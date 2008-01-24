@@ -37,49 +37,42 @@ using System.Collections;
 using System.IO;
 using System.Reflection;
 using System.Web.UI;
+using System.Web.Util;
 
 namespace System.Web.Compilation {
 
 	[BuildProviderAppliesTo (BuildProviderAppliesTo.Web)]
-	sealed class PageBuildProvider : BuildProvider {
-		PageCompiler pcompiler;
-		CompilerType compiler_type;
-
+	sealed class PageBuildProvider : TemplateBuildProvider {
+		
 		public PageBuildProvider()
 		{
 		}
 
-		public override void GenerateCode (AssemblyBuilder assemblyBuilder)
+		protected override TextReader SpecialOpenReader (string virtualPath, out string physicalPath)
 		{
-			HttpContext context = HttpContext.Current;
-			PageParser parser = new PageParser (VirtualPath, OpenReader (), context);
-			pcompiler = new PageCompiler (parser);
-			pcompiler.CreateMethods ();
-			compiler_type = GetDefaultCompilerTypeForLanguage (parser.Language);
-			using (TextWriter writer = assemblyBuilder.CreateCodeFile (this)) {
-				CodeDomProvider provider = pcompiler.Provider;
-				CodeCompileUnit unit = pcompiler.CompileUnit;
-				provider.CreateGenerator().GenerateCodeFromCompileUnit (unit, writer, null);
-			}
+			// We need this hack to support out-of-application wsdl helpers
+			if (StrUtils.StartsWith (virtualPath, BuildManager.FAKE_VIRTUAL_PATH_PREFIX)) {
+				physicalPath = virtualPath.Substring (BuildManager.FAKE_VIRTUAL_PATH_PREFIX.Length);
+				return new StreamReader (physicalPath);
+			} else
+				physicalPath = null;
+			
+			return base.SpecialOpenReader (virtualPath, out physicalPath);
 		}
-
-		public override Type GetGeneratedType (CompilerResults results)
+		
+		protected override BaseCompiler CreateCompiler (TemplateParser parser)
 		{
-			// This is not called if compilation failed.
-			// Returning null makes the caller throw an InvalidCastException
-			Assembly assembly = results.CompiledAssembly;
-			return assembly.GetType (pcompiler.Parser.ClassName);
+			return new PageCompiler (parser as PageParser);
 		}
 
-		public override CompilerType CodeCompilerType {
-			get { return compiler_type; }
+		protected override TemplateParser CreateParser (string virtualPath, string physicalPath, HttpContext context)
+		{	
+			return CreateParser (virtualPath, physicalPath, OpenReader (virtualPath), context);
 		}
-
-		// FIXME: figure this out.
-		public override ICollection VirtualPathDependencies {
-			get {
-				return pcompiler.Parser.Dependencies;
-			}
+		
+		protected override TemplateParser CreateParser (string virtualPath, string physicalPath, TextReader reader, HttpContext context)
+		{
+			return new PageParser (virtualPath, physicalPath, reader, context);
 		}
 	}
 }

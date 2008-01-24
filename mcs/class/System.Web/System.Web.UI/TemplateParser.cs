@@ -204,14 +204,20 @@ namespace System.Web.UI {
                         if (!File.Exists (realpath))
                                 throw new ParseException (Location, "Could not find file \"" + realpath + "\".");
 			string vpath = VirtualPathUtility.Combine (BaseVirtualDir, src);
+			if (VirtualPathUtility.IsAbsolute (vpath))
+				vpath = VirtualPathUtility.ToAppRelative (vpath);
+			
                         Type type = null;
-                        AddDependency (realpath);
+                        AddDependency (vpath);
                         try {
-                                ArrayList other_deps = new ArrayList ();
+#if NET_2_0
+				type = BuildManager.GetCompiledType (vpath);
+#else
+				ArrayList other_deps = new ArrayList ();
                                 type = UserControlParser.GetCompiledType (vpath, realpath, other_deps, Context);
-                                foreach (string s in other_deps) {
+				foreach (string s in other_deps)
                                         AddDependency (s);
-                                }
+#endif
                         } catch (ParseException pe) {
                                 if (this is UserControlParser)
                                         throw new ParseException (Location, pe.Message, pe);
@@ -227,10 +233,8 @@ namespace System.Web.UI {
                         AddImport (ns);
                         Assembly ass = null;
 			
-			if (assembly != null && assembly.Length > 0) {
+			if (assembly != null && assembly.Length > 0)
 				ass = AddAssemblyByName (assembly);
-				AddDependency (ass.Location);
-			}
 			
                         RootBuilder.Foundry.RegisterFoundry (tagPrefix, ass, ns);
                 }
@@ -403,7 +407,6 @@ namespace System.Web.UI {
 			Assembly asm = type.Assembly;
 			string location = asm.Location;
 			
-			AddDependency (location);
 			string dirname = Path.GetDirectoryName (location);
 			bool doAddAssembly = true;
 			foreach (string dir in HttpApplication.BinDirectories) {
@@ -445,9 +448,8 @@ namespace System.Web.UI {
 
 		internal virtual void AddSourceDependency (string filename)
 		{
-			if (dependencies != null && dependencies.Contains (filename)) {
+			if (dependencies != null && dependencies.Contains (filename))
 				ThrowParseException ("Circular file references are not allowed. File: " + filename);
-			}
 
 			AddDependency (filename);
 		}
@@ -569,6 +571,8 @@ namespace System.Web.UI {
 			linePragmasOn = GetBool (atts, "LinePragmas", false);
 			
 			string inherits = GetString (atts, "Inherits", null);
+			string srcRealPath = null;
+			
 #if NET_2_0
 			// In ASP 2, the source file is actually integrated with
 			// the generated file via the use of partial classes. This
@@ -582,20 +586,28 @@ namespace System.Web.UI {
 
 			string legacySrc = GetString (atts, "Src", null);
 			if (legacySrc != null) {
+				legacySrc = UrlUtils.Combine (BaseVirtualDir, legacySrc);
 				if (src == null) {
 					src = legacySrc;
+					legacySrc = MapPath (legacySrc, false);
+					srcRealPath = legacySrc;
+					if (!File.Exists (srcRealPath))
+						ThrowParseException ("File " + src + " not found");
+					
 					srcIsLegacy = true;
-				}
+				} else 
+					legacySrc = MapPath (legacySrc, false);
 				
 				GetAssemblyFromSource (legacySrc);
-				AddDependency (MapPath (legacySrc, false));
+				AddDependency (legacySrc);
 			}
 			
 			if (!srcIsLegacy && src != null && inherits != null) {
 				// Make sure the source exists
 				src = UrlUtils.Combine (BaseVirtualDir, src);
-				string realPath = MapPath (src, false);
-				if (!File.Exists (realPath))
+				srcRealPath = MapPath (src, false);
+				
+				if (!File.Exists (srcRealPath))
 					ThrowParseException ("File " + src + " not found");
 
 				// We are going to create a partial class that shares
@@ -607,7 +619,7 @@ namespace System.Web.UI {
 
 				// Add the code file as an option to the
 				// compiler. This lets both files be compiled at once.
-				compilerOptions += " \"" + realPath + "\"";
+				compilerOptions += " \"" + srcRealPath + "\"";
 
 				if (codeFileBaseClass != null) {
 					try {
@@ -626,14 +638,19 @@ namespace System.Web.UI {
 #else
 			string src = GetString (atts, "Src", null);
 
-			if (src != null)
+			if (src != null) {
+				srcRealPath = MapPath (src, false);
 				srcAssembly = GetAssemblyFromSource (src);
-
+			}
+			
 			if (inherits != null)
 				SetBaseType (inherits);
 #endif
-			if (src != null)
-				AddDependency (MapPath (src, false));
+			if (src != null) {
+				if (VirtualPathUtility.IsAbsolute (src))
+					src = VirtualPathUtility.ToAppRelative (src);
+				AddDependency (src);
+			}
 			
 			className = GetString (atts, "ClassName", null);
 			if (className != null) {
@@ -750,7 +767,7 @@ namespace System.Web.UI {
 		
 		internal void SetBaseType (string type)
 		{
-			if (type == DefaultBaseTypeName) {
+			if (type == null || type == DefaultBaseTypeName) {
 				baseType = DefaultBaseType;
 				return;
 			}
@@ -784,7 +801,7 @@ namespace System.Web.UI {
 			if (!File.Exists (realPath))
 				ThrowParseException ("File " + vpath + " not found");
 
-			AddSourceDependency (realPath);
+			AddSourceDependency (vpath);
 
 			CompilerResults result = CachingCompiler.Compile (language, realPath, realPath, assemblies, Debug);
 			if (result.NativeCompilerReturnValue != 0) {
@@ -794,12 +811,19 @@ namespace System.Web.UI {
 
 			AddAssembly (result.CompiledAssembly, true);
 			return result.CompiledAssembly;
-		}
-		
-		internal abstract Type DefaultBaseType { get; }
+		}		
+
 		internal abstract string DefaultBaseTypeName { get; }
 		internal abstract string DefaultDirectiveName { get; }
 
+		internal Type DefaultBaseType {
+			get {
+				Type type = Type.GetType (DefaultBaseTypeName, true);
+
+				return type;
+			}
+		}
+		
 		internal ILocation DirectiveLocation {
 			get { return directiveLocation; }
 		}
@@ -815,6 +839,10 @@ namespace System.Web.UI {
 			get { return (!srcIsLegacy && src != null); }
 		}
 
+		internal string CodeBehindSource {
+			get { return src; }
+		}
+			
 		internal string PartialClassName {
 			get { return partialClassName; }
 		}
@@ -864,8 +892,24 @@ namespace System.Web.UI {
 
 #if NET_2_0
 				string physPath = HttpContext.Current.Request.PhysicalApplicationPath;
+				string inFile;
 				
-				if (StrUtils.StartsWith (inputFile, physPath)) {
+				if (String.IsNullOrEmpty (inputFile)) {
+					inFile = null;
+					StreamReader sr = Reader as StreamReader;
+
+					if (sr != null) {
+						FileStream fr = sr.BaseStream as FileStream;
+						if (fr != null)
+							inFile = fr.Name;
+					}
+				} else
+					inFile = inputFile;
+
+				if (String.IsNullOrEmpty (inFile))
+					throw new HttpException ("Unable to determine class name - no input file found.");
+				
+				if (StrUtils.StartsWith (inFile, physPath)) {
 					className = inputFile.Substring (physPath.Length).ToLower (CultureInfo.InvariantCulture);
 					className = className.Replace ('.', '_');
 					className = className.Replace ('/', '_').Replace ('\\', '_');
@@ -958,6 +1002,11 @@ namespace System.Web.UI {
 #if NET_2_0
 		internal string OutputCacheVaryByContentEncodings {
 			get { return oc_content_encodings; }
+		}
+
+		internal virtual TextReader Reader {
+			get { return null; }
+			set { /* no-op */ }
 		}
 #endif
 		

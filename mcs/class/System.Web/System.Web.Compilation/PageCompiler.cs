@@ -150,10 +150,9 @@ namespace System.Web.Compilation
 
 #if NET_2_0
 			if (pageParser.Async)
-				cref = new CodeTypeReference (typeof (System.Web.IHttpAsyncHandler));
-			else
-				cref = new CodeTypeReference (typeof (System.Web.IHttpHandler));
-			mainClass.BaseTypes.Add (cref);
+				mainClass.BaseTypes.Add (new CodeTypeReference (typeof (System.Web.IHttpAsyncHandler)));
+			
+			mainClass.BaseTypes.Add (new CodeTypeReference (typeof (System.Web.IHttpHandler)));
 #endif
 		}
 
@@ -375,8 +374,84 @@ namespace System.Web.Compilation
 #endif
 			
 			CreateGetTypeHashCode ();
+
+#if NET_2_0
+			if (pageParser.Async)
+				CreateAsyncMethods ();
+#endif
 		}
 
+#if NET_2_0
+		void CreateAsyncMethods ()
+		{
+			CodeMemberMethod method = new CodeMemberMethod ();
+			CodeParameterDeclarationExpression arg;
+			CodeMethodInvokeExpression invoke;
+
+			// public virtual System.IAsyncResult BeginProcessRequest(System.Web.HttpContext context, System.AsyncCallback cb, object data);
+			method.ReturnType = new CodeTypeReference (typeof (IAsyncResult));
+			method.Name = "BeginProcessRequest";
+			method.Attributes = MemberAttributes.Public;
+			
+			arg = new CodeParameterDeclarationExpression ();
+			arg.Type = new CodeTypeReference (typeof (HttpContext));
+			arg.Name = "context";
+			method.Parameters.Add (arg);
+
+			arg = new CodeParameterDeclarationExpression ();
+			arg.Type = new CodeTypeReference (typeof (AsyncCallback));
+			arg.Name = "cb";
+			method.Parameters.Add (arg);
+
+			arg = new CodeParameterDeclarationExpression ();
+			arg.Type = new CodeTypeReference (typeof (object));
+			arg.Name = "data";
+			method.Parameters.Add (arg);
+
+			invoke = new CodeMethodInvokeExpression (thisRef, "AsyncPageBeginProcessRequest");
+			invoke.Parameters.Add (new CodeArgumentReferenceExpression ("context"));
+			invoke.Parameters.Add (new CodeArgumentReferenceExpression ("cb"));
+			invoke.Parameters.Add (new CodeArgumentReferenceExpression ("data"));
+
+			method.Statements.Add (new CodeMethodReturnStatement (invoke));
+			mainClass.Members.Add (method);
+
+			// public virtual void EndProcessRequest(System.IAsyncResult ar);
+			method = new CodeMemberMethod ();
+			method.ReturnType = new CodeTypeReference (typeof (void));
+			method.Name = "EndProcessRequest";
+			method.Attributes = MemberAttributes.Public;
+
+			arg = new CodeParameterDeclarationExpression ();
+			arg.Type = new CodeTypeReference (typeof (IAsyncResult));
+			arg.Name = "ar";
+			method.Parameters.Add (arg);
+
+			invoke = new CodeMethodInvokeExpression (thisRef, "AsyncPageEndProcessRequest");
+			invoke.Parameters.Add (new CodeArgumentReferenceExpression ("ar"));
+
+			method.Statements.Add (invoke);
+			mainClass.Members.Add (method);
+
+			// public override void ProcessRequest(System.Web.HttpContext context);
+			method = new CodeMemberMethod ();
+			method.ReturnType = new CodeTypeReference (typeof (void));
+			method.Name = "ProcessRequest";
+			method.Attributes = MemberAttributes.Public | MemberAttributes.Override;
+
+			arg = new CodeParameterDeclarationExpression ();
+			arg.Type = new CodeTypeReference (typeof (HttpContext));
+			arg.Name = "context";
+			method.Parameters.Add (arg);
+			
+			invoke = new CodeMethodInvokeExpression (new CodeBaseReferenceExpression (), "ProcessRequest");
+			invoke.Parameters.Add (new CodeArgumentReferenceExpression ("context"));
+
+			method.Statements.Add (invoke);
+			mainClass.Members.Add (method);
+		}
+#endif
+		
 		public static Type CompilePageType (PageParser pageParser)
 		{
 			PageCompiler compiler = new PageCompiler (pageParser);

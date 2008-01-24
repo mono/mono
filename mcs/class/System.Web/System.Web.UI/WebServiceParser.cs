@@ -45,7 +45,12 @@ namespace System.Web.UI {
 
 #if NET_2_0
 		internal WebServiceParser (HttpContext context, string virtualPath, TextReader reader)
-			: base (context, virtualPath, null, reader)
+			: this (context, virtualPath, null, reader)
+		{
+		}
+		
+		internal WebServiceParser (HttpContext context, string virtualPath, string physicalPath, TextReader reader)
+			: base (context, virtualPath, physicalPath, reader)
 		{
 		}
 #endif

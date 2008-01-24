@@ -32,6 +32,7 @@
 #if NET_2_0
 
 using System;
+using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Specialized;
@@ -46,7 +47,7 @@ namespace System.Web.Compilation {
 	public abstract class BuildProvider {
 		string virtual_path;
 		ArrayList ref_assemblies;
-
+		
 		ICollection vpath_deps;
 
 		protected BuildProvider()
@@ -54,11 +55,22 @@ namespace System.Web.Compilation {
 			ref_assemblies = new ArrayList ();
 		}
 
-		internal void SetVirtualPath (string path)
+		internal void SetVirtualPath (string virtualPath)
 		{
-			virtual_path = path;
+			if (!VirtualPathUtility.IsRooted (virtualPath))
+				virtual_path = "/" + virtualPath;
+			else {
+				if (VirtualPathUtility.IsAppRelative (virtualPath))
+					virtual_path = VirtualPathUtility.ToAbsolute (virtualPath);
+				else
+					virtual_path = virtualPath;
+			}
 		}
 
+		internal virtual void GenerateCode ()
+		{
+		}
+		
 		public virtual void GenerateCode (AssemblyBuilder assemblyBuilder)
 		{
 		}
@@ -78,33 +90,14 @@ namespace System.Web.Compilation {
 		void SetCommonParameters (CompilationSection config, CompilerParameters p)
 		{
 			p.IncludeDebugInformation = config.Debug;
-			foreach (AssemblyInfo info in config.Assemblies) {
-				if (info.Assembly != "*") {
-					p.ReferencedAssemblies.Add (info.Assembly);
-					ref_assemblies.Add (info.Assembly);
-				} else {
-					AddAssembliesInBin (p.ReferencedAssemblies);
-				}
-			}
-
-			// explicit, strict?
-			// embedded? linked?/resources
 		}
-
-		void AddAssembliesInBin (StringCollection coll)
-		{
-			foreach (string s in HttpApplication.BinDirectoryAssemblies) {
-				coll.Add (s);
-				ref_assemblies.Add (s);
-			}
-		}
-
+		
 		internal CompilerType GetDefaultCompilerTypeForLanguage (string language, CompilationSection configSection)
 		{
 			// MS throws when accesing a Hashtable, we do here.
 			if (language == null || language == "")
 				throw new ArgumentNullException ("language");
-
+				
 			CompilationSection config;
 			if (configSection == null)
 				config = WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection;
@@ -122,13 +115,14 @@ namespace System.Web.Compilation {
 				return new CompilerType (type, p);
 			}
 
-			if (!CodeDomProvider.IsDefinedLanguage (language))
-				throw new HttpException (String.Format ("No compiler for language '{0}'.", language));
-
-			CompilerInfo info = CodeDomProvider.GetCompilerInfo (language);
-			CompilerParameters par = info.CreateDefaultCompilerParameters ();
-			SetCommonParameters (config, par);
-			return new CompilerType (info.CodeDomProviderType, par);
+			if (CodeDomProvider.IsDefinedLanguage (language)) {
+				CompilerInfo info = CodeDomProvider.GetCompilerInfo (language);
+				CompilerParameters par = info.CreateDefaultCompilerParameters ();
+				SetCommonParameters (config, par);
+				return new CompilerType (info.CodeDomProviderType, par);
+			}
+			
+			throw new HttpException (String.Concat ("No compiler for language '", language, "'."));
 		}
 		
 		protected CompilerType GetDefaultCompilerTypeForLanguage (string language)
@@ -167,7 +161,7 @@ namespace System.Web.Compilation {
 			// MS also throws a NullReferenceException here when not hosted.
 			return VirtualPathProvider.OpenFile (virtualPath);
 		}
-
+		
 		public virtual CompilerType CodeCompilerType {
 			get { return null; } // Documented to return null
 		}
@@ -187,6 +181,10 @@ namespace System.Web.Compilation {
 
 				return vpath_deps;
 			}
+		}
+
+		internal virtual CodeCompileUnit CodeUnit {
+			get { return null; }
 		}
 	}
 

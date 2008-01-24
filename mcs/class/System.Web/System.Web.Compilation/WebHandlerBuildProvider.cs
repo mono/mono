@@ -40,50 +40,20 @@ using System.Web.UI;
 
 namespace System.Web.Compilation {
 	[BuildProviderAppliesTo (BuildProviderAppliesTo.Web)]
-	sealed class WebHandlerBuildProvider : BuildProvider {
-		WebServiceCompiler wscompiler;
-		CompilerType compiler_type;
-
+	sealed class WebHandlerBuildProvider : SimpleBuildProvider
+	{
 		public WebHandlerBuildProvider ()
 		{
 		}
 
-		public override void GenerateCode (AssemblyBuilder assemblyBuilder)
+		protected override SimpleWebHandlerParser CreateParser (string virtualPath, string physicalPath, TextReader reader, HttpContext context)
 		{
-			HttpContext context = HttpContext.Current;
-			WebHandlerParser parser = new WebHandlerParser (context, VirtualPath, OpenReader ());
-			wscompiler = new WebServiceCompiler (parser);
-			compiler_type = GetDefaultCompilerTypeForLanguage (parser.Language);
-			if (parser.Program.Trim () == "")
-				return;
-
-			using (TextWriter writer = assemblyBuilder.CreateCodeFile (this)) {
-				writer.WriteLine (parser.Program);
-			}
+			return new WebHandlerParser (context, virtualPath, physicalPath, reader);
 		}
-
-		public override Type GetGeneratedType (CompilerResults results)
+		
+		protected override SimpleWebHandlerParser CreateParser (string virtualPath, string physicalPath, HttpContext context)
 		{
-			SimpleWebHandlerParser parser = wscompiler.Parser;
-			Type type = null;
-			if (parser.Program.Trim () == "") {
-				type = parser.GetTypeFromBin (parser.ClassName);
-				return type;
-			}
-
-			Assembly assembly = results.CompiledAssembly;
-			return assembly.GetType (parser.ClassName);
-		}
-
-		public override CompilerType CodeCompilerType {
-			get { return compiler_type; }
-		}
-
-		// FIXME: figure this out.
-		public override ICollection VirtualPathDependencies {
-			get {
-				return wscompiler.Parser.Dependencies;
-			}
+			return new WebHandlerParser (context, virtualPath, physicalPath, OpenReader (virtualPath));
 		}
 	}
 }

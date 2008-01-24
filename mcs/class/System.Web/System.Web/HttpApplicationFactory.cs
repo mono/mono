@@ -395,7 +395,11 @@ namespace System.Web {
 						app_file = System.Web.Util.UrlUtils.ResolveVirtualPathFromAppAbsolute("~/" + Path.GetFileName(app_file));
 						app_type = System.Web.J2EE.PageMapper.GetObjectType(context, app_file);
 #else
+#if NET_2_0
+						app_type = BuildManager.GetCompiledType ("~/" + Path.GetFileName (app_file));
+#else
 						app_type = ApplicationFileParser.GetCompiledApplicationType (app_file, context);
+#endif
 #endif
 						if (app_type == null) {
 							string msg = String.Format ("Error compiling application file ({0}).", app_file);

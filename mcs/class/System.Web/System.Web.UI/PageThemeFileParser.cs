@@ -61,10 +61,6 @@ namespace System.Web.UI
 			ThrowParseException ("Unknown directive: " + directive);
 		}
 
-		internal override Type DefaultBaseType {
-			get { return typeof (PageTheme); }
-		}
-
 		internal override string DefaultBaseTypeName {
 			get { return "System.Web.UI.PageTheme"; }
 		}

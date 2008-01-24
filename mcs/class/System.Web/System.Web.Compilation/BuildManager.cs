@@ -4,8 +4,9 @@
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
 //	Gonzalo Paniagua Javier (gonzalo@novell.com)
+//      Marek Habersack (mhabersack@novell.com)
 //
-// (C) 2006 Novell, Inc (http://www.novell.com)
+// (C) 2006-2008 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -38,26 +39,219 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Text;
+using System.Threading;
 using System.Web;
+using System.Web.Caching;
 using System.Web.Configuration;
 using System.Web.Hosting;
+using System.Web.Util;
 
 namespace System.Web.Compilation {
 	public sealed class BuildManager {
-		private static List<Assembly> AppCode_Assemblies = new List<Assembly>();
-		private static List<Assembly> TopLevel_Assemblies = new List<Assembly>();
-		private static bool haveResources;
+		class BuildItem
+		{
+			public BuildProvider buildProvider;
+			public AssemblyBuilder assemblyBuilder;
+			public Type codeDomProviderType;
+			public bool codeGenerated;
+			public Assembly compiledAssembly;
+			
+			public CompilerParameters CompilerOptions {
+				get {
+					if (buildProvider == null)
+						throw new HttpException ("No build provider.");
+					return buildProvider.CodeCompilerType.CompilerParameters;
+				}
+			}
+
+			public string VirtualPath {
+				get {
+					if (buildProvider == null)
+						throw new HttpException ("No build provider.");
+					return buildProvider.VirtualPath;
+				}
+			}
+
+			public CodeCompileUnit CodeUnit {
+				get {
+					if (buildProvider == null)
+						throw new HttpException ("No build provider.");
+					return buildProvider.CodeUnit;
+				}
+			}
+			
+			public BuildItem (BuildProvider provider)
+			{
+				this.buildProvider = provider;
+				if (provider != null)
+					codeDomProviderType = GetCodeDomProviderType (provider);
+			}
+
+			public void SetCompiledAssembly (AssemblyBuilder assemblyBuilder, Assembly compiledAssembly)
+			{
+				if (this.compiledAssembly != null || this.assemblyBuilder == null || this.assemblyBuilder != assemblyBuilder)
+					return;
+
+				this.compiledAssembly = compiledAssembly;
+			}
+			
+			public CodeDomProvider CreateCodeDomProvider ()
+			{
+				if (codeDomProviderType == null)
+					throw new HttpException ("Unable to create compilation provider, no provider type given.");
+				
+				CodeDomProvider ret;
+
+				try {
+					ret = Activator.CreateInstance (codeDomProviderType) as CodeDomProvider;
+				} catch (Exception ex) {
+					throw new HttpException ("Failed to create compilation provider.", ex);
+				}
+
+				if (ret == null)
+					throw new HttpException ("Unable to instantiate code DOM provider '" + codeDomProviderType + "'.");
+
+				return ret;
+			}
+
+			public void GenerateCode ()
+			{
+				if (buildProvider == null)
+					throw new HttpException ("Cannot generate code - missing build provider.");
+				
+				buildProvider.GenerateCode ();
+				codeGenerated = true;
+			}
+
+			public void StoreCodeUnit ()
+			{
+				if (buildProvider == null)
+					throw new HttpException ("Cannot generate code - missing build provider.");
+				if (assemblyBuilder == null)
+					throw new HttpException ("Cannot generate code - missing assembly builder.");
+
+				buildProvider.GenerateCode (assemblyBuilder);
+			}
+
+			public override string ToString ()
+			{
+				string ret = "BuildItem [";
+				string virtualPath = VirtualPath;
+				
+				if (!String.IsNullOrEmpty (virtualPath))
+					ret += virtualPath;
+
+				ret += "]";
+
+				return ret;
+			}
+		}
+
+		class BuildCacheItem
+		{
+			public string compiledCustomString;
+			public Assembly assembly;
+			public Type type;
+			public string virtualPath;
+
+			public BuildCacheItem (Assembly assembly, BuildProvider bp, CompilerResults results)
+			{
+				this.assembly = assembly;
+				this.compiledCustomString = bp.GetCustomString (results);
+				this.type = bp.GetGeneratedType (results);
+				this.virtualPath = bp.VirtualPath;
+			}
+			
+			public override string ToString ()
+			{
+				StringBuilder sb = new StringBuilder ("BuildCacheItem [");
+				bool first = true;
+				
+				if (!String.IsNullOrEmpty (compiledCustomString)) {
+					sb.Append ("compiledCustomString: " + compiledCustomString);
+					first = false;
+				}
+				
+				if (assembly != null) {
+					sb.Append ((first ? "" : "; ") + "assembly: " + assembly.ToString ());
+					first = false;
+				}
+
+				if (type != null) {
+					sb.Append ((first ? "" : "; ") + "type: " + type.ToString ());
+					first = false;
+				}
+
+				if (!String.IsNullOrEmpty (virtualPath)) {
+					sb.Append ((first ? "" : "; ") + "virtualPath: " + virtualPath);
+					first = false;
+				}
+
+				sb.Append ("]");
+				
+				return sb.ToString ();
+			}
+		}
+		
+		enum BuildKind {
+			Unknown,
+			Pages,
+			NonPages,
+			Application,
+			Theme,
+			Fake
+		};
+
+		internal const string FAKE_VIRTUAL_PATH_PREFIX = "/@@MonoFakeVirtualPath@@";
+		const string BUILD_MANAGER_VIRTUAL_PATH_CACHE_PREFIX = "Build_Manager";
+		static int BUILD_MANAGER_VIRTUAL_PATH_CACHE_PREFIX_LENGTH = BUILD_MANAGER_VIRTUAL_PATH_CACHE_PREFIX.Length;
+		
+		static object buildCacheLock = new object ();
+
+		//
+		// Disabled - see comment at the end of BuildAssembly below
+		//
+		// static object buildCountLock = new object ();
+		// static int buildCount = 0;
+		
+		static List<Assembly> AppCode_Assemblies = new List<Assembly>();
+		static List<Assembly> TopLevel_Assemblies = new List<Assembly>();
+		static bool haveResources;
+
+		// The build cache which maps a virtual path to a build item with all the necessary
+		// bits. 
+		static Dictionary <string, BuildCacheItem> buildCache = new Dictionary <string, BuildCacheItem> ();
+
+		// Maps the virtual path of a non-page build to the assembly that contains the
+		// compiled type.
+		static Dictionary <string, Assembly> nonPagesCache = new Dictionary <string, Assembly> ();
+		
+		static List <Assembly> referencedAssemblies = new List <Assembly> ();
+		
+		static Dictionary <string, object> compilationTickets = new Dictionary <string, object> ();
+
+		static Assembly globalAsaxAssembly;
+		
+		static Dictionary <string, BuildKind> knownFileTypes = new Dictionary <string, BuildKind> () {
+			{".aspx", BuildKind.Pages},
+			{".asax", BuildKind.Application},
+			{".ashx", BuildKind.NonPages},
+			{".asmx", BuildKind.NonPages},
+			{".ascx", BuildKind.NonPages},
+			{".master", BuildKind.NonPages}
+		};
 		
 		internal BuildManager ()
 		{
 		}
-
+		
 		internal static void ThrowNoProviderException (string extension)
 		{
 			string msg = "No registered provider for extension '{0}'.";
 			throw new HttpException (String.Format (msg, extension));
 		}
-
+		
 		public static object CreateInstanceFromVirtualPath (string virtualPath, Type requiredBaseType)
 		{
 			// virtualPath + Exists done in GetCompiledType()
@@ -66,6 +260,9 @@ namespace System.Web.Compilation {
 
 			// Get the Type.
 			Type type = GetCompiledType (virtualPath);
+			if (type == null)
+				throw new HttpException ("Instance creation failed for virtual path '" + virtualPath + "'.");
+			
 			if (!requiredBaseType.IsAssignableFrom (type)) {
 				string msg = String.Format ("Type '{0}' does not inherit from '{1}'.",
 								type.FullName, requiredBaseType.FullName);
@@ -75,6 +272,57 @@ namespace System.Web.Compilation {
 			return Activator.CreateInstance (type, null);
 		}
 
+		public static ICollection GetReferencedAssemblies ()
+		{
+			List <Assembly> al = new List <Assembly> ();
+			
+			CompilationSection compConfig = WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection;
+                        if (compConfig == null)
+				return al;
+			
+                        bool addAssembliesInBin = false;
+                        foreach (AssemblyInfo info in compConfig.Assemblies) {
+                                if (info.Assembly == "*")
+                                        addAssembliesInBin = true;
+                                else
+                                        LoadAssembly (info, al);
+                        }
+			
+                        if (addAssembliesInBin)
+				foreach (string s in HttpApplication.BinDirectoryAssemblies)
+					LoadAssembly (s, al);
+
+			lock (buildCacheLock) {
+				foreach (Assembly asm in referencedAssemblies) {
+					if (!al.Contains (asm))
+						al.Add (asm);
+				}
+
+				if (globalAsaxAssembly != null)
+					al.Add (globalAsaxAssembly);
+			}
+			
+			return al;
+		}
+
+		static void LoadAssembly (string path, List <Assembly> al)
+		{
+			AddAssembly (Assembly.LoadFrom (path), al);
+		}
+
+		static void LoadAssembly (AssemblyInfo info, List <Assembly> al)
+		{
+			AddAssembly (Assembly.Load (info.Assembly), al);
+		}
+
+		static void AddAssembly (Assembly asm, List <Assembly> al)
+		{
+			if (al.Contains (asm))
+				return;
+
+			al.Add (asm);
+		}
+		
 		[MonoTODO ("Not implemented, always returns null")]
 		public static BuildDependencySet GetCachedBuildDependencySet (HttpContext context, string virtualPath)
 		{
@@ -83,91 +331,623 @@ namespace System.Web.Compilation {
 
 		internal static BuildProvider GetBuildProviderForPath (string virtualPath, bool throwOnMissing)
 		{
+			return GetBuildProviderForPath (virtualPath, null, throwOnMissing);
+		}
+		
+		internal static BuildProvider GetBuildProviderForPath (string virtualPath, CompilationSection section, bool throwOnMissing)
+		{
 			string extension = VirtualPathUtility.GetExtension (virtualPath);
-			CompilationSection c = WebConfigurationManager.GetSection ("system.web/compilation", virtualPath) as CompilationSection;
+			CompilationSection c = section;
+
 			if (c == null)
-				ThrowNoProviderException (extension);
+				c = WebConfigurationManager.GetSection ("system.web/compilation", virtualPath) as CompilationSection;
+			
+			if (c == null)
+				if (throwOnMissing)
+					ThrowNoProviderException (extension);
+				else
+					return null;
 			
 			BuildProviderCollection coll = c.BuildProviders;
 			if (coll == null || coll.Count == 0)
 				ThrowNoProviderException (extension);
 			
 			BuildProvider provider = coll.GetProviderForExtension (extension);
-			if (provider == null && throwOnMissing)
-				ThrowNoProviderException (extension);
+			if (provider == null)
+				if (throwOnMissing)
+					ThrowNoProviderException (extension);
+				else
+					return null;
 
+			provider.SetVirtualPath (virtualPath);
 			return provider;
+		}
+
+		static string GetAbsoluteVirtualPath (string virtualPath)
+		{
+			string vp;
+
+			if (!VirtualPathUtility.IsRooted (virtualPath))
+				vp = "~/" + virtualPath;
+			else
+				vp = virtualPath;
+			
+			if (VirtualPathUtility.IsAppRelative (vp))
+				return VirtualPathUtility.ToAbsolute (vp);
+			else
+				return vp;
+		}
+		
+		static BuildCacheItem GetCachedItem (string virtualPath)
+		{
+			BuildCacheItem ret;
+			
+			lock (buildCacheLock) {
+				if (buildCache.TryGetValue (virtualPath, out ret))
+					return ret;
+			}
+
+			return null;
 		}
 		
 		public static Assembly GetCompiledAssembly (string virtualPath)
 		{
-			BuildProvider provider;
-			CompilerParameters parameters;
+			string vp = GetAbsoluteVirtualPath (virtualPath);
+			BuildCacheItem ret = GetCachedItem (vp);
+			if (ret != null)
+				return ret.assembly;
+			
+			BuildAssembly (vp);
+			ret = GetCachedItem (vp);
+			if (ret != null)
+				return ret.assembly;
 
-			AssemblyBuilder abuilder = GetAssemblyBuilder (virtualPath, out provider);
-			CompilerType ctype = provider.CodeCompilerType;
-			parameters = PrepareParameters (abuilder.TempFiles, virtualPath, ctype.CompilerParameters);
-			CompilerResults results = abuilder.BuildAssembly (virtualPath, parameters);
-			return results.CompiledAssembly;
-		}
-
-		static AssemblyBuilder GetAssemblyBuilder (string virtualPath, out BuildProvider provider)
-		{
-			if (virtualPath == null || virtualPath == "")
-				throw new ArgumentNullException ("virtualPath");
-
-			if (virtualPath [0] != '/')
-				throw new ArgumentException ("The virtual path is not rooted", "virtualPath");
-
-			if (!HostingEnvironment.VirtualPathProvider.FileExists (virtualPath))
-				throw new HttpException (String.Format ("The file '{0}' does not exist.", virtualPath));
-			provider = GetBuildProviderForPath (virtualPath, true);
-			CompilerType compiler_type = provider.CodeCompilerType;
-			Type ctype = compiler_type.CodeDomProviderType;
-			CodeDomProvider dom_provider = (CodeDomProvider) Activator.CreateInstance (ctype, null);
-
-			AssemblyBuilder abuilder = new AssemblyBuilder (virtualPath, dom_provider);
-			provider.SetVirtualPath (virtualPath);
-			provider.GenerateCode (abuilder);
-			return abuilder;
-		}
-
-		public static string GetCompiledCustomString (string virtualPath)
-		{
-			BuildProvider provider = GetBuildProviderForPath (virtualPath, false);
-			if (provider == null)
-				return null;
-			// FIXME: where to get the CompilerResults from?
-			return provider.GetCustomString (null);
-		}
-
-		static CompilerParameters PrepareParameters (TempFileCollection temp_files,
-								string virtualPath,
-								CompilerParameters base_params)
-		{
-			CompilerParameters res = new CompilerParameters ();
-			res.TempFiles = temp_files;
-			res.CompilerOptions = base_params.CompilerOptions;
-			res.IncludeDebugInformation = base_params.IncludeDebugInformation;
-			res.TreatWarningsAsErrors = base_params.TreatWarningsAsErrors;
-			res.WarningLevel = base_params.WarningLevel;
-			string dllfilename = Path.GetFileName (temp_files.AddExtension ("dll", true));
-			res.OutputAssembly = Path.Combine (temp_files.TempDir, dllfilename);
-			return res;
+			return null;
 		}
 
 		public static Type GetCompiledType (string virtualPath)
 		{
-			BuildProvider provider;
-			CompilerParameters parameters;
+			string vp = GetAbsoluteVirtualPath (virtualPath);
+			
+			BuildCacheItem ret = GetCachedItem (vp);
+			if (ret != null)
+				return ret.type;
+			
+			BuildAssembly (vp);
+			ret = GetCachedItem (vp);
+			if (ret != null)
+				return ret.type;
 
-			AssemblyBuilder abuilder = GetAssemblyBuilder (virtualPath, out provider);
-			CompilerType ctype = provider.CodeCompilerType;
-			parameters = PrepareParameters (abuilder.TempFiles, virtualPath, ctype.CompilerParameters);
-			CompilerResults results = abuilder.BuildAssembly (virtualPath, parameters);
-			return provider.GetGeneratedType (results);
+			return null;
 		}
 
+		
+		public static string GetCompiledCustomString (string virtualPath)
+		{
+			string vp = GetAbsoluteVirtualPath (virtualPath);
+			BuildCacheItem ret = GetCachedItem (vp);
+			if (ret != null)
+				return ret.compiledCustomString;
+
+			BuildAssembly (vp);
+			ret = GetCachedItem (vp);
+			if (ret != null)
+				return ret.compiledCustomString;
+
+			return null;
+		}
+		
+		static List <string> GetFilesForBuild (string virtualPath, string physicalDir, out BuildKind kind)
+		{
+			string extension = VirtualPathUtility.GetExtension (virtualPath);
+			List <string> ret = new List <string> ();
+			
+			if (StrUtils.StartsWith (virtualPath, FAKE_VIRTUAL_PATH_PREFIX)) {
+				kind = BuildKind.Fake;
+				return ret;
+			}
+			
+			if (!knownFileTypes.TryGetValue (extension, out kind)) {
+				string tmp;
+				if (VirtualPathUtility.IsAbsolute (virtualPath))
+					tmp = VirtualPathUtility.ToAppRelative (virtualPath);
+				else
+					tmp = virtualPath;
+					
+				if (StrUtils.StartsWith (tmp, "~/App_Themes/"))
+					kind = BuildKind.Theme;
+				else
+					kind = BuildKind.Unknown;
+			}
+
+			if (kind == BuildKind.Theme || kind == BuildKind.Application)
+				return ret;
+
+			if (BatchMode) {
+				string[] files = Directory.GetFiles (physicalDir, "*.*");
+				BuildKind fileKind;
+			
+				foreach (string file in files) {
+					if (!knownFileTypes.TryGetValue (Path.GetExtension (file), out fileKind))
+						continue;
+					
+					if (kind == fileKind)
+						ret.Add (file);
+				}
+			} else
+				ret.Add (Path.Combine (physicalDir, VirtualPathUtility.GetFileName (virtualPath)));
+			
+			return ret;
+		}
+
+		static Type GetCodeDomProviderType (BuildProvider provider)
+		{
+			CompilerType codeCompilerType;
+			Type codeDomProviderType = null;
+
+			codeCompilerType = provider.CodeCompilerType;
+			if (codeCompilerType != null)
+				codeDomProviderType = codeCompilerType.CodeDomProviderType;
+				
+			if (codeDomProviderType == null)
+				throw new HttpException (String.Concat ("Provider '", provider, " 'fails to specify the compiler type."));
+
+			return codeDomProviderType;
+		}
+		
+		static string GetVirtualPathDirectory (string virtualPath)
+		{
+			string vp;
+			if (!VirtualPathUtility.IsRooted (virtualPath))
+				vp = VirtualPathUtility.ToAbsolute ("~/" + virtualPath);
+			else {
+				if (VirtualPathUtility.IsAppRelative (virtualPath))
+					vp = VirtualPathUtility.ToAbsolute (virtualPath);
+				else
+					vp = virtualPath;
+			}
+
+			return VirtualPathUtility.GetDirectory (vp);
+		}
+
+		static List <BuildItem> LoadBuildProviders (string virtualPath, string virtualDir, Dictionary <string, bool> vpCache,
+							    out BuildKind kind, out string assemblyBaseName)
+		{
+			HttpContext ctx = HttpContext.Current;
+			HttpRequest req = ctx != null ? ctx.Request : null;
+
+			if (req == null)
+				throw new HttpException ("No context available, cannot build.");
+
+			CompilationSection section = WebConfigurationManager.GetSection ("system.web/compilation", virtualPath) as CompilationSection;
+			string physicalDir = req.MapPath (virtualDir);
+			
+			List <string> files;
+			
+			try {
+				files = GetFilesForBuild (virtualPath, physicalDir, out kind);
+			} catch (Exception ex) {
+				throw new HttpException ("Error loading build providers for path '" + virtualDir + "'.", ex);
+			}
+
+			List <BuildItem> ret = new List <BuildItem> ();
+			BuildProvider provider = null;
+			
+			switch (kind) {
+				case BuildKind.Theme:
+					assemblyBaseName = "App_Theme_";
+					provider = new ThemeDirectoryBuildProvider ();
+					provider.SetVirtualPath (virtualPath);
+					break;
+
+				case BuildKind.Application:
+					assemblyBaseName = "App_global.asax.";
+					provider = new ApplicationFileBuildProvider ();
+					provider.SetVirtualPath (virtualPath);
+					break;
+
+				case BuildKind.Fake:
+					provider = GetBuildProviderForPath (virtualPath, section, false);
+					assemblyBaseName = null;
+					break;
+					
+				default:
+					assemblyBaseName = null;
+					break;
+			}
+
+			if (provider != null) {
+				ret.Add (new BuildItem (provider));
+				return ret;
+			}
+			
+			string fileVirtualPath;
+			string fileName;
+			
+			lock (buildCacheLock) {
+				foreach (string f in files) {
+					fileName = Path.GetFileName (f);
+					fileVirtualPath = VirtualPathUtility.Combine (virtualDir, fileName);
+					
+					if (buildCache.ContainsKey (fileVirtualPath) || vpCache.ContainsKey (fileVirtualPath))
+						continue;
+					
+					vpCache.Add (fileVirtualPath, true);
+					provider = GetBuildProviderForPath (fileVirtualPath, section, false);
+					if (provider == null)
+						continue;
+
+					ret.Add (new BuildItem (provider));
+				}
+			}
+
+			return ret;
+		}		
+
+		static AssemblyBuilder CreateAssemblyBuilder (string assemblyBaseName, string virtualPath, BuildItem buildItem)
+		{
+			buildItem.assemblyBuilder = new AssemblyBuilder (virtualPath, buildItem.CreateCodeDomProvider (), assemblyBaseName);
+			buildItem.assemblyBuilder.CompilerOptions = buildItem.CompilerOptions;
+			
+			return buildItem.assemblyBuilder;
+		}
+
+		static Dictionary <string, CompileUnitPartialType> GetUnitPartialTypes (CodeCompileUnit unit)
+		{
+			Dictionary <string, CompileUnitPartialType> ret = null;
+
+			CompileUnitPartialType pt;
+			foreach (CodeNamespace ns in unit.Namespaces) {
+				foreach (CodeTypeDeclaration type in ns.Types) {
+					if (type.IsPartial) {
+						pt = new CompileUnitPartialType (unit, ns, type);
+
+						if (ret == null)
+							ret = new Dictionary <string, CompileUnitPartialType> ();
+						
+						ret.Add (pt.TypeName, pt);
+					}
+				}
+			}
+
+			return ret;
+		}
+
+		static bool TypeHasConflictingMember (CodeTypeDeclaration type, CodeMemberMethod member)
+		{
+			if (type == null || member == null)
+				return false;
+
+			CodeMemberMethod method;
+			string methodName = member.Name;
+			int count;
+			
+			foreach (CodeTypeMember m in type.Members) {
+				if (m.Name != methodName)
+					continue;
+				
+				method = m as CodeMemberMethod;
+				if (method == null)
+					continue;
+			
+				if ((count = method.Parameters.Count) != member.Parameters.Count)
+					continue;
+
+				CodeParameterDeclarationExpressionCollection methodA = method.Parameters;
+				CodeParameterDeclarationExpressionCollection methodB = member.Parameters;
+			
+				for (int i = 0; i < count; i++)
+					if (methodA [i].Type != methodB [i].Type)
+						continue;
+
+				return true;
+			}
+			
+			return false;
+		}
+
+		static bool TypeHasConflictingMember (CodeTypeDeclaration type, CodeMemberField member)
+		{
+			if (type == null || member == null)
+				return false;
+
+			CodeMemberField field = FindMemberByName (type, member.Name) as CodeMemberField;
+			if (field == null)
+				return false;
+
+			if (field.Type == member.Type)
+				return false; // This will get "flattened" by AssemblyBuilder
+			
+			return true;
+		}
+		
+		static bool TypeHasConflictingMember (CodeTypeDeclaration type, CodeTypeMember member)
+		{
+			if (type == null || member == null)
+				return false;
+
+			return (FindMemberByName (type, member.Name) != null);
+		}
+
+		static CodeTypeMember FindMemberByName (CodeTypeDeclaration type, string name)
+		{
+			foreach (CodeTypeMember m in type.Members) {
+				if (m == null || m.Name != name)
+					continue;
+				return m;
+			}
+
+			return null;
+		}
+		
+		static bool PartialTypesConflict (CodeTypeDeclaration typeA, CodeTypeDeclaration typeB)
+		{
+			bool conflict;
+			Type type;
+			
+			foreach (CodeTypeMember member in typeB.Members) {
+				conflict = false;
+				type = member.GetType ();
+				if (type == typeof (CodeMemberMethod))
+					conflict = TypeHasConflictingMember (typeA, (CodeMemberMethod) member);
+				else if (type == typeof (CodeMemberField))
+					conflict = TypeHasConflictingMember (typeA, (CodeMemberField) member);
+				else
+					conflict = TypeHasConflictingMember (typeA, member);
+				
+				if (conflict)
+					return true;
+			}
+			
+			return false;
+		}
+		
+		static bool CanAcceptCode (AssemblyBuilder assemblyBuilder, BuildItem buildItem)
+		{
+			CodeCompileUnit newUnit = buildItem.CodeUnit;
+			if (newUnit == null)
+				return true;
+			
+			Dictionary <string, CompileUnitPartialType> unitPartialTypes = GetUnitPartialTypes (newUnit);
+
+			if (unitPartialTypes == null)
+				return true;
+
+			if (assemblyBuilder.Units.Count > CompilationConfig.MaxBatchSize)
+				return false;
+			
+			CompileUnitPartialType pt;			
+			foreach (List <CompileUnitPartialType> partialTypes in assemblyBuilder.PartialTypes.Values)
+				foreach (CompileUnitPartialType cupt in partialTypes)
+					if (unitPartialTypes.TryGetValue (cupt.TypeName, out pt) && PartialTypesConflict (cupt.PartialType, pt.PartialType))
+						return false;
+			
+			return true;
+		}
+		
+		static void AssignToAssemblyBuilder (string assemblyBaseName, string virtualPath, BuildItem buildItem,
+						     Dictionary <Type, List <AssemblyBuilder>> assemblyBuilders)
+		{
+			if (!buildItem.codeGenerated)
+				buildItem.GenerateCode ();
+			
+			List <AssemblyBuilder> builders;
+
+			if (!assemblyBuilders.TryGetValue (buildItem.codeDomProviderType, out builders)) {
+				builders = new List <AssemblyBuilder> ();
+				assemblyBuilders.Add (buildItem.codeDomProviderType, builders);
+			}
+
+			// Put it in the first assembly builder that doesn't have conflicting
+			// partial types
+			foreach (AssemblyBuilder assemblyBuilder in builders) {
+				if (CanAcceptCode (assemblyBuilder, buildItem)) {
+					buildItem.assemblyBuilder = assemblyBuilder;
+					buildItem.StoreCodeUnit ();
+					return;
+				}
+			}
+
+			// None of the existing builders can accept this unit, get it a new builder
+			builders.Add (CreateAssemblyBuilder (assemblyBaseName, virtualPath, buildItem));
+			buildItem.StoreCodeUnit ();
+		}
+		
+		static void BuildAssembly (string virtualPath)
+		{
+			object ticket;
+			bool acquired;
+			string virtualDir = GetVirtualPathDirectory (virtualPath);
+			
+			acquired = AcquireCompilationTicket (virtualDir, out ticket);
+			try {
+				Monitor.Enter (ticket);
+				lock (buildCacheLock) {
+					if (buildCache.ContainsKey (virtualPath))
+						return;
+				}
+				
+				string assemblyBaseName;
+				Dictionary <string, bool> vpCache = new Dictionary <string, bool> ();
+				BuildKind buildKind;
+				List <BuildItem> buildItems = LoadBuildProviders (virtualPath, virtualDir, vpCache, out buildKind, out assemblyBaseName);
+				
+				if (buildItems.Count == 0)
+					return;
+				
+				Dictionary <Type, List <AssemblyBuilder>> assemblyBuilders = new Dictionary <Type, List <AssemblyBuilder>> ();
+				foreach (BuildItem buildItem in buildItems)
+					if (buildItem.assemblyBuilder == null)
+						AssignToAssemblyBuilder (assemblyBaseName, virtualPath, buildItem, assemblyBuilders);
+
+				CompilerResults results;
+				Assembly compiledAssembly;
+				string vp;
+				BuildProvider bp;
+				
+				foreach (List <AssemblyBuilder> abuilders in assemblyBuilders.Values) {
+					foreach (AssemblyBuilder abuilder in abuilders) {
+						abuilder.AddAssemblyReference (GetReferencedAssemblies () as List <Assembly>);
+						results = abuilder.BuildAssembly (virtualPath);
+						compiledAssembly = results.CompiledAssembly;
+						
+						lock (buildCacheLock) {
+							switch (buildKind) {
+								case BuildKind.NonPages:
+									if (!referencedAssemblies.Contains (compiledAssembly))
+										referencedAssemblies.Add (compiledAssembly);
+									break;
+
+ 								case BuildKind.Application:
+ 									globalAsaxAssembly = compiledAssembly;
+ 									break;
+							}
+							
+							foreach (BuildItem buildItem in buildItems) {
+								if (buildItem.assemblyBuilder != abuilder)
+									continue;
+								
+								vp = buildItem.VirtualPath;
+								bp = buildItem.buildProvider;
+								buildItem.SetCompiledAssembly (abuilder, compiledAssembly);
+								
+								if (!buildCache.ContainsKey (vp)) {
+									AddToCache (vp, bp);
+									buildCache.Add (vp, new BuildCacheItem (compiledAssembly, bp, results));
+								}
+
+								if (!nonPagesCache.ContainsKey (vp))
+									nonPagesCache.Add (vp, compiledAssembly);
+							}
+						}
+					}
+				}
+
+				// WARNING: enabling this code breaks the test suite - it stays
+				// disabled until I figure out what to do about it.
+				// See http://support.microsoft.com/kb/319947
+// 				lock (buildCountLock) {
+// 					buildCount++;
+// 					if (buildCount > CompilationConfig.NumRecompilesBeforeAppRestart)
+// 						HttpRuntime.UnloadAppDomain ();
+// 				}
+			} finally {
+				Monitor.Exit (ticket);
+				if (acquired)
+					ReleaseCompilationTicket (virtualDir);
+			}
+		}
+		
+		internal static void AddToCache (string virtualPath, BuildProvider bp)
+		{
+			HttpContext ctx = HttpContext.Current;
+			HttpRequest req = ctx != null ? ctx.Request : null;
+
+			if (req == null)
+				throw new HttpException ("No current context.");
+			
+			CacheItemRemovedCallback cb = new CacheItemRemovedCallback (OnVirtualPathChanged);
+			CacheDependency dep;
+			ICollection col = bp.VirtualPathDependencies;
+			int count;
+			
+			if (col != null && (count = col.Count) > 0) {
+				string[] files = new string [count];
+				int fileCount = 0;
+				string file;
+				
+				foreach (object o in col) {
+					file = o as string;
+					if (String.IsNullOrEmpty (file))
+						continue;
+					files [fileCount++] = req.MapPath (file);
+				}
+
+				dep = new CacheDependency (files);
+			} else
+				dep = null;
+			
+			HttpRuntime.InternalCache.Add (BUILD_MANAGER_VIRTUAL_PATH_CACHE_PREFIX + virtualPath,
+						       true,
+						       dep,
+						       Cache.NoAbsoluteExpiration,
+						       Cache.NoSlidingExpiration,
+						       CacheItemPriority.High,
+						       cb);
+						       
+		}
+
+		static int RemoveVirtualPathFromCaches (string virtualPath)
+		{
+			lock (buildCacheLock) {
+				// This is expensive, but we must do it - we must not leave
+				// the assembly in which the invalidated type lived. At the same
+				// time, we must remove the virtual paths which were in that
+				// assembly from the other caches, so that they get recompiled.
+				BuildCacheItem item = GetCachedItem (virtualPath);
+				if (item == null)
+					return 0;
+
+				if (buildCache.ContainsKey (virtualPath))
+					buildCache.Remove (virtualPath);
+
+				Assembly asm;
+				
+				if (nonPagesCache.TryGetValue (virtualPath, out asm)) {
+					nonPagesCache.Remove (virtualPath);
+					if (referencedAssemblies.Contains (asm))
+						referencedAssemblies.Remove (asm);
+
+					List <string> keysToRemove = new List <string> ();
+					foreach (KeyValuePair <string, Assembly> kvp in nonPagesCache)
+						if (kvp.Value == asm)
+							keysToRemove.Add (kvp.Key);
+					
+					foreach (string key in keysToRemove) {
+						nonPagesCache.Remove (key);
+
+						if (buildCache.ContainsKey (key))
+							buildCache.Remove (key);
+					}
+				}
+				
+				return 1;
+			}
+		}
+		
+		static void OnVirtualPathChanged (string key, object value, CacheItemRemovedReason removedReason)
+		{
+			string virtualPath;
+
+			if (StrUtils.StartsWith (key, BUILD_MANAGER_VIRTUAL_PATH_CACHE_PREFIX))
+				virtualPath = key.Substring (BUILD_MANAGER_VIRTUAL_PATH_CACHE_PREFIX_LENGTH);
+			else
+				return;
+
+			RemoveVirtualPathFromCaches (virtualPath);
+		}
+		
+		static bool AcquireCompilationTicket (string key, out object ticket)
+                {
+                        lock (((ICollection)compilationTickets).SyncRoot) {
+                                if (!compilationTickets.TryGetValue (key, out ticket)) {
+                                        ticket = new Mutex ();
+                                        compilationTickets.Add (key, ticket);
+                                        return true;
+                                }
+                        }
+			
+                        return false;
+                }
+
+                static void ReleaseCompilationTicket (string key)
+                {
+                        lock (((ICollection)compilationTickets).SyncRoot) {
+				if (compilationTickets.ContainsKey (key))
+					compilationTickets.Remove (key);
+                        }
+                }
+		
 		// The 2 GetType() overloads work on the global.asax, App_GlobalResources, App_WebReferences or App_Browsers
 		public static Type GetType (string typeName, bool throwOnError)
 		{
@@ -203,7 +983,7 @@ namespace System.Web.Compilation {
 		{
 			return GetVirtualPathDependencies (virtualPath, null);
 		}
-
+		
 		// Assemblies built from the App_Code directory
 		public static IList CodeAssemblies {
 			get { return AppCode_Assemblies; }
@@ -217,6 +997,15 @@ namespace System.Web.Compilation {
 			get { return haveResources; }
 			set { haveResources = value; }
 		}
+
+		internal static bool BatchMode {
+			get { return CompilationConfig.Batch; }
+		}
+
+		internal static CompilationSection CompilationConfig {
+			get { return WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection; }
+		}
+			
 	}
 }
 

@@ -30,6 +30,7 @@
 //
 using System;
 using System.Collections;
+using System.IO;
 using System.Web;
 using System.Web.Compilation;
 
@@ -38,12 +39,37 @@ namespace System.Web.UI
 	sealed class ApplicationFileParser : TemplateParser
 	{
 		static ArrayList dependencies;
-
+#if NET_2_0
+		TextReader reader;
+#endif
+		
 		public ApplicationFileParser (string fname, HttpContext context)
 		{
 			InputFile = fname;
 			Context = context;
 		}
+
+#if NET_2_0
+		internal ApplicationFileParser (string virtualPath, TextReader reader, HttpContext context)
+			: this (virtualPath, null, reader, context)
+		{
+		}
+		
+		internal ApplicationFileParser (string virtualPath, string inputFile, TextReader reader, HttpContext context)
+		{
+			Context = context;
+			Reader = reader;
+
+			if (String.IsNullOrEmpty (inputFile)) {
+				HttpRequest req = context != null ? context.Request : null;
+				if (req != null)
+					InputFile = req.MapPath (virtualPath);
+			} else
+				InputFile = inputFile;
+			
+			SetBaseType (null);
+		}
+#endif
 		
 		protected override Type CompileIntoType ()
 		{
@@ -71,11 +97,7 @@ namespace System.Web.UI
 
 		internal static ArrayList FileDependencies {
 			get { return dependencies; }
-		}
-		
-		internal override Type DefaultBaseType {
-			get { return typeof (HttpApplication); }
-		}
+		}		
 
 		internal override string DefaultBaseTypeName {
 			get { return "System.Web.HttpApplication"; }
@@ -88,6 +110,13 @@ namespace System.Web.UI
 		internal override string BaseVirtualDir {
 			get { return Context.Request.ApplicationPath; }
 		}
+		
+#if NET_2_0
+		 internal TextReader Reader {
+                        get { return reader; }
+                        set { reader = value; }
+                }
+#endif
 	}
 
 }

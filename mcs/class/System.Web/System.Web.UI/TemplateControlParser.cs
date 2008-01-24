@@ -170,14 +170,19 @@ namespace System.Web.UI {
 					ThrowParseException ("'page' and 'control' are mutually exclusive");
 
 				string filepath = (!is_page) ? control : page;
-				filepath = MapPath (filepath);
 				AddDependency (filepath);
+				
+				filepath = MapPath (filepath);
 				Type ctype;
 				if (is_page) {
 					PageParser pp = new PageParser (page, filepath, Context);
 					ctype = pp.CompileIntoType ();
 				} else {
+#if NET_2_0
+					ctype = BuildManager.GetCompiledType (control);
+#else
 					ctype = UserControlParser.GetCompiledType (control, filepath, Dependencies, Context);
+#endif
 				}
 
 				AddAssembly (ctype.Assembly, true);
@@ -212,7 +217,7 @@ namespace System.Web.UI {
 			get { return compilationMode; }
 		}
 		
-		internal TextReader Reader {
+		internal override TextReader Reader {
 			get { return reader; }
 			set { reader = value; }
 		}

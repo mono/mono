@@ -29,6 +29,7 @@
 //
 
 using System.Web;
+using System.Web.Compilation;
 
 namespace System.Web.UI
 {
@@ -39,11 +40,15 @@ namespace System.Web.UI
 							string virtualPath,
 							string path)
 		{
+#if NET_2_0
+			return BuildManager.CreateInstanceFromVirtualPath (virtualPath, typeof (IHttpHandler)) as IHttpHandler;
+#else
 			Type type = WebHandlerParser.GetCompiledType (context, virtualPath, path);
 			if (!(typeof (IHttpHandler).IsAssignableFrom (type)))
 				throw new HttpException ("Type does not implement IHttpHandler: " + type.FullName);
 
 			return Activator.CreateInstance (type) as IHttpHandler;
+#endif
 		}
 
 		public virtual void ReleaseHandler (IHttpHandler handler)

@@ -231,10 +231,9 @@ namespace System.Web.Compilation
 
 			throw new Exception ("Got type: " + type);
 		}
-		
-		void InitParser (string filename)
+
+		void InitParser (TextReader reader, string filename)
 		{
-			StreamReader reader = new StreamReader (filename, WebEncoding.FileEncoding);
 			AspParser parser = new AspParser (filename, reader);
 			reader.Close ();
 			parser.Error += new ParseErrorHandler (ParseError);
@@ -242,12 +241,27 @@ namespace System.Web.Compilation
 			parser.TextParsed += new TextParsedHandler (TextParsed);
 			if (!pstack.Push (parser))
 				throw new ParseException (Location, "Infinite recursion detected including file: " + filename);
-			tparser.AddDependency (filename);
+
+			if (filename != "@@inner_string@@") {
+				string arvp = Path.Combine (tparser.BaseVirtualDir, Path.GetFileName (filename));
+				if (VirtualPathUtility.IsAbsolute (arvp))
+					arvp = VirtualPathUtility.ToAppRelative (arvp);
+				
+				tparser.AddDependency (arvp);
+			}
+		}
+		
+		void InitParser (string filename)
+		{
+			StreamReader reader = new StreamReader (filename, WebEncoding.FileEncoding);
+			InitParser (reader, filename);
 		}
 
 		public void Parse (string file)
 		{
+#if NET_1_1_ONLY
 			InitParser (file);
+#endif
 
 			pstack.Parser.Parse ();
 			if (text.Length > 0)
@@ -266,13 +280,50 @@ namespace System.Web.Compilation
 
 		public void Parse ()
 		{
+#if NET_2_0
+			string inputFile = tparser.InputFile;
+			TextReader inputReader = tparser.Reader;
+			
+			if (String.IsNullOrEmpty (inputFile)) {
+				StreamReader sr = inputReader as StreamReader;
+				if (sr != null) {
+					FileStream fr = sr.BaseStream as FileStream;
+					if (fr != null)
+						inputFile = fr.Name;
+				}
+
+				if (String.IsNullOrEmpty (inputFile))
+					inputFile = "@@inner_string@@";
+			}
+
+			if (inputReader != null)
+				InitParser (inputReader, inputFile);
+			else {
+				if (String.IsNullOrEmpty (inputFile))
+					throw new HttpException ("Parser input file is empty, cannot continue.");
+				inputFile = Path.GetFullPath (inputFile);
+				InitParser (inputFile);
+			}
+			Parse (inputFile);
+#else
 			Parse (Path.GetFullPath (tparser.InputFile));
+#endif
 		}
 
 		internal static void AddTypeToCache (ArrayList dependencies, string inputFile, Type type)
 		{
-			CacheDependency cd = new CacheDependency ((string[])dependencies.ToArray (typeof (string)));
-			HttpRuntime.InternalCache.Insert ("@@Type" + inputFile, type, cd);
+			string [] deps = (string []) dependencies.ToArray (typeof (string));
+			HttpContext ctx = HttpContext.Current;
+			HttpRequest req = ctx != null ? ctx.Request : null;
+
+			if (req == null)
+				throw new HttpException ("No current context, cannot compile.");
+
+			int depLength = deps.Length;
+			for (int i = 0; i < deps.Length; i++)
+				deps [i] = req.MapPath (deps [i]);			
+
+			HttpRuntime.InternalCache.Insert ("@@Type" + inputFile, type, new CacheDependency (deps));
 		}
 		
 		public Type GetCompiledType ()

@@ -1,3 +1,8 @@
+2008-01-24  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpApplicationFactory.cs: use BuildManager.GetCompiledType to
+	build the application (global.asax) file.
+
 2008-01-22  Konstantin Triger <kostat@mainsoft.com>
 
 	* HttpResponse.cs: move headers_sent initialization up to prevent additional

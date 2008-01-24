@@ -55,7 +55,6 @@ namespace System.Web.UI
 		
 		internal UserControlParser (string virtualPath, string inputFile, HttpContext context, string type)
 		{
-			if (type == null) type = PagesConfig.UserControlBaseType;
 			Context = context;
 			BaseVirtualDir = UrlUtils.GetDirectory (virtualPath);
 			InputFile = inputFile;
@@ -65,11 +64,24 @@ namespace System.Web.UI
 
 #if NET_2_0
 		internal UserControlParser (string virtualPath, TextReader reader, HttpContext context)
+			: this (virtualPath, null, reader, context)
+		{
+		}
+		
+		internal UserControlParser (string virtualPath, string inputFile, TextReader reader, HttpContext context)
 		{
 			Context = context;
 			BaseVirtualDir = UrlUtils.GetDirectory (virtualPath);
+
+			if (String.IsNullOrEmpty (inputFile)) {
+				HttpRequest req = context != null ? context.Request : null;
+				if (req != null)
+					InputFile = req.MapPath (virtualPath);
+			} else
+				InputFile = inputFile;
+			
 			Reader = reader;
-			SetBaseType (PagesConfig.UserControlBaseType);
+			SetBaseType (null);
 			AddApplicationAssembly ();
 		}
 #endif
@@ -100,8 +112,8 @@ namespace System.Web.UI
 				// Make sure the page exists
 				if (masterPage != null) {
 					string path = MapPath (masterPage);
-					MasterPageParser.GetCompiledMasterType (masterPage, path, HttpContext.Current);
-					AddDependency (path);
+//					BuildManager.GetCompiledType (masterPage);
+					AddDependency (masterPage);
 				}
 			}
 #endif
@@ -109,14 +121,15 @@ namespace System.Web.UI
 			base.ProcessMainAttributes (atts);
 		}
 
-		internal override Type DefaultBaseType {
-			get { return typeof (UserControl); }
+#if NET_2_0
+		internal override string DefaultBaseTypeName {
+			get { return PagesConfig.UserControlBaseType; }
 		}
-
+#else
 		internal override string DefaultBaseTypeName {
 			get { return "System.Web.UI.UserControl"; }
 		}
-
+#endif
 		internal override string DefaultDirectiveName {
 			get { return "control"; }
 		}

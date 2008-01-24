@@ -72,10 +72,24 @@ namespace System.Web.UI
 			if (cachedType != null)
 				return; // We don't need anything else.
 
-			this.context = context;
+			// context is obsolete in 2.0+ - MSDN recommends passing null, so we need to
+			// take that into account
+			if (context != null)
+				this.context = context;
+			else
+				this.context = HttpContext.Current;
+			
 			this.vPath = virtualPath;
-			this.physPath = physicalPath;
-			AddDependency (physicalPath);
+			AddDependency (virtualPath);
+			
+			// physicalPath is obsolete in 2.0+ - same note what for context applies here
+			if (physicalPath != null && physicalPath.Length > 0)
+				this.physPath = physicalPath;
+			else {
+				HttpRequest req = this.context != null ? context.Request : null;
+				if (req != null)
+					this.physPath = req.MapPath (virtualPath);
+			}
 
 			assemblies = new ArrayList ();
 			string location = Context.ApplicationInstance.AssemblyLocation;
@@ -390,7 +404,7 @@ namespace System.Web.UI
 			if (!File.Exists (realPath))
 				throw new ParseException (location, "File " + vpath + " not found");
 
-			AddDependency (realPath);
+			AddDependency (vpath);
 
 			CompilerResults result = CachingCompiler.Compile (language, realPath, realPath, assemblies);
 			if (result.NativeCompilerReturnValue != 0) {

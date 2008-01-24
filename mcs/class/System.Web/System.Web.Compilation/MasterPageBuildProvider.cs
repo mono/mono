@@ -42,47 +42,24 @@ using System.Web.UI;
 namespace System.Web.Compilation {
 
 	[BuildProviderAppliesTo (BuildProviderAppliesTo.Web)]
-	sealed class MasterPageBuildProvider : BuildProvider {
-		MasterPageCompiler pcompiler;
-		CompilerType compiler_type;
-
+	sealed class MasterPageBuildProvider : TemplateBuildProvider {
 		public MasterPageBuildProvider()
 		{
 		}
 
-		public override void GenerateCode (AssemblyBuilder assemblyBuilder)
+		protected override BaseCompiler CreateCompiler (TemplateParser parser)
 		{
-			HttpContext context = HttpContext.Current;
-			MasterPageParser parser = new MasterPageParser (VirtualPath,
-									VirtualPathUtility.ToAbsolute (VirtualPath),
-									context);
-			pcompiler = new MasterPageCompiler (parser);
-			pcompiler.CreateMethods ();
-			compiler_type = GetDefaultCompilerTypeForLanguage (parser.Language);
-			using (TextWriter writer = assemblyBuilder.CreateCodeFile (this)) {
-				CodeDomProvider provider = pcompiler.Provider;
-				CodeCompileUnit unit = pcompiler.CompileUnit;
-				provider.CreateGenerator().GenerateCodeFromCompileUnit (unit, writer, null);
-			}
+			return new MasterPageCompiler (parser as MasterPageParser);
 		}
 
-		public override Type GetGeneratedType (CompilerResults results)
+		protected override TemplateParser CreateParser (string virtualPath, string physicalPath, HttpContext context)
+		{	
+			return CreateParser (virtualPath, physicalPath, OpenReader (virtualPath), context);
+		}
+		
+		protected override TemplateParser CreateParser (string virtualPath, string physicalPath, TextReader reader, HttpContext context)
 		{
-			// This is not called if compilation failed.
-			// Returning null makes the caller throw an InvalidCastException
-			Assembly assembly = results.CompiledAssembly;
-			return assembly.GetType (pcompiler.Parser.ClassName);
-		}
-
-		public override CompilerType CodeCompilerType {
-			get { return compiler_type; }
-		}
-
-		// FIXME: figure this out.
-		public override ICollection VirtualPathDependencies {
-			get {
-				return pcompiler.Parser.Dependencies;
-			}
+			return new MasterPageParser (virtualPath, physicalPath, reader, context);
 		}
 	}
 }

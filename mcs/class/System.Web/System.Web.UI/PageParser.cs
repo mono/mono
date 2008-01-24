@@ -86,18 +86,29 @@ namespace System.Web.UI
 			Context = context;
 			BaseVirtualDir = UrlUtils.GetDirectory (virtualPath);
 			InputFile = inputFile;
-			SetBaseType (PagesConfig.PageBaseType);
+			SetBaseType (null);
 			AddApplicationAssembly ();
 			LoadConfigDefaults ();
 		}
 
 #if NET_2_0
 		internal PageParser (string virtualPath, TextReader reader, HttpContext context)
+			: this (virtualPath, null, reader, context)
+		{
+		}
+		
+		internal PageParser (string virtualPath, string inputFile, TextReader reader, HttpContext context)
 		{
 			Context = context;
 			BaseVirtualDir = UrlUtils.GetDirectory (virtualPath);
 			Reader = reader;
-			SetBaseType (PagesConfig.PageBaseType);
+			if (String.IsNullOrEmpty (inputFile)) {
+				HttpRequest req = context != null ? context.Request : null;
+				if (req != null)
+					InputFile = req.MapPath (virtualPath);
+			} else
+				InputFile = inputFile;
+			SetBaseType (null);
 			AddApplicationAssembly ();
 			LoadConfigDefaults ();
 		}
@@ -139,9 +150,13 @@ namespace System.Web.UI
 								    string inputFile, 
 								    HttpContext context)
 		{
+#if NET_2_0
+			return BuildManager.CreateInstanceFromVirtualPath (virtualPath, typeof (IHttpHandler)) as IHttpHandler;
+#else
 			PageParser pp = new PageParser (virtualPath, inputFile, context);
 			IHttpHandler h = (IHttpHandler) pp.GetCompiledInstance ();
 			return h;
+#endif
 		}
 		
 		internal override void ProcessMainAttributes (Hashtable atts)
@@ -350,9 +365,8 @@ namespace System.Web.UI
 			
 			// Make sure the page exists
 			if (!String.IsNullOrEmpty (masterPage)) {
-				string path = MapPath (masterPage);
-				MasterPageParser.GetCompiledMasterType (masterPage, path, HttpContext.Current);
-				AddDependency (path);
+				BuildManager.GetCompiledType (masterPage);
+				AddDependency (masterPage);
 			}
 			
 			title = GetString(atts, "Title", null);
@@ -394,9 +408,7 @@ namespace System.Web.UI
 				} else if (virtualPath != null) {
 					string mappedPath = MapPath (virtualPath);
 					if (isMasterType)
-						type = masterType = MasterPageParser.GetCompiledMasterType (virtualPath,
-												     mappedPath,
-												     HttpContext.Current);
+						type = masterType = BuildManager.GetCompiledType (virtualPath);
 					else
 						type = previousPageType = GetCompiledPageType (virtualPath, mappedPath,
 											       HttpContext.Current);
@@ -422,8 +434,12 @@ namespace System.Web.UI
 
 		public static Type GetCompiledPageType (string virtualPath, string inputFile, HttpContext context)
 		{
+#if NET_2_0
+			return BuildManager.GetCompiledType (virtualPath);
+#else
 			PageParser pp = new PageParser (virtualPath, inputFile, context);
 			return pp.CompileIntoType ();
+#endif
 		}
 		
 		protected override Type CompileIntoType ()
@@ -463,16 +479,18 @@ namespace System.Web.UI
 
 		internal TraceMode TraceMode {
 			get { return tracemode; }
-		}
-		
-		internal override Type DefaultBaseType {
-			get { return baseType; }
-		}
+		}		
 
+#if NET_2_0
+		internal override string DefaultBaseTypeName {
+			get { return PagesConfig.PageBaseType; }
+		}
+#else
 		internal override string DefaultBaseTypeName {
 			get { return "System.Web.UI.Page"; }
 		}
-
+#endif
+		
 		internal override string DefaultDirectiveName {
 			get { return "page"; }
 		}

@@ -34,6 +34,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Web.Compilation;
 using System.Web.Util;
 using System.IO;
 
@@ -104,10 +105,11 @@ namespace System.Web.UI
 		internal static MasterPage CreateMasterPage (TemplateControl owner, HttpContext context,
 							     string masterPageFile, IDictionary contentTemplateCollection)
 		{
-			MasterPage masterPage = MasterPageParser.GetCompiledMasterInstance (masterPageFile,
-											    owner.Page.MapPath (masterPageFile),
-											    context);
-			List <string> phids = masterPage.placeholderIds;			
+			MasterPage masterPage = BuildManager.CreateInstanceFromVirtualPath (masterPageFile, typeof (MasterPage)) as MasterPage;
+			if (masterPage == null)
+				throw new HttpException ("Failed to create MasterPage instance for '" + masterPageFile + "'.");
+			
+			List <string> phids = masterPage.placeholderIds;
 			if (contentTemplateCollection != null) {
 				foreach (string templateName in contentTemplateCollection.Keys) {
 					if (phids != null && !phids.Contains (templateName))

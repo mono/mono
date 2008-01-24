@@ -5,7 +5,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2003 Ximian, Inc (http://www.ximian.com)
-//
+// (C) 2008 Novell, Inc (http://novell.com/)
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -43,7 +43,12 @@ namespace System.Web.UI
 
 #if NET_2_0
 		internal WebHandlerParser (HttpContext context, string virtualPath, TextReader reader)
-			: base (context, virtualPath, null, reader)
+			: this (context, virtualPath, null, reader)
+		{
+		}
+		
+		internal WebHandlerParser (HttpContext context, string virtualPath, string physicalPath, TextReader reader)
+			: base (context, virtualPath, physicalPath, reader)
 		{
 		}
 #endif

@@ -4,8 +4,9 @@
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//      Marek Habersack (mhabersack@novell.com)
 //
-// (C) 2006 Novell, Inc (http://www.novell.com)
+// (C) 2006-2008 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -42,44 +43,142 @@ using System.Web.Configuration;
 using System.Web.Util;
 
 namespace System.Web.Compilation {
+	internal class CompileUnitPartialType
+	{
+		public readonly CodeCompileUnit Unit;
+		public readonly CodeNamespace ParentNamespace;
+		public readonly CodeTypeDeclaration PartialType;
 
+		string typeName;
+		
+		public string TypeName {
+			get {
+				if (typeName == null) {
+					if (ParentNamespace == null || PartialType == null)
+						return null;
+					
+					typeName = ParentNamespace.Name;
+					if (String.IsNullOrEmpty (typeName))
+						typeName = PartialType.Name;
+					else
+						typeName += "." + PartialType.Name;
+				}
+
+				return typeName;
+			}
+		}
+		
+		public CompileUnitPartialType (CodeCompileUnit unit, CodeNamespace parentNamespace, CodeTypeDeclaration type)
+		{
+			this.Unit = unit;
+			this.ParentNamespace = parentNamespace;
+			this.PartialType = type;
+		}
+	}
+	
 	public class AssemblyBuilder {
+		const string DEFAULT_ASSEMBLY_BASE_NAME = "App_Web_";
+		
 		static bool KeepFiles = (Environment.GetEnvironmentVariable ("MONO_ASPNET_NODELETE") != null);
-
+		
 		CodeDomProvider provider;
+		CompilerParameters parameters;
+
+		Dictionary <string, bool> code_files;
+		Dictionary <string, List <CompileUnitPartialType>> partial_types;
 		List <CodeCompileUnit> units;
 		List <string> source_files;
-		List <string> referenced_assemblies;
+		List <Assembly> referenced_assemblies;
 		Dictionary <string, string> resource_files;
 		TempFileCollection temp_files;
-		//TODO: there should be a Compile () method here which is where all the compilation exceptions are thrown from.
-
+		string outputFilesPrefix;
+		string outputAssemblyPrefix;
+		string outputAssemblyName;
+		
 		internal AssemblyBuilder (CodeDomProvider provider)
-		: this (null, provider)
+		: this (null, provider, DEFAULT_ASSEMBLY_BASE_NAME)
+		{}
+
+		internal AssemblyBuilder (CodeDomProvider provider, string assemblyBaseName)
+		: this (null, provider, assemblyBaseName)
+		{}
+
+		internal AssemblyBuilder (string virtualPath, CodeDomProvider provider)
+		: this (virtualPath, provider, DEFAULT_ASSEMBLY_BASE_NAME)
 		{}
 		
-		internal AssemblyBuilder (string virtualPath, CodeDomProvider provider)
+		internal AssemblyBuilder (string virtualPath, CodeDomProvider provider, string assemblyBaseName)
 		{
 			this.provider = provider;
+			this.outputFilesPrefix = assemblyBaseName ?? DEFAULT_ASSEMBLY_BASE_NAME;
+			
 			units = new List <CodeCompileUnit> ();
-			temp_files = new TempFileCollection ();
-			referenced_assemblies = new List <string> ();
+
 			CompilationSection section;
 			if (virtualPath != null)
 				section = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation", virtualPath);
 			else
 				section = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation");
 			string tempdir = section.TempDirectory;
-			if (tempdir == null || tempdir == "")
+			if (String.IsNullOrEmpty (tempdir))
 				tempdir = AppDomain.CurrentDomain.SetupInformation.DynamicBase;
-				
+
+			if (!KeepFiles)
+				KeepFiles = section.Debug;
+			
 			temp_files = new TempFileCollection (tempdir, KeepFiles);
+		}
+
+		internal string OutputFilesPrefix {
+			get {
+				if (outputFilesPrefix == null)
+					outputFilesPrefix = DEFAULT_ASSEMBLY_BASE_NAME;
+
+				return outputFilesPrefix;
+			}
+
+			set {
+				if (String.IsNullOrEmpty (value))
+					outputFilesPrefix = DEFAULT_ASSEMBLY_BASE_NAME;
+				else
+					outputFilesPrefix = value;
+				outputAssemblyPrefix = null;
+				outputAssemblyName = null;
+			}
+		}
+		
+		internal string OutputAssemblyPrefix {
+			get {
+				if (outputAssemblyPrefix == null) {
+					string basePath = temp_files.BasePath;
+					string baseName = Path.GetFileName (basePath);
+					string baseDir = Path.GetDirectoryName (basePath);
+
+					outputAssemblyPrefix = Path.Combine (baseDir, String.Concat (OutputFilesPrefix, baseName));
+				}
+
+				return outputAssemblyPrefix;
+			}
+		}
+
+		internal string OutputAssemblyName {
+			get {
+				if (outputAssemblyName == null)
+					outputAssemblyName = OutputAssemblyPrefix + ".dll";
+
+				return outputAssemblyName;
+			}
 		}
 		
 		internal TempFileCollection TempFiles {
 			get { return temp_files; }
 		}
 
+		internal CompilerParameters CompilerOptions {
+			get { return parameters; }
+			set { parameters = value; }
+		}
+		
 		internal CodeCompileUnit [] GetUnitsAsArray ()
 		{
 			CodeCompileUnit [] result = new CodeCompileUnit [units.Count];
@@ -87,6 +186,30 @@ namespace System.Web.Compilation {
 			return result;
 		}
 
+		internal List <CodeCompileUnit> Units {
+			get {
+				if (units == null)
+					units = new List <CodeCompileUnit> ();
+				return units;
+			}
+		}
+		
+		internal Dictionary <string, List <CompileUnitPartialType>> PartialTypes {
+			get {
+				if (partial_types == null)
+					partial_types = new Dictionary <string, List <CompileUnitPartialType>> ();
+				return partial_types;
+			}
+		}
+		
+		Dictionary <string, bool> CodeFiles {
+			get {
+				if (code_files == null)
+					code_files = new Dictionary <string, bool> ();
+				return code_files;
+			}
+		}
+		
 		List <string> SourceFiles {
 			get {
 				if (source_files == null)
@@ -108,14 +231,32 @@ namespace System.Web.Compilation {
 			if (a == null)
 				throw new ArgumentNullException ("a");
 
-			referenced_assemblies.Add (a.Location);
+			List <Assembly> assemblies = ReferencedAssemblies;
+			
+			if (assemblies.Contains (a))
+				return;
+			
+			assemblies.Add (a);
 		}
 
+		internal void AddAssemblyReference (List <Assembly> asmlist)
+		{
+			if (asmlist == null)
+				return;
+			
+			foreach (Assembly a in asmlist) {
+				if (a == null)
+					continue;
+
+				AddAssemblyReference (a);
+			}
+		}
+		
 		internal void AddCodeCompileUnit (CodeCompileUnit compileUnit)
 		{
 			if (compileUnit == null)
 				throw new ArgumentNullException ("compileUnit");
-			units.Add (compileUnit);
+			units.Add (CheckForPartialTypes (compileUnit));
 		}
 		
 		public void AddCodeCompileUnit (BuildProvider buildProvider, CodeCompileUnit compileUnit)
@@ -126,7 +267,7 @@ namespace System.Web.Compilation {
 			if (compileUnit == null)
 				throw new ArgumentNullException ("compileUnit");
 
-			units.Add (compileUnit);
+			units.Add (CheckForPartialTypes (compileUnit));
 		}
 
 		public TextWriter CreateCodeFile (BuildProvider buildProvider)
@@ -142,8 +283,20 @@ namespace System.Web.Compilation {
 
 		internal void AddCodeFile (string path)
 		{
-			if (path == null || path.Length == 0)
+			AddCodeFile (path, null);
+		}
+		
+		internal void AddCodeFile (string path, BuildProvider bp)
+		{
+			if (String.IsNullOrEmpty (path))
 				return;
+
+			Dictionary <string, bool> codeFiles = CodeFiles;
+			if (codeFiles.ContainsKey (path))
+				return;
+			
+			codeFiles.Add (path, true);
+			
 			string extension = Path.GetExtension (path);
 			if (extension == null || extension.Length == 0)
 				return; // maybe better to throw an exception here?
@@ -177,14 +330,146 @@ namespace System.Web.Compilation {
 		{
 			if (extension == null)
 				throw new ArgumentNullException ("extension");
-			
-			return temp_files.AddExtension (String.Concat ("_", temp_files.Count, ".", extension), true);
+
+			string newFileName = OutputAssemblyPrefix + "_" + temp_files.Count + "." + extension;
+			temp_files.AddFile (newFileName, KeepFiles);
+
+			return newFileName;
 		}
 
 		public CodeDomProvider CodeDomProvider {
 			get { return provider; }
 		}
 
+		List <Assembly> ReferencedAssemblies {
+			get {
+				if (referenced_assemblies == null)
+					referenced_assemblies = new List <Assembly> ();
+
+				return referenced_assemblies;
+			}
+		}
+		
+		CodeCompileUnit CheckForPartialTypes (CodeCompileUnit compileUnit)
+		{
+			if (compileUnit == null)
+				return null;
+
+			CodeTypeDeclarationCollection types;
+			CompileUnitPartialType partialType;
+			string partialTypeName;
+			List <CompileUnitPartialType> tmp;
+			Dictionary <string, List <CompileUnitPartialType>> partialTypes = PartialTypes;
+			
+			foreach (CodeNamespace ns in compileUnit.Namespaces) {
+				if (ns == null)
+					continue;
+				types = ns.Types;
+				if (types == null || types.Count == 0)
+					continue;
+
+				foreach (CodeTypeDeclaration type in types) {
+					if (type == null)
+						continue;
+
+					if (type.IsPartial) {
+						partialType = new CompileUnitPartialType (compileUnit, ns, type);
+						partialTypeName = partialType.TypeName;
+						
+						if (!partialTypes.TryGetValue (partialTypeName, out tmp)) {
+							tmp = new List <CompileUnitPartialType> (1);
+							partialTypes.Add (partialTypeName, tmp);
+						}
+						tmp.Add (partialType);
+					}
+				}
+			}
+						
+			return compileUnit;
+		}
+		
+		void ProcessPartialTypes ()
+		{
+			Dictionary <string, List <CompileUnitPartialType>> partialTypes = PartialTypes;
+			if (partialTypes.Count == 0)
+				return;
+			
+			foreach (KeyValuePair <string, List <CompileUnitPartialType>> kvp in partialTypes)
+				ProcessType (kvp.Value);
+		}
+
+		void ProcessType (List <CompileUnitPartialType> typeList)
+		{
+			CompileUnitPartialType[] types = new CompileUnitPartialType [typeList.Count];
+			int counter = 0;
+			
+			foreach (CompileUnitPartialType type in typeList) {
+				if (counter == 0) {
+					types [0] = type;
+					counter++;
+					continue;
+				}
+
+				for (int i = 0; i < counter; i++)
+					CompareTypes (types [i], type);
+				types [counter++] = type;
+			}
+		}
+
+		void CompareTypes (CompileUnitPartialType source, CompileUnitPartialType target)
+		{
+			CodeTypeDeclaration sourceType = source.PartialType;
+			CodeTypeMemberCollection targetMembers = target.PartialType.Members;
+			List <CodeTypeMember> membersToRemove = new List <CodeTypeMember> ();
+			
+			foreach (CodeTypeMember member in targetMembers) {
+				if (TypeHasMember (sourceType, member))
+					membersToRemove.Add (member);
+			}
+
+			foreach (CodeTypeMember member in membersToRemove)
+				targetMembers.Remove (member);
+		}		
+
+		bool TypeHasMember (CodeTypeDeclaration type, CodeMemberMethod member)
+		{
+			if (type == null || member == null)
+				return false;
+
+			CodeMemberMethod method = FindMemberByName (type, member.Name) as CodeMemberMethod;
+			if (method == null)
+				return false;
+
+			if (method.Parameters.Count != member.Parameters.Count)
+				return false;
+			
+			return true;
+		}
+
+		bool TypeHasMember (CodeTypeDeclaration type, CodeTypeMember member)
+		{
+			if (type == null || member == null)
+				return false;
+
+			return (FindMemberByName (type, member.Name) != null);
+		}
+
+		CodeTypeMember FindMemberByName (CodeTypeDeclaration type, string name)
+		{
+			foreach (CodeTypeMember m in type.Members) {
+				if (m == null || m.Name != name)
+					continue;
+				return m;
+			}
+
+			return null;
+		}
+		
+		internal CompilerResults BuildAssembly (string virtualPath)
+		{
+			return BuildAssembly (virtualPath, CompilerOptions);
+		}
+		
 		internal CompilerResults BuildAssembly (CompilerParameters options)
 		{
 			return BuildAssembly (null, options);
@@ -194,6 +479,12 @@ namespace System.Web.Compilation {
 		{
 			if (options == null)
 				throw new ArgumentNullException ("options");
+
+			options.TempFiles = temp_files;
+			if (options.OutputAssembly == null)
+				options.OutputAssembly = OutputAssemblyName;
+
+			ProcessPartialTypes ();
 			
 			CompilerResults results;
 			CodeCompileUnit [] units = GetUnitsAsArray ();
@@ -224,10 +515,10 @@ namespace System.Web.Compilation {
 			Dictionary <string, string> resources = ResourceFiles;
 			foreach (KeyValuePair <string, string> de in resources)
 				options.EmbeddedResources.Add (de.Value);
-			foreach (string refasm in referenced_assemblies)
-				options.ReferencedAssemblies.Add (refasm);
+			foreach (Assembly refasm in ReferencedAssemblies)
+				options.ReferencedAssemblies.Add (refasm.Location);
 			
-			results = provider.CompileAssemblyFromFile (options, files.ToArray ());			
+			results = provider.CompileAssemblyFromFile (options, files.ToArray ());
 
 			if (results.NativeCompilerReturnValue != 0) {
 				string fileText = null;
@@ -236,7 +527,7 @@ namespace System.Web.Compilation {
 						fileText = sr.ReadToEnd ();
 					}
 				} catch (Exception) {}
-				
+
 				throw new CompilationException (virtualPath, results.Errors, fileText);
 			}
 			

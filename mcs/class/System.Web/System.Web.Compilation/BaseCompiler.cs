@@ -43,6 +43,8 @@ namespace System.Web.Compilation
 {
 	abstract class BaseCompiler
 	{
+		const string DEFAULT_NAMESPACE = "ASP";
+		
 #if NET_2_0
 		static BindingFlags replaceableFlags = BindingFlags.Public | BindingFlags.NonPublic |
 						  BindingFlags.Instance;
@@ -137,7 +139,7 @@ namespace System.Web.Compilation
 			return member;
 		}
 		
-		void Init ()
+		internal void ConstructType ()
 		{
 			unit = new CodeCompileUnit ();
 #if NET_2_0
@@ -163,7 +165,7 @@ namespace System.Web.Compilation
 #endif
 
 			string mainclasstype = parser.ClassName;
-			string mainns = "ASP";
+			string mainns = DEFAULT_NAMESPACE;
 
 #if NET_2_0
 			int maindot = mainclasstype.LastIndexOf ('.');
@@ -549,6 +551,14 @@ namespace System.Web.Compilation
 			return AppDomain.CurrentDomain.SetupInformation.DynamicBase;
 		}
 
+		internal static CodeDomProvider CreateProvider (string lang)
+		{
+			CompilerParameters par;
+			string tempdir;
+			
+			return CreateProvider (HttpContext.Current, lang, out par, out tempdir);
+		}
+		
 		internal static CodeDomProvider CreateProvider (string lang, out string compilerOptions, out int warningLevel, out string tempdir)
 		{
 			return CreateProvider (HttpContext.Current, lang, out compilerOptions, out warningLevel, out tempdir);
@@ -556,7 +566,25 @@ namespace System.Web.Compilation
 		
 		internal static CodeDomProvider CreateProvider (HttpContext context, string lang, out string compilerOptions, out int warningLevel, out string tempdir)
 		{
+			CodeDomProvider ret;
+			CompilerParameters par;
+
+			ret = CreateProvider (context, lang, out par, out tempdir);
+			if (par != null){
+				warningLevel = par.WarningLevel;
+				compilerOptions = par.CompilerOptions;
+			} else {
+				warningLevel = 2;
+				compilerOptions = String.Empty;
+			}
+
+			return ret;
+		}
+
+		internal static CodeDomProvider CreateProvider (HttpContext context, string lang, out CompilerParameters par, out string tempdir)
+		{
 			CodeDomProvider ret = null;
+			par = null;
 			
 #if NET_2_0
 			CompilationSection config = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation");
@@ -566,20 +594,15 @@ namespace System.Web.Compilation
 				CompilerInfo info = CodeDomProvider.GetCompilerInfo (lang);
 				if (info != null && info.IsCodeDomProviderTypeValid) {
 					ret = info.CreateProvider ();
-
-					CompilerParameters cp = info.CreateDefaultCompilerParameters ();
-					compilerOptions = cp.CompilerOptions;
-					warningLevel = cp.WarningLevel;
-				} else {
-					compilerOptions = String.Empty;
-					warningLevel = 2;
+					par = info.CreateDefaultCompilerParameters ();
 				}
 			} else {
 				Type t = HttpApplication.LoadType (comp.Type, true);
 				ret = Activator.CreateInstance (t) as CodeDomProvider;
 
-				compilerOptions = comp.CompilerOptions;
-				warningLevel = comp.WarningLevel;
+				par = new CompilerParameters ();
+				par.CompilerOptions = comp.CompilerOptions;
+				par.WarningLevel = comp.WarningLevel;
 			}
 #else
 			CompilationConfiguration config;
@@ -587,8 +610,9 @@ namespace System.Web.Compilation
 			config = CompilationConfiguration.GetInstance (context);
 			ret = config.GetProvider (lang);
 
-			compilerOptions = config.GetCompilerOptions (lang);
-			warningLevel = config.GetWarningLevel (lang);
+			par = new CompilerParameters ();
+			par.CompilerOptions = config.GetCompilerOptions (lang);
+			par.WarningLevel = config.GetWarningLevel (lang);
 #endif
 			tempdir = config.TempDirectory;
 
@@ -602,7 +626,7 @@ namespace System.Web.Compilation
 			if (type != null)
 				return type;
 
-			Init ();
+			ConstructType ();
 			string lang = parser.Language;
 			string tempdir;
 			string compilerOptions;
@@ -646,7 +670,7 @@ namespace System.Web.Compilation
 			}
 
 			results.TempFiles.Delete ();
-			Type mainClassType = assembly.GetType (mainClassExpr.Type.BaseType, true);
+			Type mainClassType = assembly.GetType (MainClassType, true);
 
 #if NET_2_0
 			if (parser.IsPartial) {
@@ -668,6 +692,15 @@ namespace System.Web.Compilation
 			return mainClassType;
 		}
 
+		internal string MainClassType {
+			get {
+				if (mainClassExpr == null)
+					return null;
+
+				return mainClassExpr.Type.BaseType;
+			}
+		}
+		
 #if NET_2_0
 		internal bool IsRebuildingPartial
 		{

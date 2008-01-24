@@ -40,45 +40,24 @@ using System.Web.UI;
 
 namespace System.Web.Compilation {
 	[BuildProviderAppliesTo (BuildProviderAppliesTo.Web)]
-	sealed class UserControlBuildProvider : BuildProvider {
-		UserControlCompiler uccompiler;
-		CompilerType compiler_type;
-
+	sealed class UserControlBuildProvider : TemplateBuildProvider {
 		public UserControlBuildProvider ()
 		{
 		}
 
-		public override void GenerateCode (AssemblyBuilder assemblyBuilder)
+		protected override BaseCompiler CreateCompiler (TemplateParser parser)
 		{
-			HttpContext context = HttpContext.Current;
-			UserControlParser parser = new UserControlParser (VirtualPath, OpenReader (), context);
-			uccompiler = new UserControlCompiler (parser);
-			uccompiler.CreateMethods ();
-			compiler_type = GetDefaultCompilerTypeForLanguage (parser.Language);
-			using (TextWriter writer = assemblyBuilder.CreateCodeFile (this)) {
-				CodeDomProvider provider = uccompiler.Provider;
-				CodeCompileUnit unit = uccompiler.CompileUnit;
-				provider.CreateGenerator().GenerateCodeFromCompileUnit (unit, writer, null);
-			}
+			return new UserControlCompiler (parser as UserControlParser);
 		}
 
-		public override Type GetGeneratedType (CompilerResults results)
+		protected override TemplateParser CreateParser (string virtualPath, string physicalPath, HttpContext context)
+		{	
+			return CreateParser (virtualPath, physicalPath, OpenReader (virtualPath), context);
+		}
+		
+		protected override TemplateParser CreateParser (string virtualPath, string physicalPath, TextReader reader, HttpContext context)
 		{
-			// This is not called if compilation failed.
-			// Returning null makes the caller throw an InvalidCastException
-			Assembly assembly = results.CompiledAssembly;
-			return assembly.GetType (uccompiler.Parser.ClassName);
-		}
-
-		public override CompilerType CodeCompilerType {
-			get { return compiler_type; }
-		}
-
-		// FIXME: figure this out.
-		public override ICollection VirtualPathDependencies {
-			get {
-				return uccompiler.Parser.Dependencies;
-			}
+			return new UserControlParser (virtualPath, physicalPath, reader, context);
 		}
 	}
 }

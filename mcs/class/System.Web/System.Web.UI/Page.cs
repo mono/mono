@@ -5,9 +5,10 @@
 //   Duncan Mak  (duncan@ximian.com)
 //   Gonzalo Paniagua (gonzalo@ximian.com)
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Marek Habersack (mhabersack@novell.com)
 //
 // (C) 2002,2003 Ximian, Inc. (http://www.ximian.com)
-// Copyright (C) 2003,2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2003-2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -51,6 +52,7 @@ using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using System.Reflection;
 #if NET_2_0
+using System.Web.Compilation;
 using System.Web.UI.Adapters;
 using System.Collections.Generic;
 #endif
@@ -610,8 +612,11 @@ public partial class Page : TemplateControl, IHttpHandler
 			if (ps != null)
 				_styleSheetTheme = ps.StyleSheetTheme;
 		}
-		if (_styleSheetTheme != null && _styleSheetTheme != "")
-			_styleSheetPageTheme = ThemeDirectoryCompiler.GetCompiledInstance (_styleSheetTheme, Context);
+		if (!String.IsNullOrEmpty (_styleSheetTheme)) {
+			string virtualPath = "~/App_Themes/" + _styleSheetTheme;
+			_styleSheetPageTheme = BuildManager.CreateInstanceFromVirtualPath (virtualPath, typeof (PageTheme)) as PageTheme;
+		}
+		
 	}
 
 	void InitializeTheme ()
@@ -621,9 +626,11 @@ public partial class Page : TemplateControl, IHttpHandler
 			if (ps != null)
 				_theme = ps.Theme;
 		}
-		if (_theme != null && _theme != "") {
-			_pageTheme = ThemeDirectoryCompiler.GetCompiledInstance (_theme, Context);
-			_pageTheme.SetPage (this);
+		if (!String.IsNullOrEmpty (_theme)) {
+			string virtualPath = "~/App_Themes/" + _theme;
+			_pageTheme = BuildManager.CreateInstanceFromVirtualPath (virtualPath, typeof (PageTheme)) as PageTheme;
+			if (_pageTheme != null)
+				_pageTheme.SetPage (this);
 		}
 	}
 
@@ -2690,7 +2697,12 @@ public partial class Page : TemplateControl, IHttpHandler
 					return;
 				}
 #else
-				IHttpHandler handler = PageParser.GetCompiledPageInstance (prevPage, Server.MapPath (prevPage), Context);
+				IHttpHandler handler;
+#if NET_2_0
+				handler = BuildManager.CreateInstanceFromVirtualPath (prevPage, typeof (IHttpHandler)) as IHttpHandler;
+#else
+				handler = PageParser.GetCompiledPageInstance (prevPage, Server.MapPath (prevPage), Context);
+#endif
 				previousPage = (Page) handler;
 				previousPage.isCrossPagePostBack = true;
 				Server.Execute (handler, null, true, _context.Request.CurrentExecutionFilePath, null, false, false);

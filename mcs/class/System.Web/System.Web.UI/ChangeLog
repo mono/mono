@@ -1,3 +1,92 @@
+2008-01-24  Marek Habersack  <mhabersack@novell.com>
+
+	* PageThemeFileParser.cs: the DefaultBaseType property removed.
+
+	* ApplicationFileParser.cs: added constructor which takes a
+	TextReader.
+	Removed the DefaultBaseType property.
+	Added the Reader property.
+
+	* MasterPage.cs: use BuildManager to create page instance.
+
+	* WebHandlerParser.cs: added a compatibility constructor.
+
+	* TemplateControl.cs: GetTypeFromControlPath uses
+	BuildManager.GetCompiledType for the 2.0+ profile.
+
+	* WebServiceParser.cs: added a compatibility internal
+	constructor.
+
+	* SimpleWebHandlerParser.cs: properly treat context and
+	physicalPath parameters to the constructor, especially for the
+	2.0+ profile where they are obsolete.
+	Dependencies are added using virtual paths.
+
+	* PageThemeParser.cs: DefaultBaseType property removed.
+
+	* Page.cs: Style sheets and themes are compiled using
+	BuildManager.
+	Previous page instance is compiled using BuildManager for the 2.0+
+	profile.
+
+	* MasterPageParser.cs: Use BuildManager to create instance and
+	compile types.
+	Dependencies are added using virtual paths.
+
+	* SimpleHandlerFactory.cs: Use
+	BuildManager.CreateInstanceFromVirtualPath for the 2.0+ profile.
+
+	* UserControlParser.cs: if the parser is created using a
+	TextReader, take the input file path from the virtual path.
+	Added a new internal constructor which takes both a TextReader and
+	an inputFile parameters.
+	Set base type to the default in the constructors.
+	Use virtual path when setting master page dependency.
+	DefaultBaseTypename doesn't use a literal string in the 2.0+
+	profile, it gets the base type from the application
+	configuration.
+
+	* TemplateControlParser.cs: Dependency on a control/page mentioned
+	in the Reference directive is registered using the virtual path.
+	TextReader property is an override now.
+
+	* TemplateParser.cs: RegisterCustomControl adds a dependency on
+	the virtual path, not the physical path. The custom control is
+	compiled using BuildManager.GetCompiledType for the 2.0+ profile.
+	RegisterNamespace does not add a dependency on the assembly.
+	LoadType does not add a dependency on the assembly.
+	Legacy Src attribute is handled properly now.
+	Dependency on code-behind (Src and CodeFile directive attributes)
+	is added using the code-behind file's virtual path.
+	GetAssemblyFromSource adds a dependency using the virtual path.
+	DefaultBaseType implemented here, using DefaultBaseTypeName which
+	is implemented in the descendant classes.
+	Added internal CodeBehindSource property, used by build
+	providers.
+	ClassName property works correctly if inputFile is missing
+	(e.g. when the parser has been created using a TextReader)
+	Added a virtual internal property TextReader to return the readed
+	which has been used to create the parser instance.
+
+	* PageHandlerFactory.cs: GetHandler uses
+	BuildManager.CreateInstanceFromVirtualPath for the 2.0+ profile.
+
+	* PageParser.cs: set the default base type in the constructors.
+	If the input file is not passed to a constructor, take the input
+	file path from the virtual path.
+	GetCompiledPageInstance uses BuildManager.CreateInstanceFromVirtualPath
+	for the 2.0+ profile.
+	MasterPage dependency is set using the virtual path of the master
+	page.
+	MasterPage is compiled into a type using BuildManager.GetCompiledType.
+	GetCompiledPageType uses BuildManager.GetCompiledType for the 2.0
+	profile.
+	DefaultBaseType override removed, it is implemented in the
+	TemplateParser class.
+	DefaultBaseTypename doesn't use a literal string in the 2.0+
+	profile, it gets the base type from the application
+	configuration.
+	
 2008-01-17 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Control.cs: fix ResolveUrl for some cases.

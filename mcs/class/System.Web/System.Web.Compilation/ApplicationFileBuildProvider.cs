@@ -1,10 +1,10 @@
 //
-// System.Web.UI.PageThemeParser
+// System.Web.Compilation.ApplicationFileBuildProvider
 //
 // Authors:
-//   Chris Toshok (toshok@ximian.com)
+//   Marek Habersack (mhabersack@novell.com)
 //
-// (C) 2006 Novell, Inc. (http://www.novell.com)
+// (C) 2008 Novell, Inc
 //
 
 //
@@ -27,41 +27,35 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 #if NET_2_0
-
 using System;
+using System.CodeDom;
+using System.CodeDom.Compiler;
 using System.Collections;
 using System.IO;
+using System.Reflection;
 using System.Web;
-using System.Web.Compilation;
-using System.Web.Util;
+using System.Web.UI;
 
-namespace System.Web.UI
+namespace System.Web.Compilation
 {
-	internal sealed class PageThemeParser: UserControlParser
+	internal class ApplicationFileBuildProvider : TemplateBuildProvider
 	{
-		string[] linkedStyleSheets;
-
-		public string [] LinkedStyleSheets {
-			get { return linkedStyleSheets; }
-			set { linkedStyleSheets = value; }
+		protected override BaseCompiler CreateCompiler (TemplateParser parser)
+		{
+			return new GlobalAsaxCompiler (parser as ApplicationFileParser);
 		}
 
-		internal PageThemeParser (string virtualPath, HttpContext context)
-		: base (virtualPath, Path.GetDirectoryName(virtualPath), context, "System.Web.UI.PageTheme")
-		{
-			AddDependency (virtualPath);
+		protected override TemplateParser CreateParser (string virtualPath, string physicalPath, HttpContext context)
+		{	
+			return CreateParser (virtualPath, physicalPath, OpenReader (virtualPath), context);
 		}
 		
-		internal override void HandleOptions (object obj)
+		protected override TemplateParser CreateParser (string virtualPath, string physicalPath, TextReader reader, HttpContext context)
 		{
-		}
-
-		internal override string DefaultBaseTypeName {
-			get { return "System.Web.UI.PageTheme"; }
+			return new ApplicationFileParser (virtualPath, physicalPath, reader, context);
 		}
 	}
 }
-
 #endif
+

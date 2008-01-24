@@ -193,7 +193,11 @@ namespace System.Web.UI {
 
 			string vpath = UrlUtils.Combine (TemplateSourceDirectory, virtualPath);
 			string realpath = Context.Request.MapPath (vpath);
+#if NET_2_0
+			return BuildManager.GetCompiledType (vpath);
+#else
 			return UserControlParser.GetCompiledType (vpath, realpath, Context);
+#endif
 		}
 
 		public Control LoadControl (string virtualPath)

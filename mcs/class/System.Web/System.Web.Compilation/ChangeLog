@@ -1,3 +1,86 @@
+2008-01-24  Marek Habersack  <mhabersack@novell.com>
+
+	* WebHandlerBuildProvider.cs: derive from the new
+	SimpleBuildProvider class.
+
+	* BuildManager.cs: full implementation of the batch compilation
+	for the 2.0 profile. The implementation is most probably different
+	to MS.NET's but the effects are the same (or nearly the same -
+	there are some minor differences). There are missing bits and
+	pieces, but minor ones - to be added later.
+
+	* SimpleBuildProvider.cs: new build provider abstract class
+	deriving from the GenericBuildProvider that implements common code
+	for building web handlers and web services.
+
+	* GenericBuildProvider.cs: new generic abstract class used to
+	implement base builder code for all the build provider types and
+	maximize code reuse.
+
+	* PageBuildProvider.cs: derive from the new TemplateBuildProvider
+	class and implement all the necessary abstract members. 
+	Handle "fake" virtual paths, to properly support generating of the
+	WSDL helper code.
+
+	* BuildProvider.cs: SetVirtualPath now converts the passed path to
+	absolute URL.
+	Added internal virtual method GenerateCode, used by derived
+	classes.
+	SetCommonParameters no longer sets the referenced assemblies, this
+	is done in BuildManager now.
+	Added an internal virtual property CodeUnit which returns the
+	build provider's compilation unit.
+
+	* PageCompiler.cs: fix assignment of base types for asynchronous
+	pages, to match MS.NET.
+	For asynchronous pages, add the necessary methods generation.
+
+	* BaseCompiler.cs: default namespace is now set using a constant.
+	Renamed the Init method into ConstructType, to better reflect its
+	purpose and made the method internal - it is used by the build
+	providers.
+	Added several CreateProvider overloads for easier and more unified
+	compilation provider creation.
+	Added an internal MainClassType property to enable class type name
+	retrieval from other parts of the class hierarchy.
+
+	* ApplicationFileBuildProvider.cs: new build provider deriving
+	from the TemplateBuildProvider class to compile the global.asax
+	file.
+
+	* AspGenerator.cs: properly handle parsers which have no input
+	file path given, but use TextReader instead.
+	Dependencies are virtual paths now, convert them to physical ones
+	before creating cache dependency.
+
+	* CachingCompiler.cs: parser dependencies are virtual paths now,
+	convert them to physical ones before creating cache dependency.
+
+	* AssemblyBuilder.cs: full implementation of the documented
+	functionality as well as a lot of internal build code
+	added. Produces assemblies using the same style what MS.NET for
+	temporary and target file naming. Handles partial type squashing
+	if the same partial type is used by several code compile units
+	added to the same builder instance.
+
+	* MasterPageBuildProvider.cs: use the new TemplateBuildProvider
+	base class and add implementation of all the abstract methods
+	required by it.
+
+	* ThemeDirectoryBuildProvider.cs: new build provider to compile
+	theme directories. Replaces the old ThemeDirectoryCompiler class.
+
+	* UserControlBuildProvider.cs: use the new TemplateBuildProvider
+	base class and add implementation of all the abstract methods
+	required by it.
+
+	* TemplateBuildProvider.cs: new internal abstract class which
+	implements the common tasks for all the template control build
+	providers.
+
+	* WebServiceBuildProvider.cs: use the new SimpleBuildProvider base
+	type to implement building.
+
 2008-01-17  Igor Zelmanovich <igorz@mainsoft.com>
 
 	* BaseCompiler.cs: Assign AppRelativeVirtualPath correctly

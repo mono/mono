@@ -3,8 +3,9 @@
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//      Marek Habersack (mhabersack@novell.com)
 //
-// (C) 2006 Novell, Inc (http://www.novell.com)
+// (C) 2006, 2007 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -40,50 +41,20 @@ using System.Web.UI;
 
 namespace System.Web.Compilation {
 	[BuildProviderAppliesTo (BuildProviderAppliesTo.Web)]
-	sealed class WebServiceBuildProvider : BuildProvider {
-		WebServiceCompiler wscompiler;
-		CompilerType compiler_type;
-
+	sealed class WebServiceBuildProvider : SimpleBuildProvider
+	{
 		public WebServiceBuildProvider ()
 		{
 		}
 
-		public override void GenerateCode (AssemblyBuilder assemblyBuilder)
+		protected override SimpleWebHandlerParser CreateParser (string virtualPath, string physicalPath, TextReader reader, HttpContext context)
 		{
-			HttpContext context = HttpContext.Current;
-			WebServiceParser parser = new WebServiceParser (context, VirtualPath, OpenReader ());
-			wscompiler = new WebServiceCompiler (parser);
-			compiler_type = GetDefaultCompilerTypeForLanguage (parser.Language);
-			if (parser.Program.Trim () == "")
-				return;
-
-			using (TextWriter writer = assemblyBuilder.CreateCodeFile (this)) {
-				writer.WriteLine (parser.Program);
-			}
+			return new WebServiceParser (context, virtualPath, physicalPath, reader);
 		}
-
-		public override Type GetGeneratedType (CompilerResults results)
+		
+		protected override SimpleWebHandlerParser CreateParser (string virtualPath, string physicalPath, HttpContext context)
 		{
-			SimpleWebHandlerParser parser = wscompiler.Parser;
-			Type type = null;
-			if (parser.Program.Trim () == "") {
-				type = parser.GetTypeFromBin (parser.ClassName);
-				return type;
-			}
-
-			Assembly assembly = results.CompiledAssembly;
-			return assembly.GetType (parser.ClassName);
-		}
-
-		public override CompilerType CodeCompilerType {
-			get { return compiler_type; }
-		}
-
-		// FIXME: figure this out.
-		public override ICollection VirtualPathDependencies {
-			get {
-				return wscompiler.Parser.Dependencies;
-			}
+			return new WebServiceParser (context, virtualPath, physicalPath, OpenReader (virtualPath));
 		}
 	}
 }

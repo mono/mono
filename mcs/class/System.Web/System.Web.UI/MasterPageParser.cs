@@ -47,25 +47,34 @@ namespace System.Web.UI
 		string cacheEntryName;
 		
 		internal MasterPageParser (string virtualPath, string inputFile, HttpContext context)
-		: base (virtualPath, inputFile, context, "System.Web.UI.MasterPage")
+			: base (virtualPath, inputFile, context, "System.Web.UI.MasterPage")
 		{
 			this.cacheEntryName = String.Concat ("@@MasterPagePHIDS:", virtualPath, ":", inputFile);
+			
+			contentPlaceHolderIds = HttpRuntime.InternalCache.Get (this.cacheEntryName) as List <string>;
+		}
+
+		internal MasterPageParser (string virtualPath, TextReader reader, HttpContext context)
+			: this (virtualPath, null, reader, context)
+		{
+		}
+		
+		internal MasterPageParser (string virtualPath, string inputFile, TextReader reader, HttpContext context)
+			: base (virtualPath, inputFile, reader, context)
+		{
+			this.cacheEntryName = String.Concat ("@@MasterPagePHIDS:", virtualPath, ":", InputFile);
 			
 			contentPlaceHolderIds = HttpRuntime.InternalCache.Get (this.cacheEntryName) as List <string>;
 		}
 		
 		public static MasterPage GetCompiledMasterInstance (string virtualPath, string inputFile, HttpContext context)
 		{
-			MasterPageParser mpp = new MasterPageParser (virtualPath, inputFile, context);
-			MasterPage mp = (MasterPage) mpp.GetCompiledInstance ();
-			mp.SetPlaceHolderIds (mpp.contentPlaceHolderIds);
-			return mp;
+			return BuildManager.CreateInstanceFromVirtualPath (virtualPath, typeof (MasterPage)) as MasterPage;
 		}
 
 		public static Type GetCompiledMasterType (string virtualPath, string inputFile, HttpContext context)
 		{
-			MasterPageParser mpp = new MasterPageParser (virtualPath, inputFile, context);
-			return mpp.CompileIntoType ();
+			return BuildManager.GetCompiledType (virtualPath);
 		}
 		
 		internal override void HandleOptions (object obj)
@@ -87,12 +96,11 @@ namespace System.Web.UI
 				} else {
 					string path = GetString (atts, "VirtualPath", null);
 					if (path != null) {
-						string mappedPath = MapPath (path);
-						masterType = MasterPageParser.GetCompiledMasterType (path, mappedPath,
-												     HttpContext.Current);
-						AddDependency (mappedPath);
+						masterType = BuildManager.GetCompiledType (path);
+						AddDependency (path);
 					} else
-						ThrowParseException ("The MasterType directive must have either a TypeName or a VirtualPath attribute.");				}
+						ThrowParseException ("The MasterType directive must have either a TypeName or a VirtualPath attribute.");
+				}
 				AddAssembly (masterType.Assembly, true);
 			}
 			else
@@ -111,10 +119,6 @@ namespace System.Web.UI
 		
 		internal Type MasterType {
 			get { return masterType; }
-		}
-
-		internal override Type DefaultBaseType {
-			get { return typeof (MasterPage); }
 		}
 
 		internal override string DefaultBaseTypeName {

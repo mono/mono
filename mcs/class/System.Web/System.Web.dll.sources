@@ -15,6 +15,7 @@ System.Web.Caching/CachedVaryBy.cs
 System.Web.Caching/OutputCacheModule.cs
 System.Web/CapabilitiesLoader.cs
 System.Web/BrowserCapabilities.cs
+System.Web.Compilation/ApplicationFileBuildProvider.cs
 System.Web.Compilation/AppSettingsExpressionBuilder.cs
 System.Web.Compilation/AspComponentFoundry.cs
 System.Web.Compilation/AppCodeCompiler.cs
@@ -49,6 +50,7 @@ System.Web.Compilation/ExpressionBuilder.cs
 System.Web.Compilation/ExpressionEditorAttribute.cs
 System.Web.Compilation/ExpressionPrefixAttribute.cs
 System.Web.Compilation/ForceCopyBuildProvider.cs
+System.Web.Compilation/GenericBuildProvider.cs
 System.Web.Compilation/GlobalAsaxCompiler.cs
 System.Web.Compilation/IAssemblyPostProcessor.cs
 System.Web.Compilation/IgnoreFileBuildProvider.cs
@@ -69,11 +71,14 @@ System.Web.Compilation/PreservationFile.cs
 System.Web.Compilation/ResourceExpressionBuilder.cs
 System.Web.Compilation/ResourceExpressionFields.cs
 System.Web.Compilation/ResourceProviderFactory.cs
-System.Web.Compilation/UserControlBuildProvider.cs
+System.Web.Compilation/SimpleBuildProvider.cs
 System.Web.Compilation/TagAttributes.cs
 System.Web.Compilation/TagType.cs
+System.Web.Compilation/TemplateBuildProvider.cs
 System.Web.Compilation/TemplateControlCompiler.cs
+System.Web.Compilation/ThemeDirectoryBuildProvider.cs
 System.Web.Compilation/ThemeDirectoryCompiler.cs
+System.Web.Compilation/UserControlBuildProvider.cs
 System.Web.Compilation/UserControlCompiler.cs
 System.Web.Compilation/WebServiceCompiler.cs
 System.Web.Compilation/WebHandlerBuildProvider.cs
