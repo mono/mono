@@ -1324,6 +1324,59 @@ namespace MonoTests.System.Windows.Forms
 			f.Close ();
 			f.Dispose ();
 		}
+		
+		[Test]
+		public void Bug354672 ()
+		{
+			Form f = new Form ();
+			f.ClientSize = new Size (300, 300);
+
+			TableLayoutPanel tlp = new TableLayoutPanel ();
+			tlp.AutoSize = true;
+			tlp.ColumnCount = 2;
+			tlp.RowCount = 1;
+			f.Controls.Add (tlp);
+
+			TextBox t1 = new TextBox ();
+			t1.Dock = DockStyle.Fill;
+			tlp.Controls.Add (t1);
+
+			TextBox t2 = new TextBox ();
+			t2.Dock = DockStyle.Fill;
+			tlp.Controls.Add (t2);
+
+			Assert.AreEqual (new Size (212, 26), tlp.PreferredSize, "A1");
+
+			f.Dispose ();
+		}
+
+		[Test]
+		public void Bug354672More ()
+		{
+			Form f = new Form ();
+			f.ClientSize = new Size (300, 300);
+
+			TableLayoutPanel tlp = new TableLayoutPanel ();
+			tlp.AutoSize = true;
+			tlp.ColumnCount = 2;
+			tlp.RowCount = 1;
+			tlp.ColumnStyles.Add (new ColumnStyle (SizeType.AutoSize));
+			tlp.ColumnStyles.Add (new ColumnStyle (SizeType.Percent, 50f));
+			
+			f.Controls.Add (tlp);
+
+			TextBox t1 = new TextBox ();
+			t1.Dock = DockStyle.Fill;
+			tlp.Controls.Add (t1);
+
+			TextBox t2 = new TextBox ();
+			t2.Dock = DockStyle.Fill;
+			tlp.Controls.Add (t2);
+
+			Assert.AreEqual (new Size (212, 26), tlp.PreferredSize, "A1");
+
+			f.Dispose ();
+		}
 	}
 }
 #endif

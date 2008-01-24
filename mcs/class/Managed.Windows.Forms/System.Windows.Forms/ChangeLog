@@ -1,3 +1,10 @@
+2008-01-24  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TableLayoutPanel.cs: Enhance GetPreferredSize to take into account
+	when all contained controls are autosize or dock-fill.  Also take into
+	account when the total percentage of column/row sizes is not 100%.
+	[Fixes bug #354672]
+
 2008-01-24  Andreia Gaita <avidigal@novell.com>
 
 	* HtmlDocument.cs:

@@ -513,16 +513,24 @@ namespace System.Windows.Forms
 			
 			// Figure out how wide the panel needs to be
 			int[] column_widths = new int[ColumnCount];
-
+			float total_column_percentage = 0f;
+			
 			// Figure out how tall each column wants to be
 			for (int i = 0; i < ColumnCount; i++) {
+				if (i < ColumnStyles.Count && ColumnStyles[i].SizeType == SizeType.Percent)
+					total_column_percentage += ColumnStyles[i].Width;
+					
 				int biggest = 0;
 
 				for (int j = 0; j < RowCount; j++) {
 					Control c = actual_positions[i, j];
 
-					if (c != null && !c.AutoSize)
-						biggest = Math.Max (biggest, c.ExplicitBounds.Width + c.Margin.Horizontal + Padding.Horizontal);
+					if (c != null) {
+						if (!c.AutoSize)
+							biggest = Math.Max (biggest, c.ExplicitBounds.Width + c.Margin.Horizontal + Padding.Horizontal);
+						else
+							biggest = Math.Max (biggest, c.ExplicitBounds.Width + c.Margin.Horizontal + Padding.Horizontal);
+					}
 				}
 
 				column_widths[i] = biggest;
@@ -535,8 +543,8 @@ namespace System.Windows.Forms
 			int percent_total_width = 0;
 
 			for (int i = 0; i < ColumnCount; i++) {
-				if (ColumnStyles[i].SizeType == SizeType.Percent)
-					percent_total_width = Math.Max (percent_total_width, (int)(column_widths[i] / ((ColumnStyles[i].Width) / 100)));
+				if (i < ColumnStyles.Count && ColumnStyles[i].SizeType == SizeType.Percent)
+					percent_total_width = Math.Max (percent_total_width, (int)(column_widths[i] / ((ColumnStyles[i].Width) / total_column_percentage)));
 				else
 					non_percent_total_width += column_widths[i];
 			}
@@ -544,16 +552,24 @@ namespace System.Windows.Forms
 
 			// Figure out how tall the panel needs to be
 			int[] row_heights = new int[RowCount];
-			
+			float total_row_percentage = 0f;
+		
 			// Figure out how tall each row wants to be
 			for (int j = 0; j < RowCount; j++) {
+				if (j < RowStyles.Count && RowStyles[j].SizeType == SizeType.Percent)
+					total_row_percentage += RowStyles[j].Height;
+					
 				int biggest = 0;
 				
 				for (int i = 0; i < ColumnCount; i++) {
 					Control c = actual_positions[i, j];
 
-					if (c != null && !c.AutoSize)
-						biggest = Math.Max (biggest, c.ExplicitBounds.Height + c.Margin.Vertical + Padding.Vertical);
+					if (c != null) {
+						if (!c.AutoSize)
+							biggest = Math.Max (biggest, c.ExplicitBounds.Height + c.Margin.Vertical + Padding.Vertical);
+						else
+							biggest = Math.Max (biggest, c.PreferredSize.Height + c.Margin.Vertical + Padding.Vertical);
+					}
 				}
 
 				row_heights[j] = biggest;
@@ -566,8 +582,8 @@ namespace System.Windows.Forms
 			int percent_total_height = 0;
 			
 			for (int j = 0; j < RowCount; j++) {
-				if (RowStyles[j].SizeType == SizeType.Percent)
-					percent_total_height = Math.Max (percent_total_height, (int)(row_heights[j] / ((RowStyles[j].Height) / 100)));
+				if (j < RowStyles.Count && RowStyles[j].SizeType == SizeType.Percent)
+					percent_total_height = Math.Max (percent_total_height, (int)(row_heights[j] / ((RowStyles[j].Height) / total_row_percentage)));
 				else
 					non_percent_total_height += row_heights[j];
 			}
