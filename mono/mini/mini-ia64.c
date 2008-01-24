@@ -2320,8 +2320,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		break_count ();
 #endif
 
-	ins = bb->code;
-	while (ins) {
+	MONO_BB_FOR_EACH_INS (bb, ins) {
 		offset = code.buf - cfg->native_code;
 
 		max_len = ((int)(((guint8 *)ins_get_spec (ins->opcode))[MONO_INST_LEN])) + 128;
@@ -3422,8 +3421,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 		last_ins = ins;
 		last_offset = offset;
-		
-		ins = ins->next;
 	}
 
 	ia64_codegen_close (code);

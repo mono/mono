@@ -316,7 +316,7 @@ print_code_with_aliasing_information (MonoAliasingInformation *info) {
 		
 		printf ("CODE FOR BB %d\n", bb_info->bb->block_num);
 		mono_aliasing_initialize_code_traversal (info, bb_info->bb);
-		for (inst = bb_info->bb->code; inst != NULL; inst = inst->next) {
+		MONO_BB_FOR_EACH_INS (bb_info->bb, inst) {
 			print_tree_with_aliasing_information (info, inst);
 			printf ("\n");
 		}
@@ -735,7 +735,7 @@ mono_build_aliasing_information (MonoCompile *cfg) {
 		bb_info->potential_alias_uses = NULL;
 		info->next_interesting_inst = NULL;
 		
-		for (inst = bb->code; inst != NULL; inst = inst->next) {
+		MONO_BB_FOR_EACH_INS (bb, inst) {
 			if (FOLLOW_ALIAS_ANALYSIS) {
 				printf ("TRAVERSING INST: ");
 				mono_print_tree_nl (inst);
@@ -1005,7 +1005,7 @@ mono_aliasing_deadce (MonoAliasingInformation *info) {
 			printf ("Working on BB %d\n", bb->block_num);
 		}
 		
-		for (inst = bb->code; inst != NULL; inst = inst->next) {
+		MONO_BB_FOR_EACH_INS (bb, inst) {
 			mono_aliasing_deadce_on_inst (info, possibly_dead_assignments, inst);
 			if (inst->opcode == OP_JMP) {
 				/* Keep arguments live! */

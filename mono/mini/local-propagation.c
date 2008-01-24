@@ -829,7 +829,7 @@ mono_local_cprop_bb (MonoCompile *cfg, TreeMover *tree_mover, MonoBasicBlock *bb
 			printf ("Running tree mover on BB%d\n", bb->block_num);
 		}
 	}
-	for (; tree; tree = tree->next) {
+	MONO_BB_FOR_EACH_INS (bb, tree) {
 		if (tree_mover != NULL) {
 			if (MONO_DEBUG_TREE_MOVER) {
 				printf ("Running tree mover on tree ");

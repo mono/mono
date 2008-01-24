@@ -204,7 +204,7 @@ mono_ssa_rename_vars (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, MonoIn
 	printf ("RENAME VARS BB%d %s\n", bb->block_num, mono_method_full_name (cfg->method, TRUE));
 #endif
 
-	for (inst = bb->code; inst; inst = inst->next) {
+	MONO_BB_FOR_EACH_INS (bb, inst) {
 		if (inst->opcode != OP_PHI)
 			replace_usage (cfg, bb, inst, stack);
 
@@ -239,7 +239,7 @@ mono_ssa_rename_vars (MonoCompile *cfg, int max_vars, MonoBasicBlock *bb, MonoIn
 			if (n->in_bb [j] == bb)
 				break;
 		
-		for (inst = n->code; inst; inst = inst->next) {
+		MONO_BB_FOR_EACH_INS (n, inst) {
 			if (inst->ssa_op == MONO_SSA_STORE && inst->inst_i1->opcode == OP_PHI) {
 				idx = inst->inst_i1->inst_c0;
 				if (stack [idx])
@@ -296,7 +296,7 @@ mono_ssa_compute (MonoCompile *cfg)
 		mono_bitset_set (vinfo [i].def_in, 0);
 	}
 	for (i = 0; i < cfg->num_bblocks; ++i) {
-		for (inst = cfg->bblocks [i]->code; inst; inst = inst->next) {
+		MONO_BB_FOR_EACH_INS (cfg->bblocks [i], inst) {
 			if (inst->ssa_op == MONO_SSA_STORE) {
 				idx = inst->inst_i0->inst_c0;
 				g_assert (idx < cfg->num_varinfo);
@@ -468,7 +468,7 @@ mono_ssa_remove (MonoCompile *cfg)
 
 	for (i = 0; i < cfg->num_bblocks; ++i) {
 		MonoBasicBlock *bb = cfg->bblocks [i];
-		for (inst = bb->code; inst; inst = inst->next) {
+		MONO_BB_FOR_EACH_INS (bb, inst) {
 			if (inst->ssa_op == MONO_SSA_STORE && inst->inst_i1->opcode == OP_PHI) {
 				
 				phi = inst->inst_i1;
@@ -555,7 +555,7 @@ mono_ssa_remove (MonoCompile *cfg)
 	for (i = 0; i < cfg->num_bblocks; ++i) {
 		MonoBasicBlock *bb = cfg->bblocks [i];
 
-		for (inst = bb->code; inst; inst = inst->next)
+		MONO_BB_FOR_EACH_INS (bb, inst)
 			mono_ssa_replace_copies (cfg, bb, inst, is_live);
 	}
 
@@ -678,7 +678,7 @@ mono_ssa_avoid_copies (MonoCompile *cfg)
 	g_assert ((cfg->comp_done & MONO_COMP_SSA_DEF_USE));
 
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
-		for (inst = bb->code; inst; inst = inst->next) {
+		MONO_BB_FOR_EACH_INS (bb, inst) {
 			if (inst->ssa_op == MONO_SSA_STORE && inst->inst_i0->opcode == OP_LOCAL &&
 			    !IS_CALL (inst->inst_i1->opcode) && inst->inst_i1->opcode != OP_PHI && !inst->flags) {
 				i1 = MONO_VARINFO (cfg, inst->inst_i0->inst_c0);
@@ -702,10 +702,15 @@ mono_ssa_avoid_copies (MonoCompile *cfg)
 					}
 				}
 #endif			
-				if ((next = inst->next) && next->ssa_op == MONO_SSA_STORE && next->inst_i0->opcode == OP_LOCAL &&
-				    next->inst_i1->ssa_op == MONO_SSA_LOAD &&  next->inst_i1->inst_i0->opcode == OP_LOCAL &&
-				    next->inst_i1->inst_i0->inst_c0 == inst->inst_i0->inst_c0 && g_list_length (i1->uses) == 1 &&
-				    inst->opcode == next->opcode && inst->inst_i0->type == next->inst_i0->type) {
+				next = inst->next;
+				if (next && next->ssa_op == MONO_SSA_STORE &&
+						next->inst_i0->opcode == OP_LOCAL &&
+						next->inst_i1->ssa_op == MONO_SSA_LOAD &&
+						next->inst_i1->inst_i0->opcode == OP_LOCAL &&
+						next->inst_i1->inst_i0->inst_c0 == inst->inst_i0->inst_c0 &&
+						g_list_length (i1->uses) == 1 &&
+						inst->opcode == next->opcode &&
+						inst->inst_i0->type == next->inst_i0->type) {
 					i2 = MONO_VARINFO (cfg, next->inst_i0->inst_c0);
 					//printf ("ELIM. COPY in BB%d %s\n", bb->block_num, mono_method_full_name (cfg->method, TRUE));
 					inst->inst_i0 = next->inst_i0;
@@ -729,7 +734,7 @@ mono_ssa_create_def_use (MonoCompile *cfg)
 
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
 		MonoInst *inst;
-		for (inst = bb->code; inst; inst = inst->next) {
+		MONO_BB_FOR_EACH_INS (bb, inst) {
 			gboolean has_side_effects = analyze_dev_use (cfg, bb, inst, inst);
 			if (has_side_effects && (inst->ssa_op == MONO_SSA_STORE) && 
 					(inst->inst_i0->opcode == OP_LOCAL || inst->inst_i0->opcode == OP_ARG)) {
@@ -1135,9 +1140,8 @@ mono_ssa_cprop (MonoCompile *cfg)
 			}
 		}
 
-		for (inst = bb->code; inst; inst = inst->next) {
+		MONO_BB_FOR_EACH_INS (bb, inst)
 			visit_inst (cfg, bb, inst, &cvars, &bblock_list, carray);
-		}
 
 		while (cvars) {
 			MonoMethodVar *info = (MonoMethodVar *)cvars->data;			
@@ -1154,9 +1158,8 @@ mono_ssa_cprop (MonoCompile *cfg)
 
 	for (bb = cfg->bb_entry->next_bb; bb; bb = bb->next_bb) {
 		MonoInst *inst;
-		for (inst = bb->code; inst; inst = inst->next) {
+		MONO_BB_FOR_EACH_INS (bb, inst)
 			fold_tree (cfg, bb, inst, carray);
-		}
 	}
 
 	g_free (carray);

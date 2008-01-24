@@ -273,9 +273,8 @@ static void dump_code (MonoSsapreWorkArea *area) {
 		MonoInst *current_inst;
 		
 		print_bb_info (current_bb, TRUE);
-		for (current_inst = current_bb->bb->code; current_inst != NULL; current_inst = current_inst->next) {
+		MONO_BB_FOR_EACH_INS (current_bb->bb, current_inst)
 			mono_print_tree_nl (current_inst);
-		}
 	}
 }
 
@@ -827,9 +826,8 @@ process_bb (MonoSsapreWorkArea *area, MonoBasicBlock *bb, int *dt_dfn, int *uppe
 	
 	bb_info->phi_insertion_point = NULL;
 	
-	current_inst = bb->code;
 	previous_inst = NULL;
-	while (current_inst != NULL) {
+	MONO_BB_FOR_EACH_INS (bb, current_inst) {
 		/* Ugly hack to fix missing variable definitions */
 		/* (the SSA construction code should have done it already!) */
 		switch (current_inst->opcode) {
@@ -868,7 +866,6 @@ process_bb (MonoSsapreWorkArea *area, MonoBasicBlock *bb, int *dt_dfn, int *uppe
 		}
 		
 		previous_inst = current_inst;
-		current_inst = current_inst->next;
 	}
 	
 	if (current_depth > area->dt_depth) {

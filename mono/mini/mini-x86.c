@@ -2463,8 +2463,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 	mono_debug_open_block (cfg, bb, offset);
 
-	ins = bb->code;
-	while (ins) {
+	MONO_BB_FOR_EACH_INS (bb, ins) {
 		offset = code - cfg->native_code;
 
 		max_len = ((guint8 *)ins_get_spec (ins->opcode))[MONO_INST_LEN];
@@ -3269,26 +3268,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_alu_reg_imm (code, X86_ADD, X86_ESP, 12);
 #endif
 			break;
-<<<<<<< .working
-		case OP_START_HANDLER: {
-			MonoInst *spvar = mono_find_spvar_for_region (cfg, bb->region);
-			x86_mov_membase_reg (code, spvar->inst_basereg, spvar->inst_offset, X86_ESP, 4);
-			break;
-		}
-		case OP_ENDFINALLY: {
-			MonoInst *spvar = mono_find_spvar_for_region (cfg, bb->region);
-			x86_mov_reg_membase (code, X86_ESP, spvar->inst_basereg, spvar->inst_offset, 4);
-			x86_ret (code);
-			break;
-		}
-		case OP_ENDFILTER: {
-			MonoInst *spvar = mono_find_spvar_for_region (cfg, bb->region);
-			x86_mov_reg_membase (code, X86_ESP, spvar->inst_basereg, spvar->inst_offset, 4);
-			/* The local allocator will put the result into EAX */
-			x86_ret (code);
-			break;
-		}
-=======
 		case OP_START_HANDLER: {
 			MonoInst *spvar = mono_find_spvar_for_region (cfg, bb->region);
 			x86_mov_membase_reg (code, spvar->inst_basereg, spvar->inst_offset, X86_ESP, 4);
@@ -3308,7 +3287,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		}
 
->>>>>>> .merge-right.r91290
 		case OP_LABEL:
 			ins->inst_c0 = code - cfg->native_code;
 			break;
@@ -4139,8 +4117,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		}
 	       
 		cpos += max_len;
-
-		ins = ins->next;
 	}
 
 	cfg->code_len = code - cfg->native_code;
@@ -4379,7 +4355,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	max_offset = 0;
 	if (cfg->opt & MONO_OPT_BRANCH) {
 		for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
-			MonoInst *ins = bb->code;
+			MonoInst *ins;
 			bb->max_offset = max_offset;
 
 			if (cfg->prof_options & MONO_PROFILE_COVERAGE)
@@ -4388,12 +4364,11 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 			if ((cfg->opt & MONO_OPT_LOOP) && bb_is_loop_start (bb))
 				max_offset += LOOP_ALIGNMENT;
 
-			while (ins) {
+			MONO_BB_FOR_EACH_INS (bb, ins) {
 				if (ins->opcode == OP_LABEL)
 					ins->inst_c1 = max_offset;
 				
 				max_offset += ((guint8 *)ins_get_spec (ins->opcode))[MONO_INST_LEN];
-				ins = ins->next;
 			}
 		}
 	}

@@ -239,7 +239,7 @@ mono_constant_fold (MonoCompile *cfg)
 	
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
 		MonoInst *ins;
-		for (ins = bb->code; ins; ins = ins->next)	
+		MONO_BB_FOR_EACH_INS (bb, ins)
 			mono_inst_foreach (ins, mono_constant_fold_inst, NULL);
 	}
 }

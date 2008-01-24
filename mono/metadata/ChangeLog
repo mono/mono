@@ -1,3 +1,10 @@
+2008-01-24  Jonathan Chambers  <joncham@gmail.com>
+
+	* marshal.c (emit_marshal_string): Fix out string marshalling
+	to use specified encoding. Fixes #323900.
+
+	Code is contributed under MIT/X11 license.
+
 2008-01-24  Raja R Harinath  <harinath@hurrynot.org>
 
 	* class.c (mono_class_inflate_generic_method_full): Don't modify

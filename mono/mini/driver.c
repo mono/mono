@@ -900,7 +900,7 @@ mini_usage_jitdeveloper (void)
 		 "Runtime and JIT debugging options:\n"
 		 "    --breakonex            Inserts a breakpoint on exceptions\n"
 		 "    --break METHOD         Inserts a breakpoint at METHOD entry\n"
-		 "    --break-at-bb METHOD NUM Inserts a breakpoint at METHOD at the entry to BB NUM\n"
+		 "    --break-at-bb METHOD N Inserts a breakpoint in METHOD at BB N\n"
 		 "    --compile METHOD       Just compile METHOD in assembly\n"
 		 "    --compile-all          Compiles all the methods in the assembly\n"
 		 "    --ncompile N           Number of times to compile METHOD (default: 1)\n"

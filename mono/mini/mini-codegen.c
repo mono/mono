@@ -977,7 +977,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 	i = 1;
 	DEBUG (printf ("\nLOCAL REGALLOC: BASIC BLOCK %d:\n", bb->block_num));
 	/* forward pass on the instructions to collect register liveness info */
-	for (ins = bb->code; ins; ins = ins->next) {
+	MONO_BB_FOR_EACH_INS (bb, ins) {
 		spec = ins_get_spec (ins->opcode);
 
 		if (G_UNLIKELY (spec == MONO_ARCH_CPU_SPEC)) {

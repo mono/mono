@@ -1140,10 +1140,7 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 			MONO_INST_NEW (cfg, arg, OP_OUTARG);
 			arg->inst_imm = cinfo->sig_cookie.offset;
 			arg->inst_left = sig_arg;
-			
-			/* prepend, so they get reversed */
-			arg->next = call->out_args;
-			call->out_args = arg;
+			MONO_INST_LIST_ADD_TAIL (&arg->node, &call->out_args);
 		}
 		if (is_virtual && i == 0) {
 			/* the argument will be attached to the call instrucion */
@@ -1156,9 +1153,7 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 			arg->inst_left = in;
 			arg->inst_call = call;
 			arg->type = in->type;
-			/* prepend, we'll need to reverse them later */
-			arg->next = call->out_args;
-			call->out_args = arg;
+			MONO_INST_LIST_ADD_TAIL (&arg->node, &call->out_args);
 			if (ainfo->regtype == RegTypeGeneral) {
 				arg->backend.reg3 = ainfo->reg;
 				call->used_iregs |= 1 << ainfo->reg;
@@ -1212,19 +1207,6 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 				g_assert_not_reached ();
 			}
 		}
-	}
-	/*
-	 * Reverse the call->out_args list.
-	 */
-	{
-		MonoInst *prev = NULL, *list = call->out_args, *next;
-		while (list) {
-			next = list->next;
-			list->next = prev;
-			prev = list;
-			list = next;
-		}
-		call->out_args = prev;
 	}
 	call->stack_usage = cinfo->stack_usage;
 	cfg->param_area = MAX (cfg->param_area, cinfo->stack_usage);
@@ -1442,11 +1424,10 @@ if (ins->flags & MONO_INST_BRLABEL) { \
 static void
 peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 {
-	MonoInst *ins, *last_ins = NULL;
-	ins = bb->code;
+	MonoInst *ins, *n;
 
-	while (ins) {
-
+	MONO_INST_LIST_FOR_EACH_ENTRY_SAFE (ins, n, &bb->ins_list, node) {
+		MonoInst *last_ins = mono_inst_list_prev (&ins->node, &bb->ins_list);
 		switch (ins->opcode) {
 		case OP_MUL_IMM: 
 			/* remove unnecessary multiplication with 1 */
@@ -1454,8 +1435,7 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 				if (ins->dreg != ins->sreg1) {
 					ins->opcode = OP_MOVE;
 				} else {
-					last_ins->next = ins->next;				
-					ins = ins->next;				
+					MONO_DEL_INS (ins);
 					continue;
 				}
 			} else {
@@ -1477,8 +1457,7 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 			    ins->inst_basereg == last_ins->inst_destbasereg &&
 			    ins->inst_offset == last_ins->inst_offset) {
 				if (ins->dreg == last_ins->sreg1) {
-					last_ins->next = ins->next;				
-					ins = ins->next;				
+					MONO_DEL_INS (ins);
 					continue;
 				} else {
 					//static int c = 0; printf ("MATCHX %s %d\n", cfg->method->name,c++);
@@ -1501,8 +1480,7 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 			      ins->inst_offset == last_ins->inst_offset) {
 
 				if (ins->dreg == last_ins->dreg) {
-					last_ins->next = ins->next;				
-					ins = ins->next;				
+					MONO_DEL_INS (ins);
 					continue;
 				} else {
 					ins->opcode = OP_MOVE;
@@ -1557,9 +1535,7 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 			 * OP_MOVE reg, reg 
 			 */
 			if (ins->dreg == ins->sreg1) {
-				if (last_ins)
-					last_ins->next = ins->next;				
-				ins = ins->next;
+				MONO_DEL_INS (ins);
 				continue;
 			}
 			/* 
@@ -1569,16 +1545,12 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (last_ins && last_ins->opcode == OP_MOVE &&
 			    ins->sreg1 == last_ins->dreg &&
 			    ins->dreg == last_ins->sreg1) {
-				last_ins->next = ins->next;				
-				ins = ins->next;				
+				MONO_DEL_INS (ins);
 				continue;
 			}
 			break;
 		}
-		last_ins = ins;
-		ins = ins->next;
 	}
-	bb->last_ins = last_ins;
 }
 
 /* 
@@ -1625,48 +1597,15 @@ branch_b1_table [] = {
 	PPC_BR_LT 
 };
 
-static void
-insert_after_ins (MonoBasicBlock *bb, MonoInst *ins, MonoInst *to_insert)
-{
-	if (ins == NULL) {
-		ins = bb->code;
-		bb->code = to_insert;
-		to_insert->next = ins;
-	} else {
-		to_insert->next = ins->next;
-		ins->next = to_insert;
-	}
-}
-
-#define NEW_INS(cfg,dest,op) do {       \
+#define NEW_INS(cfg,ins,dest,op) do {					\
 		(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));       \
 		(dest)->opcode = (op);  \
-		insert_after_ins (bb, last_ins, (dest)); \
+		MONO_INST_LIST_ADD_TAIL (&(dest)->node, &(ins)->node);	\
 	} while (0)
 
 static int
 map_to_reg_reg_op (int op)
 {
-<<<<<<< .working
-	MonoInst *load;
-	int i, sel, spill;
-	
-	sel = cfg->rs->vassign [reg];
-	/*i = cfg->rs->isymbolic [sel];
-	g_assert (i == reg);*/
-	i = reg;
-	spill = ++cfg->spill_count;
-	cfg->rs->vassign [i] = -spill - 1;
-	mono_regstate_free_int (cfg->rs, sel);
-	/* we need to create a spill var and insert a load to sel after the current instruction */
-	MONO_INST_NEW (cfg, load, OP_LOAD_MEMBASE);
-	load->dreg = sel;
-	load->inst_basereg = cfg->frame_reg;
-	load->inst_offset = mono_spillvar_offset (cfg, spill);
-	if (item->prev) {
-		while (ins->next != item->prev->data)
-			ins = ins->next;
-=======
 	switch (op) {
 	case OP_ADD_IMM:
 		return CEE_ADD;
@@ -1728,240 +1667,14 @@ map_to_reg_reg_op (int op)
 		return OP_STOREI2_MEMBASE_REG;
 	case OP_STOREI4_MEMBASE_IMM:
 		return OP_STOREI4_MEMBASE_REG;
->>>>>>> .merge-right.r66840
 	}
 	g_assert_not_reached ();
 }
 
-<<<<<<< .working
-static int
-get_register_spilling (MonoCompile *cfg, InstList *item, MonoInst *ins, guint32 regmask, int reg)
-{
-	MonoInst *load;
-	int i, sel, spill;
-
-	DEBUG (g_print ("start regmask to assign R%d: 0x%08x (R%d <- R%d R%d)\n", reg, regmask, ins->dreg, ins->sreg1, ins->sreg2));
-	/* exclude the registers in the current instruction */
-	if (reg != ins->sreg1 && (reg_is_freeable (ins->sreg1) || (ins->sreg1 >= MONO_MAX_IREGS && cfg->rs->vassign [ins->sreg1] >= 0))) {
-		if (ins->sreg1 >= MONO_MAX_IREGS)
-			regmask &= ~ (1 << cfg->rs->vassign [ins->sreg1]);
-		else
-			regmask &= ~ (1 << ins->sreg1);
-		DEBUG (g_print ("excluding sreg1 %s\n", mono_arch_regname (ins->sreg1)));
-	}
-	if (reg != ins->sreg2 && (reg_is_freeable (ins->sreg2) || (ins->sreg2 >= MONO_MAX_IREGS && cfg->rs->vassign [ins->sreg2] >= 0))) {
-		if (ins->sreg2 >= MONO_MAX_IREGS)
-			regmask &= ~ (1 << cfg->rs->vassign [ins->sreg2]);
-		else
-			regmask &= ~ (1 << ins->sreg2);
-		DEBUG (g_print ("excluding sreg2 %s %d\n", mono_arch_regname (ins->sreg2), ins->sreg2));
-	}
-	if (reg != ins->dreg && reg_is_freeable (ins->dreg)) {
-		regmask &= ~ (1 << ins->dreg);
-		DEBUG (g_print ("excluding dreg %s\n", mono_arch_regname (ins->dreg)));
-	}
-
-	DEBUG (g_print ("available regmask: 0x%08x\n", regmask));
-	g_assert (regmask); /* need at least a register we can free */
-	sel = -1;
-	/* we should track prev_use and spill the register that's farther */
-	for (i = 0; i < MONO_MAX_IREGS; ++i) {
-		if (regmask & (1 << i)) {
-			sel = i;
-			DEBUG (g_print ("selected register %s has assignment %d\n", mono_arch_regname (sel), cfg->rs->vassign [sel]));
-			break;
-		}
-	}
-	i = cfg->rs->isymbolic [sel];
-	spill = ++cfg->spill_count;
-	cfg->rs->vassign [i] = -spill - 1;
-	mono_regstate_free_int (cfg->rs, sel);
-	/* we need to create a spill var and insert a load to sel after the current instruction */
-	MONO_INST_NEW (cfg, load, OP_LOAD_MEMBASE);
-	load->dreg = sel;
-	load->inst_basereg = cfg->frame_reg;
-	load->inst_offset = mono_spillvar_offset (cfg, spill);
-	if (item->prev) {
-		while (ins->next != item->prev->data)
-			ins = ins->next;
-	}
-	load->next = ins->next;
-	ins->next = load;
-	DEBUG (g_print ("SPILLED LOAD (%d at 0x%08x(%%sp)) R%d (freed %s)\n", spill, load->inst_offset, i, mono_arch_regname (sel)));
-	i = mono_regstate_alloc_int (cfg->rs, 1 << sel);
-	g_assert (i == sel);
-	
-	return sel;
-}
-
-static int
-get_float_register_spilling (MonoCompile *cfg, InstList *item, MonoInst *ins, guint32 regmask, int reg)
-{
-	MonoInst *load;
-	int i, sel, spill;
-
-	DEBUG (g_print ("start regmask to assign R%d: 0x%08x (R%d <- R%d R%d)\n", reg, regmask, ins->dreg, ins->sreg1, ins->sreg2));
-	/* exclude the registers in the current instruction */
-	if (reg != ins->sreg1 && (freg_is_freeable (ins->sreg1) || (ins->sreg1 >= MONO_MAX_FREGS && cfg->rs->fassign [ins->sreg1] >= 0))) {
-		if (ins->sreg1 >= MONO_MAX_FREGS)
-			regmask &= ~ (1 << cfg->rs->fassign [ins->sreg1]);
-		else
-			regmask &= ~ (1 << ins->sreg1);
-		DEBUG (g_print ("excluding sreg1 %s\n", mono_arch_regname (ins->sreg1)));
-	}
-	if (reg != ins->sreg2 && (freg_is_freeable (ins->sreg2) || (ins->sreg2 >= MONO_MAX_FREGS && cfg->rs->fassign [ins->sreg2] >= 0))) {
-		if (ins->sreg2 >= MONO_MAX_FREGS)
-			regmask &= ~ (1 << cfg->rs->fassign [ins->sreg2]);
-		else
-			regmask &= ~ (1 << ins->sreg2);
-		DEBUG (g_print ("excluding sreg2 %s %d\n", mono_arch_regname (ins->sreg2), ins->sreg2));
-	}
-	if (reg != ins->dreg && freg_is_freeable (ins->dreg)) {
-		regmask &= ~ (1 << ins->dreg);
-		DEBUG (g_print ("excluding dreg %s\n", mono_arch_regname (ins->dreg)));
-	}
-
-	DEBUG (g_print ("available regmask: 0x%08x\n", regmask));
-	g_assert (regmask); /* need at least a register we can free */
-	sel = -1;
-	/* we should track prev_use and spill the register that's farther */
-	for (i = 0; i < MONO_MAX_FREGS; ++i) {
-		if (regmask & (1 << i)) {
-			sel = i;
-			DEBUG (g_print ("selected register %s has assignment %d\n", mono_arch_regname (sel), cfg->rs->fassign [sel]));
-			break;
-		}
-	}
-	i = cfg->rs->fsymbolic [sel];
-	spill = ++cfg->spill_count;
-	cfg->rs->fassign [i] = -spill - 1;
-	mono_regstate_free_float(cfg->rs, sel);
-	/* we need to create a spill var and insert a load to sel after the current instruction */
-	MONO_INST_NEW (cfg, load, OP_LOADR8_MEMBASE);
-	load->dreg = sel;
-	load->inst_basereg = cfg->frame_reg;
-	load->inst_offset = mono_spillvar_offset_float (cfg, spill);
-	if (item->prev) {
-		while (ins->next != item->prev->data)
-			ins = ins->next;
-	}
-	load->next = ins->next;
-	ins->next = load;
-	DEBUG (g_print ("SPILLED LOAD FP (%d at 0x%08x(%%sp)) R%d (freed %s)\n", spill, load->inst_offset, i, mono_arch_regname (sel)));
-	i = mono_regstate_alloc_float (cfg->rs, 1 << sel);
-	g_assert (i == sel);
-	
-	return sel;
-}
-
-static MonoInst*
-create_copy_ins (MonoCompile *cfg, int dest, int src, MonoInst *ins)
-{
-	MonoInst *copy;
-	MONO_INST_NEW (cfg, copy, OP_MOVE);
-	copy->dreg = dest;
-	copy->sreg1 = src;
-	if (ins) {
-		copy->next = ins->next;
-		ins->next = copy;
-	}
-	DEBUG (g_print ("\tforced copy from %s to %s\n", mono_arch_regname (src), mono_arch_regname (dest)));
-	return copy;
-}
-
-static MonoInst*
-create_copy_ins_float (MonoCompile *cfg, int dest, int src, MonoInst *ins)
-{
-	MonoInst *copy;
-	MONO_INST_NEW (cfg, copy, OP_FMOVE);
-	copy->dreg = dest;
-	copy->sreg1 = src;
-	if (ins) {
-		copy->next = ins->next;
-		ins->next = copy;
-	}
-	DEBUG (g_print ("\tforced copy from %s to %s\n", mono_arch_regname (src), mono_arch_regname (dest)));
-	return copy;
-}
-
-static MonoInst*
-create_spilled_store (MonoCompile *cfg, int spill, int reg, int prev_reg, MonoInst *ins)
-{
-	MonoInst *store;
-	MONO_INST_NEW (cfg, store, OP_STORE_MEMBASE_REG);
-	store->sreg1 = reg;
-	store->inst_destbasereg = cfg->frame_reg;
-	store->inst_offset = mono_spillvar_offset (cfg, spill);
-	if (ins) {
-		store->next = ins->next;
-		ins->next = store;
-	}
-	DEBUG (g_print ("SPILLED STORE (%d at 0x%08x(%%sp)) R%d (from %s)\n", spill, store->inst_offset, prev_reg, mono_arch_regname (reg)));
-	return store;
-}
-
-static MonoInst*
-create_spilled_store_float (MonoCompile *cfg, int spill, int reg, int prev_reg, MonoInst *ins)
-{
-	MonoInst *store;
-	MONO_INST_NEW (cfg, store, OP_STORER8_MEMBASE_REG);
-	store->sreg1 = reg;
-	store->inst_destbasereg = cfg->frame_reg;
-	store->inst_offset = mono_spillvar_offset_float (cfg, spill);
-	if (ins) {
-		store->next = ins->next;
-		ins->next = store;
-	}
-	DEBUG (g_print ("SPILLED STORE FP (%d at 0x%08x(%%sp)) R%d (from %s)\n", spill, store->inst_offset, prev_reg, mono_arch_regname (reg)));
-	return store;
-}
-
-static void
-insert_before_ins (MonoInst *ins, InstList *item, MonoInst* to_insert)
-{
-	MonoInst *prev;
-	g_assert (item->next);
-	prev = item->next->data;
-
-	while (prev->next != ins)
-		prev = prev->next;
-	to_insert->next = ins;
-	prev->next = to_insert;
-	/* 
-	 * needed otherwise in the next instruction we can add an ins to the 
-	 * end and that would get past this instruction.
-	 */
-	item->data = to_insert; 
-}
-
-static int
-alloc_int_reg (MonoCompile *cfg, InstList *curinst, MonoInst *ins, int sym_reg, guint32 allow_mask)
-{
-	int val = cfg->rs->vassign [sym_reg];
-	if (val < 0) {
-		int spill = 0;
-		if (val < -1) {
-			/* the register gets spilled after this inst */
-			spill = -val -1;
-		}
-		val = mono_regstate_alloc_int (cfg->rs, allow_mask);
-		if (val < 0)
-			val = get_register_spilling (cfg, curinst, ins, allow_mask, sym_reg);
-		cfg->rs->vassign [sym_reg] = val;
-		/* add option to store before the instruction for src registers */
-		if (spill)
-			create_spilled_store (cfg, spill, val, sym_reg, ins);
-	}
-	cfg->rs->isymbolic [val] = sym_reg;
-	return val;
-}
-
-=======
 #define compare_opcode_is_unsigned(opcode) \
 		(((opcode) >= CEE_BNE_UN && (opcode) <= CEE_BLT_UN) ||	\
 		((opcode) >= OP_COND_EXC_NE_UN && (opcode) <= OP_COND_EXC_LT_UN) ||	\
 		((opcode) == OP_CLT_UN || (opcode) == OP_CGT_UN))
->>>>>>> .merge-right.r66840
 /*
  * Remove from the instruction list the instructions that can't be
  * represented with very simple instructions with no register
@@ -1970,194 +1683,73 @@ alloc_int_reg (MonoCompile *cfg, InstList *curinst, MonoInst *ins, int sym_reg, 
 static void
 mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 {
-	MonoInst *ins, *next, *temp, *last_ins = NULL;
+	MonoInst *ins, *next, *temp;
 	int imm;
 
-<<<<<<< .working
-	if (!bb->code)
-		return;
-	rs->next_vreg = bb->max_vreg;
-	mono_regstate_assign (rs);
-	reginfo = mono_mempool_alloc0 (cfg->mempool, sizeof (RegTrack) * rs->next_vreg);
-	reginfof = reginfo;
-	rs->ifree_mask = PPC_CALLER_REGS;
-	rs->ffree_mask = PPC_CALLER_FREGS;
-=======
 	/* setup the virtual reg allocator */
 	if (bb->max_vreg > cfg->rs->next_vreg)
 		cfg->rs->next_vreg = bb->max_vreg;
->>>>>>> .merge-right.r66840
 
-	ins = bb->code;
-	while (ins) {
+	MONO_BB_FOR_EACH_INS (bb, ins) {
 loop_start:
 		switch (ins->opcode) {
 		case OP_ADD_IMM:
 		case OP_ADDCC_IMM:
 			if (!ppc_is_imm16 (ins->inst_imm)) {
-				NEW_INS (cfg, temp, OP_ICONST);
+				NEW_INS (cfg, ins, temp, OP_ICONST);
 				temp->inst_c0 = ins->inst_imm;
 				temp->dreg = mono_regstate_next_int (cfg->rs);
 				ins->sreg2 = temp->dreg;
 				ins->opcode = map_to_reg_reg_op (ins->opcode);
 			}
-<<<<<<< .working
-		} else {
-			ins->dreg = -1;
-		}
-		reversed = inst_list_prepend (cfg->mempool, reversed, ins);
-		++i;
-		ins = ins->next;
-	}
-
-	cur_iregs = PPC_CALLER_REGS;
-	cur_fregs = PPC_CALLER_FREGS;
-
-	DEBUG (print_regtrack (reginfo, rs->next_vreg));
-	tmp = reversed;
-	while (tmp) {
-		int prev_dreg, prev_sreg1, prev_sreg2;
-		--i;
-		ins = tmp->data;
-		spec = ins_spec [ins->opcode];
-		DEBUG (g_print ("processing:"));
-		DEBUG (print_ins (i, ins));
-		/* make the register available for allocation: FIXME add fp reg */
-		if (ins->opcode == OP_SETREG || ins->opcode == OP_SETREGIMM) {
-			cur_iregs |= 1 << ins->dreg;
-			DEBUG (g_print ("adding %d to cur_iregs\n", ins->dreg));
-		} else if (ins->opcode == OP_SETFREG) {
-			cur_fregs |= 1 << ins->dreg;
-			DEBUG (g_print ("adding %d to cur_fregs\n", ins->dreg));
-		} else if (spec [MONO_INST_CLOB] == 'c') {
-			MonoCallInst *cinst = (MonoCallInst*)ins;
-			DEBUG (g_print ("excluding regs 0x%x from cur_iregs (0x%x)\n", cinst->used_iregs, cur_iregs));
-			DEBUG (g_print ("excluding fpregs 0x%x from cur_fregs (0x%x)\n", cinst->used_fregs, cur_fregs));
-			cur_iregs &= ~cinst->used_iregs;
-			cur_fregs &= ~cinst->used_fregs;
-			DEBUG (g_print ("available cur_iregs: 0x%x\n", cur_iregs));
-			DEBUG (g_print ("available cur_fregs: 0x%x\n", cur_fregs));
-			/* registers used by the calling convention are excluded from 
-			 * allocation: they will be selectively enabled when they are 
-			 * assigned by the special SETREG opcodes.
-			 */
-		}
-		dest_mask = src1_mask = src2_mask = cur_iregs;
-		/* update for use with FP regs... */
-		if (spec [MONO_INST_DEST] == 'f') {
-			dest_mask = cur_fregs;
-			if (ins->dreg >= MONO_MAX_FREGS) {
-				val = rs->fassign [ins->dreg];
-				prev_dreg = ins->dreg;
-				if (val < 0) {
-					int spill = 0;
-					if (val < -1) {
-						/* the register gets spilled after this inst */
-						spill = -val -1;
-					}
-					val = mono_regstate_alloc_float (rs, dest_mask);
-					if (val < 0)
-						val = get_float_register_spilling (cfg, tmp, ins, dest_mask, ins->dreg);
-					rs->fassign [ins->dreg] = val;
-					if (spill)
-						create_spilled_store_float (cfg, spill, val, prev_dreg, ins);
-				}
-				DEBUG (g_print ("\tassigned dreg %s to dest R%d\n", mono_arch_regname (val), ins->dreg));
-				rs->fsymbolic [val] = prev_dreg;
-				ins->dreg = val;
-				if (spec [MONO_INST_CLOB] == 'c' && ins->dreg != ppc_f1) {
-					/* this instruction only outputs to ppc_f1, need to copy */
-					create_copy_ins_float (cfg, ins->dreg, ppc_f1, ins);
-				}
-			} else {
-				prev_dreg = -1;
-=======
 			break;
 		case OP_SUB_IMM:
 			if (!ppc_is_imm16 (-ins->inst_imm)) {
-				NEW_INS (cfg, temp, OP_ICONST);
+				NEW_INS (cfg, ins, temp, OP_ICONST);
 				temp->inst_c0 = ins->inst_imm;
 				temp->dreg = mono_regstate_next_int (cfg->rs);
 				ins->sreg2 = temp->dreg;
 				ins->opcode = map_to_reg_reg_op (ins->opcode);
->>>>>>> .merge-right.r66840
 			}
 			break;
 		case OP_AND_IMM:
 		case OP_OR_IMM:
 		case OP_XOR_IMM:
 			if ((ins->inst_imm & 0xffff0000) && (ins->inst_imm & 0xffff)) {
-				NEW_INS (cfg, temp, OP_ICONST);
+				NEW_INS (cfg, ins, temp, OP_ICONST);
 				temp->inst_c0 = ins->inst_imm;
 				temp->dreg = mono_regstate_next_int (cfg->rs);
 				ins->sreg2 = temp->dreg;
 				ins->opcode = map_to_reg_reg_op (ins->opcode);
 			}
-<<<<<<< .working
-		} else if (ins->dreg >= MONO_MAX_IREGS) {
-			val = rs->vassign [ins->dreg];
-			prev_dreg = ins->dreg;
-			if (val < 0) {
-				int spill = 0;
-				if (val < -1) {
-					/* the register gets spilled after this inst */
-					spill = -val -1;
-=======
 			break;
 		case OP_SBB_IMM:
 		case OP_SUBCC_IMM:
 		case OP_ADC_IMM:
-			NEW_INS (cfg, temp, OP_ICONST);
+			NEW_INS (cfg, ins, temp, OP_ICONST);
 			temp->inst_c0 = ins->inst_imm;
 			temp->dreg = mono_regstate_next_int (cfg->rs);
 			ins->sreg2 = temp->dreg;
 			ins->opcode = map_to_reg_reg_op (ins->opcode);
 			break;
 		case OP_COMPARE_IMM:
-			if (compare_opcode_is_unsigned (ins->next->opcode)) {
+			next = mono_inst_list_next (&ins->node, &bb->ins_list);
+			g_assert(next);
+			if (compare_opcode_is_unsigned (next->opcode)) {
 				if (!ppc_is_uimm16 (ins->inst_imm)) {
-					NEW_INS (cfg, temp, OP_ICONST);
+					NEW_INS (cfg, ins, temp, OP_ICONST);
 					temp->inst_c0 = ins->inst_imm;
 					temp->dreg = mono_regstate_next_int (cfg->rs);
 					ins->sreg2 = temp->dreg;
 					ins->opcode = map_to_reg_reg_op (ins->opcode);
->>>>>>> .merge-right.r66840
 				}
-<<<<<<< .working
-				val = mono_regstate_alloc_int (rs, dest_mask);
-				if (val < 0)
-					val = get_register_spilling (cfg, tmp, ins, dest_mask, ins->dreg);
-				rs->vassign [ins->dreg] = val;
-				if (spill)
-					create_spilled_store (cfg, spill, val, prev_dreg, ins);
-			}
-			DEBUG (g_print ("\tassigned dreg %s to dest R%d\n", mono_arch_regname (val), ins->dreg));
-			rs->isymbolic [val] = prev_dreg;
-			ins->dreg = val;
-			if (spec [MONO_INST_DEST] == 'l') {
-				int hreg = prev_dreg + 1;
-				val = rs->vassign [hreg];
-				if (val < 0) {
-					int spill = 0;
-					if (val < -1) {
-						/* the register gets spilled after this inst */
-						spill = -val -1;
-					}
-					val = mono_regstate_alloc_int (rs, dest_mask);
-					if (val < 0)
-						val = get_register_spilling (cfg, tmp, ins, dest_mask, hreg);
-					rs->vassign [hreg] = val;
-					if (spill)
-						create_spilled_store (cfg, spill, val, hreg, ins);
-=======
 			} else {
 				if (!ppc_is_imm16 (ins->inst_imm)) {
-					NEW_INS (cfg, temp, OP_ICONST);
+					NEW_INS (cfg, ins, temp, OP_ICONST);
 					temp->inst_c0 = ins->inst_imm;
 					temp->dreg = mono_regstate_next_int (cfg->rs);
 					ins->sreg2 = temp->dreg;
 					ins->opcode = map_to_reg_reg_op (ins->opcode);
->>>>>>> .merge-right.r66840
 				}
 			}
 			break;
@@ -2166,47 +1758,10 @@ loop_start:
 				ins->opcode = OP_MOVE;
 				break;
 			}
-<<<<<<< .working
-		} else if (ins->sreg1 >= MONO_MAX_IREGS) {
-			val = rs->vassign [ins->sreg1];
-			prev_sreg1 = ins->sreg1;
-			if (val < 0) {
-				int spill = 0;
-				if (val < -1) {
-					/* the register gets spilled after this inst */
-					spill = -val -1;
-				}
-				if (0 && ins->opcode == OP_MOVE) {
-					/* 
-					 * small optimization: the dest register is already allocated
-					 * but the src one is not: we can simply assign the same register
-					 * here and peephole will get rid of the instruction later.
-					 * This optimization may interfere with the clobbering handling:
-					 * it removes a mov operation that will be added again to handle clobbering.
-					 * There are also some other issues that should with make testjit.
-					 */
-					mono_regstate_alloc_int (rs, 1 << ins->dreg);
-					val = rs->vassign [ins->sreg1] = ins->dreg;
-					//g_assert (val >= 0);
-					DEBUG (g_print ("\tfast assigned sreg1 %s to R%d\n", mono_arch_regname (val), ins->sreg1));
-				} else {
-					//g_assert (val == -1); /* source cannot be spilled */
-					val = mono_regstate_alloc_int (rs, src1_mask);
-					if (val < 0)
-						val = get_register_spilling (cfg, tmp, ins, src1_mask, ins->sreg1);
-					rs->vassign [ins->sreg1] = val;
-					DEBUG (g_print ("\tassigned sreg1 %s to R%d\n", mono_arch_regname (val), ins->sreg1));
-				}
-				if (spill) {
-					MonoInst *store = create_spilled_store (cfg, spill, val, prev_sreg1, NULL);
-					insert_before_ins (ins, tmp, store);
-				}
-=======
 			if (ins->inst_imm == 0) {
 				ins->opcode = OP_ICONST;
 				ins->inst_c0 = 0;
 				break;
->>>>>>> .merge-right.r66840
 			}
 			imm = mono_is_power_of_two (ins->inst_imm);
 			if (imm > 0) {
@@ -2214,31 +1769,12 @@ loop_start:
 				ins->inst_imm = imm;
 				break;
 			}
-<<<<<<< .working
-		} else if (ins->sreg2 >= MONO_MAX_IREGS) {
-			val = rs->vassign [ins->sreg2];
-			prev_sreg2 = ins->sreg2;
-			if (val < 0) {
-				int spill = 0;
-				if (val < -1) {
-					/* the register gets spilled after this inst */
-					spill = -val -1;
-				}
-				val = mono_regstate_alloc_int (rs, src2_mask);
-				if (val < 0)
-					val = get_register_spilling (cfg, tmp, ins, src2_mask, ins->sreg2);
-				rs->vassign [ins->sreg2] = val;
-				DEBUG (g_print ("\tassigned sreg2 %s to R%d\n", mono_arch_regname (val), ins->sreg2));
-				if (spill)
-					create_spilled_store (cfg, spill, val, prev_sreg2, ins);
-=======
 			if (!ppc_is_imm16 (ins->inst_imm)) {
-				NEW_INS (cfg, temp, OP_ICONST);
+				NEW_INS (cfg, ins, temp, OP_ICONST);
 				temp->inst_c0 = ins->inst_imm;
 				temp->dreg = mono_regstate_next_int (cfg->rs);
 				ins->sreg2 = temp->dreg;
 				ins->opcode = map_to_reg_reg_op (ins->opcode);
->>>>>>> .merge-right.r66840
 			}
 			break;
 		case OP_LOAD_MEMBASE:
@@ -2263,7 +1799,7 @@ loop_start:
 			 */
 			if (ppc_is_imm16 (ins->inst_offset))
 				break;
-			NEW_INS (cfg, temp, OP_ICONST);
+			NEW_INS (cfg, ins, temp, OP_ICONST);
 			temp->inst_c0 = ins->inst_offset;
 			temp->dreg = mono_regstate_next_int (cfg->rs);
 			ins->sreg2 = temp->dreg;
@@ -2273,43 +1809,34 @@ loop_start:
 		case OP_STOREI1_MEMBASE_IMM:
 		case OP_STOREI2_MEMBASE_IMM:
 		case OP_STOREI4_MEMBASE_IMM:
-			NEW_INS (cfg, temp, OP_ICONST);
+			NEW_INS (cfg, ins, temp, OP_ICONST);
 			temp->inst_c0 = ins->inst_imm;
 			temp->dreg = mono_regstate_next_int (cfg->rs);
 			ins->sreg1 = temp->dreg;
 			ins->opcode = map_to_reg_reg_op (ins->opcode);
-			last_ins = temp;
 			goto loop_start; /* make it handle the possibly big ins->inst_offset */
 		case OP_R8CONST:
 		case OP_R4CONST:
-			NEW_INS (cfg, temp, OP_ICONST);
+			NEW_INS (cfg, ins, temp, OP_ICONST);
 			temp->inst_c0 = ins->inst_p0;
 			temp->dreg = mono_regstate_next_int (cfg->rs);
 			ins->inst_basereg = temp->dreg;
 			ins->inst_offset = 0;
 			ins->opcode = ins->opcode == OP_R4CONST? OP_LOADR4_MEMBASE: OP_LOADR8_MEMBASE;
-			last_ins = temp;
 			/* make it handle the possibly big ins->inst_offset
 			 * later optimize to use lis + load_membase
 			 */
 			goto loop_start;
 		}
-		last_ins = ins;
-		ins = ins->next;
 	}
-<<<<<<< .working
-	cfg->max_vreg = MAX (cfg->max_vreg, rs->max_vreg);
-=======
-	bb->last_ins = last_ins;
 	bb->max_vreg = cfg->rs->next_vreg;
 	
->>>>>>> .merge-right.r66840
 }
 
 void
 mono_arch_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 {
-	if (!bb->code)
+	if (MONO_INST_LIST_EMPTY (&bb->ins_list))
 		return;
 	mono_arch_lowering_pass (cfg, bb);
 	mono_local_regalloc (cfg, bb);
@@ -2573,11 +2100,10 @@ ppc_patch (guchar *code, guchar *target)
 void
 mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 {
-	MonoInst *ins;
+	MonoInst *ins, *next;
 	MonoCallInst *call;
 	guint offset;
 	guint8 *code = cfg->native_code + cfg->code_len;
-	MonoInst *last_ins = NULL;
 	guint last_offset = 0;
 	int max_len, cpos;
 
@@ -2602,8 +2128,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		//x86_inc_mem (code, &cov->data [bb->dfn].count); 
 	}
 
-	ins = bb->code;
-	while (ins) {
+	MONO_BB_FOR_EACH_INS (bb, ins) {
 		offset = code - cfg->native_code;
 
 		max_len = ((guint8 *)ins_get_spec (ins->opcode))[MONO_INST_LEN];
@@ -2739,13 +2264,15 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ppc_rlwinm (code, ins->dreg, ins->sreg1, 0, 16, 31);
 			break;
 		case OP_COMPARE:
-			if (ins->next && compare_opcode_is_unsigned (ins->next->opcode))
+			next = mono_inst_list_next (&ins->node, &bb->ins_list);
+			if (next && compare_opcode_is_unsigned (next->opcode))
 				ppc_cmpl (code, 0, 0, ins->sreg1, ins->sreg2);
 			else
 				ppc_cmp (code, 0, 0, ins->sreg1, ins->sreg2);
 			break;
 		case OP_COMPARE_IMM:
-			if (ins->next && compare_opcode_is_unsigned (ins->next->opcode)) {
+			next = mono_inst_list_next (&ins->node, &bb->ins_list);
+			if (next && compare_opcode_is_unsigned (next->opcode)) {
 				if (ppc_is_uimm16 (ins->inst_imm)) {
 					ppc_cmpli (code, 0, 0, ins->sreg1, (ins->inst_imm & 0xffff));
 				} else {
@@ -3235,9 +2762,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ins->inst_c0 = code - cfg->native_code;
 			break;
 		case OP_BR:
-			//g_print ("target: %p, next: %p, curr: %p, last: %p\n", ins->inst_target_bb, bb->next_bb, ins, bb->last_ins);
-			//if ((ins->inst_target_bb == bb->next_bb) && ins == bb->last_ins)
-			//break;
 			if (ins->flags & MONO_INST_BRLABEL) {
 				/*if (ins->inst_i0->inst_c0) {
 					ppc_b (code, 0);
@@ -3536,10 +3060,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 	       
 		cpos += max_len;
 
-		last_ins = ins;
 		last_offset = offset;
-		
-		ins = ins->next;
 	}
 
 	cfg->code_len = code - cfg->native_code;
@@ -3663,11 +3184,6 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		ppc_mflr (code, ppc_r0);
 		ppc_stw (code, ppc_r0, PPC_RET_ADDR_OFFSET, ppc_sp);
 	}
-<<<<<<< .working
-	if (cfg->max_vreg >= 29)
-		cfg->used_int_regs |= USE_EXTRA_TEMPS;
-=======
->>>>>>> .merge-right.r66840
 
 	alloc_size = cfg->stack_offset;
 	pos = 0;
@@ -3721,16 +3237,14 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	 */
 	max_offset = 0;
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
-		MonoInst *ins = bb->code;
+		MonoInst *ins;
 		bb->max_offset = max_offset;
 
 		if (cfg->prof_options & MONO_PROFILE_COVERAGE)
 			max_offset += 6; 
 
-		while (ins) {
+		MONO_BB_FOR_EACH_INS (bb, ins)
 			max_offset += ((guint8 *)ins_get_spec (ins->opcode))[MONO_INST_LEN];
-			ins = ins->next;
-		}
 	}
 
 	/* load arguments allocated to register from the stack */

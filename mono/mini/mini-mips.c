@@ -1543,8 +1543,7 @@ mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 	if (bb->max_vreg > cfg->rs->next_vreg)
 		cfg->rs->next_vreg = bb->max_vreg;
 
-	ins = bb->code;
-	while (ins) {
+	MONO_BB_FOR_EACH_INS (bb, ins) {
 loop_start:
 		switch (ins->opcode) {
 		case OP_ADD_IMM:
@@ -1689,7 +1688,6 @@ loop_start:
 			break;
 		}
 		last_ins = ins;
-		ins = ins->next;
 	}
 	bb->last_ins = last_ins;
 	bb->max_vreg = cfg->rs->next_vreg;
@@ -1771,8 +1769,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		mips_sw (code, mips_temp, mips_at, 0);
 	}
 #endif
-	ins = bb->code;
-	while (ins) {
+	MONO_BB_FOR_EACH_INS (bb, ins) {
 		offset = code - cfg->native_code;
 
 		max_len = ((guint8 *)ins_get_spec (ins->opcode))[MONO_INST_LEN];
@@ -2981,8 +2978,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 		last_ins = ins;
 		last_offset = offset;
-		
-		ins = ins->next;
 	}
 
 	cfg->code_len = code - cfg->native_code;

@@ -2,6 +2,38 @@
 
 	* method-to-ir.c: Remove some macros which are in mini.h.
 
+2008-01-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-sparc.c (mono_arch_output_basic_block): Remove some unecessary code.
+
+	* mini-s390.c (mono_arch_emit_prolog): Fix build.
+
+	* mini-s390x.c (mono_arch_emit_prolog): Fix build.
+
+	* mini-ppc.c (mono_arch_emit_prolog): Fix build.
+
+	* cpu-amd64.md: Use smaller sizes for int opcodes.
+
+	* *.c: Get rid of the NOT_IMPLEMENTED define which is now in mini.h.
+
+	* *.cs: Add some tests from the linear-ir branch. Move structs tests to 
+	objects.cs.
+
+	* driver.c (mono_main): Add a --break-at-bb command line argument for JIT
+	debugging.
+
+	* mini.h *.c: Change cfg->vars to contain the MonoMethodVar entries directly
+	instead of though a pointer to save an indirection when accessing elements of
+	the array.
+
+	* mini.h (MONO_IS_COND_BRANCH_OP): Move these macros here from mini.c. Fix
+	some typos.
+	(NOT_IMPLEMENTED): New helper macro.
+	(MONO_BB_FOR_EACH_INS): New helper macro to iterate through the instructions
+	of a bb.
+
+	* *.c: Use the new helper macro.
+
 2008-01-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (MONO_EMIT_NEW_BRANCH_BLOCK): Don't start a new basic block here.

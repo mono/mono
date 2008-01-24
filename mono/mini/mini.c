@@ -116,14 +116,6 @@
 		}			\
 	} while (0)
 
-/* 
- * this is used to determine when some branch optimizations are possible: we exclude FP compares
- * because they have weird semantics with NaNs.
- */
-#define MONO_IS_COND_BRANCH_NOFP(ins) (MONO_IS_COND_BRANCH_OP(ins) && !(((ins)->opcode >= OP_FBEQ) && ((ins)->opcode <= OP_FBLT_UN)) && (!(ins)->inst_left || (ins)->inst_left->inst_left->type != STACK_R8))
-
-#define MONO_IS_BRANCH_OP(ins) (MONO_IS_COND_BRANCH_OP(ins) || ((ins)->opcode == OP_BR) || ((ins)->opcode == OP_BR_REG) || ((ins)->opcode == OP_SWITCH))
-
 #define MONO_CHECK_THIS(ins) (mono_method_signature (cfg->method)->hasthis && (ins)->ssa_op == MONO_SSA_LOAD && (ins)->inst_left->inst_c0 == 0)
 
 static void setup_stat_profiler (void);
@@ -1132,7 +1124,7 @@ split_bblock (MonoCompile *cfg, MonoBasicBlock *first, MonoBasicBlock *second) {
 	second->last_ins = first->last_ins;
 
 	/*g_print ("start search at %p for %p\n", first->cil_code, second->cil_code);*/
-	for (inst = first->code; inst && inst->next; inst = inst->next) {
+	MONO_BB_FOR_EACH_INS (first, inst) {
 		/*char *code = mono_disasm_code_one (NULL, cfg->method, inst->next->cil_code, NULL);
 		g_print ("found %p: %s", inst->next->cil_code, code);
 		g_free (code);*/
@@ -10098,14 +10090,13 @@ mono_inst_foreach (MonoInst *tree, MonoInstFunc func, gpointer data) {
 
 G_GNUC_UNUSED
 static void
-mono_print_bb_code (MonoBasicBlock *bb) {
-	if (bb->code) {
-		MonoInst *c = bb->code;
-		while (c) {
-			mono_print_tree (c);
-			g_print ("\n");
-			c = c->next;
-		}
+mono_print_bb_code (MonoBasicBlock *bb)
+{
+	MonoInst *c;
+
+	MONO_BB_FOR_EACH_INS (bb, c) {
+		mono_print_tree (c);
+		g_print ("\n");
 	}
 }
 
@@ -10114,6 +10105,7 @@ print_dfn (MonoCompile *cfg) {
 	int i, j;
 	char *code;
 	MonoBasicBlock *bb;
+	MonoInst *c;
 
 	g_print ("IR code for method %s\n", mono_method_full_name (cfg->method, TRUE));
 
@@ -10134,19 +10126,12 @@ print_dfn (MonoCompile *cfg) {
 		} else*/
 			code = g_strdup ("\n");
 		g_print ("\nBB%d (%d) (len: %d): %s", bb->block_num, i, bb->cil_length, code);
-		if (bb->code) {
-			MonoInst *c = bb->code;
-			while (c) {
-				if (cfg->new_ir)
-					mono_print_ins_index (-1, c);
-				else {
-					mono_print_tree (c);
-					g_print ("\n");
-				}
-				c = c->next;
-			}
-		} else {
-
+		MONO_BB_FOR_EACH_INS (bb, c) {
+			if (cfg->new_ir)
+				mono_print_ins_index (-1, c);
+			else
+				mono_print_tree (c);
+			g_print ("\n");
 		}
 
 		g_print ("\tprev:");
@@ -10775,7 +10760,7 @@ decompose_pass (MonoCompile *cfg) {
 		MonoInst *tree;
 		cfg->cbb = bb;
 		cfg->prev_ins = NULL;
-		for (tree = cfg->cbb->code; tree; tree = tree->next) {
+		MONO_BB_FOR_EACH_INS (cfg->cbb, tree) {
 			dec_foreach (tree, cfg);
 			cfg->prev_ins = tree;
 		}
@@ -10894,7 +10879,7 @@ remove_block_if_useless (MonoCompile *cfg, MonoBasicBlock *bb, MonoBasicBlock *p
 		return FALSE;
 	}
 	
-	for (inst = bb->code; inst != NULL; inst = inst->next) {
+	MONO_BB_FOR_EACH_INS (bb, inst) {
 		switch (inst->opcode) {
 		case OP_NOP:
 			break;
@@ -11531,13 +11516,10 @@ mono_print_code (MonoCompile *cfg, const char* msg)
 			
 			g_print ("%s CODE BLOCK %d (nesting %d):\n", msg, bb->block_num, bb->nesting);
 
-			for (; tree; tree = tree->next) {
+			MONO_BB_FOR_EACH_INS (bb, tree) {
 				mono_print_tree (tree);
 				g_print ("\n");
 			}
-
-			if (bb->last_ins)
-				bb->last_ins->next = NULL;
 		}
 	}
 }
@@ -11644,16 +11626,14 @@ mini_select_instructions (MonoCompile *cfg)
 
 #ifdef DEBUG_SELECTION
 	if (cfg->verbose_level >= 4) {
-	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
-		MonoInst *tree = bb->code;	
-		g_print ("DUMP BLOCK %d:\n", bb->block_num);
-		if (!tree)
-			continue;
-		for (; tree; tree = tree->next) {
-			mono_print_tree (tree);
-			g_print ("\n");
+		for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
+			MonoInst *tree;
+			g_print ("DUMP BLOCK %d:\n", bb->block_num);
+			MONO_BB_FOR_EACH_INS (bb, tree) {
+				mono_print_tree (tree);
+				g_print ("\n");
+			}
 		}
-	}
 	}
 #endif
 

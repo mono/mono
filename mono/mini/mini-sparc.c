@@ -2718,16 +2718,12 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		NOT_IMPLEMENTED;
 	}
 
-	ins = bb->code;
-	while (ins) {
+	MONO_BB_FOR_EACH_INS (bb, ins) {
 		guint8* code_start;
 
 		offset = (guint8*)code - cfg->native_code;
 
 		spec = ins_get_spec (ins->opcode);
-		/* I kept this, but this looks a workaround for a bug */
-		if (spec == MONO_ARCH_CPU_SPEC)
-			spec = ins_get_spec (CEE_ADD);
 
 		max_len = ((guint8 *)spec)[MONO_INST_LEN];
 
@@ -4044,8 +4040,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		cpos += max_len;
 
 		last_ins = ins;
-		
-		ins = ins->next;
 	}
 
 	cfg->code_len = (guint8*)code - cfg->native_code;

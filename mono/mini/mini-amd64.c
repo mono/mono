@@ -87,7 +87,8 @@ mono_breakpoint_info [MONO_BREAKPOINT_ARRAY_SIZE];
 void mini_emit_memcpy2 (MonoCompile *cfg, int destreg, int doffset, int srcreg, int soffset, int size, int align);
 
 const char*
-mono_arch_regname (int reg) {
+mono_arch_regname (int reg)
+{
 	switch (reg) {
 	case AMD64_RAX: return "%rax";
 	case AMD64_RBX: return "%rbx";
@@ -2917,8 +2918,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 	mono_debug_open_block (cfg, bb, offset);
 
-	ins = bb->code;
-	while (ins) {
+	MONO_BB_FOR_EACH_INS (bb, ins) {
 		offset = code - cfg->native_code;
 
 		max_len = ((guint8 *)ins_get_spec (ins->opcode))[MONO_INST_LEN];
@@ -4905,8 +4905,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 		last_ins = ins;
 		last_offset = offset;
-		
-		ins = ins->next;
 	}
 
 	cfg->code_len = code - cfg->native_code;
@@ -5130,7 +5128,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	max_offset = 0;
 	if (cfg->opt & MONO_OPT_BRANCH) {
 		for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
-			MonoInst *ins = bb->code;
+			MonoInst *ins;
 			bb->max_offset = max_offset;
 
 			if (cfg->prof_options & MONO_PROFILE_COVERAGE)
@@ -5139,12 +5137,11 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 			if ((cfg->opt & MONO_OPT_LOOP) && bb_is_loop_start (bb))
 				max_offset += LOOP_ALIGNMENT;
 
-			while (ins) {
+			MONO_BB_FOR_EACH_INS (bb, ins) {
 				if (ins->opcode == OP_LABEL)
 					ins->inst_c1 = max_offset;
 				
 				max_offset += ((guint8 *)ins_get_spec (ins->opcode))[MONO_INST_LEN];
-				ins = ins->next;
 			}
 		}
 	}

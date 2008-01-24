@@ -419,11 +419,13 @@ mono_analyze_liveness (MonoCompile *cfg)
 			if (cfg->aliasing_info != NULL)
 				mono_aliasing_initialize_code_traversal (cfg->aliasing_info, bb);
 
-			for (tree_num = 0, inst = bb->code; inst; inst = inst->next, tree_num++) {
+			tree_num = 0;
+			MONO_BB_FOR_EACH_INS (bb, inst) {
 #ifdef DEBUG_LIVENESS
 				mono_print_tree (inst); printf ("\n");
 #endif
 				update_gen_kill_set (cfg, bb, inst, tree_num);
+				tree_num ++;
 			}
 		}
 
@@ -1019,11 +1021,10 @@ optimize_initlocals (MonoCompile *cfg)
 
 	mono_bitset_clear_all (used);
 	initlocals_bb = cfg->bb_entry->next_bb;
-	for (ins = initlocals_bb->code; ins; ins = ins->next) {
+	MONO_BB_FOR_EACH_INS (initlocals_bb, ins)
 		update_used (cfg, ins, used);
-	}
 
-	for (ins = initlocals_bb->code; ins; ins = ins->next) {
+	MONO_BB_FOR_EACH_INS (initlocals_bb, ins) {
 		if (ins->ssa_op == MONO_SSA_STORE) {
 			int idx = ins->inst_i0->inst_c0;
 			MonoInst *var = cfg->varinfo [idx];

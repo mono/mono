@@ -1,3 +1,9 @@
+2008-01-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (SUBDIRS): Or if INTERP_SUPPORTED is true.
+	
+	* Makefile.am (SUBDIRS): Only set this on arm.
+
 2007-11-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* amd64/amd64-codegen.h (amd64_alu_reg_imm_size): Prefer the smaller 

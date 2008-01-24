@@ -1267,16 +1267,13 @@ process_block (MonoBasicBlock *bb, MonoVariableRelationsEvaluationArea *area) {
 	apply_change_to_evaluation_area (area, &(additional_relations.relation2));
 	
 	inst_index = 0;
-	current_inst = bb->code;
-	while (current_inst != NULL) {
+	MONO_BB_FOR_EACH_INS (bb, current_inst) {
 		if (TRACE_ABC_REMOVAL) {
 			printf ("Processing instruction %d\n", inst_index);
 			inst_index++;
 		}
 		
 		process_inst (current_inst, area);
-		
-		current_inst = current_inst->next;
 	}
 	
 	
