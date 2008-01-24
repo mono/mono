@@ -3123,7 +3123,14 @@ namespace Mono.CSharp {
 
 			public override void Emit (EmitContext ec)
 			{
-				((IMemoryLocation) expr).AddressOf (ec, AddressOp.LoadStore);
+				IMemoryLocation memory_loc = expr as IMemoryLocation;
+				if (memory_loc == null) {
+					LocalTemporary temp = new LocalTemporary (expr.Type);
+					expr.Emit (ec);
+					temp.Store (ec);
+					memory_loc = temp;
+				}
+				memory_loc.AddressOf (ec, AddressOp.LoadStore);
 				ec.ig.EmitCall (OpCodes.Call, info.HasValue, null);
 			}
 
@@ -3189,6 +3196,12 @@ namespace Mono.CSharp {
 			{
 				AddressOf (ec, AddressOp.LoadStore);
 				ec.ig.EmitCall (OpCodes.Call, info.HasValue, null);
+			}
+
+			public override bool IsNull {
+				get {
+					return expr.IsNull;
+				}
 			}
 
 			public void Store (EmitContext ec)
@@ -3487,6 +3500,22 @@ namespace Mono.CSharp {
 					Error_OperatorCannotBeApplied ();
 					return null;
 				}
+
+				//
+				// Optimize null comparisons
+				//
+				if (Oper == Binary.Operator.Equality) {
+					if (left.IsNull)
+						return new Unary (Unary.Operator.LogicalNot, Nullable.HasValue.Create (right, ec), loc).Resolve (ec);
+					if (right.IsNull)
+						return new Unary (Unary.Operator.LogicalNot, Nullable.HasValue.Create (left, ec), loc).Resolve (ec);
+				}
+				if (Oper == Binary.Operator.Inequality) {
+					if (left.IsNull)
+						return Nullable.HasValue.Create (right, ec);
+					if (right.IsNull)
+						return Nullable.HasValue.Create (left, ec);
+				}
 				
 				if (TypeManager.IsNullableType (left.Type)) {
 					left = left_unwrap = Unwrap.Create (left, ec);
@@ -3509,12 +3538,9 @@ namespace Mono.CSharp {
 					type = bool_wrap.Type;
 					is_boolean = true;
 				} else if ((Oper == Binary.Operator.Equality) || (Oper == Binary.Operator.Inequality)) {
-					if (!(left is NullLiteral) && !(right is NullLiteral)) {
-						underlying = new Binary (Oper, left, right).Resolve (ec);
-						if (underlying == null)
-							return null;
-					}
-
+					underlying = new Binary (Oper, left, right).Resolve (ec);
+					if (underlying == null)
+						return null;
 					type = TypeManager.bool_type;
 					is_equality = true;
 				} else if ((Oper == Binary.Operator.LessThan) ||
@@ -3610,30 +3636,10 @@ namespace Mono.CSharp {
 
 			void EmitEquality (EmitContext ec)
 			{
+				if (left.IsNull || right.IsNull)
+					throw new InternalErrorException ("Unoptimized nullable comparison");
+
 				ILGenerator ig = ec.ig;
-
-				// Given 'X? x;' for any value type X: 'x != null' is the same as 'x.HasValue'
-				if (left is NullLiteral) {
-					if (right_unwrap == null)
-						throw new InternalErrorException ();
-					right_unwrap.EmitCheck (ec);
-					if (Oper == Binary.Operator.Equality) {
-						ig.Emit (OpCodes.Ldc_I4_0);
-						ig.Emit (OpCodes.Ceq);
-					}
-					return;
-				}
-
-				if (right is NullLiteral) {
-					if (left_unwrap == null)
-						throw new InternalErrorException ();
-					left_unwrap.EmitCheck (ec);
-					if (Oper == Binary.Operator.Equality) {
-						ig.Emit (OpCodes.Ldc_I4_0);
-						ig.Emit (OpCodes.Ceq);
-					}
-					return;
-				}
 
 				Label both_have_value_label = ig.DefineLabel ();
 				Label end_label = ig.DefineLabel ();
