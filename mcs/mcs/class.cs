@@ -558,7 +558,7 @@ namespace Mono.CSharp {
 				ConstructorBuilder.ConstructorName : ConstructorBuilder.TypeConstructorName))
 				return;
 			
-			if (is_static){
+			if (is_static && c.Parameters.Empty){
 				if (default_static_constructor != null) {
 				    Report.SymbolRelatedToPreviousError (default_static_constructor);
 					Report.Error (111, c.Location,

@@ -1,5 +1,10 @@
 2008-01-24  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #353986
+ 	* class.cs: Ingore static ctors with parameters for any further checks.
+ 	
+2008-01-24  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #354310
  	* namespace.cs: Removed redundant check.
 
