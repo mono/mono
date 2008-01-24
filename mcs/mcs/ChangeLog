@@ -1,3 +1,8 @@
+2008-01-24  Marek Safar  <marek.safar@gmail.com>
+
+	* convert.cs, ecore.cs, expression.cs, generic.cs: Implemented Coalesce and
+	Condition expressions.
+	
 2008-01-23  Marek Safar  <marek.safar@gmail.com>
 
  	* codegen.cs: Fixed AssemblyBuilder initialization on other platforms.

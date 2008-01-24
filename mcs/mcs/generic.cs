@@ -3163,7 +3163,6 @@ namespace Mono.CSharp {
 
 			public override Expression DoResolve (EmitContext ec)
 			{
-				expr = expr.Resolve (ec);
 				if (expr == null)
 					return null;
 
@@ -3284,7 +3283,6 @@ namespace Mono.CSharp {
 
 			public override Expression DoResolve (EmitContext ec)
 			{
-				expr = expr.Resolve (ec);
 				if (expr == null)
 					return null;
 
@@ -3306,14 +3304,23 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public class NullableLiteral : NullLiteral, IMemoryLocation {
-			public NullableLiteral (Type target_type, Location loc)
-				: base (loc)
+		//
+		// Represents null value converted to nullable type
+		//
+		public class Null : Expression, IMemoryLocation
+		{
+			public Null (Type target_type, Location loc)
 			{
 				this.type = target_type;
+				this.loc = loc;
 
 				eclass = ExprClass.Value;
 			}
+			
+			public override Expression CreateExpressionTree (EmitContext ec)
+			{
+				return EmptyCast.Create (new NullConstant (loc), type).CreateExpressionTree (ec);
+			}			
 		
 			public override Expression DoResolve (EmitContext ec)
 			{
@@ -3328,6 +3335,12 @@ namespace Mono.CSharp {
 				ec.ig.Emit (OpCodes.Initobj, type);
 				value_target.Emit (ec);
 			}
+			
+			public override bool IsNull {
+				get {
+					return true;
+				}
+			}			
 
 			public void AddressOf (EmitContext ec, AddressOp Mode)
 			{
@@ -3368,7 +3381,7 @@ namespace Mono.CSharp {
 				if (wrap == null)
 					return null;
 
-				null_value = new NullableLiteral (wrap.Type, loc).Resolve (ec);
+				null_value = new Null (wrap.Type, loc).Resolve (ec);
 				if (null_value == null)
 					return null;
 
@@ -3445,7 +3458,7 @@ namespace Mono.CSharp {
 
 			protected override Expression ResolveUnderlying (Expression unwrap, EmitContext ec)
 			{
-				return new Unary (Oper, unwrap, loc);
+				return new Unary (Oper, unwrap, loc).Resolve (ec);
 			}
 		}
 
@@ -3486,7 +3499,7 @@ namespace Mono.CSharp {
 				    ((left.Type == TypeManager.bool_type) && (right.Type == TypeManager.bool_type))) {
 					Expression empty = new EmptyExpression (TypeManager.bool_type);
 					bool_wrap = Wrap.Create (empty, ec);
-					null_value = new NullableLiteral (bool_wrap.Type, loc).Resolve (ec);
+					null_value = new Null (bool_wrap.Type, loc).Resolve (ec);
 
 					type = bool_wrap.Type;
 					is_boolean = true;
@@ -3519,7 +3532,7 @@ namespace Mono.CSharp {
 						return null;
 
 					type = underlying.Type;
-					null_value = new NullableLiteral (type, loc).Resolve (ec);
+					null_value = new Null (type, loc).Resolve (ec);
 				}
 
 				eclass = ExprClass.Value;
@@ -3740,7 +3753,6 @@ namespace Mono.CSharp {
 		public class NullCoalescingOperator : Expression
 		{
 			Expression left, right;
-			Expression expr;
 			Unwrap unwrap;
 
 			public NullCoalescingOperator (Expression left, Expression right, Location loc)
@@ -3748,8 +3760,6 @@ namespace Mono.CSharp {
 				this.left = left;
 				this.right = right;
 				this.loc = loc;
-
-				eclass = ExprClass.Value;
 			}
 			
 			public override Expression CreateExpressionTree (EmitContext ec)
@@ -3766,14 +3776,14 @@ namespace Mono.CSharp {
 					return this;
 
 				left = left.Resolve (ec);
-				if (left == null)
-					return null;
-
 				right = right.Resolve (ec);
-				if (right == null)
+
+				if (left == null || right == null)
 					return null;
 
+				eclass = ExprClass.Value;
 				Type ltype = left.Type, rtype = right.Type;
+				Expression expr;
 
 				if (TypeManager.IsNullableType (ltype)) {
 					NullableInfo info = new NullableInfo (ltype);
@@ -3785,6 +3795,7 @@ namespace Mono.CSharp {
 					expr = Convert.ImplicitConversion (ec, right, info.UnderlyingType, loc);
 					if (expr != null) {
 						left = unwrap;
+						right = expr;
 						type = expr.Type;
 						return this;
 					}
@@ -3796,6 +3807,7 @@ namespace Mono.CSharp {
 				expr = Convert.ImplicitConversion (ec, right, ltype, loc);
 				if (expr != null) {
 					type = expr.Type;
+					right = expr;
 					return this;
 				}
 
@@ -3803,7 +3815,6 @@ namespace Mono.CSharp {
 				expr = Convert.ImplicitConversion (ec, left_null, rtype, loc);
 				if (expr != null) {
 					left = expr;
-					expr = right;
 					type = rtype;
 					return this;
 				}
@@ -3827,7 +3838,7 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Br, end_label);
 
 					ig.MarkLabel (is_null_label);
-					expr.Emit (ec);
+					right.Emit (ec);
 
 					ig.MarkLabel (end_label);
 				} else {
@@ -3838,12 +3849,11 @@ namespace Mono.CSharp {
 					ig.MarkLabel (is_null_label);
 
 					ig.Emit (OpCodes.Pop);
-					expr.Emit (ec);
+					right.Emit (ec);
 
 					ig.MarkLabel (end_label);
 				}
 			}
-
 			protected override void CloneTo (CloneContext clonectx, Expression t)
 			{
 				NullCoalescingOperator target = (NullCoalescingOperator) t;
@@ -3883,7 +3893,7 @@ namespace Mono.CSharp {
 				if (underlying == null)
 					return null;
 
-				null_value = new NullableLiteral (expr.Type, loc).Resolve (ec);
+				null_value = new Null (expr.Type, loc).Resolve (ec);
 				if (null_value == null)
 					return null;
 

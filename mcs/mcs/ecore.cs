@@ -926,7 +926,7 @@ namespace Mono.CSharp {
 			if (operator_group == null)
 				return null;
 
-			return new StaticCallExpr ((MethodInfo) operator_group, arguments, loc);
+			return new UserOperatorCall (operator_group, arguments, null, loc);
 		}
 
 		/// <summary>
@@ -3645,7 +3645,8 @@ namespace Mono.CSharp {
 						return score - 20000;
 
 					if (TypeManager.IsGenericMethodDefinition (candidate))
-						throw new InternalErrorException ("a generic method definition took part in overload resolution");
+						throw new InternalErrorException ("A generic method `{0}' definition took part in overload resolution",
+							TypeManager.CSharpSignature (candidate));
 
 					pd = TypeManager.GetParameterData (candidate);
 				}

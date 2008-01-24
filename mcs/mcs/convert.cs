@@ -1305,14 +1305,15 @@ namespace Mono.CSharp {
 		{
 			Type expr_type = expr.Type;
 			Expression e;
+			
 #if GMCS_SOURCE
-			// TODO: refactor to be a part of constant infrastructure
-			if (expr is NullLiteral) {
-			    if (TypeManager.IsNullableType (target_type))
-				return new Nullable.NullableLiteral (target_type, loc);
-			}
-
 			if (TypeManager.IsNullableType (target_type)) {
+				//
+				// From null to any nullable type
+				//
+				if (expr_type == TypeManager.null_type)
+					return new Nullable.Null (target_type, loc);
+				
 				Type target = TypeManager.GetTypeArguments (target_type) [0];
 
 				if (TypeManager.IsNullableType (expr.Type)) {
@@ -2112,10 +2113,10 @@ namespace Mono.CSharp {
 						return Nullable.Wrap.Create (e, ec);
 				}
 			} else if (TypeManager.IsNullableType (expr_type)) {
-				Expression source = Nullable.Unwrap.Create (expr, ec);
-				if (source != null) {
-					return ExplicitConversion (ec, source, target_type, loc);
-				}
+				e = ExplicitConversion (ec, Nullable.Unwrap.Create (expr, ec), target_type, loc);
+				if (e != null)
+					e = EmptyCast.Create (e, target_type);
+				return e;
 			}
 #endif
 			e = ExplicitConversionCore (ec, expr, target_type, loc);
