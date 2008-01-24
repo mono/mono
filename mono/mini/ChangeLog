@@ -1,5 +1,8 @@
 2008-01-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* driver.c (mono_main): Add a --break-at-bb command line argument for JIT
+	debugging.
+
 	* mini.h *.c: Change cfg->vars to contain the MonoMethodVar entries directly
 	instead of though a pointer to save an indirection when accessing elements of
 	the array.
