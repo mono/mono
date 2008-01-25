@@ -3071,6 +3071,8 @@ namespace Mono.CSharp {
 		Expression CreateExpressionTree (EmitContext ec, MethodGroupExpr method)		
 		{
 			string method_name;
+			bool lift_arg = false;
+			
 			switch (oper) {
 			case Operator.Addition:
 				if (method == null && ec.CheckState)
@@ -3081,9 +3083,24 @@ namespace Mono.CSharp {
 			case Operator.BitwiseAnd:
 				method_name = "And";
 				break;
+			case Operator.Division:
+				method_name = "Divide";
+				break;
+			case Operator.Equality:
+				method_name = "Equal";
+				lift_arg = true;
+				break;
+			case Operator.ExclusiveOr:
+				method_name = "ExclusiveOr";
+				break;				
 			case Operator.GreaterThan:
 				method_name = "GreaterThan";
+				lift_arg = true;
 				break;
+			case Operator.GreaterThanOrEqual:
+				method_name = "GreaterThanOrEqual";
+				lift_arg = true;
+				break;				
 			case Operator.LessThan:
 				method_name = "LessThan";
 				break;
@@ -3105,8 +3122,12 @@ namespace Mono.CSharp {
 			ArrayList args = new ArrayList (2);
 			args.Add (new Argument (left.CreateExpressionTree (ec)));
 			args.Add (new Argument (right.CreateExpressionTree (ec)));
-			if (method != null)
+			if (method != null) {
+				if (lift_arg)
+					args.Add (new Argument (new BoolConstant (false, loc)));
+				
 				args.Add (new Argument (method.CreateExpressionTree (ec)));
+			}
 			
 			return CreateExpressionFactoryCall (method_name, args);
 		}
