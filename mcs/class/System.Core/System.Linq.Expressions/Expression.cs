@@ -404,7 +404,7 @@ namespace System.Linq.Expressions {
 				Type ltype = left.Type;
 
 				if (ltype == typeof (byte) || ltype == typeof (sbyte))
-					throw new InvalidOperationException (String.Format ("SubtractChecked not defined for {0} and {1}", left.Type, right.Type));
+					throw new InvalidOperationException (String.Format ("AddChecked not defined for {0} and {1}", left.Type, right.Type));
 			}
 
 			return MakeSimpleBinary (ExpressionType.AddChecked, left, right, method);
