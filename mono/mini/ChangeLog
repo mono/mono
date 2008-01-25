@@ -1,5 +1,11 @@
 2008-01-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* Makefile.am: Move mini-trampolines.c to $(common_sources) since it is now used
+	by all platforms.
+
+	* mini-<ARCH>.h mini.c: Get rid of the MONO_ARCH_HAVE_CREATE_SPECIFIC_TRAMPOLINE
+	define.
+
 	* mini-s390x.h tramp-s390x.c Makefile.am: Rework the s390x trampoline code to use
 	the arch independent trampoline code in mini-trampolines.c.
 
