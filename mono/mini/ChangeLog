@@ -1,5 +1,8 @@
 2008-01-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-s390.h tramp-s390.c Makefile.am: Rework the s390 trampoline code to use
+	the arch independent trampoline code in mini-trampolines.c.
+
 	* mini-arm.c (mono_arch_emit_prolog): Fix build.
 
 2008-01-24  Zoltan Varga  <vargaz@gmail.com>
