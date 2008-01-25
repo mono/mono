@@ -1,3 +1,7 @@
+2008-01-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arm.c (mono_arch_emit_prolog): Fix build.
+
 2008-01-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-sparc.c (mono_arch_output_basic_block): Remove some unecessary code.
