@@ -1,3 +1,4 @@
+System.Runtime.Remoting.Channels.Tcp/TcpChannelTest.cs
 ServerObject.cs
 ContextsTest.cs
 CallSeq.cs

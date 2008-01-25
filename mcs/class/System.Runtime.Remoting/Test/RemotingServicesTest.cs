@@ -139,25 +139,23 @@ namespace MonoTests.System.Runtime.Remoting.RemotingServicesInternal
 		public void Method1()
 		{
 			_called++;
-			methodOneWay = RemotingServices.IsOneWay(MethodBase.GetCurrentMethod());			
+			methodOneWay = RemotingServices.IsOneWay(MethodBase.GetCurrentMethod());
 		}
 		
 		public void Method2()
 		{
-			methodOneWay = RemotingServices.IsOneWay(MethodBase.GetCurrentMethod());			
+			methodOneWay = RemotingServices.IsOneWay(MethodBase.GetCurrentMethod());
 		}
 		
 		public void Method2(int i)
 		{
-			methodOneWay = RemotingServices.IsOneWay(MethodBase.GetCurrentMethod());			
-			
+			methodOneWay = RemotingServices.IsOneWay(MethodBase.GetCurrentMethod());
 		}
 		
 		[OneWay()]
 		public void Method3()
 		{
-			methodOneWay = RemotingServices.IsOneWay(MethodBase.GetCurrentMethod());			
-			
+			methodOneWay = RemotingServices.IsOneWay(MethodBase.GetCurrentMethod());
 		}
 		
 		public static int Called
@@ -183,7 +181,7 @@ namespace MonoTests.System.Runtime.Remoting.RemotingServicesInternal
 		public DerivedMarshalObject(){}
 		
 		public DerivedMarshalObject(int id, string uri): base(id, uri) {}
-	}	
+	}
 	
 	interface A
 	{
@@ -267,7 +265,7 @@ namespace MonoTests.Remoting
 			
 			Assert("#A04", objRef.URI.EndsWith(objMarshal.Uri));
 			// TODO: uncomment when RemotingServices.Disconnect is implemented
-			//RemotingServices.Disconnect(objMarshal);		
+			//RemotingServices.Disconnect(objMarshal);
 		}
 		
 		[Test]
@@ -324,7 +322,6 @@ namespace MonoTests.Remoting
 		
 		// Tests RemotingServices.Marshal()
 		[Test]
-		[ExpectedException(typeof(RemotingException))]	
 		public void MarshalThrowException()
 		{
 			MarshalObject objMarshal = NewMarshalObject();
@@ -338,22 +335,19 @@ namespace MonoTests.Remoting
 			RemotingServices.Marshal(objMarshal,objMarshal.Uri);
 			
 			MarshalObject objRem = (MarshalObject) RemotingServices.Connect(typeof(MarshalObject), "tcp://localhost:1237/" + objMarshal.Uri);
-			// This line sould throw a RemotingException
+			// This line should throw a RemotingException
 			// It is forbidden to export an object which is not
 			// a real object
-			try
-			{
+			try {
 				RemotingServices.Marshal(objRem, objMarshal.Uri);
-			}
-			catch(Exception e)
-			{
+				Fail ("#1");
+			} catch (RemotingException e) {
+			} finally {
 				ChannelServices.UnregisterChannel(chn);
 			
-			// TODO: uncomment when RemotingServices.Disconnect is implemented
-			//RemotingServices.Disconnect(objMarshal);
-			
-				throw e;
-			}		
+				// TODO: uncomment when RemotingServices.Disconnect is implemented
+				//RemotingServices.Disconnect(objMarshal);
+			}
 		}
 		
 		// Tests RemotingServices.ExecuteMessage()
@@ -363,8 +357,7 @@ namespace MonoTests.Remoting
 		public void ExecuteMessage()
 		{
 			TcpChannel chn = null;
-			try
-			{
+			try {
 				chn = new TcpChannel(1235);
 				ChannelServices.RegisterChannel(chn);
 				
@@ -388,10 +381,9 @@ namespace MonoTests.Remoting
 				// Tests RemotingServices.ExecuteMessage();
 				// If ExecuteMessage does it job well, Method1 should be called 2 times
 				AssertEquals("#A10", 2, MarshalObject.Called);
-			}
-			finally
-			{
-				if(chn != null) ChannelServices.UnregisterChannel(chn);
+			} finally {
+				if (chn != null)
+					ChannelServices.UnregisterChannel (chn);
 			}
 		}
 		
@@ -400,8 +392,7 @@ namespace MonoTests.Remoting
 		public void IsOneWay()
 		{
 			TcpChannel chn = null;
-			try
-			{
+			try {
 				chn = new TcpChannel(1238);
 				ChannelServices.RegisterChannel(chn);
 				RemotingConfiguration.RegisterWellKnownServiceType(typeof(MarshalObject), "MarshalObject.rem", WellKnownObjectMode.Singleton);
@@ -416,10 +407,9 @@ namespace MonoTests.Remoting
 				objRem.Method3();
 				Thread.Sleep(20);
 				Assert("#A10.3", MarshalObject.IsMethodOneWay);
-			}
-			finally
-			{
-				if(chn != null) ChannelServices.UnregisterChannel(chn);
+			} finally {
+				if (chn != null)
+					ChannelServices.UnregisterChannel (chn);
 			}
 		}
 		
@@ -427,8 +417,7 @@ namespace MonoTests.Remoting
 		public void GetObjRefForProxy()
 		{
 			TcpChannel chn = null;
-			try
-			{
+			try {
 				chn = new TcpChannel(1239);
 				ChannelServices.RegisterChannel(chn);
 				
@@ -443,10 +432,9 @@ namespace MonoTests.Remoting
 				ObjRef objRefRem = RemotingServices.GetObjRefForProxy((MarshalByRefObject)objRem);
 				
 				Assert("#A11", objRefRem != null);
-			}
-			finally
-			{
-				if(chn != null) ChannelServices.UnregisterChannel(chn);				
+			} finally {
+				if (chn != null)
+					ChannelServices.UnregisterChannel (chn);
 			}
 		}
 		
@@ -455,8 +443,7 @@ namespace MonoTests.Remoting
 		public void GetRealProxy()
 		{
 			TcpChannel chn = null;
-			try
-			{
+			try {
 				chn = new TcpChannel(1241);
 				ChannelServices.RegisterChannel(chn);
 				
@@ -469,10 +456,9 @@ namespace MonoTests.Remoting
 				
 				Assert("#A12", rp != null);
 				AssertEquals("#A13", "MonoTests.System.Runtime.Remoting.RemotingServicesInternal.MyProxy", rp.GetType().ToString());
-			}
-			finally
-			{
-				if(chn != null) ChannelServices.UnregisterChannel(chn);
+			} finally {
+				if (chn != null)
+					ChannelServices.UnregisterChannel(chn);
 			}
 		}
 		
@@ -481,8 +467,7 @@ namespace MonoTests.Remoting
 		public void SetObjectUriForMarshal()
 		{
 			TcpChannel chn = null;
-			try
-			{
+			try {
 				chn = new TcpChannel(1242);
 				ChannelServices.RegisterChannel(chn);
 				
@@ -492,11 +477,10 @@ namespace MonoTests.Remoting
 				
 				objRem = (MarshalObject) Activator.GetObject(typeof(MarshalObject), "tcp://localhost:1242/"+objRem.Uri);
 				Assert("#A14", objRem != null);
+			} finally {
+				if (chn != null)
+					ChannelServices.UnregisterChannel (chn);
 			}
-			finally
-			{
-				if(chn != null) ChannelServices.UnregisterChannel(chn);
-			}			
 			
 		}
 		
@@ -506,8 +490,7 @@ namespace MonoTests.Remoting
 		{
 			TcpChannel chn = null;
 			Type type = typeof(MarshalObject);
-			try
-			{
+			try {
 				chn = new TcpChannel(1243);
 				ChannelServices.RegisterChannel(chn);
 				
@@ -517,11 +500,10 @@ namespace MonoTests.Remoting
 				
 				Type typeRem = RemotingServices.GetServerTypeForUri(RemotingServices.GetObjectUri(objRem));
 				AssertEquals("#A15", type, typeRem);
+			} finally {
+				if (chn != null)
+					ChannelServices.UnregisterChannel (chn);
 			}
-			finally
-			{
-				if(chn != null) ChannelServices.UnregisterChannel(chn);
-			}			
 		}
 		
 		// Tests IsObjectOutOfDomain
@@ -530,8 +512,7 @@ namespace MonoTests.Remoting
 		public void IsObjectOutOf()
 		{
 			TcpChannel chn = null;
-			try
-			{
+			try {
 				chn = new TcpChannel(1245);
 				ChannelServices.RegisterChannel(chn);
 				
@@ -545,10 +526,9 @@ namespace MonoTests.Remoting
 				MarshalObject objMarshal = new MarshalObject();
 				Assert("#A18", !RemotingServices.IsObjectOutOfAppDomain(objMarshal));
 				Assert("#A19", !RemotingServices.IsObjectOutOfContext(objMarshal));
-			}
-			finally
-			{
-				ChannelServices.UnregisterChannel(chn);
+			} finally {
+				if (chn != null)
+					ChannelServices.UnregisterChannel (chn);
 			}
 		}
 
@@ -557,8 +537,7 @@ namespace MonoTests.Remoting
 		{
 			RemotingConfiguration.ApplicationName = "app";
 			TcpChannel chn = null;
-			try
-			{
+			try {
 				chn = new TcpChannel(1246);
 				ChannelServices.RegisterChannel(chn);
 				
@@ -577,13 +556,9 @@ namespace MonoTests.Remoting
 				AssertNull ("#AN7", RemotingServices.GetServerTypeForUri ("/whatever/obj3.rem"));
 				AssertNotNull ("#AN8", RemotingServices.GetServerTypeForUri ("/obj3.rem"));
 				AssertNull ("#AN9", RemotingServices.GetServerTypeForUri ("//obj3.rem"));
-			}
-			finally
-			{
-				try {
+			} finally {
+				if (chn != null)
 					ChannelServices.UnregisterChannel(chn);
-				} catch {
-				}
 			}
 		}
 
@@ -599,12 +574,9 @@ namespace MonoTests.Remoting
 
 				string channelData = "test";
 				AssertNotNull ("#01", Activator.GetObject(typeof(MarshalObject), "tcp://localhost:1247/getobjectwithchanneldata.rem", channelData));
-
 			} finally {
-				try {
-					ChannelServices.UnregisterChannel(chn);
-				} catch {
-				}
+				if (chn != null)
+					ChannelServices.UnregisterChannel (chn);
 			}
 		}
 		

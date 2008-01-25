@@ -1,3 +1,8 @@
+2008-01-25  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* RemotingServicesTest.cs: Do not hide exception that occur when
+	unregistering a channel. Code formatting and removed extra tabs.
+
 2007-10-30  Robert Jordan  <robertj@gmx.net>
 
 	* GenericTest.cs: Add tests for bug #324232.
