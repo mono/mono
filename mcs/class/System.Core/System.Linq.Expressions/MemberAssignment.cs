@@ -39,5 +39,11 @@ namespace System.Linq.Expressions {
 		public Expression Expression {
 			get { return expression; }
 		}
+
+		internal MemberAssignment (MemberInfo member, Expression expression)
+			: base (MemberBindingType.Assignment, member)
+		{
+			this.expression = expression;
+		}
 	}
 }

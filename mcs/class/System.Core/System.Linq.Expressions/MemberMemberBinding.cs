@@ -39,5 +39,11 @@ namespace System.Linq.Expressions {
 		public ReadOnlyCollection<MemberBinding> Bindings {
 			get { return bindings; }
 		}
+
+		internal MemberMemberBinding (MemberInfo member, ReadOnlyCollection<MemberBinding> bindings)
+			: base (MemberBindingType.MemberBinding, member)
+		{
+			this.bindings = bindings;
+		}
 	}
 }

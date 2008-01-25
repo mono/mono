@@ -1,5 +1,11 @@
 2008-01-25  Jb Evain  <jbevain@novell.com>
 
+	* MemberMemberBinding.cs, MemberListBinding.cs,
+	MemberAssignment.cs, MemberBinding.cs:
+	add constructors.
+
+2008-01-25  Jb Evain  <jbevain@novell.com>
+
 	* Expression.cs: implement PropertyOrField.
 
 2008-01-24  Jb Evain  <jbevain@novell.com>

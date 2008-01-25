@@ -44,6 +44,12 @@ namespace System.Linq.Expressions {
 			get { return member; }
 		}
 
+		internal MemberBinding (MemberBindingType binding_type, MemberInfo member)
+		{
+			this.binding_type = binding_type;
+			this.member = member;
+		}
+
 		public override string ToString ()
 		{
 			return ExpressionPrinter.ToString (this);

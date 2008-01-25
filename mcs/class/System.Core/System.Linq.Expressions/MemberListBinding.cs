@@ -39,5 +39,11 @@ namespace System.Linq.Expressions {
 		public ReadOnlyCollection<ElementInit> Initializers {
 			get { return initializers; }
 		}
+
+		internal MemberListBinding (MemberInfo member, ReadOnlyCollection<ElementInit> initializers)
+			: base (MemberBindingType.ListBinding, member)
+		{
+			this.initializers = initializers;
+		}
 	}
 }
