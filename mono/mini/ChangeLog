@@ -1,5 +1,8 @@
 2008-01-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-s390x.h tramp-s390x.c Makefile.am: Rework the s390x trampoline code to use
+	the arch independent trampoline code in mini-trampolines.c.
+
 	* aot-runtime.c (mono_aot_init_vtable): Fix a warning.
 
 	* mini.c (get_runtime_generic_context_ptr): Fix a warning.
