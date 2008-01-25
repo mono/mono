@@ -63,7 +63,7 @@ namespace System.Windows.Forms {
 		private PropertySort property_sort;
 		private PropertyTabCollection property_tabs;
 		private GridItem selected_grid_item;
-		internal GridItem root_grid_item;
+		private GridItem root_grid_item;
 		private object[] selected_objects;
 		private PropertyTab selected_tab;
 
@@ -86,7 +86,6 @@ namespace System.Windows.Forms {
 		internal Label help_description_label;
 		private MenuItem reset_menuitem;
 		private MenuItem description_menuitem;
-		private object current_property_value;
 
 		private Color category_fore_color;
 #if NET_2_0
@@ -570,52 +569,55 @@ namespace System.Windows.Forms {
 		[EditorBrowsableAttribute(EditorBrowsableState.Advanced)]
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public GridItem SelectedGridItem {
-			get {
-				return SelectedGridItemInternal;
-			}
-
+			get { return selected_grid_item; }
 			set {
-				if (value == null) {
+				if (value == null)
 					throw new ArgumentException ("GridItem specified to PropertyGrid.SelectedGridItem must be a valid GridItem.");
-				}
-
-				GridItem oldItem = selected_grid_item;
-				
-				SelectedGridItemInternal = value;
-
-				OnSelectedGridItemChanged (new SelectedGridItemChangedEventArgs (oldItem, selected_grid_item));
-			}
-		}
-		
-		internal GridItem SelectedGridItemInternal {
-			get
-			{
-				return selected_grid_item;
-			}
-
-			set
-			{
-				if (selected_grid_item == value) {
-					return;
-				}
-
-				selected_grid_item = value;
-				if (selected_grid_item == null) {
-					help_title_label.Text = string.Empty;
-					help_description_label.Text = string.Empty;
-				} else {
-					help_title_label.Text = selected_grid_item.Label;
-					if (selected_grid_item.PropertyDescriptor != null)
-						this.help_description_label.Text = selected_grid_item.PropertyDescriptor.Description;
-
-					current_property_value = value.Value;
+				if (value != selected_grid_item) {
+					GridItem oldItem = selected_grid_item;
+					SelectItemCore (oldItem, value);
+					OnSelectedGridItemChanged (new SelectedGridItemChangedEventArgs (oldItem, value));
 				}
 			}
 		}
 
-		internal void PropertyValueChangedInternal () {
-			OnPropertyValueChanged (new PropertyValueChangedEventArgs (selected_grid_item, current_property_value));
+		internal GridItem RootGridItem {
+			get { return root_grid_item; }
+		}
+
+		private void UpdateHelp (GridItem item)
+		{
+			if (item == null) {
+				help_title_label.Text = string.Empty;
+				help_description_label.Text = string.Empty;
+			} else {
+				help_title_label.Text = item.Label;
+				if (item.PropertyDescriptor != null)
+					this.help_description_label.Text = item.PropertyDescriptor.Description;
+			}
+		}
+
+		private void SelectItemCore (GridItem oldItem, GridItem item)
+		{
+			UpdateHelp (item);
+			selected_grid_item = item;
+			property_grid_view.SelectItem (oldItem, item);
+		}
+
+		internal void OnPropertyValueChangedInternal (GridItem item, object property_value) {
 			PopulateSubGridItemsFromProperties (SelectedGridItem as GridEntry);
+			property_grid_view.UpdateView ();
+			OnPropertyValueChanged (new PropertyValueChangedEventArgs (item, property_value));
+		}
+
+		internal void OnExpandItem (GridItem item)
+		{
+			property_grid_view.ExpandItem ((GridEntry)item);
+		}
+
+		internal void OnCollapseItem (GridItem item)
+		{
+			property_grid_view.CollapseItem ((GridEntry)item);
 		}
 
 		[DefaultValue(null)]
@@ -662,16 +664,15 @@ namespace System.Windows.Forms {
 						}
 					}
 				} else {
-					SelectedGridItemInternal = null;
+					SelectItemCore (null, null);
 				}
 
 				RefreshTabs(PropertyTabScope.Component);
 				ReflectObjects();
 				if (root_grid_item != null) {
 					/* find the first non category grid item and select it */
-					SelectedGridItemInternal = FindFirstItem (root_grid_item);
+					SelectItemCore (null, FindFirstItem (root_grid_item));
 				}
-				property_grid_view.Refresh();
 				OnSelectedObjectsChanged (EventArgs.Empty);
 			}
 		}
@@ -877,10 +878,9 @@ namespace System.Windows.Forms {
 		}
 
 		public void ResetSelectedProperty() {
-			if (selected_grid_item == null || selected_grid_item.PropertyDescriptor == null)
+			if (selected_grid_item == null)
 				return;
-			
-			selected_grid_item.PropertyDescriptor.ResetValue(SelectedObject);
+			((GridEntry)selected_grid_item).ResetValue ();
 		}
 		#endregion	// Public Instance Methods
 
@@ -957,10 +957,8 @@ namespace System.Windows.Forms {
 
 		protected virtual void OnPropertyValueChanged (PropertyValueChangedEventArgs e) {
 			PropertyValueChangedEventHandler eh = (PropertyValueChangedEventHandler)(Events [PropertyValueChangedEvent]);
-			if (eh != null) {
+			if (eh != null)
 				eh (this, e);
-				current_property_value = selected_grid_item.Value;
-			}
 		}
 
 		protected override void OnResize (EventArgs e) {
@@ -1317,7 +1315,7 @@ namespace System.Windows.Forms {
 
 		private void ReflectObjects () {
 			if (selected_objects.Length > 0) {
-				root_grid_item = new RootGridEntry (property_grid_view,
+				root_grid_item = new RootGridEntry (this,
 								    selected_objects.Length > 1 ? selected_objects : selected_objects[0]);
 									   
 				PopulateMergedGridItems (selected_objects, true, root_grid_item as GridEntry);
@@ -1356,10 +1354,8 @@ namespace System.Windows.Forms {
 				return;
 
 			/* Clear any previous grid items */
-			if (parent_grid_item.GridItems.Count > 0) {
+			if (parent_grid_item.GridItems.Count > 0)
 				parent_grid_item.GridItems.Clear ();
-				property_grid_view.InvalidateBelowItem (parent_grid_item);
-			}
 
 			for (int i = 0; i < objs.Length; i ++) {
 				if (objs [i] == null)
@@ -1435,9 +1431,9 @@ namespace System.Windows.Forms {
 				GridEntry grid_entry;
 				grid_entry = grid_item_coll [property.Name] as GridEntry;
 				if (grid_entry == null || grid_entry is CategoryGridEntry) {
-					grid_entry = new GridEntry (property_grid_view, objs, property);
+					grid_entry = new GridEntry (this, objs, property);
 				} else {
-					grid_entry.TargetObjects = objs;
+					grid_entry.PropertyOwners = objs;
 				}
 					
 				grid_entry.SetParent (parent_grid_item);
@@ -1447,8 +1443,9 @@ namespace System.Windows.Forms {
 						string category = property.Category;
 						CategoryGridEntry cat_item = grid_item_coll [category] as CategoryGridEntry;
 						if (cat_item == null) {
-							cat_item = new CategoryGridEntry (property_grid_view, category);
+							cat_item = new CategoryGridEntry (this, category);
 							cat_item.SetParent (parent_grid_item);
+							cat_item.Expanded = true;
 							grid_item_coll.Add (category, cat_item);
 
 							// Add to our cache
@@ -1473,7 +1470,6 @@ namespace System.Windows.Forms {
 				if (recurse) {
 					PopulateSubGridItemsFromProperties (grid_entry);
 				}
-				grid_entry.Expanded = false;
 			}
 		}
 
@@ -1482,7 +1478,7 @@ namespace System.Windows.Forms {
 			if (grid_entry == null)
 				return;
 
-			if (grid_entry.TargetObjects == null)
+			if (grid_entry.PropertyOwners == null)
 				return;
 
 			PropertyDescriptor property = grid_entry.PropertyDescriptor;
@@ -1494,7 +1490,7 @@ namespace System.Windows.Forms {
 			    !property.Attributes.Contains (DesignerSerializationVisibilityAttribute.Content))
 				return;
 
-			object [] objs = grid_entry.TargetObjects;
+			object [] objs = grid_entry.PropertyOwners;
 			object [] subobjs = new object [objs.Length];
 			
 			for (int i = 0; i < objs.Length; i++)
@@ -1516,12 +1512,12 @@ namespace System.Windows.Forms {
 			if (property_sort == PropertySort.Alphabetical || property_sort == PropertySort.NoSort) {
 				foreach (GridItem item in main_grid_items) {
 					root_grid_item.GridItems.Add (item.Label, item);
-					item.SetParent (root_grid_item);
+					((GridEntry)item).SetParent (root_grid_item);
 				}
 
 				foreach (GridItem category_item in category_grid_items) {
 					category_item.GridItems.Clear ();
-					category_item.SetParent (null);
+					((GridEntry)category_item).SetParent (null);
 				}
 			} else if ((property_sort & PropertySort.Categorized) != 0) {
 				foreach (GridItem item in main_grid_items) {
@@ -1530,17 +1526,18 @@ namespace System.Windows.Forms {
 					GridItem category_item = category_grid_items [category];
 					if (category_item == null) {
 						// Create category grid items if they already don't
-						category_item = new CategoryGridEntry (property_grid_view, category);
+						category_item = new CategoryGridEntry (this, category);
+						category_item.Expanded = true;
 						category_grid_items.Add (category, category_item);
 					}
 
 					category_item.GridItems.Add (item.Label, item);
-					item.SetParent (category_item);
+					((GridEntry)item).SetParent (category_item);
 				}
 
 				foreach (GridItem category_item in category_grid_items) {
 					root_grid_item.GridItems.Add (category_item.Label, category_item);
-					category_item.SetParent (root_grid_item);
+					((GridEntry)category_item).SetParent (root_grid_item);
 				}
 			}
 		}

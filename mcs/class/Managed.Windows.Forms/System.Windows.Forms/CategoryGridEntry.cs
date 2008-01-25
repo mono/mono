@@ -34,7 +34,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 	internal class CategoryGridEntry : GridEntry
 	{
 		private string label;
-		public CategoryGridEntry (PropertyGridView owner, string category)
+		public CategoryGridEntry (PropertyGrid owner, string category)
 			: base (owner)
 		{
 			label = category;
@@ -46,6 +46,14 @@ namespace System.Windows.Forms.PropertyGridInternal
 
 		public override string Label {
 			get { return label; }
+		}
+
+		public override bool IsReadOnly {
+			get { return true; }
+		}
+
+		public override bool IsEditable {
+			get { return false; }
 		}
 	}
 }

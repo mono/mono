@@ -1,3 +1,13 @@
+2008-01-25  Ivan N. Zlatev  <contact@i-nz.net>
+
+	 * PropertyGrid.cs, PropertyGridView.cs, GridEntry.cs, GridItem.cs, 
+	 RootGridEntry.cs, CategoryGridEntry.cs:
+	 PropertyGrid rewrite.
+	 - Rewrite all of the control logic in PropertyGrid.
+	 - Rewrite all of the ComponentModel logic in GridEntry.
+	 - Rewrite all UI work in PropertyGridView.
+	 - Many bugfixes, etc.
+
 2008-01-24  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TableLayoutPanel.cs: Enhance GetPreferredSize to take into account

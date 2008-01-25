@@ -36,7 +36,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 	{
 		object val;
 
-		public RootGridEntry (PropertyGridView owner, object obj)
+		public RootGridEntry (PropertyGrid owner, object obj)
 			: base (owner)
 		{
 			val = obj;
@@ -57,6 +57,14 @@ namespace System.Windows.Forms.PropertyGridInternal
 		public override bool Select ()
 		{
 			return false; /* root entries aren't selectable */
+		}
+
+		public override bool IsReadOnly {
+			get { return true; }
+		}
+
+		public override bool IsEditable {
+			get { return false; }
 		}
 	}
 }
