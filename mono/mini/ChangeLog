@@ -1,5 +1,7 @@
 2008-01-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (mono_aot_init_vtable): Fix a warning.
+
 	* mini.c (get_runtime_generic_context_ptr): Fix a warning.
 
 	* mini-s390.h: Remove an unused define.
