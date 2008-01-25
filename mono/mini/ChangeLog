@@ -1,5 +1,7 @@
 2008-01-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* cpu-*.md: Get rid of unused opcodes.
+
 	* cpu-g4.md: Rename this to cpu-ppc.md for consistency with other archs.
 
 	* Makefile.am: Move mini-trampolines.c to $(common_sources) since it is now used
