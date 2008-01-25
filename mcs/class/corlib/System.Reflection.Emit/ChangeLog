@@ -1,6 +1,11 @@
+2008-01-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* TypeBuilder.cs (GenerateDebugInfo): Emit debug info for nested types as well.
+	Fixes #356316.
+
 2008-01-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
-	* AssemblyBuilder.cs: Introduce magic value for AssemblyBuilferAccess
+	* AssemblyBuilder.cs: Introduce magic value for AssemblyBuilderAccess
 	to signal usage from a compiler. On 2.0 profile, perform argument
 	check for access. Use AssemblyFlags passed in through AssemblyName
 	arguments. Modified SetCustomAttribute to only use the Assembly*

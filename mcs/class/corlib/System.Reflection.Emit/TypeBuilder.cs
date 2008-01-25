@@ -812,6 +812,11 @@ namespace System.Reflection.Emit
 			}
 			
 			symbolWriter.CloseNamespace ();
+
+			if (subtypes != null) {
+				for (int i = 0; i < subtypes.Length; ++i)
+					subtypes [i].GenerateDebugInfo (symbolWriter);
+			}
 		}
 
 #if NET_2_0
