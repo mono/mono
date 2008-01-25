@@ -51,11 +51,13 @@ namespace System.Runtime.Remoting.Channels.Tcp
 
 		public TcpClientChannel (IDictionary properties, IClientChannelSinkProvider sinkProvider)
 		{
-			object val = properties ["name"];
-			if (val != null) name = val as string;
+			if (properties != null) {
+				object val = properties ["name"];
+				if (val != null) name = val as string;
 			
-			val = properties ["priority"];
-			if (val != null) priority = Convert.ToInt32 (val);
+				val = properties ["priority"];
+				if (val != null) priority = Convert.ToInt32 (val);
+			}
 			
 			if (sinkProvider != null)
 			{

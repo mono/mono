@@ -1,3 +1,9 @@
+2008-01-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* TcpChannel.cs (Init): Handle properties == null.
+
+	* TcpClientChannel.cs (.ctor): Ditto. Fixes #355905.
+	
 2006-01-09  Robert Jordan  <robertj@gmx.net>
 
 	* TcpServerChannel.cs (ProcessMessages): Flush the stream only when

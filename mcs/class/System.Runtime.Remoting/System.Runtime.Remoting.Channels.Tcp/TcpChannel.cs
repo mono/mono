@@ -57,14 +57,16 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		{
 			_clientChannel = new TcpClientChannel (properties,clientSink);
 
-			if(properties["port"] != null)
-				_serverChannel = new TcpServerChannel(properties, serverSink);
+			if (properties != null) {
+				if(properties["port"] != null)
+					_serverChannel = new TcpServerChannel(properties, serverSink);
 
-			object val = properties ["name"];
-			if (val != null) _name = val as string;
+				object val = properties ["name"];
+				if (val != null) _name = val as string;
 			
-			val = properties ["priority"];
-			if (val != null) _priority = Convert.ToInt32 (val);
+				val = properties ["priority"];
+				if (val != null) _priority = Convert.ToInt32 (val);
+			}
 		}
 
 
