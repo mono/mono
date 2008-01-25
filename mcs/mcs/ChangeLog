@@ -1,3 +1,7 @@
+2008-01-25  Marek Safar  <marek.safar@gmail.com>
+
+	* report.cs: Correctly reset warnings count after probing.
+	
 2008-01-25  Martin Baulig  <martin@ximian.com>
 
 	* namespace.cs

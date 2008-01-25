@@ -140,6 +140,8 @@ namespace Mono.CSharp {
 		{
 			if (warning_stack != null)
 				Warnings = (int) warning_stack.Pop ();
+			else
+				Warnings = 0;
 
 			Errors = (int) error_stack.Pop ();
 			if (error_stack.Count == 0) {
