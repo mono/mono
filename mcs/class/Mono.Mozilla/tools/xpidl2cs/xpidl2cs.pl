@@ -59,12 +59,14 @@ $types{"wstring"} = {name => "string", out => "", marshal => "[MarshalAs(Unmanag
 $types{"nsCIDRef"} = {name => "Guid", out => "out", marshal => "[MarshalAs (UnmanagedType.LPStruct)] "};
 $types{"nsIIDRef"} = {name => "Guid", out => "out", marshal => "[MarshalAs (UnmanagedType.LPStruct)] "};
 $types{"Guid"} = {name => "Guid", out => "out", marshal => "[MarshalAs (UnmanagedType.LPStruct)] "};
-$types{"string"} = {name => "string", out => "", marshal => "[MarshalAs (UnmanagedType.LPStr)] "};
+$types{"string"} = {name => "string", out => "ref", marshal => "[MarshalAs (UnmanagedType.LPStr)] "};
+$types{"refstring"} = {name => "IntPtr", out => "ref", marshal => ""};
 $types{"charPtr"} = {name => "StringBuilder", out => "", marshal => ""};
 $types{"voidPtr"} = {name => "IntPtr", out => "", marshal => ""};
 $types{"nsISupports"} = {name => "IntPtr", out => "out", "[MarshalAs (UnmanagedType.Interface)] "};
 $types{"nsWriteSegmentFun"} = {name => "nsIWriteSegmentFunDelegate", out => "", ""};
 $types{"others"} = {name => "", out => "out", marshal => "[MarshalAs (UnmanagedType.Interface)] "};
+$types{"nsQIResult"} = {name => "IntPtr", out => "out", marshal => ""};
 
 my %dependents;
 
@@ -108,6 +110,12 @@ sub has_setter {
 
 sub get_type {
     my $x = shift;
+    my $out = shift;
+
+    if ($out && exists $types{"$out$x"}) {
+	return $types{"$out$x"}->{"name"};
+    }
+
     if (exists $types{$x}) {
 	return $types{$x}->{"name"};
     }
@@ -124,6 +132,12 @@ sub get_out {
 
 sub get_marshal {
     my $x = shift;
+    my $out = shift;
+
+    if ($out && exists $types{"$out$x"}) {
+	return $types{"$out$x"}->{"marshal"};
+    }
+
     if (exists $types{$x}) {
 	return $types{$x}->{"marshal"};
     }
@@ -171,6 +185,7 @@ sub get_params {
 	    $type = $list{$name}->{"type"};
 	    $marshal = $list{$name}->{"marshal"};
 	    $marshal = " " if !$marshal;
+	    $name = "";
 	    until (scalar(@p) == 3) {
 		shift @p;
 	    }
@@ -182,6 +197,15 @@ sub get_params {
 	    $isout = 1;
 	}
 	shift @p;
+
+	# if an out parameter is of type nsQIResult, that means
+	# it will return a pointer to an interface (that can be anything). 
+	# That means we want to return an IntPtr, and later cast it to
+	# the proper type, so reset type and marshalling
+	if ($isout && @p[0] =~ /nsQIResult/) {
+	    $marshal = "";
+	    $type = "";
+	}
 
 	if (!$type) {
 	    $type = join ",", @p[0..@p-2];
@@ -249,7 +273,7 @@ sub parse_file {
 	
 	if (index($line, "*") == -1 && index ($line, "//") == -1 && index ($line, "#include") == -1) {
 	    
-	    if (index ($line, "uuid") != -1) {
+	    if (index ($line, "uuid(") != -1) {
 		my $uuid = $line;
 		$uuid =~ s/\[.*uuid\((.*)\)\]/\1/;
 		$interface->{"uuid"} = $uuid;
@@ -338,6 +362,7 @@ sub parse_file {
     }
 }
 
+
 sub output {
 
     my $name = $interface->{"class"};
@@ -364,7 +389,7 @@ sub output {
     print X "// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION\n";
     print X "// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\n";
     print X "//\n";
-    print X "// Copyright (c) 2007 Novell, Inc.\n";
+    print X "// Copyright (c) 2007, 2008 Novell, Inc.\n";
     print X "//\n";
     print X "// Authors:\n";
     print X "//	Andreia Gaita (avidigal\@novell.com)\n";
@@ -379,14 +404,17 @@ sub output {
     print X "\n";
 
     my $uuid = $interface->{"uuid"};
+    my $parent = $interface->{"parent"};
     print X "\t[Guid (\"$uuid\")]\n";
     print X "\t[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]\n";
     print X "\t[ComImport ()]\n";
-    print X "\tinternal interface $name {\n";
+    print X "\tinternal interface $name";
+    print X " : $parent" if $parent !~ /nsISupports/;
+    print X " {\n";
 
 
-    if ($interface->{"parent"} !~ /nsISupports/) {
-	print X &parse_parent ($interface->{"parent"});
+    if ($parent !~ /nsISupports/) {
+	print X &parse_parent ($parent);
     }
     print X "\n";
     print X "#region $name\n";
@@ -398,9 +426,9 @@ sub output {
 	print X "\t\t[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]\n";
 
 	if (&is_property ($item)) {
-	    my $marshal = &get_marshal($properties{$item}->{"type"});
 	    my $out = &get_out($properties{$item}->{"type"});
-	    my $type = &get_type ($properties{$item}->{"type"});
+	    my $marshal = &get_marshal($properties{$item}->{"type"}, $out);
+	    my $type = &get_type ($properties{$item}->{"type"}, $out);
 	    my $name = ucfirst ($item);
 
 	    &add_external ($properties{$item}->{"type"});
@@ -408,6 +436,9 @@ sub output {
 
 	    print X "\t\tint get$name ($marshal $out $type ret);\n";
 	    print X "\n";
+
+	   $type = &get_type ($properties{$item}->{"type"});
+	   $marshal = &get_marshal($properties{$item}->{"type"});
 
 ## setter
 	    if (&has_setter($item)) {
@@ -427,6 +458,25 @@ sub output {
     }
     print X "#endregion\n";
     print X "\t}\n";
+
+
+# mozilla-specific helper classes to proxy objects between threads
+# remove if you're not running this for mono.mozilla
+
+    print X "\n\n";
+    $helpername = $name;
+    $helpername =~ s/nsI/ns/;
+    print X "\tinternal class $helpername";
+    print X " {\n";
+    print X "\t\tpublic static $name GetProxy (Mono.WebBrowser.IWebBrowser control, $name obj)\n";
+    print X "\t\t{\n";
+    print X "\t\t\tobject o = Base.GetProxyForObject (control, typeof($name).GUID, obj);\n";
+    print X "\t\t\treturn o as $name;\n";
+    print X "\t\t}\n";
+    print X "\t}\n";
+
+#end of mozilla-specific helper classes
+
     print X "}\n";
     close X;
 }

@@ -1,3 +1,12 @@
+2008-01-24  Andreia Gaita  <avidigal@novell.com>
+
+	* xpidl2cs.pl: Add support for different marshalling depending
+	on whether a parameter is in or out. Add special case for
+	generic interface returns. Only output parent is it's not 
+	the base parent. Output helper class to proxy objects.
+
+	* Makefile: added. regenerates interfaces
+
 2008-01-03  Andreia Gaita  <avidigal@novell.com>
 
 	* xpidl2cs.pl: Add more type conversions, don't output return
