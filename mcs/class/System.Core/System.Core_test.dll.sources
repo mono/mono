@@ -37,6 +37,7 @@ System.Linq.Expressions/ExpressionTest_Or.cs
 System.Linq.Expressions/ExpressionTest_OrElse.cs
 System.Linq.Expressions/ExpressionTest_Power.cs
 System.Linq.Expressions/ExpressionTest_Property.cs
+System.Linq.Expressions/ExpressionTest_PropertyOrField.cs
 System.Linq.Expressions/ExpressionTest_Quote.cs
 System.Linq.Expressions/ExpressionTest_RightShift.cs
 System.Linq.Expressions/ExpressionTest_SubtractChecked.cs
