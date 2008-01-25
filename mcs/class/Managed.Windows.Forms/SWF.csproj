@@ -4209,6 +4209,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms.CarbonInternal\Cursor.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms.CarbonInternal\Dnd.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

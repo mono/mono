@@ -969,6 +969,7 @@
     <Compile Include="System.Windows.Forms.Layout\TableLayoutSettingsTypeConverter.cs" />
     <Compile Include="System.Windows.Forms.CarbonInternal\ApplicationHandler.cs" />
     <Compile Include="System.Windows.Forms.CarbonInternal\ControlHandler.cs" />
+    <Compile Include="System.Windows.Forms.CarbonInternal\Cursor.cs" />
     <Compile Include="System.Windows.Forms.CarbonInternal\Dnd.cs" />
     <Compile Include="System.Windows.Forms.CarbonInternal\EventHandler.cs" />
     <Compile Include="System.Windows.Forms.CarbonInternal\EventHandlerBase.cs" />
