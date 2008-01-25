@@ -1047,7 +1047,7 @@ namespace Mono.CSharp {
 					if (using_clauses != null) {
 						using_list = new string [using_clauses.Count];
 						for (int i = 0; i < using_clauses.Count; i++)
-							using_list [i] = ((UsingEntry) using_clauses [i]).Name.ToString ();
+							using_list [i] = ((UsingEntry) using_clauses [i]).Name.GetTypeName ();
 					}
 
 					symfile_id = CodeGen.SymbolWriter.DefineNamespace (ns.Name, file.SourceFileEntry, using_list, parent_id);

@@ -1,3 +1,9 @@
+2008-01-25  Martin Baulig  <martin@ximian.com>
+
+	* namespace.cs
+	(NamespaceEntry.SymbolFileID): Make this work again after
+	MemberName.ToString() is gone.
+
 2008-01-25  Marek Safar  <marek.safar@gmail.com>
 
 	* expression.cs: Implemented Divide, Equal, ExclusiveOr, GreaterThanOrEqual
