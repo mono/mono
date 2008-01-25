@@ -1682,6 +1682,19 @@ namespace MonoTests.System.Xml
 			AssertEquals ("#5", "foo", r.LocalName);
 		}
 
+		// bug #347768
+		[Test]
+		public void ReadToNextSibling3 ()
+		{
+			string xml = @" <books> <book> <name>Happy C Sharp</name> </book> </books>";
+			XmlReader reader = XmlReader.Create (new StringReader (xml));
+
+			reader.MoveToContent ();
+
+			while (reader.Read ())
+				reader.ReadToNextSibling ("book"); // should not result in an infinite loop
+		}
+
 		[Test]
 		public void ReadSubtree ()
 		{

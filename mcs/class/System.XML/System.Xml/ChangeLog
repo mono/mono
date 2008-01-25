@@ -1,3 +1,8 @@
+2008-01-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlReader.cs : MoveToNextSibling() should check EOF (as Skip() does
+	  not). Fixed bug #347768.
+
 2008-01-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlParserContext.cs : do not pass invalid URI to XmlTextReader#ctor

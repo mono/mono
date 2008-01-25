@@ -848,7 +848,8 @@ namespace System.Xml
 			if (ReadState != ReadState.Interactive)
 				return false;
 			int depth = Depth;
-			for (Skip (); depth <= Depth; Skip ())
+			Skip ();
+			for (; !EOF && depth <= Depth; Skip ())
 				if (NodeType == XmlNodeType.Element && name == Name)
 					return true;
 			return false;
@@ -859,7 +860,8 @@ namespace System.Xml
 			if (ReadState != ReadState.Interactive)
 				return false;
 			int depth = Depth;
-			for (Skip (); depth <= Depth; Skip ())
+			Skip ();
+			for (; !EOF && depth <= Depth; Skip ())
 				if (NodeType == XmlNodeType.Element && localName == LocalName && namespaceURI == NamespaceURI)
 					return true;
 			return false;
