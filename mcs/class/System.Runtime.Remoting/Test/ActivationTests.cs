@@ -145,7 +145,8 @@ namespace MonoTests.Remoting
 		{
 			ChannelServices.UnregisterChannel (tcp);
 			ChannelServices.UnregisterChannel (http);
-			server.Stop ();
+			if (server != null)
+				server.Stop ();
 		}
 	}
 	

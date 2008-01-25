@@ -1,5 +1,11 @@
 2008-01-25  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* ActivationTests.cs: Only stop server if it was actually created.
+	* RemotingServicesTest.cs: Always/only unregister channels if they were
+	actually created. More code formatting.
+
+2008-01-25  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* RemotingServicesTest.cs: Do not hide exception that occur when
 	unregistering a channel. Code formatting and removed extra tabs.
 
