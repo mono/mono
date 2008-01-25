@@ -2825,7 +2825,7 @@ namespace Mono.CSharp {
 					if (cii == ci)
 						continue;
 
-					if (!Convert.ImplicitStandardConversionExists (
+					if (!Convert.ImplicitConversionExists (null,
 						new TypeExpression ((Type)candidates [cii], Location.Null), candidate)) {
 						break;
 					}

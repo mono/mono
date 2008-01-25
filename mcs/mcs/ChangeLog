@@ -1,3 +1,7 @@
+2008-01-25  Marek Safar  <marek.safar@gmail.com>
+
+ 	* generic.cs: Use full implicit conversion for type inference fixing.
+ 	
 2008-01-24  Marek Safar  <marek.safar@gmail.com>
 
  	* ecore.cs, expression.cs, generic.cs: Implemented Convert, ConvertChecked.
