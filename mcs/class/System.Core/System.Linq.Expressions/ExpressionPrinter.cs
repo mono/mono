@@ -270,7 +270,8 @@ namespace System.Linq.Expressions {
 
 		protected override void VisitMemberAssignment (MemberAssignment assignment)
 		{
-			throw new NotImplementedException ();
+			Print ("{0} = ", assignment.Member.Name);
+			Visit (assignment.Expression);
 		}
 
 		protected override void VisitMemberMemberBinding (MemberMemberBinding binding)

@@ -857,16 +857,51 @@ namespace System.Linq.Expressions {
 			return new UnaryExpression (ExpressionType.ArrayLength, array, typeof (int));
 		}
 
-		[MonoTODO]
 		public static MemberAssignment Bind (MemberInfo member, Expression expression)
 		{
-			throw new NotImplementedException ();
+			if (member == null)
+				throw new ArgumentNullException ("member");
+			if (expression == null)
+				throw new ArgumentNullException ("expression");
+
+			Type type = null;
+
+			var prop = member as PropertyInfo;
+			if (prop != null && prop.GetSetMethod (true) != null)
+				type = prop.PropertyType;
+
+			var field = member as FieldInfo;
+			if (field != null)
+				type = field.FieldType;
+
+			if (type == null)
+				throw new ArgumentException ("member");
+
+			if (!type.IsAssignableFrom (expression.Type))
+				throw new ArgumentException ("member");
+
+			return new MemberAssignment (member, expression);
 		}
 
-		[MonoTODO]
 		public static MemberAssignment Bind (MethodInfo propertyAccessor, Expression expression)
 		{
-			throw new NotImplementedException ();
+			if (propertyAccessor == null)
+				throw new ArgumentNullException ("propertyAccessor");
+			if (expression == null)
+				throw new ArgumentNullException ("expression");
+
+			var prop = GetAssociatedProperty (propertyAccessor);
+			if (prop == null)
+				throw new ArgumentException ("propertyAccessor");
+
+			var setter = prop.GetSetMethod (true);
+			if (setter == null)
+				throw new ArgumentException ("setter");
+
+			if (!prop.PropertyType.IsAssignableFrom (expression.Type))
+				throw new ArgumentException ("member");
+
+			return new MemberAssignment (prop, expression);
 		}
 
 		public static MethodCallExpression Call (Expression instance, MethodInfo method)
@@ -1425,6 +1460,8 @@ namespace System.Linq.Expressions {
 		{
 			foreach (var prop in method.DeclaringType.GetProperties (All)) {
 				if (prop.GetGetMethod (true) == method)
+					return prop;
+				if (prop.GetSetMethod (true) ==  method)
 					return prop;
 			}
 

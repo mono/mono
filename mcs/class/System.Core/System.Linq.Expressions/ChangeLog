@@ -1,5 +1,9 @@
 2008-01-25  Jb Evain  <jbevain@novell.com>
 
+	* Expression.cs, ExpressionPrinter.cs: implement Bind.
+
+2008-01-25  Jb Evain  <jbevain@novell.com>
+
 	* MemberMemberBinding.cs, MemberListBinding.cs,
 	MemberAssignment.cs, MemberBinding.cs:
 	add constructors.
