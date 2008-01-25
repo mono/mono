@@ -126,8 +126,7 @@ class Tester
 
 		Expression<Func<MyType, MyType, MyType>> e3 = (MyType a, MyType b) => a + b;
 		AssertNodeType (e3, ExpressionType.Add);
-// FIXME: type inference
-//		Assert (10, e3.Compile ().Invoke (new MyType (-20), new MyType (30)));
+		Assert (10, e3.Compile ().Invoke (new MyType (-20), new MyType (30)));
 	}
 
 	void AddCheckedTest ()
@@ -143,8 +142,7 @@ class Tester
 
 		Expression<Func<MyType, MyType, MyType>> e3 = (MyType a, MyType b) => a + b;
 		AssertNodeType (e3, ExpressionType.Add);
-// FIXME: type inference
-//		Assert (10, e3.Compile ().Invoke (new MyType (-20), new MyType (30)));
+		Assert (10, e3.Compile ().Invoke (new MyType (-20), new MyType (30)));
 		}
 	}
 
