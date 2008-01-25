@@ -1,3 +1,7 @@
+2008-01-25  Jb Evain  <jbevain@novell.com>
+
+	* Expression.cs: implement PropertyOrField.
+
 2008-01-24  Jb Evain  <jbevain@novell.com>
 
 	* Expression.cs, MemberExpression.cs, ExpressionPrinter.cs:

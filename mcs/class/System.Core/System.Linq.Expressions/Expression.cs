@@ -1462,10 +1462,22 @@ namespace System.Linq.Expressions {
 			return new MemberExpression (expression, prop, prop.PropertyType);
 		}
 
-		[MonoTODO]
 		public static MemberExpression PropertyOrField (Expression expression, string propertyOrFieldName)
 		{
-			throw new NotImplementedException ();
+			if (expression == null)
+				throw new ArgumentNullException ("expression");
+			if (propertyOrFieldName == null)
+				throw new ArgumentNullException ("propertyOrFieldName");
+
+			var prop = expression.Type.GetProperty (propertyOrFieldName, AllInstance);
+			if (prop != null)
+				return new MemberExpression (expression, prop, prop.PropertyType);
+
+			var field = expression.Type.GetField (propertyOrFieldName, AllInstance);
+			if (field != null)
+				return new MemberExpression (expression, field, field.FieldType);
+
+			throw new ArgumentException (string.Format ("No field or property named {0} on {1}", propertyOrFieldName, expression.Type));
 		}
 
 		public static UnaryExpression Quote (Expression expression)
