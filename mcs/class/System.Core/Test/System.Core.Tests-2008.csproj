@@ -62,9 +62,11 @@
     <Compile Include="System.Linq.Expressions\ExpressionTest_Bind.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_CallWithExpression.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_CallWithType.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_Coalesce.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Condition.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Constant.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Divide.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_Equal.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_ExclusiveOr.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Field.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_GreaterThan.cs" />
@@ -73,11 +75,14 @@
     <Compile Include="System.Linq.Expressions\ExpressionTest_LeftShift.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_LessThan.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_LessThanOrEqual.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_Lift.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_MakeBinary.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Modulo.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Multiply.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_MultiplyChecked.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Negate.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_NewArrayBounds.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_NewArrayInit.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Not.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Or.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_OrElse.cs" />
@@ -92,6 +97,7 @@
     <Compile Include="System.Linq.Expressions\ExpressionTest_TypeIs.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_UnaryPlus.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Utils.cs" />
+    <Compile Include="System.Linq\EnumerableMoreTest.cs" />
     <Compile Include="System.Linq\EnumerableTest.cs" />
     <Compile Include="System.Linq\QueryableTest.cs" />
     <Compile Include="System\TimeZoneInfo.AdjustmentRuleTest.cs" />
