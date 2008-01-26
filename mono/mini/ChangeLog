@@ -4,7 +4,7 @@
 
 	* mini.c (mono_create_delegate_trampoline): Don't use mono_create_ftpntr here.
 
-	* mini-trampolines.c (mono_delegate_trampoline): Use mono_get_addr_froM_ftnptr
+	* mini-trampolines.c (mono_delegate_trampoline): Use mono_get_addr_from_ftnptr
 	in one place.
 
 	* mini-ia64.h mini-ia64.c: Add minimal support for the delegate trampoline 
