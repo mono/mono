@@ -296,14 +296,14 @@ namespace System.Windows.Forms {
 
 		private object FormatData (object data)
 		{
-			if (data_type == typeof (object)) 
-				return data;
-
 			ConvertEventArgs e = new ConvertEventArgs (data, data_type);
 
 			OnFormat (e);
 			if (data_type.IsInstanceOfType (e.Value))
 				return e.Value;
+
+			if (e.Value == null && data_type == typeof (object))
+				return Convert.DBNull;
 
 			return ConvertData (data, data_type);
 		}
