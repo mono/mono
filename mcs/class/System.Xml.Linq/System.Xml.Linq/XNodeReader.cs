@@ -234,6 +234,8 @@ namespace System.Xml.Linq
 
 		public override string Value {
 			get {
+				if (ReadState != ReadState.Interactive)
+					return String.Empty;
 				XAttribute a = GetCurrentAttribute ();
 				if (a != null)
 					return a.Value;
@@ -385,9 +387,9 @@ namespace System.Xml.Linq
 		{
 			int a_bak = attr;
 			bool av_bak = attr_value;
-			MoveToElement ();
-			MoveToAttribute (i);
 			try {
+				MoveToElement ();
+				MoveToAttribute (i);
 				return Value;
 			} finally {
 				attr = a_bak;
@@ -399,10 +401,9 @@ namespace System.Xml.Linq
 		{
 			int a_bak = attr;
 			bool av_bak = attr_value;
-			MoveToElement ();
-			MoveToAttribute (name);
 			try {
-				return Value;
+				MoveToElement ();
+				return MoveToAttribute (name) ? Value : null;
 			} finally {
 				attr = a_bak;
 				attr_value = av_bak;
@@ -413,10 +414,9 @@ namespace System.Xml.Linq
 		{
 			int a_bak = attr;
 			bool av_bak = attr_value;
-			MoveToElement ();
-			MoveToAttribute (local, ns);
 			try {
-				return Value;
+				MoveToElement ();
+				return MoveToAttribute (local, ns) ? Value : null;
 			} finally {
 				attr = a_bak;
 				attr_value = av_bak;

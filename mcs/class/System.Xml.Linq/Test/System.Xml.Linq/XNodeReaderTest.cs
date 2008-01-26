@@ -65,5 +65,19 @@ namespace MonoTests.System.Xml.Linq
 			xw.Close ();
 			Assert.AreEqual (xml.Replace ('\'', '"'), sw.ToString ());
 		}
+
+		[Test]
+		public void GetAttribute ()
+		{
+			// bug #335975
+			var rdr = new StringReader ("<root><val>Value</val></root>");
+			var xDoc = XDocument.Load (rdr);
+			XmlReader r = xDoc.CreateReader ();
+			Assert.AreEqual (String.Empty, r.Value, "#1");
+			Assert.IsNull (r.GetAttribute ("nil", "http://www.w3.org/2001/XMLSchema-instance"), "#2");
+			r.Read ();
+			Assert.AreEqual (String.Empty, r.Value, "#3");
+			Assert.IsNull (r.GetAttribute ("nil", "http://www.w3.org/2001/XMLSchema-instance"), "#4");
+		}
 	}
 }
