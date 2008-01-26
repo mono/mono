@@ -1,5 +1,7 @@
 2008-01-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* basic-calls.cs: Add a test for proper float argument passing.
+
 	* mini-ia64.h (mono_ia64_context_get_ip): Do not substract 1 from the ip
 	if the context corresponds to an exception received through a signal.
 
