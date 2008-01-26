@@ -868,10 +868,10 @@ namespace System.Windows.Forms.PropertyGridInternal {
 					     msg.message == Msg.WM_LBUTTONDOWN ||
 					     msg.message == Msg.WM_MBUTTONDOWN ||
 					     msg.message == Msg.WM_RBUTTONDOWN ||
-					     msg.message == Msg.WM_ACTIVATE ||
-					     HwndInControl (owner, msg.hwnd) && // owner form moved
-					     msg.message == Msg.WM_NCPAINT)
-					    && !HwndInControl (dropdown_form, msg.hwnd)) {
+					     msg.message == Msg.WM_ACTIVATE) &&
+					     !HwndInControl (dropdown_form, msg.hwnd) ||
+					     (msg.message == Msg.WM_NCPAINT && // owner form moved
+					      HwndInControl (owner, msg.hwnd))) {
 						if (msg.message == Msg.WM_NCPAINT) {
 							Message m = Message.Create (msg.hwnd, (int)msg.message, msg.wParam, msg.lParam);
 							XplatUI.DefWndProc (ref m);
