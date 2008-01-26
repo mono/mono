@@ -54,7 +54,6 @@ break: len:32
 
 jmp: len:92
 call: dest:a clob:c len:20
-op_call: dest:a clob:c len:20
 br: len:4
 br_reg: src1:i len:8
 
@@ -181,29 +180,7 @@ int_clt: dest:i len:12
 int_clt_un: dest:i len:12
 
 localloc: dest:i src1:i len:60
-<<<<<<< .working
-=======
-unaligned.:
-volatile.:
-tail.:
-initobj:
-cpblk:
-initblk:
-sizeof:
-refanytype:
-illegal:
-endmac:
-mono_objaddr:
-mono_ldptr:
-mono_vtaddr:
-mono_newobj:
-mono_retobj:
-load:
-ldaddr:
-store:
-phi:
-rename:
->>>>>>> .merge-right.r93796
+
 compare: src1:i src2:i len:4
 icompare: src1:i src2:i len:4
 fcompare: src1:f src2:f len:12
@@ -218,6 +195,8 @@ setreg: dest:i src1:i len:4 clob:r
 setregimm: dest:i len:16 clob:r
 setfreg: dest:f src1:f len:4 clob:r
 checkthis: src1:b len:4
+
+call: dest:a clob:c len:20
 voidcall: len:20 clob:c
 voidcall_reg: src1:i len:8 clob:c
 voidcall_membase: src1:b len:12 clob:c
@@ -381,11 +360,7 @@ float_cgt_un: dest:i src1:f src2:f len:20
 float_clt: dest:i src1:f src2:f len:16
 float_clt_un: dest:i src1:f src2:f len:20
 float_conv_to_u: dest:i src1:f len:36
-<<<<<<< .working
-=======
-call_handler: len:12
-endfilter: src1:i len:16
->>>>>>> .merge-right.r93796
+
 aot_const: dest:i len:16
 sqrt: dest:f src1:f len:4
 

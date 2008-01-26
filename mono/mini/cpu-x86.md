@@ -64,7 +64,6 @@ not_null: src1:i len:0
 break: len:1
 jmp: len:32
 call: dest:a clob:c len:17
-op_call: dest:a clob:c len:17
 ret: len:1
 br: len:5
 beq: len:6
@@ -376,7 +375,7 @@ float_clt_un: dest:y src1:f src2:f len:32
 float_conv_to_u: dest:i src1:f len:36
 call_handler: len:10
 aot_const: dest:i len:5
-op_jump_table: dest:i len:5
+jump_table: dest:i len:5
 load_gotaddr: dest:i len:64
 got_entry: dest:i src1:b len:7
 

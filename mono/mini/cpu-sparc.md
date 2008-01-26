@@ -52,7 +52,7 @@ label:
 break: len:64
 jmp: len:64
 br: len:8
-op_jump_table: dest:i len:48
+jump_table: dest:i len:48
 
 nop: len:0
 dummy_use: len:0
@@ -164,7 +164,6 @@ checkthis: src1:b len:4
 oparglist: src1:i len:64
 
 call: dest:o clob:c len:40
-op_call: dest:o clob:c len:40
 call_reg: dest:o src1:i len:64 clob:c
 call_membase: dest:o src1:b len:64 clob:c
 voidcall: len:64 clob:c

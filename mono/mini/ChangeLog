@@ -1,5 +1,7 @@
 2008-01-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* *.md: Remove op_ opcode prefixes.
+
 	* method-to-ir.c: Implement the delegate ctor optimization.
 	
 	* method-to-ir.c (mono_method_to_ir2): Use the mono_helper_ldstr_mscorlib opt

@@ -8,7 +8,7 @@ label:
 break: len:48
 jmp: len:48
 br: len:48
-op_jump_table: dest:i len:48
+jump_table: dest:i len:48
 
 nop: len:0
 dummy_use: len:0
@@ -109,7 +109,6 @@ setret: dest:r src1:i len:48
 setlret: dest:r src1:i src2:i len:48
 checkthis: src1:b len:48
 call: dest:r clob:c len:80
-op_call: dest:r clob:c len:80
 voidcall: clob:c len:80
 voidcall_reg: src1:i clob:c len:80
 voidcall_membase: src1:b clob:c len:80
