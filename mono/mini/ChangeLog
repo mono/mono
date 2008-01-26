@@ -1,3 +1,8 @@
+2008-01-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h inssel-x86.brg inssel-amd64.brg tramp-alpha.c tramp-ia64.c: Get rid
+	of the unused mono_arch_patch_delegate_trampoline stuff.
+
 2008-01-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* basic-long.cs: Move the fp related tests to basic-float.cs.
