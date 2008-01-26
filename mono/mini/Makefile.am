@@ -122,28 +122,24 @@ x86_sources = \
 	mini-x86.c		\
 	mini-x86.h		\
 	exceptions-x86.c	\
-	tramp-x86.c			\
-	mini-trampolines.c
+	tramp-x86.c
 
 amd64_sources = \
 	mini-amd64.c		\
 	mini-amd64.h		\
 	exceptions-amd64.c	\
-	tramp-amd64.c		\
-	mini-trampolines.c
+	tramp-amd64.c
 
 ppc_sources = \
 	mini-ppc.c		\
 	mini-ppc.h		\
 	exceptions-ppc.c	\
-	mini-trampolines.c	\
 	tramp-ppc.c
 
 arm_sources = \
 	mini-arm.c		\
 	mini-arm.h		\
 	exceptions-arm.c	\
-	mini-trampolines.c	\
 	tramp-arm.c
 
 mips_sources = \
@@ -156,8 +152,7 @@ sparc_sources = \
 	mini-sparc.c		\
 	mini-sparc.h		\
 	exceptions-sparc.c	\
-	tramp-sparc.c		\
-	mini-trampolines.c
+	tramp-sparc.c
 
 s390_sources = \
 	mini-s390.c		\
@@ -175,22 +170,19 @@ ia64_sources = \
 	mini-ia64.c			\
 	mini-ia64.h			\
 	exceptions-ia64.c	\
-	tramp-ia64.c		\
-	mini-trampolines.c
+	tramp-ia64.c
 
 alpha_sources = \
 	mini-alpha.c	\
 	mini-alpha.h	\
 	exceptions-alpha.c	\
-	tramp-alpha.c	\
-	mini-trampolines.c
+	tramp-alpha.c
 
 hppa_sources = \
 	mini-hppa.c	\
 	mini-hppa.h	\
 	exceptions-hppa.c	\
-	tramp-hppa.c	\
-	mini-trampolines.c
+	tramp-hppa.c
 
 common_sources = \
 	mini.h		\
@@ -232,6 +224,7 @@ common_sources = \
 	graph.c		\
 	mini-exceptions.c	\
 	mini-codegen.c		\
+	mini-trampolines.c  \
 	declsec.c	\
 	declsec.h	\
 	wapihandles.c	\
@@ -291,7 +284,7 @@ endif
 if POWERPC
 arch_sources = $(ppc_sources)
 arch_BURGSRC= $(srcdir)/inssel-long32.brg $(srcdir)/inssel-ppc.brg
-arch_built=cpu-g4.h
+arch_built=cpu-ppc.h
 arch_define=__ppc__
 endif
 
@@ -417,8 +410,8 @@ cpu-x86.h: cpu-x86.md genmdesc$(EXEEXT)
 cpu-amd64.h: cpu-amd64.md genmdesc$(EXEEXT)
 	$(GENMDESC_PRG) $(srcdir)/cpu-amd64.md cpu-amd64.h amd64_desc
 
-cpu-g4.h: cpu-g4.md genmdesc$(EXEEXT)
-	$(GENMDESC_PRG) $(srcdir)/cpu-g4.md cpu-g4.h ppcg4
+cpu-ppc.h: cpu-ppc.md genmdesc$(EXEEXT)
+	$(GENMDESC_PRG) $(srcdir)/cpu-ppc.md cpu-ppc.h ppcg4
 
 cpu-arm.h: cpu-arm.md genmdesc$(EXEEXT)
 	$(GENMDESC_PRG) $(srcdir)/cpu-arm.md cpu-arm.h arm_cpu_desc
@@ -510,7 +503,7 @@ EXTRA_DIST = $(common_BURGSRC) cprop.c TestDriver.cs ldscript ldscript.mono \
 	inssel-softfloat.brg	\
 	$(x86_sources) inssel-x86.brg cpu-x86.md \
 	$(amd64_sources) inssel-amd64.brg cpu-amd64.md \
-	$(ppc_sources) inssel-ppc.brg cpu-g4.md \
+	$(ppc_sources) inssel-ppc.brg cpu-ppc.md \
 	$(arm_sources) inssel-arm.brg cpu-arm.md \
 	$(mips_sources) inssel-mips.brg inssel-long32-mips.brg cpu-mips.md \
 	$(sparc_sources) inssel-sparc.brg cpu-sparc.md \

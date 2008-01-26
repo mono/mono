@@ -4790,6 +4790,7 @@ get_runtime_generic_context_ptr (MonoCompile *cfg, MonoMethod *method, MonoBasic
 		return get_runtime_generic_context_other_ptr (cfg, method, bblock, rgctx, type_token, rgctx_type, ip);
 	default:
 		g_assert_not_reached ();
+		return NULL;
 	}
 }
 
@@ -9206,11 +9207,7 @@ mono_create_class_init_trampoline (MonoVTable *vtable)
 	if (ptr)
 		return ptr;
 
-#ifdef MONO_ARCH_HAVE_CREATE_SPECIFIC_TRAMPOLINE
 	code = mono_arch_create_specific_trampoline (vtable, MONO_TRAMPOLINE_CLASS_INIT, vtable->domain, NULL);
-#else
-	code = mono_arch_create_class_init_trampoline (vtable);
-#endif
 
 	ptr = mono_create_ftnptr (vtable->domain, code);
 
@@ -9235,9 +9232,7 @@ mono_create_jump_trampoline (MonoDomain *domain, MonoMethod *method,
 {
 	MonoJitInfo *ji;
 	gpointer code;
-#ifdef MONO_ARCH_HAVE_CREATE_SPECIFIC_TRAMPOLINE
 	guint32 code_size;
-#endif
 
 	if (add_sync_wrapper && method->iflags & METHOD_IMPL_ATTRIBUTE_SYNCHRONIZED)
 		return mono_create_jump_trampoline (domain, mono_marshal_get_synchronized_wrapper (method), FALSE);
@@ -9252,7 +9247,6 @@ mono_create_jump_trampoline (MonoDomain *domain, MonoMethod *method,
 	if (code)
 		return code;
 
-#ifdef MONO_ARCH_HAVE_CREATE_SPECIFIC_TRAMPOLINE
 	code = mono_arch_create_specific_trampoline (method, MONO_TRAMPOLINE_JUMP, mono_domain_get (), &code_size);
 
 	mono_domain_lock (domain);
@@ -9261,9 +9255,6 @@ mono_create_jump_trampoline (MonoDomain *domain, MonoMethod *method,
 	ji->code_start = code;
 	ji->code_size = code_size;
 	ji->method = method;
-#else
-	ji = mono_arch_create_jump_trampoline (method);
-#endif
 
 	/*
 	 * mono_delegate_ctor needs to find the method metadata from the 
@@ -9293,11 +9284,7 @@ mono_create_jit_trampoline_in_domain (MonoDomain *domain, MonoMethod *method)
 	if (method->iflags & METHOD_IMPL_ATTRIBUTE_SYNCHRONIZED)
 		return mono_create_jit_trampoline (mono_marshal_get_synchronized_wrapper (method));
 
-#ifdef MONO_ARCH_HAVE_CREATE_SPECIFIC_TRAMPOLINE
-	tramp =  mono_arch_create_specific_trampoline (method, MONO_TRAMPOLINE_GENERIC, domain, NULL);
-#else
-	tramp = mono_arch_create_jit_trampoline (method);
-#endif
+	tramp = mono_arch_create_specific_trampoline (method, MONO_TRAMPOLINE_GENERIC, domain, NULL);
 	
 	mono_domain_lock (domain);
 	g_hash_table_insert (domain->jit_trampoline_hash, method, tramp);

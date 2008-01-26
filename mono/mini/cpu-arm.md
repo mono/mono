@@ -51,7 +51,6 @@ not_reached: len:0
 not_null: src1:i len:0
 memory_barrier: len:4
 break: len:32
-
 jmp: len:92
 call: dest:a clob:c len:20
 br: len:4
@@ -81,6 +80,21 @@ int_blt_un: len:8
 
 switch: src1:i len:8
 
+ldind.i1: dest:i len:8
+ldind.u1: dest:i len:8
+ldind.i2: dest:i len:8
+ldind.u2: dest:i len:8
+ldind.i4: dest:i len:8
+ldind.u4: dest:i len:8
+ldind.i: dest:i len:8
+ldind.ref: dest:i len:8
+stind.ref: src1:b src2:i
+stind.i1: src1:b src2:i
+stind.i2: src1:b src2:i
+stind.i4: src1:b src2:i
+stind.r4: src1:b src2:f
+stind.r8: src1:b src2:f
+
 add: dest:i src1:i src2:i len:4
 sub: dest:i src1:i src2:i len:4
 mul: dest:i src1:i src2:i len:4
@@ -104,6 +118,7 @@ conv.r4: dest:f src1:i len:36
 conv.r8: dest:f src1:i len:36
 conv.u4: dest:i src1:i
 conv.r.un: dest:f src1:i len:56
+
 conv.u2: dest:i src1:i len:8
 conv.u1: dest:i src1:i len:4
 conv.i: dest:i src1:i len:4
@@ -220,6 +235,10 @@ call_membase: dest:a src1:b len:12 clob:c
 iconst: dest:i len:16
 r4const: dest:f len:20
 r8const: dest:f len:20
+<<<<<<< .working
+=======
+label: len:0
+>>>>>>> .merge-right.r94008
 store_membase_imm: dest:b len:20
 store_membase_reg: dest:b src1:i len:20
 storei1_membase_imm: dest:b len:20
@@ -305,6 +324,7 @@ cond_exc_ov: len:12
 cond_exc_no: len:8
 cond_exc_c: len:12
 cond_exc_nc: len:8
+<<<<<<< .working
 
 cond_exc_ieq: len:8
 cond_exc_ine_un: len:8
@@ -321,10 +341,16 @@ cond_exc_ino: len:8
 cond_exc_ic: len:12
 cond_exc_inc: len:8
 
+=======
+>>>>>>> .merge-right.r94008
 long_conv_to_ovf_i: dest:i src1:i src2:i len:30
+<<<<<<< .working
 long_conv_to_ovf_i4_2: dest:i src1:i src2:i len:30
+=======
+>>>>>>> .merge-right.r94008
 long_mul_ovf: 
 long_conv_to_r_un: dest:f src1:i src2:i len:37 
+<<<<<<< .working
 float_beq: len:20
 float_bne_un: len:20
 float_blt: len:20
@@ -335,6 +361,18 @@ float_bge: len:20
 float_bge_un: len:20
 float_ble: len:20
 float_ble_un: len:20
+=======
+float_beq: src1:f src2:f len:20
+float_bne_un: src1:f src2:f len:20
+float_blt: src1:f src2:f len:20
+float_blt_un: src1:f src2:f len:20
+float_bgt: src1:f src2:f len:20
+float_btg_un: src1:f src2:f len:20
+float_bge: src1:f src2:f len:20
+float_bge_un: src1:f src2:f len:20
+float_ble: src1:f src2:f len:20
+float_ble_un: src1:f src2:f len:20
+>>>>>>> .merge-right.r94008
 float_add: dest:f src1:f src2:f len:4
 float_sub: dest:f src1:f src2:f len:4
 float_mul: dest:f src1:f src2:f len:4

@@ -88,7 +88,7 @@ int_bgt_un: len:6
 int_ble_un: len:6
 int_blt_un: len:6
 
-label:
+label: len:0
 ldind.i1: dest:i len:6
 ldind.u1: dest:i len:6
 ldind.i2: dest:i len:6

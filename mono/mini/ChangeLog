@@ -16,6 +16,40 @@
 	* mini.h mini.c method-to-ir.c: Only run the local opts pass after 
 	spill_global_vars if it is useful.
 
+2008-01-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* jit-icalls.c (mono_break): New JIT icall.
+
+	* mini-<ARCH>.c: Use mono_break instead of mono_arch_break.
+
+	* mini-arm.c (arm_patch): Add support for patching the blx calling sequence.
+
+2008-01-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* cpu-*.md: Get rid of unused opcodes.
+
+	* cpu-g4.md: Rename this to cpu-ppc.md for consistency with other archs.
+
+	* Makefile.am: Move mini-trampolines.c to $(common_sources) since it is now used
+	by all platforms.
+
+	* mini-<ARCH>.h mini.c: Get rid of the MONO_ARCH_HAVE_CREATE_SPECIFIC_TRAMPOLINE
+	define.
+
+	* mini-s390x.h tramp-s390x.c Makefile.am: Rework the s390x trampoline code to use
+	the arch independent trampoline code in mini-trampolines.c.
+
+	* aot-runtime.c (mono_aot_init_vtable): Fix a warning.
+
+	* mini.c (get_runtime_generic_context_ptr): Fix a warning.
+
+	* mini-s390.h: Remove an unused define.
+	
+	* mini-s390.h tramp-s390.c Makefile.am: Rework the s390 trampoline code to use
+	the arch independent trampoline code in mini-trampolines.c.
+
+	* mini-arm.c (mono_arch_emit_prolog): Fix build.
+
 2008-01-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c: Remove some macros which are in mini.h.
