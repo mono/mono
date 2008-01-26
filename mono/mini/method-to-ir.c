@@ -3559,6 +3559,35 @@ handle_ccastclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src)
 }
 
 static MonoInst*
+handle_delegate_ctor (MonoCompile *cfg, MonoClass *klass, MonoInst *target, MonoMethod *method)
+{
+	gpointer *trampoline;
+	MonoInst *obj, *method_ins, *tramp_ins;
+
+	obj = handle_alloc (cfg, klass, FALSE);
+
+	/* Inline the contents of mono_delegate_ctor */
+
+	/* Set target field */
+	/* Optimize away setting of NULL target */
+	if (!(target->opcode == OP_PCONST && target->inst_p0 == 0))
+		MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, obj->dreg, G_STRUCT_OFFSET (MonoDelegate, target), target->dreg);
+
+	/* Set method field */
+	EMIT_NEW_METHODCONST (cfg, method_ins, method);
+	MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, obj->dreg, G_STRUCT_OFFSET (MonoDelegate, method), method_ins->dreg);
+
+	/* Set invoke_impl field */
+	trampoline = mono_create_delegate_trampoline (klass);
+	EMIT_NEW_AOTCONST (cfg, tramp_ins, MONO_PATCH_INFO_ABS, trampoline);
+	MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, obj->dreg, G_STRUCT_OFFSET (MonoDelegate, invoke_impl), tramp_ins->dreg);
+
+	/* All the checks which are in mono_delegate_ctor () are done by the delegate trampoline */
+
+	return obj;
+}
+
+static MonoInst*
 handle_array_new (MonoCompile *cfg, int rank, MonoInst **sp, unsigned char *ip)
 {
 	MonoJitICallInfo *info;
@@ -9512,7 +9541,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			}
 			case CEE_LDFTN: {
 				MonoInst *argconst;
-				MonoMethod *cil_method;
+				MonoMethod *cil_method, *ctor_method;
 
 				CHECK_STACK_OVF (1);
 				CHECK_OPSIZE (6);
@@ -9536,6 +9565,26 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				} else if (mono_security_get_mode () == MONO_SECURITY_MODE_CORE_CLR) {
 					ensure_method_is_allowed_to_call_method (cfg, method, cmethod, bblock, ip);
  				}
+
+				/* 
+				 * Optimize the common case of ldftn+delegate creation
+				 */
+#if defined(MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE) && !defined(HAVE_WRITE_BARRIERS)
+				/* FIXME: SGEN support */
+				if ((sp > stack_start) && (ip + 6 + 5 < end) && ip_in_bb (cfg, bblock, ip + 6) && (ip [6] == CEE_NEWOBJ) && (ctor_method = mini_get_method (method, read32 (ip + 7), NULL, generic_context)) && (ctor_method->klass->parent == mono_defaults.multicastdelegate_class)) {
+					MonoInst *target_ins;
+
+					ip += 6;
+					if (cfg->verbose_level > 3)
+						g_print ("converting (in B%d: stack: %d) %s", bblock->block_num, (int)(sp - stack_start), mono_disasm_code_one (NULL, method, ip, NULL));
+					target_ins = sp [-1];
+					sp --;
+					*sp = handle_delegate_ctor (cfg, ctor_method->klass, target_ins, cmethod);
+					ip += 5;					
+					sp ++;
+					break;
+				}
+#endif
 
 				EMIT_NEW_METHODCONST (cfg, argconst, cmethod);
 				if (method->wrapper_type != MONO_WRAPPER_SYNCHRONIZED)
@@ -11210,7 +11259,6 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
  * - merge the ia64 switch changes.
  * - merge the mips conditional changes.
  * - merge the generics sharing static fields changes.
- * - merge the delegate ctor changes.
  * - remove unused opcodes from mini-ops.h, remove "op_" from the opcode names,
  *   remove the op_ opcodes from the cpu-..md files, clean up the cpu-..md files.
  * - make the cpu_ tables smaller when the usage of the cee_ opcodes is removed.
