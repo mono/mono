@@ -3200,7 +3200,7 @@ handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box)
 		alloc_ftn = mono_object_new;
 	} else if (cfg->compile_aot && cfg->cbb->out_of_line && klass->type_token && klass->image == mono_defaults.corlib) {
 		/* This happens often in argument checking code, eg. throw new FooException... */
-		/* Avoid relocations by calling a helper function specialized to mscorlib */
+		/* Avoid relocations and save some space by calling a helper function specialized to mscorlib */
 		EMIT_NEW_ICONST (cfg, iargs [0], mono_metadata_token_index (klass->type_token));
 		return mono_emit_jit_icall (cfg, mono_helper_newobj_mscorlib, iargs);
 	} else {
@@ -8002,10 +8002,10 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					if (bblock->out_of_line) {
 						MonoInst *iargs [2];
 
-						if (cfg->compile_aot && cfg->method->klass->image == mono_defaults.corlib) {
+						if (cfg->method->klass->image == mono_defaults.corlib) {
 							/* 
-							 * Avoid relocations by using a version of helper_ldstr
-							 * specialized to mscorlib.
+							 * Avoid relocations in AOT and save some space by using a 
+							 * version of helper_ldstr specialized to mscorlib.
 							 */
 							EMIT_NEW_ICONST (cfg, iargs [0], mono_metadata_token_index (n));
 							*sp = mono_emit_jit_icall (cfg, mono_helper_ldstr_mscorlib, iargs);

@@ -1,5 +1,8 @@
 2008-01-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir2): Use the mono_helper_ldstr_mscorlib opt
+	in the non AOT case as well.
+
 	* mini-amd64.c (peephole_pass): Ignore NOPs in the instruction stream.
 
 	* mini.h: Remove some duplicate declarations which crept in during merges.
