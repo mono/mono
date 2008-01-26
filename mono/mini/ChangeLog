@@ -1,5 +1,7 @@
 2008-01-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-s390x.c cpu-s390x.md: Implement sext.i4 properly by sign extension.
+
 	* mini.c (mono_create_delegate_trampoline): Don't use mono_create_ftpntr here.
 
 	* mini-trampolines.c (mono_delegate_trampoline): Use mono_get_addr_froM_ftnptr
