@@ -1,5 +1,11 @@
 2008-01-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* basic-long.cs: Move the fp related tests to basic-float.cs.
+
+	* mini-ops.h (OP_OUTARG_FREG_R4): New opcode.
+
+	* mini-ia64.c inssel-ia64.brg: Implement proper R4 argument passing.
+
 	* basic-calls.cs: Add a test for proper float argument passing.
 
 	* mini-ia64.h (mono_ia64_context_get_ip): Do not substract 1 from the ip
