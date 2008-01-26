@@ -1,3 +1,7 @@
+2008-01-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* nonvirt.cs: Removed, moved to mini/exceptions.cs.
+
 2008-01-24  Jonathan Chambers  <joncham@gmail.com>
 
 	* libtest.c: Allocate memory for out string parameters.
