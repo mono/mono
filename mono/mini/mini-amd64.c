@@ -2188,7 +2188,9 @@ peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 			break;
 		}
-		last_ins = ins;
+		// Passes after the local opts passes might create new nops
+		if (ins->opcode != OP_NOP)
+			last_ins = ins;
 		ins = ins->next;
 	}
 	bb->last_ins = last_ins;
@@ -2433,7 +2435,9 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 			break;
 		}
-		last_ins = ins;
+		// Passes after the local opts passes might create new nops
+		if (ins->opcode != OP_NOP)
+			last_ins = ins;
 		ins = ins->next;
 	}
 	bb->last_ins = last_ins;

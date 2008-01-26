@@ -1,5 +1,7 @@
 2008-01-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (peephole_pass): Ignore NOPs in the instruction stream.
+
 	* mini.h: Remove some duplicate declarations which crept in during merges.
 	
 	* mini.h mini.c method-to-ir.c: Only run the local opts pass after 
