@@ -1,5 +1,7 @@
 2008-01-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ia64.c (mono_arch_call_opcode): Fix ia64 argument passing.
+
 	* jit-icalls.c (mono_break): New JIT icall.
 
 	* mini-<ARCH>.c: Use mono_break instead of mono_arch_break.
