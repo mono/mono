@@ -12415,12 +12415,15 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 
 	if (cfg->new_ir) {
 		MonoBasicBlock *bb;
+		gboolean need_local_opts;
 
-		mono_spill_global_vars (cfg);
+		mono_spill_global_vars (cfg, &need_local_opts);
 
-		/* To optimize code created by spill_global_vars */
-		mono_local_cprop2 (cfg);
-		mono_local_deadce (cfg);
+		if (need_local_opts || cfg->compile_aot) {
+			/* To optimize code created by spill_global_vars */
+			mono_local_cprop2 (cfg);
+			mono_local_deadce (cfg);
+		}
 
 		/* Add branches between non-consecutive bblocks */
 		for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {

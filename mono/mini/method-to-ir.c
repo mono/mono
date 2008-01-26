@@ -10743,10 +10743,11 @@ insert_before_ins (MonoBasicBlock *bb, MonoInst *ins, MonoInst *ins_to_insert, M
  * mono_spill_global_vars:
  *
  *   Generate spill code for variables which are not allocated to registers, 
- * and replace vregs with their allocated hregs.
+ * and replace vregs with their allocated hregs. *need_local_opts is set to TRUE if
+ * code is generated which could be optimized by the local optimization passes.
  */
 void
-mono_spill_global_vars (MonoCompile *cfg)
+mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
 {
 	MonoBasicBlock *bb;
 	char spec2 [16];
@@ -10756,6 +10757,8 @@ mono_spill_global_vars (MonoCompile *cfg)
 	guint32 i, lvregs_len;
 	gboolean dest_has_lvreg = FALSE;
 	guint32 stacktypes [128];
+
+	*need_local_opts = FALSE;
 
 	memset (spec2, 0, sizeof (spec2));
 
@@ -10866,6 +10869,7 @@ mono_spill_global_vars (MonoCompile *cfg)
 					ins->inst_imm = var->inst_offset;
 				}
 
+				*need_local_opts = TRUE;
 				spec = INS_INFO (ins->opcode);
 			}
 

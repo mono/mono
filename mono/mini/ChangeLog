@@ -1,3 +1,8 @@
+2008-01-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h mini.c method-to-ir.c: Only run the local opts pass after 
+	spill_global_vars if it is useful.
+
 2008-01-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c: Remove some macros which are in mini.h.
