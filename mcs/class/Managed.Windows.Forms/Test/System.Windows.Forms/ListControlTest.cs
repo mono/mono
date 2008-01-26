@@ -290,6 +290,39 @@ namespace MonoTests.System.Windows.Forms
 			f.Dispose ();
 		}
 
+		[Test]
+		public void SelectedValue2 ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			ListControlChild child = new ListControlChild ();
+
+			ArrayList list = new ArrayList ();
+			list.Add (new MockItem ("A", 0));
+			list.Add (new MockItem ("B", 1));
+			list.Add (new MockItem ("C", 2));
+			child.DataSource = list;
+			child.ValueMember = "Text";
+
+			MockItem item = new MockItem (String.Empty, 0);
+			child.DataBindings.Add ("SelectedValue", item, "Text");
+
+			Assert.AreEqual (-1, child.SelectedIndex, "#A1");
+
+			f.Controls.Add (child);
+			Assert.AreEqual (-1, child.SelectedIndex, "#B1");
+
+			// When the form is shown, normally the SelectedIndex is the
+			// CurrencyManager.Position (0 in this case), but it should remain as -1
+			// since SelectedValue is bound to a String.Empty value. See #324286
+			f.Show ();
+			CurrencyManager manager = (CurrencyManager)f.BindingContext [list];
+			Assert.AreEqual (-1, child.SelectedIndex, "#C1");
+			Assert.AreEqual (0, manager.Position, "#C2");
+
+			f.Dispose ();
+		}
+
 #if NET_2_0
 		[Test] // bug #81771
 		public void DataSource_BindingList1 ()

@@ -1,3 +1,7 @@
+2008-01-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListControlTest.cs: Add SelectedValue2 test - for #324286.
+
 2008-01-24  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TableLayoutTest.cs: Add tests for bug #354672.
