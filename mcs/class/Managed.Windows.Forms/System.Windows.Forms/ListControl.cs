@@ -46,6 +46,7 @@ namespace System.Windows.Forms
 		private BindingMemberInfo value_member;
 		private string display_member;
 		private CurrencyManager data_manager;
+		private BindingContext last_binding_context;
 #if NET_2_0
 		private IFormatProvider format_info;
 		private string format_string = string.Empty;
@@ -360,9 +361,16 @@ namespace System.Windows.Forms
 			}
 		}
 
+		// Since this event is fired twice for the same binding context instance
+		// (when the control is added to the form and when the form is shown), 
+		// we only take into account the first time it happens
 		protected override void OnBindingContextChanged (EventArgs e)
 		{
 			base.OnBindingContextChanged (e);
+			if (last_binding_context == BindingContext)
+				return;
+
+			last_binding_context = BindingContext;
 			ConnectToDataSource ();
 
 			if (DataManager != null) {

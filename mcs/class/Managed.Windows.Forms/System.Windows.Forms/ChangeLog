@@ -1,3 +1,11 @@
+2008-01-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListControl.cs: Since we are getting two BinginContextChanged events
+	for the same binding context instance (when the control is added to
+	form, and when the form is actually shown), take it into account only the
+	first time for a given binding context instance.
+	Fixes part of #324286.
+
 2008-01-26  Ivan N. Zlatev  <contact@i-nz.net>
 
 	 * PropertryGridView.cs: Ops.
