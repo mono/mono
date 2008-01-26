@@ -78,6 +78,7 @@ System.Windows.Forms/GroupBoxTest.cs
 System.Windows.Forms/HelpProviderTest.cs
 System.Windows.Forms/HScrollPropertiesTest.cs
 System.Windows.Forms/ImageKeyConverterTest.cs
+System.Windows.Forms/ImageListStreamerTest.cs
 System.Windows.Forms/ImageListTest.cs
 System.Windows.Forms/KeyEventArgsTest.cs
 System.Windows.Forms/KeysConverterTest.cs
