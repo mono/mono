@@ -1,5 +1,13 @@
 2008-01-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_create_delegate_trampoline): Don't use mono_create_ftpntr here.
+
+	* mini-trampolines.c (mono_delegate_trampoline): Use mono_get_addr_froM_ftnptr
+	in one place.
+
+	* mini-ia64.h mini-ia64.c: Add minimal support for the delegate trampoline 
+	stuff.
+
 	* mini.h inssel-x86.brg inssel-amd64.brg tramp-alpha.c tramp-ia64.c: Get rid
 	of the unused mono_arch_patch_delegate_trampoline stuff.
 
