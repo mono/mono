@@ -194,6 +194,7 @@ namespace System.Net {
 						throw new CookieException("The 'Port'='" + value + "' part of the cookie is invalid. Invalid value: " + values [i], e);
 					}
 				}
+				Version = 1;
 			}
 		}
 
@@ -268,7 +269,8 @@ namespace System.Net {
 
 		// returns a string that can be used to send a cookie to an Origin Server
 		// i.e., only used for clients
-		// see also para 3.3.4 of RFC 1965
+		// see para 4.2.2 of RFC 2109 and para 3.3.4 of RFC 2965
+		// see also bug #316017
 		public override string ToString () 
 		{
 			if (name.Length == 0) 
@@ -276,22 +278,22 @@ namespace System.Net {
 
 			StringBuilder result = new StringBuilder (64);
 	
-			if (version > 0) {
-				result.Append ("$Version=").Append (version).Append (";");
-            		}				
+			if (version > 0)
+				result.Append ("$Version=").Append (version).Append ("; ");		
 				
 			result.Append (name).Append ("=").Append (val);
+			
+			if (version == 0)
+				return result.ToString ();
 
-			// in the MS.Net implementation path and domain don't show up in
-			// the result, I guess that's a bug in their implementation...
 			if (path != null && path.Length != 0)
-				result.Append (";$Path=").Append (QuotedString (path));
+				result.Append ("; $Path=").Append (path);
 				
 			if (domain != null && domain.Length != 0)
-				result.Append (";$Domain=").Append (QuotedString (domain));			
+				result.Append ("; $Domain=").Append (domain);			
 	
 			if (port != null && port.Length != 0)
-				result.Append (";$Port=").Append (port);	
+				result.Append ("; $Port=").Append (port);	
 						
 			return result.ToString ();
 		}

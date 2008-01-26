@@ -1,5 +1,10 @@
 2008-01-26  Daniel Nauck  <dna@mono-project.de>
 
+	* CookieTest.cs: enabled ToString () test,
+	added Version property test
+
+2008-01-26  Daniel Nauck  <dna@mono-project.de>
+
 	* CookieTest.cs: added tests for Cookie.ToString (), see bug #316017,
 	fixed line endings
 

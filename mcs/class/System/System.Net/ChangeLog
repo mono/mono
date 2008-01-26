@@ -1,3 +1,10 @@
+2008-01-26  Daniel Nauck  <dna@mono-project.de>
+
+	* Cookie.cs: set Version to '1' if Port is set,
+	don't include path and domain informations when version is 0,
+	match ToString () output with .NET 2.0,
+	fixes bug #316017
+
 2008-01-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MonoHttpDate.cs : Parse() should return Local time. Fixed bug

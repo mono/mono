@@ -149,7 +149,9 @@ namespace MonoTests.System.Net
 			}
 			try
 			{
+				Assert.AreEqual (0, c.Version, "#6.1");
 				c.Port = "\"123\"";
+				Assert.AreEqual (1, c.Version, "#6.2");
 			}
 			catch (CookieException)
 			{
@@ -195,7 +197,6 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ToStringTest ()
 		{
 			Cookie c1 = new Cookie ("NAME", "VALUE", "/", "example.com");
