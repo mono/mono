@@ -1,5 +1,9 @@
 2008-01-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* jit-icalls.c (mono_break): New JIT icall.
+
+	* mini-<ARCH>.c: Use mono_break instead of mono_arch_break.
+
 	* mini-arm.c (arm_patch): Add support for patching the blx calling sequence.
 
 2008-01-25  Zoltan Varga  <vargaz@gmail.com>
