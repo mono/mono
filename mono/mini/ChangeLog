@@ -1,3 +1,7 @@
+2008-01-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arm.c (arm_patch): Add support for patching the blx calling sequence.
+
 2008-01-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* cpu-*.md: Get rid of unused opcodes.
