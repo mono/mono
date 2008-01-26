@@ -1,3 +1,8 @@
+2008-01-26  Daniel Nauck  <dna@mono-project.de>
+
+	* CookieTest.cs: added tests for Cookie.ToString (), see bug #316017,
+	fixed line endings
+
 2008-01-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* HttpWebRequestTest.cs: Disable #353495 since it fails on the 2.0 profile.
