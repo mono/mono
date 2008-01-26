@@ -1,3 +1,9 @@
+2008-01-26  Ivan N. Zlatev  <contact@i-nz.net>
+
+	 * PropertyGridView.cs: Close dropdown form if the owner form is
+	 moved or minimized.
+	 [Fixes bug #322446]
+
 2008-01-25  Ivan N. Zlatev  <contact@i-nz.net>
 
 	 * PropertyGrid.cs, PropertyGridView.cs, GridEntry.cs, GridItem.cs, 

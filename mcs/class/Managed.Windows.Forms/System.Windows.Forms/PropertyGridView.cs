@@ -862,15 +862,22 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				System.Windows.Forms.MSG msg = new MSG ();
 				queue_id = XplatUI.StartLoop (Thread.CurrentThread);
 				while (dropdown_form.Visible && XplatUI.GetMessage (queue_id, ref msg, IntPtr.Zero, 0, 0)) {
-
 					if ((msg.message == Msg.WM_NCLBUTTONDOWN ||
 					     msg.message == Msg.WM_NCMBUTTONDOWN ||
 					     msg.message == Msg.WM_NCRBUTTONDOWN ||
 					     msg.message == Msg.WM_LBUTTONDOWN ||
 					     msg.message == Msg.WM_MBUTTONDOWN ||
-					     msg.message == Msg.WM_RBUTTONDOWN)
+					     msg.message == Msg.WM_RBUTTONDOWN ||
+					     msg.message == Msg.WM_ACTIVATE ||
+					     HwndInControl (owner, msg.hwnd) && // owner form moved
+					     msg.message == Msg.WM_NCPAINT)
 					    && !HwndInControl (dropdown_form, msg.hwnd)) {
+						if (msg.message == Msg.WM_NCPAINT) {
+							Message m = Message.Create (msg.hwnd, (int)msg.message, msg.wParam, msg.lParam);
+							XplatUI.DefWndProc (ref m);
+						}
 						CloseDropDown ();
+						XplatUI.EndLoop (Thread.CurrentThread);
 						break;
 					}
 					XplatUI.TranslateMessage (ref msg);
