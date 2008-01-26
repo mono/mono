@@ -1272,7 +1272,7 @@ namespace System {
 				}
 			}
 			
-			if (len <= 1) 
+			if (len <= 1 && (kind != UriKind.Relative))
 				throw new UriFormatException ();
 
 			int pos = 0;

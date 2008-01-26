@@ -95,6 +95,18 @@ namespace MonoTests.System
 			Assert.AreEqual ("/test.aspx", uri.OriginalString, "#D2");
 			Assert.AreEqual ("/test.aspx", uri.ToString (), "#D3");
 			Assert.IsFalse (uri.UserEscaped, "#D4");
+
+			uri = new Uri ("", UriKind.Relative);
+			Assert.IsFalse (uri.IsAbsoluteUri, "#E1");
+			Assert.AreEqual ("", uri.OriginalString, "#E2");
+			Assert.AreEqual ("", uri.ToString (), "#E3");
+			Assert.IsFalse (uri.UserEscaped, "#E4");
+
+			uri = new Uri ("a", UriKind.Relative);
+			Assert.IsFalse (uri.IsAbsoluteUri, "#F1");
+			Assert.AreEqual ("a", uri.OriginalString, "#F2");
+			Assert.AreEqual ("a", uri.ToString (), "#F3");
+			Assert.IsFalse (uri.UserEscaped, "#F4");
 		}
 
 		[Test]

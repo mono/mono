@@ -1,3 +1,8 @@
+2008-01-23  Robert Jordan  <robertj@gmx.net>
+
+	* Uri.cs (Parse): Handle uriString.Length == 1 as a valid relative URI.
+	Fixes #346432.
+
 2007-12-04  Arina Itkes <arinai@mainsoft.com>
 
 	* Uri.cs: Unix absolute path should not be valid on Windows.
