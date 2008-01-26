@@ -1,3 +1,8 @@
+2008-01-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* PropertiesTab.cs: Fixed argument name of GetDefaultProperty to match
+	MS. Code formatting.
+
 2008-01-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Binding.cs: Don't avoid the Format event if the control 

@@ -23,27 +23,30 @@
 //	Jonathan Chambers	jonathan.chambers@ansys.com
 //
 
-
-// COMPLETE
-
 using System;
+using System.ComponentModel;
+using System.Windows.Forms.Design;
 
-namespace System.Windows.Forms.PropertyGridInternal {
-
-	public class PropertiesTab : System.Windows.Forms.Design.PropertyTab {
+namespace System.Windows.Forms.PropertyGridInternal
+{
+	public class PropertiesTab : PropertyTab
+	{
 		public PropertiesTab() {
 		}
 
-		public override System.ComponentModel.PropertyDescriptorCollection GetProperties(object component, Attribute[] attributes) {
+		public override PropertyDescriptorCollection GetProperties (object component, Attribute[] attributes)
+		{
 			return base.GetProperties(null, component, attributes);
 		}
 
-		public override System.ComponentModel.PropertyDescriptorCollection GetProperties(System.ComponentModel.ITypeDescriptorContext context, object component, Attribute[] attributes) {
+		public override PropertyDescriptorCollection GetProperties (ITypeDescriptorContext context, object component, Attribute[] attributes)
+		{
 			return base.GetProperties (context, component, attributes);
 		}
 
-		public override System.ComponentModel.PropertyDescriptor GetDefaultProperty (object component) {
-			return base.GetDefaultProperty(component);
+		public override PropertyDescriptor GetDefaultProperty (object obj)
+		{
+			return base.GetDefaultProperty (obj);
 		}
 
 		public override string HelpKeyword {
