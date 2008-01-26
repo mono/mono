@@ -1,5 +1,10 @@
 2008-01-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* System.Windows.Forms.dll.sources: Moved PropertiesTab.cs from
+	System.Windows.Forms to System.Windows.Forms.PropertyGridInternal.
+
+2008-01-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* System.Windows.Forms_test.dll.sources: Added ImageListStreamerTest.cs.
 
 2008-01-24  Andreia Gaita <avidigal@novell.com>

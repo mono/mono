@@ -1,0 +1,3 @@
+2008-01-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* PropertiesTab.cs: Moved from System.Windows.Forms.

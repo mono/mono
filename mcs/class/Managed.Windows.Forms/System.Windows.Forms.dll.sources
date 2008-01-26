@@ -17,6 +17,7 @@ System.Windows.Forms.Design/PropertyTab.cs
 System.Windows.Forms.Design/ToolStripItemDesignerAvailability.cs
 System.Windows.Forms.Design/ToolStripItemDesignerAvailabilityAttribute.cs
 System.Windows.Forms.Design/WindowsFormsComponentEditor.cs
+System.Windows.Forms.PropertyGridInternal/PropertiesTab.cs
 System.Windows.Forms.RTF/Charcode.cs
 System.Windows.Forms.RTF/Charset.cs
 System.Windows.Forms.RTF/CharsetFlags.cs
@@ -538,7 +539,6 @@ System.Windows.Forms/ProfessionalColorTable.cs
 System.Windows.Forms/ProgressBar.cs
 System.Windows.Forms/ProgressBarRenderer.cs
 System.Windows.Forms/ProgressBarStyle.cs
-System.Windows.Forms/PropertiesTab.cs
 System.Windows.Forms/PropertyGrid.cs
 System.Windows.Forms/PropertyGridCommands.cs
 System.Windows.Forms/PropertyGridTextBox.cs
