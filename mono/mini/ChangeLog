@@ -1,5 +1,7 @@
 2008-01-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h: Remove some duplicate declarations which crept in during merges.
+	
 	* mini.h mini.c method-to-ir.c: Only run the local opts pass after 
 	spill_global_vars if it is useful.
 

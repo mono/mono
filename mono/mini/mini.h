@@ -1070,39 +1070,29 @@ gpointer  mono_resolve_patch_target         (MonoMethod *method, MonoDomain *dom
 MonoLMF * mono_get_lmf                      (void) MONO_INTERNAL;
 MonoLMF** mono_get_lmf_addr                 (void) MONO_INTERNAL;
 void      mono_jit_thread_attach            (MonoDomain *domain);
-guint32   mono_get_jit_tls_key              (void);
-gint32    mono_get_lmf_tls_offset           (void);
-GList    *mono_varlist_insert_sorted        (MonoCompile *cfg, GList *list, MonoMethodVar *mv, gboolean sort_end);
-GList    *mono_varlist_sort                 (MonoCompile *cfg, GList *list, int sort_type);
-void      mono_linterval_add_range          (MonoCompile *cfg, MonoLiveInterval *interval, int from, int to);
-void      mono_linterval_print              (MonoLiveInterval *interval);
-gboolean  mono_linterval_covers             (MonoLiveInterval *interval, int pos);
-gint32    mono_linterval_get_intersect_pos  (MonoLiveInterval *i1, MonoLiveInterval *i2);
-void      mono_analyze_liveness             (MonoCompile *cfg);
-void      mono_linear_scan                  (MonoCompile *cfg, GList *vars, GList *regs, regmask_t *used_mask);
-void      mono_create_jump_table            (MonoCompile *cfg, MonoInst *label, MonoBasicBlock **bbs, int num_blocks);
-int       mono_compile_assembly             (MonoAssembly *ass, guint32 opts, const char *aot_options);
-MonoCompile *mini_method_compile            (MonoMethod *method, guint32 opts, MonoDomain *domain, gboolean run_cctors, gboolean compile_aot, int parts);
-void      mono_destroy_compile              (MonoCompile *cfg);
-gboolean  mini_class_is_system_array (MonoClass *klass);
-MonoJitICallInfo    *mono_find_jit_opcode_emulation (int opcode);
-MonoMethodSignature *mono_get_element_address_signature (int arity);
-MonoJitICallInfo    *mono_get_element_address_icall (int rank);
-MonoJitICallInfo    *mono_get_array_new_va_icall (int rank);
-
 guint32   mono_get_jit_tls_key              (void) MONO_INTERNAL;
 gint32    mono_get_lmf_tls_offset           (void) MONO_INTERNAL;
 gint32    mono_get_lmf_addr_tls_offset      (void) MONO_INTERNAL;
 GList    *mono_varlist_insert_sorted        (MonoCompile *cfg, GList *list, MonoMethodVar *mv, gboolean sort_end) MONO_INTERNAL;
 GList    *mono_varlist_sort                 (MonoCompile *cfg, GList *list, int sort_type) MONO_INTERNAL;
 void      mono_analyze_liveness             (MonoCompile *cfg) MONO_INTERNAL;
-void      mono_liveness_handle_exception_clauses (MonoCompile *cfg) MONO_INTERNAL;
 void      mono_linear_scan                  (MonoCompile *cfg, GList *vars, GList *regs, regmask_t *used_mask) MONO_INTERNAL;
 void      mono_create_jump_table            (MonoCompile *cfg, MonoInst *label, MonoBasicBlock **bbs, int num_blocks) MONO_INTERNAL;
 int       mono_compile_assembly             (MonoAssembly *ass, guint32 opts, const char *aot_options) MONO_INTERNAL;
 MonoCompile *mini_method_compile            (MonoMethod *method, guint32 opts, MonoDomain *domain, gboolean run_cctors, gboolean compile_aot, int parts) MONO_INTERNAL;
 void      mono_destroy_compile              (MonoCompile *cfg) MONO_INTERNAL;
-MonoJitICallInfo *mono_find_jit_opcode_emulation (int opcode) MONO_INTERNAL;
+MonoJitICallInfo    *mono_find_jit_opcode_emulation (int opcode) MONO_INTERNAL;
+
+gboolean  mini_class_is_system_array (MonoClass *klass);
+MonoMethodSignature *mono_get_element_address_signature (int arity);
+MonoJitICallInfo    *mono_get_element_address_icall (int rank);
+MonoJitICallInfo    *mono_get_array_new_va_icall (int rank);
+
+void      mono_linterval_add_range          (MonoCompile *cfg, MonoLiveInterval *interval, int from, int to) MONO_INTERNAL;
+void      mono_linterval_print              (MonoLiveInterval *interval) MONO_INTERNAL;
+gboolean  mono_linterval_covers             (MonoLiveInterval *interval, int pos) MONO_INTERNAL;
+gint32    mono_linterval_get_intersect_pos  (MonoLiveInterval *i1, MonoLiveInterval *i2) MONO_INTERNAL;
+void      mono_liveness_handle_exception_clauses (MonoCompile *cfg) MONO_INTERNAL;
 
 void      mono_aot_init                     (void) MONO_INTERNAL;
 gpointer  mono_aot_get_method               (MonoDomain *domain,
@@ -1123,18 +1113,14 @@ gpointer mono_aot_get_method_from_vt_slot   (MonoDomain *domain, MonoVTable *vta
 
 gboolean  mono_method_blittable             (MonoMethod *method) MONO_INTERNAL;
 gboolean  mono_method_same_domain           (MonoJitInfo *caller, MonoJitInfo *callee) MONO_INTERNAL;
-MonoJitICallInfo *mono_find_jit_opcode_emulation (int opcode);
-void      mono_register_opcode_emulation    (int opcode, const char* name, const char *sigstr, gpointer func, gboolean no_throw);
-void      mono_draw_graph                   (MonoCompile *cfg, MonoGraphOptions draw_options);
-void      mono_add_varcopy_to_end           (MonoCompile *cfg, MonoBasicBlock *bb, int src, int dest);
-void      mono_add_ins_to_end               (MonoBasicBlock *bb, MonoInst *inst);
-void      mono_replace_ins                  (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, MonoInst **prev, MonoBasicBlock *first_bb, MonoBasicBlock *last_bb);
-gpointer  mono_create_ftnptr                (MonoDomain *domain, gpointer addr);
+
 void      mono_register_opcode_emulation    (int opcode, const char* name, const char *sigstr, gpointer func, gboolean no_throw) MONO_INTERNAL;
 void      mono_draw_graph                   (MonoCompile *cfg, MonoGraphOptions draw_options) MONO_INTERNAL;
 void      mono_add_varcopy_to_end           (MonoCompile *cfg, MonoBasicBlock *bb, int src, int dest) MONO_INTERNAL;
 void      mono_add_ins_to_end               (MonoBasicBlock *bb, MonoInst *inst) MONO_INTERNAL;
 gpointer  mono_create_ftnptr                (MonoDomain *domain, gpointer addr) MONO_INTERNAL;
+
+void      mono_replace_ins                  (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, MonoInst **prev, MonoBasicBlock *first_bb, MonoBasicBlock *last_bb);
 
 int               mono_find_method_opcode      (MonoMethod *method) MONO_INTERNAL;
 MonoJitICallInfo *mono_find_jit_icall_by_name  (const char *name) MONO_INTERNAL;
