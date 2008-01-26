@@ -217,6 +217,46 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			Assert.AreEqual ("Text", b.PropertyName, "6");
 			Assert.AreEqual ("Name", b.BindingMemberInfo.BindingField, "7");
 		}
+
+		[Test]
+		public void DataSourceNullTest ()
+		{
+			ChildMockItem item = new ChildMockItem ();
+			Control c = new Control ();
+			c.Tag = null;
+			item.ObjectValue = null;
+
+			c.DataBindings.Add ("Tag", item, "ObjectValue");
+
+			Form f = new Form ();
+			f.Controls.Add (c);
+
+			f.Show (); // Need this to init data binding
+
+			Assert.AreEqual (DBNull.Value, c.Tag, "1");
+		}
+	}
+
+	class ChildMockItem : MockItem
+	{
+		object value;
+
+		public ChildMockItem ()
+			: base (null, 0)
+		{
+		}
+
+		public object ObjectValue
+		{
+			get
+			{
+				return value;
+			}
+			set
+			{
+				this.value = value;
+			}
+		}
 	}
 
 }
