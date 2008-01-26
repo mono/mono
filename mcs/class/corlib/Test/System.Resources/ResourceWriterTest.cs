@@ -442,9 +442,6 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test] // bug #82566
-#if NET_2_0
-		[Category ("NotWorking")]
-#endif
 		public void WriteEnum ()
 		{
 			MemoryStream ms = new MemoryStream ();

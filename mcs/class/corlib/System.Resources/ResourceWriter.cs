@@ -243,7 +243,7 @@ namespace System.Resources
 				/* Keep a list of unique types */
 #if NET_2_0
 				// do not output predefined ones.
-				switch (type != null ? Type.GetTypeCode (type) : TypeCode.Empty) {
+				switch ((type != null && !type.IsEnum) ? Type.GetTypeCode (type) : TypeCode.Empty) {
 				case TypeCode.Decimal:
 				case TypeCode.Single:
 				case TypeCode.Double:
