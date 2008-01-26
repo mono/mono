@@ -990,7 +990,7 @@ namespace System.Net
 
 			webHeaders.SetInternal ("Host", actualUri.Authority);
 			if (cookieContainer != null) {
-				string cookieHeader = cookieContainer.GetCookieHeader (requestUri);
+				string cookieHeader = cookieContainer.GetCookieHeader (actualUri);
 				if (cookieHeader != "")
 					webHeaders.SetInternal ("Cookie", cookieHeader);
 			}

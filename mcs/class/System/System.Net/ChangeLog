@@ -1,5 +1,10 @@
 2008-01-26  Daniel Nauck  <dna@mono-project.de>
 
+	* HttpWebRequest.cs: fixed typo. Use the actual uri for correct
+	cookie header informations and not the originally one.
+
+2008-01-26  Daniel Nauck  <dna@mono-project.de>
+
 	* Cookie.cs: set Version to '1' if Port is set,
 	don't include path and domain informations when version is 0,
 	match ToString () output with .NET 2.0,
