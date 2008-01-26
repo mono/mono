@@ -1,5 +1,7 @@
 2008-01-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-sparc.c mini-ia64.c: Fix build.
+
 	* *.md: Remove op_ opcode prefixes.
 
 	* method-to-ir.c: Implement the delegate ctor optimization.

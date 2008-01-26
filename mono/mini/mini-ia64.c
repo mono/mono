@@ -26,6 +26,7 @@
 #include "mini-ia64.h"
 #include "inssel.h"
 #include "cpu-ia64.h"
+#include "jit-icalls.h"
 
 static gint appdomain_tls_offset = -1;
 static gint thread_tls_offset = -1;

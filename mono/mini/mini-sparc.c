@@ -34,6 +34,7 @@
 #include "inssel.h"
 #include "trace.h"
 #include "cpu-sparc.h"
+#include "jit-icalls.h"
 
 /*
  * Sparc V9 means two things:
