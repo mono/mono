@@ -1126,16 +1126,15 @@ namespace System.Linq.Expressions {
 
 		public static Expression<TDelegate> Lambda<TDelegate> (Expression body, params ParameterExpression [] parameters)
 		{
+			return Lambda<TDelegate> (body, parameters as IEnumerable<ParameterExpression>);
+		}
+
+		public static Expression<TDelegate> Lambda<TDelegate> (Expression body, IEnumerable<ParameterExpression> parameters)
+		{
 			if (body == null)
 				throw new ArgumentNullException ("body");
 
-			return new Expression<TDelegate> (body, parameters);
-		}
-
-		[MonoTODO]
-		public static Expression<TDelegate> Lambda<TDelegate> (Expression body, IEnumerable<ParameterExpression> parameters)
-		{
-			throw new NotImplementedException ();
+			return new Expression<TDelegate> (body, parameters.ToReadOnlyCollection ());
 		}
 
 		[MonoTODO]

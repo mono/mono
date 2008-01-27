@@ -34,16 +34,11 @@ namespace System.Linq.Expressions {
 
 	public sealed class Expression<TDelegate> : LambdaExpression {
 
-		internal Expression (Expression body, IEnumerable<ParameterExpression> parameters)
-			: base (typeof (TDelegate), body, new ReadOnlyCollection<ParameterExpression>(new List<ParameterExpression>(parameters)))
+		internal Expression (Expression body, ReadOnlyCollection<ParameterExpression> parameters)
+			: base (typeof (TDelegate), body, parameters)
 		{
 		}
-		
-		internal Expression (Expression body, ParameterExpression [] parameters)
-			: base (typeof (TDelegate), body, new ReadOnlyCollection<ParameterExpression>(parameters))
-		{
-		}
-		
+
 		public new TDelegate Compile ()
 		{
 			return (TDelegate) (object) ((LambdaExpression) this).Compile ();
