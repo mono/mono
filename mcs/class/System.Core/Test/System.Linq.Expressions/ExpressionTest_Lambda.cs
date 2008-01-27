@@ -163,5 +163,21 @@ namespace MonoTests.System.Linq.Expressions
 			// type we have here is int.
 			Expression.Lambda<Func<int?,int?,int>> (add, p1, p2);
 		}
+
+		[Test]
+		public void LambdaType ()
+		{
+			var l = Expression.Lambda (Expression.Constant (1), new [] { Expression.Parameter (typeof (int), "foo") });
+
+			Assert.AreEqual (typeof (Func<int, int>), l.Type);
+
+			l = Expression.Lambda (Expression.Call (null, GetType ().GetMethod ("Foo")), new [] { Expression.Parameter (typeof (string), "foofoo") });
+
+			Assert.AreEqual (typeof (Action<string>), l.Type);
+		}
+
+		public static void Foo ()
+		{
+		}
 	}
 }

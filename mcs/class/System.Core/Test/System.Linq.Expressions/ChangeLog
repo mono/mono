@@ -1,5 +1,10 @@
 2008-01-27  Jb Evain  <jbevain@novell.com>
 
+	* ExpressionTest_Lambda.cs: add test for the
+	Lambda(Expression,ParameterExpression[]) method.
+
+2008-01-27  Jb Evain  <jbevain@novell.com>
+
 	* ExpressionTest_Lambda.cs: add tests to assert the type
 	of the LambdaExpressions.
 
