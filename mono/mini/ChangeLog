@@ -1,5 +1,9 @@
 2008-01-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-exceptions.c (ves_icall_System_Security_SecurityFrame_GetSecurityFrame): 
+	Fix CAS on ia64.
+	(ves_icall_System_Security_SecurityFrame_GetSecurityStack): Ditto.
+
 	* mini-s390x.c: Use is_imm16 instead of is_uimm16 when checking whenever s390_aghi
 	can be used since it takes a 16 bit signed immediate.
 
