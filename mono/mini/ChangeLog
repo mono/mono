@@ -1,5 +1,8 @@
 2008-01-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-exceptions.c (mono_handle_exception_internal): Remove the old style
+	altstack handling code.
+
 	* mini-s390.c (mono_arch_emit_exceptions): Really fix a warning.
 	
 	* mini-s390.c (mono_arch_emit_exceptions): Fix a warning.
