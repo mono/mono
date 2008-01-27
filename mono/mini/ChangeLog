@@ -1,5 +1,11 @@
 2008-01-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* inssel-s390x.brg: Fix OP_SETRET.
+
+	* mini-s390x.c (mono_arch_output_basic_block): Fix OP_BREAK.
+
+	* mini-codegen.c (mono_opcode_to_cond): Fix a warning.
+
 	* mini-s390x.c cpu-s390x.md: Implement sext.i4 properly by sign extension.
 
 	* mini.c (mono_create_delegate_trampoline): Don't use mono_create_ftpntr here.
