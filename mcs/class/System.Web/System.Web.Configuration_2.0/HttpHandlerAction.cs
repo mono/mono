@@ -3,8 +3,10 @@
 //
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
+//	Daniel Nauck    (dna(at)mono-project(dot)de)
 //
 // (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2008 Daniel Nauck
 //
 
 //
@@ -32,10 +34,12 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Web;
 using System.Web.Util;
 
 namespace System.Web.Configuration
@@ -123,21 +127,8 @@ namespace System.Web.Configuration
 
 		string cached_verb = null;
 		string[] cached_verbs;
-
-		FileMatchingInfo[] cached_files;
-
-		FileMatchingInfo[] SplitPaths ()
-		{
-			string [] paths = Path.Split (',');
-
-			FileMatchingInfo [] tmpCachedFiles = new FileMatchingInfo [paths.Length];
-
-			int i = 0;
-			foreach (string s in paths)
-				tmpCachedFiles [i++] = new FileMatchingInfo (s);
-
-			return tmpCachedFiles;
-		}
+		Dictionary<string, bool> cachedMatches = new Dictionary<string, bool> ();
+		Object pathMatchesLock = new Object ();
 
 		string[] SplitVerbs ()
 		{
@@ -157,16 +148,6 @@ namespace System.Web.Configuration
 				}
 
 				return cached_verbs;
-			}
-		}
-
-		FileMatchingInfo[] Paths {
-			get {
-				if (cached_files == null) {
-					cached_files = SplitPaths ();
-				}
-
-				return cached_files;
 			}
 		}
 
@@ -190,36 +171,99 @@ namespace System.Web.Configuration
 			throw new HttpException (String.Format ("Type {0} does not implement IHttpHandler or IHttpHandlerFactory", type_name));
 		}
 
-		internal bool PathMatches (string p)
+		internal bool PathMatches (string pathToMatch)
 		{
-			int slash = p.LastIndexOf ('/');
-			string orig = p;
-			if (slash != -1)
-				p = p.Substring (slash);
-			
-			for (int j = Paths.Length; j > 0; ){
-				j--;
-				FileMatchingInfo fm = Paths [j];
-				
+			if (cachedMatches.ContainsKey (pathToMatch))
+				return cachedMatches [pathToMatch];
+
+			lock (pathMatchesLock)
+			{
+				if (cachedMatches.ContainsKey (pathToMatch))
+					return cachedMatches [pathToMatch];
+
+				bool result = false;
 				bool ignoreCase =
 #if TARGET_J2EE
 					true;
 #else
 					false;
-#endif				
-				if (fm.MatchExact != null)
-					return fm.MatchExact.Length == orig.Length && StrUtils.EndsWith (orig, fm.MatchExact, ignoreCase);
-					
-				if (fm.EndsWith != null)
-					return StrUtils.EndsWith (p, fm.EndsWith, ignoreCase);
+#endif
+				string[] handlerPaths = Path.Split (',');
+				int slash = pathToMatch.LastIndexOf ('/');
+				string origPathToMatch = pathToMatch;
+				if (slash != -1)
+					pathToMatch = pathToMatch.Substring (slash);
 
-				if (fm.MatchExpr == "*")
-					return true;
+				foreach (string handlerPath in handlerPaths)
+				{
+					if (handlerPath == "*")
+					{
+						result = true;
+						break;
+					}
 
-				/* convert to regexp */
-				return fm.RegExp.IsMatch (orig);
+					string matchExact = null;
+					string endsWith = null;
+					Regex regEx = null;
+
+					if (handlerPath.Length > 0)
+					{
+						if (handlerPath [0] == '*' && (handlerPath.IndexOf ('*', 1) == -1))
+							endsWith = handlerPath.Substring (1);
+
+						if (handlerPath.IndexOf ('*') == -1)
+							if (handlerPath [0] != '/')
+							{
+								HttpContext ctx = HttpContext.Current;
+								HttpRequest req = ctx != null ? ctx.Request : null;
+								string vpath = req != null ? req.BaseVirtualDir : HttpRuntime.AppDomainAppVirtualPath;
+
+								if (vpath == "/")
+									vpath = String.Empty;
+
+								matchExact = String.Concat (vpath, "/", handlerPath);
+							}
+					}
+
+					if (matchExact != null)
+					{
+						result = matchExact.Length == origPathToMatch.Length && StrUtils.EndsWith (origPathToMatch, matchExact, ignoreCase);
+						if (result == true)
+							break;
+						else
+							continue;
+					}
+					else if (endsWith != null)
+					{
+						result = StrUtils.EndsWith (pathToMatch, endsWith, ignoreCase);
+						if (result == true)
+							break;
+						else
+							continue;
+					}
+
+					if (handlerPath != "*")
+					{
+						string expr = handlerPath.Replace (".", "\\.").Replace ("?", "\\?").Replace ("*", ".*");
+						if (expr.Length > 0 && expr [0] == '/')
+							expr = expr.Substring (1);
+
+						expr += "\\z";
+						regEx = new Regex (expr);
+
+						if (regEx.IsMatch (origPathToMatch))
+						{
+							result = true;
+							break;
+						}
+					}
+				}
+
+				if (!cachedMatches.ContainsKey (origPathToMatch))
+					cachedMatches.Add (origPathToMatch, result);
+
+				return result;
 			}
-			return false;
 		}
 
 		// Loads the handler, possibly delay-loaded.

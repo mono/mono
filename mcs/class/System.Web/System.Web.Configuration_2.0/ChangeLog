@@ -1,3 +1,12 @@
+2008-01-27  Daniel Nauck <dna@mono-project.de>
+
+	* HttpHandlerAction.cs: fixed the internal method PathMatches ()
+	removed wrong caching of FileMatchingInfo classes with request specific
+	informations. Now we check against the current request path and cache
+	the result in a dictionary.
+	Also check correctly against all possible paths from the HttpHandler.
+		
+
 2007-12-27  Marek Habersack  <mhabersack@novell.com>
 
 	* ProfileGroupSettingsCollection.cs: added an internal method to
