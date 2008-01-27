@@ -1,3 +1,8 @@
+2008-01-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (reflection_methodbuilder_to_mono_method): Allow DynamicMethods
+	which belong to an inflated class. Fixes #356531.
+
 2008-01-26  Robert Jordan  <robertj@gmx.net>
 
 	* file-io.c: Implement and use wrappers for GetFileAttribute|Ex ()
