@@ -44,7 +44,7 @@ namespace MonoTests.System.Resources
 				Directory.Delete (_tempDirectory, true);
 		}
 
-		[Test]
+		[Test] // ctor (Stream)
 		public void Constructor1_Stream_InvalidContent ()
 		{
 			MemoryStream ms = new MemoryStream ();
@@ -63,7 +63,22 @@ namespace MonoTests.System.Resources
 			}
 		}
 
-		[Test]
+		[Test] // ctor (Stream)
+		[Category ("NotDotNet")] // MS throws a NullReferenceException in GetEnumerator ()
+		public void Constructor1_Stream_Null ()
+		{
+			try {
+				new ResXResourceReader ((Stream) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("stream", ex.ParamName, "#5");
+			}
+		}
+
+		[Test] // ctor (String)
 		public void Constructor2_FileName_DoesNotExist ()
 		{
 			ResXResourceReader r = new ResXResourceReader ((string) "definitelydoesnotexist.zzz");
@@ -78,7 +93,7 @@ namespace MonoTests.System.Resources
 			}
 		}
 
-		[Test]
+		[Test] // ctor (TextReader)
 		public void Constructor3_Reader_InvalidContent ()
 		{
 			StringReader sr = new StringReader ("</definitelyinvalid<");
@@ -190,7 +205,8 @@ namespace MonoTests.System.Resources
 				sw.Write (string.Format (CultureInfo.InvariantCulture,
 					_resXFileRefTemplate, ResXResourceWriter.ResMimeType, "1.0",
 					Consts.AssemblySystem_Windows_Forms, refFile,
-					typeof (Bitmap).AssemblyQualifiedName, string.Empty));
+					typeof (Bitmap).AssemblyQualifiedName, string.Empty,
+					Consts.AssemblyCorlib));
 			}
 
 			using (ResXResourceReader r = new ResXResourceReader (resxFile)) {
@@ -219,7 +235,8 @@ namespace MonoTests.System.Resources
 				sw.Write (string.Format (CultureInfo.InvariantCulture,
 					_resXFileRefTemplate, ResXResourceWriter.ResMimeType, "1.0",
 					Consts.AssemblySystem_Windows_Forms, refFile,
-					typeof (Bitmap).AssemblyQualifiedName, string.Empty));
+					typeof (Bitmap).AssemblyQualifiedName, string.Empty,
+					Consts.AssemblyCorlib));
 			}
 
 			using (ResXResourceReader r = new ResXResourceReader (resxFile)) {
@@ -249,7 +266,8 @@ namespace MonoTests.System.Resources
 					_resXFileRefTemplate, ResXResourceWriter.ResMimeType, "1.0",
 					Consts.AssemblySystem_Windows_Forms, 
 					"in" + Path.DirectorySeparatorChar + "string.txt", 
-					typeof (StreamReader).AssemblyQualifiedName, string.Empty));
+					typeof (StreamReader).AssemblyQualifiedName, string.Empty,
+					Consts.AssemblyCorlib));
 			}
 
 			using (ResXResourceReader r = new ResXResourceReader (resxFile)) {
@@ -383,7 +401,8 @@ namespace MonoTests.System.Resources
 				sw.Write (string.Format (CultureInfo.InvariantCulture,
 					_resXFileRefTemplate, ResXResourceWriter.ResMimeType, "1.0",
 					Consts.AssemblySystem_Windows_Forms, refFile, 
-					typeof (string).AssemblyQualifiedName, string.Empty));
+					typeof (string).AssemblyQualifiedName, string.Empty,
+					Consts.AssemblyCorlib));
 			}
 
 			using (ResXResourceReader r = new ResXResourceReader (resxFile)) {
@@ -413,7 +432,8 @@ namespace MonoTests.System.Resources
 				sw.Write (string.Format (CultureInfo.InvariantCulture,
 					_resXFileRefTemplate, ResXResourceWriter.ResMimeType, "1.0",
 					Consts.AssemblySystem_Windows_Forms, refFile,
-					typeof (string).AssemblyQualifiedName, ";utf-7"));
+					typeof (string).AssemblyQualifiedName, ";utf-7",
+					Consts.AssemblyCorlib));
 			}
 
 			using (ResXResourceReader r = new ResXResourceReader (resxFile)) {
@@ -452,7 +472,8 @@ namespace MonoTests.System.Resources
 				sw.Write (string.Format (CultureInfo.InvariantCulture,
 					_resXFileRefTemplate, ResXResourceWriter.ResMimeType, "1.0",
 					Consts.AssemblySystem_Windows_Forms, refFile,
-					typeof (string).AssemblyQualifiedName, string.Empty));
+					typeof (string).AssemblyQualifiedName, string.Empty,
+					Consts.AssemblyCorlib));
 			}
 
 			using (ResXResourceReader r = new ResXResourceReader (resxFile)) {
@@ -482,7 +503,8 @@ namespace MonoTests.System.Resources
 				sw.Write (string.Format (CultureInfo.InvariantCulture,
 					_resXFileRefTemplate, ResXResourceWriter.ResMimeType, "1.0",
 					Consts.AssemblySystem_Windows_Forms, refFile,
-					typeof (string).AssemblyQualifiedName, ";utf-8"));
+					typeof (string).AssemblyQualifiedName, ";utf-8",
+					Consts.AssemblyCorlib));
 			}
 
 			using (ResXResourceReader r = new ResXResourceReader (resxFile)) {
@@ -1475,9 +1497,8 @@ namespace MonoTests.System.Resources
 		}
 
 #if NET_2_0
-
 		[Test]
-		public void useResXDataNodes ()
+		public void UseResXDataNodes ()
 		{
 			string refFile = Path.Combine (_tempDirectory, "32x32.ico");
 			WriteEmbeddedResource ("32x32.ico", refFile);
@@ -1487,25 +1508,41 @@ namespace MonoTests.System.Resources
 				sw.Write (string.Format (CultureInfo.InvariantCulture,
 					_resXFileRefTemplate, ResXResourceWriter.ResMimeType, "1.0",
 					Consts.AssemblySystem_Windows_Forms, refFile,
-					typeof (Bitmap).AssemblyQualifiedName, string.Empty));
+					typeof (Bitmap).AssemblyQualifiedName, string.Empty,
+					Consts.AssemblyCorlib));
 			}
 
 			using (ResXResourceReader r = new ResXResourceReader (resxFile)) {
 				r.UseResXDataNodes = true;
 				IDictionaryEnumerator enumerator = r.GetEnumerator ();
-				enumerator.MoveNext ();
-				Assert.IsNotNull (enumerator.Current, "#A1");
-				Assert.AreEqual ("foo", enumerator.Key, "#A2");
-				ResXDataNode node = enumerator.Value as ResXDataNode;
-				Assert.IsNotNull (node, "#A3");
-				Assert.AreEqual ("foo", node.Name, "#A4");
-				Bitmap bitmap = node.GetValue (new AssemblyName[] {typeof (Bitmap).Assembly.GetName ()}) as Bitmap;
-				Assert.IsNotNull (bitmap, "#A5");
+
+				int entries = 0;
+				while (enumerator.MoveNext ()) {
+					entries++;
+
+					ResXDataNode node = enumerator.Value as ResXDataNode;
+
+					switch ((string) enumerator.Key) {
+					case "foo":
+						Assert.AreEqual ("foo", node.Name, "#A1");
+						Bitmap bitmap = node.GetValue (new AssemblyName[] {typeof (Bitmap).Assembly.GetName ()}) as Bitmap;
+						Assert.IsNotNull (bitmap, "#A2");
+						break;
+					case "panel_label.Locked":
+						Assert.AreEqual ("panel_label.Locked", node.Name, "#B1");
+						Assert.AreEqual (true, node.GetValue (new AssemblyName[] {typeof (int).Assembly.GetName ()}), "#B2");
+						break;
+					default:
+						Assert.Fail ("#C:" + enumerator.Key);
+						break;
+					}
+				}
+				Assert.AreEqual (2, entries, "#D");
 			}
 		}
 		
 		[Test]
-		public void getPosition()
+		public void ResXDataNode_GetNodePosition ()
 		{
 			string refFile = Path.Combine (_tempDirectory, "32x32.ico");
 			WriteEmbeddedResource ("32x32.ico", refFile);
@@ -1515,7 +1552,8 @@ namespace MonoTests.System.Resources
 				sw.Write (string.Format (CultureInfo.InvariantCulture,
 					_resXFileRefTemplate, ResXResourceWriter.ResMimeType, "1.0",
 					Consts.AssemblySystem_Windows_Forms, refFile,
-					typeof (Bitmap).AssemblyQualifiedName, string.Empty));
+					typeof (Bitmap).AssemblyQualifiedName, string.Empty,
+					Consts.AssemblyCorlib));
 			}
 
 			using (ResXResourceReader r = new ResXResourceReader (resxFile)) {
@@ -1539,20 +1577,26 @@ namespace MonoTests.System.Resources
 				sw.Write (string.Format (CultureInfo.InvariantCulture,
 					_resXFileRefTemplate, ResXResourceWriter.ResMimeType, "1.0",
 					Consts.AssemblySystem_Windows_Forms, refFile,
-					typeof (Bitmap).AssemblyQualifiedName, string.Empty));
+					typeof (Bitmap).AssemblyQualifiedName, string.Empty,
+					Consts.AssemblyCorlib));
 			}
 
 			using (ResXResourceReader r = new ResXResourceReader (resxFile)) {
 				IDictionaryEnumerator enumerator = r.GetMetadataEnumerator ();
-				enumerator.MoveNext ();
-				Assert.IsNotNull (enumerator.Current, "#A1");
-				Assert.AreEqual ("panel_label.Locked", enumerator.Key, "#A2");
-				Assert.AreEqual(typeof(bool), enumerator.Value.GetType(), "#A3");
-				bool flag = (bool)enumerator.Value;
-				Assert.AreEqual (true, flag, "#A4");
+				Assert.IsTrue (enumerator.MoveNext (), "#A1");
+				Assert.IsNotNull (enumerator.Current, "#A2");
+				Assert.AreEqual ("panel_label.Locked", enumerator.Key, "#A3");
+				Assert.AreEqual(typeof(bool), enumerator.Value.GetType(), "#A4");
+				Assert.IsTrue ((bool) enumerator.Value, "#A5");
+				Assert.IsFalse (enumerator.MoveNext (), "#A6");
+			}
+
+			using (ResXResourceReader r = new ResXResourceReader (resxFile)) {
+				r.UseResXDataNodes = true;
+				IDictionaryEnumerator enumerator = r.GetMetadataEnumerator ();
+				Assert.IsFalse (enumerator.MoveNext (), "#B1");
 			}
 		}
-
 #endif
 
 		[Test]
@@ -1745,7 +1789,7 @@ namespace MonoTests.System.Resources
 			"		<value>System.Resources.ResXResourceWriter, {2}</value>" +
 			"	</resheader>" +
 #if NET_2_0
-			"	<metadata name=\"panel_label.Locked\" type=\"System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\">" +
+			"	<metadata name=\"panel_label.Locked\" type=\"System.Boolean, {6}\">" +
 			"		<value>True</value>" +
 			" 	</metadata>" +
 #endif

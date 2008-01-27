@@ -305,9 +305,17 @@ namespace MonoTests.System.Resources
 		public void ConvertFrom_Type_MemoryStream ()
 		{
 			string fileRef = _tempFileUTF7 + ";" + typeof (MemoryStream).AssemblyQualifiedName;
-			using (MemoryStream ms = (MemoryStream)_converter.ConvertFrom (fileRef)) {
+#if NET_2_0
+			using (MemoryStream ms = (MemoryStream) _converter.ConvertFrom (fileRef)) {
 				Assert.IsTrue (ms.Length > 0);
 			}
+#else
+			try {
+				_converter.ConvertFrom (fileRef);
+				Assert.Fail ("#1");
+			} catch (MissingMethodException) {
+			}
+#endif
 		}
 
 		[Test]

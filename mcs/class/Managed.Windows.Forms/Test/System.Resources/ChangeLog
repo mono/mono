@@ -1,3 +1,13 @@
+2008-01-27  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ResXResourceReaderTest.cs: Added Mono-only ctor tests. Fixed
+	and improved UseResXDataNodes test. Improved GetMetadataEnumerator
+	test.
+	* WriterTest.cs: Added Mono-only ctor tests.
+	* ResXFileRefTest.cs: Conversion to MemoryStream is only supported on
+	2.0 profile.
+	* ResXDataNodeTest.cs: Fixed line endings.
+
 2008-01-23  Olivier Dufour <olivier.duff@gmail.com>
 
 	* ResXResourceReaderTest.cs: Fix the value for test GetNodePosition.

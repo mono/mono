@@ -155,3 +155,4 @@ namespace MonoTests.System.Resources
 	}
 }
 #endif
+

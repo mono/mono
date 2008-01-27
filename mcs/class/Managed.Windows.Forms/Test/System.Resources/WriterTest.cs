@@ -47,6 +47,68 @@ namespace MonoTests.System.Resources
 #endif
 		}
 
+		[Test] // ctor (Stream)
+		[NUnit.Framework.Category ("NotDotNet")]
+		public void Constructor1_Stream_Null ()
+		{
+			try {
+				new ResXResourceWriter ((Stream) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("stream", ex.ParamName, "#5");
+			}
+		}
+
+		[Test] // ctor (Stream)
+		[NUnit.Framework.Category ("NotDotNet")]
+		public void Constructor1_Stream_NotWritable ()
+		{
+			MemoryStream ms = new MemoryStream (new byte [0], false);
+
+			try {
+				new ResXResourceWriter (ms);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("stream", ex.ParamName, "#5");
+			}
+		}
+
+		[Test] // ctor (TextWriter)
+		[NUnit.Framework.Category ("NotDotNet")]
+		public void Constructor2_TextWriter_Null ()
+		{
+			try {
+				new ResXResourceWriter ((TextWriter) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("textWriter", ex.ParamName, "#5");
+			}
+		}
+
+		[Test] // ctor (String)
+		[NUnit.Framework.Category ("NotDotNet")]
+		public void Constructor3_FileName_Null ()
+		{
+			try {
+				new ResXResourceWriter ((string) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("fileName", ex.ParamName, "#5");
+			}
+		}
+
 		[Test]
 		public void TestWriter ()
 		{
