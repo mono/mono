@@ -1,3 +1,9 @@
+2008-01-27  Andreia Gaita <avidigal@novell.com>
+
+	* PropertyGridView.cs: Rearrange the dropdown loop so that it exits when
+	detecting that the dropdown toolwindow is hidden. EndLoop outside the
+	while.
+
 2008-01-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* PropertiesTab.cs: Fixed argument name of GetDefaultProperty to match
