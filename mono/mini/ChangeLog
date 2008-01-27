@@ -1,5 +1,7 @@
 2008-01-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-s390.c: Add support for generic sharing.
+
 	* mini-exceptions.c (ves_icall_System_Security_SecurityFrame_GetSecurityFrame): 
 	Fix CAS on s390.
 	(ves_icall_System_Security_SecurityFrame_GetSecurityStack): Ditto.
