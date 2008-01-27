@@ -45,7 +45,14 @@ namespace System.Linq.Expressions {
 		public ReadOnlyCollection<Expression> Arguments {
 			get { return arguments; }
 		}
-
+		
+		internal InvocationExpression (Expression lambda, ReadOnlyCollection<Expression> arguments)
+			: base (ExpressionType.Invoke, lambda.Type)
+		{
+			this.lambda = lambda;
+			this.arguments = arguments;
+		}
+		
 		internal override void Emit (EmitContext ec)
 		{
 			throw new NotImplementedException ();

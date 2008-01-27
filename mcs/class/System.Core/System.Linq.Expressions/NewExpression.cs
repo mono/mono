@@ -49,7 +49,15 @@ namespace System.Linq.Expressions {
 		public ReadOnlyCollection<MemberInfo> Members {
 			get { return members; }
 		}
-
+		
+		internal NewExpression (ConstructorInfo constructor, ReadOnlyCollection<Expression> arguments,	ReadOnlyCollection<MemberInfo> members)
+			: base (ExpressionType.New, constructor.DeclaringType)
+		{
+			this.constructor = constructor;
+			this.arguments = arguments;
+			this.members = members;
+		}
+		
 		internal override void Emit (EmitContext ec)
 		{
 			throw new NotImplementedException ();

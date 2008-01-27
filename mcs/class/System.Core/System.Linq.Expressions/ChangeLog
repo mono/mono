@@ -1,3 +1,10 @@
+2008-01-27  Olivier Dufour  <olivier.duff@gmail.com>
+
+	* Expression.cs, InvocationExpession.cs,
+	ListInitExpression.cs, MemberInitExpression.cs
+	NewExpression.cs : Add all missing 
+	constructor in Expressions and remove the base one
+
 2008-01-25  Jb Evain  <jbevain@novell.com>
 
 	* Expression.cs, ExpressionPrinter.cs: implement Bind.

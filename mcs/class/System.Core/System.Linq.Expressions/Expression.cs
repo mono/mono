@@ -54,12 +54,6 @@ namespace System.Linq.Expressions {
 			get { return type; }
 		}
 
-		// TODO: remove when all Expression subtypes
-		// have their constructor implemented
-		protected Expression ()
-		{
-		}
-
 		protected Expression (ExpressionType node_type, Type type)
 		{
 			this.node_type = node_type;

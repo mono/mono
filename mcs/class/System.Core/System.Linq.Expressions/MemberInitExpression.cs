@@ -44,7 +44,14 @@ namespace System.Linq.Expressions {
 		public ReadOnlyCollection<MemberBinding> Bindings {
 			get { return bindings; }
 		}
-
+		
+		internal MemberInitExpression (NewExpression new_expression, ReadOnlyCollection<MemberBinding> bindings)
+			: base (ExpressionType.MemberInit, new_expression.Type)
+		{
+			this.new_expression = new_expression;
+			this.bindings = bindings;
+		}
+		
 		internal override void Emit (EmitContext ec)
 		{
 			throw new NotImplementedException ();
