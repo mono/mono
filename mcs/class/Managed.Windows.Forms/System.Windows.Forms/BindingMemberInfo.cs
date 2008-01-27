@@ -92,14 +92,14 @@ namespace System.Windows.Forms {
 
 		#region Public Static Methods
 #if NET_2_0
-		public static bool operator == (BindingMemberInfo m1, BindingMemberInfo m2)
+		public static bool operator == (BindingMemberInfo a, BindingMemberInfo b)
 		{
-			return (m1.Equals (m2));
+			return (a.Equals (b));
 		}
 
-		public static bool operator != (BindingMemberInfo m1, BindingMemberInfo m2)
+		public static bool operator != (BindingMemberInfo a, BindingMemberInfo b)
 		{
-			return !(m1.Equals (m2));
+			return !(a.Equals (b));
 		}
 #endif
 		#endregion	// Public Static Methods

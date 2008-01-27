@@ -593,9 +593,9 @@ namespace System.Windows.Forms
 			#endregion Public Properties
 
 			#region Public Methods
-			public bool Contains (object selectedObject)
+			public bool Contains (object item)
 			{
-				return list.Contains (selectedObject);
+				return list.Contains (item);
 			}
 
 			public void CopyTo (Array dest, int index)

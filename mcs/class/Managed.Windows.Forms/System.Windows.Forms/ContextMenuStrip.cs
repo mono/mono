@@ -62,10 +62,11 @@ namespace System.Windows.Forms
 			base.Dispose (disposing);
 		}
 
-		protected override void SetVisibleCore (bool value)
+		protected override void SetVisibleCore (bool visible)
 		{
-			base.SetVisibleCore (value);
-			if (value) XplatUI.SetTopmost (this.Handle, true);
+			base.SetVisibleCore (visible);
+			if (visible)
+				XplatUI.SetTopmost (this.Handle, true);
 		}
 		#endregion
 	}

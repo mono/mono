@@ -61,11 +61,11 @@ namespace System.Windows.Forms
 			right_to_left = RightToLeft.Inherit;
 		}
 
-		public ContextMenu (MenuItem[] items) : base (items)
+		public ContextMenu (MenuItem [] menuItems) : base (menuItems)
 		{
 			right_to_left = RightToLeft.Inherit;
 		}
-		 
+
 		#region Public Properties
 		
 		[Localizable(true)]
@@ -91,7 +91,7 @@ namespace System.Windows.Forms
 		protected internal virtual bool ProcessCmdKey (ref Message msg, Keys keyData, Control control)
 		{
 			src_control = control;
-    		return ProcessCmdKey (ref msg, keyData);
+			return ProcessCmdKey (ref msg, keyData);
 		}
 
 		protected internal virtual void OnCollapse (EventArgs e)
@@ -124,7 +124,7 @@ namespace System.Windows.Forms
 #endif
 		}
 
-#if NET_2_0		
+#if NET_2_0
 		public void Show (Control control, Point pos, LeftRightAlignment alignment)
 		{
 			Point point;

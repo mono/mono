@@ -550,7 +550,7 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 
-		public virtual CurrencyManager GetRelatedCurrencyManager (string dataMamber)
+		public virtual CurrencyManager GetRelatedCurrencyManager (string dataMember)
 		{
 			throw new NotImplementedException ();
 		}

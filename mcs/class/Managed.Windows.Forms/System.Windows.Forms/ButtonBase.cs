@@ -562,18 +562,18 @@ namespace System.Windows.Forms {
 			base.OnMouseDown (mevent);
 		}
 
-		protected override void OnMouseEnter (EventArgs e)
+		protected override void OnMouseEnter (EventArgs eventargs)
 		{
 			is_entered = true;
 			Invalidate ();
-			base.OnMouseEnter (e);
+			base.OnMouseEnter (eventargs);
 		}
 
-		protected override void OnMouseLeave (EventArgs e)
+		protected override void OnMouseLeave (EventArgs eventargs)
 		{
 			is_entered = false;
 			Invalidate ();
-			base.OnMouseLeave (e);
+			base.OnMouseLeave (eventargs);
 		}
 
 		protected override void OnMouseMove (MouseEventArgs mevent) {

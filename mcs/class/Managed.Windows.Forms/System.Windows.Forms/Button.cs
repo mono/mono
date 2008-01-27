@@ -121,9 +121,9 @@ namespace System.Windows.Forms {
 		}
 #endif
 
-		protected override void OnMouseUp (MouseEventArgs e)
+		protected override void OnMouseUp (MouseEventArgs mevent)
 		{
-			base.OnMouseUp (e);
+			base.OnMouseUp (mevent);
 		}
 
 #if NET_2_0

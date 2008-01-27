@@ -70,13 +70,12 @@ namespace System.Windows.Forms {
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, binding));
 		}
 
-		public Binding Add (string property_name, object data_source, string data_member)
+		public Binding Add (string propertyName, object dataSource, string dataMember)
 		{
-			if (data_source == null) {
-				throw new ArgumentNullException ("DataSource cannot be null.");
-			}			
-			
-			Binding res = new Binding (property_name, data_source, data_member);
+			if (dataSource == null)
+				throw new ArgumentNullException ("dataSource");
+
+			Binding res = new Binding (propertyName, dataSource, dataMember);
 			Add (res);
 			return res;
 		}
@@ -85,56 +84,53 @@ namespace System.Windows.Forms {
 			base.Clear();
 		}
 
-		public new void Remove(Binding binding) {
-			if (binding == null) {
+		public new void Remove (Binding binding) {
+			if (binding == null)
 				throw new NullReferenceException("The binding is null");
-			}
 
 			base.Remove(binding);
 		}
 
 		public new void RemoveAt(int index) {
-			if (index < 0 || index >= base.List.Count) {
+			if (index < 0 || index >= base.List.Count)
 				throw new ArgumentOutOfRangeException("index");
-			}
 
 			base.RemoveAt(index);
 		}
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods
-		protected override void AddCore (Binding binding)
+		protected override void AddCore (Binding dataBinding)
 		{
-			if (binding == null)
+			if (dataBinding == null)
 				throw new ArgumentNullException ("dataBinding");
 
-			if (binding.Control != null && binding.Control != control)
-				  throw new ArgumentException ("dataBinding belongs to another BindingsCollection");
-				  
+			if (dataBinding.Control != null && dataBinding.Control != control)
+				throw new ArgumentException ("dataBinding belongs to another BindingsCollection");
+
 			for (int i = 0; i < Count; i++) {
 				Binding bnd = this [i];
-				if (bnd == null || bnd.PropertyName.Length == 0 || binding.PropertyName.Length == 0) {
+				if (bnd == null || bnd.PropertyName.Length == 0 || dataBinding.PropertyName.Length == 0) {
 					continue;
 				}
 
-				if (String.Compare (bnd.PropertyName, binding.PropertyName, true) == 0) {
+				if (String.Compare (bnd.PropertyName, dataBinding.PropertyName, true) == 0) {
 					throw new ArgumentException ("The binding is already in the collection");
 				}
 			}
 
-			binding.SetControl (control);
-			binding.Check ();
-			base.AddCore (binding);
+			dataBinding.SetControl (control);
+			dataBinding.Check ();
+			base.AddCore (dataBinding);
 		}
 
 		protected override void ClearCore() {
 			base.ClearCore ();
 		}
 
-		protected override void RemoveCore(Binding dataBinding) {
-			if (dataBinding == null) {
+		protected override void RemoveCore (Binding dataBinding) {
+			if (dataBinding == null)
 				throw new ArgumentNullException ("dataBinding");
-			}
 
 			base.RemoveCore (dataBinding);
 		}

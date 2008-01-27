@@ -606,10 +606,10 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public static void RemoveMessageFilter (IMessageFilter filter)
+		public static void RemoveMessageFilter (IMessageFilter value)
 		{
 			lock (message_filters) {
-				message_filters.Remove (filter);
+				message_filters.Remove (value);
 			}
 		}
 

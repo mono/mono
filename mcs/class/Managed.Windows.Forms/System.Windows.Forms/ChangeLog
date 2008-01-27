@@ -1,3 +1,29 @@
+2008-01-27  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AccessibleObject.cs: Modified argument names to match MS.
+	* Button.cs: Modified argument names to match MS.
+	* BindingContext.cs: Modified argument names to match MS.
+	* BindingMemberInfo.cs: Modified argument names to match MS.
+	* ButtonBase.cs: Modified argument names to match MS.
+	* ComboBox.cs: Modified argument names to match MS.
+	* Control.cs: Modified argument names to match MS.
+	* CheckedListBox.cs: Modified argument names to match MS.
+	* CommonDialog.cs: Modified argument names to match MS.
+	* DataGrid.cs: Modified argument names to match MS.
+	* CursorConverter.cs: Modified argument names to match MS.
+	* ControlPaint.cs: Modified argument names to match MS.
+	* CheckBox.cs: Modified argument names to match MS.
+	* ControlBindingsCollection.cs: Modified argument names to match MS.
+	* BindingSource.cs: Modified argument names to match MS.
+	* DataFormats.cs: Modified argument names to match MS.
+	* ContainerControl.cs: Modified argument names to match MS.
+	* CurrencyManager.cs: Modified argument names to match MS.
+	* Application.cs: Modified argument names to match MS.
+	* ContextMenuStrip.cs: Modified argument names to match MS.
+	* ContextMenu.cs: Modified argument names to match MS.
+	* BindingManagerBase.cs: Modified argument names to match MS.
+	* WindowsFormsSection.cs: Fixed line ending.	
+
 2008-01-27  Andreia Gaita <avidigal@novell.com>
 
 	* PropertyGridView.cs: Rearrange the dropdown loop so that it exits when

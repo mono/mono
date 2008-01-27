@@ -1833,9 +1833,9 @@ namespace System.Windows.Forms
 				return object_items.Contains (value);
 			}
 
-			public void CopyTo (object[] dest, int arrayIndex)
+			public void CopyTo (object [] destination, int arrayIndex)
 			{
-				object_items.CopyTo (dest, arrayIndex);
+				object_items.CopyTo (destination, arrayIndex);
 			}
 
 			void ICollection.CopyTo (Array dest, int index)

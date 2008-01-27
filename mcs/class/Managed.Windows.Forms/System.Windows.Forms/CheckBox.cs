@@ -354,9 +354,9 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
-		protected override void OnKeyDown (KeyEventArgs kevent)
+		protected override void OnKeyDown (KeyEventArgs e)
 		{
-			base.OnKeyDown (kevent);
+			base.OnKeyDown (e);
 		}
 #endif
 

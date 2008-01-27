@@ -664,9 +664,9 @@ namespace System.Windows.Forms {
 				PerformAutoScale ();
 		}
 
-		protected override void OnLayout (LayoutEventArgs levent)
+		protected override void OnLayout (LayoutEventArgs e)
 		{
-			base.OnLayout (levent);
+			base.OnLayout (e);
 		}
 		
 		AutoValidate auto_validate = AutoValidate.Inherit;

@@ -186,10 +186,9 @@ namespace System.Windows.Forms {
 			return FindFocusControl(owner);
 		}
 
-		public virtual int GetHelpTopic(out string FileName) {
-
-			FileName = null;
-
+		public virtual int GetHelpTopic (out string fileName)
+		{
+			fileName = null;
 			return -1;
 		}
 

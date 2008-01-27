@@ -291,13 +291,13 @@ namespace System.Windows.Forms {
 				onPositionChangedHandler (this, e);
 		}
 
-		protected internal override string GetListName (ArrayList accessors)
+		protected internal override string GetListName (ArrayList listAccessors)
 		{
 			if (list is ITypedList) {
 				PropertyDescriptor [] pds = null;
-				if (accessors != null) {
-					pds = new PropertyDescriptor [accessors.Count];
-					accessors.CopyTo (pds, 0);
+				if (listAccessors != null) {
+					pds = new PropertyDescriptor [listAccessors.Count];
+					listAccessors.CopyTo (pds, 0);
 				}
 				return ((ITypedList) list).GetListName (pds);
 			}
@@ -371,10 +371,10 @@ namespace System.Windows.Forms {
 #else
 		private
 #endif
-		void OnMetaDataChanged (EventArgs args)
+		void OnMetaDataChanged (EventArgs e)
 		{
 			if (MetaDataChanged != null)
-				MetaDataChanged (this, args);
+				MetaDataChanged (this, e);
 		}
 
 		/* TODO - We need to fire the 2.0 ListChanged event for -likely- all the events,

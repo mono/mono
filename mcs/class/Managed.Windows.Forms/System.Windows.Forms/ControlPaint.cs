@@ -151,7 +151,7 @@ namespace System.Windows.Forms {
 				G = Math.Min(255, (HueToRGB(Magic1,Magic2,hue)*RGBMax+(HLSMax/2))/HLSMax);
 				B = Math.Min(255, (HueToRGB(Magic1,Magic2,hue-(HLSMax/3))*RGBMax+(HLSMax/2))/HLSMax);
 			}
-			return(Color.FromArgb(R, G, B));
+			return (Color.FromArgb(R, G, B));
 		}
 		#endregion	// Helpers
 
@@ -178,82 +178,86 @@ namespace System.Windows.Forms {
 			return Light(baseColor, 0.5f);
 		}
 
-		public static Color Light(Color baseColor,float per) {
+		public static Color Light (Color baseColor, float percOfLightLight)
+		{
 			if (baseColor.ToArgb () == ThemeEngine.Current.ColorControl.ToArgb ()) {
 				int r_sub, g_sub, b_sub;
 				Color color;
 
-				if (per <= 0f)
+				if (percOfLightLight <= 0f)
 					return ThemeEngine.Current.ColorControlLight;
 
-				if (per == 1.0f)					
+				if (percOfLightLight == 1.0f)
 					return ThemeEngine.Current.ColorControlLightLight;
 				
 				r_sub = ThemeEngine.Current.ColorControlLightLight.R - ThemeEngine.Current.ColorControlLight.R;
 				g_sub = ThemeEngine.Current.ColorControlLightLight.G - ThemeEngine.Current.ColorControlLight.G;
 				b_sub = ThemeEngine.Current.ColorControlLightLight.B - ThemeEngine.Current.ColorControlLight.B;
-								
+
 				color = Color.FromArgb (ThemeEngine.Current.ColorControlLight.A,
-						(int) (ThemeEngine.Current.ColorControlLight.R + (r_sub * per)),
-						(int) (ThemeEngine.Current.ColorControlLight.G + (g_sub * per)),
-						(int) (ThemeEngine.Current.ColorControlLight.B + (b_sub * per)));
-				
+						(int) (ThemeEngine.Current.ColorControlLight.R + (r_sub * percOfLightLight)),
+						(int) (ThemeEngine.Current.ColorControlLight.G + (g_sub * percOfLightLight)),
+						(int) (ThemeEngine.Current.ColorControlLight.B + (b_sub * percOfLightLight)));
 				return color;
  			}
 			
 			int H, I, S;
 
-			ControlPaint.Color2HBS(baseColor, out H, out I, out S);
-			int NewIntensity =  Math.Min (255, I + (int)((255 - I) * 0.5f * per));
+			ControlPaint.Color2HBS (baseColor, out H, out I, out S);
+			int NewIntensity = Math.Min (255, I + (int) ((255 - I) * 0.5f * percOfLightLight));
 			
-			return ControlPaint.HBS2Color(H, NewIntensity, S);			
+			return ControlPaint.HBS2Color (H, NewIntensity, S);
 		}
 
-		public static Color LightLight(Color baseColor) {			
+		public static Color LightLight (Color baseColor)
+		{
 			return Light(baseColor, 1.0f);
 		}
 
-		public static Color Dark(Color baseColor) {
+		public static Color Dark (Color baseColor)
+		{
 			return Dark(baseColor, 0.5f);
 		}
 
-		public static Color Dark(Color baseColor,float per) {	
-
+		public static Color Dark (Color baseColor, float percOfDarkDark)
+		{
 			if (baseColor.ToArgb () == ThemeEngine.Current.ColorControl.ToArgb ()) {
 				
 				int r_sub, g_sub, b_sub;
 				Color color;
 
-				if (per <= 0f)
+				if (percOfDarkDark <= 0f)
 					return ThemeEngine.Current.ColorControlDark;
 
-				if (per == 1.0f)
+				if (percOfDarkDark == 1.0f)
 					return ThemeEngine.Current.ColorControlDarkDark;
-													
+
 				r_sub = ThemeEngine.Current.ColorControlDarkDark.R - ThemeEngine.Current.ColorControlDark.R;
 				g_sub = ThemeEngine.Current.ColorControlDarkDark.G - ThemeEngine.Current.ColorControlDark.G;
 				b_sub = ThemeEngine.Current.ColorControlDarkDark.B - ThemeEngine.Current.ColorControlDark.B;
-								
+
 				color = Color.FromArgb (ThemeEngine.Current.ColorControlDark.A,
-						(int) (ThemeEngine.Current.ColorControlDark.R + (r_sub * per)),
-						(int) (ThemeEngine.Current.ColorControlDark.G + (g_sub * per)),
-						(int) (ThemeEngine.Current.ColorControlDark.B + (b_sub * per)));
+						(int) (ThemeEngine.Current.ColorControlDark.R + (r_sub * percOfDarkDark)),
+						(int) (ThemeEngine.Current.ColorControlDark.G + (g_sub * percOfDarkDark)),
+						(int) (ThemeEngine.Current.ColorControlDark.B + (b_sub * percOfDarkDark)));
 				return color;
  			}
 		
 			int H, I, S;
 
-			ControlPaint.Color2HBS(baseColor, out H, out I, out S);			
+			ControlPaint.Color2HBS(baseColor, out H, out I, out S);
 			int PreIntensity = Math.Max (0, I - (int) (I * 0.333f));
-			int NewIntensity =  Math.Max (0, PreIntensity - (int) (PreIntensity * per));
+			int NewIntensity = Math.Max (0, PreIntensity - (int) (PreIntensity * percOfDarkDark));
 			return ControlPaint.HBS2Color(H, NewIntensity, S);
 		}
 
-		public static Color DarkDark(Color baseColor) {			
+		public static Color DarkDark (Color baseColor)
+		{
 			return Dark(baseColor, 1.0f);
 		}
 
-		public static void DrawBorder(Graphics graphics, Rectangle bounds, Color color, ButtonBorderStyle style) {
+		public static void DrawBorder (Graphics graphics, Rectangle bounds, Color color, ButtonBorderStyle style)
+		{
 			int line_width_top_left = 1;
 			int line_width_bottom_right = 1;
 			
@@ -267,7 +271,8 @@ namespace System.Windows.Forms {
 			DrawBorder(graphics, bounds, color, line_width_top_left, style, color, line_width_top_left, style, color, line_width_bottom_right, style, color, line_width_bottom_right, style);
 		}
 
-		internal static void DrawBorder(Graphics graphics, RectangleF bounds, Color color, ButtonBorderStyle style) {
+		internal static void DrawBorder (Graphics graphics, RectangleF bounds, Color color, ButtonBorderStyle style)
+		{
 			int line_width_top_left = 1;
 			int line_width_bottom_right = 1;
 			

@@ -309,8 +309,9 @@ namespace System.Windows.Forms
 			#endregion	// ControlAccessibleObject Public Instance Properties
 
 			#region ControlAccessibleObject Public Instance Methods
-			public override int GetHelpTopic(out string FileName) {
-				return base.GetHelpTopic (out FileName);
+			public override int GetHelpTopic (out string fileName)
+			{
+				return base.GetHelpTopic (out fileName);
 			}
 
 			[MonoTODO ("Implement this")]
@@ -632,11 +633,12 @@ namespace System.Windows.Forms
 				impl_list.Clear ();
 			}
 
-			public bool Contains (Control value) {
+			public bool Contains (Control control)
+			{
 				for (int i = list.Count; i > 0; ) {
 					i--;
-					
-					if (list [i] == value) {
+
+					if (list [i] == control) {
 						// Do we need to do anything here?
 						return true;
 					}
@@ -4476,12 +4478,12 @@ namespace System.Windows.Forms
 			toInvoke.OnClick(e);
 		}
 
-		protected void InvokePaint(Control toInvoke, PaintEventArgs e) {
-			toInvoke.OnPaint(e);
+		protected void InvokePaint(Control c, PaintEventArgs e) {
+			c.OnPaint (e);
 		}
 
-		protected void InvokePaintBackground(Control toInvoke, PaintEventArgs e) {
-			toInvoke.OnPaintBackground(e);
+		protected void InvokePaintBackground(Control c, PaintEventArgs e) {
+			c.OnPaintBackground (e);
 		}
 
 		protected virtual bool IsInputChar (char charCode) {
@@ -4534,13 +4536,14 @@ namespace System.Windows.Forms
 			return false;
 		}
 
-		protected virtual bool ProcessKeyEventArgs (ref Message msg) {
-			KeyEventArgs		key_event;
+		protected virtual bool ProcessKeyEventArgs (ref Message m)
+		{
+			KeyEventArgs key_event;
 
-			switch (msg.Msg) {
+			switch (m.Msg) {
 				case (int)Msg.WM_SYSKEYDOWN:
 				case (int)Msg.WM_KEYDOWN: {
-					key_event = new KeyEventArgs ((Keys)msg.WParam.ToInt32 ());
+					key_event = new KeyEventArgs ((Keys) m.WParam.ToInt32 ());
 					OnKeyDown (key_event);
 #if NET_2_0
 					suppressing_key_press = key_event.SuppressKeyPress;
@@ -4550,7 +4553,7 @@ namespace System.Windows.Forms
 
 				case (int)Msg.WM_SYSKEYUP:
 				case (int)Msg.WM_KEYUP: {
-					key_event = new KeyEventArgs ((Keys)msg.WParam.ToInt32 ());
+					key_event = new KeyEventArgs ((Keys) m.WParam.ToInt32 ());
 					OnKeyUp (key_event);
 					return key_event.Handled;
 				}
@@ -4561,12 +4564,12 @@ namespace System.Windows.Forms
 					if (suppressing_key_press)
 						return true;
 #endif
-					KeyPressEventArgs	key_press_event;
+					KeyPressEventArgs key_press_event;
 
-					key_press_event = new KeyPressEventArgs((char)msg.WParam);
+					key_press_event = new KeyPressEventArgs ((char) m.WParam);
 					OnKeyPress(key_press_event);
 #if NET_2_0
-					msg.WParam = (IntPtr)key_press_event.KeyChar;
+					m.WParam = (IntPtr) key_press_event.KeyChar;
 #endif
 					return key_press_event.Handled;
 				}
@@ -4579,20 +4582,19 @@ namespace System.Windows.Forms
 			return false;
 		}
 
-		protected internal virtual bool ProcessKeyMessage(ref Message msg) {
+		protected internal virtual bool ProcessKeyMessage (ref Message m)
+		{
 			if (parent != null) {
-				if (parent.ProcessKeyPreview(ref msg)) {
+				if (parent.ProcessKeyPreview (ref m))
 					return true;
-				}
 			}
 
-			return ProcessKeyEventArgs(ref msg);
+			return ProcessKeyEventArgs (ref m);
 		}
 
-		protected virtual bool ProcessKeyPreview(ref Message msg) {
-			if (parent != null) {
-				return parent.ProcessKeyPreview(ref msg);
-			}
+		protected virtual bool ProcessKeyPreview (ref Message m) {
+			if (parent != null)
+				return parent.ProcessKeyPreview(ref m);
 
 			return false;
 		}
@@ -6328,10 +6330,11 @@ namespace System.Windows.Forms
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected virtual void OnQueryContinueDrag(QueryContinueDragEventArgs e) {
+		protected virtual void OnQueryContinueDrag (QueryContinueDragEventArgs qcdevent)
+		{
 			QueryContinueDragEventHandler eh = (QueryContinueDragEventHandler)(Events [QueryContinueDragEvent]);
 			if (eh != null)
-				eh (this, e);
+				eh (this, qcdevent);
 		}
 
 #if NET_2_0

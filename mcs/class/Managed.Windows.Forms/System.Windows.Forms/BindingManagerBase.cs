@@ -30,8 +30,10 @@
 using System.ComponentModel;
 using System.Collections;
 
-namespace System.Windows.Forms {
-	public abstract class BindingManagerBase {
+namespace System.Windows.Forms
+{
+	public abstract class BindingManagerBase
+	{
 		private BindingsCollection	bindings;
 		internal bool transfering_data; /* true if we're pushing or pulling data */
 
@@ -95,19 +97,19 @@ namespace System.Windows.Forms {
 		public abstract void SuspendBinding();
 		#endregion	// Public Instance Methods
 
-                internal abstract bool IsSuspended {
-                        get;
-                }
+		internal abstract bool IsSuspended {
+			get;
+		}
 
 		#region Protected Instance Methods
 		[MonoTODO]
-		protected internal virtual PropertyDescriptorCollection GetItemProperties(ArrayList dataSources, ArrayList listAccessors)
+		protected internal virtual PropertyDescriptorCollection GetItemProperties (ArrayList dataSources, ArrayList listAccessors)
 		{
 			throw new NotImplementedException();
 		}
 
 		[MonoTODO]
-		protected virtual PropertyDescriptorCollection GetItemProperties(Type lisType, int offset, ArrayList dataSources, ArrayList listAccessors)
+		protected virtual PropertyDescriptorCollection GetItemProperties (Type listType, int offset, ArrayList dataSources, ArrayList listAccessors)
 		{
 			throw new NotImplementedException();
 		}
@@ -148,10 +150,10 @@ namespace System.Windows.Forms {
 
 
 #if NET_2_0
-		protected void OnBindingComplete (BindingCompleteEventArgs e)
+		protected void OnBindingComplete (BindingCompleteEventArgs args)
 		{
 			if (BindingComplete != null)
-				BindingComplete (this, e);
+				BindingComplete (this, args);
 		}
 
 		protected abstract void OnCurrentItemChanged (EventArgs e);
@@ -161,7 +163,7 @@ namespace System.Windows.Forms {
 			if (DataError != null)
 				DataError (this, new BindingManagerDataErrorEventArgs (e));
 		}
-#endif	       
+#endif
 
 		protected abstract void UpdateIsBinding();
 		#endregion	// Protected Instance Methods

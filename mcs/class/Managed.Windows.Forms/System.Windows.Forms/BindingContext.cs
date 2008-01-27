@@ -75,20 +75,20 @@ namespace System.Windows.Forms {
 			get { return this [dataSource, String.Empty]; }
 		}
 
-		public BindingManagerBase this [object data_source, string data_member] {
+		public BindingManagerBase this [object dataSource, string dataMember] {
 			get {
-				if (data_source == null)
-					throw new ArgumentNullException ("data_source");
-				if (data_member == null)
-					data_member = String.Empty;
+				if (dataSource == null)
+					throw new ArgumentNullException ("dataSource");
+				if (dataMember == null)
+					dataMember = String.Empty;
 
-				HashKey key = new HashKey (data_source, data_member);
+				HashKey key = new HashKey (dataSource, dataMember);
 				BindingManagerBase res = managers [key] as BindingManagerBase;
 
 				if (res != null)
 					return res;
 
-				res = CreateBindingManager (data_source, data_member);
+				res = CreateBindingManager (dataSource, dataMember);
 				if (res == null)
 					return null;
 				managers [key] = res;

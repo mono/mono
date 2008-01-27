@@ -30,9 +30,12 @@ using System;
 using System.Collections;
 using System.Text;
 
-namespace System.Windows.Forms {
-	public class DataFormats {
-		public class Format {
+namespace System.Windows.Forms
+{
+	public class DataFormats
+	{
+		public class Format
+		{
 			static readonly object lockobj = new object ();
 			
 			private static Format	formats;
@@ -40,10 +43,10 @@ namespace System.Windows.Forms {
 			private int		id;
 			private Format		next;
 
-			public Format (string name, int ID)
+			public Format (string name, int id)
 			{
 				this.name = name;
-				this.id = ID;
+				this.id = id;
 				
 				lock (lockobj) {
 					if (formats == null)
@@ -78,47 +81,45 @@ namespace System.Windows.Forms {
 			#endregion	// Public Instance Properties
 
 			#region Private Methods
-			internal static Format Add(string name) {
+			internal static Format Add (string name)
+			{
 				Format f;
 
-				f = Find(name);
+				f = Find (name);
 				if (f == null) {
 					IntPtr cliphandle;
 
-					cliphandle = XplatUI.ClipboardOpen(false);
-					f = new Format(name, XplatUI.ClipboardGetID(cliphandle, name));
-					XplatUI.ClipboardClose(cliphandle);
+					cliphandle = XplatUI.ClipboardOpen (false);
+					f = new Format (name, XplatUI.ClipboardGetID (cliphandle, name));
+					XplatUI.ClipboardClose (cliphandle);
 				}
 				return f;
 			}
 
-			internal static Format Add(int id) {
+			internal static Format Add (int id) {
 				Format f;
 
-				f = Find(id);
-				if (f == null) {
-					f = new Format("Format"+id.ToString(), id);
-				}
+				f = Find (id);
+				if (f == null)
+					f = new Format("Format" + id.ToString(), id);
 				return f;
 			}
 
-			internal static Format Find(int id) {
-				Format f;
-
-				f = formats;
-				while ((f != null) && (f.Id != id)) {
-					f = f.next;
-				}
-				return f;
-			}
-
-			internal static Format Find(string name) {
+			internal static Format Find (int id) {
 				Format f;
 
 				f = formats;
-				while ((f != null) && (!f.Name.Equals(name))) {
+				while ((f != null) && (f.Id != id))
 					f = f.next;
-				}
+				return f;
+			}
+
+			internal static Format Find (string name) {
+				Format f;
+
+				f = formats;
+				while ((f != null) && (!f.Name.Equals(name)))
+					f = f.next;
 				return f;
 			}
 
@@ -128,10 +129,11 @@ namespace System.Windows.Forms {
 				}
 			}
 			#endregion	// Private Methods
-
 		}
 		
-		private DataFormats () {}
+		private DataFormats ()
+		{
+		}
 		
 		#region Public Static Fields
 		public static readonly string Bitmap			= "Bitmap";
@@ -160,12 +162,12 @@ namespace System.Windows.Forms {
 		private static object lock_object = new object ();
 		private static bool initialized;
 
-		public static Format GetFormat (int ID)
+		public static Format GetFormat (int id)
 		{
 			lock (lock_object) {
 				if (!initialized)
 					Init ();
-				return Format.Find (ID);
+				return Format.Find (id);
 			}
 		}
 

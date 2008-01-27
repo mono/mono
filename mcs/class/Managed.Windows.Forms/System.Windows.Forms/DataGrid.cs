@@ -169,12 +169,12 @@ namespace System.Windows.Forms
 			}
 			#endregion //Public Instance Properties
 
-			public override bool Equals (object o)
+			public override bool Equals (object value)
 			{
-				if (!(o is HitTestInfo))
+				if (!(value is HitTestInfo))
 					return false;
 
-				HitTestInfo obj = (HitTestInfo) o;
+				HitTestInfo obj = (HitTestInfo) value;
 				return (obj.Column == column && obj.Row == row && obj.Type ==type);
 			}
 
@@ -187,7 +187,6 @@ namespace System.Windows.Forms
 			{
 				return "{ " + type + "," + row + "," + column + "}";
 			}
-
 		}
 
 		#region	Local Variables
@@ -1113,9 +1112,9 @@ namespace System.Windows.Forms
 			CalcAreasAndInvalidate ();
 		}
 
-		public Rectangle GetCellBounds (DataGridCell cell)
+		public Rectangle GetCellBounds (DataGridCell dgc)
 		{
-			return GetCellBounds (cell.RowNumber, cell.ColumnNumber);
+			return GetCellBounds (dgc.RowNumber, dgc.ColumnNumber);
 		}
 
 		public Rectangle GetCellBounds (int row, int col)
@@ -2738,9 +2737,6 @@ namespace System.Windows.Forms
 		}
 		#endregion	// Events
 
-
-
-
 		#region Code originally in DataGridDrawingLogic.cs
 
 		#region	Local Variables
@@ -2755,7 +2751,6 @@ namespace System.Windows.Forms
 		internal Rectangle row_headers_area;	// Used Headers rows area
 		internal Rectangle cells_area;
 		#endregion // Local Variables
-
 
 		#region Public Instance Methods
 
@@ -3098,7 +3093,6 @@ namespace System.Windows.Forms
 			CalcRowHeaders (); // Height depends on num of visible rows
 		}
 
-
 		void InvalidateCaption ()
 		{
 			if (caption_area.IsEmpty)
@@ -3175,7 +3169,6 @@ namespace System.Windows.Forms
 
 			horiz_scrollbar.LargeChange = cells_area.Width;
 		}
-
 
 		void SetUpVerticalScrollBar (out int height, out int maximum)
 		{

@@ -111,24 +111,24 @@ namespace System.Windows.Forms {
 		#endregion Internal Methods
 	
 		#region Public Instance Methods
-		public abstract void Reset();
+		public abstract void Reset ();
 
 		public DialogResult ShowDialog() {
-			return ShowDialog(null);
+			return ShowDialog (null);
 		}
 
-		public DialogResult ShowDialog(IWin32Window ownerWin32) {
+		public DialogResult ShowDialog (IWin32Window owner)
+		{
 			// This is an external derived CommonDialog
 			if (form == null) {
-				if (RunDialog (ownerWin32 == null ? IntPtr.Zero : ownerWin32.Handle))
+				if (RunDialog (owner == null ? IntPtr.Zero : owner.Handle))
 					return DialogResult.OK;
-					
-				return DialogResult.Cancel;			
+				return DialogResult.Cancel;
 			}
 			
 			// This is an internal derived CommonDialog
-			if (RunDialog(form.Handle))
-				form.ShowDialog(ownerWin32);
+			if (RunDialog (form.Handle))
+				form.ShowDialog (owner);
 
 			return form.DialogResult;
 		}
