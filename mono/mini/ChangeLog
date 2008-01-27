@@ -1,5 +1,8 @@
 2008-01-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-s390x.c: Use is_imm16 instead of is_uimm16 when checking whenever s390_aghi
+	can be used since it takes a 16 bit signed immediate.
+
 	* inssel-s390x.brg: Fix OP_SETRET.
 
 	* mini-s390x.c (mono_arch_output_basic_block): Fix OP_BREAK.
