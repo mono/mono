@@ -99,7 +99,6 @@ namespace System.Linq.Expressions {
 		//
 		Expression body;
 		ReadOnlyCollection<ParameterExpression> parameters;
-		Type delegate_type;
 
 		// This is set during compilation
 		Delegate lambda_delegate;
