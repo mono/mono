@@ -288,10 +288,10 @@ namespace System.Web.Compilation {
                                         LoadAssembly (info, al);
                         }
 
-			foreach(Assembly appCodeAssembly in CodeAssemblies)
-				al.Add (appCodeAssembly);
+			foreach (Assembly topLevelAssembly in TopLevel_Assemblies)
+				al.Add (topLevelAssembly);
 
-			foreach(string assLocation in WebConfigurationManager.ExtraAssemblies)
+			foreach (string assLocation in WebConfigurationManager.ExtraAssemblies)
 				LoadAssembly (assLocation, al);
 
                         if (addAssembliesInBin)
