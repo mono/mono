@@ -25,7 +25,7 @@
 //	Paolo Molaro	lupus@ximian.com
 //	Peter Bartok	pbartok@novell.com
 //	Gert Driesen	drieseng@users.sourceforge.net
-//  Olivier Dufour  olivier.duff@gmail.com
+//	Olivier Dufour	olivier.duff@gmail.com
 
 using System;
 using System.Collections;
@@ -52,7 +52,6 @@ namespace System.Resources
 		private ITypeResolutionService typeresolver;
 		private XmlTextReader xmlReader;
 
-
 #if NET_2_0
 		private string basepath;
 		private bool useResXDataNodes;
@@ -65,49 +64,40 @@ namespace System.Resources
 		public ResXResourceReader (Stream stream)
 		{
 			if (stream == null)
-				throw new ArgumentNullException ("Value cannot be null.");
+				throw new ArgumentNullException ("stream");
 
 			if (!stream.CanRead)
 				throw new ArgumentException ("Stream was not readable.");
 
 			this.stream = stream;
-#if NET_2_0
-			this.useResXDataNodes = false;
-#endif
-        }
+		}
 
-		public ResXResourceReader (Stream stream, ITypeResolutionService typeresolver)
+		public ResXResourceReader (Stream stream, ITypeResolutionService typeResolver)
 			: this (stream)
 		{
-			this.typeresolver = typeresolver;
+			this.typeresolver = typeResolver;
 		}
 
 		public ResXResourceReader (string fileName)
 		{
 			this.fileName = fileName;
-#if NET_2_0
- 			this.useResXDataNodes = false;
-#endif
-        }
+		}
 
-		public ResXResourceReader (string fileName, ITypeResolutionService typeresolver)
+		public ResXResourceReader (string fileName, ITypeResolutionService typeResolver)
 			: this (fileName)
 		{
-			this.typeresolver = typeresolver;
+			this.typeresolver = typeResolver;
 		}
 
 		public ResXResourceReader (TextReader reader)
 		{
 			this.reader = reader;
-#if NET_2_0
-			this.useResXDataNodes = false;
-#endif
 		}
 
-		public ResXResourceReader (TextReader reader, ITypeResolutionService typeresolver)
+		public ResXResourceReader (TextReader reader, ITypeResolutionService typeResolver)
 			: this (reader)
 		{
-			this.typeresolver = typeresolver;
+			this.typeresolver = typeResolver;
 		}
 
 #if NET_2_0
@@ -143,6 +133,7 @@ namespace System.Resources
 			get { return basepath; }
 			set { basepath = value; }
 		}
+
 		public bool UseResXDataNodes {
 			get { return useResXDataNodes; }
 			set {
@@ -306,7 +297,7 @@ namespace System.Resources
 		private void ParseDataNode (bool meta)
 		{
 #if NET_2_0
-			Hashtable hashtable = (meta ? hashtm : hasht);
+			Hashtable hashtable = ((meta && ! useResXDataNodes) ? hashtm : hasht);
 			Point pos = new Point (xmlReader.LineNumber, xmlReader.LinePosition);
 #else
 			Hashtable hashtable = hasht;

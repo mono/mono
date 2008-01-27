@@ -61,18 +61,18 @@ namespace System.Resources
 			if (stream == null)
 				throw new ArgumentNullException ("stream");
 
-			if (stream.CanWrite == false)
+			if (!stream.CanWrite)
 				throw new ArgumentException ("stream is not writable.", "stream");
 
 			this.stream = stream;
 		}
 
-		public ResXResourceWriter (TextWriter textwriter)
+		public ResXResourceWriter (TextWriter textWriter)
 		{
-			if (textwriter == null)
-				throw new ArgumentNullException ("textwriter");
+			if (textWriter == null)
+				throw new ArgumentNullException ("textWriter");
 
-			this.textwriter = textwriter;
+			this.textwriter = textWriter;
 		}
 		
 		public ResXResourceWriter (string fileName)
@@ -333,10 +333,10 @@ namespace System.Resources
 			writer.Flush ();
 		}
 
-		protected virtual void Dispose(bool disposing) {
-			if (disposing) {
+		protected virtual void Dispose (bool disposing)
+		{
+			if (disposing)
 				Close();
-			}
 		}
 
 		static string schema = @"
@@ -370,4 +370,3 @@ namespace System.Resources
 ".Replace ("'", "\"");
 	}
 }
-

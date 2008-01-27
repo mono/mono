@@ -91,10 +91,10 @@ namespace System.Resources {
 					MemoryStream ms = new MemoryStream (buffer);
 					return new Icon (ms).ToBitmap ();
 				}
-#endif
 
 				if (type == typeof (MemoryStream))
 					return new MemoryStream (buffer);
+#endif
 
 				return Activator.CreateInstance(type, BindingFlags.CreateInstance
 					| BindingFlags.Public | BindingFlags.Instance, null, 

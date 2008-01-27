@@ -1,3 +1,13 @@
+2008-01-27  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ResXResourceReader.cs: Avoid unnecessary initialization of
+	useResXDataNodes field. Modified argument names to match MS. When
+	UseResXDataNodes is true, then never use the metadata hashtable.
+	* ResXFileRef.cs: Only support convert from fileref to MemoryStream
+	on 2.0 profile.
+	* ResXResourceWriter.cs: Modified argument names to match MS.
+	* ResXDataNode: Fixed line endings.
+
 2008-01-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* ResXFileRef.cs (ConvertFrom): Add special support for MemoryStream. Fixes
