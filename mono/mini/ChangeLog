@@ -1,5 +1,9 @@
 2008-01-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-s390.c (mono_arch_emit_exceptions): Really fix a warning.
+	
+	* mini-s390.c (mono_arch_emit_exceptions): Fix a warning.
+
 	* mini-s390.c: Add support for generic sharing.
 
 	* mini-exceptions.c (ves_icall_System_Security_SecurityFrame_GetSecurityFrame): 
