@@ -1,3 +1,9 @@
+2008-01-27  Igor Zelmanovich <igorz@mainsoft.com>
+
+	* HttpResponse.cs: rise PreSendRequestHeaders befire headers_sent 
+	initialization to allow set additional headers or status code at 
+	PreSendRequestHeaders event handlers.
+
 2008-01-24  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpApplicationFactory.cs: use BuildManager.GetCompiledType to

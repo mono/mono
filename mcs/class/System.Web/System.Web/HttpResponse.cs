@@ -695,11 +695,6 @@ namespace System.Web {
 			if (headers_sent)
 				return;
 
-			headers_sent = true;
-
-			if (cached_response != null)
-				cached_response.SetHeaders (headers);
-
 			//
 			// Flush
 			//
@@ -708,6 +703,11 @@ namespace System.Web {
 				if (app_instance != null)
 					app_instance.TriggerPreSendRequestHeaders ();
 			}
+
+			headers_sent = true;
+
+			if (cached_response != null)
+				cached_response.SetHeaders (headers);
 
 			// If this page is cached use the cached headers
 			// instead of the standard headers	
