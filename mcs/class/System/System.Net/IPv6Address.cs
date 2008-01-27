@@ -67,12 +67,12 @@ namespace System.Net {
 			if (prefixLength < 0 || prefixLength > 128)
 				throw new ArgumentException ("prefixLength");
 			this.prefixLength = prefixLength;
-		}	
+		}
 	
 		public IPv6Address (ushort [] addr, int prefixLength, int scopeId) : this (addr, prefixLength)
 		{
-            this.scopeId = scopeId;
-		}		
+			this.scopeId = scopeId;
+		}
 		
 		public static IPv6Address Parse (string ipString)
 		{
@@ -82,7 +82,7 @@ namespace System.Net {
 			if (ipString.Length > 2 && 
 			    ipString [0] == '[' && 
 			    ipString [ipString.Length - 1] == ']')
-				ipString = ipString.Substring (1, ipString.Length - 2);				
+				ipString = ipString.Substring (1, ipString.Length - 2);
 
 			if (ipString.Length  < 2)
 				throw new FormatException ("Not a valid IPv6 address");
@@ -114,7 +114,7 @@ namespace System.Net {
 				}			
 			}
 			
-			ushort [] addr = new ushort [8];			
+			ushort [] addr = new ushort [8];
 			
 			bool ipv4 = false;
 			int pos2 = ipString.LastIndexOf (":");
@@ -140,7 +140,7 @@ namespace System.Net {
 			
 			int origLen = ipString.Length;
 			if (origLen < 2)
-				throw new FormatException ("Not a valid IPv6 address");			
+				throw new FormatException ("Not a valid IPv6 address");
 			ipString = ipString.Replace ("::", ":!:");
 			int len = ipString.Length;
 			if ((len - origLen) > 1) 
@@ -372,14 +372,14 @@ namespace System.Net {
 				for (int i = 0; i < 8; i++) 
 					if (this.address [i] != ipv6.address [i])
 						return false;
-				return true;				
-			} 
+				return true;
+			}
 			
 			System.Net.IPAddress ipv4 = other as System.Net.IPAddress;
 			if (ipv4 != null) {
 				for (int i = 0; i < 5; i++) 
 					if (address [i] != 0)
-						return false;			
+						return false;
 
 				if (address [5] != 0 && address [5] != 0xffff)
 					return false;
@@ -387,8 +387,8 @@ namespace System.Net {
 				long a = ipv4.InternalIPv4Address;
 				if (address [6] != (ushort) (((int) (a & 0xff) << 8) + ((int) ((a >> 8) & 0xff))) ||
 				    address [7] != (ushort) (((int) ((a >> 16) & 0xff) << 8) + ((int) ((a >> 24) & 0xff))))
-				    	return false;
-				    	
+					return false;
+
 				return true;
 			}
 			

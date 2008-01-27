@@ -1,3 +1,8 @@
+2008-01-27  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* IPAddressTest.cs: Remove use of deprecated Assertion. Improved
+	existing tests.
+
 2008-01-26  Daniel Nauck  <dna@mono-project.de>
 
 	* CookieTest.cs: enabled ToString () test,

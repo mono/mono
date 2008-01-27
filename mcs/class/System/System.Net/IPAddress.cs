@@ -187,36 +187,50 @@ namespace System.Net {
 			m_ScopeId = scopeId;
 		}
 
-		public static IPAddress Parse (string ip)
+		public static IPAddress Parse (string ipString)
 		{
 			IPAddress ret;
-			if (TryParse (ip, out ret))
+			if (TryParse (ipString, out ret))
 				return ret;
-			throw new FormatException("An invalid IP address was specified.");
+			throw new FormatException ("An invalid IP address was specified.");
 		}
 
 #if NET_2_0
 		public
 #endif
-		static bool TryParse (string ip, out IPAddress address)
+		static bool TryParse (string ipString, out IPAddress address)
 		{
-			if (ip == null)
-				throw new ArgumentNullException ("Value cannot be null.");
-				
-			if( (address = ParseIPV4(ip)) == null)
-				if( (address = ParseIPV6(ip)) == null)
+			if (ipString == null)
+				throw new ArgumentNullException ("ipString");
+
+			if ((address = ParseIPV4 (ipString)) == null)
+				if ((address = ParseIPV6 (ipString)) == null)
 					return false;
 			return true;
 		}
 
 		private static IPAddress ParseIPV4 (string ip)
 		{
+#if ONLY_1_1
 			if (ip.Length == 0 || ip == " ")
 				return new IPAddress (0);
-				
+#endif
+
 			int pos = ip.IndexOf (' ');
-			if (pos != -1)
+			if (pos != -1) {
+#if NET_2_0
+				string [] nets = ip.Substring (pos + 1).Split (new char [] {'.'});
+				if (nets.Length > 0) {
+					string lastNet = nets [nets.Length - 1];
+					if (lastNet.Length == 0)
+						return null;
+					foreach (char c in lastNet)
+						if (!Uri.IsHexDigit (c))
+							return null;
+				}
+#endif
 				ip = ip.Substring (0, pos);
+			}
 
 			if (ip.Length == 0 || ip [ip.Length - 1] == '.')
 				return null;
@@ -226,8 +240,7 @@ namespace System.Net {
 				return null;
 			
 			// Make the number in network order
-			try 
-			{
+			try {
 				long a = 0;
 				byte val = 0;
 				for (int i = 0; i < ips.Length; i++) {
@@ -242,7 +255,7 @@ namespace System.Net {
 					} else if (subnet.Length == 0)
 						return null;
 					else 
-						val = Byte.Parse (subnet, NumberStyles.None);
+						val = byte.Parse (subnet, NumberStyles.None);
 
 					if (ips.Length < 4 && i == (ips.Length - 1)) 
 						i = 3;
@@ -258,12 +271,10 @@ namespace System.Net {
 		
 		private static IPAddress ParseIPV6 (string ip)
 		{
-			try 
-			{
+			try {
 				IPv6Address newIPv6Address = IPv6Address.Parse(ip);
-				return new IPAddress(newIPv6Address.Address, newIPv6Address.ScopeId);
-			}
-			catch (Exception) {
+				return new IPAddress (newIPv6Address.Address, newIPv6Address.ScopeId);
+			} catch (Exception) {
 				return null;
 			}
 		}
@@ -457,7 +468,7 @@ namespace System.Net {
 
 #pragma warning disable 169
 		// Added for serialization compatibility with MS.NET
-		private int m_HashCode;	
+		private int m_HashCode;
 #pragma warning restore
 		
 	}

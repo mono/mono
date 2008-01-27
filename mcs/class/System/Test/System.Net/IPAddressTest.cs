@@ -72,98 +72,119 @@ public class IPAddressTest
 		"0xff.0x7f.0x20.0xf", "255.127.32.15",
 		"0.0.0.0", IPAddress.Any.ToString(),
 		"255.255.255.255", IPAddress.Broadcast.ToString(),
+#if ONLY_1_1
 		"12.1.1.3 ", "12.1.1.3",
+		"12.1 foo.1.2.3.4.5.bar", "12.0.0.1",
+		"12.1.4.6 foo.bar.test.test.bag", "12.1.4.6",
+		"12.6 foo.1.2.3.4.5.", "12.0.0.6",
+		"12.1.1.3 g", "12.1.1.3",
+		" ", "0.0.0.0",
+		"", "0.0.0.0",
+#endif
+		"12.1.1.3 abc", "12.1.1.3",
 		"12.1 .1.2", "12.0.0.1",
+		"12.1 .zzzz.2", "12.0.0.1",
 		"12.1.7", "12.1.0.7",
 		"12", "0.0.0.12",
-		"12.1 foo.1.2.3.4.5.bar", "12.0.0.1",		
-		" ", "0.0.0.0"	
+		"12.5.3 foo.67.test.test.7FFFFFFFFFfaFFF789FFFFFFFFFFFFFFF", "12.5.0.3",
+		"12.1 foo.bar.test.test.baf", "12.0.0.1",
+		"12.1.4.6 foo.bar.test.test.baf", "12.1.4.6",
+		"12.3 foo.bar.test.test.4", "12.0.0.3",
+		"12 foo.bar.test.test.baf", "0.0.0.12",
+		//"65536", "0.1.0.0",
+		//"65535", "0.0.255.255",
+		//"20.65535", "20.0.255.255"
 	};
 
-	static object[] ipv4ParseWrong = new object[] {
-		" foo", typeof(FormatException),
-		"12.. .", typeof(FormatException),
-		"12.1.2. ", typeof(FormatException),
-		"12.1.8. ", typeof(FormatException),
-		".1.1.6", typeof(FormatException),
-		" 12.1.1.1", typeof(FormatException),
-		"12.+1.1.4", typeof(FormatException),
-		"12.1.-1.5", typeof(FormatException), 
-		"257.1.1.9", typeof(FormatException), 
-		"12.", typeof(FormatException),
-		"12.1.2.", typeof(FormatException),
-		"12...", typeof(FormatException),
-		null, typeof(ArgumentNullException),
+	static string [] ipv4ParseWrong = new string [] {
+		" foo",
+		"12.. .",
+		"12.1.2. ",
+		"12.1.8. ",
+		".1.1.6",
+		" 12.1.1.1",
+		"12.+1.1.4",
+		"12.1.-1.5",
+		"257.1.1.9",
+#if NET_2_0
+		"12.1.1.3 ",
+		"12.1 foo.1.2.3.4.5.bar",
+		"12.1 foo.1.2.3.4.5.",
+		"12.1.1.3 g",
+		" ",
+		"",
+#endif
+		"12.1.foo.1.2.3.4.5.bar",
+		"12.",
+		"12.1.2.",
+		"12...",
+		"  "
 	};
 
 	[Test]
 	public void PublicFields ()
 	{
-		Assertion.AssertEquals ("Any", IPAddress.Any.Address, (long) 0);
-		Assertion.AssertEquals ("Broadcast", IPAddress.Broadcast.Address, (long) 0xFFFFFFFF);
+		Assert.AreEqual ((long) 0, IPAddress.Any.Address, "#1");
+		Assert.AreEqual ((long) 0xFFFFFFFF, IPAddress.Broadcast.Address, "#2");
 		long loopback = IPAddress.HostToNetworkOrder (BitConverter.IsLittleEndian ? 
 							      0x7f000001 : 
 							      0x0100007f);
-		Assertion.AssertEquals ("Loopback", IPAddress.Loopback.Address, loopback);
-		Assertion.AssertEquals ("None", IPAddress.None.Address, (long) 0xFFFFFFFF);
+		Assert.AreEqual (loopback, IPAddress.Loopback.Address, "#3");
+		Assert.AreEqual ((long) 0xFFFFFFFF, IPAddress.None.Address, "#4");
 	}
 
 	[Test]
 	public void ToStringV4 ()
 	{
 		IPAddress ip = IPAddress.Parse ("192.168.1.1");
-		Assertion.AssertEquals ("ToString #1", "192.168.1.1", ip.ToString ());
-		Assertion.AssertEquals ("ToString #2", "0.0.0.0", IPAddress.Any.ToString ());
-		Assertion.AssertEquals ("ToString #3", "255.255.255.255", IPAddress.Broadcast.ToString ());
-		Assertion.AssertEquals ("ToString #4", "127.0.0.1", IPAddress.Loopback.ToString ());
-		Assertion.AssertEquals ("ToString #5", "255.255.255.255", IPAddress.None.ToString ());
+		Assert.AreEqual ("192.168.1.1", ip.ToString (), "#1");
+		Assert.AreEqual ("0.0.0.0", IPAddress.Any.ToString (), "#2");
+		Assert.AreEqual ("255.255.255.255", IPAddress.Broadcast.ToString (), "#3");
+		Assert.AreEqual ("127.0.0.1", IPAddress.Loopback.ToString (), "#4");
+		Assert.AreEqual ("255.255.255.255", IPAddress.None.ToString (), "#5");
 	}
 
 #if NET_1_1
 	[Test]
 	public void ToStringV6 ()
 	{
-		if (Socket.SupportsIPv6) {
-			for(int i=0; i<ipv6AddressList.Length/2; i++) {
-				string addr = IPAddress.Parse (ipv6AddressList[i*2+1]).ToString().ToLower();
-				Assertion.AssertEquals ("ToStringIPv6 #" + i, ipv6AddressList[i*2].ToLower(), addr);
-			}
-		} else
+		if (!Socket.SupportsIPv6)
 			Assert.Ignore ("IPv6 must be enabled in machine.config");
+
+		for(int i=0; i<ipv6AddressList.Length/2; i++) {
+			string addr = IPAddress.Parse (ipv6AddressList[i*2+1]).ToString().ToLower();
+			Assert.AreEqual (ipv6AddressList[i*2].ToLower(), addr, "ToStringIPv6 #" + i);
+		}
 	}
 #endif
 
 	[Test]
 	public void IsLoopbackV4 ()
 	{
-		IPAddress ip = IPAddress.Parse ("127.0.0.1");
-		Assertion.AssertEquals ("IsLoopback #1", true, IPAddress.IsLoopback (ip));
+		IPAddress ip;
 
-		try {
-			ip = IPAddress.Parse ("::101");
-			Assertion.Fail ("#2 should have thrown a FormatException");
-		} catch {
-		}
-
+		ip = IPAddress.Parse ("127.0.0.1");
+		Assert.IsTrue (IPAddress.IsLoopback (ip), "#1");
 		ip = IPAddress.Any;
-		Assertion.AssertEquals ("IsLoopback #5", false, IPAddress.IsLoopback (ip));
-
+		Assert.IsFalse (IPAddress.IsLoopback (ip), "#2");
 		ip = IPAddress.Loopback;
-		Assertion.AssertEquals ("IsLoopback #6", true, IPAddress.IsLoopback (ip));
+		Assert.IsTrue (IPAddress.IsLoopback (ip), "#3");
+		ip = IPAddress.Parse ("::101");
+		Assert.IsFalse (IPAddress.IsLoopback (ip), "#4");
 	}
 
 #if NET_1_1
 	[Test]
 	public void IsLoopbackV6 ()
 	{
-		if (Socket.SupportsIPv6) {
-			IPAddress ip = IPAddress.IPv6Loopback;
-			Assertion.AssertEquals ("IsLoopback #3", true, IPAddress.IsLoopback (ip));
-
-			ip = IPAddress.IPv6None;
-			Assertion.AssertEquals ("IsLoopback #7", false, IPAddress.IsLoopback (ip));
-		} else
+		if (!Socket.SupportsIPv6)
 			Assert.Ignore ("IPv6 must be enabled in machine.config");
+
+		IPAddress ip = IPAddress.IPv6Loopback;
+		Assert.IsTrue (IPAddress.IsLoopback (ip), "#1");
+
+		ip = IPAddress.IPv6None;
+		Assert.IsFalse (IPAddress.IsLoopback (ip), "#2");
 	}
 
 	[Test]
@@ -171,27 +192,25 @@ public class IPAddressTest
 	{
 		byte[] dataIn	= { 10, 11, 12, 13 };
 		byte[] dataOut	= IPAddress.Parse ("10.11.12.13").GetAddressBytes ();
-		for(int i=0; i<dataIn.Length; i++)
-			Assertion.AssertEquals ("GetAddressBytes #1", dataIn[i], dataOut[i]);	
+		for (int i = 0; i < dataIn.Length; i++)
+			Assert.AreEqual (dataOut [i], dataIn [i], "GetAddressBytesV4");
 	}
 
 	[Test]
 	public void GetAddressBytesV6 ()
 	{
-		if (!Socket.SupportsIPv6) {
+		if (!Socket.SupportsIPv6)
 			Assert.Ignore ("IPv6 must be enabled in machine.config");
-			return;
-		}
 
 		byte[] dataIn	= new byte[]{ 0x01, 0x23, 0x45, 0x67, 0x89, 0x98, 0x76, 0x54, 0x32, 0x10, 0x01, 0x23, 0x45, 0x67, 0x89, 0x98 };
 		byte[] dataOut	= IPAddress.Parse ("123:4567:8998:7654:3210:0123:4567:8998").GetAddressBytes ();
-		for(int i=0; i<dataIn.Length; i++)
-			Assertion.AssertEquals ("GetAddressBytes #2", dataIn[i], dataOut[i]);
+		for (int i = 0; i < dataIn.Length; i++)
+			Assert.AreEqual (dataOut [i], dataIn [i], "GetAddressBytesV6 #1");
 
 		dataIn	= new byte[]{ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x7F, 0x00, 0x00, 0x01 };
 		dataOut	= IPAddress.Parse ("::FFFF:127.0.0.1").GetAddressBytes ();
-		for(int i=0; i<dataIn.Length; i++)
-			Assertion.AssertEquals ("GetAddressBytes #3", dataIn[i], dataOut[i]);
+		for (int i = 0; i < dataIn.Length; i++)
+			Assert.AreEqual (dataOut [i], dataIn [i], "GetAddressBytesV6 #2");
 	}
 #endif
 
@@ -219,19 +238,15 @@ public class IPAddressTest
 	}
 
 	[Test]
-	[Category ("NotDotNet")] // #5 fails
 	public void ParseOkV4 ()
 	{
-		for(int i=0; i<ipv4ParseOk.Length / 2; i++) {
+		for (int i = 0; i < ipv4ParseOk.Length / 2; i++) {
 			IPAddress ip;
-			try
-			{
+			try {
 				ip = IPAddress.Parse (ipv4ParseOk [i*2]);
-				Assertion.Assert ("ParseIPv4 #" + i, ip.ToString () == ipv4ParseOk [i*2+1]);
-			}
-			catch
-			{
-				Assertion.Fail ("Cannot parse test i=" + i + ": '" + ipv4ParseOk [i*2] + "'");
+				Assert.AreEqual (ipv4ParseOk [i * 2 + 1], ip.ToString (), "ParseOkV4:" + i);
+			} catch (FormatException) {
+				Assert.Fail ("Cannot parse test i=" + i + ": '" + ipv4ParseOk [i*2] + "'");
 			}
 		}
 	}
@@ -240,40 +255,53 @@ public class IPAddressTest
 	[Test]
 	public void ParseOkV6 ()
 	{
-		if (!Socket.SupportsIPv6) {
+		if (!Socket.SupportsIPv6)
 			Assert.Ignore ("IPv6 must be enabled in machine.config");
-			return;
-		}
 
-		for(int i=0; i<ipv6AddressList.Length / 2; i++) {
+		for (int i = 0; i < ipv6AddressList.Length / 2; i++) {
 			string source = ipv6AddressList [i*2].ToLower();
 
 			IPAddress ip = IPAddress.Parse (source);
-			Assertion.Assert (string.Format("ParseIPv6 #{0}-1: {1} != {2}", i,
-				ip.ToString ().ToLower (), source), ip.ToString ().ToLower () == source);
+			Assert.IsTrue (ip.ToString ().ToLower () == source,
+				string.Format("ParseIPv6 #{0}-1: {1} != {2}", i,
+					ip.ToString ().ToLower (), source));
 
 			ip = IPAddress.Parse (ipv6AddressList [i*2+1].ToLower ());
-			Assertion.Assert (string.Format("ParseIPv6 #{0}-2: {1} != {2}", i,
-				ip.ToString ().ToLower (), source), ip.ToString ().ToLower () == source);
+			Assert.IsTrue (ip.ToString ().ToLower () == source,
+				string.Format("ParseIPv6 #{0}-2: {1} != {2}", i,
+					ip.ToString ().ToLower (), source));
 		}
 	}
 #endif
 
 	[Test]
-	public void ParseWrong ()
+	public void ParseWrongV4 ()
 	{
-		for(int i=0; i<ipv4ParseWrong.Length/2; i++) {
-			Type	exception	= ipv4ParseWrong[i*2+1] as Type;
-			string	ipAddress	= ipv4ParseWrong[i*2] as string;
+		for (int i = 0; i < ipv4ParseWrong.Length; i++) {
+			string ipAddress = ipv4ParseWrong [i];
 
 			try {
 				IPAddress ip = IPAddress.Parse (ipAddress);
-				Assertion.Fail ("IPv4: Should raise a " + exception + " #" + i);
-			} 
-			catch (Exception e)  {
-				if(!e.GetType ().Equals (exception))
-					Assertion.Fail ("ParseWrongIPv4 #" + i + ": " + e.ToString());
+				Assert.Fail ("#1:" + i + " (" + ipAddress + ")");
+			} catch (FormatException ex) {
+				Assert.AreEqual (typeof (FormatException), ex.GetType (), "#2:" + i);
+				Assert.IsNull (ex.InnerException, "#3:" + i);
+				Assert.IsNotNull (ex.Message, "#4:" + i);
 			}
+		}
+	}
+
+	[Test]
+	public void Parse_IpString_Null ()
+	{
+		try {
+			IPAddress.Parse ((string) null);
+			Assert.Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.AreEqual ("ipString", ex.ParamName, "#5");
 		}
 	}
 
@@ -287,42 +315,42 @@ public class IPAddressTest
 		expected = BitConverter.IsLittleEndian ? expectedLE : tested;
 
 		short short0 = IPAddress.NetworkToHostOrder ((short) tested [0]);
-		Assertion.AssertEquals ("NetworkToHostOrder #1", short0, (short) expected [0]);
+		Assert.AreEqual ((short) expected [0], short0, "#A1");
 		short0 = IPAddress.HostToNetworkOrder (short0);
-		Assertion.AssertEquals ("HostToNetworkOrder #1", short0, (short) tested [0]);
+		Assert.AreEqual ((short) tested [0], short0, "#A2");
 
 		int int0 = IPAddress.NetworkToHostOrder ((int) tested [0]);
-		Assertion.AssertEquals ("NetworkToHostOrder #2", int0, (int) expected [0]);
+		Assert.AreEqual ((int) expected [0], int0, "#B1");
 		int0 = IPAddress.HostToNetworkOrder (int0);
-		Assertion.AssertEquals ("HostToNetworkOrder #2", int0, (int) tested [0]);
+		Assert.AreEqual ((int) tested [0], int0, "#B2");
 		
 		long long0 = IPAddress.NetworkToHostOrder (tested [0]);
-		Assertion.AssertEquals ("NetworkToHostOrder #3", long0, expected [0]);
+		Assert.AreEqual (expected [0], long0, "#C1");
 		long0 = IPAddress.HostToNetworkOrder (long0);
-		Assertion.AssertEquals ("HostToNetworkOrder #3", long0, tested [0]);
+		Assert.AreEqual (tested [0], long0, "#C2");
 
 		short0 = IPAddress.NetworkToHostOrder ((short) tested [1]);
-		Assertion.AssertEquals ("NetworkToHostOrder #4", short0, (short) expected [1]);
+		Assert.AreEqual ((short) expected [1], short0, "#D1");
 		short0 = IPAddress.HostToNetworkOrder (short0);
-		Assertion.AssertEquals ("HostToNetworkOrder #4", short0, (short) tested [1]);
+		Assert.AreEqual ((short) tested [1], short0, "#D2");
 		
 		int0 = IPAddress.NetworkToHostOrder ((int) tested [2]);
-		Assertion.AssertEquals ("NetworkToHostOrder #5", int0, (int) expected [2]);
+		Assert.AreEqual ((int) expected [2], int0, "#E1");
 		int0 = IPAddress.HostToNetworkOrder (int0);
-		Assertion.AssertEquals ("HostToNetworkOrder #5", int0, (int) tested [2]);
+		Assert.AreEqual ((int) tested [2], int0, "#E2");
 		
 		long0 = IPAddress.NetworkToHostOrder (tested [3]);
-		Assertion.AssertEquals ("NetworkToHostOrder #6", long0, expected [3]);
+		Assert.AreEqual (expected [3], long0, "#F1");
 		long0 = IPAddress.HostToNetworkOrder (long0);
-		Assertion.AssertEquals ("HostToNetworkOrder #6", long0, tested [3]);
+		Assert.AreEqual (tested [3], long0, "#F2");
 	}
 
 	[Test]
 	public void LoopbackIPv6 ()
 	{
-		Assertion.AssertEquals ("#01", true, new Uri("http://[0:0:0:0::127.0.0.1]/").IsLoopback);
-		Assertion.AssertEquals ("#02", false, new Uri("http://[0:0:0:0::127.1.2.3]/").IsLoopback);
-		Assertion.AssertEquals ("#03", true, new Uri("http://[0:0:0:0::0.0.0.1]/").IsLoopback);
+		Assert.IsTrue (new Uri("http://[0:0:0:0::127.0.0.1]/").IsLoopback, "#1");
+		Assert.IsFalse (new Uri ("http://[0:0:0:0::127.1.2.3]/").IsLoopback, "#2");
+		Assert.IsTrue (new Uri ("http://[0:0:0:0::0.0.0.1]/").IsLoopback, "#3");
 	}
 
 	[Test] // bug #76792
@@ -348,7 +376,7 @@ public class IPAddressTest
 	}
 
 	[Test]
-#if TARGET_JVM	
+#if TARGET_JVM
 	[Ignore ("TD BUG ID: 7213")]
 #endif
 	public void Constructor0_Address_Invalid ()
@@ -406,10 +434,17 @@ public class IPAddressTest
 	}
 
 	[Test]
-	[ExpectedException (typeof (ArgumentNullException))]
 	public void Constructor0_Address_Null ()
 	{
-		new IPAddress ((byte []) null);
+		try {
+			new IPAddress ((byte []) null);
+			Assert.Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.AreEqual ("address", ex.ParamName, "#5");
+		}
 	}
 
 	[Test]
@@ -438,19 +473,34 @@ public class IPAddressTest
 	}
 
 	[Test]
-	[ExpectedException (typeof (ArgumentNullException))]
 	public void Constructor1_Address_Null ()
 	{
-		new IPAddress ((byte []) null, 5);
+		try {
+			new IPAddress ((byte []) null, 5);
+			Assert.Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.AreEqual ("address", ex.ParamName, "#5");
+		}
 	}
 
 #if NET_2_0
 	[Test]
-	[ExpectedException (typeof (ArgumentNullException))]
-	public void TryParseArgumentNull ()
+	public void TryParse_IpString_Null ()
 	{
 		IPAddress i;
-		IPAddress.TryParse (null, out i);
+
+		try {
+			IPAddress.TryParse ((string) null, out i);
+			Assert.Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.AreEqual ("ipString", ex.ParamName, "#5");
+		}
 	}
 
 	[Test]
@@ -469,6 +519,28 @@ public class IPAddressTest
 		Assert.IsFalse (IPAddress.TryParse ("1;2:3:4:5:6:7:8", out i), "#10"); // ;
 		// FIXME:
 		// Assert.IsFalse (IPAddress.TryParse ("1:2:3:4:5:6:7:8/10", out i), "#11"); // subnet
+	}
+
+	[Test]
+	public void TryParseOkV4 ()
+	{
+		for (int i = 0; i < ipv4ParseOk.Length / 2; i++) {
+			IPAddress ip;
+			Assert.IsTrue (IPAddress.TryParse (ipv4ParseOk [i * 2], out ip), "#1:" + i);
+			Assert.AreEqual (ipv4ParseOk [i * 2 + 1], ip.ToString (), "#2:" + i);
+		}
+	}
+
+	[Test]
+	public void TryParseWrongV4 ()
+	{
+		for (int i = 0; i < ipv4ParseWrong.Length; i++) {
+			IPAddress ip;
+			string ipAddress = ipv4ParseWrong [i];
+
+			Assert.IsFalse (IPAddress.TryParse (ipAddress, out ip), "#1:" + i);
+			Assert.IsNull (ip, "#2:" + i);
+		}
 	}
 
 	[Test]
