@@ -9,6 +9,7 @@
 using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -38,21 +39,35 @@ namespace MonoTests.Microsoft.CSharp
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void DefaultExpressionTest ()
 		{
 			using (StringWriter sw = new StringWriter ()) {
-				Generate (new CodeExpression (), sw);
-				sw.Close ();
+				try {
+					Generate (new CodeExpression (), sw);
+					Assert.Fail ("#1");
+				} catch (ArgumentException ex) {
+					// Element type System.CodeDom.CodeExpression is not supported
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.AreEqual ("e", ex.ParamName, "#5");
+				}
 			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void NullExpressionTest ()
 		{
 			using (StringWriter sw = new StringWriter ()) {
-				Generate (null, sw);
+				try {
+					Generate (null, sw);
+					Assert.Fail ("#1");
+				} catch (ArgumentNullException ex) {
+					Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.AreEqual ("e", ex.ParamName, "#5");
+				}
 			}
 		}
 
@@ -347,6 +362,202 @@ namespace MonoTests.Microsoft.CSharp
 				cpde.Direction = FieldDirection.Ref;
 				Assert.AreEqual ("ref A B", Generate (cpde, sw), "#7");
 				sb.Length = 0;
+			}
+		}
+
+		[Test]
+		public void ArrayCreateExpressionTest ()
+		{
+			StringBuilder sb;
+
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				Assert.AreEqual (
+					string.Format (CultureInfo.InvariantCulture,
+						"new int[] {{{0}        5}}",
+						Environment.NewLine),
+					Generate (new CodeArrayCreateExpression (
+							typeof (int),
+							new CodeExpression [] {
+								new CodePrimitiveExpression (5)
+								})
+						, sw), "#1");
+			}
+
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				Assert.AreEqual ("new int[5]",
+					Generate (new CodeArrayCreateExpression (
+							typeof (int),
+							new CodePrimitiveExpression (5))
+						, sw), "#2");
+			}
+
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				Assert.AreEqual (
+					string.Format (CultureInfo.InvariantCulture,
+						"new string[] {{{0}" +
+						"        \"a\",{0}" +
+						"        \"b\",{0}" +
+						"        \"c\"}}",
+						Environment.NewLine),
+					Generate (new CodeArrayCreateExpression (
+							typeof (string),
+							new CodeExpression [] {
+								new CodePrimitiveExpression ("a"),
+								new CodePrimitiveExpression ("b"),
+								new CodePrimitiveExpression ("c"),
+								})
+						, sw));
+				sw.Close ();
+			}
+		}
+
+		[Test]
+		public void EscapedIdentifierTest ()
+		{
+			StringBuilder sb;
+			string code;
+
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeVariableReferenceExpression ("using"), sw);
+				Assert.AreEqual ("@using", code, "#1");
+				sw.Close ();
+			}
+
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeTypeReferenceExpression ("using"), sw);
+				Assert.AreEqual ("@using", code, "#2");
+				sw.Close ();
+			}
+
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodePropertyReferenceExpression (null, "using"), sw);
+				Assert.AreEqual ("@using", code, "#3");
+				sw.Close ();
+			}
+
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeMethodReferenceExpression (null, "using"), sw);
+				Assert.AreEqual ("@using", code, "#4");
+				sw.Close ();
+			}
+
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeFieldReferenceExpression (null, "using"), sw);
+				Assert.AreEqual ("@using", code, "#5");
+				sw.Close ();
+			}
+
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeEventReferenceExpression (null, "using"), sw);
+				Assert.AreEqual ("@using", code, "#6");
+				sw.Close ();
+			}
+		}
+
+		[Test]
+		public void EventReferenceTest ()
+		{
+			StringBuilder sb;
+			string code;
+
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeEventReferenceExpression (null, null), sw);
+				Assert.AreEqual (string.Empty, code, "#1");
+			}
+
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeEventReferenceExpression (null, "abc"), sw);
+				Assert.AreEqual ("abc", code, "#2");
+			}
+
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeEventReferenceExpression (new CodeThisReferenceExpression (), null), sw);
+				Assert.AreEqual ("this.", code, "#3");
+			}
+
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeEventReferenceExpression (new CodeThisReferenceExpression (), "abc"), sw);
+				Assert.AreEqual ("this.abc", code, "#4");
+			}
+
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeEventReferenceExpression (new CodePrimitiveExpression ("primitive"), null), sw);
+				Assert.AreEqual ("\"primitive\".", code, "#5");
+			}
+
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeEventReferenceExpression (new CodePrimitiveExpression ("primitive"), "abc"), sw);
+				Assert.AreEqual ("\"primitive\".abc", code, "#6");
+			}
+		}
+
+		[Test]
+		public void DelegateInvokeTest ()
+		{
+			StringBuilder sb;
+			string code;
+
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeDelegateInvokeExpression (null, new CodePrimitiveExpression ("abc")), sw);
+				Assert.AreEqual ("(\"abc\")", code, "#1");
+			}
+
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeDelegateInvokeExpression (new CodeThisReferenceExpression (), new CodePrimitiveExpression ("abc")), sw);
+				Assert.AreEqual ("this(\"abc\")", code, "#2");
+			}
+
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeDelegateInvokeExpression (new CodePrimitiveExpression ("primitive"), new CodePrimitiveExpression ("abc")), sw);
+				Assert.AreEqual ("\"primitive\"(\"abc\")", code, "#3");
+			}
+
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeDelegateInvokeExpression (new CodeEventReferenceExpression (new CodeThisReferenceExpression (), "Click"), new CodePrimitiveExpression ("abc")), sw);
+				Assert.AreEqual ("this.Click(\"abc\")", code, "#4");
+			}
+
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeDelegateInvokeExpression (new CodeEventReferenceExpression (new CodeThisReferenceExpression (), null), new CodePrimitiveExpression ("abc")), sw);
+				Assert.AreEqual ("this.(\"abc\")", code, "#5");
+			}
+
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeDelegateInvokeExpression (new CodeEventReferenceExpression (new CodePrimitiveExpression ("primitive"), "Click"), new CodePrimitiveExpression ("abc")), sw);
+				Assert.AreEqual ("\"primitive\".Click(\"abc\")", code, "#6");
+			}
+
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeDelegateInvokeExpression (new CodeEventReferenceExpression (new CodePrimitiveExpression ("primitive"), null), new CodePrimitiveExpression ("abc")), sw);
+				Assert.AreEqual ("\"primitive\".(\"abc\")", code, "#7");
+			}
+
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeDelegateInvokeExpression (), sw);
+				Assert.AreEqual ("()", code, "#8");
 			}
 		}
 

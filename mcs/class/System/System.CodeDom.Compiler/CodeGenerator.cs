@@ -278,7 +278,7 @@ namespace System.CodeDom.Compiler {
 		protected void GenerateExpression (CodeExpression e)
 		{
 			if (e == null)
-				throw new ArgumentNullException ("Value cannot be null.");
+				throw new ArgumentNullException ("e");
 
 			CodeArgumentReferenceExpression argref = e as CodeArgumentReferenceExpression;
 			if (argref != null) {
@@ -401,7 +401,7 @@ namespace System.CodeDom.Compiler {
 				return;
 			}
 
-			throw new ArgumentException ("Element type " + e + " is not supported.");
+			throw new ArgumentException ("Element type " + e + " is not supported.", "e");
 		}
 
 		protected abstract void GenerateExpressionStatement (CodeExpressionStatement statement);
@@ -763,6 +763,7 @@ namespace System.CodeDom.Compiler {
 		protected virtual void OutputExpressionList (CodeExpressionCollection expressions,
 							     bool newLineBetweenItems)
 		{
+			++Indent;
 			IEnumerator enumerator = expressions.GetEnumerator();
 			if (enumerator.MoveNext()) {
 				CodeExpression expression = (CodeExpression)enumerator.Current;
@@ -781,6 +782,7 @@ namespace System.CodeDom.Compiler {
 					GenerateExpression (expression);
 				}
 			}
+			--Indent;
 		}
 
 		protected virtual void OutputFieldScopeModifier (MemberAttributes attributes)

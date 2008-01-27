@@ -377,7 +377,7 @@ namespace MonoTests.Microsoft.VisualBasic
 							new CodeExpression [] {
 								new CodePrimitiveExpression (5)
 								})
-						, sw));
+						, sw), "#1");
 				sw.Close ();
 			}
 
@@ -387,10 +387,9 @@ namespace MonoTests.Microsoft.VisualBasic
 					Generate (new CodeArrayCreateExpression(
 							typeof(int), 
 							new CodePrimitiveExpression (5))
-						, sw));
+						, sw), "#2");
 				sw.Close ();
 			}
-
 
 			sb = new StringBuilder ();
 			using (StringWriter sw = new StringWriter (sb)) {
@@ -402,7 +401,7 @@ namespace MonoTests.Microsoft.VisualBasic
 								new CodePrimitiveExpression ("b"),
 								new CodePrimitiveExpression ("c"),
 								})
-						, sw));
+						, sw), "#3");
 				sw.Close ();
 			}
 		}
@@ -472,14 +471,14 @@ namespace MonoTests.Microsoft.VisualBasic
 			using (StringWriter sw = new StringWriter (sb)) {
 				code = Generate (new CodeEventReferenceExpression (null, "abc"), sw);
 				Assert.AreEqual ("abcEvent", code, "#02");
-			}			
+			}
 			
 			sb = new StringBuilder ();
 			using (StringWriter sw = new StringWriter (sb)) {
 				code = Generate (new CodeEventReferenceExpression (new CodeThisReferenceExpression (), null), sw);
 				Assert.AreEqual ("Me.Event", code, "#03");
 			}
-						
+			
 			sb = new StringBuilder ();
 			using (StringWriter sw = new StringWriter (sb)) {
 				code = Generate (new CodeEventReferenceExpression (new CodeThisReferenceExpression (), "abc"), sw);
@@ -508,19 +507,55 @@ namespace MonoTests.Microsoft.VisualBasic
 			sb = new StringBuilder ();
 			using (StringWriter sw = new StringWriter (sb)) {
 				code = Generate (new CodeDelegateInvokeExpression (null, new CodePrimitiveExpression ("abc")), sw);
-				Assert.AreEqual ("RaiseEvent (\"abc\")", code, "#02");
-			}			
-						
+#if NET_2_0
+				Assert.AreEqual ("(\"abc\")", code, "#01");
+#else
+				Assert.AreEqual ("RaiseEvent (\"abc\")", code, "#01");
+#endif
+			}
+
 			sb = new StringBuilder ();
 			using (StringWriter sw = new StringWriter (sb)) {
 				code = Generate (new CodeDelegateInvokeExpression (new CodeThisReferenceExpression (), new CodePrimitiveExpression ("abc")), sw);
-				Assert.AreEqual ("RaiseEvent Me(\"abc\")", code, "#04");
+#if NET_2_0
+				Assert.AreEqual ("Me(\"abc\")", code, "#02");
+#else
+				Assert.AreEqual ("RaiseEvent Me(\"abc\")", code, "#02");
+#endif
 			}
-			
+
 			sb = new StringBuilder ();
 			using (StringWriter sw = new StringWriter (sb)) {
 				code = Generate (new CodeDelegateInvokeExpression (new CodePrimitiveExpression ("primitive"), new CodePrimitiveExpression ("abc")), sw);
-				Assert.AreEqual ("RaiseEvent \"primitive\"(\"abc\")", code, "#06");
+#if NET_2_0
+				Assert.AreEqual ("\"primitive\"(\"abc\")", code, "#03");
+#else
+				Assert.AreEqual ("RaiseEvent \"primitive\"(\"abc\")", code, "#03");
+#endif
+			}
+
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeDelegateInvokeExpression (new CodeEventReferenceExpression (new CodeThisReferenceExpression (), "Click"), new CodePrimitiveExpression ("abc")), sw);
+				Assert.AreEqual ("RaiseEvent Click(\"abc\")", code, "#04");
+			}
+
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeDelegateInvokeExpression (new CodeEventReferenceExpression (new CodeThisReferenceExpression (), null), new CodePrimitiveExpression ("abc")), sw);
+				Assert.AreEqual ("RaiseEvent (\"abc\")", code, "#05");
+			}
+
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeDelegateInvokeExpression (new CodeEventReferenceExpression (new CodePrimitiveExpression ("primitive"), "Click"), new CodePrimitiveExpression ("abc")), sw);
+				Assert.AreEqual ("RaiseEvent \"primitive\".Click(\"abc\")", code, "#06");
+			}
+
+			sb = new StringBuilder ();
+			using (StringWriter sw = new StringWriter (sb)) {
+				code = Generate (new CodeDelegateInvokeExpression (new CodeEventReferenceExpression (new CodePrimitiveExpression ("primitive"), null), new CodePrimitiveExpression ("abc")), sw);
+				Assert.AreEqual ("RaiseEvent \"primitive\".(\"abc\")", code, "#07");
 			}
 		}
 	}

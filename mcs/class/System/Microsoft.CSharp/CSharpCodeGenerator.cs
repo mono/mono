@@ -289,7 +289,8 @@ namespace Mono.CSharp
 
 		protected override void GenerateDelegateInvokeExpression (CodeDelegateInvokeExpression expression)
 		{
-			GenerateExpression (expression.TargetObject);
+			if (expression.TargetObject != null)
+				GenerateExpression (expression.TargetObject);
 			Output.Write ('(');
 			OutputExpressionList (expression.Parameters);
 			Output.Write (')');

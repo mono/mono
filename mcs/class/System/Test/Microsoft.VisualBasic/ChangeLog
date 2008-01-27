@@ -1,3 +1,8 @@
+2008-01-27  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CodeGeneratorFromExpressionTest.cs: Numbered tests. Fixed test for
+	DelegateInvokeExpression to pass on MS 2.0 and improved coverage.
+
 2008-01-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CodeGeneratorFromNamespaceTest.cs: Added tests for type parameters.

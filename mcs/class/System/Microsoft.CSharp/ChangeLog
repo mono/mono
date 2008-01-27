@@ -1,3 +1,8 @@
+2008-01-27  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CSharpCodeGenerator.cs: Avoid ArgumentNullException when
+	CodeDelegateInvokeExpression.TargetObject is null.
+
 2008-01-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CSharpCodeGenerator.cs: Cosmetic changes to the code emitted for

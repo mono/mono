@@ -1,3 +1,8 @@
+2008-01-27  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CodeGenerator.cs: Fixed ArgumentException argument names. Indent
+	expression list.
+
 2007-12-15  Marek Habersack  <mhabersack@novell.com>
 
 	* Compiler.cs: added support for the default collection of

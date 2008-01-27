@@ -1,3 +1,9 @@
+2008-01-27  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* VBCodeGenerator.cs: In GenerateDelegateInvokeExpression, only emit
+	RaiseEvent statement on 2.0 profile if TargetObject is a
+	CodeEventReferenceExpression. Spaces to tabs and code formatting.
+
 2008-01-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* VBCodeGenerator.cs: Implement support for type parameters.
