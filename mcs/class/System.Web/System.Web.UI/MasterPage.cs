@@ -105,7 +105,13 @@ namespace System.Web.UI
 		internal static MasterPage CreateMasterPage (TemplateControl owner, HttpContext context,
 							     string masterPageFile, IDictionary contentTemplateCollection)
 		{
+#if TARGET_JVM
+			MasterPage masterPage = MasterPageParser.GetCompiledMasterInstance (masterPageFile,
+											    owner.Page.MapPath (masterPageFile),
+											    context);
+#else
 			MasterPage masterPage = BuildManager.CreateInstanceFromVirtualPath (masterPageFile, typeof (MasterPage)) as MasterPage;
+#endif
 			if (masterPage == null)
 				throw new HttpException ("Failed to create MasterPage instance for '" + masterPageFile + "'.");
 			

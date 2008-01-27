@@ -612,11 +612,15 @@ public partial class Page : TemplateControl, IHttpHandler
 			if (ps != null)
 				_styleSheetTheme = ps.StyleSheetTheme;
 		}
+#if TARGET_JVM
+		if (_styleSheetTheme != null && _styleSheetTheme != "")
+			_styleSheetPageTheme = ThemeDirectoryCompiler.GetCompiledInstance (_styleSheetTheme, Context);
+#else
 		if (!String.IsNullOrEmpty (_styleSheetTheme)) {
 			string virtualPath = "~/App_Themes/" + _styleSheetTheme;
 			_styleSheetPageTheme = BuildManager.CreateInstanceFromVirtualPath (virtualPath, typeof (PageTheme)) as PageTheme;
 		}
-		
+#endif	
 	}
 
 	void InitializeTheme ()
@@ -626,12 +630,19 @@ public partial class Page : TemplateControl, IHttpHandler
 			if (ps != null)
 				_theme = ps.Theme;
 		}
+#if TARGET_JVM
+		if (_theme != null && _theme != "") {
+			_pageTheme = ThemeDirectoryCompiler.GetCompiledInstance (_theme, Context);
+			_pageTheme.SetPage (this);
+		}
+#else
 		if (!String.IsNullOrEmpty (_theme)) {
 			string virtualPath = "~/App_Themes/" + _theme;
 			_pageTheme = BuildManager.CreateInstanceFromVirtualPath (virtualPath, typeof (PageTheme)) as PageTheme;
 			if (_pageTheme != null)
 				_pageTheme.SetPage (this);
 		}
+#endif	
 	}
 
 #endif
