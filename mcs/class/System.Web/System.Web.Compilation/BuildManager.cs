@@ -287,7 +287,13 @@ namespace System.Web.Compilation {
                                 else
                                         LoadAssembly (info, al);
                         }
-			
+
+			foreach(Assembly appCodeAssembly in CodeAssemblies)
+				al.Add (appCodeAssembly);
+
+			foreach(string assLocation in WebConfigurationManager.ExtraAssemblies)
+				LoadAssembly (assLocation, al);
+
                         if (addAssembliesInBin)
 				foreach (string s in HttpApplication.BinDirectoryAssemblies)
 					LoadAssembly (s, al);

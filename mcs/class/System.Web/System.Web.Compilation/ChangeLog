@@ -1,3 +1,8 @@
+2008-01-27  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: GetReferencedAssemblies includes the extra
+	assemblies and the App_Code assemblies.
+
 2008-01-24  Marek Habersack  <mhabersack@novell.com>
 
 	* WebHandlerBuildProvider.cs: derive from the new
