@@ -1,5 +1,9 @@
 2008-01-27  Jb Evain  <jbevain@novell.com>
 
+	* ConditionalExpression.cs: implement Emit.
+
+2008-01-27  Jb Evain  <jbevain@novell.com>
+
 	* Expression.cs: implement the last Lambda method.
 
 2008-01-27  Jb Evain  <jbevain@novell.com>

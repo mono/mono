@@ -27,6 +27,7 @@
 //
 
 using System;
+using System.Reflection.Emit;
 
 namespace System.Linq.Expressions {
 
@@ -58,8 +59,20 @@ namespace System.Linq.Expressions {
 
 		internal override void Emit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			var ig = ec.ig;
+			var false_target = ig.DefineLabel ();
+			var end_target = ig.DefineLabel ();
+
+			test.Emit (ec);
+			ig.Emit (OpCodes.Brfalse, false_target);
+
+			ifTrue.Emit (ec);
+			ig.Emit (OpCodes.Br, end_target);
+
+			ig.MarkLabel (false_target);
+			ifFalse.Emit (ec);
+
+			ig.MarkLabel (end_target);
 		}
-		
 	}
 }
