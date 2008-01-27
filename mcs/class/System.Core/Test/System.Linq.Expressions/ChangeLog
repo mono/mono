@@ -1,5 +1,10 @@
 2008-01-27  Jb Evain  <jbevain@novell.com>
 
+	* ExpressionTest_Condition.cs: tests for compilation of
+	conditionals.
+
+2008-01-27  Jb Evain  <jbevain@novell.com>
+
 	* ExpressionTest_Lambda.cs: add test for the
 	Lambda(Expression,ParameterExpression[]) method.
 

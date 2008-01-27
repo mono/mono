@@ -80,5 +80,26 @@ namespace MonoTests.System.Linq.Expressions {
 			Assert.AreEqual (typeof (bool), cond.Test.Type);
 			Assert.AreEqual ("IIF((2 > 1), 1, 0)", cond.ToString ());
 		}
+
+		[Test]
+		public void CompileConditional ()
+		{
+			var parameters = new [] { Expression.Parameter (typeof (int), "number") };
+
+			var l = Expression.Lambda<Func<int, string>> (
+						Expression.Condition (
+							Expression.GreaterThanOrEqual (
+								parameters [0],
+								Expression.Constant (0)),
+							Expression.Constant ("+"),
+							Expression.Constant ("-")),
+						parameters);
+
+			var gt = l.Compile ();
+
+			Assert.AreEqual ("+", gt (1));
+			Assert.AreEqual ("+", gt (0));
+			Assert.AreEqual ("-", gt (-1));
+		}
 	}
 }
