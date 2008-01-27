@@ -1,6 +1,14 @@
 2008-01-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-exceptions.c (ves_icall_System_Security_SecurityFrame_GetSecurityFrame): 
+	Fix CAS on s390.
+	(ves_icall_System_Security_SecurityFrame_GetSecurityStack): Ditto.
+
+	* mini-s390x.c (mono_arch_emit_exceptions): Fix a warning.
+
+	* mini-s390x.c: Add support for generic sharing.
+	
+	* mini-exceptions.c (ves_icall_System_Security_SecurityFrame_GetSecurityFrame): 
 	Fix CAS on ia64.
 	(ves_icall_System_Security_SecurityFrame_GetSecurityStack): Ditto.
 
