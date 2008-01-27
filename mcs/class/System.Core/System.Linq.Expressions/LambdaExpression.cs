@@ -72,14 +72,14 @@ namespace System.Linq.Expressions {
 			// https://bugzilla.novell.com/show_bug.cgi?id=355005
 			//
 			string name = GenName ();
-			Method = new DynamicMethod (name, Owner.Type, ParamTypes, owner_of_code);
+			Method = new DynamicMethod (name, Owner.Body.Type, ParamTypes, owner_of_code);
 
 			ig = Method.GetILGenerator ();
 		}
 
 		internal Delegate CreateDelegate ()
 		{
-			return Method.CreateDelegate (Owner.DelegateType);
+			return Method.CreateDelegate (Owner.Type);
 		}
 
 		internal int GetParameterPosition (ParameterExpression p)
@@ -112,10 +112,6 @@ namespace System.Linq.Expressions {
 			get { return parameters; }
 		}
 
-		internal Type DelegateType {
-			get { return delegate_type; }
-		}
-
 		static bool CanAssign (Type target, Type source)
 		{
 			// This catches object and value type mixage, type compatibility is handled later
@@ -126,7 +122,7 @@ namespace System.Linq.Expressions {
 		}
 
 		internal LambdaExpression (Type delegateType, Expression body, ReadOnlyCollection<ParameterExpression> parameters)
-			: base (ExpressionType.Lambda, body.Type)
+			: base (ExpressionType.Lambda, delegateType)
 		{
 			if (!delegateType.IsSubclassOf (typeof (System.Delegate)))
 				throw new ArgumentException ("delegateType");
@@ -149,7 +145,6 @@ namespace System.Linq.Expressions {
 
 			this.body = body;
 			this.parameters = parameters;
-			delegate_type = delegateType;
 		}
 
 		internal override void Emit (EmitContext ec)
