@@ -1137,10 +1137,30 @@ namespace System.Linq.Expressions {
 			return new Expression<TDelegate> (body, parameters.ToReadOnlyCollection ());
 		}
 
-		[MonoTODO]
 		public static LambdaExpression Lambda (Expression body, params ParameterExpression [] parameters)
 		{
-			throw new NotImplementedException ();
+			if (body == null)
+				throw new ArgumentNullException ("body");
+			if (parameters.Length > 4)
+				throw new ArgumentException ("Too many parameters");
+
+			return Lambda (GetDelegateType (body.Type, parameters), body, parameters);
+		}
+
+		static Type GetDelegateType (Type return_type, ParameterExpression [] parameters)
+		{
+			if (parameters == null)
+				parameters = new ParameterExpression [0];
+
+			if (return_type == typeof (void))
+				return GetActionType (parameters.Select (p => p.Type).ToArray ());
+
+			var types = new Type [parameters.Length + 1];
+			for (int i = 0; i < types.Length - 1; i++)
+				types [i] = parameters [i].Type;
+
+			types [types.Length - 1] = return_type;
+			return GetFuncType (types);
 		}
 
 		public static LambdaExpression Lambda (Type delegateType, Expression body, params ParameterExpression [] parameters)
@@ -1148,7 +1168,6 @@ namespace System.Linq.Expressions {
 			return Lambda (delegateType, body, parameters as IEnumerable<ParameterExpression>);
 		}
 
-		[MonoTODO]
 		public static LambdaExpression Lambda (Type delegateType, Expression body, IEnumerable<ParameterExpression> parameters)
 		{
 			if (delegateType == null)
