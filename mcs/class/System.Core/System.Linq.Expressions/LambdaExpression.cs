@@ -50,14 +50,14 @@ namespace System.Linq.Expressions {
 				return "<LINQ-" + method_count++ + ">";
 			}
 		}
-		
+
 		public EmitContext (LambdaExpression owner)
 		{
 			Owner = owner;
 
-			ParamTypes = new Type [Owner.parameters.Count];
-			for (int i = 0; i < Owner.parameters.Count; i++)
-				ParamTypes [i] = Owner.parameters [i].Type;
+			ParamTypes = new Type [Owner.Parameters.Count];
+			for (int i = 0; i < Owner.Parameters.Count; i++)
+				ParamTypes [i] = Owner.Parameters [i].Type;
 
 			//
 			// We probably want to use the 3.5 new API calls to associate
@@ -73,13 +73,13 @@ namespace System.Linq.Expressions {
 			//
 			string name = GenName ();
 			Method = new DynamicMethod (name, Owner.Type, ParamTypes, owner_of_code);
-			
+
 			ig = Method.GetILGenerator ();
 		}
 
 		internal Delegate CreateDelegate ()
 		{
-			return Method.CreateDelegate (Owner.delegate_type);			
+			return Method.CreateDelegate (Owner.DelegateType);
 		}
 
 		internal int GetParameterPosition (ParameterExpression p)
@@ -98,21 +98,33 @@ namespace System.Linq.Expressions {
 		// LambdaExpression parameters
 		//
 		Expression body;
-		internal ReadOnlyCollection<ParameterExpression> parameters;
-		internal Type delegate_type;
+		ReadOnlyCollection<ParameterExpression> parameters;
+		Type delegate_type;
 
 		// This is set during compilation
 		Delegate lambda_delegate;
+
+		public Expression Body {
+			get { return body; }
+		}
+
+		public ReadOnlyCollection<ParameterExpression> Parameters {
+			get { return parameters; }
+		}
+
+		internal Type DelegateType {
+			get { return delegate_type; }
+		}
 
 		static bool CanAssign (Type target, Type source)
 		{
 			// This catches object and value type mixage, type compatibility is handled later
 			if (target.IsValueType ^ source.IsValueType)
 				return false;
-			
+
 			return target.IsAssignableFrom (source);
 		}
-				
+
 		internal LambdaExpression (Type delegateType, Expression body, ReadOnlyCollection<ParameterExpression> parameters)
 			: base (ExpressionType.Lambda, body.Type)
 		{
@@ -134,18 +146,10 @@ namespace System.Linq.Expressions {
 
 			if (!CanAssign (invoke.ReturnType, body.Type))
 				throw new ArgumentException (String.Format ("body type {0} can not be assigned to {1}", body.Type, invoke.ReturnType));
-			
+
 			this.body = body;
 			this.parameters = parameters;
 			delegate_type = delegateType;
-		}
-		
-		public Expression Body {
-			get { return body; }
-		}
-
-		public ReadOnlyCollection<ParameterExpression> Parameters {
-			get { return parameters; }
 		}
 
 		internal override void Emit (EmitContext ec)
@@ -167,7 +171,7 @@ namespace System.Linq.Expressions {
 				string fname = "linq" + (EmitContext.method_count-1) + ".dll";
 				AssemblyBuilder ab = Thread.GetDomain ().DefineDynamicAssembly (
 					new AssemblyName (fname), AssemblyBuilderAccess.RunAndSave, "/tmp");
-				
+
 				ModuleBuilder b = ab.DefineDynamicModule (fname, fname);
 				TypeBuilder tb = b.DefineType ("LINQ", TypeAttributes.Public);
 				MethodBuilder mb = tb.DefineMethod ("GeneratedMethod", MethodAttributes.Static, Type, ec.ParamTypes);
@@ -178,7 +182,7 @@ namespace System.Linq.Expressions {
 				tb.CreateType ();
 				ab.Save (fname);
 			}
-			
+
 			lambda_delegate = ec.CreateDelegate ();
 			return lambda_delegate;
 		}
