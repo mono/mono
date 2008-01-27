@@ -131,6 +131,7 @@ namespace MonoTests.System.Linq.Expressions
 			Expression<Func<int,int,int>> l = Expression.Lambda<Func<int,int,int>>(
 				Expression.Add (a, b), new ParameterExpression [] { a, b });
 
+			Assert.AreEqual (typeof (Func<int, int, int>), l.Type);
 			Assert.AreEqual ("(a, b) => (a + b)", l.ToString ());
 
 			Func<int,int,int> xx = l.Compile ();
@@ -142,7 +143,7 @@ namespace MonoTests.System.Linq.Expressions
 		public void Compile ()
 		{
 			Expression<Func<int>> l = Expression.Lambda<Func<int>> (Expression.Constant (1), new ParameterExpression [0]);
-
+			Assert.AreEqual (typeof (Func<int>), l.Type);
 			Assert.AreEqual ("() => 1", l.ToString ());
 
 			Func<int> fi = l.Compile ();

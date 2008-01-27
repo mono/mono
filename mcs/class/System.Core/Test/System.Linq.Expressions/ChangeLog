@@ -1,3 +1,8 @@
+2008-01-27  Jb Evain  <jbevain@novell.com>
+
+	* ExpressionTest_Lambda.cs: add tests to assert the type
+	of the LambdaExpressions.
+
 2008-01-18  Jb Evain  <jbevain@novell.com>
 
 	* ExpressionTest_GreaterThan|GreaterThanOrEqual.cs
