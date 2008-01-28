@@ -56,7 +56,8 @@ webForm.ValidatorOnLoad = function  ()
 		else
 			vo._enabled = true;
 			
-		vo._evaluationfunction = webForm [vo.evaluationfunction];
+		if (typeof(vo.evaluationfunction) == "string")
+			vo.evaluationfunction = webForm [vo.evaluationfunction];
 	}
 
 	webForm.Page_ValidationActive = true;
@@ -207,7 +208,7 @@ webForm.Page_ClientValidate = function (group)
 	var invalidControlHasBeenFocused = false;
 	for (var v = 0; v < webForm.Page_Validators.length; v++) {
 		var vo = webForm.Page_Validators [v];
-		var evalfunc = vo._evaluationfunction;
+		var evalfunc = vo.evaluationfunction;
 		var result = false;
 
 		if (!vo._enabled || !webForm.IsValidationGroupMatch(vo, group)) {
