@@ -1,3 +1,10 @@
+2008-01-28  Jonathan Chambers  <joncham@gmail.com>
+
+	* marshal.c: Add support for BSTR marshalling
+	using other COM systems.
+
+	Code is contributed under MIT/X11 license.
+
 2008-01-28 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* object.c (mono_runtime_invoke_array): reverted previous
