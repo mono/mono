@@ -34,6 +34,7 @@
 
 using System.IO;
 using System.Net;
+using System.Web.Compilation;
 using System.Web.Services;
 using System.Web.Services.Configuration;
 using System.Web.SessionState;
@@ -103,7 +104,13 @@ namespace System.Web.Services.Protocols
 #else
 			string fp = filePath != null ? filePath.Replace (HttpRuntime.AppDomainAppPath, "/").Replace (Path.DirectorySeparatorChar, '/') : null;
 #endif
-			Type type = WebServiceParser.GetCompiledType (fp, context);
+
+			Type type;
+#if NET_2_0
+			type = BuildManager.GetCompiledType (url);
+#else
+			type = WebServiceParser.GetCompiledType (fp, context);
+#endif
 
 			WSProtocol protocol = GuessProtocol (context, verb);
 #if NET_2_0

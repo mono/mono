@@ -1,3 +1,11 @@
+2008-01-24  Marek Habersack  <mhabersack@novell.com>
+
+	* SoapDocumentationHandler.cs: use a fake virtual path to get the
+	WSDL help generator.
+
+	* WebServiceHandlerFactory.cs: use BuildManager.GetCompiledType
+	for the 2.0+ profile to get the handler type.
+
 2008-01-08  Arina Itkes  <arinai@mainsoft.com>
 
 	* Methods.cs: Fix for compatibility with .NET:
