@@ -1,5 +1,10 @@
 2008-01-28 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* object.c (mono_runtime_invoke_array): reverted previous
+	commit as it breaks the build.
+
+2008-01-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* object.c (mono_runtime_invoke_array): Verify arguments for
 	invalid types. Fixes #348522.
 
