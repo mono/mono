@@ -2525,6 +2525,7 @@ namespace System.Windows.Forms {
 				break;
 			}
 			
+#if NET_2_0
 			case Msg.WM_ENTERSIZEMOVE: {
 				OnResizeBegin (EventArgs.Empty);
 				break;
@@ -2534,6 +2535,7 @@ namespace System.Windows.Forms {
 				OnResizeEnd (EventArgs.Empty);
 				break;
 			}
+#endif
 
 			default: {
 				base.WndProc (ref m);
