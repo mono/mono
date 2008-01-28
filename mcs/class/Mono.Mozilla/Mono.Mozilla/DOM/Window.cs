@@ -55,6 +55,22 @@ namespace Mono.Mozilla.DOM
 #endregion
 
 #region Properties
+		public IDocument Document {
+			get {
+				nsIDOMDocument doc;
+				this.window.getDocument (out doc);
+				return new Document (control, (nsIDOMHTMLDocument) doc);
+			}
+		}
+		
+		public IWindowCollection Frames {
+			get {
+				nsIDOMWindowCollection windows;
+				this.window.getFrames (out windows);
+				return new WindowCollection (control, windows);
+			}
+		}
+
 		public string Name {
 			get {
 				this.window.getName (storage);
@@ -80,7 +96,13 @@ namespace Mono.Mozilla.DOM
 				this.window.getTop (out top);
 				return new Window (control, top);
 			}
-		}		
+		}
+		
+		public string StatusText {
+			get {
+				return control.StatusText;
+			}
+		}
 #endregion
 
 #region Methods
@@ -104,6 +126,41 @@ namespace Mono.Mozilla.DOM
 		{
 			this.window.scrollTo (x, y);
 		}
+#endregion
+
+#region Events
+		static object LoadEvent = new object ();
+		public event EventHandler Load
+		{
+			add { Events.AddHandler (LoadEvent, value); }
+			remove { Events.RemoveHandler (LoadEvent, value); }
+		}
+
+		static object UnloadEvent = new object ();
+		public event EventHandler Unload
+		{
+			add { Events.AddHandler (UnloadEvent, value); }
+			remove { Events.RemoveHandler (UnloadEvent, value); }
+		}
+		
+		public void OnLoad ()
+		{
+			EventHandler eh = (EventHandler) (Events[LoadEvent]);
+			if (eh != null) {
+				EventArgs e = new EventArgs ();
+				eh (this, e);
+			}		
+		}
+
+		public void OnUnload ()
+		{		
+			EventHandler eh = (EventHandler) (Events[UnloadEvent]);
+			if (eh != null) {
+				EventArgs e = new EventArgs ();
+				eh (this, e);
+			}
+		}
+		
 #endregion		
 	}
 }

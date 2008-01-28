@@ -84,15 +84,20 @@ namespace Mono.Mozilla {
 	public struct CallbackBinder {
 		
 		public CallbackDelegate				OnWidgetLoaded;
+
 		public CallbackDelegate 				OnJSStatus;
 		public CallbackDelegate 				OnLinkStatus;
 		public CallbackDelegate 				OnDestroyBrowser;
 		public CallbackDelegateIntInt			OnSizeTo;
+
 		public CallbackDelegate 				OnFocusNext;
 		public CallbackDelegate 				OnFocusPrev;
+
 		public CallbackDelegate 				OnTitleChanged;
+
 		public CallbackDelegateStringIntInt	OnShowTooltipWindow;
 		public CallbackDelegate 				OnHideTooltipWindow;
+
 		public CallbackDelegate 				OnStateNetStart;
 		public CallbackDelegate 				OnStateNetStop;
 		public CallbackDelegateUintInt			OnStateSpecial;
@@ -100,26 +105,30 @@ namespace Mono.Mozilla {
 		public CallbackDelegateIntInt			OnProgress;
 		public CallbackDelegateStringIntInt	OnProgressAll;
 		public CallbackDelegateString				OnLocationChanged;
+
 		public CallbackDelegateStringInt		OnStatusChange;
 		public CallbackDelegateUint			OnSecurityChange;
 		public CallbackDelegateBool			OnVisibility;
+
 		public DomKeyCallbackDelegate			OnDomKeyDown;
 		public DomKeyCallbackDelegate			OnDomKeyUp;
 		public DomKeyCallbackDelegate			OnDomKeyPress;
+
 		public MouseCallbackDelegate			OnMouseDown;
 		public MouseCallbackDelegate			OnMouseUp;
 		public MouseCallbackDelegate			OnMouseClick;
 		public MouseCallbackDelegate			OnMouseDoubleClick;
 		public MouseCallbackDelegate			OnMouseOver;
 		public MouseCallbackDelegate			OnMouseOut;
-		public CallbackDelegate2				OnActivate;
-		public CallbackDelegate2				OnFocusIn;
-		public CallbackDelegate2				OnFocusOut;
-		public CallbackDelegate2String			OnBeforeURIOpen;
-		public CallbackDelegate				OnFocus;
-		public CallbackDelegate2				OnCreateNewWindow;
-		public CallbackDelegatePtrPtr			OnAlert;
 
+		public CallbackDelegate2				OnActivate;
+		public CallbackDelegate2				OnFocus;
+		public CallbackDelegate2				OnBlur;
+
+		public CallbackDelegate2String			OnBeforeURIOpen;
+		public CallbackDelegate2				OnCreateNewWindow;
+
+		public CallbackDelegatePtrPtr			OnAlert;
 		public CallbackDelegate2OnAlertCheck OnAlertCheck;
 		public CallbackDelegate2OnConfirm OnConfirm;
 		public CallbackDelegate2OnConfirmCheck OnConfirmCheck;
@@ -129,46 +138,58 @@ namespace Mono.Mozilla {
 		public CallbackDelegate2OnPromptPassword OnPromptPassword;
 		public CallbackDelegate2OnSelect OnSelect;
 
+		public CallbackDelegate			OnLoad;
+		public CallbackDelegate			OnUnload;
+
 		public GenericCallbackDelegate			OnGeneric;
 		
 		internal CallbackBinder (ICallback callback) {
 			this.OnWidgetLoaded		= new CallbackDelegate (callback.OnWidgetLoaded);
+
 			this.OnJSStatus			= new CallbackDelegate (callback.OnJSStatus);
 			this.OnLinkStatus			= new CallbackDelegate (callback.OnLinkStatus);
 			this.OnDestroyBrowser		= new CallbackDelegate (callback.OnDestroyBrowser);
 			this.OnSizeTo				= new CallbackDelegateIntInt (callback.OnClientSizeTo);
+
 			this.OnFocusNext			= new CallbackDelegate (callback.OnFocusNext);
 			this.OnFocusPrev			= new CallbackDelegate (callback.OnFocusPrev);
+
 			this.OnTitleChanged		= new CallbackDelegate (callback.OnTitleChanged);
+
 			this.OnShowTooltipWindow	= new CallbackDelegateStringIntInt (callback.OnShowTooltipWindow);
 			this.OnHideTooltipWindow	= new CallbackDelegate (callback.OnHideTooltipWindow);
+
 			this.OnStateNetStart		= new CallbackDelegate (callback.OnStateNetStart);
 			this.OnStateNetStop		= new CallbackDelegate (callback.OnStateNetStop);
 			this.OnStateSpecial		= new CallbackDelegateUintInt (callback.OnStateSpecial);
 			this.OnStateChange			= new CallbackDelegateIntUint (callback.OnStateChange);
+
 			this.OnProgress			= new CallbackDelegateIntInt (callback.OnProgress);
 			this.OnProgressAll			= new CallbackDelegateStringIntInt (callback.OnProgressAll);
 			this.OnLocationChanged		= new CallbackDelegateString (callback.OnLocationChanged);
 			this.OnStatusChange		= new CallbackDelegateStringInt (callback.OnStatusChange);
 			this.OnSecurityChange		= new CallbackDelegateUint (callback.OnSecurityChange);
 			this.OnVisibility			= new CallbackDelegateBool (callback.OnVisibility);
+
 			this.OnDomKeyDown			= new DomKeyCallbackDelegate (callback.OnClientDomKeyDown);
 			this.OnDomKeyUp			= new DomKeyCallbackDelegate (callback.OnClientDomKeyUp);
 			this.OnDomKeyPress			= new DomKeyCallbackDelegate (callback.OnClientDomKeyPress);
+
 			this.OnMouseDown			= new MouseCallbackDelegate (callback.OnClientMouseDown);
 			this.OnMouseUp				= new MouseCallbackDelegate (callback.OnClientMouseUp);
 			this.OnMouseClick			= new MouseCallbackDelegate (callback.OnClientMouseClick);
 			this.OnMouseDoubleClick	= new MouseCallbackDelegate (callback.OnClientMouseDoubleClick);
 			this.OnMouseOver			= new MouseCallbackDelegate (callback.OnClientMouseOver);
 			this.OnMouseOut			= new MouseCallbackDelegate (callback.OnClientMouseOut);
-			this.OnActivate			= new CallbackDelegate2 (callback.OnClientActivate);
-			this.OnFocusIn				= new CallbackDelegate2 (callback.OnClientFocusIn);
-			this.OnFocusOut			= new CallbackDelegate2 (callback.OnClientFocusOut);
-			this.OnBeforeURIOpen		= new CallbackDelegate2String (callback.OnBeforeURIOpen);
-			this.OnFocus				= new CallbackDelegate (callback.OnFocus);
-			this.OnCreateNewWindow		= new CallbackDelegate2 (callback.OnCreateNewWindow);
-			this.OnAlert				= new CallbackDelegatePtrPtr (callback.OnAlert);
 
+			this.OnActivate			= new CallbackDelegate2 (callback.OnClientActivate);
+			this.OnFocus				= new CallbackDelegate2 (callback.OnClientFocus);
+			this.OnBlur			= new CallbackDelegate2 (callback.OnClientBlur);
+
+			this.OnBeforeURIOpen		= new CallbackDelegate2String (callback.OnBeforeURIOpen);
+			this.OnCreateNewWindow		= new CallbackDelegate2 (callback.OnCreateNewWindow);
+
+			this.OnAlert				= new CallbackDelegatePtrPtr (callback.OnAlert);
 			this.OnAlertCheck			= new CallbackDelegate2OnAlertCheck (callback.OnAlertCheck);
 			this.OnConfirm 			= new CallbackDelegate2OnConfirm (callback.OnConfirm);
 			this.OnConfirmCheck 		= new CallbackDelegate2OnConfirmCheck (callback.OnConfirmCheck);
@@ -178,6 +199,8 @@ namespace Mono.Mozilla {
 			this.OnPromptPassword 		= new CallbackDelegate2OnPromptPassword (callback.OnPromptPassword);
 			this.OnSelect 				= new CallbackDelegate2OnSelect (callback.OnSelect);
 
+			this.OnLoad = new CallbackDelegate (callback.OnLoad);
+			this.OnUnload = new CallbackDelegate (callback.OnUnload);
 
 			this.OnGeneric				= new GenericCallbackDelegate (callback.OnGeneric);
 		}

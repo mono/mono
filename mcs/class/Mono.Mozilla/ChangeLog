@@ -1,3 +1,17 @@
+2008-01-28  Andreia Gaita <avidigal@novell.com>
+
+	* Mono.WebBrowser/DOM/IWindow.cs, Mono.Mozilla/DOM/Window.cs: 
+	Add Document, Frames, StatusText properties, Load and Unload events.
+
+	* Mono.Mozilla/WebBrowser.cs: Add StatusText getter and update it on 
+	callback. Add Load and Unload events and bubble them to the current
+	Window.
+
+	* Mono.Mozilla/ICallback.cs, Mono.Mozilla/Callback.cs: Rearrange callbacks,
+	FocusIn and FocusOut are now Focus and Blur. Add Load and Unload callbacks.
+
+	* Mono.Mozilla/DOM/DOMObject.cs: Add event handler support.
+
 2008-01-24  Andreia Gaita <avidigal@novell.com>
 
 	* Mono.Mozilla.dll.sources, Mono.Mozilla.2K5.csproj: Added files.

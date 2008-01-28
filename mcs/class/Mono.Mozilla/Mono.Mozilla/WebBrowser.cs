@@ -23,6 +23,8 @@
 //	Andreia Gaita (avidigal@novell.com)
 //
 
+#undef debug
+
 using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -45,6 +47,8 @@ namespace Mono.Mozilla
 		internal Platform platform;
 		internal Platform enginePlatform;
 
+		private string statusText;
+		
 		public WebBrowser (Platform platform)
 		{
 			this.platform = platform;
@@ -67,10 +71,8 @@ namespace Mono.Mozilla
 			this.document = null;	
 		}
 
-		public IWindow Window
-		{
-			get
-			{
+		public IWindow Window {
+			get {
 				if (Navigation != null) {
 					nsIWebBrowserFocus webBrowserFocus = (nsIWebBrowserFocus) (navigation.navigation);
 					nsIDOMWindow window;
@@ -81,10 +83,8 @@ namespace Mono.Mozilla
 			}
 		}
 
-		public IDocument Document
-		{
-			get
-			{
+		public IDocument Document {
+			get {
 				if (Navigation != null && document == null) {
 					document = navigation.Document;
 				}
@@ -92,10 +92,8 @@ namespace Mono.Mozilla
 			}
 		}
 
-		public INavigation Navigation
-		{
-			get
-			{
+		public INavigation Navigation {
+			get {
 				if (navigation == null) {
 					
 					nsIWebNavigation webNav = Base.GetWebNavigation (this);
@@ -103,6 +101,10 @@ namespace Mono.Mozilla
 				}
 				return navigation as INavigation;
 			}
+		}
+		
+		public string StatusText {
+			get { return statusText; }
 		}
 
 		#region Layout
@@ -200,6 +202,13 @@ namespace Mono.Mozilla
 			remove { Events.RemoveHandler (FocusEvent, value); }
 		}
 
+		static object BlurEvent = new object ();
+		public event EventHandler Blur
+		{
+			add { Events.AddHandler (BlurEvent, value); }
+			remove { Events.RemoveHandler (BlurEvent, value); }
+		}
+
 		static object CreateNewWindowEvent = new object ();
 		public event CreateNewWindowEventHandler CreateNewWindow
 		{
@@ -234,6 +243,20 @@ namespace Mono.Mozilla
 		{
 			add { Events.AddHandler (CompletedEvent, value); }
 			remove { Events.RemoveHandler (CompletedEvent, value); }
+		}
+
+		static object LoadEvent = new object ();
+		public event EventHandler Loaded
+		{
+			add { Events.AddHandler (LoadEvent, value); }
+			remove { Events.RemoveHandler (LoadEvent, value); }
+		}
+
+		static object UnloadEvent = new object ();
+		public event EventHandler Unloaded
+		{
+			add { Events.AddHandler (UnloadEvent, value); }
+			remove { Events.RemoveHandler (UnloadEvent, value); }
 		}
 		#endregion
 
@@ -307,6 +330,7 @@ namespace Mono.Mozilla
 
 		public void OnStateChange (Int32 status, UInt32 state)
 		{
+#if debug
 			System.Text.StringBuilder s = new System.Text.StringBuilder ();
 			if ((state & (uint) StateFlags.Start) != 0) {
 				s.Append ("Start\t");
@@ -336,6 +360,7 @@ namespace Mono.Mozilla
 				s.Append ("Window\t");
 			}
 			Console.Error.WriteLine (s.ToString ());
+#endif
 			if ((state & (uint) StateFlags.Transferring) != 0 && 
 				(state & (uint) StateFlags.IsRequest) != 0 &&
 				(state & (uint) StateFlags.IsDocument) != 0
@@ -366,7 +391,9 @@ namespace Mono.Mozilla
 			        eh (this, e);
 			    }
 			}  
+#if debug
 			Console.Error.WriteLine ("{0} completed", s.ToString ());
+#endif
 		}
 
 		public void OnProgress (Int32 currentTotalProgress, Int32 maxTotalProgress)
@@ -392,7 +419,7 @@ namespace Mono.Mozilla
 
 		public void OnStatusChange (string message, Int32 status)
 		{
-			// TODO:  Add WebBrowser.OnStatusChange implementation
+			statusText = message;
 		}
 
 		public void OnSecurityChange (UInt32 state)
@@ -407,6 +434,9 @@ namespace Mono.Mozilla
 
 		public bool OnClientDomKeyDown (KeyInfo keyInfo, ModifierKeys modifiers)
 		{
+#if debug
+			Console.Error.WriteLine ("OnClientDomKeyDown");
+#endif
 			EventHandler eh = (EventHandler) (Events[KeyDownEvent]);
 			if (eh != null) {
 				EventArgs e = new EventArgs ();
@@ -418,6 +448,9 @@ namespace Mono.Mozilla
 
 		public bool OnClientDomKeyUp (KeyInfo keyInfo, ModifierKeys modifiers)
 		{
+#if debug
+			Console.Error.WriteLine ("OnClientDomKeyUp");
+#endif
 			EventHandler eh = (EventHandler) (Events[KeyUpEvent]);
 			if (eh != null) {
 				EventArgs e = new EventArgs ();
@@ -429,6 +462,9 @@ namespace Mono.Mozilla
 
 		public bool OnClientDomKeyPress (KeyInfo keyInfo, ModifierKeys modifiers)
 		{
+#if debug
+			Console.Error.WriteLine ("OnClientDomKeyPress");
+#endif
 			EventHandler eh = (EventHandler) (Events[KeyPressEvent]);
 			if (eh != null) {
 				EventArgs e = new EventArgs ();
@@ -440,6 +476,9 @@ namespace Mono.Mozilla
 
 		public bool OnClientMouseDown (MouseInfo mouseInfo, ModifierKeys modifiers)
 		{
+#if debug
+			Console.Error.WriteLine ("OnClientMouseDown");
+#endif
 			EventHandler eh = (EventHandler) (Events[MouseDownEvent]);
 			if (eh != null) {
 				EventArgs e = new EventArgs ();
@@ -451,6 +490,9 @@ namespace Mono.Mozilla
 
 		public bool OnClientMouseUp (MouseInfo mouseInfo, ModifierKeys modifiers)
 		{
+#if debug
+			Console.Error.WriteLine ("OnClientMouseUp");
+#endif
 			EventHandler eh = (EventHandler) (Events[MouseUpEvent]);
 			if (eh != null) {
 				EventArgs e = new EventArgs ();
@@ -462,6 +504,9 @@ namespace Mono.Mozilla
 
 		public bool OnClientMouseClick (MouseInfo mouseInfo, ModifierKeys modifiers)
 		{
+#if debug
+			Console.Error.WriteLine ("OnClientMouseClick");
+#endif
 			EventHandler eh = (EventHandler) (Events[MouseClickEvent]);
 			if (eh != null) {
 				EventArgs e = new EventArgs ();
@@ -473,6 +518,9 @@ namespace Mono.Mozilla
 
 		public bool OnClientMouseDoubleClick (MouseInfo mouseInfo, ModifierKeys modifiers)
 		{
+#if debug
+			Console.Error.WriteLine ("OnClientMouseDoubleClick");
+#endif
 			EventHandler eh = (EventHandler) (Events[MouseDoubleClickEvent]);
 			if (eh != null) {
 				EventArgs e = new EventArgs ();
@@ -484,6 +532,9 @@ namespace Mono.Mozilla
 
 		public bool OnClientMouseOver (MouseInfo mouseInfo, ModifierKeys modifiers)
 		{
+#if debug
+			Console.Error.WriteLine ("OnClientMouseOver");
+#endif
 			EventHandler eh = (EventHandler) (Events[MouseEnterEvent]);
 			if (eh != null) {
 				EventArgs e = new EventArgs ();
@@ -495,6 +546,9 @@ namespace Mono.Mozilla
 
 		public bool OnClientMouseOut (MouseInfo mouseInfo, ModifierKeys modifiers)
 		{
+#if debug
+			Console.Error.WriteLine ("OnClientMouseOut");
+#endif
 			EventHandler eh = (EventHandler) (Events[MouseLeaveEvent]);
 			if (eh != null) {
 				EventArgs e = new EventArgs ();
@@ -510,15 +564,23 @@ namespace Mono.Mozilla
 			return false;
 		}
 
-		public bool OnClientFocusIn ()
+		public bool OnClientFocus ()
 		{
-			// TODO:  Add WebBrowser.OnClientFocusIn implementation
+			EventHandler eh = (EventHandler) (Events[FocusEvent]);
+			if (eh != null) {
+				EventArgs e = new EventArgs ();
+				eh (this, e);
+			}
 			return false;
 		}
 
-		public bool OnClientFocusOut ()
+		public bool OnClientBlur ()
 		{
-			// TODO:  Add WebBrowser.OnClientFocusOut implementation
+			EventHandler eh = (EventHandler) (Events[BlurEvent]);
+			if (eh != null) {
+				EventArgs e = new EventArgs ();
+				eh (this, e);
+			}
 			return false;
 		}
 
@@ -526,15 +588,6 @@ namespace Mono.Mozilla
 		{
 			// TODO:  Add WebBrowser.OnBeforeURIOpen implementation
 			return false;
-		}
-
-		public void OnFocus ()
-		{
-			EventHandler eh = (EventHandler) (Events[FocusEvent]);
-			if (eh != null) {
-				EventArgs e = new EventArgs ();
-				eh (this, e);
-			}
 		}
 
 		public bool OnCreateNewWindow ()
@@ -718,12 +771,22 @@ namespace Mono.Mozilla
 			return false;
 		}
 
+		public void OnLoad ()
+		{
+			((DOM.Window)Window).OnLoad ();
+		}
 
+		public void OnUnload ()
+		{		
+			((DOM.Window)Window).OnUnload ();
+		}
 
 		public void OnGeneric (IntPtr type)
 		{
 			string t = Marshal.PtrToStringUni (type);
-			Console.Error.WriteLine (t);
+#if debug
+			Console.Error.WriteLine ("Generic:{0}", t);
+#endif
 
 		}
 		#endregion

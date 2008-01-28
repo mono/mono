@@ -25,6 +25,7 @@
 
 using System;
 using System.Text;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Collections;
 using Mono.WebBrowser;
@@ -33,6 +34,7 @@ namespace Mono.Mozilla.DOM
 {
 	internal class DOMObject : IDisposable
 	{
+		private EventHandlerList event_handlers;		
 		protected WebBrowser control;
 		internal HandleRef storage;
 		protected bool disposed = false;
@@ -44,6 +46,7 @@ namespace Mono.Mozilla.DOM
 			IntPtr p = Base.StringInit ();
 			storage = new HandleRef (this, p);
 			resources = new Hashtable ();
+			event_handlers = null;
 		}
 
 		~DOMObject ()
@@ -70,5 +73,21 @@ namespace Mono.Mozilla.DOM
 		}
 
 		#endregion
+
+		protected EventHandlerList Events {
+			get {
+				// Note: space vs. time tradeoff
+				// We create the object here if it's never be accessed before.  This potentially 
+				// saves space. However, we must check each time the propery is accessed to
+				// determine whether we need to create the object, which increases overhead.
+				// We could put the creation in the contructor, but that would waste space
+				// if it were never used.  However, accessing this property would be faster.
+				if (null == event_handlers)
+					event_handlers = new EventHandlerList();
+
+				return event_handlers;
+			}
+		}
+
 	}
 }

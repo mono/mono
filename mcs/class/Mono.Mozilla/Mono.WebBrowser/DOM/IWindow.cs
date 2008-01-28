@@ -30,13 +30,19 @@ namespace Mono.WebBrowser.DOM
 {
 	public interface IWindow
 	{
+		IDocument Document { get; }
+		IWindowCollection Frames { get; }
 		string Name { get; set; }
 		IWindow Parent { get; }
+		string StatusText { get; }
 		IWindow Top { get; }
 		
 		bool Equals (IWindow obj);		
 		int GetHashCode ();
 		void Open (string url);
 		void ScrollTo (int x, int y);
+
+		event EventHandler Load;
+		event EventHandler Unload;
 	}
 }

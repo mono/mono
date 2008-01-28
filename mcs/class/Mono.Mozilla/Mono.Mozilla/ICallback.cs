@@ -37,15 +37,20 @@ namespace Mono.Mozilla
 		void OnLinkStatus				();
 		void OnDestroyBrowser			();
 		void OnClientSizeTo			(Int32 width, Int32 height);
+
 		void OnFocusNext				();
 		void OnFocusPrev				();
+
 		void OnTitleChanged			();
+
 		void OnShowTooltipWindow		(string tiptext, Int32 x, Int32 y);
 		void OnHideTooltipWindow		();
+
 		void OnStateNetStart			();
 		void OnStateNetStop			();
 		void OnStateSpecial			(UInt32 stateFlags, Int32 status);
 		void OnStateChange				(Int32 status, UInt32 state);
+
 		void OnProgress				(Int32 currentTotalProgress, Int32 maxTotalProgress);
 		void OnProgressAll				(string URI, Int32 currentTotalProgress, Int32 maxTotalProgress);
 		void OnLocationChanged			(string URI);
@@ -66,11 +71,10 @@ namespace Mono.Mozilla
 		bool OnClientMouseOut			(MouseInfo mouseInfo, ModifierKeys modifiers);
 
 		bool OnClientActivate			();
-		bool OnClientFocusIn			();
-		bool OnClientFocusOut			();
+		bool OnClientFocus			();
+		bool OnClientBlur			();
 
 		bool OnBeforeURIOpen			(string URL);
-		void OnFocus					();
 		bool OnCreateNewWindow			();
 		
 		/*
@@ -101,6 +105,8 @@ namespace Mono.Mozilla
 										 UInt32 count, IntPtr list, 
 										 out Int32 retVal);
 
+		void OnLoad ();
+		void OnUnload ();
 
 		/*
 		 * Generic logging event
