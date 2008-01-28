@@ -78,6 +78,16 @@ namespace MonoTests.System.Xml.Linq
 			r.Read ();
 			Assert.AreEqual (String.Empty, r.Value, "#3");
 			Assert.IsNull (r.GetAttribute ("nil", "http://www.w3.org/2001/XMLSchema-instance"), "#4");
+
+			// bug #335975
+			rdr = new StringReader ("<root xmlns='urn:foo'><val>Value</val></root>");
+			xDoc = XDocument.Load (rdr);
+			r = xDoc.CreateReader ();
+			Assert.AreEqual (String.Empty, r.Value, "#5");
+			Assert.IsNull (r.GetAttribute ("nil", "http://www.w3.org/2001/XMLSchema-instance"), "#6");
+			r.Read ();
+			Assert.AreEqual (String.Empty, r.Value, "#7");
+			Assert.IsNull (r.GetAttribute ("nil", "http://www.w3.org/2001/XMLSchema-instance"), "#8");
 		}
 	}
 }

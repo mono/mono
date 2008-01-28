@@ -128,12 +128,17 @@ namespace System.Xml.Linq
 
 		XAttribute GetCurrentAttribute ()
 		{
+			return GetXAttribute (attr);
+		}
+
+		XAttribute GetXAttribute (int idx)
+		{
 			XElement el = node as XElement;
 			if (el == null)
 				return null;
 			int i = 0;
 			foreach (XAttribute a in el.Attributes ())
-				if (i++ == attr)
+				if (i++ == idx)
 					return a;
 			return null;
 		}
@@ -141,17 +146,17 @@ namespace System.Xml.Linq
 		// XName for element and attribute, string for xmldecl attributes, doctype attribute, doctype name and PI, null for empty.
 		object GetCurrentName ()
 		{
-			return GetName (attr, attr_value);
-		}
-
-		object GetName (int attr, bool attr_value)
-		{
 			if (attr_value)
 				return null;
+			return GetName (attr);
+		}
+
+		object GetName (int attr)
+		{
 			if (attr >= 0) {
 				switch (node.NodeType) {
 				case XmlNodeType.Element:
-					XAttribute a = GetCurrentAttribute ();
+					XAttribute a = GetXAttribute (attr);
 					return a.Name;
 				case XmlNodeType.DocumentType:
 					if (attr == 0)
@@ -329,7 +334,7 @@ namespace System.Xml.Linq
 			int c = AttributeCount;
 			bool match = false;
 			for (int i = 0; i < c; i++) {
-				object o = GetName (i, false);
+				object o = GetName (i);
 				if (o == null)
 					continue;
 				if ((o as string) == name)
@@ -366,7 +371,7 @@ namespace System.Xml.Linq
 			int c = AttributeCount;
 			bool match = false;
 			for (int i = 0; i < c; i++) {
-				object o = GetName (i, false);
+				object o = GetName (i);
 				if (o == null)
 					continue;
 				if ((o as string) == local && ns.Length == 0)
