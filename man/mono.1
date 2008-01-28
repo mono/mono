@@ -612,6 +612,12 @@ assemblies on demand and store the result into a cache in
 If set, this variable overrides the default system configuration directory
 ($PREFIX/etc). It's used to locate machine.config file.
 .TP
+.I "MONO_COM"
+Sets the style of COM interop.  If the value of this variable is "MS"
+Mono will use string marhsalling routines from the liboleaut32 for the
+BSTR type library, any other values will use the mono-builtin BSTR
+string marshalling.
+.TP
 .I "MONO_CONFIG"
 If set, this variable overrides the default runtime configuration file
 ($PREFIX/etc/mono/config). The --config command line options overrides the
