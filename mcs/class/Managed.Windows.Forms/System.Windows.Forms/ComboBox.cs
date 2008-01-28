@@ -972,11 +972,17 @@ namespace System.Windows.Forms
 		{
 			base.OnDisplayMemberChanged (e);
 
-			if (DataManager == null || !IsHandleCreated)
+			if (DataManager == null)
 				return;
 
-			BindDataItems ();
+			if (selected_index != -1 && DropDownStyle != ComboBoxStyle.DropDownList)
+				SetControlText (GetItemText (Items [selected_index]));
+
+			if (!IsHandleCreated)
+				return;
+
 			SelectedIndex = DataManager.Position;
+			Invalidate ();
 		}
 
 		protected virtual void OnDrawItem (DrawItemEventArgs e)
