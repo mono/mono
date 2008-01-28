@@ -31,6 +31,7 @@ System.Linq.Expressions/ExpressionTest_Modulo.cs
 System.Linq.Expressions/ExpressionTest_MultiplyChecked.cs
 System.Linq.Expressions/ExpressionTest_Multiply.cs
 System.Linq.Expressions/ExpressionTest_Negate.cs
+System.Linq.Expressions/ExpressionTest_New.cs
 System.Linq.Expressions/ExpressionTest_NewArrayBounds.cs
 System.Linq.Expressions/ExpressionTest_NewArrayInit.cs
 System.Linq.Expressions/ExpressionTest_Not.cs
