@@ -1,5 +1,10 @@
 2008-01-28  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TableLayoutPanel.cs: Draw the table border at 0,0 instead of
+	table.Location.  [Fixes bug #354672]
+
+2008-01-28  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Form.cs: Handle WM_ENTERSIZEMOVE and WM_EXITSIZEMOVE to raise
 	ResizeBegin and ResizeEnd.  [Fixes bug #346529 for win32]
 

@@ -336,24 +336,24 @@ namespace System.Windows.Forms
 		
 		private void DrawCellBorders (PaintEventArgs e)
 		{
-			Rectangle paint_here = this.Bounds;
+			Rectangle paint_here = new Rectangle (Point.Empty, this.Size);
 
 			switch (CellBorderStyle) {
 				case TableLayoutPanelCellBorderStyle.Single:
-					DrawSingleBorder (e.Graphics, this.Bounds);
+					DrawSingleBorder (e.Graphics, paint_here);
 					break;
 				case TableLayoutPanelCellBorderStyle.Inset:
-					DrawInsetBorder (e.Graphics, this.Bounds);
+					DrawInsetBorder (e.Graphics, paint_here);
 					break;
 				case TableLayoutPanelCellBorderStyle.InsetDouble:
 					DrawInsetDoubleBorder (e.Graphics, paint_here);
 					break;
 				case TableLayoutPanelCellBorderStyle.Outset:
-					DrawOutsetBorder (e.Graphics, this.Bounds);
+					DrawOutsetBorder (e.Graphics, paint_here);
 					break;
 				case TableLayoutPanelCellBorderStyle.OutsetDouble:
 				case TableLayoutPanelCellBorderStyle.OutsetPartial:
-					DrawOutsetDoubleBorder (e.Graphics, this.Bounds);
+					DrawOutsetDoubleBorder (e.Graphics, paint_here);
 					break;
 			}
 		}
