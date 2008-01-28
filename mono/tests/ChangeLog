@@ -1,3 +1,10 @@
+2008-01-28  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* bug-348522.2.cs: Added, tests for invoking by reflection
+	using bad arguments.
+
+	* Makefile.am: added bug-348522.2.cs.
+
 2008-01-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* nonvirt.cs: Removed, moved to mini/exceptions.cs.
