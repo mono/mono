@@ -1,3 +1,8 @@
+2008-01-28  Geoff Norton  <gnorton@novell.com>
+
+	* EventHandler.cs: Subscribe ot ResizeBegin and ResizeEnd events.
+	* WindowHandler.cs: Send WM_ENTERSIZEMOVE and WM_EXITSIZEMOVE
+
 2008-01-23  Geoff Norton  <gnorton@novell.com>
 
 	* Cursor.cs: Expose the colors to avoid some warnings until we use them

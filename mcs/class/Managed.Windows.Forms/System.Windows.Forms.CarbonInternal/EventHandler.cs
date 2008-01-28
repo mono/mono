@@ -90,6 +90,8 @@ namespace System.Windows.Forms.CarbonInternal {
 									new EventTypeSpec (kEventClassWindow, WindowHandler.kEventWindowCollapsing),
 									new EventTypeSpec (kEventClassWindow, WindowHandler.kEventWindowExpanding),
 									new EventTypeSpec (kEventClassWindow, WindowHandler.kEventWindowBoundsChanged),
+									new EventTypeSpec (kEventClassWindow, WindowHandler.kEventWindowResizeStarted),
+									new EventTypeSpec (kEventClassWindow, WindowHandler.kEventWindowResizeCompleted),
 									new EventTypeSpec (kEventClassWindow, WindowHandler.kEventWindowClose),
 									new EventTypeSpec (kEventClassWindow, WindowHandler.kEventWindowShown),
 

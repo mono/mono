@@ -140,6 +140,18 @@ namespace System.Windows.Forms.CarbonInternal {
 
 						return true;
 					}
+					case kEventWindowResizeStarted: {
+						msg.message = Msg.WM_ENTERSIZEMOVE;
+						msg.hwnd = hwnd.Handle;
+						
+						return true;
+					}
+					case kEventWindowResizeCompleted: {
+						msg.message = Msg.WM_EXITSIZEMOVE;
+						msg.hwnd = hwnd.Handle;
+
+						return true;
+					}
 					case kEventWindowBoundsChanged: {
 						Rect window_bounds = new Rect ();
 						HIRect view_bounds = new HIRect ();
@@ -161,9 +173,9 @@ namespace System.Windows.Forms.CarbonInternal {
 
 						Driver.PerformNCCalc (hwnd);
 
-						msg.message = Msg.WM_WINDOWPOSCHANGED;
 						msg.hwnd = hwnd.Handle;
-						
+						msg.message = Msg.WM_WINDOWPOSCHANGED;
+
 						return true;
 					}
 				}
