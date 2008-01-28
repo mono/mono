@@ -6,6 +6,11 @@ function Menu_OverItem (menuId, itemId, parentId) {
 	var subm = getSubMenu (menuId, itemId);
 	if (subm.parentMenu == null && parentId != null)
 		subm.parentMenu = getSubMenu (menuId, parentId);
+
+	if (parentId != null && menu.dynamicHover != null)
+		Menu_HilighItem (menuId, itemId, menu.dynamicHover, menu.dynamicLinkHover);
+	else if (parentId == null && menu.staticHover != null)
+		Menu_HilighItem (menuId, itemId, menu.staticHover, menu.staticLinkHover);
 	
 	if (subm.firstShown != true) {		
 		var item = getMenuItem (menuId, itemId);
@@ -33,11 +38,6 @@ function Menu_OverItem (menuId, itemId, parentId) {
 	Menu_SetActive (menu, subm);
 	Menu_ShowMenu (subm);
 	Menu_Resize (subm, menuId, itemId);
-
-	if (parentId != null && menu.dynamicHover != null)
-		Menu_HilighItem (menuId, itemId, menu.dynamicHover, menu.dynamicLinkHover);
-	else if (parentId == null && menu.staticHover != null)
-		Menu_HilighItem (menuId, itemId, menu.staticHover, menu.staticLinkHover);
 }
 
 function Menu_OverDynamicLeafItem (menuId, itemId, parentId) {

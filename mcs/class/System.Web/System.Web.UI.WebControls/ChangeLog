@@ -1,3 +1,8 @@
+2008-01-28 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Menu.js: dynamic nodes are positioned after hover style of 
+	parent node is applied.
+
 2008-01-24  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* DataSourceCacheManager.cs: fixed GetKeyFromParameters, incase more
