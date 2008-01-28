@@ -1,3 +1,10 @@
+2008-01-28  Andreia Gaita <avidigal@novell.com>
+
+	* HtmlWindow.cs: Add event handler support. Add Document, Frames, 
+	IsClosed, Opener, StatusBarText, Url properties, stub out the remaining
+	missing properties and methods. Add Load, Unload, Error, GotFocus, 
+	LostFocus, Resize, Scroll events (only load and unload are connected)
+
 2008-01-27  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AccessibleObject.cs: Modified argument names to match MS.

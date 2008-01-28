@@ -27,28 +27,97 @@
 
 using System;
 using System.Drawing;
+using System.ComponentModel;
 using Mono.WebBrowser.DOM;
 
 namespace System.Windows.Forms
 {
-	public sealed class HtmlWindow {
-
+	public sealed class HtmlWindow
+	{
+		private EventHandlerList event_handlers;
 		private IWindow window;
 		private Mono.WebBrowser.IWebBrowser webHost;
+		
 		internal HtmlWindow (Mono.WebBrowser.IWebBrowser webHost, IWindow iWindow)
 		{
 			this.window = iWindow;
 			this.webHost = webHost;
+			event_handlers = null;
+			this.window.Load += new EventHandler (OnLoad);
+			this.window.Unload += new EventHandler (OnUnload);
 		}
-	
+
+		private EventHandlerList Events {
+			get {
+				// Note: space vs. time tradeoff
+				// We create the object here if it's never be accessed before.  This potentially 
+				// saves space. However, we must check each time the propery is accessed to
+				// determine whether we need to create the object, which increases overhead.
+				// We could put the creation in the contructor, but that would waste space
+				// if it were never used.  However, accessing this property would be faster.
+				if (null == event_handlers)
+					event_handlers = new EventHandlerList();
+
+				return event_handlers;
+			}
+		}
+
 #region Properties
+		public HtmlDocument Document {
+			get { return new HtmlDocument (webHost, this.window.Document); }
+		}
+		
+		public object DomWindow {
+			get { throw new NotImplementedException (); }
+		}
+
+		public HtmlWindowCollection Frames {
+			get { return new HtmlWindowCollection (webHost, this.window.Frames); }
+		}
+
+		public HtmlHistory History {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO ("Windows are always open")]
+		public bool IsClosed {
+			get { return false; }
+		}
+
 		public string Name {
 			get { return this.window.Name; }
 			set { this.window.Name = value; }
 		}
 		
+		[MonoTODO ("Separate windows are not supported yet")]
+		public HtmlWindow Opener {
+			get { return null; }
+		}
+
 		public HtmlWindow Parent {
 			get { return new HtmlWindow (webHost, this.window.Parent); }
+		}
+
+		public Point Position {
+			get { throw new NotImplementedException (); }
+		}
+
+		public Size Size {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+		
+		public string StatusBarText {
+			get { return this.window.StatusText; }
+			set { throw new NotImplementedException (); }
+		}
+
+		public HtmlElement WindowFrameElement {
+			get { throw new NotImplementedException (); }
+		}		
+		
+		public Uri Url { 
+			get { return this.Document.Url; } 
 		}
 #endregion
 		
@@ -132,7 +201,167 @@ namespace System.Windows.Forms
 		{
 			return OpenNew (url.ToString (), options);
 		}
+
+		public void AttachEventHandler (string name, EventHandler e)
+		{
+			throw new NotImplementedException ();
+		}
 		
+		public void Close ()
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void DetachEventHandler (string name, EventHandler e)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void Focus ()
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void MoveTo (Point position)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void MoveTo (int x, int y)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void RemoveFocus ()
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void ResizeTo (Size size)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public void ResizeTo (int width, int height)
+		{
+			throw new NotImplementedException ();
+		}
+		
+#endregion
+
+#region Events
+		static object ErrorEvent = new object ();
+		public event HtmlElementErrorEventHandler Error
+		{
+			add { Events.AddHandler (ErrorEvent, value); }
+			remove { Events.RemoveHandler (ErrorEvent, value); }
+		}
+
+		internal void OnError (object sender, EventArgs ev)
+		{
+			HtmlElementErrorEventHandler eh = (HtmlElementErrorEventHandler) (Events[ErrorEvent]);
+			if (eh != null) {
+				HtmlElementErrorEventArgs e = new HtmlElementErrorEventArgs (String.Empty, 0, null);
+				eh (this, e);
+			}		
+		}
+
+		static object GotFocusEvent = new object ();
+		public event HtmlElementEventHandler GotFocus
+		{
+			add { Events.AddHandler (GotFocusEvent, value); }
+			remove { Events.RemoveHandler (GotFocusEvent, value); }
+		}
+
+		internal void OnGotFocus (object sender, EventArgs ev)
+		{
+			HtmlElementEventHandler eh = (HtmlElementEventHandler) (Events[GotFocusEvent]);
+			if (eh != null) {
+				HtmlElementEventArgs e = new HtmlElementEventArgs ();
+				eh (this, e);
+			}		
+		}
+
+		static object LostFocusEvent = new object ();
+		public event HtmlElementEventHandler LostFocus
+		{
+			add { Events.AddHandler (LostFocusEvent, value); }
+			remove { Events.RemoveHandler (LostFocusEvent, value); }
+		}
+
+		internal void OnLostFocus (object sender, EventArgs ev)
+		{
+			HtmlElementEventHandler eh = (HtmlElementEventHandler) (Events[LostFocusEvent]);
+			if (eh != null) {
+				HtmlElementEventArgs e = new HtmlElementEventArgs ();
+				eh (this, e);
+			}		
+		}
+
+		static object LoadEvent = new object ();
+		public event HtmlElementEventHandler Load
+		{
+			add { Events.AddHandler (LoadEvent, value); }
+			remove { Events.RemoveHandler (LoadEvent, value); }
+		}
+
+		internal void OnLoad (object sender, EventArgs ev)
+		{
+			HtmlElementEventHandler eh = (HtmlElementEventHandler) (Events[LoadEvent]);
+			if (eh != null) {
+				HtmlElementEventArgs e = new HtmlElementEventArgs ();
+				eh (this, e);
+			}		
+		}
+
+		static object UnloadEvent = new object ();
+		public event HtmlElementEventHandler Unload
+		{
+			add { Events.AddHandler (UnloadEvent, value); }
+			remove { Events.RemoveHandler (UnloadEvent, value); }
+		}
+
+		internal void OnUnload (object sender, EventArgs ev)
+		{
+			HtmlElementEventHandler eh = (HtmlElementEventHandler) (Events[UnloadEvent]);
+			if (eh != null) {
+				HtmlElementEventArgs e = new HtmlElementEventArgs ();
+				eh (this, e);
+			}		
+		}
+
+		static object ScrollEvent = new object ();
+		public event HtmlElementEventHandler Scroll
+		{
+			add { Events.AddHandler (ScrollEvent, value); }
+			remove { Events.RemoveHandler (ScrollEvent, value); }
+		}
+
+		internal void OnScroll (object sender, EventArgs ev)
+		{
+			HtmlElementEventHandler eh = (HtmlElementEventHandler) (Events[ScrollEvent]);
+			if (eh != null) {
+				HtmlElementEventArgs e = new HtmlElementEventArgs ();
+				eh (this, e);
+			}		
+		}
+
+		static object ResizeEvent = new object ();
+		public event HtmlElementEventHandler Resize
+		{
+			add { Events.AddHandler (ResizeEvent, value); }
+			remove { Events.RemoveHandler (ResizeEvent, value); }
+		}
+
+		internal void OnResize (object sender, EventArgs ev)
+		{
+			HtmlElementEventHandler eh = (HtmlElementEventHandler) (Events[ResizeEvent]);
+			if (eh != null) {
+				HtmlElementEventArgs e = new HtmlElementEventArgs ();
+				eh (this, e);
+			}		
+		}
+
 #endregion
 		
 		

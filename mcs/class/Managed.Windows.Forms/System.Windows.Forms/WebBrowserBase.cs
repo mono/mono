@@ -230,7 +230,7 @@ namespace System.Windows.Forms
 			Console.Error.WriteLine ("WebBrowserBase: OnGotFocus");
 #endif
 			base.OnGotFocus (e);
-			WebHost.FocusIn (Mono.WebBrowser.FocusOption.FocusFirstElement);
+//			WebHost.FocusIn (Mono.WebBrowser.FocusOption.FocusFirstElement);
 		}
 
 		protected override void OnHandleCreated (EventArgs e)
@@ -244,7 +244,7 @@ namespace System.Windows.Forms
 			Console.Error.WriteLine ("WebBrowserBase: OnLostFocus");
 #endif
 			base.OnLostFocus (e);
-//			WebHost.FocusOut ();
+			WebHost.FocusOut ();
 		}
 
 		protected override void OnParentChanged (EventArgs e)
