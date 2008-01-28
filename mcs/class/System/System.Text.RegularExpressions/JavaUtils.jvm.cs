@@ -71,5 +71,22 @@ namespace System.Text.RegularExpressions
 			Matcher emptyMatcher = javaPattern.matcher ((CharSequence) (object) String.Empty);
 			return emptyMatcher.groupCount ();
 		}
+
+		internal static string ReplaceWithLookBehind (string input, string pattern, string lookBehindPattern, string replacement) {
+			Pattern p = Pattern.compile (pattern);
+			Pattern behindPattern = Pattern.compile (lookBehindPattern);
+	
+			Matcher m = p.matcher ((CharSequence) (object) input);
+			StringBuffer sb = new StringBuffer ();
+
+			while (m.find ()) {
+				Matcher pm = behindPattern.matcher ((CharSequence) (object) input.Substring (0, m.start()));
+				if(pm.find())
+					m.appendReplacement(sb, replacement);
+			}
+
+			m.appendTail (sb);
+			return sb.ToString();
+		}
 	}
 }

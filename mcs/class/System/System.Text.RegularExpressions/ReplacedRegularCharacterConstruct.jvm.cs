@@ -40,9 +40,14 @@ namespace System.Text.RegularExpressions
 	{
 		private const string BACKSLASH_IN_CC_PATTERN = @"(?<=(?:[^\\]|\A)(?:[\\]{2})*(?:\[|\[[^\[\]]*[^\[\]\\])(?:[\\]{2})*)\\b(?=[^\[\]]*\])";
 		private const string BRACKET_IN_CC_PATTERN = @"(?<=(?:[^\\]|\A)(?:[\\]{2})*(?:\[|\[[^\[\]]*[^\[\]\\])(?:[\\]{2})*)\[(?=[^\[\]]*\])";
+		private const string BACKSLASH_PATTERN = @"\\b(?=[^\[\]]*\])";
+		private const string BRACKET_PATTERN = @"\[(?=[^\[\]]*\])";
+		private const string BACKSLASH_BEHIND_PATTERN = @"(?:[^\\]|\A)(?:[\\]{2})*\[(?:[^\[\]\\]*(\\[^b])*)*(?:[\\]{2})*$";
+		private const string BRACKET_BEHIND_PATTERN = @"(?:[^\\]|\A)(?:[\\]{2})*(?:\[(?:[^\[\]]*[^\[\]\\])?)(?:[\\]{2})*$";
 		private const string BACKSLASH = @"\\u0008";
 		private const string BRACKET = @"\\[";
-		private const string LEFT_FIGURE_PAREN = @"(?<=(?:[^\\]|\A)(?:[\\]{2})*)(?<!(?:\A|[^\\])(?:[\\]{2})*\\[pP])\{(?!\d\d*(,(\d\d*)?)?\})";
+
+		private const string LEFT_FIGURE_PAREN = @"(?<=(?:[^\\\{]|\A)(?:[\\]{2})*)(?<!(?:[^\\]|\A)(?:[\\]{2})*\\[pP])\{(?!\d\d*(,(\d\d*)?)?\})";
 		private const string RIGHT_FIGURE_PAREN = @"(?<!(?:[^\\]|\A)(\\{2})*(?:\\(?:[pP]\{\w\w*)?|(?:\{\d\d*(,(\d\d*)?)?)))\}";
 		private const string ESC_LEFT_FIGURE = @"\\{";
 		private const string ESC_RIGHT_FIGURE = @"\\}";
@@ -78,10 +83,10 @@ namespace System.Text.RegularExpressions
 		public string Reformat (RegexOptions options,
 			string reformattedPattern,
 			PatternGrouping patternGrouping) {
-			reformattedPattern = JavaUtils.ReplaceAllAdvanced (reformattedPattern, BACKSLASH_IN_CC_PATTERN, BACKSLASH);
+			reformattedPattern = JavaUtils.ReplaceWithLookBehind (reformattedPattern, BACKSLASH_PATTERN, BACKSLASH_BEHIND_PATTERN, BACKSLASH);
 			reformattedPattern = JavaUtils.ReplaceAllAdvanced (reformattedPattern, LEFT_FIGURE_PAREN, ESC_LEFT_FIGURE);
 			reformattedPattern = JavaUtils.ReplaceAllAdvanced (reformattedPattern, RIGHT_FIGURE_PAREN, ESC_RIGHT_FIGURE);
-			reformattedPattern = JavaUtils.ReplaceAllAdvanced (reformattedPattern, BRACKET_IN_CC_PATTERN, BRACKET);
+			reformattedPattern = JavaUtils.ReplaceWithLookBehind (reformattedPattern, BRACKET_PATTERN, BRACKET_BEHIND_PATTERN, BRACKET);
 			reformattedPattern = JavaUtils.ReplaceAllAdvanced (reformattedPattern, NULL_PATTERN, JAVA_NULL);
 
 			return reformattedPattern;

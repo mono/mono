@@ -94,7 +94,18 @@ namespace System.Text.RegularExpressions
 				return;
 			}
 
-			PatternData patternData = PatternDataBuilder.GetPatternData (pattern, roptions);
+			PatternData patternData;
+			try
+			{
+				patternData = PatternDataBuilder.GetPatternData(pattern, roptions);
+			}catch(Exception e)
+			{
+#if DEBUG
+				throw;
+#endif
+				Console.WriteLine("Creating pattern on JVM failed for pattern " + pattern
+					+ "\n" + e.Message);
+			}
 
 			if (patternData == null)
 				InitNewRegex ();
