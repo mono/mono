@@ -1,5 +1,9 @@
 2008-01-28  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Makefile.am: disabled bug-348522.2.cs until after release.
+
+2008-01-28  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* bug-348522.2.cs: Added, tests for invoking by reflection
 	using bad arguments.
 
