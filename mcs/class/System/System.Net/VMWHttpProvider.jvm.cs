@@ -12,6 +12,7 @@ using org.ietf.jgss;
 using java.security;
 using System.Collections.Specialized;
 using System.Collections;
+using mainsoft.apache.commons.httpclient.cookie;
 
 namespace System.Net
 {
@@ -356,7 +357,7 @@ namespace System.Net
 
 		private void InitHostConfig()
 		{
-			if(this.Proxy == null)
+			if (this.Proxy == null || this.Proxy == WebRequest.DefaultWebProxy)
 				return;
 			if(this.Proxy.IsBypassed(GetOriginalAddress()))
 				return;
@@ -488,6 +489,7 @@ namespace System.Net
 					_client.getParams().setParameter(HttpClientParams.CONNECTION_MANAGER_TIMEOUT, new java.lang.Long(30000));
 					_client.getParams().setParameter(HttpClientParams.USER_AGENT, 
 							"VMW4J HttpClient (based on Jakarta Commons HttpClient)");
+					_client.getParams ().setBooleanParameter (HttpClientParams.SINGLE_COOKIE_HEADER, true);
 					java.util.ArrayList schemas = new java.util.ArrayList ();
 					schemas.add ("Ntlm");
 					schemas.add ("Digest");
@@ -587,10 +589,7 @@ namespace System.Net
 				case 301:
 				case 303:
 				case 307:
-					if (method.getFollowRedirects()) 
-						return true;
-					else 
-						return false;
+					return true;
 				default:
 					return false;
 			} //end of switch
@@ -690,7 +689,14 @@ namespace System.Net
 					try
 					{	
 						synchHeaders();
-						_client.executeMethod(_hostConfig, _method, _state);
+						InternalExecuteMethod ();						
+						int numOfRedirects = 0;
+						while (isRedirectNeeded (_method) && _allowAutoRedirect && numOfRedirects < MaxAutoRedirections) {
+							if (!HandleManualyRedirect ())
+								break;
+							numOfRedirects++;
+						}
+						
 						//todo right place to re-put all headers again...
 						mainsoft.apache.commons.httpclient.Header hostHeader =
 							_method.getRequestHeader("Host");
@@ -726,7 +732,8 @@ namespace System.Net
 							//this.Abort();
 							throw new WebException("The remote server returned an error: (" + respCodeAsInt +") " +_response.StatusCode, null, WebExceptionStatus.ProtocolError, _response);
 						}
-						if(isRedirectNeeded(_method) && _method.getResponseHeader("location") == null)
+						Header location = _method.getResponseHeader ("location");
+						if (isRedirectNeeded (_method) && location == null && _method.getFollowRedirects ())
 						{
 							// See comments above for the error >= 400
 							_response.ReadAllAndClose();
@@ -754,6 +761,42 @@ namespace System.Net
 				return _response;
 			}
 
+		}
+
+		private void InternalExecuteMethod () {
+			_client.executeMethod (_hostConfig, _method, _state);			
+		}		
+
+		private bool HandleManualyRedirect () {			
+			Header redirectHeader = _method.getResponseHeader ("location");
+			if (redirectHeader == null) {
+				// See comments above for the error >= 400
+				_response.ReadAllAndClose ();
+				//this.Abort();
+				throw new WebException ("Got response code " + _response.StatusCode + ", but no location provided", null, WebExceptionStatus.ProtocolError, _response);
+			}
+
+			mainsoft.apache.commons.httpclient.HttpMethod originalMethod = _method;
+			try {
+				string location = redirectHeader.getValue ();
+				URI currentUri = _method.getURI ();
+				URI redirectUri = null;
+
+				redirectUri = new URI (location, true);
+				if (redirectUri.isRelativeURI ()) {
+					//location is incomplete, use current values for defaults	
+					redirectUri = new URI (currentUri, redirectUri);
+				}
+				
+				_method = new GetMethod ();				
+				_method.setURI (redirectUri);				
+				InternalExecuteMethod ();
+				return true;
+			}
+			catch (URIException e) {
+				_method = originalMethod;
+				return false;
+			}
 		}
 
 		public override void Abort()
