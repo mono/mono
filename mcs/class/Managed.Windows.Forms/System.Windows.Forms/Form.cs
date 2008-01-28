@@ -2524,6 +2524,16 @@ namespace System.Windows.Forms {
 				WmGetMinMaxInfo (ref m);
 				break;
 			}
+			
+			case Msg.WM_ENTERSIZEMOVE: {
+				OnResizeBegin (EventArgs.Empty);
+				break;
+			}
+			
+			case Msg.WM_EXITSIZEMOVE: {
+				OnResizeEnd (EventArgs.Empty);
+				break;
+			}
 
 			default: {
 				base.WndProc (ref m);

@@ -1,3 +1,8 @@
+2008-01-28  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Form.cs: Handle WM_ENTERSIZEMOVE and WM_EXITSIZEMOVE to raise
+	ResizeBegin and ResizeEnd.  [Fixes bug #346529 for win32]
+
 2008-01-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ComboBox.cs: When OnDisplayMemberChanged method is reached, instead
