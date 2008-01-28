@@ -1,3 +1,8 @@
+2008-01-29  Jb Evain  <jbevain@novell.com>
+
+	* Expression.cs, NewExpression.cs, ExpressionPrinter.cs:
+	implement the first flavors of New.
+
 2008-01-27  Jb Evain  <jbevain@novell.com>
 
 	* ConditionalExpression.cs: implement Emit.

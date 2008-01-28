@@ -311,7 +311,9 @@ namespace System.Linq.Expressions {
 
 		protected override void VisitNew (NewExpression nex)
 		{
-			throw new NotImplementedException ();
+			Print ("new {0}(", nex.Type.Name);
+			VisitExpressionList (nex.Arguments);
+			Print (")");
 		}
 
 		protected override void VisitMemberInit (MemberInitExpression init)

@@ -1346,28 +1346,53 @@ namespace System.Linq.Expressions {
 			return MakeSimpleUnary (ExpressionType.Negate, expression, method);
 		}
 
-		[MonoTODO]
 		public static NewExpression New (ConstructorInfo constructor)
 		{
-			throw new NotImplementedException ();
+			if (constructor == null)
+				throw new ArgumentNullException ("constructor");
+
+			if (constructor.GetParameters ().Length > 0)
+				throw new ArgumentException ("Constructor must be parameter less");
+
+			return new NewExpression (constructor, (null as IEnumerable<Expression>).ToReadOnlyCollection<Expression> (), null);
 		}
 
-		[MonoTODO]
 		public static NewExpression New (Type type)
 		{
-			throw new NotImplementedException ();
+			if (type == null)
+				throw new ArgumentNullException ("type");
+
+			if (type.GetConstructor (Type.EmptyTypes) == null)
+				throw new ArgumentException ("Type doesn't have a parameter less constructor");
+
+			return new NewExpression (type, (null as IEnumerable<Expression>).ToReadOnlyCollection<Expression> ());
 		}
 
-		[MonoTODO]
 		public static NewExpression New (ConstructorInfo constructor, params Expression [] arguments)
 		{
-			throw new NotImplementedException ();
+			return New (constructor, arguments as IEnumerable<Expression>);
 		}
 
-		[MonoTODO]
 		public static NewExpression New (ConstructorInfo constructor, IEnumerable<Expression> arguments)
 		{
-			throw new NotImplementedException ();
+			if (constructor == null)
+				throw new ArgumentNullException ("constructor");
+
+			var args = arguments.ToReadOnlyCollection ();
+			var parameters = constructor.GetParameters ();
+
+			if (args.Count != parameters.Length)
+				throw new ArgumentException ("arguments");
+
+			for (int i = 0; i < parameters.Length; i++) {
+				if (args [i] == null)
+					throw new ArgumentNullException ("arguments");
+
+				if (!parameters [i].ParameterType.IsAssignableFrom (args [i].Type))
+					throw new ArgumentException ("arguments");
+			}
+
+			return new NewExpression (constructor, args, null);
 		}
 
 		[MonoTODO]
