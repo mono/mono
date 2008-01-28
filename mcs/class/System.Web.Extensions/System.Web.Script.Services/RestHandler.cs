@@ -104,11 +104,7 @@ namespace System.Web.Script.Services
 		private RestHandler (HttpContext context, Type type, string filePath) {
 			LogicalTypeInfo logicalTypeInfo = LogicalTypeInfo.GetLogicalTypeInfo (type, filePath);
 			HttpRequest request = context.Request;
-#if TARGET_J2EE
-			string methodName = GetContextAction (request.ContentType);
-#else
 			string methodName = request.PathInfo.Substring (1);
-#endif
 			if (logicalTypeInfo == null || String.IsNullOrEmpty(methodName))
 				ThrowInvalidOperationException (methodName);
 
@@ -116,35 +112,6 @@ namespace System.Web.Script.Services
 			if (_logicalMethodInfo == null)
 				ThrowInvalidOperationException (methodName);
 		}
-
-#if TARGET_J2EE
-		static readonly char [] trimChars = { '"', '\'' };
-		static string GetContextAction (string cts) {
-			if (cts == null || cts.Length == 0)
-				return null;
-
-			int start = 0;
-			int idx = cts.IndexOf (';');
-			for (start = idx + 1; idx != -1; ) {
-				idx = cts.IndexOf (';', start);
-				string body;
-				if (idx == -1)
-					body = cts.Substring (start);
-				else {
-					body = cts.Substring (start, idx - start);
-					start = idx + 1;
-				}
-				body = body.Trim ();
-				string actionEq = "action=";
-				if (String.CompareOrdinal (body, 0, actionEq, 0, actionEq.Length) == 0) {
-					string action = body.Substring (actionEq.Length);
-					return action.Trim (trimChars);
-				}
-			}
-
-			return null;
-		}
-#endif
 
 		static void ThrowInvalidOperationException (string pathInfo) {
 			throw new InvalidOperationException (
