@@ -1,5 +1,9 @@
 2008-01-28  Andreia Gaita <avidigal@novell.com>
 
+	* Assembly/AssemblyInfo.cs: Version change 
+	
+2008-01-28  Andreia Gaita <avidigal@novell.com>
+
 	* Mono.WebBrowser/DOM/IWindow.cs, Mono.Mozilla/DOM/Window.cs: 
 	Add Document, Frames, StatusText properties, Load and Unload events.
 
