@@ -931,6 +931,33 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual(false, eventFired, "SWC2");
 		}
 
+		// Bug #333750 - DisplayMember assignation 
+		// when ComboBox already has a BindingContext BUT
+		// handle hasn't been created yet.
+		[Test]
+		public void SelectedTextWithBindingTest ()
+		{
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+			ComboBox cb = new ComboBox ();
+			cb.Parent = form;
+
+			MockItem [] items = new MockItem [] {
+				new MockItem ("A", 0),
+				new MockItem ("B", 1),
+				new MockItem ("C", 2)
+			};
+
+			cb.DataSource = items;
+			cb.DisplayMember = "Text";
+
+			form.Show ();
+
+			Assert.AreEqual ("A", cb.SelectedText, "#A1");
+
+			form.Dispose ();
+		}
+
 		[Test]
 		public void SortedTest()
 		{

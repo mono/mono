@@ -1,3 +1,7 @@
+2008-01-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ComboBoxTest.cs: New SelectedTextWithBinding test - for #333750.
+
 2008-01-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ImageListStreamerTest.cs: Added binary (de)serialization tests.
