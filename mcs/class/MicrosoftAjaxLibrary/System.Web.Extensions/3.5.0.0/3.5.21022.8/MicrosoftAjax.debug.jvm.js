@@ -4936,11 +4936,11 @@ Sys.Net.WebServiceProxy.invoke = function Sys$Net$WebServiceProxy$invoke(service
     ]);
     if (e) throw e;
     var request = new Sys.Net.WebRequest();
-    request.get_headers()['Content-Type'] = 'application/json; charset=utf-8; action='+methodName;
+    request.get_headers()['Content-Type'] = 'application/json; charset=utf-8';
     if (!params) params = {};
     var urlParams = params;
     if (!useGet || !urlParams) urlParams = {};
-    request.set_url(Sys.Net.WebRequest._createUrl(servicePath, urlParams));
+    request.set_url(Sys.Net.WebRequest._createUrl(servicePath+"/"+encodeURIComponent(methodName)+".invoke", urlParams));
     var body = null;
     if (!useGet) {
         body = Sys.Serialization.JavaScriptSerializer.serialize(params);
