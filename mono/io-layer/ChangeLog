@@ -1,7 +1,8 @@
 2008-01-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* sockets.c (_wapi_connect): Add a workaround to a solaris x86 problem where
-	getsockopt (SO_ERROR) doesn't return after connect () fails. Fixes #356552.
+	getsockopt (SO_ERROR) doesn't return an error code after connect () fails. Fixes
+	#356552.
 
 2008-01-23  Dick Porter  <dick@ximian.com>
 
