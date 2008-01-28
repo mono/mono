@@ -1,3 +1,9 @@
+2008-01-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* appdomain.c (ves_icall_System_AppDomain_createDomain): Add some FIXMEs.
+
+	* exception.c (mono_get_exception_out_of_memory): New helper function.
+
 2008-01-28  Jonathan Chambers  <joncham@gmail.com>
 
 	* marshal.c: Add support for BSTR marshalling
