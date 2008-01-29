@@ -101,5 +101,16 @@ namespace MonoTests.System.Xml.Linq
 			reader.MoveToFirstAttribute ();
 			Assert.AreEqual ("http://www.w3.org/2000/xmlns/", reader.NamespaceURI);
 		}
+
+		[Test]
+		public void CreateReaderFromElement ()
+		{
+			// bug #356522 (another revised test case)
+			var rdr = new StringReader ("<root xmlns='XNodeReaderTest.xsd'>Value</root>");
+			var xDoc = XDocument.Load (rdr);
+			var reader = xDoc.Root.CreateReader ();
+			reader.Read (); // do not move to text (Value)
+			Assert.AreEqual (XmlNodeType.Element, reader.NodeType);
+		}
 	}
 }

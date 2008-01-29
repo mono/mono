@@ -433,22 +433,26 @@ namespace System.Xml.Linq
 
 		public override bool Read ()
 		{
+			// clear attribute state on element/xmldecl/dtd.
+			attr = -1;
+			attr_value = false;
+
 			switch (state) {
 			case ReadState.Initial:
 				state = ReadState.Interactive;
 				XDocument doc = node as XDocument;
-				if (doc != null && doc.Declaration != null)
-					return true;
+				if (doc != null) {
+					if (doc.Declaration != null)
+						return true;
+				}
+				else
+					return true; // any other root
 				break;
 			case ReadState.Interactive:
 				break;
 			default:
 				return false;
 			}
-
-			// clear attribute state on element/xmldecl/dtd.
-			attr = -1;
-			attr_value = false;
 
 			// when positioned on xmldecl, move to children
 			if (node is XDocument) {

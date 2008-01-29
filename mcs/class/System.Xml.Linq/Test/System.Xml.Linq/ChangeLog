@@ -1,5 +1,9 @@
 2008-01-29  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XNodeReaderTest.cs : test CreateReader() for non-document XNode.
+
+2008-01-29  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XNodeReaderTest.cs : test for bug #356522 revised case.
 
 2008-01-28  Atsushi Enomoto  <atsushi@ximian.com>
