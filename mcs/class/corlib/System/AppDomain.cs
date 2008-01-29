@@ -479,6 +479,14 @@ namespace System {
 		}
 #endif
 
+#if NET_2_1
+		// TODO: the last parameter is ignored for now
+		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, bool emitSymbolInfo)
+		{
+			return DefineDynamicAssembly (name, access, null, null, null, null, null, false);
+		}
+#endif
+
 		internal AssemblyBuilder DefineInternalDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access)
 		{
 			return new AssemblyBuilder (name, null, access, true);

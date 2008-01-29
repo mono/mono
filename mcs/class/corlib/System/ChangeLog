@@ -1,3 +1,7 @@
+2008-01-29  Jb Evain  <jbevain@novell.com>
+
+	* AppDomain.cs: add SL overload of DefineDynamicAssembly.
+
 2008-01-29  Marek Safar  <marek.safar@gmail.com>
 
 	* Type.cs (MakeGenericType): More argument checks. Fixes #356863 by
