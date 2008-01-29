@@ -2208,6 +2208,9 @@ namespace System.Windows.Forms {
 				case Keys.Control | Keys.Shift | Keys.F6:
 					MdiParent.MdiContainer.ActivatePreviousChild ();
 					return true;
+				case Keys.Alt | Keys.OemMinus:
+					(this.WindowManager as MdiWindowManager).ShowPopup (Point.Empty);
+					return true;
 				}
 			}
 

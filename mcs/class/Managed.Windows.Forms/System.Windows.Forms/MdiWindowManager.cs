@@ -243,13 +243,13 @@ namespace System.Windows.Forms {
 			icon_menu.DrawItem += new DrawItemEventHandler (DrawIconMenuItem);
 			icon_menu.Click += new EventHandler (ClickIconMenuItem);
 
-			MenuItem restore = new MenuItem ("Restore", new EventHandler (RestoreItemHandler));
-			MenuItem move = new MenuItem ("Move", new EventHandler (MoveItemHandler));
-			MenuItem size = new MenuItem ("Size", new EventHandler (SizeItemHandler));
-			MenuItem minimize = new MenuItem ("Minimize", new EventHandler (MinimizeItemHandler));
-			MenuItem maximize = new MenuItem ("Maximize", new EventHandler (MaximizeItemHandler));
-			MenuItem close = new MenuItem ("Close", new EventHandler (CloseItemHandler));
-			MenuItem next = new MenuItem ("Next", new EventHandler (NextItemHandler));
+			MenuItem restore = new MenuItem ("&Restore", new EventHandler (RestoreItemHandler));
+			MenuItem move = new MenuItem ("&Move", new EventHandler (MoveItemHandler));
+			MenuItem size = new MenuItem ("&Size", new EventHandler (SizeItemHandler));
+			MenuItem minimize = new MenuItem ("Mi&nimize", new EventHandler (MinimizeItemHandler));
+			MenuItem maximize = new MenuItem ("Ma&ximize", new EventHandler (MaximizeItemHandler));
+			MenuItem close = new MenuItem ("&Close", new EventHandler (CloseItemHandler));
+			MenuItem next = new MenuItem ("Nex&t", new EventHandler (NextItemHandler));
 
 			icon_menu.MenuItems.AddRange (new MenuItem [] { restore, move, size, minimize,
 									maximize, close, next });
@@ -270,7 +270,7 @@ namespace System.Windows.Forms {
 			ShowPopup (pnt);
 		}
 		
-		private void ShowPopup (Point pnt)
+		internal void ShowPopup (Point pnt)
 		{
 			icon_popup_menu.MenuItems[0].Enabled = form.window_state != FormWindowState.Normal;    // restore
 			icon_popup_menu.MenuItems[1].Enabled = form.window_state != FormWindowState.Maximized; // move
