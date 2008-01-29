@@ -88,6 +88,16 @@ namespace System.Windows.Forms
 			get { return this.exception; }
 		}
 		#endregion	// Public Instance Properties
+
+		internal void SetErrorText (string error_text)
+		{
+			this.error_text = error_text;
+		}
+
+		internal void SetException (Exception exception)
+		{
+			this.exception = exception;
+		}
 	}
 }
 #endif

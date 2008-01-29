@@ -54,6 +54,7 @@ namespace System.Windows.Forms {
 		//private object null_value;
 		//private string format_string;
 		//private IFormatProvider format_info;
+		private bool formatting_enabled;
 #endif
 		#region Public Constructors
 #if NET_2_0
@@ -130,6 +131,21 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		[DefaultValue (false)]
+		public bool FormattingEnabled {
+			get {
+				return formatting_enabled;
+			}
+			set {
+				if (formatting_enabled == value)
+					return;
+
+				formatting_enabled = value;
+			}
+		}
+#endif
+
 		public bool IsBinding {
 			get {
 				return is_binding;
@@ -145,6 +161,14 @@ namespace System.Windows.Forms {
 		#endregion	// Public Instance Properties
 
 		#region Protected Instance Methods
+#if NET_2_0
+		protected virtual void OnBindingComplete (BindingCompleteEventArgs args)
+		{
+			if (BindingComplete != null)
+				BindingComplete (this, args);
+		}
+#endif
+
 		protected virtual void OnFormat (ConvertEventArgs cevent)
 		{
 			if (Format!=null)
@@ -208,7 +232,23 @@ namespace System.Windows.Forms {
 				return;
 
 			data = control_property.GetValue (control);
-			SetPropertyValue (data);
+
+			try {
+				SetPropertyValue (data);
+			} catch (Exception e) {
+#if NET_2_0
+				if (formatting_enabled) {
+					FireBindingComplete (BindingCompleteContext.DataSourceUpdate, e, e.Message);
+					return;
+				}
+#endif
+				throw e;
+			}
+
+#if NET_2_0
+			if (formatting_enabled)
+				FireBindingComplete (BindingCompleteContext.DataSourceUpdate, null, null);
+#endif
 		}
 
 		internal void PushData ()
@@ -231,8 +271,23 @@ namespace System.Windows.Forms {
 				data = pd.GetValue (manager.Current);
 			}
 
-			data = FormatData (data);
-			SetControlValue (data);
+			try {
+				data = FormatData (data);
+				SetControlValue (data);
+			} catch (Exception e) {
+#if NET_2_0
+				if (formatting_enabled) {
+					FireBindingComplete (BindingCompleteContext.ControlUpdate, e, e.Message);
+					return;
+				}
+#endif
+				throw e;
+			}
+
+#if NET_2_0
+			if (formatting_enabled)
+				FireBindingComplete (BindingCompleteContext.ControlUpdate, null, null);
+#endif
 		}
 
 		internal void UpdateIsBinding ()
@@ -325,10 +380,27 @@ namespace System.Windows.Forms {
 
 			return null;
 		}
+#if NET_2_0
+		void FireBindingComplete (BindingCompleteContext context, Exception exc, string error_message)
+		{
+			BindingCompleteEventArgs args = new BindingCompleteEventArgs (this, 
+					exc == null ? BindingCompleteState.Success : BindingCompleteState.Exception,
+					context);
+			if (exc != null) {
+				args.SetException (exc);
+				args.SetErrorText (error_message);
+			}
+
+			OnBindingComplete (args);
+		}
+#endif
 
 		#region Events
 		public event ConvertEventHandler Format;
 		public event ConvertEventHandler Parse;
+#if NET_2_0
+		public event BindingCompleteEventHandler BindingComplete;
+#endif
 		#endregion	// Events
 	}
 }
