@@ -239,5 +239,24 @@ namespace MonoTests.System.Reflection.Emit
 			mb.ResolveField (0x4001234);
 		}
 #endif
+
+		[Test]
+		public void GetTypes ()
+		{
+			AssemblyBuilder ab = genAssembly ();
+			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll");
+			
+            TypeBuilder tb1 = mb.DefineType("Foo", TypeAttributes.Public);
+			
+			Type[] types = mb.GetTypes ();
+			Assert.AreEqual (1, types.Length);
+			Assert.AreEqual (tb1, types [0]);
+
+			// After the type is created, MS seems to return the created type
+			tb1.CreateType ();
+
+			types = mb.GetTypes ();
+			Assert.AreEqual (tb1.CreateType (), types [0]);
+		}
 	}
 }
