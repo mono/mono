@@ -1,3 +1,7 @@
+2008-01-29 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* TreeView.cs: add XPFileExplorer icon set.
+
 2008-01-28 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Menu.js: dynamic nodes are positioned after hover style of 

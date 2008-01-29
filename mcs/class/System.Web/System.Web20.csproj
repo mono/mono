@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -1284,6 +1284,15 @@
     <Compile Include="System.Web\UplevelHelper.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="resources\file.gif">
+      <LogicalName>file.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\folder.gif">
+      <LogicalName>folder.gif</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\computer.gif">
+      <LogicalName>computer.gif</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Include="resources\arrow_down.gif">
       <LogicalName>arrow_down.gif</LogicalName>
     </EmbeddedResource>

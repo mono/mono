@@ -22,6 +22,9 @@ RESOURCE_FILES_1= \
 	resources/WebUIValidation.js
 
 RESOURCE_FILES_2 = \
+	resources/folder.gif \
+	resources/file.gif \
+	resources/computer.gif \
 	resources/arrow_minus.gif \
 	resources/arrow_noexpand.gif \
 	resources/arrow_plus.gif \

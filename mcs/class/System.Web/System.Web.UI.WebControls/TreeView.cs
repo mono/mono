@@ -122,7 +122,7 @@ namespace System.Web.UI.WebControls
 			imageStyles [TreeViewImageSet.News] = new ImageStyle ("TreeView_plus", "TreeView_minus", "TreeView_noexpand", null, null, null);
 			imageStyles [TreeViewImageSet.Faq] = new ImageStyle ("TreeView_plus", "TreeView_minus", "TreeView_noexpand", null, null, null);
 			imageStyles [TreeViewImageSet.WindowsHelp] = new ImageStyle ("TreeView_plus", "TreeView_minus", "TreeView_noexpand", null, null, null);
-			imageStyles [TreeViewImageSet.XPFileExplorer] = new ImageStyle ("TreeView_plus", "TreeView_minus", "TreeView_noexpand", null, null, null);
+			imageStyles [TreeViewImageSet.XPFileExplorer] = new ImageStyle ("TreeView_plus", "TreeView_minus", "TreeView_noexpand", "folder", "file", "computer");
 		}
 		
 		public event TreeNodeEventHandler TreeNodeCheckChanged {

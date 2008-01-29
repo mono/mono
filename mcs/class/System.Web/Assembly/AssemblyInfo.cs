@@ -108,6 +108,9 @@ using System.Web.UI;
 [assembly: WebResource ("arrow_up.gif", "image/gif")]
 [assembly: WebResource ("arrow_down.gif", "image/gif")]
 [assembly: WebResource ("transparent.gif", "image/gif")]
+[assembly: WebResource ("file.gif", "image/gif")]
+[assembly: WebResource ("folder.gif", "image/gif")]
+[assembly: WebResource ("computer.gif", "image/gif")]
 
 [assembly: WebResource ("TreeView.js", "text/javascript")]
 [assembly: WebResource ("Menu.js", "text/javascript")]
