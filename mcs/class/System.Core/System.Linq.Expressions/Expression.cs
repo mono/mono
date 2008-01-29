@@ -192,7 +192,7 @@ namespace System.Linq.Expressions {
 
 				Type ltype = left.Type.IsValueType && IsNullable (left.Type) ? GetNullableOf(left.Type) : left.Type;
 				Type rtype = left.Type.IsValueType && IsNullable (right.Type) ? GetNullableOf(right.Type) :right.Type;
-					
+
 				if (ltype != pi [0].ParameterType)
 					throw new InvalidOperationException ("left-side argument type does not match left expression type");
 
@@ -218,19 +218,19 @@ namespace System.Linq.Expressions {
 							return null;
 					}
 				}
-				
+
 				// Use IsNumber to avoid expensive reflection.
 				if (IsNumber (ultype)){
 					if (ultype == urtype && ltype == rtype)
 						return method;
-					
+
 					if (oper_name != null){
 						method = GetBinaryOperator (oper_name, rtype, left, right);
 						if (method != null)
 							return method;
 					}
 				}
-				
+
 				if (oper_name != null){
 					method = GetBinaryOperator (oper_name, ltype, left, right);
 					if (method != null)
@@ -243,7 +243,7 @@ namespace System.Linq.Expressions {
 				if (!ltype.IsValueType && !rtype.IsValueType &&
 				    (oper_name == "op_Equality" || oper_name == "op_Inequality"))
 					return null;
-				
+
 				throw new InvalidOperationException (
 					String.Format ("Operation {0} not defined for {1} and {2}", oper_name != null ? oper_name.Substring (3) : "is", ltype, rtype));
 			}
@@ -274,8 +274,8 @@ namespace System.Linq.Expressions {
 				//
 				if (left.Type == typeof(double) || left.Type == typeof(float))
 					throw new InvalidOperationException ("Types not supported");
-			} 
-			
+			}
+
 			return method;
 		}
 
@@ -283,7 +283,7 @@ namespace System.Linq.Expressions {
 		{
 			Type result = method == null ? left.Type : method.ReturnType;
 			bool is_lifted;
-			
+
 			if (method == null){
 				if (IsNullable (left.Type)){
 					if (!IsNullable (right.Type))
@@ -297,7 +297,7 @@ namespace System.Linq.Expressions {
 				//
 				is_lifted = false;
 			}
-			
+
 			return new BinaryExpression (et, result, left, right, false, is_lifted, method, null);
 		}
 
@@ -318,7 +318,7 @@ namespace System.Linq.Expressions {
 			bool is_lifted;
 
 			//
-			// Implement the rules as described in "Expression.Equal" method.  
+			// Implement the rules as described in "Expression.Equal" method.
 			//
 			if (method == null){
 				if (lnullable == false && rnullable == false){
@@ -333,7 +333,7 @@ namespace System.Linq.Expressions {
 				ParameterInfo [] pi = method.GetParameters ();
 				Type mltype = pi [0].ParameterType;
 				Type mrtype = pi [1].ParameterType;
-				
+
 				if (ltype == mltype && rtype == mrtype){
 					is_lifted = false;
 					result = method.ReturnType;
@@ -393,7 +393,7 @@ namespace System.Linq.Expressions {
 			// The check in BinaryCoreCheck allows a bit more than we do
 			// (byte, sbyte).  Catch that here
 			//
-			
+
 			if (method == null){
 				Type ltype = left.Type;
 
@@ -719,12 +719,12 @@ namespace System.Linq.Expressions {
 			//
 			if (left.Type.IsValueType && !IsNullable (left.Type))
 				throw new InvalidOperationException ("Left expression can never be null");
-			
+
 			Type result = null;
 
 			if (IsNullable (left.Type)){
 				Type lbase = GetNullableOf (left.Type);
-				
+
 				if (!IsNullable (right.Type) && lbase.IsAssignableFrom (right.Type))
 					result = lbase;
 			}
@@ -928,7 +928,13 @@ namespace System.Linq.Expressions {
 			if (args.Count != parameters.Length)
 				throw new ArgumentException ("The number of arguments doesn't match the number of parameters");
 
-			// TODO: check for assignability of the arguments on the parameters
+			for (int i = 0; i < parameters.Length; i++) {
+				if (args [i] == null)
+					throw new ArgumentNullException ("arguments");
+
+				if (!parameters [i].ParameterType.IsAssignableFrom (args [i].Type))
+					throw new ArgumentException ("arguments");
+			}
 
 			return new MethodCallExpression (instance, method, args);
 		}
@@ -1646,7 +1652,7 @@ namespace System.Linq.Expressions {
 		{
 			return type.GetGenericArguments () [0];
 		}
-		
+
 		//
 		// This method must be overwritten by derived classes to
 		// compile the expression
