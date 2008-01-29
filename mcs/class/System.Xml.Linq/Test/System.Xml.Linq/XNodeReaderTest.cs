@@ -89,5 +89,17 @@ namespace MonoTests.System.Xml.Linq
 			Assert.AreEqual (String.Empty, r.Value, "#7");
 			Assert.IsNull (r.GetAttribute ("nil", "http://www.w3.org/2001/XMLSchema-instance"), "#8");
 		}
+
+		[Test]
+		public void NamespaceURIForXmlns ()
+		{
+			// bug #356522 (revised test case)
+			var rdr = new StringReader ("<root xmlns='XNodeReaderTest.xsd'>Value</root>");
+			var xDoc = XDocument.Load (rdr);
+			var reader = xDoc.CreateReader ();
+			reader.MoveToContent ();
+			reader.MoveToFirstAttribute ();
+			Assert.AreEqual ("http://www.w3.org/2000/xmlns/", reader.NamespaceURI);
+		}
 	}
 }
