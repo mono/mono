@@ -1,5 +1,8 @@
 2008-01-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* marshal.c (mono_string_to_bstr): Fix a warning.
+	(init_com_provider_ms): Ditto.
+
 	* appdomain.c (ves_icall_System_AppDomain_createDomain): Add some FIXMEs.
 
 	* exception.c (mono_get_exception_out_of_memory): New helper function.
