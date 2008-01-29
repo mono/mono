@@ -1,3 +1,7 @@
+2008-01-28 Arina Itkes <arinai@mainsoft.com>
+	
+	* DataTable.cs: Fix for IXmlSerializable.WriteXml.
+
 2007-10-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DataColumn.cs: Fixed ParamName of ArgumentNullException. Modified

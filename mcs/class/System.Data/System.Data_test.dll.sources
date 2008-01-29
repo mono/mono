@@ -43,6 +43,7 @@ System.Data/DataTableTest.cs
 System.Data/DataTableTest2.cs
 System.Data/DataTableTest3.cs
 System.Data/DataTableTest4.cs
+System.Data/DataTableTest5.cs
 System.Data/DataTableLoadRowTest.cs
 System.Data/DataTableReaderTest.cs
 System.Data/DataTableReadWriteXmlTest.cs

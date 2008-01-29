@@ -1711,7 +1711,22 @@ namespace System.Data {
 
 		void IXmlSerializable.WriteXml (XmlWriter writer) 
 		{
-			WriteXml (writer);
+			DataSet dset = dataSet;
+			bool isPartOfDataSet = true;
+
+			if (dataSet == null) {
+				dset = new DataSet ();
+				dset.Tables.Add (this);
+				isPartOfDataSet = false;
+			}
+
+			XmlSchemaWriter.WriteXmlSchema (writer, new DataTable [] { this }, 
+											null, TableName, dset.DataSetName);
+			dset.WriteIndividualTableContent (writer, this, XmlWriteMode.DiffGram);
+			writer.Flush ();
+
+			if (!isPartOfDataSet)
+				dataSet.Tables.Remove(this);
 		}
 
 		#endregion

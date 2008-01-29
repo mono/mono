@@ -1,3 +1,8 @@
+2008-01-28 Arina Itkes <arinai@mainsoft.com>
+
+	* DataTableTest5.cs: added tests for implemetation 
+	of IXmlSerializable.WriteXml in DataTable class.
+	
 2007-11-14  Atushi Enomoto  <atsushi@ximian.com>
 
 	* DataSetTest.cs : added test for r89307 fix (it is for XmlSerializer
