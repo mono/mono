@@ -1,5 +1,9 @@
 2008-01-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* icall.c (ves_icall_System_Reflection_Assembly_GetModulesInternal): Remove
+	the dynamic case which is now in managed code.
+	(ves_icall_System_Reflection_Assembly_GetTypes): Ditto.
+
 	* marshal.c (mono_string_to_bstr): Fix a warning.
 	(init_com_provider_ms): Ditto.
 
