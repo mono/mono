@@ -42,9 +42,7 @@ namespace System.Windows.Forms.RTF {
 
 		static Picture ()
 		{
-			Bitmap b = new Bitmap (1, 1);
-			Graphics g = Graphics.FromImage (b);
-			dpix = g.DpiX;
+			dpix = TextRenderer.GetDpi ().Width;
 		}
 
 		public Picture ()
