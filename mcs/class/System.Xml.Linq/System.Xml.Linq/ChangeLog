@@ -1,5 +1,15 @@
 2008-01-29  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XNodeReader.cs : NodeType should return None at Initial state.
+	  Fixed bug #356522.
+
+2008-01-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XNodeReader.cs : when created from non-document node, the first
+	  call to Read() should not move the node to its first child.
+
+2008-01-29  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XNodeReader.cs : Probably fixed (reopened) bug #356522.
 	  NamespaceURI for "xmlns" attribute was "", which should be
 	  http://www.w3.org/2000/xmlns/ (in XAttribute its namespace is "").
