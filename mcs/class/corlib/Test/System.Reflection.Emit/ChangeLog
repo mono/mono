@@ -1,3 +1,8 @@
+2008-01-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* AssemblyBuilderTest.cs (GetModule): Add some tests and comment out one which
+	doesn't run on mono.
+
 2008-01-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AssemblyBuilderTest.cs: Enabled test for bug #354970.
