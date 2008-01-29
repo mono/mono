@@ -1,5 +1,9 @@
 2008-01-29  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Form.cs: Remove duplicated copy of GetAutoScaleSize.
+
+2008-01-29  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Form.cs: corcompare for RestoreBounds.
 
 2008-01-29  Jonathan Pobst  <monkey@jpobst.com>

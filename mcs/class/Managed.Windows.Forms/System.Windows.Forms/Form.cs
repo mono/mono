@@ -386,7 +386,7 @@ namespace System.Windows.Forms {
 		#region Public Constructor & Destructor
 		public Form ()
 		{
-			SizeF current_scale = GetAutoScaleSize (DeviceContext, Font);
+			SizeF current_scale = GetAutoScaleSize (Font);
 
 			autoscale = true;
 			autoscale_base_size = new Size ((int)Math.Round (current_scale.Width), (int)Math.Round(current_scale.Height));
@@ -1600,23 +1600,6 @@ namespace System.Windows.Forms {
 		#endregion	// Public Static Methods
 
 		#region Public Instance Methods
-		internal SizeF GetAutoScaleSize (Graphics g, Font font)
-		{
-			//
-			// The following constants come from the dotnet mailing list
-			// discussion: http://discuss.develop.com/archives/wa.exe?A2=ind0203A&L=DOTNET&P=R3655
-			//
-			// The magic number is "Its almost the length
-			// of the string with a smattering added in
-			// for compat with earlier code".
-			//
-	
-			string magic_string = "The quick brown fox jumped over the lazy dog.";
-			double magic_number = 44.549996948242189;
-			float width = (float) (g.MeasureString (magic_string, font).Width / magic_number);
-			
-			return new SizeF (width, font.Height);
-		}
 						 
 		public void Activate ()
 		{
@@ -1825,7 +1808,7 @@ namespace System.Windows.Forms {
 #endif
 		protected void ApplyAutoScaling()
 		{
-			SizeF current_size_f = GetAutoScaleSize (DeviceContext, Font);
+			SizeF current_size_f = GetAutoScaleSize (Font);
 			Size current_size = new Size ((int)Math.Round (current_size_f.Width), (int)Math.Round (current_size_f.Height));
 			float	dx;
 			float	dy;
