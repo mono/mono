@@ -93,7 +93,7 @@ namespace MonoTests.System.CodeDom.Compiler {
 		public void ExecWait_NullTempFileCollection ()
 		{
 			if (cmdNotFound)
-				return;
+				throw new NullReferenceException ();
 			Executor.ExecWait (cmd, null);
 		}
 

@@ -1,5 +1,7 @@
 2008-01-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* ExecutorTest.cs (ExecWait_NullTempFileCollection): Fix the cmdNoFound case.
+	
 	* ExecutorTest.cs: Handle cases when ping is not in the PATH, or when it
 	returns a non standard error code.
 
