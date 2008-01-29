@@ -665,7 +665,7 @@ namespace System.Reflection {
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern Module[] GetModulesInternal ();
+		internal virtual extern Module[] GetModulesInternal ();
 
 		public Module[] GetModules (bool getResourceModules) {
 			Module[] modules = GetModulesInternal ();
