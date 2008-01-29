@@ -1,5 +1,10 @@
 2008-01-29  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TextRenderer.cs: Don't maintain private bitmap/graphics contexts.
+	Use the Hwnd one instead.
+
+2008-01-29  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Form.cs: Remove duplicated copy of GetAutoScaleSize.
 
 2008-01-29  Jonathan Pobst  <monkey@jpobst.com>

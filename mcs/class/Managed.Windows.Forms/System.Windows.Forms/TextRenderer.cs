@@ -50,11 +50,6 @@ namespace System.Windows.Forms
 #endif
 	class TextRenderer
 	{
-		[ThreadStatic]
-		private static Bitmap static_bitmap;
-		[ThreadStatic]
-		private static Graphics static_graphics;
-
 		private TextRenderer ()
 		{
 		}
@@ -103,7 +98,7 @@ namespace System.Windows.Forms
 
 		public static Size MeasureText (string text, Font font)
 		{
-			return MeasureTextInternal (StaticGraphics, text, font, Size.Empty, TextFormatFlags.Default, false);
+			return MeasureTextInternal (Hwnd.GraphicsContext, text, font, Size.Empty, TextFormatFlags.Default, false);
 		}
 
 		public static Size MeasureText (IDeviceContext dc, string text, Font font)
@@ -113,7 +108,7 @@ namespace System.Windows.Forms
 
 		public static Size MeasureText (string text, Font font, Size proposedSize)
 		{
-			return MeasureTextInternal (StaticGraphics, text, font, proposedSize, TextFormatFlags.Default, false);
+			return MeasureTextInternal (Hwnd.GraphicsContext, text, font, proposedSize, TextFormatFlags.Default, false);
 		}
 
 		public static Size MeasureText (IDeviceContext dc, string text, Font font, Size proposedSize)
@@ -123,7 +118,7 @@ namespace System.Windows.Forms
 
 		public static Size MeasureText (string text, Font font, Size proposedSize, TextFormatFlags flags)
 		{
-			return MeasureTextInternal (StaticGraphics, text, font, proposedSize, flags, false);
+			return MeasureTextInternal (Hwnd.GraphicsContext, text, font, proposedSize, flags, false);
 		}
 
 		public static Size MeasureText (IDeviceContext dc, string text, Font font, Size proposedSize, TextFormatFlags flags)
@@ -339,7 +334,7 @@ namespace System.Windows.Forms
 
 		internal static Size MeasureTextInternal (string text, Font font, bool useMeasureString)
 		{
-			return MeasureTextInternal (StaticGraphics, text, font, Size.Empty, TextFormatFlags.Default, useMeasureString);
+			return MeasureTextInternal (Hwnd.GraphicsContext, text, font, Size.Empty, TextFormatFlags.Default, useMeasureString);
 		}
 
 #if NET_2_0
@@ -356,7 +351,7 @@ namespace System.Windows.Forms
 
 		internal static Size MeasureTextInternal (string text, Font font, Size proposedSize, bool useMeasureString)
 		{
-			return MeasureTextInternal (StaticGraphics, text, font, proposedSize, TextFormatFlags.Default, useMeasureString);
+			return MeasureTextInternal (Hwnd.GraphicsContext, text, font, proposedSize, TextFormatFlags.Default, useMeasureString);
 		}
 
 		internal static Size MeasureTextInternal (IDeviceContext dc, string text, Font font, Size proposedSize, bool useMeasureString)
@@ -367,72 +362,54 @@ namespace System.Windows.Forms
 #endif
 		internal static Size MeasureTextInternal (string text, Font font, Size proposedSize, TextFormatFlags flags, bool useMeasureString)
 		{
-			return MeasureTextInternal (StaticGraphics, text, font, proposedSize, flags, useMeasureString);
+			return MeasureTextInternal (Hwnd.GraphicsContext, text, font, proposedSize, flags, useMeasureString);
 		}
 #endregion
 
 		#region Thread-Safe Static Graphics Methods
 		internal static SizeF MeasureString (string text, Font font)
 		{
-			return StaticGraphics.MeasureString (text, font);
+			return Hwnd.GraphicsContext.MeasureString (text, font);
 		}
 
 		internal static SizeF MeasureString (string text, Font font, int width)
 		{
-			return StaticGraphics.MeasureString (text, font, width);
+			return Hwnd.GraphicsContext.MeasureString (text, font, width);
 		}
 
 		internal static SizeF MeasureString (string text, Font font, SizeF layoutArea)
 		{
-			return StaticGraphics.MeasureString (text, font, layoutArea);
+			return Hwnd.GraphicsContext.MeasureString (text, font, layoutArea);
 		}
 
 		internal static SizeF MeasureString (string text, Font font, int width, StringFormat format)
 		{
-			return StaticGraphics.MeasureString (text, font, width, format);
+			return Hwnd.GraphicsContext.MeasureString (text, font, width, format);
 		}
 
 		internal static SizeF MeasureString (string text, Font font, PointF origin, StringFormat stringFormat)
 		{
-			return StaticGraphics.MeasureString (text, font, origin, stringFormat);
+			return Hwnd.GraphicsContext.MeasureString (text, font, origin, stringFormat);
 		}
 
 		internal static SizeF MeasureString (string text, Font font, SizeF layoutArea, StringFormat stringFormat)
 		{
-			return StaticGraphics.MeasureString (text, font, layoutArea, stringFormat);
+			return Hwnd.GraphicsContext.MeasureString (text, font, layoutArea, stringFormat);
 		}
 
 		internal static SizeF MeasureString (string text, Font font, SizeF layoutArea, StringFormat stringFormat, out int charactersFitted, out int linesFilled)
 		{
-			return StaticGraphics.MeasureString (text, font, layoutArea, stringFormat, out charactersFitted, out linesFilled);
+			return Hwnd.GraphicsContext.MeasureString (text, font, layoutArea, stringFormat, out charactersFitted, out linesFilled);
 		}
 
 		internal static Region[] MeasureCharacterRanges (string text, Font font, RectangleF layoutRect, StringFormat stringFormat)
 		{
-			return StaticGraphics.MeasureCharacterRanges (text, font, layoutRect, stringFormat);
+			return Hwnd.GraphicsContext.MeasureCharacterRanges (text, font, layoutRect, stringFormat);
 		}
 		
 		internal static SizeF GetDpi ()
 		{
-			return new SizeF (StaticGraphics.DpiX, StaticGraphics.DpiY);
-		}
-		
-		internal static Bitmap StaticBitmap {
-			get {
-				if (static_bitmap == null)
-					static_bitmap = new Bitmap (1, 1, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-				
-				return static_bitmap;
-			}
-		}
-		
-		internal static Graphics StaticGraphics {
-			get {
-				if (static_graphics == null)
-					static_graphics = Graphics.FromImage (StaticBitmap);
-					
-				return static_graphics;
-			}
+			return new SizeF (Hwnd.GraphicsContext.DpiX, Hwnd.GraphicsContext.DpiY);
 		}
 		#endregion
 		
