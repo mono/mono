@@ -472,7 +472,7 @@ namespace System.Reflection.Emit {
 
 			// MS replaces the typebuilders with their created types
 			for (int i = 0; i < copy.Length; ++i)
-				if (types [i].IsCreated ())
+				if (types [i].is_created)
 					copy [i] = types [i].CreateType ();
 
 			return copy;
