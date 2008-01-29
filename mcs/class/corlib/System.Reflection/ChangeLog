@@ -1,5 +1,7 @@
 2008-01-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* Assembly.cs: Make GetTypes () virtual so it can be overriden by AssemblyBuilder.
+	
 	* Assembly.cs: Make GetModulesInternal () virtual so it can be overriden by
 	AssemblyBuilder.
 

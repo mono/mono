@@ -329,7 +329,7 @@ namespace System.Reflection {
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern Type[] GetTypes (bool exportedOnly);
+		internal virtual extern Type[] GetTypes (bool exportedOnly);
 		
 		public virtual Type[] GetTypes ()
 		{
