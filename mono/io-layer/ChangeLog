@@ -1,5 +1,8 @@
 2008-01-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* security.c (RevertToSelf): Make this return TRUE if impersonating is not
+	supported.
+
 	* sockets.c (_wapi_connect): Add a workaround to a solaris x86 problem where
 	getsockopt (SO_ERROR) doesn't return an error code after connect () fails. Fixes
 	#356552.
