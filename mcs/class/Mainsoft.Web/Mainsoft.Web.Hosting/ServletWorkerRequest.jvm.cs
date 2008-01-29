@@ -246,7 +246,6 @@ namespace Mainsoft.Web.Hosting {
 		protected abstract int getContentLength ();
 		protected abstract string getContentType ();
 		public abstract string GetRemoteUser ();
-		protected abstract int getServerPort ();
 		protected abstract string getHeader (string name);
 		protected abstract java.util.Enumeration getHeaderNames ();
 		protected abstract InputStream getInputStream ();
@@ -272,7 +271,7 @@ namespace Mainsoft.Web.Hosting {
 				case KnownServerVariable.REQUEST_URI : return GetUriPath();
 				case KnownServerVariable.SCRIPT_NAME : return GetFilePath ();
 				case KnownServerVariable.SERVER_NAME : return GetServerName();
-				case KnownServerVariable.SERVER_PORT : return Convert.ToString(getServerPort());
+				case KnownServerVariable.SERVER_PORT : return Convert.ToString(GetLocalPort());
 				case KnownServerVariable.SERVER_PROTOCOL : return GetHttpVersion ();
 				case KnownServerVariable.SERVER_SOFTWARE : return GetContext().getServerInfo();
 				case KnownServerVariable.PATH_INFO : return GetPathInfo();

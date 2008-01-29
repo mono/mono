@@ -155,10 +155,6 @@ namespace Mainsoft.Web.Hosting
 			return _HttpServletRequest.getRemoteUser ();
 		}
 
-		protected override int getServerPort () {
-			return _HttpServletRequest.getServerPort ();
-		}
-
 		protected override java.util.Enumeration getHeaderNames () {
 			return _HttpServletRequest.getHeaderNames ();
 		}
