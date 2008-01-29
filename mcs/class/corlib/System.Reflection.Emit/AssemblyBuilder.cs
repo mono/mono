@@ -631,6 +631,39 @@ namespace System.Reflection.Emit {
 				return (Module[])modules.Clone ();
 		}
 
+		internal override Type[] GetTypes (bool exportedOnly) {
+			Type[] res = null;
+			if (modules != null) {
+				for (int i = 0; i < modules.Length; ++i) {
+					Type[] types = modules [i].GetTypes ();
+					if (res == null)
+						res = types;
+					else {
+						Type[] tmp = new Type [res.Length + types.Length];
+						Array.Copy (res, 0, tmp, 0, res.Length);
+						Array.Copy (types, 0, tmp, res.Length, types.Length);
+					}
+				}
+			}
+			if (loaded_modules != null) {
+				for (int i = 0; i < loaded_modules.Length; ++i) {
+					Type[] types = loaded_modules [i].GetTypes ();
+					if (res == null)
+						res = types;
+					else {
+						Type[] tmp = new Type [res.Length + types.Length];
+						Array.Copy (res, 0, tmp, 0, res.Length);
+						Array.Copy (types, 0, tmp, res.Length, types.Length);
+					}
+				}
+			}
+
+			if (res == null)
+				return new Type [0];
+			else
+				return res;
+		}
+
 		public override ManifestResourceInfo GetManifestResourceInfo(string resourceName) {
 			throw not_supported ();
 		}

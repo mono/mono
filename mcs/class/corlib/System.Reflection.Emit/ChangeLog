@@ -1,5 +1,7 @@
 2008-01-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* AssemblyBuilder.cs (GetTypes): Implement this entirely in managed code.
+
 	* ModuleBuilder.cs (GetTypes): Replace TypeBuilders with their created types to
 	match MS.
 
