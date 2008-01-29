@@ -136,7 +136,7 @@ namespace System.Xml.Linq
 
 		public override string ToString ()
 		{
-			if (ns == XNamespace.Blank)
+			if (ns == XNamespace.None)
 				return local;
 			return String.Concat ("{", ns.NamespaceName, "}", local);
 		}

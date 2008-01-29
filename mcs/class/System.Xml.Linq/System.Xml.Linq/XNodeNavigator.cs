@@ -89,7 +89,7 @@ namespace System.Xml.Linq
 			get {
 				switch (NodeType) {
 				case XPathNodeType.Namespace:
-					return attr.Name.Namespace == XNamespace.Blank ? String.Empty : attr.Name.LocalName;
+					return attr.Name.Namespace == XNamespace.None ? String.Empty : attr.Name.LocalName;
 				case XPathNodeType.Attribute:
 					return attr.Name.LocalName;
 				case XPathNodeType.Element:
@@ -115,7 +115,7 @@ namespace System.Xml.Linq
 				default:
 					return LocalName;
 				}
-				if (name.Namespace == XNamespace.Blank)
+				if (name.Namespace == XNamespace.None)
 					return name.LocalName;
 				XElement el = (node as XElement) ?? node.Parent;
 				if (el == null)
@@ -178,7 +178,7 @@ namespace System.Xml.Linq
 				default:
 					return LocalName;
 				}
-				if (name.Namespace == XNamespace.Blank)
+				if (name.Namespace == XNamespace.None)
 					return String.Empty;
 				XElement el = (node as XElement) ?? node.Parent;
 				if (el == null)

@@ -38,8 +38,8 @@ namespace System.Xml.Linq
 		static readonly XNamespace blank = Get (String.Empty);
 		static readonly XNamespace xml = Get ("http://www.w3.org/XML/1998/namespace");
 		static readonly XNamespace xmlns = Get ("http://www.w3.org/2000/xmlns/");
-
-		internal static XNamespace Blank {
+		
+		public static XNamespace None { 
 			get { return blank; }
 		}
 
@@ -70,13 +70,6 @@ namespace System.Xml.Linq
 			if (namespaceName == null)
 				throw new ArgumentNullException ("namespaceName");
 			uri = namespaceName;
-		}
-		
-		[MonoTODO]
-		public static XNamespace None { 
-			get {
-				return null;
-			}
 		}
 
 		public string NamespaceName {
@@ -114,10 +107,9 @@ namespace System.Xml.Linq
 			return uri.GetHashCode ();
 		}
 
-		[MonoTODO]
 		public override string ToString ()
 		{
-			return uri.ToString ();
+			return uri;
 		}
 	}
 }

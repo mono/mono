@@ -388,7 +388,7 @@ namespace System.Xml.Linq
 				do {
 					// not sure how current Orcas behavior makes sense here though ...
 					if (r.LocalName == "xmlns" && r.NamespaceURI == XNamespace.Xmlns.NamespaceName)
-						e.SetAttributeValue (XNamespace.Blank.GetName ("xmlns"), r.Value);
+						e.SetAttributeValue (XNamespace.None.GetName ("xmlns"), r.Value);
 					else
 						e.SetAttributeValue (XName.Get (r.LocalName, r.NamespaceURI), r.Value);
 				} while (r.MoveToNextAttribute ());
@@ -556,9 +556,9 @@ namespace System.Xml.Linq
 		{
 			for (XElement el = this; el != null; el = el.Parent)
 				foreach (XAttribute a in el.Attributes ())
-					if (a.IsNamespaceDeclaration && a.Name.Namespace == XNamespace.Blank)
+					if (a.IsNamespaceDeclaration && a.Name.Namespace == XNamespace.None)
 						return XNamespace.Get (a.Value);
-			return XNamespace.Blank; // nothing is declared.
+			return XNamespace.None; // nothing is declared.
 		}
 
 		public XNamespace GetNamespaceOfPrefix (string prefix)
@@ -567,7 +567,7 @@ namespace System.Xml.Linq
 				foreach (XAttribute a in el.Attributes ())
 					if (a.IsNamespaceDeclaration && a.Name.LocalName == prefix)
 						return XNamespace.Get (a.Value);
-			return XNamespace.Blank; // nothing is declared.
+			return XNamespace.None; // nothing is declared.
 		}
 
 		public string GetPrefixOfNamespace (XNamespace ns)
@@ -583,7 +583,7 @@ namespace System.Xml.Linq
 			for (XElement el = this; el != null; el = el.Parent)
 				foreach (XAttribute a in el.Attributes ())
 					if (a.IsNamespaceDeclaration && a.Value == ns.NamespaceName)
-						yield return a.Name.Namespace == XNamespace.Blank ? String.Empty : a.Name.LocalName;
+						yield return a.Name.Namespace == XNamespace.None ? String.Empty : a.Name.LocalName;
 		}
 
 		public void ReplaceAll (object item)

@@ -137,11 +137,11 @@ namespace System.Xml.Linq
 				// do nothing for xmlns attributes
 				return;
 
-			if (xns == XNamespace.Blank)
+			if (xns == XNamespace.None)
 				if (el.GetPrefixOfNamespace (xns) != prefix)
-					el.SetAttributeValue (prefix == String.Empty ? XNamespace.Blank.GetName ("xmlns") : XNamespace.Xmlns.GetName (prefix), xns.NamespaceName);
-			else if (el.GetDefaultNamespace () != XNamespace.Blank)
-				el.SetAttributeValue (XNamespace.Blank.GetName ("xmlns"), xns.NamespaceName);
+					el.SetAttributeValue (prefix == String.Empty ? XNamespace.None.GetName ("xmlns") : XNamespace.Xmlns.GetName (prefix), xns.NamespaceName);
+			else if (el.GetDefaultNamespace () != XNamespace.None)
+				el.SetAttributeValue (XNamespace.None.GetName ("xmlns"), xns.NamespaceName);
 		}
 
 		// Public Methods

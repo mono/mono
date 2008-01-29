@@ -224,7 +224,7 @@ namespace System.Xml.Linq
 		public override string Prefix {
 			get {
 				XName name = GetCurrentName () as XName;
-				if (name == null || name.Namespace == XNamespace.Blank)
+				if (name == null || name.Namespace == XNamespace.None)
 					return String.Empty;
 				XElement el = (node as XElement) ?? node.Parent;
 				if (el == null)
@@ -355,7 +355,7 @@ namespace System.Xml.Linq
 		{
 			XElement el = (node as XElement) ?? node.Parent;
 			if (el == null ||
-			    name.Namespace == XNamespace.Blank ||
+			    name.Namespace == XNamespace.None ||
 			    el.GetPrefixOfNamespace (name.Namespace) == String.Empty)
 				return name.LocalName;
 			return String.Concat (el.GetPrefixOfNamespace (name.Namespace), ":", name.LocalName);

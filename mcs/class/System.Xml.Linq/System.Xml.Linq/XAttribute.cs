@@ -226,7 +226,7 @@ namespace System.Xml.Linq
 		}
 
 		public bool IsNamespaceDeclaration {
-			get { return name.Namespace == XNamespace.Xmlns || (name.LocalName == "xmlns" && name.Namespace == XNamespace.Blank); }
+			get { return name.Namespace == XNamespace.Xmlns || (name.LocalName == "xmlns" && name.Namespace == XNamespace.None); }
 		}
 
 		public XName Name {
