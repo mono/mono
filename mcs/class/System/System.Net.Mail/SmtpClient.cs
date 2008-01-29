@@ -558,7 +558,11 @@ namespace System.Net.Mail {
 				throw new SmtpException (status.StatusCode, status.Description);
 
 			// Send message headers
-			SendHeader (HeaderName.Date, DateTime.Now.ToString ("ddd, dd MMM yyyy HH':'mm':'ss zzz", DateTimeFormatInfo.InvariantInfo));
+			string dt = DateTime.Now.ToString ("ddd, dd MMM yyyy HH':'mm':'ss zzz", DateTimeFormatInfo.InvariantInfo);
+			// remove ':' from time zone offset (e.g. from "+01:00")
+			dt = dt.Remove (dt.Length - 3, 1);
+			SendHeader (HeaderName.Date, dt);
+
 			SendHeader (HeaderName.From, from.ToString ());
 			SendHeader (HeaderName.To, message.To.ToString ());
 			if (message.CC.Count > 0)
@@ -916,17 +920,39 @@ try {
 		private string ToQuotedPrintable (byte [] bytes)
 		{
 			StringWriter writer = new StringWriter ();
+			int charsInLine = 0;
+			int curLen;
+			StringBuilder sb = new StringBuilder("=", 3);
+			char c = (char)0;
+
 			foreach (byte i in bytes) {
 				if (i > 127) {
-					writer.Write ("=");
-					writer.Write (Convert.ToString (i, 16).ToUpper ());
-				} else
-					writer.Write (Convert.ToChar (i));
+					sb.Length = 1;
+					sb.Append(Convert.ToString (i, 16).ToUpperInvariant ());
+					curLen = 3;
+				} else {
+					c = Convert.ToChar (i);
+					if (c == '\r' || c == '\n') {
+						writer.Write (c);
+						charsInLine = 0;
+						continue;
+					}
+					curLen = 1;
+				}
+				
+				charsInLine += curLen;
+				if (charsInLine > 75) {
+					writer.Write ("=\r\n");
+					charsInLine = curLen;
+				}
+				if (curLen == 1)
+					writer.Write (c);
+				else
+					writer.Write (sb.ToString ());
 			}
 
-			return writer.GetStringBuilder ().ToString ();
+			return writer.ToString ();
 		}
-
 		private static string GetTransferEncodingName (TransferEncoding encoding)
 		{
 			switch (encoding) {

@@ -1,3 +1,11 @@
+2008-01-29  Juraj Skripsky  <js@hotfeet.ch>
+
+	* SmtpClient.cs: Remove ':' from the time zone offset in the
+	mail's date field. Fixes bug #351443.
+	(ToQuotedPrintable): Make sure text encoded as quoted-printable does
+	not contain more then 76 chars per line (required by rfc1521). Fixes
+	bug #351448.
+
 2007-12-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* AlternateView.cs : supply charset info for ContentType.
