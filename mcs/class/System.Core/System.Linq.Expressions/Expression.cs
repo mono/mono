@@ -241,7 +241,7 @@ namespace System.Linq.Expressions {
 				// == and != allow reference types without operators defined.
 				//
 				if (!ltype.IsValueType && !rtype.IsValueType &&
-				    (oper_name == "op_Equality" || oper_name == "op_Inequality"))
+					(oper_name == "op_Equality" || oper_name == "op_Inequality"))
 					return null;
 
 				throw new InvalidOperationException (
@@ -340,7 +340,7 @@ namespace System.Linq.Expressions {
 				}
 				else if (ltype.IsValueType && rtype.IsValueType &&
 					   ((lnullable && GetNullableOf (ltype) == mltype) ||
-					    (rnullable && GetNullableOf (rtype) == mrtype))){
+						(rnullable && GetNullableOf (rtype) == mrtype))){
 					is_lifted = true;
 					if (method.ReturnType == typeof(bool)){
 						result = liftToNull ? typeof(bool?) : typeof(bool);
@@ -575,6 +575,15 @@ namespace System.Linq.Expressions {
 		public static BinaryExpression AndAlso (Expression left, Expression right, MethodInfo method)
 		{
 			method = BinaryCoreCheck ("op_BitwiseAnd", left, right, method);
+			if (method == null) {
+				if (left.Type != typeof (bool))
+					throw new InvalidOperationException ("Only booleans are allowed for AndAlso");
+			} else {
+				// The method should have identical parameter and return types.
+
+				if (left.Type != right.Type || method.ReturnType != left.Type)
+					throw new ArgumentException ("left, right and return type must match");
+			}
 
 			return MakeBoolBinary (ExpressionType.AndAlso, left, right, false, method);
 		}
@@ -587,7 +596,7 @@ namespace System.Linq.Expressions {
 		public static BinaryExpression OrElse (Expression left, Expression right, MethodInfo method)
 		{
 			method = BinaryCoreCheck ("op_BitwiseOr", left, right, method);
-			if (method == null){
+			if (method == null) {
 				if (left.Type != typeof (bool))
 					throw new InvalidOperationException ("Only booleans are allowed for OrElse");
 			} else {
