@@ -1,3 +1,8 @@
+2008-01-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* AssemblyBuilder.cs: Override GetModulesInternal () so we can return
+	ModuleBuilders.
+
 2008-01-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* TypeBuilder.cs (GenerateDebugInfo): Emit debug info for nested types as well.

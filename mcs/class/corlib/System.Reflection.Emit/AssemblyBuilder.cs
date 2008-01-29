@@ -624,6 +624,13 @@ namespace System.Reflection.Emit {
 			throw not_supported ();
 		}
 
+		internal override Module[] GetModulesInternal () {
+			if (modules == null)
+				return new Module [0];
+			else
+				return (Module[])modules.Clone ();
+		}
+
 		public override ManifestResourceInfo GetManifestResourceInfo(string resourceName) {
 			throw not_supported ();
 		}
