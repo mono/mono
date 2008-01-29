@@ -34,12 +34,12 @@ namespace System.Linq.Expressions {
 
 	public sealed class MethodCallExpression : Expression {
 
-		Expression @object;
+		Expression obj;
 		MethodInfo method;
 		ReadOnlyCollection<Expression> arguments;
 
 		public Expression Object {
-			get { return @object; }
+			get { return obj; }
 		}
 
 		public MethodInfo Method {
@@ -50,10 +50,17 @@ namespace System.Linq.Expressions {
 			get { return arguments; }
 		}
 
-		internal MethodCallExpression (Expression @object, MethodInfo method, ReadOnlyCollection<Expression> arguments)
+		internal MethodCallExpression (MethodInfo method, ReadOnlyCollection<Expression> arguments)
 			: base (ExpressionType.Call, method.ReturnType)
 		{
-			this.@object = @object;
+			this.method = method;
+			this.arguments = arguments;
+		}
+
+		internal MethodCallExpression (Expression obj, MethodInfo method, ReadOnlyCollection<Expression> arguments)
+			: base (ExpressionType.Call, method.ReturnType)
+		{
+			this.obj = obj;
 			this.method = method;
 			this.arguments = arguments;
 		}

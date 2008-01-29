@@ -933,16 +933,46 @@ namespace System.Linq.Expressions {
 			return new MethodCallExpression (instance, method, args);
 		}
 
-		[MonoTODO]
 		public static MethodCallExpression Call (Expression instance, string methodName, Type [] typeArguments, params Expression [] arguments)
 		{
-			throw new NotImplementedException ();
+			if (instance == null)
+				throw new ArgumentNullException ("instance");
+			if (methodName == null)
+				throw new ArgumentNullException ("methodName");
+
+			if (typeArguments == null)
+				typeArguments = new Type [0];
+
+			var method = instance.Type.GetMethod (methodName, AllInstance, null, typeArguments, null);
+			if (method == null)
+				throw new InvalidOperationException ("No such method");
+
+			var args = arguments.ToReadOnlyCollection ();
+			if (typeArguments.Length != args.Count)
+				throw new InvalidOperationException ("Argument count doesn't match parameters length");
+
+			return new MethodCallExpression (instance, method, args);
 		}
 
-		[MonoTODO]
 		public static MethodCallExpression Call (Type type, string methodName, Type [] typeArguments, params Expression [] arguments)
 		{
-			throw new NotImplementedException ();
+			if (type == null)
+				throw new ArgumentNullException ("type");
+			if (methodName == null)
+				throw new ArgumentNullException ("methodName");
+
+			if (typeArguments == null)
+				typeArguments = new Type [0];
+
+			var method = type.GetMethod (methodName, AllStatic, null, typeArguments, null);
+			if (method == null)
+				throw new InvalidOperationException ("No such method");
+
+			var args = arguments.ToReadOnlyCollection ();
+			if (typeArguments.Length != args.Count)
+				throw new InvalidOperationException ("Argument count doesn't match parameters length");
+
+			return new MethodCallExpression (method, args);
 		}
 
 		public static ConditionalExpression Condition (Expression test, Expression ifTrue, Expression ifFalse)
