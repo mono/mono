@@ -1,5 +1,8 @@
 2008-01-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* ModuleBuilder.cs (GetTypes): Replace TypeBuilders with their created types to
+	match MS.
+
 	* AssemblyBuilder.cs: Override GetModulesInternal () so we can return
 	ModuleBuilders.
 

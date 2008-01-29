@@ -467,8 +467,13 @@ namespace System.Reflection.Emit {
 				return new TypeBuilder [0];
 
 			int n = num_types;
-			TypeBuilder [] copy = new TypeBuilder [n];
+			Type [] copy = new Type [n];
 			Array.Copy (types, copy, n);
+
+			// MS replaces the typebuilders with their created types
+			for (int i = 0; i < copy.Length; ++i)
+				if (types [i].IsCreated ())
+					copy [i] = types [i].CreateType ();
 
 			return copy;
 		}
