@@ -94,7 +94,7 @@ namespace System.Text.RegularExpressions
 				return;
 			}
 
-			PatternData patternData;
+			PatternData patternData = null;
 			try
 			{
 				patternData = PatternDataBuilder.GetPatternData(pattern, roptions);
