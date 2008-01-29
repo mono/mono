@@ -1,3 +1,7 @@
+2008-01-29 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* ObjectStateFormatter.cs: has public constructor.
+
 2008-01-29  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* Page.cs: performance optimization of DeterminePostBackMode

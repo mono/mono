@@ -59,7 +59,7 @@ namespace System.Web.UI {
 		HashAlgorithm algo;
 		byte [] vkey;
 
-		internal ObjectStateFormatter ()
+		public ObjectStateFormatter ()
 		{
 		}
 		
