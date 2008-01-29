@@ -1,5 +1,11 @@
 2008-01-29  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Hwnd.cs: Make bmp, bmp_g variables threadstatic and private.
+	* Control.cs, DataGridViewCell.cs, LineTag.cs: Use Hwnd.GraphicsContext
+	instead of Hwnd.bmp_g.
+
+2008-01-29  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TextRenderer.cs: Don't maintain private bitmap/graphics contexts.
 	Use the Hwnd one instead.
 

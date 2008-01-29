@@ -125,7 +125,7 @@ namespace System.Windows.Forms
 					font = value;
 	
 					height = Font.Height;
-					XplatUI.GetFontMetrics (Hwnd.bmp_g, Font, out ascent, out descent);
+					XplatUI.GetFontMetrics (Hwnd.GraphicsContext, Font, out ascent, out descent);
 					line.recalc = true;
 				}
 			}
