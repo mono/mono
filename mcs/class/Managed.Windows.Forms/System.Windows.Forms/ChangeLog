@@ -1,5 +1,9 @@
 2008-01-29  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Control.cs: Add MarshalAs attribute to Font getter for corcompare.
+
+2008-01-29  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Form.cs: Handle Alt-Minus for MDI children forms.
 	* MdiWindowManager.cs: Make ShowPopup internal so Form can call it.
 	Add mnemonics to the control menu.

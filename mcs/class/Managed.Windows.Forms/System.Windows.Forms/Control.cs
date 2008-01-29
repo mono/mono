@@ -2762,6 +2762,9 @@ namespace System.Windows.Forms
 		[Localizable(true)]
 		[MWFCategory("Appearance")]
 		public virtual Font Font {
+#if NET_2_0
+			[return: MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof (Font))]
+#endif
 			get {
 				if (font != null)
 					return font;
