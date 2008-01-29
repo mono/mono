@@ -41,6 +41,7 @@ namespace MonoTests.System.CodeDom.Compiler {
 	public class ExecutorTest {
 
 		private bool posix;
+		private bool cmdNotFound;
 		private int errcode;
 		private string cmd;
 		private string cd;
@@ -52,15 +53,22 @@ namespace MonoTests.System.CodeDom.Compiler {
 		[TestFixtureSetUp]
 		public void FixtureSetUp ()
 		{
-			int platform = (int) Environment.OSVersion.Platform;
-			posix = (platform == 4) || (platform == 128);
-			errcode = (posix ? 2 : 1);
 			cmd = "ping"; // available everywhere
 			cd = Environment.CurrentDirectory;
 			temp = Path.GetTempPath ();
 			tfc = new TempFileCollection ();
 			winid = WindowsIdentity.GetCurrent ();
 			token = winid.Token;
+
+			try {
+				string output = null;
+				string error = null;
+				errcode = Executor.ExecWaitWithCapture (cmd, tfc, ref output, ref error);
+			}
+			catch (Exception) {
+				// cmd might not be in the PATH
+				cmdNotFound = true;
+			}
 		}
 
 		[TestFixtureTearDown]
@@ -84,6 +92,8 @@ namespace MonoTests.System.CodeDom.Compiler {
 		[ExpectedException (typeof (NullReferenceException))]
 		public void ExecWait_NullTempFileCollection ()
 		{
+			if (cmdNotFound)
+				return;
 			Executor.ExecWait (cmd, null);
 		}
 
@@ -92,6 +102,8 @@ namespace MonoTests.System.CodeDom.Compiler {
 		[Category ("NotWorking")]
 		public void ExecWait ()
 		{
+			if (cmdNotFound)
+				return;
 			// why does it fail ? any case that works ?
 			Executor.ExecWait (cmd, tfc);
 		}
@@ -99,6 +111,8 @@ namespace MonoTests.System.CodeDom.Compiler {
 		[Test]
 		public void ExecWaitWithCapture ()
 		{
+			if (cmdNotFound)
+				return;
 			string output = null;
 			string error = null;
 			TempFileCollection tfc = new TempFileCollection ();
@@ -113,6 +127,8 @@ namespace MonoTests.System.CodeDom.Compiler {
 		[Test]
 		public void ExecWaitWithCapture_CurrentDir ()
 		{
+			if (cmdNotFound)
+				return;
 			string output = null;
 			string error = null;
 			TempFileCollection tfc = new TempFileCollection ();
@@ -128,6 +144,8 @@ namespace MonoTests.System.CodeDom.Compiler {
 		[Test]
 		public void ExecWaitWithCapture_Token ()
 		{
+			if (cmdNotFound)
+				return;
 			string output = null;
 			string error = null;
 			TempFileCollection tfc = new TempFileCollection ();
@@ -142,6 +160,8 @@ namespace MonoTests.System.CodeDom.Compiler {
 		[Test]
 		public void ExecWaitWithCapture_Token_CurrentDir ()
 		{
+			if (cmdNotFound)
+				return;
 			string output = null;
 			string error = null;
 			TempFileCollection tfc = new TempFileCollection ();
