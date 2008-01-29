@@ -66,6 +66,26 @@ namespace MonoTests.System.Linq.Expressions {
 			Expression.Call (Expression.Constant (new object ()), typeof (object).GetMethod ("ToString"), Expression.Constant (new object ()));
 		}
 
+		public class Foo {
+			public void Bar (string s)
+			{
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void MethodHasNullArgument ()
+		{
+			Expression.Call (Expression.New (typeof (Foo)), typeof (Foo).GetMethod ("Bar"), null as Expression);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void MethodArgumentDoesntMatchParameterType ()
+		{
+			Expression.Call (Expression.New (typeof (Foo)), typeof (Foo).GetMethod ("Bar"), Expression.Constant (42));
+		}
+
 		[Test]
 		public void CallToString ()
 		{
