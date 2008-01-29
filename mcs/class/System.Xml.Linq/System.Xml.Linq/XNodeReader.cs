@@ -200,9 +200,12 @@ namespace System.Xml.Linq
 
 		public override string NamespaceURI {
 			get {
-				object name = GetCurrentName ();
-				if (name is XName)
-					return ((XName) name).NamespaceName;
+				XName name = GetCurrentName () as XName;
+				if (name != null)
+					// XName for "xmlns" has NamespaceName as "", so we have to return w3c xmlns as a special case.
+					return name.LocalName == "xmlns" && name.Namespace == XNamespace.None ?
+						XNamespace.Xmlns.NamespaceName :
+						name.NamespaceName;
 				return String.Empty;
 			}
 		}
@@ -224,7 +227,7 @@ namespace System.Xml.Linq
 		public override string Prefix {
 			get {
 				XName name = GetCurrentName () as XName;
-				if (name == null || name.Namespace == XNamespace.Blank)
+				if (name == null || name.Namespace == XNamespace.None)
 					return String.Empty;
 				XElement el = (node as XElement) ?? node.Parent;
 				if (el == null)
@@ -355,7 +358,7 @@ namespace System.Xml.Linq
 		{
 			XElement el = (node as XElement) ?? node.Parent;
 			if (el == null ||
-			    name.Namespace == XNamespace.Blank ||
+			    name.Namespace == XNamespace.None ||
 			    el.GetPrefixOfNamespace (name.Namespace) == String.Empty)
 				return name.LocalName;
 			return String.Concat (el.GetPrefixOfNamespace (name.Namespace), ":", name.LocalName);

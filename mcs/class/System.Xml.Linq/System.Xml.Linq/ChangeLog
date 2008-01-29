@@ -1,3 +1,15 @@
+2008-01-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XNodeReader.cs : Probably fixed (reopened) bug #356522.
+	  NamespaceURI for "xmlns" attribute was "", which should be
+	  http://www.w3.org/2000/xmlns/ (in XAttribute its namespace is "").
+
+2008-01-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XElement.cs, XNamespace.cs, XNodeNavigator.cs, XAttribute.cs,
+	  XNodeReader.cs, XName.cs, XNodeWriter.cs :
+	  XNamespace.Blank -> XNamespace.None (and .None is implemented.)
+
 2008-01-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XNodeReader.cs : Fixed bug #356522. Attribute name retrieval was
