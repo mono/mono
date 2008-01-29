@@ -1150,7 +1150,7 @@ namespace System {
 			if (types == null)
 				throw new ArgumentNullException ("types");
 			if (GetGenericArguments().Length != types.Length)
-				throw new ArgumentException ("types");			
+				throw new ArgumentException (String.Format ("The type or method has {0} generic parameter(s) but {1} generic argument(s) where provided. A generic argument must be provided for each generic parameter.", GetGenericArguments ().Length, types.Length), "types");
 
 			Type[] systemTypes = new Type[types.Length];
 			for (int i = 0; i < types.Length; ++i) {
