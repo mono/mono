@@ -923,18 +923,8 @@ namespace System.Linq.Expressions {
 				throw new ArgumentException ("Type is not assignable to the declaring type of the method");
 
 			var args = arguments.ToReadOnlyCollection ();
-			var parameters = method.GetParameters ();
 
-			if (args.Count != parameters.Length)
-				throw new ArgumentException ("The number of arguments doesn't match the number of parameters");
-
-			for (int i = 0; i < parameters.Length; i++) {
-				if (args [i] == null)
-					throw new ArgumentNullException ("arguments");
-
-				if (!parameters [i].ParameterType.IsAssignableFrom (args [i].Type))
-					throw new ArgumentException ("arguments");
-			}
+			CheckMethodArguments (method, args);
 
 			return new MethodCallExpression (instance, method, args);
 		}
@@ -1415,20 +1405,26 @@ namespace System.Linq.Expressions {
 				throw new ArgumentNullException ("constructor");
 
 			var args = arguments.ToReadOnlyCollection ();
-			var parameters = constructor.GetParameters ();
 
-			if (args.Count != parameters.Length)
-				throw new ArgumentException ("arguments");
-
-			for (int i = 0; i < parameters.Length; i++) {
-				if (args [i] == null)
-					throw new ArgumentNullException ("arguments");
-
-				if (!parameters [i].ParameterType.IsAssignableFrom (args [i].Type))
-					throw new ArgumentException ("arguments");
-			}
+			CheckMethodArguments (constructor, args);
 
 			return new NewExpression (constructor, args, null);
+		}
+
+		static void CheckMethodArguments (MethodBase method, ReadOnlyCollection<Expression> arguments)
+		{
+			var parameters = method.GetParameters ();
+
+			if (arguments.Count != parameters.Length)
+				throw new ArgumentException ("The number of arguments doesn't match the number of parameters");
+
+			for (int i = 0; i < parameters.Length; i++) {
+				if (arguments [i] == null)
+					throw new ArgumentNullException ("arguments");
+
+				if (!parameters [i].ParameterType.IsAssignableFrom (arguments [i].Type))
+					throw new ArgumentException ("arguments");
+			}
 		}
 
 		[MonoTODO]
