@@ -1,5 +1,7 @@
 2008-01-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-sparc.c (get_call_info): Add support for generic sharing.
+
 	* mini-exceptions.c: Add a FIXME.
 
 2008-01-27  Zoltan Varga  <vargaz@gmail.com>
