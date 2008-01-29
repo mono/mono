@@ -157,6 +157,7 @@
     <Compile Include="System.Data\DataTableTest2.cs" />
     <Compile Include="System.Data\DataTableTest3.cs" />
     <Compile Include="System.Data\DataTableTest4.cs" />
+    <Compile Include="System.Data\DataTableTest5.cs" />
     <Compile Include="System.Data\DataViewManagerTest.cs" />
     <Compile Include="System.Data\DataViewTest.cs" />
     <Compile Include="System.Data\DataViewTest2.cs" />
