@@ -1,3 +1,8 @@
+2008-01-29  Marek Safar  <marek.safar@gmail.com>
+
+	* Type.cs (MakeGenericType): More argument checks. Fixes #356863 by
+	 Sanghyeon Seo.
+
 2008-01-25  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MonoType.cs (InvokeMember): Fixed exceptions arguments for last comit.

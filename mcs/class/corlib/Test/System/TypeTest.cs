@@ -171,6 +171,10 @@ namespace MonoTests.System
 			return a;
 		}
 	}
+	
+	class Foo<T, U>
+	{
+	}
 
 	public interface IBar<T>
 	{
@@ -2888,6 +2892,17 @@ PublicKeyToken=b77a5c561934e089"));
 			} catch (ArgumentException) {
 			}
 		}
+	
+		[Test]
+		public void MakeGenericType_WrongNumOfArguments ()
+		{
+			try {
+				Type t = typeof (Foo<,>).MakeGenericType (new Type [] { typeof (int) });
+				Assert.Fail ("#1");
+			} catch (ArgumentException) {
+			}
+		}
+	
 #endif
 
 		static bool ContainsProperty (PropertyInfo [] props, string name)

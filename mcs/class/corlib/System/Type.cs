@@ -1149,6 +1149,8 @@ namespace System {
 				throw new InvalidOperationException ("not a generic type definition");
 			if (types == null)
 				throw new ArgumentNullException ("types");
+			if (GetGenericArguments().Length != types.Length)
+				throw new ArgumentException ("types");			
 
 			Type[] systemTypes = new Type[types.Length];
 			for (int i = 0; i < types.Length; ++i) {
@@ -1161,7 +1163,7 @@ namespace System {
 					throw new ArgumentNullException ("types");
 				systemTypes [i] = types [i].UnderlyingSystemType;
 			}
-			
+
 			Type res = MakeGenericType (this, systemTypes);
 			if (res == null)
 				throw new TypeLoadException ();
