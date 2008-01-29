@@ -1154,6 +1154,7 @@ namespace System.Windows.Forms {
 
 #if NET_2_0
 		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public Rectangle RestoreBounds {
 			get { return restore_bounds; }
 		}
