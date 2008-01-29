@@ -1,3 +1,7 @@
+2008-01-29  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* Page.cs: performance optimization of DeterminePostBackMode
+
 2008-01-24  Marek Habersack  <mhabersack@novell.com>
 
 	* PageThemeFileParser.cs: the DefaultBaseType property removed.

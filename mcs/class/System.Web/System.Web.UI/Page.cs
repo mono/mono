@@ -837,8 +837,13 @@ public partial class Page : TemplateControl, IHttpHandler
 		NameValueCollection coll = null;
 		if (0 == String.Compare (Request.HttpMethod, "POST", true, CultureInfo.InvariantCulture))
 			coll = req.Form;
-		else
+		else {
+			string query = Request.QueryStringRaw;
+			if (query == null || query.Length == 0)
+				return null;
+
 			coll = req.QueryString;
+		}
 
 		WebROCollection c = (WebROCollection) coll;
 		allow_load = !c.GotID;
