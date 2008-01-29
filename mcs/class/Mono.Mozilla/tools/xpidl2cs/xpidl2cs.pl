@@ -161,8 +161,9 @@ sub get_params {
     my $x = shift;
     my $ret = '';
     my %list;
+#    print $methods{$x}->{"params"}."\n";
     my @params = split /,/, $methods{$x}->{"params"};
-
+	
 #    print "params:@params:\n";
     for my $param (@params) {
 	my $marshal;
@@ -174,7 +175,7 @@ sub get_params {
 
 #	print "param:$param:\n";
 	my @p = split (" ", $param);
-
+#	print "@p\n";
 # need to backtrack to a previous parameter defined by iid_is(name) and 
 # replace the type of this one with that. who the $%#@ came up with this idea? le sigh.
 
@@ -191,12 +192,19 @@ sub get_params {
 	    }
 	}
 
-	shift @p unless @p[0] =~ /(in|out)/;
+	if (@p[0] =~ m/array/) {
+	    until (scalar(@p) == 3) {
+		shift @p;
+	    }
+	    $isout = 1 if (@p[0] =~ m/out/);
+	    shift @p;
 
-	if (@p[0] =~ m/out/) {
-	    $isout = 1;
+	    $type = @p[0] . "[]";
 	}
-	shift @p;
+
+	shift @p unless @p[0] =~ /(in|out)/;
+	$isout = 1 if (@p[0] =~ m/out/);
+	shift @p unless scalar(@p) <= 2;
 
 	# if an out parameter is of type nsQIResult, that means
 	# it will return a pointer to an interface (that can be anything). 
@@ -223,8 +231,9 @@ sub get_params {
 	$out = &get_out($type) if $isout;
 
 	$type = &get_type (@p[0]) unless $type;
+	shift @p unless scalar(@p) == 1;
 	$marshal = &get_marshal ($type) unless $marshal;
-	$name = @p[1] unless $name;
+	$name = @p[0] unless $name;
 
 #	print "marshal:$marshal\ttype:$type\tname:$name\n";
 
@@ -319,7 +328,7 @@ sub parse_file {
 		    my  $m = substr($line, 0, index($line, "("));
 		    my @atts = split / /, $m;
 
-#		    print $m;
+#		    print "$m\n";
 		    $mname = pop @atts;
 #		    print "name=$mname\n";
 		    my @nospaces = grep /[^ ]/, @atts;
@@ -333,6 +342,7 @@ sub parse_file {
 		    @atts = split / /, $mparams;
 		    @nospaces = grep /[^ ]/, @atts;
 		    $mparams = join " ", @nospaces;
+#		    print "params=>$mparams\n";
 
 		}
 		elsif (index ($line, "raises") == -1) {
@@ -342,9 +352,11 @@ sub parse_file {
 		    my @atts = split / /, $mparams;
 		    my @nospaces = grep /[^ ]/, @atts;
 		    $mparams = join " ", @nospaces;
+#		    print "params=>$mparams\n";
 		}
 		if (index ($line, ";") != -1) {
 		    $method = 0;
+		    $mparams =~ s/\[([^\]]+),([^\]]+),([^\]]+)\]/\1 \2 \3/;
 		    $mparams =~ s/\[([^\]]+),([^\]]+)\]/\1 \2/;
 		    $mparams =~ s/\(/ /;
 		    $mparams =~ s/\)//;
@@ -412,7 +424,6 @@ sub output {
     print X " : $parent" if $parent !~ /nsISupports/;
     print X " {\n";
 
-
     if ($parent !~ /nsISupports/) {
 	print X &parse_parent ($parent);
     }
@@ -421,7 +432,6 @@ sub output {
 
     my @items = split ",", $interface->{"items"};
     for my $item (@items) {
-
 	print X "\t\t[PreserveSigAttribute]\n";
 	print X "\t\t[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]\n";
 

@@ -1,3 +1,7 @@
+2008-01-29  Andreia Gaita  <avidigal@novell.com>
+
+	* xpidl2cs.pl: Add support for arrays in parameters
+
 2008-01-24  Andreia Gaita  <avidigal@novell.com>
 
 	* xpidl2cs.pl: Add support for different marshalling depending
