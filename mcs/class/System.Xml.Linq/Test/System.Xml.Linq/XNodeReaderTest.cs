@@ -112,5 +112,17 @@ namespace MonoTests.System.Xml.Linq
 			reader.Read (); // do not move to text (Value)
 			Assert.AreEqual (XmlNodeType.Element, reader.NodeType);
 		}
+
+		[Test]
+		public void NodeTypeAtInitialStateIsNone ()
+		{
+			// bug #356522 (another revised test case)
+			var rdr = new StringReader ("<root xmlns='XNodeReaderTest.xsd'>Value</root>");
+			var xDoc = XDocument.Load (rdr);
+			var reader = xDoc.Root.CreateReader ();
+			Assert.AreEqual (XmlNodeType.None, reader.NodeType, "#1");
+			reader.MoveToContent (); // do Read() and shift state to Interactive.
+			Assert.AreEqual (true, reader.MoveToFirstAttribute (), "#2");
+		}
 	}
 }

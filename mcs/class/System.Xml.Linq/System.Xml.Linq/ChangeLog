@@ -1,5 +1,10 @@
 2008-01-29  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XNodeReader.cs : NodeType should return None at Initial state.
+	  Fixed bug #356522.
+
+2008-01-29  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XNodeReader.cs : when created from non-document node, the first
 	  call to Read() should not move the node to its first child.
 

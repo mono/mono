@@ -216,7 +216,8 @@ namespace System.Xml.Linq
 
 		public override XmlNodeType NodeType {
 			get {
-				return  end_element ? XmlNodeType.EndElement :
+				return  state != ReadState.Interactive ? XmlNodeType.None :
+					end_element ? XmlNodeType.EndElement :
 					attr_value ? XmlNodeType.Text :
 					attr >= 0 ? XmlNodeType.Attribute :
 					node.NodeType == XmlNodeType.Document ? XmlNodeType.XmlDeclaration :
