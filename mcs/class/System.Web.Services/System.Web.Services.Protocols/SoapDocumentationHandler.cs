@@ -105,7 +105,7 @@ namespace System.Web.Services.Protocols
 				throw new InvalidOperationException ("Documentation page '" + physPath + "' not found");
 #endif
 
-#if NET_2_0
+#if NET_2_0 && !TARGET_JVM
 			// Since BuildManager expects the virtualPath to be mappable into the
 			// application virtual root directory and the WSDL help generator possibly
 			// lives outside the location (by default in $prefix/etc/mono/2.0/), we need
