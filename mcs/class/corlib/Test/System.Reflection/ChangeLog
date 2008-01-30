@@ -1,3 +1,7 @@
+2008-01-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* ModuleTest.cs: Add a test for GetTypes ().
+
 2008-01-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AssemblyNameTest.cs: Added test for effect of AssemblyNameFlags on

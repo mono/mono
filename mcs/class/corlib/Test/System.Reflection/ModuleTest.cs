@@ -314,6 +314,32 @@ public class ModuleTest
 		m.GetObjectData (null, new StreamingContext (StreamingContextStates.All));
 	}
 
+	[Test]
+	public void GetTypes ()
+	{
+		AssemblyName newName = new AssemblyName ();
+		newName.Name = "ModuleTest";
+
+		AssemblyBuilder ab = Thread.GetDomain().DefineDynamicAssembly (newName, AssemblyBuilderAccess.RunAndSave, TempFolder);
+
+		ModuleBuilder mb = ab.DefineDynamicModule ("myDynamicModule1", "myDynamicModule" + ".dll", true);
+
+		TypeBuilder tb = mb.DefineType ("Foo", TypeAttributes.Public);
+		tb.CreateType ();
+
+		ab.Save ("test_assembly.dll");
+
+		Assembly ass = Assembly.LoadFrom (Path.Combine (TempFolder, "test_assembly.dll"));
+		ArrayList types = new ArrayList ();
+		// The order of the modules is different between MS.NET and mono
+		foreach (Module m in ass.GetModules ()) {
+			Type[] t = m.GetTypes ();
+			types.AddRange (t);
+		}
+		Assert.AreEqual (1, types.Count);
+		Assert.AreEqual ("Foo", ((Type)(types [0])).Name);
+	}
+
 	class FindTypesTestFirstClass {
 	}
 
