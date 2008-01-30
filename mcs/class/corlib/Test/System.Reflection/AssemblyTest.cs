@@ -47,7 +47,7 @@ namespace MonoTests.System.Reflection
 	[TestFixture]
 	public class AssemblyTest
 	{
-		static string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.Reflection.ModuleTest");
+		static string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.Reflection.AssemblyTest");
 
 		[SetUp]
 		public void SetUp ()
