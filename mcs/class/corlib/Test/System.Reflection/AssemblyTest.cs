@@ -38,6 +38,7 @@ using System.Reflection;
 #if !TARGET_JVM
 using System.Reflection.Emit;
 #endif
+using System.Threading;
 using System.Runtime.Serialization;
 using System.Security;
 
@@ -46,6 +47,27 @@ namespace MonoTests.System.Reflection
 	[TestFixture]
 	public class AssemblyTest
 	{
+		static string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.Reflection.ModuleTest");
+
+		[SetUp]
+		public void SetUp ()
+		{
+			while (Directory.Exists (TempFolder))
+				TempFolder = Path.Combine (TempFolder, "2");
+			Directory.CreateDirectory (TempFolder);
+		}
+
+		[TearDown]
+		public void TearDown ()
+		{
+			try {
+				// This throws an exception under MS.NET, since the directory contains loaded
+				// assemblies.
+				Directory.Delete (TempFolder, true);
+			} catch (Exception) {
+			}
+		}
+
 		[Test] 
 		public void CreateInstance() 
 		{
@@ -80,10 +102,10 @@ namespace MonoTests.System.Reflection
 		{
 			Assembly a = typeof (int).Assembly;
 			string typeName = typeof (string).AssemblyQualifiedName;
+#if NET_2_0
 			try {
 				a.GetType (typeName, true, false);
 				Assert.Fail ("#A1");
-#if NET_2_0
 			} catch (ArgumentException ex) {
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
 				Assert.IsNull (ex.InnerException, "#A3");
@@ -91,6 +113,9 @@ namespace MonoTests.System.Reflection
 				Assert.IsNull (ex.ParamName, "#A5");
 			}
 #else
+			try {
+				a.GetType (typeName, true, false);
+				Assert.Fail ("#A1");
 			} catch (TypeLoadException ex) {
 				Assert.AreEqual (typeof (TypeLoadException), ex.GetType (), "#A2");
 				Assert.IsNull (ex.InnerException, "#A3");
@@ -124,6 +149,32 @@ namespace MonoTests.System.Reflection
 #endif
 			}
 		}
+
+#if !TARGET_JVM // Reflection.Emit is not supported.
+		[Test]
+		public void GetModules_MissingFile ()
+		{
+			AssemblyName newName = new AssemblyName ();
+			newName.Name = "ModuleTest";
+
+			AssemblyBuilder ab = Thread.GetDomain().DefineDynamicAssembly (newName, AssemblyBuilderAccess.RunAndSave, TempFolder);
+
+			ModuleBuilder mb = ab.DefineDynamicModule ("myDynamicModule1", "myDynamicModule.dll", true);
+
+			ab.Save ("test_assembly.dll");
+
+			File.Delete (Path.Combine (TempFolder, "myDynamicModule.dll"));
+
+			Assembly ass = Assembly.LoadFrom (Path.Combine (TempFolder, "test_assembly.dll"));
+			try {
+				ass.GetModules ();
+				Assert.Fail ();
+			}
+			catch (FileNotFoundException ex) {
+				Assert.AreEqual ("myDynamicModule.dll", ex.FileName);
+			}
+		}
+#endif
 
 #if !TARGET_JVM // ManifestModule not supported under TARGET_JVM.
 #if NET_2_0
@@ -747,7 +798,8 @@ namespace MonoTests.System.Reflection
 				if (Directory.Exists (tempDir))
 					Directory.Delete (tempDir, true);
 			}
-		}
+	    }
+
 
 		[Test] // bug #79715
 		public void Load_PartialVersion ()

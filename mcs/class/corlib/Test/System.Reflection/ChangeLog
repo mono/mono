@@ -1,5 +1,7 @@
 2008-01-30  Zoltan Varga  <vargaz@gmail.com>
 
+	* AssemblyTest.cs: Add a test for GetModules () and a missing module.
+
 	* ModuleTest.cs: Add a test for GetTypes ().
 
 2008-01-20  Gert Driesen  <drieseng@users.sourceforge.net>
