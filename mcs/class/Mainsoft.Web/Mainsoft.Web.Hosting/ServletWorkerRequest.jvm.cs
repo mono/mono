@@ -186,7 +186,8 @@ namespace Mainsoft.Web.Hosting {
 			string uri = GetUriPath();
 			string pathInfo = GetPathInfo();
 			if (pathInfo != null && pathInfo.Length > 0)
-				uri = uri.Substring(0, uri.Length - pathInfo.Length);
+				if (!uri.EndsWith (pathInfo, StringComparison.Ordinal))
+					uri = uri.Substring (0, uri.Length - pathInfo.Length);
 
 			return uri;
 		}
