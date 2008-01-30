@@ -49,6 +49,7 @@
     <Compile Include="System.Linq.Expressions\BinaryExpression.cs" />
     <Compile Include="System.Linq.Expressions\ConditionalExpression.cs" />
     <Compile Include="System.Linq.Expressions\ConstantExpression.cs" />
+    <Compile Include="System.Linq.Expressions\EmitContext.cs" />
     <Compile Include="System.Linq.Expressions\ElementInit.cs" />
     <Compile Include="System.Linq.Expressions\Expression.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionPrinter.cs" />
