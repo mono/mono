@@ -1,3 +1,8 @@
+2008-01-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions-x86.c (mono_arch_find_jit_info): Fix stack unwinding when an
+	exception happens while compiling a virtual method.
+
 2008-01-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-exceptions.c (mono_handle_exception_internal): Remove the old style
