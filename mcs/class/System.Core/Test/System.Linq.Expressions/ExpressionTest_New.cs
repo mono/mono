@@ -114,11 +114,60 @@ namespace MonoTests.System.Linq.Expressions {
 		{
 			var n = Expression.New (typeof (Bar));
 
+			Assert.IsNull (n.Constructor);
 			Assert.AreEqual ("new Bar()", n.ToString ());
 
 			n = Expression.New (typeof (Bar).GetConstructor (Type.EmptyTypes));
 
 			Assert.AreEqual ("new Bar()", n.ToString ());
+		}
+
+		public class Gazonk {
+
+			string value;
+
+			public Gazonk (string s)
+			{
+				value = s;
+			}
+
+			public override bool Equals (object obj)
+			{
+				var o = obj as Gazonk;
+				if (o == null)
+					return false;
+
+				return value == o.value;
+			}
+
+			public override int GetHashCode ()
+			{
+				return value.GetHashCode ();
+			}
+		}
+
+		[Test]
+		public void CompileNewClass ()
+		{
+			var p = Expression.Parameter (typeof (string), "p");
+			var n = Expression.New (typeof (Gazonk).GetConstructor (new [] { typeof (string) }), p);
+			var fgaz = Expression.Lambda<Func<string, Gazonk>> (n, p).Compile ();
+
+			var g1 = new Gazonk ("foo");
+			var g2 = new Gazonk ("bar");
+
+			Assert.IsNotNull (g1);
+			Assert.AreEqual (g1, fgaz ("foo"));
+			Assert.IsNotNull (g2);
+			Assert.AreEqual (g2, fgaz ("bar"));
+
+			n = Expression.New (typeof (Bar));
+			var lbar = Expression.Lambda<Func<Bar>> (n).Compile ();
+
+			var bar = lbar ();
+
+			Assert.IsNotNull (bar);
+			Assert.IsNull (bar.Value);
 		}
 	}
 }

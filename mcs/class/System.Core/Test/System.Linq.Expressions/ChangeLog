@@ -1,3 +1,7 @@
+2008-01-30  Jb Evain  <jbevain@novell.com>
+
+	* ExpressionTest_New.cs: add tests for emitting new reference types.
+
 2008-01-27  Jb Evain  <jbevain@novell.com>
 
 	* ExpressionTest_Condition.cs: tests for compilation of
