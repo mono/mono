@@ -69,6 +69,14 @@ namespace System.Windows.Forms
 			get;
 		}
 
+#if NET_2_0
+		public bool IsBindingSuspended {
+			get {
+				return IsSuspended;
+			}
+		}
+#endif
+
 		public abstract int Position {
 			get; set;
 		}
@@ -97,8 +105,10 @@ namespace System.Windows.Forms
 		public abstract void SuspendBinding();
 		#endregion	// Public Instance Methods
 
-		internal abstract bool IsSuspended {
-			get;
+		internal virtual bool IsSuspended {
+			get {
+				return false;
+			}
 		}
 
 		#region Protected Instance Methods
