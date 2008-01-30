@@ -1,3 +1,7 @@
+2008-01-30  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* BindingManagerBaseTest.cs: New test for 2.0 IsBindingSuspended test.
+
 2008-01-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ComboBoxTest.cs: New SelectedTextWithBinding test - for #333750.

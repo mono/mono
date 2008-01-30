@@ -68,5 +68,32 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 
 			Assert.AreEqual (bm2.Bindings[0], binding, "3");
 		}
+
+#if NET_2_0
+		[Test]
+		public void IsBindingSuspendedTest ()
+		{
+			Control c = new Control ();
+			c.BindingContext = new BindingContext ();
+
+			MockItem item = new MockItem ("A", 0);
+			MockItem [] items = new MockItem [] { item };
+
+			BindingManagerBase manager = c.BindingContext [item];
+			BindingManagerBase manager2 = c.BindingContext [items];
+			Assert.IsFalse (manager.IsBindingSuspended, "#A1");
+			Assert.IsFalse (manager2.IsBindingSuspended, "#A2");
+
+			manager.SuspendBinding ();
+			manager2.SuspendBinding ();
+			Assert.IsFalse (manager.IsBindingSuspended, "#B1");
+			Assert.IsTrue (manager2.IsBindingSuspended, "#B2");
+
+			manager.ResumeBinding ();
+			manager2.ResumeBinding ();
+			Assert.IsFalse (manager.IsBindingSuspended, "#C1");
+			Assert.IsFalse (manager2.IsBindingSuspended, "#C2");
+		}
+#endif
 	}
 }
