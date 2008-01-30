@@ -42,8 +42,6 @@ namespace System.Linq.Expressions {
 
 		public ILGenerator ig;
 
-		public abstract MethodInfo Method { get; }
-
 		static object mlock = new object ();
 		static int method_count;
 
@@ -87,10 +85,6 @@ namespace System.Linq.Expressions {
 
 		DynamicMethod method;
 
-		public override MethodInfo Method {
-			get { return method; }
-		}
-
 		public DynamicEmitContext (LambdaExpression lambda)
 			: base (lambda)
 		{
@@ -125,10 +119,6 @@ namespace System.Linq.Expressions {
 		AssemblyBuilder assembly;
 		TypeBuilder type;
 		MethodBuilder method;
-
-		public override MethodInfo Method {
-			get { return method; }
-		}
 
 		public DebugEmitContext (LambdaExpression lambda)
 			: base (lambda)
