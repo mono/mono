@@ -155,7 +155,7 @@ namespace MonoTests.System.Reflection
 		public void GetModules_MissingFile ()
 		{
 			AssemblyName newName = new AssemblyName ();
-			newName.Name = "ModuleTest";
+			newName.Name = "AssemblyTest";
 
 			AssemblyBuilder ab = Thread.GetDomain().DefineDynamicAssembly (newName, AssemblyBuilderAccess.RunAndSave, TempFolder);
 
