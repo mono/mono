@@ -1,3 +1,8 @@
+2008-01-30  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ListBox.cs: Call MouseClick and MouseDoubleClick.
+	[Fixes bug #357146]
+
 2008-01-29  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Hwnd.cs: Make bmp, bmp_g variables threadstatic and private.

@@ -1831,10 +1831,18 @@ namespace System.Windows.Forms
 
 		private void OnMouseUpLB (object sender, MouseEventArgs e)
     		{
-			if (e.Clicks > 1)
+			if (e.Clicks > 1) {
 				OnDoubleClick (EventArgs.Empty);
-			else if (e.Clicks == 1)
+#if NET_2_0
+				OnMouseDoubleClick (e);
+#endif
+			}
+			else if (e.Clicks == 1) {
 				OnClick (EventArgs.Empty);
+#if NET_2_0
+				OnMouseClick (e);
+#endif
+			}
 			
 			if (!button_pressed)
 				return;
