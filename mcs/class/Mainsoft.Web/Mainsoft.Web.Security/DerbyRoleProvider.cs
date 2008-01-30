@@ -163,7 +163,7 @@ namespace Mainsoft.Web.Security
 				int returnValue = DerbyRolesHelper.UsersInRoles_FindUsersInRole (connection, applicationName, roleName, usernameToMatch, out reader);
 
 				if (returnValue == 2)
-					throw new ProviderException ("roleName was not found in the database");
+					throw new ProviderException ("The role '" + roleName + "' was not found.");
 
 				using (reader) {
 					if (reader == null)
@@ -234,7 +234,7 @@ namespace Mainsoft.Web.Security
 				int returnValue = DerbyRolesHelper.UsersInRoles_GetUsersInRoles (connection, applicationName, rolename, out reader);
 
 				if (returnValue == 2)
-					throw new ProviderException ("rolename was not found in the database");
+					throw new ProviderException ("The role '" + rolename + "' was not found.");
 
 				using (reader) {
 					if (reader == null)
