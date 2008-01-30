@@ -37,8 +37,9 @@ namespace System.Linq.Expressions {
 
 	abstract class EmitContext {
 
-		public LambdaExpression owner;
-		public Type [] param_types;
+		protected LambdaExpression owner;
+		protected Type [] param_types;
+
 		public ILGenerator ig;
 
 		public abstract MethodInfo Method { get; }
