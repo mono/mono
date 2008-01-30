@@ -574,10 +574,18 @@ namespace System.Linq.Expressions {
 
 		public static BinaryExpression AndAlso (Expression left, Expression right, MethodInfo method)
 		{
-			method = BinaryCoreCheck ("op_BitwiseAnd", left, right, method);
+			method = ConditionalBinaryCheck ("op_BitwiseAnd", left, right, method);
+
+			return MakeBoolBinary (ExpressionType.AndAlso, left, right, false, method);
+		}
+
+		static MethodInfo ConditionalBinaryCheck (string oper, Expression left, Expression right, MethodInfo method)
+		{
+			method = BinaryCoreCheck (oper, left, right, method);
+
 			if (method == null) {
 				if (left.Type != typeof (bool))
-					throw new InvalidOperationException ("Only booleans are allowed for AndAlso");
+					throw new InvalidOperationException ("Only booleans are allowed");
 			} else {
 				// The method should have identical parameter and return types.
 
@@ -585,7 +593,7 @@ namespace System.Linq.Expressions {
 					throw new ArgumentException ("left, right and return type must match");
 			}
 
-			return MakeBoolBinary (ExpressionType.AndAlso, left, right, false, method);
+			return method;
 		}
 
 		public static BinaryExpression OrElse (Expression left, Expression right)
@@ -595,16 +603,7 @@ namespace System.Linq.Expressions {
 
 		public static BinaryExpression OrElse (Expression left, Expression right, MethodInfo method)
 		{
-			method = BinaryCoreCheck ("op_BitwiseOr", left, right, method);
-			if (method == null) {
-				if (left.Type != typeof (bool))
-					throw new InvalidOperationException ("Only booleans are allowed for OrElse");
-			} else {
-				// The method should have identical parameter and return types.
-
-				if (left.Type != right.Type || method.ReturnType != left.Type)
-					throw new ArgumentException ("left, right and return type must match");
-			}
+			method = ConditionalBinaryCheck ("op_BitwiseOr", left, right, method);
 
 			return MakeBoolBinary (ExpressionType.OrElse, left, right, false, method);
 		}
