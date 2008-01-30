@@ -321,8 +321,8 @@ namespace System.Configuration
 				} catch (ConfigurationException) {
 					throw;
 				} catch (Exception ex) {
-					string msg = String.Format ("The value of the property '{0}' cannot be parsed.", prop.Name);
-					throw new ConfigurationErrorsException (msg, ex, reader);
+					string msg = String.Format ("The value for the property '{0}' is not valid. The error is: {1}", prop.Name, ex.Message);
+					throw new ConfigurationErrorsException (msg, reader);
 				}
 				readProps [prop] = prop.Name;
 			}
