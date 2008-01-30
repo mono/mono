@@ -46,20 +46,17 @@ namespace System.Web.Script.Services
 			_section = (ScriptingAuthenticationServiceSection) WebConfigurationManager.GetSection ("system.web.extensions/scripting/webServices/authenticationService");
 		}
 
-		ScriptingAuthenticationServiceSection ScriptingProfileServiceSection {
-			get {
-				if (_section == null || !_section.Enabled)
-					throw new InvalidOperationException ("Authentication service is disabled.");
+		void EnsureEnabled() {
+			if (_section == null || !_section.Enabled)
+				throw new InvalidOperationException ("Authentication service is disabled.");
 
-				return _section;
-			}
+			if (_section.RequireSSL && !HttpContext.Current.Request.IsSecureConnection)
+				throw new HttpException ("SSL is required for this operation.");
 		}
 
 		[WebMethod ()]
 		public bool Login (string userName, string password, bool createPersistentCookie) {
-
-			if (ScriptingProfileServiceSection.RequireSSL && !HttpContext.Current.Request.IsSecureConnection)
-				throw new HttpException ("SSL is required for this operation.");
+			EnsureEnabled ();
 
 			if (!Membership.Provider.ValidateUser (userName, password))
 				return false;
@@ -71,6 +68,8 @@ namespace System.Web.Script.Services
 
 		[WebMethod ()]
 		public void Logout () {
+			EnsureEnabled ();
+
 			FormsAuthentication.SignOut ();
 		}
 	}
