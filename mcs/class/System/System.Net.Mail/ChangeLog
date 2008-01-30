@@ -1,5 +1,9 @@
 2008-01-29  Juraj Skripsky  <js@hotfeet.ch>
 
+	* SmtpClient.cs (ToQuotedPrintable): Escape the escape character "=".
+
+2008-01-29  Juraj Skripsky  <js@hotfeet.ch>
+
 	* SmtpClient.cs: Remove ':' from the time zone offset in the
 	mail's date field. Fixes bug #351443.
 	(ToQuotedPrintable): Make sure text encoded as quoted-printable does

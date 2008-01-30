@@ -923,10 +923,11 @@ try {
 			int charsInLine = 0;
 			int curLen;
 			StringBuilder sb = new StringBuilder("=", 3);
+			byte equalSign = (byte)'=';
 			char c = (char)0;
 
 			foreach (byte i in bytes) {
-				if (i > 127) {
+				if (i > 127 || i == equalSign) {
 					sb.Length = 1;
 					sb.Append(Convert.ToString (i, 16).ToUpperInvariant ());
 					curLen = 3;
