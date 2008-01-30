@@ -99,5 +99,37 @@ namespace MonoTests.System.Linq.Expressions {
 			var call = Expression.Call (null, typeof (string).GetMethod ("IsNullOrEmpty"), Expression.Constant(""));
 			Assert.AreEqual ("IsNullOrEmpty(\"\")", call.ToString ());
 		}
+
+		public static object Identity (object o)
+		{
+			return o;
+		}
+
+		[Test]
+		public void CompileSimpleStaticCall ()
+		{
+			var p = Expression.Parameter (typeof (object), "o");
+			var lambda = Expression.Lambda<Func<object, object>> (Expression.Call (GetType ().GetMethod ("Identity"), p), p);
+
+			var i = lambda.Compile ();
+
+			Assert.AreEqual (2, i (2));
+			Assert.AreEqual ("Foo", i ("Foo"));
+		}
+
+		[Test]
+		public void CompileSimpleInstanceCall ()
+		{
+			var p = Expression.Parameter (typeof (string), "p");
+			var lambda = Expression.Lambda<Func<string, string>> (
+				Expression.Call (
+					p, typeof (string).GetMethod ("ToString", Type.EmptyTypes)),
+				p);
+
+			var ts = lambda.Compile ();
+
+			Assert.AreEqual ("foo", ts ("foo"));
+			Assert.AreEqual ("bar", ts ("bar"));
+		}
 	}
 }
