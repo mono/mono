@@ -1,5 +1,9 @@
 2008-01-30  Jb Evain  <jbevain@novell.com>
 
+	* MethodCallExpression.cs: very naive implementation of Emit.
+
+2008-01-30  Jb Evain  <jbevain@novell.com>
+
 	* NewExpression.cs: add Emit support for reference types.
 
 2008-01-30  Jb Evain  <jbevain@novell.com>

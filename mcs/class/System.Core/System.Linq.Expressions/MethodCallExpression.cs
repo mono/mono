@@ -29,6 +29,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Reflection;
+using System.Reflection.Emit;
 
 namespace System.Linq.Expressions {
 
@@ -67,7 +68,15 @@ namespace System.Linq.Expressions {
 
 		internal override void Emit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			var ig = ec.ig;
+
+			foreach (var arg in arguments)
+				arg.Emit (ec);
+
+			if (obj != null)
+				obj.Emit (ec);
+
+			ig.Emit (OpCodes.Callvirt, method);
 		}
 	}
 }
