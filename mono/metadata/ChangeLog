@@ -1,3 +1,9 @@
+2008-01-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_Reflection_Assembly_GetModulesInternal): 
+	Handle properly modules which are not in the moduleref table. Fixes
+	#356938.
+
 2008-01-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_System_Reflection_Assembly_GetModulesInternal): Remove
