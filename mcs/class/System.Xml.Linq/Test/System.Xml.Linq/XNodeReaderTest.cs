@@ -114,6 +114,19 @@ namespace MonoTests.System.Xml.Linq
 		}
 
 		[Test]
+		public void CreateReaderFromElement2 ()
+		{
+			// bug #356522 (another revised test case)
+			var rdr = new StringReader ("<root><foo xmlns='urn:foo'>Value</foo><bar /></root>");
+			var xDoc = XDocument.Load (rdr);
+			var reader = xDoc.Root.FirstNode.CreateReader ();
+			reader.Read (); // <foo>
+			reader.Read (); // Value
+			reader.Read (); // </foo>
+			Assert.IsFalse (reader.Read ()); // do not move to <bar>
+		}
+
+		[Test]
 		public void NodeTypeAtInitialStateIsNone ()
 		{
 			// bug #356522 (another revised test case)

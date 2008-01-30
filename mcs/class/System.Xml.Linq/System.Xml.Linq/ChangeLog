@@ -1,3 +1,8 @@
+2008-01-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XNodeReader.cs : when it is created from non-document XNode, do
+	  not go beyond the source node. Fixed bug #356522 (the third case).
+
 2008-01-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XNodeReader.cs : NodeType should return None at Initial state.

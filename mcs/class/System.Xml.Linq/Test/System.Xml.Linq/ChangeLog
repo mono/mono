@@ -1,3 +1,7 @@
+2008-01-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XNodeReaderTest.cs : test for bug #356522, the third case.
+
 2008-01-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XNodeReaderTest.cs : test get_NodeType() for Initial state.
