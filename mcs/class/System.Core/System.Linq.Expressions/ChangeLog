@@ -1,3 +1,8 @@
+2008-01-30  Jb Evain  <jbevain@novell.com>
+
+	* LambdaExpression.cs, EmitContext.cs: small refactoring.
+	Extract the different EmitContexts to their own file.
+
 2008-01-29  Jb Evain  <jbevain@novell.com>
 
 	* MethodCallExpression.cs, Expression.cs: complete Calls.

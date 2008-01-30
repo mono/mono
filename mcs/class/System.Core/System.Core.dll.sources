@@ -32,6 +32,7 @@ System.Linq.Expressions/BinaryExpression.cs
 System.Linq.Expressions/ConditionalExpression.cs
 System.Linq.Expressions/ConstantExpression.cs
 System.Linq.Expressions/ElementInit.cs
+System.Linq.Expressions/EmitContext.cs
 System.Linq.Expressions/Expression.cs
 System.Linq.Expressions/Expression_T.cs
 System.Linq.Expressions/ExpressionPrinter.cs

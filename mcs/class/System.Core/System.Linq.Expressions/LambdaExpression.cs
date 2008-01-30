@@ -32,76 +32,13 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Threading;
 
 namespace System.Linq.Expressions {
 
-	internal class EmitContext {
-		internal LambdaExpression Owner;
-		internal Type [] ParamTypes;
-		internal DynamicMethod Method;
-		internal ILGenerator ig;
-
-		static object mlock = new object ();
-		internal static int method_count;
-		static string GenName ()
-		{
-			lock (mlock){
-				return "<LINQ-" + method_count++ + ">";
-			}
-		}
-
-		public EmitContext (LambdaExpression owner)
-		{
-			Owner = owner;
-
-			ParamTypes = new Type [Owner.Parameters.Count];
-			for (int i = 0; i < Owner.Parameters.Count; i++)
-				ParamTypes [i] = Owner.Parameters [i].Type;
-
-			//
-			// We probably want to use the 3.5 new API calls to associate
-			// the method with the "sandboxed" Assembly, instead am currently
-			// dumping these types in this class
-			//
-			Type owner_of_code = typeof (EmitContext);
-
-
-			//
-			// FIXME: Need to force this to be verifiable, see:
-			// https://bugzilla.novell.com/show_bug.cgi?id=355005
-			//
-			string name = GenName ();
-			Method = new DynamicMethod (name, Owner.Body.Type, ParamTypes, owner_of_code);
-
-			ig = Method.GetILGenerator ();
-		}
-
-		internal Delegate CreateDelegate ()
-		{
-			return Method.CreateDelegate (Owner.Type);
-		}
-
-		internal int GetParameterPosition (ParameterExpression p)
-		{
-			int position = Owner.Parameters.IndexOf (p);
-			if (position == -1)
-				throw new InvalidOperationException ("Parameter not in scope");
-
-			return position;
-		}
-	}
-
 	public class LambdaExpression : Expression {
 
-		//
-		// LambdaExpression parameters
-		//
 		Expression body;
 		ReadOnlyCollection<ParameterExpression> parameters;
-
-		// This is set during compilation
-		Delegate lambda_delegate;
 
 		public Expression Body {
 			get { return body; }
@@ -154,31 +91,9 @@ namespace System.Linq.Expressions {
 
 		public Delegate Compile ()
 		{
-			if (lambda_delegate != null)
-				return lambda_delegate;
-
-			var ec = new EmitContext (this);
-
-			Emit (ec);
-
-			if (Environment.GetEnvironmentVariable ("LINQ_DBG") != null){
-				string fname = "linq" + (EmitContext.method_count-1) + ".dll";
-				AssemblyBuilder ab = Thread.GetDomain ().DefineDynamicAssembly (
-					new AssemblyName (fname), AssemblyBuilderAccess.RunAndSave, "/tmp");
-
-				ModuleBuilder b = ab.DefineDynamicModule (fname, fname);
-				TypeBuilder tb = b.DefineType ("LINQ", TypeAttributes.Public);
-				MethodBuilder mb = tb.DefineMethod ("GeneratedMethod", MethodAttributes.Static, Type, ec.ParamTypes);
-				ec.ig = mb.GetILGenerator ();
-
-				Emit (ec);
-
-				tb.CreateType ();
-				ab.Save (fname);
-			}
-
-			lambda_delegate = ec.CreateDelegate ();
-			return lambda_delegate;
+			var context = EmitContext.Create (this);
+			context.Emit ();
+			return context.CreateDelegate ();
 		}
 	}
 }
