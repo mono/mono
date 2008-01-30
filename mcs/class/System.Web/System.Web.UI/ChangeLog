@@ -1,3 +1,9 @@
+2008-01-30 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* ObjectStateFormatter.cs: 
+	ensure ReaderContext.GetCache called with positive arg to prevent from
+	ArgumentOutOfRange being thrown.
+
 2008-01-29 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* ObjectStateFormatter.cs: has public constructor.

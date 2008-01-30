@@ -277,6 +277,9 @@ namespace System.Web.UI {
 
 			public bool RegisterCache (object o)
 			{
+				if (nextKey == short.MaxValue)
+					return false;
+
 				if (cache == null) {
 					cache = new Hashtable ();
 					cache.Add (o, key = nextKey++);
