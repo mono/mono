@@ -841,8 +841,8 @@ namespace System.Linq.Expressions {
 				throw new ArgumentException ("The number of arguments doesn't match the rank of the array");
 
 			foreach (var arg in args)
-				if (!IsInt (arg.Type))
-					throw new ArgumentException ("The index must be an integer");
+				if (arg.Type != typeof (int))
+					throw new ArgumentException ("The index must be of type int");
 
 			return Call (array, array.Type.GetMethod ("Get", PublicInstance), args);
 		}
