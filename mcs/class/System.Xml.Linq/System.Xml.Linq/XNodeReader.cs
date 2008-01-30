@@ -479,11 +479,11 @@ namespace System.Xml.Linq
 				}
 			}
 			end_element = false;
-			if (node.NextNode != null) {
+			if (node.NextNode != null && node != start) {
 				node = node.NextNode;
 				return true;
 			}
-			if (node.Parent == null || end_element && node == start) {
+			if (node.Parent == null || node == start) {
 				state = ReadState.EndOfFile;
 				return false;
 			}
