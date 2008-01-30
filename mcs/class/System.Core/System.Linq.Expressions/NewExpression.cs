@@ -29,6 +29,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Reflection;
+using System.Reflection.Emit;
 
 namespace System.Linq.Expressions {
 
@@ -63,10 +64,24 @@ namespace System.Linq.Expressions {
 			this.arguments = arguments;
 			this.members = members;
 		}
-		
+
 		internal override void Emit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			var ig = ec.ig;
+
+			bool is_value_type = this.Type.IsValueType;
+			if (is_value_type)
+				throw new NotImplementedException ();
+
+			foreach (var arg in arguments)
+				arg.Emit (ec);
+
+			ig.Emit (OpCodes.Newobj, constructor ?? GetDefaultConstructor (this.Type));
+		}
+
+		static ConstructorInfo GetDefaultConstructor (Type type)
+		{
+			return type.GetConstructor (Type.EmptyTypes);
 		}
 	}
 }
