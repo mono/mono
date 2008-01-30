@@ -123,10 +123,12 @@
     <Compile Include="System.Web.Script.Serialization\JSON\ReflectionUtils.cs" />
     <Compile Include="System.Web.Script.Serialization\ScriptIgnoreAttribute.cs" />
     <Compile Include="System.Web.Script.Serialization\SimpleTypeResolver.cs" />
+    <Compile Include="System.Web.Script.Services\AuthenticationService.cs" />
     <Compile Include="System.Web.Script.Services\ClientProxyHandler.cs" />
     <Compile Include="System.Web.Script.Services\GenerateScriptTypeAttribute.cs" />
     <Compile Include="System.Web.Script.Services\LogicalTypeInfo.cs" />
     <Compile Include="System.Web.Script.Services\ProfileService.cs" />
+    <Compile Include="System.Web.Script.Services\ProxyGenerator.cs" />
     <Compile Include="System.Web.Script.Services\ResponseFormat.cs" />
     <Compile Include="System.Web.Script.Services\RestHandler.cs" />
     <Compile Include="System.Web.Script.Services\ScriptHandlerFactory.cs" />

@@ -25,8 +25,10 @@
 ./System.Web.Script.Serialization/JSON/JavaScriptConvert.cs
 ./System.Web.Script.Serialization/JSON/JavaScriptUtils.cs
 ./System.Web.Script.Serialization/JSON/JavaScriptParameters.cs
+./System.Web.Script.Services/AuthenticationService.cs
 ./System.Web.Script.Services/GenerateScriptTypeAttribute.cs
 ./System.Web.Script.Services/ProfileService.cs
+./System.Web.Script.Services/ProxyGenerator.cs
 ./System.Web.Script.Services/ResponseFormat.cs
 ./System.Web.Script.Services/ScriptMethodAttribute.cs
 ./System.Web.Script.Services/ScriptServiceAttribute.cs
