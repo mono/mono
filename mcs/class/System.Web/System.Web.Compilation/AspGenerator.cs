@@ -259,7 +259,7 @@ namespace System.Web.Compilation
 
 		public void Parse (string file)
 		{
-#if NET_1_1_ONLY
+#if ONLY_1_1
 			InitParser (file);
 #endif
 

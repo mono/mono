@@ -1,3 +1,8 @@
+2008-01-31  Jb Evain  <jbevain@novell.com>
+
+	* AspGenerator.cs: correct typo. Fix #357547.
+	Backport from trunk at r94456.
+
 2008-01-27  Marek Habersack  <mhabersack@novell.com>
 
 	* BuildManager.cs: GetReferencedAssemblies includes the extra
