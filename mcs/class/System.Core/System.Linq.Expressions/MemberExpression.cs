@@ -28,7 +28,7 @@
 
 using System;
 using System.Reflection;
-using System.Text;
+using System.Reflection.Emit;
 
 namespace System.Linq.Expressions {
 
@@ -54,7 +54,33 @@ namespace System.Linq.Expressions {
 
 		internal override void Emit (EmitContext ec)
 		{
+			var property = member as PropertyInfo;
+			if (property != null) {
+				EmitPropertyAccess (ec, property);
+				return;
+			}
+
+			var field = member as FieldInfo;
+			if (field != null) {
+				EmitFieldAccess (ec, field);
+				return;
+			}
+
+			throw new NotSupportedException ();
+		}
+
+		void EmitPropertyAccess (EmitContext ec, PropertyInfo property)
+		{
 			throw new NotImplementedException ();
+		}
+
+		void EmitFieldAccess (EmitContext ec, FieldInfo field)
+		{
+			if (!field.IsStatic) {
+				expression.Emit (ec);
+				ec.ig.Emit (OpCodes.Ldfld, field);
+			} else
+				ec.ig.Emit (OpCodes.Ldsfld, field);
 		}
 	}
 }
