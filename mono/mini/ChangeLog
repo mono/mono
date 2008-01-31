@@ -1,5 +1,7 @@
 2008-01-31  Zoltan Varga  <vargaz@gmail.com>
 
+	* objects.cs: Add some soft-float tests.
+
 	* mini.c: Fix a couple more soft-float issues.
 
 	* helpers.c (mono_disassemble_code): Fix disassembly on ARM.
