@@ -788,7 +788,9 @@ namespace System.Net
 					redirectUri = new URI (currentUri, redirectUri);
 				}
 				
-				_method = new GetMethod ();				
+				_method = new GetMethod ();
+				foreach(Header h in originalMethod.getRequestHeaders())
+					_method.addRequestHeader(h);				
 				_method.setURI (redirectUri);				
 				InternalExecuteMethod ();
 				return true;
