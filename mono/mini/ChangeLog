@@ -1,3 +1,7 @@
+2008-01-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c: Fix a couple more soft-float issues.
+
 2008-01-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* exceptions-x86.c (mono_arch_find_jit_info): Fix stack unwinding when an
