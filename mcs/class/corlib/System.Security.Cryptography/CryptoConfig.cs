@@ -617,7 +617,7 @@ public class CryptoConfig {
 				break;
 			case 4:
 				if (name == "oidEntry") {
-					oid.Add (Get (attrs, "OID"), Get (attrs, "name"));
+					oid.Add (Get (attrs, "name"), Get (attrs, "OID"));
 				} else if (name == "nameEntry") {
 					names.Add (Get (attrs, "name"), Get (attrs, "class"));
 				} else if (name == "cryptoClasses") {
