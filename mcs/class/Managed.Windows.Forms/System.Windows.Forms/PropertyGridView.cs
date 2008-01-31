@@ -145,7 +145,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 
 		protected override void OnDoubleClick (EventArgs e) 
 		{
-			if (property_grid.SelectedGridItem.Expandable)
+			if (property_grid.SelectedGridItem != null && property_grid.SelectedGridItem.Expandable)
 				property_grid.SelectedGridItem.Expanded = !property_grid.SelectedGridItem.Expanded;
 			else
 				ToggleValue ((GridEntry)property_grid.SelectedGridItem);
