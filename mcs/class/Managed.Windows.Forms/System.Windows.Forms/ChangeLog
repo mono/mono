@@ -1,3 +1,9 @@
+2008-01-31  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: Remove my awesome optimization as it caused some
+	regressions with control ordering.  :(
+	[Fixes bug #357467]
+
 2008-01-31  Ivan N. Zlatev  <contact@i-nz.net>
 
 	 * PropertyGridView.cs: Fix a NRE on double click when there is no
