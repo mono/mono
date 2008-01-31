@@ -1276,11 +1276,7 @@ namespace MonoTests.System.Web.UI {
                 {
                         WebTest t = new WebTest ("RedirectOnError.aspx");
                         string html = t.Run ();
-#if TARGET_JVM
-						Assert.AreEqual ("[TargetPage]", html.Trim ());
-#else
                         Assert.AreEqual (HttpStatusCode.Found, t.Response.StatusCode);
-#endif
                 }
 
 #endif

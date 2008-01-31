@@ -110,6 +110,7 @@ namespace MonoTests.SystemWeb.Framework
 			HttpWebRequest wr = (HttpWebRequest) WebRequest.Create (uri);
 			wr.UserAgent = UserAgent;
 			wr.Headers.Add (headers);
+			wr.AllowAutoRedirect = false;
 			return wr;
 		}
 
