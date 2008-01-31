@@ -85,5 +85,36 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual ("MemberClass.StaticField", expr.ToString(), "Field#09");
 		}
 
+		public static string foo = "foo";
+
+		[Test]
+		public void CompileStaticField ()
+		{
+			var foo = Expression.Lambda<Func<string>> (
+				Expression.Field (null, GetType ().GetField (
+					"foo", BindingFlags.Static | BindingFlags.Public))).Compile ();
+
+			Assert.AreEqual ("foo", foo ());
+		}
+
+		public class Bar {
+			public string baz;
+
+			public Bar ()
+			{
+				baz = "baz";
+			}
+		}
+
+		[Test]
+		public void CompileInstanceField ()
+		{
+			var p = Expression.Parameter (typeof (Bar), "bar");
+			var baz = Expression.Lambda<Func<Bar, string>> (
+				Expression.Field (p, typeof (Bar).GetField (
+					"baz", BindingFlags.Public | BindingFlags.Instance)), p).Compile ();
+
+			Assert.AreEqual ("baz", baz (new Bar ()));
+		}
 	}
 }
