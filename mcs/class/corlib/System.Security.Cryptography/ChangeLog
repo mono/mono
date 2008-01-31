@@ -1,3 +1,9 @@
+2008-01-31  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* CryptoConfig.cs: Inverse name and oid when reading them from 
+	machine.config. Part of the fix for #346536 
+	[Backport r94458]
+
 2007-08-17  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* CryptoStream.cs: Write cannot depend on buffer.Length (fix #82428)
