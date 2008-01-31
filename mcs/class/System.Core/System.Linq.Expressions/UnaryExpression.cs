@@ -76,13 +76,16 @@ namespace System.Linq.Expressions {
 
 		internal override void Emit (EmitContext ec)
 		{
-			var il = ec.ig;
+			var ig = ec.ig;
 
-			operand.Emit (ec);
-
-			bool is_unsigned = IsUnsigned (operand.Type);
-
-			throw new NotImplementedException ();
+			switch (this.NodeType) {
+			case ExpressionType.ArrayLength:
+				operand.Emit (ec);
+				ig.Emit (OpCodes.Ldlen);
+				return;
+			default:
+				throw new NotImplementedException (this.NodeType.ToString ());
+			}
 		}
 	}
 }

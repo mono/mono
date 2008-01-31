@@ -1,5 +1,9 @@
 2008-01-31  Jb Evain  <jbevain@novell.com>
 
+	* UnaryExpression.cs: emit array length.
+
+2008-01-31  Jb Evain  <jbevain@novell.com>
+
 	* MemberExpression.cs: Simple support for emitting fields.
 
 2008-01-30  Jb Evain  <jbevain@novell.com>
