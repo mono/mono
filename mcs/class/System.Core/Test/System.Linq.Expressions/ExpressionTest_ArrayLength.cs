@@ -73,5 +73,16 @@ namespace MonoTests.System.Linq.Expressions
 
 			Expression.ArrayLength (Expression.Constant (array));
 		}
+
+		[Test]
+		public void CompileArrayLength ()
+		{
+			var p = Expression.Parameter (typeof (object []), "ary");
+			var len = Expression.Lambda<Func<object [], int>> (
+				Expression.ArrayLength (p), p).Compile ();
+
+			Assert.AreEqual (0, len (new string [0]));
+			Assert.AreEqual (2, len (new [] { "jb", "evain" }));
+		}
 	}
 }

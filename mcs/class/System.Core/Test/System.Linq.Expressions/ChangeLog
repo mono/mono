@@ -1,5 +1,9 @@
 2008-01-31  Jb Evain  <jbevain@novell.com>
 
+	* ExpressionTest_ArrayLength.cs: add compile test.
+
+2008-01-31  Jb Evain  <jbevain@novell.com>
+
 	* ExpressionTest_Field.cs: add field access tests.
 
 2008-01-30  Jb Evain  <jbevain@novell.com>
