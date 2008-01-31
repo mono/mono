@@ -1,3 +1,8 @@
+2008-01-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (peephole_pass): Use IXOR instead of LXOR for zeroing a register to
+	avoid a REX prefix.
+
 2008-01-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* exceptions-x86.c (mono_arch_find_jit_info): Fix stack unwinding when an
