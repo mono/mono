@@ -1,3 +1,12 @@
+2008-01-31 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (is_valid_bool_arg): Allow boxed values and null literals as well.
+
+	* verify.c (do_invoke_method): Fix for calling with byref structs.
+
+	* verify.c (do_cast): push a boxed value type based on the type token and not
+	the type of stack.
+
 2008-01-31  William Holmes  <billholmes54@gmail.com>
 
 	* process.c (process_module_string_read): Check the size returned form 
