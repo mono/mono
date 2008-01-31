@@ -11,7 +11,7 @@
     
     protected void Page_Error(object sender, EventArgs e)
     {
-        Response.Redirect ("heh");
+		Response.Redirect ("~/TargetPage.aspx");
     }
 </script>
 

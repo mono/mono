@@ -1,4 +1,4 @@
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java20|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\Debug_Java20\</OutputPath>
@@ -196,6 +196,7 @@
   <ItemGroup>
     <Content Include="App_Themes\Theme2\Theme2.skin" />
     <Content Include="GridViewUpdate.aspx" />
+    <Content Include="TargetPage.aspx" />
     <Content Include="WEB-INF\faces-config.xml" />
   </ItemGroup>
   <ItemGroup>
