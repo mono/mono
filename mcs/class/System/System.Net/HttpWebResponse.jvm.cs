@@ -363,8 +363,29 @@ namespace System.Net
 			else
 				_version = null;
 		}
-	
-		private void FillCookies()
+
+		private mainsoft.apache.commons.httpclient.Cookie FindCookie (mainsoft.apache.commons.httpclient.Cookie [] cookies, string name) {
+			for (int i = 0; i < cookies.Length; ++i)
+				if (cookies [i].getName () == name)
+					return cookies [i];
+			return null;
+		}
+
+		private mainsoft.apache.commons.httpclient.Cookie [] FetchResponseCookies (mainsoft.apache.commons.httpclient.Header [] headers,
+																				mainsoft.apache.commons.httpclient.Cookie [] stateCookies) {
+			System.Collections.ArrayList list = new System.Collections.ArrayList();
+			foreach (mainsoft.apache.commons.httpclient.Header h in headers) {
+				foreach (mainsoft.apache.commons.httpclient.HeaderElement element in h.getValues ()) {
+					mainsoft.apache.commons.httpclient.Cookie c = FindCookie (stateCookies, element.getName ());
+					if (c != null)
+						list.Add(c);
+				}
+			}
+
+			return (mainsoft.apache.commons.httpclient.Cookie[]) list.ToArray(typeof(mainsoft.apache.commons.httpclient.Cookie));
+		}
+
+		private void FillCookies ()
 		{
 			if(_state == null)
 				return;
@@ -374,6 +395,10 @@ namespace System.Net
 
 			if(javaCookies == null)
 				return;
+
+			mainsoft.apache.commons.httpclient.Header [] headers = _httpMethod.getResponseHeaders ("Set-Cookie");
+			if (headers != null)
+				javaCookies = FetchResponseCookies (headers, javaCookies);						
 
 			for(int i = 0; i < javaCookies.Length; i++)
 			{
