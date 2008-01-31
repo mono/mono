@@ -1,5 +1,7 @@
 2008-01-31  Zoltan Varga  <vargaz@gmail.com>
 
+	* helpers.c (mono_disassemble_code): Fix disassembly on ARM.
+
 	* mini-amd64.c (peephole_pass): Use IXOR instead of LXOR for zeroing a register to
 	avoid a REX prefix.
 
