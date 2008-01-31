@@ -52,7 +52,9 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		public string RenderAttributes ()
 		{
 			HtmlTextWriter writer = new HtmlTextWriter (new StringWriter ());
+			writer.Write ("<dummy");
 			base.RenderAttributes (writer);
+			writer.Write (">");
 			return writer.InnerWriter.ToString ();
 		}
 
@@ -189,14 +191,10 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			ic.Name = "mono";
 			ic.Value = "value";
 
-			HtmlDiff.AssertAreEqual (" name type=\"test\" value=\"value\" /", ic.RenderAttributes (), "RenderAttributes failed #1");
+			HtmlDiff.AssertAreEqual ("<dummy name type=\"test\" value=\"value\" />", ic.RenderAttributes (), "RenderAttributes failed #1");
 
 			ic.ID = "toto";
-#if NET_2_0
-			HtmlDiff.AssertAreEqual (" name=\"toto\" id=\"toto\" type=\"test\" value=\"value\" /", ic.RenderAttributes (), "RenderAttributes failed #2");
-#else
-			HtmlDiff.AssertAreEqual(" name=\"toto\" id=\"toto\" type=\"test\" value=\"value\" /", ic.RenderAttributes() , "RenderAttributes failed #3");
-#endif
+			HtmlDiff.AssertAreEqual ("<dummy name=\"toto\" id=\"toto\" type=\"test\" value=\"value\" />", ic.RenderAttributes (), "RenderAttributes failed #2");
 		}
 
 		[Test]
@@ -214,7 +212,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			ic.Value = "s3kr3t";
 
 			// logic to hide password isn't in HtmlInputControl
-			HtmlDiff.AssertAreEqual (" name type=\"password\" value=\"s3kr3t\" /", ic.RenderAttributes (), "Password failed");
+			HtmlDiff.AssertAreEqual ("<dummy name type=\"password\" value=\"s3kr3t\" />", ic.RenderAttributes (), "Password failed");
 		}
 	}
 }

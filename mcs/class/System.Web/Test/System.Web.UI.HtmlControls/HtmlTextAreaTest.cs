@@ -47,7 +47,9 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		public string RenderAttributes ()
 		{
 			HtmlTextWriter writer = new HtmlTextWriter (new StringWriter ());
+			writer.Write ("<dummy");
 			base.RenderAttributes (writer);
+			writer.Write (" />");
 			return writer.InnerWriter.ToString ();
 		}
 
@@ -190,10 +192,10 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			ta.Name = "mono";
 			ta.Value = "value";
 			// value is out
-			HtmlDiff.AssertAreEqual (" name cols=\"4\" rows=\"2\"", ta.RenderAttributes (),"RenderAttributes failed #1");
+			HtmlDiff.AssertAreEqual ("<dummy name cols=\"4\" rows=\"2\" />", ta.RenderAttributes (), "RenderAttributes failed #1");
 
 			ta.ID = "go";
-			HtmlDiff.AssertAreEqual (" name=\"go\" id=\"go\" cols=\"4\" rows=\"2\"", ta.RenderAttributes (),"RenderAttributes failed #2");
+			HtmlDiff.AssertAreEqual ("<dummy name=\"go\" id=\"go\" cols=\"4\" rows=\"2\" />", ta.RenderAttributes (), "RenderAttributes failed #2");
 		}
 
 		[Test]
@@ -212,9 +214,9 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			ta.Name = "mono";
 			ta.ID = "go";
 #if NET_2_0
-			string expected = " name=\"UC$go\" id=\"UC_go\"";
+			string expected = "<dummy name=\"UC$go\" id=\"UC_go\" />";
 #else
-			string expected = " name=\"UC:go\" id=\"UC_go\"";
+			string expected = "<dummy name=\"UC:go\" id=\"UC_go\" />";
 #endif
 			Assert.AreEqual (expected, ta.RenderAttributes ());
 		}
