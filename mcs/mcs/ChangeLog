@@ -1,3 +1,7 @@
+2008-02-01  Marek Safar  <marek.safar@gmail.com>
+
+	* support.cs: Fixed broken return.
+
 2008-01-25  Marek Safar  <marek.safar@gmail.com>
 
 	* report.cs: Correctly reset warnings count after probing.
