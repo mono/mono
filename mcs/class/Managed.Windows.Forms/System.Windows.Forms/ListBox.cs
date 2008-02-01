@@ -1072,7 +1072,7 @@ namespace System.Windows.Forms
 		
 		protected override void SetBoundsCore (int x,  int y, int width, int height, BoundsSpecified specified)
 		{
-			if ((specified & BoundsSpecified.Height) == BoundsSpecified.Height)
+			//if ((specified & BoundsSpecified.Height) == BoundsSpecified.Height)
 				requested_height = height;
 
 			if (IntegralHeight) {
@@ -1831,6 +1831,10 @@ namespace System.Windows.Forms
 
 		private void OnMouseUpLB (object sender, MouseEventArgs e)
     		{
+    			// Only do stuff with the left mouse button
+    			if ((e.Button | MouseButtons.Left) == 0)
+    				return;
+    				
 			if (e.Clicks > 1) {
 				OnDoubleClick (EventArgs.Empty);
 #if NET_2_0
