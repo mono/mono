@@ -38,6 +38,25 @@ namespace System.Linq {
 				throw new ArgumentNullException ("source");
 		}
 
+		public static void Source1AndSource2 (object source1,object source2)
+		{
+			if (source1 == null)
+				throw new ArgumentNullException ("source1");
+			if (source2 == null)
+				throw new ArgumentNullException ("source2");
+		}
+
+		public static void SourceAndFuncAndSelector ( object source, object func, object selector)
+		{
+			if (source == null)
+				throw new ArgumentNullException ("source");
+			if (func == null)
+				throw new ArgumentNullException ("func");
+			if (selector == null)
+				throw new ArgumentNullException ("selector");
+		}
+
+
 		public static void SourceAndFunc (object source, object func)
 		{
 			if (source == null)
@@ -87,6 +106,25 @@ namespace System.Linq {
 			if (elementSelector == null)
 				throw new ArgumentNullException ("elementSelector");
 		}
+		public static void SourceAndKeyResultSelectors (object source, object keySelector, object resultSelector)
+		{
+			if (source == null)
+				throw new ArgumentNullException ("source");
+			if (keySelector == null)
+				throw new ArgumentNullException ("keySelector");
+			if (resultSelector == null)
+				throw new ArgumentNullException ("resultSelector");
+		}
+
+		public static void SourceAndCollectionSelectorAndResultSelector (object source, object collectionSelector, object resultSelector)
+		{
+			if (source == null)
+				throw new ArgumentNullException ("source");
+			if (collectionSelector == null)
+				throw new ArgumentNullException ("collectionSelector");
+			if (resultSelector == null)
+				throw new ArgumentNullException ("resultSelector");
+		}
 
 		public static void SourceAndCollectionSelectors (object source, object collectionSelector, object selector)
 		{
@@ -108,6 +146,18 @@ namespace System.Linq {
 				throw new ArgumentNullException ("outerKeySelector");
 			if (innerKeySelector == null)
 				throw new ArgumentNullException ("innerKeySelector");
+			if (resultSelector == null)
+				throw new ArgumentNullException ("resultSelector");
+		}
+
+		public static void GroupBySelectors (object source, object keySelector, object elementSelector, object resultSelector)
+		{
+			if (source == null)
+				throw new ArgumentNullException ("source");
+			if (keySelector == null)
+				throw new ArgumentNullException ("keySelector");
+			if (elementSelector == null)
+				throw new ArgumentNullException ("elementSelector");
 			if (resultSelector == null)
 				throw new ArgumentNullException ("resultSelector");
 		}

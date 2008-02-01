@@ -1,3 +1,8 @@
+2008-02-01  Jb Evain  <jbevain@novell.com>
+
+	* Queryable.cs, Check.cs: integrate GHOP work from
+	Andreas Noever <andreas.noever@gmail.com>.
+
 2008-01-21  Jb Evain  <jbevain@novell.com>
 
 	* Enumerable.cs: fix Intersect.
