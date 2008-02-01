@@ -1243,8 +1243,24 @@ namespace System.Linq.Expressions {
 
 		public static MemberListBinding ListBind (MemberInfo member, IEnumerable<ElementInit> initializers)
 		{
-			throw new NotImplementedException ();
-			//return new MemberListBinding (member, initializers.ToReadOnlyCollection());
+			if (member == null)
+				throw new ArgumentNullException ("member");
+			foreach (ElementInit elt in initializers) {
+				if (elt == null)
+					throw new ArgumentNullException ("initializers");
+			}
+			Type mbrType;
+			if (member.MemberType == MemberTypes.Field)
+				mbrType = ((FieldInfo)member).FieldType;
+			else if (member.MemberType != MemberTypes.Property)
+				mbrType = ((PropertyInfo)member).PropertyType;
+			else
+				throw new ArgumentException ("Member must be a field or a property");
+			
+			if (!mbrType.IsSubclassOf(typeof(System.Collections.IEnumerable)))
+				throw new ArgumentException ("Member must inherite from IEnumerable");
+						
+			return new MemberListBinding (member, initializers.ToReadOnlyCollection ());
 		}
 
 		public static MemberListBinding ListBind (MethodInfo propertyAccessor, params ElementInit [] initializers)
@@ -1254,8 +1270,31 @@ namespace System.Linq.Expressions {
 
 		public static MemberListBinding ListBind (MethodInfo propertyAccessor, IEnumerable<ElementInit> initializers)
 		{
-			throw new NotImplementedException ();
-			//return new MemberListBinding (propertyAccessor, initializers.ToReadOnlyCollection());
+			if (propertyAccessor == null)
+				throw new ArgumentNullException ("propertyAccessor");
+			foreach (ElementInit elt in initializers) {
+				if (elt == null)
+					throw new ArgumentNullException ("initializers");
+			}
+			if(propertyAccessor.IsSpecialName) {
+				Type propType = null;
+				ParameterInfo[] parameters;
+				if (propertyAccessor.Name.StartsWith ("get_")) {
+					parameters = propertyAccessor.GetParameters ();
+					if (parameters.Length != 0)
+						throw new ArgumentException ("PropertyAccessor must be a property accessor");
+					propType = propertyAccessor.ReturnType;
+				} else if (propertyAccessor.Name.StartsWith ("set_")) {
+					parameters = propertyAccessor.GetParameters ();
+					if (parameters.Length != 1)
+						throw new ArgumentException ("PropertyAccessor must be a property accessor");
+					propType = parameters[0].ParameterType;
+				}
+				if (!propType.IsSubclassOf(typeof (System.Collections.IEnumerable)))
+					throw new ArgumentException ("The type of the property of propertyAccessor must implement IEnumerable");
+				return new MemberListBinding (propertyAccessor, initializers.ToReadOnlyCollection());
+			}
+			throw new ArgumentException ("propertyAccessor must be a property accessor");
 		}
 
 		[MonoTODO]

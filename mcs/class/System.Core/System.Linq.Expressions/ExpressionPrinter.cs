@@ -284,7 +284,11 @@ namespace System.Linq.Expressions {
 
 		protected override void VisitMemberListBinding (MemberListBinding binding)
 		{
-			throw new NotImplementedException ();
+			for (int i = 0; i < binding.Initializers.Count; i++) {
+				Print (binding.Member.Name);
+				Print (".");
+				VisitElementInitializer (binding.Initializers [i]);
+			}
 		}
 
 		protected override void VisitList<T> (ReadOnlyCollection<T> list, Action<T> visitor)
