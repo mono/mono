@@ -87,13 +87,10 @@ namespace System.Drawing {
 			CGContextTranslateCTM (context, view_bounds.origin.x, (window_bounds.bottom - window_bounds.top) - (view_bounds.origin.y + view_bounds.size.height));
 
 			// Create the original rect path and clip to it
-			IntPtr clip_path = CGPathCreateMutable ();
 			Rect rc_clip = new Rect (0, 0, view_bounds.size.width, view_bounds.size.height);
-			CGPathAddRect (clip_path, IntPtr.Zero, rc_clip);
-			CGContextBeginPath (context);
 
 			Rectangle [] clip_rectangles = (Rectangle []) hwnd_delegate.DynamicInvoke (new object [] {handle});
-			if (clip_rectangles != null) {
+			if (clip_rectangles != null && clip_rectangles.Length > 0) {
 				int length = clip_rectangles.Length;
 				Rect [] clip_rects = new Rect [length];
 				for (int i = 0; i < length; i++) {
@@ -104,9 +101,16 @@ namespace System.Drawing {
 					clip_rects [i].size.width = r.Width; 
 					clip_rects [i].size.height = r.Height; 
 				}
-				CGPathAddRects (clip_path, IntPtr.Zero, clip_rects, length);
-				CGContextAddPath (context, clip_path);
+				CGContextBeginPath (context);
+				CGContextAddRect (context, rc_clip);
+				CGContextAddRects (context, clip_rects, length);
+				CGContextClosePath (context);
 				CGContextEOClip (context);
+			} else {
+				CGContextBeginPath (context);
+				CGContextAddRect (context, rc_clip);
+				CGContextClosePath (context);
+				CGContextClip (context);
 			}
 
 			return new CarbonContext (port, context, (int)view_bounds.size.width, (int)view_bounds.size.height);
@@ -197,7 +201,13 @@ namespace System.Drawing {
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern void CGPathAddRect (IntPtr path, IntPtr _void, Rect rect);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern void CGContextAddRects (IntPtr context, Rect [] rects, int count);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern void CGContextAddRect (IntPtr context, Rect rect);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern void CGContextBeginPath (IntPtr context);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern void CGContextClosePath (IntPtr context);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern void CGContextAddPath (IntPtr context, IntPtr path);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
