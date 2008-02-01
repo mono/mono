@@ -358,10 +358,11 @@ namespace System.Net.Sockets
 					
 					break;
 				} catch (Exception e) {
-					if (client != null) {
-						client.Close ();
-						client = null;
-					}
+					/* Reinitialise the socket so
+					 * other properties still work
+					 * (see no-arg constructor)
+					 */
+					Init (AddressFamily.InterNetwork);
 
 					/* This is the last known
 					 * address, so re-throw the

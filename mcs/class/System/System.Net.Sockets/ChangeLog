@@ -1,3 +1,9 @@
+2008-02-01  Dick Porter  <dick@ximian.com>
+
+	* TcpClient.cs: If the Connect fails (when given an array of
+	addresses) leave the socket object in a usable state.  Fixes bug
+	355473.
+
 2007-11-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* NetworkStream.cs : in 2.0 Close() is not needed and does not exist.
