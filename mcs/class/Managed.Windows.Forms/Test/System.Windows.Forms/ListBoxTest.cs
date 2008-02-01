@@ -493,6 +493,63 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 
+		[Test]
+		public void HeightAndIntegralHeight ()
+		{
+			ListBox a = new ListBox();
+			Size defaultSize = new Size(120, 96);
+			Assert.AreEqual (defaultSize, a.Size, "A1");
+			a.CreateControl();
+			Assert.AreEqual (0, (a.ClientSize.Height % a.ItemHeight), "A2");
+			a.IntegralHeight = false;
+			Assert.AreEqual (a.Size, defaultSize, "A3");
+			a.IntegralHeight = true;
+			Assert.AreEqual (0, (a.ClientSize.Height % a.ItemHeight), "A4");
+
+			Size clientSizeI = new Size(200, a.ItemHeight * 5);
+			Size clientSize = clientSizeI + new Size(0, a.ItemHeight / 2);
+			Size borderSize = new Size(a.Width - a.ClientSize.Width, a.Height - a.ClientSize.Height);
+			Size totalSizeI = clientSizeI + borderSize;
+			Size totalSize = clientSize + borderSize;
+
+			a = new ListBox();
+			a.ClientSize = clientSize;
+			Assert.AreEqual (clientSize, a.ClientSize, "A5");
+			Assert.AreEqual (totalSize, a.Size, "A6");
+			a.IntegralHeight = false;
+			a.IntegralHeight = true;
+			Assert.AreEqual (clientSize, a.ClientSize, "A7");
+			a.CreateControl();
+			Assert.AreEqual (clientSizeI, a.ClientSize, "A8");
+			Assert.AreEqual (totalSizeI, a.Size, "A9");
+			a.IntegralHeight = false;
+			Assert.AreEqual (clientSize, a.ClientSize, "A10");
+			a.IntegralHeight = true;
+			Assert.AreEqual (totalSizeI, a.Size, "A11");
+
+			a = new ListBox();
+			a.CreateControl();
+			a.Size = totalSize;
+			Assert.AreEqual (totalSizeI, a.Size, "A12");
+			Assert.AreEqual (clientSizeI, a.ClientSize, "A13");
+			a.IntegralHeight = false;
+			Assert.AreEqual (totalSize, a.Size, "A14");
+			Assert.AreEqual (clientSize, a.ClientSize, "A15");
+
+			a = new ListBox();
+			a.IntegralHeight = false;
+			Assert.AreEqual (defaultSize, a.Size, "A16");
+			a.CreateControl();
+			Assert.AreEqual (defaultSize, a.Size, "A17");
+
+			a = new ListBox();
+			a.ClientSize = clientSize;
+			a.IntegralHeight = false;
+			Assert.AreEqual (clientSize, a.ClientSize, "A18");
+			a.CreateControl();
+			Assert.AreEqual (clientSize, a.ClientSize, "A19");
+		}
+
 		//
 		// Events
 		//

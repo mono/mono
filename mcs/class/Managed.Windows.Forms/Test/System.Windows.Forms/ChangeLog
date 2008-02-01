@@ -1,3 +1,8 @@
+2008-02-01  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ListBoxTest.cs: Commit some tests for bug #357152 from James
+	Purcell.
+
 2008-01-30  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* BindingManagerBaseTest.cs: New test for 2.0 IsBindingSuspended test.

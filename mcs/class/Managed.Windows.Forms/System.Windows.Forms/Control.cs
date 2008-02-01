@@ -2859,11 +2859,6 @@ namespace System.Windows.Forms
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int Height {
-			get { return HeightInternal; }
-			set { HeightInternal = value; }
-		}
-
-		internal virtual int HeightInternal {
 			get { return this.bounds.Height; }
 			set { SetBounds(bounds.X, bounds.Y, bounds.Width, value, BoundsSpecified.Height); }
 		}
@@ -5633,14 +5628,17 @@ namespace System.Windows.Forms
 					Control [] controls = child_controls.GetAllControls ();
 					bool parented = false;
 					for (int i=0; i<controls.Length; i++) {
-						if (controls [i].is_visible && controls[i].IsHandleCreated) {
-							XplatUI.SetParent(controls[i].Handle, window.Handle);
-							parented = true;
-						} 
+						if (controls [i].is_visible && controls[i].IsHandleCreated)
+							if (XplatUI.GetParent (controls[i].Handle) != window.Handle) {
+								Console.WriteLine ("dif parent");
+								XplatUI.SetParent(controls[i].Handle, window.Handle);
+								parented = true;
+							} else Console.WriteLine ("same parent");
+
 					}
-					if (parented) {
+					
+					//if (parented)
 						UpdateChildrenZOrder ();
-					}
 				}
 			}
 			else {
