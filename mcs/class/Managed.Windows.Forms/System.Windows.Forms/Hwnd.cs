@@ -285,6 +285,15 @@ namespace System.Windows.Forms {
 		{
 			ArrayList masks = new ArrayList ();
 
+			if (x < 0) {
+				masks.Add (new Rectangle (0, 0, x*-1, Height));
+				if (y < 0) {
+					masks.Add (new Rectangle (x*-1, 0, Width, y*-1));
+				}
+			} else if (y < 0) {
+				masks.Add (new Rectangle (0, 0, Width, y*-1));
+			}
+
 			foreach (Hwnd child in children) {
 				if (child.visible)
 					masks.Add (new Rectangle (child.X, child.Y, child.Width, child.Height));

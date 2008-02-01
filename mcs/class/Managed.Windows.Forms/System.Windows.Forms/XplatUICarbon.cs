@@ -721,7 +721,7 @@ namespace System.Windows.Forms {
 
 			if (client) {
 				hwnd.AddInvalidArea(x, y, width, height);
-				if (!hwnd.expose_pending) {
+				if (!hwnd.expose_pending && hwnd.visible) {
 					MSG msg = new MSG ();
 					msg.message = Msg.WM_PAINT;
 					msg.hwnd = hwnd.Handle;
@@ -730,7 +730,7 @@ namespace System.Windows.Forms {
 				}
 			} else {
 				hwnd.AddNcInvalidArea (x, y, width, height);
-				if (!hwnd.nc_expose_pending) {
+				if (!hwnd.nc_expose_pending && hwnd.visible) {
 					MSG msg = new MSG ();
 					Region rgn = new Region (hwnd.Invalid);
 					IntPtr hrgn = rgn.GetHrgn (null); // Graphics object isn't needed
@@ -740,6 +740,7 @@ namespace System.Windows.Forms {
 					msg.hwnd = hwnd.Handle;
 					MessageQueue.Enqueue (msg);
 					hwnd.nc_expose_pending = true;
+
 				}
 			}
 		}
@@ -1222,8 +1223,10 @@ namespace System.Windows.Forms {
 				CFRelease (hwnd.client_window);
 			*/
 
-			if (WindowMapping [hwnd.Handle] != null) 
+			if (WindowMapping [hwnd.Handle] != null) { 
 				DisposeWindow ((IntPtr)(WindowMapping [hwnd.Handle]));
+				WindowMapping.Remove (hwnd.Handle);
+			}
 		}
 
 		internal override IntPtr DispatchMessage(ref MSG msg) {

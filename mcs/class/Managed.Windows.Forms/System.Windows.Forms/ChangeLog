@@ -1,3 +1,11 @@
+2008-02-01  Geoff Norton  <gnorton@novell.com>
+
+	* Hwnd.cs: Ensure that windows moved into -'ve coordinate space
+	get that region removed from the paint event.
+	* XplatUICarbon.cs: Remove the window mapping after disposing of 
+	window.  Prevents a crash with handle reuse.  Optimize exposes
+	only onto visible windows (rare; but possible).
+
 2008-02-01  Jonathan Pobst  <monkey@jpobst.com>
 
 	* UpDownBase.cs: Make sure the internal textbox calls the base's
