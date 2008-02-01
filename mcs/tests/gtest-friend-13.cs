@@ -7,6 +7,10 @@ public class B : FriendClass
 	protected internal override void Test ()
 	{
 	}
+	
+	internal override void Test_2 ()
+	{
+	}	
 }
 
 public class Test

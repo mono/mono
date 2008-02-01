@@ -9,5 +9,9 @@ public class FriendClass
 	protected internal virtual void Test ()
 	{
 	}
+	
+	internal virtual void Test_2 ()
+	{
+	}
 }
 
