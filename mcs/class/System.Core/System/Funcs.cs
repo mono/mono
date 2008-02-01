@@ -26,7 +26,11 @@
 //
 
 
+#if NET_2_1 // temporary hack. SL 1.1 fly high on crack
+namespace System.Linq
+#else
 namespace System
+#endif
 {
 	public delegate TResult Func<TResult> ();
 	public delegate TResult Func<T, TResult> (T arg1);

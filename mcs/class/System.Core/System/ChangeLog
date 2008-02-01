@@ -1,3 +1,8 @@
+2008-02-01  Jb Evain  <jbevain@novell.com>
+
+	* Funcs.cs: gross hack for SL 1.1a.
+	I hate myself, I hate myself.
+
 2008-01-24  Stephane Delcroix  <sdelcroix@novell.com>
 
 	* TimeZoneInfo.TransitionTime.cs: check for a whole number of
