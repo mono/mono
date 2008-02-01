@@ -1751,7 +1751,11 @@ namespace System.Windows.Forms
 
 		private void OnMouseDownLB (object sender, MouseEventArgs e)
     		{
-    			int index = IndexAtClientPoint (e.X, e.Y);
+			// Only do stuff with the left mouse button
+			if ((e.Button & MouseButtons.Left) == 0)
+				return;
+			
+			int index = IndexAtClientPoint (e.X, e.Y);
     			    				
 			if (index == -1)
 				return;			
@@ -1832,7 +1836,7 @@ namespace System.Windows.Forms
 		private void OnMouseUpLB (object sender, MouseEventArgs e)
     		{
     			// Only do stuff with the left mouse button
-    			if ((e.Button | MouseButtons.Left) == 0)
+    			if ((e.Button & MouseButtons.Left) == 0)
     				return;
     				
 			if (e.Clicks > 1) {

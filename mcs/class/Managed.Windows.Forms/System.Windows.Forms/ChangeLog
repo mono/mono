@@ -1,5 +1,10 @@
 2008-02-01  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ListBox.cs: Fix a logic error and don't process MouseDown
+	for mouse buttons other than Left.
+
+2008-02-01  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Control.cs: Remove HeightInternal.
 	* ListBox.cs: Commit patch from James Purcell that correctly
 	calculates heights for ListBoxen.
