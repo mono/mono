@@ -5630,10 +5630,9 @@ namespace System.Windows.Forms
 					for (int i=0; i<controls.Length; i++) {
 						if (controls [i].is_visible && controls[i].IsHandleCreated)
 							if (XplatUI.GetParent (controls[i].Handle) != window.Handle) {
-								Console.WriteLine ("dif parent");
 								XplatUI.SetParent(controls[i].Handle, window.Handle);
 								parented = true;
-							} else Console.WriteLine ("same parent");
+							}
 
 					}
 					
