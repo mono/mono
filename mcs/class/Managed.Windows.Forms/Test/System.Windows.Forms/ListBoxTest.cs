@@ -120,8 +120,12 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // bug #80620
+		[NUnit.Framework.Category ("NotWorking")]
 		public void ClientRectangle_Borders ()
 		{
+			// This test is invalid because createcontrol forces .net to resize
+			// the listbox using integralheight, which defaults to true.  This
+			// will only hold for most font sizes.
 			listBox.CreateControl ();
 			Assert.AreEqual (listBox.ClientRectangle, new ListBox ().ClientRectangle);
 		}

@@ -1,5 +1,9 @@
 2008-02-01  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ListBoxTest.cs: Disable test that is default font dependent.
+
+2008-02-01  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ListBoxTest.cs: Commit some tests for bug #357152 from James
 	Purcell.
 
