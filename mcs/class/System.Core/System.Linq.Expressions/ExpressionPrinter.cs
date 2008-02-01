@@ -84,7 +84,10 @@ namespace System.Linq.Expressions {
 
 		protected override void VisitElementInitializer (ElementInit initializer)
 		{
-			throw new NotImplementedException ();
+			Print(initializer.AddMethod.Name);
+			Print("(");
+			VisitExpressionList(initializer.Arguments);
+			Print (")");
 		}
 
 		protected override void VisitUnary (UnaryExpression unary)

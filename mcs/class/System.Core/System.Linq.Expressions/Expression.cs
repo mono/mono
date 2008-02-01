@@ -1048,16 +1048,27 @@ namespace System.Linq.Expressions {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static ElementInit ElementInit (MethodInfo addMethod, params Expression [] arguments)
 		{
-			throw new NotImplementedException ();
+			return ElementInit (addMethod, arguments as IEnumerable<Expression>);
 		}
 
-		[MonoTODO]
 		public static ElementInit ElementInit (MethodInfo addMethod, IEnumerable<Expression> arguments)
 		{
-			throw new NotImplementedException ();
+			if (addMethod == null)
+				throw new ArgumentNullException ("addMethod");
+			if (arguments == null)
+				throw new ArgumentNullException ("arguments");
+			if (addMethod.Name.ToLowerInvariant() != "add")//case insensitive
+				throw new ArgumentException ("addMethod");
+			if (addMethod.IsStatic)
+				throw new ArgumentException ("addMethod must be an instance method", "addMethod");
+			
+			var args = arguments.ToReadOnlyCollection ();
+			    
+			CheckMethodArguments (addMethod, args);
+
+			return new ElementInit (addMethod, args);
 		}
 
 		public static MemberExpression Field (Expression expression, FieldInfo field)
@@ -1146,15 +1157,28 @@ namespace System.Linq.Expressions {
 			return func.MakeGenericType (typeArgs);
 		}
 
-		[MonoTODO]
 		public static InvocationExpression Invoke (Expression expression, params Expression [] arguments)
 		{
-			throw new NotImplementedException ();
+			return Invoke (expression, arguments as IEnumerable<Expression>);
 		}
 
-		[MonoTODO]
 		public static InvocationExpression Invoke (Expression expression, IEnumerable<Expression> arguments)
 		{
+			/*if (expression == null)
+				throw new ArgumentNullException ("expression");
+			System.Delegate delegateObj;
+			if (expression.Type.IsSubclassOf (typeof(Expression<object>))) {//not sure here
+				delegateObj = ((Expression<System.Delegate>)expression).Compile ();//not sure here too
+			} else if (expression.type.IsSubclassOf (typeof(System.Delegate))) {
+				delegateObj = (System.Delegate)Activator.CreateInstance(expression.type);
+			} else
+				throw new ArgumentException ("expression");
+			
+			var args = arguments.ToReadOnlyCollection ();
+			
+			CheckMethodArguments (delegateObj.Method, args);
+			
+			return new InvocationExpression (expression, args);*/
 			throw new NotImplementedException ();
 		}
 
@@ -1214,25 +1238,24 @@ namespace System.Linq.Expressions {
 
 		public static MemberListBinding ListBind (MemberInfo member, params ElementInit [] initializers)
 		{
-			throw new NotImplementedException ();
+			return ListBind (member, initializers as IEnumerable<ElementInit>);
 		}
 
-		[MonoTODO]
 		public static MemberListBinding ListBind (MemberInfo member, IEnumerable<ElementInit> initializers)
 		{
 			throw new NotImplementedException ();
+			//return new MemberListBinding (member, initializers.ToReadOnlyCollection());
 		}
 
-		[MonoTODO]
 		public static MemberListBinding ListBind (MethodInfo propertyAccessor, params ElementInit [] initializers)
 		{
-			throw new NotImplementedException ();
+			return ListBind (propertyAccessor, initializers as IEnumerable<ElementInit>);
 		}
 
-		[MonoTODO]
 		public static MemberListBinding ListBind (MethodInfo propertyAccessor, IEnumerable<ElementInit> initializers)
 		{
 			throw new NotImplementedException ();
+			//return new MemberListBinding (propertyAccessor, initializers.ToReadOnlyCollection());
 		}
 
 		[MonoTODO]
