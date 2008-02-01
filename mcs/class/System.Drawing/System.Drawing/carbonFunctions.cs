@@ -25,6 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#undef DEBUG_CLIPPING
 
 using System.Collections;
 using System.Reflection;
@@ -39,6 +40,13 @@ namespace System.Drawing {
 		internal static object lockobj = new object ();
 
 		internal static Delegate hwnd_delegate;
+
+#if DEBUG_CLIPPING
+		internal static float red = 1.0f;
+		internal static float green = 0.0f;
+		internal static float blue = 0.0f;
+		internal static int debug_threshold = 1;
+#endif
 
 		static Carbon () {
 			foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies ()) {
@@ -94,20 +102,26 @@ namespace System.Drawing {
 			Rectangle [] clip_rectangles = (Rectangle []) hwnd_delegate.DynamicInvoke (new object [] {handle});
 			if (clip_rectangles != null && clip_rectangles.Length > 0) {
 				int length = clip_rectangles.Length;
-				Rect [] clip_rects = new Rect [length];
-				for (int i = 0; i < length; i++) {
-					Rectangle r = (Rectangle) clip_rectangles [i];
-					clip_rects [i] = new Rect ();
-					clip_rects [i].origin.x = r.X; 
-					clip_rects [i].origin.y = view_bounds.size.height - r.Y - r.Height; 
-					clip_rects [i].size.width = r.Width; 
-					clip_rects [i].size.height = r.Height; 
-				}
+				
 				CGContextBeginPath (context);
 				CGContextAddRect (context, rc_clip);
-				CGContextAddRects (context, clip_rects, length);
+
+				for (int i = 0; i < length; i++) {
+					CGContextAddRect (context, new Rect (clip_rectangles [i].X, view_bounds.size.height - clip_rectangles [i].Y - clip_rectangles [i].Height, clip_rectangles [i].Width, clip_rectangles [i].Height));
+				}
 				CGContextClosePath (context);
 				CGContextEOClip (context);
+#if DEBUG_CLIPPING
+				if (clip_rectangles.Length >= debug_threshold) {
+					CGContextSetRGBFillColor (context, red, green, blue, 0.5f);
+					CGContextFillRect (context, rc_clip);
+					CGContextFlush (context);
+					System.Threading.Thread.Sleep (500);
+					if (red == 1.0f) { red = 0.0f; blue = 1.0f; } 
+					else if (blue == 1.0f) { blue = 0.0f; green = 1.0f; } 
+					else if (green == 1.0f) { green = 0.0f; red = 1.0f; } 
+				}
+#endif
 			} else {
 				CGContextBeginPath (context);
 				CGContextAddRect (context, rc_clip);
@@ -224,6 +238,13 @@ namespace System.Drawing {
 		internal static extern void CGContextSaveGState (IntPtr context);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern void CGContextRestoreGState (IntPtr context);
+
+#if DEBUG_CLIPPING
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern void CGContextSetRGBFillColor (IntPtr context, float red, float green, float blue, float alpha);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern void CGContextFillRect (IntPtr context, Rect rect);
+#endif
 	}
 
 	internal struct CGSize {
