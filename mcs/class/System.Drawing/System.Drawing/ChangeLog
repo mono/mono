@@ -1,5 +1,10 @@
 2008-02-01  Geoff Norton  <gnorton@novell.com>
 
+	* carbonFunctions.cs: Ensure we save/restore the GState before
+	modifying the clipping path as QD contexts can be reused.
+
+2008-02-01  Geoff Norton  <gnorton@novell.com>
+
 	* carbonFunction.cs:  Rework the clipping interaction with 
 	CoreGraphics.  Our old method was buggy in certain cases causing
 	improper / inefficient clip handling.

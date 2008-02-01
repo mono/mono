@@ -89,6 +89,8 @@ namespace System.Drawing {
 			// Create the original rect path and clip to it
 			Rect rc_clip = new Rect (0, 0, view_bounds.size.width, view_bounds.size.height);
 
+			CGContextSaveGState (context);
+
 			Rectangle [] clip_rectangles = (Rectangle []) hwnd_delegate.DynamicInvoke (new object [] {handle});
 			if (clip_rectangles != null && clip_rectangles.Length > 0) {
 				int length = clip_rectangles.Length;
@@ -132,6 +134,8 @@ namespace System.Drawing {
 		}
 
 		internal static void ReleaseContext (IntPtr port, IntPtr context) {
+			CGContextRestoreGState (context);
+
 			lock (lockobj) { 
 				if (contextReference [port] != null && context == (IntPtr) contextReference [port]) { 
 					QDEndCGContext (port, ref context);
@@ -216,6 +220,10 @@ namespace System.Drawing {
 		internal static extern void CGContextEOClip (IntPtr context);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern void CGContextEOFillPath (IntPtr context);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern void CGContextSaveGState (IntPtr context);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern void CGContextRestoreGState (IntPtr context);
 	}
 
 	internal struct CGSize {
