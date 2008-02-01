@@ -357,6 +357,10 @@ namespace Microsoft.Win32 {
 		public void SetValue (string name, object value, RegistryValueKind valueKind)
 		{
 			SetDirty ();
+
+			if (name == null)
+				name = string.Empty;
+
 			switch (valueKind){
 			case RegistryValueKind.String:
 				if (value is string){
@@ -592,7 +596,7 @@ namespace Microsoft.Win32 {
 			RegistryKey result = self.Probe (rkey, ToUnix (keyname), writable);
 			if (result == null && IsWellKnownKey (rkey.Name, keyname)) {
 				// create the subkey even if its parent was opened read-only
-				result = CreateSubKey (rkey, keyname, false);
+				result = CreateSubKey (rkey, keyname, writable);
 			}
 
 			return result;
@@ -670,7 +674,7 @@ namespace Microsoft.Win32 {
 			}
 
 			if (throw_if_missing && !self.ValueExists (name))
-				throw new ArgumentException ("the given value does not exist", "name");
+				throw new ArgumentException ("the given value does not exist");
 
 			self.RemoveValue (name);
 		}
@@ -682,7 +686,7 @@ namespace Microsoft.Win32 {
 				// key is marked for deletion
 				if (!throw_if_missing)
 					return;
-				throw new ArgumentException ("the given value does not exist", "value");
+				throw new ArgumentException ("the given value does not exist");
 			}
 
 			string dir = Path.Combine (self.Dir, ToUnix (keyname));
@@ -691,7 +695,7 @@ namespace Microsoft.Win32 {
 				Directory.Delete (dir, true);
 				KeyHandler.Drop (dir);
 			} else if (throw_if_missing)
-				throw new ArgumentException ("the given value does not exist", "value");
+				throw new ArgumentException ("the given value does not exist");
 		}
 		
 		public string [] GetSubKeyNames (RegistryKey rkey)

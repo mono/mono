@@ -1,3 +1,14 @@
+2008-02-01  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* RegistryKey.cs: Added missing checks on length of subkey and value
+	names. On 2.0 profile, allow subkey <= 255 characters. Modified
+	ArgumentNullException argument names to match MS.
+	* UnixRegistryApi.cs: In SetValue (string, object, RegistryValueKind),
+	use a zero-length string for name if it is null. In OpenSubKey,
+	respect value of writable argument when creating well-known subkey.
+	Fixes bug #357883. Removed argument names for ArgumentException's to
+	match MS.
+
 2008-01-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* RegistryKey.cs: Fix some argument names to be consistent with MS.

@@ -194,6 +194,9 @@ namespace Microsoft.Win32
 			if (value == null)
 				throw new ArgumentNullException ("value");
 
+			if (name != null)
+				AssertKeyNameLength (name);
+
 			if (!IsWritable)
 				throw new UnauthorizedAccessException ("Cannot write to the registry key.");
 
@@ -207,7 +210,10 @@ namespace Microsoft.Win32
 			AssertKeyStillValid ();
 			
 			if (value == null)
-				throw new ArgumentNullException ();
+				throw new ArgumentNullException ("value");
+
+			if (name != null)
+				AssertKeyNameLength (name);
 
 			if (!IsWritable)
 				throw new UnauthorizedAccessException ("Cannot write to the registry key.");
@@ -231,7 +237,11 @@ namespace Microsoft.Win32
 		public RegistryKey OpenSubKey (string name, bool writable)
 		{
 			AssertKeyStillValid ();
-			AssertKeyNameNotNull (name);
+
+			if (name == null)
+				throw new ArgumentNullException ("name");
+
+			AssertKeyNameLength (name);
 
 			return RegistryApi.OpenSubKey (this, name, writable);
 		}
@@ -280,8 +290,7 @@ namespace Microsoft.Win32
 		{
 			AssertKeyStillValid ();
 			AssertKeyNameNotNull (subkey);
-			if (subkey.Length > 255)
-				throw new ArgumentException ("keyName length is larger than 255 characters", subkey);
+			AssertKeyNameLength (subkey);
 
 			if (!IsWritable)
 				throw new UnauthorizedAccessException ("Cannot write to the registry key.");
@@ -318,6 +327,7 @@ namespace Microsoft.Win32
 		{
 			AssertKeyStillValid ();
 			AssertKeyNameNotNull (subkey);
+			AssertKeyNameLength (subkey);
 
 			if (!IsWritable)
 				throw new UnauthorizedAccessException ("Cannot write to the registry key.");
@@ -353,6 +363,7 @@ namespace Microsoft.Win32
 			
 			AssertKeyStillValid ();
 			AssertKeyNameNotNull (subkey);
+			AssertKeyNameLength (subkey);
 			
 			RegistryKey child = OpenSubKey (subkey, true);
 			if (child == null)
@@ -380,7 +391,9 @@ namespace Microsoft.Win32
 		public void DeleteValue(string name, bool throwOnMissingValue)
 		{
 			AssertKeyStillValid ();
-			AssertKeyNameNotNull (name);
+
+			if (name == null)
+				throw new ArgumentNullException ("name");
 
 			if (!IsWritable)
 				throw new UnauthorizedAccessException ("Cannot write to the registry key.");
@@ -503,9 +516,23 @@ namespace Microsoft.Win32
 		private void AssertKeyNameNotNull (string subKeyName)
 		{
 			if (subKeyName == null)
-				throw new ArgumentNullException ();
+#if NET_2_0
+				throw new ArgumentNullException ("name");
+#else
+				throw new ArgumentNullException ("subkey");
+#endif
 		}
-		
+
+		private void AssertKeyNameLength (string name)
+		{
+#if NET_2_0
+			if (name.Length > 255)
+				throw new ArgumentException ("Name of registry key cannot be greater than 255 characters");
+#else
+			if (name.Length >= 255)
+				throw new ArgumentException ("Name of registry key cannot be greater than or equal to 255 characters");
+#endif
+		}
 
 		/// <summary>
 		///	Utility method to delelte a key's sub keys and values.
