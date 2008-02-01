@@ -1,5 +1,11 @@
 2008-02-01  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Label.cs: Apply patch from James Purcell that corrects the 
+	signature of the AutoSize property.
+	[Fixes bug #357605]
+
+2008-02-01  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ListBox.cs: Don't throw [Mouse]Click events for buttons
 	other than the left mouse button.
 
