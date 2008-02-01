@@ -18,6 +18,7 @@ System.Linq.Expressions/ExpressionTest_Coalesce.cs
 System.Linq.Expressions/ExpressionTest_Condition.cs
 System.Linq.Expressions/ExpressionTest_Constant.cs
 System.Linq.Expressions/ExpressionTest_Divide.cs
+System.Linq.Expressions/ExpressionTest_ElementInit.cs
 System.Linq.Expressions/ExpressionTest_Equal.cs
 System.Linq.Expressions/ExpressionTest_ExclusiveOr.cs
 System.Linq.Expressions/ExpressionTest_Field.cs
