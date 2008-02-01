@@ -89,7 +89,7 @@ namespace Mono.CSharp {
 
 				if (pi [i].IsDefined (TypeManager.param_array_type, false)) {
 					params_idx = i;
-					return;
+					break;
 				}
 			}
 
