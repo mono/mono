@@ -1,3 +1,8 @@
+2008-02-02  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TypeTest.cs (InvokeMember_WithoutDefaultValue): Fixed assert to
+	allow test to pass on MS too.
+
 2008-01-24  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeTest.cs (InvokeMember_WithoutDefaultValue): Added test for bug #348522.

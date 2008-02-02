@@ -2101,11 +2101,12 @@ PublicKeyToken=b77a5c561934e089"));
 					new object [] {Missing.Value}, null, null, null);
 				Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
+				// Missing parameter does not have a default value
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNotNull (ex.ParamName, "#5");
-				Assert.AreEqual ("__argument", ex.ParamName, "#6");
+				Assert.AreEqual ("parameters", ex.ParamName, "#6");
 			}
 		}
 
