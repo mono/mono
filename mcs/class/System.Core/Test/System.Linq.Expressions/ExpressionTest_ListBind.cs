@@ -39,27 +39,27 @@ namespace MonoTests.System.Linq.Expressions {
 	public class ExpressionTest_ListBind {
 
 		private List<ElementInit> list;
-		
+
 		[SetUp]
 		public void init()
 		{
 			list= new List<ElementInit> ();
 		}
-		
+
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void MemberNull ()
 		{
 			Expression.ListBind (null as MemberInfo, list);
 		}
-		
+
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void PropertyAccessorNull ()
 		{
 			Expression.ListBind (null as MethodInfo, list);
 		}
-		
+
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void ArgNull ()
@@ -67,7 +67,7 @@ namespace MonoTests.System.Linq.Expressions {
 			list.Add(null);
 			Expression.ListBind (typeof (Foo).GetProperty ("Bar").GetSetMethod (), list);
 		}
-		
+
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void ArgNull2 ()
@@ -75,29 +75,29 @@ namespace MonoTests.System.Linq.Expressions {
 			list.Add(null);
 			Expression.ListBind (typeof (Foo).GetMember ("foo")[0], list);
 		}
-		
+
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void MemberTypeImplementIEnumerable ()
 		{
-			Expression.ListBind (typeof (Foo).GetMember ("str")[0], list);
+			Expression.ListBind (typeof (Foo).GetMember ("baz")[0], list);
 		}
 		//TODO test for other than fielf and property...
-		
+
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void MethodeGetImplementIEnumerable2 ()
 		{
 			Expression.ListBind (typeof (Foo).GetProperty ("BarBar").GetGetMethod (), list);
 		}
-		
+
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void MethodMustBeAnAccessor ()
 		{
 			Expression.ListBind (typeof (Foo).GetMethod ("test"), list);
-		}		
-		
+		}
+
 		/*[Test]
 		public void ListBindToString ()
 		{
@@ -108,7 +108,7 @@ namespace MonoTests.System.Linq.Expressions {
 		}*/
 
 		public class Foo {
-	
+
 			public string [] Bar
 			{
 				get {return foo;}
@@ -116,6 +116,9 @@ namespace MonoTests.System.Linq.Expressions {
 			}
 			public string [] foo;
 			public string str;
+
+			public int baz;
+
 			public string [] test ()
 			{
 				return null;
