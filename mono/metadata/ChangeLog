@@ -1,3 +1,8 @@
+2008-02-02  Geoff Norton  <gnorton@novell.com>
+
+	* loader.c (mono_method_get_param_names): Populate the parameter name for 
+	generic parameters as well. (Fixes #342536)
+
 2008-01-31 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (is_valid_bool_arg): Allow boxed values and null literals as well.
