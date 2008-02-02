@@ -72,7 +72,6 @@ namespace MonoTests.System.Reflection
 			}
 		}
 
-
 #if NET_2_0
 		public enum ParamEnum {
 			None = 0,
@@ -80,8 +79,10 @@ namespace MonoTests.System.Reflection
 			Bar = 2
 		};
 
-		public static void paramMethod (int i, [In] int j, [Out] int k, [Optional] int l, [In,Out] int m, [DefaultParameterValue (ParamEnum.Foo)] ParamEnum n) {
+		public static void paramMethod (int i, [In] int j, [Out] int k, [Optional] int l, [In,Out] int m, [DefaultParameterValue (ParamEnum.Foo)] ParamEnum n)
+		{
 		}
+
 #if !TARGET_JVM // No support for extern methods in TARGET_JVM
 		[DllImport ("foo")]
 		public extern static void marshalAsMethod (
@@ -97,8 +98,7 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (ParamEnum.Foo, info [5].DefaultValue, "#2");
 		}
 
-		// See bug: 339013
-		[Test]
+		[Test] // bug #339013
 		public void TestDefaultValues ()
 		{
 			ParameterInfo [] pi = typeof (ParameterInfoTest).GetMethod ("Sample").GetParameters ();
@@ -110,7 +110,7 @@ namespace MonoTests.System.Reflection
 		public void Sample (int a, [Optional] int b)
 		{
 		}
-			
+
 		[Test]
 		public void PseudoCustomAttributes () {
 			ParameterInfo[] info = typeof (ParameterInfoTest).GetMethod ("paramMethod").GetParameters ();
@@ -136,6 +136,52 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual ("5", attr.MarshalCookie, "#D2");
 			Assert.AreEqual (typeof (Marshal1), Type.GetType (attr.MarshalType), "#D3");
 #endif
+		}
+
+		[Test] // bug #342536
+		public void Generics_Name ()
+		{
+			MethodInfo mi;
+			Type type;
+			ParameterInfo [] info;
+		
+			type = typeof (BaseType<string>);
+
+			mi = type.GetMethod ("GetItems");
+			Assert.IsNotNull (mi, "#A1");
+			info = mi.GetParameters ();
+			Assert.AreEqual (1, info.Length, "#A2");
+			Assert.AreEqual ("count", info [0].Name, "#A3");
+
+			mi = type.GetMethod ("Add");
+			Assert.IsNotNull (mi, "#B1");
+			info = mi.GetParameters ();
+			Assert.AreEqual (2, info.Length, "#B2");
+			Assert.AreEqual ("item", info [0].Name, "#B3");
+			Assert.AreEqual ("index", info [1].Name, "#B4");
+
+			mi = type.GetMethod ("Create");
+			Assert.IsNotNull (mi, "#C1");
+			info = mi.GetParameters ();
+			Assert.AreEqual (2, info.Length, "#C2");
+			Assert.AreEqual ("x", info [0].Name, "#C3");
+			Assert.AreEqual ("item", info [1].Name, "#C4");
+		}
+
+		public class BaseType <T>
+		{
+			public void GetItems (int count)
+			{
+			}
+
+			public void Add (T item, int index)
+			{
+			}
+
+			public V Create <V> (int x, T item)
+			{
+				return default (V);
+			}
 		}
 #endif
 	}

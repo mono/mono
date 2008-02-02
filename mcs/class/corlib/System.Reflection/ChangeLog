@@ -1,3 +1,11 @@
+2008-02-02  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* MonoMethod.cs (MakeGenericMethod): Modified argument name to match
+	MS. When one of the types is null, throw ArgumentNullException instead
+	of ArgumentException.
+	* MethodInfo.cs (MakeGenericMethod): Modified argument name to match
+	MS.
+
 2008-01-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* Assembly.cs: Make GetTypes () virtual so it can be overriden by AssemblyBuilder.

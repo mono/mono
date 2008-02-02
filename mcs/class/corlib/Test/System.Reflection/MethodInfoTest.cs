@@ -321,23 +321,29 @@ namespace MonoTests.System.Reflection
 		public void ReturnParameter ()
 		{
 			ParameterInfo pi = typeof (MethodInfoTest).GetMethod ("return_parameter_test").ReturnParameter;
-
-			Assert.AreEqual (typeof (int), pi.ParameterType);
-			Assert.AreEqual (-1, pi.Position);
-			// This fails on MS
-			//Assert.AreEqual (True, pi.IsRetval);
+			Assert.AreEqual (typeof (int), pi.ParameterType, "#1");
+			Assert.AreEqual (-1, pi.Position, "#2");
+			// MS always return false here
+			//Assert.IsTrue (pi.IsRetval, "#3");
 		}
 
 #if !TARGET_JVM // ReflectionOnly is not supported yet on TARGET_JVM
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
-		public void InvokeOnRefOnlyAssembly ()
+			public void InvokeOnRefOnlyAssembly ()
 		{
 			Assembly a = Assembly.ReflectionOnlyLoad (typeof (MethodInfoTest).Assembly.FullName);
 			Type t = a.GetType (typeof (RefOnlyMethodClass).FullName);
 			MethodInfo m = t.GetMethod ("RefOnlyMethod", BindingFlags.Static | BindingFlags.NonPublic);
-			
-			m.Invoke (null, new object [0]);
+			try {
+				m.Invoke (null, new object [0]);
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// The requested operation is invalid in the
+				// ReflectionOnly context
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 #endif // TARGET_JVM
 
@@ -351,8 +357,8 @@ namespace MonoTests.System.Reflection
 			MethodInfo generic_method = method.MakeGenericMethod (arguments);
 			kvp = (KeyValuePair<string, uint>)generic_method.Invoke (null, new object [] { kvp });
 
-			Assert.AreEqual ("a", kvp.Key);
-			Assert.AreEqual (21, kvp.Value);
+			Assert.AreEqual ("a", kvp.Key, "#1");
+			Assert.AreEqual (21, kvp.Value, "#2");
 		}
 
 		public static KeyValuePair<T1, T2> Go <T1, T2> (KeyValuePair <T1, T2> kvp)
@@ -384,35 +390,60 @@ namespace MonoTests.System.Reflection
 			strArg.Add ("test");
 		}
 
-		public void MakeGenericMethodArgsMismatchFoo<T> () {}
+		public void MakeGenericMethodArgsMismatchFoo<T> ()
+		{
+		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void MakeGenericMethodArgsMismatch ()
 		{
 			MethodInfo gmi = this.GetType ().GetMethod (
-				"MakeGenericMethodArgsMismatchFoo")
-				.MakeGenericMethod ();
+				"MakeGenericMethodArgsMismatchFoo");
+			try {
+				gmi.MakeGenericMethod ();
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// The type or method has 1 generic parameter(s),
+				// but 0 generic argument(s) were provided. A
+				// generic argument must be provided for each
+				// generic parameter
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 
 		public void SimpleGenericMethod<TFoo, TBar> () {}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void MakeGenericMethodWithNullArray ()
 		{
 			MethodInfo gmi = this.GetType ().GetMethod ("SimpleGenericMethod");
-
-			gmi.MakeGenericMethod ((Type []) null);
+			try {
+				gmi.MakeGenericMethod ((Type []) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("methodInstantiation", ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void MakeGenericMethodWithNullValueInTypesArray ()
 		{
 			MethodInfo gmi = this.GetType ().GetMethod ("SimpleGenericMethod");
-
-			gmi.MakeGenericMethod (new Type [] { typeof (int), null });
+			try {
+				gmi.MakeGenericMethod (new Type [] { typeof (int), null });
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 
 		public static int? pass_nullable (int? i)
@@ -429,9 +460,9 @@ namespace MonoTests.System.Reflection
 
 			// Test conversion of vtype to a nullable type for the this argument
 			PropertyInfo pi = typeof (Nullable <int>).GetProperty ("HasValue");
-		    Assert.AreEqual (true, pi.GetGetMethod ().Invoke (10, null));
+			Assert.AreEqual (true, pi.GetGetMethod ().Invoke (10, null));
 			PropertyInfo pi2 = typeof (Nullable <int>).GetProperty ("Value");
-		    Assert.AreEqual (10, pi2.GetGetMethod ().Invoke (10, null));
+			Assert.AreEqual (10, pi2.GetGetMethod ().Invoke (10, null));
 		}
 
 		public static void foo_generic<T> ()
@@ -445,7 +476,6 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (true, mi.IsGenericMethod, "#1");
 			MethodInfo mi2 = mi.MakeGenericMethod (new Type[] { typeof (int) });
 			Assert.AreEqual (true, mi2.IsGenericMethod, "#2");
-
 			MethodInfo mi3 = typeof (GenericHelper<int>).GetMethod ("Test");
 			Assert.AreEqual (false, mi3.IsGenericMethod, "#3");
 		}
@@ -489,16 +519,16 @@ namespace MonoTests.System.Reflection
 		public void IsGenericMethodDefinition ()
 		{
 			MethodInfo m1 = typeof (A<>).GetMethod ("Foo");
-			Assert.IsTrue (m1.IsGenericMethod);
-			Assert.IsTrue (m1.IsGenericMethodDefinition);
+			Assert.IsTrue (m1.IsGenericMethod, "#A1");
+			Assert.IsTrue (m1.IsGenericMethodDefinition, "#A2");
 
 			MethodInfo m2 = typeof (A<int>).GetMethod ("Foo");
-			Assert.IsTrue (m2.IsGenericMethod);
-			Assert.IsTrue (m2.IsGenericMethodDefinition);
+			Assert.IsTrue (m2.IsGenericMethod, "#B1");
+			Assert.IsTrue (m2.IsGenericMethodDefinition, "#B2");
 
 			MethodInfo m3 = m2.MakeGenericMethod (typeof (int));
-			Assert.IsTrue (m3.IsGenericMethod);
-			Assert.IsFalse (m3.IsGenericMethodDefinition);
+			Assert.IsTrue (m3.IsGenericMethod, "#C1");
+			Assert.IsFalse (m3.IsGenericMethodDefinition, "#C2");
 		}
 
 		[Test]
@@ -508,21 +538,19 @@ namespace MonoTests.System.Reflection
 			MethodInfo mi2 = typeof (MyList<int>).GetMethod ("ConvertAll");
 
 			Assert.AreEqual ("MonoTests.System.Reflection.MethodInfoTest+Foo`2[T,TOutput]",
-					 mi1.GetParameters () [0].ParameterType.ToString ());
+					 mi1.GetParameters () [0].ParameterType.ToString (), "#A1");
 			Assert.AreEqual ("MonoTests.System.Reflection.MethodInfoTest+Foo`2[System.Int32,TOutput]",
-					 mi2.GetParameters () [0].ParameterType.ToString ());
-			Assert.IsTrue (mi1.IsGenericMethod);
-			Assert.IsTrue (mi1.IsGenericMethodDefinition);
-			Assert.IsTrue (mi2.IsGenericMethod);
-			Assert.IsTrue (mi2.IsGenericMethodDefinition);
+					 mi2.GetParameters () [0].ParameterType.ToString (), "#A2");
+			Assert.IsTrue (mi1.IsGenericMethod, "#A3");
+			Assert.IsTrue (mi1.IsGenericMethodDefinition, "#A4");
+			Assert.IsTrue (mi2.IsGenericMethod, "#A5");
+			Assert.IsTrue (mi2.IsGenericMethodDefinition, "#A6");
 
 			MethodInfo mi3 = mi2.GetGenericMethodDefinition ();
 
-			Assert.IsTrue (mi3.IsGenericMethod);
-			Assert.IsTrue (mi3.IsGenericMethodDefinition);
-
-			// ensure it's the same object, not just equal
-			Assert.IsTrue (mi2 == mi3);
+			Assert.IsTrue (mi3.IsGenericMethod, "#B1");
+			Assert.IsTrue (mi3.IsGenericMethodDefinition, "#B2");
+			Assert.AreSame (mi2, mi3, "#B3");
 		}
 
 		public class MyList<T>
@@ -544,7 +572,8 @@ namespace MonoTests.System.Reflection
 		class GenericHelper<T>
 		{
 			public void Test (T t)
-			{ }
+			{
+			}
 		}
 #endif
 	}

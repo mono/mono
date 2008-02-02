@@ -301,17 +301,17 @@ namespace System.Reflection {
 		}
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
-		public override MethodInfo MakeGenericMethod (Type [] types)
+		public override MethodInfo MakeGenericMethod (Type [] methodInstantiation)
 		{
-			if (types == null)
-				throw new ArgumentNullException ("types");
-			foreach (Type type in types)
+			if (methodInstantiation == null)
+				throw new ArgumentNullException ("methodInstantiation");
+			foreach (Type type in methodInstantiation)
 				if (type == null)
-					throw new ArgumentException ("Types cannot contain a null value");
+					throw new ArgumentNullException ();
 
-			MethodInfo ret = MakeGenericMethod_impl (types);
+			MethodInfo ret = MakeGenericMethod_impl (methodInstantiation);
 			if (ret == null)
-				throw new ArgumentException (String.Format ("The method has {0} generic parameter(s) but {1} generic argument(s) were provided.", GetGenericArguments ().Length, types.Length));
+				throw new ArgumentException (String.Format ("The method has {0} generic parameter(s) but {1} generic argument(s) were provided.", GetGenericArguments ().Length, methodInstantiation.Length));
 			return ret;
 		}
 
