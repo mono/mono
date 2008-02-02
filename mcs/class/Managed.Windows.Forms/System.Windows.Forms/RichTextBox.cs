@@ -1359,6 +1359,7 @@ namespace System.Windows.Forms {
 			remove { base.QueryContinueDrag -= value; }
 		}
 
+		[MonoTODO("Currently does not ever fire")]
 		public event EventHandler SelectionChanged {
 			add { Events.AddHandler (SelectionChangedEvent, value); }
 			remove { Events.RemoveHandler (SelectionChangedEvent, value); }

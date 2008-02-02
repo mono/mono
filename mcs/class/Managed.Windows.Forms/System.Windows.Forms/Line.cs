@@ -452,11 +452,15 @@ namespace System.Windows.Forms
 			bool wrapped;
 			Line line;
 			int wrap_pos;
+			int prev_height;
+			int prev_ascent;
 
 			pos = 0;
 			len = this.text.Length;
 			tag = this.tags;
 			prev_offset = this.offset;	// For drawing optimization calculations
+			prev_height = this.height;
+			prev_ascent = this.ascent;
 			this.height = 0;		// Reset line height
 			this.ascent = 0;		// Reset the ascent for the line
 			tag.Shift = 0;
@@ -473,9 +477,10 @@ namespace System.Windows.Forms
 			wrap_pos = 0;
 
 			while (pos < len) {
+
 				while (tag.Length == 0) {	// We should always have tags after a tag.length==0 unless len==0
 					//tag.Ascent = 0;
-					tag.Shift = 0;
+					tag.Shift = tag.Line.ascent - tag.Ascent;
 					tag = tag.Next;
 				}
 
@@ -561,12 +566,18 @@ namespace System.Windows.Forms
 				}
 			}
 
-			if (this.height == 0) {
-				this.height = tags.Font.Height;
-				tag.Height = this.height;
+			while (tag != null) {	
+				tag.Shift = tag.Line.ascent - tag.Ascent;
+				tag = tag.Next;
 			}
 
-			if (prev_offset != offset)
+			if (this.height == 0) {
+				this.height = tags.Font.Height;
+				tags.Height = this.height;
+				tags.Shift = 0;
+			}
+
+			if (prev_offset != offset || prev_height != this.height || prev_ascent != this.ascent)
 				retval = true;
 
 			return retval;

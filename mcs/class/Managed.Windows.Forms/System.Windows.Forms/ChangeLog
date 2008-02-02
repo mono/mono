@@ -1,3 +1,10 @@
+2008-02-02  Luke Page  <luke.a.page@gmail.com>
+
+	* Line.cs, LineTag.cs, RichTextBox.cs, TextControl.cs
+	Fixes bug 351938 - caret is positioned correctly when drawn
+	and when calculating textual position of caret, no longer
+	has a NRE in certain situations.
+	
 2008-02-01  Geoff Norton  <gnorton@novell.com>
 
 	* Hwnd.cs: Ensure that windows moved into -'ve coordinate space

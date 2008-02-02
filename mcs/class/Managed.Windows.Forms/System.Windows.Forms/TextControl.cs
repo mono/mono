@@ -1268,11 +1268,20 @@ namespace System.Windows.Forms {
 				MoveCaretToTextTag ();
 			}
 
-			caret.height = caret.tag.Height;
+			// if the caret has had SelectionFont changed to a
+			// different height, we reflect changes unless the new
+			// font is larger than the line (line recalculations
+			// ignore empty tags) in which case we make it equal
+			// the line height and then when text is entered
+			if (caret.tag.Height > caret.tag.Line.Height) {
+				caret.height = caret.line.height;
+			} else {
+				caret.height = caret.tag.Height;
+			}
 
 			if (owner.Focused) {
 				XplatUI.CreateCaret(owner.Handle, caret_width, caret.height);
-				XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.Line.widths[caret.pos] + caret.line.X - viewport_x, caret.line.Y + caret.tag.Shift - viewport_y + caret_shift);
+				XplatUI.SetCaretPos (owner.Handle, (int) caret.tag.Line.widths [caret.pos] + caret.line.X - viewport_x, caret.line.Y + viewport_y + caret_shift);
 				DisplayCaret ();
 			}
 
@@ -1955,7 +1964,7 @@ namespace System.Windows.Forms {
 		// Inserts a character at the current caret position
 		internal void InsertCharAtCaret (char ch, bool move_caret)
 		{
-			caret.line.InsertString (caret.pos, ch.ToString ());
+			caret.line.InsertString (caret.pos, ch.ToString(), caret.tag);
 
 			undo.RecordTyping (caret.line, caret.pos, ch);
 

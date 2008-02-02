@@ -396,7 +396,11 @@ namespace System.Windows.Forms
 				return tag;	// Not sure if we should get the final tag here
 
 			while (tag != null) {
-				if ((tag.start <= pos) && (pos <= tag.End))
+				// [H  e][l][l  o  _  W][o  r]  Text
+				// [1  2][3][4  5  6  7][8  9]  Start
+				//     3  4           8     10  End
+				// 0 1  2  3  4  5  6  7  8  9   Pos
+				if ((tag.start <= pos) && (pos < tag.End))
 					return GetFinalTag (tag);
 
 				tag = tag.next;
@@ -444,7 +448,7 @@ namespace System.Windows.Forms
 				return retval;
 			}
 
-			start_tag = FindTag (line, formatStart);
+			start_tag = FindTag (line, formatStart - 1);
 
 			// we are at an empty tag already!
 			// e.g. [Tag 0 - "He"][Tag 1 = 0 length][Tag 2 "llo world"]
@@ -487,7 +491,7 @@ namespace System.Windows.Forms
 				return retval;
 
 			/// Now do the last tag
-			end_tag = FindTag (line, end);
+			end_tag = FindTag (line, end-1);
 
 			if (end_tag != null) {
 				end_tag.Break (end);
@@ -507,13 +511,16 @@ namespace System.Windows.Forms
 			int length_no_ending = line.TextLengthWithoutEnding ();
 
 			if (Length == 0)
-				return start;
+				return low-1;
 
 			if (length_no_ending == 0)
 				return 0;
-				
-			if (x < line.widths[low])
+
+			if (x < line.widths [low]) {
+				if (low == 1 && x > (line.widths [1] / 2))
+					return low;
 				return low - 1;
+			}
 
 			if (x > line.widths[length_no_ending])
 				return length_no_ending;
@@ -562,8 +569,9 @@ namespace System.Windows.Forms
 
 		private static void SetFormat (LineTag tag, Font font, Color color, Color back_color, FormatSpecified specified)
 		{
-			if ((FormatSpecified.Font & specified) == FormatSpecified.Font)
+			if ((FormatSpecified.Font & specified) == FormatSpecified.Font) {
 				tag.Font = font;
+			}
 			if ((FormatSpecified.Color & specified) == FormatSpecified.Color)
 				tag.color = color;
 			if ((FormatSpecified.BackColor & specified) == FormatSpecified.BackColor) {
