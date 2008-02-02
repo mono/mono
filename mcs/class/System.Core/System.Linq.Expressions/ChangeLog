@@ -1,5 +1,9 @@
 2008-02-02  Jb Evain  <jbevain@novell.com>
 
+	* Expression.cs: fix ListBind(MemberInfo,IEnumerable<ElementInit>).
+
+2008-02-02  Jb Evain  <jbevain@novell.com>
+
 	* Expression.cs: fix ListBind(MethodInfo,IEnumerable<ElementInit>).
 
 2008-02-01  Olivier Dufour  <olivier.duff@gmail.com>

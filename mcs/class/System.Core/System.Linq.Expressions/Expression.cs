@@ -1066,7 +1066,7 @@ namespace System.Linq.Expressions {
 				throw new ArgumentException ("addMethod must be an instance method", "addMethod");
 
 			var args = arguments.ToReadOnlyCollection ();
-			
+
 			CheckMethodArguments (addMethod, args);
 
 			return new ElementInit (addMethod, args);
@@ -1229,26 +1229,32 @@ namespace System.Linq.Expressions {
 			return ListBind (member, initializers as IEnumerable<ElementInit>);
 		}
 
+		static void CheckIsAssignableToIEnumerable (Type t)
+		{
+			if (!typeof (IEnumerable).IsAssignableFrom (t))
+				throw new ArgumentException (string.Format ("Type {0} doesn't implemen IEnumerable", t));
+		}
+
 		public static MemberListBinding ListBind (MemberInfo member, IEnumerable<ElementInit> initializers)
 		{
 			if (member == null)
 				throw new ArgumentNullException ("member");
-			foreach (ElementInit elt in initializers) {
-				if (elt == null)
-					throw new ArgumentNullException ("initializers");
+
+			var inits = initializers.ToReadOnlyCollection ();
+			CheckForNull (inits, "initializers");
+
+			switch (member.MemberType) {
+			case MemberTypes.Field:
+				CheckIsAssignableToIEnumerable ((member as FieldInfo).FieldType);
+				break;
+			case MemberTypes.Property:
+				CheckIsAssignableToIEnumerable ((member as PropertyInfo).PropertyType);
+				break;
+			default:
+				throw new ArgumentException ("member");
 			}
-			Type mbrType;
-			if (member.MemberType == MemberTypes.Field)
-				mbrType = ((FieldInfo)member).FieldType;
-			else if (member.MemberType != MemberTypes.Property)
-				mbrType = ((PropertyInfo)member).PropertyType;
-			else
-				throw new ArgumentException ("Member must be a field or a property");
 
-			if (!mbrType.IsSubclassOf(typeof(System.Collections.IEnumerable)))
-				throw new ArgumentException ("Member must inherite from IEnumerable");
-
-			return new MemberListBinding (member, initializers.ToReadOnlyCollection ());
+			return new MemberListBinding (member, inits);
 		}
 
 		public static MemberListBinding ListBind (MethodInfo propertyAccessor, params ElementInit [] initializers)
@@ -1275,8 +1281,7 @@ namespace System.Linq.Expressions {
 			if (prop == null)
 				throw new ArgumentException ("propertyAccessor");
 
-			if (!typeof (IEnumerable).IsAssignableFrom (prop.PropertyType))
-				throw new ArgumentException ("propertyAccessor");
+			CheckIsAssignableToIEnumerable (prop.PropertyType);
 
 			return new MemberListBinding (prop, inits);
 		}
