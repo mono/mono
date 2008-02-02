@@ -1,5 +1,12 @@
 2008-02-02  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* CharCategoryTest.cs: Fixed line endings.
+	* CharTest.cs: Fixed line endings.
+	* MulticasrDelegate.cs: Fixed line endings.
+	* ExceptionTest.cs: Fixed line endings.
+
+2008-02-02  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* TypeTest.cs (InvokeMember_WithoutDefaultValue): Fixed assert to
 	allow test to pass on MS too.
 
