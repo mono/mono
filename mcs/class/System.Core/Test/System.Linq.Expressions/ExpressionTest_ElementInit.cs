@@ -100,7 +100,7 @@ namespace MonoTests.System.Linq.Expressions {
 			public void Add (string s)
 			{
 			}
-			
+
 			public void Bar ()
 			{
 			}
