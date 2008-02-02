@@ -388,7 +388,7 @@ namespace System
 					ParameterInfo[] parameters = m.GetParameters();
 					for (int i = 0; i < parameters.Length; ++i) {
 						if (System.Reflection.Missing.Value == args [i] && (parameters [i].Attributes & ParameterAttributes.HasDefault) != ParameterAttributes.HasDefault)
-							throw new ArgumentException ("Used Missing.Value for argument without default value", parameters [i].Name);
+							throw new ArgumentException ("Used Missing.Value for argument without default value", "parameters");
 					}
 					bool hasParamArray = parameters.Length > 0 ? Attribute.IsDefined (parameters [parameters.Length - 1], 
 						typeof (ParamArrayAttribute)) : false;
