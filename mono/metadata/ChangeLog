@@ -1,3 +1,8 @@
+2008-02-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_runtime_invoke): Fix sharing of runtime wrappers
+	between methods for non-corlib types.
+
 2008-02-02  Geoff Norton  <gnorton@novell.com>
 
 	* loader.c (mono_method_get_param_names): Populate the parameter name for 
