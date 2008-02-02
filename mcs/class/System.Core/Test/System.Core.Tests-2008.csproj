@@ -66,6 +66,7 @@
     <Compile Include="System.Linq.Expressions\ExpressionTest_Condition.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Constant.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Divide.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_ElementInit.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Equal.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_ExclusiveOr.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Field.cs" />
@@ -76,6 +77,7 @@
     <Compile Include="System.Linq.Expressions\ExpressionTest_LessThan.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_LessThanOrEqual.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Lift.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_ListBind.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_MakeBinary.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Modulo.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Multiply.cs" />
