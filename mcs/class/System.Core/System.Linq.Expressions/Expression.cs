@@ -28,6 +28,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -1063,9 +1064,9 @@ namespace System.Linq.Expressions {
 				throw new ArgumentException ("addMethod");
 			if (addMethod.IsStatic)
 				throw new ArgumentException ("addMethod must be an instance method", "addMethod");
-			
+
 			var args = arguments.ToReadOnlyCollection ();
-			    
+			
 			CheckMethodArguments (addMethod, args);
 
 			return new ElementInit (addMethod, args);
@@ -1157,28 +1158,15 @@ namespace System.Linq.Expressions {
 			return func.MakeGenericType (typeArgs);
 		}
 
+		[MonoTODO]
 		public static InvocationExpression Invoke (Expression expression, params Expression [] arguments)
 		{
 			return Invoke (expression, arguments as IEnumerable<Expression>);
 		}
 
+		[MonoTODO]
 		public static InvocationExpression Invoke (Expression expression, IEnumerable<Expression> arguments)
 		{
-			/*if (expression == null)
-				throw new ArgumentNullException ("expression");
-			System.Delegate delegateObj;
-			if (expression.Type.IsSubclassOf (typeof(Expression<object>))) {//not sure here
-				delegateObj = ((Expression<System.Delegate>)expression).Compile ();//not sure here too
-			} else if (expression.type.IsSubclassOf (typeof(System.Delegate))) {
-				delegateObj = (System.Delegate)Activator.CreateInstance(expression.type);
-			} else
-				throw new ArgumentException ("expression");
-			
-			var args = arguments.ToReadOnlyCollection ();
-			
-			CheckMethodArguments (delegateObj.Method, args);
-			
-			return new InvocationExpression (expression, args);*/
 			throw new NotImplementedException ();
 		}
 
@@ -1256,10 +1244,10 @@ namespace System.Linq.Expressions {
 				mbrType = ((PropertyInfo)member).PropertyType;
 			else
 				throw new ArgumentException ("Member must be a field or a property");
-			
+
 			if (!mbrType.IsSubclassOf(typeof(System.Collections.IEnumerable)))
 				throw new ArgumentException ("Member must inherite from IEnumerable");
-						
+
 			return new MemberListBinding (member, initializers.ToReadOnlyCollection ());
 		}
 
@@ -1268,33 +1256,29 @@ namespace System.Linq.Expressions {
 			return ListBind (propertyAccessor, initializers as IEnumerable<ElementInit>);
 		}
 
+		static void CheckForNull<T> (ReadOnlyCollection<T> collection, string name) where T : class
+		{
+			foreach (var t in collection)
+				if (t == null)
+					throw new ArgumentNullException (name);
+		}
+
 		public static MemberListBinding ListBind (MethodInfo propertyAccessor, IEnumerable<ElementInit> initializers)
 		{
 			if (propertyAccessor == null)
 				throw new ArgumentNullException ("propertyAccessor");
-			foreach (ElementInit elt in initializers) {
-				if (elt == null)
-					throw new ArgumentNullException ("initializers");
-			}
-			if(propertyAccessor.IsSpecialName) {
-				Type propType = null;
-				ParameterInfo[] parameters;
-				if (propertyAccessor.Name.StartsWith ("get_")) {
-					parameters = propertyAccessor.GetParameters ();
-					if (parameters.Length != 0)
-						throw new ArgumentException ("PropertyAccessor must be a property accessor");
-					propType = propertyAccessor.ReturnType;
-				} else if (propertyAccessor.Name.StartsWith ("set_")) {
-					parameters = propertyAccessor.GetParameters ();
-					if (parameters.Length != 1)
-						throw new ArgumentException ("PropertyAccessor must be a property accessor");
-					propType = parameters[0].ParameterType;
-				}
-				if (!propType.IsSubclassOf(typeof (System.Collections.IEnumerable)))
-					throw new ArgumentException ("The type of the property of propertyAccessor must implement IEnumerable");
-				return new MemberListBinding (propertyAccessor, initializers.ToReadOnlyCollection());
-			}
-			throw new ArgumentException ("propertyAccessor must be a property accessor");
+
+			var inits = initializers.ToReadOnlyCollection ();
+			CheckForNull (inits, "initializers");
+
+			var prop = GetAssociatedProperty (propertyAccessor);
+			if (prop == null)
+				throw new ArgumentException ("propertyAccessor");
+
+			if (!typeof (IEnumerable).IsAssignableFrom (prop.PropertyType))
+				throw new ArgumentException ("propertyAccessor");
+
+			return new MemberListBinding (prop, inits);
 		}
 
 		[MonoTODO]
