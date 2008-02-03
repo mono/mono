@@ -226,6 +226,7 @@ namespace System.Web
 
 				StreamWriter writer = new StreamWriter (stream);
 				writer.Write (buffer, 0, _position);
+				writer.Flush ();
 			}
 		}
 
