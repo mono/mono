@@ -1,5 +1,8 @@
 2008-02-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mini_method_compile): Disable extended bblocks for now.
+	(mono_replace_ins): Fix unlinking of bblocks.
+
 	* local-propagation.c: Fix the div_imm strength reduction optimization.
 
 	* mini-sparc.c (mono_arch_allocate_vars): Fix build.

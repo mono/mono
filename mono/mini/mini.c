@@ -2182,19 +2182,14 @@ mono_replace_ins (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, MonoInst 
 	}
 
 	if (first_bb == last_bb) {
-		int i;
-
 		/* 
 		 * Only one replacement bb, merge the code into
 		 * the current bb.
 		 */
 
 		/* Delete links between the first_bb and its successors */
-		for (i = 0; i < first_bb->out_count; ++i) {
-			MonoBasicBlock *out_bb = first_bb->out_bb [i];
-
-			mono_unlink_bblock (cfg, first_bb, out_bb);
-		}
+		while (first_bb->out_count)
+			mono_unlink_bblock (cfg, first_bb, first_bb->out_bb [0]);
 
 		/* Head */
 		if (*prev)
@@ -10114,11 +10109,12 @@ print_dfn (MonoCompile *cfg) {
 			code = g_strdup ("\n");
 		g_print ("\nBB%d (%d) (len: %d): %s", bb->block_num, i, bb->cil_length, code);
 		MONO_BB_FOR_EACH_INS (bb, c) {
-			if (cfg->new_ir)
+			if (cfg->new_ir) {
 				mono_print_ins_index (-1, c);
-			else
+			} else {
 				mono_print_tree (c);
-			g_print ("\n");
+				g_print ("\n");
+			}
 		}
 
 		g_print ("\tprev:");
@@ -12112,6 +12108,9 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	/* FIXME: Fix SSA to handle branches inside bblocks */
 	if (cfg->opt & (MONO_OPT_SSA | MONO_OPT_ABCREM | MONO_OPT_SSAPRE))
 		cfg->disable_extended_bblocks = TRUE;
+
+	// FIXME:
+	cfg->disable_extended_bblocks = TRUE;
 
 	/*
 	 * create MonoInst* which represents arguments and local variables
