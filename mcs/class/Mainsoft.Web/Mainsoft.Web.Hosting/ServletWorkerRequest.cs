@@ -79,8 +79,7 @@ namespace Mainsoft.Web.Hosting
 		}
 
 		public override string GetPathInfo () {
-			string pathInfo = base.GetPathInfo() ?? _HttpServletRequest.getPathInfo ();
-			return pathInfo ?? String.Empty;
+			return base.GetPathInfo () ?? String.Empty;
 		}
 
 		public override string GetQueryString () {
