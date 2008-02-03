@@ -136,6 +136,8 @@
     <Compile Include="System.Data\DataRowTest2.cs" />
     <Compile Include="System.Data\DataRowViewTest.cs" />
     <Compile Include="System.Data\DataRowViewTest2.cs" />
+    <Compile Include="System.Data\DataSet1.Designer.cs">
+    </Compile>
     <Compile Include="System.Data\DataSetAssertion.cs" />
     <Compile Include="System.Data\DataSetInferXmlSchemaTest.cs" />
     <Compile Include="System.Data\DataSetReadXmlSchemaTest.cs" />
@@ -184,6 +186,7 @@
     <Compile Include="System.Data\VersionNotFoundException.cs" />
     <Compile Include="System.Data\XmlDataLoaderTest.cs" />
     <Compile Include="System.Data\XmlDataReaderTest.cs" />
+    <Compile Include="System.Data\XmlExportOfTypedDataSetTest.cs" />
     <Compile Include="System.Xml\XmlDataDocumentTest.cs" />
     <Compile Include="System.Xml\XmlDataDocumentTest2.cs" />
   </ItemGroup>
