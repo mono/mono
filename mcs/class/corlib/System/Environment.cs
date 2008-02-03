@@ -558,10 +558,6 @@ namespace System {
 			return GetLogicalDrivesInternal ();
 		}
 
-		// FIXME: Anyone using this anywhere ?
-		static internal string GetResourceString (string s) { return String.Empty; }
-
-                
 #if NET_2_0
 		public static string GetEnvironmentVariable (string variable, EnvironmentVariableTarget target)
 		{

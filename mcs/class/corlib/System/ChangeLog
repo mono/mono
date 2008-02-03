@@ -1,3 +1,7 @@
+2008-02-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Environment.cs: Remove unused method found with Gendarme.
+
 2008-02-02  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Variant.cs: Fixed line endings.
