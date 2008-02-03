@@ -822,9 +822,6 @@ namespace System.Web {
 
 			Exception error = context.Error;
 			if (error != null){
-#if TARGET_J2EE
-				Console.WriteLine (error.ToString ());
-#endif
 				HttpResponse response = context.Response;
 
 				if (!response.HeadersSent){
