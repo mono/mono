@@ -1,3 +1,7 @@
+2008-02-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Evidence.cs: Fix missing assignement (thanks to Gendarme :)
+
 2006-05-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CodeGroup.cs: Under 2.0 the ctor is protected (not public).

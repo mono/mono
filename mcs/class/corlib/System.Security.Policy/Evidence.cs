@@ -221,7 +221,7 @@ namespace System.Security.Policy {
 				he = hostEvidenceList.GetEnumerator ();
 			IEnumerator ae = null;
 			if (assemblyEvidenceList != null)
-				assemblyEvidenceList.GetEnumerator ();
+				ae = assemblyEvidenceList.GetEnumerator ();
 			return new EvidenceEnumerator (he, ae);
 		}
 
