@@ -48,6 +48,7 @@ System.Data/DataTableLoadRowTest.cs
 System.Data/DataTableReaderTest.cs
 System.Data/DataTableReadWriteXmlTest.cs
 System.Data/DataTableReadXmlSchemaTest.cs
+System.Data/DataSet1.Designer.cs
 System.Data/DataViewManagerTest.cs
 System.Data/DataViewTest.cs
 System.Data/DataViewTest2.cs
@@ -78,6 +79,7 @@ System.Data/RowNotInTableExceptionTest.cs
 System.Data/VersionNotFoundException.cs
 System.Data/XmlDataLoaderTest.cs
 System.Data/XmlDataReaderTest.cs
+System.Data/XmlExportOfTypedDataSetTest.cs
 System.Data.Common/ConnectionStringsSectionTest.cs
 System.Data.Common/DataAdapterTest.cs
 System.Data.Common/DataColumnMappingCollectionTest.cs

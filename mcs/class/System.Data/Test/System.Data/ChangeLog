@@ -1,3 +1,8 @@
+2008-02-03 Arina Itkes <arinai@mainsoft.com>
+
+	* XmlExportOfTypedDataSetTest.cs: added test for exporting of
+	  a generated typed DataSet and DataTable by a same XmlExporter.
+	
 2008-01-28 Arina Itkes <arinai@mainsoft.com>
 
 	* DataTableTest5.cs: added tests for implemetation 
