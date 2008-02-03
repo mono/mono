@@ -99,7 +99,7 @@ namespace System.Linq.Expressions {
 			// FIXME: Need to force this to be verifiable, see:
 			// https://bugzilla.novell.com/show_bug.cgi?id=355005
 			//
-			method = new DynamicMethod ("lambda_method", lambda.Body.Type, param_types, owner_of_code);
+			method = new DynamicMethod (GenerateName (), lambda.Body.Type, param_types, owner_of_code);
 			ig = method.GetILGenerator ();
 		}
 
