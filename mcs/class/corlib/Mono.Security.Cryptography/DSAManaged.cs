@@ -262,7 +262,7 @@ namespace Mono.Security.Cryptography {
 		public override DSAParameters ExportParameters (bool includePrivateParameters)
 		{
 			if (m_disposed)
-				throw new ObjectDisposedException ("");
+				throw new ObjectDisposedException (Locale.GetText ("Keypair was disposed"));
 
 			if (!keypairGenerated)
 				Generate ();
@@ -380,7 +380,7 @@ namespace Mono.Security.Cryptography {
 		public override bool VerifySignature (byte[] rgbHash, byte[] rgbSignature) 
 		{
 			if (m_disposed)
-				throw new ObjectDisposedException ("");
+				throw new ObjectDisposedException (Locale.GetText ("Keypair was disposed"));
 
 			if (rgbHash == null)
 				throw new ArgumentNullException ("rgbHash");

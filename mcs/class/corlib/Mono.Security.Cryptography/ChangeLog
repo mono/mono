@@ -1,3 +1,8 @@
+2008-02-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DSAManaged.cs: Replace "" (found by Gendarme) with more useful text.
+	* RSAManaged.cs: Replace "" (found by Gendarme) with more useful text.
+
 2008-01-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PKCS1.cs: Add a new method that optionally checks for badly 

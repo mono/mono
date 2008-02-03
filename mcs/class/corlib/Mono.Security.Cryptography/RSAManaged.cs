@@ -257,7 +257,7 @@ namespace Mono.Security.Cryptography {
 		public override RSAParameters ExportParameters (bool includePrivateParameters) 
 		{
 			if (m_disposed)
-				throw new ObjectDisposedException ("");
+				throw new ObjectDisposedException (Locale.GetText ("Keypair was disposed"));
 
 			if (!keypairGenerated)
 				GenerateKeyPair ();
@@ -293,7 +293,7 @@ namespace Mono.Security.Cryptography {
 		public override void ImportParameters (RSAParameters parameters) 
 		{
 			if (m_disposed)
-				throw new ObjectDisposedException ("");
+				throw new ObjectDisposedException (Locale.GetText ("Keypair was disposed"));
 
 			// if missing "mandatory" parameters
 			if (parameters.Exponent == null) 
