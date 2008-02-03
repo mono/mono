@@ -1,5 +1,9 @@
 2008-02-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* local-propagation.c: Fix the div_imm strength reduction optimization.
+
+	* mini-sparc.c (mono_arch_allocate_vars): Fix build.
+
 	* method-to-ir.c (mono_method_to_ir2): Merge the cctor call before alloc workaround
 	from mini.c.
 

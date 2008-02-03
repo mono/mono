@@ -1243,12 +1243,13 @@ mono_local_cprop2 (MonoCompile *cfg)
 	MonoBasicBlock *bb;
 	MonoInst **defs;
 	guint32 *def_index;
-	int max = cfg->next_vreg;
+	int max;
 
 #if SIZEOF_VOID_P == 4
 restart:
 #endif
 
+	max = cfg->next_vreg;
 	defs = mono_mempool_alloc (cfg->mempool, sizeof (MonoInst*) * (cfg->next_vreg + 1));
 	def_index = mono_mempool_alloc (cfg->mempool, sizeof (guint32) * (cfg->next_vreg + 1));
 
