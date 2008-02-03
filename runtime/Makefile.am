@@ -3,7 +3,7 @@ AUTOMAKE_OPTIONS = cygnus
 
 tmpinst = _tmpinst
 
-noinst_SCRIPTS = mono-wrapper monodis-wrapper semdel-wrapper
+noinst_SCRIPTS = mono-wrapper monodis-wrapper
 
 etctmp = etc
 symlinks = etc/mono/1.0/machine.config etc/mono/2.0/machine.config etc/mono/2.0/web.config etc/mono/browscap.ini
@@ -50,10 +50,10 @@ install-data:
 uninstall:
 	cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' RUNTIME_HAS_CONSISTENT_GACDIR=yes prefix=$(prefix) uninstall-profiles
 
-## semdel-wrapper will probably not delete the semaphore if someone is crazy enough to do a 'make -j distclean' :-)
+## mono --wapi=semdel will probably not delete the semaphore if someone is crazy enough to do a 'make -j distclean' :-)
 clean-local:
 	cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' clean-profiles
-	-./semdel-wrapper
+	-./mono-wrapper --wapi=semdel
 	-rm -fr $(etctmp) $(tmpinst) .wapi
 
 endif BUILD_MCS
