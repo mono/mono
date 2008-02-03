@@ -1,3 +1,9 @@
+2008-02-03 Arina Itkes <arinai@mainsoft.com>
+
+	* XmlSchemaExporter.cs : Generated typed DataTable and typed DataSet 
+	  have an identical schema and an identical TargetNamespace. 
+	  This fix is a workaround for this specific case.
+
 2008-01-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TypeData.cs : fixed setter which did not actually see the argument.
