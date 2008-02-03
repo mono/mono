@@ -1,5 +1,11 @@
 2008-02-03  Luke Page   <luke.a.page@gmail.com>
 
+	* RichTextBoxTest.cs: Restored property test with failing tests
+	commented so that it tests the fix to bug 358379 that AutoSize
+	defaults to false.
+
+2008-02-03  Luke Page   <luke.a.page@gmail.com>
+
 	* TextBoxTest.cs: Added test from James Purcell for bug #358229 to
 	test FixedHeight control style when multiline changed.
 
