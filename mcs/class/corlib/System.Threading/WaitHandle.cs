@@ -83,7 +83,8 @@ namespace System.Threading
 #endif
 			}
 		}
-
+#if false
+		// usage of property is commented - see above
 		static bool IsSTAThread {
 			get {
 				bool isSTA = Thread.CurrentThread.ApartmentState ==
@@ -100,7 +101,7 @@ namespace System.Threading
 				return isSTA;
 			}
 		}
-		
+#endif
 		public static bool WaitAll(WaitHandle[] waitHandles)
 		{
 			CheckArray (waitHandles, true);

@@ -1,3 +1,7 @@
+2008-02-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* WaitHandle.cs: Ifdef out some unused code (found by Gendarme).
+
 2008-01-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* Thread.cs (set_CurrentCulture): If the culture is read-only, cache the result
