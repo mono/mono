@@ -8133,6 +8133,22 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					 * will be transformed into a normal call there.
 					 */
 				} else {
+					MonoVTable *vtable = mono_class_vtable (cfg->domain, cmethod->klass);
+					/*
+					 * TypeInitializationExceptions thrown from the mono_runtime_class_init
+					 * call in mono_jit_runtime_invoke () can abort the finalizer thread.
+					 * As a workaround, we call class cctors before allocating objects.
+					 */
+					if (mini_field_access_needs_cctor_run (cfg, method, vtable) && !(g_slist_find (class_inits, vtable))) {
+						guint8 *tramp = mono_create_class_init_trampoline (vtable);
+						mono_emit_native_call (cfg, tramp, 
+											   helper_sig_class_init_trampoline,
+											   NULL);
+						if (cfg->verbose_level > 2)
+							printf ("class %s.%s needs init call for ctor\n", cmethod->klass->name_space, cmethod->klass->name);
+						class_inits = g_slist_prepend (class_inits, vtable);
+					}
+
 					alloc = handle_alloc (cfg, cmethod->klass, FALSE);
 					*sp = alloc;
 				}

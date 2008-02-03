@@ -1,3 +1,8 @@
+2008-02-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir2): Merge the cctor call before alloc workaround
+	from mini.c.
+
 2008-01-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-sparc.c mini-ia64.c: Fix build.
