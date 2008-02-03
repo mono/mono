@@ -1888,7 +1888,7 @@ mono_branch_to_cmov (MonoCompile *cfg)
 			if (!(INS_HAS_NO_SIDE_EFFECT (ins1) && INS_HAS_NO_SIDE_EFFECT (ins2)))
 				continue;
 
-			if (bb->last_ins && bb->last_ins->opcode == OP_BR_REG)
+			if (bb->last_ins && (bb->last_ins->opcode == OP_BR_REG || bb->last_ins->opcode == OP_BR))
 				continue;
 
 			/* Find the compare instruction */
@@ -2037,6 +2037,9 @@ mono_branch_to_cmov (MonoCompile *cfg)
 			}
 
 			ins1 = code_bb->code;
+
+			if (!ins1)
+				continue;
 
 			/* Check that code_bb is simple */
 			simple = TRUE;
