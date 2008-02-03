@@ -790,6 +790,18 @@ namespace MonoTests.System.Windows.Forms
 			tb.BorderStyle = BorderStyle.None;
 			Assert.IsTrue (eventLogger.EventRaised ("BorderStyleChanged"));
 		}
+
+		[Test]
+		public void FixedHeightControlStyle ()
+		{
+			TextBoxPublic t = new TextBoxPublic ();
+
+			t.Multiline = true;
+			Assert.IsFalse (t.GetStylePublic (ControlStyles.FixedHeight), "A1");
+
+			t.Multiline = false;
+			Assert.IsTrue (t.GetStylePublic (ControlStyles.FixedHeight), "A2");
+		}
 		
 		[Test]
 		public void ModifiedTest ()
@@ -847,6 +859,13 @@ namespace MonoTests.System.Windows.Forms
 			public bool PublicIsInputChar (char charCode)
 			{
 				return base.IsInputChar (charCode);
+			}
+		}
+
+		private class TextBoxPublic : TextBox
+		{
+			public bool GetStylePublic (ControlStyles flag) {
+				return GetStyle (flag);
 			}
 		}
 	}

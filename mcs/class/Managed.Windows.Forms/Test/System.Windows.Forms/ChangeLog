@@ -1,3 +1,8 @@
+2008-02-03  Luke Page   <luke.a.page@gmail.com>
+
+	* TextBoxTest.cs: Added test from James Purcell for bug #358229 to
+	test FixedHeight control style when multiline changed.
+
 2008-02-01  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ListBoxTest.cs: Disable test that is default font dependent.
