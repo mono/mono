@@ -28,18 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Text;
-using System.Collections;
-using System.Reflection;
-using System.Reflection.Emit;
 using System.Runtime.Serialization;
-
-using RegularExpression = System.Text.RegularExpressions.Syntax.RegularExpression;
-using Parser = System.Text.RegularExpressions.Syntax.Parser;
-
-using System.Diagnostics;
-
 
 namespace System.Text.RegularExpressions
 {
@@ -70,7 +59,7 @@ namespace System.Text.RegularExpressions
 			if (machineFactory is InterpreterFactory)
 				return null;
 
-			return (JvmReMachine) ((JvmReMachineFactory) machineFactory).GetMachine ();
+			return ((JvmReMachineFactory) machineFactory).GetMachine ();
 		}
 
 		internal int GetJavaNumberByNetNumber (int netNumber) {
@@ -95,20 +84,22 @@ namespace System.Text.RegularExpressions
 			}
 
 			PatternData patternData = null;
-			try
-			{
+			string errorMessage = null;
+			try{
 				patternData = PatternDataBuilder.GetPatternData(pattern, roptions);
-			}catch(Exception e)
-			{
+			}catch(Exception e){
 #if DEBUG
 				throw;
 #endif
-				Console.WriteLine("Creating pattern on JVM failed for pattern " + pattern
-					+ "\n" + e.Message);
+				errorMessage = "Creating pattern on JVM failed for pattern " + pattern
+				+ "\n" + e.Message;
 			}
 
-			if (patternData == null)
-				InitNewRegex ();
+			if (patternData == null){
+				InitNewRegex();
+				if (errorMessage != null)
+					Console.WriteLine (errorMessage);
+			}
 			else
 				InitJvmRegex (patternData);
 
