@@ -1,3 +1,8 @@
+2008-02-03  Luke Page  <luke.a.page@gmail.com>
+	* TextBoxBase.cs - commited patch from James Purcell that
+	correctly sets the FixedHeight control style when the MultiLine
+	property is changed on a TextBox control. Fixes bug 358229.
+
 2008-02-02  Luke Page  <luke.a.page@gmail.com>
 
 	* Line.cs, LineTag.cs, RichTextBox.cs, TextControl.cs

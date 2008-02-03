@@ -453,6 +453,9 @@ namespace System.Windows.Forms
 				if (value != document.multiline) {
 					document.multiline = value;
 
+					if (this is TextBox)
+						SetStyle (ControlStyles.FixedHeight, !value);
+
 					// SetBoundsCore overrides the Height for multiline if it needs to,
 					// so we don't need to worry about it here.
 					SetBoundsCore (Left, Top, Width, ExplicitBounds.Height, BoundsSpecified.None);
