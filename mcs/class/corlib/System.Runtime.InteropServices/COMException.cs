@@ -2,13 +2,10 @@
 // COMException.cs - COM Exception
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Motus Technologies Inc. (http://www.motus.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -58,9 +55,9 @@ public class COMException : ExternalException {
 	public override string ToString ()
 	{
 		return String.Format (
-			"{0} (0x{1:x}): {2} {3}\n{4}",
-			GetType (), HResult, Message, InnerException == null ? "" : InnerException.ToString (),
-			StackTrace != null ? StackTrace : "");
+			"{0} (0x{1:x}): {2} {3}{4}{5}",
+			GetType (), HResult, Message, InnerException == null ? String.Empty : InnerException.ToString (),
+			Environment.NewLine, StackTrace != null ? StackTrace : String.Empty);
 	}
 } 
 
