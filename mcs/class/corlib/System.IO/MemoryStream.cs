@@ -134,12 +134,6 @@ namespace System.IO
 				throw new ObjectDisposedException ("MemoryStream");
 		}
 		
-		void CheckIfClosedThrowIO ()
-		{
-			if (streamClosed)
-				throw new IOException ("MemoryStream is closed");
-		}
-		
 		public override bool CanRead {
 			get { return !streamClosed; }
 		}

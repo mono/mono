@@ -210,7 +210,7 @@ namespace System.IO
 			return result;
 		}
 
-		delegate void WriteDelegate (byte [] buffer, int offset, int count);
+//		delegate void WriteDelegate (byte [] buffer, int offset, int count);
 
 		public virtual IAsyncResult
 		BeginWrite (byte [] buffer, int offset, int count, AsyncCallback cback, object state)

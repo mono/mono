@@ -1,3 +1,7 @@
+2008-02-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MemoryStream.cs: Remove unused code found by Gendarme.
+
 2008-01-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* BinaryReader.cs: Fix ReadCharBytes method to avoid non-linear behavior. 
