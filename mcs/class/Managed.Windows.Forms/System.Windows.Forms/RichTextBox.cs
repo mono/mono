@@ -83,6 +83,7 @@ namespace System.Windows.Forms {
 			document.CRLFSize = 1;
 			shortcuts_enabled = true;
 			base.EnableLinks = true;
+			richtext = true;
 			
 			rtf_style = new RtfSectionStyle ();
 			rtf_section_stack = null;

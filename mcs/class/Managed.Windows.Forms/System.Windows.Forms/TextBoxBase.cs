@@ -2172,22 +2172,20 @@ namespace System.Windows.Forms
 
 		private void TextBoxBase_FontOrColorChanged (object sender, EventArgs e)
 		{
-			if (!richtext) {
-				Line	line;
+			Line	line;
 
-				document.SuspendRecalc ();
-				// Font changes apply to the whole document
-				for (int i = 1; i <= document.Lines; i++) {
-					line = document.GetLine(i);
-					if (LineTag.FormatText(line, 1, line.text.Length, Font, ForeColor,
-							Color.Empty, FormatSpecified.Font | FormatSpecified.Color))
-						document.RecalculateDocument (CreateGraphicsInternal (), line.LineNo, line.LineNo, false);
-				}
-				document.ResumeRecalc (false);
-
-				// Make sure the caret height is matching the new font height
-				document.AlignCaret();
+			document.SuspendRecalc ();
+			// Font changes apply to the whole document
+			for (int i = 1; i <= document.Lines; i++) {
+				line = document.GetLine(i);
+				if (LineTag.FormatText(line, 1, line.text.Length, Font, ForeColor,
+						Color.Empty, FormatSpecified.Font | FormatSpecified.Color))
+					document.RecalculateDocument (CreateGraphicsInternal (), line.LineNo, line.LineNo, false);
 			}
+			document.ResumeRecalc (false);
+
+			// Make sure the caret height is matching the new font height
+			document.AlignCaret();
 		}
 
 		private void ScrollTimerTickHandler (object sender, EventArgs e)

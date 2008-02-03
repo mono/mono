@@ -1504,7 +1504,7 @@ namespace System.Windows.Forms {
 
 				case CaretDirection.PgUp: {
 
-					if (viewport_y == 0 && owner.richtext) {
+					if (caret.line.line_no == 1 && owner.richtext) {
 						owner.vscroll.Value = 0;
 						Line line = GetLine (1);
 						PositionCaret (line, 0);
@@ -1523,10 +1523,10 @@ namespace System.Windows.Forms {
 
 				case CaretDirection.PgDn: {
 
-					if (viewport_y + viewport_height >= document_y && owner.richtext) {
+					if (caret.line.line_no == lines && owner.richtext) {
 						owner.vscroll.Value = owner.vscroll.Maximum - viewport_height + 1;
 						Line line = GetLine (lines);
-						PositionCaret (line, line.Text.Length);
+						PositionCaret (line, line.TextLengthWithoutEnding());
 					}
 
 					int y_offset = caret.line.Y - viewport_y;

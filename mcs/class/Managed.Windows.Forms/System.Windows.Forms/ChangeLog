@@ -1,4 +1,11 @@
 2008-02-03  Luke Page  <luke.a.page@gmail.com>
+
+	* TextBoxBase.cs, RichTextBox.cs, TextControl.cs: Sets richtext
+	property. Removed if for richtext property that was always true.
+	PgUp/PgDn at top/bottom fixed for RTB. Fixes bug #358237.
+
+2008-02-03  Luke Page  <luke.a.page@gmail.com>
+
 	* TextBoxBase.cs - commited patch from James Purcell that
 	correctly sets the FixedHeight control style when the MultiLine
 	property is changed on a TextBox control. Fixes bug 358229.
