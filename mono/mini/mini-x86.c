@@ -4190,7 +4190,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	int alloc_size, pos, max_offset, i;
 	guint8 *code;
 
-	cfg->code_size =  MAX (mono_method_get_header (method)->code_size * 4, 1024);
+	cfg->code_size =  MAX (mono_method_get_header (method)->code_size * 4, 10240);
 
 	if (cfg->prof_options & MONO_PROFILE_ENTER_LEAVE)
 		cfg->code_size += 512;
