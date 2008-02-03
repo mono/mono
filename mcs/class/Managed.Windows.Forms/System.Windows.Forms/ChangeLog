@@ -1,5 +1,10 @@
 2008-02-03  Luke Page  <luke.a.page@gmail.com>
 
+	* RichTextBox.cs: AutoSize now defaults to false. Fixes Bug
+	#358379.
+
+2008-02-03  Luke Page  <luke.a.page@gmail.com>
+
 	* TextBoxBase.cs, RichTextBox.cs, TextControl.cs: Sets richtext
 	property. Removed if for richtext property that was always true.
 	PgUp/PgDn at top/bottom fixed for RTB. Fixes bug #358237.

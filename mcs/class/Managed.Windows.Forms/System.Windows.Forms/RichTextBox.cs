@@ -74,6 +74,7 @@ namespace System.Windows.Forms {
 		#region Public Constructors
 		public RichTextBox() {
 			accepts_return = true;
+			auto_size = false;
 			auto_word_select = false;
 			bullet_indent = 0;
 			max_length = Int32.MaxValue;
