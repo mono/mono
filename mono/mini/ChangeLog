@@ -1,5 +1,7 @@
 2008-02-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-x86.c (mono_arch_emit_prolog): Add a missing assert.
+	
 	* mini-x86.c (mono_arch_emit_prolog): Increase the prolog size.
 
 	* local-propagation.c (mono_branch_to_cmov): Fix some asserts.

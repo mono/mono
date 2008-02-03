@@ -4392,6 +4392,8 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 
 	cfg->code_len = code - cfg->native_code;
 
+	g_assert (cfg->code_len < cfg->code_size);
+
 	return code;
 }
 
