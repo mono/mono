@@ -1,3 +1,10 @@
+2008-02-03  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: Don't invalidate on region change.  The WM should
+	take care of this automagically.  Keeps us out of an infinite
+	paint loop if someone changes the Region in the OnPaint.
+	[Fixes bug #358327]
+
 2008-02-04  Ivan N. Zlatev  <contact@i-nz.net>
 
 	 * ImageIndexConverter.cs: ConvertFrom must handle "(none)".
