@@ -1,3 +1,10 @@
+2008-01-28  Jonathan Pryor  <jpryor@novell.com>
+
+	* Stdlib.cs: Obsolete Stdlib.signal(), as it's not safe; see also:
+	  http://lists.ximian.com/pipermail/mono-devel-list/2008-January/026501.html
+	  http://lists.ximian.com/pipermail/mono-devel-list/2008-January/026503.html
+	  Add SetSignalAction() as a replacement.
+
 2008-01-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Syscall.cs: Fix Flock.Equals to avoid NRE (and return false if object 

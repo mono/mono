@@ -25,6 +25,7 @@
 ./Mono.Unix/UnixPath.cs
 ./Mono.Unix/UnixPipes.cs
 ./Mono.Unix/UnixProcess.cs
+./Mono.Unix/UnixSignal.cs
 ./Mono.Unix/UnixStream.cs
 ./Mono.Unix/UnixSymbolicLinkInfo.cs
 ./Mono.Unix/UnixUserInfo.cs
