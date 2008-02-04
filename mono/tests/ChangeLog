@@ -1,5 +1,9 @@
 2008-02-04  Massimiliano Mantione  <massi@ximian.com>
 
+	* iface4.cs: Also added another "level" of inheritance...
+
+2008-02-04  Massimiliano Mantione  <massi@ximian.com>
+
 	* iface4.cs: Tested also Stop method (just to be on the safe side).
 
 2008-01-28  Rodrigo Kumpera  <rkumpera@novell.com>
