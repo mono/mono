@@ -259,6 +259,7 @@ namespace System.Web.Compilation
 
 		public void Parse (string file)
 		{
+			isApplication = tparser.DefaultDirectiveName == "application";
 #if ONLY_1_1
 			InitParser (file);
 #endif
@@ -333,7 +334,6 @@ namespace System.Web.Compilation
 				return type;
 			}
 
-			isApplication = tparser.DefaultDirectiveName == "application";
 			Parse ();
 
 			BaseCompiler compiler = GetCompilerFromType ();
