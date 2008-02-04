@@ -1495,8 +1495,11 @@ namespace System.Windows.Forms {
 						break;
 					}
 				case Keys.F4:
-					if (!is_drop_down_visible)
-						DropDownMonthCalendar();
+					if (!e.Alt && !is_drop_down_visible) {
+						DropDownMonthCalendar ();
+						e.Handled = true;
+					}
+
 					break;
 			}
 		}

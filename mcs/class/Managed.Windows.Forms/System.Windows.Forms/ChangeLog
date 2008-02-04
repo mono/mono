@@ -1,5 +1,12 @@
 2008-02-03  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DateTimePicker.cs: Apply patch from Srikanth Madikeri so we drop
+	down the MonthCalendar only on F4, not Alt+F4.
+	* MonthCalendar.cs: If we are a popup, close ourselves on Alt+F4.
+	[Fixes bug #358340]
+
+2008-02-03  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ThemeWin32Classic.cs: For MonthCalendar, draw a dark border
 	if its part of a DateTimePicker, else, use the back color.
 	[Fixes bug #358339]

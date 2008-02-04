@@ -2143,6 +2143,13 @@ namespace System.Windows.Forms {
 						this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 						e.Handled = true;
 						break;
+					case Keys.F4:
+						// Close ourselves on Alt-F4 if we are a popup
+						if (e.Alt && owner != null) {
+							this.Hide ();
+							e.Handled = true;
+						}
+						break;
 					default:
 						break;
 				}
