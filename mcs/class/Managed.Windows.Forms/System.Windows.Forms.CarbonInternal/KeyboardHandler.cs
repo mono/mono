@@ -254,6 +254,8 @@ namespace System.Windows.Forms.CarbonInternal {
 				msg.lParam = new IntPtr (0x20000000);
 			} else if (msg.message == Msg.WM_SYSKEYUP && translate_modifier && msg.wParam == (IntPtr) 18) {
 				msg.message = Msg.WM_KEYUP;
+				
+				msg.lParam = IntPtr.Zero;
 				translate_modifier = false;
 			}
 

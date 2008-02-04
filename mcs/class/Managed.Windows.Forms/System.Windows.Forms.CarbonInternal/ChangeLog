@@ -1,5 +1,10 @@
 2008-02-04  Geoff Norton  <gnorton@novell.com>
 
+	* KeyboardHandler.cs: lParam should be cleared in the broken menu 
+	filter case.
+
+2008-02-04  Geoff Norton  <gnorton@novell.com>
+
 	* KeyboardHandler.cs: Control+key does not generate SYSKEY, it prevents
 	SYSKEY (ctrl+alt+foo).  Also implement broken menu keyup filtering.
 
