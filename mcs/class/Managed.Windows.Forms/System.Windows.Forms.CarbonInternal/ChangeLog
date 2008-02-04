@@ -1,5 +1,9 @@
 2008-02-04  Geoff Norton  <gnorton@novell.com>
 
+	* KeyboardHandler.cs: Filter the translate call.
+
+2008-02-04  Geoff Norton  <gnorton@novell.com>
+
 	* KeyboardHandler.cs: Commit support for the last batch of keytypes
 	(F1-12; Fn+modifiers; etc).
 

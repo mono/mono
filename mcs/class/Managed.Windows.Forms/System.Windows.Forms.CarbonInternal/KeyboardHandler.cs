@@ -259,8 +259,10 @@ namespace System.Windows.Forms.CarbonInternal {
  
 			if (msg.message >= Msg.WM_KEYFIRST && msg.message <= Msg.WM_KEYLAST)
 				res = true;
- 
 			
+			if (msg != Msg.WM_KEYDOWN && msg != Msg.WM_SYSKEYDOWN && msg != Msg.WM_KEYUP && msg != Msg.WM_SYSKEYUP && msg != Msg.WM_CHAR && msg != Msg.WM_SYSCHAR) 
+				return res;
+
 			if (key_modifier_table [8] == 0x01 && key_modifier_table [12] == 0x00 && key_modifier_table [14] == 0x00) {
 				if (msg.message == Msg.WM_KEYDOWN) {
 					msg.message = Msg.WM_SYSKEYDOWN;
