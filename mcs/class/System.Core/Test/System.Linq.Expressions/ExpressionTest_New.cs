@@ -112,12 +112,14 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void NewBar ()
 		{
 			var n = Expression.New (typeof (Bar));
 
 			Assert.IsNotNull (n.Constructor);
+			Assert.IsNotNull (n.Arguments);
+			Assert.IsNull (n.Members); // wrong doc
+
 			Assert.AreEqual ("new Bar()", n.ToString ());
 
 			n = Expression.New (typeof (Bar).GetConstructor (Type.EmptyTypes));
