@@ -255,38 +255,45 @@ namespace System.Xml.Schema
 				typeof (XmlSchemaParticle));
 		}
 
-		public void GetUnspecifiedDefaultAttributes (ArrayList list)
+		public void GetUnspecifiedDefaultAttributes (ArrayList defaultAttributeList)
 		{
+			if (defaultAttributeList == null)
+				throw new ArgumentNullException ("defaultAttributeList");
+
 			if (transition != Transition.StartTag)
 				throw new InvalidOperationException ("Method 'GetUnsoecifiedDefaultAttributes' works only when the validator state is inside a start tag.");
 			foreach (XmlSchemaAttribute attr
 				in GetExpectedAttributes ())
 				if (attr.ValidatedDefaultValue != null || attr.ValidatedFixedValue != null)
-					list.Add (attr);
+					defaultAttributeList.Add (attr);
 
-			list.AddRange (defaultAttributes);
+			defaultAttributeList.AddRange (defaultAttributes);
 		}
 
 		// State Controller
 
 		public void AddSchema (XmlSchema schema)
 		{
+			if (schema == null)
+				throw new ArgumentNullException ("schema");
 			schemas.Add (schema);
 			schemas.Compile ();
 		}
 
 		public void Initialize ()
 		{
-			Initialize (null);
-		}
-
-		public void Initialize (SOMObject startType)
-		{
-			this.startType = startType;
 			transition = Transition.Content;
 			state = new XsdParticleStateManager ();
 			if (!schemas.IsCompiled)
 				schemas.Compile ();
+		}
+
+		public void Initialize (SOMObject partialValidationType)
+		{
+			if (partialValidationType == null)
+				throw new ArgumentNullException ("partialValidationType");
+			this.startType = partialValidationType;
+			Initialize ();
 		}
 
 		// It must be called at the end of the validation (to check
@@ -324,8 +331,15 @@ namespace System.Xml.Schema
 			string attributeValue,
 			XmlSchemaInfo info)
 		{
+			if (attributeValue == null)
+				throw new ArgumentNullException ("attributeValue");
 			return ValidateAttribute (localName, ns,
-				delegate () { return info.SchemaType.Datatype.ParseValue (attributeValue, nameTable, nsResolver); },
+				delegate () {
+					if (info != null && info.SchemaType != null && info.SchemaType.Datatype != null)
+						return info.SchemaType.Datatype.ParseValue (attributeValue, nameTable, nsResolver);
+					else
+						return attributeValue;
+				},
 				info);
 		}
 
@@ -333,7 +347,7 @@ namespace System.Xml.Schema
 		// value might not be required (and thus it improves 
 		// performance in some cases. Doh).
 
-		// The return value is typed primitive, is possible.
+		// The return value is typed primitive, if possible.
 		// AttDeriv
 		public object ValidateAttribute (
 			string localName,
@@ -341,6 +355,13 @@ namespace System.Xml.Schema
 			XmlValueGetter attributeValue,
 			XmlSchemaInfo info)
 		{
+			if (localName == null)
+				throw new ArgumentNullException ("localName");
+			if (ns == null)
+				throw new ArgumentNullException ("ns");
+			if (attributeValue == null)
+				throw new ArgumentNullException ("attributeValue");
+
 			CheckState (Transition.StartTag);
 
 			QName qname = new QName (localName, ns);
@@ -354,11 +375,14 @@ namespace System.Xml.Schema
 			if (schemas.Count == 0)
 				return null;
 
-			// 3.3.4 Element Locally Valid (Type) - attribute
-			if (Context.ActualType is ComplexType)
-				return AssessAttributeElementLocallyValidType (localName, ns, attributeValue, info);
-			else
-				HandleError ("Current simple type cannot accept attributes other than schema instance namespace.");
+			if (Context.Element != null && Context.XsiType == null) {
+
+				// 3.3.4 Element Locally Valid (Type) - attribute
+				if (Context.ActualType is ComplexType)
+					return AssessAttributeElementLocallyValidType (localName, ns, attributeValue, info);
+				else
+					HandleError ("Current simple type cannot accept attributes other than schema instance namespace.");
+			}
 			return null;
 		}
 
@@ -380,6 +404,11 @@ namespace System.Xml.Schema
 			string schemaLocation,
 			string noNsSchemaLocation)
 		{
+			if (localName == null)
+				throw new ArgumentNullException ("localName");
+			if (ns == null)
+				throw new ArgumentNullException ("ns");
+
 			CheckState (Transition.Content);
 			transition = Transition.StartTag;
 
@@ -484,6 +513,8 @@ namespace System.Xml.Schema
 		// or content type validation errors.
 		public void ValidateText (string value)
 		{
+			if (value == null)
+				throw new ArgumentNullException ("value");
 			ValidateText (delegate () { return value; });
 		}
 
@@ -491,6 +522,9 @@ namespace System.Xml.Schema
 		// ValidateAtomicValue().
 		public void ValidateText (XmlValueGetter getter)
 		{
+			if (getter == null)
+				throw new ArgumentNullException ("getter");
+
 			CheckState (Transition.Content);
 			if (schemas.Count == 0)
 				return;
@@ -514,6 +548,8 @@ namespace System.Xml.Schema
 
 		public void ValidateWhitespace (string value)
 		{
+			if (value == null)
+				throw new ArgumentNullException ("value");
 			ValidateWhitespace (delegate () { return value; });
 		}
 
@@ -788,7 +824,7 @@ namespace System.Xml.Schema
 				try {
 					parsedValue = getter ();
 				} catch (Exception ex) { // It is inevitable and bad manner.
-					HandleError ("Attribute value is invalid against its data type " + dt.TokenizedType, ex);
+					HandleError (String.Format ("Attribute value is invalid against its data type {0}", dt != null ? dt.TokenizedType : default (XmlTokenizedType)), ex);
 				}
 
 				// check part of 3.14.4 StringValid

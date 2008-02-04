@@ -1,3 +1,7 @@
+2008-02-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaValidatorTests.cs : new. Test for bug #358408.
+
 2006-08-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSchemaTest.cs : added bug #78985 case.

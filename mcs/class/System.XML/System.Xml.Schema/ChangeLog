@@ -1,3 +1,11 @@
+2008-02-04  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaValidator.cs : added couple of null argument check.
+	  Do not depend on XmlSchemaInfo to retrieve attribute value (it
+	  could be null).
+	  Do not practically validate attribute when it is not in validating
+	  state (i.e. inside xs:any). Fixed bug #358408.
+
 2008-01-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* XmlSchemaInference.cs: Fix infinite recursion in TypeInference
