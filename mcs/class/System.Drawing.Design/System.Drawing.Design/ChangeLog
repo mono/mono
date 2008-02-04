@@ -1,3 +1,8 @@
+2008-02-04  Ivan N. Zlatev  <contact@i-nz.net>
+
+	 * ColorEditor.cs: Perfom action in OnMouseUp only if in client.
+	 [Fixes bug #358444]
+
 2007-11-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ToolboxItemCreator.cs, ToolboxService.cs, ToolboxItemContainer.cs:

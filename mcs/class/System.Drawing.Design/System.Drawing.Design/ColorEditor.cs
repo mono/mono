@@ -344,7 +344,7 @@ namespace System.Drawing.Design
 
 			protected override void OnMouseUp (MouseEventArgs e)
 			{
-				if (highlighting) {
+				if (highlighting && this.ClientRectangle.Contains (e.X, e.Y)) {
 					if (ColorChanged != null)
 						ColorChanged (colors[y / 24, x / 24], EventArgs.Empty);
 					highlighting = false;
