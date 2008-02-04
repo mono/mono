@@ -239,15 +239,15 @@ namespace System.Xml.Serialization {
 				schemas.Add (map.Schema);
 				ImportNamespace (currentSchema, targetNs);
 	        }
-			else if (existingSchema != map.Schema && !CanBeDuplicated (existingSchema, map.Schema))
+	        else if (existingSchema != map.Schema && !CanBeDuplicated (existingSchema, map.Schema))
 	        {
 				throw new InvalidOperationException("The namespace '" + targetNs +"' defined by the class '" + map.TypeFullName + "' is a duplicate.");
 	        }
 		}
 
-		private static bool CanBeDuplicated(XmlSchema existingSchema, XmlSchema schema)
+		private static bool CanBeDuplicated (XmlSchema existingSchema, XmlSchema schema)
 		{
-			if(XmlSchemas.IsDataSet(existingSchema) && XmlSchemas.IsDataSet(schema)
+			if(XmlSchemas.IsDataSet (existingSchema) && XmlSchemas.IsDataSet (schema)
 				&& existingSchema.Id == schema.Id)
 				return true;
 			return false;
