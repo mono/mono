@@ -106,6 +106,8 @@ namespace MonoTests.System.Linq.Expressions {
 
 			Assert.AreEqual (ExpressionType.New, n.NodeType);
 			Assert.AreEqual (typeof (Foo), n.Type);
+			Assert.AreEqual (1, n.Arguments.Count);
+			Assert.IsNull (n.Members);
 			Assert.AreEqual ("new Foo(\"foo\")", n.ToString ());
 		}
 
