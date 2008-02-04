@@ -377,8 +377,6 @@ namespace System.Windows.Forms {
 				MetaDataChanged (this, e);
 		}
 
-		/* TODO - We need to fire the 2.0 ListChanged event for -likely- all the events,
-		since we are only doing it by now for ItemChanged - but need tests to ensure it */
 		private void ListChangedHandler (object sender, ListChangedEventArgs e)
 		{
 			switch (e.ListChangedType) {
@@ -423,7 +421,6 @@ namespace System.Windows.Forms {
 					UpdateIsBinding ();
 #else
 					OnItemChanged (new ItemChangedEventArgs (-1));
-					OnListChanged (e);
 #endif
 				}
 				else {
@@ -460,6 +457,9 @@ namespace System.Windows.Forms {
 				//				UpdateIsBinding ();
 				break;
 			}
+#if NET_2_0
+			OnListChanged (e);
+#endif
 		}
 
 #if NET_2_0

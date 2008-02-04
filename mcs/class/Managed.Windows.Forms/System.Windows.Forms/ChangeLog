@@ -1,3 +1,8 @@
+2008-02-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* CurrencyManager.cs: When we get a ListChanged event from our source,
+	always fire our own ListChanged event, as .Net does.
+
 2008-02-03  Luke Page  <luke.a.page@gmail.com>
 
 	* RichTextBox.cs: AutoSize now defaults to false. Fixes Bug
