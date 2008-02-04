@@ -1,3 +1,11 @@
+2008-02-04  Geoff Norton  <gnorton@novell.com>
+
+	* EventHandler.cs: Expose GetEventClass internally.  Subscribe to
+	the unicode text events.
+	* KeyboardHandler.cs: Commit the new keyboard handler.  We grab
+	the unicode characters provided by apple and push them thru a translation
+	table to generate windows style keyboard events.
+
 2008-01-28  Geoff Norton  <gnorton@novell.com>
 
 	* EventHandler.cs: Subscribe ot ResizeBegin and ResizeEnd events.
