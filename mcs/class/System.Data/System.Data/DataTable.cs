@@ -1706,7 +1706,7 @@ namespace System.Data {
 
 		void IXmlSerializable.ReadXml (XmlReader reader) 
 		{
-			ReadXml (reader);
+			ReadXml_internal (reader, true);
 		}
 
 		void IXmlSerializable.WriteXml (XmlWriter writer) 
@@ -2061,6 +2061,11 @@ namespace System.Data {
 
 		public XmlReadMode ReadXml (XmlReader reader)
 		{
+			return ReadXml_internal (reader, false);
+		}
+
+		public XmlReadMode ReadXml_internal (XmlReader reader, bool serializable) 
+		{
 			// The documentation from MS for this method is rather
 			// poor.  The following cases have been observed
 			// during testing:
@@ -2086,7 +2091,7 @@ namespace System.Data {
 			DataSet ds = new DataSet ();
 
 			reader.MoveToContent ();
-			if (Columns.Count > 0 && reader.LocalName != "diffgram") 
+			if (Columns.Count > 0 && reader.LocalName != "diffgram" || serializable)
 				mode = ds.ReadXml (reader);
 			else if (Columns.Count > 0 && reader.LocalName == "diffgram") {
 				  try {

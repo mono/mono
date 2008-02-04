@@ -1,3 +1,8 @@
+2008-02-04 Arina Itkes <arinai@mainsoft.com>
+
+	* DataTableTest5.cs: Removing of "Ignore" category
+	  for tests on IXmlSerializable.ReadXml for empty DataTable.
+
 2008-02-03 Arina Itkes <arinai@mainsoft.com>
 
 	* XmlExportOfTypedDataSetTest.cs: added test for exporting of

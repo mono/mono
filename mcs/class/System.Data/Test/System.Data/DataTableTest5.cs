@@ -451,7 +451,6 @@ namespace Monotests_System.Data
 			Assert.AreEqual (3, row ["DepartmentID"], "#75");
 		}
 
-		[Ignore ("IXmlSerializable.ReadXml does not work for a table without columns defined.")]
 		[Test]
 		public void XmlTest1 () {
 			//Make a table without any relations
@@ -470,7 +469,6 @@ namespace Monotests_System.Data
 			VerifyTableSchema (table, parentTable1.TableName, null);//parentTable1.DataSet);
 		}
 
-		[Ignore ("IXmlSerializable.ReadXml does not work for a table without columns defined.")]
 		[Test]
 		public void XmlTest2 () {
 			MakeParentTable1 ();
@@ -487,7 +485,6 @@ namespace Monotests_System.Data
 			VerifyTableSchema (table, parentTable1.TableName, ds);
 		}
 
-		[Ignore ("IXmlSerializable.ReadXml does not work for a table without columns defined.")]
 		[Test]
 		public void XmlTest3 () {
 			//Create a parent table and create child tables
@@ -506,7 +503,7 @@ namespace Monotests_System.Data
 			VerifyTableSchema (table, parentTable1.TableName, null);
 		}
 
-		[Ignore ("IXmlSerializable.ReadXml does not work for a table without columns defined.")]
+		
 		[Test]
 		public void XmlTest4 () {
 			//Create a parent table and create child tables
@@ -1063,7 +1060,6 @@ namespace Monotests_System.Data
 			Assert.AreEqual (DataRowState.Unchanged, row.RowState, "#10");
 		}
 
-		[Ignore ("IXmlSerializable.ReadXml does not work for a table without columns defined.")]
 		[Test]
 		public void XmlTest16 () {
 			FileStream stream = null;
