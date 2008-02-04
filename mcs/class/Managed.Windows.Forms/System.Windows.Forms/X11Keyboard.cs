@@ -51,6 +51,7 @@ namespace System.Windows.Forms {
 		private int lcid;
 		private bool num_state, cap_state;
 		private bool initialized;
+		private bool menu_state = false;
 
 		private int NumLockMask;
 		private int AltGrMask;
@@ -205,8 +206,16 @@ namespace System.Windows.Forms {
 			if (msg.message >= Msg.WM_KEYFIRST && msg.message <= Msg.WM_KEYLAST)
 				res = true;
 
+			if (msg.message == Msg.WM_SYSKEYUP && msg.wParam == (IntPtr) 0x12 && menu_state) {
+				msg.message = Msg.WM_KEYUP;
+				menu_state = false;
+			}
+
 			if (msg.message != Msg.WM_KEYDOWN && msg.message != Msg.WM_SYSKEYDOWN)
 				return res;
+
+			if ((key_state_table [(int) VirtualKeys.VK_MENU] & 0x80) != 0 && msg.wParam != (IntPtr) 0x12)
+				menu_state = true;
 
 			EnsureLayoutInitialized ();
 

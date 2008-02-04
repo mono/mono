@@ -1,3 +1,9 @@
+2008-02-04  Geoff Norton  <gnorton@novell.com>
+
+	* X11Keyboard.cs: VK_MENU should send a KEYUP instead of 
+	SYSKEYUP if any other key has been pressed in the mean time.
+	Fixes #324404
+
 2008-02-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: In ItemControl.ItemsMouseMove, only fire ItemDrag event
