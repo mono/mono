@@ -58,7 +58,10 @@ namespace System.Windows.Forms
 			string indexStr;
 			if (value != null && value is string) {
 				indexStr = (string) value;
-				return Int32.Parse (indexStr);
+				if (indexStr == "(none)")
+					return -1;
+				else
+					return Int32.Parse (indexStr);
 			}
 			else
 				return base.ConvertFrom (context, culture, value);

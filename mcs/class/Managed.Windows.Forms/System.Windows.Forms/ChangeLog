@@ -1,3 +1,7 @@
+2008-02-04  Ivan N. Zlatev  <contact@i-nz.net>
+
+	 * ImageIndexConverter.cs: ConvertFrom must handle "(none)".
+
 2008-02-03  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DateTimePicker.cs: Apply patch from Srikanth Madikeri so we drop
