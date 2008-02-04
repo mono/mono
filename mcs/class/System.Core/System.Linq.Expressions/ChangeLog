@@ -1,3 +1,7 @@
+2008-02-04  Jb Evain  <jbevain@novell.com>
+
+	* ExpressionPrinter.cs: fix and clean printing of ElementInit.
+
 2008-02-02  Jb Evain  <jbevain@novell.com>
 
 	* Expression.cs: fix ListBind(MemberInfo,IEnumerable<ElementInit>).

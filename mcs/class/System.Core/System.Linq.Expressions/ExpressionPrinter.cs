@@ -84,9 +84,9 @@ namespace System.Linq.Expressions {
 
 		protected override void VisitElementInitializer (ElementInit initializer)
 		{
-			Print(initializer.AddMethod.Name);
-			Print("(");
-			VisitExpressionList(initializer.Arguments);
+			Print (initializer.AddMethod);
+			Print ("(");
+			VisitExpressionList (initializer.Arguments);
 			Print (")");
 		}
 
