@@ -2655,8 +2655,8 @@ namespace Mono.CSharp {
 			if (TypeManager.IsGenericParameter (t)) {
 				GenericConstraints constraints = TypeManager.GetTypeParameterConstraints (t);
 				if (constraints != null) {
-					if (constraints.EffectiveBaseClass != null)
-						t = constraints.EffectiveBaseClass;
+					//if (constraints.EffectiveBaseClass != null)
+					//	t = constraints.EffectiveBaseClass;
 				}
 			}
 			a.Add (t);
