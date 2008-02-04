@@ -39,6 +39,7 @@ namespace System.Windows.Forms.CarbonInternal {
 		internal const uint kEventHotKeyReleased = 6;
 
 		internal const uint kEventParamKeyMacCharCodes = 1801676914;
+		internal const uint kEventParamKeyCode = 1801678692;
 		internal const uint kEventParamKeyModifiers = 1802334052;
 		internal const uint kEventTextInputUnicodeForKeyEvent = 2;
 		internal const uint kEventParamTextInputSendText = 1953723512;
@@ -50,6 +51,7 @@ namespace System.Windows.Forms.CarbonInternal {
 		internal static byte [] key_filter_table;
 		internal static byte [] key_modifier_table;
 		internal static byte [] key_translation_table;
+		internal static byte [] char_translation_table;
 
 		internal static bool translate_modifier = false;
 
@@ -83,10 +85,10 @@ namespace System.Windows.Forms.CarbonInternal {
 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 							};
 
-			// our key translation table is a set of translations from mac vkey codes
+			// our char translation table is a set of translations from mac char codes
 			// to win32 vkey codes
 			// most things map directly
-			key_translation_table = new byte [256] {
+			char_translation_table = new byte [256] {
 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 
 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 0x25, 0x27, 0x26, 0x28, 
 32, 49, 34, 51, 52, 53, 55, 222, 57, 48, 56, 187, 188, 189, 190, 191, 
@@ -103,6 +105,24 @@ namespace System.Windows.Forms.CarbonInternal {
 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 
 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 
 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255
+							};
+			key_translation_table = new byte [256] {
+0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 
+16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 
+32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 
+48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 
+64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 
+80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 
+0x74, 0x75, 0x76, 0x72, 0x77, 0x78, 0x79, 103, 104, 105, 106, 107, 108, 109, 0x7a, 0x7b, 
+112, 113, 114, 115, 116, 117, 0x73, 119, 0x71, 121, 0x70, 123, 124, 125, 126, 127, 
+128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 
+144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 
+160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 
+176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 
+192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 
+208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 
+224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 
+240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255 
 							};
 			// the key modifier table is a state table of the possible modifier keys
 			// apple currently only goes up to 1 << 14 keys, we've extended this to 32
@@ -186,11 +206,13 @@ namespace System.Windows.Forms.CarbonInternal {
 
 		public void ProcessKeyPress (IntPtr eventref, ref MSG msg) {
 			byte charCode = 0x0;
+			byte keyCode = 0x0;
 
 			GetEventParameter (eventref, kEventParamKeyMacCharCodes, typeChar, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (byte)), IntPtr.Zero, ref charCode);
+			GetEventParameter (eventref, kEventParamKeyCode, typeUInt32, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (byte)), IntPtr.Zero, ref keyCode);
 
 			msg.lParam = (IntPtr) charCode;
-			msg.wParam = (IntPtr) key_translation_table [charCode];
+			msg.wParam = charCode == 0x10 ? (IntPtr) key_translation_table [keyCode] : (IntPtr) char_translation_table [charCode];
 			msg.hwnd = XplatUICarbon.FocusWindow;
 		}
 
