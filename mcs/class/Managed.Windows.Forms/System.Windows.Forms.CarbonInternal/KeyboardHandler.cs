@@ -242,6 +242,10 @@ namespace System.Windows.Forms.CarbonInternal {
 				if (msg.message == Msg.WM_CHAR) msg.message = Msg.WM_SYSCHAR;
 
 				msg.lParam = new IntPtr (0x20000000);
+			} else if (key_modifier_table [12] == 0x01 || key_modifier_table [14] == 0x01) {
+				if (msg.message == Msg.WM_KEYDOWN) msg.message = Msg.WM_SYSKEYDOWN;
+				if (msg.message == Msg.WM_KEYUP) msg.message = Msg.WM_SYSKEYUP;
+				if (msg.message == Msg.WM_CHAR) msg.message = Msg.WM_SYSCHAR;
 			}
 
 			return res;

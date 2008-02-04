@@ -1,5 +1,10 @@
 2008-02-04  Geoff Norton  <gnorton@novell.com>
 
+	* KeyboardHandler.cs: Control+key generates SYSKEY/SYSCHAR as well
+	as Alt+key.
+
+2008-02-04  Geoff Norton  <gnorton@novell.com>
+
 	* EventHandler.cs: Expose GetEventClass internally.  Subscribe to
 	the unicode text events.
 	* KeyboardHandler.cs: Commit the new keyboard handler.  We grab
