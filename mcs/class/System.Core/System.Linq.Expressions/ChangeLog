@@ -1,5 +1,9 @@
 2008-02-04  Jb Evain  <jbevain@novell.com>
 
+	* ExpressionPrinter.cs: fix printing of MemberListBinding.
+
+2008-02-04  Jb Evain  <jbevain@novell.com>
+
 	* Expression.cs, NewExpression.cs: make New(Type) test pass.
 
 2008-02-04  Jb Evain  <jbevain@novell.com>

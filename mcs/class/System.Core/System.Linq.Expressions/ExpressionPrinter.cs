@@ -284,11 +284,12 @@ namespace System.Linq.Expressions {
 
 		protected override void VisitMemberListBinding (MemberListBinding binding)
 		{
-			for (int i = 0; i < binding.Initializers.Count; i++) {
-				Print (binding.Member.Name);
-				Print (".");
-				VisitElementInitializer (binding.Initializers [i]);
-			}
+			Print (binding.Member.Name);
+			Print (" = {");
+			// replace when the patch to the visitor is in
+			// VisitElementInitializerList (binding.Initializers);
+			VisitList (binding.Initializers, VisitElementInitializer);
+			Print ("}");
 		}
 
 		protected override void VisitList<T> (ReadOnlyCollection<T> list, Action<T> visitor)
