@@ -1,3 +1,8 @@
+2008-02-04  Marek Habersack  <mhabersack@novell.com>
+
+	* SimpleWebHandlerParser.cs: use WebEncoding.FileEncoding when
+	reading the source file.
+
 2008-01-24  Marek Habersack  <mhabersack@novell.com>
 
 	* PageThemeFileParser.cs: the DefaultBaseType property removed.

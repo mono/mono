@@ -1,5 +1,8 @@
 2008-02-04  Marek Habersack  <mhabersack@novell.com>
 
+	* AssemblyBuilder.cs: do not use WebEncoding.FileEncoding when
+	generating source code files. Fixes bug #357053.
+
 	* AspGenerator.cs: set isApplication before parsing. Fixes bug
 	#357036.
 

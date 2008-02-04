@@ -278,7 +278,7 @@ namespace System.Web.Compilation {
 			// Generate a file name with the correct source language extension
 			string filename = GetTempFilePhysicalPath (provider.FileExtension);
 			SourceFiles.Add (filename);
-			return new StreamWriter (File.OpenWrite (filename), WebEncoding.FileEncoding);
+			return new StreamWriter (File.OpenWrite (filename));
 		}
 
 		internal void AddCodeFile (string path)
@@ -500,7 +500,7 @@ namespace System.Web.Compilation {
 			foreach (CodeCompileUnit unit in units) {
 				filename = GetTempFilePhysicalPath (provider.FileExtension);
 				try {
-					sw = new StreamWriter (File.OpenWrite (filename), WebEncoding.FileEncoding);
+					sw = new StreamWriter (File.OpenWrite (filename));
 					provider.GenerateCodeFromCompileUnit (unit, sw, null);
 					files.Add (filename);
 				} catch {
