@@ -67,29 +67,29 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public abstract new GridItemCollection GridItems
+		public abstract GridItemCollection GridItems
 		{
 			get;
 		}
 
-		public abstract new GridItemType GridItemType
+		public abstract GridItemType GridItemType
 		{
 			get;
 		}
 
-		public abstract new string Label
-		{
-			get;
-		}
-
-
-		public abstract new GridItem Parent
+		public abstract string Label
 		{
 			get;
 		}
 
 
-		public abstract new PropertyDescriptor PropertyDescriptor
+		public abstract GridItem Parent
+		{
+			get;
+		}
+
+
+		public abstract PropertyDescriptor PropertyDescriptor
 		{
 			get;
 		}
@@ -105,14 +105,14 @@ namespace System.Windows.Forms
 		}
 #endif
 
-		public abstract new object Value
+		public abstract object Value
 		{
 			get;
 		}
 		#endregion
 
 		#region Public Instance Methods
-		public abstract new bool Select ();
+		public abstract bool Select ();
 		#endregion	// Public Instance Methods
 	}
 }

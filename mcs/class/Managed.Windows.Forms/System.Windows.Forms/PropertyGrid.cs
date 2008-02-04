@@ -47,9 +47,7 @@ namespace System.Windows.Forms {
 		#region Private Members
 		
 		
-		private const int GRID_ITEM_HEIGHT = 16;
-		private const int GRID_LEFT_COLUMN_WIDTH = 16;
-		private const int DIVIDER_PADDING = 2;
+		private const string UNCATEGORIZED_CATEGORY_LABEL = "Misc";
 
 		private AttributeCollection browsable_attributes = null;
 		private bool can_show_commands = false;
@@ -62,8 +60,8 @@ namespace System.Windows.Forms {
 		private Color line_color;
 		private PropertySort property_sort;
 		private PropertyTabCollection property_tabs;
-		private GridItem selected_grid_item;
-		private GridItem root_grid_item;
+		private GridEntry selected_grid_item;
+		private GridEntry root_grid_item;
 		private object[] selected_objects;
 		private PropertyTab selected_tab;
 
@@ -93,10 +91,6 @@ namespace System.Windows.Forms {
 		private Color commands_disabled_link_color;
 		private Color commands_link_color;
 #endif
-		// Category and main items cache
-		GridItemCollection category_grid_items;
-		GridItemCollection main_grid_items;
-
 		#endregion	// Private Members
 		
 		#region Contructors
@@ -544,8 +538,17 @@ namespace System.Windows.Forms {
 				property_sort = value;
 				UpdateToolBarButtons ();
 				if (needUpdate) {
-					UpdateSortLayout ();
+					UpdateSortLayout (root_grid_item);
 					property_grid_view.Refresh ();
+					// update selection
+					if (selected_grid_item != null) {
+						if (selected_grid_item.GridItemType == GridItemType.Category && 
+						    (value == PropertySort.Alphabetical || value == PropertySort.NoSort))
+							SelectItemCore (null, null);
+						else
+							SelectItemCore (null, selected_grid_item);
+					}
+
 
 #if NET_2_0
 					EventHandler eh = (EventHandler)(Events [PropertySortChangedEvent]);
@@ -574,8 +577,8 @@ namespace System.Windows.Forms {
 				if (value == null)
 					throw new ArgumentException ("GridItem specified to PropertyGrid.SelectedGridItem must be a valid GridItem.");
 				if (value != selected_grid_item) {
-					GridItem oldItem = selected_grid_item;
-					SelectItemCore (oldItem, value);
+					GridEntry oldItem = selected_grid_item;
+					SelectItemCore (oldItem, (GridEntry)value);
 					OnSelectedGridItemChanged (new SelectedGridItemChangedEventArgs (oldItem, value));
 				}
 			}
@@ -597,7 +600,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void SelectItemCore (GridItem oldItem, GridItem item)
+		private void SelectItemCore (GridEntry oldItem, GridEntry item)
 		{
 			UpdateHelp (item);
 			selected_grid_item = item;
@@ -605,19 +608,31 @@ namespace System.Windows.Forms {
 		}
 
 		internal void OnPropertyValueChangedInternal (GridItem item, object property_value) {
-			PopulateSubGridItemsFromProperties (SelectedGridItem as GridEntry);
+			PopulateSubGridItems (selected_grid_item);
 			property_grid_view.UpdateView ();
 			OnPropertyValueChanged (new PropertyValueChangedEventArgs (item, property_value));
 		}
 
-		internal void OnExpandItem (GridItem item)
+		internal void OnExpandItem (GridEntry item)
 		{
-			property_grid_view.ExpandItem ((GridEntry)item);
+			property_grid_view.ExpandItem (item);
 		}
 
-		internal void OnCollapseItem (GridItem item)
+		internal void OnCollapseItem (GridEntry item)
 		{
-			property_grid_view.CollapseItem ((GridEntry)item);
+			property_grid_view.CollapseItem (item);
+		}
+
+		internal DialogResult ShowError (string text)
+		{
+			return this.ShowError (text, MessageBoxButtons.OK);
+		}
+
+		internal DialogResult ShowError (string text, MessageBoxButtons buttons)
+		{
+			if (text == null)
+				throw new ArgumentNullException ("text");
+			return MessageBox.Show (this, text, "Properties Window", buttons, MessageBoxIcon.Exclamation);
 		}
 
 		[DefaultValue(null)]
@@ -668,11 +683,9 @@ namespace System.Windows.Forms {
 				}
 
 				RefreshTabs(PropertyTabScope.Component);
-				ReflectObjects();
-				if (root_grid_item != null) {
-					/* find the first non category grid item and select it */
-					SelectItemCore (null, FindFirstItem (root_grid_item));
-				}
+				PopulateGrid (selected_objects);
+				if (root_grid_item != null)
+					SelectItemCore (null, GetDefaultPropertyItem (root_grid_item));
 				OnSelectedObjectsChanged (EventArgs.Empty);
 			}
 		}
@@ -834,26 +847,69 @@ namespace System.Windows.Forms {
 			base.Dispose(val);
 		}
 
-		[MonoTODO ("should this be recursive?  or just the toplevel items?")]
-		public void CollapseAllGridItems () {
-			if (root_grid_item != null) {
-				foreach (GridItem item in root_grid_item.GridItems) {
-					item.Expanded = false;
-				}
+		public void CollapseAllGridItems () 
+		{
+			GridEntry category = FindCategoryItem (selected_grid_item);
+			if (category != null)
+				SelectedGridItem = category;
+			CollapseItemRecursive (root_grid_item);
+			property_grid_view.UpdateView ();
+		}
+
+		private void CollapseItemRecursive (GridItem item)
+		{
+			if (item == null)
+				return;
+
+			foreach (GridItem child in item.GridItems) {
+				CollapseItemRecursive (child);
+				if (child.Expandable)
+					child.Expanded = false;
 			}
 		}
 
-		[MonoTODO ("should this be recursive?  or just the toplevel items?")]
-		public void ExpandAllGridItems () {
-			if (root_grid_item != null) {
-				foreach (GridItem item in root_grid_item.GridItems) {
-					item.Expanded = true;
-				}
+		private GridEntry FindCategoryItem (GridEntry entry)
+		{
+			if (entry == null || (property_sort != PropertySort.Categorized && 
+			    property_sort != PropertySort.CategorizedAlphabetical))
+				return null;
+
+			if (entry.GridItemType == GridItemType.Category)
+				return entry;
+
+			GridEntry category = null;
+			GridItem current = (GridItem)entry;
+			while (category == null) {
+				if (current.Parent != null && current.Parent.GridItemType == GridItemType.Category)
+					category = (GridEntry) current.Parent;
+				current = current.Parent;
+				if (current == null)
+					break;
+			}
+			return (GridEntry) category;
+		}
+
+		public void ExpandAllGridItems () 
+		{
+			ExpandItemRecursive (root_grid_item);
+		}
+
+		private void ExpandItemRecursive (GridItem item)
+		{
+			if (item == null)
+				return;
+
+			foreach (GridItem child in item.GridItems) {
+				ExpandItemRecursive (child);
+				if (child.Expandable)
+					child.Expanded = true;
 			}
 		}
 
-		public override void Refresh () {
+		public override void Refresh () 
+		{
 			base.Refresh ();
+			property_grid_view.UpdateView ();
 		}
 
 		public void RefreshTabs (PropertyTabScope tabScope) {
@@ -880,7 +936,7 @@ namespace System.Windows.Forms {
 		public void ResetSelectedProperty() {
 			if (selected_grid_item == null)
 				return;
-			((GridEntry)selected_grid_item).ResetValue ();
+			selected_grid_item.ResetValue ();
 		}
 		#endregion	// Public Instance Methods
 
@@ -1246,13 +1302,13 @@ namespace System.Windows.Forms {
 
 		#region Private Helper Methods
 
-		private GridItem FindFirstItem (GridItem root)
+		private GridItem FindFirstPropertyItem (GridItem root)
 		{
 			if (root.GridItemType == GridItemType.Property)
 				return root;
 
 			foreach (GridItem item in root.GridItems) {
-				GridItem subitem = FindFirstItem (item);
+				GridItem subitem = FindFirstPropertyItem (item);
 				if (subitem != null)
 					return subitem;
 			}
@@ -1260,6 +1316,62 @@ namespace System.Windows.Forms {
 			return null;
 		}
 
+		// TODO: Should use the current tab's GetDefaultProperty and the current
+		// code should be PropertyTab specific
+		//
+		private GridEntry GetDefaultPropertyItem (GridEntry rootItem)
+		{
+			if (rootItem == null || rootItem.GridItems.Count == 0)
+				return null;
+			object[] propertyOwners = rootItem.Values;
+			if (propertyOwners == null || propertyOwners.Length == 0 || propertyOwners[0] == null)
+				return null;
+
+			//return (GridEntry) FindFirstItem (rootItem);
+			GridItem defaultSelected = null;
+			if (propertyOwners.Length > 1)
+				defaultSelected = rootItem.GridItems[0];
+			else {
+				PropertyDescriptor defaultProperty = null;
+				ICustomTypeDescriptor customTypeDescriptor = propertyOwners[0] as ICustomTypeDescriptor;
+				if (customTypeDescriptor != null)   // try 1: ICustomTypeDescriptor
+					defaultProperty = customTypeDescriptor.GetDefaultProperty ();
+				if (defaultProperty == null)   // try 2: TypeDescriptor
+					defaultProperty = TypeDescriptor.GetDefaultProperty (propertyOwners[0]);
+
+				if (defaultProperty != null)
+					defaultSelected = FindItem (defaultProperty.Name, rootItem);
+				if (defaultSelected == null)
+					defaultSelected = FindFirstPropertyItem (rootItem);
+			}
+
+			return defaultSelected as GridEntry;
+		}
+
+		private GridEntry FindItem (string name, GridEntry rootItem)
+		{
+			if (rootItem == null || name == null)
+				return null;
+
+			if (property_sort == PropertySort.Alphabetical || property_sort == PropertySort.NoSort) {
+				foreach (GridItem item in rootItem.GridItems) {
+					if (item.Label == name) {
+						return (GridEntry)item;
+					}
+				}
+			} else if (property_sort == PropertySort.Categorized || 
+				   property_sort == PropertySort.CategorizedAlphabetical) {
+				foreach (GridItem categoryItem in rootItem.GridItems) {
+					foreach (GridItem item in categoryItem.GridItems) {
+						if (item.Label == name) {
+							return (GridEntry)item;
+						}
+					}
+				}
+			}
+
+			return null;
+		}
 
 #if NET_2_0
 		private void toolbar_ButtonClick (object sender, ToolStripItemClickedEventArgs e)
@@ -1313,12 +1425,10 @@ namespace System.Windows.Forms {
 			description_menuitem.Checked = this.HelpVisible;
 		}
 
-		private void ReflectObjects () {
-			if (selected_objects.Length > 0) {
-				root_grid_item = new RootGridEntry (this,
-								    selected_objects.Length > 1 ? selected_objects : selected_objects[0]);
-									   
-				PopulateMergedGridItems (selected_objects, true, root_grid_item as GridEntry);
+		private void PopulateGrid (object[] objects) {
+			if (objects.Length > 0) {
+				root_grid_item = new RootGridEntry (this, objects);
+				PopulateRootGridItems (root_grid_item, objects, GetMergedPropertyNames (objects));
 			} else {
 				root_grid_item = null;
 			}
@@ -1346,200 +1456,201 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
-		private void PopulateMergedGridItems (object [] objs, bool recurse, GridEntry parent_grid_item)
+		private string[] GetMergedPropertyNames (object [] objects)
 		{
 			ArrayList intersection = null;
-
-			if (parent_grid_item == null)
-				return;
-
-			/* Clear any previous grid items */
-			if (parent_grid_item.GridItems.Count > 0)
-				parent_grid_item.GridItems.Clear ();
-
-			for (int i = 0; i < objs.Length; i ++) {
-				if (objs [i] == null)
+			for (int i = 0; i < objects.Length; i ++) {
+				if (objects [i] == null)
 					continue;
 
+				PropertyDescriptorCollection properties = GetProperties (objects[i]);
 				ArrayList new_intersection = new ArrayList ();
-				Type type = objs[i].GetType();
 
-				/* i tried using filter attributes, but there's no way to do it for EditorBrowsableAttributes,
-				   since that type lacks an override for IsDefaultAttribute, and for some reason the
-				   BrowsableAttribute.Yes filter wasn't working */
-				PropertyDescriptorCollection properties = null;
-				ICustomTypeDescriptor descriptor;
+				foreach (PropertyDescriptor currentProperty in (i == 0 ? (ICollection)properties : (ICollection)intersection)) {
+					PropertyDescriptor matchingProperty = (i == 0 ? currentProperty : properties [currentProperty.Name]);
 
-				descriptor = objs [i] as ICustomTypeDescriptor;
-				if (descriptor != null) {
-					properties = descriptor.GetProperties ();
-				}
-				if (properties == null) {
-					TypeConverter cvt = TypeDescriptor.GetConverter (objs[i]);
-					properties = cvt.GetProperties (objs[i]);
-				}
-				if (properties == null) {
-					properties = TypeDescriptor.GetProperties (objs[i]);
-				}
-
-				foreach (PropertyDescriptor p in (i == 0 ? (ICollection)properties : (ICollection)intersection)) {
-					PropertyDescriptor property = (i == 0 ? p : properties [p.Name]);
-					
-					if (!IsPropertyVisible (property, objs.Length > 1))
+					if (!IsPropertyVisible (matchingProperty, objects.Length > 1))
 						continue;
-						
-					Type p_type = p.ComponentType;
-					Type property_type = property.ComponentType;
-
-					if (p_type.IsAssignableFrom (type))
-						new_intersection.Add (p);
-					else if (property_type.IsAssignableFrom (p_type))
-						new_intersection.Add (property);
+					if (matchingProperty.PropertyType == currentProperty.PropertyType)
+						new_intersection.Add (matchingProperty);
 				}
 
 				intersection = new_intersection;
 			}
 
-			if (intersection != null && intersection.Count > 0)
-				PopulateGridItemsFromProperties (objs, intersection, recurse, parent_grid_item);
-		}
-
-		private void PopulateGridItemsFromProperties (object[] objs, ArrayList properties, bool recurse, GridEntry parent_grid_item)
-		{
-			
-			GridItemCollection grid_item_coll = parent_grid_item.GridItems;
-
-			// Clean our grid items cache
-			if (parent_grid_item == root_grid_item) {
-				main_grid_items = new GridItemCollection ();
-				category_grid_items = null;
-			}
-
-			bool categorized = false, show = true;
-					
-			if (property_sort == PropertySort.Alphabetical || /* XXX */property_sort == PropertySort.NoSort || !recurse)
-				categorized = false;
-			else if ((property_sort & PropertySort.Categorized) != 0) {
-				categorized = parent_grid_item == root_grid_item;
-				if (categorized)
-					category_grid_items = new GridItemCollection ();
-			} else {
-				show = false;
-			}
-
-			foreach (PropertyDescriptor property in properties) {
-				GridEntry grid_entry;
-				grid_entry = grid_item_coll [property.Name] as GridEntry;
-				if (grid_entry == null || grid_entry is CategoryGridEntry) {
-					grid_entry = new GridEntry (this, objs, property);
-				} else {
-					grid_entry.PropertyOwners = objs;
-				}
-					
-				grid_entry.SetParent (parent_grid_item);
+			string[] propertyNames = new string [intersection.Count];
+			for (int i=0; i < intersection.Count; i++)
+				propertyNames[i] = ((PropertyDescriptor)intersection[i]).Name;
 				
-				if (show) {
-					if (categorized) {
-						string category = property.Category;
-						CategoryGridEntry cat_item = grid_item_coll [category] as CategoryGridEntry;
-						if (cat_item == null) {
-							cat_item = new CategoryGridEntry (this, category);
-							cat_item.SetParent (parent_grid_item);
-							cat_item.Expanded = true;
-							grid_item_coll.Add (category, cat_item);
+			return propertyNames;
+		}
 
-							// Add to our cache
-							category_grid_items.Add (category, cat_item);
-						}
-						if (cat_item.GridItems [property.Name] == null) {
-							cat_item.GridItems.Add (property.Name, grid_entry);
-							grid_entry.SetParent (cat_item);
-						}
-					} else {
-						if (grid_item_coll [property.Name] == null) {
-							grid_item_coll.Add (property.Name, grid_entry);
-							grid_entry.SetParent (parent_grid_item);
-						}
+		private PropertyDescriptor GetPropertyDescriptor (object propertyOwner, string propertyName)
+		{
+			if (propertyOwner == null || propertyName == null)
+				return null;
+
+			PropertyDescriptorCollection properties = GetProperties (propertyOwner);
+			if (properties != null)
+				return properties[propertyName];
+			return null;
+		}
+
+		// TODO: Should use the current tab's GetProperties and the current code
+		// should be PropertyTab specific
+		//
+		private PropertyDescriptorCollection GetProperties (object propertyOwner)
+		{
+			if (propertyOwner == null)
+				return null;
+
+			PropertyDescriptorCollection properties = null;
+			ICustomTypeDescriptor customTypeDescriptor = propertyOwner as ICustomTypeDescriptor;
+			if (customTypeDescriptor != null)   // try 1: ICustomTypeDescriptor
+				properties = customTypeDescriptor.GetProperties ();
+			if (properties == null) { // try 2: Converter with PropertiesSupported
+				TypeConverter converter = TypeDescriptor.GetConverter (propertyOwner);
+				if (converter.GetPropertiesSupported ())
+					properties = converter.GetProperties (propertyOwner);
+			}
+			if (properties == null)   // try 3: TypeDescriptor
+				properties = TypeDescriptor.GetProperties (propertyOwner);
+
+			return properties;
+		}
+
+		private void PopulateRootGridItems (GridEntry rootItem, object[] propertyOwners, string[] propertyNames)
+		{
+			if (propertyOwners == null || propertyNames == null)
+				return;
+
+			bool categorized = property_sort == PropertySort.Categorized || 
+				property_sort == PropertySort.CategorizedAlphabetical;
+			rootItem.GridItems.Clear ();
+
+			foreach (string propertyName in propertyNames) {
+				GridEntry item = null;
+
+				PropertyDescriptor[] properties = new PropertyDescriptor[propertyNames.Length];
+				for (int i=0; i < propertyOwners.Length; i++)
+					properties[i] = GetPropertyDescriptor (propertyOwners[i], propertyName);
+
+				if (categorized) {
+					string categoryName = null;
+					foreach (PropertyDescriptor property in properties) {
+						categoryName = property.Category;
+						if (categoryName != null)
+							break;
 					}
+					if (categoryName == null)
+						categoryName = UNCATEGORIZED_CATEGORY_LABEL;
+					GridEntry category = (GridEntry)root_grid_item.GridItems[categoryName];
+					if (category == null) {
+						category = new CategoryGridEntry (this, categoryName, rootItem);
+						category.Expanded = true;
+						rootItem.GridItems.Add (category);
+					}
+					item = new GridEntry (this, properties, category);
+					category.GridItems.Add (item);
+				} else {
+					item = new GridEntry (this, properties, rootItem);
+					rootItem.GridItems.Add (item);
 				}
 
-				// Add main properties to our cache
-				if (parent_grid_item == root_grid_item)
-					main_grid_items.Add (grid_entry.Label, grid_entry);
-
-				if (recurse) {
-					PopulateSubGridItemsFromProperties (grid_entry);
-				}
+				if (IsExpandable (item))
+					PopulateSubGridItems (item);
 			}
 		}
 
-		private void PopulateSubGridItemsFromProperties (GridEntry grid_entry)
+		private void PopulateSubGridItems (GridEntry parentItem)
 		{
-			if (grid_entry == null)
+			object[] propertyOwners = parentItem.Values;
+			if (propertyOwners == null)
 				return;
 
-			if (grid_entry.PropertyOwners == null)
+
+			PropertyDescriptorCollection propertiesCollection = GetProperties (propertyOwners[0]);
+			if (propertiesCollection == null)
 				return;
 
-			PropertyDescriptor property = grid_entry.PropertyDescriptor;
+			parentItem.GridItems.Clear ();
+			foreach (PropertyDescriptor property in propertiesCollection) {
+				string propertyName = property.Name;
 
-			if (property == null || property.Converter == null)
-				return;
+				PropertyDescriptor[] properties = new PropertyDescriptor[propertyOwners.Length];
+				for (int i=0; i < propertyOwners.Length; i++)
+					properties[i] = GetPropertyDescriptor (propertyOwners[i], propertyName);
 
-			if (!property.Converter.GetPropertiesSupported () && 
-			    !property.Attributes.Contains (DesignerSerializationVisibilityAttribute.Content))
-				return;
-
-			object [] objs = grid_entry.PropertyOwners;
-			object [] subobjs = new object [objs.Length];
-			
-			for (int i = 0; i < objs.Length; i++)
-				subobjs [i] = property.GetValue (objs [i]);
-			
-			PopulateMergedGridItems (subobjs, true, grid_entry);
+				GridEntry item = new GridEntry (this, properties, parentItem);
+				parentItem.GridItems.Add (item);
+				if (IsExpandable (item))
+					PopulateSubGridItems (item);
+			}
 		}
 
-		void UpdateSortLayout ()
+		private bool IsExpandable (GridEntry item)
 		{
-			if (root_grid_item == null)
+			if (item == null || item.PropertyDescriptor == null || 
+			    item.PropertyDescriptor.Converter == null)
+				return false;
+			else if (!item.PropertyDescriptor.Converter.GetPropertiesSupported () &&
+				 !item.PropertyDescriptor.Attributes.Contains (
+					 DesignerSerializationVisibilityAttribute.Content))
+				return false;
+			return true;
+		}
+
+		private void UpdateSortLayout (GridEntry rootItem)
+		{
+			if (rootItem == null)
 				return;
 
-			root_grid_item.GridItems.Clear ();
-
-			if (category_grid_items == null)
-				category_grid_items = new GridItemCollection ();
+			GridItemCollection reordered = new GridItemCollection ();
 
 			if (property_sort == PropertySort.Alphabetical || property_sort == PropertySort.NoSort) {
-				foreach (GridItem item in main_grid_items) {
-					root_grid_item.GridItems.Add (item.Label, item);
-					((GridEntry)item).SetParent (root_grid_item);
+				foreach (GridItem item in rootItem.GridItems) {
+					if (item.GridItemType == GridItemType.Category) {
+						foreach (GridItem categoryChild in item.GridItems) {
+							reordered.Add (categoryChild);
+							((GridEntry)categoryChild).SetParent (rootItem);
+						}
+					} else {
+						reordered.Add (item);
+					}
 				}
+			} else if (property_sort == PropertySort.Categorized || 
+				   property_sort == PropertySort.CategorizedAlphabetical) {
+				GridItemCollection categories = new GridItemCollection ();
 
-				foreach (GridItem category_item in category_grid_items) {
-					category_item.GridItems.Clear ();
-					((GridEntry)category_item).SetParent (null);
-				}
-			} else if ((property_sort & PropertySort.Categorized) != 0) {
-				foreach (GridItem item in main_grid_items) {
-					string category = item.PropertyDescriptor.Category;
-
-					GridItem category_item = category_grid_items [category];
-					if (category_item == null) {
-						// Create category grid items if they already don't
-						category_item = new CategoryGridEntry (this, category);
-						category_item.Expanded = true;
-						category_grid_items.Add (category, category_item);
+				foreach (GridItem item in rootItem.GridItems) {
+					if (item.GridItemType == GridItemType.Category) {
+						categories.Add (item);
+						continue;
 					}
 
-					category_item.GridItems.Add (item.Label, item);
+					string categoryName = item.PropertyDescriptor.Category;
+					if (categoryName == null)
+						categoryName = UNCATEGORIZED_CATEGORY_LABEL;
+					GridItem category_item = rootItem.GridItems [categoryName];
+					if (category_item == null)
+						category_item = categories [categoryName];
+
+					if (category_item == null) {
+						// Create category grid items if they already don't
+						category_item = new CategoryGridEntry (this, categoryName, rootItem);
+						category_item.Expanded = true;
+						categories.Add (category_item);
+					}
+
+					category_item.GridItems.Add (item);
 					((GridEntry)item).SetParent (category_item);
 				}
 
-				foreach (GridItem category_item in category_grid_items) {
-					root_grid_item.GridItems.Add (category_item.Label, category_item);
-					((GridEntry)category_item).SetParent (root_grid_item);
-				}
+				reordered.AddRange (categories);
 			}
+
+			rootItem.GridItems.Clear ();
+			rootItem.GridItems.AddRange (reordered);
 		}
 
 		private void help_panel_Paint(object sender, PaintEventArgs e) {

@@ -44,14 +44,13 @@ namespace System.Windows.Forms.PropertyGridInternal
 		private bool expanded;
 		private GridItemCollection grid_items;
 		private GridItem parent;
-		private PropertyDescriptor property_descriptor;
-		private object[] property_owners;
+		private PropertyDescriptor[] property_descriptors;
 		private int top;
 		private Rectangle plus_minus_bounds;
 		#endregion	// Local Variables
 
 		#region  Contructors
-		protected GridEntry (PropertyGrid propertyGrid)
+		protected GridEntry (PropertyGrid propertyGrid, GridEntry parent)
 		{
 			if (propertyGrid == null)
 				throw new ArgumentNullException ("propertyGrid");
@@ -60,20 +59,22 @@ namespace System.Windows.Forms.PropertyGridInternal
 			top = -1;
 			grid_items = new GridItemCollection ();
 			expanded = false;
+			this.parent = parent;
 		}
 
-		public GridEntry (PropertyGrid propertyGrid, object[] propertyOwners, PropertyDescriptor prop_desc) : this (propertyGrid) 
+		// Cannot use one PropertyDescriptor for all owners, because the
+		// propertydescriptors might have different Invokees. Check
+		// ReflectionPropertyDescriptor.GetInvokee and how it's used.
+		//
+		public GridEntry (PropertyGrid propertyGrid, PropertyDescriptor[] properties, 
+				  GridEntry parent) : this (propertyGrid, parent) 
 		{
-			if (propertyOwners == null)
-				throw new ArgumentNullException ("propertyOwners");
-			if (prop_desc == null)
+			if (properties == null || properties.Length == 0)
 				throw new ArgumentNullException ("prop_desc");
-			property_owners = propertyOwners;
-			property_descriptor = prop_desc;
+			property_descriptors = properties;
 		}
 		#endregion	// Constructors
 
-		#region Public Instance Properties
 
 		public override bool Expandable {
 			get { return grid_items.Count > 0; }
@@ -101,55 +102,120 @@ namespace System.Windows.Forms.PropertyGridInternal
 		}
 
 		public override string Label {
-			get { return property_descriptor.Name; }
+			get { return PropertyDescriptor.Name; }
 		}
 
 		public override GridItem Parent {
 			get { return parent; }
 		}
 
-		public override PropertyDescriptor PropertyDescriptor {
-			get { return property_descriptor; }
-		}
-
-		public override object Value {
-			get {
-				if (property_owners == null || property_owners.Length == 0 || property_descriptor == null)
-					return null;
-
-				object v = property_descriptor.GetValue (property_owners[0]);
-				for (int i = 1; i < property_owners.Length; i ++) {
-					if (!Object.Equals (v, property_descriptor.GetValue (property_owners[i])))
-						return null;
-				}
-
-				return v;
+		public GridEntry ParentEntry {
+			get { 
+				if (parent != null && parent.GridItemType == GridItemType.Category)
+					return parent.Parent as GridEntry;
+				return parent as GridEntry; 
 			}
 		}
-		#endregion	// Public Instance Properties
 
-		#region Public Instance Methods
+		public override PropertyDescriptor PropertyDescriptor {
+			get { return property_descriptors != null ? property_descriptors[0] : null; }
+		}
+
+		public PropertyDescriptor[] PropertyDescriptors {
+			get { return property_descriptors; }
+		}
+
+		public object PropertyOwner {
+			get { 
+				object[] owners = PropertyOwners;
+				if (owners != null)
+					return owners[0];
+				return null;
+			}
+		}
+
+		public object[] PropertyOwners {
+			get { 
+				if (ParentEntry != null)
+					return ParentEntry.Values;
+				return null;
+			}
+		}
+
+		// true if the value is the same among all properties
+		public bool HasMergedValue {
+			get {
+				if (!IsMerged)
+					return false;
+
+				object[] values = this.Values;
+				for (int i=0; i+1 < values.Length; i++) {
+					if (!Object.Equals (values[i], values[i+1]))
+						return false;
+				}
+				return true;
+			}
+		}
+
+		public virtual bool IsMerged {
+			get { return (PropertyDescriptors != null && PropertyDescriptors.Length > 1); }
+		}
+
+		// If IsMerged this will return all values for all properties in all owners
+		public virtual object[] Values {
+			get {
+				if (PropertyDescriptor == null || this.PropertyOwners == null)
+					return null;
+				if (IsMerged) {
+					object[] owners = this.PropertyOwners;
+					PropertyDescriptor[] properties = PropertyDescriptors;
+					object[] values = new object[owners.Length];
+					for (int i=0; i < owners.Length; i++)
+						values[i] = properties[i].GetValue (owners[i]);
+					return values;
+				} else {
+					return new object[] { this.Value };
+				}
+			}
+		}
+
+		// Returns the first value for the first propertyowner and propertydescriptor
+		//
+		public override object Value {
+			get {
+				if (PropertyDescriptor == null || PropertyOwner == null)
+					return null;
+
+				return PropertyDescriptor.GetValue (PropertyOwner);
+			}
+		}
+
+		public string ValueText {
+			get { return ConvertToString (this.Value); }
+		}
+
 		public override bool Select ()
 		{
 			property_grid.SelectedGridItem = this;
 			return true;
 		}
-		#endregion	// Public Instance Methods
 
 		#region ITypeDescriptorContext
-		void ITypeDescriptorContext.OnComponentChanged () {
+		void ITypeDescriptorContext.OnComponentChanged () 
+		{
 		}
 
-		bool ITypeDescriptorContext.OnComponentChanging () {
+		bool ITypeDescriptorContext.OnComponentChanging () 
+		{
 			return false;
 		}
 
 		IContainer ITypeDescriptorContext.Container {
 			get {
-				if (property_owners != null && property_owners.Length > 0 && property_descriptor == null)
+				if (PropertyOwner == null)
 					return null;
 
-				IComponent component = property_owners[0] as IComponent;
+				IComponent component = property_grid.SelectedObject as IComponent;
 				if (component != null && component.Site != null)
 					return component.Site.Container;
 				return null;
@@ -157,11 +223,11 @@ namespace System.Windows.Forms.PropertyGridInternal
 		}
 
 		object ITypeDescriptorContext.Instance {
-			get { return property_owners[0]; }
+			get { return PropertyOwner; }
 		}
 
 		PropertyDescriptor ITypeDescriptorContext.PropertyDescriptor {
-			get { return property_descriptor; }
+			get { return PropertyDescriptor; }
 		}
 		#endregion
 
@@ -175,11 +241,6 @@ namespace System.Windows.Forms.PropertyGridInternal
 		}
 
 		#endregion
-
-		public object[] PropertyOwners {
-			get { return property_owners; }
-			set { property_owners = value; }
-		}
 
 		internal int Top {
 			get { return top; }
@@ -199,20 +260,19 @@ namespace System.Windows.Forms.PropertyGridInternal
 			this.parent = parent;
 		}
 
-		public string ValueString {
-			get { return ConvertToString (this.Value); }
-		}
-
 		public ICollection AcceptedValues {
 			get {
-				if (property_descriptor != null && property_descriptor.Converter != null &&
-				    property_descriptor.Converter.GetStandardValuesSupported ()) {
+				if (PropertyDescriptor != null && PropertyDescriptor.Converter != null &&
+				    PropertyDescriptor.Converter.GetStandardValuesSupported ()) {
 					ArrayList values = new ArrayList ();
 					string stringVal = null;
-					foreach (object value in property_descriptor.Converter.GetStandardValues ()) {
-						stringVal = ConvertToString (value);
-						if (stringVal != null)
-							values.Add (stringVal);
+					ICollection standardValues = PropertyDescriptor.Converter.GetStandardValues ();
+					if (standardValues != null) {
+						foreach (object value in standardValues) {
+							stringVal = ConvertToString (value);
+							if (stringVal != null)
+								values.Add (stringVal);
+						}
 					}
 					return values.Count > 0 ? values : null;
 				}
@@ -220,18 +280,18 @@ namespace System.Windows.Forms.PropertyGridInternal
 			}
 		}
 
-		// TODO
 		private string ConvertToString (object value)
 		{
 			if (value is string)
 				return (string)value;
 
-			if (property_descriptor != null && property_descriptor.Converter != null &&
-			    property_descriptor.Converter.CanConvertTo (typeof (string))) {
+			if (PropertyDescriptor != null && PropertyDescriptor.Converter != null &&
+			    PropertyDescriptor.Converter.CanConvertTo (typeof (string))) {
 				try {
-					return property_descriptor.Converter.ConvertToString (value);
+					return PropertyDescriptor.Converter.ConvertToString (value);
 				} catch {
-					// TODO
+					// XXX: Happens too often...
+					// property_grid.ShowError ("Property value of '" + property_descriptor.Name + "' is not convertible to string.");
 					return null;
 				}
 			}
@@ -269,25 +329,29 @@ namespace System.Windows.Forms.PropertyGridInternal
 
 			UITypeEditor editor = GetEditor ();
 			if (editor != null) {
+				string error = null;
+				bool success = false;
 				try {
 					object value = editor.EditValue ((ITypeDescriptorContext)this,
 									 container,
 									 this.Value);
-					return SetValue (value);
-				} catch {
-					// TODO
+					success = SetValue (value, out error);
+				} catch (Exception e) {
+					error = e.Message;
 				}
+				if (!success && error != null)
+					property_grid.ShowError (error);
 			}
 			return false;
 		}
 
 		private UITypeEditor GetEditor ()
 		{
-			if (property_descriptor != null) {
+			if (PropertyDescriptor != null) {
 				try { // can happen, because we are missing some editors
-					return property_descriptor.GetEditor (typeof (UITypeEditor)) as UITypeEditor;
+					return PropertyDescriptor.GetEditor (typeof (UITypeEditor)) as UITypeEditor;
 				} catch {
-					// TODO
+					property_grid.ShowError ("Unable to load UITypeEditor for property '" + PropertyDescriptor.Name + "'.");
 				}
 			}
 			return null;
@@ -295,71 +359,128 @@ namespace System.Windows.Forms.PropertyGridInternal
 
 		public bool ToggleValue ()
 		{
-			if (IsReadOnly)
+			if (IsReadOnly || (IsMerged && !HasMergedValue))
 				return false;
 
 			bool success = false;
-			if (property_descriptor.PropertyType == typeof(bool))
-				success = SetValue (!(bool)this.Value);
-			else if (property_descriptor.Converter != null && 
-				 property_descriptor.Converter.GetStandardValuesSupported ()) {
+			string error = null;
+			if (PropertyDescriptor.PropertyType == typeof(bool))
+				success = SetValue (!(bool)this.Value, out error);
+			else if (PropertyDescriptor.Converter != null && 
+				 PropertyDescriptor.Converter.GetStandardValuesSupported ()) {
 				TypeConverter.StandardValuesCollection values = 
-					(TypeConverter.StandardValuesCollection) property_descriptor.Converter.GetStandardValues();
+					(TypeConverter.StandardValuesCollection) PropertyDescriptor.Converter.GetStandardValues();
 				for (int i = 0; i < values.Count; i++) {
 					if (this.Value.Equals (values[i])){
 						if (i < values.Count-1)
-							success = SetValue (values[i+1]);
+							success = SetValue (values[i+1], out error);
 						else
-							success = SetValue (values[0]);
+							success = SetValue (values[0], out error);
 						break;
 					}
 				}
 			}
+			if (!success && error != null)
+				property_grid.ShowError (error);
 			return success;
 		}
 
-		public bool SetValue (object value)
+		public bool SetValue (object value, out string error)
 		{
-			if (property_descriptor == null)
+			error = null;
+			if (this.IsReadOnly)
 				return false;
 
+			if (SetValueCore (value, out error)) {
+				property_grid.OnPropertyValueChangedInternal (this, this.Value);
+				return true;
+			}
+			return false;
+		}
+
+		protected virtual bool SetValueCore (object value, out string error)
+		{
+			error = null;
+
+			TypeConverter converter = PropertyDescriptor.Converter;
 			// if the new value is not of the same type try to convert it
-			if (value != null && this.Value != null && value.GetType () != this.Value.GetType ()) {
-				if (property_descriptor.Converter != null &&
-				    property_descriptor.Converter.CanConvertFrom (value.GetType ())) {
+			if (value != null && 
+			    this.Value != null && value.GetType () != this.Value.GetType ()) {
+				if (converter != null &&
+				    converter.CanConvertFrom (value.GetType ())) {
 					try {
-						value = property_descriptor.Converter.ConvertFrom (value);
+						value = converter.ConvertFrom (value);
 					} catch {
-						// TODO
+						string valueText = ConvertToString (value);
+						if (valueText != null) {
+							error = "Property value '" + valueText + "' of '" + 
+								PropertyDescriptor.Name + "' is not convertible to type '" +
+								this.Value.GetType ().Name + "'";
+
+						} else {
+							error = "Property value of '" + 
+								PropertyDescriptor.Name + "' is not convertible to type '" +
+								this.Value.GetType ().Name + "'";
+						}
+						return false;
 					}
 				}
 			}
 
 			bool changed = false;
-			foreach (object propertyOwner in property_owners) {
-				object currentVal = property_descriptor.GetValue (propertyOwner);
+			bool current_changed = false;
+			object[] propertyOwners = this.PropertyOwners;
+			PropertyDescriptor[] properties = PropertyDescriptors;
+			for (int i=0; i < propertyOwners.Length; i++) {
+				object currentVal = properties[i].GetValue (propertyOwners[i]);
+				current_changed = false;
 				if (!Object.Equals (currentVal, value)) {
-					try {
-						property_descriptor.SetValue (propertyOwner, value);
-					} catch {
-						// TODO
-					}
-					if (IsValueType (this.Parent))
-						((GridEntry) this.Parent).SetValue (propertyOwner);
-					changed = true;
-				}
-			}
+					if (this.ShouldCreateParentInstance) {
+						Hashtable updatedParentProperties = new Hashtable ();
+						PropertyDescriptorCollection parentProperties = TypeDescriptor.GetProperties (propertyOwners[i]);
+						foreach (PropertyDescriptor property in parentProperties) {
+							if (property.Name == properties[i].Name)
+								updatedParentProperties[property.Name] = value;
+							else
+								updatedParentProperties[property.Name] = property.GetValue (propertyOwners[i]);
+						}
+						object updatedParentValue = this.ParentEntry.PropertyDescriptor.Converter.CreateInstance (updatedParentProperties);
+						if (updatedParentValue != null)
+							current_changed = this.ParentEntry.SetValueCore (updatedParentValue, out error);
+					} else {
+						try {
+							properties[i].SetValue (propertyOwners[i], value);
+						} catch {
+							// MS seems to swallow this
+							// 
+							// string valueText = ConvertToString (value);
+							// if (valueText != null)
+							// 	error = "Property value '" + valueText + "' of '" + properties[i].Name + "' is invalid.";
+							// else
+							// 	error = "Property value of '" + properties[i].Name + "' is invalid.";
+							// return false;
+						}
 
-			if (changed)
-				property_grid.OnPropertyValueChangedInternal (this, this.Value);
+						if (IsValueType (this.ParentEntry)) 
+							current_changed = ParentEntry.SetValueCore (propertyOwners[i], out error);
+						else
+							current_changed = Object.Equals (properties[i].GetValue (propertyOwners[i]), value);
+					}
+					// restore original value if doesn't get set
+					if (!current_changed && !PropertyDescriptor.IsReadOnly)
+						properties[i].SetValue (propertyOwners[i], currentVal);
+				}
+				if (current_changed)
+					changed = true;
+			}
 			return changed;
 		}
 
-		private bool IsValueType (GridItem item)
+		private bool IsValueType (GridEntry item)
 		{
 			if (item != null && item.PropertyDescriptor != null && 
 			    (item.PropertyDescriptor.PropertyType.IsValueType ||
-			     item.PropertyDescriptor.PropertyType.IsArray))
+			     item.PropertyDescriptor.PropertyType.IsPrimitive))
 				return true;
 			return false;
 		}
@@ -367,15 +488,36 @@ namespace System.Windows.Forms.PropertyGridInternal
 		public bool ResetValue ()
 		{
 			if (IsResetable) {
-				property_descriptor.ResetValue (property_owners[0]);
+				object[] owners = this.PropertyOwners;
+				PropertyDescriptor[] properties = PropertyDescriptors;
+				for (int i=0; i < owners.Length; i++) {
+					properties[i].ResetValue (owners[i]);
+					if (IsValueType (this.ParentEntry)) {
+						string error = null;
+						if (!ParentEntry.SetValueCore (owners[i], out error) && error != null)
+							property_grid.ShowError (error);
+					}
+				}
 				property_grid.OnPropertyValueChangedInternal (this, this.Value);
 				return true;
 			}
 			return false;
 		}
 
+		public bool HasDefaultValue {
+			get {
+				if (PropertyDescriptor != null && 
+				    PropertyDescriptor.Attributes[typeof (DefaultValueAttribute)] != null)
+				    return true;
+				return false;
+			}
+		}
+
+		// Determines if the current value can be reset
+		//
 		public virtual bool IsResetable {
-			get { return (!IsReadOnly && property_descriptor.CanResetValue (property_owners[0])); }
+			get { return (!IsReadOnly && PropertyDescriptor.CanResetValue (PropertyOwner)); }
+
 		}
 
 		// If false the entry can be modified only by the means of a predefined values
@@ -383,12 +525,16 @@ namespace System.Windows.Forms.PropertyGridInternal
 		//
 		public virtual bool IsEditable {
 			get {
-				if (property_descriptor == null || property_descriptor.IsReadOnly)
+				if (PropertyDescriptor == null)
+					return true;
+				else if (PropertyDescriptor.PropertyType.IsArray)
 					return false;
-				else if (property_descriptor.Converter == null)
+				else if (PropertyDescriptor.IsReadOnly && this.ShouldCreateParentInstance)
+					return true;
+				else if (PropertyDescriptor.Converter == null)
 					return false;
-				else if (property_descriptor.Converter.GetStandardValuesSupported () &&
-					 property_descriptor.Converter.GetStandardValuesExclusive ())
+				else if (PropertyDescriptor.Converter.GetStandardValuesSupported () &&
+					 PropertyDescriptor.Converter.GetStandardValuesExclusive ())
 					return false;
 				else
 					return true;
@@ -399,22 +545,54 @@ namespace System.Windows.Forms.PropertyGridInternal
 		//
 		public virtual bool IsReadOnly {
 			get {
-				if (property_descriptor == null || property_descriptor.IsReadOnly)
+				// if (PropertyDescriptor != null) {
+				// 	Console.WriteLine ("=== [" + PropertyDescriptor.Name + "]");
+				// 	Console.WriteLine ("PropertyDescriptor.IsReadOnly: " + PropertyDescriptor.IsReadOnly);
+				// 	Console.WriteLine ("ShouldCreateParentInstance: " + this.ShouldCreateParentInstance);
+				// 	Console.WriteLine ("HasCustomEditor: " + HasCustomEditor);
+				// 	Console.WriteLine ("Converter != null: " + (PropertyDescriptor.Converter != null).ToString());
+				// 	Console.WriteLine ("Converter.GetStandardValuesSupported: " + PropertyDescriptor.Converter.GetStandardValuesSupported ().ToString ());
+				// 	Console.WriteLine ("CanConvertFrom (string): " + PropertyDescriptor.Converter.CanConvertFrom ((ITypeDescriptorContext)this, typeof (string)));
+				// 	Console.WriteLine ("IsArray: " + PropertyDescriptor.PropertyType.IsArray.ToString ());
+				// }
+				if (PropertyDescriptor == null || PropertyOwner == null ||
+				    (PropertyDescriptor.IsReadOnly && !this.ShouldCreateParentInstance))
 					return true;
-				else if (GetEditor() == null && property_descriptor.Converter == null)
+				else if (!HasCustomEditor && PropertyDescriptor.Converter == null)
 					return true;
-				else if (!property_descriptor.Converter.GetStandardValuesSupported () &&
-					 !property_descriptor.Converter.CanConvertFrom ((ITypeDescriptorContext)this, 
-											typeof (string)) &&
-					 this.EditorStyle == UITypeEditorEditStyle.None) {
+				else if (PropertyDescriptor.Converter != null &&
+					 !PropertyDescriptor.Converter.GetStandardValuesSupported () &&
+					 !PropertyDescriptor.Converter.CanConvertFrom ((ITypeDescriptorContext)this,
+										       typeof (string)) &&
+					 !HasCustomEditor) {
 					return true;
-				} else
+				} else if (PropertyDescriptor.PropertyType.IsArray && !HasCustomEditor)
+					return true;
+				else
 					return false;
 			}
 		}
+
+		// This is a way to set readonly properties (e.g properties without a setter).
+		// The way it works is that if CreateInstance is supported by the parent's converter  
+		// it gets passed a list of properties and their values which it uses to create an 
+		// instance (e.g by passing them to the ctor of that object type).
+		// 
+		// This is used for e.g Font
+		//
+		public virtual bool ShouldCreateParentInstance {
+			get {
+				if (this.ParentEntry != null && ParentEntry.PropertyDescriptor != null) {
+					TypeConverter parentConverter = Parent.PropertyDescriptor.Converter;
+					if (parentConverter != null && parentConverter.GetCreateInstanceSupported ((ITypeDescriptorContext)this))
+						return true;
+				}
+				return false;
+			}
+		}
+
 		public virtual bool PaintValueSupported {
 			get {
-
 				UITypeEditor editor = GetEditor ();
 				if (editor != null)
 					return editor.GetPaintValueSupported ();

@@ -1,3 +1,10 @@
+2008-02-04  Ivan N. Zlatev  <contact@i-nz.net>
+	[Backport to 1.9]
+	 * PropertyGrid.cs, PropertyGridView.cs, GridEntry.cs,
+	 CategoryGridEntry.cs, RootGridEntry.cs, GridItem.cs,
+	 GridItemCollection.cs:
+	 PropertyGrid backport.
+
 2008-01-31  Jonathan Pobst  <monkey@jpobst.com>
 	[Backport to 1.9]
 	* Control.cs: Remove my awesome optimization as it caused some
