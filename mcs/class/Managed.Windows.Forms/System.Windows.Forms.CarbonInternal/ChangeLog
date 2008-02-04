@@ -1,5 +1,10 @@
 2008-02-04  Geoff Norton  <gnorton@novell.com>
 
+	* KeyboardHandler.cs: Control+key does not generate SYSKEY, it prevents
+	SYSKEY (ctrl+alt+foo).  Also implement broken menu keyup filtering.
+
+2008-02-04  Geoff Norton  <gnorton@novell.com>
+
 	* KeyboardHandler.cs: Control+key generates SYSKEY/SYSCHAR as well
 	as Alt+key.
 

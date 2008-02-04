@@ -51,6 +51,8 @@ namespace System.Windows.Forms.CarbonInternal {
 		internal static byte [] key_modifier_table;
 		internal static byte [] key_translation_table;
 
+		internal static bool translate_modifier = false;
+
 		static KeyboardHandler () {
 			// our key filter table is a 256 byte array - if the corresponding byte 
 			// is set the key should be filtered from WM_CHAR (apple pushes unicode events
@@ -236,16 +238,23 @@ namespace System.Windows.Forms.CarbonInternal {
 			if (msg.message >= Msg.WM_KEYFIRST && msg.message <= Msg.WM_KEYLAST)
 				res = true;
  
-			if (key_modifier_table [8] == 0x01) {
-				if (msg.message == Msg.WM_KEYDOWN) msg.message = Msg.WM_SYSKEYDOWN;
-				if (msg.message == Msg.WM_KEYUP) msg.message = Msg.WM_SYSKEYUP;
-				if (msg.message == Msg.WM_CHAR) msg.message = Msg.WM_SYSCHAR;
+			
+			if (key_modifier_table [8] == 0x01 && key_modifier_table [12] == 0x00 && key_modifier_table [14] == 0x00) {
+				if (msg.message == Msg.WM_KEYDOWN) {
+					msg.message = Msg.WM_SYSKEYDOWN;
+				} else if (msg.message == Msg.WM_CHAR) {
+					msg.message = Msg.WM_SYSCHAR;
+					translate_modifier = true;
+				} else if (msg.message == Msg.WM_KEYUP) {
+					msg.message = Msg.WM_SYSKEYUP;
+				} else {
+					return res;
+				}
 
 				msg.lParam = new IntPtr (0x20000000);
-			} else if (key_modifier_table [12] == 0x01 || key_modifier_table [14] == 0x01) {
-				if (msg.message == Msg.WM_KEYDOWN) msg.message = Msg.WM_SYSKEYDOWN;
-				if (msg.message == Msg.WM_KEYUP) msg.message = Msg.WM_SYSKEYUP;
-				if (msg.message == Msg.WM_CHAR) msg.message = Msg.WM_SYSCHAR;
+			} else if (msg.message == Msg.WM_SYSKEYUP && translate_modifier && msg.wParam == (IntPtr) 18) {
+				msg.message = Msg.WM_KEYUP;
+				translate_modifier = false;
 			}
 
 			return res;
