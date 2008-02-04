@@ -1,3 +1,8 @@
+2008-02-03  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Hwnd.cs: Use GraphicContext instead of the uninitialized bmp_g.
+	[Fixes bug #358342]
+
 2008-02-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* CurrencyManager.cs: When we get a ListChanged event from our source,
