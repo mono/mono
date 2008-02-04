@@ -66,6 +66,16 @@ namespace Mono.Cecil.Cil {
 			return FinalCreate (opcode, type);
 		}
 
+		public Instruction Create (OpCode opcode, CallSite site)
+		{
+			if (site == null)
+				throw new ArgumentNullException ("site");
+			if (opcode.Code != Code.Calli)
+				throw new ArgumentException ("code");
+
+			return FinalCreate (opcode, site);
+		}
+
 		public Instruction Create (OpCode opcode, MethodReference method)
 		{
 			if (method == null)
@@ -230,6 +240,13 @@ namespace Mono.Cecil.Cil {
 		public Instruction Emit (OpCode opcode, MethodReference meth)
 		{
 			Instruction instr = Create (opcode, meth);
+			Append (instr);
+			return instr;
+		}
+
+		public Instruction Emit (OpCode opcode, CallSite site)
+		{
+			Instruction instr = Create (opcode, site);
 			Append (instr);
 			return instr;
 		}
