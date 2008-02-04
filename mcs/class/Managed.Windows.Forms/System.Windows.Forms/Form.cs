@@ -2193,6 +2193,7 @@ namespace System.Windows.Forms {
 					MdiParent.MdiContainer.ActivatePreviousChild ();
 					return true;
 				case Keys.Alt | Keys.OemMinus:
+				case Keys.Alt | Keys.Subtract:
 					(this.WindowManager as MdiWindowManager).ShowPopup (Point.Empty);
 					return true;
 				}

@@ -1,5 +1,11 @@
 2008-02-03  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Form.cs: Alt-Minus for MDI children system menu should work
+	with both the minus keys on the keyboard.
+	[Fixes bug #336295]
+
+2008-02-03  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Control.cs: Don't invalidate on region change.  The WM should
 	take care of this automagically.  Keeps us out of an infinite
 	paint loop if someone changes the Region in the OnPaint.
