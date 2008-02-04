@@ -93,7 +93,7 @@ namespace MonoTests.System.Linq.Expressions {
 		{
 			var ElementInit = Expression.ElementInit (typeof (Foo).GetMethod ("Add"), new Expression [] {Expression.Constant ("")});
 
-			Assert.AreEqual ("Add(\"\")", ElementInit.ToString ());
+			Assert.AreEqual ("Void Add(System.String)(\"\")", ElementInit.ToString ());
 		}
 
 		public class Foo {
