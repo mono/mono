@@ -1439,7 +1439,7 @@ namespace System.Linq.Expressions {
 			if (constructor.GetParameters ().Length > 0)
 				throw new ArgumentException ("Constructor must be parameter less");
 
-			return new NewExpression (constructor, (null as IEnumerable<Expression>).ToReadOnlyCollection<Expression> (), null);
+			return new NewExpression (constructor, (null as IEnumerable<Expression>).ToReadOnlyCollection (), null);
 		}
 
 		public static NewExpression New (Type type)
@@ -1447,10 +1447,11 @@ namespace System.Linq.Expressions {
 			if (type == null)
 				throw new ArgumentNullException ("type");
 
-			if (type.GetConstructor (Type.EmptyTypes) == null)
+			var ctor = type.GetConstructor (Type.EmptyTypes);
+			if (ctor == null)
 				throw new ArgumentException ("Type doesn't have a parameter less constructor");
 
-			return new NewExpression (type, (null as IEnumerable<Expression>).ToReadOnlyCollection<Expression> ());
+			return new NewExpression (ctor, (null as IEnumerable<Expression>).ToReadOnlyCollection (), null);
 		}
 
 		public static NewExpression New (ConstructorInfo constructor, params Expression [] arguments)
