@@ -138,7 +138,7 @@ namespace System.Web.UI
 			StringBuilder content = new StringBuilder ();
 			int idxStart, idxEnd, length;			
 
-			using (StreamReader reader = new StreamReader (File.OpenRead (physPath))) {
+			using (StreamReader reader = new StreamReader (File.OpenRead (physPath), WebEncoding.FileEncoding)) {
 				while ((line = reader.ReadLine ()) != null && cachedType == null) {
 					length = line.Length;
 					if (length == 0) {
