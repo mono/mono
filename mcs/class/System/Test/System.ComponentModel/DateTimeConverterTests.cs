@@ -62,6 +62,10 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreEqual (date.Minute, newDate.Minute, "#5");
 			Assert.AreEqual (date.Second, newDate.Second, "#6");
 			Assert.AreEqual (0, newDate.Millisecond, "#7");
+
+			newDate = (DateTime) converter.ConvertFrom (null, CultureInfo.InvariantCulture, 
+								    String.Empty);
+			Assert.AreEqual (DateTime.MinValue, newDate, "#8");
 		}
 
 		[Test]

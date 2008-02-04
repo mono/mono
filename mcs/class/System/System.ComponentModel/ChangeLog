@@ -1,3 +1,7 @@
+2008-02-04  Ivan N. Zlatev  <contact@i-nz.net>
+
+	 * DateTimeConverter.cs: handle empty strings in ConvertFrom.
+
 2008-01-19  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* MaskedTextProvider.cs: Fix IsPassword (found by Gendarme)
