@@ -38,94 +38,94 @@ namespace MonoTests.System.Linq.Expressions {
 	[TestFixture]
 	public class ExpressionTest_ListBind {
 
-		private List<ElementInit> list;
-
-		[SetUp]
-		public void init()
-		{
-			list= new List<ElementInit> ();
-		}
-
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void MemberNull ()
 		{
-			Expression.ListBind (null as MemberInfo, list);
+			Expression.ListBind (null as MemberInfo, new List<ElementInit> ());
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void PropertyAccessorNull ()
 		{
-			Expression.ListBind (null as MethodInfo, list);
+			Expression.ListBind (null as MethodInfo, new List<ElementInit> ());
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void ArgNull ()
 		{
-			list.Add(null);
+			var list = new List<ElementInit> ();
+			list.Add (null);
 			Expression.ListBind (typeof (Foo).GetProperty ("Bar").GetSetMethod (), list);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void ArgNull2 ()
-		{
-			list.Add(null);
-			Expression.ListBind (typeof (Foo).GetMember ("foo")[0], list);
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void MemberTypeImplementIEnumerable ()
 		{
-			Expression.ListBind (typeof (Foo).GetMember ("baz")[0], list);
+			Expression.ListBind (typeof (Foo).GetMember ("baz") [0], new List<ElementInit> ());
 		}
-		//TODO test for other than fielf and property...
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void MethodeGetImplementIEnumerable2 ()
 		{
-			Expression.ListBind (typeof (Foo).GetProperty ("BarBar").GetGetMethod (), list);
+			Expression.ListBind (typeof (Foo).GetProperty ("BarBar").GetGetMethod (), new List<ElementInit> ());
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void MethodMustBeAnAccessor ()
 		{
-			Expression.ListBind (typeof (Foo).GetMethod ("test"), list);
+			Expression.ListBind (typeof (Foo).GetMethod ("test"), new List<ElementInit> ());
 		}
 
-		/*[Test]
+		[Test]
+		[Category ("NotWorking")]
 		public void ListBindToString ()
 		{
-			//TODO list add or do with a lambda expression
-			var ListBind = Expression.ListBind (typeof (Foo).GetMember ("Bar"), list);
+			var add = typeof (List<string>).GetMethod ("Add");
 
-			Assert.AreEqual ("Bar.Add(\"\")", ListBind.ToString ());
-		}*/
+			var list = new List<ElementInit> () {
+				Expression.ElementInit (add, Expression.Constant ("foo")),
+				Expression.ElementInit (add, Expression.Constant ("bar")),
+				Expression.ElementInit (add, Expression.Constant ("baz")),
+			};
+
+			var binding = Expression.ListBind (typeof (Foo).GetProperty ("List"), list.ToArray ());
+
+			Assert.AreEqual ("List = {Void Add(System.String)(\"foo\"), Void Add(System.String)(\"bar\"), Void Add(System.String)(\"baz\")}", binding.ToString ());
+		}
 
 		public class Foo {
 
-			public string [] Bar
-			{
-				get {return foo;}
-				set {foo = value;}
-			}
 			public string [] foo;
 			public string str;
 
 			public int baz;
 
+			private List<string> list = new List<string> ();
+
+			public List<string> List {
+				get { return list; }
+			}
+
+			public string [] Bar
+			{
+				get { return foo; }
+				set { foo = value; }
+			}
+
+			public int BarBar
+			{
+				get { return 0; }
+			}
+
 			public string [] test ()
 			{
 				return null;
-			}
-			public int BarBar
-			{
-				get {return 0;}
 			}
 		}
 	}
