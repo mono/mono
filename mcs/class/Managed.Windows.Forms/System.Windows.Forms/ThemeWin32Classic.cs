@@ -3328,12 +3328,19 @@ namespace System.Windows.Forms
 				}				
 			}
 			
+			Brush border_brush;
+			
+			if (mc.owner == null)
+				border_brush = GetControlBackBrush (mc.BackColor);
+			else
+				border_brush = SystemBrushes.ControlDarkDark;
+				
 			// finally paint the borders of the calendars as required
 			for (int i = 0; i <= mc.CalendarDimensions.Width; i++) {
 				if (i == 0 && clip_rectangle.X == client_rectangle.X) {
-					dc.FillRectangle (GetControlBackBrush (mc.BackColor), client_rectangle.X, client_rectangle.Y, 1, client_rectangle.Height);
+					dc.FillRectangle (border_brush, client_rectangle.X, client_rectangle.Y, 1, client_rectangle.Height);
 				} else if (i == mc.CalendarDimensions.Width && clip_rectangle.Right == client_rectangle.Right) {
-					dc.FillRectangle (GetControlBackBrush (mc.BackColor), client_rectangle.Right-1, client_rectangle.Y, 1, client_rectangle.Height);
+					dc.FillRectangle (border_brush, client_rectangle.Right - 1, client_rectangle.Y, 1, client_rectangle.Height);
 				} else { 
 					Rectangle rect = new Rectangle (
 						client_rectangle.X + (month_size.Width*i) + (calendar_spacing.Width * (i-1)) + 1,
@@ -3341,15 +3348,15 @@ namespace System.Windows.Forms
 						calendar_spacing.Width,
 						client_rectangle.Height);
 					if (i < mc.CalendarDimensions.Width && i > 0 && clip_rectangle.IntersectsWith (rect)) {
-						dc.FillRectangle (GetControlBackBrush (mc.BackColor), rect);
+						dc.FillRectangle (border_brush, rect);
 					}
 				}
 			}
 			for (int i = 0; i <= mc.CalendarDimensions.Height; i++) {
 				if (i == 0 && clip_rectangle.Y == client_rectangle.Y) {
-					dc.FillRectangle (GetControlBackBrush (mc.BackColor), client_rectangle.X, client_rectangle.Y, client_rectangle.Width, 1);
+					dc.FillRectangle (border_brush, client_rectangle.X, client_rectangle.Y, client_rectangle.Width, 1);
 				} else if (i == mc.CalendarDimensions.Height && clip_rectangle.Bottom == client_rectangle.Bottom) {
-					dc.FillRectangle (GetControlBackBrush (mc.BackColor), client_rectangle.X, client_rectangle.Bottom-1, client_rectangle.Width, 1);
+					dc.FillRectangle (border_brush, client_rectangle.X, client_rectangle.Bottom - 1, client_rectangle.Width, 1);
 				} else { 
 					Rectangle rect = new Rectangle (
 						client_rectangle.X,
@@ -3357,7 +3364,7 @@ namespace System.Windows.Forms
 						client_rectangle.Width,
 						calendar_spacing.Height);
 					if (i < mc.CalendarDimensions.Height && i > 0 && clip_rectangle.IntersectsWith (rect)) {
-						dc.FillRectangle (GetControlBackBrush (mc.BackColor), rect);
+						dc.FillRectangle (border_brush, rect);
 					}
 				}
 			}
