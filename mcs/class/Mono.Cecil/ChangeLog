@@ -1,5 +1,10 @@
 2008-02-04  Jb Evain  <jbevain@novell.com>
 
+	* Mono.Cecil.Binary/CLIHeader.cs
+	  Mono.Cecil.Binary/ImageWriter.cs
+	  Mono.Cecil.Metadata/MetadataWriter.cs:
+		emit the proper cli header version for 1.1 and 2.0 cases.
+
 	* Mono.Cecil.Cil/CilWorker.cs: add callsite overloads.
 
 2008-01-10  Jb Evain  <jbevain@novell.com>

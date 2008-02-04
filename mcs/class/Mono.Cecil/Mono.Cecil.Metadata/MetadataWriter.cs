@@ -91,6 +91,10 @@ namespace Mono.Cecil.Metadata {
 			set { m_entryPointToken = value; }
 		}
 
+		public TargetRuntime TargetRuntime {
+			get { return m_runtime; }
+		}
+
 		public MetadataWriter (AssemblyDefinition asm, MetadataRoot root,
 			AssemblyKind kind, TargetRuntime rt, BinaryWriter writer)
 		{

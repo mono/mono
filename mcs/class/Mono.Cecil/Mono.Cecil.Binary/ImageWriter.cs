@@ -316,8 +316,15 @@ namespace Mono.Cecil.Binary {
 		public override void VisitCLIHeader (CLIHeader header)
 		{
 			m_textWriter.Write (header.Cb);
-			m_textWriter.Write (header.MajorRuntimeVersion);
-			m_textWriter.Write (header.MinorRuntimeVersion);
+
+			if (m_mdWriter.TargetRuntime == TargetRuntime.NET_2_0) {
+				m_textWriter.Write ((ushort) 2);
+				m_textWriter.Write ((ushort) 5);
+			} else {
+				m_textWriter.Write ((ushort) 2);
+				m_textWriter.Write ((ushort) 0);
+			}
+
 			m_textWriter.Write (header.Metadata.VirtualAddress);
 			m_textWriter.Write (header.Metadata.Size);
 			m_textWriter.Write ((uint) header.Flags);

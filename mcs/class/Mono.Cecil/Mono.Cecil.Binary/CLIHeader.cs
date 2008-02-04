@@ -52,8 +52,6 @@ namespace Mono.Cecil.Binary {
 		public void SetDefaultValues ()
 		{
 			Cb = 0x48;
-			MajorRuntimeVersion = 2;
-			MinorRuntimeVersion = 0;
 			Flags = RuntimeImage.ILOnly;
 			CodeManagerTable = DataDirectory.Zero;
 			ExportAddressTableJumps = DataDirectory.Zero;
