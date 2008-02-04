@@ -1,3 +1,8 @@
+2008-02-04  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #355251
+ 	* generic.cs: Added base class constraint based type inference.
+
 2008-02-01  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #357255

@@ -2640,17 +2640,25 @@ namespace Mono.CSharp {
 
 		void AddToBounds (Type t, int index)
 		{
-			ArrayList a = bounds[index];
+			ArrayList a = bounds [index];
 			if (a == null) {
 				a = new ArrayList ();
-				a.Add (t);
-				bounds[index] = a;
-				return;
+				bounds [index] = a;
+			} else {
+				if (a.Contains (t))
+					return;
 			}
 
-			if (a.Contains (t))
-				return;
-
+			//
+			// SPEC: does not cover type inference using constraints
+			//
+			if (TypeManager.IsGenericParameter (t)) {
+				GenericConstraints constraints = TypeManager.GetTypeParameterConstraints (t);
+				if (constraints != null) {
+					if (constraints.EffectiveBaseClass != null)
+						t = constraints.EffectiveBaseClass;
+				}
+			}
 			a.Add (t);
 		}
 		
