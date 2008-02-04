@@ -1,3 +1,9 @@
+2008-01-28  Jonathan Pryor  <jpryor@novell.com>
+
+	* signal.c: Provide support functions for Mono.Unix.UnixSignal, which 
+	  supports both polling and waiting on signal emission.
+	* map.h: Flush (adds UnixSignal-related prototypes).
+
 2008-01-05  Jonathan Pryor  <jpryor@novell.com>
 
 	* map.h, map.c: Flush; add new ST_NOEXEC, ST_REMOUNT, and ST_BIND MountFlags 

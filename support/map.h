@@ -1382,6 +1382,7 @@ struct Mono_Posix_Syscall__Utsname;
 struct Mono_Posix_Timeval;
 struct Mono_Posix_Timezone;
 struct Mono_Posix_Utimbuf;
+struct Mono_Unix_UnixSignal_SignalInfo;
 
 /*
  * Inferred Structure Declarations
@@ -1540,6 +1541,15 @@ Mono_Posix_FromUtimbuf (struct Mono_Posix_Utimbuf* from, struct utimbuf *to);
 int
 Mono_Posix_ToUtimbuf (struct utimbuf *from, struct Mono_Posix_Utimbuf* to);
 
+
+struct Mono_Unix_UnixSignal_SignalInfo {
+	int   signum;
+	int   count;
+	int   read_fd;
+	int   write_fd;
+	int   have_handler;
+	void* handler;
+};
 
 
 /*
@@ -1706,6 +1716,9 @@ gint64 Mono_Posix_Syscall_write (int fd, void* buf, guint64 count);
 int Mono_Posix_Syscall_WSTOPSIG (int status);
 int Mono_Posix_Syscall_WTERMSIG (int status);
 int Mono_Posix_ToStatvfs (void* source, struct Mono_Posix_Statvfs* destination);
+void* Mono_Unix_UnixSignal_install (int signum);
+int Mono_Unix_UnixSignal_uninstall (void* info);
+int Mono_Unix_UnixSignal_WaitAny (void** infos, int count, int timeout);
 int wexitstatus (int status);
 int wifexited (int status);
 int wifsignaled (int status);
