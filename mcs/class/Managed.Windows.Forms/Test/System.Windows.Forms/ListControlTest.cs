@@ -466,6 +466,10 @@ namespace MonoTests.System.Windows.Forms
 			_value = value;
 		}
 
+		public MockItem ()
+		{
+		}
+
 		public string Text {
 			get { return _text; }
 		}

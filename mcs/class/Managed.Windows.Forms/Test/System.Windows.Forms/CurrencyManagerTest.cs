@@ -1071,5 +1071,81 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			Assert.IsTrue (typeof (DataView).IsAssignableFrom (GetFinalType (cm)), "A6");
 		}
 
+#if NET_2_0
+		[Test]
+		public void ListChangedEventTest ()
+		{
+			Control c = new Control ();
+			c.BindingContext = new BindingContext ();
+			c.CreateControl ();
+
+			BindingListChild<MockItem> binding_list = new BindingListChild<MockItem> ();
+			CurrencyManager currency_manager = (CurrencyManager)c.BindingContext [binding_list];
+			currency_manager.ListChanged += new ListChangedEventHandler(ListChangedEvent);
+
+			ClearListChangedLog ();
+
+			MockItem item = binding_list.AddNew ();
+			binding_list.EndNew (binding_list.IndexOf (item));
+			Assert.IsTrue (list_changed_called, "#A1");
+			Assert.AreEqual (ListChangedType.ItemAdded, list_changed_args.ListChangedType, "#A2");
+
+			ClearListChangedLog ();
+
+			binding_list.Insert (0, new MockItem ());
+			Assert.IsTrue (list_changed_called, "#B1");
+			Assert.AreEqual (ListChangedType.ItemAdded, list_changed_args.ListChangedType, "#B2");
+
+			ClearListChangedLog ();
+
+			binding_list.RemoveAt (0);
+			Assert.IsTrue (list_changed_called, "#D1");
+			Assert.AreEqual (ListChangedType.ItemDeleted, list_changed_args.ListChangedType, "#D2");
+
+			ClearListChangedLog ();
+
+			binding_list [0] = new MockItem ();
+			Assert.IsTrue (list_changed_called, "#E1");
+			Assert.AreEqual (ListChangedType.ItemChanged, list_changed_args.ListChangedType, "#E2");
+
+			ClearListChangedLog ();
+
+			binding_list.DoResetItem (0);
+			Assert.IsTrue (list_changed_called, "#F1");
+			Assert.AreEqual (ListChangedType.ItemChanged, list_changed_args.ListChangedType, "#F2");
+
+			ClearListChangedLog ();
+
+			binding_list.DoResetBinding ();
+			Assert.IsTrue (list_changed_called, "#G1");
+			Assert.AreEqual (ListChangedType.Reset, list_changed_args.ListChangedType, "#G2");
+
+			binding_list.Clear ();
+			Assert.IsTrue (list_changed_called, "#F1");
+			Assert.AreEqual (ListChangedType.Reset, list_changed_args.ListChangedType, "#F2");
+
+			currency_manager.ListChanged -= ListChangedEvent;
+		}
+
+		void ClearListChangedLog ()
+		{
+			list_changed_called = false;
+			list_changed_args = null;
+		}
+
+		public class BindingListChild<T> : BindingList<T>
+		{
+			public void DoResetItem (int position)
+			{
+				ResetItem (position);
+			}
+
+			public void DoResetBinding ()
+			{
+				ResetBindings ();
+			}
+		}
+#endif
+
 	}
 }
