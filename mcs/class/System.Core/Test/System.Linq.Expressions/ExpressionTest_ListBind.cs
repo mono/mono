@@ -83,7 +83,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ListBindToString ()
 		{
 			var add = typeof (List<string>).GetMethod ("Add");

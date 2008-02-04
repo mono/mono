@@ -1,3 +1,8 @@
+2008-02-04  Jb Evain  <jbevain@novell.com>
+
+	* ExpressionTest_ListBind.cs: add working test for MemberListBinding
+	ToStringification.
+
 2008-02-02  Jb Evain  <jbevain@novell.com>
 
 	* ExpressionTest_ListBind.cs: fix MemberTypeImplementIEnumerable test.
