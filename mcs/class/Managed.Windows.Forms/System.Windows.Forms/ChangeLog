@@ -1,3 +1,10 @@
+2008-02-04  Ivan N. Zlatev  <contact@i-nz.net>
+
+	 * PropertyGrid.cs, PropertyGridView.cs, GridEntry.cs,
+	 CategoryGridEntry.cs, RootGridEntry.cs, GridItem.cs,
+	 GridItemCollection.cs:
+	 PropertyGrid rewrite part 2. Tons of bugfixes and new features.
+
 2008-02-04  Geoff Norton  <gnorton@novell.com>
 
 	* X11Keyboard.cs: VK_MENU should send a KEYUP instead of 

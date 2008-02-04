@@ -49,14 +49,25 @@ namespace System.Windows.Forms
 		#endregion	// Constructors
 
 		#region Internal Properties and Methods
-		internal void Add(string key, GridItem grid_item)
+		internal void Add(GridItem grid_item)
 		{
-			list.Add(key,grid_item);
+			list.Add (grid_item.Label, grid_item);
+		}
+
+		internal void AddRange (GridItemCollection items)
+		{
+			foreach (GridItem item in items)
+				Add (item);
 		}
 
 		internal int IndexOf (GridItem grid_item)
 		{
 			return list.IndexOfValue (grid_item);
+		}
+
+		internal void Remove (string key)
+		{
+			list.Remove (key);
 		}
 		#endregion	// Internal Properties and Methods
 
@@ -146,14 +157,6 @@ namespace System.Windows.Forms
 
 		internal void Clear ()
 		{
-			for (int i = 0; i < list.Count; i++) {
-				GridEntry grid_entry = list.GetByIndex (i) as GridEntry;
-				if (grid_entry == null || grid_entry.Parent == null)
-					continue;
-
-				grid_entry.SetParent (null);
-			}
-
 			list.Clear ();
 		}
 	}

@@ -34,11 +34,13 @@ namespace System.Windows.Forms.PropertyGridInternal
 	[MonoTODO ("needs to implement IRootGridEntry")]
 	internal class RootGridEntry : GridEntry /*, IRootGridEntry */
 	{
-		object val;
+		object[] val;
 
-		public RootGridEntry (PropertyGrid owner, object obj)
-			: base (owner)
+		public RootGridEntry (PropertyGrid owner, object[] obj)
+			: base (owner, null)
 		{
+			if (obj == null || obj.Length == 0)
+				throw new ArgumentNullException ("obj");
 			val = obj;
 		}
 
@@ -47,10 +49,14 @@ namespace System.Windows.Forms.PropertyGridInternal
 		}
 
 		public override string Label {
-			get { return val.GetType().ToString(); }
+			get { return val.Length > 1 ? val.GetType().ToString() : val[0].GetType().ToString(); }
 		}
 
 		public override object Value {
+			get { return val.Length > 1 ? val : val[0]; }
+		}
+
+		public override object[] Values {
 			get { return val; }
 		}
 
@@ -65,6 +71,14 @@ namespace System.Windows.Forms.PropertyGridInternal
 
 		public override bool IsEditable {
 			get { return false; }
+		}
+
+		public override bool IsResetable {
+			get { return false; }
+		}
+
+		public override bool IsMerged {
+			get { return val.Length > 1; }
 		}
 	}
 }
