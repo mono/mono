@@ -1,3 +1,15 @@
+2008-02-04  Geoff Norton  <gnorton@novell.com>
+
+	* EventHandler.cs: [Backport] Expose GetEventClass internally.  Subscribe to
+	the unicode text events.
+	* KeyboardHandler.cs: [Backport] Commit the new keyboard handler.  We grab
+	the unicode characters provided by apple and push them thru a translation
+	table to generate windows style keyboard events. Control+key does not generate
+	SYSKEY, it prevents SYSKEY (ctrl+alt+foo).  Also implement broken menu keyup
+	filtering.  lParam should be cleared in the broken menu filter case.
+	Commit support for the last batch of keytypes .(F1-12; Fn+modifiers; etc).
+	Filter the translate call.
+
 2008-01-28  Geoff Norton  <gnorton@novell.com>
 
 	* EventHandler.cs: Subscribe ot ResizeBegin and ResizeEnd events.

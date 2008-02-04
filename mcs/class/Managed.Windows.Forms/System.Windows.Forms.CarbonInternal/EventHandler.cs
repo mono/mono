@@ -98,7 +98,8 @@ namespace System.Windows.Forms.CarbonInternal {
 									new EventTypeSpec (kEventClassKeyboard, KeyboardHandler.kEventRawKeyModifiersChanged),
 									new EventTypeSpec (kEventClassKeyboard, KeyboardHandler.kEventRawKeyDown),
 									new EventTypeSpec (kEventClassKeyboard, KeyboardHandler.kEventRawKeyRepeat),
-									new EventTypeSpec (kEventClassKeyboard, KeyboardHandler.kEventRawKeyUp)
+									new EventTypeSpec (kEventClassKeyboard, KeyboardHandler.kEventRawKeyUp),
+									new EventTypeSpec (kEventClassTextInput, KeyboardHandler.kEventTextInputUnicodeForKeyEvent)
 									};
 
 		internal static int EventCallback (IntPtr callref, IntPtr eventref, IntPtr handle) {
@@ -113,6 +114,7 @@ namespace System.Windows.Forms.CarbonInternal {
 					break;
 				}
 				case kEventClassKeyboard:
+				case kEventClassTextInput:
 					handler = (IEventHandler) Driver.KeyboardHandler;
 					break;
 				case kEventClassWindow:
@@ -141,13 +143,13 @@ namespace System.Windows.Forms.CarbonInternal {
 
 		internal static bool TranslateMessage (ref MSG msg) {
 			bool result = false;
-
+ 
 			if (!result)
 				result = Driver.KeyboardHandler.TranslateMessage (ref msg);
 			if (!result)
 				result = Driver.MouseHandler.TranslateMessage (ref msg);
 
-			return result;
+ 			return result;
 		}
 
 		internal static void InstallApplicationHandler () {
@@ -170,7 +172,7 @@ namespace System.Windows.Forms.CarbonInternal {
 		internal static extern IntPtr GetWindowEventTarget (IntPtr window);
 
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-		static extern uint GetEventClass (IntPtr eventref);
+		internal static extern uint GetEventClass (IntPtr eventref);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern uint GetEventKind (IntPtr eventref);
 		
