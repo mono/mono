@@ -1,3 +1,8 @@
+2008-02-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-amd64.c (mono_arch_patch_callsite): Add some diagnostics to help debug
+	issues where an 32 bit callsite cannot be patched by a 64 bit address.
+
 2008-02-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* generics.2.cs generics-variant-types.2.il: Merge some tests from the linear IR
