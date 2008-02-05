@@ -373,9 +373,15 @@ namespace System.Web.Compilation {
 		{
 			string vp;
 
-			if (!VirtualPathUtility.IsRooted (virtualPath))
-				vp = "~/" + virtualPath;
-			else
+			if (!VirtualPathUtility.IsRooted (virtualPath)) {
+				HttpContext ctx = HttpContext.Current;
+				HttpRequest req = ctx != null ? ctx.Request : null;
+
+				if (req != null)
+					vp = VirtualPathUtility.GetDirectory (req.FilePath) + virtualPath;
+				else
+					throw new HttpException ("No context, cannot map paths.");
+			} else
 				vp = virtualPath;
 			
 			if (VirtualPathUtility.IsAppRelative (vp))
@@ -414,8 +420,8 @@ namespace System.Web.Compilation {
 		public static Type GetCompiledType (string virtualPath)
 		{
 			string vp = GetAbsoluteVirtualPath (virtualPath);
-			
 			BuildCacheItem ret = GetCachedItem (vp);
+
 			if (ret != null)
 				return ret.type;
 			
