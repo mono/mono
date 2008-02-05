@@ -76,8 +76,6 @@ namespace System.Windows.Forms {
 		internal bool		fixed_size;
 		internal bool		zombie; /* X11 only flag.  true if the X windows have been destroyed but we haven't been Disposed */
 		internal Region		user_clip;
-		internal static Bitmap	bmp = new Bitmap(1, 1, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-		internal static Graphics bmp_g = Graphics.FromImage (bmp);
 		internal XEventQueue	queue;
 		internal WindowExStyles	initial_ex_style;
 		internal WindowStyles	initial_style;
@@ -85,6 +83,11 @@ namespace System.Windows.Forms {
 		internal Point		previous_child_startup_location = new Point (int.MinValue, int.MinValue);
 		static internal Point	previous_main_startup_location = new Point (int.MinValue, int.MinValue);
 		internal ArrayList children;
+
+		[ThreadStatic]
+		private static Bitmap bmp;
+		[ThreadStatic]
+		private static Graphics bmp_g;
 		#endregion	// Local Variables
 
 		// locks for some operations (used in XplatUIX11.cs)
@@ -282,6 +285,15 @@ namespace System.Windows.Forms {
 		{
 			ArrayList masks = new ArrayList ();
 
+			if (x < 0) {
+				masks.Add (new Rectangle (0, 0, x*-1, Height));
+				if (y < 0) {
+					masks.Add (new Rectangle (x*-1, 0, Width, y*-1));
+				}
+			} else if (y < 0) {
+				masks.Add (new Rectangle (0, 0, Width, y*-1));
+			}
+
 			foreach (Hwnd child in children) {
 				if (child.visible)
 					masks.Add (new Rectangle (child.X, child.Y, child.Width, child.Height));
@@ -312,8 +324,7 @@ namespace System.Windows.Forms {
 					
 						intersect.X -= X;
 						intersect.Y -= Y;
-						intersect.Y = parent.Height - intersect.Y - intersect.Height;
-					
+
 						masks.Add (intersect);
 					}
 				} while (sibling_handle != IntPtr.Zero);
@@ -330,7 +341,7 @@ namespace System.Windows.Forms {
 			if (menu != null) {
 				int menu_height = menu.Rect.Height;
 				if (menu_height == 0)
-					menu_height = ThemeEngine.Current.CalcMenuBarSize (bmp_g, menu, cp.Width);
+					menu_height = ThemeEngine.Current.CalcMenuBarSize (GraphicsContext, menu, cp.Width);
 				borders.top += menu_height;
 			}
 			

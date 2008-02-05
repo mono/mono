@@ -1,3 +1,8 @@
+2008-02-04  Geoff Norton  <gnorton@novell.com>
+
+	* Hwnd.cs: [Backport] The conversion to Quartz coordinates happens in
+	System.Drawing.  Removing this translation from here.
+
 2008-02-04  Ivan N. Zlatev  <contact@i-nz.net>
 	[Backport to 1.9]
 	 * PropertyGrid.cs, PropertyGridView.cs, GridEntry.cs,
