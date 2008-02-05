@@ -59,6 +59,7 @@ namespace System.Web.UI
 		string _callbackEventError = String.Empty;
 		static readonly object CrossPagePostBack = new object ();
 		FacesContext _facesContext;
+		const string RenderBodyContentOnlyKey = "mainsoft.render.body.content.only";
 
 		static readonly java.util.List emptyList = java.util.Collections.unmodifiableList (new java.util.ArrayList ());
 

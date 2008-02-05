@@ -1081,6 +1081,17 @@ public partial class Page : TemplateControl, IHttpHandler
 			
 			ClientScript.RegisterStartupScript (typeof (Page), "MaintainScrollPositionOnPostBackStartup", script.ToString());
 		}
+#if TARGET_J2EE
+		if (bool.Parse (WebConfigurationManager.AppSettings [RenderBodyContentOnlyKey] ?? "false")) {
+			for (Control c = this.Form; c != null; c = c.Parent) {
+				HtmlGenericControl ch = (c as HtmlGenericControl);
+				if (ch != null && ch.TagName == "body") {
+					ch.RenderChildren (writer);
+					return;
+				}
+			}
+		}
+#endif
 		base.Render (writer);
 	}
 #endif
