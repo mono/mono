@@ -894,10 +894,8 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			control.Dock = DockStyle.Fill;
 			dropdown_form.Controls.Clear ();
 			dropdown_form.Controls.Add (control);
-			dropdown_form.Location = PointToScreen (new Point (SplitterLocation, grid_textbox.Location.Y + row_height));
+			dropdown_form.Location = PointToScreen (new Point (grid_textbox.Right - control.Width, grid_textbox.Location.Y + row_height));
 			location = dropdown_form.Location;
-
-			dropdown_form.Width = ClientRectangle.Width - SplitterLocation - (vbar.Visible ? vbar.Width : 0);
 
 			owner.AddOwnedForm (dropdown_form);
 

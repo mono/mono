@@ -1,3 +1,10 @@
+2008-02-05  Ivan N. Zlatev  <contact@i-nz.net>
+
+	[Backport to 1.9]
+	* PropertyGridView.cs: Do not trucate custom editors' width
+	and align them to the left.
+	[Fixes #356527 and #358349]
+
 2008-02-01  Jonathan Pobst  <monkey@jpobst.com>
 	[Backport to 1.9]
 	* UpDownBase.cs: Make sure the internal textbox calls the base's
