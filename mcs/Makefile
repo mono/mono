@@ -63,7 +63,7 @@ all-local $(STD_TARGETS:=-local):
 	@:
 
 dir-check:
-	@if [ "$(NO_DIR_CHECK)" = "" ]; then echo "Running make from the mcs directory is not supported. Run make from the parent directory (if using a tarball), or from the directory where the runtime is checked out (if using an SVN checkout)."; exit 1; fi
+	@if [ "$(NO_DIR_CHECK)" = "" -a "$(PROFILES)" != "basic" ]; then echo "Running make from the mcs directory is not supported. Run make from the parent directory (if using a tarball), or from the directory where the runtime is checked out (if using an SVN checkout)."; exit 1; fi
 
 # fun specialty targets
 

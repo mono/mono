@@ -1,3 +1,7 @@
+2008-02-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile (dir-check): Hopefully fix make dist.
+
 2008-02-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile: Abort with an error message if make is typed directly in this 
