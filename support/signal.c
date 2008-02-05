@@ -11,6 +11,9 @@
 
 #include <signal.h>
 
+#include "map.h"
+#include "mph.h"
+
 #ifndef PLATFORM_WIN32
 #include <sys/time.h>
 #include <sys/types.h>
@@ -19,9 +22,6 @@
 #include <string.h>
 #include <pthread.h>
 #endif
-
-#include "map.h"
-#include "mph.h"
 
 G_BEGIN_DECLS
 

@@ -1,3 +1,7 @@
+2008-02-05  Jonathan Pryor  <jpryor@novell.com>
+
+	* signal.c: Fix the Win32 build.
+
 2008-01-28  Jonathan Pryor  <jpryor@novell.com>
 
 	* signal.c: Provide support functions for Mono.Unix.UnixSignal, which 
