@@ -39,12 +39,12 @@ net_2_0_centum_tests := \
 	class/Microsoft.Build.Framework	\
 	class/Microsoft.Build.Utilities	\
 	class/Microsoft.Build.Engine
-	#class/Microsoft.Build.Tasks	
-	#class/Mono.C5
-	
+#class/Microsoft.Build.Tasks	
+#class/Mono.C5
+
 net_3_5_centum_tests := \
 	class/System.Xml.Linq
-	#class/System.Web.Extensions		
+#class/System.Web.Extensions		
 
 ifdef ONLY_CENTUM_TESTS
 TEST_SUBDIRS := $($(PROFILE)_centum_tests)
@@ -56,11 +56,14 @@ endif
 
 include build/rules.make
 
-all-recursive $(STD_TARGETS:=-recursive): platform-check profile-check
+all-recursive $(STD_TARGETS:=-recursive): dir-check platform-check profile-check
 
 .PHONY: all-local $(STD_TARGETS:=-local)
 all-local $(STD_TARGETS:=-local):
 	@:
+
+dir-check:
+	@if [ "$(NO_DIR_CHECK)" = "" ]; then echo "Running make from the mcs directory is not supported. Run make from the parent directory (if using a tarball), or from the directory where the runtime is checked out (if using an SVN checkout)."; exit 1; fi
 
 # fun specialty targets
 

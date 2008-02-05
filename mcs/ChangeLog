@@ -1,3 +1,8 @@
+2008-02-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile: Abort with an error message if make is typed directly in this 
+	directory, instead from the 'mono' directory.
+
 2007-12-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile: currently Sys.Web.Extensions is not ready for
