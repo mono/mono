@@ -1,5 +1,8 @@
 2008-02-05  Jb Evain  <jbevain@novell.com>
 
+	* Mono.Cecil.Signatures/SignatureReader.cs:
+		Properly read fnptr local variables. Fix #358507.
+
 	* Mono.Cecil.Binary/DefaultImporter.cs:
 		Import modifiers and sentinels, patch from:
 		Andrea Carlo Ornstein <andrea.ornstein@st.com>

@@ -237,7 +237,7 @@ namespace Mono.Cecil.Signatures {
 			property.ParamCount = Utilities.ReadCompressedInteger (m_blobData, start + 1, out start);
 			property.CustomMods = ReadCustomMods (m_blobData, start, out start);
 			property.Type = ReadType (m_blobData, start, out start);
-			property.Parameters = ReadParameters (property.ParamCount, m_blobData, start);
+			property.Parameters = ReadParameters (property.ParamCount, m_blobData, start, out start);
 		}
 
 		public override void VisitLocalVarSig (LocalVarSig localvar)
@@ -267,7 +267,7 @@ namespace Mono.Cecil.Signatures {
 			methodDef.ParamCount = Utilities.ReadCompressedInteger (data, start, out start);
 			methodDef.RetType = ReadRetType (data, start, out start);
 			int sentpos;
-			methodDef.Parameters = ReadParameters (methodDef.ParamCount, data, start, out sentpos);
+			methodDef.Parameters = ReadParameters (methodDef.ParamCount, data, start, out start, out sentpos);
 			methodDef.Sentinel = sentpos;
 		}
 
@@ -292,7 +292,7 @@ namespace Mono.Cecil.Signatures {
 			methodRef.ParamCount = Utilities.ReadCompressedInteger (data, start, out start);
 			methodRef.RetType = ReadRetType (data, start, out start);
 			int sentpos;
-			methodRef.Parameters = ReadParameters (methodRef.ParamCount, data, start, out sentpos);
+			methodRef.Parameters = ReadParameters (methodRef.ParamCount, data, start, out start, out sentpos);
 			methodRef.Sentinel = sentpos;
 		}
 
@@ -384,19 +384,19 @@ namespace Mono.Cecil.Signatures {
 			return rt;
 		}
 
-		Param [] ReadParameters (int length, byte [] data, int pos)
+		Param [] ReadParameters (int length, byte [] data, int pos, out int start)
 		{
 			Param [] ret = new Param [length];
-			int start = pos;
+			start = pos;
 			for (int i = 0; i < length; i++)
 				ret [i] = ReadParameter (data, start, out start);
 			return ret;
 		}
 
-		Param [] ReadParameters (int length, byte [] data, int pos, out int sentinelpos)
+		Param [] ReadParameters (int length, byte [] data, int pos, out int start, out int sentinelpos)
 		{
 			Param [] ret = new Param [length];
-			int start = pos;
+			start = pos;
 			sentinelpos = -1;
 
 			for (int i = 0; i < length; i++) {
