@@ -4,7 +4,7 @@ namespace Db4objects.Db4o
         public interface IObjectContainer
         {
                 System.Collections.IList Query ();
-                System.Collections.Generic.IList<Extent> Query<Extent> ();
+                System.Collections.Generic.IList<Extent> Query<Extent> (System.Collections.Generic.IList<Extent> foo, System.Collections.Generic.IList<Extent> bar);
         }
 }
 
@@ -17,7 +17,7 @@ namespace Db4objects.Db4o.Internal
                         return null;
                 }
 
-                public System.Collections.Generic.IList<Extent> Query<Extent>()
+                public System.Collections.Generic.IList<Extent> Query<Extent>(System.Collections.Generic.IList<Extent> foo, System.Collections.Generic.IList<Extent> bar)
                 {
                         return null;
                 }
