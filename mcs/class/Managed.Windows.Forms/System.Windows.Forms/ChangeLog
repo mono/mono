@@ -1,3 +1,9 @@
+2008-02-05  Ivan N. Zlatev  <contact@i-nz.net>
+
+	 * PropertyGridView.cs: Do not trucate custom editors' width
+	 and align them to the left.
+	 [Fixes #358353 and #358349]
+
 2008-02-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* BindingsCollection.cs: Implement 2.0 CollectionChanging event.
