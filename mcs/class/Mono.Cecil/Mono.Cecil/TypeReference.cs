@@ -127,7 +127,7 @@ namespace Mono.Cecil {
 		public TypeReference (string name, string ns, IMetadataScope scope, bool valueType) :
 			this (name, ns, scope)
 		{
-			this.IsValueType = valueType;
+			m_isValueType = valueType;
 		}
 
 		public virtual TypeReference GetOriginalType ()
