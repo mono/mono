@@ -1,3 +1,8 @@
+2008-02-05  Everaldo Canuto  <ecanuto@novell.com>
+
+	* MenuAPI.cs: Check if control is disposable when track popup menu. Thanks
+	Jonathan for this patch. Fixes #358442.
+
 2008-02-05  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Form.cs: If we change the active MDI child form, let the others
