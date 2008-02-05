@@ -3259,30 +3259,19 @@ namespace Mono.CSharp {
 			return (MethodInfo)mg.best_candidate;
 		}
 
-		/// <summary>
-		///   Determines "better conversion" as specified in 14.4.2.3
-		///
-		///    Returns : p    if a->p is better,
-		///              q    if a->q is better,
-		///              null if neither is better
-		/// </summary>
-		static Type BetterConversion (EmitContext ec, Argument a, Type p, Type q)
+		//
+		//  Determines "better conversion" as specified in 7.4.3
+		//  Returns :   1    if a->p is better,
+		//              2    if a->q is better,
+		//              0 if neither is better
+		//
+		static int BetterConversion (EmitContext ec, Argument a, Type p, Type q)
 		{
-			Type argument_type = TypeManager.TypeToCoreType (a.Type);
-			Expression argument_expr = a.Expr;
-
-			if (argument_type == null)
-				throw new Exception ("Expression of type " + a.Expr +
-					" does not resolve its type");
-
 			if (p == null || q == null)
 				throw new InternalErrorException ("BetterConversion Got a null conversion");
 
-			if (p == q)
-				return null;
-
-			if (argument_expr is NullLiteral) 
-			{
+			Expression argument_expr = a.Expr;
+			if (argument_expr is NullLiteral) {
 				//
 				// If the argument is null and one of the types to compare is 'object' and
 				// the other is a reference type, we prefer the other.
@@ -3299,16 +3288,29 @@ namespace Mono.CSharp {
 				//         case to avoid the immediately following two checks.
 				//
 				if (!p.IsValueType && q == TypeManager.object_type)
-					return p;
+					return 1;
 				if (!q.IsValueType && p == TypeManager.object_type)
-					return q;
+					return 2;
 			}
-                                
-			if (argument_type == p)
-				return p;
 
-			if (argument_type == q)
-				return q;
+			Type argument_type = TypeManager.TypeToCoreType (a.Type);
+			if (argument_type == TypeManager.anonymous_method_type && RootContext.Version > LanguageVersion.ISO_2) {
+				//
+				// Uwrap delegate from Expression<T>
+				//
+				if (TypeManager.DropGenericTypeArguments (p) == TypeManager.expression_type) {
+					p = TypeManager.GetTypeArguments (p) [0];
+					q = TypeManager.GetTypeArguments (q) [0];
+				}
+				p = Delegate.GetInvokeMethod (null, p).ReturnType;
+				q = Delegate.GetInvokeMethod (null, q).ReturnType;
+			} else {
+				if (argument_type == p)
+					return 1;
+
+				if (argument_type == q)
+					return 2;
+			}
 
 			Expression p_tmp = new EmptyExpression (p);
 			Expression q_tmp = new EmptyExpression (q);
@@ -3317,44 +3319,44 @@ namespace Mono.CSharp {
 			bool q_to_p = Convert.ImplicitConversionExists (ec, q_tmp, p);
 
 			if (p_to_q && !q_to_p)
-				return p;
+				return 1;
 
 			if (q_to_p && !p_to_q)
-				return q;
+				return 2;
 
 			if (p == TypeManager.sbyte_type)
 				if (q == TypeManager.byte_type || q == TypeManager.ushort_type ||
 					q == TypeManager.uint32_type || q == TypeManager.uint64_type)
-					return p;
+					return 1;
 			if (q == TypeManager.sbyte_type)
 				if (p == TypeManager.byte_type || p == TypeManager.ushort_type ||
 					p == TypeManager.uint32_type || p == TypeManager.uint64_type)
-					return q;
+					return 2;
 
 			if (p == TypeManager.short_type)
 				if (q == TypeManager.ushort_type || q == TypeManager.uint32_type ||
 					q == TypeManager.uint64_type)
-					return p;
+					return 1;
 			if (q == TypeManager.short_type)
 				if (p == TypeManager.ushort_type || p == TypeManager.uint32_type ||
 					p == TypeManager.uint64_type)
-					return q;
+					return 2;
 
 			if (p == TypeManager.int32_type)
 				if (q == TypeManager.uint32_type || q == TypeManager.uint64_type)
-					return p;
+					return 1;
 			if (q == TypeManager.int32_type)
 				if (p == TypeManager.uint32_type || p == TypeManager.uint64_type)
-					return q;
+					return 2;
 
 			if (p == TypeManager.int64_type)
 				if (q == TypeManager.uint64_type)
-					return p;
+					return 1;
 			if (q == TypeManager.int64_type)
 				if (p == TypeManager.uint64_type)
-					return q;
+					return 2;
 
-			return null;
+			return 0;
 		}
 
 		/// <summary>
@@ -3398,16 +3400,16 @@ namespace Mono.CSharp {
 					continue;
 
 				same = false;
-				Type better = BetterConversion (ec, a, ct, bt);
+				int result = BetterConversion (ec, a, ct, bt);
 
 				// for each argument, the conversion to 'ct' should be no worse than 
 				// the conversion to 'bt'.
-				if (better == bt)
+				if (result == 2)
 					return false;
 
 				// for at least one argument, the conversion to 'ct' should be better than 
 				// the conversion to 'bt'.
-				if (better == ct)
+				if (result != 0)
 					better_at_least_one = true;
 			}
 

@@ -1,5 +1,10 @@
 2008-02-05  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #357047
+ 	* ecore.cs: Applied C# 3.0 changes to better conversion.
+
+2008-02-05  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #358374
  	* cs-parser.jay: Correctly set modifiers for all constructor types.
 
