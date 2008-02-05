@@ -45,10 +45,11 @@ namespace System.ComponentModel.Design
 			{
 				Multiline = true;
 				AcceptsReturn = true;
-				Height = 250;
+				Height = 135;
+				Width = 280;
 				ScrollBars = ScrollBars.Both;
 				WordWrap = false;
-				BorderStyle = BorderStyle.None;
+				BorderStyle = BorderStyle.FixedSingle;
 			}
 		}
 
