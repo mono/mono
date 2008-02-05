@@ -1,3 +1,8 @@
+2008-02-05  Marek Habersack  <mhabersack@novell.com>
+
+	* FileUpload.cs: make sure FileContent always returns the input
+	stream positioned at the beginning. Fixes bug #35684
+
 2008-02-04  Marek Habersack  <mhabersack@novell.com>
 
 	* SimpleWebHandlerParser.cs: use WebEncoding.FileEncoding when
