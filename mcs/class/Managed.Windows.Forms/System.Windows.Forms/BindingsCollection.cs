@@ -67,23 +67,41 @@ namespace System.Windows.Forms {
 			AddCore(binding);
 		}
 
-		protected virtual void AddCore(Binding dataBinding) {
+		protected virtual void AddCore (Binding dataBinding) 
+		{
+			CollectionChangeEventArgs args = new CollectionChangeEventArgs (CollectionChangeAction.Add, dataBinding);
+#if NET_2_0
+			OnCollectionChanging (args);
+#endif
 			base.List.Add(dataBinding);
-			OnCollectionChanged(new CollectionChangeEventArgs(CollectionChangeAction.Add, base.List));
+			OnCollectionChanged (args);
 		}
 
 		protected internal void Clear() {
 			ClearCore();
 		}
 
-		protected virtual void ClearCore() {
+		protected virtual void ClearCore() 
+		{
+			CollectionChangeEventArgs args = new CollectionChangeEventArgs(CollectionChangeAction.Refresh, null);
+#if NET_2_0
+			OnCollectionChanging (args);
+#endif
 			base.List.Clear();
-			OnCollectionChanged(new CollectionChangeEventArgs(CollectionChangeAction.Refresh, base.List));
+			OnCollectionChanged (args);
 		}
 
 		protected virtual void OnCollectionChanged(System.ComponentModel.CollectionChangeEventArgs ccevent) {
 			if (CollectionChanged!=null) CollectionChanged(this, ccevent);
 		}
+
+#if NET_2_0
+		protected virtual void OnCollectionChanging (CollectionChangeEventArgs args)
+		{
+			if (CollectionChanging != null)
+				CollectionChanging (this, args);
+		}
+#endif
 
 		protected internal void Remove(Binding binding) {
 			RemoveCore(binding);
@@ -94,9 +112,14 @@ namespace System.Windows.Forms {
 			OnCollectionChanged(new CollectionChangeEventArgs(CollectionChangeAction.Remove, base.List));
 		}
 
-		protected virtual void RemoveCore(Binding dataBinding) {
+		protected virtual void RemoveCore(Binding dataBinding) 
+		{
+			CollectionChangeEventArgs args = new CollectionChangeEventArgs(CollectionChangeAction.Remove, dataBinding);
+#if NET_2_0
+			OnCollectionChanging (args);
+#endif
 			base.List.Remove(dataBinding);
-			OnCollectionChanged(new CollectionChangeEventArgs(CollectionChangeAction.Remove, base.List));
+			OnCollectionChanged (args);
 		}
 
 		protected internal bool ShouldSerializeMyAll() {
@@ -115,6 +138,9 @@ namespace System.Windows.Forms {
 
 		#region Events
 		public event CollectionChangeEventHandler	CollectionChanged;
+#if NET_2_0
+		public event CollectionChangeEventHandler	CollectionChanging;
+#endif
 		#endregion	// Events
 	}
 }
