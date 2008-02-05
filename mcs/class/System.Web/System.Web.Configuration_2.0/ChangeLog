@@ -1,3 +1,12 @@
+2008-02-05  Marek Habersack  <mhabersack@novell.com>
+
+	* CompilerCollection.cs: Get (string language) should not use
+	BaseGet as our collection is keyed on a list of language names
+	(e.g. "cs;csharp") and passing a single language won't match in
+	BaseGet correctly. Use the overriden indexer instead.
+	Initialize the base class with the case-insensitive
+	comparer. Fixes bug #357824.
+
 2008-01-27  Daniel Nauck <dna@mono-project.de>
 
 	* HttpHandlerAction.cs: fixed the internal method PathMatches ()
