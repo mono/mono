@@ -1,3 +1,11 @@
+2008-02-06  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: protect non-page builds from endless recursion
+	if a non-page file recursively references/includes another file
+	from the same batch. If such case is detected, the recursively
+	referenced file is compiled into a separate assembly and removed
+	from the previous compilation batch. Fixes bug #358742.
+
 2008-02-05  Marek Habersack  <mhabersack@novell.com>
 
 	* BuildManager.cs: GetAbsoluteVirtualPath correctly converts
