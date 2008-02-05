@@ -8312,14 +8312,15 @@ namespace Mono.CSharp {
 				ReturnType = pi.PropertyType;
 			else
 				return false;
-			
+
 			//
 			// we use sig.RetType == null to mean `do not check the
 			// method return value.  
 			//
-			if (sig.RetType != null)
-				if (ReturnType != sig.RetType)
+			if (sig.RetType != null) {
+				if (!TypeManager.IsEqual (ReturnType, sig.RetType))
 					return false;
+			}
 
 			Type [] args;
 			if (mi != null)

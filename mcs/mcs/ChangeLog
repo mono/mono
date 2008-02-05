@@ -1,5 +1,10 @@
 2008-02-05  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #325372
+ 	* class.cs: Use generic type comparison when testing method signatures.
+
+2008-02-05  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #357047
  	* ecore.cs: Applied C# 3.0 changes to better conversion.
 
