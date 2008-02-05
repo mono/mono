@@ -1,3 +1,7 @@
+2008-02-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* cpu-amd64.md (move): Correct the maximum size of move.
+
 2008-02-05  Mark Probst  <mark.probst@gmail.com>
 
 	* tramp-amd64.c, tramp-x86.c, mini-trampolines.c: Added a check in
