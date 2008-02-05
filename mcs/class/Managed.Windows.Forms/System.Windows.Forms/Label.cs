@@ -191,15 +191,21 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[DefaultValue(false)]
-		[Localizable(true)]
-		[RefreshProperties(RefreshProperties.All)]
 #if NET_2_0
 		[Browsable (true)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Visible)]
 		[EditorBrowsable (EditorBrowsableState.Always)]
 #endif
-		public new virtual bool AutoSize {
+		[DefaultValue(false)]
+		[Localizable(true)]
+		[RefreshProperties(RefreshProperties.All)]
+		public
+#if NET_2_0
+		override
+#else
+		virtual
+#endif
+		bool AutoSize {
 			get { return autosize; }
 			set {
 				if (autosize == value)
