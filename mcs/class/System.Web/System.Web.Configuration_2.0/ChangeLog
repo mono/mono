@@ -4,7 +4,8 @@
 	BaseGet as our collection is keyed on a list of language names
 	(e.g. "cs;csharp") and passing a single language won't match in
 	BaseGet correctly. Use the overriden indexer instead.
-	Initialize the base class with the case-insensitive comparer.
+	Initialize the base class with the case-insensitive
+	comparer. Fixes bug #357824.
 
 2008-01-27  Daniel Nauck <dna@mono-project.de>
 
