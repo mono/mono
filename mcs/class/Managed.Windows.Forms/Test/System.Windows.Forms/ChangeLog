@@ -1,5 +1,9 @@
 2008-02-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* BindingsCollectionTest.cs: New file.
+
+2008-02-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* CurrencyManagerTest.cs: New tests for 2.0 ListChanged event.
 	* ListControlTest.cs: Add a default ctor for MockItem.
 
