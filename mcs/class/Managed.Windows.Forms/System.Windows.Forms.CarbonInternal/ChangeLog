@@ -1,5 +1,9 @@
 2008-02-04  Geoff Norton  <gnorton@novell.com>
 
+	* KeyboardHandler.cs: [Backport fix] msg != msg.message
+
+2008-02-04  Geoff Norton  <gnorton@novell.com>
+
 	* EventHandler.cs: [Backport] Expose GetEventClass internally.  Subscribe to
 	the unicode text events.
 	* KeyboardHandler.cs: [Backport] Commit the new keyboard handler.  We grab
