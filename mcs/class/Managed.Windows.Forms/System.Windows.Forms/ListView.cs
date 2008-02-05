@@ -2616,15 +2616,17 @@ namespace System.Windows.Forms
 				}
 
 				if (me.Button == MouseButtons.Left || me.Button == MouseButtons.Right) {
-					if (drag_begin.X == -1 && drag_begin.Y == -1)
-						drag_begin = new Point (me.X, me.Y);
-					else {
+					if (drag_begin.X == -1 && drag_begin.Y == -1) {
+						if (item != null) {
+							drag_begin = new Point (me.X, me.Y);
+							dragged_item_index = item.Index;
+						}
+
+					} else {
 						Rectangle r = new Rectangle (drag_begin, SystemInformation.DragSize);
 						if (!r.Contains (me.X, me.Y)) {
-							dragged_item_index = item.Index;
-
-							if (item != null)
-								owner.OnItemDrag (new ItemDragEventArgs (me.Button, item));
+							ListViewItem dragged_item  = owner.items [dragged_item_index];
+							owner.OnItemDrag (new ItemDragEventArgs (me.Button, dragged_item));
 
 							drag_begin = new Point (-1, -1);
 							dragged_item_index = -1;
@@ -2757,6 +2759,11 @@ namespace System.Windows.Forms
 				prev_selection = null;
 				box_select_mode = BoxSelect.None;
 				checking = false;
+
+				// Clean these bits in case the mouse buttons were
+				// released before firing ItemDrag
+				dragged_item_index = -1;
+				drag_begin = new Point (-1, -1);
 			}
 			
 			private void LabelEditFinished (object sender, EventArgs e)

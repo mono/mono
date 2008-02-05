@@ -1,3 +1,14 @@
+2008-02-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	[Backport to 1.9]
+	* ListView.cs: In ItemControl.ItemsMouseMove, only fire ItemDrag event
+	when the item in current position is different than 0. Also, save the
+	item index in the beginning of the operation, instead of getting the
+	index of the item when the event is actually performed. Lastly clean
+	the related fields in ItemsMouseUp if the ItemDrag operation wasn't
+	triggered.
+	[Fixes #357873]
+
 2008-02-04  Geoff Norton  <gnorton@novell.com>
 	
 	* LineTag.cs: 
