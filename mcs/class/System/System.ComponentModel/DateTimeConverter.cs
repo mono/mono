@@ -61,7 +61,9 @@ namespace System.ComponentModel
 			if (value is string) {
 				string DateString = (string) value;
 				try {
-					if (culture == null) {
+					if (DateString != null && DateString.Trim ().Length == 0) {
+						return DateTime.MinValue;
+					} else if (culture == null) {
 						return DateTime.Parse (DateString);
 					} else {
 						DateTimeFormatInfo info = (DateTimeFormatInfo) culture.GetFormat (typeof (DateTimeFormatInfo));

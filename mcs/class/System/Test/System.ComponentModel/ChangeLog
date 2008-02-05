@@ -1,3 +1,7 @@
+2008-02-04  Ivan N. Zlatev  <contact@i-nz.net>
+
+	 * DateTimeConverterTests.cs: Test ConvertFrom with empty string.
+
 2008-01-19  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* MaskedTextProviderTest.cs: Fix IsPassword (found by Gendarme)
