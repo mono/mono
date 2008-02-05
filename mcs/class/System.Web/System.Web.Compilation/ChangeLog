@@ -1,5 +1,9 @@
 2008-02-05  Marek Habersack  <mhabersack@novell.com>
 
+	* BuildManager.cs: GetAbsoluteVirtualPath correctly converts
+	non-rooted relative paths to absolute ones now. Fixes bug
+	#357504.
+
 	* GenericBuildProvider.cs: introduced a new abstract method,
 	GetReferencedAssemblies, which is called on descendant builders to
 	get a list of assemblies referenced by the parsed file. Fixes bug
