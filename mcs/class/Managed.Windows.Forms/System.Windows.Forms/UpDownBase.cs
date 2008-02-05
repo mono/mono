@@ -275,7 +275,7 @@ namespace System.Windows.Forms
 				// some way.
 
 				owner.OnMouseDown (e);
-				// doesn't chain up
+				base.OnMouseDown (e);
 			}
 
 			protected override void OnMouseUp (MouseEventArgs e)
@@ -285,7 +285,7 @@ namespace System.Windows.Forms
 				// some way.
 
 				owner.OnMouseUp (e);
-				// doesn't chain up
+				base.OnMouseUp (e);
 			}
 
 			// XXX there are likely more events that forward up to the UpDown

@@ -1,5 +1,13 @@
 2008-02-01  Jonathan Pobst  <monkey@jpobst.com>
 	[Backport to 1.9]
+	* UpDownBase.cs: Make sure the internal textbox calls the base's
+	OnMouseDown and OnMouseUp so the textbox will function correctly.
+	There were notes saying it doesn't chain up, but its an internal
+	class, so our implementation may differ.
+	[Fixes bug #357482]
+
+2008-02-01  Jonathan Pobst  <monkey@jpobst.com>
+	[Backport to 1.9]
 	* Control.cs: Remove HeightInternal.
 	* ListBox.cs: Commit patch from James Purcell that correctly
 	calculates heights for ListBoxen.
