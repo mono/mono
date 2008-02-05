@@ -1,5 +1,9 @@
 2008-02-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_normalize_opcodes): New pass to get rid of CEE_ opcodes.
+
+	* mini-amd64.c mini-amd64.c: Get rid of CEE_ opcodes.
+
 	* cpu-amd64.md: Fix x86_mul_membase.
 
 	* inssel.brg: Pass OP_CALL to backends instead of CEE_CALL.
