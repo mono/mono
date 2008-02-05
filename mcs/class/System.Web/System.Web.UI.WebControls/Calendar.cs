@@ -1176,7 +1176,7 @@ namespace System.Web.UI.WebControls {
 				cellNextPrev.Width = Unit.Percentage (15);
 
 				DateTime date = GetGlobalCalendar().AddMonths (DisplayDate, - 1);
-				date = GetGlobalCalendar().AddDays (date, -DisplayDate.Day + 1);
+				date = GetGlobalCalendar ().AddDays (date, -date.Day + 1);
 				cellNextPrev.RenderBeginTag (writer);
 				writer.Write (BuildLink ("V" + GetDaysFromZenith (date), GetNextPrevFormatText (date, false), cellNextPrev.ForeColor, Enabled));
 				cellNextPrev.RenderEndTag (writer);
@@ -1202,7 +1202,7 @@ namespace System.Web.UI.WebControls {
 
 			if (ShowNextPrevMonth) { // Next Table Data
 				DateTime date = GetGlobalCalendar().AddMonths (DisplayDate, + 1);
-				date = GetGlobalCalendar().AddDays (date, -DisplayDate.Day + 1);
+				date = GetGlobalCalendar ().AddDays (date, -date.Day + 1);
 
 				cellNextPrev.HorizontalAlign = HorizontalAlign.Right;
 				cellNextPrev.RenderBeginTag (writer);

@@ -3,6 +3,10 @@
 	* Menu.js: dynamic nodes are positioned after hover style of 
 	parent node is applied.
 
+2008-01-31 Igor Zelmanovich <igorz@mainsoft.com>
+
+        * Calendar.cs: resolve Next/Prev. month link date correctly.
+
 2008-01-24  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* DataSourceCacheManager.cs: fixed GetKeyFromParameters, incase more
