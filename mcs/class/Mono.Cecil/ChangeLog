@@ -1,5 +1,8 @@
 2008-02-05  Jb Evain  <jbevain@novell.com>
 
+	* Mono.Cecil/TypeDefinition.cs:
+		System.Enum by itself is not a value type.
+
 	* Mono.Cecil.Signatures/SignatureReader.cs:
 		Properly read fnptr local variables. Fix #358507.
 

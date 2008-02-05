@@ -415,7 +415,7 @@ namespace Mono.Cecil {
 		public override bool IsValueType {
 			get {
 				return m_baseType != null && (
-					this.IsEnum || m_baseType.FullName == Constants.ValueType);
+					this.IsEnum || (m_baseType.FullName == Constants.ValueType && this.FullName != Constants.Enum));
 			}
 		}
 
