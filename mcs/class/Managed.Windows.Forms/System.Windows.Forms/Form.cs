@@ -1960,6 +1960,12 @@ namespace System.Windows.Forms {
 					
 					wm = window_manager as MdiWindowManager;
 					wm.RaiseActivated ();
+
+					// We need to tell everyone who may have just been deactivated to redraw their titlebar
+					if (MdiParent != null)
+						foreach (Form form in MdiParent.MdiChildren)
+							if (form != this && form.IsHandleCreated)
+								XplatUI.InvalidateNC (form.Handle);
 				}
 				
 				if (window_state != FormWindowState.Normal) {

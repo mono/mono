@@ -1,3 +1,9 @@
+2008-02-05  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Form.cs: If we change the active MDI child form, let the others
+	know they need to repaint their title bar so it will appear inactive.
+	[Fixes part 1 of bug #325473]
+
 2008-02-05  Ivan N. Zlatev  <contact@i-nz.net>
 
 	 * PropertyGridView.cs: Do not trucate custom editors' width
