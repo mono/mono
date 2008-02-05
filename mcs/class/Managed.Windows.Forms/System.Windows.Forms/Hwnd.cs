@@ -324,8 +324,7 @@ namespace System.Windows.Forms {
 					
 						intersect.X -= X;
 						intersect.Y -= Y;
-						intersect.Y = parent.Height - intersect.Y - intersect.Height;
-					
+
 						masks.Add (intersect);
 					}
 				} while (sibling_handle != IntPtr.Zero);
