@@ -380,6 +380,8 @@ namespace System.Web {
 				app_offline_file = filePath;
 				HttpApplicationFactory.DisableWatchers ();
 				HttpApplicationFactory.ApplicationDisabled = true;
+				InternalCache.InvokePrivateCallbacks ();
+				HttpApplicationFactory.Dispose ();
 			}
 		}
 		
