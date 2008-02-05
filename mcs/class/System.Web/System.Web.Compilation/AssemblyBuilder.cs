@@ -239,6 +239,19 @@ namespace System.Web.Compilation {
 			assemblies.Add (a);
 		}
 
+		internal void AddAssemblyReference (string assemblyLocation)
+		{
+			try {
+				Assembly asm = Assembly.LoadFrom (assemblyLocation);
+				if (asm == null)
+					return;
+
+				AddAssemblyReference (asm);
+			} catch {
+				// ignore, it will come up later
+			}
+		}
+		
 		internal void AddAssemblyReference (List <Assembly> asmlist)
 		{
 			if (asmlist == null)

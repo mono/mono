@@ -32,6 +32,7 @@ using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Web;
@@ -55,6 +56,7 @@ namespace System.Web.Compilation
 		protected abstract string GetCodeBehindSource (TParser parser);
 		protected abstract string GetClassType (BaseCompiler compiler, TParser parser);
 		protected abstract AspGenerator CreateAspGenerator (TParser parser);
+		protected abstract List <string> GetReferencedAssemblies (TParser parser);
 		
 		protected virtual TParser Parse ()
 		{
@@ -106,6 +108,12 @@ namespace System.Web.Compilation
 			if (codeBehindSource != null)
 				assemblyBuilder.AddCodeFile (codeBehindSource, this);
 
+			List <string> refasms = GetReferencedAssemblies (parser);
+			if (refasms != null && refasms.Count > 0) {
+				foreach (string loc in refasms)
+					assemblyBuilder.AddAssemblyReference (loc);
+			}
+			
 			GenerateCode (assemblyBuilder, parser, _compiler);
 		}
 

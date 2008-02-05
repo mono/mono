@@ -32,6 +32,7 @@ using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Web;
@@ -90,6 +91,34 @@ namespace System.Web.Compilation
 				return new AspGenerator (parser);
 
 			return null;
+		}
+
+		protected override List <string> GetReferencedAssemblies (TemplateParser parser)
+		{
+			if (parser == null)
+				return null;
+			
+			ArrayList al = parser.Assemblies;
+			int count;
+			
+			if (al == null || al.Count == 0)
+				return null;
+
+			List <string> ret = new List <string> ();
+			string loc;
+			
+			foreach (object o in al) {
+				loc = o as string;
+				if (loc == null)
+					continue;
+
+				if (ret.Contains (loc))
+					continue;
+
+				ret.Add (loc);
+			}
+
+			return ret;
 		}
 	}
 }

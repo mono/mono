@@ -32,6 +32,7 @@ using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Web;
@@ -115,6 +116,34 @@ namespace System.Web.Compilation
 			return new WebServiceCompiler (parser);
 		}
 
+		protected override List <string> GetReferencedAssemblies (SimpleWebHandlerParser parser)
+		{
+			if (parser == null)
+				return null;
+			
+			ArrayList al = parser.Assemblies;
+			int count;
+			
+			if (al == null || al.Count == 0)
+				return null;
+
+			List <string> ret = new List <string> ();
+			string loc;
+			
+			foreach (object o in al) {
+				loc = o as string;
+				if (loc == null)
+					continue;
+
+				if (ret.Contains (loc))
+					continue;
+
+				ret.Add (loc);
+			}
+
+			return ret;
+		}
+		
 		protected override bool NeedsConstructType {
 			get { return false; }
 		}

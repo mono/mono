@@ -1,5 +1,17 @@
 2008-02-05  Marek Habersack  <mhabersack@novell.com>
 
+	* GenericBuildProvider.cs: introduced a new abstract method,
+	GetReferencedAssemblies, which is called on descendant builders to
+	get a list of assemblies referenced by the parsed file. Fixes bug
+	#357499.
+
+	* AssemblyBuilder.cs: added a new overload of the
+	AddAssemblyReference method, to be used by build providers to
+	register assemblies collected by the corresponding parser.
+
+	* TemplateBuildProvider.cs, SimpleBuildProvider.cs: implemented
+	overload of the new abstract method GetReferencedAssemblies.
+
 	* AspGenerator.cs: introduced a new overload for the Parse method
 	which accepts a bool indicating whether or not to initialize the
 	parser. The overload is used when parsing server-side
