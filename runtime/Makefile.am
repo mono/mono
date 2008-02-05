@@ -33,14 +33,14 @@ if BUILD_MCS
 # The write check is to foil 'make distcheck'
 all-local: $(SUPPORT_FILES) $(TEST_SUPPORT_FILES)
 	if test -w $(mcs_topdir); then :; else chmod -R +w $(mcs_topdir); fi
-	cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' CC='$(CC)' all-profiles
+	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='$(build_profiles)' CC='$(CC)' all-profiles
 
 # override automake
 install: install-exec install-data
 
 # override automake
 install-exec: $(SUPPORT_FILES) $(TEST_SUPPORT_FILES)
-	cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' RUNTIME_HAS_CONSISTENT_GACDIR=yes prefix=$(prefix) install-profiles
+	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='$(build_profiles)' RUNTIME_HAS_CONSISTENT_GACDIR=yes prefix=$(prefix) install-profiles
 
 # override automake
 install-data:
@@ -48,11 +48,11 @@ install-data:
 
 # override automake
 uninstall:
-	cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' RUNTIME_HAS_CONSISTENT_GACDIR=yes prefix=$(prefix) uninstall-profiles
+	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='$(build_profiles)' RUNTIME_HAS_CONSISTENT_GACDIR=yes prefix=$(prefix) uninstall-profiles
 
 ## mono --wapi=semdel will probably not delete the semaphore if someone is crazy enough to do a 'make -j distclean' :-)
 clean-local:
-	cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' clean-profiles
+	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='$(build_profiles)' clean-profiles
 	-./mono-wrapper --wapi=semdel
 	-rm -fr $(etctmp) $(tmpinst) .wapi
 
@@ -68,10 +68,10 @@ test_select = ONLY_CENTUM_TESTS=yes
 endif
 
 mcs-do-test-profiles:
-	cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' test-profiles
+	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='$(build_profiles)' test-profiles
 
 mcs-do-run-test-profiles: test-support-files
-	cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' run-test-profiles
+	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='$(build_profiles)' run-test-profiles
 
 if PLATFORM_WIN32
 cur_dir_cmd = cygpath -w -a .
