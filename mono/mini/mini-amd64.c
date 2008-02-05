@@ -2966,15 +2966,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert (amd64_is_imm32 (ins->inst_imm));
 			amd64_mov_membase_imm (code, ins->inst_destbasereg, ins->inst_offset, ins->inst_imm, 8);
 			break;
-		case CEE_LDIND_I:
-			amd64_mov_reg_mem (code, ins->dreg, (gssize)ins->inst_p0, sizeof (gpointer));
-			break;
-		case CEE_LDIND_I4:
-			amd64_mov_reg_mem (code, ins->dreg, (gssize)ins->inst_p0, 4);
-			break;
-		case CEE_LDIND_U4:
-			amd64_mov_reg_mem (code, ins->dreg, (gssize)ins->inst_p0, 4);
-			break;
 		case OP_LOAD_MEM:
 		case OP_LOADI8_MEM:
 			// FIXME: Decompose this earlier

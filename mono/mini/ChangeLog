@@ -1,3 +1,7 @@
+2008-02-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* cpu-<ARCH>.md mini-<ARCH>.c: Get rid of the unused CEE_LDIND/STIND opcodes.
+
 2008-02-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* cpu-<ARCH>.md mini-<ARCH>.md: Get rid of CEE_ opcodes.

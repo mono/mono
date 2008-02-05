@@ -2508,11 +2508,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_STORE_MEM_IMM:
 			x86_mov_mem_imm (code, ins->inst_p0, ins->inst_c0, 4);
 			break;
-		case CEE_LDIND_I:
-		case CEE_LDIND_I4:
-		case CEE_LDIND_U4:
-			x86_mov_reg_mem (code, ins->dreg, ins->inst_p0, 4);
-			break;
 		case OP_LOADU4_MEM:
 			if (cfg->new_ir)
 				x86_mov_reg_mem (code, ins->dreg, ins->inst_imm, 4);

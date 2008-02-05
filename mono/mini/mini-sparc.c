@@ -2778,23 +2778,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_STORE_MEMBASE_REG:
 			EMIT_STORE_MEMBASE_REG (ins, sti);
 			break;
-		case CEE_LDIND_I:
-#ifdef SPARCV9
-			sparc_ldx (code, ins->inst_c0, sparc_g0, ins->dreg);
-#else
-			sparc_ld (code, ins->inst_c0, sparc_g0, ins->dreg);
-#endif
-			break;
-		case CEE_LDIND_I4:
-#ifdef SPARCV9
-			sparc_ldsw (code, ins->inst_c0, sparc_g0, ins->dreg);
-#else
-			sparc_ld (code, ins->inst_c0, sparc_g0, ins->dreg);
-#endif
-			break;
-		case CEE_LDIND_U4:
-			sparc_ld (code, ins->inst_c0, sparc_g0, ins->dreg);
-			break;
 		case OP_LOADU4_MEM:
 			sparc_set (code, ins->inst_c0, ins->dreg);
 			sparc_ld (code, ins->dreg, sparc_g0, ins->dreg);
@@ -2988,6 +2971,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 			break;
 		}
+		case OP_IDIV_UN_IMM:
+			sparc_wry (code, sparc_g0, sparc_g0);
+			EMIT_ALU_IMM (ins, udiv, FALSE);
+			break;
 		case OP_IREM:
 			/* Sign extend sreg1 into %y */
 			sparc_sra_imm (code, ins->sreg1, 31, sparc_o7);
