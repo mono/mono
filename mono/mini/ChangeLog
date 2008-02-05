@@ -1,3 +1,9 @@
+2008-02-05  Mark Probst  <mark.probst@gmail.com>
+
+	* tramp-amd64.c, tramp-x86.c, mini-trampolines.c: Added a check in
+	the generic class init trampoline to return quickly if the class
+	is already inited.
+
 2008-02-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* tramp-amd64.c (mono_arch_patch_callsite): Add some diagnostics to help debug
