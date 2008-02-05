@@ -1,3 +1,9 @@
+2008-02-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* cpu-amd64.md: Fix x86_mul_membase.
+
+	* inssel.brg: Pass OP_CALL to backends instead of CEE_CALL.
+
 2008-02-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-x86.c (mono_arch_emit_prolog): Add a missing assert.

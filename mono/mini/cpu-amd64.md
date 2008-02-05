@@ -397,7 +397,7 @@ x86_xor_reg_membase: dest:i src1:i src2:b clob:1 len:13
 
 x86_add_membase: dest:i src1:i src2:b clob:1 len:13
 x86_sub_membase: dest:i src1:i src2:b clob:1 len:13
-x86_mul_membase: dest:i src1:b src2:i len:14
+x86_mul_membase: dest:i src1:i src2:b clob:1 len:14
 x86_and_membase_imm: src1:b len:12
 x86_or_membase_imm: src1:b len:12
 x86_xor_membase_imm: src1:b len:12
