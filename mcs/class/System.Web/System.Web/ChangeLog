@@ -1,3 +1,11 @@
+2008-02-06  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpApplicationFactory.cs: in FireOnAppEnd, set app_type to null
+	after the event has been fired.
+
+	* HttpRuntime.cs: when switching to offline mode fire the
+	shutdown events. Fixes bug #357565.
+
 2008-01-27  Igor Zelmanovich <igorz@mainsoft.com>
 
 	* HttpResponse.cs: rise PreSendRequestHeaders befire headers_sent 
