@@ -123,7 +123,7 @@ namespace System.Drawing.Design
 						color_chosen = true;
 					}
 
-
+					tab_control.Height = 192; // the height of the custom colors tab
 					editorService.DropDownControl(tab_control);
 					if (color_chosen) {
 						return selected_color;

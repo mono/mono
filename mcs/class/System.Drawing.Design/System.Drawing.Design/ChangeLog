@@ -1,3 +1,9 @@
+2008-02-05  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* ColorEditor.cs: Set the Height to match the custom colors tab
+	Height.
+	[Fixes bug #356527]
+
 2008-02-04  Ivan N. Zlatev  <contact@i-nz.net>
 
 	 * ColorEditor.cs: Perfom action in OnMouseUp only if in client.
