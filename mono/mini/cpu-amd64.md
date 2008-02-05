@@ -62,17 +62,6 @@ break: len:2
 jmp: len:120
 br: len:6
 
-beq: len:8
-bge: len:8
-bgt: len:8
-ble: len:8
-blt: len:8
-bne.un: len:8
-bge.un: len:8
-bgt.un: len:8
-ble.un: len:8
-blt.un: len:8
-
 label: len:0
 ldind.i1: dest:i len:8
 ldind.u1: dest:i len:8
@@ -88,20 +77,6 @@ stind.i2: src1:b src2:i
 stind.i4: src1:b src2:i
 stind.r4: dest:f src1:b
 stind.r8: dest:f src1:b
-
-add: dest:i src1:i src2:i len:3 clob:1
-sub: dest:i src1:i src2:i len:3 clob:1
-mul: dest:i src1:i src2:i len:4 clob:1
-div: dest:a src1:a src2:i len:16 clob:d
-div.un: dest:a src1:a src2:i len:16 clob:d
-rem: dest:d src1:a src2:i len:16 clob:a
-rem.un: dest:d src1:a src2:i len:16 clob:a
-and: dest:i src1:i src2:i len:3 clob:1
-or: dest:i src1:i src2:i len:3 clob:1
-xor: dest:i src1:i src2:i len:3 clob:1
-shl: dest:i src1:i src2:s clob:1 len:3
-shr: dest:i src1:i src2:s clob:1 len:3
-shr.un: dest:i src1:i src2:s clob:1 len:3
 
 long_add: dest:i src1:i src2:i len:3 clob:1
 long_sub: dest:i src1:i src2:i len:3 clob:1
@@ -158,26 +133,18 @@ long_conv_to_r4: dest:f src1:i len:9
 long_conv_to_r8: dest:f src1:i len:9
 long_conv_to_u4: dest:i src1:i len:3
 long_conv_to_u8: dest:i src1:i len:3
+long_conv_to_ovf_i4_un: dest:i src1:i len:16
+long_conv_to_ovf_u4: dest:i src1:i len:15
 
 throw: src1:i len:18
 rethrow: src1:i len:18
 start_handler: len:9
 endfinally: len:9
 endfilter: src1:a len:9
+call_handler: len:14
 
-conv.ovf.i4.un: dest:i src1:i len:16
-conv.ovf.u4.un: 
-conv.ovf.u4: dest:i src1:i len:15
 ckfinite: dest:f src1:f len:43
 
-conv.u2: dest:i src1:i len:4
-conv.u1: dest:i src1:i len:4
-conv.i: dest:i src1:i len:4
-
-mul.ovf: dest:i src1:i src2:i clob:1 len:10
-# this opcode is handled specially in the code generator
-mul.ovf.un: dest:i src1:i src2:i len:18
-conv.u: dest:i src1:i len:4
 ceq: dest:c len:8
 cgt: dest:c len:8
 cgt.un: dest:c len:8
@@ -198,28 +165,28 @@ outarg_imm: len:6
 setret: dest:a src1:i len:3
 setlret: dest:i src1:i src2:i len:5
 checkthis: src1:b len:5
-call: dest:a clob:c len:64
+
 ret: len:2
+
 voidcall: clob:c len:64
 voidcall_reg: src1:i clob:c len:64
 voidcall_membase: src1:b clob:c len:64
+call: dest:a clob:c len:64
+call_reg: dest:a src1:i len:64 clob:c
+call_membase: dest:a src1:b len:64 clob:c
 fcall: dest:f len:64 clob:c
 fcall_reg: dest:f src1:i len:64 clob:c
 fcall_membase: dest:f src1:b len:64 clob:c
 lcall: dest:a len:64 clob:c
 lcall_reg: dest:a src1:i len:64 clob:c
 lcall_membase: dest:a src1:b len:64 clob:c
-
 vcall: len:64 clob:c
 vcall_reg: src1:i len:64 clob:c
 vcall_membase: src1:b len:64 clob:c
-
 vcall2: len:64 clob:c
 vcall2_reg: src1:i len:64 clob:c
 vcall2_membase: src1:b len:64 clob:c
 
-call_reg: dest:a src1:i len:64 clob:c
-call_membase: dest:a src1:b len:64 clob:c
 iconst: dest:i len:10
 i8const: dest:i len:18
 r4const: dest:f len:14
@@ -254,13 +221,11 @@ loadu4_mem: dest:i len:10
 loadu1_mem: dest:i len:10
 loadu2_mem: dest:i len:10
 amd64_loadi8_memindex: dest:i src1:i src2:i len:10
-move: dest:i src1:i len:4
+move: dest:i src1:i len:3
+
 add_imm: dest:i src1:i len:8 clob:1
 sub_imm: dest:i src1:i len:8 clob:1
 mul_imm: dest:i src1:i len:11
-# there is no actual support for division or reminder by immediate
-# we simulate them, though (but we need to change the burg rules 
-# to allocate a symbolic reg for src2)
 div_imm: dest:a src1:i src2:i len:16 clob:d
 div_un_imm: dest:a src1:i src2:i len:16 clob:d
 rem_imm: dest:d src1:i src2:i len:16 clob:a
@@ -363,7 +328,7 @@ float_clt_membase: dest:i src1:f src2:b len:35
 float_clt_un_membase: dest:i src1:f src2:b len:42
 float_conv_to_u: dest:i src1:f len:46
 fmove: dest:f src1:f len:8
-call_handler: len:14
+
 aot_const: dest:i len:10
 jump_table: dest:i len:18
 x86_test_null: src1:i len:5

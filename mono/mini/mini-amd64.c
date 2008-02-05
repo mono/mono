@@ -4206,12 +4206,12 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			break;
 		}
-		case CEE_CONV_OVF_U4:
+		case OP_LCONV_TO_OVF_U4:
 			amd64_alu_reg_imm (code, X86_CMP, ins->sreg1, 0);
 			EMIT_COND_SYSTEM_EXCEPTION (X86_CC_LT, TRUE, "OverflowException");
 			amd64_mov_reg_reg (code, ins->dreg, ins->sreg1, 8);
 			break;
-		case CEE_CONV_OVF_I4_UN:
+		case OP_LCONV_TO_OVF_I4_UN:
 			amd64_alu_reg_imm (code, X86_CMP, ins->sreg1, 0x7fffffff);
 			EMIT_COND_SYSTEM_EXCEPTION (X86_CC_GT, FALSE, "OverflowException");
 			amd64_mov_reg_reg (code, ins->dreg, ins->sreg1, 8);
