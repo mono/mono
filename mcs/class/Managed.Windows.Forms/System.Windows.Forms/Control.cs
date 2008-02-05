@@ -1323,7 +1323,7 @@ namespace System.Windows.Forms
 		}
 
 		internal Graphics DeviceContext {
-			get { return Hwnd.bmp_g; }
+			get { return Hwnd.GraphicsContext; }
 		}
 
 		private void ProcessActiveTracker (ref Message m)
