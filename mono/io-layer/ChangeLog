@@ -1,3 +1,7 @@
+2008-02-05  Dick Porter  <dick@ximian.com>
+
+	* versioninfo.c (VerLanguageName): Implement VerLanguageName.
+
 2008-01-31  Bill Holmes  <billholmes54@gmail.com>
 	* processes.c (match_procname_to_modulename) : Added to check if the last 
 	  part of module name is equal to the process name.
