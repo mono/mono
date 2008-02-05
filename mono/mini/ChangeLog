@@ -1,5 +1,7 @@
 2008-02-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-s390.c mini-s390x.c: Get rid of CEE_ opcodes.
+
 	* cpu-<ARCH>.md mini-<ARCH>.c: Get rid of the unused CEE_LDIND/STIND opcodes.
 
 2008-02-05  Zoltan Varga  <vargaz@gmail.com>
