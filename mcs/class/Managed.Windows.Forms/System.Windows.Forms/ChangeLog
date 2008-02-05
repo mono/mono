@@ -1,3 +1,9 @@
+2008-02-05  Everaldo Canuto  <ecanuto@novell.com>
+
+	[Backport to 1.9]
+	* MenuAPI.cs: Check if control is disposable when track popup menu. Thanks
+	Jonathan for this patch. Fixes #358442.
+
 2008-02-05  Ivan N. Zlatev  <contact@i-nz.net>
 
 	[Backport to 1.9]

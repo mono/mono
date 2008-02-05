@@ -282,7 +282,10 @@ namespace System.Windows.Forms {
 				XplatUI.TranslateMessage(ref msg);
 				XplatUI.DispatchMessage(ref msg);				
 			}
-			
+
+			if (tracker.grab_control.IsDisposed)
+				return true;
+
 			if (captured)
 				tracker.grab_control.Capture = true;
 
