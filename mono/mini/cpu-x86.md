@@ -63,19 +63,8 @@ not_reached: len:0
 not_null: src1:i len:0
 break: len:1
 jmp: len:32
-call: dest:a clob:c len:17
 ret: len:1
 br: len:5
-beq: len:6
-bge: len:6
-bgt: len:6
-ble: len:6
-blt: len:6
-bne.un: len:6
-bge.un: len:6
-bgt.un: len:6
-ble.un: len:6
-blt.un: len:6
 
 int_beq: len:6
 int_bge: len:6
@@ -103,32 +92,6 @@ stind.i2: src1:b src2:i
 stind.i4: src1:b src2:i
 stind.r4: dest:f src1:b
 stind.r8: dest:f src1:b
-
-add: dest:i src1:i src2:i len:2 clob:1
-sub: dest:i src1:i src2:i len:2 clob:1
-mul: dest:i src1:i src2:i len:3 clob:1
-div: dest:a src1:a src2:i len:15 clob:d
-div.un: dest:a src1:a src2:i len:15 clob:d
-rem: dest:d src1:a src2:i len:15 clob:a
-rem.un: dest:d src1:a src2:i len:15 clob:a
-and: dest:i src1:i src2:i len:2 clob:1
-or: dest:i src1:i src2:i len:2 clob:1
-xor: dest:i src1:i src2:i len:2 clob:1
-shl: dest:i src1:i src2:s clob:1 len:2
-shr: dest:i src1:i src2:s clob:1 len:2
-shr.un: dest:i src1:i src2:s clob:1 len:2
-
-neg: dest:i src1:i len:2 clob:1
-not: dest:i src1:i len:2 clob:1
-conv.i1: dest:i src1:y len:3
-conv.i2: dest:i src1:i len:3
-conv.i4: dest:i src1:i len:2
-conv.r4: dest:f src1:i len:7
-conv.r8: dest:f src1:i len:7
-conv.u4: dest:i src1:i
-conv.u2: dest:i src1:i len:3
-conv.u1: dest:i src1:y len:3
-conv.i: dest:i src1:i len:3
 
 int_add: dest:i src1:i src2:i len:2 clob:1
 int_sub: dest:i src1:i src2:i len:2 clob:1
@@ -163,11 +126,9 @@ rethrow: src1:i len:13
 start_handler: len:16
 endfinally: len:16
 endfilter: src1:a len:16
+call_handler: len:10
 
 ckfinite: dest:f src1:f len:32
-
-mul.ovf: dest:i src1:i src2:i clob:1 len:9
-mul.ovf.un: dest:i src1:i src2:i len:16
 
 int_mul_ovf: dest:i src1:i src2:i clob:1 len:9
 int_mul_ovf_un: dest:i src1:i src2:i len:16
@@ -199,6 +160,10 @@ outarg_imm: len:5
 setret: dest:a src1:i len:2
 setlret: dest:l src1:i src2:i len:4
 checkthis: src1:b len:2
+
+call: dest:a clob:c len:17
+call_reg: dest:a src1:i len:11 clob:c
+call_membase: dest:a src1:b len:16 clob:c
 voidcall: len:17 clob:c
 voidcall_reg: src1:i len:11 clob:c
 voidcall_membase: src1:b len:16 clob:c
@@ -208,17 +173,13 @@ fcall_membase: dest:f src1:b len:16 clob:c
 lcall: dest:l len:17 clob:c
 lcall_reg: dest:l src1:i len:11 clob:c
 lcall_membase: dest:l src1:b len:16 clob:c
-
 vcall: len:17 clob:c
 vcall_reg: src1:i len:11 clob:c
 vcall_membase: src1:b len:16 clob:c
-
 vcall2: len:17 clob:c
 vcall2_reg: src1:i len:11 clob:c
 vcall2_membase: src1:b len:16 clob:c
 
-call_reg: dest:a src1:i len:11 clob:c
-call_membase: dest:a src1:b len:16 clob:c
 iconst: dest:i len:5
 r4const: dest:f len:15
 r8const: dest:f len:16
@@ -262,7 +223,6 @@ mul_imm: dest:i src1:i len:9
 
 div_imm: dest:a src1:a src2:i len:15 clob:d
 div_un_imm: dest:a src1:a src2:i len:15 clob:d
-# This returns EAX
 rem_imm: dest:a src1:a src2:i len:15 clob:d
 rem_un_imm: dest:d src1:a src2:i len:15 clob:a
 and_imm: dest:i src1:i len:6 clob:1
@@ -277,12 +237,8 @@ int_add_imm: dest:i src1:i len:6 clob:1
 #int_subcc_imm: dest:i src1:i len:6 clob:1
 int_sub_imm: dest:i src1:i len:6 clob:1
 int_mul_imm: dest:i src1:i len:9
-# there is no actual support for division or reminder by immediate
-# we simulate them, though (but we need to change the burg rules 
-# to allocate a symbolic reg for src2)
 int_div_imm: dest:a src1:a len:15 clob:d
 int_div_un_imm: dest:a src1:a len:15 clob:d
-# This returns EAX
 int_rem_imm: dest:a src1:a len:15 clob:d
 int_rem_un_imm: dest:d src1:a len:15 clob:a
 int_and_imm: dest:i src1:i len:6 clob:1
@@ -327,7 +283,6 @@ long_shr: dest:L src1:L src2:s clob:1 len:22
 long_shr_un: dest:L src1:L src2:s clob:1 len:22
 long_conv_to_ovf_i: dest:i src1:i src2:i len:30
 long_conv_to_ovf_i4_2: dest:i src1:i src2:i len:30
-long_mul_ovf: 
 long_conv_to_r8_2: dest:f src1:i src2:i len:37 
 long_conv_to_r4_2: dest:f src1:i src2:i len:64
 long_conv_to_r_un: dest:f src1:i src2:i len:37 
@@ -373,7 +328,6 @@ float_cgt_un: dest:y src1:f src2:f len:37
 float_clt: dest:y src1:f src2:f len:25
 float_clt_un: dest:y src1:f src2:f len:32
 float_conv_to_u: dest:i src1:f len:36
-call_handler: len:10
 aot_const: dest:i len:5
 jump_table: dest:i len:5
 load_gotaddr: dest:i len:64

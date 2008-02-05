@@ -1693,7 +1693,7 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (last_ins && (last_ins->opcode == OP_STOREI1_MEMBASE_REG) &&
 					ins->inst_basereg == last_ins->inst_destbasereg &&
 					ins->inst_offset == last_ins->inst_offset) {
-				ins->opcode = (ins->opcode == OP_LOADI1_MEMBASE) ? CEE_CONV_I1 : CEE_CONV_U1;
+				ins->opcode = (ins->opcode == OP_LOADI1_MEMBASE) ? OP_ICONV_TO_I1 : OP_ICONV_TO_U1;
 				ins->sreg1 = last_ins->sreg1;				
 			}
 			break;
@@ -1702,12 +1702,10 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (last_ins && (last_ins->opcode == OP_STOREI2_MEMBASE_REG) &&
 					ins->inst_basereg == last_ins->inst_destbasereg &&
 					ins->inst_offset == last_ins->inst_offset) {
-				ins->opcode = (ins->opcode == OP_LOADI2_MEMBASE) ? CEE_CONV_I2 : CEE_CONV_U2;
+				ins->opcode = (ins->opcode == OP_LOADI2_MEMBASE) ? OP_ICONV_TO_I2 : OP_ICONV_TO_U2;
 				ins->sreg1 = last_ins->sreg1;				
 			}
 			break;
-		case CEE_CONV_I4:
-		case CEE_CONV_U4:
 		case OP_MOVE:
 		case OP_SETREG:
 			ins->opcode = OP_MOVE;
@@ -1793,11 +1791,11 @@ map_to_reg_reg_op (int op)
 {
 	switch (op) {
 	case OP_ADD_IMM:
-		return CEE_ADD;
+		return OP_IADD;
 	case OP_SUB_IMM:
-		return CEE_SUB;
+		return OP_ISUB;
 	case OP_AND_IMM:
-		return CEE_AND;
+		return OP_IAND;
 	case OP_COMPARE_IMM:
 		return OP_COMPARE;
 	case OP_ICOMPARE_IMM:
@@ -1811,9 +1809,9 @@ map_to_reg_reg_op (int op)
 	case OP_SBB_IMM:
 		return OP_SBB;
 	case OP_OR_IMM:
-		return CEE_OR;
+		return OP_IOR;
 	case OP_XOR_IMM:
-		return CEE_XOR;
+		return OP_IXOR;
 	case OP_LOAD_MEMBASE:
 		return OP_LOAD_MEMINDEX;
 	case OP_LOADI4_MEMBASE:
@@ -1922,7 +1920,7 @@ loop_start:
 			temp->inst_c0 = ins->inst_imm;
 			temp->dreg = mono_regstate_next_int (cfg->rs);
 			ins->sreg2 = temp->dreg;
-			ins->opcode = CEE_MUL;
+			ins->opcode = OP_IMUL;
 			break;
 		case OP_LOCALLOC_IMM:
 			NEW_INS (cfg, temp, OP_ICONST);
@@ -2586,21 +2584,17 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert (arm_is_imm8 (ins->inst_offset));
 			ARM_LDRSH_IMM (code, ins->dreg, ins->inst_basereg, ins->inst_offset);
 			break;
-		case CEE_CONV_I1:
 		case OP_ICONV_TO_I1:
 			ARM_SHL_IMM (code, ins->dreg, ins->sreg1, 24);
 			ARM_SAR_IMM (code, ins->dreg, ins->dreg, 24);
 			break;
-		case CEE_CONV_I2:
 		case OP_ICONV_TO_I2:
 			ARM_SHL_IMM (code, ins->dreg, ins->sreg1, 16);
 			ARM_SAR_IMM (code, ins->dreg, ins->dreg, 16);
 			break;
-		case CEE_CONV_U1:
 		case OP_ICONV_TO_U1:
 			ARM_AND_REG_IMM8 (code, ins->dreg, ins->sreg1, 0xff);
 			break;
-		case CEE_CONV_U2:
 		case OP_ICONV_TO_U2:
 			ARM_SHL_IMM (code, ins->dreg, ins->sreg1, 16);
 			ARM_SHR_IMM (code, ins->dreg, ins->dreg, 16);
@@ -2638,7 +2632,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_IADDCC:
 			ARM_ADDS_REG_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
-		case CEE_ADD:
 		case OP_IADD:
 			ARM_ADD_REG_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
@@ -2663,22 +2656,18 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert (imm8 >= 0);
 			ARM_ADCS_REG_IMM (code, ins->dreg, ins->sreg1, imm8, rot_amount);
 			break;
-		case CEE_ADD_OVF:
 		case OP_IADD_OVF:
 			ARM_ADD_REG_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
 			//EMIT_COND_SYSTEM_EXCEPTION_FLAGS (PPC_BR_FALSE, PPC_BR_EQ, "OverflowException");
 			break;
-		case CEE_ADD_OVF_UN:
 		case OP_IADD_OVF_UN:
 			ARM_ADD_REG_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
 			//EMIT_COND_SYSTEM_EXCEPTION_FLAGS (PPC_BR_FALSE, PPC_BR_EQ, "OverflowException");
 			break;
-		case CEE_SUB_OVF:
 		case OP_ISUB_OVF:
 			ARM_SUB_REG_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
 			//EMIT_COND_SYSTEM_EXCEPTION_FLAGS (PPC_BR_FALSE, PPC_BR_EQ, "OverflowException");
 			break;
-		case CEE_SUB_OVF_UN:
 		case OP_ISUB_OVF_UN:
 			ARM_SUB_REG_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
 			//EMIT_COND_SYSTEM_EXCEPTION_FLAGS (PPC_BR_TRUE, PPC_BR_EQ, "OverflowException");
@@ -2708,7 +2697,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert (imm8 >= 0);
 			ARM_SUBS_REG_IMM (code, ins->dreg, ins->sreg1, imm8, rot_amount);
 			break;
-		case CEE_SUB:
 		case OP_ISUB:
 			ARM_SUB_REG_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
@@ -2738,7 +2726,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert (imm8 >= 0);
 			ARM_RSC_REG_IMM (code, ins->dreg, ins->sreg1, imm8, rot_amount);
 			break;
-		case CEE_AND:
 		case OP_IAND:
 			ARM_AND_REG_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
@@ -2748,15 +2735,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert (imm8 >= 0);
 			ARM_AND_REG_IMM (code, ins->dreg, ins->sreg1, imm8, rot_amount);
 			break;
-		case CEE_DIV:
-		case CEE_DIV_UN:
 		case OP_DIV_IMM:
-		case CEE_REM:
-		case CEE_REM_UN:
 		case OP_REM_IMM:
 			/* crappy ARM arch doesn't have a DIV instruction */
 			g_assert_not_reached ();
-		case CEE_OR:
 		case OP_IOR:
 			ARM_ORR_REG_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
@@ -2766,7 +2748,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert (imm8 >= 0);
 			ARM_ORR_REG_IMM (code, ins->dreg, ins->sreg1, imm8, rot_amount);
 			break;
-		case CEE_XOR:
 		case OP_IXOR:
 			ARM_EOR_REG_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
@@ -2776,7 +2757,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert (imm8 >= 0);
 			ARM_EOR_REG_IMM (code, ins->dreg, ins->sreg1, imm8, rot_amount);
 			break;
-		case CEE_SHL:
 		case OP_ISHL:
 			ARM_SHL_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
@@ -2787,7 +2767,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			else if (ins->dreg != ins->sreg1)
 				ARM_MOV_REG_REG (code, ins->dreg, ins->sreg1);
 			break;
-		case CEE_SHR:
 		case OP_ISHR:
 			ARM_SAR_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
@@ -2805,19 +2784,15 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			else if (ins->dreg != ins->sreg1)
 				ARM_MOV_REG_REG (code, ins->dreg, ins->sreg1);				
 			break;
-		case CEE_SHR_UN:
 		case OP_ISHR_UN:
 			ARM_SHR_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
-		case CEE_NOT:
 		case OP_INOT:
 			ARM_MVN_REG_REG (code, ins->dreg, ins->sreg1);
 			break;
-		case CEE_NEG:
 		case OP_INEG:
 			ARM_RSB_REG_IMM8 (code, ins->dreg, ins->sreg1, 0);
 			break;
-		case CEE_MUL:
 		case OP_IMUL:
 			if (ins->dreg == ins->sreg2)
 				ARM_MUL_REG_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
@@ -2827,12 +2802,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_MUL_IMM:
 			g_assert_not_reached ();
 			break;
-		case CEE_MUL_OVF:
 		case OP_IMUL_OVF:
 			/* FIXME: handle ovf/ sreg2 != dreg */
 			ARM_MUL_REG_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
-		case CEE_MUL_OVF_UN:
 		case OP_IMUL_OVF_UN:
 			/* FIXME: handle ovf/ sreg2 != dreg */
 			ARM_MUL_REG_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
@@ -2851,8 +2824,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			/* Load the value from the GOT */
 			ARM_LDR_REG_REG (code, ins->dreg, ARMREG_PC, ins->dreg);
 			break;
-		case CEE_CONV_I4:
-		case CEE_CONV_U4:
 		case OP_ICONV_TO_I4:
 		case OP_ICONV_TO_U4:
 		case OP_MOVE:
@@ -2919,7 +2890,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_VCALL:
 		case OP_VCALL2:
 		case OP_VOIDCALL:
-		case CEE_CALL:
 		case OP_CALL:
 			call = (MonoCallInst*)ins;
 			if (ins->flags & MONO_INST_HAS_METHOD)
@@ -3163,18 +3133,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_COND_EXC_INO:
 			/* FIXME: */
 			break;
-		case CEE_BEQ:
-		case CEE_BNE_UN:
-		case CEE_BLT:
-		case CEE_BLT_UN:
-		case CEE_BGT:
-		case CEE_BGT_UN:
-		case CEE_BGE:
-		case CEE_BGE_UN:
-		case CEE_BLE:
-		case CEE_BLE_UN:
-			EMIT_COND_BRANCH (ins, ins->opcode - CEE_BEQ);
-			break;
 		case OP_IBEQ:
 		case OP_IBNE_UN:
 		case OP_IBLT:
@@ -3243,7 +3201,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert (arm_is_fpimm8 (ins->inst_offset));
 			ARM_LDFS (code, ins->dreg, ins->inst_basereg, ins->inst_offset);
 			break;
-		case CEE_CONV_R_UN: {
+		case OP_ICONV_TO_R_UN: {
 			int tmpreg;
 			tmpreg = ins->dreg == 0? 1: 0;
 			ARM_CMP_REG_IMM8 (code, ins->sreg1, 0);
@@ -3269,11 +3227,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			 */
 			break;
 		}
-		case CEE_CONV_R4:
 		case OP_ICONV_TO_R4:
 			ARM_FLTS (code, ins->dreg, ins->sreg1);
 			break;
-		case CEE_CONV_R8:
 		case OP_ICONV_TO_R8:
 			ARM_FLTD (code, ins->dreg, ins->sreg1);
 			break;
@@ -3322,18 +3278,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_LOADR4_MEMBASE:
 			g_assert (arm_is_fpimm8 (ins->inst_offset));
 			ARM_FLDS (code, ins->dreg, ins->inst_basereg, ins->inst_offset);
-			break;
-		case CEE_CONV_R_UN: {
-			g_assert_not_reached ();
-			break;
-		}
-		case CEE_CONV_R4:
-			g_assert_not_reached ();
-			//ARM_FLTS (code, ins->dreg, ins->sreg1);
-			break;
-		case CEE_CONV_R8:
-			g_assert_not_reached ();
-			//ARM_FLTD (code, ins->dreg, ins->sreg1);
 			break;
 #endif
 		case OP_FCONV_TO_I1:

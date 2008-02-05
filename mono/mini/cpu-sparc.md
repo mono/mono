@@ -60,16 +60,6 @@ dummy_store: len:0
 not_reached: len:0
 not_null: src1:i len:0
 
-beq: len:8
-bge: len:8
-bgt: len:8
-ble: len:8
-blt: len:8
-bne.un: len:64
-bge.un: len:64
-bgt.un: len:64
-ble.un: len:64
-blt.un: len:64
 sparc_brz: src1:i len: 8
 sparc_brlez: src1:i len: 8
 sparc_brlz: src1:i len: 8
@@ -97,47 +87,18 @@ stind.i4: src1:b src2:i
 stind.r4: src1:b src2:f
 stind.r8: src1:b src2:f
 
-add: dest:i src1:i src2:i len:64
-sub: dest:i src1:i src2:i len:4
-mul: dest:i src1:i src2:i len:4
-div: dest:i src1:i src2:i len:64
-div.un: dest:i src1:i src2:i len:8
-rem: dest:d src1:i src2:i len:64
-rem.un: dest:d src1:i src2:i len:64
-and: dest:i src1:i src2:i len:4
-or: dest:i src1:i src2:i len:4
-xor: dest:i src1:i src2:i len:4
-shl: dest:i src1:i src2:i len:4
-shr: dest:i src1:i src2:i len:4
-shr.un: dest:i src1:i src2:i len:4
-neg: dest:i src1:i len:4
-not: dest:i src1:i len:4
-conv.i1: dest:i src1:i len:8
-conv.i2: dest:i src1:i len:8
-conv.i4: dest:i src1:i len:4
-conv.i8: dest:i src1:i len:4
-conv.r4: dest:f src1:i len:64
-conv.r8: dest:f src1:i len:64
-conv.u4: dest:i src1:i len:4
-conv.u8: dest:i src1:i len:4
-conv.u2: dest:i src1:i len:8
-conv.u1: dest:i src1:i len:4
-conv.i: dest:i src1:i len:4
-
 throw: src1:i len:64
 rethrow: src1:i len:64
-conv.ovf.u4: dest:i src1:i len:64
-ckfinite: dest:f src1:f len:40
-
-mul.ovf: dest:i src1:i src2:i len:64
-mul.ovf.un: dest:i src1:i src2:i len:64
-
-int_mul_ovf: dest:i src1:i src2:i len:64
-int_mul_ovf_un: dest:i src1:i src2:i len:64
-
 start_handler: len:64
 endfinally: len:64
 endfilter: src1:i len:64
+call_handler: len:64
+
+conv.ovf.u4: dest:i src1:i len:64
+ckfinite: dest:f src1:f len:40
+
+int_mul_ovf: dest:i src1:i src2:i len:64
+int_mul_ovf_un: dest:i src1:i src2:i len:64
 conv.u: dest:i src1:i len:4
 arglist: src1:i
 ceq: dest:i len:64
@@ -304,7 +265,6 @@ float_cgt_un: dest:i src1:f src2:f len:64
 float_clt: dest:i src1:f src2:f len:64
 float_clt_un: dest:i src1:f src2:f len:64
 float_conv_to_u: dest:i src1:f len:64
-call_handler: len:64
 aot_const: dest:i len:64
 adc: dest:i src1:i src2:i len:4
 addcc: dest:i src1:i src2:i len:4

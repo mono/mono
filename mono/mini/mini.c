@@ -11686,24 +11686,22 @@ mono_normalize_opcodes (MonoCompile *cfg, MonoBasicBlock *bb)
 		remap_table = g_new0 (gint16, OP_LAST);
 
 #if SIZEOF_VOID_P == 8
-		remap_table [CEE_CONV_I1] = OP_LCONV_TO_I1;
-		remap_table [CEE_CONV_I2] = OP_LCONV_TO_I2;
-		remap_table [CEE_CONV_U1] = OP_LCONV_TO_U1;
-		remap_table [CEE_CONV_U2] = OP_LCONV_TO_U2;
 		remap_table [CEE_CONV_U8] = OP_ZEXT_I4;
 		remap_table [CEE_CONV_U] = OP_ZEXT_I4;
 		remap_table [CEE_CONV_I8] = OP_SEXT_I4;
 		remap_table [CEE_CONV_I] = OP_SEXT_I4;
+		remap_table [CEE_CONV_OVF_U4] = OP_LCONV_TO_OVF_U4;
+		remap_table [CEE_CONV_OVF_I4_UN] = OP_LCONV_TO_OVF_I4_UN;
+#else
+#endif
 		remap_table [CEE_CONV_R4] = OP_ICONV_TO_R4;
 		remap_table [CEE_CONV_R8] = OP_ICONV_TO_R8;
 		remap_table [CEE_CONV_I4] = OP_MOVE;
 		remap_table [CEE_CONV_U4] = OP_MOVE;
-		remap_table [CEE_CONV_OVF_U4] = OP_LCONV_TO_OVF_U4;
-		remap_table [CEE_CONV_OVF_I4_UN] = OP_LCONV_TO_OVF_I4_UN;
-#else
-		g_assert_not_reached ();
-#endif
-
+		remap_table [CEE_CONV_I1] = REMAP_OPCODE (CONV_TO_I1);
+		remap_table [CEE_CONV_I2] = REMAP_OPCODE (CONV_TO_I2);
+		remap_table [CEE_CONV_U1] = REMAP_OPCODE (CONV_TO_U1);
+		remap_table [CEE_CONV_U2] = REMAP_OPCODE (CONV_TO_U2);
 		remap_table [CEE_ADD] = REMAP_OPCODE (ADD);
 		remap_table [CEE_SUB] = REMAP_OPCODE (SUB);
 		remap_table [CEE_MUL] = REMAP_OPCODE (MUL);
@@ -11730,15 +11728,15 @@ mono_normalize_opcodes (MonoCompile *cfg, MonoBasicBlock *bb)
 		remap_table [CEE_BGE_UN] = REMAP_OPCODE (BGE_UN);
 		remap_table [CEE_BLE] = REMAP_OPCODE (BLE);
 		remap_table [CEE_BLE_UN] = REMAP_OPCODE (BLE_UN);
+		remap_table [CEE_MUL_OVF] = REMAP_OPCODE (MUL_OVF);
+		remap_table [CEE_MUL_OVF_UN] = REMAP_OPCODE (MUL_OVF_UN);
 	}
 
-#ifdef MONO_ARCH_ENABLE_NORMALIZE_OPCODES
 	MONO_BB_FOR_EACH_INS (bb, ins) {
 		int remapped = remap_table [ins->opcode];
 		if (remapped)
 			ins->opcode = remapped;
 	}
-#endif
 }
 
 void

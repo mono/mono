@@ -1,5 +1,7 @@
 2008-02-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* cpu-<ARCH>.md mini-<ARCH>.md: Get rid of CEE_ opcodes.
+
 	* cpu-amd64.md mini-amd64.c: Remove unused opcodes.
 
 	* mini.c (mono_normalize_opcodes): New pass to get rid of CEE_ opcodes.

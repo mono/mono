@@ -16,31 +16,6 @@ dummy_store: len:0
 not_reached: len:0
 not_null: src1:i len:0
 
-beq: len:48
-bge: len:48
-bgt: len:48
-ble: len:48
-blt: len:48
-bne.un: len:48
-bge.un: len:48
-bgt.un: len:48
-ble.un: len:48
-blt.un: len:48
-
-add: dest:i src1:i src2:i len:48
-sub: dest:i src1:i src2:i len:48
-mul: dest:i src1:i src2:i len:48
-div: dest:a src1:a src2:i len:48 clob:d
-div.un: dest:a src1:a src2:i len:48 clob:d
-rem: dest:d src1:a src2:i len:48 clob:a
-rem.un: dest:d src1:a src2:i len:48 clob:a
-and: dest:i src1:i src2:i len:48
-or: dest:i src1:i src2:i len:48
-xor: dest:i src1:i src2:i len:48
-shl: dest:i src1:i src2:s len:48
-shr: dest:i src1:i src2:s len:48
-shr.un: dest:i src1:i src2:s len:48
-
 long_add: dest:i src1:i src2:i len:48
 long_sub: dest:i src1:i src2:i len:48
 long_and: dest:i src1:i src2:i len:48
@@ -49,17 +24,6 @@ long_xor: dest:i src1:i src2:i len:48
 long_shl: dest:i src1:i src2:s len:48
 long_shr: dest:i src1:i src2:s len:48
 long_shr_un: dest:i src1:i src2:s len:48
-
-neg: dest:i src1:i len:48
-not: dest:i src1:i len:48
-conv.i1: dest:i src1:i len:48
-conv.i2: dest:i src1:i len:48
-conv.i4: dest:i src1:i len:48
-conv.i8: dest:i src1:i len:48
-conv.r4: dest:f src1:i len:112
-conv.r8: dest:f src1:i len:112
-conv.u4: dest:i src1:i len:112
-conv.u8: dest:i src1:i len:112
 
 long_neg: dest:i src1:i len:48
 long_not: dest:i src1:i len:48
@@ -73,21 +37,14 @@ long_conv_to_i8: dest:i src1:i len:48
 long_conv_to_u8: dest:i src1:i len:112
 long_conv_to_r4: dest:f src1:i len:112
 long_conv_to_r8: dest:f src1:i len:112
+long_conv_to_r_un: dest:f src1:i len:48
+long_conv_to_ovf_i4_un: dest:i src1:i len:96
+long_conv_to_ovf_u4: dest:i src1:i len:48
 
-conv.r.un: dest:f src1:i len:48
 throw: src1:i len:96
 rethrow: src1:i len:48
-conv.ovf.i4.un: dest:i src1:i len:96
-conv.ovf.u4.un: 
-conv.ovf.u4: dest:i src1:i len:48
 ckfinite: dest:f src1:f len:48
-conv.u2: dest:i src1:i len:48
-conv.u1: dest:i src1:i len:48
-conv.i: dest:i src1:i len:48
-mul.ovf: dest:i src1:i src2:i len:48
-# this opcode is handled specially in the code generator
-mul.ovf.un: dest:i src1:i src2:i len:48
-conv.u: dest:i src1:i len:48
+
 ceq: dest:c len:48
 cgt: dest:c len:48
 cgt.un: dest:c len:48
@@ -108,7 +65,10 @@ outarg_imm: len:48
 setret: dest:r src1:i len:48
 setlret: dest:r src1:i src2:i len:48
 checkthis: src1:b len:48
+
 call: dest:r clob:c len:80
+call_reg: dest:r src1:i len:80 clob:c
+call_membase: dest:r src1:b len:80 clob:c
 voidcall: clob:c len:80
 voidcall_reg: src1:i clob:c len:80
 voidcall_membase: src1:b clob:c len:80
@@ -124,8 +84,7 @@ vcall_membase: src1:b len:80 clob:c
 vcall2: len:80 clob:c
 vcall2_reg: src1:i len:80 clob:c
 vcall2_membase: src1:b len:80 clob:c
-call_reg: dest:r src1:i len:80 clob:c
-call_membase: dest:r src1:b len:80 clob:c
+
 iconst: dest:i len:48
 i8const: dest:i len:48
 r4const: dest:f len:48
@@ -243,10 +202,12 @@ float_clt_membase: dest:i src1:f src2:b len:48
 float_clt_un_membase: dest:i src1:f src2:b len:48
 float_conv_to_u: dest:i src1:f len:48
 fmove: dest:f src1:f len:48
+
 call_handler: len:96
 start_handler: len:96
 endfilter: len:96
 endfinally: len:96
+
 aot_const: dest:i len:48
 tls_get: dest:i len:48
 atomic_add_i4: src1:b src2:i dest:i len:48

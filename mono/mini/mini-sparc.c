@@ -1973,12 +1973,12 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 				}
 			}
 			break;
-		case CEE_BEQ:
-		case CEE_BNE_UN:
-		case CEE_BLT:
-		case CEE_BGT:
-		case CEE_BGE:
-		case CEE_BLE:
+		case OP_IBEQ:
+		case OP_IBNE_UN:
+		case OP_IBLT:
+		case OP_IBGT:
+		case OP_IBGE:
+		case OP_IBLE:
 		case OP_COND_EXC_EQ:
 		case OP_COND_EXC_GE:
 		case OP_COND_EXC_GT:
@@ -1999,22 +1999,22 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 				(last_ins->inst_imm == 0)) {
 				MonoInst *next = ins->next;
 				switch (ins->opcode) {
-				case CEE_BEQ:
+				case OP_IBEQ:
 					ins->opcode = OP_SPARC_BRZ;
 					break;
-				case CEE_BNE_UN:
+				case OP_IBNE_UN:
 					ins->opcode = OP_SPARC_BRNZ;
 					break;
-				case CEE_BLT:
+				case OP_IBLT:
 					ins->opcode = OP_SPARC_BRLZ;
 					break;
-				case CEE_BGT:
+				case OP_IBGT:
 					ins->opcode = OP_SPARC_BRGZ;
 					break;
-				case CEE_BGE:
+				case OP_IBGE:
 					ins->opcode = OP_SPARC_BRGEZ;
 					break;
-				case CEE_BLE:
+				case OP_IBLE:
 					ins->opcode = OP_SPARC_BRLEZ;
 					break;
 				case OP_COND_EXC_EQ:
@@ -2045,8 +2045,6 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 				continue;
 			}
 			break;
-		case CEE_CONV_I4:
-		case CEE_CONV_U4:
 		case OP_MOVE:
 			/* 
 			 * OP_MOVE reg, reg 
@@ -2287,7 +2285,6 @@ emit_move_return_value (MonoInst *ins, guint32 *code)
 	case OP_VOIDCALL_REG:
 	case OP_VOIDCALL_MEMBASE:
 		break;
-	case CEE_CALL:
 	case OP_CALL:
 	case OP_CALL_REG:
 	case OP_CALL_MEMBASE:
@@ -2836,26 +2833,22 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			EMIT_LOAD_MEMBASE (ins, ldx);
 			break;
 #endif
-		case CEE_CONV_I1:
 		case OP_ICONV_TO_I1:
 			sparc_sll_imm (code, ins->sreg1, 24, sparc_o7);
 			sparc_sra_imm (code, sparc_o7, 24, ins->dreg);
 			break;
-		case CEE_CONV_I2:
 		case OP_ICONV_TO_I2:
 			sparc_sll_imm (code, ins->sreg1, 16, sparc_o7);
 			sparc_sra_imm (code, sparc_o7, 16, ins->dreg);
 			break;
-		case CEE_CONV_U1:
 		case OP_ICONV_TO_U1:
 			sparc_and_imm (code, FALSE, ins->sreg1, 0xff, ins->dreg);
 			break;
-		case CEE_CONV_U2:
 		case OP_ICONV_TO_U2:
 			sparc_sll_imm (code, ins->sreg1, 16, sparc_o7);
 			sparc_srl_imm (code, sparc_o7, 16, ins->dreg);
 			break;
-		case CEE_CONV_OVF_U4:
+		case OP_LCONV_TO_OVF_U4:
 			/* Only used on V9 */
 			sparc_cmp_imm (code, ins->sreg1, 0);
 			mono_add_patch_info (cfg, (guint8*)(code) - (cfg)->native_code,
@@ -2871,19 +2864,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			sparc_nop (code);
 			sparc_mov_reg_reg (code, ins->sreg1, ins->dreg);
 			break;
-		case CEE_CONV_OVF_I4_UN:
+		case OP_LCONV_TO_OVF_I4_UN:
 			/* Only used on V9 */
 			NOT_IMPLEMENTED;
-			break;
-		case CEE_CONV_U:
-		case CEE_CONV_U8:
-			/* Only used on V9 */
-			sparc_srl_imm (code, ins->sreg1, 0, ins->dreg);
-			break;
-		case CEE_CONV_I:
-		case CEE_CONV_I8:
-			/* Only used on V9 */
-			sparc_sra_imm (code, ins->sreg1, 0, ins->dreg);
 			break;
 		case OP_COMPARE:
 		case OP_LCOMPARE:
@@ -2913,7 +2896,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_IADDCC:
 			sparc_add (code, TRUE, ins->sreg1, ins->sreg2, ins->dreg);
 			break;
-		case CEE_ADD:
 		case OP_IADD:
 			sparc_add (code, FALSE, ins->sreg1, ins->sreg2, ins->dreg);
 			break;
@@ -2936,7 +2918,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_ISUBCC:
 			sparc_sub (code, TRUE, ins->sreg1, ins->sreg2, ins->dreg);
 			break;
-		case CEE_SUB:
 		case OP_ISUB:
 			sparc_sub (code, FALSE, ins->sreg1, ins->sreg2, ins->dreg);
 			break;
@@ -2955,7 +2936,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_ISBB_IMM:
 			EMIT_ALU_IMM (ins, subx, TRUE);
 			break;
-		case CEE_AND:
 		case OP_IAND:
 			sparc_and (code, FALSE, ins->sreg1, ins->sreg2, ins->dreg);
 			break;
@@ -2963,7 +2943,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_IAND_IMM:
 			EMIT_ALU_IMM (ins, and, FALSE);
 			break;
-		case CEE_DIV:
 		case OP_IDIV:
 			/* Sign extend sreg1 into %y */
 			sparc_sra_imm (code, ins->sreg1, 31, sparc_o7);
@@ -2971,7 +2950,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			sparc_sdiv (code, TRUE, ins->sreg1, ins->sreg2, ins->dreg);
 			EMIT_COND_SYSTEM_EXCEPTION_GENERAL (code, sparc_boverflow, "ArithmeticException", TRUE, sparc_icc_short);
 			break;
-		case CEE_DIV_UN:
 		case OP_IDIV_UN:
 			sparc_wry (code, sparc_g0, sparc_g0);
 			sparc_udiv (code, FALSE, ins->sreg1, ins->sreg2, ins->dreg);
@@ -3010,7 +2988,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 			break;
 		}
-		case CEE_REM:
 		case OP_IREM:
 			/* Sign extend sreg1 into %y */
 			sparc_sra_imm (code, ins->sreg1, 31, sparc_o7);
@@ -3020,7 +2997,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			sparc_smul (code, FALSE, ins->sreg2, sparc_o7, sparc_o7);
 			sparc_sub (code, FALSE, ins->sreg1, sparc_o7, ins->dreg);
 			break;
-		case CEE_REM_UN:
 		case OP_IREM_UN:
 			sparc_wry (code, sparc_g0, sparc_g0);
 			sparc_udiv (code, FALSE, ins->sreg1, ins->sreg2, sparc_o7);
@@ -3045,7 +3021,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 			sparc_sub (code, FALSE, ins->sreg1, sparc_o7, ins->dreg);
 			break;
-		case CEE_OR:
 		case OP_IOR:
 			sparc_or (code, FALSE, ins->sreg1, ins->sreg2, ins->dreg);
 			break;
@@ -3053,7 +3028,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_IOR_IMM:
 			EMIT_ALU_IMM (ins, or, FALSE);
 			break;
-		case CEE_XOR:
 		case OP_IXOR:
 			sparc_xor (code, FALSE, ins->sreg1, ins->sreg2, ins->dreg);
 			break;
@@ -3061,7 +3035,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_IXOR_IMM:
 			EMIT_ALU_IMM (ins, xor, FALSE);
 			break;
-		case CEE_SHL:
 		case OP_ISHL:
 			sparc_sll (code, ins->sreg1, ins->sreg2, ins->dreg);
 			break;
@@ -3074,7 +3047,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				sparc_sll (code, ins->sreg1, sparc_o7, ins->dreg);
 			}
 			break;
-		case CEE_SHR:
 		case OP_ISHR:
 			sparc_sra (code, ins->sreg1, ins->sreg2, ins->dreg);
 			break;
@@ -3096,7 +3068,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				sparc_srl (code, ins->sreg1, sparc_o7, ins->dreg);
 			}
 			break;
-		case CEE_SHR_UN:
 		case OP_ISHR_UN:
 			sparc_srl (code, ins->sreg1, ins->sreg2, ins->dreg);
 			break;
@@ -3133,17 +3104,14 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				sparc_srlx (code, ins->sreg1, sparc_o7, ins->dreg);
 			}
 			break;
-		case CEE_NOT:
 		case OP_INOT:
 			/* can't use sparc_not */
 			sparc_xnor (code, FALSE, ins->sreg1, sparc_g0, ins->dreg);
 			break;
-		case CEE_NEG:
 		case OP_INEG:
 			/* can't use sparc_neg */
 			sparc_sub (code, FALSE, sparc_g0, ins->sreg1, ins->dreg);
 			break;
-		case CEE_MUL:
 		case OP_IMUL:
 			sparc_smul (code, FALSE, ins->sreg1, ins->sreg2, ins->dreg);
 			break;
@@ -3166,7 +3134,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				EMIT_ALU_IMM (ins, smul, FALSE);
 			break;
 		}
-		case CEE_MUL_OVF:
 		case OP_IMUL_OVF:
 			sparc_smul (code, TRUE, ins->sreg1, ins->sreg2, ins->dreg);
 			sparc_rdy (code, sparc_g1);
@@ -3174,7 +3141,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			sparc_cmp (code, sparc_g1, sparc_o7);
 			EMIT_COND_SYSTEM_EXCEPTION_GENERAL (ins, sparc_bne, "OverflowException", TRUE, sparc_icc_short);
 			break;
-		case CEE_MUL_OVF_UN:
 		case OP_IMUL_OVF_UN:
 			sparc_umul (code, TRUE, ins->sreg1, ins->sreg2, ins->dreg);
 			sparc_rdy (code, sparc_o7);
@@ -3195,8 +3161,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			mono_add_patch_info (cfg, offset, (MonoJumpInfoType)ins->inst_i1, ins->inst_p0);
 			sparc_set_template (code, ins->dreg);
 			break;
-		case CEE_CONV_I4:
-		case CEE_CONV_U4:
 		case OP_MOVE:
 			if (ins->sreg1 != ins->dreg)
 				sparc_mov_reg_reg (code, ins->sreg1, ins->dreg);
@@ -3235,7 +3199,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_VCALL:
 		case OP_VCALL2:
 		case OP_VOIDCALL:
-		case CEE_CALL:
 		case OP_CALL:
 			call = (MonoCallInst*)ins;
 			g_assert (!call->virtual);
@@ -3618,22 +3581,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_SPARC_COND_EXC_NEZ:
 			EMIT_COND_SYSTEM_EXCEPTION_BPR (ins, brnz, ins->inst_p1);
 			break;
-		case CEE_BEQ:
-		case CEE_BNE_UN:
-		case CEE_BLT:
-		case CEE_BLT_UN:
-		case CEE_BGT:
-		case CEE_BGT_UN:
-		case CEE_BGE:
-		case CEE_BGE_UN:
-		case CEE_BLE:
-		case CEE_BLE_UN: {
-			if (sparcv9)
-				EMIT_COND_BRANCH_PREDICTED (ins, opcode_to_sparc_cond (ins->opcode), 1, 1);
-			else
-				EMIT_COND_BRANCH (ins, opcode_to_sparc_cond (ins->opcode), 1, 1);
-			break;
-		}
 
 		case OP_IBEQ:
 		case OP_IBNE_UN:
@@ -3749,7 +3696,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			sparc_fmovs (code, ins->sreg1 + 1, ins->dreg + 1);
 #endif
 			break;
-		case CEE_CONV_R4:
 		case OP_ICONV_TO_R4: {
 			gint32 offset = cfg->arch.float_spill_slot_offset;
 #ifdef SPARCV9
@@ -3776,7 +3722,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			sparc_fstod (code, FP_SCRATCH_REG, ins->dreg);
 			break;
 		}
-		case CEE_CONV_R8:
 		case OP_ICONV_TO_R8: {
 			gint32 offset = cfg->arch.float_spill_slot_offset;
 #ifdef SPARCV9
@@ -3851,10 +3796,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			sparc_fmovs (code, ins->sreg1, ins->dreg);
 			sparc_fmovs (code, ins->sreg1 + 1, ins->dreg + 1);
 #endif
-			break;
-		case CEE_CONV_R_UN:
-			/* Emulated */
-			g_assert_not_reached ();
 			break;
 		case OP_LCONV_TO_R_UN: { 
 			/* Emulated */

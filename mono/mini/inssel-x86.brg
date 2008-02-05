@@ -50,8 +50,12 @@
 #
 
 stmt: OP_START_HANDLER,
-stmt: OP_ENDFINALLY,
+stmt: OP_ENDFINALLY {
+	mono_bblock_add_inst (s->cbb, tree);
+}
+
 stmt: OP_ENDFILTER (reg) {
+	tree->sreg1 = state->left->reg1;
 	mono_bblock_add_inst (s->cbb, tree);
 }
 
