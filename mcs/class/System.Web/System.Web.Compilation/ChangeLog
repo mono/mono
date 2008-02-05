@@ -1,3 +1,10 @@
+2008-02-05  Marek Habersack  <mhabersack@novell.com>
+
+	* AspGenerator.cs: introduced a new overload for the Parse method
+	which accepts a bool indicating whether or not to initialize the
+	parser. The overload is used when parsing server-side
+	includes. Fixes bug #357498
+
 2008-02-04  Marek Habersack  <mhabersack@novell.com>
 
 	* AssemblyBuilder.cs: do not use WebEncoding.FileEncoding when

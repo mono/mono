@@ -259,10 +259,19 @@ namespace System.Web.Compilation
 
 		public void Parse (string file)
 		{
-			isApplication = tparser.DefaultDirectiveName == "application";
 #if ONLY_1_1
-			InitParser (file);
+			Parse (file, true);
+#else
+			Parse (file, false);
 #endif
+		}
+		
+		public void Parse (string file, bool doInitParser)
+		{
+			isApplication = tparser.DefaultDirectiveName == "application";
+			
+			if (doInitParser)
+				InitParser (file);
 
 			pstack.Parser.Parse ();
 			if (text.Length > 0)
@@ -455,7 +464,7 @@ namespace System.Web.Compilation
 					file = GetIncludeFilePath (tparser.BaseDir, file);
 				}
 
-				Parse (file);
+				Parse (file, true);
 				break;
 			default:
 				break;
