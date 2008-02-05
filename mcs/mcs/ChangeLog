@@ -1,3 +1,8 @@
+2008-02-05  Jb Evain  <jbevain@novell.com>
+
+	* class.cs: use generic type comparison for parameters
+	as well.
+
 2008-02-05  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #325372

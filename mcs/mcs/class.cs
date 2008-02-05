@@ -8332,11 +8332,10 @@ namespace Mono.CSharp {
 			if (args.Length != sigp.Length)
 				return false;
 
-			for (int i = args.Length; i > 0; ){
-				i--;
-				if (args [i] != sigp [i])
+			for (int i = args.Length - 1; i >= 0; i--)
+				if (!TypeManager.IsEqual (args [i], sigp [i]))
 					return false;
-			}
+
 			return true;
 		}
 	}
