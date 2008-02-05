@@ -231,7 +231,7 @@ namespace System.Windows.Forms {
 				if (DataGridView == null)
 					return Size.Empty;
 					
-				return GetPreferredSize (Hwnd.bmp_g, InheritedStyle, RowIndex, Size.Empty); 
+				return GetPreferredSize (Hwnd.GraphicsContext, InheritedStyle, RowIndex, Size.Empty); 
 			}
 		}
 
@@ -434,7 +434,7 @@ namespace System.Windows.Forms {
 			if (DataGridView == null)
 				return Rectangle.Empty;
 			
-			return GetContentBounds (Hwnd.bmp_g, InheritedStyle, rowIndex);
+			return GetContentBounds (Hwnd.GraphicsContext, InheritedStyle, rowIndex);
 		}
 
 		public object GetEditedFormattedValue (int rowIndex, DataGridViewDataErrorContexts context) {

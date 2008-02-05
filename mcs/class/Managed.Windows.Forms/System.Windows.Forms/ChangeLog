@@ -1,4 +1,10 @@
 2008-02-04  Geoff Norton  <gnorton@novell.com>
+	
+	* LineTag.cs: 
+	* DataGriveViewCell.cs: More fixing the branch.  bmp_g is the instance
+	variable, call the appropriate Property instead.
+
+2008-02-04  Geoff Norton  <gnorton@novell.com>
 
 	* Control.cs: Fix the branch.  bmp_g is the instance variable, call the
 	appropriate Property instead.
