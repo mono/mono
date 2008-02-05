@@ -31,6 +31,7 @@
 #if NET_2_0
 
 using System;
+using System.Collections;
 using System.Configuration;
 
 namespace System.Web.Configuration
@@ -46,6 +47,7 @@ namespace System.Web.Configuration
 		}
 
 		public CompilerCollection ()
+			: base (CaseInsensitiveComparer.DefaultInvariant)
 		{
 		}
 
@@ -61,7 +63,7 @@ namespace System.Web.Configuration
 
 		public Compiler Get (string language)
 		{
-			return (Compiler) BaseGet (language);
+			return this [language];
 		}
 
 		protected override object GetElementKey (ConfigurationElement element)
