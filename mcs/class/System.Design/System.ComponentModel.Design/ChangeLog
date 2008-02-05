@@ -1,3 +1,9 @@
+2008-02-05  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* MutilineStringEditor.cs: Make BorderStyle, Width and Height
+	sensible.
+	[Fixes #356530]
+
 2008-01-22  Ivan N. Zlatev  <contact@i-nz.net>
 
 	 * MutilineStringEditor.cs: Fix EditValue to return the new
