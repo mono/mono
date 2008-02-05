@@ -67,8 +67,13 @@ namespace System.Web.UI.WebControls
 			get {
 				if (PostedFile == null)
 					return Stream.Null;
-				else
-					return PostedFile.InputStream;
+				else {
+					Stream ret = PostedFile.InputStream;
+					if (ret != null)
+						ret.Position = 0;
+					
+					return ret;
+				}
 			}
 		}
 

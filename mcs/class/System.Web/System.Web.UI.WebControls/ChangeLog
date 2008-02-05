@@ -1,3 +1,8 @@
+2008-02-05  Marek Habersack  <mhabersack@novell.com>
+
+	* FileUpload.cs: make sure FileContent always returns the input
+	stream positioned at the beginning. Fixes bug #356846
+
 2008-01-31 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Calendar.cs: resolve Next/Prev. month link date correctly.
