@@ -209,6 +209,8 @@ namespace System.Web.Compilation {
 		
 		static object buildCacheLock = new object ();
 
+		static Stack <BuildKind> recursiveBuilds = new Stack <BuildKind> ();
+		
 		//
 		// Disabled - see comment at the end of BuildAssembly below
 		//
@@ -474,8 +476,16 @@ namespace System.Web.Compilation {
 
 			if (kind == BuildKind.Theme || kind == BuildKind.Application)
 				return ret;
+			
+			bool doBatch = BatchMode;
 
-			if (BatchMode) {
+			lock (buildCacheLock) {
+				if (recursiveBuilds.Count > 0 && recursiveBuilds.Peek () == kind)
+					doBatch = false;
+				recursiveBuilds.Push (kind);
+			}
+			
+			if (doBatch) {
 				string[] files = Directory.GetFiles (physicalDir, "*.*");
 				BuildKind fileKind;
 			
@@ -770,6 +780,8 @@ namespace System.Web.Compilation {
 			object ticket;
 			bool acquired;
 			string virtualDir = GetVirtualPathDirectory (virtualPath);
+			BuildKind buildKind = BuildKind.Unknown;
+			bool kindPushed = false;
 			
 			acquired = AcquireCompilationTicket (virtualDir, out ticket);
 			try {
@@ -781,17 +793,29 @@ namespace System.Web.Compilation {
 				
 				string assemblyBaseName;
 				Dictionary <string, bool> vpCache = new Dictionary <string, bool> ();
-				BuildKind buildKind;
 				List <BuildItem> buildItems = LoadBuildProviders (virtualPath, virtualDir, vpCache, out buildKind, out assemblyBaseName);
+				kindPushed = true;
 				
 				if (buildItems.Count == 0)
 					return;
 				
 				Dictionary <Type, List <AssemblyBuilder>> assemblyBuilders = new Dictionary <Type, List <AssemblyBuilder>> ();
-				foreach (BuildItem buildItem in buildItems)
+				bool checkForRecursion = buildKind == BuildKind.NonPages;
+				
+				foreach (BuildItem buildItem in buildItems) {
+					if (checkForRecursion) {
+						// Expensive but, alas, necessary - the builder in
+						// our list might've been put into a different
+						// assembly in a recursive call.
+						lock (buildCacheLock) {
+							if (buildCache.ContainsKey (buildItem.VirtualPath))
+								continue;
+						}
+					}
+					
 					if (buildItem.assemblyBuilder == null)
 						AssignToAssemblyBuilder (assemblyBaseName, virtualPath, buildItem, assemblyBuilders);
-
+				}
 				CompilerResults results;
 				Assembly compiledAssembly;
 				string vp;
@@ -844,6 +868,12 @@ namespace System.Web.Compilation {
 // 						HttpRuntime.UnloadAppDomain ();
 // 				}
 			} finally {
+				if (kindPushed && buildKind == BuildKind.Pages || buildKind == BuildKind.NonPages) {
+					lock (buildCacheLock) {
+						recursiveBuilds.Pop ();
+					}
+				}
+				
 				Monitor.Exit (ticket);
 				if (acquired)
 					ReleaseCompilationTicket (virtualDir);
