@@ -1,5 +1,12 @@
 2008-02-01  Jonathan Pobst  <monkey@jpobst.com>
 	[Backport to 1.9]
+	* Control.cs: Remove HeightInternal.
+	* ListBox.cs: Commit patch from James Purcell that correctly
+	calculates heights for ListBoxen.
+	[Fixes bug #357152]
+
+2008-02-01  Jonathan Pobst  <monkey@jpobst.com>
+	[Backport to 1.9]
 	* Label.cs: Apply patch from James Purcell that corrects the 
 	signature of the AutoSize property.
 	[Fixes bug #357605]

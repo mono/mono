@@ -70,7 +70,7 @@ namespace System.Windows.Forms
 		Hashtable item_heights;
 		private int item_height = -1;
 		private int column_width = 0;
-		private int requested_height = -1;
+		private int requested_height;
 		private DrawMode draw_mode = DrawMode.Normal;
 		private int horizontal_extent = 0;
 		private bool horizontal_scrollbar = false;
@@ -105,6 +105,7 @@ namespace System.Windows.Forms
 
 		public ListBox ()
 		{
+			requested_height = bounds.Height;
 			InternalBorderStyle = BorderStyle.Fixed3D;			
 			BackColor = ThemeEngine.Current.ColorWindow;
 
@@ -983,6 +984,10 @@ namespace System.Windows.Forms
 		protected override void OnHandleCreated (EventArgs e)
 		{
 			base.OnHandleCreated (e);
+
+			if (IntegralHeight)
+				UpdateListBoxBounds ();
+
 			LayoutListBox ();
 		}
 
@@ -1069,30 +1074,38 @@ namespace System.Windows.Forms
 			SetBounds (new_bounds.X, new_bounds.Y, new_bounds.Width, new_bounds.Height, specified);
 		}
 #endif
+
+		private int SnapHeightToIntegral (int height)
+		{
+			int border;
+
+			switch (border_style) {
+			case BorderStyle.Fixed3D:
+				border = ThemeEngine.Current.Border3DSize.Height;
+				break;
+			case BorderStyle.FixedSingle:
+				border = ThemeEngine.Current.BorderSize.Height;
+				break;
+			case BorderStyle.None:
+			default:
+				border = 0;
+				break;
+			}
+
+			height -= (2 * border);
+			height -= height % ItemHeight;
+			height += (2 * border);
+
+			return height;
+		}
 		
 		protected override void SetBoundsCore (int x,  int y, int width, int height, BoundsSpecified specified)
 		{
 			if ((specified & BoundsSpecified.Height) == BoundsSpecified.Height)
 				requested_height = height;
 
-			if (IntegralHeight) {
-				int border;
-				switch (border_style) {
-				case BorderStyle.Fixed3D:
-					border = ThemeEngine.Current.Border3DSize.Height;
-					break;
-				case BorderStyle.FixedSingle:
-					border = ThemeEngine.Current.BorderSize.Height;
-					break;
-				case BorderStyle.None:
-				default:
-					border = 0;
-					break;
-				}
-				height -= (2 * border);
-				height -= height % ItemHeight;
-				height += (2 * border);
-			}
+			if (IntegralHeight && IsHandleCreated)
+				height = SnapHeightToIntegral (height);
 
 			base.SetBoundsCore (x, y, width, height, specified);
 			UpdateScrollBars ();
@@ -1309,19 +1322,6 @@ namespace System.Windows.Forms
 			item_rect.Y -= first_item_rect.Y;
 			
 			return item_rect;
-		}
-
-		internal override int HeightInternal {
-			get { 
-				if (requested_height > -1)
-					return requested_height;
-				else
-					return bounds.Height;
-			}
-			set {
-				base.HeightInternal = value;
-				requested_height = value;
-			}
 		}
 
 		// Value Changed
@@ -2067,10 +2067,8 @@ namespace System.Windows.Forms
 
 		private void UpdateListBoxBounds ()
 		{
-			if (requested_height == -1)
-				return;
-
-			SetBounds(bounds.X, bounds.Y, bounds.Width, requested_height, BoundsSpecified.None);
+			if (IsHandleCreated)
+				SetBounds (bounds.X, bounds.Y, bounds.Width, IntegralHeight ? SnapHeightToIntegral (requested_height) : requested_height, BoundsSpecified.None);
 		}
 
 		private void UpdateScrollBars ()
@@ -2811,4 +2809,5 @@ namespace System.Windows.Forms
 
 	}
 }
+
 
