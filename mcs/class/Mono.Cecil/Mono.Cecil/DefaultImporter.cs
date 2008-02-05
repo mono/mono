@@ -29,7 +29,6 @@
 namespace Mono.Cecil {
 
 	using System;
-	using System.Collections;
 
 	public class DefaultImporter : IImporter {
 
@@ -67,37 +66,38 @@ namespace Mono.Cecil {
 			return null;
 		}
 
-		TypeReference GetTypeSpec (TypeReference t, ImportContext context)
+		TypeSpecification GetTypeSpec (TypeSpecification original, ImportContext context)
 		{
-			Stack s = new Stack ();
-			while (t is TypeSpecification) {
-				s.Push (t);
-				t = (t as TypeSpecification).ElementType;
-			}
+			TypeSpecification typeSpec;
 
-			TypeReference elementType = ImportTypeReference (t, context);
-			while (s.Count > 0) {
-				t = (TypeReference) s.Pop ();
-				if (t is PointerType)
-					elementType = new PointerType (elementType);
-				else if (t is ArrayType) // deal with complex arrays
-					elementType = new ArrayType (elementType);
-				else if (t is ReferenceType)
-					elementType = new ReferenceType (elementType);
-				else if (t is GenericInstanceType) {
-					GenericInstanceType git = t as GenericInstanceType;
-					GenericInstanceType genElemType = new GenericInstanceType (elementType);
+			TypeReference elementType = ImportTypeReference (original.ElementType, context);
+			if (original is PointerType) {
+				typeSpec = new PointerType (elementType);
+			} else if (original is ArrayType) { // deal with complex arrays
+				typeSpec = new ArrayType (elementType);
+			} else if (original is ReferenceType) {
+				typeSpec = new ReferenceType (elementType);
+			} else if (original is GenericInstanceType) {
+				GenericInstanceType git = original as GenericInstanceType;
+				GenericInstanceType genElemType = new GenericInstanceType (elementType);
 
-					context.GenericContext.CheckProvider (genElemType.GetOriginalType (), git.GenericArguments.Count);
-					foreach (TypeReference arg in git.GenericArguments)
-						genElemType.GenericArguments.Add (ImportTypeReference (arg, context));
+				context.GenericContext.CheckProvider (genElemType.GetOriginalType (), git.GenericArguments.Count);
+				foreach (TypeReference arg in git.GenericArguments)
+					genElemType.GenericArguments.Add (ImportTypeReference (arg, context));
 
-					elementType = genElemType;
-				} else
-					throw new ReflectionException ("Unknown element type: {0}", t.GetType ().Name);
-			}
+				typeSpec = genElemType;
+			} else if (original is ModifierOptional) {
+				TypeReference mt = (original as ModifierOptional).ModifierType;
+				typeSpec = new ModifierOptional (elementType, ImportTypeReference (mt, context));
+			} else if (original is ModifierRequired) {
+				TypeReference mt = (original as ModifierRequired).ModifierType;
+				typeSpec = new ModifierRequired (elementType, ImportTypeReference (mt, context));
+			} else if (original is SentinelType) {
+				typeSpec = new SentinelType (elementType);
+			} else
+				throw new ReflectionException ("Unknown element type: {0}", original.GetType ().Name);
 
-			return elementType;
+			return typeSpec;
 		}
 
 		static GenericParameter GetGenericParameter (GenericParameter gp, ImportContext context)
@@ -119,7 +119,7 @@ namespace Mono.Cecil {
 				return t;
 
 			if (t is TypeSpecification)
-				return GetTypeSpec (t, context);
+				return GetTypeSpec (t as TypeSpecification, context);
 
 			if (t is GenericParameter)
 				return GetGenericParameter (t as GenericParameter, context);
