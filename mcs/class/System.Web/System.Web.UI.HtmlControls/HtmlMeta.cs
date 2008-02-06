@@ -32,6 +32,7 @@ using System.ComponentModel;
 using System.Collections;
 using System.Security.Permissions;
 using System.Web.UI.WebControls;
+using System.Web.Configuration;
 
 namespace System.Web.UI.HtmlControls
 {
@@ -112,9 +113,15 @@ namespace System.Web.UI.HtmlControls
 
 		protected internal override void Render (HtmlTextWriter writer)
 		{
-			writer.WriteBeginTag (TagName);
-			RenderAttributes (writer);
-			writer.Write (">");
+			XhtmlConformanceSection xhtml = WebConfigurationManager.GetSection ("system.web/xhtmlConformance") as XhtmlConformanceSection;
+
+			if (xhtml != null && xhtml.Mode == XhtmlConformanceMode.Legacy)
+				base.Render (writer);
+			else {
+				writer.WriteBeginTag (TagName);
+				RenderAttributes (writer);
+				writer.Write ("/>");
+			}
 		}
 	}
 }
