@@ -203,7 +203,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			if (property_grid.RootGridItem == null)
 				return;
 
-			if (!ValidateEntry ((GridEntry)property_grid.SelectedGridItem)) {
+			if (!TrySetEntry ((GridEntry)property_grid.SelectedGridItem, grid_textbox.Text)) {
 				FocusSelection ();
 				return;
 			}
@@ -260,7 +260,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			    && grid_textbox.Visible) {
 				switch (keyData) {
 				case Keys.Enter:
-					SetValue (selectedItem, grid_textbox.Text);
+					TrySetEntry (selectedItem, grid_textbox.Text);
 					return true;
 				case Keys.Escape:
 					if (selectedItem.IsEditable)
@@ -277,18 +277,14 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			return base.ProcessDialogKey (keyData);
 		}
 
-		private bool ValidateEntry (GridEntry entry)
+		private bool TrySetEntry (GridEntry entry, object value)
 		{
 			if (entry == null)
 				return true;
-			return SetValue (entry, grid_textbox.Text);
-		}
 
-		// false if error occured
-		private bool SetValue (GridEntry entry, object value)
-		{
-			if (entry.IsEditable && 
-			    (!entry.IsMerged || entry.HasMergedValue || !entry.HasMergedValue && grid_textbox.Text != String.Empty)) {
+			if (entry.IsEditable || !entry.IsEditable && (entry.HasCustomEditor || entry.AcceptedValues != null) ||
+			    !entry.IsMerged || entry.HasMergedValue || 
+			    (!entry.HasMergedValue && grid_textbox.Text != String.Empty)) {
 				string error = null;
 				bool changed = entry.SetValue (value, out error);
 				if (!changed && error != null) {
@@ -396,7 +392,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				return;
 			}
 
-			if (!ValidateEntry (selectedItem)) {
+			if (!TrySetEntry (selectedItem, grid_textbox.Text)) {
 				FocusSelection ();
 				return;
 			}
@@ -679,7 +675,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		{
 			GridEntry entry = (GridEntry) property_grid.SelectedGridItem;
 			if (entry != null && entry.IsEditable)
-				SetValue (entry, grid_textbox.Text);
+				TrySetEntry (entry, grid_textbox.Text);
 		}
 
 		#endregion
@@ -704,7 +700,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		{
 			GridEntry entry = this.property_grid.SelectedGridItem as GridEntry;
 			if (entry != null)
-				SetValue (entry, (string) ((ListBox) sender).SelectedItem);
+				TrySetEntry (entry, (string) ((ListBox) sender).SelectedItem);
 			CloseDropDown ();
 		}
 
@@ -734,6 +730,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 							i++;
 						}
 						listBox.Height = row_height * Math.Min (listBox.Items.Count, 15);
+						listBox.Width = ClientRectangle.Width - SplitterLocation - (vbar.Visible ? vbar.Width : 0);
 						listBox.KeyDown += new KeyEventHandler (listBox_KeyDown);
 						listBox.MouseUp+=new MouseEventHandler (listBox_MouseUp);
 						if (std_values.Count > 0)
@@ -948,6 +945,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		public void CloseDropDown () {
 			Control c = dropdown_form.Controls[0];
 			c.Capture = false;
+			dropdown_form.Controls.Clear ();
 			dropdown_form.Hide ();
 		}
 

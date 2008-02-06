@@ -1,3 +1,11 @@
+2008-02-06  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* PropertyGridView.cs: 
+	 - Refactor SetValue to allow setting the value
+	when a custom editor is used, but the entry is not editable.
+	 - Remove the custom editor control on CloseDropDown.
+	[Fixed #359196]
+
 2008-02-06  Andreia Gaita <avidigal@novell.com>
 
 	* PrintControllerWithStatusDialog.cs: Set PrintFileName value through
