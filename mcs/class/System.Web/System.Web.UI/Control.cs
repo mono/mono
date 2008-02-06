@@ -1335,6 +1335,12 @@ namespace System.Web.UI
 		}
 		
 		string ResolveClientUrlInternal (string relativeUrl) {
+			if (relativeUrl.StartsWith (J2EE.J2EEConsts.ACTION_URL_PREFIX, StringComparison.Ordinal))
+				return CreateActionUrl (relativeUrl.Substring (J2EE.J2EEConsts.ACTION_URL_PREFIX.Length));
+
+			if (relativeUrl.StartsWith (J2EE.J2EEConsts.RENDER_URL_PREFIX, StringComparison.Ordinal))
+				return ResolveClientUrl (relativeUrl.Substring (J2EE.J2EEConsts.RENDER_URL_PREFIX.Length));
+
 #endif
 			if (VirtualPathUtility.IsAbsolute (relativeUrl) || relativeUrl.IndexOf (':') >= 0)
 				return relativeUrl;
