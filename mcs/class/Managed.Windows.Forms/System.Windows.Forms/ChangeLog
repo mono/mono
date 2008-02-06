@@ -1,3 +1,7 @@
+2008-02-06  Andreia Gaita  <avidigal@novell.com>
+	
+	* WebBrowser.cs: Do a normal page refresh by default.
+
 2008-02-05  Andreia Gaita  <avidigal@novell.com>
 
 	* XplatUIWin32.cs, XplatUICarbon.cs: set the hwnd.Mapped flag when we create 

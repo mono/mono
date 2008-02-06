@@ -267,9 +267,7 @@ namespace System.Windows.Forms
 
 		public override void Refresh ()
 		{
-			documentReady = false;
-			document = null;
-			WebHost.Navigation.Reload (Mono.WebBrowser.ReloadOption.Full);
+			Refresh (WebBrowserRefreshOption.IfExpired);
 		}
 
 		public void Refresh (WebBrowserRefreshOption opt)
