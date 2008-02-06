@@ -1,5 +1,8 @@
 2008-02-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-<ARCH>.c (mono_arch_get_inst_for_method): Remove the MemoryBarrier
+	case since it is handled in mini.c.
+
 	* cpu-sparc.md (sparc_setfreg_float): Fix the sparc build.
 
 	* mini-ops.h: Add new opcodes OP_CALL/OP_CALLVIRT.
