@@ -59,5 +59,8 @@ namespace Mainsoft.Web.Hosting
 		public const string FILESYSTEM_ACCESS = "WebFileSystemAccess";
 		public const string ACCESS_FULL = "Full";
 		public const string ACCESS_VIRTUAL = "Virtual";
+
+		public const string ACTION_URL_PREFIX = "ActionURL:";
+		public const string RENDER_URL_PREFIX = "RenderURL:";
 	}
 }
