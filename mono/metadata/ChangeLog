@@ -1,3 +1,8 @@
+2008-02-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_runtime_invoke): Revert the direct_wrapper
+	changes for now since they seem to break too many things.
+
 2008-02-05  Mark Probst  <mark.probst@gmail.com>
 
 	* marshal.c, marshal.h (mono_marshal_find_bitfield_offset,
