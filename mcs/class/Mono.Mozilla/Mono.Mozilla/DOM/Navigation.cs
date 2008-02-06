@@ -104,11 +104,7 @@ namespace Mono.Mozilla.DOM
 
 		public void Reload ()
 		{
-			if (navigation == null)
-				return;
-
-			control.Reset ();
-			navigation.reload ((uint)ReloadOption.None);
+			Reload (ReloadOption.None);
 		}
 
 		public void Reload (ReloadOption option)
@@ -117,7 +113,12 @@ namespace Mono.Mozilla.DOM
 				return;
 
 			control.Reset ();
-			navigation.reload ((uint)option);
+			if (option == ReloadOption.None)
+				navigation.reload ((uint)LoadFlags.None);
+			else if (option == ReloadOption.Proxy)
+				navigation.reload ((uint) LoadFlags.BypassLocalCache);
+			else if (option == ReloadOption.Full)
+				navigation.reload ((uint) LoadFlags.BypassProxy);
 		}
 
 		public void Stop ()

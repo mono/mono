@@ -1,3 +1,7 @@
+2008-02-06  Andreia Gaita <avidigal@novell.com>
+
+	* Navigation.cs: Pass the proper flags to reload
+
 2008-01-28  Andreia Gaita <avidigal@novell.com>
 
 	* Assembly/AssemblyInfo.cs: Version change 
