@@ -2217,6 +2217,15 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 			else
 				break;
 		case OP_LXOR:
+			/*
+			 * Use IXOR to avoid a rex prefix if possible. The cpu will sign extend the 
+			 * 0 result into 64 bits.
+			 */
+			if ((ins->sreg1 == ins->sreg2) && (ins->sreg1 == ins->dreg)) {
+				ins->opcode = OP_IXOR;
+			}
+			/* Fall through */
+		case OP_IXOR:
 			if ((ins->sreg1 == ins->sreg2) && (ins->sreg1 == ins->dreg)) {
 				MonoInst *ins2;
 
@@ -3872,9 +3881,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 			break;
 		}
-		case CEE_RET:
-			amd64_ret (code);
-			break;
 		case OP_THROW: {
 			amd64_mov_reg_reg (code, AMD64_ARG_REG1, ins->sreg1, 8);
 			code = emit_call (cfg, code, MONO_PATCH_INFO_INTERNAL_METHOD, 

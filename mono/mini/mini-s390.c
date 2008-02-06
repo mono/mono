@@ -247,7 +247,7 @@ static gboolean is_regsize_var (MonoType *);
 static inline void add_general (guint *, size_data *, ArgInfo *, gboolean);
 static inline void add_stackParm (guint *, size_data *, ArgInfo *, gint);
 static inline void add_float (guint *, size_data *, ArgInfo *);
-static CallInfo * calculate_sizes (MonoMethodSignature *, size_data *, gboolean);
+static CallInfo * calculate_sizes (MonoCompile *, MonoMethodSignature *, size_data *, gboolean);
 static void peephole_pass (MonoCompile *, MonoBasicBlock *);
 static guchar * emit_float_to_int (MonoCompile *, guchar *, int, int, int, gboolean);
 gpointer mono_arch_get_lmf_addr (void);
@@ -669,7 +669,7 @@ enter_method (MonoMethod *method, RegParm *rParm, char *sp)
 	
 	sig = mono_method_signature (method);
 	
-	cinfo = calculate_sizes (sig, &sz, sig->pinvoke);
+	cinfo = calculate_sizes (NULL, sig, &sz, sig->pinvoke);
 
 	if (cinfo->struct_ret) {
 		printf ("[STRUCTRET:%p], ", (gpointer) rParm->gr[0]);
@@ -1274,13 +1274,15 @@ add_float (guint *fr,  size_data *sz, ArgInfo *ainfo)
 /*------------------------------------------------------------------*/
 
 static CallInfo *
-calculate_sizes (MonoMethodSignature *sig, size_data *sz, 
+calculate_sizes (MonoCompile *cfg, MonoMethodSignature *sig, size_data *sz, 
 		 gboolean string_ctor)
 {
 	guint i, fr, gr, size;
 	int nParm = sig->hasthis + sig->param_count;
+	MonoType *ret_type;
 	guint32 simpletype, align;
 	CallInfo *cinfo = g_malloc0 (sizeof (CallInfo) + sizeof (ArgInfo) * nParm);
+	MonoGenericSharingContext *gsctx = cfg ? cfg->generic_sharing_context : NULL;
 
 	fr                = 0;
 	gr                = s390_r2;
@@ -1300,7 +1302,9 @@ calculate_sizes (MonoMethodSignature *sig, size_data *sz,
 	/* area that the callee will use.			    */
 	/*----------------------------------------------------------*/
 
-	simpletype = mono_type_get_underlying_type (sig->ret)->type;
+	ret_type = mono_type_get_underlying_type (sig->ret);
+	ret_type = mini_get_basic_type_from_generic (gsctx, ret_type);
+	simpletype = ret_type->type;
 enum_retvalue:
 	switch (simpletype) {
 		case MONO_TYPE_BOOLEAN:
@@ -1385,6 +1389,8 @@ enum_retvalue:
 	/*----------------------------------------------------------*/
 
 	for (i = 0; i < sig->param_count; ++i) {
+		MonoType *ptype;
+
 		/*--------------------------------------------------*/
 		/* Handle vararg type calls. All args are put on    */
 		/* the stack.                                       */
@@ -1402,7 +1408,9 @@ enum_retvalue:
 			continue;
 		}
 
-		simpletype = mono_type_get_underlying_type(sig->params [i])->type;
+		ptype = mono_type_get_underlying_type (sig->params [i]);
+		ptype = mini_get_basic_type_from_generic (gsctx, ptype);
+		simpletype = ptype->type;
 		switch (simpletype) {
 		case MONO_TYPE_BOOLEAN:
 		case MONO_TYPE_I1:
@@ -1645,7 +1653,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 
 	sig     = mono_method_signature (cfg->method);
 	
-	cinfo   = calculate_sizes (sig, &sz, sig->pinvoke);
+	cinfo   = calculate_sizes (cfg, sig, &sz, sig->pinvoke);
 
 	if (cinfo->struct_ret) {
 		cfg->ret->opcode = OP_REGVAR;
@@ -1835,7 +1843,7 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb,
 	n = sig->param_count + sig->hasthis;
 	DEBUG (g_print ("Call requires: %d parameters\n",n));
 	
-	cinfo = calculate_sizes (sig, &sz, sig->pinvoke);
+	cinfo = calculate_sizes (cfg, sig, &sz, sig->pinvoke);
 
 	stackSize         = sz.stack_size + sz.local_size + sz.parm_size + sz.offset;
 	call->stack_usage = MAX(stackSize, call->stack_usage);
@@ -3254,8 +3262,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			s390_st   (code, s390_r1, 0, ins->dreg, 4);
 		}
 			break;	
-		case OP_ICONST:
-		case OP_SETREGIMM: {
+		case OP_ICONST: {
 			if (s390_is_imm16(ins->inst_c0)) {
 				s390_lhi  (code, ins->dreg, ins->inst_c0);
 			} else {
@@ -3275,8 +3282,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			s390_l    (code,ins->dreg, 0, s390_r13, 4);
 		}
 			break;
-		case OP_MOVE:
-		case OP_SETREG: {
+		case OP_MOVE: {
 			if (ins->dreg != ins->sreg1) {
 				s390_lr (code, ins->dreg, ins->sreg1);
 			}
@@ -3294,7 +3300,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				s390_lr (code, s390_r3, saved);
 			break;
 		}
-		case OP_SETFREG:
 		case OP_FMOVE: {
 			if (ins->dreg != ins->sreg1) {
 				s390_ldr   (code, ins->dreg, ins->sreg1);
@@ -3473,10 +3478,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				s390_jo   (code, -2);
 				s390_lr   (code, s390_r12, s390_r14);
 			}
-		}
-			break;
-		case CEE_RET: {
-			s390_br  (code, s390_r14);
 		}
 			break;
 		case OP_THROW: {
@@ -4124,7 +4125,7 @@ emit_load_volatile_registers(guint8 * code, MonoCompile *cfg)
 	sig = mono_method_signature (method);
 	pos = 0;
 
-	cinfo = calculate_sizes (sig, &sz, sig->pinvoke);
+	cinfo = calculate_sizes (NULL, sig, &sz, sig->pinvoke);
 
 	if (cinfo->struct_ret) {
 		ArgInfo *ainfo = &cinfo->ret;
@@ -4285,7 +4286,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	sig = mono_method_signature (method);
 	pos = 0;
 
-	cinfo = calculate_sizes (sig, &sz, sig->pinvoke);
+	cinfo = calculate_sizes (cfg, sig, &sz, sig->pinvoke);
 
 	if (cinfo->struct_ret) {
 		ArgInfo *ainfo = &cinfo->ret;
@@ -4623,7 +4624,7 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 				/*---------------------------------------------*/
 				/* Load return address & parameter register    */
 				/*---------------------------------------------*/
-				s390_larl (code, s390_r14, S390_RELATIVE((patch_info->ip.i +
+				s390_larl (code, s390_r14, (gsize)S390_RELATIVE((patch_info->ip.i +
 							   cfg->native_code + 8), code));
 				s390_l    (code, s390_r2, 0, s390_r13, 4);
 				/*---------------------------------------------*/
@@ -4730,7 +4731,7 @@ mono_arch_emit_this_vret_args (MonoCompile *cfg, MonoCallInst *inst, int this_re
 	/* add the this argument */
 	if (this_reg != -1) {
 		MonoInst *this;
-		MONO_INST_NEW (cfg, this, OP_SETREG);
+		MONO_INST_NEW (cfg, this, OP_MOVE);
 		this->type  = this_type;
 		this->sreg1 = this_reg;
 		this->dreg  = mono_regstate_next_int (cfg->rs);
@@ -4740,7 +4741,7 @@ mono_arch_emit_this_vret_args (MonoCompile *cfg, MonoCallInst *inst, int this_re
 
 	if (vt_reg != -1) {
 		MonoInst *vtarg;
-		MONO_INST_NEW (cfg, vtarg, OP_SETREG);
+		MONO_INST_NEW (cfg, vtarg, OP_MOVE);
 		vtarg->type  = STACK_MP;
 		vtarg->sreg1 = vt_reg;
 		vtarg->dreg  = mono_regstate_next_int (cfg->rs);

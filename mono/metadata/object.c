@@ -3119,6 +3119,7 @@ mono_install_runtime_invoke (MonoInvokeFunc func)
 	default_mono_runtime_invoke = func ? func: dummy_mono_runtime_invoke;
 }
 
+
 /**
  * mono_runtime_invoke_array:
  * @method: method to invoke
@@ -3195,7 +3196,7 @@ mono_runtime_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 				} else {
 					/* MS seems to create the objects if a null is passed in */
 					if (!mono_array_get (params, MonoObject*, i))
-						mono_array_setref (params, i, mono_object_new (mono_domain_get (), mono_class_from_mono_type (sig->params [i])));
+						mono_array_setref (params, i, mono_object_new (mono_domain_get (), mono_class_from_mono_type (sig->params [i]))); 
 
 					if (t->byref) {
 						/*
@@ -3220,6 +3221,7 @@ mono_runtime_invoke_array (MonoMethod *method, void *obj, MonoArray *params,
 			case MONO_TYPE_SZARRAY:
 				if (t->byref)
 					pa [i] = mono_array_addr (params, MonoObject*, i);
+					// FIXME: I need to check this code path
 				else
 					pa [i] = mono_array_get (params, MonoObject*, i);
 				break;

@@ -1407,6 +1407,10 @@ do
 	./make_bool_branch_test.sh boolean_branch_${I}_18 unverifiable ${OP} float64
 	./make_bool_branch_test.sh boolean_branch_${I}_19 unverifiable ${OP} 'class MyValueType'
 	./make_bool_branch_test.sh boolean_branch_${I}_20 unverifiable ${OP} 'class ValueTypeTemplate`1<object>'
+
+	./make_bool_branch_test.sh boolean_branch_${I}_21 valid ${OP} object "pop\n\tldnull"
+	./make_bool_branch_test.sh boolean_branch_${I}_22 valid ${OP} MyValueType "pop\n\tldnull\n\tisinst MyValueType"
+
 	I=`expr $I + 1`
 done
 
@@ -1916,7 +1920,7 @@ function create_nesting_test_only_first_ok () {
 
 I=1
 
-for OP in "callvirt instance int32 class Root\/Nested::Target()" "call instance int32 class Root\/Nested::Target()" "ldc.i4.0\n\t\tstfld int32 Root\/Nested::fld\n\t\tldc.i4.0" "ldfld int32 Root\/Nested::fld" "ldflda int32 Root\/Nested::fld"
+for OP in "callvirt instance int32 class Root\/Nested::Target()" "ldc.i4.0\n\t\tstfld int32 Root\/Nested::fld\n\t\tldc.i4.0" "ldfld int32 Root\/Nested::fld" "ldflda int32 Root\/Nested::fld"
 do
   create_nesting_test_same_result 1 valid public assembly assembly
 

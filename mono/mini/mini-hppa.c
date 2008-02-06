@@ -1316,11 +1316,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_STOREI4_MEMBASE_REG:
 			EMIT_STORE_MEMBASE_REG (ins, stw);
 			break;
-		case CEE_LDIND_I:
-		case CEE_LDIND_I4:
-		case CEE_LDIND_U4:
-			NOT_IMPLEMENTED;
-			break;
 		case OP_LOADU1_MEMBASE:
 			EMIT_LOAD_MEMBASE (ins, ldb);
 			break;
@@ -1356,7 +1351,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case CEE_CONV_I4:
 		case CEE_CONV_U4:
 		case OP_MOVE:
-		case OP_SETREG:
 			if (ins->sreg1 != ins->dreg)
 				hppa_copy (code, ins->sreg1, ins->dreg);
 			break;
@@ -1571,7 +1565,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_warning ("unimplemented opcode %s in %s()\n", mono_inst_name (ins->opcode), __FUNCTION__);
 			NOT_IMPLEMENTED;
 			break;
-		case OP_SETFREG:
 		case OP_FMOVE:
 			if (ins->sreg1 != ins->dreg)
 				hppa_fcpy (code, HPPA_FP_FMT_DBL, ins->sreg1, ins->dreg);
@@ -2882,7 +2875,7 @@ mono_arch_emit_this_vret_args (MonoCompile *cfg, MonoCallInst *inst, int this_re
 	/* add the this argument */
 	if (this_reg != -1) {
 		MonoInst *this;
-		MONO_INST_NEW (cfg, this, OP_SETREG);
+		MONO_INST_NEW (cfg, this, OP_MOVE);
 		this->type = this_type;
 		this->sreg1 = this_reg;
 		this->dreg = mono_regstate_next_int (cfg->rs);
@@ -2892,7 +2885,7 @@ mono_arch_emit_this_vret_args (MonoCompile *cfg, MonoCallInst *inst, int this_re
 
 	if (vt_reg != -1) {
 		MonoInst *vtarg;
-		MONO_INST_NEW (cfg, vtarg, OP_SETREG);
+		MONO_INST_NEW (cfg, vtarg, OP_MOVE);
 		vtarg->type = STACK_MP;
 		vtarg->sreg1 = vt_reg;
 		vtarg->dreg = mono_regstate_next_int (cfg->rs);

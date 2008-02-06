@@ -1,3 +1,8 @@
+2008-02-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* get.c (get_escaped_name): Escape the name if it begins with a dot. Fixes
+	#358564.
+
 2007-12-06  Jb Evain  <jbevain@novell.com>
 
 	* main.c: fix regression #346283.

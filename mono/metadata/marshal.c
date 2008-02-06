@@ -41,6 +41,13 @@ typedef enum {
 	MONO_MARSHAL_SERIALIZE		/* Value needs to be serialized into the new domain */
 } MonoXDomainMarshalType;
 
+typedef enum {
+	MONO_COM_DEFAULT,
+	MONO_COM_MS
+} MonoCOMProvider;
+
+static MonoCOMProvider com_provider = MONO_COM_DEFAULT;
+
 enum {
 #include "mono/cil/opcode.def"
 	LAST = 0xff
@@ -538,12 +545,17 @@ mono_marshal_init (void)
 	static gboolean module_initialized = FALSE;
 
 	if (!module_initialized) {
+		char* com_provider_env = NULL;
 		module_initialized = TRUE;
 		InitializeCriticalSection (&marshal_mutex);
 		InitializeCriticalSection (&cominterop_mutex);
 		wrapper_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
 		last_error_tls_id = TlsAlloc ();
 		load_type_info_tls_id = TlsAlloc ();
+
+		com_provider_env = getenv ("MONO_COM");
+		if (com_provider_env && !strcmp(com_provider_env, "MS"))
+			com_provider = MONO_COM_MS;
 
 		register_icall (mono_marshal_string_to_utf16, "mono_marshal_string_to_utf16", "ptr obj", FALSE);
 		register_icall (mono_marshal_string_to_utf16_copy, "mono_marshal_string_to_utf16_copy", "ptr obj", FALSE);
@@ -1074,6 +1086,56 @@ mono_string_to_ansibstr (MonoString *string_obj)
 	return NULL;
 }
 
+typedef gpointer (*SysAllocStringLenFunc)(gunichar* str, guint32 len);
+typedef guint32 (*SysStringLenFunc)(gpointer bstr);
+typedef void (*SysFreeStringFunc)(gunichar* str);
+
+static SysAllocStringLenFunc sys_alloc_string_len_ms = NULL;
+static SysStringLenFunc sys_string_len_ms = NULL;
+static SysFreeStringFunc sys_free_string_ms = NULL;
+
+static gboolean
+init_com_provider_ms (void)
+{
+	static gboolean initialized = FALSE;
+	char *error_msg;
+	MonoDl *module = NULL;
+	const char* scope = "liboleaut32.so";
+
+	if (initialized)
+		return TRUE;
+
+	module = mono_dl_open(scope, MONO_DL_LAZY, &error_msg);
+	if (error_msg) {
+		g_warning ("Error loading COM support library '%s': %s", scope, error_msg);
+		g_assert_not_reached ();
+		return FALSE;
+	}
+	error_msg = mono_dl_symbol (module, "SysAllocStringLen", (gpointer*)&sys_alloc_string_len_ms);
+	if (error_msg) {
+		g_warning ("Error loading entry point '%s' in COM support library '%s': %s", "SysAllocStringLen", scope, error_msg);
+		g_assert_not_reached ();
+		return FALSE;
+	}
+
+	error_msg = mono_dl_symbol (module, "SysStringLen", (gpointer*)&sys_string_len_ms);
+	if (error_msg) {
+		g_warning ("Error loading entry point '%s' in COM support library '%s': %s", "SysStringLen", scope, error_msg);
+		g_assert_not_reached ();
+		return FALSE;
+	}
+
+	error_msg = mono_dl_symbol (module, "SysFreeString", (gpointer*)&sys_free_string_ms);
+	if (error_msg) {
+		g_warning ("Error loading entry point '%s' in COM support library '%s': %s", "SysFreeString", scope, error_msg);
+		g_assert_not_reached ();
+		return FALSE;
+	}
+
+	initialized = TRUE;
+	return TRUE;
+}
+
 gpointer
 mono_string_to_bstr (MonoString *string_obj)
 {
@@ -1082,16 +1144,30 @@ mono_string_to_bstr (MonoString *string_obj)
 		return NULL;
 	return SysAllocStringLen (mono_string_chars (string_obj), mono_string_length (string_obj));
 #else
-	int slen = mono_string_length (string_obj);
-	char *ret = g_malloc (slen * 2 + 4 + 2);
-	if (ret == NULL)
-		return NULL;
-	memcpy (ret + 4, mono_string_chars (string_obj), slen * 2);
-	* ((guint32 *) ret) = slen * 2;
-	ret [4 + slen * 2] = 0;
-	ret [5 + slen * 2] = 0;
+	if (com_provider == MONO_COM_DEFAULT) {
+		int slen = mono_string_length (string_obj);
+		char *ret = g_malloc (slen * 2 + 4 + 2);
+		if (ret == NULL)
+			return NULL;
+		memcpy (ret + 4, mono_string_chars (string_obj), slen * 2);
+		* ((guint32 *) ret) = slen;
+		ret [4 + slen * 2] = 0;
+		ret [5 + slen * 2] = 0;
 
-	return ret + 4;
+		return ret + 4;
+	} else if (com_provider == MONO_COM_MS && init_com_provider_ms ()) {
+		gpointer ret = NULL;
+		gunichar* str = NULL;
+		guint32 len;
+		len = mono_string_length (string_obj);
+		str = g_utf16_to_ucs4 (mono_string_chars (string_obj), len,
+			NULL, NULL, NULL);
+		ret = sys_alloc_string_len_ms (str, len);
+		g_free(str);
+		return ret;
+	} else {
+		g_assert_not_reached ();
+	}
 #endif
 }
 
@@ -1103,7 +1179,21 @@ mono_string_from_bstr (gpointer bstr)
 		return NULL;
 	return mono_string_new_utf16 (mono_domain_get (), bstr, SysStringLen (bstr));
 #else
-	return mono_string_new_utf16 (mono_domain_get (), bstr, *(guint32 *)((char *)bstr - 4) / 2);
+	if (com_provider == MONO_COM_DEFAULT) {
+		return mono_string_new_utf16 (mono_domain_get (), bstr, *(guint32 *)((char *)bstr - 4));
+	} else if (com_provider == MONO_COM_MS && init_com_provider_ms ()) {
+		MonoString* str = NULL;
+		glong written = 0;
+		gunichar2* utf16 = NULL;
+
+		utf16 = g_ucs4_to_utf16 (bstr, sys_string_len_ms (bstr), NULL, &written, NULL);
+		str = mono_string_new_utf16 (mono_domain_get (), utf16, written);
+		g_free (utf16);
+		return str;
+	} else {
+		g_assert_not_reached ();
+	}
+
 #endif
 }
 
@@ -1113,7 +1203,14 @@ mono_free_bstr (gpointer bstr)
 #ifdef PLATFORM_WIN32
 	SysFreeString ((BSTR)bstr);
 #else
-	g_free (((char *)bstr) - 4);
+	if (com_provider == MONO_COM_DEFAULT) {
+		g_free (((char *)bstr) - 4);
+	} else if (com_provider == MONO_COM_MS && init_com_provider_ms ()) {
+		sys_free_string_ms (bstr);
+	} else {
+		g_assert_not_reached ();
+	}
+
 #endif
 }
 
@@ -4467,11 +4564,23 @@ mono_marshal_get_runtime_invoke (MonoMethod *method)
 	MonoMethod *res = NULL;
 	static MonoString *string_dummy = NULL;
 	static MonoMethodSignature *delay_abort_sig = NULL;
+	static MonoMethodSignature *cctor_signature = NULL;
+	static MonoMethodSignature *finalize_signature = NULL;
 	int i, pos, posna;
 	char *name;
 	gboolean need_direct_wrapper = FALSE;
 
 	g_assert (method);
+
+	if (!cctor_signature) {
+		cctor_signature = mono_metadata_signature_alloc (mono_defaults.corlib, 0);
+		cctor_signature->ret = &mono_defaults.void_class->byval_arg;
+	}
+	if (!finalize_signature) {
+		finalize_signature = mono_metadata_signature_alloc (mono_defaults.corlib, 0);
+		finalize_signature->ret = &mono_defaults.void_class->byval_arg;
+		finalize_signature->hasthis = 1;
+	}
 
 	if (method->klass->rank && (method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) &&
 		(method->iflags & METHOD_IMPL_ATTRIBUTE_NATIVE)) {
@@ -4501,37 +4610,35 @@ mono_marshal_get_runtime_invoke (MonoMethod *method)
 		}
 	}
 
-	/* See bug #80743 */
 	/*
-	 * FIXME: Sharing runtime invoke wrappers between different methods means that
-	 * calling a method of klass A might invoke the type initializer of class B.
-	 * Normally, the type initializer of type B was already executed when B's method
-	 * was called but in some complex cases this might not be true.
-	 * See #349621 for an example. We avoid that for mscorlib methods by putting every
-	 * wrapper into the object class, but the non-mscorlib case needs fixing.
+	 * We try to share runtime invoke wrappers between different methods but have to
+	 * be careful about methods whose klass has a type cctor, since putting the wrapper
+	 * into that klass would mean that calling a method of klass A might invoke the
+	 * type initializer of class B, or throw an exception if the type initializer 
+	 * was called before and failed. See #349621 for an example. 
+	 * We avoid that for mscorlib methods by putting every wrapper into the object class.
 	 */
 	if (method->klass->image == mono_defaults.corlib)
 		target_klass = mono_defaults.object_class;
 	else {
-		target_klass = method->klass;
-	}
-#if 0
-	target_klass = mono_defaults.object_class;
-	/* 
-	 * if types in the signature belong to non-mscorlib, we cache only
-	 * in the method image
-	 */
-	if (mono_class_from_mono_type (callsig->ret)->image != mono_defaults.corlib) {
-		target_klass = method->klass;
-	} else {
-		for (i = 0; i < callsig->param_count; i++) {
-			if (mono_class_from_mono_type (callsig->params [i])->image != mono_defaults.corlib) {
-				target_klass = method->klass;
-				break;
-			}
+		/* Try to share wrappers for non-corlib methods with simple signatures */
+		if (mono_metadata_signature_equal (callsig, cctor_signature)) {
+			callsig = cctor_signature;
+			target_klass = mono_defaults.object_class;
+		} else if (mono_metadata_signature_equal (callsig, finalize_signature)) {
+			callsig = finalize_signature;
+			target_klass = mono_defaults.object_class;
+		} else {
+			if (mono_class_get_cctor (method->klass))
+				need_direct_wrapper = TRUE;
+			/*
+			 * Can't put these wrappers into object, since they reference non-corlib
+			 * metadata (callsig).
+			 */
+			target_klass = method->klass;
 		}
 	}
-#endif
+
 	if (need_direct_wrapper) {
 		cache = target_klass->image->runtime_invoke_direct_cache;
 		res = mono_marshal_find_in_cache (cache, method);
@@ -9038,7 +9145,7 @@ mono_marshal_get_struct_to_ptr (MonoClass *klass)
 
 	mono_mb_emit_byte (mb, CEE_RET);
 
-	res = mono_mb_create_method (mb, mono_method_signature (stoptr), 0);
+	res = mono_mb_create_method (mb, signature_no_pinvoke (stoptr), 0);
 	mono_mb_free (mb);
 
 	klass->marshal_info->str_to_ptr = res;
@@ -9065,11 +9172,18 @@ mono_marshal_get_ptr_to_struct (MonoClass *klass)
 	if (klass->marshal_info->ptr_to_str)
 		return klass->marshal_info->ptr_to_str;
 
-	if (!ptostr)
+	if (!ptostr) {
+		MonoMethodSignature *sig;
+
 		/* Create the signature corresponding to
 		 	  static void PtrToStructure (IntPtr ptr, object structure);
 		   defined in class/corlib/System.Runtime.InteropServices/Marshal.cs */
-		ptostr = mono_create_icall_signature ("void ptr object");
+		sig = mono_create_icall_signature ("void ptr object");
+		sig = signature_dup (mono_defaults.corlib, sig);
+		sig->pinvoke = 0;
+		mono_memory_barrier ();
+		ptostr = sig;
+	}
 
 	mb = mono_mb_new (klass, "PtrToStructure", MONO_WRAPPER_UNKNOWN);
 
@@ -11683,4 +11797,25 @@ cominterop_ccw_invoke (MonoCCWInterface* ccwe, guint32 dispIdMember,
 								   guint32 *puArgErr)
 {
 	return MONO_E_NOTIMPL;
+}
+
+void
+mono_marshal_find_nonzero_bit_offset (guint8 *buf, int len, int *byte_offset, guint8 *bitmask)
+{
+	int i;
+	guint8 byte;
+
+	for (i = 0; i < len; ++i)
+		if (buf [i])
+			break;
+
+	g_assert (i < len);
+
+	byte = buf [i];
+	while (byte && !(byte & 1))
+		byte >>= 1;
+	g_assert (byte == 1);
+
+	*byte_offset = i;
+	*bitmask = buf [i];
 }

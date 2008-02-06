@@ -269,7 +269,7 @@ static gboolean is_regsize_var (MonoType *);
 static inline void add_general (guint *, size_data *, ArgInfo *);
 static inline void add_stackParm (guint *, size_data *, ArgInfo *, gint);
 static inline void add_float (guint *, size_data *, ArgInfo *);
-static CallInfo * calculate_sizes (MonoMethodSignature *, size_data *, gboolean);
+static CallInfo * calculate_sizes (MonoCompile *, MonoMethodSignature *, size_data *, gboolean);
 static void peephole_pass (MonoCompile *, MonoBasicBlock *);
 static guchar * emit_float_to_int (MonoCompile *, guchar *, int, int, int, gboolean);
 gpointer mono_arch_get_lmf_addr (void);
@@ -467,7 +467,7 @@ backUpStackPtr(MonoCompile *cfg, guint8 *code)
 {
 	int stackSize = cfg->stack_usage;
 
-	if (s390_is_uimm16 (stackSize)) {
+	if (s390_is_imm16 (stackSize)) {
 		s390_aghi  (code, STK_BASE, stackSize);
 	} else { 
 		while (stackSize > 32767) {
@@ -695,7 +695,7 @@ enter_method (MonoMethod *method, RegParm *rParm, char *sp)
 	
 	sig = mono_method_signature (method);
 	
-	cinfo = calculate_sizes (sig, &sz, sig->pinvoke);
+	cinfo = calculate_sizes (NULL, sig, &sz, sig->pinvoke);
 
 	if (cinfo->struct_ret) {
 		printf ("[STRUCTRET:%p], ", (gpointer) rParm->gr[0]);
@@ -1321,13 +1321,15 @@ add_float (guint *fr,  size_data *sz, ArgInfo *ainfo)
 /*------------------------------------------------------------------*/
 
 static CallInfo *
-calculate_sizes (MonoMethodSignature *sig, size_data *sz, 
+calculate_sizes (MonoCompile *cfg, MonoMethodSignature *sig, size_data *sz, 
 		 gboolean string_ctor)
 {
 	guint i, fr, gr, size;
 	int nParm = sig->hasthis + sig->param_count;
+	MonoType *ret_type;
 	guint32 simpletype, align;
 	CallInfo *cinfo = g_malloc0 (sizeof (CallInfo) + sizeof (ArgInfo) * nParm);
+	MonoGenericSharingContext *gsctx = cfg ? cfg->generic_sharing_context : NULL;
 
 	fr                = 0;
 	gr                = s390_r2;
@@ -1347,7 +1349,9 @@ calculate_sizes (MonoMethodSignature *sig, size_data *sz,
 	/* area that the callee will use.			    */
 	/*----------------------------------------------------------*/
 
-	simpletype = mono_type_get_underlying_type (sig->ret)->type;
+	ret_type = mono_type_get_underlying_type (sig->ret);
+	ret_type = mini_get_basic_type_from_generic (gsctx, ret_type);
+	simpletype = ret_type->type;
 enum_retvalue:
 	switch (simpletype) {
 		case MONO_TYPE_BOOLEAN:
@@ -1396,7 +1400,7 @@ enum_retvalue:
 			if (sig->pinvoke)
 				size = mono_class_native_size (klass, &align);
 			else
-                        	size = mono_class_value_size (klass, &align);
+				size = mono_class_value_size (klass, &align);
 	
 			cinfo->ret.reg    = s390_r2;
 			cinfo->struct_ret = 1;
@@ -1432,6 +1436,8 @@ enum_retvalue:
 	/*----------------------------------------------------------*/
 
 	for (i = 0; i < sig->param_count; ++i) {
+		MonoType *ptype;
+
 		/*--------------------------------------------------*/
 		/* Handle vararg type calls. All args are put on    */
 		/* the stack.                                       */
@@ -1449,7 +1455,9 @@ enum_retvalue:
 			continue;
 		}
 
-		simpletype = mono_type_get_underlying_type(sig->params [i])->type;
+		ptype = mono_type_get_underlying_type (sig->params [i]);
+		ptype = mini_get_basic_type_from_generic (gsctx, ptype);
+		simpletype = ptype->type;
 		cinfo->args[nParm].type = simpletype;
 		switch (simpletype) {
 		case MONO_TYPE_BOOLEAN:
@@ -1681,7 +1689,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 
 	sig     = mono_method_signature (cfg->method);
 	
-	cinfo   = calculate_sizes (sig, &sz, sig->pinvoke);
+	cinfo   = calculate_sizes (cfg, sig, &sz, sig->pinvoke);
 
 	if (cinfo->struct_ret) {
 		cfg->ret->opcode = OP_REGVAR;
@@ -1870,7 +1878,7 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb,
 	n = sig->param_count + sig->hasthis;
 	DEBUG (g_print ("Call requires: %d parameters\n",n));
 	
-	cinfo = calculate_sizes (sig, &sz, sig->pinvoke);
+	cinfo = calculate_sizes (cfg, sig, &sz, sig->pinvoke);
 
 	call->stack_usage = MAX(sz.stack_size, call->stack_usage);
 	lParamArea        = MAX((call->stack_usage - S390_MINIMAL_STACK_SIZE - sz.parm_size), 0);
@@ -2657,7 +2665,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_BREAK: {
 			s390_basr  (code, s390_r13, 0);
 			s390_j	   (code, 6);
-			mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_ABS, 
+			mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_ABS, 
 					     mono_break);
 			s390_llong (code, mono_break);
 			s390_lg    (code, s390_r14, 0, s390_r13, 4);
@@ -3391,8 +3399,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		}
 			break;
 		case OP_ICONST: 
-		case OP_I8CONST:
-		case OP_SETREGIMM: {
+		case OP_I8CONST: {
 			if (s390_is_imm16(ins->inst_c0)) {
 				s390_lghi (code, ins->dreg, ins->inst_c0);
 			} else {
@@ -3414,13 +3421,12 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_SEXT_I4:
 		case OP_MOVE:
-		case OP_SETREG: {
 			if (ins->dreg != ins->sreg1) {
 				s390_lgr (code, ins->dreg, ins->sreg1);
 			}
-		}
 			break;
 		case OP_LCONV_TO_I4:
+		case OP_SEXT_I4:
 			s390_lgfr (code, ins->dreg, ins->sreg1);
 			break;
 		case OP_ZEXT_I4:
@@ -3446,7 +3452,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			EMIT_COND_SYSTEM_EXCEPTION (S390_CC_LT, "OverflowException");
 			s390_lgfr (code, ins->dreg, ins->sreg1);
 			break;
-		case OP_SETFREG:
 		case OP_FMOVE: {
 			if (ins->dreg != ins->sreg1) {
 				s390_ldr   (code, ins->dreg, ins->sreg1);
@@ -3593,7 +3598,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				int lmfOffset = cfg->stack_usage - sizeof(MonoLMF);
 
 				s390_lgr (code, s390_r13, cfg->frame_reg);
-				if (s390_is_uimm16(lmfOffset))
+				if (s390_is_imm16(lmfOffset))
 					s390_aghi (code, s390_r13, lmfOffset);
 				else {
 					s390_basr (code, s390_r14, 0);
@@ -3621,10 +3626,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				s390_jo   (code, -2);
 				s390_lgr  (code, s390_r12, s390_r14);
 			}
-		}
-			break;
-		case CEE_RET: {
-			s390_br  (code, s390_r14);
 		}
 			break;
 		case OP_THROW: {
@@ -4273,7 +4274,7 @@ emit_load_volatile_registers (guint8 *code, MonoCompile *cfg)
 	CallInfo *cinfo;
 	size_data sz;
 
-	cinfo = calculate_sizes (sig, &sz, sig->pinvoke);
+	cinfo = calculate_sizes (NULL, sig, &sz, sig->pinvoke);
 
 	if (cinfo->struct_ret) {
 		ArgInfo *ainfo = &cinfo->ret;
@@ -4405,7 +4406,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 
 	cfg->stack_usage = alloc_size;
 	s390_lgr  (code, s390_r11, STK_BASE);
-	if (s390_is_uimm16 (alloc_size)) {
+	if (s390_is_imm16 (alloc_size)) {
 		s390_aghi (code, STK_BASE, -alloc_size);
 	} else { 
 		int stackSize = alloc_size;
@@ -4440,7 +4441,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	sig = mono_method_signature (method);
 	pos = 0;
 
-	cinfo = calculate_sizes (sig, &sz, sig->pinvoke);
+	cinfo = calculate_sizes (cfg, sig, &sz, sig->pinvoke);
 
 	if (cinfo->struct_ret) {
 		ArgInfo *ainfo = &cinfo->ret;
@@ -4776,7 +4777,7 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 				/*---------------------------------------------*/
 				/* Load return address & parameter register    */
 				/*---------------------------------------------*/
-				s390_larl (code, s390_r14, S390_RELATIVE((patch_info->ip.i +
+				s390_larl (code, s390_r14, (guint64)S390_RELATIVE((patch_info->ip.i +
 							   cfg->native_code + 8), code));
 				s390_lg   (code, s390_r2, 0, s390_r13, 4);
 				/*---------------------------------------------*/
@@ -4886,7 +4887,7 @@ mono_arch_emit_this_vret_args (MonoCompile *cfg, MonoCallInst *inst, int this_re
 	/* add the this argument */
 	if (this_reg != -1) {
 		MonoInst *this;
-		MONO_INST_NEW (cfg, this, OP_SETREG);
+		MONO_INST_NEW (cfg, this, OP_MOVE);
 		this->type  = this_type;
 		this->sreg1 = this_reg;
 		this->dreg  = mono_regstate_next_int (cfg->rs);
@@ -4896,7 +4897,7 @@ mono_arch_emit_this_vret_args (MonoCompile *cfg, MonoCallInst *inst, int this_re
 
 	if (vt_reg != -1) {
 		MonoInst *vtarg;
-		MONO_INST_NEW (cfg, vtarg, OP_SETREG);
+		MONO_INST_NEW (cfg, vtarg, OP_MOVE);
 		vtarg->type  = STACK_MP;
 		vtarg->sreg1 = vt_reg;
 		vtarg->dreg  = mono_regstate_next_int (cfg->rs);

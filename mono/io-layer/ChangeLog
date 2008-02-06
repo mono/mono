@@ -1,3 +1,30 @@
+2008-02-05  Dick Porter  <dick@ximian.com>
+
+	* versioninfo.c (VerLanguageName): Implement VerLanguageName.
+
+2008-01-31  Bill Holmes  <billholmes54@gmail.com>
+	* processes.c (match_procname_to_modulename) : Added to check if the last 
+	  part of module name is equal to the process name.
+
+	* processes.c (EnumProcessModules) : Changed the first entry in the returned 
+	  modules array (the process module) to be populated from the entry found
+	  in /proc/<PID>/maps.
+
+	* processes.c (get_module_name & GetModuleInformation) : In the case where 
+	  the module passed in is NULL, search the /proc/<PID>/maps for a name that
+	  matches the process name to populate the return information.
+
+	Fixes #357062
+
+2008-01-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* security.c (RevertToSelf): Make this return TRUE if impersonating is not
+	supported.
+
+	* sockets.c (_wapi_connect): Add a workaround to a solaris x86 problem where
+	getsockopt (SO_ERROR) doesn't return an error code after connect () fails. Fixes
+	#356552.
+
 2008-01-23  Dick Porter  <dick@ximian.com>
 
 	* versioninfo.c (get_string_block): When stepping over the

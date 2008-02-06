@@ -108,7 +108,7 @@ conv.i1: dest:i src1:i len:30
 conv.i2: dest:i src1:i len:36
 conv.i4: dest:i src1:i len:4
 conv.i8: dest:i src1:i len:4
-conv.i: dest:i src1:i len:2
+conv.i: dest:i src1:i len:4
 conv.ovf.i4.un: dest:i src1:i len:50
 conv.ovf.u4: dest:i src1:i len:48
 conv.ovf.u8.un: dest:i src1:i len:4
@@ -296,9 +296,6 @@ s390_move: len:48 dest:b src1:b
 s390_setf4ret: dest:f src1:f len:4
 sbb: dest:i src1:i src2:i len:6
 sbb_imm: dest:i src1:i len:14
-setfreg: dest:f src1:f len:4
-setreg: dest:i src1:i len:4
-setregimm: dest:i len:20
 setret: dest:a src1:i len:4
 sext_i4: dest:i src1:i len:4
 shl: dest:i src1:i src2:i clob:s len:6

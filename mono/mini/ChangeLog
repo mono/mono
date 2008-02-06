@@ -36,6 +36,108 @@
 	* method-to-ir.c (mono_method_to_ir2): Merge the cctor call before alloc workaround
 	from mini.c.
 
+2008-02-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-amd64.c (mono_arch_patch_callsite): Add more diagnostics.
+
+	* inssel.brg mini-<ARCH>.c cpu-<ARCH>.md: Get rid of unused CEE_RET opcode.
+
+	* mini-<ARCH>.c cpu-<ARCH>.md: Get rid of unused LDIND/STIND opcodes.
+
+	* *.brg mini-<ARCH>.c cpu-<ARCH>.md: Get rid of OP_SETREG/OP_SETFREG/OP_SETREGIMM,
+	use OP_MOVE/OP_FMOVE/OP_ICONST instead.
+
+2008-02-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* cpu-amd64.md (move): Correct the maximum size of move.
+
+2008-02-05  Mark Probst  <mark.probst@gmail.com>
+
+	* tramp-amd64.c, tramp-x86.c, mini-trampolines.c: Added a check in
+	the generic class init trampoline to return quickly if the class
+	is already inited.
+
+2008-02-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-amd64.c (mono_arch_patch_callsite): Add some diagnostics to help debug
+	issues where an 32 bit callsite cannot be patched by a 64 bit address.
+
+2008-02-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* generics.2.cs generics-variant-types.2.il: Merge some tests from the linear IR
+	branch.
+
+2008-01-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* objects.cs: Add some soft-float tests.
+
+	* mini.c: Fix a couple more soft-float issues.
+
+	* helpers.c (mono_disassemble_code): Fix disassembly on ARM.
+
+	* mini-amd64.c (peephole_pass): Use IXOR instead of LXOR for zeroing a register to
+	avoid a REX prefix.
+
+2008-01-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions-x86.c (mono_arch_find_jit_info): Fix stack unwinding when an
+	exception happens while compiling a virtual method.
+
+2008-01-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-sparc.c (mono_arch_emit_epilog): Fix folding of negative return values.
+	
+	* mini-sparc.c: Fix build.
+
+	* mini-sparc.c (get_call_info): Add support for generic sharing.
+
+	* mini-exceptions.c: Add a FIXME.
+
+2008-01-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (mono_handle_exception_internal): Remove the old style
+	altstack handling code.
+
+	* mini-s390.c (mono_arch_emit_exceptions): Really fix a warning.
+	
+	* mini-s390.c (mono_arch_emit_exceptions): Fix a warning.
+
+	* mini-s390.c: Add support for generic sharing.
+
+	* mini-exceptions.c (ves_icall_System_Security_SecurityFrame_GetSecurityFrame): 
+	Fix CAS on s390.
+	(ves_icall_System_Security_SecurityFrame_GetSecurityStack): Ditto.
+
+	* mini-s390x.c (mono_arch_emit_exceptions): Fix a warning.
+
+	* mini-s390x.c: Add support for generic sharing.
+	
+	* mini-exceptions.c (ves_icall_System_Security_SecurityFrame_GetSecurityFrame): 
+	Fix CAS on ia64.
+	(ves_icall_System_Security_SecurityFrame_GetSecurityStack): Ditto.
+
+	* mini-s390x.c: Use is_imm16 instead of is_uimm16 when checking whenever s390_aghi
+	can be used since it takes a 16 bit signed immediate.
+
+	* inssel-s390x.brg: Fix OP_SETRET.
+
+	* mini-s390x.c (mono_arch_output_basic_block): Fix OP_BREAK.
+
+	* mini-codegen.c (mono_opcode_to_cond): Fix a warning.
+
+	* mini-s390x.c cpu-s390x.md: Implement sext.i4 properly by sign extension.
+
+	* mini.c (mono_create_delegate_trampoline): Don't use mono_create_ftpntr here.
+
+	* mini-trampolines.c (mono_delegate_trampoline): Use mono_get_addr_from_ftnptr
+	in one place.
+
+	* mini-ia64.h mini-ia64.c: Add minimal support for the delegate trampoline 
+	stuff.
+
+	* mini.h inssel-x86.brg inssel-amd64.brg tramp-alpha.c tramp-ia64.c: Get rid
+	of the unused mono_arch_patch_delegate_trampoline stuff.
+
 2008-01-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-sparc.c mini-ia64.c: Fix build.
@@ -55,6 +157,22 @@
 	spill_global_vars if it is useful.
 
 2008-01-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* basic-long.cs: Move the fp related tests to basic-float.cs.
+
+	* mini-ops.h (OP_OUTARG_FREG_R4): New opcode.
+
+	* mini-ia64.c inssel-ia64.brg: Implement proper R4 argument passing.
+
+	* basic-calls.cs: Add a test for proper float argument passing.
+
+	* mini-ia64.h (mono_ia64_context_get_ip): Do not substract 1 from the ip
+	if the context corresponds to an exception received through a signal.
+
+	* exceptions.cs: Add a test for nullref handling at the start of a try
+	clause.
+
+	* mini-ia64.c (mono_arch_call_opcode): Fix ia64 argument passing.
 
 	* jit-icalls.c (mono_break): New JIT icall.
 

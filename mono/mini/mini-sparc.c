@@ -485,12 +485,14 @@ add_float (guint32 *gr, guint32 *stack_size, ArgInfo *ainfo, gboolean single)
  * the 'Sparc Compliance Definition 2.4' document.
  */
 static CallInfo*
-get_call_info (MonoMethodSignature *sig, gboolean is_pinvoke)
+get_call_info (MonoCompile *cfg, MonoMethodSignature *sig, gboolean is_pinvoke)
 {
 	guint32 i, gr, fr;
 	int n = sig->hasthis + sig->param_count;
 	guint32 stack_size = 0;
 	CallInfo *cinfo;
+	MonoType *ret_type;
+	MonoGenericSharingContext *gsctx = cfg ? cfg->generic_sharing_context : NULL;
 
 	cinfo = g_malloc0 (sizeof (CallInfo) + (sizeof (ArgInfo) * n));
 
@@ -518,6 +520,7 @@ get_call_info (MonoMethodSignature *sig, gboolean is_pinvoke)
 
 	for (i = 0; i < sig->param_count; ++i) {
 		ArgInfo *ainfo = &cinfo->args [sig->hasthis + i];
+		MonoType *ptype;
 
 		if ((sig->call_convention == MONO_CALL_VARARG) && (i == sig->sentinelpos)) {
 			gr = PARAM_REGS;
@@ -533,7 +536,9 @@ get_call_info (MonoMethodSignature *sig, gboolean is_pinvoke)
 			add_general (&gr, &stack_size, ainfo, FALSE);
 			continue;
 		}
-		switch (mono_type_get_underlying_type (sig->params [i])->type) {
+		ptype = mono_type_get_underlying_type (sig->params [i]);
+		ptype = mini_get_basic_type_from_generic (gsctx, ptype);
+		switch (ptype->type) {
 		case MONO_TYPE_BOOLEAN:
 		case MONO_TYPE_I1:
 		case MONO_TYPE_U1:
@@ -620,86 +625,86 @@ get_call_info (MonoMethodSignature *sig, gboolean is_pinvoke)
 	}
 
 	/* return value */
-	{
-		switch (mono_type_get_underlying_type (sig->ret)->type) {
-		case MONO_TYPE_BOOLEAN:
-		case MONO_TYPE_I1:
-		case MONO_TYPE_U1:
-		case MONO_TYPE_I2:
-		case MONO_TYPE_U2:
-		case MONO_TYPE_CHAR:
-		case MONO_TYPE_I4:
-		case MONO_TYPE_U4:
-		case MONO_TYPE_I:
-		case MONO_TYPE_U:
-		case MONO_TYPE_PTR:
-		case MONO_TYPE_FNPTR:
-		case MONO_TYPE_CLASS:
-		case MONO_TYPE_OBJECT:
-		case MONO_TYPE_SZARRAY:
-		case MONO_TYPE_ARRAY:
-		case MONO_TYPE_STRING:
-			cinfo->ret.storage = ArgInIReg;
-			cinfo->ret.reg = sparc_i0;
-			if (gr < 1)
-				gr = 1;
-			break;
-		case MONO_TYPE_U8:
-		case MONO_TYPE_I8:
+	ret_type = mono_type_get_underlying_type (sig->ret);
+	ret_type = mini_get_basic_type_from_generic (gsctx, ret_type);
+	switch (ret_type->type) {
+	case MONO_TYPE_BOOLEAN:
+	case MONO_TYPE_I1:
+	case MONO_TYPE_U1:
+	case MONO_TYPE_I2:
+	case MONO_TYPE_U2:
+	case MONO_TYPE_CHAR:
+	case MONO_TYPE_I4:
+	case MONO_TYPE_U4:
+	case MONO_TYPE_I:
+	case MONO_TYPE_U:
+	case MONO_TYPE_PTR:
+	case MONO_TYPE_FNPTR:
+	case MONO_TYPE_CLASS:
+	case MONO_TYPE_OBJECT:
+	case MONO_TYPE_SZARRAY:
+	case MONO_TYPE_ARRAY:
+	case MONO_TYPE_STRING:
+		cinfo->ret.storage = ArgInIReg;
+		cinfo->ret.reg = sparc_i0;
+		if (gr < 1)
+			gr = 1;
+		break;
+	case MONO_TYPE_U8:
+	case MONO_TYPE_I8:
 #ifdef SPARCV9
+		cinfo->ret.storage = ArgInIReg;
+		cinfo->ret.reg = sparc_i0;
+		if (gr < 1)
+			gr = 1;
+#else
+		cinfo->ret.storage = ArgInIRegPair;
+		cinfo->ret.reg = sparc_i0;
+		if (gr < 2)
+			gr = 2;
+#endif
+		break;
+	case MONO_TYPE_R4:
+	case MONO_TYPE_R8:
+		cinfo->ret.storage = ArgInFReg;
+		cinfo->ret.reg = sparc_f0;
+		break;
+	case MONO_TYPE_GENERICINST:
+		if (!mono_type_generic_inst_is_valuetype (sig->ret)) {
 			cinfo->ret.storage = ArgInIReg;
 			cinfo->ret.reg = sparc_i0;
 			if (gr < 1)
 				gr = 1;
-#else
-			cinfo->ret.storage = ArgInIRegPair;
-			cinfo->ret.reg = sparc_i0;
-			if (gr < 2)
-				gr = 2;
-#endif
 			break;
-		case MONO_TYPE_R4:
-		case MONO_TYPE_R8:
-			cinfo->ret.storage = ArgInFReg;
-			cinfo->ret.reg = sparc_f0;
-			break;
-		case MONO_TYPE_GENERICINST:
-			if (!mono_type_generic_inst_is_valuetype (sig->ret)) {
-				cinfo->ret.storage = ArgInIReg;
-				cinfo->ret.reg = sparc_i0;
-				if (gr < 1)
-					gr = 1;
-				break;
-			}
-			/* Fall through */
-		case MONO_TYPE_VALUETYPE:
-			if (v64) {
-				if (sig->pinvoke)
-					NOT_IMPLEMENTED;
-				else
-					/* Already done */
-					;
-			}
-			else
-				cinfo->ret.storage = ArgOnStack;
-			break;
-		case MONO_TYPE_TYPEDBYREF:
-			if (v64) {
-				if (sig->pinvoke)
-					/* Same as a valuetype with size 24 */
-					NOT_IMPLEMENTED;
-				else
-					/* Already done */
-					;
-			}
-			else
-				cinfo->ret.storage = ArgOnStack;
-			break;
-		case MONO_TYPE_VOID:
-			break;
-		default:
-			g_error ("Can't handle as return value 0x%x", sig->ret->type);
 		}
+		/* Fall through */
+	case MONO_TYPE_VALUETYPE:
+		if (v64) {
+			if (sig->pinvoke)
+				NOT_IMPLEMENTED;
+			else
+				/* Already done */
+				;
+		}
+		else
+			cinfo->ret.storage = ArgOnStack;
+		break;
+	case MONO_TYPE_TYPEDBYREF:
+		if (v64) {
+			if (sig->pinvoke)
+				/* Same as a valuetype with size 24 */
+				NOT_IMPLEMENTED;
+			else
+				/* Already done */
+				;
+		}
+		else
+			cinfo->ret.storage = ArgOnStack;
+		break;
+	case MONO_TYPE_VOID:
+		break;
+	default:
+		g_error ("Can't handle as return value 0x%x", sig->ret->type);
 	}
 
 	cinfo->stack_usage = stack_size;
@@ -751,7 +756,7 @@ mono_arch_get_global_int_regs (MonoCompile *cfg)
 
 	sig = mono_method_signature (cfg->method);
 
-	cinfo = get_call_info (sig, FALSE);
+	cinfo = get_call_info (cfg, sig, FALSE);
 
 	/* Use unused input registers */
 	for (i = cinfo->reg_usage; i < 6; ++i)
@@ -797,7 +802,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 
 	sig = mono_method_signature (cfg->method);
 
-	cinfo = get_call_info (sig, FALSE);
+	cinfo = get_call_info (m, sig, FALSE);
 
 	if (sig->ret->type != MONO_TYPE_VOID) {
 		switch (cinfo->ret.storage) {
@@ -1115,7 +1120,7 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 	sig = call->signature;
 	n = sig->param_count + sig->hasthis;
 	
-	cinfo = get_call_info (sig, sig->pinvoke);
+	cinfo = get_call_info (cfg, sig, sig->pinvoke);
 
 	for (i = 0; i < n; ++i) {
 		ainfo = cinfo->args + i;
@@ -2354,7 +2359,7 @@ emit_load_volatile_arguments (MonoCompile *cfg, guint32 *code)
 
 	sig = mono_method_signature (method);
 
-	cinfo = get_call_info (sig, FALSE);
+	cinfo = get_call_info (cfg, sig, FALSE);
 	
 	/* This is the opposite of the code in emit_prolog */
 
@@ -3152,7 +3157,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (ins->sreg1 != ins->dreg)
 				sparc_mov_reg_reg (code, ins->sreg1, ins->dreg);
 			break;
-		case OP_SETFREG:
+		case OP_FMOVE:
 			/* Only used on V9 */
 			if (ins->sreg1 != ins->dreg)
 				sparc_fmovd (code, ins->sreg1, ins->dreg);
@@ -3377,10 +3382,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 			break;
 		}
-		case CEE_RET:
-			/* The return is done in the epilog */
-			g_assert_not_reached ();
-			break;
 		case OP_THROW:
 			sparc_mov_reg_reg (code, ins->sreg1, sparc_o0);
 			mono_add_patch_info (cfg, (guint8*)code - cfg->native_code, MONO_PATCH_INFO_INTERNAL_METHOD, 
@@ -4031,7 +4032,7 @@ mono_arch_instrument_prolog (MonoCompile *cfg, void *func, void *p, gboolean ena
 	for (i = 0; i < 6; ++i)
 		sparc_sti_imm (code, sparc_i0 + i, sparc_fp, ARGS_OFFSET + (i * sizeof (gpointer)));
 
-	cinfo = get_call_info (sig, FALSE);
+	cinfo = get_call_info (cfg, sig, FALSE);
 
 	/* Save float regs on V9, since they are caller saved */
 	for (i = 0; i < sig->param_count + sig->hasthis; ++i) {
@@ -4248,7 +4249,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 
 	sig = mono_method_signature (method);
 
-	cinfo = get_call_info (sig, FALSE);
+	cinfo = get_call_info (cfg, sig, FALSE);
 
 	/* Keep in sync with emit_load_volatile_arguments */
 	for (i = 0; i < sig->param_count + sig->hasthis; ++i) {
@@ -4461,7 +4462,7 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 	if (can_fold && (sparc_inst_op (code [-2]) == 0x2) && (sparc_inst_op3 (code [-2]) == 0x2) && sparc_inst_imm (code [-2]) && (sparc_inst_rd (code [-2]) == sparc_i0)) {
 		/* or reg, imm, %i0 */
 		int reg = sparc_inst_rs1 (code [-2]);
-		int imm = sparc_inst_imm13 (code [-2]);
+		int imm = (((gint32)(sparc_inst_imm13 (code [-2]))) << 19) >> 19;
 		code [-2] = code [-1];
 		code --;
 		sparc_restore_imm (code, reg, imm, sparc_o0);
@@ -4755,7 +4756,7 @@ mono_arch_get_argument_info (MonoMethodSignature *csig, int param_count, MonoJit
 	CallInfo *cinfo;
 	ArgInfo *ainfo;
 
-	cinfo = get_call_info (csig, FALSE);
+	cinfo = get_call_info (NULL, csig, FALSE);
 
 	if (csig->hasthis) {
 		ainfo = &cinfo->args [0];

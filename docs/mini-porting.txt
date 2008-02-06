@@ -415,6 +415,23 @@
 	*) mono_arch_instrument_epilog ()
 		Functions needed to implement the profiling interface.
 	
+* Testing the port
+
+    The JIT has a set of regression tests in *.cs files inside the mini directory.
+    The usual method of testing a port is by compiling these tests on another machine
+	with a working runtime by typing 'make rcheck', then copying TestDriver.dll and
+	*.exe to the mini directory. The tests can be run by typing:
+	./mono --regression <exe file name>
+	The suggested order for working through these tests is the following:
+	- basic.exe
+	- basic-long.exe
+	- basic-float.exe
+	- basic-calls.exe
+	- objects.exe
+	- arrays.exe
+	- exceptions.exe
+	- iltests.exe
+	- generics.exe	
 	
 * Writing regression tests
 

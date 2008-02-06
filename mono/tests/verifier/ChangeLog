@@ -1,3 +1,16 @@
+2008-01-30 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_tests.sh: More tests for brtrue/brfalse with boxed values
+	and null literals.
+
+	* make_bool_branch_test.sh: New optional arg to allow for new tests.
+
+2008-01-30 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_tests.sh: Removed some invalid tests for nesting access
+	as they where trying to call non final virtual methods without using
+	the 'this' pointer.
+
 2008-01-23 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_call_test.sh: test generator for call and callvirt.

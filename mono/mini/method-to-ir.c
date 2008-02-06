@@ -11285,7 +11285,7 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
  *   arguments, or stores killing loads etc. Also, should we fold loads into other
  *   instructions if the result of the load is used multiple times ?
  * - make the REM_IMM optimization in mini-x86.c arch-independent.
- * - LAST MERGE: 94008 (except 92841).
+ * - LAST MERGE: 95001 (except 92841).
  */
 
 /*

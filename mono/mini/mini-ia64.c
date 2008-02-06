@@ -160,6 +160,7 @@ ia64_patch (unsigned char* code, gpointer target);
 typedef enum {
 	ArgInIReg,
 	ArgInFloatReg,
+	ArgInFloatRegR4,
 	ArgOnStack,
 	ArgValuetypeAddrInIReg,
 	ArgAggregate,
@@ -234,7 +235,7 @@ add_float (guint32 *gr, guint32 *fr, guint32 *stack_size, ArgInfo *ainfo, gboole
 		(*stack_size) += sizeof (gpointer);
     }
     else {
-		ainfo->storage = ArgInFloatReg;
+		ainfo->storage = is_double ? ArgInFloatReg : ArgInFloatRegR4;
 		ainfo->reg = 8 + *fr;
 		(*fr) += 1;
 		(*gr) += 1;
@@ -898,6 +899,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 				inst->dreg = cfg->arch.reg_in0 + ainfo->reg;
 				break;
 			case ArgInFloatReg:
+			case ArgInFloatRegR4:
 				/* 
 				 * Since float regs are volatile, we save the arguments to
 				 * the stack in the prolog.
@@ -996,6 +998,13 @@ add_outarg_reg (MonoCompile *cfg, MonoCallInst *call, MonoInst *arg, ArgStorage 
 		break;
 	case ArgInFloatReg:
 		arg->opcode = OP_OUTARG_FREG;
+		arg->inst_left = tree;
+		arg->inst_right = (MonoInst*)call;
+		arg->backend.reg3 = reg;
+		call->used_fregs |= 1 << reg;
+		break;
+	case ArgInFloatRegR4:
+		arg->opcode = OP_OUTARG_FREG_R4;
 		arg->inst_left = tree;
 		arg->inst_right = (MonoInst*)call;
 		arg->backend.reg3 = reg;
@@ -1114,8 +1123,8 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 		} else {
 			MonoType *arg_type;
 
-			MONO_INST_NEW (cfg, arg, OP_OUTARG);
 			in = call->args [i];
+			MONO_INST_NEW (cfg, arg, OP_OUTARG);
 			arg->cil_code = in->cil_code;
 			arg->inst_left = in;
 			arg->type = in->type;
@@ -1156,6 +1165,15 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 
 					vtaddr = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL);
 
+					/* Trees can't be shared so make a copy */
+					MONO_INST_NEW (cfg, arg, CEE_STIND_I);
+					arg->cil_code = in->cil_code;
+					arg->ssa_op = MONO_SSA_STORE;
+					arg->inst_left = vtaddr;
+					arg->inst_right = in;
+					arg->type = in->type;
+					MONO_INST_LIST_ADD_TAIL (&arg->node, &call->out_args);
+
 					/* 
 					 * Part of the structure is passed in registers.
 					 */
@@ -1193,10 +1211,7 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 						MONO_INST_NEW (cfg, load, load_op);
 						load->inst_left = load2;
 
-						if (j == 0)
-							set_reg = arg;
-						else
-							MONO_INST_NEW (cfg, set_reg, OP_OUTARG_REG);
+						MONO_INST_NEW (cfg, set_reg, OP_OUTARG_REG);
 						add_outarg_reg (cfg, call, set_reg, arg_storage, dest_reg, load);
 						if (set_reg != call->out_args) {
 							set_reg->next = call->out_args;
@@ -1224,10 +1239,7 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 						MONO_INST_NEW (cfg, load, CEE_LDIND_I);
 						load->inst_left = load2;
 
-						if (j == 0)
-							outarg = arg;
-						else
-							MONO_INST_NEW (cfg, outarg, OP_OUTARG);
+						MONO_INST_NEW (cfg, outarg, OP_OUTARG);
 						outarg->inst_left = load;
 						outarg->inst_imm = 16 + ainfo->offset + (slot - 8) * 8;
 
@@ -1257,6 +1269,7 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 
 					arg->opcode = OP_OUTARG_VT;
 					arg->inst_right = stack_addr;
+					MONO_INST_LIST_ADD_TAIL (&arg->node, &call->out_args);
 				}
 			}
 			else {
@@ -1265,6 +1278,7 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 					add_outarg_reg (cfg, call, arg, ainfo->storage, cfg->arch.reg_out0 + ainfo->reg, in);
 					break;
 				case ArgInFloatReg:
+				case ArgInFloatRegR4:
 					add_outarg_reg (cfg, call, arg, ainfo->storage, ainfo->reg, in);
 					break;
 				case ArgOnStack:
@@ -1278,6 +1292,7 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 				default:
 					g_assert_not_reached ();
 				}
+				MONO_INST_LIST_ADD_TAIL (&arg->node, &call->out_args);
 			}
 		}
 	}
@@ -3014,14 +3029,22 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_LCALL_REG:
 		case OP_VCALL_REG:
 		case OP_VCALL2_REG:
-		case OP_VOIDCALL_REG:
-			call = (MonoCallInst*)ins;
+		case OP_VOIDCALL_REG: {
+			MonoCallInst *call = (MonoCallInst*)ins;
+			CallInfo *cinfo;
+			int out_reg;
+
+			/* 
+			 * mono_arch_find_this_arg () needs to find the this argument in a global 
+			 * register.
+			 */
+			cinfo = get_call_info (cfg, cfg->mempool, call->signature, FALSE);
+			out_reg = cfg->arch.reg_out0;
+			if (cinfo->ret.storage == ArgValuetypeAddrInIReg)
+				out_reg ++;
+			ia64_mov (code, IA64_R10, out_reg);
 
 			/* Indirect call */
-			/* 
-			 * mono_arch_patch_delegate_trampoline will patch this, this is why R8 is 
-			 * used.
-			 */
 			ia64_mov (code, IA64_R8, ins->sreg1);
 			ia64_ld8_inc_imm (code, GP_SCRATCH_REG2, IA64_R8, 8);
 			ia64_mov_to_br (code, IA64_B6, GP_SCRATCH_REG2);
@@ -3030,7 +3053,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			code = emit_move_return_value (cfg, ins, code);
 			break;
-
+		}
 		case OP_FCALL_MEMBASE:
 		case OP_LCALL_MEMBASE:
 		case OP_VCALL_MEMBASE:
@@ -3058,8 +3081,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (call->method && ins->inst_offset < 0) {
 				/* 
 				 * This is a possible IMT call so save the IMT method in a global 
-				 * register where mono_arch_find_imt_method () and its friends can access 
-				 * it.
+				 * register where mono_arch_find_imt_method () and its friends can 
+				 * access it.
 				 */
 				ia64_movl (code, IA64_R9, call->method);
 			}
@@ -4199,6 +4222,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 			switch (ainfo->storage) {
 			case ArgInIReg:
 			case ArgInFloatReg:
+			case ArgInFloatRegR4:
 				g_assert (inst->opcode == OP_REGOFFSET);
 				if (ia64_is_adds_imm (inst->inst_offset))
 					ia64_adds_imm (code, GP_SCRATCH_REG, inst->inst_offset, inst->inst_basereg);
@@ -4988,18 +5012,30 @@ mono_arch_find_imt_method (gpointer *regs, guint8 *code)
 	return regs [IA64_R9];
 }
 
-MonoObject*
-mono_arch_find_this_argument (gpointer *regs, MonoMethod *method)
-{
-	return regs [IA64_R10];
-}
-
 void
 mono_arch_emit_imt_argument (MonoCompile *cfg, MonoCallInst *call)
 {
 	/* Done by the implementation of the CALL_MEMBASE opcodes */
 }
 #endif
+
+gpointer
+mono_arch_get_this_arg_from_call (MonoMethodSignature *sig, gssize *regs, guint8 *code)
+{
+	return (gpointer)regs [IA64_R10];
+}
+
+MonoObject*
+mono_arch_find_this_argument (gpointer *regs, MonoMethod *method)
+{
+	return mono_arch_get_this_arg_from_call (mono_method_signature (method), (gssize*)regs, NULL);
+}
+
+gpointer
+mono_arch_get_delegate_invoke_impl (MonoMethodSignature *sig, gboolean has_target)
+{
+	return NULL;
+}
 
 MonoInst*
 mono_arch_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)

@@ -62,6 +62,12 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 	return start;
 }
 
+/*
+ * mono_arch_patch_callsite:
+ *
+ *   Patch the callsite whose address is given by ORIG_CODE so it calls ADDR. ORIG_CODE
+ * points to the pc right after the call.
+ */
 void
 mono_arch_patch_callsite (guint8 *orig_code, guint8 *addr)
 {
@@ -76,7 +82,17 @@ mono_arch_patch_callsite (guint8 *orig_code, guint8 *addr)
 			if (can_write)
 				InterlockedExchangePointer ((gpointer*)(orig_code - 11), addr);
 		} else {
-			g_assert ((((guint64)(addr)) >> 32) == 0);
+			if ((((guint64)(addr)) >> 32) != 0) {
+				/* Print some diagnostics */
+				MonoJitInfo *ji = mono_jit_info_table_find (mono_domain_get (), (char*)orig_code);
+				if (ji)
+					fprintf (stderr, "At %s, offset 0x%zx\n", mono_method_full_name (ji->method, TRUE), (guint8*)orig_code - (guint8*)ji->code_start);
+				fprintf (stderr, "Addr: %p\n", addr);
+				ji = mono_jit_info_table_find (mono_domain_get (), (char*)addr);
+				if (ji)
+					fprintf (stderr, "Callee: %s\n", mono_method_full_name (ji->method, TRUE));
+				g_assert_not_reached ();
+			}
 			g_assert ((((guint64)(orig_code)) >> 32) == 0);
 			if (can_write)
 				InterlockedExchange ((gint32*)(orig_code - 4), ((gint64)addr - (gint64)orig_code));
@@ -189,6 +205,24 @@ mono_arch_create_trampoline_code (MonoTrampolineType tramp_type)
 	framesize = (framesize + (MONO_ARCH_FRAME_ALIGNMENT - 1)) & ~ (MONO_ARCH_FRAME_ALIGNMENT - 1);
 
 	offset = 0;
+
+	if (tramp_type == MONO_TRAMPOLINE_GENERIC_CLASS_INIT) {
+		static int byte_offset = -1;
+		static guint8 bitmask;
+
+		guint8 *jump;
+
+		if (byte_offset < 0)
+			mono_marshal_find_bitfield_offset (MonoVTable, initialized, &byte_offset, &bitmask);
+
+		amd64_test_membase_imm_size (code, MONO_ARCH_VTABLE_REG, byte_offset, bitmask, 1);
+		jump = code;
+		amd64_branch8 (code, X86_CC_Z, -1, 1);
+
+		amd64_ret (code);
+
+		x86_patch (jump, code);
+	}
 
 	/*
 	 * The generic class init trampoline is called directly by JITted code, there is no

@@ -63,7 +63,6 @@ not_reached: len:0
 not_null: src1:i len:0
 break: len:1
 jmp: len:32
-ret: len:1
 br: len:5
 
 int_beq: len:6

@@ -57,7 +57,6 @@ break: len:4
 jmp: len:92
 call: dest:v clob:c len:20
 calli: dest:v clob:c len:20
-ret: len:8
 br.s: len:8
 brfalse.s: len:8
 brtrue.s: len:8
@@ -143,9 +142,6 @@ outarg: src1:i len:1
 outarg_imm: len:5
 setret: dest:v src1:i len:4
 setlret: src1:i src2:i len:12
-setreg: dest:i src1:i len:8 clob:r
-setregimm: dest:i len:8 clob:r
-setfreg: dest:f src1:f len:8 clob:r
 checkthis: src1:b len:4
 voidcall: len:20 clob:c
 voidcall_reg: src1:i len:20 clob:c

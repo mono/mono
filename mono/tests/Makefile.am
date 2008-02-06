@@ -167,7 +167,6 @@ BASE_TEST_CS_SRC=		\
 	remoting3.cs		\
 	remoting4.cs		\
 	remoting5.cs		\
-	nonvirt.cs		\
 	largeexp.cs		\
 	largeexp2.cs		\
 	marshalbyref1.cs	\
@@ -255,6 +254,10 @@ TEST_CS_SRC = $(BASE_TEST_CS_SRC)
 endif
 endif
 
+if IA64
+TEST_CS_SRC+=async-exc-compilation.cs
+endif
+
 if X86
 # bug #71274
 PLATFORM_DISABLED_TESTS=finalizer-abort.exe finalizer-exception.exe finalizer-exit.exe
@@ -270,6 +273,7 @@ DISABLED_TESTS=			\
 	delegate-delegate-exception.exe	\
 	appdomain-unload.exe		\
 	bug-77127.exe \
+	bug-348522.exe	\
 	$(PLATFORM_DISABLED_TESTS)
 
 # These only compile with MS CSC
@@ -331,6 +335,7 @@ TEST_CS2_SRC = \
 	bug-333798-tb.2.cs		\
 	bug-335131.2.cs		\
 	bug-322722_patch_bx.2.cs		\
+	bug-348522.2.cs		\
 	bug-322722_dyn_method_throw.2.cs
 
 TEST_IL2_SRC = find-method.2.il	\

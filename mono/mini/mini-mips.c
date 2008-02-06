@@ -1399,7 +1399,6 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 		case CEE_CONV_I4:
 		case CEE_CONV_U4:
 		case OP_MOVE:
-		case OP_SETREG:
 			ins->opcode = OP_MOVE;
 			/* 
 			 * OP_MOVE reg, reg 
@@ -2221,7 +2220,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			/* XXX - Throw exception if we overflowed */
 			break;
 		case OP_ICONST:
-		case OP_SETREGIMM:
 			mips_load_const (code, ins->dreg, ins->inst_c0);
 			break;
 		case OP_AOTCONST:
@@ -2245,7 +2243,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case CEE_CONV_I4:
 		case CEE_CONV_U4:
 		case OP_MOVE:
-		case OP_SETREG:
 			if (ins->dreg != ins->sreg1)
 				mips_move (code, ins->dreg, ins->sreg1);
 			break;
@@ -2264,11 +2261,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 					mips_move (code, mips_v0, ins->sreg2);
 				if (ins->sreg1 != mips_v1)
 					mips_move (code, mips_v1, ins->sreg1);
-			}
-			break;
-		case OP_SETFREG:
-			if (ins->dreg != ins->sreg1) {
-				mips_fmovd (code, ins->dreg, ins->sreg1);
 			}
 			break;
 		case OP_FMOVE:
@@ -2387,10 +2379,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 			break;
 		}
-		case CEE_RET:
-			mips_jr (code, mips_ra);
-			mips_nop (code);
-			break;
 		case OP_THROW: {
 			gpointer addr = mono_arch_get_throw_exception();
 			mips_move (code, mips_a0, ins->sreg1);
@@ -3933,7 +3921,7 @@ mono_arch_emit_this_vret_args (MonoCompile *cfg, MonoCallInst *inst, int this_re
 	/* add the this argument */
 	if (this_reg != -1) {
 		MonoInst *this;
-		MONO_INST_NEW (cfg, this, OP_SETREG);
+		MONO_INST_NEW (cfg, this, OP_MOVE);
 		this->type = this_type;
 		this->sreg1 = this_reg;
 		this->dreg = mono_regstate_next_int (cfg->rs);
@@ -3943,7 +3931,7 @@ mono_arch_emit_this_vret_args (MonoCompile *cfg, MonoCallInst *inst, int this_re
 
 	if (vt_reg != -1) {
 		MonoInst *vtarg;
-		MONO_INST_NEW (cfg, vtarg, OP_SETREG);
+		MONO_INST_NEW (cfg, vtarg, OP_MOVE);
 		vtarg->type = STACK_MP;
 		vtarg->sreg1 = vt_reg;
 		vtarg->dreg = mono_regstate_next_int (cfg->rs);

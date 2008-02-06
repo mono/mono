@@ -1529,7 +1529,6 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 		case CEE_CONV_I4:
 		case CEE_CONV_U4:
 		case OP_MOVE:
-		case OP_SETREG:
 			ins->opcode = OP_MOVE;
 			/* 
 			 * OP_MOVE reg, reg 
@@ -2518,7 +2517,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ppc_mullw (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
 		case OP_ICONST:
-		case OP_SETREGIMM:
 			ppc_load (code, ins->dreg, ins->inst_c0);
 			break;
 		case OP_AOTCONST:
@@ -2529,7 +2527,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case CEE_CONV_I4:
 		case CEE_CONV_U4:
 		case OP_MOVE:
-		case OP_SETREG:
 			ppc_mr (code, ins->dreg, ins->sreg1);
 			break;
 		case OP_SETLRET: {
@@ -2544,7 +2541,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				ppc_mr (code, ppc_r4, saved);
 			break;
 		}
-		case OP_SETFREG:
 		case OP_FMOVE:
 			ppc_fmr (code, ins->dreg, ins->sreg1);
 			break;
@@ -2689,9 +2685,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			ppc_addi (code, ins->dreg, ppc_sp, area_offset);
 			break;
 		}
-		case CEE_RET:
-			ppc_blr (code);
-			break;
 		case OP_THROW: {
 			//ppc_break (code);
 			ppc_mr (code, ppc_r3, ins->sreg1);
@@ -3879,7 +3872,7 @@ mono_arch_emit_this_vret_args (MonoCompile *cfg, MonoCallInst *inst, int this_re
 	/* add the this argument */
 	if (this_reg != -1) {
 		MonoInst *this;
-		MONO_INST_NEW (cfg, this, OP_SETREG);
+		MONO_INST_NEW (cfg, this, OP_MOVE);
 		this->type = this_type;
 		this->sreg1 = this_reg;
 		this->dreg = mono_regstate_next_int (cfg->rs);
@@ -3889,7 +3882,7 @@ mono_arch_emit_this_vret_args (MonoCompile *cfg, MonoCallInst *inst, int this_re
 
 	if (vt_reg != -1) {
 		MonoInst *vtarg;
-		MONO_INST_NEW (cfg, vtarg, OP_SETREG);
+		MONO_INST_NEW (cfg, vtarg, OP_MOVE);
 		vtarg->type = STACK_MP;
 		vtarg->sreg1 = vt_reg;
 		vtarg->dreg = mono_regstate_next_int (cfg->rs);

@@ -152,7 +152,6 @@ setret: dest:a src1:i len:3
 setlret: dest:i src1:i src2:i len:5
 checkthis: src1:b len:5
 
-ret: len:2
 
 voidcall: clob:c len:64
 voidcall_reg: src1:i clob:c len:64
@@ -208,7 +207,6 @@ loadu1_mem: dest:i len:10
 loadu2_mem: dest:i len:10
 amd64_loadi8_memindex: dest:i src1:i src2:i len:10
 move: dest:i src1:i len:3
-
 add_imm: dest:i src1:i len:8 clob:1
 sub_imm: dest:i src1:i len:8 clob:1
 mul_imm: dest:i src1:i len:11

@@ -1,3 +1,92 @@
+2008-02-05  Mark Probst  <mark.probst@gmail.com>
+
+	* marshal.c, marshal.h (mono_marshal_find_bitfield_offset,
+	mono_marshal_find_nonzero_bit_offset): Added macro and function
+	for finding the byte- and bit-offset of a bitfield within a
+	struct.
+
+2008-02-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_ptr_to_struct): Make the signature non-pinvoke.
+	(mono_marshal_get_struct_to_ptr): Ditto.
+
+	* marshal.c (mono_marshal_get_runtime_invoke): Fix the signature of 
+	cctor_signature.
+
+2008-02-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_runtime_invoke): Fix sharing of runtime wrappers
+	between methods for non-corlib types.
+
+2008-02-02  Geoff Norton  <gnorton@novell.com>
+
+	* loader.c (mono_method_get_param_names): Populate the parameter name for 
+	generic parameters as well. (Fixes #342536)
+
+2008-01-31 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (is_valid_bool_arg): Allow boxed values and null literals as well.
+
+	* verify.c (do_invoke_method): Fix for calling with byref structs.
+
+	* verify.c (do_cast): push a boxed value type based on the type token and not
+	the type of stack.
+
+2008-01-31  William Holmes  <billholmes54@gmail.com>
+
+	* process.c (process_module_string_read): Check the size returned form 
+	  VerQueryValue to avoid out of memory exception. 
+
+2008-01-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_Reflection_Assembly_GetModulesInternal): 
+	Handle properly modules which are not in the moduleref table. Fixes
+	#356938.
+
+2008-01-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_Reflection_Assembly_GetModulesInternal): Remove
+	the dynamic case which is now in managed code.
+	(ves_icall_System_Reflection_Assembly_GetTypes): Ditto.
+
+	* marshal.c (mono_string_to_bstr): Fix a warning.
+	(init_com_provider_ms): Ditto.
+
+	* appdomain.c (ves_icall_System_AppDomain_createDomain): Add some FIXMEs.
+
+	* exception.c (mono_get_exception_out_of_memory): New helper function.
+
+2008-01-28  Jonathan Chambers  <joncham@gmail.com>
+
+	* marshal.c: Add support for BSTR marshalling
+	using other COM systems.
+
+	Code is contributed under MIT/X11 license.
+
+2008-01-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* object.c (mono_runtime_invoke_array): reverted previous
+	commit as it breaks the build.
+
+2008-01-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* object.c (mono_runtime_invoke_array): Verify arguments for
+	invalid types. Fixes #348522.
+
+2008-01-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: added IL_CODE_CALL_NONFINAL_VIRTUAL to track calls to
+	non-final virtual calls using call. 
+
+	* verify.c (do_invoke): fixed some TODOs.
+
+	* verify.c (push_arg): set has_this_store for "ldarga 0".
+
+2008-01-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (reflection_methodbuilder_to_mono_method): Allow DynamicMethods
+	which belong to an inflated class. Fixes #356531.
+
 2008-01-26  Robert Jordan  <robertj@gmx.net>
 
 	* file-io.c: Implement and use wrappers for GetFileAttribute|Ex ()
