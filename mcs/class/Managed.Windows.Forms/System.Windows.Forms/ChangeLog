@@ -1,3 +1,9 @@
+2008-02-05  Jonathan Pobst  <monkey@jpobst.com>
+	[Backport to 1.9]
+	* Form.cs: If we change the active MDI child form, let the others
+	know they need to repaint their title bar so it will appear inactive.
+	[Fixes part 1 of bug #325473]
+
 2008-02-05  Andreia Gaita  <avidigal@novell.com>
 	[Backport to 1.9]
 	* XplatUIWin32.cs, XplatUICarbon.cs: set the hwnd.Mapped flag when we create 
