@@ -106,6 +106,13 @@ namespace System.Windows.Forms {
 		#endregion	// Public Constructors
 
 		#region Public Instance Properties
+#if NET_2_0
+		public IBindableComponent BindableComponent {
+			get {
+				return control;
+			}
+		}
+#endif
 		public BindingManagerBase BindingManagerBase {
 			get {
 				return manager;
