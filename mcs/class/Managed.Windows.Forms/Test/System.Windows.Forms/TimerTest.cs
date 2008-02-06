@@ -123,11 +123,11 @@ namespace MonoTests.System.Windows.Forms
 				timer.Tick += new EventHandler (TickHandler);
 				timer.Interval = 1000;
 				timer.Enabled = true;
-				Assert.AreEqual (true, timer.Enabled, "1");
-				Assert.AreEqual (false, Ticked, "2");
+				Assert.AreEqual (true, timer.Enabled, "3");
+				Assert.AreEqual (false, Ticked, "4");
 				timer.Enabled = false;
-				Assert.AreEqual (false, Ticked, "3"); // This may fail if we are running on a very slow machine...
-				Assert.AreEqual (false, timer.Enabled, "4");
+				Assert.AreEqual (false, Ticked, "5"); // This may fail if we are running on a very slow machine...
+				Assert.AreEqual (false, timer.Enabled, "6");
 			}
 		}
 

@@ -1,3 +1,8 @@
+2008-02-06  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TimerTest.cs: Several asserts in one test had the same name,
+	so I can't tell which assert is failing on the buildbot.  Fixed.
+
 2008-02-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* BindingsCollectionTest.cs: New file.
