@@ -1,3 +1,9 @@
+2008-02-06 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: guarded some debug functions around and #ifdef.
+
+	* verify.c (merge_stacks): implement proper PIII 1.8.1.3 stack state merging.
+
 2008-02-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_get_runtime_invoke): Revert the direct_wrapper
