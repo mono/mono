@@ -124,15 +124,12 @@ namespace System.Web.Compilation
 		
 		public override Type GetGeneratedType (CompilerResults results)
 		{
-			if (_compiler == null || results == null)
-				return null;
-
-			if (NeedsLoadFromBin)
+			if (NeedsLoadFromBin && _compiler != null)
 				return LoadTypeFromBin (_compiler, Parser);
 			
 			// This is not called if compilation failed.
 			// Returning null makes the caller throw an InvalidCastException
-			Assembly assembly = results.CompiledAssembly;
+			Assembly assembly = results != null ? results.CompiledAssembly : null;
 			if (assembly == null)
 				return null;
 			

@@ -1,10 +1,24 @@
 2008-02-06  Marek Habersack  <mhabersack@novell.com>
 
+	* GenericBuildProvider.cs: GetGeneratedType may return a type even
+	though the results are null.
+
+	* AssemblyBuilder.cs: if there are no units and no source files,
+	do not attempt to compile the assembly.
+
+	* AppResourcesAssemblyBuilder.cs, AppCodeCompiler.cs: expect that
+	BuildAssembly may return null results.
+
 	* BuildManager.cs: protect non-page builds from endless recursion
 	if a non-page file recursively references/includes another file
 	from the same batch. If such case is detected, the recursively
 	referenced file is compiled into a separate assembly and removed
 	from the previous compilation batch. Fixes bug #358742.
+	If AssemblyBuilder returns no results from BuildAssembly, it might
+	mean we're dealing with a compilation of empty .as[hm]x files,
+	with no code and only code-behind in bin/. Do not report an error
+	in that case, only add the compiled types to the cache. Fixes bug
+	#357624.
 
 2008-02-05  Marek Habersack  <mhabersack@novell.com>
 
