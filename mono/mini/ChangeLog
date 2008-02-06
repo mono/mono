@@ -1,3 +1,8 @@
+2008-02-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* *.brg mini-<ARCH>.c cpu-<ARCH>.md: Get rid of OP_SETREG/OP_SETFREG/OP_SETREGIMM,
+	use OP_MOVE/OP_FMOVE/OP_ICONST instead.
+
 2008-02-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* cpu-amd64.md (move): Correct the maximum size of move.
