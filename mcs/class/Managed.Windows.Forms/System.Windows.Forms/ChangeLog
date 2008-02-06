@@ -1,3 +1,12 @@
+2008-02-05  Andreia Gaita  <avidigal@novell.com>
+	[Backport to 1.9]
+	* XplatUIWin32.cs, XplatUICarbon.cs: set the hwnd.Mapped flag when we create 
+	the window so that the check on Control.UpdateZOrderOfChild passes on non-X
+	platforms. Fixes #359036
+	
+	Note: Control.UpdateZOrderOfChild needs to be rewritten to not rely on 
+	platform-specific flags.
+	
 2008-02-05  Everaldo Canuto  <ecanuto@novell.com>
 
 	[Backport to 1.9]
