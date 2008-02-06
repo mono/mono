@@ -1,3 +1,7 @@
+2008-02-01  Jonathan Pobst  <monkey@jpobst.com>
+	[Backport to 1.9]
+	* ListBoxTest.cs: Disable test that is default font dependent.
+
 2008-01-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ComboBoxTest.cs: New SelectedTextWithBinding test - for #333750.
