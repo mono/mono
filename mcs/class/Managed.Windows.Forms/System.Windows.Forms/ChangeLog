@@ -1,3 +1,12 @@
+2008-02-05  Andreia Gaita  <avidigal@novell.com>
+
+	* XplatUIWin32.cs, XplatUICarbon.cs: set the hwnd.Mapped flag when we create 
+	the window so that the check on Control.UpdateZOrderOfChild passes on non-X
+	platforms. Fixes #359036
+	
+	Note: Control.UpdateZOrderOfChild needs to be rewritten to not rely on 
+	platform-specific flags.
+
 2008-02-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Binding.cs: Add 2.0 BindableComponent property - just return control

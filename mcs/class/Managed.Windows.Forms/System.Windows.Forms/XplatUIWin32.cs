@@ -1596,7 +1596,7 @@ namespace System.Windows.Forms {
 			}
 
 			hwnd.ClientWindow = WindowHandle;
-
+			hwnd.Mapped = true;
 			Win32SetWindowLong(WindowHandle, WindowLong.GWL_USERDATA, (uint)ThemeEngine.Current.DefaultControlBackColor.ToArgb());
 
 			return WindowHandle;

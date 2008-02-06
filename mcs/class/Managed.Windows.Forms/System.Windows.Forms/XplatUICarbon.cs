@@ -1791,6 +1791,7 @@ namespace System.Windows.Forms {
 			HIViewSetVisible (hwnd.client_window, visible);
 
 			hwnd.visible = visible;
+			hwnd.Mapped = true;
 			return true;
 		}
 		
