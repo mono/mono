@@ -1,5 +1,7 @@
 2008-02-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* tramp-amd64.c (mono_arch_patch_callsite): Add more diagnostics.
+
 	* inssel.brg mini-<ARCH>.c cpu-<ARCH>.md: Get rid of unused CEE_RET opcode.
 
 	* mini-<ARCH>.c cpu-<ARCH>.md: Get rid of unused LDIND/STIND opcodes.
