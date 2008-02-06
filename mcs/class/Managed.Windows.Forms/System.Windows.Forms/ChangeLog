@@ -1,3 +1,9 @@
+2008-02-06  Andreia Gaita <avidigal@novell.com>
+	[Backport to 1.9]
+	* PrintControllerWithStatusDialog.cs: Set PrintFileName value through
+	reflection only on 1.1, this property is public on system.drawing on 2.0.
+	Fixed #359247
+
 2008-02-05  Jonathan Pobst  <monkey@jpobst.com>
 	[Backport to 1.9]
 	* Form.cs: If we change the active MDI child form, let the others
