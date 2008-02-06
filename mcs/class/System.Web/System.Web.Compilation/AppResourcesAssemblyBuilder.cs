@@ -114,6 +114,9 @@ namespace System.Web.Compilation
 				cp.EmbeddedResources.Add (f);
 			
 			CompilerResults results = abuilder.BuildAssembly (cp);
+			if (results == null)
+				return;
+			
 			Assembly ret = null;
 			
 			if (results.NativeCompilerReturnValue == 0) {

@@ -508,8 +508,13 @@ namespace System.Web.Compilation {
 			// files. This also facilates possible debugging for the
 			// end user, since they get the code beforehand.
 			List <string> files = SourceFiles;
+
+			if (units.Length == 0 && files.Count == 0)
+				return null;
+			
 			string filename;
 			StreamWriter sw = null;
+			
 			foreach (CodeCompileUnit unit in units) {
 				filename = GetTempFilePhysicalPath (provider.FileExtension);
 				try {

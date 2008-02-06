@@ -257,6 +257,9 @@ namespace System.Web.Compilation
 			foreach (Assembly a in BuildManager.TopLevelAssemblies)
 				parameters.ReferencedAssemblies.Add (a.Location);
 			CompilerResults results = abuilder.BuildAssembly (parameters);
+			if (results == null)
+				return;
+			
 			if (results.NativeCompilerReturnValue == 0) {
 				BuildManager.CodeAssemblies.Add (results.CompiledAssembly);
 				BuildManager.TopLevelAssemblies.Add (results.CompiledAssembly);
