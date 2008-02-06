@@ -1,4 +1,8 @@
 2008-02-06  Massimiliano Mantione  <massi@ximian.com>
+	*class.c: use_new_interface_vtable_code: renamed the env var to have
+	a "MONO_" prefix, and fix the logic to enable it by default.
+
+2008-02-06  Massimiliano Mantione  <massi@ximian.com>
 	*class.c:
 	mono_class_setup_vtable_general: rewrote the way in which interface
 	methods are added to vtables. Makes bug-77127.exe pass, and hopefully
