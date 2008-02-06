@@ -1,5 +1,7 @@
 2008-02-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* cpu-sparc.md (sparc_setfreg_float): Fix the sparc build.
+
 	* mini-ops.h: Add new opcodes OP_CALL/OP_CALLVIRT.
 
 	* *.c: Use the new opcodes in the IR and back end code.
