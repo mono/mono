@@ -1,5 +1,7 @@
 2008-02-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-s390.c cpu-s390.md: Preliminary S390 port work.
+
 	* linear-scan.c (mono_linear_scan2): Avoid using GMAXINT32 which is not
 	defined in older glib versions.
 
