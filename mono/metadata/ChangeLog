@@ -1,3 +1,11 @@
+2008-02-06  Massimiliano Mantione  <massi@ximian.com>
+	*class.c:
+	mono_class_setup_vtable_general: rewrote the way in which interface
+	methods are added to vtables. Makes bug-77127.exe pass, and hopefully
+	makes the code more maintainable.
+	For now the old code is still there, and can be activated setting
+	the env var "USE_NEW_INTERFACE_VTABLE_CODE".
+
 2008-02-06 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c: guarded some debug functions around and #ifdef.
