@@ -508,8 +508,9 @@ namespace System.Web.Compilation {
 			// files. This also facilates possible debugging for the
 			// end user, since they get the code beforehand.
 			List <string> files = SourceFiles;
+			Dictionary <string, string> resources = ResourceFiles;
 
-			if (units.Length == 0 && files.Count == 0)
+			if (units.Length == 0 && files.Count == 0 && resources.Count == 0 && options.EmbeddedResources.Count == 0)
 				return null;
 			
 			string filename;
@@ -530,7 +531,7 @@ namespace System.Web.Compilation {
 					}
 				}
 			}
-			Dictionary <string, string> resources = ResourceFiles;
+
 			foreach (KeyValuePair <string, string> de in resources)
 				options.EmbeddedResources.Add (de.Value);
 			foreach (Assembly refasm in ReferencedAssemblies)

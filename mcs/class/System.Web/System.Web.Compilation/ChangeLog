@@ -3,8 +3,9 @@
 	* GenericBuildProvider.cs: GetGeneratedType may return a type even
 	though the results are null.
 
-	* AssemblyBuilder.cs: if there are no units and no source files,
-	do not attempt to compile the assembly.
+	* AssemblyBuilder.cs: if there are no units, no source files, no
+	resources and no embedded resources in the passed options then
+	do not attempt to compile the assembly. Fixes bug #359325
 
 	* AppResourcesAssemblyBuilder.cs, AppCodeCompiler.cs: expect that
 	BuildAssembly may return null results.
