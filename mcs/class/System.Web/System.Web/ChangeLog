@@ -5,6 +5,8 @@
 
 	* HttpRuntime.cs: when switching to offline mode fire the
 	shutdown events. Fixes bug #357565.
+	Watch for Created event in the FileSystemWatcher for the
+	app_offline.htm files.
 
 2008-01-27  Igor Zelmanovich <igorz@mainsoft.com>
 
