@@ -1,3 +1,12 @@
+2008-02-06 Rodrigo Kumpera <rkumpera@novell.com>
+	* valid_merge_base_type.cs
+	* valid_merge_first_value_is_base_type.cs:
+	* valid_merge_interface_type_3.cs: 
+	* valid_merge_interface_type_4.cs:
+	* valid_merge_interface_type.cs:
+	* valid_merge_second_value_is_base_type.cs: New tests for stack merging.
+	These tests verify the correctness of the merged value.
+
 2008-01-30 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_tests.sh: More tests for brtrue/brfalse with boxed values
