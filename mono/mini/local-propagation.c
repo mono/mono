@@ -35,6 +35,10 @@
         (dest)->inst_p1 = (gpointer)(gssize)(imm); \
 	} while (0)
 
+#ifndef MONO_ARCH_IS_OP_MEMBASE
+#define MONO_ARCH_IS_OP_MEMBASE(opcode) FALSE
+#endif
+
 #define MONO_DEBUG_LOCAL_PROP 0
 #define MONO_DEBUG_TREE_MOVER 0
 #define MONO_DUMP_TREE_MOVER 0

@@ -121,8 +121,6 @@ typedef struct MonoCompileArch {
 
 #define MONO_ARCH_AOT_SUPPORTED 1
 
-#define MONO_ARCH_IS_OP_MEMBASE(opcode) FALSE
-
 /* we have the stack pointer, not the base pointer in sigcontext */
 #define MONO_CONTEXT_SET_IP(ctx,ip) do { (ctx)->eip = (int)ip; } while (0); 
 #define MONO_CONTEXT_SET_BP(ctx,bp) do { (ctx)->ebp = (int)bp; } while (0); 

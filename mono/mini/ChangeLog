@@ -1,5 +1,13 @@
 2008-02-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* linear-scan.c (mono_linear_scan2): Avoid using GMAXINT32 which is not
+	defined in older glib versions.
+
+	* local-propagation.c: Add a default definition for MONO_ARCH_IS_OP_MEMBASE ()
+	if not defined.
+
+	* mini-<ARCH>.h: Remove MONO_ARCH_IS_OP_MEMBASE () definition.
+
 	* mini-s390.c mini-s390x.c: Get rid of CEE_ opcodes.
 
 	* cpu-<ARCH>.md mini-<ARCH>.c: Get rid of the unused CEE_LDIND/STIND opcodes.

@@ -366,7 +366,7 @@ mono_linear_scan2 (MonoCompile *cfg, GList *vars, GList *regs, regmask_t *used_m
 
 		/* Find a register for the current interval */
 		for (i = 0; i < n_regs; ++i)
-			free_pos [i] = G_MAXINT32;
+			free_pos [i] = ((gint32)0x7fffffff);
 
 		for (l = active; l != NULL; l = l->next) {
 			MonoMethodVar *v = (MonoMethodVar*)l->data;
