@@ -1,5 +1,9 @@
 2008-02-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ops.h: Add new opcodes OP_CALL/OP_CALLVIRT.
+
+	* *.c: Use the new opcodes in the IR and back end code.
+
 	* mini-ops.h cpu-<ARCH>.md: Correct the name of the bgt_un opcodes.
 
 	* mini-amd64.c (emit_call_body): Use a far-call for calling dynamic methods.
