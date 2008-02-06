@@ -403,6 +403,7 @@ namespace System.Web {
 					watcher.NotifyFilter |= NotifyFilters.Size;
 					watcher.Deleted += seh;
 					watcher.Changed += seh;
+					watcher.Created += seh;
 					watcher.Renamed += reh;
 					watcher.EnableRaisingEvents = true;
 					
