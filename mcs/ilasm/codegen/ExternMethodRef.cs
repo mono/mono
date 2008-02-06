@@ -81,7 +81,7 @@ namespace Mono.ILASM {
                                 if (in_opt) {
                                         typeref.Resolve (code_gen);
                                         opt_list.Add (typeref.PeapiType);
-                                } else if (TypeRef.Ellipsis == typeref) {
+                                } else if (typeref is SentinelTypeRef) {
                                         in_opt = true;
                                 } else {
                                         typeref.Resolve (code_gen);

@@ -1,3 +1,8 @@
+2008-02-06  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #358496.
+	* ExternMethodRef.cs (ResolveVararg): Fix the check for sentinel.
+
 2007-12-31  Rodrigo Kumpera <rkumpera@novell.com>
 
 	* ilasm.exe.sources: added EmiteByteInst.cs.
