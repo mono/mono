@@ -1,3 +1,7 @@
+2008-02-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (emit_call_body): Use a far-call for calling dynamic methods.
+
 2008-02-06  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-trampolines.c (mono_generic_class_init_trampoline): Removed
