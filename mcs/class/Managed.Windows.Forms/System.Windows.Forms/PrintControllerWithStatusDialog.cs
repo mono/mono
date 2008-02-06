@@ -79,9 +79,16 @@ namespace System.Windows.Forms
 
 		void Set_PrinterSettings_PrintFileName (PrinterSettings settings, string filename)
 		{
-			PropertyInfo PrintFileName = typeof (PrinterSettings).GetProperty ("PrintFileName", BindingFlags.NonPublic | BindingFlags.Instance);
-
-			PrintFileName.SetValue (settings, filename, null);
+			#if NET_2_0
+				settings.PrintFileName = filename;
+			#else
+			
+				PropertyInfo printFileName = typeof (PrinterSettings).GetProperty ("PrintFileName", BindingFlags.NonPublic | BindingFlags.Instance);
+				if (printFileName == null) {
+					throw new Exception ("Unable to set filename to print");
+				}
+				printFileName.SetValue (settings, filename, null);
+			#endif
 		}
 
 		public override void OnStartPrint(PrintDocument document, PrintEventArgs e) {
