@@ -150,7 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Mono.Mozilla\Mono.Mozilla2K5.csproj">
-      <Project>{3A1F2BAF-B92F-4F90-8250-A0F04ACCEAD0}</Project>
+      <Project>{5E6C996A-007F-40CE-B244-006EFCFB77D2}</Project>
       <Name>Mono.Mozilla2K5</Name>
     </ProjectReference>
   </ItemGroup>
@@ -173,6 +173,7 @@
     <Compile Include="System.Windows.Forms.Design\ToolStripItemDesignerAvailability.cs" />
     <Compile Include="System.Windows.Forms.Design\ToolStripItemDesignerAvailabilityAttribute.cs" />
     <Compile Include="System.Windows.Forms.Design\WindowsFormsComponentEditor.cs" />
+    <Compile Include="System.Windows.Forms.PropertyGridInternal\PropertiesTab.cs" />
     <Compile Include="System.Windows.Forms.RTF\Charcode.cs" />
     <Compile Include="System.Windows.Forms.RTF\Charset.cs" />
     <Compile Include="System.Windows.Forms.RTF\CharsetFlags.cs" />
@@ -694,7 +695,6 @@
     <Compile Include="System.Windows.Forms\ProgressBar.cs" />
     <Compile Include="System.Windows.Forms\ProgressBarRenderer.cs" />
     <Compile Include="System.Windows.Forms\ProgressBarStyle.cs" />
-    <Compile Include="System.Windows.Forms\PropertiesTab.cs" />
     <Compile Include="System.Windows.Forms\PropertyGrid.cs" />
     <Compile Include="System.Windows.Forms\PropertyGridCommands.cs" />
     <Compile Include="System.Windows.Forms\PropertyGridTextBox.cs" />

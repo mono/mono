@@ -1,3 +1,9 @@
+2008-02-06  Andreia Gaita <avidigal@novell.com>
+
+	* build-csproj2k5: fixed mono.mozilla project guid
+	* SWF2K5.csproj: synched to sources
+	* SWF2k5.sln: updated with proper mono.mozilla guid	
+
 2008-02-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* System.Windows.Forms_test.dll.sources: Added
