@@ -1,5 +1,10 @@
 2008-02-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-s390.c (mono_arch_get_inst_for_method): Remove the Interlocked cases
+	as they are handled in mini.c.
+
+	* mini-s390x.c (mono_arch_get_inst_for_method): Ditto.
+	
 	* mini-<ARCH>.c (mono_arch_get_inst_for_method): Remove the MemoryBarrier
 	case since it is handled in mini.c.
 
