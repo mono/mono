@@ -459,6 +459,8 @@ namespace System.Windows.Forms {
 			} else if (sizegrip != null) {
 				sizegrip.Visible = false;
 			}
+			
+			XplatUI.InvalidateNC (Handle);
 		}
 
 		private void CalcHBar (int left, int right, bool vert_vis)

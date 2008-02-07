@@ -1,5 +1,11 @@
 2008-02-07  Jonathan Pobst  <monkey@jpobst.com>
 
+	* MdiClient.cs: After we move the scrollbars, invalidate the NC
+	area, so any old scrollbar artifacts are cleaned up.
+	[Fixes bug #336305]
+
+2008-02-07  Jonathan Pobst  <monkey@jpobst.com>
+
 	* MdiWindowManager.cs: If we are maximized and using MainMenuStrip
 	for our menus, display that control box menu instead of the 1.1
 	menu one.
