@@ -1,4 +1,20 @@
 2008-02-06 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* valid_boxed_enum_is_compatible_with_system_enum.cs: Added. 
+	Test if an enum is compatible with System.Enum.
+
+	* valid_merge_boxed_type.cs: Added. Test merging
+	a boxed int32 with a reference type.
+
+	* valid_merge_boxed_type_2.cs: Same.
+
+	* make_ldelem_test.sh: Added some enums to be used by the tests.
+
+	* make_tests.sh: New tests for ldelem compatibility between enums
+	and their base type. Marked some tests as strict.
+
+2008-02-06 Rodrigo Kumpera <rkumpera@novell.com>
+
 	* valid_merge_base_type.cs
 	* valid_merge_first_value_is_base_type.cs:
 	* valid_merge_interface_type_3.cs: 
