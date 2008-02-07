@@ -1,3 +1,7 @@
+2008-02-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* HttpException.cs: Removed CWL.
+
 2008-02-07  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpException.cs: more exception output compatibility changes to

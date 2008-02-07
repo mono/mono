@@ -268,8 +268,6 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 		
 		string GetDefaultErrorMessage ()
 		{
-			Console.WriteLine ("GetDefaultErrorMessage ()");
-			
 			Exception ex, baseEx;
 			ex = baseEx = GetBaseException ();
 			if (ex == null)
