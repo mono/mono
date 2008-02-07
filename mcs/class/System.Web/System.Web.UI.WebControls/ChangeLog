@@ -1,3 +1,7 @@
+2008-02-07 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* Login.cs: render id attribute of root element correctly.
+
 2008-02-05  Marek Habersack  <mhabersack@novell.com>
 
 	* FileUpload.cs: make sure FileContent always returns the input

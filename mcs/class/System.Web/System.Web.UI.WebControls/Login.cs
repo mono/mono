@@ -60,6 +60,12 @@ namespace System.Web.UI.WebControls {
 				ID = _owner.ID;
 			}
 
+			public override string ClientID {
+				get {
+					return _owner.ClientID;
+				}
+			}
+
 			public void InstantiateTemplate (ITemplate template)
 			{
 				template.InstantiateIn (_containerCell);
