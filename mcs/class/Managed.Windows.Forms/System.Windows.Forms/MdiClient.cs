@@ -841,13 +841,28 @@ namespace System.Windows.Forms {
 					if (c is MenuStrip)
 						child_menu = (MenuStrip)c;
 
-				RemoveControlMenuItems (wm);
+				if (form.WindowState != FormWindowState.Maximized)
+					RemoveControlMenuItems (wm);
 				
 				if (form.WindowState == FormWindowState.Maximized) {
-					parent_menu.Items.Insert (0, new MdiControlStrip.SystemMenuItem (form));
-					parent_menu.Items.Add (new MdiControlStrip.ControlBoxMenuItem (form, MdiControlStrip.ControlBoxType.Close));
-					parent_menu.Items.Add (new MdiControlStrip.ControlBoxMenuItem (form, MdiControlStrip.ControlBoxType.Max));
-					parent_menu.Items.Add (new MdiControlStrip.ControlBoxMenuItem (form, MdiControlStrip.ControlBoxType.Min));
+					bool found = false;
+					
+					foreach (ToolStripItem tsi in parent_menu.Items) {
+						if (tsi is MdiControlStrip.SystemMenuItem) {
+							(tsi as MdiControlStrip.SystemMenuItem).MdiForm = form;
+							found = true;
+						} else if (tsi is MdiControlStrip.ControlBoxMenuItem) {
+							(tsi as MdiControlStrip.ControlBoxMenuItem).MdiForm = form;
+							found = true;
+						}
+					}	
+					
+					if (!found) {
+						parent_menu.Items.Insert (0, new MdiControlStrip.SystemMenuItem (form));
+						parent_menu.Items.Add (new MdiControlStrip.ControlBoxMenuItem (form, MdiControlStrip.ControlBoxType.Close));
+						parent_menu.Items.Add (new MdiControlStrip.ControlBoxMenuItem (form, MdiControlStrip.ControlBoxType.Max));
+						parent_menu.Items.Add (new MdiControlStrip.ControlBoxMenuItem (form, MdiControlStrip.ControlBoxType.Min));
+					}
 				}
 				
 				if (child_menu != null)

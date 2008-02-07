@@ -90,6 +90,11 @@ namespace System.Windows.Forms
 				return;
 			}
 
+			public Form MdiForm {
+				get { return form; }
+				set { form = value; }
+			}
+
 			private void RestoreItemHandler (object sender, EventArgs e)
 			{
 				form.WindowState = FormWindowState.Normal;
@@ -172,6 +177,11 @@ namespace System.Windows.Forms
 				}
 			}
 
+			public Form MdiForm {
+				get { return form; }
+				set { form = value; }
+			}
+			
 			private void RestoreItemHandler (object sender, EventArgs e)
 			{
 				form.WindowState = FormWindowState.Normal;

@@ -1,5 +1,14 @@
 2008-02-07  Jonathan Pobst  <monkey@jpobst.com>
 
+	* MdiControlStrip.cs: Add property to access the mdi form tied to
+	each toolstripitem.
+	* MdiClient.cs: Be smarter about removing and adding toolstripitems
+	to the implicitly merged menu.  Every time we clicked the form, items
+	were getting removed and the re-added, causing the form to jump around
+	as the menu resized.
+
+2008-02-07  Jonathan Pobst  <monkey@jpobst.com>
+
 	* MdiClient.cs: Make sure the NormalBounds always gets set.  It
 	was being reset by the implicit menu merge for menustrips.
 	[Fixes bug #336296]
