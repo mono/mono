@@ -343,6 +343,35 @@ namespace MonoTests.System.Windows.Forms
 			TearDown ();
 		}
 		
+		[Test]
+		public void NewFormShouldAlsoBeMaximized ()
+		{
+			Form parent = new Form ();
+			
+			Form child1 = new Form ();
+			Form child2 = new Form ();
+			
+			parent.ShowInTaskbar = false;
+			parent.IsMdiContainer = true;
+			parent.ClientSize = new Size (300, 300);
+			
+			parent.Show ();
+			
+			child1.MdiParent = parent;
+			child1.Show ();
+			
+			child1.WindowState = FormWindowState.Maximized;
+			
+			child2.MdiParent = parent;
+			child2.ClientSize = new Size (100, 100);
+			child2.Show ();
+
+			Assert.IsTrue (child2.Width > 200, "Width should be maximized");
+			Assert.IsTrue (child2.Height > 200, "Height should be maximized");
+			
+			parent.Dispose ();
+		}
+		
 		/* These tests are all failing on WinXP with XP Theme. 
 		 * offset seems to be 22,22 normally, and 22,29 with XP theme.
 		 * Find a way to test this reliably.
