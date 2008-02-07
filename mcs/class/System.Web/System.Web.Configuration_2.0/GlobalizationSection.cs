@@ -209,7 +209,7 @@ namespace System.Web.Configuration {
 				auto = true;
 				if (culture.Length > 5 && culture[4] == ':')
 					return new CultureInfo (culture.Substring (5));
-				return new CultureInfo (0x007f);
+				return CultureInfo.InvariantCulture;// (0x007f);
 			}
 
 			return new CultureInfo (culture);
