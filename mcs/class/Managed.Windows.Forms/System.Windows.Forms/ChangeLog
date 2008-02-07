@@ -1,3 +1,10 @@
+2008-02-07  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Form.cs: When becoming visible, if we are an MDI child, call
+	SetWindowState with a dummy old_state so that changes will actually
+	be made.
+	[Fixes the 2nd part of bug #325473]
+
 2008-02-07  Andreia Gaita <avidigal@novell.com>
 
 	* Control.cs: Reset properties to their pre parent-change values in case
