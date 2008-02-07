@@ -1,5 +1,10 @@
 2008-02-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_normalize_opcodes): New mini pass to convert CEE_ opcodes to
+	the corresponding OP_I/OP_L opcodes.
+
+	* mini-amd64.c mini-amd64.h cpu-amd64.md: Get rid of CEE_ opcodes.
+
 	* mini-sparc.c (mono_arch_output_basic_block): Fix the sparc build.
 
 2008-02-06  Zoltan Varga  <vargaz@gmail.com>
