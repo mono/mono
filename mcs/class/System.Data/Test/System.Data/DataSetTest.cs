@@ -1025,7 +1025,7 @@ namespace MonoTests.System.Data
 			ds.WriteXmlSchema (xw);
 
 			string result = sw.ToString ();
-			Assert.AreEqual (result.Replace ("\r\n", "\n"), schema);
+			Assert.AreEqual (result.Replace ("\r\n", "\n"), schema.Replace ("\r\n", "\n"));
 		}
 
 		[Test]
@@ -1066,7 +1066,7 @@ namespace MonoTests.System.Data
 			ser.Serialize (xw, ds);
 
 			string result = sw.ToString ();
-			Assert.AreEqual (result.Replace ("\r\n", "\n"), xml);
+			Assert.AreEqual (result.Replace ("\r\n", "\n"), xml.Replace ("\r\n", "\n"));
 		}
 
 		// bug #70961
@@ -1414,7 +1414,7 @@ namespace MonoTests.System.Data
 			ds.Relations.Add (rel);
 			StringWriter sw = new StringWriter ();
 			ds.WriteXml (sw);
-			Assert.AreEqual (sw.ToString ().Replace ("\r\n", "\n"), xml);
+			Assert.AreEqual (sw.ToString ().Replace ("\r\n", "\n"), xml.Replace ("\r\n", "\n"));
 		}
 
 		[Test]
@@ -1436,7 +1436,7 @@ namespace MonoTests.System.Data
     <col3>sample text 2</col3>
   </table2>
 </set>";
-			Assert.AreEqual (sr.ReadToEnd ().Replace ("\r\n", "\n"), result);
+			Assert.AreEqual (sr.ReadToEnd ().Replace ("\r\n", "\n"), result.Replace ("\r\n", "\n"));
 		}
 
 		[Test]
@@ -1453,7 +1453,7 @@ namespace MonoTests.System.Data
 			ds.Tables [0].Rows.Add (new object [] {"content string."});
 			StringWriter sw = new StringWriter ();
 			ds.WriteXml (sw);
-			Assert.AreEqual (sw.ToString ().Replace ("\r\n", "\n"), xml);
+			Assert.AreEqual (sw.ToString ().Replace ("\r\n", "\n"), xml.Replace ("\r\n", "\n"));
 		}
 
 		[Test]
@@ -1493,7 +1493,7 @@ namespace MonoTests.System.Data
 			xtw.QuoteChar = '\'';
 			ds.WriteXml (xtw);
 			xtw.Flush ();
-			Assert.AreEqual (input, sw.ToString ().Replace ("\r\n", "\n"));
+			Assert.AreEqual (input.Replace ("\r\n", "\n"), sw.ToString ().Replace ("\r\n", "\n"));
 		}
 
 		[Test] // bug #60469
@@ -1556,7 +1556,7 @@ namespace MonoTests.System.Data
 			result = sw.ToString ();
 
 			result = result.Replace ("\r\n", "\n").Replace ('"', '\'');
-			Assert.AreEqual (schema, result);
+			Assert.AreEqual (schema.Replace ("\r\n", "\n"), result);
 		}
 
 		// bug #66366
@@ -1605,7 +1605,7 @@ namespace MonoTests.System.Data
 
 			string result = sw.ToString ();
 
-			Assert.AreEqual (result.Replace ("\r\n", "\n"), xmlschema);
+			Assert.AreEqual (result.Replace ("\r\n", "\n"), xmlschema.Replace ("\r\n", "\n"));
 		}
 
 		// bug #67792.
@@ -1653,7 +1653,7 @@ namespace MonoTests.System.Data
 
 			string result = sw.ToString ();
 
-			Assert.AreEqual (result.Replace ("\r\n", "\n"), xmlschema);
+			Assert.AreEqual (result.Replace ("\r\n", "\n"), xmlschema.Replace ("\r\n", "\n"));
 		}
 
 		// bug # 68432
@@ -1767,7 +1767,7 @@ namespace MonoTests.System.Data
 
 			string result = sw.ToString ();
 
-			Assert.AreEqual (result.Replace ("\r\n", "\n"), xmlschema);
+			Assert.AreEqual (result.Replace ("\r\n", "\n"), xmlschema.Replace ("\r\n", "\n"));
 		}
 
 		// bug #67793
@@ -1816,7 +1816,7 @@ namespace MonoTests.System.Data
 
 			string result = sw.ToString ();
 
-			Assert.AreEqual (result.Replace ("\r\n", "\n"), xmlschema);
+			Assert.AreEqual (result.Replace ("\r\n", "\n"), xmlschema.Replace ("\r\n", "\n"));
 		}
 
 		// bug #68008
@@ -1872,7 +1872,7 @@ namespace MonoTests.System.Data
 
 			string result = sw.ToString ();
 
-			Assert.AreEqual (result.Replace ("\r\n", "\n"), xml);
+			Assert.AreEqual (result.Replace ("\r\n", "\n"), xml.Replace ("\r\n", "\n"));
 		}
 
 		[Test]
@@ -2015,7 +2015,7 @@ namespace MonoTests.System.Data
 
 			string result = sw.ToString ();
 
-			Assert.AreEqual (result.Replace ("\r\n", "\n"), xml);
+			Assert.AreEqual (result.Replace ("\r\n", "\n"), xml.Replace ("\r\n", "\n"));
 		}
 
 		[Test]

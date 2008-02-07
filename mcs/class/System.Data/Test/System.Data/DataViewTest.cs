@@ -716,7 +716,7 @@ table was set.
 
 			dc2.ColumnName = "new_column_name";
 
-			AssertEquals (result, eventWriter.ToString ().Replace ("\r\n", "\n"));
+			AssertEquals (result.Replace ("\r\n", "\n"), eventWriter.ToString ().Replace ("\r\n", "\n"));
 		}
 
 		private void ListChanged (object o, ListChangedEventArgs e)
@@ -780,7 +780,7 @@ removed relation 2
 			ds.Relations.Remove (dr);
 			eventWriter.WriteLine ("removed relation 2");
 
-			AssertEquals (result, eventWriter.ToString ().Replace ("\r\n", "\n"));
+			AssertEquals (result.Replace ("\r\n", "\n"), eventWriter.ToString ().Replace ("\r\n", "\n"));
 		}
 
 		[Test]
@@ -892,7 +892,7 @@ table changed.
 			dv.Table = new DataTable ("table2");
 			eventWriter.WriteLine ("table changed.");
 
-			AssertEquals (result, eventWriter.ToString ().Replace ("\r\n", "\n"));
+			AssertEquals (result.Replace ("\r\n", "\n"), eventWriter.ToString ().Replace ("\r\n", "\n"));
 		}
 
 		[Test]
@@ -958,7 +958,7 @@ table was set.
 			dt.Columns.Add ("");
 			eventWriter.WriteLine (" add a column with an empty name.");
 
-			AssertEquals (result, eventWriter.ToString ().Replace ("\r\n", "\n"));
+			AssertEquals (result.Replace ("\r\n", "\n"), eventWriter.ToString ().Replace ("\r\n", "\n"));
 		}
 
 		public class ComplexEventSequence1View : DataView
