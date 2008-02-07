@@ -1,5 +1,11 @@
 2008-02-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-s390.c mini-s390.h cpu-s390.md: Get rid of CEE_ opcodes.
+
+	* mini.c (mono_normalize_opcodes): Add some more opcodes.
+
+	* mini-arm.c mini-arm.h cpu-arm.md: Get rid of CEE_ opcodes.
+
 	* cpu-amd64.md: Remove some unused opcodes.
 
 	* mini-sparc.c mini-sparc.h cpu-sparc.md: Get rid of CEE_ opcodes.
