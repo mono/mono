@@ -48,7 +48,7 @@ namespace System.Web.Configuration {
 		static IInternalConfigConfigurationFactory configFactory;
 		static Hashtable configurations = Hashtable.Synchronized (new Hashtable ());
 #else
-		static readonly object AppSettingsKey = new object ();
+		const string AppSettingsKey = "WebConfigurationManager.AppSettings";
 		static internal IInternalConfigConfigurationFactory configFactory
 		{
 			get{
@@ -275,12 +275,18 @@ namespace System.Web.Configuration {
 #if TARGET_J2EE
 			object value = get_runtime_object.Invoke (section, new object [0]);
 			if (String.CompareOrdinal ("appSettings", sectionName) == 0) {
-				HttpContext hc = HttpContext.Current;
-				NameValueCollection collection = (NameValueCollection) hc.Items [AppSettingsKey];
+				AppDomain appDomain = AppDomain.CurrentDomain;
+				Hashtable settingsCache = (Hashtable) appDomain.GetData (AppSettingsKey);
+				if (settingsCache == null) {
+					settingsCache = Hashtable.Synchronized (new Hashtable ());
+					appDomain.SetData (AppSettingsKey, settingsCache);
+				}
+
+				NameValueCollection collection = (NameValueCollection) settingsCache [c];
 
 				if (collection == null) {
-					collection = new KeyValueMergedCollection (hc, (NameValueCollection) value);
-					hc.Items [AppSettingsKey] = collection;
+					collection = new KeyValueMergedCollection (HttpContext.Current, (NameValueCollection) value);
+					settingsCache [c] = collection;
 				}
 
 				value = collection;
