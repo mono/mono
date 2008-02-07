@@ -471,14 +471,12 @@ namespace System.Web.UI
 
 			public void readExternal (java.io.ObjectInput __p1)
 			{
-				Console.WriteLine ("readExternal: " + CurrentPage);
 				ObjectStateFormatter osf = new ObjectStateFormatter (CurrentPage);
 				_state = osf.Deserialize (new ObjectInputStream (__p1));
 			}
 
 			public void writeExternal (java.io.ObjectOutput __p1)
 			{
-				Console.WriteLine ("writeExternal: " + CurrentPage);
 				ObjectStateFormatter osf = new ObjectStateFormatter (CurrentPage);
 				osf.Serialize (new ObjectOutputStream (__p1), _state);
 			}
