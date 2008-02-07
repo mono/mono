@@ -130,5 +130,12 @@ namespace System.Web {
 			Request.SetWorkerRequest (wr);
 			Response.SetWorkerRequest (wr);
 		}
+
+		private Page _currentHandlerInternal;
+		internal Page CurrentHandlerInternal
+		{
+			get { return _currentHandlerInternal; }
+			set { _currentHandlerInternal = value; }
+		}
 	}
 }

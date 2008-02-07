@@ -43,6 +43,7 @@ using javax.faces.el;
 using javax.faces.component;
 using System.Threading;
 using System.Web.Configuration;
+using Mainsoft.Web.Hosting;
 
 namespace System.Web.UI
 {
@@ -106,6 +107,8 @@ namespace System.Web.UI
 			_context.PushHandler (this);
 			if (jsfHandler == _context.Handler)
 				_context.Handler = this;
+			
+			_context.CurrentHandlerInternal = this;
 
 			return jsfHandler;
 		}
@@ -200,17 +203,7 @@ namespace System.Web.UI
 			System.Diagnostics.Trace.WriteLine ("processSaveState");
 
 			object state = new Pair (_state, GetValidatorsState ());
-			if (getFacesContext ().getApplication ().getStateManager ().isSavingStateInClient (getFacesContext ())) {
-				int length;
-				byte [] buffer = new ObjectStateFormatter (this).SerializeInternal (state, out length);
-				if (buffer.Length != length) {
-					byte [] trimmedBuffer = new byte [length];
-					Array.Copy (buffer, trimmedBuffer, length);
-					buffer = trimmedBuffer;
-				}
-				state = vmw.common.TypeUtils.ToSByteArray (buffer);
-			}
-			return state;
+			return new StateSerializer (state);
 		}
 
 		public override void processRestoreState (FacesContext context, object state) {
@@ -220,10 +213,7 @@ namespace System.Web.UI
 				throw new ArgumentNullException ("state");
 			IHttpHandler jsfHandler = EnterThread ();
 			try {
-				if (getFacesContext ().getApplication ().getStateManager ().isSavingStateInClient (getFacesContext ())) {
-					byte [] buffer = (byte []) vmw.common.TypeUtils.ToByteArray ((sbyte []) state);
-					state = new ObjectStateFormatter (this).DeserializeInternal (buffer);
-				}
+				state = ((StateSerializer) state).State;
 				_state = (Pair) ((Pair) state).First;
 				_validatorsState = (bool []) ((Pair) state).Second;
 				RestorePageState ();
@@ -458,6 +448,53 @@ namespace System.Web.UI
 				_writer.Write (__p1, __p2, __p3);
 			}
 		}
+		#endregion
+
+		#region StateSerializer
+		public sealed class StateSerializer : java.io.Externalizable
+		{
+			object _state;
+
+			public StateSerializer ()
+			{
+			}
+
+			public StateSerializer (object state)
+			{
+				_state = state;
+			}
+
+			public object State
+			{
+				get { return _state; }
+			}
+
+			public void readExternal (java.io.ObjectInput __p1)
+			{
+				Console.WriteLine ("readExternal: " + CurrentPage);
+				ObjectStateFormatter osf = new ObjectStateFormatter (CurrentPage);
+				_state = osf.Deserialize (new ObjectInputStream (__p1));
+			}
+
+			public void writeExternal (java.io.ObjectOutput __p1)
+			{
+				Console.WriteLine ("writeExternal: " + CurrentPage);
+				ObjectStateFormatter osf = new ObjectStateFormatter (CurrentPage);
+				osf.Serialize (new ObjectOutputStream (__p1), _state);
+			}
+
+			private Page CurrentPage
+			{
+				get
+				{
+					HttpContext context = HttpContext.Current;
+					if (context.CurrentHandler is Page)
+						return (Page) context.CurrentHandler;
+					
+					return context.CurrentHandlerInternal;
+				}
+			}
+		} 
 		#endregion
 	}
 }

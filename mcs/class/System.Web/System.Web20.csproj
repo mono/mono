@@ -1161,6 +1161,8 @@
     <Compile Include="System.Web.Configuration\FileMatchingInfo.cs" />
     <Compile Include="System.Web.Configuration_2.0\AppSettings.jvm.cs" />
     <Compile Include="System.Web.Configuration_2.0\MachineKeySectionUtils.cs" />
+    <Compile Include="System.Web.J2EE\ObjectInputStream.cs" />
+    <Compile Include="System.Web.J2EE\ObjectOutputStream.cs" />
     <Compile Include="System.Web.Security\AspNetDBSchemaChecker.cs" />
     <Compile Include="System.Web.SessionState\HttpSessionState.cs" />
     <Compile Include="System.Web.SessionState\ISessionHandler.cs" />
