@@ -587,6 +587,8 @@ namespace System.Web.UI {
 			string legacySrc = GetString (atts, "Src", null);
 			if (legacySrc != null) {
 				legacySrc = UrlUtils.Combine (BaseVirtualDir, legacySrc);
+				GetAssemblyFromSource (legacySrc);
+
 				if (src == null) {
 					src = legacySrc;
 					legacySrc = MapPath (legacySrc, false);
@@ -596,9 +598,8 @@ namespace System.Web.UI {
 					
 					srcIsLegacy = true;
 				} else 
-					legacySrc = MapPath (legacySrc, false);
-				
-				GetAssemblyFromSource (legacySrc);
+					legacySrc = MapPath (legacySrc, false);				
+
 				AddDependency (legacySrc);
 			}
 			
@@ -793,17 +794,33 @@ namespace System.Web.UI {
 			this.language = language;
 			implicitLanguage = false;
 		}
-		
+
 		Assembly GetAssemblyFromSource (string vpath)
-		{
+		{			
 			vpath = UrlUtils.Combine (BaseVirtualDir, vpath);
 			string realPath = MapPath (vpath, false);
 			if (!File.Exists (realPath))
 				ThrowParseException ("File " + vpath + " not found");
 
 			AddSourceDependency (vpath);
+			
+			CompilerResults result;
 
-			CompilerResults result = CachingCompiler.Compile (language, realPath, realPath, assemblies, Debug);
+#if NET_2_0
+			string tmp;
+			CompilerParameters parameters;
+			CodeDomProvider provider = BaseCompiler.CreateProvider (HttpContext.Current, language, out parameters, out tmp);
+			if (provider == null)
+				throw new HttpException ("Cannot find provider for language '" + language + "'.");
+			
+			AssemblyBuilder abuilder = new AssemblyBuilder (provider);
+			abuilder.CompilerOptions = parameters;
+			abuilder.AddAssemblyReference (BuildManager.GetReferencedAssemblies () as List <Assembly>);
+			abuilder.AddCodeFile (realPath);
+			result = abuilder.BuildAssembly (vpath);
+#else
+			result = CachingCompiler.Compile (language, realPath, realPath, assemblies, Debug);
+#endif
 			if (result.NativeCompilerReturnValue != 0) {
 				StreamReader reader = new StreamReader (realPath);
 				throw new CompilationException (realPath, result.Errors, reader.ReadToEnd ());
@@ -840,7 +857,12 @@ namespace System.Web.UI {
 		}
 
 		internal string CodeBehindSource {
-			get { return src; }
+			get {
+				if (srcIsLegacy)
+					return null;
+				
+				return src;
+			}
 		}
 			
 		internal string PartialClassName {
