@@ -1,3 +1,35 @@
+2008-02-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_type_is_enum_type): Added. Test if a type is an enum.
+
+	* verify.c (mono_type_get_underlying_type_any): Added. Return the underlying
+	type of an enum even if the argument is byref.
+
+	* verify.c: Replace all explicit uses of enumtype and enum_basetype
+	to calls to mono_type_is_enum_type and mono_type_get_underlying_type_any.
+
+	* verify.c: Check for an enum in all cases of MONO_TYPE_GENERICINST.
+
+	*verify.c (verify_type_compatibility_full): Make enum types
+	compatible with their base types.
+
+	* verify.c (is_compatible_boxed_valuetype): Added. Check if both
+	types are compatible for the special case of a boxed valuetype and
+	System.Object.
+
+	* verify.c (verify_stack_type_compatibility): The function
+	is_compatible_boxed_valuetype was extracted from here.
+
+	* verify.c (push_arg): Only set ctx->has_this_store if the method
+	is not static.
+
+	* verify.c (do_ldelem): Fixed a typo in an error message and added
+	strict check for mixing int32 and native int as the array type
+	and ldelem type.
+
+	* verify.c (merge_stacks): Consider boxed valuetypes in the
+	compatibility checks.
+
 2008-02-07  Massimiliano Mantione  <massi@ximian.com>
 	* profiler.h: (MonoGCEvent): Added start-stop the world events.
 
