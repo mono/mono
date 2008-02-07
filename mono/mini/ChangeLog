@@ -1,5 +1,7 @@
 2008-02-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-x86.c mini-x86.h cpu-x86.md: Get rid of CEE_ opcodes.
+
 	* mini.c mini-<ARCH>.c: Remove mono_arch_local_regalloc (), instead make 
 	arch specific functions for its parts. Call the peephole pass after local
 	regalloc so the prolog can compute a more accurate max_offset.
