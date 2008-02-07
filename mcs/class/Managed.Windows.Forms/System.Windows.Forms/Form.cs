@@ -2160,9 +2160,12 @@ namespace System.Windows.Forms {
 			
 			if (Visible) {
 				if (window_manager != null)
-					// We don't really have an old_state, and if we pass the same thing,
-					// it may not really change the state for us
-					window_manager.SetWindowState ((FormWindowState)(-1), WindowState);
+					if (WindowState == FormWindowState.Normal)
+						window_manager.SetWindowState (WindowState, WindowState);
+					else
+						// We don't really have an old_state, and if we pass the same thing,
+						// it may not really change the state for us
+						window_manager.SetWindowState ((FormWindowState)(-1), WindowState);
 			}
 		}
 

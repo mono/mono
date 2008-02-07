@@ -1,5 +1,10 @@
 2008-02-07  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Form.cs: Don't do the previous change when WindowState = Normal,
+	or it messes up where the window is placed.  Fixes test failure.
+
+2008-02-07  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Form.cs: When becoming visible, if we are an MDI child, call
 	SetWindowState with a dummy old_state so that changes will actually
 	be made.
