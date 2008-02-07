@@ -1,5 +1,7 @@
 2008-02-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* cpu-amd64.md: Remove some unused opcodes.
+
 	* mini-sparc.c mini-sparc.h cpu-sparc.md: Get rid of CEE_ opcodes.
 
 	* mini-x86.c mini-x86.h cpu-x86.md: Get rid of CEE_ opcodes.
