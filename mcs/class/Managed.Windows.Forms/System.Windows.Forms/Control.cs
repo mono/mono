@@ -32,6 +32,7 @@
 
 #undef DebugRecreate
 #undef DebugFocus
+#undef DebugMessages
 
 using System;
 using System.ComponentModel;
@@ -1848,6 +1849,18 @@ namespace System.Windows.Forms
 			// MS doesn't seem to send a CursorChangedEvent
 
 			parent = new_parent;
+
+			// reset properties back to their pre-parent-change values if there is
+			// no new parent (i.e., the control is changing parents because it's
+			// being removed. See #355850)
+			if (parent == null) {
+				is_enabled = pre_enabled;
+				is_visible = pre_visible;
+				font = pre_font;
+				foreground_color = pre_fore_color;
+				background_color = pre_back_color;
+				right_to_left = pre_rtl;
+			}
 
 			Form frm = this as Form;
 			if (frm != null) {
@@ -5119,7 +5132,7 @@ namespace System.Windows.Forms
 		}
 
 		protected virtual void WndProc(ref Message m) {
-#if debug
+#if DebugMessages
 			Console.WriteLine("Control {0} received message {1}", window.Handle == IntPtr.Zero ? this.Text : XplatUI.Window(window.Handle), m.ToString ());
 #endif
 			if ((this.control_style & ControlStyles.EnableNotifyMessage) != 0) {

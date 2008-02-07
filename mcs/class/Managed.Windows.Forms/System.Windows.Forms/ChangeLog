@@ -1,3 +1,10 @@
+2008-02-07  Andreia Gaita <avidigal@novell.com>
+
+	* Control.cs: Reset properties to their pre parent-change values in case
+	the new parent == null (in which case we're basically removing the control, 
+	and don't want any events fired due to fake property changes)
+	[Fixes #355850]
+
 2008-02-06  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* PropertyGridView.cs: 
