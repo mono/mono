@@ -71,13 +71,15 @@ default_handler (int signum)
 {
 	int i;
 	for (i = 0; i < NUM_SIGNALS; ++i) {
+		int fd;
 		signal_info* h = &signals [i];
-		if (h->signum != signum)
+		if (g_atomic_int_get (&h->signum) != signum)
 			continue;
-		++h->count;
-		if (h->write_fd > 0) {
+		g_atomic_int_inc (&h->count);
+		fd = g_atomic_int_get (&h->write_fd);
+		if (fd > 0) {
 			char c = signum;
-			write (h->write_fd, &c, 1);
+			write (fd, &c, 1);
 		}
 	}
 }
@@ -108,8 +110,6 @@ Mono_Unix_UnixSignal_install (int sig)
 				break;
 			}
 			else {
-				h->signum       = sig;
-				h->count        = 0;
 				h->have_handler = 1;
 			}
 		}
@@ -125,6 +125,11 @@ Mono_Unix_UnixSignal_install (int sig)
 	if (h && have_handler) {
 		h->have_handler = 1;
 		h->handler      = handler;
+	}
+
+	if (h) {
+		g_atomic_int_set (&h->count, 0);
+		g_atomic_int_set (&h->signum, sig);
 	}
 
 	pthread_mutex_unlock (&signals_mutex);

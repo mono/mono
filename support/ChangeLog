@@ -1,3 +1,8 @@
+2008-02-07  Jonathan Pryor  <jpryor@novell.com>
+
+	* signal.c: Make the signal handler thread-safe, so that it can safely be
+	  invoked concurrently from multiple threads.
+
 2008-02-05  Jonathan Pryor  <jpryor@novell.com>
 
 	* signal.c: Fix the Win32 build.
