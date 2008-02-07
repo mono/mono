@@ -36,6 +36,7 @@ using System.Security.Permissions;
 using System.Text;
 using System.Web.Util;
 using System.Web.Compilation;
+using System.Collections.Specialized;
 
 namespace System.Web
 {
@@ -48,7 +49,6 @@ namespace System.Web
 	public class HttpException : ExternalException
 	{
 		const string DEFAULT_DESCRIPTION_TEXT = "Error processing request.";
-		const string BOTTOM_EXCEPTION_FORMAT = "<!--\r\n[{0}]: {1}\r\n-->\r\n";
 		const string ERROR_404_DESCRIPTION = "The resource you are looking for (or one of its dependencies) could have been removed, had its name changed, or is temporarily unavailable.  Please review the following URL and make sure that it is spelled correctly.";
 		
 		int http_code = 500;
@@ -134,7 +134,9 @@ namespace System.Web
 					return GetDefaultErrorMessage ();
 				
 				return GetHtmlizedErrorMessage ();
-			} catch {
+			} catch (Exception ex) {
+				Console.WriteLine (ex);
+				
 				// we need the try/catch block in case the
 				// problem was with MapPath, which will cause
 				// IsCustomErrorEnabled to throw an exception
@@ -169,28 +171,47 @@ p {{font-family:{0};font-weight:normal;color:black;margin-top: -5px}}
 b {{font-family:{0};font-weight:bold;color:black;margin-top: -5px}}
 h1 {{ font-family:{0};font-weight:normal;font-size:18pt;color:red }}
 h2 {{ font-family:{0};font-weight:normal;font-size:14pt;color:maroon }}
-pre {{font-family:""Lucida Console"",""DejaVu Sans Mono"",	monospace;font-size: 1.2em}}
+pre {{font-family:""Lucida Console"",""DejaVu Sans Mono"",monospace;font-size: 0.9em}}
 div.bodyText {{font-family: {0}}}
 table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 .errorText {{color: red; font-weight: bold}}
 .marker {{font-weight: bold; color: black;text-decoration: none;}}
 .version {{color: gray;}}
 .error {{margin-bottom: 10px;}}
-.expandable {{ text-decoration:underline; font-weight:bold; color:navy; cursor:hand; }}", errorStyleFonts);
+.expandable {{ text-decoration:underline; font-weight:bold; color:navy; cursor:pointer; }}", errorStyleFonts);
 
 			builder.AppendFormat (
 				"</style></head><body><h1>Server Error in '{0}' Application</h1><hr style=\"color: silver\"/>",
 				HtmlEncode (HttpRuntime.AppDomainAppVirtualPath));
 		}
 		
-		void WriteFileBottom (StringBuilder builder, Exception ex1, Exception ex2)
+		void WriteFileBottom (StringBuilder builder)
 		{
 			builder.Append ("<hr style=\"color: silver\"/>");
-			builder.AppendFormat ("<strong>Version information: </strong> Mono Version: {0}; ASP.NET Version: {0}</body></html>\r\n", Environment.Version);
-			if (ex1 != null)
-				builder.AppendFormat (BOTTOM_EXCEPTION_FORMAT, ex1.GetType (), ex1.ToString ());
-			if (ex2 != null)
-				builder.AppendFormat (BOTTOM_EXCEPTION_FORMAT, ex2.GetType (), ex2.ToString ());
+			builder.AppendFormat ("<strong>Version information: </strong> Mono Version: {0}; ASP.NET Version: {0}</body></html>\r\n<!--", Environment.Version);
+			
+			string trace, message;
+			bool haveTrace;
+			Exception ex = this;
+			
+			while (ex != null) {
+				trace = ex.StackTrace;
+				message = ex.Message;
+				haveTrace = (trace != null && trace.Length > 0);
+				
+				if (!haveTrace && (message == null || message.Length == 0)) {
+					ex = ex.InnerException;
+					continue;
+				}
+
+				builder.Append ("\r\n[" + ex.GetType () + "]: " + HtmlEncode (message) + "\r\n");
+				if (haveTrace)
+					builder.Append (ex.StackTrace);
+				
+				ex = ex.InnerException;
+			}
+			
+			builder.Append ("\r\n-->");
 		}
 
 		string GetCustomErrorDefaultMessage ()
@@ -225,12 +246,14 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 
     &lt;/system.web&gt;
 &lt;/configuration&gt;</pre></td></tr></table>");
-			WriteFileBottom (builder, null, null);
+			WriteFileBottom (builder);
 			return builder.ToString ();
 		}
 		
 		string GetDefaultErrorMessage ()
 		{
+			Console.WriteLine ("GetDefaultErrorMessage ()");
+			
 			Exception ex, baseEx;
 			ex = baseEx = GetBaseException ();
 			if (ex == null)
@@ -259,7 +282,7 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 				WriteTextAsCode (builder, baseEx.ToString ());
 				builder.Append ("</td></tr>\r\n</table>\r\n");
 			}
-			WriteFileBottom (builder, ex, null);
+			WriteFileBottom (builder);
 			
 			return builder.ToString ();
 		}
@@ -277,73 +300,128 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 		{
 			StringBuilder builder = new StringBuilder ();
 			HtmlizedException exc = (HtmlizedException) this.InnerException;
+			bool isParseException = exc is ParseException;
+			bool isCompileException = (!isParseException && exc is CompilationException);
+			
 			WriteFileTop (builder, exc.Title);
 			builder.AppendFormat ("<h2><em>{0}</em></h2>\r\n", exc.Title);
 			builder.AppendFormat ("<p><strong>Description: </strong>{0}\r\n</p>\r\n", HtmlEncode (exc.Description));
 			string errorMessage = HtmlEncode (exc.ErrorMessage).Replace ("\n", "<br/>");
-			builder.AppendFormat ("<p><strong>Error message: </strong></p><p>{0}</p>", errorMessage);
+			
+			builder.Append ("<p><strong>");
+			if (isParseException)
+				builder.Append ("Parser ");
+			else if (isCompileException)
+				builder.Append ("Compiler ");
+			
+			builder.AppendFormat ("Error Message: </strong>{0}</p>", errorMessage);
 
-			if (exc.FileName != null)
-				builder.AppendFormat ("<p><strong>File name: </strong> {0}</p>", HtmlEncode (exc.FileName));
-
+			StringBuilder longCodeVersion = null;
+			
 			if (exc.FileText != null) {
-				if (exc.SourceFile != exc.FileName)
-					builder.AppendFormat ("<p><strong>Source File: </strong>{0}</p>", exc.SourceFile);
-
-				if (exc is ParseException) {
-					builder.Append ("<p>&nbsp;&nbsp;&nbsp;&nbsp;<strong>Line: </strong>");
-					builder.Append (exc.ErrorLines [0]);
-					builder.Append ("</p>");
-				}
-
-				if (exc is ParseException) {
-					builder.Append ("<strong>Source Error: </strong>\r\n");
+				if (isParseException || isCompileException) {
+					builder.Append ("<p><strong>Source Error: </strong></p>\r\n");
 					builder.Append ("<table summary=\"Source error\" class=\"sampleCode\">\r\n<tr><td>");
-					WriteSource (builder, exc);
-					builder.Append ("</td></tr>\r\n</table>\r\n");
+
+					if (isCompileException)
+						longCodeVersion = new StringBuilder ();
+					WriteSource (builder, longCodeVersion, exc);
+					builder.Append ("</pre></code></td></tr>\r\n</table>\r\n");
 				} else {
 					builder.Append ("<table summary=\"Source file\" class=\"sampleCode\">\r\n<tr><td>");
-					WriteSource (builder, exc);
-					builder.Append ("</td></tr>\r\n</table>\r\n");
+					WriteSource (builder, null, exc);
+					builder.Append ("</pre></code></td></tr>\r\n</table>\r\n");
 				}
-			}			
 
-			WriteFileBottom (
-				builder,
-				exc,
-				null
-			);
+				builder.Append ("<br/><p><strong>Source File: </strong>");
+				if (exc.SourceFile != exc.FileName)
+					builder.Append (exc.SourceFile);
+				else
+					builder.Append (exc.FileName);
+				
+				if (isParseException || isCompileException) {
+					builder.Append ("&nbsp;&nbsp;<strong>Line: </strong>");
+					builder.Append (exc.ErrorLines [0]);
+				}
+				builder.Append ("</p>");
+			} else if (exc.FileName != null)
+				builder.AppendFormat ("{0}</p>", HtmlEncode (exc.FileName));
+
+			bool needToggleJS = false;
+			
+			if (isCompileException) {
+				CompilationException cex = exc as CompilationException;
+				StringCollection output = cex.CompilerOutput;
+
+				if (output != null && output.Count > 0) {
+					needToggleJS = true;
+					StringBuilder sb = new StringBuilder ();
+					foreach (string s in output)
+						sb.Append (s + "\r\n");
+					WriteExpandableBlock (builder, "Show Detailed Compiler Output", sb.ToString ());
+				}
+			}
+			
+			if (longCodeVersion != null && longCodeVersion.Length > 0) {
+				WriteExpandableBlock (builder, "Show Complete Compilation Source", longCodeVersion.ToString ());
+				needToggleJS = true;
+			}
+
+			if (needToggleJS)
+				builder.Append ("<script type=\"text/javascript\">\r\n" +
+						"function ToggleVisible (id)\r\n" +
+						"{\r\n" +
+						"\tvar e = document.getElementById (id);\r\n" +
+						"\tif (e.style.display == 'none')\r\n" +
+						"\t{\r\n" +
+						"\t\te.style.display = '';\r\n" +
+						"\t} else {\r\n" +
+						"\t\te.style.display = 'none';\r\n" +
+						"\t}\r\n" +
+						"}\r\n" +
+						"</script>\r\n");
+			
+			WriteFileBottom (builder);
 			
 			return builder.ToString ();
 		}
 
+		static void WriteExpandableBlock (StringBuilder builder, string title, string contents)
+		{
+			builder.AppendFormat ("<br><div class=\"expandable\" onclick=\"ToggleVisible ('fullCode')\">{0}:</div><br/>" +
+					      "<div id=\"fullCode\" style=\"display: none\"><table summary=\"Details\" class=\"sampleCode\"><tr><td>" +
+					      "<code><pre>\r\n", title);
+			builder.Append (contents);
+			builder.Append ("</pre></code></td></tr></table></div>");
+		}
+		
 		static void WriteTextAsCode (StringBuilder builder, string text)
 		{
 			builder.AppendFormat ("<pre>{0}</pre>", HtmlEncode (text));
 		}
 
 #if TARGET_J2EE
-		static void WriteSource (StringBuilder builder, HtmlizedException e)
+		static void WriteSource (StringBuilder builder, StringBuilder longVersion, HtmlizedException e)
 		{
-			builder.Append ("<pre>");
-			WritePageSource (builder, e);
-			builder.Append ("</pre>\r\n");
+			builder.Append ("<code><pre>");
+			WritePageSource (builder, longVersion, e);
+			builder.Append ("</code></pre>\r\n");
 		}
 
 #else
-		static void WriteSource (StringBuilder builder, HtmlizedException e)
+		static void WriteSource (StringBuilder builder, StringBuilder longVersion, HtmlizedException e)
 		{
-			builder.Append ("<pre>");
+			builder.Append ("<code><pre>");
 			if (e is CompilationException)
-				WriteCompilationSource (builder, e);
+				WriteCompilationSource (builder, longVersion, e);
 			else
 				WritePageSource (builder, e);
 
-			builder.Append ("</pre>\r\n");
+			builder.Append ("<code></pre>\r\n");
 		}
 #endif
 		
-		static void WriteCompilationSource (StringBuilder builder, HtmlizedException e)
+		static void WriteCompilationSource (StringBuilder builder, StringBuilder longVersion, HtmlizedException e)
 		{
 			int [] a = e.ErrorLines;
 			string s;
@@ -353,21 +431,42 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 
 			if (a != null && a.Length > 0)
 				errline = a [0];
-			
-			TextReader reader = new StringReader (e.FileText);
-			while ((s = reader.ReadLine ()) != null) {
-				line++;
 
-				if (errline == line)
-					builder.Append ("<span style=\"color: red\">");
+			int begin = errline - 2;
+			int end = errline + 2;
 
-				builder.AppendFormat ("Line {0}: {1}\r\n", line, HtmlEncode (s));
+			if (begin < 0)
+				begin = 0;
 
-				if (line == errline) {
-					builder.Append ("</span>");
-					errline = (++index < a.Length) ? a [index] : 0;
+			string tmp;			
+			using (TextReader reader = new StringReader (e.FileText)) {
+				while ((s = reader.ReadLine ()) != null) {
+					line++;
+					if (line < begin || line > end) {
+						if (longVersion != null)
+							longVersion.AppendFormat ("Line {0}: {1}\r\n", line, HtmlEncode (s));
+						continue;
+					}
+				
+					if (errline == line) {
+						if (longVersion != null)
+							longVersion.Append ("<span style=\"color: red\">");
+						builder.Append ("<span style=\"color: red\">");
+					}
+					
+					tmp = String.Format ("Line {0}: {1}\r\n", line, HtmlEncode (s));
+					builder.Append (tmp);
+					if (longVersion != null)
+						longVersion.Append (tmp);
+					
+					if (line == errline) {
+						builder.Append ("</span>");
+						if (longVersion != null)
+							longVersion.Append ("</span>");
+						errline = (++index < a.Length) ? a [index] : 0;
+					}
 				}
-			}
+			}			
 		}
 
 		static void WritePageSource (StringBuilder builder, HtmlizedException e)
@@ -376,8 +475,8 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 			int line = 0;
 			int beginerror = e.ErrorLines [0];
 			int enderror = e.ErrorLines [1];
-			int begin = beginerror - 3;
-			int end = enderror + 3;
+			int begin = beginerror - 2;
+			int end = enderror + 2;
 			if (begin <= 0)
 				begin = 1;
 			
@@ -393,7 +492,7 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 				if (beginerror == line)
 					builder.Append ("<span style=\"color: red\">");
 
-				builder.AppendFormat ("{0}\r\n", HtmlEncode (s));
+				builder.AppendFormat ("Line {0}: {1}\r\n", line, HtmlEncode (s));
 
 				if (enderror <= line) {
 					builder.Append ("</span>");
