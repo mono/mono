@@ -1,3 +1,8 @@
+2008-02-07  Konstantin Triger <kostat@mainsoft.com>
+
+	* ClientConfigurationSystem.cs: performance: refactor out the Configuration
+		object construction from GetSection() to the ctor.
+
 2008-01-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* ConfigurationElement.cs: Allow non-public constructors. Fixes #353554.

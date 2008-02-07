@@ -36,15 +36,20 @@ namespace System.Configuration {
 
 	internal class ClientConfigurationSystem : IInternalConfigSystem
 	{
-		object IInternalConfigSystem.GetSection (string configKey)
-		{
+		readonly Configuration cfg;
+
+		public ClientConfigurationSystem () {
 			Assembly a = Assembly.GetEntryAssembly();
 			string exePath = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
             
 			if (a == null && exePath == null)
 				exePath = "";
             
-			Configuration cfg = ConfigurationManager.OpenExeConfigurationInternal (ConfigurationUserLevel.None, a, exePath);
+			cfg = ConfigurationManager.OpenExeConfigurationInternal (ConfigurationUserLevel.None, a, exePath);
+		}
+
+		object IInternalConfigSystem.GetSection (string configKey)
+		{
 			if (cfg == null)
 				return null;
 
