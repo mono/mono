@@ -1,5 +1,12 @@
 2008-02-08  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ops.h: Add OP_ICONV_TO_R_UN opcode.
+
+	* mini.c (mono_normalize_opcodes): Remap CEE_CONV_R_UN too.
+
+	* cpu-s390x.md cpu-s390.md mini-s390x.c mini-arm.c cpu-arm.md mini-s390.c: Get
+	rid of CEE_CONV_R_UN.
+
 	* mini-s390x.c mini-s390x.h cpu-s390x.md inssel-s390x.brg: Get rid of CEE_ opcodes.
 
 2008-02-07  Zoltan Varga  <vargaz@gmail.com>
