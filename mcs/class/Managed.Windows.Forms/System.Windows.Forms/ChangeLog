@@ -1,5 +1,11 @@
 2008-02-07  Jonathan Pobst  <monkey@jpobst.com>
 
+	* MdiClient.cs: Make sure the NormalBounds always gets set.  It
+	was being reset by the implicit menu merge for menustrips.
+	[Fixes bug #336296]
+
+2008-02-07  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Form.cs: Don't do the previous change when WindowState = Normal,
 	or it messes up where the window is placed.  Fixes test failure.
 

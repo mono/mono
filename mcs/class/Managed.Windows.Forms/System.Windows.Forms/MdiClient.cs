@@ -881,15 +881,15 @@ namespace System.Windows.Forms {
 				ActivateChild (form);
 				return;
 			}
+				
+			if (old_window_state == FormWindowState.Normal)
+				wm.NormalBounds = form.Bounds;
 
 			if (SetWindowStates (wm))
 				return;
 
 			if (old_window_state == new_window_state)
 				return;
-				
-			if (old_window_state == FormWindowState.Normal)
-				wm.NormalBounds = form.Bounds;
 
 			mdiclient_layout = old_window_state == FormWindowState.Maximized || new_window_state == FormWindowState.Maximized;
 

@@ -1,5 +1,9 @@
 2008-02-07  Jonathan Pobst  <monkey@jpobst.com>
 
+	* MdiFormTest.cs: Add test for bug #336296.
+
+2008-02-07  Jonathan Pobst  <monkey@jpobst.com>
+
 	* MdiFormTest.cs: Add test for bug #325473.
 
 2008-02-06  Jonathan Pobst  <monkey@jpobst.com>

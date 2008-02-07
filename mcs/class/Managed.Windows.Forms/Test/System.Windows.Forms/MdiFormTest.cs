@@ -371,7 +371,40 @@ namespace MonoTests.System.Windows.Forms
 			
 			parent.Dispose ();
 		}
-		
+
+#if NET_2_0
+		[Test]
+		public void RestoreWithMainMenuStrip ()
+		{
+			Form parent = new Form ();
+
+			Form child1 = new Form ();
+
+			parent.ShowInTaskbar = false;
+			parent.IsMdiContainer = true;
+			parent.ClientSize = new Size (500, 500);
+
+			MenuStrip ms = new MenuStrip ();
+			ms.Items.Add (new ToolStripMenuItem ("main", null, new ToolStripMenuItem ("item1")));
+			parent.Controls.Add (ms);
+			parent.MainMenuStrip = ms;
+
+			parent.Show ();
+
+			child1.MdiParent = parent;
+			child1.Show ();
+
+			Size s = child1.Size;
+			
+			child1.WindowState = FormWindowState.Maximized;
+			child1.WindowState = FormWindowState.Normal;
+
+			Assert.AreEqual (s, child1.Size, "A1");
+
+			parent.Dispose ();
+		}
+#endif
+
 		/* These tests are all failing on WinXP with XP Theme. 
 		 * offset seems to be 22,22 normally, and 22,29 with XP theme.
 		 * Find a way to test this reliably.
