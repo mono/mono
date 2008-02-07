@@ -437,6 +437,69 @@ namespace Mono.Cecil {
 
 		#endregion
 
+		#region MethodSemanticsAttributes
+		public bool IsSetter {
+			get { return (m_semAttrs & MethodSemanticsAttributes.Setter) != 0; }
+			set {
+				if (value)
+					m_semAttrs |= MethodSemanticsAttributes.Setter;
+				else
+					m_semAttrs &= ~MethodSemanticsAttributes.Setter;
+			}
+		}
+
+		public bool IsGetter {
+			get { return (m_semAttrs & MethodSemanticsAttributes.Getter) != 0; }
+			set {
+				if (value)
+					m_semAttrs |= MethodSemanticsAttributes.Getter;
+				else
+					m_semAttrs &= ~MethodSemanticsAttributes.Getter;
+			}
+		}
+
+		public bool IsOther {
+			get { return (m_semAttrs & MethodSemanticsAttributes.Other) != 0; }
+			set {
+				if (value)
+					m_semAttrs |= MethodSemanticsAttributes.Other;
+				else
+					m_semAttrs &= ~MethodSemanticsAttributes.Other;
+			}
+		}
+
+		public bool IsAddOn {
+			get { return (m_semAttrs & MethodSemanticsAttributes.AddOn) != 0; }
+			set {
+				if (value)
+					m_semAttrs |= MethodSemanticsAttributes.AddOn;
+				else
+					m_semAttrs &= ~MethodSemanticsAttributes.AddOn;
+			}
+		}
+
+		public bool IsRemoveOn {
+			get { return (m_semAttrs & MethodSemanticsAttributes.RemoveOn) != 0; }
+			set {
+				if (value)
+					m_semAttrs |= MethodSemanticsAttributes.RemoveOn;
+				else
+					m_semAttrs &= ~MethodSemanticsAttributes.RemoveOn;
+			}
+		}
+
+		public bool IsFire {
+			get { return (m_semAttrs & MethodSemanticsAttributes.Fire) != 0; }
+			set {
+				if (value)
+					m_semAttrs |= MethodSemanticsAttributes.Fire;
+				else
+					m_semAttrs &= ~MethodSemanticsAttributes.Fire;
+			}
+		}
+
+		#endregion
+
 		public bool IsConstructor {
 			get {
 				return this.IsRuntimeSpecialName && this.IsSpecialName &&
