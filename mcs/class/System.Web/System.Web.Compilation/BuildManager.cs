@@ -263,7 +263,9 @@ namespace System.Web.Compilation {
 			// Get the Type.
 			Type type = GetCompiledType (virtualPath);
 			if (type == null)
-				throw new HttpException ("Instance creation failed for virtual path '" + virtualPath + "'.");
+				//throw new HttpException ("Instance creation failed for virtual
+				//path '" + virtualPath + "'.");
+				return null;
 			
 			if (!requiredBaseType.IsAssignableFrom (type)) {
 				string msg = String.Format ("Type '{0}' does not inherit from '{1}'.",
@@ -774,9 +776,35 @@ namespace System.Web.Compilation {
 			builders.Add (CreateAssemblyBuilder (assemblyBaseName, virtualPath, buildItem));
 			buildItem.StoreCodeUnit ();
 		}
+
+		static void AssertVirtualPathExists (string virtualPath)
+		{
+			string realpath;
+			bool fakePath;
+			
+			if (StrUtils.StartsWith (virtualPath, FAKE_VIRTUAL_PATH_PREFIX)) {
+				realpath = virtualPath.Substring (FAKE_VIRTUAL_PATH_PREFIX.Length);
+				fakePath = true;
+			} else {
+				HttpContext ctx = HttpContext.Current;
+				HttpRequest req = ctx != null ? ctx.Request : null;
+
+				if (req == null)
+					throw new HttpException ("Missing context, cannot continue.");
+
+				realpath = req.MapPath (virtualPath);
+			}
+
+			if (!File.Exists (realpath) && !Directory.Exists (realpath))
+				throw new HttpException (404,
+							 "The file '" + virtualPath + "' does not exist.",
+							 fakePath ? Path.GetFileName (realpath) : virtualPath);
+		}
 		
 		static void BuildAssembly (string virtualPath)
 		{
+			AssertVirtualPathExists (virtualPath);
+			
 			object ticket;
 			bool acquired;
 			string virtualDir = GetVirtualPathDirectory (virtualPath);

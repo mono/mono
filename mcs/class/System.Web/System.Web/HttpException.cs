@@ -47,7 +47,14 @@ namespace System.Web
 #endif
 	public class HttpException : ExternalException
 	{
+		const string DEFAULT_DESCRIPTION_TEXT = "Error processing request.";
+		const string BOTTOM_EXCEPTION_FORMAT = "<!--\r\n[{0}]: {1}\r\n-->\r\n";
+		const string ERROR_404_DESCRIPTION = "The resource you are looking for (or one of its dependencies) could have been removed, had its name changed, or is temporarily unavailable.  Please review the following URL and make sure that it is spelled correctly.";
+		
 		int http_code = 500;
+		string resource_name;
+		string description;
+		
 		const string errorStyleFonts = "\"Verdana\",\"DejaVu Sans\",sans-serif";
 		
 		public HttpException ()
@@ -69,6 +76,16 @@ namespace System.Web
 			http_code = httpCode;
 		}
 
+		internal HttpException (int httpCode, string message, string resourceName) : this (httpCode, message)
+		{
+			resource_name = resourceName;
+		}
+
+		internal HttpException (int httpCode, string message, string resourceName, string description) : this (httpCode, message, resourceName)
+		{
+			this.description = description;
+		}
+		
 #if NET_2_0
 		protected HttpException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
@@ -101,6 +118,12 @@ namespace System.Web
 			http_code = httpCode;
 		}
 
+		public HttpException (int httpCode, string message, Exception innerException, string resourceName)
+			: this (httpCode, message, innerException)
+		{
+			resource_name = resourceName;
+		}
+		
 		public string GetHtmlErrorMessage ()
 		{
 			try {
@@ -120,7 +143,19 @@ namespace System.Web
 		}
 
 		internal virtual string Description {
-			get { return "Error processing request."; }
+			get {
+				if (description != null)
+					return description;
+
+				return DEFAULT_DESCRIPTION_TEXT;
+			}
+			
+			set {
+				if (value != null && value.Length > 0)
+					description = value;
+				else
+					description = DEFAULT_DESCRIPTION_TEXT;
+			}
 		}
 
 		void WriteFileTop (StringBuilder builder, string title)
@@ -147,14 +182,15 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 				"</style></head><body><h1>Server Error in '{0}' Application</h1><hr style=\"color: silver\"/>",
 				HtmlEncode (HttpRuntime.AppDomainAppVirtualPath));
 		}
-
-		void WriteFileBottom (StringBuilder builder, string trace1, string trace2)
+		
+		void WriteFileBottom (StringBuilder builder, Exception ex1, Exception ex2)
 		{
-			if (trace1 != null)
-				builder.AppendFormat ("<![CDATA[\r\n{0}\r\n]]>\r\n", HttpUtility.HtmlEncode (trace1));
-			if (trace2 != null)
-				builder.AppendFormat ("<![CDATA[\r\n{0}\r\n]]>\r\n", HttpUtility.HtmlEncode (trace2));
-			builder.AppendFormat ("<hr style=\"color: silver\"/>{0}</body></html>\r\n", DateTime.UtcNow);
+			builder.Append ("<hr style=\"color: silver\"/>");
+			builder.AppendFormat ("<strong>Version information: </strong> Mono Version: {0}; ASP.NET Version: {0}</body></html>\r\n", Environment.Version);
+			if (ex1 != null)
+				builder.AppendFormat (BOTTOM_EXCEPTION_FORMAT, ex1.GetType (), ex1.ToString ());
+			if (ex2 != null)
+				builder.AppendFormat (BOTTOM_EXCEPTION_FORMAT, ex2.GetType (), ex2.ToString ());
 		}
 
 		string GetCustomErrorDefaultMessage ()
@@ -202,23 +238,28 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 
 			StringBuilder builder = new StringBuilder ();
 			WriteFileTop (builder, String.Format ("Error{0}", http_code != 0 ? " " + http_code : String.Empty));
-			builder.AppendFormat ("<h2><em>{0}</em></h2>\r\n", HtmlEncode (ex.Message));
-			builder.AppendFormat ("<p><strong>Description: </strong>{0}</p>\r\n", HtmlEncode (Description));
-			builder.Append ("<p><strong>Error Message: </strong>");
+			builder.Append ("<h2><em>");
+			if (http_code == 404)
+				builder.Append ("The resource cannot be found.");
+			else
+				builder.AppendFormat (HtmlEncode (ex.Message));
+			builder.Append ("</em></h2>\r\n<p><strong>Description: </strong>");
+			
 			if (http_code != 0)
 				builder.AppendFormat ("HTTP {0}. ", http_code);
-			builder.AppendFormat ("{0}: {1}\r\n</p>\r\n", ex.GetType ().FullName, HtmlEncode (ex.Message));
+			builder.Append (http_code == 404 ? ERROR_404_DESCRIPTION : HtmlEncode (Description));
+			builder.Append ("</p>\r\n");
 
-			if (baseEx != null) {
-				builder.AppendFormat ("<p><strong>Stack Trace: </strong></p>");
+			if (resource_name != null && resource_name.Length > 0)
+				builder.AppendFormat ("<p><strong>Resource URL: </strong>{0}</p>\r\n", resource_name);
+			
+			if (baseEx != null && http_code != 404) {
+				builder.Append ("<p><strong>Stack Trace: </strong></p>");
 				builder.Append ("<table summary=\"Stack Trace\" class=\"sampleCode\">\r\n<tr><td>");
 				WriteTextAsCode (builder, baseEx.ToString ());
 				builder.Append ("</td></tr>\r\n</table>\r\n");
 			}
-			WriteFileBottom (builder,
-					 this.ToString (),
-					 null
-			);
+			WriteFileBottom (builder, ex, null);
 			
 			return builder.ToString ();
 		}
@@ -269,7 +310,7 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 
 			WriteFileBottom (
 				builder,
-				exc.ToString (),
+				exc,
 				null
 			);
 			

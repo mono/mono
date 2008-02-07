@@ -63,7 +63,7 @@ namespace System.Web
 			string fileName = request.PhysicalPath;
 			FileInfo fi = new FileInfo (fileName);
 			if (!fi.Exists || !ValidFileName (fileName))
-				throw new HttpException (404, "Path '" + request.FilePath + "' was not found.");
+				throw new HttpException (404, "Path '" + request.FilePath + "' was not found.", request.FilePath);
 
 			if ((fi.Attributes & FileAttributes.Directory) != 0) {
 				response.Redirect (request.Path + '/');

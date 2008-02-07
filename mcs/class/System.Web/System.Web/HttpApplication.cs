@@ -946,9 +946,9 @@ namespace System.Web {
 #endif
 			} catch (FileNotFoundException fnf){
 				if (context.Request.IsLocal)
-					ProcessError (new HttpException (404, String.Format ("File not found {0}", fnf.FileName), fnf));
+					ProcessError (new HttpException (404, String.Format ("File not found {0}", fnf.FileName), fnf, context.Request.FilePath));
 				else
-					ProcessError (new HttpException (404, "File not found: " + Path.GetFileName (fnf.FileName)));
+					ProcessError (new HttpException (404, "File not found: " + Path.GetFileName (fnf.FileName), context.Request.FilePath));
 			} catch (DirectoryNotFoundException dnf){
 				if (!context.Request.IsLocal)
 					dnf = null; // Do not "leak" real path information

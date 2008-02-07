@@ -1,3 +1,19 @@
+2008-02-07  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpException.cs: moved several strings to constants, for easier
+	maintenance. 
+	Added 3 new constructors which let the caller to set the exception
+	description.
+	The Description property is now settable.
+	The stack trace at the bottom of the file is written after the
+	terminating </html>, inside a HTML comment. Format changed to
+	match MS.NET.
+	Error 404 is handled in a special way, to match the output with
+	MS.NET.
+
+	* HttpContext.cs, StaticFileHandler.cs, HttpApplication.cs: use
+	the new HttpException constructor for 404.
+
 2008-02-06  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpApplicationFactory.cs: in FireOnAppEnd, set app_type to null
