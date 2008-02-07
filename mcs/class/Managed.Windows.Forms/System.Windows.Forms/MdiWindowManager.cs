@@ -272,6 +272,19 @@ namespace System.Windows.Forms {
 		
 		internal void ShowPopup (Point pnt)
 		{
+#if NET_2_0
+			// If we are using MainMenuStrip, display that menu instead
+			if (form.WindowState == FormWindowState.Maximized && form.MdiParent.MainMenuStrip != null)
+				if (form.MdiParent.MainMenuStrip.Items.Count > 0) {
+					ToolStripItem tsi = form.MdiParent.MainMenuStrip.Items[0];
+					
+					if (tsi is MdiControlStrip.SystemMenuItem) {
+						(tsi as MdiControlStrip.SystemMenuItem).ShowDropDown ();
+						return;
+					}
+				}
+#endif
+				
 			icon_popup_menu.MenuItems[0].Enabled = form.window_state != FormWindowState.Normal;    // restore
 			icon_popup_menu.MenuItems[1].Enabled = form.window_state != FormWindowState.Maximized; // move
 			icon_popup_menu.MenuItems[2].Enabled = form.window_state != FormWindowState.Maximized; // size

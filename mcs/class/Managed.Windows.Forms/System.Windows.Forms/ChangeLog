@@ -1,5 +1,11 @@
 2008-02-07  Jonathan Pobst  <monkey@jpobst.com>
 
+	* MdiWindowManager.cs: If we are maximized and using MainMenuStrip
+	for our menus, display that control box menu instead of the 1.1
+	menu one.
+
+2008-02-07  Jonathan Pobst  <monkey@jpobst.com>
+
 	* MdiControlStrip.cs: Add property to access the mdi form tied to
 	each toolstripitem.
 	* MdiClient.cs: Be smarter about removing and adding toolstripitems
