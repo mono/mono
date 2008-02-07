@@ -1,3 +1,8 @@
+2008-02-07  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: check for virtualPath existence before
+	attempting to compile the assemblies. Fixes bug #359465
+
 2008-02-06  Marek Habersack  <mhabersack@novell.com>
 
 	* GenericBuildProvider.cs: GetGeneratedType may return a type even

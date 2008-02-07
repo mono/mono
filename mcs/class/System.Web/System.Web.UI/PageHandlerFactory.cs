@@ -37,11 +37,7 @@ namespace System.Web.UI
 	{
 		public virtual IHttpHandler GetHandler (HttpContext context, string requestType, string url, string path)
 		{
-#if NET_2_0 && !TARGET_JVM
- 			return BuildManager.CreateInstanceFromVirtualPath (url, typeof (IHttpHandler)) as IHttpHandler;
-#else
 			return PageParser.GetCompiledPageInstance (url, path, context);
-#endif
 		}
 
 		public virtual void ReleaseHandler (IHttpHandler handler)

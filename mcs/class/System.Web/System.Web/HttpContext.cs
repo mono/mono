@@ -609,8 +609,7 @@ namespace System.Web {
 		{
 			filePath = UrlUtils.Combine (Request.BaseVirtualDir, filePath);
 			if (!StrUtils.StartsWith (filePath, HttpRuntime.AppDomainAppVirtualPath))
-				throw new HttpException (404, "The virtual path '" + filePath +
-					"' maps to another application.");
+				throw new HttpException (404, "The virtual path '" + filePath + "' maps to another application.", filePath);
 
 			Request.SetCurrentExePath (filePath);
 			// A null pathInfo or queryString is ignored and previous values remain untouched
