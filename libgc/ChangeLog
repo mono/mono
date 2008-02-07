@@ -1,3 +1,8 @@
+2008-02-07  Massimiliano Mantione  <massi@ximian.com>
+	* include/gc.h: (GCEventType): Added start-stop the world events.
+	* pthread_stop_world.c: (GC_stop_world and GC_start_world): hooked
+	start-stop the world events.
+
 2007-11-05  Geoff Norton  <gnorton@novell.com>
 
 	* darwin_stop_world.c: Correct the structure name on Darwin-x86 for Leopard.

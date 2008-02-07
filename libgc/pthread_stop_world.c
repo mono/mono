@@ -414,6 +414,8 @@ static void pthread_stop_world()
 /* Caller holds allocation lock.	*/
 void GC_stop_world()
 {
+    if (GC_notify_event)
+        GC_notify_event (GC_EVENT_PRE_STOP_WORLD);
     /* Make sure all free list construction has stopped before we start. */
     /* No new construction can start, since free list construction is	*/
     /* required to acquire and release the GC lock before it starts,	*/
@@ -433,6 +435,8 @@ void GC_stop_world()
 #   ifdef PARALLEL_MARK
       GC_release_mark_lock();
 #   endif
+    if (GC_notify_event)
+        GC_notify_event (GC_EVENT_POST_STOP_WORLD);
 }
 
 /* Caller holds allocation lock, and has held it continuously since	*/
@@ -449,6 +453,8 @@ static void pthread_start_world()
 #   if DEBUG_THREADS
       GC_printf0("World starting\n");
 #   endif
+    if (GC_notify_event)
+        GC_notify_event (GC_EVENT_PRE_START_WORLD);
 
     for (i = 0; i < THREAD_TABLE_SZ; i++) {
       for (p = GC_threads[i]; p != 0; p = p -> next) {
@@ -488,6 +494,8 @@ static void pthread_start_world()
 	}
     }
   
+    if (GC_notify_event)
+        GC_notify_event (GC_EVENT_POST_START_WORLD);
     #if DEBUG_THREADS
       GC_printf0("World started\n");
     #endif
