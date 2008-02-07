@@ -1,5 +1,9 @@
 2008-02-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c mini-<ARCH>.c: Remove mono_arch_local_regalloc (), instead make 
+	arch specific functions for its parts. Call the peephole pass after local
+	regalloc so the prolog can compute a more accurate max_offset.
+	
 	* mini.c (mono_normalize_opcodes): New mini pass to convert CEE_ opcodes to
 	the corresponding OP_I/OP_L opcodes.
 
