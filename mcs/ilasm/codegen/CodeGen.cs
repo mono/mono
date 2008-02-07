@@ -73,7 +73,7 @@ namespace Mono.ILASM {
                         this.is_dll = is_dll;
 
 			if (debugging_info)
-				symwriter = new SymbolWriter (CreateDebugFile (output_file));
+				symwriter = new SymbolWriter (output_file);
 
                         type_manager = new TypeManager (this);
                         extern_table = new ExternTable ();
@@ -93,17 +93,6 @@ namespace Mono.ILASM {
                         entry_point = false;
                         this_module = null;
                 }
-
-		private string CreateDebugFile (string output_file)
-		{
-			int ext_index = output_file.LastIndexOf ('.');
-
-			if (ext_index == -1)
-				ext_index = output_file.Length;
-
-			return String.Format ("{0}.{1}", output_file.Substring (0, ext_index),
-					      "mdb");
-		}
 
                 public PEFile PEFile {
                         get { return pefile; }

@@ -1,3 +1,8 @@
+2008-02-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CodeGen.cs: Use original filename as base name for debug file.
+	Symbol writer will already add .mdb to it. Fixes bug #359516.
+
 2008-01-03  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* EmiteByteInstr.cs: Fixed typo in class name.

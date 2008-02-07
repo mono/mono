@@ -249,8 +249,6 @@ namespace Mono.ILASM {
                                                 break;
                                         case "debug":
                                         case "deb":
-						if (str[0] != '-')
-							break;
 						debugging_info = true;
 						break;
                                         // Stubs to stay commandline compatible with MS 
