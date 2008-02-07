@@ -1,5 +1,11 @@
 2008-02-07  Marek Habersack  <mhabersack@novell.com>
 
+	* CompilationException.cs: added new constructor which takes
+	CompilerResults as one of the parameters.
+	Added CompilerOutput property.
+
+	* AssemblyBuilder.cs: use the new CompilationError constructor.
+
 	* BuildManager.cs: check for virtualPath existence before
 	attempting to compile the assemblies. Fixes bug #359465
 

@@ -547,7 +547,7 @@ namespace System.Web.Compilation {
 					}
 				} catch (Exception) {}
 
-				throw new CompilationException (virtualPath, results.Errors, fileText);
+				throw new CompilationException (virtualPath, results, fileText);
 			}
 			
 			Assembly assembly = results.CompiledAssembly;

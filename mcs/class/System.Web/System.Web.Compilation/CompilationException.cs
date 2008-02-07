@@ -30,6 +30,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Specialized;
 using System.CodeDom.Compiler;
 using System.Text;
 using System.Web;
@@ -40,6 +41,7 @@ namespace System.Web.Compilation
 	{
 		string filename;
 		CompilerErrorCollection errors;
+		CompilerResults results;
 		string fileText;
 		string errmsg;
 		int [] errorLines;
@@ -51,6 +53,12 @@ namespace System.Web.Compilation
 			this.fileText = fileText;
 		}
 
+		public CompilationException (string filename, CompilerResults results, string fileText)
+			: this (filename, results != null ? results.Errors : null, fileText)
+		{
+			this.results = results;
+		}
+		
 		public override string SourceFile {
 			get {
 				if (errors == null || errors.Count == 0)
@@ -113,6 +121,16 @@ namespace System.Web.Compilation
 		public override bool ErrorLinesPaired {
 			get { return false; }
 		}
+
+		public StringCollection CompilerOutput {
+			get {
+				if (results == null)
+					return null;
+
+				return results.Output;
+			}
+		}
+			
 	}
 }
 
