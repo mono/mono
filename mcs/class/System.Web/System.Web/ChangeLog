@@ -1,3 +1,8 @@
+2008-02-07  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* HttpResponse.cs: fixed AddHeadersNoCache, removed date_header since
+	java app server adds it, under TARGET_J2EE.
+
 2008-02-06  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpApplicationFactory.cs: in FireOnAppEnd, set app_type to null
