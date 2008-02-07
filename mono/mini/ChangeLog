@@ -1,3 +1,7 @@
+2008-02-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-s390x.c mini-s390x.h cpu-s390x.md inssel-s390x.brg: Get rid of CEE_ opcodes.
+
 2008-02-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-s390.c mini-s390.h cpu-s390.md: Get rid of CEE_ opcodes.
