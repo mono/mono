@@ -1,3 +1,8 @@
+2008-02-08  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ComboBoxTest.cs: MethodScaleControl needs to take Font into
+	account, which PreferredHeight does.  Fixes a failing test.
+
 2008_02-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListControl.cs: Add setter and events for MockItem members -

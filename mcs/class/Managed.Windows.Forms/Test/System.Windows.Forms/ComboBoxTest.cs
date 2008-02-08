@@ -1252,22 +1252,22 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (new Rectangle (5, 10, 121, 21), gb.Bounds, "A1");
 
 			gb.PublicScaleControl (new SizeF (2.0f, 2.0f), BoundsSpecified.All);
-			Assert.AreEqual (new Rectangle (10, 20, 238, 21), gb.Bounds, "A2");
+			Assert.AreEqual (new Rectangle (10, 20, 238, gb.PreferredHeight), gb.Bounds, "A2");
 
 			gb.PublicScaleControl (new SizeF (.5f, .5f), BoundsSpecified.Location);
-			Assert.AreEqual (new Rectangle (5, 10, 238, 21), gb.Bounds, "A3");
+			Assert.AreEqual (new Rectangle (5, 10, 238, gb.PreferredHeight), gb.Bounds, "A3");
 
 			gb.PublicScaleControl (new SizeF (.5f, .5f), BoundsSpecified.Size);
-			Assert.AreEqual (new Rectangle (5, 10, 121, 21), gb.Bounds, "A4");
-			Console.WriteLine ("DONE");
+			Assert.AreEqual (new Rectangle (5, 10, 121, gb.PreferredHeight), gb.Bounds, "A4");
+
 			gb.PublicScaleControl (new SizeF (3.5f, 3.5f), BoundsSpecified.Size);
-			Assert.AreEqual (new Rectangle (5, 10, 414, 21), gb.Bounds, "A5");
+			Assert.AreEqual (new Rectangle (5, 10, 414, gb.PreferredHeight), gb.Bounds, "A5");
 
 			gb.PublicScaleControl (new SizeF (2.5f, 2.5f), BoundsSpecified.Size);
-			Assert.AreEqual (new Rectangle (5, 10, 1029, 21), gb.Bounds, "A6");
+			Assert.AreEqual (new Rectangle (5, 10, 1029, gb.PreferredHeight), gb.Bounds, "A6");
 
 			gb.PublicScaleControl (new SizeF (.2f, .2f), BoundsSpecified.Size);
-			Assert.AreEqual (new Rectangle (5, 10, 209, 21), gb.Bounds, "A7");
+			Assert.AreEqual (new Rectangle (5, 10, 209, gb.PreferredHeight), gb.Bounds, "A7");
 
 			f.Dispose ();
 		}
