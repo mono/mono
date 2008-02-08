@@ -94,7 +94,30 @@ namespace MonoTests.System.Linq.Expressions {
 			var invoke = Expression.Invoke (CreateInvokable<Func<string, string, int>> (), "foo".ToConstant (), "bar".ToConstant ());
 			Assert.AreEqual (typeof (int), invoke.Type);
 			Assert.AreEqual (2, invoke.Arguments.Count);
-			Assert.AreEqual ("Invoke(invokable, \"foo\", \"bar\")", invoke.ToString ());
+			if (OnMono ())
+				Assert.AreEqual ("Invoke(invokable, \"foo\", \"bar\")", invoke.ToString ());
+			else
+				Assert.AreEqual ("Invoke(invokable,\"foo\",\"bar\")", invoke.ToString ());
+		}
+
+		[Test]
+		public void InvokeLambda ()
+		{
+			var p = Expression.Parameter (typeof (int), "i");
+			var lambda = Expression.Lambda<Func<int, int>> (p, p);
+
+			var invoke = Expression.Invoke (lambda, 1.ToConstant ());
+			Assert.AreEqual (typeof (int), invoke.Type);
+			Assert.AreEqual (1, invoke.Arguments.Count);
+			if (OnMono ())
+				Assert.AreEqual ("Invoke(i => i, 1)", invoke.ToString ());
+			else
+				Assert.AreEqual ("Invoke(i => i,1)", invoke.ToString ());
+		}
+
+		static bool OnMono ()
+		{
+			return Type.GetType ("Mono.Runtime") != null;
 		}
 	}
 }
