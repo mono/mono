@@ -1,3 +1,9 @@
+2008-02-08  Jonathan Pryor  <jpryor@novell.com>
+
+	* signal.c: Mono_Unix_UnixSignal_WaitAny() semantic change: return the index
+	  into the signals array of the first signaled signal if successful,
+	  otherwise return the timeout.
+
 2008-02-07  Jonathan Pryor  <jpryor@novell.com>
 
 	* signal.c: Make the signal handler thread-safe, so that it can safely be

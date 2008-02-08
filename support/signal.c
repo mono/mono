@@ -221,7 +221,7 @@ teardown_pipes (signal_info** signals, int count)
 static int
 wait_for_any (signal_info** signals, int count, int max_fd, fd_set* read_fds, int timeout)
 {
-	int r;
+	int r, idx;
 	do {
 		struct timeval tv;
 		struct timeval *ptv = NULL;
@@ -234,24 +234,29 @@ wait_for_any (signal_info** signals, int count, int max_fd, fd_set* read_fds, in
 		r = select (max_fd + 1, read_fds, NULL, NULL, ptv);
 	} while (r == -1 && errno == EINTR);
 
-	if (r > 0) {
+	idx = -1;
+	if (r == 0)
+		idx = timeout;
+	else if (r > 0) {
 		int i;
 		for (i = 0; i < count; ++i) {
 			signal_info* h = signals [i];
 			if (FD_ISSET (h->read_fd, read_fds)) {
 				char c;
-				read (h->read_fd, &c, 1); /* ignore error */
+				read (h->read_fd, &c, 1); /* ignore any error */
+				if (idx == -1)
+					idx = i;
 			}
 		}
 	}
 
-	return r;
+	return idx;
 }
 
 /*
  * returns: -1 on error:
- *           0 on timeout
- *         > 0 on success
+ *          timeout on timeout
+ *          index into _signals array of signal that was generated on success
  */
 int
 Mono_Unix_UnixSignal_WaitAny (void** _signals, int count, int timeout /* milliseconds */)
