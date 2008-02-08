@@ -1,3 +1,8 @@
+2008-02-08  Jonathan Pobst  <monkey@jpobst.com>
+	[Backport to 1.9]
+	* Control.cs: Guard against an NRE in ShowFocusCues.
+	[Fixes bug #359830]
+
 2008-02-06  Ivan N. Zlatev  <contact@i-nz.net>
 
 	[Backport to 1.9]
