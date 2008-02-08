@@ -235,6 +235,121 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 
 			Assert.AreEqual (DBNull.Value, c.Tag, "1");
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void IsBindingTest ()
+		{
+			MockItem [] items = new MockItem [] { new MockItem ("A", 0) };
+			Binding binding = new Binding ("Text", items, "Text");
+			Binding binding2 = new Binding ("Text", items [0], "Text");
+			Assert.IsFalse (binding.IsBinding, "#A1");
+			Assert.IsFalse (binding2.IsBinding, "#A2");
+
+			Control c = new Control ();
+			Control c2 = new Control ();
+			c.DataBindings.Add (binding);
+			c2.DataBindings.Add (binding2);
+			Assert.IsFalse (binding.IsBinding, "#B1");
+			Assert.IsFalse (binding2.IsBinding, "#B2");
+
+			c.CreateControl ();
+			c2.CreateControl ();
+			Assert.IsFalse (binding.IsBinding, "#C1");
+			Assert.IsFalse (binding2.IsBinding, "#C2");
+
+			Form form = new Form ();
+			form.ShowInTaskbar = false;
+			form.Controls.Add (c);
+			form.Controls.Add (c2);
+			Assert.IsTrue (binding.IsBinding, "#D1");
+			Assert.IsTrue (binding2.IsBinding, "#D2");
+
+			form.Show ();
+
+			// Important part -
+			// IsBinding is true ALWAYS with PropertyManager, even when
+			// ResumeBinding has been called
+			//
+			CurrencyManager curr_manager = (CurrencyManager)form.BindingContext [items];
+			PropertyManager prop_manager = (PropertyManager)form.BindingContext [items [0]];
+			curr_manager.SuspendBinding ();
+			prop_manager.SuspendBinding ();
+			//Assert.IsFalse (binding.IsBinding, "#E1"); // Comment by now
+			Assert.IsTrue (binding2.IsBinding, "#E2");
+
+			curr_manager.ResumeBinding ();
+			prop_manager.ResumeBinding ();
+			Assert.IsTrue (binding.IsBinding, "#F1");
+			Assert.IsTrue (binding2.IsBinding, "#F2");
+
+			form.Dispose ();
+		}
+
+#if NET_2_0
+		[Test]
+		public void ReadValueTest ()
+		{
+			Control c = new Control ();
+			c.BindingContext = new BindingContext ();
+			c.CreateControl ();
+
+			ChildMockItem item = new ChildMockItem ();
+			item.ObjectValue = "A";
+			Binding binding = new Binding ("Tag", item, "ObjectValue");
+			binding.ControlUpdateMode = ControlUpdateMode.Never;
+
+			c.DataBindings.Add (binding);
+			Assert.AreEqual (null, c.Tag, "#A1");
+
+			item.ObjectValue = "B";
+			Assert.AreEqual (null, c.Tag, "#B1");
+
+			binding.ReadValue ();
+			Assert.AreEqual ("B", c.Tag, "#C1");
+
+			item.ObjectValue = "C";
+			binding.ReadValue ();
+			Assert.AreEqual ("C", c.Tag, "#D1");
+		}
+
+		[Test]
+		public void ControlUpdateModeTest ()
+		{
+			Control c = new Control ();
+			c.BindingContext = new BindingContext ();
+			c.CreateControl ();
+
+			MockItem item = new MockItem ("A", 0);
+			Binding binding = new Binding ("Text", item, "Text");
+			binding.ControlUpdateMode = ControlUpdateMode.Never;
+
+			c.DataBindings.Add (binding);
+			Assert.AreEqual (String.Empty, c.Text, "#A1");
+
+			item.Text = "B";
+			Assert.AreEqual (String.Empty, c.Text, "#B1");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void DataSourceUpdateModeTest ()
+		{
+			Control c = new Control ();
+			c.BindingContext = new BindingContext ();
+			c.CreateControl ();
+
+			MockItem item = new MockItem ("A", 0);
+			Binding binding = new Binding ("Text", item, "Text");
+			binding.DataSourceUpdateMode = DataSourceUpdateMode.Never;
+
+			c.DataBindings.Add (binding);
+			Assert.AreEqual ("A", c.Text, "#A1");
+
+			c.Text = "B";
+			Assert.AreEqual ("A", item.Text, "#B1");
+		}
+#endif
 	}
 
 	class ChildMockItem : MockItem

@@ -468,17 +468,48 @@ namespace MonoTests.System.Windows.Forms
 
 		public MockItem ()
 		{
+			_text = String.Empty;
+			_value = -1;
 		}
 
 		public string Text {
 			get { return _text; }
+			set {
+				if (_text == value)
+					return;
+
+				_text = value;
+				OnTextChanged (EventArgs.Empty);
+			}
 		}
 
 		public int Value {
 			get { return _value; }
+			set {
+				if (_value == value)
+					return;
+
+				_value = value;
+				OnValueChanged (EventArgs.Empty);
+			}
 		}
 
-		private readonly string _text;
-		private readonly int _value;
+		protected virtual void OnTextChanged (EventArgs args)
+		{
+			if (TextChanged != null)
+				TextChanged (this, args);
+		}
+
+		protected virtual void OnValueChanged (EventArgs args)
+		{
+			if (ValueChanged != null)
+				ValueChanged (this, args);
+		}
+
+		public event EventHandler TextChanged;
+		public event EventHandler ValueChanged;
+
+		private string _text;
+		private int _value;
 	}
 }
