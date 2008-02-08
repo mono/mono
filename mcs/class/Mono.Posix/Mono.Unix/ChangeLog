@@ -1,3 +1,7 @@
+2008-02-08  Jonathan Pryor  <jpryor@novell.com>
+
+	* UnixSignal.cs: Modification of Info->count should be thread safe.
+
 2008-01-28  Jonathan Pryor  <jpryor@novell.com>
 
 	* UnixSignal.cs: Added; Polling and blocking based Unix signal mechanism.

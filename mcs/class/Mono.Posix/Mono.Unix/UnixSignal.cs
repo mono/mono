@@ -88,14 +88,13 @@ namespace Mono.Unix {
 
 		public unsafe bool Reset ()
 		{
-			int n = Info->count;
-			Info->count = 0;
+			int n = Interlocked.Exchange (ref Info->count, 0);
 			return n != 0;
 		}
 
 		public unsafe int Count {
 			get {return Info->count;}
-			set {Info->count = value;}
+			set {Interlocked.Exchange (ref Info->count, value);}
 		}
 
 		[Map]
