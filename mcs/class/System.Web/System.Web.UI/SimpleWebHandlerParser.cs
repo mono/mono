@@ -513,7 +513,12 @@ namespace System.Web.UI
 		}
 
 		internal string Program {
-			get { return program; }
+			get {
+				if (program != null)
+					return program;
+
+				return String.Empty;
+			}
 		}
 
 		internal ArrayList Assemblies {
