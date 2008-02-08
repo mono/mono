@@ -863,28 +863,9 @@ namespace System.Windows.Forms
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override Rectangle GetScaledBounds (Rectangle bounds, SizeF factor, BoundsSpecified specified)
 		{
-			// For some reason, it always uses the control's Height instead of
-			// the Height passed in
-			bounds.Height = this.bounds.Height;
+			bounds.Height = requested_height;
 
-			if ((specified & BoundsSpecified.X) == BoundsSpecified.X)
-				bounds.X = (int)Math.Round (bounds.Left * factor.Width);
-			if ((specified & BoundsSpecified.Y) == BoundsSpecified.Y)
-				bounds.Y = (int)Math.Round (bounds.Top * factor.Height);
-			
-			if ((specified & BoundsSpecified.Width) == BoundsSpecified.Width && !GetStyle (ControlStyles.FixedWidth))
-				bounds.Width = (int)Math.Round (bounds.Width * factor.Width);
-			if ((specified & BoundsSpecified.Height) == BoundsSpecified.Height && !GetStyle (ControlStyles.FixedHeight))
-				bounds.Height = (int)Math.Round (bounds.Height * factor.Height);
-
-			Size size = ClientSizeFromSize (bounds.Size);
-
-			if ((specified & BoundsSpecified.Width) == BoundsSpecified.Width && !GetStyle (ControlStyles.FixedWidth))
-				bounds.Width -= (int)((bounds.Width - size.Width) * (factor.Width - 1));
-			if ((specified & BoundsSpecified.Height) == BoundsSpecified.Height && !GetStyle (ControlStyles.FixedHeight))
-				bounds.Height -= (int)((bounds.Height - size.Height) * (factor.Height - 1));
-
-			return bounds;
+			return base.GetScaledBounds (bounds, factor, specified);
 		}
 #endif
 
@@ -1069,9 +1050,7 @@ namespace System.Windows.Forms
 
 		protected override void ScaleControl (SizeF factor, BoundsSpecified specified)
 		{
-			Rectangle new_bounds = GetScaledBounds (new Rectangle (Location, new Size (Width, Height)), factor, specified);
-
-			SetBounds (new_bounds.X, new_bounds.Y, new_bounds.Width, new_bounds.Height, specified);
+			base.ScaleControl (factor, specified);
 		}
 #endif
 
@@ -2825,5 +2804,6 @@ namespace System.Windows.Forms
 
 	}
 }
+
 
 

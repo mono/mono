@@ -1,3 +1,34 @@
+2008-02-08  Jonathan Pobst  <monkey@jpobst.com>
+
+	Commit patch from James Purcell for better AutoScale implementation:
+
+	* ScaleControl should call GetScaledBounds with the control's total size rather
+	than client size.  GetScaledBounds should handle ignoring the borders in its
+	calculations.  Cleaned up ScaleControl/GetScaledBounds overrides in controls
+	(for the most part they just call the base code now since that is fixed).
+	* Added ScaleChildrenInternal to allow controls to disable scaling of children
+	without having to override ScaleChildren (since none of .NET's controls do). 
+	This is required for most controls in Mono that have scrollbars to prevent the
+	scrollbars from being moved/resized.
+	* Nested ContainerControls can have a different scale mode than their parent. 
+	This is briefly mentioned in MSDN but is buggy in MS.NET (the runtime and
+	designer produce different results both of which look incorrect).
+	* Default AutoScaleMode for ContainerControl should be Inherit.
+	* Simplified workaround for ComboBox scaling issue.
+	* 1.0 style auto-scaling now uses its own methods instead of sharing 2.0's. 
+	1.0 style auto scaling should scale the whole control's size instead of
+	ignoring the borders (except for Form) and the rounding is done differently to
+	preserve control alignment.
+	* ApplyAutoScaling (used for 1.0 style) should use the rounded result of
+	GetAutoScaleSize.
+	* Cleaned up fix for "Bug 355703 - Setting AutoScale = true doesn't stick".
+	* CurrentAutoScaleDimensions should round the estimated character width instead
+	of truncating.
+	* ListBox's GetScaledBounds should always use the height it was set to instead
+	of the height that was passed in.  This prevents rounding errors from
+	accumulating quickly with IntegralHeight.
+	[Bug #359098]
+
 2008-02-08  Andreia Gaita <avidigal@novell.com>
 
 	* Form.cs: Add a null check (darn it). 

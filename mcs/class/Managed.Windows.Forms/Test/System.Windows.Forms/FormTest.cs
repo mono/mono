@@ -2822,6 +2822,45 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (false, f.AutoScale, "A3");
 		}
 #endif
+
+		[Test] // Bug #359098
+		public void AutoScaleBounds ()
+		{
+			AutoScaleForm a = new AutoScaleForm (false);
+			a.Show ();
+			Assert.AreEqual (new Size (213, 121), a.ClientSize, "A0");
+			Assert.AreEqual (new Rectangle (  5, 107, 132,  9), new Rectangle (a.hScrollBar1.Location, a.hScrollBar1.Size), "A1");
+			Assert.AreEqual (new Rectangle (151,  74,  60, 44), new Rectangle (a.treeView1.Location, a.treeView1.Size), "A2");
+			Assert.AreEqual (new Rectangle (197,  21,   9, 39), new Rectangle (a.vScrollBar1.Location, a.vScrollBar1.Size), "A3");
+			Assert.AreEqual (new Rectangle (139,  21,  54, 49), new Rectangle (a.listView1.Location, a.listView1.Size), "A4");
+			Assert.AreEqual (new Rectangle ( 70,   5,  65, 37), new Rectangle (a.textBox2.Location, a.textBox2.Size), "A5");
+			Assert.AreEqual (new Rectangle (139,   5,  70,  0), new Rectangle (a.comboBox1.Location, new Size (a.comboBox1.Width, 0)), "A6");
+			Assert.AreEqual (new Rectangle (  5,  77,  43, 13), new Rectangle (a.button2.Location, a.button2.Size), "A7");
+			Assert.AreEqual (new Rectangle ( 70,  44,  65, 37), new Rectangle (a.richTextBox1.Location, a.richTextBox1.Size), "A8");
+			Assert.AreEqual (new Rectangle ( 53,  86,  21,  7), new Rectangle (a.label1.Location,a.label1.Size), "A9");
+			Assert.AreEqual (new Rectangle ( 65,  84,  58,  0), new Rectangle (a.textBox1.Location, new Size (a.textBox1.Width, 0)), "A10");
+			Assert.AreEqual (new Rectangle (  5,  63,  43, 13), new Rectangle (a.button1.Location, a.button1.Size), "A11");
+			Assert.AreEqual (new Rectangle (  5,   5,  60, 47), new Rectangle (a.listBox1.Location, a.listBox1.Size), "A12");
+			a.Dispose ();
+
+#if NET_2_0
+			a = new AutoScaleForm (true);
+			Assert.AreEqual (new Size (184, 104), a.ClientSize, "B0");
+			Assert.AreEqual (new Rectangle (  4, 92, 114, 16), new Rectangle (a.hScrollBar1.Location, a.hScrollBar1.ClientSize), "B1");
+			Assert.AreEqual (new Rectangle (130, 64,  50, 36), new Rectangle (a.treeView1.Location, a.treeView1.ClientSize), "B2");
+			Assert.AreEqual (new Rectangle (170, 18,  16, 34), new Rectangle (a.vScrollBar1.Location, a.vScrollBar1.ClientSize), "B3");
+			Assert.AreEqual (new Rectangle (120, 18,  44, 40), new Rectangle (a.listView1.Location, a.listView1.ClientSize), "B4");
+			Assert.AreEqual (new Rectangle ( 60,  4,  54, 30), new Rectangle (a.textBox2.Location, a.textBox2.ClientSize), "B5");
+			Assert.AreEqual (new Rectangle (120,  4,  62,  0), new Rectangle (a.comboBox1.Location, new Size (a.comboBox1.ClientSize.Width, 0)), "B6");
+			Assert.AreEqual (new Rectangle (  4, 66,  38, 12), new Rectangle (a.button2.Location, a.button2.ClientSize), "B7");
+			Assert.AreEqual (new Rectangle ( 60, 38,  54, 30), new Rectangle (a.richTextBox1.Location, a.richTextBox1.ClientSize), "B8");
+			Assert.AreEqual (new Rectangle ( 46, 74,  18,  6), new Rectangle (a.label1.Location,a.label1.ClientSize), "B9");
+			Assert.AreEqual (new Rectangle ( 56, 72,  48,  0), new Rectangle (a.textBox1.Location, new Size (a.textBox1.ClientSize.Width, 0)), "B10");
+			Assert.AreEqual (new Rectangle (  4, 54,  38, 12), new Rectangle (a.button1.Location, a.button1.ClientSize), "B11");
+			Assert.AreEqual (new Rectangle (  4,  4,  50, 39), new Rectangle (a.listBox1.Location, a.listBox1.ClientSize), "B12");
+			a.Dispose ();
+#endif
+		}
 	}
 
 	public class TimeBombedForm : Form
@@ -2850,6 +2889,63 @@ namespace MonoTests.System.Windows.Forms
 				Reason = "OnPaint";
 				Close ();
 			}
+		}
+	}
+
+	public class AutoScaleForm : Form
+	{
+		public ListBox listBox1 = new ListBox ();
+		public ComboBox comboBox1 = new ComboBox ();
+		public Button button1 = new Button ();
+		public Button button2 = new Button ();
+		public Label label1 = new Label ();
+		public TextBox textBox1 = new TextBox ();
+		public TextBox textBox2 = new TextBox ();
+		public RichTextBox richTextBox1 = new RichTextBox ();
+		public ListView listView1 = new ListView ();
+		public TreeView treeView1 = new TreeView ();
+		public VScrollBar vScrollBar1 = new VScrollBar ();
+		public HScrollBar hScrollBar1 = new HScrollBar ();
+
+		public AutoScaleForm (bool use_new_auto_scale)
+		{
+			SuspendLayout ();
+
+			listBox1.IntegralHeight = false;
+			listBox1.SetBounds (8, 8, 104, 82);
+			comboBox1.SetBounds (240, 8, 121, 21);
+			button1.SetBounds (8, 108, 75, 23);
+			button2.SetBounds (8, 132, 75, 23);
+			label1.SetBounds (92, 148, 35, 13);
+			textBox1.SetBounds (112, 144, 100, 20);
+			textBox2.Multiline = true;
+			textBox2.SetBounds (120, 8, 112, 64);
+			richTextBox1.SetBounds (120, 76, 112, 64);
+			listView1.SetBounds (240, 36, 92, 84);
+			treeView1.SetBounds (260, 128, 104, 76);
+			vScrollBar1.SetBounds (340, 36, 16, 68);
+			hScrollBar1.SetBounds (8, 184, 228, 16);
+
+			ClientSize = new Size (368, 209);
+
+			Controls.AddRange ( new Control [] { listBox1, comboBox1, button1, button2, label1, textBox1,
+				textBox2, richTextBox1, listView1, treeView1, vScrollBar1, hScrollBar1 } );
+
+			if (use_new_auto_scale) {
+#if NET_2_0
+				AutoScaleMode = AutoScaleMode.Font;
+				SizeF s = CurrentAutoScaleDimensions;
+				AutoScaleDimensions = new SizeF (s.Width * 2, s.Height * 2);
+#endif
+			}
+			else {
+				AutoScale = true;
+				SizeF s = Form.GetAutoScaleSize (Font);
+				AutoScaleBaseSize = new Size ((int)Math.Round (s.Width) * 2, (int)s.Height * 2);
+			}
+
+			ResumeLayout (false);
+			PerformLayout ();
 		}
 	}
 }

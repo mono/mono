@@ -385,6 +385,10 @@ namespace System.Windows.Forms
 			}
 		}
 
+		internal override bool ScaleChildrenInternal {
+			get { return false; }
+		}
+
 		#endregion	// Private Internal Properties
 
 		#region	 Protected Properties

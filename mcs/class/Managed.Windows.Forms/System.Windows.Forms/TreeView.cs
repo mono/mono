@@ -1176,6 +1176,10 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Methods
 
 		#region	Internal & Private Methods and Properties
+		internal override bool ScaleChildrenInternal {
+			get { return false; }
+		}
+
 		internal IntPtr CreateNodeHandle ()
 		{
 			return (IntPtr) handle_count++;
@@ -2483,4 +2487,5 @@ namespace System.Windows.Forms {
 		#endregion	// Events
 	}
 }
+
 

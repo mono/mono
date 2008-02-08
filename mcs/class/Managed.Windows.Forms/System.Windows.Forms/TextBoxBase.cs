@@ -1712,6 +1712,10 @@ namespace System.Windows.Forms
 			}
 		}
 
+		internal override bool ScaleChildrenInternal {
+			get { return false; }
+		}
+
 		internal bool ShowSelection {
 			get {
 				if (show_selection || !hide_selection) {

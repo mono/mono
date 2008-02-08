@@ -926,6 +926,10 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		internal override bool ScaleChildrenInternal {
+			get { return false; }
+		}
+
 		internal bool ShowEditRow {
 			get {
 				if (ListManager != null && !ListManager.CanAddRows)

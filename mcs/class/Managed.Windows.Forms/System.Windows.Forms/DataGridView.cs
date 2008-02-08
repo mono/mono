@@ -1016,6 +1016,10 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal override bool ScaleChildrenInternal {
+			get { return false; }
+		}
+
 		[DefaultValue (ScrollBars.Both)]
 		[Localizable (true)]
 		public ScrollBars ScrollBars {

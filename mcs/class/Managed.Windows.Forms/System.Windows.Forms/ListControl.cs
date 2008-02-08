@@ -278,6 +278,14 @@ namespace System.Windows.Forms
 
 		#endregion Public Properties
 
+		#region Private Properties
+
+		internal override bool ScaleChildrenInternal {
+			get { return false; }
+		}
+
+		#endregion Private Properties
+
 		#region Public Methods
 
 		protected object FilterItemOnProperty (object item)

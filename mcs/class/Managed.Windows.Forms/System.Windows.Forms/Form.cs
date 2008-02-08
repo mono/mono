@@ -189,21 +189,15 @@ namespace System.Windows.Forms {
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override Rectangle GetScaledBounds (Rectangle bounds, SizeF factor, BoundsSpecified specified)
 		{
-			// Never change the Form's location
-			specified &= ~BoundsSpecified.Location;
+			if ((specified & BoundsSpecified.Width) == BoundsSpecified.Width) {
+				int border = Size.Width - ClientSize.Width;
+				bounds.Width = (int)Math.Round ((bounds.Width - border) * factor.Width) + border;
+			}
+			if ((specified & BoundsSpecified.Height) == BoundsSpecified.Height) {
+				int border = Size.Height - ClientSize.Height;
+				bounds.Height = (int)Math.Round ((bounds.Height - border) * factor.Height) + border;
+			}
 
-			if ((specified & BoundsSpecified.Width) == BoundsSpecified.Width && !GetStyle (ControlStyles.FixedWidth))
-				bounds.Width = (int)Math.Round (bounds.Width * factor.Width);
-			if ((specified & BoundsSpecified.Height) == BoundsSpecified.Height && !GetStyle (ControlStyles.FixedHeight))
-				bounds.Height = (int)Math.Round (bounds.Height * factor.Height);
-
-			Size size = ClientSizeFromSize (bounds.Size);
-
-			if ((specified & BoundsSpecified.Width) == BoundsSpecified.Width && !GetStyle (ControlStyles.FixedWidth))
-				bounds.Width -= (int)((bounds.Width - size.Width) * (factor.Width - 1));
-			if ((specified & BoundsSpecified.Height) == BoundsSpecified.Height && !GetStyle (ControlStyles.FixedHeight))
-				bounds.Height -= (int)((bounds.Height - size.Height) * (factor.Height - 1));
-			
 			return bounds;
 		}
 
@@ -215,9 +209,7 @@ namespace System.Windows.Forms {
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override void ScaleControl (SizeF factor, BoundsSpecified specified)
 		{
-			Rectangle new_bounds = GetScaledBounds (bounds, factor, specified);
-			
-			SetBounds (new_bounds.X, new_bounds.Y, new_bounds.Width, new_bounds.Height, specified);
+			base.ScaleControl (factor, specified);
 		}
 #endif
 
@@ -513,12 +505,12 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				autoscale = value;
-				
 #if NET_2_0
-				if (value && AutoScaleMode != AutoScaleMode.None)
+				if (value)
 					AutoScaleMode = AutoScaleMode.None;
 #endif
+
+				autoscale = value;
 			}
 		}
 
@@ -1825,19 +1817,19 @@ namespace System.Windows.Forms {
 			// http://blogs.msdn.com/mharsh/archive/2004/01/25/62621.aspx
 			// but it makes things larger without looking better.
 			//
-			if (current_size_f.Width != AutoScaleBaseSize.Width) {
-				dx = current_size_f.Width / AutoScaleBaseSize.Width + 0.08f;
+			if (current_size.Width != AutoScaleBaseSize.Width) {
+				dx = (float)current_size.Width / AutoScaleBaseSize.Width + 0.08f;
 			} else {
 				dx = 1;
 			}
 
-			if (current_size_f.Height != AutoScaleBaseSize.Height) {
-				dy = current_size_f.Height / AutoScaleBaseSize.Height + 0.08f;
+			if (current_size.Height != AutoScaleBaseSize.Height) {
+				dy = (float)current_size.Height / AutoScaleBaseSize.Height + 0.08f;
 			} else {
 				dy = 1;
 			}
 
-			Scale (new SizeF (dx, dy));
+			Scale (dx, dy);
 			
 			AutoScaleBaseSize = current_size;
 		}
@@ -2262,42 +2254,13 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
-		[EditorBrowsable(EditorBrowsableState.Never)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 #else
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 #endif
-		protected override void ScaleCore(float dx, float dy) {
-			try {
-				SuspendLayout();
-
-				// We can't scale max or min windows
-				if (WindowState == FormWindowState.Normal) {
-					// We cannot call base since base also adjusts X/Y, but
-					// a form is toplevel and doesn't move
-					Size	size;
-
-					size = ClientSize;
-					if (!GetStyle(ControlStyles.FixedWidth)) {
-						size.Width = (int)(size.Width * dx);
-					}
-
-					if (!GetStyle(ControlStyles.FixedHeight)) {
-						size.Height = (int)(size.Height * dy);
-					}
-
-					ClientSize = size;
-				}
-
-				/* Now scale our children */
-				Control [] controls = Controls.GetAllControls ();
-				for (int i=0; i < controls.Length; i++) {
-					controls[i].Scale (new SizeF (dx, dy));
-				}
-			}
-
-			finally {
-				ResumeLayout();
-			}
+		protected override void ScaleCore (float dx, float dy)
+		{
+			base.ScaleCore (dx, dy);
 		}
 
 		protected override void Select(bool directed, bool forward) {

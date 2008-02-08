@@ -48,6 +48,7 @@ namespace System.Windows.Forms {
 		private AutoScaleMode	auto_scale_mode;
 		private bool		auto_scale_mode_set;
 		private bool		auto_scale_pending;
+		private bool		is_auto_scaling;
 #endif
 
 		internal bool validation_failed; //track whether validation was cancelled by a validating control
@@ -59,7 +60,7 @@ namespace System.Windows.Forms {
 			ControlRemoved += new ControlEventHandler(OnControlRemoved);
 #if NET_2_0
 			auto_scale_dimensions = SizeF.Empty;
-			auto_scale_mode = AutoScaleMode.None;
+			auto_scale_mode = AutoScaleMode.Inherit;
 #endif
 		}
 		#endregion	// Public Constructors
@@ -274,6 +275,9 @@ namespace System.Windows.Forms {
 				return auto_scale_mode;
 			}
 			set {
+				if (this is Form)
+					(this as Form).AutoScale = false;
+
 				if (auto_scale_mode != value) {
 					auto_scale_mode = value;
 
@@ -284,9 +288,6 @@ namespace System.Windows.Forms {
 
 					PerformAutoScale ();
 				}
-					
-				if (this is Form)
-					(this as Form).AutoScale = false;
 			}
 		}
 #endif // NET_2_0
@@ -316,7 +317,7 @@ namespace System.Windows.Forms {
 
 					case AutoScaleMode.Font:
 						Size s = TextRenderer.MeasureText ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890", Font);
-						int width = (int)((float)s.Width / 62f);
+						int width = (int)Math.Round ((float)s.Width / 62f);
 						
 						return new SizeF (width, s.Height);
 				}
@@ -356,9 +357,12 @@ namespace System.Windows.Forms {
 
 		#region Public Instance Methods
 #if NET_2_0
-		public void PerformAutoScale ()
+		internal void PerformAutoScale (bool called_by_scale)
 		{
-			if (layout_suspended > 0) {
+			if ((AutoScaleMode == AutoScaleMode.Inherit) && !called_by_scale)
+				return;
+
+			if ((layout_suspended > 0) && !called_by_scale) {
 				auto_scale_pending = true;
 				return;
 			}
@@ -366,19 +370,36 @@ namespace System.Windows.Forms {
 			// PerformDelayedAutoScale after ResumeLayout
 			auto_scale_pending = false;
 
-			if (AutoScaleFactor != new SizeF(1F, 1F)) {
+			SizeF factor = AutoScaleFactor;
+			if (AutoScaleMode == AutoScaleMode.Inherit) {
+				ContainerControl cc = FindContainer (this.Parent);
+				if (cc != null)
+					factor = cc.AutoScaleFactor;
+			}
+			if (factor != new SizeF (1F, 1F)) {
+				is_auto_scaling = true;
 				SuspendLayout ();
-				Scale (AutoScaleFactor);
+				Scale (factor);
 				ResumeLayout (false);
+				is_auto_scaling = false;
 			}
 
 			auto_scale_dimensions = CurrentAutoScaleDimensions;
+		}
+
+		public void PerformAutoScale ()
+		{
+			PerformAutoScale (false);
 		}
 
 		internal void PerformDelayedAutoScale ()
 		{
 			if (auto_scale_pending)
 				PerformAutoScale ();
+		}
+
+		internal bool IsAutoScaling {
+			get { return is_auto_scaling; }
 		}
 #endif
 

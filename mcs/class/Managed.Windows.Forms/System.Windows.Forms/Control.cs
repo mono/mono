@@ -3562,15 +3562,15 @@ namespace System.Windows.Forms
 
 #if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		protected
-#else
-		internal
+		protected virtual bool ScaleChildren {
+			get { return ScaleChildrenInternal; }
+		}
 #endif
-		virtual bool ScaleChildren
-		{
+
+		internal virtual bool ScaleChildrenInternal {
 			get { return true; }
 		}
-	
+
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -4219,25 +4219,51 @@ namespace System.Windows.Forms
 			ScaleCore(dx, dy);
 		}
 
-		[EditorBrowsable (EditorBrowsableState.Advanced)]
 #if NET_2_0
-		public
-#else
-		internal
-#endif
-		void Scale (SizeF factor) 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public void Scale (SizeF factor)
 		{
+			BoundsSpecified bounds_spec = BoundsSpecified.All;
+
 			SuspendLayout ();
-			
-			ScaleControl (factor, BoundsSpecified.All);
+
+			if (this is ContainerControl) {
+				if ((this as ContainerControl).IsAutoScaling)
+					bounds_spec = BoundsSpecified.Size;
+				else if (IsContainerAutoScaling (this.Parent))
+					bounds_spec = BoundsSpecified.Location;
+			}
+
+			ScaleControl (factor, bounds_spec);
 
 			// Scale children
-			if (ScaleChildren)
-				foreach (Control c in Controls.GetAllControls ())
+			if ((bounds_spec != BoundsSpecified.Location) && ScaleChildren) {
+				foreach (Control c in Controls.GetAllControls ()) {
 					c.Scale (factor);
+					if (c is ContainerControl) {
+						ContainerControl cc = c as ContainerControl;
+						if ((cc.AutoScaleMode == AutoScaleMode.Inherit) && IsContainerAutoScaling (this))
+							cc.PerformAutoScale (true);
+					}
+				}
+			}
 
 			ResumeLayout ();
 		}
+
+		internal ContainerControl FindContainer (Control c)
+		{
+			while ((c != null) && !(c is ContainerControl))
+				c = c.Parent;
+			return c as ContainerControl;
+		}
+
+		private bool IsContainerAutoScaling (Control c)
+		{
+			ContainerControl cc = FindContainer (c);
+			return (cc != null) && cc.IsAutoScaling;
+		}
+#endif
 
 		public void Select() {
 			Select(false, false);	
@@ -4445,25 +4471,57 @@ namespace System.Windows.Forms
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		protected 
-#else
-		internal
-#endif
-		virtual Rectangle GetScaledBounds (Rectangle bounds, SizeF factor, BoundsSpecified specified)
+		protected virtual Rectangle GetScaledBounds (Rectangle bounds, SizeF factor, BoundsSpecified specified)
 		{
 			// Top level controls do not scale location
 			if (!is_toplevel) {
 				if ((specified & BoundsSpecified.X) == BoundsSpecified.X)
-					bounds.X = (int)Math.Round (bounds.Left * factor.Width);
+					bounds.X = (int)Math.Round (bounds.X * factor.Width);
 				if ((specified & BoundsSpecified.Y) == BoundsSpecified.Y)
-					bounds.Y = (int)Math.Round (bounds.Top * factor.Height);
+					bounds.Y = (int)Math.Round (bounds.Y * factor.Height);
 			}
-			
-			if ((specified & BoundsSpecified.Width) == BoundsSpecified.Width && !GetStyle (ControlStyles.FixedWidth))
-				bounds.Width = (int)Math.Round (bounds.Width * factor.Width);
-			if ((specified & BoundsSpecified.Height) == BoundsSpecified.Height && !GetStyle (ControlStyles.FixedHeight))
-				bounds.Height = (int)Math.Round (bounds.Height * factor.Height);
-				
+
+			if ((specified & BoundsSpecified.Width) == BoundsSpecified.Width && !GetStyle (ControlStyles.FixedWidth)) {
+				int border = (this is ComboBox) ? (ThemeEngine.Current.Border3DSize.Width * 2) :
+					(this.bounds.Width - this.client_size.Width);
+				bounds.Width = (int)Math.Round ((bounds.Width - border) * factor.Width + border);
+			}
+			if ((specified & BoundsSpecified.Height) == BoundsSpecified.Height && !GetStyle (ControlStyles.FixedHeight)) {
+				int border = (this is ComboBox) ? (ThemeEngine.Current.Border3DSize.Height * 2) :
+					(this.bounds.Height - this.client_size.Height);
+				bounds.Height = (int)Math.Round ((bounds.Height - border) * factor.Height + border);
+			}
+
+			return bounds;
+		}
+#endif
+
+		private Rectangle GetScaledBoundsOld (Rectangle bounds, SizeF factor, BoundsSpecified specified)
+		{
+			RectangleF new_bounds = new RectangleF(bounds.Location, bounds.Size);
+
+			// Top level controls do not scale location
+			if (!is_toplevel) {
+				if ((specified & BoundsSpecified.X) == BoundsSpecified.X)
+					new_bounds.X *= factor.Width;
+				if ((specified & BoundsSpecified.Y) == BoundsSpecified.Y)
+					new_bounds.Y *= factor.Height;
+			}
+
+			if ((specified & BoundsSpecified.Width) == BoundsSpecified.Width && !GetStyle (ControlStyles.FixedWidth)) {
+				int border = (this is Form) ? (this.bounds.Width - this.client_size.Width) : 0;
+				new_bounds.Width = ((new_bounds.Width - border) * factor.Width + border);
+			}
+			if ((specified & BoundsSpecified.Height) == BoundsSpecified.Height && !GetStyle (ControlStyles.FixedHeight)) {
+				int border = (this is Form) ? (this.bounds.Height - this.client_size.Height) : 0;
+				new_bounds.Height = ((new_bounds.Height - border) * factor.Height + border);
+			}
+
+			bounds.X = (int)Math.Round (new_bounds.X);
+			bounds.Y = (int)Math.Round (new_bounds.Y);
+			bounds.Width = (int)Math.Round (new_bounds.Right) - bounds.X;
+			bounds.Height = (int)Math.Round (new_bounds.Bottom) - bounds.Y;
+
 			return bounds;
 		}
 
@@ -4771,48 +4829,32 @@ namespace System.Windows.Forms
 
 #if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		protected
-#else
-		internal
-#endif
-		virtual void ScaleControl (SizeF factor, BoundsSpecified specified)
+		protected virtual void ScaleControl (SizeF factor, BoundsSpecified specified)
 		{
-			Rectangle new_bounds = GetScaledBounds (new Rectangle (Location, ClientSize), factor, specified);
+			Rectangle new_bounds = GetScaledBounds (bounds, factor, specified);
 
 			SetBounds (new_bounds.X, new_bounds.Y, new_bounds.Width, new_bounds.Height, specified);
 		}
+#endif
 
 #if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
 #else
-		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 #endif
-		protected virtual void ScaleCore(float dx, float dy) {
-			Point	location;
-			Size	size;
+		protected virtual void ScaleCore (float dx, float dy)
+		{
+			Rectangle new_bounds = GetScaledBoundsOld (bounds, new SizeF (dx, dy), BoundsSpecified.All);
 
-			SuspendLayout();
+			SuspendLayout ();
 
-			location = new Point((int)(Left * dx), (int)(Top * dy));
-			size = this.ClientSize;
+			SetBounds (new_bounds.X, new_bounds.Y, new_bounds.Width, new_bounds.Height, BoundsSpecified.All);
 
-			if (!GetStyle(ControlStyles.FixedWidth)) {
-				size.Width = (int)(size.Width * dx);
-			}
+			if (ScaleChildrenInternal)
+				foreach (Control c in Controls.GetAllControls ())
+					c.Scale (dx, dy);
 
-			if (!GetStyle(ControlStyles.FixedHeight)) {
-				size.Height = (int)(size.Height * dy);
-			}
-
-			SetBounds(location.X, location.Y, size.Width, size.Height, BoundsSpecified.All);
-
-			/* Now scale our children */
-			Control [] controls = child_controls.GetAllControls ();
-			for (int i=0; i < controls.Length; i++) {
-				controls[i].Scale (new SizeF (dx, dy));
-			}
-
-			ResumeLayout();
+			ResumeLayout ();
 		}
 
 		protected virtual void Select(bool directed, bool forward) {

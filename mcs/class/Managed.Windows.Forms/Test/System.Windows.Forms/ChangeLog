@@ -1,3 +1,8 @@
+2008-02-08  Jonathan Pobst  <monkey@jpobst.com>
+
+	* FormTest.cs: Commit tests from James Purcell for his new
+	AutoScale implementation.  [Bug #359098]
+
 2008-02-07  Jonathan Pobst  <monkey@jpobst.com>
 
 	* MdiFormTest.cs: Add test for bug #336296.
