@@ -1,3 +1,8 @@
+2008-02-08  Juraj Skripsky  <js@hotfeet.ch>
+
+	* Random.cs (Next): Use rounding (via implicit conversion) only on
+	positive values. Fixes bug 359918.
+
 2008-02-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Environment.cs: Remove unused method found with Gendarme.
