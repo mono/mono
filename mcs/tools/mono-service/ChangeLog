@@ -1,3 +1,12 @@
+2008-02-08  Jonathan Pryor  <pryorj@novell.com>
+
+	* mono-service.cs: The return value of UnixSignal.WaitAny() changed; cope.
+
+2008-02-07  Jonathan Pryor  <pryorj@novell.com>
+
+	* mono-service.cs: Use Mono.Unix.UnixSignal for signal handling, which 
+	  is actually safe.  As a bonus, it removes the 'wakeup every .5s' code.
+
 2006-08-30  Robert Jordan  <robertj@gmx.net>
 
 	* Makefile: Support the 2.0 profile.

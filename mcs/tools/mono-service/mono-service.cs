@@ -11,6 +11,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using Mono.Unix;
 using Mono.Unix.Native;
 using System.ServiceProcess;
 using System.Threading;
@@ -36,13 +37,6 @@ class MonoServiceRunner : MarshalByRefObject
 					 "Usage is:\n" +
 					 "mono-service [-d:DIRECTORY] [-l:LOCKFILE] [-n:NAME] [-m:LOGNAME] service.exe\n");
 		Environment.Exit (1);
-	}
-
-	int signum;
-	
-	void my_handler (int sig)
-	{
-		signum = sig;
 	}
 
 	static void call (object o, string method, object [] arg)
@@ -163,15 +157,6 @@ class MonoServiceRunner : MarshalByRefObject
 	public int StartService ()
 	{
 		try	{
-			// Invoke all the code used in the signal handler, so the JIT does
-			// not kick-in inside the signal handler
-			my_handler (0);
-			
-			// Hook up 
-			Stdlib.signal (Signum.SIGTERM, new SignalHandler (my_handler));
-			Stdlib.signal (Signum.SIGUSR1, new SignalHandler (my_handler));
-			Stdlib.signal (Signum.SIGUSR2, new SignalHandler (my_handler));
-	
 			// Load service assembly
 			Assembly a = null;
 			
@@ -250,36 +235,38 @@ class MonoServiceRunner : MarshalByRefObject
 			call (service, "OnStart", new string [0]);
 			info (logname, "Service {0} started", service.ServiceName);
 	
+			UnixSignal intr = new UnixSignal (Signum.SIGINT);
+			UnixSignal term = new UnixSignal (Signum.SIGTERM);
+			UnixSignal usr1 = new UnixSignal (Signum.SIGUSR1);
+			UnixSignal usr2 = new UnixSignal (Signum.SIGUSR2);
+
+			UnixSignal[] sigs = new UnixSignal[]{
+				intr,
+				term,
+				usr1,
+				usr2
+			};
+
 			for (bool running = true; running; ){
-				// Poll only after 500ms
-				Thread.Sleep (500);
-				
-				Signum v;
-				
-				if (NativeConvert.TryToSignum (signum, out v)){
-					signum = 0;
-					
-					switch (v){
-					case Signum.SIGTERM:
-						if (service.CanStop) {
-							info (logname, "Stopping service {0}", service.ServiceName);
-							call (service, "OnStop", null);
-							running = false;
-						}
-						break;
-					case Signum.SIGUSR1:
-						if (service.CanPauseAndContinue) {
-							info (logname, "Pausing service {0}", service.ServiceName);
-							call (service, "OnPause", null);
-						}
-						break;
-					case Signum.SIGUSR2:
-						if (service.CanPauseAndContinue) {
-							info (logname, "Continuing service {0}", service.ServiceName);
-							call (service, "OnContinue", null);
-						}
-						break;
-					}
+				int idx = UnixSignal.WaitAny (sigs);
+				if (idx < 0 || idx >= sigs.Length)
+					continue;
+				if ((intr.IsSet || term.IsSet) && service.CanStop) {
+					intr.Reset ();
+					term.Reset ();
+					info (logname, "Stopping service {0}", service.ServiceName);
+					call (service, "OnStop", null);
+					running = false;
+				}
+				else if (usr1.IsSet && service.CanPauseAndContinue) {
+					usr1.Reset ();
+					info (logname, "Pausing service {0}", service.ServiceName);
+					call (service, "OnPause", null);
+				}
+				else if (usr2.IsSet && service.CanPauseAndContinue) {
+					usr2.Reset ();
+					info (logname, "Continuing service {0}", service.ServiceName);
+					call (service, "OnContinue", null);
 				}
 			}
 		} finally {
