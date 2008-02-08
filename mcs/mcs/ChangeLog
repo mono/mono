@@ -1,5 +1,11 @@
 2008-02-08  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bugs #325134, #359749
+ 	* expression.cs, ecore.cs: Try to resolve an extension method even if the
+ 	first binds point to non-method member expression.
+ 	
+2008-02-08  Marek Safar  <marek.safar@gmail.com>
+
  	* cs-parser.jay: Null coalescing operator is not part of ISO-1.
 
 2008-02-08  Marek Safar  <marek.safar@gmail.com>

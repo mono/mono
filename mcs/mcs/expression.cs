@@ -4325,9 +4325,21 @@ namespace Mono.CSharp {
 					return (new DelegateInvocation (
 						expr_resolved, Arguments, loc)).Resolve (ec);
 				}
+
+				MemberExpr me = expr_resolved as MemberExpr;
+				if (me == null) {
+					expr_resolved.Error_UnexpectedKind (ResolveFlags.MethodGroup, loc);
+					return null;
+				}
 				
-				expr_resolved.Error_UnexpectedKind (ResolveFlags.MethodGroup, loc);
-				return null;
+				mg = ec.TypeContainer.LookupExtensionMethod (me.Type, me.Name);
+				if (mg == null) {
+					Report.Error (1955, loc, "The member `{0}' cannot be used as method or delegate",
+						expr_resolved.GetSignatureForError ());
+					return null;
+				}
+
+				((ExtensionMethodGroupExpr)mg).ExtensionExpression = me.InstanceExpression;
 			}
 
 			//

@@ -2448,7 +2448,7 @@ namespace Mono.CSharp {
 						if (!me.IsStatic &&
 						    (!intermediate || !IdenticalNameAndTypeName (ec, me, loc))) {
 							Error_ObjectRefRequired (ec, loc, me.GetSignatureForError ());
-							return EmptyExpression.Null;
+							return null;
 						}
 
 						//
