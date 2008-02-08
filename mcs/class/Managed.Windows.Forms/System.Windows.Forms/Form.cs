@@ -2610,7 +2610,7 @@ namespace System.Windows.Forms {
 					Hide ();
 				} else {
 					Dispose ();					
-					if (act != this)
+					if (act != null && act != this)
 						act.SelectActiveControl ();
 				}
 				mdi_parent = null;

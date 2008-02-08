@@ -1,3 +1,7 @@
+2008-02-08  Andreia Gaita <avidigal@novell.com>
+
+	* Form.cs: Add a null check (darn it). 
+
 2008-02-08  Jonathan Pobst  <monkey@jpobst.com>
 
 	* MdiClient.cs: Make sure the requesting form actually owns the
