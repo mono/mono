@@ -2559,9 +2559,9 @@ namespace Mono.CSharp {
 			return ds.CheckAccessLevel (Type);
 		}
 
-		public virtual bool AsAccessible (DeclSpace ds, int flags)
+		public virtual bool AsAccessible (DeclSpace ds)
 		{
-			return ds.AsAccessible (Type, flags);
+			return ds.IsAccessibleAs (Type);
 		}
 
 		public virtual bool IsClass {
@@ -2905,9 +2905,9 @@ namespace Mono.CSharp {
 			return texpr.CheckAccessLevel (ds);
 		}
 
-		public override bool AsAccessible (DeclSpace ds, int flags)
+		public override bool AsAccessible (DeclSpace ds)
 		{
-			return texpr.AsAccessible (ds, flags);
+			return texpr.AsAccessible (ds);
 		}
 
 		public override bool IsClass {

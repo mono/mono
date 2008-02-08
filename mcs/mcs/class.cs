@@ -1064,11 +1064,11 @@ namespace Mono.CSharp {
 				}
 
 				if ((Kind == Kind.Interface) &&
-				    !iface.AsAccessible (Parent, ModFlags)) {
+				    !iface.AsAccessible (this)) {
 					Report.Error (61, Location,
 						      "Inconsistent accessibility: base " +
 						      "interface `{0}' is less accessible " +
-						      "than interface `{1}'", iface.Name,
+						      "than interface `{1}'", iface.GetSignatureForError (),
 						      Name);
 					return null;
 				}
@@ -3128,7 +3128,7 @@ namespace Mono.CSharp {
 					return ifaces;
 				}
 
-				if (!base_class.AsAccessible (this, ModFlags)) {
+				if (!base_class.AsAccessible (this)) {
 					Report.SymbolRelatedToPreviousError (base_class.Type);
 					Report.Error (60, Location, "Inconsistent accessibility: base class `{0}' is less accessible than class `{1}'", 
 						TypeManager.CSharpName (base_class.Type), GetSignatureForError ());
@@ -5596,7 +5596,7 @@ namespace Mono.CSharp {
 			}
 			
 			// verify accessibility
-			if (!Parent.AsAccessible (MemberType, ModFlags)) {
+			if (!IsAccessibleAs (MemberType)) {
 				Report.SymbolRelatedToPreviousError (MemberType);
 				if (this is Property)
 					Report.Error (53, Location,
@@ -5753,14 +5753,9 @@ namespace Mono.CSharp {
 
 			if (!CheckBase ())
 				return false;
-			
-			if (!Parent.AsAccessible (MemberType, ModFlags)) {
-				Report.Error (52, Location,
-					"Inconsistent accessibility: field type `" +
-					TypeManager.CSharpName (MemberType) + "' is less " +
-					"accessible than field `" + GetSignatureForError () + "'");
+
+			if (!DoDefine ())
 				return false;
-			}
 
 			if (!IsTypePermitted ())
 				return false;

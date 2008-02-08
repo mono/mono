@@ -1,3 +1,9 @@
+2008-02-08  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bugs #321394, #323028
+ 	* generic.cs, parameter.cs, ecore.cs, class.cs, decl.cs, delegate.cs: 
+ 	Reworked naive IsAccessibleAs implementation to handle nested types.
+
 2008-02-05  Jb Evain  <jbevain@novell.com>
 
 	* class.cs: use generic type comparison for parameters

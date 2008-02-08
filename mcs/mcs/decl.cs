@@ -353,7 +353,7 @@ namespace Mono.CSharp {
 			member_name = new_name;
 			cached_name = null;
 		}
-		
+
 		protected bool CheckAbstractAndExtern (bool has_block)
 		{
 			if (Parent.PartialContainer.Kind == Kind.Interface)
@@ -471,6 +471,146 @@ namespace Mono.CSharp {
 			}
 
 			AttributeTester.Report_ObsoleteMessage (oa, GetSignatureForError (), loc);
+		}
+
+		// Access level of a type.
+		const int X = 1;
+		enum AccessLevel
+		{ // Each column represents `is this scope larger or equal to Blah scope'
+			// Public    Assembly   Protected
+			Protected = (0 << 0) | (0 << 1) | (X << 2),
+			Public = (X << 0) | (X << 1) | (X << 2),
+			Private = (0 << 0) | (0 << 1) | (0 << 2),
+			Internal = (0 << 0) | (X << 1) | (0 << 2),
+			ProtectedOrInternal = (0 << 0) | (X << 1) | (X << 2),
+		}
+
+		static AccessLevel GetAccessLevelFromModifiers (int flags)
+		{
+			if ((flags & Modifiers.INTERNAL) != 0) {
+
+				if ((flags & Modifiers.PROTECTED) != 0)
+					return AccessLevel.ProtectedOrInternal;
+				else
+					return AccessLevel.Internal;
+
+			} else if ((flags & Modifiers.PROTECTED) != 0)
+				return AccessLevel.Protected;
+			else if ((flags & Modifiers.PRIVATE) != 0)
+				return AccessLevel.Private;
+			else
+				return AccessLevel.Public;
+		}
+
+		//
+		// Returns the access level for type `t'
+		//
+		static AccessLevel GetAccessLevelFromType (Type t)
+		{
+			if (t.IsPublic)
+				return AccessLevel.Public;
+			if (t.IsNestedPrivate)
+				return AccessLevel.Private;
+			if (t.IsNotPublic)
+				return AccessLevel.Internal;
+
+			if (t.IsNestedPublic)
+				return AccessLevel.Public;
+			if (t.IsNestedAssembly)
+				return AccessLevel.Internal;
+			if (t.IsNestedFamily)
+				return AccessLevel.Protected;
+			if (t.IsNestedFamORAssem)
+				return AccessLevel.ProtectedOrInternal;
+			if (t.IsNestedFamANDAssem)
+				throw new NotImplementedException ("NestedFamANDAssem not implemented, cant make this kind of type from c# anyways");
+
+			// nested private is taken care of
+
+			throw new Exception ("I give up, what are you?");
+		}
+
+		//
+		// Checks whether the type P is as accessible as this member
+		//
+		public bool IsAccessibleAs (Type p)
+		{
+			//
+			// if M is private, its accessibility is the same as this declspace.
+			// we already know that P is accessible to T before this method, so we
+			// may return true.
+			//
+			if ((mod_flags & Modifiers.PRIVATE) != 0)
+				return true;
+
+			while (p.IsArray || p.IsPointer || p.IsByRef)
+				p = TypeManager.GetElementType (p);
+
+#if GMCS_SOURCE
+			if (p.IsGenericParameter)
+				return true;
+
+			if (TypeManager.IsGenericType (p)) {
+				foreach (Type t in p.GetGenericArguments ()) {
+					if (!IsAccessibleAs (t))
+						return false;
+				}
+			}
+#endif
+
+			for (Type p_parent = null; p != null; p = p_parent) {
+				p_parent = p.DeclaringType;
+				AccessLevel pAccess = GetAccessLevelFromType (p);
+				if (pAccess == AccessLevel.Public)
+					continue;
+
+				bool same_access_restrictions = false;
+				for (MemberCore mc = this; !same_access_restrictions && mc.Parent != null; mc = mc.Parent) {
+					AccessLevel al = GetAccessLevelFromModifiers (mc.ModFlags);
+					switch (pAccess) {
+						case AccessLevel.Internal:
+							if (al == AccessLevel.Private || al == AccessLevel.Internal)
+								same_access_restrictions = CodeGen.Assembly.Builder == p.Assembly || TypeManager.IsFriendAssembly (p.Assembly);
+
+							break;
+
+						case AccessLevel.Protected:
+							if (al == AccessLevel.Protected)
+								same_access_restrictions = mc.Parent.IsBaseType (p_parent);
+							break;
+
+						case AccessLevel.ProtectedOrInternal:
+							if (al == AccessLevel.Protected)
+								same_access_restrictions = mc.Parent.IsBaseType (p_parent);
+
+							if (al == AccessLevel.Internal)
+								same_access_restrictions = CodeGen.Assembly.Builder == p.Assembly || TypeManager.IsFriendAssembly (p.Assembly);
+
+							if (al == AccessLevel.ProtectedOrInternal)
+								same_access_restrictions = mc.Parent.IsBaseType (p_parent) &&
+									(CodeGen.Assembly.Builder == p.Assembly || TypeManager.IsFriendAssembly (p.Assembly));
+
+							break;
+
+						case AccessLevel.Private:
+							//
+							// Both are private and share same parent
+							//
+							if (al == AccessLevel.Private)
+								same_access_restrictions = TypeManager.IsEqual (mc.Parent.TypeBuilder, p_parent);
+
+							break;
+
+						default:
+							throw new InternalErrorException (al.ToString ());
+					}
+				}
+
+				if (!same_access_restrictions)
+					return false;
+			}
+
+			return true;
 		}
 
 		/// <summary>
@@ -957,113 +1097,20 @@ namespace Mono.CSharp {
 			return TypeManager.IsNestedFamilyAccessible (TypeBuilder, declaring);
 		}
 
-		// Access level of a type.
-		const int X = 1;
-		enum AccessLevel { // Each column represents `is this scope larger or equal to Blah scope'
-			// Public    Assembly   Protected
-			Protected           = (0 << 0) | (0 << 1) | (X << 2),
-			Public              = (X << 0) | (X << 1) | (X << 2),
-			Private             = (0 << 0) | (0 << 1) | (0 << 2),
-			Internal            = (0 << 0) | (X << 1) | (0 << 2),
-			ProtectedOrInternal = (0 << 0) | (X << 1) | (X << 2),
-		}
-		
-		static AccessLevel GetAccessLevelFromModifiers (int flags)
+		public bool IsBaseType (Type baseType)
 		{
-			if ((flags & Modifiers.INTERNAL) != 0) {
-				
-				if ((flags & Modifiers.PROTECTED) != 0)
-					return AccessLevel.ProtectedOrInternal;
-				else
-					return AccessLevel.Internal;
-				
-			} else if ((flags & Modifiers.PROTECTED) != 0)
-				return AccessLevel.Protected;
-			else if ((flags & Modifiers.PRIVATE) != 0)
-				return AccessLevel.Private;
-			else
-				return AccessLevel.Public;
-		}
+			if (TypeManager.IsInterfaceType (baseType))
+				throw new NotImplementedException ();
 
-		// What is the effective access level of this?
-		// TODO: Cache this?
-		AccessLevel EffectiveAccessLevel {
-			get {
-				AccessLevel myAccess = GetAccessLevelFromModifiers (ModFlags);
-				if (!IsTopLevel && (Parent != null))
-					return myAccess & Parent.EffectiveAccessLevel;
-				return myAccess;
+			Type type = TypeBuilder;
+			while (type != null) {
+				if (TypeManager.IsEqual (type, baseType))
+					return true;
+
+				type = type.BaseType;
 			}
-		}
 
-		// Return the access level for type `t'
-		static AccessLevel TypeEffectiveAccessLevel (Type t)
-		{
-			if (t.IsPublic)
-				return AccessLevel.Public;
-			if (t.IsNestedPrivate)
-				return AccessLevel.Private;
-			if (t.IsNotPublic)
-				return AccessLevel.Internal;
-			
-			// By now, it must be nested
-			AccessLevel parent_level = TypeEffectiveAccessLevel (t.DeclaringType);
-			
-			if (t.IsNestedPublic)
-				return parent_level;
-			if (t.IsNestedAssembly)
-				return parent_level & AccessLevel.Internal;
-			if (t.IsNestedFamily)
-				return parent_level & AccessLevel.Protected;
-			if (t.IsNestedFamORAssem)
-				return parent_level & AccessLevel.ProtectedOrInternal;
-			if (t.IsNestedFamANDAssem)
-				throw new NotImplementedException ("NestedFamANDAssem not implemented, cant make this kind of type from c# anyways");
-			
-			// nested private is taken care of
-			
-			throw new Exception ("I give up, what are you?");
-		}
-
-		//
-		// This answers `is the type P, as accessible as a member M which has the
-		// accessability @flags which is declared as a nested member of the type T, this declspace'
-		//
-		public bool AsAccessible (Type p, int flags)
-		{
-			//
-			// 1) if M is private, its accessability is the same as this declspace.
-			// we already know that P is accessible to T before this method, so we
-			// may return true.
-			//
-			
-			if ((flags & Modifiers.PRIVATE) != 0)
-				return true;
-			
-			while (p.IsArray || p.IsPointer || p.IsByRef)
-				p = TypeManager.GetElementType (p);
-
-#if GMCS_SOURCE
-			if (p.IsGenericParameter)
-				return true;
-
-			if (TypeManager.IsGenericType (p)) {
-				foreach (Type t in p.GetGenericArguments ()) {
-					if (!AsAccessible (t, flags))
-						return false;
-				}
-			}
-#endif
-			AccessLevel pAccess = TypeEffectiveAccessLevel (p);
-			AccessLevel mAccess = this.EffectiveAccessLevel &
-				GetAccessLevelFromModifiers (flags);
-			
-			// for every place from which we can access M, we must
-			// be able to access P as well. So, we want
-			// For every bit in M and P, M_i -> P_1 == true
-			// or, ~ (M -> P) == 0 <-> ~ ( ~M | P) == 0
-			
-			return ~ (~ mAccess | pAccess) == 0;
+			return false;
 		}
 
 		private Type LookupNestedTypeInHierarchy (string name)

@@ -337,7 +337,7 @@ namespace Mono.CSharp {
 			if (IsTypeParameter)
 				return true;
 
-			return member.ds.AsAccessible (parameter_type, member.ModFlags);
+			return member.IsAccessibleAs (parameter_type);
 		}
 
 		public override IResolveContext ResolveContext {

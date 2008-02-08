@@ -243,8 +243,7 @@ namespace Mono.CSharp {
 				if ((expr == null) || (expr.Type == null))
 					return false;
 
-				// TODO: It's aleady done in ResolveAsBaseTerminal
-				if (!ec.GenericDeclContainer.AsAccessible (fn.Type, ec.GenericDeclContainer.ModFlags)) {
+				if (!ec.GenericDeclContainer.IsAccessibleAs (fn.Type)) {
 					Report.SymbolRelatedToPreviousError (fn.Type);
 					Report.Error (703, loc,
 						"Inconsistent accessibility: constraint type `{0}' is less accessible than `{1}'",
@@ -1504,14 +1503,14 @@ namespace Mono.CSharp {
 			return ds.CheckAccessLevel (gt);
 		}
 
-		public override bool AsAccessible (DeclSpace ds, int flags)
+		public override bool AsAccessible (DeclSpace ds)
 		{
 			foreach (Type t in atypes) {
-				if (!ds.AsAccessible (t, flags))
+				if (!ds.IsAccessibleAs (t))
 					return false;
 			}
 
-			return ds.AsAccessible (gt, flags);
+			return ds.IsAccessibleAs (gt);
 		}
 
 		public override bool IsClass {
