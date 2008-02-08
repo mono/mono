@@ -1,3 +1,18 @@
+2008-02-08 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* unverifiable_void_ptr_store_2.cs: Tests for using unmanaged pointers.
+	This test looks for void pointers.
+
+	* unverifiable_void_ptr_store_3.cs: Same.
+
+	* unverifiable_void_ptr_store.cs: Same.
+
+	* valid_merge_boxed_type_3.cs: Test merging a reference type diferent than
+	System.Object and a boxed valuetype. This is hopefully the last issue of
+	merging stack frames.
+
+	* Makefile: compile .cs files with /unsafe switch.
+
 2008-02-06 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* valid_boxed_enum_is_compatible_with_system_enum.cs: Added. 
