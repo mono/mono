@@ -1,3 +1,7 @@
+2008-02-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Binding.cs: Implement 2.0 WriteValue method.
+
 2008-02-08  Jonathan Pobst  <monkey@jpobst.com>
 
 	Commit patch from James Purcell for better AutoScale implementation:

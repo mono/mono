@@ -195,6 +195,11 @@ namespace System.Windows.Forms {
 		{
 			PushData (true);
 		}
+
+		public void WriteValue ()
+		{
+			PullData (true);
+		}
 #endif
 
 		#region Protected Instance Methods
@@ -265,8 +270,17 @@ namespace System.Windows.Forms {
 
 		internal void PullData ()
 		{
+			PullData (false);
+		}
+
+		void PullData (bool force)
+		{
 			if (IsBinding == false || manager.Current == null)
 				return;
+#if NET_2_0
+			if (!force && datasource_update_mode == DataSourceUpdateMode.Never)
+				return;
+#endif
 
 			data = control_property.GetValue (control);
 
