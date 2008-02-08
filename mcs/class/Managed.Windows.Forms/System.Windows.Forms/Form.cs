@@ -2609,7 +2609,9 @@ namespace System.Windows.Forms {
 				if (is_modal) {
 					Hide ();
 				} else {
-					Dispose ();
+					Dispose ();					
+					if (act != this)
+						act.SelectActiveControl ();
 				}
 				mdi_parent = null;
 			} else {

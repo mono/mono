@@ -1,3 +1,8 @@
+2008-02-08  Andreia Gaita <avidigal@novell.com>
+
+	* Form.cs: When closing forms, get focus back to the active control of the
+	active form. [Fixes #341314, corner case]
+	
 2008-02-07  Jonathan Pobst  <monkey@jpobst.com>
 
 	* MdiClient.cs: After we move the scrollbars, invalidate the NC
