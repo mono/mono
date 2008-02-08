@@ -1,3 +1,7 @@
+2008-02-08  Jonathan Pryor  <pryorj@novell.com>
+
+	* mono-service.cs: The return value of UnixSignal.WaitAny() changed; cope.
+
 2008-02-07  Jonathan Pryor  <pryorj@novell.com>
 
 	* mono-service.cs: Use Mono.Unix.UnixSignal for signal handling, which 

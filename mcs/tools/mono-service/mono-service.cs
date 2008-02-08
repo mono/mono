@@ -248,8 +248,8 @@ class MonoServiceRunner : MarshalByRefObject
 			};
 
 			for (bool running = true; running; ){
-				bool signaled = UnixSignal.WaitAny (sigs);
-				if (!signaled)
+				int idx = UnixSignal.WaitAny (sigs);
+				if (idx < 0 || idx >= sigs.Length)
 					continue;
 				if ((intr.IsSet || term.IsSet) && service.CanStop) {
 					intr.Reset ();
