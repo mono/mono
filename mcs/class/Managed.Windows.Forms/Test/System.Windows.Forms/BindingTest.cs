@@ -314,6 +314,29 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		public void WriteValueTest ()
+		{
+			Control c = new Control ();
+			c.BindingContext = new BindingContext ();
+			c.CreateControl ();
+
+			MockItem item = new MockItem ();
+			item.Text = "A";
+			Binding binding = new Binding ("Text", item, "Text");
+			binding.DataSourceUpdateMode = DataSourceUpdateMode.Never;
+
+			c.DataBindings.Add (binding);
+			Assert.AreEqual ("A", c.Text, "#A1");
+
+			c.Text = "B";
+			Assert.AreEqual ("A", item.Text, "#B1");
+
+			binding.WriteValue ();
+			Assert.AreEqual ("B", item.Text, "#C1");
+		}
+
+		[Test]
 		public void ControlUpdateModeTest ()
 		{
 			Control c = new Control ();
@@ -348,6 +371,19 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 
 			c.Text = "B";
 			Assert.AreEqual ("A", item.Text, "#B1");
+
+			binding.DataSourceUpdateMode = DataSourceUpdateMode.OnPropertyChanged;
+			Assert.AreEqual ("A", item.Text, "#C1");
+
+			c.Text = "C";
+			Assert.AreEqual ("C", item.Text, "#D1");
+
+			// This requires a Validation even, which we can't test
+			// by directly modifying the property
+			binding.DataSourceUpdateMode = DataSourceUpdateMode.OnValidation;
+
+			c.Text = "D";
+			Assert.AreEqual ("C", item.Text, "#E1");
 		}
 #endif
 	}
