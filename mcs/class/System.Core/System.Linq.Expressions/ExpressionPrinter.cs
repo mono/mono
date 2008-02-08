@@ -37,6 +37,8 @@ namespace System.Linq.Expressions {
 
 		StringBuilder builder;
 
+		const string ListSeparator = ", ";
+
 		ExpressionPrinter (StringBuilder builder)
 		{
 			this.builder = builder;
@@ -296,7 +298,7 @@ namespace System.Linq.Expressions {
 		{
 			for (int i = 0; i < list.Count; i++) {
 				if (i > 0)
-					Print (", ");
+					Print (ListSeparator);
 
 				visitor (list [i]);
 			}
@@ -356,7 +358,15 @@ namespace System.Linq.Expressions {
 
 		protected override void VisitInvocation (InvocationExpression invocation)
 		{
-			throw new NotImplementedException ();
+			Print ("Invoke(");
+			Visit (invocation.Expression);
+
+			if (invocation.Arguments.Count != 0) {
+				Print (ListSeparator);
+				VisitExpressionList (invocation.Arguments);
+			}
+
+			Print (")");
 		}
 	}
 }

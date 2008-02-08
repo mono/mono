@@ -35,28 +35,27 @@ namespace System.Linq.Expressions {
 
 	public sealed class InvocationExpression : Expression {
 
-		Expression lambda;
+		Expression expression;
 		ReadOnlyCollection<Expression> arguments;
 
 		public Expression Expression {
-			get { return lambda; }
+			get { return expression; }
 		}
 
 		public ReadOnlyCollection<Expression> Arguments {
 			get { return arguments; }
 		}
-		
-		internal InvocationExpression (Expression lambda, ReadOnlyCollection<Expression> arguments)
-			: base (ExpressionType.Invoke, lambda.Type)
+
+		internal InvocationExpression (Expression expression, Type type, ReadOnlyCollection<Expression> arguments)
+			: base (ExpressionType.Invoke, type)
 		{
-			this.lambda = lambda;
+			this.expression = expression;
 			this.arguments = arguments;
 		}
-		
+
 		internal override void Emit (EmitContext ec)
 		{
 			throw new NotImplementedException ();
 		}
-		
 	}
 }

@@ -1158,16 +1158,52 @@ namespace System.Linq.Expressions {
 			return func.MakeGenericType (typeArgs);
 		}
 
-		[MonoTODO]
 		public static InvocationExpression Invoke (Expression expression, params Expression [] arguments)
 		{
 			return Invoke (expression, arguments as IEnumerable<Expression>);
 		}
 
-		[MonoTODO]
+		static Type GetInvokableType (Type t)
+		{
+			if (typeof (Delegate).IsAssignableFrom (t))
+				return t;
+
+			return GetGenericType (t, typeof (Expression<>));
+		}
+
+		static Type GetGenericType (Type t, Type def)
+		{
+			if (t == null)
+				return null;
+
+			if (t.IsGenericType && t.GetGenericTypeDefinition () == def)
+				return t;
+
+			return GetGenericType (t.BaseType, def);
+		}
+
 		public static InvocationExpression Invoke (Expression expression, IEnumerable<Expression> arguments)
 		{
-			throw new NotImplementedException ();
+			if (expression == null)
+				throw new ArgumentNullException ("expression");
+
+			var type = GetInvokableType (expression.Type);
+			if (type == null)
+				throw new ArgumentException ("The type of the expression is not invokable");
+
+			var args = arguments.ToReadOnlyCollection ();
+			CheckForNull (args, "arguments");
+
+			var invoke = type.GetMethod ("Invoke");
+			if (invoke == null)
+				throw new ArgumentException ("expression");
+
+			if (invoke.GetParameters ().Length != args.Count)
+				throw new InvalidOperationException ("Arguments count doesn't match parameters length");
+
+			CheckMethodArguments (invoke, args);
+
+			return new InvocationExpression (expression, invoke.ReturnType, args);
 		}
 
 		public static Expression<TDelegate> Lambda<TDelegate> (Expression body, params ParameterExpression [] parameters)

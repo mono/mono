@@ -1,3 +1,8 @@
+2008-02-08  Jb Evain  <jbevain@novell.com>
+
+	* Expression.cs, InvocationExpression.cs, ExpressionPrinter.cs
+		add support for Invoke.
+
 2008-02-04  Jb Evain  <jbevain@novell.com>
 
 	* ExpressionPrinter.cs: fix printing of MemberListBinding.
