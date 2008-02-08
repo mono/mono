@@ -2845,6 +2845,7 @@ namespace MonoTests.System.Windows.Forms
 
 #if NET_2_0
 			a = new AutoScaleForm (true);
+			a.Show ();
 			Assert.AreEqual (new Size (184, 104), a.ClientSize, "B0");
 			Assert.AreEqual (new Rectangle (  4, 92, 114, 16), new Rectangle (a.hScrollBar1.Location, a.hScrollBar1.ClientSize), "B1");
 			Assert.AreEqual (new Rectangle (130, 64,  50, 36), new Rectangle (a.treeView1.Location, a.treeView1.ClientSize), "B2");
@@ -2909,6 +2910,8 @@ namespace MonoTests.System.Windows.Forms
 
 		public AutoScaleForm (bool use_new_auto_scale)
 		{
+			ShowInTaskbar = false;
+			
 			SuspendLayout ();
 
 			listBox1.IntegralHeight = false;
