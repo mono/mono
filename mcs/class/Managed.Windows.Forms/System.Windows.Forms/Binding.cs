@@ -50,7 +50,8 @@ namespace System.Windows.Forms {
 		private Type data_type;
 
 #if NET_2_0
-		//private DataSourceUpdateMode datasource_update_mode;
+		private DataSourceUpdateMode datasource_update_mode;
+		private ControlUpdateMode control_update_mode;
 		//private object null_value;
 		//private string format_string;
 		//private IFormatProvider format_info;
@@ -89,7 +90,7 @@ namespace System.Windows.Forms {
 			data_source = dataSource;
 			data_member = dataMember;
 			binding_member_info = new BindingMemberInfo (dataMember);
-			//datasource_update_mode = dataSourceUpdateMode;
+			datasource_update_mode = dataSourceUpdateMode;
 			//null_value = nullValue;
 			//format_string = formatString;
 			//format_info = formatInfo;
@@ -132,6 +133,18 @@ namespace System.Windows.Forms {
 			}
 		}
 
+#if NET_2_0
+		[DefaultValue (ControlUpdateMode.OnPropertyChanged)]
+		public ControlUpdateMode ControlUpdateMode {
+			get {
+				return control_update_mode;
+			}
+			set {
+				control_update_mode = value;
+			}
+		}
+#endif
+
 		public object DataSource {
 			get {
 				return data_source;
@@ -139,6 +152,16 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
+		[DefaultValue (DataSourceUpdateMode.OnValidation)]
+		public DataSourceUpdateMode DataSourceUpdateMode {
+			get {
+				return datasource_update_mode;
+			}
+			set {
+				datasource_update_mode = value;
+			}
+		}
+
 		[DefaultValue (false)]
 		public bool FormattingEnabled {
 			get {
@@ -166,6 +189,13 @@ namespace System.Windows.Forms {
 			}
 		}
 		#endregion	// Public Instance Properties
+
+#if NET_2_0
+		public void ReadValue ()
+		{
+			PushData (true);
+		}
+#endif
 
 		#region Protected Instance Methods
 #if NET_2_0
@@ -260,8 +290,17 @@ namespace System.Windows.Forms {
 
 		internal void PushData ()
 		{
+			PushData (false);
+		}
+
+		void PushData (bool force)
+		{
 			if (manager == null || manager.IsSuspended || manager.Current == null)
 				return;
+#if NET_2_0
+			if (!force && control_update_mode == ControlUpdateMode.Never)
+				return;
+#endif
 
 			if (is_null_desc != null) {
 				bool is_null = (bool) is_null_desc.GetValue (manager.Current);
