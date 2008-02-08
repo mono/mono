@@ -131,16 +131,16 @@ namespace Mono.Unix {
 			AssertValid ();
 			if (exitContext)
 				throw new InvalidOperationException ("exitContext is not supported");
-			return WaitAny (new UnixSignal[]{this}, millisecondsTimeout);
+			return WaitAny (new UnixSignal[]{this}, millisecondsTimeout) == 0;
 		}
 		#endregion
 
-		public static bool WaitAny (UnixSignal[] signals)
+		public static int WaitAny (UnixSignal[] signals)
 		{
 			return WaitAny (signals, -1);
 		}
 
-		public static bool WaitAny (UnixSignal[] signals, TimeSpan timeout)
+		public static int WaitAny (UnixSignal[] signals, TimeSpan timeout)
 		{
 			long ms = (long) timeout.TotalMilliseconds;
 			if (ms < -1 || ms > Int32.MaxValue)
@@ -148,7 +148,7 @@ namespace Mono.Unix {
 			return WaitAny (signals, (int) ms);
 		}
 
-		public static unsafe bool WaitAny (UnixSignal[] signals, int millisecondsTimeout)
+		public static unsafe int WaitAny (UnixSignal[] signals, int millisecondsTimeout)
 		{
 			IntPtr[] infos = new IntPtr [signals.Length];
 			for (int i = 0; i < signals.Length; ++i) {
@@ -156,10 +156,7 @@ namespace Mono.Unix {
 				if (infos [i] == IntPtr.Zero)
 					throw new InvalidOperationException ("Disposed UnixSignal");
 			}
-			int r = WaitAny (infos, infos.Length, millisecondsTimeout);
-			if (r > 0)
-				return true;
-			return false;
+			return WaitAny (infos, infos.Length, millisecondsTimeout);
 		}
 	}
 }

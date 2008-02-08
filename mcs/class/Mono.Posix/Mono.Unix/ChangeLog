@@ -1,5 +1,14 @@
 2008-02-08  Jonathan Pryor  <jpryor@novell.com>
 
+	* UnixSignal.cs: UnixSignal.WaitAny() should have the same return type as
+	  WaitHandle.WaitAny().  Oops.
+
+2008-02-08  Jonathan Pryor  <jpryor@novell.com>
+
+	* UnixSignal.cs: Modification of Info->count should be thread safe.
+
+2008-02-08  Jonathan Pryor  <jpryor@novell.com>
+
 	* UnixSignal.cs: Modification of Info->count should be thread safe.
 
 2008-01-28  Jonathan Pryor  <jpryor@novell.com>
