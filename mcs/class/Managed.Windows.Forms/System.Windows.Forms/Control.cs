@@ -3582,7 +3582,12 @@ namespace System.Windows.Forms
 				if (this.parent == null)
 					return false;
 					
-				return this.FindForm ().show_focus_cues;
+				Form f = this.FindForm ();
+				
+				if (f != null)
+					return f.show_focus_cues;
+					
+				return false;
 			}
 		}
 
