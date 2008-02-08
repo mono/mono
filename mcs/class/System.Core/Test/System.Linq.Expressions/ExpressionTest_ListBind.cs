@@ -93,7 +93,7 @@ namespace MonoTests.System.Linq.Expressions {
 				Expression.ElementInit (add, Expression.Constant ("baz")),
 			};
 
-			var binding = Expression.ListBind (typeof (Foo).GetProperty ("List"), list.ToArray ());
+			var binding = Expression.ListBind (typeof (Foo).GetProperty ("List"), list);
 
 			Assert.AreEqual ("List = {Void Add(System.String)(\"foo\"), Void Add(System.String)(\"bar\"), Void Add(System.String)(\"baz\")}", binding.ToString ());
 		}
