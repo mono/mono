@@ -1,3 +1,22 @@
+2008-02-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_type_get_stack_name): Added. Return the name for the
+	stack type of the given MonoType.
+
+	* verify.c (verify_type_compatibility_full): Handle the void type.
+
+	* verify.c (is_compatible_boxed_valuetype): Changed to fit the
+	way stack merging works.
+
+	* verify.c (store_local): Improved verification message.
+
+	* verify.c (do_branch_op): If the merging is invalid, the method
+	is unverifiable and not invalid. Improved error message.
+
+	* verify.c (merge_stacks): Properly merge a boxed valuetype and
+	a reference type diferent than System.Object. Improved error
+	message.
+
 2008-02-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (mono_type_is_enum_type): Added. Test if a type is an enum.
