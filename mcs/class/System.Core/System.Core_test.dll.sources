@@ -24,6 +24,7 @@ System.Linq.Expressions/ExpressionTest_ExclusiveOr.cs
 System.Linq.Expressions/ExpressionTest_Field.cs
 System.Linq.Expressions/ExpressionTest_GreaterThan.cs
 System.Linq.Expressions/ExpressionTest_GreaterThanOrEqual.cs
+System.Linq.Expressions/ExpressionTest_Invoke.cs
 System.Linq.Expressions/ExpressionTest_Lambda.cs
 System.Linq.Expressions/ExpressionTest_LessThan.cs
 System.Linq.Expressions/ExpressionTest_LessThanOrEqual.cs
