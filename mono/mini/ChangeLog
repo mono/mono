@@ -1,5 +1,10 @@
 2008-02-08  Zoltan Varga  <vargaz@gmail.com>
 
+	* objects.cs: Add tests for large argument offsets on ARM.
+
+	* mini-arm.c (mono_arch_emit_prolog): Fix handling of arguments with large 
+	stack offsets. Fixes #359651.
+
 	* mini.c (mono_normalize_opcodes): Remap CEE_CONV_R4/R8 properly.
 
 	* cpu-s390x.md: Add OP_LCONV_TO_R4/R8.
