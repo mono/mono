@@ -1,3 +1,7 @@
+2008-02-08  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* ColorEditor.cs: Fix Height to include the last 8th row.
+
 2008-02-05  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* ColorEditor.cs: Set the Height to match the custom colors tab
