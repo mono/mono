@@ -3745,7 +3745,7 @@ typeof_type_expression
 unbound_type_name
 	: IDENTIFIER GENERIC_DIMENSION
 	  {
-		if (RootContext.Version < LanguageVersion.ISO_1)
+		if (RootContext.Version < LanguageVersion.ISO_2)
 			Report.FeatureIsNotAvailable (lexer.Location, "generics");
 	  
 		LocatedToken lt = (LocatedToken) $1;
@@ -4093,6 +4093,9 @@ conditional_expression
 	  }
 	| conditional_or_expression OP_COALESCING expression
 	  {
+		if (RootContext.Version < LanguageVersion.ISO_2)
+			Report.FeatureIsNotAvailable (GetLocation ($2), "null coalescing operator");
+			
 		$$ = new Nullable.NullCoalescingOperator ((Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	// We'll be resolved into a `parenthesized_expression_0' later on.
