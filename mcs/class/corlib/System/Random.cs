@@ -118,12 +118,13 @@ namespace System
 				throw new ArgumentOutOfRangeException (Locale.GetText (
 					"Min value is greater than max value."));
 
-			uint diff = (uint)(maxValue - minValue);
-			if (diff == 0)
+			// special case: a difference of one (or less) will always return the minimum
+			// e.g. -1,-1 or -1,0 will always return -1
+			uint diff = (uint) (maxValue - minValue);
+			if (diff <= 1)
 				return minValue;
 
-			int result = (int)(Sample () * diff + minValue);
-			return ((result != maxValue) ? result : (result - 1));
+			return (int)(Sample () * diff) + minValue;
 		}
 
 		public virtual void NextBytes (byte [] buffer)

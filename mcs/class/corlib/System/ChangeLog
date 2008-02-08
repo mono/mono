@@ -1,3 +1,14 @@
+2008-02-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Random.cs: Explain (and extend) special case in Next(min,max)
+	[Backport r95273]
+
+2008-02-08  Juraj Skripsky  <js@hotfeet.ch>
+
+	* Random.cs (Next): Use rounding (via implicit conversion) only on
+	positive values. Fixes bug 359918.
+	[Backport r95272]
+
 2008-01-25  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MonoType.cs (InvokeMember): Fixed exceptions arguments for last comit.
