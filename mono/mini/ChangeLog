@@ -1,5 +1,11 @@
 2008-02-08  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_normalize_opcodes): Remap CEE_CONV_R4/R8 properly.
+
+	* cpu-s390x.md: Add OP_LCONV_TO_R4/R8.
+
+	* cpu-ia64.md mini-ia64.h mini-ia64.c: Get rid of CEE_ opcodes.
+
 	* mini-ops.h: Add OP_ICONV_TO_R_UN opcode.
 
 	* mini.c (mono_normalize_opcodes): Remap CEE_CONV_R_UN too.
