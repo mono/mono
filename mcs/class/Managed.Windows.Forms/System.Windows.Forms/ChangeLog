@@ -1,5 +1,13 @@
 2008-02-08  Jonathan Pobst  <monkey@jpobst.com>
 
+	* MdiClient.cs: Make sure the requesting form actually owns the
+	control menu items before removing them.  Also, use
+	Suspend/ResumeLayout when adding or removing items so we only
+	layout once.
+	[Fixes bug #359887]
+
+2008-02-08  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Control.cs: Guard against an NRE in ShowFocusCues.
 	[Fixes bug #359830]
 

@@ -860,10 +860,12 @@ namespace System.Windows.Forms {
 					}	
 					
 					if (!found) {
+						parent_menu.SuspendLayout ();
 						parent_menu.Items.Insert (0, new MdiControlStrip.SystemMenuItem (form));
 						parent_menu.Items.Add (new MdiControlStrip.ControlBoxMenuItem (form, MdiControlStrip.ControlBoxType.Close));
 						parent_menu.Items.Add (new MdiControlStrip.ControlBoxMenuItem (form, MdiControlStrip.ControlBoxType.Max));
 						parent_menu.Items.Add (new MdiControlStrip.ControlBoxMenuItem (form, MdiControlStrip.ControlBoxType.Min));
+						parent_menu.ResumeLayout ();
 					}
 				}
 				
@@ -880,11 +882,23 @@ namespace System.Windows.Forms {
 		{
 			Form form = wm.form;
 			MenuStrip parent_menu = form.MdiParent.MainMenuStrip;
-			
-			if (parent_menu != null)
-				for (int i = parent_menu.Items.Count - 1; i >= 0; i--)
-					if (parent_menu.Items[i] is MdiControlStrip.SystemMenuItem || parent_menu.Items[i] is MdiControlStrip.ControlBoxMenuItem)
-						parent_menu.Items.RemoveAt (i);
+
+			// Only remove the items if the form requesting still owns the menu items
+			if (parent_menu != null) {
+				parent_menu.SuspendLayout ();
+
+				for (int i = parent_menu.Items.Count - 1; i >= 0; i--) {
+					if (parent_menu.Items[i] is MdiControlStrip.SystemMenuItem) {
+						if ((parent_menu.Items[i] as MdiControlStrip.SystemMenuItem).MdiForm == form)
+							parent_menu.Items.RemoveAt (i);
+					} else if (parent_menu.Items[i] is MdiControlStrip.ControlBoxMenuItem) {
+						if ((parent_menu.Items[i] as MdiControlStrip.ControlBoxMenuItem).MdiForm == form)
+							parent_menu.Items.RemoveAt (i);
+					}
+				}
+				
+				parent_menu.ResumeLayout ();
+			}
 		}
 #endif
 
