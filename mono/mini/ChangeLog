@@ -1,5 +1,7 @@
 2008-02-08  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (mono_aot_get_plt_entry): Fix a warning.
+
 	* objects.cs: Add tests for large argument offsets on ARM.
 
 	* mini-arm.c (mono_arch_emit_prolog): Fix handling of arguments with large 
