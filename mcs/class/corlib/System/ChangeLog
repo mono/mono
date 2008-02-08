@@ -1,3 +1,7 @@
+2008-02-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Random.cs: Explain (and extend) special case in Next(min,max)
+
 2008-02-08  Juraj Skripsky  <js@hotfeet.ch>
 
 	* Random.cs (Next): Use rounding (via implicit conversion) only on
