@@ -267,6 +267,12 @@ namespace Mono.Unix.Native {
 	}
 
 
+	public enum SignalAction {
+		Default,
+		Ignore,
+		Error
+	}
+
 	//
 	// Right now using this attribute gives an assert because it
 	// isn't implemented.
@@ -454,6 +460,8 @@ namespace Mono.Unix.Native {
 		private static extern IntPtr sys_signal (int signum, IntPtr handler);
 
 		[CLSCompliant (false)]
+		[Obsolete ("This is not safe; " + 
+				"use Mono.Unix.UnixSignal for signal delivery or SetSignalAction()")]
 		public static SignalHandler signal (Signum signum, SignalHandler handler)
 		{
 			int _sig = NativeConvert.FromSignum (signum);
@@ -492,6 +500,28 @@ namespace Mono.Unix.Native {
 #else
 			return new SignalHandler (new SignalWrapper (handler).InvokeSignalHandler);
 #endif
+		}
+
+		public static int SetSignalAction (Signum signal, SignalAction action)
+		{
+			IntPtr handler = IntPtr.Zero;
+			switch (action) {
+				case SignalAction.Default:
+					handler = _SIG_DFL;
+					break;
+				case SignalAction.Ignore:
+					handler = _SIG_IGN;
+					break;
+				case SignalAction.Error:
+					handler = _SIG_ERR;
+					break;
+				default:
+					throw new ArgumentException ("Invalid action value.", "action");
+			}
+			IntPtr r = sys_signal (NativeConvert.FromSignum (signal), handler);
+			if (r == _SIG_ERR)
+				return -1;
+			return 0;
 		}
 
 		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, EntryPoint="raise")]
