@@ -20,7 +20,6 @@ namespace Commons.Xml.Relaxng
 		{
 			try {
 				Run (args);
-				Console.Error.WriteLine ("done.");
 			} catch (Exception ex) {
 				if (Environment.GetEnvironmentVariable ("MONO_XMLTOOL_ERROR_DETAILS") == "yes")
 					Console.Error.WriteLine (ex);
