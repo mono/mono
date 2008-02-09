@@ -1,5 +1,10 @@
 2008-02-09  Daniel Nauck  <dna@mono-project.de>
 
+	* HttpWebResponse.cs: convert UTC/GMT Expires DateTime from a cookie
+	into local time, also set the HttpOnly property if available.
+
+2008-02-09  Daniel Nauck  <dna@mono-project.de>
+
 	* Cookie.cs: implemented HttpOnly
 
 2008-01-27  Gert Driesen  <drieseng@users.sourceforge.net>
