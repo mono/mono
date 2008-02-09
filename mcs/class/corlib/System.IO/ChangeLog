@@ -1,3 +1,8 @@
+2008-02-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* UnexceptionalStreamReader.cs (Read): Optimize this to avoid making a number of
+	calls + creation of a string for each character read.
+
 2008-02-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MemoryStream.cs: Remove unused code found by Gendarme.

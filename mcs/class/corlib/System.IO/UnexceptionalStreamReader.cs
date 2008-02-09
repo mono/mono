@@ -42,7 +42,15 @@ using System.Runtime.InteropServices;
 namespace System.IO {
 	internal class UnexceptionalStreamReader : StreamReader {
 
-		private bool[] newline = new bool [Environment.NewLine.Length];
+		private static bool[] newline = new bool [Environment.NewLine.Length];
+
+		private static char newlineChar;
+
+		static UnexceptionalStreamReader () {
+			string n = Environment.NewLine;
+			if (n.Length == 1)
+				newlineChar = n [0];
+		}
 
 		public UnexceptionalStreamReader(Stream stream)
 			: base (stream)
@@ -128,26 +136,34 @@ namespace System.IO {
 				throw new ArgumentException ("index + count > dest_buffer.Length");
 
 			int chars_read = 0;
-			while (count > 0) {
-				int c = Read ();
-				if (c < 0)
-					break;
-				chars_read++;
-				count--;
+			char nl = newlineChar;
+			try {
+				while (count > 0) {
+					int c = base.Read ();
+					if (c < 0)
+						break;
+					chars_read++;
+					count--;
 
-				dest_buffer [index] = (char) c;
-				if (CheckEOL (dest_buffer [index++]))
-					return chars_read;
+					dest_buffer [index] = (char) c;
+					// shortcut when a new line is only one character (e.g. Linux, Mac)
+					if (nl != (char)0) {
+						if ((char)c == nl)
+							return chars_read;
+					} else {
+						if (CheckEOL ((char)c))
+							return chars_read;
+					}
+					index ++;
+				}
+			} catch (IOException) {
 			}
+			
 			return chars_read;
 		}
 
 		private bool CheckEOL (char current)
 		{
-			// shortcut when a new line is only one character (e.g. Linux, Mac)
-			if (newline.Length == 1)
-				return (current == Environment.NewLine [0]);
-
 			// general case for any length (e.g. Windows)
 			for (int i=0; i < newline.Length; i++) {
 				if (!newline [i]) {
