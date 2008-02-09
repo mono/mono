@@ -1,3 +1,7 @@
+2008-02-09  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* UnixSignalTest.cs: Added; tests Mono.Unix.UnixSignal.
+
 2006-07-02  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* UnixPathTest.cs: Added; test UnixPath.Combine().

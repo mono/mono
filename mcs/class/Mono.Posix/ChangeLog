@@ -1,3 +1,7 @@
+2008-02-09  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Mono.Posix_test.dll.sources: Add Mono.Unix/UnixSignalTest.cs.
+
 2008-01-28  Jonathan Pryor  <jpryor@novell.com>
 
 	* Mono.Posix.dll.sources: Add Mono.Unix/UnixSignal.cs.
