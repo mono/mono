@@ -3,6 +3,7 @@
 //
 // Authors:
 // 	Gonzalo Paniagua Javier (gonzalo@novell.com)
+//      Daniel Nauck    (dna(at)mono-project(dot)de)
 //
 // (c) Copyright 2004 Novell, Inc. (http://www.novell.com)
 //
@@ -194,6 +195,112 @@ namespace MonoTests.System.Net
 
 			Assert.AreEqual ("Adios", cookie.Value, "#11");
 			Assert.AreEqual (0, cookie.Version, "#12");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestAddExpired_Cookie ()
+		{
+			CookieContainer cc = new CookieContainer ();
+			Uri uri = new Uri ("http://www.contoso.com");
+			DateTime expires = DateTime.Now.Subtract (new TimeSpan (1, 30, 0));
+
+			//expired cookie
+			Cookie c1 = new Cookie ("TEST", "MyValue", "/", uri.Host);
+			c1.Expires = expires;
+			cc.Add (c1);
+			Assert.AreEqual (1, cc.Count, "#A1");
+			CookieCollection coll = cc.GetCookies (uri);
+			Assert.AreEqual (1, coll.Count, "#A1.1");
+			Cookie cookie = coll [0];
+			Assert.AreEqual ("", cookie.Comment, "#A2");
+			Assert.IsNull (cookie.CommentUri, "#A3");
+			Assert.AreEqual ("www.contoso.com", cookie.Domain, "#A4");
+			Assert.IsFalse (cookie.Expired, "#A5");
+			Assert.AreEqual (DateTime.MinValue, cookie.Expires, "#A6");
+			Assert.AreEqual ("TEST", cookie.Name, "#A7");
+			Assert.AreEqual ("MyValue", cookie.Value, "#A8");
+			Assert.AreEqual ("/", cookie.Path, "#A9");
+			Assert.AreEqual ("", cookie.Port, "#A10");
+			Assert.IsFalse (cookie.Secure, "#A11");
+
+			//expired cookie
+			Cookie c2 = new Cookie ("TEST2", "MyValue2");
+			c2.Expires = expires;
+			cc.Add (uri, c2);
+			Assert.AreEqual (1, cc.Count, "#B1");
+			coll = cc.GetCookies (uri);
+			Assert.AreEqual (1, coll.Count, "#B1.1");
+			cookie = coll [0];
+			Assert.AreEqual ("", cookie.Comment, "#B2");
+			Assert.IsNull (cookie.CommentUri, "#B3");
+			Assert.AreEqual ("www.contoso.com", cookie.Domain, "#B4");
+			Assert.IsFalse (cookie.Expired, "#B5");
+			Assert.AreEqual (DateTime.MinValue, cookie.Expires, "#B6");
+			Assert.AreEqual ("TEST", cookie.Name, "#B7");
+			Assert.AreEqual ("MyValue", cookie.Value, "#B8");
+			Assert.AreEqual ("/", cookie.Path, "#B9");
+			Assert.AreEqual ("", cookie.Port, "#B10");
+			Assert.IsFalse (cookie.Secure, "#B11");
+
+			//not expired cookie
+			Cookie c3 = new Cookie ("TEST3", "MyValue3");
+			cc.Add (uri, c3);
+			Assert.AreEqual (2, cc.Count, "#C1");
+			coll = cc.GetCookies (uri);
+			Assert.AreEqual (2, coll.Count, "#C1.1");
+			cookie = coll [1];
+			Assert.AreEqual ("", cookie.Comment, "#C2");
+			Assert.IsNull (cookie.CommentUri, "#C3");
+			Assert.AreEqual ("www.contoso.com", cookie.Domain, "#C4");
+			Assert.IsFalse (cookie.Expired, "#C5");
+			Assert.AreEqual (DateTime.MinValue, cookie.Expires, "#C6");
+			Assert.AreEqual ("TEST3", cookie.Name, "#C7");
+			Assert.AreEqual ("MyValue3", cookie.Value, "#C8");
+			Assert.AreEqual ("/", cookie.Path, "#C9");
+			Assert.AreEqual ("", cookie.Port, "#C10");
+			Assert.IsFalse (cookie.Secure, "#C11");
+
+			Assert.AreEqual (2, cc.Count, "#D1");
+			coll = cc.GetCookies (new Uri("http://contoso.com"));
+			Assert.AreEqual (0, coll.Count, "#D1.1");
+
+			//not expired cookie
+			Cookie c4 = new Cookie ("TEST4", "MyValue4", "/", ".contoso.com");
+			cc.Add (uri, c4);
+			Assert.AreEqual (3, cc.Count, "#E1");
+			coll = cc.GetCookies (uri);
+			Assert.AreEqual (3, coll.Count, "#E1.1");
+
+			//expired cookie
+			Cookie c5 = new Cookie ("TEST5", "MyValue5", "/", ".contoso.com");
+			c5.Expires = expires;
+			cc.Add (c5);
+			Assert.AreEqual (4, cc.Count, "#F1");
+			coll = cc.GetCookies (uri);
+			Assert.AreEqual (4, coll.Count, "#F1.1");
+			cookie = coll ["TEST5"];
+			Assert.AreEqual (".contoso.com", cookie.Domain, "#F2");
+			Assert.IsFalse (cookie.Expired, "#F3");
+			Assert.AreEqual (DateTime.MinValue, cookie.Expires, "#F4");
+			Assert.AreEqual ("TEST5", cookie.Name, "#F5");
+			Assert.AreEqual ("MyValue5", cookie.Value, "#F6");
+			Assert.AreEqual ("/", cookie.Path, "#F7");
+
+			//expired cookie
+			Cookie c6 = new Cookie ("TEST6", "MyValue6", "/", ".contoso.com");
+			c5.Expires = expires;
+			cc.Add (uri, c6);
+			Assert.AreEqual (5, cc.Count, "#G1");
+			coll = cc.GetCookies (uri);
+			Assert.AreEqual (5, coll.Count, "#G1.1");
+			cookie = coll ["TEST6"];
+			Assert.AreEqual (".contoso.com", cookie.Domain, "#G2");
+			Assert.IsFalse (cookie.Expired, "#G3");
+			Assert.AreEqual (DateTime.MinValue, cookie.Expires, "#G4");
+			Assert.AreEqual ("TEST6", cookie.Name, "#G5");
+			Assert.AreEqual ("MyValue6", cookie.Value, "#G6");
+			Assert.AreEqual ("/", cookie.Path, "#G7");
 		}
 
 		[Test]
