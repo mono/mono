@@ -1,3 +1,7 @@
+2008-02-09  Daniel Nauck  <dna@mono-project.de>
+
+	* Cookie.cs: implemented HttpOnly
+
 2008-01-27  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* IPAddress.cs (Parse): Changed argument name to match MS.

@@ -22,6 +22,30 @@ namespace MonoTests.System.Net
 		[Test]
 		public void PublicFields ()
 		{
+			Cookie c = new Cookie ();
+			Assert.AreEqual (string.Empty, c.Name, "#A1");
+			Assert.AreEqual (string.Empty, c.Value, "#A2");
+			Assert.AreEqual (string.Empty, c.Domain, "#A3");
+			Assert.AreEqual (string.Empty, c.Port, "#A4");
+			Assert.AreEqual (string.Empty, c.Comment, "#A5");
+			Assert.AreEqual (null, c.CommentUri, "#A6");
+			Assert.IsFalse (c.Discard, "#A7");
+			Assert.IsFalse (c.Expired, "#A8");
+			Assert.AreEqual (DateTime.MinValue, c.Expires, "#A9");
+			Assert.IsFalse (c.HttpOnly, "#A10");
+			Assert.AreEqual (string.Empty, c.Path, "#A11");
+			Assert.IsFalse (c.Secure, "#A12");
+			Assert.AreEqual (0, c.Version, "#A13");
+			Assert.AreEqual (string.Empty, c.ToString (), "#A14");
+
+			c.Expires = DateTime.Now;
+			Assert.IsTrue (c.Expired, "#A15");
+
+			c.Port = null;
+			Assert.AreEqual (string.Empty, c.Port, "#A16");
+
+			c.Value = null;
+			Assert.AreEqual (string.Empty, c.Value, "#A17");
 		}
 
 		[Test]

@@ -1,3 +1,7 @@
+2008-02-09  Daniel Nauck  <dna@mono-project.de>
+
+	* CookieTest.cs: added tests for public fields
+
 2008-01-27  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* IPAddressTest.cs: Remove use of deprecated Assertion. Improved

@@ -4,6 +4,7 @@
 // Authors:
 // 	Lawrence Pit (loz@cable.a2000.nl)
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//      Daniel Nauck    (dna(at)mono-project(dot)de)
 //
 // (c) Copyright 2004 Novell, Inc. (http://www.ximian.com)
 //
@@ -49,6 +50,7 @@ namespace System.Net {
 		string domain;
 		bool expired;
 		DateTime expires;
+		bool httpOnly;
 		string name;
 		string path;
 		string port;
@@ -66,6 +68,7 @@ namespace System.Net {
 		{
 			expires = DateTime.MinValue;
 			timestamp = DateTime.Now;
+			httpOnly = false;
 			domain = "";
 			name = "";
 			val = "";
@@ -117,11 +120,9 @@ namespace System.Net {
 				return expires <= DateTime.Now && 
 				       expires != DateTime.MinValue;
 			}
-			set { 
-				expired = value; 
-				if (expired) {
+			set {  
+				if (value)
 					expires = DateTime.Now;
-				}
 			}
 		}
 
@@ -130,21 +131,11 @@ namespace System.Net {
 			set { expires = value; }
 		}
 
-#if NET_2_0
-		static Exception GetMustImplement ()
-		{
-			return new NotImplementedException ();
-		}
-		
-		[MonoTODO]
+#if NET_2_0	
 		public bool HttpOnly
 		{
-			get {
-				throw GetMustImplement ();
-			}
-			set {
-				throw GetMustImplement ();
-			}
+			get { return httpOnly; }
+			set { httpOnly = value; }
 		}
 #endif
 
