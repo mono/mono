@@ -1,3 +1,8 @@
+2008-02-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_setup_vtable_general): Add a missing call to
+	mono_class_setup_methods () which is needed in the AOT case.
+
 2008-02-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (mono_type_get_stack_name): Added. Return the name for the
