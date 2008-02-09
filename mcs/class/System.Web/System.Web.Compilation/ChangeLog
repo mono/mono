@@ -1,3 +1,8 @@
+2008-02-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AppSettingsExpressionBuilder.cs: Improve exception messages. Return
+	"raw" appsetting value if targetType is null.
+
 2008-02-07  Marek Habersack  <mhabersack@novell.com>
 
 	* CompilationException.cs: added new constructor which takes

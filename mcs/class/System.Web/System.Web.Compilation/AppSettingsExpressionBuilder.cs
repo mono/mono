@@ -54,24 +54,29 @@ namespace System.Web.Compilation {
 			string value = WebConfigurationManager.AppSettings [key];
 
 			if (value == null)
-				throw new InvalidOperationException (String.Format ("App setting {0} not found", key));
+				throw new InvalidOperationException (String.Format ("The application setting '{0}' was not found.", key));
 			return value;
 		}
 
 		public static object GetAppSetting (string key, Type targetType, string propertyName)
 		{
+			object value = GetAppSetting (key);
+
+			if (targetType == null)
+				return value.ToString ();
+
+			PropertyInfo pi = targetType.GetProperty(propertyName);
+			if (pi == null)
+				return value.ToString ();
+
 			try {
-				object value = GetAppSetting (key);
-
-				PropertyInfo pi = targetType.GetProperty(propertyName);
-				if (pi == null)
-					return value.ToString ();
-
 				TypeConverter converter = TypeDescriptor.GetConverter (pi.PropertyType);
 				return converter.ConvertFrom (value);
-			}
-			catch (NotSupportedException) {
-				throw new InvalidOperationException (String.Format ("Could not convert app setting {0} to type {1}", key, targetType));
+			} catch (NotSupportedException) {
+				throw new InvalidOperationException (String.Format (
+					"Could not convert application setting '{0}' " +
+					" to type '{1}' for property '{2}'.", value,
+					pi.PropertyType.Name, pi.Name));
 			}
 		}
 
@@ -96,5 +101,3 @@ namespace System.Web.Compilation {
 }
 
 #endif
-
-

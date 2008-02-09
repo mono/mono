@@ -1,3 +1,8 @@
+2008-02-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AppSettingsExpressionBuilderTest.cs: Added and improved tests for
+	GetAppSetting overloads.
+
 2007-12-23  Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* added AppSettingsExpressionBuilderTest.cs
