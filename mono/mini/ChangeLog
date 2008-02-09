@@ -1,3 +1,11 @@
+2008-02-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (emit_method_code): Add an assert.
+
+	* mini-arm.h mini-arm.c exceptions-arm.c: Modify the exception throwing code and
+	the IMT code so it is AOT friendly. Enable AOT for methods which call interface
+	methods.
+
 2008-02-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-arm.c (mono_arch_output_basic_block): Fix the ordering of arguments for 
