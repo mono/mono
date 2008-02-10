@@ -401,8 +401,13 @@ namespace System.Windows.Forms {
 
 		void ConnectPropertyChangedEvent ()
 		{
-			if (data_source == null || binding_member_info == null || binding_member_info.BindingField.Length == 0)
+#if NET_2_0
+			if (data_source == null || binding_member_info == new BindingMemberInfo (String.Empty) || binding_member_info.BindingField.Length == 0)
 				return;
+#else
+			if (data_source == null || binding_member_info.Equals (new BindingMemberInfo (String.Empty)) || binding_member_info.BindingField.Length == 0)
+				return;
+#endif
 
 			string event_name = binding_member_info.BindingField + "Changed";
 			Type event_handler_type = typeof (EventHandler);

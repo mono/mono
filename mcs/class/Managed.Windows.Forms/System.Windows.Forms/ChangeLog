@@ -1,3 +1,8 @@
+2008-02-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Binding.cs : build fix (operator == is not overriden in 1.x. Do
+	  not compare struct with null in 2.0).
+
 2008-02-10  Luke Page <luke.a.page@gmail.com>
 
 	* MaskedTextBox.cs: UseSystemPasswordChar updates PasswordChar, PasswordChar
