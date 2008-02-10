@@ -46,24 +46,29 @@ namespace System.CodeDom.Compiler {
 		private CodeGeneratorOptions options;
 		private CodeTypeMember currentMember;
 		private CodeTypeDeclaration currentType;
+		private Visitor visitor;
 
 		//
 		// Constructors
 		//
 		protected CodeGenerator()
 		{
+			visitor = new Visitor (this);
 		}
 
 		//
 		// Properties
 		//
 #if NET_2_0
-		protected CodeTypeDeclaration CurrentClass {
+		protected
+#else
+		internal
+#endif
+		CodeTypeDeclaration CurrentClass {
 			get {
 				return currentType;
 			}
 		}
-#endif
 
 		protected CodeTypeMember CurrentMember {
 			get {
@@ -280,128 +285,11 @@ namespace System.CodeDom.Compiler {
 			if (e == null)
 				throw new ArgumentNullException ("e");
 
-			CodeArgumentReferenceExpression argref = e as CodeArgumentReferenceExpression;
-			if (argref != null) {
-				GenerateArgumentReferenceExpression (argref);
-				return;
+			try {
+				e.Accept (visitor);
+			} catch (NotImplementedException) {
+				throw new ArgumentException ("Element type " + e.GetType () + " is not supported.", "e");
 			}
-			CodeArrayCreateExpression mkarray = e as CodeArrayCreateExpression;
-			if (mkarray != null) {
-				GenerateArrayCreateExpression (mkarray);
-				return;
-			}
-			CodeArrayIndexerExpression arrayidx = e as CodeArrayIndexerExpression;
-			if (arrayidx != null) {
-				GenerateArrayIndexerExpression (arrayidx);
-				return;
-			}
-			CodeBaseReferenceExpression baseref = e as CodeBaseReferenceExpression;
-			if (baseref != null) {
-				GenerateBaseReferenceExpression (baseref);
-				return;
-			}
-			CodeBinaryOperatorExpression binary = e as CodeBinaryOperatorExpression;
-			if (binary != null) {
-				GenerateBinaryOperatorExpression (binary);
-				return;
-			}
-			CodeCastExpression cast = e as CodeCastExpression;
-			if (cast != null) {
-				GenerateCastExpression (cast);
-				return;
-			}
-			CodeDelegateCreateExpression mkdel = e as CodeDelegateCreateExpression;
-			if (mkdel != null) {
-				GenerateDelegateCreateExpression (mkdel);
-				return;
-			}
-			CodeDelegateInvokeExpression delinvoke = e as CodeDelegateInvokeExpression;
-			if (delinvoke != null) {
-				GenerateDelegateInvokeExpression (delinvoke);
-				return;
-			}
-			CodeDirectionExpression direction = e as CodeDirectionExpression;
-			if (direction != null) {
-				GenerateDirectionExpression (direction);
-				return;
-			}
-			CodeEventReferenceExpression eventref = e as CodeEventReferenceExpression;
-			if ( eventref != null ) {
-				GenerateEventReferenceExpression( eventref );
-				return;
-			}
-			CodeFieldReferenceExpression fieldref = e as CodeFieldReferenceExpression;
-			if (fieldref != null) {
-				GenerateFieldReferenceExpression (fieldref);
-				return;
-			}
-			CodeIndexerExpression idx = e as CodeIndexerExpression;
-			if (idx != null) {
-				GenerateIndexerExpression (idx);
-				return;
-			}
-			CodeMethodInvokeExpression methodinv = e as CodeMethodInvokeExpression;
-			if (methodinv != null) {
-				GenerateMethodInvokeExpression (methodinv);
-				return;
-			}
-			CodeMethodReferenceExpression methodref = e as CodeMethodReferenceExpression;
-			if (methodref != null) {
-				GenerateMethodReferenceExpression (methodref);
-				return;
-			}
-			CodeObjectCreateExpression objref = e as CodeObjectCreateExpression;
-			if (objref != null) {
-				GenerateObjectCreateExpression (objref);
-				return;
-			}
-			CodeParameterDeclarationExpression param = e as CodeParameterDeclarationExpression;
-			if (param != null) {
-				GenerateParameterDeclarationExpression (param);
-				return;
-			}
-			CodePrimitiveExpression primitive = e as CodePrimitiveExpression;
-			if (primitive != null) {
-				GeneratePrimitiveExpression (primitive);
-				return;
-			}
-			CodePropertyReferenceExpression propref = e as CodePropertyReferenceExpression;
-			if (propref != null) {
-				GeneratePropertyReferenceExpression (propref);
-				return;
-			}
-			CodePropertySetValueReferenceExpression propset = e as CodePropertySetValueReferenceExpression;
-			if (propset != null) {
-				GeneratePropertySetValueReferenceExpression (propset);
-				return;
-			}
-			CodeSnippetExpression snippet = e as CodeSnippetExpression;
-			if (snippet != null) {
-				GenerateSnippetExpression (snippet);
-				return;
-			}
-			CodeThisReferenceExpression thisref = e as CodeThisReferenceExpression;
-			if (thisref != null) {
-				GenerateThisReferenceExpression (thisref);
-				return;
-			}
-			CodeTypeOfExpression typeOf = e as CodeTypeOfExpression;
-			if (typeOf != null) {
-				GenerateTypeOfExpression (typeOf);
-				return;
-			}
-			CodeTypeReferenceExpression typeref = e as CodeTypeReferenceExpression;
-			if (typeref != null) {
-				GenerateTypeReferenceExpression (typeref);
-				return;
-			}
-			CodeVariableReferenceExpression varref = e as CodeVariableReferenceExpression;
-			if (varref != null) {
-				GenerateVariableReferenceExpression (varref);
-				return;
-			}
-
-			throw new ArgumentException ("Element type " + e + " is not supported.", "e");
 		}
 
 		protected abstract void GenerateExpressionStatement (CodeExpressionStatement statement);
@@ -478,34 +366,40 @@ namespace System.CodeDom.Compiler {
 
 		protected virtual void GeneratePrimitiveExpression (CodePrimitiveExpression e)
 		{
-			if (e.Value == null) {
+			object value = e.Value;
+			if (value == null) {
 				output.Write (NullToken);
 				return;
 			}
-
-			Type type = e.Value.GetType ();
-			if (type == typeof (bool)) {
-				output.Write (e.Value.ToString ().ToLower (CultureInfo.InvariantCulture));
-			} else if (type == typeof (char)) {
-				output.Write ("'" + e.Value.ToString () + "'");
-			} else if (type == typeof (string)) {
-				output.Write (QuoteSnippetString ((string) e.Value));
-			} else if (type == typeof (float)) {
-				GenerateSingleFloatValue((float) e.Value);
-			} else if (type == typeof (double)) {
-				GenerateDoubleValue((double) e.Value);
-			} else if (type == typeof (decimal)) {
-				this.GenerateDecimalValue((decimal) e.Value);
-			} else if (type == typeof (byte) || type == typeof (short) || 
-				type == typeof (int) || type == typeof (long)) {
-				// All of these should be IFormatable, I am just being safe/slow 
-				IFormattable formattable = e.Value as IFormattable;
-				if (formattable != null) {
-					output.Write (formattable.ToString (null, CultureInfo.InvariantCulture));
-				} else {
-					output.Write (e.Value.ToString ());
-				}
-			} else {
+ 
+			Type type = value.GetType ();
+			TypeCode typeCode = Type.GetTypeCode (type);
+			switch (typeCode) {
+			case TypeCode.Boolean:
+				output.Write (value.ToString ().ToLower (CultureInfo.InvariantCulture));
+				break;
+			case TypeCode.Char:
+				output.Write ("'" + value.ToString () + "'");
+				break;
+			case TypeCode.String:
+				output.Write (QuoteSnippetString ((string) value));
+				break;
+			case TypeCode.Single:
+				GenerateSingleFloatValue ((float) value);
+				break;
+			case TypeCode.Double:
+				GenerateDoubleValue ((double) value);
+				break;
+			case TypeCode.Decimal:
+				GenerateDecimalValue ((decimal) value);
+				break;
+			case TypeCode.Byte:
+			case TypeCode.Int16:
+			case TypeCode.Int32:
+			case TypeCode.Int64:
+				output.Write (((IFormattable)value).ToString (null, CultureInfo.InvariantCulture));
+				break;
+			default:
 				throw new ArgumentException (string.Format(CultureInfo.InvariantCulture,
 					"Invalid Primitive Type: {0}. Only CLS compliant primitive " +
 					"types can be used. Consider using CodeObjectCreateExpression.",
@@ -544,8 +438,6 @@ namespace System.CodeDom.Compiler {
 
 		protected void GenerateStatement (CodeStatement s)
 		{
-			bool handled = false;
-
 #if NET_2_0
 			if (s.StartDirectives.Count > 0)
 				GenerateDirectives (s.StartDirectives);
@@ -553,56 +445,6 @@ namespace System.CodeDom.Compiler {
 			if (s.LinePragma != null)
 				GenerateLinePragmaStart (s.LinePragma);
 
-			CodeAssignStatement assign = s as CodeAssignStatement;
-			if (assign != null) {
-				GenerateAssignStatement (assign);
-				handled = true;
-			}
-			CodeAttachEventStatement attach = s as CodeAttachEventStatement;
-			if (attach != null) {
-				GenerateAttachEventStatement (attach);
-				handled = true;
-			}
-			CodeCommentStatement comment = s as CodeCommentStatement;
-			if (comment != null) {
-				GenerateCommentStatement (comment);
-				handled = true;
-			}
-			CodeConditionStatement condition = s as CodeConditionStatement;
-			if (condition != null) {
-				GenerateConditionStatement (condition);
-				handled = true;
-			}
-			CodeExpressionStatement expression = s as CodeExpressionStatement;
-			if (expression != null) {
-				GenerateExpressionStatement (expression);
-				handled = true;
-			}
-			CodeGotoStatement gotostmt = s as CodeGotoStatement;
-			if (gotostmt != null) {
-				GenerateGotoStatement (gotostmt);
-				handled = true;
-			}
-			CodeIterationStatement iteration = s as CodeIterationStatement;
-			if (iteration != null) {
-				GenerateIterationStatement (iteration);
-				handled = true;
-			}
-			CodeLabeledStatement label = s as CodeLabeledStatement;
-			if (label != null) {
-				GenerateLabeledStatement (label);
-				handled = true;
-			}
-			CodeMethodReturnStatement returnstmt = s as CodeMethodReturnStatement;
-			if (returnstmt != null) {
-				GenerateMethodReturnStatement (returnstmt);
-				handled = true;
-			}
-			CodeRemoveEventStatement remove = s as CodeRemoveEventStatement;
-			if (remove != null) {
-				GenerateRemoveEventStatement (remove);
-				handled = true;
-			}
 			CodeSnippetStatement snippet = s as CodeSnippetStatement;
 			if (snippet != null) {
 #if NET_2_0
@@ -616,26 +458,13 @@ namespace System.CodeDom.Compiler {
 #else
 				GenerateSnippetStatement (snippet);
 #endif
-				handled = true;
+			} else {
+				try {
+					s.Accept (visitor);
+				} catch (NotImplementedException) {
+					throw new ArgumentException ("Element type " + s.GetType () + " is not supported.", "s");
+				}
 			}
-			CodeThrowExceptionStatement exception = s as CodeThrowExceptionStatement;
-			if (exception != null) {
-				GenerateThrowExceptionStatement (exception);
-				handled = true;
-			}
-			CodeTryCatchFinallyStatement trycatch = s as CodeTryCatchFinallyStatement;
-			if (trycatch != null) {
-				GenerateTryCatchFinallyStatement (trycatch);
-				handled = true;
-			}
-			CodeVariableDeclarationStatement declaration = s as CodeVariableDeclarationStatement;
-			if (declaration != null) {
-				GenerateVariableDeclarationStatement (declaration);
-				handled = true;
-			}
-
-			if (!handled)
-				throw new ArgumentException ("Element type " + s + " is not supported.");
 
 			if (s.LinePragma != null)
 				GenerateLinePragmaEnd (s.LinePragma);
@@ -1131,48 +960,11 @@ namespace System.CodeDom.Compiler {
 				if (member.LinePragma != null)
 					GenerateLinePragmaStart (member.LinePragma);
 
-				CodeMemberEvent eventm = member as CodeMemberEvent;
-				if (eventm != null) {
-					GenerateEvent (eventm, type);
-					continue;
+				try {
+					member.Accept (visitor);
+				} catch (NotImplementedException) {
+					throw new ArgumentException ("Element type " + member.GetType () + " is not supported.");
 				}
-				CodeMemberField field = member as CodeMemberField;
-				if (field != null) {
-					GenerateField (field);
-					continue;
-				}
-				CodeEntryPointMethod epmethod = member as CodeEntryPointMethod;
-				if (epmethod != null) {
-					GenerateEntryPointMethod (epmethod, type);
-					continue;
-				}
-				CodeTypeConstructor typeCtor = member as CodeTypeConstructor;
-				if (typeCtor != null) {
-					GenerateTypeConstructor (typeCtor);
-					continue;
-				}
-				CodeConstructor ctor = member as CodeConstructor;
-				if (ctor != null) {
-					GenerateConstructor (ctor, type);
-					continue;
-				}
-				CodeMemberMethod method = member as CodeMemberMethod;
-				if (method != null) {
-					GenerateMethod (method, type);
-					continue;
-				}
-				CodeMemberProperty property = member as CodeMemberProperty;
-				if (property != null) {
-					GenerateProperty (property, type);
-					continue;
-				}
-				CodeSnippetTypeMember snippet = member as CodeSnippetTypeMember;
-				if (snippet != null) {
-					GenerateSnippetMember (snippet);
-					continue;
-				}
-
-				this.currentMember = prevMember;
 			}
 
 			// Hack because of previous continue usage
@@ -1295,5 +1087,252 @@ namespace System.CodeDom.Compiler {
 		{
 		}
 #endif
+
+		internal class Visitor : ICodeDomVisitor {
+			CodeGenerator g;
+
+			public Visitor (CodeGenerator generator)
+			{
+				this.g = generator;
+			}
+
+			// CodeExpression
+				
+			public void Visit (CodeArgumentReferenceExpression o)
+			{
+				g.GenerateArgumentReferenceExpression (o);
+			}
+	
+			public void Visit (CodeArrayCreateExpression o)
+			{
+				g.GenerateArrayCreateExpression (o);
+			}
+	
+			public void Visit (CodeArrayIndexerExpression o)
+			{
+				g.GenerateArrayIndexerExpression (o);
+			}
+	
+			public void Visit (CodeBaseReferenceExpression o)
+			{
+				g.GenerateBaseReferenceExpression (o);
+			}
+	
+			public void Visit (CodeBinaryOperatorExpression o)
+			{
+				g.GenerateBinaryOperatorExpression (o);
+			}
+	
+			public void Visit (CodeCastExpression o)
+			{
+				g.GenerateCastExpression (o);
+			}
+	
+#if NET_2_0
+			public void Visit (CodeDefaultValueExpression o)
+			{
+				g.GenerateDefaultValueExpression (o);
+			}
+#endif
+	
+			public void Visit (CodeDelegateCreateExpression o)
+			{
+				g.GenerateDelegateCreateExpression (o);
+			}
+	
+			public void Visit (CodeDelegateInvokeExpression o)
+			{
+				g.GenerateDelegateInvokeExpression (o);
+			}
+	
+			public void Visit (CodeDirectionExpression o)
+			{
+				g.GenerateDirectionExpression (o);
+			}
+	
+			public void Visit (CodeEventReferenceExpression o)
+			{
+				g.GenerateEventReferenceExpression (o);
+			}
+	
+			public void Visit (CodeFieldReferenceExpression o)
+			{
+				g.GenerateFieldReferenceExpression (o);
+			}
+	
+			public void Visit (CodeIndexerExpression o)
+			{
+				g.GenerateIndexerExpression (o);
+			}
+	
+			public void Visit (CodeMethodInvokeExpression o)
+			{
+				g.GenerateMethodInvokeExpression (o);
+			}
+	
+			public void Visit (CodeMethodReferenceExpression o)
+			{
+				g.GenerateMethodReferenceExpression (o);
+			}
+	
+			public void Visit (CodeObjectCreateExpression o)
+			{
+				g.GenerateObjectCreateExpression (o);
+			}
+	
+			public void Visit (CodeParameterDeclarationExpression o)
+			{
+				g.GenerateParameterDeclarationExpression (o);
+			}
+	
+			public void Visit (CodePrimitiveExpression o)
+			{
+				g.GeneratePrimitiveExpression (o);
+			}
+	
+			public void Visit (CodePropertyReferenceExpression o)
+			{
+				g.GeneratePropertyReferenceExpression (o);
+			}
+	
+			public void Visit (CodePropertySetValueReferenceExpression o)
+			{
+				g.GeneratePropertySetValueReferenceExpression (o);
+			}
+	
+			public void Visit (CodeSnippetExpression o)
+			{
+				g.GenerateSnippetExpression (o);
+			}
+	
+			public void Visit (CodeThisReferenceExpression o)
+			{
+				g.GenerateThisReferenceExpression (o);
+			}
+	
+			public void Visit (CodeTypeOfExpression o)
+			{
+				g.GenerateTypeOfExpression (o);
+			}
+	
+			public void Visit (CodeTypeReferenceExpression o)
+			{
+				g.GenerateTypeReferenceExpression (o);
+			}
+			
+			public void Visit (CodeVariableReferenceExpression o)
+			{
+				g.GenerateVariableReferenceExpression (o);
+			}
+			
+			// CodeStatement
+
+			public void Visit (CodeAssignStatement o)
+			{
+				g.GenerateAssignStatement (o);
+			}
+
+			public void Visit (CodeAttachEventStatement o)
+			{
+				g.GenerateAttachEventStatement (o);
+			}
+
+			public void Visit (CodeCommentStatement o)
+			{
+				g.GenerateCommentStatement (o);
+			}
+
+			public void Visit (CodeConditionStatement o)
+			{
+				g.GenerateConditionStatement (o);
+			}
+
+			public void Visit (CodeExpressionStatement o)
+			{
+				g.GenerateExpressionStatement (o);
+			}
+
+			public void Visit (CodeGotoStatement o)
+			{
+				g.GenerateGotoStatement (o);
+			}
+
+			public void Visit (CodeIterationStatement o)
+			{
+				g.GenerateIterationStatement (o);
+			}
+
+			public void Visit (CodeLabeledStatement o)
+			{
+				g.GenerateLabeledStatement (o);
+			}
+
+			public void Visit (CodeMethodReturnStatement o)
+			{
+				g.GenerateMethodReturnStatement (o);
+			}
+
+			public void Visit (CodeRemoveEventStatement o)
+			{
+				g.GenerateRemoveEventStatement (o);
+			}
+
+			public void Visit (CodeThrowExceptionStatement o)
+			{
+				g.GenerateThrowExceptionStatement (o);
+			}
+
+			public void Visit (CodeTryCatchFinallyStatement o)
+			{
+				g.GenerateTryCatchFinallyStatement (o);
+			}
+
+			public void Visit (CodeVariableDeclarationStatement o)
+			{
+				g.GenerateVariableDeclarationStatement (o);
+			}
+		
+			// CodeTypeMember
+			
+			public void Visit (CodeConstructor o)
+			{
+				g.GenerateConstructor (o, g.CurrentClass);
+			}
+			
+			public void Visit (CodeEntryPointMethod o)
+			{
+				g.GenerateEntryPointMethod (o, g.CurrentClass);
+			}
+	
+			public void Visit (CodeMemberEvent o)
+			{
+				g.GenerateEvent (o, g.CurrentClass);
+			}
+	
+			public void Visit (CodeMemberField o)
+			{
+				g.GenerateField (o);
+			}
+			
+			public void Visit (CodeMemberMethod o)
+			{
+				g.GenerateMethod (o, g.CurrentClass);
+			}
+	
+			public void Visit (CodeMemberProperty o)
+			{
+				g.GenerateProperty (o, g.CurrentClass);		
+			}
+	
+			public void Visit (CodeSnippetTypeMember o)
+			{
+				g.GenerateSnippetMember (o);
+			}
+	
+			public void Visit (CodeTypeConstructor o)
+			{
+				g.GenerateTypeConstructor (o);
+			}
+		}
 	}
 }

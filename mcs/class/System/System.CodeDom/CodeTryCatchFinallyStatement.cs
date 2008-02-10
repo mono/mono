@@ -90,5 +90,13 @@ namespace System.CodeDom
 				return catchClauses;
 			}
 		}
+
+		//
+		// ICodeDomVisitor method
+		//
+		internal override void Accept (ICodeDomVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
 	}
 }

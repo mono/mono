@@ -72,5 +72,13 @@ namespace System.CodeDom {
 				right = value;
 			}
 		}
+
+		//
+		// ICodeDomVisitor method
+		//
+		internal override void Accept (ICodeDomVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
 	}
 }

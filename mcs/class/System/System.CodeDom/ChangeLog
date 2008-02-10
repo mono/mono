@@ -1,3 +1,32 @@
+2008-02-10  Juraj Skripsky  <js@hotfeet.ch>
+
+	* CodeObject.cs: Add empty Visit method implementation.
+	
+	* CodeArgumentReferenceExpression.cs, CodeArrayCreateExpression.cs,
+	CodeArrayIndexerExpression.cs, CodeAssignStatement.cs,
+	CodeAttachEventStatement.cs, CodeBaseReferenceExpression.cs,
+	CodeBinaryOperatorExpression.cs, CodeCastExpression.cs,
+	CodeCommentStatement.cs, CodeConditionStatement.cs,
+	CodeConstructor.cs, CodeDefaultValueExpression.cs,
+	CodeDelegateCreateExpression.cs, CodeDelegateInvokeExpression.cs,
+	CodeDirectionExpression.cs, CodeEntryPointMethod.cs,
+	CodeEventReferenceExpression.cs, CodeExpressionStatement.cs,
+	CodeFieldReferenceExpression.cs, CodeGotoStatement.cs,
+	CodeIndexerExpression.cs, CodeIterationStatement.cs,
+	CodeLabeledStatement.cs, CodeMemberEvent.cs,
+	CodeMemberField.cs, CodeMemberMethod.cs,
+	CodeMemberProperty.cs, CodeMethodInvokeExpression.cs,
+	CodeMethodReferenceExpression.cs, CodeMethodReturnStatement.cs,
+	CodeObjectCreateExpression.cs, CodeParameterDeclarationExpression.cs,
+	CodePrimitiveExpression.cs, CodePropertyReferenceExpression.cs,
+	CodePropertySetValueReferenceExpression.cs, CodeRemoveEventStatement.cs, 
+	CodeSnippetExpression.cs, CodeSnippetTypeMember.cs,
+	CodeThisReferenceExpression.cs, CodeThrowExceptionStatement.cs,
+	CodeTryCatchFinallyStatement.cs, CodeTypeConstructor.cs,
+	CodeTypeOfExpression.cs, CodeTypeReferenceExpression.cs,
+	CodeVariableDeclarationStatement.cs, CodeVariableReferenceExpression.cs:
+	Add Visit method implementation.
+
 2007-01-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CodeTypeReference.cs :

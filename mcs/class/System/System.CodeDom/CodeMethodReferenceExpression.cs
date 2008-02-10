@@ -103,5 +103,13 @@ namespace System.CodeDom
 			}
 		}
 #endif
+
+		//
+		// ICodeDomVisitor method
+		//
+		internal override void Accept (ICodeDomVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
 	}
 }

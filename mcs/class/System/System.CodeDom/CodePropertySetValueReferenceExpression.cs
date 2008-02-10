@@ -38,5 +38,12 @@ namespace System.CodeDom
 	public class CodePropertySetValueReferenceExpression
 		: CodeExpression
 	{
+		//
+		// ICodeDomVisitor method
+		//
+		internal override void Accept (ICodeDomVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
 	}
 }

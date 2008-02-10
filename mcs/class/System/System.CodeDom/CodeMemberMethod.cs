@@ -140,5 +140,13 @@ namespace System.CodeDom
 		public event EventHandler PopulateParameters;
 
 		public event EventHandler PopulateStatements;
+
+		//
+		// ICodeDomVisitor method
+		//
+		internal override void Accept (ICodeDomVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
 	}
 }

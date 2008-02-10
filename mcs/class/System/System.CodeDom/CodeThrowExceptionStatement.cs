@@ -63,5 +63,13 @@ namespace System.CodeDom
 				toThrow = value;
 			}
 		}
+
+		//
+		// ICodeDomVisitor method
+		//
+		internal override void Accept (ICodeDomVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
 	}
 }

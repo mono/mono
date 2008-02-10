@@ -70,5 +70,13 @@ namespace System.CodeDom
 				return chainedConstructorArgs;
 			}
 		}
+
+		//
+		// ICodeDomVisitor method
+		//
+		internal override void Accept (ICodeDomVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
 	}
 }

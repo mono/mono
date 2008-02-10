@@ -42,5 +42,13 @@ namespace System.CodeDom
 		{
 			Attributes = MemberAttributes.Public | MemberAttributes.Static;
 		}
+
+		//
+		// ICodeDomVisitor method
+		//
+		internal override void Accept (ICodeDomVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
 	}
 }

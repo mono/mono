@@ -94,5 +94,13 @@ namespace System.CodeDom
 				targetObject = value;
 			}
 		}
+
+		//
+		// ICodeDomVisitor method
+		//
+		internal override void Accept (ICodeDomVisitor visitor)
+		{
+			visitor.Visit (this);
+		}
 	}
 }

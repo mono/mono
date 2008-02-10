@@ -52,5 +52,10 @@ namespace System.CodeDom
 				return userData;
 			}
 		}
+
+		internal virtual void Accept (ICodeDomVisitor visitor)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }
