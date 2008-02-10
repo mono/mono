@@ -209,8 +209,10 @@ namespace System.Web.UI
 		public override void processRestoreState (FacesContext context, object state) {
 			System.Diagnostics.Trace.WriteLine ("processRestoreState");
 
-			if (state == null)
-				throw new ArgumentNullException ("state");
+			if (state == null) {
+				Console.WriteLine ("WARNING: processRestoreState was called with null state.");
+				return; //throw new ArgumentNullException ("state");
+			}
 			IHttpHandler jsfHandler = EnterThread ();
 			try {
 				state = ((StateSerializer) state).State;
