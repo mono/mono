@@ -1,3 +1,11 @@
+2008-02-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XElement.cs : .ctor(XName,object) was trying to set args as its
+	  content, not as its own fields.
+	* XNodeWriter.cs : check null ns and replace it with "".
+	  Now that IsEmpty is true, set IsEmpty as false explicitly
+	  when WriteFullEndElement() is called.
+
 2008-02-09  Miguel de Icaza  <miguel@novell.com>
 
 	* XNamespace.cs: implement.

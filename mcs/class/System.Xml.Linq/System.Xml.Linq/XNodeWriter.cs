@@ -223,7 +223,7 @@ namespace System.Xml.Linq
 		{
 			CheckState ();
 
-			XNamespace xns = XNamespace.Get (ns);
+			XNamespace xns = XNamespace.Get (ns ?? String.Empty);
 			XElement el = new XElement (xns.GetName (name));
 			if (current == null) {
 				root.Add (el);
@@ -233,7 +233,7 @@ namespace System.Xml.Linq
 				state = XmlNodeType.Element;
 			}
 
-			FillXmlns (el, prefix, xns);
+			FillXmlns (el, prefix ?? String.Empty, xns);
 
 			current = el;
 		}
@@ -257,8 +257,8 @@ namespace System.Xml.Linq
 				throw new InvalidOperationException ("Current state is not acceptable for endElement.");
 
 			XElement el = current as XElement;
-			if (!forceFull && el != null && el.FirstNode == null)
-				el.IsEmpty = true;
+			if (forceFull)
+				el.IsEmpty = false;
 
 			current = current.Parent;
 		}

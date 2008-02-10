@@ -39,6 +39,22 @@ namespace MonoTests.System.Xml.Linq
 	public class XNodeWriterTest
 	{
 		[Test]
+		public void WriteEmptyElements ()
+		{
+			var doc = new XDocument ();
+			XmlWriter w = doc.CreateWriter ();
+			w.WriteStartElement ("root");
+			w.WriteStartElement ("foo");
+			w.WriteEndElement ();
+			w.WriteStartElement ("bar");
+			w.WriteFullEndElement ();
+			w.WriteEndElement ();
+			w.Close ();
+			Assert.IsTrue (((XElement) doc.Root.FirstNode).IsEmpty, "#1");
+			Assert.IsFalse (((XElement) doc.Root.LastNode).IsEmpty, "#2");
+		}
+
+		[Test]
 		public void CreateWriter1 ()
 		{
 			string xml = "<root><foo/><bar></bar><baz a='v' xmlns='urn:foo' xmlns:x='urn:x'><x:ext xmlns=''>test</x:ext><!-- comment -->  <?some-pi some-data?></baz></root>";

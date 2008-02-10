@@ -47,11 +47,12 @@ namespace System.Xml.Linq
 
 		XName name;
 		XAttribute attr_first, attr_last;
-		bool explicit_is_empty;
+		bool explicit_is_empty = true;
 
 		public XElement (XName name, object value)
 		{
-			SetElementValue (name, value);
+			this.name = name;
+			Add (value);
 		}
 
 		public XElement (XElement source)
@@ -398,6 +399,7 @@ namespace System.Xml.Linq
 				r.Read ();
 				e.ReadContentFrom (r);
 				r.ReadEndElement ();
+				e.explicit_is_empty = false;
 			} else {
 				e.explicit_is_empty = true;
 				r.Read ();

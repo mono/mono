@@ -37,12 +37,14 @@ namespace MonoTests.System.Xml.Linq
 	[TestFixture]
 	public class ExtensionsTest
 	{
+/* It does not compile probably due to bug #359733.
 		[Test]
 		public void Remove ()
 		{
 			XDocument doc = XDocument.Parse ("<root><foo/><bar/><baz/></root>");
-			doc.Root.Nodes ().Remove ();
+			doc.Root.Nodes ().Remove<XNode> ();
 			Assert.IsNull (doc.Root.FirstNode, "#1");
 		}
+*/
 	}
 }
