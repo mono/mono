@@ -2936,7 +2936,7 @@ namespace MonoTests.System.Windows.Forms
 
 			if (use_new_auto_scale) {
 #if NET_2_0
-				AutoScaleMode = AutoScaleMode.Font;
+				AutoScaleMode = AutoScaleMode.Dpi;
 				SizeF s = CurrentAutoScaleDimensions;
 				AutoScaleDimensions = new SizeF (s.Width * 2, s.Height * 2);
 #endif
