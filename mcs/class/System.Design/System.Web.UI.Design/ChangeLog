@@ -1,3 +1,9 @@
+2008-02-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DataFieldConverter.cs, DataMemberConverter.cs, DataSourceConverter.cs:
+	Use 'is' instead of 'as' and a null check. Found using Gendarme new 
+	UseIsOperator rule.
+
 2007-10-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HtmlControlDesigner.cs, WebControlToolboxItem.cs,

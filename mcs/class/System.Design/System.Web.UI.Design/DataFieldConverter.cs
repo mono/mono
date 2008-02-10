@@ -68,7 +68,7 @@ namespace System.Web.UI.Design
 
 		public override bool GetStandardValuesSupported (ITypeDescriptorContext context)
 		{
-			return ((context.Instance as IComponent) != null);
+			return (context.Instance is IComponent);
 		}
 	}
 }
