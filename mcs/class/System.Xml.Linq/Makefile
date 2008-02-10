@@ -13,7 +13,7 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 EXTRA_DISTFILES =
 
 # This is a .NET 3.5 only assembly
-VALID_PROFILE := $(filter net_3_5, $(PROFILE))
+VALID_PROFILE := $(filter net_2_0_bootstrap net_2_0 net_2_1, $(PROFILE))
 ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-System.Xml.Linq.dll
 NO_INSTALL = yes
