@@ -1,5 +1,10 @@
 2008-02-07  Jb Evain  <jbevain@novell.com>
 
+	* Mono.Cecil/BaseAssemblyResolver.cs:
+		deal with 2.1 corlib on Mono.
+
+2008-02-07  Jb Evain  <jbevain@novell.com>
+
 	* Mono.Cecil/MethodDefinition.cs:
 		add last Is method for semantics property.
 
