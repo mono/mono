@@ -1,3 +1,7 @@
+2008-02-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* interpreter.cs (Eval): Remove a needless string allocation.
+
 2007-12-04  Arina Itkes <arinai@mainsoft.com>
 
 	* parser.cs: Max value of m for a construct {n,m} is 2147483647.

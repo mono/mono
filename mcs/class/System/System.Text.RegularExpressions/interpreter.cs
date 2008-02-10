@@ -167,11 +167,10 @@ namespace System.Text.RegularExpressions {
 						//	True
 				 
 						bool reverse = ((OpFlags)program[pc + 3] & OpFlags.RightToLeft) != 0;
-						string substring = GetString (pc + 3);
 
 						if (qs == null) {
 							bool ignore = ((OpFlags)program[pc + 3] & OpFlags.IgnoreCase) != 0;
-
+							string substring = GetString (pc + 3);
 							qs = new QuickSearch (substring, ignore, reverse);
 						}
 						while ((anch_reverse && anch_ptr >= anch_begin) 
@@ -181,7 +180,7 @@ namespace System.Text.RegularExpressions {
 							{
 								anch_ptr = qs.Search (text, anch_ptr, anch_begin);
 								if (anch_ptr != -1)
-									anch_ptr += substring.Length ;
+									anch_ptr += qs.Length ;
 								
 							}
 							else
