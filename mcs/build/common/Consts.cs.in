@@ -48,13 +48,12 @@ internal
 
 	public const string MonoVersion = "@MONO_VERSION@";
 
-#if NET_3_5
 	// Versions of .NET Framework 3.5 RTM
-	public const string FxVersion = "3.5.0.0";
-	public const string FxFileVersion = "3.5.21022.8";
+	public const string Fx35Version = "3.5.0.0";
+	public const string Fx35FileVersion = "3.5.21022.8";
 	
-	public const string VsVersion = "0.0.0.0"; // Useless ?
-#elif NET_2_1
+	public const string Vs35Version = "0.0.0.0"; // Useless ?
+#if NET_2_1
 	// Versions of .NET Framework 2.1 (SilverLight)
 	public const string FxVersion = "2.1.0.0";
 	public const string VsVersion = "9.0.0.0"; // TODO:

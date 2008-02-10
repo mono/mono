@@ -37,9 +37,9 @@ using System.Runtime.InteropServices;
 
 // General Information about the System.Xml.Linq assembly
 
-[assembly: AssemblyVersion (Consts.FxVersion)]
-[assembly: SatelliteContractVersion (Consts.FxVersion)]
-[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+[assembly: AssemblyVersion (Consts.Fx35Version)]
+[assembly: SatelliteContractVersion (Consts.Fx35Version)]
+[assembly: AssemblyFileVersion (Consts.Fx35FileVersion)]
 
 [assembly: AssemblyTitle ("System.Xml.Linq.dll")]
 [assembly: AssemblyDescription ("System.Xml.Linq.dll")]

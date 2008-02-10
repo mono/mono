@@ -39,16 +39,16 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyProduct("System.Core")]
 [assembly: AssemblyCopyright("")]
 [assembly: AssemblyCulture("")]
-[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+[assembly: AssemblyFileVersion (Consts.Fx35FileVersion)]
 [assembly: AssemblyDefaultAlias ("System.Core.dll")]
 [assembly: NeutralResourcesLanguage ("en-US")]
 
 [assembly: CLSCompliant(true)]
 [assembly: ComVisible (false)]
 
-[assembly: AssemblyVersion(Consts.FxVersion)]
-[assembly: SatelliteContractVersion (Consts.FxVersion)]
-[assembly: AssemblyInformationalVersionAttribute (Consts.FxVersion)]
+[assembly: AssemblyVersion(Consts.Fx35Version)]
+[assembly: SatelliteContractVersion (Consts.Fx35Version)]
+[assembly: AssemblyInformationalVersionAttribute (Consts.Fx35Version)]
 
 [assembly: AssemblyDelaySign (true)]
 [assembly: AssemblyKeyFile ("../ecma.pub")]

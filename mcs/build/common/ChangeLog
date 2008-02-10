@@ -1,3 +1,8 @@
+2008-02-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Consts.cs.in : now that we removed 3.5 profile, those versions are
+	  needed independently.
+
 2007-12-31  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Consts.cs.in: Add corlib assembly name.
