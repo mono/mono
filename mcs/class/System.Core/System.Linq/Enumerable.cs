@@ -2314,9 +2314,16 @@ namespace System.Linq
 		public static Dictionary<TKey, TSource> ToDictionary<TSource, TKey> (this IEnumerable<TSource> source,
 				Func<TSource, TKey> keySelector, IEqualityComparer<TKey> comparer)
 		{
-			throw new NotImplementedException ();
-			// FIXME: compiler issue
-			//return ToDictionary (source, keySelector, (a) => a, comparer);
+			Check.SourceAndKeySelector (source, keySelector);
+
+			if (comparer == null)
+				comparer = EqualityComparer<TKey>.Default;
+			
+			var dict = new Dictionary<TKey, TSource> (comparer);
+			foreach (var e in source)
+				dict.Add (keySelector (e), e);
+
+			return dict;
 		}
 
 		#endregion

@@ -1,3 +1,7 @@
+2008-02-09  Miguel de Icaza  <miguel@novell.com>
+
+	* Enumerable.cs (ToDictionary): Implement this overload. 
+
 2008-02-01  Jb Evain  <jbevain@novell.com>
 
 	* Queryable.cs, Check.cs: integrate GHOP work from
