@@ -93,6 +93,9 @@ namespace System.Reflection {
 		private extern string get_code_base (bool escaped);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern string get_fullname ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern string get_location ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -363,7 +366,7 @@ namespace System.Reflection {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static void InternalGetAssemblyName (string assemblyFile, AssemblyName aname);
-		
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern void FillName (Assembly ass, AssemblyName aname);
 
@@ -397,10 +400,7 @@ namespace System.Reflection {
 			if (assemblyName != null)
 				return assemblyName;
 
-			AssemblyName aname = new AssemblyName ();
-			FillName (this, aname);
-			assemblyName = aname.ToString ();
-
+			assemblyName = get_fullname ();
 			return assemblyName;
 		}
 

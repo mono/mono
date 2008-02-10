@@ -1,3 +1,7 @@
+2008-02-10  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Assembly.cs: Use icall for ToString/FullName. Fixes bug #318231.
+
 2008-02-02  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* MonoMethod.cs (MakeGenericMethod): Modified argument name to match
