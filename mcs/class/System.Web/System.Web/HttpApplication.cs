@@ -945,6 +945,10 @@ namespace System.Web {
 				context.PushHandler (handler);
 #endif
 			} catch (FileNotFoundException fnf){
+#if TARGET_JVM
+				Console.WriteLine ("$$$$$$$$$$:Sys.Web Pipeline");
+				Console.WriteLine (fnf.ToString ());
+#endif
 				if (context.Request.IsLocal)
 					ProcessError (new HttpException (404, String.Format ("File not found {0}", fnf.FileName), fnf, context.Request.FilePath));
 				else
