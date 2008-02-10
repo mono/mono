@@ -1,3 +1,8 @@
+2008-01-10  Konstantin Triger <kostat@mainsoft.com>
+
+	* Iterator.cs: prevent endless recursion in AncestorIterator
+		while collecting results.
+
 2008-01-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DefaultContext.cs: Fix direct comparison with NaN. Found by 

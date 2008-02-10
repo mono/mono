@@ -277,5 +277,21 @@ namespace MonoTests.System.Xml.XPath
 			AssertEquals ("xml", nl [2].LocalName);
 			AssertEquals (3, nl.Count);
 		}
+
+		[Test]
+		public void AncestorAxis () {
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<foo><bar><baz><bax /></baz></bar></foo>");
+
+			XmlNode bar = doc.GetElementsByTagName ("bar") [0];
+			XmlElement barClone = (XmlElement) bar.CloneNode (true);
+			XmlNodeList baxs = barClone.GetElementsByTagName ("bax");
+
+			XmlNode bax = baxs [0];
+			XmlNodeList ans = bax.SelectNodes ("ancestor::*");
+			AssertEquals (2, ans.Count);
+			AssertEquals ("bar", ans [0].Name);
+			AssertEquals ("baz", ans [1].Name);
+		}
 	}
 }
