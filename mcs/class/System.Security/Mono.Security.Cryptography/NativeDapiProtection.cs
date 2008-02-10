@@ -175,7 +175,7 @@ namespace Mono.Security.Cryptography {
 			}
 
 			if ((encdata == null) || (hr != 0)) {
-				throw new CryptographicException (Marshal.GetLastWin32Error ());
+				throw new CryptographicException (hr);
 			}
 			return encdata;
 		}
