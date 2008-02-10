@@ -162,7 +162,7 @@ namespace System.Runtime.Remoting.Proxies
 			MonoMethodMessage mMsg = (MonoMethodMessage) msg;
 			mMsg.LogicalCallContext = CallContext.CreateLogicalCallContext (true);
 			CallType call_type = mMsg.CallType;
-			bool is_remproxy = (rp as RemotingProxy) != null;
+			bool is_remproxy = (rp is RemotingProxy);
 
 			IMethodReturnMessage res_msg = null;
 			
