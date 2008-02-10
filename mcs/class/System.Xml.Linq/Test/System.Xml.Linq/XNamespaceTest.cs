@@ -98,6 +98,17 @@ namespace MonoTests.System.Xml.Linq
 			Assert.AreEqual ("http://www.w3.org/2000/xmlns/", XNamespace.Xmlns.NamespaceName, "#2");
 		}
 
+		[Test]
+		public void Addition ()
+		{
+			XNamespace ns = "http://www.novell.com";
+			XName d = ns + "hello";
+
+			Assert.AreEqual ("hello", d.LocalName, "localname");
+			Assert.AreEqual (ns, d.Namespace, "namespace");
+			Assert.AreEqual ("http://www.novell.com", d.NamespaceName, "nsname");
+		}
+			
 /*
 // there is no Blank anymore
 		[Test]

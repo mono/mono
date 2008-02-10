@@ -94,7 +94,7 @@ namespace System.Xml.Linq
 		
 		public static XName operator +(XNamespace ns, string localName)
 		{
-			return null;
+			return new XName (localName, ns.NamespaceName);
 		}
 
 		public static implicit operator XNamespace (string s)

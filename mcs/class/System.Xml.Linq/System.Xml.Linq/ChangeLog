@@ -1,3 +1,7 @@
+2008-02-09  Miguel de Icaza  <miguel@novell.com>
+
+	* XNamespace.cs: implement.
+
 2008-01-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XNodeReader.cs : when it is created from non-document XNode, do
