@@ -1,5 +1,8 @@
 2008-02-10  Zoltan Varga  <vargaz@gmail.com>
 
+	* BaseMachine.cs Regex.cs: Make LTRReplace and RTLReplace instance methods to 
+	avoid creating two machines for each Regex.Replace () call.
+
 	* interpreter.cs (Eval): Remove a needless string allocation.
 
 2007-12-04  Arina Itkes <arinai@mainsoft.com>

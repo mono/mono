@@ -373,15 +373,17 @@ namespace System.Text.RegularExpressions {
 
 		public string Replace (string input, MatchEvaluator evaluator, int count, int startat)
 		{
+			BaseMachine m = (BaseMachine)CreateMachine ();
+
 			if (RightToLeft)
-				return BaseMachine.RTLReplace (this, input, evaluator, count, startat);
+				return m.RTLReplace (this, input, evaluator, count, startat);
 
 			// NOTE: If this is a cause of a lot of allocations, we can convert it to
 			//       use a ThreadStatic allocation mitigator
 			Adapter a = new Adapter (evaluator);
 
-			return BaseMachine.LTRReplace (this, input, new BaseMachine.MatchAppendEvaluator (a.Evaluate),
-						       count, startat);
+			return m.LTRReplace (this, input, new BaseMachine.MatchAppendEvaluator (a.Evaluate),
+								 count, startat);
 		}
 
 		public string Replace (string input, string replacement)

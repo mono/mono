@@ -1,5 +1,5 @@
-﻿//
-// BaseMachine.jvm.cs
+//
+// BaseMachine.cs
 //
 // Author:
 // author:	Dan Lewis (dlewis@gmx.co.uk)
@@ -100,9 +100,9 @@ namespace System.Text.RegularExpressions
 			return ReplacementEvaluator.Evaluate (replacement, match);
 		}
 
-		internal static string LTRReplace (Regex regex, string input, MatchAppendEvaluator evaluator, int count, int startat)
+		internal string LTRReplace (Regex regex, string input, MatchAppendEvaluator evaluator, int count, int startat)
 		{
-			Match m = regex.Match (input, startat);
+			Match m = Scan (regex, input, startat, input.Length);
 			if (!m.Success)
 				return input;
 
@@ -130,9 +130,9 @@ namespace System.Text.RegularExpressions
 			return result.ToString ();
 		}
 
-		internal static string RTLReplace (Regex regex, string input, MatchEvaluator evaluator, int count, int startat)
+		internal string RTLReplace (Regex regex, string input, MatchEvaluator evaluator, int count, int startat)
 		{
-			Match m = regex.Match (input, startat);
+			Match m = Scan (regex, input, startat, input.Length);
 			if (!m.Success)
 				return input;
 
