@@ -786,7 +786,7 @@ namespace System.Drawing.Printing
 				default_page_settings.PrinterResolution.Y, ref graphics);
 
 			DOCINFO doc = new DOCINFO ();
-			doc.filename = name.ToString();
+			doc.filename = name;
 			doc.settings = settings;
 			doc.default_page_settings = default_page_settings;
 			doc_info.Add (graphics, doc);

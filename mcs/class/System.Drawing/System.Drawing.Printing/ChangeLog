@@ -1,3 +1,8 @@
+2008-02-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PrintingServicesUnix.cs: Fix AvoidToStringOnStringsRule found
+	using Gendarme.
+
 2007-12-10  Andreia Gaita <avidigal@novell.com>
 
 	* PrintingServicesWin32.cs: Add enumeration flag to get remote 
