@@ -57,6 +57,11 @@ namespace System.Text.RegularExpressions {
 			captures = new CaptureCollection (n_caps);
 			captures.SetValue (this, n_caps - 1);
 		}
+
+		internal Group (string text, int index, int length) : base (text, index, length)
+		{
+			success = true;
+		}
 		
 		internal Group () : base ("")
 		{

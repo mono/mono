@@ -1016,6 +1016,11 @@ namespace System.Text.RegularExpressions {
 			int n_caps, first_mark_index;
 			Group g;
 			GetGroupInfo (0, out first_mark_index, out n_caps);
+
+			// Avoid fully populating the Match instance if not needed
+			if (!needs_groups_or_captures)
+				return new Match (regex, this, text, text_end, 0, marks [first_mark_index].Index, marks [first_mark_index].Length);
+
 			Match retval = new Match (regex, this, text, text_end, groups.Length, 
 						  marks [first_mark_index].Index, marks [first_mark_index].Length, n_caps);
 			PopulateGroup (retval, first_mark_index, n_caps);

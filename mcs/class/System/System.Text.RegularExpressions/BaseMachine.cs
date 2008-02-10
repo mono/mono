@@ -44,7 +44,7 @@ namespace System.Text.RegularExpressions
 			if (regex.RightToLeft)
 				return RTLReplace (regex, input, new MatchEvaluator (ev.Evaluate), count, startat);
 			else
-				return LTRReplace (regex, input, new MatchAppendEvaluator (ev.EvaluateAppend), count, startat);
+				return LTRReplace (regex, input, new MatchAppendEvaluator (ev.EvaluateAppend), count, startat, ev.NeedsGroupsOrCaptures);
 		}
 
 		virtual public string [] Split (Regex regex, string input, int count, int startat)
@@ -100,8 +100,14 @@ namespace System.Text.RegularExpressions
 			return ReplacementEvaluator.Evaluate (replacement, match);
 		}
 
-		internal string LTRReplace (Regex regex, string input, MatchAppendEvaluator evaluator, int count, int startat)
+		internal string LTRReplace (Regex regex, string input, MatchAppendEvaluator evaluator, int count, int startat) {
+			return LTRReplace (regex, input, evaluator, count, startat, true);
+		}
+
+		internal string LTRReplace (Regex regex, string input, MatchAppendEvaluator evaluator, int count, int startat, bool needs_groups_or_captures)
 		{
+			this.needs_groups_or_captures = needs_groups_or_captures;
+			
 			Match m = Scan (regex, input, startat, input.Length);
 			if (!m.Success)
 				return input;
@@ -164,5 +170,10 @@ namespace System.Text.RegularExpressions
 
 			return result.ToString ();
 		}
+
+		// Specify whenever Match objects created by this machine need to be fully
+		// built. If false, these can be omitted, avoiding some memory allocations and
+		// processing time.
+		protected bool needs_groups_or_captures = true; 
 	}
 }

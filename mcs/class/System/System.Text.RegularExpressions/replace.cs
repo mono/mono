@@ -87,6 +87,15 @@ namespace System.Text.RegularExpressions {
 			}
 		}
 
+		public bool NeedsGroupsOrCaptures {
+			get {
+				if (n_pieces == 0)
+					return false;
+				else
+					return true;
+			}
+		}
+
 		void Ensure (int size)
 		{
 			int new_size;

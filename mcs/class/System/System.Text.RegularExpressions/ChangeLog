@@ -1,5 +1,16 @@
 2008-02-10  Zoltan Varga  <vargaz@gmail.com>
 
+	* replace.cs (NeedsGroupsOrCaptures): New property. Determines whenever the
+	replacement process needs access to the groups or captures properties of the
+	Match object.
+
+	* Group.cs: Add an internal ctor which avoids allocations.
+
+	* Match.cs: Ditto.
+
+	* BaseMachine.cs interpreter.cs: Add an optimization to avoid fully creating
+	Match objects during Replace () if the replacement string is simple.
+
 	* BaseMachine.cs Regex.cs: Make LTRReplace and RTLReplace instance methods to 
 	avoid creating two machines for each Regex.Replace () call.
 

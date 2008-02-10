@@ -85,6 +85,14 @@ namespace System.Text.RegularExpressions {
 		}
 #if !TARGET_JVM 
 		internal Match (Regex regex, IMachine machine, string text, int text_length, int n_groups, 
+				int index, int length) :
+			base (text, index, length) {
+			this.regex = regex;
+			this.machine = machine;
+			this.text_length = text_length;
+		}
+
+		internal Match (Regex regex, IMachine machine, string text, int text_length, int n_groups, 
 				int index, int length, int n_caps) :
 			base (text, index, length, n_caps)
 		{
