@@ -401,6 +401,9 @@ namespace System.Windows.Forms {
 
 		void ConnectPropertyChangedEvent ()
 		{
+			if (data_source == null || binding_member_info == null || binding_member_info.BindingField.Length == 0)
+				return;
+
 			string event_name = binding_member_info.BindingField + "Changed";
 			Type event_handler_type = typeof (EventHandler);
 
