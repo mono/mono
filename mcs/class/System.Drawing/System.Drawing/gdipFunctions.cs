@@ -1703,8 +1703,7 @@ namespace System.Drawing
 		public delegate void StreamCloseDelegate ();
 		public delegate long StreamSizeDelegate ();
 
-		internal class GdiPlusStreamHelper 
-		{
+		internal sealed class GdiPlusStreamHelper {
 			public Stream stream;
 			
 			private StreamGetHeaderDelegate sghd = null;

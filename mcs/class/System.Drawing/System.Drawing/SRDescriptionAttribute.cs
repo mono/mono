@@ -36,8 +36,8 @@ using System.ComponentModel;
 namespace System.Drawing
 {
 	[AttributeUsage(AttributeTargets.All)]
-	internal class SRDescriptionAttribute : DescriptionAttribute
-	{
+	internal sealed class SRDescriptionAttribute : DescriptionAttribute {
+
 		private bool isReplaced = false;
 
 		public SRDescriptionAttribute (string description)

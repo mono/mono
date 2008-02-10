@@ -35,7 +35,11 @@ using System.Security;
 namespace System.Drawing {
 
 	[SuppressUnmanagedCodeSecurity]
-	internal class Carbon {
+#if NET_2_0
+	internal static class Carbon {
+#else
+	internal sealed class Carbon {
+#endif
 		internal static Hashtable contextReference = new Hashtable ();
 		internal static object lockobj = new object ();
 

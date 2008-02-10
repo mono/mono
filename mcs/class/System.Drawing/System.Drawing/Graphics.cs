@@ -436,6 +436,8 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
  			
+		// according to MSDN fillmode "is required but ignored" which makes _some_ sense since the unmanaged 
+		// GDI+ call doesn't support it (issue spotted using Gendarme's AvoidUnusedParametersRule)
 		public void DrawClosedCurve (Pen pen, Point [] points, float tension, FillMode fillmode)
 		{
 			if (pen == null)
@@ -447,7 +449,9 @@ namespace System.Drawing
 			status = GDIPlus.GdipDrawClosedCurve2I (nativeObject, pen.nativeObject, points, points.Length, tension);
 			GDIPlus.CheckStatus (status);
 		}
-		
+
+		// according to MSDN fillmode "is required but ignored" which makes _some_ sense since the unmanaged 
+		// GDI+ call doesn't support it (issue spotted using Gendarme's AvoidUnusedParametersRule)
 		public void DrawClosedCurve (Pen pen, PointF [] points, float tension, FillMode fillmode)
 		{
 			if (pen == null)
@@ -1088,13 +1092,6 @@ namespace System.Drawing
 				throw new ArgumentNullException ("points");
 			Status status = GDIPlus.GdipDrawPolygon (nativeObject, pen.nativeObject, points, points.Length);
 			GDIPlus.CheckStatus (status);
-		}
-
-		internal void DrawRectangle (Pen pen, RectangleF rect)
-		{
-			if (pen == null)
-				throw new ArgumentNullException ("pen");
-			DrawRectangle (pen, rect.Left, rect.Top, rect.Width, rect.Height);
 		}
 
 		public void DrawRectangle (Pen pen, Rectangle rect)
