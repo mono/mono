@@ -592,7 +592,7 @@ namespace Microsoft.Win32 {
 			RegistryKey result = self.Probe (rkey, ToUnix (keyname), writable);
 			if (result == null && IsWellKnownKey (rkey.Name, keyname)) {
 				// create the subkey even if its parent was opened read-only
-				result = CreateSubKey (rkey, keyname, false);
+				result = CreateSubKey (rkey, keyname, writable);
 			}
 
 			return result;

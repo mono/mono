@@ -1,3 +1,8 @@
+2008-02-10  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* UnixRegistryApi.cs: In OpenSubKey, respect value of writable argument
+	when creating well-known subkey. Fixes bug #357883.
+
 2008-01-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* RegistryKey.cs: Fix some argument names to be consistent with MS.
