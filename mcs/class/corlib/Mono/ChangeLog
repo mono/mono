@@ -1,3 +1,8 @@
+2008-02-10  Miguel de Icaza  <miguel@novell.com>
+
+	* DataConverter.cs: Apply fix from Cliff Brake
+	<cliff.brake@gmail.com>, we were incrementing b.i in two places. 
+
 2007-05-30  Miguel de Icaza  <miguel@novell.com>
 
 	* DataConverter.cs: Fix the PutBytesLE and PutByteBE, they were

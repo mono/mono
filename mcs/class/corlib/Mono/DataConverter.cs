@@ -309,7 +309,7 @@ namespace Mono {
 			IEnumerator enumerator = args.GetEnumerator ();
 			bool ok = enumerator.MoveNext ();
 
-			for (b.i = 0; b.i < description.Length; b.i++){
+			for (b.i = 0; b.i < description.Length; ){
 				object oarg;
 
 				if (ok)
