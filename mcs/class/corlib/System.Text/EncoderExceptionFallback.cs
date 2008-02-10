@@ -49,7 +49,7 @@ namespace System.Text
 
 		public override bool Equals (object value)
 		{
-			return value as EncoderExceptionFallback != null;
+			return (value is EncoderExceptionFallback);
 		}
 
 		public override int GetHashCode ()

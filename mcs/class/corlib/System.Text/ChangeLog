@@ -1,3 +1,10 @@
+2008-02-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DecoderExceptionFallback.cs: Use 'is' instead of 'as' and a null
+	check. Found using Gendarme new UseIsOperator rule.
+	* EncoderExceptionFallback.cs: Use 'is' instead of 'as' and a null
+	check. Found using Gendarme new UseIsOperator rule.
+
 2007-12-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DecoderFallback.cs, EncoderFallback.cs, Encoding.cs :
