@@ -94,6 +94,8 @@ namespace System.Windows.Forms {
 			//null_value = nullValue;
 			//format_string = formatString;
 			//format_info = formatInfo;
+
+			ConnectPropertyChangedEvent ();
 		}
 #else
 		public Binding (string propertyName, object dataSource, string dataMember)
@@ -102,6 +104,7 @@ namespace System.Windows.Forms {
 			data_source = dataSource;
 			data_member = dataMember;
 			binding_member_info = new BindingMemberInfo (dataMember);
+			ConnectPropertyChangedEvent ();
 		}		
 #endif
 		#endregion	// Public Constructors
@@ -393,6 +396,31 @@ namespace System.Windows.Forms {
 		private void PositionChangedHandler (object sender, EventArgs e)
 		{
 			Check ();
+			PushData ();
+		}
+
+		void ConnectPropertyChangedEvent ()
+		{
+			string event_name = binding_member_info.BindingField + "Changed";
+			Type event_handler_type = typeof (EventHandler);
+
+			EventDescriptor prop_changed_event = null;
+			foreach (EventDescriptor event_desc in TypeDescriptor.GetEvents (data_source)) {
+				if (event_desc.Name == event_name && event_desc.EventType == event_handler_type) {
+					prop_changed_event = event_desc;
+					break;
+				}
+			}
+
+			// No event for property changes
+			if (prop_changed_event == null)
+				return;
+
+			prop_changed_event.AddEventHandler (data_source, new EventHandler (PropertyChangedHandler));
+		}
+
+		void PropertyChangedHandler (object o, EventArgs args)
+		{
 			PushData ();
 		}
 
