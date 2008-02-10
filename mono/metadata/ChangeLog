@@ -1,3 +1,12 @@
+2008-02-10  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* class.c: Include Retargetable spec in assembly name.
+	* assembly.c: Always include PublicKeyToken spec in assembly name
+	(with value "null" if assembly is not signed), and include
+	Retargetable spec.
+	* icall-def.h: Added icall for Assembly.get_fullname.
+	* icall.c: Added icall returning the fullname of an assembly.
+
 2008-02-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_setup_vtable_general): Add a missing call to
