@@ -314,8 +314,13 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 		{
 			StringBuilder builder = new StringBuilder ();
 			HtmlizedException exc = (HtmlizedException) this.InnerException;
+#if TARGET_J2EE
+			bool isParseException = false;
+			bool isCompileException = false;
+#else
 			bool isParseException = exc is ParseException;
 			bool isCompileException = (!isParseException && exc is CompilationException);
+#endif
 			
 			WriteFileTop (builder, exc.Title);
 			builder.AppendFormat ("<h2><em>{0}</em></h2>\r\n", exc.Title);
@@ -363,6 +368,7 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 
 			bool needToggleJS = false;
 			
+#if !TARGET_J2EE
 			if (isCompileException) {
 				CompilationException cex = exc as CompilationException;
 				StringCollection output = cex.CompilerOutput;
@@ -375,6 +381,7 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 					WriteExpandableBlock (builder, "Show Detailed Compiler Output", sb.ToString ());
 				}
 			}
+#endif
 			
 			if (longCodeVersion != null && longCodeVersion.Length > 0) {
 				WriteExpandableBlock (builder, "Show Complete Compilation Source", longCodeVersion.ToString ());
@@ -418,7 +425,7 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 		static void WriteSource (StringBuilder builder, StringBuilder longVersion, HtmlizedException e)
 		{
 			builder.Append ("<code><pre>");
-			WritePageSource (builder, longVersion, e);
+			WritePageSource (builder, e);
 			builder.Append ("</code></pre>\r\n");
 		}
 
