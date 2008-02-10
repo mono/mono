@@ -357,8 +357,8 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 					builder.Append (exc.SourceFile);
 				else
 					builder.Append (exc.FileName);
-				
-				if (isParseException || isCompileException) {
+
+				if ((isParseException || isCompileException) && exc.ErrorLines.Length > 0) {
 					builder.Append ("&nbsp;&nbsp;<strong>Line: </strong>");
 					builder.Append (exc.ErrorLines [0]);
 				}
