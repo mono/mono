@@ -1,3 +1,10 @@
+2008-02-10  Luke Page <luke.a.page@gmail.com>
+
+	* MaskedTextBox.cs: UseSystemPasswordChar updates PasswordChar, PasswordChar
+	updates the provider and if not using a provider, uses the internal document
+	class implementation of password char. Also when showing text, uses display string
+	from the provider, instead of the actual text.
+
 2008-02-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Binding.cs: Ooooops, forgot to take into account the data_source

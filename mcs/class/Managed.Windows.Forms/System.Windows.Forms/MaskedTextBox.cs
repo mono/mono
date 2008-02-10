@@ -131,6 +131,7 @@ namespace System.Windows.Forms
 				throw new ArgumentNullException ();
 			}
 			provider = maskedTextProvider;
+			is_empty_mask = false;
 			Init ();
 		}
 
@@ -140,6 +141,7 @@ namespace System.Windows.Forms
 				throw new ArgumentNullException ();
 			}
 			provider = new MaskedTextProvider (mask, CultureInfo.CurrentCulture);
+			is_empty_mask = false;
 			Init ();
 		}
 		private void Init ()
@@ -508,6 +510,7 @@ namespace System.Windows.Forms
 				}
 				
 				provider = new MaskedTextProvider (value, provider.Culture, provider.AllowPromptAsInput, provider.PromptChar, provider.PasswordChar, provider.AsciiOnly);
+				ReCalculatePasswordChar ();
 				UpdateVisibleText ();
 			}
 		}
@@ -565,10 +568,22 @@ namespace System.Windows.Forms
 		[DefaultValue ('\0')]
 		public char PasswordChar {
 			get {
+				if (use_system_password_char)
+					return '*';
+
 				return provider.PasswordChar;
 			}
 			set {
 				provider.PasswordChar = value;
+
+				if (value != '\0') {
+					provider.IsPassword = true;
+				} else 
+					provider.IsPassword = false;
+
+				ReCalculatePasswordChar (true);
+				CalculateDocument ();
+
 				UpdateVisibleText ();
 			}
 		}
@@ -730,7 +745,14 @@ namespace System.Windows.Forms
 				return use_system_password_char;
 			}
 			set {
-				use_system_password_char = value;
+				if (use_system_password_char != value) {
+					use_system_password_char = value;
+
+					if (use_system_password_char)
+						PasswordChar = PasswordChar;
+					else
+						PasswordChar = '\0';
+				}
 			}
 		}
 		
@@ -757,6 +779,21 @@ namespace System.Windows.Forms
 		}
 #endregion
 #region Internal and private members
+
+		private void ReCalculatePasswordChar ()
+		{
+			ReCalculatePasswordChar (PasswordChar != '\0');
+		}
+
+		private void ReCalculatePasswordChar (bool using_password)
+		{
+			if (using_password)
+				if (is_empty_mask)
+					document.PasswordChar = PasswordChar.ToString ();
+				else
+					document.PasswordChar = string.Empty;
+		}
+
 		internal override void OnPaintInternal (PaintEventArgs pevent)
 		{
 			base.OnPaintInternal (pevent);
@@ -772,7 +809,15 @@ namespace System.Windows.Forms
 		
 		private void UpdateVisibleText ()
 		{
-			string text = Text;
+			string text = null;
+
+			if (is_empty_mask || setting_text)
+				text = base.Text;
+			else
+				if (provider == null)
+					text = string.Empty;
+				else
+					text = provider.ToDisplayString ();
 
 			setting_text = true;
 			if (base.Text != text) {
