@@ -260,7 +260,8 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			    && grid_textbox.Visible) {
 				switch (keyData) {
 				case Keys.Enter:
-					TrySetEntry (selectedItem, grid_textbox.Text);
+					if (TrySetEntry (selectedItem, grid_textbox.Text))
+						UnfocusSelection ();
 					return true;
 				case Keys.Escape:
 					if (selectedItem.IsEditable)
@@ -608,7 +609,8 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			pevent.Graphics.DrawString (valueText, font,
 						    brush,
 						    new RectangleF (xLoc, rect.Y + ENTRY_SPACING,
-								    ClientRectangle.Width-(xLoc), row_height),string_format);
+								    ClientRectangle.Width-(xLoc), row_height - (ENTRY_SPACING*2 + 1)), 
+						    string_format);
 		}
 
 		private void DrawGridItem (GridEntry grid_item, PaintEventArgs pevent, int depth, ref int yLoc) {
@@ -699,8 +701,10 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		void AcceptListBoxSelection (object sender) 
 		{
 			GridEntry entry = this.property_grid.SelectedGridItem as GridEntry;
-			if (entry != null)
-				TrySetEntry (entry, (string) ((ListBox) sender).SelectedItem);
+			if (entry != null) {
+				if (TrySetEntry (entry, (string) ((ListBox) sender).SelectedItem))
+					UnfocusSelection ();
+			}
 			CloseDropDown ();
 		}
 

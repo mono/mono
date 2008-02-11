@@ -1,5 +1,12 @@
 2008-02-11  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* PropertyGridView.cs: 
+	 - Fix height for drawing the grid entry
+	 text value, so that it clips multiline text properly.
+	 - Fix unfocusing to match MSFT.
+
+2008-02-11  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* PropertyGrid.cs: Do not populate subgriditems unless expandable.
 	Fixes a bug where on repopulation after value changed items become
 	expandable.
