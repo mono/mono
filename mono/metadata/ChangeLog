@@ -1,3 +1,8 @@
+2008-02-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_layout_fields): Set class->min_align for classes using
+	explicit layout as well. Fixes #360375.
+
 2008-02-11  Geoff Norton  <gnorton@novell.com>
 
 	* loader.c: Guard and dereference against inflated generic methods
