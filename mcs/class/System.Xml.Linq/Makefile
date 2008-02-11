@@ -8,6 +8,10 @@ LIB_MCS_FLAGS = \
 	        /r:System.Core.dll \
 	        /r:System.Xml.dll
 
+ifeq (2.0, $(FRAMEWORK_VERSION))
+LIB_MCS_FLAGS += -d:NET_3_5 -nowarn:1720
+endif
+
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 EXTRA_DISTFILES =
