@@ -95,7 +95,9 @@ namespace System.Windows.Forms {
 			//format_string = formatString;
 			//format_info = formatInfo;
 
-			ConnectPropertyChangedEvent ();
+			EventDescriptor prop_changed_event = GetPropertyChangedEvent (data_source, binding_member_info.BindingField);
+			if (prop_changed_event != null)
+				prop_changed_event.AddEventHandler (data_source, new EventHandler (SourcePropertyChangedHandler));
 		}
 #else
 		public Binding (string propertyName, object dataSource, string dataMember)
@@ -104,7 +106,10 @@ namespace System.Windows.Forms {
 			data_source = dataSource;
 			data_member = dataMember;
 			binding_member_info = new BindingMemberInfo (dataMember);
-			ConnectPropertyChangedEvent ();
+				
+			EventDescriptor prop_changed_event = GetPropertyChangedEvent (data_source, binding_member_info.BindingField);
+			if (prop_changed_event != null)
+				prop_changed_event.AddEventHandler (data_source, new EventHandler (SourcePropertyChangedHandler));
 		}		
 #endif
 		#endregion	// Public Constructors
@@ -245,6 +250,11 @@ namespace System.Windows.Forms {
 				
 			data_type = control_property.PropertyType; // Getting the PropertyType is kinda slow and it should never change, so it is cached
 			control.Validating += new CancelEventHandler (ControlValidatingHandler);
+#if NET_2_0
+			EventDescriptor prop_changed_event = GetPropertyChangedEvent (control, property_name);
+			if (prop_changed_event != null)
+				prop_changed_event.AddEventHandler (control, new EventHandler (ControlPropertyChangedHandler));
+#endif
 
 			this.control = control;
 		}
@@ -381,6 +391,11 @@ namespace System.Windows.Forms {
 
 		private void ControlValidatingHandler (object sender, CancelEventArgs e)
 		{
+#if NET_2_0
+			if (datasource_update_mode != DataSourceUpdateMode.OnValidation)
+				return;
+#endif
+
 			object old_data = data;
 
 			// If the data doesn't seem to be valid (it can't be converted,
@@ -399,38 +414,39 @@ namespace System.Windows.Forms {
 			PushData ();
 		}
 
-		void ConnectPropertyChangedEvent ()
+		EventDescriptor GetPropertyChangedEvent (object o, string property_name)
 		{
-#if NET_2_0
-			if (data_source == null || binding_member_info == new BindingMemberInfo (String.Empty) || binding_member_info.BindingField.Length == 0)
-				return;
-#else
-			if (data_source == null || binding_member_info.Equals (new BindingMemberInfo (String.Empty)) || binding_member_info.BindingField.Length == 0)
-				return;
-#endif
+			if (o == null || property_name == null || property_name.Length == 0)
+				return null;
 
-			string event_name = binding_member_info.BindingField + "Changed";
+			string event_name = property_name + "Changed";
 			Type event_handler_type = typeof (EventHandler);
 
 			EventDescriptor prop_changed_event = null;
-			foreach (EventDescriptor event_desc in TypeDescriptor.GetEvents (data_source)) {
+			foreach (EventDescriptor event_desc in TypeDescriptor.GetEvents (o)) {
 				if (event_desc.Name == event_name && event_desc.EventType == event_handler_type) {
 					prop_changed_event = event_desc;
 					break;
 				}
 			}
 
-			// No event for property changes
-			if (prop_changed_event == null)
-				return;
-
-			prop_changed_event.AddEventHandler (data_source, new EventHandler (PropertyChangedHandler));
+			return prop_changed_event;
 		}
 
-		void PropertyChangedHandler (object o, EventArgs args)
+		void SourcePropertyChangedHandler (object o, EventArgs args)
 		{
 			PushData ();
 		}
+
+#if NET_2_0
+		void ControlPropertyChangedHandler (object o, EventArgs args)
+		{
+			if (datasource_update_mode != DataSourceUpdateMode.OnPropertyChanged)
+				return;
+
+			PullData ();
+		}
+#endif
 
 		private object ParseData (object data, Type data_type)
 		{

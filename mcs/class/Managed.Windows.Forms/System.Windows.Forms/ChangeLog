@@ -1,3 +1,10 @@
+2008-02-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Binding.cs: For the 2.0 profile, look for a 
+	'PropertyChanged' event in the target control, and add checks for
+	DataSourceUpdateMode property to change -or not- the data source
+	from validation/control property change.
+
 2008-02-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Binding.cs : build fix (operator == is not overriden in 1.x. Do
