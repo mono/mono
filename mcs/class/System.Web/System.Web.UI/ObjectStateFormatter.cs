@@ -401,7 +401,7 @@ namespace System.Web.UI {
 			
 			public static void WriteObject (BinaryWriter w, object o, WriterContext ctx)
 			{
-#if TRACE
+#if TRACE && !TARGET_J2EE
 				if (o != null) {
 					Trace.WriteLine (String.Format ("Writing {0} (type: {1})", o, o.GetType ()));
 					Trace.Indent ();
@@ -443,7 +443,7 @@ namespace System.Web.UI {
 				}
 
 				fmt.Write (w, o, ctx);
-#if TRACE
+#if TRACE && !TARGET_J2EE
 				Trace.Unindent ();
 				Trace.WriteLine (String.Format ("Wrote {0} (type: {1}) {2} bytes", o, o.GetType (), w.BaseStream.Position - pos));
 #endif
