@@ -92,6 +92,25 @@ namespace MonoTests.System.Xml.Linq
 		}
 
 		[Test]
+		public void Get2 ()
+		{
+			XNamespace n = XNamespace.Get (String.Empty);
+			Assert.IsTrue (Object.ReferenceEquals (XNamespace.None, n), "#1");
+			n = XNamespace.Get ("http://www.w3.org/2000/xmlns/");
+			Assert.IsTrue (Object.ReferenceEquals (XNamespace.Xmlns, n), "#2");
+			Assert.IsTrue (Object.ReferenceEquals (XNamespace.Get ("urn:foo"), XNamespace.Get ("urn:foo")), "#3");
+		}
+
+		[Test]
+		public void GetName ()
+		{
+			XNamespace n = XNamespace.Get ("urn:foo");
+			Assert.IsTrue (Object.ReferenceEquals (n.GetName ("foo"), n.GetName ("foo")), "#1");
+			Assert.IsTrue (n.GetName ("foo") == n.GetName ("foo"), "#2");
+			Assert.IsFalse (n.GetName ("foo") == n.GetName ("bar"), "#3");
+		}
+
+		[Test]
 		public void Predefined ()
 		{
 			Assert.AreEqual ("http://www.w3.org/XML/1998/namespace", XNamespace.Xml.NamespaceName, "#1");
@@ -109,16 +128,13 @@ namespace MonoTests.System.Xml.Linq
 			Assert.AreEqual ("http://www.novell.com", d.NamespaceName, "nsname");
 		}
 			
-/*
-// there is no Blank anymore
 		[Test]
 		public void Equals ()
 		{
-			Assert.IsTrue (XNamespace.Blank.Equals (XNamespace.Get ("")), "#1");
-			Assert.IsTrue (XNamespace.Blank == XNamespace.Get (""), "#2");
-			Assert.IsFalse (XNamespace.Blank.Equals (XNamespace.Get (" ")), "#3");
-			Assert.IsFalse (XNamespace.Blank == XNamespace.Get (" "), "#4");
+			Assert.IsTrue (XNamespace.None.Equals (XNamespace.Get ("")), "#1");
+			Assert.IsTrue (XNamespace.None == XNamespace.Get (""), "#2");
+			Assert.IsFalse (XNamespace.None.Equals (XNamespace.Get (" ")), "#3");
+			Assert.IsFalse (XNamespace.None == XNamespace.Get (" "), "#4");
 		}
-*/
 	}
 }

@@ -1,5 +1,9 @@
 2008-02-11  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XNamespace.cs : make Get() and GetName() table-based.
+
+2008-02-11  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XNodeNavigator.cs : MoveToId() is not supported in this class.
 	* XElement.cs : allow DTD by default.
 

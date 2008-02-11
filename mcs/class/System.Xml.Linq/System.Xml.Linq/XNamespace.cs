@@ -35,10 +35,17 @@ namespace System.Xml.Linq
 {
 	public sealed class XNamespace
 	{
-		static readonly XNamespace blank = Get (String.Empty);
-		static readonly XNamespace xml = Get ("http://www.w3.org/XML/1998/namespace");
-		static readonly XNamespace xmlns = Get ("http://www.w3.org/2000/xmlns/");
-		
+		static readonly XNamespace blank, xml, xmlns;
+		static Dictionary<string, XNamespace> nstable;
+
+		static XNamespace ()
+		{
+			nstable = new Dictionary<string, XNamespace> ();
+			blank = Get (String.Empty);
+			xml = Get ("http://www.w3.org/XML/1998/namespace");
+			xmlns = Get ("http://www.w3.org/2000/xmlns/");
+		}
+
 		public static XNamespace None { 
 			get { return blank; }
 		}
@@ -51,19 +58,34 @@ namespace System.Xml.Linq
 			get { return xmlns; }
 		}
 
-		[MonoTODO]
 		public static XNamespace Get (string uri)
 		{
-			return new XNamespace (uri);
+			lock (nstable) {
+				XNamespace ret;
+				if (!nstable.TryGetValue (uri, out ret)) {
+					ret = new XNamespace (uri);
+					nstable [uri] = ret;
+				}
+				return ret;
+			}
 		}
 
-		[MonoTODO]
 		public XName GetName (string localName)
 		{
-			return new XName (localName, this);
+			if (table == null)
+				table = new Dictionary<string, XName> ();
+			lock (table) {
+				XName ret;
+				if (!table.TryGetValue (localName, out ret)) {
+					ret = new XName (localName, this);
+					table [localName] = ret;
+				}
+				return ret;
+			}
 		}
 
 		string uri;
+		Dictionary<string, XName> table;
 
 		XNamespace (string namespaceName)
 		{
@@ -78,6 +100,8 @@ namespace System.Xml.Linq
 
 		public override bool Equals (object other)
 		{
+			if (Object.ReferenceEquals (this, other))
+				return true;
 			XNamespace ns = other as XNamespace;
 			return ns != null && uri == ns.uri;
 		}
