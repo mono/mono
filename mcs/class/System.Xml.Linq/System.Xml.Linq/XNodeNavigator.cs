@@ -187,9 +187,8 @@ namespace System.Xml.Linq
 			}
 		}
 
-		[MonoTODO]
 		public override IXmlSchemaInfo SchemaInfo {
-			get { throw new NotImplementedException (); }
+			get { return null; }
 		}
 
 		public override object UnderlyingObject {

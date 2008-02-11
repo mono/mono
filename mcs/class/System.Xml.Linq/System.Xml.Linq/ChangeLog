@@ -1,5 +1,11 @@
 2008-02-11  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XName.cs : implemented GetObjectData(). It is however incompatible
+	  with .NET (yet?).
+	* XNodeNavigator.cs : SchemaInfo is null.
+
+2008-02-11  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XStreamingElement.cs : it was almost already implemented.
 	* XElement.cs : finish .ctor(XStreamingElement).
 

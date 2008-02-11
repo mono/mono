@@ -44,6 +44,15 @@ namespace System.Xml.Linq
 		string local;
 		XNamespace ns;
 
+		XName (SerializationInfo info, StreamingContext context)
+		{
+			string expandedName = info.GetString ("name");
+			string local, ns;
+			ExpandName (expandedName, out local, out ns);
+			this.local = local;
+			this.ns = XNamespace.Get (ns);
+		}
+
 		internal XName (string local, XNamespace ns)
 		{
 			this.local = XmlConvert.VerifyNCName (local);
@@ -80,9 +89,17 @@ namespace System.Xml.Linq
 
 		public static XName Get (string expandedName)
 		{
+			string local, ns;
+			ExpandName (expandedName, out local, out ns);
+			return Get (local, ns);
+		}
+
+		static void ExpandName (string expandedName, out string local, out string ns)
+		{
 			if (expandedName == null)
 				throw new ArgumentNullException ("expandedName");
-			string ns = null, local = null;
+			ns = null;
+			local = null;
 			if (expandedName.Length == 0)
 				throw ErrorInvalidExpandedName ();
 			//this.expanded = expandedName;
@@ -101,7 +118,6 @@ namespace System.Xml.Linq
 				local = expandedName;
 				ns = String.Empty;
 			}
-			return Get (local, ns);
 		}
 
 		public static XName Get (string localName, string namespaceName)
@@ -141,10 +157,13 @@ namespace System.Xml.Linq
 			return String.Concat ("{", ns.NamespaceName, "}", local);
 		}
 
-		[MonoTODO]
+		// in .NET it is serialized as "NameSerializer". dunno how to create it.
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{
-			throw new NotImplementedException ();
+			if (info == null)
+				throw new ArgumentNullException ("info");
+
+			info.AddValue ("name", ToString ());
 		}
 	}
 }
