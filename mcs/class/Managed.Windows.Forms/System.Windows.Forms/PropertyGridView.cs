@@ -893,8 +893,9 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			Point location;
 			dropdown_form.Size = control.Size;
 			control.Dock = DockStyle.Fill;
-			dropdown_form.Controls.Clear ();
 			dropdown_form.Controls.Add (control);
+			dropdown_form.Width = Math.Max (ClientRectangle.Width - SplitterLocation - (vbar.Visible ? vbar.Width : 0), 
+							control.Width);
 			dropdown_form.Location = PointToScreen (new Point (grid_textbox.Right - control.Width, grid_textbox.Location.Y + row_height));
 			location = dropdown_form.Location;
 
@@ -949,8 +950,8 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		public void CloseDropDown () {
 			Control c = dropdown_form.Controls[0];
 			c.Capture = false;
-			dropdown_form.Controls.Clear ();
 			dropdown_form.Hide ();
+			dropdown_form.Controls.Clear ();
 		}
 
 		public void DropDownControl (Control control) {
