@@ -2957,9 +2957,16 @@ namespace MonoTests.System
 			AssertEquals ("#01", "Infinity", Double.PositiveInfinity.ToString());
 			AssertEquals ("#02", "-Infinity", Double.NegativeInfinity.ToString());
 			AssertEquals ("#03", "NaN", Double.NaN.ToString());
-			AssertEquals ("#01", "Infinity", Single.PositiveInfinity.ToString());
-			AssertEquals ("#02", "-Infinity", Single.NegativeInfinity.ToString());
-			AssertEquals ("#03", "NaN", Single.NaN.ToString());
+			AssertEquals ("#04", "Infinity", Single.PositiveInfinity.ToString());
+			AssertEquals ("#05", "-Infinity", Single.NegativeInfinity.ToString());
+			AssertEquals ("#06", "NaN", Single.NaN.ToString());
+
+			AssertEquals ("#07", "Infinity", Double.PositiveInfinity.ToString("R"));
+			AssertEquals ("#08", "-Infinity", Double.NegativeInfinity.ToString("R"));
+			AssertEquals ("#09", "NaN", Double.NaN.ToString("R"));
+			AssertEquals ("#10", "Infinity", Single.PositiveInfinity.ToString("R"));
+			AssertEquals ("#11", "-Infinity", Single.NegativeInfinity.ToString("R"));
+			AssertEquals ("#12", "NaN", Single.NaN.ToString("R"));
 		}
 
 		[Test]
@@ -4262,9 +4269,9 @@ namespace MonoTests.System
 			AssertEquals ("#03", "NaN", (0.0 / 0.0).ToString ("N99", _nfi)); 
 		}
 
-		// Test16000 - Double and R
+		// TestRoundtrip for double and single
 		[Test]
-		public void Test16000 ()
+		public void TestRoundtrip()
 		{
 			AssertEquals ("#01", "1.2345678901234567", 1.2345678901234567890.ToString ("R", _nfi));
 			AssertEquals ("#02", "1.2345678901234567", 1.2345678901234567890.ToString ("r", _nfi));
@@ -4272,6 +4279,11 @@ namespace MonoTests.System
 			AssertEquals ("#04", "1.2345678901234567", 1.2345678901234567890.ToString ("r0", _nfi));
 			AssertEquals ("#05", "1.2345678901234567", 1.2345678901234567890.ToString ("R99", _nfi));
 			AssertEquals ("#06", "1.2345678901234567", 1.2345678901234567890.ToString ("r99", _nfi));
+			AssertEquals ("#07", "-1.7976931348623157E+308", Double.MinValue.ToString ("R"));
+			AssertEquals ("#08", "1.7976931348623157E+308", Double.MaxValue.ToString ("R"));
+			AssertEquals ("#09", "-1.7976931348623147E+308", (-1.7976931348623147E+308).ToString("R"));
+			AssertEquals ("#10", "-3.40282347E+38", Single.MinValue.ToString("R"));
+			AssertEquals ("#11", "3.40282347E+38", Single.MaxValue.ToString("R"));
 		}
 
 		// Test17000 - Double and X

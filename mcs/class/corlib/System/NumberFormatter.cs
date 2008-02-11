@@ -54,6 +54,9 @@ namespace System
 		const int DecimalDefPrecision = 100;
 		const int TenPowersListLength = 19;
 
+		const double MinRoundtripVal = -1.79769313486231E+308;
+		const double MaxRoundtripVal = 1.79769313486231E+308;
+
 #if UNSAFE_TABLES
 		// The below arrays are taken from mono/metatdata/number-formatter.h
 
@@ -1111,20 +1114,39 @@ namespace System
 
 		public string FormatRoundtrip (double origval, NumberFormatInfo nfi)
 		{
+			if (_NaN)
+				return nfi.NaNSymbol;
+
+			if (_infinity)
+				if (_positive)
+					return nfi.PositiveInfinitySymbol;
+				else
+					return nfi.NegativeInfinitySymbol;
+
 			NumberFormatter nfc = GetClone ();
-			string shortRep = FormatGeneral (_defPrecision, nfi);
-			// Check roundtrip only for "normal" double values.
-			if (!_NaN && !_infinity && origval == Double.Parse (shortRep, nfi))
-				return shortRep;
+			if (origval >= MinRoundtripVal && origval <= MaxRoundtripVal) {
+				string shortRep = FormatGeneral (_defPrecision, nfi);
+				if (origval == Double.Parse (shortRep, nfi))
+					return shortRep;
+			}
 			return nfc.FormatGeneral (_defPrecision + 2, nfi);
 		}
 
 		public string FormatRoundtrip (float origval, NumberFormatInfo nfi)
 		{
+			if (_NaN)
+				return nfi.NaNSymbol;
+
+			if (_infinity)
+				if (_positive)
+					return nfi.PositiveInfinitySymbol;
+				else
+					return nfi.NegativeInfinitySymbol;
+
 			NumberFormatter nfc = GetClone ();
 			string shortRep = FormatGeneral (_defPrecision, nfi);
 			// Check roundtrip only for "normal" double values.
-			if (!_NaN && !_infinity && origval == Single.Parse (shortRep, nfi))
+			if (origval == Single.Parse (shortRep, nfi))
 				return shortRep;
 			return nfc.FormatGeneral (_defPrecision + 2, nfi);
 		}

@@ -1,3 +1,7 @@
+2008-02-11  Eyal Alaluf <eyala@mainsoft.com>
+
+	* NumberFormatterTest.cs: Test +-Infinity & NaN ToString ("R")
+
 2008-02-02  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CharCategoryTest.cs: Fixed line endings.
