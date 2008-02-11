@@ -315,7 +315,7 @@ namespace System.Xml.Linq
 				return false;
 			node = node.NextNode;
 			attr = null;
-			return false;
+			return true;
 		}
 
 		public override bool MoveToNextAttribute ()

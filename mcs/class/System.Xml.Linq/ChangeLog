@@ -1,3 +1,7 @@
+2008-02-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xml.Linq_test.dll.sources : added XNodeNavigatorTest.cs.
+
 2007-12-03  Marek Safar  <marek.safar@gmail.com>
 
 	* Makefile : Fixed 3.5 settings.

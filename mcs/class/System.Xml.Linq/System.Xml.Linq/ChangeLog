@@ -1,3 +1,7 @@
+2008-02-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XNodeNavigator.cs : oops, MoveToNext() always returned false.
+
 2008-02-11  Miguel de Icaza  <miguel@novell.com>
 
 	* XAttribute.cs, XElement.cs: typecasting operators that take
