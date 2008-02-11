@@ -449,7 +449,7 @@ namespace MonoTests.System.Xml
 			string ret = @"<one>
   <two>Some data.</two>
 </one>";
-			AssertEquals (ret, nav.OuterXml.Replace ("\r\n", "\n"));
+			AssertEquals (ret.Replace ("\r\n", "\n"), nav.OuterXml.Replace ("\r\n", "\n"));
 		}
 #endif
 
