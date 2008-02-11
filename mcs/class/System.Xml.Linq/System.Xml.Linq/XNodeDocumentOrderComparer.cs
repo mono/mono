@@ -116,19 +116,19 @@ namespace System.Xml.Linq
 			switch (ret) {
 			case CompareResult.Same:
 				// n1 and n2 are sibling each other.
-				return CompareSibling (n1, n2);
+				return CompareSibling (n1, n2, CompareResult.Same);
 			case CompareResult.Child:
-				return CompareSibling (n1, n2.Owner);
+				return CompareSibling (n1, n2.Owner, CompareResult.Child);
 			case CompareResult.Parent:
-				return CompareSibling (n1.Owner, n2);
+				return CompareSibling (n1.Owner, n2, CompareResult.Parent);
 			case CompareResult.Descendant:
 				for (XNode i2 = n2; ; i2 = i2.Owner)
 					if (i2.Owner == n1.Owner)
-						return CompareSibling (n1, i2);
+						return CompareSibling (n1, i2, CompareResult.Descendant);
 			case CompareResult.Ancestor:
 				for (XNode i1 = n1; ; i1 = i1.Owner)
 					if (i1.Owner == n2.Owner)
-						return CompareSibling (i1, n2);
+						return CompareSibling (i1, n2, CompareResult.Ancestor);
 			default:
 				return ret;
 			}
@@ -136,8 +136,11 @@ namespace System.Xml.Linq
 
 		// results are returned as following/preceding, as it is also
 		// used for comparing parents.
-		CompareResult CompareSibling (XNode n1, XNode n2)
+		CompareResult CompareSibling (XNode n1, XNode n2, CompareResult forSameValue)
 		{
+			if (n1 == n2)
+				return forSameValue;
+
 			for (XNode n = n1.NextNode; n != null; n = n.NextNode)
 				if (n == n2)
 					return CompareResult.Following;

@@ -54,6 +54,11 @@ namespace MonoTests.System.Xml.Linq
 			XDocument doc = XDocument.Parse ("<foo><bar/></foo>");
 			Assert.IsTrue (c.Compare (doc, doc.FirstNode) < 0, "#2-1");
 			Assert.IsTrue (c.Compare (doc.FirstNode, doc) > 0, "#2-2");
+
+			el = XDocument.Parse ("<root><foo><f1/><f2/></foo><bar/></root>").Root;
+			XElement e2 = el.FirstNode as XElement;
+			Assert.IsTrue (c.Compare (e2, e2.FirstNode) < 0, "#3-1");
+			Assert.IsTrue (c.Compare (e2, e2.LastNode) < 0, "#3-2");
 		}
 
 		[Test]

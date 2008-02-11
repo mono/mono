@@ -46,5 +46,16 @@ namespace MonoTests.System.Xml.Linq
 			Assert.IsNull (doc.Root.FirstNode, "#1");
 		}
 */
+
+		[Test]
+		public void InDocumentOrder ()
+		{
+			XElement el = XDocument.Parse ("<root><foo><f1/><f2/></foo><bar/></root>").Root;
+			XElement c = el.FirstNode as XElement;
+			int n = 0;
+			string [] names = {"foo", "f1", "f2", "bar"};
+			foreach (XElement e2 in new XNode [] {el.LastNode, c.LastNode, c.FirstNode, c}.InDocumentOrder ())
+				Assert.AreEqual (names [n], e2.Name.LocalName, "#" + n++);
+		}
 	}
 }

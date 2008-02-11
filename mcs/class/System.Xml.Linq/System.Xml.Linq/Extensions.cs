@@ -141,11 +141,15 @@ namespace System.Xml.Linq
 					yield return n;
 		}
 
-		[MonoTODO]
 		public static IEnumerable<T> InDocumentOrder<T> (
 			this IEnumerable<T> source) where T : XNode
 		{
-			throw new NotImplementedException ();
+			List<XNode> list = new List<XNode> ();
+			foreach (XNode n in source)
+				list.Add (n);
+			list.Sort (XNode.DocumentOrderComparer);
+			foreach (T n in list)
+				yield return n;
 		}
 
 		public static IEnumerable<XNode> Nodes<T> (

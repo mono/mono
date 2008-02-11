@@ -1,5 +1,11 @@
 2008-02-11  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XNodeDocumentOrderComparerTest.cs : added another test for
+	  descendant/ancestor comparison.
+	* ExtensionsTest.cs : test InDocumentOrder<T>().
+
+2008-02-11  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XNamespaceTest.cs : test Get() and GetName().
 
 2008-02-11  Atsushi Enomoto  <atsushi@ximian.com>
