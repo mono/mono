@@ -303,10 +303,9 @@ namespace System.Xml.Linq
 			return true;
 		}
 
-		[MonoTODO]
 		public override bool MoveToId (string id)
 		{
-			return false;
+			throw new NotSupportedException ("This XPathNavigator does not support IDs");
 		}
 
 		public override bool MoveToNext ()

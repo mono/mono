@@ -356,6 +356,7 @@ namespace System.Xml.Linq
 		public static XElement Load (string uri, LoadOptions options)
 		{
 			XmlReaderSettings s = new XmlReaderSettings ();
+			s.ProhibitDtd = false;
 			s.IgnoreWhitespace = (options & LoadOptions.PreserveWhitespace) == 0;
 			using (XmlReader r = XmlReader.Create (uri, s)) {
 				return LoadCore (r, options);
@@ -370,6 +371,7 @@ namespace System.Xml.Linq
 		public static XElement Load (TextReader tr, LoadOptions options)
 		{
 			XmlReaderSettings s = new XmlReaderSettings ();
+			s.ProhibitDtd = false;
 			s.IgnoreWhitespace = (options & LoadOptions.PreserveWhitespace) == 0;
 			using (XmlReader r = XmlReader.Create (tr, s)) {
 				return LoadCore (r, options);
@@ -384,6 +386,7 @@ namespace System.Xml.Linq
 		public static XElement Load (XmlReader reader, LoadOptions options)
 		{
 			XmlReaderSettings s = reader.Settings.Clone ();
+			s.ProhibitDtd = false;
 			s.IgnoreWhitespace = (options & LoadOptions.PreserveWhitespace) == 0;
 			using (XmlReader r = XmlReader.Create (reader, s)) {
 				return LoadCore (r, options);

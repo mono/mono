@@ -1,5 +1,10 @@
 2008-02-11  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XNodeNavigator.cs : MoveToId() is not supported in this class.
+	* XElement.cs : allow DTD by default.
+
+2008-02-11  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XNode.cs XElement.cs XObject.cs XDocument.cs XContainer.cs :
 	  support LoadOptions.SetLineInfo and LoadOptions.SetBaseUri.
 

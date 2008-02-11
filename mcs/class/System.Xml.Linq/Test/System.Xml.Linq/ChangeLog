@@ -1,5 +1,10 @@
 2008-02-11  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XNodeNavigatorTest.cs : test MoveToId() (NotSupportedException,
+	  cannot be enabled yet).
+
+2008-02-11  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XObjectTest.cs : new. Test IXmlLineInfo.
 
 2008-02-11  Atsushi Enomoto  <atsushi@ximian.com>

@@ -48,6 +48,22 @@ namespace MonoTests.System.Xml.Linq
 			Assert.IsTrue (nav.MoveToFirstChild (), "#1");
 			Assert.IsTrue (nav.MoveToNext (), "#2");
 		}
+
+		[Test]
+		public void MoveToId () // Not supported
+		{
+			string xml = @"
+<!DOCTYPE root [
+<!ELEMENT foo EMPTY>
+<!ELEMENT bar EMPTY>
+<!ATTLIST foo id ID #IMPLIED>
+<!ATTLIST bar id ID #IMPLIED>
+]>
+<root><foo id='foo' /><bar id='bar' /></root>",
+			XDocument doc = XDocument.Parse (xml, LoadOptions.SetLineInfo);
+			XPathNavigator nav = doc.CreateNavigator ();
+			nav.MoveToId ("foo");
+		}
 */
 	}
 }
