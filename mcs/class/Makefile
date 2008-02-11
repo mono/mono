@@ -99,6 +99,7 @@ net_2_0_dirs := \
 	System.Core			\
 	System.Web.Extensions		\
 	System.Web.Extensions.Design	\
+	System.Xml.Linq			\
 	Microsoft.Build.Framework	\
 	Microsoft.Build.Utilities	\
 	Microsoft.Build.Engine		\
