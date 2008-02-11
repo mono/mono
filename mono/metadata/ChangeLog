@@ -1,3 +1,9 @@
+2008-02-11  Geoff Norton  <gnorton@novell.com>
+
+	* loader.c: [Backport] Guard and dereference against inflated generic 
+	methods.  Populate the parameter name for generic parameters as well.
+	 (Fixes #342536)
+
 2008-01-31  William Holmes  <billholmes54@gmail.com>
 
 	* process.c (process_module_string_read): Check the size returned form
