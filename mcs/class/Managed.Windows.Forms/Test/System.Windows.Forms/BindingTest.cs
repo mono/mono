@@ -404,6 +404,29 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			c.Text = "D";
 			Assert.AreEqual ("C", item.Text, "#E1");
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void DataSourceNullValueTest ()
+		{
+			Control c = new Control ();
+			c.BindingContext = new BindingContext ();
+			c.CreateControl ();
+
+			ChildMockItem item = new ChildMockItem ();
+			item.ObjectValue = "A";
+			Binding binding = new Binding ("Tag", item, "ObjectValue");
+			binding.DataSourceNullValue = "NonNull";
+
+			c.DataBindings.Add (binding);
+			Assert.AreEqual (c.Tag, "A", "#A1");
+
+			// Since Tag property doesn't have a 
+			// TagChanged event, we need to force an update
+			c.Tag = null;
+			binding.WriteValue ();
+			Assert.AreEqual (item.ObjectValue, "NonNull", "#B1");
+		}
 #endif
 	}
 
