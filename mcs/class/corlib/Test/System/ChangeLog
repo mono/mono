@@ -1,3 +1,8 @@
+2008-02-11  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DelegateTest.cs: Added incomplete set of (notworking) tests for
+	bug #360784.
+
 2008-02-11  Eyal Alaluf <eyala@mainsoft.com>
 
 	* NumberFormatterTest.cs: Test +-Infinity & NaN ToString ("R")
