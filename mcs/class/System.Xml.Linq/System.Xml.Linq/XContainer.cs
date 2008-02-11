@@ -80,7 +80,12 @@ namespace System.Xml.Linq
 			if (content == null)
 				return;
 
-			XNode n = XUtil.ToNode (content);
+			foreach (XNode n in XUtil.ToNodes (content))
+				AddNode (n);
+		}
+
+		void AddNode (XNode n)
+		{
 			CheckChildType (n, false);
 			OnAdded (n, false);
 			n.SetOwner (this);

@@ -455,13 +455,8 @@ namespace System.Xml.Linq
 		public void Save (string filename, SaveOptions options)
 		{
 			XmlWriterSettings s = new XmlWriterSettings ();
-			if ((options & SaveOptions.DisableFormatting) != 0) {
-				// hacky!
-				s.Indent = true;
-				s.IndentChars = String.Empty;
-				s.NewLineChars = String.Empty;
-			}
-			using (XmlWriter w = XmlWriter.Create (filename)) {
+			s.Indent = options != SaveOptions.DisableFormatting;
+			using (XmlWriter w = XmlWriter.Create (filename, s)) {
 				Save (w);
 			}
 		}
@@ -474,13 +469,8 @@ namespace System.Xml.Linq
 		public void Save (TextWriter tw, SaveOptions options)
 		{
 			XmlWriterSettings s = new XmlWriterSettings ();
-			if ((options & SaveOptions.DisableFormatting) != 0) {
-				// hacky!
-				s.Indent = true;
-				s.IndentChars = String.Empty;
-				s.NewLineChars = String.Empty;
-			}
-			using (XmlWriter w = XmlWriter.Create (tw)) {
+			s.Indent = options != SaveOptions.DisableFormatting;
+			using (XmlWriter w = XmlWriter.Create (tw, s)) {
 				Save (w);
 			}
 		}
@@ -639,9 +629,9 @@ namespace System.Xml.Linq
 
 		public void SetValue (object value)
 		{
-			XNode n = XUtil.ToNode (value);
 			RemoveNodes ();
-			Add (n);
+			foreach (XNode n in XUtil.ToNodes (value))
+				Add (n);
 		}
 
 		internal override void OnAdded (XNode node, bool addFirst)

@@ -82,12 +82,7 @@ namespace System.Xml.Linq
 			StringWriter sw = new StringWriter ();
 			XmlWriterSettings s = new XmlWriterSettings ();
 			s.ConformanceLevel = ConformanceLevel.Auto;
-			if ((options & SaveOptions.DisableFormatting) == 0) {
-				// hacky!
-				s.Indent = true;
-				s.IndentChars = String.Empty;
-				s.NewLineChars = String.Empty;
-			}
+			s.Indent = options != SaveOptions.DisableFormatting;
 			XmlWriter xw = XmlWriter.Create (sw, s);
 			WriteTo (xw);
 			xw.Close ();
@@ -98,15 +93,16 @@ namespace System.Xml.Linq
 		{
 			if (Parent == null)
 				throw new InvalidOperationException ();
-			XNode n = XUtil.ToNode (content);
-			n.SetOwner (Parent);
-			n.previous = this;
-			n.next = next;
-			if (next != null)
-				next.previous = n;
-			next = n;
-			if (Parent.LastNode == this)
-				Parent.LastNode = n;
+			foreach (XNode n in XUtil.ToNodes (content)) {
+				n.SetOwner (Parent);
+				n.previous = this;
+				n.next = next;
+				if (next != null)
+					next.previous = n;
+				next = n;
+				if (Parent.LastNode == this)
+					Parent.LastNode = n;
+			}
 		}
 
 		public void AddAfterSelf (params object [] content)
@@ -124,15 +120,16 @@ namespace System.Xml.Linq
 		{
 			if (Parent == null)
 				throw new InvalidOperationException ();
-			XNode n = XUtil.ToNode (content);
-			n.SetOwner (Parent);
-			n.previous = previous;
-			n.next = this;
-			if (previous != null)
-				previous.next = n;
-			previous = n;
-			if (Parent.FirstNode == this)
-				Parent.FirstNode = n;
+			foreach (XNode n in XUtil.ToNodes (content)) {
+				n.SetOwner (Parent);
+				n.previous = previous;
+				n.next = this;
+				if (previous != null)
+					previous.next = n;
+				previous = n;
+				if (Parent.FirstNode == this)
+					Parent.FirstNode = n;
+			}
 		}
 
 		public void AddBeforeSelf (params object [] content)

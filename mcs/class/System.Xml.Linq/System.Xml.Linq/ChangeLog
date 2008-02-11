@@ -1,5 +1,11 @@
 2008-02-11  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XNode.cs, XElement.cs, XStreamingElement.cs, XContainer.cs,
+	  XUtil.cs : one-object to one-XNode conversion is wrong. It could
+	  be one-or-more nodes (i.e. when object is IEnumerable).
+
+2008-02-11  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XNamespace.cs : make Get() and GetName() table-based.
 
 2008-02-11  Atsushi Enomoto  <atsushi@ximian.com>

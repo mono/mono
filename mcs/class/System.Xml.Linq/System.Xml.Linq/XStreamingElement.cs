@@ -138,7 +138,8 @@ namespace System.Xml.Linq
 					WriteAttribute ((XAttribute) o, w);
 				else
 					// FIXME: check node validity
-					XUtil.ToNode (o).WriteTo (w);
+					foreach (XNode n in XUtil.ToNodes (o))
+						n.WriteTo (w);
 			}
 		}
 

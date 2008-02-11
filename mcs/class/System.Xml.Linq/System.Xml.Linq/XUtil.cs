@@ -60,17 +60,19 @@ namespace System.Xml.Linq
 			throw new NotImplementedException ();
 		}
 
-		// FIXME: this method is not enough by design.
-		public static XNode ToNode (object o)
+		public static IEnumerable<XNode> ToNodes (object o)
 		{
 			XNode n = o as XNode;
 			if (n != null)
-				return n;
-			if (o is string)
-				return new XText ((string) o);
-			if (o is IEnumerable)
-				throw new NotImplementedException ();
-			return new XText (o.ToString ());
+				yield return n;
+			else if (o is string)
+				yield return new XText ((string) o);
+			else if (o is IEnumerable)
+				foreach (object obj in (IEnumerable) o)
+					foreach (XNode nn in ToNodes (obj))
+						yield return nn;
+			else
+				yield return new XText (o.ToString ());
 		}
 
 		public static object Clone (object o)
