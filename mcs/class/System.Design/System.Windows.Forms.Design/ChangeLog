@@ -1,3 +1,7 @@
+2008-02-11  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* AnchorEditor.cs: More sensible default width.
+
 2008-01-24  Ivan N. Zlatev  <contact@i-nz.net>
 
 	 * DockEditor.cs: ITypeDescriptorContext.Instance doesn't 
