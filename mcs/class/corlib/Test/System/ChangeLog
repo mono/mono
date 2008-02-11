@@ -1,3 +1,7 @@
+2008-02-11  Eyal Alaluf <eyala@mainsoft.com>
+
+	* NumberFormatterTest.cs: Test +-Infinity & NaN ToString ("R")
+	
 2008-01-24  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeTest.cs (InvokeMember_WithoutDefaultValue): Added test for bug #348522.

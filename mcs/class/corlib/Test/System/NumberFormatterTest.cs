@@ -2957,9 +2957,16 @@ namespace MonoTests.System
 			AssertEquals ("#01", "Infinity", Double.PositiveInfinity.ToString());
 			AssertEquals ("#02", "-Infinity", Double.NegativeInfinity.ToString());
 			AssertEquals ("#03", "NaN", Double.NaN.ToString());
-			AssertEquals ("#01", "Infinity", Single.PositiveInfinity.ToString());
-			AssertEquals ("#02", "-Infinity", Single.NegativeInfinity.ToString());
-			AssertEquals ("#03", "NaN", Single.NaN.ToString());
+			AssertEquals ("#04", "Infinity", Single.PositiveInfinity.ToString());
+			AssertEquals ("#05", "-Infinity", Single.NegativeInfinity.ToString());
+			AssertEquals ("#06", "NaN", Single.NaN.ToString());
+
+			AssertEquals ("#07", "Infinity", Double.PositiveInfinity.ToString("R"));
+			AssertEquals ("#08", "-Infinity", Double.NegativeInfinity.ToString("R"));
+			AssertEquals ("#09", "NaN", Double.NaN.ToString("R"));
+			AssertEquals ("#10", "Infinity", Single.PositiveInfinity.ToString("R"));
+			AssertEquals ("#11", "-Infinity", Single.NegativeInfinity.ToString("R"));
+			AssertEquals ("#12", "NaN", Single.NaN.ToString("R"));
 		}
 
 		[Test]
