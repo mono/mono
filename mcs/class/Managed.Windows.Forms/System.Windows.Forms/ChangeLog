@@ -1,5 +1,11 @@
 2008-02-11  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* PropertyGridView.cs:
+	 - Clear the controls in the drop down form after it is hidden.
+	 - Fix Width sizing of the dropdown editors to match MSFT.
+
+2008-02-11  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* PropertyGridView.cs: 
 	 - Fix height for drawing the grid entry
 	 text value, so that it clips multiline text properly.
