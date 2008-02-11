@@ -52,6 +52,7 @@ namespace System.Windows.Forms {
 #if NET_2_0
 		private DataSourceUpdateMode datasource_update_mode;
 		private ControlUpdateMode control_update_mode;
+		private object datasource_null_value;
 		//private object null_value;
 		//private string format_string;
 		//private IFormatProvider format_info;
@@ -167,6 +168,16 @@ namespace System.Windows.Forms {
 			}
 			set {
 				datasource_update_mode = value;
+			}
+		}
+
+		[DefaultValue (null)]
+		public object DataSourceNullValue {
+			get {
+				return datasource_null_value;
+			}
+			set {
+				datasource_null_value = value;
 			}
 		}
 
@@ -457,6 +468,10 @@ namespace System.Windows.Forms {
 				return e.Value;
 			if (e.Value == Convert.DBNull)
 				return e.Value;
+#if NET_2_0
+			if (e.Value == null)
+				return data_type.IsByRef ? null : Convert.DBNull;
+#endif
 
 			return ConvertData (e.Value, data_type);
 		}

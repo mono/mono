@@ -1,3 +1,7 @@
+2008-02-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Binding.cs: Implement 2.0 DataSourceNullValue property.
+
 2008-02-11  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* PropertyGridView.cs:
