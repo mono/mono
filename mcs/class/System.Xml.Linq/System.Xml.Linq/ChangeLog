@@ -1,3 +1,12 @@
+2008-02-11  Miguel de Icaza  <miguel@novell.com>
+
+	* XAttribute.cs, XElement.cs: typecasting operators that take
+	values that can be null (nullable types and string) should not
+	throw an exception if the XAttribute is null, but return null instead.
+
+	* Added awesome test suite using awesome C-x ( C-x ) C-x e based
+	code generation.
+
 2008-02-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XElement.cs : .ctor(XName,object) was trying to set args as its

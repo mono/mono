@@ -72,9 +72,10 @@ namespace System.Xml.XPath
 		public static IEnumerable<XElement> XPathSelectElements (this XNode node, string xpath, IXmlNamespaceResolver nsResolver)
 		{
 			XPathNodeIterator iter = CreateNavigator (node).Select (xpath, nsResolver);
-			foreach (XPathNavigator nav in iter)
+			foreach (XPathNavigator nav in iter){
 				if (nav.UnderlyingObject is XElement)
 					yield return (XElement) nav.UnderlyingObject;
+			}
 		}
 	}
 }

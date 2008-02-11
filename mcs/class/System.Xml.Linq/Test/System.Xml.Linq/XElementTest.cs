@@ -338,5 +338,24 @@ namespace MonoTests.System.Xml.Linq
 			Assert.AreEqual ("x", ((XElement) bar.FirstNode).GetPrefixOfNamespace (ns2), "#5-2");
 			Assert.AreEqual (null, ((XElement) bar.FirstNode).GetPrefixOfNamespace (ns1), "#5-3");
 		}
+
+		[Test]
+		public void NullCasts ()
+		{
+			XElement a = null;
+
+			Assert.AreEqual (null, (bool?) a, "bool?");
+			Assert.AreEqual (null, (DateTime?) a, "DateTime?");
+			Assert.AreEqual (null, (decimal?) a, "decimal?");
+			Assert.AreEqual (null, (double?) a, "double?");
+			Assert.AreEqual (null, (float?) a, "float?");
+			Assert.AreEqual (null, (Guid?) a, "Guid?");
+			Assert.AreEqual (null, (int?) a, "int?");
+			Assert.AreEqual (null, (long?) a, "long?");
+			Assert.AreEqual (null, (uint?) a, "uint?");
+			Assert.AreEqual (null, (ulong?) a, "ulong?");
+			Assert.AreEqual (null, (TimeSpan?) a, "TimeSpan?");
+			Assert.AreEqual (null, (string) a, "string");
+		}
 	}
 }

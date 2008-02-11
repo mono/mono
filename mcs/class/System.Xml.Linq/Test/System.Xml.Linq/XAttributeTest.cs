@@ -107,5 +107,24 @@ namespace MonoTests.System.Xml.Linq
 			a = new XAttribute (XName.Get ("a"), " >_< ");
 			Assert.AreEqual ("a=\" &gt;_&lt; \"", a.ToString ());
 		}
+
+		[Test]
+		public void NullCasts ()
+		{
+			XAttribute a = null;
+
+			Assert.AreEqual (null, (bool?) a, "bool?");
+			Assert.AreEqual (null, (DateTime?) a, "DateTime?");
+			Assert.AreEqual (null, (decimal?) a, "decimal?");
+			Assert.AreEqual (null, (double?) a, "double?");
+			Assert.AreEqual (null, (float?) a, "float?");
+			Assert.AreEqual (null, (Guid?) a, "Guid?");
+			Assert.AreEqual (null, (int?) a, "int?");
+			Assert.AreEqual (null, (long?) a, "long?");
+			Assert.AreEqual (null, (uint?) a, "uint?");
+			Assert.AreEqual (null, (ulong?) a, "ulong?");
+			Assert.AreEqual (null, (TimeSpan?) a, "TimeSpan?");
+			Assert.AreEqual (null, (string) a, "string");
+		}
 	}
 }

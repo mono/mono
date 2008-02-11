@@ -88,7 +88,8 @@ namespace System.Xml.Linq
 		public static explicit operator bool? (XElement element)
 		{
 			if (element == null)
-				throw new ArgumentNullException ("element");
+				return null;
+			
 			return element.Value == null ? (bool?) null : XmlConvert.ToBoolean (element.Value);
 		}
 
@@ -102,7 +103,8 @@ namespace System.Xml.Linq
 		public static explicit operator DateTime? (XElement element)
 		{
 			if (element == null)
-				throw new ArgumentNullException ("element");
+				return null;
+			
 			return element.Value == null ? (DateTime?) null : XmlConvert.ToDateTime (element.Value, XmlDateTimeSerializationMode.RoundtripKind);
 		}
 
@@ -116,7 +118,8 @@ namespace System.Xml.Linq
 		public static explicit operator decimal? (XElement element)
 		{
 			if (element == null)
-				throw new ArgumentNullException ("element");
+				return null;
+			
 			return element.Value == null ? (decimal?) null : XmlConvert.ToDecimal (element.Value);
 		}
 
@@ -130,7 +133,8 @@ namespace System.Xml.Linq
 		public static explicit operator double? (XElement element)
 		{
 			if (element == null)
-				throw new ArgumentNullException ("element");
+				return null;
+			
 			return element.Value == null ? (double?) null : XmlConvert.ToDouble (element.Value);
 		}
 
@@ -144,7 +148,8 @@ namespace System.Xml.Linq
 		public static explicit operator float? (XElement element)
 		{
 			if (element == null)
-				throw new ArgumentNullException ("element");
+				return null;
+			
 			return element.Value == null ? (float?) null : XmlConvert.ToSingle (element.Value);
 		}
 
@@ -158,7 +163,8 @@ namespace System.Xml.Linq
 		public static explicit operator Guid? (XElement element)
 		{
 			if (element == null)
-				throw new ArgumentNullException ("element");
+				return null;
+			
 			return element.Value == null ? (Guid?) null : XmlConvert.ToGuid (element.Value);
 		}
 
@@ -172,7 +178,8 @@ namespace System.Xml.Linq
 		public static explicit operator int? (XElement element)
 		{
 			if (element == null)
-				throw new ArgumentNullException ("element");
+				return null;
+			
 			return element.Value == null ? (int?) null : XmlConvert.ToInt32 (element.Value);
 		}
 
@@ -186,7 +193,8 @@ namespace System.Xml.Linq
 		public static explicit operator long? (XElement element)
 		{
 			if (element == null)
-				throw new ArgumentNullException ("element");
+				return null;
+			
 			return element.Value == null ? (long?) null : XmlConvert.ToInt64 (element.Value);
 		}
 
@@ -202,7 +210,8 @@ namespace System.Xml.Linq
 		public static explicit operator uint? (XElement element)
 		{
 			if (element == null)
-				throw new ArgumentNullException ("element");
+				return null;
+			
 			return element.Value == null ? (uint?) null : XmlConvert.ToUInt32 (element.Value);
 		}
 
@@ -218,7 +227,8 @@ namespace System.Xml.Linq
 		public static explicit operator ulong? (XElement element)
 		{
 			if (element == null)
-				throw new ArgumentNullException ("element");
+				return null;
+			
 			return element.Value == null ? (ulong?) null : XmlConvert.ToUInt64 (element.Value);
 		}
 
@@ -232,14 +242,16 @@ namespace System.Xml.Linq
 		public static explicit operator TimeSpan? (XElement element)
 		{
 			if (element == null)
-				throw new ArgumentNullException ("element");
+				return null;
+			
 			return element.Value == null ? (TimeSpan?) null : XmlConvert.ToTimeSpan (element.Value);
 		}
 
 		public static explicit operator string (XElement element)
 		{
 			if (element == null)
-				throw new ArgumentNullException ("element");
+				return null;
+			
 			return element.Value;
 		}
 
