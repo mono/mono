@@ -182,13 +182,13 @@ namespace System.Xml.Linq
 			return null;
 		}
 
-		internal void ReadContentFrom (XmlReader reader)
+		internal void ReadContentFrom (XmlReader reader, LoadOptions options)
 		{
 			while (!reader.EOF) {
 				if (reader.NodeType == XmlNodeType.EndElement)
 					// end of the element.
 					break;
-				Add (XNode.ReadFrom (reader));
+				Add (XNode.ReadFrom (reader, options));
 			}
 		}
 

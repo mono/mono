@@ -145,25 +145,34 @@ namespace System.Xml.Linq
 
 		public static XNode ReadFrom (XmlReader r)
 		{
+			return ReadFrom (r, LoadOptions.None);
+		}
+
+		internal static XNode ReadFrom (XmlReader r, LoadOptions options)
+		{
 			switch (r.NodeType) {
 			case XmlNodeType.Element:
-				return XElement.Load (r);
+				return XElement.Load (r, options);
 			case XmlNodeType.Whitespace:
 			case XmlNodeType.SignificantWhitespace:
 			case XmlNodeType.Text:
 				XText t = new XText (r.Value);
+				t.FillLineInfoAndBaseUri (r, options);
 				r.Read ();
 				return t;
 			case XmlNodeType.CDATA:
 				XCData c = new XCData (r.Value);
+				c.FillLineInfoAndBaseUri (r, options);
 				r.Read ();
 				return c;
 			case XmlNodeType.ProcessingInstruction:
 				XPI pi = new XPI (r.Name, r.Value);
+				pi.FillLineInfoAndBaseUri (r, options);
 				r.Read ();
 				return pi;
 			case XmlNodeType.Comment:
 				XComment cm = new XComment (r.Value);
+				cm.FillLineInfoAndBaseUri (r, options);
 				r.Read ();
 				return cm;
 			case XmlNodeType.DocumentType:
@@ -171,10 +180,11 @@ namespace System.Xml.Linq
 					r.GetAttribute ("PUBLIC"),
 					r.GetAttribute ("System"),
 					r.Value);
+				d.FillLineInfoAndBaseUri (r, options);
 				r.Read ();
 				return d;
 			default:
-				throw new NotSupportedException (String.Format ("Node type {0} is not supported", r.NodeType));
+				throw new InvalidOperationException (String.Format ("Node type {0} is not supported", r.NodeType));
 			}
 		}
 

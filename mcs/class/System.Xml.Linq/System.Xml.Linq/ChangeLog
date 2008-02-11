@@ -1,5 +1,10 @@
 2008-02-11  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XNode.cs XElement.cs XObject.cs XDocument.cs XContainer.cs :
+	  support LoadOptions.SetLineInfo and LoadOptions.SetBaseUri.
+
+2008-02-11  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XNodeNavigator.cs : oops, MoveToNext() always returned false.
 
 2008-02-11  Miguel de Icaza  <miguel@novell.com>

@@ -128,20 +128,40 @@ namespace System.Xml.Linq
 					annotations.RemoveAt (i);
 		}
 
-		[MonoTODO]
-		int IXmlLineInfo.LineNumber {
+		internal int LineNumber {
 			get { return line; }
+			set { line = value; }
 		}
 
-		[MonoTODO]
-		int IXmlLineInfo.LinePosition {
+		internal int LinePosition {
 			get { return column; }
+			set { column = value; }
 		}
 
-		[MonoTODO]
+		int IXmlLineInfo.LineNumber {
+			get { return LineNumber; }
+		}
+
+		int IXmlLineInfo.LinePosition {
+			get { return LinePosition; }
+		}
+
 		bool IXmlLineInfo.HasLineInfo ()
 		{
 			return line > 0;
+		}
+
+		internal void FillLineInfoAndBaseUri (XmlReader r, LoadOptions options)
+		{
+			if ((options & LoadOptions.SetLineInfo) != LoadOptions.None) {
+				IXmlLineInfo li = r as IXmlLineInfo;
+				if (li != null && li.HasLineInfo ()) {
+					LineNumber = li.LineNumber;
+					LinePosition = li.LinePosition;
+				}
+			}
+			if ((options & LoadOptions.SetBaseUri) != LoadOptions.None)
+				BaseUri = r.BaseURI;
 		}
 	}
 }

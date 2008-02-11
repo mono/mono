@@ -358,7 +358,7 @@ namespace System.Xml.Linq
 			XmlReaderSettings s = new XmlReaderSettings ();
 			s.IgnoreWhitespace = (options & LoadOptions.PreserveWhitespace) == 0;
 			using (XmlReader r = XmlReader.Create (uri, s)) {
-				return LoadCore (r);
+				return LoadCore (r, options);
 			}
 		}
 
@@ -372,7 +372,7 @@ namespace System.Xml.Linq
 			XmlReaderSettings s = new XmlReaderSettings ();
 			s.IgnoreWhitespace = (options & LoadOptions.PreserveWhitespace) == 0;
 			using (XmlReader r = XmlReader.Create (tr, s)) {
-				return LoadCore (r);
+				return LoadCore (r, options);
 			}
 		}
 
@@ -386,17 +386,19 @@ namespace System.Xml.Linq
 			XmlReaderSettings s = reader.Settings.Clone ();
 			s.IgnoreWhitespace = (options & LoadOptions.PreserveWhitespace) == 0;
 			using (XmlReader r = XmlReader.Create (reader, s)) {
-				return LoadCore (r);
+				return LoadCore (r, options);
 			}
 		}
 
-		static XElement LoadCore (XmlReader r)
+		static XElement LoadCore (XmlReader r, LoadOptions options)
 		{
 			r.MoveToContent ();
 			if (r.NodeType != XmlNodeType.Element)
 				throw new InvalidOperationException ("The XmlReader must be positioned at an element");
 			XName name = XName.Get (r.LocalName, r.NamespaceURI);
 			XElement e = new XElement (name);
+			e.FillLineInfoAndBaseUri (r, options);
+
 			if (r.MoveToFirstAttribute ()) {
 				do {
 					// not sure how current Orcas behavior makes sense here though ...
@@ -404,12 +406,13 @@ namespace System.Xml.Linq
 						e.SetAttributeValue (XNamespace.None.GetName ("xmlns"), r.Value);
 					else
 						e.SetAttributeValue (XName.Get (r.LocalName, r.NamespaceURI), r.Value);
+					e.LastAttribute.FillLineInfoAndBaseUri (r, options);
 				} while (r.MoveToNextAttribute ());
 				r.MoveToElement ();
 			}
 			if (!r.IsEmptyElement) {
 				r.Read ();
-				e.ReadContentFrom (r);
+				e.ReadContentFrom (r, options);
 				r.ReadEndElement ();
 				e.explicit_is_empty = false;
 			} else {
@@ -651,7 +654,7 @@ namespace System.Xml.Linq
 
 		void IXmlSerializable.ReadXml (XmlReader reader)
 		{
-			ReadContentFrom (reader);
+			ReadContentFrom (reader, LoadOptions.None);
 		}
 
 		XmlSchema IXmlSerializable.GetSchema ()

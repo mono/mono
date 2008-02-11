@@ -1,5 +1,9 @@
 2008-02-11  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XObjectTest.cs : new. Test IXmlLineInfo.
+
+2008-02-11  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XNodeNavigatorTest.cs : new test (but it does not build yet).
 
 2008-02-10  Atsushi Enomoto  <atsushi@ximian.com>

@@ -97,7 +97,7 @@ namespace System.Xml.Linq
 			XmlReaderSettings s = new XmlReaderSettings ();
 			s.IgnoreWhitespace = (options & LoadOptions.PreserveWhitespace) == 0;
 			using (XmlReader r = XmlReader.Create (uri, s)) {
-				return LoadCore (r);
+				return LoadCore (r, options);
 			}
 		}
 
@@ -111,7 +111,7 @@ namespace System.Xml.Linq
 			XmlReaderSettings s = new XmlReaderSettings ();
 			s.IgnoreWhitespace = (options & LoadOptions.PreserveWhitespace) == 0;
 			using (XmlReader r = XmlReader.Create (reader, s)) {
-				return LoadCore (r);
+				return LoadCore (r, options);
 			}
 		}
 
@@ -125,18 +125,18 @@ namespace System.Xml.Linq
 			XmlReaderSettings s = reader.Settings.Clone ();
 			s.IgnoreWhitespace = (options & LoadOptions.PreserveWhitespace) == 0;
 			using (XmlReader r = XmlReader.Create (reader, s)) {
-				return LoadCore (r);
+				return LoadCore (r, options);
 			}
 		}
 
-		static XDocument LoadCore (XmlReader reader)
+		static XDocument LoadCore (XmlReader reader, LoadOptions options)
 		{
 			XDocument doc = new XDocument ();
-			doc.ReadContent (reader);
+			doc.ReadContent (reader, options);
 			return doc;
 		}
 
-		void ReadContent (XmlReader reader)
+		void ReadContent (XmlReader reader, LoadOptions options)
 		{
 			if (reader.ReadState == ReadState.Initial)
 				reader.Read ();
@@ -147,7 +147,7 @@ namespace System.Xml.Linq
 					reader.GetAttribute ("standalone"));
 				reader.Read ();
 			}
-			ReadContentFrom (reader);
+			ReadContentFrom (reader, options);
 			if (Root == null)
 				throw new InvalidOperationException ("The document element is missing.");
 		}
