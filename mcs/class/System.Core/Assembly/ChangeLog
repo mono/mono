@@ -1,7 +1,3 @@
-2008-02-10  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* AssemblyInfo.cs: use 3.5 version strings.
-
 2007-08-20  Marek Safar <marek.safar@gmail.com>
 
 	* AssemblyInfo.cs: Add a few more attributes.
