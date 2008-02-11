@@ -236,6 +236,25 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			Assert.AreEqual (DBNull.Value, c.Tag, "1");
 		}
 
+		// For this case to work, the data source property needs
+		// to have an associated 'PropertyChanged' event.
+		[Test]
+		public void DataSourcePropertyChanged ()
+		{
+			Control c = new Control ();
+			c.BindingContext = new BindingContext ();
+			c.CreateControl ();
+
+			MockItem item = new MockItem ("A", 0);
+			Binding binding = new Binding ("Text", item, "Text");
+
+			c.DataBindings.Add (binding);
+			Assert.AreEqual ("A", c.Text, "#A1");
+
+			item.Text = "B";
+			Assert.AreEqual ("B", c.Text, "#B1");
+		}
+
 		[Test]
 		[Category ("NotWorking")]
 		public void IsBindingTest ()

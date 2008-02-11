@@ -1,3 +1,8 @@
+2008-02-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* BindingTest.cs: New test for changes in data source property (with
+	a 'PropertyChange' event).
+
 2008-02-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* BindingTest.cs: Add new cases for DataSourceUpdateMode test,
