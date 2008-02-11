@@ -72,10 +72,10 @@ namespace System.Xml.Linq
 			Add (contents);
 		}
 
-		[MonoTODO ("finish")]		
 		public XElement (XStreamingElement source)
 		{
 			this.name = source.Name;
+			Add (source.Contents);
 		}
 
 		public static explicit operator bool (XElement element)

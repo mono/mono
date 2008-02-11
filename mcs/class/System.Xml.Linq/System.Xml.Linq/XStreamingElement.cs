@@ -57,7 +57,10 @@ namespace System.Xml.Linq
 			set { name = value; }
 		}
 
-		[MonoTODO]
+		internal IEnumerable<object> Contents {
+			get { return contents; }
+		}
+
 		public void Add (object content)
 		{
 			if (contents == null)
@@ -65,7 +68,6 @@ namespace System.Xml.Linq
 			contents.Add (content);
 		}
 
-		[MonoTODO]
 		public void Add (object [] content)
 		{
 			if (contents == null)
@@ -73,33 +75,28 @@ namespace System.Xml.Linq
 			contents.Add (content);
 		}
 
-		[MonoTODO]
 		public void Save (string fileName)
 		{
 			using (TextWriter w = File.CreateText (fileName))
 				Save (w);
 		}
 
-		[MonoTODO]
 		public void Save (TextWriter textWriter)
 		{
 			Save (textWriter, SaveOptions.None);
 		}
 
-		[MonoTODO]
 		public void Save (XmlWriter writer)
 		{
 			WriteTo (writer);
 		}
 
-		[MonoTODO]
 		public void Save (string fileName, SaveOptions options)
 		{
 			using (TextWriter w = File.CreateText (fileName))
 				Save (w, options);
 		}
 
-		[MonoTODO]
 		public void Save (TextWriter textWriter, SaveOptions options)
 		{
 			XmlWriterSettings s = new XmlWriterSettings ();
