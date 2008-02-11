@@ -1,3 +1,7 @@
+2008-02-11  Geoff Norton  <gnorton@novell.com>
+
+	* loader.c: Guard and dereference against inflated generic methods
+
 2008-02-10  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* class.c: Include Retargetable spec in assembly name.
