@@ -1,3 +1,9 @@
+2008-02-11  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* PropertyGrid.cs: Do not populate subgriditems unless expandable.
+	Fixes a bug where on repopulation after value changed items become
+	expandable.
+
 2008-02-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Binding.cs: For the 2.0 profile, look for a 
@@ -142,7 +148,7 @@
 	 - Refactor SetValue to allow setting the value
 	when a custom editor is used, but the entry is not editable.
 	 - Remove the custom editor control on CloseDropDown.
-	[Fixed #359196]
+	[Fixes #359196]
 
 2008-02-06  Andreia Gaita <avidigal@novell.com>
 

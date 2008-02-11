@@ -1557,13 +1557,15 @@ namespace System.Windows.Forms {
 					rootItem.GridItems.Add (item);
 				}
 
-				if (IsExpandable (item))
-					PopulateSubGridItems (item);
+				PopulateSubGridItems (item);
 			}
 		}
 
 		private void PopulateSubGridItems (GridEntry parentItem)
 		{
+			if (!IsExpandable (parentItem))
+				return;
+
 			object[] propertyOwners = parentItem.Values;
 			if (propertyOwners == null)
 				return;
