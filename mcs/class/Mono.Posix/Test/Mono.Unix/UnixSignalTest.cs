@@ -21,7 +21,7 @@ namespace MonoTests.Mono.Unix {
 		[Test]
 		public void TestRaise ()
 		{
-			Thread t1 = new Thread (delegate {
+			Thread t1 = new Thread (delegate () {
 					using (UnixSignal a = new UnixSignal (Signum.SIGINT)) {
 						DateTime start = DateTime.Now;
 						bool r = a.WaitOne (5000, false);
@@ -32,7 +32,7 @@ namespace MonoTests.Mono.Unix {
 							throw new InvalidOperationException ("Signal slept too long");
 					}
 			});
-			Thread t2 = new Thread (delegate {
+			Thread t2 = new Thread (delegate () {
 					Thread.Sleep (1000);
 					Stdlib.raise (Signum.SIGINT);
 			});
@@ -45,7 +45,7 @@ namespace MonoTests.Mono.Unix {
 		[Test]
 		public void TestRaiseAny ()
 		{
-			Thread t1 = new Thread (delegate {
+			Thread t1 = new Thread (delegate () {
 					using (UnixSignal a = new UnixSignal (Signum.SIGINT)) {
 						DateTime start = DateTime.Now;
 						int idx = UnixSignal.WaitAny (new UnixSignal[]{a}, 5000);
@@ -56,7 +56,7 @@ namespace MonoTests.Mono.Unix {
 							throw new InvalidOperationException ("Signal slept too long");
 					}
 			});
-			Thread t2 = new Thread (delegate {
+			Thread t2 = new Thread (delegate () {
 					Thread.Sleep (1000);
 					Stdlib.raise (Signum.SIGINT);
 			});
@@ -69,7 +69,7 @@ namespace MonoTests.Mono.Unix {
 		[Test]
 		public void TestSeparation ()
 		{
-			Thread t1 = new Thread (delegate {
+			Thread t1 = new Thread (delegate () {
 					using (UnixSignal a = new UnixSignal (Signum.SIGINT))
 					using (UnixSignal b = new UnixSignal (Signum.SIGTERM)) {
 						DateTime start = DateTime.Now;
@@ -82,7 +82,7 @@ namespace MonoTests.Mono.Unix {
 							throw new InvalidOperationException ("Signal slept too long");
 					}
 			});
-			Thread t2 = new Thread (delegate {
+			Thread t2 = new Thread (delegate () {
 					Thread.Sleep (1000);
 					Stdlib.raise (Signum.SIGTERM);
 			});
@@ -212,7 +212,7 @@ namespace MonoTests.Mono.Unix {
 
 		static Thread CreateRaiseStormThread (int max)
 		{
-			return new Thread (delegate {
+			return new Thread (delegate () {
 				Random r = new Random (Environment.TickCount);
 				for (int i = 0; i < max; ++i) {
 					int n = r.Next (0, signals.Length);
@@ -242,7 +242,7 @@ namespace MonoTests.Mono.Unix {
 
 		static Thread CreateSignalCreatorThread ()
 		{
-			return new Thread (delegate {
+			return new Thread (delegate () {
 				Random r = new Random (Environment.TickCount << 4);
 				for (int i = 0; i < StormCount; ++i) {
 					int n = r.Next (0, signals.Length);
@@ -279,7 +279,7 @@ namespace MonoTests.Mono.Unix {
 
 		static Thread CreateWaitAnyThread (params UnixSignal[] usignals)
 		{
-			return new Thread (delegate {
+			return new Thread (delegate () {
 				int idx = UnixSignal.WaitAny (usignals);
 				Assert.AreEqual (idx >= 0 && idx < usignals.Length, true);
 			});
