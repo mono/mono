@@ -42,7 +42,8 @@ using java.security;
 namespace Mainsoft.Web.Hosting {
 	[MonoTODO("Implement security demands on the path usage functions (and review)")]
 	[ComVisible (false)]
-	public abstract class BaseWorkerRequest : HttpWorkerRequest, IServiceProvider {
+	public abstract class BaseWorkerRequest : HttpWorkerRequest, IHttpExtendedWorkerRequest, IServiceProvider
+	{
 		OutputStreamWrapper _OutputStream;
 
 		readonly string _contextPath;
