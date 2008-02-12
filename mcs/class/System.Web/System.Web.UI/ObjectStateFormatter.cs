@@ -153,10 +153,6 @@ namespace System.Web.UI {
 				return "";
 #endif
 			byte [] buffer = Convert.FromBase64String (inputString);
-			return DeserializeInternal (buffer);
-		}
-
-		internal object DeserializeInternal(byte [] buffer) {
 			int length;
 			if (buffer == null || (length = buffer.Length) == 0)
 				throw new ArgumentNullException ("inputString");
@@ -177,13 +173,7 @@ namespace System.Web.UI {
 		{
 			if (stateGraph == null)
 				return "";
-			int length;
-			byte [] buffer = SerializeInternal (stateGraph, out length);
-			return Convert.ToBase64String (buffer, 0, length);
-		}
-
-		internal byte[] SerializeInternal(object stateGraph, out int length) {
-
+			
 			MemoryStream ms = new MemoryStream ();
 			Stream output = ms;
 #if NET_2_0
@@ -208,9 +198,7 @@ namespace System.Web.UI {
 				}
 				
 			}
-
-			length = (int) ms.Length;
-			return ms.GetBuffer ();
+			return Convert.ToBase64String (ms.GetBuffer (), 0, (int) ms.Length);
 		}
 		
 		public void Serialize (Stream outputStream, object stateGraph)
