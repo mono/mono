@@ -41,6 +41,8 @@ namespace System.Web.UI
 	public partial class Control : UIComponent, StateHolder
 	{
 		ComponentChildrenList _childrenList;
+		HashMap _attributes;
+		HashMap _facets;
 
 		protected override void addFacesListener (FacesListener __p1) {
 			throw new Exception ("The method or operation is not implemented.");
@@ -71,7 +73,7 @@ namespace System.Web.UI
 		}
 
 		public override Map getAttributes () {
-			throw new Exception ("The method or operation is not implemented.");
+			return _attributes ?? (_attributes = new HashMap ());
 		}
 
 		public override int getChildCount () {
@@ -104,7 +106,7 @@ namespace System.Web.UI
 		}
 
 		public override Map getFacets () {
-			throw new Exception ("The method or operation is not implemented.");
+			return _facets ?? (_facets = new HashMap ());
 		}
 
 		public override Iterator getFacetsAndChildren () {
@@ -117,7 +119,7 @@ namespace System.Web.UI
 		}
 
 		public override string getId () {
-			throw new Exception ("The method or operation is not implemented.");
+			return ID;
 		}
 
 		public override UIComponent getParent () {
