@@ -1,3 +1,10 @@
+2008-02-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_normalize_opcodes): Always convert CEE_CONV_R4/R8 to 
+	OP_ICONV_TO_R4/R8.
+
+	* mini-ia64.c cpu-ia64.md: Add OP_ICONV_TO_R4/R8.
+
 2008-02-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (emit_method_code): Add an assert.
