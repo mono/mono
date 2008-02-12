@@ -1,3 +1,7 @@
+2008-02-11  Jonathan Pryor  <jpryor@novell.com>
+
+	* UnixSignal.cs: Improve argument checking to match docs.
+
 2008-02-08  Jonathan Pryor  <jpryor@novell.com>
 
 	* UnixSignal.cs: UnixSignal.WaitAny() should have the same return type as
