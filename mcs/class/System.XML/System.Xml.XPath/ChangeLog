@@ -1,3 +1,8 @@
+2008-02-12  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DefaultContext.cs : now number formatting for "R" works fine, so
+	  just use it (and remove conditional compilation for TARGET_JVM).
+
 2008-01-10  Konstantin Triger <kostat@mainsoft.com>
 
 	* Iterator.cs: prevent endless recursion in AncestorIterator
