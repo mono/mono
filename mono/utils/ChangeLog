@@ -1,3 +1,8 @@
+2008-02-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-membar.h (mono_memory_barrier): Applied patch by Sergey Tikhonov 
+	<tsv@solvo.ru>. Add alpha support.
+
 2008-01-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-io-portability.c: Include errno.h since it is needed by code inside
