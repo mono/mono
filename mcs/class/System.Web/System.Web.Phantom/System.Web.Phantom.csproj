@@ -50,9 +50,13 @@
     <Compile Include="..\System.Web\IHttpExtendedHandler.cs">
       <Link>IHttpExtendedHandler.cs</Link>
     </Compile>
+    <Compile Include="..\System.Web\IHttpExtendedWorkerRequest.cs">
+      <Link>IHttpExtendedWorkerRequest.cs</Link>
+    </Compile>
     <Compile Include="Stubs.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="JavaEE, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=x86" />
     <Reference Include="System.Web, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=x86" />
@@ -69,7 +73,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-RefInfo-system-web="repository:vmw:framework:2.0" REFS-JarPath-system-web="" REFS-RefInfo-rt="repository:jre:sun:1.6.0" REFS-JarPath-rt="" REFS-RefInfo-system-xml="repository:vmw:framework:2.0" REFS-JarPath-system-xml="" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-JarPath-system-data="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system="" />
+      <UserProperties REFS-RefInfo-javaee="repository:JavaEE:tomcat:1.3" REFS-JarPath-javaee="" REFS-JarPath-system="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system-data="" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-JarPath-system-xml="" REFS-RefInfo-system-xml="repository:vmw:framework:2.0" REFS-JarPath-rt="" REFS-RefInfo-rt="repository:jre:sun:1.6.0" REFS-JarPath-system-web="" REFS-RefInfo-system-web="repository:vmw:framework:2.0" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

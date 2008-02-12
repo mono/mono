@@ -138,10 +138,8 @@ namespace System.Web
 		{
 			if (context == null)
 				return;
-			HttpServletRequest servletReq = context.ServletRequest;
-			if (servletReq == null)
-				return;
-			HttpSession javaSession = servletReq.getSession(false);
+			IHttpExtendedWorkerRequest exWorker = (IHttpExtendedWorkerRequest) context.WorkerRequest;
+			HttpSession javaSession = exWorker.GetSession (false);
 			if (javaSession == null)
 				return;
 
@@ -179,15 +177,13 @@ namespace System.Web
 			if (cookies == null || cookies.Count == 0)
 				return;
 
-			HttpServletRequest servletReq = context.ServletRequest;
-			if (servletReq == null)
-				return;
-			bool inPortletMode = true; //servletReq is IPortletRequest;
+			IHttpExtendedWorkerRequest exWorker = (IHttpExtendedWorkerRequest) context.WorkerRequest;
+			bool inPortletMode = !context.IsServletRequest;
 			bool shouldStoreCookiesCollection = false;
-			HttpSession javaSession = servletReq.getSession(false);
+			HttpSession javaSession = exWorker.GetSession (false);
 
 			if (javaSession == null && inPortletMode)
-				javaSession = servletReq.getSession(true);
+				javaSession = exWorker.GetSession (true);
 
 			if (javaSession == null)
 				return;
