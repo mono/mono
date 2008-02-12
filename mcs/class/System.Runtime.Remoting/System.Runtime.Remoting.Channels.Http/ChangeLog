@@ -1,3 +1,7 @@
+2008-02-12  Roei Erez (roeie@mainsoft.com)
+
+	* HttpServerChannel.cs: Always initialize channel uri.
+
 2007-10-30  Robert Jordan  <robertj@gmx.net>
 
 	* HttpHelper.cs: Support for the "https" scheme. Make scheme parser
