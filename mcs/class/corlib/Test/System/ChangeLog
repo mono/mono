@@ -1,3 +1,8 @@
+2008-02-12  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DelegateTest.cs: Added more tests for CreateDelegate, dealing with
+	a non-matching return type, case, arguments and inherited methods.
+
 2008-02-11  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DelegateTest.cs: Added incomplete set of (notworking) tests for

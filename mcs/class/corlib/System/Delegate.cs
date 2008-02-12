@@ -296,7 +296,8 @@ namespace System
 			if (!type.IsSubclassOf (typeof (MulticastDelegate)))
 				throw new ArgumentException ("type is not subclass of MulticastDelegate.");
 
-			ParameterInfo[] delargs = type.GetMethod ("Invoke").GetParameters ();
+			MethodInfo invoke = type.GetMethod ("Invoke");
+			ParameterInfo [] delargs = invoke.GetParameters ();
 			Type[] delargtypes = new Type [delargs.Length];
 
 			for (int i=0; i<delargs.Length; i++)
@@ -306,10 +307,28 @@ namespace System
 			 * FIXME: we should check the caller has reflection permission
 			 * or if it lives in the same assembly...
 			 */
-			BindingFlags flags = BindingFlags.ExactBinding | BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic;
+
+			/*
+			 * since we need to walk the inheritance chain anyway to
+			 * find private methods, adjust the bindingflags to ignore
+			 * inherited methods
+			 */
+			BindingFlags flags = BindingFlags.ExactBinding |
+				BindingFlags.Public | BindingFlags.Static |
+				BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
 			if (ignoreCase)
 				flags |= BindingFlags.IgnoreCase;
-			MethodInfo info = target.GetMethod (method, flags, null, delargtypes, new ParameterModifier [0]);
+
+			MethodInfo info = null;
+
+			for (Type targetType = target; targetType != null; targetType = targetType.BaseType) {
+				MethodInfo mi = targetType.GetMethod (method, flags,
+					null, delargtypes, new ParameterModifier [0]);
+				if (mi != null && return_type_match (invoke.ReturnType, mi.ReturnType)) {
+					info = mi;
+					break;
+				}
+			}
 
 			if (info == null) {
 				if (throwOnBindFailure)
@@ -350,7 +369,8 @@ namespace System
 			if (!type.IsSubclassOf (typeof (MulticastDelegate)))
 				throw new ArgumentException ("type");
 
-			ParameterInfo[] delargs = type.GetMethod ("Invoke").GetParameters ();
+			MethodInfo invoke = type.GetMethod ("Invoke");
+			ParameterInfo[] delargs = invoke.GetParameters ();
 			Type[] delargtypes = new Type [delargs.Length];
 
 			for (int i=0; i<delargs.Length; i++)
@@ -360,12 +380,29 @@ namespace System
 			 * FIXME: we should check the caller has reflection permission
 			 * or if it lives in the same assembly...
 			 */
-			BindingFlags flags = BindingFlags.ExactBinding | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
+
+			/*
+			 * since we need to walk the inheritance chain anyway to
+			 * find private methods, adjust the bindingflags to ignore
+			 * inherited methods
+			 */
+			BindingFlags flags = BindingFlags.ExactBinding | 
+				BindingFlags.NonPublic | BindingFlags.Public |
+				BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
 			if (ignoreCase)
 				flags |= BindingFlags.IgnoreCase;
 
-			MethodInfo info = target.GetType ().GetMethod (method, flags, null, delargtypes, new ParameterModifier [0]);
+			MethodInfo info = null;
+
+			for (Type targetType = target.GetType (); targetType != null; targetType = targetType.BaseType) {
+				MethodInfo mi = targetType.GetMethod (method, flags,
+					null, delargtypes, new ParameterModifier [0]);
+				if (mi != null && return_type_match (invoke.ReturnType, mi.ReturnType)) {
+					info = mi;
+					break;
+				}
+			}
 
 			if (info == null)
 				if (throwOnBindFailure)

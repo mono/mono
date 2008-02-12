@@ -1,3 +1,9 @@
+2008-02-12  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Delegate.cs (CreateDelegate): Walk the inheritance change to find
+	matching method. Skip methods for which the return type does not match
+	the delegate. Fixes bug #360784.
+
 2008-02-11  Eyal Alaluf <eyala@mainsoft.com>
 
 	* NumberFormatter.cs: Fix ToString("R") for +-Infinity & NaN.

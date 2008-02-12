@@ -83,48 +83,68 @@ namespace MonoTests.System
 		}
 
 		[Test] // CreateDelegate (Type, Object, String)
-		[Category ("NotWorking")]
 		public void CreateDelegate2 ()
 		{
 			E e;
 
-			B b = new B ();
+			e = (E) Delegate.CreateDelegate (typeof (E), new B (), "Execute");
+			Assert.IsNotNull (e, "#A1");
+			Assert.AreEqual (4, e (new C ()), "#A2");
 
-			// static method
-			try {
-				Delegate.CreateDelegate (typeof (E), b, "Run");
-				Assert.Fail ("#A1");
-			} catch (ArgumentException ex) {
-				// Error binding to target method
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
-				Assert.IsNull (ex.InnerException, "#A3");
-				Assert.IsNotNull (ex.Message, "#A4");
-				Assert.IsNull (ex.ParamName, "#A5");
-			}
-
-			// matching instance method
-			e = (E) Delegate.CreateDelegate (typeof (E), b, "Execute");
+			e = (E) Delegate.CreateDelegate (typeof (E), new C (), "Execute");
 			Assert.IsNotNull (e, "#B1");
-			Assert.AreEqual (4, e (new C ()), "#B2");
+			Assert.AreEqual (4, e (new C ()), "#D2");
 
-			C c = new C ();
+			e = (E) Delegate.CreateDelegate (typeof (E), new C (), "DoExecute");
+			Assert.IsNotNull (e, "#C1");
+			Assert.AreEqual (102, e (new C ()), "#C2");
+		}
 
-			// static method
+		[Test] // CreateDelegate (Type, Object, String)
+		public void CreateDelegate2_Method_ArgumentsMismatch ()
+		{
 			try {
-				Delegate.CreateDelegate (typeof (E), c, "Run");
-				Assert.Fail ("#C1");
+				Delegate.CreateDelegate (typeof (E), new B (),
+					"StartExecute");
+				Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Error binding to target method
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
-				Assert.IsNull (ex.InnerException, "#C3");
-				Assert.IsNotNull (ex.Message, "#C4");
-				Assert.IsNull (ex.ParamName, "#C5");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
 			}
+		}
 
-			// matching instance method
-			e = (E) Delegate.CreateDelegate (typeof (E), c, "Execute");
-			Assert.IsNotNull (e, "#D1");
-			Assert.AreEqual (4, e (new C ()), "#D2");
+		[Test] // CreateDelegate (Type, Object, String)
+		public void CreateDelegate2_Method_CaseMismatch ()
+		{
+			try {
+				Delegate.CreateDelegate (typeof (E), new B (), "ExecutE");
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Error binding to target method
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+		}
+
+		[Test] // CreateDelegate (Type, Object, String)
+		public void CreateDelegate2_Method_DoesNotExist ()
+		{
+			try {
+				Delegate.CreateDelegate (typeof (E), new B (),
+					"DoesNotExist");
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Error binding to target method
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 
 		[Test] // CreateDelegate (Type, Object, String)
@@ -140,6 +160,37 @@ namespace MonoTests.System
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNotNull (ex.ParamName, "#5");
 				Assert.AreEqual ("method", ex.ParamName, "#6");
+			}
+		}
+
+		[Test] // CreateDelegate (Type, Object, String)
+		public void CreateDelegate2_Method_ReturnTypeMismatch ()
+		{
+			try {
+				Delegate.CreateDelegate (typeof (E), new B (),
+					"DoExecute");
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Error binding to target method
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+		}
+
+		[Test] // CreateDelegate (Type, Object, String)
+		public void CreateDelegate2_Method_Static ()
+		{
+			try {
+				Delegate.CreateDelegate (typeof (E), new B (), "Run");
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Error binding to target method
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
 			}
 		}
 
@@ -175,7 +226,6 @@ namespace MonoTests.System
 		}
 
 		[Test] // CreateDelegate (Type, Type, String)
-		[Category ("NotWorking")]
 		public void CreateDelegate3 ()
 		{
 			E e;
@@ -185,33 +235,76 @@ namespace MonoTests.System
 			Assert.IsNotNull (e, "#A1");
 			Assert.AreEqual (5, e (new C ()), "#A2");
 
-			// instance method
-			try {
-				Delegate.CreateDelegate (typeof (E), typeof (B), "Execute");
-				Assert.Fail ("#B1");
-			} catch (ArgumentException ex) {
-				// Error binding to target method
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
-				Assert.IsNull (ex.InnerException, "#B3");
-				Assert.IsNotNull (ex.Message, "#B4");
-				Assert.IsNull (ex.ParamName, "#B5");
-			}
-
 			// matching static method
 			e = (E) Delegate.CreateDelegate (typeof (E), typeof (C), "Run");
-			Assert.IsNotNull (e, "#C1");
-			Assert.AreEqual (5, e (new C ()), "#C2");
+			Assert.IsNotNull (e, "#B1");
+			Assert.AreEqual (5, e (new C ()), "#B2");
 
-			// instance method
+			// matching static method
+			e = (E) Delegate.CreateDelegate (typeof (E), typeof (C), "DoRun");
+			Assert.IsNotNull (e, "#C1");
+			Assert.AreEqual (107, e (new C ()), "#C2");
+		}
+
+		[Test] // CreateDelegate (Type, Type, String)
+		public void CreateDelegate3_Method_ArgumentsMismatch ()
+		{
 			try {
-				Delegate.CreateDelegate (typeof (E), typeof (C), "Execute");
-				Assert.Fail ("#D1");
+				Delegate.CreateDelegate (typeof (E), typeof (B),
+					"StartRun");
+				Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Error binding to target method
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#D2");
-				Assert.IsNull (ex.InnerException, "#D3");
-				Assert.IsNotNull (ex.Message, "#D4");
-				Assert.IsNull (ex.ParamName, "#D5");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+		}
+
+		[Test] // CreateDelegate (Type, Type, String)
+		public void CreateDelegate3_Method_CaseMismatch ()
+		{
+			try {
+				Delegate.CreateDelegate (typeof (E), typeof (B), "RuN");
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Error binding to target method
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+		}
+
+		[Test] // CreateDelegate (Type, Type, String)
+		public void CreateDelegate3_Method_DoesNotExist ()
+		{
+			try {
+				Delegate.CreateDelegate (typeof (E), typeof (B),
+					"DoesNotExist");
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Error binding to target method
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+		}
+
+		[Test] // CreateDelegate (Type, Type, String)
+		public void CreateDelegate3_Method_Instance ()
+		{
+			try {
+				Delegate.CreateDelegate (typeof (E), typeof (B), "Execute");
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Error binding to target method
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
 			}
 		}
 
@@ -227,6 +320,22 @@ namespace MonoTests.System
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNotNull (ex.ParamName, "#5");
 				Assert.AreEqual ("method", ex.ParamName, "#6");
+			}
+		}
+
+		[Test] // CreateDelegate (Type, Type, String)
+		public void CreateDelegate3_Method_ReturnTypeMismatch ()
+		{
+			try {
+				Delegate.CreateDelegate (typeof (E), typeof (B),
+					"DoRun");
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Error binding to target method
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
 			}
 		}
 
@@ -261,124 +370,105 @@ namespace MonoTests.System
 		}
 
 		[Test] // CreateDelegate (Type, Object, String, Boolean)
-		[Category ("NotWorking")]
 		public void CreateDelegate4 ()
 		{
 			E e;
 
 			B b = new B ();
 
-			// static method, exact case, ignore case
-			try {
-				Delegate.CreateDelegate (typeof (E), b, "Run", true);
-				Assert.Fail ("#A1");
-			} catch (ArgumentException ex) {
-				// Error binding to target method
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
-				Assert.IsNull (ex.InnerException, "#A3");
-				Assert.IsNotNull (ex.Message, "#A4");
-				Assert.IsNull (ex.ParamName, "#A5");
-			}
-
-			// static method, exact case, do not ignore case
-			try {
-				Delegate.CreateDelegate (typeof (E), b, "Run", false);
-				Assert.Fail ("#B1");
-			} catch (ArgumentException ex) {
-				// Error binding to target method
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
-				Assert.IsNull (ex.InnerException, "#B3");
-				Assert.IsNotNull (ex.Message, "#B4");
-				Assert.IsNull (ex.ParamName, "#B5");
-			}
-
 			// instance method, exact case, ignore case
 			e = (E) Delegate.CreateDelegate (typeof (E), b, "Execute", true);
-			Assert.IsNotNull (e, "#C1");
-			Assert.AreEqual (4, e (new C ()), "#C2");
+			Assert.IsNotNull (e, "#A1");
+			Assert.AreEqual (4, e (new C ()), "#A2");
 
 			// instance method, exact case, do not ignore case
 			e = (E) Delegate.CreateDelegate (typeof (E), b, "Execute", false);
-			Assert.IsNotNull (e, "#D1");
-			Assert.AreEqual (4, e (new C ()), "#D2");
+			Assert.IsNotNull (e, "#B1");
+			Assert.AreEqual (4, e (new C ()), "#B2");
 
 			// instance method, case mismatch, ignore case
 			e = (E) Delegate.CreateDelegate (typeof (E), b, "ExecutE", true);
-			Assert.IsNotNull (e, "#E1");
-			Assert.AreEqual (4, e (new C ()), "#E2");
-
-			// instance method, case mismatch, do not igore case
-			try {
-				Delegate.CreateDelegate (typeof (E), b, "ExecutE", false);
-				Assert.Fail ("#F1");
-			} catch (ArgumentException ex) {
-				// Error binding to target method
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#F2");
-				Assert.IsNull (ex.InnerException, "#F3");
-				Assert.IsNotNull (ex.Message, "#F4");
-				Assert.IsNull (ex.ParamName, "#F5");
-			}
+			Assert.IsNotNull (e, "#C1");
+			Assert.AreEqual (4, e (new C ()), "#C2");
 
 			C c = new C ();
 
-			// static method, exact case, ignore case
-			try {
-				Delegate.CreateDelegate (typeof (E), c, "Run", true);
-				Assert.Fail ("#G1");
-			} catch (ArgumentException ex) {
-				// Error binding to target method
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#G2");
-				Assert.IsNull (ex.InnerException, "#G3");
-				Assert.IsNotNull (ex.Message, "#G4");
-				Assert.IsNull (ex.ParamName, "#G5");
-			}
-
-			// static method, exact case, do not ignore case
-			try {
-				Delegate.CreateDelegate (typeof (E), c, "Run", false);
-				Assert.Fail ("#H1");
-			} catch (ArgumentException ex) {
-				// Error binding to target method
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#H2");
-				Assert.IsNull (ex.InnerException, "#H3");
-				Assert.IsNotNull (ex.Message, "#H4");
-				Assert.IsNull (ex.ParamName, "#H5");
-			}
-
 			// instance method, exact case, ignore case
 			e = (E) Delegate.CreateDelegate (typeof (E), c, "Execute", true);
-			Assert.IsNotNull (e, "#I1");
-			Assert.AreEqual (4, e (new C ()), "#I2");
+			Assert.IsNotNull (e, "#D1");
+			Assert.AreEqual (4, e (new C ()), "#D2");
+
+			// instance method, exact case, ignore case
+			e = (E) Delegate.CreateDelegate (typeof (E), c, "DoExecute", true);
+			Assert.IsNotNull (e, "#E1");
+			Assert.AreEqual (102, e (new C ()), "#E2");
 
 			// instance method, exact case, do not ignore case
 			e = (E) Delegate.CreateDelegate (typeof (E), c, "Execute", false);
-			Assert.IsNotNull (e, "#J1");
-			Assert.AreEqual (4, e (new C ()), "#J2");
+			Assert.IsNotNull (e, "#F1");
+			Assert.AreEqual (4, e (new C ()), "#F2");
 
 			// instance method, case mismatch, ignore case
 			e = (E) Delegate.CreateDelegate (typeof (E), c, "ExecutE", true);
-			Assert.IsNotNull (e, "#K1");
-			Assert.AreEqual (4, e (new C ()), "#K2");
+			Assert.IsNotNull (e, "#G1");
+			Assert.AreEqual (4, e (new C ()), "#G2");
+		}
 
-			// instance method, case mismatch, do not ignore case
+		[Test] // CreateDelegate (Type, Object, String, Boolean)
+		public void CreateDelegate4_Method_ArgumentsMismatch ()
+		{
 			try {
-				Delegate.CreateDelegate (typeof (E), c, "ExecutE", false);
-				Assert.Fail ("#L1");
+				Delegate.CreateDelegate (typeof (E), new B (),
+					"StartExecute", false);
+				Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
 				// Error binding to target method
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#L2");
-				Assert.IsNull (ex.InnerException, "#L3");
-				Assert.IsNotNull (ex.Message, "#L4");
-				Assert.IsNull (ex.ParamName, "#L5");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+		}
+
+		[Test] // CreateDelegate (Type, Object, String, Boolean)
+		public void CreateDelegate4_Method_CaseMismatch ()
+		{
+			// instance method, case mismatch, do not igore case
+			try {
+				Delegate.CreateDelegate (typeof (E), new B (),
+					"ExecutE", false);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Error binding to target method
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+		}
+
+		[Test] // CreateDelegate (Type, Object, String, Boolean)
+		public void CreateDelegate4_Method_DoesNotExist ()
+		{
+			try {
+				Delegate.CreateDelegate (typeof (E), new B (),
+					"DoesNotExist", false);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Error binding to target method
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
 			}
 		}
 
 		[Test] // CreateDelegate (Type, Object, String, Boolean)
 		public void CreateDelegate4_Method_Null ()
 		{
-			C c = new C ();
 			try {
-				Delegate.CreateDelegate (typeof (D), c, (string) null, true);
+				Delegate.CreateDelegate (typeof (D), new C (),
+					(string) null, true);
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
@@ -386,6 +476,37 @@ namespace MonoTests.System
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNotNull (ex.ParamName, "#5");
 				Assert.AreEqual ("method", ex.ParamName, "#6");
+			}
+		}
+
+		[Test] // CreateDelegate (Type, Object, String, Boolean)
+		public void CreateDelegate4_Method_ReturnTypeMismatch ()
+		{
+			try {
+				Delegate.CreateDelegate (typeof (E), new B (),
+					"DoExecute", false);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Error binding to target method
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+		}
+
+		[Test] // CreateDelegate (Type, Object, String, Boolean)
+		public void CreateDelegate4_Method_Static ()
+		{
+			try {
+				Delegate.CreateDelegate (typeof (E), new B (), "Run", true);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Error binding to target method
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
 			}
 		}
 
@@ -422,16 +543,90 @@ namespace MonoTests.System
 
 #if NET_2_0
 		[Test] // CreateDelegate (Type, Object, String, Boolean, Boolean)
-		[Category ("NotWorking")]
-		public void CreateDelegate9_BindFailures ()
+		public void CreateDelegate9 ()
 		{
 			E e;
 
-			B b = new B ();
+			// do not ignore case, do not throw bind failure
+			e = (E) Delegate.CreateDelegate (typeof (E), new B (),
+				"Execute", false, false);
+			Assert.IsNotNull (e, "#A1");
+			Assert.AreEqual (4, e (new C ()), "#A2");
 
-			// static method, exact case, ignore case, throw on bind failure
+			// do not ignore case, throw bind failure
+			e = (E) Delegate.CreateDelegate (typeof (E), new B (),
+				"Execute", false, true);
+			Assert.IsNotNull (e, "#B1");
+			Assert.AreEqual (4, e (new C ()), "#B2");
+
+			// ignore case, do not throw bind failure
+			e = (E) Delegate.CreateDelegate (typeof (E), new B (),
+				"Execute", true, false);
+			Assert.IsNotNull (e, "#C1");
+			Assert.AreEqual (4, e (new C ()), "#C2");
+
+			// ignore case, throw bind failure
+			e = (E) Delegate.CreateDelegate (typeof (E), new B (),
+				"Execute", true, true);
+			Assert.IsNotNull (e, "#D1");
+			Assert.AreEqual (4, e (new C ()), "#D2");
+
+			// do not ignore case, do not throw bind failure
+			e = (E) Delegate.CreateDelegate (typeof (E), new C (),
+				"Execute", false, false);
+			Assert.IsNotNull (e, "#E1");
+			Assert.AreEqual (4, e (new C ()), "#E2");
+
+			// do not ignore case, throw bind failure
+			e = (E) Delegate.CreateDelegate (typeof (E), new C (),
+				"Execute", false, true);
+			Assert.IsNotNull (e, "#F1");
+			Assert.AreEqual (4, e (new C ()), "#F2");
+
+			// ignore case, do not throw bind failure
+			e = (E) Delegate.CreateDelegate (typeof (E), new C (),
+				"Execute", true, false);
+			Assert.IsNotNull (e, "#G1");
+			Assert.AreEqual (4, e (new C ()), "#G2");
+
+			// ignore case, throw bind failure
+			e = (E) Delegate.CreateDelegate (typeof (E), new C (),
+				"Execute", true, true);
+			Assert.IsNotNull (e, "#H1");
+			Assert.AreEqual (4, e (new C ()), "#H2");
+
+			// do not ignore case, do not throw bind failure
+			e = (E) Delegate.CreateDelegate (typeof (E), new C (),
+				"DoExecute", false, false);
+			Assert.IsNotNull (e, "#I1");
+			Assert.AreEqual (102, e (new C ()), "#I2");
+
+			// do not ignore case, throw bind failure
+			e = (E) Delegate.CreateDelegate (typeof (E), new C (),
+				"DoExecute", false, true);
+			Assert.IsNotNull (e, "#J1");
+			Assert.AreEqual (102, e (new C ()), "#J2");
+
+			// ignore case, do not throw bind failure
+			e = (E) Delegate.CreateDelegate (typeof (E), new C (),
+				"DoExecute", true, false);
+			Assert.IsNotNull (e, "#K1");
+			Assert.AreEqual (102, e (new C ()), "#K2");
+
+			// ignore case, throw bind failure
+			e = (E) Delegate.CreateDelegate (typeof (E), new C (),
+				"DoExecute", true, true);
+			Assert.IsNotNull (e, "#L1");
+			Assert.AreEqual (102, e (new C ()), "#L2");
+		}
+
+		[Test] // CreateDelegate (Type, Object, String, Boolean, Boolean)
+		public void CreateDelegate9_Method_ArgumentsMismatch ()
+		{
+			// throw bind failure
 			try {
-				Delegate.CreateDelegate (typeof (E), b, "Run", true, true);
+				Delegate.CreateDelegate (typeof (E), new B (),
+					"StartExecute", false, true);
 				Assert.Fail ("#A1");
 			} catch (ArgumentException ex) {
 				// Error binding to target method
@@ -441,62 +636,160 @@ namespace MonoTests.System
 				Assert.IsNull (ex.ParamName, "#A5");
 			}
 
-			// static method, exact case, ignore case, do not throw on bind failure
-			e = (E) Delegate.CreateDelegate (typeof (E), b, "Run", true, false);
+			// do not throw on bind failure
+			E e = (E) Delegate.CreateDelegate (typeof (E), new B (),
+				"StartExecute", false, false);
+			Assert.IsNull (e, "#B");
+		}
+
+		[Test] // CreateDelegate (Type, Object, String, Boolean, Boolean)
+		public void CreateDelegate9_Method_CaseMismatch ()
+		{
+			E e;
+
+			// do not ignore case, throw bind failure
+			try {
+				Delegate.CreateDelegate (typeof (E), new B (),
+					"ExecutE", false, true);
+				Assert.Fail ("#A1");
+			} catch (ArgumentException ex) {
+				// Error binding to target method
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNull (ex.ParamName, "#A5");
+			}
+
+			// do not ignore case, do not throw bind failure
+			e = (E) Delegate.CreateDelegate (typeof (E), new B (),
+				"ExecutE", false, false);
 			Assert.IsNull (e, "#B");
 
-			// instance method, case mismatch, do not igore case, throw on bind failure
+			// ignore case, throw bind failure
+			e = (E) Delegate.CreateDelegate (typeof (E), new B (),
+				"ExecutE", true, true);
+			Assert.IsNotNull (e, "#C1");
+			Assert.AreEqual (4, e (new C ()), "#C2");
+
+			// ignore case, do not throw bind failure
+			e = (E) Delegate.CreateDelegate (typeof (E), new B (),
+				"ExecutE", true, false);
+			Assert.IsNotNull (e, "#D1");
+			Assert.AreEqual (4, e (new C ()), "#D2");
+		}
+
+		[Test] // CreateDelegate (Type, Object, String, Boolean, Boolean)
+		public void CreateDelegate9_Method_DoesNotExist ()
+		{
+			// throw bind failure
 			try {
-				Delegate.CreateDelegate (typeof (E), b, "ExecutE",
-					false, true);
-				Assert.Fail ("#C1");
+				Delegate.CreateDelegate (typeof (E), new B (),
+					"DoesNotExist", false, true);
+				Assert.Fail ("#A1");
 			} catch (ArgumentException ex) {
 				// Error binding to target method
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
-				Assert.IsNull (ex.InnerException, "#C3");
-				Assert.IsNotNull (ex.Message, "#C4");
-				Assert.IsNull (ex.ParamName, "#C5");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNull (ex.ParamName, "#A5");
 			}
 
-			// instance method, case mismatch, do not igore case, do not throw on bind failure
-			e = (E) Delegate.CreateDelegate (typeof (E), b, "ExecutE",
-				false, false);
-			Assert.IsNull (e, "#D");
+			// do not throw on bind failure
+			E e = (E) Delegate.CreateDelegate (typeof (E), new B (),
+				"DoesNotExist", false, false);
+			Assert.IsNull (e, "#B");
+		}
 
-			C c = new C ();
-
-			// static method, exact case, ignore case, throw on bind failure
+		[Test] // CreateDelegate (Type, Object, String, Boolean, Boolean)
+		public void CreateDelegate9_Method_Null ()
+		{
 			try {
-				Delegate.CreateDelegate (typeof (E), c, "Run", true, true);
-				Assert.Fail ("#E1");
+				Delegate.CreateDelegate (typeof (E), new B (),
+					(string) null, false, false);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("method", ex.ParamName, "#6");
+			}
+		}
+
+		[Test] // CreateDelegate (Type, Object, String, Boolean, Boolean)
+		public void CreateDelegate9_Method_ReturnTypeMismatch ()
+		{
+			// throw bind failure
+			try {
+				Delegate.CreateDelegate (typeof (E), new B (),
+					"DoExecute", false, true);
+				Assert.Fail ("#A1");
 			} catch (ArgumentException ex) {
 				// Error binding to target method
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#E2");
-				Assert.IsNull (ex.InnerException, "#E3");
-				Assert.IsNotNull (ex.Message, "#E4");
-				Assert.IsNull (ex.ParamName, "#E5");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNull (ex.ParamName, "#A5");
 			}
 
-			// static method, exact case, ignore case, do not throw on bind failure
-			e = (E) Delegate.CreateDelegate (typeof (E), c, "Run", true, false);
-			Assert.IsNull (e, "#F");
+			// do not throw on bind failure
+			E e = (E) Delegate.CreateDelegate (typeof (E), new B (),
+				"DoExecute", false, false);
+			Assert.IsNull (e, "#B");
+		}
 
-			// instance method, case mismatch, do not ignore case, throw on bind failure
+		[Test] // CreateDelegate (Type, Object, String, Boolean, Boolean)
+		public void CreateDelegate9_Method_Static ()
+		{
+			// throw bind failure
 			try {
-				Delegate.CreateDelegate (typeof (E), c, "ExecutE", false, true);
-				Assert.Fail ("#G1");
+				Delegate.CreateDelegate (typeof (E), new B (),
+					"Run", true, true);
+				Assert.Fail ("#A1");
 			} catch (ArgumentException ex) {
 				// Error binding to target method
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#G2");
-				Assert.IsNull (ex.InnerException, "#G3");
-				Assert.IsNotNull (ex.Message, "#G4");
-				Assert.IsNull (ex.ParamName, "#G5");
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNull (ex.ParamName, "#A5");
 			}
 
-			// instance method, case mismatch, do not ignore case, do not throw on bind failure
-			e = (E) Delegate.CreateDelegate (typeof (E), c, "ExecutE",
-				false, false);
-			Assert.IsNull (e, "#H");
+			// do not throw on bind failure
+			E e = (E) Delegate.CreateDelegate (typeof (E), new B (),
+				"Run", true, false);
+			Assert.IsNull (e, "#B");
+		}
+
+		[Test] // CreateDelegate (Type, Object, String, Boolean, Boolean)
+		public void CreateDelegate9_Target_Null ()
+		{
+			try {
+				Delegate.CreateDelegate (typeof (E),(object) null,
+					"Execute", true, false);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("target", ex.ParamName, "#6");
+			}
+		}
+
+		[Test] // CreateDelegate (Type, Object, String, Boolean)
+		public void CreateDelegate9_Type_Null ()
+		{
+			try {
+				Delegate.CreateDelegate ((Type) null, new B (),
+					"Execute", true, false);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("type", ex.ParamName, "#6");
+			}
 		}
 
 		class ParentClass
@@ -629,9 +922,27 @@ namespace MonoTests.System
 				return 5;
 			}
 
+			public static void DoRun (C x)
+			{
+			}
+
+			public static int StartRun (C x, B b)
+			{
+				return 6;
+			}
+
 			int Execute (C c)
 			{
 				return 4;
+			}
+
+			public void DoExecute (C c)
+			{
+			}
+
+			public int StartExecute (C c, B b)
+			{
+				return 3;
 			}
 		}
 
@@ -647,6 +958,24 @@ namespace MonoTests.System
 
 			public override string retarg3 (string s) {
 				return s + "2";
+			}
+
+			static void Run (C x)
+			{
+			}
+
+			public new static int DoRun (C x)
+			{
+				return 107;
+			}
+
+			void Execute (C c)
+			{
+			}
+
+			public new int DoExecute (C c)
+			{
+				return 102;
 			}
 
 			public void M ()
