@@ -357,5 +357,17 @@ namespace MonoTests.System.Xml.Linq
 			Assert.AreEqual (null, (TimeSpan?) a, "TimeSpan?");
 			Assert.AreEqual (null, (string) a, "string");
 		}
+
+		[Test]
+		public void Value ()
+		{
+			// based on bug #360858
+			XElement a = new XElement("root",
+				new XElement ("foo"),
+				"Linux&Windows",
+				new XComment ("comment"),
+				new XElement ("bar"));
+			Assert.AreEqual ("Linux&Windows", a.Value);
+		}
 	}
 }

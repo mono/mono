@@ -1,3 +1,7 @@
+2008-02-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XElementTest.cs : added test for Value (bug #360858).
+
 2008-02-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XNodeDocumentOrderComparerTest.cs : added another test for

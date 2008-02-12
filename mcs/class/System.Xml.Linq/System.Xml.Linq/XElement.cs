@@ -299,10 +299,13 @@ namespace System.Xml.Linq
 		public string Value {
 			get {
 				StringBuilder sb = null;
-				foreach (object s in Nodes ()) {
+				foreach (XNode n in Nodes ()) {
 					if (sb == null)
 						sb = new StringBuilder ();
-					sb.Append (s);
+					if (n is XText)
+						sb.Append (((XText) n).Value);
+					else if (n is XElement)
+						sb.Append (((XElement) n).Value);
 				}
 				return sb == null ? String.Empty : sb.ToString ();
 			}

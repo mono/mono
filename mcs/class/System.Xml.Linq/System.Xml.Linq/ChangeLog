@@ -1,3 +1,8 @@
+2008-02-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XElement.cs : Value is rather a value in XPath semantics than
+	  the textual xml representation. Fixed bug #360858.
+
 2008-02-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XNodeDocumentOrderComparer.cs : ancestor/descendant comparison was
