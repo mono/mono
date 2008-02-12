@@ -1,3 +1,8 @@
+2008-02-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-alpha.h mini-alpha.c tramp-alpha.c: Alpha port updates from Sergey Tikhonov 
+	<tsv@solvo.ru>.
+
 2008-02-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_normalize_opcodes): Always convert CEE_CONV_R4/R8 to 
