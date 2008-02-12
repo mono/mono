@@ -1,6 +1,13 @@
 2008-02-12  Ivan N. Zlatev  <contact@i-nz.net>
 
 	[Backport to 1.9]
+	* PropertyGridView.cs: Ensure that drop down editors are shown
+	in the WorkingArea of the screen.
+	[Fixes bug #359807]
+
+2008-02-12  Ivan N. Zlatev  <contact@i-nz.net>
+
+	[Backport to 1.9]
 	* GridEntry.cs: Fail silently when UITypeEditor is missing.
 	[Fixes bug #360666]
 

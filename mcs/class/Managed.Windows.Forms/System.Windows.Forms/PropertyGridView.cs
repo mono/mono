@@ -897,6 +897,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			dropdown_form.Width = Math.Max (ClientRectangle.Width - SplitterLocation - (vbar.Visible ? vbar.Width : 0), 
 							control.Width);
 			dropdown_form.Location = PointToScreen (new Point (grid_textbox.Right - control.Width, grid_textbox.Location.Y + row_height));
+			RepositionInScreenWorkingArea (dropdown_form);
 			location = dropdown_form.Location;
 
 			owner.AddOwnedForm (dropdown_form);
@@ -930,6 +931,26 @@ namespace System.Windows.Forms.PropertyGridInternal {
 					XplatUI.DispatchMessage (ref msg);
 				}
 				XplatUI.EndLoop (Thread.CurrentThread);			
+			}
+		}
+
+		private void RepositionInScreenWorkingArea (Form form)
+		{
+			Rectangle workingArea = Screen.FromControl (form).WorkingArea;
+			if (!workingArea.Contains (form.Bounds)) {
+				int x, y;
+				x = form.Location.X;
+				y = form.Location.Y;
+
+				if (form.Location.X < workingArea.X)
+					x = workingArea.X;
+
+				if (form.Location.Y + form.Size.Height > workingArea.Height) {
+					Point aboveTextBox = PointToScreen (new Point (grid_textbox.Right - form.Width, grid_textbox.Location.Y));
+					y = aboveTextBox.Y - form.Size.Height;
+				}
+
+				form.Location = new Point (x, y);
 			}
 		}
 
