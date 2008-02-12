@@ -212,12 +212,12 @@ namespace System.Runtime.Remoting.Channels.Http
 			_tcpListener = new TcpListener (_bindToAddr, _port);
 			_tcpListener.Start();
 
-			if (_port == 0) {
-				_port = ((IPEndPoint)_tcpListener.LocalEndpoint).Port;
-				String[] uris = { this.GetChannelUri() };
-				_channelData.ChannelUris = uris;
-			}
-				
+			if (_port == 0)
+				_port = ((IPEndPoint)_tcpListener.LocalEndpoint).Port;				
+			
+			String[] uris = { this.GetChannelUri() };
+			_channelData.ChannelUris = uris;
+
 			if(_listenerThread == null)
 			{
 				ThreadStart t = new ThreadStart(this.Listen);
