@@ -399,7 +399,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	public bool IsValid {
 		get {
 			if (!is_validated)
-				throw new HttpException (Locale.GetText ("Page hasn't been validated."));
+				throw new HttpException (Locale.GetText ("Page.IsValid cannot be called before validation has taken place. It should be queried in the event handler for a control that has CausesValidation=True and initiated the postback, or after a call to Page.Validate."));
 
 #if NET_2_0
 			foreach (IValidator val in Validators)
