@@ -348,7 +348,8 @@ namespace Mono.CSharp
 					}
 
 					if (m != null) {
-						Report.Error (1509, "referenced file `{0}' is not an assembly; try using the '-addmodule' option", filename);
+						Report.Error (1509, "Referenced file `{0}' is not an assembly. Consider using `-addmodule' option instead",
+						              Path.GetFileName (filename));
 						return;
 					}
 				} catch (FileNotFoundException) {

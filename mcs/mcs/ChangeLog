@@ -1,5 +1,9 @@
 2008-02-12  Marek Safar  <marek.safar@gmail.com>
 
+	* driver.cs: Don't report full path for referenced module as assembly error.
+
+2008-02-12  Marek Safar  <marek.safar@gmail.com>
+
 	* Makefile: Fixed `qh' target to work on all machines.
 	
  	* report.cs, typemanager.cs, parameter.cs, ecore.cs, class.cs, anonymous.cs,
