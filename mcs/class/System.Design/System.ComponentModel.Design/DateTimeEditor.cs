@@ -55,7 +55,6 @@ namespace System.ComponentModel.Design
 
 		public DateTimeEditor ()
 		{
-			control.LostFocus += new EventHandler (changeHandler);
 			control.DateSelected += new DateRangeEventHandler (control_DateSelected);
 		}
 
@@ -71,9 +70,7 @@ namespace System.ComponentModel.Design
 
 					editContent = (DateTime)value;
 					if (editContent > control.MaxDate || editContent < control.MinDate)
-						editContent = DateTime.Today;
-
-					control.SelectionStart = editContent;
+						control.SelectionStart = DateTime.Today;
 
 					editorService.DropDownControl (control);
 
@@ -81,11 +78,6 @@ namespace System.ComponentModel.Design
 				}
 			}
 			return base.EditValue (context, provider, value);
-		}
-
-		void changeHandler (object sender, EventArgs e)
-		{
-			editContent = control.SelectionStart;
 		}
 
 		void control_DateSelected (object sender, DateRangeEventArgs e)

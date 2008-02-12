@@ -1,3 +1,10 @@
+2008-02-12  Ivan N. Zlatev  <contact@i-nz.net>
+
+	[Backport to 1.9]
+	* DateTimeEditor.cs: Set edit value only if the user sets it
+	in the editor.
+	[Fixes #359159]
+
 2008-02-05  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* MutilineStringEditor.cs: Make BorderStyle, Width and Height
