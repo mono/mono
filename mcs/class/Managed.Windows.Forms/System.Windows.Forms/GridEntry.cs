@@ -351,7 +351,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 				try { // can happen, because we are missing some editors
 					return PropertyDescriptor.GetEditor (typeof (UITypeEditor)) as UITypeEditor;
 				} catch {
-					property_grid.ShowError ("Unable to load UITypeEditor for property '" + PropertyDescriptor.Name + "'.");
+					// property_grid.ShowError ("Unable to load UITypeEditor for property '" + PropertyDescriptor.Name + "'.");
 				}
 			}
 			return null;
