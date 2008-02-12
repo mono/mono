@@ -273,9 +273,14 @@ namespace System.Web.SessionState
 					handler.ReleaseItemExclusive (context, container.SessionID, storeLockId);
 					handler.RemoveItem (context, container.SessionID, storeLockId, storeData);
 					if (supportsExpiration)
+#if TARGET_J2EE
+						;
+					else
+#else
 						// Make sure the expiration handler is not called after we will have raised
 						// the session end event.
 						handler.SetItemExpireCallback (null);
+#endif
 					SessionStateUtility.RaiseSessionEnd (container, this, args);
 				}
 				SessionStateUtility.RemoveHttpSessionStateFromContext (context);
