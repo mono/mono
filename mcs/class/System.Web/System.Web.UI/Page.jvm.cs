@@ -473,14 +473,26 @@ namespace System.Web.UI
 
 			public void readExternal (java.io.ObjectInput __p1)
 			{
-				ObjectStateFormatter osf = new ObjectStateFormatter (CurrentPage);
-				_state = osf.Deserialize (new ObjectInputStream (__p1));
+				Page page = CurrentPage;
+				ObjectStateFormatter osf = new ObjectStateFormatter (page);
+				ObjectInputStream inputStream = new ObjectInputStream (__p1);
+
+				if (page.NeedViewStateEncryption || page.EnableViewStateMac)
+					_state = osf.Deserialize ((string) inputStream.readObject ());
+				else
+					_state = osf.Deserialize (inputStream);
 			}
 
 			public void writeExternal (java.io.ObjectOutput __p1)
 			{
-				ObjectStateFormatter osf = new ObjectStateFormatter (CurrentPage);
-				osf.Serialize (new ObjectOutputStream (__p1), _state);
+				Page page = CurrentPage;
+				ObjectStateFormatter osf = new ObjectStateFormatter (page);
+				ObjectOutputStream outputStream = new ObjectOutputStream (__p1);
+
+				if (page.NeedViewStateEncryption || page.EnableViewStateMac)
+					outputStream.writeObject (osf.Serialize (_state));
+				else
+					osf.Serialize (outputStream, _state);
 			}
 
 			private Page CurrentPage

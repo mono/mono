@@ -1,5 +1,10 @@
 2008-02-12  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
+	* Page.jvm.cs: StateSerializer.readExternal and writeExternal fixed
+	to support viewstate encryption
+
+2008-02-12  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
 	* ObjectStateFormatter.cs: revert of 91820
 
 2008-02-08  Marek Habersack  <mhabersack@novell.com>
