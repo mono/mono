@@ -1,3 +1,9 @@
+
+Tue Feb 12 19:16:49 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* RxCompiler.cs, RxInterpreter.cs, RxOp.cs: experimental new
+	interpreter.
+
 2008-02-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* replace.cs (NeedsGroupsOrCaptures): New property. Determines whenever the
