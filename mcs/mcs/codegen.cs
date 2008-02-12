@@ -1353,7 +1353,7 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder customBuilder)
 		{
-			if (a.Type.IsSubclassOf (TypeManager.security_attr_type) && a.CheckSecurityActionValidity (true)) {
+			if (TypeManager.IsSubclassOf (a.Type, TypeManager.security_attr_type) && a.CheckSecurityActionValidity (true)) {
 				if (declarative_security == null)
 					declarative_security = new ListDictionary ();
 

@@ -1,3 +1,11 @@
+2008-02-12  Marek Safar  <marek.safar@gmail.com>
+
+	* Makefile: Fixed `qh' target to work on all machines.
+	
+ 	* report.cs, typemanager.cs, parameter.cs, ecore.cs, class.cs, anonymous.cs,
+ 	expression.cs, codegen.cs, statement.cs, doc.cs: Replaced type IsSubclassOf
+ 	and HasElementType with TypeManager implementation.
+
 2008-02-08  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bugs #325134, #359749

@@ -867,7 +867,7 @@ namespace Mono.CSharp {
 				(t == TypeManager.int64_type) ||
 				(t == TypeManager.uint64_type) ||
 				(t == TypeManager.char_type) ||
-				(t.IsSubclassOf (TypeManager.enum_type)) ||
+				(TypeManager.IsSubclassOf (t, TypeManager.enum_type)) ||
 				(t == TypeManager.float_type) ||
 				(t == TypeManager.double_type) ||
 				(t.IsPointer && t != TypeManager.void_ptr_type);
@@ -1829,7 +1829,7 @@ namespace Mono.CSharp {
 		static bool EqualsNullIsReferenceEquals (Type t)
 		{
 			return t == TypeManager.object_type || t == TypeManager.string_type ||
-				t == TypeManager.delegate_type || t.IsSubclassOf (TypeManager.delegate_type);
+				t == TypeManager.delegate_type || TypeManager.IsDelegateType (t);
 		}
 
 		static void Warning_UnintendedReferenceComparison (Location loc, string side, Type type)

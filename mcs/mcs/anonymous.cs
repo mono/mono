@@ -1289,7 +1289,7 @@ namespace Mono.CSharp {
 			for (int i = 0; i < Parameters.Count; ++i) {
 				Type itype = d_params.Types [i];
 				if (!TypeManager.IsGenericParameter (itype)) {
-					if (!itype.HasElementType)
+					if (!TypeManager.HasElementType (itype))
 						continue;
 					
 					if (!TypeManager.IsGenericParameter (itype.GetElementType ()))

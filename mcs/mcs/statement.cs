@@ -3061,7 +3061,7 @@ namespace Mono.CSharp {
 			    t == TypeManager.char_type ||
 			    t == TypeManager.string_type ||
 			    t == TypeManager.bool_type ||
-			    t.IsSubclassOf (TypeManager.enum_type))
+			    TypeManager.IsSubclassOf (t, TypeManager.enum_type))
 				return expr;
 
 			if (allowed_types == null){
@@ -4280,7 +4280,7 @@ namespace Mono.CSharp {
 
 					type = te.Type;
 
-					if (type != TypeManager.exception_type && !type.IsSubclassOf (TypeManager.exception_type)){
+					if (type != TypeManager.exception_type && !TypeManager.IsSubclassOf (type, TypeManager.exception_type)){
 						Error (155, "The type caught or thrown must be derived from System.Exception");
 						return false;
 					}
@@ -4370,7 +4370,7 @@ namespace Mono.CSharp {
 
 				Type resolved_type = c.CatchType;
 				for (int ii = 0; ii < last_index; ++ii) {
-					if (resolved_type == prev_catches [ii] || resolved_type.IsSubclassOf (prev_catches [ii])) {
+					if (resolved_type == prev_catches [ii] || TypeManager.IsSubclassOf (resolved_type, prev_catches [ii])) {
 						Report.Error (160, c.loc, "A previous catch clause already catches all exceptions of this or a super type `{0}'", prev_catches [ii].FullName);
 						return false;
 					}

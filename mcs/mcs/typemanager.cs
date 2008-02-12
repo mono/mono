@@ -1599,11 +1599,11 @@ namespace Mono.CSharp {
 			return false;
 #endif
 
-		t = DropGenericTypeArguments (t);
-		if (t.IsSubclassOf (TypeManager.delegate_type))
-			return true;
-		else
+		if (t == TypeManager.delegate_type)
 			return false;
+
+		t = DropGenericTypeArguments (t);
+		return IsSubclassOf (t, TypeManager.delegate_type);
 	}
 	
 	public static bool IsEnumType (Type t)

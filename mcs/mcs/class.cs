@@ -2852,7 +2852,7 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
-			if (a.Type.IsSubclassOf (TypeManager.security_attr_type) && a.CheckSecurityActionValidity (false)) {
+			if (TypeManager.IsSubclassOf (a.Type, TypeManager.security_attr_type) && a.CheckSecurityActionValidity (false)) {
 				if (declarative_security == null)
 					declarative_security = new ListDictionary ();
 
@@ -2968,14 +2968,13 @@ namespace Mono.CSharp {
 		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
 		{
 			if (a.Type == TypeManager.attribute_usage_type) {
-				if (BaseType != TypeManager.attribute_type && !BaseType.IsSubclassOf (TypeManager.attribute_type) &&
+				if (!TypeManager.IsAttributeType (BaseType) &&
 					TypeBuilder.FullName != "System.Attribute") {
 					Report.Error (641, a.Location, "Attribute `{0}' is only valid on classes derived from System.Attribute", a.GetSignatureForError ());
 				}
 			}
 
-			if (a.Type == TypeManager.conditional_attribute_type &&
-				!(BaseType == TypeManager.attribute_type || BaseType.IsSubclassOf (TypeManager.attribute_type))) {
+			if (a.Type == TypeManager.conditional_attribute_type && !TypeManager.IsAttributeType (BaseType)) {
 				Report.Error (1689, a.Location, "Attribute `System.Diagnostics.ConditionalAttribute' is only valid on methods or attribute classes");
 				return;
 			}
@@ -3978,7 +3977,7 @@ namespace Mono.CSharp {
 				is_external_implementation = true;
 			}
 
-			if (a.Type.IsSubclassOf (TypeManager.security_attr_type) && a.CheckSecurityActionValidity (false)) {
+			if (TypeManager.IsSubclassOf (a.Type, TypeManager.security_attr_type) && a.CheckSecurityActionValidity (false)) {
 				if (declarative_security == null)
 					declarative_security = new ListDictionary ();
 				a.ExtractSecurityPermissionSet (declarative_security);
@@ -4814,7 +4813,7 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
-			if (a.Type.IsSubclassOf (TypeManager.security_attr_type) && a.CheckSecurityActionValidity (false)) {
+			if (TypeManager.IsSubclassOf (a.Type, TypeManager.security_attr_type) && a.CheckSecurityActionValidity (false)) {
 				if (declarative_security == null) {
 					declarative_security = new ListDictionary ();
 				}
@@ -5070,7 +5069,7 @@ namespace Mono.CSharp {
  				if (al.Count > 2)
  					MemberCache.VerifyClsParameterConflict (al, this, ConstructorBuilder);
  
-				if (Parent.TypeBuilder.IsSubclassOf (TypeManager.attribute_type)) {
+				if (TypeManager.IsSubclassOf (Parent.TypeBuilder, TypeManager.attribute_type)) {
 					foreach (Type param in ParameterTypes) {
 						if (param.IsArray) {
 							return true;
@@ -5702,7 +5701,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (a.Type.IsSubclassOf (TypeManager.security_attr_type)) {
+			if (TypeManager.IsSubclassOf (a.Type, TypeManager.security_attr_type)) {
 				a.Error_InvalidSecurityParent ();
 				return;
 			}
@@ -6251,7 +6250,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (a.Type.IsSubclassOf (TypeManager.security_attr_type) && a.CheckSecurityActionValidity (false)) {
+			if (TypeManager.IsSubclassOf (a.Type, TypeManager.security_attr_type) && a.CheckSecurityActionValidity (false)) {
 				if (declarative_security == null)
 					declarative_security = new ListDictionary ();
 				a.ExtractSecurityPermissionSet (declarative_security);
@@ -6686,7 +6685,7 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
-			if (a.Type.IsSubclassOf (TypeManager.security_attr_type)) {
+			if (TypeManager.IsSubclassOf (a.Type, TypeManager.security_attr_type)) {
 				a.Error_InvalidSecurityParent ();
 				return;
 			}
@@ -7545,7 +7544,7 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
-			if (a.Type.IsSubclassOf (TypeManager.security_attr_type)) {
+			if (TypeManager.IsSubclassOf (a.Type, TypeManager.security_attr_type)) {
 				a.Error_InvalidSecurityParent ();
 				return;
 			}

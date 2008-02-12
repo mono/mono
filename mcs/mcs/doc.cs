@@ -292,37 +292,37 @@ namespace Mono.CSharp {
 		{
 			switch (identifier) {
 			case "int":
-				return typeof (int);
+				return TypeManager.int32_type;
 			case "uint":
-				return typeof (uint);
+				return TypeManager.uint32_type;
 			case "short":
-				return typeof (short);
+				return TypeManager.short_type;;
 			case "ushort":
-				return typeof (ushort);
+				return TypeManager.ushort_type;
 			case "long":
-				return typeof (long);
+				return TypeManager.int64_type;
 			case "ulong":
-				return typeof (ulong);
+				return TypeManager.uint64_type;;
 			case "float":
-				return typeof (float);
+				return TypeManager.float_type;;
 			case "double":
-				return typeof (double);
+				return TypeManager.double_type;
 			case "char":
-				return typeof (char);
+				return TypeManager.char_type;;
 			case "decimal":
-				return typeof (decimal);
+				return TypeManager.decimal_type;;
 			case "byte":
-				return typeof (byte);
+				return TypeManager.byte_type;;
 			case "sbyte":
-				return typeof (sbyte);
+				return TypeManager.sbyte_type;;
 			case "object":
-				return typeof (object);
+				return TypeManager.object_type;;
 			case "bool":
-				return typeof (bool);
+				return TypeManager.bool_type;;
 			case "string":
-				return typeof (string);
+				return TypeManager.string_type;;
 			case "void":
-				return typeof (void);
+				return TypeManager.void_type;;
 			}
 			FullNamedExpression e = ds.LookupNamespaceOrType (identifier, mc.Location, false);
 			if (e != null) {
@@ -711,7 +711,7 @@ namespace Mono.CSharp {
 			Type type = FindDocumentedType (mc, name, ds, cref);
 			if (type != null
 				// delegate must not be referenced with args
-				&& (!type.IsSubclassOf (typeof (System.Delegate))
+				&& (!TypeManager.IsDelegateType (type)
 				|| parameter_types == null)) {
 				string result = GetSignatureForDoc (type)
 					+ (brace_pos < 0 ? String.Empty : signature.Substring (brace_pos));
