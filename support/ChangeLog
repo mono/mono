@@ -1,3 +1,8 @@
+2008-02-12  Jonathan Pryor  <jpryor@novell.com>
+
+	* signal.c: Fix another build break; g_atomic_int_set() (part of GLib 2.10)
+	  isn't present on all build machines, so use an alternate function.
+
 2008-02-08  Jonathan Pryor  <jpryor@novell.com>
 
 	* signal.c: Mono_Unix_UnixSignal_WaitAny() semantic change: return the index
