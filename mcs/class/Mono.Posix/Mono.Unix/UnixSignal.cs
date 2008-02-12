@@ -150,6 +150,10 @@ namespace Mono.Unix {
 
 		public static unsafe int WaitAny (UnixSignal[] signals, int millisecondsTimeout)
 		{
+			if (signals == null)
+				throw new ArgumentNullException ("signals");
+			if (millisecondsTimeout < -1)
+				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
 			IntPtr[] infos = new IntPtr [signals.Length];
 			for (int i = 0; i < signals.Length; ++i) {
 				infos [i] = signals [i].signal_info;
