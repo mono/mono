@@ -52,6 +52,7 @@ label: len:0
 break: len:64
 jmp: len:64
 br: len:8
+<<<<<<< .working
 jump_table: dest:i len:48
 
 nop: len:0
@@ -73,11 +74,15 @@ sparc_cond_exc_gtz: src1:i len:64
 sparc_cond_exc_gez: src1:i len:64
 sparc_cond_exc_lez: src1:i len:64
 
+=======
+
+>>>>>>> .merge-right.r95529
 throw: src1:i len:64
 rethrow: src1:i len:64
 start_handler: len:64
 endfinally: len:64
 endfilter: src1:i len:64
+<<<<<<< .working
 call_handler: len:64
 
 conv.ovf.u4: dest:i src1:i len:64
@@ -85,6 +90,11 @@ ckfinite: dest:f src1:f len:40
 
 int_mul_ovf: dest:i src1:i src2:i len:64
 int_mul_ovf_un: dest:i src1:i src2:i len:64
+=======
+
+conv.ovf.u4: dest:i src1:i len:64
+ckfinite: dest:f src1:f len:40
+>>>>>>> .merge-right.r95529
 conv.u: dest:i src1:i len:4
 arglist: src1:i
 ceq: dest:i len:64
@@ -105,7 +115,6 @@ setfret: dest:f src1:f len:8
 outarg: src1:i len:1
 outarg_imm: len:5
 setret: dest:a src1:i len:4
-setfreg: dest:f src1:f len:4 clob:r
 sparc_setfreg_float: dest:f src1:f len:4 clob:r
 checkthis: src1:b len:4
 oparglist: src1:i len:64
@@ -188,6 +197,7 @@ cond_exc_ov: len:64
 cond_exc_no: len:64
 cond_exc_c: len:64
 cond_exc_nc: len:64
+<<<<<<< .working
 
 cond_exc_ieq: len:64
 cond_exc_ine_un: len:64
@@ -214,6 +224,8 @@ long_conv_to_r_un: dest:f src1:i src2:i len:64
 long_shr_imm: dest:i src1:i len:64
 long_shr_un_imm: dest:i src1:i len:64
 long_shl_imm: dest:i src1:i len:64
+=======
+>>>>>>> .merge-right.r95529
 float_beq: len:8
 float_bne_un: len:64
 float_blt: len:8
@@ -296,6 +308,19 @@ int_xor_imm: dest:i src1:i len:64
 int_shl_imm: dest:i src1:i len:64
 int_shr_imm: dest:i src1:i len:64
 int_shr_un_imm: dest:i src1:i len:64
+int_mul_ovf: dest:i src1:i src2:i len:64
+int_mul_ovf_un: dest:i src1:i src2:i len:64
+int_conv_to_i1: dest:i src1:i len:8
+int_conv_to_i2: dest:i src1:i len:8
+int_conv_to_i4: dest:i src1:i len:4
+int_conv_to_i8: dest:i src1:i len:4
+int_conv_to_r4: dest:f src1:i len:64
+int_conv_to_r8: dest:f src1:i len:64
+int_conv_to_u4: dest:i src1:i len:4
+int_conv_to_u8: dest:i src1:i len:4
+int_conv_to_u2: dest:i src1:i len:8
+int_conv_to_u1: dest:i src1:i len:4
+int_conv_to_i: dest:i src1:i len:4
 int_neg: dest:i src1:i len:64
 int_not: dest:i src1:i len:64
 int_ceq: dest:i len:64
@@ -303,17 +328,18 @@ int_cgt: dest:i len:64
 int_cgt_un: dest:i len:64
 int_clt: dest:i len:64
 int_clt_un: dest:i len:64
-int_beq: len:64
+int_beq: len:8
+int_bge: len:8
+int_bgt: len:8
+int_ble: len:8
+int_blt: len:8
 int_bne_un: len:64
-int_blt: len:64
-int_blt_un: len:64
-int_bgt: len:64
-int_bgt_un: len:64
-int_bge: len:64
 int_bge_un: len:64
-int_ble: len:64
+int_bgt_un: len:64
 int_ble_un: len:64
+int_blt_un: len:64
 
+<<<<<<< .working
 int_conv_to_i1: dest:i src1:i len:8
 int_conv_to_u1: dest:i src1:i len:8
 int_conv_to_i2: dest:i src1:i len:8
@@ -325,4 +351,30 @@ int_conv_to_u8: dest:i src1:i len:4
 int_conv_to_r4: dest:f src1:i len:64
 int_conv_to_r8: dest:f src1:i len:64
 
+=======
+# 64 bit opcodes
+long_shl: dest:i src1:i src2:i len:64
+long_shr: dest:i src1:i src2:i len:64
+long_shr_un: dest:i src1:i src2:i len:64
+long_conv_to_ovf_i: dest:i src1:i src2:i len:48
+long_mul_ovf: 
+long_conv_to_r_un: dest:f src1:i src2:i len:64 
+long_shr_imm: dest:i src1:i len:64
+long_shr_un_imm: dest:i src1:i len:64
+long_shl_imm: dest:i src1:i len:64
+
+>>>>>>> .merge-right.r95529
 memory_barrier: len:4
+
+sparc_brz: src1:i len: 8
+sparc_brlez: src1:i len: 8
+sparc_brlz: src1:i len: 8
+sparc_brnz: src1:i len: 8
+sparc_brgz: src1:i len: 8
+sparc_brgez: src1:i len: 8
+sparc_cond_exc_eqz: src1:i len:64
+sparc_cond_exc_nez: src1:i len:64
+sparc_cond_exc_ltz: src1:i len:64
+sparc_cond_exc_gtz: src1:i len:64
+sparc_cond_exc_gez: src1:i len:64
+sparc_cond_exc_lez: src1:i len:64

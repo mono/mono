@@ -64,6 +64,7 @@ not_null: src1:i len:0
 break: len:1
 jmp: len:32
 br: len:5
+<<<<<<< .working
 
 int_beq: len:6
 int_bge: len:6
@@ -76,6 +77,18 @@ int_bgt_un: len:6
 int_ble_un: len:6
 int_blt_un: len:6
 
+=======
+int_beq: len:6
+int_bge: len:6
+int_bgt: len:6
+int_ble: len:6
+int_blt: len:6
+int_bne_un: len:6
+int_bge_un: len:6
+int_bgt_un: len:6
+int_ble_un: len:6
+int_blt_un: len:6
+>>>>>>> .merge-right.r95529
 label: len:0
 
 int_add: dest:i src1:i src2:i len:2 clob:1
@@ -88,9 +101,28 @@ int_rem_un: dest:d src1:a src2:i len:15 clob:a
 int_and: dest:i src1:i src2:i len:2 clob:1
 int_or: dest:i src1:i src2:i len:2 clob:1
 int_xor: dest:i src1:i src2:i len:2 clob:1
+<<<<<<< .working
 int_shl: dest:i src1:i src2:s clob:1 len:2
 int_shr: dest:i src1:i src2:s clob:1 len:2
 int_shr_un: dest:i src1:i src2:s clob:1 len:2
+=======
+int_shl: dest:i src1:i src2:s clob:1 len:2
+int_shr: dest:i src1:i src2:s clob:1 len:2
+int_shr_un: dest:i src1:i src2:s clob:1 len:2
+int_neg: dest:i src1:i len:2 clob:1
+int_not: dest:i src1:i len:2 clob:1
+int_conv_to_i1: dest:i src1:y len:3
+int_conv_to_i2: dest:i src1:i len:3
+int_conv_to_i4: dest:i src1:i len:2
+int_conv_to_r4: dest:f src1:i len:7
+int_conv_to_r8: dest:f src1:i len:7
+int_conv_to_u4: dest:i src1:i
+int_conv_to_u2: dest:i src1:i len:3
+int_conv_to_u1: dest:i src1:y len:3
+int_conv_to_i: dest:i src1:i len:3
+int_mul_ovf: dest:i src1:i src2:i clob:1 len:9
+int_mul_ovf_un: dest:i src1:i src2:i len:16
+>>>>>>> .merge-right.r95529
 
 int_neg: dest:i src1:i len:2 clob:1
 int_not: dest:i src1:i len:2 clob:1
@@ -114,11 +146,14 @@ endfilter: src1:a len:16
 call_handler: len:10
 
 ckfinite: dest:f src1:f len:32
+<<<<<<< .working
 
 int_mul_ovf: dest:i src1:i src2:i clob:1 len:9
 int_mul_ovf_un: dest:i src1:i src2:i len:16
 
 conv.u: dest:i src1:i len:3
+=======
+>>>>>>> .merge-right.r95529
 
 ceq: dest:y len:6
 cgt: dest:y len:6

@@ -435,8 +435,13 @@ mono_arch_free_jit_tls_data (MonoJitTlsData *tls)
 
 /*========================= End of Function ========================*/
 
-static void
-  peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
+void
+mono_arch_peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
+{
+}
+
+void
+mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 {
   MonoInst *ins, *last_ins = NULL;
   ins = bb->code;
@@ -607,8 +612,6 @@ static void
    
   bb->last_ins = last_ins;
 }
-
-
 
 // Convert to opposite branch opcode
 static guint16 cvt_branch_opcode(guint16 opcode)
@@ -1206,33 +1209,6 @@ static void
    bb->last_ins = last_ins;
    
    bb->max_vreg = cfg->rs->next_vreg;
-}
-
-/*------------------------------------------------------------------*/
-/*                                                                  */
-/* Name         - mono_arch_local_regalloc.                         */
-/*                                                                  */
-/* Function     - We first scan the list of instructions and we     */
-/*                save the liveness information of each register    */
-/*                (when the register is first used, when its value  */
-/*                is set etc.). We also reverse the list of instr-  */
-/*                uctions (in the InstList list) because assigning  */
-/*                registers backwards allows for more tricks to be  */
-/*                used.                                             */
-/*                                                                  */
-/*------------------------------------------------------------------*/
-
-void
-mono_arch_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
-{
-  CFG_DEBUG(2) ALPHA_DEBUG("mono_arch_local_regalloc");
-   
-  if (!bb->code)
-    return;
-   
-  mono_arch_lowering_pass (cfg, bb);
-   
-  mono_local_regalloc(cfg, bb);
 }
 
 /*========================= End of Function ========================*/
@@ -2234,9 +2210,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
    
    CFG_DEBUG(2) ALPHA_DEBUG("mono_arch_output_basic_block");
    
-   if (cfg->opt & MONO_OPT_PEEPHOLE)
-     peephole_pass (cfg, bb);
-    
    CFG_DEBUG(2) g_print ("Basic block %d(%p) starting at offset 0x%x\n",
 			 bb->block_num, bb, bb->native_offset);
    
@@ -3720,7 +3693,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 	 case OP_LCALL:
 	 case OP_VCALL:
 	 case OP_VOIDCALL:
-	 case CEE_CALL:
+	 case OP_CALL:
 	   CFG_DEBUG(4) g_print("ALPHA_CHECK: [fcall/lcall/vcall/voidcall/call] Target: [");
 	   call = (MonoCallInst*)ins;
 	   
@@ -5260,11 +5233,6 @@ mono_arch_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod,
    CFG_DEBUG(2) ALPHA_DEBUG("mono_arch_get_inst_for_method");
    
    CFG_DEBUG(3) g_print("mono_arch_get_inst_for_method: %s\n", cmethod->name);
-   
-   if (cmethod->klass == mono_defaults.thread_class &&
-       strcmp (cmethod->name, "MemoryBarrier") == 0) {
-     MONO_INST_NEW (cfg, ins, OP_MEMORY_BARRIER);
-   }
    
    return ins;
 }

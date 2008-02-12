@@ -1,3 +1,103 @@
+2008-02-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_layout_fields): Set class->min_align for classes using
+	explicit layout as well. Fixes #360375.
+
+2008-02-11  Geoff Norton  <gnorton@novell.com>
+
+	* loader.c: Guard and dereference against inflated generic methods
+
+2008-02-10  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* class.c: Include Retargetable spec in assembly name.
+	* assembly.c: Always include PublicKeyToken spec in assembly name
+	(with value "null" if assembly is not signed), and include
+	Retargetable spec.
+	* icall-def.h: Added icall for Assembly.get_fullname.
+	* icall.c: Added icall returning the fullname of an assembly.
+
+2008-02-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_setup_vtable_general): Add a missing call to
+	mono_class_setup_methods () which is needed in the AOT case.
+
+2008-02-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_type_get_stack_name): Added. Return the name for the
+	stack type of the given MonoType.
+
+	* verify.c (verify_type_compatibility_full): Handle the void type.
+
+	* verify.c (is_compatible_boxed_valuetype): Changed to fit the
+	way stack merging works.
+
+	* verify.c (store_local): Improved verification message.
+
+	* verify.c (do_branch_op): If the merging is invalid, the method
+	is unverifiable and not invalid. Improved error message.
+
+	* verify.c (merge_stacks): Properly merge a boxed valuetype and
+	a reference type diferent than System.Object. Improved error
+	message.
+
+2008-02-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_type_is_enum_type): Added. Test if a type is an enum.
+
+	* verify.c (mono_type_get_underlying_type_any): Added. Return the underlying
+	type of an enum even if the argument is byref.
+
+	* verify.c: Replace all explicit uses of enumtype and enum_basetype
+	to calls to mono_type_is_enum_type and mono_type_get_underlying_type_any.
+
+	* verify.c: Check for an enum in all cases of MONO_TYPE_GENERICINST.
+
+	*verify.c (verify_type_compatibility_full): Make enum types
+	compatible with their base types.
+
+	* verify.c (is_compatible_boxed_valuetype): Added. Check if both
+	types are compatible for the special case of a boxed valuetype and
+	System.Object.
+
+	* verify.c (verify_stack_type_compatibility): The function
+	is_compatible_boxed_valuetype was extracted from here.
+
+	* verify.c (push_arg): Only set ctx->has_this_store if the method
+	is not static.
+
+	* verify.c (do_ldelem): Fixed a typo in an error message and added
+	strict check for mixing int32 and native int as the array type
+	and ldelem type.
+
+	* verify.c (merge_stacks): Consider boxed valuetypes in the
+	compatibility checks.
+
+2008-02-07  Massimiliano Mantione  <massi@ximian.com>
+	* profiler.h: (MonoGCEvent): Added start-stop the world events.
+
+2008-02-06  Massimiliano Mantione  <massi@ximian.com>
+	*class.c: use_new_interface_vtable_code: renamed the env var to have
+	a "MONO_" prefix, and fix the logic to enable it by default.
+
+2008-02-06  Massimiliano Mantione  <massi@ximian.com>
+	*class.c:
+	mono_class_setup_vtable_general: rewrote the way in which interface
+	methods are added to vtables. Makes bug-77127.exe pass, and hopefully
+	makes the code more maintainable.
+	For now the old code is still there, and can be activated setting
+	the env var "USE_NEW_INTERFACE_VTABLE_CODE".
+
+2008-02-06 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: guarded some debug functions around and #ifdef.
+
+	* verify.c (merge_stacks): implement proper PIII 1.8.1.3 stack state merging.
+
+2008-02-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_runtime_invoke): Revert the direct_wrapper
+	changes for now since they seem to break too many things.
+
 2008-02-05  Mark Probst  <mark.probst@gmail.com>
 
 	* marshal.c, marshal.h (mono_marshal_find_bitfield_offset,

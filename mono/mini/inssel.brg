@@ -865,13 +865,13 @@ stmt: OP_ARGLIST (reg) {
 	mono_bblock_add_inst (s->cbb, tree);
 }
 
-reg: CEE_CALL {
+reg: OP_CALL {
 	tree->opcode = OP_CALL;
 	tree->dreg = state->reg1;
 	mono_bblock_add_inst (s->cbb, tree);
 }
 
-reg: CEE_CALLVIRT (reg) {
+reg: OP_CALLVIRT (reg) {
 	mini_emit_virtual_call (s, state, tree, OP_CALL, OP_CALL_MEMBASE);
 }
 

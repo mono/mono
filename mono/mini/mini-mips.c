@@ -1284,8 +1284,13 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 	return call;
 }
 
-static void
-peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
+void
+mono_arch_peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
+{
+}
+
+void
+mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 {
 	MonoInst *ins, *last_ins = NULL;
 	ins = bb->code;
@@ -1532,7 +1537,7 @@ map_to_reg_reg_op (int op)
  * represented with very simple instructions with no register
  * requirements.
  */
-static void
+void
 mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 {
 	MonoInst *ins, *next, *temp, *last_ins = NULL;
@@ -1692,15 +1697,6 @@ loop_start:
 	bb->max_vreg = cfg->rs->next_vreg;
 }
 
-void
-mono_arch_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
-{
-	if (!bb->code)
-		return;
-	mono_arch_lowering_pass (cfg, bb);
-	mono_local_regalloc (cfg, bb);
-}
-
 static guchar*
 emit_float_to_int (MonoCompile *cfg, guchar *code, int dreg, int sreg, int size, gboolean is_signed)
 {
@@ -1742,9 +1738,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 	guint last_offset = 0;
 	int max_len, cpos;
 	int ins_cnt = 0;
-
-	if (cfg->opt & MONO_OPT_PEEPHOLE)
-		peephole_pass (cfg, bb);
 
 	/* we don't align basic blocks of loops on mips */
 
@@ -2314,7 +2307,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_LCALL:
 		case OP_VCALL:
 		case OP_VOIDCALL:
-		case CEE_CALL:
+		case OP_CALL:
 		case OP_FCALL_REG:
 		case OP_LCALL_REG:
 		case OP_VCALL_REG:
@@ -2330,7 +2323,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			case OP_LCALL:
 			case OP_VCALL:
 			case OP_VOIDCALL:
-			case CEE_CALL:
+			case OP_CALL:
 				call = (MonoCallInst*)ins;
 				if (ins->flags & MONO_INST_HAS_METHOD)
 					mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_METHOD, call->method);
@@ -3945,18 +3938,6 @@ mono_arch_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethod
 {
 	MonoInst *ins = NULL;
 
-	if (cmethod->klass == mono_defaults.thread_class &&
-			strcmp (cmethod->name, "MemoryBarrier") == 0) {
-		MONO_INST_NEW (cfg, ins, OP_MEMORY_BARRIER);
-	}
-#if 0
-	if (cmethod->klass == mono_defaults.math_class) {
-		if (strcmp (cmethod->name, "Sqrt") == 0) {
-			MONO_INST_NEW (cfg, ins, OP_SQRT);
-			ins->inst_i0 = args [0];
-		}
-	}
-#endif
 	return ins;
 }
 

@@ -817,6 +817,9 @@ enum {
 #define OP_PMUL OP_LMUL
 #define OP_PMUL_IMM OP_LMUL_IMM
 #define OP_PNEG OP_LNEG
+#define OP_PCONV_TO_I1 OP_LCONV_TO_I1
+#define OP_PCONV_TO_U1 OP_LCONV_TO_U1
+#define OP_PCONV_TO_I2 OP_LCONV_TO_I2
 #define OP_PCONV_TO_U2 OP_LCONV_TO_U2
 #define OP_PCONV_TO_OVF_I1_UN OP_LCONV_TO_OVF_I1_UN
 #define OP_PCONV_TO_OVF_I1 OP_LCONV_TO_OVF_I1
@@ -856,6 +859,9 @@ enum {
 #define OP_PADD OP_LADD
 #define OP_PADD_IMM OP_LADD_IMM
 #define OP_PNEG OP_LNEG
+#define OP_PCONV_TO_I1 OP_LCONV_TO_I1
+#define OP_PCONV_TO_U1 OP_LCONV_TO_U1
+#define OP_PCONV_TO_I2 OP_LCONV_TO_I2
 #define OP_PCONV_TO_U2 OP_LCONV_TO_U2
 #define OP_PCONV_TO_OVF_I1_UN OP_LCONV_TO_OVF_I1_UN
 #define OP_PCONV_TO_OVF_I1 OP_LCONV_TO_OVF_I1
@@ -868,6 +874,9 @@ enum {
 #define OP_PADD CEE_ADD
 #define OP_PADD2 OP_IADD
 #define OP_PNEG CEE_NEG
+#define OP_PCONV_TO_I1 OP_ICONV_TO_I1
+#define OP_PCONV_TO_U1 OP_ICONV_TO_U1
+#define OP_PCONV_TO_I2 OP_ICONV_TO_I2
 #define OP_PCONV_TO_U2 CEE_CONV_U2
 #define OP_PCONV_TO_OVF_I1_UN CEE_CONV_OVF_I1_UN
 #define OP_PCONV_TO_OVF_I1 CEE_CONV_OVF_I1
@@ -1174,47 +1183,49 @@ void              mono_branch_to_cmov (MonoCompile *cfg) MONO_INTERNAL;
 /* methods that must be provided by the arch-specific port */
 void      mono_arch_init                        (void) MONO_INTERNAL;
 void      mono_arch_cleanup                     (void) MONO_INTERNAL;
-void      mono_arch_cpu_init                    (void);
-guint32   mono_arch_cpu_optimizazions           (guint32 *exclude_mask);
-void      mono_arch_instrument_mem_needs        (MonoMethod *method, int *stack, int *code);
-void     *mono_arch_instrument_prolog           (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments);
-void     *mono_arch_instrument_epilog           (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments);
-MonoCallInst *mono_arch_call_opcode             (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call, int is_virtual);
-void      mono_arch_emit_call                   (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual);
-void      mono_arch_emit_outarg_vt              (MonoCompile *cfg, MonoInst *ins, MonoInst *src);
-void      mono_arch_emit_setret                 (MonoCompile *cfg, MonoMethod *method, MonoInst *val);
-MonoInst *mono_arch_get_inst_for_method         (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args);
-MonoInst *mono_arch_emit_inst_for_method       (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args);
-void      mono_codegen                          (MonoCompile *cfg);
-void      mono_call_inst_add_outarg_reg         (MonoCompile *cfg, MonoCallInst *call, int vreg, int hreg, gboolean fp);
-const char *mono_arch_regname                   (int reg);
-const char *mono_arch_fregname                  (int reg);
-gpointer  mono_arch_get_throw_exception         (void);
-gpointer  mono_arch_get_rethrow_exception       (void);
-gpointer  mono_arch_get_throw_exception_by_name (void);
-gpointer  mono_arch_get_throw_corlib_exception  (void);
-guchar*   mono_arch_create_trampoline_code      (MonoTrampolineType tramp_type);
-gpointer  mono_arch_create_jit_trampoline       (MonoMethod *method);
-MonoJitInfo *mono_arch_create_jump_trampoline      (MonoMethod *method);
-gpointer  mono_arch_create_class_init_trampoline(MonoVTable *vtable);
-GList    *mono_arch_get_allocatable_int_vars    (MonoCompile *cfg);
-GList    *mono_arch_get_global_int_regs         (MonoCompile *cfg);
-guint32   mono_arch_regalloc_cost               (MonoCompile *cfg, MonoMethodVar *vmv);
-void      mono_arch_patch_code                  (MonoMethod *method, MonoDomain *domain, guint8 *code, MonoJumpInfo *ji, gboolean run_cctors);
-void      mono_arch_flush_icache                (guint8 *code, gint size);
-int       mono_arch_max_epilog_size             (MonoCompile *cfg);
-guint8   *mono_arch_emit_prolog                 (MonoCompile *cfg);
-void      mono_arch_emit_epilog                 (MonoCompile *cfg);
-void      mono_arch_emit_exceptions             (MonoCompile *cfg);
-void      mono_arch_local_regalloc              (MonoCompile *cfg, MonoBasicBlock *bb);
-void      mono_arch_output_basic_block          (MonoCompile *cfg, MonoBasicBlock *bb);
-gboolean  mono_arch_has_unwind_info             (gconstpointer addr);
-void      mono_arch_setup_jit_tls_data          (MonoJitTlsData *tls);
-void      mono_arch_free_jit_tls_data           (MonoJitTlsData *tls);
-void      mono_arch_emit_this_vret_args         (MonoCompile *cfg, MonoCallInst *inst, int this_reg, int this_type, int vt_reg);
-void      mono_arch_allocate_vars               (MonoCompile *m);
-int       mono_arch_get_argument_info           (MonoMethodSignature *csig, int param_count, MonoJitArgumentInfo *arg_info);
-gboolean  mono_arch_print_tree			(MonoInst *tree, int arity);
+void      mono_arch_cpu_init                    (void) MONO_INTERNAL;
+guint32   mono_arch_cpu_optimizazions           (guint32 *exclude_mask) MONO_INTERNAL;
+void      mono_arch_instrument_mem_needs        (MonoMethod *method, int *stack, int *code) MONO_INTERNAL;
+void     *mono_arch_instrument_prolog           (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments) MONO_INTERNAL;
+void     *mono_arch_instrument_epilog           (MonoCompile *cfg, void *func, void *p, gboolean enable_arguments) MONO_INTERNAL;
+MonoCallInst *mono_arch_call_opcode             (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call, int is_virtual) MONO_INTERNAL;
+MonoInst *mono_arch_get_inst_for_method         (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args) MONO_INTERNAL;
+void      mono_codegen                          (MonoCompile *cfg) MONO_INTERNAL;
+void      mono_call_inst_add_outarg_reg         (MonoCompile *cfg, MonoCallInst *call, int vreg, int hreg, gboolean fp) MONO_INTERNAL;
+const char *mono_arch_regname                   (int reg) MONO_INTERNAL;
+const char *mono_arch_fregname                  (int reg) MONO_INTERNAL;
+gpointer  mono_arch_get_throw_exception         (void) MONO_INTERNAL;
+gpointer  mono_arch_get_rethrow_exception       (void) MONO_INTERNAL;
+gpointer  mono_arch_get_throw_exception_by_name (void) MONO_INTERNAL;
+gpointer  mono_arch_get_throw_corlib_exception  (void) MONO_INTERNAL;
+guchar*   mono_arch_create_trampoline_code      (MonoTrampolineType tramp_type) MONO_INTERNAL;
+gpointer  mono_arch_create_jit_trampoline       (MonoMethod *method) MONO_INTERNAL;
+MonoJitInfo *mono_arch_create_jump_trampoline      (MonoMethod *method) MONO_INTERNAL;
+gpointer  mono_arch_create_class_init_trampoline(MonoVTable *vtable) MONO_INTERNAL;
+GList    *mono_arch_get_allocatable_int_vars    (MonoCompile *cfg) MONO_INTERNAL;
+GList    *mono_arch_get_global_int_regs         (MonoCompile *cfg) MONO_INTERNAL;
+guint32   mono_arch_regalloc_cost               (MonoCompile *cfg, MonoMethodVar *vmv) MONO_INTERNAL;
+void      mono_arch_patch_code                  (MonoMethod *method, MonoDomain *domain, guint8 *code, MonoJumpInfo *ji, gboolean run_cctors) MONO_INTERNAL;
+void      mono_arch_flush_icache                (guint8 *code, gint size) MONO_INTERNAL;
+int       mono_arch_max_epilog_size             (MonoCompile *cfg) MONO_INTERNAL;
+guint8   *mono_arch_emit_prolog                 (MonoCompile *cfg) MONO_INTERNAL;
+void      mono_arch_emit_epilog                 (MonoCompile *cfg) MONO_INTERNAL;
+void      mono_arch_emit_exceptions             (MonoCompile *cfg) MONO_INTERNAL;
+void      mono_arch_lowering_pass               (MonoCompile *cfg, MonoBasicBlock *bb) MONO_INTERNAL;
+void      mono_arch_peephole_pass_1             (MonoCompile *cfg, MonoBasicBlock *bb) MONO_INTERNAL;
+void      mono_arch_peephole_pass_2             (MonoCompile *cfg, MonoBasicBlock *bb) MONO_INTERNAL;
+void      mono_arch_output_basic_block          (MonoCompile *cfg, MonoBasicBlock *bb) MONO_INTERNAL;
+gboolean  mono_arch_has_unwind_info             (gconstpointer addr) MONO_INTERNAL;
+void      mono_arch_setup_jit_tls_data          (MonoJitTlsData *tls) MONO_INTERNAL;
+void      mono_arch_free_jit_tls_data           (MonoJitTlsData *tls) MONO_INTERNAL;
+void      mono_arch_emit_this_vret_args         (MonoCompile *cfg, MonoCallInst *inst, int this_reg, int this_type, int vt_reg) MONO_INTERNAL;
+void      mono_arch_allocate_vars               (MonoCompile *m) MONO_INTERNAL;
+int       mono_arch_get_argument_info           (MonoMethodSignature *csig, int param_count, MonoJitArgumentInfo *arg_info) MONO_INTERNAL;
+gboolean  mono_arch_print_tree			(MonoInst *tree, int arity) MONO_INTERNAL;
+void      mono_arch_emit_call                   (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual) MONO_INTERNAL;
+void      mono_arch_emit_outarg_vt              (MonoCompile *cfg, MonoInst *ins, MonoInst *src) MONO_INTERNAL;
+void      mono_arch_emit_setret                 (MonoCompile *cfg, MonoMethod *method, MonoInst *val) MONO_INTERNAL;
+MonoInst *mono_arch_emit_inst_for_method       (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args) MONO_INTERNAL;
 
 MonoJitInfo *mono_arch_find_jit_info            (MonoDomain *domain, 
 						 MonoJitTlsData *jit_tls, 

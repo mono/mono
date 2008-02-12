@@ -132,6 +132,9 @@ typedef struct {
 static void
 merge_stacks (VerifyContext *ctx, ILCodeDesc *from, ILCodeDesc *to, int start, gboolean external);
 
+static int
+get_stack_type (MonoType *type);
+
 //////////////////////////////////////////////////////////////////
 
 
@@ -224,6 +227,44 @@ mono_type_create_fnptr_from_mono_method (VerifyContext *ctx, MonoMethod *method)
 	res->type = MONO_TYPE_FNPTR;
 	ctx->funptrs = g_slist_prepend (ctx->funptrs, res);
 	return res;
+}
+
+/*
+ * mono_type_is_enum_type:
+ * 
+ * Returns TRUE if @type is an enum type. 
+ */
+static gboolean
+mono_type_is_enum_type (MonoType *type)
+{
+	if (type->type == MONO_TYPE_VALUETYPE && type->data.klass->enumtype)
+		return TRUE;
+	if (type->type == MONO_TYPE_GENERICINST && type->data.generic_class->container_class->enumtype)
+		return TRUE;
+	return FALSE;
+}
+
+/*
+ * mono_type_get_underlying_type_any:
+ * 
+ * This functions is just like mono_type_get_underlying_type but it doesn't care if the type is byref.
+ * 
+ * Returns the underlying type of @type regardless if it is byref or not.
+ */
+static MonoType*
+mono_type_get_underlying_type_any (MonoType *type)
+{
+	if (type->type == MONO_TYPE_VALUETYPE && type->data.klass->enumtype)
+		return type->data.klass->enum_basetype;
+	if (type->type == MONO_TYPE_GENERICINST && type->data.generic_class->container_class->enumtype)
+		return type->data.generic_class->container_class->enum_basetype;
+	return type;
+}
+
+static const char*
+mono_type_get_stack_name (MonoType *type)
+{
+	return type_names [get_stack_type (type) & TYPE_MASK];
 }
 
 #define CTOR_REQUIRED_FLAGS (METHOD_ATTRIBUTE_SPECIAL_NAME | METHOD_ATTRIBUTE_RT_SPECIAL_NAME)
@@ -1492,6 +1533,7 @@ static const unsigned char bin_ovf_table [TYPE_MAX][TYPE_MAX] = {
 	{TYPE_INV, TYPE_INV, TYPE_INV, TYPE_INV, TYPE_INV, TYPE_INV},
 };
 
+#ifdef MONO_VERIFIER_DEBUG
 
 /*debug helpers */
 static void
@@ -1588,6 +1630,7 @@ dump_stack_state (ILCodeDesc *state)
 		dump_stack_value (state->stack + i);
 	printf ("\n");
 }
+#endif
 
 /*Returns TRUE if candidate array type can be assigned to target.
  *Both parameters MUST be of type MONO_TYPE_ARRAY (target->type == MONO_TYPE_ARRAY)
@@ -1658,8 +1701,16 @@ handle_enum:
 	case MONO_TYPE_OBJECT:
 	case MONO_TYPE_SZARRAY:
 	case MONO_TYPE_ARRAY:
-	case MONO_TYPE_GENERICINST:
 		return TYPE_COMPLEX | mask;
+
+	case MONO_TYPE_GENERICINST:
+		if (mono_type_is_enum_type (type)) {
+			type = mono_type_get_underlying_type_any (type);
+			type_kind = type->type;
+			goto handle_enum;
+		} else {
+			return TYPE_COMPLEX | mask;
+		}
 
 	case MONO_TYPE_I8:
 	case MONO_TYPE_U8:
@@ -1670,12 +1721,13 @@ handle_enum:
 		return TYPE_R8 | mask;
 
 	case MONO_TYPE_VALUETYPE:
-		if (type->data.klass->enumtype) {
-			type = type->data.klass->enum_basetype;
+		if (mono_type_is_enum_type (type)) {
+			type = mono_type_get_underlying_type_any (type);
 			type_kind = type->type;
 			goto handle_enum;
-		} else 
+		} else {
 			return TYPE_COMPLEX | mask;
+		}
 
 	default:
 		VERIFIER_DEBUG ( printf ("unknown type %02x in eval stack type\n", type->type); );
@@ -1727,11 +1779,21 @@ handle_enum:
 	case MONO_TYPE_SZARRAY:
 	case MONO_TYPE_ARRAY:
 
-	case MONO_TYPE_GENERICINST:
 	case MONO_TYPE_VAR:
 	case MONO_TYPE_MVAR: 
 		stack->stype = TYPE_COMPLEX | mask;
 		break;
+		
+	case MONO_TYPE_GENERICINST:
+		if (mono_type_is_enum_type (type)) {
+			type = mono_type_get_underlying_type_any (type);
+			type_kind = type->type;
+			goto handle_enum;
+		} else {
+			stack->stype = TYPE_COMPLEX | mask;
+			break;
+		}
+
 	case MONO_TYPE_I8:
 	case MONO_TYPE_U8:
 		stack->stype = TYPE_I8 | mask;
@@ -1741,8 +1803,8 @@ handle_enum:
 		stack->stype = TYPE_R8 | mask;
 		break;
 	case MONO_TYPE_VALUETYPE:
-		if (type->data.klass->enumtype) {
-			type = type->data.klass->enum_basetype;
+		if (mono_type_is_enum_type (type)) {
+			type = mono_type_get_underlying_type_any (type);
 			type_kind = type->type;
 			goto handle_enum;
 		} else {
@@ -1802,8 +1864,8 @@ handle_enum:
 		return mono_class_is_assignable_from (target->data.klass, candidate->data.klass);
 
 	case MONO_TYPE_VALUETYPE:
-		if (target->data.klass->enumtype) {
-			target = target->data.klass->enum_basetype;
+		if (mono_type_is_enum_type (target)) {
+			target = mono_type_get_underlying_type_any (target);
 			goto handle_enum;
 		} else {
 			if (candidate->type != MONO_TYPE_VALUETYPE)
@@ -1944,6 +2006,7 @@ verify_type_compatibility_full (VerifyContext *ctx, MonoType *target, MonoType *
 #define IS_ONE_OF3(T, A, B, C) (T == A || T == B || T == C)
 #define IS_ONE_OF2(T, A, B) (T == A || T == B)
 
+	MonoType *original_candidate = candidate;
 	VERIFIER_DEBUG ( printf ("checking type compatibility %p %p[%x][%x] %p[%x][%x]\n", ctx, target, target->type, target->byref, candidate, candidate->type, candidate->byref); );
 
  	/*only one is byref */
@@ -1956,9 +2019,13 @@ verify_type_compatibility_full (VerifyContext *ctx, MonoType *target, MonoType *
 		return FALSE;
 	}
 	strict |= target->byref;
+	/*From now on we don't care about byref anymore, so it's ok to discard it here*/
+	candidate = mono_type_get_underlying_type_any (candidate);
 
 handle_enum:
 	switch (target->type) {
+	case MONO_TYPE_VOID:
+		return candidate->type == MONO_TYPE_VOID;
 	case MONO_TYPE_I1:
 	case MONO_TYPE_U1:
 	case MONO_TYPE_BOOLEAN:
@@ -2016,6 +2083,11 @@ handle_enum:
 	case MONO_TYPE_GENERICINST: {
 		MonoGenericClass *left;
 		MonoGenericClass *right;
+		if (mono_type_is_enum_type (target)) {
+			target = mono_type_get_underlying_type_any (target);
+			goto handle_enum;
+		}
+
 		if (candidate->type != MONO_TYPE_GENERICINST)
 			return mono_class_is_assignable_from (mono_class_from_mono_type (target), mono_class_from_mono_type (candidate));
 		left = target->data.generic_class;
@@ -2028,7 +2100,10 @@ handle_enum:
 		return candidate->type == MONO_TYPE_STRING;
 
 	case MONO_TYPE_CLASS:
-		return mono_class_is_assignable_from (target->data.klass, mono_class_from_mono_type (candidate));
+		/* If candidate is an enum it should return true for System.Enum and supertypes.
+		 * That's why here we use the original type and not the underlying type.
+		 */ 
+		return mono_class_is_assignable_from (target->data.klass, mono_class_from_mono_type (original_candidate));
 
 	case MONO_TYPE_OBJECT:
 		return MONO_TYPE_IS_REFERENCE (candidate);
@@ -2055,8 +2130,8 @@ handle_enum:
 	case MONO_TYPE_VALUETYPE:
 		if (candidate->type == MONO_TYPE_VALUETYPE && target->data.klass == candidate->data.klass)
 			return TRUE;
-		if (target->data.klass->enumtype) {
-			target = target->data.klass->enum_basetype;
+		if (mono_type_is_enum_type (target)) {
+			target = mono_type_get_underlying_type_any (target);
 			goto handle_enum;
 		}
 		return FALSE;
@@ -2087,6 +2162,26 @@ verify_type_compatibility (VerifyContext *ctx, MonoType *target, MonoType *candi
 	return verify_type_compatibility_full (ctx, target, candidate, FALSE);
 }
 
+/*
+ * is_compatible_boxed_valuetype:
+ * 
+ * Returns TRUE if @candidate / @stack is a valid boxed valuetype. 
+ * 
+ * @type The source type. It it tested to be of the proper type.    
+ * @candidate type of the boxed valuetype.
+ * @stack stack slot of the boxed valuetype, separate from @candidade since one could be changed before calling this function
+ * @type_must_be_object if TRUE @type must be System.Object, otherwise can be any reference type.
+ * 
+ */
+static gboolean
+is_compatible_boxed_valuetype (MonoType *type, MonoType *candidate, ILStackDesc *stack, gboolean type_must_be_object)
+{
+	if (type_must_be_object && type->type != MONO_TYPE_OBJECT)
+		return FALSE;
+	if (!type_must_be_object && !MONO_TYPE_IS_REFERENCE (type))
+		return FALSE;
+	return !type->byref && mono_class_from_mono_type (candidate)->valuetype && !candidate->byref && stack_slot_is_boxed_value (stack);
+}
 
 static int
 verify_stack_type_compatibility (VerifyContext *ctx, MonoType *type, ILStackDesc *stack)
@@ -2095,7 +2190,7 @@ verify_stack_type_compatibility (VerifyContext *ctx, MonoType *type, ILStackDesc
 	if (MONO_TYPE_IS_REFERENCE (type) && !type->byref && stack_slot_is_null_literal (stack))
 		return TRUE;
 
-	if (type->type == MONO_TYPE_OBJECT && mono_class_from_mono_type (candidate)->valuetype && !candidate->byref && stack_slot_is_boxed_value (stack))
+	if (is_compatible_boxed_valuetype (type, candidate, stack, TRUE))
 		return TRUE;
 
 	return verify_type_compatibility_full (ctx, type, candidate, FALSE);
@@ -2288,7 +2383,7 @@ store_arg (VerifyContext *ctx, guint32 arg)
 			CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Incompatible type %s in argument store at 0x%04x", stack_slot_get_name (value), ctx->ip_offset));
 		}
 	}
-	if (arg == 0)
+	if (arg == 0 && !(ctx->method->flags & METHOD_ATTRIBUTE_STATIC))
 		ctx->has_this_store = 1;
 }
 
@@ -2305,7 +2400,10 @@ store_local (VerifyContext *ctx, guint32 arg)
 	if (check_underflow (ctx, 1)) {
 		value = stack_pop(ctx);
 		if (!verify_stack_type_compatibility (ctx, ctx->locals [arg], value)) {
-			CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Incompatible type %s in local store at 0x%04x", stack_slot_get_name (value), ctx->ip_offset));	
+			CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Incompatible type [%s], type [%s] was expected in local store at 0x%04x",
+					stack_slot_get_name (value),
+					mono_type_get_stack_name (ctx->locals [arg]),
+					ctx->ip_offset));	
 		}
 	}
 }
@@ -2454,7 +2552,7 @@ do_branch_op (VerifyContext *ctx, signed int delta, const unsigned char table [T
 	VERIFIER_DEBUG ( printf ("idxa %d idxb %d\n", idxa, idxb); );
 
 	if (res == TYPE_INV) {
-		ADD_VERIFY_ERROR (ctx,
+		CODE_NOT_VERIFIABLE (ctx,
 			g_strdup_printf ("Compare and Branch instruction applyed to ill formed stack (%s x %s) at 0x%04x", stack_slot_get_name (a), stack_slot_get_name (b), ctx->ip_offset));
 	} else if (res & NON_VERIFIABLE_RESULT) {
 			CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Compare and Branch instruction is not verifiable (%s x %s) at 0x%04x", stack_slot_get_name (a), stack_slot_get_name (b), ctx->ip_offset)); 
@@ -2865,7 +2963,7 @@ do_unary_math_op (VerifyContext *ctx, int op)
 		if (op == CEE_NEG)
 			break;
 	case TYPE_COMPLEX: /*only enums are ok*/
-		if (value->type->type == MONO_TYPE_VALUETYPE && value->type->data.klass->enumtype)
+		if (mono_type_is_enum_type (value->type))
 			break;
 	default:
 		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Invalid type at stack for unary not at 0x%04x", ctx->ip_offset));
@@ -3316,6 +3414,7 @@ do_ldelema (VerifyContext *ctx, int klass_token)
 static void
 do_ldelem (VerifyContext *ctx, int opcode, int token)
 {
+#define IS_ONE_OF2(T, A, B) (T == A || T == B)
 	ILStackDesc *index, *array;
 	MonoType *type;
 	if (!check_underflow (ctx, 2))
@@ -3335,7 +3434,7 @@ do_ldelem (VerifyContext *ctx, int opcode, int token)
 	array = stack_pop (ctx);
 
 	if (stack_slot_get_type (index) != TYPE_I4 && stack_slot_get_type (index) != TYPE_NATIVE_INT)
-		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Index type(%s) for ldelema is not an int or a native int at 0x%04x", stack_slot_get_name (index), ctx->ip_offset));
+		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Index type(%s) for ldelem.X is not an int or a native int at 0x%04x", stack_slot_get_name (index), ctx->ip_offset));
 
 	if (!stack_slot_is_null_literal (array)) {
 		if (stack_slot_get_type (array) != TYPE_COMPLEX || array->type->type != MONO_TYPE_SZARRAY)
@@ -3345,13 +3444,23 @@ do_ldelem (VerifyContext *ctx, int opcode, int token)
 				if (array->type->data.klass->valuetype)
 					CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Invalid array type is not a reference type for ldelem.ref 0x%04x", ctx->ip_offset));
 				type = &array->type->data.klass->byval_arg;
-			} else if (!verify_type_compatibility_full (ctx, type, &array->type->data.klass->byval_arg, TRUE)) {
-				CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Invalid array type on stack for ldelem.X at 0x%04x", ctx->ip_offset));
+			} else {
+				MonoType *candidate = &array->type->data.klass->byval_arg;
+				if (IS_STRICT_MODE (ctx)) {
+					MonoType *underlying_type = mono_type_get_underlying_type_any (type);
+					MonoType *underlying_candidate = mono_type_get_underlying_type_any (candidate);
+					if ((IS_ONE_OF2 (underlying_type->type, MONO_TYPE_I4, MONO_TYPE_U4) && IS_ONE_OF2 (underlying_candidate->type, MONO_TYPE_I, MONO_TYPE_U)) ||
+						(IS_ONE_OF2 (underlying_candidate->type, MONO_TYPE_I4, MONO_TYPE_U4) && IS_ONE_OF2 (underlying_type->type, MONO_TYPE_I, MONO_TYPE_U)))
+						CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Invalid array type on stack for ldelem.X at 0x%04x", ctx->ip_offset));
+				}
+				if (!verify_type_compatibility_full (ctx, type, candidate, TRUE))
+					CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Invalid array type on stack for ldelem.X at 0x%04x", ctx->ip_offset));
 			}
 		}
 	}
 
 	set_stack_value (ctx, stack_push (ctx), type, FALSE);
+#undef IS_ONE_OF2
 }
 
 /*FIXME handle arrays that are not 0-indexed*/
@@ -3630,11 +3739,19 @@ do_ldstr (VerifyContext *ctx, guint32 token)
 		stack_push_val (ctx, TYPE_COMPLEX,  &mono_defaults.string_class->byval_arg);
 }
 
-/*Merge the stacks and perform compat checks*/
+/*
+ * merge_stacks:
+ * Merge the stacks and perform compat checks. The merge check if types of @from are mergeable with type of @to 
+ * 
+ * @from holds new values for a given control path
+ * @to holds the current values of a given control path
+ * 
+ * TODO we can eliminate the from argument as all callers pass &ctx->eval
+ */
 static void
 merge_stacks (VerifyContext *ctx, ILCodeDesc *from, ILCodeDesc *to, int start, gboolean external) 
 {
-	int i;
+	int i, j, k;
 	stack_init (ctx, to);
 
 	if (start) {
@@ -3655,17 +3772,67 @@ merge_stacks (VerifyContext *ctx, ILCodeDesc *from, ILCodeDesc *to, int start, g
 		goto end_verify;
 	}
 
+	//FIXME we need to preserve CMMP attributes
+	//FIXME we must take null literals into consideration.
 	for (i = 0; i < from->size; ++i) {
-		ILStackDesc *from_slot = from->stack + i;
-		ILStackDesc *to_slot = to->stack + i;
+		ILStackDesc *new_slot = from->stack + i;
+		ILStackDesc *old_slot = to->stack + i;
+		MonoType *new_type = mono_type_from_stack_slot (new_slot);
+		MonoType *old_type = mono_type_from_stack_slot (old_slot);
+		MonoClass *old_class = mono_class_from_mono_type (old_type);
+		MonoClass *new_class = mono_class_from_mono_type (new_type);
+		MonoClass *match_class = NULL;
 
-		if (!verify_type_compatibility (ctx, mono_type_from_stack_slot (to_slot), mono_type_from_stack_slot (from_slot))) {
-			CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Could not merge stacks, types not compatible at 0x%04x", ctx->ip_offset)); 
-			goto end_verify;
+		// S := T then U = S (new value is compatible with current value, keep current)
+		if (verify_type_compatibility (ctx, old_type, new_type)) {
+			copy_stack_value (new_slot, old_slot);
+			continue;
 		}
 
-		/*TODO we need to choose the base class for merging reference types*/
-		copy_stack_value (to_slot, from_slot);
+		// T := S then U = T (old value is compatible with current value, use new)
+		if (verify_type_compatibility (ctx, new_type, old_type)) {
+			copy_stack_value (old_slot, new_slot);
+			continue;
+		}
+
+		//both are reference types, use closest common super type
+		if (!mono_class_from_mono_type (old_type)->valuetype 
+			&& !mono_class_from_mono_type (new_type)->valuetype
+			&& !stack_slot_is_managed_pointer (old_slot)
+			&& !stack_slot_is_managed_pointer (new_slot)) {
+			
+			for (j = MIN (old_class->idepth, new_class->idepth) - 1; j > 0; --j) {
+				if (mono_metadata_type_equal (&old_class->supertypes [j]->byval_arg, &new_class->supertypes [j]->byval_arg)) {
+					match_class = old_class->supertypes [j];
+					goto match_found;
+				}
+			}
+
+			for (j = 0; j < old_class->interface_count; ++j) {
+				for (k = 0; k < new_class->interface_count; ++k) {
+					if (mono_metadata_type_equal (&old_class->interfaces [j]->byval_arg, &new_class->interfaces [k]->byval_arg)) {
+						match_class = old_class->interfaces [j];
+						goto match_found;
+					}
+				}
+			}
+
+			//No decent super type found, use object
+			match_class = mono_defaults.object_class;
+			goto match_found;
+		} else if (is_compatible_boxed_valuetype (old_type, new_type, new_slot, FALSE) || is_compatible_boxed_valuetype (new_type, old_type, old_slot, FALSE)) {
+			match_class = mono_defaults.object_class;
+			goto match_found;
+		} 
+
+		CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Could not merge stack at depth %d, types not compatible old [%s] new [%s] at 0x%04x", i, stack_slot_get_name (old_slot), stack_slot_get_name (new_slot), ctx->ip_offset)); 
+		goto end_verify;
+
+match_found:
+		g_assert (match_class);
+		set_stack_value (ctx, old_slot, &match_class->byval_arg, stack_slot_is_managed_pointer (old_slot));
+		set_stack_value (ctx, new_slot, &match_class->byval_arg, stack_slot_is_managed_pointer (old_slot));
+		continue;
 	}
 
 end_verify:

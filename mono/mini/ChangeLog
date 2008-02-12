@@ -1,3 +1,75 @@
+2008-02-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_normalize_opcodes): Always convert CEE_CONV_R4/R8 to 
+	OP_ICONV_TO_R4/R8.
+
+	* mini-ia64.c cpu-ia64.md: Add OP_ICONV_TO_R4/R8.
+
+2008-02-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (emit_method_code): Add an assert.
+
+	* mini-arm.h mini-arm.c exceptions-arm.c: Modify the exception throwing code and
+	the IMT code so it is AOT friendly. Enable AOT for methods which call interface
+	methods.
+
+2008-02-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arm.c (mono_arch_output_basic_block): Fix the ordering of arguments for 
+	some load/store opcodes so they are consistent.	
+	(mono_arch_emit_prolog): Simplify some code.
+
+	* aot-runtime.c (mono_aot_get_plt_entry): Fix a warning.
+
+	* objects.cs: Add tests for large argument offsets on ARM.
+
+	* mini-arm.c (mono_arch_emit_prolog): Fix handling of arguments with large 
+	stack offsets. Fixes #359651.
+
+	* mini.c (mono_normalize_opcodes): Remap CEE_CONV_R4/R8 properly.
+
+	* cpu-s390x.md: Add OP_LCONV_TO_R4/R8.
+
+	* cpu-ia64.md mini-ia64.h mini-ia64.c: Get rid of CEE_ opcodes.
+
+	* mini-ops.h: Add OP_ICONV_TO_R_UN opcode.
+
+	* mini.c (mono_normalize_opcodes): Remap CEE_CONV_R_UN too.
+
+	* cpu-s390x.md cpu-s390.md mini-s390x.c mini-arm.c cpu-arm.md mini-s390.c: Get
+	rid of CEE_CONV_R_UN.
+
+	* mini-s390x.c mini-s390x.h cpu-s390x.md inssel-s390x.brg: Get rid of CEE_ opcodes.
+
+2008-02-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-s390.c mini-s390.h cpu-s390.md: Get rid of CEE_ opcodes.
+
+	* mini.c (mono_normalize_opcodes): Add some more opcodes.
+
+	* mini-arm.c mini-arm.h cpu-arm.md: Get rid of CEE_ opcodes.
+
+	* cpu-amd64.md: Remove some unused opcodes.
+
+	* mini-sparc.c mini-sparc.h cpu-sparc.md: Get rid of CEE_ opcodes.
+
+	* mini-x86.c mini-x86.h cpu-x86.md: Get rid of CEE_ opcodes.
+
+	* mini.c mini-<ARCH>.c: Remove mono_arch_local_regalloc (), instead make 
+	arch specific functions for its parts. Call the peephole pass after local
+	regalloc so the prolog can compute a more accurate max_offset.
+	
+	* mini.c (mono_normalize_opcodes): New mini pass to convert CEE_ opcodes to
+	the corresponding OP_I/OP_L opcodes.
+
+	* mini-amd64.c mini-amd64.h cpu-amd64.md: Get rid of CEE_ opcodes.
+
+	* mini-sparc.c (mono_arch_output_basic_block): Fix the sparc build.
+
+2008-02-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-sparc.c (mono_arch_output_basic_block): Fix the build.
+
 2008-02-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-s390.c cpu-s390.md: Preliminary S390 port work.
@@ -48,6 +120,33 @@
 
 2008-02-06  Zoltan Varga  <vargaz@gmail.com>
 
+=======
+	* mini-s390.c (mono_arch_get_inst_for_method): Remove the Interlocked cases
+	as they are handled in mini.c.
+
+	* mini-s390x.c (mono_arch_get_inst_for_method): Ditto.
+	
+	* mini-<ARCH>.c (mono_arch_get_inst_for_method): Remove the MemoryBarrier
+	case since it is handled in mini.c.
+
+	* cpu-sparc.md (sparc_setfreg_float): Fix the sparc build.
+
+	* mini-ops.h: Add new opcodes OP_CALL/OP_CALLVIRT.
+
+	* *.c: Use the new opcodes in the IR and back end code.
+
+	* mini-ops.h cpu-<ARCH>.md: Correct the name of the bgt_un opcodes.
+
+	* mini-amd64.c (emit_call_body): Use a far-call for calling dynamic methods.
+
+2008-02-06  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-trampolines.c (mono_generic_class_init_trampoline): Removed
+	an assert because it has a race condition.
+
+2008-02-06  Zoltan Varga  <vargaz@gmail.com>
+
+>>>>>>> .merge-right.r95529
 	* tramp-amd64.c (mono_arch_patch_callsite): Add more diagnostics.
 
 	* inssel.brg mini-<ARCH>.c cpu-<ARCH>.md: Get rid of unused CEE_RET opcode.

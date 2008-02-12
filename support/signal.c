@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
+#include <mono/io-layer/atomic.h>
 #endif
 
 G_BEGIN_DECLS
@@ -55,6 +56,22 @@ Mono_Posix_Stdlib_InvokeSignalHandler (int signum, void *handler)
 
 #ifndef PLATFORM_WIN32
 
+#ifdef WAPI_ATOMIC_ASM
+	#define mph_int_get(p)     InterlockedExchangeAdd ((p), 0)
+	#define mph_int_inc(p)     InterlockedIncrement ((p))
+	#define mph_int_set(p,o,n) InterlockedExchange ((p), (n))
+#elif GLIB_CHECK_VERSION(2,4,0)
+	#define mph_int_get(p) g_atomic_int_get ((p))
+ 	#define mph_int_inc(p) do {g_atomic_int_inc ((p));} while (0)
+	#define mph_int_set(p,o,n) do {                                 \
+		while (!g_atomic_int_compare_and_exchange ((p), (o), (n))) {} \
+	} while (0)
+#else
+	#define mph_int_get(p) (*(p))
+	#define mph_int_inc(p) do { (*(p))++; } while (0)
+	#define mph_int_set(p,o,n) do { *(p) = n; } while (0)
+#endif
+
 int
 Mono_Posix_Syscall_psignal (int sig, const char* s)
 {
@@ -71,13 +88,15 @@ default_handler (int signum)
 {
 	int i;
 	for (i = 0; i < NUM_SIGNALS; ++i) {
+		int fd;
 		signal_info* h = &signals [i];
-		if (h->signum != signum)
+		if (mph_int_get (&h->signum) != signum)
 			continue;
-		++h->count;
-		if (h->write_fd > 0) {
+		mph_int_inc (&h->count);
+		fd = mph_int_get (&h->write_fd);
+		if (fd > 0) {
 			char c = signum;
-			write (h->write_fd, &c, 1);
+			write (fd, &c, 1);
 		}
 	}
 }
@@ -108,8 +127,6 @@ Mono_Unix_UnixSignal_install (int sig)
 				break;
 			}
 			else {
-				h->signum       = sig;
-				h->count        = 0;
 				h->have_handler = 1;
 			}
 		}
@@ -125,6 +142,11 @@ Mono_Unix_UnixSignal_install (int sig)
 	if (h && have_handler) {
 		h->have_handler = 1;
 		h->handler      = handler;
+	}
+
+	if (h) {
+		mph_int_set (&h->count, h->count, 0);
+		mph_int_set (&h->signum, h->signum, sig);
 	}
 
 	pthread_mutex_unlock (&signals_mutex);
@@ -216,7 +238,7 @@ teardown_pipes (signal_info** signals, int count)
 static int
 wait_for_any (signal_info** signals, int count, int max_fd, fd_set* read_fds, int timeout)
 {
-	int r;
+	int r, idx;
 	do {
 		struct timeval tv;
 		struct timeval *ptv = NULL;
@@ -229,24 +251,29 @@ wait_for_any (signal_info** signals, int count, int max_fd, fd_set* read_fds, in
 		r = select (max_fd + 1, read_fds, NULL, NULL, ptv);
 	} while (r == -1 && errno == EINTR);
 
-	if (r > 0) {
+	idx = -1;
+	if (r == 0)
+		idx = timeout;
+	else if (r > 0) {
 		int i;
 		for (i = 0; i < count; ++i) {
 			signal_info* h = signals [i];
 			if (FD_ISSET (h->read_fd, read_fds)) {
 				char c;
-				read (h->read_fd, &c, 1); /* ignore error */
+				read (h->read_fd, &c, 1); /* ignore any error */
+				if (idx == -1)
+					idx = i;
 			}
 		}
 	}
 
-	return r;
+	return idx;
 }
 
 /*
  * returns: -1 on error:
- *           0 on timeout
- *         > 0 on success
+ *          timeout on timeout
+ *          index into _signals array of signal that was generated on success
  */
 int
 Mono_Unix_UnixSignal_WaitAny (void** _signals, int count, int timeout /* milliseconds */)

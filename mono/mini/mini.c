@@ -2527,7 +2527,7 @@ static int
 ret_type_to_call_opcode (MonoType *type, int calli, int virt, MonoGenericSharingContext *gsctx)
 {
 	if (type->byref)
-		return calli? OP_CALL_REG: virt? CEE_CALLVIRT: CEE_CALL;
+		return calli? OP_CALL_REG: virt? OP_CALLVIRT: OP_CALL;
 
 handle_enum:
 	type = mini_get_basic_type_from_generic (gsctx, type);
@@ -2542,18 +2542,18 @@ handle_enum:
 	case MONO_TYPE_CHAR:
 	case MONO_TYPE_I4:
 	case MONO_TYPE_U4:
-		return calli? OP_CALL_REG: virt? CEE_CALLVIRT: CEE_CALL;
+		return calli? OP_CALL_REG: virt? OP_CALLVIRT: OP_CALL;
 	case MONO_TYPE_I:
 	case MONO_TYPE_U:
 	case MONO_TYPE_PTR:
 	case MONO_TYPE_FNPTR:
-		return calli? OP_CALL_REG: virt? CEE_CALLVIRT: CEE_CALL;
+		return calli? OP_CALL_REG: virt? OP_CALLVIRT: OP_CALL;
 	case MONO_TYPE_CLASS:
 	case MONO_TYPE_STRING:
 	case MONO_TYPE_OBJECT:
 	case MONO_TYPE_SZARRAY:
 	case MONO_TYPE_ARRAY:    
-		return calli? OP_CALL_REG: virt? CEE_CALLVIRT: CEE_CALL;
+		return calli? OP_CALL_REG: virt? OP_CALLVIRT: OP_CALL;
 	case MONO_TYPE_I8:
 	case MONO_TYPE_U8:
 		return calli? OP_LCALL_REG: virt? OP_LCALLVIRT: OP_LCALL;
@@ -2871,7 +2871,7 @@ mono_spill_call (MonoCompile *cfg, MonoBasicBlock *bblock, MonoCallInst *call, M
 	if (!MONO_TYPE_IS_VOID (ret) || ret_object) {
 		if (ret_object) {
 			call->inst.type = STACK_OBJ;
-			call->inst.opcode = CEE_CALL;
+			call->inst.opcode = OP_CALL;
 			temp = mono_compile_create_var (cfg, &mono_defaults.string_class->byval_arg, OP_LOCAL);
 		} else {
 			type_to_eval_stack_type (cfg, ret, ins);
@@ -8863,7 +8863,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		if (! (get_domain = mono_arch_get_domain_intrinsic (cfg))) {
 			MonoCallInst *call;
 			
-			MONO_INST_NEW_CALL (cfg, call, CEE_CALL);
+			MONO_INST_NEW_CALL (cfg, call, OP_CALL);
 			call->signature = helper_sig_domain_get;
 			call->inst.type = STACK_PTR;
 			call->fptr = mono_domain_get;
@@ -9028,9 +9028,8 @@ mono_print_tree (MonoInst *tree) {
 		printf ("[%s]",  tree->inst_newa_class->name);
 		mono_print_tree (tree->inst_newa_len);
 		break;
-	case CEE_CALL:
 	case OP_CALL:
-	case CEE_CALLVIRT:
+	case OP_CALLVIRT:
 	case OP_FCALL:
 	case OP_FCALLVIRT:
 	case OP_LCALL:
@@ -11685,7 +11684,7 @@ mini_select_instructions (MonoCompile *cfg)
 /*
  * mono_normalize_opcodes:
  *
- *   Replace CEE_ opcodes with the corresponding OP_I or OP_L opcodes.
+ *   Replace CEE_ and OP_ opcodes with the corresponding OP_I or OP_L opcodes.
  */
 
 static gint16 *remap_table;
@@ -11696,7 +11695,7 @@ static gint16 *remap_table;
 #define REMAP_OPCODE(opcode) OP_I ## opcode
 #endif
 
-static void
+static G_GNUC_UNUSED void
 mono_normalize_opcodes (MonoCompile *cfg, MonoBasicBlock *bb)
 {
 	MonoInst *ins;
@@ -11721,6 +11720,7 @@ mono_normalize_opcodes (MonoCompile *cfg, MonoBasicBlock *bb)
 		remap_table [CEE_CONV_I2] = REMAP_OPCODE (CONV_TO_I2);
 		remap_table [CEE_CONV_U1] = REMAP_OPCODE (CONV_TO_U1);
 		remap_table [CEE_CONV_U2] = REMAP_OPCODE (CONV_TO_U2);
+		remap_table [CEE_CONV_R_UN] = REMAP_OPCODE (CONV_TO_R_UN);
 		remap_table [CEE_ADD] = REMAP_OPCODE (ADD);
 		remap_table [CEE_SUB] = REMAP_OPCODE (SUB);
 		remap_table [CEE_MUL] = REMAP_OPCODE (MUL);
@@ -11747,6 +11747,10 @@ mono_normalize_opcodes (MonoCompile *cfg, MonoBasicBlock *bb)
 		remap_table [CEE_BGE_UN] = REMAP_OPCODE (BGE_UN);
 		remap_table [CEE_BLE] = REMAP_OPCODE (BLE);
 		remap_table [CEE_BLE_UN] = REMAP_OPCODE (BLE_UN);
+		remap_table [CEE_ADD_OVF] = REMAP_OPCODE (ADD_OVF);
+		remap_table [CEE_ADD_OVF_UN] = REMAP_OPCODE (ADD_OVF_UN);
+		remap_table [CEE_SUB_OVF] = REMAP_OPCODE (SUB_OVF);
+		remap_table [CEE_SUB_OVF_UN] = REMAP_OPCODE (SUB_OVF_UN);
 		remap_table [CEE_MUL_OVF] = REMAP_OPCODE (MUL_OVF);
 		remap_table [CEE_MUL_OVF_UN] = REMAP_OPCODE (MUL_OVF_UN);
 	}
@@ -11770,10 +11774,20 @@ mono_codegen (MonoCompile *cfg)
 		cfg->spill_count = 0;
 		/* we reuse dfn here */
 		/* bb->dfn = bb_count++; */
-		//if ((bb == cfg->bb_entry) || !(bb->region == -1 && !bb->dfn))
+#ifdef MONO_ARCH_ENABLE_NORMALIZE_OPCODES
 		if (!cfg->new_ir)
 			mono_normalize_opcodes (cfg, bb);
-		mono_arch_local_regalloc (cfg, bb);
+#endif
+
+		mono_arch_lowering_pass (cfg, bb);
+
+		if (cfg->opt & MONO_OPT_PEEPHOLE)
+			mono_arch_peephole_pass_1 (cfg, bb);
+
+		mono_local_regalloc (cfg, bb);
+
+		if (cfg->opt & MONO_OPT_PEEPHOLE)
+			mono_arch_peephole_pass_2 (cfg, bb);
 	}
 
 	if (cfg->prof_options & MONO_PROFILE_COVERAGE)

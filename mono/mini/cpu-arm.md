@@ -1,4 +1,4 @@
-# powerpc cpu description file
+# arm cpu description file
 # this file is read by genmdesc to pruduce a table with all the relevant information
 # about the cpu instructions that may be used by the regsiter allocator, the scheduler
 # and other parts of the arch-dependent part of mini.
@@ -53,6 +53,7 @@ memory_barrier: len:4
 break: len:32
 jmp: len:92
 br: len:4
+<<<<<<< .working
 br_reg: src1:i len:8
 
 int_beq: len:8
@@ -66,7 +67,10 @@ int_bgt_un: len:8
 int_ble_un: len:8
 int_blt_un: len:8
 
+=======
+>>>>>>> .merge-right.r95529
 switch: src1:i len:8
+<<<<<<< .working
 
 int_add: dest:i src1:i src2:i len:4
 int_sub: dest:i src1:i src2:i len:4
@@ -95,8 +99,12 @@ int_conv_to_u2: dest:i src1:i len:8
 int_conv_to_u1: dest:i src1:i len:4
 int_conv_to_i: dest:i src1:i len:4
 
+=======
+
+>>>>>>> .merge-right.r95529
 throw: src1:i len:24
 rethrow: src1:i len:20
+<<<<<<< .working
 
 ckfinite: dest:f src1:f len:24
 
@@ -111,6 +119,8 @@ add_ovf_carry: dest:i src1:i src2:i len:16
 sub_ovf_carry: dest:i src1:i src2:i len:16
 add_ovf_un_carry: dest:i src1:i src2:i len:16
 sub_ovf_un_carry: dest:i src1:i src2:i len:16
+=======
+>>>>>>> .merge-right.r95529
 
 int_add_ovf: dest:i src1:i src2:i len:16
 int_add_ovf_un: dest:i src1:i src2:i len:16
@@ -122,10 +132,17 @@ int_sub_ovf_un: dest:i src1:i src2:i len:16
 
 start_handler: len:20
 endfinally: len:20
+<<<<<<< .working
 call_handler: len:12
 endfilter: src1:i len:16
 
 conv.u: dest:i src1:i len:4
+=======
+call_handler: len:12
+endfilter: src1:i len:16
+
+ckfinite: dest:f src1:f len:24
+>>>>>>> .merge-right.r95529
 
 ceq: dest:i len:12
 cgt: dest:i len:12
@@ -152,10 +169,16 @@ outarg_imm: len:16
 setret: dest:a src1:i len:4
 setlret: src1:i src2:i len:12
 checkthis: src1:b len:4
+<<<<<<< .working
 
 call: dest:a clob:c len:20
 call_reg: dest:a src1:i len:8 clob:c
 call_membase: dest:a src1:b len:12 clob:c
+=======
+call: dest:a clob:c len:20
+call_reg: dest:a src1:i len:8 clob:c
+call_membase: dest:a src1:b len:12 clob:c
+>>>>>>> .merge-right.r95529
 voidcall: len:20 clob:c
 voidcall_reg: src1:i len:8 clob:c
 voidcall_membase: src1:b len:12 clob:c
@@ -168,10 +191,13 @@ lcall_membase: dest:l src1:b len:12 clob:c
 vcall: len:20 clob:c
 vcall_reg: src1:i len:8 clob:c
 vcall_membase: src1:b len:12 clob:c
+<<<<<<< .working
 vcall2: len:20 clob:c
 vcall2_reg: src1:i len:8 clob:c
 vcall2_membase: src1:b len:12 clob:c
 
+=======
+>>>>>>> .merge-right.r95529
 iconst: dest:i len:16
 r4const: dest:f len:20
 r8const: dest:f len:20
@@ -215,9 +241,6 @@ fmove: dest:f src1:f len:4
 add_imm: dest:i src1:i len:12
 sub_imm: dest:i src1:i len:12
 mul_imm: dest:i src1:i len:12
-# there is no actual support for division or reminder by immediate
-# we simulate them, though (but we need to change the burg rules 
-# to allocate a symbolic reg for src2)
 div_imm: dest:i src1:i src2:i len:20
 div_un_imm: dest:i src1:i src2:i len:12
 rem_imm: dest:i src1:i src2:i len:28
@@ -260,6 +283,7 @@ cond_exc_ov: len:12
 cond_exc_no: len:8
 cond_exc_c: len:12
 cond_exc_nc: len:8
+<<<<<<< .working
 
 cond_exc_ieq: len:8
 cond_exc_ine_un: len:8
@@ -279,13 +303,15 @@ cond_exc_inc: len:8
 long_conv_to_ovf_i: dest:i src1:i src2:i len:30
 long_conv_to_ovf_i4_2: dest:i src1:i src2:i len:30
 long_conv_to_r_un: dest:f src1:i src2:i len:37 
+=======
+>>>>>>> .merge-right.r95529
 
 float_beq: src1:f src2:f len:20
 float_bne_un: src1:f src2:f len:20
 float_blt: src1:f src2:f len:20
 float_blt_un: src1:f src2:f len:20
 float_bgt: src1:f src2:f len:20
-float_btg_un: src1:f src2:f len:20
+float_bgt_un: src1:f src2:f len:20
 float_bge: src1:f src2:f len:20
 float_bge_un: src1:f src2:f len:20
 float_ble: src1:f src2:f len:20
@@ -316,7 +342,10 @@ float_cgt_un: dest:i src1:f src2:f len:20
 float_clt: dest:i src1:f src2:f len:16
 float_clt_un: dest:i src1:f src2:f len:20
 float_conv_to_u: dest:i src1:f len:36
+<<<<<<< .working
 
+=======
+>>>>>>> .merge-right.r95529
 aot_const: dest:i len:16
 sqrt: dest:f src1:f len:4
 
@@ -336,8 +365,57 @@ int_adc_imm: dest:i src1:i len:12
 int_sbb: dest:i src1:i src2:i len:4
 int_sbb_imm: dest:i src1:i len:12
 
-arm_rsbs_imm: dest:i src1:i len:4
-arm_rsc_imm: dest:i src1:i len:4
 bigmul: len:8 dest:l src1:i src2:i
 bigmul_un: len:8 dest:l src1:i src2:i
 tls_get: len:8 dest:i
+
+# 32 bit opcodes
+int_add: dest:i src1:i src2:i len:4
+int_sub: dest:i src1:i src2:i len:4
+int_mul: dest:i src1:i src2:i len:4
+int_div: dest:i src1:i src2:i len:40
+int_div_un: dest:i src1:i src2:i len:16
+int_rem: dest:i src1:i src2:i len:48
+int_rem_un: dest:i src1:i src2:i len:24
+int_and: dest:i src1:i src2:i len:4
+int_or: dest:i src1:i src2:i len:4
+int_xor: dest:i src1:i src2:i len:4
+int_shl: dest:i src1:i src2:i len:4
+int_shr: dest:i src1:i src2:i len:4
+int_shr_un: dest:i src1:i src2:i len:4
+int_neg: dest:i src1:i len:4
+int_not: dest:i src1:i len:4
+int_conv_to_i1: dest:i src1:i len:8
+int_conv_to_i2: dest:i src1:i len:8
+int_conv_to_i4: dest:i src1:i len:4
+int_conv_to_r4: dest:f src1:i len:36
+int_conv_to_r8: dest:f src1:i len:36
+int_conv_to_u4: dest:i src1:i
+int_conv_to_r_un: dest:f src1:i len:56
+int_conv_to_u2: dest:i src1:i len:8
+int_conv_to_u1: dest:i src1:i len:4
+int_beq: len:8
+int_bge: len:8
+int_bgt: len:8
+int_ble: len:8
+int_blt: len:8
+int_bne_un: len:8
+int_bge_un: len:8
+int_bgt_un: len:8
+int_ble_un: len:8
+int_blt_un: len:8
+int_add_ovf: dest:i src1:i src2:i len:16
+int_add_ovf_un: dest:i src1:i src2:i len:16
+int_mul_ovf: dest:i src1:i src2:i len:16
+int_mul_ovf_un: dest:i src1:i src2:i len:16
+int_sub_ovf: dest:i src1:i src2:i len:16
+int_sub_ovf_un: dest:i src1:i src2:i len:16
+add_ovf_carry: dest:i src1:i src2:i len:16
+sub_ovf_carry: dest:i src1:i src2:i len:16
+add_ovf_un_carry: dest:i src1:i src2:i len:16
+sub_ovf_un_carry: dest:i src1:i src2:i len:16
+
+long_conv_to_ovf_i: dest:i src1:i src2:i len:30
+
+arm_rsbs_imm: dest:i src1:i len:4
+arm_rsc_imm: dest:i src1:i len:4

@@ -1857,6 +1857,9 @@ emit_call_body (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstpointe
 				if (((MonoMethod*)data)->klass->image->assembly->aot_module)
 					/* The callee might be an AOT method */
 					near_call = FALSE;
+				if (((MonoMethod*)data)->dynamic)
+					/* The target is in malloc-ed memory */
+					near_call = FALSE;
 			}
 
 			if (patch_type == MONO_PATCH_INFO_INTERNAL_METHOD) {
@@ -1949,12 +1952,12 @@ store_membase_imm_to_store_membase_reg (int opcode)
 #define INST_IGNORES_CFLAGS(opcode) (!(((opcode) == OP_ADC) || ((opcode) == OP_ADC_IMM) || ((opcode) == OP_IADC) || ((opcode) == OP_IADC_IMM) || ((opcode) == OP_SBB) || ((opcode) == OP_SBB_IMM) || ((opcode) == OP_ISBB) || ((opcode) == OP_ISBB_IMM)))
 
 /*
- * peephole_pass_1:
+ * mono_arch_peephole_pass_1:
  *
  *   Perform peephole opts which should/can be performed before local regalloc
  */
-static void
-peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
+void
+mono_arch_peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 {
 	MonoInst *ins, *last_ins = NULL;
 	ins = bb->code;
@@ -1973,9 +1976,12 @@ peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 				 */
 				ins->opcode = OP_X86_LEA_MEMBASE;
 				ins->inst_basereg = ins->sreg1;
+				/* Fall through */
 			}
-			break;
+			else
+				break;
 		case OP_LXOR:
+		case OP_IXOR:
 			if ((ins->sreg1 == ins->sreg2) && (ins->sreg1 == ins->dreg)) {
 				MonoInst *ins2;
 
@@ -2192,8 +2198,8 @@ peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 	bb->last_ins = last_ins;
 }
 
-static void
-peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
+void
+mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 {
 	MonoInst *ins, *last_ins = NULL;
 	ins = bb->code;
@@ -2205,7 +2211,7 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 
 		switch (ins->opcode) {
 		case OP_ICONST:
-		case OP_I8CONST:
+		case OP_I8CONST: {
 			/* reg = 0 -> XOR (reg, reg) */
 			/* XOR sets cflags on x86, so we cant do it always */
 			if (ins->inst_c0 == 0 && (!ins->next || (ins->next && INST_IGNORES_CFLAGS (ins->next->opcode)))) {
@@ -2213,9 +2219,10 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 				ins->sreg1 = ins->dreg;
 				ins->sreg2 = ins->dreg;
 				/* Fall through */
-			}
-			else
+			} else {
 				break;
+			}
+		}
 		case OP_LXOR:
 			/*
 			 * Use IXOR to avoid a rex prefix if possible. The cpu will sign extend the 
@@ -2387,7 +2394,7 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (last_ins && (last_ins->opcode == OP_STOREI1_MEMBASE_REG) &&
 					ins->inst_basereg == last_ins->inst_destbasereg &&
 					ins->inst_offset == last_ins->inst_offset) {
-				ins->opcode = (ins->opcode == OP_LOADI1_MEMBASE) ? OP_LCONV_TO_I1 : OP_LCONV_TO_U1;
+				ins->opcode = (ins->opcode == OP_LOADI1_MEMBASE) ? OP_PCONV_TO_I1 : OP_PCONV_TO_U1;
 				ins->sreg1 = last_ins->sreg1;
 			}
 			break;
@@ -2403,7 +2410,7 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (last_ins && (last_ins->opcode == OP_STOREI2_MEMBASE_REG) &&
 					ins->inst_basereg == last_ins->inst_destbasereg &&
 					ins->inst_offset == last_ins->inst_offset) {
-				ins->opcode = (ins->opcode == OP_LOADI2_MEMBASE) ? OP_LCONV_TO_I2 : OP_LCONV_TO_U2;
+				ins->opcode = (ins->opcode == OP_LOADI2_MEMBASE) ? OP_PCONV_TO_I2 : OP_PCONV_TO_U2;
 				ins->sreg1 = last_ins->sreg1;
 			}
 			break;
@@ -2457,7 +2464,7 @@ peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
  *  Converts complex opcodes into simpler ones so that each IR instruction
  * corresponds to one machine instruction.
  */
-static void
+void
 mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 {
 	MonoInst *ins, *temp, *last_ins = NULL;
@@ -2547,27 +2554,6 @@ cc_signed_table [] = {
 };
 
 /*#include "cprop.c"*/
-
-/*
- * Local register allocation.
- * We first scan the list of instructions and we save the liveness info of
- * each register (when the register is first used, when it's value is set etc.).
- * We also reverse the list of instructions (in the InstList list) because assigning
- * registers backwards allows for more tricks to be used.
- */
-void
-mono_arch_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
-{
-	if (!bb->code)
-		return;
-
-	mono_arch_lowering_pass (cfg, bb);
-
-	if (cfg->opt & MONO_OPT_PEEPHOLE)
-		peephole_pass_1 (cfg, bb);
-
-	mono_local_regalloc (cfg, bb);
-}
 
 static unsigned char*
 emit_float_to_int (MonoCompile *cfg, guchar *code, int dreg, int sreg, int size, gboolean is_signed)
@@ -2888,9 +2874,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 	guint last_offset = 0;
 	int max_len, cpos;
 
-	if (cfg->opt & MONO_OPT_PEEPHOLE)
-		peephole_pass (cfg, bb);
-
 	if (cfg->opt & MONO_OPT_LOOP) {
 		int pad, align = LOOP_ALIGNMENT;
 		/* set alignment depending on cpu */
@@ -3055,12 +3038,13 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_ICONV_TO_U2:
 			amd64_widen_reg (code, ins->dreg, ins->sreg1, FALSE, TRUE);
 			break;
+		case OP_ZEXT_I4:
+			/* Clean out the upper word */
+			amd64_mov_reg_reg_size (code, ins->dreg, ins->sreg1, 4);
+			break;
 		case OP_SEXT_I4:
 			amd64_movsxd_reg_reg (code, ins->dreg, ins->sreg1);
 			break;
-		case OP_ZEXT_I4:
-			amd64_mov_reg_reg_size (code, ins->dreg, ins->sreg1, 4);
-			break;	
 		case OP_COMPARE:
 		case OP_LCOMPARE:
 			amd64_alu_reg_reg (code, X86_CMP, ins->sreg1, ins->sreg2);
@@ -3270,7 +3254,14 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert (amd64_is_imm32 (ins->inst_imm));
 			amd64_alu_reg_imm (code, X86_SBB, ins->dreg, ins->inst_imm);
 			break;
-
+		case OP_LAND:
+			amd64_alu_reg_reg (code, X86_AND, ins->sreg1, ins->sreg2);
+			break;
+		case OP_AND_IMM:
+		case OP_LAND_IMM:
+			g_assert (amd64_is_imm32 (ins->inst_imm));
+			amd64_alu_reg_imm (code, X86_AND, ins->sreg1, ins->inst_imm);
+			break;
 		case OP_LMUL:
 			amd64_imul_reg_reg (code, ins->sreg1, ins->sreg2);
 			break;
@@ -3386,15 +3377,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_imul_reg_reg (code, ins->sreg1, ins->sreg2);
 			EMIT_COND_SYSTEM_EXCEPTION (X86_CC_O, FALSE, "OverflowException");
 			break;
-
-		case OP_LAND:
-			amd64_alu_reg_reg (code, X86_AND, ins->sreg1, ins->sreg2);
-			break;
-		case OP_AND_IMM:
-		case OP_LAND_IMM:
-			g_assert (amd64_is_imm32 (ins->inst_imm));
-			amd64_alu_reg_imm (code, X86_AND, ins->sreg1, ins->inst_imm);
-			break;
 		case OP_LOR:
 			amd64_alu_reg_reg (code, X86_OR, ins->sreg1, ins->sreg2);
 			break;
@@ -3411,7 +3393,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert (amd64_is_imm32 (ins->inst_imm));
 			amd64_alu_reg_imm (code, X86_XOR, ins->sreg1, ins->inst_imm);
 			break;
-
 		case OP_LSHL:
 			g_assert (ins->sreg2 == AMD64_RCX);
 			amd64_shift_reg (code, X86_SHL, ins->dreg);
@@ -4090,7 +4071,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			else
 				amd64_fld_membase (code, ins->inst_basereg, ins->inst_offset, FALSE);
 			break;
-		case OP_ICONV_TO_R4:
+		case OP_ICONV_TO_R4: /* FIXME: change precision */
 		case OP_ICONV_TO_R8:
 			if (use_sse2)
 				amd64_sse_cvtsi2sd_reg_reg_size (code, ins->dreg, ins->sreg1, 4);

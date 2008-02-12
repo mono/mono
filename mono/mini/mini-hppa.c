@@ -778,8 +778,13 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 	return call;
 }
 
-static void
-peephole_pass (MonoCompile *cfg, MonoBasicBlock *bb)
+void
+mono_arch_peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
+{
+}
+
+void
+mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 {
 	DEBUG_FUNC_ENTER();
 	DEBUG_FUNC_EXIT();
@@ -877,7 +882,7 @@ map_to_reg_reg_op (int op)
  * represented with very simple instructions with no register
  * requirements.
  */
-static void
+void
 mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 {
 	MonoInst *ins, *next, *temp, *last_ins = NULL;
@@ -988,17 +993,6 @@ loop_start:
 	bb->last_ins = last_ins;
 	bb->max_vreg = cfg->rs->next_vreg;
 	
-}
-
-void
-mono_arch_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
-{
-	DEBUG_FUNC_ENTER();
-	if (!bb->code)
-		return;
-	mono_arch_lowering_pass (cfg, bb);
-	mono_local_regalloc (cfg, bb);
-	DEBUG_FUNC_EXIT();
 }
 
 void
@@ -1263,8 +1257,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 	const char *spec;
 
 	DEBUG_FUNC_ENTER();
-	if (cfg->opt & MONO_OPT_PEEPHOLE)
-		peephole_pass (cfg, bb);
 
 	if (cfg->verbose_level > 2)
 		g_print ("[%s::%s] Basic block %d starting at offset 0x%x\n", cfg->method->klass->name, cfg->method->name, bb->block_num, bb->native_offset);
@@ -1597,7 +1589,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_LCALL:
 		case OP_VCALL:
 		case OP_VOIDCALL:
-		case CEE_CALL:
+		case OP_CALL:
 			call = (MonoCallInst*)ins;
 			if (ins->flags & MONO_INST_HAS_METHOD)
 				mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_METHOD, call->method);
@@ -2901,14 +2893,6 @@ mono_arch_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethod
 	MonoInst *ins = NULL;
 	DEBUG_FUNC_ENTER();
 	DEBUG_FUNC_EXIT();
-
-#if 0
-	if (cmethod->klass == mono_defaults.thread_class &&
-		strcmp (cmethod->name, "MemoryBarrier") == 0) {
-		if (sparcv9)
-			MONO_INST_NEW (cfg, ins, OP_MEMORY_BARRIER);
-	}
-#endif
 
 	return ins;
 }
