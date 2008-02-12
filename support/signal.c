@@ -128,8 +128,8 @@ Mono_Unix_UnixSignal_install (int sig)
 	}
 
 	if (h) {
-		g_atomic_int_set (&h->count, 0);
-		g_atomic_int_set (&h->signum, sig);
+		while (!g_atomic_int_compare_and_exchange (&h->count, h->count, 0)) {}
+		while (!g_atomic_int_compare_and_exchange (&h->signum, h->signum, sig)) {}
 	}
 
 	pthread_mutex_unlock (&signals_mutex);
