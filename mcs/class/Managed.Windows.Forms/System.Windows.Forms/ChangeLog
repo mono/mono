@@ -1,3 +1,9 @@
+2008-02-12  Ivan N. Zlatev  <contact@i-nz.net>
+
+	[Backport to 1.9]
+	* GridEntry.cs: Fail silently when UITypeEditor is missing.
+	[Fixes bug #360666]
+
 2008-02-11  Ivan N. Zlatev  <contact@i-nz.net>
 
 	[Backport to 1.9]
