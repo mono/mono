@@ -5,6 +5,8 @@ using System.Globalization;
 
 namespace System.Text.RegularExpressions {
 
+	internal delegate bool EvalDelegate (RxInterpreter interp, int strpos, ref int strpos_result);
+
 	class RxInterpreter: BaseMachine {
 		byte[] program;
 		string str;
@@ -13,6 +15,7 @@ namespace System.Text.RegularExpressions {
 		int group_count;
 		int match_start;
 		int[] groups;
+		EvalDelegate eval_del; // optimized EvalByteCode method created by the CILCompiler
 
 		Mark[] marks = null; // mark stack
 		int mark_start; // start of current checkpoint
@@ -27,9 +30,10 @@ namespace System.Text.RegularExpressions {
 			return val;
 		}
 
-		public RxInterpreter (byte[] program)
+		public RxInterpreter (byte[] program, EvalDelegate eval_del)
 		{
 			this.program = program;
+			this.eval_del = eval_del;
 			group_count = 1 + (program [1] | (program [2] << 8));
 			groups = new int [group_count];
 		}
@@ -39,7 +43,14 @@ namespace System.Text.RegularExpressions {
 			string_start = start;
 			string_end = end;
 			int res = 0;
-			if (EvalByteCode (11, start, ref res)) {
+
+			bool match;
+			if (eval_del != null) {
+				match = eval_del (this, start, ref res);
+			} else {
+				match = EvalByteCode (11, start, ref res);
+			}
+			if (match) {
 				Match m = new Match (regex, this, text, end, 0, match_start, res - match_start);
 				return m;
 			}
