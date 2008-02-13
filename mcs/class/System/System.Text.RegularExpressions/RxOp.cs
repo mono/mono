@@ -30,8 +30,10 @@ namespace System.Text.RegularExpressions {
 		StringIgnoreCaseReverse,
 
 		// followed by two byte length and unicode chars (two bytes per char)
-		// a better setup may be to have all the unicode chars in a separate
-		// char array and reference them from here with (offset, length) pairs
+		// a better setup may be to reference the chars in the patterns string
+		// (offset, length) pairs, at least when the pattern contains them,
+		// but this means we can't lowercase before hand: consider using a separate
+		// string/array
 		// keep the order, see EmitString ()
 		UnicodeString,
 		UnicodeStringIgnoreCase,
@@ -107,14 +109,48 @@ namespace System.Text.RegularExpressions {
 
 		// add reverse and negate versions of the categories
 		CategoryAny,
+		NoCategoryAny,
+		CategoryAnyReverse,
+		NoCategoryAnyReverse,
 		CategoryDigit,
+		NoCategoryDigit,
+		CategoryDigitReverse,
+		NoCategoryDigitReverse,
 		CategoryWord,
+		NoCategoryWord,
+		CategoryWordReverse,
+		NoCategoryWordReverse,
 		CategoryWhiteSpace,
+		NoCategoryWhiteSpace,
+		CategoryWhiteSpaceReverse,
+		NoCategoryWhiteSpaceReverse,
 		CategoryEcmaWord,
+		NoCategoryEcmaWord,
+		CategoryEcmaWordReverse,
+		NoCategoryEcmaWordReverse,
+		CategoryEcmaDigit,
+		NoCategoryEcmaDigit,
+		CategoryEcmaDigitReverse,
+		NoCategoryEcmaDigitReverse,
 		CategoryEcmaWhiteSpace,
+		NoCategoryEcmaWhiteSpace,
+		CategoryEcmaWhiteSpaceReverse,
+		NoCategoryEcmaWhiteSpaceReverse,
 
 		// followed by a unicode category value (byte)
 		CategoryUnicode,
+		NoCategoryUnicode,
+		CategoryUnicodeReverse,
+		NoCategoryUnicodeReverse,
+
+		CategoryUnicodeLetter,
+		CategoryUnicodeMark,
+		CategoryUnicodeNumber,
+		CategoryUnicodeSeparator,
+		CategoryUnicodePunctuation,
+		CategoryUnicodeSymbol,
+		CategoryUnicodeSpecials,
+		CategoryUnicodeOther,
 		// add more categories
 
 		// backreferences
@@ -129,6 +165,9 @@ namespace System.Text.RegularExpressions {
 		// followed by two-byte group id
 		OpenGroup,
 		CloseGroup,
+
+		// followed by offset and two-byte group id
+		IfDefined,
 
 		// skip ahead num bytes
 		// followed by two-byte offset

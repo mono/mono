@@ -1,4 +1,9 @@
 
+Wed Feb 13 13:18:12 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* RxCompiler.cs, RxInterpreter.cs, RxOp.cs: unicode categories and
+	some grouping/capture support.
+
 Tue Feb 12 19:16:49 CET 2008 Paolo Molaro <lupus@ximian.com>
 
 	* RxCompiler.cs, RxInterpreter.cs, RxOp.cs: experimental new

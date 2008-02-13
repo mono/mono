@@ -1,6 +1,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 
 namespace System.Text.RegularExpressions {
 
@@ -12,6 +13,10 @@ namespace System.Text.RegularExpressions {
 		int group_count;
 		int match_start;
 		int[] groups;
+
+		Mark[] marks = null; // mark stack
+		int mark_start; // start of current checkpoint
+		int mark_end; // end of checkpoint/next free mark
 
 		static int ReadInt (byte[] code, int pc)
 		{
@@ -39,6 +44,116 @@ namespace System.Text.RegularExpressions {
 				return m;
 			}
 			return Match.Empty;
+		}
+
+		// capture management
+		private void Open (int gid, int ptr) {
+			int m = groups [gid];
+			if (m < mark_start || marks [m].IsDefined) {
+				m = CreateMark (m);
+				groups [gid] = m;
+			}
+
+			marks [m].Start = ptr;
+		}
+
+		private void Close (int gid, int ptr) {
+	       		marks [groups [gid]].End = ptr;
+		}
+
+		private bool Balance (int gid, int balance_gid, bool capture, int ptr) {
+			int b = groups [balance_gid];
+
+			if (b == -1 || marks [b].Index < 0) {
+				//Group not previously matched
+				return false;
+			}
+			if (gid > 0 && capture){ 
+				Open (gid, marks [b].Index + marks [b].Length);
+				Close (gid, ptr);
+			}
+
+			groups [balance_gid] = marks[b].Previous;
+			return true;
+		}
+
+		private int Checkpoint () {
+			mark_start = mark_end;
+			return mark_start;
+		}
+
+		private void Backtrack (int cp) {
+			for (int i = 0; i < groups.Length; ++ i) {
+				int m = groups [i];
+				while (cp <= m)
+					m = marks [m].Previous;
+				groups [i] = m;
+			}
+		}
+
+		private void ResetGroups () {
+			int n = groups.Length;
+			if (marks == null)
+				marks = new Mark [n * 10];
+			if (n == 1)
+				return;
+
+			for (int i = 0; i < n; ++ i) {
+				groups [i] = i;
+
+				marks [i].Start = -1;
+				marks [i].End = -1;
+				marks [i].Previous = -1;
+			}
+			mark_start = 0;
+			mark_end = n;
+		}
+
+		private int GetLastDefined (int gid) {
+			int m = groups [gid];
+			while (m >= 0 && !marks [m].IsDefined)
+				m = marks [m].Previous;
+
+			return m;
+		}
+
+		private int CreateMark (int previous) {
+			if (mark_end == marks.Length) {
+				Mark [] dest = new Mark [marks.Length * 2];
+				marks.CopyTo (dest, 0);
+				marks = dest;
+			}
+
+			int m = mark_end ++;
+			marks [m].Start = marks [m].End = -1;
+			marks [m].Previous = previous;
+
+			return m;
+		}
+
+		private void GetGroupInfo (int gid, out int first_mark_index, out int n_caps)
+		{
+			first_mark_index = -1;
+			n_caps = 0;
+			for (int m = groups [gid]; m >= 0; m = marks [m].Previous) {
+				if (!marks [m].IsDefined)
+					continue;
+				if (first_mark_index < 0)
+					first_mark_index = m;
+				++n_caps;
+			}
+		}
+
+		private void PopulateGroup (Group g, int first_mark_index, int n_caps)
+		{
+			int i = 1;
+			for (int m = marks [first_mark_index].Previous; m >= 0; m = marks [m].Previous) {
+				if (!marks [m].IsDefined)
+					continue;
+				Capture cap = new Capture (str, marks [m].Index, marks [m].Length);
+				g.Captures.SetValue (cap, n_caps - 1 - i);
+				++i;
+			}
 		}
 
 		bool EvalByteCode (int pc, int strpos, ref int strpos_result)
@@ -94,14 +209,49 @@ namespace System.Text.RegularExpressions {
 					pc += program [pc + 1] | (program [pc + 2] << 8);
 					while (strpos < string_end) {
 						int res = strpos;
+						if (groups.Length > 1) {
+							ResetGroups ();
+							marks [groups [0]].Start = strpos;
+						}
 						if (EvalByteCode (pc, strpos, ref res)) {
 							match_start = strpos;
+							if (groups.Length > 1)
+								marks [groups [0]].End = res;
 							strpos_result = res;
 							return true;
 						}
 						strpos++;
 					}
 					return false;
+				case RxOp.Reference:
+					length = GetLastDefined (program [pc + 1] | (program [pc + 2] << 8));
+					if (length < 0)
+						return false;
+					start = marks [length].Index;
+					length = marks [length].Length;
+					if (strpos + length > string_end)
+						return false;
+					for (end = start + length; start < end; ++start) {
+						if (str [strpos] != str [start])
+							return false;
+						strpos++;
+					}
+					pc += 3;
+					continue;
+				case RxOp.IfDefined:
+					if (GetLastDefined (program [pc + 3] | (program [pc + 4] << 8)) < 0)
+						pc += 5;
+					else
+						pc += program [pc + 1] | (program [pc + 2] << 8);
+					continue;
+				case RxOp.OpenGroup:
+					Open (program [pc + 1] | (program [pc + 2] << 8), strpos);
+					pc += 3;
+					continue;
+				case RxOp.CloseGroup:
+					Close (program [pc + 1] | (program [pc + 2] << 8), strpos);
+					pc += 3;
+					continue;
 				case RxOp.Jump:
 					pc += program [pc + 1] | (program [pc + 2] << 8);
 					continue;
@@ -257,10 +407,119 @@ namespace System.Text.RegularExpressions {
 						}
 					}
 					return false;
+				case RxOp.UnicodeChar:
+					if (strpos < string_end && (str [strpos] == (program [pc + 1] | (program [pc + 2] << 8)))) {
+						strpos++;
+						pc += 3;
+						continue;
+					}
+					return false;
+				case RxOp.NoUnicodeChar:
+					if (strpos < string_end && (str [strpos] != (program [pc + 1] | (program [pc + 2] << 8)))) {
+						strpos++;
+						pc += 3;
+						continue;
+					}
+					return false;
+				case RxOp.UnicodeCharIgnoreCase:
+					if (strpos < string_end && (Char.ToLower (str [strpos]) == (program [pc + 1] | (program [pc + 2] << 8)))) {
+						strpos++;
+						pc += 3;
+						continue;
+					}
+					return false;
+				case RxOp.NoUnicodeCharIgnoreCase:
+					if (strpos < string_end && (Char.ToLower (str [strpos]) != (program [pc + 1] | (program [pc + 2] << 8)))) {
+						strpos++;
+						pc += 3;
+						continue;
+					}
+					return false;
 				case RxOp.CategoryAny:
 					if (strpos < string_end && str [strpos] != '\n') {
 						strpos++;
 						pc++;
+						continue;
+					}
+					return false;
+				case RxOp.CategoryWord:
+					if (strpos < string_end) {
+						char c = str [strpos];
+						if (Char.IsLetterOrDigit (c) || Char.GetUnicodeCategory (c) == UnicodeCategory.ConnectorPunctuation) {
+							strpos++;
+							pc++;
+							continue;
+						}
+					}
+					return false;
+				case RxOp.NoCategoryWord:
+					if (strpos < string_end) {
+						char c = str [strpos];
+						if (!Char.IsLetterOrDigit (c) && Char.GetUnicodeCategory (c) != UnicodeCategory.ConnectorPunctuation) {
+							strpos++;
+							pc++;
+							continue;
+						}
+					}
+					return false;
+				case RxOp.CategoryDigit:
+					if (strpos < string_end && Char.IsDigit (str [strpos])) {
+						strpos++;
+						pc++;
+						continue;
+					}
+					return false;
+				case RxOp.CategoryWhiteSpace:
+					if (strpos < string_end && Char.IsWhiteSpace (str [strpos])) {
+						strpos++;
+						pc++;
+						continue;
+					}
+					return false;
+				case RxOp.CategoryEcmaWord:
+					if (strpos < string_end) {
+						int c = str [strpos];
+						if ('a' <= c && c <= 'z' || 'A' <= c && c <= 'Z' || '0' <= c && c <= '9' || c == '_') {
+							strpos++;
+							pc++;
+							continue;
+						}
+					}
+					return false;
+				case RxOp.CategoryEcmaDigit:
+					if (strpos < string_end) {
+						int c = str [strpos];
+						if ('0' <= c && c <= '9') {
+							strpos++;
+							pc++;
+							continue;
+						}
+					}
+					return false;
+				case RxOp.CategoryEcmaWhiteSpace:
+					if (strpos < string_end) {
+						int c = str [strpos];
+						if (c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\f' || c == '\v') {
+							strpos++;
+							pc++;
+							continue;
+						}
+					}
+					return false;
+				case RxOp.CategoryUnicodeSpecials:
+					if (strpos < string_end) {
+						int c = str [strpos];
+						if ('\uFEFF' <= c && c <= '\uFEFF' || '\uFFF0' <= c && c <= '\uFFFD') {
+							strpos++;
+							pc++;
+							continue;
+						}
+					}
+					return false;
+				case RxOp.CategoryUnicode:
+					if (strpos < string_end && Char.GetUnicodeCategory (str [strpos]) == (UnicodeCategory)program [pc + 1]) {
+						strpos++;
+						pc += 2;
 						continue;
 					}
 					return false;

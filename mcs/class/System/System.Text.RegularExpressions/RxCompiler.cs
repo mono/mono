@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Globalization;
 
 namespace System.Text.RegularExpressions {
 
@@ -141,23 +142,271 @@ namespace System.Text.RegularExpressions {
 			}
 		}
 
+		void EmitUniCat (UnicodeCategory cat, int offset)
+		{
+			Emit ((RxOp)((int)RxOp.CategoryUnicode + offset));
+			Emit ((byte)cat);
+		}
+
 		public void EmitCategory (Category cat, bool negate, bool reverse)
 		{
-			if (negate | reverse)
-				throw new NotSupportedException ();
+			int offset = 0;
+			if (negate)
+				offset += 1;
+			if (reverse)
+				offset += 2;
 			switch (cat) {
 			case Category.Any:
-				Emit (RxOp.CategoryAny);
+			case Category.EcmaAny:
+				Emit ((RxOp)((int)RxOp.CategoryAny + offset));
 				break;
+			case Category.Word:
+				Emit ((RxOp)((int)RxOp.CategoryWord + offset));
+				break;
+			case Category.Digit:
+				Emit ((RxOp)((int)RxOp.CategoryDigit + offset));
+				break;
+			case Category.WhiteSpace:
+				Emit ((RxOp)((int)RxOp.CategoryWhiteSpace + offset));
+				break;
+			case Category.EcmaWord:
+				Emit ((RxOp)((int)RxOp.CategoryEcmaWord + offset));
+				break;
+			case Category.EcmaDigit:
+				Emit ((RxOp)((int)RxOp.CategoryEcmaDigit + offset));
+				break;
+			case Category.EcmaWhiteSpace:
+				Emit ((RxOp)((int)RxOp.CategoryEcmaWhiteSpace + offset));
+				break;
+			case Category.UnicodeSpecials:
+				Emit ((RxOp)((int)RxOp.CategoryUnicodeSpecials + offset));
+				break;
+			// Unicode categories...
+			// letter
+			case Category.UnicodeLu: EmitUniCat (UnicodeCategory.UppercaseLetter, offset); break;
+			case Category.UnicodeLl: EmitUniCat (UnicodeCategory.LowercaseLetter, offset); break;
+			case Category.UnicodeLt: EmitUniCat (UnicodeCategory.TitlecaseLetter, offset); break;
+			case Category.UnicodeLm: EmitUniCat (UnicodeCategory.ModifierLetter, offset); break;
+			case Category.UnicodeLo: EmitUniCat (UnicodeCategory.OtherLetter, offset); break;
+			// mark
+			case Category.UnicodeMn: EmitUniCat (UnicodeCategory.NonSpacingMark, offset); break;
+			case Category.UnicodeMe: EmitUniCat (UnicodeCategory.EnclosingMark, offset); break;
+			case Category.UnicodeMc: EmitUniCat (UnicodeCategory.SpacingCombiningMark, offset); break;
+			case Category.UnicodeNd: EmitUniCat (UnicodeCategory.DecimalDigitNumber, offset); break;
+			// number
+			case Category.UnicodeNl: EmitUniCat (UnicodeCategory.LetterNumber, offset); break;
+			case Category.UnicodeNo: EmitUniCat (UnicodeCategory.OtherNumber, offset); break;
+			// separator
+			case Category.UnicodeZs: EmitUniCat (UnicodeCategory.SpaceSeparator, offset); break;
+			case Category.UnicodeZl: EmitUniCat (UnicodeCategory.LineSeparator, offset); break;
+			case Category.UnicodeZp: EmitUniCat (UnicodeCategory.ParagraphSeparator, offset); break;
+			// punctuation
+			case Category.UnicodePd: EmitUniCat (UnicodeCategory.DashPunctuation, offset); break;
+			case Category.UnicodePs: EmitUniCat (UnicodeCategory.OpenPunctuation, offset); break;
+			case Category.UnicodePi: EmitUniCat (UnicodeCategory.InitialQuotePunctuation, offset); break;
+			case Category.UnicodePe: EmitUniCat (UnicodeCategory.ClosePunctuation, offset); break;
+			case Category.UnicodePf: EmitUniCat (UnicodeCategory.FinalQuotePunctuation, offset); break;
+			case Category.UnicodePc: EmitUniCat (UnicodeCategory.ConnectorPunctuation, offset); break;
+			case Category.UnicodePo: EmitUniCat (UnicodeCategory.OtherPunctuation, offset); break;
+			// symbol
+			case Category.UnicodeSm: EmitUniCat (UnicodeCategory.MathSymbol, offset); break;
+			case Category.UnicodeSc: EmitUniCat (UnicodeCategory.CurrencySymbol, offset); break;
+			case Category.UnicodeSk: EmitUniCat (UnicodeCategory.ModifierSymbol, offset); break;
+			case Category.UnicodeSo: EmitUniCat (UnicodeCategory.OtherSymbol, offset); break;
+			// other
+			case Category.UnicodeCc: EmitUniCat (UnicodeCategory.Control, offset); break;
+			case Category.UnicodeCf: EmitUniCat (UnicodeCategory.Format, offset); break;
+			case Category.UnicodeCo: EmitUniCat (UnicodeCategory.PrivateUse, offset); break;
+			case Category.UnicodeCs: EmitUniCat (UnicodeCategory.Surrogate, offset); break;
+			case Category.UnicodeCn: EmitUniCat (UnicodeCategory.OtherNotAssigned, offset); break; 
+			// Unicode block ranges...
+			case Category.UnicodeBasicLatin:
+				EmitRange ('\u0000', '\u007F', negate, false, reverse); break;
+			case Category.UnicodeLatin1Supplement:
+				EmitRange ('\u0080', '\u00FF', negate, false, reverse); break;
+			case Category.UnicodeLatinExtendedA:
+				EmitRange ('\u0100', '\u017F', negate, false, reverse); break;
+			case Category.UnicodeLatinExtendedB:
+				EmitRange ('\u0180', '\u024F', negate, false, reverse); break;
+			case Category.UnicodeIPAExtensions:
+				EmitRange ('\u0250', '\u02AF', negate, false, reverse); break;
+			case Category.UnicodeSpacingModifierLetters:
+				EmitRange ('\u02B0', '\u02FF', negate, false, reverse); break;
+			case Category.UnicodeCombiningDiacriticalMarks:
+				EmitRange ('\u0300', '\u036F', negate, false, reverse); break;
+			case Category.UnicodeGreek:
+				EmitRange ('\u0370', '\u03FF', negate, false, reverse); break;
+			case Category.UnicodeCyrillic:
+				EmitRange ('\u0400', '\u04FF', negate, false, reverse); break;
+			case Category.UnicodeArmenian:
+				EmitRange ('\u0530', '\u058F', negate, false, reverse); break;
+			case Category.UnicodeHebrew:
+				EmitRange ('\u0590', '\u05FF', negate, false, reverse); break;
+			case Category.UnicodeArabic:
+				EmitRange ('\u0600', '\u06FF', negate, false, reverse); break;
+			case Category.UnicodeSyriac:
+				EmitRange ('\u0700', '\u074F', negate, false, reverse); break;
+			case Category.UnicodeThaana:
+				EmitRange ('\u0780', '\u07BF', negate, false, reverse); break;
+			case Category.UnicodeDevanagari:
+				EmitRange ('\u0900', '\u097F', negate, false, reverse); break;
+			case Category.UnicodeBengali:
+				EmitRange ('\u0980', '\u09FF', negate, false, reverse); break;
+			case Category.UnicodeGurmukhi:
+				EmitRange ('\u0A00', '\u0A7F', negate, false, reverse); break;
+			case Category.UnicodeGujarati:
+				EmitRange ('\u0A80', '\u0AFF', negate, false, reverse); break;
+			case Category.UnicodeOriya:
+				EmitRange ('\u0B00', '\u0B7F', negate, false, reverse); break;
+			case Category.UnicodeTamil:
+				EmitRange ('\u0B80', '\u0BFF', negate, false, reverse); break;
+			case Category.UnicodeTelugu:
+				EmitRange ('\u0C00', '\u0C7F', negate, false, reverse); break;
+			case Category.UnicodeKannada:
+				EmitRange ('\u0C80', '\u0CFF', negate, false, reverse); break;
+			case Category.UnicodeMalayalam:
+				EmitRange ('\u0D00', '\u0D7F', negate, false, reverse); break;
+			case Category.UnicodeSinhala:
+				EmitRange ('\u0D80', '\u0DFF', negate, false, reverse); break;
+			case Category.UnicodeThai:
+				EmitRange ('\u0E00', '\u0E7F', negate, false, reverse); break;
+			case Category.UnicodeLao:
+				EmitRange ('\u0E80', '\u0EFF', negate, false, reverse); break;
+			case Category.UnicodeTibetan:
+				EmitRange ('\u0F00', '\u0FFF', negate, false, reverse); break;
+			case Category.UnicodeMyanmar:
+				EmitRange ('\u1000', '\u109F', negate, false, reverse); break;
+			case Category.UnicodeGeorgian:
+				EmitRange ('\u10A0', '\u10FF', negate, false, reverse); break;
+			case Category.UnicodeHangulJamo:
+				EmitRange ('\u1100', '\u11FF', negate, false, reverse); break;
+			case Category.UnicodeEthiopic:
+				EmitRange ('\u1200', '\u137F', negate, false, reverse); break;
+			case Category.UnicodeCherokee:
+				EmitRange ('\u13A0', '\u13FF', negate, false, reverse); break;
+			case Category.UnicodeUnifiedCanadianAboriginalSyllabics:
+				EmitRange ('\u1400', '\u167F', negate, false, reverse); break;
+			case Category.UnicodeOgham:
+				EmitRange ('\u1680', '\u169F', negate, false, reverse); break;
+			case Category.UnicodeRunic:
+				EmitRange ('\u16A0', '\u16FF', negate, false, reverse); break;
+			case Category.UnicodeKhmer:
+				EmitRange ('\u1780', '\u17FF', negate, false, reverse); break;
+			case Category.UnicodeMongolian:
+				EmitRange ('\u1800', '\u18AF', negate, false, reverse); break;
+			case Category.UnicodeLatinExtendedAdditional:
+				EmitRange ('\u1E00', '\u1EFF', negate, false, reverse); break;
+			case Category.UnicodeGreekExtended:
+				EmitRange ('\u1F00', '\u1FFF', negate, false, reverse); break;
+			case Category.UnicodeGeneralPunctuation:
+				EmitRange ('\u2000', '\u206F', negate, false, reverse); break;
+			case Category.UnicodeSuperscriptsandSubscripts:
+				EmitRange ('\u2070', '\u209F', negate, false, reverse); break;
+			case Category.UnicodeCurrencySymbols:
+				EmitRange ('\u20A0', '\u20CF', negate, false, reverse); break;
+			case Category.UnicodeCombiningMarksforSymbols:
+				EmitRange ('\u20D0', '\u20FF', negate, false, reverse); break;
+			case Category.UnicodeLetterlikeSymbols:
+				EmitRange ('\u2100', '\u214F', negate, false, reverse); break;
+			case Category.UnicodeNumberForms:
+				EmitRange ('\u2150', '\u218F', negate, false, reverse); break;
+			case Category.UnicodeArrows:
+				EmitRange ('\u2190', '\u21FF', negate, false, reverse); break;
+			case Category.UnicodeMathematicalOperators:
+				EmitRange ('\u2200', '\u22FF', negate, false, reverse); break;
+			case Category.UnicodeMiscellaneousTechnical:
+				EmitRange ('\u2300', '\u23FF', negate, false, reverse); break;
+			case Category.UnicodeControlPictures:
+				EmitRange ('\u2400', '\u243F', negate, false, reverse); break;
+			case Category.UnicodeOpticalCharacterRecognition:
+				EmitRange ('\u2440', '\u245F', negate, false, reverse); break;
+			case Category.UnicodeEnclosedAlphanumerics:
+				EmitRange ('\u2460', '\u24FF', negate, false, reverse); break;
+			case Category.UnicodeBoxDrawing:
+				EmitRange ('\u2500', '\u257F', negate, false, reverse); break;
+			case Category.UnicodeBlockElements:
+				EmitRange ('\u2580', '\u259F', negate, false, reverse); break;
+			case Category.UnicodeGeometricShapes:
+				EmitRange ('\u25A0', '\u25FF', negate, false, reverse); break;
+			case Category.UnicodeMiscellaneousSymbols:
+				EmitRange ('\u2600', '\u26FF', negate, false, reverse); break;
+			case Category.UnicodeDingbats:
+				EmitRange ('\u2700', '\u27BF', negate, false, reverse); break;
+			case Category.UnicodeBraillePatterns:
+				EmitRange ('\u2800', '\u28FF', negate, false, reverse); break;
+			case Category.UnicodeCJKRadicalsSupplement:
+				EmitRange ('\u2E80', '\u2EFF', negate, false, reverse); break;
+			case Category.UnicodeKangxiRadicals:
+				EmitRange ('\u2F00', '\u2FDF', negate, false, reverse); break;
+			case Category.UnicodeIdeographicDescriptionCharacters:
+				EmitRange ('\u2FF0', '\u2FFF', negate, false, reverse); break;
+			case Category.UnicodeCJKSymbolsandPunctuation:
+				EmitRange ('\u3000', '\u303F', negate, false, reverse); break;
+			case Category.UnicodeHiragana:
+				EmitRange ('\u3040', '\u309F', negate, false, reverse); break;
+			case Category.UnicodeKatakana:
+				EmitRange ('\u30A0', '\u30FF', negate, false, reverse); break;
+			case Category.UnicodeBopomofo:
+				EmitRange ('\u3100', '\u312F', negate, false, reverse); break;
+			case Category.UnicodeHangulCompatibilityJamo:
+				EmitRange ('\u3130', '\u318F', negate, false, reverse); break;
+			case Category.UnicodeKanbun:
+				EmitRange ('\u3190', '\u319F', negate, false, reverse); break;
+			case Category.UnicodeBopomofoExtended:
+				EmitRange ('\u31A0', '\u31BF', negate, false, reverse); break;
+			case Category.UnicodeEnclosedCJKLettersandMonths:
+				EmitRange ('\u3200', '\u32FF', negate, false, reverse); break;
+			case Category.UnicodeCJKCompatibility:
+				EmitRange ('\u3300', '\u33FF', negate, false, reverse); break;
+			case Category.UnicodeCJKUnifiedIdeographsExtensionA:
+				EmitRange ('\u3400', '\u4DB5', negate, false, reverse); break;
+			case Category.UnicodeCJKUnifiedIdeographs:
+				EmitRange ('\u4E00', '\u9FFF', negate, false, reverse); break;
+			case Category.UnicodeYiSyllables:
+				EmitRange ('\uA000', '\uA48F', negate, false, reverse); break;
+			case Category.UnicodeYiRadicals:
+				EmitRange ('\uA490', '\uA4CF', negate, false, reverse); break;
+			case Category.UnicodeHangulSyllables:
+				EmitRange ('\uAC00', '\uD7A3', negate, false, reverse); break;
+			case Category.UnicodeHighSurrogates:
+				EmitRange ('\uD800', '\uDB7F', negate, false, reverse); break;
+			case Category.UnicodeHighPrivateUseSurrogates:
+				EmitRange ('\uDB80', '\uDBFF', negate, false, reverse); break;
+			case Category.UnicodeLowSurrogates:
+				EmitRange ('\uDC00', '\uDFFF', negate, false, reverse); break;
+			case Category.UnicodePrivateUse:
+				EmitRange ('\uE000', '\uF8FF', negate, false, reverse); break;
+			case Category.UnicodeCJKCompatibilityIdeographs:
+				EmitRange ('\uF900', '\uFAFF', negate, false, reverse); break;
+			case Category.UnicodeAlphabeticPresentationForms:
+				EmitRange ('\uFB00', '\uFB4F', negate, false, reverse); break;
+			case Category.UnicodeArabicPresentationFormsA:
+				EmitRange ('\uFB50', '\uFDFF', negate, false, reverse); break;
+			case Category.UnicodeCombiningHalfMarks:
+				EmitRange ('\uFE20', '\uFE2F', negate, false, reverse); break;
+			case Category.UnicodeCJKCompatibilityForms:
+				EmitRange ('\uFE30', '\uFE4F', negate, false, reverse); break;
+			case Category.UnicodeSmallFormVariants:
+				EmitRange ('\uFE50', '\uFE6F', negate, false, reverse); break;
+			case Category.UnicodeArabicPresentationFormsB:
+				EmitRange ('\uFE70', '\uFEFE', negate, false, reverse); break;
+			case Category.UnicodeHalfwidthandFullwidthForms:
+				EmitRange ('\uFF00', '\uFFEF', negate, false, reverse); break;
 			default:
-				Console.WriteLine ("Missing cat: {0}", cat);
-				throw new NotSupportedException ();
+				Console.WriteLine ("Missing category: {0}", cat);
+				EmitFalse ();
+				break;
 			}
 		}
 
 		public void EmitNotCategory (Category cat, bool negate, bool reverse)
 		{
-			throw new NotSupportedException ();
+			// not sure why the compiler needed this separate interface funtion
+			if (negate) {
+				EmitCategory (cat, false, reverse);
+			} else {
+				EmitCategory (cat, true, reverse);
+			}
 		}
 
 		public void EmitRange (char lo, char hi, bool negate, bool ignore, bool reverse)
@@ -307,11 +556,14 @@ namespace System.Text.RegularExpressions {
 
 		public void EmitBalance ()
 		{
-			throw new NotSupportedException ();
+			// it doesn't seem we need to do anything, so just don't emit anything
+			//throw new NotSupportedException ();
 		}
 
 		public void EmitReference (int gid, bool ignore, bool reverse)
 		{
+			if (gid > ushort.MaxValue)
+				throw new NotSupportedException ();
 			int offset = 0;
 			if (ignore)
 				offset += 1;
@@ -323,7 +575,12 @@ namespace System.Text.RegularExpressions {
 
 		public void EmitIfDefined (int gid, LinkRef tail)
 		{
-			throw new NotSupportedException ();
+			if (gid > ushort.MaxValue)
+				throw new NotSupportedException ();
+			BeginLink (tail);
+			Emit (RxOp.IfDefined);
+			EmitLink (tail);
+			Emit ((ushort)gid);
 		}
 
 		public void EmitSub (LinkRef tail)
