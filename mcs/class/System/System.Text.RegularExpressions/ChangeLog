@@ -1,7 +1,9 @@
 2008-02-13  Zoltan Varga  <vargaz@gmail.com>
 
-	* CILCompiler.cs: Improved version which emits only one method in most cases.
+	* CILCompiler.cs: Fix the unsafe string matching code.
 	
+	* CILCompiler.cs: Improved version which emits only one method in most cases.
+
 	* CILCompiler.cs: Fix some comments.
 
 	* CILCompiler.cs: New file, extracted from RxCompiler.cs.

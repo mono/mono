@@ -453,6 +453,8 @@ namespace System.Text.RegularExpressions {
 					break;
 				}
 				case RxOp.String: {
+					int i;
+
 					start = pc + 2;
 					length = program [pc + 1];
 					//if (strpos + length > string_end)
@@ -478,14 +480,14 @@ namespace System.Text.RegularExpressions {
 					ilgen.Emit (OpCodes.Stloc, local_strptr);
 
 					end = start + length;
-					for (; start < end; ++start) {
-						// if (*(strptr + start) != program [start])
+					for (i = 0; i < length; ++i) {
+						// if (*(strptr + i) != program [start + i])
 						//   return false;
 						ilgen.Emit (OpCodes.Ldloc, local_strptr);
-						ilgen.Emit (OpCodes.Ldc_I4, start * 2);
+						ilgen.Emit (OpCodes.Ldc_I4, i * 2);
 						ilgen.Emit (OpCodes.Add);
 						ilgen.Emit (OpCodes.Ldind_I2);
-						ilgen.Emit (OpCodes.Ldc_I4, (int)program [start]);
+						ilgen.Emit (OpCodes.Ldc_I4, (int)program [start + i]);
 						ilgen.Emit (OpCodes.Bne_Un, frame.label_fail);
 					}
 
