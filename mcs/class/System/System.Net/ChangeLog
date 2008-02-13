@@ -1,3 +1,9 @@
+2008-02-13  Daniel Nauck  <dna@mono-project.de>
+
+	[Backport from r95334 to 1.9]
+        * HttpWebResponse.cs: convert UTC/GMT Expires DateTime from a cookie
+        into local time.
+
 2008-01-27  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* IPAddress.cs (Parse): Changed argument name to match MS.

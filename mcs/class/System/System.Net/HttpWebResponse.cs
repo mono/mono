@@ -4,6 +4,7 @@
 // Authors:
 // 	Lawrence Pit (loz@cable.a2000.nl)
 // 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//      Daniel Nauck    (dna(at)mono-project(dot)de)
 //
 // (c) 2002 Lawrence Pit
 // (c) 2003 Ximian, Inc. (http://www.ximian.com)
@@ -406,17 +407,28 @@ namespace System.Net
 				case "EXPIRES": // Netscape Style Set-Cookie
 					if (cookie.Expires != DateTime.MinValue)
 						break;
+
+					//If no Expires is set, use cookie as session cookie (expires is DateTime.MinValue)
+					DateTime cookieExpiresUtc = DateTime.MinValue;
 					try {
-						cookie.Expires = DateTime.ParseExact (val, "r", CultureInfo.InvariantCulture);
+						cookieExpiresUtc = DateTime.ParseExact (val, "r", CultureInfo.InvariantCulture);
 					} catch {
 						try { 
-						cookie.Expires = DateTime.ParseExact (val,
+						cookieExpiresUtc = DateTime.ParseExact (val,
 								"ddd, dd'-'MMM'-'yyyy HH':'mm':'ss 'GMT'",
 								CultureInfo.InvariantCulture);
-						} catch {
-							cookie.Expires = DateTime.Now.AddDays (1);
-						}
+						} catch {}
 					}
+
+					//convert UTC/GMT time to local time
+#if NET_2_0
+					cookieExpiresUtc = DateTime.SpecifyKind (cookieExpiresUtc, DateTimeKind.Utc);
+					cookie.Expires = TimeZone.CurrentTimeZone.ToLocalTime (cookieExpiresUtc);
+#else
+					//DateTime.Kind is only available on .NET 2.0, so do some calculation
+					TimeSpan localOffset = TimeZone.CurrentTimeZone.GetUtcOffset (cookieExpiresUtc.Date);
+					cookie.Expires = cookieExpiresUtc.Add (localOffset);
+#endif
 					break;
 				case "PATH":
 					cookie.Path = val;
