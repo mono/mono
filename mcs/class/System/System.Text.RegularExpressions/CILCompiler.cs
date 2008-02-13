@@ -15,7 +15,6 @@ namespace System.Text.RegularExpressions {
 	// This is net 2.0, since 1.0 doesn't support DynamicMethods
 	// FIXME: Add support for 1.0, and CompileToAssembly
 	// FIXME: Emit one method with a switch instead of many methods
-	// FIXME: Avoid ref ptr, since it is bad for register allocation
 	//
 
 #if NET_2_0
@@ -90,9 +89,9 @@ namespace System.Text.RegularExpressions {
 		}
 
 		//
-		// Create a dynamic method which is the Interpreter.Eval method specialized
+		// Create a dynamic method which is the RxInterpreter.EvalByteCode method specialized
 		// to the given program and a given pc.
-		// Keep this in synch with Interpreter.Eval ()
+		// Keep this in synch with RxInterpreter.EvalByteCode ()
 		//
 		DynamicMethod CreateEvalMethod (byte[] program, int pc) {
 			DynamicMethod m = new DynamicMethod ("Eval_" + pc, typeof (bool), new Type [] { typeof (RxInterpreter), typeof (int), typeof (int).MakeByRefType () }, typeof (RxInterpreter), true);
