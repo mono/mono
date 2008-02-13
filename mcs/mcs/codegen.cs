@@ -1460,7 +1460,7 @@ namespace Mono.CSharp {
 				ConstructorInfo ci = TypeManager.GetCoreConstructor (
 					TypeManager.runtime_compatibility_attr_type, Type.EmptyTypes);
 				PropertyInfo [] pis = new PropertyInfo [1];
-				pis [0] = TypeManager.GetProperty (
+				pis [0] = TypeManager.GetCoreProperty (
 					TypeManager.runtime_compatibility_attr_type, "WrapNonExceptionThrows");
 				object [] pargs = new object [1];
 				pargs [0] = true;
