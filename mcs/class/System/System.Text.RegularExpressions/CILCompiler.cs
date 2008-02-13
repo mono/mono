@@ -202,21 +202,11 @@ namespace System.Text.RegularExpressions {
 						ilgen.Emit (OpCodes.Callvirt, typeof (string).GetMethod ("get_Chars"));
 						ilgen.Emit (OpCodes.Conv_I4);
 						ilgen.Emit (OpCodes.Ldc_I4, (int)program [pc + 1]);
-						ilgen.Emit (OpCodes.Bne_Un, l3);
+						ilgen.Emit (OpCodes.Beq, l3);
 
-						//    match_start = strpos;
-						ilgen.Emit (OpCodes.Ldarg_0);
-						ilgen.Emit (OpCodes.Ldarg_1);
-						ilgen.Emit (OpCodes.Stfld, fi_match_start);
-						//    strpos_result = strpos + 1;
-						ilgen.Emit (OpCodes.Ldarg_1);
-						ilgen.Emit (OpCodes.Ldc_I4_1);
-						ilgen.Emit (OpCodes.Add);
-						ilgen.Emit (OpCodes.Stloc, frame.local_strpos_res);
-						//    return true;
-						ilgen.Emit (OpCodes.Br, frame.label_pass);
+						// The true case is done after the loop
+
 						//  }
-						ilgen.MarkLabel (l3);
 						//  strpos++;
 						ilgen.Emit (OpCodes.Ldarg_1);
 						ilgen.Emit (OpCodes.Ldc_I4_1);
@@ -230,6 +220,21 @@ namespace System.Text.RegularExpressions {
 
 						//return false;
 						ilgen.Emit (OpCodes.Br, frame.label_fail);
+
+						// True case
+						ilgen.MarkLabel (l3);
+						//    match_start = strpos;
+						ilgen.Emit (OpCodes.Ldarg_0);
+						ilgen.Emit (OpCodes.Ldarg_1);
+						ilgen.Emit (OpCodes.Stfld, fi_match_start);
+						//    strpos_result = strpos + 1;
+						ilgen.Emit (OpCodes.Ldarg_1);
+						ilgen.Emit (OpCodes.Ldc_I4_1);
+						ilgen.Emit (OpCodes.Add);
+						ilgen.Emit (OpCodes.Stloc, frame.local_strpos_res);
+						//    return true;
+						ilgen.Emit (OpCodes.Br, frame.label_pass);
+
 					} else {
 						// General case
 
