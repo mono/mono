@@ -1756,17 +1756,16 @@ namespace Mono.CSharp {
 					tparam.GenericConstraints.HasValueTypeConstraint;
 			}
 
-			MemberList list = TypeManager.FindMembers (
-				atype, MemberTypes.Constructor,
-				BindingFlags.Public | BindingFlags.Instance |
-				BindingFlags.DeclaredOnly, null, null);
+			MemberInfo [] list = TypeManager.MemberLookup (null, null, atype, MemberTypes.Constructor,
+				BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly,
+				ConstructorInfo.ConstructorName, null);
 
-			if (atype.IsAbstract || (list == null))
+			if (list == null)
 				return false;
 
 			foreach (MethodBase mb in list) {
 				ParameterData pd = TypeManager.GetParameterData (mb);
-				if ((pd.Count == 0) && mb.IsPublic && !mb.IsStatic)
+				if (pd.Count == 0)
 					return true;
 			}
 

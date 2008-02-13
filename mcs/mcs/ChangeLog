@@ -1,5 +1,10 @@
 2008-02-13  Marek Safar  <marek.safar@gmail.com>
 
+	* generic.cs (ConstraintChecker): Use cached member lookup when looking for
+	the parameterless constructor.
+
+2008-02-13  Marek Safar  <marek.safar@gmail.com>
+
 	* generic.cs, typemanager.cs, iterators.cs, codegen.cs: Refactored core
 	lookup methods to use standard member cache when doing member lookup.
 
