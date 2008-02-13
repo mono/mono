@@ -1,5 +1,7 @@
 2008-02-13  Zoltan Varga  <vargaz@gmail.com>
 
+	* CILCompiler.cs: New file, extracted from RxCompiler.cs.
+
 	* RxInterpreter.cs RxCompiler.cs: First version of regex IL compiler.
 
 Wed Feb 13 13:18:12 CET 2008 Paolo Molaro <lupus@ximian.com>
