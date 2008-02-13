@@ -341,7 +341,7 @@ namespace Mono.CSharp {
 
 		ConstructorInfo GetInvalidOperationException ()
 		{
-			return TypeManager.GetConstructor (
+			return TypeManager.GetCoreConstructor (
 				TypeManager.invalid_operation_exception_type, Type.EmptyTypes);
 		}
 

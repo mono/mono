@@ -153,7 +153,6 @@ namespace Mono.CSharp {
 	static public Type system_int32_type;
 	static public Type system_array_type;
 	static public Type system_type_type;
-	static public Type system_assemblybuilder_type;
 	static public MethodInfo system_int_array_get_length;
 	static public MethodInfo system_int_array_get_rank;
 	static public MethodInfo system_object_array_clone;
@@ -263,11 +262,6 @@ namespace Mono.CSharp {
 	static PtrHashtable assembly_internals_vis_attrs;
 #endif
 
-	struct Signature {
-		public string name;
-		public Type [] args;
-	}
-	
 	public static void CleanUp ()
 	{
 		// Lets get everything clean so that we can collect before generating code
@@ -290,49 +284,6 @@ namespace Mono.CSharp {
 
 		TypeHandle.CleanUp ();
 	}
-
-	/// <summary>
-	///   A filter for Findmembers that uses the Signature object to
-	///   extract objects
-	/// </summary>
-	static bool SignatureFilter (MemberInfo mi, object criteria)
-	{
-		Signature sig = (Signature) criteria;
-
-		if (!(mi is MethodBase))
-			return false;
-
-		if (mi.Name != sig.name)
-			return false;
-
-		int count = sig.args.Length;
-		
-		if (mi is MethodBuilder || mi is ConstructorBuilder){
-			Type [] candidate_args = GetParameterData ((MethodBase) mi).Types;
-
-			if (candidate_args.Length != count)
-				return false;
-			
-			for (int i = 0; i < count; i++)
-				if (candidate_args [i] != sig.args [i])
-					return false;
-			
-			return true;
-		} else {
-			ParameterInfo [] pars = ((MethodBase) mi).GetParameters ();
-
-			if (pars.Length != count)
-				return false;
-
-			for (int i = 0; i < count; i++)
-				if (pars [i].ParameterType != sig.args [i])
-					return false;
-			return true;
-		}
-	}
-
-	// A delegate that points to the filter above.
-	static MemberFilter signature_filter;
 
 	//
 	// These are expressions that represent some of the internal data types, used
@@ -366,7 +317,6 @@ namespace Mono.CSharp {
 	{
 		Reset ();
 
-		signature_filter = new MemberFilter (SignatureFilter);
 		InitExpressionTypes ();
 	}
 
@@ -900,103 +850,111 @@ namespace Mono.CSharp {
 	///   Returns the MethodInfo for a method named `name' defined
 	///   in type `t' which takes arguments of types `args'
 	/// </summary>
-	static MethodInfo GetMethod (Type t, string name, Type [] args, bool is_private, bool report_errors)
+	static MethodInfo GetCoreMethod (Type t, string name, Type [] args, bool is_private, bool report_errors)
 	{
-		MemberList list;
-		Signature sig;
-		BindingFlags flags = instance_and_static | BindingFlags.Public;
-
-		sig.name = name;
-		sig.args = args;
-
+		BindingFlags flags = instance_and_static;
 		if (is_private)
 			flags |= BindingFlags.NonPublic;
+		else
+			flags |= BindingFlags.Public;
 
-		list = FindMembers (t, MemberTypes.Method, flags, signature_filter, sig);
-		if (list.Count == 0) {
-			if (report_errors)
-				Report.Error (-19, "Can not find the core function `" + name + "'");
-			return null;
+		MemberInfo[] methods = MemberLookup (null, null, t, MemberTypes.Method, flags, name, null);
+		if (methods != null) {
+			for (int i = 0; i < methods.Length; ++i) {
+				MethodBase method = (MethodBase) methods [i];
+				ParameterData pd = TypeManager.GetParameterData (method);
+				if (pd.Count != args.Length) {
+					if (name == "SetCorlibTypeBuilders")
+							Console.WriteLine ("XX");
+					continue;
+				}
+
+				for (int ii = 0; ii < args.Length; ++ii) {
+					if (!IsEqual (pd.Types [ii], args [ii])) {
+							if (name == "SetCorlibTypeBuilders")
+								Console.WriteLine (pd.Types [ii].FullName);
+							
+						method = null;
+						break;
+					}
+				}
+
+				if (method != null)
+					return (MethodInfo) method;
+			}
 		}
 
-		MethodInfo mi = list [0] as MethodInfo;
-		if (mi == null) {
-			if (report_errors)
-				Report.Error (-19, "Can not find the core function `" + name + "'");
-			return null;
+		if (report_errors)
+			Report.Error (-19, "The predefined method `{0}.{1}({2})' could not be found",
+				TypeManager.CSharpName (t), name, TypeManager.CSharpName (args));
+
+		return null;
+	}
+
+	static MethodInfo GetCoreMethod (Type t, string name, Type [] args, bool report_errors)
+	{
+		return GetCoreMethod (t, name, args, false, report_errors);
+	}
+
+	public static MethodInfo GetCoreMethod (Type t, string name, Type [] args)
+	{
+		return GetCoreMethod (t, name, args, true);
+	}
+
+	/// <summary>
+	///    Returns the ConstructorInfo for "args"
+	/// </summary>
+	public static ConstructorInfo GetCoreConstructor (Type t, Type [] args)
+	{
+		return GetCoreConstructor (t, args, true);
+	}
+
+	public static ConstructorInfo GetCoreConstructor (Type t, Type [] args, bool report_errors)
+	{
+		const BindingFlags flags = instance_and_static | BindingFlags.Public | BindingFlags.DeclaredOnly;
+
+		MemberInfo [] methods = MemberLookup (null, null, t, MemberTypes.Constructor,
+			flags, ConstructorInfo.ConstructorName, null);
+			
+		for (int i = 0; i < methods.Length; ++i) {
+			MethodBase method = (MethodBase) methods [i];
+			ParameterData pd = TypeManager.GetParameterData (method);
+			if (pd.Count != args.Length)
+				continue;
+
+			for (int ii = 0; ii < args.Length; ++ii) {
+				if (!IsEqual (pd.Types [ii], args [ii])) {
+					method = null;
+					break;
+				}
+			}
+
+			if (method != null)
+				return (ConstructorInfo) method;
 		}
 
-		return mi;
-	}
+		if (report_errors)
+			Report.Error (-19, "Can not find the core constructor of type `{0}'",
+				 TypeManager.CSharpName (t));
 
-	static MethodInfo GetMethod (Type t, string name, Type [] args, bool report_errors)
-	{
-		return GetMethod (t, name, args, false, report_errors);
-	}
-
-	public static MethodInfo GetMethod (Type t, string name, Type [] args)
-	{
-		return GetMethod (t, name, args, true);
+		return null;
 	}
 
 	/// <summary>
 	///   Returns the PropertyInfo for a property named `name' defined
 	///   in type `t'
 	/// </summary>
-	public static PropertyInfo GetProperty (Type t, string name)
+	public static PropertyInfo GetCoreProperty (Type t, string name)
 	{
-		MemberList list = FindMembers (t, MemberTypes.Property, BindingFlags.Public |
-					       BindingFlags.Instance, Type.FilterName, name);
-		if (list.Count == 0) {
+		MemberInfo [] properties = MemberLookup (null, null, t, MemberTypes.Property,
+			BindingFlags.Public | BindingFlags.Instance, name, null);
+
+		if (properties == null || properties.Length != 1) {
 			Report.Error (-19, "Can not find the core property `" + name + "'");
 			return null;
 		}
 
-		PropertyInfo pi = list [0] as PropertyInfo;
-		if (pi == null) {
-			Report.Error (-19, "Can not find the core function `" + name + "'");
-			return null;
-		}
-
-		return pi;
-	}
-
-	/// <summary>
-	///    Returns the ConstructorInfo for "args"
-	/// </summary>
-	public static ConstructorInfo GetConstructor (Type t, Type [] args)
-	{
-		return GetConstructor (t, args, true);
-	}
-
-	public static ConstructorInfo GetConstructor (Type t, Type [] args, bool report_errors)
-	{
-		MemberList list;
-		Signature sig;
-
-		sig.name = ".ctor";
-		sig.args = args;
-
-		if (t == null)
-			throw new InternalErrorException ("Core types haven't been initialized yet?");
-		
-		list = FindMembers (t, MemberTypes.Constructor,
-				    instance_and_static | BindingFlags.Public | BindingFlags.DeclaredOnly,
-				    signature_filter, sig);
-		if (list.Count == 0){
-			if (report_errors)
-				Report.Error (-19, "Can not find the core constructor for type `" + t.Name + "'");
-			return null;
-		}
-
-		ConstructorInfo ci = list [0] as ConstructorInfo;
-		if (ci == null){
-			if (report_errors)
-				Report.Error (-19, "Can not find the core constructor for type `" + t.Name + "'");
-			return null;
-		}
-
-		return ci;
+		return (PropertyInfo) properties [0];
 	}
 
 	public static void InitEnumUnderlyingTypes ()
@@ -1135,35 +1093,37 @@ namespace Mono.CSharp {
 			system_int32_type = typeof (System.Int32);
 			system_array_type = typeof (System.Array);
 			system_type_type = typeof (System.Type);
-			system_assemblybuilder_type = typeof (System.Reflection.Emit.AssemblyBuilder);
 
-			system_int_array_get_length = GetMethod (
+			system_int_array_get_length = GetCoreMethod (
 				system_array_type, "get_Length", Type.EmptyTypes);
-			system_int_array_get_rank = GetMethod (
+			system_int_array_get_rank = GetCoreMethod (
 				system_array_type, "get_Rank", Type.EmptyTypes);
-			system_object_array_clone = GetMethod (
+			system_object_array_clone = GetCoreMethod (
 				system_array_type, "Clone", Type.EmptyTypes);
 
 			Type [] system_int_arg = { system_int32_type };
-			system_int_array_get_length_int = GetMethod (
+			system_int_array_get_length_int = GetCoreMethod (
 				system_array_type, "GetLength", system_int_arg);
-			system_int_array_get_upper_bound_int = GetMethod (
+			system_int_array_get_upper_bound_int = GetCoreMethod (
 				system_array_type, "GetUpperBound", system_int_arg);
-			system_int_array_get_lower_bound_int = GetMethod (
+			system_int_array_get_lower_bound_int = GetCoreMethod (
 				system_array_type, "GetLowerBound", system_int_arg);
 
 			Type [] system_array_int_arg = { system_array_type, system_int32_type };
-			system_void_array_copyto_array_int = GetMethod (
+			system_void_array_copyto_array_int = GetCoreMethod (
 				system_array_type, "CopyTo", system_array_int_arg);
 
-			Type [] system_3_type_arg = {
-				system_type_type, system_type_type, system_type_type };
+			//
+			// HACK: When building corlib replace corlib internal core types
+			// with mcs core types to handle type comparisons inside corlib
+			//
 			Type [] system_4_type_arg = {
 				system_type_type, system_type_type, system_type_type, system_type_type };
-
-			MethodInfo set_corlib_type_builders = GetMethod (
-				system_assemblybuilder_type, "SetCorlibTypeBuilders",
-				system_4_type_arg, true, false);
+				
+			MethodInfo set_corlib_type_builders = 
+				typeof (System.Reflection.Emit.AssemblyBuilder).GetMethod (
+				"SetCorlibTypeBuilders", BindingFlags.NonPublic | BindingFlags.Instance, null,
+				system_4_type_arg, null);
 
 			if (set_corlib_type_builders != null) {
 				object[] args = new object [4];
@@ -1174,22 +1134,8 @@ namespace Mono.CSharp {
 				
 				set_corlib_type_builders.Invoke (CodeGen.Assembly.Builder, args);
 			} else {
-				// Compatibility for an older version of the class libs.
-				set_corlib_type_builders = GetMethod (
-					system_assemblybuilder_type, "SetCorlibTypeBuilders",
-					system_3_type_arg, true, true);
-
-				if (set_corlib_type_builders == null) {
-					Report.Error (-26, "Corlib compilation is not supported in Microsoft.NET due to bugs in it");
-					return;
-				}
-
-				object[] args = new object [3];
-				args [0] = object_type;
-				args [1] = value_type;
-				args [2] = enum_type;
-				
-				set_corlib_type_builders.Invoke (CodeGen.Assembly.Builder, args);
+				Report.Error (-26, "Corlib compilation is not supported in Microsoft.NET due to bugs in it");
+				return;
 			}
 		}
 
@@ -1227,104 +1173,104 @@ namespace Mono.CSharp {
 		// Now load the default methods that we use.
 		//
 		Type [] string_ = { string_type };
-		string_isinterned_string = GetMethod (
+		string_isinterned_string = GetCoreMethod (
 			string_type, "IsInterned", string_);
 		
 		Type [] runtime_type_handle = { runtime_handle_type };
-		system_type_get_type_from_handle = GetMethod (
+		system_type_get_type_from_handle = GetCoreMethod (
 			type_type, "GetTypeFromHandle", runtime_type_handle);
 
 		Type [] delegate_delegate = { delegate_type, delegate_type };
-		delegate_combine_delegate_delegate = GetMethod (
+		delegate_combine_delegate_delegate = GetCoreMethod (
 				delegate_type, "Combine", delegate_delegate);
 
-		delegate_remove_delegate_delegate = GetMethod (
+		delegate_remove_delegate_delegate = GetCoreMethod (
 				delegate_type, "Remove", delegate_delegate);
 
 		//
 		// Void arguments
 		//
-		ienumerator_getcurrent = GetProperty (
+		ienumerator_getcurrent = GetCoreProperty (
 			ienumerator_type, "Current");
-		bool_movenext_void = GetMethod (
+		bool_movenext_void = GetCoreMethod (
 			ienumerator_type, "MoveNext", Type.EmptyTypes);
-		void_reset_void = GetMethod (
+		void_reset_void = GetCoreMethod (
 			ienumerator_type, "Reset", Type.EmptyTypes);
-		void_dispose_void = GetMethod (
+		void_dispose_void = GetCoreMethod (
 			idisposable_type, "Dispose", Type.EmptyTypes);
-		int_get_offset_to_string_data = GetMethod (
+		int_get_offset_to_string_data = GetCoreMethod (
 			runtime_helpers_type, "get_OffsetToStringData", Type.EmptyTypes);
-		int_array_get_length = GetMethod (
+		int_array_get_length = GetCoreMethod (
 			array_type, "get_Length", Type.EmptyTypes);
-		int_array_get_rank = GetMethod (
+		int_array_get_rank = GetCoreMethod (
 			array_type, "get_Rank", Type.EmptyTypes);
-		ienumerable_getenumerator_void = GetMethod (
+		ienumerable_getenumerator_void = GetCoreMethod (
 			ienumerable_type, "GetEnumerator", Type.EmptyTypes);
 		
 		//
 		// Int32 arguments
 		//
 		Type [] int_arg = { int32_type };
-		int_array_get_length_int = GetMethod (
+		int_array_get_length_int = GetCoreMethod (
 			array_type, "GetLength", int_arg);
-		int_array_get_upper_bound_int = GetMethod (
+		int_array_get_upper_bound_int = GetCoreMethod (
 			array_type, "GetUpperBound", int_arg);
-		int_array_get_lower_bound_int = GetMethod (
+		int_array_get_lower_bound_int = GetCoreMethod (
 			array_type, "GetLowerBound", int_arg);
 
 		//
 		// System.Array methods
 		//
-		object_array_clone = GetMethod (
+		object_array_clone = GetCoreMethod (
 			array_type, "Clone", Type.EmptyTypes);
 		Type [] array_int_arg = { array_type, int32_type };
-		void_array_copyto_array_int = GetMethod (
+		void_array_copyto_array_int = GetCoreMethod (
 			array_type, "CopyTo", array_int_arg);
 		
 		//
 		// object arguments
 		//
 		Type [] object_arg = { object_type };
-		void_monitor_enter_object = GetMethod (
+		void_monitor_enter_object = GetCoreMethod (
 			monitor_type, "Enter", object_arg);
-		void_monitor_exit_object = GetMethod (
+		void_monitor_exit_object = GetCoreMethod (
 			monitor_type, "Exit", object_arg);
 
 		Type [] array_field_handle_arg = { array_type, runtime_field_handle_type };
 		
-		void_initializearray_array_fieldhandle = GetMethod (
+		void_initializearray_array_fieldhandle = GetCoreMethod (
 			runtime_helpers_type, "InitializeArray", array_field_handle_arg);
 
 		//
 		// Array functions
 		//
-		int_getlength_int = GetMethod (
+		int_getlength_int = GetCoreMethod (
 			array_type, "GetLength", int_arg);
 
 		//
 		// Decimal constructors
 		//
 		Type [] dec_arg = { int32_type, int32_type, int32_type, bool_type, byte_type };
-		void_decimal_ctor_five_args = GetConstructor (
+		void_decimal_ctor_five_args = GetCoreConstructor (
 			decimal_type, dec_arg);
 		
-		void_decimal_ctor_int_arg = GetConstructor (decimal_type, int_arg);
+		void_decimal_ctor_int_arg = GetCoreConstructor (decimal_type, int_arg);
 
 		//
 		// Attributes
 		//
-		unverifiable_code_ctor = GetConstructor (unverifiable_code_type, Type.EmptyTypes);
-		default_member_ctor = GetConstructor (default_member_type, string_);
-		cons_param_array_attribute = GetConstructor (param_array_type, Type.EmptyTypes);
+		unverifiable_code_ctor = GetCoreConstructor (unverifiable_code_type, Type.EmptyTypes);
+		default_member_ctor = GetCoreConstructor (default_member_type, string_);
+		cons_param_array_attribute = GetCoreConstructor (param_array_type, Type.EmptyTypes);
 
 		Type[] short_arg = { short_type };
 		// fails for .net 2.1
-		struct_layout_attribute_ctor = GetConstructor (struct_layout_attribute_type, short_arg, false);
+		struct_layout_attribute_ctor = GetCoreConstructor (struct_layout_attribute_type, short_arg, false);
 
-		decimal_constant_attribute_ctor = GetConstructor (decimal_constant_attribute_type, new Type []
+		decimal_constant_attribute_ctor = GetCoreConstructor (decimal_constant_attribute_type, new Type []
 			{ byte_type, byte_type, uint32_type, uint32_type, uint32_type } );
 
-		field_offset_attribute_ctor = GetConstructor (field_offset_attribute_type, new Type []
+		field_offset_attribute_ctor = GetCoreConstructor (field_offset_attribute_type, new Type []
 			{ int32_type });
 
 		//
@@ -1332,7 +1278,7 @@ namespace Mono.CSharp {
 		//
 		Type[] compare_exchange_types = {
 			GetReferenceType (int32_type), int32_type, int32_type };
-		int_interlocked_compare_exchange = GetMethod (
+		int_interlocked_compare_exchange = GetCoreMethod (
 			interlocked_type, "CompareExchange", compare_exchange_types);
 
 		//
@@ -1340,17 +1286,17 @@ namespace Mono.CSharp {
 		//
 #if NET_2_0
 		compiler_generated_attr = new CustomAttributeBuilder (
-			GetConstructor (compiler_generated_attr_type, Type.EmptyTypes), new object[0]);
+			GetCoreConstructor (compiler_generated_attr_type, Type.EmptyTypes), new object[0]);
 
 		Type[] type_int_arg = { type_type, int32_type };
-		fixed_buffer_attr_ctor = GetConstructor (fixed_buffer_attr_type, type_int_arg);
+		fixed_buffer_attr_ctor = GetCoreConstructor (fixed_buffer_attr_type, type_int_arg);
 
 		// C# 3.0
 		InitSystemCore ();
 #endif
 
 		// Object
-		object_ctor = GetConstructor (object_type, Type.EmptyTypes);
+		object_ctor = GetCoreConstructor (object_type, Type.EmptyTypes);
 
 #if GMCS_SOURCE
 		InitGenericCodeHelpers ();
@@ -1365,7 +1311,7 @@ namespace Mono.CSharp {
 
 		if (extension_attribute_type != null)
 			extension_attribute_attr = new CustomAttributeBuilder (
-				GetConstructor (extension_attribute_type, Type.EmptyTypes), new object[0]);
+				GetCoreConstructor (extension_attribute_type, Type.EmptyTypes), new object[0]);
 	}
 #endif
 

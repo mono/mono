@@ -1457,7 +1457,7 @@ namespace Mono.CSharp {
 
 			// FIXME: Does this belong inside SRE.AssemblyBuilder instead?
 			if (OptAttributes == null || !OptAttributes.Contains (TypeManager.runtime_compatibility_attr_type)) {
-				ConstructorInfo ci = TypeManager.GetConstructor (
+				ConstructorInfo ci = TypeManager.GetCoreConstructor (
 					TypeManager.runtime_compatibility_attr_type, Type.EmptyTypes);
 				PropertyInfo [] pis = new PropertyInfo [1];
 				pis [0] = TypeManager.GetProperty (

@@ -2060,7 +2060,7 @@ namespace Mono.CSharp {
 		static void InitGenericCodeHelpers ()
 		{
 			// Activator
-			activator_create_instance = GetMethod (
+			activator_create_instance = GetCoreMethod (
 				activator_type, "CreateInstance", Type.EmptyTypes);
 		}
 
