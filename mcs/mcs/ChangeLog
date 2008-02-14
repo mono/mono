@@ -1,3 +1,9 @@
+2008-02-14  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #361686
+ 	* decl.cs: A protected types used inside a private class which parents 
+ 	derives from the protected class are accessible.
+
 2008-02-13  Marek Safar  <marek.safar@gmail.com>
 
 	* generic.cs (ConstraintChecker): Use cached member lookup when looking for

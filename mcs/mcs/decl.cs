@@ -565,7 +565,7 @@ namespace Mono.CSharp {
 					continue;
 
 				bool same_access_restrictions = false;
-				for (MemberCore mc = this; !same_access_restrictions && mc.Parent != null; mc = mc.Parent) {
+				for (MemberCore mc = this; !same_access_restrictions && mc != null && mc.Parent != null; mc = mc.Parent) {
 					AccessLevel al = GetAccessLevelFromModifiers (mc.ModFlags);
 					switch (pAccess) {
 						case AccessLevel.Internal:
@@ -575,18 +575,31 @@ namespace Mono.CSharp {
 							break;
 
 						case AccessLevel.Protected:
-							if (al == AccessLevel.Protected)
+							if (al == AccessLevel.Protected) {
 								same_access_restrictions = mc.Parent.IsBaseType (p_parent);
+								break;
+							}
+
+							if (al == AccessLevel.Private) {
+								//
+								// When type is private and any of its parents derives from
+								// protected type then the type is accessible
+								//
+								while (mc.Parent != null) {
+									if (mc.Parent.IsBaseType (p_parent))
+										same_access_restrictions = true;
+									mc = mc.Parent; 
+								}
+							}
+
 							break;
 
 						case AccessLevel.ProtectedOrInternal:
 							if (al == AccessLevel.Protected)
 								same_access_restrictions = mc.Parent.IsBaseType (p_parent);
-
-							if (al == AccessLevel.Internal)
+							else if (al == AccessLevel.Internal)
 								same_access_restrictions = CodeGen.Assembly.Builder == p.Assembly || TypeManager.IsFriendAssembly (p.Assembly);
-
-							if (al == AccessLevel.ProtectedOrInternal)
+							else if (al == AccessLevel.ProtectedOrInternal)
 								same_access_restrictions = mc.Parent.IsBaseType (p_parent) &&
 									(CodeGen.Assembly.Builder == p.Assembly || TypeManager.IsFriendAssembly (p.Assembly));
 
