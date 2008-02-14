@@ -908,7 +908,7 @@ namespace Mono.CSharp {
 
 		MemberList IMemberContainer.GetMembers (MemberTypes mt, BindingFlags bf)
 		{
-			return FindMembers (mt, bf, null, null);
+			throw new NotSupportedException ();
 		}
 
 		public MemberCache MemberCache {
