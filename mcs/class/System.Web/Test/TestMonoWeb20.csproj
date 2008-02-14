@@ -101,6 +101,7 @@
     </VisualStudio>
   </ProjectExtensions>
   <ItemGroup>
+    <Reference Include="J2SE.Helpers, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="nunit.framework, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\nunit20\nunit-console\bin\Debug_Java20\nunit.framework.dll</HintPath>
@@ -272,6 +273,7 @@
     <Compile Include="System.Web.UI.WebControls\ListItemTest.cs" />
     <Compile Include="System.Web.UI.WebControls\LiteralTest.cs" />
     <Compile Include="System.Web.UI.WebControls\LoginNameTest.cs">
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="System.Web.UI.WebControls\LoginStatusTest.cs" />
     <Compile Include="System.Web.UI.WebControls\LoginTest.cs" />
@@ -323,6 +325,7 @@
     </Compile>
     <Compile Include="System.Web.UI.WebControls\TableRowTest.cs" />
     <Compile Include="System.Web.UI.WebControls\TableSectionStyleTest.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="System.Web.UI.WebControls\TableStyleTest.cs">
       <SubType>Component</SubType>
@@ -358,6 +361,7 @@
     <Compile Include="System.Web.UI\ChtmlTextWriterTest.cs" />
     <Compile Include="System.Web.UI\CleanHtmlTextWriter.cs" />
     <Compile Include="System.Web.UI\ClientScriptManagerTest.cs">
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="System.Web.UI\ControlCollectionTest.cs" />
     <Compile Include="System.Web.UI\ControlTest.cs" />
