@@ -2473,40 +2473,40 @@ namespace Mono.CSharp {
 		Constant EnumLiftUp (Constant left, Constant right)
 		{
 			switch (oper) {
-				case Operator.BitwiseOr:
-				case Operator.BitwiseAnd:
-				case Operator.ExclusiveOr:
-				case Operator.Equality:
-				case Operator.Inequality:
-				case Operator.LessThan:
-				case Operator.LessThanOrEqual:
-				case Operator.GreaterThan:
-				case Operator.GreaterThanOrEqual:
-					if (left is EnumConstant)
-						return left;
-
-					if (left.IsZeroInteger)
-						return new EnumConstant (left, right.Type);
-
+			case Operator.BitwiseOr:
+			case Operator.BitwiseAnd:
+			case Operator.ExclusiveOr:
+			case Operator.Equality:
+			case Operator.Inequality:
+			case Operator.LessThan:
+			case Operator.LessThanOrEqual:
+			case Operator.GreaterThan:
+			case Operator.GreaterThanOrEqual:
+				if (left is EnumConstant)
+					return left;
+				
+				if (left.IsZeroInteger)
+					return new EnumConstant (left, right.Type);
+				
+				break;
+				
+			case Operator.Addition:
+			case Operator.Subtraction:
+				return left;
+				
+			case Operator.Multiply:
+			case Operator.Division:
+			case Operator.Modulus:
+			case Operator.LeftShift:
+			case Operator.RightShift:
+				if (right is EnumConstant || left is EnumConstant)
 					break;
-
-				case Operator.Addition:
-				case Operator.Subtraction:
-					return left;
-
-				case Operator.Multiply:
-				case Operator.Division:
-				case Operator.Modulus:
-				case Operator.LeftShift:
-				case Operator.RightShift:
-					if (right is EnumConstant || left is EnumConstant)
-						break;
-					return left;
+				return left;
 			}
 			Error_OperatorCannotBeApplied ();
 			return null;
 		}
-
+		
 		public override Expression DoResolve (EmitContext ec)
 		{
 			if (left == null)
@@ -2564,9 +2564,10 @@ namespace Mono.CSharp {
 				}
 
 				if (lc != null && lc.IsZeroInteger) {
-					return rc is EnumConstant ?
-						new EnumConstant (lc, rc.Type):
-						lc;
+					if (rc is EnumConstant)
+						return new EnumConstant (lc, rc.Type);
+					Type = TypeManager.bool_type;
+					return this;
 				}
 			}
 			else if (oper == Operator.BitwiseOr) {

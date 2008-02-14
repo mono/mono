@@ -1,6 +1,15 @@
 2008-02-14  Miguel de Icaza  <miguel@novell.com>
 
-	* support.cs: Increase the size.
+	* expression.cs: Do not fold BitwiseAnd operators when the left
+	side is a false constant, because we still need to evaluate the
+	right-hand side. 
+
+	Fixes #359789
+
+	* support.cs: Instead of throwing an InternalErrorException when
+	the position of the stream is outside the boundary of our buffer,
+	reset the state of the reader, and restart the reading from the
+	beginning of the file.
 
 2008-02-14  Marek Safar  <marek.safar@gmail.com>
 
