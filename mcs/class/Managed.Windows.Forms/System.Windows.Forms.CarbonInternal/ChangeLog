@@ -1,3 +1,8 @@
+2008-02-14  Geoff Norton  <gnorton@novell.com>
+
+	* WindowHandler.cs: Ensure we send WM_ACTIVATE when we activate our
+	Form.  Fixes #360721
+
 2008-02-04  Geoff Norton  <gnorton@novell.com>
 
 	* KeyboardHandler.cs: [Backport fix] msg != msg.message

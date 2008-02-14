@@ -117,6 +117,16 @@ namespace System.Windows.Forms.CarbonInternal {
 				switch (kind) {
 					case kEventWindowExpanding:
 					case kEventWindowActivated:
+						if (XplatUICarbon.FocusWindow == IntPtr.Zero) {
+							Control c = Control.FromHandle (hwnd.client_window);
+							if (c != null) {
+								Form form = c.FindForm ();
+								if (form != null) {
+									Driver.SendMessage (form.Handle, Msg.WM_ACTIVATE, (IntPtr) WindowActiveFlags.WA_ACTIVE, IntPtr.Zero);
+								}
+							}
+						}
+
 						foreach (IntPtr utility_window in XplatUICarbon.UtilityWindows) {
 							if (utility_window != handle && !XplatUICarbon.IsWindowVisible (utility_window))
 								XplatUICarbon.ShowWindow (utility_window);
