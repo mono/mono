@@ -1,5 +1,8 @@
 2008-02-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c inssel-amd64.brg cpu-amd64.md: Get rid of the confusing _MEMBASE
+	opcodes, use the REG_MEMBASE opcodes instead.
+	
 	* mini-amd64.c (mono_arch_output_basic_block): Sync with the version on the
 	linear IR branch.
 
