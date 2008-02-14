@@ -1,3 +1,12 @@
+2008-02-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_output_basic_block): Sync with the version on the
+	linear IR branch.
+
+	* mini.c (mono_op_imm_to_op): New helper function.
+
+	* mini-ops.h: Add some opcodes from linear IR branch.
+
 2008-02-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-alpha.h mini-alpha.c tramp-alpha.c: Alpha port updates from Sergey Tikhonov 
