@@ -425,27 +425,27 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class SeekableStreamReader
 	{
-		public SeekableStreamReader (TextReader reader)
-		{
-			this.reader = reader;
-			this.buffer = new char [AverageReadLength * 3];
-
-			// Let the StreamWriter autodetect the encoder
-			reader.Peek ();
-		}
-
-		public SeekableStreamReader (Stream stream, Encoding encoding)
-			: this (new StreamReader (stream, encoding, true))
-		{ }
-
+		const int AverageReadLength = 1024;
 		TextReader reader;
-
-		private const int AverageReadLength = 1024;
+		Stream stream;
+		Encoding encoding;
 
 		char[] buffer;
 		int buffer_start;       // in chars
 		int char_count;         // count buffer[] valid characters
 		int pos;                // index into buffer[]
+
+		public SeekableStreamReader (Stream stream, Encoding encoding)
+		{
+			this.stream = stream;
+			this.encoding = encoding;
+			
+			this.reader = new StreamReader (stream, encoding, true);
+			this.buffer = new char [AverageReadLength * 3];
+
+			// Let the StreamWriter autodetect the encoder
+			reader.Peek ();
+		}
 
 		/// <remarks>
 		///   This value corresponds to the current position in a stream of characters.
@@ -458,8 +458,25 @@ namespace Mono.CSharp {
 			get { return buffer_start + pos; }
 
 			set {
-				if (value < buffer_start || value > buffer_start + char_count)
-					throw new InternalErrorException ("can't seek that far back: " + (pos - value));
+				if (value > buffer_start + char_count)
+					throw new InternalErrorException ("can't seek that far forward: " + (pos - value));
+				
+				if (value < buffer_start){
+					// Reinitialize.
+					stream.Position = 0;
+					reader = new StreamReader (stream, encoding, true);
+					buffer_start = 0;
+					char_count = 0;
+					pos = 0;
+					Peek ();
+
+					while (value > buffer_start + char_count){
+						pos = char_count+1;
+						int p = Peek ();
+					}
+					pos = value - buffer_start;
+				}
+
 				pos = value - buffer_start;
 			}
 		}
