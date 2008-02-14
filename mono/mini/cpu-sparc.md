@@ -47,54 +47,19 @@
 #
 # See the code in mini-sparc32.c for more details on how the specifiers are used.
 #
-
 label: len:0
 break: len:64
 jmp: len:64
 br: len:8
-<<<<<<< .working
-jump_table: dest:i len:48
 
-nop: len:0
-dummy_use: len:0
-dummy_store: len:0
-not_reached: len:0
-not_null: src1:i len:0
-
-sparc_brz: src1:i len: 8
-sparc_brlez: src1:i len: 8
-sparc_brlz: src1:i len: 8
-sparc_brnz: src1:i len: 8
-sparc_brgz: src1:i len: 8
-sparc_brgez: src1:i len: 8
-sparc_cond_exc_eqz: src1:i len:64
-sparc_cond_exc_nez: src1:i len:64
-sparc_cond_exc_ltz: src1:i len:64
-sparc_cond_exc_gtz: src1:i len:64
-sparc_cond_exc_gez: src1:i len:64
-sparc_cond_exc_lez: src1:i len:64
-
-=======
-
->>>>>>> .merge-right.r95529
 throw: src1:i len:64
 rethrow: src1:i len:64
 start_handler: len:64
 endfinally: len:64
 endfilter: src1:i len:64
-<<<<<<< .working
-call_handler: len:64
 
 conv.ovf.u4: dest:i src1:i len:64
 ckfinite: dest:f src1:f len:40
-
-int_mul_ovf: dest:i src1:i src2:i len:64
-int_mul_ovf_un: dest:i src1:i src2:i len:64
-=======
-
-conv.ovf.u4: dest:i src1:i len:64
-ckfinite: dest:f src1:f len:40
->>>>>>> .merge-right.r95529
 conv.u: dest:i src1:i len:4
 arglist: src1:i
 ceq: dest:i len:64
@@ -104,7 +69,6 @@ clt: dest:i len:64
 clt.un: dest:i len:64
 localloc: dest:i src1:i len:64
 sparc_localloc_imm: dest:i len:64
-localloc_imm: dest:i len:64
 compare: src1:i src2:i len:4
 icompare: src1:i src2:i len:4
 compare_imm: src1:i len:64
@@ -118,7 +82,6 @@ setret: dest:a src1:i len:4
 sparc_setfreg_float: dest:f src1:f len:4 clob:r
 checkthis: src1:b len:4
 oparglist: src1:i len:64
-
 call: dest:o clob:c len:40
 call_reg: dest:o src1:i len:64 clob:c
 call_membase: dest:o src1:b len:64 clob:c
@@ -134,10 +97,6 @@ lcall_membase: dest:l src1:b len:64 clob:c
 vcall: len:40 clob:c
 vcall_reg: src1:i len:64 clob:c
 vcall_membase: src1:b len:64 clob:c
-vcall2: len:40 clob:c
-vcall2_reg: src1:i len:64 clob:c
-vcall2_membase: src1:b len:64 clob:c
-
 iconst: dest:i len:64
 i8const: dest:i len:64
 r4const: dest:f len:64
@@ -166,23 +125,21 @@ loadr4_membase: dest:f src1:b len:64
 loadr8_membase: dest:f src1:b len:64
 loadu4_mem: dest:i len:8
 move: dest:i src1:i len:4
-
 add_imm: dest:i src1:i len:64
 addcc_imm: dest:i src1:i len:64
 sub_imm: dest:i src1:i len:64
 subcc_imm: dest:i src1:i len:64
 mul_imm: dest:i src1:i len:64
-div_imm: dest:a src1:i len:64
-div_un_imm: dest:a src1:i len:64
-rem_imm: dest:d src1:i len:64
-rem_un_imm: dest:d src1:i len:64
+div_imm: dest:a src1:i src2:i len:64
+div_un_imm: dest:a src1:i src2:i len:64
+rem_imm: dest:d src1:i src2:i len:64
+rem_un_imm: dest:d src1:i src2:i len:64
 and_imm: dest:i src1:i len:64
 or_imm: dest:i src1:i len:64
 xor_imm: dest:i src1:i len:64
 shl_imm: dest:i src1:i len:64
 shr_imm: dest:i src1:i len:64
 shr_un_imm: dest:i src1:i len:64
-
 cond_exc_eq: len:64
 cond_exc_ne_un: len:64
 cond_exc_lt: len:64
@@ -197,35 +154,6 @@ cond_exc_ov: len:64
 cond_exc_no: len:64
 cond_exc_c: len:64
 cond_exc_nc: len:64
-<<<<<<< .working
-
-cond_exc_ieq: len:64
-cond_exc_ine_un: len:64
-cond_exc_ilt: len:64
-cond_exc_ilt_un: len:64
-cond_exc_igt: len:64
-cond_exc_igt_un: len:64
-cond_exc_ige: len:64
-cond_exc_ige_un: len:64
-cond_exc_ile: len:64
-cond_exc_ile_un: len:64
-cond_exc_iov: len:64
-cond_exc_ino: len:64
-cond_exc_ic: len:64
-cond_exc_inc: len:64
-
-long_shl: dest:i src1:i src2:i len:64
-long_shr: dest:i src1:i src2:i len:64
-long_shr_un: dest:i src1:i src2:i len:64
-long_conv_to_ovf_i: dest:i src1:i src2:i len:48
-long_conv_to_ovf_i4_2: dest:i src1:i src2:i len:48
-long_mul_ovf: 
-long_conv_to_r_un: dest:f src1:i src2:i len:64 
-long_shr_imm: dest:i src1:i len:64
-long_shr_un_imm: dest:i src1:i len:64
-long_shl_imm: dest:i src1:i len:64
-=======
->>>>>>> .merge-right.r95529
 float_beq: len:8
 float_bne_un: len:64
 float_blt: len:8
@@ -245,24 +173,23 @@ float_rem: dest:f src1:f src2:f len:64
 float_rem_un: dest:f src1:f src2:f len:64
 float_neg: dest:f src1:f len:4
 float_not: dest:f src1:f len:4
-
 float_conv_to_i1: dest:i src1:f len:40
 float_conv_to_i2: dest:i src1:f len:40
 float_conv_to_i4: dest:i src1:f len:40
 float_conv_to_i8: dest:L src1:f len:40
+float_conv_to_r4: dest:f src1:f len:8
 float_conv_to_u4: dest:i src1:f len:40
 float_conv_to_u8: dest:L src1:f len:40
 float_conv_to_u2: dest:i src1:f len:40
 float_conv_to_u1: dest:i src1:f len:40
 float_conv_to_i: dest:i src1:f len:40
-float_conv_to_r4: dest:f src1:f len:8
-
 float_ceq: dest:i src1:f src2:f len:64
 float_cgt: dest:i src1:f src2:f len:64
 float_cgt_un: dest:i src1:f src2:f len:64
 float_clt: dest:i src1:f src2:f len:64
 float_clt_un: dest:i src1:f src2:f len:64
 float_conv_to_u: dest:i src1:f len:64
+call_handler: len:64
 aot_const: dest:i len:64
 adc: dest:i src1:i src2:i len:4
 addcc: dest:i src1:i src2:i len:4
@@ -339,19 +266,6 @@ int_bgt_un: len:64
 int_ble_un: len:64
 int_blt_un: len:64
 
-<<<<<<< .working
-int_conv_to_i1: dest:i src1:i len:8
-int_conv_to_u1: dest:i src1:i len:8
-int_conv_to_i2: dest:i src1:i len:8
-int_conv_to_u2: dest:i src1:i len:8
-int_conv_to_i4: dest:i src1:i len:4
-int_conv_to_u4: dest:i src1:i len:4
-int_conv_to_i8: dest:i src1:i len:4
-int_conv_to_u8: dest:i src1:i len:4
-int_conv_to_r4: dest:f src1:i len:64
-int_conv_to_r8: dest:f src1:i len:64
-
-=======
 # 64 bit opcodes
 long_shl: dest:i src1:i src2:i len:64
 long_shr: dest:i src1:i src2:i len:64
@@ -363,7 +277,6 @@ long_shr_imm: dest:i src1:i len:64
 long_shr_un_imm: dest:i src1:i len:64
 long_shl_imm: dest:i src1:i len:64
 
->>>>>>> .merge-right.r95529
 memory_barrier: len:4
 
 sparc_brz: src1:i len: 8
@@ -378,3 +291,35 @@ sparc_cond_exc_ltz: src1:i len:64
 sparc_cond_exc_gtz: src1:i len:64
 sparc_cond_exc_gez: src1:i len:64
 sparc_cond_exc_lez: src1:i len:64
+
+# Linear IR opcodes
+nop: len:0
+dummy_use: len:0
+dummy_store: len:0
+not_reached: len:0
+not_null: src1:i len:0
+
+jump_table: dest:i len:64
+
+cond_exc_ieq: len:64
+cond_exc_ine_un: len:64
+cond_exc_ilt: len:64
+cond_exc_ilt_un: len:64
+cond_exc_igt: len:64
+cond_exc_igt_un: len:64
+cond_exc_ige: len:64
+cond_exc_ige_un: len:64
+cond_exc_ile: len:64
+cond_exc_ile_un: len:64
+cond_exc_iov: len:64
+cond_exc_ino: len:64
+cond_exc_ic: len:64
+cond_exc_inc: len:64
+
+long_conv_to_ovf_i4_2: dest:i src1:i src2:i len:48
+
+vcall2: len:40 clob:c
+vcall2_reg: src1:i len:64 clob:c
+vcall2_membase: src1:b len:64 clob:c
+
+localloc_imm: dest:i len:64

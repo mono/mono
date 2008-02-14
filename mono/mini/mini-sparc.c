@@ -802,7 +802,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 
 	sig = mono_method_signature (cfg->method);
 
-	cinfo = get_call_info (m, sig, FALSE);
+	cinfo = get_call_info (cfg, sig, FALSE);
 
 	if (sig->ret->type != MONO_TYPE_VOID) {
 		switch (cinfo->ret.storage) {
@@ -1530,7 +1530,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 	sig = call->signature;
 	n = sig->param_count + sig->hasthis;
 	
-	cinfo = get_call_info (sig, sig->pinvoke);
+	cinfo = get_call_info (cfg, sig, sig->pinvoke);
 
 	if (sig->ret && MONO_TYPE_ISSTRUCT (sig->ret)) {
 		/* Set the 'struct/union return pointer' location on the stack */
@@ -1588,7 +1588,7 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 void
 mono_arch_emit_setret (MonoCompile *cfg, MonoMethod *method, MonoInst *val)
 {
-	CallInfo *cinfo = get_call_info (mono_method_signature (method), FALSE);
+	CallInfo *cinfo = get_call_info (cfg, mono_method_signature (method), FALSE);
 
 	switch (cinfo->ret.storage) {
 	case ArgInIReg:
@@ -1632,64 +1632,6 @@ opcode_to_sparc_cond (int opcode)
 	CompType t;
 
 	switch (opcode) {
-<<<<<<< .working
-=======
-	case OP_FBGE:
-		return sparc_fbge;
-	case OP_FBLE:
-		return sparc_fble;
-	case OP_FBEQ:
-	case OP_FCEQ:
-		return sparc_fbe;
-	case OP_FBLT:
-	case OP_FCLT:
-	case OP_FCLT_UN:
-		return sparc_fbl;
-	case OP_FBGT:
-	case OP_FCGT:
-	case OP_FCGT_UN:
-		return sparc_fbg;
-	case OP_IBEQ:
-	case OP_CEQ:
-	case OP_ICEQ:
-	case OP_COND_EXC_EQ:
-		return sparc_be;
-	case OP_IBNE_UN:
-	case OP_COND_EXC_NE_UN:
-		return sparc_bne;
-	case OP_IBLT:
-	case OP_CLT:
-	case OP_ICLT:
-	case OP_COND_EXC_LT:
-		return sparc_bl;
-	case OP_IBLT_UN:
-	case OP_CLT_UN:
-	case OP_ICLT_UN:
-	case OP_COND_EXC_LT_UN:
-		return sparc_blu;
-	case OP_IBGT:
-	case OP_CGT:
-	case OP_ICGT:
-	case OP_COND_EXC_GT:
-		return sparc_bg;
-	case OP_IBGT_UN:
-	case OP_CGT_UN:
-	case OP_ICGT_UN:
-	case OP_COND_EXC_GT_UN:
-		return sparc_bgu;
-	case OP_IBGE:
-	case OP_COND_EXC_GE:
-		return sparc_bge;
-	case OP_IBGE_UN:
-	case OP_COND_EXC_GE_UN:
-		return sparc_beu;
-	case OP_IBLE:
-	case OP_COND_EXC_LE:
-		return sparc_ble;
-	case OP_IBLE_UN:
-	case OP_COND_EXC_LE_UN:
-		return sparc_bleu;
->>>>>>> .merge-right.r95529
 	case OP_COND_EXC_OV:
 	case OP_COND_EXC_IOV:
 		return sparc_bvs;
@@ -1700,13 +1642,14 @@ opcode_to_sparc_cond (int opcode)
 	case OP_COND_EXC_NC:
 		NOT_IMPLEMENTED;
 	default:
+		rel = mono_opcode_to_cond (opcode);
+		t = mono_opcode_to_type (opcode, -1);
+
+		return cond_to_sparc_cond [rel][t];
 		break;
-	};
+	}
 
-	rel = mono_opcode_to_cond (opcode);
-	t = mono_opcode_to_type (opcode, -1);
-
-	return cond_to_sparc_cond [rel][t];
+	return -1;
 }
 
 #define COMPUTE_DISP(ins) \
@@ -1901,17 +1844,13 @@ emit_call (MonoCompile *cfg, guint32 *code, guint32 patch_type, gconstpointer da
 void
 mono_arch_peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 {
-<<<<<<< .working
-	MonoInst *ins, *last_ins = NULL;
-	ins = bb->code;
-=======
 }
 
 void
 mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 {
-	MonoInst *ins, *n;
->>>>>>> .merge-right.r95529
+	MonoInst *ins, *last_ins = NULL;
+	ins = bb->code;
 
 	while (ins) {
 
@@ -2146,33 +2085,11 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 	bb->last_ins = last_ins;
 }
 
-<<<<<<< .working
-=======
 void
 mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 {
 }
 
-static int
-mono_spillvar_offset_float (MonoCompile *cfg, int spillvar)
-{
-	MonoSpillInfo **si, *info;
-
-	g_assert (spillvar == 0);
-
-	si = &cfg->spill_info_float; 
-
-	if (!*si) {
-		*si = info = mono_mempool_alloc (cfg->mempool, sizeof (MonoSpillInfo));
-		cfg->stack_offset += sizeof (double);
-		cfg->stack_offset = ALIGN_TO (cfg->stack_offset, 8);
-		info->offset = - cfg->stack_offset;
-	}
-
-	return MONO_SPARC_STACK_BIAS + (*si)->offset;
-}
-
->>>>>>> .merge-right.r95529
 /* FIXME: Strange loads from the stack in basic-float.cs:test_2_rem */
 
 static void
@@ -2921,11 +2838,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			sparc_sll_imm (code, ins->sreg1, 16, sparc_o7);
 			sparc_srl_imm (code, sparc_o7, 16, ins->dreg);
 			break;
-<<<<<<< .working
 		case OP_LCONV_TO_OVF_U4:
-=======
 		case OP_ICONV_TO_OVF_U4:
->>>>>>> .merge-right.r95529
 			/* Only used on V9 */
 			sparc_cmp_imm (code, ins->sreg1, 0);
 			mono_add_patch_info (cfg, (guint8*)(code) - (cfg)->native_code,
@@ -2941,11 +2855,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			sparc_nop (code);
 			sparc_mov_reg_reg (code, ins->sreg1, ins->dreg);
 			break;
-<<<<<<< .working
 		case OP_LCONV_TO_OVF_I4_UN:
-=======
 		case OP_ICONV_TO_OVF_I4_UN:
->>>>>>> .merge-right.r95529
 			/* Only used on V9 */
 			NOT_IMPLEMENTED;
 			break;
@@ -3069,13 +2980,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 			break;
 		}
-<<<<<<< .working
 		case OP_IDIV_UN_IMM:
 			sparc_wry (code, sparc_g0, sparc_g0);
 			EMIT_ALU_IMM (ins, udiv, FALSE);
 			break;
-=======
->>>>>>> .merge-right.r95529
 		case OP_IREM:
 			/* Sign extend sreg1 into %y */
 			sparc_sra_imm (code, ins->sreg1, 31, sparc_o7);
@@ -3245,15 +3153,12 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			mono_add_patch_info (cfg, offset, (MonoJumpInfoType)ins->inst_i1, ins->inst_p0);
 			sparc_set_template (code, ins->dreg);
 			break;
-<<<<<<< .working
 		case OP_JUMP_TABLE:
 			mono_add_patch_info (cfg, offset, (MonoJumpInfoType)ins->inst_i1, ins->inst_p0);
 			sparc_set_template (code, ins->dreg);
 			break;
-=======
 		case OP_ICONV_TO_I4:
 		case OP_ICONV_TO_U4:
->>>>>>> .merge-right.r95529
 		case OP_MOVE:
 			if (ins->sreg1 != ins->dreg)
 				sparc_mov_reg_reg (code, ins->sreg1, ins->dreg);
@@ -3674,14 +3579,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_SPARC_COND_EXC_NEZ:
 			EMIT_COND_SYSTEM_EXCEPTION_BPR (ins, brnz, ins->inst_p1);
 			break;
-<<<<<<< .working
 
-=======
-		case OP_COND_EXC_IOV:
-		case OP_COND_EXC_IC:
-			EMIT_COND_SYSTEM_EXCEPTION_GENERAL (ins, opcode_to_sparc_cond (ins->opcode), ins->inst_p1, TRUE, sparc_icc_short);
-			break;
->>>>>>> .merge-right.r95529
 		case OP_IBEQ:
 		case OP_IBNE_UN:
 		case OP_IBLT:
@@ -3692,21 +3590,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_IBGE_UN:
 		case OP_IBLE:
 		case OP_IBLE_UN: {
-<<<<<<< .working
-#ifdef SPARCV9
-			EMIT_COND_BRANCH_ICC (ins, opcode_to_sparc_cond (ins->opcode), 1, 1, sparc_icc_short);
-=======
 			if (sparcv9)
 				EMIT_COND_BRANCH_PREDICTED (ins, opcode_to_sparc_cond (ins->opcode), 1, 1);
 			else
 				EMIT_COND_BRANCH (ins, opcode_to_sparc_cond (ins->opcode), 1, 1);
->>>>>>> .merge-right.r95529
-#else
-			if (sparcv9)
-				EMIT_COND_BRANCH_PREDICTED (ins, opcode_to_sparc_cond (ins->opcode), 1, 1);
-			else
-				EMIT_COND_BRANCH (ins, opcode_to_sparc_cond (ins->opcode), 1, 1);
-#endif
 			break;
 		}
 
@@ -3795,21 +3682,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			sparc_fstod (code, FP_SCRATCH_REG, ins->dreg);
 			break;
 		}
-<<<<<<< .working
-		case OP_FMOVE:
-#ifdef SPARCV9
-			sparc_fmovd (code, ins->sreg1, ins->dreg);
-#else
-			sparc_fmovs (code, ins->sreg1, ins->dreg);
-			sparc_fmovs (code, ins->sreg1 + 1, ins->dreg + 1);
-#endif
-			break;
 		case OP_ICONV_TO_R4: {
 			gint32 offset = cfg->arch.float_spill_slot_offset;
-=======
-		case OP_ICONV_TO_R4: {
-			gint32 offset = mono_spillvar_offset_float (cfg, 0);
->>>>>>> .merge-right.r95529
 #ifdef SPARCV9
 			if (!sparc_is_imm13 (offset)) {
 				sparc_set (code, offset, sparc_o7);
@@ -3834,13 +3708,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			sparc_fstod (code, FP_SCRATCH_REG, ins->dreg);
 			break;
 		}
-<<<<<<< .working
 		case OP_ICONV_TO_R8: {
 			gint32 offset = cfg->arch.float_spill_slot_offset;
-=======
-		case OP_ICONV_TO_R8: {
-			gint32 offset = mono_spillvar_offset_float (cfg, 0);
->>>>>>> .merge-right.r95529
 #ifdef SPARCV9
 			if (!sparc_is_imm13 (offset)) {
 				sparc_set (code, offset, sparc_o7);
@@ -3900,7 +3769,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 			break;
 		}
-<<<<<<< .working
 		case OP_FCONV_TO_I8:
 		case OP_FCONV_TO_U8:
 			/* Emulated */
@@ -3920,8 +3788,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert_not_reached ();
 			break;
 		}
-=======
->>>>>>> .merge-right.r95529
 		case OP_LCONV_TO_OVF_I:
 		case OP_LCONV_TO_OVF_I4_2: {
 			guint32 *br [3], *label [1];

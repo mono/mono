@@ -1,5 +1,7 @@
 2008-02-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* cpu-sparc.md mini-sparc.c: Fix sparc build.
+
 	* mini-x86.c (mono_arch_emit_outarg_vt): Pass a reasonable alignment to
 	mini_emit_memcpy2 ().
 
