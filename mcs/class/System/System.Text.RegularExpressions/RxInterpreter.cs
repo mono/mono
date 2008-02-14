@@ -38,6 +38,8 @@ namespace System.Text.RegularExpressions {
 			this.eval_del = eval_del;
 			group_count = 1 + (program [1] | (program [2] << 8));
 			groups = new int [group_count];
+
+			ResetGroups ();
 		}
 
 		public override Match Scan (Regex regex, string text, int start, int end) {
@@ -52,9 +54,11 @@ namespace System.Text.RegularExpressions {
 			} else {
 				match = EvalByteCode (11, start, ref res);
 			}
+			marks [groups [0]].End = res;
 			if (match) {
-				Match m = new Match (regex, this, text, end, 0, match_start, res - match_start);
-				return m;
+				return GenerateMatch (regex);
+				//Match m = new Match (regex, this, text, end, 0, match_start, res - match_start);
+				//return m;
 			}
 			return Match.Empty;
 		}
@@ -167,6 +171,44 @@ namespace System.Text.RegularExpressions {
 			}
 		}
 
+		private Match GenerateMatch (Regex regex)
+		{
+			int n_caps, first_mark_index;
+			Group g;
+			GetGroupInfo (0, out first_mark_index, out n_caps);
+
+			// Avoid fully populating the Match instance if not needed
+			if (!needs_groups_or_captures)
+				return new Match (regex, this, str, string_end, 0, marks [first_mark_index].Index, marks [first_mark_index].Length);
+
+			Match retval = new Match (regex, this, str, string_end, groups.Length, 
+						  marks [first_mark_index].Index, marks [first_mark_index].Length, n_caps);
+			PopulateGroup (retval, first_mark_index, n_caps);
+
+			for (int gid = 1; gid < groups.Length; ++ gid) {
+				GetGroupInfo (gid, out first_mark_index, out n_caps);
+				if (first_mark_index < 0) {
+					g = Group.Fail;
+				} else {
+					g = new Group (str, marks [first_mark_index].Index, marks [first_mark_index].Length, n_caps);
+					PopulateGroup (g, first_mark_index, n_caps);
+				}
+				retval.Groups.SetValue (g, gid);
+			}
+			return retval;
+		}
+
+		// used by the IL backend
+		void SetStartOfMatch (int pos)
+		{
+			marks [groups [0]].Start = pos;
+		}
+
+		static bool IsWordChar (char c)
+		{
+			return Char.IsLetterOrDigit (c) || Char.GetUnicodeCategory (c) == UnicodeCategory.ConnectorPunctuation;
+		}
+
 		bool EvalByteCode (int pc, int strpos, ref int strpos_result)
 		{
 			// luckily the IL engine can deal with char_group_end at compile time
@@ -230,6 +272,46 @@ namespace System.Text.RegularExpressions {
 						continue;
 					}
 					return false;
+				case RxOp.WordBoundary:
+					if (string_end == 0)
+						return false;
+					if (strpos == 0) {
+						if (IsWordChar (str [strpos])) {
+							pc++;
+							continue;
+						}
+					} else if (strpos == string_end) {
+						if (IsWordChar (str [strpos - 1])) {
+							pc++;
+							continue;
+						}
+					} else {
+						if (IsWordChar (str [strpos]) != IsWordChar (str [strpos - 1])) {
+							pc++;
+							continue;
+						}
+					}
+					return false;
+				case RxOp.NoWordBoundary:
+					if (string_end == 0)
+						return false;
+					if (strpos == 0) {
+						if (!IsWordChar (str [strpos])) {
+							pc++;
+							continue;
+						}
+					} else if (strpos == string_end) {
+						if (!IsWordChar (str [strpos - 1])) {
+							pc++;
+							continue;
+						}
+					} else {
+						if (IsWordChar (str [strpos]) == IsWordChar (str [strpos - 1])) {
+							pc++;
+							continue;
+						}
+					}
+					return false;
 				case RxOp.Anchor:
 					// FIXME: test anchor
 					length = program [pc + 3] | (program [pc + 4] << 8);
@@ -245,6 +327,7 @@ namespace System.Text.RegularExpressions {
 						}
 						if (EvalByteCode (pc, strpos, ref res)) {
 							match_start = strpos;
+							marks [groups [0]].Start = strpos;
 							if (groups.Length > 1)
 								marks [groups [0]].End = res;
 							strpos_result = res;
@@ -263,6 +346,21 @@ namespace System.Text.RegularExpressions {
 						return false;
 					for (end = start + length; start < end; ++start) {
 						if (str [strpos] != str [start])
+							return false;
+						strpos++;
+					}
+					pc += 3;
+					continue;
+				case RxOp.ReferenceIgnoreCase:
+					length = GetLastDefined (program [pc + 1] | (program [pc + 2] << 8));
+					if (length < 0)
+						return false;
+					start = marks [length].Index;
+					length = marks [length].Length;
+					if (strpos + length > string_end)
+						return false;
+					for (end = start + length; start < end; ++start) {
+						if (str [strpos] != str [start] && Char.ToLower (str [strpos]) != Char.ToLower (str [start]))
 							return false;
 						strpos++;
 					}
@@ -874,6 +972,7 @@ namespace System.Text.RegularExpressions {
 					end = ReadInt (program, pc + 7);
 					//Console.WriteLine ("min: {0}, max: {1}", start, end);
 					length = 0;
+					int cp = Checkpoint ();
 					while (length < end) {
 						if (!EvalByteCode (pc + 11, strpos, ref res)) {
 							if (length >= start) {
@@ -883,6 +982,7 @@ namespace System.Text.RegularExpressions {
 						}
 						strpos = res;
 						length++;
+						Backtrack (cp);
 					}
 					if (length != end)
 						return false;

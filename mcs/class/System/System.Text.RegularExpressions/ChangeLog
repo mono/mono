@@ -1,4 +1,10 @@
 
+Thu Feb 14 19:03:00 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* RxCompiler.cs, RxInterpreter.cs, RxOp.cs, CILCompiler.cs : support for word
+	boundary position opcodes, ignorecase backreference and more capture
+	work.
+
 Thu Feb 14 17:11:10 CET 2008 Paolo Molaro <lupus@ximian.com>
 
 	* RxCompiler.cs, RxInterpreter.cs, RxOp.cs: replace EcmaDigit with

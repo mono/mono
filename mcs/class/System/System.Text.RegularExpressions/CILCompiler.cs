@@ -232,6 +232,10 @@ namespace System.Text.RegularExpressions {
 						ilgen.Emit (OpCodes.Ldc_I4_1);
 						ilgen.Emit (OpCodes.Add);
 						ilgen.Emit (OpCodes.Stloc, frame.local_strpos_res);
+						// call SetStartOfMatch (strpos)
+						ilgen.Emit (OpCodes.Ldarg_0);
+						ilgen.Emit (OpCodes.Ldarg_1);
+						ilgen.Emit (OpCodes.Call, GetInterpreterMethod ("SetStartOfMatch"));
 						//    return true;
 						ilgen.Emit (OpCodes.Br, frame.label_pass);
 
@@ -276,6 +280,10 @@ namespace System.Text.RegularExpressions {
 						//    strpos_result = res;
 						ilgen.Emit (OpCodes.Ldloc, new_frame.local_strpos_res);
 						ilgen.Emit (OpCodes.Stloc, frame.local_strpos_res);
+						// call SetStartOfMatch (old_strpos)
+						ilgen.Emit (OpCodes.Ldarg_0);
+						ilgen.Emit (OpCodes.Ldloc, local_old_strpos);
+						ilgen.Emit (OpCodes.Call, GetInterpreterMethod ("SetStartOfMatch"));
 						//    return true;
 						ilgen.Emit (OpCodes.Br, frame.label_pass);
 

@@ -177,9 +177,9 @@ namespace System.Text.RegularExpressions {
 		// followed by two-byte reference number
 		// keep the order, see EmitReference ()
 		Reference,
-		ReversenceIgnoreCase,
+		ReferenceIgnoreCase,
 		ReferenceReverse,
-		ReversenceIgnoreCaseReverse,
+		ReferenceIgnoreCaseReverse,
 
 		// group/capture support
 		// followed by two-byte group id
