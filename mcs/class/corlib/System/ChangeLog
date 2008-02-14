@@ -1,3 +1,7 @@
+2008-02-14  Jb Evain  <jbevain@novell.com>
+
+	* Delegate.cs (CreateDelegate): refactor. DRY!
+
 2008-02-12  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Delegate.cs (CreateDelegate): Walk the inheritance change to find

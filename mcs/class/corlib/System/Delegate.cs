@@ -277,18 +277,10 @@ namespace System
 			return CreateDelegate(type, target, method, false);
 		}
 
-#if NET_2_0
- 		public 
-#else
-		internal
-#endif
-		static Delegate CreateDelegate (Type type, Type target, string method, bool ignoreCase, bool throwOnBindFailure)
+		static MethodInfo GetCandidateMethod (Type type, Type target, string method, BindingFlags bflags, bool ignoreCase, bool throwOnBindFailure)
 		{
 			if (type == null)
 				throw new ArgumentNullException ("type");
-
-			if (target == null)
-				throw new ArgumentNullException ("target");
 
 			if (method == null)
 				throw new ArgumentNullException ("method");
@@ -314,8 +306,9 @@ namespace System
 			 * inherited methods
 			 */
 			BindingFlags flags = BindingFlags.ExactBinding |
-				BindingFlags.Public | BindingFlags.Static |
-				BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
+				BindingFlags.Public | BindingFlags.NonPublic |
+				BindingFlags.DeclaredOnly | bflags;
+
 			if (ignoreCase)
 				flags |= BindingFlags.IgnoreCase;
 
@@ -332,10 +325,28 @@ namespace System
 
 			if (info == null) {
 				if (throwOnBindFailure)
-					throw new ArgumentException ("Couldn't bind to method.");
+					throw new ArgumentException ("Couldn't bind to method '" + method + "'.");
 				else
 					return null;
 			}
+
+			return info;
+		}
+
+#if NET_2_0
+ 		public 
+#else
+		internal
+#endif
+		static Delegate CreateDelegate (Type type, Type target, string method, bool ignoreCase, bool throwOnBindFailure)
+		{
+			if (target == null)
+				throw new ArgumentNullException ("target");
+
+			MethodInfo info = GetCandidateMethod (type, target, method,
+				BindingFlags.Static, ignoreCase, throwOnBindFailure);
+			if (info == null)
+				return null;
 
 			return CreateDelegate_internal (type, null, info);
 		}
@@ -357,58 +368,13 @@ namespace System
 #endif
 		static Delegate CreateDelegate (Type type, object target, string method, bool ignoreCase, bool throwOnBindFailure)
 		{
-			if (type == null)
-				throw new ArgumentNullException ("type");
-
 			if (target == null)
 				throw new ArgumentNullException ("target");
 
-			if (method == null)
-				throw new ArgumentNullException ("method");
-
-			if (!type.IsSubclassOf (typeof (MulticastDelegate)))
-				throw new ArgumentException ("type");
-
-			MethodInfo invoke = type.GetMethod ("Invoke");
-			ParameterInfo[] delargs = invoke.GetParameters ();
-			Type[] delargtypes = new Type [delargs.Length];
-
-			for (int i=0; i<delargs.Length; i++)
-				delargtypes [i] = delargs [i].ParameterType;
-
-			/* 
-			 * FIXME: we should check the caller has reflection permission
-			 * or if it lives in the same assembly...
-			 */
-
-			/*
-			 * since we need to walk the inheritance chain anyway to
-			 * find private methods, adjust the bindingflags to ignore
-			 * inherited methods
-			 */
-			BindingFlags flags = BindingFlags.ExactBinding | 
-				BindingFlags.NonPublic | BindingFlags.Public |
-				BindingFlags.Instance | BindingFlags.DeclaredOnly;
-
-			if (ignoreCase)
-				flags |= BindingFlags.IgnoreCase;
-
-			MethodInfo info = null;
-
-			for (Type targetType = target.GetType (); targetType != null; targetType = targetType.BaseType) {
-				MethodInfo mi = targetType.GetMethod (method, flags,
-					null, delargtypes, new ParameterModifier [0]);
-				if (mi != null && return_type_match (invoke.ReturnType, mi.ReturnType)) {
-					info = mi;
-					break;
-				}
-			}
-
+			MethodInfo info = GetCandidateMethod (type, target.GetType (), method,
+				BindingFlags.Instance, ignoreCase, throwOnBindFailure);
 			if (info == null)
-				if (throwOnBindFailure)
-					throw new ArgumentException ("Couldn't bind to method '" + method + "'.");
-				else
-					return null;
+				return null;
 
 			return CreateDelegate_internal (type, target, info);
 		}
