@@ -539,7 +539,6 @@ namespace System.Windows.Forms {
 				UpdateToolBarButtons ();
 				if (needUpdate) {
 					UpdateSortLayout (root_grid_item);
-					property_grid_view.Refresh ();
 					// update selection
 					if (selected_grid_item != null) {
 						if (selected_grid_item.GridItemType == GridItemType.Category && 
@@ -548,7 +547,7 @@ namespace System.Windows.Forms {
 						else
 							SelectItemCore (null, selected_grid_item);
 					}
-
+					property_grid_view.UpdateView ();
 
 #if NET_2_0
 					EventHandler eh = (EventHandler)(Events [PropertySortChangedEvent]);
@@ -686,6 +685,7 @@ namespace System.Windows.Forms {
 				PopulateGrid (selected_objects);
 				if (root_grid_item != null)
 					SelectItemCore (null, GetDefaultPropertyItem (root_grid_item));
+				property_grid_view.UpdateView ();
 				OnSelectedObjectsChanged (EventArgs.Empty);
 			}
 		}
@@ -892,6 +892,7 @@ namespace System.Windows.Forms {
 		public void ExpandAllGridItems () 
 		{
 			ExpandItemRecursive (root_grid_item);
+			property_grid_view.UpdateView ();
 		}
 
 		private void ExpandItemRecursive (GridItem item)

@@ -1,3 +1,9 @@
+2008-02-14  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* PropertyGrid.cs, PropertyGridView.cs:
+	Fix multiple scrolling and sizing issues.
+	[Fixes bug #359199]
+
 2008-02-12  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* PropertyGridView.cs: Ensure that drop down editors are shown
