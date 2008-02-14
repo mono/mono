@@ -2,7 +2,7 @@
 
 	* mini-ops.h: Get rid of OP_SPARC_LOCALLOC_IMM.
 
-	* mini-sparc. inssel-sparc.brg: Use OP_LOCALLOC_IMM instead of OP_SPARC_LOCALLOC_IMM.
+	* mini-sparc.c inssel-sparc.brg: Use OP_LOCALLOC_IMM instead of OP_SPARC_LOCALLOC_IMM.
 
 	* mini-x86.c: Sync with the version on the linear IR branch by adding new 
 	opcodes and other small changes.
