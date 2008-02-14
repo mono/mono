@@ -52,7 +52,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		private PropertyGridTextBox grid_textbox;
 		private PropertyGrid property_grid;
 		private bool resizing_grid;
-		private int open_grid_item_count = -1;
 		private int skipped_grid_items;
 		private PropertyGridDropDown dropdown_form;
 		private Form dialog_form;
@@ -97,6 +96,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 
 			vbar = new ImplicitVScrollBar ();
 			vbar.Visible = false;
+			vbar.Value = 0;
 			vbar.ValueChanged+=new EventHandler (VScrollBar_HandleValueChanged);
 			vbar.Dock = DockStyle.Right;
 			this.Controls.AddImplicit (vbar);
@@ -156,10 +156,8 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				ToggleValue ((GridEntry)property_grid.SelectedGridItem);
 		}
 
-		protected override void OnPaint (PaintEventArgs e) {
-			// Decide if we need a scrollbar
-			open_grid_item_count = 0;
-
+		protected override void OnPaint (PaintEventArgs e) 
+		{
 			// Background
 			e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), ClientRectangle);
 			
@@ -177,7 +175,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			if (e.Delta < 0)
 				vbar.Value = Math.Min (vbar.Value + SystemInformation.MouseWheelScrollLines, vbar.Maximum - vbar.SmallChange);
 			else
-				vbar.Value = Math.Max (1, vbar.Value - SystemInformation.MouseWheelScrollLines);
+				vbar.Value = Math.Max (0, vbar.Value - SystemInformation.MouseWheelScrollLines);
 			base.OnMouseWheel (e);
 		}
 
@@ -234,13 +232,11 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		protected override void OnResize (EventArgs e) {
 			base.OnResize (e);
 			if (property_grid.SelectedGridItem != null) { // initialized already
-				SuspendLayout ();
 				UpdateView ();
 				// MS scrolls to the currently selected item on resize, even
 				// when it's not in the visible area.
 				// 
 				ScrollToItem ((GridEntry)property_grid.SelectedGridItem);
-				ResumeLayout (false);
 			}
 		}
 
@@ -526,21 +522,55 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			return null;
 		}
 
-		private void UpdateScrollBar () {
-			int visible_rows = this.ClientRectangle.Height/row_height;
-			if (open_grid_item_count > visible_rows) {
+		private int GetVisibleItemsCount (GridEntry entry)
+		{
+			if (entry == null)
+				return 0;
+
+			int count = 0;
+			foreach (GridEntry e in entry.GridItems) {
+				count += 1;
+				if (e.Expandable && e.Expanded)
+					count += GetVisibleItemsCount (e);
+			}
+			return count;
+		}
+
+		private int GetVisibleRowsCount ()
+		{
+			return this.Height / row_height;
+		}
+
+		private void UpdateScrollBar ()
+		{
+			if (property_grid.RootGridItem == null)
+				return;
+
+			int visibleRows = GetVisibleRowsCount ();
+			int openedItems = GetVisibleItemsCount ((GridEntry)property_grid.RootGridItem);
+			if (openedItems > visibleRows) {
 				vbar.Visible = true;
 				vbar.SmallChange = 1;
 				vbar.Minimum = 0;
-				vbar.Maximum = open_grid_item_count-1;
-				vbar.LargeChange = visible_rows;
-			}
-			else {
+				vbar.Maximum = openedItems - 1;
+				vbar.LargeChange = visibleRows;
+			} else {
+				vbar.Value = 0;
 				vbar.Visible = false;
 			}
-
 		}
 
+		private bool GetScrollBarVisible ()
+		{
+			if (property_grid.RootGridItem == null)
+				return false;
+
+			int visibleRows = GetVisibleRowsCount ();
+			int openedItems = GetVisibleItemsCount ((GridEntry)property_grid.RootGridItem);
+			if (openedItems > visibleRows)
+				return true;
+			return false;
+		}
 		#region Drawing Code
 
 		private void DrawGridItems (GridItemCollection grid_items, PaintEventArgs pevent, int depth, ref int yLoc) {
@@ -590,14 +620,14 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			if (grid_item.PropertyDescriptor == null)
 				return; 
 
-			int xLoc = SplitterLocation+1;
+			int xLoc = SplitterLocation+ENTRY_SPACING;
 			if (grid_item.PaintValueSupported) {
 				pevent.Graphics.DrawRectangle (Pens.Black, SplitterLocation + ENTRY_SPACING, 
 							       rect.Y + 2, VALUE_PAINT_WIDTH + 1, row_height - ENTRY_SPACING*2);
 				grid_item.PaintValue (pevent.Graphics, 
 						      new Rectangle (SplitterLocation + ENTRY_SPACING + 1, 
 								     rect.Y + ENTRY_SPACING + 1,
-								     VALUE_PAINT_WIDTH, row_height - (ENTRY_SPACING*2 + 1)));
+								     VALUE_PAINT_WIDTH, row_height - (ENTRY_SPACING*2 +1)));
 				xLoc += VALUE_PAINT_INDENT;
 			}
 
@@ -608,8 +638,8 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			string valueText = grid_item.IsMerged && !grid_item.HasMergedValue ? String.Empty : grid_item.ValueText;
 			pevent.Graphics.DrawString (valueText, font,
 						    brush,
-						    new RectangleF (xLoc, rect.Y + ENTRY_SPACING,
-								    ClientRectangle.Width-(xLoc), row_height - (ENTRY_SPACING*2 + 1)), 
+						    new RectangleF (xLoc + ENTRY_SPACING, rect.Y + ENTRY_SPACING,
+								    ClientRectangle.Width-(xLoc), row_height - ENTRY_SPACING*2), 
 						    string_format);
 		}
 
@@ -650,7 +680,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			}
 			grid_item.Top = yLoc;
 			yLoc += row_height;
-			open_grid_item_count++;
 		}
 
 		private Rectangle DrawPlusMinus (Graphics g, int x, int y, bool expanded, bool category) {
@@ -673,12 +702,12 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			Refresh ();
 		}
 
-		private void TextBoxValidating (object sender, CancelEventArgs e) 
-		{
-			GridEntry entry = (GridEntry) property_grid.SelectedGridItem;
-			if (entry != null && entry.IsEditable)
-				TrySetEntry (entry, grid_textbox.Text);
-		}
+		// private void TextBoxValidating (object sender, CancelEventArgs e)
+		// {
+		// 	GridEntry entry = (GridEntry) property_grid.SelectedGridItem;
+		// 	if (entry != null && entry.IsEditable)
+		// 		TrySetEntry (entry, grid_textbox.Text);
+		// }
 
 		#endregion
 
@@ -765,7 +794,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				return;
 
 			skipped_grid_items = vbar.Value;
-			XplatUI.ScrollWindow (Handle, 0, scroll_amount, false);
 			UpdateView ();
 		}
 
@@ -812,9 +840,9 @@ namespace System.Windows.Forms.PropertyGridInternal {
 
 				int y = -vbar.Value*row_height;
 				CalculateItemY (entry, property_grid.RootGridItem.GridItems, ref y);
-				int x = SplitterLocation + 1 + (entry.PaintValueSupported ? 27 : 0);
-				grid_textbox.SetBounds (x, y + ENTRY_SPACING,
-							ClientRectangle.Width - x - (vbar.Visible ? vbar.Width : 0),
+				int x = SplitterLocation + ENTRY_SPACING + (entry.PaintValueSupported ? VALUE_PAINT_INDENT : 0);
+				grid_textbox.SetBounds (x + ENTRY_SPACING, y + ENTRY_SPACING,
+							ClientRectangle.Width - ENTRY_SPACING - x - (vbar.Visible ? vbar.Width : 0),
 							row_height - ENTRY_SPACING);
 				grid_textbox.Text = entry.IsMerged && !entry.HasMergedValue ? String.Empty : entry.ValueText;
 				grid_textbox.Visible = true;
@@ -852,7 +880,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				value += itemY / row_height;
 			else if (itemY + row_height > Height) // the new item is below the viewable area
 				value += ((itemY + row_height) - Height) / row_height + 1;
-			if (value > vbar.Minimum && value < vbar.Maximum)
+			if (value >= vbar.Minimum && value <= vbar.Maximum)
 				vbar.Value = value;
 		}
 
@@ -869,6 +897,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 
 		internal void UpdateView ()
 		{
+			UpdateScrollBar ();
 			UpdateItem ((GridEntry)property_grid.SelectedGridItem);
 			Invalidate ();
 			Update ();
