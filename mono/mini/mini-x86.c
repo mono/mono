@@ -2039,7 +2039,7 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
  *  Converts complex opcodes into simpler ones so that each IR instruction
  * corresponds to one machine instruction.
  */
-static void
+void
 mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 {
 	MonoInst *ins, *temp, *last_ins = NULL;
