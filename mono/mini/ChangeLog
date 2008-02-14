@@ -1,5 +1,8 @@
 2008-02-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-x86.c (mono_arch_emit_outarg_vt): Pass a reasonable alignment to
+	mini_emit_memcpy2 ().
+
 	* cpu-x86.md mini-x86.c: Fix x86 build.
 
 2008-02-13  Zoltan Varga  <vargaz@gmail.com>

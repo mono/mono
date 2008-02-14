@@ -1356,7 +1356,7 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 		MONO_ADD_INS (cfg->cbb, arg);
 	} else if (size <= 20) {	
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SUB_IMM, X86_ESP, X86_ESP, ALIGN_TO (size, 4));
-		mini_emit_memcpy2 (cfg, X86_ESP, 0, src->dreg, 0, size, 0);
+		mini_emit_memcpy2 (cfg, X86_ESP, 0, src->dreg, 0, size, 4);
 	} else {
 		MONO_INST_NEW (cfg, arg, OP_X86_PUSH_OBJ);
 		arg->inst_basereg = src->dreg;
