@@ -1,8 +1,29 @@
+2008-02-14  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* expression.cs (Conditional.Emit): when emitting the ternary
+	operator, use local variables to generate code verifiable code. 
+
+	The verifier cannot infer that the type on stack before the
+	stloc.0 is executed is of type ParentB. This happens because the
+	stack merge algorithm uses only parent types when deciding which
+	is the common type.  This is described in Part III 1.8.1.3 of ECMA
+	335.
+
+	This code compiled with mcs is not verifiable under MS. The MS
+	verifier picks the first common interface of Foo and Bar, which is
+	wrong, but doesn't use a full join type of the 2 interfaces.
+
+	CSC uses a clever hack to compile such code in a verifiable
+	way. It stores the intermediate values in a local variable with
+	the expected type.
+
+	Fixes: #358102
+	
 2008-02-14  Miguel de Icaza  <miguel@novell.com>
 
 	* expression.cs: Do not fold BitwiseAnd operators when the left
 	side is a false constant, because we still need to evaluate the
-	right-hand side. 
+	right-hand side.
 
 	Fixes #359789
 

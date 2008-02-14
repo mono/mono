@@ -3624,6 +3624,14 @@ namespace Mono.CSharp {
 
 			expr.EmitBranchable (ec, false_target, false);
 			true_expr.Emit (ec);
+
+			if (type.IsInterface) {
+				LocalBuilder temp = ec.GetTemporaryLocal (type);
+				ig.Emit (OpCodes.Stloc, temp);
+				ig.Emit (OpCodes.Ldloc, temp);
+				ec.FreeTemporaryLocal (temp, type);
+			}
+
 			ig.Emit (OpCodes.Br, end_target);
 			ig.MarkLabel (false_target);
 			false_expr.Emit (ec);
