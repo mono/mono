@@ -1,3 +1,10 @@
+
+Thu Feb 14 17:11:10 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* RxCompiler.cs, RxInterpreter.cs, RxOp.cs: replace EcmaDigit with
+	Range, fixed matching of "" =~ /$/, implementedt TestCharGroup.
+	Fixes and other misc opcodes implemented.
+
 2008-02-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* CILCompiler.cs: Restructure some code to avoid a branch inside a loop.

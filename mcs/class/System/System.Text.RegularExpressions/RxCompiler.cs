@@ -171,11 +171,12 @@ namespace System.Text.RegularExpressions {
 			case Category.WhiteSpace:
 				Emit ((RxOp)((int)RxOp.CategoryWhiteSpace + offset));
 				break;
+			/* FIXME: translate EcmaWord, EcmaWhiteSpace into Bitmaps? EcmaWhiteSpace will fit very well with the IL engine */
 			case Category.EcmaWord:
 				Emit ((RxOp)((int)RxOp.CategoryEcmaWord + offset));
 				break;
 			case Category.EcmaDigit:
-				Emit ((RxOp)((int)RxOp.CategoryEcmaDigit + offset));
+				EmitRange ('0', '9', negate, false, reverse);
 				break;
 			case Category.EcmaWhiteSpace:
 				Emit ((RxOp)((int)RxOp.CategoryEcmaWhiteSpace + offset));
@@ -587,12 +588,18 @@ namespace System.Text.RegularExpressions {
 
 		public void EmitSub (LinkRef tail)
 		{
-			throw new NotSupportedException ();
+			BeginLink (tail);
+			Emit (RxOp.SubExpression);
+			EmitLink (tail);
 		}
 
 		public void EmitTest (LinkRef yes, LinkRef tail)
 		{
-			throw new NotSupportedException ();
+			BeginLink (yes);
+			BeginLink (tail);
+			Emit (RxOp.Test);
+			EmitLink (yes);
+			EmitLink (tail);
 		}
 
 		public void EmitBranch (LinkRef next)
@@ -621,7 +628,10 @@ namespace System.Text.RegularExpressions {
 
 		public void EmitIn (LinkRef tail)
 		{
-			throw new NotSupportedException ();
+			// emitted for things like [\dabcfh]
+			BeginLink (tail);
+			Emit (RxOp.TestCharGroup);
+			EmitLink (tail);
 		}
 
 		public void EmitInfo (int count, int min, int max)

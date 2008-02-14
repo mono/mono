@@ -128,10 +128,6 @@ namespace System.Text.RegularExpressions {
 		NoCategoryEcmaWord,
 		CategoryEcmaWordReverse,
 		NoCategoryEcmaWordReverse,
-		CategoryEcmaDigit,
-		NoCategoryEcmaDigit,
-		CategoryEcmaDigitReverse,
-		NoCategoryEcmaDigitReverse,
 		CategoryEcmaWhiteSpace,
 		NoCategoryEcmaWhiteSpace,
 		CategoryEcmaWhiteSpaceReverse,
@@ -144,13 +140,37 @@ namespace System.Text.RegularExpressions {
 		NoCategoryUnicodeReverse,
 
 		CategoryUnicodeLetter,
+		NoCategoryUnicodeLetter,
+		CategoryUnicodeLetterReverse,
+		NoCategoryUnicodeLetterReverse,
 		CategoryUnicodeMark,
+		NoCategoryUnicodeMark,
+		CategoryUnicodeMarkReverse,
+		NoCategoryUnicodeMarkReverse,
 		CategoryUnicodeNumber,
+		NoCategoryUnicodeNumber,
+		CategoryUnicodeNumberReverse,
+		NoCategoryUnicodeNumberReverse,
 		CategoryUnicodeSeparator,
+		NoCategoryUnicodeSeparator,
+		CategoryUnicodeSeparatorReverse,
+		NoCategoryUnicodeSeparatorReverse,
 		CategoryUnicodePunctuation,
+		NoCategoryUnicodePunctuation,
+		CategoryUnicodePunctuationReverse,
+		NoCategoryUnicodePunctuationReverse,
 		CategoryUnicodeSymbol,
+		NoCategoryUnicodeSymbol,
+		CategoryUnicodeSymbolReverse,
+		NoCategoryUnicodeSymbolReverse,
 		CategoryUnicodeSpecials,
+		NoCategoryUnicodeSpecials,
+		CategoryUnicodeSpecialsReverse,
+		NoCategoryUnicodeSpecialsReverse,
 		CategoryUnicodeOther,
+		NoCategoryUnicodeOther,
+		CategoryUnicodeOtherReverse,
+		NoCategoryUnicodeOtherReverse,
 		// add more categories
 
 		// backreferences
@@ -174,7 +194,16 @@ namespace System.Text.RegularExpressions {
 		Jump,
 
 		// followed by two-byte offset
+		SubExpression,
+
+		// followed by true and false two-byte offsets
+		Test,
+
+		// followed by two-byte offset
 		Branch,
+
+		// followed by two-byte offset
+		TestCharGroup,
 
 		// anchoring expression
 		// followed by offset of tail and offset

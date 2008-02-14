@@ -7,7 +7,7 @@ namespace System.Text.RegularExpressions {
 
 	internal delegate bool EvalDelegate (RxInterpreter interp, int strpos, ref int strpos_result);
 
-	class RxInterpreter: BaseMachine {
+	sealed class RxInterpreter: BaseMachine {
 		byte[] program;
 		string str;
 		int string_start;
@@ -20,6 +20,8 @@ namespace System.Text.RegularExpressions {
 		Mark[] marks = null; // mark stack
 		int mark_start; // start of current checkpoint
 		int mark_end; // end of checkpoint/next free mark
+
+		static readonly bool trace_rx = Environment.GetEnvironmentVariable ("RXD") != null;
 
 		static int ReadInt (byte[] code, int pc)
 		{
@@ -106,8 +108,6 @@ namespace System.Text.RegularExpressions {
 			int n = groups.Length;
 			if (marks == null)
 				marks = new Mark [n * 10];
-			if (n == 1)
-				return;
 
 			for (int i = 0; i < n; ++ i) {
 				groups [i] = i;
@@ -169,11 +169,27 @@ namespace System.Text.RegularExpressions {
 
 		bool EvalByteCode (int pc, int strpos, ref int strpos_result)
 		{
+			// luckily the IL engine can deal with char_group_end at compile time
+			// this code offset needs to be checked only in opcodes that handle
+			// a single char and that are included in a TestCharGroup expression:
+			// the engine is supposed to jump to this offset as soons as the
+			// first opcode in the expression matches
+			// The code pattern becomes:
+			// on successfull match: check if char_group_end is nonzero and jump to
+			// test_char_group_passed after adjusting strpos
+			// on failure: try the next expression by simply advancing pc
+			int char_group_end = 0;
 			int length, start, end;
 			while (true) {
-				//Console.WriteLine ("evaluating: {0} at pc: {1}, strpos: {2}", (RxOp)program [pc], pc, strpos);
+				if (trace_rx)
+					Console.WriteLine ("evaluating: {0} at pc: {1}, strpos: {2}, cge: {3}", (RxOp)program [pc], pc, strpos, char_group_end);
 				switch ((RxOp)program [pc]) {
 				case RxOp.True:
+					if (char_group_end != 0) {
+						pc = char_group_end;
+						char_group_end = 0;
+						continue;
+					}
 					strpos_result = strpos;
 					return true;
 				case RxOp.False:
@@ -218,7 +234,10 @@ namespace System.Text.RegularExpressions {
 					// FIXME: test anchor
 					length = program [pc + 3] | (program [pc + 4] << 8);
 					pc += program [pc + 1] | (program [pc + 2] << 8);
-					while (strpos < string_end) {
+					// it's important to test also the end of the string
+					// position for things like: "" =~ /$/
+					end = string_end + 1;
+					while (strpos < end) {
 						int res = strpos;
 						if (groups.Length > 1) {
 							ResetGroups ();
@@ -255,6 +274,24 @@ namespace System.Text.RegularExpressions {
 					else
 						pc += program [pc + 1] | (program [pc + 2] << 8);
 					continue;
+				case RxOp.SubExpression: {
+					int res = 0;
+					if (EvalByteCode (pc + 3, strpos, ref res)) {
+						pc += program [pc + 1] | (program [pc + 2] << 8);
+						continue;
+					}
+					return false;
+				}
+				case RxOp.Test: {
+					int res = 0;
+					// FIXME: checkpoint
+					if (EvalByteCode (pc + 5, strpos, ref res)) {
+						pc += program [pc + 1] | (program [pc + 2] << 8);
+					} else {
+						pc += program [pc + 3] | (program [pc + 4] << 8);
+					}
+					continue;
+				}
 				case RxOp.OpenGroup:
 					Open (program [pc + 1] | (program [pc + 2] << 8), strpos);
 					pc += 3;
@@ -265,6 +302,10 @@ namespace System.Text.RegularExpressions {
 					continue;
 				case RxOp.Jump:
 					pc += program [pc + 1] | (program [pc + 2] << 8);
+					continue;
+				case RxOp.TestCharGroup:
+					char_group_end = pc + program [pc + 1] | (program [pc + 2] << 8);
+					pc += 3;
 					continue;
 				case RxOp.String:
 					start = pc + 2;
@@ -323,217 +364,499 @@ namespace System.Text.RegularExpressions {
 				case RxOp.Char:
 					if (strpos < string_end && (str [strpos] == program [pc + 1])) {
 						strpos++;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
 						pc += 2;
 						continue;
 					}
-					return false;
+					if (char_group_end == 0)
+						return false;
+					pc += 2;
+					continue;
 				case RxOp.NoChar:
 					if (strpos < string_end && (str [strpos] != program [pc + 1])) {
 						strpos++;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
 						pc += 2;
 						continue;
 					}
-					return false;
+					if (char_group_end == 0)
+						return false;
+					pc += 2;
+					continue;
 				case RxOp.CharIgnoreCase:
 					if (strpos < string_end && (Char.ToLower (str [strpos]) == program [pc + 1])) {
 						strpos++;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
 						pc += 2;
 						continue;
 					}
-					return false;
+					if (char_group_end == 0)
+						return false;
+					pc += 2;
+					continue;
 				case RxOp.NoCharIgnoreCase:
 					if (strpos < string_end && (Char.ToLower (str [strpos]) != program [pc + 1])) {
 						strpos++;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
 						pc += 2;
 						continue;
 					}
-					return false;
+					if (char_group_end == 0)
+						return false;
+					pc += 2;
+					continue;
 				case RxOp.Range:
 					if (strpos < string_end) {
 						int c = str [strpos];
 						if (c >= program [pc + 1] && c <= program [pc + 2]) {
 							strpos++;
+							if (char_group_end != 0)
+								goto test_char_group_passed;
 							pc += 3;
 							continue;
 						}
 					}
-					return false;
+					if (char_group_end == 0)
+						return false;
+					pc += 3;
+					continue;
 				case RxOp.NoRange:
 					if (strpos < string_end) {
 						int c = str [strpos];
-						if (c >= program [pc + 1] && c <= program [pc + 2])
-							return false;
+						if (c >= program [pc + 1] && c <= program [pc + 2]) {
+							if (char_group_end == 0)
+								return false;
+							pc += 3;
+							continue;
+						}
 						strpos++;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
 						pc += 3;
 						continue;
 					}
-					return false;
+					if (char_group_end == 0)
+						return false;
+					pc += 3;
+					continue;
 				case RxOp.RangeIgnoreCase:
 					if (strpos < string_end) {
 						int c = Char.ToLower (str [strpos]);
 						if (c >= program [pc + 1] && c <= program [pc + 2]) {
 							strpos++;
+							if (char_group_end != 0)
+								goto test_char_group_passed;
 							pc += 3;
 							continue;
 						}
 					}
-					return false;
+					if (char_group_end == 0)
+						return false;
+					pc += 3;
+					continue;
 				case RxOp.NoRangeIgnoreCase:
 					if (strpos < string_end) {
 						int c = Char.ToLower (str [strpos]);
-						if (c >= program [pc + 1] && c <= program [pc + 2])
-							return false;
+						if (c >= program [pc + 1] && c <= program [pc + 2]) {
+							if (char_group_end == 0)
+								return false;
+							pc += 3;
+							continue;
+						}
 						strpos++;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
 						pc += 3;
 						continue;
 					}
-					return false;
+					if (char_group_end == 0)
+						return false;
+					pc += 3;
+					continue;
 				case RxOp.Bitmap:
 					if (strpos < string_end) {
 						int c = str [strpos];
 						c -= program [pc + 1];
-						length =  program [pc + 2];
-						if (c < 0 || c >= (length << 3))
-							return false;
+						length = program [pc + 2];
+						if (c < 0 || c >= (length << 3)) {
+							if (char_group_end == 0)
+								return false;
+							pc += length + 3;
+							continue;
+						}
 						pc += 3;
 						if ((program [pc + (c >> 3)] & (1 << (c & 0x7))) != 0) {
 							strpos++;
+							if (char_group_end != 0)
+								goto test_char_group_passed;
+							pc += length;
+							continue;
+						}
+						if (char_group_end == 0)
+							return false;
+						pc += length;
+						continue;
+					}
+					if (char_group_end == 0)
+						return false;
+					pc += 3 + program [pc + 2];
+					continue;
+				case RxOp.NoBitmap:
+					if (strpos < string_end) {
+						int c = str [strpos];
+						c -= program [pc + 1];
+						length = program [pc + 2];
+						if (c < 0 || c >= (length << 3)) {
+							strpos++;
+							if (char_group_end != 0)
+								goto test_char_group_passed;
+							pc += 3 + length;
+							continue;
+						}
+						pc += 3;
+						if ((program [pc + (c >> 3)] & (1 << (c & 0x7))) != 0) {
+							if (char_group_end == 0)
+								return false;
+							pc += length;
+							continue;
+						} else {
+							strpos++;
+							if (char_group_end != 0)
+								goto test_char_group_passed;
 							pc += length;
 							continue;
 						}
 					}
-					return false;
+					if (char_group_end == 0)
+						return false;
+					pc += 3 + program [pc + 2];
+					continue;
 				case RxOp.BitmapIgnoreCase:
 					if (strpos < string_end) {
 						int c = Char.ToLower (str [strpos]);
 						c -= program [pc + 1];
-						length =  program [pc + 2];
-						if (c < 0 || c >= (length << 3))
-							return false;
+						length = program [pc + 2];
+						if (c < 0 || c >= (length << 3)) {
+							if (char_group_end == 0)
+								return false;
+							pc += length + 3;
+							continue;
+						}
 						pc += 3;
 						if ((program [pc + (c >> 3)] & (1 << (c & 0x7))) != 0) {
 							strpos++;
+							if (char_group_end != 0)
+								goto test_char_group_passed;
+							pc += length;
+							continue;
+						}
+						if (char_group_end == 0)
+							return false;
+						pc += length;
+						continue;
+					}
+					if (char_group_end == 0)
+						return false;
+					pc += 3 + program [pc + 2];
+					continue;
+				case RxOp.NoBitmapIgnoreCase:
+					if (strpos < string_end) {
+						int c = str [strpos];
+						c -= program [pc + 1];
+						length =  program [pc + 2];
+						pc += 3;
+						if (c < 0 || c >= (length << 3)) {
+							strpos++;
+							if (char_group_end != 0)
+								goto test_char_group_passed;
+							pc += length;
+							continue;
+						}
+						if ((program [pc + (c >> 3)] & (1 << (c & 0x7))) != 0) {
+							if (char_group_end == 0)
+								return false;
+							pc += length;
+							continue;
+						} else {
+							strpos++;
+							if (char_group_end != 0)
+								goto test_char_group_passed;
 							pc += length;
 							continue;
 						}
 					}
-					return false;
+					if (char_group_end == 0)
+						return false;
+					pc += 3 + program [pc + 2];
+					continue;
 				case RxOp.UnicodeChar:
 					if (strpos < string_end && (str [strpos] == (program [pc + 1] | (program [pc + 2] << 8)))) {
 						strpos++;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
 						pc += 3;
 						continue;
 					}
-					return false;
+					if (char_group_end == 0)
+						return false;
+					pc += 3;
+					continue;
 				case RxOp.NoUnicodeChar:
 					if (strpos < string_end && (str [strpos] != (program [pc + 1] | (program [pc + 2] << 8)))) {
 						strpos++;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
 						pc += 3;
 						continue;
 					}
-					return false;
+					if (char_group_end == 0)
+						return false;
+					pc += 3;
+					continue;
 				case RxOp.UnicodeCharIgnoreCase:
 					if (strpos < string_end && (Char.ToLower (str [strpos]) == (program [pc + 1] | (program [pc + 2] << 8)))) {
 						strpos++;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
 						pc += 3;
 						continue;
 					}
-					return false;
+					if (char_group_end == 0)
+						return false;
+					pc += 3;
+					continue;
 				case RxOp.NoUnicodeCharIgnoreCase:
 					if (strpos < string_end && (Char.ToLower (str [strpos]) != (program [pc + 1] | (program [pc + 2] << 8)))) {
 						strpos++;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
 						pc += 3;
 						continue;
 					}
-					return false;
+					if (char_group_end == 0)
+						return false;
+					pc += 3;
+					continue;
 				case RxOp.CategoryAny:
 					if (strpos < string_end && str [strpos] != '\n') {
 						strpos++;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
 						pc++;
 						continue;
 					}
-					return false;
+					if (char_group_end == 0)
+						return false;
+					pc++;
+					continue;
 				case RxOp.CategoryWord:
 					if (strpos < string_end) {
 						char c = str [strpos];
 						if (Char.IsLetterOrDigit (c) || Char.GetUnicodeCategory (c) == UnicodeCategory.ConnectorPunctuation) {
 							strpos++;
+							if (char_group_end != 0)
+								goto test_char_group_passed;
 							pc++;
 							continue;
 						}
 					}
-					return false;
+					if (char_group_end == 0)
+						return false;
+					pc++;
+					continue;
 				case RxOp.NoCategoryWord:
 					if (strpos < string_end) {
 						char c = str [strpos];
 						if (!Char.IsLetterOrDigit (c) && Char.GetUnicodeCategory (c) != UnicodeCategory.ConnectorPunctuation) {
 							strpos++;
+							if (char_group_end != 0)
+								goto test_char_group_passed;
 							pc++;
 							continue;
 						}
 					}
-					return false;
+					if (char_group_end == 0)
+						return false;
+					pc++;
+					continue;
 				case RxOp.CategoryDigit:
 					if (strpos < string_end && Char.IsDigit (str [strpos])) {
 						strpos++;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
 						pc++;
 						continue;
 					}
-					return false;
+					if (char_group_end == 0)
+						return false;
+					pc++;
+					continue;
+				case RxOp.NoCategoryDigit:
+					if (strpos < string_end && !Char.IsDigit (str [strpos])) {
+						strpos++;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
+						pc++;
+						continue;
+					}
+					if (char_group_end == 0)
+						return false;
+					pc++;
+					continue;
 				case RxOp.CategoryWhiteSpace:
 					if (strpos < string_end && Char.IsWhiteSpace (str [strpos])) {
 						strpos++;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
 						pc++;
 						continue;
 					}
-					return false;
+					if (char_group_end == 0)
+						return false;
+					pc++;
+					continue;
+				case RxOp.NoCategoryWhiteSpace:
+					if (strpos < string_end && !Char.IsWhiteSpace (str [strpos])) {
+						strpos++;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
+						pc++;
+						continue;
+					}
+					if (char_group_end == 0)
+						return false;
+					pc++;
+					continue;
 				case RxOp.CategoryEcmaWord:
 					if (strpos < string_end) {
 						int c = str [strpos];
 						if ('a' <= c && c <= 'z' || 'A' <= c && c <= 'Z' || '0' <= c && c <= '9' || c == '_') {
 							strpos++;
+							if (char_group_end != 0)
+								goto test_char_group_passed;
 							pc++;
 							continue;
 						}
 					}
-					return false;
-				case RxOp.CategoryEcmaDigit:
+					if (char_group_end == 0)
+						return false;
+					pc++;
+					continue;
+				case RxOp.NoCategoryEcmaWord:
 					if (strpos < string_end) {
 						int c = str [strpos];
-						if ('0' <= c && c <= '9') {
-							strpos++;
+						if ('a' <= c && c <= 'z' || 'A' <= c && c <= 'Z' || '0' <= c && c <= '9' || c == '_') {
+							if (char_group_end == 0)
+								return false;
 							pc++;
 							continue;
 						}
+						strpos++;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
+						pc++;
+						continue;
 					}
-					return false;
+					if (char_group_end == 0)
+						return false;
+					pc++;
+					continue;
 				case RxOp.CategoryEcmaWhiteSpace:
 					if (strpos < string_end) {
 						int c = str [strpos];
 						if (c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\f' || c == '\v') {
 							strpos++;
+							if (char_group_end != 0)
+								goto test_char_group_passed;
 							pc++;
 							continue;
 						}
 					}
-					return false;
+					if (char_group_end == 0)
+						return false;
+					pc++;
+					continue;
+				case RxOp.NoCategoryEcmaWhiteSpace:
+					if (strpos < string_end) {
+						int c = str [strpos];
+						if (c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\f' || c == '\v') {
+							if (char_group_end == 0)
+								return false;
+							pc++;
+							continue;
+						}
+						strpos++;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
+						pc++;
+						continue;
+					}
+					if (char_group_end == 0)
+						return false;
+					pc++;
+					continue;
 				case RxOp.CategoryUnicodeSpecials:
 					if (strpos < string_end) {
 						int c = str [strpos];
 						if ('\uFEFF' <= c && c <= '\uFEFF' || '\uFFF0' <= c && c <= '\uFFFD') {
 							strpos++;
+							if (char_group_end != 0)
+								goto test_char_group_passed;
 							pc++;
 							continue;
 						}
 					}
-					return false;
+					if (char_group_end == 0)
+						return false;
+					pc++;
+					continue;
+				case RxOp.NoCategoryUnicodeSpecials:
+					if (strpos < string_end) {
+						int c = str [strpos];
+						if ('\uFEFF' <= c && c <= '\uFEFF' || '\uFFF0' <= c && c <= '\uFFFD') {
+							if (char_group_end == 0)
+								return false;
+							pc++;
+							continue;
+						}
+						strpos++;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
+						pc++;
+						continue;
+					}
+					if (char_group_end == 0)
+						return false;
+					pc++;
+					continue;
 				case RxOp.CategoryUnicode:
 					if (strpos < string_end && Char.GetUnicodeCategory (str [strpos]) == (UnicodeCategory)program [pc + 1]) {
 						strpos++;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
 						pc += 2;
 						continue;
 					}
-					return false;
+					if (char_group_end == 0)
+						return false;
+					pc += 2;
+					continue;
+				case RxOp.NoCategoryUnicode:
+					if (strpos < string_end && Char.GetUnicodeCategory (str [strpos]) != (UnicodeCategory)program [pc + 1]) {
+						strpos++;
+						if (char_group_end != 0)
+							goto test_char_group_passed;
+						pc += 2;
+						continue;
+					}
+					if (char_group_end == 0)
+						return false;
+					pc += 2;
+					continue;
 				case RxOp.Branch: {
 					int res = 0;
 					if (EvalByteCode (pc + 3, strpos, ref res)) {
@@ -571,7 +894,12 @@ namespace System.Text.RegularExpressions {
 					Console.WriteLine ("evaluating: {0} at pc: {1}, strpos: {2}", (RxOp)program [pc], pc, strpos);
 					throw new NotSupportedException ();
 				}
-			}
+				continue;
+			test_char_group_passed:
+				pc = char_group_end;
+				char_group_end = 0;
+				continue;
+			} // end of while (true)
 		}
 	}
 }
