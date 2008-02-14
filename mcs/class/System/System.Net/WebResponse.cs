@@ -99,6 +99,7 @@ namespace System.Net
 			throw new NotSupportedException ();
 		}
 #if TARGET_JVM //enable overrides for extenders
+		[vmw.common.ChangeInterfaceMethodNames]
 		public virtual void Dispose()
 #else
 		void IDisposable.Dispose()
