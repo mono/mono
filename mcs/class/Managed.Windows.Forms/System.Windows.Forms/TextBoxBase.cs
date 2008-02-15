@@ -1792,6 +1792,16 @@ namespace System.Windows.Forms
 
 			if (e.Button == MouseButtons.Left) {
 
+				// Special case when shift key is pressed and
+				// left mouse is clicked.. set selection from
+				// current cursor to mouse
+				if ((Control.ModifierKeys & Keys.Shift) > 0) {
+					document.PositionCaret (e.X + document.ViewPortX, e.Y + document.ViewPortY);
+					document.SetSelectionToCaret (false);
+					document.DisplayCaret ();
+					return;
+				}
+
 				dbliclick = IsDoubleClick (e);
 
 				if (current_link != null) {

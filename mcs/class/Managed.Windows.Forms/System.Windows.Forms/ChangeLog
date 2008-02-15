@@ -1,4 +1,9 @@
 2008-02-15  Luke Page  <luke.a.page@gmail.com>
+	* TextBoxBase.cs: Handles MouseDown when shift key is clicked so
+	that it changes the selection rather than just repositioning the
+	cursor. Fixes Bug #360873.
+
+2008-02-15  Luke Page  <luke.a.page@gmail.com>
 	* TextBoxBase.cs, TextControl.cs, RichTextBox.cs: TextChanged fires
 	when Undo/Redo changes the text. Undo/Redo/Undo/Redo now works
 	correctly. See #359330
