@@ -4672,7 +4672,10 @@ namespace System.Windows.Forms {
 			xevent.ClientMessageEvent.ptr3 = wparam;
 			xevent.ClientMessageEvent.ptr4 = lparam;
 
-			hwnd.Queue.EnqueueLocked (xevent);
+			if (hwnd != null)
+				hwnd.Queue.EnqueueLocked (xevent);
+			else
+				ThreadQueue(Thread.CurrentThread).EnqueueLocked (xevent);
 
 			return true;
 		}
