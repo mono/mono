@@ -1,3 +1,8 @@
+2008-02-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-s390.h (MONO_OUTPUT_VTR): Use cfg instead of s, avoid assignments to
+	macro arguments.
+
 2008-02-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ops.h: Get rid of OP_SPARC_LOCALLOC_IMM.
