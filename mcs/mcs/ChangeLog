@@ -1,5 +1,11 @@
 2008-02-15  Miguel de Icaza  <miguel@novell.com>
 
+	* cs-tokenizer.cs: if a conditional expression happens inside a
+	(...) this also means that we do not need to de-ambiguate between
+	an parenthesized expression and a cast.  
+
+	Fixes 346484.
+
 	* constant.cs (SideEffectConstant): a constant value that happens
 	to have a side effect.   
 

@@ -971,8 +971,10 @@ namespace Mono.CSharp
 		{
 			putback (')');
 
-			// When any binary operation is used we are sure it is not a cast
-			if (expression is Binary)
+			// When any binary operation, a conditional is used we are sure it is not a cast
+			// maybe more.
+			
+			if (expression is Binary || expression is Conditional)
 				return;
 
 			deambiguate_close_parens++;
