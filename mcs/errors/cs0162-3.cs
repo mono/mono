@@ -17,4 +17,6 @@ class C {
 		if ((Flags.Removed & _enumFlags) != (Flags.Removed & _enumFlags))
 			Console.WriteLine ("error");
 	}
+
+	static void Main () {}
 }
