@@ -1,3 +1,7 @@
+2008-02-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Uri.cs : UriParser field blocks serialization.
+
 2008-01-23  Robert Jordan  <robertj@gmx.net>
 
 	* Uri.cs (Parse): Handle uriString.Length == 1 as a valid relative URI.

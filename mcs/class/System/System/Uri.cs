@@ -1762,6 +1762,7 @@ namespace System {
 			return false;
 		}
 #if NET_2_0
+		[NonSerialized]
 		private UriParser parser;
 
 		private UriParser Parser {
