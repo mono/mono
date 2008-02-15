@@ -1,4 +1,9 @@
 2008-02-15  Luke Page  <luke.a.page@gmail.com>
+	* MaskedTextBox.cs: Now skips non editable characters after a
+	character has been entered and we are progressing to the next
+	position in the MaskedTextBox.
+
+2008-02-15  Luke Page  <luke.a.page@gmail.com>
 	* TextBoxBase.cs: Handles MouseDown when shift key is clicked so
 	that it changes the selection rather than just repositioning the
 	cursor. Fixes Bug #360873.

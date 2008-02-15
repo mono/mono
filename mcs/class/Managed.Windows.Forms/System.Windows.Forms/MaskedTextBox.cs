@@ -246,7 +246,14 @@ namespace System.Windows.Forms
 			if (!result) {
 				OnMaskInputRejected (new MaskInputRejectedEventArgs (testPosition, resultHint));
 			} else {
-				SelectionStart++;
+				int iIndex = provider.FindEditPositionFrom (SelectionStart+1, true);
+
+				if (iIndex != MaskedTextProvider.InvalidIndex) {
+					SelectionStart = iIndex;
+				} else {
+					SelectionStart = provider.Length;
+				}
+
 				UpdateVisibleText ();
 			}
 			
