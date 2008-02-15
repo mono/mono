@@ -11,4 +11,6 @@ class X {
 	{
 		A = null;
 	}
+
+	static void Main () {}
 }
