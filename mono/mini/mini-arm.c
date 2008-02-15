@@ -1234,6 +1234,10 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 				MONO_ADD_INS (cfg->cbb, ins);
 				mono_call_inst_add_outarg_reg (cfg, call, ins->dreg, ainfo->reg + 1, FALSE);
 			} else if (!t->byref && ((t->type == MONO_TYPE_R8) || (t->type == MONO_TYPE_R4))) {
+#ifndef MONO_ARCH_SOFT_FLOAT
+				int creg;
+#endif
+
 				if (ainfo->size == 4) {
 #ifdef MONO_ARCH_SOFT_FLOAT
 					/* mono_emit_call_args () have already done the r8->r4 conversion */
@@ -1244,8 +1248,6 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 					MONO_ADD_INS (cfg->cbb, ins);
 					mono_call_inst_add_outarg_reg (cfg, call, ins->dreg, ainfo->reg, FALSE);
 #else
-					int creg;
-
 					MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORER4_MEMBASE_REG, ARMREG_SP, (cfg->param_area - 8), in->dreg);
 					creg = mono_alloc_ireg (cfg);
 					MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOAD_MEMBASE, creg, ARMREG_SP, (cfg->param_area - 8));
@@ -1874,8 +1876,6 @@ mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 		cfg->rs->next_vreg = bb->max_vreg;
 
 	MONO_BB_FOR_EACH_INS (bb, ins) {
-		MonoInst *last_ins;
-
 loop_start:
 		switch (ins->opcode) {
 		case OP_ADD_IMM:
@@ -2722,17 +2722,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert (imm8 >= 0);
 			ARM_AND_REG_IMM (code, ins->dreg, ins->sreg1, imm8, rot_amount);
 			break;
-<<<<<<< .working
-=======
 		case OP_IDIV:
 		case OP_IDIV_UN:
->>>>>>> .merge-right.r95529
 		case OP_DIV_IMM:
-<<<<<<< .working
-=======
 		case OP_IREM:
 		case OP_IREM_UN:
->>>>>>> .merge-right.r95529
 		case OP_REM_IMM:
 			/* crappy ARM arch doesn't have a DIV instruction */
 			g_assert_not_reached ();
@@ -3276,8 +3270,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert (arm_is_fpimm8 (ins->inst_offset));
 			ARM_FLDS (code, ins->dreg, ins->inst_basereg, ins->inst_offset);
 			break;
-<<<<<<< .working
-=======
 		case OP_ICONV_TO_R_UN: {
 			g_assert_not_reached ();
 			break;
@@ -3290,7 +3282,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert_not_reached ();
 			//ARM_FLTD (code, ins->dreg, ins->sreg1);
 			break;
->>>>>>> .merge-right.r95529
 #endif
 		case OP_FCONV_TO_I1:
 			code = emit_float_to_int (cfg, code, ins->dreg, ins->sreg1, 1, TRUE);

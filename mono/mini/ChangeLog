@@ -1,5 +1,7 @@
 2008-02-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-arm.c mini-arm.c cpu-arm.md: Fix arm build.
+
 	* method-to-ir.c (mini_emit_inst_for_method): Fix 64 bit issues in array access
 	implementation.
 	(mini_emit_ldelema_1_ins): Ditto.
