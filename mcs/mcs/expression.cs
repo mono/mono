@@ -2566,8 +2566,16 @@ namespace Mono.CSharp {
 				if (lc != null && lc.IsZeroInteger) {
 					if (rc is EnumConstant)
 						return new EnumConstant (lc, rc.Type);
-					Type = TypeManager.bool_type;
-					return this;
+
+					//
+					// Optimize cases that have no side-effects, to avoid
+					// emitting code that gets popped
+					//
+					if (right is FieldExpr)
+						return lc;
+
+					// Side effect code:
+					return new SideEffectConstant (lc, right, loc);
 				}
 			}
 			else if (oper == Operator.BitwiseOr) {

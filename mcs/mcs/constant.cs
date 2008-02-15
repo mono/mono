@@ -1754,6 +1754,69 @@ namespace Mono.CSharp {
 		}
 	}
 
+	/// <summary>
+	///   The value is constant, but when emitted has a side effect.  This is
+	///   used by BitwiseAnd to ensure that the second expression is invoked
+	///   regardless of the value of the left side.  
+	/// </summary>
+	
+	public class SideEffectConstant : Constant {
+		Constant left;
+		Expression right;
+		
+		public SideEffectConstant (Constant left, Expression right, Location loc) : base (loc)
+		{
+			this.left = left;
+			this.right = right;
+			eclass = ExprClass.Value;
+			type = left.Type;
+		}
+
+		public override string AsString ()
+		{
+			return left.AsString ();
+		}
+
+		public override object GetValue ()
+		{
+			return left.GetValue ();
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			left.Emit (ec);
+			right.Emit (ec);
+			ec.ig.Emit (OpCodes.Pop);
+		}
+
+		public override bool IsDefaultValue {
+			get {
+				return left.IsDefaultValue;
+			}
+		}
+
+		public override Constant Increment ()
+		{
+			throw new NotSupportedException ();
+		}
+		
+		public override bool IsNegative {
+			get {
+				return left.IsNegative;
+			}
+		}
+
+		public override bool IsZeroInteger {
+			get {
+				return left.IsZeroInteger;
+			}
+		}
+
+		public override Constant ConvertExplicitly (bool in_checked_context, Type target_type)
+		{
+			return left.ConvertExplicitly (in_checked_context, target_type);
+		}
+	}
 }
 
 
