@@ -1,3 +1,7 @@
+2008-02-15  Miguel de Icaza  <miguel@novell.com>
+
+	* UnmanagedMemoryStream.cs: Implement few missing pieces.
+
 2008-02-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* UnexceptionalStreamReader.cs (Read): Optimize this to avoid making a number of

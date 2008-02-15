@@ -159,46 +159,54 @@ namespace System.IO
 
 		public unsafe byte* PositionPointer {
 			get {
-				throw new NotImplementedException("Error");
+				return (byte *) initial_pointer + current_position;
 			}
 			set {
-				throw new NotImplementedException("Error");
+				if (value < (byte *)initial_pointer)
+					throw new IOException ("Address is below the inital address");
+
+				if (value >= (byte *) ((byte *)initial_pointer + length))
+					throw new ArgumentOutOfRangeException ("value");
+
+				current_position = (long) (value - (byte *) initial_pointer);
 			}
 		}
 #endregion
 		
 #region Methods
 		public override int Read ([InAttribute] [OutAttribute] byte[] buffer, int offset, int count)
-			 {
-				if (closed)
-					throw new ObjectDisposedException("The stream is closed");
-
-				if (buffer == null)
-					throw new ArgumentNullException("buffer");
-				if (offset < 0)
-					throw new ArgumentOutOfRangeException("offset", "Non-negative number required.");
-				if (count < 0)
-					throw new ArgumentOutOfRangeException("count", "Non-negative number required.");
-				if ((buffer.Length - offset) < count)
-					throw new ArgumentException("The length of the buffer array minus the offset parameter is less than the count parameter");
-
-				if (fileaccess == FileAccess.Write)
-					throw new NotSupportedException("Stream does not support reading");
-				else {
-					if (current_position >= length)
-						return (0);
-					else {
-						int progress = current_position + count < length ? count : (int) (length - current_position);
-						for (int i = 0; i < progress; i++)
-							buffer [offset + i] = Marshal.ReadByte (initial_pointer, (int) current_position++);
-						return progress;
-					}
-				}
-			}
-		public override int ReadByte () {
+		{
 			if (closed)
 				throw new ObjectDisposedException("The stream is closed");
+			
+			if (buffer == null)
+				throw new ArgumentNullException("buffer");
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException("offset", "Non-negative number required.");
+			if (count < 0)
+				throw new ArgumentOutOfRangeException("count", "Non-negative number required.");
+			if ((buffer.Length - offset) < count)
+				throw new ArgumentException("The length of the buffer array minus the offset parameter is less than the count parameter");
+			
+			if (fileaccess == FileAccess.Write)
+				throw new NotSupportedException("Stream does not support reading");
+			else {
+				if (current_position >= length)
+					return (0);
+				else {
+					int progress = current_position + count < length ? count : (int) (length - current_position);
+					for (int i = 0; i < progress; i++)
+						buffer [offset + i] = Marshal.ReadByte (initial_pointer, (int) current_position++);
+					return progress;
+				}
+			}
+		}
 
+		public override int ReadByte ()
+		{
+			if (closed)
+				throw new ObjectDisposedException("The stream is closed");
+			
 			if (fileaccess== FileAccess.Write)
 				throw new NotSupportedException("Stream does not support reading");
 			else {
@@ -207,7 +215,9 @@ namespace System.IO
 				return (int) Marshal.ReadByte(initial_pointer, (int) current_position++);
 			}
 		}
-		public override long Seek (long offset,	SeekOrigin loc) {
+		
+		public override long Seek (long offset,	SeekOrigin loc)
+		{
 			if (closed)
 				throw new ObjectDisposedException("The stream is closed");
 
@@ -296,7 +306,7 @@ namespace System.IO
 		}
 		
 		public override void WriteByte (byte value)
-		 {
+		{
 			if (closed)
 				throw new ObjectDisposedException("The stream is closed");
 			
