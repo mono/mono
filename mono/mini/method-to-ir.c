@@ -3010,7 +3010,7 @@ mono_emit_method_call (MonoCompile *cfg, MonoMethod *method, MonoMethodSignature
 			guint32 imt_slot = mono_method_get_imt_slot (method);
 			emit_imt_argument (cfg, call);
 			slot_reg = vtable_reg;
-			call->inst.inst_offset = (imt_slot - MONO_IMT_SIZE) * SIZEOF_VOID_P;
+			call->inst.inst_offset = ((gint32)imt_slot - MONO_IMT_SIZE) * SIZEOF_VOID_P;
 #else
 			slot_reg = alloc_preg (cfg);
 			mini_emit_load_intf_reg_vtable (cfg, slot_reg, vtable_reg, method->klass);
@@ -3747,7 +3747,7 @@ mini_emit_ldelema_1_ins (MonoCompile *cfg, MonoClass *klass, MonoInst *arr, Mono
 {
 	MonoInst *ins;
 	guint32 size;
-	int mult_reg, add_reg, array_reg, index_reg;
+	int mult_reg, add_reg, array_reg, index_reg, index2_reg;
 
 	mono_class_init (klass);
 	size = mono_class_array_element_size (klass);
@@ -3757,7 +3757,15 @@ mini_emit_ldelema_1_ins (MonoCompile *cfg, MonoClass *klass, MonoInst *arr, Mono
 	array_reg = arr->dreg;
 	index_reg = index->dreg;
 
-	MONO_EMIT_BOUNDS_CHECK (cfg, array_reg, MonoArray, max_length, index_reg);
+#if SIZEOF_VOID_P == 8
+	/* The array reg is 64 bits but the index reg is only 32 */
+	index2_reg = alloc_preg (cfg);
+	MONO_EMIT_NEW_UNALU (cfg, OP_SEXT_I4, index2_reg, index_reg);
+#else
+	index2_reg = index_reg;
+#endif
+
+	MONO_EMIT_BOUNDS_CHECK (cfg, array_reg, MonoArray, max_length, index2_reg);
 
 #ifdef __i386__
 	if (size == 1 || size == 2 || size == 4 || size == 8) {
@@ -3778,11 +3786,6 @@ mini_emit_ldelema_1_ins (MonoCompile *cfg, MonoClass *klass, MonoInst *arr, Mono
 #ifdef __x86_64__
 	if (size == 1 || size == 2 || size == 4 || size == 8) {
 		static const int fast_log2 [] = { 1, 0, 1, -1, 2, -1, -1, -1, 3 };
-		int index2_reg;
-
-		/* The array reg is 64 bits but the index reg is only 32 */
-		index2_reg = alloc_preg (cfg);
-		MONO_EMIT_NEW_UNALU (cfg, OP_SEXT_I4, index2_reg, index_reg);
 
 		MONO_INST_NEW (cfg, ins, OP_X86_LEA);
 		ins->dreg = add_reg;
@@ -3797,7 +3800,7 @@ mini_emit_ldelema_1_ins (MonoCompile *cfg, MonoClass *klass, MonoInst *arr, Mono
 	}
 #endif		
 
-	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_MUL_IMM, mult_reg, index_reg, size);
+	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_MUL_IMM, mult_reg, index2_reg, size);
 	MONO_EMIT_NEW_BIALU (cfg, OP_PADD, add_reg, array_reg, mult_reg);
 	NEW_BIALU_IMM (cfg, ins, OP_PADD_IMM, add_reg, add_reg, G_STRUCT_OFFSET (MonoArray, vector));
 	ins->type = STACK_PTR;
@@ -3921,11 +3924,18 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 	if (cmethod->klass == mono_defaults.string_class) {
 		if (strcmp (cmethod->name, "get_Chars") == 0) {
 			int dreg = alloc_ireg (cfg);
+			int index_reg = alloc_preg (cfg);
 			int mult_reg = alloc_preg (cfg);
 			int add_reg = alloc_preg (cfg);
-	
-			MONO_EMIT_BOUNDS_CHECK (cfg, args [0]->dreg, MonoString, length, args [1]->dreg);
-			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ISHL_IMM, mult_reg, args [1]->dreg, 1);
+
+#if SIZEOF_VOID_P == 8
+			/* The array reg is 64 bits but the index reg is only 32 */
+			MONO_EMIT_NEW_UNALU (cfg, OP_SEXT_I4, index_reg, args [1]->dreg);
+#else
+			index_reg = args [1]->dreg;
+#endif	
+			MONO_EMIT_BOUNDS_CHECK (cfg, args [0]->dreg, MonoString, length, index_reg);
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SHL_IMM, mult_reg, index_reg, 1);
 			MONO_EMIT_NEW_BIALU (cfg, OP_PADD, add_reg, mult_reg, args [0]->dreg);
 			EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOADU2_MEMBASE, dreg, 
 								   add_reg, G_STRUCT_OFFSET (MonoString, chars));

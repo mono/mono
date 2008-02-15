@@ -8,65 +8,23 @@ label: len:0
 break: len:48
 jmp: len:48
 br: len:48
-<<<<<<< .working
-jump_table: dest:i len:48
-
-nop: len:0
-dummy_use: len:0
-dummy_store: len:0
-not_reached: len:0
-not_null: src1:i len:0
-
-long_add: dest:i src1:i src2:i len:48
-long_sub: dest:i src1:i src2:i len:48
-long_and: dest:i src1:i src2:i len:48
-long_or: dest:i src1:i src2:i len:48
-long_xor: dest:i src1:i src2:i len:48
-long_shl: dest:i src1:i src2:s len:48
-long_shr: dest:i src1:i src2:s len:48
-long_shr_un: dest:i src1:i src2:s len:48
-
-long_neg: dest:i src1:i len:48
-long_not: dest:i src1:i len:48
-long_conv_to_i1: dest:i src1:i len:48
-long_conv_to_u1: dest:i src1:i len:48
-long_conv_to_i2: dest:i src1:i len:48
-long_conv_to_u2: dest:i src1:i len:48
-long_conv_to_i4: dest:i src1:i len:48
-long_conv_to_u4: dest:i src1:i len:48
-long_conv_to_i8: dest:i src1:i len:48
-long_conv_to_u8: dest:i src1:i len:112
-long_conv_to_r4: dest:f src1:i len:112
-long_conv_to_r8: dest:f src1:i len:112
-long_conv_to_r_un: dest:f src1:i len:48
-long_conv_to_ovf_i4_un: dest:i src1:i len:96
-long_conv_to_ovf_u4: dest:i src1:i len:48
-
-=======
->>>>>>> .merge-right.r95529
 throw: src1:i len:96
 rethrow: src1:i len:48
 ckfinite: dest:f src1:f len:48
-<<<<<<< .working
-
-=======
 mul.ovf: dest:i src1:i src2:i len:48
 # this opcode is handled specially in the code generator
 mul.ovf.un: dest:i src1:i src2:i len:48
 conv.u: dest:i src1:i len:48
->>>>>>> .merge-right.r95529
 ceq: dest:c len:48
 cgt: dest:c len:48
 cgt.un: dest:c len:48
 clt: dest:c len:48
 clt.un: dest:c len:48
 localloc: dest:i src1:i len:92
-localloc_imm: dest:i len:92
 compare: src1:i src2:i len:48
 lcompare: src1:i src2:i len:48
 icompare: src1:i src2:i len:48
 compare_imm: src1:i len:48
-lcompare_imm: src1:i len:48
 icompare_imm: src1:i len:48
 fcompare: src1:f src2:f clob:a len:48
 oparglist: src1:b len:48
@@ -75,10 +33,7 @@ outarg_imm: len:48
 setret: dest:r src1:i len:48
 setlret: dest:r src1:i src2:i len:48
 checkthis: src1:b len:48
-
 call: dest:r clob:c len:80
-call_reg: dest:r src1:i len:80 clob:c
-call_membase: dest:r src1:b len:80 clob:c
 voidcall: clob:c len:80
 voidcall_reg: src1:i clob:c len:80
 voidcall_membase: src1:b clob:c len:80
@@ -91,10 +46,8 @@ lcall_membase: dest:r src1:b len:80 clob:c
 vcall: len:80 clob:c
 vcall_reg: src1:i len:80 clob:c
 vcall_membase: src1:b len:80 clob:c
-vcall2: len:80 clob:c
-vcall2_reg: src1:i len:80 clob:c
-vcall2_membase: src1:b len:80 clob:c
-
+call_reg: dest:r src1:i len:80 clob:c
+call_membase: dest:r src1:b len:80 clob:c
 iconst: dest:i len:48
 i8const: dest:i len:48
 r4const: dest:f len:48
@@ -156,21 +109,6 @@ cond_exc_c: len:48
 cond_exc_nc: len:48
 cond_exc_iov: len:48
 cond_exc_ic: len:48
-<<<<<<< .working
-
-long_mul: dest:i src1:i src2:i len:48
-long_mul_imm: dest:i src1:i src2:i len:48
-long_div: dest:a src1:a src2:i len:48 clob:d
-long_div_un: dest:a src1:a src2:i len:48 clob:d
-long_rem: dest:d src1:a src2:i len:48 clob:a
-long_rem_un: dest:d src1:a src2:i len:48 clob:a
-long_conv_to_ovf_i: dest:i src1:i src2:i len:48
-long_mul_ovf: dest:i src1:i src2:i len:48
-long_mul_ovf_un: dest:i src1:i src2:i len:48
-long_conv_to_r_un: dest:f src1:i src2:i len:48 
-
-=======
->>>>>>> .merge-right.r95529
 float_beq: len:48
 float_bne_un: len:48
 float_blt: len:48
@@ -195,6 +133,7 @@ float_conv_to_i2: dest:i src1:f len:112
 float_conv_to_i4: dest:i src1:f len:112
 float_conv_to_i8: dest:i src1:f len:112
 float_conv_to_r4: dest:f src1:f len:112
+float_conv_to_r8: dest:f src1:f len:112
 float_conv_to_u4: dest:i src1:f len:112
 float_conv_to_u8: dest:i src1:f len:112
 float_conv_to_u2: dest:i src1:f len:112
@@ -215,12 +154,10 @@ float_clt_membase: dest:i src1:f src2:b len:48
 float_clt_un_membase: dest:i src1:f src2:b len:48
 float_conv_to_u: dest:i src1:f len:48
 fmove: dest:f src1:f len:48
-
 call_handler: len:96
 start_handler: len:96
 endfilter: len:96
 endfinally: len:96
-
 aot_const: dest:i len:48
 tls_get: dest:i len:48
 atomic_add_i4: src1:b src2:i dest:i len:48
@@ -309,28 +246,6 @@ int_ble_un: len:48
 int_conv_to_r4: dest:f src1:i len:112
 int_conv_to_r8: dest:f src1:i len:112
 
-<<<<<<< .working
-int_conv_to_i1: dest:i src1:i len:48
-int_conv_to_u1: dest:i src1:i len:48
-int_conv_to_i2: dest:i src1:i len:48
-int_conv_to_u2: dest:i src1:i len:48
-int_conv_to_i4: dest:i src1:i len:48
-int_conv_to_u4: dest:i src1:i len:48
-int_conv_to_i8: dest:i src1:i len:48
-int_conv_to_u8: dest:i src1:i len:48
-int_conv_to_r4: dest:f src1:i len:48
-int_conv_to_r8: dest:f src1:i len:48
-
-long_add_imm: dest:i src1:i len:48
-long_sub_imm: dest:i src1:i len:48
-long_and_imm: dest:i src1:i len:48
-long_or_imm: dest:i src1:i len:48
-long_xor_imm: dest:i src1:i len:48
-long_shl_imm: dest:i src1:i len:48
-long_shr_imm: dest:i src1:i len:48
-long_shr_un_imm: dest:i src1:i len:48
-
-=======
 # 64 bit opcodes
 long_add: dest:i src1:i src2:i len:48
 long_sub: dest:i src1:i src2:i len:48
@@ -381,7 +296,6 @@ long_bgt_un: len:48
 long_ble_un: len:48
 long_blt_un: len:48
 
->>>>>>> .merge-right.r95529
 ia64_cmp4_eq: src1:i src2:i len:48
 ia64_cmp4_ne: src1:i src2:i len:48
 ia64_cmp4_le: src1:i src2:i len:48
@@ -457,18 +371,33 @@ ia64_loadi8_membase_inc: dest:b src1:i len:48
 ia64_loadr4_membase_inc: dest:b src1:i len:48
 ia64_loadr8_membase_inc: dest:b src1:i len:48
 
-long_ceq: dest:c len:64
-long_cgt: dest:c len:64
-long_cgt_un: dest:c len:64
-long_clt: dest:c len:64
-long_clt_un: dest:c len:64
-long_beq: len:64
-long_bne_un: len:64
-long_blt: len:64
-long_blt_un: len:64
-long_bgt: len:64
-long_bgt_un: len:64
-long_bge: len:64
-long_bge_un: len:64
-long_ble: len:64
-long_ble_un: len:64
+# Linear IR opcodes
+nop: len:0
+dummy_use: len:0
+dummy_store: len:0
+not_reached: len:0
+not_null: src1:i len:0
+
+jump_table: dest:i len:48
+
+localloc_imm: dest:i len:92
+
+vcall2: len:80 clob:c
+vcall2_reg: src1:i len:80 clob:c
+vcall2_membase: src1:b len:80 clob:c
+
+int_conv_to_i1: dest:i src1:i len:48
+int_conv_to_u1: dest:i src1:i len:48
+int_conv_to_i2: dest:i src1:i len:48
+int_conv_to_u2: dest:i src1:i len:48
+int_conv_to_i4: dest:i src1:i len:48
+int_conv_to_u4: dest:i src1:i len:48
+int_conv_to_i8: dest:i src1:i len:48
+int_conv_to_u8: dest:i src1:i len:48
+
+long_add_imm: dest:i src1:i len:48
+long_sub_imm: dest:i src1:i len:48
+long_and_imm: dest:i src1:i len:48
+long_or_imm: dest:i src1:i len:48
+long_xor_imm: dest:i src1:i len:48
+

@@ -1,3 +1,11 @@
+2008-02-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mini_emit_inst_for_method): Fix 64 bit issues in array access
+	implementation.
+	(mini_emit_ldelema_1_ins): Ditto.
+
+	* mini-ia64.c cpu-ia64.md: Fix ia64 build.
+
 2008-02-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* cpu-sparc.md mini-sparc.c: Fix sparc build.
