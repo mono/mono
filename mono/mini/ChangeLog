@@ -1,5 +1,7 @@
 2008-02-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-s390.h mini-s390.c cpu-s390.md mini-ops.h: Ongoing s390 work.
+
 	* exceptions-arm.c mini-arm.c cpu-arm.md: Fix arm build.
 
 	* method-to-ir.c (mini_emit_inst_for_method): Fix 64 bit issues in array access
