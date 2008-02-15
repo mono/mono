@@ -1056,7 +1056,8 @@ namespace System.Windows.Forms {
 
 		public void Redo()
 		{
-			document.undo.Redo ();
+			if (document.undo.Redo ())
+				OnTextChanged (EventArgs.Empty);
 		}
 
 		public void SaveFile(Stream data, RichTextBoxStreamType fileType) {

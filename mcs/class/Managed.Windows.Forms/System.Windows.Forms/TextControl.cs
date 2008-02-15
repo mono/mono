@@ -4059,16 +4059,13 @@ namespace System.Windows.Forms {
 			redo_actions.Clear();
 		}
 
-		internal void Undo ()
+		internal bool Undo ()
 		{
 			Action action;
 			bool user_action_finished = false;
 
 			if (undo_actions.Count == 0)
-				return;
-
-			// Nuke the redo queue
-			redo_actions.Clear ();
+				return false;
 
 			locked = true;
 			do {
@@ -4120,18 +4117,17 @@ namespace System.Windows.Forms {
 			} while (!user_action_finished && undo_actions.Count > 0);
 
 			locked = false;
+
+			return true;
 		}
 
-		internal void Redo ()
+		internal bool Redo ()
 		{
 			Action action;
 			bool user_action_finished = false;
 
 			if (redo_actions.Count == 0)
-				return;
-
-			// You can't undo anything after redoing
-			undo_actions.Clear ();
+				return false;
 
 			locked = true;
 			do {
@@ -4139,6 +4135,7 @@ namespace System.Windows.Forms {
 				int start_index;
 
 				action = (Action) redo_actions.Pop ();
+				undo_actions.Push (action);
 
 				switch (action.type) {
 
@@ -4192,6 +4189,8 @@ namespace System.Windows.Forms {
 			} while (!user_action_finished && redo_actions.Count > 0);
 
 			locked = false;
+
+			return true;
 		}
 		#endregion	// Internal Methods
 
@@ -4201,6 +4200,9 @@ namespace System.Windows.Forms {
 		{
 			if (locked)
 				return;
+
+			// Nuke the redo queue
+			redo_actions.Clear ();
 
 			Action ua = new Action ();
 			ua.type = ActionType.UserActionBegin;
@@ -4226,6 +4228,9 @@ namespace System.Windows.Forms {
 			if (locked)
 				return;
 
+			// Nuke the redo queue
+			redo_actions.Clear ();
+
 			Action	a = new Action ();
 
 			// We cant simply store the string, because then formatting would be lost
@@ -4242,6 +4247,9 @@ namespace System.Windows.Forms {
 			if (locked || str.Length == 0)
 				return;
 
+			// Nuke the redo queue
+			redo_actions.Clear ();
+
 			Action a = new Action ();
 
 			a.type = ActionType.InsertString;
@@ -4256,6 +4264,9 @@ namespace System.Windows.Forms {
 		{
 			if (locked)
 				return;
+
+			// Nuke the redo queue
+			redo_actions.Clear ();
 
 			Action a = null;
 

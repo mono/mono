@@ -1,3 +1,8 @@
+2008-02-15  Luke Page  <luke.a.page@gmail.com>
+	* TextBoxBase.cs, TextControl.cs, RichTextBox.cs: TextChanged fires
+	when Undo/Redo changes the text. Undo/Redo/Undo/Redo now works
+	correctly. See #359330
+
 2008-02-15  Andreia Gaita <avidigal@novell.com>
 
 	* XplatUIX11.cs: If the handle is null when posting a message, use the

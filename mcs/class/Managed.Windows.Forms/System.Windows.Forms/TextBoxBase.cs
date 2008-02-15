@@ -860,7 +860,8 @@ namespace System.Windows.Forms
 		[MonoTODO("Deleting is classed as Typing, instead of its own Undo event")]
 		public void Undo ()
 		{
-			document.undo.Undo();
+			if (document.undo.Undo ())
+				OnTextChanged (EventArgs.Empty);
 		}
 
 #if NET_2_0
@@ -1125,7 +1126,7 @@ namespace System.Windows.Forms
 
 				case Keys.Z:
 					if (control && read_only == false) {
-						Undo();
+						Undo ();
 						return true;
 					}
 					return false;
