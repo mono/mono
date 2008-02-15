@@ -305,9 +305,10 @@ namespace System.Windows.Forms {
 		}
 
 		private static void SendInput() {
-			IntPtr hwnd = IntPtr.Zero;
-			if (XplatUI.GetActive () != IntPtr.Zero) {
-				Form active = ((Form) Control.FromHandle (XplatUI.GetActive ()));
+			IntPtr hwnd = XplatUI.GetActive ();
+			
+			if (hwnd != IntPtr.Zero) {
+				Form active = ((Form) Control.FromHandle (hwnd));
 				if (active != null && active.ActiveControl != null)
 					hwnd = active.ActiveControl.Handle;
 				else if (active != null)

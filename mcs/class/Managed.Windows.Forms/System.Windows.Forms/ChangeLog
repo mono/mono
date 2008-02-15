@@ -1,3 +1,11 @@
+2008-02-15  Andreia Gaita <avidigal@novell.com>
+	[Backport to 1.9]
+	* XplatUIX11.cs: If the handle is null when posting a message, use the
+	current thread queue to post instead.
+	[Fixes #332409]
+
+	* SendKeys.cs: Slight optimization
+
 2008-02-14  Ivan N. Zlatev  <contact@i-nz.net>
 
 	[Backport to 1.9]
