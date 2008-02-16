@@ -1,3 +1,9 @@
+2008-02-16  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* UITypeEditor.cs: Associate string[] with StringArrayEditor in the 
+	editors table.
+	[Part of fix for bugs #360666 and #358332]
+
 2007-07-10  Rolf Bjarne Kvinge <RKvinge@novell.com> 
 
 	* UITypeEditor.cs: Add a table of special editors (types that can't use

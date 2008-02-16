@@ -47,6 +47,7 @@ namespace System.Drawing.Design
 			editors [typeof (DateTime)] = "System.ComponentModel.Design.DateTimeEditor, " + Consts.AssemblySystem_Design;
 			editors [typeof (IList)] = "System.ComponentModel.Design.CollectionEditor, " + Consts.AssemblySystem_Design;
 			editors [typeof (ICollection)] = "System.ComponentModel.Design.CollectionEditor, " + Consts.AssemblySystem_Design;
+			editors [typeof (string[])] = "System.Windows.Forms.Design.StringArrayEditor, " + Consts.AssemblySystem_Design;
 			TypeDescriptor.AddEditorTable (typeof (UITypeEditor), editors);
 		}
 		
