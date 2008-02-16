@@ -3,8 +3,10 @@
 //
 // Author:
 //  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//  Ivan N. Zlatev (contact@i-nz.net)
 //
 // (C) 2003 Andreas Nahr
+// (C) 2008 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -44,12 +46,16 @@ namespace System.ComponentModel
 		public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object value)
 		{
 			if (value.GetType() == typeof (string)) {
-				string Test = (String) value;
-				if (Test.Length > 1)
+				if (value == null)
+					return '\0';
+				string str = (String) value;
+				if (str.Length > 1)
+					str = str.Trim ();
+				if (str.Length > 1)
 					throw new FormatException ("String has to be less than or equal to one char long");
-				if (Test.Length == 0)
-					return (char)0x00;
-				return Test[0];
+				if (str.Length == 0)
+					return '\0';
+				return str[0];
 			}
 			return base.ConvertFrom (context, culture, value);
 		}
@@ -57,9 +63,14 @@ namespace System.ComponentModel
 		public override object ConvertTo (ITypeDescriptorContext context,
 						  CultureInfo culture, object value, Type destinationType)
 		{
-			if (destinationType == typeof (string))
-			if (value != null && value is char)
-				return new string ((char) value, 1);
+			if (destinationType == typeof (string)) {
+				if (value != null && value is char) {
+					if ((char)value == '\0')
+						return String.Empty;
+					else
+						return new string ((char) value, 1);
+				}
+			}
 
 			return base.ConvertTo (context, culture, value, destinationType);
 		}

@@ -1,5 +1,13 @@
 2008-02-16  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* CharConverter.cs: 
+	 - Handle \0 char.
+	 - Trim the ConvertFrom string
+	 - Handle null string in ConvertFrom as \0 char.
+	 [Fixes bug #362112]
+
+2008-02-16  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* CultureInfoConverter.cs:
 	 - Handle "(default)" to and from conversion
 	 - Sort cultures alphabetically and also cache them.
