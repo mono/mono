@@ -271,7 +271,7 @@ namespace System.ComponentModel
 						continue;
 					
 					t = TypeDescriptor.GetTypeFromName (null, ea.EditorTypeName);
-					if (t.IsSubclassOf(editorBaseType))
+					if (t != null && t.IsSubclassOf(editorBaseType))
 						break;
 				}
 			}
