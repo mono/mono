@@ -218,8 +218,10 @@ namespace System.Windows.Forms.PropertyGridInternal {
 						foundItem.Expanded = !foundItem.Expanded;
 					
 					this.property_grid.SelectedGridItem = foundItem;
-					if (!GridLabelHitTest (e.X))
-						FocusSelection ();
+					if (!GridLabelHitTest (e.X)) {
+						// send mouse down so we get the carret under cursor
+						grid_textbox.SendMouseDown (PointToScreen (e.Location));
+					}
 				}
 			}
 		}

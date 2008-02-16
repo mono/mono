@@ -28,18 +28,27 @@
 using System;
 using System.Drawing;
 
-namespace System.Windows.Forms.PropertyGridInternal {
-	internal class PGTextBox : TextBox {
-		internal bool SwallowCapture = false;
-		
-		internal override bool InternalCapture	{
-			get {
-				return base.InternalCapture;
+namespace System.Windows.Forms.PropertyGridInternal 
+{
+	internal class PGTextBox : TextBox 
+	{
+		private bool _focusing = false;
+
+		public void FocusAt (Point location)
+		{
+			_focusing = true;
+			Point pnt = PointToClient (location);
+			XplatUI.SendMessage (Handle, Msg.WM_LBUTTONDOWN, new IntPtr ((int)MsgButtons.MK_LBUTTON), Control.MakeParam (pnt.X, pnt.Y));
+		}
+
+		protected override void WndProc (ref Message m)
+		{
+			// Swallow the first MOUSEMOVE after the focusing WM_LBUTTONDOWN
+			if (_focusing && m.Msg == (int)Msg.WM_MOUSEMOVE) {
+				_focusing = false;
+				return;
 			}
-			set {
-				if (!SwallowCapture)
-					base.InternalCapture = value;
-			}
+			base.WndProc (ref m);
 		}
 	}
 	
@@ -102,6 +111,8 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		protected override void OnGotFocus (EventArgs args)
 		{
 			base.OnGotFocus (args);
+			// force-disable selection
+			textbox.has_been_focused = true;
 			textbox.Focus ();
 			textbox.SelectionLength = 0;
 		}
@@ -217,6 +228,13 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		}
 
 		#endregion Private Helper Methods
+
+		internal void SendMouseDown (Point screenLocation)
+		{
+			Point clientLocation = PointToClient (screenLocation);
+			XplatUI.SendMessage (Handle, Msg.WM_LBUTTONDOWN, new IntPtr ((int) MsgButtons.MK_LBUTTON), Control.MakeParam (clientLocation.X, clientLocation.Y));
+			textbox.FocusAt (screenLocation);
+		}	
 
 		private void textbox_DoubleClick(object sender, EventArgs e) {
 			EventHandler eh = (EventHandler)(Events [ToggleValueEvent]);
