@@ -1,6 +1,10 @@
+2008-02-16  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* CollectionEditor.cs: Handle null collection.
+	[Part of fix for bugs #360666 and #358332]
+
 2008-02-12  Ivan N. Zlatev  <contact@i-nz.net>
 
-	[Backport to 1.9]
 	* DateTimeEditor.cs: Set edit value only if the user sets it
 	in the editor.
 	[Fixes #359159]

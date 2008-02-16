@@ -84,9 +84,23 @@ namespace System.ComponentModel.Design
 			{
 				get { return editor.GetItems (editValue); }
 				set {
-					object val = editor.SetItems (editValue, value);
-					if (val != EditValue)
-						EditValue = val;
+					if (editValue == null) {
+						object newEmptyCollection = null;
+						try {
+							if (typeof (Array).IsAssignableFrom (CollectionType))
+								newEmptyCollection = Array.CreateInstance (CollectionItemType, 0);
+							else
+								newEmptyCollection = Activator.CreateInstance (CollectionType);
+						} catch {}
+
+						object val = editor.SetItems (newEmptyCollection, value);
+						if (val != newEmptyCollection)
+							EditValue = val;
+					} else {
+						object val = editor.SetItems (editValue, value);
+						if (val != editValue)
+							EditValue = val;
+					}
 				}
 			}
 
@@ -618,9 +632,7 @@ namespace System.ComponentModel.Design
 				{
 					CollectionForm editorForm = CreateCollectionForm ();
 					editorForm.EditValue = value;
-
 					editorForm.ShowEditorDialog (editorService);
-
 					return editorForm.EditValue;
 				}
 			}
@@ -655,7 +667,7 @@ namespace System.ComponentModel.Design
 		protected virtual object[] GetItems (object editValue)
 		{
 			if (editValue == null)
-				return null;
+				return new object[0];
 			ICollection collection = editValue as ICollection;
 			if (collection == null)
 				return new object[0];
@@ -679,19 +691,11 @@ namespace System.ComponentModel.Design
 
 		protected virtual object SetItems (object editValue, object[] value)
 		{
-			IList list;
-
-			if (editValue == null)
+			IList list = (IList) editValue;
+			if (list == null)
 				return null;
 
-			if (!(editValue is IList))
-				list = new ArrayList ();
-			else
-			{
-				list = editValue as IList;
-				list.Clear ();
-			}
-
+			list.Clear ();
 			foreach (object o in value)
 				list.Add (o);
 
