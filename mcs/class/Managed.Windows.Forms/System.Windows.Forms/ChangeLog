@@ -1,6 +1,14 @@
 2008-02-16  Ivan N. Zlatev  <contact@i-nz.net>
 
 	[Backport to 1.9]
+	* PropertyGridTextBox.cs, PropertyGridView.cs: Explicitly send
+	a mouse down event to the textbox so that we get the caret
+	positioned under cursor.
+	[Fixes bug #362119]
+
+2008-02-16  Ivan N. Zlatev  <contact@i-nz.net>
+
+	[Backport to 1.9]
 	* PropertyGrid.cs: Clear current items first thing before 
 	repopulating subitems.
 	* GridEntry.cs: 
