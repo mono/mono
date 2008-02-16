@@ -84,8 +84,9 @@ namespace System
 		//   True if this instance and o represent the same type
 		//   and have the same value.
 		// </summary>
-		public override bool Equals (object o) {
-			return DefaultEquals (this, o);
+		public override bool Equals (object obj)
+		{
+			return DefaultEquals (this, obj);
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]

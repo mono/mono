@@ -1,3 +1,10 @@
+2008-02-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Object.cs: Fix parameter name to match MS implementation. Found
+	using Gendarme.
+	* ValueType.cs: Fix parameter name to match MS implementation. 
+	Found using Gendarme.
+
 2008-02-14  Jb Evain  <jbevain@novell.com>
 
 	* Delegate.cs (CreateDelegate): refactor. DRY!
