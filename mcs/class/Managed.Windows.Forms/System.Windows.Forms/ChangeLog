@@ -1,5 +1,12 @@
 2008-02-16  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* GridEntry.cs: 
+	 - Fix handling of a null current value.
+	 - Swallow editor exceptions.
+	[Fixes bug #362114]
+
+2008-02-16  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* PropertyGrid.cs: Clear current items first thing before 
 	repopulating subitems.
 	* GridEntry.cs: 

@@ -306,8 +306,13 @@ namespace System.Windows.Forms.PropertyGridInternal
 		public UITypeEditorEditStyle EditorStyle {
 			get {
 				UITypeEditor editor = GetEditor ();
-				if (editor != null)
-					return editor.GetEditStyle ((ITypeDescriptorContext)this);
+				if (editor != null) {
+					try {
+						return editor.GetEditStyle ((ITypeDescriptorContext)this);
+					} catch {
+						// Some of our Editors throw NotImplementedException
+					}
+				}
 				return UITypeEditorEditStyle.None;
 			}
 		}
@@ -369,7 +374,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 					(TypeConverter.StandardValuesCollection) PropertyDescriptor.Converter.GetStandardValues();
 				if (values != null) {
 					for (int i = 0; i < values.Count; i++) {
-						if (this.Value.Equals (values[i])){
+						if (this.Value != null && this.Value.Equals (values[i])){
 							if (i < values.Count-1)
 								success = SetValue (values[i+1], out error);
 							else
@@ -404,25 +409,34 @@ namespace System.Windows.Forms.PropertyGridInternal
 			TypeConverter converter = PropertyDescriptor.Converter;
 			// if the new value is not of the same type try to convert it
 			if (value != null && 
-			    this.Value != null && value.GetType () != this.Value.GetType ()) {
+			    (this.Value == null ||
+			     this.Value != null && value.GetType () != this.Value.GetType ())) {
+				bool conversionError = false;
 				if (converter != null &&
 				    converter.CanConvertFrom (value.GetType ())) {
 					try {
 						value = converter.ConvertFrom (value);
 					} catch {
-						string valueText = ConvertToString (value);
-						if (valueText != null) {
-							error = "Property value '" + valueText + "' of '" + 
-								PropertyDescriptor.Name + "' is not convertible to type '" +
-								this.Value.GetType ().Name + "'";
-
-						} else {
-							error = "Property value of '" + 
-								PropertyDescriptor.Name + "' is not convertible to type '" +
-								this.Value.GetType ().Name + "'";
-						}
-						return false;
+						conversionError = true;
 					}
+				} else {
+					conversionError = true;
+				}
+				if (conversionError) {
+					// MS swallows those
+					// 
+					// string valueText = ConvertToString (value);
+					// if (valueText != null) {
+					// 	error = "Property value '" + valueText + "' of '" +
+					// 		PropertyDescriptor.Name + "' is not convertible to type '" +
+					// 		this.PropertyDescriptor.PropertyType.Name + "'";
+                                        // 
+					// } else {
+					// 	error = "Property value of '" +
+					// 		PropertyDescriptor.Name + "' is not convertible to type '" +
+					// 		this.PropertyDescriptor.PropertyType.Name + "'";
+					// }
+					return false;
 				}
 			}
 
@@ -451,13 +465,13 @@ namespace System.Windows.Forms.PropertyGridInternal
 							properties[i].SetValue (propertyOwners[i], value);
 						} catch {
 							// MS seems to swallow this
-							// 
+							//
 							// string valueText = ConvertToString (value);
 							// if (valueText != null)
 							// 	error = "Property value '" + valueText + "' of '" + properties[i].Name + "' is invalid.";
 							// else
 							// 	error = "Property value of '" + properties[i].Name + "' is invalid.";
-							// return false;
+							return false;
 						}
 
 						if (IsValueType (this.ParentEntry)) 
@@ -595,8 +609,13 @@ namespace System.Windows.Forms.PropertyGridInternal
 		public virtual bool PaintValueSupported {
 			get {
 				UITypeEditor editor = GetEditor ();
-				if (editor != null)
-					return editor.GetPaintValueSupported ();
+				if (editor != null) {
+					try {
+						return editor.GetPaintValueSupported ();
+					} catch {
+						// Some of our Editors throw NotImplementedException
+					}
+				}
 				return false;
 			}
 		}
@@ -608,7 +627,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 				try {
 					editor.PaintValue (this.Value, gfx, rect);
 				} catch {
-					// TODO
+					// Some of our Editors throw NotImplementedException
 				}
 			}
 		}
