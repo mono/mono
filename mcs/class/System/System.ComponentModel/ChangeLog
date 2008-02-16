@@ -1,5 +1,12 @@
 2008-02-16  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* CultureInfoConverter.cs:
+	 - Handle "(default)" to and from conversion
+	 - Sort cultures alphabetically and also cache them.
+	 [Fixes bug #362113]
+
+2008-02-16  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* TypeDescriptor.cs, PropertyDescriptor.cs: 
 	Do not throw when can't find Type from string.
 	* ReferenceConverter.cs: Convert null value from and to string.
