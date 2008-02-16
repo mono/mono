@@ -42,7 +42,13 @@ namespace MonoTests.System.Net.Mime
 		[ExpectedException (typeof (FormatException))]
 		public void FormatException ()
 		{
-			new ContentType ("attachment; foo=bar");
+			new ContentType ("attachment; foo=bar"); // missing '/'
+		}
+
+		[Test]
+		public void ArbitraryParameter ()
+		{
+			new ContentType ("application/xml; foo=bar");
 		}
 
 		[Test]

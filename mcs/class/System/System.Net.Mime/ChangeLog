@@ -1,3 +1,8 @@
+2008-02-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ContentType.cs : Reject such MediaType that lacks '/'.
+	  Do not reject such parameters that are not standard ones.
+
 2007-12-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ContentType.cs : for SubjectEncoding, null is returned instead of 

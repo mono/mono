@@ -61,21 +61,15 @@ namespace System.Net.Mime {
 			if (contentType.Length < 1)
 				throw new ArgumentException ("contentType");
 
-			try {
-				int index = contentType.IndexOf (";");
-				if (index > 0) {
-					string[] split = contentType.Split (';');
-					this.mediaType = split[0].Trim ();
-					for (int i = 1; i < split.Length; i++)
-					{
-						Parse (split[i]);
-					}
-				}
-				else {
-					this.mediaType = contentType.Trim ();
-				}
-			} catch {
-				throw new FormatException ();
+			int index = contentType.IndexOf (';');
+			if (index > 0) {
+				string[] split = contentType.Split (';');
+				this.MediaType = split[0].Trim ();
+				for (int i = 1; i < split.Length; i++)
+					Parse (split[i]);
+			}
+			else {
+				this.MediaType = contentType.Trim ();
 			}
 		}
 
@@ -87,18 +81,8 @@ namespace System.Net.Mime {
 				return;
 
 			string[] split = pair.Split ('=');
-			if (split.Length == 2) {
-				switch (split[0].Trim ()) {
-					case "boundary":
-					case "charset":
-					case "name":
-						parameters.Add (split[0].Trim (), split[1].Trim ());
-						break;
-					default:
-						// apparently parameters must go through Parameters.Add
-						throw new FormatException ("invalid content-type format");
-				}
-			}
+			if (split.Length == 2)
+				parameters.Add (split[0].Trim (), split[1].Trim ());
 		}
 
 		#endregion // Constructors
@@ -130,6 +114,8 @@ namespace System.Net.Mime {
 					throw new ArgumentNullException ();
 				if (value.Length < 1)
 					throw new ArgumentException ();
+				if (value.IndexOf ('/') < 1)
+					throw new FormatException ();
 				if (value.IndexOf (';') != -1)
 					throw new FormatException ();
 				mediaType = value;
