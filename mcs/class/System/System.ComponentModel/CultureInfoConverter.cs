@@ -4,9 +4,11 @@
 // Authors:
 //  Martin Willemoes Hansen (mwh@sysrq.dk)
 //  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//  Ivan N. Zlatev <contact@i-nz.net>
 //
 // (C) 2003 Martin Willemoes Hansen
 // (C) 2003 Andreas Nahr
+// (C) 2008 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -30,6 +32,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections;
 using System.Globalization;
 using System.Reflection;
 using System.ComponentModel.Design.Serialization;
@@ -38,6 +41,26 @@ namespace System.ComponentModel
 {
 	public class CultureInfoConverter : TypeConverter
 	{
+
+		private class CultureInfoComparer : IComparer
+		{
+			public int Compare (object first,  object second)
+			{
+				if (first == null) {
+					if (second == null)
+						return 0;
+					else
+						return -1;
+				}
+				if (second == null)
+					return 1;
+
+				return String.Compare (((CultureInfo)first).DisplayName, ((CultureInfo)second).DisplayName, 
+						       false, CultureInfo.CurrentCulture);
+			}
+		}
+
+		private StandardValuesCollection _standardValues = null;
 
 		public CultureInfoConverter()
 		{
@@ -75,8 +98,7 @@ namespace System.ComponentModel
 				} catch {
 					// try to create a new CultureInfo if form is verbose name
 					foreach (CultureInfo CI in CultureInfo.GetCultures (CultureTypes.AllCultures))
-					// LAMESPEC MS seems to use EnglishName (culture invariant) - check this
-						if (CI.EnglishName.IndexOf (CultureString) >= 0)
+						if (CI.DisplayName.IndexOf (CultureString) >= 0)
 							return CI;
 				}
 				throw new ArgumentException ("Culture incorrect or not available in this environment.", "value");
@@ -87,9 +109,16 @@ namespace System.ComponentModel
 		public override object ConvertTo (ITypeDescriptorContext context,
 						  CultureInfo culture, object value, Type destinationType)
 		{
-			if (destinationType == typeof (string) && value != null && (value is CultureInfo))
-				// LAMESPEC MS seems to use EnglishName (culture invariant) - check this
-				return ((CultureInfo) value).EnglishName;
+			if (destinationType == typeof (string)) {
+				if (value != null && (value is CultureInfo)) {
+					if (value == CultureInfo.InvariantCulture)
+						return "(default)";
+					else
+						return ((CultureInfo) value).DisplayName; 
+				} else {
+					return "(default)";
+				}
+			}
 			if (destinationType == typeof (InstanceDescriptor) && value is CultureInfo) {
 				CultureInfo cval = (CultureInfo) value;
 				ConstructorInfo ctor = typeof(CultureInfo).GetConstructor (new Type[] {typeof(int)});
@@ -100,7 +129,15 @@ namespace System.ComponentModel
 
 		public override StandardValuesCollection GetStandardValues (ITypeDescriptorContext context)
 		{
-			return new StandardValuesCollection (CultureInfo.GetCultures (CultureTypes.AllCultures));
+			if (_standardValues == null) {
+				CultureInfo[] cultures = CultureInfo.GetCultures (CultureTypes.AllCultures);
+				Array.Sort (cultures, new CultureInfoComparer ());
+				CultureInfo[] stdValues = new CultureInfo[cultures.Length + 1];
+				stdValues[0] = CultureInfo.InvariantCulture;
+				Array.Copy (cultures, 0, stdValues, 1, cultures.Length);
+				_standardValues = new StandardValuesCollection (stdValues);
+			}
+			return _standardValues;
 		}
 
 		public override bool GetStandardValuesExclusive (ITypeDescriptorContext context)
