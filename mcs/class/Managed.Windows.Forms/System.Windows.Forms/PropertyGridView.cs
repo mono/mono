@@ -278,7 +278,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 
 		private bool TrySetEntry (GridEntry entry, object value)
 		{
-			if (entry == null)
+			if (entry == null || grid_textbox.Text.Equals (entry.ValueText))
 				return true;
 
 			if (entry.IsEditable || !entry.IsEditable && (entry.HasCustomEditor || entry.AcceptedValues != null) ||
@@ -289,7 +289,8 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				if (!changed && error != null) {
 					if (property_grid.ShowError (error, MessageBoxButtons.OKCancel) == DialogResult.Cancel)
 						UpdateItem (entry); // restore value, repaint, etc
-					return false;
+					else
+						return false;
 				}
 			}
 			return true;
@@ -382,7 +383,8 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			return item;
 		}
 
-		protected override void OnKeyDown (KeyEventArgs e) {
+		protected override void OnKeyDown (KeyEventArgs e) 
+		{
 			GridEntry selectedItem = (GridEntry)property_grid.SelectedGridItem;
 
 			if (selectedItem == null) {
