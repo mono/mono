@@ -1,5 +1,13 @@
 2008-02-16  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* GridEntry.cs:
+	 - Fix ValueText to not return null.
+	 - Fix conversion error reporting to actually happen.
+	* PropertyGridView.cs: Set entry only if the text has changed.
+	[Fixes bug #362116]
+
+2008-02-16  Ivan N. Zlatev  <contact@i-nz.net>
+
 	[Backport to 1.9]
 	* GridEntry.cs: 
 	 - Fix handling of a null current value.

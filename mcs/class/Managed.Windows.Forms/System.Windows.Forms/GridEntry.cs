@@ -191,7 +191,17 @@ namespace System.Windows.Forms.PropertyGridInternal
 		}
 
 		public string ValueText {
-			get { return ConvertToString (this.Value); }
+			get { 
+				string text = null;
+				try {
+					text = ConvertToString (this.Value);
+					if (text == null)
+						text = String.Empty;
+				} catch {
+					text = String.Empty;
+				}
+				return text;
+			}
 		}
 
 		public override bool Select ()
@@ -423,19 +433,17 @@ namespace System.Windows.Forms.PropertyGridInternal
 					conversionError = true;
 				}
 				if (conversionError) {
-					// MS swallows those
-					// 
-					// string valueText = ConvertToString (value);
-					// if (valueText != null) {
-					// 	error = "Property value '" + valueText + "' of '" +
-					// 		PropertyDescriptor.Name + "' is not convertible to type '" +
-					// 		this.PropertyDescriptor.PropertyType.Name + "'";
-                                        // 
-					// } else {
-					// 	error = "Property value of '" +
-					// 		PropertyDescriptor.Name + "' is not convertible to type '" +
-					// 		this.PropertyDescriptor.PropertyType.Name + "'";
-					// }
+					string valueText = ConvertToString (value);
+					if (valueText != null) {
+						error = "Property value '" + valueText + "' of '" +
+							PropertyDescriptor.Name + "' is not convertible to type '" +
+							this.PropertyDescriptor.PropertyType.Name + "'";
+
+					} else {
+						error = "Property value of '" +
+							PropertyDescriptor.Name + "' is not convertible to type '" +
+							this.PropertyDescriptor.PropertyType.Name + "'";
+					}
 					return false;
 				}
 			}
