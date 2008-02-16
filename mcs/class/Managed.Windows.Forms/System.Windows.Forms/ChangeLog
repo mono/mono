@@ -1,3 +1,13 @@
+2008-02-16  Ivan N. Zlatev  <contact@i-nz.net>
+
+	[Backport to 1.9]
+	* PropertyGrid.cs: Clear current items first thing before 
+	repopulating subitems.
+	* GridEntry.cs: 
+	 - Handle null StandardValuesCollection.
+	 - Mark as not editable if there is no PropertyDescriptor and
+	 if the Converter cannot convert from string.
+	[Part of fix for bugs #360666 and #358332]
 2008-02-15  Andreia Gaita <avidigal@novell.com>
 	[Backport to 1.9]
 	* XplatUIX11.cs: If the handle is null when posting a message, use the

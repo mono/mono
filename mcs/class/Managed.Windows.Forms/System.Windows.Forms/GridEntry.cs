@@ -329,18 +329,15 @@ namespace System.Windows.Forms.PropertyGridInternal
 
 			UITypeEditor editor = GetEditor ();
 			if (editor != null) {
-				string error = null;
-				bool success = false;
 				try {
 					object value = editor.EditValue ((ITypeDescriptorContext)this,
 									 container,
 									 this.Value);
-					success = SetValue (value, out error);
+					string error = null;
+					return SetValue (value, out error);
 				} catch (Exception e) {
-					error = e.Message;
+					property_grid.ShowError (e.Message + Environment.NewLine + e.StackTrace);
 				}
-				if (!success && error != null)
-					property_grid.ShowError (error);
 			}
 			return false;
 		}
@@ -370,13 +367,15 @@ namespace System.Windows.Forms.PropertyGridInternal
 				 PropertyDescriptor.Converter.GetStandardValuesSupported ()) {
 				TypeConverter.StandardValuesCollection values = 
 					(TypeConverter.StandardValuesCollection) PropertyDescriptor.Converter.GetStandardValues();
-				for (int i = 0; i < values.Count; i++) {
-					if (this.Value.Equals (values[i])){
-						if (i < values.Count-1)
-							success = SetValue (values[i+1], out error);
-						else
-							success = SetValue (values[0], out error);
-						break;
+				if (values != null) {
+					for (int i = 0; i < values.Count; i++) {
+						if (this.Value.Equals (values[i])){
+							if (i < values.Count-1)
+								success = SetValue (values[i+1], out error);
+							else
+								success = SetValue (values[0], out error);
+							break;
+						}
 					}
 				}
 			}
@@ -526,12 +525,13 @@ namespace System.Windows.Forms.PropertyGridInternal
 		public virtual bool IsEditable {
 			get {
 				if (PropertyDescriptor == null)
-					return true;
+					return false;
 				else if (PropertyDescriptor.PropertyType.IsArray)
 					return false;
 				else if (PropertyDescriptor.IsReadOnly && this.ShouldCreateParentInstance)
 					return true;
-				else if (PropertyDescriptor.Converter == null)
+				else if (PropertyDescriptor.Converter == null || 
+					 !PropertyDescriptor.Converter.CanConvertFrom (this, typeof (string)))
 					return false;
 				else if (PropertyDescriptor.Converter.GetStandardValuesSupported () &&
 					 PropertyDescriptor.Converter.GetStandardValuesExclusive ())
@@ -548,10 +548,11 @@ namespace System.Windows.Forms.PropertyGridInternal
 				// if (PropertyDescriptor != null) {
 				// 	Console.WriteLine ("=== [" + PropertyDescriptor.Name + "]");
 				// 	Console.WriteLine ("PropertyDescriptor.IsReadOnly: " + PropertyDescriptor.IsReadOnly);
-				// 	Console.WriteLine ("ShouldCreateParentInstance: " + this.ShouldCreateParentInstance);
-				// 	Console.WriteLine ("HasCustomEditor: " + HasCustomEditor);
-				// 	Console.WriteLine ("Converter != null: " + (PropertyDescriptor.Converter != null).ToString());
+				// 	Console.WriteLine ("Editor: " + (GetEditor () == null ? "none" : GetEditor ().GetType ().Name));
+				// 	Console.WriteLine ("Converter: " + (PropertyDescriptor.Converter == null ? "none" : PropertyDescriptor.Converter.GetType ().Name));
 				// 	Console.WriteLine ("Converter.GetStandardValuesSupported: " + PropertyDescriptor.Converter.GetStandardValuesSupported ().ToString ());
+				// 	Console.WriteLine ("Converter.GetStandardValuesExclusive: " + PropertyDescriptor.Converter.GetStandardValuesExclusive ().ToString ());
+				// 	Console.WriteLine ("ShouldCreateParentInstance: " + this.ShouldCreateParentInstance);
 				// 	Console.WriteLine ("CanConvertFrom (string): " + PropertyDescriptor.Converter.CanConvertFrom ((ITypeDescriptorContext)this, typeof (string)));
 				// 	Console.WriteLine ("IsArray: " + PropertyDescriptor.PropertyType.IsArray.ToString ());
 				// }

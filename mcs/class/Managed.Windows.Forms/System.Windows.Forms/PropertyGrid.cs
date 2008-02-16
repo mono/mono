@@ -1564,6 +1564,7 @@ namespace System.Windows.Forms {
 
 		private void PopulateSubGridItems (GridEntry parentItem)
 		{
+			parentItem.GridItems.Clear ();
 			if (!IsExpandable (parentItem))
 				return;
 
@@ -1576,7 +1577,6 @@ namespace System.Windows.Forms {
 			if (propertiesCollection == null)
 				return;
 
-			parentItem.GridItems.Clear ();
 			foreach (PropertyDescriptor property in propertiesCollection) {
 				string propertyName = property.Name;
 
