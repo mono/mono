@@ -1671,8 +1671,22 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 	cinfo   = calculate_sizes (cfg, sig, &sz, sig->pinvoke);
 
 	if (cinfo->struct_ret) {
-		cfg->ret->opcode = OP_REGVAR;
-		cfg->ret->inst_c0 = s390_r2;
+		if (cfg->new_ir) {
+			/* 
+			 * In the new IR, the cfg->vret_addr variable represents the
+			 * vtype return value.
+			 */
+			cfg->vret_addr->opcode = OP_REGOFFSET;
+			cfg->vret_addr->inst_basereg = cfg->frame_reg;
+			cfg->vret_addr->inst_offset = cinfo->ret.offset;
+			if (G_UNLIKELY (cfg->verbose_level > 1)) {
+				printf ("vret_addr =");
+				mono_print_ins (cfg->vret_addr);
+			}
+		} else {
+			cfg->ret->opcode = OP_REGVAR;
+			cfg->ret->inst_c0 = s390_r2;
+		}
 	} else {
 		switch (mono_type_get_underlying_type (sig->ret)->type) {
 		case MONO_TYPE_VOID:
@@ -1693,7 +1707,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 	offset		= (cfg->param_area + S390_MINIMAL_STACK_SIZE);
 	cfg->sig_cookie = 0;
 
-	if (cinfo->struct_ret) {
+	if (cinfo->struct_ret && !cfg->new_ir) {
 		inst 		   = cfg->ret;
 		offset 		   = S390_ALIGN(offset, sizeof(gpointer));
 		inst->inst_offset  = offset;
@@ -1729,49 +1743,72 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 		if (inst->opcode != OP_REGVAR) {
 			switch (cinfo->args[iParm].regtype) {
 				case RegTypeStructByAddr :
-				if (cinfo->args[iParm].reg == STK_BASE) {
-					inst->opcode       = OP_S390_LOADARG;
-					inst->inst_basereg = frame_reg;
-					size		   = abs(cinfo->args[iParm].vtsize);
-					offset 		   = S390_ALIGN(offset, sizeof(long));
-					inst->inst_offset  = offset; 
-					inst->backend.arg_info       = cinfo->args[iParm].offset;
-				} else {
-					inst->opcode 	   = OP_S390_ARGREG;
-					inst->inst_basereg = frame_reg;
-					size		   = sizeof(gpointer);
-					offset		   = S390_ALIGN(offset, size);
-					inst->inst_offset  = offset;
-					inst->backend.arg_info       = cinfo->args[iParm].offset;
-				}
+					if (cfg->new_ir) {
+						inst->opcode = OP_REGOFFSET;
+						inst->inst_basereg = frame_reg;
+						inst->inst_offset = S390_ALIGN(offset, sizeof (gpointer));
+					} else {
+						if (cinfo->args[iParm].reg == STK_BASE) {
+							inst->opcode       = OP_S390_LOADARG;
+							inst->inst_basereg = frame_reg;
+							size		   = abs(cinfo->args[iParm].vtsize);
+							offset 		   = S390_ALIGN(offset, sizeof(long));
+							inst->inst_offset  = offset; 
+							inst->backend.arg_info       = cinfo->args[iParm].offset;
+						} else {
+							inst->opcode 	   = OP_S390_ARGREG;
+							inst->inst_basereg = frame_reg;
+							size		   = sizeof(gpointer);
+							offset		   = S390_ALIGN(offset, size);
+							inst->inst_offset  = offset;
+							inst->backend.arg_info       = cinfo->args[iParm].offset;
+						}
+					}
 					break;
 				case RegTypeStructByVal :
-					inst->opcode	   = OP_S390_ARGPTR;
-					inst->inst_basereg = frame_reg;
-					size		   = cinfo->args[iParm].size;
-					offset		   = S390_ALIGN(offset, size);
-					inst->inst_offset  = offset;
-					inst->backend.arg_info       = cinfo->args[iParm].offset;
+					if (cfg->new_ir) {
+						size		   = cinfo->args[iParm].size;
+						inst->opcode = OP_REGOFFSET;
+						inst->inst_basereg = frame_reg;
+						inst->inst_offset = S390_ALIGN (offset, size);
+					} else {
+						inst->opcode	   = OP_S390_ARGPTR;
+						inst->inst_basereg = frame_reg;
+						size		   = cinfo->args[iParm].size;
+						offset		   = S390_ALIGN(offset, size);
+						inst->inst_offset  = offset;
+						inst->backend.arg_info       = cinfo->args[iParm].offset;
+					}
 					break;
 				default :
-				if (cinfo->args[iParm].reg != STK_BASE) {
-					inst->opcode 	   = OP_REGOFFSET;
-					inst->inst_basereg = frame_reg;
-					size		   = (cinfo->args[iParm].size < 8
-							      ? sizeof(long)  
-							      : sizeof(long long));
-					offset		   = S390_ALIGN(offset, size);
-					inst->inst_offset  = offset;
-				} else {
-					inst->opcode 	   = OP_S390_STKARG;
-					inst->inst_basereg = frame_reg;
-					size		   = (cinfo->args[iParm].size < 4
-							      ? 4 - cinfo->args[iParm].size
-							      : 0);
-					inst->inst_offset  = cinfo->args[iParm].offset + 
-							     size;
-					inst->backend.arg_info       = 0;
-					size		   = sizeof(long);
+					if (cfg->new_ir) {
+						inst->opcode 	   = OP_REGOFFSET;
+						inst->inst_basereg = frame_reg;
+						size		   = (cinfo->args[iParm].size < 8
+										  ? sizeof(long)  
+										  : sizeof(long long));
+						offset		   = S390_ALIGN(offset, size);
+						inst->inst_offset  = offset;
+					} else {
+						if (cinfo->args[iParm].reg != STK_BASE) {
+							inst->opcode 	   = OP_REGOFFSET;
+							inst->inst_basereg = frame_reg;
+							size		   = (cinfo->args[iParm].size < 8
+											  ? sizeof(long)  
+											  : sizeof(long long));
+							offset		   = S390_ALIGN(offset, size);
+							inst->inst_offset  = offset;
+						} else {
+							inst->opcode 	   = OP_S390_STKARG;
+							inst->inst_basereg = frame_reg;
+							size		   = (cinfo->args[iParm].size < 4
+											  ? 4 - cinfo->args[iParm].size
+											  : 0);
+							inst->inst_offset  = cinfo->args[iParm].offset + 
+								size;
+							inst->backend.arg_info       = 0;
+							size		   = sizeof(long);
+						}
 				} 
 			}
 			if ((sig->call_convention == MONO_CALL_VARARG) && 
@@ -1840,7 +1877,23 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 void
 mono_arch_create_vars (MonoCompile *cfg)
 {
-	// FIXME:
+	MonoMethodSignature *sig;
+	CallInfo *cinfo;
+	size_data sz;
+
+	sig = mono_method_signature (cfg->method);
+
+	cinfo = calculate_sizes (cfg, sig, &sz, sig->pinvoke);
+
+	if (cfg->new_ir && cinfo->struct_ret) {
+		cfg->vret_addr = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_ARG);
+		if (G_UNLIKELY (cfg->verbose_level > 1)) {
+			printf ("vret_addr = ");
+			mono_print_ins (cfg->vret_addr);
+		}
+	}
+
+	g_free (cinfo);
 }
 
 /*========================= End of Function ========================*/
@@ -2051,9 +2104,11 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 	cfg->flags       |= MONO_CFG_HAS_CALLS;
 
 	if (cinfo->struct_ret) {
-		// FIXME:
-		NOT_IMPLEMENTED;
-		call->used_iregs |= 1 << cinfo->ret.reg;
+		MONO_INST_NEW (cfg, ins, OP_MOVE);
+		ins->sreg1 = call->vret_var->dreg;
+		ins->dreg = mono_alloc_preg (cfg);
+		MONO_ADD_INS (cfg->cbb, ins);
+		mono_call_inst_add_outarg_reg (cfg, call, ins->dreg, cinfo->ret.reg, FALSE);
 	}
 
 	for (i = 0; i < n; ++i) {
@@ -2097,7 +2152,8 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 				ainfo->regtype = RegTypeFPR4;
 			add_outarg_reg2 (cfg, call, ainfo->regtype, ainfo->reg, in);
 			break;
-		case RegTypeStructByVal: {
+		case RegTypeStructByVal:
+		case RegTypeStructByAddr: {
 			guint32 align;
 			guint32 size;
 
@@ -2157,6 +2213,16 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 			MONO_ADD_INS (cfg->cbb, ins);
 			break;
 		}
+		case RegTypeBase:
+			if (!t->byref && (t->type == MONO_TYPE_I8 || t->type == MONO_TYPE_U8 || t->type == MONO_TYPE_R4 || t->type == MONO_TYPE_R8))
+				NOT_IMPLEMENTED;
+
+			MONO_INST_NEW (cfg, ins, OP_STORE_MEMBASE_REG);
+			ins->inst_destbasereg = STK_BASE;
+			ins->inst_offset = ainfo->offset;
+			ins->sreg1 = in->dreg;
+			MONO_ADD_INS (cfg->cbb, ins);
+			break;
 		default:
 			// FIXME:
 			NOT_IMPLEMENTED;
@@ -2247,7 +2313,6 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 void
 mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 {
-	MonoInst *arg;
 	MonoCallInst *call = (MonoCallInst*)ins->inst_p0;
 	ArgInfo *ainfo = (ArgInfo*)ins->inst_p1;
 	int size = ins->backend.size;
@@ -2270,7 +2335,7 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 				 	  src->dreg, 0);
 		}	
 	} else {
-		g_assert_not_reached ();
+		mini_emit_memcpy2 (cfg, ainfo->reg, ainfo->offset, src->dreg, 0, size, 4);
 	}
 }
 
@@ -3787,6 +3852,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_LCALL:
 		case OP_VCALL:
+		case OP_VCALL2:
 		case OP_VOIDCALL:
 		case OP_CALL: {
 			call = (MonoCallInst*)ins;
@@ -3807,6 +3873,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_LCALL_REG:
 		case OP_VCALL_REG:
+		case OP_VCALL2_REG:
 		case OP_VOIDCALL_REG:
 		case OP_CALL_REG: {
 			s390_lr   (code, s390_r1, ins->sreg1);
@@ -3823,6 +3890,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_LCALL_MEMBASE:
 		case OP_VCALL_MEMBASE:
+		case OP_VCALL2_MEMBASE:
 		case OP_VOIDCALL_MEMBASE:
 		case OP_CALL_MEMBASE: {
 			s390_l    (code, s390_r1, 0, ins->sreg1, ins->inst_offset);
@@ -4725,7 +4793,10 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 
 	if (cinfo->struct_ret) {
 		ArgInfo *ainfo = &cinfo->ret;
-		inst         = cfg->ret;
+		if (cfg->new_ir)
+			inst = cfg->vret_addr;
+		else
+			inst         = cfg->ret;
 		inst->backend.size = ainfo->vtsize;
 		s390_st (code, ainfo->reg, 0, inst->inst_basereg, inst->inst_offset);
 	}

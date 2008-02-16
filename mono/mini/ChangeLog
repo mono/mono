@@ -1,3 +1,7 @@
+2008-02-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-s390.c cpu-s390.md: Ongoing s390 work.
+
 2008-02-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-s390.h mini-s390.c cpu-s390.md mini-ops.h: Ongoing s390 work.
