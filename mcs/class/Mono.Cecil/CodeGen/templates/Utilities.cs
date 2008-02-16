@@ -178,11 +178,11 @@ namespace Mono.Cecil.Metadata {
 
 		internal delegate int TableRowCounter (int rid);
 
-		internal static int GetCodedIndexSize (CodedIndex ci, TableRowCounter rowCounter, IDictionary codedIndexCache)
+		internal static int GetCodedIndexSize (CodedIndex ci, TableRowCounter rowCounter, int [] codedIndexCache)
 		{
-			int bits = 0, max = 0;
-			if (codedIndexCache [ci] != null)
-				return (int) codedIndexCache [ci];
+			int bits = 0, max = 0, index = (int) ci;
+			if (codedIndexCache [index] != 0)
+				return codedIndexCache [index];
 
 			int res = 0;
 			int [] rids;
@@ -204,7 +204,7 @@ namespace Mono.Cecil.Metadata {
 			}
 
 			res = max < (1 << (16 - bits)) ? 2 : 4;
-			codedIndexCache [ci] = res;
+			codedIndexCache [index] = res;
 			return res;
 		}
 	}

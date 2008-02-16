@@ -40,7 +40,7 @@ namespace Mono.Cecil.Metadata {
 
 		MetadataRoot m_root;
 		MemoryBinaryWriter m_binaryWriter;
-		IDictionary m_ciCache;
+		int [] m_ciCache;
 
 		int m_blobHeapIdxSz;
 		int m_stringsHeapIdxSz;
@@ -50,7 +50,7 @@ namespace Mono.Cecil.Metadata {
 		{
 			m_binaryWriter = mtwv.GetWriter ();
 			m_root = mtwv.GetMetadataRoot ();
-			m_ciCache = new Hashtable ();
+			m_ciCache = new int [<%= $coded_indexes.length %>];
 		}
 
 		void WriteBlobPointer (uint pointer)

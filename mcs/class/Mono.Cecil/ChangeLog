@@ -1,3 +1,14 @@
+2008-02-16  Jb Evain  <jbevain@novell.com>
+
+	* CodeGen/templates/MetadataRowReader.cs
+	  CodeGen/templates/Utilities.cs
+	  CodeGen/templates/MetadataRowWriter.cs
+	  Mono.Cecil.Metadata/MetadataRowReader.cs
+	  Mono.Cecil.Metadata/MetadataRowWriter.cs
+	  Mono.Cecil.Metadata/Utilities.cs:
+		Use a good old traditional array instead of an
+		Hashtable. Based on a patch by Carlo Kok <ck@remobjects.com>.
+
 2008-02-07  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/BaseAssemblyResolver.cs:

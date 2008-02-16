@@ -42,7 +42,7 @@ namespace Mono.Cecil.Metadata {
 		MetadataTableReader m_mtrv;
 		BinaryReader m_binaryReader;
 		MetadataRoot m_metadataRoot;
-		IDictionary m_ciCache;
+		int [] m_ciCache;
 
 		int m_blobHeapIdxSz;
 		int m_stringsHeapIdxSz;
@@ -53,7 +53,7 @@ namespace Mono.Cecil.Metadata {
 			m_mtrv = mtrv;
 			m_binaryReader = mtrv.GetReader ();
 			m_metadataRoot = mtrv.GetMetadataRoot ();
-			m_ciCache = new Hashtable ();
+			m_ciCache = new int [<%= $coded_indexes.length %>];
 		}
 
 		int GetIndexSize (int rid)
