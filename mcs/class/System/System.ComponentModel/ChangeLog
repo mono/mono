@@ -1,3 +1,11 @@
+2008-02-16  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* TypeDescriptor.cs, PropertyDescriptor.cs: 
+	Do not throw when can't find Type from string.
+	* ReferenceConverter.cs: Convert null value from and to string.
+	Return an empty StandardValueCollection.
+	[Part of fix for bugs #360666 and #358332]
+
 2008-02-04  Ivan N. Zlatev  <contact@i-nz.net>
 
 	 * DateTimeConverter.cs: handle empty strings in ConvertFrom.

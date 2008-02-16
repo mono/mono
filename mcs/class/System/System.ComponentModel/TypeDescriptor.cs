@@ -4,9 +4,12 @@
 // Authors:
 //   Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Ivan N. Zlatev (contact@i-nz.net)
+// 
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
 // (C) 2003 Andreas Nahr
+// (C) 2008 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -115,10 +118,14 @@ public sealed class TypeDescriptor
 #endif
 	public static void AddEditorTable (Type editorBaseType, Hashtable table)
 	{
+		if (editorBaseType == null)
+			throw new ArgumentNullException ("editorBaseType");
+
 		if (editors == null)
 			editors = new Hashtable ();
-			
-		editors [editorBaseType] = table;
+
+		if (!editors.ContainsKey (editorBaseType))
+			editors [editorBaseType] = table;
 	}
 
 	public static IDesigner CreateDesigner(IComponent component, Type designerBaseType)
@@ -129,7 +136,9 @@ public sealed class TypeDescriptor
 		foreach (Attribute at in col) {
 			DesignerAttribute dat = at as DesignerAttribute;
 			if (dat != null && tn == dat.DesignerBaseTypeName) {
-				return (IDesigner) Activator.CreateInstance (GetTypeFromName (component, dat.DesignerTypeName));
+				Type designerType = GetTypeFromName (component, dat.DesignerTypeName);
+				if (designerType != null)
+					return (IDesigner) Activator.CreateInstance (designerType);
 			}
 		}
 				
@@ -285,19 +294,18 @@ public sealed class TypeDescriptor
 			return ((ICustomTypeDescriptor) component).GetConverter ();
 		} 
 		else {
-			Type t = null;
+			Type converterType = null;
 			AttributeCollection atts = GetAttributes (component, false);
 			TypeConverterAttribute tca = (TypeConverterAttribute) atts[typeof(TypeConverterAttribute)];
-			if (tca != null && tca.ConverterTypeName.Length > 0) {
-				t = GetTypeFromName (component as IComponent, tca.ConverterTypeName);
-			}
+			if (tca != null && tca.ConverterTypeName.Length > 0)
+				converterType = GetTypeFromName (component as IComponent, tca.ConverterTypeName);
 			
-			if (t != null) {
-				ConstructorInfo ci = t.GetConstructor (new Type[] { typeof(Type) });
+			if (converterType != null) {
+				ConstructorInfo ci = converterType.GetConstructor (new Type[] { typeof(Type) });
 				if (ci != null)
 					return (TypeConverter) ci.Invoke (new object[] { component.GetType () });
 				else
-					return (TypeConverter) Activator.CreateInstance (t);
+					return (TypeConverter) Activator.CreateInstance (converterType);
 			}
 			else
 				return GetConverter (component.GetType ());
@@ -465,51 +473,48 @@ public sealed class TypeDescriptor
 		Exception exc = null;
 		try {
 			return Activator.CreateInstance (t);
-		} catch (MissingMethodException e) {
-			exc = e;
-		}
+		} catch {}
 
 		try {
 			return Activator.CreateInstance (t, new object [] {componentType});
-		} catch (MissingMethodException) {
-			throw exc;
-		}
+		} catch {}
+
+		return null;
 	}
 		
 	private static object FindEditorInTable (Type componentType, Type editorBaseType, Hashtable table)
 	{
-		object value = null;
+		object editorReference = null;
 		object editor = null;
-		Type ct = componentType;
 		
 		if (componentType == null || editorBaseType == null || table == null)
-				return null;
+			return null;
 			
+		Type ct = componentType;
 		while (ct != null) {						
-			value = table [ct];
-			if (value != null)
+			editorReference = table [ct];
+			if (editorReference != null)
 				break;			
 			ct = ct.BaseType;
 		}
 		
-		if (value == null) {
+		if (editorReference == null) {
 			foreach (Type iface in componentType.GetInterfaces ()) {
-				value = table [iface];
-				if (value != null) 
-						break;
+				editorReference = table [iface];
+				if (editorReference != null) 
+					break;
 			}
 		}
 				
-		if (value == null)
-				return null;
+		if (editorReference == null)
+			return null;
 				
-		if (value is string) {
-			editor = CreateEditor (Type.GetType ((string) value), componentType);
-		} else if (value is Type) {
-			editor = CreateEditor ((Type) value, componentType);
-		} else if (value.GetType ().IsSubclassOf (editorBaseType)) {
-			editor = value;
-		}
+		if (editorReference is string)
+			editor = CreateEditor (Type.GetType ((string) editorReference), componentType);
+		else if (editorReference is Type)
+			editor = CreateEditor ((Type) editorReference, componentType);
+		else if (editorReference.GetType ().IsSubclassOf (editorBaseType))
+			editor = editorReference;
 		
 		if (editor != null) 
 			table [componentType] = editor;
@@ -519,34 +524,33 @@ public sealed class TypeDescriptor
 
 	public static object GetEditor (Type componentType, Type editorBaseType)
 	{
-		Type t = null;
+		Type editorType = null;
+		object editor = null;
 		object [] atts = componentType.GetCustomAttributes (typeof(EditorAttribute), true);
 		
 		if (atts != null && atts.Length != 0) {
-			foreach (EditorAttribute ea in atts)
-			{
-				t = GetTypeFromName (null, ea.EditorTypeName);
-				if (t.IsSubclassOf(editorBaseType))
+			foreach (EditorAttribute ea in atts) {
+				editorType = GetTypeFromName (null, ea.EditorTypeName);
+				if (editorType != null && editorType.IsSubclassOf(editorBaseType))
 					break;
 			}
 		}
 		
-		if (t != null)
-			return CreateEditor (t, componentType);
+		if (editorType != null)
+			editor = CreateEditor (editorType, componentType);
 			
-		if (t == null) {
+		if (editorType == null || editor == null) {
 #if !TARGET_JVM
 			// Make sure the editorBaseType's static constructor has been called,
 			// since that's where we're putting the initialization of its editor table.
 			
 			System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor (editorBaseType.TypeHandle);
 #endif				
-			if (editors != null) {
-				return FindEditorInTable (componentType, editorBaseType, editors [editorBaseType] as Hashtable);
-			}
+			if (editors != null)
+				editor = FindEditorInTable (componentType, editorBaseType, editors [editorBaseType] as Hashtable);
 		}
 
-		return null;    // No editor specified
+		return editor;
 	}
 
 	public static object GetEditor (object component, Type editorBaseType)
@@ -859,15 +863,15 @@ public sealed class TypeDescriptor
 	
 	internal static Type GetTypeFromName (IComponent component, string typeName)
 	{
+		Type type = null;
 		if (component != null && component.Site != null) {
 			ITypeResolutionService resver = (ITypeResolutionService) component.Site.GetService (typeof(ITypeResolutionService));
 			if (resver != null)
-				return resver.GetType (typeName, true, false);
+				type = resver.GetType (typeName);
 		}
-		
-		Type t = Type.GetType (typeName);
-		if (t == null) throw new ArgumentException ("Type '" + typeName + "' not found");
-		return t;
+		if (type == null)
+			type = Type.GetType (typeName);
+		return type;
 	}
 }
 

@@ -4,10 +4,10 @@
 // Authors:
 //   Martin Willemoes Hansen (mwh@sysrq.dk)
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Ivan N. Zlatev (contact@i-nz.net)
 //
 // (C) 2003 Martin Willemoes Hansen
 // (C) 2003 Andreas Nahr
-//
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -31,6 +31,7 @@
 //
 
 using System.Globalization;
+using System.Collections;
 
 namespace System.ComponentModel
 {
@@ -44,13 +45,17 @@ namespace System.ComponentModel
 		public override bool CanConvertFrom (ITypeDescriptorContext context,
 						     Type sourceType)
 		{
-			return false;
+			if (sourceType == typeof (string))
+				return true;
+			return base.CanConvertFrom (context, sourceType);
 		}
 
 		public override object ConvertFrom (ITypeDescriptorContext context,
 						    CultureInfo culture,
 						    object value)
 		{
+			if (value is string && ((string)value) == "(none)")
+				return null;
 			return base.ConvertFrom(context, culture, value);
 		}
 
@@ -59,12 +64,16 @@ namespace System.ComponentModel
 						  object value,
 						  Type destinationType)
 		{
+			if (destinationType == typeof (string) && value == null)
+				return "(none)";
 			return base.ConvertTo(context, culture, value, destinationType);
 		}
 
 		public override StandardValuesCollection GetStandardValues (ITypeDescriptorContext context)
 		{
-			return null;
+			ArrayList values = new ArrayList ();
+			values.Add (null);
+			return new StandardValuesCollection (values);
 		}
 
 		public override bool GetStandardValuesExclusive (ITypeDescriptorContext context)
