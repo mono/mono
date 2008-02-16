@@ -1,6 +1,14 @@
 2008-02-16  Ivan N. Zlatev  <contact@i-nz.net>
 
 	[Backport to 1.9]
+	* GridEntry.cs: 
+	 - Fix handling of a null current value.
+	 - Swallow editor exceptions.
+	[Fixes bug #362114]
+
+2008-02-16  Ivan N. Zlatev  <contact@i-nz.net>
+
+	[Backport to 1.9]
 	* PropertyGridTextBox.cs, PropertyGridView.cs: Explicitly send
 	a mouse down event to the textbox so that we get the caret
 	positioned under cursor.
