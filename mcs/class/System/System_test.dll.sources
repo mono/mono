@@ -112,10 +112,12 @@ System.ComponentModel/AttributeProviderAttributeTest.cs
 System.ComponentModel/BackgroundWorkerTest.cs
 System.ComponentModel/BindingListTest.cs
 System.ComponentModel/ByteConverterTests.cs
+System.ComponentModel/CharConverterTest.cs
 System.ComponentModel/CollectionConverterTest.cs
 System.ComponentModel/ComplexBindingPropertiesAttributeTest.cs
 System.ComponentModel/ComponentResourceManagerTest.cs
 System.ComponentModel/ContainerTest.cs
+System.ComponentModel/CultureInfoConverterTest.cs
 System.ComponentModel/DataObjectMethodAttributeTests.cs
 System.ComponentModel/DateTimeConverterTests.cs
 System.ComponentModel/DefaultBindingPropertyAttributeTest.cs

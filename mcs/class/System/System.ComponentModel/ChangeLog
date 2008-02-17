@@ -1,3 +1,14 @@
+2008-02-17  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CharConverter.cs (ConvertFrom): Avoid NRE when value is null.
+	Provide more info when left of value > 1.
+	* CultureInfoConverter.cs (ConvertFrom): Avoid NRE when value is null.
+	On 2.0 profile, use case-sensitive comparison for (Default) value.
+	Use case-insensitive comparing when value is considered as displayname.
+	Provide more info in exception message.
+	(ConvertTo): Use '(Default)' instead of '(default)' for invariant
+	culture.
+
 2008-02-16  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* CharConverter.cs: 

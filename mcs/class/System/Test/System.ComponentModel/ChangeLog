@@ -1,3 +1,9 @@
+2008-02-17  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CharConverterTest.cs: Added tests for ConvertFrom and ConvertTo.
+	* CultureInfoConverterTest.cs: Added tests for ConvertFrom and
+	ConvertTo.
+
 2008-02-04  Ivan N. Zlatev  <contact@i-nz.net>
 
 	 * DateTimeConverterTests.cs: Test ConvertFrom with empty string.
