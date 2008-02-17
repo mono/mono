@@ -1,5 +1,8 @@
 2008-02-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-sparc.c: Use cfg->vret_addr instead of cfg->ret. Name the MonoCompile
+	variables 'cfg' instead of 'm' for consistency.
+
 	* mini-x86.c: Use cfg->vret_addr instead of cfg->ret.
 
 	* mini.h (MonoCompile): Add new 'vret_addr' field which represents the hidden
