@@ -1,5 +1,7 @@
 2008-02-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-x86.c: Use cfg->vret_addr instead of cfg->ret.
+
 	* mini.h (MonoCompile): Add new 'vret_addr' field which represents the hidden
 	argument holding the vtype return address, to avoid the ambigious use of
 	cfg->ret for this purpose.
