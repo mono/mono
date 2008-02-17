@@ -23,6 +23,10 @@ namespace TestRunner {
 		public ReflectionTester (Assembly a)
 		{
 			Type t = a.GetType ("Mono.CSharp.CompilerCallableEntryPoint");
+
+			if (t == null)
+				Console.Error.WriteLine ("null, huh?");
+
 			ep = t.GetMethod ("InvokeCompiler", 
 				BindingFlags.Static | BindingFlags.Public);
 			if (ep == null)
@@ -54,6 +58,7 @@ namespace TestRunner {
 		}
 	}
 
+#if !NET_2_1
 	class ProcessTester: ITester
 	{
 		ProcessStartInfo pi;
@@ -97,6 +102,7 @@ namespace TestRunner {
 			throw new NotImplementedException ();
 		}
 	}
+#endif
 
 	class TestCase
 	{
@@ -347,7 +353,9 @@ namespace TestRunner {
 		readonly static object[] default_args = new object[1] { new string[] {} };
 		string doc_output;
 
+#if !NET_2_1
 		ProcessStartInfo pi;
+#endif
 		readonly string mono;
 
 		protected enum TestResult {
@@ -363,6 +371,7 @@ namespace TestRunner {
 		{
 			files_folder = Directory.GetCurrentDirectory ();
 
+#if !NET_2_1
 			pi = new ProcessStartInfo ();
 			pi.CreateNoWindow = true;
 			pi.WindowStyle = ProcessWindowStyle.Hidden;
@@ -374,6 +383,7 @@ namespace TestRunner {
 			if (mono != null) {
 				pi.FileName = mono;
 			}
+#endif
 		}
 
 		protected override bool GetExtraOptions(string file, out string[] compiler_options,
@@ -460,6 +470,7 @@ namespace TestRunner {
 			return true;
 		}
 
+#if !NET_2_1
 		int ExecFile (string exe_name, string filename)
 		{
 			if (mono == null)
@@ -471,6 +482,7 @@ namespace TestRunner {
 			p.WaitForExit ();
 			return p.ExitCode;
 		}
+#endif
 
 		bool ExecuteFile (MethodInfo entry_point, string exe_name, string filename)
 		{
@@ -491,12 +503,14 @@ namespace TestRunner {
 				}
 			}
 			catch (Exception e) {
+#if !NET_2_1
 				int exit_code = ExecFile (exe_name, filename);
 				if (exit_code == 0) {
 					LogLine ("(appdomain method failed, external executable succeeded)");
 					LogLine (e.ToString ());
 					return true;
 				}
+#endif
 				HandleFailure (filename, TestResult.ExecError, e.ToString ());
 				return false;
 			}
@@ -843,9 +857,7 @@ namespace TestRunner {
 			}
 
 			string mode = args[0].ToLower ();
-#if NET_2_1
-			string test_pattern ="fubar";
-#elif NET_2_0
+#if NET_2_0
 			string test_pattern = args [1] == "0" ? "*cs*.cs" : "*test-*.cs"; //args [1];
 #else
 			string test_pattern = args [1] == "0" ? "cs*.cs" : "test-*.cs"; //args [1];
@@ -862,12 +874,16 @@ namespace TestRunner {
 				tester = new ReflectionTester (Assembly.LoadFile (mcs));
 			}
 			catch (Exception) {
+#if NET_2_1
+				throw;
+#else
 				Console.Error.WriteLine ("Switching to command line mode (compiler entry point was not found)");
 				if (!File.Exists (mcs)) {
 					Console.Error.WriteLine ("ERROR: Tested compiler was not found");
 					return 1;
 				}
 				tester = new ProcessTester (mcs);
+#endif
 			}
 
 			Checker checker;

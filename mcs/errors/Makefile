@@ -61,20 +61,23 @@ test-everything:
 
 ifeq (net_2_1, $(PROFILE))
 COMPILER_NAME = smcs
-else
+LOCAL_RUNTIME_FLAGS = --security=temporary-smcs-hack
+endif
 ifeq (net_2_0, $(PROFILE))
 COMPILER_NAME = gmcs
-else
-COMPILER_NAME = mcs
 endif
+ifeq (default, $(PROFILE))
+COMPILER_NAME = mcs
 endif
 
 COMPILER = $(topdir)/class/lib/$(PROFILE)/$(COMPILER_NAME).exe
+TESTER = MONO_RUNTIME='$(RUNTIME)' $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(LOCAL_RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe
+
 run-mcs-tests: $(TEST_SUPPORT_FILES)
 
 run-mcs-tests:
 	rm -f *.exe
-	MONO_RUNTIME='$(RUNTIME)' $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe negative 0 $(COMPILER) known-issues-$(COMPILER_NAME) $(COMPILER_NAME).log
+	$(TESTER) negative 0 $(COMPILER) known-issues-$(COMPILER_NAME) $(COMPILER_NAME).log
 
 clean-local:
 	rm -f *.exe *.dll *.log *.mdb dummy.xml *.junk

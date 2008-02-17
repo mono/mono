@@ -1,3 +1,7 @@
+2008-02-17  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Makefile: Enable testing net_2_1 profile.
+
 2008-01-12  Raja R Harinath  <harinath@hurrynot.org>
 
 	* Makefile (VALID_PROFILE): New.  Disable tests for other profiles.

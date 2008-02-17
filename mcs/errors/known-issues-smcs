@@ -1,0 +1,142 @@
+cs0019-20.cs
+cs0035.cs
+cs0158-5.cs
+cs0162-7.cs NO ERROR
+cs0162-9.cs
+cs0214-10.cs NO ERROR
+cs0266-11.cs
+cs0266-9.cs
+cs0419-2.cs NO ERROR
+cs0419-3.cs NO ERROR
+cs0419-4.cs NO ERROR
+cs0419.cs NO ERROR
+cs0457-2.cs
+cs0457.cs
+cs0525.cs
+cs0526.cs
+cs0547-2.cs # new in GMCS; grammar issue
+cs0547.cs
+cs0548-4.cs
+cs0548.cs
+cs0567.cs
+cs0610.cs
+cs0611.cs
+cs0647-14.cs
+cs0647-3.cs
+cs0647-4.cs
+cs0647-5.cs
+cs0647-6.cs
+cs0647-7.cs
+cs0647-9.cs
+cs1041.cs # new in GMCS; grammar issue
+cs1502-2.cs
+cs1521-3.cs
+cs1525.cs
+cs1528.cs
+cs1533.cs IGNORE
+cs1570-10.cs NO ERROR
+cs1570-11.cs NO ERROR
+cs1570-12.cs NO ERROR
+cs1570-2.cs NO ERROR
+cs1570-3.cs NO ERROR
+cs1570-4.cs NO ERROR
+cs1570-5.cs NO ERROR
+cs1570-6.cs NO ERROR
+cs1570-7.cs NO ERROR
+cs1570-8.cs NO ERROR
+cs1570-9.cs NO ERROR
+cs1570.cs NO ERROR
+cs1571.cs NO ERROR
+cs1572.cs NO ERROR
+cs1573.cs NO ERROR
+cs1574-2.cs NO ERROR
+cs1574-3.cs NO ERROR
+cs1574-4.cs NO ERROR
+cs1574-5.cs NO ERROR
+cs1574-6.cs NO ERROR
+cs1574-7.cs NO ERROR
+cs1574-8.cs NO ERROR
+cs1574-9.cs NO ERROR
+cs1574.cs NO ERROR
+cs1580-2.cs NO ERROR
+cs1580.cs NO ERROR
+cs1581-2.cs NO ERROR
+cs1581.cs NO ERROR
+cs1584-2.cs NO ERROR
+cs1584-3.cs NO ERROR
+cs1584-4.cs NO ERROR
+cs1584.cs NO ERROR
+cs1586.cs
+cs1589.cs NO ERROR
+cs1590-2.cs NO ERROR
+cs1590-3.cs NO ERROR
+cs1590.cs NO ERROR
+cs1591-10.cs NO ERROR
+cs1591-11.cs NO ERROR
+cs1591-12.cs NO ERROR
+cs1591-13.cs NO ERROR
+cs1591-14.cs NO ERROR
+cs1591-15.cs NO ERROR
+cs1591-16.cs NO ERROR
+cs1591-17.cs NO ERROR
+cs1591-18.cs NO ERROR
+cs1591-19.cs NO ERROR
+cs1591-2.cs NO ERROR
+cs1591-3.cs NO ERROR
+cs1591-4.cs NO ERROR
+cs1591-5.cs NO ERROR
+cs1591-6.cs NO ERROR
+cs1591-7.cs NO ERROR
+cs1591-8.cs NO ERROR
+cs1591-9.cs
+cs1591.cs NO ERROR
+cs1592.cs NO ERROR
+cs1599-2.cs
+cs1599-3.cs
+cs1601-2.cs
+cs1608.cs
+cs1618-2.cs NO ERROR
+cs1642.cs NO ERROR
+cs1666.cs NO ERROR
+cs1708.cs NO ERROR
+cs3002-9.cs
+cs3003-5.cs NO ERROR
+cs3009-2.cs
+cs3010.cs
+gcs0037-2.cs
+gcs0411-2.cs # Runtime bug #354757
+gcs0411.cs # Runtime bug #354757
+gcs0729.cs
+gcs0730.cs
+gcs0733.cs
+gcs0735-2.cs
+gcs0735.cs
+gcs0739.cs
+gcs0820.cs # temporary disabled
+gcs0838.cs
+gcs1501-2.cs
+gcs1593.cs
+gcs1644-10.cs
+gcs1908-2.cs
+gcs1908-3.cs
+gcs1908-4.cs
+gcs1908.cs
+gcs1909-2.cs
+gcs1909.cs
+gcs1910-2.cs
+gcs1910.cs
+gcs1939.cs NO ERROR
+gcs1942-2.cs NO ERROR
+gcs1942.cs NO ERROR
+gcs1946.cs NO ERROR
+gcs1948.cs NO ERROR
+gcs1950.cs NO ERROR
+gcs1951-2.cs NO ERROR
+gcs1951.cs NO ERROR
+gcs1952.cs NO ERROR
+gcs1954.cs NO ERROR
+gcs3002.cs NO ERROR
+gcs3019-2.cs NO ERROR
+gcs3019.cs NO ERROR
+gcs3024-2.cs NO ERROR
+gcs3024.cs NO ERROR

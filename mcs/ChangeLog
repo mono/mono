@@ -1,10 +1,15 @@
+2008-02-17  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Makefile (_boot_): Orchestrate the net_2_1 bootstrap.
+	(net_2_1_bootstrap_SUBDIRS, net_2_1_raw_SUBDIRS): New.
+
 2008-02-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile (dir-check): Hopefully fix make dist.
 
 2008-02-05  Zoltan Varga  <vargaz@gmail.com>
 
-	* Makefile: Abort with an error message if make is typed directly in this 
+	* Makefile: Abort with an error message if make is typed directly in this
 	directory, instead from the 'mono' directory.
 
 2007-12-06  Atsushi Enomoto  <atsushi@ximian.com>
@@ -15,7 +20,7 @@
 2007-12-04  Marek Safar  <marek.safar@gmail.com>
 
 	* Makefile: Added more tests.
-	
+
 2007-12-03  Marek Safar  <marek.safar@gmail.com>
 
 	* Makefile: Added 3.5 profile, it probably not used here.

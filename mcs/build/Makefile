@@ -21,6 +21,8 @@ PROFILES = \
 	default \
 	net_2_0_bootstrap \
 	net_2_0 \
+	net_2_1_bootstrap \
+	net_2_1_raw \
 	net_2_1 \
 	net_1_0	\
 	net_3_5

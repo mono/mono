@@ -9,6 +9,7 @@ LIB_MCS_FLAGS = \
 	        /r:System.Xml.dll
 
 ifeq (2.0, $(FRAMEWORK_VERSION))
+# This is a .NET 3.5 only assembly, but built during the 2.0 build
 LIB_MCS_FLAGS += -d:NET_3_5 -nowarn:1720
 endif
 
@@ -16,9 +17,7 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 EXTRA_DISTFILES =
 
-# This is a .NET 3.5 only assembly
-VALID_PROFILE := $(filter net_2_0_bootstrap net_2_0 net_2_1, $(PROFILE))
-ifndef VALID_PROFILE
+ifneq (net_2_0, $(PROFILE))
 LIBRARY_NAME = dummy-System.Xml.Linq.dll
 NO_INSTALL = yes
 NO_SIGN_ASSEMBLY = yes

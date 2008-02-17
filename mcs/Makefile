@@ -6,7 +6,9 @@ basic_SUBDIRS := build jay mcs class
 net_1_1_bootstrap_SUBDIRS := build jay mcs class ilasm tools
 net_2_0_bootstrap_SUBDIRS := build jay mcs class ilasm tools
 net_2_0_SUBDIRS := build jay mcs class nunit20 ilasm tools tests errors
-net_2_1_SUBDIRS := build mcs class tools
+net_2_1_bootstrap_SUBDIRS := build mcs class
+net_2_1_raw_SUBDIRS := build mcs class tools
+net_2_1_SUBDIRS := tools tests errors
 net_3_5_SUBDIRS := build class
 
 # List of test subdirs that should pass 100%
@@ -87,7 +89,9 @@ profiles-do--run-test:
 # Orchestrate the bootstrap here.
 _boot_ = all clean install
 $(_boot_:%=profile-do--net_3_5--%):           profile-do--net_3_5--%:           profile-do--net_2_0--%
-$(_boot_:%=profile-do--net_2_1--%):           profile-do--net_2_1--%:           profile-do--net_2_0--%
+$(_boot_:%=profile-do--net_2_1--%):           profile-do--net_2_1--%:           profile-do--net_2_1_raw--%
+$(_boot_:%=profile-do--net_2_1_raw--%):       profile-do--net_2_1_raw--%:       profile-do--net_2_1_bootstrap--%
+$(_boot_:%=profile-do--net_2_1_bootstrap--%): profile-do--net_2_1_bootstrap--%: profile-do--net_2_0--%
 $(_boot_:%=profile-do--net_2_0--%):           profile-do--net_2_0--%:           profile-do--net_2_0_bootstrap--%
 $(_boot_:%=profile-do--net_2_0_bootstrap--%): profile-do--net_2_0_bootstrap--%: profile-do--default--%
 $(_boot_:%=profile-do--default--%):           profile-do--default--%:           profile-do--net_1_1_bootstrap--%

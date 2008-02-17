@@ -1,3 +1,7 @@
+2008-02-17  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Makefile: Enable smcs testing.
+
 2008-01-22  Raja R Harinath  <harinath@hurrynot.org>
 
 	* gtest-exmethod-08.cs: Initialize 'first' and 'second' to non-null.

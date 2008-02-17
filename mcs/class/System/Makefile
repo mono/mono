@@ -6,20 +6,14 @@ export __SECURITY_BOOTSTRAP_DB=$(topdir)/class/lib/$(PROFILE)
 LIBRARY = System.dll
 LIBRARY_USE_INTERMEDIATE_FILE = yes
 
-ifneq (net_2_1, $(PROFILE))
+ifneq (2.1, $(FRAMEWORK_VERSION))
 RESOURCE_FILES = \
 	resources/Asterisk.wav	\
 	resources/Beep.wav	\
 	resources/Exclamation.wav	\
 	resources/Hand.wav	\
 	resources/Question.wav
-else
-RESOURCE_FILES =
 endif
-
-# Because System.dll, Mono.Security.dll System.Xml.dll have a cyclic dependency, we need a two-pass build.
-# 1st pass - build System.dll without System.Xml.dll or Mono.Security.dll or System.Configuration.dll references
-# 2nd pass - build System.dll with System.Xml.dll and Mono.Security.dll or System.Configuration.dll references
 
 TEST_RESOURCES = \
 	Test/System/test-uri-props.txt \
@@ -29,21 +23,7 @@ TEST_RESOURCES = \
 TEST_MCS_FLAGS = -r:System.Drawing.dll -r:Mono.Security.dll -nowarn:1595 -nowarn:0618 -nowarn:219 -nowarn:67 -nowarn:169 -nowarn:612 \
 	$(foreach f, $(TEST_RESOURCES), -resource:$(f),$(notdir $(f)))
 
-XML_DEP := System.Xml.dll
-XML_DEP_FILE := $(wildcard ../lib/$(PROFILE)/$(XML_DEP))
-CYCLIC_DEPS := $(XML_DEP)
-CYCLIC_DEP_FILES := $(XML_DEP_FILE)
-
 ifeq (2, $(FRAMEWORK_VERSION_MAJOR))
-# Happens on net_2_0_bootstrap and net_2_0 profiles
-SECURITY_DEP := Mono.Security.dll
-SECURITY_DEP_FILE := $(wildcard ../lib/$(PROFILE)/$(SECURITY_DEP))
-CONFIGURATION_DEP := System.Configuration.dll
-CONFIGURATION_DEP_FILE := $(wildcard ../lib/$(PROFILE)/$(CONFIGURATION_DEP))
-PREBUILT_DEP := System.dll
-PREBUILT_DEP_FILE := $(wildcard ../lib/$(PROFILE)/$(PREBUILT_DEP))
-CYCLIC_DEPS += $(SECURITY_DEP) $(CONFIGURATION_DEP)
-CYCLIC_DEP_FILES += $(SECURITY_DEP_FILE) $(CONFIGURATION_DEP_FILE)
 LIB_MCS_FLAGS = -nowarn:618 -d:CONFIGURATION_2_0 -unsafe $(RESOURCE_FILES:%=-resource:%)
 TEST_MCS_FLAGS += -r:System.Configuration
 endif
@@ -60,7 +40,11 @@ EXTRA_DISTFILES = \
 	$(TEST_RESOURCES)
 
 lib_file := $(wildcard ../lib/$(PROFILE)/System.dll)
-ifndef lib_file
+ifdef lib_file
+ifeq (2.0, $(FRAMEWORK_VERSION))
+LIB_MCS_FLAGS += -r:PrebuiltSystem=$(lib_file)
+endif
+else
 USE_BOOT_COMPILE = yes
 endif
 
@@ -72,9 +56,34 @@ ifdef USE_BOOT_COMPILE
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 endif
 
+# Because System.dll, Mono.Security.dll System.Xml.dll have a cyclic dependency, we need a two-pass build.
+# 1st pass - build System.dll without System.Xml.dll or Mono.Security.dll or System.Configuration.dll references
+# 2nd pass - build System.dll with System.Xml.dll and Mono.Security.dll or System.Configuration.dll references
+
+CYCLIC_DEPS :=
+CYCLIC_DEP_FILES :=
+
+define cyclic-dep
+# Note the '$$' -- those are to be delayed till the eval
+CYCLIC_DEPS += $1
+FILE_$2 := $$(wildcard ../lib/$(PROFILE)/$1)
+ifdef FILE_$2
+CYCLIC_DEP_FILES += $$(FILE_$2)
+LIB_MCS_FLAGS += -d:$2 -r:$1
+endif
+endef
+
+ifneq (2.1, $(FRAMEWORK_VERSION))
+$(eval $(call cyclic-dep,System.Xml.dll,XML_DEP))
+endif
+
+ifeq (2.0, $(FRAMEWORK_VERSION))
+$(eval $(call cyclic-dep,Mono.Security.dll,SECURITY_DEP))
+$(eval $(call cyclic-dep,System.Configuration.dll,CONFIGURATION_DEP))
+endif
+
 MISSING_DEPS := $(filter-out $(notdir $(CYCLIC_DEP_FILES)), $(CYCLIC_DEPS))
 ifdef MISSING_DEPS
-ifneq (net_2_1, $(PROFILE))
 NO_SIGN_ASSEMBLY = yes
 NO_INSTALL = yes
 all-local: echo-warning
@@ -82,28 +91,10 @@ all-local: echo-warning
 echo-warning:
 	@echo "** Warning: System.dll built without parts that depend on: $(MISSING_DEPS)"
 endif
-endif
 
 include ../../build/library.make
 
-ifdef XML_DEP_FILE
-LIB_MCS_FLAGS += -define:XML_DEP -r:$(XML_DEP)
-$(the_lib): $(XML_DEP_FILE)
-endif
-
-ifdef SECURITY_DEP_FILE
-LIB_MCS_FLAGS += -define:SECURITY_DEP -r:Mono.Security.dll
-$(the_lib): $(SECURITY_DEP_FILE)
-endif
-
-ifdef CONFIGURATION_DEP_FILE
-LIB_MCS_FLAGS += -define:CONFIGURATION_DEP -r:$(CONFIGURATION_DEP)
-$(the_lib): $(CONFIGURATION_DEP_FILE)
-endif
-
-ifdef PREBUILT_DEP_FILE
-LIB_MCS_FLAGS += -r:PrebuiltSystem=$(topdir)/class/lib/$(PROFILE)/System.dll
-endif
+$(the_lib): $(CYCLIC_DEP_FILES)
 
 $(test_lib): $(test_lib).config $(TEST_RESOURCES)
 

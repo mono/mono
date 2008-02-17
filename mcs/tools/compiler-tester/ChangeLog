@@ -1,3 +1,8 @@
+2008-02-17  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Makefile [PROFILE=net_2_1]: Copy file from net_2_1_raw profile.
+	* compiler-tester.cs: Work better with 'net_2_1' profiles.
+
 2007-11-28  Raja R Harinath  <harinath@gmail.com>
 
 	* compiler-tester.cs: Work better with the 'net_2_1' profile.

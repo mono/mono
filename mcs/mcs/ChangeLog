@@ -1,3 +1,9 @@
+2008-02-17  Raja R Harinath  <harinath@hurrynot.org>
+
+	Cleanup to be more readable.
+	* Makefile (GMCS_PROFILE): Remove.
+	(COMPILER_NAME): New helper.
+
 2008-02-15  Miguel de Icaza  <miguel@novell.com>
 
 	* cs-tokenizer.cs: if a conditional expression happens inside a

@@ -56,23 +56,25 @@ test-local: casts-boot.exe
 
 ifeq (net_2_1, $(PROFILE))
 COMPILER_NAME = smcs
-TEST_PATTERN = 'fubar'
-else
+TEST_PATTERN = '*test-*.cs'
+LOCAL_RUNTIME_FLAGS = --security=temporary-smcs-hack
+endif
 ifeq (net_2_0, $(PROFILE))
 COMPILER_NAME = gmcs
 TEST_PATTERN = '*test-*.cs'
-else
+endif
+ifeq (default, $(PROFILE))
 COMPILER_NAME = mcs
 TEST_PATTERN = 'test-*.cs'
 endif
-endif
 
 COMPILER = $(topdir)/class/lib/$(PROFILE)/$(COMPILER_NAME).exe
+TESTER = MONO_RUNTIME='$(RUNTIME)' $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(LOCAL_RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe
 
 TEST_ILS := $(wildcard *-lib.il)
 
 run-test-local: $(TEST_ILS:.il=.dll)
-	MONO_RUNTIME='$(RUNTIME)' $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe positive $(TEST_PATTERN) $(COMPILER) known-issues-$(COMPILER_NAME) $(COMPILER_NAME).log
+	$(TESTER) positive $(TEST_PATTERN) '$(COMPILER)' known-issues-$(COMPILER_NAME) $(COMPILER_NAME).log
 
 test-everything:
 	$(MAKE) PROFILE=default run-test

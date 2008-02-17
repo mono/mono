@@ -1,3 +1,7 @@
+2008-02-17  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Makefile (LIBRARY_COMPILE) [net_2_1]: Remove special case.
+
 2008-01-13  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* corlib_test.dll.sources: added ReadOnlyCollectionTest.cs.

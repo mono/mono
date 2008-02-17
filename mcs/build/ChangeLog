@@ -1,3 +1,10 @@
+2008-02-17  Raja R Harinath  <harinath@hurrynot.org>
+
+	* profiles/net_2_1_bootstrap.make: New.
+	* profiles/net_2_1_raw.make: New.  The untuned 2.1 profile.
+	* profiles/net_2_1.make: New.  The tuned 2.1 profile.
+	* Makefile (PROFILES): Update.
+
 2007-12-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* profiles/net_3_5.make : fixed net_2_0 path.

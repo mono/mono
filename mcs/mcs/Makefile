@@ -13,22 +13,21 @@ EXTRA_DISTFILES = \
 	TODO			\
 	gmcs.exe.config
 
-GMCS_PROFILE := $(filter net_2_0_bootstrap net_2_0 net_2_1, $(PROFILE))
-
-ifdef GMCS_PROFILE
-	LOCAL_MCS_FLAGS += -d:GMCS_SOURCE
-
-	ifeq (net_2_1, $(PROFILE))
-		INTERNAL_SMCS = $(INTERNAL_GMCS)
-		LOCAL_MCS_FLAGS += -nowarn:618 -noconfig -r:mscorlib -r:System.dll
-		PROGRAM = $(topdir)/class/lib/$(PROFILE)/smcs.exe
-	else
-		BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/net_2_0_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/net_2_0_bootstrap/gmcs.exe $(DEBUG_FLAGS)
-		PROGRAM = $(topdir)/class/lib/$(PROFILE)/gmcs.exe
-	endif	
-else
-	PROGRAM = $(topdir)/class/lib/$(PROFILE)/mcs.exe
+ifeq (1.0, $(FRAMEWORK_VERSION))
+COMPILER_NAME = mcs
 endif
+
+ifeq (2.0, $(FRAMEWORK_VERSION))
+LOCAL_MCS_FLAGS += -d:GMCS_SOURCE
+COMPILER_NAME = gmcs
+endif
+
+ifeq (2.1, $(FRAMEWORK_VERSION))
+LOCAL_MCS_FLAGS += -d:GMCS_SOURCE -d:SMCS_SOURCE
+COMPILER_NAME = smcs
+endif
+
+PROGRAM = $(topdir)/class/lib/$(PROFILE)/$(COMPILER_NAME).exe
 
 BUILT_SOURCES = cs-parser.cs
 
@@ -67,6 +66,8 @@ $(PROGRAM).config: gmcs.exe.config
 else
 
 ifeq (net_2_0, $(PROFILE))
+
+BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/net_2_0_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/net_2_0_bootstrap/gmcs.exe $(DEBUG_FLAGS)
 
 clean-local: clean-net_2_0_bootstrap
 clean-net_2_0_bootstrap:

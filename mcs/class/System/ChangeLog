@@ -1,3 +1,10 @@
+2008-02-17  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Makefile (CYCLIC_DEPS): New macro.
+	(CYCLIC_DEP_FILES): Use it to clean up handling of cyclic dependencies.
+	* net_2_1_raw_System.dll.sources: Rename from net_2_1_System.dll.sources.
+	* net_2_1_bootstrap_System.dll.sources: New.
+
 2008-02-10  Juraj Skripsky  <js@hotfeet.ch>
 
 	* System.dll.sources: Added ICodeDomVisitor.cs.
