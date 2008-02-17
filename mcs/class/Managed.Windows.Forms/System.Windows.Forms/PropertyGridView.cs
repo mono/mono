@@ -52,7 +52,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		private PropertyGridTextBox grid_textbox;
 		private PropertyGrid property_grid;
 		private bool resizing_grid;
-		private int skipped_grid_items;
 		private PropertyGridDropDown dropdown_form;
 		private Form dialog_form;
 		private ImplicitVScrollBar vbar;
@@ -83,7 +82,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			dialog_form.FormBorderStyle = FormBorderStyle.None;
 			dialog_form.ShowInTaskbar = false;
 
-			skipped_grid_items = 0;
 			row_height = Font.Height + font_height_padding;
 
 			grid_textbox.Visible = false;
@@ -735,6 +733,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		{
 			GridEntry entry = this.property_grid.SelectedGridItem as GridEntry;
 			if (entry != null) {
+				grid_textbox.Text = (string) ((ListBox) sender).SelectedItem;
 				if (TrySetEntry (entry, (string) ((ListBox) sender).SelectedItem))
 					UnfocusSelection ();
 			}
@@ -787,17 +786,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 
 		private void VScrollBar_HandleValueChanged (object sender, EventArgs e) 
 		{
-			if (vbar.Value <= 0)
-				vbar.Value = 0;
-			if (vbar.Value > vbar.Maximum-ClientRectangle.Height/row_height)
-				vbar.Value = vbar.Maximum-ClientRectangle.Height/row_height+1;
-
-			int scroll_amount = (skipped_grid_items-vbar.Value)*row_height;
-
-			if (scroll_amount == 0)
-				return;
-
-			skipped_grid_items = vbar.Value;
 			UpdateView ();
 		}
 
@@ -846,7 +834,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				CalculateItemY (entry, property_grid.RootGridItem.GridItems, ref y);
 				int x = SplitterLocation + ENTRY_SPACING + (entry.PaintValueSupported ? VALUE_PAINT_INDENT : 0);
 				grid_textbox.SetBounds (x + ENTRY_SPACING, y + ENTRY_SPACING,
-							ClientRectangle.Width - ENTRY_SPACING - x - (vbar.Visible ? vbar.Width : 0),
+							ClientRectangle.Width - ENTRY_SPACING - x - (GetScrollBarVisible () ? vbar.Width : 0),
 							row_height - ENTRY_SPACING);
 				grid_textbox.Text = entry.IsMerged && !entry.HasMergedValue ? String.Empty : entry.ValueText;
 				grid_textbox.Visible = true;
@@ -909,11 +897,13 @@ namespace System.Windows.Forms.PropertyGridInternal {
 
 		internal void ExpandItem (GridEntry item)
 		{
+			UpdateItem ((GridEntry)property_grid.SelectedGridItem);
 			Invalidate (new Rectangle (0, item.Top, Width, Height - item.Top));
 		}
 
 		internal void CollapseItem (GridEntry item)
 		{
+			UpdateItem ((GridEntry)property_grid.SelectedGridItem);
 			Invalidate (new Rectangle (0, item.Top, Width, Height - item.Top));
 		}
 

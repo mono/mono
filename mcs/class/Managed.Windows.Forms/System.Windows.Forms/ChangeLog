@@ -1,3 +1,12 @@
+2008-02-17  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* GridEntry.cs: Set expanded state before notifying that the
+	expansion has taken place.
+	* PropertyGridView.cs:
+	 - Set the propertygridtextbox text to the selected 
+	 StandardValue before proceeding to setting it.
+	 - Scrolling bugfixes.
+
 2008-02-16  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* GridEntry.cs:
