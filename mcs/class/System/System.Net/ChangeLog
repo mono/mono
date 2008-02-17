@@ -1,3 +1,8 @@
+2008-02-17  Daniel Nauck  <dna@mono-project.de>
+
+	* HttpWebResponse.cs: refactored cookie expires parsing to
+	allow all common expires datetime formats.
+
 2008-02-09  Daniel Nauck  <dna@mono-project.de>
 
 	* HttpWebResponse.cs: convert UTC/GMT Expires DateTime from a cookie

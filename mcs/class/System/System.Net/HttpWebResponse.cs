@@ -8,6 +8,7 @@
 //
 // (c) 2002 Lawrence Pit
 // (c) 2003 Ximian, Inc. (http://www.ximian.com)
+// (c) 2008 Daniel Nauck
 //
 
 //
@@ -413,27 +414,7 @@ namespace System.Net
 					if (cookie.Expires != DateTime.MinValue)
 						break;
 
-					//If no Expires is set, use cookie as session cookie (expires is DateTime.MinValue)
-					DateTime cookieExpiresUtc = DateTime.MinValue;
-					try {
-						cookieExpiresUtc = DateTime.ParseExact (val, "r", CultureInfo.InvariantCulture);
-					} catch {
-						try { 
-						cookieExpiresUtc = DateTime.ParseExact (val,
-								"ddd, dd'-'MMM'-'yyyy HH':'mm':'ss 'GMT'",
-								CultureInfo.InvariantCulture);
-						} catch {}
-					}
-
-					//convert UTC/GMT time to local time
-#if NET_2_0
-					cookieExpiresUtc = DateTime.SpecifyKind (cookieExpiresUtc, DateTimeKind.Utc);
-					cookie.Expires = TimeZone.CurrentTimeZone.ToLocalTime (cookieExpiresUtc);
-#else
-					//DateTime.Kind is only available on .NET 2.0, so do some calculation
-					TimeSpan localOffset = TimeZone.CurrentTimeZone.GetUtcOffset (cookieExpiresUtc.Date);
-					cookie.Expires = cookieExpiresUtc.Add (localOffset);
-#endif
+					cookie.Expires = TryParseCookieExpires (val);
 					break;
 				case "PATH":
 					cookie.Path = val;
@@ -470,6 +451,37 @@ namespace System.Net
 	
 			foreach (string cookie_str in cookies)
 				SetCookie (cookie_str);
+		}
+
+		string[] cookieExpiresFormats =
+			new string[] { "r",
+					"ddd, dd'-'MMM'-'yyyy HH':'mm':'ss 'GMT'",
+					"ddd, dd'-'MMM'-'yy HH':'mm':'ss 'GMT'" };
+
+		DateTime TryParseCookieExpires (string value)
+		{
+			if (value == null || value.Length == 0)
+				return DateTime.MinValue;
+
+			for (int i = 0; i <= cookieExpiresFormats.Length; i++)
+			{
+				try {
+					DateTime cookieExpiresUtc = DateTime.ParseExact (value, cookieExpiresFormats [i], CultureInfo.InvariantCulture);
+
+					//convert UTC/GMT time to local time
+#if NET_2_0
+					cookieExpiresUtc = DateTime.SpecifyKind (cookieExpiresUtc, DateTimeKind.Utc);
+					return TimeZone.CurrentTimeZone.ToLocalTime (cookieExpiresUtc);
+#else
+					//DateTime.Kind is only available on .NET 2.0, so do some calculation
+					TimeSpan localOffset = TimeZone.CurrentTimeZone.GetUtcOffset (cookieExpiresUtc.Date);
+					return cookieExpiresUtc.Add (localOffset);
+#endif
+				} catch {}
+			}
+
+			//If we can't parse Expires, use cookie as session cookie (expires is DateTime.MinValue)
+			return DateTime.MinValue;
 		}
 	}	
 
