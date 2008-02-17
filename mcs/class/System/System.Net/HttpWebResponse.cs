@@ -463,7 +463,7 @@ namespace System.Net
 			if (value == null || value.Length == 0)
 				return DateTime.MinValue;
 
-			for (int i = 0; i <= cookieExpiresFormats.Length; i++)
+			for (int i = 0; i < cookieExpiresFormats.Length; i++)
 			{
 				try {
 					DateTime cookieExpiresUtc = DateTime.ParseExact (value, cookieExpiresFormats [i], CultureInfo.InvariantCulture);
