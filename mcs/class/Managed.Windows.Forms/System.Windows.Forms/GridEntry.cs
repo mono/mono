@@ -84,11 +84,11 @@ namespace System.Windows.Forms.PropertyGridInternal
 			get { return expanded; }
 			set {
 				if (expanded != value) {
+					expanded = value;
 					if (value)
 						property_grid.OnExpandItem (this);
 					else
 						property_grid.OnCollapseItem (this);
-					expanded = value;
 				}
 			}
 		}
