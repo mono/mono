@@ -1,5 +1,7 @@
 2008-02-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-arm.h mini-arm.c: Use cfg->vret_addr instead of cfg->ret.
+
 	* mini-sparc.c: Use cfg->vret_addr instead of cfg->ret. Name the MonoCompile
 	variables 'cfg' instead of 'm' for consistency.
 
