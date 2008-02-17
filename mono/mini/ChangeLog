@@ -1,3 +1,16 @@
+2008-02-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h (MonoCompile): Add new 'vret_addr' field which represents the hidden
+	argument holding the vtype return address, to avoid the ambigious use of
+	cfg->ret for this purpose.
+
+	* mini.c (NEW_RETLOADA): Use vret_addr if set.
+
+	* mini-amd64.c: Use cfg->vret_addr instead of cfg->ret.
+	
+	* mini-codegen.c (mono_print_ins): Rename to mono_print_ins_index (), Add a
+	new mono_print_ins () function which only takes one argument.
+
 2008-02-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-s390.h (MONO_OUTPUT_VTR): Use cfg instead of s, avoid assignments to
