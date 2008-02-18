@@ -1,3 +1,10 @@
+2008-02-18 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.h: Added MONO_VERIFY_SKIP_VISIBILITY and struct MonoVerifyInfoExtended
+	which contains an extra field to tell the kind of exception that should be thrown.
+
+	* verify.c: Use MonoVerifyInfoExtended instead of MonoVerifyInfo.
+
 2008-02-17  Raja R Harinath  <harinath@hurrynot.org>
 
 	* loader.c (mono_method_get_param_names): Initialize 'klass' after
