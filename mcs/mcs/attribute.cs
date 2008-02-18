@@ -293,7 +293,7 @@ namespace Mono.CSharp {
 			return LeftExpr == null ? Identifier : LeftExpr.GetSignatureForError () + "." + Identifier;
 		}
 
-		bool IsValidArgumentType (Type t)
+		static bool IsValidArgumentType (Type t)
 		{
 			if (t.IsArray)
 				t = t.GetElementType ();

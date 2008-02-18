@@ -2293,9 +2293,14 @@ namespace Mono.CSharp {
 				CheckMemberUsage (constants, "constant");
 
 				if (fields != null){
+					bool is_type_exposed = Kind == Kind.Struct || IsExposedFromAssembly ();
 					foreach (FieldBase f in fields) {
-						if ((f.ModFlags & Modifiers.Accessibility) != Modifiers.PRIVATE)
-							continue;
+						if ((f.ModFlags & Modifiers.Accessibility) != Modifiers.PRIVATE) {
+							if (is_type_exposed)
+								continue;
+
+							f.SetMemberIsUsed ();
+						}				
 						
 						if (!f.IsUsed){
 							if ((f.caching_flags & Flags.IsAssigned) == 0)

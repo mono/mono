@@ -863,17 +863,11 @@ namespace Mono.CSharp {
 			for (int i = 0; i < methods.Length; ++i) {
 				MethodBase method = (MethodBase) methods [i];
 				ParameterData pd = TypeManager.GetParameterData (method);
-				if (pd.Count != args.Length) {
-					if (name == "SetCorlibTypeBuilders")
-							Console.WriteLine ("XX");
+				if (pd.Count != args.Length)
 					continue;
-				}
 
 				for (int ii = 0; ii < args.Length; ++ii) {
 					if (!IsEqual (pd.Types [ii], args [ii])) {
-							if (name == "SetCorlibTypeBuilders")
-								Console.WriteLine (pd.Types [ii].FullName);
-							
 						method = null;
 						break;
 					}

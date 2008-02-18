@@ -347,9 +347,9 @@ namespace Mono.CSharp {
 
 			if (TypeManager.IsGenericParameter (Type) && TypeManager.IsGenericParameter (target) && type.Name == target.Name) {
 #if GMCS_SOURCE
-				string sig1 = Type.DeclaringMethod == null ?
-					TypeManager.CSharpName (Type.DeclaringType) :
-					TypeManager.CSharpSignature (Type.DeclaringMethod);
+				string sig1 = type.DeclaringMethod == null ?
+					TypeManager.CSharpName (type.DeclaringType) :
+					TypeManager.CSharpSignature (type.DeclaringMethod);
 				string sig2 = target.DeclaringMethod == null ?
 					TypeManager.CSharpName (target.DeclaringType) :
 					TypeManager.CSharpSignature (target.DeclaringMethod);

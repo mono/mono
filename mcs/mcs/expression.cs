@@ -4289,23 +4289,6 @@ namespace Mono.CSharp {
 			this.arguments_resolved = arguments_resolved;
 		}
 
-		public static string FullMethodDesc (MethodBase mb)
-		{
-			if (mb == null)
-				return "";
-
-			StringBuilder sb;
-			if (mb is MethodInfo) {
-				sb = new StringBuilder (TypeManager.CSharpName (((MethodInfo) mb).ReturnType));
-				sb.Append (" ");
-			}
-			else
-				sb = new StringBuilder ();
-
-			sb.Append (TypeManager.CSharpSignature (mb));
-			return sb.ToString ();
-		}
-
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
 			ArrayList args = new ArrayList (Arguments.Count + 3);

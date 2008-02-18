@@ -1,3 +1,20 @@
+2008-02-18  Marek Safar  <marek.safar@gmail.com>
+
+ 	* generic.cs (TypeParameter): Cache attribute target name.
+ 	
+ 	* support.cs: Removed unused variable.
+ 	
+ 	* typemanager.cs: Removed debugging leftover.
+ 	
+ 	* ecore.cs: Use local type instead of a property;
+ 	
+ 	* class.cs (VerifyMembers): Consider also parent to test whether type member
+ 	is local or public.
+ 	
+ 	* expression.cs (FullMethodDesc): Removed.
+ 	
+ 	* attribute.cs (IsValidArgumentType): Made static.
+ 	
 2008-02-17  Raja R Harinath  <harinath@hurrynot.org>
 
 	Cleanup to be more readable.

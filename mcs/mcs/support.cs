@@ -472,7 +472,7 @@ namespace Mono.CSharp {
 
 					while (value > buffer_start + char_count){
 						pos = char_count+1;
-						int p = Peek ();
+						Peek ();
 					}
 					pos = value - buffer_start;
 				}

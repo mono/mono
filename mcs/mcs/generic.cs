@@ -604,6 +604,8 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class TypeParameter : MemberCore, IMemberContainer
 	{
+		static readonly string[] attribute_target = new string [] { "type parameter" };
+		
 		string name;
 		DeclSpace decl;
 		GenericConstraints gc;
@@ -872,13 +874,13 @@ namespace Mono.CSharp {
 
 		public override AttributeTargets AttributeTargets {
 			get {
-				return (AttributeTargets) AttributeTargets.GenericParameter;
+				return AttributeTargets.GenericParameter;
 			}
 		}
 
 		public override string[] ValidAttributeTargets {
 			get {
-				return new string [] { "type parameter" };
+				return attribute_target;
 			}
 		}
 
