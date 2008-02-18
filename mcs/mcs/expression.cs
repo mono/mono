@@ -2586,8 +2586,13 @@ namespace Mono.CSharp {
 				    lc != null && lc.IsZeroInteger)
 					return rc;
 			} else if (oper == Operator.LogicalAnd) {
-				if (rc != null && rc.IsDefaultValue && rc.Type == TypeManager.bool_type)
-					return rc;
+				if (rc != null && rc.IsDefaultValue && rc.Type == TypeManager.bool_type) {
+					if (lc != null)
+						return rc;
+
+					return new SideEffectConstant (rc, left, loc);
+				}
+
 				if (lc != null && lc.IsDefaultValue && lc.Type == TypeManager.bool_type)
 					return lc;
 			}

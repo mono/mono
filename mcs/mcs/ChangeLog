@@ -1,5 +1,17 @@
 2008-02-18  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #328136
+ 	* constant.cs (SideEffectConstant): Don't emit boolean constant.
+ 	
+ 	* expression.cs: Do not fold immediately LogicalAnd operators when the left
+	side is a false constant, because we still need to evaluate the right-hand
+	side.
+	
+	* statement.cs (If): Emit two types of boolean constants (simple constant,
+	side-effect constant).
+ 	
+2008-02-18  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #361457
  	* ecore.cs (IsApplicable): Params methods have lower priority.
  	
