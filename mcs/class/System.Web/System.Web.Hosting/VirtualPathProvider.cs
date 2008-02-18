@@ -63,38 +63,57 @@ namespace System.Web.Hosting {
 
 		public virtual bool DirectoryExists (string virtualDir)
 		{
+			if (prev != null)
+				return prev.DirectoryExists (virtualDir);
+			
 			return false;
 		}
 
 		public virtual bool FileExists (string virtualPath)
 		{
+			if (prev != null)
+				return FileExists (virtualPath);
+			
 			return false;
 		}
 
-		public virtual CacheDependency GetCacheDependency (string virtualPath,
-								IEnumerable virtualPathDependencies,
-								DateTime utcStart)
+		public virtual CacheDependency GetCacheDependency (string virtualPath, IEnumerable virtualPathDependencies, DateTime utcStart)
 		{
+			if (prev != null)
+				return prev.GetCacheDependency (virtualPath, virtualPathDependencies, utcStart);
+			
 			return null;
 		}
 
 		public virtual string GetCacheKey (string virtualPath)
 		{
+			if (prev != null)
+				return prev.GetCacheKey (virtualPath);
+			
 			return null;
 		}
 
 		public virtual VirtualDirectory GetDirectory (string virtualDir)
 		{
+			if (prev != null)
+				return prev.GetDirectory (virtualDir);
+			
 			return null;
 		}
 
 		public virtual VirtualFile GetFile (string virtualPath)
 		{
+			if (prev != null)
+				return prev.GetFile (virtualPath);
+			
 			return null;
 		}
 
 		public virtual string GetFileHash (string virtualPath, IEnumerable virtualPathDependencies)
 		{
+			if (prev != null)
+				return prev.GetFileHash (virtualPath, virtualPathDependencies);
+			
 			return null;
 		}
 
@@ -108,7 +127,10 @@ namespace System.Web.Hosting {
 			// This thing throws a nullref when we're not inside an ASP.NET appdomain, which is what MS does.
 			VirtualPathProvider provider = HostingEnvironment.VirtualPathProvider;
 			VirtualFile file = provider.GetFile (virtualPath);
-			return file.Open ();
+			if (file != null)
+				return file.Open ();
+
+			return null;
 		}
 	}
 }
