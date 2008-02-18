@@ -1,3 +1,8 @@
+2008-02-18  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpRuntime.cs: When app is offline, send status code 503
+	instead of 200. Fixes bug #357565
+
 2008-02-10  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* HttpException.cs: Avoid IndexOutOfRangeException when there are no
