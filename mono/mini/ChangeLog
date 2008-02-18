@@ -1,5 +1,10 @@
 2008-02-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* genmdesc.c: Error out if the .md contains CEE_ opcodes if 
+	MONO_ARCH_ENABLE_NORMALIZE_OPCODES is defined.
+
+	* cpu-amd64.md: Remove some unused opcodes.
+
 	* mini.h mini-ops.h mini.c: Define the OP_Ccc opcodes in mini-ops.h normally
 	like the other opcodes.
 
