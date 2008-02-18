@@ -1,3 +1,7 @@
+2008-02-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DBNull.cs : ToType(typeof(DBNull),...) should be allowed.
+
 2008-02-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Object.cs: Fix parameter name to match MS implementation. Found

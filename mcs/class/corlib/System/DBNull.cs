@@ -126,6 +126,8 @@ namespace System
 		{
 			if (type == typeof (string))
 				return String.Empty;
+			if (type == typeof (DBNull))
+				return this;
 			throw new InvalidCastException ();
 		}
 
