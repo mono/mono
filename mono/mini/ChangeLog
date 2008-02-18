@@ -1,5 +1,9 @@
 2008-02-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* genmdesc.c (build_table): Fix a crash on older glib versions.
+
+	* cpu-sparc.md: Remove some unused opcodes.
+	
 	* genmdesc.c: Error out if the .md contains CEE_ opcodes if 
 	MONO_ARCH_ENABLE_NORMALIZE_OPCODES is defined.
 
