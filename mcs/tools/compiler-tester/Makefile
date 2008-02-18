@@ -11,6 +11,11 @@ all-local: $(PROGRAM)
 clean-local:
 	rm -f $(PROGRAM)
 
+$(dir $(PROGRAM))/.stamp:
+	mkdir -p $(@D)
+	touch $@
+
+$(PROGRAM): $(dir $(PROGRAM))/.stamp
 $(PROGRAM): $(topdir)/class/lib/net_2_1_raw/compiler-tester.exe
 	cp $< $@
 

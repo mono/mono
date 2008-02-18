@@ -1,3 +1,7 @@
+2008-02-18  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Makefile ($(dir $(PROGRAM))/.stamp): New.
+
 2008-02-17  Raja R Harinath  <harinath@hurrynot.org>
 
 	* Makefile [PROFILE=net_2_1]: Copy file from net_2_1_raw profile.
