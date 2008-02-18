@@ -1,3 +1,11 @@
+2008-02-18  Andreia Gaita <avidigal@novell.com>
+
+	* XplatUIX11.cs: Create FosterParent with border width at 0.
+	With the previous value of 4, everytime a control got reparented
+	from parent = null, it's location would be shifted right and 
+	down by 4, since these coordinates would be offset by the 
+	FosterParent's border width.
+
 2008-02-18  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* Control.cs: During diposing firstly remove ourselfes from

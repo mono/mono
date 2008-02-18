@@ -440,7 +440,8 @@ namespace System.Windows.Forms {
 				DefaultColormap = XDefaultColormap(DisplayHandle, ScreenNo);
 
 				// Create the foster parent
-				FosterParent=XCreateSimpleWindow(DisplayHandle, RootWindow, 0, 0, 1, 1, 4, UIntPtr.Zero, UIntPtr.Zero);
+				// it is important that border_width is kept in synch with the other XCreateWindow calls
+				FosterParent=XCreateSimpleWindow(DisplayHandle, RootWindow, 0, 0, 1, 1, 0, UIntPtr.Zero, UIntPtr.Zero);
 				if (FosterParent==IntPtr.Zero) {
 					Console.WriteLine("XplatUIX11 Constructor failed to create FosterParent");
 				}
