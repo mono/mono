@@ -1,3 +1,8 @@
+2008-02-18  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpRuntime.cs: When app is offline, send status code 503
+	instead of 200. Fixes bug #357565
+
 2008-02-07  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpException.cs: more exception output compatibility changes to

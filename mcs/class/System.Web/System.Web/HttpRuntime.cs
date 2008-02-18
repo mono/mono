@@ -323,6 +323,7 @@ namespace System.Web {
 			response.Clear ();
 			response.ContentType = "text/html";
 			response.ExpiresAbsolute = DateTime.UtcNow;
+			response.StatusCode = 503;
 			response.TransmitFile (app_offline_file, true);
 			
 			context.Request.ReleaseResources ();
