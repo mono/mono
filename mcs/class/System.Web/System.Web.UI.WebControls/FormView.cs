@@ -987,10 +987,10 @@ namespace System.Web.UI.WebControls
 				table.Rows.Add (bottomPagerRow);
 			}
 
+			OnItemCreated (EventArgs.Empty);
+			
 			if (dataBinding)
 				DataBind (false);
-			
-			OnItemCreated (EventArgs.Empty);
 
 			return PageCount;
 		}
