@@ -1,3 +1,8 @@
+2008-02-18	Arina Itkes <arinai@mainsoft.com>
+
+	* XmlNamespaceManager.cs: If there is a not empty prefix for 
+	  a namespace it should be returned.
+
 2008-01-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlReader.cs : MoveToNextSibling() should check EOF (as Skip() does

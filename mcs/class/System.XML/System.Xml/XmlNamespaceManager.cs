@@ -334,9 +334,6 @@ namespace System.Xml
 			if (uri == null)
 				return null;
 
-			if (CompareString (uri, DefaultNamespace, atomizedName))
-				return string.Empty;
-
 			if (CompareString (uri, XmlnsXml, atomizedName))
 				return PrefixXml;
 			
@@ -348,6 +345,9 @@ namespace System.Xml
 					if (!excludeOverriden || !IsOverriden (i))
 						return decls [i].Prefix;
 			}
+		
+			if (CompareString (uri, DefaultNamespace, atomizedName))
+				return string.Empty;
 
 			// ECMA specifies that this method returns String.Empty
 			// in case of no match. But actually MS.NET returns null.
