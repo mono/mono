@@ -111,6 +111,7 @@ enum {
 #define MONO_ADD_INS(b,inst) do {	\
 		if ((b)->last_ins) {	\
 			(b)->last_ins->next = (inst);	\
+            (inst)->prev = (b)->last_ins;   \
 			(b)->last_ins = (inst);	\
 		} else {	\
 			(b)->code = (b)->last_ins = (inst);	\
@@ -336,7 +337,7 @@ struct MonoInst {
 	/* used by the register allocator */
 	gint32 dreg, sreg1, sreg2;
 
-	MonoInst *next;
+	MonoInst *next, *prev;
 
 	union {
 		union {
@@ -645,10 +646,9 @@ typedef struct {
 	MonoInst        **args;
 
 	/* 
-	 * In the new IR, this variable represents the hidden argument holding the vtype
+	 * This variable represents the hidden argument holding the vtype
 	 * return address. If the method returns something other than a vtype, or
-	 * the vtype is returned in registers (cfg->ret_var_is_local in the old JIT), 
-	 * this is NULL.
+	 * the vtype is returned in registers this is NULL.
 	 */
 	MonoInst        *vret_addr;
 
@@ -1090,7 +1090,9 @@ void      mono_create_jump_table            (MonoCompile *cfg, MonoInst *label, 
 int       mono_compile_assembly             (MonoAssembly *ass, guint32 opts, const char *aot_options) MONO_INTERNAL;
 MonoCompile *mini_method_compile            (MonoMethod *method, guint32 opts, MonoDomain *domain, gboolean run_cctors, gboolean compile_aot, int parts) MONO_INTERNAL;
 void      mono_destroy_compile              (MonoCompile *cfg) MONO_INTERNAL;
-MonoJitICallInfo    *mono_find_jit_opcode_emulation (int opcode) MONO_INTERNAL;
+MonoJitICallInfo *mono_find_jit_opcode_emulation (int opcode) MONO_INTERNAL;
+void	  mono_print_ins_index (int i, MonoInst *ins) MONO_INTERNAL;
+void	  mono_print_ins (MonoInst *ins) MONO_INTERNAL;
 
 gboolean  mini_class_is_system_array (MonoClass *klass);
 MonoMethodSignature *mono_get_element_address_signature (int arity);
@@ -1171,6 +1173,7 @@ void              mini_emit_memcpy2 (MonoCompile *cfg, int destreg, int doffset,
 CompRelation      mono_opcode_to_cond (int opcode) MONO_INTERNAL;
 CompType          mono_opcode_to_type (int opcode, int cmp_opcode) MONO_INTERNAL;
 CompRelation      mono_negate_cond (CompRelation cond) MONO_INTERNAL;
+int               mono_op_imm_to_op (int opcode) MONO_INTERNAL;
 
 void              mono_decompose_long_opts (MonoCompile *cfg) MONO_INTERNAL;
 void              mono_decompose_vtype_opts (MonoCompile *cfg) MONO_INTERNAL;

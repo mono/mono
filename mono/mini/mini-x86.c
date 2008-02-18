@@ -862,7 +862,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 
 	switch (cinfo->ret.storage) {
 	case ArgOnStack:
-		if (cfg->new_ir && MONO_TYPE_ISSTRUCT (sig->ret)) {
+		if (MONO_TYPE_ISSTRUCT (sig->ret)) {
 			/* 
 			 * In the new IR, the cfg->vret_addr variable represents the
 			 * vtype return value.
@@ -928,7 +928,7 @@ mono_arch_create_vars (MonoCompile *cfg)
 
 	if (cinfo->ret.storage == ArgValuetypeInReg)
 		cfg->ret_var_is_local = TRUE;
-	if (cfg->new_ir && (cinfo->ret.storage != ArgValuetypeInReg) && MONO_TYPE_ISSTRUCT (sig->ret)) {
+	if ((cinfo->ret.storage != ArgValuetypeInReg) && MONO_TYPE_ISSTRUCT (sig->ret)) {
 		cfg->vret_addr = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_ARG);
 	}
 }
@@ -2573,8 +2573,14 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_X86_ADD_MEMBASE_IMM:
 			x86_alu_membase_imm (code, X86_ADD, ins->inst_basereg, ins->inst_offset, ins->inst_imm);
 			break;
+		case OP_X86_ADD_REG_MEMBASE:
+			x86_alu_reg_membase (code, X86_ADD, ins->sreg1, ins->sreg2, ins->inst_offset);
+			break;
 		case OP_X86_SUB_MEMBASE_IMM:
 			x86_alu_membase_imm (code, X86_SUB, ins->inst_basereg, ins->inst_offset, ins->inst_imm);
+			break;
+		case OP_X86_SUB_REG_MEMBASE:
+			x86_alu_reg_membase (code, X86_SUB, ins->sreg1, ins->sreg2, ins->inst_offset);
 			break;
 		case OP_X86_AND_MEMBASE_IMM:
 			x86_alu_membase_imm (code, X86_AND, ins->inst_basereg, ins->inst_offset, ins->inst_imm);
@@ -2620,7 +2626,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_X86_DEC_REG:
 			x86_dec_reg (code, ins->dreg);
 			break;
-		case OP_X86_MUL_MEMBASE:
+		case OP_X86_MUL_REG_MEMBASE:
 		case OP_X86_MUL_REG_MEMBASE:
 			x86_imul_reg_membase (code, ins->sreg1, ins->sreg2, ins->inst_offset);
 			break;
@@ -2636,12 +2642,12 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_BREAK:
 			x86_breakpoint (code);
 			break;
-		case OP_NOP:
-		case OP_DUMMY_USE:
-		case OP_DUMMY_STORE:
-		case OP_NOT_REACHED:
-		case OP_NOT_NULL:
-			break;
+ 		case OP_NOP:
+ 		case OP_DUMMY_USE:
+ 		case OP_DUMMY_STORE:
+ 		case OP_NOT_REACHED:
+ 		case OP_NOT_NULL:
+ 			break;
 		case OP_ADDCC:
 		case OP_IADDCC:
 		case OP_IADD:
@@ -3279,6 +3285,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_CGT_UN:
 		case OP_ICGT_UN:
 		case OP_CNE:
+		case OP_ICEQ:
+		case OP_ICLT:
+		case OP_ICLT_UN:
+		case OP_ICGT:
+		case OP_ICGT_UN:
 			x86_set_reg (code, cc_table [mono_opcode_to_cond (ins->opcode)], ins->dreg, cc_signed_table [mono_opcode_to_cond (ins->opcode)]);
 			x86_widen_reg (code, ins->dreg, ins->dreg, FALSE, FALSE);
 			break;
@@ -3620,7 +3631,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;		
 		case OP_X86_FPOP:
 			x86_fstp (code, 0);
-			break;		
+			break;
+		case OP_X86_FXCH:
+			x86_fxch (code, ins->inst_imm);
+			break;
 		case OP_X86_FXCH:
 			x86_fxch (code, ins->inst_imm);
 			break;

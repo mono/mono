@@ -281,9 +281,14 @@ x86_fpop: src1:f len:3
 x86_fp_load_i8: dest:f src1:b len:8
 x86_fp_load_i4: dest:f src1:b len:8
 x86_seteq_membase: src1:b len:9
-x86_add_membase: dest:i src1:i src2:b clob:1 len:13
-x86_sub_membase: dest:i src1:i src2:b clob:1 len:13
-x86_mul_membase: dest:i src1:i src2:b clob:1 len:14
+
+x86_add_reg_membase: dest:i src1:i src2:b clob:1 len:13
+x86_sub_reg_membase: dest:i src1:i src2:b clob:1 len:13
+x86_mul_reg_membase: dest:i src1:i src2:b clob:1 len:13
+x86_and_reg_membase: dest:i src1:i src2:b clob:1 len:13
+x86_or_reg_membase: dest:i src1:i src2:b clob:1 len:13
+x86_xor_reg_membase: dest:i src1:i src2:b clob:1 len:13
+
 amd64_test_null: src1:i len:5
 amd64_icompare_membase_reg: src1:b src2:i len:8
 amd64_icompare_membase_imm: src1:b len:13
@@ -389,12 +394,6 @@ long_cgt_un: dest:c len:64
 long_clt: dest:c len:64
 long_clt_un: dest:c len:64
 
-x86_add_reg_membase: dest:i src1:i src2:b clob:1 len:13
-x86_sub_reg_membase: dest:i src1:i src2:b clob:1 len:13
-x86_and_reg_membase: dest:i src1:i src2:b clob:1 len:13
-x86_or_reg_membase: dest:i src1:i src2:b clob:1 len:13
-x86_xor_reg_membase: dest:i src1:i src2:b clob:1 len:13
-
 int_conv_to_i1: dest:i src1:i len:4
 int_conv_to_i2: dest:i src1:i len:4
 int_conv_to_i4: dest:i src1:i len:3
@@ -464,8 +463,6 @@ amd64_and_reg_membase: dest:i src1:i src2:b clob:1 len:14
 amd64_or_reg_membase: dest:i src1:i src2:b clob:1 len:14
 amd64_xor_reg_membase: dest:i src1:i src2:b clob:1 len:14
 
-amd64_add_membase_imm: src1:b len:13
-amd64_sub_membase_imm: src1:b len:13
 amd64_and_membase_imm: src1:b len:13
 amd64_or_membase_imm: src1:b len:13
 amd64_xor_membase_imm: src1:b len:13
@@ -487,6 +484,8 @@ amd64_and_membase_reg: src1:b src2:i len:13
 amd64_or_membase_reg: src1:b src2:i len:13
 amd64_xor_membase_reg: src1:b src2:i len:13
 amd64_mul_membase_reg: src1:b src2:i len:15
+
+amd64_add_membase_imm: src1:b len:16
 
 float_conv_to_r4: dest:f src1:f
 

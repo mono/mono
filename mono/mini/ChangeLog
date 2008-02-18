@@ -28,6 +28,64 @@
 	* mini-amd64.c (mono_arch_emit_outarg_vt): Pass a reasonable alignment to
 	mini_emit_memcpy2 ().
 
+2008-02-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ia64.c: Use cfg->vret_addr instead of cfg->ret.
+
+	* mini-arm.h mini-arm.c: Use cfg->vret_addr instead of cfg->ret.
+
+	* mini-sparc.c: Use cfg->vret_addr instead of cfg->ret. Name the MonoCompile
+	variables 'cfg' instead of 'm' for consistency.
+
+	* mini-x86.c: Use cfg->vret_addr instead of cfg->ret.
+
+	* mini.h (MonoCompile): Add new 'vret_addr' field which represents the hidden
+	argument holding the vtype return address, to avoid the ambigious use of
+	cfg->ret for this purpose.
+
+	* mini.c (NEW_RETLOADA): Use vret_addr if set.
+
+	* mini-amd64.c: Use cfg->vret_addr instead of cfg->ret.
+	
+	* mini-codegen.c (mono_print_ins): Rename to mono_print_ins_index (), Add a
+	new mono_print_ins () function which only takes one argument.
+
+2008-02-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-s390.h (MONO_OUTPUT_VTR): Use cfg instead of s, avoid assignments to
+	macro arguments.
+
+2008-02-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ops.h: Get rid of OP_SPARC_LOCALLOC_IMM.
+
+	* mini-sparc.c inssel-sparc.brg: Use OP_LOCALLOC_IMM instead of OP_SPARC_LOCALLOC_IMM.
+
+	* mini-x86.c: Sync with the version on the linear IR branch by adding new 
+	opcodes and other small changes.
+
+	* mini-ops.h: Add some new opcodes from the linear IR branch.
+
+	* mini-ops.h: Get rid of the OP_X86_..._MEMBASE opcodes.
+
+	* mini-x86.c inssel-x86.brg cpu-x86.md: Get rid of the confusing _MEMBASE
+	opcodes, use the REG_MEMBASE opcodes instead.
+	
+	* mini-amd64.c inssel-amd64.brg cpu-amd64.md: Get rid of the confusing _MEMBASE
+	opcodes, use the REG_MEMBASE opcodes instead.
+	
+	* mini-amd64.c (mono_arch_output_basic_block): Sync with the version on the
+	linear IR branch.
+
+	* mini.c (mono_op_imm_to_op): New helper function.
+
+	* mini-ops.h: Add some opcodes from linear IR branch.
+
+2008-02-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-alpha.h mini-alpha.c tramp-alpha.c: Alpha port updates from Sergey Tikhonov 
+	<tsv@solvo.ru>.
+
 2008-02-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_normalize_opcodes): Always convert CEE_CONV_R4/R8 to 

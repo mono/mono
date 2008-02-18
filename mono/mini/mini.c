@@ -579,14 +579,23 @@ mono_jump_info_token_new (MonoMemPool *mp, MonoImage *image, guint32 token)
 	} while (0)
 
 #define NEW_RETLOADA(cfg,dest) do {	\
-		(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
-		(dest)->ssa_op = MONO_SSA_ADDRESS_TAKEN;	\
-		(dest)->inst_i0 = (cfg)->ret;	\
-		(dest)->inst_i0->flags |= MONO_INST_INDIRECT;	\
-		(dest)->opcode = cfg->ret_var_is_local ? OP_LDADDR : CEE_LDIND_I;	\
-		(dest)->type = STACK_MP;	\
-		(dest)->klass = (dest)->inst_i0->klass;	\
-                (cfg)->disable_ssa = TRUE; \
+        if (cfg->vret_addr) { \
+		    (dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
+		    (dest)->ssa_op = MONO_SSA_LOAD;	\
+		    (dest)->inst_i0 = cfg->vret_addr; \
+		    (dest)->opcode = mini_type_to_ldind ((cfg), (dest)->inst_i0->inst_vtype); \
+            (dest)->type = STACK_MP; \
+		    (dest)->klass = (dest)->inst_i0->klass;	\
+        } else { \
+			(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
+		    (dest)->ssa_op = MONO_SSA_ADDRESS_TAKEN;	\
+		    (dest)->inst_i0 = (cfg)->ret;	\
+		    (dest)->inst_i0->flags |= MONO_INST_INDIRECT;	\
+		    (dest)->opcode = cfg->ret_var_is_local ? OP_LDADDR : CEE_LDIND_I;	\
+		    (dest)->type = STACK_MP;	\
+		    (dest)->klass = (dest)->inst_i0->klass;	\
+            (cfg)->disable_ssa = TRUE; \
+        } \
 	} while (0)
 
 #define NEW_ARGLOADA(cfg,dest,num) do {	\
@@ -1802,6 +1811,92 @@ mini_type_to_stind (MonoCompile* cfg, MonoType *type)
 			return CEE_STIND_REF;
 	}
 	return mono_type_to_stind (type);
+}
+
+int
+mono_op_imm_to_op (int opcode)
+{
+	switch (opcode) {
+	case OP_ADD_IMM:
+		return OP_PADD;
+	case OP_IADD_IMM:
+		return OP_IADD;
+	case OP_LADD_IMM:
+		return OP_LADD;
+	case OP_ISUB_IMM:
+		return OP_ISUB;
+	case OP_LSUB_IMM:
+		return OP_LSUB;
+	case OP_AND_IMM:
+#if SIZEOF_VOID_P == 4
+		return OP_IAND;
+#else
+		return OP_LAND;
+#endif
+	case OP_IAND_IMM:
+		return OP_IAND;
+	case OP_LAND_IMM:
+		return OP_LAND;
+	case OP_IOR_IMM:
+		return OP_IOR;
+	case OP_LOR_IMM:
+		return OP_LOR;
+	case OP_IXOR_IMM:
+		return OP_IXOR;
+	case OP_LXOR_IMM:
+		return OP_LXOR;
+	case OP_ISHL_IMM:
+		return OP_ISHL;
+	case OP_LSHL_IMM:
+		return OP_LSHL;
+	case OP_ISHR_IMM:
+		return OP_ISHR;
+	case OP_LSHR_IMM:
+		return OP_LSHR;
+	case OP_ISHR_UN_IMM:
+		return OP_ISHR_UN;
+	case OP_LSHR_UN_IMM:
+		return OP_LSHR_UN;
+	case OP_IDIV_IMM:
+		return OP_IDIV;
+	case OP_IDIV_UN_IMM:
+		return OP_IDIV_UN;
+	case OP_IREM_UN_IMM:
+		return OP_IREM_UN;
+	case OP_IREM_IMM:
+		return OP_IREM;
+	case OP_DIV_IMM:
+#if SIZEOF_VOID_P == 4
+		return OP_IDIV;
+#else
+		return OP_LDIV;
+#endif
+	case OP_REM_IMM:
+#if SIZEOF_VOID_P == 4
+		return OP_IREM;
+#else
+		return OP_LREM;
+#endif
+	case OP_ADDCC_IMM:
+		return OP_ADDCC;
+	case OP_ADC_IMM:
+		return OP_ADC;
+	case OP_SUBCC_IMM:
+		return OP_SUBCC;
+	case OP_SBB_IMM:
+		return OP_SBB;
+	case OP_IADC_IMM:
+		return OP_IADC;
+	case OP_ISBB_IMM:
+		return OP_ISBB;
+	case OP_COMPARE_IMM:
+		return OP_COMPARE;
+	case OP_ICOMPARE_IMM:
+		return OP_ICOMPARE;
+	default:
+		printf ("%s\n", mono_inst_name (opcode));
+		g_assert_not_reached ();
+	}
 }
 
 /*
@@ -5988,7 +6083,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					if (ins->opcode == CEE_STOBJ) {
 						NEW_RETLOADA (cfg, ins);
 						/* FIXME: it is possible some optimization will pass the a heap pointer for the struct address, so we'll need the write barrier */
-						handle_stobj (cfg, bblock, ins, *sp, ip, ins->klass, FALSE, FALSE, FALSE);
+						handle_stobj (cfg, bblock, ins, *sp, ip, cfg->ret->klass, FALSE, FALSE, FALSE);
 					} else {
 						ins->opcode = OP_SETRET;
 						ins->cil_code = ip;

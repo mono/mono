@@ -490,12 +490,6 @@ mono_print_ins_index (int i, MonoInst *ins)
 	printf ("\n");
 }
 
-void
-mono_print_ins (MonoInst *ins)
-{
-	mono_print_ins_index (-1, ins);
-}
-
 static void
 print_regtrack (RegTrack *t, int num)
 {
@@ -514,7 +508,18 @@ print_regtrack (RegTrack *t, int num)
 		printf ("liveness: %s [%d - %d]\n", r, t [i].born_in, t[i].killed_in);
 	}
 }
+#else
+void
+mono_print_ins_index (int i, MonoInst *ins)
+{
+}
 #endif /* DISABLE_LOGGING */
+
+void
+mono_print_ins (MonoInst *ins)
+{
+	mono_print_ins_index (-1, ins);
+}
 
 typedef struct InstList InstList;
 

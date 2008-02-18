@@ -355,7 +355,7 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
  */
 #define MONO_INST_NEW(cfg,dest,op) do {	\
 		(dest) = mono_mempool_alloc ((cfg)->mempool, sizeof (MonoInst));	\
-        (dest)->inst_p0 = (dest)->inst_p1 = (dest)->next = NULL; \
+        (dest)->inst_p0 = (dest)->inst_p1 = (dest)->next = (dest)->prev = NULL; \
 		(dest)->opcode = (op);	\
         (dest)->flags = 0; \
         (dest)->dreg = (dest)->sreg1 = (dest)->sreg2 = -1;  \
@@ -10169,92 +10169,6 @@ mono_op_to_op_imm (int opcode)
 	return -1;
 }
 
-int
-mono_op_imm_to_op (int opcode)
-{
-	switch (opcode) {
-	case OP_ADD_IMM:
-		return OP_PADD;
-	case OP_IADD_IMM:
-		return OP_IADD;
-	case OP_LADD_IMM:
-		return OP_LADD;
-	case OP_ISUB_IMM:
-		return OP_ISUB;
-	case OP_LSUB_IMM:
-		return OP_LSUB;
-	case OP_AND_IMM:
-#if SIZEOF_VOID_P == 4
-		return OP_IAND;
-#else
-		return OP_LAND;
-#endif
-	case OP_IAND_IMM:
-		return OP_IAND;
-	case OP_LAND_IMM:
-		return OP_LAND;
-	case OP_IOR_IMM:
-		return OP_IOR;
-	case OP_LOR_IMM:
-		return OP_LOR;
-	case OP_IXOR_IMM:
-		return OP_IXOR;
-	case OP_LXOR_IMM:
-		return OP_LXOR;
-	case OP_ISHL_IMM:
-		return OP_ISHL;
-	case OP_LSHL_IMM:
-		return OP_LSHL;
-	case OP_ISHR_IMM:
-		return OP_ISHR;
-	case OP_LSHR_IMM:
-		return OP_LSHR;
-	case OP_ISHR_UN_IMM:
-		return OP_ISHR_UN;
-	case OP_LSHR_UN_IMM:
-		return OP_LSHR_UN;
-	case OP_IDIV_IMM:
-		return OP_IDIV;
-	case OP_IDIV_UN_IMM:
-		return OP_IDIV_UN;
-	case OP_IREM_UN_IMM:
-		return OP_IREM_UN;
-	case OP_IREM_IMM:
-		return OP_IREM;
-	case OP_DIV_IMM:
-#if SIZEOF_VOID_P == 4
-		return OP_IDIV;
-#else
-		return OP_LDIV;
-#endif
-	case OP_REM_IMM:
-#if SIZEOF_VOID_P == 4
-		return OP_IREM;
-#else
-		return OP_LREM;
-#endif
-	case OP_ADDCC_IMM:
-		return OP_ADDCC;
-	case OP_ADC_IMM:
-		return OP_ADC;
-	case OP_SUBCC_IMM:
-		return OP_SUBCC;
-	case OP_SBB_IMM:
-		return OP_SBB;
-	case OP_IADC_IMM:
-		return OP_IADC;
-	case OP_ISBB_IMM:
-		return OP_ISBB;
-	case OP_COMPARE_IMM:
-		return OP_COMPARE;
-	case OP_ICOMPARE_IMM:
-		return OP_ICOMPARE;
-	default:
-		printf ("%s\n", mono_inst_name (opcode));
-		g_assert_not_reached ();
-	}
-}
-
 static int
 ldind_to_load_membase (int opcode)
 {
@@ -11295,7 +11209,7 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
  *   arguments, or stores killing loads etc. Also, should we fold loads into other
  *   instructions if the result of the load is used multiple times ?
  * - make the REM_IMM optimization in mini-x86.c arch-independent.
- * - LAST MERGE: 95539 (except 92841).
+ * - LAST MERGE: 96067 (except 92841).
  */
 
 /*

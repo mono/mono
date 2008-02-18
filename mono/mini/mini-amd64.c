@@ -996,9 +996,9 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 
 	sig = mono_method_signature (cfg->method);
 
-	mono_arch_compute_omit_fp (cfg);
-
 	cinfo = cfg->arch.cinfo;
+
+	mono_arch_compute_omit_fp (cfg);
 
 	/*
 	 * We use the ABI calling conventions for managed code as well.
@@ -1040,42 +1040,25 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 		case ArgInIReg:
 		case ArgInFloatSSEReg:
 		case ArgInDoubleSSEReg:
-			if (MONO_TYPE_ISSTRUCT (sig->ret)) {
-				if (cfg->new_ir) {
-					/* 
-					 * In the new IR, the cfg->vret_addr variable represents the
-					 * vtype return value.
-					 */
-					cfg->vret_addr->opcode = OP_REGOFFSET;
-					cfg->vret_addr->inst_basereg = cfg->frame_reg;
-					if (cfg->arch.omit_fp) {
-						cfg->vret_addr->inst_offset = offset;
-						offset += 8;
-					} else {
-						offset += 8;
-						cfg->vret_addr->inst_offset = -offset;
-					}
-					if (G_UNLIKELY (cfg->verbose_level > 1)) {
-						printf ("vret_addr =");
-						mono_print_ins (cfg->vret_addr);
-					}
+			if ((MONO_TYPE_ISSTRUCT (sig->ret) && !mono_class_from_mono_type (sig->ret)->enumtype) || (sig->ret->type == MONO_TYPE_TYPEDBYREF)) {
+				/* The register is volatile */
+				cfg->vret_addr->opcode = OP_REGOFFSET;
+				cfg->vret_addr->inst_basereg = cfg->frame_reg;
+				if (cfg->arch.omit_fp) {
+					cfg->vret_addr->inst_offset = offset;
+					offset += 8;
 				} else {
-					/* The register is volatile */
-					cfg->ret->opcode = OP_REGOFFSET;
-					cfg->ret->inst_basereg = cfg->frame_reg;
-					if (cfg->arch.omit_fp) {
-						cfg->ret->inst_offset = offset;
-						offset += 8;
-					} else {
-						offset += 8;
-						cfg->ret->inst_offset = -offset;
-					}
+					offset += 8;
+					cfg->vret_addr->inst_offset = -offset;
+				}
+				if (G_UNLIKELY (cfg->verbose_level > 1)) {
+					printf ("vret_addr =");
+					mono_print_ins (cfg->vret_addr);
 				}
 			}
 			else {
 				cfg->ret->opcode = OP_REGVAR;
 				cfg->ret->inst_c0 = cinfo->ret.reg;
-				cfg->ret->dreg = cfg->ret->inst_c0;
 			}
 			break;
 		case ArgValuetypeInReg:
@@ -1089,6 +1072,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 		default:
 			g_assert_not_reached ();
 		}
+		cfg->ret->dreg = cfg->ret->inst_c0;
 	}
 
 	/* Allocate locals */
@@ -1198,7 +1182,7 @@ mono_arch_create_vars (MonoCompile *cfg)
 	if (cinfo->ret.storage == ArgValuetypeInReg)
 		cfg->ret_var_is_local = TRUE;
 
-	if (cfg->new_ir && (cinfo->ret.storage != ArgValuetypeInReg) && MONO_TYPE_ISSTRUCT (sig->ret)) {
+	if ((cinfo->ret.storage != ArgValuetypeInReg) && MONO_TYPE_ISSTRUCT (sig->ret)) {
 		cfg->vret_addr = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_ARG);
 		if (G_UNLIKELY (cfg->verbose_level > 1)) {
 			printf ("vret_addr = ");
@@ -2794,15 +2778,8 @@ emit_load_volatile_arguments (MonoCompile *cfg, guint8 *code)
 	
 	/* This is the opposite of the code in emit_prolog */
 	if (sig->ret->type != MONO_TYPE_VOID) {
-		/* Save volatile arguments to the stack */
-		if (cfg->new_ir) {
-			if (cfg->vret_addr && (cfg->vret_addr->opcode != OP_REGVAR))
-				amd64_mov_reg_membase (code, cinfo->ret.reg, cfg->vret_addr->inst_basereg, cfg->vret_addr->inst_offset, 8);
-		} else {
-			if ((cinfo->ret.storage == ArgInIReg) && (cfg->ret->opcode != OP_REGVAR)) {
-				amd64_mov_reg_membase (code, cinfo->ret.reg, cfg->ret->inst_basereg, cfg->ret->inst_offset, 8);
-			}
-		}
+		if (cfg->vret_addr && (cfg->vret_addr->opcode != OP_REGVAR))
+			amd64_mov_reg_membase (code, cinfo->ret.reg, cfg->vret_addr->inst_basereg, cfg->vret_addr->inst_offset, 8);
 	}
 
 	for (i = 0; i < sig->param_count + sig->hasthis; ++i) {
@@ -3080,12 +3057,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_alu_reg_membase_size (code, X86_XOR, ins->sreg1, ins->sreg2, ins->inst_offset, 4);
 			break;
 
-		case OP_X86_ADD_MEMBASE:
-			amd64_alu_reg_membase_size (code, X86_ADD, ins->sreg1, ins->sreg2, ins->inst_offset, 4);
-			break;
-		case OP_X86_SUB_MEMBASE:
-			amd64_alu_reg_membase_size (code, X86_SUB, ins->sreg1, ins->sreg2, ins->inst_offset, 4);
-			break;
 		case OP_X86_ADD_MEMBASE_IMM:
 			/* FIXME: Make a 64 version too */
 			amd64_alu_membase_imm_size (code, X86_ADD, ins->inst_basereg, ins->inst_offset, ins->inst_imm, 4);
@@ -3133,7 +3104,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_X86_DEC_REG:
 			amd64_dec_reg_size (code, ins->dreg, 4);
 			break;
-		case OP_X86_MUL_MEMBASE:
+		case OP_X86_MUL_REG_MEMBASE:
 		case OP_X86_MUL_MEMBASE_REG:
 			amd64_imul_reg_membase_size (code, ins->sreg1, ins->sreg2, ins->inst_offset, 4);
 			break;
@@ -5077,13 +5048,8 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 
 	if (sig->ret->type != MONO_TYPE_VOID) {
 		/* Save volatile arguments to the stack */
-		if (cfg->new_ir) {
-			if (cfg->vret_addr && (cfg->vret_addr->opcode != OP_REGVAR))
-				amd64_mov_membase_reg (code, cfg->vret_addr->inst_basereg, cfg->vret_addr->inst_offset, cinfo->ret.reg, 8);
-		} else {
-			if ((cinfo->ret.storage == ArgInIReg) && (cfg->ret->opcode != OP_REGVAR))
-				amd64_mov_membase_reg (code, cfg->ret->inst_basereg, cfg->ret->inst_offset, cinfo->ret.reg, 8);
-		}
+		if (cfg->vret_addr && (cfg->vret_addr->opcode != OP_REGVAR))
+			amd64_mov_membase_reg (code, cfg->vret_addr->inst_basereg, cfg->vret_addr->inst_offset, cinfo->ret.reg, 8);
 	}
 
 	/* Keep this in sync with emit_load_volatile_arguments */

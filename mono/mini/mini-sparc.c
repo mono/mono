@@ -828,16 +828,10 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 #ifdef SPARCV9
 			g_assert_not_reached ();
 #else
-			if (cfg->new_ir) {
-				cfg->vret_addr->opcode = OP_REGOFFSET;
-				cfg->vret_addr->inst_basereg = sparc_fp;
-				cfg->vret_addr->inst_offset = 64;
-			} else {
-				/* valuetypes */
-				cfg->ret->opcode = OP_REGOFFSET;
-				cfg->ret->inst_basereg = sparc_fp;
-				cfg->ret->inst_offset = 64;
-			}
+			/* valuetypes */
+			cfg->vret_addr->opcode = OP_REGOFFSET;
+			cfg->vret_addr->inst_basereg = sparc_fp;
+			cfg->vret_addr->inst_offset = 64;
 #endif
 			break;
 		default:
@@ -3333,10 +3327,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 			break;
 		}
-		case OP_SPARC_LOCALLOC_IMM:
 		case OP_LOCALLOC_IMM: {
-			gint32 offset = cfg->new_ir ? ins->inst_imm : ins->inst_c0;
-			gint32 offset2;
+			gint32 offset = ins->inst_imm;
 
 #ifdef MONO_ARCH_SIGSEGV_ON_ALTSTACK
 			/* Perform stack touching */
