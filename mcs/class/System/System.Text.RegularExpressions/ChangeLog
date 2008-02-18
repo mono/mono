@@ -1,3 +1,7 @@
+2008-02-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* CILCompiler.cs (EmitEvalMethodBody): Check for the not-yet supported
+	groups.Count > 1.
 
 Thu Feb 14 19:03:00 CET 2008 Paolo Molaro <lupus@ximian.com>
 

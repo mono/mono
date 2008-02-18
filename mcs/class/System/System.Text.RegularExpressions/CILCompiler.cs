@@ -20,6 +20,7 @@ namespace System.Text.RegularExpressions {
 	class CILCompiler : RxCompiler, ICompiler {
 		DynamicMethod[] eval_methods;
 		bool[] eval_methods_defined;
+		int group_count;
 
 		static FieldInfo fi_str = typeof (RxInterpreter).GetField ("str", BindingFlags.Instance|BindingFlags.NonPublic);
 		static FieldInfo fi_string_end = typeof (RxInterpreter).GetField ("string_end", BindingFlags.Instance|BindingFlags.NonPublic);
@@ -32,6 +33,8 @@ namespace System.Text.RegularExpressions {
 
 			eval_methods = new DynamicMethod [code.Length];
 			eval_methods_defined = new bool [code.Length];
+
+			group_count = 1 + (code [1] | (code [2] << 8));
 
 			// The main eval method
 		    DynamicMethod main = GetEvalMethod (code, 11);
@@ -143,7 +146,8 @@ namespace System.Text.RegularExpressions {
 		 * Emit IL code for a sequence of opcodes starting at pc. If there is a match,
 		 * set frame.local_strpos_res to the position of the match, then branch to 
 		 * frame.label_pass. Else branch to frame.label_fail.
-		 * Keep this in synch with RxInterpreter.EvalByteCode ()
+		 * Keep this in synch with RxInterpreter.EvalByteCode (). It it is sync with
+		 * the version in r96072.
 		 */
 		private DynamicMethod EmitEvalMethodBody (DynamicMethod m, ILGenerator ilgen,
 												  Frame frame, byte[] program, int pc)
@@ -160,6 +164,8 @@ namespace System.Text.RegularExpressions {
 					pc += program [pc + 1] | (program [pc + 2] << 8);
 
 					// FIXME: Group support
+					if (group_count > 1)
+						return null;
 					
 					// Optimize some common cases by inlining the code generated for the
 					// anchor body 
@@ -172,6 +178,9 @@ namespace System.Text.RegularExpressions {
 						 *   if (str [strpos] == program [pc + 1]) {
 						 *     match_start = strpos;
 						 *     strpos_result = strpos + 1;
+						 *     SetStartOfMatch (strpos)
+						 *     if (groups.Length > 1)
+						 *		marks [groups [0]].End = res;
 						 *     return true;
 						 *   }
 						 *   strpos ++;
