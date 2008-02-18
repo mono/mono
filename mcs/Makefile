@@ -13,37 +13,39 @@ net_3_5_SUBDIRS := build class
 
 # List of test subdirs that should pass 100%
 centum_tests := \
-	class/corlib \
-	class/System \
-	class/System.XML	\
-	class/Commons.Xml.Relaxng \
-	class/Cscompmgd \
-	class/Microsoft.JScript \
-	class/Mono.Posix \
-	class/Mono.Security \
-	class/System.Messaging \
-	class/System.Runtime.Remoting \
-	class/System.Runtime.Serialization.Formatters.Soap \
-	class/System.Security \
-	class/System.ServiceProcess \
-	class/System.Web.Services \
-	tests \
+	class/corlib						\
+	class/System						\
+	class/System.XML					\
+	class/Commons.Xml.Relaxng				\
+	class/Cscompmgd						\
+	class/Microsoft.JScript					\
+	class/Mono.Posix					\
+	class/Mono.Security					\
+	class/System.Messaging					\
+	class/System.Runtime.Remoting				\
+	class/System.Runtime.Serialization.Formatters.Soap	\
+	class/System.Security					\
+	class/System.ServiceProcess				\
+	class/System.Web.Services				\
+	tests							\
 	errors
 
-default_centum_tests :=		\
+default_centum_tests := \
 	$(centum_tests) 	\
 	class/System.Data
 
 net_2_0_centum_tests := \
-	$(centum_tests) 	\
+	$(centum_tests)				\
 	class/System.Core			\
-	class/System.Configuration	\
-	class/Microsoft.Build.Framework	\
-	class/Microsoft.Build.Utilities	\
+	class/System.Configuration		\
+	class/System.Xml.Linq			\
+	class/Microsoft.Build.Framework		\
+	class/Microsoft.Build.Utilities		\
 	class/Microsoft.Build.Engine
 #class/Microsoft.Build.Tasks	
 #class/Mono.C5
 
+# note that System.Xml.Linq is here to prevent this from being empty
 net_3_5_centum_tests := \
 	class/System.Xml.Linq
 #class/System.Web.Extensions		
