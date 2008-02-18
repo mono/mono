@@ -1,3 +1,7 @@
+2008-02-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* CustomAttributeDataTest.cs: New file.
+
 2008-02-02  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* MethodInfoTest.cs: Numbered tests. Improved existing tests.
