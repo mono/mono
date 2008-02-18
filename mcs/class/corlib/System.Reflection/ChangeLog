@@ -1,3 +1,8 @@
+2008-02-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* CustomAttributeTypedArgument.cs (.ctor): Convert arrays into a collection of
+	CustomAttributeTypedArguments to match MS.
+
 2008-02-10  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Assembly.cs: Use icall for ToString/FullName. Fixes bug #318231.
