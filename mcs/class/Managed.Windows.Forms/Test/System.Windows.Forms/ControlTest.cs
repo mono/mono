@@ -1985,6 +1985,24 @@ namespace MonoTests.System.Windows.Forms
 		{
 			((Control) sender).Tag = false;
 		}
+		
+		[Test]
+		public void ControlReparentLocationTest ()
+		{
+			Form form = new Form ();
+			Label l = new Label ();
+			l.Location = new Point (0, 0);
+			form.Controls.Add (l);
+			form.Show ();
+			Assert.AreEqual (0, l.Left, "#A1");
+			Assert.AreEqual (0, l.Top, "#A2");
+			form.Hide ();
+			form.Controls.Remove (l);
+			form.Show ();
+			form.Controls.Add (l);
+			Assert.AreEqual (0, l.Left, "#A3");
+			Assert.AreEqual (0, l.Top, "#A4");
+		}
 
 #if NET_2_0
 		[Test]
