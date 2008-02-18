@@ -1,6 +1,6 @@
 // CS1922: A field or property `Data.Value' cannot be initialized with a collection object initializer because type `int' does not implement `System.Collections.IEnumerable' interface
 // Line: 16
-// Compiler options: -langversion:linq
+
 
 using System;
 

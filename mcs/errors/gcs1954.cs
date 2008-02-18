@@ -1,6 +1,6 @@
 // CS1954:  The best overloaded collection initalizer method `Data.Add(ref int)' cannot have 'ref', or `out' modifier
 // Line: 16
-// Compiler options: -langversion:linq
+
 
 using System;
 using System.Collections;

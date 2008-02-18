@@ -1,6 +1,6 @@
 // CS1501: No overload for method `Foo' takes `2' arguments
 // Line: 17
-// Compiler options: -langversion:linq
+
 
 static class Extensions
 {

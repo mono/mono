@@ -1,6 +1,6 @@
 // CS1912: An object initializer includes more than one member `Count' initialization
 // Line: 17
-// Compiler options: -langversion:linq
+
 
 using System;
 using System.Collections.Generic;

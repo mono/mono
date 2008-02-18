@@ -1,6 +1,6 @@
 // CS0820: An implicitly typed local variable declarator cannot use an array initializer
 // Line: 9
-// Compiler options: -langversion:linq
+
 
 public class Test
 {

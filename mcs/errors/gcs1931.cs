@@ -1,6 +1,6 @@
 // CS1931: A range variable `i' conflicts with a previous declaration of `i'
 // Line: 14
-// Compiler options: -langversion:linq
+
 
 using System;
 using System.Linq;

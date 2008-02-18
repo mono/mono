@@ -1,6 +1,6 @@
 // CS1593: Delegate `System.Func<int,int>' does not take `2' arguments
 // Line: 11
-// Compiler options: -langversion:linq
+
 
 using System;
 

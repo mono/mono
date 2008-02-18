@@ -1,6 +1,6 @@
 // CS0828: An anonymous type property `Value' cannot be initialized with `null'
 // Line: 9
-// Compiler options: -langversion:linq
+
 
 public class Test
 {

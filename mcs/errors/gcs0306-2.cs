@@ -1,6 +1,6 @@
 // CS0306: The type `int*' may not be used as a type argument
 // Line: 11
-// Compiler options: -langversion:linq -unsafe
+// Compiler options: -unsafe
 
 using System.Linq;
 

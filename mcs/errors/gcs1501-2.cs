@@ -1,6 +1,6 @@
 // CS1501: No overload for method `Select' takes `1' arguments
 // Line: 17
-// Compiler options: -langversion:linq
+
 
 using System;
 

@@ -1,6 +1,6 @@
 // CS1913: Member `Data.Count()' cannot be initialized. An object initializer may only be used for fields, or properties
 // Line: 17
-// Compiler options: -langversion:linq
+
 
 using System;
 using System.Collections.Generic;

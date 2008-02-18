@@ -1,6 +1,6 @@
 // CS1918: Members of a value type property `C.Value' cannot be assigned with an object initializer
 // Line: 18
-// Compiler options: -langversion:linq
+
 
 struct S
 {

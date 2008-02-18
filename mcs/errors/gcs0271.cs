@@ -1,6 +1,6 @@
 // CS0271: The property or indexer `Test.A.B' cannot be used in this context because the get accessor is inaccessible
 // Line: 17
-// Compiler options: -langversion:linq
+
 using System;
 
 public class Test

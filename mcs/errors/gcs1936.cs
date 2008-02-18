@@ -1,6 +1,6 @@
 // CS1936: An implementation of `Select' query expression pattern for source type `Item' could not be found
 // Line: 16
-// Compiler options: -langversion:linq
+
 
 using System.Linq;
 

@@ -1,6 +1,6 @@
 // CS1914: Static field or property `Data.Count' cannot be assigned in an object initializer
 // Line: 17
-// Compiler options: -langversion:linq
+
 
 using System;
 using System.Collections.Generic;

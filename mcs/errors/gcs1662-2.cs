@@ -1,6 +1,6 @@
 // CS1662: Cannot convert `lambda expression' to delegate type `D' because some of the return types in the block are not implicitly convertible to the delegate return type
 // Line: 13
-// Compiler options: -langversion:linq
+
 
 using System;
 

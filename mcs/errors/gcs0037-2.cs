@@ -1,6 +1,6 @@
 // CS0037: Cannot convert null to `bool' because it is a value type
 // Line: 19
-// Compiler options: -langversion:linq
+
 
 using System;
 

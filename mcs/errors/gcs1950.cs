@@ -1,6 +1,6 @@
 // CS1954: The best overloaded collection initalizer method `Data.Add(__arglist)' has some invalid arguments
 // Line: 16
-// Compiler options: -langversion:linq
+
 
 using System;
 using System.Collections;

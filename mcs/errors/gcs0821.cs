@@ -1,6 +1,6 @@
 // CS0821: A fixed statement cannot use an implicitly typed local variable
 // Line: 9
-// Compiler options: -langversion:linq -unsafe
+// Compiler options: -unsafe
 
 public class Point
 {

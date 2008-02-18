@@ -1,6 +1,6 @@
 // CS1661: Cannot convert `lambda expression' to delegate type `C.WithOutParam' since there is a parameter mismatch
 // Line: 10
-// Compiler options: -langversion:linq
+
 
 class C
 {

@@ -1,6 +1,6 @@
 // CS0029: Cannot implicitly convert type `string' to `int'
 // Line: 28
-// Compiler options: -langversion:linq
+
 
 delegate string funcs (string s);
 delegate int funci (int i);

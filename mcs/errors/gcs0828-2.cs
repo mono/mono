@@ -1,6 +1,6 @@
 // CS0828: An anonymous type property `Value' cannot be initialized with `int*'
 // Line: 9
-// Compiler options: -langversion:linq -unsafe
+// Compiler options: -unsafe
 
 public unsafe class Test
 {

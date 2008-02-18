@@ -1,6 +1,6 @@
 // CS0747: Inconsistent `object initializer' member declaration
 // Line: 16
-// Compiler options: -langversion:linq
+
 
 using System;
 using System.Collections;

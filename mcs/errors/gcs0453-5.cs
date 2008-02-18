@@ -1,6 +1,6 @@
 // CS0453: The type `B.M' must be a non-nullable value type in order to use it as type parameter `T' in the generic type or method `Foo.Test_2<T>(this T)'
 // Line: 20
-// Compiler options: -langversion:linq
+
 
 using System;
 

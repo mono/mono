@@ -1,6 +1,6 @@
 // CS1931: A range variable `ii' conflicts with a previous declaration of `ii'
 // Line: 14
-// Compiler options: -langversion:linq
+
 
 using System;
 using System.Collections.Generic;

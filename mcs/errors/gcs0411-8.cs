@@ -1,6 +1,6 @@
 // CS0411: The type arguments for method `C.Test<TR,TA>(C.Func<TR,TA>, C.Func<TR,TA>)' cannot be inferred from the usage. Try specifying the type arguments explicitly
 // Line: 16
-// Compiler options: -langversion:linq
+
 
 public class C
 {

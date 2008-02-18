@@ -1,6 +1,6 @@
 // CS1942: Type inference failed to infer type argument for `select' clause. Try specifying the type argument explicitly
 // Line: 
-// Compiler options: -langversion:linq
+
 
 using System;
 

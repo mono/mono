@@ -1,6 +1,6 @@
 // CS0122: `Foo.Print(this string)' is inaccessible due to its protection level
 // Line: 19
-// Compiler options: -langversion:linq
+
 
 using System;
 

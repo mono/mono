@@ -1,6 +1,6 @@
 // CS1113: Extension method `Extension.Foo(this S)' of value type `S' cannot be used to create delegates
 // Line: 12
-// Compiler options: -langversion:linq
+
 
 delegate void D ();
 

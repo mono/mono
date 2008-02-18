@@ -1,6 +1,6 @@
 // CS0117: `Data' does not contain a definition for `Count'
 // Line: 15
-// Compiler options: -langversion:linq
+
 
 using System;
 

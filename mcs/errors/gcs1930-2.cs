@@ -1,6 +1,6 @@
 // CS1930: A range variable `i' has already been declared in this scope
 // Line: 14
-// Compiler options: -langversion:linq
+
 
 using System;
 using System.Linq;

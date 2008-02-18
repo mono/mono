@@ -1,6 +1,6 @@
 // CS0755: A partial method declaration and partial method implementation must be both an extension method or neither
 // Line: 11
-// Compiler options: -langversion:linq
+
 
 public static partial class C
 {

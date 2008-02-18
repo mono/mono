@@ -1,6 +1,6 @@
 // CS0758: A partial method declaration and partial method implementation cannot differ on use of `params' modifier
 // Line: 9
-// Compiler options: -langversion:linq
+
 
 public partial class C
 {

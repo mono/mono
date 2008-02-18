@@ -1,6 +1,6 @@
 // CS0764: A partial method declaration and partial method implementation must be both `unsafe' or neither
 // Line: 11
-// Compiler options: -langversion:linq -unsafe
+// Compiler options: -unsafe
 
 public partial class C
 {

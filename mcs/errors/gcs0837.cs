@@ -1,6 +1,6 @@
 // CS0837: The `as' operator cannot be applied to a lambda expression or anonymous method
 // Line: 15
-// Compiler options: -langversion:linq
+
 
 class X
 {

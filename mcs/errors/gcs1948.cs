@@ -1,6 +1,6 @@
 // CS1948: A range variable `T' conflicts with a method type parameter
 // Line: 12
-// Compiler options: -langversion:linq
+
 
 using System;
 using System.Linq;

@@ -1,6 +1,6 @@
 // CS1061: Type `int' does not contain a definition for `Foo' and no extension method `Foo' of type `int' could be found (are you missing a using directive or an assembly reference?)
 // Line: 9
-// Compiler options: -langversion:linq
+
 
 public class M
 {

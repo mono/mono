@@ -1,6 +1,6 @@
 // CS1930: A range variable `v' may not be passes as `ref' or `out' parameter
 // Line: 19
-// Compiler options: -langversion:linq
+
 
 using System;
 using System.Linq;
