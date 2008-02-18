@@ -1,3 +1,7 @@
+2008-02-18  Raja R Harinath  <harinath@hurrynot.org>
+
+	* rules.make (%/.stamp): Unify all directory creation targets here.
+
 2008-02-17  Raja R Harinath  <harinath@hurrynot.org>
 
 	* profiles/net_2_1_bootstrap.make: New.

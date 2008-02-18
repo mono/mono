@@ -87,12 +87,6 @@ ifndef PROGRAM_COMPILE
 PROGRAM_COMPILE = $(CSCOMPILE)
 endif
 
-ifdef prog_dir
-$(prog_dir)/.stamp:
-	$(MKINSTALLDIRS) $(@D)
-	touch $@
-endif
-
 $(PROGRAM): $(BUILT_SOURCES) $(EXTRA_SOURCES) $(response) $(prog_dir:=/.stamp)
 	$(PROGRAM_COMPILE) -target:exe -out:$(base_prog) $(BUILT_SOURCES) $(EXTRA_SOURCES) @$(response)
 ifneq ($(base_prog),$(PROGRAM))

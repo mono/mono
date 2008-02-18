@@ -297,10 +297,6 @@ endif
 
 # The library
 
-$(the_libdir)/.stamp $(build_libdir:=/.stamp):
-	$(MKINSTALLDIRS) $(@D)
-	touch $@
-
 $(the_lib): $(the_libdir)/.stamp
 
 $(build_lib): $(response) $(sn) $(BUILT_SOURCES) $(build_libdir:=/.stamp)

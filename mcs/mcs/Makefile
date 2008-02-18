@@ -49,13 +49,7 @@ clean-local: clean-program
 clean-program:
 	rm -f $(PROGRAM) $(PROGRAM).config
 
-progdir = $(dir $(PROGRAM))
-
-$(progdir)/.stamp:
-	$(MKINSTALLDIRS) $(@D)
-	touch $@
-
-$(PROGRAM) $(PROGRAM).config: $(progdir)/.stamp
+$(PROGRAM) $(PROGRAM).config: $(dir $(PROGRAM))/.stamp
 
 $(PROGRAM): $(topdir)/class/lib/default/mcs.exe
 	cp $< $@
