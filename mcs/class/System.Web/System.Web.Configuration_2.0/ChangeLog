@@ -1,3 +1,8 @@
+2008-02-18  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* WebConfigurationManager.cs: performance improvement, cached
+	GetSection method
+
 2008-02-07  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* GlobalizationSection.cs: fixed GetSanitizedCulture, performance

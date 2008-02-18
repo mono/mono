@@ -47,6 +47,7 @@ namespace System.Web.Configuration {
 #if !TARGET_J2EE
 		static IInternalConfigConfigurationFactory configFactory;
 		static Hashtable configurations = Hashtable.Synchronized (new Hashtable ());
+		static Hashtable sectionCache = new Hashtable (StringComparer.OrdinalIgnoreCase);
 #else
 		const string AppSettingsKey = "WebConfigurationManager.AppSettings";
 		static internal IInternalConfigConfigurationFactory configFactory
@@ -92,6 +93,23 @@ namespace System.Web.Configuration {
 			set{
 				AppDomain.CurrentDomain.SetData("WebConfigurationManager.configurations", value);
 				AppDomain.CurrentDomain.SetData("WebConfigurationManager.configurations.initialized", true);
+			}
+		}
+
+		static Hashtable sectionCache
+		{
+			get
+			{
+				Hashtable sectionCache = (Hashtable) AppDomain.CurrentDomain.GetData ("sectionCache");
+				if (sectionCache == null) {
+					sectionCache = new Hashtable (StringComparer.OrdinalIgnoreCase);
+					AppDomain.CurrentDomain.SetData ("sectionCache", sectionCache);
+				}
+				return sectionCache;
+			}
+			set
+			{
+				AppDomain.CurrentDomain.SetData ("sectionCache", value);
 			}
 		}
 #endif
@@ -258,7 +276,7 @@ namespace System.Web.Configuration {
 				return null;
 			}
 		}
-		
+
 		public static object GetSection (string sectionName)
 		{
 			return GetSection (sectionName, GetCurrentPath (HttpContext.Current));
@@ -266,6 +284,10 @@ namespace System.Web.Configuration {
 
 		public static object GetSection (string sectionName, string path)
 		{
+			object cachedSection = sectionCache [GetSectionCacheKey (sectionName, path)];
+			if (cachedSection != null)
+				return cachedSection;
+
 			_Configuration c = OpenWebConfiguration (path);
 			ConfigurationSection section = c.GetSection (sectionName);
 
@@ -275,26 +297,17 @@ namespace System.Web.Configuration {
 #if TARGET_J2EE
 			object value = get_runtime_object.Invoke (section, new object [0]);
 			if (String.CompareOrdinal ("appSettings", sectionName) == 0) {
-				AppDomain appDomain = AppDomain.CurrentDomain;
-				Hashtable settingsCache = (Hashtable) appDomain.GetData (AppSettingsKey);
-				if (settingsCache == null) {
-					settingsCache = Hashtable.Synchronized (new Hashtable ());
-					appDomain.SetData (AppSettingsKey, settingsCache);
-				}
-
-				NameValueCollection collection = (NameValueCollection) settingsCache [c];
-
-				if (collection == null) {
-					collection = new KeyValueMergedCollection (HttpContext.Current, (NameValueCollection) value);
-					settingsCache [c] = collection;
-				}
-
+				NameValueCollection collection;
+				collection = new KeyValueMergedCollection (HttpContext.Current, (NameValueCollection) value);
 				value = collection;
 			}
 
+			AddSectionToCache (GetSectionCacheKey (sectionName, path), value);
 			return value;
 #else
-			return SettingsMappingManager.MapSection (get_runtime_object.Invoke (section, new object [0]));
+			object value = SettingsMappingManager.MapSection (get_runtime_object.Invoke (section, new object [0]));
+			AddSectionToCache (GetSectionCacheKey (sectionName, path), value);
+			return value;
 #endif
 		}
 
@@ -332,6 +345,25 @@ namespace System.Web.Configuration {
 		internal static IInternalConfigConfigurationFactory ConfigurationFactory {
 			get { return configFactory; }
 		}
+
+		static void AddSectionToCache (string key, object section)
+		{
+			if (sectionCache [key] != null)
+				return;
+
+			Hashtable tmpTable = (Hashtable) sectionCache.Clone ();
+			if (tmpTable [key] != null)
+				return;
+
+			tmpTable.Add (key, section);
+			sectionCache = tmpTable;
+		}
+
+		static string GetSectionCacheKey (string sectionName, string path)
+		{
+			return string.Concat (path, "/", sectionName);
+		}
+
 		
 #region stuff copied from WebConfigurationSettings
 #if TARGET_J2EE
