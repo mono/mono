@@ -1,4 +1,4 @@
-// Compiler options: -langversion:linq
+
 // Tests anonymous type consolidation
 
 using System;

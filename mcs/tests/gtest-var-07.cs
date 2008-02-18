@@ -1,4 +1,4 @@
-// Compiler options: -langversion:linq
+
 
 // Tests `var' keyword contextual parsing
 

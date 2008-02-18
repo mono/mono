@@ -1,4 +1,4 @@
-// Compiler options: -langversion:linq
+
 // Tests static automatic properties
 using System;
 

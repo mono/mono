@@ -1,4 +1,4 @@
-// Compiler options: -langversion:linq
+
 
 public static class Gen
 {

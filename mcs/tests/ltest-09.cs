@@ -1,4 +1,4 @@
-// Compiler options: -langversion:linq
+
 using System.Collections.Generic;
 
 delegate TD Func<TD>();

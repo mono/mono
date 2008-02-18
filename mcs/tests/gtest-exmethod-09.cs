@@ -1,4 +1,4 @@
-// Compiler options: -langversion:linq
+
 
 static class Test
 {

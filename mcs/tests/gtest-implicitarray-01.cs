@@ -1,4 +1,4 @@
-// Compiler options: -langversion:linq
+
 // Tests implicitly typed arrays
 
 public class Test

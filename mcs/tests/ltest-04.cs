@@ -1,4 +1,4 @@
-// Compiler options: -langversion:linq
+
 //
 // This test is used to test the type information flow between arguments
 // in a generic method invocation, where:

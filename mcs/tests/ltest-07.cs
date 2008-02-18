@@ -1,4 +1,4 @@
-// Compiler options: -langversion:linq
+
 
 // Lambda parser tests
 

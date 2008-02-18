@@ -1,4 +1,4 @@
-// Compiler options: -langversion:linq
+
 // Make sure that the field and accessor methods of an automatic property have the CompilerGenerated attribute
 using System;
 using System.Reflection;

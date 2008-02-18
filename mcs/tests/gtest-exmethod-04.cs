@@ -1,4 +1,4 @@
-// Compiler options: -r:gtest-exmethod-04-lib.dll -langversion:linq
+// Compiler options: -r:gtest-exmethod-04-lib.dll
 
 namespace A
 {

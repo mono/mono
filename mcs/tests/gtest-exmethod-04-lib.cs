@@ -1,4 +1,4 @@
-// Compiler options: -t:library -langversion:linq
+// Compiler options: -t:library
 
 using System;
 

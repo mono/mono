@@ -1,4 +1,4 @@
-// Compiler options: -langversion:linq
+
 // Supported by C# 3.0
 
 public class C

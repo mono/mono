@@ -1,4 +1,4 @@
-// Compiler options: -langversion:linq
+
 // Uber-test for object and collection initialization
 using System;
 using System.Collections.Generic;

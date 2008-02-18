@@ -1,4 +1,4 @@
-// Compiler options: -langversion:linq
+
 // Tests object initialization
 using System;
 using System.Collections;

@@ -1,4 +1,4 @@
-// Compiler options: -langversion:linq
+
 
 // Test case for bug: #349034
 

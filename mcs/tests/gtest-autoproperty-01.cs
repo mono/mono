@@ -1,4 +1,4 @@
-// Compiler options: -langversion:linq
+
 // Tests automatic properties
 using System;
 

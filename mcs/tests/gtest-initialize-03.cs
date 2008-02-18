@@ -1,4 +1,4 @@
-// Compiler options: -langversion:linq
+
 
 using System;
 using System.Collections;

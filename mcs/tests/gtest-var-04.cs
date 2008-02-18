@@ -1,4 +1,4 @@
-// Compiler options: -langversion:linq
+
 // Tests variable type inference with the var keyword when using the foreach statement with generic collections
 using System;
 using System.Collections.Generic;

@@ -1,4 +1,4 @@
-// Compiler options: -langversion:linq
+
 // It tests collision between multiple external methods and also whether
 // we import external methods when same namespace does not exist locally
 

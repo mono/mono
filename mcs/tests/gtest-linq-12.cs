@@ -1,12 +1,20 @@
-// Compiler options: -langversion:linq
+
 
 using System;
 using System.Linq;
 
 class NestedQuery
 {
-	public static int Main ()
+	public void XX ()
 	{
+		var enumerable = new string[] { "aba", "bbb", "bab", "aaa" }.
+			Select((values) => new { values = values, length = values.Length }).
+				Select((ti0) => ti0.values.Select ((type) => new { type = type, x = 9 }).Where((ti1) => (ti0.length == 3)).
+			Select((ti1) => ti1.type));
+	}
+	
+	public static int Main ()
+	{/*
 		var e = from values in new [] { "aba", "bbb", "bab", "aaa" }
 			where values.Length > 0
 			select from type in values
@@ -39,7 +47,7 @@ class NestedQuery
 			
 		if (counter != 12)
 			return 2;
-			
+			*/
 		return 0;
 	}
 }

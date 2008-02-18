@@ -1,4 +1,4 @@
-// Compiler options: -langversion:linq
+
 // Tests anonymous types
 using System;
 using System.Collections;

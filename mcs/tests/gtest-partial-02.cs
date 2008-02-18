@@ -1,4 +1,4 @@
-// Compiler options: -langversion:linq -warnaserror
+// Compiler options: -warnaserror
 
 partial class C
 {
