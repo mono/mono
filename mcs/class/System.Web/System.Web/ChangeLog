@@ -1,3 +1,10 @@
+2008-02-19  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpParamsCollection.cs: do not override the NVC behavior for
+	GetValues - values from different sources (Form, Query, Cookies,
+	ServerVariables) must be kept separate for this purpose. This is
+	also the behavior of MS.NET. Fixes bug #362189
+
 2008-02-18  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpRuntime.cs: When app is offline, send status code 503

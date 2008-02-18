@@ -121,24 +121,6 @@ namespace System.Web
 			return base.GetKey (index);
 		}
 
-		public override string [] GetValues (int index)
-		{
-			string value = Get (index);
-			if (value == null)
-				return null;
-
-			return value.Split (',');
-		}
-
-		public override string [] GetValues (string name)
-		{
-			string value = Get (name);
-			if (value == null)
-				return null;
-
-			return value.Split (',');
-		}
-
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			throw new SerializationException ();
