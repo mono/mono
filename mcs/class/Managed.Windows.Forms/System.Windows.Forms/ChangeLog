@@ -1,3 +1,11 @@
+2008-02-18  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* Control.cs: During diposing firstly remove ourselfes from
+	the parent and *then* destroy our handle, because removing
+	ourselfes from the parent controls collection causes 
+	VisibilityChange, etc events, which require a handle and end
+	up recreating the control.
+
 2008-02-17  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* GridEntry.cs: Set expanded state before notifying that the

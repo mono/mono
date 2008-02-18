@@ -1122,6 +1122,13 @@ namespace System.Windows.Forms
 			if (!is_disposed && disposing) {
 				Capture = false;
 
+				// Remove fires events like VisibleChanged, etc, so
+				// which require a handle or else they will recreate the control,
+				// so do not move this after DestroyHandle.
+				// 
+				if (parent != null)
+					parent.Controls.Remove(this);
+
 				DisposeBackBuffer ();
 
 				if (this.InvokeRequired) {
@@ -1130,10 +1137,6 @@ namespace System.Windows.Forms
 					}
 				} else {
 					DestroyHandle();
-				}
-
-				if (parent != null) {
-					parent.Controls.Remove(this);
 				}
 
 				Control [] children = child_controls.GetAllControls ();
@@ -1849,18 +1852,6 @@ namespace System.Windows.Forms
 			// MS doesn't seem to send a CursorChangedEvent
 
 			parent = new_parent;
-
-			// reset properties back to their pre-parent-change values if there is
-			// no new parent (i.e., the control is changing parents because it's
-			// being removed. See #355850)
-			if (parent == null) {
-				is_enabled = pre_enabled;
-				is_visible = pre_visible;
-				font = pre_font;
-				foreground_color = pre_fore_color;
-				background_color = pre_back_color;
-				right_to_left = pre_rtl;
-			}
 
 			Form frm = this as Form;
 			if (frm != null) {
