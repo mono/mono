@@ -1,3 +1,9 @@
+2008-02-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* CustomAttributeTypedArgument.cs (.ctor): Convert arrays into a
+	collection of
+		CustomAttributeTypedArguments to match MS.
+
 2008-01-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* MonoGenericClass.cs: Make this NET 2.0 only.
