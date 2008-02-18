@@ -1,3 +1,8 @@
+2008-02-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h mini-ops.h mini.c: Define the OP_Ccc opcodes in mini-ops.h normally
+	like the other opcodes.
+
 2008-02-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ia64.c: Use cfg->vret_addr instead of cfg->ret.
