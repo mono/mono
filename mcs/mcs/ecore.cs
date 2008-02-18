@@ -3696,8 +3696,11 @@ namespace Mono.CSharp {
 						params_expanded_form = true;
 				}
 
-				if (score != 0)
+				if (score != 0) {
+					if (params_expanded_form)
+						++score;
 					return (arg_count - i) * 2 + score;
+				}				
 			}
 			
 			if (arg_count != param_count)

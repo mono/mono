@@ -38,7 +38,7 @@ namespace Mono.CSharp {
 	public class ReflectionParameters : ParameterData {
 		ParameterInfo [] pi;
 		Type [] types;
-		int params_idx = -1;
+		int params_idx = int.MaxValue;
 		bool is_varargs;
 		bool is_extension;
 		ParameterData gpd;
@@ -229,9 +229,9 @@ namespace Mono.CSharp {
 
 		public Parameter.Modifier ParameterModifier (int pos)
 		{
-			if (pos == params_idx)
+			if (pos >= params_idx)
 				return Parameter.Modifier.PARAMS;
-			else if (is_varargs && pos >= pi.Length)
+			if (is_varargs && pos >= pi.Length)
 				return Parameter.Modifier.ARGLIST;
 
 			if (gpd != null)
@@ -262,7 +262,7 @@ namespace Mono.CSharp {
 		}
 
 		public bool HasParams {
-			get { return params_idx != -1; }
+			get { return params_idx != int.MaxValue; }
 		}
 
 		public Type[] Types {
