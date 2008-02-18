@@ -1,5 +1,9 @@
 2008-02-18 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c: Implement skip visibility flag.
+
+2008-02-18 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.h: Added MONO_VERIFY_SKIP_VISIBILITY and struct MonoVerifyInfoExtended
 	which contains an extra field to tell the kind of exception that should be thrown.
 
