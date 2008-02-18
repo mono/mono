@@ -1784,7 +1784,9 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
+			left.Emit (ec);
 			right.Emit (ec);
+			ec.ig.Emit (OpCodes.Pop);
 		}
 
 		public override bool IsDefaultValue {

@@ -253,8 +253,8 @@ namespace Mono.CSharp {
 			//
 			// Dead code elimination
 			//
-			if (expr is Constant){
-				bool take = !((Constant) expr).IsDefaultValue;
+			if (expr is BoolConstant){
+				bool take = ((BoolConstant) expr).Value;
 
 				if (take){
 					if (!TrueStatement.Resolve (ec))
@@ -302,34 +302,15 @@ namespace Mono.CSharp {
 			Label end;
 
 			//
-			// If we're a boolean constant, Resolve() already
+			// If we're a boolean expression, Resolve() already
 			// eliminated dead code for us.
 			//
-			if (expr is Constant){
-				
-				//
-				// Simple bool constant
-				//
-				if (expr is BoolConstant) {
-					bool take = ((BoolConstant) expr).Value;
+			if (expr is BoolConstant){
+				bool take = ((BoolConstant) expr).Value;
 
-					if (take)
-						TrueStatement.Emit (ec);
-					else if (FalseStatement != null)
-						FalseStatement.Emit (ec);
-					
-					return;
-				}
-
-				//
-				// Bool constant with side-effects
-				//
-				expr.Emit (ec);
-				ig.Emit (OpCodes.Pop);
-
-				if (TrueStatement != null)
+				if (take)
 					TrueStatement.Emit (ec);
-				if (FalseStatement != null)
+				else if (FalseStatement != null)
 					FalseStatement.Emit (ec);
 
 				return;
