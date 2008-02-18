@@ -1,3 +1,8 @@
+2008-02-18  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Makefile (CYCLIC_DEPS): Don't use $(eval ...) -- we still
+	support older GNU makes.
+
 2008-02-17  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System_test.dll.sources: Added CharConverterTest.cs and
