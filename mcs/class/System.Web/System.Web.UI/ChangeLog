@@ -1,3 +1,7 @@
+2008-02-18  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* Page.cs: fixed RegisterRequiresPostBack, performance improvement
+
 2008-02-12  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* Page.jvm.cs: StateSerializer.readExternal and writeExternal fixed

@@ -1777,10 +1777,10 @@ public partial class Page : TemplateControl, IHttpHandler
 		if (_requiresPostBack == null)
 			_requiresPostBack = new ArrayList ();
 
-		if (_requiresPostBack.Contains (control.UniqueID))
+		if (_requiresPostBack.Contains (control))
 			return;
 
-		_requiresPostBack.Add (control.UniqueID);
+		_requiresPostBack.Add (control);
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -1888,7 +1888,7 @@ public partial class Page : TemplateControl, IHttpHandler
 #endif
 
 		object viewState = SaveViewStateRecursive ();
-		object reqPostback = (_requiresPostBack != null && _requiresPostBack.Count > 0) ? _requiresPostBack : null;
+		object reqPostback = (_requiresPostBack != null && _requiresPostBack.Count > 0) ? GetRequiresPostBackIds () : null;
 		Pair vsr = null;
 
 		if (viewState != null || reqPostback != null)
@@ -1906,6 +1906,14 @@ public partial class Page : TemplateControl, IHttpHandler
 		else
 			SavePageStateToPersistenceMedium (pair);		
 
+	}
+
+	private ArrayList GetRequiresPostBackIds ()
+	{
+		ArrayList a = new ArrayList (_requiresPostBack.Count);
+		for (int i = 0; i < _requiresPostBack.Count; i++)
+			a.Add (((Control) _requiresPostBack [i]).UniqueID);
+		return a;
 	}
 
 	public virtual void Validate ()
