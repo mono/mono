@@ -43,8 +43,10 @@ namespace MonoTests.System.Windows.Forms
 			// "9999-12-31 00:00:00", note not 23:59:59.
 			Assert.AreEqual (DateTime.MaxValue.Date, sr.End, "End");
 
+#if NET_2_0
 			Assert.AreEqual (DateTimeKind.Unspecified, sr.Start.Kind, "Start Kind");
 			Assert.AreEqual (DateTimeKind.Unspecified, sr.End.Kind, "End Kind");
+#endif
 		}
 
 		[Test]
@@ -88,9 +90,10 @@ namespace MonoTests.System.Windows.Forms
 			SelectionRange sr = new SelectionRange (new DateTime (2001, 1, 11), new DateTime (2008, 2, 17, 1, 2, 3));
 			Assert.AreEqual (new DateTime (2001, 1, 11), sr.Start, "Start");
 			Assert.AreEqual (new DateTime (2008, 2, 17), sr.End, "End");
-
+#if NET_2_0
 			Assert.AreEqual (DateTimeKind.Unspecified, sr.Start.Kind, "Start Kind");
 			Assert.AreEqual (DateTimeKind.Unspecified, sr.End.Kind, "End Kind");
+#endif
 		}
 
 #if NET_2_0

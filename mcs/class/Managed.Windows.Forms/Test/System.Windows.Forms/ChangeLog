@@ -1,5 +1,9 @@
 2008-02-19  Jonathan Pobst  <monkey@jpobst.com>
 
+	* SelectionRangeTest.cs: Add NET_2_0 so that 1.1 profile will build.
+
+2008-02-19  Jonathan Pobst  <monkey@jpobst.com>
+
 	* SelectionRangeTest.cs: Add tests from Andy Hume.
 
 2008-02-19  Jonathan Pobst  <monkey@jpobst.com> 
