@@ -1,3 +1,8 @@
+2008-02-19  Jonathan Pobst  <monkey@jpobst.com>
+
+	* SelectionRange.cs: Apply patch from Andy Hume to make
+	constructor behavior more accurate.  [Fixes bug #362117]
+
 2008-02-19  Andreia Gaita <avidigal@novell.com> 
 
 	* Control.cs: Added a new flag is_disposing to track if the

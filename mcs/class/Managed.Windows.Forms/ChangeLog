@@ -1,3 +1,7 @@
+2008-02-19  Jonathan Pobst  <monkey@jpobst.com>
+
+	* System.Windows.Forms_test.dll.sources: Added SelectionRangeTest.cs.
+
 2008-02-06  Andreia Gaita <avidigal@novell.com>
 
 	* build-csproj2k5: fixed mono.mozilla project guid

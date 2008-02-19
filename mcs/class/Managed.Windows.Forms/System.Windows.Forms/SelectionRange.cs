@@ -40,6 +40,8 @@ namespace System.Windows.Forms {
 
 		// default parameterless construcor, use default values
 		public SelectionRange () {
+			end = DateTime.MaxValue.Date;
+			start = DateTime.MinValue.Date;
 		}	
 	
 		// constructor that receives another range, copies it's Start and End values
@@ -51,11 +53,11 @@ namespace System.Windows.Forms {
 		// constructor that receives two dates, uses the lower of the two as start
 		public SelectionRange (DateTime lower, DateTime upper) {
 			if (lower <= upper) {
-				end = upper;
-				start = lower;
+				end = upper.Date;
+				start = lower.Date;
 			} else {
-				end = lower;
-				start = upper;
+				end = lower.Date;
+				start = upper.Date;
 			}
 		}
 
