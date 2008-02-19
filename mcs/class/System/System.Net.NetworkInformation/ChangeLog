@@ -1,3 +1,11 @@
+2008-02-18  Miguel de Icaza  <miguel@novell.com>
+
+	* IPv4InterfaceStatistics.cs: Implemented Linux support.
+
+	* NetworkInterface.cs: Implemented Linux support.
+
+	TODO: still missing GetIPProperties.
+
 2007-10-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Ping.cs : Do not call OnPingCompleted() at CancelAsync() it should

@@ -4,8 +4,9 @@
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@novell.com)
 //	Atsushi Enomoto (atsushi@ximian.com)
+//      Miguel de Icaza (miguel@novell.com
 //
-// Copyright (c) 2006-2007 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2006-2008 Novell, Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,18 +35,22 @@ using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.IO;
-	
+using System.Globalization;
+
 namespace System.Net.NetworkInformation {
 	public abstract class NetworkInterface {
 		protected NetworkInterface ()
 		{
 		}
 
-		[MonoTODO("Does not work on Unix yet")]
+		[MonoTODO("Only works on Linux and Windows")]
 		public static NetworkInterface [] GetAllNetworkInterfaces ()
 		{
 			switch (Environment.OSVersion.Platform) {
 			case PlatformID.Unix:
+				if (Directory.Exists ("/sys/class/net")){
+					return LinuxNetworkInterface.ImplGetAllNetworkInterfaces ();
+				}
 				return new NetworkInterface [0];
 				
 			default:
@@ -61,9 +66,24 @@ namespace System.Net.NetworkInformation {
 			return true;
 		}
 
-		[MonoTODO("Currently always returns 0")]
+		internal static string ReadLine (string path)
+		{
+			using (FileStream fs = File.OpenRead (path)){
+				using (StreamReader sr = new StreamReader (fs)){
+					return sr.ReadLine ();
+				}
+			}
+		}
+
+		[MonoTODO("Only works on Linux")]
 		public static int LoopbackInterfaceIndex {
-			get { return 0; }
+			get {
+				try {
+					return Int32.Parse (ReadLine ("/sys/class/net/lo/ifindex"));
+				} catch {
+					return 0;
+				}
+			}
 		}
 
 		public abstract IPInterfaceProperties GetIPProperties ();
@@ -89,36 +109,32 @@ namespace System.Net.NetworkInformation {
 	//
 	class LinuxNetworkInterface : NetworkInterface
 	{
-		string iface;
+		internal string iface;
+		internal string iface_path;
+		IPv4InterfaceStatistics ipv4stats;
 		
 		public static NetworkInterface [] ImplGetAllNetworkInterfaces ()
 		{
-			string [] dirs = Directory.GetDirectories ("/proc/sys/net/ipv4/conf");
+			string [] dirs = Directory.GetFiles ("/sys/class/net");
 			ArrayList a = null;
 			
 			foreach (string d in dirs){
-				int p = d.LastIndexOf ('/');
-				if (p == -1)
-					continue;
-				
-				string iface = d.Substring (p + 1);
-				if (String.CompareOrdinal (iface, "all") == 0)
-					continue;
-				if (String.CompareOrdinal (iface, "default") == 0)
-					continue;
-
 				if (a == null)
 					a = new ArrayList ();
 
-				a.Add (new LinuxNetworkInterface (iface));
+				a.Add (new LinuxNetworkInterface (Path.GetFileName (d)));
 			}
+			if (a == null)
+				return new NetworkInterface [0];
 
-			return (NetworkInterface []) a.ToArray ();
+			return (NetworkInterface []) a.ToArray (typeof (LinuxNetworkInterface));
 		}
 
 		LinuxNetworkInterface (string dir)
 		{
 			iface = dir;
+			iface_path = "/sys/class/net/" + iface + "/";
+			ipv4stats = new LinuxIPv4InterfaceStatistics (this);
 		}
 		
 		public override IPInterfaceProperties GetIPProperties ()
@@ -128,12 +144,13 @@ namespace System.Net.NetworkInformation {
 
 		public override IPv4InterfaceStatistics GetIPv4Statistics ()
 		{
-			throw new NotImplementedException ();
+			return ipv4stats;
 		}
 
 		public override PhysicalAddress GetPhysicalAddress ()
 		{
-			throw new NotImplementedException ();
+			return PhysicalAddress.ParseEthernet (ReadLine (iface_path + "address"));
+			
 		}
 
 		public override bool Supports (NetworkInterfaceComponent networkInterfaceComponent)
@@ -149,7 +166,7 @@ namespace System.Net.NetworkInformation {
 		}
 
 		public override string Description {
-			get { return iface; }
+			get { return iface_path; }
 		}
 
 		public override string Id {
@@ -166,25 +183,116 @@ namespace System.Net.NetworkInformation {
 		
 		public override NetworkInterfaceType NetworkInterfaceType {
 			get {
-				throw new NotImplementedException ();
+				try {
+					// The constants come from the ARP hardware identifiers, this is what Linux uses
+					
+					switch (Int32.Parse (ReadLine (iface_path + "type"))){
+					case 1:
+						if (Directory.Exists (iface_path + "wireless"))
+							return NetworkInterfaceType.Wireless80211;
+						
+						return NetworkInterfaceType.Ethernet;
+
+					case 19:
+						return NetworkInterfaceType.Atm;
+						
+					case 512:
+						return NetworkInterfaceType.Ppp;
+
+					case 772:
+						return NetworkInterfaceType.Loopback;
+
+					case 774:
+						return NetworkInterfaceType.Fddi;
+
+					case 800:
+						return NetworkInterfaceType.TokenRing;
+
+					case 801:
+						return NetworkInterfaceType.Wireless80211;
+						
+					case 256: // Slip
+					case 257: // CSlip
+					case 258: // Slip6
+					case 259: // CSlip6
+						return NetworkInterfaceType.Slip;
+						
+					// .NET exposes these, but we do not currently have a mapping:
+					// BasicIsdn
+					// PrimaryIsdn
+					// Ethernet3Megabit
+					// GenericModem
+					// FastEthernetT
+					// FastEthernetFx
+					//
+					// AsymmetricDsl
+					// RateAdaptDsl = 95,
+					// SymmetricDsl = 96,
+					// VeryHighSpeedDsl = 97,
+						
+					}
+					return NetworkInterfaceType.Unknown;
+				} catch {
+					return NetworkInterfaceType.Unknown;
+				}
 			}
 		}
 		
 		public override OperationalStatus OperationalStatus {
 			get {
-				throw new NotImplementedException ();
+				try {
+					string s = ReadLine (iface_path + "operstate");
+
+					switch (s){
+					case "unknown":
+						return OperationalStatus.Unknown;
+						
+					case "notpresent":
+						return OperationalStatus.NotPresent;
+
+					case "down":
+						return OperationalStatus.Down;
+
+					case "lowerlayerdown":
+						return OperationalStatus.LowerLayerDown;
+
+					case "testing":
+						return OperationalStatus.Testing;
+
+					case "dormant":
+						return OperationalStatus.Dormant;
+
+					case "up":
+						return OperationalStatus.Up;
+					}
+				} catch {
+				}
+				return OperationalStatus.Unknown;
 			}
 		}
-		
+
 		public override long Speed {
 			get {
+				// What are the units?
+				// In Linux there is no information about the device speed, maybe only for modems?
 				throw new NotImplementedException ();
 			}
 		}
 		
 		public override bool SupportsMulticast {
 			get {
-				throw new NotImplementedException ();
+				try {
+					string s = ReadLine (iface_path + "flags");
+					if (s.Length > 2 && s [0] == '0' && s [1] == 'x')
+						s = s.Substring (2);
+					
+					ulong f = UInt64.Parse (s, NumberStyles.HexNumber);
+
+					// Hardcoded, only useful for Linux.
+					return ((f & 0x1000) == 0x1000);
+				} catch (Exception e){
+					return false;
+				}
 			}
 		}
 	}

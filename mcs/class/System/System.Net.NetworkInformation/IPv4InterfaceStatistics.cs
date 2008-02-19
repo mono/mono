@@ -4,8 +4,9 @@
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@novell.com)
 //	Atsushi Enomoto (atsushi@ximian.com)
+//	Miguel de Icaza (miguel@ximian.com)
 //
-// Copyright (c) 2006-2007 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2006-2008 Novell, Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -42,6 +43,8 @@ namespace System.Net.NetworkInformation {
 		public abstract long NonUnicastPacketsSent { get; }
 		public abstract long OutgoingPacketsDiscarded { get; }
 		public abstract long OutgoingPacketsWithErrors { get; }
+
+		[MonoTODO("Not implemented for Linux")]
 		public abstract long OutputQueueLength { get; }
 		public abstract long UnicastPacketsReceived { get; }
 		public abstract long UnicastPacketsSent { get; }
@@ -103,8 +106,105 @@ namespace System.Net.NetworkInformation {
 		public override long UnicastPacketsSent {
 			get { return info.OutUcastPkts; }
 		}
-
+	
 	}
+
+	class LinuxIPv4InterfaceStatistics : IPv4InterfaceStatistics
+	{
+		LinuxNetworkInterface linux;
+		
+		public LinuxIPv4InterfaceStatistics (LinuxNetworkInterface parent)
+		{
+			linux = parent;
+		}
+
+		long Read (string file)
+		{
+			try {
+				return long.Parse (NetworkInterface.ReadLine (linux.iface_path + file));
+			} catch (Exception e){
+				return 0;
+			}
+		}
+		
+		public override long BytesReceived {
+			get {
+				return Read ("statistics/rx_bytes");
+			}
+		}
+
+		public override long BytesSent {
+			get {
+				return Read ("statistics/tx_bytes");
+			}
+		}
+
+		public override long IncomingPacketsDiscarded {
+			get {
+				return Read ("statistics/rx_dropped");
+			}
+		}
+
+		public override long IncomingPacketsWithErrors {
+			get {
+				return Read ("statistics/rx_errors");
+			}
+		}
+
+		public override long IncomingUnknownProtocolPackets {
+			get {
+				// TODO
+				return 0;
+			}
+		}
+
+		public override long NonUnicastPacketsReceived {
+			get {
+				// We cant distinguish these
+				return Read ("statistics/multicast");
+			}
+		}
+
+		public override long NonUnicastPacketsSent {
+			get {
+				// We cant distinguish these
+				return Read ("statistics/multicast");
+			}
+		}
+
+		public override long OutgoingPacketsDiscarded {
+			get {
+				return Read ("statistics/tx_dropped");
+			}
+		}
+
+		public override long OutgoingPacketsWithErrors {
+			get {
+				return Read ("statistics/tx_errors");
+			}
+		}
+
+		public override long OutputQueueLength {
+			get {
+				return 1024;
+			}
+		}
+
+		public override long UnicastPacketsReceived {
+			get {
+				return Read ("statistics/rx_packets");
+			}
+		}
+
+		public override long UnicastPacketsSent {
+			get {
+				return Read ("statistics/tx_packets");
+			}
+		}
+
+		
+	}
+	
 }
 #endif
 

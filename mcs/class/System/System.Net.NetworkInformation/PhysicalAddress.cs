@@ -28,6 +28,7 @@
 #if NET_2_0
 using System;
 using System.Text;
+using System.Globalization;
 
 namespace System.Net.NetworkInformation {
 	public class PhysicalAddress {
@@ -40,6 +41,20 @@ namespace System.Net.NetworkInformation {
 			this.bytes = address;
 		}
 
+		internal static PhysicalAddress ParseEthernet (string address)
+		{
+			if (address == null)
+				return None;
+
+			string [] blocks = address.Split (':');
+			byte [] bytes = new byte [blocks.Length];
+			int i = 0;
+			foreach (string b in blocks){
+				bytes [i++] = Byte.Parse (b, NumberStyles.HexNumber);
+			}
+			return new PhysicalAddress (bytes);
+		}
+		
 		public static PhysicalAddress Parse (string address)
 		{
 			if (address == null)
