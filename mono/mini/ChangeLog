@@ -1,5 +1,7 @@
 2008-02-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* cpu-ia64.md cpu-s390x.md: Remove some unused opcodes.
+
 	* iltests.il.in: Add a test for static methods in interfaces.
 
 2008-02-18  Zoltan Varga  <vargaz@gmail.com>
