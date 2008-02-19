@@ -32,6 +32,7 @@ System.Linq.Expressions/ExpressionTest_LeftShift.cs
 System.Linq.Expressions/ExpressionTest_Lift.cs
 System.Linq.Expressions/ExpressionTest_ListBind.cs
 System.Linq.Expressions/ExpressionTest_MakeBinary.cs
+System.Linq.Expressions/ExpressionTest_MemberInit.cs
 System.Linq.Expressions/ExpressionTest_Modulo.cs
 System.Linq.Expressions/ExpressionTest_MultiplyChecked.cs
 System.Linq.Expressions/ExpressionTest_Multiply.cs
