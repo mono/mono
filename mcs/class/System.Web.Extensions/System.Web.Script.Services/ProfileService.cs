@@ -84,14 +84,14 @@ namespace System.Web.Script.Services
 		}
 
 		[WebMethod()]
-		public IDictionary<string,object> GetAllPropertiesForCurrentUser () {
+		public IDictionary<string, object> GetAllPropertiesForCurrentUser (bool authenticatedUserOnly) {
 			return new ProfileSerializer (ScriptingProfileServiceSection.ReadAccessProperties);
 		}
 
 		[WebMethod ()]
-		public IDictionary<string, object> GetPropertiesForCurrentUser (string [] properties) {
+		public IDictionary<string, object> GetPropertiesForCurrentUser (string [] properties, bool authenticatedUserOnly) {
 			if (properties == null)
-				return GetAllPropertiesForCurrentUser ();
+				return GetAllPropertiesForCurrentUser (authenticatedUserOnly);
 
 			string [] raProps = ScriptingProfileServiceSection.ReadAccessPropertiesNoCopy;
 
@@ -116,13 +116,13 @@ namespace System.Web.Script.Services
 		}
 
 		[WebMethod ()]
-		public int SetPropertiesForCurrentUser (Dictionary<string, object> values) {
+		public string [] SetPropertiesForCurrentUser (Dictionary<string, object> values, bool authenticatedUserOnly) {
 			if (values == null)
-				return 0;
+				return new string [] { };
 
 			string [] waProps = ScriptingProfileServiceSection.WriteAccessPropertiesNoCopy;
-			
-			int counter = 0;
+
+			List<string> list = new List<string> ();
 			ProfileBase profile = HttpContext.Current.Profile;
 			foreach (KeyValuePair<string, object> pair in values) {
 				try {
@@ -138,13 +138,11 @@ namespace System.Web.Script.Services
 						profile.SetPropertyValue (name, pair.Value);
 				}
 				catch {
-					continue; //MS seems to ignore errors...
+					list.Add (pair.Key);
 				}
-
-				counter++;
 			}
 
-			return counter;
+			return list.ToArray ();
 		}
 
 		static bool IsPropertyConfigured (string [] configuredProperties, string propertyToCheck) {
