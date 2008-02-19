@@ -88,6 +88,7 @@ namespace System.Windows.Forms
 		int                     tab_index; // position in tab order of siblings
 		bool                    tab_stop; // is the control a tab stop?
 		bool                    is_disposed; // has the window already been disposed?
+		bool                    is_disposing; // is the window getting disposed?
 		Size                    client_size; // size of the client area (window excluding decorations)
 		Rectangle               client_rect; // rectangle with the client area (window excluding decorations)
 		ControlStyles           control_style; // rather win32-specific, style bits for control
@@ -1120,14 +1121,8 @@ namespace System.Windows.Forms
 		protected override void Dispose (bool disposing)
 		{
 			if (!is_disposed && disposing) {
+				is_disposing = true;
 				Capture = false;
-
-				// Remove fires events like VisibleChanged, etc, so
-				// which require a handle or else they will recreate the control,
-				// so do not move this after DestroyHandle.
-				// 
-				if (parent != null)
-					parent.Controls.Remove(this);
 
 				DisposeBackBuffer ();
 
@@ -1139,6 +1134,9 @@ namespace System.Windows.Forms
 					DestroyHandle();
 				}
 
+				if (parent != null)
+					parent.Controls.Remove(this);
+
 				Control [] children = child_controls.GetAllControls ();
 				for (int i=0; i<children.Length; i++) {
 					children[i].parent = null;	// Need to set to null or our child will try and remove from ourselves and crash
@@ -1146,6 +1144,7 @@ namespace System.Windows.Forms
 				}
 			}
 			is_disposed = true;
+			is_disposing = false;
 			is_visible = false;
 			base.Dispose(disposing);
 		}
@@ -3707,6 +3706,10 @@ namespace System.Windows.Forms
 				throw new ObjectDisposedException(GetType().FullName.ToString());
 			}
 			if (is_created) {
+				return;
+			}
+
+			if (is_disposing) {
 				return;
 			}
 
