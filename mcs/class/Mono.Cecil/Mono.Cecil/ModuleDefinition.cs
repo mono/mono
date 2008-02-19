@@ -401,6 +401,11 @@ namespace Mono.Cecil {
 			return definition;
 		}
 
+		public FieldDefinition Inject (FieldDefinition field, TypeDefinition context)
+		{
+			return Inject (field, context, m_controller.Importer);
+		}
+
 		public FieldDefinition Inject (FieldDefinition field, TypeDefinition context, IImporter importer)
 		{
 			Check (field, context, importer);
