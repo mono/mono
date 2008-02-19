@@ -1140,13 +1140,13 @@ namespace MonoTests.System.Windows.Forms
 		public void SizeChangesAtCreateHandle ()
 		{
 			ComboBox cb = new ComboBox ();
-			cb.Font = new Font ("Arial", 18f);
+			cb.Font = new Font ("Arial", 24f);
 			
 			int original = cb.Height;
 			
 			IntPtr h = cb.Handle;
 			
-			Assert.IsTrue (cb.Height > original, "ComboBox height should be bigger than original");
+			Assert.IsTrue (cb.Height > original, string.Format ("ComboBox height ({0}) should be bigger than original ({1})", cb.Height, original));
 		}
 		
 #if NET_2_0
