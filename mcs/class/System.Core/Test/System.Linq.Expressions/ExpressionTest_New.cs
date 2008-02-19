@@ -174,5 +174,85 @@ namespace MonoTests.System.Linq.Expressions {
 			Assert.IsNotNull (bar);
 			Assert.IsNull (bar.Value);
 		}
+
+		public class FakeAnonymousType {
+
+			public string Foo { get; set; }
+			public string Bar { get; set; }
+			public string Baz { get; set; }
+			public int Gazonk { get; set; }
+			public string Tzap { set {} }
+
+			public FakeAnonymousType (string foo)
+			{
+				Foo = foo;
+			}
+
+			public FakeAnonymousType (string foo, string bar, string baz)
+			{
+				Foo = foo;
+				Bar = bar;
+				Baz = baz;
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void NewFakeAnonymousType ()
+		{
+			var n = Expression.New (
+				typeof (FakeAnonymousType).GetConstructor (new [] { typeof (string), typeof (string), typeof (string) } ),
+				new [] { "Foo".ToConstant (), "Bar".ToConstant (), "Baz".ToConstant () },
+				new [] { typeof (FakeAnonymousType).GetProperty ("Foo"), typeof (FakeAnonymousType).GetProperty ("Bar"), typeof (FakeAnonymousType).GetProperty ("Baz") });
+
+			Assert.IsNotNull (n.Constructor);
+			Assert.IsNotNull (n.Arguments);
+			Assert.IsNotNull (n.Members);
+			Assert.AreEqual ("new FakeAnonymousType(Foo = \"Foo\", Bar = \"Bar\", Baz = \"Baz\")", n.ToString ());
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void NullMember ()
+		{
+			var n = Expression.New (
+				typeof (FakeAnonymousType).GetConstructor (new [] { typeof (string) }),
+				new [] { "Foo".ToConstant () },
+				new MemberInfo [] { null });
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (ArgumentException))]
+		public void MemberArgumentMiscount ()
+		{
+			var n = Expression.New (
+				typeof (FakeAnonymousType).GetConstructor (new [] { typeof (string) }),
+				new [] { "Foo".ToConstant () },
+				new [] { typeof (FakeAnonymousType).GetProperty ("Foo"), typeof (FakeAnonymousType).GetProperty ("Bar") });
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (ArgumentException))]
+		public void MemberArgumentMismatch ()
+		{
+			var n = Expression.New (
+				typeof (FakeAnonymousType).GetConstructor (new [] { typeof (string) }),
+				new [] { "Foo".ToConstant () },
+				new [] { typeof (FakeAnonymousType).GetProperty ("Gazonk") });
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (ArgumentException))]
+		public void MemberHasNoGetter ()
+		{
+			var n = Expression.New (
+				typeof (FakeAnonymousType).GetConstructor (new [] { typeof (string) }),
+				new [] { "Foo".ToConstant () },
+				new [] { typeof (FakeAnonymousType).GetProperty ("Tzap") });
+		}
 	}
 }
