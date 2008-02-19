@@ -337,7 +337,11 @@ namespace System.Linq.Expressions {
 
 		protected override void VisitMemberInit (MemberInitExpression init)
 		{
-			throw new NotImplementedException ();
+			Visit (init.NewExpression);
+			Print (" {");
+			// VisitBindingList (init.Bindings)
+			VisitList (init.Bindings, VisitBinding);
+			Print ("}");
 		}
 
 		protected override void VisitListInit (ListInitExpression init)

@@ -1431,16 +1431,26 @@ namespace System.Linq.Expressions {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public static MemberInitExpression MemberInit (NewExpression newExpression, params MemberBinding [] binding)
+		public static MemberInitExpression MemberInit (NewExpression newExpression, params MemberBinding [] bindings)
 		{
-			throw new NotImplementedException ();
+			return MemberInit (newExpression, bindings as IEnumerable<MemberBinding>);
 		}
 
-		[MonoTODO]
-		public static MemberInitExpression MemberInit (NewExpression newExpression, IEnumerable<MemberBinding> binding)
+		public static MemberInitExpression MemberInit (NewExpression newExpression, IEnumerable<MemberBinding> bindings)
 		{
-			throw new NotImplementedException ();
+			if (newExpression == null)
+				throw new ArgumentNullException ("newExpression");
+			if (bindings == null)
+				throw new ArgumentNullException ("bindings");
+
+			var bds = bindings.ToReadOnlyCollection ();
+			CheckForNull (bds, "bindings");
+
+			foreach (var binding in bds)
+				if (!binding.Member.DeclaringType.IsAssignableFrom (newExpression.Type))
+					throw new ArgumentException ("Expression type not assignable to member type");
+
+			return new MemberInitExpression (newExpression, bds);
 		}
 
 		public static UnaryExpression Negate (Expression expression)
@@ -1532,7 +1542,7 @@ namespace System.Linq.Expressions {
 		{
 			if (constructor == null)
 				throw new ArgumentNullException ("constructor");
-			
+
 			var args = arguments.ToReadOnlyCollection ();
 			var mmbs = members.ToReadOnlyCollection ();
 
