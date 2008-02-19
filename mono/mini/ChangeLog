@@ -1,5 +1,8 @@
 2008-02-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-sparc.c (mono_arch_allocate_vars): Allocate a stack slot for use by
+	the int<->float conversion opcodes instead of using mono_spillvar_offset_float ().
+
 	* mini-codegen.c: Eliminate rassign macro which is no longer needed.
 	
 	* mini-codegen.c: Remove unused mono_regstate2_... functions.
