@@ -322,7 +322,16 @@ namespace System.Linq.Expressions {
 		protected override void VisitNew (NewExpression nex)
 		{
 			Print ("new {0}(", nex.Type.Name);
-			VisitExpressionList (nex.Arguments);
+			if (nex.Members != null && nex.Members.Count > 0) {
+				for (int i = 0; i < nex.Members.Count; i++) {
+					if (i > 0)
+						Print (ListSeparator);
+
+					Print ("{0} = ", nex.Members [i].Name);
+					Visit (nex.Arguments [i]);
+				}
+			} else
+				VisitExpressionList (nex.Arguments);
 			Print (")");
 		}
 

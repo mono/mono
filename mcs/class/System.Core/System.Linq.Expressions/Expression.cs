@@ -1523,16 +1523,53 @@ namespace System.Linq.Expressions {
 			}
 		}
 
-		[MonoTODO]
 		public static NewExpression New (ConstructorInfo constructor, IEnumerable<Expression> arguments, params MemberInfo [] members)
 		{
-			throw new NotImplementedException ();
+			return New (constructor, arguments, members as IEnumerable<MemberInfo>);
 		}
 
-		[MonoTODO]
 		public static NewExpression New (ConstructorInfo constructor, IEnumerable<Expression> arguments, IEnumerable<MemberInfo> members)
 		{
-			throw new NotImplementedException ();
+			if (constructor == null)
+				throw new ArgumentNullException ("constructor");
+			
+			var args = arguments.ToReadOnlyCollection ();
+			var mmbs = members.ToReadOnlyCollection ();
+
+			CheckForNull (args, "arguments");
+			CheckForNull (mmbs, "members");
+
+			CheckMethodArguments (constructor, args);
+
+			if (args.Count != mmbs.Count)
+				throw new ArgumentException ("Arguments count does not match members count");
+
+			for (int i = 0; i < mmbs.Count; i++) {
+				var member = mmbs [i];
+				Type type = null;
+				switch (member.MemberType) {
+				case MemberTypes.Field:
+					type = (member as FieldInfo).FieldType;
+					break;
+				case MemberTypes.Method:
+					type = (member as MethodInfo).ReturnType;
+					break;
+				case MemberTypes.Property:
+					var prop = member as PropertyInfo;
+					if (prop.GetGetMethod (true) == null)
+						throw new ArgumentException ("Property must have a getter");
+
+					type = (member as PropertyInfo).PropertyType;
+					break;
+				default:
+					throw new ArgumentException ("Member type not allowed");
+				}
+
+				if (!type.IsAssignableFrom (args [i].Type))
+					throw new ArgumentException ("Argument type not assignable to member type");
+			}
+
+			return new NewExpression (constructor, args, mmbs);
 		}
 
 		public static NewArrayExpression NewArrayBounds (Type type, params Expression [] bounds)

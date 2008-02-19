@@ -1,3 +1,8 @@
+2008-02-19  Jb Evain  <jbevain@novell.com>
+
+	* Expression.cs, ExpressionPrinter.cs: implement last New
+	overload for anonymous types.
+
 2008-02-08  Jb Evain  <jbevain@novell.com>
 
 	* Expression.cs, InvocationExpression.cs, ExpressionPrinter.cs
