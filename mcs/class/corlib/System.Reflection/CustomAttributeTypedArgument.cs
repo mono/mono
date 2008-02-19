@@ -31,6 +31,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.ObjectModel;
 
 namespace System.Reflection {
 
@@ -44,6 +45,17 @@ namespace System.Reflection {
 		{
 			this.argumentType = argumentType;
 			this.value = value;
+
+			// MS seems to convert arrays into a ReadOnlyCollection
+			if (value is Array) {
+				Array a = (Array)value;
+
+				Type etype = a.GetType ().GetElementType ();
+				CustomAttributeTypedArgument[] new_value = new CustomAttributeTypedArgument [a.GetLength (0)];
+				for (int i = 0; i < new_value.Length; ++i)
+					new_value [i] = new CustomAttributeTypedArgument (etype, a.GetValue (i));
+				this.value = new ReadOnlyCollection <CustomAttributeTypedArgument> (new_value);
+			}
 		}
 
 		public Type ArgumentType {
