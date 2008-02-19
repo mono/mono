@@ -2568,10 +2568,9 @@ namespace Mono.CSharp {
 						return new EnumConstant (lc, rc.Type);
 
 					//
-					// Optimize cases that have no side-effects, to avoid
-					// emitting code that gets popped
+					// Optimize cases that have no side-effects
 					//
-					if (right is FieldExpr)
+					if (rc != null)
 						return lc;
 
 					// Side effect code:

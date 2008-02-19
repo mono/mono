@@ -1,3 +1,10 @@
+2008-02-19  Marek Safar  <marek.safar@gmail.com>
+
+ 	* constant.cs (SideEffectConstant): Don't emit boolean constant.
+ 	
+ 	* expression.cs: Fold immediately LogicalAnd operators when both sides are
+ 	constants.
+	
 2008-02-18  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #361457
