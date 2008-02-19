@@ -809,6 +809,8 @@ namespace System.Windows.Forms
 		protected override void CreateHandle ()
 		{
 			base.CreateHandle ();
+			
+			SetBounds (Left, Top, Width, PreferredHeight, BoundsSpecified.None);
 		}
 #endif
 

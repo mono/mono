@@ -1136,6 +1136,19 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (-1, cmbbox.SelectedIndex, "#S3");
 		}
 
+		[Test]  // bug 360862
+		public void SizeChangesAtCreateHandle ()
+		{
+			ComboBox cb = new ComboBox ();
+			cb.Font = new Font ("Arial", 18f);
+			
+			int original = cb.Height;
+			
+			IntPtr h = cb.Handle;
+			
+			Assert.IsTrue (cb.Height > original, "ComboBox height should be bigger than original");
+		}
+		
 #if NET_2_0
 		[Test]
 		public void BehaviorAutoSize ()
