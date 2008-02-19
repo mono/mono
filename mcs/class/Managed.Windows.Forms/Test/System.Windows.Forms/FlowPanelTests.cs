@@ -1302,6 +1302,30 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 		#endregion
+		
+		[Test]
+		public void Padding ()
+		{
+			Form f = new Form ();
+			
+			FlowLayoutPanel flp = new FlowLayoutPanel ();
+			flp.Padding = new Padding (20);
+			flp.Size = new Size (100, 100);
+
+			Button b = new Button ();
+			b.Size = new Size (50, 50);
+
+			Button b2 = new Button ();
+			b2.Size = new Size (50, 50);
+
+			flp.Controls.Add (b);
+			flp.Controls.Add (b2);
+
+			f.Controls.Add (flp);
+			
+			Assert.AreEqual (new Rectangle (23, 23, 50, 50), b.Bounds, "A1");
+			Assert.AreEqual (new Rectangle (23, 79, 50, 50), b2.Bounds, "A2");
+		}
 	}
 }
 #endif

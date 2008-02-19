@@ -1,3 +1,8 @@
+2008-02-19  Jonathan Pobst  <monkey@jpobst.com>
+
+	* FlowLayout.cs: Take padding into account when determining if there
+	is still room left on a row.  [Fixes bug #361448]
+
 2008-01-23  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TableLayout.cs: Don't include Dock.Fill, multicolumn/multirow spanned

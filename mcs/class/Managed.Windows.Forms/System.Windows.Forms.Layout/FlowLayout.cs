@@ -124,7 +124,7 @@ namespace System.Windows.Forms.Layout
 						// Decide if it's time to start a new row
 						// - Our settings must be WrapContents, and we ran out of room or the previous control's FlowBreak == true
 						if (settings.WrapContents  && !(parent is ToolStripPanel))
-							if ((parentDisplayRectangle.Width - currentLocation.X) < (c.Width + c.Margin.Left + c.Margin.Right) || forceFlowBreak) {
+							if ((parentDisplayRectangle.Width + parentDisplayRectangle.Left - currentLocation.X) < (c.Width + c.Margin.Left + c.Margin.Right) || forceFlowBreak) {
 
 								currentLocation.Y = FinishRow (rowControls);
 								currentLocation.X = parentDisplayRectangle.Left;
@@ -164,7 +164,7 @@ namespace System.Windows.Forms.Layout
 						// Decide if it's time to start a new column
 						// - Our settings must be WrapContents, and we ran out of room or the previous control's FlowBreak == true
 						if (settings.WrapContents)
-							if ((parentDisplayRectangle.Height - currentLocation.Y) < (c.Height + c.Margin.Top + c.Margin.Bottom) || forceFlowBreak) {
+							if ((parentDisplayRectangle.Height + parentDisplayRectangle.Top - currentLocation.Y) < (c.Height + c.Margin.Top + c.Margin.Bottom) || forceFlowBreak) {
 
 								currentLocation.X = FinishColumn (rowControls);
 								currentLocation.Y = parentDisplayRectangle.Top;
