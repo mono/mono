@@ -1,5 +1,8 @@
 2008-02-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* driver.c (mono_main): Improve error reporting when an assembly cannot be
+	opened. Fixes #362607.
+
 	* cpu-ia64.md cpu-s390x.md: Remove some unused opcodes.
 
 	* iltests.il.in: Add a test for static methods in interfaces.
