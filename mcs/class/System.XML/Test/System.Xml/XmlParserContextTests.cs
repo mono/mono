@@ -20,7 +20,6 @@ namespace MonoTests.System.Xml
 	public class XmlParserContextTests
 	{
 		[Test]
-		[Category ("NotWorking")]
 		public void Constructor1 ()
 		{
 			XmlDocument doc = new XmlDocument ();
@@ -54,7 +53,6 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Constructor2 ()
 		{
 			XmlDocument doc = new XmlDocument ();
@@ -88,7 +86,6 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Constructor3 ()
 		{
 			XmlDocument doc = new XmlDocument ();
@@ -97,12 +94,12 @@ namespace MonoTests.System.Xml
 
 			pc = new XmlParserContext (doc.NameTable, ns, "html",
 				"-//W3C//DTD XHTML 1.0 Strict//EN",
-				"xhtml1-strict.dtd", "internal", "file://.",
+				"xhtml1-strict.dtd", "<!-- comment -->", "file://.",
 				"xa", XmlSpace.Preserve);
 			Assert.AreEqual ("file://.", pc.BaseURI, "#1");
 			Assert.AreEqual ("html", pc.DocTypeName, "#2");
 			Assert.IsNull (pc.Encoding, "#3");
-			Assert.AreEqual ("internal", pc.InternalSubset, "#4");
+			Assert.AreEqual ("<!-- comment -->", pc.InternalSubset, "#4");
 			Assert.AreSame (ns, pc.NamespaceManager, "#5");
 			Assert.AreSame (doc.NameTable, pc.NameTable, "#6");
 			Assert.AreEqual ("-//W3C//DTD XHTML 1.0 Strict//EN", pc.PublicId, "#7");
@@ -126,7 +123,6 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Constructor4 ()
 		{
 			XmlDocument doc = new XmlDocument ();

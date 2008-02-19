@@ -1,3 +1,9 @@
+2008-02-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlParserContext.cs : .net does not populate XmlNamespaceManager
+	  automatically.
+	* XmlDocument.cs : so, always create one here.
+
 2008-01-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlReader.cs : MoveToNextSibling() should check EOF (as Skip() does

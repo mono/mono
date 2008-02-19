@@ -710,7 +710,7 @@ namespace System.Xml
 			XmlTextReader xmlReader = new XmlTextReader (
 				xml,
 				XmlNodeType.Document,
-				new XmlParserContext (NameTable, null, null, XmlSpace.None));
+				new XmlParserContext (NameTable, new XmlNamespaceManager (NameTable), null, XmlSpace.None));
 			try {
 				xmlReader.XmlResolver = resolver;
 				Load (xmlReader);
