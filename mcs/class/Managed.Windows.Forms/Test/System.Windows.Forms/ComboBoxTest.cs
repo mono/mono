@@ -1262,7 +1262,7 @@ namespace MonoTests.System.Windows.Forms
 			gb.Location = new Point (5, 10);
 			f.Controls.Add (gb);
 
-			Assert.AreEqual (new Rectangle (5, 10, 121, 21), gb.Bounds, "A1");
+			Assert.AreEqual (new Rectangle (5, 10, 121, gb.PreferredHeight), gb.Bounds, "A1");
 
 			gb.PublicScaleControl (new SizeF (2.0f, 2.0f), BoundsSpecified.All);
 			Assert.AreEqual (new Rectangle (10, 20, 238, gb.PreferredHeight), gb.Bounds, "A2");
