@@ -1,3 +1,7 @@
+2008-02-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_setup_vtable_general): Ignore static methods in interfaces.
+
 2008-02-18 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c: Implement skip visibility flag.
