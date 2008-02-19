@@ -94,6 +94,19 @@ namespace Mono.Cecil {
 				typeSpec = new ModifierRequired (elementType, ImportTypeReference (mt, context));
 			} else if (original is SentinelType) {
 				typeSpec = new SentinelType (elementType);
+			} else if (original is FunctionPointerType) {
+				FunctionPointerType ori = original as FunctionPointerType;
+
+				FunctionPointerType fnptr = new FunctionPointerType (
+					ori.HasThis,
+					ori.ExplicitThis,
+					ori.CallingConvention,
+					new MethodReturnType (ImportTypeReference (ori.ReturnType.ReturnType, context)));
+
+				foreach (ParameterDefinition parameter in ori.Parameters)
+					fnptr.Parameters.Add (new ParameterDefinition (ImportTypeReference (parameter.ParameterType, context)));
+
+				typeSpec = fnptr;
 			} else
 				throw new ReflectionException ("Unknown element type: {0}", original.GetType ().Name);
 

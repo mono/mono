@@ -1,5 +1,9 @@
 2008-02-19  Jb Evain  <jbevain@novell.com>
 
+	* Mono.Cecil/DefaultImporter.cs:
+		Add support for importing function pointers. Based on a
+		patch by Andrea Carlo Ornstein <andrea.ornstein@st.com>.
+
 	* Mono.Cecil/ModuleDefinition.cs:
 		Add a Inject(FieldDef) overload for symmetry.
 		Patch by Andrea Carlo Ornstein <andrea.ornstein@st.com>.
