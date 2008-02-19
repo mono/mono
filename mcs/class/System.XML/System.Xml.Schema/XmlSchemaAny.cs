@@ -52,9 +52,10 @@ namespace System.Xml.Schema
 					anyTypeContent.Namespace = "##any";
 					anyTypeContent.wildcard.HasValueAny = true;
 					anyTypeContent.wildcard.ResolvedNamespaces = new StringCollection ();
-					// Although it is not documented by W3C, but it should be.
+					// It is not documented by W3C but it should be.
 					anyTypeContent.wildcard.ResolvedProcessing =
-					anyTypeContent.ProcessContents = XmlSchemaContentProcessing.Lax;
+						anyTypeContent.ProcessContents = XmlSchemaContentProcessing.Lax;
+					anyTypeContent.wildcard.SkipCompile = true;
 				}
 				return anyTypeContent;
 			}
