@@ -197,7 +197,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void NewFakeAnonymousType ()
 		{
 			var n = Expression.New (
@@ -212,44 +211,40 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void NullMember ()
 		{
-			var n = Expression.New (
+			Expression.New (
 				typeof (FakeAnonymousType).GetConstructor (new [] { typeof (string) }),
 				new [] { "Foo".ToConstant () },
 				new MemberInfo [] { null });
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void MemberArgumentMiscount ()
 		{
-			var n = Expression.New (
+			Expression.New (
 				typeof (FakeAnonymousType).GetConstructor (new [] { typeof (string) }),
 				new [] { "Foo".ToConstant () },
 				new [] { typeof (FakeAnonymousType).GetProperty ("Foo"), typeof (FakeAnonymousType).GetProperty ("Bar") });
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void MemberArgumentMismatch ()
 		{
-			var n = Expression.New (
+			Expression.New (
 				typeof (FakeAnonymousType).GetConstructor (new [] { typeof (string) }),
 				new [] { "Foo".ToConstant () },
 				new [] { typeof (FakeAnonymousType).GetProperty ("Gazonk") });
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void MemberHasNoGetter ()
 		{
-			var n = Expression.New (
+			Expression.New (
 				typeof (FakeAnonymousType).GetConstructor (new [] { typeof (string) }),
 				new [] { "Foo".ToConstant () },
 				new [] { typeof (FakeAnonymousType).GetProperty ("Tzap") });
