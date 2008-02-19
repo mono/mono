@@ -58,8 +58,14 @@ namespace Mono.CSharp {
 			if (left is EmptyConstantCast)
 				return BinaryFold (ec, oper, ((EmptyConstantCast)left).child, right, loc);
 
+			if (left is SideEffectConstant)
+				return BinaryFold (ec, oper, ((SideEffectConstant) left).left, right, loc);
+
 			if (right is EmptyConstantCast)
 				return BinaryFold (ec, oper, left, ((EmptyConstantCast)right).child, loc);
+
+			if (right is SideEffectConstant)
+				return BinaryFold (ec, oper, left, ((SideEffectConstant) right).left, loc);
 
 			Type lt = left.Type;
 			Type rt = right.Type;

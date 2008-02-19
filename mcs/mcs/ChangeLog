@@ -1,5 +1,9 @@
 2008-02-19  Marek Safar  <marek.safar@gmail.com>
 
+ 	* constant.cs, cfold.cs: SideEffectConstant results can apply for folding.
+
+2008-02-19  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #328136
  	* expression.cs: Do not fold immediately LogicalAnd operators when the left
 	side is a false constant, because we still need to evaluate the right-hand

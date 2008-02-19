@@ -1761,7 +1761,7 @@ namespace Mono.CSharp {
 	/// </summary>
 	
 	public class SideEffectConstant : Constant {
-		Constant left;
+		public Constant left;
 		Expression right;
 		
 		public SideEffectConstant (Constant left, Expression right, Location loc) : base (loc)
