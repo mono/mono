@@ -809,8 +809,6 @@ namespace System.Windows.Forms
 		protected override void CreateHandle ()
 		{
 			base.CreateHandle ();
-			
-			SetBounds (Left, Top, Width, PreferredHeight, BoundsSpecified.None);
 		}
 #endif
 
@@ -1095,6 +1093,8 @@ namespace System.Windows.Forms
 		protected override void OnHandleCreated (EventArgs e)
 		{
 			base.OnHandleCreated (e);
+
+			SetBounds (Left, Top, Width, PreferredHeight, BoundsSpecified.None);
 
 			if (textbox_ctrl != null)
 				Controls.AddImplicit (textbox_ctrl);
