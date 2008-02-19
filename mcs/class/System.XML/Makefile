@@ -74,6 +74,9 @@ EXTRA_DISTFILES = \
 	Test/XmlFiles/xsd/datatypesTest.xsd \
 	Test/XmlFiles/xsd/336625.xsd	\
 	Test/XmlFiles/xsd/358408.xsd	\
+	Test/XmlFiles/xsd/361818.xsd	\
+	Test/XmlFiles/xsd/361818-2.xsd	\
+	Test/XmlFiles/xsd/361818-3.xsd	\
 	Test/XmlFiles/xsd/77687.xsd 	\
 	Test/XmlFiles/xsd/77687inc.xsd 	\
 	Test/XmlFiles/xsd/78985.xml     \

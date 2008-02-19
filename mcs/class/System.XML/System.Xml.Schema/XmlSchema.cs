@@ -367,93 +367,8 @@ namespace System.Xml.Schema
 
 			// First, we run into inclusion schemas to collect 
 			// compilation target items into compiledItems.
-			for (int i = 0; i < Includes.Count; i++) {
-				XmlSchemaExternal ext = Includes [i] as XmlSchemaExternal;
-				if (ext == null) {
-					error (handler, String.Format ("Object of Type {0} is not valid in Includes Property of XmlSchema", Includes [i].GetType().Name));
-					continue;
-				}
-
-				if (ext.SchemaLocation == null) 
-					continue;
-
-				Stream stream = null;
-				string url = null;
-				if (resolver != null) {
-					url = GetResolvedUri (resolver, ext.SchemaLocation);
-					if (handledUris.Contains (url))
-						// This schema is already handled, so simply skip (otherwise, duplicate definition errrors occur.
-						continue;
-					handledUris.Add (url, url);
-					try {
-						stream = resolver.GetEntity (new Uri (url), null, typeof (Stream)) as Stream;
-					} catch (Exception) {
-					// LAMESPEC: This is not good way to handle errors, but since we cannot know what kind of XmlResolver will come, so there are no mean to avoid this ugly catch.
-						warn (handler, "Could not resolve schema location URI: " + url);
-						stream = null;
-					}
-				}
-
-				// Process redefinition children in advance.
-				XmlSchemaRedefine redefine = Includes [i] as XmlSchemaRedefine;
-				if (redefine != null) {
-					for (int j = 0; j < redefine.Items.Count; j++) {
-						XmlSchemaObject redefinedObj = redefine.Items [j];
-						redefinedObj.isRedefinedComponent = true;
-						redefinedObj.isRedefineChild = true;
-						if (redefinedObj is XmlSchemaType ||
-							redefinedObj is XmlSchemaGroup ||
-							redefinedObj is XmlSchemaAttributeGroup)
-							compilationItems.Add (redefinedObj);
-						else
-							error (handler, "Redefinition is only allowed to simpleType, complexType, group and attributeGroup.");
-					}
-				}
-
-				XmlSchema includedSchema = null;
-				if (stream == null) {
-					// It is missing schema components.
-					missedSubComponents = true;
-					continue;
-				} else {
-					XmlTextReader xtr = null;
-					try {
-						xtr = new XmlTextReader (url, stream, nameTable);
-						includedSchema = XmlSchema.Read (xtr, handler);
-					} finally {
-						if (xtr != null)
-							xtr.Close ();
-					}
-					includedSchema.schemas = schemas;
-				}
-				includedSchema.SetParent ();
-				ext.Schema = includedSchema;
-
-				// Set - actual - target namespace for the included schema * before compilation*.
-				XmlSchemaImport import = ext as XmlSchemaImport;
-				if (import != null) {
-					if (TargetNamespace == includedSchema.TargetNamespace) {
-						error (handler, "Target namespace must be different from that of included schema.");
-						continue;
-					} else if (includedSchema.TargetNamespace != import.Namespace) {
-						error (handler, "Attribute namespace and its importing schema's target namespace must be the same.");
-						continue;
-					}
-				} else {
-					if (TargetNamespace == null && 
-						includedSchema.TargetNamespace != null) {
-						error (handler, "Target namespace is required to include a schema which has its own target namespace");
-						continue;
-					}
-					else if (TargetNamespace != null && 
-						includedSchema.TargetNamespace == null)
-						includedSchema.TargetNamespace = TargetNamespace;
-				}
-
-				// Do not compile included schema here.
-
-				AddExternalComponentsTo (includedSchema, compilationItems);
-			}
+			for (int i = 0; i < Includes.Count; i++)
+				ProcessExternal (handler, handledUris, resolver, Includes [i] as XmlSchemaExternal);
 
 			// Compilation phase.
 			// At least each Compile() must give unique (qualified) name for each component.
@@ -557,11 +472,102 @@ namespace System.Xml.Schema
 			return abs != null ? abs.ToString () : String.Empty;
 		}
 
-		void AddExternalComponentsTo (XmlSchema s, XmlSchemaObjectCollection items)
+		void ProcessExternal (ValidationEventHandler handler, Hashtable handledUris, XmlResolver resolver, XmlSchemaExternal ext)
+		{
+			if (ext == null) {
+				error (handler, String.Format ("Object of Type {0} is not valid in Includes Property of XmlSchema", ext.GetType().Name));
+				return;
+			}
+
+			if (ext.SchemaLocation == null) 
+				return;
+//			if (ext.Schema != null) // already read
+//				return;
+
+			Stream stream = null;
+			string url = null;
+			if (resolver != null) {
+				url = GetResolvedUri (resolver, ext.SchemaLocation);
+				if (handledUris.Contains (url))
+					// This schema is already handled, so simply skip (otherwise, duplicate definition errrors occur.
+					return;
+				handledUris.Add (url, url);
+				try {
+					stream = resolver.GetEntity (new Uri (url), null, typeof (Stream)) as Stream;
+				} catch (Exception) {
+				// LAMESPEC: This is not good way to handle errors, but since we cannot know what kind of XmlResolver will come, so there are no mean to avoid this ugly catch.
+					warn (handler, "Could not resolve schema location URI: " + url);
+					stream = null;
+				}
+			}
+
+			// Process redefinition children in advance.
+			XmlSchemaRedefine redefine = ext as XmlSchemaRedefine;
+			if (redefine != null) {
+				for (int j = 0; j < redefine.Items.Count; j++) {
+					XmlSchemaObject redefinedObj = redefine.Items [j];
+					redefinedObj.isRedefinedComponent = true;
+					redefinedObj.isRedefineChild = true;
+					if (redefinedObj is XmlSchemaType ||
+						redefinedObj is XmlSchemaGroup ||
+						redefinedObj is XmlSchemaAttributeGroup)
+						compilationItems.Add (redefinedObj);
+					else
+						error (handler, "Redefinition is only allowed to simpleType, complexType, group and attributeGroup.");
+				}
+			}
+
+			XmlSchema includedSchema = null;
+			if (stream == null) {
+				// It is missing schema components.
+				missedSubComponents = true;
+				return;
+			} else {
+				XmlTextReader xtr = null;
+				try {
+					xtr = new XmlTextReader (url, stream, nameTable);
+					includedSchema = XmlSchema.Read (xtr, handler);
+				} finally {
+					if (xtr != null)
+						xtr.Close ();
+				}
+				includedSchema.schemas = schemas;
+			}
+			includedSchema.SetParent ();
+			ext.Schema = includedSchema;
+
+			// Set - actual - target namespace for the included schema * before compilation*.
+			XmlSchemaImport import = ext as XmlSchemaImport;
+			if (import != null) {
+				if (TargetNamespace == includedSchema.TargetNamespace) {
+					error (handler, "Target namespace must be different from that of included schema.");
+					return;
+				} else if (includedSchema.TargetNamespace != import.Namespace) {
+					error (handler, "Attribute namespace and its importing schema's target namespace must be the same.");
+					return;
+				}
+			} else {
+				if (TargetNamespace == null && 
+					includedSchema.TargetNamespace != null) {
+					error (handler, "Target namespace is required to include a schema which has its own target namespace");
+					return;
+				}
+				else if (TargetNamespace != null && 
+					includedSchema.TargetNamespace == null)
+					includedSchema.TargetNamespace = TargetNamespace;
+			}
+
+			// Do not compile included schema here.
+
+			AddExternalComponentsTo (includedSchema, compilationItems, handler, handledUris, resolver);
+		}
+
+		void AddExternalComponentsTo (XmlSchema s, XmlSchemaObjectCollection items, ValidationEventHandler handler, Hashtable handledUris, XmlResolver resolver)
 		{
 			foreach (XmlSchemaExternal ext in s.Includes)
-				if (ext.Schema != null)
-					AddExternalComponentsTo (ext.Schema, items);
+				ProcessExternal (handler, handledUris, resolver, ext);
+//				if (ext.Schema != null)
+//					AddExternalComponentsTo (ext.Schema, items);
 			foreach (XmlSchemaObject obj in s.Items)
 				items.Add (obj);
 		}

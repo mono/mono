@@ -406,5 +406,17 @@ namespace MonoTests.System.Xml
 			while (!vr.EOF)
 				vr.Read ();
 		}
+
+		[Test]
+		public void ThreeLevelNestedInclusion ()
+		{
+			XmlTextReader r = new XmlTextReader ("Test/XmlFiles/xsd/361818.xsd");
+			try {
+				XmlSchema xs = XmlSchema.Read (r, null);
+				xs.Compile (null);
+			} finally {
+				r.Close ();
+			}
+		}
 	}
 }

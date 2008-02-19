@@ -1,5 +1,10 @@
 2008-02-19  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchema.cs : Do recursively process xs:include inside included
+	  schemas. Fixed bug #361818.
+
+2008-02-19  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaAny.cs : block extra compilation in anyTypeContent.
 
 2008-02-04  Atsushi Enomoto <atsushi@ximian.com>

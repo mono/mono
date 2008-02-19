@@ -1,0 +1,8 @@
+<xs:schema targetNamespace="http://rep.oio.dk/sundcom.dk/medcom.dk/xml/schemas/2005/08/07/" xmlns="http://rep.oio.dk/sundcom.dk/medcom.dk/xml/schemas/2005/08/07/" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="361818-3.xsd"/>
+	<xs:group name="Letters">
+		<xs:choice>
+			<xs:element ref="HospitalReferral"/>
+		</xs:choice>
+	</xs:group>
+</xs:schema>

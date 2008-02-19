@@ -1,5 +1,9 @@
 2008-02-19  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Makefile : extra distfiles (361818*.xsd).
+
+2008-02-19  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* System.Xml_test.dll.sources: added XmlSchemasTests.cs.
 
 2008-02-04  Atsushi Enomoto  <atsushi@ximian.com>
