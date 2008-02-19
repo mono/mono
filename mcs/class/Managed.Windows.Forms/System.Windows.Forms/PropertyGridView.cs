@@ -560,19 +560,20 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				vbar.Value = 0;
 				vbar.Visible = false;
 			}
+			UpdateGridTextBoxBounds ((GridEntry)property_grid.SelectedGridItem);
 		}
 
-		private bool GetScrollBarVisible ()
-		{
-			if (property_grid.RootGridItem == null)
-				return false;
-
-			int visibleRows = GetVisibleRowsCount ();
-			int openedItems = GetVisibleItemsCount ((GridEntry)property_grid.RootGridItem);
-			if (openedItems > visibleRows)
-				return true;
-			return false;
-		}
+		// private bool GetScrollBarVisible ()
+		// {
+		// 	if (property_grid.RootGridItem == null)
+		// 		return false;
+                // 
+		// 	int visibleRows = GetVisibleRowsCount ();
+		// 	int openedItems = GetVisibleItemsCount ((GridEntry)property_grid.RootGridItem);
+		// 	if (openedItems > visibleRows)
+		// 		return true;
+		// 	return false;
+		// }
 		#region Drawing Code
 
 		private void DrawGridItems (GridItemCollection grid_items, PaintEventArgs pevent, int depth, ref int yLoc) {
@@ -829,13 +830,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 					grid_textbox.ForeColor = SystemColors.ControlText;
 					grid_textbox.ReadOnly = !entry.IsEditable;
 				}
-
-				int y = -vbar.Value*row_height;
-				CalculateItemY (entry, property_grid.RootGridItem.GridItems, ref y);
-				int x = SplitterLocation + ENTRY_SPACING + (entry.PaintValueSupported ? VALUE_PAINT_INDENT : 0);
-				grid_textbox.SetBounds (x + ENTRY_SPACING, y + ENTRY_SPACING,
-							ClientRectangle.Width - ENTRY_SPACING - x - (GetScrollBarVisible () ? vbar.Width : 0),
-							row_height - ENTRY_SPACING);
+				UpdateGridTextBoxBounds (entry);
 				grid_textbox.Text = entry.IsMerged && !entry.HasMergedValue ? String.Empty : entry.ValueText;
 				grid_textbox.Visible = true;
 				InvalidateItem (entry);
@@ -843,6 +838,16 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			} else {
 				grid_textbox.Visible = false;
 			}
+		}
+
+		private void UpdateGridTextBoxBounds (GridEntry entry)
+		{
+			int y = -vbar.Value*row_height;
+			CalculateItemY (entry, property_grid.RootGridItem.GridItems, ref y);
+			int x = SplitterLocation + ENTRY_SPACING + (entry.PaintValueSupported ? VALUE_PAINT_INDENT : 0);
+			grid_textbox.SetBounds (x + ENTRY_SPACING, y + ENTRY_SPACING,
+						ClientRectangle.Width - ENTRY_SPACING - x - (vbar.Visible ? vbar.Width : 0),
+						row_height - ENTRY_SPACING);
 		}
 
 		// Calculates the sum of the heights of all items before the one
