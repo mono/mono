@@ -5940,8 +5940,16 @@ namespace Mono.CSharp {
 
 			if (initializers != null){
 				target.initializers = new ArrayList (initializers.Count);
-				foreach (Expression initializer in initializers)
-					target.initializers.Add (initializer.Clone (clonectx));
+				foreach (object initializer in initializers)
+					if (initializer is ArrayList) {
+						ArrayList this_al = (ArrayList)initializer;
+						ArrayList al = new ArrayList (this_al.Count);
+						target.initializers.Add (al);
+						foreach (Expression e in this_al)
+							al.Add (e.Clone (clonectx));
+					} else {
+						target.initializers.Add (((Expression)initializer).Clone (clonectx));
+					}
 			}
 		}
 	}
