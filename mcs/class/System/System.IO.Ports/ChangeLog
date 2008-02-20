@@ -1,3 +1,9 @@
+2008-02-19  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* SerialPortStream.cs: Set DllImport.SetLastError to true for
+	all MonoPosixHelper functions, so in case of error we can retrieve the
+	error and print a simple but effective message about it.
+
 2007-12-03  Miguel de Icaza  <miguel@novell.com>
 
 	* SerialPort.cs: Apply patch from Martin Green

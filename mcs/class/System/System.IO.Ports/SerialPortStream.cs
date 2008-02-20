@@ -24,7 +24,7 @@ namespace System.IO.Ports
 		int write_timeout;
 		bool disposed;
 
-		[DllImport ("MonoPosixHelper")]
+		[DllImport ("MonoPosixHelper", SetLastError = true)]
 		static extern int open_serial (string portName);
 
 		public SerialPortStream (string portName, int baudRate, int dataBits, Parity parity, StopBits stopBits,
@@ -33,10 +33,10 @@ namespace System.IO.Ports
 		{
 			fd = open_serial (portName);
 			if (fd == -1)
-				throw new IOException ();
+				ThrowIOException ();
 			
 			if (!set_attributes (fd, baudRate, parity, dataBits, stopBits, handshake))
-				throw new IOException (); // Probably Win32Exc for compatibility
+				ThrowIOException (); // Probably Win32Exc for compatibility
 
 			read_timeout = readTimeout;
 			write_timeout = writeTimeout;
@@ -117,11 +117,11 @@ namespace System.IO.Ports
 			// buffer (not the SerialPort class buffer)
 		}
 
-		[DllImport ("MonoPosixHelper")]
+		[DllImport ("MonoPosixHelper", SetLastError = true)]
 		static extern int read_serial (int fd, byte [] buffer, int offset, int count);
 		
 
-		[DllImport ("MonoPosixHelper")]
+		[DllImport ("MonoPosixHelper", SetLastError = true)]
 		static extern bool poll_serial (int fd, out int error, int timeout);
 
 		public override int Read ([In,Out] byte[] buffer, int offset, int count)
@@ -139,7 +139,7 @@ namespace System.IO.Ports
 			int error;
 			bool poll_result = poll_serial (fd, out error, read_timeout);
 			if (error == -1)
-				throw new IOException ();
+				ThrowIOException ();
 
 			if (!poll_result) {
 				// see bug 79735   http://bugzilla.ximian.com/show_bug.cgi?id=79735
@@ -160,7 +160,7 @@ namespace System.IO.Ports
 			throw new NotSupportedException ();
 		}
 
-		[DllImport ("MonoPosixHelper")]
+		[DllImport ("MonoPosixHelper", SetLastError = true)]
 		static extern int write_serial (int fd, byte [] buffer, int offset, int count, int timeout);
 
 		public override void Write (byte[] buffer, int offset, int count)
@@ -189,7 +189,7 @@ namespace System.IO.Ports
 			close_serial (fd);
 		}
 
-		[DllImport ("MonoPosixHelper")]
+		[DllImport ("MonoPosixHelper", SetLastError = true)]
 		static extern void close_serial (int fd);
 
 		public override void Close ()
@@ -214,16 +214,16 @@ namespace System.IO.Ports
 				throw new ObjectDisposedException (GetType ().FullName);
 		}
 
-		[DllImport ("MonoPosixHelper")]
+		[DllImport ("MonoPosixHelper", SetLastError = true)]
 		static extern bool set_attributes (int fd, int baudRate, Parity parity, int dataBits, StopBits stopBits, Handshake handshake);
 
 		public void SetAttributes (int baud_rate, Parity parity, int data_bits, StopBits sb, Handshake hs)
 		{
 			if (!set_attributes (fd, baud_rate, parity, data_bits, sb, hs))
-				throw new IOException ();
+				ThrowIOException ();
 		}
 
-		[DllImport("MonoPosixHelper")]
+		[DllImport("MonoPosixHelper", SetLastError = true)]
 		static extern int get_bytes_in_buffer (int fd, int input);
 		
 		public int BytesToRead {
@@ -238,7 +238,7 @@ namespace System.IO.Ports
 			}
 		}
 
-		[DllImport ("MonoPosixHelper")]
+		[DllImport ("MonoPosixHelper", SetLastError = true)]
 		static extern void discard_buffer (int fd, bool inputBuffer);
 
 		public void DiscardInBuffer ()
@@ -251,7 +251,7 @@ namespace System.IO.Ports
 			discard_buffer (fd, false);
 		}
 		
-		[DllImport ("MonoPosixHelper")]
+		[DllImport ("MonoPosixHelper", SetLastError = true)]
 		static extern SerialSignal get_signals (int fd, out int error);
 
 		public SerialSignal GetSignals ()
@@ -259,12 +259,12 @@ namespace System.IO.Ports
 			int error;
 			SerialSignal signals = get_signals (fd, out error);
 			if (error == -1)
-				throw new IOException ();
+				ThrowIOException ();
 
 			return signals;
 		}
 
-		[DllImport ("MonoPosixHelper")]
+		[DllImport ("MonoPosixHelper", SetLastError = true)]
 		static extern int set_signal (int fd, SerialSignal signal, bool value);
 
 		public void SetSignal (SerialSignal signal, bool value)
@@ -276,10 +276,10 @@ namespace System.IO.Ports
 				throw new Exception ("Invalid internal value");
 
 			if (set_signal (fd, signal, value) == -1)
-				throw new IOException ();
+				ThrowIOException ();
 		}
 
-		[DllImport ("MonoPosixHelper")]
+		[DllImport ("MonoPosixHelper", SetLastError = true)]
 		static extern int breakprop (int fd);
 
 		public void SetBreakState (bool value)
@@ -288,6 +288,16 @@ namespace System.IO.Ports
 				breakprop (fd);
 		}
 
+		[DllImport ("libc")]
+		static extern IntPtr strerror (int errnum);
+
+		static void ThrowIOException ()
+		{
+			int errnum = Marshal.GetLastWin32Error ();
+			string error_message = Marshal.PtrToStringAnsi (strerror (errnum));
+
+			throw new IOException (error_message);
+		}
 	}
 }
 
