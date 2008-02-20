@@ -195,15 +195,15 @@ namespace System.Windows.Forms
 
 		public static string CommonAppDataPath {
 			get {
-				return Environment.GetFolderPath (Environment.SpecialFolder.CommonApplicationData);
+				return CreateDataPath (Environment.GetFolderPath (Environment.SpecialFolder.CommonApplicationData));
 			}
 		}
 
 		public static RegistryKey CommonAppDataRegistry {
 			get {
-				return Registry.LocalMachine.OpenSubKey ("Software\\" +
-					Application.CompanyName + "\\" + Application.ProductName +
-					"\\" + Application.ProductVersion, true);
+				string key = string.Format ("Software\\{0}\\{1}\\{2}", CompanyName, ProductName, ProductVersion);
+
+				return Registry.LocalMachine.CreateSubKey (key);
 			}
 		}
 
@@ -262,9 +262,7 @@ namespace System.Windows.Forms
 
 		public static string LocalUserAppDataPath {
 			get {
-				return Path.Combine (Path.Combine (Path.Combine (
-					Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData),
-					CompanyName), ProductName), ProductVersion);
+				return CreateDataPath (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData));
 			}
 		}
 
@@ -342,17 +340,15 @@ namespace System.Windows.Forms
 
 		public static string UserAppDataPath {
 			get {
-				return Path.Combine (Path.Combine (Path.Combine (
-					Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData),
-					CompanyName), ProductName), ProductVersion);
+				return CreateDataPath (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData));
 			}
 		}
 
 		public static RegistryKey UserAppDataRegistry {
 			get {
-				return Registry.CurrentUser.OpenSubKey ("Software\\" +
-					Application.CompanyName + "\\" + Application.ProductName +
-					"\\" + Application.ProductVersion, true);
+				string key = string.Format ("Software\\{0}\\{1}\\{2}", CompanyName, ProductName, ProductVersion);
+				
+				return Registry.CurrentUser.CreateSubKey (key);
 			}
 		}
 
@@ -994,6 +990,22 @@ namespace System.Windows.Forms
 			return false;
 		}
 #endif
+
+		// Takes a starting path, appends company name, product name, and
+		// product version.  If the directory doesn't exist, create it
+		private static string CreateDataPath (string basePath)
+		{
+			string path;
+
+			path = Path.Combine (basePath, CompanyName);
+			path = Path.Combine (path, ProductName);
+			path = Path.Combine (path, ProductVersion);
+
+			if (!Directory.Exists (path))
+				Directory.CreateDirectory (path);
+			
+			return path;
+		}
 		#endregion
 	}
 }

@@ -1,5 +1,11 @@
 2008-02-20  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Application.cs: For the app data paths and the registry key paths,
+	ensure they are created before returning them to the user.
+	[Fixes bug #361709]
+
+2008-02-20  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Application.cs: Guard against an NRE in CompanyName and
 	ProductName.
 
