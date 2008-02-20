@@ -1,5 +1,8 @@
 2008-02-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-sparc.c (opcode_to_sparc_cond): Use the mono_opcode_to_cond () functions
+	instead of a switch statement.
+	
 	* mini-sparc.c (mono_arch_allocate_vars): Allocate a stack slot for use by
 	the int<->float conversion opcodes instead of using mono_spillvar_offset_float ().
 
