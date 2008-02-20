@@ -1,5 +1,11 @@
 2008-02-20  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #363218
+	* expression.cs (ArrayCreation.Clone): Deal with multi-dimensional
+	initializers.
+	
+2008-02-20  Marek Safar  <marek.safar@gmail.com>
+
  	* expression.cs, constant.cs, cfold.cs: Yet another side-effect constant
  	update. This time to deal correctly with SideEffectConstant expression used
  	as an argument for another constant folding.
