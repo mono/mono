@@ -1001,9 +1001,8 @@ namespace System.Windows.Forms.PropertyGridInternal {
 
 		#region IWindowsFormsEditorService Members
 
-		public void CloseDropDown () {
-			Control c = dropdown_form.Controls[0];
-			c.Capture = false;
+		public void CloseDropDown () 
+		{
 			dropdown_form.Hide ();
 			dropdown_form.Controls.Clear ();
 		}
