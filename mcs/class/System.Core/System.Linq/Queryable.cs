@@ -1552,7 +1552,7 @@ namespace System.Linq {
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource)),
 					source1.Expression,
 					Expression.Constant (source2),
-					Expression.Constant (comparer))); throw new NotImplementedException ();
+					Expression.Constant (comparer)));
 		}
 
 
