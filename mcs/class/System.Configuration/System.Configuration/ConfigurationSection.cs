@@ -45,7 +45,7 @@ namespace System.Configuration
 		protected ConfigurationSection ()
 		{
 		}
-
+		
 		internal IConfigurationSectionHandler SectionHandler {
 			get { return section_handler; }
 			set { section_handler = value; }
@@ -101,15 +101,21 @@ namespace System.Configuration
 		{
 			reader.MoveToContent ();
 
+			string protection_provider = null;
+			string config_source = null;
+			string localName;
+			
+			while (reader.MoveToNextAttribute ()) {
+				localName = reader.LocalName;
+				
+				if (localName == "configProtectionProvider")
+					protection_provider = reader.Value;
+				else if (localName == "configSource")
+					config_source = reader.Value;
+			}
+
 			/* XXX this stuff shouldn't be here */
 			{
-				string protection_provider = null;
-
-				while (reader.MoveToNextAttribute ()) {
-					if (reader.LocalName == "configProtectionProvider")
-						protection_provider = reader.Value;
-				}
-
 				if (protection_provider != null) {
 					ProtectedConfigurationProvider prov = ProtectedConfiguration.GetProvider (protection_provider, true);
 					XmlDocument doc = new XmlDocument ();
@@ -128,8 +134,24 @@ namespace System.Configuration
 				}
 			}
 
+			XmlReader r = reader;
+			if (config_source != null) {
+				if (config_source.Length == 0 || Path.IsPathRooted (config_source))
+					throw new ConfigurationException ("The configSource attribute must be a relative physical path.");
+				
+				if (HasValues ())
+					throw new ConfigurationException ("A section using 'configSource' may contain no other attributes or elements.");
+				
+				SectionInformation.ConfigSource = config_source;
+				if (File.Exists (config_source)) {
+					RawXml = File.ReadAllText (config_source);
+					r = new XmlTextReader (new StringReader (RawXml));
+				} else
+					RawXml = null;
+			}
+				
 			SectionInformation.SetRawXml (RawXml);
-			DeserializeElement (reader, false);
+			DeserializeElement (r, false);
 		}
 
 		protected internal virtual string SerializeSection (ConfigurationElement parentElement, string name, ConfigurationSaveMode saveMode)

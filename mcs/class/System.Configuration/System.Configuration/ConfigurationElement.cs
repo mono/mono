@@ -269,8 +269,9 @@ namespace System.Configuration
 		internal virtual bool HasValues ()
 		{
 			foreach (PropertyInformation pi in ElementInformation.Properties)
-				if (pi.ValueOrigin != PropertyValueOrigin.Default)
+				if (pi.ValueOrigin == PropertyValueOrigin.SetHere)
 					return true;
+			
 			return false;
 		}
 		
@@ -301,8 +302,9 @@ namespace System.Configuration
 					}
 					else if (reader.LocalName == "xmlns") {
 						/* ignore */
-					}
-					else if (!OnDeserializeUnrecognizedAttribute (reader.LocalName, reader.Value))
+					} else if (this is ConfigurationSection && reader.LocalName == "configSource") {
+						/* ignore */
+					} else if (!OnDeserializeUnrecognizedAttribute (reader.LocalName, reader.Value))
 						throw new ConfigurationException ("Unrecognized attribute '" + reader.LocalName + "'.");
 
 					continue;
