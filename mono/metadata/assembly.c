@@ -1426,6 +1426,15 @@ mono_assembly_load_from_full (MonoImage *image, const char*fname,
 
 	mono_assembly_fill_assembly_name (image, &ass->aname);
 
+	if (refonly && strcmp (ass->aname.name, "mscorlib") == 0) {
+		// MS.NET doesn't support loading other mscorlibs
+		g_free (ass);
+		g_free (base_dir);
+		mono_image_close (image);
+		*status = MONO_IMAGE_OK;
+		return mono_defaults.corlib->assembly;
+	}
+
 	/* Add a non-temporary reference because of ass->image */
 	mono_image_addref (image);
 
