@@ -1,3 +1,9 @@
+2008-02-20  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* OdbcDataReader.cs: (GetValue): Handle cases when certain 
+	ODBC drivers return unexpected results.  Fixes #326740.  Patch 
+	provided by Mark Junker <mjscod@gmx.de>.
+	
 2008-01-16  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* OdbcCommandBuilder.cs: Implemented 2.0 APIs and code

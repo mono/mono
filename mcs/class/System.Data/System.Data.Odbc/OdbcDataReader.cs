@@ -682,7 +682,10 @@ namespace System.Data.Odbc
 						ret = libodbc.SQLGetData (hstmt, ColIndex, col.SqlCType, buffer, bufsize, ref outsize);
 						if (ret == OdbcReturn.Error)
 							break;
-						if (ret != OdbcReturn.NoData && outsize!=-1) {
+						// Fix for strance ODBC drivers (like psqlODBC)
+						if (ret == OdbcReturn.Success && outsize==-1)
+							ret = OdbcReturn.NoData;
+						if (ret != OdbcReturn.NoData && outsize > 0) {
 							if (outsize < bufsize)
 								sb.Append (System.Text.Encoding.Unicode.GetString(buffer,0,outsize));
 							else
@@ -700,7 +703,10 @@ namespace System.Data.Odbc
 						ret = libodbc.SQLGetData (hstmt, ColIndex, col.SqlCType, buffer, bufsize, ref outsize);
 						if (ret == OdbcReturn.Error)
 							break;
-						if (ret != OdbcReturn.NoData && outsize!=-1) {
+						// Fix for strance ODBC drivers (like psqlODBC)
+						if (ret == OdbcReturn.Success && outsize==-1)
+							ret = OdbcReturn.NoData;
+						if (ret != OdbcReturn.NoData && outsize > 0) {
 							if (outsize < bufsize)
 								sb1.Append (System.Text.Encoding.Default.GetString(buffer,0,outsize));
 							else
