@@ -1065,6 +1065,8 @@ namespace System.Windows.Forms {
 		internal Image StateImage {
 			get {
 				if (TreeView != null) {
+					if (TreeView.StateImageList == null)
+						return null;
 					if (state_image_index >= 0)
 						return TreeView.StateImageList.Images[state_image_index];
 					if (state_image_key != string.Empty)

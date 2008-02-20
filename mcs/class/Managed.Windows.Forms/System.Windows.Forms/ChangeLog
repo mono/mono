@@ -1,5 +1,11 @@
 2008-02-20  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TreeNode.cs: Guard against an NRE when the parent's
+	StateImageList hasn't been set.
+	[Fixes bug #363353]
+
+2008-02-20  Jonathan Pobst  <monkey@jpobst.com>
+
 	* SplitContainer.cs: Add SupportsTransparentBackColor and
 	OptimizedDoubleBuffering control styles.
 	[Fixes bug #363303]
