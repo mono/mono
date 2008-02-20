@@ -1,3 +1,8 @@
+2008-02-20  Raja R Harinath  <harinath@hurrynot.org>
+
+	* typemanager.cs (DropGenericMethodArguments): Ensure we get an underlying
+	MethodBuilder.
+
 2008-02-19  Marek Safar  <marek.safar@gmail.com>
 
  	* constant.cs, cfold.cs: SideEffectConstant results can apply for folding.

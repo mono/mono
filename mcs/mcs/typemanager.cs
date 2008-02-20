@@ -2834,14 +2834,14 @@ namespace Mono.CSharp {
 	public static MethodBase DropGenericMethodArguments (MethodBase m)
 	{
 #if GMCS_SOURCE
-		if (m.IsGenericMethodDefinition)
-			return m;
 		if (m.IsGenericMethod)
-			return ((MethodInfo) m).GetGenericMethodDefinition ();
-		if (!m.DeclaringType.IsGenericType)
+		  m = ((MethodInfo) m).GetGenericMethodDefinition ();
+
+		Type t = m.DeclaringType;
+		if (!t.IsGenericType || t.IsGenericTypeDefinition)
 			return m;
 
-		Type t = m.DeclaringType.GetGenericTypeDefinition ();
+		t = t.GetGenericTypeDefinition ();
 		BindingFlags bf = BindingFlags.Public | BindingFlags.NonPublic |
 			BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
