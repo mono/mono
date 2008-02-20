@@ -1,3 +1,9 @@
+2008-02-17  Daniel Nauck  <dna@mono-project.de>
+
+	[Backport from r95967 to 1.9]
+        * HttpWebResponse.cs: refactored cookie expires parsing to
+        allow all common expires datetime formats.
+
 2008-02-13  Daniel Nauck  <dna@mono-project.de>
 
 	[Backport from r95334 to 1.9]
