@@ -59,18 +59,45 @@ namespace Mainsoft.Web.Hosting
 		}
 
 		protected void SaveStateInClient (FacesContext facesContext, StateManager.SerializedView serializedView) {
-			UIViewRoot uiViewRoot = facesContext.getViewRoot ();
-			//save state in response (client-side: full state; server-side: sequence)
-			RenderKit renderKit = RenderKitFactory.getRenderKit (facesContext, uiViewRoot.getRenderKitId ());
-			// not us.
-			renderKit.getResponseStateManager ().writeState (facesContext, serializedView);
+			//UIViewRoot uiViewRoot = facesContext.getViewRoot ();
+			////save state in response (client-side: full state; server-side: sequence)
+			//RenderKit renderKit = RenderKitFactory.getRenderKit (facesContext, uiViewRoot.getRenderKitId ());
+			//// not us.
+			//renderKit.getResponseStateManager ().writeState (facesContext, serializedView);
+
+			java.io.ByteArrayOutputStream bytearrayoutputstream = new java.io.ByteArrayOutputStream ();
+			java.io.ObjectOutputStream objectoutputstream = new java.io.ObjectOutputStream (bytearrayoutputstream);
+
+			//ignore tree structure
+			//objectoutputstream.writeObject (serializedView.getStructure ());
+			objectoutputstream.writeObject (serializedView.getState ());
+			objectoutputstream.close ();
+			bytearrayoutputstream.close ();
+
+			string s = " <input type=\"hidden\" name=\"faces.VIEW\" value=\"" +
+				Convert.ToBase64String ((byte []) vmw.common.TypeUtils.ToByteArray (bytearrayoutputstream.toByteArray ())) + "\" />\n ";
+			facesContext.getResponseWriter ().write (s);
 		}
 
 		protected object GetStateFromClient (FacesContext facesContext, String viewId, String renderKitId) {
-			RenderKit renderKit = RenderKitFactory.getRenderKit (facesContext, renderKitId);
-			ResponseStateManager responseStateManager = renderKit.getResponseStateManager ();
-			responseStateManager.getTreeStructureToRestore (facesContext, viewId); //ignore result. Must call for compatibility with sun implementation.
-			return responseStateManager.getComponentStateToRestore (facesContext);
+			//RenderKit renderKit = RenderKitFactory.getRenderKit (facesContext, renderKitId);
+			//ResponseStateManager responseStateManager = renderKit.getResponseStateManager ();
+			//responseStateManager.getTreeStructureToRestore (facesContext, viewId); //ignore result. Must call for compatibility with sun implementation.
+			//return responseStateManager.getComponentStateToRestore (facesContext);
+
+			java.util.Map map = facesContext.getExternalContext ().getRequestParameterMap ();
+			string s1 = (string) map.get ("faces.VIEW");
+
+			byte [] buffer = Convert.FromBase64String (s1);
+			java.io.ByteArrayInputStream bytearrayinputstream = new java.io.ByteArrayInputStream (vmw.common.TypeUtils.ToSByteArray (buffer));
+			java.io.ObjectInputStream inputStream = new java.io.ObjectInputStream (bytearrayinputstream);
+			//ignore tree structure
+			//inputStream.readObject ();
+			object state = inputStream.readObject ();
+			inputStream.close ();
+			bytearrayinputstream.close ();
+
+			return state;
 		}
 	}
 }
