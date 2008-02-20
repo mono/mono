@@ -1,5 +1,7 @@
 2008-02-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* cpu-s390x.md: Remove some unused opcodes.
+
 	* mini-ia64.c (mono_arch_lowering_pass): Add some more opcodes. Use
 	mono_op_imm_to_op ().
 
