@@ -1,3 +1,14 @@
+2008-02-20  Marek Habersack  <mhabersack@novell.com>
+
+	* ConfigurationSection.cs: support the "configSource" attribute
+	when deserializing a section. Contents of the file (if it exists)
+	replaces the previous section contents.
+
+	* ConfigurationElement.cs: ignore the "configSource" attribute if we're a
+	ConfigurationSection instance.
+	HasValues () returns true only if any of the properties has the
+	origin set to SetHere.
+
 2008-02-07  Konstantin Triger <kostat@mainsoft.com>
 
 	* ClientConfigurationSystem.cs: performance: refactor out the Configuration
