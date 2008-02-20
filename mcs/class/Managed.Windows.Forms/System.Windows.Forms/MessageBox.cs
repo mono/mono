@@ -263,11 +263,18 @@ namespace System.Windows.Forms
 				// Calculate the width based on amount of buttons 
 				tb_width = (button_width + button_space) * buttoncount;  
 
+				// The form caption can also make us bigger
+				SizeF caption = TextRenderer.MeasureString (Text, new Font (DefaultFont, FontStyle.Bold));
+				
+				// Use the bigger of the caption size (plus some arbitrary borders/close button)
+				// or the text size, up to 60% of the screen (max_size)
+				Size new_size = new SizeF (Math.Min (Math.Max (caption.Width + 40, tsize.Width), max_width), tsize.Height).ToSize ();
+				
 				// Now we choose the good size for the form
-				if (tsize.ToSize ().Width > tb_width)
-					this.ClientSize = new Size(tsize.ToSize().Width + (space_border * 2), Height = tsize.ToSize ().Height + (space_border * 4));
+				if (new_size.Width > tb_width)
+					this.ClientSize = new Size (new_size.Width + (space_border * 2), Height = new_size.Height + (space_border * 4));
 				else
-					this.ClientSize = new Size(tb_width + (space_border * 2), Height = tsize.ToSize ().Height + (space_border * 4));
+					this.ClientSize = new Size (tb_width + (space_border * 2), Height = new_size.Height + (space_border * 4));
 
 				// Now we set the left of the buttons
 				button_left = (this.ClientSize.Width / 2) - (tb_width / 2) + 5;

@@ -1,3 +1,9 @@
+2008-02-20  Jonathan Pobst  <monkey@jpobst.com>
+
+	* MessageBox.cs: Make the message box wider if the form caption
+	is longer than the text in the form.
+	[Fixes bug #361137]
+
 2008-02-20  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* PropertyGridView.cs: Fix a NRE when closing the drop down form.
