@@ -66,10 +66,6 @@ namespace System.Linq.Expressions {
 			return ExpressionPrinter.ToString (this);
 		}
 
-		static void CheckMethod (MethodInfo m)
-		{
-		}
-
 #region Binary Expressions
 		static bool IsInt (Type t)
 		{
@@ -1275,6 +1271,8 @@ namespace System.Linq.Expressions {
 		{
 			if (member == null)
 				throw new ArgumentNullException ("member");
+			if (initializers == null)
+				throw new ArgumentNullException ("initializers");
 
 			var inits = initializers.ToReadOnlyCollection ();
 			CheckForNull (inits, "initializers");
@@ -1309,6 +1307,8 @@ namespace System.Linq.Expressions {
 		{
 			if (propertyAccessor == null)
 				throw new ArgumentNullException ("propertyAccessor");
+			if (initializers == null)
+				throw new ArgumentNullException ("initializers");
 
 			var inits = initializers.ToReadOnlyCollection ();
 			CheckForNull (inits, "initializers");
@@ -1322,40 +1322,93 @@ namespace System.Linq.Expressions {
 			return new MemberListBinding (prop, inits);
 		}
 
-		[MonoTODO]
 		public static ListInitExpression ListInit (NewExpression newExpression, params ElementInit [] initializers)
 		{
-			throw new NotImplementedException ();
+			return ListInit (newExpression, initializers as IEnumerable<ElementInit>);
 		}
 
-		[MonoTODO]
 		public static ListInitExpression ListInit (NewExpression newExpression, IEnumerable<ElementInit> initializers)
 		{
-			throw new NotImplementedException ();
+			var inits = CheckListInit (newExpression, initializers);
+
+			return new ListInitExpression (newExpression, inits);
 		}
 
-		[MonoTODO]
 		public static ListInitExpression ListInit (NewExpression newExpression, params Expression [] initializers)
 		{
-			throw new NotImplementedException ();
+			return ListInit (newExpression, initializers as IEnumerable<Expression>);
 		}
 
-		[MonoTODO]
 		public static ListInitExpression ListInit (NewExpression newExpression, IEnumerable<Expression> initializers)
 		{
-			throw new NotImplementedException ();
+			var inits = CheckListInit (newExpression, initializers);
+
+			var add_method = GetAddMethod (newExpression.Type, inits [0].Type);
+			if (add_method == null)
+				throw new InvalidOperationException ("No suitable add method found");
+
+			return new ListInitExpression (newExpression, CreateInitializers (add_method, inits));
 		}
 
-		[MonoTODO]
+		static ReadOnlyCollection<ElementInit> CreateInitializers (MethodInfo add_method, ReadOnlyCollection<Expression> initializers)
+		{
+			return (from init in initializers select Expression.ElementInit (add_method, init)).ToReadOnlyCollection ();
+		}
+
+		static MethodInfo GetAddMethod (Type type, Type arg)
+		{
+			return type.GetMethod ("Add", PublicInstance | BindingFlags.IgnoreCase, null, new [] { arg }, null);
+		}
+
 		public static ListInitExpression ListInit (NewExpression newExpression, MethodInfo addMethod, params Expression [] initializers)
 		{
-			throw new NotImplementedException ();
+			return ListInit (newExpression, addMethod, initializers as IEnumerable<Expression>);
 		}
 
-		[MonoTODO]
+		static ReadOnlyCollection<T> CheckListInit<T> (NewExpression newExpression, IEnumerable<T> initializers) where T : class
+		{
+			if (newExpression == null)
+				throw new ArgumentNullException ("newExpression");
+			if (initializers == null)
+				throw new ArgumentNullException ("initializers");
+			if (!typeof (IEnumerable).IsAssignableFrom (newExpression.Type))
+				throw new InvalidOperationException ("The type of the new expression does not implement IEnumerable");
+
+			var inits = initializers.ToReadOnlyCollection ();
+			if (inits.Count == 0)
+				throw new ArgumentException ("Empty initializers");
+
+			CheckForNull (inits, "initializers");
+
+			return inits;
+		}
+
 		public static ListInitExpression ListInit (NewExpression newExpression, MethodInfo addMethod, IEnumerable<Expression> initializers)
 		{
-			throw new NotImplementedException ();
+			var inits = CheckListInit (newExpression, initializers);
+
+			if (addMethod != null) {
+				if (addMethod.Name.ToLowerInvariant () != "add")
+					throw new ArgumentException ("addMethod");
+
+				var parameters = addMethod.GetParameters ();
+				if (parameters.Length != 1)
+					throw new ArgumentException ("addMethod");
+
+				var type = parameters [0].ParameterType;
+
+				foreach (var exp in inits)
+					if (!type.IsAssignableFrom (exp.Type))
+						throw new InvalidOperationException ("Initializer not assignable to the add method parameter type");
+			}
+
+			if (addMethod == null)
+				addMethod = GetAddMethod (newExpression.Type, inits [0].Type);
+
+			if (addMethod == null)
+				throw new InvalidOperationException ("No suitable add method found");
+
+			return new ListInitExpression (newExpression, CreateInitializers (addMethod, inits));
 		}
 
 		public static MemberExpression MakeMemberAccess (Expression expression, MemberInfo member)

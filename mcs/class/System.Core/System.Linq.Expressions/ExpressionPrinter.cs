@@ -346,7 +346,11 @@ namespace System.Linq.Expressions {
 
 		protected override void VisitListInit (ListInitExpression init)
 		{
-			throw new NotImplementedException ();
+			Visit (init.NewExpression);
+			Print (" {");
+			// VisitElementInitializerList
+			VisitList (init.Initializers, VisitElementInitializer);
+			Print ("}");
 		}
 
 		protected override void VisitNewArray (NewArrayExpression newArray)
