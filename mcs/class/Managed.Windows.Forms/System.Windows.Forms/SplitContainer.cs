@@ -133,6 +133,9 @@ namespace System.Windows.Forms
 		#region Public Constructors
 		public SplitContainer ()
 		{
+			SetStyle (ControlStyles.SupportsTransparentBackColor, true);
+			SetStyle (ControlStyles.OptimizedDoubleBuffer, true);
+			
 			fixed_panel = FixedPanel.None;
 			orientation = Orientation.Vertical;
 

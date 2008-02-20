@@ -272,11 +272,39 @@ namespace MonoTests.System.Windows.Forms
 			f.Dispose ();
 		}
 
+		[Test]
+		public void ControlStyle ()
+		{
+			PublicSplitContainer epp = new PublicSplitContainer ();
+
+			ControlStyles cs = ControlStyles.ContainerControl;
+			cs |= ControlStyles.UserPaint;
+			cs |= ControlStyles.StandardClick;
+			cs |= ControlStyles.SupportsTransparentBackColor;
+			cs |= ControlStyles.StandardDoubleClick;
+			cs |= ControlStyles.Selectable;
+			cs |= ControlStyles.OptimizedDoubleBuffer;
+			cs |= ControlStyles.UseTextForAccessibility;
+
+			Assert.AreEqual (cs, epp.GetControlStyles (), "Styles");
+		}
+
 		private class PublicSplitContainer : SplitContainer
 		{
 			public void PublicScaleControl (SizeF factor, BoundsSpecified specified)
 			{
 				base.ScaleControl (factor, specified);
+			}
+
+			public ControlStyles GetControlStyles ()
+			{
+				ControlStyles retval = (ControlStyles)0;
+
+				foreach (ControlStyles cs in Enum.GetValues (typeof (ControlStyles)))
+					if (this.GetStyle (cs) == true)
+						retval |= cs;
+
+				return retval;
 			}
 		}
 	}
