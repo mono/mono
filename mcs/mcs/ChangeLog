@@ -10,44 +10,44 @@
 2008-02-19  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #328136
- 	* expression.cs: Do not fold immediately LogicalAnd operators when the left
+	* expression.cs: Do not fold immediately LogicalAnd operators when the left
 	side is a false constant, because we still need to evaluate the right-hand
 	side.
-	
+
 	* statement.cs (If): Emit two types of boolean constants (simple constant,
 	side-effect constant).
-		 	
+
 2008-02-19  Marek Safar  <marek.safar@gmail.com>
 
- 	* constant.cs (SideEffectConstant): Don't emit boolean constant.
- 	
- 	* expression.cs: Fold immediately LogicalAnd operators when both sides are
- 	constants.
-	
+	* constant.cs (SideEffectConstant): Don't emit boolean constant.
+
+	* expression.cs: Fold immediately LogicalAnd operators when both sides are
+	constants.
+
 2008-02-18  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #361457
- 	* ecore.cs (IsApplicable): Params methods have lower priority.
- 	
- 	* support.cs: Return correct parameter modifier for params types.
+	* ecore.cs (IsApplicable): Params methods have lower priority.
+
+	* support.cs: Return correct parameter modifier for params types.
 
 2008-02-18  Marek Safar  <marek.safar@gmail.com>
 
- 	* generic.cs (TypeParameter): Cache attribute target name.
- 	
- 	* support.cs: Removed unused variable.
- 	
- 	* typemanager.cs: Removed debugging leftover.
- 	
- 	* ecore.cs: Use local type instead of a property;
- 	
- 	* class.cs (VerifyMembers): Consider also parent to test whether type member
- 	is local or public.
- 	
- 	* expression.cs (FullMethodDesc): Removed.
- 	
- 	* attribute.cs (IsValidArgumentType): Made static.
- 	
+	* generic.cs (TypeParameter): Cache attribute target name.
+
+	* support.cs: Removed unused variable.
+
+	* typemanager.cs: Removed debugging leftover.
+
+	* ecore.cs: Use local type instead of a property;
+
+	* class.cs (VerifyMembers): Consider also parent to test whether type member
+	is local or public.
+
+	* expression.cs (FullMethodDesc): Removed.
+
+	* attribute.cs (IsValidArgumentType): Made static.
+
 2008-02-17  Raja R Harinath  <harinath@hurrynot.org>
 
 	Cleanup to be more readable.
@@ -58,19 +58,19 @@
 
 	* cs-tokenizer.cs: if a conditional expression happens inside a
 	(...) this also means that we do not need to de-ambiguate between
-	an parenthesized expression and a cast.  
+	an parenthesized expression and a cast.
 
 	Fixes 346484.
 
 	* constant.cs (SideEffectConstant): a constant value that happens
-	to have a side effect.   
+	to have a side effect.
 
 	Fixes the build regressions introduced by the fix for #359789
 
 2008-02-14  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* expression.cs (Conditional.Emit): when emitting the ternary
-	operator, use local variables to generate code verifiable code. 
+	operator, use local variables to generate code verifiable code.
 
 	The verifier cannot infer that the type on stack before the
 	stloc.0 is executed is of type ParentB. This happens because the
@@ -87,7 +87,7 @@
 	the expected type.
 
 	Fixes: #358102
-	
+
 2008-02-14  Miguel de Icaza  <miguel@novell.com>
 
 	* expression.cs: Do not fold BitwiseAnd operators when the left
@@ -103,13 +103,13 @@
 
 2008-02-14  Marek Safar  <marek.safar@gmail.com>
 
- 	* generic.cs (TypeParameter.GetMembers): Is not supported operation. 
- 	
+	* generic.cs (TypeParameter.GetMembers): Is not supported operation.
+
 2008-02-14  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #361686
- 	* decl.cs: A protected types used inside a private class which parents 
- 	derives from the protected class are accessible.
+	* decl.cs: A protected types used inside a private class which parents
+	derives from the protected class are accessible.
 
 2008-02-13  Marek Safar  <marek.safar@gmail.com>
 
@@ -128,17 +128,17 @@
 2008-02-12  Marek Safar  <marek.safar@gmail.com>
 
 	* Makefile: Fixed `qh' target to work on all machines.
-	
- 	* report.cs, typemanager.cs, parameter.cs, ecore.cs, class.cs, anonymous.cs,
- 	expression.cs, codegen.cs, statement.cs, doc.cs: Replaced type IsSubclassOf
- 	and HasElementType with TypeManager implementation.
+
+	* report.cs, typemanager.cs, parameter.cs, ecore.cs, class.cs, anonymous.cs,
+	expression.cs, codegen.cs, statement.cs, doc.cs: Replaced type IsSubclassOf
+	and HasElementType with TypeManager implementation.
 
 2008-02-08  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bugs #325134, #359749
- 	* expression.cs, ecore.cs: Try to resolve an extension method even if the
- 	first binds point to non-method member expression.
- 	
+	* expression.cs, ecore.cs: Try to resolve an extension method even if the
+	first binds point to non-method member expression.
+
 2008-02-08  Marek Safar  <marek.safar@gmail.com>
 
  	* cs-parser.jay: Null coalescing operator is not part of ISO-1.
@@ -146,8 +146,8 @@
 2008-02-08  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bugs #321394, #323028
- 	* generic.cs, parameter.cs, ecore.cs, class.cs, decl.cs, delegate.cs: 
- 	Reworked naive IsAccessibleAs implementation to handle nested types.
+	* generic.cs, parameter.cs, ecore.cs, class.cs, decl.cs, delegate.cs:
+	Reworked naive IsAccessibleAs implementation to handle nested types.
 
 2008-02-05  Jb Evain  <jbevain@novell.com>
 
@@ -157,27 +157,27 @@
 2008-02-05  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #325372
- 	* class.cs: Use generic type comparison when testing method signatures.
+	* class.cs: Use generic type comparison when testing method signatures.
 
 2008-02-05  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #357047
- 	* ecore.cs: Applied C# 3.0 changes to better conversion.
+	* ecore.cs: Applied C# 3.0 changes to better conversion.
 
 2008-02-05  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #358374
- 	* cs-parser.jay: Correctly set modifiers for all constructor types.
+	* cs-parser.jay: Correctly set modifiers for all constructor types.
 
 2008-02-04  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #355251
- 	* generic.cs: Added base class constraint based type inference.
+	* generic.cs: Added base class constraint based type inference.
 
 2008-02-01  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #357255
- 	* decl.cs: One more missing visibility check.
+	* decl.cs: One more missing visibility check.
 
 2008-02-01  Marek Safar  <marek.safar@gmail.com>
 
@@ -186,7 +186,7 @@
 2008-01-25  Marek Safar  <marek.safar@gmail.com>
 
 	* report.cs: Correctly reset warnings count after probing.
-	
+
 2008-01-25  Martin Baulig  <martin@ximian.com>
 
 	* namespace.cs
@@ -197,46 +197,46 @@
 
 	* expression.cs: Implemented Divide, Equal, ExclusiveOr, GreaterThanOrEqual
 	expressions.
-	
+
 2008-01-25  Marek Safar  <marek.safar@gmail.com>
 
- 	* generic.cs: Use full implicit conversion for type inference fixing.
- 	
+	* generic.cs: Use full implicit conversion for type inference fixing.
+
 2008-01-24  Marek Safar  <marek.safar@gmail.com>
 
- 	* ecore.cs, expression.cs, generic.cs: Implemented Convert, ConvertChecked.
- 	Fixed user operator conversions.
- 	
+	* ecore.cs, expression.cs, generic.cs: Implemented Convert, ConvertChecked.
+	Fixed user operator conversions.
+
 2008-01-24  Marek Safar  <marek.safar@gmail.com>
 
- 	* generic.cs: Do nullable type to null comparison optimization during
- 	resolve phase.
- 	
+	* generic.cs: Do nullable type to null comparison optimization during
+	resolve phase.
+
 2008-01-24  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #355163
- 	* generic.cs: Enabled l-value resolve on nullable expressions.
- 	
+	* generic.cs: Enabled l-value resolve on nullable expressions.
+
 2008-01-24  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #353986
- 	* class.cs: Ingore static ctors with parameters for any further checks.
- 	
+	* class.cs: Ingore static ctors with parameters for any further checks.
+
 2008-01-24  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #354310
- 	* namespace.cs: Removed redundant check.
+	* namespace.cs: Removed redundant check.
 
 2008-01-24  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #354928
- 	* expression.cs: ElementInitializers can be resolved only once.
- 	
+	* expression.cs: ElementInitializers can be resolved only once.
+
 2008-01-24  Marek Safar  <marek.safar@gmail.com>
 
 	* convert.cs, ecore.cs, expression.cs, generic.cs: Implemented Coalesce and
 	Condition expressions.
-	
+
 2008-01-23  Marek Safar  <marek.safar@gmail.com>
 
  	* codegen.cs: Fixed AssemblyBuilder initialization on other platforms.
@@ -245,30 +245,30 @@
 
 	* ecore.cs, expression.cs, generic.cs: Implicit bool? to bool conversion is
 	not allowed.
-	
+
 	* generic.cs: Implemented coalesce expression.
 
 2008-01-22  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #355145
- 	* anonymous.cs, convert.cs, ecore.cs, generic.cs, lambda.cs: Implemented
- 	expression tree type inference.
+	* anonymous.cs, convert.cs, ecore.cs, generic.cs, lambda.cs: Implemented
+	expression tree type inference.
 
 2008-01-22  Raja R Harinath  <harinath@hurrynot.org>
 
 	Fix #354663
 	* expression.cs (Binary.IsUnsignedType): Fix typo.
- 	
+
 2008-01-22  Marek Safar  <marek.safar@gmail.com>
 
- 	* ecore.cs, expression.cs, generic.cs: Implemented NewArrayInit expression.
- 	
+	* ecore.cs, expression.cs, generic.cs: Implemented NewArrayInit expression.
+
 2008-01-22  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #355161
- 	* ecore.cs, expression.cs: Wider range of extension method supported
- 	expressions.
- 
+	* ecore.cs, expression.cs: Wider range of extension method supported
+	expressions.
+
 2008-01-22  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* codegen.cs: Use magic value for AssemblyBuilderAccess to instruct
@@ -278,8 +278,8 @@
 2008-01-22  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #355148
- 	* ecore.cs, expression.cs: Correctly report misused ref and out modifiers.
- 	
+	* ecore.cs, expression.cs: Correctly report misused ref and out modifiers.
+
 2008-01-22  Miguel de Icaza  <miguel@novell.com>
 
 	* expression.cs (CreateExpressionTree): Add support for or and
