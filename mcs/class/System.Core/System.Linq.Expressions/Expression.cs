@@ -1460,28 +1460,64 @@ namespace System.Linq.Expressions {
 			throw new ArgumentException ("MakeUnary expect an unary operator");
 		}
 
-		[MonoTODO]
-		public static MemberMemberBinding MemberBind (MemberInfo member, params MemberBinding [] binding)
+		public static MemberMemberBinding MemberBind (MemberInfo member, params MemberBinding [] bindings)
 		{
-			throw new NotImplementedException ();
+			return MemberBind (member, bindings as IEnumerable<MemberBinding>);
 		}
 
-		[MonoTODO]
-		public static MemberMemberBinding MemberBind (MemberInfo member, IEnumerable<MemberBinding> binding)
+		public static MemberMemberBinding MemberBind (MemberInfo member, IEnumerable<MemberBinding> bindings)
 		{
-			throw new NotImplementedException ();
+			if (member == null)
+				throw new ArgumentNullException ("member");
+
+			Type type = null;
+			switch (member.MemberType) {
+			case MemberTypes.Field:
+				type = (member as FieldInfo).FieldType;
+				break;
+			case MemberTypes.Property:
+				type = (member as PropertyInfo).PropertyType;
+				break;
+			default:
+				throw new ArgumentException ("Member is neither a field or a property");
+			}
+
+			return new MemberMemberBinding (member, CheckMemberBindings (type, bindings));
 		}
 
-		[MonoTODO]
-		public static MemberMemberBinding MemberBind (MethodInfo propertyAccessor, params MemberBinding [] binding)
+		public static MemberMemberBinding MemberBind (MethodInfo propertyAccessor, params MemberBinding [] bindings)
 		{
-			throw new NotImplementedException ();
+			return MemberBind (propertyAccessor, bindings as IEnumerable<MemberBinding>);
 		}
 
-		[MonoTODO]
-		public static MemberMemberBinding MemberBind (MethodInfo propertyAccessor, IEnumerable<MemberBinding> binding)
+		public static MemberMemberBinding MemberBind (MethodInfo propertyAccessor, IEnumerable<MemberBinding> bindings)
 		{
-			throw new NotImplementedException ();
+			if (propertyAccessor == null)
+				throw new ArgumentNullException ("propertyAccessor");
+
+			var bds = bindings.ToReadOnlyCollection ();
+			CheckForNull (bds, "bindings");
+
+			var prop = GetAssociatedProperty (propertyAccessor);
+			if (prop == null)
+				throw new ArgumentException ("propertyAccessor");
+
+			return new MemberMemberBinding (prop, CheckMemberBindings (prop.PropertyType, bindings));
+		}
+
+		static ReadOnlyCollection<MemberBinding> CheckMemberBindings (Type type, IEnumerable<MemberBinding> bindings)
+		{
+			if (bindings == null)
+				throw new ArgumentNullException ("bindings");
+
+			var bds = bindings.ToReadOnlyCollection ();
+			CheckForNull (bds, "bindings");
+
+			foreach (var binding in bds)
+				if (!binding.Member.DeclaringType.IsAssignableFrom (type))
+					throw new ArgumentException ("Type not assignable to member type");
+
+			return bds;
 		}
 
 		public static MemberInitExpression MemberInit (NewExpression newExpression, params MemberBinding [] bindings)
@@ -1493,17 +1529,8 @@ namespace System.Linq.Expressions {
 		{
 			if (newExpression == null)
 				throw new ArgumentNullException ("newExpression");
-			if (bindings == null)
-				throw new ArgumentNullException ("bindings");
 
-			var bds = bindings.ToReadOnlyCollection ();
-			CheckForNull (bds, "bindings");
-
-			foreach (var binding in bds)
-				if (!binding.Member.DeclaringType.IsAssignableFrom (newExpression.Type))
-					throw new ArgumentException ("Expression type not assignable to member type");
-
-			return new MemberInitExpression (newExpression, bds);
+			return new MemberInitExpression (newExpression, CheckMemberBindings (newExpression.Type, bindings));
 		}
 
 		public static UnaryExpression Negate (Expression expression)

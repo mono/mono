@@ -1,5 +1,9 @@
 2008-02-20  Jb Evain  <jbevain@novell.com>
 
+	* Expression.cs, ExpressionPrinter.cs: implement MemberBind.
+
+2008-02-20  Jb Evain  <jbevain@novell.com>
+
 	* Expression.cs, ExpressionPrinter.cs: implement ListInit.
 
 2008-02-19  Jb Evain  <jbevain@novell.com>
