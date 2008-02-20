@@ -1,5 +1,9 @@
 2008-02-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* icall.c (ves_icall_Type_GetPacking): Handle dynamic types.
+
+2008-02-20  Zoltan Varga  <vargaz@gmail.com>
+
 	* assembly.c (mono_assembly_load_from_full): Return the non-refonly corlib for
 	ref-only requests for compatibility with MS.
 
