@@ -1,3 +1,8 @@
+2008-02-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* AssemblyName.cs (ReferenceMatchesDefinition): Add error checking and some 
+	simple cases required by ikvm.
+
 2008-02-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* CustomAttributeTypedArgument.cs (.ctor): Convert arrays into a
