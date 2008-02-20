@@ -1140,6 +1140,8 @@ namespace System.Runtime.InteropServices
 
 		public static Delegate GetDelegateForFunctionPointer (IntPtr ptr, Type t)
 		{
+			if (t == null)
+				throw new ArgumentNullException ("t");
 			if (!t.IsSubclassOf (typeof (MulticastDelegate)) || (t == typeof (MulticastDelegate)))
 				throw new ArgumentException ("Type is not a delegate", "t");
 			if (ptr == IntPtr.Zero)
