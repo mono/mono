@@ -1,3 +1,8 @@
+2008-02-20  Raja R Harinath  <harinath@hurrynot.org>
+
+	* icall.c (ves_icall_MonoMethod_GetGenericMethodDefinition):
+	Compute correct value, to prepare for imethod->reflection_info going away.
+
 2008-02-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_setup_vtable_general): Ignore static methods in interfaces.
