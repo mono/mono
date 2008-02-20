@@ -3,7 +3,7 @@
 	* TreeView.cs: StateImages are basically custom checkboxes, so
 	factor their size the same as real checkboxes when determining
 	what got clicked.
-	[Fixes bug #363360]
+	[Fixes bug #363367]
 
 2008-02-20  Jonathan Pobst  <monkey@jpobst.com>
 
