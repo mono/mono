@@ -1,5 +1,7 @@
 2008-02-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* assembly.c (mono_assembly_load_from_full): Fix a leak in the previous patch.
+	
 	* assembly.c (mono_assembly_load_from_full): Return the non-refonly corlib for
 	ref-only requests for compatibility with MS.
 
