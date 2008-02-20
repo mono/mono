@@ -1,5 +1,12 @@
 2008-02-20  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TreeView.cs: StateImages are basically custom checkboxes, so
+	factor their size the same as real checkboxes when determining
+	what got clicked.
+	[Fixes bug #363360]
+
+2008-02-20  Jonathan Pobst  <monkey@jpobst.com>
+
 	* MessageBox.cs: Make the message box wider if the form caption
 	is longer than the text in the form.
 	[Fixes bug #361137]

@@ -1286,6 +1286,11 @@ namespace System.Windows.Forms {
 				l -= ImageList.ImageSize.Width + 3;
 			if (checkboxes)
 				l -= 19;
+#if NET_2_0
+			// StateImage is basically a custom checkbox
+			else if (node.StateImage != null)
+				l -= 19;
+#endif
 			return (x > l && x < l + 8);
 		}
 
