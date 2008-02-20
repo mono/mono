@@ -356,6 +356,12 @@ namespace System.Reflection {
 		[MonoTODO]
 		public static bool ReferenceMatchesDefinition (AssemblyName reference, AssemblyName definition)
 		{
+			if (reference == null)
+				throw new ArgumentNullException ("reference");
+			if (definition == null)
+				throw new ArgumentNullException ("definition");
+			if (reference.Name != definition.Name)
+				return false;
 			throw new NotImplementedException ();
 		}
 #endif
