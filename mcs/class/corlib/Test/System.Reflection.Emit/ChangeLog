@@ -1,3 +1,7 @@
+2008-02-20  Raja R Harinath  <harinath@hurrynot.org>
+
+	* MethodBuilderTest.cs (Bug354757): New test.
+
 2008-01-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* ModuleBuilderTest.cs: Add tests for GetTypes ().

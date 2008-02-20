@@ -41,6 +41,3 @@ cs0457.cs
 cs1533.cs IGNORE
 
 gcs0820.cs # temporary disabled
-
-gcs0411.cs # Runtime bug #354757
-gcs0411-2.cs # Runtime bug #354757

@@ -104,8 +104,6 @@ cs3003-5.cs NO ERROR
 cs3009-2.cs
 cs3010.cs
 gcs0037-2.cs
-gcs0411-2.cs # Runtime bug #354757
-gcs0411.cs # Runtime bug #354757
 gcs0729.cs
 gcs0730.cs
 gcs0733.cs

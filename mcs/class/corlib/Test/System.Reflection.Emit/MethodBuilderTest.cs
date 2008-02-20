@@ -928,6 +928,22 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.AreEqual (generatedGenericType.MakeGenericType (new Type [] { typeof (int) }), mi2.Invoke (null, new object [] { 1 }));
 		}
 
+		[Test]
+		public void Bug354757 ()
+		{
+			TypeBuilder gtb = module.DefineType (genTypeName (), TypeAttributes.Public);
+			gtb.DefineGenericParameters ("T");
+			MethodBuilder mb = gtb.DefineMethod ("foo", MethodAttributes.Public);
+			mb.DefineGenericParameters ("S");
+			Assert.IsTrue (mb.IsGenericMethodDefinition);
+
+			Type gt = gtb.MakeGenericType (typeof (object));
+			MethodInfo m = TypeBuilder.GetMethod (gt, mb);
+			Assert.IsTrue (m.IsGenericMethodDefinition);
+
+			MethodInfo mopen = m.MakeGenericMethod (m.GetGenericArguments ());
+			Assert.IsFalse (mopen.IsGenericMethodDefinition);
+		}
 #endif
 	}
 }

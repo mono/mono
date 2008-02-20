@@ -551,6 +551,19 @@ namespace MonoTests.System.Reflection
 			Assert.IsTrue (mi3.IsGenericMethod, "#B1");
 			Assert.IsTrue (mi3.IsGenericMethodDefinition, "#B2");
 			Assert.AreSame (mi2, mi3, "#B3");
+
+			MethodInfo mi4 = mi2.MakeGenericMethod (typeof (short));
+			Assert.IsTrue (mi4.IsGenericMethod, "#C1");
+			Assert.IsFalse (mi4.IsGenericMethodDefinition, "#C2");
+			Assert.AreSame (mi2, mi4.GetGenericMethodDefinition (), "#C3");
+		}
+
+		[Test]
+		public void Bug354757 ()
+		{
+			MethodInfo gmd = (typeof (MyList <int>)).GetMethod ("ConvertAll");
+			MethodInfo oi = gmd.MakeGenericMethod (gmd.GetGenericArguments ());
+			Assert.AreSame (gmd, oi);
 		}
 
 		public class MyList<T>

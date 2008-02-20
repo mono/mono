@@ -1,3 +1,9 @@
+2008-02-20  Raja R Harinath  <harinath@hurrynot.org>
+
+	* MethodInfoTest.cs (GetGenericMethodDefinition): Add a test for
+	an instantiation.
+	(Bug354757): New test.
+
 2008-02-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* CustomAttributeDataTest.cs: New file.
@@ -11,7 +17,7 @@
 
 	* AssemblyTest.cs (GetModules_MissingFile): Rename the generated assembly to
 	avoid name clashes.
-	
+
 	* AssemblyTest.cs: Add a test for GetModules () and a missing module.
 
 	* ModuleTest.cs: Add a test for GetTypes ().
