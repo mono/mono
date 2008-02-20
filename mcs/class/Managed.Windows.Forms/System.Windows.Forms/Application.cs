@@ -224,11 +224,13 @@ namespace System.Windows.Forms
 				// If there is no [AssemblyCompany], return the outermost namespace
 				// on Main ()
 				if (company == null || company.Length == 0)
-					company = assembly.EntryPoint.DeclaringType.Namespace;
+					if (assembly.EntryPoint != null)
+						company = assembly.EntryPoint.DeclaringType.Namespace;
 
 				// If that doesn't work, return the name of class containing Main ()
 				if (company == null || company.Length == 0)
-					company = assembly.EntryPoint.DeclaringType.FullName;
+					if (assembly.EntryPoint != null)
+						company = assembly.EntryPoint.DeclaringType.FullName;
 				
 				return company;
 			}
@@ -290,7 +292,8 @@ namespace System.Windows.Forms
 				// If there is no [AssemblyProduct], return the name of class
 				// containing Main ()
 				if (name == null || name.Length == 0)
-					name = assembly.EntryPoint.DeclaringType.FullName;
+					if (assembly.EntryPoint != null)
+						name = assembly.EntryPoint.DeclaringType.FullName;
 
 				return name;
 			}

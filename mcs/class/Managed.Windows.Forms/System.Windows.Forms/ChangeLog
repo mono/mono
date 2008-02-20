@@ -1,5 +1,10 @@
 2008-02-20  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Application.cs: Guard against an NRE in CompanyName and
+	ProductName.
+
+2008-02-20  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Application.cs: For CompanyName, ProductName, and ProductVersion,
 	make sure we handle all three cases correctly: attribute is present,
 	attribute is present but is an empty string, and attribute is not
