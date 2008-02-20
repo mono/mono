@@ -209,16 +209,28 @@ namespace System.Windows.Forms
 
 		public static string CompanyName {
 			get {
+				string company = string.Empty;
+
 				Assembly assembly = Assembly.GetEntryAssembly ();
+				
 				if (assembly == null)
 					assembly = Assembly.GetCallingAssembly ();
 
 				AssemblyCompanyAttribute[] attrs = (AssemblyCompanyAttribute[])
 					assembly.GetCustomAttributes (typeof(AssemblyCompanyAttribute), true);
 				if (attrs != null && attrs.Length > 0)
-					return attrs [0].Company;
+					company = attrs [0].Company;
 
-				return assembly.GetName().Name;
+				// If there is no [AssemblyCompany], return the outermost namespace
+				// on Main ()
+				if (company == null || company.Length == 0)
+					company = assembly.EntryPoint.DeclaringType.Namespace;
+
+				// If that doesn't work, return the name of class containing Main ()
+				if (company == null || company.Length == 0)
+					company = assembly.EntryPoint.DeclaringType.FullName;
+				
+				return company;
 			}
 		}
 
@@ -262,7 +274,10 @@ namespace System.Windows.Forms
 
 		public static string ProductName {
 			get {
+				string name = string.Empty;
+				
 				Assembly assembly = Assembly.GetEntryAssembly ();
+				
 				if (assembly == null)
 					assembly = Assembly.GetCallingAssembly ();
 
@@ -270,17 +285,23 @@ namespace System.Windows.Forms
 					assembly.GetCustomAttributes(typeof(AssemblyProductAttribute), true);
 
 				if (attrs != null && attrs.Length > 0)
-					return attrs [0].Product;
+					name = attrs [0].Product;
 
-				return assembly.GetName ().Name;
+				// If there is no [AssemblyProduct], return the name of class
+				// containing Main ()
+				if (name == null || name.Length == 0)
+					name = assembly.EntryPoint.DeclaringType.FullName;
+
+				return name;
 			}
 		}
 
 		public static string ProductVersion {
 			get {
-				String version;
+				String version = string.Empty;
 
 				Assembly assembly = Assembly.GetEntryAssembly ();
+				
 				if (assembly == null)
 					assembly = Assembly.GetCallingAssembly ();
 
@@ -288,18 +309,15 @@ namespace System.Windows.Forms
 					Attribute.GetCustomAttribute (assembly,
 					typeof (AssemblyInformationalVersionAttribute))
 					as AssemblyInformationalVersionAttribute;
+					
 				if (infoVersion != null)
 					version = infoVersion.InformationalVersion;
-				else {
-					AssemblyFileVersionAttribute fileVersion =
-						Attribute.GetCustomAttribute (assembly,
-						typeof (AssemblyFileVersionAttribute))
-						as AssemblyFileVersionAttribute;
-					if (fileVersion != null)
-						version = fileVersion.Version;
-					else
-						version = assembly.GetName ().Version.ToString ();
-				}
+					
+				// If [AssemblyInformationalVersion] is not present, it
+				// seems 1.0.0.0 is always returned, despite the documentation
+				if (version == null || version.Length == 0)
+					version = new Version (1, 0, 0, 0).ToString ();
+
 				return version;
 			}
 		}
