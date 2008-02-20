@@ -1,3 +1,9 @@
+2008-02-20  Raja R Harinath  <harinath@hurrynot.org>
+
+	* reflection.c (mono_custom_attrs_from_method): Don't silently
+	return an empty list for generic method instances.
+	(mono_custom_attrs_from_param): Likewise.
+
 2008-02-20  Rodrigo Kumpera  <rkumpera@novell.com>
 	    Raja R Harinath  <harinath@hurrynot.org>
 
