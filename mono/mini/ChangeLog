@@ -1,5 +1,8 @@
 2008-02-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ia64.c (mono_arch_lowering_pass): Add some more opcodes. Use
+	mono_op_imm_to_op ().
+
 	* mini-sparc.c (opcode_to_sparc_cond): Use the mono_opcode_to_cond () functions
 	instead of a switch statement.
 	
