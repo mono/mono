@@ -523,8 +523,11 @@ namespace System.Web.UI
 					sb.AppendLine ("Sys.Services.ProfileService.set_path('" + profileServicePath + "');");
 
 				ScriptingAuthenticationServiceSection authenticationService = (ScriptingAuthenticationServiceSection) WebConfigurationManager.GetSection ("system.web.extensions/scripting/webServices/authenticationService");
-				if (authenticationService.Enabled)
+				if (authenticationService.Enabled) {
 					sb.AppendLine ("Sys.Services._AuthenticationService.DefaultWebServicePath = '" + ResolveClientUrl ("~/Authentication_JSON_AppService.axd") + "';");
+					if (Page.User.Identity.IsAuthenticated)
+						sb.AppendLine ("Sys.Services.AuthenticationService._setAuthenticated(true);");
+				}
 				string authenticationServicePath = GetAuthenticationServicePath ();
 				if (!String.IsNullOrEmpty (authenticationServicePath))
 					sb.AppendLine ("Sys.Services.AuthenticationService.set_path('" + authenticationServicePath + "');");
