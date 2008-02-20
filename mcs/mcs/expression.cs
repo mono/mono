@@ -2529,11 +2529,14 @@ namespace Mono.CSharp {
 				return null;
 
 			Constant lc = left as Constant;
-			if (lc != null && lc.Type == TypeManager.bool_type && 
-				((oper == Operator.LogicalAnd && (bool)lc.GetValue () == false) ||
-				 (oper == Operator.LogicalOr && (bool)lc.GetValue () == true))) {
 
-				// TODO: make a sense to resolve unreachable expression as we do for statement
+			if (lc != null && lc.Type == TypeManager.bool_type &&
+				((oper == Operator.LogicalAnd && lc.IsDefaultValue) ||
+				 (oper == Operator.LogicalOr && !lc.IsDefaultValue))) {
+
+				// FIXME: resolve right expression as unreachable
+				// right.Resolve (ec);
+
 				Report.Warning (429, 4, loc, "Unreachable expression code detected");
 				return left;
 			}
@@ -2556,52 +2559,32 @@ namespace Mono.CSharp {
 					return null;
 			}
 
-			if (oper == Operator.BitwiseAnd) {
-				if (rc != null && rc.IsZeroInteger) {
-					return lc is EnumConstant ?
-						new EnumConstant (rc, lc.Type):
-						rc;
-				}
-
-				if (lc != null && lc.IsZeroInteger) {
-					if (rc is EnumConstant)
-						return new EnumConstant (lc, rc.Type);
-
-					//
-					// Optimize cases that have no side-effects
-					//
-					if (rc != null)
-						return lc;
-
-					// Side effect code:
-					return new SideEffectConstant (lc, right, loc);
-				}
-			}
-			else if (oper == Operator.BitwiseOr) {
-				if (lc is EnumConstant &&
-				    rc != null && rc.IsZeroInteger)
-					return lc;
-				if (rc is EnumConstant &&
-				    lc != null && lc.IsZeroInteger)
-					return rc;
-			} else if (oper == Operator.LogicalAnd) {
-				if (rc != null && rc.IsDefaultValue && rc.Type == TypeManager.bool_type) {
-					if (lc != null)
-						return rc;
-
-					return new SideEffectConstant (rc, left, loc);
-				}
-
-				if (lc != null && lc.IsDefaultValue && lc.Type == TypeManager.bool_type)
-					return lc;
-			}
-
-			if (rc != null && lc != null){
+			if (rc != null && lc != null) {
 				int prev_e = Report.Errors;
 				Expression e = ConstantFold.BinaryFold (
 					ec, oper, lc, rc, loc);
 				if (e != null || Report.Errors != prev_e)
 					return e;
+			} else {
+				if ((oper == Operator.BitwiseAnd || oper == Operator.LogicalAnd) &&
+					((lc != null && lc.IsDefaultValue) || (rc != null && rc.IsDefaultValue))) {
+
+					if ((ResolveOperator (ec)) == null)
+						return null;
+
+					if (rc != null) {
+						right = left;
+						lc = rc;
+					}
+					
+					// TODO: there must be better way how to check that the expression
+					// does not have any mutator
+					if (right is MemberExpr)
+						return lc;
+
+					// The result is a constant with side-effect
+					return new SideEffectConstant (lc, right, loc);
+				}
 			}
 
 #if GMCS_SOURCE

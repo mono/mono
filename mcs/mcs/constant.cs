@@ -1784,6 +1784,15 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
+			//
+			// This happens when both sides have side-effects and
+			// the result is a constant
+			//
+			if (left is SideEffectConstant) {
+				left.Emit (ec);
+				ec.ig.Emit (OpCodes.Pop);
+			}
+
 			right.Emit (ec);
 		}
 

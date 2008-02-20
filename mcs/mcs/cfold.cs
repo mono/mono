@@ -55,22 +55,31 @@ namespace Mono.CSharp {
 		static public Constant BinaryFold (EmitContext ec, Binary.Operator oper,
 						     Constant left, Constant right, Location loc)
 		{
+			Constant result = null;
+
 			if (left is EmptyConstantCast)
 				return BinaryFold (ec, oper, ((EmptyConstantCast)left).child, right, loc);
 
-			if (left is SideEffectConstant)
-				return BinaryFold (ec, oper, ((SideEffectConstant) left).left, right, loc);
+			if (left is SideEffectConstant) {
+				result = BinaryFold (ec, oper, ((SideEffectConstant) left).left, right, loc);
+				if (result == null)
+					return null;
+				return new SideEffectConstant (result, left, loc);
+			}
 
 			if (right is EmptyConstantCast)
 				return BinaryFold (ec, oper, left, ((EmptyConstantCast)right).child, loc);
 
-			if (right is SideEffectConstant)
-				return BinaryFold (ec, oper, left, ((SideEffectConstant) right).left, loc);
+			if (right is SideEffectConstant) {
+				result = BinaryFold (ec, oper, left, ((SideEffectConstant) right).left, loc);
+				if (result == null)
+					return null;
+				return new SideEffectConstant (result, right, loc);
+			}
 
 			Type lt = left.Type;
 			Type rt = right.Type;
 			bool bool_res;
-			Constant result = null;
 
 			if (lt == TypeManager.bool_type && lt == rt) {
 				bool lv = ((BoolConstant) left ).Value;
