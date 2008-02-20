@@ -1,5 +1,9 @@
 2008-02-20  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* PropertyGridView.cs: Fix a NRE when closing the drop down form.
+
+2008-02-20  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* PropertyGridView.cs: 
 	 - Fix a NRE that caused a test failure
 	 - Another performance improvement - cache the standard values
