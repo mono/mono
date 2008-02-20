@@ -43,7 +43,7 @@ namespace Mainsoft.Web.Hosting
 
 			Object serializedComponentStates;
 			if (isSavingStateInClient (facesContext)) {
-				serializedComponentStates = GetStateFromClient (facesContext, uiViewRoot, renderKitId);
+				serializedComponentStates = GetStateFromClient (facesContext, uiViewRoot.getViewId(), renderKitId);
 			}
 			else {
 				HttpSession session = (HttpSession) facesContext.getExternalContext ().getSession (false);

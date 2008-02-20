@@ -66,10 +66,10 @@ namespace Mainsoft.Web.Hosting
 			renderKit.getResponseStateManager ().writeState (facesContext, serializedView);
 		}
 
-		protected object GetStateFromClient (FacesContext facesContext, javax.faces.component.UIViewRoot uiViewRoot, String renderKitId) {
+		protected object GetStateFromClient (FacesContext facesContext, String viewId, String renderKitId) {
 			RenderKit renderKit = RenderKitFactory.getRenderKit (facesContext, renderKitId);
 			ResponseStateManager responseStateManager = renderKit.getResponseStateManager ();
-			responseStateManager.getTreeStructureToRestore (facesContext, uiViewRoot.getViewId ()); //ignore result. Must call for compatibility with sun implementation.
+			responseStateManager.getTreeStructureToRestore (facesContext, viewId); //ignore result. Must call for compatibility with sun implementation.
 			return responseStateManager.getComponentStateToRestore (facesContext);
 		}
 	}
