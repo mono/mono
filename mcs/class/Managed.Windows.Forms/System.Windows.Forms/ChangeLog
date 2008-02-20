@@ -1,3 +1,10 @@
+2008-02-20  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* PropertyGridView.cs: 
+	 - Fix a NRE that caused a test failure
+	 - Another performance improvement - cache the standard values
+	 listbox.
+
 2008-02-19  Ivan N. Zlatev  <contact@i-nz.net>
 
 	[Backport to 1.9]

@@ -58,6 +58,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		private StringFormat string_format;
 		private Font bold_font;
 		private Brush inactive_text_brush;
+		private ListBox dropdown_list;
 		#endregion
 
 		#region Contructors
@@ -756,23 +757,25 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				else {
 					ICollection std_values = entry.AcceptedValues;
 					if (std_values != null) {
-						ListBox listBox = new ListBox ();
-						listBox.BorderStyle = BorderStyle.FixedSingle;
+						if (dropdown_list == null)
+							dropdown_list = new ListBox ();
+						dropdown_list.Items.Clear ();
+						dropdown_list.BorderStyle = BorderStyle.FixedSingle;
 						int selected_index = 0;
 						int i = 0;
 						foreach (object obj in std_values) {
-							listBox.Items.Add (obj);
+							dropdown_list.Items.Add (obj);
 							if (entry.ValueText != null && entry.ValueText.Equals (obj))
 								selected_index = i;
 							i++;
 						}
-						listBox.Height = row_height * Math.Min (listBox.Items.Count, 15);
-						listBox.Width = ClientRectangle.Width - SplitterLocation - (vbar.Visible ? vbar.Width : 0);
-						listBox.KeyDown += new KeyEventHandler (listBox_KeyDown);
-						listBox.MouseUp+=new MouseEventHandler (listBox_MouseUp);
+						dropdown_list.Height = row_height * Math.Min (dropdown_list.Items.Count, 15);
+						dropdown_list.Width = ClientRectangle.Width - SplitterLocation - (vbar.Visible ? vbar.Width : 0);
+						dropdown_list.KeyDown += new KeyEventHandler (listBox_KeyDown);
+						dropdown_list.MouseUp+=new MouseEventHandler (listBox_MouseUp);
 						if (std_values.Count > 0)
-							listBox.SelectedIndex = selected_index;
-						DropDownControl (listBox);
+							dropdown_list.SelectedIndex = selected_index;
+						DropDownControl (dropdown_list);
 					}
 				}
 			}
@@ -842,6 +845,8 @@ namespace System.Windows.Forms.PropertyGridInternal {
 
 		private void UpdateGridTextBoxBounds (GridEntry entry)
 		{
+			if (entry == null)
+				return;
 			int y = -vbar.Value*row_height;
 			CalculateItemY (entry, property_grid.RootGridItem.GridItems, ref y);
 			int x = SplitterLocation + ENTRY_SPACING + (entry.PaintValueSupported ? VALUE_PAINT_INDENT : 0);
