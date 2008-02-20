@@ -57,5 +57,20 @@ namespace Mainsoft.Web.Hosting
 			Trace.WriteLine ("Exiting getComponentStateToSave");
 			return serializedComponentStates;
 		}
+
+		protected void SaveStateInClient (FacesContext facesContext, StateManager.SerializedView serializedView) {
+			UIViewRoot uiViewRoot = facesContext.getViewRoot ();
+			//save state in response (client-side: full state; server-side: sequence)
+			RenderKit renderKit = RenderKitFactory.getRenderKit (facesContext, uiViewRoot.getRenderKitId ());
+			// not us.
+			renderKit.getResponseStateManager ().writeState (facesContext, serializedView);
+		}
+
+		protected object GetStateFromClient (FacesContext facesContext, javax.faces.component.UIViewRoot uiViewRoot, String renderKitId) {
+			RenderKit renderKit = RenderKitFactory.getRenderKit (facesContext, renderKitId);
+			ResponseStateManager responseStateManager = renderKit.getResponseStateManager ();
+			responseStateManager.getTreeStructureToRestore (facesContext, uiViewRoot.getViewId ()); //ignore result. Must call for compatibility with sun implementation.
+			return responseStateManager.getComponentStateToRestore (facesContext);
+		}
 	}
 }

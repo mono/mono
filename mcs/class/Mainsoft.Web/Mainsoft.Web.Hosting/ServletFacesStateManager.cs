@@ -23,11 +23,7 @@ namespace Mainsoft.Web.Hosting
 
 			if (serializedView != null) {
 				if (isSavingStateInClient (facesContext)) {
-					UIViewRoot uiViewRoot = facesContext.getViewRoot ();
-					//save state in response (client-side: full state; server-side: sequence)
-					RenderKit renderKit = RenderKitFactory.getRenderKit (facesContext, uiViewRoot.getRenderKitId ());
-					// not us.
-					renderKit.getResponseStateManager ().writeState (facesContext, serializedView);
+					SaveStateInClient (facesContext, serializedView);
 				}
 				else {
 					HttpSession session = (HttpSession) facesContext.getExternalContext ().getSession (true);
@@ -47,10 +43,7 @@ namespace Mainsoft.Web.Hosting
 
 			Object serializedComponentStates;
 			if (isSavingStateInClient (facesContext)) {
-				RenderKit renderKit = RenderKitFactory.getRenderKit (facesContext, renderKitId);
-				ResponseStateManager responseStateManager = renderKit.getResponseStateManager ();
-				responseStateManager.getTreeStructureToRestore (facesContext, uiViewRoot.getViewId ()); //ignore result. Must call for compatibility with sun implementation.
-				serializedComponentStates = responseStateManager.getComponentStateToRestore (facesContext);
+				serializedComponentStates = GetStateFromClient (facesContext, uiViewRoot, renderKitId);
 			}
 			else {
 				HttpSession session = (HttpSession) facesContext.getExternalContext ().getSession (false);
