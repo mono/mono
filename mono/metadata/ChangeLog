@@ -1,3 +1,14 @@
+2008-02-20  Rodrigo Kumpera  <rkumpera@novell.com>
+	    Raja R Harinath  <harinath@hurrynot.org>
+
+	Fix #354757
+	* class-internals.h (struct _MonoMethodInflated.is_mb_open): Add.
+	* class.c (mono_class_inflate_generic_method_full): Initialize it
+	when a fully-open method is instantiated.
+	* metadata.c (inflated_method_equal, inflated_method_hash): Update
+	to new field.
+	* reflection.c (inflate_mono_method): Don't create a temporary context.
+
 2008-02-20  Raja R Harinath  <harinath@hurrynot.org>
 
 	* icall.c (ves_icall_MonoMethod_GetGenericMethodDefinition):
