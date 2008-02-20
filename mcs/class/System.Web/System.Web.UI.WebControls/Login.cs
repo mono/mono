@@ -57,9 +57,17 @@ namespace System.Web.UI.WebControls {
 			{
 				_owner = owner;
 				InitTable ();
-				ID = _owner.ID;
 			}
-
+			
+			public override string ID {
+				get {
+					return _owner.ID;
+				}
+				set {
+					_owner.ID = value;
+				}
+			}
+			
 			public override string ClientID {
 				get {
 					return _owner.ClientID;
@@ -73,9 +81,6 @@ namespace System.Web.UI.WebControls {
 
 			private void InitTable ()
 			{
-				CellSpacing = 0;
-				CellPadding = _owner.BorderPadding;
-
 				_containerCell = new TableCell ();
 
 				TableRow row = new TableRow ();
@@ -83,10 +88,12 @@ namespace System.Web.UI.WebControls {
 				Rows.Add (row);
 			}
 
-			protected internal override void OnPreRender (EventArgs e)
-			{
+			protected internal override void Render (HtmlTextWriter writer) {
+				CellSpacing = 0;
+				CellPadding = _owner.BorderPadding;
 				ApplyStyle (_owner.ControlStyle);
-				base.OnPreRender (e);
+				Attributes.CopyFrom (_owner.Attributes);
+				base.Render (writer);
 			}
 			
 			public Control UserNameTextBox {
