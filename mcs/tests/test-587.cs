@@ -1,5 +1,3 @@
-// Compiler options: -nowarn:0162
-
 class Program
 {
 	static int Main ()
@@ -8,10 +6,13 @@ class Program
 
 		if ((++ctc_f == 0 && false)) {
 			return 1;
+		} else if (false && +ctc_f == 0) {
+			return 2;
 		} else {
 			if (ctc_f != 1) {
-				return 2;
+				return 3;
 			}
+			
 			return 0;
 		}
 	}
