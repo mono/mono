@@ -33,7 +33,7 @@ namespace Mono.ILASM {
                         DriverMain driver = new DriverMain (args);
                         if (!driver.Run ())
                                 return 1;
-                        Console.WriteLine ("Operation completed successfully");
+                        Report.Message ("Operation completed successfully");
                         return 0;
                 }
 
@@ -104,7 +104,7 @@ namespace Mono.ILASM {
 
                                 try {
 					if (sn != null) {
-						Console.WriteLine ("Signing assembly with the specified strongname keypair");
+						Report.Message ("Signing assembly with the specified strongname keypair");
 						return Sign (output_file);
 					}
                                 } catch {
