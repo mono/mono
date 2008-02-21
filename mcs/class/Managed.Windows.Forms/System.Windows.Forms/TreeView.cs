@@ -827,7 +827,7 @@ namespace System.Windows.Forms {
 				return new TreeViewHitTestInfo (n, TreeViewHitTestLocations.Label);
 			else if (IsPlusMinusArea (n, x))
 				return new TreeViewHitTestInfo (n, TreeViewHitTestLocations.PlusMinus);
-			else if (checkboxes && IsCheckboxArea (n, x))
+			else if ((checkboxes || n.StateImage != null) && IsCheckboxArea (n, x))
 			        return new TreeViewHitTestInfo (n, TreeViewHitTestLocations.StateImage);
 			else if (x > n.Bounds.Right)
 				return new TreeViewHitTestInfo (n, TreeViewHitTestLocations.RightOfLabel);

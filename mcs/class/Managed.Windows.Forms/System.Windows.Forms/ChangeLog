@@ -1,5 +1,10 @@
 2008-02-21  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TreeView.cs: Factor in checkboxes = false and state images in
+	to HitTest.  [Fixes bug #363360]
+
+2008-02-21  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ThemeWin32Classic.cs: Only look at the Date part of a DateTime
 	when drawing the selected range.
 	[Fixes bug #363648]
