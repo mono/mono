@@ -117,7 +117,7 @@ namespace MonoTests.System.Linq.Expressions {
 
 		static bool OnMono ()
 		{
-			return Type.GetType ("Mono.Runtime") != null;
+			return typeof (Expression).Assembly.GetType ("Consts") != null;
 		}
 	}
 }
