@@ -1,3 +1,7 @@
+2008-02-21  Jb Evain  <jbevain@novell.com>
+
+	* BinaryExpression.cs (Emit): fix the both_are_null case.
+
 2008-02-20  Jb Evain  <jbevain@novell.com>
 
 	* Expression.cs, ExpressionPrinter.cs: implement MemberBind.

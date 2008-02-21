@@ -191,7 +191,7 @@ namespace System.Linq.Expressions {
 				ig.MarkLabel (both_are_null);
 				ig.Emit (OpCodes.Ldloca, ret);
 				ig.Emit (OpCodes.Initobj, Type);
-				ig.Emit (OpCodes.Ldloca, ret);
+				ig.Emit (OpCodes.Ldloc, ret);
 				ig.Emit (OpCodes.Br, exit);
 				
 			// create:
