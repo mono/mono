@@ -2817,6 +2817,19 @@ namespace Mono.CSharp {
 		return false;
 	}
 
+	public static bool IsEqual (Type[] a, Type[] b)
+	{
+		if (a.Length != b.Length)
+			return false;
+
+		for (int i = 0; i < a.Length; ++i) {
+			if (!IsEqual (a [i], b [i]))
+				return false;
+		}
+
+		return true;
+	}
+
 	public static Type DropGenericTypeArguments (Type t)
 	{
 #if GMCS_SOURCE

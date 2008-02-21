@@ -97,48 +97,6 @@ namespace Mono.CSharp {
 			}
 
 			//
-			// Operator pair checking
-			//
-			class OperatorEntry
-			{
-				public int flags;
-				public Type ret_type;
-				public Type type1, type2;
-				public Operator op;
-				public Operator.OpType ot;
-				
-				public OperatorEntry (int f, Operator o)
-				{
-					flags = f;
-
-					ret_type = o.MemberType;
-					Type [] pt = o.ParameterTypes;
-					type1 = pt [0];
-					type2 = pt [1];
-					op = o;
-					ot = o.OperatorType;
-				}
-
-				public override int GetHashCode ()
-				{	
-					return ret_type.GetHashCode ();
-				}
-
-				public override bool Equals (object o)
-				{
-					OperatorEntry other = (OperatorEntry) o;
-
-					if (other.ret_type != ret_type)
-						return false;
-					if (other.type1 != type1)
-						return false;
-					if (other.type2 != type2)
-						return false;
-					return true;
-				}
-			}
-				
-			//
 			// Checks that some operators come in pairs:
 			//  == and !=
 			// > and <
@@ -149,101 +107,53 @@ namespace Mono.CSharp {
 			//
 			void CheckPairedOperators ()
 			{
-				IDictionary pairs = new HybridDictionary ();
-				Operator true_op = null;
-				Operator false_op = null;
 				bool has_equality_or_inequality = false;
-				
-				// Register all the operators we care about.
-				foreach (Operator op in this){
-					int reg = 0;
+				Operator[] operators = (Operator[]) ToArray (typeof (Operator));
+				bool [] has_pair = new bool [operators.Length];
 
-					// Skip erroneous code.
-					if (op.MethodBuilder == null)
+				for (int i = 0; i < Count; ++i) {
+					if (operators [i] == null)
 						continue;
 
-					switch (op.OperatorType){
-					case Operator.OpType.Equality:
-						reg = 1;
+					Operator o_a = operators [i];
+					Operator.OpType o_type = o_a.OperatorType;
+					if (o_type == Operator.OpType.Equality || o_type == Operator.OpType.Inequality)
 						has_equality_or_inequality = true;
-						break;
-					case Operator.OpType.Inequality:
-						reg = 2;
-						has_equality_or_inequality = true;
-						break;
 
-					case Operator.OpType.True:
-						true_op = op;
-						break;
-					case Operator.OpType.False:
-						false_op = op;
-						break;
-						
-					case Operator.OpType.GreaterThan:
-						reg = 1; break;
-					case Operator.OpType.LessThan:
-						reg = 2; break;
-						
-					case Operator.OpType.GreaterThanOrEqual:
-						reg = 1; break;
-					case Operator.OpType.LessThanOrEqual:
-						reg = 2; break;
+					Operator.OpType matching_type = o_a.GetMatchingOperator ();
+					if (matching_type == Operator.OpType.TOP) {
+						operators [i] = null;
+						continue;
 					}
-					if (reg == 0)
-						continue;
+	
+					for (int ii = 0; ii < Count; ++ii) {
+						Operator o_b = operators [ii];
+						if (o_b == null || o_b.OperatorType != matching_type)
+							continue;
 
-					OperatorEntry oe = new OperatorEntry (reg, op);
+						if (!TypeManager.IsEqual (o_a.ReturnType, o_b.ReturnType))
+							continue;
 
-					object o = pairs [oe];
-					if (o == null)
-						pairs [oe] = oe;
-					else {
-						oe = (OperatorEntry) o;
-						oe.flags |= reg;
+						if (!TypeManager.IsEqual (o_a.ParameterTypes, o_b.ParameterTypes))
+							continue;
+
+						operators [i] = null;
+
+						//
+						// Used to ignore duplicate user conversions
+						//
+						has_pair [ii] = true;
 					}
 				}
 
-				if (true_op != null){
-					if (false_op == null)
-						Report.Error (216, true_op.Location, "The operator `{0}' requires a matching operator `false' to also be defined",
-							true_op.GetSignatureForError ());
-				} else if (false_op != null)
-					Report.Error (216, false_op.Location, "The operator `{0}' requires a matching operator `true' to also be defined",
-						false_op.GetSignatureForError ());
-				
-				//
-				// Look for the mistakes.
-				//
-				foreach (DictionaryEntry de in pairs){
-					OperatorEntry oe = (OperatorEntry) de.Key;
-
-					if (oe.flags == 3)
+				for (int i = 0; i < Count; ++i) {
+					if (operators [i] == null || has_pair [i])
 						continue;
 
-					string s = "";
-					switch (oe.ot){
-					case Operator.OpType.Equality:
-						s = "!=";
-						break;
-					case Operator.OpType.Inequality: 
-						s = "==";
-						break;
-					case Operator.OpType.GreaterThan: 
-						s = "<";
-						break;
-					case Operator.OpType.LessThan:
-						s = ">";
-						break;
-					case Operator.OpType.GreaterThanOrEqual:
-						s = "<=";
-						break;
-					case Operator.OpType.LessThanOrEqual:
-						s = ">=";
-						break;
-					}
-					Report.Error (216, oe.op.Location,
+					Operator o = operators [i];
+					Report.Error (216, o.Location,
 						"The operator `{0}' requires a matching operator `{1}' to also be defined",
-						oe.op.GetSignatureForError (), s);
+						o.GetSignatureForError (), Operator.GetName (o.GetMatchingOperator ()));
 				}
 
  				if (has_equality_or_inequality && Report.WarningLevel > 2) {
@@ -8184,6 +8094,30 @@ namespace Mono.CSharp {
 			case OpType.Explicit:
 				return "explicit";
 			default: return "";
+			}
+		}
+
+		public OpType GetMatchingOperator ()
+		{
+			switch (OperatorType) {
+				case OpType.Equality:
+					return OpType.Inequality;
+				case OpType.Inequality:
+					return OpType.Equality;
+				case OpType.True:
+					return OpType.False;
+				case OpType.False:
+					return OpType.True;
+				case OpType.GreaterThan:
+					return OpType.LessThan;
+				case OpType.LessThan:
+					return OpType.GreaterThan;
+				case OpType.GreaterThanOrEqual:
+					return OpType.LessThanOrEqual;
+				case OpType.LessThanOrEqual:
+					return OpType.GreaterThanOrEqual;
+				default:
+					return OpType.TOP;
 			}
 		}
 

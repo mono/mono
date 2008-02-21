@@ -1,3 +1,8 @@
+2008-02-21  Marek Safar  <marek.safar@gmail.com>
+
+	* class.cs, typemanager.cs: Rewrote operator matching logic to correctly
+	handle missing matches when mutiple operators exist.
+	
 2008-02-20  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #363218
