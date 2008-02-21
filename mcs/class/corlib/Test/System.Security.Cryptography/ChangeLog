@@ -1,3 +1,10 @@
+2008-02-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Rfc2898DeriveBytesTest.cs: Add test cases for consecutive calls to
+	GetBytes and compare the result to a single, larger, call. Converted 
+	all exitsing tests to NUnit 2.2.
+	[Backport r96344]
+
 2008-01-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RC2CryptoServiceProviderTest.cs: Fix Create[De|En]cryptor_KeyNull 
