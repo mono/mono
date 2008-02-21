@@ -48,6 +48,9 @@ namespace System.Windows.Forms
 		#region Public Constructors
 		public ToolStripContainer () : base ()
 		{
+			SetStyle (ControlStyles.SupportsTransparentBackColor, true);
+			SetStyle (ControlStyles.ResizeRedraw, true);
+
 			content_panel = new ToolStripContentPanel ();
 			content_panel.Dock = DockStyle.Fill;
 			this.Controls.Add (content_panel);

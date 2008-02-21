@@ -105,11 +105,39 @@ namespace MonoTests.System.Windows.Forms
 
 			Assert.AreEqual ("System.Windows.Forms.ToolStripContainer+ToolStripContainerTypedControlCollection", epp.CreateControlsInstance (). GetType ().ToString (), "B1");
 		}
-		
+
+		[Test]
+		public void ControlStyle ()
+		{
+			ExposeProtectedProperties epp = new ExposeProtectedProperties ();
+
+			ControlStyles cs = ControlStyles.ContainerControl;
+			cs |= ControlStyles.UserPaint;
+			cs |= ControlStyles.StandardClick;
+			cs |= ControlStyles.SupportsTransparentBackColor;
+			cs |= ControlStyles.StandardDoubleClick;
+			cs |= ControlStyles.Selectable;
+			cs |= ControlStyles.ResizeRedraw;
+			cs |= ControlStyles.UseTextForAccessibility;
+
+			Assert.AreEqual (cs, epp.GetControlStyles (), "Styles");
+		}
+
 		private class ExposeProtectedProperties : ToolStripContainer
 		{
 			public new Size DefaultSize { get { return base.DefaultSize; } }
 			public new ControlCollection CreateControlsInstance () { return base.CreateControlsInstance (); }
+
+			public ControlStyles GetControlStyles ()
+			{
+				ControlStyles retval = (ControlStyles)0;
+
+				foreach (ControlStyles cs in Enum.GetValues (typeof (ControlStyles)))
+					if (this.GetStyle (cs) == true)
+						retval |= cs;
+
+				return retval;
+			}
 		}
 	}
 }

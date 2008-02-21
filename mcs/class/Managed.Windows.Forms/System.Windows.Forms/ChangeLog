@@ -1,3 +1,9 @@
+2008-02-21  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripContainer.cs: Add SupportsTransparentBackColor and
+	ResizeRedraw control styles.
+	[Fixes bug #363555]
+
 2008-02-20  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TreeView.cs: StateImages are basically custom checkboxes, so
