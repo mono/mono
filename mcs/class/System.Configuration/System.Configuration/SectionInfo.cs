@@ -195,6 +195,16 @@ namespace System.Configuration
 				ConfigurationSection parentSection = config.Parent != null ? config.Parent.GetSectionInstance (this, false) : null;
 				xml = section.SerializeSection (parentSection, Name, mode);
 
+				string externalDataXml = section.ExternalDataXml;
+				string filePath = config.FilePath;
+				
+				if (!String.IsNullOrEmpty (filePath) && !String.IsNullOrEmpty (externalDataXml)) {
+					string path = Path.Combine (Path.GetDirectoryName (filePath), section.SectionInformation.ConfigSource);
+					using (StreamWriter sw = new StreamWriter (path)) {
+						sw.Write (externalDataXml);
+					}
+				}
+				
 				if (section.SectionInformation.IsProtected) {
 					StringBuilder sb = new StringBuilder ();
 					sb.AppendFormat ("<{0} configProtectionProvider=\"{1}\">\n",

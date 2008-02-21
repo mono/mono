@@ -41,9 +41,14 @@ namespace System.Configuration
 	{
 		SectionInformation sectionInformation;
 		IConfigurationSectionHandler section_handler;
-
+		string externalDataXml;
+		
 		protected ConfigurationSection ()
 		{
+		}
+
+		internal string ExternalDataXml {
+			get { return externalDataXml; }
 		}
 		
 		internal IConfigurationSectionHandler SectionHandler {
@@ -95,7 +100,7 @@ namespace System.Configuration
 				elem.SetReadOnly ();
 			return elem;
 		}
-
+		
 		[MonoInternalNote ("find the proper location for the decryption stuff")]
 		protected internal virtual void DeserializeSection (XmlReader reader)
 		{
@@ -134,28 +139,41 @@ namespace System.Configuration
 				}
 			}
 
-			XmlReader r = reader;
-			if (config_source != null) {
-				if (config_source.Length == 0 || Path.IsPathRooted (config_source))
-					throw new ConfigurationException ("The configSource attribute must be a relative physical path.");
-				
-				if (HasValues ())
-					throw new ConfigurationException ("A section using 'configSource' may contain no other attributes or elements.");
-				
+			if (config_source != null)
 				SectionInformation.ConfigSource = config_source;
-				if (File.Exists (config_source)) {
-					RawXml = File.ReadAllText (config_source);
-					r = new XmlTextReader (new StringReader (RawXml));
-				} else
-					RawXml = null;
-			}
-				
+			
 			SectionInformation.SetRawXml (RawXml);
-			DeserializeElement (r, false);
+			DeserializeElement (reader, false);
 		}
 
+		internal void DeserializeConfigSource (string basePath)
+		{
+			string config_source = SectionInformation.ConfigSource;
+
+			if (String.IsNullOrEmpty (config_source))
+				return;
+
+			if (Path.IsPathRooted (config_source))
+				throw new ConfigurationException ("The configSource attribute must be a relative physical path.");
+			
+			if (HasLocalModifications ())
+				throw new ConfigurationException ("A section using 'configSource' may contain no other attributes or elements.");
+			
+			string path = Path.Combine (basePath, config_source);
+			if (!File.Exists (path)) {
+				RawXml = null;
+				SectionInformation.SetRawXml (null);
+				return;
+			}
+			
+			RawXml = File.ReadAllText (path);
+			SectionInformation.SetRawXml (RawXml);
+			DeserializeElement (new XmlTextReader (new StringReader (RawXml)), false);
+		}
+		
 		protected internal virtual string SerializeSection (ConfigurationElement parentElement, string name, ConfigurationSaveMode saveMode)
 		{
+			externalDataXml = null;
 			ConfigurationElement elem;
 			if (parentElement != null) {
 				elem = (ConfigurationElement) CreateElement (GetType());
@@ -163,13 +181,37 @@ namespace System.Configuration
 			}
 			else
 				elem = this;
+			
+			string ret;			
+			using (StringWriter sw = new StringWriter ()) {
+				using (XmlTextWriter tw = new XmlTextWriter (sw)) {
+					tw.Formatting = Formatting.Indented;
+					elem.SerializeToXmlElement (tw, name);
+					tw.Close ();
+				}
+				
+				ret = sw.ToString ();
+			}
+			
+			string config_source = SectionInformation.ConfigSource;
+			
+			if (String.IsNullOrEmpty (config_source))
+				return ret;
 
-			StringWriter sw = new StringWriter ();
-			XmlTextWriter tw = new XmlTextWriter (sw);
-			tw.Formatting = Formatting.Indented;
-			elem.SerializeToXmlElement (tw, name);
-			tw.Close ();
-			return sw.ToString ();
+			externalDataXml = ret;
+			using (StringWriter sw = new StringWriter ()) {
+				bool haveName = !String.IsNullOrEmpty (name);
+
+				using (XmlTextWriter tw = new XmlTextWriter (sw)) {
+					if (haveName)
+						tw.WriteStartElement (name);
+					tw.WriteAttributeString ("configSource", config_source);
+					if (haveName)
+						tw.WriteEndElement ();
+				}
+
+				return sw.ToString ();
+			}
 		}
 	}
 }

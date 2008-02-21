@@ -1,3 +1,24 @@
+2008-02-21  Marek Habersack  <mhabersack@novell.com>
+
+	* Configuration.cs: if the section being deserialized uses the
+	configSource attribute, call the section's DeserializeConfigSource
+	method.
+
+	* SectionInfo.cs: WriteData takes care of writing the section data
+	to the configSource file, if any.
+
+	* ConfigurationSection.cs: moved reading of the configSource
+	external data file to a separate internal method,
+	DeserializeConfigSource. Section's source config file path is now
+	used to find the configSource.
+	SerializeSection now doesn't write the section content to the
+	passed writer if configSource was used. Writing of the section
+	data is now done in SectionInfo.
+
+	* ConfigurationElement.cs: added a new method -
+	HasLocalModifications which returns true of any of the element
+	properties have been set locally on that element.
+
 2008-02-20  Marek Habersack  <mhabersack@novell.com>
 
 	* ConfigurationSection.cs: support the "configSource" attribute
