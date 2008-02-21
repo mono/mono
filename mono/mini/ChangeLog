@@ -1,3 +1,19 @@
+2008-02-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (encode_patch): Handle ICALL_ADDR patch type.
+
+	* aot-runtime.c (decode_patch_info): Ditto.
+
+	* mini.c (mono_resolve_patch_target): Ditto.
+	
+	* aot-compiler.c (compile_method): Add some experimental code for AOT compiling
+	icall wrappers.
+
+	* patch-info.h (PATCH_INFO): Add 'ICALL_ADDR' patch type.
+	
+	* mini.c (mono_method_to_ir): Convert a CEE_MONO_LDPTR opcode to an AOT constant
+	if it references an icall address.
+
 2008-02-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* cpu-s390x.md: Remove some more unused opcodes.
