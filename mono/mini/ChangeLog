@@ -1,3 +1,8 @@
+2008-02-21  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini.c (inline_method): clean any pending loader error when inlining fail.
+	Otherwise loader errors in mono_method_to_ir leaks and cause spurious errors.
+
 2008-02-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (encode_patch): Handle ICALL_ADDR patch type.
