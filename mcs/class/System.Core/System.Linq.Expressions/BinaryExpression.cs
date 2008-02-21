@@ -250,6 +250,7 @@ namespace System.Linq.Expressions {
 			LocalBuilder ret = ig.DeclareLocal (Type);
 			ig.Emit (OpCodes.Ldloca, ret);
 			ig.Emit (OpCodes.Initobj, Type);
+			ig.Emit (OpCodes.Ldloc, ret);
 
 		// exit:
 			ig.MarkLabel (exit);
