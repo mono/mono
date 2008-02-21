@@ -97,5 +97,18 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual ("(value(MonoTests.System.Linq.Expressions.OpClass) && value(MonoTests.System.Linq.Expressions.OpClass))",
 				expr.ToString(), "AndAlso#09");
 		}
+
+		[Test]
+		public void AndAlsoTest ()
+		{
+			Expression<Func<bool, bool, bool>> e = (bool a, bool b) => a && b;
+
+			Func<bool, bool, bool> c = e.Compile ();
+
+			Assert.AreEqual (true, c (true, true), "t1");
+			Assert.AreEqual (false, c (true, false), "t2");
+			Assert.AreEqual (false, c (false, true), "t3");
+			Assert.AreEqual (false, c (false, false), "t4");
+		}
 	}
 }
