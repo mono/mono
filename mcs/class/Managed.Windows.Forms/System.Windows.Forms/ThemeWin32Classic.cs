@@ -3665,39 +3665,40 @@ namespace System.Windows.Forms
 			}
 
 			const int inflate = -1;
-			if (date == mc.SelectionStart && date == mc.SelectionEnd) {
+
+			if (date == mc.SelectionStart.Date && date == mc.SelectionEnd.Date) {
 				// see if the date is in the start of selection
 				date_color = mc.BackColor;
 				// draw the left hand of the back ground
 				Rectangle selection_rect = Rectangle.Inflate (rectangle, inflate, inflate);				
 				dc.FillPie (ResPool.GetSolidBrush (mc.TitleBackColor), selection_rect, 0, 360);
-			} else if (date == mc.SelectionStart) {
+			} else if (date == mc.SelectionStart.Date) {
 				// see if the date is in the start of selection
 				date_color = mc.BackColor;
 				// draw the left hand of the back ground
 				Rectangle selection_rect = Rectangle.Inflate (rectangle, inflate, inflate);				
 				dc.FillPie (ResPool.GetSolidBrush (mc.TitleBackColor), selection_rect, 90, 180);
 				// fill the other side as a straight rect
-				if (date < mc.SelectionEnd) 
+				if (date < mc.SelectionEnd.Date) 
 				{
 					// use rectangle instead of rectangle to go all the way to edge of rect
 					selection_rect.X = (int) Math.Floor((double)(rectangle.X + rectangle.Width / 2));
 					selection_rect.Width = Math.Max(rectangle.Right - selection_rect.X, 0);
 					dc.FillRectangle (ResPool.GetSolidBrush (mc.TitleBackColor), selection_rect);
 				}
-			} else if (date == mc.SelectionEnd) {
+			} else if (date == mc.SelectionEnd.Date) {
 				// see if it is the end of selection
 				date_color = mc.BackColor;
 				// draw the left hand of the back ground
 				Rectangle selection_rect = Rectangle.Inflate (rectangle, inflate, inflate);
 				dc.FillPie (ResPool.GetSolidBrush (mc.TitleBackColor), selection_rect, 270, 180);
 				// fill the other side as a straight rect
-				if (date > mc.SelectionStart) {
+				if (date > mc.SelectionStart.Date) {
 					selection_rect.X = rectangle.X;
 					selection_rect.Width = rectangle.Width - (rectangle.Width / 2);
 					dc.FillRectangle (ResPool.GetSolidBrush (mc.TitleBackColor), selection_rect);
 				}
-			} else if (date > mc.SelectionStart && date < mc.SelectionEnd) {
+			} else if (date > mc.SelectionStart.Date && date < mc.SelectionEnd.Date) {
 				// now see if it's in the middle
 				date_color = mc.BackColor;
 				// draw the left hand of the back ground
