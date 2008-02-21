@@ -72,13 +72,17 @@
     <Compile Include="System.Linq.Expressions\ExpressionTest_Field.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_GreaterThan.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_GreaterThanOrEqual.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_Invoke.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Lambda.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_LeftShift.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_LessThan.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_LessThanOrEqual.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Lift.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_ListBind.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_ListInit.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_MakeBinary.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_MemberBind.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_MemberInit.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Modulo.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Multiply.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_MultiplyChecked.cs" />
