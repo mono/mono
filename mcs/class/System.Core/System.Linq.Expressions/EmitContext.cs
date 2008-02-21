@@ -54,10 +54,10 @@ namespace System.Linq.Expressions {
 
 		public static EmitContext Create (LambdaExpression lambda)
 		{
-			//if (Environment.GetEnvironmentVariable ("LINQ_DBG") != null)
+			if (Environment.GetEnvironmentVariable ("LINQ_DBG") != null)
 				return new DebugEmitContext (lambda);
 
-			//return new DynamicEmitContext (lambda);
+			return new DynamicEmitContext (lambda);
 		}
 
 		public int GetParameterPosition (ParameterExpression p)
