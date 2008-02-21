@@ -1,3 +1,14 @@
+2008-02-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arm.c (mono_arch_output_basic_block): Implement proper argument passing
+	for tail calls up to the point that the tests in iltests.exe run. Also add a
+	dummy CKFINITE implementation.
+	(mono_arch_emit_prolog): Avoid saving the method in the LMF since it is only
+	needed for trampoline LMF frames.
+
+	* exceptions-arm.c (mono_arch_find_jit_info): Only read lmf->method for 
+	trampoline LMF frames.
+
 2008-02-21  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini.c (inline_method): clean any pending loader error when inlining fail.
