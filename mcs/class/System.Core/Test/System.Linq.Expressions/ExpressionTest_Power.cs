@@ -81,7 +81,7 @@ namespace MonoTests.System.Linq.Expressions
 			ParameterExpression a = Expression.Parameter(typeof(double), "a");
 			ParameterExpression b = Expression.Parameter(typeof(double), "b");
 			BinaryExpression p = Expression.Power (a, b);
-			
+
 			Expression<Func<double,double,double>> pexpr = Expression.Lambda<Func<double,double,double>> (p, new ParameterExpression [] { a, b });
 			Func<double,double,double> compiled = pexpr.Compile ();
 			Assert.AreEqual (1, compiled (1, 10));

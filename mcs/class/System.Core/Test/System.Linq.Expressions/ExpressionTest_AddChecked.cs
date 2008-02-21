@@ -151,7 +151,7 @@ namespace MonoTests.System.Linq.Expressions
 			Func<T> del = l.Compile ();
 			del ();
 		}
-		
+
 		//
 		// SubtractChecked is not defined for small types (byte, sbyte)
 		//
@@ -194,7 +194,7 @@ namespace MonoTests.System.Linq.Expressions
 			// These are invalid:
 			InvalidOperation<byte> (Byte.MaxValue, 2);
 			InvalidOperation<sbyte> (SByte.MaxValue, 2);
-			
+
 			// Stuff that just fits in 32 bits, does not overflow:
 			MustNotOverflow<short> (Int16.MaxValue, 2);
 			MustNotOverflow<ushort> (UInt16.MaxValue, 2);

@@ -114,7 +114,7 @@ namespace MonoTests.System.Linq.Expressions
 	// constants, like this case.   Need to figure out what to do
 	// with those
 	//
-	
+
 			Func<OpClass> compiled = l.Compile ();
 			Assert.AreEqual (left, compiled  ());
 #endif
@@ -125,7 +125,7 @@ namespace MonoTests.System.Linq.Expressions
 				return 1000;
 			}
 		}
-		
+
 		[Test]
 		public void TestMethodAddition ()
 		{
@@ -134,7 +134,7 @@ namespace MonoTests.System.Linq.Expressions
 
 			Func<int> compiled = l.Compile ();
 			Assert.AreEqual (1000, compiled ());
-			
+
 		}
 	}
 }

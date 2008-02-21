@@ -166,7 +166,7 @@ namespace MonoTests.System.Linq.Expressions
 			}
 			throw new Exception (String.Format ("SubtractChecked should have thrown for the creation of a tree with {0} operands", v1.GetType ()));
 		}
-		
+
 		[Test]
 		public void TestOverflows ()
 		{
@@ -178,7 +178,7 @@ namespace MonoTests.System.Linq.Expressions
 			MustOverflow<long> (Int64.MaxValue, -1);
 
 			MustOverflow<ushort> (UInt16.MinValue, 1);
-			
+
 			// unsigned values use Sub_Ovf_Un, check that too:
 			MustOverflow<ulong> (0, 1);
 			MustOverflow<uint>  (0, 1);
@@ -191,7 +191,7 @@ namespace MonoTests.System.Linq.Expressions
 			// Sounds very odd, should file a bug with MS.
 			MustNotOverflow<short> (Int16.MinValue, 1);
 		}
-		
+
 		//
 		// These should not overflow
 		//

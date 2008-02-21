@@ -136,7 +136,7 @@ namespace MonoTests.System.Linq.Expressions
 		[ExpectedException (typeof (ArgumentException))]
 		public void TestInvalidCtor_2 ()
 		{
-			// type mismatch: int value, type == double 
+			// type mismatch: int value, type == double
 			Expression.Constant (0, typeof (double));
 		}
 
@@ -155,7 +155,7 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (typeof (int), c.Type, "#1");
 			Assert.AreEqual (1, c.Value, "#2");
 		}
-		
+
 		[Test]
 		public void ConstantCodeGen ()
 		{

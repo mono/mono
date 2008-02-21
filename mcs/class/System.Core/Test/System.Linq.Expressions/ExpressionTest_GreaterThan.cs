@@ -124,7 +124,7 @@ namespace MonoTests.System.Linq.Expressions
 
 			Expression<Func<int,int,bool>> pexpr = Expression.Lambda<Func<int,int,bool>> (
 				p, new ParameterExpression [] { a, b });
-			
+
 			Func<int,int,bool> compiled = pexpr.Compile ();
 			Assert.AreEqual (true, compiled (10, 1), "tc1");
 			Assert.AreEqual (true, compiled (1, 0), "tc2");

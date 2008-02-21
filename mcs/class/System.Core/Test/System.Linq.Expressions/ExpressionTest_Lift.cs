@@ -64,19 +64,19 @@ namespace MonoTests.System.Linq.Expressions
 		static MethodInfo GM(string n)
 		{
 			MethodInfo [] m = typeof(ExpressionTest_Lifting).GetMethods(BindingFlags.Static | BindingFlags.Public);
-			
+
 			foreach (MethodInfo mm in m)
 				if (mm.Name == n)
 					return mm;
-			
+
 			throw new Exception("No method found: " + n);
 		}
-		
+
 		static public int MyCompare (OpStruct a, OpStruct b)
 		{
 			return 1;
 		}
-		
+
 		[Test]
 		public void TestLiftOnEqual_WithMethodInfo ()
 		{
@@ -92,13 +92,13 @@ namespace MonoTests.System.Linq.Expressions
 			BinaryExpression cmp2 = Expression.Equal (a, b, false, GM("MyCompare"));
 
 			//
-			// When we use a MethodInfo, that has a non-bool return type, 
+			// When we use a MethodInfo, that has a non-bool return type,
 			// the result is always Nullable<returntype> regardless of the
 			// setting of "liftToNull"
 			//
 			Assert.AreEqual (typeof(int?), cmp.Type);
 			Assert.AreEqual (typeof(int?), cmp2.Type);
-			
+
 		}
 	}
 }

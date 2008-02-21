@@ -49,7 +49,7 @@ namespace MonoTests.System.Linq.Expressions
 		{
 			return 1;
 		}
-		
+
 		static MethodInfo GM (string n)
 		{
 			MethodInfo [] methods = typeof (ExpressionTest_MakeBinary).GetMethods (
@@ -61,7 +61,7 @@ namespace MonoTests.System.Linq.Expressions
 
 			throw new Exception (String.Format ("Method {0} not found", n));
 		}
-		
+
 		[Test]
 		public void MethodChecks ()
 		{
@@ -101,7 +101,7 @@ namespace MonoTests.System.Linq.Expressions
 
 			Expression.Add (left, right, GM ("BadMethodSig_3"));
 		}
-		
+
 		static void PassInt (ExpressionType nt)
 		{
 			Expression left = Expression.Constant (1);
@@ -185,7 +185,7 @@ namespace MonoTests.System.Linq.Expressions
 			FailInt (ExpressionType.TypeIs);
 #endif
 		}
-		
+
 		public delegate Expression BinaryExpr (Expression a, Expression b);
 
 		public T CodeGen<T> (BinaryExpr bin, T v1, T v2)
@@ -196,7 +196,7 @@ namespace MonoTests.System.Linq.Expressions
 			Func<T> fi = l.Compile ();
 			return fi ();
 		}
-		
+
 		[Test]
 		public void TestOperations ()
 		{
@@ -215,7 +215,7 @@ namespace MonoTests.System.Linq.Expressions
 			BinaryExpression p = Expression.MakeBinary (node, Expression.Constant (a), Expression.Constant(b));
 			Expression<Func<T,T,bool>> pexpr = Expression.Lambda<Func<T,T,bool>> (
 				p, new ParameterExpression [] { pa, pb });
-			
+
 			Func<T,T,bool> compiled = pexpr.Compile ();
 			Assert.AreEqual (r, compiled (a, b), String.Format ("{0} ({1},{2}) == {3}", node, a, b, r));
 		}
@@ -224,7 +224,7 @@ namespace MonoTests.System.Linq.Expressions
 		public void ComparisonTests ()
 		{
 			ExpressionType t = ExpressionType.Equal;
-		
+
 			CTest<byte>   (t, true,   10,  10);
 			CTest<sbyte>  (t, false,   1,   5);
 			CTest<sbyte>  (t, true,    1,   1);
@@ -235,7 +235,7 @@ namespace MonoTests.System.Linq.Expressions
 			CTest<string> (t, false,  "Hey",  "There");
 
 			t = ExpressionType.NotEqual;
-			
+
 			CTest<byte>   (t, false,   10,  10);
 			CTest<sbyte>  (t, true,   1,   5);
 			CTest<sbyte>  (t, false,    1,   1);
@@ -257,7 +257,7 @@ namespace MonoTests.System.Linq.Expressions
 			CTest<double> (t, false,  1.0, 1.0);
 			CTest<double> (t, false,  1.0, 1.0);
 
-			
+
 			t = ExpressionType.LessThan;
 			CTest<byte>   (t, false,   5,  1);
 			CTest<byte>   (t, false,   10,  10);
@@ -280,7 +280,7 @@ namespace MonoTests.System.Linq.Expressions
 			CTest<double> (t, true,  1.0, 1.0);
 			CTest<double> (t, true,  1.0, 1.0);
 
-			
+
 			t = ExpressionType.LessThanOrEqual;
 			CTest<byte>   (t, false,   5,  1);
 			CTest<byte>   (t, true,   10,  10);
@@ -291,7 +291,7 @@ namespace MonoTests.System.Linq.Expressions
 			CTest<ulong>  (t, false,     Int64.MaxValue,  0);
 			CTest<double> (t, true,  1.0, 1.0);
 			CTest<double> (t, true,  1.0, 1.0);
-			
+
 		}
 
 	}

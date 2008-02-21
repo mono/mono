@@ -111,7 +111,7 @@ namespace MonoTests.System.Linq.Expressions
 				return null;
 			}
 		}
-		
+
 		[Test]
 		[ExpectedException(typeof(ArgumentException))]
 		public void MethodInfoReturnType ()
