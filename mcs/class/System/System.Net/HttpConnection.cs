@@ -313,8 +313,11 @@ namespace System.Net {
 
 				Socket s = sock;
 				sock = null;
-				s.Shutdown (SocketShutdown.Both);
-				s.Close ();
+				try {
+					s.Shutdown (SocketShutdown.Both);
+				} finally {
+					s.Close ();
+				}
 				if (context_bound)
 					epl.UnbindContext (context);
 			}
