@@ -1,3 +1,8 @@
+2008-02-21  Zoltan Varga  <vargaz@gmail.com>
+
+        [Backport from r96331 to 1.9]
+	* HttpConnection.cs (Close): Close the socket even if Shutdown throws an exception.
+
 2008-02-17  Daniel Nauck  <dna@mono-project.de>
 
 	[Backport from r95967 to 1.9]
