@@ -28,10 +28,21 @@ using System.Collections.Generic;
 using System.Text;
 using javax.servlet.http;
 
-namespace System.Web
+namespace Mainsoft.Web
 {
 	public interface IHttpExtendedWorkerRequest
 	{
 		HttpSession GetSession (bool create);
+	}
+
+	public interface IHttpUnifyWorkerRequest
+	{
+	}
+
+	public class UnifyRequestException : Exception
+	{
+		public UnifyRequestException (Exception innerException)
+			: base (String.Empty, innerException) {
+		}
 	}
 }
