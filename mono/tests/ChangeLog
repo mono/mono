@@ -1,3 +1,13 @@
+2008-02-21  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* resolve_method_bug.2.il
+	* resolve_field_bug.2.il
+	* resolve_type_bug.2.il: Tests for #363450. They verify that
+	a loader error during System.Reflection.Module::Resolve* methods don't
+	leak and causes a spurious TypeLoadException somewhere else.
+
+	* Makefile.am: Added the previous tests.
+
 2008-02-17  Raja R Harinath  <harinath@hurrynot.org>
 
 	* Makefile.am (SMCS): Add temporary-smcs-hack flag.
