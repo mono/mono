@@ -53,36 +53,36 @@ namespace System.Linq.Expressions {
 		internal override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			
+
 			switch (Type.GetTypeCode (Type)){
 			case TypeCode.Byte:
 				ig.Emit (OpCodes.Ldc_I4, (int) ((byte)value));
 				return;
-					      
+
 			case TypeCode.SByte:
 				ig.Emit (OpCodes.Ldc_I4, (int) ((sbyte)value));
 				return;
-					
+
 			case TypeCode.Int16:
 				ig.Emit (OpCodes.Ldc_I4, (int) ((short)value));
 				return;
-				
+
 			case TypeCode.UInt16:
 				ig.Emit (OpCodes.Ldc_I4, (int) ((ushort)value));
 				return;
-				
+
 			case TypeCode.Int32:
 				ig.Emit (OpCodes.Ldc_I4, (int) value);
 				return;
-				
+
 			case TypeCode.UInt32:
 				ig.Emit (OpCodes.Ldc_I4, unchecked ((int) ((uint)Value)));
 				return;
-				
+
 			case TypeCode.Int64:
 				ig.Emit (OpCodes.Ldc_I8, (long) value);
 				return;
-					
+
 			case TypeCode.UInt64:
 				ig.Emit (OpCodes.Ldc_I8, unchecked ((long) ((ulong)value)));
 				return;
@@ -93,28 +93,28 @@ namespace System.Linq.Expressions {
 				else
 					ec.ig.Emit (OpCodes.Ldc_I4_0);
 				return;
-				
+
 			case TypeCode.Char:
 				ig.Emit (OpCodes.Ldc_I4, (int) ((char) value));
 				return;
-				
+
 			case TypeCode.Single:
 				ig.Emit (OpCodes.Ldc_R4, (float) value);
 				return;
-				
+
 			case TypeCode.Double:
 				ig.Emit (OpCodes.Ldc_R8, (double) value);
 				return;
-				
+
 			case TypeCode.Decimal: {
 				Decimal v = (decimal) value;
 				int [] words = Decimal.GetBits (v);
 				int power = (words [3] >> 16) & 0xff;
 				Type ti = typeof (int);
-				
+
 				if (power == 0 && v <= int.MaxValue && v >= int.MinValue) {
 					ig.Emit (OpCodes.Ldc_I4, (int) v);
-					
+
 					ig.Emit (OpCodes.Newobj, typeof (Decimal).GetConstructor (new Type [1] { ti }));
 					return;
 				}

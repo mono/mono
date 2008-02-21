@@ -125,7 +125,7 @@ namespace System.Linq.Expressions {
 
 			return lb;
 		}
-		
+
 		void EmitLogical (EmitContext ec, bool and, bool short_circuit)
 		{
 			ILGenerator ig = ec.ig;
@@ -138,35 +138,35 @@ namespace System.Linq.Expressions {
 				vleft = EmitStored (ec, left);
 				if (!short_circuit)
 					vright = EmitStored (ec, right);
-				
+
 				Label left_is_null = ig.DefineLabel ();
 				Label left_is_false = ig.DefineLabel ();
 				Label right_is_null = ig.DefineLabel ();
 				Label create  = ig.DefineLabel ();
 				Label exit = ig.DefineLabel ();
 				Label both_are_null = ig.DefineLabel ();
-				
+
 				// Check left
-				
+
 				ig.Emit (OpCodes.Ldloca, vleft);
 				ig.Emit (OpCodes.Call, has_value);
 				ig.Emit (OpCodes.Brfalse, left_is_null);
-				
+
 				ig.Emit (OpCodes.Ldloca, vleft);
-				ig.Emit (OpCodes.Call, get_value);					
+				ig.Emit (OpCodes.Call, get_value);
 				ig.Emit (OpCodes.Dup);
-				
+
 				left_is_false = ig.DefineLabel ();
 				ig.Emit (and ? OpCodes.Brfalse : OpCodes.Brtrue, create);
-				
+
 				// Deal with right
 				if (short_circuit)
 					vright = EmitStored (ec, right);
-				
+
 				ig.Emit (OpCodes.Ldloca, vright);
 				ig.Emit (OpCodes.Call, has_value);
 				ig.Emit (OpCodes.Brfalse, right_is_null);
-				
+
 				ig.Emit (OpCodes.Ldloca, vright);
 				ig.Emit (OpCodes.Call, get_value);
 
@@ -193,7 +193,7 @@ namespace System.Linq.Expressions {
 				ig.Emit (OpCodes.Initobj, Type);
 				ig.Emit (OpCodes.Ldloc, ret);
 				ig.Emit (OpCodes.Br, exit);
-				
+
 			// create:
 				ig.MarkLabel (create);
 				ig.Emit (OpCodes.Newobj, Type.GetConstructors ()[0]);
@@ -205,18 +205,18 @@ namespace System.Linq.Expressions {
 				right.Emit (ec);
 				ig.Emit (and ? OpCodes.And : OpCodes.Or);
 			}
-			
+
 		}
 
 		void EmitCoalesce (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			
+
 			LocalBuilder vleft;
 			LocalBuilder vright;
-					
+
 			MethodInfo has_value = left.Type.GetMethod ("get_HasValue");
-			
+
 			Label exit = ig.DefineLabel ();
 			Label try_right = ig.DefineLabel ();
 			Label setup_null = ig.DefineLabel ();
@@ -225,13 +225,13 @@ namespace System.Linq.Expressions {
 			if (IsNullable (left.Type)){
 				ig.Emit (OpCodes.Ldloca, vleft);
 				ig.Emit (OpCodes.Call, has_value);
-			} else 
+			} else
 				ig.Emit (OpCodes.Ldloc, vleft);
-			
+
 			ig.Emit (OpCodes.Brfalse, try_right);
 			ig.Emit (OpCodes.Ldloc, vleft);
 			ig.Emit (OpCodes.Br, exit);
-			
+
 		// try_right;
 			ig.MarkLabel (try_right);
 			vright = EmitStored (ec, right);
@@ -240,7 +240,7 @@ namespace System.Linq.Expressions {
 				ig.Emit (OpCodes.Call, has_value);
 			} else
 				ig.Emit (OpCodes.Ldloc, vright);
-			
+
 			ig.Emit (OpCodes.Brfalse, setup_null);
 			ig.Emit (OpCodes.Ldloc, vright);
 			ig.Emit (OpCodes.Br, exit);
@@ -250,11 +250,11 @@ namespace System.Linq.Expressions {
 			LocalBuilder ret = ig.DeclareLocal (Type);
 			ig.Emit (OpCodes.Ldloca, ret);
 			ig.Emit (OpCodes.Initobj, Type);
-			
+
 		// exit:
 			ig.MarkLabel (exit);
 		}
-		
+
 		internal override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
@@ -269,7 +269,7 @@ namespace System.Linq.Expressions {
 			case ExpressionType.And:
 				EmitLogical (ec, true, false);
 				return;
-				
+
 			case ExpressionType.Or:
 				EmitLogical (ec, false, false);
 				return;
@@ -294,7 +294,7 @@ namespace System.Linq.Expressions {
 				ig.Emit (OpCodes.Call, typeof (System.Math).GetMethod ("Pow"));
 				return;
 			}
-			
+
 			Label? empty_value = null;
 			LocalBuilder ret = null;
 
@@ -410,65 +410,65 @@ namespace System.Linq.Expressions {
 				else
 					opcode = OpCodes.Cgt;
 				break;
-				
+
 			case ExpressionType.GreaterThanOrEqual:
 				Type le = left.Type;
-				
+
 				if (is_unsigned || (le == typeof (double) || le == typeof (float)))
 					ig.Emit (OpCodes.Clt_Un);
 				else
 					ig.Emit (OpCodes.Clt);
-				
+
 				ig.Emit (OpCodes.Ldc_I4_0);
-				
+
 				opcode = OpCodes.Ceq;
 				break;
-				
+
 			case ExpressionType.LessThan:
 				if (is_unsigned)
 					opcode = OpCodes.Clt_Un;
 				else
 					opcode = OpCodes.Clt;
 				break;
-				
+
 			case ExpressionType.LessThanOrEqual:
 				Type lt = left.Type;
-				
+
 				if (is_unsigned || (lt == typeof (double) || lt == typeof (float)))
 					ig.Emit (OpCodes.Cgt_Un);
 				else
 					ig.Emit (OpCodes.Cgt);
 				ig.Emit (OpCodes.Ldc_I4_0);
-				
+
 				opcode = OpCodes.Ceq;
 				break;
-				
+
 			case ExpressionType.Equal:
 				opcode = OpCodes.Ceq;
 				break;
-				
+
 			case ExpressionType.NotEqual:
 				ig.Emit (OpCodes.Ceq);
 				ig.Emit (OpCodes.Ldc_I4_0);
-				
+
 				opcode = OpCodes.Ceq;
 				break;
-				
+
 			default:
 				throw new Exception (String.Format ("Internal error: BinaryExpression contains non-Binary nodetype {0}", NodeType));
 			}
 			ig.Emit (opcode);
-			
+
 			if (IsLifted){
 				ig.Emit (OpCodes.Newobj, left.Type.GetConstructors ()[0]);
-				
+
 				Label skip = ig.DefineLabel ();
 				ig.Emit (OpCodes.Br_S, skip);
 				ig.MarkLabel (empty_value.Value);
 				ig.Emit (OpCodes.Ldloc, ret);
 				ig.Emit (OpCodes.Ldloca, ret);
 				ig.Emit (OpCodes.Initobj, Type);
-				
+
 				ig.MarkLabel (skip);
 			}
 		}

@@ -45,18 +45,18 @@ namespace System.Linq.Expressions {
 		public ReadOnlyCollection<ElementInit> Initializers {
 			get { return initializers; }
 		}
-		
+
 		internal ListInitExpression (NewExpression new_expression, ReadOnlyCollection<ElementInit> initializers)
 			: base (ExpressionType.ListInit, new_expression.Type)
 		{
 			this.new_expression = new_expression;
 			this.initializers = initializers;
 		}
-		
+
 		internal override void Emit (EmitContext ec)
 		{
 			throw new NotImplementedException ();
 		}
-		
+
 	}
 }

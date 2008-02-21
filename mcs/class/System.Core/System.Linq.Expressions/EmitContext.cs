@@ -54,10 +54,10 @@ namespace System.Linq.Expressions {
 
 		public static EmitContext Create (LambdaExpression lambda)
 		{
-			if (Environment.GetEnvironmentVariable ("LINQ_DBG") != null)
+			//if (Environment.GetEnvironmentVariable ("LINQ_DBG") != null)
 				return new DebugEmitContext (lambda);
 
-			return new DynamicEmitContext (lambda);
+			//return new DynamicEmitContext (lambda);
 		}
 
 		public int GetParameterPosition (ParameterExpression p)
@@ -117,6 +117,7 @@ namespace System.Linq.Expressions {
 	class DebugEmitContext : EmitContext {
 
 		AssemblyBuilder assembly;
+		string file_name;
 		TypeBuilder type;
 		MethodBuilder method;
 
@@ -124,10 +125,10 @@ namespace System.Linq.Expressions {
 			: base (lambda)
 		{
 			var name = GenerateName ();
-			var file_name = name + ".dll";
+			file_name = name + ".dll";
 
 			assembly = AppDomain.CurrentDomain.DefineDynamicAssembly (
-				new AssemblyName (file_name), AssemblyBuilderAccess.RunAndSave, Path.GetTempPath ());
+				new AssemblyName (name), AssemblyBuilderAccess.RunAndSave, Path.GetTempPath ());
 
 			type = assembly.DefineDynamicModule (file_name, file_name).DefineType ("Linq", TypeAttributes.Public);
 
@@ -150,7 +151,7 @@ namespace System.Linq.Expressions {
 			owner.Emit (this);
 
 			type.CreateType ();
-			assembly.Save (assembly.GetName ().FullName);
+			assembly.Save (file_name);
 		}
 	}
 }
