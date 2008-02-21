@@ -269,6 +269,15 @@ namespace System.Configuration
 		internal virtual bool HasValues ()
 		{
 			foreach (PropertyInformation pi in ElementInformation.Properties)
+				if (pi.ValueOrigin != PropertyValueOrigin.Default)
+					return true;
+			
+			return false;
+		}
+
+		internal virtual bool HasLocalModifications ()
+		{
+			foreach (PropertyInformation pi in ElementInformation.Properties)
 				if (pi.ValueOrigin == PropertyValueOrigin.SetHere)
 					return true;
 			

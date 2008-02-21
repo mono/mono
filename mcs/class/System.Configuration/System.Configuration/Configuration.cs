@@ -280,6 +280,9 @@ namespace System.Configuration {
 				XmlTextReader r = new XmlTextReader (new StringReader (xml));
 				sec.DeserializeSection (r);
 				r.Close ();
+
+				if (!String.IsNullOrEmpty (sec.SectionInformation.ConfigSource) && !String.IsNullOrEmpty (FilePath))
+					sec.DeserializeConfigSource (Path.GetDirectoryName (FilePath));
 			}
 			
 			elementData [config] = sec;
