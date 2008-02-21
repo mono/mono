@@ -487,6 +487,8 @@ namespace System.Web {
 				IHttpExtendedHandler extHandler = context.Handler as IHttpExtendedHandler;
 				if (extHandler != null && !extHandler.IsCompleted)
 					return;
+				if (context.Error is UnifyRequestException)
+					return;
 
 				ihah.EndProcessRequest (null);
 #else

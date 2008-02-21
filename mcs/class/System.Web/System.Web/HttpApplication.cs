@@ -694,10 +694,33 @@ namespace System.Web {
 		internal void Tick ()
 		{
 			try {
+#if TARGET_J2EE
+				if (context.Error is UnifyRequestException) {
+					Exception ex = context.Error.InnerException;
+					context.ClearError ();
+					vmw.common.TypeUtils.Throw (ex);
+				}
+				try {
+#endif		
 				if (pipeline.MoveNext ()){
 					if ((bool)pipeline.Current)
 						PipelineDone ();
 				}
+#if TARGET_J2EE
+				}
+				catch (Exception ex) {
+					if (ex is ThreadAbortException && 
+						((ThreadAbortException) ex).ExceptionState == FlagEnd.Value)
+						throw;
+					if (context.WorkerRequest is IHttpUnifyWorkerRequest) {
+						context.ClearError ();
+						context.AddError (new UnifyRequestException (ex));
+						return;
+					}
+					else
+						throw;
+				}
+#endif
 			} catch (ThreadAbortException taex) {
 				object obj = taex.ExceptionState;
 				Thread.ResetAbort ();
