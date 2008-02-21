@@ -960,7 +960,13 @@ namespace System.Windows.Forms
 			content_rect.Width -= check_size;
 			content_rect.Offset (check_size, 0);
 			
-			Size text_size = TextRenderer.MeasureTextInternal (text, button.Font, Size.Empty, button.TextFormatFlags, button.UseCompatibleTextRendering);
+			Size proposed = Size.Empty;
+			
+			// Force wrapping if we aren't AutoSize and our text is too long
+			if (!button.AutoSize)
+				proposed.Width = button.Width - glyphArea.Width - 2;
+
+			Size text_size = TextRenderer.MeasureTextInternal (text, button.Font, proposed, button.TextFormatFlags, button.UseCompatibleTextRendering);
 			Size image_size = image == null ? Size.Empty : image.Size;
 
 			textRectangle = Rectangle.Empty;

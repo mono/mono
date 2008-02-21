@@ -285,9 +285,9 @@ namespace System.Windows.Forms
 				Size retval;
 				
 				if (dc is Graphics)
-					retval = (dc as Graphics).MeasureString (text, font, Int32.MaxValue, sf).ToSize ();
+					retval = (dc as Graphics).MeasureString (text, font, proposedSize.Width == 0 ? Int32.MaxValue : proposedSize.Width, sf).ToSize ();
 				else
-					retval = TextRenderer.MeasureString (text, font, Int32.MaxValue, sf).ToSize ();
+					retval = TextRenderer.MeasureString (text, font, proposedSize.Width == 0 ? Int32.MaxValue : proposedSize.Width, sf).ToSize ();
 
 				if (retval.Width > 0 && (flags & TextFormatFlags.NoPadding) == 0)
 					retval.Width += 9;

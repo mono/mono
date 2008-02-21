@@ -1,5 +1,12 @@
 2008-02-21  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TextRenderer.cs: Respect proposed size for MeasureString.
+	* ThemeWin32Classics.cs: If our CheckBox/RadioButton isn't
+	autosize, use a proposed width to force wrapping for long text.
+	[Fixes bug #360981]
+
+2008-02-21  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TreeView.cs: Factor in checkboxes = false and state images in
 	to HitTest.  [Fixes bug #363360]
 
