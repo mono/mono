@@ -1,3 +1,13 @@
+2008-02-21  Marek Habersack  <mhabersack@novell.com>
+
+	* ControlBuilder.cs: introduced a new internal property -
+	MyNamingContainer used by the public properties
+	NamingContainerType and BindingContainerType. This simplifies the
+	code in the latter property, as the binding container type must
+	almost always be the same as the naming container type. The only
+	exception is when we're inside a content builder, in which case we
+	return the parent's BindingContainerType. Fixes bug #363665
+
 2008-02-08  Marek Habersack  <mhabersack@novell.com>
 
 	* SimpleWebHandlerParser.cs: always return a non-null value from

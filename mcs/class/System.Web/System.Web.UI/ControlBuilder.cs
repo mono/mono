@@ -36,6 +36,7 @@ using System.Security.Permissions;
 using System.Web.Compilation;
 using System.Web.Configuration;
 using System.IO;
+using System.Web.UI.WebControls;
 
 namespace System.Web.UI {
 
@@ -49,6 +50,7 @@ namespace System.Web.UI {
 			BindingFlags.Static |
 			BindingFlags.IgnoreCase;
 
+		ControlBuilder myNamingContainer;
 		TemplateParser parser;
 		internal ControlBuilder parentBuilder;
 		Type type;	       
@@ -146,52 +148,49 @@ namespace System.Web.UI {
 
 		public Type NamingContainerType {
 			get {
-				if (parentBuilder == null)
+				ControlBuilder cb = myNamingContainer;
+				
+				if (cb == null)
 					return typeof (Control);
 
-				Type ptype = parentBuilder.ControlType;
-				if (ptype == null)
-					return parentBuilder.NamingContainerType;
-
-				if (!typeof (INamingContainer).IsAssignableFrom (ptype))
-					return parentBuilder.NamingContainerType;
-
-				return ptype;
+				return cb.ControlType;
 			}
 		}
-		
+
+		ControlBuilder MyNamingContainer {
+			get {
+				if (myNamingContainer == null) {
+					Type controlType = parentBuilder != null ? parentBuilder.ControlType : null;
+					
+					if (controlType == null)
+						myNamingContainer = null;
+					else if (typeof (INamingContainer).IsAssignableFrom (controlType))
+						myNamingContainer = parentBuilder;
+					else
+						myNamingContainer = parentBuilder.MyNamingContainer;
+				}
+
+				return myNamingContainer;
+			}
+		}
+			
 #if NET_2_0
 		public virtual
 #else
 		internal
 #endif
 		Type BindingContainerType {
-			get {				
-				if (parentBuilder == null) {
-#if NET_2_0
-					Type bt = Parser.BaseType;
-					if (bt != null)
-						return bt;
-#endif
-
+			get {
+				ControlBuilder cb = MyNamingContainer;
+				if (cb == null)
 					return typeof (Control);
-				}
-
-				if (parentBuilder is TemplateBuilder && ((TemplateBuilder)parentBuilder).ContainerType != null)
-					return ((TemplateBuilder)parentBuilder).ContainerType;
-				
-				Type ptype = parentBuilder.ControlType;
-				if (ptype == null)
-					return parentBuilder.BindingContainerType;
-				
-				if (!typeof (INamingContainer).IsAssignableFrom (ptype))
-					return parentBuilder.BindingContainerType;
 
 #if NET_2_0
-				return typeof (Control);
-#else
-				return ptype;
+				if (cb is ContentBuilderInternal)
+					return cb.BindingContainerType;
 #endif
+				
+				return cb.ControlType;
 			}
 		}
 
