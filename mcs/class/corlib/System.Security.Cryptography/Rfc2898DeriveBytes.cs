@@ -157,8 +157,7 @@ namespace System.Security.Cryptography {
 				if (count >= cb)
 					return result;
 				_pos = 0;
-				rpos = 20 - cb;
-				r = cb - rpos;
+				rpos = count;
 			}
 
 			byte[] data = new byte [_salt.Length + 4];
@@ -166,7 +165,8 @@ namespace System.Security.Cryptography {
 
 			for (int i=1; i <= l; i++) {
 				_buffer = F (data, _iteration, ++_f);
-				int count = ((i == l) ? r : 20);
+				// we may not need the complete last block
+				int count = ((i == l) ? result.Length - rpos : 20);
 				Buffer.BlockCopy (_buffer, _pos, result, rpos, count);
 				rpos += _pos + count;
 				_pos = ((count == 20) ? 0 : count);
