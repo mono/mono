@@ -1,3 +1,7 @@
+2008-02-21  Mark Probst  <mark.probst@gmail.com>
+
+	* generics-sharing.2.cs: Improved tests.
+
 2008-02-21  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* resolve_method_bug.2.il

@@ -1,3 +1,14 @@
+2008-02-21  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Fetch data out of the extensible part of the runtime
+	generic context instead of calling a helper function.
+
+	* generic-sharing.c: Some functions moved into
+	metadata/generic-sharing.c.  Helper function for fetching other
+	types now checks and asserts against extensible rgctx (just for
+	debugging purposes - the helper function isn't called anymore
+	unless for debugging).
+
 2008-02-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-arm.c (mono_arch_output_basic_block): Implement proper argument passing

@@ -1,3 +1,26 @@
+2008-02-21  Mark Probst  <mark.probst@gmail.com>
+
+	* object.c, generic-sharing.c: Moved some generic sharing code
+	from object.c to generic-sharing.c.
+
+	* generic-sharing.c: Added support for extensible runtime generic
+	context.
+
+	* metadata-internals.h: Two new hash tables in MonoImage for
+	extensible runtime generic context support.
+
+	* domain.c: Unregister generic vtables upon domain unloading.
+
+	* image.c: Destroy new hash tables upon image unloading.
+
+	* metadata.c: Unregister generic subclasses upon image unloading.
+
+	* class-internals.h: New data structure for runtime generic
+	context template.  New fields in the runtime generic context for
+	extensible part.
+
+	* Makefile.am: Added generic-sharing.c.
+
 2008-02-21 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	icall.c (ves_icall_System_Reflection_Module_ResolveTypeToken): If
