@@ -1,5 +1,11 @@
 2008-02-21  Jonathan Pobst  <monkey@jpobst.com>
 
+	* FontDialog.cs: Ensure that when the Font is set in code,
+	all the gui pieces are updated accordingly.
+	[Fixes bug #361020]
+
+2008-02-21  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TextRenderer.cs: Respect proposed size for MeasureString.
 	* ThemeWin32Classics.cs: If our CheckBox/RadioButton isn't
 	autosize, use a proposed width to force wrapping for long text.

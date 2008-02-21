@@ -411,6 +411,9 @@ namespace System.Windows.Forms
 					currentSize = font.Size;
 					currentFontName = font.Name;
 					
+					strikethroughCheckBox.Checked = font.Strikeout;
+					underlinedCheckBox.Checked = font.Underline;
+					
 					int index = fontListBox.FindString (currentFontName);
 					
 					if (index != -1) {
@@ -418,6 +421,9 @@ namespace System.Windows.Forms
 					} else {
 						fontListBox.SelectedIndex = 0;
 					}
+					
+					UpdateFontSizeListBox ();
+					UpdateFontStyleListBox ();
 					
 					fontListBox.TopIndex = fontListBox.SelectedIndex;
 				}
@@ -1137,6 +1143,11 @@ namespace System.Windows.Forms
 						currentFontStyle = FontStyle.Bold | FontStyle.Italic;
 						break;
 				}
+				
+				if (strikethroughCheckBox.Checked)
+					currentFontStyle |= FontStyle.Strikeout;
+				if (underlinedCheckBox.Checked)
+					currentFontStyle |= FontStyle.Underline;
 			}
 			
 			fontstyleListBox.EndUpdate( );
