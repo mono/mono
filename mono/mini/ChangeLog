@@ -1,3 +1,19 @@
+2008-02-22  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.h: New trampoline type (RGCTX_LAZY_FETCH).
+
+	* mini-trampolines.c, tramp-amd64.c, tramp-x86.c: RGCTX lazy fetch
+	trampoline: Fetch an entry from the runtime generic context.  If
+	it's NULL, jump to the actual trampoline to fill the runtime
+	generic context.  Otherwise, return it.
+
+	* mini.c: Call the lazy fetch trampoline to get entries out of the
+	runtime generic context.
+
+	* tramp-ia64.c, tramp-arm.c, tramp-alpha.c, tramp-s390.c,
+	tramp-s390x.c, tramp-ppc.c, tramp-hppa.c, tramp-mips.c,
+	tramp-sparc.c: Stubs for the lazy fetch trampoline.
+
 2008-02-21  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.c: Fetch data out of the extensible part of the runtime

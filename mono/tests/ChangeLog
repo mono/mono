@@ -1,3 +1,12 @@
+2008-02-22  Mark Probst  <mark.probst@gmail.com>
+
+	* generics-sharing.2.cs: New tests for the extensible runtime
+	generic context.
+
+	* recursive-generics.2.cs: Tests for recursive generic types.
+
+	* Makefile.am: Added recursive-generics.2.cs.
+
 2008-02-21  Mark Probst  <mark.probst@gmail.com>
 
 	* generics-sharing.2.cs: Improved tests.
