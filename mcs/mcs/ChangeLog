@@ -1,3 +1,7 @@
+2008-02-22  Marek Safar  <marek.safar@gmail.com>
+
+	* generic.cs, expression.cs: More ongoing work on expression trees.
+	
 2008-02-21  Marek Safar  <marek.safar@gmail.com>
 
 	* class.cs, typemanager.cs: Rewrote operator matching logic to correctly

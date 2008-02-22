@@ -588,12 +588,14 @@ namespace Mono.CSharp {
 		{
 			string method_name; 
 			switch (Oper) {
-				case Operator.UnaryNegation:
-					method_name = "Negate";
-					break;
-
-				default:
-					throw new InternalErrorException ("Unknown unary operator " + Oper.ToString ());
+			case Operator.UnaryNegation:
+				method_name = "Negate";
+				break;
+			case Operator.LogicalNot:
+				method_name = "Not";
+				break;
+			default:
+				throw new InternalErrorException ("Unknown unary operator " + Oper.ToString ());
 			}
 
 			ArrayList args = new ArrayList (2);
@@ -1806,11 +1808,16 @@ namespace Mono.CSharp {
 				return ee;
 			return null;
 		}
-					
-		Expression CheckShiftArguments (EmitContext ec)
+
+		Expression ResolveShiftArguments (EmitContext ec)
 		{
 			Expression new_left = Make32or64 (ec, left);
-			Expression new_right = ForceConversion (ec, right, TypeManager.int32_type);
+			Expression new_right;
+			if (right.Type != TypeManager.int32_type)
+				new_right = Convert.ImplicitConversion (ec, right, TypeManager.int32_type, loc);
+			else
+				new_right = right;
+
 			if (new_left == null || new_right == null) {
 				Error_OperatorCannotBeApplied ();
 				return null;
@@ -2011,12 +2018,17 @@ namespace Mono.CSharp {
 
 				if (union != null) {
 					ArrayList args = new ArrayList (2);
-					args.Add (new Argument (left));
-					args.Add (new Argument (right));
+					Argument larg = new Argument (left);
+					args.Add (larg);
+					Argument rarg = new Argument (right);
+					args.Add (rarg);
 
 					union = union.OverloadResolve (ec, ref args, true, loc);
-					if (union != null)
-						return new UserOperatorCall (union, args, CreateExpressionTree, loc);				
+					if (union != null) {
+						left = larg.Expr;
+						right = rarg.Expr;
+						return new UserOperatorCall (union, args, CreateExpressionTree, loc);
+					}
 				}
 			}
 
@@ -2354,7 +2366,7 @@ namespace Mono.CSharp {
 			}
 			
 			if (oper == Operator.LeftShift || oper == Operator.RightShift)
-				return CheckShiftArguments (ec);
+				return ResolveShiftArguments (ec);
 
 			if (oper == Operator.LogicalOr || oper == Operator.LogicalAnd){
 				if (l == TypeManager.bool_type && r == TypeManager.bool_type) {
@@ -3103,6 +3115,13 @@ namespace Mono.CSharp {
 			case Operator.LogicalAnd:
 				method_name = "AndAlso";
 				break;
+			case Operator.Inequality:
+				method_name = "NotEqual";
+				lift_arg = true;
+				break;
+			case Operator.RightShift:
+				method_name = "RightShift";
+				break;
 				
 			case Operator.BitwiseOr:
 				method_name = "Or";
@@ -3314,7 +3333,7 @@ namespace Mono.CSharp {
 			args.Add (new Argument (left.CreateExpressionTree (ec)));
 			args.Add (new Argument (right.CreateExpressionTree (ec)));
 			args.Add (new Argument (op.Method.CreateExpressionTree (ec)));
-			return CreateExpressionFactoryCall (is_and ? "AndAlso" : "OrAlso", args);
+			return CreateExpressionFactoryCall (is_and ? "AndAlso" : "OrElse", args);
 		}		
 
 		protected void Error19 ()
@@ -4278,7 +4297,18 @@ namespace Mono.CSharp {
 
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
-			ArrayList args = new ArrayList (Arguments.Count + 3);
+			ArrayList args;
+
+			//
+			// Special conversion for nested expression trees
+			//
+			if (TypeManager.DropGenericTypeArguments (type) == TypeManager.expression_type) {
+				args = new ArrayList (1);
+				args.Add (new Argument (this));
+				return CreateExpressionFactoryCall ("Quote", args);
+			}
+
+			args = new ArrayList (Arguments.Count + 3);
 			if (mg.IsInstance)
 				args.Add (new Argument (mg.InstanceExpression.CreateExpressionTree (ec)));
 			else

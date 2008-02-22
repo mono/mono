@@ -3110,6 +3110,14 @@ namespace Mono.CSharp {
 
 				HasValue = has_value_pi.GetGetMethod (false);
 				Value = value_pi.GetGetMethod (false);
+#if MS_COMPATIBLE
+				if (UnderlyingType.Module == CodeGen.Module.Builder) {
+					Type o_type = TypeManager.DropGenericTypeArguments (type);
+					Constructor = TypeBuilder.GetConstructor (type,
+						TypeManager.GetCoreConstructor (o_type, o_type.GetGenericArguments ()));
+					return;
+				}
+#endif
 				Constructor = type.GetConstructor (new Type[] { UnderlyingType });
 			}
 		}
@@ -3391,7 +3399,7 @@ namespace Mono.CSharp {
 			
 			public override Expression CreateExpressionTree (EmitContext ec)
 			{
-				return expr.CreateExpressionTree (ec);
+				return underlying.CreateExpressionTree (ec);
 			}			
 
 			public override Expression DoResolve (EmitContext ec)
