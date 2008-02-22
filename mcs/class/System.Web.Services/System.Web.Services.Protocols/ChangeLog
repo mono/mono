@@ -1,3 +1,8 @@
+2008-02-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TypeStubManager.cs : reverted 2007-12-11 change as it caused
+	  several regressions.
+
 2008-01-24  Marek Habersack  <mhabersack@novell.com>
 
 	* SoapDocumentationHandler.cs: use a fake virtual path to get the
