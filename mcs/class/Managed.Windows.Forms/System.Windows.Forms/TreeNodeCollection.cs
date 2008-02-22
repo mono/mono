@@ -208,6 +208,8 @@ namespace System.Windows.Forms {
 			if (owner != null) {
 				tree_view = owner.TreeView;
 				if (tree_view != null) {
+					tree_view.highlighted_node = null;
+					tree_view.selected_node = null;
 					tree_view.UpdateBelow (owner);
 					tree_view.RecalculateVisibleOrder (owner);
 					tree_view.UpdateScrollBars (false);
