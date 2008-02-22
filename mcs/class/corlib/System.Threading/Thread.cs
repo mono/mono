@@ -102,9 +102,10 @@ namespace System.Threading {
 		 * These fields are used to avoid having to increment corlib versions
 		 * when a new field is added to the unmanaged MonoThread structure.
 		 */
-		private IntPtr unused5;
+		private IntPtr small_id;
 		private IntPtr unused6;
 		private IntPtr unused7;
+		volatile int critical_region_level;
 		#endregion
 
 		// the name of local_slots is important as it's used by the runtime.
@@ -914,18 +915,16 @@ namespace System.Threading {
 			}
 		}
 
-		[MonoTODO("Not implemented")]
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static void BeginCriticalRegion ()
 		{
-			throw new NotImplementedException ();
+			CurrentThread.critical_region_level++;
 		}
 
-		[MonoTODO("Not implemented")]
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public static void EndCriticalRegion ()
 		{
-			throw new NotImplementedException ();
+			CurrentThread.critical_region_level--;
 		}
 
 		[MonoTODO("Not implemented")]
