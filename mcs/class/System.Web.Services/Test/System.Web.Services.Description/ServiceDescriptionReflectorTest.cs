@@ -275,6 +275,7 @@ namespace MonoTests.System.Web.Services.Description
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void Bug345448 ()
 		{
 			ServiceDescriptionReflector r =
