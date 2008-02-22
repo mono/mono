@@ -1,3 +1,8 @@
+2008-02-21 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	verify.c: Report which exception should be thrown by the JIT.
+	Added a lot of FIXME notes.
+
 2008-02-22  Mark Probst  <mark.probst@gmail.com>
 
 	* generic-sharing.c: Runtime generic context slots are not
