@@ -1,3 +1,7 @@
+2008-02-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* ssa.c (mono_ssa_remove): Avoid declaring volatile variables dead.
+
 2008-02-22  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.h: New trampoline type (RGCTX_LAZY_FETCH).
