@@ -1,3 +1,5 @@
+// Compiler options: -doc:gxml-02.xml
+
 using System.Collections.Generic;
 
 // <see cref="int?" /> - this is invalid 1584/1658
