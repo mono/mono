@@ -1,3 +1,8 @@
+2008-01-23  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* CheckBox.cs: fiexed RenderInput, should not render RenderInput on
+	selected RadioButton
+
 2008-02-20 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Login.cs: render id attribute of root element correctly.

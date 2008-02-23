@@ -432,7 +432,7 @@ namespace System.Web.UI.WebControls {
 			if (Checked)
 				w.AddAttribute (HtmlTextWriterAttribute.Checked, "checked", false);
 
-			if (AutoPostBack) {
+			if (AutoPostBack && (render_type != "radio" || !Checked)) {
 #if NET_2_0
 				string onclick = Page.ClientScript.GetPostBackEventReference (GetPostBackOptions (), true);
 				onclick = String.Concat ("setTimeout('", onclick.Replace ("\\", "\\\\").Replace ("'", "\\'"), "', 0)");
