@@ -80,6 +80,47 @@ namespace System.Windows.Forms {
 			return res;
 		}
 
+#if NET_2_0
+		public Binding Add (string propertyName, object dataSource, string dataMember, bool formattingEnabled)
+		{
+			return Add (propertyName, dataSource, dataMember, formattingEnabled, DataSourceUpdateMode.OnValidation, null, String.Empty, null);
+		}
+
+		public Binding Add (string propertyName, object dataSource, string dataMember, bool formattingEnabled, DataSourceUpdateMode updateMode)
+		{
+			return Add (propertyName, dataSource, dataMember, formattingEnabled, updateMode, null, String.Empty, null);
+		}
+
+		public Binding Add (string propertyName, object dataSource, string dataMember, bool formattingEnabled, DataSourceUpdateMode updateMode,
+			object nullValue)
+		{
+			return Add (propertyName, dataSource, dataMember, formattingEnabled, updateMode, nullValue, String.Empty, null);
+		}
+
+		public Binding Add (string propertyName, object dataSource, string dataMember, bool formattingEnabled, DataSourceUpdateMode updateMode,
+			object nullValue, string formatString)
+		{
+			return Add (propertyName, dataSource, dataMember, formattingEnabled, updateMode, nullValue, formatString, null);
+		}
+
+		public Binding Add (string propertyName, object dataSource, string dataMember, bool formattingEnabled, DataSourceUpdateMode updateMode,
+			object nullValue, string formatString, IFormatProvider formatInfo)
+		{
+			if (dataSource == null)
+				throw new ArgumentNullException ("dataSource");
+
+			Binding res = Add (propertyName, dataSource, dataMember);
+			res.FormattingEnabled = formattingEnabled;
+			res.DataSourceUpdateMode = updateMode;
+			res.NullValue = nullValue;
+			res.FormatString = formatString;
+			res.FormatInfo = formatInfo;
+
+			Add (res);
+			return res;
+		}
+#endif
+
 		public new void Clear() {
 			base.Clear();
 		}

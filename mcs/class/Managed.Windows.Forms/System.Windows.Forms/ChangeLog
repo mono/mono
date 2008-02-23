@@ -1,3 +1,9 @@
+2008-02-22  Carlos Alberto Cortez <calberto.cortez@ŋmail.com>
+
+	* ControlBindingsCollection.cs: Add the missing 2.0 Add overloads.
+	* Binding.cs: Add stubs for the overloads of the Add method in
+	CBCollection.
+
 2008-02-22  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Binding.cs: PullData () returns a false value if we got an exception.

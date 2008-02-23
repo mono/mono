@@ -193,6 +193,24 @@ namespace System.Windows.Forms {
 				formatting_enabled = value;
 			}
 		}
+
+		public IFormatProvider FormatInfo {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public string FormatString {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
 #endif
 
 		public bool IsBinding {
@@ -200,6 +218,18 @@ namespace System.Windows.Forms {
 				return is_binding;
 			}
 		}
+
+#if NET_2_0
+		[DefaultValue (null)]
+		public object NullValue {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
 
 		[DefaultValue ("")]
 		public string PropertyName {
