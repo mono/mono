@@ -1,3 +1,7 @@
+2008-02-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* pinvoke3.cs: Add tests for missing MarshalAs directives when marshalling arrays.
+
 2008-02-22  Mark Probst  <mark.probst@gmail.com>
 
 	* generics-sharing.2.cs: New tests for the extensible runtime
