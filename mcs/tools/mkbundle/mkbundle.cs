@@ -201,8 +201,8 @@ class MakeBundle {
 			ArrayList config_names = new ArrayList ();
 			byte [] buffer = new byte [8192];
 
-			StreamWriter ts = new StreamWriter (File.Create (temp_s));
-			StreamWriter tc = new StreamWriter (File.Create (temp_c));
+			using (StreamWriter ts = new StreamWriter (File.Create (temp_s))) {
+			using (StreamWriter tc = new StreamWriter (File.Create (temp_c))) {
 			string prog = null;
 
 			tc.WriteLine ("/* This source code was produced by mkbundle, do not edit */");
@@ -415,6 +415,8 @@ class MakeBundle {
 				return;
 			}
 			Console.WriteLine ("Done");
+			}
+			}
 		} finally {
 			if (!keeptemp){
 				if (object_out == null){

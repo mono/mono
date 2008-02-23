@@ -1,3 +1,7 @@
+2008-02-23  Marek Safar  <marek.safar@gmail.com>
+
+	* mkbundle.cs: Close resources correctly when something goes wrong.
+	
 2007-10-19  Robert Jordan  <robertj@gmx.net>
 
 	* mkbundle.cs (Execute): [Windows] since recently (?) cygwin's bash
