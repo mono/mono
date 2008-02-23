@@ -1,3 +1,7 @@
+2008-02-23  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* SqlProfileProvider.cs: exception on empty connection string
+
 2007-12-30  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* SqlProfileProvider.cs: added db schema checking
