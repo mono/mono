@@ -1,3 +1,7 @@
+2008-02-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* regalloc.h: Remove some unused fields.
+
 2008-02-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (mono_arch_patch_code): Fix a warning.
