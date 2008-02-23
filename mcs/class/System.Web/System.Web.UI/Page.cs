@@ -1777,9 +1777,6 @@ public partial class Page : TemplateControl, IHttpHandler
 		if (_requiresPostBack == null)
 			_requiresPostBack = new ArrayList ();
 
-		if (_requiresPostBack.Contains (control.UniqueID))
-			return;
-
 		_requiresPostBack.Add (control.UniqueID);
 	}
 
