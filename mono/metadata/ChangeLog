@@ -1,3 +1,8 @@
+2008-02-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_emit_managed_wrapper): Avoid generating invalid IL if
+	some of the conversions caused the generation of a marshal directive exception.
+
 2008-02-21 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	verify.c: Report which exception should be thrown by the JIT.
