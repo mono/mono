@@ -1,3 +1,7 @@
+2008-02-23  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* Page.cs: reverted 96081
+
 2008-02-18  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* Page.cs: fixed RegisterRequiresPostBack, performance improvement
