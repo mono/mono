@@ -1,3 +1,7 @@
+2008-02-23  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* SqlMembershipProvider.cs: exception on empty connection string
+
 2007-12-30  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* SqliteMembershipProvider.cs, SqlRoleProvider.cs: added chema checking
