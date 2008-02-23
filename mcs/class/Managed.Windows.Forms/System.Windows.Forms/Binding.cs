@@ -292,18 +292,20 @@ namespace System.Windows.Forms {
 			PushData ();
 		}
 
-		internal void PullData ()
+		internal bool PullData ()
 		{
-			PullData (false);
+			return PullData (false);
 		}
 
-		void PullData (bool force)
+		// Return false ONLY in case of error - and return true even in cases
+		// where no update was possible
+		bool PullData (bool force)
 		{
 			if (IsBinding == false || manager.Current == null)
-				return;
+				return true;
 #if NET_2_0
 			if (!force && datasource_update_mode == DataSourceUpdateMode.Never)
-				return;
+				return true;
 #endif
 
 			data = control_property.GetValue (control);
@@ -314,7 +316,7 @@ namespace System.Windows.Forms {
 #if NET_2_0
 				if (formatting_enabled) {
 					FireBindingComplete (BindingCompleteContext.DataSourceUpdate, e, e.Message);
-					return;
+					return false;
 				}
 #endif
 				throw e;
@@ -324,6 +326,7 @@ namespace System.Windows.Forms {
 			if (formatting_enabled)
 				FireBindingComplete (BindingCompleteContext.DataSourceUpdate, null, null);
 #endif
+			return true;
 		}
 
 		internal void PushData ()
@@ -407,16 +410,17 @@ namespace System.Windows.Forms {
 				return;
 #endif
 
-			object old_data = data;
-
+			bool ok = true;
 			// If the data doesn't seem to be valid (it can't be converted,
 			// is the wrong type, etc, we reset to the old data value.
+			// If Formatting is enabled, no exception is fired, but we get a false value
 			try {
-				PullData ();
+				ok = PullData ();
 			} catch {
-				data = old_data;
-				SetControlValue (data);
+				ok = false;
 			}
+
+			e.Cancel = !ok;
 		}
 
 		private void PositionChangedHandler (object sender, EventArgs e)
