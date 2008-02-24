@@ -61,6 +61,12 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 
 			Assert.AreSame (b.PropertyName, prop, "ctor5");
 			Assert.AreSame (b.DataSource, data_source, "ctor6");
+
+#if NET_2_0
+			Assert.AreEqual (false, b.FormattingEnabled, "ctor7");
+			Assert.AreEqual (String.Empty, b.FormatString, "ctor8");
+			Assert.IsNull (b.FormatInfo, "ctor9");
+#endif
 		}
 
 		[Test]
@@ -426,6 +432,39 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			c.Tag = null;
 			binding.WriteValue ();
 			Assert.AreEqual (item.ObjectValue, "NonNull", "#B1");
+		}
+
+		[Test]
+		public void FormattingEnabledTest ()
+		{
+			Control c = new Control ();
+			c.BindingContext = new BindingContext ();
+			c.CreateControl ();
+
+			MockItem item = new MockItem ();
+			item.Value = 666;
+			Binding binding = new Binding ("Text", item, "Value");
+			binding.FormattingEnabled = true;
+			binding.FormatString = "p";
+
+			c.DataBindings.Add (binding);
+			Assert.AreEqual ((666).ToString ("p"), c.Text, "#A1");
+
+			binding.FormatString = "c";
+			Assert.AreEqual ((666).ToString ("c"), c.Text, "#B1");
+			Console.WriteLine (c.Text);
+
+			binding.FormattingEnabled = false;
+			Assert.AreEqual ((666).ToString (), c.Text, "#C1");
+		}
+
+		[Test]
+		public void FormatStringTest ()
+		{
+			Binding binding = new Binding ("Text", null, "Text");
+			binding.FormatString = null;
+
+			Assert.AreEqual (String.Empty, binding.FormatString, "#A1");
 		}
 #endif
 	}

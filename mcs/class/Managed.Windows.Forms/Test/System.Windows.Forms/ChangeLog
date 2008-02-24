@@ -1,3 +1,8 @@
+2008-02-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* BindingTest.cs: Update ctor test with 2.0 properties, and add new
+	tests for 2.0 FormattingEnabled and FormatString properties.
+
 2008-02-21  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripContainerTests.cs: Add test for bug #363555.
