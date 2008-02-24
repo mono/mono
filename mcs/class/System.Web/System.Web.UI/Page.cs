@@ -1162,7 +1162,7 @@ public partial class Page : TemplateControl, IHttpHandler
 				finally {
 					getFacesContext ().setResponseWriter (oldFacesWriter);
 				}
-			}
+			} else
 #endif
 			scriptManager.RegisterHiddenField ("__VIEWSTATE", _savedViewState);
 
