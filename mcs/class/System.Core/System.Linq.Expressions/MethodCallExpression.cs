@@ -76,7 +76,7 @@ namespace System.Linq.Expressions {
 			if (obj != null)
 				obj.Emit (ec);
 
-			ig.Emit (OpCodes.Callvirt, method);
+			ig.Emit (method.IsVirtual ? OpCodes.Callvirt : OpCodes.Call, method);
 		}
 	}
 }

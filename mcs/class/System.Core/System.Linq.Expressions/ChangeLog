@@ -1,5 +1,10 @@
 2008-02-24  Jb Evain  <jbevain@novell.com>
 
+	* MethodCallExpression.cs: emit call or callvirt depending
+	on the virtuality of the method.
+
+2008-02-24  Jb Evain  <jbevain@novell.com>
+
 	* LambdaExpression.cs: properly format error message.
 
 2008-02-21  Jb Evain  <jbevain@novell.com>
