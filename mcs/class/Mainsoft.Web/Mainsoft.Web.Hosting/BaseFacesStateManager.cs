@@ -74,7 +74,7 @@ namespace Mainsoft.Web.Hosting
 			objectoutputstream.close ();
 			bytearrayoutputstream.close ();
 
-			string s = " <input type=\"hidden\" name=\"faces.VIEW\" value=\"" +
+			string s = " <input type=\"hidden\" name=\"" + VIEWSTATE + "\" id=\"" + VIEWSTATE + "\" value=\"" +
 				Convert.ToBase64String ((byte []) vmw.common.TypeUtils.ToByteArray (bytearrayoutputstream.toByteArray ())) + "\" />\n ";
 			facesContext.getResponseWriter ().write (s);
 		}
@@ -86,7 +86,7 @@ namespace Mainsoft.Web.Hosting
 			//return responseStateManager.getComponentStateToRestore (facesContext);
 
 			java.util.Map map = facesContext.getExternalContext ().getRequestParameterMap ();
-			string s1 = (string) map.get ("faces.VIEW");
+			string s1 = (string) map.get (VIEWSTATE);
 
 			byte [] buffer = Convert.FromBase64String (s1);
 			java.io.ByteArrayInputStream bytearrayinputstream = new java.io.ByteArrayInputStream (vmw.common.TypeUtils.ToSByteArray (buffer));
