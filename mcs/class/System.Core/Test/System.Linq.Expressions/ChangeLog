@@ -1,3 +1,7 @@
+2008-02-24  Jb Evain  <jbevain@novell.com>
+
+	* ExpressionTest.cs: test for Action compilation.
+
 2008-02-04  Jb Evain  <jbevain@novell.com>
 
 	* ExpressionTest_ListBind.cs: add working test for MemberListBinding

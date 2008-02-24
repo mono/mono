@@ -144,5 +144,30 @@ namespace MonoTests.System.Linq.Expressions {
 			Assert.AreEqual (typeof (string), p.Type);
 			Assert.AreEqual ("foo", p.ToString ());
 		}
+
+		static int buffer;
+
+		public static int Identity (int i)
+		{
+			buffer = i;
+			return i;
+		}
+
+		[Test]
+		public void CompileActionDiscardingRetValue ()
+		{
+			var p = Expression.Parameter (typeof (int), "i");
+			var identity = GetType ().GetMethod ("Identity", BindingFlags.Static | BindingFlags.Public );
+			Assert.IsNotNull (identity);
+
+			var lambda = Expression.Lambda<Action<int>> (Expression.Call (identity, p), p);
+
+			var method = lambda.Compile ();
+
+			buffer = 0;
+
+			method (42);
+			Assert.AreEqual (42, buffer);
+		}
 	}
 }
