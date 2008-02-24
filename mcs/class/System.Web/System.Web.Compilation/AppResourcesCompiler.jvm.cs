@@ -51,7 +51,12 @@ namespace System.Web.Compilation
 		public Assembly Compile () { return null; }
 		internal static Assembly GetCachedLocalResourcesAssembly (string path)
 		{
-			string localResourcesPath = UrlUtils.Combine (path, "App_LocalResources");
+			string localResourcesPath;
+			if (path.Length > 0 && path [path.Length - 1] == '/')
+				localResourcesPath = string.Concat (path, "App_LocalResources");
+			else
+				localResourcesPath = string.Concat (path, "/App_LocalResources");
+
 			return System.Web.J2EE.PageMapper.GetObjectAssembly (HttpContext.Current, localResourcesPath);
 		}
 	}

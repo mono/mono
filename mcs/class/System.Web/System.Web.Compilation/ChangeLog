@@ -1,3 +1,8 @@
+2008-02-24  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* AppResourcesCompiler.jvm.cs: performance improvement in
+	GetCachedLocalResourcesAssembly
+
 2008-02-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AppSettingsExpressionBuilder.cs: Improve exception messages. Return
