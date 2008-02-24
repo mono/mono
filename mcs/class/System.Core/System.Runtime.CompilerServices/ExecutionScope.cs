@@ -3,8 +3,9 @@
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
+//	Jb Evain  <jbevain@novell.com>
 //
-// Copyright (C) 2007 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2007 - 2008, Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,26 +27,34 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
 using System.Linq.Expressions;
 
-namespace System.Runtime.CompilerServices
-{
-	public class ExecutionScope
-	{
-		public object[] Globals;
-		public object[] Locals;
+namespace System.Runtime.CompilerServices {
+
+	public class ExecutionScope {
+
+		public object [] Globals;
+		public object [] Locals;
 		public ExecutionScope Parent;
 
-		[MonoTODO]
-		public Delegate CreateDelegate (int indexLambda)
+		internal ExecutionScope ()
 		{
-			throw new NotImplementedException();
 		}
 
-		[MonoTODO]
-		public Expression IsolateExpression (Expression expression)
+		public Delegate CreateDelegate (int indexLambda, object [] locals)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException ();
+		}
+
+		public object [] CreateHoistedLocals ()
+		{
+			throw new NotSupportedException ();
+		}
+
+		public Expression IsolateExpression (Expression expression, object [] locals)
+		{
+			throw new NotSupportedException ();
 		}
 	}
 }

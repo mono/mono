@@ -1,3 +1,7 @@
+2008-02-24  Jb Evain  <jbevain@novell.com>
+
+	* ExecutionScope.cs: update API.
+
 2007-01-19  Marek Safar <marek.safar@gmail.com>
 
 	* ChangeLog: Added
