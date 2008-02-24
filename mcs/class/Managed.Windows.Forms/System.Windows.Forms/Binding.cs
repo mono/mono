@@ -54,8 +54,8 @@ namespace System.Windows.Forms {
 		private ControlUpdateMode control_update_mode;
 		private object datasource_null_value;
 		//private object null_value;
-		//private string format_string;
-		//private IFormatProvider format_info;
+		private IFormatProvider format_info;
+		private string format_string;
 		private bool formatting_enabled;
 #endif
 		#region Public Constructors
@@ -93,8 +93,8 @@ namespace System.Windows.Forms {
 			binding_member_info = new BindingMemberInfo (dataMember);
 			datasource_update_mode = dataSourceUpdateMode;
 			//null_value = nullValue;
-			//format_string = formatString;
-			//format_info = formatInfo;
+			format_string = formatString;
+			format_info = formatInfo;
 
 			EventDescriptor prop_changed_event = GetPropertyChangedEvent (data_source, binding_member_info.BindingField);
 			if (prop_changed_event != null)
@@ -191,24 +191,37 @@ namespace System.Windows.Forms {
 					return;
 
 				formatting_enabled = value;
+				PushData ();
 			}
 		}
 
+		[DefaultValue (null)]
 		public IFormatProvider FormatInfo {
 			get {
-				throw new NotImplementedException ();
+				return format_info;
 			}
 			set {
-				throw new NotImplementedException ();
+				if (value == format_info)
+					return;
+
+				format_info = value;
+				PushData ();
 			}
 		}
 
+		[DefaultValue ("")]
 		public string FormatString {
 			get {
-				throw new NotImplementedException ();
+				return format_string;
 			}
 			set {
-				throw new NotImplementedException ();
+				if (value == null)
+					value = String.Empty;
+				if (value == format_string)
+					return;
+
+				format_string = value;
+				PushData ();
 			}
 		}
 #endif
@@ -520,6 +533,12 @@ namespace System.Windows.Forms {
 
 			if (e.Value == null && data_type == typeof (object))
 				return Convert.DBNull;
+#if NET_2_0
+			if (formatting_enabled && e.Value is IFormattable && data_type == typeof (string)) {
+				IFormattable formattable = (IFormattable) e.Value;
+				return formattable.ToString (format_string, format_info);
+			}
+#endif
 
 			return ConvertData (data, data_type);
 		}

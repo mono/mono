@@ -1,3 +1,9 @@
+2008-02-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Binding.cs: Actually implement 2.0 FormatString and FormatInfo
+	properties. Also when changing FormattingEnabled update the control
+	property -as .Net does-.
+
 2008-02-22  Carlos Alberto Cortez <calberto.cortez@ŋmail.com>
 
 	* ControlBindingsCollection.cs: Add the missing 2.0 Add overloads.
