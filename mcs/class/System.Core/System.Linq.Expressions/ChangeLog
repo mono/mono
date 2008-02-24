@@ -1,5 +1,10 @@
 2008-02-24  Jb Evain  <jbevain@novell.com>
 
+	* LambdaExpression.cs, EmitContext.cs: make compilation
+	of delegate returning void work.
+
+2008-02-24  Jb Evain  <jbevain@novell.com>
+
 	* MethodCallExpression.cs: emit call or callvirt depending
 	on the virtuality of the method.
 

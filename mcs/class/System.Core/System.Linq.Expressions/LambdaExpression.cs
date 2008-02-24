@@ -76,17 +76,29 @@ namespace System.Linq.Expressions {
 					throw new ArgumentException (String.Format ("Can not assign a {0} to a {1}", invoke_parameters [i].ParameterType, parameters [i].Type));
 			}
 
-			if (!CanAssign (invoke.ReturnType, body.Type))
+			if (invoke.ReturnType != typeof (void) && !CanAssign (invoke.ReturnType, body.Type))
 				throw new ArgumentException (String.Format ("body type {0} can not be assigned to {1}", body.Type, invoke.ReturnType));
 
 			this.body = body;
 			this.parameters = parameters;
 		}
 
+		void EmitPopIfNeeded (EmitContext ec)
+		{
+			if (GetReturnType () == typeof (void) && body.Type != typeof (void))
+				ec.ig.Emit (OpCodes.Pop);
+		}
+
 		internal override void Emit (EmitContext ec)
 		{
 			body.Emit (ec);
+			EmitPopIfNeeded (ec);
 			ec.ig.Emit (OpCodes.Ret);
+		}
+
+		internal Type GetReturnType ()
+		{
+			return this.Type.GetMethod ("Invoke").ReturnType;
 		}
 
 		public Delegate Compile ()

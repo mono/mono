@@ -39,6 +39,7 @@ namespace System.Linq.Expressions {
 
 		protected LambdaExpression owner;
 		protected Type [] param_types;
+		protected Type return_type;
 
 		public ILGenerator ig;
 
@@ -50,6 +51,7 @@ namespace System.Linq.Expressions {
 			this.owner = lambda;
 
 			param_types = owner.Parameters.Select (p => p.Type).ToArray ();
+			return_type = owner.GetReturnType ();
 		}
 
 		public static EmitContext Create (LambdaExpression lambda)
@@ -99,7 +101,7 @@ namespace System.Linq.Expressions {
 			// FIXME: Need to force this to be verifiable, see:
 			// https://bugzilla.novell.com/show_bug.cgi?id=355005
 			//
-			method = new DynamicMethod (GenerateName (), lambda.Body.Type, param_types, owner_of_code);
+			method = new DynamicMethod (GenerateName (), return_type, param_types, owner_of_code);
 			ig = method.GetILGenerator ();
 		}
 
@@ -132,7 +134,7 @@ namespace System.Linq.Expressions {
 
 			type = assembly.DefineDynamicModule (file_name, file_name).DefineType ("Linq", TypeAttributes.Public);
 
-			method = type.DefineMethod (name, MethodAttributes.Public | MethodAttributes.Static, owner.Body.Type, param_types);
+			method = type.DefineMethod (name, MethodAttributes.Public | MethodAttributes.Static, return_type, param_types);
 			ig = method.GetILGenerator ();
 		}
 
