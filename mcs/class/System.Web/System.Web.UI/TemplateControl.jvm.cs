@@ -33,6 +33,7 @@ using System.Web.J2EE;
 using System.Xml;
 using vmw.common;
 using System.Web.Util;
+using System.Threading;
 
 namespace System.Web.UI {
 
@@ -576,6 +577,7 @@ namespace System.Web.UI {
 
 #if NET_2_0
 
+		Assembly _resourceAssembly = null;
 		string _appRelativeVirtualPath = null;
 
 		public string AppRelativeVirtualPath
@@ -650,7 +652,16 @@ namespace System.Web.UI {
 
 		protected Object GetLocalResourceObject (string resourceKey)
 		{
-			return HttpContext.GetLocalResourceObject (Context.Request.Path, resourceKey);
+			if (_resourceAssembly == null)
+				_resourceAssembly = System.Web.Compilation.AppResourcesCompiler.GetCachedLocalResourcesAssembly (TemplateSourceDirectory);
+
+			string fileName = string.Empty;
+			int lastSlash = AppRelativeVirtualPath.LastIndexOf ('/');
+
+			if (lastSlash > 0 && AppRelativeVirtualPath.Length > lastSlash + 1)
+				fileName = AppRelativeVirtualPath.Substring (lastSlash + 1);
+
+			return HttpContext.GetResourceObject (fileName, resourceKey, Thread.CurrentThread.CurrentUICulture, _resourceAssembly);
 		}
 
 		protected Object GetLocalResourceObject (string resourceKey, Type objType, string propName)

@@ -439,7 +439,7 @@ namespace System.Web {
 		}
 
 #if NET_2_0
-		static object GetResourceObject (string classKey, string resourceKey, CultureInfo culture, Assembly assembly)
+		internal static object GetResourceObject (string classKey, string resourceKey, CultureInfo culture, Assembly assembly)
 		{
 			ResourceManager rm;
 			try {

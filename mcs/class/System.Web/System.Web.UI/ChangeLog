@@ -1,3 +1,8 @@
+2008-02-24  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* TemplateControl.jvm.cs: perforamce optimization in
+	GetLocalResourceObject
+
 2008-02-23  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* Page.cs: fixed RegisterRequiresPostBack, no need to check presence of
