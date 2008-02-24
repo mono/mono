@@ -65,6 +65,7 @@ namespace System.Windows.Forms {
 			scrollbars = RichTextBoxScrollBars.None;
 			alignment = HorizontalAlignment.Left;
 			this.LostFocus +=new EventHandler(TextBox_LostFocus);
+			this.RightToLeftChanged += new EventHandler (TextBox_RightToLeftChanged);
 
 			BackColor = SystemColors.Window;
 			ForeColor = SystemColors.WindowText;
@@ -93,12 +94,51 @@ namespace System.Windows.Forms {
 
 			document.multiline = false;
 		}
+
 		#endregion	// Public Constructors
 
 		#region Private & Internal Methods
+
+		void TextBox_RightToLeftChanged (object sender, EventArgs e)
+		{
+			UpdateAlignment ();
+		}
+
 		private void TextBox_LostFocus(object sender, EventArgs e) {
 			if (hide_selection)
 				document.InvalidateSelectionArea ();
+		}
+
+		private void UpdateAlignment ()
+		{
+			HorizontalAlignment new_alignment = alignment;
+			RightToLeft rtol = GetInheritedRtoL ();
+
+			if (rtol == RightToLeft.Yes) {
+				if (new_alignment == HorizontalAlignment.Left)
+					new_alignment = HorizontalAlignment.Right;
+				else if (new_alignment == HorizontalAlignment.Right)
+					new_alignment = HorizontalAlignment.Left;
+			}
+
+			document.alignment = new_alignment;
+
+			// MS word-wraps if alignment isn't left
+			if (Multiline) {
+				if (alignment != HorizontalAlignment.Left) {
+					document.Wrap = true;
+				} else {
+					document.Wrap = word_wrap;
+				}
+			}
+
+			for (int i = 1; i <= document.Lines; i++) {
+				document.GetLine (i).Alignment = new_alignment;
+			}
+
+			document.RecalculateDocument (CreateGraphicsInternal ());
+
+			Invalidate ();	// Make sure we refresh
 		}
 
 		internal override Color ChangeBackColor (Color backColor)
@@ -322,21 +362,8 @@ namespace System.Windows.Forms {
 				if (value != alignment) {
 					alignment = value;
 
-					document.alignment = value;
+					UpdateAlignment ();
 
-					// MS word-wraps if alignment isn't left
-					if (Multiline) {
-						if (alignment != HorizontalAlignment.Left) {
-							document.Wrap = true;
-						} else {
-							document.Wrap = word_wrap;
-						}
-					}
-
-					for (int i = 1; i <= document.Lines; i++) {
-						document.GetLine(i).Alignment = value;
-					}
-					document.RecalculateDocument(CreateGraphicsInternal());
 					OnTextAlignChanged(EventArgs.Empty);
 				}
 			}

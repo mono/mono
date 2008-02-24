@@ -130,6 +130,7 @@ namespace System.Windows.Forms
 			FontChanged += new EventHandler(TextBoxBase_FontOrColorChanged);
 			ForeColorChanged += new EventHandler(TextBoxBase_FontOrColorChanged);
 			MouseWheel += new MouseEventHandler(TextBoxBase_MouseWheel);
+			RightToLeftChanged += new EventHandler (TextBoxBase_RightToLeftChanged);
 			
 			scrollbars = RichTextBoxScrollBars.None;
 
@@ -1895,10 +1896,17 @@ namespace System.Windows.Forms
 			if (vscroll.Visible) {
 				//hscroll.Maximum += vscroll.Width;
 				canvas_width = ClientSize.Width - vscroll.Width;
+
+				if (GetInheritedRtoL () == RightToLeft.Yes) {
+					document.OffsetX = vscroll.Width;
+				} else {
+					document.OffsetX = 0;
+				}
+
 			} else {
 				canvas_width = ClientSize.Width;
+				document.OffsetX = 0;
 			}
-
 
 			document.ViewPortWidth = canvas_width;
 			document.ViewPortHeight = canvas_height;
@@ -1909,19 +1917,48 @@ namespace System.Windows.Forms
 			if (canvas_height < 1 || canvas_width < 1)
 				return;
 
-			// We always move them, they just might not be displayed
-			hscroll.Bounds = new Rectangle (ClientRectangle.Left,
-					Math.Max (0, ClientRectangle.Height - hscroll.Height),
-					Math.Max (0, ClientSize.Width - (vscroll.Visible ? vscroll.Width : 0)),
+			int hmod = vscroll.Visible ? vscroll.Width : 0;
+			int vmod = hscroll.Visible ? hscroll.Height : 0;
+
+			if (GetInheritedRtoL () == RightToLeft.Yes) {
+				hscroll.Bounds = new Rectangle (ClientRectangle.Left + hmod, 
+					Math.Max(0, ClientRectangle.Height - hscroll.Height), 
+					ClientSize.Width, 
 					hscroll.Height);
 
-			vscroll.Bounds = new Rectangle (Math.Max (0, ClientRectangle.Right - vscroll.Width),
-					ClientRectangle.Top, vscroll.Width,
-					Math.Max (0, ClientSize.Height - (hscroll.Visible ? hscroll.Height : 0)));
-			
+				vscroll.Bounds = new Rectangle (ClientRectangle.Left, 
+					ClientRectangle.Top, 
+					vscroll.Width, 
+					Math.Max(0, ClientSize.Height - (vmod)));
+			} else {
+				hscroll.Bounds = new Rectangle (ClientRectangle.Left, 
+					Math.Max(0, ClientRectangle.Height - hscroll.Height), 
+					Math.Max(0, ClientSize.Width - hmod), 
+					hscroll.Height);
+
+				vscroll.Bounds = new Rectangle (
+					Math.Max(0, ClientRectangle.Right - vscroll.Width), 
+					ClientRectangle.Top, 
+					vscroll.Width, 
+					Math.Max(0, ClientSize.Height - vmod));
+			}
+		}
+
+		internal RightToLeft GetInheritedRtoL ()
+		{
+			for (Control c = this; c != null; c = c.Parent)
+				if (c.RightToLeft != RightToLeft.Inherit)
+					return c.RightToLeft;
+			return RightToLeft.No;
 		}
 
 		private void TextBoxBase_SizeChanged (object sender, EventArgs e)
+		{
+			if (IsHandleCreated)
+				CalculateDocument ();
+		}
+
+		private void TextBoxBase_RightToLeftChanged (object o, EventArgs e)
 		{
 			if (IsHandleCreated)
 				CalculateDocument ();
@@ -2044,7 +2081,12 @@ namespace System.Windows.Forms
 			switch (scrollbars) {
 			case RichTextBoxScrollBars.Both:
 			case RichTextBoxScrollBars.Vertical:
-				vscroll.Visible = vscroll.Enabled;
+
+				if (richtext) {
+					vscroll.Visible = vscroll.Enabled;
+				} else {
+					vscroll.Visible = true;
+				}
 				break;
 			case RichTextBoxScrollBars.ForcedBoth:
 			case RichTextBoxScrollBars.ForcedVertical:
@@ -2056,6 +2098,8 @@ namespace System.Windows.Forms
 			}
 
 			PositionControls ();
+
+			SizeControls (); //Update sizings now we've decided whats visible
 		}
 
 		private void document_WidthChanged (object sender, EventArgs e)
@@ -2090,7 +2134,11 @@ namespace System.Windows.Forms
 				document.CaretLostFocus ();
 
 			if (vscroll.Visible) {
-				XplatUI.ScrollWindow(this.Handle, new Rectangle(0, 0, ClientSize.Width - vscroll.Width, ClientSize.Height), old_viewport_x - this.hscroll.Value, 0, false);
+				if (GetInheritedRtoL () == RightToLeft.Yes) {
+					XplatUI.ScrollWindow (this.Handle, new Rectangle (vscroll.Width, 0, ClientSize.Width - vscroll.Width, ClientSize.Height), old_viewport_x - this.hscroll.Value, 0, false);
+				} else {
+					XplatUI.ScrollWindow (this.Handle, new Rectangle (0, 0, ClientSize.Width - vscroll.Width, ClientSize.Height), old_viewport_x - this.hscroll.Value, 0, false);
+				}
 			} else {
 				XplatUI.ScrollWindow(this.Handle, ClientRectangle, old_viewport_x - this.hscroll.Value, 0, false);
 			}

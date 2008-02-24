@@ -223,6 +223,8 @@ namespace System.Windows.Forms {
 
 		internal int		viewport_x;
 		internal int		viewport_y;		// The visible area of the document
+		internal int		offset_x;
+		internal int		offset_y;
 		internal int		viewport_width;
 		internal int		viewport_height;
 
@@ -284,6 +286,9 @@ namespace System.Windows.Forms {
 
 			viewport_x = 0;
 			viewport_y = 0;
+
+			offset_x = 0;
+			offset_y = 0;
 
 			crlf_size = 2;
 
@@ -422,6 +427,32 @@ namespace System.Windows.Forms {
 
 			set {
 				viewport_y = value;
+			}
+		}
+
+		internal int OffsetX
+		{
+			get
+			{
+				return offset_x;
+			}
+
+			set
+			{
+				offset_x = value;
+			}
+		}
+
+		internal int OffsetY
+		{
+			get
+			{
+				return offset_y;
+			}
+
+			set
+			{
+				offset_y = value;
 			}
 		}
 
@@ -838,7 +869,11 @@ namespace System.Windows.Forms {
 				// Lineheight changed, invalidate the rest of the document
 				if ((line.Y - viewport_y) >=0 ) {
 					// We formatted something that's in view, only draw parts of the screen
-					owner.Invalidate(new Rectangle(0, line.Y - viewport_y, viewport_width, owner.Height - line.Y - viewport_y));
+					owner.Invalidate(new Rectangle(
+						offset_x, 
+						line.Y - viewport_y + offset_y, 
+						viewport_width, 
+						owner.Height - line.Y - viewport_y));
 				} else {
 					// The tag was above the visible area, draw everything
 					owner.Invalidate();
@@ -846,17 +881,29 @@ namespace System.Windows.Forms {
 			} else {
 				switch(line.alignment) {
 					case HorizontalAlignment.Left: {
-						owner.Invalidate(new Rectangle(line.X + (int)line.widths[pos] - viewport_x - 1, line.Y - viewport_y, viewport_width, line.height + 1));
+						owner.Invalidate(new Rectangle(
+							line.X + ((int)line.widths[pos] - viewport_x - 1) + offset_x, 
+							line.Y - viewport_y + offset_y, 
+							viewport_width, 
+							line.height + 1));
 						break;
 					}
 
 					case HorizontalAlignment.Center: {
-						owner.Invalidate(new Rectangle(line.X, line.Y - viewport_y, viewport_width, line.height + 1));
+						owner.Invalidate(new Rectangle(
+							line.X + offset_x, 
+							line.Y - viewport_y + offset_y, 
+							viewport_width, 
+							line.height + 1));
 						break;
 					}
 
 					case HorizontalAlignment.Right: {
-						owner.Invalidate(new Rectangle(line.X, line.Y - viewport_y, (int)line.widths[pos + 1] - viewport_x + line.X, line.height + 1));
+						owner.Invalidate(new Rectangle(
+							line.X + offset_x, 
+							line.Y - viewport_y + offset_y, 
+							(int)line.widths[pos + 1] - viewport_x + line.X, 
+							line.height + 1));
 						break;
 					}
 				}
@@ -894,15 +941,19 @@ namespace System.Windows.Forms {
 				// Lineheight changed, invalidate the rest of the document
 				if ((line.Y - viewport_y) >=0 ) {
 					// We formatted something that's in view, only draw parts of the screen
-					owner.Invalidate(new Rectangle(0, line.Y - viewport_y, viewport_width, owner.Height - line.Y - viewport_y));
+					owner.Invalidate(new Rectangle(
+						offset_x, 
+						line.Y - viewport_y + offset_y, 
+						viewport_width, 
+						owner.Height - line.Y - viewport_y));
 				} else {
 					// The tag was above the visible area, draw everything
 					owner.Invalidate();
 				}
 			} else {
-				int x = 0 - viewport_x;
+				int x = 0 - viewport_x + offset_x;
 				int w = viewport_width;
-				int y = Math.Min (start_line_top - viewport_y, line.Y - viewport_y);
+				int y = Math.Min (start_line_top - viewport_y, line.Y - viewport_y) + offset_y;
 				int h = Math.Max (end_line_bottom - y, end_line.Y + end_line.height - y);
 
 				owner.Invalidate (new Rectangle (x, y, w, h));
@@ -1200,7 +1251,9 @@ namespace System.Windows.Forms {
 				if (owner.Focused) {
 					if (caret.height != caret.tag.Height)
 						XplatUI.CreateCaret (owner.Handle, caret_width, caret.height);
-					XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.Line.widths[caret.pos] + caret.line.X - viewport_x, caret.line.Y + caret.tag.Shift - viewport_y + caret_shift);
+					XplatUI.SetCaretPos(owner.Handle, 
+						offset_x + (int)caret.tag.Line.widths[caret.pos] + caret.line.X - viewport_x, 
+						offset_y + caret.line.Y + caret.tag.Shift - viewport_y + caret_shift);
 				}
 
 				if (CaretMoved != null) CaretMoved(this, EventArgs.Empty);
@@ -1226,7 +1279,9 @@ namespace System.Windows.Forms {
 
 			if (owner.ShowSelection && (!selection_visible || owner.show_caret_w_selection)) {
 				XplatUI.CreateCaret (owner.Handle, caret_width, caret.height);
-				XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.Line.widths[caret.pos] + caret.line.X - viewport_x, caret.line.Y + caret.tag.Shift - viewport_y + caret_shift);
+				XplatUI.SetCaretPos(owner.Handle, 
+					(int)caret.tag.Line.widths[caret.pos] + caret.line.X - viewport_x + offset_x, 
+					offset_y + caret.line.Y + caret.tag.Shift - viewport_y + caret_shift);
 			}
 
 			if (CaretMoved != null) CaretMoved(this, EventArgs.Empty);
@@ -1235,7 +1290,9 @@ namespace System.Windows.Forms {
 		internal void CaretHasFocus() {
 			if ((caret.tag != null) && owner.IsHandleCreated) {
 				XplatUI.CreateCaret(owner.Handle, caret_width, caret.height);
-				XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.Line.widths[caret.pos] + caret.line.X - viewport_x, caret.line.Y + caret.tag.Shift - viewport_y + caret_shift);
+				XplatUI.SetCaretPos(owner.Handle, 
+					offset_x + (int)caret.tag.Line.widths[caret.pos] + caret.line.X - viewport_x, 
+					offset_y + caret.line.Y + caret.tag.Shift - viewport_y + caret_shift);
 
 				DisplayCaret ();
 			}
@@ -1281,7 +1338,9 @@ namespace System.Windows.Forms {
 
 			if (owner.Focused) {
 				XplatUI.CreateCaret(owner.Handle, caret_width, caret.height);
-				XplatUI.SetCaretPos (owner.Handle, (int) caret.tag.Line.widths [caret.pos] + caret.line.X - viewport_x, caret.line.Y + viewport_y + caret_shift);
+				XplatUI.SetCaretPos (owner.Handle, 
+					offset_x + (int) caret.tag.Line.widths [caret.pos] + caret.line.X - viewport_x, 
+					offset_y + caret.line.Y + viewport_y + caret_shift);
 				DisplayCaret ();
 			}
 
@@ -1303,7 +1362,9 @@ namespace System.Windows.Forms {
 			}
 
 			if (owner.Focused) {
-				XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.Line.widths[caret.pos] + caret.line.X - viewport_x, caret.line.Y + caret.tag.Shift - viewport_y + caret_shift);
+				XplatUI.SetCaretPos(owner.Handle, 
+					offset_x + (int)caret.tag.Line.widths[caret.pos] + caret.line.X - viewport_x, 
+					offset_y + caret.line.Y + caret.tag.Shift - viewport_y + caret_shift);
 				DisplayCaret ();
 			}
 			
@@ -1634,11 +1695,11 @@ namespace System.Windows.Forms {
 			// First, figure out from what line to what line we need to draw
 
 			if (multiline) {
-				start = GetLineByPixel(clip.Top + viewport_y, false).line_no;
-				end = GetLineByPixel(clip.Bottom + viewport_y, false).line_no;
+				start = GetLineByPixel(clip.Top + viewport_y - offset_y, false).line_no;
+				end = GetLineByPixel(clip.Bottom + viewport_y - offset_y, false).line_no;
 			} else {
-				start = GetLineByPixel(clip.Left + viewport_x, false).line_no;
-				end = GetLineByPixel(clip.Right + viewport_x, false).line_no;
+				start = GetLineByPixel(clip.Left + viewport_x - offset_x, false).line_no;
+				end = GetLineByPixel(clip.Right + viewport_x - offset_x, false).line_no;
 			}
 
 			// remove links in the list (used for mouse down events) that are within the clip area.
@@ -1653,7 +1714,7 @@ namespace System.Windows.Forms {
 
 			/// Make sure that we aren't drawing one more line then we need to
 			line = GetLine (end - 1);
-			if (line != null && clip.Bottom == line.Y + line.height - viewport_y)
+			if (line != null && clip.Bottom == offset_y + line.Y + line.height - viewport_y)
 				end--;
 
 			line_no = start;
@@ -1669,9 +1730,9 @@ namespace System.Windows.Forms {
 			// Non multiline selection can be handled outside of the loop
 			if (!multiline && selection_visible && owner.ShowSelection) {
 				g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorHighlight),
-						selection_start.line.widths [selection_start.pos] +
+						offset_x + selection_start.line.widths [selection_start.pos] +
 						selection_start.line.X - viewport_x, 
-						selection_start.line.Y,
+						offset_y + selection_start.line.Y,
 						(selection_end.line.X + selection_end.line.widths [selection_end.pos]) -
 						(selection_start.line.X + selection_start.line.widths [selection_start.pos]), 
 						selection_start.line.height);
@@ -1679,7 +1740,7 @@ namespace System.Windows.Forms {
 
 			while (line_no <= end) {
 				line = GetLine (line_no);
-				float line_y = line.Y - viewport_y;
+				float line_y = line.Y - viewport_y + offset_y;
 				
 				tag = line.tags;
 				if (!calc_pass) {
@@ -1715,7 +1776,7 @@ namespace System.Windows.Forms {
 					} else if (multiline) {
 						// lets draw some selection baby!!  (non multiline selection is drawn outside the loop)
 						g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorHighlight),
-								line.widths [line_selection_start - 1] + line.X - viewport_x, 
+								offset_x + line.widths [line_selection_start - 1] + line.X - viewport_x, 
 								line_y, line.widths [line_selection_end - 1] - line.widths [line_selection_start - 1], 
 								line.height);
 					}
@@ -1730,13 +1791,15 @@ namespace System.Windows.Forms {
 						continue;
 					}
 
-					if (((tag.X + tag.Width) < (clip.Left - viewport_x)) && (tag.X > (clip.Right - viewport_x))) {
+					if (((tag.X + tag.Width) < (clip.Left - viewport_x - offset_x)) && 
+					     (tag.X > (clip.Right - viewport_x - offset_x))) {
 						tag = tag.Next;
 						continue;
 					}
 
 					if (tag.BackColor != Color.Empty) {
-						g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (tag.BackColor), tag.X + line.X - viewport_x,
+						g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (tag.BackColor), 
+								offset_x + tag.X + line.X - viewport_x,
 								line_y + tag.Shift, tag.Width, line.height);
 					}
 
@@ -1771,7 +1834,7 @@ namespace System.Windows.Forms {
 						Rectangle text_size;
 
 						tag.Draw (g, current_color,
-								line.X - viewport_x,
+								offset_x + line.X - viewport_x,
 								line_y + tag.Shift,
 								old_tag_pos - 1, Math.Min (tag.Start + tag.Length, tag_pos) - 1,
 								text.ToString (), out text_size, tag.IsLink);
@@ -2627,9 +2690,9 @@ namespace System.Windows.Forms {
 				#endif
 
 				owner.Invalidate(new Rectangle (
-					(int)l1.widths[p1] + l1.X - viewport_x, 
-					l1.Y - viewport_y, 
-					endpoint - (int)l1.widths[p1] + 1, 
+					offset_x + (int)l1.widths[p1] + l1.X - viewport_x, 
+					offset_y + l1.Y - viewport_y,
+					endpoint - (int) l1.widths [p1] + 1, 
 					l1.height));
 				return;
 			}
@@ -2641,7 +2704,11 @@ namespace System.Windows.Forms {
 
 			// Three invalidates:
 			// First line from start
-			owner.Invalidate(new Rectangle((int)l1.widths[p1] + l1.X - viewport_x, l1.Y - viewport_y, viewport_width, l1.height));
+			owner.Invalidate(new Rectangle(
+				offset_x + (int)l1.widths[p1] + l1.X - viewport_x, 
+				offset_y + l1.Y - viewport_y, 
+				viewport_width, 
+				l1.height));
 
 			
 			// lines inbetween
@@ -2649,7 +2716,11 @@ namespace System.Windows.Forms {
 				int	y;
 
 				y = GetLine(l1.line_no + 1).Y;
-				owner.Invalidate(new Rectangle(0, y - viewport_y, viewport_width, l2.Y - y));
+				owner.Invalidate(new Rectangle(
+					offset_x, 
+					offset_y + y - viewport_y, 
+					viewport_width, 
+					l2.Y - y));
 
 				#if Debug
 					Console.WriteLine("Invaliding from {0}:{1} to {2}:{3} Middle => x={4}, y={5}, {6}x{7}", l1.line_no, p1, l2.line_no, p2, 0, y - viewport_y, viewport_width, l2.Y - y);
@@ -2658,10 +2729,14 @@ namespace System.Windows.Forms {
 			
 
 			// Last line to end
-			owner.Invalidate(new Rectangle((int)l2.widths[0] + l2.X - viewport_x, l2.Y - viewport_y, (int)l2.widths[p2] + 1, l2.height));
+			owner.Invalidate(new Rectangle(
+				offset_x + (int)l2.widths[0] + l2.X - viewport_x, 
+				offset_y + l2.Y - viewport_y, 
+				(int)l2.widths[p2] + 1, 
+				l2.height));
+
 			#if Debug
 				Console.WriteLine("Invaliding from {0}:{1} to {2}:{3} End    => x={4}, y={5}, {6}x{7}", l1.line_no, p1, l2.line_no, p2, (int)l2.widths[0] + l2.X - viewport_x, l2.Y - viewport_y, (int)l2.widths[p2] + 1, l2.height);
-
 			#endif
 		}
 
@@ -3392,6 +3467,9 @@ namespace System.Windows.Forms {
 		internal LineTag FindCursor (int x, int y, out int index)
 		{
 			Line line;
+
+			x -= offset_x;
+			y -= offset_y;
 
 			line = GetLineByPixel (multiline ? y : x, false);
 

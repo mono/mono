@@ -1,3 +1,11 @@
+2008-02-24  Luke Page  <luke.a.page@gmail.com>
+
+	* Line.cs, TextControl.cs: Implement offset x and y so that a
+	document doesn't have to begin  at (0,0) on the viewpoint.
+	* TextBox.cs, TextBoxBase.cs: RightToLeft switches the scroll
+	bars and switches the text alignment (and therefore is now
+	implemented for textbox). Fixes #321383.
+
 2008-02-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Binding.cs: Actually implement 2.0 FormatString and FormatInfo

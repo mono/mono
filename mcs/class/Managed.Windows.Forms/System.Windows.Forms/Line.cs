@@ -331,7 +331,7 @@ namespace System.Windows.Forms
 				break;
 			}
 
-			TextBoxTextRenderer.DrawText (dc, end_str, last.Font, last.Color, X + widths [TextLengthWithoutEnding ()] - document.viewport_x, y, true);
+			TextBoxTextRenderer.DrawText (dc, end_str, last.Font, last.Color, X + widths [TextLengthWithoutEnding ()] - document.viewport_x + document.OffsetX, y, true);
 		}
 
 		/// <summary> Find the tag on a line based on the character position, pos is 0-based</summary>
