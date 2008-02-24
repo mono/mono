@@ -69,7 +69,7 @@ namespace System.Linq.Expressions {
 
 			var invoke_parameters = invoke.GetParameters ();
 			if (invoke_parameters.Length != parameters.Count)
-				throw new ArgumentException ("Different number of arguments in delegate {0}", "delegateType");
+				throw new ArgumentException (string.Format ("Different number of arguments in delegate {0}", delegateType), "delegateType");
 
 			for (int i = 0; i < invoke_parameters.Length; i++){
 				if (!CanAssign (parameters [i].Type, invoke_parameters [i].ParameterType))

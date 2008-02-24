@@ -1,3 +1,7 @@
+2008-02-24  Jb Evain  <jbevain@novell.com>
+
+	* LambdaExpression.cs: properly format error message.
+
 2008-02-21  Jb Evain  <jbevain@novell.com>
 
 	* BinaryExpression.cs (EmitCoalesce): fix setup_null.
