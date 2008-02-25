@@ -943,7 +943,7 @@ namespace System.Windows.Forms
 		protected override void OnMouseUp (MouseEventArgs mea)
 		{
 			// If we're currently over an item (set in MouseMove)
-			if (mouse_currently_over != null && !(mouse_currently_over is ToolStripControlHost)) {
+			if (mouse_currently_over != null && !(mouse_currently_over is ToolStripControlHost) && mouse_currently_over.Enabled) {
 				// Fire our ItemClicked event
 				OnItemClicked (new ToolStripItemClickedEventArgs (mouse_currently_over));
 					

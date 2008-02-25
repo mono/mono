@@ -1,3 +1,8 @@
+2008-02-25  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStrip.cs: Don't raise ItemClicked for disabled items.
+	[Fixes bug #364486]
+
 2008-02-25  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* GridEntry.cs: Use the PropertyDescriptor.PropertyType instead 
