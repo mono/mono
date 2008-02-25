@@ -162,9 +162,9 @@ namespace System.Web.UI {
 				if (myNamingContainer == null) {
 					Type controlType = parentBuilder != null ? parentBuilder.ControlType : null;
 					
-					if (controlType == null)
+					if (parentBuilder == null && controlType == null)
 						myNamingContainer = null;
-					else if (typeof (INamingContainer).IsAssignableFrom (controlType))
+					else if (controlType != null && typeof (INamingContainer).IsAssignableFrom (controlType))
 						myNamingContainer = parentBuilder;
 					else
 						myNamingContainer = parentBuilder.MyNamingContainer;
@@ -189,7 +189,7 @@ namespace System.Web.UI {
 				if (cb is ContentBuilderInternal)
 					return cb.BindingContainerType;
 #endif
-				
+
 				return cb.ControlType;
 			}
 		}

@@ -1,3 +1,10 @@
+2008-02-25  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: GetContainerType now checks whether
+	the binding container returned from the builder implements
+	IDataItemContainer (for 2.0+ profiles) and looks for one more
+	property, Rows, if no Items property is found.
+
 2008-02-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AppSettingsExpressionBuilder.cs: Improve exception messages. Return
