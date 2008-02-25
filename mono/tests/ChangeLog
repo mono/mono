@@ -1,3 +1,13 @@
+2008-02-25  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* call_missing_method.il
+	* call_missing_call.il
+	* ldfld_missing_class.il
+	* ldfld_missing_field.il: Test if the proper loader
+	error is raised in case of failure.
+
+	* Makefile.am: Added the previous tests.
+
 2008-02-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* pinvoke3.cs: Add tests for missing MarshalAs directives when marshalling arrays.
