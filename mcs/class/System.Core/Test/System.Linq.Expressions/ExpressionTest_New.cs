@@ -262,6 +262,7 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void CompileNewStruct ()
 		{
 			var create = Expression.Lambda<Func<EineStrukt>> (
@@ -273,6 +274,7 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void CompileNewStructWithParameters ()
 		{
 			var pl = Expression.Parameter (typeof (int), "left");
