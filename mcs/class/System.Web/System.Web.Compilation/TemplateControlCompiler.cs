@@ -1153,17 +1153,35 @@ namespace System.Web.Compilation
 			parent.renderMethod.Statements.Add (AddLinePragma (expr, cr));
 		}
 
+		static PropertyInfo GetContainerProperty (Type type, string[] propNames)
+		{
+			PropertyInfo prop;
+			
+			foreach (string name in propNames) {
+				prop = type.GetProperty (name, noCaseFlags & ~BindingFlags.NonPublic);
+				if (prop != null)
+					return prop;
+			}
+
+			return null;
+		}
+
+		static string[] containerPropNames = {"Items", "Rows"};
+		
 		static Type GetContainerType (ControlBuilder builder)
 		{
 			TemplateBuilder tb = builder as TemplateBuilder;
 			if (tb != null && tb.ContainerType != null)
 				return tb.ContainerType;
-#if NET_2_0
-			return builder.BindingContainerType;
-#else
+
 			Type type = builder.BindingContainerType;
 
-			PropertyInfo prop = type.GetProperty ("Items", noCaseFlags & ~BindingFlags.NonPublic);
+#if NET_2_0
+			if (typeof (IDataItemContainer).IsAssignableFrom (type))
+				return type;
+#endif
+			
+			PropertyInfo prop = GetContainerProperty (type, containerPropNames);
 			if (prop == null)
 				return type;
 
@@ -1176,7 +1194,6 @@ namespace System.Web.Compilation
 				return type;
 
 			return prop.PropertyType;
-#endif
 		}
 		
 		CodeMemberMethod CreateDBMethod (ControlBuilder builder, string name, Type container, Type target)
