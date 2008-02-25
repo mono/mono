@@ -77,8 +77,12 @@
                                     <asp:BoundField DataField="User" HeaderText="User Name" >
                                         <HeaderStyle HorizontalAlign="Left" />
                                     </asp:BoundField>
-                                    <asp:HyperLinkField DataNavigateUrlFields="User" DataNavigateUrlFormatString="EditUser.aspx?User={0}"
-                                        Text="Edit User" />
+                                    <asp:TemplateField>
+                                        <ItemTemplate>
+                                            <asp:HyperLink NavigateUrl='<%# string.Format("EditUser.aspx?User={0}", HttpUtility.UrlEncode((string)Eval("User"))) %>'
+                                                Text="Edit User" runat="server" />
+                                        </ItemTemplate>
+                                    </asp:TemplateField>
                                     <asp:TemplateField ShowHeader="False">
                                     <ItemTemplate>
                                           <custom:GridButton ID="GridButton1" runat="server" User='<%# Bind("User") %>' OnClick="Delete_Click" >Delete User</custom:GridButton>
