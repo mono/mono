@@ -61,17 +61,6 @@ namespace System.Text.RegularExpressions {
 			return typeof (RxInterpreter).GetMethod (name, BindingFlags.Instance|BindingFlags.NonPublic);
 		}
 
-		private string GetString (ushort[] program, int pc) {
-			int len = program[pc + 1];
-			int str = pc + 2;
-
-			char[] cs = new char[len];
-			for (int i = 0; i < len; ++ i)
-				cs[i] = (char)program[str ++];
-
-			return new string (cs);
-		}
-
 		private int ReadInt (byte[] code, int pc)
 		{
 			int val = code [pc];
@@ -79,18 +68,6 @@ namespace System.Text.RegularExpressions {
 			val |= code [pc + 2] << 16;
 			val |= code [pc + 3] << 24;
 			return val;
-		}
-
-		private MethodInfo GetEvalMethodWithFallback (byte[] program, int pc, out bool fallback) {
-			DynamicMethod eval = GetEvalMethod (program, pc);
-			fallback = eval != null;
-			if (eval != null) {
-				fallback = false;
-				return eval;
-			} else {
-				fallback = true;
-				return GetInterpreterMethod ("EvalByteCode");
-			}
 		}
 
 		class Frame {
@@ -128,7 +105,7 @@ namespace System.Text.RegularExpressions {
 			 */
 			Frame frame = new Frame (ilgen);
 
-			m = EmitEvalMethodBody (m, ilgen, frame, program, pc);
+			m = EmitEvalMethodBody (m, ilgen, frame, program, pc, false, out pc);
 			if (m == null)
 				return null;
 				
@@ -149,18 +126,22 @@ namespace System.Text.RegularExpressions {
 		/*
 		 * Emit IL code for a sequence of opcodes starting at pc. If there is a match,
 		 * set frame.local_strpos_res to the position of the match, then branch to 
-		 * frame.label_pass. Else branch to frame.label_fail.
+		 * frame.label_pass. Else branch to frame.label_fail. If one_op is true, only
+		 * generate code for one opcode and set out_pc to the next pc after the opcode.
 		 * Keep this in synch with RxInterpreter.EvalByteCode (). It it is sync with
 		 * the version in r96072.
-		 * FIXME: char group support
 		 * FIXME: In the new interpreter and the IL compiler, '<.+>' does not match '<FOO>'
 		 * Also, '<.+?' matches '<FOO>', but the match is '<FOO>' instead of '<F'
+		 * FIXME: Modify the regex tests so they are run with RegexOptions.Compiled as
+		 * well.
 		 */
 		private DynamicMethod EmitEvalMethodBody (DynamicMethod m, ILGenerator ilgen,
-												  Frame frame, byte[] program, int pc)
+												  Frame frame, byte[] program, int pc,
+												  bool one_op, out int out_pc)
 		{
 			int start, length, end;
-			bool fallback;
+
+			out_pc = 0;
 
 			while (true) {
 				RxOp op = (RxOp)program [pc];
@@ -282,7 +263,7 @@ namespace System.Text.RegularExpressions {
 						ilgen.Emit (OpCodes.Ldarg_1);
 						ilgen.Emit (OpCodes.Stloc, local_old_strpos);
 
-						m = EmitEvalMethodBody (m, ilgen, new_frame, program, pc);
+						m = EmitEvalMethodBody (m, ilgen, new_frame, program, pc, false, out out_pc);
 						if (m == null)
 							return null;
 
@@ -331,7 +312,7 @@ namespace System.Text.RegularExpressions {
 					ilgen.Emit (OpCodes.Ldarg_1);
 					ilgen.Emit (OpCodes.Stloc, local_old_strpos);
 
-					m = EmitEvalMethodBody (m, ilgen, new_frame, program, pc + 3);
+					m = EmitEvalMethodBody (m, ilgen, new_frame, program, pc + 3, false, out out_pc);
 					if (m == null)
 						return null;
 
@@ -432,7 +413,7 @@ namespace System.Text.RegularExpressions {
 					//return false;
 					ilgen.Emit (OpCodes.Br, frame.label_fail);
 					ilgen.MarkLabel (l2);
-						
+
 					pc += 3;
 					break;
 				}
@@ -484,11 +465,13 @@ namespace System.Text.RegularExpressions {
 					ilgen.Emit (OpCodes.Stloc, frame.local_strpos_res);
 					//  return true;
 					ilgen.Emit (OpCodes.Br, frame.label_pass);
+					pc++;
 					goto End;
 				}
 				case RxOp.False: {
 					//  return false;
 					ilgen.Emit (OpCodes.Br, frame.label_fail);
+					pc++;
 					goto End;
 				}
 				case RxOp.AnyPosition: {
@@ -581,19 +564,19 @@ namespace System.Text.RegularExpressions {
 				case RxOp.EndOfLine: {
 					//if (!(strpos == string_end || str [strpos] == '\n'))
 					//	return false;
-					Label l = ilgen.DefineLabel ();
+					Label l_match = ilgen.DefineLabel ();
 					ilgen.Emit (OpCodes.Ldarg_1);
 					ilgen.Emit (OpCodes.Ldarg_0);
 					ilgen.Emit (OpCodes.Ldfld, fi_string_end);
-					ilgen.Emit (OpCodes.Beq, l);
+					ilgen.Emit (OpCodes.Beq, l_match);
 					ilgen.Emit (OpCodes.Ldarg_0);
 					ilgen.Emit (OpCodes.Ldfld, fi_str);
 					ilgen.Emit (OpCodes.Ldarg_1);
 					ilgen.Emit (OpCodes.Callvirt, typeof (string).GetMethod ("get_Chars"));
 					ilgen.Emit (OpCodes.Ldc_I4, (int)'\n');
-					ilgen.Emit (OpCodes.Beq, l);
+					ilgen.Emit (OpCodes.Beq, l_match);
 					ilgen.Emit (OpCodes.Br, frame.label_fail);
-					ilgen.MarkLabel (l);
+					ilgen.MarkLabel (l_match);
 					
 					pc++;
 					break;
@@ -665,6 +648,7 @@ namespace System.Text.RegularExpressions {
 					ilgen.Emit (OpCodes.Br, l_match);
 
 					ilgen.MarkLabel (l_match);
+
 					pc++;
 					break;
 				}
@@ -765,8 +749,6 @@ namespace System.Text.RegularExpressions {
 					return null;
 				}
 				case RxOp.String: {
-					int i;
-
 					start = pc + 2;
 					length = program [pc + 1];
 					//if (strpos + length > string_end)
@@ -780,6 +762,7 @@ namespace System.Text.RegularExpressions {
 
 					/* Avoid unsafe code in Moonlight build */
 #if false && !NET_2_1
+					int i;
 					LocalBuilder local_strptr = ilgen.DeclareLocal (typeof (char).MakePointerType ());
 					// char *strptr = &str.start_char + strpos
 					ilgen.Emit (OpCodes.Ldarg_0);
@@ -837,9 +820,43 @@ namespace System.Text.RegularExpressions {
 					pc = end;
 					break;
 				}
-				case RxOp.Jump:
+				case RxOp.Jump: {
 					pc += program [pc + 1] | (program [pc + 2] << 8);
-					continue;
+					break;
+				}
+				case RxOp.TestCharGroup: {
+					int char_group_end = pc + program [pc + 1] | (program [pc + 2] << 8);
+					pc += 3;
+
+					Label label_match = ilgen.DefineLabel ();
+
+					/*
+					 * Generate code for all the matching ops in the group
+					 */
+					while (pc < char_group_end) {
+						Frame new_frame = new Frame (ilgen);
+						m = EmitEvalMethodBody (m, ilgen, new_frame, program, pc, true, out pc);
+						if (m == null)
+							return null;						
+						
+						// Pass
+						// strpos is already updated by the code generated by the
+						// recursive call
+						ilgen.MarkLabel (new_frame.label_pass);
+						ilgen.Emit (OpCodes.Br, label_match);
+						
+						// Fail
+						// Just fall through to the next test
+						ilgen.MarkLabel (new_frame.label_fail);
+					}
+
+					// If we reached here, all the matching ops have failed
+					ilgen.Emit (OpCodes.Br, frame.label_fail);
+
+					ilgen.MarkLabel (label_match);
+
+					break;
+				}
 				case RxOp.Repeat: {
 					start = ReadInt (program, pc + 3);
 					end = ReadInt (program, pc + 7);
@@ -866,7 +883,7 @@ namespace System.Text.RegularExpressions {
 					ilgen.Emit (OpCodes.Ldarg_1);
 					ilgen.Emit (OpCodes.Stloc, local_old_strpos);
 
-					m = EmitEvalMethodBody (m, ilgen, new_frame, program, pc + 11);
+					m = EmitEvalMethodBody (m, ilgen, new_frame, program, pc + 11, false, out out_pc);
 					if (m == null)
 						return null;
 
@@ -926,7 +943,7 @@ namespace System.Text.RegularExpressions {
 					ilgen.Emit (OpCodes.Ldc_I4_1);
 					ilgen.Emit (OpCodes.Add);
 					ilgen.Emit (OpCodes.Starg, 1);
-					
+
 					pc++;
 					break;
 				}
@@ -1097,6 +1114,7 @@ namespace System.Text.RegularExpressions {
 					ilgen.MarkLabel (l_nomatch);
 					//return false;
 					ilgen.Emit (OpCodes.Br, frame.label_fail);
+
 					ilgen.MarkLabel (l2);
 
 					if (op == RxOp.CategoryUnicode || op == RxOp.NoCategoryUnicode)
@@ -1109,9 +1127,14 @@ namespace System.Text.RegularExpressions {
 					Console.WriteLine ("Opcode " + op + " not supported.");
 					return null;
 			    }
+
+				if (one_op)
+					break;
 			}
 
 			End:
+
+			out_pc = pc;
 
 			return m;
 		}
