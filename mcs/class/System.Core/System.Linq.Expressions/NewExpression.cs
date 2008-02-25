@@ -51,6 +51,12 @@ namespace System.Linq.Expressions {
 			get { return members; }
 		}
 
+		internal NewExpression (Type type, ReadOnlyCollection<Expression> arguments)
+			: base (ExpressionType.New, type)
+		{
+			this.arguments = arguments;
+		}
+
 		internal NewExpression (ConstructorInfo constructor, ReadOnlyCollection<Expression> arguments, ReadOnlyCollection<MemberInfo> members)
 			: base (ExpressionType.New, constructor.DeclaringType)
 		{

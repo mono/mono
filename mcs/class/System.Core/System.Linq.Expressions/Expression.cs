@@ -1573,11 +1573,16 @@ namespace System.Linq.Expressions {
 			if (type == null)
 				throw new ArgumentNullException ("type");
 
+			var args = (null as IEnumerable<Expression>).ToReadOnlyCollection ();
+
+			if (type.IsValueType)
+				return new NewExpression (type, args);
+
 			var ctor = type.GetConstructor (Type.EmptyTypes);
 			if (ctor == null)
 				throw new ArgumentException ("Type doesn't have a parameter less constructor");
 
-			return new NewExpression (ctor, (null as IEnumerable<Expression>).ToReadOnlyCollection (), null);
+			return new NewExpression (ctor, args, null);
 		}
 
 		public static NewExpression New (ConstructorInfo constructor, params Expression [] arguments)

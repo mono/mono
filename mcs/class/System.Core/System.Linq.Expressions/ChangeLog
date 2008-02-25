@@ -1,3 +1,8 @@
+2008-02-25  Jb Evain  <jbevain@novell.com>
+
+	* Expression.cs, NewExpression.cs: deal with the fact that value types
+	don't have a parameterless constructor.
+
 2008-02-24  Jb Evain  <jbevain@novell.com>
 
 	* LambdaExpression.cs, EmitContext.cs: make compilation
@@ -116,7 +121,7 @@
 
 	* Expression.cs, InvocationExpession.cs,
 	ListInitExpression.cs, MemberInitExpression.cs
-	NewExpression.cs : Add all missing 
+	NewExpression.cs : Add all missing
 	constructor in Expressions and remove the base one
 
 2008-01-25  Jb Evain  <jbevain@novell.com>
@@ -148,7 +153,7 @@
 	used those from mcs, that was wrong.   use the proper ones, clean
 	up the result.
 
-	* BinaryExpression.cs: Add method invocations for binary methods. 
+	* BinaryExpression.cs: Add method invocations for binary methods.
 
 2008-01-22  Jb Evain  <jbevain@novell.com>
 
@@ -171,12 +176,12 @@
 	TODO: this does not use the "Conversion" Lambda, which am not sure
 	who generates this or what it is used for.
 
-	(EmitLogical): Fix a couple of bugs in AndAlso, OrElse.	
+	(EmitLogical): Fix a couple of bugs in AndAlso, OrElse.
 
 	* Expression.cs: Add support for Coalesce.
 	(BinaryCoreCheck): Move more checking here, instead of the helper
 	routines, will remove them next.
-	
+
 	* LambdaExpression.cs (Compile): Create the delegate last, so we
 	manage to save the assembly while debugging in case of error
 
@@ -184,7 +189,7 @@
 
 	* Expression.cs (BinaryCoreCheck): Add checking for a few
 	operators here (to avoid doing a second pass, handles AndAlso and
-	OrElse). 
+	OrElse).
 
 	(AndAlso, OrElse): Add some code.
 
@@ -192,7 +197,7 @@
 	get_Value, as we already probed for the lack of value.
 
 	Split out support for And/Or to a separate routine as the code is
-	not very easy to share with the arithmetics code. 
+	not very easy to share with the arithmetics code.
 
 2008-01-21  Marek Safar  <marek.safar@gmail.com>
 
@@ -208,7 +213,7 @@
 
 	* Start code generation for nullables, currently this generates
 	incorrect code for things like:
-	
+
 	Expression<Func<int?, int?, int?>> e2 = (a, b) => a + b;
 	e2.Compile ().Invoke (null, 3))
 
@@ -217,19 +222,19 @@
 	* Introduce LINQ_DBG env variable, which generates a linq file in
 	/tmp;   It currently does not work as well as it should, as the
 	Func<> parameters do not mwatch the generated method.
-	Investigate. 
-	
+	Investigate.
+
 
 2008-01-20  Miguel de Icaza  <miguel@novell.com>
 
 	Introduce support for Nullable arguments, no code is generated for
 	these yet, its only tests + node creation behavior at this point.
-	
+
 	* Expression.cs (BinaryCoreCheck): Do not allow "int?" and "int"
 	as operators, they must both be nullable.
 
 	NullableTypes in the arguments are transformed into the underlying
-	values when doing the method validation.  
+	values when doing the method validation.
 
 2008-01-18  Miguel de Icaza  <miguel@novell.com>
 
@@ -242,7 +247,7 @@
 2008-01-18  Miguel de Icaza  <miguel@novell.com>
 
 	* BinaryExpression.cs: Add support for emitting code for some
-	operators (ported from the Mono C# compiler).   
+	operators (ported from the Mono C# compiler).
 
 	Add tests.
 
@@ -250,14 +255,14 @@
 
 	Beginning of code generation framework for Linq.Expressions.
 	Some code was borrowed by from the C# compiler
-	
+
 	* Expression_T.cs: Fill in the blanks.
-	
+
 	* LambdaExpression.cs: Validation of parameters mostly, a tiny bit
 	of codegen.
 
 	* ConstantExpression.cs: Mostly done, need to write tests for
-	non-fundamental types and other ValueType initializations. 
+	non-fundamental types and other ValueType initializations.
 
 2008-01-17  Jb Evain  <jbevain@novell.com>
 
@@ -274,7 +279,7 @@
 
 2008-01-16  Miguel de Icaza  <miguel@novell.com>
 
-	* Expression.cs: Add support for user-defined operators. 
+	* Expression.cs: Add support for user-defined operators.
 
 	Put back various binary operator tests.
 
