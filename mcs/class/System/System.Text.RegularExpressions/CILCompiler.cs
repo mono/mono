@@ -27,7 +27,14 @@ namespace System.Text.RegularExpressions {
 		static FieldInfo fi_string_end = typeof (RxInterpreter).GetField ("string_end", BindingFlags.Instance|BindingFlags.NonPublic);
 		static FieldInfo fi_match_start = typeof (RxInterpreter).GetField ("match_start", BindingFlags.Instance|BindingFlags.NonPublic);
 		static FieldInfo fi_program = typeof (RxInterpreter).GetField ("program", BindingFlags.Instance|BindingFlags.NonPublic);
+		static FieldInfo fi_marks = typeof (RxInterpreter).GetField ("marks", BindingFlags.Instance|BindingFlags.NonPublic);
+		static FieldInfo fi_groups = typeof (RxInterpreter).GetField ("groups", BindingFlags.Instance|BindingFlags.NonPublic);
+		static FieldInfo fi_mark_start = typeof (Mark).GetField ("Start", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
+		static FieldInfo fi_mark_end = typeof (Mark).GetField ("End", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
 		static MethodInfo mi_is_word_char = typeof (RxInterpreter).GetMethod ("IsWordChar", BindingFlags.Static|BindingFlags.NonPublic);
+		static MethodInfo mi_reset_groups = typeof (RxInterpreter).GetMethod ("ResetGroups", BindingFlags.Instance|BindingFlags.NonPublic);
+		static MethodInfo mi_open = typeof (RxInterpreter).GetMethod ("Open", BindingFlags.Instance|BindingFlags.NonPublic);
+		static MethodInfo mi_close = typeof (RxInterpreter).GetMethod ("Close", BindingFlags.Instance|BindingFlags.NonPublic);
 
 		IMachineFactory ICompiler.GetMachineFactory () {
 			byte[] code = new byte [curpos];
@@ -143,6 +150,8 @@ namespace System.Text.RegularExpressions {
 
 			out_pc = 0;
 
+			int group_count = 1 + (program [1] | (program [2] << 8));
+
 			while (true) {
 				RxOp op = (RxOp)program [pc];
 
@@ -151,22 +160,18 @@ namespace System.Text.RegularExpressions {
 					length = program [pc + 3] | (program [pc + 4] << 8);
 					pc += program [pc + 1] | (program [pc + 2] << 8);
 
-					// FIXME: Group support
-					if (group_count > 1)
-						return null;
-					
 					// Optimize some common cases by inlining the code generated for the
 					// anchor body 
 					RxOp anch_op = (RxOp)program [pc];
 					// FIXME: Do this even if the archor op is not the last in the regex
-					if (anch_op == RxOp.Char && (RxOp)program [pc + 2] == RxOp.True) {
+					if (group_count == 1 && anch_op == RxOp.Char && (RxOp)program [pc + 2] == RxOp.True) {
 
 						/*
 						 * while (strpos < string_end) {
 						 *   if (str [strpos] == program [pc + 1]) {
 						 *     match_start = strpos;
 						 *     strpos_result = strpos + 1;
-						 *     SetStartOfMatch (strpos)
+						 *     marks [groups [0]].Start = strpos;
 						 *     if (groups.Length > 1)
 						 *		marks [groups [0]].End = res;
 						 *     return true;
@@ -221,9 +226,12 @@ namespace System.Text.RegularExpressions {
 						// True case
 						ilgen.MarkLabel (l3);
 						//    match_start = strpos;
+						// match_start doesn't seem to be used
+						/* 
 						ilgen.Emit (OpCodes.Ldarg_0);
 						ilgen.Emit (OpCodes.Ldarg_1);
 						ilgen.Emit (OpCodes.Stfld, fi_match_start);
+						*/
 						//    strpos_result = strpos + 1;
 						ilgen.Emit (OpCodes.Ldarg_1);
 						ilgen.Emit (OpCodes.Ldc_I4_1);
@@ -254,6 +262,25 @@ namespace System.Text.RegularExpressions {
 						ilgen.Emit (OpCodes.Br, l2);
 						ilgen.MarkLabel (l1);
 
+						//if (groups.Length > 1) {
+						//	ResetGroups ();
+						//	marks [groups [0]].Start = strpos;
+						//}
+						if (group_count > 1) {
+							ilgen.Emit (OpCodes.Ldarg_0);
+							ilgen.Emit (OpCodes.Call, mi_reset_groups);
+
+							ilgen.Emit (OpCodes.Ldarg_0);
+							ilgen.Emit (OpCodes.Ldfld, fi_marks);
+							ilgen.Emit (OpCodes.Ldarg_0);
+							ilgen.Emit (OpCodes.Ldfld, fi_groups);
+							ilgen.Emit (OpCodes.Ldc_I4_0);
+							ilgen.Emit (OpCodes.Ldelem_I4);
+							ilgen.Emit (OpCodes.Ldelema, typeof (Mark));
+							ilgen.Emit (OpCodes.Ldarg_1);
+							ilgen.Emit (OpCodes.Stfld, fi_mark_start);
+						}
+
 						//  if (EvalByteCode (pc, strpos, ref res)) {
 
 						Frame new_frame = new Frame (ilgen);
@@ -270,16 +297,39 @@ namespace System.Text.RegularExpressions {
 						// Pass
 						ilgen.MarkLabel (new_frame.label_pass);
 						//    match_start = old_strpos;
+						// match_start doesn't seem to be used
+						/*
 						ilgen.Emit (OpCodes.Ldarg_0);
 						ilgen.Emit (OpCodes.Ldloc, local_old_strpos);
 						ilgen.Emit (OpCodes.Stfld, fi_match_start);
+						*/
 						//    strpos_result = res;
 						ilgen.Emit (OpCodes.Ldloc, new_frame.local_strpos_res);
 						ilgen.Emit (OpCodes.Stloc, frame.local_strpos_res);
-						// call SetStartOfMatch (old_strpos)
+						//    marks [groups [0]].Start = old_strpos;
 						ilgen.Emit (OpCodes.Ldarg_0);
+						ilgen.Emit (OpCodes.Ldfld, fi_marks);
+						ilgen.Emit (OpCodes.Ldarg_0);
+						ilgen.Emit (OpCodes.Ldfld, fi_groups);
+						ilgen.Emit (OpCodes.Ldc_I4_0);
+						ilgen.Emit (OpCodes.Ldelem_I4);
+						ilgen.Emit (OpCodes.Ldelema, typeof (Mark));
 						ilgen.Emit (OpCodes.Ldloc, local_old_strpos);
-						ilgen.Emit (OpCodes.Call, GetInterpreterMethod ("SetStartOfMatch"));
+						ilgen.Emit (OpCodes.Stfld, fi_mark_start);
+						//    if (groups.Length > 1)
+						//		marks [groups [0]].End = res;
+						if (group_count > 1) {
+							ilgen.Emit (OpCodes.Ldarg_0);
+							ilgen.Emit (OpCodes.Ldfld, fi_marks);
+							ilgen.Emit (OpCodes.Ldarg_0);
+							ilgen.Emit (OpCodes.Ldfld, fi_groups);
+							ilgen.Emit (OpCodes.Ldc_I4_0);
+							ilgen.Emit (OpCodes.Ldelem_I4);
+							ilgen.Emit (OpCodes.Ldelema, typeof (Mark));
+							ilgen.Emit (OpCodes.Ldloc, new_frame.local_strpos_res);
+							ilgen.Emit (OpCodes.Stfld, fi_mark_end);
+						}
+
 						//    return true;
 						ilgen.Emit (OpCodes.Br, frame.label_pass);
 
@@ -818,6 +868,28 @@ namespace System.Text.RegularExpressions {
 #endif
 
 					pc = end;
+					break;
+				}
+				case RxOp.OpenGroup: {
+					//Open (program [pc + 1] | (program [pc + 2] << 8), strpos);
+					int group_id = program [pc + 1] | (program [pc + 2] << 8);
+					ilgen.Emit (OpCodes.Ldarg_0);
+					ilgen.Emit (OpCodes.Ldc_I4, group_id);
+					ilgen.Emit (OpCodes.Ldarg_1);
+					ilgen.Emit (OpCodes.Call, mi_open);
+
+					pc += 3;
+					break;
+				}
+				case RxOp.CloseGroup: {
+					//Close (program [pc + 1] | (program [pc + 2] << 8), strpos);
+					int group_id = program [pc + 1] | (program [pc + 2] << 8);
+					ilgen.Emit (OpCodes.Ldarg_0);
+					ilgen.Emit (OpCodes.Ldc_I4, group_id);
+					ilgen.Emit (OpCodes.Ldarg_1);
+					ilgen.Emit (OpCodes.Call, mi_close);
+
+					pc += 3;
 					break;
 				}
 				case RxOp.Jump: {

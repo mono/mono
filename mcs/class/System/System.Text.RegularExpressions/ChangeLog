@@ -1,5 +1,7 @@
 2008-02-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* CILCompiler.cs: Implement grouping support.
+	
 	* CILCompiler.cs: Implement character groups.
 
 2008-02-25  Zoltan Varga  <vargaz@gmail.com>
