@@ -249,5 +249,84 @@ namespace MonoTests.System.Linq.Expressions {
 				new [] { "Foo".ToConstant () },
 				new [] { typeof (FakeAnonymousType).GetProperty ("Tzap") });
 		}
+
+		public struct EineStrukt {
+			public int left;
+			public int right;
+
+			public EineStrukt (int left, int right)
+			{
+				this.left = left;
+				this.right = right;
+			}
+		}
+
+		[Test]
+		public void CompileNewStruct ()
+		{
+			var create = Expression.Lambda<Func<EineStrukt>> (
+				Expression.New (typeof (EineStrukt))).Compile ();
+
+			var s = create ();
+			Assert.AreEqual (0, s.left);
+			Assert.AreEqual (0, s.right);
+		}
+
+		[Test]
+		public void CompileNewStructWithParameters ()
+		{
+			var pl = Expression.Parameter (typeof (int), "left");
+			var pr = Expression.Parameter (typeof (int), "right");
+
+			var create = Expression.Lambda<Func<int, int, EineStrukt>> (
+				Expression.New (typeof (EineStrukt).GetConstructor (new [] { typeof (int), typeof (int) }), pl, pr), pl, pr).Compile ();
+
+			var s = create (42, 12);
+
+			Assert.AreEqual (42, s.left);
+			Assert.AreEqual (12, s.right);
+		}
+
+		public class EineKlass {
+
+			public string Left { get; set; }
+			public string Right { get; set; }
+
+			public EineKlass ()
+			{
+			}
+
+			public EineKlass (string l, string r)
+			{
+				Left = l;
+				Right = r;
+			}
+		}
+
+		[Test]
+		public void CompileNewClassEmptyConstructor ()
+		{
+			var create = Expression.Lambda<Func<EineKlass>> (
+				Expression.New (typeof (EineKlass))).Compile ();
+
+			var k = create ();
+			Assert.IsNull (k.Left);
+			Assert.IsNull (k.Right);
+		}
+
+		[Test]
+		public void CompileNewClassWithParameters ()
+		{
+			var pl = Expression.Parameter (typeof (string), "left");
+			var pr = Expression.Parameter (typeof (string), "right");
+
+			var create = Expression.Lambda<Func<string, string, EineKlass>> (
+				Expression.New (typeof (EineKlass).GetConstructor (new [] { typeof (string), typeof (string) }), pl, pr), pl, pr).Compile ();
+
+			var k = create ("foo", "bar");
+
+			Assert.AreEqual ("foo", k.Left);
+			Assert.AreEqual ("bar", k.Right);
+		}
 	}
 }

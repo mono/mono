@@ -1,7 +1,8 @@
 //
-// ExpressionTest_CallWithExpression.cs
+// ExpressionTest_Call.cs
 //
 // Author:
+//   Federico Di Gregorio <fog@initd.org>
 //   Jb Evain (jbevain@novell.com)
 //
 // (C) 2008 Novell, Inc. (http://www.novell.com)
@@ -36,7 +37,49 @@ using NUnit.Framework;
 namespace MonoTests.System.Linq.Expressions {
 
 	[TestFixture]
-	public class ExpressionTest_CallWithExpression {
+	public class ExpressionTest_Call {
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Arg1Null ()
+		{
+			Expression.Call ((Type)null, "TestMethod", null, Expression.Constant (1));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Arg2Null ()
+		{
+			Expression.Call (typeof (MemberClass), null, null, Expression.Constant (1));
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void Arg4WrongType ()
+		{
+			Expression.Call (typeof (MemberClass), "StaticMethod", null, Expression.Constant (true));
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void InstanceMethod ()
+		{
+			Expression.Call (typeof (MemberClass), "TestMethod", null, Expression.Constant (1));
+		}
+
+		[Test]
+		[Category ("NotWorking")] // need for a better method finder.
+		public void StaticMethod ()
+		{
+			Expression.Call (typeof (MemberClass), "StaticMethod", null, Expression.Constant (1));
+		}
+
+		[Test]
+		public void StaticGenericMethod ()
+		{
+			MemberClass.StaticGenericMethod(1);
+			Expression.Call (typeof (MemberClass), "StaticGenericMethod", new Type [1] { typeof (int) }, Expression.Constant (1));
+		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
