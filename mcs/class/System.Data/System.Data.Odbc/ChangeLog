@@ -1,3 +1,11 @@
+2008-02-26  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes BNC#364432.
+	* OdbcParameter.cs: (Bind): Set StrLen parameter of
+	SQLBindParameter to reflect NullData in case of DBNull.
+	(CopyValue): If Value is DBNull.Value, just don't try any
+	heroics. 
+	
 2008-02-25  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes BNC#364426.
