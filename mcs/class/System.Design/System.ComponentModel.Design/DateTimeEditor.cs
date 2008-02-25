@@ -71,6 +71,8 @@ namespace System.ComponentModel.Design
 					editContent = (DateTime)value;
 					if (editContent > control.MaxDate || editContent < control.MinDate)
 						control.SelectionStart = DateTime.Today;
+					else
+						control.SelectionStart = editContent;
 
 					editorService.DropDownControl (control);
 

@@ -1,3 +1,10 @@
+2008-02-25  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DateTimeEditor.cs: Set the calendar to the currently edited 
+	date. Patch by Andy Hume. Code is contributed under 
+	MIT/X11 license.
+	[Fixes #362749]
+
 2008-02-16  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* CollectionEditor.cs: Handle null collection.
