@@ -1847,9 +1847,8 @@ namespace System.Web.UI.WebControls
 			if (causesValidation && Page != null && !Page.IsValid)
 				return;
 
-			currentEditOldValues = OldEditValues.Values;
-
-			currentEditRowKeys = DataKeys [rowIndex].Values;
+			currentEditOldValues = CopyOrderedDictionary (OldEditValues.Values);
+			currentEditRowKeys = CopyOrderedDictionary (DataKeys [rowIndex].Values);
 			currentEditNewValues = GetRowValues (row, false, false);
 			
 			GridViewUpdateEventArgs args = new GridViewUpdateEventArgs (rowIndex, currentEditRowKeys, currentEditOldValues, currentEditNewValues);
@@ -1862,6 +1861,14 @@ namespace System.Web.UI.WebControls
 			if (view == null)
 				throw new HttpException ("The DataSourceView associated to data bound control was null");
 			view.Update (currentEditRowKeys, currentEditNewValues, currentEditOldValues, new DataSourceViewOperationCallback (UpdateCallback));
+		}
+
+		static IOrderedDictionary CopyOrderedDictionary (IOrderedDictionary sourceDic) {
+			OrderedDictionary copyDic = new OrderedDictionary ();
+			foreach (object key in sourceDic.Keys) {
+				copyDic.Add (key, sourceDic [key]);
+			}
+			return copyDic;
 		}
 
 		bool UpdateCallback (int recordsAffected, Exception exception)
@@ -1878,7 +1885,7 @@ namespace System.Web.UI.WebControls
 		public virtual void DeleteRow (int rowIndex)
 		{
 			GridViewRow row = Rows [rowIndex];
-			currentEditRowKeys = DataKeys [rowIndex].Values;
+			currentEditRowKeys = CopyOrderedDictionary (DataKeys [rowIndex].Values);
 			currentEditNewValues = GetRowValues (row, true, true);
 			
 			GridViewDeleteEventArgs args = new GridViewDeleteEventArgs (rowIndex, currentEditRowKeys, currentEditNewValues);
