@@ -1,3 +1,8 @@
+2008-02-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTime.cs, DateTimeUtils.cs : make Kind value from parse result
+	  as dotnet-compatible. Patch by James Purcell, fixed bug #352210.
+
 2008-02-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DBNull.cs : ToType(typeof(DBNull),...) should be allowed.

@@ -126,7 +126,9 @@ namespace System {
 				break;
 #if NET_2_0
 			case 'o':
+			case 'O':
 				pattern = dfi.RoundtripPattern;
+				use_invariant = true;
 				break;
 #endif
 			case 'r':
@@ -138,6 +140,7 @@ namespace System {
 				break;
 			case 's':
 				pattern = dfi.SortableDateTimePattern;
+				use_invariant = true;
 				break;
 			case 't':
 				pattern = dfi.ShortTimePattern;
@@ -147,7 +150,9 @@ namespace System {
 				break;
 			case 'u':
 				pattern = dfi.UniversalSortableDateTimePattern;
-				useutc = true;
+				if (date_time_offset)
+					useutc = true;
+				use_invariant = true;
 				break;
 			case 'U':
 				if (date_time_offset)

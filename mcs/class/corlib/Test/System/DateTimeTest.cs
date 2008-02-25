@@ -1997,7 +1997,6 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Bug352210 ()
 		{
 			DateTime dt = DateTime.ParseExact ("2007-06-15T10:30:10.5", "yyyy-MM-ddTHH:mm:ss.f", null);
@@ -2005,6 +2004,94 @@ namespace MonoTests.System
 #if NET_2_0
 			Assert.AreEqual (DateTimeKind.Unspecified, dt.Kind, "#2");
 #endif
+		}
+
+		[Test]
+		public void Bug352210_New ()
+		{
+			long ticksUTC = 633377759060000000;
+			long ticksLocal = ticksUTC + TimeZone.CurrentTimeZone.GetUtcOffset (new DateTime (ticksUTC)).Ticks;
+			CultureInfo ci = CultureInfo.InvariantCulture;
+			DateTime dt;
+
+			// Should return same time with Unspecified kind
+			dt = DateTime.ParseExact ("2008-02-05 02:38:26", "yyyy-MM-dd HH:mm:ss", ci);
+#if NET_2_0
+			Assert.AreEqual (DateTimeKind.Unspecified, dt.Kind, "A1");
+#endif
+			Assert.AreEqual (ticksUTC, dt.Ticks, "A2");
+
+			// Should return same time with Unspecified kind
+			dt = DateTime.ParseExact ("2008-02-05 02:38:26Z", "u", ci);
+#if NET_2_0
+			Assert.AreEqual (DateTimeKind.Unspecified, dt.Kind, "B1");
+#endif
+			Assert.AreEqual (ticksUTC, dt.Ticks, "B2");
+
+#if NET_2_0
+			// Should adjust to local time with Local kind
+			dt = DateTime.ParseExact ("2008-02-05 00:38:26-02:00", "yyyy-MM-dd HH:mm:ssK", ci);
+			Assert.AreEqual (DateTimeKind.Local, dt.Kind, "C1");
+			Assert.AreEqual (ticksLocal, dt.Ticks, "C2");
+
+			// Should ignore AssumeUniversal since a timezone specifier is in the format string
+			// and return time adjusted to local time with Local kind
+			dt = DateTime.ParseExact ("2008-02-05 00:38:26 -2", "yyyy-MM-dd HH:mm:ss z", ci, DateTimeStyles.AssumeUniversal);
+			Assert.AreEqual (DateTimeKind.Local, dt.Kind, "D1");
+			Assert.AreEqual (ticksLocal, dt.Ticks, "D2");
+#endif
+
+			try {
+				// GMT in format string can be used to specify time zone
+				dt = DateTime.ParseExact ("2008-02-05 02:38:26 GMT", "yyyy-MM-dd HH:mm:ss GMT", ci);
+#if NET_2_0
+				Assert.AreEqual (DateTimeKind.Local, dt.Kind, "E1");
+#endif
+				Assert.AreEqual (ticksLocal, dt.Ticks, "E2");
+			}
+			catch {
+				Assert.Fail ("E3");
+			}
+
+			try {
+				// Same as above even when surrounded with other characters
+				dt = DateTime.ParseExact ("2008-02-05 02:38:26 qqGMTqq", "yyyy-MM-dd HH:mm:ss qqGMTqq", ci);
+#if NET_2_0
+				Assert.AreEqual (DateTimeKind.Local, dt.Kind, "F1");
+#endif
+				Assert.AreEqual (ticksLocal, dt.Ticks, "F2");
+			}
+			catch {
+				Assert.Fail ("F3");
+			}
+
+			try {
+				// But single quoted GMT in format string should not specify time zone
+				dt = DateTime.ParseExact ("2008-02-05 02:38:26 GMT", "yyyy-MM-dd HH:mm:ss 'GMT'", ci);
+#if NET_2_0
+				Assert.AreEqual (DateTimeKind.Unspecified, dt.Kind, "G1");
+#endif
+				Assert.AreEqual (ticksUTC, dt.Ticks, "G2");
+			}
+			catch {
+				Assert.Fail ("G3");
+			}
+
+			try {
+				// GMT in Parse can occur before time in 2.0 but not in 1.0
+				dt = DateTime.Parse ("GMT 2008-02-05 02:38:26", ci);
+#if NET_2_0
+				Assert.AreEqual (DateTimeKind.Local, dt.Kind, "H1");
+				Assert.AreEqual (ticksLocal, dt.Ticks, "H2");
+#else
+				Assert.Fail ("H3");
+#endif
+			}
+			catch {
+#if NET_2_0
+				Assert.Fail ("H4");
+#endif
+			}
 		}
 
 #if NET_2_0

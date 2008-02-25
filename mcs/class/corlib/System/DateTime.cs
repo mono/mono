@@ -1164,30 +1164,20 @@ namespace System
 					      ref bool incompleteFormat,
 					      ref bool longYear)
 		{
-#if NET_2_0
-			DateTimeKind explicit_kind = DateTimeKind.Unspecified;
-#endif
-			bool useutc = false, use_localtime = true;
+			bool useutc = false;
 			bool use_invariant = false;
 			bool sloppy_parsing = false;
+#if !NET_2_0
 			bool afterTimePart = firstPartIsDate && secondPart == "";
+#endif
 			bool flexibleTwoPartsParsing = !exact && secondPart != null;
 			incompleteFormat = false;
 			int valuePos = 0;
 			string format = firstPart;
 			bool afterTFormat = false;
 			DateTimeFormatInfo invInfo = DateTimeFormatInfo.InvariantInfo;
-			if (format.Length == 1) {
-				if (format == "u")
-					use_localtime = false;
+			if (format.Length == 1)
 				format = DateTimeUtils.GetStandardPattern (format [0], dfi, out useutc, out use_invariant);
-			}
-			else if (!exact && CultureInfo.InvariantCulture.CompareInfo.IndexOf (format, "GMT", CompareOptions.Ordinal) >= 0)
-				useutc = true;
-#if NET_2_0
-			if ((style & DateTimeStyles.AssumeUniversal) != 0)
-				useutc = true;
-#endif
 
 			result = new DateTime (0);
 			if (format == null)
@@ -1231,7 +1221,11 @@ namespace System
 				if (flexibleTwoPartsParsing && pos + num == 0)
 				{
 					bool isLetter = IsLetter(s, valuePos);
+#if NET_2_0
+					if (isLetter) {
+#else
 					if (afterTimePart && isLetter) {
+#endif
 						if (s [valuePos] == 'Z')
 							num_parsed = 1;
 						else
@@ -1285,8 +1279,10 @@ namespace System
 						chars = format;
 						len = chars.Length;
 						isFirstPart = false;
+#if !NET_2_0
 						if (!firstPartIsDate || format == "")
 							afterTimePart = true;
+#endif
 						continue;
 					}
 					break;
@@ -1548,7 +1544,6 @@ namespace System
 					if (s [valuePos] == 'Z') {
 						valuePos++;
 						useutc = true;
-						explicit_kind = DateTimeKind.Utc;
 					}
 					else if (s [valuePos] == '+' || s [valuePos] == '-') {
 						if (tzsign != -1)
@@ -1573,7 +1568,6 @@ namespace System
 
 						tzoffmin = _ParseNumber (s, valuePos, 0, 2, true, sloppy_parsing, out num_parsed);
 						num = 2;
-						explicit_kind = DateTimeKind.Local;
 						if (num_parsed < 0)
 							return false;
 					}
@@ -1593,7 +1587,23 @@ namespace System
 					num_parsed = 1;
 					useutc = true;
 					break;
+				case 'G':
+					if (s [valuePos] != 'G')
+						return false;
 
+					if ((pos + 2 < len) && (valuePos + 2 < s.Length) &&
+						(chars [pos + 1] == 'M') && (s[valuePos + 1] == 'M') &&
+						(chars [pos + 2] == 'T') && (s[valuePos + 2] == 'T'))
+					{
+						useutc = true;
+						num = 2;
+						num_parsed = 3;
+					}
+					else {
+						num = 0;
+						num_parsed = 1;
+					}
+					break;
 				case ':':
 					if (!_ParseTimeSeparator (s, valuePos, dfi, exact, out num_parsed))
 						return false;
@@ -1716,20 +1726,10 @@ namespace System
 			if (dayofweek != -1 && dayofweek != (int) result.DayOfWeek)
 				return false;
 
-			// If no timezone was specified, default to the local timezone.
+			bool kind_specified = true;
 			TimeSpan utcoffset;
 
-			if (useutc) {
-				if ((style & DateTimeStyles.AdjustToUniversal) != 0)
-					use_localtime = false;
-				utcoffset = new TimeSpan (0, 0, 0);
-			} else if (tzsign == -1) {
-				TimeZone tz = TimeZone.CurrentTimeZone;
-				utcoffset = tz.GetUtcOffset (result);
-			} else {
-				if ((style & DateTimeStyles.AdjustToUniversal) != 0)
-					use_localtime = false;
-
+			if (tzsign != -1) {
 				if (tzoffmin == -1)
 					tzoffmin = 0;
 				if (tzoffset == -1)
@@ -1739,21 +1739,39 @@ namespace System
 
 				utcoffset = new TimeSpan (tzoffset, tzoffmin, 0);
 			}
+#if NET_2_0
+			else if (useutc || ((style & DateTimeStyles.AssumeUniversal) != 0))
+#else
+			else if (useutc)
+#endif
+				utcoffset = new TimeSpan (0, 0, 0);
+			else {
+				// If no timezone was specified, default to the local timezone.
+				TimeZone tz = TimeZone.CurrentTimeZone;
+				utcoffset = tz.GetUtcOffset (result);
+
+#if NET_2_0
+				if ((style & DateTimeStyles.AssumeLocal) == 0)
+#endif
+					kind_specified = false;
+			}
 
 			long newticks = (result.ticks - utcoffset).Ticks;
 
 			result = new DateTime (false, new TimeSpan (newticks));
+
+			if (kind_specified && ((style & DateTimeStyles.AdjustToUniversal) != 0)) {
 #if NET_2_0
-			if (explicit_kind != DateTimeKind.Unspecified)
-				result.kind = explicit_kind;
-			else if (use_localtime)
-				result = result.ToLocalTime ();
-			else
 				result.kind = DateTimeKind.Utc;
-#else
-			if (use_localtime)
-				result = result.ToLocalTime ();
 #endif
+			}
+			else {
+				result = result.ToLocalTime ();
+#if NET_2_0
+				if (!kind_specified)
+					result.kind = DateTimeKind.Unspecified;
+#endif
+			}
 
 			return true;
 		}
