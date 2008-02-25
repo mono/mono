@@ -1,3 +1,7 @@
+2008-02-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* CILCompiler.cs: Implement lots of missing opcodes.
+
 2008-02-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* CILCompiler.cs (EmitEvalMethodBody): Check for the not-yet supported
