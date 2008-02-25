@@ -1,3 +1,10 @@
+2008-02-25 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* GridView.cs:
+	at Update and Delete use not read only coppies of dictionaries
+	in event argumens, that allows user to change them before corresponding
+	DataSource's method is called.
+
 2008-02-20 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Login.cs: render id attribute of root element correctly.
