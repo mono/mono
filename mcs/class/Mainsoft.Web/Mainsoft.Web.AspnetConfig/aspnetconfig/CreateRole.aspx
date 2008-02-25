@@ -72,10 +72,12 @@
                         <asp:BoundField DataField="Role" HeaderText="Role Name" >
                             <HeaderStyle HorizontalAlign="Left" />
                         </asp:BoundField>
-                        <asp:HyperLinkField DataNavigateUrlFields="Role" DataNavigateUrlFormatString="ManageRole.aspx?Role={0}"
-                            HeaderText="Add\Remove Role" Text="Manage" >
-                            <HeaderStyle HorizontalAlign="Left" />
-                        </asp:HyperLinkField>
+                        <asp:TemplateField HeaderText="Add\Remove Role">
+                            <ItemTemplate>
+                                <asp:HyperLink ID="HyperLink1" NavigateUrl='<%# string.Format("ManageRole.aspx?Role={0}", HttpUtility.UrlEncode((string)Eval("Role"))) %>'
+                                    Text="Manage" runat="server" />
+                            </ItemTemplate>
+                        </asp:TemplateField>
                         <asp:TemplateField>
                             <ItemTemplate>
                                   <custom:GridButton ID="grid_btn" runat="server" User='<%# Bind("Role") %>' OnClick="gridbtn_click"  >Delete</custom:GridButton>
