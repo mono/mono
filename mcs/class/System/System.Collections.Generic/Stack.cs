@@ -121,7 +121,7 @@ namespace System.Collections.Generic
 
 		public void Push (T t)
 		{
-			if (_size == 0 || _size == _array.Length)
+			if (_array == null || _size == _array.Length)
 				Array.Resize <T> (ref _array, _size == 0 ? INITIAL_SIZE : 2 * _size);
 			
 			_version ++;

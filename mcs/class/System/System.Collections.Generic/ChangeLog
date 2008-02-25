@@ -1,3 +1,9 @@
+2007-11-15  Roei Erez  <roeie@mainsoft.com>
+
+	* Stack.cs: Performance improvement in the case where the stack is popped
+	untill empty. Changed the condition for resizing the array, and instead of
+	check for zero size, check if the inner array is null.
+
 2007-11-15  Jb Evain  <jbevain@novell.com>
 
 	* LinkedList.cs: ifdef out manually the Serialization part of the
