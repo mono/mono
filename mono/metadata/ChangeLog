@@ -1,3 +1,10 @@
+2008-02-25 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* loader.c (field_from_memberref): Generate a loader error if the type is not found.
+
+	* loader.c (method_from_memberref): Generate type load error instead of method missing
+	if the type is not found.
+
 2008-02-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_emit_managed_wrapper): Avoid generating invalid IL if
