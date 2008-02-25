@@ -236,8 +236,11 @@ namespace Mono.CSharp
 			mcs_output_lines=mcs_output.Split(
 				System.Environment.NewLine.ToCharArray());
 			bool loadIt=true;
+			StringCollection sc = new StringCollection ();
 			foreach (string error_line in mcs_output_lines)
 			{
+				sc.Add (error_line);
+				
 				CompilerError error=CreateErrorFromString(error_line);
 				if (null!=error)
 				{
@@ -245,10 +248,17 @@ namespace Mono.CSharp
 					if (!error.IsWarning) loadIt=false;
 				}
 			}
+
+			// (g)mcs outputs no useful information to stdout, we can ignore it here.
+			if (sc.Count > 0) {
+				sc.Insert (0, Environment.NewLine);
+				sc.Insert (0, mcs.StartInfo.FileName + " " + mcs.StartInfo.Arguments);
+				results.Output = sc;
+			}
+			
 			if (loadIt) {
 				if (!File.Exists (options.OutputAssembly)) {
-					throw new Exception ("Compiler failed to produce the assembly. Stderr='"
-						+mcs_output+"', Stdout='"+mcs_stdout+"'");
+					throw new Exception ("Compiler failed to produce the assembly. Stderr='" +mcs_output + "'");
 				}
 				if (options.GenerateInMemory) {
 					using (FileStream fs = File.OpenRead(options.OutputAssembly)) {
@@ -264,7 +274,7 @@ namespace Mono.CSharp
 			} else {
 				results.CompiledAssembly = null;
 			}
-
+			
 			return results;
 		}
 
