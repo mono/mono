@@ -1,3 +1,8 @@
+2008-02-25  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* PropertyGridView.cs: Limit mousewheel scrolling to not scroll
+	past the view.
+
 2008-02-20  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* PropertyGridView.cs: Fix a NRE when closing the drop down form.
