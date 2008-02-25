@@ -1,3 +1,7 @@
+2008-02-25  Raja R Harinath  <harinath@hurrynot.org>
+
+	* statement.cs (Switch.Error_AlreadyOccurs): Fix typo in name.
+
 2008-02-22  Marek Safar  <marek.safar@gmail.com>
 
 	* generic.cs, expression.cs: More ongoing work on expression trees.

@@ -2951,7 +2951,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public void Erorr_AlreadyOccurs (Type switch_type, SwitchLabel collision_with)
+		public void Error_AlreadyOccurs (Type switch_type, SwitchLabel collision_with)
 		{
 			string label;
 			if (converted == null)
@@ -3151,7 +3151,7 @@ namespace Mono.CSharp {
 				foreach (SwitchLabel sl in ss.Labels){
 					if (sl.Label == null){
 						if (default_section != null){
-							sl.Erorr_AlreadyOccurs (SwitchType, (SwitchLabel)default_section.Labels [0]);
+							sl.Error_AlreadyOccurs (SwitchType, (SwitchLabel)default_section.Labels [0]);
 							error = true;
 						}
 						default_section = ss;
@@ -3167,7 +3167,7 @@ namespace Mono.CSharp {
 					try {
 						Elements.Add (key, sl);
 					} catch (ArgumentException) {
-						sl.Erorr_AlreadyOccurs (SwitchType, (SwitchLabel)Elements [key]);
+						sl.Error_AlreadyOccurs (SwitchType, (SwitchLabel)Elements [key]);
 						error = true;
 					}
 				}
