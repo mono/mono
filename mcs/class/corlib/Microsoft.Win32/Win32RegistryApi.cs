@@ -536,9 +536,13 @@ namespace Microsoft.Win32
 
 		public string ToString (RegistryKey rkey)
 		{
+#if NET_2_0
+			return rkey.Name;
+#else			
 			IntPtr handle = GetHandle (rkey);
 			
 			return String.Format ("{0} [0x{1:X}]", rkey.Name, handle.ToInt32 ());
+#endif
 		}
 
 		/// <summary>
