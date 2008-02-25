@@ -732,11 +732,15 @@ namespace System.Data.Odbc
 					OdbcTimestamp ts_data = new OdbcTimestamp();
 					ret = libodbc.SQLGetData (hstmt, ColIndex, col.SqlCType, ref ts_data, 0, ref outsize);
 					if (outsize != -1) {// This means SQL_NULL_DATA
-						DataValue = new DateTime(ts_data.year, ts_data.month,
-							ts_data.day, ts_data.hour, ts_data.minute,
-							ts_data.second);
-						if (ts_data.fraction != 0)
-							DataValue = ((DateTime) DataValue).AddTicks ((long)ts_data.fraction / 100);
+						if (col.OdbcType == OdbcType.Time) {
+							DataValue = new System.TimeSpan (ts_data.hour, ts_data.minute, ts_data.second);
+						} else {
+							DataValue = new DateTime(ts_data.year, ts_data.month,
+							                         ts_data.day, ts_data.hour, ts_data.minute,
+							                         ts_data.second);
+							if (ts_data.fraction != 0)
+								DataValue = ((DateTime) DataValue).AddTicks ((long)ts_data.fraction / 100);
+						}
 					}
 					break;
 				case OdbcType.VarBinary :

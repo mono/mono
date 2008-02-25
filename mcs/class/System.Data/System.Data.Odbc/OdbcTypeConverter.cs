@@ -142,13 +142,14 @@ namespace System.Data.Odbc
 				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.Real];
 			case SQL_TYPE.SMALLINT:
 				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.SmallInt];
+			case SQL_TYPE.TYPE_TIME:
 			case SQL_TYPE.TIME:
+				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.Time];
 			case SQL_TYPE.TIMESTAMP:
 				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.DateTime];
 			case SQL_TYPE.TINYINT:
 				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.TinyInt];
 			case SQL_TYPE.TYPE_DATE:
-			case SQL_TYPE.TYPE_TIME:
 			case SQL_TYPE.TYPE_TIMESTAMP:
 				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.DateTime];
 			case SQL_TYPE.VARBINARY:

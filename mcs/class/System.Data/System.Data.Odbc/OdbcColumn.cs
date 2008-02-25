@@ -81,6 +81,7 @@ namespace System.Data.Odbc
 					case OdbcType.Char:
 						return typeof (string);
 					case OdbcType.Time:
+						return typeof (TimeSpan);
 					case OdbcType.Timestamp:
 					case OdbcType.DateTime:
 					case OdbcType.Date:
