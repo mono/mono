@@ -1,5 +1,7 @@
 2008-02-25  Raja R Harinath  <harinath@hurrynot.org>
 
+	* cs0152-3.cs: New testcase from #363791.
+
 	* gcs1644-10.cs: Remove spurious error message.
 
 2008-02-17  Raja R Harinath  <harinath@hurrynot.org>

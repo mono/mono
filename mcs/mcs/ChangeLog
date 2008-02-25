@@ -1,5 +1,12 @@
 2008-02-25  Raja R Harinath  <harinath@hurrynot.org>
 
+	Fix #363791
+	* enum.cs (EnumMember.Value): Only access 'value' if
+	ResolveValue says it's ok.
+	(EnumMember.DoResolveValue): Don't set prev_member.value.
+	(Enum.GetDefinition): Reverse arguments of Equals --
+	EnumMember.Value can return 'null'.
+
 	* statement.cs (Switch.Error_AlreadyOccurs): Fix typo in name.
 
 2008-02-22  Marek Safar  <marek.safar@gmail.com>

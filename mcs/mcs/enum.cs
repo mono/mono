@@ -72,7 +72,7 @@ namespace Mono.CSharp {
 		}
 
 		public object Value {
-			get { return value.GetValue (); }
+			get { return ResolveValue () ? value.GetValue () : null; }
 		}
 
 		public override bool Define ()
@@ -106,16 +106,12 @@ namespace Mono.CSharp {
 				return new EnumConstant (c, MemberType);
 			}
 
-			if (prev_member == null) {
+			if (prev_member == null)
 				return new EnumConstant (
 					New.Constantify (ParentEnum.UnderlyingType), MemberType);
-			}
 
-			if (!prev_member.ResolveValue ()) {
-				prev_member.value = new EnumConstant (
-					New.Constantify (ParentEnum.UnderlyingType), MemberType);
+			if (!prev_member.ResolveValue ())
 				return null;
-			}
 
 			try {
 				return (EnumConstant) prev_member.value.Increment ();
@@ -218,7 +214,7 @@ namespace Mono.CSharp {
 		public EnumMember GetDefinition (object value)
 		{
 			foreach (EnumMember e in defined_names.Values) {
-				if (e.Value.Equals (value))
+				if (value.Equals (e.Value))
 					return e;
 			}
 
