@@ -663,8 +663,13 @@ namespace System.Web {
 #if !TARGET_J2EE
 				if (timer != null) {
 					TimeSpan remaining = value - (DateTime.UtcNow - time_stamp);
-					int remaining_ms = Math.Max ((int)remaining.TotalMilliseconds, 0);
-					timer.Change (remaining_ms, Timeout.Infinite);
+					long remaining_ms = Math.Max ((long)remaining.TotalMilliseconds, 0);
+
+					// See http://msdn2.microsoft.com/en-us/library/7hs7492w.aspx
+					if (remaining_ms > 4294967294)
+						remaining_ms = 4294967294;
+					
+					timer.Change (remaining_ms, (long)Timeout.Infinite);
 				}
 #endif
 			}
