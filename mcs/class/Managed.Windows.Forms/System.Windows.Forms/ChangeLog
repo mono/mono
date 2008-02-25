@@ -1,5 +1,12 @@
 2008-02-25  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* GridEntry.cs: Use the PropertyDescriptor.PropertyType instead 
+	of GetType on the current value as it uses reflection to 
+	determine the type. This fixes the case where the new value is 
+	null. 
+
+2008-02-25  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* PropertyGridView.cs: Limit mousewheel scrolling to not scroll
 	past the view.
 

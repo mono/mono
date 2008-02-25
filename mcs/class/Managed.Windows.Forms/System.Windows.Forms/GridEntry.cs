@@ -417,19 +417,17 @@ namespace System.Windows.Forms.PropertyGridInternal
 			error = null;
 
 			TypeConverter converter = PropertyDescriptor.Converter;
+			Type valueType = value != null ? value.GetType () : null;
 			// if the new value is not of the same type try to convert it
-			if (value != null && 
-			    (this.Value == null ||
-			     this.Value != null && value.GetType () != this.Value.GetType ())) {
+			if (valueType != this.PropertyDescriptor.PropertyType) {
 				bool conversionError = false;
-				if (converter != null &&
-				    converter.CanConvertFrom (value.GetType ())) {
-					try {
+				try {
+					if (converter != null &&
+					    converter.CanConvertFrom (valueType))
 						value = converter.ConvertFrom (value);
-					} catch {
+					else
 						conversionError = true;
-					}
-				} else {
+				} catch {
 					conversionError = true;
 				}
 				if (conversionError) {
