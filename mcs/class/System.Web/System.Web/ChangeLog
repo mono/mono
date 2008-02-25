@@ -1,5 +1,8 @@
 2008-02-25  Marek Habersack  <mhabersack@novell.com>
 
+	* HttpException.cs: fix a buglet with unfoldable hidden divs which
+	contain the full compiler output and the full source code.
+
 	* HttpContext.cs: correctly set the timeout if the user has
 	specified a timeout which, when converted to milliseconds yields a
 	value larger than one allowed by Timer.Change. This can happen,
