@@ -5,4 +5,5 @@
 class Test
 {
 	int? i;
+	static void Main () {}
 }

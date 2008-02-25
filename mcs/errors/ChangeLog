@@ -1,3 +1,7 @@
+2008-02-25  Raja R Harinath  <harinath@hurrynot.org>
+
+	* gcs1644-10.cs: Remove spurious error message.
+
 2008-02-17  Raja R Harinath  <harinath@hurrynot.org>
 
 	* Makefile: Enable testing net_2_1 profile.
