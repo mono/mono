@@ -1,3 +1,8 @@
+2008-02-25  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* PropertyGridView.cs: Limit mousewheel scrolling to not scroll
+	past the view.
+
 2008-02-24  Luke Page  <luke.a.page@gmail.com>
 
 	* Line.cs, TextControl.cs: Implement offset x and y so that a
