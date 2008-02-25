@@ -1135,7 +1135,7 @@ namespace Mono.Cecil {
 				return br.ReadSingle ();
 			case ElementType.R8 :
 				return br.ReadDouble ();
-			case ElementType.Object: // illegal, but in some cases the vb compiler emits that
+			case ElementType.Object: // illegal, but foundable
 				return null;
 			default :
 				throw new ReflectionException ("Non valid element in constant table");
