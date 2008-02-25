@@ -376,7 +376,7 @@ namespace System.Web {
 		public int ScriptTimeout {
 			get { return (int) context.ConfigTimeout.TotalSeconds; }
 			[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Medium)]
-			set { context.ConfigTimeout = new TimeSpan (0, 0, value); }
+			set { context.ConfigTimeout = TimeSpan.FromSeconds (value); }
 		}
 	}
 }
