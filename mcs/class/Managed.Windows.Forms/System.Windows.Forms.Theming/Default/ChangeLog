@@ -1,3 +1,8 @@
+2008-02-25  Jonathan Pobst  <monkey@jpobst.com>
+
+	* LabelPainter.cs: Take Padding into account when drawing
+	the label text.
+
 2008-01-23  Everaldo Canuto  <ecanuto@novell.com>
 
 	* LabelPainter.cs: Added.
