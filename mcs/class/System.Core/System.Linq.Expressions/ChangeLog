@@ -1,5 +1,9 @@
 2008-02-25  Jb Evain  <jbevain@novell.com>
 
+	* NewExpression.cs (Emit): deal with value types construction.
+
+2008-02-25  Jb Evain  <jbevain@novell.com>
+
 	* Expression.cs, NewExpression.cs: deal with the fact that value types
 	don't have a parameterless constructor.
 

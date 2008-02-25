@@ -68,15 +68,29 @@ namespace System.Linq.Expressions {
 		internal override void Emit (EmitContext ec)
 		{
 			var ig = ec.ig;
+			var type = this.Type;
 
 			bool is_value_type = this.Type.IsValueType;
-			if (is_value_type)
-				throw new NotImplementedException ();
+			LocalBuilder local = null;
+			if (is_value_type) {
+				local = ig.DeclareLocal (type);
+				ig.Emit (OpCodes.Ldloca, local);
+
+				if (constructor == null) {
+					ig.Emit (OpCodes.Initobj, type);
+					ig.Emit (OpCodes.Ldloc, local);
+					return;
+				}
+			}
 
 			foreach (var arg in arguments)
 				arg.Emit (ec);
 
-			ig.Emit (OpCodes.Newobj, constructor ?? GetDefaultConstructor (this.Type));
+			if (is_value_type) {
+				ig.Emit (OpCodes.Call, constructor);
+				ig.Emit (OpCodes.Ldloc, local);
+			} else
+				ig.Emit (OpCodes.Newobj, constructor ?? GetDefaultConstructor (this.Type));
 		}
 
 		static ConstructorInfo GetDefaultConstructor (Type type)
