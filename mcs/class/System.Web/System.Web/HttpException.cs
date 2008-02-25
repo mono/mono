@@ -356,12 +356,12 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 					StringBuilder sb = new StringBuilder ();
 					foreach (string s in output)
 						sb.Append (s + "\r\n");
-					WriteExpandableBlock (builder, "Show Detailed Compiler Output", sb.ToString ());
+					WriteExpandableBlock (builder, "compilerOutput", "Show Detailed Compiler Output", sb.ToString ());
 				}
 			}
 			
 			if (longCodeVersion != null && longCodeVersion.Length > 0) {
-				WriteExpandableBlock (builder, "Show Complete Compilation Source", longCodeVersion.ToString ());
+				WriteExpandableBlock (builder, "fullCode", "Show Complete Compilation Source", longCodeVersion.ToString ());
 				needToggleJS = true;
 			}
 
@@ -384,11 +384,11 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 			return builder.ToString ();
 		}
 
-		static void WriteExpandableBlock (StringBuilder builder, string title, string contents)
+		static void WriteExpandableBlock (StringBuilder builder, string id, string title, string contents)
 		{
-			builder.AppendFormat ("<br><div class=\"expandable\" onclick=\"ToggleVisible ('fullCode')\">{0}:</div><br/>" +
-					      "<div id=\"fullCode\" style=\"display: none\"><table summary=\"Details\" class=\"sampleCode\"><tr><td>" +
-					      "<code><pre>\r\n", title);
+			builder.AppendFormat ("<br><div class=\"expandable\" onclick=\"ToggleVisible ('{1}')\">{0}:</div><br/>" +
+					      "<div id=\"{1}\" style=\"display: none\"><table summary=\"Details\" class=\"sampleCode\"><tr><td>" +
+					      "<code><pre>\r\n", title, id);
 			builder.Append (contents);
 			builder.Append ("</pre></code></td></tr></table></div>");
 		}
