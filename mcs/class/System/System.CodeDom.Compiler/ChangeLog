@@ -1,3 +1,7 @@
+2008-02-26  Marek Habersack  <mhabersack@novell.com>
+
+	* CompilerResults.cs: Output can be set internally.
+
 2008-02-10  Juraj Skripsky  <js@hotfeet.ch>
 
 	* CodeGenerator.cs: Mark CurrentClass internal for NET_1_1.

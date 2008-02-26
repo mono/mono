@@ -105,6 +105,9 @@ namespace System.CodeDom.Compiler {
 					output = new StringCollection();
 				return output;
 			}
+			internal set {
+				output = value;
+			}
 		}
 
 		public string PathToAssembly {

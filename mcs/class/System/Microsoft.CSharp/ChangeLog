@@ -1,3 +1,8 @@
+2008-02-26  Marek Habersack  <mhabersack@novell.com>
+
+	* CSharpCodeCompiler.cs: CompilerResults.Output can now be set
+	internally.
+
 2008-02-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CSharpCodeCompiler.cs : build fix.
