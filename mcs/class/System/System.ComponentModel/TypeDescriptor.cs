@@ -861,7 +861,7 @@ public sealed class TypeDescriptor
 		}
 	}
 	
-	internal static Type GetTypeFromName (IComponent component, string typeName)
+	private static Type GetTypeFromName (IComponent component, string typeName)
 	{
 		Type type = null;
 		if (component != null && component.Site != null) {

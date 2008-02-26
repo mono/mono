@@ -4,6 +4,16 @@
 
 2008-02-26  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* PropertyDescriptor.cs: 
+	 - Implement CreateInstance and GetTypeFromName
+	 and refactor GetEditor and Converter use them.
+	 - Drop TypeDescriptor.GetTypeFromName as we also want to check the
+	 ComponentType assembly, which it doesn't do.
+	* TypeDescriptor.cs: Make GetTypeFromName private as it is no longer
+	used from the outside.
+
+2008-02-26  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* ReflectionPropertyDescriptor.cs: Use Attribute.GetCustomAttributes
 	instead of PropertyInfo.GetCustomAttributes as the latter will not 
 	retrieve inherited attributes.

@@ -21,6 +21,10 @@ using NUnit.Framework;
 
 namespace MonoTests.System.ComponentModel
 {
+	internal class MyVersionTypeConverter : TypeConverter
+	{
+	}
+
 	[TestFixture]
 	public class PropertyDescriptorTests
 	{
@@ -353,6 +357,60 @@ namespace MonoTests.System.ComponentModel
 			}
 		}
 
+		class Converter_test
+		{
+			public virtual Version NoConverter {
+				get { return null; }
+			}
+
+			[TypeConverter (typeof(MyVersionTypeConverter))]
+			public virtual Version WithConverter {
+				get { return null; }
+			}
+
+			[TypeConverter ("MonoTests.System.ComponentModel.MyVersionTypeConverter")]
+			public virtual Version WithConverterNamed {
+				get { return null; }
+			}
+
+			[TypeConverter("System.ComponentModel.CharConverter, " + Consts.AssemblySystem)]
+			public virtual Version WithConverterNamedAssmQuald {
+				get { return null; }
+			}
+
+			public int WithDefaultConverter {
+				get { return 0; }
+			}
+		}
+                
+		class ConverterSubclassNotOverridenProperties_test : Converter_test
+		{ 
+		}
+		
+		class ConverterSubclassOverridenProperties_test : Converter_test
+		{
+			public override Version WithConverter {
+				get { return null; }
+			}
+
+			public override Version WithConverterNamed {
+				get { return null; }
+			}
+		}
+
+		class ConverterEmptyConvertersOnOveriddenProperties : Converter_test
+		{
+			[TypeConverter]
+			public override Version WithConverter {
+				get { return null; }
+			}
+
+			[TypeConverter]
+			public override Version WithConverterNamed {
+				get { return null; }
+			}
+		}
+		
 		private ArrayList _invokedHandlers;
 
 		[SetUp]
@@ -411,6 +469,54 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreEqual (typeof (TypeConverter), p1.Converter.GetType (), "1");
 			Assert.AreEqual (typeof (Int32Converter), p2.Converter.GetType (), "2");
 			Assert.AreEqual (typeof (StringConverter), p3.Converter.GetType (), "3");
+		}
+
+		[Test]
+		public void ConverterTest ()
+		{
+			Assert.AreEqual (typeof (TypeConverter), 
+					 TypeDescriptor.GetProperties (typeof (Converter_test))["NoConverter"].Converter.GetType (), "#1");
+			Assert.AreEqual (typeof (MyVersionTypeConverter), 
+					 TypeDescriptor.GetProperties (typeof (Converter_test))["WithConverter"].Converter.GetType (), "#2");
+			Assert.AreEqual (typeof (MyVersionTypeConverter), 
+					 TypeDescriptor.GetProperties (typeof (Converter_test))["WithConverterNamed"].Converter.GetType (), "#3");
+			Assert.AreEqual (typeof (CharConverter), 
+					 TypeDescriptor.GetProperties (typeof (Converter_test))["WithConverterNamedAssmQuald"].Converter.GetType (), "#4");
+			Assert.AreEqual (typeof (Int32Converter), 
+					 TypeDescriptor.GetProperties (typeof (Converter_test))["WithDefaultConverter"].Converter.GetType (), "#5");
+
+			Assert.AreEqual (typeof (TypeConverter), 
+					 TypeDescriptor.GetProperties (typeof (ConverterSubclassNotOverridenProperties_test))["NoConverter"].Converter.GetType (), "#6");
+			Assert.AreEqual (typeof (MyVersionTypeConverter), 
+					 TypeDescriptor.GetProperties (typeof (ConverterSubclassNotOverridenProperties_test))["WithConverter"].Converter.GetType (), "#7");
+			Assert.AreEqual (typeof (MyVersionTypeConverter), 
+					 TypeDescriptor.GetProperties (typeof (ConverterSubclassNotOverridenProperties_test))["WithConverterNamed"].Converter.GetType (), "#8");
+			Assert.AreEqual (typeof (CharConverter), 
+					 TypeDescriptor.GetProperties (typeof (ConverterSubclassNotOverridenProperties_test))["WithConverterNamedAssmQuald"].Converter.GetType (), "#9");
+			Assert.AreEqual (typeof (Int32Converter), 
+					 TypeDescriptor.GetProperties (typeof (ConverterSubclassNotOverridenProperties_test))["WithDefaultConverter"].Converter.GetType (), "#10");
+
+			Assert.AreEqual (typeof (TypeConverter), 
+					 TypeDescriptor.GetProperties (typeof (ConverterSubclassOverridenProperties_test))["NoConverter"].Converter.GetType (), "#11");
+			Assert.AreEqual (typeof (MyVersionTypeConverter), 
+					 TypeDescriptor.GetProperties (typeof (ConverterSubclassOverridenProperties_test))["WithConverter"].Converter.GetType (), "#12");
+			Assert.AreEqual (typeof (MyVersionTypeConverter), 
+					 TypeDescriptor.GetProperties (typeof (ConverterSubclassOverridenProperties_test))["WithConverterNamed"].Converter.GetType (), "#13");
+			Assert.AreEqual (typeof (CharConverter), 
+					 TypeDescriptor.GetProperties (typeof (ConverterSubclassOverridenProperties_test))["WithConverterNamedAssmQuald"].Converter.GetType (), "#14");
+			Assert.AreEqual (typeof (Int32Converter), 
+					 TypeDescriptor.GetProperties (typeof (ConverterSubclassOverridenProperties_test))["WithDefaultConverter"].Converter.GetType (), "#15");
+
+			Assert.AreEqual (typeof (TypeConverter), 
+					 TypeDescriptor.GetProperties (typeof (ConverterEmptyConvertersOnOveriddenProperties))["NoConverter"].Converter.GetType (), "#116");
+			Assert.AreEqual (typeof (TypeConverter), 
+					 TypeDescriptor.GetProperties (typeof (ConverterEmptyConvertersOnOveriddenProperties))["WithConverter"].Converter.GetType (), "#17");
+			Assert.AreEqual (typeof (TypeConverter), 
+					 TypeDescriptor.GetProperties (typeof (ConverterEmptyConvertersOnOveriddenProperties))["WithConverterNamed"].Converter.GetType (), "#18");
+			Assert.AreEqual (typeof (CharConverter), 
+					 TypeDescriptor.GetProperties (typeof (ConverterEmptyConvertersOnOveriddenProperties))["WithConverterNamedAssmQuald"].Converter.GetType (), "#19");
+			Assert.AreEqual (typeof (Int32Converter), 
+					 TypeDescriptor.GetProperties (typeof (ConverterEmptyConvertersOnOveriddenProperties))["WithDefaultConverter"].Converter.GetType (), "#20");
 		}
 
 		[Test]

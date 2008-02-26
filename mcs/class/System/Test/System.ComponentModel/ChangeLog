@@ -1,3 +1,9 @@
+2008-02-26  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* PropertyDescriptorTests.cs: Add Converter tests. Based on a 
+	patch by Andy Hume <andyhume32@yahoo.co.uk> under the MIT/X11 
+	license.
+
 2008-02-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CharConverterTest.cs: Fixed test to pass on MS.
