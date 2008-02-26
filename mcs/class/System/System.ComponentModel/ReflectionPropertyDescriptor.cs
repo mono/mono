@@ -54,7 +54,7 @@ namespace System.ComponentModel
 		}
 
 		public ReflectionPropertyDescriptor (PropertyInfo info)
-		: base (info.Name, (Attribute[])info.GetCustomAttributes (true))
+		: base (info.Name, Attribute.GetCustomAttributes (info, true))
 		{
 			_member = info;
 			_componentType = _member.DeclaringType;

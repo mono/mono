@@ -1,3 +1,10 @@
+2008-02-26  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* ReflectionPropertyDescriptor.cs: Use Attribute.GetCustomAttributes
+	instead of PropertyInfo.GetCustomAttributes as the latter will not 
+	retrieve inherited attributes.
+	[Fixes bug #322464]
+
 2008-02-17  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CharConverter.cs (ConvertFrom): Avoid NRE when value is null.
