@@ -1,3 +1,7 @@
+2008-02-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* static-constructor.cs thread5.cs: Fix these so they works on the 2.0 profile too.
+
 2008-02-25  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* call_missing_method.il
