@@ -253,7 +253,9 @@ namespace Mono.CSharp
 			if (sc.Count > 0) {
 				sc.Insert (0, Environment.NewLine);
 				sc.Insert (0, mcs.StartInfo.FileName + " " + mcs.StartInfo.Arguments);
-				results.Output = sc;
+				results.Output.Clear ();
+				foreach (string s in sc)
+					results.Output.Add (s);
 			}
 			
 			if (loadIt) {
