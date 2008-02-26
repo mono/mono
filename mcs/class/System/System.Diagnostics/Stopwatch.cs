@@ -34,48 +34,24 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 namespace System.Diagnostics
 {
 	public class Stopwatch
 	{
-		[DllImport ("kernel32.dll")]
-		static extern bool QueryPerformanceCounter (out long performance_count);
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern long GetTimestamp ();
 
-		[DllImport ("kernel32.dll")]
-		static extern bool QueryPerformanceFrequency (out long frequency);
+		public static readonly long Frequency = 10000000;
 
-		public static readonly long Frequency;
-
-		public static readonly bool IsHighResolution;
-
-		public static long GetTimestamp ()
-		{
-			if (IsHighResolution) {
-				long performance_count;
-				QueryPerformanceCounter (out performance_count);
-				return performance_count;
-			}
-			else
-				return DateTime.Now.Ticks;
-		}
+		public static readonly bool IsHighResolution = true;
 
 		public static Stopwatch StartNew ()
 		{
 			Stopwatch s = new Stopwatch ();
 			s.Start ();
 			return s;
-		}
-
-		static Stopwatch ()
-		{
-			Frequency = TimeSpan.TicksPerSecond;
-			IsHighResolution = false;
-			int platform = (int) Environment.OSVersion.Platform;
-			if ((platform != 4) && (platform != 128)) {
-				// try to use high performance timer on Windows.
-				IsHighResolution = QueryPerformanceFrequency (out Frequency);
-			}
 		}
 
 		public Stopwatch ()
