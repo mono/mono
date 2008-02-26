@@ -1,3 +1,9 @@
+2008-02-25  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Binding.cs: Actually implement 2.0 NullValue property. Also
+	when changing the formatting related properties, only update the state
+	if formatting_enabled is true (we don't mind otherwise).
+
 2008-02-25  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStrip.cs: Don't raise ItemClicked for disabled items.

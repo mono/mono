@@ -53,7 +53,7 @@ namespace System.Windows.Forms {
 		private DataSourceUpdateMode datasource_update_mode;
 		private ControlUpdateMode control_update_mode;
 		private object datasource_null_value;
-		//private object null_value;
+		private object null_value;
 		private IFormatProvider format_info;
 		private string format_string;
 		private bool formatting_enabled;
@@ -92,7 +92,7 @@ namespace System.Windows.Forms {
 			data_member = dataMember;
 			binding_member_info = new BindingMemberInfo (dataMember);
 			datasource_update_mode = dataSourceUpdateMode;
-			//null_value = nullValue;
+			null_value = nullValue;
 			format_string = formatString;
 			format_info = formatInfo;
 
@@ -205,7 +205,8 @@ namespace System.Windows.Forms {
 					return;
 
 				format_info = value;
-				PushData ();
+				if (formatting_enabled)
+					PushData ();
 			}
 		}
 
@@ -221,7 +222,8 @@ namespace System.Windows.Forms {
 					return;
 
 				format_string = value;
-				PushData ();
+				if (formatting_enabled)
+					PushData ();
 			}
 		}
 #endif
@@ -236,10 +238,15 @@ namespace System.Windows.Forms {
 		[DefaultValue (null)]
 		public object NullValue {
 			get {
-				throw new NotImplementedException ();
+				return null_value;
 			}
 			set {
-				throw new NotImplementedException ();
+				if (value == null_value)
+					return;
+
+				null_value = value;
+				if (formatting_enabled)
+					PushData ();
 			}
 		}
 #endif
@@ -531,14 +538,20 @@ namespace System.Windows.Forms {
 			if (data_type.IsInstanceOfType (e.Value))
 				return e.Value;
 
-			if (e.Value == null && data_type == typeof (object))
-				return Convert.DBNull;
 #if NET_2_0
-			if (formatting_enabled && e.Value is IFormattable && data_type == typeof (string)) {
-				IFormattable formattable = (IFormattable) e.Value;
-				return formattable.ToString (format_string, format_info);
+			if (formatting_enabled) {
+				if (e.Value == null || e.Value == Convert.DBNull) {
+					return null_value;
+				}
+				
+				if (e.Value is IFormattable && data_type == typeof (string)) {
+					IFormattable formattable = (IFormattable) e.Value;
+					return formattable.ToString (format_string, format_info);
+				}
 			}
 #endif
+			if (e.Value == null && data_type == typeof (object))
+				return Convert.DBNull;
 
 			return ConvertData (data, data_type);
 		}
