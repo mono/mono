@@ -1,4 +1,10 @@
 
+Tue Feb 26 17:46:32 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* monitor.c, threads.c, threadpool.c: replace the use of GetTickCount ()
+	with mono_msec_ticks () which is monotonic and doesn't cause bugs when
+	the system time is adjusted.
+
 Tue Feb 26 17:40:10 CET 2008 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c, icall-def.h: use the new time functions (fixes the
