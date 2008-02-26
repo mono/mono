@@ -68,7 +68,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")] // need for a better method finder.
 		public void StaticMethod ()
 		{
 			Expression.Call (typeof (MemberClass), "StaticMethod", null, Expression.Constant (1));
@@ -77,8 +76,7 @@ namespace MonoTests.System.Linq.Expressions {
 		//[Test]
 		public void StaticGenericMethod ()
 		{
-			MemberClass.StaticGenericMethod(1);
-			Expression.Call (typeof (MemberClass), "StaticGenericMethod", new Type [1] { typeof (int) }, Expression.Constant (1));
+			Expression.Call (typeof (MemberClass), "StaticGenericMethod", new [] { typeof (int) }, Expression.Constant (1));
 		}
 
 		[Test]
