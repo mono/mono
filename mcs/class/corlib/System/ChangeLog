@@ -1,3 +1,8 @@
+
+Tue Feb 26 17:50:17 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* DateTime.cs: instroduce a method that returns ticks monotonically.
+
 2008-02-26  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* Attribute.cs, MonoCustomAttrs: MS ignores the inherit param in 

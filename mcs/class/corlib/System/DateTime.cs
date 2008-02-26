@@ -457,6 +457,9 @@ namespace System
 		}
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern long GetTimeMonotonic ();
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern long GetNow ();
 
 		//
