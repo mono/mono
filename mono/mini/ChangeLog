@@ -1,3 +1,9 @@
+2008-02-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am: Use gmcs for compiling the regression tests.
+
+	* *.2.cs *.2.il: Rename to *.cs and *.il.
+
 2008-02-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* regalloc.h: Make the vassign array smaller.
