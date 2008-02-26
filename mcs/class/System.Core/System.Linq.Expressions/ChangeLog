@@ -1,3 +1,8 @@
+2008-02-26  Jb Evain  <jbevain@novell.com>
+
+	* Expression.cs (Call): Guess the parameters type from the argument
+	types if needed.
+
 2008-02-25  Jb Evain  <jbevain@novell.com>
 
 	* NewExpression.cs (Emit): deal with value types construction.

@@ -942,15 +942,14 @@ namespace System.Linq.Expressions {
 				throw new ArgumentNullException ("methodName");
 
 			if (typeArguments == null)
-				typeArguments = new Type [0];
+				typeArguments = (from arg in arguments select arg.Type).ToArray ();
 
 			var method = instance.Type.GetMethod (methodName, AllInstance, null, typeArguments, null);
 			if (method == null)
 				throw new InvalidOperationException ("No such method");
 
 			var args = arguments.ToReadOnlyCollection ();
-			if (typeArguments.Length != args.Count)
-				throw new InvalidOperationException ("Argument count doesn't match parameters length");
+			CheckMethodArguments (method, args);
 
 			return new MethodCallExpression (instance, method, args);
 		}
@@ -963,15 +962,14 @@ namespace System.Linq.Expressions {
 				throw new ArgumentNullException ("methodName");
 
 			if (typeArguments == null)
-				typeArguments = new Type [0];
+				typeArguments = (from arg in arguments select arg.Type).ToArray ();
 
 			var method = type.GetMethod (methodName, AllStatic, null, typeArguments, null);
 			if (method == null)
 				throw new InvalidOperationException ("No such method");
 
 			var args = arguments.ToReadOnlyCollection ();
-			if (typeArguments.Length != args.Count)
-				throw new InvalidOperationException ("Argument count doesn't match parameters length");
+			CheckMethodArguments (method, args);
 
 			return new MethodCallExpression (method, args);
 		}
