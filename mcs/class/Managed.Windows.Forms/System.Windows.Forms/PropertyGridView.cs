@@ -926,7 +926,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			Invalidate (new Rectangle (0, item.Top, Width, Height - item.Top));
 		}
 
-		private void ShowDropDownControl (Control control, bool block) 
+		private void ShowDropDownControl (Control control) 
 		{
 			Object	queue_id;
 
@@ -949,31 +949,9 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			if (dropdown_form.Location != location) {
 				dropdown_form.Location = location;
 			}
-			if (block) {
-				System.Windows.Forms.MSG msg = new MSG ();
-				queue_id = XplatUI.StartLoop (Thread.CurrentThread);
-				while (dropdown_form.Visible && XplatUI.GetMessage (queue_id, ref msg, IntPtr.Zero, 0, 0)) {
-					switch (msg.message) {
-						case Msg.WM_NCLBUTTONDOWN:
-					    case Msg.WM_NCMBUTTONDOWN:
-					    case Msg.WM_NCRBUTTONDOWN:
-					    case Msg.WM_LBUTTONDOWN:
-					    case Msg.WM_MBUTTONDOWN:
-					    case Msg.WM_RBUTTONDOWN:
-					    	if (!HwndInControl (dropdown_form, msg.hwnd))
-								CloseDropDown ();
-						break;
-						case Msg.WM_ACTIVATE:
-						case Msg.WM_NCPAINT:
-					 		if (owner.window.Handle == msg.hwnd)
-								CloseDropDown ();
-						break;						
-					}
-					XplatUI.TranslateMessage (ref msg);
-					XplatUI.DispatchMessage (ref msg);
-				}
-				XplatUI.EndLoop (Thread.CurrentThread);			
-			}
+
+			DropDownMessageFilter d = new DropDownMessageFilter (owner, this, dropdown_form);
+			Application.AddMessageFilter (d);
 		}
 
 		private void RepositionInScreenWorkingArea (Form form)
@@ -1017,7 +995,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		}
 
 		public void DropDownControl (Control control) {
-			ShowDropDownControl (control, true);
+			ShowDropDownControl (control);
 		}
 
 		public System.Windows.Forms.DialogResult ShowDialog (Form dialog) {
@@ -1039,6 +1017,51 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				}
 			}
 
+		}
+
+		private class DropDownMessageFilter : IMessageFilter
+		{
+			PropertyGridView owner;
+			Form topOwner;
+			PropertyGridDropDown dropdown;
+
+			public DropDownMessageFilter (Form topowner, PropertyGridView owner, PropertyGridDropDown dropdown)
+			{
+				this.owner = owner;
+				this.topOwner = topowner;
+				this.dropdown = dropdown;
+			}
+
+			public bool PreFilterMessage (ref Message m)
+			{
+				switch ((Msg)m.Msg) {
+
+					case Msg.WM_NCLBUTTONDOWN:
+					case Msg.WM_NCMBUTTONDOWN:
+					case Msg.WM_NCRBUTTONDOWN:
+					case Msg.WM_LBUTTONDOWN:
+					case Msg.WM_MBUTTONDOWN:
+					case Msg.WM_RBUTTONDOWN:
+						if (!owner.HwndInControl (dropdown, m.HWnd)) {
+							owner.CloseDropDown ();
+							Application.RemoveMessageFilter (this);
+						}
+						break;
+					case Msg.WM_ACTIVATE:
+					case Msg.WM_NCPAINT:
+						if (topOwner.window.Handle == m.HWnd) {
+							owner.CloseDropDown ();
+							Application.RemoveMessageFilter (this);
+						}
+						break;
+					case Msg.WM_KILLFOCUS:
+						owner.CloseDropDown ();
+						Application.RemoveMessageFilter (this);
+						break;
+				}
+				
+				return false;
+			}
 		}
 	}
 }

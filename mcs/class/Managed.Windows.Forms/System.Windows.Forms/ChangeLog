@@ -1,5 +1,10 @@
 2008-02-26  Andreia Gaita  <avidigal@novell.com>
 
+	* PropertyGridView.cs: Use a message filter to check when to 
+	close the dropdown
+
+2008-02-26  Andreia Gaita  <avidigal@novell.com>
+
 	* Application.cs: Change the message_filters loop so a filter 
 	can be removed while looping.
 
