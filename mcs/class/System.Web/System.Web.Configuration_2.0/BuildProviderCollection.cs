@@ -96,7 +96,7 @@ namespace System.Web.Configuration
 		internal System.Web.Compilation.BuildProvider GetProviderForExtension (string extension)
 		{
 			foreach (BuildProvider provider in this) {
-				if (extension != provider.Extension)
+				if (String.Compare (extension, provider.Extension, StringComparison.OrdinalIgnoreCase) != 0)
 					continue;
 				
 				Type type = HttpApplication.LoadType (provider.Type);

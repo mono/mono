@@ -1,3 +1,8 @@
+2008-02-26  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildProviderCollection.cs: be case-insensitive when looking for
+	the extension match.
+
 2008-02-25  Marek Habersack  <mhabersack@novell.com>
 
 	* WebConfigurationManager.cs: hashtable can contain a key with a
