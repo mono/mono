@@ -83,10 +83,14 @@ namespace Mainsoft.Web.Hosting
 		override public void init(ServletConfig config)
 		{
 			base.init(config);
-			InitRuntime (config, this);
+			InitRuntime (config, this, CreateDeserializer ());
 		}
 
-		public static void InitRuntime (ServletConfig config, object evidence) {
+		protected virtual vmw.@internal.io.IObjectsDeserializer CreateDeserializer () {
+			return null;
+		}
+
+		public static void InitRuntime (ServletConfig config, object evidence, vmw.@internal.io.IObjectsDeserializer deserializer) {
 
 			ServletContext context = config.getServletContext ();
 
@@ -118,6 +122,8 @@ namespace Mainsoft.Web.Hosting
 				//servletDomain.SetData (J2EEConsts.CLASS_LOADER, vmw.common.TypeUtils.ToClass (evidence).getClassLoader ());
 				//servletDomain.SetData(J2EEConsts.SERVLET_CONFIG, config);
 				servletDomain.SetData (J2EEConsts.RESOURCE_LOADER, new ServletResourceLoader (context));
+				if (deserializer != null)
+					servletDomain.SetData (J2EEConsts.DESERIALIZER_CONST, deserializer);
 
 				lock (evidence) {
 					if (context.getAttribute (J2EEConsts.APP_DOMAIN) == null)
