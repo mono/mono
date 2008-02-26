@@ -74,9 +74,16 @@ namespace Mono.Cecil.Binary {
 				throw new FileNotFoundException (string.Format ("File '{0}' not found.", fi.FullName), fi.FullName);
 			#endif
 
-			return Read (new Image (fi), new FileStream (
-				fi.FullName, FileMode.Open,
-				FileAccess.Read, FileShare.Read));
+			FileStream stream = null;
+			try {
+				stream = new FileStream (fi.FullName, FileMode.Open, FileAccess.Read, FileShare.Read);
+				return Read (new Image (fi), stream);
+			} catch (Exception e) {
+				if (stream != null)
+					stream.Close ();
+
+				throw new BadImageFormatException ("Invalid PE file", file, e);
+			}
 		}
 
 		public static ImageReader Read (byte [] image)

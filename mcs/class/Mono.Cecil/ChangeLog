@@ -1,3 +1,8 @@
+2008-02-26  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil.Binary/ImageReader.cs:
+		Avoid throwing non desired exceptions.
+
 2008-02-25  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/ReflectionReader.cs:
