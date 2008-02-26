@@ -224,8 +224,15 @@ namespace System.Windows.Forms
 				// If there is no [AssemblyCompany], return the outermost namespace
 				// on Main ()
 				if (company == null || company.Length == 0)
-					if (assembly.EntryPoint != null)
+					if (assembly.EntryPoint != null) {
 						company = assembly.EntryPoint.DeclaringType.Namespace;
+
+						if (company != null) {
+							int firstDot = company.IndexOf ('.');
+							if (firstDot >= 0)
+								company = company.Substring (0, firstDot);
+						}
+					}
 
 				// If that doesn't work, return the name of class containing Main ()
 				if (company == null || company.Length == 0)
@@ -282,16 +289,27 @@ namespace System.Windows.Forms
 					assembly = Assembly.GetCallingAssembly ();
 
 				AssemblyProductAttribute[] attrs = (AssemblyProductAttribute[])
-					assembly.GetCustomAttributes(typeof(AssemblyProductAttribute), true);
+					assembly.GetCustomAttributes (typeof(AssemblyProductAttribute), true);
 
 				if (attrs != null && attrs.Length > 0)
 					name = attrs [0].Product;
 
-				// If there is no [AssemblyProduct], return the name of class
-				// containing Main ()
+				// If there is no [AssemblyProduct], .NET returns the name of 
+				// the innermost namespace and if that fails, resorts to the 
+				// name of the class containing Main ()
 				if (name == null || name.Length == 0)
-					if (assembly.EntryPoint != null)
-						name = assembly.EntryPoint.DeclaringType.FullName;
+					if (assembly.EntryPoint != null) {
+						name = assembly.EntryPoint.DeclaringType.Namespace;
+
+						if (name != null) {
+							int lastDot = name.LastIndexOf ('.');
+							if (lastDot >= 0 && lastDot < name.Length - 1)
+								name = name.Substring (lastDot + 1);
+						}
+
+						if (name == null || name.Length == 0)
+							name = assembly.EntryPoint.DeclaringType.FullName;
+					}
 
 				return name;
 			}
@@ -314,6 +332,18 @@ namespace System.Windows.Forms
 				if (infoVersion != null)
 					version = infoVersion.InformationalVersion;
 					
+				// If [AssemblyFileVersion] is present it is used before 
+				// resorting to 1.0
+				if (version == null || version.Length == 0) {
+					AssemblyFileVersionAttribute fileVersion =
+						Attribute.GetCustomAttribute (assembly,
+						typeof (AssemblyFileVersionAttribute))
+						as AssemblyFileVersionAttribute;
+
+					if (fileVersion != null)
+						version = fileVersion.Version;
+				}
+
 				// If [AssemblyInformationalVersion] is not present, it
 				// seems 1.0.0.0 is always returned, despite the documentation
 				if (version == null || version.Length == 0)
