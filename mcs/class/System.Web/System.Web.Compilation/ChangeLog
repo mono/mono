@@ -1,3 +1,8 @@
+2008-02-26  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: known file types extensions are now matched
+	case-insensitively.
+
 2008-02-25  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: GetContainerType now checks whether

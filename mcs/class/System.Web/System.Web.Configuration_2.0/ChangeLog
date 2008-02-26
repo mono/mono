@@ -1,3 +1,8 @@
+2008-02-26  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildProviderCollection.cs: be case-insensitive when looking for
+	the extension match.
+
 2008-02-05  Marek Habersack  <mhabersack@novell.com>
 
 	* CompilerCollection.cs: Get (string language) should not use

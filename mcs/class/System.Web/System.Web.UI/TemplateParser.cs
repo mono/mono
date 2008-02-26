@@ -784,7 +784,7 @@ namespace System.Web.UI {
 				ThrowParseException ("Cannot find type " + type);
 
 			if (!DefaultBaseType.IsAssignableFrom (parent))
-				ThrowParseException ("The parent type does not derive from " + DefaultBaseType);
+				ThrowParseException ("The parent type '" + type + "' does not derive from " + DefaultBaseType);
 
 			baseType = parent;
 		}

@@ -235,7 +235,7 @@ namespace System.Web.Compilation {
 
 		static Assembly globalAsaxAssembly;
 		
-		static Dictionary <string, BuildKind> knownFileTypes = new Dictionary <string, BuildKind> () {
+		static Dictionary <string, BuildKind> knownFileTypes = new Dictionary <string, BuildKind> (StringComparer.OrdinalIgnoreCase) {
 			{".aspx", BuildKind.Pages},
 			{".asax", BuildKind.Application},
 			{".ashx", BuildKind.NonPages},
@@ -823,7 +823,7 @@ namespace System.Web.Compilation {
 				Dictionary <string, bool> vpCache = new Dictionary <string, bool> ();
 				List <BuildItem> buildItems = LoadBuildProviders (virtualPath, virtualDir, vpCache, out buildKind, out assemblyBaseName);
 				kindPushed = true;
-				
+
 				if (buildItems.Count == 0)
 					return;
 				
@@ -852,8 +852,12 @@ namespace System.Web.Compilation {
 				foreach (List <AssemblyBuilder> abuilders in assemblyBuilders.Values) {
 					foreach (AssemblyBuilder abuilder in abuilders) {
 						abuilder.AddAssemblyReference (GetReferencedAssemblies () as List <Assembly>);
-						results = abuilder.BuildAssembly (virtualPath);
-
+						try {
+							results = abuilder.BuildAssembly (virtualPath);
+						} catch (CompilationException ex) {
+							throw new HttpException ("Compilation failed for virtual path '" + virtualPath + "'.", ex);
+						}
+						
 						// No results is not an error - it is possible that the assembly builder contained only .asmx and
 						// .ashx files which had no body, just the directive. In such case, no code unit or code file is added
 						// to the assembly builder and, in effect, no assembly is produced but there are STILL types that need
