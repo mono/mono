@@ -1544,6 +1544,7 @@ namespace System
 					if (s [valuePos] == 'Z') {
 						valuePos++;
 						useutc = true;
+						style |= DateTimeStyles.AdjustToUniversal;
 					}
 					else if (s [valuePos] == '+' || s [valuePos] == '-') {
 						if (tzsign != -1)
