@@ -1,3 +1,10 @@
+
+Tue Feb 26 15:43:26 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* mono-time.c, mono-time.h: new file with the implementation of the
+	time-related routines we need in mono. This includes an hires
+	monotonic clock and a proper monotonic replacement for GetTickCount ().
+
 2008-02-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-membar.h (mono_memory_barrier): Applied patch by Sergey Tikhonov 
