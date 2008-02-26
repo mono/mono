@@ -172,5 +172,26 @@ namespace MonoTests.System.Linq.Expressions {
 			Assert.AreEqual ("foo", ts ("foo"));
 			Assert.AreEqual ("bar", ts ("bar"));
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void CheckTypeArgsIsNotUsedForParameterLookup ()
+		{
+			Expression.Call (GetType (), "EineMethod", new [] { typeof (string), typeof (int) }, "foo".ToConstant (), 2.ToConstant ());
+		}
+
+		public static void EineGenericMethod<X, Y> (string foo, int bar)
+		{
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void CheckTypeArgsIsUsedForGenericArguments ()
+		{
+			var m = Expression.Call (GetType (), "EineGenericMethod", new [] { typeof (string), typeof (int) }, "foo".ToConstant (), 2.ToConstant ());
+			Assert.IsNotNull (m.Method);
+			Assert.AreEqual ("Void EineGenericMethod[String,Int32](System.String, Int32)", m.Method.ToString ());
+		}
 	}
 }
