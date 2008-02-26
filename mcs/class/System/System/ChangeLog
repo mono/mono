@@ -1,8 +1,3 @@
-2008-02-26  Stephane Delcroix  <sdelcroix@novell.com>
-
-	* Uri.cs: check IsHexEncoding on utf8 bytes, not on the string. 
-	Fixes bnc #363320.
-
 2008-02-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Uri.cs : UriParser field blocks serialization.

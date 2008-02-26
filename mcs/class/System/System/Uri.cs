@@ -8,7 +8,6 @@
 //    Ben Maurer (bmaurer@users.sourceforge.net)
 //    Atsushi Enomoto (atsushi@ximian.com)
 //    Sebastien Pouliot  <sebastien@ximian.com>
-//    Stephane Delcroix  <sdelcroix@novell.com>
 //
 // (C) 2001 Garrett Rooney
 // (C) 2003 Ian MacLean
@@ -942,13 +941,12 @@ namespace System {
 
 		public static bool IsHexEncoding (string pattern, int index) 
 		{
-			byte [] data = Encoding.UTF8.GetBytes (pattern);
-			if ((index + 3) > data.Length)
+			if ((index + 3) > pattern.Length)
 				return false;
 
-			return ((data [index++] == '%') &&
-			        IsHexDigit ((char)(data [index++])) &&
-			        IsHexDigit ((char)(data [index])));
+			return ((pattern [index++] == '%') &&
+			        IsHexDigit (pattern [index++]) &&
+			        IsHexDigit (pattern [index]));
 		}
 
 #if NET_2_0
@@ -1096,8 +1094,8 @@ namespace System {
 				{
 					// if ,yes , copy it as is
 					s.Append(c);
-					s.Append((char)(data[++i]));
-					s.Append((char)(data[++i]));
+					s.Append(str[++i]);
+					s.Append(str[++i]);
 					continue;
 				}
 
