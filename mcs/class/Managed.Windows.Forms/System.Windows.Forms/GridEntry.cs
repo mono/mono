@@ -350,8 +350,8 @@ namespace System.Windows.Forms.PropertyGridInternal
 									 this.Value);
 					string error = null;
 					return SetValue (value, out error);
-				} catch (Exception e) {
-					property_grid.ShowError (e.Message + Environment.NewLine + e.StackTrace);
+				} catch { // (Exception e) {
+					// property_grid.ShowError (e.Message + Environment.NewLine + e.StackTrace);
 				}
 			}
 			return false;
@@ -376,15 +376,16 @@ namespace System.Windows.Forms.PropertyGridInternal
 
 			bool success = false;
 			string error = null;
+			object value = this.Value;
 			if (PropertyDescriptor.PropertyType == typeof(bool))
-				success = SetValue (!(bool)this.Value, out error);
+				success = SetValue (!(bool)value, out error);
 			else if (PropertyDescriptor.Converter != null && 
 				 PropertyDescriptor.Converter.GetStandardValuesSupported ()) {
 				TypeConverter.StandardValuesCollection values = 
 					(TypeConverter.StandardValuesCollection) PropertyDescriptor.Converter.GetStandardValues();
 				if (values != null) {
 					for (int i = 0; i < values.Count; i++) {
-						if (this.Value != null && this.Value.Equals (values[i])){
+						if (value != null && value.Equals (values[i])){
 							if (i < values.Count-1)
 								success = SetValue (values[i+1], out error);
 							else

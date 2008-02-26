@@ -771,9 +771,10 @@ namespace System.Windows.Forms.PropertyGridInternal {
 						dropdown_list.BorderStyle = BorderStyle.FixedSingle;
 						int selected_index = 0;
 						int i = 0;
+						string valueText = entry.ValueText;
 						foreach (object obj in std_values) {
 							dropdown_list.Items.Add (obj);
-							if (entry.ValueText != null && entry.ValueText.Equals (obj))
+							if (valueText != null && valueText.Equals (obj))
 								selected_index = i;
 							i++;
 						}
