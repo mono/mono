@@ -1,3 +1,8 @@
+2008-02-26  Andreia Gaita  <avidigal@novell.com>
+
+	* Application.cs: Change the message_filters loop so a filter 
+	can be removed while looping.
+
 2008-02-26  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* GridEntry.cs: Optimization in ToggleValue so that it caches

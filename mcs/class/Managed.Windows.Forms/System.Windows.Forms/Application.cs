@@ -446,11 +446,13 @@ namespace System.Windows.Forms
 #endif
 		static bool FilterMessage (ref Message message)
 		{
-			lock (message_filters)
-				foreach (IMessageFilter filter in message_filters)
+			lock (message_filters) {
+				for (int i = 0; i < message_filters.Count; i++) {
+					IMessageFilter filter = (IMessageFilter) message_filters[i];
 					if (filter.PreFilterMessage (ref message))
 						return true;
-
+				}
+			}
 			return false;
 		}
 		
