@@ -798,7 +798,10 @@ namespace System.Text.RegularExpressions {
 					Console.WriteLine ("Opcode " + op + " not supported.");
 					return null;
 				}
-				case RxOp.String: {
+				case RxOp.String:
+				case RxOp.StringIgnoreCase: {
+					bool ignore = (op == RxOp.StringIgnoreCase);
+
 					start = pc + 2;
 					length = program [pc + 1];
 					//if (strpos + length > string_end)
@@ -832,6 +835,8 @@ namespace System.Text.RegularExpressions {
 						ilgen.Emit (OpCodes.Ldc_I4, i * 2);
 						ilgen.Emit (OpCodes.Add);
 						ilgen.Emit (OpCodes.Ldind_I2);
+						if (ignore)
+							ilgen.Emit (OpCodes.Call, typeof (Char).GetMethod ("ToLower", new Type [] { typeof (char) }));
 						ilgen.Emit (OpCodes.Ldc_I4, (int)program [start + i]);
 						ilgen.Emit (OpCodes.Bne_Un, frame.label_fail);
 					}
@@ -857,6 +862,8 @@ namespace System.Text.RegularExpressions {
 						ilgen.Emit (OpCodes.Ldloc, local_str);
 						ilgen.Emit (OpCodes.Ldarg_1);
 						ilgen.Emit (OpCodes.Callvirt, typeof (string).GetMethod ("get_Chars"));
+						if (ignore)
+							ilgen.Emit (OpCodes.Call, typeof (Char).GetMethod ("ToLower", new Type [] { typeof (char) }));
 						ilgen.Emit (OpCodes.Ldc_I4, (int)program [start]);
 						ilgen.Emit (OpCodes.Bne_Un, frame.label_fail);
 						//strpos++;
