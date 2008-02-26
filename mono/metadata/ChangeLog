@@ -1,5 +1,8 @@
 2008-02-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* reflection.c (mono_custom_attrs_from_builders): Revert the last change as
+	it breaks the build.
+	
 	* reflection.c (mono_custom_attrs_from_builders): Assert instead of a crash if the
 	cattr is not finished yet.
 
