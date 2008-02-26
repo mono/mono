@@ -1,3 +1,13 @@
+2008-02-26  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* GridEntry.cs: Optimization in ToggleValue so that it caches
+	the current value.
+	* PropertyGridView.cs: An optimization so that the property isn't 
+	re-read twice for each StandardValue added to the drop-down menu.
+	Patch by Andy Hume <andyhume32@yahoo.co.uk> under the MIT/X11
+	license.
+	[Fixes bug #362755]
+
 2008-02-25  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* GridEntry.cs: Use the PropertyDescriptor.PropertyType instead 
