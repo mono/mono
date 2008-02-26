@@ -11,9 +11,11 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
-using System.Globalization;
-using System.Drawing.Design;
 using System.ComponentModel.Design;
+using System.Drawing.Design;
+using System.Globalization;
+using System.Reflection;
+using System.Runtime.InteropServices;
 
 using NUnit.Framework;
 
@@ -362,6 +364,41 @@ namespace MonoTests.System.ComponentModel
 		void Reset ()
 		{
 			_invokedHandlers.Clear ();
+		}
+
+		[Test]
+		public void Attributes ()
+		{
+			PropertyDescriptorCollection properties;
+			PropertyDescriptor pd;
+
+			properties = TypeDescriptor.GetProperties (typeof (TestBase));
+
+			pd = properties ["PropBase3"];
+			Assert.IsNull (FindAttribute (pd, typeof (DescriptionAttribute)), "#A1");
+			Assert.IsNotNull (FindAttribute (pd, typeof (PropTestAttribute)), "#A2");
+
+			pd = properties ["PropBase2"];
+			Assert.IsNotNull (FindAttribute (pd, typeof (DescriptionAttribute)), "#B1");
+			Assert.IsNotNull (FindAttribute (pd, typeof (PropTestAttribute)), "#B2");
+
+			pd = properties ["PropBase1"];
+			Assert.IsNull (FindAttribute (pd, typeof (DescriptionAttribute)), "#C1");
+			Assert.IsNotNull (FindAttribute (pd, typeof (PropTestAttribute)), "#C2");
+
+			properties = TypeDescriptor.GetProperties (typeof (TestSub));
+
+			pd = properties ["PropBase3"];
+			Assert.IsNull (FindAttribute (pd, typeof (DescriptionAttribute)), "#D1");
+			Assert.IsNotNull (FindAttribute (pd, typeof (PropTestAttribute)), "#D2");
+
+			pd = properties ["PropBase2"];
+			Assert.IsNotNull (FindAttribute (pd, typeof (DescriptionAttribute)), "#E1");
+			Assert.IsNotNull (FindAttribute (pd, typeof (PropTestAttribute)), "#E2");
+
+			pd = properties ["PropBase1"];
+			Assert.IsNull (FindAttribute (pd, typeof (DescriptionAttribute)), "#F1");
+			Assert.IsNotNull (FindAttribute (pd, typeof (PropTestAttribute)), "#F2");
 		}
 
 		[Test]
@@ -873,6 +910,14 @@ namespace MonoTests.System.ComponentModel
 			_invokedHandlers.Add ("ValueChanged2");
 		}
 
+		static Attribute FindAttribute (PropertyDescriptor pd, Type type)
+		{
+			foreach (Attribute attr in pd.Attributes)
+				if (attr.GetType () == type)
+					return attr;
+			return null;
+		}
+
 		class GetEditor_test 
 		{
 			[Editor (typeof (UIEditor), typeof (UITypeEditor))]
@@ -955,6 +1000,62 @@ namespace MonoTests.System.ComponentModel
 				return base.GetValueChangedHandler (component);
 			}
 #endif
+		}
+
+		[AttributeUsage (AttributeTargets.Field | AttributeTargets.Property)]
+		public class PropTestAttribute : Attribute
+		{
+			public PropTestAttribute ()
+			{
+			}
+		}
+
+		public class TestBase
+		{
+			[PropTest]
+			public int PropBase1
+			{
+				get { return 0; }
+				set { }
+			}
+
+			[PropTest]
+			[Description ("whatever")]
+			public string PropBase2
+			{
+				get { return ""; }
+				set { }
+			}
+
+			[PropTest]
+			public virtual string PropBase3
+			{
+				get { return ""; }
+				set { }
+			}
+		}
+
+		public class TestSub : TestBase
+		{
+			[PropTest]
+			public int PropSub1
+			{
+				get { return 0; }
+				set { }
+			}
+
+			[PropTest]
+			public string PropSub2
+			{
+				get { return ""; }
+				set { }
+			}
+
+			public override string PropBase3
+			{
+				get { return ""; }
+				set { }
+			}
 		}
 	}
 }

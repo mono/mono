@@ -89,7 +89,7 @@ namespace MonoTests.System.ComponentModel
 
 			try {
 				converter.ConvertFrom (null, CultureInfo.InvariantCulture,
-					"\ref\n");
+					"\ref \n");
 				Assert.Fail ("#B1");
 			} catch (FormatException ex) {
 				// \ref\n is not a valid value for Char
@@ -97,7 +97,7 @@ namespace MonoTests.System.ComponentModel
 				Assert.IsNull (ex.InnerException, "#B3");
 				Assert.IsNotNull (ex.Message, "#B4");
 				Assert.IsTrue (ex.Message.IndexOf (typeof (char).Name) != -1, "#B5");
-				Assert.IsTrue (ex.Message.IndexOf ("\ref\n") != -1, "#B6");
+				Assert.IsTrue (ex.Message.IndexOf ("ef") != -1, "#B6");
 			}
 		}
 

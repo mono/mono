@@ -53,7 +53,7 @@ namespace System.ComponentModel
 					throw new FormatException (string.Format (
 						"String {0} is not a valid Char: " +
 						"it has to be less than or equal to " +
-						"one char long.", value));
+						"one char long.", char_string));
 				if (char_string.Length == 0)
 					return '\0';
 				return char_string [0];

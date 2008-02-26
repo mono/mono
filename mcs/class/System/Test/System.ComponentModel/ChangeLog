@@ -1,3 +1,8 @@
+2008-02-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CharConverterTest.cs: Fixed test to pass on MS.
+	* PropertyDescriptorTest.cs: Added test for Attributes.
+
 2008-02-17  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CharConverterTest.cs: Added tests for ConvertFrom and ConvertTo.
