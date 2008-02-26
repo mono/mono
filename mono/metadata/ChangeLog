@@ -1,3 +1,9 @@
+
+Tue Feb 26 17:40:10 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c, icall-def.h: use the new time functions (fixes the
+	non-monotonic behaviour of TickCount).
+
 2008-02-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (mono_custom_attrs_from_builders): Revert the last change as
