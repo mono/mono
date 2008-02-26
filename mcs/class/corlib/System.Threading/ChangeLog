@@ -1,4 +1,9 @@
 
+Tue Feb 26 17:51:58 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* Timer.cs: use a monotonic clock to schedule timers
+	(fixes part of bug#347476).
+
 Fri Feb 22 11:23:53 CET 2008 Paolo Molaro <lupus@ximian.com>
 
 	* Thread.cs: implemented Begin/EndCriticalRegion.

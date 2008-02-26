@@ -65,8 +65,7 @@ namespace System.Threading
 
 		static long Ticks ()
 		{
-			/* use a monotonic time value later */
-			return DateTime.UtcNow.Ticks;
+			return DateTime.GetTimeMonotonic ();
 		}
 
 		static private void SchedulerThread ()
