@@ -193,20 +193,23 @@ namespace System.Reflection {
 			else
 				return null;
 		}
-		
+
+		// According to MSDN the inherit parameter is ignored here and
+		// the behavior always defaults to inherit = false
+		//
 		public override bool IsDefined (Type attributeType, bool inherit)
 		{
-			return MonoCustomAttrs.IsDefined (this, attributeType, inherit);
+			return MonoCustomAttrs.IsDefined (this, attributeType, false);
 		}
 
 		public override object[] GetCustomAttributes (bool inherit)
 		{
-			return MonoCustomAttrs.GetCustomAttributes (this, inherit);
+			return MonoCustomAttrs.GetCustomAttributes (this, false);
 		}
 		
 		public override object[] GetCustomAttributes (Type attributeType, bool inherit)
 		{
-			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
+			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, false);
 		}
 
 		public override object GetValue (object obj, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture)

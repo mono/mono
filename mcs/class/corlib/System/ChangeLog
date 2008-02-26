@@ -1,3 +1,12 @@
+2008-02-26  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* Attribute.cs, MonoCustomAttrs: MS ignores the inherit param in 
+	PropertyInfo's ICustomAttributeProvider implementation, but not 
+	in the Attributes, so directly get the attributes from 
+	MonoCustomAttrs instead of going throught the PropertyInfo's 
+	ICustomAttributeProvider.
+	[Fixes bugs #324472 and #322464]
+
 2008-02-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTime.cs : fix roundtrip regression in Sys.Xml.XmlConvertTests,

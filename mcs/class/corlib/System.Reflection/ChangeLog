@@ -1,3 +1,9 @@
+2008-02-26  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* MonoProperty.cs: MS ignores the inherit parameter and defaults to false
+	for GetCustomAttributes.
+	[Fixes bugs #324472 and #322464]
+
 2008-02-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* AssemblyName.cs (ReferenceMatchesDefinition): Add error checking and some 

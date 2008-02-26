@@ -1,3 +1,7 @@
+2008-02-26  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* AttributeTest.cs: Remove NotWorking as we pass those tests now.
+
 2008-02-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeTest.cs : enable Bug3522210() and add new test for the bug,

@@ -129,9 +129,6 @@ namespace MonoTests.System
 		}
 
 		[Test]
-#if NET_2_0
-		[Category ("NotWorking")] // bug #81797
-#endif
 		public void IsDefined_PropertyInfo_Override ()
 		{
 			PropertyInfo pi = typeof (TestSub).GetProperty ("PropBase3");
@@ -218,7 +215,6 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Category ("NotWorking")] // bug #81797
 		public void GetCustomAttribute_PropertyInfo_Override ()
 		{
 			PropertyInfo pi = typeof (TestSub).GetProperty ("PropBase3");
@@ -607,7 +603,6 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Category ("NotWorking")] // bug #81797
 		public void GetCustomAttributes_PropertyInfo_Override ()
 		{
 			object [] attrs;

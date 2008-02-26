@@ -224,6 +224,13 @@ namespace System
 			// element parameter is not allowed to be null
 			CheckParameters (element, type);
 
+			// MS ignores the inherit param in PropertyInfo's ICustomAttributeProvider 
+			// implementation, but not in the Attributes, so directly get the attributes
+			// from MonoCustomAttrs instead of going throught the PropertyInfo's 
+			// ICustomAttributeProvider
+			MemberTypes mtype = element.MemberType;
+			if (mtype == MemberTypes.Property)
+				return (Attribute []) MonoCustomAttrs.GetCustomAttributes (element, type, inherit);
 			return (Attribute []) element.GetCustomAttributes (type, inherit);
 		}
 
@@ -248,6 +255,13 @@ namespace System
 			// element parameter is not allowed to be null
 			CheckParameters (element, typeof (Attribute));
 
+			// MS ignores the inherit param in PropertyInfo's ICustomAttributeProvider 
+			// implementation, but not in the Attributes, so directly get the attributes
+			// from MonoCustomAttrs instead of going throught the PropertyInfo's 
+			// ICustomAttributeProvider
+			MemberTypes mtype = element.MemberType;
+			if (mtype == MemberTypes.Property)
+				return (Attribute []) MonoCustomAttrs.GetCustomAttributes (element, inherit);
 			return (Attribute []) element.GetCustomAttributes (inherit);
 		}
 
@@ -301,7 +315,14 @@ namespace System
 				mtype != MemberTypes.NestedType)
 				throw new NotSupportedException (Locale.GetText (
 					"Element is not a constructor, method, property, event, type or field."));
-
+#if NET_2_0
+			// MS ignores the inherit param in PropertyInfo's ICustomAttributeProvider 
+			// implementation, but not in the Attributes, so directly get the attributes
+			// from MonoCustomAttrs instead of going throught the PropertyInfo's 
+			// ICustomAttributeProvider
+			if (mtype == MemberTypes.Property)
+				return MonoCustomAttrs.IsDefined (element, attributeType, inherit);
+#endif
 			return ((MemberInfo) element).IsDefined (attributeType, inherit);
 		}
 

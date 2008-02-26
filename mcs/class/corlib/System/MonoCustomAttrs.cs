@@ -305,6 +305,31 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern bool IsDefinedInternal (ICustomAttributeProvider obj, Type AttributeType);
 
+		static PropertyInfo GetBasePropertyDefinition (PropertyInfo property)
+		{
+			MethodInfo method = property.GetGetMethod (true);
+			if (method == null || !method.IsVirtual)
+				method = property.GetSetMethod (true);
+			if (method == null || !method.IsVirtual)
+				return null;
+
+			MethodInfo baseMethod = method.GetBaseDefinition ();
+			if (baseMethod != null && baseMethod != method) {
+				ParameterInfo[] parameters = property.GetIndexParameters ();
+				if (parameters != null && parameters.Length > 0) {
+					Type[] paramTypes = new Type[parameters.Length];
+					for (int i=0; i < paramTypes.Length; i++)
+						paramTypes[i] = parameters[i].ParameterType;
+					return baseMethod.DeclaringType.GetProperty (property.Name, property.PropertyType, 
+										     paramTypes);
+				} else {
+					return baseMethod.DeclaringType.GetProperty (property.Name, property.PropertyType);
+				}
+			}
+			return null;
+
+		}
+
 		// Handles Type, MonoProperty and MonoMethod.
 		// The runtime has also cases for MonoEvent, MonoField, Assembly and ParameterInfo,
 		// but for those we return null here.
@@ -318,25 +343,9 @@ namespace System
 
 			MethodInfo method = null;
 			if (obj is MonoProperty)
-			{
-				MonoProperty prop = (MonoProperty) obj;
-				method = prop.GetGetMethod (true);
-				if (method == null)
-					method = prop.GetSetMethod (true);
-/*
-				MonoProperty prop = (MonoProperty) obj;
-				if (prop.DeclaringType.BaseType != null) {
-					PropertyInfo baseProp = prop.DeclaringType.BaseType.GetProperty (prop.Name);
-					if (baseProp != prop)
-						return baseProp;
-				}
-				return null;
-*/
-			}
+				return GetBasePropertyDefinition ((MonoProperty) obj);
 			else if (obj is MonoMethod)
-			{
 				method = (MethodInfo) obj;
-			}
 
 			/**
 			 * ParameterInfo -> null
