@@ -1,3 +1,8 @@
+2008-02-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (mono_custom_attrs_from_builders): Assert instead of a crash if the
+	cattr is not finished yet.
+
 2008-02-25 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c: Proper token validation for field, method and type.
