@@ -1,3 +1,8 @@
+2008-02-26  Geoff Norton  <gnorton@novell.com>
+	
+	* WindowHandler.cs: Send WM_CLOSE instead of WM_DESTROY.  Fixes 
+	#364281
+
 2008-02-14  Geoff Norton  <gnorton@novell.com>
 
 	* WindowHandler.cs: Ensure we send WM_ACTIVATE when we activate our

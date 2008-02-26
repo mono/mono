@@ -140,7 +140,7 @@ namespace System.Windows.Forms.CarbonInternal {
 						}	
 						break;
 					case kEventWindowClose:
-						NativeWindow.WndProc (hwnd.Handle, Msg.WM_DESTROY, IntPtr.Zero, IntPtr.Zero);
+						NativeWindow.WndProc (hwnd.Handle, Msg.WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
 						return false;
 					case kEventWindowShown: { 
 						msg.message = Msg.WM_SHOWWINDOW;
