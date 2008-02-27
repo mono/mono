@@ -193,5 +193,31 @@ namespace MonoTests.System.Linq.Expressions {
 			Assert.IsNotNull (m.Method);
 			Assert.AreEqual ("Void EineGenericMethod[String,Int32](System.String, Int32)", m.Method.ToString ());
 		}
+
+		public struct EineStrukt {
+
+			public string Foo;
+
+			public EineStrukt (string foo)
+			{
+				Foo = foo;
+			}
+
+			public string GimmeFoo ()
+			{
+				return Foo;
+			}
+		}
+
+		[Test]
+		public void CallMethodOnStruct ()
+		{
+			var param = Expression.Parameter (typeof (EineStrukt), "s");
+			var foo = Expression.Lambda<Func<EineStrukt, string>> (
+				Expression.Call (param, typeof (EineStrukt).GetMethod ("GimmeFoo")), param).Compile ();
+
+			var s = new EineStrukt ("foo");
+			Assert.AreEqual ("foo", foo (s));
+		}
 	}
 }
