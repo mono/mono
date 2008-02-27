@@ -1,5 +1,12 @@
 2008-02-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* BindingTest.cs: Added a new test for 2.0 BindableComponent property
+	- again as not working ;-(. Also add a child class of ToolStripItem to
+	test this property.
+	* ControlBindingsCollectionTest.cs: Likewise.
+
+2008-02-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* BindingTest.cs: Added a new test for 2.0 NullValue property - mark
 	as NotWorking by now ;-(. Also add an assertion for this new property
 	in CtorTest.

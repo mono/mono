@@ -44,6 +44,18 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			c2.DataBindings.Add ("Text", c1, "Text");
 			c2.DataBindings.Add ("Text", c1, "Text");
 		}
+
+#if NET_2_0
+		[Test]
+		public void CtorTest ()
+		{
+			BindableToolStripItem item = new BindableToolStripItem ();
+			ControlBindingsCollection data_bindings = new ControlBindingsCollection (item);
+
+			Assert.AreEqual (item, data_bindings.BindableComponent, "#A1");
+			Assert.AreEqual (null, data_bindings.Control, "#A2");
+		}
+#endif
 	}
 
 }

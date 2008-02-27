@@ -363,6 +363,38 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		public void BindableComponentTest ()
+		{
+			Control c = new Control ();
+
+			MockItem item = new MockItem (String.Empty, 0);
+			Binding binding = new Binding ("Text", item, "Text");
+
+			c.DataBindings.Add (binding);
+			Assert.AreEqual (c, binding.Control, "#A1");
+			Assert.AreEqual (c, binding.BindableComponent, "#A2");
+
+			// 
+			// Now use IBindableComponent - update binding when property changes
+			// since ToolStripItem doesn't have validation at all
+			//
+			BindableToolStripItem toolstrip_item = new BindableToolStripItem ();
+			toolstrip_item.BindingContext = new BindingContext ();
+			Binding binding2 = new Binding ("Text", item, "Text");
+			binding2.DataSourceUpdateMode = DataSourceUpdateMode.OnPropertyChanged;
+
+			item.Text = "A";
+			toolstrip_item.DataBindings.Add (binding2);
+			Assert.AreEqual (null, binding2.Control, "#B1");
+			Assert.AreEqual (toolstrip_item, binding2.BindableComponent, "#B2");
+			Assert.AreEqual (item.Text, toolstrip_item.Text, "#B3");
+
+			toolstrip_item.Text = "B";
+			Assert.AreEqual (toolstrip_item.Text, item.Text, "#C1");
+		}
+
+		[Test]
 		public void ControlUpdateModeTest ()
 		{
 			Control c = new Control ();
@@ -520,5 +552,31 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		}
 	}
 
+#if NET_2_0
+	class BindableToolStripItem : ToolStripItem, IBindableComponent
+	{
+		ControlBindingsCollection data_bindings;
+		BindingContext binding_context;
+
+		public ControlBindingsCollection DataBindings {
+			get {
+				if (data_bindings == null)
+					data_bindings = new ControlBindingsCollection (this);
+
+				return data_bindings;
+			}
+		}
+
+		public BindingContext BindingContext
+		{
+			get {
+				return binding_context;
+			}
+			set {
+				binding_context = value;
+			}
+		}
+	}
+#endif
 }
 
