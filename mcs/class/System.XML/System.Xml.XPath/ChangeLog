@@ -1,3 +1,9 @@
+2008-02-27  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathNavigator.cs : in some MoveTo*() methods, it should allow any
+	  destination node when "type" is XPathNodeType.All. Based on the
+	  patch by Sanghyeon Seo, fixed bug #365112.
+
 2008-02-12  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DefaultContext.cs : now number formatting for "R" works fine, so

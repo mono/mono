@@ -640,6 +640,19 @@ namespace MonoTests.System.Xml
 			AssertEquals ("1", nav.ValueAs (typeof (string), null));
 			AssertEquals (1, nav.ValueAs (typeof (int), null));
 		}
+
+		[Test]
+		public void MoveToFollowingNodeTypeAll ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<root><child/><child2/></root>");
+			XPathNavigator nav = doc.CreateNavigator ();
+			Assert ("#1", nav.MoveToFollowing (XPathNodeType.All));
+			Assert ("#2", nav.MoveToFollowing (XPathNodeType.All));
+			AssertEquals ("#3", "child", nav.LocalName);
+			Assert ("#4", nav.MoveToNext (XPathNodeType.All));
+			AssertEquals ("#5", "child2", nav.LocalName);
+		}
 #endif
 	}
 }

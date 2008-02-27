@@ -737,7 +737,7 @@ namespace System.Xml.XPath
 		{
 			XPathNavigator nav = Clone ();
 			while (nav.MoveToNext ()) {
-				if (nav.NodeType == type) {
+				if (type == XPathNodeType.All || nav.NodeType == type) {
 					MoveTo (nav);
 					return true;
 				}
@@ -823,7 +823,7 @@ namespace System.Xml.XPath
 				}
 				if (end != null && end.IsSamePosition (nav))
 					return false;
-				if (nav.NodeType == type) {
+				if (type == XPathNodeType.All || nav.NodeType == type) {
 					MoveTo (nav);
 					return true;
 				}
