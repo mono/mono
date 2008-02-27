@@ -38,6 +38,8 @@ namespace System.Net
 		protected bool _hasRequest;
 		protected Stream _writeStream;
 		private GHWebAsyncResult _asyncWrite;		
+		private const int DEFAULT_IDLE_CONNECTION_TIMEOUT = 0;
+		private const int DEFAULT_IDLE_THREAD_TIMEOUT = 2;
 
 		private bool _isConnectionOpened;
 		
@@ -478,7 +480,7 @@ namespace System.Net
 				{
 					mainsoft.apache.commons.httpclient.MultiThreadedHttpConnectionManager manager =
 						new mainsoft.apache.commons.httpclient.MultiThreadedHttpConnectionManager();
-					manager.setConnectionStaleCheckingEnabled(false);
+					SetStaleCheckingFromConfig(manager);
 					manager.setMaxTotalConnections(200);
 					//by some reasons RFC something - the default 
 					//value will be 2 , so we need to change it ...
@@ -497,10 +499,59 @@ namespace System.Net
 					schemas.add ("Negotiate");
 					_client.getParams ().setParameter (AuthPolicy.AUTH_SCHEME_PRIORITY, schemas);
 					if (!_disableHttpConnectionPooling) {
+						RunIdleTimeoutThreadIfNeeded(manager);
 						_sclient = _client;
 					}
 				}
 			}
+		}
+
+		private static void SetStaleCheckingFromConfig(MultiThreadedHttpConnectionManager manager)
+		{
+			bool staleCheckingEnable = true;
+			string s = System.Configuration.ConfigurationSettings.AppSettings ["StaleCheckingEnable"];
+			if (s != null) {
+				try {
+					staleCheckingEnable = bool.Parse (s);
+				}
+				catch { }
+			}
+			manager.setConnectionStaleCheckingEnabled (staleCheckingEnable);
+		}
+
+		private static void RunIdleTimeoutThreadIfNeeded(HttpConnectionManager manager)
+		{
+			int socketIdleConnectionTimeout = DEFAULT_IDLE_CONNECTION_TIMEOUT;
+
+			string s = System.Configuration.ConfigurationSettings.AppSettings ["SocketIdleTimeoutInSeconds"];
+			if (s != null) {
+				try {
+					socketIdleConnectionTimeout = Int32.Parse (s) * 1000;
+				}
+				catch { }
+			}
+
+			if (socketIdleConnectionTimeout > 0) {
+				RunIdleTimeoutThread (manager, socketIdleConnectionTimeout);
+			}
+		}
+
+		private static void RunIdleTimeoutThread(HttpConnectionManager manager, int socketIdleConnectionTimeout)
+		{
+			int idleThreadTimeout = DEFAULT_IDLE_THREAD_TIMEOUT;
+			string s = System.Configuration.ConfigurationSettings.AppSettings ["IdleThreadTimeoutInSeconds"];
+			if (s != null) {
+				try {
+					idleThreadTimeout = Int32.Parse (s) * 1000;
+				}
+				catch { }
+			}
+			mainsoft.apache.commons.httpclient.util.IdleConnectionTimeoutThread idleConnectionTimeoutThread =
+				new mainsoft.apache.commons.httpclient.util.IdleConnectionTimeoutThread ();
+			idleConnectionTimeoutThread.addConnectionManager (manager);
+			idleConnectionTimeoutThread.setTimeoutInterval (idleThreadTimeout);
+			idleConnectionTimeoutThread.setConnectionTimeout (socketIdleConnectionTimeout);
+			idleConnectionTimeoutThread.start ();
 		}
 
 		private void InitMethod()
