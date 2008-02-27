@@ -1,3 +1,9 @@
+2008-02-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* BindingTest.cs: Added a new test for 2.0 NullValue property - mark
+	as NotWorking by now ;-(. Also add an assertion for this new property
+	in CtorTest.
+
 2008-02-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* BindingTest.cs: Update ctor test with 2.0 properties, and add new

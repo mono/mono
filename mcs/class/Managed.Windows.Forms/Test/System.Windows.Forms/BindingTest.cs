@@ -66,6 +66,7 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			Assert.AreEqual (false, b.FormattingEnabled, "ctor7");
 			Assert.AreEqual (String.Empty, b.FormatString, "ctor8");
 			Assert.IsNull (b.FormatInfo, "ctor9");
+			Assert.IsNull (b.NullValue, "ctor10");
 #endif
 		}
 
@@ -432,6 +433,34 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			c.Tag = null;
 			binding.WriteValue ();
 			Assert.AreEqual (item.ObjectValue, "NonNull", "#B1");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void NullValueTest ()
+		{
+			Control c = new Control ();
+			c.BindingContext = new BindingContext ();
+			c.CreateControl ();
+
+			DataTable table = new DataTable ();
+			table.Columns.Add ("Name", typeof (string));
+			table.Columns.Add ("Id", typeof (int));
+			table.Rows.Add (null, DBNull.Value);
+
+			Binding binding = new Binding ("Tag", table, "Name");
+			Binding binding2 = new Binding ("Width", table, "Id");
+			binding.FormattingEnabled = true;
+			binding.NullValue = "non-null";
+			binding2.FormattingEnabled = true;
+			binding2.NullValue = 101;
+
+			c.Width = 99;
+			c.DataBindings.Add (binding);
+			c.DataBindings.Add (binding2);
+
+			Assert.AreEqual ("non-null", c.Tag, "#A1");
+			Assert.AreEqual (101, c.Width, "#A2");
 		}
 
 		[Test]
