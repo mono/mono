@@ -1,5 +1,7 @@
 2008-02-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-mips.c: Use cfg->vret_addr instead of cfg->ret.
+
 	* mini-s390x.c: Use cfg->vret_addr instead of cfg->ret.
 
 	* mini-s390.c: Use cfg->vret_addr instead of cfg->ret.
