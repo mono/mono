@@ -343,7 +343,7 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 			WriteFileTop (builder, exc.Title);
 			builder.AppendFormat ("<h2><em>{0}</em></h2>\r\n", exc.Title);
 			builder.AppendFormat ("<p><strong>Description: </strong>{0}\r\n</p>\r\n", HtmlEncode (exc.Description));
-			string errorMessage = HtmlEncode (exc.ErrorMessage).Replace ("\n", "<br/>");
+			string errorMessage = HtmlEncode (exc.ErrorMessage);
 			
 			builder.Append ("<p><strong>");
 			if (isParseException)
@@ -351,7 +351,12 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 			else if (isCompileException)
 				builder.Append ("Compiler ");
 			
-			builder.AppendFormat ("Error Message: </strong>{0}</p>", errorMessage);
+			builder.Append ("Error Message: </strong>");
+#if NET_2_0
+			builder.AppendFormat ("<code>{0}</code></p>", errorMessage);
+#else
+			builder.AppendFormat ("<blockquote><pre>{0}</pre></blockquote></p>", errorMessage);
+#endif
 
 			StringBuilder longCodeVersion = null;
 			
