@@ -207,18 +207,31 @@ namespace System.Windows.Forms {
 		{
 			Size retsize = Size.Empty;
 
+			// Add up the requested sizes for Docked controls
 			foreach (Control child in Controls) {
-				if (child.Dock == DockStyle.Fill) {
-					if (child.Bounds.Right > retsize.Width)
-						retsize.Width = child.Bounds.Right;
-				} else if (child.Dock != DockStyle.Top && child.Dock != DockStyle.Bottom && (child.Anchor & AnchorStyles.Right) == 0 && (child.Bounds.Right + child.Margin.Right) > retsize.Width)
-					retsize.Width = child.Bounds.Right + child.Margin.Right;
+				if (!child.is_visible)
+					continue;
+					
+				if (child.Dock == DockStyle.Left || child.Dock == DockStyle.Right)
+					retsize.Width += child.PreferredSize.Width;
+				else if (child.Dock == DockStyle.Top || child.Dock == DockStyle.Bottom)
+					retsize.Height += child.PreferredSize.Height;	
+			}
+			
+			// See if any non-Docked control is positioned lower or more right than our size
+			foreach (Control child in Controls) {
+				if (!child.is_visible)
+					continue;
 
-				if (child.Dock == DockStyle.Fill) {
-					if (child.Bounds.Bottom > retsize.Height)
-						retsize.Height = child.Bounds.Bottom;
-				} else if (child.Dock != DockStyle.Left && child.Dock != DockStyle.Right && (child.Anchor & AnchorStyles.Bottom) == 0 && (child.Bounds.Bottom + child.Margin.Bottom) > retsize.Height)
-					retsize.Height = child.Bounds.Bottom + child.Margin.Bottom;
+				if (child.Dock != DockStyle.None)
+					continue;
+					
+				// If its anchored to the bottom or right, that doesn't really count
+				if ((child.Anchor & AnchorStyles.Bottom) == AnchorStyles.Bottom || (child.Anchor & AnchorStyles.Right) == AnchorStyles.Right)
+					continue;
+					
+				retsize.Width = Math.Max (retsize.Width, child.Bounds.Right + child.Margin.Right);
+				retsize.Height = Math.Max (retsize.Height, child.Bounds.Bottom + child.Margin.Bottom);
 			}
 
 			return retsize;

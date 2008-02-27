@@ -112,6 +112,66 @@ namespace MonoTests.System.Windows.Forms
 			
 			f.Close ();
 		}
+
+		[Test]
+		public void PreferredSize ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+
+			UserControl p = new UserControl ();
+			f.Controls.Add (p);
+
+			Button b1 = new Button ();
+			b1.Size = new Size (200, 200);
+			b1.Dock = DockStyle.Fill;
+			p.Controls.Add (b1);
+
+			Button b = new Button ();
+			b.Size = new Size (100, 100);
+			b.Dock = DockStyle.Top;
+			p.Controls.Add (b);
+			
+			f.Show ();
+			
+			Assert.AreEqual (new Size (0, 100), p.PreferredSize, "A1");
+			
+			b1.Dock = DockStyle.Left;
+			Assert.AreEqual (new Size (200, 100), p.PreferredSize, "A2");
+
+			b1.Dock = DockStyle.None;
+			Assert.AreEqual (new Size (203, 203), p.PreferredSize, "A3");
+
+			b1.Dock = DockStyle.Fill;
+			b.Dock = DockStyle.Fill;
+			Assert.AreEqual (new Size (0, 0), p.PreferredSize, "A4");
+			
+			b1.Dock = DockStyle.Top;
+			b.Dock = DockStyle.Left;
+
+			Assert.AreEqual (new Size (100, 200), p.PreferredSize, "A5");
+		
+			Button b2 = new Button ();
+			b2.Size = new Size (50, 50);
+			p.Controls.Add (b2);
+
+			Assert.AreEqual (new Size (100, 200), p.PreferredSize, "A6");
+			
+			b2.Left = 300;
+			Assert.AreEqual (new Size (353, 200), p.PreferredSize, "A7");
+
+			b2.Top = 300;
+			Assert.AreEqual (new Size (353, 353), p.PreferredSize, "A8");
+
+			b2.Anchor = AnchorStyles.Bottom;
+			Assert.AreEqual (new Size (100, 200), p.PreferredSize, "A9");
+
+			b2.Anchor = AnchorStyles.Left;
+			Assert.AreEqual (new Size (353, 353), p.PreferredSize, "A10");
+			
+			f.Dispose ();
+		}
+	
 #endif	
 	}
 }
