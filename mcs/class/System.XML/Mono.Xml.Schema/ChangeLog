@@ -1,3 +1,8 @@
+2008-02-19  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdWildcard.cs : block extra compilation and made compilation reset.
+	  This somehow fixed bug #360541.
+
 2007-10-31  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdValidatingReader.cs : r68046 didn't really fix the issue.

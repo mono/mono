@@ -1,3 +1,7 @@
+2008-02-19  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaAny.cs : block extra compilation in anyTypeContent.
+
 2008-02-04  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaValidator.cs : added couple of null argument check.

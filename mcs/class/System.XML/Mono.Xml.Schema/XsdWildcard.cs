@@ -49,19 +49,32 @@ namespace Mono.Xml.Schema
 
 		public XmlSchemaContentProcessing ResolvedProcessing;
 		public string TargetNamespace;
+		public bool SkipCompile;
 		public bool HasValueAny;
 		public bool HasValueLocal;
 		public bool HasValueOther;
 		public bool HasValueTargetNamespace;
 		public StringCollection ResolvedNamespaces;
 
+		void Reset ()
+		{
+			HasValueAny = false;
+			HasValueLocal = false;
+			HasValueOther = false;
+			HasValueTargetNamespace = false;
+			ResolvedNamespaces = new StringCollection ();
+		}
+
 		public void Compile (string nss,
 			ValidationEventHandler h, XmlSchema schema)
 		{
+			if (SkipCompile)
+				return; // used by XmlSchemaAny.AnyTypeContent.
+
+			Reset ();
 			int nscount = 0;
 			string actualNamespace = nss == null ? "##any" : nss;
 			string[] nslist = XmlSchemaUtil.SplitList(actualNamespace);
-			ResolvedNamespaces = new StringCollection ();
 			for (int i = 0; i < nslist.Length; i++) {
 				string ns = nslist [i];
 				switch(ns) {
