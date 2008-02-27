@@ -273,7 +273,6 @@ namespace Mono.CSharp
  			bool loadIt=true;
 			foreach (string error_line in mcsOutput) {
 #if !NET_2_0
-				Console.WriteLine ("Adding error line");
 				sc.Add (error_line);
 #endif
 				CompilerError error = CreateErrorFromString (error_line);
