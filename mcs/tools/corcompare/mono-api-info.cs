@@ -381,13 +381,25 @@ namespace Mono.AssemblyInfo
 			foreach (MemberData md in members)
 				md.DoOutput ();
 
-			Type [] nested = type.GetNestedTypes ();
+			Type [] nested = type.GetNestedTypes (BindingFlags.Public | BindingFlags.NonPublic);
 			if (nested != null && nested.Length > 0) {
-				XmlNode classes = document.CreateElement ("classes", null);
-				nclass.AppendChild (classes);
+				bool add_nested = false;
 				foreach (Type t in nested) {
-					TypeData td = new TypeData (document, classes, t);
-					td.DoOutput ();
+					if (t.IsNestedPublic || t.IsNestedFamily || t.IsNestedFamORAssem) {
+						add_nested = true;
+						break;
+					}
+				}
+
+				if (add_nested) {
+					XmlNode classes = document.CreateElement ("classes", null);
+					nclass.AppendChild (classes);
+					foreach (Type t in nested) {
+						if (t.IsNestedPublic || t.IsNestedFamily || t.IsNestedFamORAssem) {
+							TypeData td = new TypeData (document, classes, t);
+							td.DoOutput ();
+						}
+					}
 				}
 			}
 		}
