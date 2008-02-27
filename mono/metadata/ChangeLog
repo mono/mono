@@ -1,3 +1,10 @@
+2008-02-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_setup_methods): Move the check for synchronized methods on
+	vtypes to marshal.c.
+
+	* marshal.c (mono_marshal_get_synchronized_wrapper): Do the vtype check here so
+	it works for AOT as well.
 
 Tue Feb 26 17:46:32 CET 2008 Paolo Molaro <lupus@ximian.com>
 
