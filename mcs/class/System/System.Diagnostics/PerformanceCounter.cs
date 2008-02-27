@@ -34,6 +34,8 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 #if NET_2_0
 using System.Runtime.ConstrainedExecution;
 #endif
@@ -52,11 +54,16 @@ namespace System.Diagnostics {
 		private string counterName;
 		private string instanceName;
 		private string machineName;
+		IntPtr impl;
+		PerformanceCounterType type;
 		private bool readOnly;
+		bool changed;
+		bool is_custom;
 #if NET_2_0
 		private PerformanceCounterInstanceLifetime lifetime;
 #endif
 
+		[Obsolete]
 		public static int DefaultFileMappingSize = 524288;
 
 		// set catname, countname, instname to "", machname to "."
@@ -95,6 +102,12 @@ namespace System.Diagnostics {
 			bool readOnly)
 		{
 
+			if (categoryName == null)
+				throw new ArgumentNullException ("categoryName");
+			if (counterName == null)
+				throw new ArgumentNullException ("counterName");
+			if (instanceName == null)
+				throw new ArgumentNullException ("instanceName");
 			CategoryName = categoryName;
 			CounterName = counterName;
 
@@ -105,6 +118,7 @@ namespace System.Diagnostics {
 			this.instanceName = instanceName;
 			this.machineName = ".";
 			this.readOnly = readOnly;
+			changed = true;
 		}
 
 		public PerformanceCounter (string categoryName,
@@ -114,6 +128,37 @@ namespace System.Diagnostics {
 			: this (categoryName, counterName, instanceName, false)
 		{
 			this.machineName = machineName;
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern IntPtr GetImpl (string category, string counter,
+				string instance, string machine, out PerformanceCounterType ctype, out bool custom);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern bool GetSample (IntPtr impl, bool only_value, out CounterSample sample);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern long UpdateValue (IntPtr impl, bool do_incr, long value);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern void FreeData (IntPtr impl);
+
+		/* the perf counter has changed, ensure it's valid and setup it to
+		 * be able to collect/update data
+		 */
+		void UpdateInfo ()
+		{
+			// system counters are always readonly
+			if (!is_custom)
+				readOnly = true;
+			// need to free the previous info
+			if (impl != IntPtr.Zero)
+				Close ();
+			impl = GetImpl (categoryName, counterName, instanceName, machineName, out type, out is_custom);
+			// invalid counter, need to handle out of mem
+			if (impl == IntPtr.Zero)
+				throw new InvalidOperationException ();
+			changed = false;
 		}
 
 		// may throw ArgumentNullException
@@ -126,6 +171,7 @@ namespace System.Diagnostics {
 				if (value == null)
 					throw new ArgumentNullException ("categoryName");
 				categoryName = value;
+				changed = true;
 			}
 		}
 
@@ -148,15 +194,18 @@ namespace System.Diagnostics {
 				if (value == null)
 					throw new ArgumentNullException ("counterName");
 				counterName = value;
+				changed = true;
 			}
 		}
 
-		// may throw InvalidOperationException
-		[MonoTODO]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The type of the counter.")]
 		public PerformanceCounterType CounterType {
-			get {return 0;}
+			get {
+				if (changed)
+					UpdateInfo ();
+				return type;
+			}
 		}
 
 #if NET_2_0
@@ -171,10 +220,14 @@ namespace System.Diagnostics {
 		[DefaultValue (""), ReadOnly (true), RecommendedAsConfigurable (true)]
 		[TypeConverter ("System.Diagnostics.Design.InstanceNameConverter, " + Consts.AssemblySystem_Design)]
 		[SRDescription ("The instance name for this performance counter.")]
-		public string InstanceName 
-			{
+		public string InstanceName {
 			get {return instanceName;}
-			set {instanceName = value;}
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("value");
+				instanceName = value;
+				changed = true;
+			}
 		}
 
 		// may throw ArgumentException if machine name format is wrong
@@ -183,17 +236,35 @@ namespace System.Diagnostics {
 		[SRDescription ("The machine where this performance counter resides.")]
 		public string MachineName {
 			get {return machineName;}
-			set {machineName = value;}
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("value");
+				if (value == "" || value == ".") {
+					machineName = ".";
+					changed = true;
+					return;
+				}
+				throw new PlatformNotSupportedException ();
+			}
 		}
 
 		// may throw InvalidOperationException, Win32Exception
-		[MonoTODO]
 		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The raw value of the counter.")]
 		public long RawValue {
-			get {return 0;}
+			get {
+				CounterSample sample;
+				if (changed)
+					UpdateInfo ();
+				GetSample (impl, true, out sample);
+				return sample.RawValue;
+			}
 			set {
-				throw new NotImplementedException ();
+				if (changed)
+					UpdateInfo ();
+				if (readOnly)
+					throw new InvalidOperationException ();
+				UpdateValue (impl, false, value);
 			}
 		}
 
@@ -204,29 +275,33 @@ namespace System.Diagnostics {
 			set {readOnly = value;}
 		}
 
-		[MonoTODO]
 		public void BeginInit ()
 		{
-			throw new NotImplementedException ();
+			// we likely don't need to do anything significant here
 		}
 
-		[MonoTODO]
+		public void EndInit ()
+		{
+			// we likely don't need to do anything significant here
+		}
+
 		public void Close ()
 		{
-			throw new NotImplementedException ();
+			IntPtr p = impl;
+			impl = IntPtr.Zero;
+			if (p != IntPtr.Zero)
+				FreeData (p);
 		}
 
-		[MonoTODO]
 		public static void CloseSharedResources ()
 		{
-			throw new NotImplementedException ();
+			// we likely don't need to do anything significant here
 		}
 
 		// may throw InvalidOperationException, Win32Exception
-		[MonoTODO]
 		public long Decrement ()
 		{
-			throw new NotImplementedException ();
+			return IncrementBy (-1);
 		}
 
 		[MonoTODO]
@@ -235,34 +310,31 @@ namespace System.Diagnostics {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public void EndInit ()
-		{
-			throw new NotImplementedException ();
-		}
-
 		// may throw InvalidOperationException, Win32Exception
-		[MonoTODO]
 		public long Increment ()
 		{
-			throw new NotImplementedException ();
+			return IncrementBy (1);
 		}
 
 		// may throw InvalidOperationException, Win32Exception
-		[MonoTODO]
 #if NET_2_0
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 #endif
 		public long IncrementBy (long value)
 		{
-			throw new NotImplementedException ();
+			if (readOnly)
+				throw new InvalidOperationException ();
+			return UpdateValue (impl, true, value);
 		}
 
 		// may throw InvalidOperationException, Win32Exception
-		[MonoTODO]
 		public CounterSample NextSample ()
 		{
-			throw new NotImplementedException ();
+			CounterSample sample;
+			if (changed)
+				UpdateInfo ();
+			GetSample (impl, false, out sample);
+			return sample;
 		}
 
 		// may throw InvalidOperationException, Win32Exception

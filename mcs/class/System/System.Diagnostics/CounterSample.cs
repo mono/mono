@@ -34,6 +34,8 @@ namespace System.Diagnostics {
 
 	public struct CounterSample {
 		
+		// do not reorder and keep in sync with the runtime
+		// in metadata/mono-perfcounters.c
 		private long rawValue;
 		private long baseValue;
 		private long counterFrequency;

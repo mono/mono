@@ -25,11 +25,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
 
 namespace System.Diagnostics 
 {
-	public enum PerformanceCounterCategoryType
+#if NET_2_0
+	public
+#endif
+	enum PerformanceCounterCategoryType
 	{
 		SingleInstance,
 		MultiInstance,
@@ -37,4 +39,3 @@ namespace System.Diagnostics
 	}
 }
 
-#endif

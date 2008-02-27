@@ -1,4 +1,10 @@
 
+Wed Feb 27 20:00:04 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* CounterSample.cs, CounterSampleCalculator.cs, PerformanceCounter.cs,
+	PerformanceCounterCategory.cs, PerformanceCounterCategoryType.cs:
+	beginning of the performance counter implementation.
+
 Tue Feb 26 18:37:13 CET 2008 Paolo Molaro <lupus@ximian.com>
 
 	* Stopwatch.cs: use an hires monotonic clock.

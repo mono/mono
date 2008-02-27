@@ -41,6 +41,13 @@ namespace System.Diagnostics
 		private PerformanceCounterCategoryType type;
 #endif
 
+		static void CheckCategory (string categoryName) {
+			if (categoryName == null)
+				throw new ArgumentNullException ("categoryName");
+			if (categoryName == "")
+				throw new ArgumentException ("categoryName");
+		}
+
 		public PerformanceCounterCategory ()
 			: this ("", ".")
 		{
@@ -54,9 +61,9 @@ namespace System.Diagnostics
 
 		// may throw ArgumentException (""), ArgumentNullException
 		[MonoTODO]
-		public PerformanceCounterCategory (string categoryName,
-			string machineName)
+		public PerformanceCounterCategory (string categoryName, string machineName)
 		{
+			CheckCategory (categoryName);
 			// TODO checks and whatever else is needed
 			this.categoryName = categoryName;
 			this.machineName = machineName;
@@ -66,7 +73,7 @@ namespace System.Diagnostics
 		// may throw InvalidOperationException, Win32Exception
 		[MonoTODO]
 		public string CategoryHelp {
-			get {throw new NotImplementedException ();}
+			get {return "";}
 		}
 
 		// may throw ArgumentException (""), ArgumentNullException
@@ -90,9 +97,10 @@ namespace System.Diagnostics
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		public PerformanceCounterCategoryType CategoryType {
-			get { return type; }
+			get {
+				return type;
+			}
 		}
 #endif
 
@@ -107,8 +115,7 @@ namespace System.Diagnostics
 		// may throw ArgumentNullException, InvalidOperationException
 		// (categoryName is ""), Win32Exception
 		[MonoTODO]
-		public static bool CounterExists (string counterName, 
-			string categoryName)
+		public static bool CounterExists (string counterName, string categoryName)
 		{
 			throw new NotImplementedException ();
 		}
@@ -116,14 +123,11 @@ namespace System.Diagnostics
 		// may throw ArgumentNullException, InvalidOperationException
 		// (categoryName is "", machine name is bad), Win32Exception
 		[MonoTODO]
-		public static bool CounterExists (string counterName, 
-			string categoryName,
-			string machineName)
+		public static bool CounterExists (string counterName, string categoryName, string machineName)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 #if NET_2_0
 		[Obsolete ("Use another overload that uses PerformanceCounterCategoryType instead")]
 #endif
@@ -132,10 +136,10 @@ namespace System.Diagnostics
 			string categoryHelp,
 			CounterCreationDataCollection counterData)
 		{
-			throw new NotImplementedException ();
+			return Create (categoryName, categoryHelp,
+				PerformanceCounterCategoryType.Unknown, counterData);
 		}
 
-		[MonoTODO]
 #if NET_2_0
 		[Obsolete ("Use another overload that uses PerformanceCounterCategoryType instead")]
 #endif
@@ -145,12 +149,15 @@ namespace System.Diagnostics
 			string counterName,
 			string counterHelp)
 		{
-			throw new NotImplementedException ();
+			return Create (categoryName, categoryHelp,
+				PerformanceCounterCategoryType.Unknown, counterName, counterHelp);
 		}
 
-#if NET_2_0
 		[MonoTODO]
-		public static PerformanceCounterCategory Create (
+#if NET_2_0
+		public
+#endif
+		static PerformanceCounterCategory Create (
 			string categoryName,
 			string categoryHelp,
 			PerformanceCounterCategoryType categoryType,
@@ -160,45 +167,46 @@ namespace System.Diagnostics
 		}
 
 		[MonoTODO]
-		public static PerformanceCounterCategory Create (
+#if NET_2_0
+		public
+#endif
+		static PerformanceCounterCategory Create (
 			string categoryName,
 			string categoryHelp,
 			PerformanceCounterCategoryType categoryType,
 			string counterName,
 			string counterHelp)
 		{
+			CheckCategory (categoryName);
 			throw new NotImplementedException ();
 		}
-#endif
 
 		[MonoTODO]
 		public static void Delete (string categoryName)
 		{
+			CheckCategory (categoryName);
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static bool Exists (string categoryName)
 		{
-			throw new NotImplementedException ();
+			return Exists (categoryName, ".");
 		}
 
 		[MonoTODO]
-		public static bool Exists (string categoryName, 
-			string machineName)
+		public static bool Exists (string categoryName, string machineName)
 		{
+			CheckCategory (categoryName);
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static PerformanceCounterCategory[] GetCategories ()
 		{
-			throw new NotImplementedException ();
+			return GetCategories (".");
 		}
 
 		[MonoTODO]
-		public static PerformanceCounterCategory[] GetCategories (
-			string machineName)
+		public static PerformanceCounterCategory[] GetCategories (string machineName)
 		{
 			throw new NotImplementedException ();
 		}
@@ -227,17 +235,13 @@ namespace System.Diagnostics
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public static bool InstanceExists (string instanceName, 
-			string categoryName)
+		public static bool InstanceExists (string instanceName, string categoryName)
 		{
-			throw new NotImplementedException ();
+			return InstanceExists (instanceName, categoryName, ".");
 		}
 
 		[MonoTODO]
-		public static bool InstanceExists (string instanceName, 
-			string categoryName,
-			string machineName)
+		public static bool InstanceExists (string instanceName, string categoryName, string machineName)
 		{
 			throw new NotImplementedException ();
 		}
