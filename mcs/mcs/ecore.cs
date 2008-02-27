@@ -3260,39 +3260,13 @@ namespace Mono.CSharp {
 		}
 
 		//
-		//  Determines "better conversion" as specified in 7.4.3
+		//  7.4.3.3  Better conversion from expression
 		//  Returns :   1    if a->p is better,
 		//              2    if a->q is better,
 		//              0 if neither is better
 		//
-		static int BetterConversion (EmitContext ec, Argument a, Type p, Type q)
+		static int BetterExpressionConversion (EmitContext ec, Argument a, Type p, Type q)
 		{
-			if (p == null || q == null)
-				throw new InternalErrorException ("BetterConversion Got a null conversion");
-
-			Expression argument_expr = a.Expr;
-			if (argument_expr is NullLiteral) {
-				//
-				// If the argument is null and one of the types to compare is 'object' and
-				// the other is a reference type, we prefer the other.
-				//
-				// This follows from the usual rules:
-				//   * There is an implicit conversion from 'null' to type 'object'
-				//   * There is an implicit conversion from 'null' to any reference type
-				//   * There is an implicit conversion from any reference type to type 'object'
-				//   * There is no implicit conversion from type 'object' to other reference types
-				//  => Conversion of 'null' to a reference type is better than conversion to 'object'
-				//
-				//  FIXME: This probably isn't necessary, since the type of a NullLiteral is the 
-				//         null type. I think it used to be 'object' and thus needed a special 
-				//         case to avoid the immediately following two checks.
-				//
-				if (!p.IsValueType && q == TypeManager.object_type)
-					return 1;
-				if (!q.IsValueType && p == TypeManager.object_type)
-					return 2;
-			}
-
 			Type argument_type = TypeManager.TypeToCoreType (a.Type);
 			if (argument_type == TypeManager.anonymous_method_type && RootContext.Version > LanguageVersion.ISO_2) {
 				//
@@ -3312,11 +3286,26 @@ namespace Mono.CSharp {
 					return 2;
 			}
 
-			Expression p_tmp = new EmptyExpression (p);
-			Expression q_tmp = new EmptyExpression (q);
+			// TODO: this is expensive
+			Expression p_expr = new EmptyExpression (p);
+			Expression q_expr = new EmptyExpression (q);
+			
+			return BetterTypeConversion (ec, p_expr, q_expr);
+		}
 
-			bool p_to_q = Convert.ImplicitConversionExists (ec, p_tmp, q);
-			bool q_to_p = Convert.ImplicitConversionExists (ec, q_tmp, p);
+		//
+		// 7.4.3.4  Better conversion from type
+		//
+		public static int BetterTypeConversion (EmitContext ec, Expression p_expr, Expression q_expr)
+		{
+			if (p_expr == null || q_expr == null)
+				throw new InternalErrorException ("BetterTypeConversion got a null conversion");
+
+			Type p = p_expr.Type;
+			Type q = q_expr.Type;
+
+			bool p_to_q = Convert.ImplicitConversionExists (ec, p_expr, q);
+			bool q_to_p = Convert.ImplicitConversionExists (ec, q_expr, p);
 
 			if (p_to_q && !q_to_p)
 				return 1;
@@ -3400,7 +3389,7 @@ namespace Mono.CSharp {
 					continue;
 
 				same = false;
-				int result = BetterConversion (ec, a, ct, bt);
+				int result = BetterExpressionConversion (ec, a, ct, bt);
 
 				// for each argument, the conversion to 'ct' should be no worse than 
 				// the conversion to 'bt'.
