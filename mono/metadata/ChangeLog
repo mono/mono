@@ -1,3 +1,10 @@
+
+Wed Feb 27 19:49:16 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am, icall-def.h, icall.c, mono-perfcounters-def.h,
+	mono-perfcounters.c, mono-perfcounters.h: basic performance counter
+	implementation.
+
 2008-02-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_get_synchronized_wrapper): Fix the code which throws
