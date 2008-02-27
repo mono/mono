@@ -161,7 +161,8 @@ namespace System.Xml {
 			}
 		}
 #endif
-
+		static DateTimeStyles _defaultStyle = DateTimeStyles.AllowLeadingWhite | DateTimeStyles.AllowTrailingWhite;
+		
 		public XmlConvert()
 		{}
 
@@ -344,7 +345,7 @@ namespace System.Xml {
 				dt = ToDateTime (value, localDateTimeFormats);
 				return dt == DateTime.MinValue || dt == DateTime.MaxValue ? dt : dt.ToLocalTime ();
 			case XmlDateTimeSerializationMode.RoundtripKind:
-				return ToDateTime (value, roundtripDateTimeFormats);
+				return ToDateTime (value, roundtripDateTimeFormats, _defaultStyle | DateTimeStyles.RoundtripKind);
 			case XmlDateTimeSerializationMode.Utc:
 				dt = ToDateTime (value, utcDateTimeFormats);
 				return dt == DateTime.MinValue || dt == DateTime.MaxValue ? dt : dt.ToUniversalTime ();
@@ -363,14 +364,17 @@ namespace System.Xml {
 			//d.FullDateTimePattern = format;
 			//return DateTime.Parse(s, d);
 			DateTimeStyles style = DateTimeStyles.AllowLeadingWhite |
-					       DateTimeStyles.AllowTrailingWhite;
+					       DateTimeStyles.AllowTrailingWhite;			
 			return DateTime.ParseExact (s, format, DateTimeFormatInfo.InvariantInfo, style);
 		}
 
 		public static DateTime ToDateTime(string s, string[] formats)
 		{
-			DateTimeStyles style = DateTimeStyles.AllowLeadingWhite |
-					       DateTimeStyles.AllowTrailingWhite;
+			return ToDateTime (s, formats, _defaultStyle);			
+		}
+
+		private static DateTime ToDateTime (string s, string [] formats, DateTimeStyles style) 
+		{
 			return DateTime.ParseExact (s, formats, DateTimeFormatInfo.InvariantInfo, style);
 		}
 		
