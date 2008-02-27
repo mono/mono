@@ -1,3 +1,7 @@
+2008-02-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am: Compile and run all tests using the 2.0 profile.
+
 2008-02-26  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* load-exceptions.cs: Fix the test for missing type situations.
