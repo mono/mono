@@ -1,3 +1,8 @@
+2008-02-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_synchronized_wrapper): Fix the code which throws
+	the type load exception.
+
 2008-02-27 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c: Added a few FIXME for method signatures
