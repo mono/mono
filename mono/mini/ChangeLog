@@ -1,5 +1,9 @@
 2008-02-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-<ARCH>.h mini.c: Get rid of the MONO_ARCH_HAVE_CREATE_VARS define.
+
+	* mini-<ARCH>.c (mono_arch_create_vars): Define this for all architectures.
+	
 	* mini.c (mono_method_to_ir): Avoid invalid memory reads for methods without a
 	body.
 
