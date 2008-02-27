@@ -210,6 +210,7 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void CallMethodOnStruct ()
 		{
 			var param = Expression.Parameter (typeof (EineStrukt), "s");
