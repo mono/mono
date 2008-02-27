@@ -1,6 +1,8 @@
 2008-02-27  Zoltan Varga  <vargaz@gmail.com>
 
-	* mini-s390.c: Use cfg->vret_addr instead of cfg->ret.	
+	* mini-s390x.c: Use cfg->vret_addr instead of cfg->ret.
+
+	* mini-s390.c: Use cfg->vret_addr instead of cfg->ret.
 
 	* mini-<ARCH>.h mini.c: Get rid of the MONO_ARCH_HAVE_CREATE_VARS define.
 
