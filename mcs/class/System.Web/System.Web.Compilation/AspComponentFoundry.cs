@@ -261,7 +261,7 @@ namespace System.Web.Compilation
 					return type;
 				
 				ArrayList other_deps = new ArrayList ();
-				type = UserControlParser.GetCompiledType (vpath, realpath, other_deps, context);
+				type = BuildManager.GetCompiledType (vpath);
 				if (type != null) {
 					AspGenerator.AddTypeToCache (other_deps, realpath, type);
 					WebConfigurationManager.ExtraAssemblies.Add (type.Assembly.Location);

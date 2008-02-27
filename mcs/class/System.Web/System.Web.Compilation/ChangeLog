@@ -1,5 +1,8 @@
 2008-02-27  Marek Habersack  <mhabersack@novell.com>
 
+	* AspComponentFoundry.cs: use BuildManager.GetCompiledType in the
+	LoadType method for the 2.0 profile.
+
 	* CompilationException.cs: use a different format of ErrorMessage
 	for the 2.0+ profile.
 
