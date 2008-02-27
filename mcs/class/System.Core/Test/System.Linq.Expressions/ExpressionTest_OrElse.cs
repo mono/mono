@@ -132,12 +132,20 @@ namespace MonoTests.System.Linq.Expressions
 		public void OrElseTest ()
 		{
 			ParameterExpression a = Expression.Parameter (typeof (bool), "a"), b = Expression.Parameter (typeof (bool), "b");
-			var c = Expression.Lambda<Func<bool, bool, bool>> (
-				Expression.OrElse (a, b), a, b).Compile ();
+			var l = Expression.Lambda<Func<bool, bool, bool>> (
+				Expression.OrElse (a, b), a, b);
 
-			Assert.AreEqual (true, c (true, true), "o1");
-			Assert.AreEqual (true, c (true, false), "o2");
-			Assert.AreEqual (true, c (false, true), "o3");
+			var be = l.Body as BinaryExpression;
+			Assert.IsNotNull (be);
+			Assert.AreEqual (typeof (bool), be.Type);
+			Assert.IsFalse (be.IsLifted);
+			Assert.IsFalse (be.IsLiftedToNull);
+
+			var c = l.Compile ();
+
+			Assert.AreEqual (true,  c (true, true), "o1");
+			Assert.AreEqual (true,  c (true, false), "o2");
+			Assert.AreEqual (true,  c (false, true), "o3");
 			Assert.AreEqual (false, c (false, false), "o4");
 		}
 
@@ -146,13 +154,27 @@ namespace MonoTests.System.Linq.Expressions
 		public void OrElseTestNullable ()
 		{
 			ParameterExpression a = Expression.Parameter (typeof (bool?), "a"), b = Expression.Parameter (typeof (bool?), "b");
-			var c = Expression.Lambda<Func<bool?, bool?, bool?>> (
-				Expression.OrElse (a, b), a, b).Compile ();
+			var l = Expression.Lambda<Func<bool?, bool?, bool?>> (
+				Expression.OrElse (a, b), a, b);
 
-			Assert.AreEqual (true, c (true, true), "o1");
-			Assert.AreEqual (true, c (true, false), "o2");
-			Assert.AreEqual (true, c (false, true), "o3");
+			var be = l.Body as BinaryExpression;
+			Assert.IsNotNull (be);
+			Assert.AreEqual (typeof (bool?), be.Type);
+			Assert.IsTrue (be.IsLifted);
+			Assert.IsTrue (be.IsLiftedToNull);
+
+			var c = l.Compile ();
+
+			Assert.AreEqual (true,  c (true, true),   "o1");
+			Assert.AreEqual (true,  c (true, false),  "o2");
+			Assert.AreEqual (true,  c (false, true),  "o3");
 			Assert.AreEqual (false, c (false, false), "o4");
+
+			Assert.AreEqual (true, c (true, null),  "o5");
+			Assert.AreEqual (null, c (false, null), "o6");
+			Assert.AreEqual (null, c (null, false), "o7");
+			Assert.AreEqual (true, c (true, null),  "o8");
+			Assert.AreEqual (null, c (null, null),  "o9");
 		}
 	}
 }

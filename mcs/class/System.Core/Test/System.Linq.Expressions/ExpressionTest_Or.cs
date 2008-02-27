@@ -104,22 +104,38 @@ namespace MonoTests.System.Linq.Expressions
 		[Test]
 		public void OrTest ()
 		{
-			Expression<Func<bool, bool, bool>> e = (bool a, bool b) => a | b;
+			ParameterExpression a = Expression.Parameter (typeof (bool), "a"), b = Expression.Parameter (typeof (bool), "b");
+			var l = Expression.Lambda<Func<bool, bool, bool>> (
+				Expression.Or (a, b), a, b);
 
-			Func<bool,bool,bool> c = e.Compile ();
+			var be = l.Body as BinaryExpression;
+			Assert.IsNotNull (be);
+			Assert.AreEqual (typeof (bool), be.Type);
+			Assert.IsFalse (be.IsLifted);
+			Assert.IsFalse (be.IsLiftedToNull);
+
+			var c = l.Compile ();
 
 			Assert.AreEqual (true,  c (true, true), "o1");
-			Assert.AreEqual (true, c (true, false), "o2");
-			Assert.AreEqual (true, c (false, true), "o3");
+			Assert.AreEqual (true,  c (true, false), "o2");
+			Assert.AreEqual (true,  c (false, true), "o3");
 			Assert.AreEqual (false, c (false, false), "o4");
 		}
 
 		[Test]
 		public void OrNullableTest ()
 		{
-			Expression<Func<bool?, bool?, bool?>> e = (bool? a, bool? b) => a | b;
+			ParameterExpression a = Expression.Parameter (typeof (bool?), "a"), b = Expression.Parameter (typeof (bool?), "b");
+			var l = Expression.Lambda<Func<bool?, bool?, bool?>> (
+				Expression.Or (a, b), a, b);
 
-			Func<bool?,bool?,bool?> c = e.Compile ();
+			var be = l.Body as BinaryExpression;
+			Assert.IsNotNull (be);
+			Assert.AreEqual (typeof (bool?), be.Type);
+			Assert.IsTrue (be.IsLifted);
+			Assert.IsTrue (be.IsLiftedToNull);
+
+			var c = l.Compile ();
 
 			Assert.AreEqual (true,  c (true, true),   "o1");
 			Assert.AreEqual (true,  c (true, false),  "o2");

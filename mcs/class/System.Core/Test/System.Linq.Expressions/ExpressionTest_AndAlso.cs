@@ -101,14 +101,28 @@ namespace MonoTests.System.Linq.Expressions
 		[Test]
 		public void AndAlsoTest ()
 		{
-			ParameterExpression a = Expression.Parameter (typeof (bool), "a"), b = Expression.Parameter (typeof (bool), "b");
-			var c = Expression.Lambda<Func<bool, bool, bool>> (
-				Expression.AndAlso (a, b), a, b).Compile ();
+			ParameterExpression a = Expression.Parameter (typeof (bool?), "a"), b = Expression.Parameter (typeof (bool?), "b");
+			var l = Expression.Lambda<Func<bool?, bool?, bool?>> (
+				Expression.And (a, b), a, b);
 
-			Assert.AreEqual (true, c (true, true), "t1");
-			Assert.AreEqual (false, c (true, false), "t2");
-			Assert.AreEqual (false, c (false, true), "t3");
-			Assert.AreEqual (false, c (false, false), "t4");
+			var be = l.Body as BinaryExpression;
+			Assert.IsNotNull (be);
+			Assert.AreEqual (typeof (bool?), be.Type);
+			Assert.IsTrue (be.IsLifted);
+			Assert.IsTrue (be.IsLiftedToNull);
+
+			var c = l.Compile ();
+
+			Assert.AreEqual (true,  c (true, true), "a1");
+			Assert.AreEqual (false, c (true, false), "a2");
+			Assert.AreEqual (false, c (false, true), "a3");
+			Assert.AreEqual (false, c (false, false), "a4");
+
+			Assert.AreEqual (null,  c (true, null), "a5");
+			Assert.AreEqual (false, c (false, null), "a6");
+			Assert.AreEqual (false, c (null, false), "a7");
+			Assert.AreEqual (null,  c (true, null), "a8");
+			Assert.AreEqual (null,  c (null, null), "a9");
 		}
 
 		[Test]
@@ -116,13 +130,27 @@ namespace MonoTests.System.Linq.Expressions
 		public void AndAlsoTestNullable ()
 		{
 			ParameterExpression a = Expression.Parameter (typeof (bool?), "a"), b = Expression.Parameter (typeof (bool?), "b");
-			var c = Expression.Lambda<Func<bool?, bool?, bool?>> (
-				Expression.AndAlso (a, b), a, b).Compile ();
+			var l = Expression.Lambda<Func<bool?, bool?, bool?>> (
+				Expression.AndAlso (a, b), a, b);
 
-			Assert.AreEqual (true, c (true, true), "t1");
-			Assert.AreEqual (false, c (true, false), "t2");
-			Assert.AreEqual (false, c (false, true), "t3");
-			Assert.AreEqual (false, c (false, false), "t4");
+			var be = l.Body as BinaryExpression;
+			Assert.IsNotNull (be);
+			Assert.AreEqual (typeof (bool?), be.Type);
+			Assert.IsTrue (be.IsLifted);
+			Assert.IsTrue (be.IsLiftedToNull);
+
+			var c = l.Compile ();
+
+			Assert.AreEqual (true,  c (true, true), "a1");
+			Assert.AreEqual (false, c (true, false), "a2");
+			Assert.AreEqual (false, c (false, true), "a3");
+			Assert.AreEqual (false, c (false, false), "a4");
+
+			Assert.AreEqual (null,  c (true, null), "a5");
+			Assert.AreEqual (false, c (false, null), "a6");
+			Assert.AreEqual (false, c (null, false), "a7");
+			Assert.AreEqual (null,  c (true, null), "a8");
+			Assert.AreEqual (null,  c (null, null), "a9");
 		}
 	}
 }

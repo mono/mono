@@ -104,9 +104,17 @@ namespace MonoTests.System.Linq.Expressions
 		[Test]
 		public void AndTest ()
 		{
-			Expression<Func<bool, bool, bool>> e = (bool a, bool b) => a & b;
+			ParameterExpression a = Expression.Parameter (typeof (bool), "a"), b = Expression.Parameter (typeof (bool), "b");
+			var l = Expression.Lambda<Func<bool, bool, bool>> (
+				Expression.And (a, b), a, b);
 
-			Func<bool,bool,bool> c = e.Compile ();
+			var be = l.Body as BinaryExpression;
+			Assert.IsNotNull (be);
+			Assert.AreEqual (typeof (bool), be.Type);
+			Assert.IsFalse (be.IsLifted);
+			Assert.IsFalse (be.IsLiftedToNull);
+
+			var c = l.Compile ();
 
 			Assert.AreEqual (true,  c (true, true), "t1");
 			Assert.AreEqual (false, c (true, false), "t2");
@@ -117,10 +125,17 @@ namespace MonoTests.System.Linq.Expressions
 		[Test]
 		public void AndNullableTest ()
 		{
-			Expression<Func<bool?, bool?, bool?>> e = (bool? a, bool? b) => a & b;
+			ParameterExpression a = Expression.Parameter (typeof (bool?), "a"), b = Expression.Parameter (typeof (bool?), "b");
+			var l = Expression.Lambda<Func<bool?, bool?, bool?>> (
+				Expression.And (a, b), a, b);
 
-			Func<bool?,bool?,bool?> c = e.Compile ();
+			var be = l.Body as BinaryExpression;
+			Assert.IsNotNull (be);
+			Assert.AreEqual (typeof (bool?), be.Type);
+			Assert.IsTrue (be.IsLifted);
+			Assert.IsTrue (be.IsLiftedToNull);
 
+			var c = l.Compile ();
 
 			Assert.AreEqual (true,  c (true, true), "a1");
 			Assert.AreEqual (false, c (true, false), "a2");
@@ -131,7 +146,7 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (false, c (false, null), "a6");
 			Assert.AreEqual (false, c (null, false), "a7");
 			Assert.AreEqual (null,  c (true, null),  "a8");
-			Assert.AreEqual (null, c (null, null),   "a9");
+			Assert.AreEqual (null,  c (null, null),   "a9");
 		}
 	}
 }
