@@ -36,12 +36,26 @@ namespace System.Windows.Forms {
 	public class ControlBindingsCollection : BindingsCollection {
 		#region	Fields
 		private Control control;
+#if NET_2_0
+		private IBindableComponent bindable_component;
+#endif
 		#endregion	// Fields
 
 		#region Constructors
 		internal ControlBindingsCollection (Control control) {
 			this.control = control;
+#if NET_2_0
+			bindable_component = control as IBindableComponent;
+#endif
 		}
+
+#if NET_2_0
+		public ControlBindingsCollection (IBindableComponent control)
+		{
+			bindable_component = control;
+			control = control as Control;
+		}
+#endif
 		#endregion	// Constructors
 
 		#region Public Instance Properties
@@ -61,6 +75,14 @@ namespace System.Windows.Forms {
 				return null;
 			}
 		}
+
+#if NET_2_0
+		public IBindableComponent BindableComponent {
+			get {
+				return bindable_component;
+			}
+		}
+#endif
 		#endregion	// Public Instance Properties
 
 		#region Public Instance Methods
@@ -146,7 +168,11 @@ namespace System.Windows.Forms {
 			if (dataBinding == null)
 				throw new ArgumentNullException ("dataBinding");
 
+#if NET_2_0
+			if (dataBinding.Control != null && dataBinding.BindableComponent != bindable_component)
+#else
 			if (dataBinding.Control != null && dataBinding.Control != control)
+#endif
 				throw new ArgumentException ("dataBinding belongs to another BindingsCollection");
 
 			for (int i = 0; i < Count; i++) {
@@ -160,7 +186,11 @@ namespace System.Windows.Forms {
 				}
 			}
 
+#if NET_2_0
+			dataBinding.SetControl (bindable_component);
+#else
 			dataBinding.SetControl (control);
+#endif
 			dataBinding.Check ();
 			base.AddCore (dataBinding);
 		}

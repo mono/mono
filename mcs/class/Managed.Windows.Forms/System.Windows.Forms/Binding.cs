@@ -40,7 +40,11 @@ namespace System.Windows.Forms {
 		private bool checked_isnull;
 
 		private BindingMemberInfo binding_member_info;
+#if NET_2_0
+		private IBindableComponent control;
+#else
 		private Control control;
+#endif
 
 		private BindingManagerBase manager;
 		private PropertyDescriptor control_property;
@@ -138,7 +142,11 @@ namespace System.Windows.Forms {
 		[DefaultValue (null)]
 		public Control Control {
 			get {
+#if NET_2_0
+				return control as Control;
+#else
 				return control;
+#endif
 			}
 		}
 
@@ -297,7 +305,11 @@ namespace System.Windows.Forms {
 			get { return data_member; }
 		}
 		
+#if NET_2_0
+		internal void SetControl (IBindableComponent control)
+#else
 		internal void SetControl (Control control)
+#endif
 		{
 			if (control == this.control)
 				return;
@@ -310,13 +322,15 @@ namespace System.Windows.Forms {
 				throw new ArgumentException (String.Concat ("Cannot bind to property '", property_name, "' because it is read only."));
 				
 			data_type = control_property.PropertyType; // Getting the PropertyType is kinda slow and it should never change, so it is cached
-			control.Validating += new CancelEventHandler (ControlValidatingHandler);
+
+			if (control is Control)
+				((Control)control).Validating += new CancelEventHandler (ControlValidatingHandler);
+
 #if NET_2_0
 			EventDescriptor prop_changed_event = GetPropertyChangedEvent (control, property_name);
 			if (prop_changed_event != null)
 				prop_changed_event.AddEventHandler (control, new EventHandler (ControlPropertyChangedHandler));
 #endif
-
 			this.control = control;
 		}
 
@@ -430,7 +444,11 @@ namespace System.Windows.Forms {
 		internal void UpdateIsBinding ()
 		{
 			is_binding = false;
-			if (control == null || !control.Created)
+#if NET_2_0
+			if (control == null || (control is Control && !((Control)control).Created))
+#else
+			if (control == null && !control.Created)
+#endif
 				return;
 			if (manager == null || manager.IsSuspended)
 				return;
