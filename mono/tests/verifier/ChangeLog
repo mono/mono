@@ -1,10 +1,14 @@
 2008-02-27 Rodrigo Kumpera <rkumpera@novell.com>
 
+	* valid_vararg.il: New test for calling vararg methods.
+
+2008-02-27 Rodrigo Kumpera <rkumpera@novell.com>
+
 	* valid_refanyval.il: New test for the refanyval opcode.
 
-	*  invalid_refanyval_null_stack_top.il: Same.
+	* invalid_refanyval_null_stack_top.il: Same.
 
-	*  invalid_refanyval_invalid_stack_top.il: Same.
+	* invalid_refanyval_invalid_stack_top.il: Same.
 
 2008-02-27 Rodrigo Kumpera <rkumpera@novell.com>
 
