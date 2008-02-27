@@ -1,3 +1,8 @@
+2008-02-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_method_to_ir): Avoid invalid memory reads for methods without a
+	body.
+
 2007-11-14  Yoichi NAKAYAMA  <nakayama@pixela.co.jp>
 
 	* inssel-mips.brg (OP_OUTARG_MEMBASE (CEE_LDIND_R4 (base))): Add missing
