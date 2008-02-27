@@ -1,3 +1,16 @@
+2008-02-27 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Added a few FIXME for method signatures
+
+	* verify.c (do_invoke_method): Use mono_method_get_signature_full instead
+	of mono_method_get_signature and get vararg call working. Removed unused
+	checks for return value.
+
+	* verify.c (do_refanyval): Verify the refanyval opcode.
+
+	* verify.c (mono_method_verify): Implemented verification of arglist and
+	use do_refanyval.
+
 2008-02-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_setup_methods): Move the check for synchronized methods on
