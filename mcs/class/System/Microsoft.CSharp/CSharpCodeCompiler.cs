@@ -41,8 +41,9 @@ namespace Mono.CSharp
 	using System.Collections.Specialized;
 	using System.Diagnostics;
 	using System.Text.RegularExpressions;
-
+	
 #if NET_2_0
+	using System.Threading;
 	using System.Collections.Generic;
 #endif
 	
@@ -51,6 +52,11 @@ namespace Mono.CSharp
 		static string windowsMcsPath;
 		static string windowsMonoPath;
 
+#if NET_2_0
+		Mutex mcsOutMutex;
+		StringCollection mcsOutput;
+#endif
+		
 		static CSharpCodeCompiler ()
 		{
 			if (Path.DirectorySeparatorChar == '\\') {
@@ -180,9 +186,12 @@ namespace Mono.CSharp
 			CompilerResults results=new CompilerResults(options.TempFiles);
 			Process mcs=new Process();
 
+#if !NET_2_0
 			string mcs_output;
 			string mcs_stdout;
-			string[] mcs_output_lines;
+			string[] mcsOutput;
+#endif
+			
 			// FIXME: these lines had better be platform independent.
 			if (Path.DirectorySeparatorChar == '\\') {
 				mcs.StartInfo.FileName = windowsMonoPath;
@@ -202,11 +211,20 @@ namespace Mono.CSharp
 				mcs.StartInfo.Arguments=BuildArgs(options, fileNames);
 #endif
 			}
+
+#if NET_2_0
+			mcsOutput = new StringCollection ();
+			mcsOutMutex = new Mutex ();
+#endif
+			
 			mcs.StartInfo.CreateNoWindow=true;
 			mcs.StartInfo.UseShellExecute=false;
 			mcs.StartInfo.RedirectStandardOutput=true;
 			mcs.StartInfo.RedirectStandardError=true;
 #if NET_2_0
+			mcs.OutputDataReceived += new DataReceivedEventHandler (McsStdoutDataReceived);
+			mcs.ErrorDataReceived += new DataReceivedEventHandler (McsStderrDataReceived);
+
 			string mono_inside_mdb = null;
 #endif
 			
@@ -219,47 +237,67 @@ namespace Mono.CSharp
 					Environment.SetEnvironmentVariable ("MONO_INSIDE_MDB", null);
 				}
 #endif
-				
+
 				mcs.Start();
+
+#if NET_2_0
+				mcs.BeginOutputReadLine ();
+				mcs.BeginErrorReadLine ();
+#else
 				// If there are a few kB in stdout, we might lock
 				mcs_output=mcs.StandardError.ReadToEnd();
 				mcs_stdout=mcs.StandardOutput.ReadToEnd ();
+#endif
 				mcs.WaitForExit();
+				
 				results.NativeCompilerReturnValue = mcs.ExitCode;
 			} finally {
-				mcs.Close();
 #if NET_2_0
+				mcs.CancelErrorRead ();
+				mcs.CancelOutputRead ();
+				
 				if (mono_inside_mdb != null)
 					Environment.SetEnvironmentVariable ("MONO_INSIDE_MDB", mono_inside_mdb);
 #endif
-			}
-			mcs_output_lines=mcs_output.Split(
-				System.Environment.NewLine.ToCharArray());
-			bool loadIt=true;
-			StringCollection sc = new StringCollection ();
-			foreach (string error_line in mcs_output_lines)
-			{
-				sc.Add (error_line);
-				
-				CompilerError error=CreateErrorFromString(error_line);
-				if (null!=error)
-				{
-					results.Errors.Add(error);
-					if (!error.IsWarning) loadIt=false;
-				}
+
+				mcs.Close();
 			}
 
-			// (g)mcs outputs no useful information to stdout, we can ignore it here.
-			if (sc.Count > 0) {
-				sc.Insert (0, Environment.NewLine);
-				sc.Insert (0, mcs.StartInfo.FileName + " " + mcs.StartInfo.Arguments);
-				results.Output = sc;
+#if NET_2_0
+			StringCollection sc = mcsOutput;
+#else
+			mcsOutput = mcs_output.Split (System.Environment.NewLine.ToCharArray ());
+			StringCollection sc = new StringCollection ();
+#endif
+		       
+ 			bool loadIt=true;
+			foreach (string error_line in mcsOutput) {
+#if !NET_2_0
+				Console.WriteLine ("Adding error line");
+				sc.Add (error_line);
+#endif
+				CompilerError error = CreateErrorFromString (error_line);
+				if (error != null) {
+					results.Errors.Add (error);
+					if (!error.IsWarning)
+						loadIt = false;
+				}
 			}
 			
+			if (sc.Count > 0) {
+				sc.Insert (0, mcs.StartInfo.FileName + " " + mcs.StartInfo.Arguments + Environment.NewLine);
+				results.Output = sc;
+			}
+
 			if (loadIt) {
 				if (!File.Exists (options.OutputAssembly)) {
-					throw new Exception ("Compiler failed to produce the assembly. Stderr='" +mcs_output + "'");
+					StringBuilder sb = new StringBuilder ();
+					foreach (string s in sc)
+						sb.Append (s + Environment.NewLine);
+					
+					throw new Exception ("Compiler failed to produce the assembly. Output: '" + sb.ToString () + "'");
 				}
+				
 				if (options.GenerateInMemory) {
 					using (FileStream fs = File.OpenRead(options.OutputAssembly)) {
 						byte[] buffer = new byte[fs.Length];
@@ -279,6 +317,20 @@ namespace Mono.CSharp
 		}
 
 #if NET_2_0
+		void McsStdoutDataReceived (object sender, DataReceivedEventArgs args)
+		{
+			mcsOutMutex.WaitOne ();
+			mcsOutput.Add (args.Data);
+			mcsOutMutex.ReleaseMutex ();
+		}
+
+		void McsStderrDataReceived (object sender, DataReceivedEventArgs args)
+		{
+			mcsOutMutex.WaitOne ();
+			mcsOutput.Add (args.Data);
+			mcsOutMutex.ReleaseMutex ();
+		}		
+
 		private static string BuildArgs(CompilerParameters options,string[] fileNames, Dictionary <string, string> providerOptions)
 #else
 		private static string BuildArgs(CompilerParameters options,string[] fileNames)
