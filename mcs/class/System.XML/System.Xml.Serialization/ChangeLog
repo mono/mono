@@ -1,3 +1,8 @@
+2008-02-27 Arina Itkes <arinai@mainsoft.com>
+
+	* XmlSchemaExporter.cs, XmlTypeMapping.cs: Fixed handling for cases when
+	a class returns schema type object and does not return a schema.
+
 2008-02-03 Arina Itkes <arinai@mainsoft.com>
 
 	* XmlSchemaExporter.cs : Generated typed DataTable and typed DataSet 

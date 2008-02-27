@@ -652,7 +652,14 @@ namespace System.Data {
 #if NET_2_0
 		public static XmlSchemaComplexType GetDataSetSchema (XmlSchemaSet schemaSet)
 		{
-			return new XmlSchemaComplexType ();
+			XmlSchemaComplexType stype = new XmlSchemaComplexType ();
+			XmlSchemaSequence seq = new XmlSchemaSequence ();
+			XmlSchemaElement selem = new XmlSchemaElement ();
+			selem.RefName = new XmlQualifiedName ("schema", XmlSchema.Namespace);
+			seq.Items.Add (selem);
+			seq.Items.Add (new XmlSchemaAny ());
+			stype.Particle = seq;
+			return stype;
 		}
 #endif
 		public bool HasChanges ()

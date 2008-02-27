@@ -620,6 +620,10 @@ namespace System.Xml.Serialization {
 				elem.Name = map.SchemaTypeName.Name;
 				return;
 			}
+			if (map.SchemaType != null && map.SchemaTypeName.IsEmpty) {
+				elem.SchemaType = map.SchemaType;
+				return;
+			}
 #endif
 			XmlSchemaComplexType stype = new XmlSchemaComplexType ();
 			XmlSchemaSequence seq = new XmlSchemaSequence ();

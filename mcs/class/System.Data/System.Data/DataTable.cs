@@ -2036,7 +2036,21 @@ namespace System.Data {
 
 		public static XmlSchemaComplexType GetDataTableSchema (XmlSchemaSet schemaSet)
 		{
-			return new XmlSchemaComplexType ();
+			XmlSchemaComplexType result = new XmlSchemaComplexType ();
+			XmlSchemaSequence seq = new XmlSchemaSequence ();
+			XmlSchemaAny any = new XmlSchemaAny ();
+			any.Namespace = XmlConstants.SchemaNamespace;
+			any.MinOccurs = 0;
+			any.MaxOccursString = "unbounded";
+			any.ProcessContents = XmlSchemaContentProcessing.Lax;
+			seq.Items.Add (any);
+			any = new XmlSchemaAny ();
+			any.Namespace = XmlConstants.DiffgrNamespace;
+			any.MinOccurs = 0;
+			any.ProcessContents = XmlSchemaContentProcessing.Lax;
+			seq.Items.Add (any);
+			result.Particle = seq;
+			return result;
 		}
 
 		public XmlReadMode ReadXml (Stream stream)
