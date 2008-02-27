@@ -1,5 +1,13 @@
 2008-02-27 Rodrigo Kumpera <rkumpera@novell.com>
 
+	* valid_refanyval.il: New test for the refanyval opcode.
+
+	*  invalid_refanyval_null_stack_top.il: Same.
+
+	*  invalid_refanyval_invalid_stack_top.il: Same.
+
+2008-02-27 Rodrigo Kumpera <rkumpera@novell.com>
+
 	* valid_arglist.il: New test for the arglist opcode.
 
 	* invalid_arglist_method_not_vararg.il: Same.
