@@ -110,5 +110,17 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual ("(value(MonoTests.System.Linq.Expressions.OpClass) << 1)",
 				expr.ToString(), "LeftShift#13");
 		}
+
+		[Test]
+		public void CompileLeftShift ()
+		{
+			ParameterExpression l = Expression.Parameter (typeof (int), "l"), r = Expression.Parameter (typeof (int), "r");
+
+			var ls = Expression.Lambda<Func<int, int, int>> (
+				Expression.LeftShift (l, r), l, r).Compile ();
+
+			Assert.AreEqual (12, ls (6, 1));
+			Assert.AreEqual (96, ls (12, 3));
+		}
 	}
 }

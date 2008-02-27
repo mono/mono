@@ -134,7 +134,19 @@ namespace MonoTests.System.Linq.Expressions
 
 			Func<int> compiled = l.Compile ();
 			Assert.AreEqual (1000, compiled ());
+		}
 
+		[Test]
+		public void CompileAdd ()
+		{
+			ParameterExpression l = Expression.Parameter (typeof (int), "l"), r = Expression.Parameter (typeof (int), "r");
+
+			var add = Expression.Lambda<Func<int, int, int>> (
+				Expression.Add (l, r), l, r).Compile ();
+
+			Assert.AreEqual (12, add (6, 6));
+			Assert.AreEqual (0, add (-1, 1));
+			Assert.AreEqual (-2, add (1, -3));
 		}
 	}
 }

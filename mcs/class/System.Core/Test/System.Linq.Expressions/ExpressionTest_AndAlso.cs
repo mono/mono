@@ -101,9 +101,22 @@ namespace MonoTests.System.Linq.Expressions
 		[Test]
 		public void AndAlsoTest ()
 		{
-			Expression<Func<bool, bool, bool>> e = (bool a, bool b) => a && b;
+			ParameterExpression a = Expression.Parameter (typeof (bool), "a"), b = Expression.Parameter (typeof (bool), "b");
+			var c = Expression.Lambda<Func<bool, bool, bool>> (
+				Expression.AndAlso (a, b), a, b).Compile ();
 
-			Func<bool, bool, bool> c = e.Compile ();
+			Assert.AreEqual (true, c (true, true), "t1");
+			Assert.AreEqual (false, c (true, false), "t2");
+			Assert.AreEqual (false, c (false, true), "t3");
+			Assert.AreEqual (false, c (false, false), "t4");
+		}
+
+		[Test]
+		public void AndAlsoTestNullable ()
+		{
+			ParameterExpression a = Expression.Parameter (typeof (bool?), "a"), b = Expression.Parameter (typeof (bool?), "b");
+			var c = Expression.Lambda<Func<bool?, bool?, bool?>> (
+				Expression.AndAlso (a, b), a, b).Compile ();
 
 			Assert.AreEqual (true, c (true, true), "t1");
 			Assert.AreEqual (false, c (true, false), "t2");

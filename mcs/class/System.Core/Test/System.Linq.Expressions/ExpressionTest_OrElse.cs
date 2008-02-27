@@ -131,9 +131,22 @@ namespace MonoTests.System.Linq.Expressions
 		[Test]
 		public void OrElseTest ()
 		{
-			Expression<Func<bool, bool, bool>> e = (bool a, bool b) => a || b;
+			ParameterExpression a = Expression.Parameter (typeof (bool), "a"), b = Expression.Parameter (typeof (bool), "b");
+			var c = Expression.Lambda<Func<bool, bool, bool>> (
+				Expression.OrElse (a, b), a, b).Compile ();
 
-			Func<bool, bool, bool> c = e.Compile ();
+			Assert.AreEqual (true, c (true, true), "o1");
+			Assert.AreEqual (true, c (true, false), "o2");
+			Assert.AreEqual (true, c (false, true), "o3");
+			Assert.AreEqual (false, c (false, false), "o4");
+		}
+
+		[Test]
+		public void OrElseTestNullable ()
+		{
+			ParameterExpression a = Expression.Parameter (typeof (bool?), "a"), b = Expression.Parameter (typeof (bool?), "b");
+			var c = Expression.Lambda<Func<bool?, bool?, bool?>> (
+				Expression.OrElse (a, b), a, b).Compile ();
 
 			Assert.AreEqual (true, c (true, true), "o1");
 			Assert.AreEqual (true, c (true, false), "o2");
