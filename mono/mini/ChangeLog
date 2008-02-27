@@ -1,3 +1,37 @@
+2007-11-14  Yoichi NAKAYAMA  <nakayama@pixela.co.jp>
+
+	* inssel-mips.brg (OP_OUTARG_MEMBASE (CEE_LDIND_R4 (base))): Add missing
+	OP_LOADR4_MEMBASE emission.
+
+	* mini-codegen.c (mono_spillvar_offset_int): Remove assertion.
+	(mono_spillvar_offset_float): Ditto.
+
+	* mini-mips.c (mono_arch_emit_prolog): Ditto.
+
+	* inssel-long32-mips.brg: Fix wrong branching, reduce redundant code
+	emission.
+
+	* basic-long.cs: Add regression tests for them.
+
+	* mini-mips.c (add_float32_arg): Respect o32 calling convention in gr
+	use.
+	(mono_arch_allocate_vars): Fix representation of single-precision float
+	argument.
+	(mono_arch_output_basic_block): Ditto.
+
+	* inssel-mips.brg: Ditto, remove duplicate items.
+
+	* mini-mips.c (emit_load_volatile_arguments): New function to handle
+	arguments of tail calls as on other platforms.
+	(mono_arch_output_basic_block): Handle tail calls.
+
+	* inssel-mips.brg (OP_OUTARG_VT (CEE_LDOBJ (base))): Correct destination
+	register.
+
+	* objects.cs (test_5_pass_static_struct): Add test for it.
+
+	Contributed under MIT/X11 license.
+
 2008-02-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am: Use gmcs for compiling the regression tests.
