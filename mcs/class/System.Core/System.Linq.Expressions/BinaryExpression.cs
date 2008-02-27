@@ -276,12 +276,10 @@ namespace System.Linq.Expressions {
 				return;
 
 			case ExpressionType.AndAlso:
-				Console.WriteLine ("LINQ/BinaryExpression: AndAlso code path not yet reviewed");
 				EmitLogical (ec, true, true);
 				return;
 
 			case ExpressionType.OrElse:
-				Console.WriteLine ("LINQ/BinaryExpression: OrElse code path not yet reviewed");
 				EmitLogical (ec, false, true);
 				return;
 
