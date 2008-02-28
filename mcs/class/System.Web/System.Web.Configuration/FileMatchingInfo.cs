@@ -71,7 +71,7 @@ namespace System.Web.Configuration
 					expr = expr.Substring (1);
 
 				expr += "\\z";
-				RegExp = new Regex (expr);
+				RegExp = new Regex (expr, RegexOptions.IgnoreCase);
 			}
 		}
 	}

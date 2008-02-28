@@ -102,10 +102,10 @@ namespace System.Web.Configuration {
 				FileMatchingInfo fm = files [j];
 
 				if (fm.MatchExact != null)
-					return fm.MatchExact.Length == orig.Length && StrUtils.EndsWith (orig, fm.MatchExact);
+					return fm.MatchExact.Length == orig.Length && StrUtils.EndsWith (orig, fm.MatchExact, true);
 					
 				if (fm.EndsWith != null)
-					return StrUtils.EndsWith (p, fm.EndsWith);
+					return StrUtils.EndsWith (p, fm.EndsWith, true);
 
 				if (fm.MatchExpr == "*")
 					return true;
