@@ -1,3 +1,9 @@
+2008-02-28  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpParamsCollection.cs: restore the GetValues overrides only to
+	make sure the collections are merged before invoking the base
+	implementation.
+
 2008-02-25  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpContext.cs: correctly set the timeout if the user has
