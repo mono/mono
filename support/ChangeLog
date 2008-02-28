@@ -1,5 +1,11 @@
 2008-02-12  Jonathan Pryor  <jpryor@novell.com>
 
+	* signal.c: SLES9 has glib 2.2, so we can't rely on g_atomic_int_*().
+	  Provide a fallback mechanism between using Mono's atomic.h, glib 2.4
+	  functions, and horribly unsafe-but-no-alternative code.
+
+2008-02-12  Jonathan Pryor  <jpryor@novell.com>
+
 	* signal.c: Fix another build break; g_atomic_int_set() (part of GLib 2.10)
 	  isn't present on all build machines, so use an alternate function.
 

@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
+#include <mono/io-layer/atomic.h>
 #endif
 
 G_BEGIN_DECLS
@@ -55,6 +56,22 @@ Mono_Posix_Stdlib_InvokeSignalHandler (int signum, void *handler)
 
 #ifndef PLATFORM_WIN32
 
+#ifdef WAPI_ATOMIC_ASM
+	#define mph_int_get(p)     InterlockedExchangeAdd ((p), 0)
+	#define mph_int_inc(p)     InterlockedIncrement ((p))
+	#define mph_int_set(p,o,n) InterlockedExchange ((p), (n))
+#elif GLIB_CHECK_VERSION(2,4,0)
+	#define mph_int_get(p) g_atomic_int_get ((p))
+ 	#define mph_int_inc(p) do {g_atomic_int_inc ((p));} while (0)
+	#define mph_int_set(p,o,n) do {                                 \
+		while (!g_atomic_int_compare_and_exchange ((p), (o), (n))) {} \
+	} while (0)
+#else
+	#define mph_int_get(p) (*(p))
+	#define mph_int_inc(p) do { (*(p))++; } while (0)
+	#define mph_int_set(p,o,n) do { *(p) = n; } while (0)
+#endif
+
 int
 Mono_Posix_Syscall_psignal (int sig, const char* s)
 {
@@ -73,10 +90,10 @@ default_handler (int signum)
 	for (i = 0; i < NUM_SIGNALS; ++i) {
 		int fd;
 		signal_info* h = &signals [i];
-		if (g_atomic_int_get (&h->signum) != signum)
+		if (mph_int_get (&h->signum) != signum)
 			continue;
-		g_atomic_int_inc (&h->count);
-		fd = g_atomic_int_get (&h->write_fd);
+		mph_int_inc (&h->count);
+		fd = mph_int_get (&h->write_fd);
 		if (fd > 0) {
 			char c = signum;
 			write (fd, &c, 1);
@@ -128,8 +145,8 @@ Mono_Unix_UnixSignal_install (int sig)
 	}
 
 	if (h) {
-		while (!g_atomic_int_compare_and_exchange (&h->count, h->count, 0)) {}
-		while (!g_atomic_int_compare_and_exchange (&h->signum, h->signum, sig)) {}
+		mph_int_set (&h->count, h->count, 0);
+		mph_int_set (&h->signum, h->signum, sig);
 	}
 
 	pthread_mutex_unlock (&signals_mutex);
