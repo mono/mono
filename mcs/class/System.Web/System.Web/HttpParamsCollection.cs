@@ -55,35 +55,8 @@ namespace System.Web
 
 		public override string Get (string name)
 		{
-			if (_merged)
-				return base.Get (name);
-
-			string values = null;
-
-			string query_value = _queryString [name];
-			if (query_value != null)
-				values += query_value;
-
-			string form_value = _form [name];
-			if (form_value != null)
-				values += "," + form_value;
-
-			string servar_value = _serverVariables [name];
-			if (servar_value != null)
-				values += "," + servar_value;
-
-			HttpCookie answer = _cookies [name];
-			string cookie_value = ((answer == null) ? null : answer.Value);
-			if (cookie_value != null)
-				values += "," + cookie_value;
-
-			if (values == null)
-				return null;
-
-			if (values.Length > 0 && values [0] == ',')
-				return values.Substring (1);
-
-			return values;
+			MergeCollections ();
+			return base.Get (name);
 		}
 
 		private void MergeCollections ()
