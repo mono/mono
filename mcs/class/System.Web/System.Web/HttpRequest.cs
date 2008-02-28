@@ -1337,6 +1337,9 @@ namespace System.Web {
 		// Notice: there is nothing raw about this querystring.
 		internal string QueryStringRaw {
 			get {
+				if (url_components == null)
+					return worker_request.GetQueryString ();
+
 				return UrlComponents.Query;
 			}
 

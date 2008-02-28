@@ -58,6 +58,10 @@
 	Watch for Created event in the FileSystemWatcher for the
 	app_offline.htm files.
 
+2008-01-29  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* HttpRequest.cs: performance optimization of QueryStringRaw
+
 2008-01-27  Igor Zelmanovich <igorz@mainsoft.com>
 
 	* HttpResponse.cs: rise PreSendRequestHeaders befire headers_sent 
