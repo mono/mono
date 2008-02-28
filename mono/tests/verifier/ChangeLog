@@ -1,5 +1,13 @@
 2008-02-28 Rodrigo Kumpera <rkumpera@novell.com>
 
+	* invalid_refanytype_null_stack_top.il: New test for refanytype opcode.
+
+	* invalid_refanytype_invalid_stack_top.il: Same.
+
+	* valid_refanytype.il: Same.
+
+2008-02-28 Rodrigo Kumpera <rkumpera@novell.com>
+
 	* make_mkrefany.il: New test generator for mkrefany opcode.
 
 	* make_tests.sh: Added tests for mkrefany.
