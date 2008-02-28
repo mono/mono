@@ -40,6 +40,8 @@ namespace System.Windows.Forms.PropertyGridInternal {
 	internal class PropertyGridView : ScrollableControl, IWindowsFormsEditorService {
 
 		#region Private Members
+		private const char PASSWORD_PAINT_CHAR = '\u25cf'; // the dot char
+		private const char PASSWORD_TEXT_CHAR = '*';
 		private const int V_INDENT = 16;
 		private const int ENTRY_SPACING = 2;
 		private const int RESIZE_WIDTH = 3;
@@ -647,7 +649,13 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			if (grid_item.IsResetable || !grid_item.HasDefaultValue)
 				font = bold_font;
 			Brush brush = grid_item.IsReadOnly ? inactive_text_brush : SystemBrushes.ControlText;
-			string valueText = grid_item.IsMerged && !grid_item.HasMergedValue ? String.Empty : grid_item.ValueText;
+			string valueText = String.Empty;
+			if (!grid_item.IsMerged || grid_item.IsMerged && grid_item.HasMergedValue) {
+				if (grid_item.IsPassword)
+					valueText = new String (PASSWORD_PAINT_CHAR, grid_item.ValueText.Length);
+				else
+					valueText = grid_item.ValueText;
+			}
 			pevent.Graphics.DrawString (valueText, font,
 						    brush,
 						    new RectangleF (xLoc + ENTRY_SPACING, rect.Y + ENTRY_SPACING,
@@ -843,6 +851,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 					grid_textbox.ReadOnly = !entry.IsEditable;
 				}
 				UpdateGridTextBoxBounds (entry);
+				grid_textbox.PasswordChar = entry.IsPassword ? PASSWORD_TEXT_CHAR : '\0';
 				grid_textbox.Text = entry.IsMerged && !entry.HasMergedValue ? String.Empty : entry.ValueText;
 				grid_textbox.Visible = true;
 				InvalidateItem (entry);
@@ -928,11 +937,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 
 		private void ShowDropDownControl (Control control) 
 		{
-			Object	queue_id;
-
-			Form owner = FindForm ();
-
-			Point location;
 			dropdown_form.Size = control.Size;
 			control.Dock = DockStyle.Fill;
 			dropdown_form.Controls.Add (control);
@@ -940,18 +944,16 @@ namespace System.Windows.Forms.PropertyGridInternal {
 							control.Width);
 			dropdown_form.Location = PointToScreen (new Point (grid_textbox.Right - control.Width, grid_textbox.Location.Y + row_height));
 			RepositionInScreenWorkingArea (dropdown_form);
-			location = dropdown_form.Location;
+			Point location = dropdown_form.Location;
 
+			Form owner = FindForm ();
 			owner.AddOwnedForm (dropdown_form);
-
 			dropdown_form.Show ();
-
-			if (dropdown_form.Location != location) {
+			if (dropdown_form.Location != location)
 				dropdown_form.Location = location;
-			}
 
 			System.Windows.Forms.MSG msg = new MSG ();
-			queue_id = XplatUI.StartLoop (Thread.CurrentThread);
+			object queue_id = XplatUI.StartLoop (Thread.CurrentThread);
 			while (dropdown_form.Visible && XplatUI.GetMessage (queue_id, ref msg, IntPtr.Zero, 0, 0)) {
 				switch (msg.message) {
 					case Msg.WM_NCLBUTTONDOWN:

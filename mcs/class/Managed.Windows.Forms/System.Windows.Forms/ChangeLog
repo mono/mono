@@ -1,3 +1,13 @@
+2008-02-28  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* GridEntry.cs: 
+	 - Use PropertyDescriptor.DisplayName instead of .Name for Label,
+	   so that DisplayNameAttribute doesn't get ignored.
+	 - Check for ParenthesizeNameAttribute and parenthesize the Label.
+	 - Add support for PasswordPropertyTextAttribute
+	* PropertyGridView.cs: Check if an entry is a password.
+	[Fixes bugs #365589, #365586, #365588]
+
 2008-02-28  Andreia Gaita <avidigal@novell.com>
 
 	* PropertyGridView.cs: Revert the message filtering change, as we
