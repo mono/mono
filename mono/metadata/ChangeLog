@@ -1,3 +1,10 @@
+
+Thu Feb 28 19:49:45 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* icall-def.h, domain.c, mono-perfcounters-def.h, mono-perfcounters.c,
+	mono-perfcounters.h, class-internals.h: support for predefined
+	writable counters, query of categories and counters, bugfixes.
+
 2008-02-28 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (do_refanytype): Verify the refanytype opcode.
