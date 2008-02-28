@@ -1,3 +1,11 @@
+2008-02-28  Marek Habersack  <mhabersack@novell.com>
+
+	* HandlerFactoryConfiguration.cs: ignore case when matching
+	handler paths.
+
+	* FileMatchingInfo.cs: regular expression is created with the
+	ignore case option.
+
 2007-12-13  Marek Habersack  <mhabersack@novell.com>
 
 	* FileMatchingInfo.cs. MachineKeyRegistryStorage.cs: speed

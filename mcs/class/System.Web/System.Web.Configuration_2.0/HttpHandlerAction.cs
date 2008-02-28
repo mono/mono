@@ -182,12 +182,6 @@ namespace System.Web.Configuration
 					return cachedMatches [pathToMatch];
 
 				bool result = false;
-				bool ignoreCase =
-#if TARGET_J2EE
-					true;
-#else
-					false;
-#endif
 				string[] handlerPaths = Path.Split (',');
 				int slash = pathToMatch.LastIndexOf ('/');
 				string origPathToMatch = pathToMatch;
@@ -227,7 +221,7 @@ namespace System.Web.Configuration
 
 					if (matchExact != null)
 					{
-						result = matchExact.Length == origPathToMatch.Length && StrUtils.EndsWith (origPathToMatch, matchExact, ignoreCase);
+						result = matchExact.Length == origPathToMatch.Length && StrUtils.EndsWith (origPathToMatch, matchExact, true);
 						if (result == true)
 							break;
 						else
@@ -235,7 +229,7 @@ namespace System.Web.Configuration
 					}
 					else if (endsWith != null)
 					{
-						result = StrUtils.EndsWith (pathToMatch, endsWith, ignoreCase);
+						result = StrUtils.EndsWith (pathToMatch, endsWith, true);
 						if (result == true)
 							break;
 						else
@@ -249,7 +243,7 @@ namespace System.Web.Configuration
 							expr = expr.Substring (1);
 
 						expr += "\\z";
-						regEx = new Regex (expr);
+						regEx = new Regex (expr, RegexOptions.IgnoreCase);
 
 						if (regEx.IsMatch (origPathToMatch))
 						{

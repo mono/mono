@@ -150,7 +150,7 @@ namespace System.Web.UI {
 				if (tagname != null && src == null)
 					ThrowParseException ("Need a Src attribute with TagName.");
 
-				if (!src.EndsWith (".ascx"))
+				if (!StrUtils.EndsWith (src, ".ascx", true))
 					ThrowParseException ("Source file extension for controls must be .ascx");
 
 				RegisterCustomControl (tagprefix, tagname, src);

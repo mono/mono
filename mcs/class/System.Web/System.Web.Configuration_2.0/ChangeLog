@@ -1,3 +1,8 @@
+2008-02-28  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpHandlerAction.cs: ignore case when matching handler
+	paths. Fixes bug #364995
+
 2008-02-26  Marek Habersack  <mhabersack@novell.com>
 
 	* BuildProviderCollection.cs: be case-insensitive when looking for

@@ -1,9 +1,13 @@
+2008-02-28  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlParser.cs: when registering a control, check for
+	the .ascx extension case-insensitively. Fixes bug #364995
+
 2008-02-28 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* Control.cs:
 	fixed exception propagation in case of multiple control with same id
 	were found.	 
-
 
 2008-02-26  Marek Habersack  <mhabersack@novell.com>
 
