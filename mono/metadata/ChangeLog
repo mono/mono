@@ -1,3 +1,8 @@
+2008-02-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (do_mkrefany): Verify the mkrefany opcode.
+
+	* verify.c (mono_method_verify): Use do_mkrefany.
 
 Wed Feb 27 19:49:16 CET 2008 Paolo Molaro <lupus@ximian.com>
 
