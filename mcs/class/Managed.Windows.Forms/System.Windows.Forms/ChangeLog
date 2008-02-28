@@ -1,3 +1,8 @@
+2008-02-28  Andreia Gaita <avidigal@novell.com>
+
+	* PropertyGridView.cs: Revert the message filtering change, as we
+	need it to block after all. Remove block parameter, unnecessary.
+
 2008-02-27  Jonathan Pobst  <monkey@jpobst.com>
 
 	* UserControl.cs: Better implementation of GetPreferredSize.

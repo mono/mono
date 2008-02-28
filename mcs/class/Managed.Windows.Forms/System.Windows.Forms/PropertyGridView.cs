@@ -950,8 +950,29 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				dropdown_form.Location = location;
 			}
 
-			DropDownMessageFilter d = new DropDownMessageFilter (owner, this, dropdown_form);
-			Application.AddMessageFilter (d);
+			System.Windows.Forms.MSG msg = new MSG ();
+			queue_id = XplatUI.StartLoop (Thread.CurrentThread);
+			while (dropdown_form.Visible && XplatUI.GetMessage (queue_id, ref msg, IntPtr.Zero, 0, 0)) {
+				switch (msg.message) {
+					case Msg.WM_NCLBUTTONDOWN:
+				    case Msg.WM_NCMBUTTONDOWN:
+				    case Msg.WM_NCRBUTTONDOWN:
+				    case Msg.WM_LBUTTONDOWN:
+				    case Msg.WM_MBUTTONDOWN:
+				    case Msg.WM_RBUTTONDOWN:
+				    	if (!HwndInControl (dropdown_form, msg.hwnd))
+							CloseDropDown ();
+					break;
+					case Msg.WM_ACTIVATE:
+					case Msg.WM_NCPAINT:
+				 		if (owner.window.Handle == msg.hwnd)
+							CloseDropDown ();
+					break;						
+				}
+				XplatUI.TranslateMessage (ref msg);
+				XplatUI.DispatchMessage (ref msg);
+			}
+			XplatUI.EndLoop (Thread.CurrentThread);			
 		}
 
 		private void RepositionInScreenWorkingArea (Form form)
@@ -1017,51 +1038,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				}
 			}
 
-		}
-
-		private class DropDownMessageFilter : IMessageFilter
-		{
-			PropertyGridView owner;
-			Form topOwner;
-			PropertyGridDropDown dropdown;
-
-			public DropDownMessageFilter (Form topowner, PropertyGridView owner, PropertyGridDropDown dropdown)
-			{
-				this.owner = owner;
-				this.topOwner = topowner;
-				this.dropdown = dropdown;
-			}
-
-			public bool PreFilterMessage (ref Message m)
-			{
-				switch ((Msg)m.Msg) {
-
-					case Msg.WM_NCLBUTTONDOWN:
-					case Msg.WM_NCMBUTTONDOWN:
-					case Msg.WM_NCRBUTTONDOWN:
-					case Msg.WM_LBUTTONDOWN:
-					case Msg.WM_MBUTTONDOWN:
-					case Msg.WM_RBUTTONDOWN:
-						if (!owner.HwndInControl (dropdown, m.HWnd)) {
-							owner.CloseDropDown ();
-							Application.RemoveMessageFilter (this);
-						}
-						break;
-					case Msg.WM_ACTIVATE:
-					case Msg.WM_NCPAINT:
-						if (topOwner.window.Handle == m.HWnd) {
-							owner.CloseDropDown ();
-							Application.RemoveMessageFilter (this);
-						}
-						break;
-					case Msg.WM_KILLFOCUS:
-						owner.CloseDropDown ();
-						Application.RemoveMessageFilter (this);
-						break;
-				}
-				
-				return false;
-			}
 		}
 	}
 }
