@@ -41,9 +41,9 @@ namespace System.Web
 		private bool _merged;
 
 		public HttpParamsCollection (NameValueCollection queryString,
-									NameValueCollection form,
-									NameValueCollection serverVariables,
-									HttpCookieCollection cookies)
+					     NameValueCollection form,
+					     NameValueCollection serverVariables,
+					     HttpCookieCollection cookies)
 		{
 			_queryString = queryString;
 			_form = form;
@@ -89,7 +89,7 @@ namespace System.Web
 		private void MergeCollections ()
 		{
 			if (_merged)
-				return;
+				return;			
 
 			Unprotect ();
 
@@ -121,6 +121,18 @@ namespace System.Web
 			return base.GetKey (index);
 		}
 
+		public override string[] GetValues (int index)
+                {
+			MergeCollections ();
+			return base.GetValues (index);
+                }
+                
+                public override string[] GetValues (string name)
+                {
+			MergeCollections ();
+			return base.GetValues (name);
+                }
+		
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			throw new SerializationException ();
@@ -128,8 +140,7 @@ namespace System.Web
 
 		public override string [] AllKeys
 		{
-			get
-			{
+			get {
 				MergeCollections ();
 				return base.AllKeys;
 			}
@@ -137,8 +148,7 @@ namespace System.Web
 
 		public override int Count
 		{
-			get
-			{
+			get {
 				MergeCollections ();
 				return base.Count;
 			}
