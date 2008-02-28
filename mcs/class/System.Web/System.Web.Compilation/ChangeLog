@@ -1,3 +1,9 @@
+2008-02-28  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: make sure that data-bound attribute
+	assignments properly convert the Bind expression to the Eval
+	one. Fixes bug #362039
+
 2008-02-27  Marek Habersack  <mhabersack@novell.com>
 
 	* AspComponentFoundry.cs: use BuildManager.GetCompiledType in the
