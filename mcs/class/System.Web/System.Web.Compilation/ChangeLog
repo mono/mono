@@ -1,3 +1,9 @@
+2008-02-28  Marek Habersack  <mhabersack@novell.com>
+
+	* AspGenerator.cs: in 2.0+, aspx files which contain the Content
+	controls can contain only them, whitespace and directives. Fixes
+	bug #339747
+
 2008-02-27  Marek Habersack  <mhabersack@novell.com>
 
 	* AspComponentFoundry.cs: use BuildManager.GetCompiledType in the

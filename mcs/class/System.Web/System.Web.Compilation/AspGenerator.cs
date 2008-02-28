@@ -533,6 +533,56 @@ namespace System.Web.Compilation
 			}
 		}
 
+#if NET_2_0
+		bool BuilderHasOtherThan (Type type, ControlBuilder cb)
+		{
+			ArrayList al = cb.OtherTags;
+			if (al != null && al.Count > 0)
+				return true;
+			
+			al = cb.Children;
+			if (al != null) {
+				ControlBuilder tmp;
+				
+				foreach (object o in al) {
+					if (o == null)
+						continue;
+					
+					tmp = o as ControlBuilder;
+					if (tmp == null) {
+						string s = o as string;
+						if (s != null && String.IsNullOrEmpty (s.Trim ()))
+							continue;
+						
+						return true;
+					}
+					
+					if (tmp is System.Web.UI.WebControls.ContentBuilderInternal)
+						continue;
+					
+					if (!(tmp.ControlType is System.Web.UI.WebControls.Content))
+						return true;					
+				}
+			}
+
+			return false;
+		}
+		
+		bool OtherControlsAllowed (ControlBuilder cb)
+		{
+			if (cb == null)
+				return true;
+			
+			if (!typeof (System.Web.UI.WebControls.Content).IsAssignableFrom (cb.ControlType))
+				return true;
+
+			if (BuilderHasOtherThan (typeof (System.Web.UI.WebControls.Content), rootBuilder))
+				return false;
+			
+			return true;
+		}
+#endif
+		
 		bool ProcessTag (string tagid, TagAttributes atts, TagType tagtype)
 		{
 			if (isApplication) {
@@ -570,6 +620,11 @@ namespace System.Web.Compilation
 			if (builder == null)
 				return false;
 
+#if NET_2_0
+			if (!OtherControlsAllowed (builder))
+				throw new ParseException (Location, "Only Content controls are allowed directly in a content page that contains Content controls.");
+#endif
+			
 			builder.location = location;
 			builder.ID = htable ["id"] as string;
 			if (typeof (HtmlForm).IsAssignableFrom (builder.ControlType)) {
