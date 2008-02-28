@@ -2,7 +2,8 @@
 
 	* HttpParamsCollection.cs: restore the GetValues overrides only to
 	make sure the collections are merged before invoking the base
-	implementation.
+	implementation. 
+	Remove code that's no longer needed.
 
 2008-02-25  Marek Habersack  <mhabersack@novell.com>
 
