@@ -102,7 +102,18 @@ namespace System.Windows.Forms.PropertyGridInternal
 		}
 
 		public override string Label {
-			get { return PropertyDescriptor.Name; }
+			get { 
+				PropertyDescriptor property = this.PropertyDescriptor;
+				if (property != null) {
+					string label = property.DisplayName;
+					ParenthesizePropertyNameAttribute parensAttr = 
+						property.Attributes[typeof (ParenthesizePropertyNameAttribute)] as ParenthesizePropertyNameAttribute;
+					if (parensAttr != null && parensAttr.NeedParenthesis)
+						label = "(" + label + ")";
+					return label;
+				}
+				return String.Empty;
+			}
 		}
 
 		public override GridItem Parent {
@@ -350,7 +361,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 									 this.Value);
 					string error = null;
 					return SetValue (value, out error);
-				} catch { // (Exception e) {
+				} catch { //(Exception e) {
 					// property_grid.ShowError (e.Message + Environment.NewLine + e.StackTrace);
 				}
 			}
@@ -595,6 +606,15 @@ namespace System.Windows.Forms.PropertyGridInternal
 			}
 		}
 
+		public bool IsPassword {
+			get {
+#if NET_2_0
+				if (PropertyDescriptor != null)
+					return PropertyDescriptor.Attributes.Contains (PasswordPropertyTextAttribute.Yes);
+#endif
+				return false;
+			}
+		}
 		// This is a way to set readonly properties (e.g properties without a setter).
 		// The way it works is that if CreateInstance is supported by the parent's converter  
 		// it gets passed a list of properties and their values which it uses to create an 

@@ -179,6 +179,10 @@ namespace System.Windows.Forms.PropertyGridInternal
 			}
 		}
 
+		public char PasswordChar {
+			set { textbox.PasswordChar = value; }
+		}
+
 		#endregion Public Instance Properties
 		
 		#region Events
