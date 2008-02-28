@@ -35,9 +35,12 @@ namespace Mono.Mozilla.DOM
 	internal class Node: DOMObject, INode
 	{
 		internal nsIDOMNode node;
+		protected int hashcode;
+		private EventListener eventListener;
 		
 		public Node (WebBrowser control, nsIDOMNode domNode) : base (control)
 		{
+			hashcode = domNode.GetHashCode ();
 			if (!(domNode is nsIDOMHTMLDocument) && control.platform != control.enginePlatform)
 				this.node = nsDOMNode.GetProxy (control, domNode);
 			else
@@ -183,7 +186,84 @@ namespace Mono.Mozilla.DOM
 		#endregion
 		
 		public override int GetHashCode () {
-			return this.node.GetHashCode ();
+			return this.hashcode;
+		}
+		
+		#region Events
+		
+		private EventListener EventListener {
+			get {
+				if (eventListener == null)
+					eventListener = new EventListener (this.node as nsIDOMEventTarget, this);
+				return eventListener;
+			}
+		}
+		
+		public void AttachEventHandler (string eventName, EventHandler handler) {
+			EventListener.AddHandler (handler, eventName);			
+		}
+		
+		public void DetachEventHandler (string eventName, EventHandler handler) {
+			EventListener.RemoveHandler (handler, eventName);
+		}
+		
+		public event NodeEventHandler Click
+		{
+			add { EventListener.AddHandler (value, "click"); }
+			remove { EventListener.RemoveHandler (value, "click"); }
 		}		
+
+		public event NodeEventHandler DoubleClick
+		{
+			add { EventListener.AddHandler (value, "dblclick"); }
+			remove { EventListener.RemoveHandler (value, "dblclick"); }
+		}		
+		public event NodeEventHandler KeyDown
+		{
+			add { EventListener.AddHandler (value, "keydown"); }
+			remove { EventListener.RemoveHandler (value, "keydown"); }
+		}		
+		public event NodeEventHandler KeyPress
+		{
+			add { EventListener.AddHandler (value, "keypress"); }
+			remove { EventListener.RemoveHandler (value, "keypress"); }
+		}		
+		public event NodeEventHandler KeyUp
+		{
+			add { EventListener.AddHandler (value, "keyup"); }
+			remove { EventListener.RemoveHandler (value, "keyup"); }
+		}		
+		public event NodeEventHandler MouseDown
+		{
+			add { EventListener.AddHandler (value, "mousedown"); }
+			remove { EventListener.RemoveHandler (value, "mousedown"); }
+		}		
+		public event NodeEventHandler MouseEnter
+		{
+			add { EventListener.AddHandler (value, "mouseenter"); }
+			remove { EventListener.RemoveHandler (value, "mouseenter"); }
+		}		
+		public event NodeEventHandler MouseLeave
+		{
+			add { EventListener.AddHandler (value, "mouseout"); }
+			remove { EventListener.RemoveHandler (value, "mouseout"); }
+		}		
+		public event NodeEventHandler MouseMove
+		{
+			add { EventListener.AddHandler (value, "mousemove"); }
+			remove { EventListener.RemoveHandler (value, "mousemove"); }
+		}		
+		public event NodeEventHandler MouseOver
+		{
+			add { EventListener.AddHandler (value, "mouseover"); }
+			remove { EventListener.RemoveHandler (value, "mouseover"); }
+		}		
+		public event NodeEventHandler MouseUp
+		{
+			add { EventListener.AddHandler (value, "mouseup"); }
+			remove { EventListener.RemoveHandler (value, "mouseup"); }
+		}		
+
+		#endregion
 	}
 }

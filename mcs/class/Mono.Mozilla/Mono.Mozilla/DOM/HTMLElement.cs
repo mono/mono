@@ -81,7 +81,7 @@ namespace Mono.Mozilla.DOM
 		}
 
 		public override int GetHashCode () {
-			return this.element.GetHashCode ();
+			return this.hashcode;
 		}
 		#endregion
 	}

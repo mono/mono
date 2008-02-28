@@ -38,7 +38,51 @@ namespace Mono.WebBrowser.DOM
 		void Reload ();
 		void Reload (ReloadOption option);
 		void Stop ();
+
+		/// <summary>
+		/// Navigate to the page in the history, by index.
+		/// </summary>
+		/// <param name="index">
+		/// A <see cref="System.Int32"/> representing an absolute index in the 
+		/// history (that is, > -1 and < history length
+		/// </param>
+		void Go (int index);
+		
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="index">
+		/// A <see cref="System.Int32"/> representing an index in the 
+		/// history, that can be relative or absolute depending on the relative argument
+		/// </param>
+		/// <param name="relative">
+		/// A <see cref="System.Boolean"/> indicating whether the index is relative to 
+		/// the current place in history or not (i.e., if relative = true, index can be
+		/// positive or negative, and index=-1 means load the previous page in the history.
+		/// if relative = false, index must be > -1, and index = 0 means load the first
+		/// page of the history.
+		/// </param>
+		void Go (int index, bool relative);
+		
+
+		/// <summary>
+		/// Navigate to an Url. Uses default loading flags, so the page might come
+		/// from cache
+		/// </summary>
+		/// <param name="url">
+		/// A <see cref="System.String"/> representing an Url
+		/// </param>		
 		void Go (string url);
+		
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="url">
+		/// A <see cref="System.String"/> representing an Url.
+		/// </param>
+		/// <param name="flags">
+		/// A <see cref="LoadFlags"/> that control if the page comes from cache or not.
+		/// </param>
 		void Go (string url, LoadFlags flags);
 		
 		int GetHashCode ();

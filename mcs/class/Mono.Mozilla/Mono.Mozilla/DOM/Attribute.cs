@@ -77,7 +77,7 @@ namespace Mono.Mozilla.DOM
 		#endregion
 		
 		public override int GetHashCode () {
-			return this.attribute.GetHashCode ();
+			return this.hashcode;
 		}
 	}
 }

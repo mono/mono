@@ -46,16 +46,16 @@ namespace Mono.WebBrowser
 		IDocument Document { get; }
 		INavigation Navigation { get; }
 
-		event EventHandler KeyDown;
-		event EventHandler KeyPress;
-		event EventHandler KeyUp;
-		event EventHandler MouseClick;
-		event EventHandler MouseDoubleClick;
-		event EventHandler MouseDown;
-		event EventHandler MouseEnter;
-		event EventHandler MouseLeave;
-		event EventHandler MouseMove;
-		event EventHandler MouseUp;
+		event NodeEventHandler KeyDown;
+		event NodeEventHandler KeyPress;
+		event NodeEventHandler KeyUp;
+		event NodeEventHandler MouseClick;
+		event NodeEventHandler MouseDoubleClick;
+		event NodeEventHandler MouseDown;
+		event NodeEventHandler MouseEnter;
+		event NodeEventHandler MouseLeave;
+		event NodeEventHandler MouseMove;
+		event NodeEventHandler MouseUp;
 		event EventHandler Focus;
 		event CreateNewWindowEventHandler CreateNewWindow;
 		event AlertEventHandler Alert;
@@ -63,6 +63,7 @@ namespace Mono.WebBrowser
 		event EventHandler DocumentCompleted;
 		event EventHandler Completed;
 		
+		event EventHandler Generic;		
 	}
 
 	public enum ReloadOption : uint
@@ -175,7 +176,7 @@ namespace Mono.WebBrowser
 
 #endregion	// Public Constructors
 
-		#region Public Instance Properties
+#region Public Instance Properties
 		public DialogType Type {
 			get { return this.type; }
 			set { this.type = value; }
@@ -253,7 +254,6 @@ namespace Mono.WebBrowser
 			set { returnValue = value; }
 		}
 
-		#endregion	// Public Instance Properties
+#endregion
 	}
-
 }

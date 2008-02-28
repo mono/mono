@@ -42,6 +42,21 @@ namespace Mono.WebBrowser.DOM
 		string 		Value {get;} 
 		
 		int 		GetHashCode ();
+		
+		void AttachEventHandler (string eventName, EventHandler handler);
+		void DetachEventHandler (string eventName, EventHandler handler);
+		
+		event NodeEventHandler Click;
+		event NodeEventHandler DoubleClick;
+		event NodeEventHandler KeyDown;
+		event NodeEventHandler KeyPress;
+		event NodeEventHandler KeyUp;
+		event NodeEventHandler MouseDown;
+		event NodeEventHandler MouseEnter;
+		event NodeEventHandler MouseLeave;
+		event NodeEventHandler MouseMove;
+		event NodeEventHandler MouseOver;
+		event NodeEventHandler MouseUp;
 	}
 	
 	public enum NodeType

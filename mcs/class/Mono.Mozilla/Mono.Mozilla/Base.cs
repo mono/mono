@@ -73,7 +73,7 @@ namespace Mono.Mozilla
 		public static bool Init (WebBrowser control, Platform platform)
 		{
 			BindingInfo info = new BindingInfo ();
-			info.callback = new CallbackBinder (control);
+			info.callback = new CallbackBinder (control.callbacks);
 			IntPtr ptrCallback = Marshal.AllocHGlobal (Marshal.SizeOf (info.callback));
 			Marshal.StructureToPtr (info.callback, ptrCallback, true);
 
@@ -270,6 +270,39 @@ namespace Mono.Mozilla
 			[MarshalAs (UnmanagedType.LPStruct)] Guid iid, 
 			[MarshalAs (UnmanagedType.Interface)] object obj,
 			out IntPtr ret);
+
+
+		[DllImport ("gluezilla")]
+		public static extern uint gluezilla_StringContainerInit (HandleRef /*nsStringContainer & */aStr);
+
+		[DllImport ("gluezilla")]
+		public static extern void gluezilla_StringContainerFinish (HandleRef /*nsStringContainer & */aStr);
+
+		[DllImport ("gluezilla")]
+		public static extern uint gluezilla_StringGetData (HandleRef /*const nsAString &*/ aStr, 
+			out IntPtr /*const PRUnichar ** */aBuf, 
+			out bool /*PRBool * */aTerm);
+
+		[DllImport ("gluezilla")]
+		public static extern uint gluezilla_StringSetData (HandleRef /*nsAString &*/ aStr, 
+			[MarshalAs (UnmanagedType.LPWStr)] string /*const PRUnichar * */ aBuf, uint aCount);
+
+		[DllImport ("gluezilla")]
+		public static extern uint gluezilla_CStringContainerInit (HandleRef /*nsCStringContainer &*/ aStr);
+
+		[DllImport ("gluezilla")]
+		public static extern void gluezilla_CStringContainerFinish (HandleRef /*nsCStringContainer &*/ aStr);
+
+		[DllImport ("gluezilla")]
+		public static extern uint gluezilla_CStringGetData (HandleRef /*const nsACString &*/ aStr, 
+			out IntPtr /*const PRUnichar ** */aBuf, 
+			out bool /*PRBool **/ aTerm);
+
+		[DllImport ("gluezilla")]
+		public static extern uint gluezilla_CStringSetData (HandleRef /*nsACString &*/ aStr, 
+			string aBuf, 
+			uint aCount);
+
 
 		#endregion
 	}

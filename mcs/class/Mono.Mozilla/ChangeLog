@@ -1,3 +1,48 @@
+2008-02-28  Andreia Gaita <avidigal@novell.com> 
+
+	* Mono.Mozilla/DOM/EventListener.cs: Implementation of the 
+	nsIDOMEventListener, so that events can be registered as-needed
+	for each dom object, instead of gluezilla firing everything up.
+	This class will eventually replace gluezilla's EventListener.
+
+	* Mono.Mozilla/DOM/Node.cs: Store the hashcode of the unmanaged
+	object before proxying so we can use it to match events to objects.
+	Implement event handling for dom objects. These events are registered
+	on the managed EventListener and go straight out to the caller (don't
+	go out through the Callback class).
+
+	* Mono.Mozilla/DOM/HTMLElement.cs,
+	  Mono.Mozilla/DOM/Attribute.cs, 
+	  Mono.Mozilla/DOM/Element.cs: Use the hashcode stored on the
+	  parent Node class instead of the local object hashcode (the 
+	  local object is a proxy, while the stored hashcode is from
+	  the real object)
+
+	* Mono.Mozilla/DOM/Navigation.cs: Implement navigation through
+	the history.
+
+	* Mono.Mozilla/WebBrowser.cs: Move callback-related code to 
+	the Callback class. Add support for registering and firing events
+	coming from the Callback class (generic window events, element
+	specific events come through the element it was registered on).
+
+	* Mono.Mozilla/Callback.cs: Cleaned up unused callbacks, moved 
+	callback-related code from WebBrowser.cs to here to keep all 
+	callback code together. All events coming through here are 
+	window-related and get sent to the handlers registered through
+	the WebBrowser class/interface.
+
+	* Mono.Mozilla/ICallback.cs: Removed, unnecessary overhead. 
+	* Mono.Mozilla/Base.cs: new pinvokes to support the string classes
+	* Mono.Mozilla/UniString.cs: Wrapper for mozilla's nsString class
+	* Mono.Mozilla/AsciiString.cs: Wrapper for mozilla's nsCString class
+
+	* Mono.Mozilla.dll.sources: 
+	new files: AsciiString, UniString, EventListener, nsIDOMEvent, 
+	nsIDOMEventListener, nsIDOMEventTarget, nsIDOMKeyEvent, nsIDOMMouseEvent, 
+	nsIDOMUIEvent, NodeEventArgs, NodeEventHandler
+	removed: ICallback	
+
 2008-02-06  Andreia Gaita <avidigal@novell.com>
 
 	* Navigation.cs: Pass the proper flags to reload

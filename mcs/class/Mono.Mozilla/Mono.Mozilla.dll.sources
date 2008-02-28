@@ -1,8 +1,16 @@
 Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
+Mono.Mozilla/AsciiString.cs
 Mono.Mozilla/Base.cs
 Mono.Mozilla/Callback.cs
-Mono.Mozilla/ICallback.cs
+Mono.Mozilla/DOM/EventListener.cs
+Mono.Mozilla/interfaces/nsIDOMEvent.cs
+Mono.Mozilla/interfaces/nsIDOMEventListener.cs
+Mono.Mozilla/interfaces/nsIDOMEventTarget.cs
+Mono.Mozilla/interfaces/nsIDOMKeyEvent.cs
+Mono.Mozilla/interfaces/nsIDOMMouseEvent.cs
+Mono.Mozilla/interfaces/nsIDOMUIEvent.cs
+Mono.Mozilla/UniString.cs
 Mono.Mozilla/WebBrowser.cs
 Mono.Mozilla/DOM/Attribute.cs
 Mono.Mozilla/DOM/AttributeCollection.cs
@@ -58,6 +66,8 @@ Mono.Mozilla/interfaces/nsIWebNavigation.cs
 Mono.Mozilla/interfaces/extras/NodeType.cs
 Mono.Mozilla/interfaces/extras/nsIWriteSegmentFun.cs
 Mono.Mozilla/interfaces/extras/Options.cs
+Mono.WebBrowser/DOM/NodeEventArgs.cs
+Mono.WebBrowser/DOM/NodeEventHandler.cs
 Mono.WebBrowser/IWebBrowser.cs
 Mono.WebBrowser/Manager.cs
 Mono.WebBrowser/DOM/IAttribute.cs

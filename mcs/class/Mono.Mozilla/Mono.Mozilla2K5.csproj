@@ -79,9 +79,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Mono.Mozilla\AsciiString.cs" />
     <Compile Include="Mono.Mozilla\Base.cs" />
     <Compile Include="Mono.Mozilla\Callback.cs" />
-    <Compile Include="Mono.Mozilla\ICallback.cs" />
+    <Compile Include="Mono.Mozilla\DOM\EventListener.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMEvent.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMEventListener.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMEventTarget.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMKeyEvent.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMMouseEvent.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMUIEvent.cs" />
+    <Compile Include="Mono.Mozilla\UniString.cs" />
     <Compile Include="Mono.Mozilla\WebBrowser.cs" />
     <Compile Include="Mono.Mozilla\DOM\Attribute.cs" />
     <Compile Include="Mono.Mozilla\DOM\AttributeCollection.cs" />
@@ -137,6 +145,8 @@
     <Compile Include="Mono.Mozilla\interfaces\extras\NodeType.cs" />
     <Compile Include="Mono.Mozilla\interfaces\extras\nsIWriteSegmentFun.cs" />
     <Compile Include="Mono.Mozilla\interfaces\extras\Options.cs" />
+    <Compile Include="Mono.WebBrowser\DOM\NodeEventArgs.cs" />
+    <Compile Include="Mono.WebBrowser\DOM\NodeEventHandler.cs" />
     <Compile Include="Mono.WebBrowser\IWebBrowser.cs" />
     <Compile Include="Mono.WebBrowser\Manager.cs" />
     <Compile Include="Mono.WebBrowser\DOM\IAttribute.cs" />

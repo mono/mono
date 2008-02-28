@@ -129,6 +129,59 @@ namespace Mono.Mozilla.DOM
 			navigation.stop ((uint)StopOption.All);
 		}
 		
+		
+		/// <summary>
+		/// Navigate to the page in the history, by index.
+		/// </summary>
+		/// <param name="index">
+		/// A <see cref="System.Int32"/> representing an absolute index in the 
+		/// history (that is, > -1 and < history length
+		/// </param>
+		public void Go (int index)
+		{
+			if (navigation == null || index < 0)
+				return;
+			
+			int count;
+			nsISHistory history;
+			navigation.getSessionHistory (out history);
+			history.getCount (out count);
+			if (index > count)
+				return;
+
+			control.Reset ();
+			navigation.gotoIndex (index);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="index">
+		/// A <see cref="System.Int32"/> representing an index in the 
+		/// history, that can be relative or absolute depending on the relative argument
+		/// </param>
+		/// <param name="relative">
+		/// A <see cref="System.Boolean"/> indicating whether the index is relative to 
+		/// the current place in history or not (i.e., if relative = true, index can be
+		/// positive or negative, and index=-1 means load the previous page in the history.
+		/// if relative = false, index must be > -1, and index = 0 means load the first
+		/// page of the history.
+		/// </param>
+		public void Go (int index, bool relative) {
+
+			if (relative) {
+				nsISHistory history;
+				int count;
+				int curIndex;
+
+				navigation.getSessionHistory (out history);
+				history.getCount (out count);
+				history.getIndex (out curIndex);
+				index = curIndex + index;
+			}
+			Go (index);			
+		}
+		
 		public void Go (string url)
 		{
 			if (navigation == null)
