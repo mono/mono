@@ -795,8 +795,11 @@ namespace System.Web.UI
 				try {
 					if (c._userId != null)
 						_controlsCache.Add (c._userId, c);
-				} catch (Exception ex) {
-					throw new HttpException ("Found more than one control with ID '" + c._userId + "'", ex);
+				} catch (ArgumentException ex) {
+					throw new HttpException (
+						"Multiple controls with the same ID '" + 
+						c._userId + 
+						"' were found. FindControl requires that controls have unique IDs. ");
 				}
 
 				if ((c.stateMask & IS_NAMING_CONTAINER) == 0 && c.HasControls ())
