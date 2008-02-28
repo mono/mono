@@ -21,11 +21,10 @@
 # Boston, MA 02111-1307, USA.
 ##############################################################
 
-die "Usage: xpidl2cs.pl file.idl [/path/to/idl/]" if length @ARGV == 0;
+die "Usage: xpidl2cs.pl file.idl [/path/to/idl/]" if scalar(@ARGV) < 1;
 
 my $file = shift;
-my $path = shift if length @ARGV > 0;
-
+my $path = shift if scalar(@ARGV) == 1;
 
 open FILE, '<', $path.$file or die "Can't open file $path$file";
 
@@ -64,9 +63,12 @@ $types{"refstring"} = {name => "IntPtr", out => "ref", marshal => ""};
 $types{"charPtr"} = {name => "StringBuilder", out => "", marshal => ""};
 $types{"voidPtr"} = {name => "IntPtr", out => "", marshal => ""};
 $types{"nsISupports"} = {name => "IntPtr", out => "out", "[MarshalAs (UnmanagedType.Interface)] "};
+$types{"DOMTimeStamp"} = {name => "int", out => "out", ""};
 $types{"nsWriteSegmentFun"} = {name => "nsIWriteSegmentFunDelegate", out => "", ""};
 $types{"others"} = {name => "", out => "out", marshal => "[MarshalAs (UnmanagedType.Interface)] "};
 $types{"nsQIResult"} = {name => "IntPtr", out => "out", marshal => ""};
+
+$names{"event"} = {name => "_event"};
 
 my %dependents;
 
@@ -106,6 +108,15 @@ sub parse_parent {
 sub has_setter {
     my $x = shift;
     return !$properties{$x}->{"setter"};
+}
+
+sub get_name {
+    my $x = shift;
+
+    if (exists $names{$x}) {
+	return $names{$x}->{"name"};
+    }
+    return $x;
 }
 
 sub get_type {
@@ -225,7 +236,7 @@ sub get_params {
 	    $marshal = &get_marshal ($type);
 	    $marshal = " " if !$marshal;
 	    $type = &get_type ($type);
-	    $name = @p[0];
+	    $name = &get_name (@p[0]);
 	}
 #	print "marshal:$marshal\ttype:$type\tname:$name\n";
 	$out = &get_out($type) if $isout;
@@ -233,7 +244,7 @@ sub get_params {
 	$type = &get_type (@p[0]) unless $type;
 	shift @p unless scalar(@p) == 1;
 	$marshal = &get_marshal ($type) unless $marshal;
-	$name = @p[0] unless $name;
+	$name = &get_name (@p[0]) unless $name;
 
 #	print "marshal:$marshal\ttype:$type\tname:$name\n";
 

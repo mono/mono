@@ -1,3 +1,8 @@
+2008-02-28  Andreia Gaita  <avidigal@novell.com>
+
+	* xpidlcs.pl: Add overrideable names (for renaming parameters that
+	clash with c# keywords). Turn DOMTimeStamp to int for now.
+
 2008-01-29  Andreia Gaita  <avidigal@novell.com>
 
 	* xpidl2cs.pl: Add support for arrays in parameters
