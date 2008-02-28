@@ -1,4 +1,10 @@
 
+Thu Feb 28 19:52:30 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* CounterCreationData.cs, PerformanceCounterCategory.cs,
+	PerformanceCounter.cs: bugfixes, icalls for categories,
+	more methods implemented.
+
 Wed Feb 27 20:00:04 CET 2008 Paolo Molaro <lupus@ximian.com>
 
 	* CounterSample.cs, CounterSampleCalculator.cs, PerformanceCounter.cs,

@@ -40,6 +40,7 @@ namespace System.Diagnostics {
 	public class CounterCreationData 
 	{
 
+		// keep the same order of fields: this is used in metadata/mono-perfcounters.c
 		private string help;
 		private string name;
 		private PerformanceCounterType type;

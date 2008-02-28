@@ -148,13 +148,13 @@ namespace System.Diagnostics {
 		 */
 		void UpdateInfo ()
 		{
-			// system counters are always readonly
-			if (!is_custom)
-				readOnly = true;
 			// need to free the previous info
 			if (impl != IntPtr.Zero)
 				Close ();
 			impl = GetImpl (categoryName, counterName, instanceName, machineName, out type, out is_custom);
+			// system counters are always readonly
+			if (!is_custom)
+				readOnly = true;
 			// invalid counter, need to handle out of mem
 			if (impl == IntPtr.Zero)
 				throw new InvalidOperationException ();
@@ -322,6 +322,8 @@ namespace System.Diagnostics {
 #endif
 		public long IncrementBy (long value)
 		{
+			if (changed)
+				UpdateInfo ();
 			if (readOnly)
 				throw new InvalidOperationException ();
 			return UpdateValue (impl, true, value);
