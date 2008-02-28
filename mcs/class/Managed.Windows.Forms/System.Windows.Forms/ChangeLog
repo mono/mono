@@ -1,3 +1,9 @@
+2008-02-28  Andreia Gaita <avidigal@novell.com>
+
+	* WebBrowserBase.cs: MouseClick sig changed.
+	* HtmlHistory.cs: Implement history navigation
+	* HtmlElement.cs: Add event handlers, and connect them.
+
 2008-02-28  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* GridEntry.cs: 

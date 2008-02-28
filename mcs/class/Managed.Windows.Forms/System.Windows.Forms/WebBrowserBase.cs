@@ -307,7 +307,7 @@ namespace System.Windows.Forms
 				
 			state = State.Loaded;
 
-			webHost.MouseClick += new EventHandler (OnWebHostMouseClick);
+			webHost.MouseClick += new Mono.WebBrowser.DOM.NodeEventHandler (OnWebHostMouseClick);
 			webHost.Focus += new EventHandler (OnWebHostFocus);
 			webHost.CreateNewWindow += new Mono.WebBrowser.CreateNewWindowEventHandler (OnWebHostCreateNewWindow);
 			webHost.Alert += new Mono.WebBrowser.AlertEventHandler (OnWebHostAlert);

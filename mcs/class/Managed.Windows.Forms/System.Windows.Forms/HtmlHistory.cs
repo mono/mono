@@ -30,12 +30,52 @@ using Mono.WebBrowser.DOM;
 
 namespace System.Windows.Forms
 {
-	public sealed class HtmlHistory {
+	public sealed class HtmlHistory : IDisposable {
+
+		private bool disposed;
 
 		private Mono.WebBrowser.IWebBrowser webHost;
 		internal HtmlHistory (Mono.WebBrowser.IWebBrowser webHost)
 		{
 			this.webHost = webHost;
+		}
+		
+		#region IDisposable Members
+
+		protected void Dispose (bool disposing)
+		{
+			if (!disposed) {
+				disposed = true;
+			}
+		}
+
+		public void Dispose ()
+		{
+			Dispose (true);
+			GC.SuppressFinalize (this);
+		}
+
+		#endregion
+		
+		
+		public void Back () {
+			this.webHost.Navigation.Back ();
+		}
+		
+		public void Forward () {
+			this.webHost.Navigation.Forward ();
+		}
+		
+		public void Go (int index) {
+			this.webHost.Navigation.Go (index, true);
+		}
+
+		public void Go (string url) {
+			this.webHost.Navigation.Go (url);
+		}
+
+		public void Go (Uri uri) {
+			this.webHost.Navigation.Go (uri.ToString ());
 		}
 	}
 }
