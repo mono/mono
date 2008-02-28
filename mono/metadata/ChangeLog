@@ -1,5 +1,11 @@
 2008-02-28 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (do_refanytype): Verify the refanytype opcode.
+
+	* verify.c (mono_method_verify): Use do_refanytype.
+
+2008-02-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (do_mkrefany): Verify the mkrefany opcode.
 
 	* verify.c (mono_method_verify): Use do_mkrefany.
