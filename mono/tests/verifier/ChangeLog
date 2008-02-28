@@ -1,3 +1,9 @@
+2008-02-28 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_mkrefany.il: New test generator for mkrefany opcode.
+
+	* make_tests.sh: Added tests for mkrefany.
+
 2008-02-27 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* valid_vararg.il: New test for calling vararg methods.
