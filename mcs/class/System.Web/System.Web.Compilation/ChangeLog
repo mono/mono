@@ -1,5 +1,9 @@
 2008-02-28  Marek Habersack  <mhabersack@novell.com>
 
+	* TemplateControlCompiler.cs: make sure that data-bound attribute
+	assignments properly convert the Bind expression to the Eval
+	one. Fixes bug #362039
+
 	* AspGenerator.cs: in 2.0+, aspx files which contain the Content
 	controls can contain only them, whitespace and directives. Fixes
 	bug #339747

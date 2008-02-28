@@ -486,7 +486,7 @@ namespace System.Web.Compilation
 		}
 
 		void AddCodeForPropertyOrField (ControlBuilder builder, Type type, string var_name, string att, MemberInfo member, bool isDataBound, bool isExpression)
-		{			
+		{
 			CodeMemberMethod method = builder.method;
 			bool isWritable = IsWritablePropertyOrField (member);
 			if (isDataBound && isWritable) {
@@ -500,7 +500,7 @@ namespace System.Web.Compilation
 				return;
 			}
 #endif
-			
+
 			CodeAssignStatement assign = new CodeAssignStatement ();
 			assign.Left = new CodePropertyReferenceExpression (ctrlVar, var_name);
 			currentLocation = builder.location;
@@ -616,7 +616,7 @@ namespace System.Web.Compilation
 #endif
 				if (!IsWritablePropertyOrField (member))
 					return false;
-
+				
 				AddCodeForPropertyOrField (builder, type, member.Name, attValue, member, isDataBound, isExpression);
 				return true;
 			}
@@ -657,7 +657,8 @@ namespace System.Web.Compilation
 			if (attValue == null && is_bool)
 				val = "true"; // Font-Bold <=> Font-Bold="true"
 #if NET_2_0
-			if (isDataBound) RegisterBindingInfo (builder, prefix + member.Name + "." + subprop.Name, ref attValue);
+			if (isDataBound)
+				RegisterBindingInfo (builder, prefix + member.Name + "." + subprop.Name, ref attValue);
 #endif
 			AddCodeForPropertyOrField (builder, subprop.PropertyType,
 						   prefix + member.Name + "." + subprop.Name,
@@ -876,8 +877,14 @@ namespace System.Web.Compilation
 			bool databound = IsDataBound (attvalue);
 
 			if (databound) {
-				val = attvalue.Substring (3);
-				val = val.Substring (0, val.Length - 2);
+				val = attvalue.Substring (3, attvalue.Length - 5).Trim ();
+#if NET_2_0
+				if (StrUtils.StartsWith (val, "Bind", true)) {
+					Match match = bindRegexInValue.Match (val);
+					if (match.Success)
+						val = "Eval" + val.Substring (4);
+				}
+#endif
 				CreateDBAttributeMethod (builder, id, val);
 			} else {
 				CodeCastExpression cast;
