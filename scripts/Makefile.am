@@ -20,7 +20,6 @@ bin_SCRIPTS = \
 	$(scripts_service)	\
 	$(scripts_nunit)	\
 	$(scripts_rpmhelpers)	\
-	mcs			\
 	mono-test-install
 
 scripts_1_0_compat = \
@@ -46,6 +45,7 @@ scripts_1_0 = \
 	genxs			\
 	installvst		\
 	macpack			\
+	mcs			\
 	mbas			\
 	mjs			\
 	monolinker		\
@@ -187,6 +187,3 @@ $(scripts_2_0): script.in Makefile
 	$(REWRITE2) -e "s,@""exe_name@,$$n,g" $(srcdir)/script.in > $@.tmp
 	mv $@.tmp $@
 
-mcs: script.in Makefile
-	$(REWRITE2) -e "s,@""exe_name@,gmcs,g" $(srcdir)/script.in > $@.tmp
-	mv $@.tmp $@
