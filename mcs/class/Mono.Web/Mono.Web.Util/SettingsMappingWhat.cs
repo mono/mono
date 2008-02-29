@@ -1,5 +1,5 @@
 //
-// System.Web.Util.SettingsMappingWhat
+// Mono.Web.Util.SettingsMappingWhat
 //
 // Authors:
 //   Marek Habersack (mhabersack@novell.com)
@@ -33,7 +33,7 @@ using System.Collections.Generic;
 using System.Xml;
 using System.Xml.XPath;
 
-namespace System.Web.Util
+namespace Mono.Web.Util
 {
 	public enum SettingsMappingWhatOperation
 	{

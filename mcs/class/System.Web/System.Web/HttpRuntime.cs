@@ -41,6 +41,9 @@ using System.Web.Caching;
 using System.Web.Configuration;
 using System.Web.UI;
 using System.Web.Util;
+#if MONOWEB_DEP
+using Mono.Web.Util;
+#endif
 using System.Threading;
 #if TARGET_J2EE
 using Mainsoft.Web;
@@ -128,7 +131,9 @@ namespace System.Web {
 #if NET_2_0
 			try {
 				WebConfigurationManager.Init ();
+#if MONOWEB_DEP
 				SettingsMappingManager.Init ();
+#endif
 			} catch (Exception ex) {
 				initialException = ex;
 			}

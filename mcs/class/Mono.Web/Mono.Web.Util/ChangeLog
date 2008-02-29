@@ -1,0 +1,7 @@
+2008-03-01  Marek Habersack  <mhabersack@novell.com>
+
+	* ISectionSettingsMapper.cs, MembershipSectionMapper.cs,
+	RoleManagerSectionMapper.cs, SettingsMapping.cs,
+	SettingsMappingManager.cs, SettingsMappingWhat.cs: moved to here
+	from System.Web
+

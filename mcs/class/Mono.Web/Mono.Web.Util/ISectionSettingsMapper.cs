@@ -1,5 +1,5 @@
 //
-// System.Web.Util.ISectionSettingsMapper
+// Mono.Web.Util.ISectionSettingsMapper
 //
 // Authors:
 //   Marek Habersack (mhabersack@novell.com)
@@ -31,7 +31,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace System.Web.Util
+namespace Mono.Web.Util
 {
   public interface ISectionSettingsMapper
   {
