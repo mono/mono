@@ -1,3 +1,8 @@
+2008-02-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* report.cs (FeatureIsNotAvailable): Use 'mcs1' instead of 'mcs', and 'mcs' 
+	instead of 'gmcs'.
+
 2008-02-27  Marek Safar  <marek.safar@gmail.com>
 
 	* ecore.cs: Clean-up and split BetterConversion.
