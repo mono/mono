@@ -42,7 +42,7 @@ namespace System.Windows.Forms
 		
 		#region IDisposable Members
 
-		protected void Dispose (bool disposing)
+		private void Dispose (bool disposing)
 		{
 			if (!disposed) {
 				disposed = true;
@@ -58,12 +58,12 @@ namespace System.Windows.Forms
 		#endregion
 		
 		
-		public void Back () {
-			this.webHost.Navigation.Back ();
+		public void Back (int index) {
+			this.webHost.Navigation.Go (index * -1, true);
 		}
 		
-		public void Forward () {
-			this.webHost.Navigation.Forward ();
+		public void Forward (int index) {
+			this.webHost.Navigation.Go (index, true);
 		}
 		
 		public void Go (int index) {
