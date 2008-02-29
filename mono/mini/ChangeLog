@@ -1,5 +1,10 @@
 2008-02-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ops.h: Remove OP_SPARC_INARG_VT, add a new OP_VTARG_ADDR opcode instead
+	to be in sync with the code on the linear IR branch.
+
+	* mini-sparc.c inssel-sparc.brg: Use OP_VTARG_ADDR.
+
 	* inssel-s390.brg (OP_SETRET (freg)): Set dreg correctly.
 
 2008-02-27  Zoltan Varga  <vargaz@gmail.com>
