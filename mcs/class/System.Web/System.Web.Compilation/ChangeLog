@@ -1,3 +1,10 @@
+2008-02-29  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: implement a mechanism to ignore certain virtual
+	paths when batch compiling. Helps applications which may have
+	.as?x files which won't work on mono for various reasons (one such
+	sample is mojoportal).
+
 2008-02-28  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: make sure that data-bound attribute

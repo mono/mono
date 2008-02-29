@@ -37,6 +37,7 @@ using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -243,6 +244,9 @@ namespace System.Web.Compilation {
 			{".ascx", BuildKind.NonPages},
 			{".master", BuildKind.NonPages}
 		};
+
+		static Dictionary <string, bool> virtualPathsToIgnore;
+		static bool haveVirtualPathsToIgnore;
 		
 		internal BuildManager ()
 		{
@@ -592,6 +596,9 @@ namespace System.Web.Compilation {
 				foreach (string f in files) {
 					fileName = Path.GetFileName (f);
 					fileVirtualPath = VirtualPathUtility.Combine (virtualDir, fileName);
+
+					if (IgnoreVirtualPath (fileVirtualPath))
+						continue;
 					
 					if (buildCache.ContainsKey (fileVirtualPath) || vpCache.ContainsKey (fileVirtualPath))
 						continue;
@@ -608,6 +615,83 @@ namespace System.Web.Compilation {
 			return ret;
 		}		
 
+		static bool IgnoreVirtualPath (string virtualPath)
+		{
+			if (!haveVirtualPathsToIgnore)
+				return false;
+			
+			if (virtualPathsToIgnore.ContainsKey (virtualPath))
+				return true;
+			
+			return false;
+		}
+
+		static void AddPathToIgnore (string vp)
+		{
+			if (virtualPathsToIgnore == null)
+				virtualPathsToIgnore = new Dictionary <string, bool> ();
+			
+			string path = GetAbsoluteVirtualPath (vp);
+			if (virtualPathsToIgnore.ContainsKey (path))
+				return;
+
+			virtualPathsToIgnore.Add (path, true);
+			haveVirtualPathsToIgnore = true;
+		}
+
+		static char[] virtualPathsToIgnoreSplitChars = {','};
+		static void LoadVirtualPathsToIgnore ()
+		{
+			if (virtualPathsToIgnore != null)
+				return;
+			
+			NameValueCollection appSettings = WebConfigurationManager.AppSettings;
+			if (appSettings == null)
+				return;
+
+			string pathsFromConfig = appSettings ["MonoAspnetBatchCompileIgnorePaths"];
+			string pathsFromFile = appSettings ["MonoAspnetBatchCompileIgnoreFromFile"];
+
+			if (!String.IsNullOrEmpty (pathsFromConfig)) {
+				string[] paths = pathsFromConfig.Split (virtualPathsToIgnoreSplitChars);
+				string path;
+				
+				foreach (string p in paths) {
+					path = p.Trim ();
+					if (path.Length == 0)
+						continue;
+
+					AddPathToIgnore (path);
+				}
+			}
+
+			if (!String.IsNullOrEmpty (pathsFromFile)) {
+				string realpath;
+				HttpContext ctx = HttpContext.Current;
+				HttpRequest req = ctx != null ? ctx.Request : null;
+
+				if (req == null)
+					throw new HttpException ("Missing context, cannot continue.");
+
+				realpath = req.MapPath (pathsFromFile);
+				if (!File.Exists (realpath))
+					return;
+
+				string[] paths = File.ReadAllLines (realpath);
+				if (paths == null || paths.Length == 0)
+					return;
+
+				string path;
+				foreach (string p in paths) {
+					path = p.Trim ();
+					if (path.Length == 0)
+						continue;
+
+					AddPathToIgnore (path);
+				}
+			}
+		}
+		
 		static AssemblyBuilder CreateAssemblyBuilder (string assemblyBaseName, string virtualPath, BuildItem buildItem)
 		{
 			buildItem.assemblyBuilder = new AssemblyBuilder (virtualPath, buildItem.CreateCodeDomProvider (), assemblyBaseName);
@@ -804,6 +888,7 @@ namespace System.Web.Compilation {
 		static void BuildAssembly (string virtualPath)
 		{
 			AssertVirtualPathExists (virtualPath);
+			LoadVirtualPathsToIgnore ();
 			
 			object ticket;
 			bool acquired;
