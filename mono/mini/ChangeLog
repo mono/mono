@@ -1,3 +1,7 @@
+2008-02-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel-s390.brg (OP_SETRET (freg)): Set dreg correctly.
+
 2008-02-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-mips.c: Use cfg->vret_addr instead of cfg->ret.
