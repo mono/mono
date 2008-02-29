@@ -1,3 +1,9 @@
+2008-02-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ops.h mini-s390.c inssel-s390.brg: Ongoing S390 work.
+
+	* method-to-ir.c (mono_spill_global_vars): Fix a comment.
+
 2008-02-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-s390.c cpu-s390.md: Ongoing s390 work.

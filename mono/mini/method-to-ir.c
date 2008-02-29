@@ -10838,7 +10838,7 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
 				MonoInst *var = ins->inst_p0;
 
 				if (var->opcode == OP_VTARG_ADDR) {
-					/* Happens on SPARC where vtypes are passed by reference */
+					/* Happens on SPARC/S390 where vtypes are passed by reference */
 					MonoInst *vtaddr = var->inst_left;
 					if (vtaddr->opcode == OP_REGVAR) {
 						ins->opcode = OP_MOVE;
