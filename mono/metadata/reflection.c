@@ -7399,6 +7399,15 @@ mono_custom_attrs_from_method (MonoMethod *method)
 {
 	MonoCustomAttrInfo *cinfo;
 	guint32 idx;
+
+	/*
+	 * An instantiated method has the same cattrs as the generic method definition.
+	 *
+	 * LAMESPEC: The .NET SRE throws an exception for instantiations of generic method builders
+	 *           Note that this stanza is not necessary for non-SRE types, but it's a micro-optimization
+	 */
+	if (method->is_inflated)
+		method = ((MonoMethodInflated *) method)->declaring;
 	
 	if (dynamic_custom_attrs && (cinfo = lookup_custom_attr (method)))
 		return cinfo;
@@ -7503,6 +7512,15 @@ mono_custom_attrs_from_param (MonoMethod *method, guint32 param)
 	guint32 param_list, param_last, param_pos, found;
 	MonoImage *image;
 	MonoReflectionMethodAux *aux;
+
+	/*
+	 * An instantiated method has the same cattrs as the generic method definition.
+	 *
+	 * LAMESPEC: The .NET SRE throws an exception for instantiations of generic method builders
+	 *           Note that this stanza is not necessary for non-SRE types, but it's a micro-optimization
+	 */
+	if (method->is_inflated)
+		method = ((MonoMethodInflated *) method)->declaring;
 
 	if (method->klass->image->dynamic) {
 		MonoCustomAttrInfo *res, *ainfo;
@@ -9007,21 +9025,12 @@ static MonoMethod *
 inflate_mono_method (MonoReflectionGenericClass *type, MonoMethod *method, MonoObject *obj)
 {
 	MonoMethodInflated *imethod;
-	MonoGenericContext tmp_context;
 	MonoGenericContext *context;
 	MonoClass *klass;
 
 	klass = mono_class_from_mono_type (type->type.type);
 	g_assert (klass->generic_class);
 	context = mono_class_get_context (klass);
-
-	if (method->generic_container) {
-		g_assert (method->klass == klass->generic_class->container_class);
-
-		tmp_context.class_inst = klass->generic_class->context.class_inst;
-		tmp_context.method_inst = method->generic_container->context.method_inst;
-		context = &tmp_context;
-	}
 
 	imethod = (MonoMethodInflated *) mono_class_inflate_generic_method_full (method, klass, context);
 	if (method->generic_container) {

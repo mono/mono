@@ -30,9 +30,10 @@ For comments, corrections and updates, please contact mono@novell.com
 
 	This code is dual licensed under the LGPL or commercial licenses. 
 
-	The LGPL ensures that Mono can be used in most scenarios, but 
-	gives Novell the flexibility to relicense the code for embedded
-	systems or commercial settings where the LGPL can not be used. 
+	The LGPL ensures that Mono can be used in most scenarios, but
+	gives Novell the flexibility to relicense the code for
+	embedded systems, static linking or commercial settings where
+	the LGPL can not be used.
 
 	Contact mono@novell.com for details on obtaining the Mono
 	runtime under other terms.

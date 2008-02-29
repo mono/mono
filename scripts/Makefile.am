@@ -1,15 +1,39 @@
+#
+# Scripts that we install
+#
+# Starting with Mono 2.0, the majority of the tools default to the 
+# 2.0 profile.  Commands that support the 1.0 toolchain and must
+# run under 1.0 have the number 1 appended to their command names
+# (for example mcs1 is the C# 1.0 compiler) and are listed in the
+# scripts_1_0 compat variable.
+# 
+# To preserve compatibility with old Makefiles and tools we keep the
+# command names that had the suffix 2 (like wsdl2)
+#
 bin_SCRIPTS = \
 	$(scripts_1_0)		\
 	$(scripts_1_0_umask)	\
+	$(scripts_1_0_compat)	\
+	$(script_defaults)	\
 	$(scripts_2_0)		\
 	$(scripts_2_1)		\
 	$(scripts_service)	\
 	$(scripts_nunit)	\
 	$(scripts_rpmhelpers)	\
+	mcs			\
 	mono-test-install
 
+scripts_1_0_compat = \
+	al1			\
+	ilasm1			\
+	mcs1			\
+	mkbundle1		\
+	mono-api-info1		\
+	monop1			\
+	resgen1			\
+	wsdl1
+
 scripts_1_0 = \
-	al			\
 	caspol			\
 	cert2spc		\
 	certmgr			\
@@ -20,29 +44,22 @@ scripts_1_0 = \
 	dtd2rng			\
 	gacutil			\
 	genxs			\
-	ilasm			\
 	installvst		\
 	macpack			\
 	mbas			\
-	mcs			\
 	mjs			\
-	mkbundle		\
-	monop			\
 	monolinker		\
 	mono-api-diff 		\
-	mono-api-info 		\
 	mono-shlib-cop 		\
 	mono-xmltool		\
 	mozroots		\
 	permview		\
 	prj2make		\
-	resgen			\
 	secutil			\
 	setreg			\
 	signcode		\
 	soapsuds		\
 	sqlsharp		\
-	wsdl			\
 	xsd
 
 scripts_1_0_umask = \
@@ -62,6 +79,22 @@ scripts_2_0 = \
 	wsdl2			\
 	sgen			\
 	xbuild
+
+#
+# these are the new defaults, 2.0 profile-based commands
+#
+# we can move scripts_1_0 scripts here as we see fit, if we need to
+# keep a 1.0 command available, we should additionally put it on
+# the scripts_1_0_compat list
+#
+scripts_defaults = 		\
+	al			\
+	ilasm			\
+	mkbundle		\
+	mono-api-info		\
+	monop			\
+	resgen			\
+	wsdl
 
 scripts_2_1 = smcs
 scripts_service = mono-service mono-service2
@@ -141,7 +174,19 @@ $(scripts_1_0_umask): script_umask.in Makefile
 	$(REWRITE1) -e 's,@''exe_name@,$@,g' $(srcdir)/script_umask.in > $@.tmp
 	mv $@.tmp $@
 
+$(scripts_1_0_compat): script.in Makefile
+	t=`basename $@ 1`; $(REWRITE1) -e "s,@exe_name@,$$t,g" $(srcdir)/script.in > $@.tmp
+	mv $@.tmp $@
+
+$(scripts_defaults): script.in Makefile
+	$(REWRITE2) -e "s,@exe_name@,$$t,g" $(srcdir)/script.in > $@.tmp
+	mv $@.tmp $@
+
 $(scripts_2_0): script.in Makefile
 	n=`echo $@ | sed 's,2$$,,'`; \
 	$(REWRITE2) -e "s,@""exe_name@,$$n,g" $(srcdir)/script.in > $@.tmp
+	mv $@.tmp $@
+
+mcs: script.in Makefile
+	$(REWRITE2) -e "s,@""exe_name@,gmcs,g" $(srcdir)/script.in > $@.tmp
 	mv $@.tmp $@

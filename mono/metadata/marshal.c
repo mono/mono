@@ -25,7 +25,8 @@
 #include "mono/metadata/gc-internal.h"
 #include "mono/metadata/threads-types.h"
 #include "mono/metadata/string-icalls.h"
-#include <mono/metadata/gc-internal.h>
+#include "mono/metadata/attrdefs.h"
+#include "mono/metadata/gc-internal.h"
 #include <string.h>
 #include <errno.h>
 
@@ -8574,17 +8575,6 @@ mono_marshal_emit_managed_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *i
 	mono_mb_emit_icon (mb, 0);
 	mono_mb_emit_stloc (mb, 2);
 
-	/* fixme: howto handle this ? */
-	if (sig->hasthis) {
-		if (this) {
-			/* FIXME: need a solution for the moving GC here */
-			mono_mb_emit_ptr (mb, this);
-		} else {
-			/* fixme: */
-			g_assert_not_reached ();
-		}
-	} 
-
 	/* we first do all conversions */
 	tmp_locals = alloca (sizeof (int) * sig->param_count);
 	for (i = 0; i < sig->param_count; i ++) {
@@ -8607,6 +8597,17 @@ mono_marshal_emit_managed_wrapper (MonoMethodBuilder *mb, MonoMethodSignature *i
 	}
 
 	emit_thread_interrupt_checkpoint (mb);
+
+	/* fixme: howto handle this ? */
+	if (sig->hasthis) {
+		if (this) {
+			/* FIXME: need a solution for the moving GC here */
+			mono_mb_emit_ptr (mb, this);
+		} else {
+			/* fixme: */
+			g_assert_not_reached ();
+		}
+	} 
 
 	for (i = 0; i < sig->param_count; i++) {
 		MonoType *t = sig->params [i];
@@ -9259,6 +9260,24 @@ mono_marshal_get_synchronized_wrapper (MonoMethod *method)
 	/* result */
 	if (!MONO_TYPE_IS_VOID (sig->ret))
 		ret_local = mono_mb_add_local (mb, sig->ret);
+
+	if (method->klass->valuetype && !(method->flags & MONO_METHOD_ATTR_STATIC)) {
+		mono_class_set_failure (method->klass, MONO_EXCEPTION_TYPE_LOAD, NULL);
+		/* This will throw the type load exception when the wrapper is compiled */
+		mono_mb_emit_byte (mb, CEE_LDNULL);
+		mono_mb_emit_op (mb, CEE_ISINST, method->klass);
+		mono_mb_emit_byte (mb, CEE_POP);
+
+		if (!MONO_TYPE_IS_VOID (sig->ret))
+			mono_mb_emit_ldloc (mb, ret_local);
+		mono_mb_emit_byte (mb, CEE_RET);
+
+		res = mono_mb_create_and_cache (cache, method,
+										mb, sig, sig->param_count + 16);
+		mono_mb_free (mb);
+
+		return res;
+	}
 
 	/* this */
 	this_local = mono_mb_add_local (mb, &mono_defaults.object_class->byval_arg);

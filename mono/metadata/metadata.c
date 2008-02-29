@@ -1960,6 +1960,8 @@ inflated_method_equal (gconstpointer a, gconstpointer b)
 	const MonoMethodInflated *mb = b;
 	if (ma->declaring != mb->declaring)
 		return FALSE;
+	if (ma->is_mb_open != mb->is_mb_open)
+		return FALSE;
 	return mono_metadata_generic_context_equal (&ma->context, &mb->context);
 }
 
@@ -1967,7 +1969,7 @@ static guint
 inflated_method_hash (gconstpointer a)
 {
 	const MonoMethodInflated *ma = a;
-	return mono_metadata_generic_context_hash (&ma->context) ^ mono_aligned_addr_hash (ma->declaring);
+	return mono_metadata_generic_context_hash (&ma->context) ^ mono_aligned_addr_hash (ma->declaring) + ma->is_mb_open;
 }
 
 static gboolean
@@ -2163,6 +2165,7 @@ mono_metadata_clean_for_image (MonoImage *image)
 		free_generic_class (l->data);
 	g_slist_free (ginst_data.list);
 	g_slist_free (gclass_data.list);
+	mono_class_unregister_image_generic_subclasses (image);
 	mono_loader_unlock ();
 }
 

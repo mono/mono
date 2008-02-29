@@ -1,3 +1,7 @@
+2008-02-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* amd64/amd64-codegen.h (amd64_movsxd_reg_mem): New codegen macro.
+
 2008-02-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* amd64/amd64-codegen.h (amd64_alu_membase8_imm_size): New codegen macro.

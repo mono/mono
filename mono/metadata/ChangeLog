@@ -1,3 +1,186 @@
+
+Thu Feb 28 19:49:45 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* icall-def.h, domain.c, mono-perfcounters-def.h, mono-perfcounters.c,
+	mono-perfcounters.h, class-internals.h: support for predefined
+	writable counters, query of categories and counters, bugfixes.
+
+2008-02-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (do_refanytype): Verify the refanytype opcode.
+
+	* verify.c (mono_method_verify): Use do_refanytype.
+
+2008-02-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (do_mkrefany): Verify the mkrefany opcode.
+
+	* verify.c (mono_method_verify): Use do_mkrefany.
+
+Wed Feb 27 19:49:16 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am, icall-def.h, icall.c, mono-perfcounters-def.h,
+	mono-perfcounters.c, mono-perfcounters.h: basic performance counter
+	implementation.
+
+2008-02-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_synchronized_wrapper): Fix the code which throws
+	the type load exception.
+
+2008-02-27 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Added a few FIXME for method signatures
+
+	* verify.c (do_invoke_method): Use mono_method_get_signature_full instead
+	of mono_method_get_signature and get vararg call working. Removed unused
+	checks for return value.
+
+	* verify.c (do_refanyval): Verify the refanyval opcode.
+
+	* verify.c (mono_method_verify): Implemented verification of arglist and
+	use do_refanyval.
+
+2008-02-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_setup_methods): Move the check for synchronized methods on
+	vtypes to marshal.c.
+
+	* marshal.c (mono_marshal_get_synchronized_wrapper): Do the vtype check here so
+	it works for AOT as well.
+
+Tue Feb 26 17:46:32 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* monitor.c, threads.c, threadpool.c: replace the use of GetTickCount ()
+	with mono_msec_ticks () which is monotonic and doesn't cause bugs when
+	the system time is adjusted.
+
+Tue Feb 26 17:40:10 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c, icall-def.h: use the new time functions (fixes the
+	non-monotonic behaviour of TickCount).
+
+2008-02-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (mono_custom_attrs_from_builders): Revert the last change as
+	it breaks the build.
+	
+	* reflection.c (mono_custom_attrs_from_builders): Assert instead of a crash if the
+	cattr is not finished yet.
+
+2008-02-25 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Proper token validation for field, method and type.
+
+2008-02-25 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* loader.c (field_from_memberref): Generate a loader error if the type is not found.
+
+	* loader.c (method_from_memberref): Generate type load error instead of method missing
+	if the type is not found.
+
+2008-02-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_emit_managed_wrapper): Avoid generating invalid IL if
+	some of the conversions caused the generation of a marshal directive exception.
+
+2008-02-21 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	verify.c: Report which exception should be thrown by the JIT.
+	Added a lot of FIXME notes.
+
+2008-02-22  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-sharing.c: Runtime generic context slots are not
+	instantiated on init anymore.  Instead, provide function to do the
+	instantiating on demand.
+
+	* class-internals.h: Added vtable to runtime generic context.
+	Macros for encoding direct and indirect slot offsets in one
+	guint32.
+
+2008-02-21  Mark Probst  <mark.probst@gmail.com>
+
+	* object.c, generic-sharing.c: Moved some generic sharing code
+	from object.c to generic-sharing.c.
+
+	* generic-sharing.c: Added support for extensible runtime generic
+	context.
+
+	* metadata-internals.h: Two new hash tables in MonoImage for
+	extensible runtime generic context support.
+
+	* domain.c: Unregister generic vtables upon domain unloading.
+
+	* image.c: Destroy new hash tables upon image unloading.
+
+	* metadata.c: Unregister generic subclasses upon image unloading.
+
+	* class-internals.h: New data structure for runtime generic
+	context template.  New fields in the runtime generic context for
+	extensible part.
+
+	* Makefile.am: Added generic-sharing.c.
+
+2008-02-21 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	icall.c (ves_icall_System_Reflection_Module_ResolveTypeToken): If
+	there is a pending loader exception, raise it.
+
+	icall.c (ves_icall_System_Reflection_Module_ResolveMethodToken): 
+	same.
+
+	icall.c (ves_icall_System_Reflection_Module_ResolveFieldToken): 
+	same.
+
+	Fixes #363450.
+
+2008-02-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_Type_GetPacking): Handle dynamic types.
+
+	* assembly.c (mono_assembly_load_from_full): Fix a leak in the previous patch.
+	
+	* assembly.c (mono_assembly_load_from_full): Return the non-refonly corlib for
+	ref-only requests for compatibility with MS.
+
+2008-02-20  Raja R Harinath  <harinath@hurrynot.org>
+
+	* reflection.c (mono_custom_attrs_from_method): Don't silently
+	return an empty list for generic method instances.
+	(mono_custom_attrs_from_param): Likewise.
+
+2008-02-20  Rodrigo Kumpera  <rkumpera@novell.com>
+	    Raja R Harinath  <harinath@hurrynot.org>
+
+	Fix #354757
+	* class-internals.h (struct _MonoMethodInflated.is_mb_open): Add.
+	* class.c (mono_class_inflate_generic_method_full): Initialize it
+	when a fully-open method is instantiated.
+	* metadata.c (inflated_method_equal, inflated_method_hash): Update
+	to new field.
+	* reflection.c (inflate_mono_method): Don't create a temporary context.
+
+2008-02-20  Raja R Harinath  <harinath@hurrynot.org>
+
+	* icall.c (ves_icall_MonoMethod_GetGenericMethodDefinition):
+	Compute correct value, to prepare for imethod->reflection_info going away.
+
+2008-02-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_setup_vtable_general): Ignore static methods in interfaces.
+
+2008-02-18 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Implement skip visibility flag.
+
+2008-02-18 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.h: Added MONO_VERIFY_SKIP_VISIBILITY and struct MonoVerifyInfoExtended
+	which contains an extra field to tell the kind of exception that should be thrown.
+
+	* verify.c: Use MonoVerifyInfoExtended instead of MonoVerifyInfo.
+
 2008-02-17  Raja R Harinath  <harinath@hurrynot.org>
 
 	* loader.c (mono_method_get_param_names): Initialize 'klass' after

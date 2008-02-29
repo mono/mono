@@ -127,7 +127,11 @@ libmonoruntime_la_SOURCES = \
 	class-internals.h		\
 	wrapper-types.h		\
 	mempool.c	\
-	debug-helpers.c
+	mono-perfcounters.c	\
+	mono-perfcounters.h	\
+	mono-perfcounters-def.h	\
+	debug-helpers.c	\
+	generic-sharing.c
 
 libmonoruntime_static_la_SOURCES = $(libmonoruntime_la_SOURCES)
 

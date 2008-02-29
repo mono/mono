@@ -60,9 +60,11 @@
 #include <mono/metadata/number-formatter.h>
 #include <mono/metadata/security-manager.h>
 #include <mono/metadata/security-core-clr.h>
+#include <mono/metadata/mono-perfcounters.h>
 #include <mono/io-layer/io-layer.h>
 #include <mono/utils/strtod.h>
 #include <mono/utils/monobitset.h>
+#include <mono/utils/mono-time.h>
 
 #if defined (PLATFORM_WIN32)
 #include <windows.h>
@@ -1932,9 +1934,13 @@ ves_icall_Type_GetPacking (MonoReflectionType *type, guint32 *packing, guint32 *
 {
 	MonoClass *klass = mono_class_from_mono_type (type->type);
 
-	g_assert (!klass->image->dynamic);
-
-	mono_metadata_packing_from_typedef (klass->image, klass->type_token, packing, size);
+	if (klass->image->dynamic) {
+		MonoReflectionTypeBuilder *tb = (MonoReflectionTypeBuilder*)type;
+		*packing = tb->packing_size;
+		*size = tb->class_size;
+	} else {
+		mono_metadata_packing_from_typedef (klass->image, klass->type_token, packing, size);
+	}
 }
 
 static MonoReflectionType*
@@ -2711,6 +2717,7 @@ static MonoReflectionMethod *
 ves_icall_MonoMethod_GetGenericMethodDefinition (MonoReflectionMethod *method)
 {
 	MonoMethodInflated *imethod;
+	MonoMethod *result;
 
 	MONO_ARCH_SAVE_REGS;
 
@@ -2721,12 +2728,19 @@ ves_icall_MonoMethod_GetGenericMethodDefinition (MonoReflectionMethod *method)
 		return NULL;
 
 	imethod = (MonoMethodInflated *) method->method;
-
 	if (imethod->reflection_info)
 		return imethod->reflection_info;
-	else
-		return mono_method_get_object (
-			mono_object_domain (method), imethod->declaring, NULL);
+
+	result = imethod->declaring;
+	/* Not a generic method.  */
+	if (!result->generic_container)
+		return NULL;
+	if (imethod->context.class_inst) {
+		MonoClass *klass = ((MonoMethod *) imethod)->klass;
+		result = mono_class_inflate_generic_method_full (result, klass, mono_class_get_context (klass));
+	}
+
+	return mono_method_get_object (mono_object_domain (method), result, NULL);
 }
 
 static gboolean
@@ -5165,6 +5179,9 @@ ves_icall_System_Reflection_Module_ResolveTypeToken (MonoImage *image, guint32 t
 	init_generic_context_from_args (&context, type_args, method_args);
 	klass = mono_class_get_full (image, token, &context);
 
+	if (mono_loader_get_last_error ())
+		mono_raise_exception (mono_loader_error_prepare_exception (mono_loader_get_last_error ()));
+
 	if (klass)
 		return &klass->byval_arg;
 	else
@@ -5206,6 +5223,9 @@ ves_icall_System_Reflection_Module_ResolveMethodToken (MonoImage *image, guint32
 
 	init_generic_context_from_args (&context, type_args, method_args);
 	method = mono_get_method_full (image, token, NULL, &context);
+
+	if (mono_loader_get_last_error ())
+		mono_raise_exception (mono_loader_error_prepare_exception (mono_loader_get_last_error ()));
 
 	return method;
 }
@@ -5271,6 +5291,9 @@ ves_icall_System_Reflection_Module_ResolveFieldToken (MonoImage *image, guint32 
 
 	init_generic_context_from_args (&context, type_args, method_args);
 	field = mono_field_from_token (image, token, &klass, &context);
+
+	if (mono_loader_get_last_error ())
+		mono_raise_exception (mono_loader_error_prepare_exception (mono_loader_get_last_error ()));
 	
 	return field;
 }
@@ -5517,35 +5540,6 @@ ves_icall_System_Delegate_SetMulticastInvoke (MonoDelegate *this)
  * Magic number to convert FILETIME base Jan 1, 1601 to DateTime - base Jan, 1, 0001
  */
 #define FILETIME_ADJUST ((guint64)504911232000000000LL)
-
-/*
- * This returns Now in UTC
- */
-static gint64
-ves_icall_System_DateTime_GetNow (void)
-{
-#ifdef PLATFORM_WIN32
-	SYSTEMTIME st;
-	FILETIME ft;
-	
-	GetSystemTime (&st);
-	SystemTimeToFileTime (&st, &ft);
-	return (gint64) FILETIME_ADJUST + ((((gint64)ft.dwHighDateTime)<<32) | ft.dwLowDateTime);
-#else
-	/* FIXME: put this in io-layer and call it GetLocalTime */
-	struct timeval tv;
-	gint64 res;
-
-	MONO_ARCH_SAVE_REGS;
-
-	if (gettimeofday (&tv, NULL) == 0) {
-		res = (((gint64)tv.tv_sec + EPOCH_ADJUST)* 1000000 + tv.tv_usec)*10;
-		return res;
-	}
-	/* fixme: raise exception */
-	return 0;
-#endif
-}
 
 #ifdef PLATFORM_WIN32
 /* convert a SYSTEMTIME which is of the form "last thursday in october" to a real date */
@@ -6129,16 +6123,6 @@ ves_icall_System_Environment_InternalSetEnvironmentVariable (MonoString *name, M
 	g_free (utf8_value);
 #endif
 }
-
-/*
- * Returns: the number of milliseconds elapsed since the system started.
- */
-static gint32
-ves_icall_System_Environment_get_TickCount (void)
-{
-	return GetTickCount ();
-}
-
 
 static void
 ves_icall_System_Environment_Exit (int result)

@@ -34,6 +34,192 @@
 	* mini-amd64.c (mono_arch_emit_outarg_vt): Pass a reasonable alignment to
 	mini_emit_memcpy2 ().
 
+2008-02-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ops.h: Remove OP_SPARC_INARG_VT, add a new OP_VTARG_ADDR opcode instead
+	to be in sync with the code on the linear IR branch.
+
+	* mini-sparc.c inssel-sparc.brg: Use OP_VTARG_ADDR.
+
+	* inssel-s390.brg (OP_SETRET (freg)): Set dreg correctly.
+
+2008-02-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-mips.c: Use cfg->vret_addr instead of cfg->ret.
+
+	* mini-s390x.c: Use cfg->vret_addr instead of cfg->ret.
+
+	* mini-s390.c: Use cfg->vret_addr instead of cfg->ret.
+
+	* mini-<ARCH>.h mini.c: Get rid of the MONO_ARCH_HAVE_CREATE_VARS define.
+
+	* mini-<ARCH>.c (mono_arch_create_vars): Define this for all architectures.
+	
+	* mini.c (mono_method_to_ir): Avoid invalid memory reads for methods without a
+	body.
+
+2007-11-14  Yoichi NAKAYAMA  <nakayama@pixela.co.jp>
+
+	* inssel-mips.brg (OP_OUTARG_MEMBASE (CEE_LDIND_R4 (base))): Add missing
+	OP_LOADR4_MEMBASE emission.
+
+	* mini-codegen.c (mono_spillvar_offset_int): Remove assertion.
+	(mono_spillvar_offset_float): Ditto.
+
+	* mini-mips.c (mono_arch_emit_prolog): Ditto.
+
+	* inssel-long32-mips.brg: Fix wrong branching, reduce redundant code
+	emission.
+
+	* basic-long.cs: Add regression tests for them.
+
+	* mini-mips.c (add_float32_arg): Respect o32 calling convention in gr
+	use.
+	(mono_arch_allocate_vars): Fix representation of single-precision float
+	argument.
+	(mono_arch_output_basic_block): Ditto.
+
+	* inssel-mips.brg: Ditto, remove duplicate items.
+
+	* mini-mips.c (emit_load_volatile_arguments): New function to handle
+	arguments of tail calls as on other platforms.
+	(mono_arch_output_basic_block): Handle tail calls.
+
+	* inssel-mips.brg (OP_OUTARG_VT (CEE_LDOBJ (base))): Correct destination
+	register.
+
+	* objects.cs (test_5_pass_static_struct): Add test for it.
+
+	Contributed under MIT/X11 license.
+
+2008-02-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am: Use gmcs for compiling the regression tests.
+
+	* *.2.cs *.2.il: Rename to *.cs and *.il.
+
+2008-02-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* regalloc.h: Make the vassign array smaller.
+
+	* mini.c (mini_method_compile): Remove an unused field in cfg.
+
+	* mini-codegen.c: Add a bunch of micro optimizations.
+
+2008-02-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* regalloc.h: Remove some unused fields.
+
+2008-02-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_patch_code): Fix a warning.
+
+	* ssa.c (mono_ssa_remove): Avoid declaring volatile variables dead.
+
+2008-02-22  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.h: New trampoline type (RGCTX_LAZY_FETCH).
+
+	* mini-trampolines.c, tramp-amd64.c, tramp-x86.c: RGCTX lazy fetch
+	trampoline: Fetch an entry from the runtime generic context.  If
+	it's NULL, jump to the actual trampoline to fill the runtime
+	generic context.  Otherwise, return it.
+
+	* mini.c: Call the lazy fetch trampoline to get entries out of the
+	runtime generic context.
+
+	* tramp-ia64.c, tramp-arm.c, tramp-alpha.c, tramp-s390.c,
+	tramp-s390x.c, tramp-ppc.c, tramp-hppa.c, tramp-mips.c,
+	tramp-sparc.c: Stubs for the lazy fetch trampoline.
+
+2008-02-21  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Fetch data out of the extensible part of the runtime
+	generic context instead of calling a helper function.
+
+	* generic-sharing.c: Some functions moved into
+	metadata/generic-sharing.c.  Helper function for fetching other
+	types now checks and asserts against extensible rgctx (just for
+	debugging purposes - the helper function isn't called anymore
+	unless for debugging).
+
+2008-02-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arm.c (mono_arch_output_basic_block): Implement proper argument passing
+	for tail calls up to the point that the tests in iltests.exe run. Also add a
+	dummy CKFINITE implementation.
+	(mono_arch_emit_prolog): Avoid saving the method in the LMF since it is only
+	needed for trampoline LMF frames.
+
+	* exceptions-arm.c (mono_arch_find_jit_info): Only read lmf->method for 
+	trampoline LMF frames.
+
+2008-02-21  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini.c (inline_method): clean any pending loader error when inlining fail.
+	Otherwise loader errors in mono_method_to_ir leaks and cause spurious errors.
+
+2008-02-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (encode_patch): Handle ICALL_ADDR patch type.
+
+	* aot-runtime.c (decode_patch_info): Ditto.
+
+	* mini.c (mono_resolve_patch_target): Ditto.
+	
+	* aot-compiler.c (compile_method): Add some experimental code for AOT compiling
+	icall wrappers.
+
+	* patch-info.h (PATCH_INFO): Add 'ICALL_ADDR' patch type.
+	
+	* mini.c (mono_method_to_ir): Convert a CEE_MONO_LDPTR opcode to an AOT constant
+	if it references an icall address.
+
+2008-02-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* cpu-s390x.md: Remove some more unused opcodes.
+	
+	* cpu-s390x.md: Remove some unused opcodes.
+
+	* mini-ia64.c (mono_arch_lowering_pass): Add some more opcodes. Use
+	mono_op_imm_to_op ().
+
+	* mini-sparc.c (opcode_to_sparc_cond): Use the mono_opcode_to_cond () functions
+	instead of a switch statement.
+	
+	* mini-sparc.c (mono_arch_allocate_vars): Allocate a stack slot for use by
+	the int<->float conversion opcodes instead of using mono_spillvar_offset_float ().
+
+	* mini-codegen.c: Eliminate rassign macro which is no longer needed.
+	
+	* mini-codegen.c: Remove unused mono_regstate2_... functions.
+
+	* mini-codegen.c (mono_print_ins_index): Avoid printing an index when it is
+	-1.
+
+2008-02-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* driver.c (mono_main): Improve error reporting when an assembly cannot be
+	opened. Fixes #362607.
+
+	* cpu-ia64.md cpu-s390x.md: Remove some unused opcodes.
+
+	* iltests.il.in: Add a test for static methods in interfaces.
+
+2008-02-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* genmdesc.c (build_table): Fix a crash on older glib versions.
+
+	* cpu-sparc.md: Remove some unused opcodes.
+	
+	* genmdesc.c: Error out if the .md contains CEE_ opcodes if 
+	MONO_ARCH_ENABLE_NORMALIZE_OPCODES is defined.
+
+	* cpu-amd64.md: Remove some unused opcodes.
+
+	* mini.h mini-ops.h mini.c: Define the OP_Ccc opcodes in mini-ops.h normally
+	like the other opcodes.
+
 2008-02-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ia64.c: Use cfg->vret_addr instead of cfg->ret.

@@ -1011,10 +1011,14 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 				MonoInst *indir;
 				MONO_INST_NEW (cfg, indir, 0);
 				*indir = *inst;
+<<<<<<< .working
 				if (cfg->new_ir)
 					inst->opcode = OP_VTARG_ADDR;
 				else
 					inst->opcode = OP_SPARC_INARG_VT;
+=======
+				inst->opcode = OP_VTARG_ADDR;
+>>>>>>> .merge-right.r96975
 				inst->inst_left = indir;
 			}
 		}
@@ -1268,6 +1272,7 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 	return call;
 }
 
+<<<<<<< .working
 /* FIXME: Remove these later */
 #define NEW_LOAD_MEMBASE(cfg,dest,op,dr,base,offset) do { \
         MONO_INST_NEW ((cfg), (dest), (op)); \
@@ -1618,6 +1623,21 @@ int cond_to_sparc_cond [][3] = {
 	{sparc_bgu,  sparc_bgu,  sparc_fbg}
 };
 
+=======
+int cond_to_sparc_cond [][3] = {
+	{sparc_be,   sparc_be,   sparc_fbe},
+	{sparc_bne,  sparc_bne,  0},
+	{sparc_ble,  sparc_ble,  sparc_fble},
+	{sparc_bge,  sparc_bge,  sparc_fbge},
+	{sparc_bl,   sparc_bl,   sparc_fbl},
+	{sparc_bg,   sparc_bg,   sparc_fbg},
+	{sparc_bleu, sparc_bleu, 0},
+	{sparc_beu,  sparc_beu,  0},
+	{sparc_blu,  sparc_blu,  sparc_fbl},
+	{sparc_bgu,  sparc_bgu,  sparc_fbg}
+};
+
+>>>>>>> .merge-right.r96975
 /* Map opcode to the sparc condition codes */
 static inline SparcCond
 opcode_to_sparc_cond (int opcode)

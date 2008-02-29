@@ -633,6 +633,7 @@ mono_class_inflate_generic_method_full (MonoMethod *method, MonoClass *klass_hin
 	MonoMethodInflated *iresult, *cached;
 	MonoMethodSignature *sig;
 	MonoGenericContext tmp_context;
+	gboolean is_mb_open = FALSE;
 
 	/* The `method' has already been instantiated before => we need to peel out the instantiation and create a new context */
 	while (method->is_inflated) {
@@ -651,10 +652,22 @@ mono_class_inflate_generic_method_full (MonoMethod *method, MonoClass *klass_hin
 	if (!method->generic_container && !method->klass->generic_container)
 		return method;
 
+	/*
+	 * The reason for this hack is to fix the behavior of inflating generic methods that come from a MethodBuilder.
+	 * What happens is that instantiating a generic MethodBuilder with its own arguments should create a diferent object.
+	 * This is opposite to the way non-SRE MethodInfos behave.
+	 *
+	 * FIXME: express this better, somehow!
+	 */
+	is_mb_open = method->generic_container &&
+		method->klass->image->dynamic && !method->klass->wastypebuilder &&
+		context->method_inst == method->generic_container->context.method_inst;
+
 	mono_stats.inflated_method_count++;
 	iresult = g_new0 (MonoMethodInflated, 1);
 	iresult->context = *context;
 	iresult->declaring = method;
+	iresult->is_mb_open = is_mb_open;
 
 	if (!context->method_inst && method->generic_container)
 		iresult->context.method_inst = method->generic_container->context.method_inst;
@@ -1321,8 +1334,6 @@ mono_class_setup_methods (MonoClass *class)
 		for (i = 0; i < class->method.count; ++i) {
 			int idx = mono_metadata_translate_token_index (class->image, MONO_TABLE_METHOD, class->method.first + i + 1);
 			methods [i] = mono_get_method (class->image, MONO_TOKEN_METHOD_DEF | idx, class);
-			if (class->valuetype && methods [i]->iflags & METHOD_IMPL_ATTRIBUTE_SYNCHRONIZED && !(methods [i]->flags & MONO_METHOD_ATTR_STATIC))
-				mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, NULL);
 		}
 	}
 
@@ -2657,6 +2668,9 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 				int im_slot = ic_offset + im->slot;
 				MonoMethod *override_im = (override_map != NULL) ? g_hash_table_lookup (override_map, im) : NULL;
 				
+				if (im->flags & METHOD_ATTRIBUTE_STATIC)
+					continue;
+
 				// If there is an explicit implementation, just use it right away,
 				// otherwise look for a matching method
 				if (override_im == NULL) {
@@ -2721,6 +2735,9 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 					MonoMethod *im = ic->methods [im_index];
 					int im_slot = ic_offset + im->slot;
 					
+					if (im->flags & METHOD_ATTRIBUTE_STATIC)
+						continue;
+
 					TRACE_INTERFACE_VTABLE (printf ("      [class is not abstract, checking slot %d for interface '%s'.'%s', method %s, slot check is %d]\n",
 							im_slot, ic->name_space, ic->name, im->name, (vtable [im_slot] == NULL)));
 					if (vtable [im_slot] == NULL) {

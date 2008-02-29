@@ -580,6 +580,7 @@ typedef enum {
 	MONO_TRAMPOLINE_JUMP,
 	MONO_TRAMPOLINE_CLASS_INIT,
 	MONO_TRAMPOLINE_GENERIC_CLASS_INIT,
+	MONO_TRAMPOLINE_RGCTX_LAZY_FETCH,
 	MONO_TRAMPOLINE_AOT,
 	MONO_TRAMPOLINE_AOT_PLT,
 	MONO_TRAMPOLINE_DELEGATE,
@@ -707,7 +708,7 @@ typedef struct {
 	guint            skip_visibility : 1;
 	gpointer         debug_info;
 	guint32          lmf_offset;
-	guint16          *intvars;
+    guint16          *intvars;
 	MonoProfileCoverageInfo *coverage_info;
 	GHashTable       *token_info_hash;
 	MonoCompileArch  arch;
@@ -787,12 +788,6 @@ enum {
 	MONO_SSA_INDIRECT_LOAD_STORE =
 	MONO_SSA_LOAD|MONO_SSA_STORE|MONO_SSA_ADDRESS_TAKEN
 };
-
-#define OP_CEQ    (256+CEE_CEQ)
-#define OP_CLT    (256+CEE_CLT)
-#define OP_CLT_UN (256+CEE_CLT_UN)
-#define OP_CGT    (256+CEE_CGT)
-#define OP_CGT_UN (256+CEE_CGT_UN)
 
 /* opcodes: value assigned after all the CIL opcodes */
 #ifdef MINI_OP
@@ -993,26 +988,17 @@ enum {
 	MONO_EXC_INTRINS_NUM
 };
 
-/*
- * Flags for which contexts were used in inflating a generic.
- */
-enum {
-	MONO_GENERIC_CONTEXT_USED_CLASS = 1,
-	MONO_GENERIC_CONTEXT_USED_METHOD = 2
-};
-
-#define MONO_GENERIC_CONTEXT_USED_BOTH		(MONO_GENERIC_CONTEXT_USED_CLASS | MONO_GENERIC_CONTEXT_USED_METHOD)
-
 enum {
 	MINI_GENERIC_CLASS_RELATION_SELF,
 	MINI_GENERIC_CLASS_RELATION_ARGUMENT,
+	MINI_GENERIC_CLASS_RELATION_OTHER_TABLE,
 	MINI_GENERIC_CLASS_RELATION_OTHER
 };
 
 enum {
-	MINI_RGCTX_STATIC_DATA,
-	MINI_RGCTX_KLASS,
-	MINI_RGCTX_VTABLE
+	MINI_TOKEN_SOURCE_CLASS,
+	MINI_TOKEN_SOURCE_METHOD,
+	MINI_TOKEN_SOURCE_FIELD
 };
 
 typedef void (*MonoInstFunc) (MonoInst *tree, gpointer data);
@@ -1205,6 +1191,8 @@ guchar*   mono_arch_create_trampoline_code      (MonoTrampolineType tramp_type) 
 gpointer  mono_arch_create_jit_trampoline       (MonoMethod *method) MONO_INTERNAL;
 MonoJitInfo *mono_arch_create_jump_trampoline      (MonoMethod *method) MONO_INTERNAL;
 gpointer  mono_arch_create_class_init_trampoline(MonoVTable *vtable) MONO_INTERNAL;
+gpointer  mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 encoded_offset) MONO_INTERNAL;
+guint32	  mono_arch_get_rgctx_lazy_fetch_offset (gpointer *regs) MONO_INTERNAL;
 GList    *mono_arch_get_allocatable_int_vars    (MonoCompile *cfg) MONO_INTERNAL;
 GList    *mono_arch_get_global_int_regs         (MonoCompile *cfg) MONO_INTERNAL;
 guint32   mono_arch_regalloc_cost               (MonoCompile *cfg, MonoMethodVar *vmv) MONO_INTERNAL;
@@ -1366,7 +1354,6 @@ int mini_wapi_seminfo (int argc, char **argv);
 MonoGenericContext* mini_method_get_context (MonoMethod *method) MONO_INTERNAL;
 
 int mono_method_check_context_used (MonoMethod *method) MONO_INTERNAL;
-int mono_class_check_context_used (MonoClass *class) MONO_INTERNAL;
 
 gboolean mono_generic_context_equal_deep (MonoGenericContext *context1, MonoGenericContext *context2) MONO_INTERNAL;
 
@@ -1377,11 +1364,12 @@ gboolean mono_method_is_generic_sharable_impl (MonoMethod *method) MONO_INTERNAL
 
 MonoMethod* mono_method_get_declaring_generic_method (MonoMethod *method) MONO_INTERNAL;
 
-int mono_class_generic_class_relation (MonoClass *klass, MonoClass *method_klass,
+int mono_class_generic_class_relation (MonoClass *klass, int info_type, MonoClass *method_klass,
 				       MonoGenericContext *generic_context, int *arg_num) MONO_INTERNAL;
 
 gpointer mono_helper_get_rgctx_other_ptr (MonoClass *caller_class, MonoRuntimeGenericContext *rgctx,
-					  guint32 token, guint32 rgctx_type) MONO_INTERNAL;
+					  guint32 token, guint32 token_source, guint32 rgctx_type,
+					  gint32 rgctx_index) MONO_INTERNAL;
 
 void mono_generic_sharing_init (void) MONO_INTERNAL;
 

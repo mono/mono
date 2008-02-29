@@ -1776,10 +1776,6 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 
 	if (cinfo->struct_ret) {
 		if (cfg->new_ir) {
-			/* 
-			 * In the new IR, the cfg->vret_addr variable represents the
-			 * vtype return value.
-			 */
 			cfg->vret_addr->opcode = OP_REGOFFSET;
 			cfg->vret_addr->inst_basereg = cfg->frame_reg;
 			cfg->vret_addr->inst_offset = cinfo->ret.offset;
@@ -1788,8 +1784,8 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 				mono_print_ins (cfg->vret_addr);
 			}
 		} else {
-			cfg->ret->opcode = OP_REGVAR;
-			cfg->ret->inst_c0 = s390_r2;
+			cfg->vret_addr->opcode = OP_REGVAR;
+			cfg->vret_addr->inst_c0 = s390_r2;
 		}
 	} else {
 		switch (mono_type_get_underlying_type (sig->ret)->type) {
@@ -1812,7 +1808,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 	cfg->sig_cookie = 0;
 
 	if (cinfo->struct_ret && !cfg->new_ir) {
-		inst 		   = cfg->ret;
+		inst 		   = cfg->vret_addr;
 		offset 		   = S390_ALIGN(offset, sizeof(gpointer));
 		inst->inst_offset  = offset;
 		inst->opcode 	   = OP_REGOFFSET;
@@ -1821,6 +1817,10 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 		if ((sig->call_convention == MONO_CALL_VARARG) &&
 		    (!retFitsInReg (cinfo->ret.size)))
 			cfg->sig_cookie += cinfo->ret.size;
+		if (G_UNLIKELY (cfg->verbose_level > 1)) {
+			printf ("vret_addr =");
+			mono_print_ins (cfg->vret_addr);
+		}
 	}
 
 	if (sig->hasthis) {
@@ -1999,7 +1999,7 @@ mono_arch_create_vars (MonoCompile *cfg)
 
 	cinfo = calculate_sizes (cfg, sig, &sz, sig->pinvoke);
 
-	if (cfg->new_ir && cinfo->struct_ret) {
+	if (cinfo->struct_ret) {
 		cfg->vret_addr = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_ARG);
 		if (G_UNLIKELY (cfg->verbose_level > 1)) {
 			printf ("vret_addr = ");
@@ -4732,7 +4732,7 @@ emit_load_volatile_registers(guint8 * code, MonoCompile *cfg)
 
 	if (cinfo->struct_ret) {
 		ArgInfo *ainfo = &cinfo->ret;
-		inst         = cfg->ret;
+		inst         = cfg->vret_addr;
 		s390_l (code, ainfo->reg, 0, inst->inst_basereg, inst->inst_offset);
 	}
 
@@ -4893,10 +4893,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 
 	if (cinfo->struct_ret) {
 		ArgInfo *ainfo = &cinfo->ret;
-		if (cfg->new_ir)
-			inst = cfg->vret_addr;
-		else
-			inst         = cfg->ret;
+		inst         = cfg->vret_addr;
 		inst->backend.size = ainfo->vtsize;
 		s390_st (code, ainfo->reg, 0, inst->inst_basereg, inst->inst_offset);
 	}

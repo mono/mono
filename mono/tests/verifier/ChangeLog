@@ -1,3 +1,40 @@
+2008-02-28 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* invalid_refanytype_null_stack_top.il: New test for refanytype opcode.
+
+	* invalid_refanytype_invalid_stack_top.il: Same.
+
+	* valid_refanytype.il: Same.
+
+2008-02-28 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_mkrefany.il: New test generator for mkrefany opcode.
+
+	* make_tests.sh: Added tests for mkrefany.
+
+2008-02-27 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* valid_vararg.il: New test for calling vararg methods.
+
+2008-02-27 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* valid_refanyval.il: New test for the refanyval opcode.
+
+	* invalid_refanyval_null_stack_top.il: Same.
+
+	* invalid_refanyval_invalid_stack_top.il: Same.
+
+2008-02-27 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* valid_arglist.il: New test for the arglist opcode.
+
+	* invalid_arglist_method_not_vararg.il: Same.
+
+2008-02-18 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* unverifiable_locals_without_initlocals.il: Methods with locals
+	that are not .init are allways unverifiable.
+
 2008-02-08 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* unverifiable_void_ptr_store_2.cs: Tests for using unmanaged pointers.

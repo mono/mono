@@ -4474,6 +4474,7 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 		if (cfg->verbose_level > 2)
 			printf ("INLINE ABORTED %s\n", mono_method_full_name (cmethod, TRUE));
 		cfg->exception_type = MONO_EXCEPTION_NONE;
+		mono_loader_clear_error ();
 
 		/* This gets rid of the newly added bblocks */
 		cfg->cbb = prev_cbb;
@@ -4868,6 +4869,9 @@ emit_get_runtime_generic_context_from_this (MonoCompile *cfg, guint32 this_reg)
 static MonoInst*
 emit_get_runtime_generic_context_super_ptr (MonoCompile *cfg, MonoInst *rgc_ptr, int depth, int rgctx_type)
 {
+	NOT_IMPLEMENTED;
+	return NULL;
+#if 0
 	int field_offset_const, offset;
 	MonoInst *ins;
 	int dreg;
@@ -4894,6 +4898,7 @@ emit_get_runtime_generic_context_super_ptr (MonoCompile *cfg, MonoInst *rgc_ptr,
 	EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOAD_MEMBASE, dreg, rgc_ptr->dreg, offset);
 
 	return ins;
+#endif
 }
 
 /*
@@ -4903,6 +4908,9 @@ emit_get_runtime_generic_context_super_ptr (MonoCompile *cfg, MonoInst *rgc_ptr,
 static MonoInst*
 emit_get_runtime_generic_context_arg_ptr (MonoCompile *cfg, MonoInst *rgc_ptr, int arg_num, int rgctx_type)
 {
+	NOT_IMPLEMENTED;
+	return NULL;
+#if 0
 	MonoInst *ins;
 	int dreg, arg_info_offset, arg_info_field_offset;
 
@@ -4929,6 +4937,7 @@ emit_get_runtime_generic_context_arg_ptr (MonoCompile *cfg, MonoInst *rgc_ptr, i
 	EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOAD_MEMBASE, dreg, rgc_ptr->dreg, arg_info_offset + arg_info_field_offset);
 
 	return ins;
+#endif
 }
 
 static MonoInst*
@@ -4953,6 +4962,9 @@ emit_get_runtime_generic_context_ptr (MonoCompile *cfg, MonoMethod *method,
 									  MonoGenericContext *generic_context, MonoInst *rgctx,
 									  int rgctx_type)
 {
+	NOT_IMPLEMENTED;
+	return NULL;
+#if 0
 	int arg_num = -1;
 	int relation = mono_class_generic_class_relation (klass, method->klass, generic_context, &arg_num);
 
@@ -4968,6 +4980,7 @@ emit_get_runtime_generic_context_ptr (MonoCompile *cfg, MonoMethod *method,
 	default:
 		g_assert_not_reached ();
 	}
+#endif
 }
 
 /*
@@ -6677,6 +6690,9 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		if (!method_is_safe (method))
 			emit_throw_verification_exception (cfg, bblock, ip);
 	}
+
+	if (header->code_size == 0)
+		UNVERIFIED;
 
 	if (get_basic_blocks (cfg, header, cfg->real_offset, ip, end, &err_pos)) {
 		ip = err_pos;
@@ -8785,6 +8801,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				MonoInst *rgctx;
 				MonoInst *args [3];
 
+				NOT_IMPLEMENTED;
+#if 0
 				/* FIXME: Decompose later to help abcrem */
 
 				/* domain */
@@ -8798,6 +8816,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				args [2] = sp [0];
 
 				ins = mono_emit_jit_icall (cfg, mono_array_new, args);
+#endif
 			} else {
 				if (cfg->opt & MONO_OPT_SHARED) {
 					/* Decompose now to avoid problems with references to the domainvar */
@@ -9331,17 +9350,34 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 				break;
 			}
-			case CEE_MONO_LDPTR:
+			case CEE_MONO_LDPTR: {
+				gpointer ptr;
+
 				CHECK_STACK_OVF (1);
 				CHECK_OPSIZE (6);
 				token = read32 (ip + 2);
-				EMIT_NEW_PCONST (cfg, ins, mono_method_get_wrapper_data (method, token));
+
+				ptr = mono_method_get_wrapper_data (method, token);
+				if (cfg->compile_aot && cfg->method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE) {
+					MonoMethod *wrapped = mono_marshal_method_from_wrapper (cfg->method);
+
+					if (wrapped && ptr != NULL && mono_lookup_internal_call (wrapped) == ptr) {
+						EMIT_NEW_AOTCONST (cfg, ins, MONO_PATCH_INFO_ICALL_ADDR, wrapped);
+						ins->cil_code = ip;
+						*sp++ = ins;
+						ip += 6;
+						break;
+					}
+				}
+
+				EMIT_NEW_PCONST (cfg, ins, ptr);
 				*sp++ = ins;
 				ip += 6;
 				inline_costs += 10 * num_calls++;
 				/* Can't embed random pointers into AOT code */
 				cfg->disable_aot = 1;
 				break;
+			}
 			case CEE_MONO_VTADDR: {
 				MonoInst *src_var, *src;
 
@@ -9532,7 +9568,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				 *    CEE_CLT    into OP_CLT
 				 *    CEE_CLT_UN into OP_CLT_UN
 				 */
-				MONO_INST_NEW (cfg, cmp, 256 + ip [1]);
+				MONO_INST_NEW (cfg, cmp, (OP_CEQ - CEE_CEQ) + ip [1]);
 				
 				MONO_INST_NEW (cfg, ins, cmp->opcode);
 				sp -= 2;
@@ -11209,7 +11245,9 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
  *   arguments, or stores killing loads etc. Also, should we fold loads into other
  *   instructions if the result of the load is used multiple times ?
  * - make the REM_IMM optimization in mini-x86.c arch-independent.
- * - LAST MERGE: 96067 (except 92841).
+ * - LAST MERGE: 96975 (except 92841).
+ * - merge the extensible gctx changes.
+ * - merge the mini-codegen.c changes.
  */
 
 /*

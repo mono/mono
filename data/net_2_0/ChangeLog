@@ -1,3 +1,7 @@
+2008-02-29  Marek Habersack  <mhabersack@novell.com>
+
+	* machine.config: added an entry to ignore the browserCaps section.
+
 2007-12-15  Marek Habersack  <mhabersack@novell.com>
 
 	* web.config: compilation/compilers are no longer necessary.
