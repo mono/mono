@@ -1,3 +1,11 @@
+2008-02-29  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* StringCollectionEditor.cs: 
+	 - Split the lines not based on Environment.NewLine as this is 
+	 not what is used by MWF on Windows.
+	 - Ignore last empty line.
+	[Fixes bug #365948]
+
 2008-02-11  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* AnchorEditor.cs: More sensible default width.

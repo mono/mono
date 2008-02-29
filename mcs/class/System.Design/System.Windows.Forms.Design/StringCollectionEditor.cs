@@ -140,9 +140,10 @@ namespace System.Windows.Forms.Design
 			private void butOk_Click (object sender, EventArgs e)
 			{
 				if (this.txtItems.Text != String.Empty) {
-					string[] items = txtItems.Text.Split (Environment.NewLine.ToCharArray ());
-					object[] objects = new object[items.Length];
-					for (int i=0; i < items.Length; i++)
+					string[] items = txtItems.Lines;
+					bool lastLineEmpty = items[items.Length-1].Trim ().Length == 0;
+					object[] objects = new object[lastLineEmpty ? items.Length-1 : items.Length];
+					for (int i=0; i < objects.Length; i++)
 						objects[i] = (object)items[i];
 					base.Items = objects;
 				}
