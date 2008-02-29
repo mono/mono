@@ -1,3 +1,11 @@
+2008-02-29  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* PropertyGrid.cs: Check for null PropertyDescriptor.Name just 
+	in case.
+	* GridEntry.cs: For MS compitability make all child properties 
+	readonly if the parent is readonly. Ugh.
+	[Fixes bug #365945 and #365944]
+
 2008-02-29  Andreia Gaita <avidigal@novell.com> 
 
 	* HtmlHistory.cs: Fix sigs for Forward and Back to navigate by index

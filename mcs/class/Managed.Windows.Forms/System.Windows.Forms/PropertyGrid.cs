@@ -990,8 +990,9 @@ namespace System.Windows.Forms {
 			base.OnMouseUp (e);
 		}
 		
-		[MonoTODO]
-		protected void OnNotifyPropertyValueUIItemsChanged(object sender, EventArgs e) {
+		protected void OnNotifyPropertyValueUIItemsChanged(object sender, EventArgs e) 
+		{
+			property_grid_view.UpdateView ();
 		}
 
 		protected override void OnPaint (PaintEventArgs pevent) {
@@ -1401,7 +1402,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		internal void UpdateToolBarButtons ()
+		private void UpdateToolBarButtons ()
 		{
 			if ((PropertySort & PropertySort.Categorized) != 0) {
 				categorized_toolbarbutton.Pushed = true;
@@ -1531,8 +1532,7 @@ namespace System.Windows.Forms {
 
 			foreach (string propertyName in propertyNames) {
 				GridEntry item = null;
-
-				PropertyDescriptor[] properties = new PropertyDescriptor[propertyNames.Length];
+				PropertyDescriptor[] properties = new PropertyDescriptor[propertyOwners.Length];
 				for (int i=0; i < propertyOwners.Length; i++)
 					properties[i] = GetPropertyDescriptor (propertyOwners[i], propertyName);
 
@@ -1703,15 +1703,15 @@ namespace System.Windows.Forms {
 		{
 		
 #if NET_2_0
-		public bool Pushed {
-			get { return base.Checked; }
-			set { base.Checked = value; }
-		}
-		
-		public ToolBarButtonStyle Style {
-			get { return ToolBarButtonStyle.PushButton; }
-			set { }
-		}
+			public bool Pushed {
+				get { return base.Checked; }
+				set { base.Checked = value; }
+			}
+			
+			public ToolBarButtonStyle Style {
+				get { return ToolBarButtonStyle.PushButton; }
+				set { }
+			}
 #endif
 		}
 		

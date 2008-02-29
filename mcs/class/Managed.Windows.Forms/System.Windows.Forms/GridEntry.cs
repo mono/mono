@@ -588,7 +588,10 @@ namespace System.Windows.Forms.PropertyGridInternal
 				// 	Console.WriteLine ("CanConvertFrom (string): " + PropertyDescriptor.Converter.CanConvertFrom ((ITypeDescriptorContext)this, typeof (string)));
 				// 	Console.WriteLine ("IsArray: " + PropertyDescriptor.PropertyType.IsArray.ToString ());
 				// }
-				if (PropertyDescriptor == null || PropertyOwner == null ||
+				if (ParentEntry != null && ParentEntry.GridItemType == GridItemType.Property 
+				    && ParentEntry.IsReadOnly)
+					return true;
+				else if (PropertyDescriptor == null || PropertyOwner == null ||
 				    (PropertyDescriptor.IsReadOnly && !this.ShouldCreateParentInstance))
 					return true;
 				else if (!HasCustomEditor && PropertyDescriptor.Converter == null)
