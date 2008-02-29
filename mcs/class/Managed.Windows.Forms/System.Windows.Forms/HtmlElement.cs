@@ -30,7 +30,6 @@ using Mono.WebBrowser.DOM;
 
 namespace System.Windows.Forms
 {
-	[MonoTODO ("Needs Implementation")]
 	public sealed class HtmlElement
 	{
 		private EventHandlerList events;		
@@ -275,59 +274,214 @@ namespace System.Windows.Forms
 			}
 		}
 
+		private void OnDoubleClick (object sender, EventArgs e)
+		{
+			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[DoubleClickEvent];
+			if (eh != null) {
+				HtmlElementEventArgs ev = new HtmlElementEventArgs ();
+				eh (this, ev);
+			}
+		}
+
 		private static object DoubleClickEvent = new object ();
 		public event HtmlElementEventHandler DoubleClick {
-			add { Events.AddHandler (DoubleClickEvent, value); }
-			remove { Events.RemoveHandler (DoubleClickEvent, value); }
+			add { 
+				Events.AddHandler (DoubleClickEvent, value);
+				element.DoubleClick += new NodeEventHandler (OnDoubleClick);
+			}
+			remove { 
+				Events.RemoveHandler (DoubleClickEvent, value);
+				element.DoubleClick -= new NodeEventHandler (OnDoubleClick);
+			}
+		}
+
+		private void OnMouseDown (object sender, EventArgs e)
+		{
+			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[MouseDownEvent];
+			if (eh != null) {
+				HtmlElementEventArgs ev = new HtmlElementEventArgs ();
+				eh (this, ev);
+			}
 		}
 
 		private static object MouseDownEvent = new object ();
 		public event HtmlElementEventHandler MouseDown {
-			add { Events.AddHandler (MouseDownEvent, value); }
-			remove { Events.RemoveHandler (MouseDownEvent, value); }
+			add { 
+				Events.AddHandler (MouseDownEvent, value);
+				element.MouseDown += new NodeEventHandler (OnMouseDown);
+			}
+			remove { 
+				Events.RemoveHandler (MouseDownEvent, value);
+				element.MouseDown -= new NodeEventHandler (OnMouseDown);
+			}
+		}
+
+		private void OnMouseUp (object sender, EventArgs e)
+		{
+			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[MouseUpEvent];
+			if (eh != null) {
+				HtmlElementEventArgs ev = new HtmlElementEventArgs ();
+				eh (this, ev);
+			}
 		}
 
 		private static object MouseUpEvent = new object ();
 		public event HtmlElementEventHandler MouseUp {
-			add { Events.AddHandler (MouseUpEvent, value); }
-			remove { Events.RemoveHandler (MouseUpEvent, value); }
+			add { 
+				Events.AddHandler (MouseUpEvent, value);
+				element.MouseUp += new NodeEventHandler (OnMouseUp);
+			}
+			remove { 
+				Events.RemoveHandler (MouseUpEvent, value);
+				element.MouseUp -= new NodeEventHandler (OnMouseUp);
+			}
+		}
+
+		private void OnMouseMove (object sender, EventArgs e)
+		{
+			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[MouseMoveEvent];
+			if (eh != null) {
+				HtmlElementEventArgs ev = new HtmlElementEventArgs ();
+				eh (this, ev);
+			}
 		}
 
 		private static object MouseMoveEvent = new object ();
 		public event HtmlElementEventHandler MouseMove {
-			add { Events.AddHandler (MouseMoveEvent, value); }
-			remove { Events.RemoveHandler (MouseMoveEvent, value); }
+			add { 
+				Events.AddHandler (MouseMoveEvent, value);
+				element.MouseMove += new NodeEventHandler (OnMouseMove);
+			}
+			remove { 
+				Events.RemoveHandler (MouseMoveEvent, value);
+				element.MouseMove -= new NodeEventHandler (OnMouseMove);
+			}
+		}
+
+		private void OnMouseOver (object sender, EventArgs e)
+		{
+			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[MouseOverEvent];
+			if (eh != null) {
+				HtmlElementEventArgs ev = new HtmlElementEventArgs ();
+				eh (this, ev);
+			}
 		}
 
 		private static object MouseOverEvent = new object ();
 		public event HtmlElementEventHandler MouseOver {
-			add { Events.AddHandler (MouseOverEvent, value); }
-			remove { Events.RemoveHandler (MouseOverEvent, value); }
+			add { 
+				Events.AddHandler (MouseOverEvent, value);
+				element.MouseOver += new NodeEventHandler (OnMouseOver);
+			}
+			remove { 
+				Events.RemoveHandler (MouseOverEvent, value);
+				element.MouseOver -= new NodeEventHandler (OnMouseOver);
+			}
 		}
+		
+		private void OnMouseEnter (object sender, EventArgs e)
+		{
+			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[MouseEnterEvent];
+			if (eh != null) {
+				HtmlElementEventArgs ev = new HtmlElementEventArgs ();
+				eh (this, ev);
+			}
+		}
+		
 		private static object MouseEnterEvent = new object ();
 		public event HtmlElementEventHandler MouseEnter {
-			add { Events.AddHandler (MouseEnterEvent, value); }
-			remove { Events.RemoveHandler (MouseEnterEvent, value); }
+			add { 
+				Events.AddHandler (MouseEnterEvent, value);
+				element.MouseEnter += new NodeEventHandler (OnMouseEnter);
+			}
+			remove { 
+				Events.RemoveHandler (MouseEnterEvent, value);
+				element.MouseEnter -= new NodeEventHandler (OnMouseEnter);
+			}
 		}
+		
+		private void OnMouseLeave (object sender, EventArgs e)
+		{
+			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[MouseLeaveEvent];
+			if (eh != null) {
+				HtmlElementEventArgs ev = new HtmlElementEventArgs ();
+				eh (this, ev);
+			}
+		}		
+		
 		private static object MouseLeaveEvent = new object ();
 		public event HtmlElementEventHandler MouseLeave {
-			add { Events.AddHandler (MouseLeaveEvent, value); }
-			remove { Events.RemoveHandler (MouseLeaveEvent, value); }
+			add { 
+				Events.AddHandler (MouseLeaveEvent, value);
+				element.MouseLeave += new NodeEventHandler (OnMouseLeave);
+			}
+			remove { 
+				Events.RemoveHandler (MouseLeaveEvent, value);
+				element.MouseLeave -= new NodeEventHandler (OnMouseLeave);
+			}
 		}
+
+		private void OnKeyDown (object sender, EventArgs e)
+		{
+			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[KeyDownEvent];
+			if (eh != null) {
+				HtmlElementEventArgs ev = new HtmlElementEventArgs ();
+				eh (this, ev);
+			}
+		}		
+		
 		private static object KeyDownEvent = new object ();
 		public event HtmlElementEventHandler KeyDown {
-			add { Events.AddHandler (KeyDownEvent, value); }
-			remove { Events.RemoveHandler (KeyDownEvent, value); }
+			add { 
+				Events.AddHandler (KeyDownEvent, value);
+				element.KeyDown += new NodeEventHandler (OnKeyDown);
+			}
+			remove { 
+				Events.RemoveHandler (KeyDownEvent, value);
+				element.KeyDown -= new NodeEventHandler (OnKeyDown);
+			}
 		}
+
+		private void OnKeyPress (object sender, EventArgs e)
+		{
+			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[KeyPressEvent];
+			if (eh != null) {
+				HtmlElementEventArgs ev = new HtmlElementEventArgs ();
+				eh (this, ev);
+			}
+		}		
+		
 		private static object KeyPressEvent = new object ();
 		public event HtmlElementEventHandler KeyPress {
-			add { Events.AddHandler (KeyPressEvent, value); }
-			remove { Events.RemoveHandler (KeyPressEvent, value); }
+			add { 
+				Events.AddHandler (KeyPressEvent, value);
+				element.KeyPress += new NodeEventHandler (OnKeyPress);
+			}
+			remove { 
+				Events.RemoveHandler (KeyPressEvent, value);
+				element.KeyPress -= new NodeEventHandler (OnKeyPress);
+			}
 		}
+
+		private void OnKeyUp (object sender, EventArgs e)
+		{
+			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[KeyUpEvent];
+			if (eh != null) {
+				HtmlElementEventArgs ev = new HtmlElementEventArgs ();
+				eh (this, ev);
+			}
+		}		
+		
 		private static object KeyUpEvent = new object ();
 		public event HtmlElementEventHandler KeyUp {
-			add { Events.AddHandler (KeyUpEvent, value); }
-			remove { Events.RemoveHandler (KeyUpEvent, value); }
+			add { 
+				Events.AddHandler (KeyUpEvent, value);
+				element.KeyUp += new NodeEventHandler (OnKeyUp);
+			}
+			remove { 
+				Events.RemoveHandler (KeyUpEvent, value);
+				element.KeyUp -= new NodeEventHandler (OnKeyUp);
+			}
 		}
 
 #endregion

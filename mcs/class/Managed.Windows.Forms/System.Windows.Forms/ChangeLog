@@ -1,3 +1,7 @@
+2008-02-29  Andreia Gaita <avidigal@novell.com>
+
+	* HtmlElement.cs: More handlers for mouse and key events
+
 2008-02-28  Andreia Gaita <avidigal@novell.com>
 
 	* WebBrowserBase.cs: MouseClick sig changed.
