@@ -1,3 +1,8 @@
+2008-03-01  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* Component.cs: Do not set the Site to null on disposing as this 
+	is the Containers job. Instead try to remove from Container if sited.
+
 2008-02-16  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* CharConverter.cs: 
