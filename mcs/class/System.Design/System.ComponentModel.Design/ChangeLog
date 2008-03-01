@@ -1,3 +1,14 @@
+2008-03-01  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* MenuCommandService.cs: implemeneted
+	* DesignerHost.cs: Do not fire ComponentChanging/ed events
+	when removing a component.
+	* DesignModeSite: Naming fixes.
+	* UndoEngine.cs: A lot of bugfixes.
+	* SelectionService: Set root component as selected if the 
+	last remaining component from the current selection has been
+	removed.
+
 2008-02-25  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DateTimeEditor.cs: Set the calendar to the currently edited 

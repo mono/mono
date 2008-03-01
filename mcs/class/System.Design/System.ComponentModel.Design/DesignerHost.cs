@@ -158,9 +158,11 @@ namespace System.ComponentModel.Design
 
 		public override void Remove (IComponent component)
 		{
+			DesignerTransaction transaction = this.CreateTransaction ("Remove " + component.Site.Name);
 			RemovePreProcess (component);
 			base.Remove (component);
 			RemovePostProcess (component);
+			transaction.Commit ();
 		}
 
 		internal void RemovePreProcess (IComponent component)
@@ -354,12 +356,8 @@ namespace System.ComponentModel.Design
 		public void DestroyComponent (IComponent component)
 		{
 			if (component.Site != null && component.Site.Container == this) {
-				OnComponentChanging (component, null);
-				
 				this.Remove (component); // takes care for the designer as well
 				component.Dispose ();
-
-				OnComponentChanged (component, null, null, null);
 			}
 		}
 

@@ -55,6 +55,15 @@ namespace System.ComponentModel.Design
 
 		public DesignModeSite (IComponent component, string name, IContainer container, IServiceProvider serviceProvider)
 		{
+			if (serviceProvider == null)
+				throw new ArgumentNullException ("serviceProvider");
+			if (component == null)
+				throw new ArgumentNullException ("component");
+			if (container == null)
+				throw new ArgumentNullException ("container");
+			if (name == null)
+				throw new ArgumentNullException ("name");
+
 			_component = component;
 			_container = container;
 			_componentName = name;
@@ -83,7 +92,7 @@ namespace System.ComponentModel.Design
 				return _componentName;
 			}
 			set {
-				if (value != null && value.Trim().Length > 0) {
+				if (value != _componentName && value != null && value.Trim().Length > 0) {
 
 					INameCreationService nameService = this.GetService (typeof (INameCreationService)) as INameCreationService;
 
@@ -93,21 +102,13 @@ namespace System.ComponentModel.Design
 
 					// check for duplicated name
 					//
-					if (component != null && _component != component) { // duplicate name
-						if (nameService != null)
-							value = nameService.CreateName (_container, _component.GetType ());
-						else
-							value = _componentName;
-					}
-					else { // if not a duplicate -> check the validity of the name
-						if (nameService != null && !nameService.IsValidName (value))
-							value = _componentName;
-					}
+					if (component == null && nameService != null && !nameService.IsValidName (value)) { // no duplicate name
+						value = _componentName;
+						string oldName = _componentName;
+						_componentName = value;
 
-					string oldName = _componentName;
-					_componentName = value;
-					
-					((DesignerHost)this.GetService (typeof (IDesignerHost))).OnComponentRename (_component, oldName, _componentName);
+						((DesignerHost)this.GetService (typeof (IDesignerHost))).OnComponentRename (_component, oldName, _componentName);
+					}
 				}
 			}
 		}

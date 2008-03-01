@@ -54,13 +54,12 @@ namespace System.ComponentModel.Design
 		
 		private void OnComponentRemoving (object sender, ComponentEventArgs args)
 		{
-			if (this.GetComponentSelected (args.Component)) 
+			if (this.GetComponentSelected (args.Component))
 #if NET_2_0
 				this.SetSelectedComponents (new IComponent[] { args.Component }, SelectionTypes.Remove);
 #else
 				this.SetSelectedComponents (new IComponent[] { this.RootComponent }, SelectionTypes.Click);
 #endif
-
 		}
 		
 		public event EventHandler SelectionChanging;
