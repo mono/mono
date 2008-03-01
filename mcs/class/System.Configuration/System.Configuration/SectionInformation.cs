@@ -48,7 +48,7 @@ namespace System.Configuration
 		bool force_update, is_declared, is_locked;
 		string name, type_name;
 		string raw_xml;
-
+		
 		ProtectedConfigurationProvider protection_provider;
 		
 
@@ -60,6 +60,11 @@ namespace System.Configuration
 			allow_override = true;
 			inherit_on_child_apps = true;
 			restart_on_external_changes = true;
+		}
+
+		internal string ConfigFilePath {
+			get;
+			set;
 		}
 		
 		public ConfigurationAllowDefinition AllowDefinition {

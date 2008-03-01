@@ -271,7 +271,8 @@ namespace System.Configuration {
 				parentSection = parent.GetSectionInstance (config, true);
 				sec.SectionInformation.SetParentSection (parentSection);
 			}
-
+			sec.SectionInformation.ConfigFilePath = FilePath;
+			
 			string xml = data as string;
 			sec.RawXml = xml;
 			sec.Reset (parentSection);

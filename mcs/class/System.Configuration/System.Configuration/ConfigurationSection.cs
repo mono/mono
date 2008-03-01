@@ -73,6 +73,30 @@ namespace System.Configuration
 				object parent = parentSection != null ? parentSection.GetRuntimeObject () : null;
 				if (RawXml == null)
 					return parent;
+				
+				try {
+					// This code requires some re-thinking...
+					XmlReader reader = new XmlTextReader (new StringReader (RawXml));
+
+					DoDeserializeSection (reader);
+					if (!String.IsNullOrEmpty (SectionInformation.ConfigSource)) {
+						string fileDir = SectionInformation.ConfigFilePath;
+						if (!String.IsNullOrEmpty (fileDir))
+							fileDir = Path.GetDirectoryName (fileDir);
+						else
+							fileDir = String.Empty;
+					
+						string path = Path.Combine (fileDir, SectionInformation.ConfigSource);
+						if (File.Exists (path)) {
+							RawXml = File.ReadAllText (path);
+							SectionInformation.SetRawXml (RawXml);
+						}
+					}
+				} catch {
+					// ignore, it can fail - we deserialize only in order to get
+					// the configSource attribute
+				}
+				
 				XmlDocument doc = new XmlDocument ();
 				doc.LoadXml (RawXml);
 				return SectionHandler.Create (parent, null, doc.DocumentElement);
@@ -100,9 +124,8 @@ namespace System.Configuration
 				elem.SetReadOnly ();
 			return elem;
 		}
-		
-		[MonoInternalNote ("find the proper location for the decryption stuff")]
-		protected internal virtual void DeserializeSection (XmlReader reader)
+
+		void DoDeserializeSection (XmlReader reader)
 		{
 			reader.MoveToContent ();
 
@@ -111,8 +134,7 @@ namespace System.Configuration
 			string localName;
 			
 			while (reader.MoveToNextAttribute ()) {
-				localName = reader.LocalName;
-				
+				localName = reader.LocalName;				
 				if (localName == "configProtectionProvider")
 					protection_provider = reader.Value;
 				else if (localName == "configSource")
@@ -144,6 +166,12 @@ namespace System.Configuration
 			
 			SectionInformation.SetRawXml (RawXml);
 			DeserializeElement (reader, false);
+		}
+		
+		[MonoInternalNote ("find the proper location for the decryption stuff")]
+		protected internal virtual void DeserializeSection (XmlReader reader)
+		{
+			DoDeserializeSection (reader);
 		}
 
 		internal void DeserializeConfigSource (string basePath)

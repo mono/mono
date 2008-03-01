@@ -1,3 +1,15 @@
+2008-03-01  Marek Habersack  <mhabersack@novell.com>
+
+	* SectionInformation.cs: added an internal property -
+	ConfigFilePath, used when deserializing a section in
+	ConfigurationSection.GetRuntimeObject.
+
+	* Configuration.cs: set SectionInformation.ConfigFilePath when
+	getting an instance of a section.
+
+	* ConfigurationSection.cs: support the 'configSource' attribute
+	when section is read through GetRuntimeObject.
+
 2008-02-21  Marek Habersack  <mhabersack@novell.com>
 
 	* Configuration.cs: if the section being deserialized uses the
