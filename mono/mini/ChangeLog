@@ -1,3 +1,8 @@
+2008-03-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_method_to_ir): Report calling a static method using callvirt as
+	unverified.
+
 2008-02-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ops.h: Remove OP_SPARC_INARG_VT, add a new OP_VTARG_ADDR opcode instead
