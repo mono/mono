@@ -1,3 +1,10 @@
+2008-03-01  Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile: added a dependency on Mono.Web.dll
+
+	* System.Web.dll.sources: removed SystemSettingsMapper public APIs
+	and moved them to the Mono.Web assembly.
+
 2007-12-30  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* System.Web.dll.sources: added AspNetDBSchemaChecker.cs

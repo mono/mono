@@ -1,5 +1,5 @@
 //
-// System.Web.Util.RoleManagerSectionMapper
+// Mono.Web.Util.MembershipSectionMapper
 //
 // Authors:
 //   Marek Habersack (mhabersack@novell.com)
@@ -33,13 +33,13 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Web.Configuration;
 
-namespace System.Web.Util
+namespace Mono.Web.Util
 {
-	internal class RoleManagerSectionMapper : ISectionSettingsMapper
+	internal class MembershipSectionMapper : ISectionSettingsMapper
 	{
 		public object MapSection (object _section, List <SettingsMappingWhat> whats)
 		{
-			RoleManagerSection section = _section as RoleManagerSection;
+			MembershipSection section = _section as MembershipSection;
 			if (section == null)
 				return _section;
 			
@@ -113,7 +113,7 @@ namespace System.Web.Util
 			}
 		}
 		
-		void ProcessAdd (RoleManagerSection section, SettingsMappingWhatContents how)
+		void ProcessAdd (MembershipSection section, SettingsMappingWhatContents how)
 		{
 			string name, type;
 			if (!GetCommonAttributes (how, out name, out type))
@@ -130,7 +130,7 @@ namespace System.Web.Util
 			providers.Add (prov);
 		}
 
-		void ProcessRemove (RoleManagerSection section, SettingsMappingWhatContents how)
+		void ProcessRemove (MembershipSection section, SettingsMappingWhatContents how)
 		{
 			string name, type;
 			if (!GetCommonAttributes (how, out name, out type))
@@ -145,12 +145,12 @@ namespace System.Web.Util
 			}
 		}
 		
-		void ProcessClear (RoleManagerSection section, SettingsMappingWhatContents how)
+		void ProcessClear (MembershipSection section, SettingsMappingWhatContents how)
 		{
 			section.Providers.Clear ();
 		}
 
-		void ProcessReplace (RoleManagerSection section, SettingsMappingWhatContents how)
+		void ProcessReplace (MembershipSection section, SettingsMappingWhatContents how)
 		{
 			string name, type;
 			if (!GetCommonAttributes (how, out name, out type))

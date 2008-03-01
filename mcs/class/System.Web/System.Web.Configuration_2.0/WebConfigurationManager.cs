@@ -34,7 +34,9 @@ using System.IO;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Reflection;
-using System.Web.Util;
+#if MONOWEB_DEP
+using Mono.Web.Util;
+#endif
 using System.Xml;
 using System.Configuration;
 using System.Configuration.Internal;
@@ -305,7 +307,11 @@ namespace System.Web.Configuration {
 			AddSectionToCache (GetSectionCacheKey (sectionName, path), value);
 			return value;
 #else
+#if MONOWEB_DEP
 			object value = SettingsMappingManager.MapSection (get_runtime_object.Invoke (section, new object [0]));
+#else
+			object value = null;
+#endif
 			AddSectionToCache (GetSectionCacheKey (sectionName, path), value);
 			return value;
 #endif

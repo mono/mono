@@ -1,3 +1,8 @@
+2008-03-01  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpRuntime.cs: SettingsMappingManager has been moved to
+	Mono.Web.
+
 2008-02-28  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpParamsCollection.cs: restore the GetValues overrides only to

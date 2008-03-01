@@ -1,5 +1,5 @@
 //
-// System.Web.Util.SettingsMappingManager
+// Mono.Web.Util.SettingsMappingManager
 //
 // Authors:
 //   Marek Habersack (mhabersack@novell.com)
@@ -38,7 +38,7 @@ using System.Web.Configuration;
 using System.Xml;
 using System.Xml.XPath;
 
-namespace System.Web.Util
+namespace Mono.Web.Util
 {
 	public class SettingsMappingManager
 	{
@@ -51,6 +51,11 @@ namespace System.Web.Util
 		static Dictionary <object, object> _mappedSections;
 		static SettingsMappingPlatform _myPlatform;
 
+		static bool _runningOnWindows;
+		internal static bool IsRunningOnWindows {
+                        get { return _runningOnWindows; }
+                }
+
 		public static SettingsMappingPlatform Platform {
 			get { return _myPlatform; }
 		}
@@ -62,6 +67,9 @@ namespace System.Web.Util
 		static SettingsMappingManager ()
 		{
 			_mappingFile = Path.Combine (Path.GetDirectoryName (RuntimeEnvironment.SystemConfigurationFile), settingsMapFileName);
+			PlatformID pid = Environment.OSVersion.Platform;
+			_runningOnWindows = ((int) pid != 128 && (int) pid != 4);
+
 		}
 
 		static public void Init ()
@@ -79,7 +87,7 @@ namespace System.Web.Util
 					return;
 			}
 
-			if (HttpApplication.IsRunningOnWindows)
+			if (IsRunningOnWindows)
 				_myPlatform = SettingsMappingPlatform.Windows;
 			else
 				_myPlatform = SettingsMappingPlatform.Unix;

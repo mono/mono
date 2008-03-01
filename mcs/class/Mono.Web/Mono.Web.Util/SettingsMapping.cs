@@ -1,5 +1,5 @@
 //
-// System.Web.Util.SettingsMapping
+// Mono.Web.Util.SettingsMapping
 //
 // Authors:
 //   Marek Habersack (mhabersack@novell.com)
@@ -34,7 +34,7 @@ using System.ComponentModel;
 using System.Xml;
 using System.Xml.XPath;
 
-namespace System.Web.Util
+namespace Mono.Web.Util
 {
 	public enum SettingsMappingPlatform
 	{
