@@ -42,6 +42,17 @@ namespace System.ComponentModel.Design.Serialization
 	//
 	internal class CodeDomSerializationProvider : IDesignerSerializationProvider
 	{
+
+		private static CodeDomSerializationProvider _instance = null;
+
+		public static CodeDomSerializationProvider Instance {
+			get {
+				if (_instance == null)
+					_instance = new CodeDomSerializationProvider ();
+				return _instance;
+			}
+		}
+
 		public CodeDomSerializationProvider ()
 		{
 			_componentSerializer = new ComponentCodeDomSerializer ();

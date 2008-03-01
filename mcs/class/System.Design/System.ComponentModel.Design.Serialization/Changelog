@@ -1,3 +1,28 @@
+2008-03-01  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* CodeDomSerializerBase.cs, PropertyCodeDomSerializer.cs: 
+	PropertySerializer shouldn't check for serialization visibility
+	as its duty is to serialize properies if invoked directly.
+	CodeDomSerializerBase.SerializeProperties should check the 
+	visibility.
+	* CodeDomSerializer.cs: Fix deserialize to deserialize all 
+	statements.
+	* CodeDomDesignerLoader.cs: Implement IDesignerSerializationService
+	using the ComponentSerializationService instead of calling
+	ourselves recursive.
+	* CodeDomComponentSerializationService.cs: A lot of bugfixes.
+	* DesignerSerializationManager.cs: 
+	 - Verify that we are not in session before creating a new one.
+	 - Do not check whether we should
+	 preserve names in GetInstance. This is only for CreateInstance.
+	 - Fix a NRE if serialization providers are not initialized.
+	* CodeDomSerializationProvider.cs, CodeDomDesignerLoader.cs:
+	Refactor the codedom provider to a singleton, so that
+	CodeDomComponentSerializationService and others can share the
+	instance.
+	* SerializeAbsoluteContext.cs: ShouldSerialize should check if 
+	the absolute context is of the same member not the opposite.
+
 2008-01-04  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* CodeDomComponentSerializationService.cs: implemented.

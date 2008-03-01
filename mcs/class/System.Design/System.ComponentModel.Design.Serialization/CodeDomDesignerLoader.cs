@@ -56,7 +56,7 @@ namespace System.ComponentModel.Design.Serialization
 										CodeDomComponentSerializationService (base.LoaderHost));
 			IDesignerSerializationManager manager = base.LoaderHost.GetService (typeof (IDesignerSerializationManager)) as IDesignerSerializationManager;
 			if (manager != null)
-				manager.AddSerializationProvider (new CodeDomSerializationProvider ());
+				manager.AddSerializationProvider (CodeDomSerializationProvider.Instance);
 		}
 		
 		protected override bool IsReloadNeeded ()
@@ -256,17 +256,29 @@ namespace System.ComponentModel.Design.Serialization
 
 		ICollection IDesignerSerializationService.Deserialize (object serializationData)
 		{
-			IDesignerSerializationService service = LoaderHost.GetService (typeof (IDesignerSerializationService)) as IDesignerSerializationService;
-			if (service != null)
-				return service.Deserialize (serializationData);
+			if (serializationData == null)
+				throw new ArgumentNullException ("serializationData");
+
+			ComponentSerializationService service = LoaderHost.GetService (typeof (ComponentSerializationService)) as ComponentSerializationService;
+			SerializationStore store = serializationData as SerializationStore;
+			if (service != null && serializationData != null)
+				return service.Deserialize (store, this.LoaderHost.Container);
 			return new object[0];
 		}
 
 		object IDesignerSerializationService.Serialize (ICollection objects)
 		{
-			IDesignerSerializationService service = LoaderHost.GetService (typeof (IDesignerSerializationService)) as IDesignerSerializationService;
-			if (service != null)
-				return service.Serialize (objects);
+			if (objects == null)
+				throw new ArgumentNullException ("objects");
+
+			ComponentSerializationService service = LoaderHost.GetService (typeof (ComponentSerializationService)) as ComponentSerializationService;
+			if (service != null) {
+				SerializationStore store = service.CreateStore ();
+				foreach (object o in objects)
+					service.Serialize (store, o);
+				store.Close ();
+				return store;
+			}
 			return null;
 		}
 #endregion
