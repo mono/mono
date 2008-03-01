@@ -131,11 +131,12 @@ namespace System.ComponentModel {
 		protected virtual void Dispose (bool release_all)
 		{
 			if (release_all) {
+				if (mySite != null && mySite.Container != null)
+					mySite.Container.Remove (this);
 				EventHandler eh = (EventHandler) Events [disposedEvent];
 				if (eh != null)
 					eh (this, EventArgs.Empty);
 			}
-			mySite = null;
 		}
 
 		protected virtual object GetService (Type service)
