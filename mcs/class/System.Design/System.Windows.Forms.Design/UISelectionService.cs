@@ -42,6 +42,7 @@ namespace System.Windows.Forms.Design
 	{
 
 		private IServiceProvider _serviceProvider;
+		private DesignerTransaction _transaction;
 
 		public UISelectionService (IServiceProvider serviceProvider) : base (serviceProvider)
 		{
@@ -49,6 +50,7 @@ namespace System.Windows.Forms.Design
 				throw new ArgumentNullException ("serviceProvider");
 
 			_serviceProvider = serviceProvider;
+			_transaction = null;
 		}
 
 		private object GetService (Type service)
@@ -84,8 +86,6 @@ namespace System.Windows.Forms.Design
 		
 		public void MouseDragBegin (Control container, int x, int y)
 		{
-			// XXX: pass ControlDesigner and not control and check if it is a ParentControlDesigner !!!!!!
-			//
 			// * start resizing the selection frame
 			// * start selecting
 			//		   
@@ -93,6 +93,11 @@ namespace System.Windows.Forms.Design
 			
 			if (frame != null && frame.HitTest (x, y)) {
 				this.SetSelectedComponents (new IComponent[] { frame.Control });
+				if (_transaction == null) {
+					IDesignerHost host = this.GetService (typeof (IDesignerHost)) as IDesignerHost;
+					_transaction = host.CreateTransaction ("Resize " + 
+						(this.SelectionCount == 1 ? ((IComponent)this.PrimarySelection).Site.Name : "controls"));
+				}
 				this.ResizeBegin (x, y);
 			}
 			else {
@@ -112,8 +117,16 @@ namespace System.Windows.Forms.Design
 		{
 			if (_selecting)
 				SelectionEnd (cancel);
-			else if (_resizing)
+			else if (_resizing) {
 				ResizeEnd (cancel);
+				if (_transaction != null) {
+					if (cancel)
+						_transaction.Cancel ();
+					else
+						_transaction.Commit ();
+					_transaction = null;
+				}
+			}
 
 			if (Cursor.Current != Cursors.Default)
 				Cursor.Current = Cursors.Default;
@@ -129,11 +142,14 @@ namespace System.Windows.Forms.Design
 		//
 		public void DragBegin ()
 		{
+			// Console.WriteLine ("DragBegin");
+			if (_transaction == null) {
+				IDesignerHost host = this.GetService (typeof (IDesignerHost)) as IDesignerHost;
+				_transaction = host.CreateTransaction ("Move " + 
+								       (this.SelectionCount == 1? ((IComponent)this.PrimarySelection).Site.Name : "controls"));
+			}
 			_dragging = true;
 			_firstMove = true;
-			// TODO: Use the undo/redo mechanism to declare a state change, so that if the dragging is canceled
-			// the locations and container of the controls will be restored to the one before the dragging
-			//
 			if (this.PrimarySelection != null)
 				((Control)this.PrimarySelection).DoDragDrop (new ControlDataObject ((Control)this.PrimarySelection), DragDropEffects.All);
 		}
@@ -142,8 +158,7 @@ namespace System.Windows.Forms.Design
 		//
 		public void DragOver (Control container, int x, int y)
 		{
-			//Console.WriteLine ("DragOver: " + x + " : " + y);
-			//Console.WriteLine ("in container: " + container.ToString ());
+			// Console.WriteLine ("DragOver");
 			if (_dragging) {
 				if (_firstMove) {
 					_prevMousePosition = new Point (x, y);
@@ -169,9 +184,8 @@ namespace System.Windows.Forms.Design
 		//
 		public void DragDrop (bool cancel, Control container, int x, int y)
 		{
+			// Console.WriteLine ("UISelectionService.DragDrop: in " + container.Site.Name);
 			if (_dragging) {
-				// TODO: Handle cancel by requesting an undo operation
-				//
 				int dx = x - _prevMousePosition.X;
 				int dy = y - _prevMousePosition.Y;
 			
@@ -187,6 +201,13 @@ namespace System.Windows.Forms.Design
 				// Else for parentcontroldesigner there is no mouseup event and it doesn't set allow drop back to false
 				//
 				Native.SendMessage (((Control)this.PrimarySelection).Handle, Native.Msg.WM_LBUTTONUP, (IntPtr) 0, (IntPtr) 0);
+				if (_transaction != null) {
+					if (cancel)
+						_transaction.Cancel ();
+					else
+						_transaction.Commit ();
+					_transaction = null;
+				}
 			}
 		}
 		
@@ -206,10 +227,8 @@ namespace System.Windows.Forms.Design
 			ICollection selection = this.GetSelectedComponents ();
 			foreach (Component component in selection) {
 				Control control = component as Control;
-				if (reparent) {
-					control.Parent.Controls.Remove (control);
-					container.Controls.Add (control);
-				}
+				if (reparent)
+					TypeDescriptor.GetProperties (control)["Parent"].SetValue (control, container);
 
 				PropertyDescriptor property = TypeDescriptor.GetProperties (control)["Location"];
 				Point location = (Point) property.GetValue (control);
@@ -238,7 +257,7 @@ namespace System.Windows.Forms.Design
 		//
 		private void SelectionBegin (Control container, int x, int y)
 		{
-			//Console.WriteLine ("SelectionBegin");
+			// Console.WriteLine ("SelectionBegin");
 			_selecting = true;
 			_selectionContainer = container;
 			_prevMousePosition = new Point (x, y);
@@ -248,7 +267,7 @@ namespace System.Windows.Forms.Design
 		
 		private void SelectionContinue (int x, int y)
 		{
-			//Console.WriteLine ("SelectionContinue");
+			// Console.WriteLine ("SelectionContinue");
 			if (_selecting) {
 				// right to right
 				//
@@ -330,7 +349,7 @@ namespace System.Windows.Forms.Design
 		
 		private void SelectionEnd (bool cancel)
 		{
-			//Console.WriteLine ("SelectionEnd");
+			// Console.WriteLine ("SelectionEnd");
 			_selecting = false;
 			ICollection selectedControls = GetControlsIn (_selectionRectangle);
 			// do not change selection if nothing has changed
@@ -349,6 +368,7 @@ namespace System.Windows.Forms.Design
 
 		private void ResizeBegin (int x, int y)
 		{
+			// Console.WriteLine ("ResizeBegin");
 			_resizing = true;
 			_selectionFrame = this.GetSelectionFrameAt (x, y);
 			_selectionFrame.ResizeBegin (x, y);
@@ -356,6 +376,7 @@ namespace System.Windows.Forms.Design
 
 		private void ResizeContinue (int x, int y)
 		{
+			// Console.WriteLine ("ResizeContinue");
 			Rectangle deltaBounds = _selectionFrame.ResizeContinue (x, y);
 			ICollection selection = this.GetSelectedComponents ();
 
@@ -371,6 +392,7 @@ namespace System.Windows.Forms.Design
 
 		private void ResizeEnd (bool cancel)
 		{
+			// Console.WriteLine ("ResizeEnd");
 			_selectionFrame.ResizeEnd (cancel);
 			_resizing = false;
 		}

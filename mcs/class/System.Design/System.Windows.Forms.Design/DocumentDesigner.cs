@@ -270,13 +270,6 @@ namespace System.Windows.Forms.Design
 		{
 			base.Initialize (component);
 
-			// FIXME: Remove this code because it will end up in FormDocumentDesigner
-			if (component is Form) {
-				((Form)component).TopLevel = false;
-				// XXX: File a MWF bug: setting toplevel to false also sets visible to false
-				((Form)component).Visible = true;
-			}
-
 			_designerViewFrame = new DesignerViewFrame (this.Control, new ComponentTray (this, component.Site));
 			_designerViewFrame.DesignedControl.Location = new Point (15, 15);
 			SetValue (this.Component,  "Location", new Point (0, 0));
@@ -287,6 +280,10 @@ namespace System.Windows.Forms.Design
 				componentChangeSvc.ComponentRemoved += new ComponentEventHandler (OnComponentRemoved);
 			}
 
+			IMenuCommandService menuCommands = GetService (typeof (IMenuCommandService)) as IMenuCommandService;
+			IServiceContainer serviceContainer = this.GetService (typeof (IServiceContainer)) as IServiceContainer;
+			if (menuCommands != null && serviceContainer != null)
+				new DefaultMenuCommands (serviceContainer).AddTo (menuCommands);
 			InitializeSelectionService ();
 		}
 

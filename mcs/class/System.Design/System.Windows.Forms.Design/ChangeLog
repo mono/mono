@@ -1,3 +1,20 @@
+2008-03-01  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* ControlDesigner.cs: Ignore the first WM_MOUSEMOVE after
+	WM_MOUSEDOWN as it is sent just after it.
+	* ParentControlDesigner.cs: Monitor Component Remove events
+	and fire ComponentChanging/ed events for the Parent of the removed
+	Control. Helps the UndoEngine to serialize parent changes.
+	* ControlDesigner.cs: Set the Control.Text to be the component name.
+	* FormDocumentDesigner.cs: Added.
+	* PanelDesigner.cs: Added.
+	* UISelectionService.cs: Set Parent through the TypeDescriptor, so
+	that component change notifications get fired.
+	* DefaultMenuCommands.cs: Implement Cut, Copy, Paste
+	* DocumentDesigner: 
+	 - Drop Form specific code.
+	 - Add menu commands.
+
 2008-02-29  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* StringCollectionEditor.cs: 

@@ -49,6 +49,7 @@ namespace System.Windows.Forms.Design
 		private WndProcRouter _messageRouter;
 		private bool _locked = false;
 		private bool _mouseDown = false;
+		private bool _mouseMoveAfterMouseDown = false;
 		private bool _mouseDownFirstMove = false;
 		private bool _firstMouseMoveInClient = true;
 
@@ -64,8 +65,9 @@ namespace System.Windows.Forms.Design
 			if (!(component is Control))
 				throw new ArgumentException ("Component is not a Control.");
 
+			Control.Text = component.Site.Name;
 			_messageRouter = new WndProcRouter ((Control) component, (IMessageReceiver) this);
-			((Control)component).WindowTarget = _messageRouter;
+			Control.WindowTarget = _messageRouter;
 
 			// DT properties
 			//
@@ -87,9 +89,8 @@ namespace System.Windows.Forms.Design
 
 			// XXX: The control already has a handle?
 			//
-			if (Control.IsHandleCreated) {
+			if (Control.IsHandleCreated)
 				OnCreateHandle ();
-			}
 
 		}
 
@@ -171,8 +172,8 @@ namespace System.Windows.Forms.Design
 			get {
 				ArrayList components = new ArrayList ();
 				foreach (Control c in this.Control.Controls)
-						if (c.Site != null)
-							components.Add (c);
+					if (c.Site != null)
+						components.Add (c);
 				return components;
 			}
 		}
@@ -226,7 +227,7 @@ namespace System.Windows.Forms.Design
 			// Mouse messages should be routed the control, if GetHitTest (virtual) returns true.
 			//
 			if (IsMouseMessage ((Native.Msg) m.Msg) &&
-					this.GetHitTest (new Point (Native.LoWord((int) m.LParam), Native.HiWord (((int) m.LParam))))) {
+			    this.GetHitTest (new Point (Native.LoWord((int) m.LParam), Native.HiWord (((int) m.LParam))))) {
 				
 				this.DefWndProc (ref m);
 				return;
@@ -267,6 +268,7 @@ namespace System.Windows.Forms.Design
 					break;
 
 				case Native.Msg.WM_NCRBUTTONDOWN:
+				case Native.Msg.WM_NCLBUTTONDOWN:
 				case Native.Msg.WM_NCMBUTTONDOWN:
 				case Native.Msg.WM_NCLBUTTONDBLCLK:
 				case Native.Msg.WM_NCRBUTTONDBLCLK:
@@ -292,6 +294,7 @@ namespace System.Windows.Forms.Design
 				case Native.Msg.WM_LBUTTONDOWN:
 				case Native.Msg.WM_RBUTTONDOWN:		 
 				case Native.Msg.WM_MBUTTONDOWN:
+					_mouseMoveAfterMouseDown = true;
 					if ((Native.Msg)m.Msg == Native.Msg.WM_LBUTTONDOWN)
 						_mouseButtonDown = MouseButtons.Left;
 					else if ((Native.Msg)m.Msg == Native.Msg.WM_RBUTTONDOWN)
@@ -330,19 +333,27 @@ namespace System.Windows.Forms.Design
 				case Native.Msg.WM_NCRBUTTONUP:
 				case Native.Msg.WM_MBUTTONUP:  
 				case Native.Msg.WM_NCMBUTTONUP:
+					_mouseMoveAfterMouseDown = false; // just in case
 					this.OnMouseUp ();
 					this.BaseWndProc (ref m);
 					break;
 
-				// MWF Specific msg! - must reach control
-				//
-				case Native.Msg.WM_MOUSE_ENTER:
-					_firstMouseMoveInClient = false; // just so that nothing will get fired in WM_MOUSEMOVE
-					OnMouseEnter ();
-					this.DefWndProc (ref m);
-					break;
+				// // MWF Specific msg! - must reach control
+				// //
+				// case Native.Msg.WM_MOUSE_ENTER:
+				// 	_firstMouseMoveInClient = false; // just so that nothing will get fired in WM_MOUSEMOVE
+				// 	OnMouseEnter ();
+				// 	this.DefWndProc (ref m);
+				// 	break;
 
+				// FIXME: The first MOUSEMOVE after WM_MOUSEDOWN should be ingored
+				//
 				case Native.Msg.WM_MOUSEMOVE:
+					if (_mouseMoveAfterMouseDown) { // mousemove is send after each mousedown so ignore that
+						_mouseMoveAfterMouseDown = false;
+						this.BaseWndProc (ref m);
+						return;
+					}
 					// If selection is in progress pass the mouse move msg to the primary selection.
 					// If resizing is in progress pass to the parent of the primary selection (remmember that the selection
 					// frame is not a control and is drawn in the parent of the primary selection).
@@ -451,9 +462,6 @@ namespace System.Windows.Forms.Design
 		//
 		internal virtual void OnMouseMove (int x, int y)
 		{
-			// Fire the OnMouseEnter if this is the first mousemove in
-			// the client area. (I have to, because there is no WM_MOUSEENTER msg)
-			//
 			if (_mouseDown) {
 				if (_mouseDownFirstMove) {
 					OnMouseDragBegin (x, y);
@@ -712,8 +720,8 @@ namespace System.Windows.Forms.Design
 				propertyDescriptor = properties[newProperties[i]] as PropertyDescriptor;
 				if (propertyDescriptor != null)
 					properties[newProperties[i]] = TypeDescriptor.CreateProperty (typeof (ControlDesigner),
-																				  propertyDescriptor,
-																				  attributes[i]);
+												      propertyDescriptor,
+												      attributes[i]);
 			}
 
 			// This one is a must to have.
@@ -755,10 +763,7 @@ namespace System.Windows.Forms.Design
 
 		private string Name {
 			get { return base.Component.Site.Name; }
-			set {
-				if (value != null)
-					base.Component.Site.Name = value;
-			}
+			set { base.Component.Site.Name = value; }
 		}
 
 		private ContextMenu ContextMenu {
