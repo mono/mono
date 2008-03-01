@@ -269,12 +269,14 @@ System.Windows.Forms.Design/DataMemberFieldConverter.cs
 System.Windows.Forms.Design/DataMemberFieldEditor.cs
 System.Windows.Forms.Design/DataMemberListEditor.cs
 System.Windows.Forms.Design/DataSourceConverter.cs
+System.Windows.Forms.Design/DefaultMenuCommands.cs
 System.Windows.Forms.Design/DesignerOptions.cs
 System.Windows.Forms.Design/DockEditor.cs
 System.Windows.Forms.Design/DocumentDesigner.cs
 System.Windows.Forms.Design/EventHandlerService.cs
 System.Windows.Forms.Design/FileNameEditor.cs
 System.Windows.Forms.Design/FolderNameEditor.cs
+System.Windows.Forms.Design/FormDocumentDesigner.cs
 System.Windows.Forms.Design/FormatStringEditor.cs
 System.Windows.Forms.Design/ImageCollectionEditor.cs
 System.Windows.Forms.Design/ImageIndexEditor.cs
@@ -289,6 +291,7 @@ System.Windows.Forms.Design/ListControlStringCollectionEditor.cs
 System.Windows.Forms.Design/MaskDescriptor.cs
 System.Windows.Forms.Design/MenuCommands.cs
 System.Windows.Forms.Design/Native.cs
+System.Windows.Forms.Design/PanelDesigner.cs
 System.Windows.Forms.Design/ParentControlDesigner.cs
 System.Windows.Forms.Design/ScrollableControlDesigner.cs
 System.Windows.Forms.Design/SelectionFrame.cs

@@ -99,6 +99,12 @@ namespace System.Windows.Forms.Design
 				}
 			}
 
+			IComponentChangeService componentChangeSvc = GetService (typeof (IComponentChangeService)) as IComponentChangeService;
+			if (componentChangeSvc != null) {
+				componentChangeSvc.ComponentRemoving += new ComponentEventHandler (OnComponentRemoving);
+				componentChangeSvc.ComponentRemoved += new ComponentEventHandler (OnComponentRemoved);
+			}
+
 			// At the end set whatever we've managed to get
 			//
 			_drawGrid = _defaultDrawGrid;
@@ -158,6 +164,11 @@ namespace System.Windows.Forms.Design
 
 			foreach (IComponent component in components)
 			{
+				if (!this.CanParent ((ControlDesigner)host.GetDesigner (component))) {
+					host.DestroyComponent (component);
+					continue;
+				}
+
 				Control control = component as Control;
 				if (control != null) {
 					if (hasLocation)
@@ -169,7 +180,8 @@ namespace System.Windows.Forms.Design
 						base.SetValue (component, "Size", new Size (width, height));
 
 					this.Control.SuspendLayout ();
-					this.Control.Controls.Add (control);
+					// set parent instead of controls.Add so that it gets serialized for Undo/Redo
+					TypeDescriptor.GetProperties (control)["Parent"].SetValue (control, this.Control);
 					this.Control.SuspendLayout ();
 					this.Control.Refresh ();
 				}
@@ -214,7 +226,6 @@ namespace System.Windows.Forms.Design
 
 		protected override void OnDragEnter (DragEventArgs e)
 		{
-
 			this.Control.Refresh ();
 		}
 
@@ -227,7 +238,7 @@ namespace System.Windows.Forms.Design
 		{
 			IUISelectionService selectionServ = this.GetService (typeof (IUISelectionService)) as IUISelectionService;
 			if (selectionServ != null) {
-				// once ControlDesigner.MouseDragBegin is fired this will start getting dragover events.
+				// once ControlDesigner.MouseDragBegin is called this will start getting dragover events.
 				//
 				Point location = this.SnapPointToGrid (this.Control.PointToClient (new Point (e.X, e.Y)));
 				selectionServ.DragOver (this.Control, location.X, location.Y);
@@ -250,6 +261,28 @@ namespace System.Windows.Forms.Design
 		}
 #endregion
 
+#region ComponentChange
+
+		private void OnComponentRemoving (object sender, ComponentEventArgs args)
+		{
+			IComponentChangeService componentChangeSvc = GetService (typeof (IComponentChangeService)) as IComponentChangeService;
+			Control control = args.Component as Control;
+			if (control != null && control.Parent == this.Control && componentChangeSvc != null)
+				componentChangeSvc.OnComponentChanging (args.Component, TypeDescriptor.GetProperties (args.Component)["Parent"]);
+		}
+
+		private void OnComponentRemoved (object sender, ComponentEventArgs args)
+		{
+			IComponentChangeService componentChangeSvc = GetService (typeof (IComponentChangeService)) as IComponentChangeService;
+			Control control = args.Component as Control;
+			if (control != null && control.Parent == this.Control && componentChangeSvc != null) {
+				control.Parent = null;
+				componentChangeSvc.OnComponentChanged (args.Component,
+								       TypeDescriptor.GetProperties (args.Component)["Parent"],
+								       this.Control, null);
+			}
+		}
+#endregion
 
 #region Design-Time Properties
 

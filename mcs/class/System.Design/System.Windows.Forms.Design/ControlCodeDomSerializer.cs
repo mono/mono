@@ -59,18 +59,21 @@ namespace System.Windows.Forms.Design
 
 			object serialized = base.Serialize (manager, value);
 			CodeStatementCollection statements = serialized as CodeStatementCollection;
-			if (statements != null) {
+			if (statements != null) { // the root control is serialized to CodeExpression
 				ICollection childControls = TypeDescriptor.GetProperties (value)["Controls"].GetValue (value) as ICollection;
-				// If the serialized object is not a statements collection then we don't do anything,
-				// because this means that the object is not under context (serialized to experssion)
-				// 
 				if (childControls.Count > 0) {
 					CodeExpression componentRef = base.GetExpression (manager, value);
-					statements.Insert (0, new CodeExpressionStatement (
-						new CodeMethodInvokeExpression (componentRef, "SuspendLayout")));
-					statements.Add (new CodeMethodInvokeExpression (componentRef, "ResumeLayout", 
-																		   new CodeExpression[] { 
-																			   new CodePrimitiveExpression (false) }));
+
+					CodeStatement statement = new CodeExpressionStatement (
+						new CodeMethodInvokeExpression (componentRef, "SuspendLayout"));
+					statement.UserData["statement-order"] = "begin";
+					statements.Add (statement);
+					statement = new CodeExpressionStatement (
+						new CodeMethodInvokeExpression (componentRef, "ResumeLayout", 
+										new CodeExpression[] { 
+											new CodePrimitiveExpression (false) }));
+					statement.UserData["statement-order"] = "end";
+					statements.Add (statement);
 					serialized = statements;
 				}
 			}
