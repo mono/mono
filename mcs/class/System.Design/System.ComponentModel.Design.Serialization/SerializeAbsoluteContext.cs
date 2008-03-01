@@ -58,7 +58,7 @@ namespace System.ComponentModel.Design.Serialization
 
 		public bool ShouldSerialize (MemberDescriptor member)
 		{
-			return !(member == _member);
+			return member == _member;
 		}
 	}
 }

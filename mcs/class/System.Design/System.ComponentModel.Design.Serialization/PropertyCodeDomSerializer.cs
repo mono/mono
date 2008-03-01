@@ -59,7 +59,7 @@ namespace System.ComponentModel.Design.Serialization
 
 			if (property.Attributes.Contains (DesignerSerializationVisibilityAttribute.Content))
 				SerializeContentProperty (manager, value, property, statements);
-			else if (!property.Attributes.Contains (DesignerSerializationVisibilityAttribute.Hidden))
+			else
 				SerializeNormalProperty (manager, value, property, statements);
 		}
 
@@ -152,21 +152,17 @@ namespace System.ComponentModel.Design.Serialization
 
 			PropertyDescriptor property = (PropertyDescriptor) descriptor;
 
-			if (property.Attributes.Contains (DesignerSerializationVisibilityAttribute.Hidden))
+			if (property.Attributes.Contains (DesignOnlyAttribute.Yes))
 				return false;
-			else if (property.Attributes.Contains (DesignOnlyAttribute.Yes))
-				return false;
+
+			SerializeAbsoluteContext absolute = manager.Context[typeof (SerializeAbsoluteContext)] as SerializeAbsoluteContext;
+			if (absolute != null && absolute.ShouldSerialize (descriptor))
+				return true;
 
 			bool result = property.ShouldSerializeValue (value);
 
 			if (!result) {
 				if (!GetRelationship (manager, value, descriptor).IsEmpty)
-					result = true;
-			}
-
-			if (!result) {
-				SerializeAbsoluteContext absolute = manager.Context[typeof (SerializeAbsoluteContext)] as SerializeAbsoluteContext;
-				if (absolute != null && absolute.ShouldSerialize (descriptor))
 					result = true;
 			}
 

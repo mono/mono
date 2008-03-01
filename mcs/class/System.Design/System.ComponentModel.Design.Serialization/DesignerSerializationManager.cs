@@ -154,7 +154,6 @@ namespace System.ComponentModel.Design.Serialization
 		protected virtual object CreateInstance (Type type, ICollection arguments, string name, bool addToContainer)
 		{
 			VerifyInSession ();
-			
 			object instance = null;
 
 			if (name != null && _recycleInstances) {
@@ -165,9 +164,8 @@ namespace System.ComponentModel.Design.Serialization
 				}
 			}
 			
-			if (instance == null || !_recycleInstances) {
+			if (instance == null || !_recycleInstances)
 				instance = this.CreateInstance (type, arguments);
-			}
 		
 			if (addToContainer && instance != null && this.Container != null && typeof (IComponent).IsAssignableFrom (type)) {
 				if (_preserveNames) {
@@ -274,7 +272,7 @@ namespace System.ComponentModel.Design.Serialization
 
 			// try 3: from provider
 			//
-			if (serializer == null) {
+			if (serializer == null && _serializationProviders != null) {
 				foreach (IDesignerSerializationProvider provider in _serializationProviders) {
 					serializer = provider.GetSerializer (this, null, componentType, serializerType);
 					if (serializer != null)
@@ -299,6 +297,7 @@ namespace System.ComponentModel.Design.Serialization
 		
 		public IDisposable CreateSession ()
 		{
+			VerifyNotInSession ();
 			_errors = new ArrayList ();
 			_session = new Session (this);
 			_serializersCache = new Dictionary<System.Type,object> ();
@@ -388,13 +387,13 @@ namespace System.ComponentModel.Design.Serialization
 			
 			object instance = null;
 			_instancesByNameCache.TryGetValue (name, out instance);
-			
-			if (instance == null && _preserveNames && this.Container != null)
+
+			if (instance == null && this.Container != null)
 				instance = this.Container.Components[name];
-			
+
 			if (instance == null)
 				instance = this.RequestInstance (name);
-			
+
 			return instance;
 		}
 		

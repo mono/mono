@@ -127,8 +127,6 @@ namespace System.ComponentModel.Design.Serialization
 			if (member is EventDescriptor)
 				base.SerializeEvent (manager, statements, owningobject, (EventDescriptor) member);
 
-			manager.Context.Pop ();
-
 			return statements;
 		}
 
@@ -168,30 +166,24 @@ namespace System.ComponentModel.Design.Serialization
 					if (deserialized == null)
 						deserialized = DeserializeStatementToInstance (manager, s);
 					else
-						break;
+						DeserializeStatement (manager, s);
 				}
 			}
-
 			return deserialized;
 		}
 
 		protected object DeserializeStatementToInstance (IDesignerSerializationManager manager, CodeStatement statement)
 		{
-			object deserialized = null;
-
 			CodeAssignStatement assignment = statement as CodeAssignStatement;
-			if (assignment == null)
-				return null;
-
-			// CodeFieldReferenceExpression
-			//
-			CodeFieldReferenceExpression fieldRef = assignment.Left as CodeFieldReferenceExpression;
-			if (fieldRef != null)
-				deserialized = base.DeserializeExpression (manager, fieldRef.FieldName, assignment.Right);
-
+			if (assignment != null) {
+				// CodeFieldReferenceExpression
+				//
+				CodeFieldReferenceExpression fieldRef = assignment.Left as CodeFieldReferenceExpression;
+				if (fieldRef != null)
+					return base.DeserializeExpression (manager, fieldRef.FieldName, assignment.Right);
+			}
 			base.DeserializeStatement (manager, statement);
-
-			return deserialized;
+			return null;
 		}
 	}
 }

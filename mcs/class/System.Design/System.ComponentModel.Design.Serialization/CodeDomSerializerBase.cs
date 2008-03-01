@@ -374,8 +374,10 @@ namespace System.ComponentModel.Design.Serialization
 				throw new ArgumentNullException ("manager");
 
 			PropertyDescriptorCollection properties = TypeDescriptor.GetProperties (value, filter);
-			foreach (PropertyDescriptor property in properties)
-				this.SerializeProperty (manager, statements, value, property);
+			foreach (PropertyDescriptor property in properties) {
+				if (!property.Attributes.Contains (DesignerSerializationVisibilityAttribute.Hidden))
+					this.SerializeProperty (manager, statements, value, property);
+			}
 		}
 
 		protected virtual object DeserializeInstance (IDesignerSerializationManager manager, Type type, 
@@ -729,9 +731,8 @@ namespace System.ComponentModel.Design.Serialization
 			}
 
 			if (errorOccurred)
-				return _errorMarker;
-			else 
-				return deserialized;
+				deserialized = _errorMarker;
+			return deserialized;
 		}
 
 		// Searches for a method on type that matches argument types
@@ -905,7 +906,7 @@ namespace System.ComponentModel.Design.Serialization
 
 		internal void ReportError (IDesignerSerializationManager manager, string message)
 		{
-			this.ReportError (manager, message, "");
+			this.ReportError (manager, message, String.Empty);
 		}
 
 		internal void ReportError (IDesignerSerializationManager manager, string message, string details)
