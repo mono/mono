@@ -1,3 +1,7 @@
+2008-03-03  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ProvidersHelper.cs: fixed thread safety issue in InstantiateProvider
+
 2008-02-18  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* WebConfigurationManager.cs: performance improvement, cached
