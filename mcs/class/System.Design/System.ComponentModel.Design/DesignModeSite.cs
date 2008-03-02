@@ -93,20 +93,13 @@ namespace System.ComponentModel.Design
 			}
 			set {
 				if (value != _componentName && value != null && value.Trim().Length > 0) {
-
 					INameCreationService nameService = this.GetService (typeof (INameCreationService)) as INameCreationService;
+					IComponent component = _container.Components[value]; // get the component with that name
 
-					// Get the component with that name, if any
-					//
-					IComponent component = _container.Components[value];
-
-					// check for duplicated name
-					//
-					if (component == null && nameService != null && !nameService.IsValidName (value)) { // no duplicate name
-						value = _componentName;
+					if (component == null &&
+					    (nameService == null || (nameService != null && nameService.IsValidName (value)))) {
 						string oldName = _componentName;
 						_componentName = value;
-
 						((DesignerHost)this.GetService (typeof (IDesignerHost))).OnComponentRename (_component, oldName, _componentName);
 					}
 				}
