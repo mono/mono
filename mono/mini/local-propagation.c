@@ -1719,7 +1719,7 @@ mono_local_deadce (MonoCompile *cfg)
 
 				j = ins_index + 1;
 				def = reverse [ins_index + 1];
-				while ((j < nins) && (def->opcode == OP_NOP)) {
+				while ((j < nins - 1) && (def->opcode == OP_NOP)) {
 					j ++;
 					def = reverse [j];
 				}
@@ -1731,7 +1731,7 @@ mono_local_deadce (MonoCompile *cfg)
 				 * This isn't copyprop, not deadce, but it can only be performed
 				 * after handle_global_vregs () has run.
 				 */
-				if (!get_vreg_to_inst (cfg, ins->sreg1) && (spec2 [MONO_INST_DEST] != ' ') && (def->dreg == ins->sreg1) && !mono_bitset_test_fast (used, ins->sreg1) && !MONO_IS_STORE_MEMBASE (def)) {
+				if (!get_vreg_to_inst (cfg, ins->sreg1) && (spec2 [MONO_INST_DEST] != ' ') && (def->dreg == ins->sreg1) && !mono_bitset_test_fast (used, ins->sreg1) && !MONO_IS_STORE_MEMBASE (def) && ((spec [MONO_INST_DEST] == 'f' && ins->sreg1 > MONO_MAX_FREGS) || (spec [MONO_INST_DEST] == 'i' && ins->sreg1 > MONO_MAX_IREGS))) {
 					if (cfg->verbose_level > 2) {
 						printf ("\tReverse copyprop in BB%d on ", bb->block_num);
 						mono_print_ins (ins);

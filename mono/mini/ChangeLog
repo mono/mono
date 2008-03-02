@@ -1,5 +1,11 @@
 2008-03-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* local-propagation.c (mono_local_deadce): Avoid reverse copyprop on hard
+	registers.
+
+	* method-to-ir.c (mono_method_check_inlining): Avoid disabling inlining if the
+	called methods class has no cctor.
+
 	* mini-amd64.c (mono_arch_emit_call): Emit most parameters in non-reverse order.
 	(mono_arch_emit_prolog): Re-enable the first bblock optimization.
 
