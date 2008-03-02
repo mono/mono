@@ -45,15 +45,19 @@ $types{"int"} = {name => "int", out => "out", marshal => ""};
 $types{"nsresult"} = {name => "int", out => "out", marshal => ""};
 $types{"unsigned,int"} = {name => "uint", out => "out", marshal => ""};
 $types{"PRUint32"} = {name => "UInt32", out => "out", marshal => ""};
+$types{"PRInt64"} = {name => "long", out => "out", marshal => ""};
 $types{"long"} = {name => "int", out => "out", marshal => ""};
 $types{"unsigned,long"} = {name => "uint", out => "out", marshal => ""};
 $types{"float"} = {name => "float", out => "out", marshal => ""};
 $types{"boolean"} = {name => "bool", out => "out", marshal => ""};
 $types{"PRBool"} = {name => "bool", out => "out", marshal => ""};
 $types{"void"} = {name => "", out => "", marshal => ""};
+$types{"octet"} = {name => "byte", out => "out", marshal => ""};
+$types{"byte"} = {name => "byte", out => "out", marshal => ""};
 $types{"DOMString"} = {name => "/*DOMString*/ HandleRef", out => "", marshal => ""};
 $types{"AUTF8String"} = {name => "/*AUTF8String*/ HandleRef", out => "", marshal => ""};
 $types{"ACString"} = {name => "/*ACString*/ HandleRef", out => "", marshal => ""};
+$types{"AString"} = {name => "/*AString*/ HandleRef", out => "", marshal => ""};
 $types{"wstring"} = {name => "string", out => "", marshal => "[MarshalAs(UnmanagedType.LPWStr)] "};
 $types{"nsCIDRef"} = {name => "Guid", out => "out", marshal => "[MarshalAs (UnmanagedType.LPStruct)] "};
 $types{"nsIIDRef"} = {name => "Guid", out => "out", marshal => "[MarshalAs (UnmanagedType.LPStruct)] "};
@@ -65,6 +69,7 @@ $types{"voidPtr"} = {name => "IntPtr", out => "", marshal => ""};
 $types{"nsISupports"} = {name => "IntPtr", out => "out", "[MarshalAs (UnmanagedType.Interface)] "};
 $types{"DOMTimeStamp"} = {name => "int", out => "out", ""};
 $types{"nsWriteSegmentFun"} = {name => "nsIWriteSegmentFunDelegate", out => "", ""};
+$types{"nsLoadFlags"} = {name => "ulong", out => "out", ""};
 $types{"others"} = {name => "", out => "out", marshal => "[MarshalAs (UnmanagedType.Interface)] "};
 $types{"nsQIResult"} = {name => "IntPtr", out => "out", marshal => ""};
 
@@ -203,14 +208,16 @@ sub get_params {
 	    }
 	}
 
-	if (@p[0] =~ m/array/) {
+	if (@p[0] =~ m/array/ || @p[1] =~ m/array/) {
+
+
 	    until (scalar(@p) == 3) {
 		shift @p;
 	    }
 	    $isout = 1 if (@p[0] =~ m/out/);
 	    shift @p;
-
-	    $type = @p[0] . "[]";
+	    $marshal = &get_marshal (@p[0]);
+	    $type = &get_type(@p[0]) . "[]";
 	}
 
 	shift @p unless @p[0] =~ /(in|out)/;
@@ -310,7 +317,7 @@ sub parse_file {
 		$interface->{"parent"} = $parent;
 
 	    }
-	    elsif (index ($line, "const") != -1) {
+	    elsif (index ($line, "const") != -1 && index ($line, "[") == -1) {
 		next;
 	    }
 	    elsif (index ($line, "attribute") != -1) {
