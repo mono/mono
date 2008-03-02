@@ -1,3 +1,12 @@
+2008-03-02  Andreia Gaita <avidigal@novell.com> 
+
+	* Mono.Mozilla.dll.sources: Added yet another bunch of interfaces to support
+	  streaming and services
+	* Mono.Mozilla/Base.cs: Added a ServiceManager getter to allow direct access
+	  to all mozilla services through contract IDs
+	* Mono.Mozilla/WebBrowser.cs: Stream support, for sending data directly to
+	  the embedded browser.
+
 2008-02-28  Andreia Gaita <avidigal@novell.com> 
 
 	* Mono.Mozilla/DOM/EventListener.cs: Implementation of the 

@@ -303,6 +303,9 @@ namespace Mono.Mozilla
 			string aBuf, 
 			uint aCount);
 
+		[DllImport ("gluezilla")]
+		public static extern uint gluezilla_getServiceManager ([MarshalAs (UnmanagedType.Interface)] out nsIServiceManager result);
+
 
 		#endregion
 	}

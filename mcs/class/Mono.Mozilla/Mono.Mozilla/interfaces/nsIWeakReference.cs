@@ -19,30 +19,40 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2008 Novell, Inc.
+// Copyright (c) 2007, 2008 Novell, Inc.
 //
 // Authors:
 //	Andreia Gaita (avidigal@novell.com)
 //
-//
 
 using System;
+using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
+using System.Text;
 
-namespace Mono.Mozilla.DOM
-{
-	internal enum NodeType : ushort 
-	{
-		Element       = 1,
-		Attribute     = 2,
-		Text          = 3,
-		CDataSection  = 4,
-		EntityReference = 5,
-		Entity       = 6,
-		ProcessingInstruction = 7,
-		Comment       = 8,
-		Document      = 9,
-		DocumentType = 10,
-		DocumentFragment = 11,
-		Notation      = 12
+namespace Mono.Mozilla {
+
+	[Guid ("9188bc85-f92e-11d2-81ef-0060083a0bcf")]
+	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
+	[ComImport ()]
+	internal interface nsIWeakReference {
+
+#region nsIWeakReference
+		[PreserveSigAttribute]
+		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		int QueryReferent (
+				[MarshalAs (UnmanagedType.LPStruct)]   Guid uuid,
+				  out IntPtr result);
+
+#endregion
+	}
+
+
+	internal class nsWeakReference {
+		public static nsIWeakReference GetProxy (Mono.WebBrowser.IWebBrowser control, nsIWeakReference obj)
+		{
+			object o = Base.GetProxyForObject (control, typeof(nsIWeakReference).GUID, obj);
+			return o as nsIWeakReference;
+		}
 	}
 }

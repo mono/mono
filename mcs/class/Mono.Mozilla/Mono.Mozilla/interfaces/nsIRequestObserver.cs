@@ -19,30 +19,47 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2008 Novell, Inc.
+// Copyright (c) 2007, 2008 Novell, Inc.
 //
 // Authors:
 //	Andreia Gaita (avidigal@novell.com)
 //
-//
 
 using System;
+using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
+using System.Text;
 
-namespace Mono.Mozilla.DOM
-{
-	internal enum NodeType : ushort 
-	{
-		Element       = 1,
-		Attribute     = 2,
-		Text          = 3,
-		CDataSection  = 4,
-		EntityReference = 5,
-		Entity       = 6,
-		ProcessingInstruction = 7,
-		Comment       = 8,
-		Document      = 9,
-		DocumentType = 10,
-		DocumentFragment = 11,
-		Notation      = 12
+namespace Mono.Mozilla {
+
+	[Guid ("fd91e2e0-1481-11d3-9333-00104ba0fd40")]
+	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
+	[ComImport ()]
+	internal interface nsIRequestObserver {
+
+#region nsIRequestObserver
+		[PreserveSigAttribute]
+		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		int onStartRequest (
+				[MarshalAs (UnmanagedType.Interface)]   nsIRequest aRequest,
+				   IntPtr aContext);
+
+		[PreserveSigAttribute]
+		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		int onStopRequest (
+				[MarshalAs (UnmanagedType.Interface)]   nsIRequest aRequest,
+				   IntPtr aContext,
+				   int aStatusCode);
+
+#endregion
+	}
+
+
+	internal class nsRequestObserver {
+		public static nsIRequestObserver GetProxy (Mono.WebBrowser.IWebBrowser control, nsIRequestObserver obj)
+		{
+			object o = Base.GetProxyForObject (control, typeof(nsIRequestObserver).GUID, obj);
+			return o as nsIRequestObserver;
+		}
 	}
 }

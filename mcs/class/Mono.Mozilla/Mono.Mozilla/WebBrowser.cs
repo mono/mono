@@ -37,10 +37,7 @@ using Mono.WebBrowser.DOM;
 
 namespace Mono.Mozilla
 {
-	/// <summary>
-	/// Summary description for WebBrowser.
-	/// </summary>
-	public class WebBrowser : IWebBrowser
+	internal class WebBrowser : IWebBrowser
 	{
 		private bool loaded;
 		private DOM.Document document;
@@ -157,6 +154,41 @@ namespace Mono.Mozilla
 			Base.Resize (this, width, height);			
 		}
 		
+
+		public void OpenStream (string uri, string contentType)
+		{
+			
+		
+			nsIServiceManager servMan;
+			Base.gluezilla_getServiceManager (out servMan);		
+			IntPtr ptr;
+			servMan.getServiceByContractID ("@mozilla.org/network/io-service;1", typeof (nsIIOService).GUID, out ptr);
+
+			nsIIOService ioService = (nsIIOService)Marshal.GetObjectForIUnknown (ptr);
+			UniString asciiUri = new UniString(uri);
+			nsIURI ret;
+			ioService.newURI (asciiUri.Handle, null, null, out ret);
+			AsciiString ctype = new AsciiString(contentType);
+			nsIWebBrowserStream stream = (nsIWebBrowserStream) navigation.navigation;
+			stream.openStream (ret, ctype.Handle);
+		}
+		
+		public void AppendToStream (byte[] data, uint len)
+		{
+			nsIWebBrowserStream stream = navigation.navigation as nsIWebBrowserStream;
+			if (stream == null)
+				return;
+			stream.appendToStream (data, len);
+		}
+		
+		public void CloseStream ()
+		{
+			nsIWebBrowserStream stream = navigation.navigation as nsIWebBrowserStream;
+			if (stream == null)
+				return;
+			stream.closeStream ();
+		}		
+
 		
 		internal void AttachEvent (INode node, string eve, EventHandler handler) {
 			string key = String.Intern (node.GetHashCode() + ":" + eve);
@@ -169,6 +201,7 @@ namespace Mono.Mozilla
 			Console.Error.WriteLine ("Event Detached: " + key);
 			DomEvents.RemoveHandler (key, handler);
 		}
+		
 		
 		#endregion
 

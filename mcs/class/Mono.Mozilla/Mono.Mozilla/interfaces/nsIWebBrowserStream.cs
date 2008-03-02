@@ -19,30 +19,50 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2008 Novell, Inc.
+// Copyright (c) 2007, 2008 Novell, Inc.
 //
 // Authors:
 //	Andreia Gaita (avidigal@novell.com)
 //
-//
 
 using System;
+using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
+using System.Text;
 
-namespace Mono.Mozilla.DOM
-{
-	internal enum NodeType : ushort 
-	{
-		Element       = 1,
-		Attribute     = 2,
-		Text          = 3,
-		CDataSection  = 4,
-		EntityReference = 5,
-		Entity       = 6,
-		ProcessingInstruction = 7,
-		Comment       = 8,
-		Document      = 9,
-		DocumentType = 10,
-		DocumentFragment = 11,
-		Notation      = 12
+namespace Mono.Mozilla {
+
+	[Guid ("86d02f0e-219b-4cfc-9c88-bd98d2cce0b8")]
+	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
+	[ComImport ()]
+	internal interface nsIWebBrowserStream {
+
+#region nsIWebBrowserStream
+		[PreserveSigAttribute]
+		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		int openStream (
+				[MarshalAs (UnmanagedType.Interface)]   nsIURI aBaseURI,
+				   /*ACString*/ HandleRef aContentType);
+
+		[PreserveSigAttribute]
+		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		int appendToStream (
+				byte[] aData,
+				   uint aLen);
+
+		[PreserveSigAttribute]
+		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		int closeStream ();
+
+#endregion
+	}
+
+
+	internal class nsWebBrowserStream {
+		public static nsIWebBrowserStream GetProxy (Mono.WebBrowser.IWebBrowser control, nsIWebBrowserStream obj)
+		{
+			object o = Base.GetProxyForObject (control, typeof(nsIWebBrowserStream).GUID, obj);
+			return o as nsIWebBrowserStream;
+		}
 	}
 }
