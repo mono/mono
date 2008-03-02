@@ -1,5 +1,7 @@
 2008-03-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (mono_arch_emit_prolog): Fix tracing after the last change.
+	
 	* mini-amd64.c (mono_arch_emit_prolog): Avoid saving dead arguments.
 
 	* mini.c (mono_method_check_inlining): Avoid disabling inlining for methods
