@@ -1,5 +1,8 @@
 2008-03-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_method_to_ir): Allow callvirt on static methods for compatibility
+	with MS.
+
 	* mini-amd64.c (mono_arch_emit_prolog): Fix tracing after the last change.
 	
 	* mini-amd64.c (mono_arch_emit_prolog): Avoid saving dead arguments.
