@@ -1,3 +1,7 @@
+2008-03-03  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ProvidersHelper.cs: fixed thread safety issue in InstantiateProvider
+
 2008-03-01  Marek Habersack  <mhabersack@novell.com>
 
 	* WebConfigurationManager.cs: SettingsMappingManager has been

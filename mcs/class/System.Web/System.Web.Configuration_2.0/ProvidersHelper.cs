@@ -39,6 +39,7 @@ using System.IO;
 using System.Reflection;
 using System.Web;
 using System.Web.Compilation;
+using System.Collections.Specialized;
 
 namespace System.Web.Configuration {
 
@@ -77,7 +78,8 @@ namespace System.Web.Configuration {
 
 			ProviderBase provider = Activator.CreateInstance (settingsType) as ProviderBase;
 
-			provider.Initialize (providerSettings.Name, providerSettings.Parameters);
+			NameValueCollection col = new NameValueCollection (providerSettings.Parameters);
+			provider.Initialize (providerSettings.Name, col);
 
 			return provider;
 		}
