@@ -1,5 +1,8 @@
 2008-03-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (mono_arch_emit_call): Emit most parameters in non-reverse order.
+	(mono_arch_emit_prolog): Re-enable the first bblock optimization.
+
 	* local-propagation.c (mono_local_deadce): Make the reverse copyprop optimization
 	more generic.
 

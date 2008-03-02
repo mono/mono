@@ -1575,6 +1575,19 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SUB_IMM, X86_ESP, X86_ESP, 8);
 	}
 
+	/*
+	 * Emit all parameters passed in registers in non-reverse order for better readability
+	 * and to help the optimization in emit_prolog ().
+	 */
+	for (i = 0; i < n; ++i) {
+		ainfo = cinfo->args + i;
+
+		in = call->args [i];
+
+		if (ainfo->storage == ArgInIReg)
+			add_outarg_reg2 (cfg, call, ainfo->storage, ainfo->reg, in);
+	}
+
 	for (i = n - 1; i >= 0; --i) {
 		ainfo = cinfo->args + i;
 
@@ -1618,7 +1631,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 		else {
 			switch (ainfo->storage) {
 			case ArgInIReg:
-				add_outarg_reg2 (cfg, call, ainfo->storage, ainfo->reg, in);
+				/* Already done */
 				break;
 			case ArgInFloatSSEReg:
 			case ArgInDoubleSSEReg:
@@ -5229,15 +5242,14 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	 * original argument registers.
 	 * FIXME: Generalize this
 	 */
-#if 0
 	if (!args_clobbered) {
 		MonoBasicBlock *first_bb = cfg->bb_entry;
 		MonoInst *next;
 
-		next = mono_inst_list_first (&first_bb->ins_list);
+		next = mono_bb_first_ins (first_bb);
 		if (!next && first_bb->next_bb) {
 			first_bb = first_bb->next_bb;
-			next = mono_inst_list_first (&first_bb->ins_list);
+			next = mono_bb_first_ins (first_bb);
 		}
 
 		if (first_bb->in_count > 1)
@@ -5283,10 +5295,12 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 
 			if (!match)
 				break;
+			next = next->next;
+#if 0
 			next = mono_inst_list_next (&next->node, &first_bb->ins_list);
+#endif
 		}
 	}
-#endif
 
 	cfg->code_len = code - cfg->native_code;
 

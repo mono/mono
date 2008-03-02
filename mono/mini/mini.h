@@ -183,6 +183,8 @@ extern const char ins_info[];
 
 #define MONO_BB_FOR_EACH_INS(bb, ins) for ((ins) = (bb)->code; (ins); (ins) = (ins)->next)
 
+#define mono_bb_first_ins(bb) (bb)->code
+
 struct MonoEdge {
 	MonoEdge *next;
 	MonoBasicBlock *bb;
