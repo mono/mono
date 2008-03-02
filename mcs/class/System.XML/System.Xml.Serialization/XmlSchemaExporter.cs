@@ -620,7 +620,7 @@ namespace System.Xml.Serialization {
 				elem.Name = map.SchemaTypeName.Name;
 				return;
 			}
-			if (map.SchemaType != null && map.SchemaTypeName.IsEmpty) {
+			if (map.SchemaType != null && map.Schema == null) {
 				elem.SchemaType = map.SchemaType;
 				return;
 			}
