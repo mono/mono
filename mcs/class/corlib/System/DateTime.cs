@@ -1546,8 +1546,7 @@ namespace System
 				case 'K':
 					if (s [valuePos] == 'Z') {
 						valuePos++;
-						useutc = true;
-						style |= DateTimeStyles.AdjustToUniversal;
+						useutc = true;						
 					}
 					else if (s [valuePos] == '+' || s [valuePos] == '-') {
 						if (tzsign != -1)
@@ -1733,6 +1732,8 @@ namespace System
 			bool kind_specified = true;
 			TimeSpan utcoffset;
 
+			bool adjustToUniversal = (style & DateTimeStyles.AdjustToUniversal) != 0;
+			
 			if (tzsign != -1) {
 				if (tzoffmin == -1)
 					tzoffmin = 0;
@@ -1742,41 +1743,34 @@ namespace System
 					tzoffset = -tzoffset;
 
 				utcoffset = new TimeSpan (tzoffset, tzoffmin, 0);
-			}
-#if NET_2_0
-			else if (useutc || ((style & DateTimeStyles.AssumeUniversal) != 0))
-#else
-			else if (useutc)
-#endif
-				utcoffset = new TimeSpan (0, 0, 0);
-			else {
-				// If no timezone was specified, default to the local timezone.
-				TimeZone tz = TimeZone.CurrentTimeZone;
-				utcoffset = tz.GetUtcOffset (result);
-
-#if NET_2_0
-				if ((style & DateTimeStyles.AssumeLocal) == 0)
-#endif
-					kind_specified = false;
-			}
-
-			long newticks = (result.ticks - utcoffset).Ticks;
-
-			result = new DateTime (false, new TimeSpan (newticks));
-
-			if (kind_specified && ((style & DateTimeStyles.AdjustToUniversal) != 0)) {
+				long newticks = (result.ticks - utcoffset).Ticks;
+				if (newticks < 0)
+					newticks += TimeSpan.TicksPerDay;
+				result = new DateTime (false, new TimeSpan (newticks));
 #if NET_2_0
 				result.kind = DateTimeKind.Utc;
+				if ((style & DateTimeStyles.RoundtripKind) != 0)
+					result = result.ToLocalTime ();
 #endif
 			}
-			else {
-				result = result.ToLocalTime ();
-#if NET_2_0
-				if (!kind_specified)
-					result.kind = DateTimeKind.Unspecified;
-#endif
-			}
+#if NET_2_0							
+			else if (useutc || ((style & DateTimeStyles.AssumeUniversal) != 0))
+				result.kind = DateTimeKind.Utc;
+			else if ((style & DateTimeStyles.AssumeLocal) != 0)
+				result.kind = DateTimeKind.Local;						
 
+			bool adjustToLocal = !adjustToUniversal && (style & DateTimeStyles.RoundtripKind) == 0;
+			if (result.kind != DateTimeKind.Unspecified)
+			{				
+				if (adjustToUniversal)
+					result = result.ToUniversalTime ();
+				else if (adjustToLocal)
+					result = result.ToLocalTime ();
+			}
+#else
+			if (!adjustToUniversal && (useutc || tzsign != -1))
+				result = result.ToLocalTime ();
+#endif
 			return true;
 		}
 
@@ -1797,7 +1791,9 @@ namespace System
 						   DateTimeStyles style)
 		{
 			DateTimeFormatInfo dfi = DateTimeFormatInfo.GetInstance (fp);
-
+#if NET_2_0
+			CheckStyle (style);
+#endif
 			if (s == null)
 				throw new ArgumentNullException ("s");
 			if (formats == null)
@@ -1810,9 +1806,21 @@ namespace System
 			if (!ParseExact (s, formats, dfi, style, out result, true, ref longYear))
 				throw new FormatException ();
 			return result;
-		}
+		}		
 
 #if NET_2_0
+		private static void CheckStyle (DateTimeStyles style)
+		{
+			if ( (style & DateTimeStyles.RoundtripKind) != 0)
+			{
+				if ((style & DateTimeStyles.AdjustToUniversal) != 0 || (style & DateTimeStyles.AssumeLocal) != 0 ||
+					 (style & DateTimeStyles.AssumeUniversal) != 0)
+					throw new ArgumentException ("The DateTimeStyles value RoundtripKind cannot be used with the values AssumeLocal, Asersal or AdjustToUniversal.", "style");
+			}
+			if ((style & DateTimeStyles.AssumeUniversal) != 0 && (style & DateTimeStyles.AssumeLocal) != 0)			
+				throw new ArgumentException ("The DateTimeStyles values AssumeLocal and AssumeUniversal cannot be used together.", "style");
+		}
+
 		public static bool TryParse (string s, out DateTime result)
 		{
 			try {

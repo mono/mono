@@ -1,3 +1,9 @@
+2008-03-02  Roei Erez  <roeie@mainsoft.com>
+
+	* DateTime.cs: Improve the patch supplied by James Purcell to be
+	  dotnet-compatible, and add support for RoundTripKind parsing. 
+	  Fixed reopened bug #352210.
+
 
 Tue Feb 26 17:50:17 CET 2008 Paolo Molaro <lupus@ximian.com>
 

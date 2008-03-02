@@ -1,3 +1,7 @@
+2008-03-02  Roei Erez  <roeie@mainsoft.com>
+
+	* DateTimeTest.cs : add test cases for  Bug3522210.
+
 2008-02-26  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* AttributeTest.cs: Remove NotWorking as we pass those tests now.

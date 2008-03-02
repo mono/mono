@@ -2261,6 +2261,105 @@ namespace MonoTests.System
 			Assert.AreEqual (dt.Ticks, d1.Ticks, "#3");
 			Assert.AreEqual (DateTimeKind.Unspecified, d1.Kind, "#4");
 		}
+
+		[Test]
+		public void TestRoundTrip () {
+			DateTime result;
+			DateTimeStyles roundTripStyle = DateTimeStyles.RoundtripKind;
+			string utcDate = "2008-02-21T11:14:18.2721262Z";
+			string localDate = "2008-02-21T11:14:18.2721262+02:00";
+			string unspec = "2008-02-21T11:14:18.2721262";
+			String [] formats = {"yyyy-MM-ddTHH:mm:ssK", "yyyy-MM-ddTHH:mm:ss.FFFFFFFK"};
+
+			result = DateTime.ParseExact (localDate, formats, CultureInfo.InvariantCulture, roundTripStyle);
+			Assert.AreEqual (result.Kind, DateTimeKind.Local);
+			Assert.AreEqual (result.ToUniversalTime ().Ticks, 633391820582721262);
+			
+			result = DateTime.ParseExact (unspec, formats, CultureInfo.InvariantCulture, roundTripStyle);
+			Assert.AreEqual (result.Kind, DateTimeKind.Unspecified);
+			Assert.AreEqual (result.Ticks, 633391892582721262);
+			
+			result = DateTime.ParseExact (utcDate, formats, CultureInfo.InvariantCulture, roundTripStyle);
+			Assert.AreEqual (result.Kind, DateTimeKind.Utc);
+			Assert.AreEqual (result.Ticks, 633391892582721262);
+
+		}		
+
+		[Test]
+		public void TestRegularStyle () {
+			DateTime result;
+			DateTimeStyles style = DateTimeStyles.AllowLeadingWhite | DateTimeStyles.AllowTrailingWhite;
+			string utcDate = "2008-02-21T11:14:18.2721262Z";
+			string localDate = "2008-02-21T11:14:18.2721262+02:00";
+			string unspec = "2008-02-21T11:14:18.2721262";
+			String [] formats = {"yyyy-MM-ddTHH:mm:ssK", "yyyy-MM-ddTHH:mm:ss.FFFFFFFK"};
+
+			result = DateTime.ParseExact (localDate, formats, CultureInfo.InvariantCulture, style);
+			Assert.AreEqual (result.Kind, DateTimeKind.Local);
+			Assert.AreEqual (result.ToUniversalTime ().Ticks, 633391820582721262);
+
+			result = DateTime.ParseExact (unspec, formats, CultureInfo.InvariantCulture, style);
+			Assert.AreEqual (result.Kind, DateTimeKind.Unspecified);			
+			Assert.AreEqual (result.Ticks, 633391892582721262);
+
+			result = DateTime.ParseExact (utcDate, formats, CultureInfo.InvariantCulture, style);
+			Assert.AreEqual (result.Kind, DateTimeKind.Local);
+			Assert.AreEqual (result.ToUniversalTime ().Ticks, 633391892582721262);
+		}
+
+		[Test]
+		public void TestAssumeLocal () {
+			DateTime result;
+			DateTimeStyles assumeLocal =  DateTimeStyles.AssumeLocal;
+			string utcDate = "2008-02-21T11:14:18.2721262Z";
+			string localDate = "2008-02-21T11:14:18.2721262+02:00";
+			string unspec = "2008-02-21T11:14:18.2721262";
+			String [] formats = {"yyyy-MM-ddTHH:mm:ssK", "yyyy-MM-ddTHH:mm:ss.FFFFFFFK"};
+
+			result = DateTime.ParseExact (localDate, formats, CultureInfo.InvariantCulture, assumeLocal);
+			Assert.AreEqual (result.Kind, DateTimeKind.Local);
+			Assert.AreEqual (result.ToUniversalTime ().Ticks, 633391820582721262);
+
+			result = DateTime.ParseExact (unspec, formats, CultureInfo.InvariantCulture, assumeLocal);
+			Assert.AreEqual (result.Kind, DateTimeKind.Local);
+			Assert.AreEqual (result.Ticks, 633391892582721262);
+
+			result = DateTime.ParseExact (utcDate, formats, CultureInfo.InvariantCulture, assumeLocal);
+			Assert.AreEqual (result.Kind, DateTimeKind.Local);
+			Assert.AreEqual (result.ToUniversalTime ().Ticks, 633391892582721262);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void IllegalStyleCombination1()
+		{
+			DateTimeStyles illegal = DateTimeStyles.RoundtripKind | DateTimeStyles.AssumeLocal;
+			DateTime.ParseExact ("", "", null, illegal);			
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void IllegalStyleCombination2()
+		{
+			DateTimeStyles illegal = DateTimeStyles.RoundtripKind | DateTimeStyles.AdjustToUniversal;
+			DateTime.ParseExact ("", "", null, illegal);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void IllegalStyleCombination3()
+		{
+			DateTimeStyles illegal = DateTimeStyles.RoundtripKind | DateTimeStyles.AssumeUniversal;
+			DateTime.ParseExact ("", "", null, illegal);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void IllegalStyleCombination4()
+		{
+			DateTimeStyles illegal = DateTimeStyles.AssumeLocal | DateTimeStyles.AssumeUniversal;
+			DateTime.ParseExact ("", "", null, illegal);
+		}
 #endif
 	}
 }
