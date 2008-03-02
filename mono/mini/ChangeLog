@@ -1,3 +1,8 @@
+2008-03-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* local-propagation.c (mono_local_deadce): Make the reverse copyprop optimization
+	more generic.
+
 2008-02-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ops.h mini-s390.c inssel-s390.brg: Ongoing S390 work.

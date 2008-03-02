@@ -1712,36 +1712,34 @@ mono_local_deadce (MonoCompile *cfg)
 
 			g_assert (ins->opcode > MONO_CEE_LAST);
 
-			if ((ins->opcode == OP_MOVE) && get_vreg_to_inst (cfg, ins->dreg)) {
-				if (ins_index + 1 < nins) {
-					int j;
-					MonoInst *def;
-					const char *spec2;
+			if ((ins->opcode == OP_MOVE) && (ins_index + 1 < nins)) {
+				int j;
+				MonoInst *def;
+				const char *spec2;
 
-					j = ins_index + 1;
-					def = reverse [ins_index + 1];
-					while ((j < nins) && (def->opcode == OP_NOP)) {
-						j ++;
-						def = reverse [j];
+				j = ins_index + 1;
+				def = reverse [ins_index + 1];
+				while ((j < nins) && (def->opcode == OP_NOP)) {
+					j ++;
+					def = reverse [j];
+				}
+				spec2 = INS_INFO (def->opcode);
+
+				/* 
+				 * Perform a limited kind of reverse copy propagation, i.e.
+				 * transform B <- FOO; A <- B into A <- FOO
+				 * This isn't copyprop, not deadce, but it can only be performed
+				 * after handle_global_vregs () has run.
+				 */
+				if (!get_vreg_to_inst (cfg, ins->sreg1) && (spec2 [MONO_INST_DEST] != ' ') && (def->dreg == ins->sreg1) && !mono_bitset_test_fast (used, ins->sreg1) && !MONO_IS_STORE_MEMBASE (def)) {
+					if (cfg->verbose_level > 2) {
+						printf ("\tReverse copyprop in BB%d on ", bb->block_num);
+						mono_print_ins (ins);
 					}
-					spec2 = INS_INFO (def->opcode);
 
-					/* 
-					 * Perform a limited kind of reverse copy propagation, i.e.
-					 * transform B <- FOO; A <- B into A <- FOO
-					 * This isn't copyprop, not deadce, but it can only be performed
-					 * after handle_global_vregs () has run.
-					 */
-					if (!get_vreg_to_inst (cfg, ins->sreg1) && (spec2 [MONO_INST_DEST] != ' ') && (def->dreg == ins->sreg1) && !mono_bitset_test_fast (used, ins->sreg1) && !MONO_IS_STORE_MEMBASE (def)) {
-						if (cfg->verbose_level > 2) {
-							printf ("\tReverse copyprop in BB%d on ", bb->block_num);
-							mono_print_ins (ins);
-						}
-
-						def->dreg = ins->dreg;
-						NULLIFY_INS (ins);
-						spec = INS_INFO (ins->opcode);
-					}
+					def->dreg = ins->dreg;
+					NULLIFY_INS (ins);
+					spec = INS_INFO (ins->opcode);
 				}
 			}
 
