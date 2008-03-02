@@ -1,3 +1,7 @@
+2008-03-02  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DriveInfo.cs: Removed debug code.
+
 2008-02-15  Miguel de Icaza  <miguel@novell.com>
 
 	* UnmanagedMemoryStream.cs: Implement few missing pieces.

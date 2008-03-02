@@ -229,11 +229,8 @@ namespace System.IO {
 
 			try {
 				using (StreamReader linux_ostype = TryOpen ("/proc/sys/kernel/ostype")){
-					Console.WriteLine ("here {0}", linux_ostype);
 					if (linux_ostype != null){
 						string line = linux_ostype.ReadLine ();
-
-						Console.WriteLine ("L: {0}", line);
 						if (line == "Linux")
 							di = LinuxGetDrives ();
 					}
