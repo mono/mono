@@ -1,3 +1,7 @@
+2008-03-02  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DesignModeSite.cs: Fix Name setter to actually set the name.
+
 2008-03-01  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* MenuCommandService.cs: implemeneted
