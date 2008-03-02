@@ -1,3 +1,12 @@
+2008-03-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListViewItem.cs: For Tile view, always set bounds for the first
+	subitem (which is the main one), and also don't let Width be larger
+	than ListView.TileSize.Width. Improve code readibility also.
+	* ThemeWin32Classic.cs: When painting the ListViewItem instances
+	in Tile view, _always_ use the NoWrap flag.
+	Fixes #360798.
+
 2008-02-29  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* PropertyGrid.cs: Check for null PropertyDescriptor.Name just 

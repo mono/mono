@@ -2668,7 +2668,11 @@ namespace System.Windows.Forms
 			else
 				format.Alignment = StringAlignment.Near;
 			
+#if NET_2_0
+			if (control.LabelWrap && control.View != View.Tile)
+#else
 			if (control.LabelWrap)
+#endif
 				format.FormatFlags = StringFormatFlags.LineLimit;
 			else
 				format.FormatFlags = StringFormatFlags.NoWrap;

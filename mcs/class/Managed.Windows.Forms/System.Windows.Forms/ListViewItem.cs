@@ -1055,22 +1055,23 @@ namespace System.Windows.Forms
 
 				int separation = 2;
 				SizeF tsize = TextRenderer.MeasureString (Text, Font);
+				int main_item_height = (int) Math.Ceiling (tsize.Height);
+				int main_item_width = (int) Math.Ceiling (tsize.Width);
+				sub_items [0].bounds.Height = main_item_height;
 
 				// Set initial values for subitem's layout
-				int total_height = (int)Math.Ceiling (tsize.Height);
-				int max_subitem_width = (int)Math.Ceiling (tsize.Width);
-				SubItems [0].bounds.Height = total_height;
+				int total_height = main_item_height;
+				int max_subitem_width = main_item_width;
 			
-				int count = Math.Min (owner.Columns.Count, SubItems.Count);
+				int count = Math.Min (owner.Columns.Count, sub_items.Count);
 				for (int i = 1; i < count; i++) { // Ignore first column and first subitem
-					ListViewSubItem sub_item = SubItems [i];
+					ListViewSubItem sub_item = sub_items [i];
 					if (sub_item.Text == null || sub_item.Text.Length == 0)
 						continue;
 
 					tsize = TextRenderer.MeasureString (sub_item.Text, sub_item.Font);
 				
 					int width = (int)Math.Ceiling (tsize.Width);
-				
 					if (width > max_subitem_width)
 						max_subitem_width = width;
 				
@@ -1078,18 +1079,21 @@ namespace System.Windows.Forms
 					total_height += height + separation;
 				
 					sub_item.bounds.Height = height;
-			
 				}
 
+				max_subitem_width = Math.Min (max_subitem_width, owner.TileSize.Width - (icon_rect.Width + 4));
 				label_rect.X = icon_rect.Right + 4;
 				label_rect.Y = owner.TileSize.Height / 2 - total_height / 2;
 				label_rect.Width = max_subitem_width;
 				label_rect.Height = total_height;
 			
-				// Second pass for assigning bounds. This time take first subitem into account.
-				int current_y = label_rect.Y;
-				for (int j = 0; j < count; j++) {
-					ListViewSubItem sub_item = SubItems [j];
+				// Main item - always set bounds for it
+				sub_items [0].SetBounds (label_rect.X, label_rect.Y, max_subitem_width, sub_items [0].bounds.Height);
+
+				// Second pass to assign bounds for every sub item
+				int current_y = sub_items [0].bounds.Bottom + separation;
+				for (int j = 1; j < count; j++) {
+					ListViewSubItem sub_item = sub_items [j];
 					if (sub_item.Text == null || sub_item.Text.Length == 0)
 						continue;
 
