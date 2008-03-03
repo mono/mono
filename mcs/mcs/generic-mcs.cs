@@ -22,6 +22,12 @@ namespace Mono.CSharp
 	
 	public abstract class GenericConstraints
 	{
+		public bool HasValueTypeConstraint {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+			
 		public abstract string TypeParameter {
 			get;
 		}
@@ -41,7 +47,7 @@ namespace Mono.CSharp
 		{
 			throw new NotImplementedException ();
 		}
-
+		
 		public Location Location {
 			get { return Location.Null; } 
 		}

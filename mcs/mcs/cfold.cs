@@ -14,7 +14,7 @@ namespace Mono.CSharp {
 
 	public class ConstantFold {
 
-		static Type[] binary_promotions = new Type[] { 
+		public static readonly Type[] binary_promotions = new Type[] { 
 			TypeManager.decimal_type, TypeManager.double_type, TypeManager.float_type,
 			TypeManager.uint64_type, TypeManager.int64_type, TypeManager.uint32_type };
 
@@ -25,21 +25,40 @@ namespace Mono.CSharp {
 		// On success, the types of `lc' and `rc' on output will always match,
 		// and the pair will be one of:
 		//
-		static void DoBinaryNumericPromotions (ref Constant left, ref Constant right)
+		static bool DoBinaryNumericPromotions (ref Constant left, ref Constant right)
 		{
 			Type ltype = left.Type;
 			Type rtype = right.Type;
 
 			foreach (Type t in binary_promotions) {
-				if (t == ltype || t == rtype) {
-					left = left.ConvertImplicitly (t);
-					right = right.ConvertImplicitly (t);
-					return;
-				}
+				if (t == ltype)
+					return t == rtype || ConvertPromotion (ref right, ref left, t);
+
+				if (t == rtype)
+					return t == ltype || ConvertPromotion (ref left, ref right, t);
 			}
 
 			left = left.ConvertImplicitly (TypeManager.int32_type);
 			right = right.ConvertImplicitly (TypeManager.int32_type);
+			return left != null && right != null;
+		}
+
+		static bool ConvertPromotion (ref Constant prim, ref Constant second, Type type)
+		{
+			Constant c = prim.ConvertImplicitly (type);
+			if (c != null) {
+				prim = c;
+				return true;
+			}
+
+			if (type == TypeManager.uint32_type) {
+				type = TypeManager.int64_type;
+				prim = prim.ConvertImplicitly (type);
+				second = second.ConvertImplicitly (type);
+				return prim != null && second != null;
+			}
+
+			return false;
 		}
 
 		internal static void Error_CompileTimeOverflow (Location loc)
@@ -152,8 +171,7 @@ namespace Mono.CSharp {
 
 			switch (oper){
 			case Binary.Operator.BitwiseOr:
-				DoBinaryNumericPromotions (ref left, ref right);
-				if (left == null || right == null)
+				if (!DoBinaryNumericPromotions (ref left, ref right))
 					return null;
 
 				if (left is IntConstant){
@@ -180,8 +198,7 @@ namespace Mono.CSharp {
 				break;
 				
 			case Binary.Operator.BitwiseAnd:
-				DoBinaryNumericPromotions (ref left, ref right);
-				if (left == null || right == null)
+				if (!DoBinaryNumericPromotions (ref left, ref right))
 					return null;
 				
 				///
@@ -211,8 +228,7 @@ namespace Mono.CSharp {
 				break;
 
 			case Binary.Operator.ExclusiveOr:
-				DoBinaryNumericPromotions (ref left, ref right);
-				if (left == null || right == null)
+				if (!DoBinaryNumericPromotions (ref left, ref right))
 					return null;
 				
 				if (left is IntConstant){
@@ -252,6 +268,9 @@ namespace Mono.CSharp {
 					return null;
 				}
 
+				if (lt == TypeManager.null_type && lt == rt)
+					return left;
+
 				//
 				// handle "E operator + (E x, U y)"
 				// handle "E operator + (Y y, E x)"
@@ -281,8 +300,7 @@ namespace Mono.CSharp {
 					return new EnumConstant (result, lt);
 				}
 
-				DoBinaryNumericPromotions (ref left, ref right);
-				if (left == null || right == null)
+				if (!DoBinaryNumericPromotions (ref left, ref right))
 					return null;
 
 				try {
@@ -403,8 +421,7 @@ namespace Mono.CSharp {
 					return new EnumConstant (result, lt);
 				}
 
-				DoBinaryNumericPromotions (ref left, ref right);
-				if (left == null || right == null)
+				if (!DoBinaryNumericPromotions (ref left, ref right))
 					return null;
 
 				try {
@@ -495,8 +512,7 @@ namespace Mono.CSharp {
 				return result;
 				
 			case Binary.Operator.Multiply:
-				DoBinaryNumericPromotions (ref left, ref right);
-				if (left == null || right == null)
+				if (!DoBinaryNumericPromotions (ref left, ref right))
 					return null;
 
 				try {
@@ -586,8 +602,7 @@ namespace Mono.CSharp {
 				break;
 
 			case Binary.Operator.Division:
-				DoBinaryNumericPromotions (ref left, ref right);
-				if (left == null || right == null)
+				if (!DoBinaryNumericPromotions (ref left, ref right))
 					return null;
 
 				try {
@@ -681,8 +696,7 @@ namespace Mono.CSharp {
 				break;
 				
 			case Binary.Operator.Modulus:
-				DoBinaryNumericPromotions (ref left, ref right);
-				if (left == null || right == null)
+				if (!DoBinaryNumericPromotions (ref left, ref right))
 					return null;
 
 				try {
@@ -832,8 +846,7 @@ namespace Mono.CSharp {
 					
 				}
 
-				DoBinaryNumericPromotions (ref left, ref right);
-				if (left == null || right == null)
+				if (!DoBinaryNumericPromotions (ref left, ref right))
 					return null;
 
 				bool_res = false;
@@ -881,8 +894,7 @@ namespace Mono.CSharp {
 					
 				}
 
-				DoBinaryNumericPromotions (ref left, ref right);
-				if (left == null || right == null)
+				if (!DoBinaryNumericPromotions (ref left, ref right))
 					return null;
 
 				bool_res = false;
@@ -910,8 +922,7 @@ namespace Mono.CSharp {
 				return new BoolConstant (bool_res, left.Location);
 
 			case Binary.Operator.LessThan:
-				DoBinaryNumericPromotions (ref left, ref right);
-				if (left == null || right == null)
+				if (!DoBinaryNumericPromotions (ref left, ref right))
 					return null;
 
 				bool_res = false;
@@ -939,8 +950,7 @@ namespace Mono.CSharp {
 				return new BoolConstant (bool_res, left.Location);
 				
 			case Binary.Operator.GreaterThan:
-				DoBinaryNumericPromotions (ref left, ref right);
-				if (left == null || right == null)
+				if (!DoBinaryNumericPromotions (ref left, ref right))
 					return null;
 
 				bool_res = false;
@@ -968,8 +978,7 @@ namespace Mono.CSharp {
 				return new BoolConstant (bool_res, left.Location);
 
 			case Binary.Operator.GreaterThanOrEqual:
-				DoBinaryNumericPromotions (ref left, ref right);
-				if (left == null || right == null)
+				if (!DoBinaryNumericPromotions (ref left, ref right))
 					return null;
 
 				bool_res = false;
@@ -997,8 +1006,7 @@ namespace Mono.CSharp {
 				return new BoolConstant (bool_res, left.Location);
 
 			case Binary.Operator.LessThanOrEqual:
-				DoBinaryNumericPromotions (ref left, ref right);
-				if (left == null || right == null)
+				if (!DoBinaryNumericPromotions (ref left, ref right))
 					return null;
 
 				bool_res = false;

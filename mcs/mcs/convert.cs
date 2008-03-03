@@ -383,14 +383,13 @@ namespace Mono.CSharp {
 				return true;
 
 			// from any delegate type to System.Delegate
-			if ((expr_type == TypeManager.delegate_type || TypeManager.IsDelegateType (expr_type)) &&
-			    target_type == TypeManager.delegate_type)
+			if (target_type == TypeManager.delegate_type &&
+				(expr_type == TypeManager.delegate_type || TypeManager.IsDelegateType (expr_type)))
 				return true;
 
 			// from any array-type or delegate type into System.ICloneable.
-			if (expr_type.IsArray ||
-			    expr_type == TypeManager.delegate_type || TypeManager.IsDelegateType (expr_type))
-				if (target_type == TypeManager.icloneable_type)
+			if (target_type == TypeManager.icloneable_type &&
+				(expr_type.IsArray || expr_type == TypeManager.delegate_type || TypeManager.IsDelegateType (expr_type)))
 					return true;
 
 			// from a generic type definition to a generic instance.
@@ -487,11 +486,7 @@ namespace Mono.CSharp {
 
 			// from the null type to any reference-type.
 			if (expr_type == TypeManager.null_type){
-				if (target_type.IsPointer)
-					return true;
-
-				if (!target_type.IsValueType)
-					return true;
+				return true;
 			}
 
 			if (TypeManager.IsGenericParameter (expr_type))

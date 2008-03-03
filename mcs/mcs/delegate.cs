@@ -473,6 +473,9 @@ namespace Mono.CSharp {
 						       Location loc)
 		{
 			MethodInfo invoke_mb = GetInvokeMethod (container_type, delegate_type);
+			if (invoke_mb == null)
+				return null;
+
 			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);
 
 #if GMCS_SOURCE
@@ -780,6 +783,9 @@ namespace Mono.CSharp {
 
 		public static MethodBase ImplicitStandardConversionExists (MethodGroupExpr mg, Type target_type)
 		{
+			if (target_type == TypeManager.delegate_type || target_type == TypeManager.multicast_delegate_type)
+				return null;
+
 			foreach (MethodInfo mi in mg.Methods){
 				MethodBase mb = Delegate.VerifyMethod (mg.DeclaringType, target_type, mg, mi, Location.Null);
 				if (mb != null)

@@ -1987,6 +1987,12 @@ namespace Mono.CSharp {
 			second_valid = true;
 		}
 
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			// This has no expresion tree representation
+			return this;
+		}
+
 		public override Expression DoResolve (EmitContext ec)
 		{
 			// This should never be invoked, we are born in fully
@@ -2002,7 +2008,11 @@ namespace Mono.CSharp {
 
 			if (second_valid)
 				ec.ig.Emit (op2);
-		}			
+		}
+
+		public Type UnderlyingType {
+			get { return child.Type; }
+		}
 	}
 
 	/// <summary>
@@ -3286,64 +3296,61 @@ namespace Mono.CSharp {
 					return 2;
 			}
 
-			// TODO: this is expensive
-			Expression p_expr = new EmptyExpression (p);
-			Expression q_expr = new EmptyExpression (q);
-			
-			return BetterTypeConversion (ec, p_expr, q_expr);
+			return BetterTypeConversion (ec, p, q);
 		}
 
 		//
 		// 7.4.3.4  Better conversion from type
 		//
-		public static int BetterTypeConversion (EmitContext ec, Expression p_expr, Expression q_expr)
+		public static int BetterTypeConversion (EmitContext ec, Type p, Type q)
 		{
-			if (p_expr == null || q_expr == null)
+			if (p == null || q == null)
 				throw new InternalErrorException ("BetterTypeConversion got a null conversion");
 
-			Type p = p_expr.Type;
-			Type q = q_expr.Type;
+			if (p == TypeManager.int32_type) {
+				if (q == TypeManager.uint32_type || q == TypeManager.uint64_type)
+					return 1;
+			} else if (p == TypeManager.int64_type) {
+				if (q == TypeManager.uint64_type)
+					return 1;
+			} else if (p == TypeManager.sbyte_type) {
+				if (q == TypeManager.byte_type || q == TypeManager.ushort_type ||
+					q == TypeManager.uint32_type || q == TypeManager.uint64_type)
+					return 1;
+			} else if (p == TypeManager.short_type) {
+				if (q == TypeManager.ushort_type || q == TypeManager.uint32_type ||
+					q == TypeManager.uint64_type)
+					return 1;
+			}
 
-			bool p_to_q = Convert.ImplicitConversionExists (ec, p_expr, q);
-			bool q_to_p = Convert.ImplicitConversionExists (ec, q_expr, p);
+			if (q == TypeManager.int32_type) {
+				if (p == TypeManager.uint32_type || p == TypeManager.uint64_type)
+					return 2;
+			} if (q == TypeManager.int64_type) {
+				if (p == TypeManager.uint64_type)
+					return 2;
+			} else if (q == TypeManager.sbyte_type) {
+				if (p == TypeManager.byte_type || p == TypeManager.ushort_type ||
+					p == TypeManager.uint32_type || p == TypeManager.uint64_type)
+					return 2;
+			} if (q == TypeManager.short_type) {
+				if (p == TypeManager.ushort_type || p == TypeManager.uint32_type ||
+					p == TypeManager.uint64_type)
+					return 2;
+			}
+
+			// TODO: this is expensive
+			Expression p_tmp = new EmptyExpression (p);
+			Expression q_tmp = new EmptyExpression (q);
+
+			bool p_to_q = Convert.ImplicitConversionExists (ec, p_tmp, q);
+			bool q_to_p = Convert.ImplicitConversionExists (ec, q_tmp, p);
 
 			if (p_to_q && !q_to_p)
 				return 1;
 
 			if (q_to_p && !p_to_q)
 				return 2;
-
-			if (p == TypeManager.sbyte_type)
-				if (q == TypeManager.byte_type || q == TypeManager.ushort_type ||
-					q == TypeManager.uint32_type || q == TypeManager.uint64_type)
-					return 1;
-			if (q == TypeManager.sbyte_type)
-				if (p == TypeManager.byte_type || p == TypeManager.ushort_type ||
-					p == TypeManager.uint32_type || p == TypeManager.uint64_type)
-					return 2;
-
-			if (p == TypeManager.short_type)
-				if (q == TypeManager.ushort_type || q == TypeManager.uint32_type ||
-					q == TypeManager.uint64_type)
-					return 1;
-			if (q == TypeManager.short_type)
-				if (p == TypeManager.ushort_type || p == TypeManager.uint32_type ||
-					p == TypeManager.uint64_type)
-					return 2;
-
-			if (p == TypeManager.int32_type)
-				if (q == TypeManager.uint32_type || q == TypeManager.uint64_type)
-					return 1;
-			if (q == TypeManager.int32_type)
-				if (p == TypeManager.uint32_type || p == TypeManager.uint64_type)
-					return 2;
-
-			if (p == TypeManager.int64_type)
-				if (q == TypeManager.uint64_type)
-					return 1;
-			if (q == TypeManager.int64_type)
-				if (p == TypeManager.uint64_type)
-					return 2;
 
 			return 0;
 		}

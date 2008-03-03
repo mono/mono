@@ -2053,7 +2053,7 @@ namespace Mono.CSharp {
 					FNV_prime);
 
 				Expression field_to_string = new Conditional (new Binary (Binary.Operator.Inequality,
-					new MemberAccess (new This (f.Location), f.Name), new NullConstant (loc)),
+					new MemberAccess (new This (f.Location), f.Name), new NullLiteral (loc)),
 					new Invocation (new MemberAccess (
 						new MemberAccess (new This (f.Location), f.Name), "ToString"), null),
 					new StringConstant ("<null>", loc));

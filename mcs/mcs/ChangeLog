@@ -1,3 +1,12 @@
+2008-03-03  Marek Safar  <marek.safar@gmail.com>
+
+	* anonymous.cs, cfold.cs, convert.cs, delegate.cs, doc.cs, ecore.cs,
+	expression.cs: Refactored binary operators resolve phase and improved speed.
+	The nullable code is still missing and won't work correctly, more fixes
+	required.
+
+	It also fixes #323726, #324312, #324248, and many other unreported issues.
+
 2008-02-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* report.cs (FeatureIsNotAvailable): Use 'mcs1' instead of 'mcs', and 'mcs' 
