@@ -1,3 +1,9 @@
+2008-03-03  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* ImageFormatConverter.cs: Perform a case insensitive comparison 
+	instead of a case sensitive one.
+	[Fixes bug #366567]
+
 2008-01-23  Geoff Norton  <gnorton@novell.com>
 
 	* carbonFunction.cs:  Remove some debug code.  Thanks spouliot.

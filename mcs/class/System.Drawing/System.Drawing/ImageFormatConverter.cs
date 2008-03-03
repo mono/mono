@@ -99,28 +99,26 @@ namespace System.Drawing
 					return ImageFormat.Wmf;
 			} else {
 				// case #3, this is probably a short format
-				switch (strFormat) {
-				case "Bmp":
+				if (String.Compare (strFormat, "Bmp", true) == 0)
 					return ImageFormat.Bmp;
-				case "Emf":
+				else if (String.Compare (strFormat, "Emf", true) == 0)
 					return ImageFormat.Emf;
-				case "Exif":
+				else if (String.Compare (strFormat, "Exif", true) == 0)
 					return ImageFormat.Exif;
-				case "Gif":
+				else if (String.Compare (strFormat, "Gif", true) == 0)
 					return ImageFormat.Gif;
-				case "Icon":
+				else if (String.Compare (strFormat, "Icon", true) == 0)
 					return ImageFormat.Icon;
-				case "Jpeg":
+				else if (String.Compare (strFormat, "Jpeg", true) == 0)
 					return ImageFormat.Jpeg;
-				case "MemoryBmp":
+				else if (String.Compare (strFormat, "MemoryBmp", true) == 0)
 					return ImageFormat.MemoryBmp;
-				case "Png":
+				else if (String.Compare (strFormat, "Png", true) == 0)
 					return ImageFormat.Png;
-				case "Tiff":
+				else if (String.Compare (strFormat, "Tiff", true) == 0)
 					return ImageFormat.Tiff;
-				case "Wmf":
+				else if (String.Compare (strFormat, "Wmf", true) == 0)
 					return ImageFormat.Wmf;
-				}
 			}
 			// last case, this is an unknown string
 			return base.ConvertFrom (context, culture, val);
