@@ -1,3 +1,11 @@
+2008-03-03  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* PropertyGridView.cs: 
+	 - Subscribe to the listbox only once and not everytime.
+	 - Update the textbox even if SetValue fails.
+	 - Close the listbox before calling TrySetValue just in case.
+	 [Fixes bug #366569]
+
 2008-02-29  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* PropertyGrid.cs: Fix wrong array size initialization.
