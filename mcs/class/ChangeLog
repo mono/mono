@@ -1,3 +1,7 @@
+2008-03-03  Marek Safar  <marek.safar@gmail.com>
+
+	* Makefile: Moved Mono.Web to 2.0 section.
+
 2008-02-17  Raja R Harinath  <harinath@hurrynot.org>
 
 	* Makefile (net_3_5_dirs): Remove System.Xml.Linq, now that it's
