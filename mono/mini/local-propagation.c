@@ -2123,7 +2123,7 @@ mono_branch_to_cmov (MonoCompile *cfg)
 			cmov->sreg1 = dreg;
 			cmov->sreg2 = tmp_reg;
 			cond = mono_opcode_to_cond (branch->opcode);
-			if (code_bb == bb2)
+			if (branch->inst_false_bb == code_bb)
 				cond = mono_negate_cond (cond);
 			switch (mono_opcode_to_type (branch->opcode, compare->opcode)) {
 			case CMP_TYPE_I:

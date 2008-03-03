@@ -1,3 +1,8 @@
+2008-03-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* local-propagation.c (mono_branch_to_cmov): Fix checking of whenever negation
+	of the condition is needed.
+
 2008-03-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* local-propagation.c (mono_local_deadce): Avoid reverse copyprop on hard
