@@ -11,7 +11,6 @@
 # csXXXX.cs NO ERROR	: error test case doesn't report any error. An exception is considered
 #			  as NO ERROR and CS5001 is automatically ignored.
 
-cs0019-20.cs
 cs0158-5.cs
 cs0162-7.cs NO ERROR
 cs0214-10.cs NO ERROR
@@ -27,6 +26,7 @@ cs1521-3.cs
 cs1525.cs
 cs1528.cs
 cs1586.cs
+gcs0019-9.cs
 gcs1644-10.cs NO ERROR
 
 # Operators
