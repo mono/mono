@@ -1,5 +1,9 @@
 2008-03-03 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* reflection.h: Fix the build I just broke.
+
+2008-03-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* reflection.c (mono_reflection_is_valid_dynamic_token): New function,
 	Test if a token is valid, this remove explicit usage of 
 	MonoDynamicImage::tokens from the verifier code.
