@@ -85,7 +85,7 @@ test-generics:
 
 clean-local:
 	-rm -fr dir-*
-	-rm -f *.exe *.dll *.netmodule *.out *.pdb casts.cs *.log
+	-rm -f *.exe *.dll *.netmodule *.out *.pdb *.mdb casts.cs *.log
 	-rm -f xml-*.xml
 
 dist-local: dist-default

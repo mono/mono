@@ -381,7 +381,7 @@ class Tester
 		Assert (4, r4.Invoke (new InverseLogicalOperator (false), 3, 4));
 	}
 
-	public void ConvertTest ()
+	void ConvertTest ()
 	{
 		Expression<Func<int, byte>> e = (int a) => ((byte) a);
 		AssertNodeType (e, ExpressionType.Convert);
@@ -403,7 +403,7 @@ class Tester
 		AssertNodeType (e5, ExpressionType.Convert);
 	}
 
-	public void ConvertCheckedTest ()
+	void ConvertCheckedTest ()
 	{
 		Expression<Func<int, byte>> e = (int a) => checked((byte) a);
 		AssertNodeType (e, ExpressionType.ConvertChecked);
@@ -424,7 +424,7 @@ class Tester
 		}
 	}
 
-	public void DivideTest ()
+	void DivideTest ()
 	{
 		Expression<Func<int, int, int>> e = (int a, int b) => a / b;
 		AssertNodeType (e, ExpressionType.Divide);
@@ -445,7 +445,7 @@ class Tester
 		Assert (new MyType (-6), e4.Compile ().Invoke (new MyType (120), new MyType (-20)));
 	}
 
-	public void EqualTest ()
+	void EqualTest ()
 	{
 		Expression<Func<int, int, bool>> e = (int a, int b) => a == b;
 		AssertNodeType (e, ExpressionType.Equal);
@@ -467,8 +467,26 @@ class Tester
 		Assert (true, e4.Compile ().Invoke (null, null));
 		Assert (true, e4.Compile ().Invoke (new MyType (120), new MyType (120)));
 	}
+	
+	delegate void EmptyDelegate ();
+	
+	static void EqualTestDelegate ()
+	{
+		Expression<Func<Delegate, Delegate, bool>> e1 = (a, b) => a == b;
+		AssertNodeType (e1, ExpressionType.Equal);
+		Assert (true, e1.Compile ().Invoke (null, null));
 
-	public void ExclusiveOrTest ()
+		EmptyDelegate ed = delegate () {};
+
+		Expression<Func<EmptyDelegate, EmptyDelegate, bool>> e2 = (a, b) => a == b;
+		AssertNodeType (e2, ExpressionType.Equal);
+		Assert (false, e2.Compile ().Invoke (delegate () {}, null));
+		Assert (false, e2.Compile ().Invoke (delegate () {}, delegate {}));
+		Assert (false, e2.Compile ().Invoke (ed, delegate {}));
+		Assert (true, e2.Compile ().Invoke (ed, ed));
+	}	
+
+	void ExclusiveOrTest ()
 	{
 		Expression<Func<int, int, int>> e = (int a, int b) => a ^ b;
 		AssertNodeType (e, ExpressionType.ExclusiveOr);
@@ -489,17 +507,17 @@ class Tester
 		Assert (new MyType (-108), e4.Compile ().Invoke (new MyType (120), new MyType (-20)));
 	}
 
-	public void GreaterThanTest ()
-	{
+	void GreaterThanTest ()
+	{/*
 		Expression<Func<int, int, bool>> e = (int a, int b) => a > b;
 		AssertNodeType (e, ExpressionType.GreaterThan);
 		Assert (true, e.Compile ().Invoke (60, 30));
-
-		Expression<Func<byte?, byte?, bool>> e2 = (a, b) => a > b;
+*/
+		Expression<Func<uint?, byte?, bool>> e2 = (a, b) => a > b;
 		AssertNodeType (e2, ExpressionType.GreaterThan);
 		Assert (false, e2.Compile ().Invoke (null, 3));
 		Assert (false, e2.Compile ().Invoke (2, 2));
-
+/*
 		Expression<Func<MyType, MyType, bool>> e3 = (MyType a, MyType b) => a > b;
 		AssertNodeType (e3, ExpressionType.GreaterThan);
 		Assert (false, e3.Compile ().Invoke (new MyType (-20), new MyType (-20)));
@@ -509,9 +527,10 @@ class Tester
 		Assert (false, e4.Compile ().Invoke (null, new MyType (-20)));
 		Assert (false, e4.Compile ().Invoke (null, null));
 		Assert (true, e4.Compile ().Invoke (new MyType (120), new MyType (-20)));
+		*/
 	}
 
-	public void GreaterThanOrEqualTest ()
+	void GreaterThanOrEqualTest ()
 	{
 		Expression<Func<int, int, bool>> e = (int a, int b) => a >= b;
 		AssertNodeType (e, ExpressionType.GreaterThanOrEqual);
@@ -526,7 +545,7 @@ class Tester
 		AssertNodeType (e3, ExpressionType.GreaterThanOrEqual);
 		Assert (true, e3.Compile ().Invoke (new MyType (-20), new MyType (-20)));
 
-		Expression<Func<MyType?, MyType?, bool>> e4 = (MyType? a, MyType? b) => a >= b;
+		Expression<Func<MyType?, MyType?, bool>> e4 = (MyType? a, MyType? b) => a >= null;
 		AssertNodeType (e4, ExpressionType.GreaterThanOrEqual);
 		Assert (false, e4.Compile ().Invoke (null, new MyType (-20)));
 		Assert (false, e4.Compile ().Invoke (null, null));
@@ -688,8 +707,6 @@ class Tester
 		var c2 = e2.Compile ();
 		Assert (64, c2 (new MyType (256), new MyType (2)));
 		
-/* FIXME: LiftedBinaryOperator ignores underlying conversions
-
 		Expression<Func<long?, sbyte, long?>> e3 = (long? a, sbyte b) => a >> b;
 		AssertNodeType (e3, ExpressionType.RightShift);
 		Assert (null, e3.Compile ().Invoke (null, 11));
@@ -701,7 +718,6 @@ class Tester
 		Assert (null, c4 (new MyType (8), null));
 		Assert (null, c4 (null, new MyType (8)));
 		Assert (64, c4 (new MyType (256), new MyType (2)));
-*/
 	}	
 
 	//
@@ -744,6 +760,7 @@ class Tester
 		e.ConvertCheckedTest ();
 		e.DivideTest ();
 		e.EqualTest ();
+		e.EqualTestDelegate ();
 		e.ExclusiveOrTest ();
 		e.GreaterThanTest ();
 		e.GreaterThanOrEqualTest ();
