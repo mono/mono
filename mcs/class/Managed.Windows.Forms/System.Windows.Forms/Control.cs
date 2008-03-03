@@ -672,11 +672,11 @@ namespace System.Windows.Forms
 			{
 				return IndexOfKey (key) >= 0;
 			}
-#endif
 
 			void ICollection.CopyTo (Array array, int index) {
 				CopyTo (array, index);
 			}
+#endif
 
 #if !NET_2_0
 			public void CopyTo (Array array, int index) {

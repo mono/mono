@@ -1,3 +1,7 @@
+2008-03-03  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: Hide ICollection.CopyTo from the 1.1 profile.
+
 2008-03-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: Implement support for custom column width based on
