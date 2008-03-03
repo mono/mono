@@ -1,3 +1,9 @@
+2008-03-03  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* ImageFormatConverter.cs: Perform a case insensitive comparison 
+	instead of a case sensitive one.
+	[Fixes bug #366567]
+
 2008-03-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Icon.cs: Don't require icon entries when creating a new icon 
