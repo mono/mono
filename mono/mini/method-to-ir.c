@@ -6904,24 +6904,25 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			/*
 			 * ldloca inhibits many optimizations so try to get rid of it in common
 			 * cases.
-			 * FIXME: do this in LDLOCA as well.
 			 */
-			/* FIXME: Finish this */
-#if 0
-			/* FIXME: Check for out of range ip */
-			if ((ip [2] == CEE_PREFIX1) && (ip [3] == CEE_INITOBJ) && ip_in_bb (cfg, bblock, ip + 3)) {
-				MonoClass *klass = cfg->locals [ip [1]]->klass;
+			if (ip + 8 < end && (ip [2] == CEE_PREFIX1) && (ip [3] == CEE_INITOBJ) && ip_in_bb (cfg, bblock, ip + 3)) {
+				/* From the INITOBJ case */
+				token = read32 (ip + 4);
+				klass = mini_get_class (method, token, generic_context);
+				CHECK_TYPELOAD (klass);
+				if (cfg->generic_sharing_context && mono_class_check_context_used (klass))
+					GENERIC_SHARING_FAILURE (CEE_INITOBJ);
+
 				if (MONO_TYPE_IS_REFERENCE (&klass->byval_arg)) {
-					/* FIXME: */
-					g_assert_not_reached ();
+					MONO_EMIT_NEW_PCONST (cfg, cfg->locals [ip [1]]->dreg, NULL);
 				} else {
 					MONO_EMIT_NEW_VZERO (cfg, cfg->locals [ip [1]]->dreg, klass);
 				}
+
 				ip += 2 + 6;
 				inline_costs += 1;
 				break;
 			}
-#endif
 
 			EMIT_NEW_LOCLOADA (cfg, ins, ip [1]);
 			*sp++ = ins;

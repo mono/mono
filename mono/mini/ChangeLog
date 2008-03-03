@@ -1,3 +1,9 @@
+2008-03-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir2): Optimize the ldloca+initobj combination.
+
+	* generics.cs: Add a test for the ldloca+initobj optimization.
+
 2008-03-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* local-propagation.c (mono_branch_to_cmov): Fix checking of whenever negation
