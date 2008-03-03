@@ -470,7 +470,7 @@ namespace System.Data.Odbc
 									OdbcHandleType.Dbc,
 									hdbc));
 
-			return System.Text.Encoding.Default.GetString (buffer);
+			return System.Text.Encoding.Default.GetString (buffer).Substring (0, actualLength);
 		}
 
 		private void RaiseStateChange (ConnectionState from, ConnectionState to)
