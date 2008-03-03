@@ -1,3 +1,7 @@
+2008-03-03  Marek Safar  <marek.safar@gmail.com>
+
+	* Makefile: Moved Mono.Web to 2.0 section.
+
 2007-12-19  Jb Evain  <jbevain@novell.com>
 
 	* Makefile: include MicrosoftAjaxLibrary/License.htm
