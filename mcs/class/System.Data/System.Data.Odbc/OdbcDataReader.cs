@@ -598,7 +598,12 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		string GetString (int ordinal)
 		{
-			return (string) GetValue (ordinal);
+			object ret = GetValue (ordinal);
+
+			if (ret != null && ret.GetType () != typeof (string))
+				return (string) Convert.ToString (ret);
+			else
+				return (string) GetValue (ordinal);
 		}
 
 		[MonoTODO]
@@ -733,7 +738,8 @@ namespace System.Data.Odbc
 					ret = libodbc.SQLGetData (hstmt, ColIndex, col.SqlCType, ref ts_data, 0, ref outsize);
 					if (outsize != -1) {// This means SQL_NULL_DATA
 						if (col.OdbcType == OdbcType.Time) {
-							DataValue = new System.TimeSpan (ts_data.hour, ts_data.minute, ts_data.second);
+							// libodbc returns value in first three fields for OdbcType.Time 
+							DataValue = new System.TimeSpan (ts_data.year, ts_data.month, ts_data.day);
 						} else {
 							DataValue = new DateTime(ts_data.year, ts_data.month,
 							                         ts_data.day, ts_data.hour, ts_data.minute,

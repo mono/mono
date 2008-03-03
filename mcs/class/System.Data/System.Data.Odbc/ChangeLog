@@ -1,5 +1,12 @@
 2008-03-03  Veerapuram Varadhan  <vvaradhan@novell.com>
 
+	** Fixes Bug#324025
+	* OdbcDataReader (GetString): Use Convert.ToString() to return
+	appropriate typed values.
+	(GetValue): Fixes a regression. 
+	
+2008-03-03  Veerapuram Varadhan  <vvaradhan@novell.com>
+
 	* OdbcCommandBuilder.cs: Clean up.
 	
 2008-03-03  Veerapuram Varadhan  <vvaradhan@novell.com>
