@@ -572,7 +572,7 @@ namespace Mono.CSharp {
 				version = "2.0";
 				break;
 			case LanguageVersion.Default_MCS:
-				Report.Error (1644, loc, "Feature `{0}' is not available in Mono mcs1 compiler. Consider using Mono mcs compiler instead",
+				Report.Error (1644, loc, "Feature `{0}' is not available in Mono mcs1 compiler. Consider using the `gmcs' compiler instead",
 				              feature);
 				return;
 			default:
