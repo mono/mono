@@ -84,6 +84,7 @@ Mono.WebBrowser/DOM/NodeEventArgs.cs
 Mono.WebBrowser/DOM/NodeEventHandler.cs
 Mono.WebBrowser/IWebBrowser.cs
 Mono.WebBrowser/Manager.cs
+Mono.WebBrowser/Exception.cs
 Mono.WebBrowser/DOM/IAttribute.cs
 Mono.WebBrowser/DOM/IAttributeCollection.cs
 Mono.WebBrowser/DOM/IDocument.cs

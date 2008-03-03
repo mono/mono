@@ -1,3 +1,11 @@
+2008-03-03  Andreia Gaita <avidigal@novell.com> 
+
+	* Mono.Mozilla/Base.cs: Add service manager getter.
+	* Mono.Mozilla/interfaces/nsIWebBrowserStream.cs: Send basic IntPtr instead of byte array, arrays
+	  don't work.
+	* Mono.Mozilla/WebBrowser.cs: Proper streaming support, and exception handling
+	* Mono.WebBrowser/Exception.cs, Manager.cs: exception handling
+	
 2008-03-02  Andreia Gaita <avidigal@novell.com> 
 
 	* Mono.Mozilla.dll.sources: Added yet another bunch of interfaces to support

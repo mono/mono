@@ -43,7 +43,8 @@ namespace Mono.WebBrowser
 		void Resize (int width, int height);
 
 		void OpenStream (string uri, string contentType);
-		void AppendToStream (byte[] data, uint len);
+		void AppendToStream (string html);
+		void AppendToStream (byte[] data);
 		void CloseStream ();
 
 		IWindow Window { get; }

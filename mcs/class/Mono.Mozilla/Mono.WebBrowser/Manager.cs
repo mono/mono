@@ -41,7 +41,7 @@ namespace Mono.WebBrowser
 			if (browserEngine == null || browserEngine == "mozilla")
 				return new Mono.Mozilla.WebBrowser (platform);
 
-			throw new Exception (String.Format ("Browser engine {0} is not supported at this time.", browserEngine));
+			throw new Exception (Mono.WebBrowser.Exception.ErrorCodes.EngineNotSupported, browserEngine);
 		}
 
 		

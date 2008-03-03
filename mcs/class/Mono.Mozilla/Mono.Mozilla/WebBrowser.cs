@@ -50,6 +50,8 @@ namespace Mono.Mozilla
 		private EventHandlerList domEvents;
 
 		private string statusText;
+
+		private bool streamingMode;
 		
 		public WebBrowser (Platform platform)
 		{
@@ -157,36 +159,58 @@ namespace Mono.Mozilla
 
 		public void OpenStream (string uri, string contentType)
 		{
-			
-		
-			nsIServiceManager servMan;
-			Base.gluezilla_getServiceManager (out servMan);		
+			nsIServiceManager servMan = Base.gluezilla_getServiceManager ();
 			IntPtr ptr;
 			servMan.getServiceByContractID ("@mozilla.org/network/io-service;1", typeof (nsIIOService).GUID, out ptr);
+			if (ptr == IntPtr.Zero)
+				throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.IOService);
 
-			nsIIOService ioService = (nsIIOService)Marshal.GetObjectForIUnknown (ptr);
-			UniString asciiUri = new UniString(uri);
+			nsIIOService ioService;
+			try {
+				ioService = (nsIIOService)Marshal.GetObjectForIUnknown (ptr);
+			} catch (System.Exception ex) {
+				throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.IOService, ex);
+			}
+			AsciiString asciiUri = new AsciiString (uri);
 			nsIURI ret;
 			ioService.newURI (asciiUri.Handle, null, null, out ret);
 			AsciiString ctype = new AsciiString(contentType);
 			nsIWebBrowserStream stream = (nsIWebBrowserStream) navigation.navigation;
 			stream.openStream (ret, ctype.Handle);
+			streamingMode = true;
 		}
-		
-		public void AppendToStream (byte[] data, uint len)
+
+		public void AppendToStream (string html)
 		{
+			if (!streamingMode)
+				throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.StreamNotOpen);
+
 			nsIWebBrowserStream stream = navigation.navigation as nsIWebBrowserStream;
 			if (stream == null)
-				return;
-			stream.appendToStream (data, len);
+				throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.StreamNotOpen);
+			IntPtr native_html = Marshal.StringToHGlobalAnsi (html);
+			stream.appendToStream (native_html, (uint)html.Length);
+			Marshal.FreeHGlobal (native_html);
+		}
+
+		public void AppendToStream (byte[] data)
+		{
+			if (data == null)
+				throw new ArgumentNullException ("data");
+			string html = System.Text.ASCIIEncoding.UTF8.GetString (data);
+			AppendToStream (html);
 		}
 		
 		public void CloseStream ()
 		{
+			if (!streamingMode)
+				return;
+
 			nsIWebBrowserStream stream = navigation.navigation as nsIWebBrowserStream;
 			if (stream == null)
 				return;
 			stream.closeStream ();
+			streamingMode = false;
 		}		
 
 		

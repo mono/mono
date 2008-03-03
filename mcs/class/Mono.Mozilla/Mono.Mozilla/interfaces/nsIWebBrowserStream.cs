@@ -47,7 +47,7 @@ namespace Mono.Mozilla {
 		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
 		int appendToStream (
-				byte[] aData,
+				IntPtr aData,
 				   uint aLen);
 
 		[PreserveSigAttribute]
