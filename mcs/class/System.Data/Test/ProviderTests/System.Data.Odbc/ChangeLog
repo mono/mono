@@ -1,5 +1,9 @@
 2008-03-03  Veerapuram Varadhan  <vvaradhan@novell.com>
 
+	* OdbcParameterTest.cs: Build break fix. 
+	
+2008-03-03  Veerapuram Varadhan  <vvaradhan@novell.com>
+
 	* OdbcParameterTest.cs: Test for Bug#332809. Patch provided by
 	Ernesto Carrea <equistango@gmail.com>
 	
