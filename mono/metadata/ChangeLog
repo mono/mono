@@ -1,5 +1,12 @@
 2008-03-03 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* reflection.h: Move mono_reflection_is_valid_dynamic_token to
+	object-internal.h
+
+	* object-internal.h: Same.
+
+2008-03-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* reflection.h: Fix the build I just broke.
 
 2008-03-03 Rodrigo Kumpera  <rkumpera@novell.com>
