@@ -60,8 +60,7 @@ namespace System.Data.Odbc
 			case TypeCode.Empty:
 			case TypeCode.Object:
 			case TypeCode.DBNull:
-				throw new ArgumentException (String.Format ("Infering OdbcType from {0} is not supported",
-									    Type.GetTypeCode (value.GetType ())));
+				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.NVarChar];  //Default to NVarChar as in MS.net. OdbcParameter.Bind() will take care.
 			case TypeCode.Boolean:
 				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.Bit];
 			case TypeCode.Char:

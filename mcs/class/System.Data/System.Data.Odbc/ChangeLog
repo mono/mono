@@ -1,3 +1,13 @@
+2008-03-03  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes from BNC#332809 - patch provided by Ernesto Carrea
+	<equistango@gmail.com>
+	* OdbcParameter.cs (Bind): Do not allocate buffer if value is
+	DBNull.
+	* OdbcTypeConverter.cs (InferFromValue): Incase of DBNull, do not
+	throw exception, instead return NVarChar to match MS.NET
+	implementation.
+	
 2008-03-03  Ankit Jain  <jankit@novell.com>
 
 	* OdbcMetaDataCollectionNames.cs: Set the field values.
