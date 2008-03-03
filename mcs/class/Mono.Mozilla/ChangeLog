@@ -1,5 +1,9 @@
 2008-03-03  Andreia Gaita <avidigal@novell.com> 
 
+	* Mono.WebBrowser/Exception.cs: Fix 1.1 build. Add header.
+
+2008-03-03  Andreia Gaita <avidigal@novell.com> 
+
 	* Mono.Mozilla/Base.cs: Add service manager getter.
 	* Mono.Mozilla/interfaces/nsIWebBrowserStream.cs: Send basic IntPtr instead of byte array, arrays
 	  don't work.
