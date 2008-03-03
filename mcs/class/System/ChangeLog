@@ -1,3 +1,10 @@
+2008-03-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* System.dll.sources: Add the new regex interpreter/compiler sources, not yet
+	used.
+
+	* net_2_1_raw_System.dll.sources: Ditto.
+	
 2008-02-18  Raja R Harinath  <harinath@hurrynot.org>
 
 	* Makefile (CYCLIC_DEPS): Don't use $(eval ...) -- we still

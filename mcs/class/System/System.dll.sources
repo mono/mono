@@ -909,6 +909,7 @@ System.Text.RegularExpressions/BaseMachine.cs
 System.Text.RegularExpressions/cache.cs
 System.Text.RegularExpressions/CaptureCollection.cs
 System.Text.RegularExpressions/Capture.cs
+System.Text.RegularExpressions/CILCompiler.cs
 System.Text.RegularExpressions/category.cs
 System.Text.RegularExpressions/compiler.cs
 System.Text.RegularExpressions/debug.cs
@@ -926,6 +927,9 @@ System.Text.RegularExpressions/Regex.cs
 System.Text.RegularExpressions/RegexOptions.cs
 System.Text.RegularExpressions/RegexRunner.cs
 System.Text.RegularExpressions/RegexRunnerFactory.cs
+System.Text.RegularExpressions/RxInterpreter.cs
+System.Text.RegularExpressions/RxCompiler.cs
+System.Text.RegularExpressions/RxOp.cs
 System.Text.RegularExpressions/replace.cs
 System.Text.RegularExpressions/syntax.cs
 System.Threading/Semaphore.cs
