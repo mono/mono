@@ -1,5 +1,12 @@
 2008-03-03  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* GridEntry.cs: Do not convert not only if the types match, 
+	but also if the property type is assigneable from the value's
+	type.
+	[Fixes bug #366566]
+
+2008-03-03  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* PropertyGridView.cs: 
 	 - Subscribe to the listbox only once and not everytime.
 	 - Update the textbox even if SetValue fails.

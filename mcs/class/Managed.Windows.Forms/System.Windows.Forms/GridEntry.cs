@@ -431,7 +431,8 @@ namespace System.Windows.Forms.PropertyGridInternal
 			TypeConverter converter = PropertyDescriptor.Converter;
 			Type valueType = value != null ? value.GetType () : null;
 			// if the new value is not of the same type try to convert it
-			if (valueType != this.PropertyDescriptor.PropertyType) {
+			if (valueType != null && this.PropertyDescriptor.PropertyType != null &&
+			    !this.PropertyDescriptor.PropertyType.IsAssignableFrom (valueType)) {
 				bool conversionError = false;
 				try {
 					if (converter != null &&
