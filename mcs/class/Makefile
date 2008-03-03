@@ -3,6 +3,10 @@ thisdir = class
 MONO_POSIX := Mono.Posix
 MONO_SYMBOLWRITER := Mono.CompilerServices.SymbolWriter
 
+ifeq (net_2_0, $(PROFILE))
+MONO_WEB := Mono.Web
+endif
+
 bootstrap_dirs := \
 	corlib					\
 	System					\
@@ -56,6 +60,7 @@ common_dirs := \
 	Mono.Data.Sqlite		\
 	Mono.Data.SqliteClient		\
 	System.Web			\
+	$(MONO_WEB)			\
 	System.Web.Services		\
 	System.Web			\
 	System.Runtime.Serialization.Formatters.Soap \
@@ -102,8 +107,7 @@ net_2_0_dirs := \
 	Microsoft.Build.Framework	\
 	Microsoft.Build.Utilities	\
 	Microsoft.Build.Engine		\
-	Microsoft.Build.Tasks		\
-	Mono.Web
+	Microsoft.Build.Tasks
 
 net_2_1_dirs := \
 	corlib			\
@@ -131,7 +135,7 @@ SUBDIRS = $(common_dirs) $(default_dirs) $(net_2_0_dirs) $(net_2_1_dirs) $(net_3
 BROKEN_SUBDIRS =
 
 DIST_ONLY_SUBDIRS = \
-	$(BROKEN_SUBDIRS)
+	$(BROKEN_SUBDIRS) Mono.Web
 
 # No new makefiles for: System.Messaging, System.Web.Mobile,
 # System.ServiceProcess
