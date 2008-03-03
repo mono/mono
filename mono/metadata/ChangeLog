@@ -1,3 +1,10 @@
+2008-03-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (token_bounds_check): Fix bounds check for dynamic images.
+
+	* verify.c (verifier_load_method): Fixed the errors message.
+
+	* verify.c (mono_method_verify): Fixed a debug message.
 
 Thu Feb 28 19:49:45 CET 2008 Paolo Molaro <lupus@ximian.com>
 
