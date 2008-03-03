@@ -1,3 +1,9 @@
+2008-03-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Icon.cs: Don't require icon entries when creating a new icon 
+	(since they won't exist if we create the icon from an handle).
+	Also avoid a step when cloning. Fix bug #366485
+
 2008-02-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* gdipFunctions.cs: Seal GdiPlusStreamHelper class. Found using

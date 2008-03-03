@@ -9,7 +9,7 @@
 //   Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2002 Ximian, Inc. http://www.ximian.com
-// Copyright (C) 2004-2007 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -136,37 +136,43 @@ namespace System.Drawing
 
 			iconSize = size;
 			iconDir = original.iconDir;
-			imageData = original.imageData;
 			
-			id = UInt16.MaxValue;
 			int count = iconDir.idCount;
-			for (ushort i=0; i < count; i++) {
-				IconDirEntry ide = iconDir.idEntries [i];
-				if ((ide.height == size.Height) || (ide.width == size.Width)) {
-					id = i;
-					break;
-				}
-			}
+			if (count > 0) {
+				imageData = original.imageData;
+				id = UInt16.MaxValue;
 
-			// if a perfect match isn't found we look for the biggest icon *smaller* than specified
-			if (id == UInt16.MaxValue) {
-				int requested = Math.Min (size.Height, size.Width);
-				IconDirEntry best = iconDir.idEntries [0];
-				for (ushort i=1; i < count; i++) {
+				for (ushort i=0; i < count; i++) {
 					IconDirEntry ide = iconDir.idEntries [i];
-					if ((ide.height < requested) || (ide.width < requested)) {
-						if ((ide.height > best.height) || (ide.width > best.width))
-							id = i;
+					if ((ide.height == size.Height) || (ide.width == size.Width)) {
+						id = i;
+						break;
 					}
 				}
+
+				// if a perfect match isn't found we look for the biggest icon *smaller* than specified
+				if (id == UInt16.MaxValue) {
+					int requested = Math.Min (size.Height, size.Width);
+					IconDirEntry best = iconDir.idEntries [0];
+					for (ushort i=1; i < count; i++) {
+						IconDirEntry ide = iconDir.idEntries [i];
+						if ((ide.height < requested) || (ide.width < requested)) {
+							if ((ide.height > best.height) || (ide.width > best.width))
+								id = i;
+						}
+					}
+				}
+
+				// last one, if nothing better can be found
+				if (id == UInt16.MaxValue)
+					id = (ushort) (count - 1);
+
+				iconSize.Height = iconDir.idEntries [id].height;
+				iconSize.Width = iconDir.idEntries [id].width;
+			} else {
+				iconSize.Height = size.Height;
+				iconSize.Width = size.Width;
 			}
-
-			// last one, if nothing better can be found
-			if (id == UInt16.MaxValue)
-				id = (ushort) (count - 1);
-
-			iconSize.Height = iconDir.idEntries [id].height;
-			iconSize.Width = iconDir.idEntries [id].width;
 
 			if (original.bitmap != null)
 				bitmap = (Bitmap) original.bitmap.Clone ();
@@ -297,7 +303,7 @@ namespace System.Drawing
 
 		public object Clone ()
 		{
-			return new Icon (this, this.Width, this.Height);
+			return new Icon (this, Size);
 		}
 
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
