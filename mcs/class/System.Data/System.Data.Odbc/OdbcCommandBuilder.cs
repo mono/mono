@@ -630,7 +630,6 @@ namespace System.Data.Odbc
 		{
 			if (args.Command != null)
 				return;
-			Console.WriteLine (Environment.StackTrace);
 			try {
 				switch (args.StatementType) {
 				case StatementType.Insert:

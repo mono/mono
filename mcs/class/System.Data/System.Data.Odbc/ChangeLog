@@ -1,5 +1,9 @@
 2008-03-03  Veerapuram Varadhan  <vvaradhan@novell.com>
 
+	* OdbcCommandBuilder.cs: Clean up.
+	
+2008-03-03  Veerapuram Varadhan  <vvaradhan@novell.com>
+
 	** Fixes Bug#340451 - patch provided by Ernesto Carrea
 	<equistango@gmail.com>
 	* OdbcConnection.cs (GetInfo): Trim the value to actual length
