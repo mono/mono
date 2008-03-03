@@ -461,6 +461,24 @@ namespace MonoTests.System.Data
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
+
+                [Test]
+                public void DBNullParameterTest()
+                {
+			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			try {
+				ConnectionManager.Singleton.OpenConnection ();
+				OdbcDataAdapter Adaptador = new OdbcDataAdapter ();
+				DataSet Lector = new DataSet ();
+
+				Adaptador.SelectCommand = new OdbcCommand ("SELECT ?;", (OdbcConnection) conn);
+				Adaptador.SelectCommand.Parameters.AddWithValue("@un", DBNull.Value);
+				Adaptador.Fill (Lector);
+				Assert.AreEqual (Lector.Tables[0].Rows[0][0], DBNull.Value, "#1 DBNull parameter not passed correctly");
+			} finally {
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+		}		
 		
 		[Test]
 		public void DefaultValuesTest ()
