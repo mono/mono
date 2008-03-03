@@ -326,6 +326,12 @@ namespace System.Reflection.Emit
 			return pb;
 		}
 
+		internal void check_override ()
+		{
+			if (override_method != null && override_method.IsVirtual && !IsVirtual)
+				throw new TypeLoadException (String.Format("Method '{0}' override '{1}' but it is not virtual", name, override_method));
+		}
+
 		internal void fixup ()
 		{
 			if (((attrs & (MethodAttributes.Abstract | MethodAttributes.PinvokeImpl)) == 0) && ((iattrs & (MethodImplAttributes.Runtime | MethodImplAttributes.InternalCall)) == 0)) {

@@ -772,8 +772,11 @@ namespace System.Reflection.Emit
 				throw new TypeLoadException ("Could not load type '" + FullName + "' from assembly '" + Assembly + "' because it is an enum with methods.");
 
 			if (methods != null) {
-				for (int i = 0; i < num_methods; ++i)
-					((MethodBuilder)(methods[i])).fixup ();
+				for (int i = 0; i < num_methods; ++i) {
+					MethodBuilder mb = (MethodBuilder)(methods[i]);
+					mb.check_override ();
+					mb.fixup ();
+				}
 			}
 
 			//

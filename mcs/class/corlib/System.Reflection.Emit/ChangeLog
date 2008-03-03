@@ -1,3 +1,13 @@
+2008-03-03 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* MethodBuilder.cs (check_override): Added, verify if this method has explicit
+	override set and doesn't follow virtual settings of overriden method.
+
+	* TypeBuilder.cs (CreateType): Call MethodBuilder::check_override before
+	creating the type.
+
+	Fixes #361689.
+
 2008-01-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* ModuleBuilder.cs: Fix build.
