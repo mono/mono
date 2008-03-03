@@ -1,3 +1,7 @@
+2008-03-03  Ankit Jain  <jankit@novell.com>
+
+	* OdbcMetaDataCollectionNamesTest.cs: New.
+
 2007-10-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* OdbcDataAdapterTest.cs: Added tests for ctors, DeleteCommand,

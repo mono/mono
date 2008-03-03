@@ -188,6 +188,7 @@ System.Data.OleDb/OleDbException.cs
 System.Data.OleDb/OleDbInfoMessageEventArgs.cs
 System.Data.OleDb/OleDbInfoMessageEventHandler.cs
 System.Data.OleDb/OleDbLiteral.cs
+System.Data.OleDb/OleDbMetaDataCollectionNames.cs
 System.Data.OleDb/OleDbParameter.cs
 System.Data.OleDb/OleDbParameterCollection.cs
 System.Data.OleDb/OleDbPermission.cs

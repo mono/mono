@@ -93,6 +93,7 @@ System.Data.Common/DbTransactionTest.cs
 System.Data.Odbc/OdbcCommandTest.cs
 System.Data.Odbc/OdbcConnectionTest.cs
 System.Data.Odbc/OdbcDataAdapterTest.cs
+System.Data.Odbc/OdbcMetaDataCollectionNamesTest.cs
 System.Data.Odbc/OdbcParameterCollectionTest.cs
 System.Data.Odbc/OdbcParameterTest.cs
 System.Data.Odbc/OdbcPermissionAttributeTest.cs
@@ -100,12 +101,14 @@ System.Data.Odbc/OdbcPermissionTest.cs
 System.Data.OleDb/OleDbCommandTest.cs
 System.Data.OleDb/OleDbConnectionTest.cs
 System.Data.OleDb/OleDbDataAdapterTest.cs
+System.Data.OleDb/OleDbMetaDataCollectionNamesTest.cs
 System.Data.OleDb/OleDbParameterCollectionTest.cs
 System.Data.OleDb/OleDbPermissionAttributeTest.cs
 System.Data.OleDb/OleDbPermissionTest.cs
 System.Data.SqlClient/SqlCommandTest.cs
 System.Data.SqlClient/SqlConnectionTest.cs
 System.Data.SqlClient/SqlConnectionStringBuilderTest.cs
+System.Data.SqlClient/SqlClientMetaDataCollectionNamesTest.cs
 System.Data.SqlClient/SqlClientPermissionAttributeTest.cs
 System.Data.SqlClient/SqlClientPermissionTest.cs
 System.Data.SqlClient/SqlDataAdapterTest.cs

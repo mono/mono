@@ -1,11 +1,11 @@
 //
-// System.Data.Odbc.OdbcMetaDataCollectionNames.cs
+// System.Data.OleDb.OleDbMetaDataCollectionNames.cs
 //
 // Author:
-//   Nagappan A <anagappan@novell.com>
+//   Ankit Jain <jankit@novell.com>
 //
 //
-// Copyright (C) 2007 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,12 +29,14 @@
 
 #if NET_2_0
 
-namespace System.Data.Odbc
+namespace System.Data.OleDb
 {
 	/// <summary>
 	/// Collection names
 	/// </summary>
-	public static class OdbcMetaDataCollectionNames {
+	public static class OleDbMetaDataCollectionNames {
+		public static readonly string Catalogs = "Catalogs";
+		public static readonly string Collations = "Collations";
 		public static readonly string Columns = "Columns";
 		public static readonly string Indexes = "Indexes";
 		public static readonly string ProcedureColumns = "ProcedureColumns";

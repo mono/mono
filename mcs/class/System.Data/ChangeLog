@@ -1,3 +1,9 @@
+2008-03-03  Ankit Jain  <jankit@novell.com>
+
+	* System.Data.dll.sources: Add new OleDbMetaDataCollectionNames.cs
+	* System.Data_test.dll.sources: Add the new OdbcMetaDataColumnNamesTest,
+	OleDbMetaDataCollectionNamesTest and SqlClientMetaDataCollectionNamesTest.
+
 2007-11-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Data_test.dll.sources: added MonkeyDataSet.cs, test helper.

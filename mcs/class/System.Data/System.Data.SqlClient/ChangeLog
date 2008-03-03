@@ -1,3 +1,7 @@
+2008-03-03  Ankit Jain  <jankit@novell.com>
+
+	* SqlClientMetaDataCollectionNames.cs: Set the field values.
+
 2007-10-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SqlCommand.cs: Use ExceptionHelper.CheckEnumValue for enum checks.
