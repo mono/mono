@@ -1,3 +1,10 @@
+2008-03-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: Implement support for custom column width based on
+	Columns collection (we were previously using this collection only
+	with Details view).
+	Fixes #364484.
+
 2008-03-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListViewItem.cs: For Tile view, always set bounds for the first

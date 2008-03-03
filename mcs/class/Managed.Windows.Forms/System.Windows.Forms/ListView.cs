@@ -101,6 +101,7 @@ namespace System.Windows.Forms
 		private Point [] items_location;
 		private ItemMatrixLocation [] items_matrix_location;
 		private Size item_size; // used for caching item size
+		private int custom_column_width; // used when using Columns with SmallIcon/List views
 		private int hot_item_index = -1;
 #if NET_2_0
 		private bool hot_tracking;
@@ -387,6 +388,12 @@ namespace System.Windows.Forms
 
 		internal override bool ScaleChildrenInternal {
 			get { return false; }
+		}
+
+		internal bool UseCustomColumnWidth {
+			get {
+				return (view == View.List || view == View.SmallIcon) && columns.Count > 0;
+			}
 		}
 
 		#endregion	// Private Internal Properties
@@ -1681,6 +1688,9 @@ namespace System.Windows.Forms
 		void CalculateRowsAndCols (Size item_size, bool left_aligned, int x_spacing, int y_spacing)
 		{
 			Rectangle area = ClientRectangle;
+
+			if (UseCustomColumnWidth)
+				CalculateCustomColumnWidth ();
 #if NET_2_0
 			if (show_groups && groups.Count > 0 && view != View.List) {
 				// When groups are used the alignment is always top-aligned
@@ -1716,14 +1726,33 @@ namespace System.Windows.Forms
 						rows = 1;
 					cols = (int) Math.Ceiling ((double)items.Count / (double)rows);
 				} else {
-					cols = (int) Math.Floor ((double)(area.Width - v_scroll.Width + x_spacing) / (double)(item_size.Width + x_spacing));
-					if (cols <= 0)
+					if (UseCustomColumnWidth)
+						cols = (int) Math.Floor ((double)(area.Width - v_scroll.Width) / (double)(custom_column_width));
+					else
+						cols = (int) Math.Floor ((double)(area.Width - v_scroll.Width + x_spacing) / (double)(item_size.Width + x_spacing));
+
+					if (cols < 1)
 						cols = 1;
+
 					rows = (int) Math.Ceiling ((double)items.Count / (double)cols);
 				}
 			}
 
 			item_index_matrix = new int [rows, cols];
+		}
+
+		// When using custom column width, we look for the minimum one
+		void CalculateCustomColumnWidth ()
+		{
+			int min_width = Int32.MaxValue;
+			for (int i = 0; i < columns.Count; i++) {
+				int col_width = columns [i].Width;
+
+				if (col_width < min_width)
+					min_width = col_width;
+			}
+
+			custom_column_width = min_width;
 		}
 
 		void LayoutIcons (Size item_size, bool left_aligned, int x_spacing, int y_spacing)
@@ -1744,9 +1773,8 @@ namespace System.Windows.Forms
 
 			CalculateRowsAndCols (sz, left_aligned, x_spacing, y_spacing);
 
+			layout_wd = UseCustomColumnWidth ? cols * custom_column_width : cols * (sz.Width + x_spacing) - x_spacing;
 			layout_ht = rows * (sz.Height + y_spacing) - y_spacing;
-			layout_wd = cols * (sz.Width + x_spacing) - x_spacing;
-
 #if NET_2_0
 			if (using_groups)
 				CalculateGroupsLayout (sz, y_spacing, 0);
@@ -1770,7 +1798,7 @@ namespace System.Windows.Forms
 					row = (current_item / cols);
 					col = current_item % cols;
 
-					x = col * (item_size.Width + x_spacing);
+					x = UseCustomColumnWidth ? col * custom_column_width : col * (item_size.Width + x_spacing);
 					y = row * (item_size.Height + y_spacing) + group_items_loc.Y;
 
 					SetItemLocation (i, x, y, row + starting_row, col);
@@ -1778,7 +1806,7 @@ namespace System.Windows.Forms
 				} else
 #endif
 				{
-					x = col * (item_size.Width + x_spacing);
+					x = UseCustomColumnWidth ? col * custom_column_width : col * (item_size.Width + x_spacing);
 					y = row * (item_size.Height + y_spacing);
 
 					SetItemLocation (i, x, y, row, col);
