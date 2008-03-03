@@ -1,5 +1,9 @@
 2008-03-03 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (token_bounds_check): Fix the build I just broke.
+
+2008-03-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (token_bounds_check): Fix bounds check for dynamic images.
 
 	* verify.c (verifier_load_method): Fixed the errors message.
