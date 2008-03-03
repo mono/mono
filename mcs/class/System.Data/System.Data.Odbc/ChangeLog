@@ -1,3 +1,56 @@
+2008-03-03  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes Bug#324025
+	* OdbcDataReader (GetString): Use Convert.ToString() to return
+	appropriate typed values.
+	(GetValue): Fixes a regression. 
+	
+2008-03-03  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* OdbcCommandBuilder.cs: Clean up.
+	
+2008-03-03  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes Bug#340451 - patch provided by Ernesto Carrea
+	<equistango@gmail.com>
+	* OdbcConnection.cs (GetInfo): Trim the value to actual length
+	returned by libodbc.
+	
+2008-03-03  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes from BNC#332809 - patch provided by Ernesto Carrea
+	<equistango@gmail.com>
+	* OdbcParameter.cs (Bind): Do not allocate buffer if value is
+	DBNull.
+	* OdbcTypeConverter.cs (InferFromValue): Incase of DBNull, do not
+	throw exception, instead return NVarChar to match MS.NET
+	implementation.
+	
+2008-02-26  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes BNC#364432.
+	* OdbcParameter.cs: (Bind): Set StrLen parameter of
+	SQLBindParameter to reflect NullData in case of DBNull.
+	(CopyValue): If Value is DBNull.Value, just don't try any
+	heroics. 
+	
+2008-02-25  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes BNC#364426.
+	* OdbcDataReader.cs: (GetValue): Map OdbcType.Time to
+	System.TimeSpan.  
+
+	* OdbcTypeConverter.cs: (GetTypeMap): Map OdbcType.Time and
+	SqlType.TIME to corresponding types. 
+
+	* OdbcColumn.cs: -- ditto --
+	
+2008-02-20  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* OdbcDataReader.cs: (GetValue): Handle cases when certain 
+	ODBC drivers return unexpected results.  Fixes #326740.  Patch 
+	provided by Mark Junker <mjscod@gmx.de>.
+	
 2008-01-16  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* OdbcCommandBuilder.cs: Implemented 2.0 APIs and code

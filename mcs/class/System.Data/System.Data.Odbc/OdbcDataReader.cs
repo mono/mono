@@ -598,7 +598,12 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		string GetString (int ordinal)
 		{
-			return (string) GetValue (ordinal);
+			object ret = GetValue (ordinal);
+
+			if (ret != null && ret.GetType () != typeof (string))
+				return (string) Convert.ToString (ret);
+			else
+				return (string) GetValue (ordinal);
 		}
 
 		[MonoTODO]
@@ -682,7 +687,10 @@ namespace System.Data.Odbc
 						ret = libodbc.SQLGetData (hstmt, ColIndex, col.SqlCType, buffer, bufsize, ref outsize);
 						if (ret == OdbcReturn.Error)
 							break;
-						if (ret != OdbcReturn.NoData && outsize!=-1) {
+						// Fix for strance ODBC drivers (like psqlODBC)
+						if (ret == OdbcReturn.Success && outsize==-1)
+							ret = OdbcReturn.NoData;
+						if (ret != OdbcReturn.NoData && outsize > 0) {
 							if (outsize < bufsize)
 								sb.Append (System.Text.Encoding.Unicode.GetString(buffer,0,outsize));
 							else
@@ -700,7 +708,10 @@ namespace System.Data.Odbc
 						ret = libodbc.SQLGetData (hstmt, ColIndex, col.SqlCType, buffer, bufsize, ref outsize);
 						if (ret == OdbcReturn.Error)
 							break;
-						if (ret != OdbcReturn.NoData && outsize!=-1) {
+						// Fix for strance ODBC drivers (like psqlODBC)
+						if (ret == OdbcReturn.Success && outsize==-1)
+							ret = OdbcReturn.NoData;
+						if (ret != OdbcReturn.NoData && outsize > 0) {
 							if (outsize < bufsize)
 								sb1.Append (System.Text.Encoding.Default.GetString(buffer,0,outsize));
 							else
@@ -726,11 +737,16 @@ namespace System.Data.Odbc
 					OdbcTimestamp ts_data = new OdbcTimestamp();
 					ret = libodbc.SQLGetData (hstmt, ColIndex, col.SqlCType, ref ts_data, 0, ref outsize);
 					if (outsize != -1) {// This means SQL_NULL_DATA
-						DataValue = new DateTime(ts_data.year, ts_data.month,
-							ts_data.day, ts_data.hour, ts_data.minute,
-							ts_data.second);
-						if (ts_data.fraction != 0)
-							DataValue = ((DateTime) DataValue).AddTicks ((long)ts_data.fraction / 100);
+						if (col.OdbcType == OdbcType.Time) {
+							// libodbc returns value in first three fields for OdbcType.Time 
+							DataValue = new System.TimeSpan (ts_data.year, ts_data.month, ts_data.day);
+						} else {
+							DataValue = new DateTime(ts_data.year, ts_data.month,
+							                         ts_data.day, ts_data.hour, ts_data.minute,
+							                         ts_data.second);
+							if (ts_data.fraction != 0)
+								DataValue = ((DateTime) DataValue).AddTicks ((long)ts_data.fraction / 100);
+						}
 					}
 					break;
 				case OdbcType.VarBinary :

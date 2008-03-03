@@ -60,8 +60,7 @@ namespace System.Data.Odbc
 			case TypeCode.Empty:
 			case TypeCode.Object:
 			case TypeCode.DBNull:
-				throw new ArgumentException (String.Format ("Infering OdbcType from {0} is not supported",
-									    Type.GetTypeCode (value.GetType ())));
+				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.NVarChar];  //Default to NVarChar as in MS.net. OdbcParameter.Bind() will take care.
 			case TypeCode.Boolean:
 				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.Bit];
 			case TypeCode.Char:
@@ -142,13 +141,14 @@ namespace System.Data.Odbc
 				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.Real];
 			case SQL_TYPE.SMALLINT:
 				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.SmallInt];
+			case SQL_TYPE.TYPE_TIME:
 			case SQL_TYPE.TIME:
+				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.Time];
 			case SQL_TYPE.TIMESTAMP:
 				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.DateTime];
 			case SQL_TYPE.TINYINT:
 				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.TinyInt];
 			case SQL_TYPE.TYPE_DATE:
-			case SQL_TYPE.TYPE_TIME:
 			case SQL_TYPE.TYPE_TIMESTAMP:
 				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.DateTime];
 			case SQL_TYPE.VARBINARY:

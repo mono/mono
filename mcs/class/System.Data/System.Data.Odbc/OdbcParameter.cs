@@ -313,15 +313,23 @@ namespace System.Data.Odbc
 
 		internal void Bind(IntPtr hstmt, int ParamNum) {
 			OdbcReturn ret;
+			int len;
 			
 			// Convert System.Data.ParameterDirection into odbc enum
 			OdbcInputOutputDirection paramdir = libodbc.ConvertParameterDirection(this.Direction);
 
 			_cbLengthInd.EnsureAlloc (Marshal.SizeOf (typeof (int)));
-			Marshal.WriteInt32 (_cbLengthInd, GetNativeSize ());
-			AllocateBuffer ();
+			if (Value is DBNull)
+				len = (int)OdbcLengthIndicator.NullData;
+			else {
+				len = GetNativeSize ();
+				AllocateBuffer ();
+			}	
+			
+			Marshal.WriteInt32 (_cbLengthInd, len);
 			ret = libodbc.SQLBindParameter(hstmt, (ushort) ParamNum, (short) paramdir,
-						       _typeMap.NativeType, _typeMap.SqlType, Convert.ToUInt32(Size),
+						       _typeMap.NativeType, _typeMap.SqlType, 
+			                   Convert.ToUInt32(Size),
 						       0, (IntPtr) _nativeBuffer, 0, _cbLengthInd);
 
 			// Check for error condition
@@ -416,6 +424,9 @@ namespace System.Data.Odbc
 			if (_nativeBuffer.Handle == IntPtr.Zero)
 				return;
 
+			if (Value is DBNull)
+				return;
+			
 			DateTime dt;
 			TextInfo ti = CultureInfo.InvariantCulture.TextInfo;
 			Encoding enc = Encoding.GetEncoding (ti.ANSICodePage);
