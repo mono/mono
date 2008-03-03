@@ -297,12 +297,11 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				string error = null;
 				bool changed = entry.SetValue (value, out error);
 				if (!changed && error != null) {
-					if (property_grid.ShowError (error, MessageBoxButtons.OKCancel) == DialogResult.Cancel)
-						UpdateItem (entry); // restore value, repaint, etc
-					else
+					if (property_grid.ShowError (error, MessageBoxButtons.OKCancel) == DialogResult.OK)
 						return false;
 				}
 			}
+			UpdateItem (entry); // restore value, repaint, etc
 			return true;
 		}
 
@@ -752,10 +751,10 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			GridEntry entry = this.SelectedGridItem as GridEntry;
 			if (entry != null) {
 				grid_textbox.Text = (string) ((ListBox) sender).SelectedItem;
-				if (TrySetEntry (entry, (string) ((ListBox) sender).SelectedItem))
+				CloseDropDown ();
+				if (TrySetEntry (entry, grid_textbox.Text))
 					UnfocusSelection ();
 			}
-			CloseDropDown ();
 		}
 
 		private void DropDownButtonClicked (object sender, EventArgs e) 
@@ -773,8 +772,11 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				else {
 					ICollection std_values = entry.AcceptedValues;
 					if (std_values != null) {
-						if (dropdown_list == null)
+						if (dropdown_list == null) {
 							dropdown_list = new ListBox ();
+							dropdown_list.KeyDown += new KeyEventHandler (listBox_KeyDown);
+							dropdown_list.MouseUp += new MouseEventHandler (listBox_MouseUp);
+						}
 						dropdown_list.Items.Clear ();
 						dropdown_list.BorderStyle = BorderStyle.FixedSingle;
 						int selected_index = 0;
@@ -788,8 +790,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 						}
 						dropdown_list.Height = row_height * Math.Min (dropdown_list.Items.Count, 15);
 						dropdown_list.Width = ClientRectangle.Width - SplitterLocation - (vbar.Visible ? vbar.Width : 0);
-						dropdown_list.KeyDown += new KeyEventHandler (listBox_KeyDown);
-						dropdown_list.MouseUp+=new MouseEventHandler (listBox_MouseUp);
 						if (std_values.Count > 0)
 							dropdown_list.SelectedIndex = selected_index;
 						DropDownControl (dropdown_list);
@@ -911,8 +911,10 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			if (newItem != null) {
 				UpdateItem (newItem);
 				ScrollToItem (newItem);
-			} else
+			} else {
 				grid_textbox.Visible = false;
+				vbar.Visible = false;
+			}
 		}
 
 		internal void UpdateView ()
