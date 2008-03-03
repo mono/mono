@@ -5,7 +5,7 @@
 // 	Sanjay Gupta <gsanjay@novell.com>
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004,2006-2007 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006-2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -236,6 +236,16 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (32, clone.Width, "Width");
 			Assert.AreEqual (32, clone.Size.Width, "Size.Width");
 			Assert.AreEqual (32, clone.Size.Height, "Size.Height");
+		}
+
+		[Test]
+		public void CloneHandleIcon ()
+		{
+			Icon clone = (Icon) Icon.FromHandle (SystemIcons.Hand.Handle).Clone ();
+			Assert.AreEqual (SystemIcons.Hand.Height, clone.Height, "Height");
+			Assert.AreEqual (SystemIcons.Hand.Width, clone.Width, "Width");
+			Assert.AreEqual (SystemIcons.Hand.Size.Width, clone.Size.Width, "Size.Width");
+			Assert.AreEqual (SystemIcons.Hand.Size.Height, clone.Size.Height, "Size.Height");
 		}
 
 		private void XPIcon (int size)
