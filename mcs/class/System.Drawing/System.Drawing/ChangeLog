@@ -1,3 +1,9 @@
+2008-03-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Graphics.cs: Sync with HEAD. This fix CopyFromScreen for X11 
+	when source or destination coordinates are not 0 (bug #363881),
+	remove some dead code and adds some comments.
+
 2008-03-03  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* ImageFormatConverter.cs: Perform a case insensitive comparison 
