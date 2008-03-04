@@ -1,3 +1,8 @@
+2008-03-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_layout_fields): Set the min alignment of small structs to
+	their size on all platforms for perf reasons.
+
 2008-03-03 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* reflection.h: Move mono_reflection_is_valid_dynamic_token to
