@@ -1,5 +1,8 @@
 2008-03-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* local-propagation.c (mono_local_deadce): Avoid treating the inputs of
+	eliminated instructions as used.
+
 	* method-to-ir.c (mono_method_to_ir2): Optimize the ldloca+initobj combination.
 
 	* generics.cs: Add a test for the ldloca+initobj optimization.

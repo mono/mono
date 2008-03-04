@@ -1771,10 +1771,13 @@ mono_local_deadce (MonoCompile *cfg)
 							if (bb->last_ins == ins)
 								bb->last_ins = NULL;
 						}
+						NULLIFY_INS (ins);
+						spec = INS_INFO (ins->opcode);
 					}
 				}
 
-				mono_bitset_clear_fast (used, ins->dreg);
+				if (spec [MONO_INST_DEST] != ' ')
+					mono_bitset_clear_fast (used, ins->dreg);
 			}
 
 			if (spec [MONO_INST_DEST] != ' ')
