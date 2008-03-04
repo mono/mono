@@ -8,16 +8,6 @@ Iterators
 	are referenced, but when we call "ComputeMethodHost" in
 	iterators.cs:854 this information is not yet available.
 
-* Anonymous Methods
-===================
-
-In EmitAnonymousHelperClasses we set the "NeedThis" parameter of all
-the roots, but this is not necessary.  We should track the
-"HaveCapturedFields" on a per-ScopeInfo basis, and only set the
-HaveCapturedFields on the proper roots, instead of all the roots.
-
-
-
 ===========================================
 
 * Value Parameter
@@ -251,5 +241,15 @@ RECOMMENDATIONS
 
 	Notice how numbering of the arguments changes as the
 	{ oob_stack.Push (lexer.Location) } takes a "slot"  in the productions.
+
+
+* Anonymous Methods
+===================
+
+In EmitAnonymousHelperClasses we set the "NeedThis" parameter of all
+the roots, but this is not necessary.  We should track the
+"HaveCapturedFields" on a per-ScopeInfo basis, and only set the
+HaveCapturedFields on the proper roots, instead of all the roots.
+
 
 
