@@ -6,7 +6,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // Portions (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004-2007 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -247,8 +247,13 @@ namespace Mono.Security.Cryptography {
 			if (!encrypt && (0 > len) && ((algo.Padding == PaddingMode.None) || (algo.Padding == PaddingMode.Zeros))) {
 				throw new CryptographicException ("outputBuffer", Locale.GetText ("Overflow"));
 			} else 	if (KeepLastBlock) {
-				if (0 > len + BlockSizeByte)
+				if (0 > len + BlockSizeByte) {
+#if NET_2_0
 					throw new CryptographicException ("outputBuffer", Locale.GetText ("Overflow"));
+#else
+					throw new IndexOutOfRangeException (Locale.GetText ("Overflow"));
+#endif
+				}
 			} else {
 				if (0 > len) {
 					// there's a special case if this is the end of the decryption process
@@ -449,7 +454,7 @@ namespace Mono.Security.Cryptography {
 			case PaddingMode.ANSIX923:
 				if ((padding == 0) || (padding > BlockSizeByte))
 					ThrowBadPaddingException (algo.Padding, padding, -1);
-				for (int i=padding; i > 0; i--) {
+				for (int i = padding - 1; i > 0; i--) {
 					if (res [total - 1 - i] != 0x00)
 						ThrowBadPaddingException (algo.Padding, -1, i);
 				}
@@ -463,7 +468,7 @@ namespace Mono.Security.Cryptography {
 			case PaddingMode.PKCS7:
 				if ((padding == 0) || (padding > BlockSizeByte))
 					ThrowBadPaddingException (algo.Padding, padding, -1);
-				for (int i=padding - 1; i > 0; i--) {
+				for (int i = padding - 1; i > 0; i--) {
 					if (res [total - 1 - i] != padding)
 						ThrowBadPaddingException (algo.Padding, -1, i);
 				}
