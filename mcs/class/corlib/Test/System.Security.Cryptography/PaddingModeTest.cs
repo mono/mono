@@ -5,7 +5,7 @@
 //	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -43,7 +43,7 @@ namespace MonoTests.System.Security.Cryptography {
 
 		public void AssertEquals (string msg, byte[] array1, byte[] array2) 
 		{
-			AllTests.AssertEquals (msg, array1, array2);
+			Assert.AreEqual (array1, array2, msg);
 		}
 
 		protected byte[] CombineKeys (byte[] key1, byte[] key2, byte[] key3) 
@@ -996,6 +996,24 @@ namespace MonoTests.System.Security.Cryptography {
 		{
 			Assert.AreEqual ("46-34-5C-8E-EB-DC-74-5C", MAC (PaddingMode.Zeros, 8));
 			Assert.AreEqual ("46-34-5C-8E-EB-DC-74-5C", MAC (PaddingMode.Zeros, 4));
+		}
+
+		// https://bugzilla.novell.com/show_bug.cgi?id=366623
+
+		[Test]
+		public void ANSIX923_366623 ()
+		{
+			TripleDES algo = GetTripleDES ();
+			algo.IV = new byte [algo.BlockSize >> 3];
+			algo.Mode = CipherMode.ECB;
+			algo.Padding = PaddingMode.ANSIX923;
+
+			ICryptoTransform enc = algo.CreateEncryptor ();
+			byte[] data = new byte [2] { 0xff, 0xff };
+			byte[] encdata = enc.TransformFinalBlock (data, 0, 2);
+			ICryptoTransform dec = algo.CreateDecryptor ();
+			byte[] decdata = dec.TransformFinalBlock (encdata, 0, encdata.Length);
+			Assert.AreEqual (data, decdata);
 		}
 #endif
 	}

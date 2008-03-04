@@ -1,3 +1,8 @@
+2008-03-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PaddingModeTest.cs: Add test case for #366623 ANSI padding bug.
+	[Backport r97310]
+
 2008-02-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Rfc2898DeriveBytesTest.cs: Add test cases for consecutive calls to
