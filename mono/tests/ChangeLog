@@ -1,3 +1,8 @@
+2008-03-04  Mark Probst  <mark.probst@gmail.com>
+
+	* generics-sharing.2.c: Added test for open catch clauses in
+	shared generic code.
+
 2008-02-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am: Compile and run all tests using the 2.0 profile.

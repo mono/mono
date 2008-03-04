@@ -1,3 +1,22 @@
+2008-03-04  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: For shared methods of generic classes put the location
+	of "this" into the MonoGenericJitInfo.
+
+	* mini-x86.c, mini-amd64.c, mini.h: Added function for fetching a
+	register out of a MonoContext by register number.  Add the generic
+	sharing context as an argument to mono_arch_find_this_argument().
+
+	* mini-alpha.c, mini-arm.c, mini-hppa.c, mini-ia64.c, mini-mips.c,
+	mini-ppc.c, mini-s390.c, mini-s390x.c, mini-sparc.c: Added stub
+	for new arch function.
+
+	* mini-exception.c: Handle open exception clauses in shared
+	generic code.
+
+	* mini-trampolines.c: Supply additional argument to
+	mono_arch_find_this_argument().
+
 2008-03-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am (regtests): Run the bench.exe tests last.
