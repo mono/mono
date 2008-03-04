@@ -140,8 +140,9 @@ System.Reflection.Emit/TypeBuilderTest.cs
 System.Reflection/ModuleTest.cs
 System.Reflection/StrongNameKeyPairTest.cs
 System/ResolveEventArgsTest.cs
-System.Resources/ResourceReaderTest.cs
 System.Resources/ResourceManagerTest.cs
+System.Resources/ResourceReaderTest.cs
+System.Resources/ResourceSetTest.cs
 System.Resources/ResourceWriterTest.cs
 System.Runtime.CompilerServices/RuntimeHelpersTest.cs
 System.Runtime.CompilerServices/RuntimeWrappedExceptionTest.cs

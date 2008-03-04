@@ -1,7 +1,8 @@
-2008-03-04  Sebastien Pouliot  <sebastien@ximian.com>
+2008-03-04  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* corlib.dll.sources: Add internal System.Resources.RuntimeResourceSet
 	to the build.
+	* corlib_test.dll.sources: Add unit tests for ResourceSet
 
 2008-02-18  Zoltan Varga  <vargaz@gmail.com>
 
