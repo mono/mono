@@ -1,3 +1,7 @@
+2008-03-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* mono-api.xsl : add support for parameters.
+
 2008-02-27  Chris Toshok  <toshok@ximian.com>
 
 	* mono-api-info.cs: include protected nested classes in the

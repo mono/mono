@@ -480,6 +480,14 @@
 			<xsl:if test="not(@presence)">
 				<xsl:call-template name="status"/>
 			</xsl:if>
+			<xsl:for-each select="parameters/parameter[warnings/warning]">
+				<div>
+					<xsl:call-template name="ELEMENT">
+						<xsl:with-param name="class">a</xsl:with-param>
+						<xsl:with-param name="image">tb</xsl:with-param>
+					</xsl:call-template>
+				</div>
+			</xsl:for-each>
 	</xsl:template>
 
 	<xsl:template name="status">
