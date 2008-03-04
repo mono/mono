@@ -101,14 +101,15 @@ default_dirs :=		\
 	Mono.Cecil.Mdb		\
 
 net_2_0_dirs := \
+	Microsoft.Build.Framework	\
+	Microsoft.Build.Utilities	\
+	Microsoft.Build.Engine		\
+	Microsoft.Build.Tasks		\
 	System.Core			\
 	System.Web.Extensions		\
 	System.Web.Extensions.Design	\
 	System.Xml.Linq			\
-	Microsoft.Build.Framework	\
-	Microsoft.Build.Utilities	\
-	Microsoft.Build.Engine		\
-	Microsoft.Build.Tasks
+	System.Data.Linq
 
 net_2_1_dirs := \
 	corlib			\
