@@ -1,3 +1,8 @@
+2008-03-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SymmetricTransform.cs: Fix ANSIX923 padding check (#366623) to be
+	just like PKCS7 (but comparing to 0).
+
 2008-02-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DSAManaged.cs: Replace "" (found by Gendarme) with more useful text.
