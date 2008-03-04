@@ -546,6 +546,7 @@ System.Resources/ResourceManager.cs
 System.Resources/ResourceReader.cs
 System.Resources/ResourceSet.cs
 System.Resources/ResourceWriter.cs
+System.Resources/RuntimeResourceSet.cs
 System.Resources/SatelliteContractVersionAttribute.cs
 System.Resources/UltimateResourceFallbackLocation.cs
 System.Resources/Win32Resources.cs
