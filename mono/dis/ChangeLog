@@ -1,3 +1,8 @@
+2008-03-05  Ankit Jain  <jankit@novell.com>
+
+	* dis-cil.c (disassemble_cil): For catch clause, emit stringified class
+	with prefix.
+
 2008-02-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* get.c (get_escaped_name): Escape the name if it begins with a dot. Fixes
