@@ -55,42 +55,45 @@ namespace System.Resources
 		protected IResourceReader Reader;
 		protected Hashtable Table;
 
+		[NonSerialized]
+		private bool disposed;
+
 		// Constructors
-		protected ResourceSet () {}
+		protected ResourceSet ()
+		{
+			Table = new Hashtable ();
+		}
 
 		public ResourceSet (IResourceReader reader)
 		{
 			if (reader == null)
-				throw new ArgumentNullException ("The reader is null.");
+				throw new ArgumentNullException ("reader");
 			Reader = reader;
 		}
 
 		[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
 		public ResourceSet (Stream stream)
 		{
-			if(stream==null) {
-				throw new ArgumentNullException("stream is null");
-			}
+			if (stream == null)
+				throw new ArgumentNullException ("stream");
 
-			if(!stream.CanRead) {
-				throw new ArgumentException("stream is not readable");
-			}
+			if (!stream.CanRead)
+				throw new ArgumentException ("stream is not readable");
 			
 			Reader = new ResourceReader (stream);
 		}
 
-		public ResourceSet (String fileName)
+		public ResourceSet (string fileName)
 		{
-			if(fileName==null) {
-				throw new ArgumentNullException("filename is null");
-			}
+			if (fileName == null)
+				throw new ArgumentNullException ("fileName");
 			
 			Reader = new ResourceReader (fileName);
 		}
 
 		public virtual void Close ()
 		{
-			Dispose (true);
+			Dispose ();
 		}
 
 		public void Dispose()
@@ -111,12 +114,14 @@ namespace System.Resources
 
 			Reader = null;
 			Table = null;
+			disposed = true;
 		}
 
 		public virtual Type GetDefaultReader ()
 		{
 			return (typeof (ResourceReader));
-		} 
+		}
+
 		public virtual Type GetDefaultWriter ()
 		{
 			return (typeof (ResourceWriter));
@@ -127,6 +132,8 @@ namespace System.Resources
 		[ComVisible (false)]
 		public virtual IDictionaryEnumerator GetEnumerator ()
 		{
+			if (disposed)
+				throw new ObjectDisposedException ("Instance was disposed.");
 			if (Table == null)
 				ReadResources ();
 			return Table.GetEnumerator(); 
@@ -138,27 +145,12 @@ namespace System.Resources
 		}
 
 #endif
-
-		public virtual object GetObject (string name)
+		private object GetObjectInternal (string name, bool ignoreCase)
 		{
 			if (name == null)
-				throw new ArgumentNullException ("The name parameter is null.");
-			if (Reader == null)
-				throw new InvalidOperationException ("The ResourceSet has been closed.");
-
-			if (Table == null) { 
-				ReadResources ();
-			}
-			
-			return(Table[name]);
-		}
-
-		public virtual object GetObject (string name, bool ignoreCase)
-		{
-			if (name == null)
-				throw new ArgumentNullException ("The name parameter is null.");
-			if (Reader == null)
-				throw new InvalidOperationException ("ResourceSet has been closed.");
+				throw new ArgumentNullException ("name");
+			if (disposed)
+				throw new ObjectDisposedException ("Instance was disposed.");
 			if (Table == null)
 				ReadResources ();
 
@@ -173,24 +165,37 @@ namespace System.Resources
 				return Table[name];
 		}
 
+		public virtual object GetObject (string name)
+		{
+			return GetObjectInternal (name, false);
+		}
+
+		public virtual object GetObject (string name, bool ignoreCase)
+		{
+			return GetObjectInternal (name, ignoreCase);
+		}
+
+		private string GetStringInternal (string name, bool ignoreCase)
+		{
+			object value = GetObject (name, ignoreCase);
+			if (value == null)
+				return null;
+
+			string s = (value as string);
+			if (s == null)
+				throw new InvalidOperationException ("Resource is not a string.");
+
+			return s;
+		}
+
 		public virtual string GetString (string name)
 		{
-			Object o = GetObject (name);
-			if (o == null)
-				return null;
-			if (o is string)
-				return (string) o;
-			throw new InvalidOperationException("Not a string");
+			return GetStringInternal (name, false);
 		}
 
 		public virtual string GetString (string name, bool ignoreCase)
 		{
-			Object o = GetObject (name, ignoreCase);
-			if (o == null)
-				return null;
-			if (o is string)
-				return (string) o;
-			throw new InvalidOperationException("Not a string");
+			return GetStringInternal (name, ignoreCase);
 		}
 
 		protected virtual void ReadResources ()

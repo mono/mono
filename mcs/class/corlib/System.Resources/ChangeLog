@@ -1,3 +1,13 @@
+2008-03-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ResourceManager.cs: Use RuntimeResourceSet, an internal type, just
+	like MS does (and tell us indirectly with a Type property).
+	* ResourceSet.cs: Fix a few problems found with new unit tests. Also
+	fix some exception parameters.
+	* RuntimeResourceSet.cs: New. Internal type used by ResourceManager.
+	ResouceSet cannot be used, as is, because it does not clone objects,
+	when possible, leading to problems when those objects are disposed.
+
 2008-01-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ResourceWriter.cs: On 2.0 profile, do not mistakenly identify an

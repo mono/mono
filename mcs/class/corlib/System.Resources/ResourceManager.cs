@@ -56,7 +56,7 @@ namespace System.Resources
 		
 		private bool ignoreCase;
 		private Type resourceSource;
-		private Type resourceSetType;
+		private Type resourceSetType = typeof (RuntimeResourceSet);
 		private String resourceDir;
 		
 		/* Recursing through culture parents stops here */
@@ -69,10 +69,9 @@ namespace System.Resources
 		// constructors
 		protected ResourceManager ()
 		{
-			resourceSetType = typeof (ResourceSet);
 		}
 		
-		public ResourceManager (Type resourceSource) : this ()
+		public ResourceManager (Type resourceSource)
 		{
 			if (resourceSource == null)
 				throw new ArgumentNullException ("resourceSource");
@@ -84,7 +83,7 @@ namespace System.Resources
 			neutral_culture = GetNeutralResourcesLanguage (MainAssembly);
 		}
 
-		public ResourceManager (string baseName, Assembly assembly) : this ()
+		public ResourceManager (string baseName, Assembly assembly)
 		{
 			if (baseName == null)
 				throw new ArgumentNullException ("baseName");
@@ -112,7 +111,7 @@ namespace System.Resources
 			return usingResourceSet;
 		}
 
-		public ResourceManager (string baseName, Assembly assembly, Type usingResourceSet) : this ()
+		public ResourceManager (string baseName, Assembly assembly, Type usingResourceSet)
 		{
 			if (baseName == null)
 				throw new ArgumentNullException ("baseName");
@@ -130,7 +129,7 @@ namespace System.Resources
 		}
 
 		/* Private constructor for CreateFileBasedResourceManager */
-		private ResourceManager(String baseName, String resourceDir, Type usingResourceSet) : this ()
+		private ResourceManager(String baseName, String resourceDir, Type usingResourceSet)
 		{
 			if (baseName == null)
 				throw new ArgumentNullException ("baseName");
