@@ -1,4 +1,4 @@
-thisdir = class/System.Dat.Linq
+thisdir = class/System.Data.Linq
 SUBDIRS = 
 include ../../build/rules.make
 
@@ -12,13 +12,9 @@ LIB_MCS_FLAGS = \
 
 NO_TEST = yes
 
-# This is a .NET 3.5 only assembly
-VALID_PROFILE := $(filter net_3_5, $(PROFILE))
-ifndef VALID_PROFILE
-LIBRARY_NAME = dummy-System.Data.Linq.dll
-NO_INSTALL = yes
-NO_SIGN_ASSEMBLY = yes
-NO_TEST = yes
+ifeq (2.0, $(FRAMEWORK_VERSION))
+# This is a .NET 3.5 only assembly, but built during the 2.0 build
+LIB_MCS_FLAGS += -d:NET_3_5
 endif
 
 include ../../build/library.make

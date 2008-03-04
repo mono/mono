@@ -34,6 +34,7 @@ using System.Resources;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("System.Data.Linq.dll")]
+[assembly: AssemblyDefaultAlias("System.Data.Linq.dll")]
 [assembly: AssemblyDescription("System.Data.Linq.dll")]
 [assembly: AssemblyCompany("Mono Development Team")]
 [assembly: AssemblyProduct("System.Query")]
