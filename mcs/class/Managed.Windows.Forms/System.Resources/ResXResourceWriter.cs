@@ -32,6 +32,7 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Xml;
+using System.Reflection;
 
 namespace System.Resources
 {
@@ -43,6 +44,7 @@ namespace System.Resources
 		private TextWriter	textwriter;
 		private XmlTextWriter	writer;
 		private bool		written;
+		private string		base_path;
 		#endregion	// Local Variables
 
 		#region Static Fields
@@ -52,7 +54,11 @@ namespace System.Resources
 		public static readonly string ResMimeType			= "text/microsoft-resx";
 		public static readonly string ResourceSchema			= schema;
 		public static readonly string SoapSerializedObjectMimeType	= "application/x-microsoft.net.object.soap.base64";
+#if NET_2_0
+		public static readonly string Version				= "2.0";
+#else
 		public static readonly string Version				= "1.3";
+#endif
 		#endregion	// Static Fields
 
 		#region Constructors & Destructor
@@ -297,9 +303,157 @@ namespace System.Resources
 		}
 
 #if NET_2_0
+		[MonoTODO ("Stub, not implemented")]
+		public virtual void AddAlias (string aliasName, AssemblyName assemblyName)
+		{
+		}
+		
 		public void AddResource (ResXDataNode node)
 		{
 			AddResource (node.Name, node.Value, node.Comment);
+		}
+		
+		public void AddMetadata (string name, string value)
+		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+
+			if (value == null)
+				throw new ArgumentNullException ("value");
+
+			if (written)
+				throw new InvalidOperationException ("The resource is already generated.");
+
+			if (writer == null)
+				InitWriter ();
+
+			writer.WriteStartElement ("metadata");
+			writer.WriteAttributeString ("name", name);
+			writer.WriteAttributeString ("xml:space", "preserve");
+			
+			writer.WriteElementString ("value", value);
+			
+			writer.WriteEndElement ();
+		}
+
+		public void AddMetadata (string name, byte[] value)
+		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+
+			if (value == null)
+				throw new ArgumentNullException ("value");
+
+			if (written)
+				throw new InvalidOperationException ("The resource is already generated.");
+
+			if (writer == null)
+				InitWriter ();
+
+			writer.WriteStartElement ("metadata");
+			writer.WriteAttributeString ("name", name);
+
+			writer.WriteAttributeString ("type", value.GetType ().AssemblyQualifiedName);
+			
+			writer.WriteStartElement ("value");
+			WriteNiceBase64 (value, 0, value.Length);
+			writer.WriteEndElement ();
+
+			writer.WriteEndElement ();
+		}
+		
+		public void AddMetadata (string name, object value)
+		{
+			if (value is string) {
+				AddMetadata (name, (string)value);
+				return;
+			}
+
+			if (value is byte[]) {
+				AddMetadata (name, (byte[])value);
+				return;
+			}
+
+			if (name == null)
+				throw new ArgumentNullException ("name");
+
+			if (value == null)
+				throw new ArgumentNullException ("value");
+
+			if (!value.GetType ().IsSerializable)
+				throw new InvalidOperationException (String.Format ("The element '{0}' of type '{1}' is not serializable.", name, value.GetType ().Name));
+
+			if (written)
+				throw new InvalidOperationException ("The resource is already generated.");
+
+			if (writer == null)
+				InitWriter ();
+
+			Type type = value.GetType ();
+			
+			TypeConverter converter = TypeDescriptor.GetConverter (value);
+			if (converter != null && converter.CanConvertTo (typeof (string)) && converter.CanConvertFrom (typeof (string))) {
+				string str = (string)converter.ConvertToInvariantString (value);
+				writer.WriteStartElement ("metadata");
+				writer.WriteAttributeString ("name", name);
+				if (type != null)
+					writer.WriteAttributeString ("type", type.AssemblyQualifiedName);
+				writer.WriteStartElement ("value");
+				writer.WriteString (str);
+				writer.WriteEndElement ();
+				writer.WriteEndElement ();
+				writer.WriteWhitespace ("\n  ");
+				return;
+			}
+
+			if (converter != null && converter.CanConvertTo (typeof (byte[])) && converter.CanConvertFrom (typeof (byte[]))) {
+				byte[] b = (byte[])converter.ConvertTo (value, typeof (byte[]));
+				writer.WriteStartElement ("metadata");
+				writer.WriteAttributeString ("name", name);
+
+				if (type != null) {
+					writer.WriteAttributeString ("type", type.AssemblyQualifiedName);
+					writer.WriteAttributeString ("mimetype", ByteArraySerializedObjectMimeType);
+					writer.WriteStartElement ("value");
+					WriteNiceBase64 (b, 0, b.Length);
+				} else {
+					writer.WriteAttributeString ("mimetype", BinSerializedObjectMimeType);
+					writer.WriteStartElement ("value");
+					writer.WriteBase64 (b, 0, b.Length);
+				}
+
+				writer.WriteEndElement ();
+				writer.WriteEndElement ();
+				return;
+			}
+
+			MemoryStream ms = new MemoryStream ();
+			BinaryFormatter fmt = new BinaryFormatter ();
+			try {
+				fmt.Serialize (ms, value);
+			} catch (Exception e) {
+				throw new InvalidOperationException ("Cannot add a " + value.GetType () +
+								     "because it cannot be serialized: " +
+								     e.Message);
+			}
+
+			writer.WriteStartElement ("metadata");
+			writer.WriteAttributeString ("name", name);
+
+			if (type != null) {
+				writer.WriteAttributeString ("type", type.AssemblyQualifiedName);
+				writer.WriteAttributeString ("mimetype", ByteArraySerializedObjectMimeType);
+				writer.WriteStartElement ("value");
+				WriteNiceBase64 (ms.GetBuffer (), 0, ms.GetBuffer ().Length);
+			} else {
+				writer.WriteAttributeString ("mimetype", BinSerializedObjectMimeType);
+				writer.WriteStartElement ("value");
+				writer.WriteBase64 (ms.GetBuffer (), 0, ms.GetBuffer ().Length);
+			}
+
+			writer.WriteEndElement ();
+			writer.WriteEndElement ();
+			ms.Close ();
 		}
 #endif
 
@@ -368,5 +522,14 @@ namespace System.Resources
     </xsd:element>
   </xsd:schema>
 ".Replace ("'", "\"");
+
+		#region Public Properties
+#if NET_2_0
+		public string BasePath {
+			get { return base_path; }
+			set { base_path = value; }
+		}
+#endif
+		#endregion
 	}
 }
