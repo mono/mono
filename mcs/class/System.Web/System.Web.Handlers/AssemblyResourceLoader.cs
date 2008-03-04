@@ -299,6 +299,10 @@ namespace System.Web.Handlers {
 					if (rset == null)
 						break;
 					writer.WriteLine ();
+					string ns = sra.TypeName;
+					int indx = ns.LastIndexOf ('.');
+					if (indx > 0)
+						writer.WriteLine ("Type.registerNamespace('" + ns.Substring (0, indx) + "')");
 					writer.Write ("{0}={{", sra.TypeName);
 					bool first = true;
 					foreach (DictionaryEntry entry in rset) {
