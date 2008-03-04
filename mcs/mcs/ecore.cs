@@ -4044,9 +4044,8 @@ namespace Mono.CSharp {
 							}
 						}
 						
-						if (VerifyArgumentsCompat (ec, ref Arguments, arg_count, best_candidate, cand_params, may_fail, loc))
-							throw new InternalErrorException ("Overload verification expected failure");
-						return null;
+						if (!VerifyArgumentsCompat (ec, ref Arguments, arg_count, best_candidate, cand_params, may_fail, loc))
+							return null;
 					}
 				}
 
