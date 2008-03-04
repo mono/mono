@@ -826,14 +826,14 @@ namespace Mono.CSharp {
 				break;
 
 			case Binary.Operator.Equality:
-				if (left is NullConstant){
-					if (right is NullConstant)
+				if (left is NullLiteral){
+					if (right is NullLiteral)
 						return new BoolConstant (true, left.Location);
 					else if (right is StringConstant)
 						return new BoolConstant (
 							((StringConstant) right).Value == null, left.Location);
-				} else if (right is NullConstant){
-					if (left is NullConstant)
+				} else if (right is NullLiteral) {
+					if (left is NullLiteral)
 						return new BoolConstant (true, left.Location);
 					else if (left is StringConstant)
 						return new BoolConstant (
@@ -874,14 +874,14 @@ namespace Mono.CSharp {
 				return new BoolConstant (bool_res, left.Location);
 
 			case Binary.Operator.Inequality:
-				if (left is NullConstant){
-					if (right is NullConstant)
+				if (left is NullLiteral) {
+					if (right is NullLiteral)
 						return new BoolConstant (false, left.Location);
 					else if (right is StringConstant)
 						return new BoolConstant (
 							((StringConstant) right).Value != null, left.Location);
-				} else if (right is NullConstant){
-					if (left is NullConstant)
+				} else if (right is NullLiteral) {
+					if (left is NullLiteral)
 						return new BoolConstant (false, left.Location);
 					else if (left is StringConstant)
 						return new BoolConstant (

@@ -1,3 +1,8 @@
+2008-03-04  Marek Safar  <marek.safar@gmail.com>
+
+	* generic.cs, typemanager.cs, literal.cs, convert.cs, cfold.cs, constant.cs,
+	expression.cs, statement.cs: Unififed null literal representation.
+
 2008-03-03  Marek Safar  <marek.safar@gmail.com>
 
 	* anonymous.cs, cfold.cs, convert.cs, delegate.cs, doc.cs, ecore.cs,

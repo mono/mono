@@ -23,52 +23,34 @@ using System;
 using System.Reflection;
 using System.Reflection.Emit;
 
-//
-// I put System.Null just so we do not have to special case it on 
-// TypeManager.CSharpName
-//
-namespace System {
-	//
-	// Represents the Null Type, just used as a placeholder for the type in NullLiteral
-	//
-	public class Null {
-	}
-}
-	
 namespace Mono.CSharp {
 
 	//
-	// The NullType just exists to compare type equality, and for
-	// expressions that might have the `null type'
+	// The null literal
 	//
-	public class NullType {
-	}
-
-
-	public class NullConstant : Constant
-	{
-		public NullConstant (Location loc):
+	public class NullLiteral : Constant {
+		public NullLiteral (Location loc):
 			base (loc)
 		{
 			eclass = ExprClass.Value;
-			type = TypeManager.null_type;
-		}
-		
-		override public string AsString ()
-		{
-			return "null";
+			type = typeof (NullLiteral);
 		}
 
-		public override object GetValue ()
+		override public string AsString ()
 		{
-			return null;
+			return GetSignatureForError ();
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			return this;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			ec.ig.Emit(OpCodes.Ldnull);
+			ec.ig.Emit (OpCodes.Ldnull);
 		}
-		
+
 		public override string ExprClassName {
 			get {
 				return GetSignatureForError ();
@@ -78,6 +60,34 @@ namespace Mono.CSharp {
 		public override string GetSignatureForError ()
 		{
 			return "null";
+		}
+
+		public override void Error_ValueCannotBeConverted (EmitContext ec, Location loc, Type t, bool expl)
+		{
+			if (TypeManager.IsGenericParameter (t)) {
+				Report.Error(403, loc,
+					"Cannot convert null to the type parameter `{0}' because it could be a value " +
+					"type. Consider using `default ({0})' instead", t.Name);
+			} else {
+				Report.Error(37, loc, "Cannot convert null to `{0}' because it is a value type",
+					TypeManager.CSharpName(t));
+			}
+		}
+
+		public override Constant ConvertImplicitly (Type targetType)
+		{
+			if (targetType.IsPointer)
+				return new EmptyConstantCast (NullPointer.Null, targetType);
+
+			if (TypeManager.IsReferenceType (targetType))
+				return new EmptyConstantCast (this, targetType);
+
+			return null;
+		}
+
+		public override object GetValue ()
+		{
+			return null;
 		}
 
 		public override Constant Increment ()
@@ -111,79 +121,6 @@ namespace Mono.CSharp {
 
 			return null;
 		}
-
-		public override Constant ConvertImplicitly (Type targetType)
-		{
-			if (!TypeManager.IsValueType (targetType))
-				return new EmptyConstantCast (this, targetType);
-
-			return null;
-		}
-	}
-
-	//
-	// Represents default(X) when result can be reduced to null
-	//
-	public class NullDefault : EmptyConstantCast
-	{
-		public NullDefault(Constant value, Type type)
-			: base (value, type)
-		{
-		}
-
-		public override void Error_ValueCannotBeConverted (EmitContext ec, Location loc, Type target, bool expl)
-		{
-			base.Error_ValueCannotBeConverted (ec, loc, target, expl);
-		}
-	}
-
-	//
-	// The null Literal constant
-	//
-	public class NullLiteral : NullConstant {
-		public NullLiteral (Location loc):
-			base (loc)
-		{
-		}
-
-		public override Expression DoResolve (EmitContext ec)
-		{
-			type = TypeManager.null_type;
-			return this;
-		}
-
-		public override void Error_ValueCannotBeConverted (EmitContext ec, Location loc, Type t, bool expl)
-		{
-			if (TypeManager.IsGenericParameter (t)) {
-				Report.Error(403, loc,
-					"Cannot convert null to the type parameter `{0}' because it could be a value " +
-					"type. Consider using `default ({0})' instead", t.Name);
-			} else {
-				Report.Error(37, loc, "Cannot convert null to `{0}' because it is a value type",
-					TypeManager.CSharpName(t));
-			}
-		}
-
-		public override Constant ConvertImplicitly (Type targetType)
-		{
-			if (targetType.IsPointer)
-				return new EmptyConstantCast (NullPointer.Null, targetType);
-
-			if (TypeManager.IsGenericParameter(targetType)) {
-				GenericConstraints gc = null;
-
-#if GMCS_SOURCE
-				gc = TypeManager.GetTypeParameterConstraints(targetType);
-#endif
-				if (gc != null && gc.IsReferenceType)
-					return new EmptyConstantCast (this, targetType);
-
-				return null;
-			}
-
-			return base.ConvertImplicitly(targetType);
-		}
-
 	}
 
 	//

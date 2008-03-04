@@ -272,10 +272,12 @@ namespace Mono.CSharp {
 			if (TypeManager.IsGenericParameter (expr_type))
 				return ImplicitTypeParameterConversion (expr, target_type);
 
+			//
 			// from the null type to any reference-type.
-			if (expr_type == TypeManager.null_type) {
-				NullConstant nc = (NullConstant)expr;
-				return nc.ConvertImplicitly(target_type);
+			//
+			NullLiteral nl = expr as NullLiteral;
+			if (nl != null) {
+				return nl.ConvertImplicitly(target_type);
 			}
 
 			if (ImplicitReferenceConversionCore (expr, target_type))
@@ -1339,7 +1341,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (expr_type.Equals (target_type) && !TypeManager.IsNullType (expr_type))
+			if (expr_type.Equals (target_type) && expr_type != TypeManager.null_type)
 				return expr;
 
 			//

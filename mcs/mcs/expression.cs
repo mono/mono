@@ -45,7 +45,7 @@ namespace Mono.CSharp {
 				return expr_tree (ec, mg);
 
 			ArrayList args = new ArrayList (arguments.Count + 1);
-			args.Add (new Argument (new NullConstant (loc).CreateExpressionTree (ec)));
+			args.Add (new Argument (new NullLiteral (loc).CreateExpressionTree (ec)));
 			args.Add (new Argument (mg.CreateExpressionTree (ec)));
 			foreach (Argument a in arguments) {
 				args.Add (new Argument (a.Expr.CreateExpressionTree (ec)));
@@ -1496,20 +1496,17 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (TypeManager.IsGenericParameter (type))
-			{
+			if (TypeManager.IsGenericParameter (type)) {
 				GenericConstraints constraints = TypeManager.GetTypeParameterConstraints(type);
 				if (constraints != null && constraints.IsReferenceType)
-					return new NullDefault (new NullLiteral (Location), type);
-			}
-			else
-			{
+					return new EmptyConstantCast (new NullLiteral (Location), type);
+			} else {
 				Constant c = New.Constantify(type);
 				if (c != null)
-					return new NullDefault (c, type);
+					return new EmptyConstantCast (c, type);
 
 				if (!TypeManager.IsValueType (type))
-					return new NullDefault (new NullLiteral (Location), type);
+					return new EmptyConstantCast (new NullLiteral (Location), type);
 			}
 			eclass = ExprClass.Variable;
 			return this;
@@ -2508,6 +2505,8 @@ namespace Mono.CSharp {
 			// operator != (object a, object b)
 			// operator == (object a, object b)
 			//
+
+			// TODO: this method is almost equivalent to Convert.ImplicitReferenceConversion
 
 			if (left.eclass == ExprClass.MethodGroup || right.eclass == ExprClass.MethodGroup)
 				return null;
@@ -4449,7 +4448,7 @@ namespace Mono.CSharp {
 			if (mg.IsInstance)
 				args.Add (new Argument (mg.InstanceExpression.CreateExpressionTree (ec)));
 			else
-				args.Add (new Argument (new NullConstant (loc).CreateExpressionTree (ec)));
+				args.Add (new Argument (new NullLiteral (loc).CreateExpressionTree (ec)));
 
 			args.Add (new Argument (mg.CreateExpressionTree (ec)));
 			foreach (Argument a in Arguments) {

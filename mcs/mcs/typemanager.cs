@@ -569,7 +569,7 @@ namespace Mono.CSharp {
 	/// </summary>
 	static public string CSharpName (Type t)
 	{
-		if (t == typeof(NullType))
+		if (t == null_type)
 			return "null";
 
 		if (t == typeof (ArglistParameter))
@@ -1155,7 +1155,7 @@ namespace Mono.CSharp {
 		// These are only used for compare purposes
 		//
 		anonymous_method_type = typeof (AnonymousMethod);
-		null_type = typeof (NullType);
+		null_type = typeof (NullLiteral);
 	}
 
 	//
@@ -1568,11 +1568,6 @@ namespace Mono.CSharp {
 			return true;
 
 		return false;
-	}
-
-	public static bool IsNullType (Type t)
-	{
-		return t == null_type;
 	}
 
 	public static bool IsAttributeType (Type t)

@@ -3353,7 +3353,7 @@ namespace Mono.CSharp {
 			
 			public override Expression CreateExpressionTree (EmitContext ec)
 			{
-				return EmptyCast.Create (new NullConstant (loc), type).CreateExpressionTree (ec);
+				return EmptyCast.Create (new NullLiteral (loc), type).CreateExpressionTree (ec);
 			}			
 		
 			public override Expression DoResolve (EmitContext ec)
