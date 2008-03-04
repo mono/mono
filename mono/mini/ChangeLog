@@ -1,5 +1,13 @@
 2008-03-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (mono_arch_compute_omit_fp): Don't disable fp elimination for 
+	methods returning vtypes in registers.
+	(mono_arch_allocate_vars): Ditto.
+
+	* mini-amd64.c (mono_arch_get_this_arg_reg): New arch specific helper function.
+
+	* tramp-amd64.c (mono_arch_get_unbox_trampoline): Use mono_arch_get_this_arg_reg ().	
+
 	* generics.cs: Add a test from the linear IR branch.
 
 	* mini-amd64.c (emit_load_volatile_arguments): Handle vtypes passed in regs too.
