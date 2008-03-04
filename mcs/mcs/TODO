@@ -29,17 +29,16 @@ HaveCapturedFields on the proper roots, instead of all the roots.
 	Section 9.3 in the latest spec.
 
 
-* Review
---------
+Large project:
+--------------
 
-	Reference type equality operators (15.9.6) introduced
-	operator == (C x, C y) where C is a reference type.
+	Drop FindMembers as our API and instead extract all the data
+	out of a type the first time into our own datastructures, and
+	use that to navigate and search the type instead of the
+	callback based FindMembers.	
 
-	Our compiler used:
-
-	operator == (object a, object b)
-
-	Review our implementation.
+	Martin has some some of this work with his TypeHandle code
+	that we could use for this.
 
 New
 ---
@@ -66,18 +65,6 @@ NEW NOTES:
 
 			if (expr_type == target_type)
 				return true;
-
-
-Null Type
----------
-
-	Need to introduce the NullType concept into the compiler, to address a 
-	few small buglets and remove the hardcoded values for NullLiteral.
-
-	NullLiteral will be the only expression that has the NullType as its type.
-
-	This is what must be used to test for Null literals, instead of `is NullLiteral',
-	and this will introduce a couple of fixes to the rules.
 
 ****************************************************************************************
 * 
@@ -146,17 +133,6 @@ DeclareLocal audit
 	Then we can move DeclareLocal into a helper class.
 
 	This is required to fix foreach in iterators.
-
-Large project:
---------------
-
-	Drop FindMembers as our API and instead extract all the data
-	out of a type the first time into our own datastructures, and
-	use that to navigate and search the type instead of the
-	callback based FindMembers.	
-
-	Martin has some some of this work with his TypeHandle code
-	that we could use for this.
 
 Ideas:
 ------
