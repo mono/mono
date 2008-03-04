@@ -1,3 +1,9 @@
+
+Tue Mar 4 19:04:02 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: mono_load_remote_field_new() always returns object.
+	so use the proper signature (fixes bug #366445).
+
 2008-03-04  Zoltan Varga  <vargaz@gmail.com>
 	
 	* class-internals.h (MonoMethod): Remove unused uses_this flag, 
