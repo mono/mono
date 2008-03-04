@@ -1,3 +1,9 @@
+2008-03-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SymmetricTransform.cs: Sync with corlib. Fix ANSIX923 padding check
+	(#366623)
+	[Backport r97309]
+
 2008-01-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PKCS1.cs: Add a new method that optionally checks for badly 
