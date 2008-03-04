@@ -1,5 +1,8 @@
 2008-03-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c mini.h mini.c: Add support for passing small valuetypes in
+	registers in managed methods.
+
 	* local-propagation.c (mono_local_deadce): Do reverse copyprop for OP_VMOVE as
 	well.
 

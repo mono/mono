@@ -176,7 +176,7 @@ extern int mono_inject_async_exc_pos;
 extern MonoMethodDesc *mono_break_at_bb_method;
 extern int mono_break_at_bb_bb_num;
 extern gboolean check_for_pending_exc;
-extern gboolean disable_vret_in_regs;
+extern gboolean disable_vtypes_in_regs;
 
 #define INS_INFO(opcode) (&ins_info [((opcode) - OP_START - 1) * 3])
 

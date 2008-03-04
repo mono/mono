@@ -204,8 +204,8 @@ mono_breakpoint_info_index [MONO_BREAKPOINT_ARRAY_SIZE];
 /* Whenever to check for pending exceptions in managed-to-native wrappers */
 gboolean check_for_pending_exc = TRUE;
 
-/* Whenever to disable returning small valuetypes in registers for managed methods */
-gboolean disable_vret_in_regs = FALSE;
+/* Whenever to disable passing/returning small valuetypes in registers for managed methods */
+gboolean disable_vtypes_in_regs = FALSE;
 
 gboolean
 mono_running_on_valgrind (void)
@@ -12404,10 +12404,10 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 				cfg->new_ir = TRUE;
 
 			/*
-			 * Returning vtypes in registers in managed methods is an ABI change from
-			 * the old JIT.
+			 * Passing/returning vtypes in registers in managed methods is an ABI change 
+			 * from the old JIT.
 			 */
-			disable_vret_in_regs = TRUE;
+			disable_vtypes_in_regs = TRUE;
 		}
 		else
 			cfg->new_ir = TRUE;

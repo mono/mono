@@ -394,12 +394,8 @@ add_valuetype (MonoGenericSharingContext *gsctx, MonoMethodSignature *sig, ArgIn
 	else 
 		size = mini_type_stack_size (gsctx, &klass->byval_arg, NULL);
 
-	/* 
-	 * FIXME: This is an ABI change from the original JIT, so it will break
-	 * running with COUNT=
-	 */
-	if (!sig->pinvoke && !disable_vret_in_regs && (size == 8) && is_return) {
-		/* We return vtypes of size 8 in a register */
+	if (!sig->pinvoke && !disable_vtypes_in_regs && ((is_return && (size == 8)) || (!is_return && (size <= 16)))) {
+		/* We pass and return vtypes of size 8 in a register */
 	} else if (!sig->pinvoke || (size == 0) || (size > 16)) {
 		/* Allways pass in memory */
 		ainfo->offset = *stack_size;
@@ -418,59 +414,66 @@ add_valuetype (MonoGenericSharingContext *gsctx, MonoMethodSignature *sig, ArgIn
 	else
 		nquads = 1;
 
-	/*
-	 * Implement the algorithm from section 3.2.3 of the X86_64 ABI.
-	 * The X87 and SSEUP stuff is left out since there are no such types in
-	 * the CLR.
-	 */
-	info = mono_marshal_load_type_info (klass);
-	g_assert (info);
-	if (info->native_size > 16) {
-		ainfo->offset = *stack_size;
-		*stack_size += ALIGN_TO (info->native_size, 8);
-		ainfo->storage = ArgOnStack;
-
-		return;
-	}
-
-	args [0] = ARG_CLASS_NO_CLASS;
-	args [1] = ARG_CLASS_NO_CLASS;
-	for (quad = 0; quad < nquads; ++quad) {
-		int size;
-		guint32 align;
-		ArgumentClass class1;
-		
-		if (info->num_fields == 0)
-			class1 = ARG_CLASS_MEMORY;
-		else
-			class1 = ARG_CLASS_NO_CLASS;
-		for (i = 0; i < info->num_fields; ++i) {
-			size = mono_marshal_type_size (info->fields [i].field->type, 
-										   info->fields [i].mspec, 
-										   &align, TRUE, klass->unicode);
-			if ((info->fields [i].offset < 8) && (info->fields [i].offset + size) > 8) {
-				/* Unaligned field */
-				NOT_IMPLEMENTED;
-			}
-
-			/* Skip fields in other quad */
-			if ((quad == 0) && (info->fields [i].offset >= 8))
-				continue;
-			if ((quad == 1) && (info->fields [i].offset < 8))
-				continue;
-
-			class1 = merge_argument_class_from_type (info->fields [i].field->type, class1);
+	if (!sig->pinvoke) {
+		/* Always pass in 1 or 2 integer registers */
+		args [0] = ARG_CLASS_INTEGER;
+		args [1] = ARG_CLASS_INTEGER;
+		/* Only the simplest cases are supported */
+		if (is_return && nquads != 1) {
+			args [0] = ARG_CLASS_MEMORY;
+			args [1] = ARG_CLASS_MEMORY;
 		}
-		g_assert (class1 != ARG_CLASS_NO_CLASS);
-		args [quad] = class1;
+	} else {
+		/*
+		 * Implement the algorithm from section 3.2.3 of the X86_64 ABI.
+		 * The X87 and SSEUP stuff is left out since there are no such types in
+		 * the CLR.
+		 */
+		info = mono_marshal_load_type_info (klass);
+		g_assert (info);
+		if (info->native_size > 16) {
+			ainfo->offset = *stack_size;
+			*stack_size += ALIGN_TO (info->native_size, 8);
+			ainfo->storage = ArgOnStack;
+
+			return;
+		}
+
+		args [0] = ARG_CLASS_NO_CLASS;
+		args [1] = ARG_CLASS_NO_CLASS;
+		for (quad = 0; quad < nquads; ++quad) {
+			int size;
+			guint32 align;
+			ArgumentClass class1;
+		
+			if (info->num_fields == 0)
+				class1 = ARG_CLASS_MEMORY;
+			else
+				class1 = ARG_CLASS_NO_CLASS;
+			for (i = 0; i < info->num_fields; ++i) {
+				size = mono_marshal_type_size (info->fields [i].field->type, 
+											   info->fields [i].mspec, 
+											   &align, TRUE, klass->unicode);
+				if ((info->fields [i].offset < 8) && (info->fields [i].offset + size) > 8) {
+					/* Unaligned field */
+					NOT_IMPLEMENTED;
+				}
+
+				/* Skip fields in other quad */
+				if ((quad == 0) && (info->fields [i].offset >= 8))
+					continue;
+				if ((quad == 1) && (info->fields [i].offset < 8))
+					continue;
+
+				class1 = merge_argument_class_from_type (info->fields [i].field->type, class1);
+			}
+			g_assert (class1 != ARG_CLASS_NO_CLASS);
+			args [quad] = class1;
+		}
 	}
 
 	/* Post merger cleanup */
 	if ((args [0] == ARG_CLASS_MEMORY) || (args [1] == ARG_CLASS_MEMORY))
-		args [0] = args [1] = ARG_CLASS_MEMORY;
-
-	/* We only support the simplest cases for managed methods */
-	if (!sig->pinvoke && ((nquads != 1) || (args [0] != ARG_CLASS_INTEGER)))
 		args [0] = args [1] = ARG_CLASS_MEMORY;
 
 	/* Allocate registers */
@@ -516,7 +519,10 @@ add_valuetype (MonoGenericSharingContext *gsctx, MonoMethodSignature *sig, ArgIn
 			*fr = orig_fr;
 
 			ainfo->offset = *stack_size;
-			*stack_size += ALIGN_TO (info->native_size, 8);
+			if (sig->pinvoke)
+				*stack_size += ALIGN_TO (info->native_size, 8);
+			else
+				*stack_size = nquads * sizeof (gpointer);
 			ainfo->storage = ArgOnStack;
 		}
 	}
@@ -1692,8 +1698,8 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 			if (cinfo->ret.pair_storage [0] == ArgInIReg && cinfo->ret.pair_storage [1] == ArgNone) {
 				/*
 				 * Tell the JIT to use a more efficient calling convention: call using
-				 * OP_CALL, compute the result after the call, and save the result 
-				 * there.
+				 * OP_CALL, compute the result location after the call, and save the 
+				 * result there.
 				 */
 				call->vret_in_reg = TRUE;
 			} else {
@@ -2802,9 +2808,9 @@ emit_load_volatile_arguments (MonoCompile *cfg, guint8 *code)
 {
 	MonoMethod *method = cfg->method;
 	MonoMethodSignature *sig;
-	MonoInst *inst;
+	MonoInst *ins;
 	CallInfo *cinfo;
-	guint32 i;
+	guint32 i, quad;
 
 	/* FIXME: Generate intermediate code instead */
 
@@ -2821,27 +2827,44 @@ emit_load_volatile_arguments (MonoCompile *cfg, guint8 *code)
 	for (i = 0; i < sig->param_count + sig->hasthis; ++i) {
 		ArgInfo *ainfo = cinfo->args + i;
 		MonoType *arg_type;
-		inst = cfg->args [i];
+		ins = cfg->args [i];
 
 		if (sig->hasthis && (i == 0))
 			arg_type = &mono_defaults.object_class->byval_arg;
 		else
 			arg_type = sig->params [i - sig->hasthis];
 
-		if (inst->opcode != OP_REGVAR) {
+		if (ins->opcode != OP_REGVAR) {
 			switch (ainfo->storage) {
 			case ArgInIReg: {
 				guint32 size = 8;
 
 				/* FIXME: I1 etc */
-				amd64_mov_reg_membase (code, ainfo->reg, inst->inst_basereg, inst->inst_offset, size);
+				amd64_mov_reg_membase (code, ainfo->reg, ins->inst_basereg, ins->inst_offset, size);
 				break;
 			}
 			case ArgInFloatSSEReg:
-				amd64_movss_reg_membase (code, ainfo->reg, inst->inst_basereg, inst->inst_offset);
+				amd64_movss_reg_membase (code, ainfo->reg, ins->inst_basereg, ins->inst_offset);
 				break;
 			case ArgInDoubleSSEReg:
-				amd64_movsd_reg_membase (code, ainfo->reg, inst->inst_basereg, inst->inst_offset);
+				amd64_movsd_reg_membase (code, ainfo->reg, ins->inst_basereg, ins->inst_offset);
+				break;
+			case ArgValuetypeInReg:
+				for (quad = 0; quad < 2; quad ++) {
+					switch (ainfo->pair_storage [quad]) {
+					case ArgInIReg:
+						amd64_mov_reg_membase (code, ainfo->pair_regs [quad], ins->inst_basereg, ins->inst_offset + (quad * sizeof (gpointer)), sizeof (gpointer));
+						break;
+					case ArgInFloatSSEReg:
+					case ArgInDoubleSSEReg:
+						g_assert_not_reached ();
+						break;
+					case ArgNone:
+						break;
+					default:
+						g_assert_not_reached ();
+					}
+				}
 				break;
 			default:
 				break;
@@ -2850,7 +2873,7 @@ emit_load_volatile_arguments (MonoCompile *cfg, guint8 *code)
 		else {
 			g_assert (ainfo->storage == ArgInIReg);
 
-			amd64_mov_reg_reg (code, ainfo->reg, inst->dreg, 8);
+			amd64_mov_reg_reg (code, ainfo->reg, ins->dreg, 8);
 		}
 	}
 
