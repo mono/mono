@@ -8283,6 +8283,29 @@ namespace MonoTests.System.Reflection.Emit
 		}
 #endif
 
+		public interface IDelegateFactory {
+			Delegate Create (Delegate del);
+		}
+
+		[Test] //bug #361689
+		public void CreateTypeFailsWithInvalidMethodOverride ()
+		{
+			TypeBuilder tb = module.DefineType ("TheType", TypeAttributes.Public, typeof (object), new Type [] {typeof (IDelegateFactory)});
+
+			MethodBuilder mc = tb.DefineMethod ("Create", MethodAttributes.Public, typeof (Delegate), new Type[] {typeof (Delegate)});
+			ILGenerator gen = mc.GetILGenerator ();
+			gen.Emit (OpCodes.Ldarg_0);
+			gen.Emit (OpCodes.Ret);
+			tb.DefineMethodOverride (mc, typeof (IDelegateFactory).GetMethod ("Create"));
+			try {
+				tb.CreateType ();
+				Assert.Fail ("#1 create type did not throw TypeLoadException");
+			} catch (TypeLoadException) {
+			
+			}
+		}
+
+
 		static MethodInfo GetMethodByName (MethodInfo [] methods, string name)
 		{
 			foreach (MethodInfo mi in methods)

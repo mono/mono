@@ -1,3 +1,8 @@
+2008-03-03  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeBuilderTest.cs: Added CreateTypeFailsWithInvalidMethodOverride.
+	Test for bug #361689.
+
 2008-02-20  Raja R Harinath  <harinath@hurrynot.org>
 
 	* MethodBuilderTest.cs (Bug354757): New test.
