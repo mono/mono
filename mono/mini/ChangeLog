@@ -1,5 +1,7 @@
 2008-03-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (emit_load_volatile_arguments): Handle vtypes passed in regs too.
+
 	* mini.c (inline_method): Cache failed inline attempts.
 
 2008-03-04  Mark Probst  <mark.probst@gmail.com>
