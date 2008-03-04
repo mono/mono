@@ -2790,7 +2790,7 @@ customattr_decl		: D_CUSTOM custom_type
 			  bytes_list
 			;
 			
-custom_type		: call_conv type type_spec DOUBLE_COLON D_CTOR OPEN_PARENS type_list CLOSE_PARENS
+custom_type		: call_conv type type_spec DOUBLE_COLON method_name OPEN_PARENS type_list CLOSE_PARENS
                           {
                                 BaseTypeRef owner = (BaseTypeRef) $3;
                                 ArrayList arg_list = (ArrayList) $7;
@@ -2804,7 +2804,7 @@ custom_type		: call_conv type type_spec DOUBLE_COLON D_CTOR OPEN_PARENS type_lis
                                 $$ = owner.GetMethodRef ((BaseTypeRef) $2,
                                         (CallConv) $1, (string) $5, param_list, 0);
                           }
-			| call_conv type D_CTOR OPEN_PARENS type_list CLOSE_PARENS
+			| call_conv type method_name OPEN_PARENS type_list CLOSE_PARENS
                           {
                                 ArrayList arg_list = (ArrayList) $5;
                                 BaseTypeRef[] param_list;

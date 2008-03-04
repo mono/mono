@@ -1,5 +1,9 @@
 2008-03-05  Ankit Jain  <jankit@novell.com>
 
+	* ILParser.jay (custom_type): Allow any method name.
+
+2008-03-05  Ankit Jain  <jankit@novell.com>
+
 	Fix bug #367024.
 	* ILParser.jay (seh_clause): catch can take generic class refs also.
 
