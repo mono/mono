@@ -1,3 +1,7 @@
+2008-03-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (inline_method): Cache failed inline attempts.
+
 2008-03-04  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.c: For shared methods of generic classes put the location
