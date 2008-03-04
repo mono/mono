@@ -3,10 +3,11 @@
 //     NUnit Test Cases for System.Resources.ResourceManager
 //
 // Authors:
-//     Robert Jordan (robertj@gmx.net)
-//     Gert Driesen (drieseng@users.sourceforge.net)
+//	Robert Jordan (robertj@gmx.net)
+//	Gert Driesen (drieseng@users.sourceforge.net)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc. (http://www.novell.com)
+// Copyright (C) 2005,2008 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -866,8 +867,9 @@ namespace MonoTests.System.Resources
 			ResourceSet rs = rm.GetResourceSet (CultureInfo.InvariantCulture,
 							    true, true);
 			rs.Close ();
-			rs = rm.GetResourceSet (CultureInfo.InvariantCulture,
-						true, true);
+			ResourceSet rs2 = rs;
+			rs = rm.GetResourceSet (CultureInfo.InvariantCulture, true, true);
+			Assert.IsTrue (Object.ReferenceEquals (rs2, rs), "#0");
 
 			try {
 				rm.GetString ("HelloWorld");
@@ -880,6 +882,13 @@ namespace MonoTests.System.Resources
 			} finally {
 				rm.ReleaseAllResources ();
 			}
+		}
+
+		[Test]
+		public void ResourceSetType ()
+		{
+			ResourceManager rm = new ResourceManager (typeof (string));
+			Assert.AreEqual ("RuntimeResourceSet", rm.ResourceSetType.Name, "Name");
 		}
 
 		class MockResourceManager : ResourceManager

@@ -1,3 +1,9 @@
+2008-03-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ResourceManagerTest.cs: Add test case for ResourceSetType which 
+	shows that an internal type, not the basic ResourceSet, is being used
+	* ResourceSetTest.cs: New. Unit tests for ResourceSet
+
 2008-01-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ResourceWriterTest.cs: Enabled test for writing enum value on 2.0
