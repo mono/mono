@@ -1,3 +1,9 @@
+2008-03-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SymmetricTransform.cs: Fix ANSIX923 padding check (#366623) to be
+	just like PKCS7 (but comparing to 0).
+	[Backport of r97308]
+
 2008-01-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PKCS1.cs: Add a new method that optionally checks for badly 
