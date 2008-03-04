@@ -569,15 +569,11 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 #define NEW_LOCLOADA(cfg,dest,num) NEW_VARLOADA ((cfg), (dest), (cfg)->locals [(num)], (cfg)->locals [(num)]->inst_vtype)
 
 #define NEW_RETLOADA(cfg,dest) do {	\
-        if (cfg->vret_addr) { \
-            MONO_INST_NEW ((cfg), (dest), OP_MOVE); \
-            (dest)->type = STACK_MP; \
-		    (dest)->klass = cfg->ret->klass;	\
-		    (dest)->sreg1 = cfg->vret_addr->dreg;   \
-            (dest)->dreg = alloc_dreg ((cfg), (dest)->type); \
-        } else { \
-			NEW_VARLOADA ((cfg), (dest), (cfg)->ret, (cfg)->ret->inst_vtype); \
-        } \
+        MONO_INST_NEW ((cfg), (dest), OP_MOVE); \
+        (dest)->type = STACK_MP; \
+	    (dest)->klass = cfg->ret->klass;	\
+	    (dest)->sreg1 = cfg->vret_addr->dreg;   \
+        (dest)->dreg = alloc_dreg ((cfg), (dest)->type); \
 	} while (0)
 
 #define NEW_ARGLOADA(cfg,dest,num) NEW_VARLOADA ((cfg), (dest), arg_array [(num)], param_types [(num)])
@@ -6006,17 +6002,55 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 					break;
 				}
 				case OP_VCALL:
-					ins->opcode = OP_VCALL2;
-					ins->dreg = -1;
-					break;
 				case OP_VCALL_REG:
-					ins->opcode = OP_VCALL2_REG;
-					ins->dreg = -1;
+				case OP_VCALL_MEMBASE: {
+					MonoCallInst *call = (MonoCallInst*)ins;
+
+					if (call->vret_in_reg) {
+						MonoCallInst *call2;
+
+						/* Replace the vcall with an integer call */
+						MONO_INST_NEW_CALL (cfg, call2, OP_NOP);
+						memcpy (call2, call, sizeof (MonoCallInst));
+						switch (ins->opcode) {
+						case OP_VCALL:
+							call2->inst.opcode = OP_CALL;
+							break;
+						case OP_VCALL_REG:
+							call2->inst.opcode = OP_CALL_REG;
+							break;
+						case OP_VCALL_MEMBASE:
+							call2->inst.opcode = OP_CALL_MEMBASE;
+							break;
+						}
+						call2->inst.dreg = alloc_preg (cfg);
+						MONO_ADD_INS (cfg->cbb, ((MonoInst*)call2));
+
+						/* Compute the vtype location */
+						dest_var = get_vreg_to_inst (cfg, call->inst.dreg);
+						/* This was already created when OP_OUTARG_VTRETADDR was processed */
+						g_assert (dest_var);
+						EMIT_NEW_VARLOADA (cfg, dest, dest_var, dest_var->inst_vtype);
+
+						/* Save the result */
+						/* This assumes the vtype is sizeof (gpointer) long */
+						MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, dest->dreg, 0, call2->inst.dreg);
+					} else {
+						switch (ins->opcode) {
+						case OP_VCALL:
+							ins->opcode = OP_VCALL2;
+							break;
+						case OP_VCALL_REG:
+							ins->opcode = OP_VCALL2_REG;
+							break;
+						case OP_VCALL_MEMBASE:
+							ins->opcode = OP_VCALL2_MEMBASE;
+							break;
+						}
+						ins->dreg = -1;
+					}
 					break;
-				case OP_VCALL_MEMBASE:
-					ins->opcode = OP_VCALL2_MEMBASE;
-					ins->dreg = -1;
-					break;
+				}
 				default:
 					break;
 				}
@@ -7463,10 +7497,16 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					if (mini_type_to_stind (cfg, ret_type) == CEE_STOBJ) {
 						MonoInst *ret_addr;
 
-						EMIT_NEW_RETLOADA (cfg, ret_addr);
+						if (!cfg->vret_addr) {
+							MonoInst *ins;
 
-						EMIT_NEW_STORE_MEMBASE (cfg, ins, OP_STOREV_MEMBASE, ret_addr->dreg, 0, (*sp)->dreg);
-						ins->klass = mono_class_from_mono_type (ret_type);
+							EMIT_NEW_VARSTORE (cfg, ins, cfg->ret, ret_type, (*sp));
+						} else {
+							EMIT_NEW_RETLOADA (cfg, ret_addr);
+
+							EMIT_NEW_STORE_MEMBASE (cfg, ins, OP_STOREV_MEMBASE, ret_addr->dreg, 0, (*sp)->dreg);
+							ins->klass = mono_class_from_mono_type (ret_type);
+						}
 					} else {
 #ifdef MONO_ARCH_SOFT_FLOAT
 						if (!ret_type->byref && ret_type->type == MONO_TYPE_R4) {
@@ -11249,6 +11289,8 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
  * - LAST MERGE: 96975 (except 92841).
  * - merge the extensible gctx changes.
  * - merge the mini-codegen.c changes.
+ * - when returning vtypes in registers, generate IR and append it to the end of the
+ *   last bb instead of doing it in the epilog.
  */
 
 /*

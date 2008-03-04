@@ -394,7 +394,13 @@ add_valuetype (MonoGenericSharingContext *gsctx, MonoMethodSignature *sig, ArgIn
 	else 
 		size = mini_type_stack_size (gsctx, &klass->byval_arg, NULL);
 
-	if (!sig->pinvoke || (size == 0) || (size > 16)) {
+	/* 
+	 * FIXME: This is an ABI change from the original JIT, so it will break
+	 * running with COUNT=
+	 */
+	if (!sig->pinvoke && !disable_vret_in_regs && (size == 8) && is_return) {
+		/* We return vtypes of size 8 in a register */
+	} else if (!sig->pinvoke || (size == 0) || (size > 16)) {
 		/* Allways pass in memory */
 		ainfo->offset = *stack_size;
 		*stack_size += ALIGN_TO (size, 8);
@@ -434,7 +440,10 @@ add_valuetype (MonoGenericSharingContext *gsctx, MonoMethodSignature *sig, ArgIn
 		guint32 align;
 		ArgumentClass class1;
 		
-		class1 = ARG_CLASS_NO_CLASS;
+		if (info->num_fields == 0)
+			class1 = ARG_CLASS_MEMORY;
+		else
+			class1 = ARG_CLASS_NO_CLASS;
 		for (i = 0; i < info->num_fields; ++i) {
 			size = mono_marshal_type_size (info->fields [i].field->type, 
 										   info->fields [i].mspec, 
@@ -458,6 +467,10 @@ add_valuetype (MonoGenericSharingContext *gsctx, MonoMethodSignature *sig, ArgIn
 
 	/* Post merger cleanup */
 	if ((args [0] == ARG_CLASS_MEMORY) || (args [1] == ARG_CLASS_MEMORY))
+		args [0] = args [1] = ARG_CLASS_MEMORY;
+
+	/* We only support the simplest cases for managed methods */
+	if (!sig->pinvoke && ((nquads != 1) || (args [0] != ARG_CLASS_INTEGER)))
 		args [0] = args [1] = ARG_CLASS_MEMORY;
 
 	/* Allocate registers */
@@ -923,9 +936,6 @@ mono_arch_compute_omit_fp (MonoCompile *cfg)
 		}
 	}
 
-	if (cinfo->ret.storage == ArgValuetypeInReg)
-		cfg->arch.omit_fp = FALSE;
-
 	locals_size = 0;
 	for (i = cfg->locals_start; i < cfg->num_varinfo; i++) {
 		MonoInst *ins = cfg->varinfo [i];
@@ -1063,11 +1073,15 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 			break;
 		case ArgValuetypeInReg:
 			/* Allocate a local to hold the result, the epilog will copy it to the correct place */
-			g_assert (!cfg->arch.omit_fp);
-			offset += 16;
 			cfg->ret->opcode = OP_REGOFFSET;
 			cfg->ret->inst_basereg = cfg->frame_reg;
-			cfg->ret->inst_offset = - offset;
+			if (cfg->arch.omit_fp) {
+				cfg->ret->inst_offset = offset;
+				offset += 16;
+			} else {
+				offset += 16;
+				cfg->ret->inst_offset = - offset;
+			}
 			break;
 		default:
 			g_assert_not_reached ();
@@ -1593,51 +1607,51 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 
 		in = call->args [i];
 
-		if ((i >= sig->hasthis) && (MONO_TYPE_ISSTRUCT(sig->params [i - sig->hasthis]))) {
-			guint32 align;
-			guint32 size;
+		switch (ainfo->storage) {
+		case ArgInIReg:
+			/* Already done */
+			break;
+		case ArgInFloatSSEReg:
+		case ArgInDoubleSSEReg:
+			add_outarg_reg2 (cfg, call, ainfo->storage, ainfo->reg, in);
+			break;
+		case ArgOnStack:
+		case ArgValuetypeInReg:
+			if ((i >= sig->hasthis) && (MONO_TYPE_ISSTRUCT(sig->params [i - sig->hasthis]))) {
+				guint32 align;
+				guint32 size;
 
-			if (sig->params [i - sig->hasthis]->type == MONO_TYPE_TYPEDBYREF) {
-				size = sizeof (MonoTypedRef);
-				align = sizeof (gpointer);
-			}
-			else
-				if (sig->pinvoke)
-					size = mono_type_native_stack_size (&in->klass->byval_arg, &align);
-				else {
-					/* 
-					 * Other backends use mono_type_stack_size (), but that
-					 * aligns the size to 8, which is larger than the size of
-					 * the source, leading to reads of invalid memory if the
-					 * source is at the end of address space.
-					 */
-					size = mono_class_value_size (in->klass, &align);
+				if (sig->params [i - sig->hasthis]->type == MONO_TYPE_TYPEDBYREF) {
+					size = sizeof (MonoTypedRef);
+					align = sizeof (gpointer);
 				}
+				else {
+					if (sig->pinvoke)
+						size = mono_type_native_stack_size (&in->klass->byval_arg, &align);
+					else {
+						/* 
+						 * Other backends use mono_type_stack_size (), but that
+						 * aligns the size to 8, which is larger than the size of
+						 * the source, leading to reads of invalid memory if the
+						 * source is at the end of address space.
+						 */
+						size = mono_class_value_size (in->klass, &align);
+					}
+				}
+				g_assert (in->klass);
 
-			g_assert (in->klass);
+				if (size > 0) {
+					MONO_INST_NEW (cfg, arg, OP_OUTARG_VT);
+					arg->sreg1 = in->dreg;
+					arg->klass = in->klass;
+					arg->backend.size = size;
+					arg->inst_p0 = call;
+					arg->inst_p1 = mono_mempool_alloc (cfg->mempool, sizeof (ArgInfo));
+					memcpy (arg->inst_p1, ainfo, sizeof (ArgInfo));
 
-			if (size > 0) {
-				MONO_INST_NEW (cfg, arg, OP_OUTARG_VT);
-				arg->sreg1 = in->dreg;
-				arg->klass = in->klass;
-				arg->backend.size = size;
-				arg->inst_p0 = call;
-				arg->inst_p1 = mono_mempool_alloc (cfg->mempool, sizeof (ArgInfo));
-				memcpy (arg->inst_p1, ainfo, sizeof (ArgInfo));
-
-				MONO_ADD_INS (cfg->cbb, arg);
-			}
-		}
-		else {
-			switch (ainfo->storage) {
-			case ArgInIReg:
-				/* Already done */
-				break;
-			case ArgInFloatSSEReg:
-			case ArgInDoubleSSEReg:
-				add_outarg_reg2 (cfg, call, ainfo->storage, ainfo->reg, in);
-				break;
-			case ArgOnStack:
+					MONO_ADD_INS (cfg->cbb, arg);
+				}
+			} else {
 				MONO_INST_NEW (cfg, arg, OP_X86_PUSH);
 				arg->sreg1 = in->dreg;
 				if (!sig->params [i - sig->hasthis]->byref) {
@@ -1654,10 +1668,10 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 					}
 				}
 				MONO_ADD_INS (cfg->cbb, arg);
-				break;
-			default:
-				g_assert_not_reached ();
 			}
+			break;
+		default:
+			g_assert_not_reached ();
 		}
 
 		if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG) && (i == sig->sentinelpos)) {
@@ -1675,17 +1689,26 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 		MonoInst *vtarg;
 
 		if (cinfo->ret.storage == ArgValuetypeInReg) {
-			/*
-			 * The valuetype is in RAX:RDX after the call, need to be copied to
-			 * the stack. Push the address here, so the call instruction can
-			 * access it.
-			 */
-			MONO_INST_NEW (cfg, vtarg, OP_X86_PUSH);
-			vtarg->sreg1 = call->vret_var->dreg;
-			MONO_ADD_INS (cfg->cbb, vtarg);
+			if (cinfo->ret.pair_storage [0] == ArgInIReg && cinfo->ret.pair_storage [1] == ArgNone) {
+				/*
+				 * Tell the JIT to use a more efficient calling convention: call using
+				 * OP_CALL, compute the result after the call, and save the result 
+				 * there.
+				 */
+				call->vret_in_reg = TRUE;
+			} else {
+				/*
+				 * The valuetype is in RAX:RDX after the call, need to be copied to
+				 * the stack. Push the address here, so the call instruction can
+				 * access it.
+				 */
+				MONO_INST_NEW (cfg, vtarg, OP_X86_PUSH);
+				vtarg->sreg1 = call->vret_var->dreg;
+				MONO_ADD_INS (cfg->cbb, vtarg);
 
-			/* Align stack */
-			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SUB_IMM, X86_ESP, X86_ESP, 8);
+				/* Align stack */
+				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SUB_IMM, X86_ESP, X86_ESP, 8);
+			}
 		}
 		else {
 			MONO_INST_NEW (cfg, vtarg, OP_MOVE);
@@ -2050,7 +2073,7 @@ mono_arch_peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 			 * OP_MOVE reg1, reg2
 			 */
 			if (last_ins && (last_ins->opcode == OP_STOREI4_MEMBASE_REG 
-					 || last_ins->opcode == OP_STORE_MEMBASE_REG) &&
+					 || last_ins->opcode == OP_STORE_MEMBASE_REG || last_ins->opcode == OP_STOREI8_MEMBASE_REG) &&
 			    ins->inst_basereg == last_ins->inst_destbasereg &&
 			    ins->inst_offset == last_ins->inst_offset) {
 				if (ins->dreg == last_ins->sreg1) {
@@ -6007,13 +6030,26 @@ mono_arch_get_vcall_slot_addr (guint8* code, gpointer *regs)
 	return (gpointer*)((char*)vt + displacement);
 }
 
+int
+mono_arch_get_this_arg_reg (MonoMethodSignature *sig)
+{
+	int this_reg = AMD64_ARG_REG1;
+
+	if (MONO_TYPE_ISSTRUCT (sig->ret)) {
+		CallInfo *cinfo = get_call_info (NULL, NULL, sig, FALSE);
+		
+		if (cinfo->ret.storage != ArgValuetypeInReg)
+			this_reg = AMD64_ARG_REG2;
+		g_free (cinfo);
+	}
+
+	return this_reg;
+}
+
 gpointer
 mono_arch_get_this_arg_from_call (MonoMethodSignature *sig, gssize *regs, guint8 *code)
 {
-	if (MONO_TYPE_ISSTRUCT (sig->ret))
-		return (gpointer)regs [AMD64_ARG_REG2];
-	else
-		return (gpointer)regs [AMD64_ARG_REG1];
+	return (gpointer)regs [mono_arch_get_this_arg_reg (sig)];
 }
 
 #define MAX_ARCH_DELEGATE_PARAMS 10
