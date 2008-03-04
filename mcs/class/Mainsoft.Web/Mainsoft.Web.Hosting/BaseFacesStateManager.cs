@@ -74,8 +74,11 @@ namespace Mainsoft.Web.Hosting
 			objectoutputstream.close ();
 			bytearrayoutputstream.close ();
 
-			string s = " <input type=\"hidden\" name=\"" + VIEWSTATE + "\" id=\"" + VIEWSTATE + "\" value=\"" +
-				Convert.ToBase64String ((byte []) vmw.common.TypeUtils.ToByteArray (bytearrayoutputstream.toByteArray ())) + "\" />\n ";
+			string s = 
+@"<div>
+	<input type=""hidden"" name=""" + VIEWSTATE + "\" id=\"" + VIEWSTATE + "\" value=\"" +
+				Convert.ToBase64String ((byte []) vmw.common.TypeUtils.ToByteArray (bytearrayoutputstream.toByteArray ())) + @""" />
+</div>";
 			facesContext.getResponseWriter ().write (s);
 		}
 
