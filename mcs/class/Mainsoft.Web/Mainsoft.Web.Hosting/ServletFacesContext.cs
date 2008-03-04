@@ -10,9 +10,9 @@ using javax.faces.application;
 
 namespace Mainsoft.Web.Hosting
 {
-	public sealed class ServletFacesContext : AspNetFacesContext
+	public class ServletFacesContext : AspNetFacesContext
 	{
-		ServletFacesContext (FacesContext wrappedFacesContext, ExternalContext externalContext, HttpContext httpContext, FacesContext oldFacesContext)
+		protected ServletFacesContext (FacesContext wrappedFacesContext, ExternalContext externalContext, HttpContext httpContext, FacesContext oldFacesContext)
 			: base (wrappedFacesContext, externalContext, httpContext, oldFacesContext) {
 		}
 
@@ -30,9 +30,10 @@ namespace Mainsoft.Web.Hosting
 			return context;
 		}
 
+	}
 		#region ServletExternalContext
 
-		sealed class ServletExternalContext : BaseExternalContext
+		public class ServletExternalContext : BaseExternalContext
 		{
 			readonly ExternalContext _externalContext;
 
@@ -163,5 +164,4 @@ namespace Mainsoft.Web.Hosting
 		}
 
 		#endregion
-	}
 }

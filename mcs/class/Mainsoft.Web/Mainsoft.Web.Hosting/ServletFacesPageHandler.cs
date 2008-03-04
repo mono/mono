@@ -63,7 +63,7 @@ namespace Mainsoft.Web.Hosting
 		#endregion
 	}
 
-	public sealed class ServletFacesPageHandler : BaseFacesPageHandler, IHttpHandler, IServiceProvider
+	public class ServletFacesPageHandler : BaseFacesPageHandler, IHttpHandler, IServiceProvider
 	{
 		readonly FacesContextFactory _facesContextFactory;
 		readonly Lifecycle _lifecycle;
@@ -82,13 +82,23 @@ namespace Mainsoft.Web.Hosting
 			_pageType = pageType;
 		}
 
+		protected virtual ServletFacesContext GetFacesContext (FacesContextFactory facesContextFactory,
+																	ServletContext servletContext,
+																	ServletRequest servletRequest,
+																	ServletResponse servletResponse,
+																	Lifecycle lifecycle,
+																	HttpContext httpContext,
+																	string executionFilePath) {
+			return ServletFacesContext.GetFacesContext (facesContextFactory, servletContext, servletRequest, servletResponse, lifecycle, httpContext, executionFilePath);
+		}
+
 		public void ProcessRequest (HttpContext context) {
 			ServletWorkerRequest wr = (ServletWorkerRequest) ((IServiceProvider) context).GetService (typeof (HttpWorkerRequest));
 			ServletContext servletContext = wr.GetContext ();
 			HttpServletRequest request = wr.ServletRequest;
 			HttpServletResponse response = wr.ServletResponse;
 
-			ServletFacesContext facesContext = ServletFacesContext.GetFacesContext (_facesContextFactory, servletContext, request, response, _lifecycle, context, _executionFilePath);
+			ServletFacesContext facesContext = GetFacesContext (_facesContextFactory, servletContext, request, response, _lifecycle, context, _executionFilePath);
 			try {
 				try {
 					try {
