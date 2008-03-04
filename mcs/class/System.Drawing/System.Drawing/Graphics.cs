@@ -239,9 +239,9 @@ namespace System.Drawing
 				
 			Bitmap bmp = new Bitmap (blockRegionSize.Width, blockRegionSize.Height);
 			int red, blue, green;
-			for (int y = sourceY; y <  sourceY + blockRegionSize.Height; y++) {
-				for (int x = sourceX; x <  sourceX + blockRegionSize.Width; x++) {
-					pixel = GDIPlus.XGetPixel (image, x, y);			
+			for (int y = 0; y < blockRegionSize.Height; y++) {
+				for (int x = 0; x < blockRegionSize.Width; x++) {
+					pixel = GDIPlus.XGetPixel (image, x, y);
 
 					switch (visual.depth) {
 						case 16: /* 16bbp pixel transformation */
@@ -263,7 +263,7 @@ namespace System.Drawing
 				}
 			}
 
-			DrawImage (bmp, 0, 0);
+			DrawImage (bmp, destinationX, destinationY);
 			bmp.Dispose ();
 			GDIPlus.XDestroyImage (image);
 			GDIPlus.XFree (vPtr);
