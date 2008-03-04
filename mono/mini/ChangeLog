@@ -1,5 +1,7 @@
 2008-03-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* generics.cs: Add a test from the linear IR branch.
+
 	* mini-amd64.c (emit_load_volatile_arguments): Handle vtypes passed in regs too.
 
 	* mini.c (inline_method): Cache failed inline attempts.
