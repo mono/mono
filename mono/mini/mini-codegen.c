@@ -409,11 +409,24 @@ mono_print_ins_index (int i, MonoInst *ins)
 	case OP_LCALLVIRT:
 	case OP_VCALL:
 	case OP_VCALLVIRT:
+	case OP_VCALL_REG:
+	case OP_VCALL_MEMBASE:
 	case OP_VCALL2:
+	case OP_VCALL2_REG:
+	case OP_VCALL2_MEMBASE:
 	case OP_VOIDCALL:
 	case OP_VOIDCALLVIRT: {
 		MonoCallInst *call = (MonoCallInst*)ins;
 		GSList *list;
+
+		if (ins->opcode == OP_VCALL || ins->opcode == OP_VCALL_REG || ins->opcode == OP_VCALL_MEMBASE) {
+			/*
+			 * These are lowered opcodes, but they are in the .md files since the old 
+			 * JIT passes them to backends.
+			 */
+			if (ins->dreg != -1)
+				printf (" R%d <-", ins->dreg);
+		}
 
 		if (call->method) {
 			char *full_name = mono_method_full_name (call->method, TRUE);

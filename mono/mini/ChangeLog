@@ -1,5 +1,7 @@
 2008-03-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-codegen.c (mono_print_ins_index): Add special support for a few opcodes.
+
 	* local-propagation.c (mono_local_deadce): Avoid treating the inputs of
 	eliminated instructions as used.
 
