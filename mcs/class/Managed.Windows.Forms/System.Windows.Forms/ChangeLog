@@ -1,5 +1,22 @@
 2008-03-05  Jonathan Pobst  <monkey@jpobst.com>
 
+	corcompare - fix parameter names [N-Z].
+	LinkArea.cs, NativeWindow.cs, NotifyIcon.cs, PageSetupDialog.cs,
+	Panel.cs, PrintDialog.cs, PrintPreviewControl.cs, PropertyGrid.cs,
+	PropertyManager.cs, RichTextBox.cs,
+	ScrollBar.cs, SelectionRange.cs, SplitContainer.cs, StatusBar.cs,
+	StatusBarDrawItemEventArgs.cs, StatusBarPanelClickEventArgs.cs,
+	StatusStrip.cs, TabControl.cs, TableLayoutColumnStyleCollection.cs,
+	TableLayoutRowStyleCollection.cs, TableLayoutStyleCollection.cs,
+	TextBoxBase.cs, ThreadExceptionDialog.cs, ToolStrip.cs,
+	ToolStripContentPanel.cs, ToolStripDropDown.cs,
+	ToolStripDropDownMenu.cs, ToolStripItem.cs, ToolStripMenuItem.cs,
+	ToolStripPanel.cs, ToolStripSeparator.cs,
+	TreeNode.cs, TreeView.cs, TreeViewHitTestInfo.cs,
+	UICuesEventHandler.cs, UpDownBase.cs.
+
+2008-03-05  Jonathan Pobst  <monkey@jpobst.com>
+
 	corcompare - fix parameter names [G-M].
 	GridColumnStylesCollection.cs, GridItemCollection.cs,
 	GridTableStylesCollection.cs, GroupBox.cs, Help.cs,

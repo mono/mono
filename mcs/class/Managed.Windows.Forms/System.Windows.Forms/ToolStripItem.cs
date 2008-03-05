@@ -1094,12 +1094,12 @@ namespace System.Windows.Forms
 				eh (this, e);
 		}
 
-		protected virtual void OnMouseMove (MouseEventArgs e)
+		protected virtual void OnMouseMove (MouseEventArgs mea)
 		{
 			if (this.Enabled) {
 				MouseEventHandler eh = (MouseEventHandler)(Events [MouseMoveEvent]);
 				if (eh != null)
-					eh (this, e);
+					eh (this, mea);
 			}
 		}
 
@@ -1958,14 +1958,14 @@ namespace System.Windows.Forms
 				base.DoDefaultAction ();
 			}
 
-			public override int GetHelpTopic (out string FileName)
+			public override int GetHelpTopic (out string fileName)
 			{
-				return base.GetHelpTopic (out FileName);
+				return base.GetHelpTopic (out fileName);
 			}
 
-			public override AccessibleObject Navigate (AccessibleNavigation navdir)
+			public override AccessibleObject Navigate (AccessibleNavigation navigationDirection)
 			{
-				return base.Navigate (navdir);
+				return base.Navigate (navigationDirection);
 			}
 
 			public override string ToString ()

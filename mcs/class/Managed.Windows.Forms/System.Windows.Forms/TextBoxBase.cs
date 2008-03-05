@@ -871,9 +871,9 @@ namespace System.Windows.Forms
 			SelectionLength = 0;
 		}
 
-		public virtual char GetCharFromPosition (Point p)
+		public virtual char GetCharFromPosition (Point pt)
 		{
-			return GetCharFromPositionInternal (p);
+			return GetCharFromPositionInternal (pt);
 		}
 		
 		internal virtual char GetCharFromPositionInternal (Point p)
@@ -904,10 +904,10 @@ namespace System.Windows.Forms
 			return tag.Line.text [index];
 		}
 
-		public virtual int GetCharIndexFromPosition (Point p)
+		public virtual int GetCharIndexFromPosition (Point pt)
 		{
 			int line_index;
-			LineTag tag = document.FindCursor (p.X, p.Y, out line_index);
+			LineTag tag = document.FindCursor (pt.X, pt.Y, out line_index);
 			if (tag == null)
 				return 0;
 
@@ -944,9 +944,9 @@ namespace System.Windows.Forms
 					line.Y + document.viewport_y + tag.Shift);
 		}
 
-		public int GetFirstCharIndexFromLine (int line_number)
+		public int GetFirstCharIndexFromLine (int lineNumber)
 		{
-			Line line = document.GetLine (line_number + 1);
+			Line line = document.GetLine (lineNumber + 1);
 			if (line == null)
 				return -1;
 					
@@ -2473,9 +2473,9 @@ namespace System.Windows.Forms
 			return line_out.LineNo;
 		}
 
-		protected override void OnMouseUp (MouseEventArgs e)
+		protected override void OnMouseUp (MouseEventArgs mevent)
 		{
-			base.OnMouseUp (e);
+			base.OnMouseUp (mevent);
 		}
 #endif
 	}

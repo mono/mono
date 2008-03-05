@@ -36,10 +36,10 @@ namespace System.Windows.Forms {
 		private TreeNode node;
 		private TreeViewHitTestLocations location;
 
-		public TreeViewHitTestInfo (TreeNode node, TreeViewHitTestLocations location)
+		public TreeViewHitTestInfo (TreeNode hitNode, TreeViewHitTestLocations hitLocation)
 		{
-			this.node = node;
-			this.location = location;
+			this.node = hitNode;
+			this.location = hitLocation;
 		}
 
 		public TreeNode Node {

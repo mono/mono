@@ -83,13 +83,13 @@ namespace System.Windows.Forms {
 #else
 		private
 #endif
-		TreeNode (SerializationInfo info, StreamingContext context) : this ()
+		TreeNode (SerializationInfo serializationInfo, StreamingContext context) : this ()
 		{
 			SerializationInfoEnumerator	en;
 			SerializationEntry		e;
 			int				children;
 
-			en = info.GetEnumerator();
+			en = serializationInfo.GetEnumerator();
 			children = 0;
 			while (en.MoveNext()) { 
 				e = en.Current;
@@ -105,7 +105,7 @@ namespace System.Windows.Forms {
 			}
 			if (children > 0) {
 				for (int i = 0; i < children; i++) {
-					TreeNode node = (TreeNode) info.GetValue ("children" + i, typeof (TreeNode));
+					TreeNode node = (TreeNode) serializationInfo.GetValue ("children" + i, typeof (TreeNode));
 					Nodes.Add (node);
 				}
 			}
@@ -128,14 +128,15 @@ namespace System.Windows.Forms {
 			Nodes.AddRange (children);
 		}
 
-		public TreeNode (string text, int image_index, int selected_image_index) : this (text)
+		public TreeNode (string text, int imageIndex, int selectedImageIndex) : this (text)
 		{
-			this.image_index = image_index;
-			this.selected_image_index = selected_image_index;
+			this.image_index = imageIndex;
+			this.selected_image_index = selectedImageIndex;
 		}
 
-		public TreeNode (string text, int image_index, int selected_image_index,
-				TreeNode [] children) : this (text, image_index, selected_image_index)
+		public TreeNode (string text, int imageIndex, int selectedImageIndex,
+				TreeNode[] children)
+			: this (text, imageIndex, selectedImageIndex)
 		{
 			Nodes.AddRange (children);
 		}
@@ -753,9 +754,9 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
-		public void Collapse (bool ignore_children)
+		public void Collapse (bool ignoreChildren)
 		{
-			if (ignore_children)
+			if (ignoreChildren)
 				Collapse ();
 			else
 				CollapseRecursive (this);
@@ -795,8 +796,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public int GetNodeCount (bool include_subtrees) {
-			if (!include_subtrees)
+		public int GetNodeCount (bool includeSubTrees) {
+			if (!includeSubTrees)
 				return Nodes.Count;
 
 			int count = 0;

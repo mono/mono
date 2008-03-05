@@ -38,29 +38,29 @@ namespace System.Windows.Forms {
 		{
 		}
 		
-		public int Add (ColumnStyle style)
+		public int Add (ColumnStyle columnStyle)
 		{
-			return base.Add (style);
+			return base.Add (columnStyle);
 		}
-		
-		public bool Contains (ColumnStyle style)
+
+		public bool Contains (ColumnStyle columnStyle)
 		{
-			return ((IList)this).Contains (style);
+			return ((IList)this).Contains (columnStyle);
 		}
-		
-		public int IndexOf (ColumnStyle style)
+
+		public int IndexOf (ColumnStyle columnStyle)
 		{
-			return ((IList)this).IndexOf (style);
+			return ((IList)this).IndexOf (columnStyle);
 		}
-		
-		public void Insert (int index, ColumnStyle style)
+
+		public void Insert (int index, ColumnStyle columnStyle)
 		{
-			((IList)this).Insert (index, style);
+			((IList)this).Insert (index, columnStyle);
 		}
-		
-		public void Remove (ColumnStyle style)
+
+		public void Remove (ColumnStyle columnStyle)
 		{
-			((IList)this).Remove (style);
+			((IList)this).Remove (columnStyle);
 		}
 		
 		public new ColumnStyle this [int index] {

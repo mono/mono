@@ -683,9 +683,9 @@ namespace System.Windows.Forms
 			base.OnMouseDown (e);
 		}
 
-		protected override void OnMouseUp (MouseEventArgs e)
+		protected override void OnMouseUp (MouseEventArgs mevent)
 		{
-			base.OnMouseUp (e);
+			base.OnMouseUp (mevent);
 		}
 #endif
 

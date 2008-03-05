@@ -606,21 +606,21 @@ namespace System.Windows.Forms
 			UpdateThumbPos (thumb_area.Y + (int)(((float)(position - minimum)) * pixel_per_pos), true, false);
 		}
 
-		protected virtual void OnScroll (ScrollEventArgs event_args)
+		protected virtual void OnScroll (ScrollEventArgs se)
 		{
 			ScrollEventHandler eh = (ScrollEventHandler)(Events [ScrollEvent]);
 			if (eh == null)
 				return;
 
-			if (event_args.NewValue < Minimum) {
-				event_args.NewValue = Minimum;
+			if (se.NewValue < Minimum) {
+				se.NewValue = Minimum;
 			}
 
-			if (event_args.NewValue > Maximum) {
-				event_args.NewValue = Maximum;
+			if (se.NewValue > Maximum) {
+				se.NewValue = Maximum;
 			}
 
-			eh (this, event_args);
+			eh (this, se);
 		}
 
 		private void SendWMScroll(ScrollBarCommands cmd) {

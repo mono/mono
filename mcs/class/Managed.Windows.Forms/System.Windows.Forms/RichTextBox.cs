@@ -1148,18 +1148,18 @@ namespace System.Windows.Forms {
 
 #if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new void DrawToBitmap (Bitmap bitmap, Rectangle clip)
+		public new void DrawToBitmap (Bitmap bitmap, Rectangle targetBounds)
 		{
 			Graphics dc = Graphics.FromImage (bitmap);
 
 			if (backcolor_set || (Enabled && !read_only)) {
-				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), clip);
+				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), targetBounds);
 			} else {
-				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorControl), clip);
+				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorControl), targetBounds);
 			}
 			
 			// Draw the viewable document
-			document.Draw (dc, clip);
+			document.Draw (dc, targetBounds);
 		}
 #endif
 
@@ -1248,9 +1248,9 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
-		protected override bool ProcessCmdKey (ref Message msg, Keys keyData)
+		protected override bool ProcessCmdKey (ref Message m, Keys keyData)
 		{
-			return base.ProcessCmdKey (ref msg, keyData);
+			return base.ProcessCmdKey (ref m, keyData);
 		}
 #endif
 		#endregion	// Protected Instance Methods

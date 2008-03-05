@@ -45,9 +45,9 @@ namespace System.Windows.Forms {
 		}	
 	
 		// constructor that receives another range, copies it's Start and End values
-		public SelectionRange (SelectionRange selectionRange) {
-			end = selectionRange.End;
-			start = selectionRange.Start;
+		public SelectionRange (SelectionRange range) {
+			end = range.End;
+			start = range.Start;
 		}
 
 		// constructor that receives two dates, uses the lower of the two as start

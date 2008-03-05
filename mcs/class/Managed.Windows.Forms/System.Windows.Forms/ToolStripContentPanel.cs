@@ -226,11 +226,11 @@ namespace System.Windows.Forms
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		protected override void OnPaintBackground (PaintEventArgs pevent)
+		protected override void OnPaintBackground (PaintEventArgs e)
 		{
-			base.OnPaintBackground (pevent);
+			base.OnPaintBackground (e);
 			
-			this.Renderer.DrawToolStripContentPanelBackground (new ToolStripContentPanelRenderEventArgs (pevent.Graphics, this));
+			this.Renderer.DrawToolStripContentPanelBackground (new ToolStripContentPanelRenderEventArgs (e.Graphics, this));
 		}
 		
 		protected virtual void OnRendererChanged (EventArgs e)

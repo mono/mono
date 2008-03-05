@@ -120,7 +120,7 @@ namespace System.Windows.Forms {
 			return TypeDescriptor.GetProperties (data_source);
 		}
 
-		public override void RemoveAt (int idx)
+		public override void RemoveAt (int index)
 		{
 			throw new NotSupportedException ("RemoveAt is not supported for property to property binding");
 		}
@@ -137,7 +137,7 @@ namespace System.Windows.Forms {
                         get { return data_source == null; }
                 }
 
-		protected internal override string GetListName (ArrayList list)
+		protected internal override string GetListName (ArrayList listAccessors)
 		{
 			return String.Empty;
 		}
@@ -147,17 +147,17 @@ namespace System.Windows.Forms {
 		{
 		}
 
-		protected internal override void OnCurrentChanged (EventArgs e)
+		protected internal override void OnCurrentChanged (EventArgs ea)
 		{
 			PushData ();
 
 			if (onCurrentChangedHandler != null) {
-				onCurrentChangedHandler (this, e);
+				onCurrentChangedHandler (this, ea);
 			}
 		}
 
 #if NET_2_0
-		protected override void OnCurrentItemChanged (EventArgs e)
+		protected override void OnCurrentItemChanged (EventArgs ea)
 		{
 			throw new NotImplementedException ();
 		}

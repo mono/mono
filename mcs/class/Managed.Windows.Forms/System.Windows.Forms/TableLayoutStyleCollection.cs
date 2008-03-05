@@ -140,13 +140,13 @@ namespace System.Windows.Forms {
 			return al.GetEnumerator ();
 		}
 #endregion
-		public TableLayoutStyle this [int idx] {
+		public TableLayoutStyle this [int index] {
 			get {
-				return (TableLayoutStyle) al [idx];
+				return (TableLayoutStyle)al[index];
 			}
 
 			set {
-				al [idx] = value;
+				al[index] = value;
 			}
 		}
 	}

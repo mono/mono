@@ -104,12 +104,12 @@ namespace System.Windows.Forms
 			OnHandleChange();
 		}
 
-		public virtual void CreateHandle(CreateParams create_params)
+		public virtual void CreateHandle(CreateParams cp)
 		{
-			if (create_params != null) {
+			if (cp != null) {
 				WindowCreating = this;
 
-				window_handle=XplatUI.CreateWindow(create_params);
+				window_handle=XplatUI.CreateWindow(cp);
 
 				WindowCreating = null;
 

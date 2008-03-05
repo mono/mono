@@ -31,11 +31,11 @@ namespace System.Windows.Forms {
 
 		private StatusBarPanel panel;
 
-		public StatusBarPanelClickEventArgs (StatusBarPanel panel,
-				MouseButtons buttons, int clicks, int x, int y) :
-			base (buttons, clicks, x, y, 0)
+		public StatusBarPanelClickEventArgs (StatusBarPanel statusBarPanel,
+				MouseButtons button, int clicks, int x, int y) :
+			base (button, clicks, x, y, 0)
 		{
-			this.panel = panel;
+			this.panel = statusBarPanel;
 		}
 
 		public StatusBarPanel StatusBarPanel {

@@ -168,14 +168,14 @@ namespace System.Windows.Forms
 			return string.Format ("{{Start={0}, Length={1}}}", this.start.ToString (), this.length.ToString ());
 		}
 		
-		public static bool operator == (LinkArea l1, LinkArea l2)
+		public static bool operator == (LinkArea linkArea1, LinkArea linkArea2)
 		{
-			return (l1.Length == l2.Length) && (l1.Start == l2.Start);
+			return (linkArea1.Length == linkArea2.Length) && (linkArea1.Start == linkArea2.Start);
 		}
-		
-		public static bool operator != (LinkArea l1, LinkArea l2)
+
+		public static bool operator != (LinkArea linkArea1, LinkArea linkArea2)
 		{
-			return !(l1 == l2);
+			return !(linkArea1 == linkArea2);
 		}
 #endif
 		#endregion //Methods

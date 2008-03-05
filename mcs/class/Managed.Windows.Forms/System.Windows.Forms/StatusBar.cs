@@ -220,10 +220,10 @@ namespace System.Windows.Forms {
 			base.Dispose (disposing);
 		}
 
-		protected virtual void OnDrawItem (StatusBarDrawItemEventArgs e) {
+		protected virtual void OnDrawItem (StatusBarDrawItemEventArgs sbdievent) {
 			StatusBarDrawItemEventHandler eh = (StatusBarDrawItemEventHandler)(Events [DrawItemEvent]);
 			if (eh != null)
-				eh (this, e);
+				eh (this, sbdievent);
 		}
 
 		protected override void OnHandleCreated (EventArgs e) {
@@ -235,8 +235,8 @@ namespace System.Windows.Forms {
 			base.OnHandleDestroyed (e);
 		}
 
-		protected override void OnLayout (LayoutEventArgs e) {
-			base.OnLayout (e);
+		protected override void OnLayout (LayoutEventArgs levent) {
+			base.OnLayout (levent);
 		}
 
 		protected override void OnMouseDown (MouseEventArgs e) {
@@ -535,8 +535,8 @@ namespace System.Windows.Forms {
 			#endregion	// Public Instance Properties
 
 			#region Public Instance Methods
-			public virtual int Add (StatusBarPanel p) {
-				return AddInternal (p, true);
+			public virtual int Add (StatusBarPanel value) {
+				return AddInternal (value, true);
 			}
 
 			public virtual StatusBarPanel Add (string text) {
@@ -546,16 +546,16 @@ namespace System.Windows.Forms {
 				return res;
 			}
 
-			public virtual void AddRange (StatusBarPanel [] range) {
-				if (range == null)
-					throw new ArgumentNullException ("panels");
-				if (range.Length == 0)
-					return;
+			public virtual void AddRange (StatusBarPanel [] panels) {
 				if (panels == null)
-					panels = new ArrayList (range.Length);
+					throw new ArgumentNullException ("panels");
+				if (panels.Length == 0)
+					return;
+				if (this.panels == null)
+					this.panels = new ArrayList (panels.Length);
 
-				for (int i = 0; i < range.Length; i++)
-					AddInternal (range [i], false);
+				for (int i = 0; i < panels.Length; i++)
+					AddInternal (panels [i], false);
 				owner.Refresh ();
 			}
 
@@ -622,8 +622,8 @@ namespace System.Windows.Forms {
 				owner.Refresh ();
 			}
 
-			public virtual void Remove (StatusBarPanel panel) {
-				panels.Remove (panel);
+			public virtual void Remove (StatusBarPanel value) {
+				panels.Remove (value);
 			}
 
 			public virtual void RemoveAt (int index) {

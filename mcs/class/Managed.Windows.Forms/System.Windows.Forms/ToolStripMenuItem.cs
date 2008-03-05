@@ -406,9 +406,9 @@ namespace System.Windows.Forms
 			return true;
 		}
 		
-		protected internal override void SetBounds (Rectangle bounds)
+		protected internal override void SetBounds (Rectangle rect)
 		{
-			base.SetBounds (bounds);
+			base.SetBounds (rect);
 		}
 		#endregion
 

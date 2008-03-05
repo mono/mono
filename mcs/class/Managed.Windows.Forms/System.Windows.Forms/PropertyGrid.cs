@@ -843,8 +843,8 @@ namespace System.Windows.Forms {
 
 		#region Public Instance Methods
 		
-		protected override void Dispose(bool val) {
-			base.Dispose(val);
+		protected override void Dispose(bool disposing) {
+			base.Dispose(disposing);
 		}
 
 		public void CollapseAllGridItems () 
@@ -978,16 +978,16 @@ namespace System.Windows.Forms {
 			base.OnHandleDestroyed (e);
 		}
 
-		protected override void OnMouseDown (MouseEventArgs e) {
-			base.OnMouseDown (e);
+		protected override void OnMouseDown (MouseEventArgs me) {
+			base.OnMouseDown (me);
 		}
 
-		protected override void OnMouseMove (MouseEventArgs e) {
-			base.OnMouseMove (e);
+		protected override void OnMouseMove (MouseEventArgs me) {
+			base.OnMouseMove (me);
 		}
 
-		protected override void OnMouseUp (MouseEventArgs e) {
-			base.OnMouseUp (e);
+		protected override void OnMouseUp (MouseEventArgs me) {
+			base.OnMouseUp (me);
 		}
 		
 		protected void OnNotifyPropertyValueUIItemsChanged(object sender, EventArgs e) 

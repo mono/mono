@@ -466,10 +466,10 @@ namespace System.Windows.Forms
 			base.OnKeyUp (e);
 		}
 
-		protected override void OnLayout (LayoutEventArgs levent)
+		protected override void OnLayout (LayoutEventArgs e)
 		{
 			UpdateLayout ();
-			base.OnLayout (levent);
+			base.OnLayout (e);
 		}
 
 		protected override void OnLostFocus (EventArgs e)
@@ -560,9 +560,9 @@ namespace System.Windows.Forms
 			base.SetBoundsCore (x, y, width, height, specified);
 		}
 
-		protected override void WndProc (ref Message m)
+		protected override void WndProc (ref Message msg)
 		{			
-			base.WndProc (ref m);
+			base.WndProc (ref msg);
 		}
 		#endregion
 		

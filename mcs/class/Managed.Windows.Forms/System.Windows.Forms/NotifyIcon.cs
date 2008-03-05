@@ -432,9 +432,9 @@ namespace System.Windows.Forms {
 			ShowBalloonTip(timeout, balloon_title, balloon_text, balloon_icon);
 		}
 
-		public void ShowBalloonTip(int timeout, string title, string text, ToolTipIcon icon)
+		public void ShowBalloonTip(int timeout, string tipTitle, string tipText, ToolTipIcon tipIcon)
 		{
-			XplatUI.SystrayBalloon(window.Handle, timeout, title, text, icon);
+			XplatUI.SystrayBalloon(window.Handle, timeout, tipTitle, tipText, tipIcon);
 		}
 #endif
 		#endregion Public Methods

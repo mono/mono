@@ -682,9 +682,9 @@ namespace System.Windows.Forms
 			base.SetBoundsCore (x, y, width, height, specified);
 		}
 
-		protected override void SetVisibleCore (bool value)
+		protected override void SetVisibleCore (bool visible)
 		{
-			base.SetVisibleCore (value);
+			base.SetVisibleCore (visible);
 		}
 
 		protected override void WndProc (ref Message m)

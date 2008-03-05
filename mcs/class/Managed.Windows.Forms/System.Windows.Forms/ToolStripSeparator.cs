@@ -241,9 +241,9 @@ namespace System.Windows.Forms
 			}
 		}
 
-		protected internal override void SetBounds (Rectangle bounds)
+		protected internal override void SetBounds (Rectangle rect)
 		{
-			base.SetBounds (bounds);
+			base.SetBounds (rect);
 		}
 		#endregion
 

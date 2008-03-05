@@ -514,12 +514,12 @@ namespace System.Windows.Forms {
 			DeselectTab (this.tab_pages [tabPage]);
 		}
 
-		public void DeselectTab (string key)
+		public void DeselectTab (string tabPageName)
 		{
-			if (key == null)
+			if (tabPageName == null)
 				throw new ArgumentNullException ("tabPageName");
 
-			DeselectTab (this.tab_pages [key]);
+			DeselectTab (this.tab_pages [tabPageName]);
 		}
 
 		public void DeselectTab (int index)
@@ -709,29 +709,29 @@ namespace System.Windows.Forms {
 			return base.ProcessKeyPreview (ref m);
 		}
 
-		protected override void OnKeyDown (KeyEventArgs e)
+		protected override void OnKeyDown (KeyEventArgs ke)
 		{
-			if (e.KeyCode == Keys.Tab && (e.KeyData & Keys.Control) != 0) {
-				if ((e.KeyData & Keys.Shift) == 0)
+			if (ke.KeyCode == Keys.Tab && (ke.KeyData & Keys.Control) != 0) {
+				if ((ke.KeyData & Keys.Shift) == 0)
 					SelectedIndex = (SelectedIndex + 1) % TabCount;
 				else
 					SelectedIndex = (SelectedIndex + TabCount - 1) % TabCount;
-				e.Handled = true;
-			} else if (e.KeyCode == Keys.Home) {
+				ke.Handled = true;
+			} else if (ke.KeyCode == Keys.Home) {
 				SelectedIndex = 0;
-				e.Handled = true;
-			} else if (e.KeyCode == Keys.End) {
+				ke.Handled = true;
+			} else if (ke.KeyCode == Keys.End) {
 				SelectedIndex = TabCount - 1;
-				e.Handled = true;
-			} else if (e.KeyCode == Keys.Left && SelectedIndex > 0) {
+				ke.Handled = true;
+			} else if (ke.KeyCode == Keys.Left && SelectedIndex > 0) {
 				SelectedIndex--;
-				e.Handled = true;
-			} else if (e.KeyCode == Keys.Right && SelectedIndex < TabCount - 1) {
+				ke.Handled = true;
+			} else if (ke.KeyCode == Keys.Right && SelectedIndex < TabCount - 1) {
 				SelectedIndex++;
-				e.Handled = true;
+				ke.Handled = true;
 			}
 
-			base.OnKeyDown (e);
+			base.OnKeyDown (ke);
 		}
 
 		protected override bool IsInputKey (Keys key)
@@ -760,15 +760,15 @@ namespace System.Windows.Forms {
 			return pages;
 		}
 
-		protected virtual object [] GetItems (Type type)
+		protected virtual object [] GetItems (Type baseType)
 		{
-			object [] pages = (object []) Array.CreateInstance (type, Controls.Count);
+			object[] pages = (object[])Array.CreateInstance (baseType, Controls.Count);
 			Controls.CopyTo (pages, 0);
 			return pages;
 		}
 		#endregion
 
-		protected void UpdateTabSelection (bool uiselected)
+		protected void UpdateTabSelection (bool updateFocus)
 		{
 			ResizeTabPages ();
 		}
@@ -1541,11 +1541,11 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			public void Add (TabPage page)
+			public void Add (TabPage value)
 			{
-				if (page == null)
+				if (value == null)
 					throw new ArgumentNullException ("Value cannot be null.");
-				owner.Controls.Add (page);
+				owner.Controls.Add (value);
 			}
 
 #if NET_2_0
@@ -1634,9 +1634,9 @@ namespace System.Windows.Forms {
 			}
 #endif
 
-			public void Remove (TabPage page)
+			public void Remove (TabPage value)
 			{
-				owner.Controls.Remove (page);
+				owner.Controls.Remove (value);
 			}
 
 			public void RemoveAt (int index)
@@ -1694,9 +1694,9 @@ namespace System.Windows.Forms {
 				owner.InsertTab (index, new TabPage (text));
 			}
 			
-			public void Insert (int index, TabPage page)
+			public void Insert (int index, TabPage tabPage)
 			{
-				owner.InsertTab (index, page);
+				owner.InsertTab (index, tabPage);
 			}
 
 			public void Insert (int index, string key, string text)

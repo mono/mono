@@ -306,7 +306,7 @@ namespace System.Windows.Forms
 			base.OnDockChanged (e);
 		}
 		
-		protected override void OnLayout (LayoutEventArgs levent)
+		protected override void OnLayout (LayoutEventArgs e)
 		{
 			// Don't see any reason to layout if we aren't created
 			if (!this.Created)
@@ -363,11 +363,11 @@ namespace System.Windows.Forms
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		protected override void OnPaintBackground (PaintEventArgs pevent)
+		protected override void OnPaintBackground (PaintEventArgs e)
 		{
-			base.OnPaintBackground (pevent);
+			base.OnPaintBackground (e);
 
-			this.Renderer.DrawToolStripPanelBackground (new ToolStripPanelRenderEventArgs (pevent.Graphics, this));
+			this.Renderer.DrawToolStripPanelBackground (new ToolStripPanelRenderEventArgs (e.Graphics, this));
 		}
 
 		protected override void OnParentChanged (EventArgs e)

@@ -28,5 +28,5 @@
 // COMPLETE
 
 namespace System.Windows.Forms {
-	public delegate void UICuesEventHandler (Object Sender, UICuesEventArgs e);
+	public delegate void UICuesEventHandler (Object sender, UICuesEventArgs e);
 }

@@ -991,14 +991,14 @@ namespace System.Windows.Forms
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		protected override void OnPaintBackground (PaintEventArgs pevent)
+		protected override void OnPaintBackground (PaintEventArgs e)
 		{
-			base.OnPaintBackground (pevent);
+			base.OnPaintBackground (e);
 
 			Rectangle affected_bounds = new Rectangle (Point.Empty, this.Size);
-			ToolStripRenderEventArgs e = new ToolStripRenderEventArgs (pevent.Graphics, this, affected_bounds, SystemColors.Control);
+			ToolStripRenderEventArgs tsrea = new ToolStripRenderEventArgs (e.Graphics, this, affected_bounds, SystemColors.Control);
 			
-			this.Renderer.DrawToolStripBackground (e);
+			this.Renderer.DrawToolStripBackground (tsrea);
 		}
 
 		protected internal virtual void OnPaintGrip (PaintEventArgs e)
@@ -1053,9 +1053,9 @@ namespace System.Windows.Forms
 			base.OnVisibleChanged (e);
 		}
 
-		protected override bool ProcessCmdKey (ref Message msg, Keys keyData)
+		protected override bool ProcessCmdKey (ref Message m, Keys keyData)
 		{
-			return base.ProcessCmdKey (ref msg, keyData);
+			return base.ProcessCmdKey (ref m, keyData);
 		}
 
 		protected override bool ProcessDialogKey (Keys keyData)
@@ -1194,9 +1194,9 @@ namespace System.Windows.Forms
 			item.Parent = parent;
 		}
 
-		protected override void SetVisibleCore (bool value)
+		protected override void SetVisibleCore (bool visible)
 		{
-			base.SetVisibleCore (value);
+			base.SetVisibleCore (visible);
 		}
 
 		protected override void WndProc (ref Message m)

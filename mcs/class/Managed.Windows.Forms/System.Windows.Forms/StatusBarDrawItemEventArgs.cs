@@ -33,18 +33,18 @@ namespace System.Windows.Forms {
 
 		private StatusBarPanel panel;
 
-		public StatusBarDrawItemEventArgs (Graphics g, Font font, Rectangle rect,
-				int item, DrawItemState state, StatusBarPanel panel) :
-		this (g, font, rect, item, state, panel, Control.DefaultForeColor,
+		public StatusBarDrawItemEventArgs (Graphics g, Font font, Rectangle r,
+				int itemId, DrawItemState itemState, StatusBarPanel panel) :
+			this (g, font, r, itemId, itemState, panel, Control.DefaultForeColor,
 				Control.DefaultBackColor)
 		
 		{
 		}
 
-		public StatusBarDrawItemEventArgs (Graphics g, Font font, Rectangle rect,
-				int item, DrawItemState state, StatusBarPanel panel,
-				Color foreColor, Color backColor) : base (g, font, rect,
-						item, state)
+		public StatusBarDrawItemEventArgs (Graphics g, Font font, Rectangle r,
+				int itemId, DrawItemState itemState, StatusBarPanel panel,
+				Color foreColor, Color backColor) : base (g, font, r,
+						itemId, itemState)
 		{
 			this.panel = panel;
 		}

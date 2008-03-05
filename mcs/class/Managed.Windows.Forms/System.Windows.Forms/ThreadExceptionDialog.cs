@@ -152,12 +152,12 @@ namespace System.Windows.Forms
 			this.ResumeLayout(false);
 		}
 	
-		public ThreadExceptionDialog (Exception e)
+		public ThreadExceptionDialog (Exception t)
 		{
-			this.e = e;
+			this.e = t;
 			InitializeComponent ();
 
-			this.labelException.Text = e.Message;
+			this.labelException.Text = t.Message;
 			if (Form.ActiveForm != null)
 				this.Text = Form.ActiveForm.Text;
 			else

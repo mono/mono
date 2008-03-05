@@ -185,7 +185,7 @@ namespace System.Windows.Forms {
 		#endregion // Public Instance Properties
 
 		#region Protected Instance Methods
-		protected override bool RunDialog (IntPtr hwnd) 
+		protected override bool RunDialog (IntPtr hwndOwner) 
 		{
 			try {
 				SetPrinterDetails ();

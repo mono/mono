@@ -237,7 +237,7 @@ namespace System.Windows.Forms
 		}
 #endif
 
-		protected override bool RunDialog (IntPtr hwnd)
+		protected override bool RunDialog (IntPtr hwndOwner)
 		{
 #if ONLY_1_1
 			if (PrinterSettings == null)

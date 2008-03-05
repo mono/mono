@@ -259,17 +259,17 @@ namespace System.Windows.Forms {
 
 		#region Protected Instance Properties
 
-		protected override void OnPaint(PaintEventArgs e)
+		protected override void OnPaint(PaintEventArgs pevent)
 		{
 			if (page_infos == null || image_cache == null)
 				GeneratePreview ();
-			ThemeEngine.Current.PrintPreviewControlPaint (e, this, image_size);
+			ThemeEngine.Current.PrintPreviewControlPaint (pevent, this, image_size);
 		}
 
-		protected override void OnResize(EventArgs e)
+		protected override void OnResize(EventArgs eventargs)
 		{
 			InvalidateLayout ();
-			base.OnResize (e);
+			base.OnResize (eventargs);
 		}
 
 		protected virtual void OnStartPageChanged(EventArgs e)

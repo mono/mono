@@ -806,8 +806,8 @@ namespace System.Windows.Forms {
 					
 		}
 
-		public int GetNodeCount (bool include_subtrees) {
-			return root_node.GetNodeCount (include_subtrees);
+		public int GetNodeCount (bool includeSubTrees) {
+			return root_node.GetNodeCount (includeSubTrees);
 		}
 
 #if NET_2_0
@@ -869,10 +869,10 @@ namespace System.Windows.Forms {
 			return node.prop_bag;
 		}
 
-		protected override bool IsInputKey (Keys key_data)
+		protected override bool IsInputKey (Keys keyData)
 		{
-			if (IsHandleCreated && (key_data & Keys.Alt) == 0) {
-				switch (key_data & Keys.KeyCode) {
+			if (IsHandleCreated && (keyData & Keys.Alt) == 0) {
+				switch (keyData & Keys.KeyCode) {
 				case Keys.Left:
 				case Keys.Up:
 				case Keys.Right:
@@ -890,7 +890,7 @@ namespace System.Windows.Forms {
 					break;
 				}
 			}
-			return base.IsInputKey (key_data);
+			return base.IsInputKey (keyData);
 		}
 
 		protected override void OnKeyDown (KeyEventArgs e)
