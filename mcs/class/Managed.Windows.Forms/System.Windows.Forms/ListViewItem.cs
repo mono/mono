@@ -1443,9 +1443,9 @@ namespace System.Windows.Forms
 				list.Clear ();
 			}
 
-			public bool Contains (ListViewSubItem item)
+			public bool Contains (ListViewSubItem subItem)
 			{
-				return list.Contains (item);
+				return list.Contains (subItem);
 			}
 
 #if NET_2_0

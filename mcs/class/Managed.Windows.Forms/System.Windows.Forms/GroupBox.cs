@@ -263,10 +263,10 @@ namespace System.Windows.Forms
 			Refresh ();
 		}
 
-		protected override void OnPaint (PaintEventArgs pevent)
+		protected override void OnPaint (PaintEventArgs e)
 		{
-			ThemeEngine.Current.DrawGroupBox (pevent.Graphics, ClientRectangle, this);
-			base.OnPaint(pevent);
+			ThemeEngine.Current.DrawGroupBox (e.Graphics, ClientRectangle, this);
+			base.OnPaint(e);
 		}
 
 		protected override bool ProcessMnemonic (char charCode)

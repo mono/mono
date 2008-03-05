@@ -40,7 +40,7 @@ namespace System.Windows.Forms.Layout {
 		{
 		}
 
-		public virtual bool Layout (object container, LayoutEventArgs args)
+		public virtual bool Layout (object container, LayoutEventArgs layoutEventArgs)
 		{
 			return false;
 		}

@@ -151,7 +151,7 @@ namespace System.Windows.Forms {
 		*/
 
 		static byte [] header = new byte []{ 77, 83, 70, 116, 73, 76, 3, 0 };
-		public void GetObjectData (SerializationInfo info, StreamingContext context)
+		public void GetObjectData (SerializationInfo si, StreamingContext context)
 		{
 			MemoryStream stream = new MemoryStream ();
 			BinaryWriter writer = new BinaryWriter (stream);
@@ -197,7 +197,7 @@ namespace System.Windows.Forms {
 			mask.Dispose ();
 
 			stream = GetRLEStream (stream, 4);
-			info.AddValue ("Data", stream.ToArray (), typeof (byte []));
+			si.AddValue ("Data", stream.ToArray (), typeof (byte []));
 		}
 
 		unsafe Bitmap Get1bppMask (Bitmap main)

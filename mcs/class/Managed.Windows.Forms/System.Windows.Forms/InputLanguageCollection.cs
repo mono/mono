@@ -65,9 +65,9 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
-		public void CopyTo(InputLanguage[] dest, int index) {
+		public void CopyTo(InputLanguage[] array, int index) {
 			if (list.Length>0) {
-				Array.Copy(list, 0, dest, index, list.Length);
+				Array.Copy(list, 0, array, index, list.Length);
 			}
 		}
 

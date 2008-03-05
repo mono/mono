@@ -57,11 +57,11 @@ namespace System.Windows.Forms
 		}
 
 		
-		public DataGridColumnStyle this [PropertyDescriptor propDesc] {
+		public DataGridColumnStyle this [PropertyDescriptor propertyDescriptor] {
 			get {				
 				for (int i = 0; i < items.Count; i++) {
 					DataGridColumnStyle column = (DataGridColumnStyle) items[i];
-					if (column.PropertyDescriptor.Equals (propDesc)) {
+					if (column.PropertyDescriptor.Equals (propertyDescriptor)) {
 						return column;
 					}
 				}
@@ -140,10 +140,10 @@ namespace System.Windows.Forms
 		{
 			return (FromColumnNameToIndex (column.MappingName) != -1);
 		}
-		
-		public bool Contains (PropertyDescriptor propDesc)
+
+		public bool Contains (PropertyDescriptor propertyDescriptor)
 		{
-			return (this [propDesc] != null);
+			return (this[propertyDescriptor] != null);
 		}
 
 		public bool Contains (string name)
@@ -201,10 +201,10 @@ namespace System.Windows.Forms
 			return items.IndexOf (element);
 		}
 		
-		protected void OnCollectionChanged (CollectionChangeEventArgs ccevent)
+		protected void OnCollectionChanged (CollectionChangeEventArgs e)
 		{						
 			if (fire_event == true && CollectionChanged != null) {
-				CollectionChanged (this, ccevent);
+				CollectionChanged (this, e);
 			}
 		}
 		

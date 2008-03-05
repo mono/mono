@@ -402,14 +402,14 @@ namespace System.Windows.Forms
 
 			#region Public Methods
 
-			public virtual int Add (MenuItem mi)
+			public virtual int Add (MenuItem item)
 			{
-				if (mi.Parent != null)
-					mi.Parent.MenuItems.Remove (mi);
+				if (item.Parent != null)
+					item.Parent.MenuItems.Remove (item);
 				
-				items.Add (mi);
-				mi.Index = items.Count - 1;
-				UpdateItem (mi);
+				items.Add (item);
+				item.Index = items.Count - 1;
+				UpdateItem (item);
 				
 				owner.OnMenuChanged (EventArgs.Empty);
 				if (owner.parent_menu != null)
@@ -427,14 +427,14 @@ namespace System.Windows.Forms
 				mi.parent_menu = owner;
 			}
 
-			public virtual MenuItem Add (string s)
+			public virtual MenuItem Add (string caption)
 			{
-				MenuItem item = new MenuItem (s);
+				MenuItem item = new MenuItem (caption);
 				Add (item);
 				return item;
 			}
 
-			public virtual int Add (int index, MenuItem mi)
+			public virtual int Add (int index, MenuItem item)
 			{
 				if (index < 0 || index > Count)
 					throw new ArgumentOutOfRangeException ("Index of out range");
@@ -444,14 +444,14 @@ namespace System.Windows.Forms
 				for (int i = 0; i < index; i++)
 					new_items.Add (items[i]);
 
-				new_items.Add (mi);
+				new_items.Add (item);
 
 				for (int i = index; i < Count; i++)
 					new_items.Add (items[i]);
 
 				items = new_items;
 				UpdateItemsIndices ();				
-				UpdateItem (mi);
+				UpdateItem (item);
 
 				return index;
 			}
@@ -477,17 +477,17 @@ namespace System.Windows.Forms
 				UpdateItem (mi);
 			}
 
-			public virtual MenuItem Add (string s, EventHandler e)
+			public virtual MenuItem Add (string caption, EventHandler onClick)
 			{
-				MenuItem item = new MenuItem (s, e);
+				MenuItem item = new MenuItem (caption, onClick);
 				Add (item);
 
 				return item;
 			}
 
-			public virtual MenuItem Add (string s, MenuItem[] items)
+			public virtual MenuItem Add (string caption, MenuItem[] items)
 			{
-				MenuItem item = new MenuItem (s, items);
+				MenuItem item = new MenuItem (caption, items);
 				Add (item);
 
 				return item;

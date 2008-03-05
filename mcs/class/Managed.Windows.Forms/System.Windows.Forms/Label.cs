@@ -562,32 +562,32 @@ namespace System.Windows.Forms
 
 		#region Public Methods
 
-		protected Rectangle CalcImageRenderBounds (Image image, Rectangle area, ContentAlignment img_align)
+		protected Rectangle CalcImageRenderBounds (Image image, Rectangle r, ContentAlignment align)
 		{
-			Rectangle rcImageClip = area;
+			Rectangle rcImageClip = r;
 			rcImageClip.Inflate (-2,-2);
 
-			int X = area.X;
-			int Y = area.Y;
+			int X = r.X;
+			int Y = r.Y;
 
-			if (img_align == ContentAlignment.TopCenter ||
-				img_align == ContentAlignment.MiddleCenter ||
-				img_align == ContentAlignment.BottomCenter) {
-				X += (area.Width - image.Width) / 2;
-			} else if (img_align == ContentAlignment.TopRight ||
-				img_align == ContentAlignment.MiddleRight||
-				img_align == ContentAlignment.BottomRight) {
-				X += (area.Width - image.Width);
+			if (align == ContentAlignment.TopCenter ||
+				align == ContentAlignment.MiddleCenter ||
+				align == ContentAlignment.BottomCenter) {
+				X += (r.Width - image.Width) / 2;
+			} else if (align == ContentAlignment.TopRight ||
+				align == ContentAlignment.MiddleRight||
+				align == ContentAlignment.BottomRight) {
+				X += (r.Width - image.Width);
 			}
 
-			if( img_align == ContentAlignment.BottomCenter ||
-				img_align == ContentAlignment.BottomLeft ||
-				img_align == ContentAlignment.BottomRight) {
-				Y += area.Height - image.Height;
-			} else if(img_align == ContentAlignment.MiddleCenter ||
-					img_align == ContentAlignment.MiddleLeft ||
-					img_align == ContentAlignment.MiddleRight) {
-				Y += (area.Height - image.Height) / 2;
+			if( align == ContentAlignment.BottomCenter ||
+				align == ContentAlignment.BottomLeft ||
+				align == ContentAlignment.BottomRight) {
+				Y += r.Height - image.Height;
+			} else if(align == ContentAlignment.MiddleCenter ||
+					align == ContentAlignment.MiddleLeft ||
+					align == ContentAlignment.MiddleRight) {
+				Y += (r.Height - image.Height) / 2;
 			}
 
 			rcImageClip.X = X;
@@ -653,10 +653,10 @@ namespace System.Windows.Forms
 		}
 #endif
 
-		protected override void OnPaint (PaintEventArgs pevent)
+		protected override void OnPaint (PaintEventArgs e)
 		{
-			ThemeElements.LabelPainter.Draw (pevent.Graphics, ClientRectangle, this);
-			base.OnPaint(pevent);
+			ThemeElements.LabelPainter.Draw (e.Graphics, ClientRectangle, this);
+			base.OnPaint(e);
 		}
 
 		protected override void OnParentChanged (EventArgs e)

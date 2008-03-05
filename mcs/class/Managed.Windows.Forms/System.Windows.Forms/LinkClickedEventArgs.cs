@@ -35,9 +35,9 @@ namespace System.Windows.Forms
 	{		
 		private string link_text;				
 		
-		public LinkClickedEventArgs (string link_text) 
+		public LinkClickedEventArgs (string linkText) 
 		{
-			this.link_text = link_text;
+			this.link_text = linkText;
 		}		
 		
 		public string LinkText 

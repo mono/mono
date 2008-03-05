@@ -120,9 +120,9 @@ namespace System.Windows.Forms
 				eh (this, e);
 		}
 
-		protected override bool ProcessCmdKey (ref Message msg, Keys keyData)
+		protected override bool ProcessCmdKey (ref Message m, Keys keyData)
 		{
-			return base.ProcessCmdKey (ref msg, keyData);
+			return base.ProcessCmdKey (ref m, keyData);
 		}
 
 		protected override void WndProc (ref Message m)

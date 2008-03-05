@@ -477,13 +477,13 @@ namespace System.Windows.Forms
 #endif
 		}
 
-		protected override void OnPaint (PaintEventArgs pevent)
+		protected override void OnPaint (PaintEventArgs e)
 		{
 			// We need to invoke paintbackground because control is opaque
 			// and can have transparent colors.
-			base.InvokePaintBackground (this, pevent);
+			base.InvokePaintBackground (this, e);
 			
-			ThemeElements.LinkLabelPainter.Draw (pevent.Graphics, pevent.ClipRectangle, this);
+			ThemeElements.LinkLabelPainter.Draw (e.Graphics, e.ClipRectangle, this);
 			// Do not call base.OnPaint since it's the Label class 
 		}
 
@@ -566,9 +566,9 @@ namespace System.Windows.Forms
 			CreateLinkPieces();
 		}
 
-		protected override void WndProc (ref Message m)
+		protected override void WndProc (ref Message msg)
 		{
-			base.WndProc (ref m);
+			base.WndProc (ref msg);
 		}
 
 		#endregion //Public Methods
@@ -967,16 +967,16 @@ namespace System.Windows.Forms
 #else
 			internal
 #endif
-			int Add (Link link)
+			int Add (Link value)
 			{
-				link.Owner = owner;
+				value.Owner = owner;
 				/* remove the default 0,-1 link */
 				if (IsDefault) {
 					/* don't call Clear() here to save the additional CreateLinkPieces */
 					collection.Clear ();
 				}
 
-				int idx = collection.Add (link);
+				int idx = collection.Add (value);
 
 				owner.sorted_links = null;
 				owner.CheckLinks ();
@@ -998,12 +998,12 @@ namespace System.Windows.Forms
 				}
 			}
 
-			public Link Add (int start, int length, object o)
+			public Link Add (int start, int length, object linkData)
 			{
 				Link link = new Link (owner);
 				link.Length = length;
 				link.Start = start;
-				link.LinkData = o;
+				link.LinkData = linkData;
 
 				int idx = Add (link);
 

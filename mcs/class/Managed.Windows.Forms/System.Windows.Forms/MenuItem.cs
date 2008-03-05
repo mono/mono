@@ -448,13 +448,13 @@ namespace System.Windows.Forms
 			return item;
 		}
 
-		protected void CloneMenu (MenuItem menuitem)
+		protected void CloneMenu (MenuItem itemSrc)
 		{
-			base.CloneMenu (menuitem); // Copy subitems
+			base.CloneMenu (itemSrc); // Copy subitems
 
 			// Window list
-			MdiList = menuitem.MdiList;
-			is_window_menu_item = menuitem.is_window_menu_item;
+			MdiList = itemSrc.MdiList;
+			is_window_menu_item = itemSrc.is_window_menu_item;
 			// Remove items corresponding to window menu items, and add new items
 			// (Otherwise window menu items would show up twice, since the PopulateWindowMenu doesn't
 			// now them)
@@ -469,31 +469,31 @@ namespace System.Windows.Forms
 				PopulateWindowMenu ();
 
 			// Properties
-			BarBreak = menuitem.BarBreak;
-			Break = menuitem.Break;
-			Checked = menuitem.Checked;
-			DefaultItem = menuitem.DefaultItem;
-			Enabled = menuitem.Enabled;			
-			MergeOrder = menuitem.MergeOrder;
-			MergeType = menuitem.MergeType;
-			OwnerDraw = menuitem.OwnerDraw;
+			BarBreak = itemSrc.BarBreak;
+			Break = itemSrc.Break;
+			Checked = itemSrc.Checked;
+			DefaultItem = itemSrc.DefaultItem;
+			Enabled = itemSrc.Enabled;			
+			MergeOrder = itemSrc.MergeOrder;
+			MergeType = itemSrc.MergeType;
+			OwnerDraw = itemSrc.OwnerDraw;
 			//Parent = menuitem.Parent;
-			RadioCheck = menuitem.RadioCheck;
-			Shortcut = menuitem.Shortcut;
-			ShowShortcut = menuitem.ShowShortcut;
-			Text = menuitem.Text;
-			Visible = menuitem.Visible;
+			RadioCheck = itemSrc.RadioCheck;
+			Shortcut = itemSrc.Shortcut;
+			ShowShortcut = itemSrc.ShowShortcut;
+			Text = itemSrc.Text;
+			Visible = itemSrc.Visible;
 			
 #if NET_2_0
-			Name = menuitem.Name;
-			Tag = menuitem.Tag;
+			Name = itemSrc.Name;
+			Tag = itemSrc.Tag;
 #endif
 			// Events
-			Events[ClickEvent] = menuitem.Events[ClickEvent];
-			Events[DrawItemEvent] = menuitem.Events[DrawItemEvent];
-			Events[MeasureItemEvent] = menuitem.Events[MeasureItemEvent];
-			Events[PopupEvent] = menuitem.Events[PopupEvent];
-			Events[SelectEvent] = menuitem.Events[SelectEvent];
+			Events[ClickEvent] = itemSrc.Events[ClickEvent];
+			Events[DrawItemEvent] = itemSrc.Events[DrawItemEvent];
+			Events[MeasureItemEvent] = itemSrc.Events[MeasureItemEvent];
+			Events[PopupEvent] = itemSrc.Events[PopupEvent];
+			Events[SelectEvent] = itemSrc.Events[SelectEvent];
 		}
 
 		protected override void Dispose (bool disposing)
@@ -509,9 +509,9 @@ namespace System.Windows.Forms
 			return item;
 		}
 
-		public void MergeMenu (MenuItem menuitem)
+		public void MergeMenu (MenuItem itemSrc)
 		{
-			base.MergeMenu (menuitem);
+			base.MergeMenu (itemSrc);
 		}
 
 		protected virtual void OnClick (EventArgs e)

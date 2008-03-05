@@ -167,10 +167,10 @@ namespace System.Windows.Forms
 			RemoveAt (index);
 		}
 
-		protected void OnCollectionChanged (CollectionChangeEventArgs ccevent)
+		protected void OnCollectionChanged (CollectionChangeEventArgs e)
 		{
 			if (CollectionChanged != null) {
-				CollectionChanged (this, ccevent);
+				CollectionChanged (this, e);
 			}
 		}
 

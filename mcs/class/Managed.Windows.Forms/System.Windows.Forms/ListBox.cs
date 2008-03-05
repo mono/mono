@@ -2344,16 +2344,16 @@ namespace System.Windows.Forms
 				this.owner = owner;
 			}
 
-			public ObjectCollection (ListBox owner, object[] obj)
+			public ObjectCollection (ListBox owner, object[] value)
 			{
 				this.owner = owner;
-				AddRange (obj);
+				AddRange (value);
 			}
 
-			public ObjectCollection (ListBox owner,  ObjectCollection obj)
+			public ObjectCollection (ListBox owner,  ObjectCollection value)
 			{
 				this.owner = owner;
-				AddRange (obj);
+				AddRange (value);
 			}
 
 			#region Public Properties
@@ -2420,12 +2420,12 @@ namespace System.Windows.Forms
 				owner.CollectionChanged ();
 			}
 
-			public void AddRange (ObjectCollection col)
+			public void AddRange (ObjectCollection value)
 			{
-				if (col == null)
-					throw new ArgumentNullException ("col");
+				if (value == null)
+					throw new ArgumentNullException ("value");
 
-				foreach (object mi in col)
+				foreach (object mi in value)
 					AddItem (mi);
 
 				owner.CollectionChanged ();
@@ -2445,17 +2445,17 @@ namespace System.Windows.Forms
 				object_items.Clear ();
 				owner.CollectionChanged ();
 			}
-			public bool Contains (object obj)
+			public bool Contains (object value)
 			{
-				if (obj == null)
-					throw new ArgumentNullException ("obj");
+				if (value == null)
+					throw new ArgumentNullException ("value");
 
-				return object_items.Contains (obj);
+				return object_items.Contains (value);
 			}
 
-			public void CopyTo (object[] dest, int arrayIndex)
+			public void CopyTo (object[] destination, int arrayIndex)
 			{
-				object_items.CopyTo (dest, arrayIndex);
+				object_items.CopyTo (destination, arrayIndex);
 			}
 
 			void ICollection.CopyTo (Array dest, int index)
@@ -2603,10 +2603,10 @@ namespace System.Windows.Forms
 				return false;
 			}
 
-			public void CopyTo (Array dest, int index)
+			public void CopyTo (Array destination, int index)
 			{
 				foreach (object o in owner.selection)
-					dest.SetValue(owner.Items.IndexOf (o), index++);
+					destination.SetValue(owner.Items.IndexOf (o), index++);
 			}
 
 			public IEnumerator GetEnumerator ()
@@ -2728,10 +2728,10 @@ namespace System.Windows.Forms
 
 			#region Public Methods
 #if NET_2_0
-			public void Add (object item)
+			public void Add (object value)
 			{
-				if (!owner.selection.Contains (item)) {
-					owner.selection.Add (item);
+				if (!owner.selection.Contains (value)) {
+					owner.selection.Add (value);
 					owner.CollectionChanged ();
 				}
 			}
@@ -2748,9 +2748,9 @@ namespace System.Windows.Forms
 				return owner.selection.Contains (selectedObject);
 			}
 
-			public void CopyTo (Array dest, int index)
+			public void CopyTo (Array destination, int index)
 			{
-				owner.selection.CopyTo (dest, index);
+				owner.selection.CopyTo (destination, index);
 			}
 
 #if NET_2_0
@@ -2789,9 +2789,9 @@ namespace System.Windows.Forms
 				throw new NotSupportedException ();
 			}
 	
-			public int IndexOf (object item)
+			public int IndexOf (object selectedObject)
 			{
-				return owner.selection.IndexOf (item);
+				return owner.selection.IndexOf (selectedObject);
 			}
 
 			public IEnumerator GetEnumerator ()

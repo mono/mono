@@ -39,8 +39,8 @@ namespace System.Windows.Forms {
 		private int		y;
 
 		#region Public Constructors
-		public MouseEventArgs(MouseButtons buttons, int clicks, int x, int y, int delta) {
-			this.buttons=buttons;
+		public MouseEventArgs(MouseButtons button, int clicks, int x, int y, int delta) {
+			this.buttons=button;
 			this.clicks=clicks;
 			this.delta=delta;
 			this.x=x;

@@ -102,12 +102,12 @@ namespace System.Windows.Forms
 			return Add((ListViewGroup)value);               
 		}
 
-		public int Add(ListViewGroup value)
+		public int Add(ListViewGroup group)
 		{
-			if (Contains(value))
+			if (Contains(group))
 				return -1;
 
-			AddGroup (value);
+			AddGroup (group);
 
 			if (this.list_view_owner != null)
 				list_view_owner.Redraw(true);
@@ -192,9 +192,9 @@ namespace System.Windows.Forms
 			Remove((ListViewGroup)value);
 		}
 
-		public void Remove (ListViewGroup value)
+		public void Remove (ListViewGroup group)
 		{
-			int idx = list.IndexOf (value);
+			int idx = list.IndexOf (group);
 			if (idx != -1)
 				RemoveAt (idx);
 		}

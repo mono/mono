@@ -3301,10 +3301,10 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
-		protected override void OnBackgroundImageChanged (EventArgs args)
+		protected override void OnBackgroundImageChanged (EventArgs e)
 		{
 			item_control.BackgroundImage = BackgroundImage;
-			base.OnBackgroundImageChanged (args);
+			base.OnBackgroundImageChanged (e);
 		}
 #endif
 
@@ -3387,11 +3387,11 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
-		protected internal virtual void OnItemChecked (ItemCheckedEventArgs icea)
+		protected internal virtual void OnItemChecked (ItemCheckedEventArgs e)
 		{
 			ItemCheckedEventHandler eh = (ItemCheckedEventHandler)(Events [ItemCheckedEvent]);
 			if (eh != null)
-				eh (this, icea);
+				eh (this, e);
 		}
 #endif
 
@@ -3403,29 +3403,29 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
-		protected virtual void OnItemMouseHover (ListViewItemMouseHoverEventArgs args)
+		protected virtual void OnItemMouseHover (ListViewItemMouseHoverEventArgs e)
 		{
 			ListViewItemMouseHoverEventHandler eh = (ListViewItemMouseHoverEventHandler)(Events [ItemMouseHoverEvent]);
 			if (eh != null)
-				eh (this, args);
+				eh (this, e);
 		}
 
-		protected internal virtual void OnItemSelectionChanged (ListViewItemSelectionChangedEventArgs args)
+		protected internal virtual void OnItemSelectionChanged (ListViewItemSelectionChangedEventArgs e)
 		{
 			ListViewItemSelectionChangedEventHandler eh = 
 				(ListViewItemSelectionChangedEventHandler) Events [ItemSelectionChangedEvent];
 			if (eh != null)
-				eh (this, args);
+				eh (this, e);
 		}
 
-		protected override void OnMouseHover (EventArgs args)
+		protected override void OnMouseHover (EventArgs e)
 		{
-			base.OnMouseHover (args);
+			base.OnMouseHover (e);
 		}
 
-		protected override void OnParentChanged (EventArgs args)
+		protected override void OnParentChanged (EventArgs e)
 		{
-			base.OnParentChanged (args);
+			base.OnParentChanged (e);
 		}
 #endif
 
@@ -3442,18 +3442,18 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
-		protected virtual void OnCacheVirtualItems (CacheVirtualItemsEventArgs args)
+		protected virtual void OnCacheVirtualItems (CacheVirtualItemsEventArgs e)
 		{
 			EventHandler eh = (EventHandler)Events [CacheVirtualItemsEvent];
 			if (eh != null)
-				eh (this, args);
+				eh (this, e);
 		}
 
-		protected virtual void OnRetrieveVirtualItem (RetrieveVirtualItemEventArgs args)
+		protected virtual void OnRetrieveVirtualItem (RetrieveVirtualItemEventArgs e)
 		{
 			RetrieveVirtualItemEventHandler eh = (RetrieveVirtualItemEventHandler)Events [RetrieveVirtualItemEvent];
 			if (eh != null)
-				eh (this, args);
+				eh (this, e);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -3464,19 +3464,19 @@ namespace System.Windows.Forms
 				eh (this, e);
 		}
 
-		protected virtual void OnSearchForVirtualItem (SearchForVirtualItemEventArgs args)
+		protected virtual void OnSearchForVirtualItem (SearchForVirtualItemEventArgs e)
 		{
 			SearchForVirtualItemEventHandler eh = (SearchForVirtualItemEventHandler) Events [SearchForVirtualItemEvent];
 			if (eh != null)
-				eh (this, args);
+				eh (this, e);
 		}
 		
-		protected virtual void OnVirtualItemsSelectionRangeChanged (ListViewVirtualItemsSelectionRangeChangedEventArgs args)
+		protected virtual void OnVirtualItemsSelectionRangeChanged (ListViewVirtualItemsSelectionRangeChangedEventArgs e)
 		{
 			ListViewVirtualItemsSelectionRangeChangedEventHandler eh = 
 				(ListViewVirtualItemsSelectionRangeChangedEventHandler) Events [VirtualItemsSelectionRangeChangedEvent];
 			if (eh != null)
-				eh (this, args);
+				eh (this, e);
 		}
 #endif
 
@@ -3523,11 +3523,11 @@ namespace System.Windows.Forms
 			ArrangeIcons (this.alignment);
 		}
 
-		public void ArrangeIcons (ListViewAlignment alignment)
+		public void ArrangeIcons (ListViewAlignment value)
 		{
 			// Icons are arranged only if view is set to LargeIcon or SmallIcon
 			if (view == View.LargeIcon || view == View.SmallIcon) {
-				this.CalculateListView (alignment);
+				this.CalculateListView (value);
 				// we have done the calculations already
 				this.Redraw (false);
 			}
@@ -3605,12 +3605,12 @@ namespace System.Windows.Forms
 			return FindItemWithText (text, true, 0, true);
 		}
 
-		public ListViewItem FindItemWithText (string text, bool includeSubItems, int startIndex)
+		public ListViewItem FindItemWithText (string text, bool includeSubItemsInSearch, int startIndex)
 		{
-			return FindItemWithText (text, includeSubItems, startIndex, true);
+			return FindItemWithText (text, includeSubItemsInSearch, startIndex, true);
 		}
 
-		public ListViewItem FindItemWithText (string text, bool includeSubItems, int startIndex, bool prefixSearch)
+		public ListViewItem FindItemWithText (string text, bool includeSubItemsInSearch, int startIndex, bool isPrefixSearch)
 		{
 			if (startIndex < 0 || startIndex >= items.Count)
 				throw new ArgumentOutOfRangeException ("startIndex");
@@ -3620,7 +3620,7 @@ namespace System.Windows.Forms
 
 			if (virtual_mode) {
 				SearchForVirtualItemEventArgs args = new SearchForVirtualItemEventArgs (true,
-						prefixSearch, includeSubItems, text, Point.Empty, 
+						isPrefixSearch, includeSubItemsInSearch, text, Point.Empty, 
 						SearchDirectionHint.Down, startIndex);
 
 				OnSearchForVirtualItem (args);
@@ -3634,16 +3634,16 @@ namespace System.Windows.Forms
 			for (int i = startIndex; i < items.Count; i++) {
 				ListViewItem lvi = items [i];
 
-				if ((prefixSearch && lvi.Text.StartsWith (text, true, CultureInfo.CurrentCulture)) // prefix search
+				if ((isPrefixSearch && lvi.Text.StartsWith (text, true, CultureInfo.CurrentCulture)) // prefix search
 						|| String.Compare (lvi.Text, text, true) == 0) // match
 					return lvi;
 			}
 
-			if (includeSubItems) {
+			if (includeSubItemsInSearch) {
 				for (int i = startIndex; i < items.Count; i++) {
 					ListViewItem lvi = items [i];
 					foreach (ListViewItem.ListViewSubItem sub_item in lvi.SubItems)
-						if ((prefixSearch && sub_item.Text.StartsWith (text, true, CultureInfo.CurrentCulture))
+						if ((isPrefixSearch && sub_item.Text.StartsWith (text, true, CultureInfo.CurrentCulture))
 								|| String.Compare (sub_item.Text, text, true) == 0)
 							return lvi;
 				}
@@ -3652,14 +3652,14 @@ namespace System.Windows.Forms
 			return null;
 		}
 
-		public ListViewItem FindNearestItem (SearchDirectionHint direction, int x, int y)
+		public ListViewItem FindNearestItem (SearchDirectionHint serachDirection, int x, int y)
 		{
-			return FindNearestItem (direction, new Point (x, y));
+			return FindNearestItem (serachDirection, new Point (x, y));
 		}
 
-		public ListViewItem FindNearestItem (SearchDirectionHint direction, Point location)
+		public ListViewItem FindNearestItem (SearchDirectionHint dir, Point point)
 		{
-			if (direction < SearchDirectionHint.Left || direction > SearchDirectionHint.Down)
+			if (dir < SearchDirectionHint.Left || dir > SearchDirectionHint.Down)
 				throw new ArgumentOutOfRangeException ("searchDirection");
 
 			if (view != View.LargeIcon && view != View.SmallIcon)
@@ -3667,8 +3667,8 @@ namespace System.Windows.Forms
 
 			if (virtual_mode) {
 				SearchForVirtualItemEventArgs args = new SearchForVirtualItemEventArgs (false,
-						false, false, String.Empty, location, 
-						direction, 0);
+						false, false, String.Empty, point, 
+						dir, 0);
 
 				OnSearchForVirtualItem (args);
 				int idx = args.Index;
@@ -3684,40 +3684,40 @@ namespace System.Windows.Forms
 			//
 			// It looks like .Net does a previous adjustment
 			//
-			switch (direction) {
+			switch (dir) {
 				case SearchDirectionHint.Up:
-					location.Y -= item_size.Height;
+					point.Y -= item_size.Height;
 					break;
 				case SearchDirectionHint.Down:
-					location.Y += item_size.Height;
+					point.Y += item_size.Height;
 					break;
 				case SearchDirectionHint.Left:
-					location.X -= item_size.Width;
+					point.X -= item_size.Width;
 					break;
 				case SearchDirectionHint.Right:
-					location.X += item_size.Width;
+					point.X += item_size.Width;
 					break;
 			}
 
 			for (int i = 0; i < items.Count; i++) {
 				Point item_loc = GetItemLocation (i);
 
-				if (direction == SearchDirectionHint.Up) {
-					if (location.Y < item_loc.Y)
+				if (dir == SearchDirectionHint.Up) {
+					if (point.Y < item_loc.Y)
 						continue;
-				} else if (direction == SearchDirectionHint.Down) {
-					if (location.Y > item_loc.Y)
+				} else if (dir == SearchDirectionHint.Down) {
+					if (point.Y > item_loc.Y)
 						continue;
-				} else if (direction == SearchDirectionHint.Left) {
-					if (location.X < item_loc.X)
+				} else if (dir == SearchDirectionHint.Left) {
+					if (point.X < item_loc.X)
 						continue;
-				} else if (direction == SearchDirectionHint.Right) {
-					if (location.X > item_loc.X)
+				} else if (dir == SearchDirectionHint.Right) {
+					if (point.X > item_loc.X)
 						continue;
 				}
 
-				int x_dist = location.X - item_loc.X;
-				int y_dist = location.Y - item_loc.Y;
+				int x_dist = point.X - item_loc.X;
+				int y_dist = point.Y - item_loc.Y;
 
 				int dist = x_dist * x_dist  + y_dist * y_dist;
 				if (dist < min_dist) {
@@ -3757,9 +3757,9 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
-		public ListViewHitTestInfo HitTest (Point pt)
+		public ListViewHitTestInfo HitTest (Point point)
 		{
-			return HitTest (pt.X, pt.Y);
+			return HitTest (point.X, point.Y);
 		}
 
 		public ListViewHitTestInfo HitTest (int x, int y)
@@ -4496,9 +4496,9 @@ namespace System.Windows.Forms
 				return idx;
 			}
 
-			public virtual ColumnHeader Add (string str, int width, HorizontalAlignment textAlign)
+			public virtual ColumnHeader Add (string text, int width, HorizontalAlignment textAlign)
 			{
-				ColumnHeader colHeader = new ColumnHeader (this.owner, str, textAlign, width);
+				ColumnHeader colHeader = new ColumnHeader (this.owner, text, textAlign, width);
 				this.Add (colHeader);
 				return colHeader;
 			}
@@ -4509,9 +4509,9 @@ namespace System.Windows.Forms
 				return Add (String.Empty, text);
 			}
 
-			public virtual ColumnHeader Add (string text, int iwidth)
+			public virtual ColumnHeader Add (string text, int width)
 			{
-				return Add (String.Empty, text, iwidth);
+				return Add (String.Empty, text, width);
 			}
 
 			public virtual ColumnHeader Add (string key, string text)
@@ -4523,22 +4523,22 @@ namespace System.Windows.Forms
 				return colHeader;
 			}
 
-			public virtual ColumnHeader Add (string key, string text, int iwidth)
+			public virtual ColumnHeader Add (string key, string text, int width)
 			{
-				return Add (key, text, iwidth, HorizontalAlignment.Left, -1);
+				return Add (key, text, width, HorizontalAlignment.Left, -1);
 			}
 
-			public virtual ColumnHeader Add (string key, string text, int iwidth, HorizontalAlignment textAlign, int imageIndex)
+			public virtual ColumnHeader Add (string key, string text, int width, HorizontalAlignment textAlign, int imageIndex)
 			{
-				ColumnHeader colHeader = new ColumnHeader (key, text, iwidth, textAlign);
+				ColumnHeader colHeader = new ColumnHeader (key, text, width, textAlign);
 				colHeader.ImageIndex = imageIndex;
 				Add (colHeader);
 				return colHeader;
 			}
 
-			public virtual ColumnHeader Add (string key, string text, int iwidth, HorizontalAlignment textAlign, string imageKey)
+			public virtual ColumnHeader Add (string key, string text, int width, HorizontalAlignment textAlign, string imageKey)
 			{
-				ColumnHeader colHeader = new ColumnHeader (key, text, iwidth, textAlign);
+				ColumnHeader colHeader = new ColumnHeader (key, text, width, textAlign);
 				colHeader.ImageKey = imageKey;
 				Add (colHeader);
 				return colHeader;
@@ -4702,9 +4702,9 @@ namespace System.Windows.Forms
 			}
 #endif
 
-			public void Insert (int index, string str, int width, HorizontalAlignment textAlign)
+			public void Insert (int index, string text, int width, HorizontalAlignment textAlign)
 			{
-				ColumnHeader colHeader = new ColumnHeader (this.owner, str, textAlign, width);
+				ColumnHeader colHeader = new ColumnHeader (this.owner, text, textAlign, width);
 				this.Insert (index, colHeader);
 			}
 
@@ -4802,20 +4802,20 @@ namespace System.Windows.Forms
 				get { return false; }
 			}
 
-			public virtual ListViewItem this [int displayIndex] {
+			public virtual ListViewItem this [int index] {
 				get {
-					if (displayIndex < 0 || displayIndex >= Count)
+					if (index < 0 || index >= Count)
 						throw new ArgumentOutOfRangeException ("displayIndex");
 
 #if NET_2_0
 					if (owner != null && owner.VirtualMode)
-						return RetrieveVirtualItemFromOwner (displayIndex);
+						return RetrieveVirtualItemFromOwner (index);
 #endif
-					return (ListViewItem) list [displayIndex];
+					return (ListViewItem) list [index];
 				}
 
 				set {
-					if (displayIndex < 0 || displayIndex >= Count)
+					if (index < 0 || index >= Count)
 						throw new ArgumentOutOfRangeException ("displayIndex");
 
 #if NET_2_0
@@ -4840,7 +4840,7 @@ namespace System.Windows.Forms
 					}
 #endif
 
-					list [displayIndex] = value;
+					list [index] = value;
 					CollectionChanged (true);
 				}
 			}
@@ -4929,16 +4929,16 @@ namespace System.Windows.Forms
 			}
 #endif
 
-			public void AddRange (ListViewItem [] values)
+			public void AddRange (ListViewItem [] items)
 			{
-				if (values == null)
+				if (items == null)
 					throw new ArgumentNullException ("Argument cannot be null!", "values");
 #if NET_2_0
 				if (owner != null && owner.VirtualMode)
 					throw new InvalidOperationException ();
 #endif
 
-				foreach (ListViewItem item in values)
+				foreach (ListViewItem item in items)
 					AddItem (item);
 
 				CollectionChanged (true);
@@ -5000,7 +5000,7 @@ namespace System.Windows.Forms
 			}
 
 #if NET_2_0
-			public ListViewItem [] Find (string key, bool searchAllSubitems)
+			public ListViewItem [] Find (string key, bool searchAllSubItems)
 			{
 				if (key == null)
 					return new ListViewItem [0];

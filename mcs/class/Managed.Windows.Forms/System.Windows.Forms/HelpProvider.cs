@@ -136,12 +136,12 @@ namespace System.Windows.Forms {
 		#endregion	// Public Instance Properties
 
 		#region Public Instance Methods
-		public virtual bool CanExtend(object extendee) {
-			if (!(extendee is Control)) {
+		public virtual bool CanExtend(object target) {
+			if (!(target is Control)) {
 				return false;
 			}
 
-			if ((extendee is Form) || (extendee is ToolBar)) {
+			if ((target is Form) || (target is ToolBar)) {
 				return false;
 			}
 

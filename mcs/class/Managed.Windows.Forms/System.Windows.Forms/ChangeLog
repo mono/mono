@@ -1,5 +1,15 @@
 2008-03-05  Jonathan Pobst  <monkey@jpobst.com>
 
+	corcompare - fix parameter names [G-M].
+	GridColumnStylesCollection.cs, GridItemCollection.cs,
+	GridTableStylesCollection.cs, GroupBox.cs, Help.cs,
+	HelpProvider.cs, ImageListStreamer.cs, InputLanguageCollection.cs,
+	Label.cs, LayoutEngine.cs, LinkClickedEventArgs.cs,
+	LinkLabel.cs, ListBox.cs, ListView.cs, ListViewGroupCollection.cs,
+	ListViewItem.cs, Menu.cs, MenuItem.cs, MenuStrip.cs, MouseEventArgs.cs.
+
+2008-03-05  Jonathan Pobst  <monkey@jpobst.com>
+
 	corcompare - fix parameter names [A-F].
 	Control.cs, DataGridBoolColumn.cs, DataGridColumnStyle.cs,
 	DataGridTextBoxColumn.cs, DataGridViewButtonCell.cs,
