@@ -58,6 +58,11 @@ namespace Mainsoft.Web.Hosting
 	/// </summary>
 	public class BaseHttpServlet : HttpServlet, IJDBCDriverDeregisterer
 	{
+		// requered for supporting J2EEUtils api
+		static readonly LocalDataStoreSlot _servletRequestSlot = Thread.GetNamedDataSlot (J2EEConsts.SERVLET_REQUEST);
+		static readonly LocalDataStoreSlot _servletResponseSlot = Thread.GetNamedDataSlot (J2EEConsts.SERVLET_RESPONSE);
+		static readonly LocalDataStoreSlot _servletSlot = Thread.GetNamedDataSlot (J2EEConsts.CURRENT_SERVLET);
+
 		bool _appVirDirInited = false;
 
 		static FacesContextFactory _facesContextFactory;
@@ -175,12 +180,13 @@ namespace Mainsoft.Web.Hosting
 				// Put to the TLS current AppDomain of the servlet, so anyone can use it.
 				vmw.@internal.EnvironmentUtils.setAppDomain(servletDomain);
 
+				// requered for supporting J2EEUtils api
 				// put request to the TLS
-				//Thread.SetData(_servletRequestSlot, req);
-				//// put response to the TLS
-				//Thread.SetData(_servletResponseSlot, resp);
-				//// put the servlet object to the TLS
-				//Thread.SetData(_servletSlot, this);
+				Thread.SetData (_servletRequestSlot, req);
+				// put response to the TLS
+				Thread.SetData (_servletResponseSlot, resp);
+				// put the servlet object to the TLS
+				Thread.SetData (_servletSlot, this);
 
 				resp.setHeader("X-Powered-By", "ASP.NET");
 				resp.setHeader("X-AspNet-Version", "1.1.4322");
