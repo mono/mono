@@ -175,15 +175,21 @@ namespace Mono.Mozilla
 			nsIURI ret;
 			ioService.newURI (asciiUri.Handle, null, null, out ret);
 			AsciiString ctype = new AsciiString(contentType);
-			nsIWebBrowserStream stream = (nsIWebBrowserStream) navigation.navigation;
-			stream.openStream (ret, ctype.Handle);
-			streamingMode = true;
+			if (Navigation != null) {
+				nsIWebBrowserStream stream = (nsIWebBrowserStream) navigation.navigation;
+				stream.openStream (ret, ctype.Handle);
+				streamingMode = true;
+			} else
+				throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.Navigation);
 		}
 
 		public void AppendToStream (string html)
 		{
 			if (!streamingMode)
 				throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.StreamNotOpen);
+
+			if (Navigation == null)
+				throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.Navigation);
 
 			nsIWebBrowserStream stream = navigation.navigation as nsIWebBrowserStream;
 			if (stream == null)
@@ -205,6 +211,9 @@ namespace Mono.Mozilla
 		{
 			if (!streamingMode)
 				return;
+
+			if (Navigation == null)
+				throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.Navigation);
 
 			nsIWebBrowserStream stream = navigation.navigation as nsIWebBrowserStream;
 			if (stream == null)

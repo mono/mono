@@ -28,7 +28,7 @@ using System.Runtime.InteropServices;
 
 namespace Mono.Mozilla
 {
-	public class UniString : IDisposable
+	internal class UniString : IDisposable
 	{
 		[StructLayout(LayoutKind.Sequential)]
 		class nsStringContainer {

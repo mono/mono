@@ -803,14 +803,14 @@ using Mono.WebBrowser.DOM;
 
  
 	[StructLayout (LayoutKind.Sequential)]
-	public struct SizeInfo
+	internal struct SizeInfo
 	{
 		public UInt32 width;
 		public UInt32 height;
 	}
 
 	[StructLayout (LayoutKind.Sequential)]
-	public struct ModifierKeys
+	internal struct ModifierKeys
 	{
 		public Int32 altKey;
 		public Int32 ctrlKey;
@@ -819,7 +819,7 @@ using Mono.WebBrowser.DOM;
 	}
 
 	[StructLayout (LayoutKind.Sequential)]
-	public struct MouseInfo
+	internal struct MouseInfo
 	{
 		public UInt16 button;
 		public Int32 clientX;
@@ -829,7 +829,7 @@ using Mono.WebBrowser.DOM;
 	}
 
 	[StructLayout (LayoutKind.Sequential)]
-	public struct KeyInfo
+	internal struct KeyInfo
 	{
 		public UInt32 charCode;
 		public UInt32 keyCode;

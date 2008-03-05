@@ -29,7 +29,7 @@ using System.Runtime.InteropServices;
 namespace Mono.Mozilla
 {
 	
-	public class AsciiString : IDisposable
+	internal class AsciiString : IDisposable
 	{
 		[StructLayout(LayoutKind.Sequential)]
 		class nsStringContainer {
