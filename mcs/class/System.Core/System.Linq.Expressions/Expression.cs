@@ -902,6 +902,25 @@ namespace System.Linq.Expressions {
 			return new MethodCallExpression (instance, method, args);
 		}
 
+		static Type [] CollectTypes (IEnumerable<Expression> expressions)
+		{
+			return (from arg in expressions select arg.Type).ToArray ();
+		}
+
+		static MethodInfo TryMakeGeneric (MethodInfo method, Type [] args)
+		{
+			if (method == null)
+				return null;
+
+			if (!method.IsGenericMethod && args == null)
+				return method;
+
+			if (args.Length == method.GetGenericArguments ().Length)
+				return method.MakeGenericMethod (args);
+
+			return null;
+		}
+
 		public static MethodCallExpression Call (Expression instance, string methodName, Type [] typeArguments, params Expression [] arguments)
 		{
 			if (instance == null)
@@ -909,10 +928,8 @@ namespace System.Linq.Expressions {
 			if (methodName == null)
 				throw new ArgumentNullException ("methodName");
 
-			if (typeArguments == null)
-				typeArguments = (from arg in arguments select arg.Type).ToArray ();
-
-			var method = instance.Type.GetMethod (methodName, AllInstance, null, typeArguments, null);
+			var method = instance.Type.GetMethod (methodName, AllInstance, null, CollectTypes (arguments), null);
+			method = TryMakeGeneric (method, typeArguments);
 			if (method == null)
 				throw new InvalidOperationException ("No such method");
 
@@ -929,10 +946,8 @@ namespace System.Linq.Expressions {
 			if (methodName == null)
 				throw new ArgumentNullException ("methodName");
 
-			if (typeArguments == null)
-				typeArguments = (from arg in arguments select arg.Type).ToArray ();
-
-			var method = type.GetMethod (methodName, AllStatic, null, typeArguments, null);
+			var method = type.GetMethod (methodName, AllStatic, null, CollectTypes (arguments), null);
+			method = TryMakeGeneric (method, typeArguments);
 			if (method == null)
 				throw new InvalidOperationException ("No such method");
 
