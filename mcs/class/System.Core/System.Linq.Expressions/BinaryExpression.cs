@@ -114,15 +114,6 @@ namespace System.Linq.Expressions {
 			return method;
 		}
 
-		LocalBuilder EmitStored (EmitContext ec, Expression expr)
-		{
-			var local = ec.ig.DeclareLocal (expr.Type);
-			expr.Emit (ec);
-			ec.ig.Emit (OpCodes.Stloc, local);
-
-			return local;
-		}
-
 		void EmitLiftedLogical (EmitContext ec, bool and, bool short_circuit)
 		{
 			var ig = ec.ig;

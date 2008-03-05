@@ -1,3 +1,9 @@
+2008-03-06  Jb Evain  <jbevain@novell.com>
+
+	* BinaryExpression.cs, Expression.cs: move EmitStored from
+	BinaryExpression to Expression.
+	* MethodCallExpression.cs: allow method calls on structs.
+
 2008-03-05  Jb Evain  <jbevain@novell.com>
 
 	* Expression.cs: Fix the Call method which takes an array

@@ -33,6 +33,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 
 namespace System.Linq.Expressions {
 
@@ -1892,5 +1893,14 @@ namespace System.Linq.Expressions {
 		// compile the expression
 		//
 		internal abstract void Emit (EmitContext ec);
+
+		internal static LocalBuilder EmitStored (EmitContext ec, Expression expr)
+		{
+			var local = ec.ig.DeclareLocal (expr.Type);
+			expr.Emit (ec);
+			ec.ig.Emit (OpCodes.Stloc, local);
+
+			return local;
+		}
 	}
 }

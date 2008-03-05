@@ -73,8 +73,13 @@ namespace System.Linq.Expressions {
 			foreach (var arg in arguments)
 				arg.Emit (ec);
 
-			if (obj != null)
-				obj.Emit (ec);
+			if (obj != null) {
+				if (obj.Type.IsValueType) {
+					var local = EmitStored (ec, obj);
+					ig.Emit (OpCodes.Ldloca, local);
+				} else
+					obj.Emit (ec);
+			}
 
 			ig.Emit (method.IsVirtual ? OpCodes.Callvirt : OpCodes.Call, method);
 		}
