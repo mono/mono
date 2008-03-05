@@ -1,3 +1,7 @@
+2008-03-05  Jb Evain  <jbevain@novell.com>
+
+	* Expression.cs: fix for a good chunk of lifted/liftToNull tests.
+
 2008-02-26  Jb Evain  <jbevain@novell.com>
 
 	* Expression.cs (Call): Guess the parameters type from the argument

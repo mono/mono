@@ -295,7 +295,7 @@ namespace System.Linq.Expressions {
 				is_lifted = false;
 			}
 
-			return new BinaryExpression (et, result, left, right, false, is_lifted, method, null);
+			return new BinaryExpression (et, result, left, right, is_lifted, is_lifted, method, null);
 		}
 
 		static UnaryExpression MakeSimpleUnary (ExpressionType et, Expression expression, MethodInfo method)
@@ -320,6 +320,7 @@ namespace System.Linq.Expressions {
 			if (method == null){
 				if (lnullable == false && rnullable == false){
 					is_lifted = false;
+					liftToNull = false;
 					result = typeof (bool);
 				} else if (lnullable && rnullable){
 					is_lifted = true;
@@ -573,7 +574,7 @@ namespace System.Linq.Expressions {
 		{
 			method = ConditionalBinaryCheck ("op_BitwiseAnd", left, right, method);
 
-			return MakeBoolBinary (ExpressionType.AndAlso, left, right, false, method);
+			return MakeBoolBinary (ExpressionType.AndAlso, left, right, true, method);
 		}
 
 		static MethodInfo ConditionalBinaryCheck (string oper, Expression left, Expression right, MethodInfo method)
@@ -581,7 +582,7 @@ namespace System.Linq.Expressions {
 			method = BinaryCoreCheck (oper, left, right, method);
 
 			if (method == null) {
-				if (left.Type != typeof (bool))
+				if (GetNotNullableOf (left.Type) != typeof (bool))
 					throw new InvalidOperationException ("Only booleans are allowed");
 			} else {
 				// The method should have identical parameter and return types.
@@ -602,7 +603,7 @@ namespace System.Linq.Expressions {
 		{
 			method = ConditionalBinaryCheck ("op_BitwiseOr", left, right, method);
 
-			return MakeBoolBinary (ExpressionType.OrElse, left, right, false, method);
+			return MakeBoolBinary (ExpressionType.OrElse, left, right, true, method);
 		}
 
 		//
@@ -686,7 +687,7 @@ namespace System.Linq.Expressions {
 		// Miscelaneous
 		//
 
-		static void ArrayCheck (Expression array)
+		static void CheckArray (Expression array)
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
@@ -696,7 +697,8 @@ namespace System.Linq.Expressions {
 
 		public static BinaryExpression ArrayIndex (Expression array, Expression index)
 		{
-			ArrayCheck (array);
+			CheckArray (array);
+
 			if (index == null)
 				throw new ArgumentNullException ("index");
 			if (array.Type.GetArrayRank () != 1)
@@ -828,7 +830,7 @@ namespace System.Linq.Expressions {
 
 		public static MethodCallExpression ArrayIndex (Expression array, IEnumerable<Expression> indexes)
 		{
-			ArrayCheck (array);
+			CheckArray (array);
 
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
@@ -1864,7 +1866,10 @@ namespace System.Linq.Expressions {
 			if (t.IsPointer)
 				return IsUnsigned (t.GetElementType ());
 
-			return t == typeof (ushort) || t == typeof (uint) || t == typeof (ulong) || t == typeof (byte);
+			return t == typeof (ushort) ||
+				t == typeof (uint) ||
+				t == typeof (ulong) ||
+				t == typeof (byte);
 		}
 
 		//
@@ -1873,6 +1878,11 @@ namespace System.Linq.Expressions {
 		internal static Type GetNullableOf (Type type)
 		{
 			return type.GetGenericArguments () [0];
+		}
+
+		internal static Type GetNotNullableOf (Type type)
+		{
+			return IsNullable (type) ? GetNullableOf (type) : type;
 		}
 
 		//
