@@ -67,21 +67,6 @@ namespace System.Linq.Expressions {
 		}
 
 #region Binary Expressions
-		static bool IsInt (Type t)
-		{
-			return t == typeof (byte) || t == typeof (sbyte) ||
-				t == typeof (short) || t == typeof (ushort) ||
-				t == typeof (int) || t == typeof (uint) ||
-				t == typeof (long) || t == typeof (ulong);
-		}
-
-		static bool IsNumber (Type t)
-		{
-			if (IsInt (t))
-				return true;
-
-			return t == typeof (float) || t == typeof (double) || t == typeof (decimal);
-		}
 
 		static MethodInfo GetUnaryOperator (string oper_name, Type on_type, Expression expression)
 		{
@@ -200,17 +185,11 @@ namespace System.Linq.Expressions {
 			} else {
 				Type ltype = left.Type;
 				Type rtype = right.Type;
-				Type ultype = left.Type;
-				Type urtype = right.Type;
+				Type ultype = GetNotNullableOf (ltype);
+				Type urtype = GetNotNullableOf (rtype);
 
-				if (IsNullable (ltype))
-					ultype = GetNullableOf (ltype);
-
-				if (IsNullable (rtype))
-					urtype = GetNullableOf (rtype);
-
-				if (oper_name == "op_BitwiseOr" || oper_name == "op_BitwiseAnd"){
-					if (ultype == typeof (bool)){
+				if (oper_name == "op_BitwiseOr" || oper_name == "op_BitwiseAnd") {
+					if (ultype == typeof (bool)) {
 						if (ultype == urtype && ltype == rtype)
 							return null;
 					}
@@ -219,7 +198,7 @@ namespace System.Linq.Expressions {
 				// Use IsNumber to avoid expensive reflection.
 				if (IsNumber (ultype)){
 					if (ultype == urtype && ltype == rtype)
-						return method;
+						return null;
 
 					if (oper_name != null){
 						method = GetBinaryOperator (oper_name, rtype, left, right);
@@ -257,34 +236,36 @@ namespace System.Linq.Expressions {
 			if (right == null)
 				throw new ArgumentNullException ("right");
 
-			if (method == null){
+			if (method == null) {
 				// avoid reflection shortcut and catches Ints/bools before we check Numbers in general
-				if (left.Type == right.Type && (left.Type == typeof (bool) || IsInt (left.Type)))
-					return method;
+				if (left.Type == right.Type && IsIntOrBool (left.Type))
+					return null;
 			}
 
 			method = BinaryCoreCheck (oper_name, left, right, method);
-			if (method == null){
-				//
+			if (method == null) {
 				// The check in BinaryCoreCheck allows a bit more than we do
 				// (floats and doubles).  Catch this here
-				//
-				if (left.Type == typeof(double) || left.Type == typeof(float))
+				if (left.Type == typeof (double) || left.Type == typeof (float))
 					throw new InvalidOperationException ("Types not supported");
 			}
 
 			return method;
 		}
 
+		static Type GetResultType (Expression expression, MethodInfo method)
+		{
+			return method == null ? expression.Type : method.ReturnType;
+		}
+
 		static BinaryExpression MakeSimpleBinary (ExpressionType et, Expression left, Expression right, MethodInfo method)
 		{
-			Type result = method == null ? left.Type : method.ReturnType;
 			bool is_lifted;
 
 			if (method == null){
 				if (IsNullable (left.Type)){
 					if (!IsNullable (right.Type))
-						throw new Exception ("Assertion, internal error: left is nullable, requires right to be as well");
+						throw new InvalidOperationException ("Assertion, internal error: left is nullable, requires right to be as well");
 					is_lifted = true;
 				} else
 					is_lifted = false;
@@ -295,14 +276,12 @@ namespace System.Linq.Expressions {
 				is_lifted = false;
 			}
 
-			return new BinaryExpression (et, result, left, right, is_lifted, is_lifted, method, null);
+			return new BinaryExpression (et, GetResultType (left, method), left, right, is_lifted, is_lifted, method, null);
 		}
 
 		static UnaryExpression MakeSimpleUnary (ExpressionType et, Expression expression, MethodInfo method)
 		{
-			Type result = method == null ? expression.Type : method.ReturnType;
-
-			return new UnaryExpression (et, expression, result, method);
+			return new UnaryExpression (et, expression, GetResultType (expression, method), method);
 		}
 
 		static BinaryExpression MakeBoolBinary (ExpressionType et, Expression left, Expression right, bool liftToNull, MethodInfo method)
@@ -314,29 +293,27 @@ namespace System.Linq.Expressions {
 			bool rnullable = IsNullable (rtype);
 			bool is_lifted;
 
-			//
 			// Implement the rules as described in "Expression.Equal" method.
-			//
-			if (method == null){
-				if (lnullable == false && rnullable == false){
+			if (method == null) {
+				if (!lnullable && !rnullable) {
 					is_lifted = false;
 					liftToNull = false;
 					result = typeof (bool);
-				} else if (lnullable && rnullable){
+				} else if (lnullable && rnullable) {
 					is_lifted = true;
 					result = liftToNull ? typeof(bool?) : typeof (bool);
 				} else
-					throw new Exception ("Internal error: this should have been caught in BinaryCoreCheck");
+					throw new InvalidOperationException ("Internal error: this should have been caught in BinaryCoreCheck");
 			} else {
 				ParameterInfo [] pi = method.GetParameters ();
 				Type mltype = pi [0].ParameterType;
 				Type mrtype = pi [1].ParameterType;
 
-				if (ltype == mltype && rtype == mrtype){
+				if (ltype == mltype && rtype == mrtype) {
 					is_lifted = false;
+					liftToNull = false;
 					result = method.ReturnType;
-				}
-				else if (ltype.IsValueType && rtype.IsValueType &&
+				} else if (ltype.IsValueType && rtype.IsValueType &&
 					   ((lnullable && GetNullableOf (ltype) == mltype) ||
 						(rnullable && GetNullableOf (rtype) == mrtype))){
 					is_lifted = true;
@@ -352,10 +329,10 @@ namespace System.Linq.Expressions {
 						// See:
 						// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=323139
 						result = typeof (Nullable<>).MakeGenericType (method.ReturnType);
-							//Type.GetType ("System.Nullable`1[" + method.ReturnType.ToString () + "]");
 					}
 				} else {
 					is_lifted = false;
+					liftToNull = false;
 					result = method.ReturnType;
 				}
 			}
@@ -1854,6 +1831,27 @@ namespace System.Linq.Expressions {
 			method = UnaryCoreCheck ("op_UnaryPlus", expression, method);
 
 			return MakeSimpleUnary (ExpressionType.UnaryPlus, expression, method);
+		}
+
+		static bool IsInt (Type t)
+		{
+			return t == typeof (byte) || t == typeof (sbyte) ||
+				t == typeof (short) || t == typeof (ushort) ||
+				t == typeof (int) || t == typeof (uint) ||
+				t == typeof (long) || t == typeof (ulong);
+		}
+
+		static bool IsIntOrBool (Type t)
+		{
+			return IsInt (t) || t == typeof (bool);
+		}
+
+		static bool IsNumber (Type t)
+		{
+			if (IsInt (t))
+				return true;
+
+			return t == typeof (float) || t == typeof (double) || t == typeof (decimal);
 		}
 
 		internal static bool IsNullable (Type type)
