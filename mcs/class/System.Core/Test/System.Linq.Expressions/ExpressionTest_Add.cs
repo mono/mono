@@ -139,14 +139,66 @@ namespace MonoTests.System.Linq.Expressions
 		[Test]
 		public void CompileAdd ()
 		{
-			ParameterExpression l = Expression.Parameter (typeof (int), "l"), r = Expression.Parameter (typeof (int), "r");
+			ParameterExpression left = Expression.Parameter (typeof (int), "l"), right = Expression.Parameter (typeof (int), "r");
+			var l = Expression.Lambda<Func<int, int, int>> (
+				Expression.Add (left, right), left, right);
 
-			var add = Expression.Lambda<Func<int, int, int>> (
-				Expression.Add (l, r), l, r).Compile ();
+			var be = l.Body as BinaryExpression;
+			Assert.IsNotNull (be);
+			Assert.AreEqual (typeof (int), be.Type);
+			Assert.IsFalse (be.IsLifted);
+			Assert.IsFalse (be.IsLiftedToNull);
+
+			var add = l.Compile ();
 
 			Assert.AreEqual (12, add (6, 6));
 			Assert.AreEqual (0, add (-1, 1));
 			Assert.AreEqual (-2, add (1, -3));
+		}
+
+		[Test]
+		public void AddLifted ()
+		{
+			var b = Expression.Add (
+				Expression.Constant (null, typeof (int?)),
+				Expression.Constant (null, typeof (int?)));
+
+			Assert.AreEqual (typeof (int?), b.Type);
+			Assert.IsTrue (b.IsLifted);
+			Assert.IsTrue (b.IsLiftedToNull);
+		}
+
+		[Test]
+		public void AddNotLifted ()
+		{
+			var b = Expression.Add (
+				Expression.Constant (1, typeof (int)),
+				Expression.Constant (1, typeof (int)));
+
+			Assert.AreEqual (typeof (int), b.Type);
+			Assert.IsFalse (b.IsLifted);
+			Assert.IsFalse (b.IsLiftedToNull);
+		}
+
+		[Test]
+		public void AddTestNullable ()
+		{
+			ParameterExpression a = Expression.Parameter (typeof (int?), "a"), b = Expression.Parameter (typeof (int?), "b");
+			var l = Expression.Lambda<Func<int?, int?, int?>> (
+				Expression.Add (a, b), a, b);
+
+			var be = l.Body as BinaryExpression;
+			Assert.IsNotNull (be);
+			Assert.AreEqual (typeof (int?), be.Type);
+			Assert.IsTrue (be.IsLifted);
+			Assert.IsTrue (be.IsLiftedToNull);
+
+			var c = l.Compile ();
+
+			Assert.AreEqual (null, c (1, null), "a1");
+			Assert.AreEqual (null, c (null, null), "a2");
+			Assert.AreEqual (null, c (null, 2), "a3");
+			Assert.AreEqual (3,    c (1, 2), "a4");
 		}
 	}
 }
