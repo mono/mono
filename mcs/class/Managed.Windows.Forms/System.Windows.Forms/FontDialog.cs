@@ -723,7 +723,7 @@ namespace System.Windows.Forms
 			return base.HookProc (hWnd, msg, wparam, lparam);
 		}
 
-		protected override bool RunDialog( IntPtr hwndOwner )
+		protected override bool RunDialog( IntPtr hWndOwner )
 		{
 			form.Refresh();
 			

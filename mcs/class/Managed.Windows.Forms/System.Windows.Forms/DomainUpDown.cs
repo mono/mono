@@ -170,36 +170,36 @@ namespace System.Windows.Forms
 			#endregion	// Public Instance Properties
 
 			#region Public Instance Methods
-			public override int Add(object value) {
-				if (value == null)
+			public override int Add(object item) {
+				if (item == null)
 					throw new ArgumentNullException("value", "Cannot add null values to a DomainUpDownItemCollection");
 
-				int ret = base.Add(value);
-				string_cache.Add(value.ToString());
+				int ret = base.Add(item);
+				string_cache.Add(item.ToString());
 				OnCollectionChanged(Count - 1, +1);
 				return ret;
 			}
 
-			public override void Insert(int index, object value) {
-				if (value == null)
+			public override void Insert(int index, object item) {
+				if (item == null)
 					throw new ArgumentNullException("value", "Cannot add null values to a DomainUpDownItemCollection");
 
-				base.Insert(index, value);
-				string_cache.Insert(index, value.ToString());
+				base.Insert(index, item);
+				string_cache.Insert(index, item.ToString());
 				OnCollectionChanged(index, +1);
 			}
 
-			public override void Remove(object obj) {
-				int index = IndexOf(obj);
+			public override void Remove(object item) {
+				int index = IndexOf(item);
 
 				if (index >= 0)
 					RemoveAt(index);
 			}
 
-			public override void RemoveAt(int index) {
-				base.RemoveAt(index);
-				string_cache.RemoveAt(index);
-				OnCollectionChanged(index, -1);
+			public override void RemoveAt(int item) {
+				base.RemoveAt(item);
+				string_cache.RemoveAt(item);
+				OnCollectionChanged(item, -1);
 			}
 			#endregion	// Public Instance Methods
 

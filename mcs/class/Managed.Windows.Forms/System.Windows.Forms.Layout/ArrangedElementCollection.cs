@@ -51,9 +51,9 @@ namespace System.Windows.Forms.Layout
 			list.CopyTo (array, index);
 		}
 
-		public override bool Equals (object other)
+		public override bool Equals (object obj)
 		{
-			if (other is ArrangedElementCollection && this == other)
+			if (obj is ArrangedElementCollection && this == obj)
 				return (true);
 			else
 				return (false);

@@ -42,9 +42,9 @@ namespace System.Windows.Forms.Design
 		private IServiceProvider serviceProvider;
 
 		[MonoTODO]
-		public EventsTab(IServiceProvider serviceProvider)
+		public EventsTab(IServiceProvider sp)
 		{
-			this.serviceProvider = serviceProvider;
+			this.serviceProvider = sp;
 		}
 
 		[MonoTODO("What value should we return?")]
@@ -94,15 +94,15 @@ namespace System.Windows.Forms.Design
 		}
 		
 		[MonoTODO]
-		public override bool CanExtend(object component)
+		public override bool CanExtend(object extendee)
 		{
 			return false;
 		}
 		
 		[MonoTODO("Test")]
-		public override PropertyDescriptor GetDefaultProperty(object component)
+		public override PropertyDescriptor GetDefaultProperty(object obj)
 		{
-			object[] attributes = component.GetType().GetCustomAttributes(typeof(DefaultEventAttribute), true);
+			object[] attributes = obj.GetType().GetCustomAttributes(typeof(DefaultEventAttribute), true);
 			if (attributes.Length > 0) {
 				DefaultEventAttribute defaultEvent = attributes[0] as DefaultEventAttribute;
 				if (defaultEvent != null && serviceProvider != null) {
@@ -110,7 +110,7 @@ namespace System.Windows.Forms.Design
 						serviceProvider.GetService(typeof(IEventBindingService));
 	
 					if (eventPropertySvc == null)
-						foreach (EventDescriptor ed in TypeDescriptor.GetEvents(component))
+						foreach (EventDescriptor ed in TypeDescriptor.GetEvents(obj))
 							if (ed.Name == defaultEvent.Name)
 								return eventPropertySvc.GetEventProperty(ed);
 				}

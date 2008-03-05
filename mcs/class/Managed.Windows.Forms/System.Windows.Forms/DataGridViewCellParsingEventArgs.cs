@@ -35,7 +35,9 @@ namespace System.Windows.Forms {
 		private bool parsingApplied = false;
 		private int rowIndex;
 
-		public DataGridViewCellParsingEventArgs (int columnIndex, int rowIndex, object value, Type desiredType, DataGridViewCellStyle inheritedCellStyle) : base (value, desiredType) {
+		public DataGridViewCellParsingEventArgs (int rowIndex, int columnIndex, object value, Type desiredType, DataGridViewCellStyle inheritedCellStyle)
+			: base (value, desiredType)
+		{
 			this.columnIndex = columnIndex;
 			this.rowIndex = rowIndex;
 			this.inheritedCellStyle = inheritedCellStyle;

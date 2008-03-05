@@ -3757,8 +3757,8 @@ namespace System.Windows.Forms
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		public object EndInvoke (IAsyncResult async_result) {
-			AsyncMethodResult result = (AsyncMethodResult) async_result;
+		public object EndInvoke (IAsyncResult asyncResult) {
+			AsyncMethodResult result = (AsyncMethodResult) asyncResult;
 			return result.EndInvoke ();
 		}
 

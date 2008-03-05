@@ -1668,22 +1668,22 @@ namespace System.Windows.Forms {
 			return ShowDialog (null);
 		}
 
-		public DialogResult ShowDialog(IWin32Window ownerWin32) {
+		public DialogResult ShowDialog(IWin32Window owner) {
 			Rectangle	area;
 			bool		confined;
 			IntPtr		capture_window;
 
 			Form owner_to_be = null;
 
-			if ((ownerWin32 == null) && (Application.MWFThread.Current.Context != null)) {
+			if ((owner == null) && (Application.MWFThread.Current.Context != null)) {
 				IntPtr active = XplatUI.GetActive ();
 				if (active != IntPtr.Zero) {
-					ownerWin32 = Control.FromHandle (active) as Form;
+					owner = Control.FromHandle (active) as Form;
 				}
 			}
 
-			if (ownerWin32 != null) {
-				Control c = Control.FromHandle (ownerWin32.Handle);
+			if (owner != null) {
+				Control c = Control.FromHandle (owner.Handle);
 				if (c != null)
 					owner_to_be = c.TopLevelControl as Form;
 			}
@@ -1716,7 +1716,7 @@ namespace System.Windows.Forms {
 			}
 
 			if (owner_to_be != null)
-				owner = owner_to_be;
+				this.owner = owner_to_be;
 				
 			#if broken
 			// Can't do this, will screw us in the modal loop
@@ -1742,9 +1742,9 @@ namespace System.Windows.Forms {
 
 			Application.RunLoop(true, new ApplicationContext(this));
 
-			if (owner != null) {
+			if (this.owner != null) {
 				// Cannot use Activate(), it has a check for the current active window...
-				XplatUI.Activate(owner.window.Handle);
+				XplatUI.Activate(this.owner.window.Handle);
 			}
 			
 			if (IsHandleCreated) {
@@ -2119,11 +2119,11 @@ namespace System.Windows.Forms {
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected override void OnPaint (PaintEventArgs pevent) {
-			base.OnPaint (pevent);
+		protected override void OnPaint (PaintEventArgs e) {
+			base.OnPaint (e);
 
 			if (size_grip != null) {
-				size_grip.HandlePaint (this, pevent);
+				size_grip.HandlePaint (this, e);
 			}
 		}
 
@@ -2232,13 +2232,13 @@ namespace System.Windows.Forms {
 			return base.ProcessDialogKey(keyData);
 		}
 
-		protected override bool ProcessKeyPreview(ref Message msg) {
+		protected override bool ProcessKeyPreview(ref Message m) {
 			if (key_preview) {
-				if (ProcessKeyEventArgs(ref msg)) {
+				if (ProcessKeyEventArgs(ref m)) {
 					return true;
 				}
 			}
-			return base.ProcessKeyPreview (ref msg);
+			return base.ProcessKeyPreview (ref m);
 		}
 
 		protected override bool ProcessTabKey(bool forward) {
@@ -2258,9 +2258,9 @@ namespace System.Windows.Forms {
 #else
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 #endif
-		protected override void ScaleCore (float dx, float dy)
+		protected override void ScaleCore (float x, float y)
 		{
-			base.ScaleCore (dx, dy);
+			base.ScaleCore (x, y);
 		}
 
 		protected override void Select(bool directed, bool forward) {

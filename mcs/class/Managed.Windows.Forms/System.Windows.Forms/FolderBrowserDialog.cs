@@ -254,7 +254,7 @@ namespace System.Windows.Forms {
 			ShowNewFolderButton = true;
 		}
 		
-		protected override bool RunDialog (IntPtr hwndOwner)
+		protected override bool RunDialog (IntPtr hWndOwner)
 		{
 			folderBrowserTreeView.RootFolder = RootFolder;
 			folderBrowserTreeView.SelectedPath = SelectedPath;

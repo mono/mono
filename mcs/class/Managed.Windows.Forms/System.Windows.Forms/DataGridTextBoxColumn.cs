@@ -167,7 +167,7 @@ namespace System.Windows.Forms
 			HideEditBox ();
 		}
 
-		protected internal override void Edit (CurrencyManager source, int rowNum,  Rectangle bounds,  bool _ro, string instantText, bool cellIsVisible)
+		protected internal override void Edit (CurrencyManager source, int rowNum,  Rectangle bounds,  bool readOnly, string displayText, bool cellIsVisible)
 		{
 			grid.SuspendLayout ();
 
@@ -177,10 +177,10 @@ namespace System.Windows.Forms
 			
 			bool ro = false;
 
-			ro = (TableStyleReadOnly || ReadOnly || _ro);
+			ro = (TableStyleReadOnly || ReadOnly || readOnly);
 
-			if (!ro && instantText != null) {
-				textbox.Text = instantText;
+			if (!ro && displayText != null) {
+				textbox.Text = displayText;
 				textbox.IsInEditOrNavigateMode = false;
 			} else {
 				textbox.Text = GetFormattedValue (source, rowNum);
@@ -330,13 +330,13 @@ namespace System.Windows.Forms
 			grid.ResumeLayout (false);
 		}
 		
-		protected internal override void UpdateUI (CurrencyManager source, int rowNum, string instantText)
+		protected internal override void UpdateUI (CurrencyManager source, int rowNum, string displayText)
 		{
 			if (textbox.Visible // I don't really like this, but it gets DataGridTextBoxColumnTest.TestUpdateUI passing
 			    && textbox.IsInEditOrNavigateMode) {
 				textbox.Text = GetFormattedValue (source, rowNum);
 			} else {
-				textbox.Text = instantText;
+				textbox.Text = displayText;
 			}
 		}
 

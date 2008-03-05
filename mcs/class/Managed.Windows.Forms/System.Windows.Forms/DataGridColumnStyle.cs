@@ -405,12 +405,12 @@ namespace System.Windows.Forms
 			Edit (source, rowNum, bounds, readOnly, string.Empty);
 		}
 		
-		protected internal virtual void Edit (CurrencyManager source, int rowNum, Rectangle bounds, bool readOnly, string instantText)
+		protected internal virtual void Edit (CurrencyManager source, int rowNum, Rectangle bounds, bool readOnly, string displayText)
 		{	
-			Edit (source, rowNum, bounds, readOnly, instantText, true);
+			Edit (source, rowNum, bounds, readOnly, displayText, true);
 		}
 
-		protected internal abstract void Edit (CurrencyManager source, int rowNum, Rectangle bounds, bool readOnly,   string instantText,  bool cellIsVisible);
+		protected internal abstract void Edit (CurrencyManager source, int rowNum, Rectangle bounds, bool readOnly, string displayText,  bool cellIsVisible);
 
 		[MonoTODO]
 		protected void EndUpdate ()
@@ -492,7 +492,7 @@ namespace System.Windows.Forms
 			SetDataGridInColumn (value);
 		}
 
-		protected internal virtual void UpdateUI (CurrencyManager source, int rowNum, string instantText)
+		protected internal virtual void UpdateUI (CurrencyManager source, int rowNum, string displayText)
 		{
 		}
 

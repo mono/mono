@@ -208,12 +208,12 @@ namespace System.Windows.Forms.VisualStyles
 		}
 
 		[System.Security.SuppressUnmanagedCodeSecurity]
-		public Region GetBackgroundRegion (IDeviceContext dc, Rectangle contentBounds)
+		public Region GetBackgroundRegion (IDeviceContext dc, Rectangle bounds)
 		{
 			if (dc == null)
 				throw new ArgumentNullException ("dc");
 
-			XplatUIWin32.RECT BoundsRect = XplatUIWin32.RECT.FromRectangle (contentBounds);
+			XplatUIWin32.RECT BoundsRect = XplatUIWin32.RECT.FromRectangle (bounds);
 			IntPtr retval;
 
 			last_hresult = UXTheme.GetThemeBackgroundRegion (theme, dc.GetHdc (), this.part, this.state, ref BoundsRect, out retval);

@@ -380,36 +380,36 @@ namespace System.Windows.Forms {
 			SetData (DataFormats.Bitmap, image);
 		}
 
-		public virtual void SetText (string text)
+		public virtual void SetText (string textData)
 		{
-			if (string.IsNullOrEmpty (text))
+			if (string.IsNullOrEmpty (textData))
 				throw new ArgumentNullException ("text");
 
-			SetData (DataFormats.UnicodeText, text);
+			SetData (DataFormats.UnicodeText, textData);
 		}
 
-		public virtual void SetText (string text, TextDataFormat format)
+		public virtual void SetText (string textData, TextDataFormat format)
 		{
-			if (string.IsNullOrEmpty (text))
+			if (string.IsNullOrEmpty (textData))
 				throw new ArgumentNullException ("text");
 			if (!Enum.IsDefined (typeof (TextDataFormat), format))
 				throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for TextDataFormat", format));
 
 			switch (format) {
 				case TextDataFormat.Text:
-					SetData (DataFormats.Text, text);
+					SetData (DataFormats.Text, textData);
 					break;
 				case TextDataFormat.UnicodeText:
-					SetData (DataFormats.UnicodeText, text);
+					SetData (DataFormats.UnicodeText, textData);
 					break;
 				case TextDataFormat.Rtf:
-					SetData (DataFormats.Rtf, text);
+					SetData (DataFormats.Rtf, textData);
 					break;
 				case TextDataFormat.Html:
-					SetData (DataFormats.Html, text);
+					SetData (DataFormats.Html, textData);
 					break;
 				case TextDataFormat.CommaSeparatedValue:
-					SetData (DataFormats.CommaSeparatedValue, text);
+					SetData (DataFormats.CommaSeparatedValue, textData);
 					break;
 			}
 		}

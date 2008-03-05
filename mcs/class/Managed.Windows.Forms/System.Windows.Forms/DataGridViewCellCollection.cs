@@ -170,11 +170,11 @@ namespace System.Windows.Forms
 			Remove (o as DataGridViewCell);
 		}
 
-		public virtual void Remove (DataGridViewCell dataGridViewCell)
+		public virtual void Remove (DataGridViewCell cell)
 		{
-			base.List.Remove (dataGridViewCell);
+			base.List.Remove (cell);
 			OnCollectionChanged (new CollectionChangeEventArgs (
-				CollectionChangeAction.Remove, dataGridViewCell));
+				CollectionChangeAction.Remove, cell));
 		}
 
 		public virtual void RemoveAt (int index)

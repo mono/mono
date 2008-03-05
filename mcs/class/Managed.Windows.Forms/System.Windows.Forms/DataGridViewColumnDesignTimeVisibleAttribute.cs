@@ -50,14 +50,14 @@ namespace System.Windows.Forms {
 			get { return visible; }
 		}
 
-		public override bool Equals (object o) {
-			if (!(o is DataGridViewColumnDesignTimeVisibleAttribute)) {
+		public override bool Equals (object obj) {
+			if (!(obj is DataGridViewColumnDesignTimeVisibleAttribute)) {
 				return false;
 			}
-			if ((o as DataGridViewColumnDesignTimeVisibleAttribute).visible != this.visible) {
+			if ((obj as DataGridViewColumnDesignTimeVisibleAttribute).visible != this.visible) {
 				return false;
 			}
-			return base.Equals(o);
+			return base.Equals(obj);
 		}
 
 		public override int GetHashCode () {

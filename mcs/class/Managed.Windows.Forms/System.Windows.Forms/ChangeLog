@@ -1,3 +1,14 @@
+2008-03-05  Jonathan Pobst  <monkey@jpobst.com>
+
+	corcompare - fix parameter names [A-F].
+	Control.cs, DataGridBoolColumn.cs, DataGridColumnStyle.cs,
+	DataGridTextBoxColumn.cs, DataGridViewButtonCell.cs,
+	DataGridViewCellCollection.cs, DataGridViewCellParsingEventArgs.cs,
+	DataGridViewCheckBoxCell.cs, DataGridViewColumnDesignTimeVisibleAttribute.cs,
+	DataGridViewComboBoxCell.cs, DataGridViewHeaderCell.cs,
+	DataGridViewImageCell.cs, DataObject.cs, DomainUpDown.cs,
+	DrawItemEventArgs.cs, FolderBrowserDialog.cs, FontDialog.cs, Form.cs.
+
 2008-03-03  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* GridEntry.cs: Do not convert not only if the types match, 

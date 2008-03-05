@@ -48,15 +48,15 @@ namespace System.Windows.Forms {
 
 		public DrawItemEventArgs (Graphics graphics, Font font,
 				Rectangle rect, int index, DrawItemState state,
-				Color fore_color, Color back_color)
+				Color foreColor, Color backColor)
 		{
 			this.graphics = graphics;
 			this.font = font;
 			this.rect = rect;
 			this.index = index;
 			this.state = state;
-			this.fore_color = fore_color;
-			this.back_color = back_color;
+			this.fore_color = foreColor;
+			this.back_color = backColor;
 		}
 
 		public Graphics Graphics {

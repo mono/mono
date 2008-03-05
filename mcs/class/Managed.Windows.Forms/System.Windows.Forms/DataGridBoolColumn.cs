@@ -158,10 +158,10 @@ namespace System.Windows.Forms
 			}
 		}
 
-		protected internal override bool Commit (CurrencyManager source, int rowNum)
+		protected internal override bool Commit (CurrencyManager dataSource, int rowNum)
 		{
 			if (rowNum == editing_row) {
-				SetColumnValueAtRow (source, rowNum, FromStateToValue (editing_state));
+				SetColumnValueAtRow (dataSource, rowNum, FromStateToValue (editing_state));
 				// XXX 
 				// this needs to not use the current cell
 				// bounds, but the bounds of the cell for this
@@ -177,7 +177,7 @@ namespace System.Windows.Forms
 		{
 		}
 
-		protected internal override void Edit (CurrencyManager source, int rowNum, Rectangle bounds, bool readOnly, string instantText,  bool cellIsVisible)
+		protected internal override void Edit (CurrencyManager source, int rowNum, Rectangle bounds, bool readOnly, string displayText,  bool cellIsVisible)
 		{
 			editing_row = rowNum;
 			model_state = FromValueToState (GetColumnValueAtRow (source, rowNum));
@@ -280,19 +280,19 @@ namespace System.Windows.Forms
 			PaintGridLine (g, bounds);
 		}
 
-		protected internal override void SetColumnValueAtRow (CurrencyManager lm, int row, object obj)
+		protected internal override void SetColumnValueAtRow (CurrencyManager lm, int row, object value)
 		{
-			object value = null;
+			object final_value = null;
 
-			if (ValueEquals (null_value, obj))
-				value = DBNull.Value;
-			else if (ValueEquals (true_value, obj))
-				value = true;
-			else if (ValueEquals (false_value, obj))
-				value = false;
+			if (ValueEquals (null_value, value))
+				final_value = DBNull.Value;
+			else if (ValueEquals (true_value, value))
+				final_value = true;
+			else if (ValueEquals (false_value, value))
+				final_value = false;
 			/* else error? */
 
-			base.SetColumnValueAtRow (lm, row, value);
+			base.SetColumnValueAtRow (lm, row, final_value);
 		}
 		#endregion	// Public Instance Methods
 
