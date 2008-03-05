@@ -1,3 +1,9 @@
+
+Wed Mar 5 19:39:01 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* Type.cs: optimize GetTypeCode () for the common case
+	(fixes bug #367354).
+
 2008-03-02  Roei Erez  <roeie@mainsoft.com>
 
 	* DateTime.cs: Improve the patch supplied by James Purcell to be

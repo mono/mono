@@ -488,6 +488,8 @@ namespace System {
 		internal extern static TypeCode GetTypeCodeInternal (Type type);
 
 		public static TypeCode GetTypeCode (Type type) {
+			if (type is MonoType)
+				return GetTypeCodeInternal (type);
 			if (type == null)
 				/* MS.NET returns this */
 				return TypeCode.Empty;
@@ -495,7 +497,7 @@ namespace System {
 			type = type.UnderlyingSystemType;
 
 			if (!type.IsSystemType)
-				return Type.GetTypeCode (typeof (object));
+				return TypeCode.Object;
 			else
 				return GetTypeCodeInternal (type);
 		}
