@@ -1,3 +1,7 @@
+2008-03-05  Jb Evain  <jbevain@novell.com>
+
+	* ExpressionTest_Call.cs: we pass the Call with type arguments tests.
+
 2008-02-24  Jb Evain  <jbevain@novell.com>
 
 	* ExpressionTest.cs: test for Action compilation.

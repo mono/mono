@@ -174,7 +174,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void CheckTypeArgsIsNotUsedForParameterLookup ()
 		{
@@ -186,7 +185,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CheckTypeArgsIsUsedForGenericArguments ()
 		{
 			var m = Expression.Call (GetType (), "EineGenericMethod", new [] { typeof (string), typeof (int) }, "foo".ToConstant (), 2.ToConstant ());
