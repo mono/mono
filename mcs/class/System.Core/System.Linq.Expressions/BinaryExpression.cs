@@ -152,7 +152,6 @@ namespace System.Linq.Expressions {
 			ig.Emit (OpCodes.Call, get_value);
 			ig.Emit (OpCodes.Dup);
 
-			left_is_false = ig.DefineLabel ();
 			ig.Emit (and ? OpCodes.Brfalse : OpCodes.Brtrue, create);
 
 			// Deal with right
@@ -171,6 +170,7 @@ namespace System.Linq.Expressions {
 
 			// left_is_null:
 			ig.MarkLabel (left_is_null);
+
 			ig.Emit (OpCodes.Ldloca, vright);
 			ig.Emit (OpCodes.Call, has_value);
 			ig.Emit (OpCodes.Brfalse, both_are_null);
