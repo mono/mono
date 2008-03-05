@@ -66,7 +66,7 @@ namespace System.Linq.Expressions {
 			return ExpressionPrinter.ToString (this);
 		}
 
-#region Binary Expressions
+		#region Binary Expressions
 
 		static MethodInfo GetUnaryOperator (string oper_name, Type on_type, Expression expression)
 		{
@@ -129,7 +129,7 @@ namespace System.Linq.Expressions {
 		{
 			MethodInfo [] methods = on_type.GetMethods (PublicStatic);
 
-			foreach (MethodInfo m in methods){
+			foreach (MethodInfo m in methods) {
 				if (m.Name != oper_name)
 					continue;
 
@@ -172,13 +172,10 @@ namespace System.Linq.Expressions {
 				if (pi.Length != 2)
 					throw new ArgumentException ("Must have only two parameters", "method");
 
-				Type ltype = left.Type.IsValueType && IsNullable (left.Type) ? GetNullableOf(left.Type) : left.Type;
-				Type rtype = left.Type.IsValueType && IsNullable (right.Type) ? GetNullableOf(right.Type) :right.Type;
-
-				if (ltype != pi [0].ParameterType)
+				if (!pi [0].ParameterType.IsAssignableFrom (GetNotNullableOf (left.Type)))
 					throw new InvalidOperationException ("left-side argument type does not match left expression type");
 
-				if (rtype != pi [1].ParameterType)
+				if (!pi [1].ParameterType.IsAssignableFrom (GetNotNullableOf (right.Type)))
 					throw new InvalidOperationException ("right-side argument type does not match right expression type");
 
 				return method;
@@ -262,10 +259,11 @@ namespace System.Linq.Expressions {
 		{
 			bool is_lifted;
 
-			if (method == null){
-				if (IsNullable (left.Type)){
+			if (method == null) {
+				if (IsNullable (left.Type)) {
 					if (!IsNullable (right.Type))
 						throw new InvalidOperationException ("Assertion, internal error: left is nullable, requires right to be as well");
+
 					is_lifted = true;
 				} else
 					is_lifted = false;
@@ -364,15 +362,10 @@ namespace System.Linq.Expressions {
 		{
 			method = BinaryCoreCheck ("op_Addition", left, right, method);
 
-			//
 			// The check in BinaryCoreCheck allows a bit more than we do
 			// (byte, sbyte).  Catch that here
-			//
-
-			if (method == null){
-				Type ltype = left.Type;
-
-				if (ltype == typeof (byte) || ltype == typeof (sbyte))
+			if (method == null) {
+				if (left.Type == typeof (byte) || left.Type == typeof (sbyte))
 					throw new InvalidOperationException (String.Format ("AddChecked not defined for {0} and {1}", left.Type, right.Type));
 			}
 
@@ -387,6 +380,7 @@ namespace System.Linq.Expressions {
 		public static BinaryExpression Subtract (Expression left, Expression right, MethodInfo method)
 		{
 			method = BinaryCoreCheck ("op_Subtraction", left, right, method);
+
 			return MakeSimpleBinary (ExpressionType.Subtract, left, right, method);
 		}
 
@@ -399,17 +393,13 @@ namespace System.Linq.Expressions {
 		{
 			method = BinaryCoreCheck ("op_Subtraction", left, right, method);
 
-			//
 			// The check in BinaryCoreCheck allows a bit more than we do
 			// (byte, sbyte).  Catch that here
-			//
-
-			if (method == null){
-				Type ltype = left.Type;
-
-				if (ltype == typeof (byte) || ltype == typeof (sbyte))
+			if (method == null) {
+				if (left.Type == typeof (byte) || left.Type == typeof (sbyte))
 					throw new InvalidOperationException (String.Format ("SubtractChecked not defined for {0} and {1}", left.Type, right.Type));
 			}
+
 			return MakeSimpleBinary (ExpressionType.SubtractChecked, left, right, method);
 		}
 
@@ -563,7 +553,6 @@ namespace System.Linq.Expressions {
 					throw new InvalidOperationException ("Only booleans are allowed");
 			} else {
 				// The method should have identical parameter and return types.
-
 				if (left.Type != right.Type || method.ReturnType != left.Type)
 					throw new ArgumentException ("left, right and return type must match");
 			}
@@ -798,7 +787,7 @@ namespace System.Linq.Expressions {
 			throw new ArgumentException ("MakeBinary expect a binary node type");
 		}
 
-#endregion
+		#endregion
 
 		public static MethodCallExpression ArrayIndex (Expression array, params Expression [] indexes)
 		{
