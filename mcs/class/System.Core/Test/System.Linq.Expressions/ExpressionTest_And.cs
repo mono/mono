@@ -123,7 +123,18 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		public void AndLifted ()
+		{
+			var b = Expression.And (
+				Expression.Constant (null, typeof (bool?)),
+				Expression.Constant (null, typeof (bool?)));
+
+			Assert.AreEqual (typeof (bool?), b.Type);
+			Assert.IsTrue (b.IsLifted);
+			Assert.IsTrue (b.IsLiftedToNull);
+		}
+
+		[Test]
 		public void AndNullableTest ()
 		{
 			ParameterExpression a = Expression.Parameter (typeof (bool?), "a"), b = Expression.Parameter (typeof (bool?), "b");

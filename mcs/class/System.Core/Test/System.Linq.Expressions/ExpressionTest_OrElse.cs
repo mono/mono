@@ -129,6 +129,18 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
+		public void OrElseNotLifted ()
+		{
+			var b = Expression.OrElse (
+				Expression.Constant (true, typeof (bool)),
+				Expression.Constant (true, typeof (bool)));
+
+			Assert.AreEqual (typeof (bool), b.Type);
+			Assert.IsFalse (b.IsLifted);
+			Assert.IsFalse (b.IsLiftedToNull);
+		}
+
+		[Test]
 		public void OrElseTest ()
 		{
 			ParameterExpression a = Expression.Parameter (typeof (bool), "a"), b = Expression.Parameter (typeof (bool), "b");
@@ -150,7 +162,18 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		public void OrElseLifted ()
+		{
+			var b = Expression.OrElse (
+				Expression.Constant (null, typeof (bool?)),
+				Expression.Constant (null, typeof (bool?)));
+
+			Assert.AreEqual (typeof (bool?), b.Type);
+			Assert.IsTrue (b.IsLifted);
+			Assert.IsTrue (b.IsLiftedToNull);
+		}
+
+		[Test]
 		public void OrElseTestNullable ()
 		{
 			ParameterExpression a = Expression.Parameter (typeof (bool?), "a"), b = Expression.Parameter (typeof (bool?), "b");

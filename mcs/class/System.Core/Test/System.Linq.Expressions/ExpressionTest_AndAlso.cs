@@ -103,7 +103,7 @@ namespace MonoTests.System.Linq.Expressions
 		{
 			ParameterExpression a = Expression.Parameter (typeof (bool), "a"), b = Expression.Parameter (typeof (bool), "b");
 			var l = Expression.Lambda<Func<bool, bool, bool>> (
-				Expression.And (a, b), a, b);
+				Expression.AndAlso (a, b), a, b);
 
 			var be = l.Body as BinaryExpression;
 			Assert.IsNotNull (be);
@@ -117,6 +117,30 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (false, c (true, false), "a2");
 			Assert.AreEqual (false, c (false, true), "a3");
 			Assert.AreEqual (false, c (false, false), "a4");
+		}
+
+		[Test]
+		public void AndAlsoLifted ()
+		{
+			var b = Expression.AndAlso (
+				Expression.Constant (null, typeof (bool?)),
+				Expression.Constant (null, typeof (bool?)));
+
+			Assert.AreEqual (typeof (bool?), b.Type);
+			Assert.IsTrue (b.IsLifted);
+			Assert.IsTrue (b.IsLiftedToNull);
+		}
+
+		[Test]
+		public void AndAlsoNotLifted ()
+		{
+			var b = Expression.AndAlso (
+				Expression.Constant (true, typeof (bool)),
+				Expression.Constant (true, typeof (bool)));
+
+			Assert.AreEqual (typeof (bool), b.Type);
+			Assert.IsFalse (b.IsLifted);
+			Assert.IsFalse (b.IsLiftedToNull);
 		}
 
 		[Test]
