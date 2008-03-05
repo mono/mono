@@ -106,106 +106,109 @@ namespace System.Linq.Expressions {
 
 		static MethodInfo GetMethodNoPar (Type t, string name)
 		{
-			MethodInfo [] methods = t.GetMethods ();
-			foreach (MethodInfo m in methods){
-				if (m.Name != name)
-					continue;
-				if (m.GetParameters ().Length == 0)
-					return m;
-			}
-			throw new Exception (String.Format ("Internal error: method {0} with no parameters not found on {1}",
-							    name, t));
+			var method = t.GetMethod (name, Type.EmptyTypes);
+			if (method == null)
+				throw new ArgumentException (
+					string.Format ("Internal error: method {0} with no parameters not found on {1}", name, t));
+
+			return method;
 		}
 
 		LocalBuilder EmitStored (EmitContext ec, Expression expr)
 		{
-			LocalBuilder lb = ec.ig.DeclareLocal (expr.Type);
+			var local = ec.ig.DeclareLocal (expr.Type);
 			expr.Emit (ec);
-			ec.ig.Emit (OpCodes.Stloc, lb);
+			ec.ig.Emit (OpCodes.Stloc, local);
 
-			return lb;
+			return local;
+		}
+
+		void EmitLiftedLogical (EmitContext ec, bool and, bool short_circuit)
+		{
+			var ig = ec.ig;
+			LocalBuilder ret = ig.DeclareLocal (Type);
+			LocalBuilder vleft = null, vright = null;
+			MethodInfo has_value = left.Type.GetMethod ("get_HasValue");
+			MethodInfo get_value = GetMethodNoPar (left.Type, "get_Value");
+
+			vleft = EmitStored (ec, left);
+			if (!short_circuit)
+				vright = EmitStored (ec, right);
+
+			Label left_is_null = ig.DefineLabel ();
+			Label left_is_false = ig.DefineLabel ();
+			Label right_is_null = ig.DefineLabel ();
+			Label create = ig.DefineLabel ();
+			Label exit = ig.DefineLabel ();
+			Label both_are_null = ig.DefineLabel ();
+
+			// Check left
+
+			ig.Emit (OpCodes.Ldloca, vleft);
+			ig.Emit (OpCodes.Call, has_value);
+			ig.Emit (OpCodes.Brfalse, left_is_null);
+
+			ig.Emit (OpCodes.Ldloca, vleft);
+			ig.Emit (OpCodes.Call, get_value);
+			ig.Emit (OpCodes.Dup);
+
+			left_is_false = ig.DefineLabel ();
+			ig.Emit (and ? OpCodes.Brfalse : OpCodes.Brtrue, create);
+
+			// Deal with right
+			if (short_circuit)
+				vright = EmitStored (ec, right);
+
+			ig.Emit (OpCodes.Ldloca, vright);
+			ig.Emit (OpCodes.Call, has_value);
+			ig.Emit (OpCodes.Brfalse, right_is_null);
+
+			ig.Emit (OpCodes.Ldloca, vright);
+			ig.Emit (OpCodes.Call, get_value);
+
+			ig.Emit (and ? OpCodes.And : OpCodes.Or);
+			ig.Emit (OpCodes.Br, create);
+
+			// left_is_null:
+			ig.MarkLabel (left_is_null);
+			ig.Emit (OpCodes.Ldloca, vright);
+			ig.Emit (OpCodes.Call, has_value);
+			ig.Emit (OpCodes.Brfalse, both_are_null);
+			ig.Emit (OpCodes.Ldloca, vright);
+			ig.Emit (OpCodes.Call, get_value);
+			ig.Emit (OpCodes.Dup);
+			ig.Emit (and ? OpCodes.Brfalse : OpCodes.Brtrue, create);
+
+			// right_is_null:
+			ig.MarkLabel (right_is_null);
+			ig.Emit (OpCodes.Pop);
+
+			// both_are_null:
+			ig.MarkLabel (both_are_null);
+			ig.Emit (OpCodes.Ldloca, ret);
+			ig.Emit (OpCodes.Initobj, Type);
+			ig.Emit (OpCodes.Ldloc, ret);
+			ig.Emit (OpCodes.Br, exit);
+
+			// create:
+			ig.MarkLabel (create);
+			ig.Emit (OpCodes.Newobj, Type.GetConstructors () [0]);
+
+			// exit:
+			ig.MarkLabel (exit);
 		}
 
 		void EmitLogical (EmitContext ec, bool and, bool short_circuit)
 		{
 			ILGenerator ig = ec.ig;
-			if (IsLifted){
-				LocalBuilder ret = ig.DeclareLocal (Type);
-				LocalBuilder vleft = null, vright = null;
-				MethodInfo has_value = left.Type.GetMethod ("get_HasValue");
-				MethodInfo get_value = GetMethodNoPar (left.Type, "get_Value");
-
-				vleft = EmitStored (ec, left);
-				if (!short_circuit)
-					vright = EmitStored (ec, right);
-
-				Label left_is_null = ig.DefineLabel ();
-				Label left_is_false = ig.DefineLabel ();
-				Label right_is_null = ig.DefineLabel ();
-				Label create  = ig.DefineLabel ();
-				Label exit = ig.DefineLabel ();
-				Label both_are_null = ig.DefineLabel ();
-
-				// Check left
-
-				ig.Emit (OpCodes.Ldloca, vleft);
-				ig.Emit (OpCodes.Call, has_value);
-				ig.Emit (OpCodes.Brfalse, left_is_null);
-
-				ig.Emit (OpCodes.Ldloca, vleft);
-				ig.Emit (OpCodes.Call, get_value);
-				ig.Emit (OpCodes.Dup);
-
-				left_is_false = ig.DefineLabel ();
-				ig.Emit (and ? OpCodes.Brfalse : OpCodes.Brtrue, create);
-
-				// Deal with right
-				if (short_circuit)
-					vright = EmitStored (ec, right);
-
-				ig.Emit (OpCodes.Ldloca, vright);
-				ig.Emit (OpCodes.Call, has_value);
-				ig.Emit (OpCodes.Brfalse, right_is_null);
-
-				ig.Emit (OpCodes.Ldloca, vright);
-				ig.Emit (OpCodes.Call, get_value);
-
-				ig.Emit (and ? OpCodes.And : OpCodes.Or);
-				ig.Emit (OpCodes.Br, create);
-
-			// left_is_null:
-				ig.MarkLabel (left_is_null);
-				ig.Emit (OpCodes.Ldloca, vright);
-				ig.Emit (OpCodes.Call, has_value);
-				ig.Emit (OpCodes.Brfalse, both_are_null);
-				ig.Emit (OpCodes.Ldloca, vright);
-				ig.Emit (OpCodes.Call, get_value);
-				ig.Emit (OpCodes.Dup);
-				ig.Emit (and ? OpCodes.Brfalse : OpCodes.Brtrue, create);
-
-			// right_is_null:
-				ig.MarkLabel (right_is_null);
-				ig.Emit (OpCodes.Pop);
-
-			// both_are_null:
-				ig.MarkLabel (both_are_null);
-				ig.Emit (OpCodes.Ldloca, ret);
-				ig.Emit (OpCodes.Initobj, Type);
-				ig.Emit (OpCodes.Ldloc, ret);
-				ig.Emit (OpCodes.Br, exit);
-
-			// create:
-				ig.MarkLabel (create);
-				ig.Emit (OpCodes.Newobj, Type.GetConstructors ()[0]);
-
-			// exit:
-				ig.MarkLabel (exit);
-			} else {
-				left.Emit (ec);
-				right.Emit (ec);
-				ig.Emit (and ? OpCodes.And : OpCodes.Or);
+			if (IsLifted) {
+				EmitLiftedLogical (ec, and, short_circuit);
+				return;
 			}
 
+			left.Emit (ec);
+			right.Emit (ec);
+			ig.Emit (and ? OpCodes.And : OpCodes.Or);
 		}
 
 		void EmitCoalesce (EmitContext ec)
@@ -256,77 +259,13 @@ namespace System.Linq.Expressions {
 			ig.MarkLabel (exit);
 		}
 
-		internal override void Emit (EmitContext ec)
+		void EmitBinaryOperator (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
 			OpCode opcode;
-
-			if (method != null){
-				EmitMethod (ec);
-				return;
-			}
-
-			switch (NodeType){
-			case ExpressionType.And:
-				EmitLogical (ec, true, false);
-				return;
-
-			case ExpressionType.Or:
-				EmitLogical (ec, false, false);
-				return;
-
-			case ExpressionType.AndAlso:
-				EmitLogical (ec, true, true);
-				return;
-
-			case ExpressionType.OrElse:
-				EmitLogical (ec, false, true);
-				return;
-
-			case ExpressionType.Coalesce:
-				EmitCoalesce (ec);
-				return;
-
-			case ExpressionType.Power:
-				left.Emit (ec);
-				right.Emit (ec);
-				ig.Emit (OpCodes.Call, typeof (System.Math).GetMethod ("Pow"));
-				return;
-			}
-
-			Label? empty_value = null;
-			LocalBuilder ret = null;
-
-			if (IsLifted){
-				LocalBuilder vleft, vright;
-
-				empty_value = ig.DefineLabel ();
-				ret = ig.DeclareLocal (Type);
-
-				vleft = EmitStored (ec, left);
-				vright = EmitStored (ec, right);
-
-				MethodInfo has_value = left.Type.GetMethod ("get_HasValue");
-				MethodInfo get_value = GetMethodNoPar (left.Type, "get_Value");
-
-				ig.Emit (OpCodes.Ldloca, vleft);
-				ig.Emit (OpCodes.Call, has_value);
-				ig.Emit (OpCodes.Brfalse, empty_value.Value);
-				ig.Emit (OpCodes.Ldloca, vright);
-				ig.Emit (OpCodes.Call, has_value);
-				ig.Emit (OpCodes.Brfalse, empty_value.Value);
-				ig.Emit (OpCodes.Ldloca, vleft);
-				ig.Emit (OpCodes.Call, get_value);
-				ig.Emit (OpCodes.Ldloca, vright);
-				ig.Emit (OpCodes.Call, get_value);
-			} else {
-				left.Emit (ec);
-				right.Emit (ec);
-			}
-
+			var ig = ec.ig;
 			bool is_unsigned = IsUnsigned (left.Type);
 
-			switch (NodeType){
+			switch (NodeType) {
 			case ExpressionType.Add:
 				opcode = OpCodes.Add;
 				break;
@@ -454,22 +393,105 @@ namespace System.Linq.Expressions {
 				break;
 
 			default:
-				throw new Exception (String.Format ("Internal error: BinaryExpression contains non-Binary nodetype {0}", NodeType));
+				throw new InvalidOperationException (string.Format ("Internal error: BinaryExpression contains non-Binary nodetype {0}", NodeType));
 			}
+
 			ig.Emit (opcode);
+		}
 
-			if (IsLifted){
-				ig.Emit (OpCodes.Newobj, left.Type.GetConstructors ()[0]);
+		void EmitLiftedSimpleBinary (EmitContext ec)
+		{
+			Label empty_value;
+			LocalBuilder ret = null;
 
-				Label skip = ig.DefineLabel ();
-				ig.Emit (OpCodes.Br_S, skip);
-				ig.MarkLabel (empty_value.Value);
-				ig.Emit (OpCodes.Ldloc, ret);
-				ig.Emit (OpCodes.Ldloca, ret);
-				ig.Emit (OpCodes.Initobj, Type);
+			LocalBuilder vleft, vright;
 
-				ig.MarkLabel (skip);
+			var ig = ec.ig;
+			empty_value = ig.DefineLabel ();
+			ret = ig.DeclareLocal (Type);
+
+			vleft = EmitStored (ec, left);
+			vright = EmitStored (ec, right);
+
+			MethodInfo has_value = left.Type.GetMethod ("get_HasValue");
+			MethodInfo get_value = GetMethodNoPar (left.Type, "get_Value");
+
+			ig.Emit (OpCodes.Ldloca, vleft);
+			ig.Emit (OpCodes.Call, has_value);
+			ig.Emit (OpCodes.Brfalse, empty_value);
+			ig.Emit (OpCodes.Ldloca, vright);
+			ig.Emit (OpCodes.Call, has_value);
+			ig.Emit (OpCodes.Brfalse, empty_value);
+			ig.Emit (OpCodes.Ldloca, vleft);
+			ig.Emit (OpCodes.Call, get_value);
+			ig.Emit (OpCodes.Ldloca, vright);
+			ig.Emit (OpCodes.Call, get_value);
+
+			EmitBinaryOperator (ec);
+
+			ig.Emit (OpCodes.Newobj, left.Type.GetConstructors () [0]);
+
+			Label skip = ig.DefineLabel ();
+			ig.Emit (OpCodes.Br_S, skip);
+			ig.MarkLabel (empty_value);
+			ig.Emit (OpCodes.Ldloc, ret);
+			ig.Emit (OpCodes.Ldloca, ret);
+			ig.Emit (OpCodes.Initobj, Type);
+
+			ig.MarkLabel (skip);
+		}
+
+		void EmitSimpleBinary (EmitContext ec)
+		{
+			if (IsLifted) {
+				EmitLiftedSimpleBinary (ec);
+				return;
 			}
+
+			left.Emit (ec);
+			right.Emit (ec);
+			EmitBinaryOperator (ec);
+		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			OpCode opcode;
+
+			if (method != null){
+				EmitMethod (ec);
+				return;
+			}
+
+			switch (NodeType){
+			case ExpressionType.And:
+				EmitLogical (ec, true, false);
+				return;
+
+			case ExpressionType.Or:
+				EmitLogical (ec, false, false);
+				return;
+
+			case ExpressionType.AndAlso:
+				EmitLogical (ec, true, true);
+				return;
+
+			case ExpressionType.OrElse:
+				EmitLogical (ec, false, true);
+				return;
+
+			case ExpressionType.Coalesce:
+				EmitCoalesce (ec);
+				return;
+
+			case ExpressionType.Power:
+				left.Emit (ec);
+				right.Emit (ec);
+				ig.Emit (OpCodes.Call, typeof (System.Math).GetMethod ("Pow"));
+				return;
+			}
+
+			EmitSimpleBinary (ec);
 		}
 	}
 }
