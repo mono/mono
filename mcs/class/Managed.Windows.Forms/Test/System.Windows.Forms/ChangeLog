@@ -1,3 +1,7 @@
+2008-03-05  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TableLayoutTest.cs: Add test for bug #367249.
+
 2008-02-27  Jonathan Pobst  <monkey@jpobst.com>
 
 	* UserControlTest.cs: Add test for PreferredSize.

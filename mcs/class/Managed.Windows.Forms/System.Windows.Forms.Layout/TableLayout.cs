@@ -429,7 +429,7 @@ namespace System.Windows.Forms.Layout
 						// Figure out the width of the control
 						int column_width = panel.column_widths[x];
 						
-						for (int i = 1; i < settings.GetColumnSpan(c); i++)
+						for (int i = 1; i < Math.Min (settings.GetColumnSpan(c), panel.column_widths.Length); i++)
 							column_width += panel.column_widths[x + i];
 
 						if (c.Dock == DockStyle.Fill || c.Dock == DockStyle.Top || c.Dock == DockStyle.Bottom || ((c.Anchor & AnchorStyles.Left) == AnchorStyles.Left && (c.Anchor & AnchorStyles.Right) == AnchorStyles.Right))
@@ -440,7 +440,7 @@ namespace System.Windows.Forms.Layout
 						// Figure out the height of the control
 						int column_height = panel.row_heights[y];
 
-						for (int i = 1; i < settings.GetRowSpan (c); i++)
+						for (int i = 1; i < Math.Min (settings.GetRowSpan (c), panel.row_heights.Length); i++)
 							column_height += panel.row_heights[y + i];
 
 						if (c.Dock == DockStyle.Fill || c.Dock == DockStyle.Left || c.Dock == DockStyle.Right || ((c.Anchor & AnchorStyles.Top) == AnchorStyles.Top && (c.Anchor & AnchorStyles.Bottom) == AnchorStyles.Bottom))

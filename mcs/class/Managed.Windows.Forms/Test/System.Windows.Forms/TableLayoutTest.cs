@@ -1377,6 +1377,21 @@ namespace MonoTests.System.Windows.Forms
 
 			f.Dispose ();
 		}
+		
+		[Test]
+		public void Bug367249 ()
+		{
+			// Setting a colspan greater than the number of columns was
+			// causing an IOORE, this test just should not exception
+			TableLayoutPanel LayoutPanel = new TableLayoutPanel ();
+			LayoutPanel.ColumnCount = 1;
+			LayoutPanel.RowCount = 2;
+
+			Button OkButton = new Button ();
+			OkButton.Text = "OK";
+			LayoutPanel.Controls.Add (OkButton);
+			LayoutPanel.SetColumnSpan (OkButton, 3);
+		}
 	}
 }
 #endif
