@@ -322,3 +322,11 @@ long_conv_to_ovf_i4_2: dest:i src1:i src2:i len:44
 vcall2: len:8 clob:c
 vcall2_membase: src1:b len:12 clob:c
 vcall2_reg: src1:i len:8 clob:c
+
+s390_long_add: dest:l src1:i src2:i len:18 clob:1
+s390_long_add_ovf: dest:l src1:i src2:i len:32 clob:1
+s390_long_add_ovf_un: dest:l src1:i src2:i len:32 clob:1
+s390_long_sub: dest:l src1:i src2:i len:18 clob:1
+s390_long_sub_ovf: dest:l src1:i src2:i len:32 clob:1
+s390_long_sub_ovf_un: dest:l src1:i src2:i len:32 clob:1
+s390_long_neg: dest:l src1:i src2:i len:18 clob:1

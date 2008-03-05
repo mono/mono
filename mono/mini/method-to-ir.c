@@ -5344,7 +5344,12 @@ mono_decompose_long_opts (MonoCompile *cfg)
 		tree = bb->code;
 		cfg->cbb->code = cfg->cbb->last_ins = NULL;
 
-		for (; tree; tree = tree->next) {
+		while (tree) {
+
+#ifdef MONO_ARCH_HAVE_DECOMPOSE_LONG_OPTS
+			mono_arch_decompose_long_opts (cfg, tree);
+#endif
+
 			switch (tree->opcode) {
 			case OP_I8CONST:
 				MONO_EMIT_NEW_ICONST (cfg, tree->dreg + 1, tree->inst_ls_word);
@@ -5609,6 +5614,7 @@ mono_decompose_long_opts (MonoCompile *cfg)
 				 * FIXME: The original version in inssel-long32.brg does not work
 				 * on x86, and the x86 version might not work on other archs ?
 				 */
+				/* FIXME: Move these to mono_arch_decompose_long_opts () */
 #if defined(__i386__)
 				MONO_EMIT_NEW_UNALU (cfg, OP_INEG, tree->dreg + 1, tree->sreg1 + 1);
 				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ADC_IMM, tree->dreg + 2, tree->sreg1 + 2, 0);
@@ -5843,16 +5849,28 @@ mono_decompose_long_opts (MonoCompile *cfg)
 			}
 
 			if (cfg->cbb->code || (cfg->cbb != first_bb)) {
+				MonoInst *new_prev;
+
 				/* Replace the original instruction with the new code sequence */
 
-				mono_replace_ins (cfg, bb, tree, &prev, first_bb, cfg->cbb);
+				/* Ignore the new value of prev */
+				new_prev = prev;
+				mono_replace_ins (cfg, bb, tree, &new_prev, first_bb, cfg->cbb);
+
+				/* Process the newly added ops again since they can be long ops too */
+				if (prev)
+					tree = prev->next;
+				else
+					tree = bb->code;
 
 				first_bb->code = first_bb->last_ins = NULL;
 				first_bb->in_count = first_bb->out_count = 0;
 				cfg->cbb = first_bb;
 			}
-			else
+			else {
 				prev = tree;
+				tree = tree->next;
+			}
 		}
 	}
 #endif

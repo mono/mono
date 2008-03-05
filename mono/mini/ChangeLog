@@ -1,3 +1,12 @@
+2008-03-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ops.h: Add some new s390 opcodes.
+
+	* method-to-ir.c (mono_decompose_long_opts): Add a new arch-specific function to
+	decompose some long opcodes.
+
+	* mini-s390.h mini-s390.c cpu-s390.md: Ongoing s390 work.
+
 2008-03-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c mini.h mini.c: Add support for passing small valuetypes in

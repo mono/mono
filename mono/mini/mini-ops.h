@@ -775,6 +775,13 @@ MINI_OP(OP_S390_STKARG, 	   "s390_stkarg", NONE, NONE, NONE)
 MINI_OP(OP_S390_MOVE,	 	   "s390_move", IREG, IREG, NONE)
 MINI_OP(OP_S390_SETF4RET,	   "s390_setf4ret", FREG, FREG, NONE)
 MINI_OP(OP_S390_BKCHAIN, 	   "s390_bkchain", NONE, NONE, NONE)
+MINI_OP(OP_S390_LADD,          "s390_long_add", LREG, IREG, IREG)
+MINI_OP(OP_S390_LADD_OVF,      "s390_long_add_ovf", LREG, IREG, IREG)
+MINI_OP(OP_S390_LADD_OVF_UN,   "s390_long_add_ovf_un", LREG, IREG, IREG)
+MINI_OP(OP_S390_LSUB,          "s390_long_sub", LREG, IREG, IREG)
+MINI_OP(OP_S390_LSUB_OVF,      "s390_long_sub_ovf", LREG, IREG, IREG)
+MINI_OP(OP_S390_LSUB_OVF_UN,   "s390_long_sub_ovf_un", LREG, IREG, IREG)
+MINI_OP(OP_S390_LNEG,          "s390_long_neg", LREG, IREG, IREG)
 #endif
 
 #if defined(__ia64__)
