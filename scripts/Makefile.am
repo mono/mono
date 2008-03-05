@@ -14,7 +14,7 @@ bin_SCRIPTS = \
 	$(scripts_1_0)		\
 	$(scripts_1_0_umask)	\
 	$(scripts_1_0_compat)	\
-	$(script_defaults)	\
+	$(scripts_defaults)	\
 	$(scripts_2_0)		\
 	$(scripts_2_1)		\
 	$(scripts_service)	\
