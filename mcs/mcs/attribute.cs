@@ -293,6 +293,18 @@ namespace Mono.CSharp {
 			return LeftExpr == null ? Identifier : LeftExpr.GetSignatureForError () + "." + Identifier;
 		}
 
+		public bool HasSecurityAttribute {
+			get {
+				return TypeManager.security_attr_type != null &&
+				TypeManager.IsSubclassOf (type, TypeManager.security_attr_type);
+			}
+		}
+
+		public bool IsValidSecurityAttribute ()
+		{
+			return HasSecurityAttribute && IsSecurityActionValid (false);
+		}
+
 		static bool IsValidArgumentType (Type t)
 		{
 			if (t.IsArray)
@@ -861,7 +873,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Tests permitted SecurityAction for assembly or other types
 		/// </summary>
-		public bool CheckSecurityActionValidity (bool for_assembly)
+		protected virtual bool IsSecurityActionValid (bool for_assembly)
 		{
 			SecurityAction action = GetSecurityActionValue ();
 
@@ -1316,6 +1328,11 @@ namespace Mono.CSharp {
 			RootContext.ToplevelTypes.NamespaceEntry = ns;
 		}
 
+		protected override bool IsSecurityActionValid (bool for_assembly)
+		{
+			return base.IsSecurityActionValid (true);
+		}
+
 		void Leave ()
 		{
 			RootContext.ToplevelTypes.NamespaceEntry = null;
@@ -1648,6 +1665,9 @@ namespace Mono.CSharp {
 
 		static bool IsClsCompliant (ICustomAttributeProvider attribute_provider) 
 		{
+			if (TypeManager.cls_compliant_attribute_type == null)
+				return false;
+
 			object[] CompliantAttribute = attribute_provider.GetCustomAttributes (TypeManager.cls_compliant_attribute_type, false);
 			if (CompliantAttribute.Length == 0)
 				return false;
@@ -1665,6 +1685,9 @@ namespace Mono.CSharp {
 
 			if (TypeManager.IsGenericParameter (type))
 				return true;
+
+			if (TypeManager.cls_compliant_attribute_type == null)
+				return false;
 
 			object[] CompliantAttribute = type.GetCustomAttributes (TypeManager.cls_compliant_attribute_type, false);
 			if (CompliantAttribute.Length == 0) 
@@ -1702,9 +1725,11 @@ namespace Mono.CSharp {
 
 				// Type is external, we can get attribute directly
 				if (type_ds == null) {
-					object[] attribute = type.GetCustomAttributes (TypeManager.obsolete_attribute_type, false);
-					if (attribute.Length == 1)
-						result = (ObsoleteAttribute)attribute [0];
+					if (TypeManager.obsolete_attribute_type != null) {
+						object [] attribute = type.GetCustomAttributes (TypeManager.obsolete_attribute_type, false);
+						if (attribute.Length == 1)
+							result = (ObsoleteAttribute) attribute [0];
+					}
 				} else {
 					result = type_ds.GetObsoleteAttribute ();
 				}
@@ -1754,6 +1779,9 @@ namespace Mono.CSharp {
 			if ((mi.DeclaringType is TypeBuilder) || TypeManager.IsGenericType (mi.DeclaringType))
 				return null;
 
+			if (TypeManager.obsolete_attribute_type == null)
+				return null;
+
 			ObsoleteAttribute oa = System.Attribute.GetCustomAttribute (mi, TypeManager.obsolete_attribute_type, false)
 				as ObsoleteAttribute;
 			analyzed_member_obsolete.Add (mi, oa == null ? FALSE : oa);
@@ -1782,6 +1810,9 @@ namespace Mono.CSharp {
 			object excluded = analyzed_method_excluded [mb];
 			if (excluded != null)
 				return excluded == TRUE ? true : false;
+
+			if (TypeManager.conditional_attribute_type == null)
+				return false;
 
 			ConditionalAttribute[] attrs = mb.GetCustomAttributes (TypeManager.conditional_attribute_type, true)
 				as ConditionalAttribute[];
@@ -1813,7 +1844,7 @@ namespace Mono.CSharp {
 
 			// TODO: add caching
 			// TODO: merge all Type bases attribute caching to one cache to save memory
-			if (class_decl == null) {
+			if (class_decl == null && TypeManager.conditional_attribute_type != null) {
 				object[] attributes = type.GetCustomAttributes (TypeManager.conditional_attribute_type, false);
 				foreach (ConditionalAttribute ca in attributes) {
 					if (RootContext.AllDefines.Contains (ca.ConditionString))
@@ -1829,13 +1860,16 @@ namespace Mono.CSharp {
 		{
 			TypeContainer tc = TypeManager.LookupInterface (type);
 			if (tc == null) {
+				if (TypeManager.coclass_attr_type == null)
+					return null;
+
 				object[] o = type.GetCustomAttributes (TypeManager.coclass_attr_type, false);
 				if (o.Length < 1)
 					return null;
 				return ((System.Runtime.InteropServices.CoClassAttribute)o[0]).CoClass;
 			}
 
-			if (tc.OptAttributes == null)
+			if (tc.OptAttributes == null || TypeManager.coclass_attr_type == null)
 				return null;
 
 			Attribute a = tc.OptAttributes.Search (TypeManager.coclass_attr_type);

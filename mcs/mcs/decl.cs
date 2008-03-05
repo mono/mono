@@ -441,7 +441,7 @@ namespace Mono.CSharp {
 
 			caching_flags &= ~Flags.Obsolete_Undetected;
 
-			if (OptAttributes == null)
+			if (OptAttributes == null || TypeManager.obsolete_attribute_type == null)
 				return null;
 
 			Attribute obsolete_attr = OptAttributes.Search (
@@ -672,7 +672,7 @@ namespace Mono.CSharp {
 
 			caching_flags &= ~Flags.HasCompliantAttribute_Undetected;
 
-			if (OptAttributes != null) {
+			if (OptAttributes != null && TypeManager.cls_compliant_attribute_type != null) {
 				Attribute cls_attribute = OptAttributes.Search (
 					TypeManager.cls_compliant_attribute_type);
 				if (cls_attribute != null) {

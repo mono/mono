@@ -62,12 +62,10 @@ namespace Mono.CSharp {
 	static public Type null_type;
 	static public Type array_type;
 	static public Type runtime_handle_type;
-	static public Type icloneable_type;
 	static public Type type_type;
 	static public Type ienumerator_type;
 	static public Type ienumerable_type;
 	static public Type idisposable_type;
-	static public Type iconvertible_type;
 	static public Type default_member_type;
 	static public Type iasyncresult_type;
 	static public Type asynccallback_type;
@@ -142,8 +140,6 @@ namespace Mono.CSharp {
 	static public TypeExpr system_int32_expr, system_uint32_expr;
 	static public TypeExpr system_int64_expr, system_uint64_expr;
 	static public TypeExpr system_char_expr, system_void_expr;
-	static public TypeExpr system_asynccallback_expr;
-	static public TypeExpr system_iasyncresult_expr;
 	static public TypeExpr system_valuetype_expr;
 	static public TypeExpr system_intptr_expr;
 
@@ -307,8 +303,6 @@ namespace Mono.CSharp {
 		system_uint64_expr  = new TypeLookupExpression ("System.UInt64");
 		system_char_expr    = new TypeLookupExpression ("System.Char");
 		system_void_expr    = new TypeLookupExpression ("System.Void");
-		system_asynccallback_expr = new TypeLookupExpression ("System.AsyncCallback");
-		system_iasyncresult_expr = new TypeLookupExpression ("System.IAsyncResult");
 		system_valuetype_expr  = new TypeLookupExpression ("System.ValueType");
 		system_intptr_expr  = new TypeLookupExpression ("System.IntPtr");
 	}
@@ -597,6 +591,9 @@ namespace Mono.CSharp {
 
 	static public string CSharpName (Type[] types)
 	{
+		if (types.Length == 0)
+			return string.Empty;
+
 		StringBuilder sb = new StringBuilder ();
 		foreach (Type t in types) {
 			sb.Append (CSharpName (t));
@@ -822,28 +819,64 @@ namespace Mono.CSharp {
 		return CSharpName (ei.DeclaringType) + "." + ei.Name;
 	}
 
-	/// <summary>
-	///   Looks up a type, and aborts if it is not found.  This is used
-	///   by types required by the compiler
-	/// </summary>
-	public static Type CoreLookupType (string namespaceName, string name)
+	//
+	// Looks up a type, and aborts if it is not found.  This is used
+	// by predefined types required by the compiler
+	//
+	static Type CoreLookupType (string ns_name, string name, Kind type_kind, bool required)
 	{
-		return CoreLookupType (namespaceName, name, false);
+		Type t = CoreLookupType (ns_name, name, !required);
+		if (RootContext.StdLib || t == null)
+			return t;
+
+		DeclSpace ds = (DeclSpace)RootContext.ToplevelTypes.GetDefinition (t.FullName);
+		if (ds == null) {
+			// TODO: implement
+			throw new NotImplementedException ("Predefined type is imported");
+		}
+
+		if (ds is Delegate) {
+			if (type_kind == Kind.Delegate)
+				return t;
+		} else {
+			TypeContainer tc = (TypeContainer)ds;
+			if (tc.Kind == type_kind)
+				return t;
+		}
+
+		Report.Error (520, ds.Location, "The predefined type `{0}.{1}' is not declared correctly",
+			ns_name, name);
+		return null;
 	}
 
+	public static Type CoreLookupType (string ns_name, string name)
+	{
+		return CoreLookupType (ns_name, name, true);
+	}
+
+	// TODO: move to CoreLookupType with 4 args
 	static Type CoreLookupType (string ns_name, string name, bool mayFail)
 	{
-		Namespace ns = RootNamespace.Global.GetNamespace (ns_name, true);
-		FullNamedExpression fne = ns.Lookup (RootContext.ToplevelTypes, name, Location.Null);
-		Type t = fne == null ? null : fne.Type;
-		if (t == null) {
-			if (!mayFail)
-				Report.Error (518, "The predefined type `" + name + "' is not defined or imported");
+		Expression expr;
+		if (RootContext.StdLib) {
+			Namespace ns = RootNamespace.Global.GetNamespace (ns_name, true);
+			expr = ns.Lookup (RootContext.ToplevelTypes, name, Location.Null);
+		} else {
+			Report.DisableReporting ();
+			TypeLookupExpression tle = new TypeLookupExpression (ns_name + "." + name);
+			expr = tle.ResolveAsTypeTerminal (RootContext.ToplevelTypes, false);
+			Report.EnableReporting ();
+		}
+
+		if (expr == null) {
+			if (!mayFail) {
+				Report.Error (518, "The predefined type `{0}.{1}' is not defined or imported",
+					ns_name, name);
+			}
 			return null;
 		}
 
-		AttributeTester.RegisterNonObsoleteType (t);
-		return t;
+		return expr.Type;
 	}
 
 	/// <summary>
@@ -951,80 +984,110 @@ namespace Mono.CSharp {
 		return (PropertyInfo) properties [0];
 	}
 
-	public static void InitEnumUnderlyingTypes ()
-	{
-		int32_type    = CoreLookupType ("System", "Int32");
-		int64_type    = CoreLookupType ("System", "Int64");
-		uint32_type   = CoreLookupType ("System", "UInt32"); 
-		uint64_type   = CoreLookupType ("System", "UInt64"); 
-		byte_type     = CoreLookupType ("System", "Byte");
-		sbyte_type    = CoreLookupType ("System", "SByte");
-		short_type    = CoreLookupType ("System", "Int16");
-		ushort_type   = CoreLookupType ("System", "UInt16");
-
-		ienumerator_type     = CoreLookupType ("System.Collections", "IEnumerator");
-		ienumerable_type     = CoreLookupType ("System.Collections", "IEnumerable");
-
-		idisposable_type     = CoreLookupType ("System", "IDisposable");
-
-#if GMCS_SOURCE
-		InitGenericCoreTypes ();
-#endif
-	}
-	
 	/// <remarks>
 	///   The types have to be initialized after the initial
 	///   population of the type has happened (for example, to
 	///   bootstrap the corlib.dll
 	/// </remarks>
-	public static void InitCoreTypes ()
+	public static bool InitCoreTypes ()
 	{
-		object_type   = CoreLookupType ("System", "Object");
+		object_type   = CoreLookupType ("System", "Object", Kind.Class, true);
 		system_object_expr.Type = object_type;
-		value_type    = CoreLookupType ("System", "ValueType");
+		value_type    = CoreLookupType ("System", "ValueType", Kind.Class, true);
 		system_valuetype_expr.Type = value_type;
+		attribute_type = CoreLookupType ("System", "Attribute", Kind.Class, true);
 
-		InitEnumUnderlyingTypes ();
+		int32_type    = CoreLookupType ("System", "Int32", Kind.Struct, true);
+		int64_type    = CoreLookupType ("System", "Int64", Kind.Struct, true);
+		uint32_type   = CoreLookupType ("System", "UInt32", Kind.Struct, true); 
+		uint64_type   = CoreLookupType ("System", "UInt64", Kind.Struct, true); 
+		byte_type     = CoreLookupType ("System", "Byte", Kind.Struct, true);
+		sbyte_type    = CoreLookupType ("System", "SByte", Kind.Struct, true);
+		short_type    = CoreLookupType ("System", "Int16", Kind.Struct, true);
+		ushort_type   = CoreLookupType ("System", "UInt16", Kind.Struct, true);
 
-		char_type     = CoreLookupType ("System", "Char");
-		string_type   = CoreLookupType ("System", "String");
-		float_type    = CoreLookupType ("System", "Single");
-		double_type   = CoreLookupType ("System", "Double");
+		ienumerator_type     = CoreLookupType ("System.Collections", "IEnumerator", Kind.Interface, true);
+		ienumerable_type     = CoreLookupType ("System.Collections", "IEnumerable", Kind.Interface, true);
+		idisposable_type     = CoreLookupType ("System", "IDisposable", Kind.Interface, true);
+
+#if GMCS_SOURCE
+		InitGenericCoreTypes ();
+#endif
+		char_type     = CoreLookupType ("System", "Char", Kind.Struct, true);
+		string_type   = CoreLookupType ("System", "String", Kind.Class, true);
+		float_type    = CoreLookupType ("System", "Single", Kind.Struct, true);
+		double_type   = CoreLookupType ("System", "Double", Kind.Struct, true);
+		decimal_type  = CoreLookupType ("System", "Decimal", Kind.Struct, true);
+		bool_type     = CoreLookupType ("System", "Boolean", Kind.Struct, true);
+		intptr_type = CoreLookupType ("System", "IntPtr", Kind.Struct, true);
+		uintptr_type = CoreLookupType ("System", "UIntPtr", Kind.Struct, true);
+
+		multicast_delegate_type = CoreLookupType ("System", "MulticastDelegate", Kind.Class, true);
+		delegate_type           = CoreLookupType ("System", "Delegate", Kind.Class, true);
+
+		enum_type	= CoreLookupType ("System", "Enum", Kind.Class, true);
+		array_type	= CoreLookupType ("System", "Array", Kind.Class, true);
+		void_type	= CoreLookupType ("System", "Void", Kind.Struct, true);
+		type_type	= CoreLookupType ("System", "Type", Kind.Class, true);
+		exception_type = CoreLookupType ("System", "Exception", Kind.Class, true);
+
+		runtime_field_handle_type = CoreLookupType ("System", "RuntimeFieldHandle", Kind.Struct, true);
+		runtime_handle_type = CoreLookupType ("System", "RuntimeTypeHandle", Kind.Struct, true);
+
+		param_array_type = CoreLookupType ("System", "ParamArrayAttribute", Kind.Class, true);
+		out_attribute_type = CoreLookupType ("System.Runtime.InteropServices", "OutAttribute", Kind.Class, true);
+
+		return Report.Errors == 0;
+	}
+
+	//
+	// Initializes optional core types
+	//
+	public static void InitOptionalCoreTypes ()
+	{
+		void_ptr_type = GetPointerType (void_type);
 		char_ptr_type = GetPointerType (char_type);
-		decimal_type  = CoreLookupType ("System", "Decimal");
-		bool_type     = CoreLookupType ("System", "Boolean");
-		enum_type     = CoreLookupType ("System", "Enum");
 
-		multicast_delegate_type = CoreLookupType ("System", "MulticastDelegate");
-		delegate_type           = CoreLookupType ("System", "Delegate");
+		runtime_argument_handle_type = CoreLookupType ("System", "RuntimeArgumentHandle", Kind.Struct, false);
+		asynccallback_type = CoreLookupType ("System", "AsyncCallback", Kind.Delegate, false);
+		iasyncresult_type = CoreLookupType ("System", "IAsyncResult", Kind.Interface, false);
+		typed_reference_type = CoreLookupType ("System", "TypedReference", Kind.Struct, false);
+		arg_iterator_type = CoreLookupType ("System", "ArgIterator", Kind.Struct, false);
+		mbr_type = CoreLookupType ("System", "MarshalByRefObject", Kind.Class, false);
 
-		array_type    = CoreLookupType ("System", "Array");
-		void_type     = CoreLookupType ("System", "Void");
-		type_type     = CoreLookupType ("System", "Type");
+		//
+		// Optional attributes, used for error reporting only
+		//
+		obsolete_attribute_type = CoreLookupType ("System", "ObsoleteAttribute", Kind.Class, false);
+		if (obsolete_attribute_type != null) {
+			Class c = TypeManager.LookupClass (obsolete_attribute_type);
+			if (c != null)
+				c.DefineMembers ();
+		}
 
-		runtime_field_handle_type = CoreLookupType ("System", "RuntimeFieldHandle");
-		runtime_method_handle_type = CoreLookupType ("System", "RuntimeMethodHandle");
-		runtime_argument_handle_type = CoreLookupType ("System", "RuntimeArgumentHandle");
+		dllimport_type = CoreLookupType ("System.Runtime.InteropServices", "DllImportAttribute", Kind.Class, false);
+		methodimpl_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "MethodImplAttribute", Kind.Class, false);
+		marshal_as_attr_type = CoreLookupType ("System.Runtime.InteropServices", "MarshalAsAttribute", Kind.Class, false);
+		in_attribute_type = CoreLookupType ("System.Runtime.InteropServices", "InAttribute", Kind.Class, false);
+		indexer_name_type = CoreLookupType ("System.Runtime.CompilerServices", "IndexerNameAttribute", Kind.Class, false);
+		conditional_attribute_type = CoreLookupType ("System.Diagnostics", "ConditionalAttribute", Kind.Class, false);
+		cls_compliant_attribute_type = CoreLookupType ("System", "CLSCompliantAttribute", Kind.Class, false);
+		security_attr_type = CoreLookupType ("System.Security.Permissions", "SecurityAttribute", Kind.Class, false);
+		required_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "RequiredAttributeAttribute", Kind.Class, false);
+		guid_attr_type = CoreLookupType ("System.Runtime.InteropServices", "GuidAttribute", Kind.Class, false);
+		assembly_culture_attribute_type = CoreLookupType ("System.Reflection", "AssemblyCultureAttribute", Kind.Class, false);
+		assembly_version_attribute_type = CoreLookupType ("System.Reflection", "AssemblyVersionAttribute", Kind.Class, false);
+		comimport_attr_type = CoreLookupType ("System.Runtime.InteropServices", "ComImportAttribute", Kind.Class, false);
+		coclass_attr_type = CoreLookupType ("System.Runtime.InteropServices", "CoClassAttribute", Kind.Class, false);
+		attribute_usage_type = CoreLookupType ("System", "AttributeUsageAttribute", Kind.Class, false);
+
+
 		runtime_helpers_type = CoreLookupType ("System.Runtime.CompilerServices", "RuntimeHelpers");
 		default_member_type  = CoreLookupType ("System.Reflection", "DefaultMemberAttribute");
-		runtime_handle_type  = CoreLookupType ("System", "RuntimeTypeHandle");
-		asynccallback_type   = CoreLookupType ("System", "AsyncCallback");
-		iasyncresult_type    = CoreLookupType ("System", "IAsyncResult");
-		icloneable_type      = CoreLookupType ("System", "ICloneable");
-		iconvertible_type    = CoreLookupType ("System", "IConvertible");
+		runtime_method_handle_type = CoreLookupType ("System", "RuntimeMethodHandle");
 		interlocked_type     = CoreLookupType ("System.Threading", "Interlocked");
 		monitor_type         = CoreLookupType ("System.Threading", "Monitor");
-		intptr_type          = CoreLookupType ("System", "IntPtr");
-		uintptr_type         = CoreLookupType ("System", "UIntPtr");
 
-		attribute_type       = CoreLookupType ("System", "Attribute");
-		attribute_usage_type = CoreLookupType ("System", "AttributeUsageAttribute");
-		dllimport_type       = CoreLookupType ("System.Runtime.InteropServices", "DllImportAttribute");
-		methodimpl_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "MethodImplAttribute");
-		marshal_as_attr_type = CoreLookupType ("System.Runtime.InteropServices", "MarshalAsAttribute");
-		param_array_type     = CoreLookupType ("System", "ParamArrayAttribute");
-		in_attribute_type    = CoreLookupType ("System.Runtime.InteropServices", "InAttribute");
-		out_attribute_type   = CoreLookupType ("System.Runtime.InteropServices", "OutAttribute");
 #if NET_2_0
 		// needed before any call susceptible to fail, as it is used during resolution
 		internals_visible_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "InternalsVisibleToAttribute");
@@ -1032,36 +1095,19 @@ namespace Mono.CSharp {
 		// this can fail if the user doesn't have an -r:System.dll
 		default_parameter_value_attribute_type = CoreLookupType ("System.Runtime.InteropServices", "DefaultParameterValueAttribute", true);
 #endif
-		typed_reference_type = CoreLookupType ("System", "TypedReference");
-		arg_iterator_type    = CoreLookupType ("System", "ArgIterator", true);
-		mbr_type             = CoreLookupType ("System", "MarshalByRefObject");
 		decimal_constant_attribute_type = CoreLookupType ("System.Runtime.CompilerServices", "DecimalConstantAttribute");
 
 		unverifiable_code_type= CoreLookupType ("System.Security", "UnverifiableCodeAttribute");
 
-		void_ptr_type         = GetPointerType (void_type);
 
-		indexer_name_type     = CoreLookupType ("System.Runtime.CompilerServices", "IndexerNameAttribute");
-
-		exception_type        = CoreLookupType ("System", "Exception");
 		invalid_operation_exception_type = CoreLookupType ("System", "InvalidOperationException");
 		not_supported_exception_type = CoreLookupType ("System", "NotSupportedException");
 
 		//
 		// Attribute types
 		//
-		obsolete_attribute_type = CoreLookupType ("System", "ObsoleteAttribute");
-		conditional_attribute_type = CoreLookupType ("System.Diagnostics", "ConditionalAttribute");
-		cls_compliant_attribute_type = CoreLookupType ("System", "CLSCompliantAttribute");
 		struct_layout_attribute_type = CoreLookupType ("System.Runtime.InteropServices", "StructLayoutAttribute");
 		field_offset_attribute_type = CoreLookupType ("System.Runtime.InteropServices", "FieldOffsetAttribute");
-		security_attr_type = CoreLookupType ("System.Security.Permissions", "SecurityAttribute");
-		required_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "RequiredAttributeAttribute", true);
-		guid_attr_type = CoreLookupType ("System.Runtime.InteropServices", "GuidAttribute");
-		assembly_culture_attribute_type = CoreLookupType ("System.Reflection", "AssemblyCultureAttribute");
-		assembly_version_attribute_type = CoreLookupType ("System.Reflection", "AssemblyVersionAttribute");
-		comimport_attr_type = CoreLookupType ("System.Runtime.InteropServices", "ComImportAttribute");
-		coclass_attr_type = CoreLookupType ("System.Runtime.InteropServices", "CoClassAttribute");
 
 		//
 		// .NET 2.0
@@ -1148,8 +1194,6 @@ namespace Mono.CSharp {
 		system_uint64_expr.Type = uint64_type;
 		system_char_expr.Type = char_type;
 		system_void_expr.Type = void_type;
-		system_asynccallback_expr.Type = asynccallback_type;
-		system_iasyncresult_expr.Type = iasyncresult_type;
 
 		//
 		// These are only used for compare purposes

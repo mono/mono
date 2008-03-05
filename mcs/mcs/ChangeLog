@@ -1,3 +1,9 @@
+2008-03-05  Marek Safar  <marek.safar@gmail.com>
+
+	* typemanager.cs, parameter.cs, rootcontext.cs, ecore.cs, class.cs, decl.cs,
+	delegate.cs, convert.cs, driver.cs, attribute.cs, codegen.cs: TypeManager
+	predefined types clean up (work related to #364674).
+
 2008-03-04  Marek Safar  <marek.safar@gmail.com>
 
 	* ecore.cs: Print an error message instead of throwing exception.

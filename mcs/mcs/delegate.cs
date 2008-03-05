@@ -42,7 +42,10 @@ namespace Mono.CSharp {
 		ReturnParameter return_attributes;
 
 		MemberCache member_cache;
-	
+
+		const MethodAttributes mattr = MethodAttributes.Public | MethodAttributes.HideBySig |
+			MethodAttributes.Virtual | MethodAttributes.NewSlot;
+
 		const int AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
@@ -248,8 +251,6 @@ namespace Mono.CSharp {
 			
   			CallingConventions cc = Parameters.CallingConvention;
 
- 			const MethodAttributes mattr = MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.Virtual | MethodAttributes.NewSlot;
-
  			InvokeBuilder = TypeBuilder.DefineMethod ("Invoke", 
  								  mattr,		     
  								  cc,
@@ -261,14 +262,22 @@ namespace Mono.CSharp {
 			TypeManager.RegisterMethod (InvokeBuilder, Parameters);
 			member_cache.AddMember (InvokeBuilder, this);
 
+			if (TypeManager.iasyncresult_type != null && TypeManager.asynccallback_type != null) {
+				DefineAsyncMethods (cc);
+			}
+
+			return true;
+		}
+
+		void DefineAsyncMethods (CallingConventions cc)
+		{
 			//
 			// BeginInvoke
 			//
-			
-			Parameters async_parameters = Parameters.MergeGenerated (Parameters, 
+			Parameters async_parameters = Parameters.MergeGenerated (Parameters,
 				new Parameter (TypeManager.asynccallback_type, "callback", Parameter.Modifier.NONE, null, Location),
 				new Parameter (TypeManager.object_type, "object", Parameter.Modifier.NONE, null, Location));
-			
+
 			BeginInvokeBuilder = TypeBuilder.DefineMethod ("BeginInvoke",
 				mattr, cc, TypeManager.iasyncresult_type, async_parameters.Types);
 
@@ -294,27 +303,26 @@ namespace Mono.CSharp {
 
 			if (out_params > 0) {
 				Type [] end_param_types = new Type [out_params];
-				Parameter [] end_params = new Parameter [out_params ];
+				Parameter [] end_params = new Parameter [out_params];
 
-				int param = 0; 
+				int param = 0;
 				for (int i = 0; i < Parameters.FixedParameters.Length; ++i) {
 					Parameter p = Parameters.FixedParameters [i];
 					if ((p.ModFlags & Parameter.Modifier.ISBYREF) == 0)
 						continue;
 
-					end_param_types [param] = p.ExternalType();
+					end_param_types [param] = p.ExternalType ();
 					end_params [param] = p;
 					++param;
 				}
 				end_parameters = Parameters.CreateFullyResolved (end_params, end_param_types);
-			}
-			else {
+			} else {
 				end_parameters = Parameters.EmptyReadOnlyParameters;
 			}
 
 			end_parameters = Parameters.MergeGenerated (end_parameters,
 				new Parameter (TypeManager.iasyncresult_type, "result", Parameter.Modifier.NONE, null, Location));
-			
+
 			//
 			// Create method, define parameters, register parameters with type system
 			//
@@ -324,8 +332,6 @@ namespace Mono.CSharp {
 			end_parameters.ApplyAttributes (EndInvokeBuilder);
 			TypeManager.RegisterMethod (EndInvokeBuilder, end_parameters);
 			member_cache.AddMember (EndInvokeBuilder, this);
-
-			return true;
 		}
 
 		public override void Emit ()

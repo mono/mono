@@ -1684,20 +1684,11 @@ namespace Mono.CSharp
 					LoadModule (module);
 			}
 			
-			//
-			// Before emitting, we need to get the core
-			// types emitted from the user defined types
-			// or from the system ones.
-			//
-			if (timestamps)
-				ShowTime ("Initializing Core Types");
-			if (!RootContext.StdLib){
-				RootContext.ResolveCore ();
-				if (Report.Errors > 0)
-					return false;
-			}
-			
-			TypeManager.InitCoreTypes ();
+			if (!TypeManager.InitCoreTypes ())
+				return false;
+
+			TypeManager.InitOptionalCoreTypes ();
+
 			if (timestamps)
 				ShowTime ("   Core Types done");
 

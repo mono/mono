@@ -4673,7 +4673,7 @@ namespace Mono.CSharp {
 			}
 
 			if (right_side == EmptyExpression.OutAccess &&
-			    !IsStatic && !(InstanceExpression is This) && TypeManager.IsSubclassOf (DeclaringType, TypeManager.mbr_type)) {
+			    !IsStatic && !(InstanceExpression is This) && TypeManager.mbr_type != null && TypeManager.IsSubclassOf (DeclaringType, TypeManager.mbr_type)) {
 				Report.SymbolRelatedToPreviousError (DeclaringType);
 				Report.Warning (197, 1, loc,
 						"Passing `{0}' as ref or out or taking its address may cause a runtime exception because it is a field of a marshal-by-reference class",
@@ -4685,7 +4685,7 @@ namespace Mono.CSharp {
 
 		public override void CheckMarshalByRefAccess (EmitContext ec)
 		{
-			if (!IsStatic && Type.IsValueType && !(InstanceExpression is This) && TypeManager.IsSubclassOf (DeclaringType, TypeManager.mbr_type)) {
+			if (!IsStatic && Type.IsValueType && !(InstanceExpression is This) && TypeManager.mbr_type != null && TypeManager.IsSubclassOf (DeclaringType, TypeManager.mbr_type)) {
 				Report.SymbolRelatedToPreviousError (DeclaringType);
 				Report.Warning (1690, 1, loc, "Cannot call methods, properties, or indexers on `{0}' because it is a value type member of a marshal-by-reference class",
 						GetSignatureForError ());

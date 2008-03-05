@@ -337,16 +337,6 @@ namespace Mono.CSharp {
 
 			// from any class-type S to any interface-type T.
 			if (target_type.IsInterface) {
-				if (target_type != TypeManager.iconvertible_type &&
-				    expr_type.IsValueType && (expr is Constant) &&
-				    !(expr is IntLiteral || expr is BoolLiteral ||
-				      expr is FloatLiteral || expr is DoubleLiteral ||
-				      expr is LongLiteral || expr is CharLiteral ||
-				      expr is StringLiteral || expr is DecimalLiteral ||
-				      expr is UIntLiteral || expr is ULongLiteral)) {
-					return false;
-				}
-
 				if (TypeManager.ImplementsInterface (expr_type, target_type)){
 					return !TypeManager.IsGenericParameter (expr_type) &&
 						!TypeManager.IsValueType (expr_type);
@@ -388,11 +378,6 @@ namespace Mono.CSharp {
 			if (target_type == TypeManager.delegate_type &&
 				(expr_type == TypeManager.delegate_type || TypeManager.IsDelegateType (expr_type)))
 				return true;
-
-			// from any array-type or delegate type into System.ICloneable.
-			if (target_type == TypeManager.icloneable_type &&
-				(expr_type.IsArray || expr_type == TypeManager.delegate_type || TypeManager.IsDelegateType (expr_type)))
-					return true;
 
 			// from a generic type definition to a generic instance.
 			if (TypeManager.IsEqual (expr_type, target_type))
@@ -453,16 +438,6 @@ namespace Mono.CSharp {
 
 			// from any class-type S to any interface-type T.
 			if (target_type.IsInterface) {
-				if (target_type != TypeManager.iconvertible_type &&
-				    expr_type.IsValueType && (expr is Constant) &&
-				    !(expr is IntLiteral || expr is BoolLiteral ||
-				      expr is FloatLiteral || expr is DoubleLiteral ||
-				      expr is LongLiteral || expr is CharLiteral ||
-				      expr is StringLiteral || expr is DecimalLiteral ||
-				      expr is UIntLiteral || expr is ULongLiteral)) {
-					return false;
-				}
-
 				if (TypeManager.ImplementsInterface (expr_type, target_type))
 					return TypeManager.IsGenericParameter (expr_type) ||
 						TypeManager.IsValueType (expr_type);
@@ -1797,14 +1772,6 @@ namespace Mono.CSharp {
 			    TypeManager.IsDelegateType (target_type))
 				return true;
 
-			//
-			// From ICloneable to Array or Delegate types
-			//
-			if (source_type == TypeManager.icloneable_type &&
-			    (target_type == TypeManager.array_type ||
-			     target_type == TypeManager.delegate_type))
-				return true;
-
 			return false;
 		}
 
@@ -1926,14 +1893,6 @@ namespace Mono.CSharp {
 			//
 			if (source_type == TypeManager.delegate_type &&
 			    TypeManager.IsDelegateType (target_type))
-				return new ClassCast (source, target_type);
-
-			//
-			// From ICloneable to Array or Delegate types
-			//
-			if (source_type == TypeManager.icloneable_type &&
-			    (target_type == TypeManager.array_type ||
-			     target_type == TypeManager.delegate_type))
 				return new ClassCast (source, target_type);
 
 			return null;

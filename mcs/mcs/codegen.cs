@@ -1133,7 +1133,9 @@ namespace Mono.CSharp {
 			if (!OptAttributes.CheckTargets())
 				return;
 
-			ClsCompliantAttribute = ResolveAttribute (TypeManager.cls_compliant_attribute_type);
+			if (TypeManager.cls_compliant_attribute_type != null)
+				ClsCompliantAttribute = ResolveAttribute (TypeManager.cls_compliant_attribute_type);
+
 			if (ClsCompliantAttribute != null) {
 				is_cls_compliant = ClsCompliantAttribute.GetClsCompliantAttributeValue ();
 			}
@@ -1353,7 +1355,7 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder customBuilder)
 		{
-			if (TypeManager.IsSubclassOf (a.Type, TypeManager.security_attr_type) && a.CheckSecurityActionValidity (true)) {
+			if (a.IsValidSecurityAttribute ()) {
 				if (declarative_security == null)
 					declarative_security = new ListDictionary ();
 

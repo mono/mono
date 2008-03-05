@@ -40,7 +40,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (TypeManager.IsSubclassOf (a.Type, TypeManager.security_attr_type)) {
+			if (a.HasSecurityAttribute) {
 				a.Error_InvalidSecurityParent ();
 				return;
 			}
@@ -290,7 +290,7 @@ namespace Mono.CSharp {
 			}
 
 			if (a.Type == TypeManager.out_attribute_type && (ModFlags & Modifier.REF) == Modifier.REF &&
-			    !OptAttributes.Contains (TypeManager.in_attribute_type)) {
+			    TypeManager.in_attribute_type != null && !OptAttributes.Contains (TypeManager.in_attribute_type)) {
 				Report.Error (662, a.Location,
 					"Cannot specify only `Out' attribute on a ref parameter. Use both `In' and `Out' attributes or neither");
 				return;

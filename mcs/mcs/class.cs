@@ -56,7 +56,8 @@ namespace Mono.CSharp {
 		Struct,
 		Class,
 		Interface,
-		Enum
+		Enum,
+		Delegate
 	}
 
 	/// <summary>
@@ -699,7 +700,7 @@ namespace Mono.CSharp {
 
 		public bool IsComImport {
 			get {
-				if (OptAttributes == null)
+				if (OptAttributes == null || TypeManager.comimport_attr_type == null)
 					return false;
 
 				return OptAttributes.Contains (TypeManager.comimport_attr_type);
@@ -2767,7 +2768,7 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
-			if (TypeManager.IsSubclassOf (a.Type, TypeManager.security_attr_type) && a.CheckSecurityActionValidity (false)) {
+			if (a.IsValidSecurityAttribute ()) {
 				if (declarative_security == null)
 					declarative_security = new ListDictionary ();
 
@@ -2894,7 +2895,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (a.Type == TypeManager.comimport_attr_type &&
+			if (a.Type == TypeManager.comimport_attr_type && TypeManager.guid_attr_type != null &&
 				!attributes.Contains (TypeManager.guid_attr_type)) {
 					a.Error_MissingGuidAttribute ();
 					return;
@@ -3078,6 +3079,9 @@ namespace Mono.CSharp {
 			if (OptAttributes == null)
 				return false;
 
+			if (TypeManager.conditional_attribute_type == null)
+				return false;
+
 			Attribute[] attrs = OptAttributes.SearchMulti (TypeManager.conditional_attribute_type);
 
 			if (attrs == null)
@@ -3226,7 +3230,7 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
-			if (a.Type == TypeManager.comimport_attr_type &&
+			if (a.Type == TypeManager.comimport_attr_type && TypeManager.guid_attr_type != null &&
 				!attributes.Contains (TypeManager.guid_attr_type)) {
 					a.Error_MissingGuidAttribute ();
 					return;
@@ -3490,13 +3494,13 @@ namespace Mono.CSharp {
 				if ((ModFlags & Modifiers.OVERRIDE) != 0) {
 					ObsoleteAttribute oa = AttributeTester.GetMethodObsoleteAttribute (base_method);
 					if (oa != null) {
-						if (OptAttributes == null || !OptAttributes.Contains (TypeManager.obsolete_attribute_type)) {
+						if (OptAttributes == null || TypeManager.obsolete_attribute_type == null || !OptAttributes.Contains (TypeManager.obsolete_attribute_type)) {
 							Report.SymbolRelatedToPreviousError (base_method);
 								Report.Warning (672, 1, Location, "Member `{0}' overrides obsolete member `{1}'. Add the Obsolete attribute to `{0}'",
 									GetSignatureForError (), TypeManager.CSharpSignature (base_method));
 						}
 					} else {
-						if (OptAttributes != null && OptAttributes.Contains (TypeManager.obsolete_attribute_type)) {
+						if (OptAttributes != null && TypeManager.obsolete_attribute_type != null && OptAttributes.Contains (TypeManager.obsolete_attribute_type)) {
 							Report.Warning (809, 1, Location, "Obsolete member `{0}' overrides non-obsolete member `{1}'",
 								GetSignatureForError (), TypeManager.CSharpSignature (base_method));
 						}
@@ -3892,7 +3896,7 @@ namespace Mono.CSharp {
 				is_external_implementation = true;
 			}
 
-			if (TypeManager.IsSubclassOf (a.Type, TypeManager.security_attr_type) && a.CheckSecurityActionValidity (false)) {
+			if (a.IsValidSecurityAttribute ()) {
 				if (declarative_security == null)
 					declarative_security = new ListDictionary ();
 				a.ExtractSecurityPermissionSet (declarative_security);
@@ -4133,6 +4137,9 @@ namespace Mono.CSharp {
 
 			if (base_method == null) {
 				if (OptAttributes == null)
+					return false;
+
+				if (TypeManager.conditional_attribute_type == null)
 					return false;
 
 				Attribute[] attrs = OptAttributes.SearchMulti (TypeManager.conditional_attribute_type);
@@ -4728,7 +4735,7 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
-			if (TypeManager.IsSubclassOf (a.Type, TypeManager.security_attr_type) && a.CheckSecurityActionValidity (false)) {
+			if (a.IsValidSecurityAttribute ()) {
 				if (declarative_security == null) {
 					declarative_security = new ListDictionary ();
 				}
@@ -5616,7 +5623,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (TypeManager.IsSubclassOf (a.Type, TypeManager.security_attr_type)) {
+			if ((a.HasSecurityAttribute)) {
 				a.Error_InvalidSecurityParent ();
 				return;
 			}
@@ -6165,7 +6172,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (TypeManager.IsSubclassOf (a.Type, TypeManager.security_attr_type) && a.CheckSecurityActionValidity (false)) {
+			if (a.IsValidSecurityAttribute ()) {
 				if (declarative_security == null)
 					declarative_security = new ListDictionary ();
 				a.ExtractSecurityPermissionSet (declarative_security);
@@ -6600,7 +6607,7 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
-			if (TypeManager.IsSubclassOf (a.Type, TypeManager.security_attr_type)) {
+			if (a.HasSecurityAttribute) {
 				a.Error_InvalidSecurityParent ();
 				return;
 			}
@@ -7459,7 +7466,7 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
-			if (TypeManager.IsSubclassOf (a.Type, TypeManager.security_attr_type)) {
+			if ((a.HasSecurityAttribute)) {
 				a.Error_InvalidSecurityParent ();
 				return;
 			}
@@ -7666,7 +7673,7 @@ namespace Mono.CSharp {
 			if (!DefineParameters (parameters))
 				return false;
 
-			if (OptAttributes != null) {
+			if (OptAttributes != null && TypeManager.indexer_name_type != null) {
 				Attribute indexer_attr = OptAttributes.Search (TypeManager.indexer_name_type);
 				if (indexer_attr != null) {
 					// Remove the attribute from the list because it is not emitted
