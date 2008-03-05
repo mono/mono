@@ -1839,6 +1839,9 @@ namespace Mono.CSharp {
 
 		if (assembly_internals_vis_attrs.Contains (assembly))
 			return (bool)(assembly_internals_vis_attrs [assembly]);
+				
+		if (internals_visible_attr_type == null)
+			return false;
 		
 		object [] attrs = assembly.GetCustomAttributes (internals_visible_attr_type, false);
 		if (attrs.Length == 0) {
