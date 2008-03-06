@@ -1,4 +1,12 @@
 
+Thu Mar 6 19:43:41 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: ldfld_remote and stfld_remote needs just one wrapper as
+	the called function takes an object type argument. Fixes storing or
+	valuetypes across remoting as well as reducing memory usage.
+	* image.c, metadata-internals.h: remove now unused ldfld_remote and
+	stfld_remote wrapper caches.
+
 Tue Mar 4 19:10:30 CET 2008 Paolo Molaro <lupus@ximian.com>
 
 	* marshal.c: mono_load_remote_field_new() always returns object,
