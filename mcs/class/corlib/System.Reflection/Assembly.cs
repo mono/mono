@@ -734,7 +734,7 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern int MonoDebugger_GetMethodToken (MethodBase method);
 
-#if NET_2_0
+#if NET_2_0 || BOOTSTRAP_NET_2_0
 		[MonoTODO ("Always returns zero")]
 		[ComVisible (false)]
 		public long HostContext {
