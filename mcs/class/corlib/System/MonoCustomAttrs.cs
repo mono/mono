@@ -115,6 +115,8 @@ namespace System
 		{
 			if (obj == null)
 				throw new ArgumentNullException ("obj");
+			if (attributeType == null)
+				throw new ArgumentNullException ("attributeType");			
 
 			object[] r;
 			object[] res = GetCustomAttributesBase (obj, attributeType);
