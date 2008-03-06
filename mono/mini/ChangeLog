@@ -1,5 +1,10 @@
 2008-03-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (decode_patch_info): Update this after the ldfld/stfld wrapper
+	changes.
+
+	* aot-compiler.c (encode_patch): Ditto.
+
 	* mini.h (G_MININT32): Fix the definition of this.
 
 2008-03-05  Zoltan Varga  <vargaz@gmail.com>
