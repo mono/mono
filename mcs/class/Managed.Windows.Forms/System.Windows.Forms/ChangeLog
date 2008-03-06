@@ -1,3 +1,10 @@
+2008-02-22  Jonathan Pobst  <monkey@jpobst.com>
+	[Backport to 1.9]
+	* TreeView.cs: Make selected_node and highlighted_node internal.
+	* TreeNodeCollection.cs: Reset selected_node and highlighted_node
+	to null when Nodes.Clear is called.
+	[Fixes bug #363884]
+
 2008-03-03  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* GridEntry.cs: Do not convert not only if the types match, 

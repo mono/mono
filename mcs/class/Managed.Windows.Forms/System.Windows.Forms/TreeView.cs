@@ -50,10 +50,10 @@ namespace System.Windows.Forms {
 		private TreeNodeCollection nodes;
 
 		private TreeViewAction selection_action;
-		private TreeNode selected_node;
+		internal TreeNode selected_node;
 		private TreeNode pre_selected_node;
 		private TreeNode focused_node;
-		private TreeNode highlighted_node;
+		internal TreeNode highlighted_node;
 		private Rectangle mouse_rect;
 		private bool select_mmove;
 
