@@ -1,3 +1,8 @@
+2008-03-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (_mono_reflection_parse_type): Distinguish between vectors and
+	one dimension arrays. Fixes #367670.
+	(mono_reflection_get_type_internal): Ditto.
 
 Tue Mar 4 19:04:02 CET 2008 Paolo Molaro <lupus@ximian.com>
 
