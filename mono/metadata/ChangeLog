@@ -1,3 +1,12 @@
+
+Thu Mar 6 19:43:41 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: ldfld_remote and stfld_remote needs just one wrapper as
+	the called function takes an object type argument. Fixes storing or
+	valuetypes across remoting as well as reducing memory usage.
+	* image.c, metadata-internals.h: remove now unused ldfld_remote and
+	stfld_remote wrapper caches.
+
 2008-03-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (mono_lookup_internal_call): Update the exception message when an icall
