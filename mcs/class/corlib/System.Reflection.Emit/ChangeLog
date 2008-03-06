@@ -1,3 +1,8 @@
+2008-03-06  Jb Evain  <jbevain@novell.com>
+
+        * SignatureHelper.cs (GetMethodSigHelper): if returnType
+        is null, use typeof (void) instead. Fixes #367663.
+
 2008-03-03 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* MethodBuilder.cs (check_override): Added, verify if this method has explicit

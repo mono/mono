@@ -372,6 +372,9 @@ namespace System.Reflection.Emit {
 			if (mod != null && !(mod is ModuleBuilder))
 				throw new ArgumentException ("ModuleBuilder is expected");
 
+			if (returnType == null)
+				returnType = typeof (void);
+
 			SignatureHelper helper = 
 				new SignatureHelper ((ModuleBuilder)mod, SignatureHelperType.HELPER_METHOD);
 			helper.returnType = returnType;
