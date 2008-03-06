@@ -1114,5 +1114,16 @@ namespace MonoTests.System.Reflection
 			// Just a sanity check, in case the above passed for some other reason
 			Assert.IsNotNull (corlib_test.GetType ("MonoTests.System.Reflection.AssemblyTest+Bug328812_NestedFamORAssem"));
 		}
+		
+		[Test]
+		public void CustomAttributesNull ()
+		{
+			Assembly a = typeof (int).Assembly;
+			try {
+				a.GetCustomAttributes (null, false);
+				Assert.Fail ();
+			} catch (ArgumentNullException)
+			{}
+		}
 	}
 }
