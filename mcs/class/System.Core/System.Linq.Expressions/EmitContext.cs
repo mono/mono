@@ -96,7 +96,7 @@ namespace System.Linq.Expressions {
 		{
 			// FIXME: Need to force this to be verifiable, see:
 			// https://bugzilla.novell.com/show_bug.cgi?id=355005
-			method = new DynamicMethod (GenerateName (), return_type, param_types, true);
+			method = new DynamicMethod (GenerateName (), return_type, param_types, typeof (EmitContext), true);
 			ig = method.GetILGenerator ();
 		}
 
