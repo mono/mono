@@ -1,3 +1,7 @@
+2008-03-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* TypeTest.cs (PublicKeyToken): Add a test for #367670.
+
 2008-03-02  Roei Erez  <roeie@mainsoft.com>
 
 	* DateTimeTest.cs : add test cases for  Bug3522210.

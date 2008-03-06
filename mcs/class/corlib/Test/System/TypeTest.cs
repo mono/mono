@@ -1705,6 +1705,13 @@ Culture=neutral
 ,
 PublicKeyToken=b77a5c561934e089"));
 		}
+
+		[Test]
+		public void GetTypeNonVectorArray ()
+		{
+			Type t = Type.GetType ("System.String[*]");
+			Assert.AreEqual ("System.String[*]", t.ToString ());
+		}
 		
 		[Test]
 		public void ExerciseFilterName ()
