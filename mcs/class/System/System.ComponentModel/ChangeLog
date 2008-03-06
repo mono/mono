@@ -1,3 +1,10 @@
+2008-03-06  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* Container.cs: On disposal unsite the component first before 
+	disposing in order to prevent it from asking us to remove it 
+	through the Site property.
+	[Fixes bugs #367653 and #367583]
+
 2008-03-01  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* Component.cs: Do not set the Site to null on disposing as this 
