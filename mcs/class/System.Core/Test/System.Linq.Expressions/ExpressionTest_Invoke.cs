@@ -120,15 +120,15 @@ namespace MonoTests.System.Linq.Expressions {
 			return typeof (Expression).Assembly.GetType ("Consts") != null;
 		}
 
-		public delegate string StringAction (string s);
+		delegate string StringAction (string s);
 
-		public static string Identity (string s)
+		static string Identity (string s)
 		{
 			return s;
 		}
 
 		[Test]
-		public void TestCompileInvoke ()
+		public void TestCompileInvokePrivateDelegate ()
 		{
 			var action = Expression.Parameter (typeof (StringAction), "action");
 			var str = Expression.Parameter (typeof (string), "str");
