@@ -1,5 +1,9 @@
 2008-03-06  Jb Evain  <jbevain@novell.com>
 
+	* EmitContext.cs: Lambda methods bypass JIT visibility checks.
+
+2008-03-06  Jb Evain  <jbevain@novell.com>
+
 	* MethodCallExpression.cs, Expression.cs: refactor method calling
 	into a more sophisticated EmitCall in Expression.
 	* InvocationExpression.cs (Emit): implement using the previous EmitCall.

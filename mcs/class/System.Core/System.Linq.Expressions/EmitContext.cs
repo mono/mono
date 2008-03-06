@@ -90,18 +90,9 @@ namespace System.Linq.Expressions {
 		public DynamicEmitContext (LambdaExpression lambda)
 			: base (lambda)
 		{
-			//
-			// We probably want to use the 3.5 new API calls to associate
-			// the method with the "sandboxed" Assembly, instead am currently
-			// dumping these types in this class
-			//
-			Type owner_of_code = typeof (EmitContext);
-
-			//
 			// FIXME: Need to force this to be verifiable, see:
 			// https://bugzilla.novell.com/show_bug.cgi?id=355005
-			//
-			method = new DynamicMethod (GenerateName (), return_type, param_types, owner_of_code);
+			method = new DynamicMethod (GenerateName (), return_type, param_types, true);
 			ig = method.GetILGenerator ();
 		}
 
