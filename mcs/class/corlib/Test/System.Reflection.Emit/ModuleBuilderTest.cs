@@ -238,6 +238,26 @@ namespace MonoTests.System.Reflection.Emit
 
 			mb.ResolveField (0x4001234);
 		}
+
+		[Test]
+		public void ResolveMethodTokenMethodBuilder ()
+		{
+			AssemblyBuilder ab = genAssembly ();
+			ModuleBuilder moduleb = ab.DefineDynamicModule ("foo.dll", "foo.dll");
+
+			TypeBuilder tb = moduleb.DefineType ("foo");
+			MethodBuilder mb = tb.DefineMethod("Frub", MethodAttributes.Static, null, new Type[] { typeof(IntPtr) });
+			int tok = mb.GetToken().Token;
+			mb.SetImplementationFlags(MethodImplAttributes.NoInlining);
+			ILGenerator ilgen = mb.GetILGenerator();
+			ilgen.Emit(OpCodes.Ret);
+
+			tb.CreateType ();
+
+			MethodBase mi = moduleb.ResolveMethod (tok);
+			Assert.IsNotNull (mi);
+			Assert.AreEqual ("Frub", mi.Name);
+		}
 #endif
 
 		[Test]

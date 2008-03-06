@@ -1,3 +1,7 @@
+2008-03-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* ModuleBuilderTest.cs: Add a test for #367668.
+
 2008-03-06  Jb Evain  <jbevain@novell.com>
 
 	* ILGeneratorTest.cs: add test for #367663, checking
