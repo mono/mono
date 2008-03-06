@@ -1,5 +1,7 @@
 2008-03-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* DynamicMethod.cs: Create a dynamic assembly to hold the anon hosted methods.
+	
 	* DynamicMethod.cs: Add net 3.5 ctor overloads.
 
 	* ModuleBuilder.cs (RegisterToken): New icall.

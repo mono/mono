@@ -107,6 +107,9 @@ namespace System.Reflection.Emit {
 						throw new ArgumentException ("Parameter " + i + " is null", "parameterTypes");
 			}
 
+			if (m == null)
+				m = AnonHostModuleHolder.anon_host_module;
+
 			this.name = name;
 			this.attributes = attributes | MethodAttributes.Static;
 			this.callingConvention = callingConvention;
@@ -385,6 +388,19 @@ namespace System.Reflection.Emit {
 			refs [nrefs + 1] = null;
 			nrefs += 2;
 			return nrefs - 1;
+		}
+
+		// This class takes care of constructing the module in a thread safe manner
+		class AnonHostModuleHolder {
+			public static Module anon_host_module;
+
+			static AnonHostModuleHolder () {
+				AssemblyName aname = new AssemblyName ();
+				aname.Name = "Anonymously Hosted DynamicMethods Assembly";
+				AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (aname, AssemblyBuilderAccess.Run);
+
+				anon_host_module = ab.GetManifestModule ();
+			}
 		}
 	}
 
