@@ -1,5 +1,7 @@
 2008-03-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* DynamicMethodTest.cs: Add a test for anon-hosted dynamic methods.
+
 	* ModuleBuilderTest.cs: Add a test for #367668.
 
 2008-03-06  Jb Evain  <jbevain@novell.com>

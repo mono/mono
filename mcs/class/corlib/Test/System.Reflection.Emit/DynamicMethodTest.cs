@@ -312,6 +312,26 @@ namespace MonoTests.System.Reflection.Emit
 			string ret = (string) method.Invoke (null, new object [] {});
 			Assert.AreEqual ("foo", ret, "#1");
 		}
+
+		[Test]
+		public void AnonHosted ()
+		{
+			DynamicMethod hello = new DynamicMethod ("Hello",
+													 typeof (int),
+													 new Type[] { typeof (string) });
+			ILGenerator helloIL = hello.GetILGenerator ();
+			helloIL.Emit (OpCodes.Ldc_I4_2);
+			helloIL.Emit (OpCodes.Ret);
+
+			HelloInvoker hi =
+				(HelloInvoker) hello.CreateDelegate (typeof (HelloInvoker));
+			int ret = hi ("Hello, World!");
+			Assert.AreEqual (2, ret);
+
+			object[] invokeArgs = { "Hello, World!" };
+			object objRet = hello.Invoke (null, invokeArgs);
+			Assert.AreEqual (2, objRet);
+		}			
 	}
 }
 
