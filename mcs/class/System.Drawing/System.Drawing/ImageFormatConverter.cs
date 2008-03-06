@@ -99,25 +99,25 @@ namespace System.Drawing
 					return ImageFormat.Wmf;
 			} else {
 				// case #3, this is probably a short format
-				if (String.Compare (strFormat, "Bmp", true) == 0)
+				if (String.Compare (strFormat, "Bmp", true, CultureInfo.InvariantCulture) == 0)
 					return ImageFormat.Bmp;
-				else if (String.Compare (strFormat, "Emf", true) == 0)
+				else if (String.Compare (strFormat, "Emf", true, CultureInfo.InvariantCulture) == 0)
 					return ImageFormat.Emf;
-				else if (String.Compare (strFormat, "Exif", true) == 0)
+				else if (String.Compare (strFormat, "Exif", true, CultureInfo.InvariantCulture) == 0)
 					return ImageFormat.Exif;
-				else if (String.Compare (strFormat, "Gif", true) == 0)
+				else if (String.Compare (strFormat, "Gif", true, CultureInfo.InvariantCulture) == 0)
 					return ImageFormat.Gif;
-				else if (String.Compare (strFormat, "Icon", true) == 0)
+				else if (String.Compare (strFormat, "Icon", true, CultureInfo.InvariantCulture) == 0)
 					return ImageFormat.Icon;
-				else if (String.Compare (strFormat, "Jpeg", true) == 0)
+				else if (String.Compare (strFormat, "Jpeg", true, CultureInfo.InvariantCulture) == 0)
 					return ImageFormat.Jpeg;
-				else if (String.Compare (strFormat, "MemoryBmp", true) == 0)
+				else if (String.Compare (strFormat, "MemoryBmp", true, CultureInfo.InvariantCulture) == 0)
 					return ImageFormat.MemoryBmp;
-				else if (String.Compare (strFormat, "Png", true) == 0)
+				else if (String.Compare (strFormat, "Png", true, CultureInfo.InvariantCulture) == 0)
 					return ImageFormat.Png;
-				else if (String.Compare (strFormat, "Tiff", true) == 0)
+				else if (String.Compare (strFormat, "Tiff", true, CultureInfo.InvariantCulture) == 0)
 					return ImageFormat.Tiff;
-				else if (String.Compare (strFormat, "Wmf", true) == 0)
+				else if (String.Compare (strFormat, "Wmf", true, CultureInfo.InvariantCulture) == 0)
 					return ImageFormat.Wmf;
 			}
 			// last case, this is an unknown string
@@ -126,12 +126,8 @@ namespace System.Drawing
 
 		public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object val, Type destType )
 		{
-			if ((val is ImageFormat) && (destType == typeof (string)))
-				return val.ToString ();
-			
-			if (destType == typeof (InstanceDescriptor) && val is ImageFormat) {
+			if (val is ImageFormat) {
 				ImageFormat c = (ImageFormat) val;
-
 				string prop = null;
 				if (c.Guid.Equals (ImageFormat.Bmp.Guid))
 					prop = "Bmp";
@@ -153,12 +149,16 @@ namespace System.Drawing
 					prop = "Tiff";
 				else if (c.Guid.Equals (ImageFormat.Wmf.Guid))
 					prop = "Wmf";
-				
-				if (prop != null){
-					return new InstanceDescriptor (typeof (ImageFormat).GetProperty (prop), null);
-				} else {
-					ConstructorInfo ctor = typeof(ImageFormat).GetConstructor (new Type[] {typeof(Guid)} );
-					return new InstanceDescriptor (ctor, new object[] {c.Guid});
+
+				if (destType == typeof (string)) {
+					return prop != null ? prop : c.ToString ();
+				} else if (destType == typeof (InstanceDescriptor)) {
+					if (prop != null){
+						return new InstanceDescriptor (typeof (ImageFormat).GetProperty (prop), null);
+					} else {
+						ConstructorInfo ctor = typeof(ImageFormat).GetConstructor (new Type[] {typeof(Guid)} );
+						return new InstanceDescriptor (ctor, new object[] {c.Guid});
+					}
 				}
 			}
 			
