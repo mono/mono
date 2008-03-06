@@ -1912,6 +1912,17 @@ namespace System.Linq.Expressions {
 				expression.Emit (ec);
 		}
 
+		internal static void EmitCall (EmitContext ec, Expression expression, IEnumerable<Expression> arguments, MethodInfo method)
+		{
+			if (expression != null)
+				EmitLoad (ec, expression);
+
+			foreach (var argument in arguments)
+				argument.Emit (ec);
+
+			EmitCall (ec, method);
+		}
+
 		internal static void EmitCall (EmitContext ec, MethodInfo method)
 		{
 			ec.ig.Emit (

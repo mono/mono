@@ -68,15 +68,7 @@ namespace System.Linq.Expressions {
 
 		internal override void Emit (EmitContext ec)
 		{
-			var ig = ec.ig;
-
-			foreach (var arg in arguments)
-				arg.Emit (ec);
-
-			if (obj != null)
-				EmitLoad (ec, obj);
-
-			EmitCall (ec, method);
+			EmitCall (ec, obj, arguments, method);
 		}
 	}
 }

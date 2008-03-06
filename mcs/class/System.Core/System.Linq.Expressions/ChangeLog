@@ -1,5 +1,11 @@
 2008-03-06  Jb Evain  <jbevain@novell.com>
 
+	* MethodCallExpression.cs, Expression.cs: refactor method calling
+	into a more sophisticated EmitCall in Expression.
+	* InvocationExpression.cs (Emit): implement using the previous EmitCall.
+
+2008-03-06  Jb Evain  <jbevain@novell.com>
+
 	* Expression.cs: add a EmitCall helper.
 	* MemberExpression.cs: implement property access.
 
