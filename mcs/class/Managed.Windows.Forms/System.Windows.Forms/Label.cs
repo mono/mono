@@ -452,9 +452,9 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
-		public override	Size GetPreferredSize (Size proposed)
+		public override	Size GetPreferredSize (Size proposedSize)
 		{
-			return InternalGetPreferredSize (proposed);
+			return InternalGetPreferredSize (proposedSize);
 		}
 #endif
 
@@ -611,12 +611,12 @@ namespace System.Windows.Forms
 				string_format.Dispose ();
 		}
 
-		protected internal void DrawImage (Graphics g, Image image, Rectangle area, ContentAlignment img_align)
+		protected internal void DrawImage (Graphics g, Image image, Rectangle r, ContentAlignment align)
 		{
  			if (image == null || g == null)
 				return;
 
-			Rectangle rcImageClip = CalcImageRenderBounds (image, area, img_align);
+			Rectangle rcImageClip = CalcImageRenderBounds (image, r, align);
 
 			if (Enabled)
 				g.DrawImage (image, rcImageClip.X, rcImageClip.Y, rcImageClip.Width, rcImageClip.Height);

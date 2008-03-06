@@ -281,10 +281,10 @@ namespace System.Windows.Forms {
 
 		#region Protected Instance Methods
 #if NET_2_0
-		protected virtual void OnBindingComplete (BindingCompleteEventArgs args)
+		protected virtual void OnBindingComplete (BindingCompleteEventArgs e)
 		{
 			if (BindingComplete != null)
-				BindingComplete (this, args);
+				BindingComplete (this, e);
 		}
 #endif
 

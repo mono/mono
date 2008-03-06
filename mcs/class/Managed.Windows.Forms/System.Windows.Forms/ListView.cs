@@ -3652,9 +3652,9 @@ namespace System.Windows.Forms
 			return null;
 		}
 
-		public ListViewItem FindNearestItem (SearchDirectionHint serachDirection, int x, int y)
+		public ListViewItem FindNearestItem (SearchDirectionHint searchDirection, int x, int y)
 		{
-			return FindNearestItem (serachDirection, new Point (x, y));
+			return FindNearestItem (searchDirection, new Point (x, y));
 		}
 
 		public ListViewItem FindNearestItem (SearchDirectionHint dir, Point point)

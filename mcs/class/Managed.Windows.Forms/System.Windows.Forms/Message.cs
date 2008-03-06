@@ -77,14 +77,14 @@ namespace System.Windows.Forms {
 		}
 		
 #if NET_2_0
-		public static bool operator == (Message m1, Message m2)
+		public static bool operator == (Message a, Message b)
 		{
-			return (m1.hwnd == m2.hwnd) && (m1.lParam == m2.lParam) && (m1.msg == m2.msg) && (m1.result == m2.result) && (m1.wParam == m2.wParam);
+			return (a.hwnd == b.hwnd) && (a.lParam == b.lParam) && (a.msg == b.msg) && (a.result == b.result) && (a.wParam == b.wParam);
 		}
 
-		public static bool operator != (Message m1, Message m2)
+		public static bool operator != (Message a, Message b)
 		{
-			return !(m1 == m2);
+			return !(a == b);
 		}
 #endif
 		#endregion	// Public Static Methods

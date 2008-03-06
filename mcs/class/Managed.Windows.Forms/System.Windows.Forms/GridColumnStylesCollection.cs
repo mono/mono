@@ -57,11 +57,11 @@ namespace System.Windows.Forms
 		}
 
 		
-		public DataGridColumnStyle this [PropertyDescriptor propertyDescriptor] {
+		public DataGridColumnStyle this [PropertyDescriptor propertyDesciptor] {
 			get {				
 				for (int i = 0; i < items.Count; i++) {
 					DataGridColumnStyle column = (DataGridColumnStyle) items[i];
-					if (column.PropertyDescriptor.Equals (propertyDescriptor)) {
+					if (column.PropertyDescriptor.Equals (propertyDesciptor)) {
 						return column;
 					}
 				}

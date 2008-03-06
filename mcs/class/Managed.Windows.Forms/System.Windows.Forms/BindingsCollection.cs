@@ -96,10 +96,10 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
-		protected virtual void OnCollectionChanging (CollectionChangeEventArgs args)
+		protected virtual void OnCollectionChanging (CollectionChangeEventArgs e)
 		{
 			if (CollectionChanging != null)
-				CollectionChanging (this, args);
+				CollectionChanging (this, e);
 		}
 #endif
 

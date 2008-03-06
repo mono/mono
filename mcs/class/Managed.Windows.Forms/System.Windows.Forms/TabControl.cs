@@ -734,16 +734,16 @@ namespace System.Windows.Forms {
 			base.OnKeyDown (ke);
 		}
 
-		protected override bool IsInputKey (Keys key)
+		protected override bool IsInputKey (Keys keyData)
 		{
-			switch (key & Keys.KeyCode) {
+			switch (keyData & Keys.KeyCode) {
 			case Keys.Home:
 			case Keys.End:
 			case Keys.Left:
 			case Keys.Right:
 				return true;
 			}
-			return base.IsInputKey (key);
+			return base.IsInputKey (keyData);
 		}
 		#endregion
 
