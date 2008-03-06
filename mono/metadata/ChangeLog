@@ -1,5 +1,14 @@
 2008-03-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* icall.c (mono_lookup_internal_call): Update the exception message when an icall
+	is not found.
+
+	* reflection.c (mono_image_register_token): New helper function to save
+	a token->object mapping.	
+
+	* icall.c (ves_icall_ModuleBuilder_RegisterToken): New icall to access it from
+	managed code.
+
 	* reflection.c (_mono_reflection_parse_type): Distinguish between vectors and
 	one dimension arrays. Fixes #367670.
 	(mono_reflection_get_type_internal): Ditto.
