@@ -1,5 +1,10 @@
 2008-03-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_method_to_ir): Apply one of the ldstr optimizations in the
+	non-aot case as well.
+
+	* cpu-amd64.md: Reduce the max size of some frequently used opcodes.
+
 	* aot-runtime.c (decode_patch_info): Update this after the ldfld/stfld wrapper
 	changes.
 
