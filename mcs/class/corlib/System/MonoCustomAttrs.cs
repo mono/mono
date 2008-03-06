@@ -116,8 +116,11 @@ namespace System
 			if (obj == null)
 				throw new ArgumentNullException ("obj");
 			if (attributeType == null)
-				throw new ArgumentNullException ("attributeType");			
+				throw new ArgumentNullException ("attributeType");	
 
+			if (attributeType == typeof (MonoCustomAttrs))
+				attributeType = null;
+			
 			object[] r;
 			object[] res = GetCustomAttributesBase (obj, attributeType);
 			// shortcut
@@ -241,7 +244,7 @@ namespace System
 			if (!inherit)
 				return (object[]) GetCustomAttributesBase (obj, null).Clone ();
 
-			return GetCustomAttributes (obj, null, inherit);
+			return GetCustomAttributes (obj, typeof (MonoCustomAttrs), inherit);
 		}
 
 #if NET_2_0

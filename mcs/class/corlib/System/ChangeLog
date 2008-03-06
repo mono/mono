@@ -1,6 +1,7 @@
 2008-03-06  Marek Safar  <marek.safar@gmail.com>
 
-	* MonoCustomAttrs (GetCustomAttributes): Type cannot be null.
+	* MonoCustomAttrs (GetCustomAttributes): Type cannot be null with
+	typeof (MonoCustomAttrs) hack.
 
 Wed Mar 5 19:39:01 CET 2008 Paolo Molaro <lupus@ximian.com>
 
