@@ -4107,7 +4107,14 @@ namespace System.Windows.Forms
 				}
 				return ProcessDialogChar((char)msg.WParam);
 			} else if (msg.Msg == (int)Msg.WM_SYSCHAR) {
-				return ProcessDialogChar((char)msg.WParam);
+				if (ProcessDialogChar((char)msg.WParam))
+					return true;
+				else
+#if NET_2_0
+					return ToolStripManager.ProcessMenuKey (ref msg);
+#else
+					return false;
+#endif
 			}
 			return false;
 		}
@@ -5735,11 +5742,6 @@ namespace System.Windows.Forms
 						return;
 #endif
 			}
-#if NET_2_0
-			else
-				if (ToolStripManager.ProcessMenuKey (ref m))
-					return;
-#endif
 
 			DefWndProc (ref m);
 		}

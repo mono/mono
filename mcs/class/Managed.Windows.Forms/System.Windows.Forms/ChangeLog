@@ -1,5 +1,13 @@
 2008-03-06  Jonathan Pobst  <monkey@jpobst.com>
 
+	Control.cs: Don't call ProcessMenuKey on WM_SYSKEYUP if there
+	was a mnemonic pressed as well as Alt.  Also, if nothing handles a
+	mnemonic, let the ToolStripManager have it even if it doesn't
+	have a matching mnemonic.
+	[Fixes bug #367499]
+
+2008-03-06  Jonathan Pobst  <monkey@jpobst.com>
+
 	corcompare - fix warning about implicit implementation
 	* ToolStrip.cs: Add IToolStripData interface.
 	* IToolStripData.cs: Add.
