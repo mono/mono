@@ -124,5 +124,58 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual ("MemberClass.StaticProperty", expr.ToString(), "Property#16");
 			Assert.AreEqual (MemberClass.GetStaticPropertyInfo(), expr.Member, "Property#17");
 		}
+
+		public class Foo {
+			public string Prop { get; set; }
+
+			public static string StatProp
+			{
+				get { return "StaticFoo"; }
+			}
+		}
+
+		[Test]
+		public void TestCompileGetInstanceProperty ()
+		{
+			var p = Expression.Parameter (typeof (Foo), "foo");
+			var fooer = Expression.Lambda<Func<Foo, string>> (
+				Expression.Property (p, typeof (Foo).GetProperty ("Prop")), p).Compile ();
+
+			Assert.AreEqual ("foo", fooer (new Foo { Prop = "foo" }));
+		}
+
+		[Test]
+		public void TestCompileGetStaticProperty ()
+		{
+			var sf = Expression.Lambda<Func<string>> (
+				Expression.Property (null, typeof (Foo).GetProperty (
+				"StatProp", BindingFlags.Public | BindingFlags.Static))).Compile ();
+
+			Assert.AreEqual ("StaticFoo", sf ());
+		}
+
+		public struct Bar {
+			private string slot;
+
+			public string Prop {
+				get { return slot; }
+				set { slot = value; }
+			}
+
+			public Bar (string slot)
+			{
+				this.slot = slot;
+			}
+		}
+
+		[Test]
+		public void TestCompileGetInstancePropertyOnStruct ()
+		{
+			var p = Expression.Parameter (typeof (Bar), "bar");
+			var barer = Expression.Lambda<Func<Bar, string>> (
+				Expression.Property (p, typeof (Bar).GetProperty ("Prop")), p).Compile ();
+
+			Assert.AreEqual ("bar", barer (new Bar ("bar")));
+		}
 	}
 }

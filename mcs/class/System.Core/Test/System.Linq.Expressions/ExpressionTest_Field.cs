@@ -116,5 +116,24 @@ namespace MonoTests.System.Linq.Expressions
 
 			Assert.AreEqual ("baz", baz (new Bar ()));
 		}
+
+		public struct Gazonk {
+			public string Tzap;
+
+			public Gazonk (string tzap)
+			{
+				Tzap = tzap;
+			}
+		}
+
+		[Test]
+		public void CompileStructInstanceField ()
+		{
+			var p = Expression.Parameter (typeof (Gazonk), "gazonk");
+			var gazonker = Expression.Lambda<Func<Gazonk, string>> (
+				Expression.Field (p, typeof (Gazonk).GetField ("Tzap")), p).Compile ();
+
+			Assert.AreEqual ("bang", gazonker (new Gazonk ("bang")));
+		}
 	}
 }
