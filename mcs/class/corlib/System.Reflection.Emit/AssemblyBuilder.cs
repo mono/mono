@@ -714,7 +714,7 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-#if NET_2_0 || NET_2_0_BOOTSTRAP
+#if NET_2_0 || BOOTSTRAP_NET_2_0
 		ModuleBuilder manifest_module;
 
 		//
