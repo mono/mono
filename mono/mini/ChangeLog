@@ -1,3 +1,7 @@
+2008-03-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h (G_MININT32): Fix the definition of this.
+
 2008-03-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h: Define G_MININT32/G_MAXINT32 if using an older glib version.
