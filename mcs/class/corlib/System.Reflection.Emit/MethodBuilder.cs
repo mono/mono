@@ -105,6 +105,8 @@ namespace System.Reflection.Emit
 			}
 			type = tb;
 			table_idx = get_next_table_index (this, 0x06, true);
+
+			((ModuleBuilder)tb.Module).RegisterToken (this, GetToken ().Token);
 		}
 
 		internal MethodBuilder (TypeBuilder tb, string name, MethodAttributes attributes, 

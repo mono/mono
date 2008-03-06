@@ -74,9 +74,11 @@ namespace System.Reflection.Emit {
 				System.Array.Copy (parameterTypes, this.parameters, parameterTypes.Length);
 			}
 			type = tb;
-			table_idx = get_next_table_index (this, 0x06, true);
 			this.paramModReq = paramModReq;
 			this.paramModOpt = paramModOpt;
+			table_idx = get_next_table_index (this, 0x06, true);
+
+			((ModuleBuilder)tb.Module).RegisterToken (this, GetToken ().Token);
 		}
 
 #if NET_2_0

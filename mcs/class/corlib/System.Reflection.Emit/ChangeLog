@@ -1,3 +1,12 @@
+2008-03-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* ModuleBuilder.cs (RegisterToken): New icall.
+
+	* MethodBuilder.cs (ctor): Call ModuleBuilder.RegisterToken (), so the token gets
+	added to the internal hash table. Fixes #367668.
+
+	* ConstructorBuilder.cs: Ditto.
+	
 2008-03-06  Jb Evain  <jbevain@novell.com>
 
         * SignatureHelper.cs (GetMethodSigHelper): if returnType

@@ -677,6 +677,13 @@ namespace System.Reflection.Emit {
 			return getToken (this, helper);
 		}
 
+		/*
+		 * Register the token->obj mapping with the runtime so the Module.Resolve... 
+		 * methods will work for obj.
+		 */
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern void RegisterToken (object obj, int token);
+
 		internal TokenGenerator GetTokenGenerator () {
 			if (token_gen == null)
 				token_gen = new ModuleBuilderTokenGenerator (this);
