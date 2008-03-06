@@ -1,3 +1,6 @@
+2008-03-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* assembly.c (build_assembly_name): Fix a warning.
 
 Thu Mar 6 19:43:41 CET 2008 Paolo Molaro <lupus@ximian.com>
 
