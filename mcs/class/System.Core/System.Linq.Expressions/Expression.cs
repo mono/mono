@@ -1894,13 +1894,22 @@ namespace System.Linq.Expressions {
 		//
 		internal abstract void Emit (EmitContext ec);
 
-		internal static LocalBuilder EmitStored (EmitContext ec, Expression expr)
+		internal static LocalBuilder EmitStored (EmitContext ec, Expression expression)
 		{
-			var local = ec.ig.DeclareLocal (expr.Type);
-			expr.Emit (ec);
+			var local = ec.ig.DeclareLocal (expression.Type);
+			expression.Emit (ec);
 			ec.ig.Emit (OpCodes.Stloc, local);
 
 			return local;
+		}
+
+		internal static void EmitLoad (EmitContext ec, Expression expression)
+		{
+			if (expression.Type.IsValueType) {
+				var local = EmitStored (ec, expression);
+				ec.ig.Emit (OpCodes.Ldloca, local);
+			} else
+				expression.Emit (ec);
 		}
 	}
 }

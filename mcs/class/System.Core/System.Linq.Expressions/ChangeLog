@@ -1,5 +1,10 @@
 2008-03-06  Jb Evain  <jbevain@novell.com>
 
+	* MethodCallExpression.cs, Expression.cs: refactor a EmitLoad in Expression.
+	* MemberExpression.cs: use EmitLoad to load the instance field if needed.
+
+2008-03-06  Jb Evain  <jbevain@novell.com>
+
 	* BinaryExpression.cs, Expression.cs: move EmitStored from
 	BinaryExpression to Expression.
 	* MethodCallExpression.cs: allow method calls on structs.

@@ -77,7 +77,7 @@ namespace System.Linq.Expressions {
 		void EmitFieldAccess (EmitContext ec, FieldInfo field)
 		{
 			if (!field.IsStatic) {
-				expression.Emit (ec);
+				EmitLoad (ec, expression);
 				ec.ig.Emit (OpCodes.Ldfld, field);
 			} else
 				ec.ig.Emit (OpCodes.Ldsfld, field);
