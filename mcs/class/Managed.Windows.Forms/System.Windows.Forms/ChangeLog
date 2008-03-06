@@ -1,5 +1,10 @@
 2008-03-06  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStrip.cs: Enable implicit mnemonics for drop down
+	menu strips.  [Fixes part of bug #367692]
+
+2008-03-06  Jonathan Pobst  <monkey@jpobst.com>
+
 	corcompare - fix parameter names [stragglers].
 	Binding.cs, BindingsCollection.cs, GridColumnStylesCollection.cs,
 	HelpEventHandler.cs, Label.cs, ListView.cs, Message.cs,
