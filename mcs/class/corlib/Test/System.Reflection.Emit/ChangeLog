@@ -1,3 +1,8 @@
+2008-03-06  Jb Evain  <jbevain@novell.com>
+
+	* ILGeneratorTest.cs: add test for #367663, checking
+	that EmitCalli deals with null return types.
+
 2008-03-03  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeBuilderTest.cs: Added CreateTypeFailsWithInvalidMethodOverride.

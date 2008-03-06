@@ -8,6 +8,7 @@
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.InteropServices;
 using System.Threading;
 
 using NUnit.Framework;
@@ -34,7 +35,7 @@ namespace MonoTests.System.Reflection.Emit
 			assemblyName.Name = "MonoTests.System.Reflection.Emit.ILGeneratorTest";
 
 			AssemblyBuilder assembly = Thread.GetDomain ().DefineDynamicAssembly (
-				assemblyName, AssemblyBuilderAccess.Run);
+				assemblyName, AssemblyBuilderAccess.RunAndSave);
 
 			ModuleBuilder module = assembly.DefineDynamicModule ("module1");
 			tb = module.DefineType ("T", TypeAttributes.Public);
@@ -361,6 +362,30 @@ namespace MonoTests.System.Reflection.Emit
 			MethodInfo tf = dynt.GetMethod ("TestFilter");
 			Assert.IsTrue ((bool) tf.Invoke (null, new object [] { true }));
 		}
+
+#if NET_2_0
+		delegate void FooFoo ();
+
+		static void Foo ()
+		{
+		}
+
+		[Test]
+		public void TestEmitCalliWithNullReturnType ()
+		{
+			MethodBuilder mb = tb.DefineMethod ("F",
+				MethodAttributes.Public | MethodAttributes.Static, null, new Type [] { typeof (IntPtr) });
+			mb.SetImplementationFlags (MethodImplAttributes.NoInlining);
+			il_gen = mb.GetILGenerator ();
+			il_gen.Emit (OpCodes.Ldarg_0);
+			il_gen.EmitCalli (OpCodes.Calli, CallingConvention.StdCall, null, Type.EmptyTypes);
+			il_gen.Emit (OpCodes.Ret);
+	
+			Type dynt = tb.CreateType ();
+			dynt.GetMethod ("F", BindingFlags.Public | BindingFlags.Static).Invoke (
+				null, new object [] { Marshal.GetFunctionPointerForDelegate (new FooFoo (Foo)) });
+		}
+#endif
 
 		[Test]
 		[ExpectedException (typeof (Exception))]
