@@ -43,7 +43,7 @@ namespace System.Windows.Forms
 	[DefaultProperty ("Items")]
 	[Designer ("System.Windows.Forms.Design.ToolStripDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[DesignerSerializer ("System.Windows.Forms.Design.ToolStripCodeDomSerializer, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
-	public class ToolStrip : ScrollableControl, IComponent, IDisposable
+	public class ToolStrip : ScrollableControl, IComponent, IDisposable, IToolStripData
 	{
 		#region Private Variables
 		private bool allow_item_reorder;

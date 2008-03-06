@@ -1,5 +1,9 @@
 2008-03-06  Jonathan Pobst  <monkey@jpobst.com>
 
+	* System.Windows.Forms.dll.sources: Added IToolStripData.cs.
+
+2008-03-06  Jonathan Pobst  <monkey@jpobst.com>
+
 	* System.Windows.Forms.dll.sources: Added IBounds.cs.
 
 2008-02-19  Jonathan Pobst  <monkey@jpobst.com>
