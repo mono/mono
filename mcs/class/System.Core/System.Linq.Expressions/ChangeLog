@@ -1,5 +1,10 @@
 2008-03-06  Jb Evain  <jbevain@novell.com>
 
+	* EmitContext.cs: the DebugContext delegate the CreateDelegate
+	to a DynamicContext to avoid visibility issues in debug mode.
+
+2008-03-06  Jb Evain  <jbevain@novell.com>
+
 	* EmitContext.cs: Lambda methods bypass JIT visibility checks.
 
 2008-03-06  Jb Evain  <jbevain@novell.com>

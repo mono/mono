@@ -87,6 +87,10 @@ namespace System.Linq.Expressions {
 
 		DynamicMethod method;
 
+		public DynamicMethod Method {
+			get { return method; }
+		}
+
 		public DynamicEmitContext (LambdaExpression lambda)
 			: base (lambda)
 		{
@@ -114,10 +118,14 @@ namespace System.Linq.Expressions {
 		TypeBuilder type;
 		MethodBuilder method;
 
+		DynamicEmitContext dynamic_context;
+
 		public DebugEmitContext (LambdaExpression lambda)
 			: base (lambda)
 		{
-			var name = GenerateName ();
+			dynamic_context = new DynamicEmitContext (lambda);
+
+			var name = dynamic_context.Method.Name;
 			file_name = name + ".dll";
 
 			assembly = AppDomain.CurrentDomain.DefineDynamicAssembly (
@@ -131,16 +139,13 @@ namespace System.Linq.Expressions {
 
 		public override Delegate CreateDelegate ()
 		{
-			return Delegate.CreateDelegate (owner.Type, GetMethod ());
-		}
-
-		MethodInfo GetMethod ()
-		{
-			return type.GetMethod (method.Name, BindingFlags.Static | BindingFlags.Public);
+			return dynamic_context.CreateDelegate ();
 		}
 
 		public override void Emit ()
 		{
+			dynamic_context.Emit ();
+
 			owner.Emit (this);
 
 			type.CreateType ();
