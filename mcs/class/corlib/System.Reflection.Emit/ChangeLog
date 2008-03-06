@@ -1,5 +1,7 @@
 2008-03-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* DynamicMethod.cs: Add net 3.5 ctor overloads.
+
 	* ModuleBuilder.cs (RegisterToken): New icall.
 
 	* MethodBuilder.cs (ctor): Call ModuleBuilder.RegisterToken (), so the token gets

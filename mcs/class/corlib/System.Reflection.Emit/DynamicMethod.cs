@@ -79,19 +79,25 @@ namespace System.Reflection.Emit {
 		public DynamicMethod (string name, Type returnType, Type[] parameterTypes, Type owner, bool skipVisibility) : this (name, MethodAttributes.Public | MethodAttributes.Static, CallingConventions.Standard, returnType, parameterTypes, owner, skipVisibility) {
 		}
 
-		public DynamicMethod (string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes, Type owner, bool skipVisibility) : this (name, attributes, callingConvention, returnType, parameterTypes, owner, owner.Module, skipVisibility) {
+		public DynamicMethod (string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes, Type owner, bool skipVisibility) : this (name, attributes, callingConvention, returnType, parameterTypes, owner, owner.Module, skipVisibility, false) {
 		}
 
-		public DynamicMethod (string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes, Module m, bool skipVisibility) : this (name, attributes, callingConvention, returnType, parameterTypes, null, m, skipVisibility) {
+		public DynamicMethod (string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes, Module m, bool skipVisibility) : this (name, attributes, callingConvention, returnType, parameterTypes, null, m, skipVisibility, false) {
 		}
 
-		DynamicMethod (string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type [] parameterTypes, Type owner, Module m, bool skipVisibility)
+		public DynamicMethod (string name, Type returnType, Type[] parameterTypes) : this (name, returnType, parameterTypes, false) {
+		}
+
+		public DynamicMethod (string name, Type returnType, Type[] parameterTypes, bool skipVisibility) : this (name, MethodAttributes.Public | MethodAttributes.Static, CallingConventions.Standard, returnType, parameterTypes, null, null, false, true) {
+		}
+
+		DynamicMethod (string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type [] parameterTypes, Type owner, Module m, bool skipVisibility, bool anonHosted)
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
 			if (returnType == null)
 				returnType = typeof (void);
-			if (m == null)
+			if ((m == null) && !anonHosted)
 				throw new ArgumentNullException ("m");
 			if (returnType.IsByRef)
 				throw new ArgumentException ("Return type can't be a byref type", "returnType");
