@@ -1,3 +1,9 @@
+2008-03-06  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* CodeDomSerializerBase.cs: Fix deserialization of 
+	CodeFieldReference to handle static fields. This fixes enum 
+	references.
+
 2008-03-01  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* CodeDomSerializerBase.cs, PropertyCodeDomSerializer.cs: 

@@ -444,15 +444,25 @@ namespace System.ComponentModel.Design.Serialization
 				}
 			}
 
-			// CodeFieldReferenceExpression
+			// CodeFieldReferenceExpression (used for Enum references as well)
 			//
 			CodeFieldReferenceExpression fieldRef = expression as CodeFieldReferenceExpression;
 			if (deserialized == null && fieldRef != null) {
 				deserialized = manager.GetInstance (fieldRef.FieldName);
 				if (deserialized == null) {
-					ReportError (manager, "Field '" + fieldRef.FieldName + "' not initialized prior to reference");
-					errorOccurred = true;
+					object fieldHolder = DeserializeExpression (manager, null, fieldRef.TargetObject);
+					FieldInfo field = null;
+					if (fieldHolder is Type) // static field
+						field = ((Type)fieldHolder).GetField (fieldRef.FieldName, 
+										      BindingFlags.GetField | BindingFlags.Public | BindingFlags.Static);
+					else // instance field
+						field = fieldHolder.GetType().GetField (fieldRef.FieldName, 
+											BindingFlags.GetField | BindingFlags.Public | BindingFlags.Instance);
+					if (field != null)
+						deserialized = field.GetValue (fieldHolder);
 				}
+				if (deserialized == null)
+					ReportError (manager, "Field '" + fieldRef.FieldName + "' not initialized prior to reference");
 			}
 				
 
