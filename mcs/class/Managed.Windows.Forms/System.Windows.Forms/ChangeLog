@@ -1,3 +1,9 @@
+2008-03-06  Jonathan Pobst  <monkey@jpobst.com>
+
+	corcompare - fix warning about implicit implementation
+	* Control.cs, ToolStripPanelRow.cs: Add IBounds interface.
+	* IBounds.cs: Add.
+
 2008-03-05  Jonathan Pobst  <monkey@jpobst.com>
 
 	corcompare - fix parameter names [N-Z].

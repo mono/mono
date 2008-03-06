@@ -60,7 +60,7 @@ namespace System.Windows.Forms
 	[ToolboxItemFilter("System.Windows.Forms")]
 	public class Control : Component, ISynchronizeInvoke, IWin32Window
 #if NET_2_0
-		, IBindableComponent, IDropTarget
+		, IBindableComponent, IDropTarget, IBounds
 #endif
 	{
 		#region Local Variables

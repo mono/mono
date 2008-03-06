@@ -36,7 +36,7 @@ using System.Collections.Generic;
 namespace System.Windows.Forms
 {
 	[ToolboxItem (false)]
-	public class ToolStripPanelRow : Component, IComponent, IDisposable
+	public class ToolStripPanelRow : Component, IComponent, IDisposable, IBounds
 	{
 		private Rectangle bounds;
 		internal List<Control> controls;
@@ -137,14 +137,14 @@ namespace System.Windows.Forms
 		{
 			control.SizeChanged += new EventHandler (control_SizeChanged);
 			controls.Add (control);
-			this.OnLayout (new LayoutEventArgs (control, ""));
+			this.OnLayout (new LayoutEventArgs (control, string.Empty));
 		}
 		
 		protected internal virtual void OnControlRemoved (Control control, int index)
 		{
 			control.SizeChanged -= new EventHandler (control_SizeChanged);
 			controls.Remove (control);
-			this.OnLayout (new LayoutEventArgs (control, ""));
+			this.OnLayout (new LayoutEventArgs (control, string.Empty));
 		}
 		
 		protected virtual void OnLayout (LayoutEventArgs e)
@@ -220,7 +220,7 @@ namespace System.Windows.Forms
 
 		void control_SizeChanged (object sender, EventArgs e)
 		{
-			this.OnLayout (new LayoutEventArgs ((Control)sender, ""));
+			this.OnLayout (new LayoutEventArgs ((Control)sender, string.Empty));
 		}
 		#endregion
 	}
