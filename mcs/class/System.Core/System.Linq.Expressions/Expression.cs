@@ -1911,5 +1911,12 @@ namespace System.Linq.Expressions {
 			} else
 				expression.Emit (ec);
 		}
+
+		internal static void EmitCall (EmitContext ec, MethodInfo method)
+		{
+			ec.ig.Emit (
+				method.IsVirtual ? OpCodes.Callvirt : OpCodes.Call,
+				method);
+		}
 	}
 }

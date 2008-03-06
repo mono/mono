@@ -71,7 +71,11 @@ namespace System.Linq.Expressions {
 
 		void EmitPropertyAccess (EmitContext ec, PropertyInfo property)
 		{
-			throw new NotImplementedException ();
+			var getter = property.GetGetMethod (true);
+			if (!getter.IsStatic)
+				EmitLoad (ec, expression);
+
+			EmitCall (ec, getter);
 		}
 
 		void EmitFieldAccess (EmitContext ec, FieldInfo field)
