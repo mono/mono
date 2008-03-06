@@ -35,7 +35,7 @@ namespace MonoTests.System.Reflection.Emit
 			assemblyName.Name = "MonoTests.System.Reflection.Emit.ILGeneratorTest";
 
 			AssemblyBuilder assembly = Thread.GetDomain ().DefineDynamicAssembly (
-				assemblyName, AssemblyBuilderAccess.RunAndSave);
+				assemblyName, AssemblyBuilderAccess.Run);
 
 			ModuleBuilder module = assembly.DefineDynamicModule ("module1");
 			tb = module.DefineType ("T", TypeAttributes.Public);
