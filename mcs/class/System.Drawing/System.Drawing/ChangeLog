@@ -1,3 +1,10 @@
+2008-03-06  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* ImageFormatConverter.cs: 
+	 - String comparison should use the InvariantCulture.
+	 - ConvertTo string should return the name for known image formats.
+	 [Fixes bug #366570]
+
 2008-03-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Graphics.cs: Fix CopyFromScreen for X11 when source or destination
