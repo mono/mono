@@ -1,3 +1,8 @@
+2008-03-07  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mono.1: Documented new --security options validil
+	and verifiable.
+
 2007-12-08  Jonathan Pryor  <jpryor@novell.com>
 
 	* wsdl.1: Fix groff comment (so that it doesn't appear in monodoc's
