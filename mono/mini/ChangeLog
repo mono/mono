@@ -1,5 +1,8 @@
 2008-03-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c jit-icalls.h jit-icalls.c: Generalize the exception creation 
+	optimization to ctors taking 0 or 2 arguments too.
+
 	* mini.c (mono_method_to_ir): Optimalize the size of the exception throwing code
 	a bit.
 
