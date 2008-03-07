@@ -1,3 +1,9 @@
+2008-03-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListBoxTest.cs: New tests for 2.0 selection methods
+	in the different selection modes. Also, in GetSelectedTest (), 
+	be sure that we set the right selection mode (test cleaness).
+
 2008-03-05  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TableLayoutTest.cs: Add test for bug #367249.

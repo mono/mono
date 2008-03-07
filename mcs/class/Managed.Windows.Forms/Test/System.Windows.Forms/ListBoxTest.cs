@@ -156,6 +156,7 @@ namespace MonoTests.System.Windows.Forms
 			listBox.Items.Add ("B");
 			listBox.Items.Add ("C");
 			listBox.Items.Add ("D");
+			listBox.SelectionMode = SelectionMode.MultiSimple;
 			listBox.Sorted = true;
 			listBox.SetSelected (0,true);
 			listBox.SetSelected (2,true);
@@ -312,6 +313,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (1, listBox.SelectedIndex, "#4");
 		}
 
+#if NET_2_0
 		[Test]
 		public void SelectedIndex_Removed ()
 		{
@@ -331,6 +333,130 @@ namespace MonoTests.System.Windows.Forms
 			listBox.Items.RemoveAt (0);
 			Assert.AreEqual (-1, listBox.SelectedIndex, "#5");
 		}
+
+		// This should also apply to MultiSimple selection mode
+		[Test]
+		public void Selection_MultiExtended ()
+		{
+			listBox.Items.Add ("A");
+			listBox.Items.Add ("B");
+			listBox.Items.Add ("C");
+			listBox.Items.Add ("D");
+			listBox.SelectionMode = SelectionMode.MultiExtended;
+
+			//
+			// First part: test the order of SelectedItems as well
+			// as SelectedIndex when more than one item is selected
+			//
+			listBox.SelectedItems.Add ("D");
+			listBox.SelectedItems.Add ("B");
+			Assert.AreEqual (1, listBox.SelectedIndex, "#A1");
+			Assert.AreEqual (2, listBox.SelectedItems.Count, "#A2");
+			Assert.AreEqual ("B", listBox.SelectedItems [0], "#A3");
+			Assert.AreEqual ("D", listBox.SelectedItems [1], "#A4");
+
+			listBox.SelectedItems.Add ("C");
+			Assert.AreEqual (1, listBox.SelectedIndex, "#B1");
+			Assert.AreEqual (3, listBox.SelectedItems.Count, "#B2");
+			Assert.AreEqual ("B", listBox.SelectedItems [0], "#B3");
+			Assert.AreEqual ("C", listBox.SelectedItems [1], "#B4");
+			Assert.AreEqual ("D", listBox.SelectedItems [2], "#B5");
+
+			listBox.SelectedItems.Add ("A");
+			Assert.AreEqual (0, listBox.SelectedIndex, "#C1");
+			Assert.AreEqual (4, listBox.SelectedItems.Count, "#C2");
+			Assert.AreEqual ("A", listBox.SelectedItems [0], "#C3");
+			Assert.AreEqual ("B", listBox.SelectedItems [1], "#C4");
+			Assert.AreEqual ("C", listBox.SelectedItems [2], "#C5");
+			Assert.AreEqual ("D", listBox.SelectedItems [3], "#C6");
+
+			// 
+			// Second part: how does SelectedIndex setter work related
+			// to SelectedItems
+			//
+			listBox.SelectedIndex = -1;
+			Assert.AreEqual (-1, listBox.SelectedIndex, "#D1");
+			Assert.AreEqual (0, listBox.SelectedItems.Count, "#D2");
+
+			listBox.SelectedIndex = 3; // "D"
+			Assert.AreEqual (3, listBox.SelectedIndex, "#E1");
+			Assert.AreEqual (1, listBox.SelectedItems.Count, "#E2");
+			Assert.AreEqual ("D", listBox.SelectedItems [0], "#E3");
+
+			listBox.SelectedItems.Add ("B"); // index = 1
+			Assert.AreEqual (1, listBox.SelectedIndex, "#F1");
+			Assert.AreEqual (2, listBox.SelectedItems.Count, "#E3");
+			Assert.AreEqual ("B", listBox.SelectedItems [0], "#E4");
+			Assert.AreEqual ("D", listBox.SelectedItems [1], "#E5");
+
+			listBox.SelectedIndex = 2;
+			Assert.AreEqual (1, listBox.SelectedIndex, "#G1");
+			Assert.AreEqual (3, listBox.SelectedItems.Count, "#G2");
+			Assert.AreEqual ("B", listBox.SelectedItems [0], "#G3");
+			Assert.AreEqual ("C", listBox.SelectedItems [1], "#G4");
+			Assert.AreEqual ("D", listBox.SelectedItems [2], "#G5");
+
+			listBox.SelectedIndex = 1; // already selected
+			Assert.AreEqual (1, listBox.SelectedIndex, "#H1");
+			Assert.AreEqual (3, listBox.SelectedItems.Count, "#H2");
+
+			// NOTE: It seems that passing -1 does not affect the collection
+			// in anyway (other wrong values generate an exception, however)
+			listBox.SelectedIndices.Add (-1);
+			Assert.AreEqual (3, listBox.SelectedItems.Count, "#J1");
+		}
+
+		[Test]
+		public void Selection_One ()
+		{
+			listBox.Items.Add ("A");
+			listBox.Items.Add ("B");
+			listBox.Items.Add ("C");
+			listBox.SelectionMode = SelectionMode.One;
+
+			listBox.SelectedItems.Add ("B");
+			Assert.AreEqual (1, listBox.SelectedIndex, "#A1");
+			Assert.AreEqual (1, listBox.SelectedItems.Count, "#A2");
+			Assert.AreEqual ("B", listBox.SelectedItems [0], "#A3");
+
+			listBox.SelectedIndex = 2;
+			Assert.AreEqual (2, listBox.SelectedIndex, "#B1");
+			Assert.AreEqual (1, listBox.SelectedItems.Count, "#B2");
+			Assert.AreEqual ("C", listBox.SelectedItems [0], "#B3");
+
+			listBox.SelectedItems.Add ("A");
+			Assert.AreEqual (0, listBox.SelectedIndex, "#C1");
+			Assert.AreEqual (1, listBox.SelectedItems.Count, "#C2");
+			Assert.AreEqual ("A", listBox.SelectedItems [0], "#C3");
+		}
+
+		[Test]
+		public void Selection_None ()
+		{
+			listBox.Items.Add ("A");
+			listBox.Items.Add ("B");
+			listBox.SelectionMode = SelectionMode.None;
+
+			try {
+				listBox.SelectedIndex = 0;
+				Assert.Fail ("#A");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				listBox.SelectedIndices.Add (0);
+				Assert.Fail ("#B");
+			} catch (InvalidOperationException e) {
+				Console.WriteLine (e.Message);
+			}
+
+			try {
+				listBox.SelectedItems.Add ("A");
+				Assert.Fail ("#C");
+			} catch (ArgumentException) {
+			}
+		}
+#endif
 
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
