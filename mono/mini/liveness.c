@@ -757,7 +757,7 @@ mono_linterval_covers (MonoLiveInterval *interval, int pos)
 }
 
 /**
- * mono_linterval_intersects:
+ * mono_linterval_get_intersect_pos:
  *
  *   Determine whenever I1 and I2 intersect, and if they do, return the first
  * point of intersection. Otherwise, return -1.

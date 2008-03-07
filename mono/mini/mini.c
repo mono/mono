@@ -1971,7 +1971,6 @@ mono_compile_create_var_for_vreg (MonoCompile *cfg, MonoType *type, int opcode, 
 		memset (&cfg->vars [orig_count], 0, (cfg->varinfo_count - orig_count) * sizeof (MonoMethodVar));
 	}
 
-	/*g_print ("created temp %d of type 0x%x\n", num, type->type);*/
 	mono_jit_stats.allocate_var++;
 
 	MONO_INST_NEW (cfg, inst, opcode);
@@ -2041,7 +2040,7 @@ mono_compile_create_var_for_vreg (MonoCompile *cfg, MonoType *type, int opcode, 
 
 	cfg->num_varinfo++;
 	if (cfg->verbose_level > 2)
-		g_print ("created temp %d of type %s\n", num, mono_type_get_name (type));
+		g_print ("created temp %d (R%d) of type %s\n", num, vreg, mono_type_get_name (type));
 	return inst;
 }
 

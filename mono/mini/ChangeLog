@@ -1,3 +1,12 @@
+2008-03-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* cpu-amd64.md: Add clob:1 to some float opcodes.
+
+	* liveness.c (mono_linterval_get_intersect_pos): Fix a typo.
+
+	* mini.c (mono_compile_create_var_for_vreg): Print the vreg number too in the
+	debug message.
+
 2008-03-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ops.h: Add some new s390 opcodes.
