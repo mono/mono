@@ -97,7 +97,6 @@ cs1608.cs
 cs1618-2.cs NO ERROR
 cs1642.cs NO ERROR
 cs1666.cs NO ERROR
-cs1708.cs NO ERROR
 cs3002-9.cs
 cs3003-5.cs NO ERROR
 cs3009-2.cs
@@ -116,6 +115,7 @@ gcs0838.cs
 gcs1501-2.cs
 gcs1593.cs
 gcs1644-10.cs NO ERROR
+gcs1708.cs NO ERROR
 gcs1908-2.cs
 gcs1908-3.cs
 gcs1908-4.cs
