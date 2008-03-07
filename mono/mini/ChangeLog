@@ -1,3 +1,15 @@
+2008-03-07  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini.h: Added MiniVerifierMode enumeration.
+
+	* mini.c: Added mini_verifier_set_mode to control
+	the usage of the new verifier.
+
+	* mini.c (mono_method): Integrated the new verifier.
+
+	* driver.c: Extended --security option with validil and
+	verifiable options to activate the new verifier.
+
 2008-03-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c jit-icalls.h jit-icalls.c: Generalize the exception creation 
