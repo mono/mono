@@ -1,5 +1,8 @@
 2008-03-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c (mono_class_setup_mono_type): Handle types whose name clashes with
+	system types correctly.
+
 	* exception.h exception.c (mono_exception_from_token_two_strings): New helper
 	function.
 
