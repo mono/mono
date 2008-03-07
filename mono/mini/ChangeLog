@@ -1,5 +1,10 @@
 2008-03-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_method_to_ir): Optimalize the size of the exception throwing code
+	a bit.
+
+	* jit-icalls.h (mono_create_corlib_exception): New JIT icall.
+
 	* mini-amd64.c (mono_arch_emit_prolog): Improve the first_bb optimization a bit.
 
 2008-03-06  Zoltan Varga  <vargaz@gmail.com>
