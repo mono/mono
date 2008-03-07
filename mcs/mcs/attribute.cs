@@ -1476,10 +1476,7 @@ namespace Mono.CSharp {
 		static PtrHashtable analyzed_types_obsolete;
 		static PtrHashtable analyzed_member_obsolete;
 		static PtrHashtable analyzed_method_excluded;
-
-#if NET_2_0
 		static PtrHashtable fixed_buffer_cache;
-#endif
 
 		static object TRUE = new object ();
 		static object FALSE = new object ();
@@ -1499,9 +1496,7 @@ namespace Mono.CSharp {
 			analyzed_types_obsolete = new PtrHashtable ();
 			analyzed_member_obsolete = new PtrHashtable ();
 			analyzed_method_excluded = new PtrHashtable ();
-#if NET_2_0
 			fixed_buffer_cache = new PtrHashtable ();
-#endif
 		}
 
 		public enum Result {
@@ -1611,9 +1606,11 @@ namespace Mono.CSharp {
 			if (TypeManager.GetConstant (fi) != null)
 				return null;
 
-#if NET_2_0
 			object o = fixed_buffer_cache [fi];
 			if (o == null) {
+				if (TypeManager.fixed_buffer_attr_type == null)
+					return null;
+
 				if (!fi.IsDefined (TypeManager.fixed_buffer_attr_type, false)) {
 					fixed_buffer_cache.Add (fi, FALSE);
 					return null;
@@ -1628,9 +1625,6 @@ namespace Mono.CSharp {
 				return null;
 
 			return (IFixedBuffer)o;
-#else
-			return null;
-#endif		
 		}
 
 		public static void VerifyModulesClsCompliance ()

@@ -178,10 +178,20 @@ namespace Mono.CSharp {
 		{
 			base.ApplyAttributes (mb, cb, index);
 
-			CustomAttributeBuilder a = new CustomAttributeBuilder (
-				TypeManager.cons_param_array_attribute, new object[0]);
+			CustomAttributeBuilder ca = TypeManager.param_array_attr;
+			if (ca == null) {
+				ConstructorInfo ci = TypeManager.GetPredefinedConstructor (TypeManager.param_array_type, Location, Type.EmptyTypes);
+				if (ci == null)
+					return;
+
+				ca = new CustomAttributeBuilder (ci, new object [0]);
+				if (ca == null)
+					return;
+
+				TypeManager.param_array_attr = ca;
+			}
 				
-			builder.SetCustomAttribute (a);
+			builder.SetCustomAttribute (ca);
 		}
 	}
 
@@ -642,7 +652,13 @@ namespace Mono.CSharp {
 			if (parameter_expr_tree_type != null)
 				return parameter_expr_tree_type;
 
-			parameter_expr_tree_type = new TypeExpression (LinqExpression.parameter_expression_type, location).
+			Type p_type = TypeManager.parameter_expression_type;
+			if (p_type == null) {
+				p_type = TypeManager.CoreLookupType ("System.Linq.Expressions", "ParameterExpression", Kind.Class, true);
+				TypeManager.parameter_expression_type = p_type;
+			}
+
+			parameter_expr_tree_type = new TypeExpression (p_type, location).
 				ResolveAsTypeTerminal (ec, false);
 
 			return parameter_expr_tree_type;

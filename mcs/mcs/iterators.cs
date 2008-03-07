@@ -333,16 +333,9 @@ namespace Mono.CSharp {
 
 		Statement Create_ThrowNotSupported ()
 		{
-			TypeExpr ex_type = new TypeExpression (
-				TypeManager.not_supported_exception_type, Location);
+			TypeExpr ex_type = new TypeLookupExpression ("System.NotSupportedException");
 
 			return new Throw (new New (ex_type, null, Location), Location);
-		}
-
-		ConstructorInfo GetInvalidOperationException ()
-		{
-			return TypeManager.GetCoreConstructor (
-				TypeManager.invalid_operation_exception_type, Type.EmptyTypes);
 		}
 
 		protected override ScopeInitializer CreateScopeInitializer ()
@@ -449,6 +442,15 @@ namespace Mono.CSharp {
 						return false;
 
 					cast = new ClassCast (initializer, type.Type);
+
+					if (TypeManager.int_interlocked_compare_exchange == null) {
+						Type t = TypeManager.CoreLookupType ("System.Threading", "Interlocked", Kind.Class, true);
+						if (t != null) {
+							TypeManager.int_interlocked_compare_exchange = TypeManager.GetPredefinedMethod (
+								t, "CompareExchange", loc, TypeManager.GetReferenceType (TypeManager.int32_type),
+								TypeManager.int32_type, TypeManager.int32_type);
+						}
+					}
 
 					ce = TypeManager.int_interlocked_compare_exchange;
 
@@ -586,6 +588,12 @@ namespace Mono.CSharp {
 
 			public override bool Resolve (EmitContext ec)
 			{
+				if (TypeManager.invalid_operation_exception_ctor == null) {
+					Type t = TypeManager.CoreLookupType ("System", "InvalidOperationException", Kind.Class, true);
+					if (t != null)
+						TypeManager.invalid_operation_exception_ctor = TypeManager.GetPredefinedConstructor (t, loc, Type.EmptyTypes);
+				}
+
 				ec.CurrentBranching.CurrentUsageVector.Goto ();
 				return true;
 			}
@@ -600,7 +608,7 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Ldc_I4, (int) Iterator.State.Running);
 				ig.Emit (OpCodes.Bgt, label_ok);
 
-				ig.Emit (OpCodes.Newobj, host.GetInvalidOperationException ());
+				ig.Emit (OpCodes.Newobj, TypeManager.invalid_operation_exception_ctor);
 				ig.Emit (OpCodes.Throw);
 
 				ig.MarkLabel (label_ok);

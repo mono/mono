@@ -1248,7 +1248,15 @@ namespace Mono.CSharp {
 
 		public static Expression CreateExpressionFactoryCall (string name, TypeArguments typeArguments, ArrayList args, Location loc)
 		{
-			TypeExpression texpr = new TypeExpression (LinqExpression.expression_type, loc);
+			TypeExpr texpr = TypeManager.expression_type_expr;
+			if (texpr == null) {
+				Type t = TypeManager.CoreLookupType ("System.Linq.Expressions", "Expression", Kind.Class, true);
+				if (t == null)
+					return null;
+
+				TypeManager.expression_type_expr = texpr = new TypeExpression (t, Location.Null);
+			}
+
 			return new Invocation (new MemberAccess (texpr, name, typeArguments, loc), args);
 		}
 	}
@@ -5070,18 +5078,7 @@ namespace Mono.CSharp {
 
 		bool IsSingleDimensionalArrayLength ()
 		{
-			if (getter == TypeManager.system_int_array_get_length ||
-				getter == TypeManager.int_array_get_length) {
-				Type iet = InstanceExpression.Type;
-
-				//
-				// System.Array.Length can be called, but the Type does not
-				// support invoking GetArrayRank, so test for that case first
-				//
-				return iet != TypeManager.array_type && (iet.GetArrayRank () == 1);
-			}
-
-			return false;
+			return DeclaringType == TypeManager.array_type && getter != null && getter.Name == "Length";
 		}
 
 		override public Expression DoResolve (EmitContext ec)

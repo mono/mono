@@ -1072,6 +1072,7 @@ namespace Mono.CSharp {
 		public AssemblyBuilder Builder;
 		bool is_cls_compliant;
 		bool wrap_non_exception_throws;
+		Type runtime_compatibility_attr_type;
 
 		public Attribute ClsCompliantAttribute;
 
@@ -1126,6 +1127,9 @@ namespace Mono.CSharp {
 
 		public void Resolve ()
 		{
+			runtime_compatibility_attr_type = TypeManager.CoreLookupType (
+				"System.Runtime.CompilerServices", "RuntimeCompatibilityAttribute", Kind.Class, false);
+
 			if (OptAttributes == null)
 				return;
 
@@ -1140,14 +1144,14 @@ namespace Mono.CSharp {
 				is_cls_compliant = ClsCompliantAttribute.GetClsCompliantAttributeValue ();
 			}
 
-#if GMCS_SOURCE
-			Attribute a = ResolveAttribute (TypeManager.runtime_compatibility_attr_type);
-			if (a != null) {
-				object val = a.GetPropertyValue ("WrapNonExceptionThrows");
-				if (val != null)
-					wrap_non_exception_throws = (bool)val;
+			if (runtime_compatibility_attr_type != null) {
+				Attribute a = ResolveAttribute (runtime_compatibility_attr_type);
+				if (a != null) {
+					object val = a.GetPropertyValue ("WrapNonExceptionThrows");
+					if (val != null)
+						wrap_non_exception_throws = (bool) val;
+				}
 			}
-#endif
 		}
 
 		// fix bug #56621
@@ -1456,19 +1460,21 @@ namespace Mono.CSharp {
 #if GMCS_SOURCE
 			if (has_extension_method)
 				Builder.SetCustomAttribute (TypeManager.extension_attribute_attr);
-
-			// FIXME: Does this belong inside SRE.AssemblyBuilder instead?
-			if (OptAttributes == null || !OptAttributes.Contains (TypeManager.runtime_compatibility_attr_type)) {
-				ConstructorInfo ci = TypeManager.GetCoreConstructor (
-					TypeManager.runtime_compatibility_attr_type, Type.EmptyTypes);
-				PropertyInfo [] pis = new PropertyInfo [1];
-				pis [0] = TypeManager.GetCoreProperty (
-					TypeManager.runtime_compatibility_attr_type, "WrapNonExceptionThrows");
-				object [] pargs = new object [1];
-				pargs [0] = true;
-				Builder.SetCustomAttribute (new CustomAttributeBuilder (ci, new object [0], pis, pargs));
-			}
 #endif
+
+			if (runtime_compatibility_attr_type != null) {
+				// FIXME: Does this belong inside SRE.AssemblyBuilder instead?
+				if (OptAttributes == null || !OptAttributes.Contains (runtime_compatibility_attr_type)) {
+					ConstructorInfo ci = TypeManager.GetPredefinedConstructor (
+						runtime_compatibility_attr_type, Location.Null, Type.EmptyTypes);
+					PropertyInfo [] pis = new PropertyInfo [1];
+					pis [0] = TypeManager.GetCoreProperty (
+						runtime_compatibility_attr_type, "WrapNonExceptionThrows");
+					object [] pargs = new object [1];
+					pargs [0] = true;
+					Builder.SetCustomAttribute (new CustomAttributeBuilder (ci, new object [0], pis, pargs));
+				}
+			}
 
 			if (declarative_security != null) {
 
@@ -1558,15 +1564,14 @@ namespace Mono.CSharp {
 		{
 			base.Emit (tc);
 
-			if (!m_module_is_unsafe)
-				return;
-
-			if (TypeManager.unverifiable_code_ctor == null) {
-				Console.WriteLine ("Internal error ! Cannot set unverifiable code attribute.");
-				return;
+			if (m_module_is_unsafe) {
+				Type t = TypeManager.CoreLookupType ("System.Security", "UnverifiableCodeAttribute", Kind.Class, true);
+				if (t != null) {
+					ConstructorInfo unverifiable_code_ctor = TypeManager.GetPredefinedConstructor (t, Location.Null, Type.EmptyTypes);
+					if (unverifiable_code_ctor != null)
+						Builder.SetCustomAttribute (new CustomAttributeBuilder (unverifiable_code_ctor, new object [0]));
+				}
 			}
-				
-			Builder.SetCustomAttribute (new CustomAttributeBuilder (TypeManager.unverifiable_code_ctor, new object [0]));
 		}
                 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder customBuilder)
@@ -1601,6 +1606,9 @@ namespace Mono.CSharp {
 				return;
 
 			if (!OptAttributes.CheckTargets())
+				return;
+
+			if (TypeManager.default_charset_type == null)
 				return;
 
 			Attribute a = ResolveAttribute (TypeManager.default_charset_type);

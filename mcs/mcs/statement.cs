@@ -3667,6 +3667,11 @@ namespace Mono.CSharp {
 
 			Report.Debug (1, "END OF SWITCH BLOCK", loc, ec.CurrentBranching);
 
+			if (TypeManager.string_isinterned_string == null) {
+				TypeManager.string_isinterned_string = TypeManager.GetPredefinedMethod (TypeManager.string_type,
+					"IsInterned", loc, TypeManager.string_type);
+			}
+
 			return ok;
 		}
 		
@@ -3802,6 +3807,14 @@ namespace Mono.CSharp {
 			
 			temp = new TemporaryVariable (t, loc);
 			temp.Resolve (ec);
+
+			if (TypeManager.void_monitor_enter_object == null || TypeManager.void_monitor_exit_object == null) {
+				Type monitor_type = TypeManager.CoreLookupType ("System.Threading", "Monitor", Kind.Class, true);
+				TypeManager.void_monitor_enter_object = TypeManager.GetPredefinedMethod (
+					monitor_type, "Enter", loc, TypeManager.object_type);
+				TypeManager.void_monitor_exit_object = TypeManager.GetPredefinedMethod (
+					monitor_type, "Exit", loc, TypeManager.object_type);
+			}
 			
 			return ok;
 		}
@@ -4761,6 +4774,11 @@ namespace Mono.CSharp {
 			// So, ensure there's some IL code after the finally block.
 			ec.NeedReturnLabel ();
 
+			if (TypeManager.void_dispose_void == null) {
+				TypeManager.void_dispose_void = TypeManager.GetPredefinedMethod (
+					TypeManager.idisposable_type, "Dispose", loc, Type.EmptyTypes);
+			}
+
 			return ok;
 		}
 		
@@ -5100,6 +5118,16 @@ namespace Mono.CSharp {
 					// way I could do this without a goto
 					//
 
+					if (TypeManager.bool_movenext_void == null) {
+						TypeManager.bool_movenext_void = TypeManager.GetPredefinedMethod (
+							TypeManager.ienumerator_type, "MoveNext", loc, Type.EmptyTypes);
+					}
+
+					if (TypeManager.ienumerator_getcurrent == null) {
+						TypeManager.ienumerator_getcurrent = TypeManager.GetCoreProperty (
+							TypeManager.ienumerator_type, "Current");
+					}
+
 #if GMCS_SOURCE
 					//
 					// Prefer a generic enumerator over a non-generic one.
@@ -5401,6 +5429,11 @@ namespace Mono.CSharp {
 				if (is_disposable) {
 					ResolveFinally (branching);
 					ec.EndFlowBranching ();
+
+					if (TypeManager.void_dispose_void == null) {
+						TypeManager.void_dispose_void = TypeManager.GetPredefinedMethod (
+							TypeManager.idisposable_type, "Dispose", loc, Type.EmptyTypes);
+					}
 				} else
 					emit_finally = true;
 

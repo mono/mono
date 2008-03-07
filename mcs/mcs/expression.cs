@@ -2397,10 +2397,21 @@ namespace Mono.CSharp {
 			args.Add (new Argument (left, Argument.AType.Expression));
 			args.Add (new Argument (right, Argument.AType.Expression));
 
-			if (oper == Operator.Addition)
+			if (oper == Operator.Addition) {
+				if (TypeManager.delegate_combine_delegate_delegate == null) {
+					TypeManager.delegate_combine_delegate_delegate = TypeManager.GetPredefinedMethod (
+						TypeManager.delegate_type, "Combine", loc, TypeManager.delegate_type, TypeManager.delegate_type);
+				}
+
 				method = TypeManager.delegate_combine_delegate_delegate;
-			else
+			} else {
+				if (TypeManager.delegate_remove_delegate_delegate == null) {
+					TypeManager.delegate_remove_delegate_delegate = TypeManager.GetPredefinedMethod (
+						TypeManager.delegate_type, "Remove", loc, TypeManager.delegate_type, TypeManager.delegate_type);
+				}
+
 				method = TypeManager.delegate_remove_delegate_delegate;
+			}
 
 			return new BinaryDelegate (l, method, args);
 		}
@@ -4701,25 +4712,6 @@ namespace Mono.CSharp {
 
 			Type decl_type = method.DeclaringType;
 
-			if (!RootContext.StdLib) {
-				// Replace any calls to the system's System.Array type with calls to
-				// the newly created one.
-				if (method == TypeManager.system_int_array_get_length)
-					method = TypeManager.int_array_get_length;
-				else if (method == TypeManager.system_int_array_get_rank)
-					method = TypeManager.int_array_get_rank;
-				else if (method == TypeManager.system_object_array_clone)
-					method = TypeManager.object_array_clone;
-				else if (method == TypeManager.system_int_array_get_length_int)
-					method = TypeManager.int_array_get_length_int;
-				else if (method == TypeManager.system_int_array_get_lower_bound_int)
-					method = TypeManager.int_array_get_lower_bound_int;
-				else if (method == TypeManager.system_int_array_get_upper_bound_int)
-					method = TypeManager.int_array_get_upper_bound_int;
-				else if (method == TypeManager.system_void_array_copyto_array_int)
-					method = TypeManager.void_array_copyto_array_int;
-			}
-
 			if (!ec.IsInObsoleteScope) {
 				//
 				// This checks ObsoleteAttribute on the method and on the declaring type
@@ -5180,6 +5172,14 @@ namespace Mono.CSharp {
 						       "when creating an instance of a " +
 						       "variable type.", type));
 					return null;
+				}
+
+				if (TypeManager.activator_create_instance == null) {
+					Type activator_type = TypeManager.CoreLookupType ("System", "Activator", Kind.Class, true);
+					if (activator_type != null) {
+						TypeManager.activator_create_instance = TypeManager.GetPredefinedMethod (
+							activator_type, "CreateInstance", loc, Type.EmptyTypes);
+					}
 				}
 
 				is_type_parameter = true;
@@ -5919,6 +5919,15 @@ namespace Mono.CSharp {
 		//
 		void EmitStaticInitializers (EmitContext ec)
 		{
+			// FIXME: This should go to Resolve !
+			if (TypeManager.void_initializearray_array_fieldhandle == null) {
+				TypeManager.void_initializearray_array_fieldhandle = TypeManager.GetPredefinedMethod (
+					TypeManager.runtime_helpers_type, "InitializeArray", loc,
+					TypeManager.array_type, TypeManager.runtime_field_handle_type);
+				if (TypeManager.void_initializearray_array_fieldhandle == null)
+					return;
+			}
+
 			//
 			// First, the static data
 			//
@@ -6570,6 +6579,12 @@ namespace Mono.CSharp {
 			}
 
 			type = TypeManager.type_type;
+
+			if (TypeManager.system_type_get_type_from_handle == null) {
+				TypeManager.system_type_get_type_from_handle = TypeManager.GetPredefinedMethod (
+					TypeManager.type_type, "GetTypeFromHandle", loc, TypeManager.runtime_handle_type);
+			}
+
 			// Even though what is returned is a type object, it's treated as a value by the compiler.
 			// In particular, 'typeof (Foo).X' is something totally different from 'Foo.X'.
 			eclass = ExprClass.Value;
@@ -6639,13 +6654,6 @@ namespace Mono.CSharp {
 	internal class TypeOfMethod : Expression
 	{
 		readonly MethodInfo method;
-		static MethodInfo get_type_from_handle;
-
-		static TypeOfMethod ()
-		{
-			get_type_from_handle = typeof (MethodBase).GetMethod ("GetMethodFromHandle",
-				new Type [] { TypeManager.runtime_method_handle_type });
-		}
 
 		public TypeOfMethod (MethodInfo method, Location loc)
 		{
@@ -6655,6 +6663,15 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
+			if (TypeManager.methodbase_get_type_from_handle == null) {
+				Type t = TypeManager.CoreLookupType ("System.Reflection", "MethodBase", Kind.Class, true);
+				Type handle_type = TypeManager.CoreLookupType ("System", "RuntimeMethodHandle", Kind.Class, true);
+
+				if (t != null && handle_type != null)
+					TypeManager.methodbase_get_type_from_handle = TypeManager.GetPredefinedMethod (t,
+						"GetMethodFromHandle", loc, handle_type);
+			}
+
 			type = typeof (MethodBase);
 			eclass = ExprClass.Value;
 			return this;
@@ -6663,7 +6680,7 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			ec.ig.Emit (OpCodes.Ldtoken, method);
-			ec.ig.Emit (OpCodes.Call, get_type_from_handle);
+			ec.ig.Emit (OpCodes.Call, TypeManager.methodbase_get_type_from_handle);
 		}
 	}
 
@@ -7451,10 +7468,16 @@ namespace Mono.CSharp {
 #endif
 
 			Type t = ea.Expr.Type;
-			if (t.GetArrayRank () != ea.Arguments.Count) {
+			int rank = ea.Arguments.Count;
+			if (t.GetArrayRank () != rank) {
 				Report.Error (22, ea.Location, "Wrong number of indexes `{0}' inside [], expected `{1}'",
 					  ea.Arguments.Count.ToString (), t.GetArrayRank ().ToString ());
 				return null;
+			}
+
+			if (rank != 1 && TypeManager.int_getlength_int == null) {
+				TypeManager.int_getlength_int = TypeManager.GetPredefinedMethod (
+					TypeManager.array_type, "GetLength", loc, TypeManager.int32_type);
 			}
 
 			type = TypeManager.GetElementType (t);
@@ -8650,6 +8673,12 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
+			if (TypeManager.int_get_offset_to_string_data == null) {
+				// TODO: Move to resolve !!
+				TypeManager.int_get_offset_to_string_data = TypeManager.GetPredefinedMethod (
+					TypeManager.runtime_helpers_type, "get_OffsetToStringData", loc, Type.EmptyTypes);
+			}
+
 			ILGenerator ig = ec.ig;
 
 			ig.Emit (OpCodes.Ldloc, b);

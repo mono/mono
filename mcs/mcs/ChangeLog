@@ -1,3 +1,11 @@
+2008-03-07  Marek Safar  <marek.safar@gmail.com>
+
+	* generic.cs, typemanager.cs, parameter.cs, rootcontext.cs, ecore.cs, 
+	class.cs, delegate.cs, iterators.cs, const.cs, constant.cs, driver.cs,
+	expression.cs, attribute.cs, codegen.cs, statement.cs: TypeManager optional
+	predefined types clean up, delayed predefined types members initialization
+	(work related to #364674).
+
 2008-03-05  Marek Safar  <marek.safar@gmail.com>
 
 	* typemanager.cs (IsFriendAssembly): InternalsVisibleTo is not mandatory.

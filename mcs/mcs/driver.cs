@@ -1709,8 +1709,6 @@ namespace Mono.CSharp
 				RootContext.BootCorlib_PopulateCoreTypes ();
 			RootContext.PopulateTypes ();
 
-			TypeManager.InitCodeHelpers ();
-
 			RootContext.DefineTypes ();
 			
 			if (Report.Errors == 0 &&

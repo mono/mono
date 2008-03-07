@@ -130,17 +130,46 @@ namespace Mono.CSharp {
 				return;
 
 			if (value.Type == TypeManager.decimal_type) {
-				Decimal d = ((DecimalConstant)value).Value;
-				int[] bits = Decimal.GetBits (d);
-				object[] args = new object[] { (byte)(bits [3] >> 16), (byte)(bits [3] >> 31), (uint)bits [2], (uint)bits [1], (uint)bits [0] };
-				CustomAttributeBuilder cab = new CustomAttributeBuilder (TypeManager.decimal_constant_attribute_ctor, args);
-				FieldBuilder.SetCustomAttribute (cab);
-			}
-			else{
+				EmitDecimalConstant ();
+			} else{
 				FieldBuilder.SetConstant (value.GetTypedValue ());
 			}
 
 			base.Emit ();
+		}
+
+		void EmitDecimalConstant ()
+		{
+			ConstructorInfo ctor = TypeManager.decimal_constant_attribute_ctor;
+			if (ctor == null) {
+				if (TypeManager.decimal_constant_attribute_type == null) {
+					TypeManager.decimal_constant_attribute_type = TypeManager.CoreLookupType (
+						"System.Runtime.CompilerServices", "DecimalConstantAttribute", Kind.Class, true);
+
+					if (TypeManager.decimal_constant_attribute_type == null)
+						return;
+				}
+
+				ctor = TypeManager.GetPredefinedConstructor (TypeManager.decimal_constant_attribute_type, Location,
+					TypeManager.byte_type, TypeManager.byte_type,
+					TypeManager.uint32_type, TypeManager.uint32_type, TypeManager.uint32_type);
+
+				if (ctor == null)
+					return;
+
+				TypeManager.decimal_constant_attribute_ctor = ctor;
+			}
+
+			Decimal d = ((DecimalConstant) value).Value;
+			int [] bits = Decimal.GetBits (d);
+			object [] args = new object [] { 
+				(byte) (bits [3] >> 16),
+				(byte) (bits [3] >> 31),
+				(uint) bits [2], (uint) bits [1], (uint) bits [0]
+			};
+
+			CustomAttributeBuilder cab = new CustomAttributeBuilder (ctor, args);
+			FieldBuilder.SetCustomAttribute (cab);
 		}
 
 		public static void Error_ExpressionMustBeConstant (Location loc, string e_name)
@@ -246,7 +275,10 @@ namespace Mono.CSharp {
 		{
 			if (fi is FieldBuilder)
 				return null;
-			
+
+			if (TypeManager.decimal_constant_attribute_type == null)
+				return null;
+
 			object[] attrs = fi.GetCustomAttributes (TypeManager.decimal_constant_attribute_type, false);
 			if (attrs.Length != 1)
 				return null;

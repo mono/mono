@@ -1617,6 +1617,22 @@ namespace Mono.CSharp {
 			if (!seen_normal_indexers)
 				return;
 
+			if (TypeManager.default_member_ctor == null) {
+				if (TypeManager.default_member_type == null) {
+					TypeManager.default_member_type = TypeManager.CoreLookupType (
+						"System.Reflection", "DefaultMemberAttribute", Kind.Class, true);
+
+					if (TypeManager.default_member_type == null)
+						return;
+				}
+
+				TypeManager.default_member_ctor = TypeManager.GetPredefinedConstructor (
+					TypeManager.default_member_type, Location, TypeManager.string_type);
+
+				if (TypeManager.default_member_ctor == null)
+					return;
+			}
+
 			CustomAttributeBuilder cb = new CustomAttributeBuilder (TypeManager.default_member_ctor, new string [] { IndexerName });
 			TypeBuilder.SetCustomAttribute (cb);
 		}
@@ -2310,8 +2326,18 @@ namespace Mono.CSharp {
 									   FieldAttributes.Private);
 
 				if (HasExplicitLayout){
-					object [] ctor_args = new object [1];
-					ctor_args [0] = 0;
+					object [] ctor_args = new object [] { 0 };
+
+					if (TypeManager.field_offset_attribute_ctor == null) {
+						// Type is optional
+						if (TypeManager.field_offset_attribute_type == null) {
+							TypeManager.field_offset_attribute_type = TypeManager.CoreLookupType (
+								"System.Runtime.InteropServices", "FieldOffsetAttribute", Kind.Class, true);
+						}
+
+						TypeManager.field_offset_attribute_ctor = TypeManager.GetPredefinedConstructor (
+							TypeManager.field_offset_attribute_type, Location, TypeManager.int32_type);
+					}
 				
 					CustomAttributeBuilder cba = new CustomAttributeBuilder (
 						TypeManager.field_offset_attribute_ctor, ctor_args);
@@ -2594,11 +2620,11 @@ namespace Mono.CSharp {
 		///   checks whether the `interface_type' is a base inteface implementation.
 		///   Then it checks whether `name' exists in the interface type.
 		/// </summary>
-		public virtual bool VerifyImplements (InterfaceMemberBase mb)
+		public bool VerifyImplements (InterfaceMemberBase mb)
 		{
 			if (ifaces != null) {
 				foreach (Type t in ifaces){
-					if (t == mb.InterfaceType)
+					if (TypeManager.IsEqual (t, mb.InterfaceType))
 						return true;
 				}
 			}
@@ -4032,7 +4058,7 @@ namespace Mono.CSharp {
 		{
 #if GMCS_SOURCE			
 			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0)
-				MethodBuilder.SetCustomAttribute (TypeManager.compiler_generated_attr);
+				MethodBuilder.SetCustomAttribute (TypeManager.GetCompilerGeneratedAttribute (Location));
 #endif
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
@@ -4417,10 +4443,17 @@ namespace Mono.CSharp {
 						Report.Error (1109, Location, "`{0}': Extension methods cannot be defined in a nested class",
 							GetSignatureForError ());
 
-					if (TypeManager.extension_attribute_type == null)
-						Report.Error (1110, Location, 
+					if (TypeManager.extension_attribute_type == null) {
+						Report.Error (1110, Location,
 							"`{0}': Extension methods cannot be declared without a reference to System.Core.dll assembly. Add the assembly reference or remove `this' modifer from the first parameter",
 							GetSignatureForError ());
+					} else if (TypeManager.extension_attribute_attr == null) {
+						ConstructorInfo ci = TypeManager.GetPredefinedConstructor (
+							TypeManager.extension_attribute_type, Location, System.Type.EmptyTypes);
+
+						if (ci != null)
+							TypeManager.extension_attribute_attr = new CustomAttributeBuilder (ci, new object [0]);
+					}
 
 					ModFlags |= Modifiers.METHOD_EXTENSION;
 					Parent.ModFlags |= Modifiers.METHOD_EXTENSION;
@@ -5695,7 +5728,7 @@ namespace Mono.CSharp {
 		{
 #if GMCS_SOURCE
 			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0) {
-				FieldBuilder.SetCustomAttribute (TypeManager.compiler_generated_attr);
+				FieldBuilder.SetCustomAttribute (TypeManager.GetCompilerGeneratedAttribute (Location));
 			}
 #endif
 
@@ -5803,7 +5836,6 @@ namespace Mono.CSharp {
 		TypeBuilder fixed_buffer_type;
 		FieldBuilder element;
 		Expression size_expr;
-		int buffer_size;
 
 		const int AllowedModifiers =
 			Modifiers.NEW |
@@ -5824,10 +5856,6 @@ namespace Mono.CSharp {
 
 		public override bool Define()
 		{
-#if !NET_2_0
-			if ((ModFlags & (Modifiers.PUBLIC | Modifiers.PROTECTED)) != 0)
-				Report.Warning (-23, 1, Location, "Only private or internal fixed sized buffers are supported by .NET 1.x");
-#endif
 			if (!Parent.IsInUnsafeScope)
 				Expression.UnsafeError (Location);
 
@@ -5870,7 +5898,7 @@ namespace Mono.CSharp {
 			if (buffer_size_const == null)
 				return;
 
-			buffer_size = buffer_size_const.Value;
+			int buffer_size = buffer_size_const.Value;
 
 			if (buffer_size <= 0) {
 				Report.Error (1665, Location, "`{0}': Fixed size buffers must have a length greater than zero", GetSignatureForError ());
@@ -5886,22 +5914,55 @@ namespace Mono.CSharp {
 			}
 
 			buffer_size *= type_size;
+			EmitFieldSize (buffer_size);
+			base.Emit ();
+		}
+
+		void EmitFieldSize (int buffer_size)
+		{
+			if (TypeManager.struct_layout_attribute_type == null) {
+				TypeManager.struct_layout_attribute_type = TypeManager.CoreLookupType (
+					"System.Runtime.InteropServices", "StructLayoutAttribute", Kind.Class, true);
+
+				if (TypeManager.struct_layout_attribute_type == null)
+					return;
+			}
 
 			if (fi == null)
 				fi = new FieldInfo [] { TypeManager.struct_layout_attribute_type.GetField ("Size") };
 
-			object[] fi_val = new object[1];
-			fi_val [0] = buffer_size;
+			object [] fi_val = new object [] { buffer_size };
 
-			CustomAttributeBuilder cab = new CustomAttributeBuilder (TypeManager.struct_layout_attribute_ctor, 
+			if (TypeManager.struct_layout_attribute_ctor == null) {
+				TypeManager.struct_layout_attribute_ctor = TypeManager.GetPredefinedConstructor (
+					TypeManager.struct_layout_attribute_type, Location, TypeManager.short_type);
+			}
+
+			CustomAttributeBuilder cab = new CustomAttributeBuilder (TypeManager.struct_layout_attribute_ctor,
 				ctor_args, fi, fi_val);
 			fixed_buffer_type.SetCustomAttribute (cab);
+			
+			//
+			// Don't emit FixedBufferAttribute attribute for private types
+			//
+			if ((ModFlags & Modifiers.PRIVATE) != 0)
+				return;	
 
-#if NET_2_0
-			cab = new CustomAttributeBuilder (TypeManager.fixed_buffer_attr_ctor, new object[] { MemberType, buffer_size } );
+			if (TypeManager.fixed_buffer_attr_ctor == null) {
+				if (TypeManager.fixed_buffer_attr_type == null) {
+					TypeManager.fixed_buffer_attr_type = TypeManager.CoreLookupType (
+						"System.Runtime.CompilerServices", "FixedBufferAttribute", Kind.Class, true);
+
+					if (TypeManager.fixed_buffer_attr_type == null)
+						return;
+				}
+
+				TypeManager.fixed_buffer_attr_ctor = TypeManager.GetPredefinedConstructor (TypeManager.fixed_buffer_attr_type,
+					Location, TypeManager.type_type, TypeManager.int32_type);
+			}
+
+			cab = new CustomAttributeBuilder (TypeManager.fixed_buffer_attr_ctor, new object [] { MemberType, buffer_size });
 			FieldBuilder.SetCustomAttribute (cab);
-#endif
-			base.Emit ();
 		}
 
 		protected override bool IsFieldClsCompliant {
@@ -6212,7 +6273,7 @@ namespace Mono.CSharp {
 
 #if GMCS_SOURCE			
 			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0)
-				method_data.MethodBuilder.SetCustomAttribute (TypeManager.compiler_generated_attr);
+				method_data.MethodBuilder.SetCustomAttribute (TypeManager.GetCompilerGeneratedAttribute (Location));
 #endif			
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
@@ -7503,6 +7564,17 @@ namespace Mono.CSharp {
 
 			if (!CheckBase ())
 				return false;
+
+			if (TypeManager.delegate_combine_delegate_delegate == null) {
+				TypeManager.delegate_combine_delegate_delegate = TypeManager.GetPredefinedMethod (
+					TypeManager.delegate_type, "Combine", Location,
+					TypeManager.delegate_type, TypeManager.delegate_type);
+			}
+			if (TypeManager.delegate_remove_delegate_delegate == null) {
+				TypeManager.delegate_remove_delegate_delegate = TypeManager.GetPredefinedMethod (
+					TypeManager.delegate_type, "Remove", Location,
+					TypeManager.delegate_type, TypeManager.delegate_type);
+			}
 
 			//
 			// Now define the accessors

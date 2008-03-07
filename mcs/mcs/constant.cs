@@ -1630,6 +1630,14 @@ namespace Mono.CSharp {
 
 			if (power == 0 && Value <= int.MaxValue && Value >= int.MinValue)
 			{
+				if (TypeManager.void_decimal_ctor_int_arg == null) {
+					TypeManager.void_decimal_ctor_int_arg = TypeManager.GetPredefinedConstructor (
+						TypeManager.decimal_type, loc, TypeManager.int32_type);
+
+					if (TypeManager.void_decimal_ctor_int_arg == null)
+						return;
+				}
+
 				IntConstant.EmitInt (ig, (int)Value);
 				ig.Emit (OpCodes.Newobj, TypeManager.void_decimal_ctor_int_arg);
 				return;
@@ -1650,6 +1658,15 @@ namespace Mono.CSharp {
 
 			// power
 			IntConstant.EmitInt (ig, power);
+
+			if (TypeManager.void_decimal_ctor_five_args == null) {
+				TypeManager.void_decimal_ctor_five_args = TypeManager.GetPredefinedConstructor (
+					TypeManager.decimal_type, loc, TypeManager.int32_type, TypeManager.int32_type,
+					TypeManager.int32_type, TypeManager.bool_type, TypeManager.byte_type);
+
+				if (TypeManager.void_decimal_ctor_five_args == null)
+					return;
+			}
 
 			ig.Emit (OpCodes.Newobj, TypeManager.void_decimal_ctor_five_args);
 		}

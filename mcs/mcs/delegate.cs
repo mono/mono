@@ -85,18 +85,6 @@ namespace Mono.CSharp {
 			if (TypeBuilder != null)
 				return TypeBuilder;
 
-			if (TypeManager.multicast_delegate_type == null && !RootContext.StdLib) {
-				Namespace system = RootNamespace.Global.GetNamespace ("System", true);
-				TypeExpr expr = system.Lookup (this, "MulticastDelegate", Location) as TypeExpr;
-				TypeManager.multicast_delegate_type = expr.Type;
-			}
-
-			if (TypeManager.multicast_delegate_type == null)
-				Report.Error (-100, Location, "Internal error: delegate used before " +
-					      "System.MulticastDelegate is resolved.  This can only " +
-					      "happen during corlib compilation, when using a delegate " +
-					      "in any of the `core' classes.  See bug #72015 for details.");
-
 			if (IsTopLevel) {
 				if (TypeManager.NamespaceClash (Name, Location))
 					return null;
@@ -338,8 +326,10 @@ namespace Mono.CSharp {
 		{
 			Parameters.ApplyAttributes (InvokeBuilder);
 
-			Parameters p = (Parameters)TypeManager.GetParameterData (BeginInvokeBuilder);
-			p.ApplyAttributes (BeginInvokeBuilder);
+			if (BeginInvokeBuilder != null) {
+				Parameters p = (Parameters) TypeManager.GetParameterData (BeginInvokeBuilder);
+				p.ApplyAttributes (BeginInvokeBuilder);
+			}
 
 			if (OptAttributes != null) {
 				OptAttributes.Emit ();
