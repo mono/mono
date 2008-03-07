@@ -1,3 +1,16 @@
+2008-03-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListBox.cs: Rewrote/refactored most of selection code. We require
+	the following things in selection: a) keep selection sorted (both
+	indices and items), b) SelectedIndices automatically detect the
+	selection mode, c) SelectedIndex should be the first selected item
+	index, d) Need to Focus/adjust scroll bar when selecting a new item,
+	not only for SelectedIndex, which is specially important in Multi*
+	selection modes. To achieve this we are moving the selection core to
+	SelectedIndexCollection and make depend all selection modifications on
+	it.
+	Fixes #366438.
+
 2008-03-06  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStrip.cs: Enable implicit mnemonics for drop down

@@ -77,10 +77,8 @@ namespace System.Windows.Forms
 		private bool integral_height = true;
 		private bool multicolumn = false;
 		private bool scroll_always_visible = false;
-		private int selected_index = -1;		
 		private SelectedIndexCollection selected_indices;		
 		private SelectedObjectCollection selected_items;
-		private ArrayList selection = new ArrayList ();
 		private SelectionMode selection_mode = SelectionMode.One;
 		private bool sorted = false;
 		private bool use_tabstops = true;
@@ -500,7 +498,9 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override int SelectedIndex {
-			get { return selected_index;}
+			get { 
+				return selected_indices.Count > 0 ? selected_indices [0] : -1;
+			}
 			set {
 				if (value < -1 || value >= Items.Count)
 					throw new ArgumentOutOfRangeException ("Index of out range");
@@ -508,30 +508,13 @@ namespace System.Windows.Forms
 				if (SelectionMode == SelectionMode.None)
 					throw new ArgumentException ("cannot call this method if SelectionMode is SelectionMode.None");
 
-				if (selected_index == value)
-					return;
-
 				if (value == -1)
-					ClearSelected ();
-				else if (SelectionMode == SelectionMode.One)
-					UnSelectItem (selected_index, true);
+					selected_indices.Clear ();
+				else
+					selected_indices.Add (value);
 
-    				if (value != -1 && value < top_index) {
-    					top_index = value;
-    					UpdateTopItem ();
-    				} else {
-    					int rows = items_area.Height / ItemHeight;
-    					if (value >= (top_index + rows))
-    					{
-    						top_index = value - rows + 1;
-    						UpdateTopItem ();
-    					}
-    				}
-    				SelectItem (value);
-    				selected_index = value;
-    				FocusedItem = value;
-    				OnSelectedIndexChanged  (new EventArgs ());
-    				OnSelectedValueChanged (new EventArgs ());
+    				OnSelectedIndexChanged  (EventArgs.Empty);
+    				OnSelectedValueChanged (EventArgs.Empty);
 			}
 		}
 
@@ -579,12 +562,14 @@ namespace System.Windows.Forms
 					
 				switch (selection_mode) {
 				case SelectionMode.None: 
-					ClearSelected ();
+					SelectedIndices.Clear ();
 					break;						
 
 				case SelectionMode.One:
-					while (SelectedIndices.Count > 1)
-						UnSelectItem (SelectedIndices [SelectedIndices.Count - 1], true);
+					// FIXME: Probably this can be improved
+					ArrayList old_selection = (ArrayList) SelectedIndices.List.Clone ();
+					for (int i = 1; i < old_selection.Count; i++)
+						SelectedIndices.Remove ((int)old_selection [i]);
 					break;
 
 				default:
@@ -722,11 +707,7 @@ namespace System.Windows.Forms
 
 		public void ClearSelected ()
 		{
-			foreach (int i in selected_indices) {
-				UnSelectItem (i, false);
-			}
-
-			selection.Clear ();
+			selected_indices.Clear ();
 		}
 
 		protected virtual ObjectCollection CreateItemCollection ()
@@ -1119,9 +1100,9 @@ namespace System.Windows.Forms
 				throw new InvalidOperationException ();
 
 			if (value)
-				SelectItem (index);
+				SelectedIndices.Add (index);
 			else
-    				UnSelectItem (index, true);
+				SelectedIndices.Remove (index);
 		}
 
 		protected virtual void Sort ()
@@ -1715,16 +1696,19 @@ namespace System.Windows.Forms
 
 			if (ctrl_pressed)
 				foreach (int i in prev_selection)
-					if (!selection.Contains (i))
+					if (!selected_indices.Contains (i))
 						new_selection.Add (i);
 
-			foreach (int i in SelectedIndices)
+			// Need to make a copy since we can't enumerate and modify the collection
+			// at the same time
+			ArrayList sel_indices = (ArrayList) selected_indices.List.Clone ();
+			foreach (int i in sel_indices)
 				if (!new_selection.Contains (i))
-					UnSelectItem (i, true);
+					selected_indices.Remove (i);
 
 			foreach (int i in new_selection)
-				if (!SelectedIndices.Contains (i))
-					SelectItem (i);
+				if (!sel_indices.Contains (i))
+					selected_indices.Add (i);
 			ResumeLayout ();
 		}
 
@@ -1741,18 +1725,14 @@ namespace System.Windows.Forms
 
 			switch (SelectionMode) {
 			case SelectionMode.One:
-				if (SelectedIndex != index) {
-					UnSelectItem (SelectedIndex, true);
-					SelectItem (index);
-				}
-				selected_index = index;
+				SelectedIndex = index;
 				break;
 
 			case SelectionMode.MultiSimple:
 				if (SelectedIndices.Contains (index))
-					UnSelectItem (index, true);
+					SelectedIndices.Remove (index);
 				else
-					SelectItem (index);
+					SelectedIndices.Add (index);
 				break;
 
 			case SelectionMode.MultiExtended:
@@ -1760,10 +1740,10 @@ namespace System.Windows.Forms
 				ctrl_pressed = (XplatUI.State.ModifierKeys & Keys.Control) != 0;
 
 				if (ctrl_pressed) {
-					prev_selection = new int [selection.Count];
+					prev_selection = new int [SelectedIndices.Count];
 					SelectedIndices.CopyTo (prev_selection, 0);
 				} else
-					ClearSelected ();
+					SelectedIndices.Clear ();
 
 				if (!shift_pressed)
 					anchor = index;
@@ -1789,12 +1769,7 @@ namespace System.Windows.Forms
 
 			switch (SelectionMode) {
 			case SelectionMode.One:
-				if (index == selected_index)
-					return;
-
-				UnSelectItem (SelectedIndex, true);
-				SelectItem (index);
-				selected_index = index;
+				SelectedIndex = index;
 				break;
 
 			case SelectionMode.MultiSimple:
@@ -1892,16 +1867,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-		// Add an item in the Selection array and marks it visually as selected
-		private void SelectItem (int index)
-		{
-			if (index == -1 || SelectedIndices.Contains (index))
-				return;
-
-    			selection.Add (Items[index]);
-    			InvalidateItem (index);
-		}		
-		
 		// An item navigation operation (mouse or keyboard) has caused to select a new item
 		internal void SelectedItemFromNavigation (int index)
 		{
@@ -1918,9 +1883,10 @@ namespace System.Windows.Forms
 					} else {
 
 						if (SelectedIndices.Contains (index))
-							UnSelectItem (index, true);
+							SelectedIndices.Remove (index);
 						else {
-    							SelectItem (index);
+							SelectedIndices.Add (index);
+
     							OnSelectedIndexChanged  (new EventArgs ());
     							OnSelectedValueChanged (new EventArgs ());
     						}
@@ -1934,13 +1900,13 @@ namespace System.Windows.Forms
 					} else {
 
 						if (ctrl_pressed == false && shift_pressed == false) {
-							ClearSelected ();
+							SelectedIndices.Clear ();
 						}
 						
 						if (shift_pressed == true) {
 							ShiftSelection (index);
 						} else { // ctrl_pressed or single item
-							SelectItem (index);
+							SelectedIndices.Add (index);
 						}
     						
     						OnSelectedIndexChanged  (new EventArgs ());
@@ -1983,9 +1949,9 @@ namespace System.Windows.Forms
 					end = index;
 				}
 				
-				ClearSelected ();
+				selected_indices.Clear ();
 				for (int idx = start; idx <= end; idx++) {
-					SelectItem (idx);	
+					selected_indices.Add (idx);
 				}
 			}
 		}
@@ -2011,18 +1977,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-		// Removes an item in the Selection array and marks it visually as unselected
-		private void UnSelectItem (int index, bool remove)
-		{
-			if (index == -1)
-				return;
-
-			if (remove)
-				selection.Remove (Items[index]);
-
-			InvalidateItem (index);
-		}
-
 		StringFormat string_format;
 		internal StringFormat StringFormat {
 			get {
@@ -2045,7 +1999,7 @@ namespace System.Windows.Forms
 				Sort (false);
 
 			if (Items.Count == 0) {
-				selected_index = -1;
+				selected_indices.List.Clear ();
 				focused_item = -1;
 				top_index = 0;
 			}
@@ -2058,6 +2012,24 @@ namespace System.Windows.Forms
 			LayoutListBox ();
 
 			base.Refresh ();
+		}
+
+		void EnsureVisible (int index)
+		{
+			if (!IsHandleCreated || index == -1)
+				return;
+
+			if (index < top_index) {
+				top_index = index;
+				UpdateTopItem ();
+			} else {
+				int rows = items_area.Height / ItemHeight;
+				if (index >= (top_index + rows))
+				{
+					top_index = index - rows + 1;
+					UpdateTopItem ();
+				}
+			}
 		}
 
 		private void UpdateListBoxBounds ()
@@ -2441,7 +2413,7 @@ namespace System.Windows.Forms
 
 			public virtual void Clear ()
 			{
-				owner.selection.Clear ();
+				owner.selected_indices.Clear ();
 				object_items.Clear ();
 				owner.CollectionChanged ();
 			}
@@ -2507,9 +2479,7 @@ namespace System.Windows.Forms
 				if (index < 0 || index >= Count)
 					throw new ArgumentOutOfRangeException ("Index of out range");
 
-				if (index == owner.selected_index)
-					owner.selected_index = -1;
-				owner.selection.Remove (object_items [index]);
+				owner.selected_indices.Remove (index);
 				object_items.RemoveAt (index);
 				owner.CollectionChanged ();
 			}
@@ -2537,16 +2507,19 @@ namespace System.Windows.Forms
 		public class SelectedIndexCollection : IList, ICollection, IEnumerable
 		{
 			private ListBox owner;
+			ArrayList selection;
+			bool sorting_needed; // Selection state retrieval is done sorted - we do it lazyly
 
 			public SelectedIndexCollection (ListBox owner)
 			{
 				this.owner = owner;
+				selection = new ArrayList ();
 			}
 
 			#region Public Properties
 			[Browsable (false)]
 			public int Count {
-				get { return owner.selection.Count; }
+				get { return selection.Count; }
 			}
 
 			public bool IsReadOnly {
@@ -2558,7 +2531,8 @@ namespace System.Windows.Forms
 					if (index < 0 || index >= Count)
 						throw new ArgumentOutOfRangeException ("Index of out range");
 
-					return owner.Items.IndexOf (owner.selection [index]);
+					CheckSorted ();
+					return (int)selection [index];
 				}
 			}
 
@@ -2571,66 +2545,89 @@ namespace System.Windows.Forms
 			}
 
 			object ICollection.SyncRoot {
-				get { return this; }
+				get { return selection; }
 			}
 
 			#endregion Public Properties
 
 			#region Public Methods
 #if NET_2_0
-			public void Add (int index)
+			public 
+#else
+			internal
+#endif
+			void Add (int index)
 			{
-				object item = owner.items[index];
-				
-				if (!owner.selection.Contains (item)) {
-					owner.selection.Add (item);
-					owner.CollectionChanged ();
-				}
+				if (selection.Contains (index))
+					return;
+
+				if (index == -1) // Weird MS behaviour
+					return;
+				if (index < -1 || index >= owner.Items.Count)
+					throw new ArgumentOutOfRangeException ("index");
+				if (owner.selection_mode == SelectionMode.None)
+					throw new InvalidOperationException ("Cannot call this method when selection mode is SelectionMode.None");
+
+				if (owner.selection_mode == SelectionMode.One && Count > 0) // Unselect previously selected item
+					Remove ((int)selection [0]);
+
+				selection.Add (index);
+				sorting_needed = true;
+				owner.EnsureVisible (index);
+				owner.FocusedItem = index;
+				owner.InvalidateItem (index);
 			}
 
-			public void Clear ()
-			{
-				owner.selection.Clear ();
-				owner.CollectionChanged ();
-			}
+#if NET_2_0
+			public 
+#else
+			internal
 #endif
+			void Clear ()
+			{
+				foreach (int index in selection)
+					owner.InvalidateItem (index);
+
+				selection.Clear ();
+			}
 
 			public bool Contains (int selectedIndex)
 			{
-				foreach (object o in owner.selection)
-					if (owner.Items.IndexOf (o) == selectedIndex)
+				foreach (int index in selection)
+					if (index == selectedIndex)
 						return true;
 				return false;
 			}
 
 			public void CopyTo (Array destination, int index)
 			{
-				foreach (object o in owner.selection)
-					destination.SetValue(owner.Items.IndexOf (o), index++);
+				CheckSorted ();
+				selection.CopyTo (destination, index);
 			}
 
 			public IEnumerator GetEnumerator ()
 			{
-				//FIXME: write an enumerator that uses owner.selection.GetEnumerator
-				//  so that invalidation is write on selection changes
-				ArrayList indices = new ArrayList ();
-				foreach (object o in owner.selection)
-					indices.Add (owner.Items.IndexOf (o));
-				return indices.GetEnumerator ();
+				CheckSorted ();
+				return selection.GetEnumerator ();
 			}
 
+			// FIXME: Probably we can avoid sorting when calling
+			// IndexOf (imagine a scenario where multiple removal of items
+			// happens)
 #if NET_2_0
-			public void Remove (int index)
+			public 
+#else
+			internal
+#endif
+			void Remove (int index)
 			{
-				object value = owner.items[index];
-				
-				if (value == null)
+				int idx = IndexOf (index);
+				if (idx == -1)
 					return;
 
-				owner.selection.Remove (value);
-				owner.CollectionChanged ();
+				selection.RemoveAt (idx);
+				owner.InvalidateItem (index);
 			}
-#endif
 
 			int IList.Add (object obj)
 			{
@@ -2668,18 +2665,35 @@ namespace System.Windows.Forms
 			}
 
 			object IList.this[int index]{
-				get {return owner.Items.IndexOf (owner.selection [index]); }
+				get { return this [index]; }
 				set {throw new NotImplementedException (); }
 			}
 
 			public int IndexOf (int selectedIndex)
 			{
-				for (int i = 0; i < owner.selection.Count; i++)
-					if (owner.Items.IndexOf (owner.selection [i]) == selectedIndex)
+				CheckSorted ();
+
+				for (int i = 0; i < selection.Count; i++)
+					if ((int)selection [i] == selectedIndex)
 						return i;
+
 				return -1;
 			}
 			#endregion Public Methods
+			internal ArrayList List {
+				get {
+					CheckSorted ();
+					return selection;
+				}
+			}
+
+			void CheckSorted ()
+			{
+				if (sorting_needed) {
+					sorting_needed = false;
+					selection.Sort ();
+				}
+			}
 		}
 
 		public class SelectedObjectCollection : IList, ICollection, IEnumerable
@@ -2693,7 +2707,7 @@ namespace System.Windows.Forms
 
 			#region Public Properties
 			public int Count {
-				get { return owner.selection.Count; }
+				get { return owner.selected_indices.Count; }
 			}
 
 			public bool IsReadOnly {
@@ -2707,7 +2721,7 @@ namespace System.Windows.Forms
 					if (index < 0 || index >= Count)
 						throw new ArgumentOutOfRangeException ("Index of out range");
 
-					return owner.selection [index];
+					return owner.items [owner.selected_indices [index]];
 				}
 				set {throw new NotSupportedException ();}
 			}
@@ -2730,27 +2744,32 @@ namespace System.Windows.Forms
 #if NET_2_0
 			public void Add (object value)
 			{
-				if (!owner.selection.Contains (value)) {
-					owner.selection.Add (value);
-					owner.CollectionChanged ();
-				}
+				if (owner.selection_mode == SelectionMode.None)
+					throw new ArgumentException ("Cannot call this method if SelectionMode is SelectionMode.None");
+
+				int idx = owner.items.IndexOf (value);
+				if (idx == -1)
+					return;
+
+				owner.selected_indices.Add (idx);
 			}
 
 			public void Clear ()
 			{
-				owner.selection.Clear ();
-				owner.CollectionChanged ();
+				owner.selected_indices.Clear ();
 			}
 #endif
 
 			public bool Contains (object selectedObject)
 			{
-				return owner.selection.Contains (selectedObject);
+				int idx = owner.items.IndexOf (selectedObject);
+				return idx == -1 ? false : owner.selected_indices.Contains (idx);
 			}
 
 			public void CopyTo (Array destination, int index)
 			{
-				owner.selection.CopyTo (destination, index);
+				for (int i = 0; i < Count; i++)
+					destination.SetValue (this [i], index++);
 			}
 
 #if NET_2_0
@@ -2759,8 +2778,11 @@ namespace System.Windows.Forms
 				if (value == null)
 					return;
 
-				owner.selection.Remove (value);
-				owner.CollectionChanged ();
+				int idx = owner.items.IndexOf (value);
+				if (idx == -1)
+					return;
+
+				owner.selected_indices.Remove (idx);
 			}
 #endif
 
@@ -2791,12 +2813,20 @@ namespace System.Windows.Forms
 	
 			public int IndexOf (object selectedObject)
 			{
-				return owner.selection.IndexOf (selectedObject);
+				int idx = owner.items.IndexOf (selectedObject);
+				return idx == -1 ? -1 : owner.selected_indices.IndexOf (idx);
 			}
 
 			public IEnumerator GetEnumerator ()
 			{
-				return owner.selection.GetEnumerator ();
+				//FIXME: write an enumerator that uses selection.GetEnumerator
+				//  so that invalidation is write on selection changes
+				object [] items = new object [Count];
+				for (int i = 0; i < Count; i++) {
+					items [i] = owner.items [owner.selected_indices [i]];
+				}
+
+				return items.GetEnumerator ();
 			}
 
 			#endregion Public Methods
