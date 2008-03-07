@@ -1,5 +1,9 @@
 2008-03-07  Marek Safar  <marek.safar@gmail.com>
 
+	* expression.cs (TypeOfVoid): Fixed predefined method initialization.
+	
+2008-03-07  Marek Safar  <marek.safar@gmail.com>
+
 	* generic.cs, typemanager.cs, parameter.cs, rootcontext.cs, ecore.cs, 
 	class.cs, delegate.cs, iterators.cs, const.cs, constant.cs, driver.cs,
 	expression.cs, attribute.cs, codegen.cs, statement.cs: TypeManager optional

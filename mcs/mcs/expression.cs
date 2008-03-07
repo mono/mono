@@ -6580,6 +6580,11 @@ namespace Mono.CSharp {
 
 			type = TypeManager.type_type;
 
+			return DoResolveBase ();
+		}
+
+		protected Expression DoResolveBase ()
+		{
 			if (TypeManager.system_type_get_type_from_handle == null) {
 				TypeManager.system_type_get_type_from_handle = TypeManager.GetPredefinedMethod (
 					TypeManager.type_type, "GetTypeFromHandle", loc, TypeManager.runtime_handle_type);
@@ -6645,9 +6650,8 @@ namespace Mono.CSharp {
 		{
 			type = TypeManager.type_type;
 			typearg = TypeManager.void_type;
-			// See description in TypeOf.
-			eclass = ExprClass.Value;
-			return this;
+
+			return DoResolveBase ();
 		}
 	}
 
