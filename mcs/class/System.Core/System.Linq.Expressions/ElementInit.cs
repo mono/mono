@@ -29,6 +29,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Reflection;
+using System.Reflection.Emit;
 
 namespace System.Linq.Expressions {
 
@@ -56,7 +57,7 @@ namespace System.Linq.Expressions {
 			return ExpressionPrinter.ToString (this);
 		}
 
-		internal void Emit (EmitContext ec)
+		internal void Emit (EmitContext ec, LocalBuilder local)
 		{
 			throw new NotImplementedException ();
 		}

@@ -55,8 +55,12 @@ namespace System.Linq.Expressions {
 
 		internal override void Emit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
-		}
+			var local = EmitStored (ec, new_expression);
 
+			foreach (var initializer in initializers)
+				initializer.Emit (ec, local);
+
+			EmitLoad (ec, local);
+		}
 	}
 }

@@ -1912,6 +1912,11 @@ namespace System.Linq.Expressions {
 				expression.Emit (ec);
 		}
 
+		internal static void EmitLoad (EmitContext ec, LocalBuilder local)
+		{
+			ec.ig.Emit (OpCodes.Ldloc, local);
+		}
+
 		internal static void EmitCall (EmitContext ec, Expression expression, IEnumerable<Expression> arguments, MethodInfo method)
 		{
 			if (expression != null)

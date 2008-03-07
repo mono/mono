@@ -58,6 +58,8 @@ namespace System.Linq.Expressions {
 
 			foreach (var binding in bindings)
 				binding.Emit (ec, local);
+
+			EmitLoad (ec, local);
 		}
 	}
 }
