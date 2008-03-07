@@ -1,3 +1,7 @@
+2008-03-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_emit_prolog): Improve the first_bb optimization a bit.
+
 2008-03-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_method_to_ir): Apply one of the ldstr optimizations in the
