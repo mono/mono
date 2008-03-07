@@ -45,5 +45,10 @@ namespace System.Linq.Expressions {
 		{
 			this.initializers = initializers;
 		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

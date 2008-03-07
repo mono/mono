@@ -54,5 +54,7 @@ namespace System.Linq.Expressions {
 		{
 			return ExpressionPrinter.ToString (this);
 		}
+
+		internal abstract void Emit (EmitContext ec);
 	}
 }

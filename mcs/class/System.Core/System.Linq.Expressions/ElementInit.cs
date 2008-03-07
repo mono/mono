@@ -55,5 +55,10 @@ namespace System.Linq.Expressions {
 		{
 			return ExpressionPrinter.ToString (this);
 		}
+
+		internal void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }
