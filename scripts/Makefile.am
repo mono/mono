@@ -14,13 +14,12 @@ bin_SCRIPTS = \
 	$(scripts_1_0)		\
 	$(scripts_1_0_umask)	\
 	$(scripts_1_0_compat)	\
-	$(script_defaults)	\
+	$(scripts_defaults)	\
 	$(scripts_2_0)		\
 	$(scripts_2_1)		\
 	$(scripts_service)	\
 	$(scripts_nunit)	\
 	$(scripts_rpmhelpers)	\
-	mcs			\
 	mono-test-install
 
 scripts_1_0_compat = \
@@ -46,6 +45,7 @@ scripts_1_0 = \
 	genxs			\
 	installvst		\
 	macpack			\
+	mcs			\
 	mbas			\
 	mjs			\
 	monolinker		\
@@ -104,7 +104,7 @@ scripts_rpmhelpers = mono-find-provides mono-find-requires
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA= mono-nunit.pc
 
-CLEANFILES = $(scripts_1_0) $(scripts_1_0_umask) $(scripts_2_0) $(scripts_2_1) gmcs mono-service mono-service2
+CLEANFILES = $(scripts_1_0) $(scripts_1_0_umask) $(scripts_2_0) $(scripts_2_1) $(scripts_defaults) $(scripts_1_0_compat) mono-service mono-service2 nunit-console nunit-console2 mono-find-provides mono-find-requires
 DISTCLEANFILES = $(pkgconfig_DATA) $(scripts_rpmhelpers)
 
 EXTRA_DIST =                   \
@@ -179,7 +179,7 @@ $(scripts_1_0_compat): script.in Makefile
 	mv $@.tmp $@
 
 $(scripts_defaults): script.in Makefile
-	$(REWRITE2) -e "s,@exe_name@,$$t,g" $(srcdir)/script.in > $@.tmp
+	$(REWRITE2) -e "s,@exe_name@,$@,g" $(srcdir)/script.in > $@.tmp
 	mv $@.tmp $@
 
 $(scripts_2_0): script.in Makefile
@@ -187,6 +187,3 @@ $(scripts_2_0): script.in Makefile
 	$(REWRITE2) -e "s,@""exe_name@,$$n,g" $(srcdir)/script.in > $@.tmp
 	mv $@.tmp $@
 
-mcs: script.in Makefile
-	$(REWRITE2) -e "s,@""exe_name@,gmcs,g" $(srcdir)/script.in > $@.tmp
-	mv $@.tmp $@

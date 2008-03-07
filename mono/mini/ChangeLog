@@ -51,6 +51,101 @@
 	* local-propagation.c (mono_local_deadce): Make the reverse copyprop optimization
 	more generic.
 
+2008-03-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c jit-icalls.h jit-icalls.c: Generalize the exception creation 
+	optimization to ctors taking 0 or 2 arguments too.
+
+	* mini.c (mono_method_to_ir): Optimalize the size of the exception throwing code
+	a bit.
+
+	* jit-icalls.h (mono_create_corlib_exception): New JIT icall.
+
+	* mini-amd64.c (mono_arch_emit_prolog): Improve the first_bb optimization a bit.
+
+2008-03-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_method_to_ir): Apply one of the ldstr optimizations in the
+	non-aot case as well.
+
+	* cpu-amd64.md: Reduce the max size of some frequently used opcodes.
+
+	* aot-runtime.c (decode_patch_info): Update this after the ldfld/stfld wrapper
+	changes.
+
+	* aot-compiler.c (encode_patch): Ditto.
+
+	* mini.h (G_MININT32): Fix the definition of this.
+
+2008-03-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h: Define G_MININT32/G_MAXINT32 if using an older glib version.
+
+	* cfold.c: Remove definition of G_MININT32 which is now in mini.h.
+
+2008-03-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_compute_omit_fp): Don't disable fp elimination for 
+	methods returning vtypes in registers.
+	(mono_arch_allocate_vars): Ditto.
+
+	* mini-amd64.c (mono_arch_get_this_arg_reg): New arch specific helper function.
+
+	* tramp-amd64.c (mono_arch_get_unbox_trampoline): Use mono_arch_get_this_arg_reg ().	
+
+	* generics.cs: Add a test from the linear IR branch.
+
+	* mini-amd64.c (emit_load_volatile_arguments): Handle vtypes passed in regs too.
+
+	* mini.c (inline_method): Cache failed inline attempts.
+
+2008-03-04  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: For shared methods of generic classes put the location
+	of "this" into the MonoGenericJitInfo.
+
+	* mini-x86.c, mini-amd64.c, mini.h: Added function for fetching a
+	register out of a MonoContext by register number.  Add the generic
+	sharing context as an argument to mono_arch_find_this_argument().
+
+	* mini-alpha.c, mini-arm.c, mini-hppa.c, mini-ia64.c, mini-mips.c,
+	mini-ppc.c, mini-s390.c, mini-s390x.c, mini-sparc.c: Added stub
+	for new arch function.
+
+	* mini-exception.c: Handle open exception clauses in shared
+	generic code.
+
+	* mini-trampolines.c: Supply additional argument to
+	mono_arch_find_this_argument().
+
+2008-03-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (regtests): Run the bench.exe tests last.
+
+2008-03-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_emit_prolog): Improve the first bblock optimization
+	a bit.
+
+2008-03-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_method_to_ir): Allow callvirt on static methods for compatibility
+	with MS.
+
+	* mini-amd64.c (mono_arch_emit_prolog): Fix tracing after the last change.
+	
+	* mini-amd64.c (mono_arch_emit_prolog): Avoid saving dead arguments.
+
+	* mini.c (mono_method_check_inlining): Avoid disabling inlining for methods
+	whose class has no cctor.
+
+	* liveness.c (mono_analyze_liveness): Mark dead arguments with MONO_INST_IS_DEAD.
+
+2008-03-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_method_to_ir): Report calling a static method using callvirt as
+	unverified.
+
 2008-02-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ops.h mini-s390.c inssel-s390.brg: Ongoing S390 work.

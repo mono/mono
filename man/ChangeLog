@@ -1,3 +1,8 @@
+2007-12-08  Jonathan Pryor  <jpryor@novell.com>
+
+	* wsdl.1: Fix groff comment (so that it doesn't appear in monodoc's
+	  man-provider output).
+
 2007-12-08  Marek Habersack  <mhabersack@novell.com>
 
 	* mono.1: added short documentation about the

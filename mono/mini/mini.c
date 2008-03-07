@@ -3737,6 +3737,9 @@ mono_method_check_inlining (MonoCompile *cfg, MonoMethod *method)
 	if (cfg->generic_sharing_context)
 		return FALSE;
 
+	if (method->inline_failure)
+		return FALSE;
+
 #ifdef MONO_ARCH_HAVE_LMF_OPS
 	if (((method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) ||
 		 (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)) &&
@@ -3781,7 +3784,7 @@ mono_method_check_inlining (MonoCompile *cfg, MonoMethod *method)
 	if (!(cfg->opt & MONO_OPT_SHARED)) {
 		vtable = mono_class_vtable (cfg->domain, method->klass);
 		if (method->klass->flags & TYPE_ATTRIBUTE_BEFORE_FIELD_INIT) {
-			if (cfg->run_cctors) {
+			if (cfg->run_cctors && method->klass->has_cctor) {
 				/* This makes so that inline cannot trigger */
 				/* .cctors: too many apps depend on them */
 				/* running with a specific order... */
@@ -4356,6 +4359,7 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 			g_print ("INLINE ABORTED %s\n", mono_method_full_name (cmethod, TRUE));
 		cfg->exception_type = MONO_EXCEPTION_NONE;
 		mono_loader_clear_error ();
+		cmethod->inline_failure = TRUE;
 	}
 	return 0;
 }
@@ -5091,6 +5095,17 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		for (i = 0; i < header->num_clauses; ++i) {
 			MonoBasicBlock *try_bb;
 			MonoExceptionClause *clause = &header->clauses [i];
+
+			/* We can't handle open exception clauses in
+			 * static methods yet.
+			 */
+			if ((method->flags & METHOD_ATTRIBUTE_STATIC) &&
+					clause->flags != MONO_EXCEPTION_CLAUSE_FILTER &&
+					clause->data.catch_class &&
+					mono_class_check_context_used (clause->data.catch_class)) {
+				GENERIC_SHARING_FAILURE (CEE_NOP);
+			}
+
 			GET_BBLOCK (cfg, try_bb, ip + clause->try_offset);
 			try_bb->real_offset = clause->try_offset;
 			GET_BBLOCK (cfg, tblock, ip + clause->handler_offset);
@@ -6737,10 +6752,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						MonoInst *iargs [2];
 						int temp;
 
-						if (cfg->compile_aot && cfg->method->klass->image == mono_defaults.corlib) {
+						if (cfg->method->klass->image == mono_defaults.corlib) {
 							/* 
-							 * Avoid relocations by using a version of helper_ldstr
-							 * specialized to mscorlib.
+							 * Avoid relocations and save some code size by using a 
+							 * version of helper_ldstr specialized to mscorlib.
 							 */
 							NEW_ICONST (cfg, iargs [0], mono_metadata_token_index (n));
 							temp = mono_emit_jit_icall (cfg, bblock, mono_helper_ldstr_mscorlib, iargs, ip);
@@ -6801,6 +6816,43 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			n = fsig->param_count;
 			CHECK_STACK (n);
+ 
+			/* 
+			 * Generate smaller code for the common newobj <exception> instruction in
+			 * argument checking code.
+			 */
+			if (bblock->out_of_line && cmethod->klass->image == mono_defaults.corlib && n <= 2 && 
+				((n < 1) || (!fsig->params [0]->byref && fsig->params [0]->type == MONO_TYPE_STRING)) && 
+				((n < 2) || (!fsig->params [1]->byref && fsig->params [1]->type == MONO_TYPE_STRING))) {
+				MonoInst *iargs [3];
+				int temp;
+				
+				sp -= n;
+
+				NEW_ICONST (cfg, iargs [0], cmethod->klass->type_token);
+				switch (n) {
+				case 0:
+					temp = mono_emit_jit_icall (cfg, bblock, mono_create_corlib_exception_0, iargs, ip);
+					break;
+				case 1:
+					iargs [1] = sp [0];
+					temp = mono_emit_jit_icall (cfg, bblock, mono_create_corlib_exception_1, iargs, ip);
+					break;
+				case 2:
+					iargs [1] = sp [0];
+					iargs [2] = sp [1];
+					temp = mono_emit_jit_icall (cfg, bblock, mono_create_corlib_exception_2, iargs, ip);
+					break;
+				default:
+					g_assert_not_reached ();
+				}
+				NEW_TEMPLOAD (cfg, ins, temp);
+				*sp ++ = ins;
+
+				ip += 5;
+				inline_costs += 5;
+				break;
+			}
 
 			/* move the args to allow room for 'this' in the first position */
 			while (n--) {
@@ -8219,9 +8271,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				MONO_ADD_INS (bblock, store);
 				NEW_TEMPLOAD (cfg, ins, vtvar->inst_c0);
 			} else {
-				if ((ip [5] == CEE_CALL) && (cmethod = mini_get_method (method, read32 (ip + 6), NULL, generic_context)) &&
-						(cmethod->klass == mono_defaults.monotype_class->parent) &&
-						(strcmp (cmethod->name, "GetTypeFromHandle") == 0) && ip_in_bb (cfg, bblock, ip + 5)) {
+				if ((ip + 5 < end) && ip_in_bb (cfg, bblock, ip + 5) && 
+					((ip [5] == CEE_CALL) || (ip [5] == CEE_CALLVIRT)) && 
+					(cmethod = mini_get_method (method, read32 (ip + 6), NULL, generic_context)) &&
+					(cmethod->klass == mono_defaults.monotype_class->parent) &&
+					(strcmp (cmethod->name, "GetTypeFromHandle") == 0)) {
 					MonoClass *tclass = mono_class_from_mono_type (handle);
 					mono_class_init (tclass);
 					if (cfg->compile_aot)
@@ -12305,7 +12359,7 @@ remove_critical_edges (MonoCompile *cfg) {
 MonoCompile*
 mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gboolean run_cctors, gboolean compile_aot, int parts)
 {
-	MonoMethodHeader *header = mono_method_get_header (method);
+	MonoMethodHeader *header;
 	guint8 *ip;
 	MonoCompile *cfg;
 	MonoJitInfo *jinfo;
@@ -12313,7 +12367,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	gboolean deadce_has_run = FALSE;
 	gboolean try_generic_shared;
 	MonoMethod *method_to_compile;
-	int gsctx_size;
+	int generic_info_size;
 
 	mono_jit_stats.methods_compiled++;
 	if (mono_profiler_get_events () & MONO_PROFILE_JIT_COMPILATION)
@@ -12370,6 +12424,8 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	if (try_generic_shared)
 		cfg->generic_sharing_context = (MonoGenericSharingContext*)&cfg->generic_sharing_context;
 	cfg->token_info_hash = g_hash_table_new (NULL, NULL);
+
+	header = mono_method_get_header (method_to_compile);
 	if (!header) {
 		cfg->exception_type = MONO_EXCEPTION_INVALID_PROGRAM;
 		cfg->exception_message = g_strdup_printf ("Missing or incorrect header for method %s", cfg->method->name);
@@ -12779,19 +12835,19 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	}
 
 	if (cfg->generic_sharing_context)
-		gsctx_size = sizeof (MonoGenericSharingContext*);
+		generic_info_size = sizeof (MonoGenericJitInfo);
 	else
-		gsctx_size = 0;
+		generic_info_size = 0;
 
 	if (cfg->method->dynamic) {
 		jinfo = g_malloc0 (sizeof (MonoJitInfo) + (header->num_clauses * sizeof (MonoJitExceptionInfo)) +
-				gsctx_size);
+				generic_info_size);
 	} else {
 		/* we access cfg->domain->mp */
 		mono_domain_lock (cfg->domain);
 		jinfo = mono_mempool_alloc0 (cfg->domain->mp, sizeof (MonoJitInfo) +
 				(header->num_clauses * sizeof (MonoJitExceptionInfo)) +
-				gsctx_size);
+				generic_info_size);
 		mono_domain_unlock (cfg->domain);
 	}
 
@@ -12803,9 +12859,41 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	jinfo->cas_inited = FALSE; /* initialization delayed at the first stalk walk using this method */
 	jinfo->num_clauses = header->num_clauses;
 
-	if (cfg->generic_sharing_context) {
-		jinfo->has_generic_sharing_context = 1;
-		mono_jit_info_set_generic_sharing_context (jinfo, cfg->generic_sharing_context);
+	if (cfg->generic_sharing_context && !(method_to_compile->flags & METHOD_ATTRIBUTE_STATIC)) {
+		MonoInst *inst;
+		MonoGenericJitInfo *gi;
+
+		jinfo->has_generic_jit_info = 1;
+
+		gi = mono_jit_info_get_generic_jit_info (jinfo);
+		g_assert (gi);
+
+		gi->generic_sharing_context = cfg->generic_sharing_context;
+
+		g_assert (!(method_to_compile->flags & METHOD_ATTRIBUTE_STATIC));
+
+		inst = cfg->varinfo [0];
+
+		if (inst->opcode == OP_REGVAR) {
+			gi->this_in_reg = 1;
+			gi->this_reg = inst->dreg;
+
+			//g_print ("this in reg %d\n", inst->dreg);
+		} else {
+			g_assert (inst->opcode == OP_REGOFFSET);
+#ifdef __i386__
+			g_assert (inst->inst_basereg == X86_EBP);
+#elif defined(__x86_64__)
+			g_assert (inst->inst_basereg == X86_EBP || inst->inst_basereg == X86_ESP);
+#endif
+			g_assert (inst->inst_offset >= G_MININT32 && inst->inst_offset <= G_MAXINT32);
+
+			gi->this_in_reg = 0;
+			gi->this_reg = inst->inst_basereg;
+			gi->this_offset = inst->inst_offset;
+
+			//g_print ("this at offset %d\n", inst->inst_offset);
+		}
 	}
 
 	if (header->num_clauses) {
@@ -14215,6 +14303,9 @@ mini_init (const char *filename, const char *runtime_version)
 	register_icall (mono_value_copy, "mono_value_copy", "void ptr ptr ptr", FALSE);
 	register_icall (mono_helper_get_rgctx_other_ptr, "get_rgctx_other_ptr", "ptr ptr ptr int32 int32 int32 int32", FALSE);
 	register_icall (mono_break, "mono_break", NULL, TRUE);
+	register_icall (mono_create_corlib_exception_0, "mono_create_corlib_exception_0", "object int", TRUE);
+	register_icall (mono_create_corlib_exception_1, "mono_create_corlib_exception_1", "object int object", TRUE);
+	register_icall (mono_create_corlib_exception_2, "mono_create_corlib_exception_2", "object int object object", TRUE);
 #endif
 
 #define JIT_RUNTIME_WORKS

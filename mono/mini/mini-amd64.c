@@ -4958,10 +4958,14 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	CallInfo *cinfo;
 	gint32 lmf_offset = cfg->arch.lmf_offset;
 	gboolean args_clobbered = FALSE;
+	gboolean trace = FALSE;
 
 	cfg->code_size =  MAX (((MonoMethodNormal *)method)->header->code_size * 4, 10240);
 
 	code = cfg->native_code = g_malloc (cfg->code_size);
+
+	if (mono_jit_trace_calls != NULL && mono_trace_eval (method))
+		trace = TRUE;
 
 	/* Amount of stack space allocated by register saving code */
 	pos = 0;
@@ -5119,6 +5123,10 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 
 		ins = cfg->args [i];
 
+		if ((ins->flags & MONO_INST_IS_DEAD) && !trace)
+			/* Unused arguments */
+			continue;
+
 		if (sig->hasthis && (i == 0))
 			arg_type = &mono_defaults.object_class->byval_arg;
 		else
@@ -5274,7 +5282,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		}
 	}
 
-	if (mono_jit_trace_calls != NULL && mono_trace_eval (method)) {
+	if (trace) {
 		args_clobbered = TRUE;
 		code = mono_arch_instrument_prolog (cfg, mono_trace_enter_method, code, TRUE);
 	}
@@ -5310,15 +5318,16 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 				switch (ainfo->storage) {
 				case ArgInIReg: {
 					if (((next->opcode == OP_LOAD_MEMBASE) || (next->opcode == OP_LOADI4_MEMBASE)) && next->inst_basereg == ins->inst_basereg && next->inst_offset == ins->inst_offset) {
-						if (next->dreg == ainfo->reg)
+						if (next->dreg == ainfo->reg) {
 							NULLIFY_INS (next);
-						else {
+							match = TRUE;
+						} else {
 							next->opcode = OP_MOVE;
 							next->sreg1 = ainfo->reg;
+							/* Only continue if the instruction doesn't change argument regs */
+							if (next->dreg == ainfo->reg || next->dreg == AMD64_RAX)
+								match = TRUE;
 						}
-						/* Only continue if the instruction doesn't change argument regs */
-						if (next->dreg == ainfo->reg || next->dreg == AMD64_RAX)
-							match = TRUE;
 					}
 					break;
 				}
@@ -5339,12 +5348,12 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 				}
 			}
 
-			if (!match)
-				break;
-			next = next->next;
-#if 0
-			next = mono_inst_list_next (&next->node, &first_bb->ins_list);
-#endif
+			if (match) {
+				next = next->next;
+				//next = mono_inst_list_next (&next->node, &first_bb->ins_list);
+				if (!next)
+					break;
+			}
 		}
 	}
 
@@ -6405,7 +6414,7 @@ mono_arch_find_imt_method (gpointer *regs, guint8 *code)
 }
 
 MonoObject*
-mono_arch_find_this_argument (gpointer *regs, MonoMethod *method)
+mono_arch_find_this_argument (gpointer *regs, MonoMethod *method, MonoGenericSharingContext *gsctx)
 {
 	return mono_arch_get_this_arg_from_call (mono_method_signature (method), (gssize*)regs, NULL);
 }
@@ -6586,4 +6595,25 @@ MonoInst* mono_arch_get_thread_intrinsic (MonoCompile* cfg)
 	MONO_INST_NEW (cfg, ins, OP_TLS_GET);
 	ins->inst_offset = thread_tls_offset;
 	return ins;
+}
+
+#define _CTX_REG(ctx,fld,i) ((gpointer)((&ctx->fld)[i]))
+
+gpointer
+mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
+{
+	switch (reg) {
+	case AMD64_RCX: return (gpointer)ctx->rcx;
+	case AMD64_RDX: return (gpointer)ctx->rdx;
+	case AMD64_RBX: return (gpointer)ctx->rbx;
+	case AMD64_RBP: return (gpointer)ctx->rbp;
+	case AMD64_RSP: return (gpointer)ctx->rsp;
+	default:
+		if (reg < 8)
+			return _CTX_REG (ctx, rax, reg);
+		else if (reg >= 12)
+			return _CTX_REG (ctx, r12, reg - 12);
+		else
+			g_assert_not_reached ();
+	}
 }

@@ -1,3 +1,25 @@
+2008-03-05  Wade Berrier  <wberrier@novell.com>
+
+	* scripts/Makefile.am: fix typo so that 'scripts_defaults' scripts get
+	installed.
+	Fix sed command so that 'scripts_defaults' scripts work. 
+	Add some files to the cleanup list.
+
+2008-03-02  Miguel de Icaza  <miguel@novell.com>
+
+	* configure.in: No need to detect mcs1, as we are going to keep
+	mcs as the 1.0 compiler and gmcs as the 2.0 compiler.  Since
+	making mcs a 2.0 compiler caused too many problems.
+
+2008-02-29  Miguel de Icaza  <miguel@novell.com>
+
+	* configure.in: Detect if there is an mcs1 command installed as
+	the external c# compiler, and if this is the compiler, pick this
+	to bootstrap. 
+
+	You need to re-autogen.sh after the first installation of mono
+	with the new scripts.
+
 2008-02-28  Miguel de Icaza  <miguel@novell.com>
 
 	* scripts/Makefile.am: Implement new defaults for the Mono 2.0

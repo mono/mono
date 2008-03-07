@@ -4307,9 +4307,20 @@ mono_image_create_token (MonoDynamicImage *assembly, MonoObject *obj, gboolean c
 		g_error ("requested token for %s\n", klass->name);
 	}
 
-	mono_g_hash_table_insert (assembly->tokens, GUINT_TO_POINTER (token), obj);
+	mono_image_register_token (assembly, token, obj);
 
 	return token;
+}
+
+/*
+ * mono_image_register_token:
+ *
+ *   Register the TOKEN->OBJ mapping in the mapping table in ASSEMBLY.
+ */
+void
+mono_image_register_token (MonoDynamicImage *assembly, guint32 token, MonoObject *obj)
+{
+	mono_g_hash_table_insert (assembly->tokens, GUINT_TO_POINTER (token), obj);
 }
 
 typedef struct {
@@ -6352,7 +6363,9 @@ _mono_reflection_parse_type (char *name, char **endptr, gboolean is_recursed,
 					break;
 				if (*p == ',')
 					rank++;
-				else if (*p != '*') /* '*' means unknown lower bound */
+				else if (*p == '*') /* '*' means unknown lower bound */
+					info->modifiers = g_list_append (info->modifiers, GUINT_TO_POINTER (-2));
+				else
 					return 0;
 				++p;
 			}
@@ -6437,6 +6450,7 @@ mono_reflection_get_type_internal (MonoImage *rootimage, MonoImage* image, MonoT
 	MonoClass *klass;
 	GList *mod;
 	int modval;
+	gboolean bounded = FALSE;
 	
 	if (!image)
 		image = mono_defaults.corlib;
@@ -6506,8 +6520,10 @@ mono_reflection_get_type_internal (MonoImage *rootimage, MonoImage* image, MonoT
 			return &klass->this_arg;
 		} else if (modval == -1) {
 			klass = mono_ptr_class_get (&klass->byval_arg);
+		} else if (modval == -2) {
+			bounded = TRUE;
 		} else { /* array rank */
-			klass = mono_array_class_get (klass, modval);
+			klass = mono_bounded_array_class_get (klass, modval, bounded);
 		}
 		mono_class_init (klass);
 	}
@@ -9735,6 +9751,19 @@ mono_reflection_destroy_dynamic_method (MonoReflectionDynamicMethod *mb)
 	if (mb->mhandle)
 		mono_runtime_free_method (
 			mono_object_get_domain ((MonoObject*)mb), mb->mhandle);
+}
+
+/**
+ * 
+ * mono_reflection_is_valid_dynamic_token:
+ * 
+ * Returns TRUE if token is valid.
+ * 
+ */
+gboolean
+mono_reflection_is_valid_dynamic_token (MonoDynamicImage *image, guint32 token)
+{
+	return mono_g_hash_table_lookup (image->tokens, GUINT_TO_POINTER (token)) != NULL;
 }
 
 /**

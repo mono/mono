@@ -2704,7 +2704,7 @@ mono_arch_find_imt_method (gpointer *regs, guint8 *code)
 }
 
 MonoObject*
-mono_arch_find_this_argument (gpointer *regs, MonoMethod *method)
+mono_arch_find_this_argument (gpointer *regs, MonoMethod *method, MonoGenericSharingContext *gsctx)
 {
 	mono_sparc_flushw ();
 
@@ -4793,4 +4793,11 @@ MonoInst* mono_arch_get_domain_intrinsic (MonoCompile* cfg)
 MonoInst* mono_arch_get_thread_intrinsic (MonoCompile* cfg)
 {
 	return NULL;
+}
+
+gpointer
+mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
+{
+	/* FIXME: implement */
+	g_assert_not_reached ();
 }

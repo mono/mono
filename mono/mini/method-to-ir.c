@@ -4343,9 +4343,6 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 		return 0;
 #endif
 
-	if (cfg->cbb->out_of_line && !inline_allways)
-		return 0;
-
 	if (cfg->verbose_level > 2)
 		printf ("INLINE START %p %s -> %s\n", cmethod,  mono_method_full_name (cfg->method, TRUE), mono_method_full_name (cmethod, TRUE));
 
@@ -4602,7 +4599,7 @@ get_basic_blocks (MonoCompile *cfg, MonoMethodHeader* header, guint real_offset,
 			
 			/* Find the start of the bblock containing the throw */
 			bblock = NULL;
-			while ((bb_start > start) && !bblock) {
+			while ((bb_start >= start) && !bblock) {
 				bblock = cfg->cil_offset_to_bb [(bb_start) - start];
 				bb_start --;
 			}
@@ -8181,6 +8178,43 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			n = fsig->param_count;
 			CHECK_STACK (n);
 
+			/* 
+			 * Generate smaller code for the common newobj <exception> instruction in
+			 * argument checking code.
+			 */
+			if (bblock->out_of_line && cmethod->klass->image == mono_defaults.corlib && n <= 2 && 
+				((n < 1) || (!fsig->params [0]->byref && fsig->params [0]->type == MONO_TYPE_STRING)) && 
+				((n < 2) || (!fsig->params [1]->byref && fsig->params [1]->type == MONO_TYPE_STRING))) {
+				MonoInst *iargs [3];
+				
+				sp -= n;
+
+				EMIT_NEW_ICONST (cfg, iargs [0], cmethod->klass->type_token);
+				switch (n) {
+				case 0:
+					*sp ++ = mono_emit_jit_icall (cfg, mono_create_corlib_exception_0, iargs);
+					break;
+				case 1:
+					iargs [1] = sp [0];
+					*sp ++ = mono_emit_jit_icall (cfg, mono_create_corlib_exception_1, iargs);
+					break;
+				case 2:
+					iargs [1] = sp [0];
+					iargs [2] = sp [1];
+					*sp ++ = mono_emit_jit_icall (cfg, mono_create_corlib_exception_2, iargs);
+					break;
+				default:
+					g_assert_not_reached ();
+				}
+
+				ip += 5;
+				inline_costs += 5;
+				break;
+			}
+
+			if (bblock->out_of_line && cmethod->klass->image == mono_defaults.corlib && n ==0)
+				printf ("HIT!\n");
+
 			/* move the args to allow room for 'this' in the first position */
 			while (n--) {
 				--sp;
@@ -10787,6 +10821,8 @@ mono_handle_global_vregs (MonoCompile *cfg)
 	pos = 0;
 	for (i = 0; i < cfg->num_varinfo; ++i) {
 		MonoInst *var = cfg->varinfo [i];
+		if (pos < i && cfg->locals_start == i)
+			cfg->locals_start = pos;
 		if (!(var->flags & MONO_INST_IS_DEAD)) {
 			if (pos < i) {
 				cfg->varinfo [pos] = cfg->varinfo [i];
@@ -10809,6 +10845,8 @@ mono_handle_global_vregs (MonoCompile *cfg)
 		}
 	}
 	cfg->num_varinfo = pos;
+	if (cfg->locals_start > cfg->num_varinfo)
+		cfg->locals_start = cfg->num_varinfo;
 }
 
 static void
@@ -11304,7 +11342,7 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
  *   arguments, or stores killing loads etc. Also, should we fold loads into other
  *   instructions if the result of the load is used multiple times ?
  * - make the REM_IMM optimization in mini-x86.c arch-independent.
- * - LAST MERGE: 96975 (except 92841).
+ * - LAST MERGE: 97663 (except 92841).
  * - merge the extensible gctx changes.
  * - merge the mini-codegen.c changes.
  * - when returning vtypes in registers, generate IR and append it to the end of the
