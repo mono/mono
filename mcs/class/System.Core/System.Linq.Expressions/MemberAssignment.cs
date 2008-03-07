@@ -28,6 +28,7 @@
 
 using System;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Text;
 
 namespace System.Linq.Expressions {
@@ -46,7 +47,7 @@ namespace System.Linq.Expressions {
 			this.expression = expression;
 		}
 
-		internal override void Emit (EmitContext ec)
+		internal override void Emit (EmitContext ec, LocalBuilder local)
 		{
 			throw new NotImplementedException ();
 		}

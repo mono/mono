@@ -28,6 +28,7 @@
 
 using System;
 using System.Reflection;
+using System.Reflection.Emit;
 
 namespace System.Linq.Expressions {
 
@@ -55,6 +56,6 @@ namespace System.Linq.Expressions {
 			return ExpressionPrinter.ToString (this);
 		}
 
-		internal abstract void Emit (EmitContext ec);
+		internal abstract void Emit (EmitContext ec, LocalBuilder local);
 	}
 }

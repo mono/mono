@@ -29,6 +29,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Reflection;
+using System.Reflection.Emit;
 
 namespace System.Linq.Expressions {
 
@@ -46,7 +47,7 @@ namespace System.Linq.Expressions {
 			this.bindings = bindings;
 		}
 
-		internal override void Emit (EmitContext ec)
+		internal override void Emit (EmitContext ec, LocalBuilder local)
 		{
 			throw new NotImplementedException ();
 		}

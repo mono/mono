@@ -70,9 +70,8 @@ namespace System.Linq.Expressions {
 			var ig = ec.ig;
 			var type = this.Type;
 
-			bool is_value_type = this.Type.IsValueType;
 			LocalBuilder local = null;
-			if (is_value_type) {
+			if (type.IsValueType) {
 				local = ig.DeclareLocal (type);
 				ig.Emit (OpCodes.Ldloca, local);
 
@@ -83,14 +82,13 @@ namespace System.Linq.Expressions {
 				}
 			}
 
-			foreach (var arg in arguments)
-				arg.Emit (ec);
+			EmitCollection (ec, arguments);
 
-			if (is_value_type) {
+			if (type.IsValueType) {
 				ig.Emit (OpCodes.Call, constructor);
 				ig.Emit (OpCodes.Ldloc, local);
 			} else
-				ig.Emit (OpCodes.Newobj, constructor ?? GetDefaultConstructor (this.Type));
+				ig.Emit (OpCodes.Newobj, constructor ?? GetDefaultConstructor (type));
 		}
 
 		static ConstructorInfo GetDefaultConstructor (Type type)

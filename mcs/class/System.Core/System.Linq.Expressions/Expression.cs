@@ -1917,8 +1917,7 @@ namespace System.Linq.Expressions {
 			if (expression != null)
 				EmitLoad (ec, expression);
 
-			foreach (var argument in arguments)
-				argument.Emit (ec);
+			EmitCollection (ec, arguments);
 
 			EmitCall (ec, method);
 		}
@@ -1928,6 +1927,12 @@ namespace System.Linq.Expressions {
 			ec.ig.Emit (
 				method.IsVirtual ? OpCodes.Callvirt : OpCodes.Call,
 				method);
+		}
+
+		internal static void EmitCollection<T> (EmitContext ec, IEnumerable<T> collection) where T : Expression
+		{
+			foreach (var expression in collection)
+				expression.Emit (ec);
 		}
 	}
 }
