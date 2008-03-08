@@ -1,5 +1,9 @@
 2008-03-08  Jb Evain  <jbevain@novell.com>
 
+	* MemberAssignment.cs (Emit): implement.
+
+2008-03-08  Jb Evain  <jbevain@novell.com>
+
 	* ElementInit.cs (Emit): implement.
 
 2008-03-06  Jb Evain  <jbevain@novell.com>

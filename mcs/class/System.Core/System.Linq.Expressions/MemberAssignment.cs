@@ -49,7 +49,36 @@ namespace System.Linq.Expressions {
 
 		internal override void Emit (EmitContext ec, LocalBuilder local)
 		{
-			throw new NotImplementedException ();
+			var member = this.Member;
+
+			switch (member.MemberType) {
+			case MemberTypes.Field:
+				EmitFieldAssignment (ec, (FieldInfo) member, local);
+				return;
+			case MemberTypes.Property:
+				EmitPropertyAssignment (ec, (PropertyInfo) member, local);
+				return;
+			default:
+				throw new NotSupportedException (member.MemberType.ToString ());
+			}
+		}
+
+		void EmitFieldAssignment (EmitContext ec, FieldInfo field, LocalBuilder local)
+		{
+			Expression.EmitLoad (ec, local);
+			expression.Emit (ec);
+			ec.ig.Emit (OpCodes.Stfld, field);
+		}
+
+		void EmitPropertyAssignment (EmitContext ec, PropertyInfo property, LocalBuilder local)
+		{
+			var setter = property.GetSetMethod (true);
+			if (setter == null)
+				throw new InvalidOperationException ();
+
+			Expression.EmitLoad (ec, local);
+			expression.Emit (ec);
+			Expression.EmitCall (ec, setter);
 		}
 	}
 }
