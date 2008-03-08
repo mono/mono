@@ -123,12 +123,12 @@ namespace Mono.Cecil.Cil {
 
 		public static bool operator == (OpCode one, OpCode other)
 		{
-			return one.Equals (other);
+			return one.m_op1 == other.m_op1 && one.m_op2 == other.m_op2;
 		}
 
 		public static bool operator != (OpCode one, OpCode other)
 		{
-			return !one.Equals (other);
+			return one.m_op1 != other.m_op1 || one.m_op2 != other.m_op2;
 		}
 
 		public override string ToString ()

@@ -28,11 +28,9 @@
 
 namespace Mono.Cecil.Binary {
 
-	using Mono.Cecil.Metadata;
-
 	public struct DataDirectory {
 
-		public static readonly DataDirectory Zero = new DataDirectory(RVA.Zero, 0);
+		public static readonly DataDirectory Zero = new DataDirectory (RVA.Zero, 0);
 
 		RVA m_virtualAddress;
 		uint m_size;
@@ -61,27 +59,26 @@ namespace Mono.Cecil.Binary {
 		public override bool Equals (object other)
 		{
 			if (other is DataDirectory) {
-				DataDirectory odd = (DataDirectory)other;
-				return (this.m_virtualAddress == odd.m_virtualAddress &&
-				this.m_size == odd.m_size);
+				DataDirectory odd = (DataDirectory) other;
+				return this.m_virtualAddress == odd.m_virtualAddress && this.m_size == odd.m_size;
 			}
+
 			return false;
 		}
 
 		public override string ToString ()
 		{
-			return string.Format ("{0} [{1}]",
-								  m_virtualAddress.ToString (), m_size.ToString ("X"));
+			return string.Format ("{0} [{1}]", m_virtualAddress, m_size.ToString ("X"));
 		}
 
 		public static bool operator == (DataDirectory one, DataDirectory other)
 		{
-			return one.Equals (other);
+			return one.m_virtualAddress == other.m_virtualAddress && one.m_size == other.m_size;
 		}
 
 		public static bool operator != (DataDirectory one, DataDirectory other)
 		{
-			return !one.Equals (other);
+			return one.m_virtualAddress != other.m_virtualAddress || one.m_size != other.m_size;
 		}
 	}
 }

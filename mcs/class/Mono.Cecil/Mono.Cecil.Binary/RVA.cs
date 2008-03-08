@@ -64,12 +64,12 @@ namespace Mono.Cecil.Binary {
 
 		public static bool operator == (RVA one, RVA other)
 		{
-			return one.Equals (other);
+			return one.m_rva == other.m_rva;
 		}
 
 		public static bool operator != (RVA one, RVA other)
 		{
-			return !one.Equals (other);
+			return one.m_rva != other.m_rva;
 		}
 
 		public static bool operator < (RVA one, RVA other)
@@ -104,7 +104,7 @@ namespace Mono.Cecil.Binary {
 
 		public static implicit operator RVA (uint val)
 		{
-			return val == 0 ? RVA.Zero : new RVA (val);
+			return val == 0 ? Zero : new RVA (val);
 		}
 
 		public static implicit operator uint (RVA rva)

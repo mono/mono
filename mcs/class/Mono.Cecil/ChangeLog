@@ -1,3 +1,11 @@
+2008-03-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Mono.Cecil.Cil/OpCode.cs
+	* Mono.Cecil.Binary/RVA.cs
+	* Mono.Cecil.Binary/DataDirectory.cs:
+		Avoid boxing/unboxing when == or != operators are used.
+		Results in significant memory savings for Gendarme.
+
 2008-03-08  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/ReflectionReader.cs:
