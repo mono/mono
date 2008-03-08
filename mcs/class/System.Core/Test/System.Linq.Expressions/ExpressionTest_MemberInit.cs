@@ -86,5 +86,25 @@ namespace MonoTests.System.Linq.Expressions {
 			Assert.AreEqual (ExpressionType.MemberInit, m.NodeType);
 			Assert.AreEqual ("new Foo() {Bar = \"bar\", Baz = \"baz\"}", m.ToString ());
 		}
+
+		public class Thing {
+			public string Foo;
+			public string Bar { get; set; }
+		}
+
+		[Test]
+		public void CompiledInit ()
+		{
+			var i = Expression.Lambda<Func<Thing>> (
+				Expression.MemberInit (
+					Expression.New (typeof (Thing)),
+					Expression.Bind (typeof (Thing).GetField ("Foo"), "foo".ToConstant ()),
+					Expression.Bind (typeof (Thing).GetProperty ("Bar"), "bar".ToConstant ()))).Compile ();
+
+			var thing = i ();
+			Assert.IsNotNull (thing);
+			Assert.AreEqual ("foo", thing.Foo);
+			Assert.AreEqual ("bar", thing.Bar);
+		}
 	}
 }
