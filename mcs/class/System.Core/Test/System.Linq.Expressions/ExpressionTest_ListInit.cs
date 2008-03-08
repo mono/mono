@@ -124,5 +124,24 @@ namespace MonoTests.System.Linq.Expressions {
 			Assert.AreEqual (ExpressionType.ListInit, li.NodeType);
 			Assert.AreEqual ("new List`1() {Void Add(System.String)(\"foo\"), Void Add(System.String)(\"bar\")}", li.ToString ());
 		}
+
+		[Test]
+		public void CompileListOfStringsInit ()
+		{
+			var add = typeof (List<string>).GetMethod ("Add");
+
+			var c = Expression.Lambda<Func<List<string>>> (
+				Expression.ListInit (
+					Expression.New (typeof (List<string>)),
+					Expression.ElementInit (add, "foo".ToConstant ()),
+					Expression.ElementInit (add, "bar".ToConstant ()))).Compile	();
+
+			var list = c ();
+
+			Assert.IsNotNull (list);
+			Assert.AreEqual (2, list.Count);
+			Assert.AreEqual ("foo", list [0]);
+			Assert.AreEqual ("bar", list [1]);
+		}
 	}
 }
