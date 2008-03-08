@@ -57,5 +57,39 @@ namespace System.Linq.Expressions {
 		}
 
 		internal abstract void Emit (EmitContext ec, LocalBuilder local);
+
+		internal LocalBuilder EmitLoadMember (EmitContext ec, LocalBuilder local)
+		{
+			Expression.EmitLoad (ec, local);
+
+			switch (member.MemberType) {
+			case MemberTypes.Property:
+				return EmitLoadProperty (ec, (PropertyInfo) member);
+			case MemberTypes.Field:
+				return EmitLoadField (ec, (FieldInfo) member);
+			default:
+				throw new NotSupportedException (member.MemberType.ToString ());
+			}
+		}
+
+		LocalBuilder EmitLoadProperty (EmitContext ec, PropertyInfo property)
+		{
+			var getter = property.GetGetMethod (true);
+			if (getter == null)
+				throw new NotSupportedException ();
+
+			var store = ec.ig.DeclareLocal (property.PropertyType);
+			Expression.EmitCall (ec, getter);
+			ec.ig.Emit (OpCodes.Stloc, store);
+			return store;
+		}
+
+		LocalBuilder EmitLoadField (EmitContext ec, FieldInfo field)
+		{
+			var store = ec.ig.DeclareLocal (field.FieldType);
+			ec.ig.Emit (OpCodes.Ldfld, field);
+			ec.ig.Emit (OpCodes.Stloc, store);
+			return store;
+		}
 	}
 }

@@ -1,5 +1,10 @@
 2008-03-08  Jb Evain  <jbevain@novell.com>
 
+	* MemberListBinding.cs (Emit): implement.
+	* MemberBinding.cs (EmitLoadMember): add helper.
+
+2008-03-08  Jb Evain  <jbevain@novell.com>
+
 	* MemberAssignment.cs (Emit): implement.
 
 2008-03-08  Jb Evain  <jbevain@novell.com>
