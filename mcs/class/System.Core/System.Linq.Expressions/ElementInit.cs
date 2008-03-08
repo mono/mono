@@ -59,7 +59,9 @@ namespace System.Linq.Expressions {
 
 		internal void Emit (EmitContext ec, LocalBuilder local)
 		{
-			throw new NotImplementedException ();
+			Expression.EmitLoad (ec, local);
+			Expression.EmitCollection (ec, arguments);
+			Expression.EmitCall (ec, add_method);
 		}
 	}
 }
