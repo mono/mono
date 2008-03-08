@@ -190,14 +190,18 @@ security system than CAS, see http://www.mono-project.com/Moonlight
 for more details and links to the descriptions of this new system. 
 .TP
 .I validil
-Enables the new verifier and perform basic verification for code validity.
-Unsafe code and PInvoke are allowed. This mode gives a better safety guarantee but
-it is still possible that managed code crash mono.
+Enables the new verifier and performs basic verification for code
+validity.  In this mode, unsafe code and P/Invoke are allowed. This
+mode gives provides a better safety guarantee but it is still possible
+for managed code to crash Mono. 
 .TP
 .I verifiable
-Enables the new verifier and perform full verification and only allows verifiable code to be executed.
-Unsafe code is not allowed but PInvoke can be used. This mode should not allow managed code to crash mono.
-The verification is not as strict as ECMA 335 standard in order to stay compatible with the MS runtime.
+Enables the new verifier and performs full verification of the code
+being executed.  It only allows verifiable code to be executed.
+Unsafe code is not allowed but P/Invoke is.  This mode should
+not allow managed code to crash mono.  The verification is not as
+strict as ECMA 335 standard in order to stay compatible with the MS
+runtime.
 .ne
 .RE
 .TP
