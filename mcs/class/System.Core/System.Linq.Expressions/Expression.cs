@@ -1917,13 +1917,19 @@ namespace System.Linq.Expressions {
 			ec.ig.Emit (OpCodes.Ldloc, local);
 		}
 
+		internal static void EmitCall (EmitContext ec, LocalBuilder local, IEnumerable<Expression> arguments, MethodInfo method)
+		{
+			EmitLoad (ec, local);
+			EmitCollection (ec, arguments);
+			EmitCall (ec, method);
+		}
+
 		internal static void EmitCall (EmitContext ec, Expression expression, IEnumerable<Expression> arguments, MethodInfo method)
 		{
 			if (expression != null)
 				EmitLoad (ec, expression);
 
 			EmitCollection (ec, arguments);
-
 			EmitCall (ec, method);
 		}
 
