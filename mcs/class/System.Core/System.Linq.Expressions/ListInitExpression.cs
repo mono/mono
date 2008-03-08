@@ -56,10 +56,7 @@ namespace System.Linq.Expressions {
 		internal override void Emit (EmitContext ec)
 		{
 			var local = EmitStored (ec, new_expression);
-
-			foreach (var initializer in initializers)
-				initializer.Emit (ec, local);
-
+			EmitCollection (ec, initializers, local);
 			EmitLoad (ec, local);
 		}
 	}

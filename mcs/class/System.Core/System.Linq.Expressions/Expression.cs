@@ -1939,5 +1939,17 @@ namespace System.Linq.Expressions {
 			foreach (var expression in collection)
 				expression.Emit (ec);
 		}
+
+		internal static void EmitCollection (EmitContext ec, IEnumerable<ElementInit> initializers, LocalBuilder local)
+		{
+			foreach (var initializer in initializers)
+				initializer.Emit (ec, local);
+		}
+
+		internal static void EmitCollection (EmitContext ec, IEnumerable<MemberBinding> bindings, LocalBuilder local)
+		{
+			foreach (var binding in bindings)
+				binding.Emit (ec, local);
+		}
 	}
 }
