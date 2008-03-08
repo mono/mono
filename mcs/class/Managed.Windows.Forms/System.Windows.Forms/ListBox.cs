@@ -951,6 +951,7 @@ namespace System.Windows.Forms
 				UpdateListBoxBounds ();
 
 			LayoutListBox ();
+			EnsureVisible (focused_item);
 		}
 
 		protected override void OnHandleDestroyed (EventArgs e)
@@ -2585,6 +2586,9 @@ namespace System.Windows.Forms
 #endif
 			void Clear ()
 			{
+				if (selection.Count == 0)
+					return;
+
 				foreach (int index in selection)
 					owner.InvalidateItem (index);
 
