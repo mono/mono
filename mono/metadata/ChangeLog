@@ -1,3 +1,7 @@
+2008-03-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_setup_mono_type): Improve the test for corlib.
+
 2008-03-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_setup_mono_type): Handle types whose name clashes with
