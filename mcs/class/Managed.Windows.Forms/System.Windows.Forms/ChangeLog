@@ -1,5 +1,11 @@
 2008-03-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ControlBindingsCollection.cs: Implement last 2.0
+	DefaultDataSourceUpdateMode property. Also fix a wrong instruction
+	in the new 2.0 Add methods.
+
+2008-03-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListBox.cs: When calling SelectedIndexCollection.Clear,
 	return if no items are previously selected - this is done to avoid 
 	firing OnSelectedIndexChanged without need to do so. Also,

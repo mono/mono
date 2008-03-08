@@ -38,6 +38,7 @@ namespace System.Windows.Forms {
 		private Control control;
 #if NET_2_0
 		private IBindableComponent bindable_component;
+		private DataSourceUpdateMode default_datasource_update_mode;
 #endif
 		#endregion	// Fields
 
@@ -46,6 +47,7 @@ namespace System.Windows.Forms {
 			this.control = control;
 #if NET_2_0
 			bindable_component = control as IBindableComponent;
+			default_datasource_update_mode = DataSourceUpdateMode.OnValidation;
 #endif
 		}
 
@@ -54,6 +56,7 @@ namespace System.Windows.Forms {
 		{
 			bindable_component = control;
 			control = control as Control;
+			default_datasource_update_mode = DataSourceUpdateMode.OnValidation;
 		}
 #endif
 		#endregion	// Constructors
@@ -82,6 +85,15 @@ namespace System.Windows.Forms {
 				return bindable_component;
 			}
 		}
+
+		public DataSourceUpdateMode DefaultDataSourceUpdateMode {
+			get {
+				return default_datasource_update_mode;
+			}
+			set {
+				default_datasource_update_mode = value;
+			}
+		}
 #endif
 		#endregion	// Public Instance Properties
 
@@ -98,6 +110,9 @@ namespace System.Windows.Forms {
 				throw new ArgumentNullException ("dataSource");
 
 			Binding res = new Binding (propertyName, dataSource, dataMember);
+#if NET_2_0
+			res.DataSourceUpdateMode = default_datasource_update_mode;
+#endif
 			Add (res);
 			return res;
 		}
@@ -105,7 +120,7 @@ namespace System.Windows.Forms {
 #if NET_2_0
 		public Binding Add (string propertyName, object dataSource, string dataMember, bool formattingEnabled)
 		{
-			return Add (propertyName, dataSource, dataMember, formattingEnabled, DataSourceUpdateMode.OnValidation, null, String.Empty, null);
+			return Add (propertyName, dataSource, dataMember, formattingEnabled, default_datasource_update_mode, null, String.Empty, null);
 		}
 
 		public Binding Add (string propertyName, object dataSource, string dataMember, bool formattingEnabled, DataSourceUpdateMode updateMode)
@@ -131,7 +146,7 @@ namespace System.Windows.Forms {
 			if (dataSource == null)
 				throw new ArgumentNullException ("dataSource");
 
-			Binding res = Add (propertyName, dataSource, dataMember);
+			Binding res = new Binding (propertyName, dataSource, dataMember);
 			res.FormattingEnabled = formattingEnabled;
 			res.DataSourceUpdateMode = updateMode;
 			res.NullValue = nullValue;
