@@ -1,3 +1,11 @@
+2008-03-08  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/ReflectionReader.cs:
+		Protect from malformed RIDs.
+	* Mono.Cecil/AggressiveReflectionReader.cs:
+		Create the m_events and m_properties tables
+		even if they contains 0 elements.
+
 2008-02-26  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil.Binary/ImageReader.cs:

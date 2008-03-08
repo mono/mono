@@ -123,16 +123,25 @@ namespace Mono.Cecil {
 
 		public TypeDefinition GetTypeDefAt (uint rid)
 		{
+			if (rid > m_typeDefs.Length)
+				return null;
+
 			return m_typeDefs [rid - 1];
 		}
 
 		public TypeReference GetTypeRefAt (uint rid)
 		{
+			if (rid > m_typeRefs.Length)
+				return null;
+
 			return m_typeRefs [rid - 1];
 		}
 
 		public TypeReference GetTypeSpecAt (uint rid, GenericContext context)
 		{
+			if (rid > m_typeSpecs.Length)
+				return null;
+
 			int index = (int) rid - 1;
 			TypeReference tspec = m_typeSpecs [index];
 			if (tspec != null)
@@ -151,11 +160,17 @@ namespace Mono.Cecil {
 
 		public FieldDefinition GetFieldDefAt (uint rid)
 		{
+			if (rid > m_fields.Length)
+				return null;
+
 			return m_fields [rid - 1];
 		}
 
 		public MethodDefinition GetMethodDefAt (uint rid)
 		{
+			if (rid > m_meths.Length)
+				return null;
+
 			return m_meths [rid - 1];
 		}
 
@@ -172,8 +187,11 @@ namespace Mono.Cecil {
 
 		public MemberReference GetMemberRefAt (uint rid, GenericContext context)
 		{
+			if (rid > m_memberRefs.Length)
+				return null;
+
 			int index = (int) rid - 1;
-			MemberReference member = m_memberRefs [rid - 1];
+			MemberReference member = m_memberRefs [index];
 			if (member != null)
 				return member;
 
@@ -276,26 +294,41 @@ namespace Mono.Cecil {
 
 		public PropertyDefinition GetPropertyDefAt (uint rid)
 		{
+			if (rid > m_properties.Length)
+				return null;
+
 			return m_properties [rid - 1];
 		}
 
 		public EventDefinition GetEventDefAt (uint rid)
 		{
+			if (rid > m_events.Length)
+				return null;
+
 			return m_events [rid - 1];
 		}
 
 		public ParameterDefinition GetParamDefAt (uint rid)
 		{
+			if (rid > m_parameters.Length)
+				return null;
+
 			return m_parameters [rid - 1];
 		}
 
 		public GenericParameter GetGenericParameterAt (uint rid)
 		{
+			if (rid > m_genericParameters.Length)
+				return null;
+
 			return m_genericParameters [rid - 1];
 		}
 
 		public GenericInstanceMethod GetMethodSpecAt (uint rid, GenericContext context)
 		{
+			if (rid > m_methodSpecs.Length)
+				return null;
+
 			int index = (int) rid - 1;
 			GenericInstanceMethod gim = m_methodSpecs [index];
 			if (gim != null)

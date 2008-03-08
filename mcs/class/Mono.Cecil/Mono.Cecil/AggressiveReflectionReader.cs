@@ -124,8 +124,10 @@ namespace Mono.Cecil {
 
 		void ReadProperties ()
 		{
-			if (!m_tHeap.HasTable (PropertyTable.RId))
+			if (!m_tHeap.HasTable (PropertyTable.RId)) {
+				m_properties = new PropertyDefinition [0];
 				return;
+			}
 
 			PropertyTable propsTable = m_tableReader.GetPropertyTable ();
 			PropertyMapTable pmapTable = m_tableReader.GetPropertyMapTable ();
@@ -169,8 +171,10 @@ namespace Mono.Cecil {
 
 		void ReadEvents ()
 		{
-			if (!m_tHeap.HasTable (EventTable.RId))
+			if (!m_tHeap.HasTable (EventTable.RId)) {
+				m_events = new EventDefinition [0];
 				return;
+			}
 
 			EventTable evtTable = m_tableReader.GetEventTable ();
 			EventMapTable emapTable = m_tableReader.GetEventMapTable ();
