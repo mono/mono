@@ -1,5 +1,11 @@
 2008-03-08  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* Mono.Cecil.Cil/CodeReader.cs:
+		Use one and only Hashtable for caching instructions offsets.
+		Save tons of precious memory.
+
+2008-03-08  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* Mono.Cecil.Cil/OpCode.cs
 	* Mono.Cecil.Binary/RVA.cs
 	* Mono.Cecil.Binary/DataDirectory.cs:

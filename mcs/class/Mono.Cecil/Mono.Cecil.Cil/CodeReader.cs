@@ -40,11 +40,13 @@ namespace Mono.Cecil.Cil {
 
 		ReflectionReader m_reflectReader;
 		MetadataRoot m_root;
+		IDictionary m_instructions;
 
 		public CodeReader (ReflectionReader reflectReader)
 		{
 			m_reflectReader = reflectReader;
 			m_root = m_reflectReader.MetadataRoot;
+			m_instructions = new Hashtable ();
 		}
 
 		public override void VisitMethodBody (MethodBody body)
@@ -54,13 +56,12 @@ namespace Mono.Cecil.Cil {
 			BinaryReader br = m_reflectReader.Module.ImageReader.MetadataReader.GetDataReader (meth.RVA);
 
 			// lets read the method
-			IDictionary instrs;
 			int flags = br.ReadByte ();
 			switch (flags & 0x3) {
 			case (int) MethodHeader.TinyFormat :
 				methBody.CodeSize = flags >> 2;
 				methBody.MaxStack = 8;
-				ReadCilBody (methBody, br, out instrs);
+				ReadCilBody (methBody, br);
 				break;
 			case (int) MethodHeader.FatFormat :
 				br.BaseStream.Position--;
@@ -71,9 +72,9 @@ namespace Mono.Cecil.Cil {
 				methBody.LocalVarToken = br.ReadInt32 ();
 				body.InitLocals = (fatflags & (int) MethodHeader.InitLocals) != 0;
 				VisitVariableDefinitionCollection (methBody.Variables);
-				ReadCilBody (methBody, br, out instrs);
+				ReadCilBody (methBody, br);
 				if ((fatflags & (int) MethodHeader.MoreSects) != 0)
-					ReadSection (methBody, br, instrs);
+					ReadSection (methBody, br);
 				break;
 			}
 
@@ -102,12 +103,12 @@ namespace Mono.Cecil.Cil {
 			return body.Variables [index];
 		}
 
-		void ReadCilBody (MethodBody body, BinaryReader br, out IDictionary instructions)
+		void ReadCilBody (MethodBody body, BinaryReader br)
 		{
 			long start = br.BaseStream.Position;
 			Instruction last = null;
+			m_instructions.Clear();
 			InstructionCollection code = body.Instructions;
-			instructions = new Hashtable ();
 			GenericContext context = new GenericContext (body.Method);
 
 			while (br.BaseStream.Position < start + body.CodeSize) {
@@ -210,7 +211,7 @@ namespace Mono.Cecil.Cil {
 					break;
 				}
 
-				instructions.Add (instr.Offset, instr);
+				m_instructions.Add (instr.Offset, instr);
 
 				if (last != null) {
 					last.Next = instr;
@@ -227,29 +228,29 @@ namespace Mono.Cecil.Cil {
 				switch (i.OpCode.OperandType) {
 				case OperandType.ShortInlineBrTarget:
 				case OperandType.InlineBrTarget:
-					i.Operand = GetInstruction (body, instructions, (int) i.Operand);
+					i.Operand = GetInstruction (body, (int) i.Operand);
 					break;
 				case OperandType.InlineSwitch:
 					int [] lbls = (int []) i.Operand;
 					Instruction [] instrs = new Instruction [lbls.Length];
 					for (int j = 0; j < lbls.Length; j++)
-						instrs [j] = GetInstruction (body, instructions, lbls [j]);
+						instrs [j] = GetInstruction (body, lbls [j]);
 					i.Operand = instrs;
 					break;
 				}
 			}
 		}
 
-		static Instruction GetInstruction (MethodBody body, IDictionary instructions, int offset)
+		Instruction GetInstruction (MethodBody body, int offset)
 		{
-			Instruction instruction = instructions [offset] as Instruction;
+			Instruction instruction = m_instructions [offset] as Instruction;
 			if (instruction != null)
 				return instruction;
 
 			return body.Instructions.Outside;
 		}
 
-		void ReadSection (MethodBody body, BinaryReader br, IDictionary instructions)
+		void ReadSection (MethodBody body, BinaryReader br)
 		{
 			br.BaseStream.Position += 3;
 			br.BaseStream.Position &= ~3;
@@ -262,11 +263,11 @@ namespace Mono.Cecil.Cil {
 				for (int i = 0; i < length; i++) {
 					ExceptionHandler eh = new ExceptionHandler (
 						(ExceptionHandlerType) (br.ReadInt16 () & 0x7));
-					eh.TryStart = GetInstruction (body, instructions, Convert.ToInt32 (br.ReadInt16 ()));
-					eh.TryEnd = GetInstruction (body, instructions, eh.TryStart.Offset + Convert.ToInt32 (br.ReadByte ()));
-					eh.HandlerStart = GetInstruction (body, instructions, Convert.ToInt32 (br.ReadInt16 ()));
-					eh.HandlerEnd = GetInstruction (body, instructions, eh.HandlerStart.Offset + Convert.ToInt32 (br.ReadByte ()));
-					ReadExceptionHandlerEnd (eh, br, body, instructions);
+					eh.TryStart = GetInstruction (body, Convert.ToInt32 (br.ReadInt16 ()));
+					eh.TryEnd = GetInstruction (body, eh.TryStart.Offset + Convert.ToInt32 (br.ReadByte ()));
+					eh.HandlerStart = GetInstruction (body, Convert.ToInt32 (br.ReadInt16 ()));
+					eh.HandlerEnd = GetInstruction (body, eh.HandlerStart.Offset + Convert.ToInt32 (br.ReadByte ()));
+					ReadExceptionHandlerEnd (eh, br, body);
 					body.ExceptionHandlers.Add (eh);
 				}
 			} else {
@@ -277,20 +278,20 @@ namespace Mono.Cecil.Cil {
 				for (int i = 0; i < length; i++) {
 					ExceptionHandler eh = new ExceptionHandler (
 						(ExceptionHandlerType) (br.ReadInt32 () & 0x7));
-					eh.TryStart = GetInstruction (body, instructions, br.ReadInt32 ());
-					eh.TryEnd = GetInstruction (body, instructions, eh.TryStart.Offset + br.ReadInt32 ());
-					eh.HandlerStart = GetInstruction (body, instructions, br.ReadInt32 ());
-					eh.HandlerEnd = GetInstruction (body, instructions, eh.HandlerStart.Offset + br.ReadInt32 ());
-					ReadExceptionHandlerEnd(eh, br, body, instructions);
+					eh.TryStart = GetInstruction (body, br.ReadInt32 ());
+					eh.TryEnd = GetInstruction (body, eh.TryStart.Offset + br.ReadInt32 ());
+					eh.HandlerStart = GetInstruction (body, br.ReadInt32 ());
+					eh.HandlerEnd = GetInstruction (body, eh.HandlerStart.Offset + br.ReadInt32 ());
+					ReadExceptionHandlerEnd (eh, br, body);
 					body.ExceptionHandlers.Add (eh);
 				}
 			}
 
 			if ((flags & (byte) MethodDataSection.MoreSects) != 0)
-				ReadSection (body, br, instructions);
+				ReadSection (body, br);
 		}
 
-		void ReadExceptionHandlerEnd (ExceptionHandler eh, BinaryReader br, MethodBody body, IDictionary instructions)
+		void ReadExceptionHandlerEnd (ExceptionHandler eh, BinaryReader br, MethodBody body)
 		{
 			switch (eh.Type) {
 			case ExceptionHandlerType.Catch :
@@ -298,8 +299,8 @@ namespace Mono.Cecil.Cil {
 				eh.CatchType = m_reflectReader.GetTypeDefOrRef (token, new GenericContext (body.Method));
 				break;
 			case ExceptionHandlerType.Filter :
-				eh.FilterStart = GetInstruction (body, instructions, br.ReadInt32 ());
-				eh.FilterEnd = GetInstruction (body, instructions, eh.HandlerStart.Previous.Offset);
+				eh.FilterStart = GetInstruction (body, br.ReadInt32 ());
+				eh.FilterEnd = GetInstruction (body, eh.HandlerStart.Previous.Offset);
 				break;
 			default :
 				br.ReadInt32 ();
