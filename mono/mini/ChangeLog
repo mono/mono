@@ -1,3 +1,9 @@
+2008-03-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* local-propagation.c (mono_local_cprop2): Optimize the sext+storei1/storei2
+	instruction combination.
+	(mono_local_deadce): Ditto.
+
 2008-03-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* cpu-amd64.md: Add clob:1 to some float opcodes.
