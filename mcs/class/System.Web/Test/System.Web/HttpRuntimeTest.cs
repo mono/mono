@@ -1,0 +1,66 @@
+//
+// System.Web.HttpRuntimeTest.cs - Unit tests for System.Web.HttpRuntime
+//
+// Author:
+//	Dean Brettle <dean@brettle.com>
+//
+// Copyright (C) 2007 Dean Brettle
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+using System;
+using System.Web;
+using NUnit.Framework;
+using MonoTests.SystemWeb.Framework;
+using System.Web.UI;
+using System.Threading;
+
+namespace MonoTests.System.Web
+{
+	[TestFixture]
+	public class HttpRuntimeTest
+	{
+
+		[Test]
+		[Category ("NunitWeb")]
+		[Ignore ("Pending fix for bug 351878")]
+		public void UnloadAppDomain () 
+		{
+				WebTest t = new WebTest (PageInvoker.CreateOnLoad (UnloadAppDomain_OnLoad));
+				t.Run ();
+		}
+		
+		public static void UnloadAppDomain_OnLoad (Page p) 
+		{
+			HttpRuntime.UnloadAppDomain();
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		[Ignore ("Pending fix for bug 351878")]
+		[Explicit]
+		public void UnloadAppDomain100Times () 
+		{
+			for (int i = 0; i < 100; i++)
+				UnloadAppDomain();
+		}
+
+	}
+}

@@ -36,6 +36,7 @@ using System.Globalization;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Web.UI.WebControls.Adapters;
 using System.Text;
 using System.Collections;
 using System.Data;
@@ -163,6 +164,13 @@ namespace MonoTests.System.Web.UI.WebControls
 			public DataSourceSelectArguments GetSelectArguments () {
 				return SelectArguments;
 			}
+			
+			internal DataBoundControlAdapter dataBoundControlAdapter;
+			protected override global::System.Web.UI.Adapters.ControlAdapter ResolveAdapter ()
+			{
+				return dataBoundControlAdapter;
+			}
+
 		}
 
 		[TestFixtureTearDown]
@@ -342,6 +350,25 @@ namespace MonoTests.System.Web.UI.WebControls
 			p.Controls.Add (c);
 			
 			c.DoEnsureDataBound ();
+		}
+
+		class MyDataBoundControlAdapter : DataBoundControlAdapter
+		{
+			internal bool perform_data_binding_called;
+			protected override void PerformDataBinding (IEnumerable data)
+			{
+				perform_data_binding_called = true;
+			}
+		}
+		
+		[Test]
+		public void PerformDataBinding_UsesAdapter ()
+		{
+			MyDataBoundControl c = new MyDataBoundControl ();
+			MyDataBoundControlAdapter a = new MyDataBoundControlAdapter();;
+			c.dataBoundControlAdapter = a;
+			c.DataBind ();
+			Assert.IsTrue (a.perform_data_binding_called, "PerformDataBinding_UsesAdapter");
 		}
 
 	}

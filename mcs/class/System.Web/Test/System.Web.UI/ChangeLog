@@ -1,3 +1,11 @@
+2008-03-09  Dean Brettle <dean@brettle.com> 
+
+	* PageTest.cs: add tests for using a PageAdapter.
+	
+	* ControlTest.cs: moved commented out ResolveAdapter_1 test to 
+	../System.Web/AppBrowsersTest.cs.  Fixed typo in test name.  
+	Added Customcontroladapter.Adapter property for use by AppBrowsersTest.
+
 2007-12-31  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* PageTest.cs: added tests for Response.End/Redirect

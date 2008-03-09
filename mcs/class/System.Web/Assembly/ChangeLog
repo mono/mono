@@ -1,3 +1,8 @@
+2008-01-07  Dean Brettle <dean@brettle.com> 
+
+	* AssemblyInfo.cs: made InternalsVisibleTo System.Web.test_net_2_0.dll
+	to support ControlAdapterTest.ConfigCapabilitiesNotCalled().
+
 2007-11-22  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AssemblyInfo.cs: InternalsVisibleTo is 2.0 only. Fixes 1.0 profile

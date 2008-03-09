@@ -1,3 +1,11 @@
+2008-03-09  Dean Brettle <dean@brettle.com> 
+
+	* HttpCapabilitiesBase.cs: changed to use nBrowser for *.browser 
+	support.  Also added internal GetConfigCapabilities_called
+	flag used by ControlAdapterTest.ConfigCapabilitiesNotCalled() to 
+	test that GetConfigCapabilities() is not called during normal page
+	processing when there are no files in App_Browsers/.
+
 2008-02-28  Marek Habersack  <mhabersack@novell.com>
 
 	* HandlerFactoryConfiguration.cs: ignore case when matching

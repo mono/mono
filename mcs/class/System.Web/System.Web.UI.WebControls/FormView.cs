@@ -865,7 +865,7 @@ namespace System.Web.UI.WebControls
 				if (RequiresDataBinding) {
 					OnDataBinding (EventArgs.Empty);
 					RequiresDataBinding = false;
-					PerformDataBinding (null);
+					InternalPerformDataBinding (null);
 					MarkAsDataBound ();
 					OnDataBound (EventArgs.Empty);
 				}

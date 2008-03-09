@@ -37,7 +37,11 @@ namespace System.Web.UI.WebControls.Adapters
 {
 	public class WebControlAdapter : ControlAdapter
 	{
-		public WebControlAdapter()
+		public WebControlAdapter ()
+		{
+		}
+		
+		internal WebControlAdapter (WebControl wc) : base (wc)
 		{
 		}
 
@@ -50,34 +54,32 @@ namespace System.Web.UI.WebControls.Adapters
 
 		protected virtual void RenderBeginTag (HtmlTextWriter writer)
 		{
-			control.RenderBeginTag (writer);
+			Control.RenderBeginTag (writer);
 		}
 
 		protected virtual void RenderContents(HtmlTextWriter writer)
 		{
-			control.Render (writer);
+			Control.RenderContents (writer);
 		}
 
 		protected virtual void RenderEndTag(HtmlTextWriter writer)
 		{
-			control.RenderEndTag (writer);
+			Control.RenderEndTag (writer);
 		}
 
 		protected new WebControl Control
 		{
 			get {
-				return control;
+				return (WebControl)control;
 			}
 		}
 
 		protected bool IsEnabled
 		{
 			get {
-				return control.IsEnabled;
+				return Control.IsEnabled;
 			}
 		}
-
-		WebControl control;
 	}
 }
 

@@ -37,6 +37,7 @@ using System.Text;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Web.UI.WebControls.Adapters;
 using System.IO;
 using System.Drawing;
 using System.Threading;
@@ -95,6 +96,12 @@ namespace MonoTests.System.Web.UI.WebControls
 			{
 				ValidateDataSource (dataSource);
 			}
+
+			internal HierarchicalDataBoundControlAdapter dataBoundControlAdapter;
+			protected override global::System.Web.UI.Adapters.ControlAdapter ResolveAdapter ()
+			{
+				return dataBoundControlAdapter;
+			}
 		}
 
 		[Test]
@@ -112,6 +119,25 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			MyHierarchicalDataBoundControl hc = new MyHierarchicalDataBoundControl ();
 			hc.DoValidateDataSource (null);
+		}
+
+		class MyHierarchicalDataBoundControlAdapter : HierarchicalDataBoundControlAdapter
+		{
+			internal bool perform_data_binding_called;
+			protected override void PerformDataBinding ()
+			{
+				perform_data_binding_called = true;
+			}
+		}
+		
+		[Test]
+		public void PerformDataBinding_UsesAdapter ()
+		{
+			MyHierarchicalDataBoundControl c = new MyHierarchicalDataBoundControl ();
+			MyHierarchicalDataBoundControlAdapter a = new MyHierarchicalDataBoundControlAdapter();;
+			c.dataBoundControlAdapter = a;
+			c.DataBind ();
+			Assert.IsTrue (a.perform_data_binding_called, "PerformDataBinding_UsesAdapter");
 		}
 
 	}

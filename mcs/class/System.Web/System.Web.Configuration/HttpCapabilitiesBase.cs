@@ -41,7 +41,7 @@ namespace System.Web.Configuration
 	public class HttpCapabilitiesBase
 #endif
 	{
-		IDictionary capabilities;
+		internal IDictionary capabilities;
 
 		public HttpCapabilitiesBase () { }
 
@@ -72,18 +72,36 @@ namespace System.Web.Configuration
 #endif
 			return ua;
 		}
+		private static HttpBrowserCapabilities GetHttpBrowserCapabilitiesFromBrowscapini(string ua)
+		{
+			HttpBrowserCapabilities bcap = new HttpBrowserCapabilities();
+			bcap.capabilities = CapabilitiesLoader.GetCapabilities (ua);
+			return bcap;
+		}
 		
 		public static HttpCapabilitiesBase GetConfigCapabilities (string configKey, HttpRequest request)
 		{
-		        string ua = GetUserAgentForDetection (request);
+			string ua = GetUserAgentForDetection (request);
 
-			HttpBrowserCapabilities bcap = new HttpBrowserCapabilities ();
+			HttpBrowserCapabilities bcap = null;
+#if NET_2_0
+			GetConfigCapabilities_called = true;
+			if (HttpApplicationFactory.AppBrowsersFiles.Length > 0)
+				bcap = HttpApplicationFactory.CapabilitiesProcessor.Process(request);
+			else
+				bcap = GetHttpBrowserCapabilitiesFromBrowscapini(ua);
+#else
+			bcap = GetHttpBrowserCapabilitiesFromBrowscapini(ua);
+#endif
 			bcap.useragent = ua;
-			bcap.capabilities = CapabilitiesLoader.GetCapabilities (ua);
 			bcap.Init ();
 			return bcap;
 		}
 
+#if NET_2_0
+		// Used by unit tests to determine whether GetConfigCapabilities was called.
+		static internal bool GetConfigCapabilities_called;
+#endif
 		protected virtual void Init ()
 		{
 		}

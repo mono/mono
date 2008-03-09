@@ -40,6 +40,10 @@ namespace System.Web.UI.WebControls.Adapters
 		public DataBoundControlAdapter ()
 		{
 		}
+		
+		internal DataBoundControlAdapter (DataBoundControl c) : base (c)
+		{
+		}
 
 		protected internal virtual void PerformDataBinding (IEnumerable data)
 		{
@@ -49,7 +53,7 @@ namespace System.Web.UI.WebControls.Adapters
 		protected new DataBoundControl Control
 		{
 			get {
-				return (DataBoundControl)base.Control;
+				return (DataBoundControl)control;
 			}
 		}
 	}

@@ -1,3 +1,19 @@
+2008-03-09  Dean Brettle <dean@brettle.com> 
+
+	* HttpApplicationFactory.cs: Added support for detecting 
+	App_Browsers/*.browser files and using them to determine capabilities.
+	Also restart the app if the App_Browsers, App_Code, or App_GlobalResources
+	directories are created.
+
+	* BrowserCapabilities.cs (TagWriter): get value via internal virtual
+	GetTagWriter() method, which is overridden in nBrowser.Result.
+
+	* HttpRequest.cs (BrowserMightHaveSpecialWriter, BrowserMightHaveAdapters):
+	internal properties added to allow Page and Control methods to avoid
+	accessing Request.Browser to get browser-specific HtmlTextWriters or 
+	ControlAdapters.  Those things only exist when there are App_Browsers
+	files.
+
 2008-03-09  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpUtility.cs: HTML-decode the query string prior to parsing

@@ -37,6 +37,7 @@ using System.Text;
 using System.Web.Util;
 using System.ComponentModel;
 using System.Security.Permissions;
+using System.Web.UI.WebControls.Adapters;
 
 namespace System.Web.UI.WebControls {
 
@@ -218,7 +219,16 @@ namespace System.Web.UI.WebControls {
 			}
 			// The PerformDataBinding method binds the data in the  
 			// retrievedData collection to elements of the data-bound control.
-			PerformDataBinding (data);
+			InternalPerformDataBinding (data);
+		}
+		
+		protected void InternalPerformDataBinding (IEnumerable data)
+		{
+			DataBoundControlAdapter adapter = (DataBoundControlAdapter)Adapter;
+			if (adapter != null)
+				adapter.PerformDataBinding (data);
+			else
+				PerformDataBinding (data);
 		}
 		
 		protected virtual DataSourceSelectArguments CreateDataSourceSelectArguments ()

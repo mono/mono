@@ -1571,7 +1571,11 @@ namespace System.Web.UI.WebControls
 			int count = items.Count;
 			for (int n = 0; n < count; n++) {
 				MenuItem item = items [n];
-				RenderMenuItem (writer, item, (n + 1 == count) ? notLast : true, n == 0);
+				Adapters.MenuAdapter adapter = Adapter as Adapters.MenuAdapter;
+				if (adapter != null)
+					adapter.RenderItem (writer, item, n);
+				else
+					RenderMenuItem (writer, item, (n + 1 == count) ? notLast : true, n == 0);
 			}
 
 			if (!vertical)
@@ -1604,6 +1608,23 @@ namespace System.Web.UI.WebControls
 		static string MakeHandlerJavaScript (string handlerName, string param1, string param2, string param3)
 		{
 			return "javascript:Menu_" + handlerName + "('" + param1 + "','" + param2 + "'," + param3 + ")";
+		}
+		
+		internal void RenderItem (HtmlTextWriter writer, MenuItem item, int position) {
+			// notLast should be true if item or any of its ancestors is not a
+			// last child.
+			bool notLast = false;
+			MenuItem parent;
+			MenuItem child = item;			
+			while (null != (parent = child.Parent)) {
+				if (child.Index != parent.ChildItems.Count - 1) {
+					notLast = true;
+					break;
+				}
+				child = parent;
+			}
+			
+			RenderMenuItem (writer, item, notLast, position == 0);
 		}
 		
 		void RenderMenuItem (HtmlTextWriter writer, MenuItem item, bool notLast, bool isFirst) {

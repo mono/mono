@@ -40,6 +40,10 @@ namespace System.Web.UI.WebControls.Adapters
 		{
 		}
 
+		internal HideDisabledControlAdapter (WebControl c) : base (c)
+		{
+		}
+
 		protected internal override void Render(HtmlTextWriter writer)
 		{
 			if (!Control.IsEnabled)

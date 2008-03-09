@@ -31,6 +31,7 @@
 #if NET_2_0
 using System.Collections;
 using System.ComponentModel;
+using System.Web.UI.WebControls.Adapters;
 
 namespace System.Web.UI.WebControls
 {
@@ -133,6 +134,16 @@ namespace System.Web.UI.WebControls
 			Initialize ();
 		}
 		
+		protected void InternalPerformDataBinding ()
+		{
+			HierarchicalDataBoundControlAdapter adapter 
+				= (HierarchicalDataBoundControlAdapter)Adapter;
+			if (adapter != null)
+				adapter.PerformDataBinding ();
+			else
+				PerformDataBinding ();
+		}
+		
 		protected internal virtual void PerformDataBinding ()
 		{
 		}
@@ -140,7 +151,7 @@ namespace System.Web.UI.WebControls
 		protected override void PerformSelect ()
 		{
 			OnDataBinding (EventArgs.Empty);
-			PerformDataBinding ();
+			InternalPerformDataBinding ();
 			// The PerformDataBinding method has completed.
 			RequiresDataBinding = false;
 			MarkAsDataBound ();

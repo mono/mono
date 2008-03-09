@@ -1,6 +1,20 @@
+2008-01-15  Dean Brettle <dean@brettle.com> 
+
+	* ControlAdapter.cs: made control field internal so
+	derived internal classes can access it without using base.Control
+	which can involved several typecasts.
+
+2008-01-12  Dean Brettle <dean@brettle.com> 
+
+	* PageAdapter.cs: implemented all members.
+	
+2008-01-07  Dean Brettle <dean@brettle.com> 
+
+	* ControlAdapter.cs: implemented all members.
+	
 2005-08-24  Chris Toshok  <toshok@ximian.com>
 
-	* PageAdapter.cs, ControlAdapter: add MonoTODO's.
+	* PageAdapter.cs, ControlAdapter.cs: add MonoTODO's.
 
 2005-08-18  Dick Porter  <dick@ximian.com>
 

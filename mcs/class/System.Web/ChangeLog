@@ -1,3 +1,33 @@
+2008-03-09  Dean Brettle <dean@brettle.com> 
+
+	* System.Web_test.dll.sources: added
+		System.Web.UI.WebControls.Adapters/MenuAdapterTest.cs
+		System.Web.UI.WebControls.Adapters/WebControlAdapterTest.cs
+		System.Web.UI.WebControls.Adapters/HierarchicalDataBoundControlAdapterTest.cs
+		System.Web.UI.WebControls.Adapters/DataBoundControlAdapterTest.cs
+		System.Web.UI.WebControls.Adapters/HideDisabledControlAdapterTest.cs
+		System.Web.UI.Adapters/PageAdapterTest.cs
+		System.Web.UI.Adapters/ControlAdapterTest.cs
+		
+	* Makefile (RESOURCE_FILES_2): added
+		System.Web.Configuration_2.0/RandomRoboBotKeywords.txt
+
+	* Makefile (TEST_RESOURCE_FILES): added 
+		Test/mainsoft/NunitWebResources/PageWithAdapter.aspx
+
+	* System.Web.dll.sources: added
+		System.Web.Configuration_2.0/CapabilitiesBuild.cs
+		System.Web.Configuration_2.0/CapabilitiesChecksum.cs
+		System.Web.Configuration_2.0/CapabilitiesResult.cs
+		System.Web.Configuration_2.0/ICapabilitiesProcess.cs
+		System.Web.Configuration_2.0/nBrowser/Result.cs
+		System.Web.Configuration_2.0/nBrowser/NodeTypes.cs
+		System.Web.Configuration_2.0/nBrowser/Identification.cs
+		System.Web.Configuration_2.0/nBrowser/File.cs
+		System.Web.Configuration_2.0/nBrowser/Build.cs
+		System.Web.Configuration_2.0/nBrowser/Node.cs
+		System.Web.Configuration_2.0/nBrowser/Exception.cs
+		
 2008-03-01  Marek Habersack  <mhabersack@novell.com>
 
 	* Makefile: added a dependency on Mono.Web.dll

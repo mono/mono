@@ -1,0 +1,14 @@
+2008-01-12  Dean Brettle <dean@brettle.com> 
+
+	* PageAdapterTest.cs: added tests for PageAdapter.
+
+2008-01-07  Dean Brettle <dean@brettle.com> 
+
+	* ControlAdapterTest.cs (ConfigCapabilitiesNotCalled): added test to
+	ensure that HttpCapabilitiesBase.ConfigCapabilities() is not called
+	during normal page processing if no files are in App_Browsers.
+	
+
+2008-01-07  Dean Brettle <dean@brettle.com> 
+
+	* ControlAdapterTest.cs: added tests for ControlAdapter.

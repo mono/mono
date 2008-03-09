@@ -1,3 +1,32 @@
+2008-03-09  Dean Brettle <dean@brettle.com> 
+
+	* Page.cs (SavePageControlState, LoadPageControlState): save/load 
+	adapter state in 2.0 profile.
+	
+	* Page.cs (CreateHtmlTextWriter): call Browser.CreateHtmlTextWriter()
+	in 2.0 profile.
+	
+	* Page.cs (RenderPage): call CreateHtmlTextWriter() to get the writer
+	in 2.0 profile.
+	
+	* Page.cs (DeterminePostBackMode, InitOutputCache, 
+	RenderClientScriptFormDeclaration,	InternalProcessRequest,
+	PageStatePersister): added support for PageAdapters.
+
+	* Control.cs (Adapter, ResolveAdapter): implemented.  Adapter calls
+	ResolveAdapter and remembers result.  ResolveAdapter checks for adapters
+	of the Type hierarchy until it finds one.
+	
+	* Control.cs (SaveViewStateRecursive, LoadViewStateRecursive): save/load
+	adapter state in 2.0 profile.
+	
+	* HtmlTextWriter.cs (BeginRender, EndRender): added empty virtual methods
+	required by 2.0 profile.  These are called by corresponding methods of
+	System.Web.UI.Adapters.ControlAdapter.
+	
+	* Page.cs, Control.cs: don't access Request.Browser if it couldn't have
+	any adapters/writers because there are no files in App_Browsers/.
+
 2008-03-09  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlParser.cs: 2.0 allows controls with extensions

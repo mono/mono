@@ -80,6 +80,7 @@ namespace System.Web {
 		static bool app_shutdown = false;
 #if NET_2_0
 		static bool app_disabled = false;
+		static string[] app_browsers_files = new string[0];
 #endif
 		Stack available = new Stack ();
 		Stack available_for_end = new Stack ();
@@ -389,6 +390,14 @@ namespace System.Web {
 					// Todo: Compile code from App_Code here
 					AppCodeCompiler acc = new AppCodeCompiler ();
 					acc.Compile ();
+					
+					// Note whether there are any App_Browsers/*.browser files.  If there
+					// are we will be using *.browser files for sniffing instead of browscap.ini
+					string app_browsers_path = Path.Combine (physical_app_path, "App_Browsers");
+					app_browsers_files = new string[0];
+					if (Directory.Exists (app_browsers_path)) {
+						app_browsers_files = Directory.GetFiles (app_browsers_path, "*.browser");
+					}
 #endif
 
 					if (app_file != null) {
@@ -458,6 +467,11 @@ namespace System.Web {
 						foreach (string dir in HttpApplication.BinDirectories)
 							WatchLocationForRestart (dir, "*.dll");
 #if NET_2_0
+									// Restart if the App_* directories are created...
+			                        WatchLocationForRestart (".", "App_Code");
+			                        WatchLocationForRestart (".", "App_Browsers");
+			                        WatchLocationForRestart (".", "App_GlobalResources");
+			                        // ...or their contents is changed.
 			                        WatchLocationForRestart ("App_Code", "*", true);
 			                        WatchLocationForRestart ("App_Browsers", "*");
 			                        WatchLocationForRestart ("App_GlobalResources", "*");
@@ -559,6 +573,25 @@ namespace System.Web {
 		internal static bool ApplicationDisabled {
 			get { return app_disabled; }
 			set { app_disabled = value; }
+		}
+
+		internal static string[] AppBrowsersFiles {
+			get { return app_browsers_files; }
+		}
+		
+		static System.Web.Configuration.nBrowser.Build capabilities_processor = null;
+		static object capabilities_processor_lock = new object();
+		internal static System.Web.Configuration.ICapabilitiesProcess CapabilitiesProcessor {
+			get {
+				lock (capabilities_processor_lock) {
+					if (capabilities_processor == null) {
+						capabilities_processor = new System.Web.Configuration.nBrowser.Build();
+						foreach (string f in app_browsers_files)
+							capabilities_processor.AddBrowserFile(f);
+					}
+				}
+				return capabilities_processor;
+			}
 		}
 #endif
 		

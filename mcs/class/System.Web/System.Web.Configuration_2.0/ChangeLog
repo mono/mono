@@ -1,3 +1,31 @@
+2008-03-09  Dean Brettle <dean@brettle.com> 
+
+	* nBrowser/Result.cs, nBrowser/NodeTypes.cs, nBrowser/Identification.cs,
+	nBrowser/File.cs, nBrowser/Build.cs, nBrowser/Node.cs, 
+	nBrowser/Exception.cs: added.  The code under nBrowser handles *.browser
+	files.  It is based on Owen "Ocean" Brady's code, with the following 
+	changes and improvements.  Replaced Result.Adapter 
+	property with AdapterTypeMap property which maps control Type to adapter
+	Type.  Added Result.MarkupTextWriter property.  Added overrides for
+	Result.GetAdapters and Result.GetTagWriter to return MarkupTextWriter
+	and AdapterTypeMap, resp.  Changed tree building algorithm to not
+	depend on nodes with id="Default" and to inject defaultBrowser nodes
+	as parents of regular nodes with the same ids.  Changed Node.cs to use
+	Item instead of Add when adding a capability or sample header, so that
+	values get replaced instead of appended.  Added support for reference 
+	nodes (ie. nodes with refID="someID").
+		
+	* CapabilitiesResult.cs: load RandomRoboBotKeywords.txt resource
+	using the correct name.
+	
+	* RandomRoboBotKeywords.txt: added 
+
+	* HttpCapabilitiesBase.cs (CreateHtmlWriter, Adapters): Added
+	support for *.browsers.  Adapters property calls internal virtual
+	GetAdapters() method which is overrided in nBrowser.Result 
+	returned by nBrowser code.  CreateHtmlWriter uses type specified
+	by TagWriter property.
+	
 2008-03-03  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* ProvidersHelper.cs: fixed thread safety issue in InstantiateProvider

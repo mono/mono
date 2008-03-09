@@ -153,17 +153,20 @@ namespace System.Web.UI
 		}
 
 #if NET_2_0
-		[MonoTODO ("Not implemented, always returns null")]
-		protected ControlAdapter Adapter {
+		private ControlAdapter adapter = null;
+		private bool has_adapter = true;
+		protected internal ControlAdapter Adapter {
 			get {
-				// for the time being, fool the
-				// Control machinery into thinking we
-				// don't have an Adapter.  This will
-				// allow us to write all the rest of
-				// the Adapter handling code without
-				// having to worry about *having*
-				// adapters.
-				return null;
+				if (has_adapter) {
+					if (adapter == null) {
+						adapter = ResolveAdapter();
+					}
+					if (adapter == null)
+						has_adapter = false;
+					else
+						adapter.Control = this;
+				}
+				return adapter;
 			}
 		}
 
@@ -1119,7 +1122,25 @@ namespace System.Web.UI
 #if NET_2_0
 		protected virtual ControlAdapter ResolveAdapter ()
 		{
-			throw new NotImplementedException ();
+			if (Context == null)
+				return null;
+
+			if (!Context.Request.BrowserMightHaveAdapters)
+				return null;
+				
+			// Search up the type hierarchy until we find a control with an adapter.
+			Type adapterType = null;
+			Type controlType = GetType();
+			IDictionary typeMap = Context.Request.Browser.Adapters;
+			while (adapterType == null && controlType != typeof(object)) {
+				adapterType = (Type)typeMap [controlType];
+				controlType = controlType.BaseType;
+			}
+
+			ControlAdapter a = null;
+			if (adapterType != null)
+				a = (ControlAdapter)Activator.CreateInstance (adapterType);
+			return a;
 		}
 #endif
 
@@ -1575,7 +1596,13 @@ namespace System.Web.UI
 				}
 			}
 
+#if NET_2_0
+			object thisAdapterViewState = null;
+			if (Adapter != null)
+				thisAdapterViewState = Adapter.SaveAdapterViewState ();
+#endif
 			object thisState = SaveViewState ();
+
 			if (thisState == null && controlList == null && controlStates == null) {
 				if (trace != null) {
 #if MONO_TRACE
@@ -1592,6 +1619,9 @@ namespace System.Web.UI
 #endif
 				trace.SaveViewState (this, thisState);
 			}
+#if NET_2_0
+			thisState = new object[] { thisState, thisAdapterViewState };
+#endif
 			return new Triplet (thisState, controlList, controlStates);
 		}
 
@@ -1609,7 +1639,14 @@ namespace System.Web.UI
 			}
 #endif
 			Triplet savedInfo = (Triplet) savedState;
+#if NET_2_0
+			object[] controlAndAdapterViewStates = (object [])savedInfo.First;
+			if (Adapter != null)
+				Adapter.LoadAdapterViewState (controlAndAdapterViewStates [1]);
+			LoadViewState (controlAndAdapterViewStates [0]);
+#else
 			LoadViewState (savedInfo.First);
+#endif
 
 			ArrayList controlList = savedInfo.Second as ArrayList;
 			if (controlList == null)

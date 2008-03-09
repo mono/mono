@@ -267,6 +267,22 @@ namespace System.Web {
 			}
 		}
 
+#if NET_2_0		
+		internal bool BrowserMightHaveSpecialWriter {
+			get {
+				return (browser_capabilities != null 
+					|| HttpApplicationFactory.AppBrowsersFiles.Length > 0);
+			}
+		}
+
+		internal bool BrowserMightHaveAdapters {
+			get {
+				return (browser_capabilities != null 
+					|| HttpApplicationFactory.AppBrowsersFiles.Length > 0);
+			}
+		}
+#endif
+
 		public HttpClientCertificate ClientCertificate {
 			get {
 				if (client_cert == null)

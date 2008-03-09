@@ -41,9 +41,13 @@ using MonoTests.stand_alone.WebHarness;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 using System.Collections;
+using System.Collections.Specialized;
 using System.Net;
 
+
+
 namespace MonoTests.System.Web.UI {
+
 
 	class TestPage : Page {
 
@@ -121,7 +125,7 @@ namespace MonoTests.System.Web.UI {
 			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageLifecycleTest.aspx", "PageLifecycleTest.aspx");
 			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageValidationTest.aspx", "PageValidationTest.aspx");
 			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.AsyncPage.aspx", "AsyncPage.aspx");
-			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.AsyncPage.aspx", "AsyncPage.aspx");
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.PageWithAdapter.aspx", "PageWithAdapter.aspx");
 			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.RedirectOnError.aspx", "RedirectOnError.aspx");
 			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.ClearErrorOnError.aspx", "ClearErrorOnError.aspx");
 #else
@@ -129,7 +133,7 @@ namespace MonoTests.System.Web.UI {
 			WebTest.CopyResource (GetType (), "PageLifecycleTest.aspx", "PageLifecycleTest.aspx");
 			WebTest.CopyResource (GetType (), "PageValidationTest.aspx", "PageValidationTest.aspx");
 			WebTest.CopyResource (GetType (), "AsyncPage.aspx", "AsyncPage.aspx");
-			WebTest.CopyResource (GetType (), "AsyncPage.aspx", "AsyncPage.aspx");
+			WebTest.CopyResource (GetType (), "PageWithAdapter.aspx", "PageWithAdapter.aspx");
 			WebTest.CopyResource (GetType (), "RedirectOnError.aspx", "RedirectOnError.aspx");
 			WebTest.CopyResource (GetType (), "ClearErrorOnError.aspx", "ClearErrorOnError.aspx");
 #endif
@@ -391,6 +395,80 @@ namespace MonoTests.System.Web.UI {
 			Assert.AreEqual (0, page.GetValidators ("Fake").Count, "Page_ValidationGroup#4");
 			Assert.AreEqual (1, page.GetValidators ("VG1").Count, "Page_ValidationGroup#5");
 			Assert.AreEqual (1, page.GetValidators ("VG2").Count, "Page_ValidationGroup#6");
+		}
+
+		[Test]
+		[Category("NunitWeb")]
+		public void InitOutputCache_UsesAdapter ()
+		{
+			WebTest t = new WebTest ("PageWithAdapter.aspx");
+			
+			t.Invoker = PageInvoker.CreateOnLoad (InitOutputCache_UsesAdapter_OnLoad);
+			t.Run ();
+		}
+				
+		public static void InitOutputCache_UsesAdapter_OnLoad (Page p)
+		{
+			Assert.IsTrue (p.Response.Cache.VaryByHeaders ["header-from-aspx"], 
+				"InitOutputCache_UsesAdapter #1");
+			Assert.IsTrue (p.Response.Cache.VaryByParams ["param-from-aspx"], 
+				"InitOutputCache_UsesAdapter #2");
+			Assert.IsTrue (p.Response.Cache.VaryByHeaders ["header-from-adapter"], 
+				"InitOutputCache_UsesAdapter #3");
+			Assert.IsTrue (p.Response.Cache.VaryByParams ["param-from-adapter"], 
+				"InitOutputCache_UsesAdapter #4");
+		}
+		
+		[Test]
+		[Category("NunitWeb")]
+		public void PageStatePersister_UsesAdapter ()
+		{
+			WebTest t = new WebTest ("PageWithAdapter.aspx");
+			t.Invoker = PageInvoker.CreateOnLoad (PageStatePersister_UsesAdapter_OnLoad);
+			t.Run ();
+		}
+		
+		public static void PageStatePersister_UsesAdapter_OnLoad (Page p)
+		{
+			TestPageWithAdapter pageWithAdapter = (TestPageWithAdapter) p;
+			Assert.IsTrue (pageWithAdapter.PageStatePersister is TestPersister, 
+				"PageStatePersister_UsesAdapter #1");
+		}
+		
+		[Test]
+		[Category("NunitWeb")]
+		public void ScriptUsesAdapter ()
+		{
+			WebTest t = new WebTest ("PageWithAdapter.aspx");
+			string html = t.Run ();
+			Assert.IsTrue(html.IndexOf("var theForm = /* testFormReference */document.forms[") != -1, "ScriptUsesAdapter #1");
+		}
+
+		[Test]
+		[Category("NunitWeb")]
+		public void DeterminePostBackMode_UsesAdapter ()
+		{
+			WebTest t = new WebTest ("PageWithAdapter.aspx");
+			t.Run ();
+			t.Request = new FormRequest (t.Response, "form1");
+			t.Invoker = PageInvoker.CreateOnInit(DeterminePostBackMode_UsesAdapter_OnInit);
+			t.Run ();
+		}
+		
+		public static void DeterminePostBackMode_UsesAdapter_OnInit (Page p)
+		{
+			HtmlInputHidden h = new HtmlInputHidden();
+			h.ID = "DeterminePostBackModeTestField";
+			p.Controls.Add(h);
+			p.Load += new EventHandler(DeterminePostBackMode_UsesAdapter_OnLoad);
+		}
+		
+		public static void DeterminePostBackMode_UsesAdapter_OnLoad(object source, EventArgs args)
+		{
+			Page p = (Page)source;
+			HtmlInputHidden h = (HtmlInputHidden)p.FindControl("DeterminePostBackModeTestField");
+			Assert.AreEqual("DeterminePostBackModeTestValue", h.Value, 
+				"DeterminePostBackMode #1");
 		}
 #endif
 #if NET_2_0
@@ -1287,4 +1365,95 @@ namespace MonoTests.System.Web.UI {
 			WebTest.Unload ();
 		}
 	}
+
+#if NET_2_0
+	class TestAdapter : global::System.Web.UI.Adapters.PageAdapter
+	{
+		public override StringCollection CacheVaryByParams {
+			get {
+				StringCollection paramNames = new StringCollection();
+				paramNames.AddRange (new string[] {"param-from-adapter"});
+				return paramNames;
+			}
+		}
+
+		public override StringCollection CacheVaryByHeaders {
+			get {
+				StringCollection headerNames = new StringCollection();
+				headerNames.AddRange (new string[] {"header-from-adapter"});
+				return headerNames;
+			}
+		}
+		
+		PageStatePersister persister;
+		public override PageStatePersister GetStatePersister ()
+		{
+			if (persister == null)
+				persister = new TestPersister(Page);
+			return persister;
+		}
+		
+		protected internal override string GetPostBackFormReference (string formId)
+		{
+			return String.Format("/* testFormReference */{0}", 
+				base.GetPostBackFormReference (formId));
+		}
+		
+		public override NameValueCollection DeterminePostBackMode ()
+		{
+			NameValueCollection origRequestValues = base.DeterminePostBackMode ();
+			if (origRequestValues == null)
+				return null;
+			NameValueCollection requestValues = new NameValueCollection ();
+			requestValues.Add (origRequestValues);
+			requestValues ["DeterminePostBackModeTestField"] 
+				= "DeterminePostBackModeTestValue";
+			return requestValues;
+		}
+		
+		internal new void RenderPostBackEvent (HtmlTextWriter w,
+		                                       string target,
+		                                       string argument,
+		                                       string softKeyLabel,
+		                                       string text,
+		                                       string postUrl,
+		                                       string accessKey,
+		                                       bool encode)
+		{
+			base.RenderPostBackEvent (w, target, argument, softKeyLabel, text, postUrl,
+				accessKey, encode);
+		}
+		
+	}
+	
+	class TestPersister : HiddenFieldPageStatePersister
+	{
+		public TestPersister (Page p) : base (p)
+		{
+		}
+	}
+
+	public class TestPageWithAdapter : Page
+	{
+		private global::System.Web.UI.Adapters.PageAdapter page_adapter;
+		
+		public TestPageWithAdapter () : base ()
+		{
+			page_adapter = new TestAdapter ();
+			WebTest t = WebTest.CurrentTest;
+			if (t != null)
+				t.Invoke (this);
+		}
+		
+		protected override global::System.Web.UI.Adapters.ControlAdapter ResolveAdapter ()
+		{
+			return page_adapter;
+		}
+		
+		public new PageStatePersister PageStatePersister {
+			get { return base.PageStatePersister; }
+		}
+					
+	}
+#endif
 }

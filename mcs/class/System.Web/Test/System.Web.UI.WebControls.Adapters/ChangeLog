@@ -1,0 +1,8 @@
+2008-01-15  Dean Brettle <dean@brettle.com> 
+
+	* MenuAdapterTest.cs: added
+
+2008-01-13  Dean Brettle <dean@brettle.com> 
+
+	* WebControlAdapterTest.cs, HierarchicalDataBoundControlAdapterTest.cs,
+	DataBoundControlAdapterTest.cs, HideDisabledControlAdapterTest.cs: added

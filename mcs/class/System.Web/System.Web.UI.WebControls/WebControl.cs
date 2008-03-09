@@ -408,16 +408,13 @@ namespace System.Web.UI.WebControls {
 		protected internal bool IsEnabled 
 		{
 			get {
-				if (Enabled)
-					return true;
-				if(!HasControls())
-					return false;
-				for (int i = 0; i < Controls.Count; i++) {
-					WebControl wc = Controls [i] as WebControl;
-					if (wc != null && wc.IsEnabled)
-						return true;
+				WebControl wc = this;
+				while (wc != null) {
+					if (!wc.Enabled)
+						return false;
+					wc = wc.Parent as WebControl;
 				}
-				return false;
+				return true;
 			}
 		}
 #endif		
@@ -577,6 +574,13 @@ namespace System.Web.UI.WebControls {
 #endif		
 		override void Render (HtmlTextWriter writer)
 		{
+#if NET_2_0
+			if (Adapter != null) {
+				Adapters.WebControlAdapter wca = (Adapters.WebControlAdapter) Adapter;
+				wca.Render(writer);
+				return;
+			}
+#endif
 			RenderBeginTag (writer);
 			RenderContents (writer);
 			RenderEndTag (writer);

@@ -41,6 +41,10 @@ namespace System.Web.UI.WebControls.Adapters
 		{
 		}
 
+		internal HierarchicalDataBoundControlAdapter (HierarchicalDataBoundControl c) : base (c)
+		{
+		}
+
 		protected internal virtual void PerformDataBinding ()
 		{
 			Control.PerformDataBinding ();
@@ -49,7 +53,7 @@ namespace System.Web.UI.WebControls.Adapters
 		protected new HierarchicalDataBoundControl Control
 		{
 			get {
-				return (HierarchicalDataBoundControl)base.Control;
+				return (HierarchicalDataBoundControl)control;
 			}
 		}
 	}

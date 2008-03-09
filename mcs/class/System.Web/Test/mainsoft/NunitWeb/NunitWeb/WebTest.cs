@@ -5,7 +5,10 @@
 using System;
 using System.Reflection;
 using System.IO;
+using System.Web;
 using System.Web.Hosting;
+using System.Web.UI;
+using System.Threading;
 
 namespace MonoTests.SystemWeb.Framework
 {
@@ -122,11 +125,16 @@ namespace MonoTests.SystemWeb.Framework
 		{
 			if (Request.Url == null)
 				Request.Url = Invoker.GetDefaultUrl ();
-			WebTest newTestInstance = Host.Run (this);
-			CopyFrom (newTestInstance);
+			_unloadHandler.StartingRequest();
+			try {
+				WebTest newTestInstance = Host.Run (this);
+				CopyFrom (newTestInstance);
+			} finally {
+				_unloadHandler.FinishedRequest();
+			}
 			return _response.Body;
 		}
-
+		
 		private void CopyFrom (WebTest newTestInstance)
 		{
 			this._invoker = newTestInstance._invoker;
@@ -188,21 +196,19 @@ namespace MonoTests.SystemWeb.Framework
 		/// <summary>
 		/// Unload the web appdomain and delete the temporary application root
 		/// directory.
-		/// Is never called.
 		/// </summary>
-		static void RealUnload ()
+		public static void CleanApp ()
 		{
 #if !TARGET_JVM
 			if (host != null) {
-				AppDomain oldDomain = host.AppDomain;
-				if (oldDomain == AppDomain.CurrentDomain)
-				{
-					Console.Error.WriteLine ("Some nasty runtime bug happened");
-					throw new Exception ("Some nasty runtime bug happened");
-				}
-				host = null;
-				AppDomain.CurrentDomain.SetData (HOST_INSTANCE_NAME, null);
-				AppDomain.Unload (oldDomain);
+				lock (_appUnloadedSync) {
+					EventHandler handler = new EventHandler(PulseAppUnloadedSync);
+					WebTest.AppUnloaded += handler;
+					WebTest t = new WebTest (PageInvoker.CreateOnLoad (UnloadAppDomain_OnLoad));
+					t.Run ();
+					Monitor.Wait(_appUnloadedSync);
+					WebTest.AppUnloaded -= handler;
+				}			
 			}
 			if (baseDir != null) {
 				Directory.Delete (baseDir, true);
@@ -210,6 +216,19 @@ namespace MonoTests.SystemWeb.Framework
 				binDir = null;
 			}
 #endif
+		}
+		
+		private static object _appUnloadedSync = new object();
+		
+		private static void PulseAppUnloadedSync(object source, EventArgs args)
+		{
+			lock (_appUnloadedSync)
+				Monitor.PulseAll(_appUnloadedSync);
+		}
+
+		public static void UnloadAppDomain_OnLoad (Page p) 
+		{
+			HttpRuntime.UnloadAppDomain();
 		}
 
 		public static void Unload () {}
@@ -326,7 +345,7 @@ namespace MonoTests.SystemWeb.Framework
 #endif
 		}
 
-		private static void EnsureHosting ()
+		public static void EnsureHosting ()
 		{
 			if (host != null)
 				return;
@@ -347,9 +366,60 @@ namespace MonoTests.SystemWeb.Framework
 			host = (MyHost) ApplicationHost.CreateApplicationHost (typeof (MyHost), VIRTUAL_BASE_DIR, baseDir);
 			AppDomain.CurrentDomain.SetData (HOST_INSTANCE_NAME, host);
 			host.AppDomain.SetData (HOST_INSTANCE_NAME, host);
+ 			host.AppDomain.DomainUnload += new EventHandler (_unloadHandler.OnUnload);
 #endif
 		}
 
+		private static UnloadHandler _unloadHandler = new UnloadHandler();
+				
+		public class UnloadHandler : MarshalByRefObject
+		{
+			AutoResetEvent _unloaded = new AutoResetEvent(false);
+			
+			int _numRequestsPending = 0;
+			object _syncUnloading = new object();
+			object _syncNumRequestsPending = new object();
+			
+			internal void StartingRequest()
+			{
+				// If the app domain is about to unload, wait
+				lock (_syncUnloading)
+					lock (_syncNumRequestsPending)
+						_numRequestsPending++;
+			}
+			
+			internal void FinishedRequest()
+			{
+				// Let any unloading continue once there are not requests pending
+				lock (_syncNumRequestsPending) {
+					_numRequestsPending--;
+					if (_numRequestsPending == 0)
+						Monitor.PulseAll(_syncNumRequestsPending);
+				}
+			}
+			
+			public void OnUnload (object o, EventArgs args)
+			{
+				// Block new requests from starting
+				lock (_syncUnloading) {
+					// Wait for pending requests to finish
+					lock (_syncNumRequestsPending) {
+						while (_numRequestsPending > 0)
+							Monitor.Wait(_syncNumRequestsPending);
+					}
+					// Clear the host so that it will be created again on the next request
+					AppDomain.CurrentDomain.SetData (HOST_INSTANCE_NAME, null);
+					WebTest.host = null;
+					
+					EventHandler handler = WebTest.AppUnloaded;
+					if (handler != null)
+						handler(this, null);
+				}
+			}
+		}
+
+		public static event EventHandler AppUnloaded;
+			
 #if !TARGET_JVM
 		const string VIRTUAL_BASE_DIR = "/NunitWeb";
 		private static string baseDir;

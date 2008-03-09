@@ -814,7 +814,12 @@ public partial class Page : TemplateControl, IHttpHandler
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	protected virtual HtmlTextWriter CreateHtmlTextWriter (TextWriter tw)
 	{
-		return new HtmlTextWriter (tw);
+#if NET_2_0
+		if (Request.BrowserMightHaveSpecialWriter)
+			return Request.Browser.CreateHtmlTextWriter(tw);
+		else
+#endif
+			return new HtmlTextWriter (tw);
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
@@ -824,7 +829,11 @@ public partial class Page : TemplateControl, IHttpHandler
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
-	protected virtual NameValueCollection DeterminePostBackMode ()
+	protected 
+#if NET_2_0
+	internal
+#endif
+	virtual NameValueCollection DeterminePostBackMode ()
 	{
 		// if request was transfered from other page such Transfer
 		if (_context.IsProcessingInclude)
@@ -1015,6 +1024,19 @@ public partial class Page : TemplateControl, IHttpHandler
 				foreach (string h in hdrs)
 					cache.VaryByHeaders [h.Trim ()] = true;
 			}
+#if NET_2_0
+			if (PageAdapter != null)
+			{
+				if (PageAdapter.CacheVaryByParams != null) {
+					foreach (string p in PageAdapter.CacheVaryByParams)
+						cache.VaryByParams [p] = true;
+				}
+				if (PageAdapter.CacheVaryByHeaders != null) {
+					foreach (string h in PageAdapter.CacheVaryByHeaders)
+						cache.VaryByHeaders [h] = true;
+				}
+			}
+#endif
 		}
 			
 		cache.Duration = duration;
@@ -1126,8 +1148,15 @@ public partial class Page : TemplateControl, IHttpHandler
 
 	void RenderClientScriptFormDeclaration (HtmlTextWriter writer, string formUniqueID)
 	{
-		writer.WriteLine ("\tvar {0};\n\tif (document.getElementById) {{ {0} = document.getElementById ('{1}'); }}", theForm, formUniqueID);
-		writer.WriteLine ("\telse {{ {0} = document.{1}; }}", theForm, formUniqueID);
+#if NET_2_0
+		if (PageAdapter != null) {
+ 			writer.WriteLine ("\tvar {0} = {1};\n", theForm, PageAdapter.GetPostBackFormReference(formUniqueID));
+		} else
+#endif
+		{
+			writer.WriteLine ("\tvar {0};\n\tif (document.getElementById) {{ {0} = document.getElementById ('{1}'); }}", theForm, formUniqueID);
+			writer.WriteLine ("\telse {{ {0} = document.{1}; }}", theForm, formUniqueID);
+		}
 #if TARGET_J2EE
 		// TODO implement callback on portlet
 		string serverUrl = Request.RawUrl;
@@ -1427,7 +1456,15 @@ public partial class Page : TemplateControl, IHttpHandler
 
 	void InternalProcessRequest ()
 	{
-		_requestValueCollection = this.DeterminePostBackMode();
+#if NET_2_0
+		if (PageAdapter != null) {
+			_requestValueCollection = PageAdapter.DeterminePostBackMode();
+		}
+		else
+#endif
+		{
+			_requestValueCollection = this.DeterminePostBackMode();
+		}
 
 #if NET_2_0
 		// http://msdn2.microsoft.com/en-us/library/ms178141.aspx
@@ -1617,7 +1654,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		
 		//--
 		Trace.Write ("aspx.page", "Begin Render");
-		HtmlTextWriter output = new HtmlTextWriter (Response.Output);
+ 		HtmlTextWriter output = CreateHtmlTextWriter (Response.Output);
 		RenderControl (output);
 		Trace.Write ("aspx.page", "End Render");
 	}
@@ -1840,6 +1877,10 @@ public partial class Page : TemplateControl, IHttpHandler
 #endif
 	PageStatePersister PageStatePersister {
 		get {
+#if NET_2_0
+			if (page_state_persister == null && PageAdapter != null)
+					page_state_persister = PageAdapter.GetStatePersister();					
+#endif
 			if (page_state_persister == null)
 #if TARGET_J2EE
 				if (getFacesContext () != null)
@@ -2684,9 +2725,9 @@ public partial class Page : TemplateControl, IHttpHandler
 	{
 		if (requireStateControls == null) return null;
 		object[] state = new object [requireStateControls.Count];
-		
+		object[] adapterState = new object [requireStateControls.Count];
 		bool allNull = true;
-		for (int n=0; n<state.Length; n++) {
+		for (int n=0; n<requireStateControls.Count; n++) {
 			state [n] = ((Control) requireStateControls [n]).SaveControlState ();
 			if (state [n] != null) allNull = false;
 			
@@ -2694,21 +2735,31 @@ public partial class Page : TemplateControl, IHttpHandler
 			if (trace != null)
 				trace.SaveControlState ((Control) requireStateControls [n], state [n]);
 
+			ControlAdapter adapter = ((Control) requireStateControls [n]).Adapter;
+			if (adapter != null)
+				adapterState [n] = adapter.SaveAdapterControlState ();
+			if (adapterState [n] != null) allNull = false;
 		}
 		if (allNull) return null;
-		else return state;
+		else return new Pair (state, adapterState);
 	}
 	
 	void LoadPageControlState (object data)
 	{
-		_savedControlState = (object []) data;
-		
+		_savedControlState = null;
+		if (data == null) return;
+		Pair statePair = (Pair)data;
+		_savedControlState = (object[]) statePair.First;
+		object[] adapterState = (object[]) statePair.Second;
+
 		if (requireStateControls == null) return;
 
-		int max = Math.Min (requireStateControls.Count, _savedControlState != null ? _savedControlState.Length : requireStateControls.Count);
-		for (int n=0; n < max; n++) {
+		int min = Math.Min (requireStateControls.Count, _savedControlState != null ? _savedControlState.Length : requireStateControls.Count);
+		for (int n=0; n < min; n++) {
 			Control ctl = (Control) requireStateControls [n];
 			ctl.LoadControlState (_savedControlState != null ? _savedControlState [n] : null);
+			if (ctl.Adapter != null)
+				ctl.Adapter.LoadAdapterControlState (adapterState != null ? adapterState [n] : null);
 		}
 	}
 

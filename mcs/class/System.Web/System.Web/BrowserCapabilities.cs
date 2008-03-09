@@ -150,7 +150,7 @@ namespace System.Web {
 		const int HaveSupportsUncheck = 102;
 		const int HaveSupportsXmlHttp = 103;
 		const int HaveTables = 104; // 18;
-		//const int HaveTagWriter = 105; // 19;
+		const int HaveTagWriter = 105; // 19;
 		const int HaveType = 106;
 		const int HaveUseOptimizedCacheKey = 107;
 		const int HaveVBScript = 108; // 20;
@@ -179,7 +179,7 @@ namespace System.Web {
 		Version msDomVersion;
 		string platform;
 		bool tables;
-		//Type tagWriter;
+		Type tagWriter;
 		bool vbscript;
 		string version;
 		Version w3CDomVersion;
@@ -422,8 +422,17 @@ namespace System.Web {
 
 		public Type TagWriter {
 			get {
-				return typeof (HtmlTextWriter);
+				if (!Get (HaveTagWriter)) {
+					tagWriter = GetTagWriter ();
+					Set (HaveTagWriter);
+				}
+				return tagWriter;
 			}
+		}
+		
+		internal virtual Type GetTagWriter ()
+		{
+				return typeof (HtmlTextWriter);			
 		}
 
 		public string Type {

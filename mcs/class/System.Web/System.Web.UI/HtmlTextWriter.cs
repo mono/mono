@@ -1224,7 +1224,14 @@ namespace System.Web.UI {
 		{
 			throw new NotImplementedException ();
 		}
+		
+		public virtual void BeginRender ()
+		{
+		}
 
+		public virtual void EndRender ()
+		{
+		}
 #endif
 	}
 }

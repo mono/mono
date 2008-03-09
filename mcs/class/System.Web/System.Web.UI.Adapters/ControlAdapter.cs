@@ -35,124 +35,114 @@ namespace System.Web.UI.Adapters
 {
 	public abstract class ControlAdapter
 	{
+		internal ControlAdapter (Control c)
+		{
+			control = c;
+		}
+		
 		protected ControlAdapter ()
 		{
 		}
 
-		[MonoTODO("Not implemented")]
 		protected HttpBrowserCapabilities Browser 
 		{
 			get {
-				throw new NotImplementedException ();
+				return Page.Request.Browser;
 			}
 		}
 
-		[MonoTODO("Not implemented")]
+		internal Control control;
+		
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		protected Control Control 
+		protected internal Control Control 
 		{
-			get {
-				throw new NotImplementedException ();
+			protected get {
+				return control;
+			}
+			set {
+				control = value;
 			}
 		}
 
-		[MonoTODO("Not implemented")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 		protected Page Page 
 		{
 			get {
-				throw new NotImplementedException ();
+				return Control.Page;
 			}
 		}
 		
-		[MonoTODO("Not implemented")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 		protected PageAdapter PageAdapter 
 		{
 			get {
-				throw new NotImplementedException ();
+				return Control.Page.PageAdapter;
 			}
 		}
 
-		[MonoTODO("Not implemented")]
 		protected internal virtual void BeginRender (HtmlTextWriter w)
 		{
-			throw new NotImplementedException ();
+			w.BeginRender();
 		}
 
-		[MonoTODO("Not implemented")]
 		protected internal virtual void CreateChildControls ()
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO("Not implemented")]
 		protected internal virtual void EndRender (HtmlTextWriter w)
 		{
-			throw new NotImplementedException ();
+			w.EndRender ();
 		}
 
-		[MonoTODO("Not implemented")]
 		protected internal virtual void LoadAdapterControlState (object state)
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO("Not implemented")]
 		protected internal virtual void LoadAdapterViewState (object state)
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO("Not implemented")]
 		protected internal virtual void OnInit (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			Control.OnInit(e);
 		}
 
-		[MonoTODO("Not implemented")]
 		protected internal virtual void OnLoad (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			Control.OnLoad(e);
 		}
 
-		[MonoTODO("Not implemented")]
 		protected internal virtual void OnPreRender (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			Control.OnPreRender(e);
 		}
 
-		[MonoTODO("Not implemented")]
 		protected internal virtual void OnUnload (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			Control.OnUnload(e);
 		}
 
-		[MonoTODO("Not implemented")]
 		protected internal virtual void Render (HtmlTextWriter w)
 		{
-			throw new NotImplementedException ();
+			Control.Render (w);
 		}
 
-		[MonoTODO("Not implemented")]
 		protected internal virtual void RenderChildren (HtmlTextWriter w)
 		{
-			throw new NotImplementedException ();
+			Control.RenderChildren (w);
 		}
 
-		[MonoTODO("Not implemented")]
 		protected internal virtual object SaveAdapterControlState ()
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 
-		[MonoTODO("Not implemented")]
 		protected internal virtual object SaveAdapterViewState ()
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 	}
 }

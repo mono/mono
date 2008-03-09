@@ -39,76 +39,66 @@ namespace System.Web.UI.WebControls.Adapters
 		public MenuAdapter () 
 		{
 		}
-
-		protected internal override void OnInit(EventArgs e)
+		
+		internal MenuAdapter (Menu c) : base (c)
 		{
-			/* registers the associated control as one that requires control state */
-			Page.RegisterRequiresControlState (Control);
+		}
 
-			/* and calls control.OnInit */
-			Control.OnInit (e);
+		protected internal override void OnInit (EventArgs e)
+		{
+			base.OnInit (e);
 		}
 
 		protected internal override void OnPreRender(EventArgs e)
 		{
-			Control.OnPreRender (e);
+			base.OnPreRender (e);
 		}
 
-		[MonoTODO]
 		protected virtual void RaisePostBackEvent (string eventArgument)
 		{
-			throw new NotImplementedException ();
+			Control.RaisePostBackEvent (eventArgument);
 		}
 
 		protected override void RenderBeginTag (HtmlTextWriter writer)
 		{
-			Control.RenderBeginTag (writer);
+			base.RenderBeginTag (writer);
 		}
 
 		protected override void RenderContents (HtmlTextWriter writer)
 		{
-			// FIXME: we need to iterate over the
-			// MenuItems here, calling
-			// MenuAdapter.RenderItem for each one.
-			
-			Control.RenderContents (writer);
+			base.RenderContents (writer);
 		}
 
 		protected override void RenderEndTag (HtmlTextWriter writer)
 		{
-			Control.RenderEndTag (writer);
+			base.RenderEndTag (writer);
 		}
 
-		[MonoTODO ("Not implemented")]
 		protected internal virtual void RenderItem (HtmlTextWriter writer, 
 							    MenuItem item,
 							    int position)
 		{
-			throw new NotImplementedException ();
+			Control.RenderItem (writer, item, position);
 		}
 	  
-		[MonoTODO ("Not implemented")]
 		protected internal override void LoadAdapterControlState (object state)
 		{
-			throw new NotImplementedException ();
 		}
 		    
-		[MonoTODO ("Not implemented")]
 		protected internal override object SaveAdapterControlState ()
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 
-		[MonoTODO ("Not implemented")]
-		void System.Web.UI.IPostBackEventHandler.RaisePostBackEvent(string eventArgument)
+		void System.Web.UI.IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
 		{
-			throw new NotImplementedException ();
+			RaisePostBackEvent (eventArgument);
 		}
 
 		protected new Menu Control
 		{
 			get {
-				return (Menu)base.Control;
+				return (Menu)control;
 			}
 		}
 	}

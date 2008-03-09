@@ -1,3 +1,24 @@
+2008-03-09  Dean Brettle <dean@brettle.com> 
+
+	* add new resources: 
+		PageWithAdapter.aspx for PageTest and PageAdapterTest.
+		TestCapability.browser for AppBrowsersTest.
+
+	* NunitWebResources/adapters.browser, 
+	NunitWebResources/AppBrowsersTest.browser: modified to support
+	testing reference nodes with captures, and adapters.
+
+	* NunitWeb/NunitWeb/WebTest.cs: ensure that, during AppDomain
+	unload, no new requests are sent to the app host and any
+	pending requests are completed before the the unload occurs.
+	Also added WebTest.AppUnloaded event that tests can use to wait
+	for the app to unload (e.g. after touching Global.asax), and 
+	WebTest.CleanApp() which can be called to restart the app with
+	the a skeleton directory structure.  Tests which add files that
+	could effect other tests (e.g. App_Browsers/*.browser files) should
+	call WebTest.CleanApp() during TearDown to return the app to a 
+	pristine environment.
+	
 2008-01-08  Dean Brettle <dean@brettle.com> 
  
  	* NunitWeb/NunitWeb/WebTest.cs: copy .mdb or .pdb files with

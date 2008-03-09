@@ -64,6 +64,7 @@ RESOURCE_FILES_2 = \
 	resources/transparent.gif \
 	resources/webform.js \
 	resources/WebUIValidation_2.0.js \
+	System.Web.Configuration_2.0/RandomRoboBotKeywords.txt \
 	System.Web.UI.WebControls/GridView.js \
 	System.Web.UI.WebControls/DetailsView.js \
 	System.Web.UI.WebControls/TreeView.js \
@@ -140,6 +141,8 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/TextBoxTestlPage.aspx \
 	Test/mainsoft/NunitWebResources/ClearErrorOnError.aspx \
 	Test/mainsoft/NunitWebResources/RedirectOnError.aspx \
+	Test/mainsoft/NunitWebResources/TestCapability.browser \
+	Test/mainsoft/NunitWebResources/PageWithAdapter.aspx \
 	Test/mainsoft/MainsoftWebTest/nunitweb_config.xml 
 
 RESX_DIST =  resources/TranslationResources.resx

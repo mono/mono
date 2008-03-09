@@ -1,3 +1,18 @@
+2008-03-09  Dean Brettle <dean@brettle.com> 
+
+	* MenuTest.cs (Menu_RenderStaticItems): added tests to check that
+	result was the same when using the base MenuAdapter as when using
+	no adapter.
+	
+	* MenuTest.cs (Menu_RenderStaticItemsWithAdapter): added test
+	to ensure that MenuAdapter.RenderItem() is called.
+
+	* HierarchicalDataBoundControlTest.cs, WebControlTest.cs, 
+	DataBoundControlTest.cs: added test for use of ControlAdapters
+	when present.
+	
+	* WebControl.cs: added test for IsEnabled.
+
 2008-01-08 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* DetailsViewTest.cs:

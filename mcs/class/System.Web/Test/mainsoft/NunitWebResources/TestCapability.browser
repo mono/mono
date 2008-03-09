@@ -1,0 +1,22 @@
+<browsers>
+	<defaultBrowser id="Default">
+		<capture>
+		</capture>
+		<capabilities>
+		</capabilities>
+		<controlAdapters />
+	</defaultBrowser>
+	<browser id="Default">
+		<identification>
+	  		<userAgent match="^(?'capturename'.*)$" />
+		</identification>
+		<capture>
+		</capture>
+		<capabilities>
+			<capability name="notChanged" value="default" />
+			<capability name="changedInRefNode" value="unchanged" />
+	    	<capability name="capturedInDefaultNode" value="ua:${capturename}" />
+		</capabilities>
+		<controlAdapters />
+	</browser>
+</browsers>

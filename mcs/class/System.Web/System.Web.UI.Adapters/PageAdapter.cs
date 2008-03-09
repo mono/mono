@@ -40,90 +40,102 @@ namespace System.Web.UI.Adapters
 		{
 		}
 
-		[MonoTODO("Not implemented")]
-		public virtual StringCollection CacheVaryByHeaders 
+		internal PageAdapter (Page p) : base (p)
 		{
-			get {
-				throw new NotImplementedException ();
-			}
 		}
 
-		[MonoTODO("Not implemented")]
-		public virtual StringCollection CacheVaryByParams 
-		{
-			get {
-				throw new NotImplementedException ();
-			}
+		public virtual StringCollection CacheVaryByHeaders {
+			get { return null; }
+		}
+
+		public virtual StringCollection CacheVaryByParams {
+			get { return null; }
 		}
 		
-		[MonoTODO("Not implemented")]
 		protected string ClientState 
 		{
 			get {
-				throw new NotImplementedException ();
+				return Page.GetSavedViewState ();
 			}
 		}
 		
-		[MonoTODO("Not implemented")]
 		public virtual NameValueCollection DeterminePostBackMode ()
 		{
-			throw new NotImplementedException ();
+			return Page.DeterminePostBackMode ();
 		}
 
-		[MonoTODO("Not implemented")]
 		public virtual ICollection GetRadioButtonsByGroup (string groupName)
 		{
-			throw new NotImplementedException ();
+			if (radio_button_group == null)
+				return new ArrayList();
+			ArrayList radioButtons = (ArrayList) radio_button_group [groupName];
+			if (radioButtons == null)
+				return new ArrayList();
+			return radioButtons;
 		}
 
-		[MonoTODO("Not implemented")]
 		public virtual PageStatePersister GetStatePersister ()
 		{
-			throw new NotImplementedException ();
+			return new HiddenFieldPageStatePersister ((Page)Control);
 		}
 
-		[MonoTODO("Not implemented")]
 		public virtual void RegisterRadioButton (RadioButton radioButton)
 		{
-			throw new NotImplementedException ();
+			if (radio_button_group == null)
+				radio_button_group = new ListDictionary();
+			ArrayList radioButtons = (ArrayList) radio_button_group [radioButton.GroupName];
+			if (radioButtons == null)
+				radio_button_group [radioButton.GroupName] = radioButtons = new ArrayList();
+			if (!radioButtons.Contains(radioButton))
+				radioButtons.Add(radioButton);
 		}
 
-		[MonoTODO("Not implemented")]
 		public virtual void RenderBeginHyperlink (HtmlTextWriter w,
 							  string targetUrl,
 							  bool encodeUrl,
 							  string softKeyLabel)
 		{
-			throw new NotImplementedException ();
+			InternalRenderBeginHyperlink (w, targetUrl, encodeUrl, softKeyLabel, null);
 		}
 
-		[MonoTODO("Not implemented")]
 		public virtual void RenderBeginHyperlink (HtmlTextWriter w,
 							  string targetUrl,
 							  bool encodeUrl,
 							  string softKeyLabel,
 							  string accessKey)
 		{
-			throw new NotImplementedException ();
+			if (accessKey != null && accessKey.Length > 1)
+				throw new ArgumentOutOfRangeException("accessKey");
+			InternalRenderBeginHyperlink (w, targetUrl, encodeUrl, softKeyLabel, accessKey);
 		}
 		
-		[MonoTODO("Not implemented")]
+		void InternalRenderBeginHyperlink (HtmlTextWriter w,
+						   string targetUrl,
+						   bool encodeUrl,
+						   string softKeyLabel,
+						   string accessKey)
+		{
+			w.AddAttribute (HtmlTextWriterAttribute.Href, targetUrl, encodeUrl);
+			if (accessKey != null)
+				w.AddAttribute (HtmlTextWriterAttribute.Accesskey, accessKey);
+			w.RenderBeginTag (HtmlTextWriterTag.A);
+		}
+		
+		
 		public virtual void RenderEndHyperlink (HtmlTextWriter w)
 		{
-			throw new NotImplementedException ();
+			w.RenderEndTag();
 		}
 
-		[MonoTODO("Not implemented")]
 		public virtual void RenderPostBackEvent (HtmlTextWriter w,
 							 string target,
 							 string argument,
 							 string softKeyLabel,
 							 string text)
 		{
-			throw new NotImplementedException ();
+			RenderPostBackEvent (w, target, argument, softKeyLabel, text, Page.Request.FilePath, null, true);
 		}
 
-		[MonoTODO("Not implemented")]
 		public virtual void RenderPostBackEvent (HtmlTextWriter w,
 							 string target,
 							 string argument,
@@ -132,10 +144,9 @@ namespace System.Web.UI.Adapters
 							 string postUrl,
 							 string accessKey)
 		{
-			throw new NotImplementedException ();
+			RenderPostBackEvent (w, target, argument, softKeyLabel, text, postUrl, accessKey, true);
 		}
 
-		[MonoTODO("Not implemented")]
 		protected void RenderPostBackEvent (HtmlTextWriter w,
 						    string target,
 						    string argument,
@@ -145,20 +156,24 @@ namespace System.Web.UI.Adapters
 						    string accessKey,
 						    bool encode)
 		{
-			throw new NotImplementedException ();
+			string url = String.Format ("{0}?__VIEWSTATE={1}&__EVENTTARGET={2}&__EVENTARGUMENT={3}&__PREVIOUSPAGE={4}",
+				postUrl, HttpUtility.UrlEncode (Page.GetSavedViewState ()), target, argument, Page.Request.FilePath);
+			RenderBeginHyperlink (w, url, encode, softKeyLabel, accessKey);
+			w.Write(text);
+			RenderEndHyperlink(w);
 		}
 
-		[MonoTODO("Not implemented")]
 		public virtual string TransformText (string text) 
 		{
-			throw new NotImplementedException ();
+			return text;
 		}
 		
-		[MonoTODO("Not implemented")]
 		protected internal virtual string GetPostBackFormReference (string formID)
 		{
-			throw new NotImplementedException ();
+			return String.Format("document.forms['{0}']", formID);
 		}
+		
+		private ListDictionary radio_button_group;
 	}
 }
 #endif

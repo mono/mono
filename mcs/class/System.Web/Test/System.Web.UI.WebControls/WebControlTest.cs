@@ -38,6 +38,9 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using MonoTests.stand_alone.WebHarness;
+#if NET_2_0
+using System.Web.UI.WebControls.Adapters;
+#endif
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -662,5 +665,58 @@ namespace MonoTests.System.Web.UI.WebControls
 			c.Attributes ["HOla"] = "hi";
 			Assert.AreEqual ("hi", c.Attributes ["hoLA"], "#01");
 		}
+
+#if NET_2_0
+		class MyWebControlAdapter : WebControlAdapter
+		{
+			protected override void RenderBeginTag (HtmlTextWriter w)
+			{
+				w.WriteLine("RenderBeginTag");
+			}
+
+			protected override void RenderContents (HtmlTextWriter w)
+			{
+				w.WriteLine("RenderContents");
+			}
+
+			protected override void RenderEndTag (HtmlTextWriter w)
+			{
+				w.WriteLine("RenderEndTag");
+			}
+		}
+		
+		class MyWebControl : WebControl
+		{
+			WebControlAdapter my_web_control_adapter = new MyWebControlAdapter();
+			protected override global::System.Web.UI.Adapters.ControlAdapter ResolveAdapter ()
+			{
+				return my_web_control_adapter;
+			}
+		}
+		
+		[Test]
+		public void Render ()
+		{
+			MyWebControl c = new MyWebControl ();
+			StringWriter sw = new StringWriter ();
+			HtmlTextWriter w = new HtmlTextWriter (sw);			
+			c.Render (w);
+			Assert.AreEqual ("RenderBeginTag\nRenderContents\nRenderEndTag\n", sw.ToString (), "Render #1");
+		}
+
+		[Test]
+		public void IsEnabled ()
+		{
+			WebControl parent = new MyWebControl ();
+			WebControl child = new MyWebControl ();
+			parent.Controls.Add (child);
+			Assert.IsTrue (child.IsEnabled, "IsEnabled #1");
+			parent.Enabled = false;
+			Assert.IsFalse (child.IsEnabled, "IsEnabled #2");
+			parent.Enabled = true;
+			child.Enabled = false;
+			Assert.IsFalse (child.IsEnabled, "IsEnabled #3");
+		}
+#endif
 	}
 }

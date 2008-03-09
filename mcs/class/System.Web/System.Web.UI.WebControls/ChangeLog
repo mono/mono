@@ -1,3 +1,17 @@
+2008-03-09  Dean Brettle <dean@brettle.com> 
+
+	* DetailsView.cs, ListControl.cs, DataBoundControl.cs, 
+	FormView.cs, HierarchicalDataBoundControl.cs, WebControl.cs: 
+	added support for using ControlAdapters when present.
+	
+	* WebControl.cs: fixed implementation of IsEnabled to match 
+	documentation.
+
+	* Menu.cs (RenderMenuBody): call Adapter.RenderItem() instead of 
+	RenderMenuItem() if an adapter is present.  MenuAdapter.RenderItem() 
+	calls back to new Menu.RenderItem() internal method which calls
+	RenderMenuItem() with the appropriate parameters.
+
 2008-02-25 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* GridView.cs:

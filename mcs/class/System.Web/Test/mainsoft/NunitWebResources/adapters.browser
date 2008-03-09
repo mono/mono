@@ -3,12 +3,21 @@
     <windir>\Microsoft.NET\Framework\<ver>\CONFIG\Browsers
 -->
 <browsers>
-  <!--browser refID="Default">
-    <controlAdapters>
+  <browser refID="Default">
+  	<capture>
+  		<userAgent match="^(?'refuacapturename'.*)$" />
+  	</capture>
+    <controlAdapters markupTextWriterType="MonoTests.System.Web.CustomHtmlTextWriter, System.Web_test_net_2_0">
       <adapter 
-            controlType="MonoTests.System.Web.UI.Customadaptercontrol, MonoTests.System.Web, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
-            adapterType="MonoTests.System.Web.UI.Customadapter, MonoTests.System.Web, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" 
+            controlType="MonoTests.System.Web.UI.Customadaptercontrol, System.Web_test_net_2_0"
+            adapterType="MonoTests.System.Web.UI.Customadapter, System.Web_test_net_2_0" 
       />
     </controlAdapters>
-  </browser-->
+    <capabilities>
+    	<capability name="addedInRefNode" value="added" />
+    	<capability name="changedInRefNode" value="changed" />
+    	<capability name="capturedInOrigNode" value="uaInOrig:${capturename}" />
+    	<capability name="capturedInRefNode" value="uaInRef:${refuacapturename}" />
+    </capabilities>
+  </browser>
 </browsers>

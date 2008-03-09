@@ -707,27 +707,6 @@ namespace MonoTests.System.Web.UI
 			Stream strem = ctrl.OpenFile ("~/Fake.tmp");
 		}
 
-		//// MonoTests.SystemWeb.Framework limitation for Add_browsers - directory include in project
-		//[Test]
-		//[Category ("NunitWeb")]
-		//public void ResolveAdapter_1 ()
-		//{
-		//        WebTest.CopyResource (GetType (), "adapters.browser", "App_Browsers/adapters.browser");
-		//        WebTest t = new WebTest (PageInvoker.CreateOnInit (ResolveAdapter_Init));
-		//        string html = t.Run ();
-		//}
-		//public static void ResolveAdapter_Init (Page p)
-		//{
-		//        Customadaptercontrol ctrl = new Customadaptercontrol ();
-		//        p.Controls.Add (ctrl);
-		//        ctrl.Load += new EventHandler (ctrl_Load);
-		//}
-		//static void ctrl_Load (object sender, EventArgs e)
-		//{
-		//        Assert.IsNotNull (((Customadaptercontrol) sender).ResolveAdapter (), "ResolveAdapter Failed#1");
-		//        Assert.AreEqual ("Customadapter", ((Customadaptercontrol) sender).ResolveAdapter ().ToString (), "ResolveAdapter Failed#2");
-		//}
-
 		[Test]
 		[Category ("NunitWeb")]
 		public void ResolveClientUrl ()
@@ -973,7 +952,7 @@ namespace MonoTests.System.Web.UI
 		}
 #if NET_2_0
 		[Test]
-		public void Contorl_Adapter ()
+		public void Control_Adapter ()
 		{
 			MyNC ctr = new MyNC ();
 			Assert.AreEqual (null, ctr.Adapter (), "Adapter");
@@ -1174,6 +1153,10 @@ namespace MonoTests.System.Web.UI
 #if NET_2_0
 	public class Customadaptercontrol : Control
 	{
+		public new ControlAdapter Adapter {
+			get { return base.Adapter; }
+		}
+
 		public new ControlAdapter ResolveAdapter ()
 		{
 			return base.ResolveAdapter ();

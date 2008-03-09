@@ -53,7 +53,7 @@ namespace System.Web.Configuration
 
 		public HtmlTextWriter CreateHtmlTextWriter (TextWriter w)
 		{
-			return new HtmlTextWriter (w);
+			return (HtmlTextWriter) Activator.CreateInstance (TagWriter, new object[] {w});
 		}
 
 		public void DisableOptimizedCacheKey ()
@@ -65,12 +65,17 @@ namespace System.Web.Configuration
 		public IDictionary Adapters {
 			get {
 				if (!Get (HaveAdapters)) {
-					adapters = new Hashtable ();
+					adapters = GetAdapters();
 					Set (HaveAdapters);
 				}
 
 				return adapters;
 			}
+		}
+		
+		internal virtual IDictionary GetAdapters ()
+		{
+			return new Hashtable();
 		}
 
 		bool canCombineFormsInDeck;

@@ -393,10 +393,11 @@ namespace System.Web.UI.WebControls {
 
 #if !NET_2_0
 			IEnumerable list = DataSourceResolver.ResolveDataSource (DataSource, DataMember);
+			PerformDataBinding (list);
 #else
 			IEnumerable list = GetData ().ExecuteSelect (DataSourceSelectArguments.Empty);
+			InternalPerformDataBinding (list);
 #endif
-			PerformDataBinding (list);
 
 		}
 

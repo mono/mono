@@ -1,3 +1,15 @@
+2008-03-09  Dean Brettle <dean@brettle.com> 
+
+	* AppBrowsersTest.cs: added.  Includes tests for Control.Adapter,
+	Control.ResolveAdapter,	Control.TagWriter, and
+	Control.CreateHtmlTextWriter, when using App_Browsers/*.browser files.
+	AppBrowsersTest is currently tagged [Ignore], pending a fix for 
+	bug #351878.
+	
+	* HttpRuntimeTest.cs: added. Includes test for 
+	HttpRuntime.UnloadAppDomain().  Marked [Ignore], pending a fix for
+	bug #351878.
+	
 2008-01-16  Juraj Skripsky  <js@hotfeet.ch>
 
 	* HttpRequestTest.cs (TestReferer): added test for invalid referer url.
