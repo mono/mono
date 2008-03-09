@@ -212,6 +212,11 @@ namespace System.Web.UI {
                         try {
 #if NET_2_0
 				type = BuildManager.GetCompiledType (vpath);
+				if (type == null)
+					throw new ParseException (Location, "Error compiling user control '" + vpath + "'.");
+
+				if (!(typeof (UserControl).IsAssignableFrom (type)))
+					throw new ParseException (Location, "Type '" + type.ToString () + "' does not derive from 'System.Web.UI.UserControl'.");
 #else
 				ArrayList other_deps = new ArrayList ();
                                 type = UserControlParser.GetCompiledType (vpath, realpath, other_deps, Context);

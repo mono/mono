@@ -1,5 +1,13 @@
 2008-03-09  Marek Habersack  <mhabersack@novell.com>
 
+	* TemplateControlParser.cs: 2.0 allows controls with extensions
+	different than .ascx, as long as they derive from
+	System.Web.UI.UserControl and a build provider is available for
+	them.
+
+	* TemplateParser.cs: user controls must derive from
+	System.Web.UI.UserControl.
+
 	* SimpleWebHandlerParser.cs: if the input file doesn't contain the
 	correct directive string (tag name is empty for the <%@ %> tag),
 	use the default directive.
