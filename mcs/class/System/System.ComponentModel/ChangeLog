@@ -1,3 +1,10 @@
+2008-03-10  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* TypeDescriptor.cs: GetAttributes should not ask the Type
+	for the inherited attributes. Until recently it didn't 
+	make a difference if we did or not, because 
+	Type.GetCustomAttributes never returned inherited such.
+
 2008-03-06  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* Container.cs: On disposal unsite the component first before 

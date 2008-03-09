@@ -967,15 +967,11 @@ public sealed class TypeDescriptor
 				return _attributes;
 			
 			bool cache = true;
-			object[] ats = _infoType.GetCustomAttributes (true);
+			object[] ats = _infoType.GetCustomAttributes (false);
 			Hashtable t = new Hashtable ();
 
-			// Filter the custom attributes, so that only the top
-			// level of the same type are left.
-			//
-			for (int i = ats.Length -1; i >= 0; i--) {
+			for (int i = ats.Length -1; i >= 0; i--)
 				t [((Attribute) ats[i]).TypeId] = ats[i];
-			}
 					
 			if (comp != null && comp.Site != null) 
 			{
