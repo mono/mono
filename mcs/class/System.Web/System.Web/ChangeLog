@@ -1,3 +1,8 @@
+2008-03-09  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpUtility.cs: HTML-decode the query string prior to parsing
+	it.
+
 2008-03-01  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpRuntime.cs: SettingsMappingManager has been moved to

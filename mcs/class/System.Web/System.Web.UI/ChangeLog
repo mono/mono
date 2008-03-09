@@ -1,3 +1,9 @@
+2008-03-09  Marek Habersack  <mhabersack@novell.com>
+
+	* SimpleWebHandlerParser.cs: if the input file doesn't contain the
+	correct directive string (tag name is empty for the <%@ %> tag),
+	use the default directive.
+
 2008-02-28  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlParser.cs: when registering a control, check for

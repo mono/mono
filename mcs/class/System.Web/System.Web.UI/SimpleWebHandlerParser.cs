@@ -215,7 +215,7 @@ namespace System.Web.UI
 			if (tagtype != System.Web.Compilation.TagType.Directive)
 				throw new ParseException (location, "Unexpected tag");
 
-			if (String.Compare (tagid, DefaultDirectiveName, true) == 0) {
+			if (tagid == null || tagid.Length == 0 || String.Compare (tagid, DefaultDirectiveName, true) == 0) {
 				AddDefaultDirective (location, attributes);
 			} else if (String.Compare (tagid, "Assembly", true) == 0) {
 				AddAssemblyDirective (location, attributes);

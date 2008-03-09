@@ -1060,14 +1060,16 @@ namespace System.Web {
 			if (query.Length == 0)
 				return;
 
+			string decoded = HtmlDecode (query);
+			int decodedLength = decoded.Length;
 			int namePos = 0;
 			bool first = true;
-			while (namePos <= query.Length) {
+			while (namePos <= decodedLength) {
 				int valuePos = -1, valueEnd = -1;
-				for (int q = namePos; q < query.Length; q++) {
-					if (valuePos == -1 && query[q] == '=') {
+				for (int q = namePos; q < decodedLength; q++) {
+					if (valuePos == -1 && decoded [q] == '=') {
 						valuePos = q + 1;
-					} else if (query[q] == '&') {
+					} else if (decoded [q] == '&') {
 						valueEnd = q;
 						break;
 					}
@@ -1075,7 +1077,7 @@ namespace System.Web {
 
 				if (first) {
 					first = false;
-					if (query [namePos] == '?')
+					if (decoded [namePos] == '?')
 						namePos++;
 				}
 				
@@ -1084,15 +1086,15 @@ namespace System.Web {
 					name = null;
 					valuePos = namePos;
 				} else {
-					name = UrlDecode (query.Substring (namePos, valuePos - namePos - 1), encoding);
+					name = UrlDecode (decoded.Substring (namePos, valuePos - namePos - 1), encoding);
 				}
 				if (valueEnd < 0) {
 					namePos = -1;
-					valueEnd = query.Length;
+					valueEnd = decoded.Length;
 				} else {
 					namePos = valueEnd + 1;
 				}
-				value = UrlDecode (query.Substring (valuePos, valueEnd - valuePos), encoding);
+				value = UrlDecode (decoded.Substring (valuePos, valueEnd - valuePos), encoding);
 
 				result.Add (name, value);
 				if (namePos == -1)
