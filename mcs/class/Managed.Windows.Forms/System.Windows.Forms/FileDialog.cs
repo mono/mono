@@ -220,11 +220,6 @@ namespace System.Windows.Forms
 			mwfFileView.Anchor = ((AnchorStyles)((((AnchorStyles.Top | AnchorStyles.Bottom) | AnchorStyles.Left) | AnchorStyles.Right)));
 			mwfFileView.Location = new Point (99, 37);
 			mwfFileView.Size = new Size (449, 282);
-			mwfFileView.Columns.Add (" Name", 170, HorizontalAlignment.Left);
-			mwfFileView.Columns.Add ("Size ", 80, HorizontalAlignment.Right);
-			mwfFileView.Columns.Add (" Type", 100, HorizontalAlignment.Left);
-			mwfFileView.Columns.Add (" Last Access", 150, HorizontalAlignment.Left);
-			mwfFileView.AllowColumnReorder = true;
 			mwfFileView.MultiSelect = false;
 			mwfFileView.TabIndex = 10;
 			mwfFileView.RegisterSender (dirComboBox);
@@ -2211,6 +2206,8 @@ namespace System.Windows.Forms
 		
 		private int old_menuitem_index;
 		private bool do_update_view = false;
+
+		private ColumnHeader [] columns;
 		
 		public MWFFileView (MWFVFS vfs)
 		{
@@ -2280,12 +2277,31 @@ namespace System.Windows.Forms
 			LabelEdit = true;
 			
 			ContextMenu = contextMenu;
+
+			// Create columns, but only add them when view changes to Details
+			columns = new ColumnHeader [4];
+			columns [0] = CreateColumnHeader (" Name", 170, HorizontalAlignment.Left);
+			columns [1] = CreateColumnHeader ("Size ", 80, HorizontalAlignment.Right);
+			columns [2] = CreateColumnHeader (" Type", 100, HorizontalAlignment.Left);
+			columns [3] = CreateColumnHeader (" Last Access", 150, HorizontalAlignment.Left);
+
+			AllowColumnReorder = true;
 			
 			ResumeLayout (false);
 			
 			KeyDown += new KeyEventHandler (MWF_KeyDown);
 		}
-		
+
+		ColumnHeader CreateColumnHeader (string text, int width, HorizontalAlignment alignment)
+		{
+			ColumnHeader col = new ColumnHeader ();
+			col.Text = text;
+			col.Width = width;
+			col.TextAlign = alignment;
+
+			return col;
+		}
+
 		public string CurrentFolder {
 			get {
 				return currentFolder;
@@ -2776,8 +2792,9 @@ namespace System.Windows.Forms
 			
 			UpdateMenuItems (senderMenuItem);
 			
-			// update me
+			// update me - call BeginUpdate/EndUpdate to avoid flicker when columns change
 			
+			BeginUpdate ();
 			switch (senderMenuItem.Index) {
 				case 0:
 					View = View.SmallIcon;
@@ -2797,6 +2814,13 @@ namespace System.Windows.Forms
 				default:
 					break;
 			}
+
+			if (View == View.Details)
+				Columns.AddRange (columns);
+			else
+				Columns.Clear ();
+
+			EndUpdate ();
 		}
 
 		protected override void OnBeforeLabelEdit (LabelEditEventArgs e)

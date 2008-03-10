@@ -1,3 +1,9 @@
+2008-03-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* FileDialog.cs: Don't add any ColumnHeader to Columns if view is not
+	Details - This is needed after we added the bits to use any available
+	column also for List and SmallIcon view. 
+
 2008-03-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListBox.cs: Fire SelectedIndexChanged and SelectedValueChanged events
