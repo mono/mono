@@ -1,3 +1,8 @@
+
+Mon Mar 10 11:59:34 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: some fixes for the AOT compiler.
+
 2008-03-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* cpu-amd64.md: Add clob:1 to some float opcodes.
