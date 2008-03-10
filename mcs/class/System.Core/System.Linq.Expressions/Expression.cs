@@ -1961,10 +1961,6 @@ namespace System.Linq.Expressions {
 		internal static void EmitIsInst (EmitContext ec, Expression expression, Type candidate)
 		{
 			expression.Emit (ec);
-
-			if (expression.Type.IsValueType)
-				ec.ig.Emit (OpCodes.Box, expression.Type);
-
 			ec.ig.Emit (OpCodes.Isinst, candidate);
 		}
 	}
