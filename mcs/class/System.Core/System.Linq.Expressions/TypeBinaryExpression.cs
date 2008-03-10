@@ -27,6 +27,7 @@
 //
 
 using System;
+using System.Reflection.Emit;
 
 namespace System.Linq.Expressions {
 
@@ -52,7 +53,12 @@ namespace System.Linq.Expressions {
 
 		internal override void Emit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			expression.Emit (ec);
+
+			var ig = ec.ig;
+			ig.Emit (OpCodes.Isinst, type_operand);
+			ig.Emit (OpCodes.Ldnull);
+			ig.Emit (OpCodes.Cgt_Un);
 		}
 	}
 }

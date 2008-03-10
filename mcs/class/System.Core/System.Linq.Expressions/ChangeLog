@@ -1,3 +1,7 @@
+2008-03-10  Jb Evain  <jbevain@novell.com>
+
+	* TypeBinaryExpression.cs (Emit): implement.
+
 2008-03-08  Jb Evain  <jbevain@novell.com>
 
 	* MemberListBinding.cs (Emit): implement.
