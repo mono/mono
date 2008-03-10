@@ -1,3 +1,9 @@
+2008-03-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (do_invoke_method): Mark callvirt to static methods unverifiable.
+
+	* verify.c: Some todos cleaned and improved a few error messages.
+
 2008-03-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_setup_mono_type): Improve the test for corlib.
