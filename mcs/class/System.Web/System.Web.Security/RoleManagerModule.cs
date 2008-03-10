@@ -62,7 +62,7 @@ namespace System.Web.Security {
 			HttpApplication app = (HttpApplication)sender;
 
 			/* if we're disabled, bail out early */
-			if (!_config.Enabled)
+			if (_config == null || !_config.Enabled)
 				return;
 
 			/* allow the user to populate the Role */
@@ -116,7 +116,7 @@ namespace System.Web.Security {
 
 			/* if we're not enabled or configured to cache
 			 * cookies, bail out */
-			if (!_config.Enabled || !_config.CacheRolesInCookie)
+			if (_config == null || !_config.Enabled || !_config.CacheRolesInCookie)
 				return;
 
 			/* if the user isn't authenticated, bail
@@ -157,10 +157,10 @@ namespace System.Web.Security {
 
 		public void Init (HttpApplication app)
 		{
+			_config = (RoleManagerSection) WebConfigurationManager.GetSection ("system.web/roleManager");
+
 			app.PostAuthenticateRequest += OnPostAuthenticateRequest;
 			app.EndRequest += OnEndRequest;
-
-			_config = (RoleManagerSection) WebConfigurationManager.GetSection ("system.web/roleManager");
 		}
 	}
 }
