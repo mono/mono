@@ -47,7 +47,8 @@ namespace MonoTests.System.Reflection
 	[TestFixture]
 	public class AssemblyTest
 	{
-		static string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.Reflection.AssemblyTest");
+		static string TempFolder = Path.Combine (Path.GetTempPath (),
+			"MonoTests.System.Reflection.AssemblyTest");
 
 		[SetUp]
 		public void SetUp ()
@@ -169,8 +170,7 @@ namespace MonoTests.System.Reflection
 			try {
 				ass.GetModules ();
 				Assert.Fail ();
-			}
-			catch (FileNotFoundException ex) {
+			} catch (FileNotFoundException ex) {
 				Assert.AreEqual ("myDynamicModule.dll", ex.FileName);
 			}
 		}
@@ -236,18 +236,33 @@ namespace MonoTests.System.Reflection
 
 		[Test]
 		[Category("TargetJvmNotWorking")] // Not yet supported for TARGET_JVM
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void GetFile_Null ()
 		{
-			Assembly.GetExecutingAssembly ().GetFile (null);
+			try {
+				Assembly.GetExecutingAssembly ().GetFile (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
 		[Category("TargetJvmNotWorking")] // Not yet supported for TARGET_JVM
-		[ExpectedException (typeof (ArgumentException))]
 		public void GetFile_Empty ()
 		{
-			Assembly.GetExecutingAssembly ().GetFile (String.Empty);
+			try {
+				Assembly.GetExecutingAssembly ().GetFile (
+					String.Empty);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
@@ -415,11 +430,20 @@ namespace MonoTests.System.Reflection
 
 #if !TARGET_JVM // GetObjectData currently not implemented for Assembly.
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void GetObjectData_Null ()
+		public void GetObjectData_Info_Null ()
 		{
 			Assembly corlib = typeof (int).Assembly;
-			corlib.GetObjectData (null, new StreamingContext (StreamingContextStates.All));
+			try {
+				corlib.GetObjectData (null, new StreamingContext (
+					StreamingContextStates.All));
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("info", ex.ParamName, "#6");
+			}
 		}
 #endif // TARGET_JVM
 
@@ -798,7 +822,7 @@ namespace MonoTests.System.Reflection
 				if (Directory.Exists (tempDir))
 					Directory.Delete (tempDir, true);
 			}
-	    }
+		}
 
 
 		[Test] // bug #79715
@@ -1116,14 +1140,19 @@ namespace MonoTests.System.Reflection
 		}
 		
 		[Test]
-		public void CustomAttributesNull ()
+		public void GetCustomAttributes_AttributeType_Null ()
 		{
 			Assembly a = typeof (int).Assembly;
 			try {
 				a.GetCustomAttributes (null, false);
-				Assert.Fail ();
-			} catch (ArgumentNullException)
-			{}
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.ParamName, "#5");
+				Assert.AreEqual ("attributeType", ex.ParamName, "#6");
+			}
 		}
 	}
 }

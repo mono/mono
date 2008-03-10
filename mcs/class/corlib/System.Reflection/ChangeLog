@@ -1,3 +1,7 @@
+2008-03-10  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Assembly.cs (GetFile): Fixed exception messages and param name.
+
 2008-03-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* Assembly.cs: Define GetManifestModule () for net 2.0 bootstrap as well.

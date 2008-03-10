@@ -1,3 +1,8 @@
+2008-03-10  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AssemblyTest.cs: Improved tests for GetFile, GetObjectData and
+	GetCustomAttributes.
+
 2008-02-20  Raja R Harinath  <harinath@hurrynot.org>
 
 	* MethodInfoTest.cs (GetGenericMethodDefinition): Add a test for

@@ -256,9 +256,9 @@ namespace System.Reflection {
 		public virtual FileStream GetFile (String name)
 		{
 			if (name == null)
-				throw new ArgumentNullException ("name");
+				throw new ArgumentNullException (null, "Name cannot be null.");
 			if (name.Length == 0)
-				throw new ArgumentException ("name");
+				throw new ArgumentException ("Empty name is not valid");
 
 			string filename = (string)GetFilesInternal (name, true);
 			if (filename != null)
