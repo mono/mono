@@ -1,3 +1,8 @@
+2008-03-10 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* unverifiable_callvirt_static_method.il: Added. Test for callvirt and
+	static methods.
+
 2008-02-28 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* invalid_refanytype_null_stack_top.il: New test for refanytype opcode.
