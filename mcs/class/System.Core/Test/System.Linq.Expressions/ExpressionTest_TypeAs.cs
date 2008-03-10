@@ -86,5 +86,33 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual ("(value(MonoTests.System.Linq.Expressions.OpClass) As OpClass)", expr.ToString(), "TypeAs#09");
 		}
 
+		static Func<object, TType> CreateTypeAs<TType> ()
+		{
+			var obj = Expression.Parameter (typeof (object), "obj");
+
+			return Expression.Lambda<Func<object, TType>> (
+				Expression.TypeAs (obj, typeof (TType)), obj).Compile ();
+		}
+
+		struct Foo {
+		}
+
+		class Bar {
+		}
+
+		class Baz : Bar {
+		}
+
+		[Test]
+		public void CompiledTypeAs ()
+		{
+			var asbar = CreateTypeAs<Bar> ();
+			var asbaz = CreateTypeAs<Baz> ();
+
+			Assert.IsNotNull (asbar (new Bar ()));
+			Assert.IsNull (asbar (new Foo ()));
+			Assert.IsNotNull (asbar (new Baz ()));
+			Assert.IsNull (asbaz (new Bar ()));
+		}
 	}
 }
