@@ -1,3 +1,9 @@
+2008-03-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListBox.cs: Fire SelectedIndexChanged and SelectedValueChanged events
+	at the proper place, not only when changing SelectedIndex and changing
+	the selection using keys/mouse, as .net does.
+
 2008-03-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ControlBindingsCollection.cs: Implement last 2.0

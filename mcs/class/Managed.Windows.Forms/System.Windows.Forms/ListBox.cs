@@ -512,9 +512,6 @@ namespace System.Windows.Forms
 					selected_indices.Clear ();
 				else
 					selected_indices.Add (value);
-
-    				OnSelectedIndexChanged  (EventArgs.Empty);
-    				OnSelectedValueChanged (EventArgs.Empty);
 			}
 		}
 
@@ -1886,10 +1883,10 @@ namespace System.Windows.Forms
 						if (SelectedIndices.Contains (index))
 							SelectedIndices.Remove (index);
 						else {
-							SelectedIndices.Add (index);
+							SelectedIndices.AddCore (index);
 
-    							OnSelectedIndexChanged  (new EventArgs ());
-    							OnSelectedValueChanged (new EventArgs ());
+    							OnSelectedIndexChanged  (EventArgs.Empty);
+    							OnSelectedValueChanged (EventArgs.Empty);
     						}
     					}
     					break;
@@ -1907,11 +1904,12 @@ namespace System.Windows.Forms
 						if (shift_pressed == true) {
 							ShiftSelection (index);
 						} else { // ctrl_pressed or single item
-							SelectedIndices.Add (index);
+							SelectedIndices.AddCore (index);
+
 						}
-    						
-    						OnSelectedIndexChanged  (new EventArgs ());
-    						OnSelectedValueChanged (new EventArgs ());
+
+						OnSelectedIndexChanged  (EventArgs.Empty);
+						OnSelectedValueChanged (EventArgs.Empty);
     					}
     					break;
     				}    				
@@ -1952,7 +1950,7 @@ namespace System.Windows.Forms
 				
 				selected_indices.Clear ();
 				for (int idx = start; idx <= end; idx++) {
-					selected_indices.Add (idx);
+					selected_indices.AddCore (idx);
 				}
 			}
 		}
@@ -2559,24 +2557,36 @@ namespace System.Windows.Forms
 #endif
 			void Add (int index)
 			{
+				if (AddCore (index)) {
+					owner.OnSelectedIndexChanged (EventArgs.Empty);
+					owner.OnSelectedValueChanged (EventArgs.Empty);
+				}
+			}
+
+			// Need to separate selection logic from events,
+			// since selection changes using keys/mouse handle them their own way
+			internal bool AddCore (int index)
+			{
 				if (selection.Contains (index))
-					return;
+					return false;
 
 				if (index == -1) // Weird MS behaviour
-					return;
+					return false;
 				if (index < -1 || index >= owner.Items.Count)
 					throw new ArgumentOutOfRangeException ("index");
 				if (owner.selection_mode == SelectionMode.None)
 					throw new InvalidOperationException ("Cannot call this method when selection mode is SelectionMode.None");
 
 				if (owner.selection_mode == SelectionMode.One && Count > 0) // Unselect previously selected item
-					Remove ((int)selection [0]);
+					RemoveCore ((int)selection [0]);
 
 				selection.Add (index);
 				sorting_needed = true;
 				owner.EnsureVisible (index);
 				owner.FocusedItem = index;
 				owner.InvalidateItem (index);
+
+				return true;
 			}
 
 #if NET_2_0
@@ -2593,6 +2603,8 @@ namespace System.Windows.Forms
 					owner.InvalidateItem (index);
 
 				selection.Clear ();
+				owner.OnSelectedIndexChanged (EventArgs.Empty);
+				owner.OnSelectedValueChanged (EventArgs.Empty);
 			}
 
 			public bool Contains (int selectedIndex)
@@ -2625,12 +2637,23 @@ namespace System.Windows.Forms
 #endif
 			void Remove (int index)
 			{
+				// Separate logic from events here too
+				if (RemoveCore (index)) {
+					owner.OnSelectedIndexChanged (EventArgs.Empty);
+					owner.OnSelectedValueChanged (EventArgs.Empty);
+				}
+			}
+
+			internal bool RemoveCore (int index)
+			{
 				int idx = IndexOf (index);
 				if (idx == -1)
-					return;
+					return false;
 
 				selection.RemoveAt (idx);
 				owner.InvalidateItem (index);
+
+				return true;
 			}
 
 			int IList.Add (object obj)
