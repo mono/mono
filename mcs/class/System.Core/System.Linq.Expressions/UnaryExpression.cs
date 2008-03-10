@@ -83,7 +83,9 @@ namespace System.Linq.Expressions {
 		void EmitTypeAs (EmitContext ec)
 		{
 			var type = this.Type;
+
 			EmitIsInst (ec, operand, type);
+
 			if (IsNullable (type))
 				ec.ig.Emit (OpCodes.Unbox_Any, type);
 		}
