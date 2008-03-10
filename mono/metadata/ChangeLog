@@ -1,5 +1,12 @@
 2008-03-10 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (do_invoke_method): Remove return type validation.
+
+	* verify.c (do_ret): Do return type validation at return site instead of
+	call site.
+
+2008-03-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (do_invoke_method): Mark callvirt to static methods unverifiable.
 
 	* verify.c: Some todos cleaned and improved a few error messages.
