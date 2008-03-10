@@ -115,7 +115,7 @@ namespace System.Net.NetworkInformation {
 		
 		public static NetworkInterface [] ImplGetAllNetworkInterfaces ()
 		{
-			string [] dirs = Directory.GetFiles ("/sys/class/net");
+			string [] dirs = Directory.GetFileSystemEntries ("/sys/class/net");
 			ArrayList a = null;
 			
 			foreach (string d in dirs){

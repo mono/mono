@@ -1,3 +1,8 @@
+2008-03-07  Miguel de Icaza  <miguel@novell.com>
+
+	* NetworkInterface.cs: Use GetFileSystemEntries, on some systems
+	the files do not appear to be symlinks, but directories.
+
 2008-02-18  Miguel de Icaza  <miguel@novell.com>
 
 	* IPv4InterfaceStatistics.cs: Implemented Linux support.
