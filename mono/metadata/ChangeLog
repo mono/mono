@@ -1,3 +1,14 @@
+2007-03-10  Bill Holmes  <billholmes54@gmail.com>
+
+	* generic-sharing.c:  Including glib.h for the MSVC builds to define
+	  "inline" to "__inline" before including mono-membar.h.
+	  
+	* mono-perfcounters.c:  Adding HAVE_SYS_TIME_H check for MSVC builds.
+	  Rename "Unknown" to "CatTypeUnknown" to avoid name collisions for 
+	  MSVC builds.
+
+	Contributed under MIT/X11 license.
+
 2008-03-10 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (do_invoke_method): Remove return type validation.
