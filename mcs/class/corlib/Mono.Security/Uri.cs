@@ -8,6 +8,7 @@
 //    Ian MacLean (ianm@activestate.com)
 //    Ben Maurer (bmaurer@users.sourceforge.net)
 //    Atsushi Enomoto (atsushi@ximian.com)
+//    Stephane Delcroix  <stephane@delcroix.org>
 //
 // (C) 2001 Garrett Rooney
 // (C) 2003 Ian MacLean
@@ -777,11 +778,9 @@ namespace Mono.Security {
 			if (str == null)
 				return String.Empty;
 			
-			byte [] data = Encoding.UTF8.GetBytes (str.ToCharArray ());
 			StringBuilder s = new StringBuilder ();
-			int len = data.Length;	
+			int len = str.Length;	
 			for (int i = 0; i < len; i++) {
-				char c = (char) data [i];
 				// reserved    = ";" | "/" | "?" | ":" | "@" | "&" | "=" | "+" | "$" | ","
 				// mark        = "-" | "_" | "." | "!" | "~" | "*" | "'" | "(" | ")"
 				// control     = <US-ASCII coded characters 00-1F and 7F hexadecimal>
@@ -791,33 +790,34 @@ namespace Mono.Security {
 
 				// check for escape code already placed in str, 
 				// i.e. for encoding that follows the pattern 
-                // "%hexhex" in a string, where "hex" is a digit from 0-9 
+				// "%hexhex" in a string, where "hex" is a digit from 0-9 
 				// or a letter from A-F (case-insensitive).
-				if('%'.Equals(c) && IsHexEncoding(str,i))
-				{
+				if (IsHexEncoding (str,i)) {
 					// if ,yes , copy it as is
-					s.Append(c);
-					s.Append(str[++i]);
-					s.Append(str[++i]);
+					s.Append(str.Substring (i, 3));
+					i += 2;
 					continue;
 				}
 
-				if ((c <= 0x20) || (c >= 0x7f) || 
-				    ("<>%\"{}|\\^`".IndexOf (c) != -1) ||
-				    (escapeHex && (c == '#')) ||
-				    (escapeBrackets && (c == '[' || c == ']')) ||
-				    (escapeReserved && (";/?:@&=+$,".IndexOf (c) != -1))) {
-					s.Append (HexEscape (c));
-					continue;
+				byte [] data = Encoding.UTF8.GetBytes (new char[] {str[i]});
+				int length = data.Length;
+				for (int j = 0; j < length; j++) {
+					char c = (char) data [j];
+					if ((c <= 0x20) || (c >= 0x7f) || 
+					    ("<>%\"{}|\\^`".IndexOf (c) != -1) ||
+					    (escapeHex && (c == '#')) ||
+					    (escapeBrackets && (c == '[' || c == ']')) ||
+					    (escapeReserved && (";/?:@&=+$,".IndexOf (c) != -1))) {
+						s.Append (HexEscape (c));
+						continue;
+					}	
+					s.Append (c);
 				}
-				
-					
-				s.Append (c);
 			}
 			
 			return s.ToString ();
 		}
-
+	
 		// This method is called from .ctor(). When overriden, we can
 		// avoid the "absolute uri" constraints of the .ctor() by
 		// overriding with custom code.

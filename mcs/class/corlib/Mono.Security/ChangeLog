@@ -1,3 +1,7 @@
+2008-03-10  Stephane Delcroix  <sdelcroix@novell.com>
+
+	* Uri.cs: port the changes I did in System.Uri in r97844.
+
 2007-03-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* ASN1Convert.cs: Fix a warning.
