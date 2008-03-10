@@ -1,3 +1,9 @@
+2008-03-08  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil.Binary/CopyImageVisitor.cs:
+		Copy the cliheaders flags over the new assembly.
+		Patch by Oleksiy Gapotchenko <alex.s.gap@gmail.com>
+
 2008-03-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Mono.Cecil.Cil/CodeReader.cs:
