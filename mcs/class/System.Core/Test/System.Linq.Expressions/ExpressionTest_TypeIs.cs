@@ -80,25 +80,28 @@ namespace MonoTests.System.Linq.Expressions
 		class Baz : Bar {
 		}
 
-		static Func<object, bool> CreateTypeIs<TType> ()
+		static Func<TType, bool> CreateTypeIs<TType, TCandidate> ()
 		{
-			var obj = Expression.Parameter (typeof (object), "obj");
+			var p = Expression.Parameter (typeof (TType), "p");
 
-			return Expression.Lambda<Func<object, bool>> (
-				Expression.TypeIs (obj, typeof (TType)), obj).Compile ();
+			return Expression.Lambda<Func<TType, bool>> (
+				Expression.TypeIs (p, typeof (TCandidate)), p).Compile ();
 		}
 
 		[Test]
 		public void CompiledTypeIs ()
 		{
-			var isfoo = CreateTypeIs<Foo> ();
-			var isbar = CreateTypeIs<Bar> ();
+			var foo_is_bar = CreateTypeIs<Foo, Bar> ();
+			var foo_is_foo = CreateTypeIs<Foo, Foo> ();
+			var bar_is_bar = CreateTypeIs<Bar, Bar> ();
+			var bar_is_foo = CreateTypeIs<Bar, Foo> ();
+			var baz_is_bar = CreateTypeIs<Baz, Bar> ();
 
-			Assert.IsTrue (isfoo (new Foo ()));
-			Assert.IsFalse (isbar (new Foo ()));
-			Assert.IsTrue (isbar (new Bar ()));
-			Assert.IsFalse (isfoo (new Bar ()));
-			Assert.IsTrue (isbar (new Baz ()));
+			Assert.IsTrue (foo_is_foo (new Foo ()));
+			Assert.IsFalse (foo_is_bar (new Foo ()));
+			Assert.IsTrue (bar_is_bar (new Bar ()));
+			Assert.IsFalse (bar_is_foo (new Bar ()));
+			Assert.IsTrue (baz_is_bar (new Baz ()));
 		}
 	}
 }
