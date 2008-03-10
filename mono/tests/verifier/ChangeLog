@@ -1,5 +1,12 @@
 2008-03-10 Rodrigo Kumpera <rkumpera@novell.com>
 
+	* make_invalid_ret_type.sh: Added. Generate return site tests
+	for invalid return types.
+
+	* make_tests.sh: Add tests using make_invalid_ret_type.sh. 
+
+2008-03-10 Rodrigo Kumpera <rkumpera@novell.com>
+
 	* unverifiable_callvirt_static_method.il: Added. Test for callvirt and
 	static methods.
 
