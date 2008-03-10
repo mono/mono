@@ -53,12 +53,10 @@ namespace System.Linq.Expressions {
 
 		internal override void Emit (EmitContext ec)
 		{
-			expression.Emit (ec);
+			EmitIsInst (ec, expression, type_operand);
 
-			var ig = ec.ig;
-			ig.Emit (OpCodes.Isinst, type_operand);
-			ig.Emit (OpCodes.Ldnull);
-			ig.Emit (OpCodes.Cgt_Un);
+			ec.ig.Emit (OpCodes.Ldnull);
+			ec.ig.Emit (OpCodes.Cgt_Un);
 		}
 	}
 }

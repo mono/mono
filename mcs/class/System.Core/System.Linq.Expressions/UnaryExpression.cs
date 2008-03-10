@@ -74,14 +74,30 @@ namespace System.Linq.Expressions {
 			this.method = method;
 		}
 
+		void EmitArrayLength (EmitContext ec)
+		{
+			operand.Emit (ec);
+			ec.ig.Emit (OpCodes.Ldlen);
+		}
+
+		void EmitTypeAs (EmitContext ec)
+		{
+			var type = this.Type;
+
+			EmitIsInst (ec, operand, type);
+
+			if (IsNullable (type))
+				ec.ig.Emit (OpCodes.Unbox_Any, type);
+		}
+
 		internal override void Emit (EmitContext ec)
 		{
-			var ig = ec.ig;
-
 			switch (this.NodeType) {
 			case ExpressionType.ArrayLength:
-				operand.Emit (ec);
-				ig.Emit (OpCodes.Ldlen);
+				EmitArrayLength (ec);
+				return;
+			case ExpressionType.TypeAs:
+				EmitTypeAs (ec);
 				return;
 			default:
 				throw new NotImplementedException (this.NodeType.ToString ());
