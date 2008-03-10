@@ -1,3 +1,9 @@
+2008-03-10  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpApplication.cs: synchronize Modules and Dispose with
+	InitOnce. Should prevent firing module events before the modules
+	are fully initialized.
+
 2008-03-09  Dean Brettle <dean@brettle.com> 
 
 	* HttpApplicationFactory.cs: Added support for detecting 

@@ -244,8 +244,10 @@ namespace System.Web {
 		public HttpModuleCollection Modules {
 			[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.High)]
 			get {
-				if (modcoll == null)
-					modcoll = new HttpModuleCollection ();
+				lock (this_lock) {
+					if (modcoll == null)
+						modcoll = new HttpModuleCollection ();
+				}
 				
 				return modcoll;
 			}
@@ -628,13 +630,15 @@ namespace System.Web {
 
 		public virtual void Dispose ()
 		{
-			if (modcoll != null) {
-				for (int i = modcoll.Count - 1; i >= 0; i--) {
-					modcoll.Get (i).Dispose ();
+			lock (this_lock) {
+				if (modcoll != null) {
+					for (int i = modcoll.Count - 1; i >= 0; i--) {
+						modcoll.Get (i).Dispose ();
+					}
+					modcoll = null;
 				}
-				modcoll = null;
 			}
-
+			
 			if (Disposed != null)
 				Disposed (this, EventArgs.Empty);
 			
