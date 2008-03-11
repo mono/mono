@@ -1,5 +1,7 @@
 2008-03-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* Makefile.am il2tests.il iltests.il.in: Delete il2tests, merge it into iltests.
+
 	* tramp-amd64.c (mono_arch_create_trampoline_code): Correctly save RBP as well.
 
 Mon Mar 10 11:59:34 CET 2008 Paolo Molaro <lupus@ximian.com>
