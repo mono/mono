@@ -101,7 +101,7 @@ namespace System.Linq.Expressions {
 		{
 			left.Emit (ec);
 			right.Emit (ec);
-			ec.ig.Emit (OpCodes.Call, Method);
+			ec.EmitCall (method);
 		}
 
 		static MethodInfo GetMethodNoPar (Type t, string name)
@@ -112,6 +112,13 @@ namespace System.Linq.Expressions {
 					string.Format ("Internal error: method {0} with no parameters not found on {1}", name, t));
 
 			return method;
+		}
+
+		void EmitArrayAccess (EmitContext ec)
+		{
+			left.Emit (ec);
+			right.Emit (ec);
+			ec.ig.Emit (OpCodes.Ldelem, this.Type);
 		}
 
 		void EmitLiftedLogical (EmitContext ec, bool and, bool short_circuit)
@@ -191,7 +198,6 @@ namespace System.Linq.Expressions {
 
 		void EmitLogical (EmitContext ec, bool and, bool short_circuit)
 		{
-			ILGenerator ig = ec.ig;
 			if (IsLifted) {
 				EmitLiftedLogical (ec, and, short_circuit);
 				return;
@@ -199,7 +205,7 @@ namespace System.Linq.Expressions {
 
 			left.Emit (ec);
 			right.Emit (ec);
-			ig.Emit (and ? OpCodes.And : OpCodes.Or);
+			ec.ig.Emit (and ? OpCodes.And : OpCodes.Or);
 		}
 
 		void EmitCoalesce (EmitContext ec)
@@ -446,15 +452,16 @@ namespace System.Linq.Expressions {
 
 		internal override void Emit (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
-			OpCode opcode;
-
 			if (method != null){
 				EmitMethod (ec);
 				return;
 			}
 
 			switch (NodeType){
+			case ExpressionType.ArrayIndex:
+				EmitArrayAccess (ec);
+				return;
+
 			case ExpressionType.And:
 				EmitLogical (ec, true, false);
 				return;
@@ -478,11 +485,13 @@ namespace System.Linq.Expressions {
 			case ExpressionType.Power:
 				left.Emit (ec);
 				right.Emit (ec);
-				ig.Emit (OpCodes.Call, typeof (System.Math).GetMethod ("Pow"));
+				ec.EmitCall (typeof (Math).GetMethod ("Pow"));
+				return;
+
+			default:
+				EmitSimpleBinary (ec);
 				return;
 			}
-
-			EmitSimpleBinary (ec);
 		}
 	}
 }

@@ -1,5 +1,10 @@
 2008-03-11  Jb Evain  <jbevain@novell.com>
 
+	* BinaryExpression.cs: very naive implementation of emitting
+	array accesses.
+
+2008-03-11  Jb Evain  <jbevain@novell.com>
+
 	* *.cs: Move the different Emit* helpers to EmitContext,
 	so that they get used more naturally by the non Expression
 	types.
