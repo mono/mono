@@ -1,3 +1,9 @@
+
+Tue Mar 11 15:23:54 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: more complete check that types belong to corlib
+	(fixes second part of bug #369173).
+
 2007-03-10  Bill Holmes  <billholmes54@gmail.com>
 
 	* generic-sharing.c:  Including glib.h for the MSVC builds to define
