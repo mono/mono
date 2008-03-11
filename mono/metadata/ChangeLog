@@ -1,3 +1,7 @@
+2008-03-11 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_delegate_signature_equal): Do proper variance check on arguments
+	and return value.
 
 Tue Mar 11 17:41:38 CET 2008 Paolo Molaro <lupus@ximian.com>
 
