@@ -1,3 +1,10 @@
+2008-03-11  Marek Safar  <marek.safar@gmail.com>
+
+	* support.cs, typemanager.cs, pending.cs, ecore.cs, class.cs, delegate.cs
+	convert.cs, const.cs, anonymous.cs, constant.cs, expression.cs,
+	attribute.cs, statement: Use corect instance of predefined types (work
+	related to #364674).
+
 2008-03-07  Marek Safar  <marek.safar@gmail.com>
 
 	* expression.cs (TypeOfVoid): Fixed predefined method initialization.

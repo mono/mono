@@ -1028,7 +1028,7 @@ namespace Mono.CSharp {
 			// If any operator converts to T then Tx = T
 			//
 			foreach (MethodInfo mi in list){
-				Type ret_type = mi.ReturnType;
+				Type ret_type = TypeManager.TypeToCoreType (mi.ReturnType);
 				if (ret_type == target)
 					return ret_type;
 
@@ -1095,7 +1095,7 @@ namespace Mono.CSharp {
 			EmptyExpression expr = EmptyExpression.Grab ();
 			foreach (MethodInfo m in mg.Methods) {
 				ParameterData pd = TypeManager.GetParameterData (m);
-				Type return_type = m.ReturnType;
+				Type return_type = TypeManager.TypeToCoreType (m.ReturnType);
 				Type arg_type = pd.ParameterType (0);
 
 				if (source_type != arg_type) {
@@ -1169,7 +1169,7 @@ namespace Mono.CSharp {
 			MethodInfo method = null;
 
 			foreach (MethodInfo m in ops) {
-				if (m.ReturnType != most_specific_target)
+				if (TypeManager.TypeToCoreType (m.ReturnType) != most_specific_target)
 					continue;
 				if (TypeManager.GetParameterData (m).ParameterType (0) != most_specific_source)
 					continue;

@@ -416,9 +416,10 @@ namespace Mono.CSharp {
 					} else if ((need_proxy == null) && (name != mname))
 						continue;
 
-					if (!TypeManager.IsEqual (ret_type, m.ReturnType) &&
-					    !(ret_type == null && m.ReturnType == TypeManager.void_type) &&
-					    !(m.ReturnType == null && ret_type == TypeManager.void_type))
+					Type rt = TypeManager.TypeToCoreType (m.ReturnType);
+					if (!TypeManager.IsEqual (ret_type, rt) &&
+					    !(ret_type == null && rt == TypeManager.void_type) &&
+					    !(rt == null && ret_type == TypeManager.void_type))
 						continue;
 
 					//
@@ -533,7 +534,7 @@ namespace Mono.CSharp {
 			MethodSignature ms;
 			
 			Type [] args = TypeManager.GetParameterData (mi).Types;
-			ms = new MethodSignature (mi.Name, mi.ReturnType, args);
+			ms = new MethodSignature (mi.Name, TypeManager.TypeToCoreType (mi.ReturnType), args);
 			MemberList list = TypeContainer.FindMembers (
 				container.TypeBuilder.BaseType, MemberTypes.Method | MemberTypes.Property,
 				BindingFlags.Public | BindingFlags.Instance,

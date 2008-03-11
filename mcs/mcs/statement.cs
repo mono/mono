@@ -3067,7 +3067,7 @@ namespace Mono.CSharp {
 		//
 		Expression SwitchGoverningType (EmitContext ec, Expression expr)
 		{
-			Type t = TypeManager.DropGenericTypeArguments (expr.Type);
+			Type t = expr.Type;
 
 			if (t == TypeManager.byte_type ||
 			    t == TypeManager.sbyte_type ||
@@ -3080,7 +3080,7 @@ namespace Mono.CSharp {
 			    t == TypeManager.char_type ||
 			    t == TypeManager.string_type ||
 			    t == TypeManager.bool_type ||
-			    TypeManager.IsSubclassOf (t, TypeManager.enum_type))
+			    TypeManager.IsEnumType (t))
 				return expr;
 
 			if (allowed_types == null){

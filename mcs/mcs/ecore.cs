@@ -1393,7 +1393,7 @@ namespace Mono.CSharp {
 			foreach (MethodInfo oper in mi) {
 				ParameterData pd = TypeManager.GetParameterData (oper);
 
-				if (pd.ParameterType (0) == child.Type && oper.ReturnType == type)
+				if (pd.ParameterType (0) == child.Type && TypeManager.TypeToCoreType (oper.ReturnType) == type)
 					return oper;
 			}
 
@@ -1448,7 +1448,7 @@ namespace Mono.CSharp {
 			foreach (MethodInfo oper in mi) {
 				ParameterData pd = TypeManager.GetParameterData (oper);
 
-				if (pd.ParameterType (0) == child.Type && oper.ReturnType == type)
+				if (pd.ParameterType (0) == child.Type && TypeManager.TypeToCoreType (oper.ReturnType) == type)
 					return oper;
 			}
 
@@ -1491,7 +1491,7 @@ namespace Mono.CSharp {
 				foreach (MethodInfo oper in all_oper) {
 					ParameterData pd = TypeManager.GetParameterData (oper);
 					if (pd.ParameterType (0) == TypeManager.decimal_type)
-						operators.Add (oper.ReturnType, oper);
+						operators.Add (TypeManager.TypeToCoreType (oper.ReturnType), oper);
 				}
 			}
 

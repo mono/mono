@@ -58,7 +58,7 @@ namespace Mono.CSharp {
 
 			types = new Type [count];
 			for (int i = 0; i < count; i++)
-				types [i] = pi [i].ParameterType;
+				types [i] = TypeManager.TypeToCoreType (pi [i].ParameterType);
 
 			// TODO: This (if) should be done one level higher to correctly use
 			// out caching facilities.

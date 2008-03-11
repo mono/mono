@@ -34,7 +34,7 @@ namespace Mono.CSharp {
 			this.arguments = args;
 			this.expr_tree = expr_tree;
 
-			type = ((MethodInfo)mg).ReturnType;
+			type = TypeManager.TypeToCoreType (((MethodInfo) mg).ReturnType);
 			eclass = ExprClass.Value;
 			this.loc = loc;
 		}
@@ -8044,7 +8044,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			type = pi.PropertyType;
+			type = TypeManager.TypeToCoreType (pi.PropertyType);
 			if (type.IsPointer && !ec.InUnsafe)
 				UnsafeError (loc);
 
@@ -8419,7 +8419,7 @@ namespace Mono.CSharp {
 		{
 			this.method = method;
 			this.source = source;
-			type = method.ReturnType;
+			type = TypeManager.TypeToCoreType (method.ReturnType);
 			eclass = ExprClass.Value;
 			loc = l;
 		}

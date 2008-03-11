@@ -308,11 +308,11 @@ namespace Mono.CSharp {
 		static bool IsValidArgumentType (Type t)
 		{
 			if (t.IsArray)
-				t = t.GetElementType ();
+				t = TypeManager.GetElementType (t);
 
-			return TypeManager.IsPrimitiveType (t) ||
+			return t == TypeManager.string_type ||
+				TypeManager.IsPrimitiveType (t) ||
 				TypeManager.IsEnumType (t) ||
-				t == TypeManager.string_type ||
 				t == TypeManager.object_type ||
 				t == TypeManager.type_type;
 		}
@@ -505,7 +505,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			return (ConstructorInfo)constructor;
+			return constructor;
 		}
 
 		protected virtual bool ResolveNamedArguments (EmitContext ec)
@@ -576,14 +576,14 @@ namespace Mono.CSharp {
 						return false;
 					}
 
-					if (!IsValidArgumentType (pi.PropertyType)) {
+					if (!IsValidArgumentType (member.Type)) {
 						Report.SymbolRelatedToPreviousError (pi);
 						Error_InvalidNamedAgrumentType (member_name);
 						return false;
 					}
 
 					object value;
-					if (!a.Expr.GetAttributableValue (pi.PropertyType, out value))
+					if (!a.Expr.GetAttributableValue (member.Type, out value))
 						return false;
 
 					PropertyBase pb = TypeManager.GetProperty (pi);
@@ -603,14 +603,14 @@ namespace Mono.CSharp {
 						return false;
 					}
 
-					if (!IsValidArgumentType (fi.FieldType)) {
+					if (!IsValidArgumentType (member.Type)) {
 						Report.SymbolRelatedToPreviousError (fi);
 						Error_InvalidNamedAgrumentType (member_name);
 						return false;
 					}
 
  					object value;
-					if (!a.Expr.GetAttributableValue (fi.FieldType, out value))
+					if (!a.Expr.GetAttributableValue (member.Type, out value))
 						return false;
 
 					FieldBase fb = TypeManager.GetField (fi);
@@ -1636,7 +1636,7 @@ namespace Mono.CSharp {
 			// The first module is generated assembly
 			for (int i = 1; i < modules.Length; ++i) {
 				Module module = modules [i];
-				if (!IsClsCompliant (module)) {
+				if (!GetClsCompliantAttributeValue (module, null)) {
 					Report.Error (3013, "Added modules must be marked with the CLSCompliant attribute " +
 						      "to match the assembly", module.Name);
 					return;
@@ -1657,16 +1657,20 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		static bool IsClsCompliant (ICustomAttributeProvider attribute_provider) 
+		static bool GetClsCompliantAttributeValue (ICustomAttributeProvider attribute_provider, Assembly a) 
 		{
 			if (TypeManager.cls_compliant_attribute_type == null)
 				return false;
 
-			object[] CompliantAttribute = attribute_provider.GetCustomAttributes (TypeManager.cls_compliant_attribute_type, false);
-			if (CompliantAttribute.Length == 0)
-				return false;
+			object[] cls_attr = attribute_provider.GetCustomAttributes (TypeManager.cls_compliant_attribute_type, false);
+			if (cls_attr.Length == 0) {
+				if (a == null)
+					return false;
 
-			return ((CLSCompliantAttribute)CompliantAttribute[0]).IsCompliant;
+				return GetClsCompliantAttributeValue (a, null);
+			}
+			
+			return ((CLSCompliantAttribute)cls_attr [0]).IsCompliant;
 		}
 
 		static bool AnalyzeTypeCompliance (Type type)
@@ -1680,14 +1684,7 @@ namespace Mono.CSharp {
 			if (TypeManager.IsGenericParameter (type))
 				return true;
 
-			if (TypeManager.cls_compliant_attribute_type == null)
-				return false;
-
-			object[] CompliantAttribute = type.GetCustomAttributes (TypeManager.cls_compliant_attribute_type, false);
-			if (CompliantAttribute.Length == 0) 
-				return IsClsCompliant (type.Assembly);
-
-			return ((CLSCompliantAttribute)CompliantAttribute[0]).IsCompliant;
+			return GetClsCompliantAttributeValue (type, type.Assembly);
 		}
 
 		// Registers the core type as we assume that they will never be obsolete which

@@ -3527,6 +3527,7 @@ namespace Mono.CSharp {
 						}
 					} else {
 						if (OptAttributes != null && TypeManager.obsolete_attribute_type != null && OptAttributes.Contains (TypeManager.obsolete_attribute_type)) {
+							Report.SymbolRelatedToPreviousError (base_method);
 							Report.Warning (809, 1, Location, "Obsolete member `{0}' overrides non-obsolete member `{1}'",
 								GetSignatureForError (), TypeManager.CSharpSignature (base_method));
 						}
@@ -3852,7 +3853,7 @@ namespace Mono.CSharp {
 
 				return InterfaceType.FullName.Replace ('+', '.') + "." + ShortName;
 			}
-		}		
+		}
 
 		protected override bool VerifyClsCompliance ()
 		{
@@ -4563,7 +4564,7 @@ namespace Mono.CSharp {
 			if (mi.IsSpecialName)
 				return null;
 
-			base_ret_type = mi.ReturnType;
+			base_ret_type = TypeManager.TypeToCoreType (mi.ReturnType);
 			return mi;
 		}
 

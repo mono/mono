@@ -139,9 +139,7 @@ namespace Mono.CSharp {
 			if (t == TypeManager.decimal_type)
 				return new DecimalConstant ((decimal) v, loc);
 			if (TypeManager.IsEnumType (t)) {
-				Type real_type = TypeManager.TypeToCoreType (v.GetType ());
-				if (real_type == t)
-					real_type = System.Enum.GetUnderlyingType (real_type);
+				Type real_type = TypeManager.GetEnumUnderlyingType (t);
 				return new EnumConstant (CreateConstant (real_type, v, loc), t);
 			} 
 			if (v == null && !TypeManager.IsValueType (t))

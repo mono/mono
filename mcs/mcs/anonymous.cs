@@ -1333,7 +1333,7 @@ namespace Mono.CSharp {
 
 			MethodInfo invoke_mb = Delegate.GetInvokeMethod (
 				ec.ContainerType, delegate_type);
-			Type return_type = invoke_mb.ReturnType;
+			Type return_type = TypeManager.TypeToCoreType (invoke_mb.ReturnType);
 
 #if MS_COMPATIBLE
 			Type[] g_args = delegate_type.GetGenericArguments ();

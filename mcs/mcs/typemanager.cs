@@ -873,12 +873,11 @@ namespace Mono.CSharp {
 		if (RootContext.StdLib || t == null || !required)
 			return t;
 
-		DeclSpace ds = (DeclSpace)RootContext.ToplevelTypes.GetDefinition (t.FullName);
-		if (ds == null) {
-			// TODO: implement
-			throw new NotImplementedException ("Predefined type is imported");
-		}
+		// TODO: All predefined imported types have to have correct signature
+		if (t.Module != CodeGen.Module.Builder)
+			return t;
 
+		DeclSpace ds = (DeclSpace)RootContext.ToplevelTypes.GetDefinition (t.FullName);
 		if (ds is Delegate) {
 			if (type_kind == Kind.Delegate)
 				return t;
@@ -1339,11 +1338,6 @@ namespace Mono.CSharp {
 			return false;
 	}
 
-	public static bool IsBuiltinType (TypeContainer tc)
-	{
-		return IsBuiltinType (tc.TypeBuilder);
-	}
-
 	//
 	// This is like IsBuiltinType, but lacks decimal_type, we should also clean up
 	// the pieces in the code where we use IsBuiltinType and special case decimal_type.
@@ -1373,14 +1367,7 @@ namespace Mono.CSharp {
 	public static bool IsEnumType (Type t)
 	{
 		t = DropGenericTypeArguments (t);
-		if (builder_to_declspace [t] is Enum)
-			return true;
-
-#if MS_COMPATIBLE && GMCS_SOURCE
-		if (t.IsGenericParameter || t.IsGenericType)
-			return false;
-#endif
-		return t.IsEnum;
+		return t.BaseType == TypeManager.enum_type;
 	}
 
 	public static bool IsBuiltinOrEnum (Type t)
@@ -1708,6 +1695,17 @@ namespace Mono.CSharp {
 	{
 		return t.IsArray || t.IsPointer || t.IsByRef;
 	}
+
+	public static Type GetEnumUnderlyingType (Type t)
+	{
+		t = DropGenericTypeArguments (t);
+		Enum e = LookupTypeContainer (t) as Enum;
+		if (e != null)
+			return e.UnderlyingType;
+
+		// TODO: cache it ?
+		return TypeToCoreType (t.GetField ("value__").FieldType);
+	}
 	
 	/// <summary>
 	///   Gigantic work around for missing features in System.Reflection.Emit follows.
@@ -1906,7 +1904,7 @@ namespace Mono.CSharp {
 	public static bool CheckStructCycles (TypeContainer tc, Hashtable seen,
 					      Hashtable hash)
 	{
-		if ((tc.Kind != Kind.Struct) || IsBuiltinType (tc))
+		if ((tc.Kind != Kind.Struct) || IsBuiltinType (tc.TypeBuilder))
 			return true;
 
 		//
@@ -2153,7 +2151,7 @@ namespace Mono.CSharp {
 			if (conversionType.Equals (typeof (DateTime)))
 				return (object)(convert_value.ToDateTime (nf_provider));
 
-			if (conversionType.Equals (TypeManager.decimal_type)) {
+			if (conversionType.Equals (decimal_type)) {
 				if (convert_value.GetType () == TypeManager.char_type)
 					return (decimal)convert_value.ToInt32 (nf_provider);
 				return convert_value.ToDecimal (nf_provider);
@@ -2167,9 +2165,9 @@ namespace Mono.CSharp {
 
 			if (conversionType.Equals (typeof (Int16)))
 				return (object)(convert_value.ToInt16 (nf_provider));
-			if (conversionType.Equals (typeof (Int32)))
+			if (conversionType.Equals (int32_type))
 				return (object)(convert_value.ToInt32 (nf_provider));
-			if (conversionType.Equals (typeof (Int64)))
+			if (conversionType.Equals (int64_type))
 				return (object)(convert_value.ToInt64 (nf_provider));
 			if (conversionType.Equals (typeof (SByte)))
 				return (object)(convert_value.ToSByte (nf_provider));
@@ -2203,64 +2201,20 @@ namespace Mono.CSharp {
 	// do not report their underlyingtype, but they report
 	// themselves
 	//
+	[Obsolete ("Use GetEnumUnderlyingType")]
 	public static Type EnumToUnderlying (Type t)
 	{
-		t = DropGenericTypeArguments (t);
-		if (t == TypeManager.enum_type)
-			return t;
-
-		t = t.UnderlyingSystemType;
-		if (!TypeManager.IsEnumType (t))
-			return t;
-	
-		if (t is TypeBuilder) {
-			// slow path needed to compile corlib
-			if (t == TypeManager.bool_type ||
-			    t == TypeManager.byte_type ||
-			    t == TypeManager.sbyte_type ||
-			    t == TypeManager.char_type ||
-			    t == TypeManager.short_type ||
-			    t == TypeManager.ushort_type ||
-			    t == TypeManager.int32_type ||
-			    t == TypeManager.uint32_type ||
-			    t == TypeManager.int64_type ||
-			    t == TypeManager.uint64_type)
-				return t;
-		}
-		TypeCode tc = Type.GetTypeCode (t);
-
-		switch (tc){
-		case TypeCode.Boolean:
-			return TypeManager.bool_type;
-		case TypeCode.Byte:
-			return TypeManager.byte_type;
-		case TypeCode.SByte:
-			return TypeManager.sbyte_type;
-		case TypeCode.Char:
-			return TypeManager.char_type;
-		case TypeCode.Int16:
-			return TypeManager.short_type;
-		case TypeCode.UInt16:
-			return TypeManager.ushort_type;
-		case TypeCode.Int32:
-			return TypeManager.int32_type;
-		case TypeCode.UInt32:
-			return TypeManager.uint32_type;
-		case TypeCode.Int64:
-			return TypeManager.int64_type;
-		case TypeCode.UInt64:
-			return TypeManager.uint64_type;
-		}
-		throw new Exception ("Unhandled typecode in enum " + tc + " from " + t.AssemblyQualifiedName);
+		return GetEnumUnderlyingType (t);
 	}
 
+
 	//
-	// When compiling corlib and called with one of the core types, return
-	// the corresponding typebuilder for that type.
+	// When compiling with -nostdlib and the type is imported from an external assembly
+	// SRE uses "wrong" type and we have to convert it to the right compiler instance.
 	//
 	public static Type TypeToCoreType (Type t)
 	{
-		if (RootContext.StdLib || (t is TypeBuilder))
+		if (RootContext.StdLib || t.Module != typeof (object).Module)
 			return t;
 
 		TypeCode tc = Type.GetTypeCode (t);
@@ -2294,17 +2248,34 @@ namespace Mono.CSharp {
 			return TypeManager.string_type;
 		case TypeCode.Decimal:
 			return TypeManager.decimal_type;
-		default:
-			if (t == typeof (void))
-				return TypeManager.void_type;
-			if (t == typeof (object))
-				return TypeManager.object_type;
-			if (t == typeof (System.Type))
-				return TypeManager.type_type;
-			if (t == typeof (System.IntPtr))
-				return TypeManager.intptr_type;
-			return t;
 		}
+
+		if (t == typeof (void))
+			return TypeManager.void_type;
+		if (t == typeof (object))
+			return TypeManager.object_type;
+		if (t == typeof (System.Type))
+			return TypeManager.type_type;
+		if (t == typeof (System.IntPtr))
+			return TypeManager.intptr_type;
+		if (t == typeof (System.UIntPtr))
+			return TypeManager.uintptr_type;
+#if GMCS_SOURCE
+		if (t.IsArray) {
+			int dim = t.GetArrayRank ();
+			t = GetElementType (t);
+			return t.MakeArrayType (dim);
+		}
+		if (t.IsByRef) {
+			t = GetElementType (t);
+			return t.MakeByRefType ();
+		}
+		if (t.IsPointer) {
+			t = GetElementType (t);
+			return t.MakePointerType ();
+		}
+#endif
+		return t;
 	}
 
 	/// <summary>
@@ -2443,11 +2414,11 @@ namespace Mono.CSharp {
 			if (method.Name != new_method.Name)
 				continue;
 
-                        if (method is MethodInfo && new_method is MethodInfo)
-                                if (!IsSignatureEqual (((MethodInfo) method).ReturnType,
-						       ((MethodInfo) new_method).ReturnType))
-                                        continue;
-
+			if (method is MethodInfo && new_method is MethodInfo &&
+				!IsSignatureEqual (
+					TypeToCoreType (((MethodInfo) method).ReturnType),
+					TypeToCoreType (((MethodInfo) new_method).ReturnType)))
+				continue;
                         
 			Type [] old_args = TypeManager.GetParameterData (method).Types;
 			int old_count = old_args.Length;

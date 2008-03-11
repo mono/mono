@@ -312,7 +312,7 @@ namespace Mono.CSharp {
 
 		public Constant CreateConstantReference (Location loc)
 		{
-			return Constant.CreateConstant (fi.FieldType, value, loc);
+			return Constant.CreateConstant (TypeManager.TypeToCoreType (fi.FieldType), value, loc);
 		}
 
 		#endregion

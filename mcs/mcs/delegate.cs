@@ -511,7 +511,7 @@ namespace Mono.CSharp {
 
 			Type invoke_mb_retval = ((MethodInfo) invoke_mb).ReturnType;
 			Type mb_retval = ((MethodInfo) mb).ReturnType;
-			if (invoke_mb_retval == mb_retval)
+			if (TypeManager.TypeToCoreType (invoke_mb_retval) == TypeManager.TypeToCoreType (mb_retval))
 				return mb;
 
 			//if (!IsTypeCovariant (mb_retval, invoke_mb_retval))
@@ -653,7 +653,7 @@ namespace Mono.CSharp {
 	public abstract class DelegateCreation : Expression, MethodGroupExpr.IErrorHandler
 	{
 		protected ConstructorInfo constructor_method;
-		protected MethodBase delegate_method;
+		protected MethodInfo delegate_method;
 		// We keep this to handle IsBase only
 		protected MethodGroupExpr method_group;
 		protected Expression delegate_instance_expression;
@@ -708,8 +708,9 @@ namespace Mono.CSharp {
 				}
 			}
 
-			Expression ret_expr = new TypeExpression (((MethodInfo) delegate_method).ReturnType, loc);
-			if (!Delegate.IsTypeCovariant (ret_expr, (invoke_method.ReturnType))) {
+			Type rt = TypeManager.TypeToCoreType (delegate_method.ReturnType);
+			Expression ret_expr = new TypeExpression (rt, loc);
+			if (!Delegate.IsTypeCovariant (ret_expr, (TypeManager.TypeToCoreType (invoke_method.ReturnType)))) {
 				Error_ConversionFailed (ec, delegate_method, ret_expr);
 			}
 
@@ -955,6 +956,7 @@ namespace Mono.CSharp {
 
 			method = Delegate.GetInvokeMethod (ec.ContainerType, del_type);
 			type = ((MethodInfo) method).ReturnType;
+			type = TypeManager.TypeToCoreType (type);
 			eclass = ExprClass.Value;
 			
 			return this;
