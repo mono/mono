@@ -435,9 +435,12 @@ namespace System.Windows.Forms {
 					switch (msg.message) {
 					case Msg.WM_LBUTTONUP:
 					case Msg.WM_RBUTTONUP:
+					case Msg.WM_MBUTTONUP:
 						if (msg.message == Msg.WM_LBUTTONDOWN && drag_data.MouseState != MouseButtons.Left)
 							break;;
 						if (msg.message == Msg.WM_RBUTTONDOWN && drag_data.MouseState != MouseButtons.Right)
+							break;
+						if (msg.message == Msg.WM_MBUTTONDOWN && drag_data.MouseState != MouseButtons.Middle)
 							break;
 						
 						HandleButtonUpMsg ();

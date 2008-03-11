@@ -1,3 +1,7 @@
+2008-03-11  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* X11Dnd.cs: End DnD operation also for the middle mouse button.
+
 2008-03-11  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ContainerControl.cs: We can't do MenuStrip implicit mnemonics
