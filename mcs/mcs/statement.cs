@@ -3338,7 +3338,7 @@ namespace Mono.CSharp {
 			Type compare_type;
 			
 			if (TypeManager.IsEnumType (SwitchType))
-				compare_type = TypeManager.EnumToUnderlying (SwitchType);
+				compare_type = TypeManager.GetEnumUnderlyingType (SwitchType);
 			else
 				compare_type = SwitchType;
 			

@@ -570,7 +570,7 @@ namespace Mono.CSharp {
 					switch (pAccess) {
 						case AccessLevel.Internal:
 							if (al == AccessLevel.Private || al == AccessLevel.Internal)
-								same_access_restrictions = CodeGen.Assembly.Builder == p.Assembly || TypeManager.IsFriendAssembly (p.Assembly);
+								same_access_restrictions = TypeManager.IsThisOrFriendAssembly (p.Assembly);
 
 							break;
 
@@ -598,10 +598,10 @@ namespace Mono.CSharp {
 							if (al == AccessLevel.Protected)
 								same_access_restrictions = mc.Parent.IsBaseType (p_parent);
 							else if (al == AccessLevel.Internal)
-								same_access_restrictions = CodeGen.Assembly.Builder == p.Assembly || TypeManager.IsFriendAssembly (p.Assembly);
+								same_access_restrictions = TypeManager.IsThisOrFriendAssembly (p.Assembly);
 							else if (al == AccessLevel.ProtectedOrInternal)
 								same_access_restrictions = mc.Parent.IsBaseType (p_parent) &&
-									(CodeGen.Assembly.Builder == p.Assembly || TypeManager.IsFriendAssembly (p.Assembly));
+									TypeManager.IsThisOrFriendAssembly (p.Assembly);
 
 							break;
 
@@ -1059,11 +1059,8 @@ namespace Mono.CSharp {
 					//        However, this is invoked again later -- so safe to return true.
 					//        May also be null when resolving top-level attributes.
  					return true;
-				//
-				// This test should probably use the declaringtype.
-				//
-				return check_type.Assembly == TypeBuilder.Assembly ||
-					TypeManager.IsFriendAssembly (check_type.Assembly);
+
+				return TypeManager.IsThisOrFriendAssembly (check_type.Assembly);
 				
 			case TypeAttributes.NestedPublic:
 				return true;
@@ -1078,18 +1075,15 @@ namespace Mono.CSharp {
 				return FamilyAccessible (tb, check_type);
 
 			case TypeAttributes.NestedFamANDAssem:
-				return ((check_type.Assembly == tb.Assembly) || 
-						TypeManager.IsFriendAssembly (check_type.Assembly)) && 
+				return TypeManager.IsThisOrFriendAssembly (check_type.Assembly) && 
 					FamilyAccessible (tb, check_type);
 
 			case TypeAttributes.NestedFamORAssem:
-				return (check_type.Assembly == tb.Assembly) ||
-					FamilyAccessible (tb, check_type) ||
-					TypeManager.IsFriendAssembly (check_type.Assembly);
+				return FamilyAccessible (tb, check_type) ||
+					TypeManager.IsThisOrFriendAssembly (check_type.Assembly);
 
 			case TypeAttributes.NestedAssembly:
-				return check_type.Assembly == tb.Assembly ||
-					TypeManager.IsFriendAssembly (check_type.Assembly);
+				return TypeManager.IsThisOrFriendAssembly (check_type.Assembly);
 			}
 
 			Console.WriteLine ("HERE: " + check_attr);
@@ -2496,7 +2490,7 @@ namespace Mono.CSharp {
 					//
 					// Check for assembly methods
 					//
-					if (mi.DeclaringType.Assembly != CodeGen.Assembly.Builder && !TypeManager.IsFriendAssembly (mi.DeclaringType.Assembly))
+					if (!TypeManager.IsThisOrFriendAssembly (mi.DeclaringType.Assembly))
 						continue;
 					break;
 				}

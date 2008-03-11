@@ -2464,7 +2464,7 @@ namespace Mono.CSharp {
 				// E operator - (E e, U x)
 				//
 				if (oper == Operator.Addition || oper == Operator.Subtraction) {
-					underlying_type = TypeManager.EnumToUnderlying (ltype);
+					underlying_type = TypeManager.GetEnumUnderlyingType (ltype);
 					temp = Convert.ImplicitConversion (ec, right, underlying_type, loc);
 					if (temp == null)
 						return null;
@@ -2482,7 +2482,7 @@ namespace Mono.CSharp {
 				// E operator + (U x, E e)
 				//
 				if (oper == Operator.Addition) {
-					underlying_type = TypeManager.EnumToUnderlying (rtype);
+					underlying_type = TypeManager.GetEnumUnderlyingType (rtype);
 					temp = Convert.ImplicitConversion (ec, left, underlying_type, loc);
 					if (temp == null)
 						return null;
@@ -2500,7 +2500,7 @@ namespace Mono.CSharp {
 				if (!TypeManager.IsEqual (ltype, rtype))
 					return null;
 
-				type = TypeManager.EnumToUnderlying (ltype);
+				type = TypeManager.GetEnumUnderlyingType (ltype);
 				return this;
 			}
 
@@ -5078,7 +5078,7 @@ namespace Mono.CSharp {
 			if (t == TypeManager.decimal_type)
 				return new DecimalConstant (0, Location.Null);
 			if (TypeManager.IsEnumType (t))
-				return new EnumConstant (Constantify (TypeManager.EnumToUnderlying (t)), t);
+				return new EnumConstant (Constantify (TypeManager.GetEnumUnderlyingType (t)), t);
 
 			return null;
 		}
@@ -5771,8 +5771,8 @@ namespace Mono.CSharp {
 			byte [] element;
 			int count = array_data.Count;
 
-			if (array_element_type.IsEnum)
-				array_element_type = TypeManager.EnumToUnderlying (array_element_type);
+			if (TypeManager.IsEnumType (array_element_type))
+				array_element_type = TypeManager.GetEnumUnderlyingType (array_element_type);
 			
 			factor = GetTypeSize (array_element_type);
 			if (factor == 0)
@@ -6715,8 +6715,8 @@ namespace Mono.CSharp {
 #endif
 
 			type_queried = texpr.Type;
-			if (type_queried.IsEnum)
-				type_queried = TypeManager.EnumToUnderlying (type_queried);
+			if (TypeManager.IsEnumType (type_queried))
+				type_queried = TypeManager.GetEnumUnderlyingType (type_queried);
 
 			if (type_queried == TypeManager.void_type) {
 				Expression.Error_VoidInvalidInTheContext (loc);
@@ -7534,7 +7534,7 @@ namespace Mono.CSharp {
 			else if (type == TypeManager.intptr_type)
 				ig.Emit (OpCodes.Ldelem_I);
 			else if (TypeManager.IsEnumType (type)){
-				EmitLoadOpcode (ig, TypeManager.EnumToUnderlying (type), rank);
+				EmitLoadOpcode (ig, TypeManager.GetEnumUnderlyingType (type), rank);
 			} else if (type.IsValueType){
 				ig.Emit (OpCodes.Ldelema, type);
 				ig.Emit (OpCodes.Ldobj, type);
@@ -7563,7 +7563,7 @@ namespace Mono.CSharp {
 			has_type_arg = false; is_stobj = false;
 			t = TypeManager.TypeToCoreType (t);
 			if (TypeManager.IsEnumType (t))
-				t = TypeManager.EnumToUnderlying (t);
+				t = TypeManager.GetEnumUnderlyingType (t);
 			if (t == TypeManager.byte_type || t == TypeManager.sbyte_type ||
 			    t == TypeManager.bool_type)
 				return OpCodes.Stelem_I1;

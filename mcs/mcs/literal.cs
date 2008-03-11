@@ -186,7 +186,7 @@ namespace Mono.CSharp {
 			/// The 0 literal can be converted to an enum value,
 			///
 			if (Value == 0 && TypeManager.IsEnumType (type)) {
-				Constant c = ConvertImplicitly (TypeManager.EnumToUnderlying (type));
+				Constant c = ConvertImplicitly (TypeManager.GetEnumUnderlyingType (type));
 				if (c == null)
 					return null;
 

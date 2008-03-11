@@ -165,8 +165,7 @@ namespace Mono.CSharp {
 				return TypeManager.IsPrivateAccessible (invocation_type, mi.DeclaringType) ||
 					TypeManager.IsNestedChildOf (invocation_type, mi.DeclaringType);
 
-			if (mi.DeclaringType.Assembly == invocation_type.Assembly ||
-					TypeManager.IsFriendAssembly (mi.DeclaringType.Assembly)) {
+			if (TypeManager.IsThisOrFriendAssembly (mi.DeclaringType.Assembly)) {
 				if (ma == MethodAttributes.Assembly || ma == MethodAttributes.FamORAssem)
 					return true;
 			} else {
@@ -1078,7 +1077,7 @@ namespace Mono.CSharp {
 				if (t == TypeManager.enum_type)
 					ig.Emit (OpCodes.Ldind_Ref);
 				else
-					LoadFromPtr (ig, TypeManager.EnumToUnderlying (t));
+					LoadFromPtr (ig, TypeManager.GetEnumUnderlyingType (t));
 			} else if (t.IsValueType || TypeManager.IsGenericParameter (t))
 				ig.Emit (OpCodes.Ldobj, t);
 			else if (t.IsPointer)
@@ -1093,7 +1092,7 @@ namespace Mono.CSharp {
 		public static void StoreFromPtr (ILGenerator ig, Type type)
 		{
 			if (TypeManager.IsEnumType (type))
-				type = TypeManager.EnumToUnderlying (type);
+				type = TypeManager.GetEnumUnderlyingType (type);
 			if (type == TypeManager.int32_type || type == TypeManager.uint32_type)
 				ig.Emit (OpCodes.Stind_I4);
 			else if (type == TypeManager.int64_type || type == TypeManager.uint64_type)

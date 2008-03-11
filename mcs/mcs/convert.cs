@@ -1919,7 +1919,7 @@ namespace Mono.CSharp {
 				return new UnboxCast (expr, target_type);
 
 			if (TypeManager.IsEnumType (expr_type)) {
-				Expression underlying = EmptyCast.Create (expr, TypeManager.EnumToUnderlying (expr_type));
+				Expression underlying = EmptyCast.Create (expr, TypeManager.GetEnumUnderlyingType (expr_type));
 				expr = ExplicitConversionCore (ec, underlying, target_type, loc);
 				if (expr != null)
 					return expr;
@@ -1931,7 +1931,7 @@ namespace Mono.CSharp {
 				if (expr_type == TypeManager.enum_type)
 					return new UnboxCast (expr, target_type);
 
-				Expression ce = ExplicitConversionCore (ec, expr, TypeManager.EnumToUnderlying (target_type), loc);
+				Expression ce = ExplicitConversionCore (ec, expr, TypeManager.GetEnumUnderlyingType (target_type), loc);
 				if (ce != null)
 					return EmptyCast.Create (ce, target_type);
 				
@@ -1939,7 +1939,7 @@ namespace Mono.CSharp {
 				// LAMESPEC: IntPtr and UIntPtr conversion to any Enum is allowed
 				//
                 if (expr_type == TypeManager.intptr_type || expr_type == TypeManager.uintptr_type) {
-					ne = ExplicitUserConversion (ec, expr, TypeManager.EnumToUnderlying (target_type), loc);
+					ne = ExplicitUserConversion (ec, expr, TypeManager.GetEnumUnderlyingType (target_type), loc);
 					if (ne != null)
 						return ExplicitConversionCore (ec, ne, target_type, loc);
                 }

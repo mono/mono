@@ -3657,16 +3657,7 @@ namespace Mono.CSharp {
 				// which has InternalsVisibleTo
 				//
 				if ((thisp & MethodAttributes.FamORAssem) == MethodAttributes.FamORAssem){
-					if (Parent.TypeBuilder.Assembly != base_method.DeclaringType.Assembly)
-						return TypeManager.IsFriendAssembly (base_method.DeclaringType.Assembly);
-
-					if (thisp != base_classp) {
-						//
-						// same assembly, but other attributes differ - report an error
-						//
-						
-						return false;
-					}
+					return TypeManager.IsThisOrFriendAssembly (base_method.DeclaringType.Assembly);
 				} else if ((thisp & MethodAttributes.Family) != MethodAttributes.Family) {
 					//
 					// if it's not "protected internal", it must be "protected"

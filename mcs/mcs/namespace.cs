@@ -148,7 +148,7 @@ namespace Mono.CSharp {
 			if ((ta == TypeAttributes.NotPublic ||
 			     ta == TypeAttributes.NestedAssembly ||
 			     ta == TypeAttributes.NestedFamANDAssem) &&
-			    !TypeManager.IsFriendAssembly (t.Assembly))
+			    !TypeManager.IsThisOrFriendAssembly (t.Assembly))
 				return null;
 
 			return t;

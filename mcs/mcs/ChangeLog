@@ -1,5 +1,12 @@
 2008-03-11  Marek Safar  <marek.safar@gmail.com>
 
+	* typemanager.cs, namespace.cs, literal.cs, ecore.cs, class.cs, decl.cs,
+	convert.cs, constant.cs, expression.cs, statement.cs: Use same method to
+	check internal types accessibility for internal and external types.
+	Replaced EnumToUnderlying by GetEnumUnderlyingType.
+
+2008-03-11  Marek Safar  <marek.safar@gmail.com>
+
 	* support.cs, typemanager.cs, pending.cs, ecore.cs, class.cs, delegate.cs
 	convert.cs, const.cs, anonymous.cs, constant.cs, expression.cs,
 	attribute.cs, statement: Use corect instance of predefined types (work

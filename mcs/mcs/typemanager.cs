@@ -224,10 +224,7 @@ namespace Mono.CSharp {
 	static Hashtable propertybuilder_to_property;
 	static Hashtable fields;
 	static Hashtable events;
-
-#if GMCS_SOURCE
 	static PtrHashtable assembly_internals_vis_attrs;
-#endif
 
 	public static void CleanUp ()
 	{
@@ -244,10 +241,7 @@ namespace Mono.CSharp {
 		events = null;
 		type_hash = null;
 		propertybuilder_to_property = null;
-
-#if GMCS_SOURCE
 		assembly_internals_vis_attrs = null;
-#endif
 
 		TypeHandle.CleanUp ();
 	}
@@ -300,10 +294,7 @@ namespace Mono.CSharp {
 		propertybuilder_to_property = new Hashtable ();
 		fields = new Hashtable ();
 		type_hash = new DoubleHash ();
-
-#if GMCS_SOURCE
 		assembly_internals_vis_attrs = new PtrHashtable ();
-#endif
 
 		// TODO: I am really bored by all this static stuff
 		string_isinterned_string =
@@ -1594,15 +1585,13 @@ namespace Mono.CSharp {
 		return false;
 	}
 
-#if GMCS_SOURCE
 	//
 	// Checks whether `extern_type' is friend of the output assembly
 	//
-	public static bool IsFriendAssembly (Assembly assembly)
+	public static bool IsThisOrFriendAssembly (Assembly assembly)
 	{
-		// FIXME: This should not be reached
 		if (assembly == CodeGen.Assembly.Builder)
-			return false;
+			return true;
 
 		if (assembly_internals_vis_attrs.Contains (assembly))
 			return (bool)(assembly_internals_vis_attrs [assembly]);
@@ -1616,9 +1605,10 @@ namespace Mono.CSharp {
 			return false;
 		}
 
+		bool is_friend = false;
+#if GMCS_SOURCE
 		AssemblyName this_name = CodeGen.Assembly.Name;
 		byte [] this_token = this_name.GetPublicKeyToken ();
-		bool is_friend = false;
 		foreach (InternalsVisibleToAttribute attr in attrs) {
 			if (attr.AssemblyName == null || attr.AssemblyName.Length == 0)
 				continue;
@@ -1648,7 +1638,7 @@ namespace Mono.CSharp {
 			is_friend = true;
 			break;
 		}
-
+#endif
 		assembly_internals_vis_attrs.Add (assembly, is_friend);
 		return is_friend;
 	}
@@ -1662,6 +1652,7 @@ namespace Mono.CSharp {
 		return true;
 	}
 
+#if GMCS_SOURCE
 	static void Error_FriendAccessNameNotMatching (string other_name)
 	{
 		Report.Error (281, "Friend access was granted to `" + other_name + 
@@ -1669,13 +1660,8 @@ namespace Mono.CSharp {
 				"'. Try adding a reference to `" + other_name + 
 				"' or change the output assembly name to match it");
 	}
-#else
-	public static bool IsFriendAssembly (Assembly assembly)
-	{
-		return false;
-	}
 #endif
-	
+
         //
         // Do the right thing when returning the element type of an
         // array type based on whether we are compiling corlib or not
@@ -2195,18 +2181,6 @@ namespace Mono.CSharp {
 		}
 		return null;
 	}
-
-	//
-	// This is needed, because enumerations from assemblies
-	// do not report their underlyingtype, but they report
-	// themselves
-	//
-	[Obsolete ("Use GetEnumUnderlyingType")]
-	public static Type EnumToUnderlying (Type t)
-	{
-		return GetEnumUnderlyingType (t);
-	}
-
 
 	//
 	// When compiling with -nostdlib and the type is imported from an external assembly
@@ -2910,8 +2884,7 @@ namespace Mono.CSharp {
 						IsPrivateAccessible (invocation_type, m.DeclaringType) ||
 						IsNestedChildOf (invocation_type, m.DeclaringType);
 
-				if (invocation_assembly == mb.DeclaringType.Assembly ||
-				    TypeManager.IsFriendAssembly (mb.DeclaringType.Assembly)) {
+				if (TypeManager.IsThisOrFriendAssembly (mb.DeclaringType.Assembly)) {
 					if (ma == MethodAttributes.Assembly || ma == MethodAttributes.FamORAssem)
 						return true;
 				} else {
@@ -2938,9 +2911,7 @@ namespace Mono.CSharp {
 						IsPrivateAccessible (invocation_type, m.DeclaringType) ||
 						IsNestedChildOf (invocation_type, m.DeclaringType);
 
-				if ((invocation_assembly == fi.DeclaringType.Assembly) ||
-				    (invocation_assembly == null) ||
-				    TypeManager.IsFriendAssembly (fi.DeclaringType.Assembly)) {
+				if (TypeManager.IsThisOrFriendAssembly (fi.DeclaringType.Assembly)) {
 					if ((fa == FieldAttributes.Assembly) ||
 					    (fa == FieldAttributes.FamORAssem))
 						return true;

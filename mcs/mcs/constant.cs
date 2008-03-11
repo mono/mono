@@ -188,7 +188,7 @@ namespace Mono.CSharp {
 				return this;
 
 			if (TypeManager.IsEnumType (target_type)) {
-				Constant c = TryReduce (ec, TypeManager.EnumToUnderlying (target_type));
+				Constant c = TryReduce (ec, TypeManager.GetEnumUnderlyingType (target_type));
 				if (c == null)
 					return null;
 
