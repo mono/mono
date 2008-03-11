@@ -1,4 +1,9 @@
 
+Tue Mar 11 17:41:38 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* image.c: when someone loads a mscorlib from a file, return the
+	currently loaded mscorlib (fixes bug #369253).
+
 Tue Mar 11 16:47:32 CET 2008 Paolo Molaro <lupus@ximian.com>
 
 	* class.c: handle types with no parents by forcing them to have
