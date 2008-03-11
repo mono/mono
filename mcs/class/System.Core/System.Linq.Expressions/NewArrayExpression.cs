@@ -28,6 +28,8 @@
 
 using System;
 using System.Collections.ObjectModel;
+using System.Reflection;
+using System.Reflection.Emit;
 
 namespace System.Linq.Expressions {
 
@@ -45,9 +47,39 @@ namespace System.Linq.Expressions {
 			this.expressions = expressions;
 		}
 
-		internal override void Emit (EmitContext ec)
+		void EmitNewArrayInit (EmitContext ec)
+		{
+			var type = this.Type.GetElementType ();
+			var size = expressions.Count;
+
+			ec.ig.Emit (OpCodes.Ldc_I4, size);
+			ec.ig.Emit (OpCodes.Newarr, type);
+
+			for (int i = 0; i < size; i++) {
+				ec.ig.Emit (OpCodes.Dup);
+				ec.ig.Emit (OpCodes.Ldc_I4, i);
+				expressions [i].Emit (ec);
+				ec.ig.Emit (OpCodes.Stelem, type);
+			}
+		}
+
+		void EmitNewArrayBounds (EmitContext ec)
 		{
 			throw new NotImplementedException ();
+		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			switch (this.NodeType) {
+			case ExpressionType.NewArrayInit:
+				EmitNewArrayInit (ec);
+				return;
+			case ExpressionType.NewArrayBounds:
+				EmitNewArrayBounds (ec);
+				return;
+			default:
+				throw new NotSupportedException ();
+			}
 		}
 	}
 }
