@@ -1,4 +1,11 @@
 
+Tue Mar 11 16:47:32 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: handle types with no parents by forcing them to have
+	System.Object as a parent and marking them as broken (this currently
+	allows the first part of bug #369173 to work as well, likely because
+	we don't check for typeload exceptions everywhere yet).
+
 Tue Mar 11 15:23:54 CET 2008 Paolo Molaro <lupus@ximian.com>
 
 	* class.c: more complete check that types belong to corlib
