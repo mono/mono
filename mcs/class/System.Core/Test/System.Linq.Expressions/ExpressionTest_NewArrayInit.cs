@@ -74,5 +74,57 @@ namespace MonoTests.System.Linq.Expressions {
 			Assert.AreEqual (3, a.Expressions.Count);
 			Assert.AreEqual ("new [] {1, 2, 3}", a.ToString ());
 		}
+
+		static Func<T []> CreateArrayInit<T> (T [] ts)
+		{
+			return Expression.Lambda<Func<T []>> (
+				Expression.NewArrayInit (
+					typeof (T),
+					(from t in ts select t.ToConstant ()).ToArray ())).Compile ();
+		}
+
+		static void AssertCreatedArrayIsEqual<T> (params T [] ts)
+		{
+			var creator = CreateArrayInit (ts);
+			var array = creator ();
+
+			Assert.IsTrue (ts.SequenceEqual (array));
+		}
+
+		[Test]
+		public void CompileInitArrayOfInt ()
+		{
+			AssertCreatedArrayIsEqual (new int [] { 1, 2, 3, 4 });
+		}
+
+		enum Months { Jan, Feb, Mar, Apr };
+
+		[Test]
+		public void CompileInitArrayOfEnums ()
+		{
+			AssertCreatedArrayIsEqual (new Months [] { Months.Jan, Months.Feb, Months.Mar, Months.Apr });
+		}
+
+		class Foo {
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void CompileInitArrayOfClasses ()
+		{
+			AssertCreatedArrayIsEqual (new Foo [] { new Foo (), new Foo (), new Foo (), new Foo () });
+		}
+
+		struct Bar {
+			int bar;
+			public Bar (int b) { bar = b; }
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void CompileInitArrayOfStructs ()
+		{
+			AssertCreatedArrayIsEqual (new Bar [] { new Bar (1), new Bar (2), new Bar (3), new Bar (4) });
+		}
 	}
 }
