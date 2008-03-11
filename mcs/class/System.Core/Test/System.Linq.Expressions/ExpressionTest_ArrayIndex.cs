@@ -138,5 +138,74 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (typeof (NoOpClass), expr.Type, "ArrayIndex#14");
 			Assert.AreEqual ("value(MonoTests.System.Linq.Expressions.NoOpClass[,]).Get(1, 0)", expr.ToString(), "ArrayIndex#16");
 		}
+
+		static Func<T [], int, T> CreateArrayAccess<T> ()
+		{
+			var a = Expression.Parameter (typeof (T []), "a");
+			var i = Expression.Parameter (typeof (int), "i");
+
+			return Expression.Lambda<Func<T [], int, T>> (
+				Expression.ArrayIndex (a, i), a, i).Compile ();
+		}
+
+		[Test]
+		public void CompileIntArrayAccess ()
+		{
+			var array = new int [] { 1, 2, 3, 4 };
+			var at = CreateArrayAccess<int> ();
+
+			Assert.AreEqual (1, at (array, 0));
+			Assert.AreEqual (4, at (array, 3));
+		}
+
+		[Test]
+		public void CompileShortArrayAccess ()
+		{
+			var array = new short [] { 1, 2, 3, 4 };
+			var at = CreateArrayAccess<short> ();
+
+			Assert.AreEqual (array [0], at (array, 0));
+			Assert.AreEqual (array [3], at (array, 3));
+		}
+
+		enum Months { Jan, Feb, Mar, Apr };
+
+		[Test]
+		public void CompileEnumArrayAccess ()
+		{
+			var array = new Months [] { Months.Jan, Months.Feb, Months.Mar, Months.Apr };
+			var at = CreateArrayAccess<Months> ();
+
+			Assert.AreEqual (array [0], at (array, 0));
+			Assert.AreEqual (array [3], at (array, 3));
+		}
+
+		class Foo {
+		}
+
+		[Test]
+		public void CompileClassArrayAccess ()
+		{
+			var array = new Foo [] { new Foo (), new Foo (), new Foo (), new Foo () };
+			var at = CreateArrayAccess<Foo> ();
+
+			Assert.AreEqual (array [0], at (array, 0));
+			Assert.AreEqual (array [3], at (array, 3));
+		}
+
+		struct Bar {
+			int bar;
+			public Bar (int b) { bar = b; }
+		}
+
+		[Test]
+		public void CompileStructArrayAccess ()
+		{
+			var array = new Bar [] { new Bar (0), new Bar (1), new Bar (2), new Bar (3) };
+			var at = CreateArrayAccess<Bar> ();
+
+			Assert.AreEqual (array [0], at (array, 0));
+			Assert.AreEqual (array [3], at (array, 3));
+		}
 	}
 }
