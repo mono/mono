@@ -1,3 +1,11 @@
+2008-03-11 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_delegate_compat_test.sh: Added. Generate tests for
+	compatibility between delegate signature and function
+	signature.
+
+	* make_tests.sh: Added tests using make_delegate_compat_test.sh.
+
 2008-03-10 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_invalid_ret_type.sh: Added. Generate return site tests
