@@ -1,5 +1,17 @@
 2008-03-11  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ContainerControl.cs: We can't do MenuStrip implicit mnemonics
+	at the same time we do explicit ones, because we have to give all
+	other controls on the container a chance to handle explicit ones
+	first.  If no one has an explicit mnemonic, then we can let the
+	MenuStrip have a shot at implicit mnemonics.
+	* MenuStrip.cs: Create an implicit mnemonic function.
+	* ToolStrip.cs: When processing explicit mnemonics, don't do implicit
+	mnemonics for MenuStrips.
+	[Fixes bug #368493]
+
+2008-03-11  Jonathan Pobst  <monkey@jpobst.com>
+
 	* AxHost.cs, Binding.cs, DataGridView.cs, DataGridViewCell.cs,
 	DataGridColumnStyle.cs: corcompare stuffs.
 

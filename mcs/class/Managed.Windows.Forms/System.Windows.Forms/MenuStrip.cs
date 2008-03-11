@@ -306,6 +306,18 @@ namespace System.Windows.Forms
 			
 			return false;
 		}
+
+		internal bool ProcessImplicitMnemonic (char charCode)
+		{
+			string code = Char.ToUpper (charCode).ToString ();
+			
+			// If any item's text starts with our letter, it gets the message
+			foreach (ToolStripItem tsi in this.Items)
+				if (tsi.Enabled && tsi.Visible && !string.IsNullOrEmpty (tsi.Text) && tsi.Text.ToUpper ().StartsWith (code))
+					return tsi.ProcessMnemonic (charCode);
+					
+			return false;
+		}
 		
 		private void ReorderMdiMenu ()
 		{
