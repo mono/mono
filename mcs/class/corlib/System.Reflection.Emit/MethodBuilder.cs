@@ -576,7 +576,7 @@ namespace System.Reflection.Emit
 		public override Type[] GetGenericArguments ()
 		{
 			if (generic_params == null)
-				return new Type [0];
+				return Type.EmptyTypes;
 
 			Type[] result = new Type [generic_params.Length];
 			for (int i = 0; i < generic_params.Length; i++)
