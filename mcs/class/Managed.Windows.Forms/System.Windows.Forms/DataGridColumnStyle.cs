@@ -44,9 +44,13 @@ namespace System.Windows.Forms
 			#endregion
 
 			#region Constructors
-			public DataGridColumnHeaderAccessibleObject (DataGridColumnStyle columnstyle)
+			public DataGridColumnHeaderAccessibleObject ()
 			{
-				owner = columnstyle;
+			}
+			
+			public DataGridColumnHeaderAccessibleObject (DataGridColumnStyle owner)
+			{
+				this.owner = owner;
 			}
 			#endregion //Constructors
 

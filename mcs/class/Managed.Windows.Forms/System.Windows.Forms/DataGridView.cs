@@ -4625,6 +4625,11 @@ namespace System.Windows.Forms {
 				get { return base.Role; }
 			}
 
+			public override string Name {
+				get { return base.Name; }
+				set { base.Name = value; }
+			}
+			
 			public override AccessibleObject GetChild (int index) {
 				return base.GetChild(index);
 			}
@@ -4650,7 +4655,72 @@ namespace System.Windows.Forms {
 			}
 
 		}
+		
+		[ComVisible (true)]
+		protected class DataGridViewTopRowAccessibleObject : AccessibleObject
+		{
+			#region Constructors
+			public DataGridViewTopRowAccessibleObject ()
+			{
+			}
+			
+			public DataGridViewTopRowAccessibleObject (DataGridView owner)
+			{
+				this.owner = owner;
+			}
+			#endregion
+			
+			#region Public Methods
+			public override AccessibleObject GetChild (int index)
+			{
+				return base.GetChild (index);
+			}
 
+			public override int GetChildCount ()
+			{
+				return base.GetChildCount ();
+			}
+
+			public override AccessibleObject Navigate (AccessibleNavigation navdir)
+			{
+				return base.Navigate (navdir);
+			}
+			#endregion
+			
+			#region Public Properties
+			public override Rectangle Bounds {
+				get { return base.Bounds; }
+			}
+			
+			public override string Name {
+				get { return base.Name; }
+				set { base.Name = value; }
+			}
+
+			public DataGridView Owner {
+				get { return (DataGridView)owner; }
+				set { 
+					if (owner != null)
+						throw new InvalidOperationException ("owner has already been set");
+				
+					owner = value;
+				}
+			}
+			
+			public override AccessibleObject Parent {
+				get { return base.Parent; }
+			}
+
+			public override AccessibleRole Role {
+				get { return base.Role; }
+			}
+
+			public override string Value {
+				get { return base.Value; }
+				set { base.Value = value; }
+			}
+			#endregion
+		}
 	}
 
 }

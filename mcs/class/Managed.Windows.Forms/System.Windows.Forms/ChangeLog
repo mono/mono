@@ -1,3 +1,8 @@
+2008-03-11  Jonathan Pobst  <monkey@jpobst.com>
+
+	* AxHost.cs, Binding.cs, DataGridView.cs, DataGridViewCell.cs,
+	DataGridColumnStyle.cs: corcompare stuffs.
+
 2008-03-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* FileDialog.cs: Don't add any ColumnHeader to Columns if view is not

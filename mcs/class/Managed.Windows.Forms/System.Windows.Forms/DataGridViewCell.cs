@@ -33,7 +33,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 
-	// XXX [TypeConverter (typeof (DataGridViewCellConverter))]
+	[TypeConverter (typeof (DataGridViewCellConverter))]
 	public abstract class DataGridViewCell : DataGridViewElement, ICloneable, IDisposable
 	{
 		private DataGridView dataGridViewOwner;
@@ -1288,8 +1288,8 @@ namespace System.Windows.Forms {
 			public DataGridViewCellAccessibleObject () {
 			}
 
-			public DataGridViewCellAccessibleObject (DataGridViewCell cell) {
-				this.dataGridViewCell = cell;
+			public DataGridViewCellAccessibleObject (DataGridViewCell owner) {
+				this.dataGridViewCell = owner;
 			}
 
 			public override Rectangle Bounds {
@@ -1300,6 +1300,10 @@ namespace System.Windows.Forms {
 				get { return "Edit"; }
 			}
 
+			public override string Help {
+				get { return base.Help; }
+			}
+			
 			public override string Name {
 				get { return dataGridViewCell.OwningColumn.HeaderText + ": " + dataGridViewCell.RowIndex.ToString(); }
 			}
@@ -1334,6 +1338,12 @@ namespace System.Windows.Forms {
 						return "(null)";
 					}
 					return dataGridViewCell.FormattedValue.ToString();
+				}
+				set {
+					if (owner == null)
+						throw new InvalidOperationException ("owner is null");
+						
+					throw new NotImplementedException ();
 				}
 			}
 
@@ -1405,7 +1415,10 @@ namespace System.Windows.Forms {
 			}
 
 		}
+	}
 
+	internal class DataGridViewCellConverter : TypeConverter
+	{
 	}
 
 }

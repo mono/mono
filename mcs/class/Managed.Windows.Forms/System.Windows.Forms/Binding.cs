@@ -121,6 +121,7 @@ namespace System.Windows.Forms {
 
 		#region Public Instance Properties
 #if NET_2_0
+		[DefaultValue (null)]
 		public IBindableComponent BindableComponent {
 			get {
 				return control;
@@ -179,7 +180,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[DefaultValue (null)]
 		public object DataSourceNullValue {
 			get {
 				return datasource_null_value;
@@ -218,7 +218,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[DefaultValue ("")]
 		public string FormatString {
 			get {
 				return format_string;
@@ -243,7 +242,6 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
-		[DefaultValue (null)]
 		public object NullValue {
 			get {
 				return null_value;

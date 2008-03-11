@@ -1027,7 +1027,9 @@ namespace System.Windows.Forms {
 		#endregion	// Events
 
 		#region Delegates
+#if ONLY_1_1
 		[Serializable]
+#endif
 		protected delegate void AboutBoxDelegate ();
 		#endregion	// Delegates
 
