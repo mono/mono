@@ -59,7 +59,7 @@ namespace System.Linq.Expressions {
 
 		internal void Emit (EmitContext ec, LocalBuilder local)
 		{
-			Expression.EmitCall (ec, local, arguments, add_method);
+			ec.EmitCall (local, arguments, add_method);
 		}
 	}
 }

@@ -104,7 +104,6 @@ namespace System.Linq.Expressions {
 		public Delegate Compile ()
 		{
 			var context = EmitContext.Create (this);
-			context.Emit ();
 			return context.CreateDelegate ();
 		}
 	}

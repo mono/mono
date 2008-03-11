@@ -1,3 +1,9 @@
+2008-03-11  Jb Evain  <jbevain@novell.com>
+
+	* *.cs: Move the different Emit* helpers to EmitContext,
+	so that they get used more naturally by the non Expression
+	types.
+
 2008-03-10  Jb Evain  <jbevain@novell.com>
 
 	* TypeBinaryExpression.cs, Expression.cs: refactor an EmitIsInst.

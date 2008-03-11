@@ -55,7 +55,7 @@ namespace System.Linq.Expressions {
 
 		internal override void Emit (EmitContext ec)
 		{
-			EmitCall (ec, expression, arguments, expression.Type.GetMethod ("Invoke"));
+			ec.EmitCall (expression, arguments, expression.Type.GetMethod ("Invoke"));
 		}
 	}
 }

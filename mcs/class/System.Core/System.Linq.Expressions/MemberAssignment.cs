@@ -65,7 +65,7 @@ namespace System.Linq.Expressions {
 
 		void EmitFieldAssignment (EmitContext ec, FieldInfo field, LocalBuilder local)
 		{
-			Expression.EmitLoad (ec, local);
+			ec.EmitLoad (local);
 			expression.Emit (ec);
 			ec.ig.Emit (OpCodes.Stfld, field);
 		}
@@ -76,9 +76,9 @@ namespace System.Linq.Expressions {
 			if (setter == null)
 				throw new InvalidOperationException ();
 
-			Expression.EmitLoad (ec, local);
+			ec.EmitLoad (local);
 			expression.Emit (ec);
-			Expression.EmitCall (ec, setter);
+			ec.EmitCall (setter);
 		}
 	}
 }

@@ -73,15 +73,15 @@ namespace System.Linq.Expressions {
 		{
 			var getter = property.GetGetMethod (true);
 			if (!getter.IsStatic)
-				EmitLoad (ec, expression);
+				ec.EmitLoad (expression);
 
-			EmitCall (ec, getter);
+			ec.EmitCall (getter);
 		}
 
 		void EmitFieldAccess (EmitContext ec, FieldInfo field)
 		{
 			if (!field.IsStatic) {
-				EmitLoad (ec, expression);
+				ec.EmitLoad (expression);
 				ec.ig.Emit (OpCodes.Ldfld, field);
 			} else
 				ec.ig.Emit (OpCodes.Ldsfld, field);

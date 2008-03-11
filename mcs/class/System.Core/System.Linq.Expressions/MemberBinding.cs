@@ -60,7 +60,7 @@ namespace System.Linq.Expressions {
 
 		internal LocalBuilder EmitLoadMember (EmitContext ec, LocalBuilder local)
 		{
-			Expression.EmitLoad (ec, local);
+			ec.EmitLoad (local);
 
 			switch (member.MemberType) {
 			case MemberTypes.Property:
@@ -79,7 +79,7 @@ namespace System.Linq.Expressions {
 				throw new NotSupportedException ();
 
 			var store = ec.ig.DeclareLocal (property.PropertyType);
-			Expression.EmitCall (ec, getter);
+			ec.EmitCall (getter);
 			ec.ig.Emit (OpCodes.Stloc, store);
 			return store;
 		}

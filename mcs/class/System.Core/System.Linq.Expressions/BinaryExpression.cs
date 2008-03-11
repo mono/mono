@@ -122,9 +122,9 @@ namespace System.Linq.Expressions {
 			MethodInfo has_value = left.Type.GetMethod ("get_HasValue");
 			MethodInfo get_value = GetMethodNoPar (left.Type, "get_Value");
 
-			vleft = EmitStored (ec, left);
+			vleft = ec.EmitStored (left);
 			if (!short_circuit)
-				vright = EmitStored (ec, right);
+				vright = ec.EmitStored (right);
 
 			Label left_is_null = ig.DefineLabel ();
 			Label left_is_false = ig.DefineLabel ();
@@ -147,7 +147,7 @@ namespace System.Linq.Expressions {
 
 			// Deal with right
 			if (short_circuit)
-				vright = EmitStored (ec, right);
+				vright = ec.EmitStored (right);
 
 			ig.Emit (OpCodes.Ldloca, vright);
 			ig.Emit (OpCodes.Call, has_value);
@@ -215,7 +215,7 @@ namespace System.Linq.Expressions {
 			Label try_right = ig.DefineLabel ();
 			Label setup_null = ig.DefineLabel ();
 
-			vleft = EmitStored (ec, left);
+			vleft = ec.EmitStored (left);
 			if (IsNullable (left.Type)){
 				ig.Emit (OpCodes.Ldloca, vleft);
 				ig.Emit (OpCodes.Call, has_value);
@@ -228,7 +228,7 @@ namespace System.Linq.Expressions {
 
 		// try_right;
 			ig.MarkLabel (try_right);
-			vright = EmitStored (ec, right);
+			vright = ec.EmitStored (right);
 			if (IsNullable (right.Type)){
 				ig.Emit (OpCodes.Ldloca, vright);
 				ig.Emit (OpCodes.Call, has_value);
@@ -401,8 +401,8 @@ namespace System.Linq.Expressions {
 			empty_value = ig.DefineLabel ();
 			ret = ig.DeclareLocal (Type);
 
-			vleft = EmitStored (ec, left);
-			vright = EmitStored (ec, right);
+			vleft = ec.EmitStored (left);
+			vright = ec.EmitStored (right);
 
 			MethodInfo has_value = left.Type.GetMethod ("get_HasValue");
 			MethodInfo get_value = GetMethodNoPar (left.Type, "get_Value");

@@ -54,9 +54,9 @@ namespace System.Linq.Expressions {
 
 		internal override void Emit (EmitContext ec)
 		{
-			var local = EmitStored (ec, new_expression);
-			EmitCollection (ec, bindings, local);
-			EmitLoad (ec, local);
+			var local = ec.EmitStored (new_expression);
+			ec.EmitCollection (bindings, local);
+			ec.EmitLoad (local);
 		}
 	}
 }

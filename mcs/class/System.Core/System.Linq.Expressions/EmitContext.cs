@@ -28,6 +28,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -42,9 +43,6 @@ namespace System.Linq.Expressions {
 		protected Type return_type;
 
 		public ILGenerator ig;
-
-		static object mlock = new object ();
-		static int method_count;
 
 		protected EmitContext (LambdaExpression lambda)
 		{
@@ -73,19 +71,92 @@ namespace System.Linq.Expressions {
 
 		public abstract Delegate CreateDelegate ();
 
-		public abstract void Emit ();
-
-		protected static string GenerateName ()
+		public void Emit (Expression expression)
 		{
-			lock (mlock) {
-				return "lambda_method-" + (method_count++);
-			}
+			expression.Emit (this);
+		}
+
+		public LocalBuilder EmitStored (Expression expression)
+		{
+			var local = ig.DeclareLocal (expression.Type);
+			expression.Emit (this);
+			ig.Emit (OpCodes.Stloc, local);
+
+			return local;
+		}
+
+		public void EmitLoad (Expression expression)
+		{
+			if (expression.Type.IsValueType) {
+				var local = EmitStored (expression);
+				ig.Emit (OpCodes.Ldloca, local);
+			} else
+				expression.Emit (this);
+		}
+
+		public void EmitLoad (LocalBuilder local)
+		{
+			ig.Emit (OpCodes.Ldloc, local);
+		}
+
+		public void EmitCall (LocalBuilder local, IEnumerable<Expression> arguments, MethodInfo method)
+		{
+			EmitLoad (local);
+			EmitCollection (arguments);
+			EmitCall (method);
+		}
+
+		public void EmitCall (Expression expression, IEnumerable<Expression> arguments, MethodInfo method)
+		{
+			if (expression != null)
+				EmitLoad (expression);
+
+			EmitCollection (arguments);
+			EmitCall (method);
+		}
+
+		public void EmitCall (MethodInfo method)
+		{
+			ig.Emit (
+				method.IsVirtual ? OpCodes.Callvirt : OpCodes.Call,
+				method);
+		}
+
+		public void EmitCollection<T> (IEnumerable<T> collection) where T : Expression
+		{
+			foreach (var expression in collection)
+				expression.Emit (this);
+		}
+
+		public void EmitCollection (IEnumerable<ElementInit> initializers, LocalBuilder local)
+		{
+			foreach (var initializer in initializers)
+				initializer.Emit (this, local);
+		}
+
+		public void EmitCollection (IEnumerable<MemberBinding> bindings, LocalBuilder local)
+		{
+			foreach (var binding in bindings)
+				binding.Emit (this, local);
+		}
+
+		public void EmitIsInst (Expression expression, Type candidate)
+		{
+			expression.Emit (this);
+
+			if (expression.Type.IsValueType)
+				ig.Emit (OpCodes.Box, expression.Type);
+
+			ig.Emit (OpCodes.Isinst, candidate);
 		}
 	}
 
 	class DynamicEmitContext : EmitContext {
 
 		DynamicMethod method;
+
+		static object mlock = new object ();
+		static int method_count;
 
 		public DynamicMethod Method {
 			get { return method; }
@@ -98,6 +169,8 @@ namespace System.Linq.Expressions {
 			// https://bugzilla.novell.com/show_bug.cgi?id=355005
 			method = new DynamicMethod (GenerateName (), return_type, param_types, typeof (EmitContext), true);
 			ig = method.GetILGenerator ();
+
+			owner.Emit (this);
 		}
 
 		public override Delegate CreateDelegate ()
@@ -105,18 +178,15 @@ namespace System.Linq.Expressions {
 			return method.CreateDelegate (owner.Type);
 		}
 
-		public override void Emit ()
+		static string GenerateName ()
 		{
-			owner.Emit (this);
+			lock (mlock) {
+				return "lambda_method-" + (method_count++);
+			}
 		}
 	}
 
 	class DebugEmitContext : EmitContext {
-
-		AssemblyBuilder assembly;
-		string file_name;
-		TypeBuilder type;
-		MethodBuilder method;
 
 		DynamicEmitContext dynamic_context;
 
@@ -126,30 +196,25 @@ namespace System.Linq.Expressions {
 			dynamic_context = new DynamicEmitContext (lambda);
 
 			var name = dynamic_context.Method.Name;
-			file_name = name + ".dll";
+			var file_name = name + ".dll";
 
-			assembly = AppDomain.CurrentDomain.DefineDynamicAssembly (
+			var assembly = AppDomain.CurrentDomain.DefineDynamicAssembly (
 				new AssemblyName (name), AssemblyBuilderAccess.RunAndSave, Path.GetTempPath ());
 
-			type = assembly.DefineDynamicModule (file_name, file_name).DefineType ("Linq", TypeAttributes.Public);
+			var type = assembly.DefineDynamicModule (file_name, file_name).DefineType ("Linq", TypeAttributes.Public);
 
-			method = type.DefineMethod (name, MethodAttributes.Public | MethodAttributes.Static, return_type, param_types);
+			var method = type.DefineMethod (name, MethodAttributes.Public | MethodAttributes.Static, return_type, param_types);
 			ig = method.GetILGenerator ();
-		}
-
-		public override Delegate CreateDelegate ()
-		{
-			return dynamic_context.CreateDelegate ();
-		}
-
-		public override void Emit ()
-		{
-			dynamic_context.Emit ();
 
 			owner.Emit (this);
 
 			type.CreateType ();
 			assembly.Save (file_name);
+		}
+
+		public override Delegate CreateDelegate ()
+		{
+			return dynamic_context.CreateDelegate ();
 		}
 	}
 }

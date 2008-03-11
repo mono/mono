@@ -82,7 +82,7 @@ namespace System.Linq.Expressions {
 				}
 			}
 
-			EmitCollection (ec, arguments);
+			ec.EmitCollection (arguments);
 
 			if (type.IsValueType) {
 				ig.Emit (OpCodes.Call, constructor);
