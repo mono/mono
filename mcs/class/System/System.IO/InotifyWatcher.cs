@@ -3,6 +3,7 @@
 //
 // Authors:
 //	Gonzalo Paniagua (gonzalo@novell.com)
+//	Anders Rune Jensen (anders@iola.dk)
 //
 // (c) 2006 Novell, Inc. (http://www.novell.com)
 
@@ -77,21 +78,25 @@ namespace System.IO {
 		}
 	}
 
+	class ParentInotifyData
+	{
+		public bool IncludeSubdirs;
+		public bool Enabled;
+	        public ArrayList children; // InotifyData
+	        public InotifyData data;
+	}
+
 	class InotifyData {
 		public FileSystemWatcher FSW;
 		public string Directory;
-		public string FileMask;
-		public bool IncludeSubdirs;
-		public bool Enabled;
 		public int Watch;
-		public Hashtable SubDirs;
 	}
 
 	class InotifyWatcher : IFileWatcher
 	{
 		static bool failed;
 		static InotifyWatcher instance;
-		static Hashtable watches; // FSW to InotifyData
+		static Hashtable watches; // FSW to ParentInotifyData
 		static Hashtable requests; // FSW to InotifyData
 		static IntPtr FD;
 		static Thread thread;
@@ -130,7 +135,7 @@ namespace System.IO {
 		
 		public void StartDispatching (FileSystemWatcher fsw)
 		{
-			InotifyData data;
+			ParentInotifyData parent;
 			lock (this) {
 				if ((long) FD == -1)
 					FD = GetInotifyInstance ();
@@ -141,23 +146,25 @@ namespace System.IO {
 					thread.Start ();
 				}
 
-				data = (InotifyData) watches [fsw];
+				parent = (ParentInotifyData) watches [fsw];
 			}
 
-			if (data == null) {
-				data = new InotifyData ();
+			if (parent == null) {
+				InotifyData data = new InotifyData ();
 				data.FSW = fsw;
 				data.Directory = fsw.FullPath;
-				data.FileMask = fsw.MangledFilter;
-				data.IncludeSubdirs = fsw.IncludeSubdirectories;
-				if (data.IncludeSubdirs)
-					data.SubDirs = new Hashtable ();
 
-				data.Enabled = true;
+				parent = new ParentInotifyData();
+				parent.IncludeSubdirs = fsw.IncludeSubdirectories;
+				parent.Enabled = true;
+				parent.children = new ArrayList();
+				parent.data = data;
+
+				watches [fsw] = parent;
+
 				try {
 					StartMonitoringDirectory (data, false);
 					lock (this) {
-						watches [fsw] = data;
 						AppendRequestData (data);
 						stop = false;
 					}
@@ -254,16 +261,16 @@ namespace System.IO {
 			if (wd == -1) {
 				int error = Marshal.GetLastWin32Error ();
 				if (error == 4) { // Too many open watches
-					string watches = "(unknown)";
+					string nr_watches = "(unknown)";
 					try {
 						using (StreamReader reader = new StreamReader ("/proc/sys/fs/inotify/max_user_watches")) {
-							watches = reader.ReadLine ();
+							nr_watches = reader.ReadLine ();
 						}
 					} catch {}
 
 					string msg = String.Format ("The per-user inotify watches limit of {0} has been reached. " +
 								"If you're experiencing problems with your application, increase that limit " +
-								"in /proc/sys/fs/inotify/max_user_watches.", watches);
+								"in /proc/sys/fs/inotify/max_user_watches.", nr_watches);
 					
 					throw new Win32Exception (error, msg);
 				}
@@ -273,15 +280,13 @@ namespace System.IO {
 			FileSystemWatcher fsw = data.FSW;
 			data.Watch = wd;
 
-			if (data.IncludeSubdirs) {
+			ParentInotifyData parent = (ParentInotifyData) watches[fsw];
+
+			if (parent.IncludeSubdirs) {
 				foreach (string directory in Directory.GetDirectories (data.Directory)) {
 					InotifyData fd = new InotifyData ();
 					fd.FSW = fsw;
 					fd.Directory = directory;
-					fd.FileMask = data.FSW.MangledFilter;
-					fd.IncludeSubdirs = true;
-					fd.SubDirs = new Hashtable ();
-					fd.Enabled = true;
 
 					if (justcreated) {
 						lock (fsw) {
@@ -296,8 +301,8 @@ namespace System.IO {
 
 					try {
 						StartMonitoringDirectory (fd, justcreated);
-						fd.SubDirs [directory] = fd;
 						AppendRequestData (fd);
+					        parent.children.Add(fd);
 					} catch {} // ignore errors and don't add directory.
 				}
 			}
@@ -322,14 +327,14 @@ namespace System.IO {
 
 		public void StopDispatching (FileSystemWatcher fsw)
 		{
-			InotifyData data;
+			ParentInotifyData parent;
 			lock (this) {
-				data = (InotifyData) watches [fsw];
-				if (data == null)
+				parent = (ParentInotifyData) watches [fsw];
+				if (parent == null)
 					return;
 
-				if (RemoveRequestData (data)) {
-					StopMonitoringDirectory (data);
+				if (RemoveRequestData (parent.data)) {
+					StopMonitoringDirectory (parent.data);
 				}
 				watches.Remove (fsw);
 				if (watches.Count == 0) {
@@ -339,13 +344,14 @@ namespace System.IO {
 					Close (fd);
 				}
 
-				if (!data.IncludeSubdirs)
+				if (!parent.IncludeSubdirs)
 					return;
 
-				foreach (InotifyData idata in data.SubDirs.Values) {
-					if (RemoveRequestData (idata)) {
-						StopMonitoringDirectory (idata);
-					}
+				foreach (InotifyData idata in parent.children)
+				{
+				    if (RemoveRequestData (idata)) {
+					StopMonitoringDirectory (idata);
+				    }
 				}
 			}
 		}
@@ -473,7 +479,9 @@ namespace System.IO {
 					continue;
 
 				foreach (InotifyData data in GetEnumerator (requests [evt.WatchDescriptor])) {
-					if (data == null || data.Enabled == false)
+				        ParentInotifyData parent = (ParentInotifyData) watches[data.FSW];
+
+					if (data == null || parent.Enabled == false)
 						continue;
 
 					string directory = data.Directory;
@@ -531,17 +539,12 @@ namespace System.IO {
 
 						if (action == FileAction.Added && is_directory) {
 							if (newdirs == null)
-								newdirs = new ArrayList (4);
+								newdirs = new ArrayList (2);
 
 							InotifyData fd = new InotifyData ();
 							fd.FSW = fsw;
 							fd.Directory = datadir;
-							fd.FileMask = fsw.MangledFilter;
-							fd.IncludeSubdirs = true;
-							fd.SubDirs = new Hashtable ();
-							fd.Enabled = true;
 							newdirs.Add (fd);
-							newdirs.Add (data);
 						}
 					}
 
@@ -562,16 +565,11 @@ namespace System.IO {
 			}
 
 			if (newdirs != null) {
-				int count = newdirs.Count;
-				for (int n = 0; n < count; n += 2) {
-					InotifyData newdir = (InotifyData) newdirs [n];
-					InotifyData parent = (InotifyData) newdirs [n + 1];
+			        foreach (InotifyData newdir in newdirs) {
 					try {
 						StartMonitoringDirectory (newdir, true);
 						AppendRequestData (newdir);
-						lock (parent) {
-							parent.SubDirs [newdir.Directory] = newdir;
-						}
+					        ((ParentInotifyData) watches[newdir.FSW]).children.Add(newdir);
 					} catch {} // ignore the given directory
 				}
 				newdirs.Clear ();

@@ -1,3 +1,9 @@
+
+Tue Mar 11 14:29:22 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* InotifyWatcher.cs: patch from Anders Rune Jensen (anders@iola.dk)
+	to reduce memory usage (fixes bug #362147).
+
 2007-11-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* InvalidDataException.cs: Added private ctor for serialization. Fix 
