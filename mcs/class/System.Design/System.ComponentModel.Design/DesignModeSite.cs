@@ -55,15 +55,6 @@ namespace System.ComponentModel.Design
 
 		public DesignModeSite (IComponent component, string name, IContainer container, IServiceProvider serviceProvider)
 		{
-			if (serviceProvider == null)
-				throw new ArgumentNullException ("serviceProvider");
-			if (component == null)
-				throw new ArgumentNullException ("component");
-			if (container == null)
-				throw new ArgumentNullException ("container");
-			if (name == null)
-				throw new ArgumentNullException ("name");
-
 			_component = component;
 			_container = container;
 			_componentName = name;
@@ -206,7 +197,9 @@ namespace System.ComponentModel.Design
 				serviceInstance = _nestedContainer;
 			}
 
-			if (serviceInstance == null && _siteSpecificServices != null)
+			// Avoid returning the site specific IServiceContainer
+			if (serviceInstance == null && service != typeof (IServiceContainer) &&
+			    _siteSpecificServices != null)
 				serviceInstance = _siteSpecificServices.GetService (service);
 
 			if (serviceInstance == null)
