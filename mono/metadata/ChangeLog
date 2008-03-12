@@ -1,5 +1,10 @@
 2008-03-12 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (verify_type_compatibility_full): Allow native int to be converted
+	to native pointer in non-strict mode. Required to "(IntPtr)null" work.
+
+2008-03-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (verify_ldftn_delegate): Accept a sealed type when using
 	ldftn with a virtual method.
 
