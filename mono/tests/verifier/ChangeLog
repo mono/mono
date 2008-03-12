@@ -1,3 +1,9 @@
+2008-03-12 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* valid_ldftn_final_virtual_method.il:
+	* valid_ldftn_sealed_type_virtual_method.il: Tests the interaction
+	of sealed type and final method or ldftn verifiability.
+
 2008-03-11 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_delegate_compat_test.sh: Added. Generate tests for
