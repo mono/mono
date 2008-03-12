@@ -36,8 +36,13 @@ using System.Web.UI;
 using System.Security;
 
 // General Information about the System.Web.Extensions assembly
+#if NET_3_5
+[assembly: AssemblyVersion ("3.6.0.0")]
+[assembly: AssemblyInformationalVersion ("3.6.0.0")]
+#else
 [assembly: AssemblyVersion ("1.0.61025.0")]
 [assembly: AssemblyInformationalVersion ("1.0.61025.0")]
+#endif
 
 [assembly: AssemblyTitle ("System.Web.Extensions.dll")]
 [assembly: AssemblyDescription ("System.Web.Extensions.dll")]
