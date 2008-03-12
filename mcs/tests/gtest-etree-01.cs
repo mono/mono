@@ -301,8 +301,6 @@ class Tester
 
 	void ArrayLengthTest ()
 	{
-		int o = new int [0].Length;
-
 		Expression<Func<double [], int>> e = (double [] a) => a.Length;
 		AssertNodeType (e, ExpressionType.ArrayLength);
 		Assert (0, e.Compile ().Invoke (new double [0]));
@@ -470,7 +468,7 @@ class Tester
 	
 	delegate void EmptyDelegate ();
 	
-	static void EqualTestDelegate ()
+	void EqualTestDelegate ()
 	{
 		Expression<Func<Delegate, Delegate, bool>> e1 = (a, b) => a == b;
 		AssertNodeType (e1, ExpressionType.Equal);
@@ -508,16 +506,16 @@ class Tester
 	}
 
 	void GreaterThanTest ()
-	{/*
+	{
 		Expression<Func<int, int, bool>> e = (int a, int b) => a > b;
 		AssertNodeType (e, ExpressionType.GreaterThan);
 		Assert (true, e.Compile ().Invoke (60, 30));
-*/
+/*
 		Expression<Func<uint?, byte?, bool>> e2 = (a, b) => a > b;
 		AssertNodeType (e2, ExpressionType.GreaterThan);
 		Assert (false, e2.Compile ().Invoke (null, 3));
 		Assert (false, e2.Compile ().Invoke (2, 2));
-/*
+
 		Expression<Func<MyType, MyType, bool>> e3 = (MyType a, MyType b) => a > b;
 		AssertNodeType (e3, ExpressionType.GreaterThan);
 		Assert (false, e3.Compile ().Invoke (new MyType (-20), new MyType (-20)));
@@ -527,7 +525,7 @@ class Tester
 		Assert (false, e4.Compile ().Invoke (null, new MyType (-20)));
 		Assert (false, e4.Compile ().Invoke (null, null));
 		Assert (true, e4.Compile ().Invoke (new MyType (120), new MyType (-20)));
-		*/
+*/
 	}
 
 	void GreaterThanOrEqualTest ()
@@ -544,12 +542,13 @@ class Tester
 		Expression<Func<MyType, MyType, bool>> e3 = (MyType a, MyType b) => a >= b;
 		AssertNodeType (e3, ExpressionType.GreaterThanOrEqual);
 		Assert (true, e3.Compile ().Invoke (new MyType (-20), new MyType (-20)));
-
+/*
 		Expression<Func<MyType?, MyType?, bool>> e4 = (MyType? a, MyType? b) => a >= null;
 		AssertNodeType (e4, ExpressionType.GreaterThanOrEqual);
 		Assert (false, e4.Compile ().Invoke (null, new MyType (-20)));
 		Assert (false, e4.Compile ().Invoke (null, null));
 		Assert (true, e4.Compile ().Invoke (new MyType (120), new MyType (-20)));
+*/
 	}
 
 	void NewArrayInitTest ()
@@ -706,7 +705,7 @@ class Tester
 		AssertNodeType (e2, ExpressionType.RightShift);
 		var c2 = e2.Compile ();
 		Assert (64, c2 (new MyType (256), new MyType (2)));
-		
+/*		
 		Expression<Func<long?, sbyte, long?>> e3 = (long? a, sbyte b) => a >> b;
 		AssertNodeType (e3, ExpressionType.RightShift);
 		Assert (null, e3.Compile ().Invoke (null, 11));
@@ -718,6 +717,7 @@ class Tester
 		Assert (null, c4 (new MyType (8), null));
 		Assert (null, c4 (null, new MyType (8)));
 		Assert (64, c4 (new MyType (256), new MyType (2)));
+*/
 	}	
 
 	//
