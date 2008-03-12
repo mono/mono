@@ -244,6 +244,8 @@ namespace Mono {
 		//   f    float
 		//   d    double
 		//   b    byte
+                //   c    1-byte signed character
+                //   C    1-byte unsigned character
 		//   z8   string encoded as UTF8 with 1-byte null terminator
 		//   z6   string encoded as UTF16 with 2-byte null terminator
 		//   z7   string encoded as UTF7 with 1-byte null terminator
@@ -496,7 +498,7 @@ namespace Mono {
 				idx = Align (idx, size);
 				align = false;
 			}
-			if (idx + size >= buffer.Length){
+			if (idx + size > buffer.Length){
 				idx = buffer.Length;
 				return false;
 			}
@@ -614,6 +616,7 @@ namespace Mono {
 				case '1': case '2': case '3': case '4': case '5':
 				case '6': case '7': case '8': case '9':
 					repeat = ((short) description [i]) - ((short) '0');
+					save = i + 1;
 					break;
 
 				case '*':

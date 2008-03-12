@@ -1,3 +1,12 @@
+2008-03-12  Miguel de Icaza  <miguel@novell.com>
+
+	* DataConverter.cs: Fencepost bug fix from Kenneth D. Weinert
+	<kenw@quarter-flash.com>
+
+	Fix from Kenneth as well to avoid getting stuck on a loop on
+	repeat patterns (example: _6C!i!i), it would loop inside the '6'
+	never continuing the decoding of the format string.
+	
 2008-02-10  Miguel de Icaza  <miguel@novell.com>
 
 	* DataConverter.cs: Apply fix from Cliff Brake
