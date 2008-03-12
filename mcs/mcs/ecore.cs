@@ -5077,7 +5077,12 @@ namespace Mono.CSharp {
 
 		bool IsSingleDimensionalArrayLength ()
 		{
-			return DeclaringType == TypeManager.array_type && getter != null && getter.Name == "Length";
+			if (DeclaringType != TypeManager.array_type || getter == null || Name != "Length")
+				return false;
+
+			string t_name = InstanceExpression.Type.Name;
+			int t_name_len = t_name.Length;
+			return t_name_len > 2 && t_name [t_name_len - 2] == '[' && t_name [t_name_len - 3] != ']';
 		}
 
 		override public Expression DoResolve (EmitContext ec)

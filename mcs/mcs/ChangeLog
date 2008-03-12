@@ -1,5 +1,9 @@
 2008-03-12  Marek Safar  <marek.safar@gmail.com>
 
+	* ecore.cs (PropertyExpr): Fixed IsSingleDimensionalArrayLength regression.
+	
+2008-03-12  Marek Safar  <marek.safar@gmail.com>
+
 	* class.cs (FixedField): Don't crash when contructors are missing.
 
 2008-03-11  Marek Safar  <marek.safar@gmail.com>
