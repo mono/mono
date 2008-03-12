@@ -1,3 +1,8 @@
+2008-03-10  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DesignModeSite.cs: Do not return the site specific service 
+	container if GetService is asked for IServiceContainer.
+
 2008-03-02  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DesignModeSite.cs: Fix Name setter to actually set the name.
