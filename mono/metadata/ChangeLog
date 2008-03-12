@@ -1,3 +1,12 @@
+
+Wed Mar 12 12:11:06 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* assembly.c, class.c, metadata-internals.h: make sure public key
+	tokesns are compared in a case-insensitive way. Also, all
+	the lookups in the GAC use a lowercase public key token
+	(gaacutil already does the lowercasing on install). Fixes
+	bug #369541.
+
 2008-03-11 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (mono_delegate_signature_equal): Do proper variance check on arguments
