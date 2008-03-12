@@ -1,3 +1,7 @@
+2008-03-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : add mono-xsd to net_2_0_SUBDIRS to build xsd2.
+
 2008-02-17  Raja R Harinath  <harinath@hurrynot.org>
 
 	* Makefile (net_2_1_raw_SUBDIRS): New.

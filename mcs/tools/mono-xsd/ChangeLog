@@ -1,3 +1,7 @@
+2008-03-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : build runtime-version-dependent xsd.exe files.
+
 2006-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* NewMonoXSD.cs : Silently ignore /nologo switch for compatibility
