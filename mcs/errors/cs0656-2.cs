@@ -1,4 +1,4 @@
-// CS0656: The compiler required member `System.Runtime.CompilerServices.RuntimeHelpers.InitializeArray(System.Array, System.RuntimeFieldHandle)' could not be found
+// CS0656: The compiler required member `System.Runtime.CompilerServices.RuntimeHelpers.InitializeArray(System.Array, System.RuntimeFieldHandle)' could not be found or is inaccessible
 // Line: 16
 // Compiler options: -nostdlib CS0656-corlib.cs
 
