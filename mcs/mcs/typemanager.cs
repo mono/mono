@@ -883,32 +883,53 @@ namespace Mono.CSharp {
 		return null;
 	}
 
-	static MethodBase GetPredefinedMethodBase (Type t, string name, Location loc, params Type [] args)
+	static MemberInfo GetPredefinedMember (Type t, string name, MemberTypes mt, Location loc, params Type [] args)
 	{
 		const BindingFlags flags = instance_and_static | BindingFlags.Public | BindingFlags.DeclaredOnly;
 
-		MemberInfo [] methods = MemberLookup (null, null, t, MemberTypes.Method | MemberTypes.Constructor, flags, name, null);
-		if (methods != null) {
-			for (int i = 0; i < methods.Length; ++i) {
-				MethodBase method = (MethodBase) methods [i];
-				ParameterData pd = TypeManager.GetParameterData (method);
-				if (pd.Count != args.Length)
-					continue;
+		MemberInfo [] members = MemberLookup (null, null, t, mt, flags, name, null);
+		if (members != null) {
+			for (int i = 0; i < members.Length; ++i) {
+				MemberInfo member = members [i];
+				if (mt == MemberTypes.Method || mt == MemberTypes.Constructor) {
+					MethodBase mb = member as MethodBase;
+					if (mb == null)
+						continue;
 
-				for (int ii = 0; ii < args.Length; ++ii) {
-					if (!IsEqual (pd.Types [ii], args [ii])) {
-						method = null;
-						break;
-					}
+					ParameterData pd = TypeManager.GetParameterData (mb);
+					if (IsEqual (pd.Types, args))
+						return member;
+				}
+				if (mt == MemberTypes.Field) {
+					FieldInfo fi = member as FieldInfo;
+					if (fi == null)
+						continue;
+
+					if (args.Length >= 1 && !IsEqual (TypeToCoreType (fi.FieldType), args [0]))
+						continue;
+
+					return member;
 				}
 
-				if (method != null)
-					return (MethodBase) method;
+				if (mt == MemberTypes.Property) {
+					PropertyInfo pi = member as PropertyInfo;
+					if (pi == null)
+						continue;
+
+					if (args.Length >= 1 && !IsEqual (TypeToCoreType (pi.PropertyType), args [0]))
+						continue;
+
+					return member;
+				}
 			}
 		}
 
-		Report.Error (656, loc, "The compiler required member `{0}.{1}({2})' could not be found",
-			TypeManager.CSharpName (t), name, TypeManager.CSharpName (args));
+		string method_args = null;
+		if (mt == MemberTypes.Method || mt == MemberTypes.Constructor)
+			method_args = "(" + TypeManager.CSharpName (args) + ")";
+
+		Report.Error (656, loc, "The compiler required member `{0}.{1}{2}' could not be found or is inaccessible",
+			TypeManager.CSharpName (t), name, method_args);
 
 		return null;
 	}
@@ -918,7 +939,7 @@ namespace Mono.CSharp {
 	//
 	public static ConstructorInfo GetPredefinedConstructor (Type t, Location loc, params Type [] args)
 	{
-		return (ConstructorInfo) GetPredefinedMethodBase (t, ConstructorInfo.ConstructorName, loc, args);
+		return (ConstructorInfo) GetPredefinedMember (t, ConstructorInfo.ConstructorName, MemberTypes.Constructor, loc, args);
 	}
 
 	//
@@ -927,24 +948,17 @@ namespace Mono.CSharp {
 	//
 	public static MethodInfo GetPredefinedMethod (Type t, string name, Location loc, params Type [] args)
 	{
-		return (MethodInfo)GetPredefinedMethodBase (t, name, loc, args);
+		return (MethodInfo)GetPredefinedMember (t, name, MemberTypes.Method, loc, args);
 	}
 
-	/// <summary>
-	///   Returns the PropertyInfo for a property named `name' defined
-	///   in type `t'
-	/// </summary>
-	public static PropertyInfo GetCoreProperty (Type t, string name)
+	public static FieldInfo GetPredefinedField (Type t, string name, Location loc, params Type [] args)
 	{
-		MemberInfo [] properties = MemberLookup (null, null, t, MemberTypes.Property,
-			BindingFlags.Public | BindingFlags.Instance, name, null);
+		return (FieldInfo) GetPredefinedMember (t, name, MemberTypes.Field, loc, args);
+	}
 
-		if (properties == null || properties.Length != 1) {
-			Report.Error (-19, "Can not find the core property `" + name + "'");
-			return null;
-		}
-
-		return (PropertyInfo) properties [0];
+	public static PropertyInfo GetPredefinedProperty (Type t, string name, Location loc, params Type [] args)
+	{
+		return (PropertyInfo) GetPredefinedMember (t, name, MemberTypes.Property, loc, args);
 	}
 
 	/// <remarks>
@@ -1690,7 +1704,11 @@ namespace Mono.CSharp {
 			return e.UnderlyingType;
 
 		// TODO: cache it ?
-		return TypeToCoreType (t.GetField ("value__").FieldType);
+		FieldInfo fi = GetPredefinedField (t, Enum.UnderlyingValueField, Location.Null);
+		if (fi == null)
+			return TypeManager.int32_type;
+
+		return TypeToCoreType (fi.FieldType);
 	}
 	
 	/// <summary>

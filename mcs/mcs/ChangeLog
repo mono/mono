@@ -1,5 +1,10 @@
 2008-03-12  Marek Safar  <marek.safar@gmail.com>
 
+	* generic.cs, typemanager.cs, enum.cs, codegen.cs, statement.cs: Try not to
+	crash when predefined field does not exist.
+	
+2008-03-12  Marek Safar  <marek.safar@gmail.com>
+
 	* ecore.cs (PropertyExpr): Fixed IsSingleDimensionalArrayLength regression.
 	
 2008-03-12  Marek Safar  <marek.safar@gmail.com>

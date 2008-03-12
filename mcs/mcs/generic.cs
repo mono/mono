@@ -3067,8 +3067,8 @@ namespace Mono.CSharp {
 				Type = type;
 				UnderlyingType = TypeManager.GetTypeArguments (type) [0];
 
-				PropertyInfo has_value_pi = TypeManager.GetCoreProperty (type, "HasValue");
-				PropertyInfo value_pi = TypeManager.GetCoreProperty (type, "Value");
+				PropertyInfo has_value_pi = TypeManager.GetPredefinedProperty (type, "HasValue", Location.Null);
+				PropertyInfo value_pi = TypeManager.GetPredefinedProperty (type, "Value", Location.Null);
 
 				HasValue = has_value_pi.GetGetMethod (false);
 				Value = value_pi.GetGetMethod (false);

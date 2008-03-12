@@ -1468,8 +1468,8 @@ namespace Mono.CSharp {
 					ConstructorInfo ci = TypeManager.GetPredefinedConstructor (
 						runtime_compatibility_attr_type, Location.Null, Type.EmptyTypes);
 					PropertyInfo [] pis = new PropertyInfo [1];
-					pis [0] = TypeManager.GetCoreProperty (
-						runtime_compatibility_attr_type, "WrapNonExceptionThrows");
+					pis [0] = TypeManager.GetPredefinedProperty (runtime_compatibility_attr_type,
+						"WrapNonExceptionThrows", Location.Null, TypeManager.bool_type);
 					object [] pargs = new object [1];
 					pargs [0] = true;
 					Builder.SetCustomAttribute (new CustomAttributeBuilder (ci, new object [0], pis, pargs));

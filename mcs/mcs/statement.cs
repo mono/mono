@@ -5124,8 +5124,8 @@ namespace Mono.CSharp {
 					}
 
 					if (TypeManager.ienumerator_getcurrent == null) {
-						TypeManager.ienumerator_getcurrent = TypeManager.GetCoreProperty (
-							TypeManager.ienumerator_type, "Current");
+						TypeManager.ienumerator_getcurrent = TypeManager.GetPredefinedProperty (
+							TypeManager.ienumerator_type, "Current", loc, TypeManager.object_type);
 					}
 
 #if GMCS_SOURCE

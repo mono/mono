@@ -129,6 +129,8 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class Enum : TypeContainer
 	{
+		public static readonly string UnderlyingValueField = "value__";
+
 		Expression base_type;
 
 		public Type UnderlyingType;
@@ -151,9 +153,9 @@ namespace Mono.CSharp {
 
 		public void AddEnumMember (EnumMember em)
 		{
-			if (em.Name == "value__") {
-				Report.Error (76, em.Location, "An item in an enumeration cannot " +
-					      "have an identifier `value__'");
+			if (em.Name == UnderlyingValueField) {
+				Report.Error (76, em.Location, "An item in an enumeration cannot have an identifier `{0}'",
+					UnderlyingValueField);
 				return;
 			}
 
@@ -194,7 +196,7 @@ namespace Mono.CSharp {
 			//
 			// Call MapToInternalType for corlib
 			//
-			TypeBuilder.DefineField ("value__", UnderlyingType,
+			TypeBuilder.DefineField (UnderlyingValueField, UnderlyingType,
 						 FieldAttributes.Public | FieldAttributes.SpecialName
 						 | FieldAttributes.RTSpecialName);
 
