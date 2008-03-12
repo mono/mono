@@ -24,7 +24,15 @@ public class S
 		const decimal dec = c;
 	}
 
-	static void Main ()
+	static int Main ()
 	{
+		long i = 1;
+		int i2 = 0xA0;
+		long b = i << i2;
+		
+		if (b != 4294967296)
+			return 1;
+			
+		return 0;
 	}	
 }
