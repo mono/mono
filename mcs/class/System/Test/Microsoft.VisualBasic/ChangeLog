@@ -1,3 +1,7 @@
+2008-03-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* CodeGeneratorFromCompileUnitTest.cs: Added ExternalSourceTest.
+
 2008-01-27  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CodeGeneratorFromExpressionTest.cs: Numbered tests. Fixed test for

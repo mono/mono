@@ -688,11 +688,12 @@ namespace Microsoft.VisualBasic
 		protected override void GenerateLinePragmaStart (CodeLinePragma linePragma)
 		{
 			Output.WriteLine ();
-			Output.Write ("#ExternalSource(");
+			Output.Write ("#ExternalSource(\"");
 			Output.Write (linePragma.FileName);
-			Output.Write (", ");
+			Output.Write ("\",");
 			Output.Write (linePragma.LineNumber);
 			Output.WriteLine (")");
+			Output.WriteLine ("");
 		}
 
 		protected override void GenerateLinePragmaEnd (CodeLinePragma linePragma)

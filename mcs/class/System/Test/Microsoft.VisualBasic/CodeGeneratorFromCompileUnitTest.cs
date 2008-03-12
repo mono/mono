@@ -170,5 +170,30 @@ namespace MonoTests.Microsoft.VisualBasic
 			writer.Close ();
 			Assert.AreEqual (sb.ToString () + NewLine, writer.ToString());
 		}
+		
+		[Test]
+		public void ExternalSourceTest ()
+		{
+			CodeSnippetCompileUnit snippet;
+			
+			StringBuilder sb = new StringBuilder();
+			sb.Append ("\n");
+			sb.Append ("#ExternalSource(\"file.vb\",123)");
+			sb.Append ("\n");
+			sb.Append ("\n");
+			sb.Append ("\n");
+			sb.Append ("#End ExternalSource");
+			sb.Append ("\n");
+
+			StringWriter writer = new StringWriter ();
+			writer.NewLine = NewLine;
+
+			codeUnit = new CodeSnippetCompileUnit ("");
+			snippet = (CodeSnippetCompileUnit) codeUnit;
+			snippet.LinePragma = new CodeLinePragma ("file.vb", 123);
+			generator.GenerateCodeFromCompileUnit (codeUnit, writer, options);
+			writer.Close ();
+			Assert.AreEqual (sb.ToString (), writer.ToString());
+		}
 	}
 }

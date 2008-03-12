@@ -1,3 +1,8 @@
+2008-03-13  Rolf Bjarne Kvinge <RKvinge@novell.com> 
+
+	* VBCodeGenerator.cs: Add quotes around the filename in ExternalSource
+	  directives.
+
 2008-01-27  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* VBCodeGenerator.cs: In GenerateDelegateInvokeExpression, only emit
