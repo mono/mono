@@ -1,3 +1,6 @@
+2008-03-13  Geoff Norton  <gnorton@novell.com>
+
+	* decimal.c:  Only include memory.h if the platform has it.
 
 Wed Mar 12 12:11:06 CET 2008 Paolo Molaro <lupus@ximian.com>
 
