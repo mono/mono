@@ -1,3 +1,10 @@
+2008-03-12  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Enable generic sharing of calls to non-static
+	non-interface non-generic non-value-type methods.
+
+	* mini-trampolines.c: Resolve calls from shared generic code.
+
 2008-03-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am il2tests.il iltests.il.in: Delete il2tests, merge it into iltests.
