@@ -1,4 +1,4 @@
-// Compiler options: -nostdlib
+// Compiler options: -nostdlib -t:library -noconfig
 
 //
 // Tests compiler mscorlib bootstrap
@@ -58,14 +58,3 @@ namespace System.Reflection
 	public class DefaultMemberAttribute {}
 }
 
-class C
-{
-	delegate void Foo ();
-	
-	public static int Main ()
-	{
-		int i = 0;
-		
-		return i;
-	}
-}
