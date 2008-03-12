@@ -1,3 +1,17 @@
+2008-03-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ops.h: Add OP_TAILCALL.
+	
+	* mini.h (MonoCallInst): Add a 'tail_call' flag.
+
+	* mini.h (MONO_IS_CALL): Consider OP_TAILCALL as well.
+
+	* method-to-ir.c: Handle tail calls similarly to normal calls by emitting argument
+	passing code in mono_arch_emit_call (). This eliminates the need to mark arguments
+	as volatile and also eliminates emit_load_volatile_arguments ().
+
+	* mini-amd64.c cpu-amd64.md: Add support for OP_TAILCALL.
+	
 2008-03-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* local-propagation.c (mono_local_cprop2): Optimize the sext+storei1/storei2

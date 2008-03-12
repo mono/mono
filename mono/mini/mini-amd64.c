@@ -1549,6 +1549,9 @@ emit_sig_cookie2 (MonoCompile *cfg, MonoCallInst *call, CallInfo *cinfo)
 	MonoMethodSignature *tmp_sig;
 	MonoInst *sig_arg;
 
+	if (call->tail_call)
+		NOT_IMPLEMENTED;
+
 	/* FIXME: Add support for signature tokens to AOT */
 	cfg->disable_aot = TRUE;
 
@@ -1623,6 +1626,8 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 			break;
 		case ArgOnStack:
 		case ArgValuetypeInReg:
+			if (ainfo->storage == ArgOnStack && call->tail_call)
+				NOT_IMPLEMENTED;
 			if ((i >= sig->hasthis) && (MONO_TYPE_ISSTRUCT(sig->params [i - sig->hasthis]))) {
 				guint32 align;
 				guint32 size;
@@ -1703,6 +1708,8 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 				 */
 				call->vret_in_reg = TRUE;
 			} else {
+				if (call->tail_call)
+					NOT_IMPLEMENTED;
 				/*
 				 * The valuetype is in RAX:RDX after the call, need to be copied to
 				 * the stack. Push the address here, so the call instruction can
@@ -3680,7 +3687,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 			break;
 		}
-		case OP_JMP: {
+		case OP_JMP:
+		case OP_TAILCALL: {
 			/*
 			 * Note: this 'frame destruction' logic is useful for tail calls, too.
 			 * Keep in sync with the code in emit_epilog.
@@ -3693,7 +3701,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			g_assert (!cfg->method->save_lmf);
 
-			code = emit_load_volatile_arguments (cfg, code);
+			if (ins->opcode == OP_JMP)
+				code = emit_load_volatile_arguments (cfg, code);
 
 			if (cfg->arch.omit_fp) {
 				guint32 save_offset = 0;

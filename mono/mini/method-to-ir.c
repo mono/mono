@@ -7113,11 +7113,14 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				MONO_EMIT_NEW_UNALU (cfg, OP_X86_FPOP, -1, sp [0]->dreg);
 #endif
 			break;
-		case CEE_JMP:
+		case CEE_JMP: {
+			MonoCallInst *call;
+
 			CHECK_OPSIZE (5);
 			if (stack_start != sp)
 				UNVERIFIED;
-			MONO_INST_NEW (cfg, ins, OP_JMP);
+			MONO_INST_NEW_CALL (cfg, call, OP_JMP);
+			ins = (MonoInst*)call;
 			token = read32 (ip + 1);
 			/* FIXME: check the signature matches */
 			cmethod = mini_get_method (method, token, NULL, generic_context);
@@ -7142,6 +7145,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			/* FIXME: */
 			cfg->disable_aot = 1;
 			break;
+		}
 		case CEE_CALLI:
 		case CEE_CALL:
 		case CEE_CALLVIRT: {
@@ -7314,10 +7318,22 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if ((ins_flag & MONO_INST_TAILCALL) && cmethod && (*ip == CEE_CALL) &&
 				 (mono_metadata_signature_equal (mono_method_signature (method), mono_method_signature (cmethod)))) {
 				int i;
+				MonoCallInst *call;
 
 				/* Prevent inlining of methods with tail calls (the call stack would be altered) */
 				INLINE_FAILURE;
 
+				MONO_INST_NEW_CALL (cfg, call, OP_JMP);
+				call->tail_call = TRUE;
+				call->method = cmethod;
+				call->signature = mono_method_signature (cmethod);
+
+#ifdef __x86_64__
+				/* Handle tail calls similarly to calls */
+				call->inst.opcode = OP_TAILCALL;
+				call->args = sp;
+				mono_arch_emit_call (cfg, call, FALSE);
+#else
 				/*
 				 * We implement tail calls by storing the actual arguments into the 
 				 * argument variables, then emitting a CEE_JMP.
@@ -7327,11 +7343,12 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					arg_array [i]->flags |= MONO_INST_VOLATILE;
 					EMIT_NEW_ARGSTORE (cfg, ins, i, sp [i]);
 				}
+#endif
 
 				/* FIXME: */
 				cfg->disable_aot = 1;
 
-				MONO_INST_NEW (cfg, ins, OP_JMP);
+				ins = (MonoInst*)call;
 				ins->inst_p0 = cmethod;
 				ins->inst_p1 = arg_array [0];
 				MONO_ADD_INS (bblock, ins);

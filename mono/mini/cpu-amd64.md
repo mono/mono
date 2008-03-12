@@ -55,6 +55,7 @@
 #
 break: len:2
 jmp: len:120
+tailcall: len:120 clob:c
 br: len:6
 label: len:0
 
