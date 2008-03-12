@@ -124,13 +124,16 @@ namespace System.Web.UI.WebControls {
 				DataControlFieldCell cell = (DataControlFieldCell) sender;
 				CheckBox box = (CheckBox) cell.Controls [0];
 				object val = GetValue (cell.BindingContainer);
-				if (val != null) {
+				if (val != null && val != DBNull.Value)
 					box.Checked = (bool) val;
-					if (!box.Visible)
-						box.Visible = true;
-				}
 				else
-					box.Visible = false;
+					if (string.IsNullOrEmpty (DataField)) {
+						box.Visible = false;
+						return;
+					}
+
+				if (!box.Visible)
+					box.Visible = true;
 			}
 			catch (HttpException) {
 				throw;
