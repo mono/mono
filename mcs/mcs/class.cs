@@ -5928,6 +5928,8 @@ namespace Mono.CSharp {
 			if (TypeManager.struct_layout_attribute_ctor == null) {
 				TypeManager.struct_layout_attribute_ctor = TypeManager.GetPredefinedConstructor (
 					TypeManager.struct_layout_attribute_type, Location, TypeManager.short_type);
+				if (TypeManager.struct_layout_attribute_ctor == null)
+					return;
 			}
 
 			CustomAttributeBuilder cab = new CustomAttributeBuilder (TypeManager.struct_layout_attribute_ctor,
@@ -5951,6 +5953,9 @@ namespace Mono.CSharp {
 
 				TypeManager.fixed_buffer_attr_ctor = TypeManager.GetPredefinedConstructor (TypeManager.fixed_buffer_attr_type,
 					Location, TypeManager.type_type, TypeManager.int32_type);
+				
+				if (TypeManager.fixed_buffer_attr_ctor == null)
+					return;
 			}
 
 			cab = new CustomAttributeBuilder (TypeManager.fixed_buffer_attr_ctor, new object [] { MemberType, buffer_size });
