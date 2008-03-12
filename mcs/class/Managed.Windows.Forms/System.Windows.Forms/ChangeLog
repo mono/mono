@@ -1,5 +1,11 @@
 2008-03-11  Jonathan Pobst  <monkey@jpobst.com>
 
+	* MonthCalendar.cs: Remove an incorrect invalidate optimization.
+	The savings aren't worth the extra code to fix the optimization.
+	[Fixes bug #368585]
+
+2008-03-11  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolBar.cs: Always call base.Dock in the Dock override so that
 	Control's layout_type gets reset correctly.
 	[Fixes bug #368882]

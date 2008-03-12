@@ -638,12 +638,10 @@ namespace System.Windows.Forms {
 					}
 					SelectionRange.Start = value;
 					DateTime new_month = new DateTime(value.Year, value.Month, 1);
-					if (current_month != new_month) {
+					if (current_month != new_month)
 						current_month = new_month;
-						this.Invalidate ();
-					} else {
-						this.InvalidateDateRange (new SelectionRange (old_start, SelectionRange.Start));
-					}
+					
+					this.Invalidate ();
 					this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 				}
 			}
