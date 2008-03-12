@@ -629,7 +629,6 @@ namespace System.Windows.Forms {
 				}
 
 				if (SelectionRange.Start != value) {
-					DateTime old_start = SelectionRange.Start; 
 					// make sure the end obeys the max selection range count
 					if (value > SelectionRange.End) {
 						SelectionRange.End = value;

@@ -1,5 +1,9 @@
 2008-03-12  Jonathan Pobst  <monkey@jpobst.com>
 
+	* MonthCalendar.cs: Remove unused variable.
+
+2008-03-12  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridView*.cs: corcompare stuffs.
 
 2008-03-11  Jonathan Pobst  <monkey@jpobst.com>
