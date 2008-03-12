@@ -529,6 +529,11 @@ namespace System.Net.Sockets
 			}
 		}
 			
+		static Socket () {
+			// initialize ipv4Supported and ipv6Supported
+			CheckProtocolSupport ();
+		}
+
 		/* the field "socket" is looked up by name by the runtime */
 		private IntPtr socket;
 		private AddressFamily address_family;

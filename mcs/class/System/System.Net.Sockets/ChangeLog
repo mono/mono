@@ -1,3 +1,9 @@
+
+Wed Mar 12 20:06:07 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* Socket.cs: add a static ctor so that ipv4Supported and ipv6Supported
+	are initialized (they are used by the runtime).
+
 2008-02-01  Dick Porter  <dick@ximian.com>
 
 	* TcpClient.cs: If the Connect fails (when given an array of
