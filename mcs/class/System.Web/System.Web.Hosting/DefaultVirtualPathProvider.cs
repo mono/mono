@@ -69,8 +69,9 @@ namespace System.Web.Hosting {
 			if (virtualPath == null || virtualPath == "")
 				throw new ArgumentNullException ("virtualPath");
 
-			if (UrlUtils.IsRelativeUrl (virtualPath))
-				throw new ArgumentException (String.Concat ("The relative virtual path '", virtualPath, "', is not allowed here."));
+			// Not sure why it was put here? /grendel 2008-03-12
+// 			if (UrlUtils.IsRelativeUrl (virtualPath))
+// 				throw new ArgumentException (String.Concat ("The relative virtual path '", virtualPath, "', is not allowed here."));
 
 			string phys_path = HostingEnvironment.MapPath (virtualPath);
 			return File.Exists (phys_path);

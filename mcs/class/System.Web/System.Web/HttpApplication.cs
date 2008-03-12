@@ -967,7 +967,6 @@ namespace System.Web {
 			IHttpHandler handler = null;
 			try {
 				handler = GetHandler (context, context.Request.FilePath);
-				context.Handler = handler;
 #if NET_2_0
 				context.PushHandler (handler);
 #endif
@@ -995,13 +994,13 @@ namespace System.Web {
 			if (PostMapRequestHandler != null)
 				foreach (bool stop in RunHooks (PostMapRequestHandler))
 					yield return stop;
-			
 #endif
+			
 			if (AcquireRequestState != null){
 				foreach (bool stop in RunHooks (AcquireRequestState))
 					yield return stop;
 			}
-
+			
 #if NET_2_0
 			if (PostAcquireRequestState != null){
 				foreach (bool stop in RunHooks (PostAcquireRequestState))
@@ -1018,11 +1017,22 @@ namespace System.Web {
 				foreach (bool stop in RunHooks (PreRequestHandlerExecute))
 					if (stop)
 						goto release;
+			
 				
 #if TARGET_J2EE
 		processHandler:
 			bool doProcessHandler = false;
 #endif
+			
+#if NET_2_0
+			IHttpHandler ctxHandler = context.Handler;
+			if (ctxHandler != null && handler != ctxHandler) {
+				context.PopHandler ();
+				handler = ctxHandler;
+				context.PushHandler (handler);
+			}
+#endif
+			
 			try {
 				context.BeginTimeoutPossible ();
 				if (handler != null){
@@ -1264,8 +1274,11 @@ namespace System.Web {
 		}
 		
 		// Used by HttpServerUtility.Execute
-		internal IHttpHandler GetHandler (HttpContext context,string url)
+		internal IHttpHandler GetHandler (HttpContext context, string url)
 		{
+			if (context.Handler != null)
+				return context.Handler;
+			
 			HttpRequest request = context.Request;
 			string verb = request.RequestType;
 			

@@ -1,3 +1,10 @@
+2008-03-12  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpApplication.cs: HttpContext.Handler may be set by a module
+	in any of the event handlers between acquiring the initial handler
+	and processing the request. Honor the setting and use
+	HttpContext.Handler instead of the matched one if set.
+
 2008-03-10  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpApplication.cs: synchronize Modules and Dispose with
