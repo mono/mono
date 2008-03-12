@@ -1,3 +1,8 @@
+2008-03-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (verify_ldftn_delegate): Accept a sealed type when using
+	ldftn with a virtual method.
+
 2008-03-13  Geoff Norton  <gnorton@novell.com>
 
 	* decimal.c:  Only include memory.h if the platform has it.
