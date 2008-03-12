@@ -50,6 +50,9 @@ namespace System.Windows.Forms {
 		private bool allow_printer;
 		private bool show_help;
 		private bool show_network;
+#if NET_2_0
+		private bool enable_metric;
+#endif
 
 		private GroupBox groupbox_paper;
 		private Label label_source;
@@ -137,6 +140,16 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
+
+#if NET_2_0
+		[Browsable (true)]
+		[DefaultValue (false)]
+		[MonoTODO ("Stubbed, not implemented")]
+		public bool EnableMetric {
+			get { return enable_metric; }
+			set { enable_metric = value; }
+		}
+#endif
 
 		public Margins MinMargins {
 			get { return min_margins; }

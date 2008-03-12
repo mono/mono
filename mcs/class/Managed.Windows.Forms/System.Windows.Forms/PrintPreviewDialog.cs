@@ -870,6 +870,24 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
+		protected override bool ProcessDialogKey (Keys keyData)
+		{
+			switch (keyData) {
+				case Keys.Up:
+				case Keys.Down:
+				case Keys.Right:
+				case Keys.Left:
+					return false;
+			}
+			
+			return base.ProcessDialogKey (keyData);
+		}
+
+		protected override bool ProcessTabKey (bool forward)
+		{
+			return base.ProcessTabKey (forward);
+		}
+		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler AutoSizeChanged {

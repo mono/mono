@@ -112,6 +112,14 @@ namespace System.Windows.Forms
 
 		#endregion	// Protected Instance Methods
 
+#if NET_2_0
+		#region Public Properties
+		public override bool IsPreview {
+			get { return underlyingController.IsPreview; }
+		}
+		#endregion
+#endif
+	
 		#region Internal Class
 		class PrintingDialog : Form {
 			private Button buttonCancel;

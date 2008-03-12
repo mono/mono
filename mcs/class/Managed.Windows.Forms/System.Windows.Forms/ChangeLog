@@ -1,5 +1,12 @@
 2008-03-12  Jonathan Pobst  <monkey@jpobst.com>
 
+	* PageSetupDialog.cs: Stub EnableMetric.
+	* PrintControllerWithStatusDialog.cs: Implement IsPreview.
+	* PrintPreviewDialog.cs: Add ProcessDialogKey,
+	ProcessTabKey.
+
+2008-03-12  Jonathan Pobst  <monkey@jpobst.com>
+
 	* MonthCalendar.cs: Remove unused variable.
 
 2008-03-12  Jonathan Pobst  <monkey@jpobst.com>
