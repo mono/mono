@@ -1625,6 +1625,18 @@ namespace MonoTests.System
 		}
 #endif
 
+		//bnc #363320
+		[Test]
+		public void TestUTF8Strings ()
+		{
+			string [] tests = {
+				"file:///tmp/x (%232).jpg",
+				"file:///tmp/ü (%232).jpg" };
+
+			foreach (string test in tests)
+				AssertEquals (test, new Uri (test).ToString ());
+		}
+
 		// This test doesn't work on Linux, and arguably shouldn't work.
 		// new Uri("file:///tmp/foo/bar").AbsolutePath returns "/tmp/foo/bar" 
 		// on Linux, as anyone sane would expect.  It *doesn't* under .NET 1.1

@@ -1,3 +1,7 @@
+2008-03-12  Stephane Delcroix  <sdelcroix@novell.com>
+
+	* UriTest.cs: test for bug #363320
+
 2008-01-23  Robert Jordan  <robertj@gmx.net>
 
 	* UriTest3.cs: Add tests for bug #346432.
