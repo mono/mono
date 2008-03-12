@@ -1,3 +1,12 @@
+2008-03-12  Geoff Norton  <gnorton@novell.com>
+
+	* mini-arm.h: Add some #defines for locating sp, pc, r4 with
+	different ucontext_t implementations.
+	* exceptions-arm.c: Use the above defines to get exceptions working on 
+	iPhone (based on a patch by Luke Howard lukeh@padl.com)
+	* mini-arm.c: Implement iPhone icache support (based on a patch by
+	Luke Howard lukeh@padl.com)
+
 2008-03-12  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.c: Enable generic sharing of calls to non-static
