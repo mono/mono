@@ -1,3 +1,9 @@
+2008-03-11  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolBar.cs: Always call base.Dock in the Dock override so that
+	Control's layout_type gets reset correctly.
+	[Fixes bug #368882]
+
 2008-03-11  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* X11Dnd.cs: End DnD operation also for the middle mouse button.

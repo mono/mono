@@ -327,8 +327,11 @@ namespace System.Windows.Forms
 		public override DockStyle Dock {
 			get { return base.Dock; }
 			set {
-				if (base.Dock == value)
+				if (base.Dock == value) {
+					// Call base anyways so layout_type gets set correctly
+					base.Dock = value;
 					return;
+				}
 					
 				if (Vertical) {
 					SetStyle (ControlStyles.FixedWidth, AutoSize);
