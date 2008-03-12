@@ -81,6 +81,18 @@ namespace System.Windows.Forms {
 				}
 			}
 
+			public override string Name {
+				get { return base.Name; }
+			}
+
+			public override AccessibleStates State {
+				get { return base.State; }
+			}
+
+			public override string Value {
+				get { return base.Value; }
+			}
+			
 			public override void DoDefaultAction () {
 				if (Owner.DataGridView != null) {
 					Owner.DataGridView.SelectAll();
@@ -91,6 +103,10 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException();
 			}
 
+			public override void Select (AccessibleSelection flags)
+			{
+				base.Select (flags);
+			}
 		}
 
 	}

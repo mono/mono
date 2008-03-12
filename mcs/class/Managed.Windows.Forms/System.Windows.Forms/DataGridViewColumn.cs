@@ -33,7 +33,7 @@ namespace System.Windows.Forms {
 
 	[Designer ("System.Windows.Forms.Design.DataGridViewColumnDesigner, " + Consts.AssemblySystem_Design,
 		   "System.ComponentModel.Design.IDesigner")]
-	// XXX [TypeConverter (typeof (DataGridViewColumnConverter))]
+	[TypeConverter (typeof (DataGridViewColumnConverter))]
 	[ToolboxItem ("")]
 	[DesignTimeVisible (false)]
 	public class DataGridViewColumn : DataGridViewBand, IComponent, IDisposable {
@@ -485,7 +485,10 @@ Example */
 		}
 
 	}
-
+	
+	internal class DataGridViewColumnConverter : TypeConverter
+	{
+	}
 }
 
 #endif

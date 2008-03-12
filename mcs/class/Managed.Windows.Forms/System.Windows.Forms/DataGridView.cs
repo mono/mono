@@ -4627,7 +4627,6 @@ namespace System.Windows.Forms {
 
 			public override string Name {
 				get { return base.Name; }
-				set { base.Name = value; }
 			}
 			
 			public override AccessibleObject GetChild (int index) {
@@ -4681,9 +4680,9 @@ namespace System.Windows.Forms {
 				return base.GetChildCount ();
 			}
 
-			public override AccessibleObject Navigate (AccessibleNavigation navdir)
+			public override AccessibleObject Navigate (AccessibleNavigation navigationDirection)
 			{
-				return base.Navigate (navdir);
+				return base.Navigate (navigationDirection);
 			}
 			#endregion
 			
@@ -4694,7 +4693,6 @@ namespace System.Windows.Forms {
 			
 			public override string Name {
 				get { return base.Name; }
-				set { base.Name = value; }
 			}
 
 			public DataGridView Owner {
@@ -4717,7 +4715,6 @@ namespace System.Windows.Forms {
 
 			public override string Value {
 				get { return base.Value; }
-				set { base.Value = value; }
 			}
 			#endregion
 		}

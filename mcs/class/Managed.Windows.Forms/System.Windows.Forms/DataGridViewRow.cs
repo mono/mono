@@ -33,7 +33,7 @@ using System.Collections;
 
 namespace System.Windows.Forms {
 
-	// XXX [TypeConverter (typeof (DataGridRowConverter))]
+	[TypeConverter (typeof (DataGridRowConverter))]
 	public class DataGridViewRow : DataGridViewBand {
 
 		private AccessibleObject accessibilityObject;
@@ -519,17 +519,13 @@ namespace System.Windows.Forms {
 			{
 			}
 
-			public DataGridViewRowAccessibleObject (DataGridViewRow row)
+			public DataGridViewRowAccessibleObject (DataGridViewRow owner)
 			{
-				this.dataGridViewRow = row;
+				this.dataGridViewRow = owner;
 			}
 
 			public override Rectangle Bounds {
 				get { throw new NotImplementedException(); }
-			}
-
-			public override string DefaultAction {
-				get { return "Edit"; }
 			}
 
 			public override string Name {
@@ -631,7 +627,10 @@ namespace System.Windows.Forms {
 
 
 	}
-
+	
+	internal class DataGridRowConverter : TypeConverter
+	{
+	}
 }
 
 #endif

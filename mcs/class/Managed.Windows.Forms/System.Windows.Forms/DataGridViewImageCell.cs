@@ -152,6 +152,11 @@ namespace System.Windows.Forms {
 				get { return (Owner as DataGridViewImageCell).Description; }
 			}
 
+			public override string Value {
+				get { return base.Value; }
+				set { base.Value = value; }
+			}
+			
 			public override void DoDefaultAction () {
 				// The DataGridViewImageCell has no default action.
 			}

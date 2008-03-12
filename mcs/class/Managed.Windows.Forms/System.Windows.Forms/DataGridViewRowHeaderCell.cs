@@ -199,6 +199,10 @@ namespace System.Windows.Forms {
 				get { return base.Role; }
 			}
 
+			public override AccessibleStates State {
+				get { return base.State; }
+			}
+			
 			public override string Value {
 				get { return base.Value; }
 			}
@@ -213,6 +217,10 @@ namespace System.Windows.Forms {
 				return base.Navigate(navigationDirection);
 			}
 
+			public override void Select (AccessibleSelection flags)
+			{
+				base.Select (flags);
+			}
 		}
 
 	}
