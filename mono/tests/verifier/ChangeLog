@@ -1,5 +1,12 @@
 2008-03-12 Rodrigo Kumpera <rkumpera@novell.com>
 
+	* strict_native_int_converts_to_unamanged_pointer.cs: Allow
+	conversion from native int to unmanaged pointer in non-strict mode.
+	This is required to allow the C# expression "(IntPtr)null" to be
+	verifiable.
+
+2008-03-12 Rodrigo Kumpera <rkumpera@novell.com>
+
 	* valid_ldftn_final_virtual_method.il:
 	* valid_ldftn_sealed_type_virtual_method.il: Tests the interaction
 	of sealed type and final method or ldftn verifiability.
