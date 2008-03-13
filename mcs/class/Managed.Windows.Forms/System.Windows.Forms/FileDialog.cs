@@ -821,15 +821,15 @@ namespace System.Windows.Forms
 					if (sl.Count == 1) {
 						FileViewListViewItem item = sl [0] as FileViewListViewItem;
 						FSEntry fsEntry = item.FSEntry;
-						
-						if (fsEntry.Attributes == FileAttributes.Directory) {
+
+						if ((fsEntry.Attributes & FileAttributes.Directory) == FileAttributes.Directory) {
 							mwfFileView.ChangeDirectory (null, fsEntry.FullName);
 							return;
 						}
 					} else {
 						foreach (FileViewListViewItem item in sl) {
 							FSEntry fsEntry = item.FSEntry;
-							if (fsEntry.Attributes == FileAttributes.Directory) {
+							if ((fsEntry.Attributes & FileAttributes.Directory) == FileAttributes.Directory) {
 								mwfFileView.ChangeDirectory (null, fsEntry.FullName);
 								return;
 							}
@@ -2566,7 +2566,7 @@ namespace System.Windows.Forms
 			
 			foreach (FSEntry directoryFSEntry in directoriesArrayList) {
 				if (!ShowHiddenFiles)
-					if (directoryFSEntry.Name.StartsWith (".") || directoryFSEntry.Attributes == FileAttributes.Hidden)
+					if (directoryFSEntry.Name.StartsWith (".") || (directoryFSEntry.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
 						continue;
 				
 				FileViewListViewItem listViewItem = new FileViewListViewItem (directoryFSEntry);
@@ -2642,7 +2642,7 @@ namespace System.Windows.Forms
 		private void DoOneFSEntry (FSEntry fsEntry) 
 		{
 			if (!ShowHiddenFiles)
-				if (fsEntry.Name.StartsWith (".")  || fsEntry.Attributes == FileAttributes.Hidden)
+				if (fsEntry.Name.StartsWith (".") || (fsEntry.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
 					return;
 			
 			FileViewListViewItem listViewItem = new FileViewListViewItem (fsEntry);
@@ -2684,8 +2684,8 @@ namespace System.Windows.Forms
 				FileViewListViewItem listViewItem = SelectedItems [0] as FileViewListViewItem;
 				
 				FSEntry fsEntry = listViewItem.FSEntry;
-				
-				if (fsEntry.Attributes == FileAttributes.Directory) {
+
+				if ((fsEntry.Attributes & FileAttributes.Directory) == FileAttributes.Directory) {
 					
 					ChangeDirectory (null, fsEntry.FullName);
 					
@@ -2720,13 +2720,13 @@ namespace System.Windows.Forms
 					
 					FSEntry fsEntry = listViewItem.FSEntry;
 
-					if (fsEntry.Attributes != FileAttributes.Directory)
+					if ((fsEntry.Attributes & FileAttributes.Directory) != FileAttributes.Directory)
 						selectedFilesString = SelectedItems [0].Text;
 				} else {
 					foreach (FileViewListViewItem lvi in SelectedItems) {
 						FSEntry fsEntry = lvi.FSEntry;
 
-						if (fsEntry.Attributes != FileAttributes.Directory)
+						if ((fsEntry.Attributes & FileAttributes.Directory) != FileAttributes.Directory)
 							selectedFilesString = selectedFilesString + "\"" + lvi.Text + "\" ";
 					}
 				}

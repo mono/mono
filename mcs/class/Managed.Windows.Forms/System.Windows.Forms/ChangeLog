@@ -1,5 +1,13 @@
 2008-03-13  Jonathan Pobst  <monkey@jpobst.com>
 
+	* FileDialog.cs: Apply patch from Andy Hume: Any time we
+	are comparing attributes, make sure we only look at the
+	one we are interested.  These calls were failing if there
+	were more than one attribute.
+	[Fixes bug #370385]
+
+2008-03-13  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridColumnStyle.cs: Hide ctor from 1.1 profile.
 
 2008-03-12  Jonathan Pobst  <monkey@jpobst.com>
