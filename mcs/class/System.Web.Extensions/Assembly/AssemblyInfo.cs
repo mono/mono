@@ -37,8 +37,8 @@ using System.Security;
 
 // General Information about the System.Web.Extensions assembly
 #if NET_3_5
-[assembly: AssemblyVersion ("3.6.0.0")]
-[assembly: AssemblyInformationalVersion ("3.6.0.0")]
+[assembly: AssemblyVersion ("3.5.0.0")]
+[assembly: AssemblyInformationalVersion ("3.5.0.0")]
 #else
 [assembly: AssemblyVersion ("1.0.61025.0")]
 [assembly: AssemblyInformationalVersion ("1.0.61025.0")]
