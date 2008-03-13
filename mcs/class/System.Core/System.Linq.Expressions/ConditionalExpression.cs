@@ -34,27 +34,27 @@ namespace System.Linq.Expressions {
 	public sealed class ConditionalExpression : Expression {
 
 		Expression test;
-		Expression ifTrue;
-		Expression ifFalse;
+		Expression if_true;
+		Expression if_false;
 
 		public Expression Test {
 			get { return test; }
 		}
 
 		public Expression IfTrue {
-			get { return ifTrue; }
+			get { return if_true; }
 		}
 
 		public Expression IfFalse {
-			get { return ifFalse; }
+			get { return if_false; }
 		}
 
-		internal ConditionalExpression (Expression test, Expression ifTrue, Expression ifFalse)
-			: base (ExpressionType.Conditional, ifTrue.Type)
+		internal ConditionalExpression (Expression test, Expression if_true, Expression if_false)
+			: base (ExpressionType.Conditional, if_true.Type)
 		{
 			this.test = test;
-			this.ifTrue = ifTrue;
-			this.ifFalse = ifFalse;
+			this.if_true = if_true;
+			this.if_false = if_false;
 		}
 
 		internal override void Emit (EmitContext ec)
@@ -66,11 +66,11 @@ namespace System.Linq.Expressions {
 			test.Emit (ec);
 			ig.Emit (OpCodes.Brfalse, false_target);
 
-			ifTrue.Emit (ec);
+			if_true.Emit (ec);
 			ig.Emit (OpCodes.Br, end_target);
 
 			ig.MarkLabel (false_target);
-			ifFalse.Emit (ec);
+			if_false.Emit (ec);
 
 			ig.MarkLabel (end_target);
 		}
