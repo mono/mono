@@ -56,6 +56,7 @@
     <Compile Include="System.Linq.Expressions\ExpressionType.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionVisitor.cs" />
     <Compile Include="System.Linq.Expressions\Expression_T.cs" />
+    <Compile Include="System.Linq.Expressions\Extensions.cs" />
     <Compile Include="System.Linq.Expressions\InvocationExpression.cs" />
     <Compile Include="System.Linq.Expressions\LambdaExpression.cs" />
     <Compile Include="System.Linq.Expressions\ListInitExpression.cs" />

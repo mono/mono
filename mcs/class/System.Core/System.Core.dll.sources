@@ -38,6 +38,7 @@ System.Linq.Expressions/Expression_T.cs
 System.Linq.Expressions/ExpressionPrinter.cs
 System.Linq.Expressions/ExpressionType.cs
 System.Linq.Expressions/ExpressionVisitor.cs
+System.Linq.Expressions/Extensions.cs
 System.Linq.Expressions/InvocationExpression.cs
 System.Linq.Expressions/LambdaExpression.cs
 System.Linq.Expressions/ListInitExpression.cs
