@@ -67,5 +67,51 @@ namespace MonoTests.System.Linq.Expressions {
 			Assert.AreEqual (2, ab.Expressions.Count);
 			Assert.AreEqual ("new System.Int32[,](1, 2)", ab.ToString ());
 		}
+
+		static Func<object> CreateNewArrayFactory<T> (params int [] bounds)
+		{
+			return Expression.Lambda<Func<object>> (
+				Expression.NewArrayBounds (
+					typeof (T),
+					(from bound in bounds select bound.ToConstant ()).ToArray ())).Compile ();
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestArrayAssignability ()
+		{
+			var l = Expression.Lambda<Func<int []>> (
+				Expression.NewArrayBounds (
+					typeof (int),
+					4.ToConstant ()));
+		}
+
+		[Test]
+		public void CompileNewArraySingleDimensional ()
+		{
+			var factory = CreateNewArrayFactory<int> (3);
+
+			var array = (int []) factory ();
+			var type = array.GetType ();
+
+			Assert.IsNotNull (array);
+			Assert.AreEqual (3, array.Length);
+			Assert.IsTrue (type.IsArray);
+			Assert.AreEqual (1, type.GetArrayRank ());
+		}
+
+		[Test]
+		public void CompileNewArrayMultiDimensional ()
+		{
+			var factory = CreateNewArrayFactory<int> (3, 3);
+
+			var array = (int [,]) factory ();
+			var type = array.GetType ();
+
+			Assert.IsNotNull (array);
+			Assert.IsTrue (type.IsArray);
+			Assert.AreEqual (2, type.GetArrayRank ());
+			Assert.AreEqual (9, array.Length);
+		}
 	}
 }
