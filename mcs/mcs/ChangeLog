@@ -1,3 +1,7 @@
+2008-03-13  Marek Safar  <marek.safar@gmail.com>
+
+	* ecore.cs, expression.cs: Emit conversion for ET shift argument.
+	
 2008-03-12  Marek Safar  <marek.safar@gmail.com>
 
 	* generic.cs, typemanager.cs, enum.cs, codegen.cs, statement.cs: Try not to

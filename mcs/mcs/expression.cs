@@ -1642,6 +1642,25 @@ namespace Mono.CSharp {
 		}
 
 		class PredefinedShiftOperator : PredefinedOperator {
+			class ShiftArgumentConversion : EmptyCast
+			{
+				readonly int mask;
+
+				public ShiftArgumentConversion (Expression child, bool int_mask) :
+					base (child, TypeManager.int32_type)
+				{
+					mask = int_mask ? 0x1f : 0x3f;
+				}
+
+				public override void Emit (EmitContext ec)
+				{
+					base.Emit (ec);
+
+					IntConstant.EmitInt (ec.ig, mask);
+					ec.ig.Emit (OpCodes.And);
+				}
+			}
+
 			public PredefinedShiftOperator (Type ltype, Operator op_mask) :
 				base (ltype, TypeManager.int32_type, op_mask)
 			{
@@ -1649,11 +1668,10 @@ namespace Mono.CSharp {
 
 			public override Expression ConvertResult (EmitContext ec, Binary b)
 			{
-				base.ConvertResult (ec, b);
-
-				// FIXME: use conversion for expression tree
-				int shiftmask = (left == TypeManager.int32_type || left == TypeManager.uint32_type) ? 31 : 63;
-				b.right = new Binary (Operator.BitwiseAnd, b.right, new IntConstant (shiftmask, b.right.Location)).Resolve (ec);
+				b.left = Convert.ImplicitConversion (ec, b.left, left, b.left.Location);
+				b.right = new ShiftArgumentConversion (b.right, left == TypeManager.int32_type || left == TypeManager.uint32_type);
+				b.type = ReturnType;
+				
 				return b;
 			}
 		}

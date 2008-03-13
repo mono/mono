@@ -1996,8 +1996,8 @@ namespace Mono.CSharp {
 
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
-			// This has no expresion tree representation
-			return this;
+			// A cast has no expresion tree representation
+			return child.CreateExpressionTree (ec);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -5053,7 +5053,7 @@ namespace Mono.CSharp {
 				Error_TypeDoesNotContainDefinition (loc, PropertyInfo.DeclaringType, Name);
 				return;
 			}
-
+			
 			StringBuilder sig = new StringBuilder (TypeManager.CSharpName (mi.DeclaringType));
 			sig.Append ('.');
 			ParameterData iparams = TypeManager.GetParameterData (mi);
