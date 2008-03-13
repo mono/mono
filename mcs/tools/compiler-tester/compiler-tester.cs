@@ -137,7 +137,7 @@ namespace TestRunner {
 		protected ArrayList ignore_list = new ArrayList ();
 		protected ArrayList no_error_list = new ArrayList ();
 		
-		protected bool verbose;
+		protected bool verbose; // = true;
 			
 		int total_known_issues;
 
@@ -230,11 +230,6 @@ namespace TestRunner {
 
 			tests.Add (test);
 
-			if (verbose) {
-				Log (filename);
-				Log ("...\t");
-			}
-
 			return Check (test);
 		}
 
@@ -285,7 +280,7 @@ namespace TestRunner {
 		public virtual void PrintSummary ()
 		{
 			LogLine ("Done" + Environment.NewLine);
-			LogLine ("{0} test cases passed ({1:.##%})", success, (float) (success) / (float)total);
+			LogLine ("{0} test cases passed ({1:0.##%})", success, (float) (success) / (float)total);
 
 			if (syntax_errors > 0)
 				LogLine ("{0} test(s) ignored because of wrong syntax !", syntax_errors);
@@ -397,7 +392,7 @@ namespace TestRunner {
 
 			foreach (string one_opt in compiler_options) {
 				if (one_opt.StartsWith ("-doc:")) {
-					doc_output = one_opt.Split (':')[1];
+					doc_output = one_opt.Split (':', '/')[1];
 				}
 			}
 			return true;
@@ -423,7 +418,7 @@ namespace TestRunner {
 			// Test setup
 			if (filename.EndsWith ("-lib.cs") || filename.EndsWith ("-mod.cs")) {
 				if (verbose)
-					LogLine ("OK");
+					LogFileLine (filename, "OK");
 				--total;
 				return true;
 			}
@@ -532,7 +527,7 @@ namespace TestRunner {
 						return;
 					}
 					if (verbose)
-						LogLine ("OK");
+						LogFileLine (file, "OK");
 					return;
 
 				case TestResult.CompileError:
@@ -756,7 +751,7 @@ namespace TestRunner {
 					}
 				
 					if (verbose)
-						LogLine ("OK");
+						LogFileLine (file, "OK");
 					return true;
 
 				case CompilerError.Wrong:
