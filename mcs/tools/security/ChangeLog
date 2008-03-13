@@ -1,3 +1,11 @@
+2008-03-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyInfo.cs: Update copyright notices.
+	* sn.cs: Display a better error message if an assembly is not 
+	strongnamed but yet delay-signed (the old one succeeded to confuse
+	myself ;-). Display messages from CryptographicException since 
+	those are not unknown errors (like other exceptions).
+
 2007-12-17  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* certmgr.cs: Fixed reflection magic to look for ServerCertificates in

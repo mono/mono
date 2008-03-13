@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2006,2008 Novell, Inc (http://www.novell.com)
 //
 
 using System;
@@ -232,7 +232,7 @@ namespace Mono.Tools {
 					return 0;
 				}
 				else {
-					Console.WriteLine ("Assembly {0} isn't strongnamed", assemblyName);
+					Console.WriteLine ("Assembly {0} is delay-signed but not strongnamed", assemblyName);
 					return 1;
 				}
 			}
@@ -506,6 +506,9 @@ namespace Mono.Tools {
 			catch (IndexOutOfRangeException) {
 				Console.WriteLine ("ERROR: Invalid number of parameters.{0}", Environment.NewLine);
 				Help (null);
+			}
+			catch (CryptographicException ce) {
+				Console.WriteLine ("ERROR: {0}", ce.Message);
 			}
 			catch (Exception e) {
 				Console.WriteLine ("ERROR: Unknown error during processing: {0}", e);
