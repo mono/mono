@@ -44,10 +44,11 @@ namespace System.Windows.Forms
 			#endregion
 
 			#region Constructors
+#if NET_2_0
 			public DataGridColumnHeaderAccessibleObject ()
 			{
 			}
-			
+#endif		
 			public DataGridColumnHeaderAccessibleObject (DataGridColumnStyle owner)
 			{
 				this.owner = owner;
