@@ -1,3 +1,13 @@
+2008-03-13  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpApplication.cs: use HttpRuntime.CaseInsensitive instead of
+	own IsRunningOnWindows.
+
+	* HttpRuntime.cs: introduce two static properties -
+	CaseInsensitive (set to true whenever the environment is
+	case-insensitive - i.e. MONO_IOMAP="all" or MONO_IOMAP="case", or
+	running on Windows) and RunningOnWindows.
+
 2008-03-01  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpRuntime.cs: SettingsMappingManager has been moved to
