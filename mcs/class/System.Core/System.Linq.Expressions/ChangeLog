@@ -1,3 +1,7 @@
+2008-03-13  Marek Safar  <marek.safar@gmail.com>
+
+	* Extensions.cs: Disabled redundant OnFieldOrProperty.
+	
 2008-03-13  Jb Evain  <jbevain@novell.com>
 
 	* Extensions.cs: a collection of useful extension methods

@@ -38,7 +38,7 @@ namespace System.Linq.Expressions {
 		{
 			return type.IsAssignableFrom (self);
 		}
-
+/*
 		public static void OnFieldOrProperty (this MemberInfo self,
 			Action<FieldInfo> onfield, Action<PropertyInfo> onprop)
 		{
@@ -53,7 +53,7 @@ namespace System.Linq.Expressions {
 				throw new ArgumentException ();
 			}
 		}
-
+*/
 		public static T OnFieldOrProperty<T> (this MemberInfo self,
 			Func<FieldInfo, T> onfield, Func<PropertyInfo, T> onprop)
 		{
