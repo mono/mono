@@ -91,9 +91,9 @@ namespace System.Web.UI
 		}
 
 		protected override FacesContext getFacesContext () {
-			Page page = Page;
-			if (page != null)
-				return page.getFacesContext ();
+			Control nc = NamingContainer;
+			if (nc != null)
+				return nc.getFacesContext ();
 			return FacesContext.getCurrentInstance ();
 		}
 
