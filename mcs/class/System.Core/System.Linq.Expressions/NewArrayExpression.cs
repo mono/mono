@@ -47,9 +47,8 @@ namespace System.Linq.Expressions {
 			this.expressions = expressions;
 		}
 
-		void EmitNewArrayInit (EmitContext ec)
+		void EmitNewArrayInit (EmitContext ec, Type type)
 		{
-			var type = this.Type.GetElementType ();
 			var size = expressions.Count;
 
 			ec.ig.Emit (OpCodes.Ldc_I4, size);
@@ -63,19 +62,49 @@ namespace System.Linq.Expressions {
 			}
 		}
 
-		void EmitNewArrayBounds (EmitContext ec)
+		void EmitNewArrayBounds (EmitContext ec, Type type)
 		{
-			throw new NotImplementedException ();
+			int rank = expressions.Count;
+
+			ec.EmitCollection (expressions);
+
+			if (rank == 1) {
+				ec.ig.Emit (OpCodes.Newarr, type);
+				return;
+			}
+
+			ec.ig.Emit(OpCodes.Newobj, GetArrayConstructor (type, rank));
+		}
+
+		static ConstructorInfo GetArrayConstructor (Type type, int rank)
+		{
+			return CreateArray (type, rank).GetConstructor (CreateTypeParameters (rank));
+		}
+
+		static Type [] CreateTypeParameters (int rank)
+		{
+			var types = new Type [rank];
+			for (int i = 0; i < rank; i++)
+				types [i] = typeof (int);
+
+			return types;
+		}
+
+		static Type CreateArray (Type type, int rank)
+		{
+			return type.MakeArrayType (rank);
 		}
 
 		internal override void Emit (EmitContext ec)
 		{
+			var type = this.Type.GetElementType ();
+
 			switch (this.NodeType) {
 			case ExpressionType.NewArrayInit:
-				EmitNewArrayInit (ec);
+				EmitNewArrayInit (ec, type);
 				return;
 			case ExpressionType.NewArrayBounds:
-				EmitNewArrayBounds (ec);
+				EmitNewArrayBounds (ec, type);
 				return;
 			default:
 				throw new NotSupportedException ();
