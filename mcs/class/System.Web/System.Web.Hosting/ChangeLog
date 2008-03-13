@@ -2,6 +2,12 @@
 
 	* ApplicationHost.cs: use HttpRuntime.CaseInsensitive when
 	checking whether we're running in a case-insensitive environment.
+	Revert to the single-bin-dir behavior when setting the
+	PrivateBinPath - the directories are sought for in the order given
+	by HttpApplication.BinDirs and the first existing directory is set
+	as the value of PrivateBinPath. If none of those are found,
+	PrivateBinPath defaults to "bin" (and "/app/full/path/bin" in the
+	2.0 profile)
 
 2008-03-12  Marek Habersack  <mhabersack@novell.com>
 

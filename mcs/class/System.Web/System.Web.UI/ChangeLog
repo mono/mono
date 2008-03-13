@@ -1,3 +1,8 @@
+2008-03-13  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateParser.cs: HttpApplication.BinaryDirectories property no longer
+	exists, use HttpApplication.BinDirectory instead.
+
 2008-03-09  Dean Brettle <dean@brettle.com> 
 
 	* Page.cs (SavePageControlState, LoadPageControlState): save/load 

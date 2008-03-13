@@ -1,3 +1,8 @@
+2008-03-13  Marek Habersack  <mhabersack@novell.com>
+
+	* ApplicationHostTest.cs: adjust test for the PrivateBinPath
+	change in ApplicationHost.
+
 2007-11-03  Marek Habersack  <mhabersack@novell.com>
 
 	* ApplicationHostTest.cs: adjust ConstructorTest for
