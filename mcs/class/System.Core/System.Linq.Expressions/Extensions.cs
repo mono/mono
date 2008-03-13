@@ -1,5 +1,5 @@
 ﻿//
-// MemberExpression.cs
+// Extensions.cs
 //
 // Author:
 //   Jb Evain (jbevain@novell.com)
@@ -32,49 +32,39 @@ using System.Reflection.Emit;
 
 namespace System.Linq.Expressions {
 
-	public sealed class MemberExpression : Expression {
+	static class Extensions {
 
-		Expression expression;
-		MemberInfo member;
-
-		public Expression Expression {
-			get { return expression; }
-		}
-
-		public MemberInfo Member {
-			get { return member; }
-		}
-
-		internal MemberExpression (Expression expression, MemberInfo member, Type type)
-			: base (ExpressionType.MemberAccess, type)
+		public static bool IsAssignableTo (this Type self, Type type)
 		{
-			this.expression = expression;
-			this.member = member;
+			return type.IsAssignableFrom (self);
 		}
 
-		internal override void Emit (EmitContext ec)
+		public static void OnFieldOrProperty (this MemberInfo self,
+			Action<FieldInfo> onfield, Action<PropertyInfo> onprop)
 		{
-			member.OnFieldOrProperty (
-				field => EmitFieldAccess (ec, field),
-				prop => EmitPropertyAccess (ec, prop));
+			switch (self.MemberType) {
+			case MemberTypes.Field:
+				onfield ((FieldInfo) self);
+				return;
+			case MemberTypes.Property:
+				onprop ((PropertyInfo) self);
+				return;
+			default:
+				throw new ArgumentException ();
+			}
 		}
 
-		void EmitPropertyAccess (EmitContext ec, PropertyInfo property)
+		public static T OnFieldOrProperty<T> (this MemberInfo self,
+			Func<FieldInfo, T> onfield, Func<PropertyInfo, T> onprop)
 		{
-			var getter = property.GetGetMethod (true);
-			if (!getter.IsStatic)
-				ec.EmitLoad (expression);
-
-			ec.EmitCall (getter);
-		}
-
-		void EmitFieldAccess (EmitContext ec, FieldInfo field)
-		{
-			if (!field.IsStatic) {
-				ec.EmitLoad (expression);
-				ec.ig.Emit (OpCodes.Ldfld, field);
-			} else
-				ec.ig.Emit (OpCodes.Ldsfld, field);
+			switch (self.MemberType) {
+			case MemberTypes.Field:
+				return onfield ((FieldInfo) self);
+			case MemberTypes.Property:
+				return onprop ((PropertyInfo) self);
+			default:
+				throw new ArgumentException ();
+			}
 		}
 	}
 }

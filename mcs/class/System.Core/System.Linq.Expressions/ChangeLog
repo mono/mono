@@ -1,5 +1,14 @@
 2008-03-13  Jb Evain  <jbevain@novell.com>
 
+	* Extensions.cs: a collection of useful extension methods
+	which are useful to S.L.E.
+
+	* Expression.cs, MemberExpression.cs,
+	MemberAssignment.cs, MemberBinding.cs:
+		refactor common pattern into a common method.
+
+2008-03-13  Jb Evain  <jbevain@novell.com>
+
 	* NewArrayExpression.cs (EmitNewArrayBounds): implement.
 
 2008-03-12  Jb Evain  <jbevain@novell.com>
