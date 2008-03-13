@@ -224,15 +224,15 @@ namespace System.Web.Compilation {
 
 		// The build cache which maps a virtual path to a build item with all the necessary
 		// bits. 
-		static Dictionary <string, BuildCacheItem> buildCache = new Dictionary <string, BuildCacheItem> ();
+		static Dictionary <string, BuildCacheItem> buildCache;
 
 		// Maps the virtual path of a non-page build to the assembly that contains the
 		// compiled type.
-		static Dictionary <string, Assembly> nonPagesCache = new Dictionary <string, Assembly> ();
+		static Dictionary <string, Assembly> nonPagesCache;
 		
 		static List <Assembly> referencedAssemblies = new List <Assembly> ();
 		
-		static Dictionary <string, object> compilationTickets = new Dictionary <string, object> ();
+		static Dictionary <string, object> compilationTickets;
 
 		static Assembly globalAsaxAssembly;
 		
@@ -248,8 +248,18 @@ namespace System.Web.Compilation {
 		static Dictionary <string, bool> virtualPathsToIgnore;
 		static bool haveVirtualPathsToIgnore;
 		
-		internal BuildManager ()
+		static BuildManager ()
 		{
+			IEqualityComparer <string> comparer;
+
+			if (HttpRuntime.CaseInsensitive)
+				comparer = StringComparer.CurrentCultureIgnoreCase;
+			else
+				comparer = StringComparer.CurrentCulture;
+
+			buildCache = new Dictionary <string, BuildCacheItem> (comparer);
+			nonPagesCache = new Dictionary <string, Assembly> (comparer);
+			compilationTickets = new Dictionary <string, object> (comparer);
 		}
 		
 		internal static void ThrowNoProviderException (string extension)

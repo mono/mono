@@ -118,6 +118,8 @@ namespace System.Web {
 		static WaitCallback do_RealProcessRequest;
 		static Exception initialException;
 		static bool firstRun;
+		static bool caseInsensitive;
+		static bool runningOnWindows;
 		
 #if NET_2_0
 		static bool assemblyMappingEnabled;
@@ -127,6 +129,28 @@ namespace System.Web {
 		
 		static HttpRuntime ()
 		{
+			PlatformID pid = Environment.OSVersion.Platform;
+			runningOnWindows = ((int) pid != 128 && (int) pid != 4);
+
+			if (runningOnWindows)
+				caseInsensitive = true;
+			else {
+				string mono_iomap = Environment.GetEnvironmentVariable ("MONO_IOMAP");
+				if (mono_iomap != null) {
+					if (mono_iomap == "all")
+						caseInsensitive = true;
+					else {
+						string[] parts = mono_iomap.Split (':');
+						foreach (string p in parts) {
+							if (p == "all" || p == "case") {
+								caseInsensitive = true;
+								break;
+							}
+						}
+					}
+				}
+			}
+			
 			firstRun = true;
 #if NET_2_0
 			try {
@@ -685,6 +709,14 @@ namespace System.Web {
 			}
 		}
 #endif
+
+		internal static bool RunningOnWindows {
+			get { return runningOnWindows; }
+		}
+
+		internal static bool CaseInsensitive {
+			get { return caseInsensitive; }
+		}
 		
 		internal static TraceManager TraceManager {
 			get {

@@ -141,8 +141,6 @@ namespace System.Web {
 		CultureInfo prev_app_culture;
 		CultureInfo prev_appui_culture;
 		IPrincipal prev_user;
-
-		static bool _runningOnWindows;
 		
 #if NET_2_0
 #if TARGET_J2EE
@@ -164,12 +162,6 @@ namespace System.Web {
 		//
 		bool must_yield;
 		bool in_begin;
-
-		static HttpApplication ()
-		{
-			PlatformID pid = Environment.OSVersion.Platform;
-			_runningOnWindows = ((int) pid != 128 && (int) pid != 4);
-		}
 		
 		public HttpApplication ()
 		{
@@ -1032,7 +1024,7 @@ namespace System.Web {
 				context.PushHandler (handler);
 			}
 #endif
-			
+
 			try {
 				context.BeginTimeoutPossible ();
 				if (handler != null){
@@ -1420,11 +1412,7 @@ namespace System.Web {
 				return false;
 			}
 		}
-#endregion
-		internal static bool IsRunningOnWindows {
-                        get { return _runningOnWindows; }
-                }
-		
+#endregion		
 		internal static IEnumerable BinDirectories
 		{
 			get {
@@ -1432,7 +1420,7 @@ namespace System.Web {
 				string baseDir = setup.ApplicationBase;
 				string bindir;
 
-				if (Environment.GetEnvironmentVariable ("MONO_IOMAP") != null || IsRunningOnWindows) {
+				if (HttpRuntime.CaseInsensitive) {
 					bindir = Path.Combine (baseDir, "bin");
 					if (Directory.Exists (bindir))
 						yield return bindir;

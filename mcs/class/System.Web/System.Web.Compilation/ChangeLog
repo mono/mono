@@ -1,3 +1,8 @@
+2008-03-13  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: if we're running in a case-insensitive
+	environment, use case-insensitive comparer for the build caches. 
+
 2008-02-29  Marek Habersack  <mhabersack@novell.com>
 
 	* BuildManager.cs: implement a mechanism to ignore certain virtual
