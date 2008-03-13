@@ -85,7 +85,11 @@ namespace System.ComponentModel
 
 		public override object TypeId {
 			get {
-				return this.GetType ().ToString() + basetypename;
+				string baseTypeNameOnly = basetypename;
+				int index = baseTypeNameOnly.IndexOf (',');
+				if (index != -1) // strip name
+					baseTypeNameOnly = baseTypeNameOnly.Substring (0, index);
+				return this.GetType ().ToString() + baseTypeNameOnly;
 			}
 		}
 			

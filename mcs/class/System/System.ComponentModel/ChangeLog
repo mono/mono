@@ -1,3 +1,10 @@
+2008-03-13  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DesignerAttribute.cs: For the TypeId strip type name only 
+	of the base type to prevent AssemblyQualifiedName and not clashes.
+	* TypeDescriptor.cs: GetAttributes should ask for the inherited
+	attributes. I was wrong.
+
 2008-03-10  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* TypeDescriptor.cs: GetAttributes should not ask the Type

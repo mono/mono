@@ -967,7 +967,7 @@ public sealed class TypeDescriptor
 				return _attributes;
 			
 			bool cache = true;
-			object[] ats = _infoType.GetCustomAttributes (false);
+			object[] ats = _infoType.GetCustomAttributes (true);
 			Hashtable t = new Hashtable ();
 
 			for (int i = ats.Length -1; i >= 0; i--)
