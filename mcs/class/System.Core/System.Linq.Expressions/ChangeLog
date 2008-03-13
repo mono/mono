@@ -1,7 +1,3 @@
-2008-03-13  Marek Safar  <marek.safar@gmail.com>
-
-	* Extensions.cs: Disabled redundant OnFieldOrProperty.
-	
 2008-03-13  Jb Evain  <jbevain@novell.com>
 
 	* NewArrayExpression.cs (EmitNewArrayBounds): implement.
