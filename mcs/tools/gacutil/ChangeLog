@@ -1,3 +1,8 @@
+
+Thu Mar 13 22:33:36 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* driver.cs: run sn on the assembly to ensure it is strongly named.
+
 2007-12-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* driver.cs: Ignore the /nologo option instead of considering it to
