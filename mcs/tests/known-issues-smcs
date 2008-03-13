@@ -30,6 +30,7 @@ gtest-349.cs
 gtest-352.cs
 gtest-353.cs
 gtest-354.cs
+gtest-374.cs
 gtest-exmethod-12.cs
 gtest-linq-01.cs
 gtest-linq-02.cs
@@ -57,14 +58,12 @@ test-269.cs
 test-295.cs
 test-311.cs
 test-318.cs
-test-352.cs
 test-399-lib.cs
 test-463.cs
 test-466.cs
 test-489.cs
 test-55.cs
 test-555.cs
-test-574.cs
 test-591.cs
 test-anon-02.cs
 test-anon-31.cs
