@@ -191,15 +191,14 @@ namespace System.Windows.Forms {
 			virtualMode = false;
 
 			horizontalScrollBar = new HScrollBar();
-			horizontalScrollBar.Dock = DockStyle.Bottom;
 			horizontalScrollBar.Scroll += OnHScrollBarScroll;
 			horizontalScrollBar.Visible = false;
-			Controls.Add (horizontalScrollBar);
+			
 			verticalScrollBar = new VScrollBar();
-			verticalScrollBar.Dock = DockStyle.Right;
 			verticalScrollBar.Scroll += OnVScrollBarScroll;
 			verticalScrollBar.Visible = false;
-			Controls.Add (verticalScrollBar);
+			
+			Controls.AddRange (new Control[] {horizontalScrollBar, verticalScrollBar});
 		}
 
 		void ISupportInitialize.BeginInit ()
@@ -430,17 +429,16 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal Size BorderWidth {
+		internal int BorderWidth {
 			get {
 				switch (BorderStyle) {
 				case BorderStyle.Fixed3D:
-					return ThemeEngine.Current.Border3DSize;
+					return 2;
 				case BorderStyle.FixedSingle:
-					return ThemeEngine.Current.BorderSize;
+					return 1;
 				case BorderStyle.None:
-					return Size.Empty;
 				default:
-					return Size.Empty;
+					return 0;
 				}
 			}
 		}
@@ -3406,7 +3404,10 @@ namespace System.Windows.Forms {
 
 		protected override void OnLayout (LayoutEventArgs e)
 		{
-			base.OnLayout(e);
+			if (horizontalScrollBar.Visible)
+				horizontalScrollBar.Bounds = new Rectangle (BorderWidth, Bottom - BorderWidth - horizontalScrollBar.Height, Width - (2 * BorderWidth), horizontalScrollBar.Height);
+			if (verticalScrollBar.Visible)
+				verticalScrollBar.Bounds = new Rectangle (Right - BorderWidth - verticalScrollBar.Width, BorderWidth, verticalScrollBar.Width,  Height - (2 * BorderWidth));
 		}
 
 		protected override void OnLeave (EventArgs e)
@@ -3669,18 +3670,24 @@ namespace System.Windows.Forms {
 			if (eh != null) eh (this, e);
 		}
 
-		protected override void OnPaint (PaintEventArgs e) {
+		protected override void OnPaint (PaintEventArgs e)
+		{
 			base.OnPaint(e);
-			//Console.WriteLine("DataGridView.OnPaint-ClipRectangle: {0};", e.ClipRectangle);
-			Rectangle bounds = ClientRectangle; //e.ClipRectangle;
-			PaintBackground (e.Graphics, e.ClipRectangle, bounds);
+
+			Graphics g = e.Graphics;
+			Rectangle bounds = ClientRectangle;
 			
-			Pen pen = new Pen(gridColor);
-			pen.Width = 1;
+			// Paint the background
+			PaintBackground (g, e.ClipRectangle, bounds);
+			
 			int i = 0;
 			ArrayList sortedColumns = columns.ColumnDisplayIndexSortedArrayList;
 			bounds.Y = -verticalScrollingOffset;
 			bounds.X = -horizontalScrollingOffset;
+			
+			// Take borders into account
+			bounds.Inflate (-BorderWidth, -BorderWidth);
+			
 			gridWidth = 0;
 			foreach (DataGridViewColumn col in sortedColumns) {
 				gridWidth += col.Width;
@@ -3722,7 +3729,7 @@ namespace System.Windows.Forms {
 				bounds.Height = row.Height;
 				row.Paint (e.Graphics, e.ClipRectangle, bounds, row.Index, row.State, row.Index == 0, row.Index == rows.Count - 1);
 				bounds.Y += bounds.Height;
-				bounds.X = -horizontalScrollingOffset;
+				bounds.X = -horizontalScrollingOffset + BorderWidth;
 				i++;
 			}
 			if (rowHeadersVisible) {
@@ -3779,6 +3786,18 @@ namespace System.Windows.Forms {
 
 			horizontalScrollBar.Visible = horizontalVisible;
 			verticalScrollBar.Visible = verticalVisible;
+
+			// Paint the border
+			bounds = ClientRectangle;
+			
+			switch (BorderStyle) {
+				case BorderStyle.FixedSingle:
+					g.DrawRectangle (Pens.Black, new Rectangle (bounds.Left, bounds.Top, bounds.Width - 1, bounds.Height - 1));
+					break;
+				case BorderStyle.Fixed3D:
+					ControlPaint.DrawBorder3D (g, bounds, Border3DStyle.Sunken);
+					break;
+			}
 		}
 
 		protected virtual void OnReadOnlyChanged (EventArgs e) {
@@ -4285,7 +4304,7 @@ namespace System.Windows.Forms {
 			if (RowHeadersVisible) {
 				spaceLeft -= RowHeadersWidth;
 			}
-			spaceLeft -= BorderWidth.Width * 2;
+			spaceLeft -= BorderWidth * 2;
 			
 			int [] fixed_widths = new int [Columns.Count];
 			int [] new_widths = new int [Columns.Count];
