@@ -62,9 +62,14 @@ namespace System.Linq.Expressions {
 		{
 			ec.EmitLoad (local);
 
-			return member.OnFieldOrProperty (
-				field => EmitLoadField (ec, field),
-				prop => EmitLoadProperty (ec, prop));
+			switch (member.MemberType) {
+			case MemberTypes.Property:
+				return EmitLoadProperty (ec, (PropertyInfo) member);
+			case MemberTypes.Field:
+				return EmitLoadField (ec, (FieldInfo) member);
+			default:
+				throw new NotSupportedException (member.MemberType.ToString ());
+			}
 		}
 
 		LocalBuilder EmitLoadProperty (EmitContext ec, PropertyInfo property)

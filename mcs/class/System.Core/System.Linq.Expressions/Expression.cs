@@ -1259,9 +1259,16 @@ namespace System.Linq.Expressions {
 			var inits = initializers.ToReadOnlyCollection ();
 			CheckForNull (inits, "initializers");
 
-			member.OnFieldOrProperty (
-				field => CheckIsAssignableToIEnumerable (field.FieldType),
-				prop => CheckIsAssignableToIEnumerable (prop.PropertyType));
+			switch (member.MemberType) {
+			case MemberTypes.Field:
+				CheckIsAssignableToIEnumerable ((member as FieldInfo).FieldType);
+				break;
+			case MemberTypes.Property:
+				CheckIsAssignableToIEnumerable ((member as PropertyInfo).PropertyType);
+				break;
+			default:
+				throw new ArgumentException ("member");
+			}
 
 			return new MemberListBinding (member, inits);
 		}
@@ -1445,9 +1452,17 @@ namespace System.Linq.Expressions {
 			if (member == null)
 				throw new ArgumentNullException ("member");
 
-			var type = member.OnFieldOrProperty (
-				field => field.FieldType,
-				prop => prop.PropertyType);
+			Type type = null;
+			switch (member.MemberType) {
+			case MemberTypes.Field:
+				type = (member as FieldInfo).FieldType;
+				break;
+			case MemberTypes.Property:
+				type = (member as PropertyInfo).PropertyType;
+				break;
+			default:
+				throw new ArgumentException ("Member is neither a field or a property");
+			}
 
 			return new MemberMemberBinding (member, CheckMemberBindings (type, bindings));
 		}

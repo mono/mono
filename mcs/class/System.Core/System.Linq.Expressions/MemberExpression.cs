@@ -54,9 +54,19 @@ namespace System.Linq.Expressions {
 
 		internal override void Emit (EmitContext ec)
 		{
-			member.OnFieldOrProperty (
-				field => EmitFieldAccess (ec, field),
-				prop => EmitPropertyAccess (ec, prop));
+			var property = member as PropertyInfo;
+			if (property != null) {
+				EmitPropertyAccess (ec, property);
+				return;
+			}
+
+			var field = member as FieldInfo;
+			if (field != null) {
+				EmitFieldAccess (ec, field);
+				return;
+			}
+
+			throw new NotSupportedException ();
 		}
 
 		void EmitPropertyAccess (EmitContext ec, PropertyInfo property)
