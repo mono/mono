@@ -9873,15 +9873,9 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					 */
 					goto inline_failure;
 
-				if (sp [0]->opcode == OP_ICONST) {
-					MONO_INST_NEW (cfg, ins, OP_LOCALLOC_IMM);
-					ins->dreg = alloc_preg (cfg);
-					ins->inst_imm = sp [0]->inst_c0;
-				} else {
-					MONO_INST_NEW (cfg, ins, OP_LOCALLOC);
-					ins->dreg = alloc_preg (cfg);
-					ins->sreg1 = sp [0]->dreg;
-				}
+				MONO_INST_NEW (cfg, ins, OP_LOCALLOC);
+				ins->dreg = alloc_preg (cfg);
+				ins->sreg1 = sp [0]->dreg;
 				ins->type = STACK_PTR;
 				MONO_ADD_INS (cfg->cbb, ins);
 
@@ -10310,6 +10304,8 @@ mono_op_to_op_imm (int opcode)
 		return OP_LCALL;
 	case OP_FCALL_REG:
 		return OP_FCALL;
+	case OP_LOCALLOC:
+		return OP_LOCALLOC_IMM;
 	}
 
 	return -1;

@@ -1,3 +1,9 @@
+2008-03-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_op_to_op_imm): Handle OP_LOCALLOC as well.
+	(mono_method_to_ir2): Don't convert OP_LOCALLOC to OP_LOCALLOC_IMM here, it is
+	done automatically by the constant propagation pass.
+
 2008-03-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ops.h: Add OP_TAILCALL.
