@@ -1,3 +1,8 @@
+
+Thu Mar 13 16:24:53 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* processes.c: properly check for executable files (fixes bug #368829).
+
 2008-02-05  Dick Porter  <dick@ximian.com>
 
 	* versioninfo.c (VerLanguageName): Implement VerLanguageName.
