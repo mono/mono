@@ -142,6 +142,7 @@ namespace System.Web {
 		CultureInfo prev_appui_culture;
 		IPrincipal prev_user;
 
+		static string binDirectory;
 #if NET_2_0
 #if TARGET_J2EE
 		const string initialization_exception_key = "System.Web.HttpApplication.initialization_exception";
@@ -1369,25 +1370,24 @@ namespace System.Web {
 			}
 		}
 #endregion		
-		internal static IEnumerable BinDirectories
+		internal static string BinDirectory
 		{
 			get {
-				AppDomainSetup setup = AppDomain.CurrentDomain.SetupInformation;
-				string baseDir = setup.ApplicationBase;
-				string bindir;
-
-				if (HttpRuntime.CaseInsensitive) {
-					bindir = Path.Combine (baseDir, "bin");
-					if (Directory.Exists (bindir))
-						yield return bindir;
-				} else {
+				if (binDirectory == null) {
+					AppDomainSetup setup = AppDomain.CurrentDomain.SetupInformation;
+					string baseDir = setup.ApplicationBase;
+					string bindir;
+					
 					foreach (string dir in BinDirs) {
 						bindir = Path.Combine (baseDir, dir);
 						if (!Directory.Exists (bindir))
 							continue;
-						yield return bindir;
+						binDirectory = bindir;
+						break;
 					}
 				}
+
+				return binDirectory;
 			}
 		}
 
@@ -1397,16 +1397,17 @@ namespace System.Web {
 				ArrayList binDlls = null;
 				string[] dlls;
 				
-				foreach (string bindir in BinDirectories) {
-					if (binDlls == null)
-						binDlls = new ArrayList ();
+				string bindir = BinDirectory;
+				if (bindir != null) {
+					binDlls = new ArrayList ();
 					dlls = Directory.GetFiles (bindir, "*.dll");
 					binDlls.AddRange (dlls);
 				}
 
 				if (binDlls == null)
 					return new string[] {};
-				return (string[])binDlls.ToArray (typeof (string));
+				
+				return (string[]) binDlls.ToArray (typeof (string));
 			}
 		}
 					

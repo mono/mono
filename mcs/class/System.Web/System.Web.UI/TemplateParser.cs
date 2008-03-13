@@ -409,12 +409,8 @@ namespace System.Web.UI {
 			
 			string dirname = Path.GetDirectoryName (location);
 			bool doAddAssembly = true;
-			foreach (string dir in HttpApplication.BinDirectories) {
-				if (dirname == dir) {
-					doAddAssembly = false;
-					break;
-				}
-			}
+			if (dirname == HttpApplication.BinDirectory)
+				doAddAssembly = false;
 
 			if (doAddAssembly)
 				AddAssembly (asm, true);

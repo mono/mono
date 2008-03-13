@@ -1,7 +1,13 @@
 2008-03-13  Marek Habersack  <mhabersack@novell.com>
 
+	* HttpApplicationFactory.cs: use HttpApplication.BinDirs to
+	create watchers for binary application directories.
+
 	* HttpApplication.cs: use HttpRuntime.CaseInsensitive instead of
 	own IsRunningOnWindows.
+	Remove the BinDirectories enumerator property, replaced with a
+	BinDirectory one returning a string with path to the binary
+	directory.
 
 	* HttpRuntime.cs: introduce two static properties -
 	CaseInsensitive (set to true whenever the environment is

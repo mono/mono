@@ -455,7 +455,7 @@ namespace System.Web {
 				factory.InitType (context);
 				lock (factory) {
 					if (factory.app_start_needed) {
-						foreach (string dir in HttpApplication.BinDirectories)
+						foreach (string dir in HttpApplication.BinDirs)
 							WatchLocationForRestart (dir, "*.dll");
 #if NET_2_0
 			                        WatchLocationForRestart ("App_Code", "*", true);

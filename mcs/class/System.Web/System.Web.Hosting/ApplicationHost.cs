@@ -169,10 +169,29 @@ namespace System.Web.Hosting {
 			setup.ConfigurationFile = FindWebConfig (physicalDir);
 			setup.DisallowCodeDownload = true;
 
-			if (HttpRuntime.CaseInsensitive)
-				setup.PrivateBinPath = BuildPrivateBinPath (physicalDir, new string [] { "bin" });
-			else
-				setup.PrivateBinPath = BuildPrivateBinPath (physicalDir, HttpApplication.BinDirs);
+			string[] bindirPath = new string [1] {
+#if NET_2_0
+				Path.Combine (physicalDir, "bin")
+#else
+				"bin"
+#endif
+			};
+			string bindir;
+
+			foreach (string dir in HttpApplication.BinDirs) {
+				bindir = Path.Combine (physicalDir, dir);
+			
+				if (Directory.Exists (bindir)) {
+#if NET_2_0
+					bindirPath [0] = bindir;
+#else
+					bindirPath [0] = dir;
+#endif
+					break;
+				}
+			}
+
+			setup.PrivateBinPath = BuildPrivateBinPath (physicalDir, bindirPath);
 			setup.PrivateBinPathProbe = "*";
 			setup.ShadowCopyFiles = "true";
 			setup.ShadowCopyDirectories = setup.PrivateBinPath;
