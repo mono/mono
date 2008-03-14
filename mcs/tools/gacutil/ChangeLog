@@ -1,3 +1,7 @@
+2008-03-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* driver.cs : temporarily disable r98206 strongname check
+	  until the build gets fixed.
 
 Thu Mar 13 22:33:36 CET 2008 Paolo Molaro <lupus@ximian.com>
 

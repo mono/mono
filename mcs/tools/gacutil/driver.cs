@@ -234,12 +234,14 @@ namespace Mono.Tools {
 			}
 
 			an = assembly.GetName ();
+			/*
 			Process sn_cmd = Process.Start ("sn", "-q -v " + name);
 			sn_cmd.WaitForExit ();
 			if (sn_cmd.ExitCode != 0) {
 				WriteLine (string.Format (failure_msg, name) + "Attempt to install an assembly without a strong name.");
 				return false;
 			}
+			*/
 			pub_tok = an.GetPublicKeyToken ();
 			if (pub_tok == null || pub_tok.Length == 0) {
 				WriteLine (string.Format (failure_msg, name) + "Attempt to install an assembly without a strong name.");
