@@ -1,3 +1,9 @@
+2008-03-14  Mark Probst  <mark.probst@gmail.com>
+
+	* marshal.c, marshal.h, metadata-internals.h, image.c,
+	wrapper-types.h: New wrapper for invoking a shared static method
+	without having to pass the runtime generic context argument.
+
 2008-03-14 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* icall-def.h: Add missing function PerformanceCounterCategory::GetInstanceNames.

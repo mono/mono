@@ -1,3 +1,35 @@
+2008-03-14  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c, mini.h: Share static generic code by passing it an
+	implicit argument pointing to the runtime generic context.
+
+	* mini-ops.h, inssel.brg, inssel-long.brg, inssel-long32.brg,
+	inssel-long32-mips.brg: New opcodes for calling shared static,
+	which need to be passed the runtime generic context.
+
+	* mini-amd64.c, mini-x86.c: Save the runtime generic context
+	argument on the stack in the prologue if needed.  New function for
+	finding the runtime generic context argument from the registers
+	saved by the trampoline.
+
+	* mini-amd64.h, mini-x86.h: Specify which register to use for the
+	runtime generic context argument.
+
+	* tramp-amd64.c: Also restore the register used for the runtime
+	generic context argument.
+
+	* mini-trampoline.c: Resolve shared static calls by consulting the
+	runtime generic context via the new argument.
+
+	* generic-sharing.c: Add an argument to sharability-checking
+	functions that specifies whether type variables should be treated
+	as sharable type arguments.
+
+	* inssel-x86.brg: Removed a superfluous, buggy rule.
+
+	* graph.c, local-propagation.c, aliasing.c: Added the new opcodes
+	to switches.
+
 2008-03-14  Martin Baulig  <martin@ximian.com>
 
 	* debug-debugger.c (main_thread_handler): Call

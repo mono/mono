@@ -1,3 +1,15 @@
+2008-03-14  Mark Probst  <mark.probst@gmail.com>
+
+	* generics-sharing.2.cs: New tests for static methods.
+
+	* generic-inlining.2.cs: Added.  Tests generic method inlining.
+
+	* shared-generic-synchronized.2.cs: Added.  Tests shared
+	synchronized methods.
+
+	* Makefile.am: Added the new tests.  New target for running the
+	generic code sharing with the optimization enabled.
+
 2008-03-04  Mark Probst  <mark.probst@gmail.com>
 
 	* generics-sharing.2.c: Added test for open catch clauses in
