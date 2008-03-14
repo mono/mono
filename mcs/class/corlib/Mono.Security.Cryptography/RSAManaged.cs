@@ -297,9 +297,9 @@ namespace Mono.Security.Cryptography {
 
 			// if missing "mandatory" parameters
 			if (parameters.Exponent == null) 
-				throw new CryptographicException ("Missing Exponent");
+				throw new CryptographicException (Locale.GetText ("Missing Exponent"));
 			if (parameters.Modulus == null)
-				throw new CryptographicException ("Missing Modulus");
+				throw new CryptographicException (Locale.GetText ("Missing Modulus"));
 	
 			e = new BigInteger (parameters.Exponent);
 			n = new BigInteger (parameters.Modulus);
@@ -316,10 +316,44 @@ namespace Mono.Security.Cryptography {
 				p = new BigInteger (parameters.P);
 			if (parameters.Q != null)
 				q = new BigInteger (parameters.Q);
-			
+
 			// we now have a keypair
 			keypairGenerated = true;
-			isCRTpossible = ((p != null) && (q != null) && (dp != null) && (dq != null) && (qInv != null));
+			bool privateKey = ((p != null) && (q != null) && (dp != null));
+			isCRTpossible = (privateKey && (dq != null) && (qInv != null));
+
+			// check if the public/private keys match
+			// the way the check is made allows a bad D to work if CRT is available (like MS does, see unit tests)
+			if (!privateKey)
+				return;
+
+			// always check n == p * q
+			bool ok = (n == (p * q));
+			if (ok) {
+				// we now know that p and q are correct, so (p - 1), (q - 1) and phi will be ok too
+				BigInteger pSub1 = (p - 1);
+				BigInteger qSub1 = (q - 1);
+				BigInteger phi = pSub1 * qSub1;
+				// e is fairly static but anyway we can ensure it makes sense by recomputing d
+				BigInteger dcheck = e.ModInverse (phi);
+
+				// now if our new d(check) is different than the d we're provided then we cannot
+				// be sure if 'd' or 'e' is invalid... (note that, from experience, 'd' is more 
+				// likely to be invalid since it's twice as large as DP (or DQ) and sits at the
+				// end of the structure (e.g. truncation).
+				ok = (d == dcheck);
+
+				// ... unless we have the pre-computed CRT parameters
+				if (!ok && isCRTpossible) {
+					// we can override the previous decision since Mono always prefer, for 
+					// performance reasons, using the CRT algorithm
+					ok = (dp == (dcheck % pSub1)) && (dq == (dcheck % qSub1)) && 
+						(qInv == q.ModInverse (p));
+				}
+			}
+
+			if (!ok)
+				throw new CryptographicException (Locale.GetText ("Private/public key mismatch"));
 		}
 
 		protected override void Dispose (bool disposing) 
