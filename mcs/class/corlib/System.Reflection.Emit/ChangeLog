@@ -1,3 +1,7 @@
+2008-03-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* FieldOnTypeBuilderInst.cs: New file.
+
 2008-03-11  Marek Safar  <marek.safar@gmail.com>
 
 	* MethodBuilder.cs (GetGenericArguments): Returns Type.EmptyType.
