@@ -88,6 +88,7 @@ System.Windows.Forms/LinkAreaTest.cs
 System.Windows.Forms/LinkConverterTest.cs
 System.Windows.Forms/LinkLabelTest.cs
 System.Windows.Forms/ListControlTest.cs
+System.Windows.Forms/ListBindingHelperTest.cs
 System.Windows.Forms/ListBoxEventTest.cs
 System.Windows.Forms/ListBoxTest.cs
 System.Windows.Forms/ListViewCollectionsTest.cs
