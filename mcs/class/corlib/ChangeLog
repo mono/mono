@@ -1,3 +1,7 @@
+2008-03-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* corlib.dll.sources: Add System.Reflection.Emit/FieldOnTypeBuilderInst.cs.
+
 2008-03-04  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* corlib.dll.sources: Add internal System.Resources.RuntimeResourceSet

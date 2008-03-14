@@ -508,6 +508,7 @@ System.Reflection.Emit/EnumBuilder.cs
 System.Reflection.Emit/EventBuilder.cs
 System.Reflection.Emit/EventToken.cs
 System.Reflection.Emit/FieldBuilder.cs
+System.Reflection.Emit/FieldOnTypeBuilderInst.cs
 System.Reflection.Emit/FieldToken.cs
 System.Reflection.Emit/FlowControl.cs
 System.Reflection.Emit/GenericTypeParameterBuilder.cs
