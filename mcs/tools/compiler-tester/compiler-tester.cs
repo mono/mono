@@ -172,10 +172,12 @@ namespace TestRunner {
 				public string Type;
 				public string MethodName;
 				public int ILSize;
+				public bool Checked;
 			}
 
 			string test_file;
 			ArrayList methods;
+			public bool IsNewSet;
 
 			public VerificationData (string test_file)
 			{
@@ -213,6 +215,9 @@ namespace TestRunner {
 
 				string type = null;
 				foreach (MethodData data in methods) {
+					if (!data.Checked)
+						continue;
+
 					if (type != data.Type) {
 						if (type != null)
 							w.WriteEndElement ();
@@ -229,7 +234,9 @@ namespace TestRunner {
 					w.WriteEndElement ();
 					w.WriteEndElement ();
 				}
-				w.WriteEndElement ();
+
+				if (type != null)
+					w.WriteEndElement ();
 
 				w.WriteEndElement ();
 			}
@@ -237,12 +244,25 @@ namespace TestRunner {
 
 			public MethodData FindMethodData (string method_name, string declaring_type)
 			{
+				if (methods == null)
+					return null;
+
 				foreach (MethodData md in methods) {
 					if (md.MethodName == method_name && md.Type == declaring_type)
 						return md;
 				}
 
 				return null;
+			}
+
+			public void AddNewMethod (MethodBase mb, int il_size)
+			{
+				if (methods == null)
+					methods = new ArrayList ();
+
+				MethodData md = new MethodData (mb, il_size);
+				md.Checked = true;
+				methods.Add (md);
 			}
 		}
 
@@ -251,6 +271,12 @@ namespace TestRunner {
 		public PositiveTestCase (string filename, string [] options, string [] deps)
 			: base (filename, options, deps)
 		{
+		}
+
+		public void CreateNewTest ()
+		{
+			verif_data = new VerificationData (FileName);
+			verif_data.IsNewSet = true;
 		}
 
 		public VerificationData VerificationProvider {
@@ -264,31 +290,45 @@ namespace TestRunner {
 
 		public bool CompareIL (MethodBase mi, PositiveChecker checker)
 		{
-			if (verif_data == null)
-				verif_data = new VerificationData (FileName);
-
 			string m_name = mi.ToString ();
-			VerificationData.MethodData md = verif_data.FindMethodData (m_name, mi.DeclaringType.ToString ());
+			string decl_type = mi.DeclaringType.ToString ();
+			VerificationData.MethodData md = verif_data.FindMethodData (m_name, decl_type);
 			if (md == null) {
-				checker.HandleFailure (FileName, PositiveChecker.TestResult.ILError, m_name + " (new method?)");
-				return false;
+				verif_data.AddNewMethod (mi, GetILSize (mi));
+				if (!verif_data.IsNewSet) {
+					checker.HandleFailure (FileName, PositiveChecker.TestResult.ILError, decl_type + ": " + m_name + " (new method?)");
+					return false;
+				}
+
+				return true;
 			}
 
-#if NET_2_0
-			MethodBody body = mi.GetMethodBody ();
-			int il_size = 0;
-			if (body != null)
-				il_size = body.GetILAsByteArray ().Length;
+			if (md.Checked) {
+				checker.HandleFailure (FileName, PositiveChecker.TestResult.ILError, decl_type + ": " + m_name + " has a duplicate");
+				return false;
+			}
+			
+			md.Checked = true;
 
+			int il_size = GetILSize (mi);
 			if (md.ILSize == il_size)
 				return true;
 
 			checker.HandleFailure (FileName, PositiveChecker.TestResult.ILError,
 				string.Format ("{0} (code size {1} -> {2})", m_name, md.ILSize, il_size));
+			md.ILSize = il_size;
+
 			return false;
-#else
-			throw new NotSupportedException ();
+		}
+
+		static int GetILSize (MethodBase mi)
+		{
+#if NET_2_0
+			MethodBody body = mi.GetMethodBody ();
+			if (body != null)
+				return body.GetILAsByteArray ().Length;
 #endif
+			return 0;
 		}
 	}
 
@@ -708,6 +748,9 @@ namespace TestRunner {
 				if (!t.IsClass && t.IsValueType)
 					continue;
 
+				if (test.VerificationProvider == null)
+					test.CreateNewTest ();
+
 				foreach (MemberInfo m in t.GetMembers (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly)) {
 					MethodBase mi = m as MethodBase;
 					if (mi == null)
@@ -828,7 +871,8 @@ namespace TestRunner {
 			if (extra != null)
 				LogLine ("{0}", extra);
 
-			regression.Add (file);
+			if (!regression.Contains (file))
+				regression.Add (file);
 		}
 
 		public override void Initialize ()
@@ -860,7 +904,7 @@ namespace TestRunner {
 #if NET_2_0
 		void LoadVerificationData (string file)
 		{
-			LogLine ("Loading verification data {0} ...", file);
+			LogLine ("Loading verification data from `{0}' ...", file);
 
 			using (XmlReader r = XmlReader.Create (file)) {
 				r.ReadStartElement ("tests");
@@ -879,11 +923,11 @@ namespace TestRunner {
 
 		void UpdateVerificationData (string file)
 		{
-			LogLine ("Updating verification data {0}...", file);
+			LogLine ("Updating verification data `{0}' ...", file);
 
 			XmlWriterSettings s = new XmlWriterSettings ();
 			s.Indent = true;
-			using (XmlWriter w = XmlWriter.Create (file, s)) {
+			using (XmlWriter w = XmlWriter.Create (new StreamWriter (file, false, Encoding.UTF8), s)) {
 				w.WriteStartDocument ();
 				w.WriteComment ("This file contains expected IL and metadata produced by compiler for each test");
 				w.WriteStartElement ("tests");

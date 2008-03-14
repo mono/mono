@@ -1,5 +1,9 @@
 2008-03-14  Marek Safar  <marek.safar@gmail.com>
 
+	* compiler-tester.cs: Handle new tests correctly.
+
+2008-03-14  Marek Safar  <marek.safar@gmail.com>
+
 	* compiler-tester.cs: Replaced XmlTextWriter and XmlTextReader with
 	XmlWriter and XmlReader.
 
