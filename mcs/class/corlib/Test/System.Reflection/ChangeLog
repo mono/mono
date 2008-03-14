@@ -1,3 +1,7 @@
+2008-03-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* BinderTests.cs: Add tests for #367655.
+
 2008-03-10  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AssemblyTest.cs: Improved tests for GetFile, GetObjectData and

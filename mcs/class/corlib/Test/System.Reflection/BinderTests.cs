@@ -313,6 +313,24 @@ namespace MonoTests.System.Reflection
 		public static void params_method1 (object o, object o2) {
 		}
 
+		public static double DoubleMethod (double d) {
+			return d;
+		}
+
+		public static float FloatMethod (float f) {
+			return f;
+		}
+
+		[Test]
+		public void ChangeType ()
+		{
+			// Char -> Double
+			Assert.AreEqual (42.0, typeof (BinderTest).GetMethod ("DoubleMethod").Invoke (null, new object[] { (char)42 }));
+
+			// Char -> Float
+			Assert.AreEqual (42.0f, typeof (BinderTest).GetMethod ("FloatMethod").Invoke (null, new object[] { (char)42 }));
+		}
+
 		[Test]
 		public void TestExactBinding ()
 		{
