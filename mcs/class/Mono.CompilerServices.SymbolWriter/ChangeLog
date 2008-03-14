@@ -1,3 +1,97 @@
+2008-03-14  Martin Baulig  <martin@ximian.com>
+
+	Merged the debugger's `terrania' branch into trunk.
+
+2008-03-13  Martin Baulig  <martin@ximian.com>
+
+	* *.cs: Add `DISABLE_TERRANIA_CHANGES' conditionals everywhere
+	around the new code; they'll be removed when I'm back from my
+	vacations.
+
+2008-03-13  Martin Baulig  <martin@ximian.com>
+
+	* MonoSymbolTable.cs
+	(LexicalBlockEntry): Mark this as obsolete.
+
+2008-03-11  Martin Baulig  <martin@ximian.com>
+
+	* MonoSymbolTable.cs (MethodEntry): Removed `LocalTypeIndices'.
+
+2008-03-10  Martin Baulig  <martin@ximian.com>
+
+	* MonoSymbolTable.cs
+	(LocalVariableEntry): Removed the `Signature' field; we don't
+	write this into the symbol file anymore.
+
+	* MonoSymbolWriter.cs
+	(MonoSymbolWriter.DefineLocalVariable): The `byte[] signature'
+	argument is now obsolete.
+
+2008-02-19  Martin Baulig  <martin@ximian.com>
+
+	* MonoSymbolFile.cs
+	(MonoSymbolFile.Version): New public readonly field.
+	(MonoSymbolFile.CompatibilityMode): Likewise; this is enabled if
+	we're reading an old `39' file.
+
+	* MonoSymbolTable.cs
+	(OffsetTable.CompatibilityVersion): New public const; we keep
+	backwards compatibility with this version.
+	(OffsetTable.Write): Add `version' argument; allow writing the old
+	file format.
+	(MethodEntry): Check `file.CompatiblityMode'.
+
+2008-02-19  Martin Baulig  <martin@ximian.com>
+
+	* MonoSymbolWriter.cs
+	(MonoSymbolWriter.SetRealMethodName): New public method.
+
+	* MonoSymbolTable.cs
+	(MethodEntry.RealName): New public field; this is only used for
+	anonymous methods and iterators.
+
+2008-02-15  Martin Baulig  <martin@ximian.com>
+
+	* MonoSymbolTable.cs
+	(CodeBlockEntry): New public class.
+	(MethodEntry): Replace the old lexical blocks with a new concept
+	of `code blocks'.  Keep backwards compatibility.
+
+	* MonoSymbolWriter.cs
+	(MonoSymbolWriter): Add OpenCompilerGeneratedBlock(),
+	CloseCompilerGeneratedBlock(), StartIteratorBody(),
+	EndIteratorBody(), StartIteratorDispatcher(),
+	EndIteratorDispatcher().	
+
+2008-02-02  Martin Baulig  <martin@ximian.com>
+
+	* MonoSymbolTable.cs
+	(OffsetTable.Version): Bump to 40.
+	(OffsetTable): Add `AnonymousScopeCount',
+	`AnonymousScopeTableOffset' and `AnonymousScopeTableSize'.
+	(CapturedVariable): New public struct.
+	(CapturedScope): New public struct.
+	(ScopeVariable): New public struct.
+	(AnonymousScopeEntry): New public class.
+	(SourceFileEntry.DefineMethod): Added overloaded version taking an
+	additional `ScopeVariable[]' argument.
+
+	* MonoSymbolFile.cs
+	(MonoSymbolFile.AnonymousScopeCount): New public property.
+	(MonoSymbolFile.GetAnonymousScope): New public method.
+
+	* MonoSymbolWriter.cs
+	(MonoSymbolWriter.DefineAnonymousScope): New public method.
+	(MonoSymbolWriter.DefineCapturedLocal): New public method.
+	(MonoSymbolWriter.DefineCapturedParameter): New public method.
+	(MonoSymbolWriter.DefineCapturedThis): New public method.
+	(MonoSymbolWriter.DefineCapturedScope): New public method.
+	(MonoSymbolWriter.DefineScopeVariable): New public method.
+
+2008-02-02  Martin Baulig  <martin@ximian.com>
+
+	***** Terrania changes start at this point *****
+
 2007-08-27  Jb Evain  <jbevain@novell.com>
 
 	* MonoSymbolFile.cs, SymbolWriterImpl.cs: add some Cecil specific

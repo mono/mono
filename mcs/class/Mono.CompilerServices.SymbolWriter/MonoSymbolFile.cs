@@ -131,12 +131,23 @@ namespace Mono.CompilerServices.SymbolWriter
 		ArrayList sources = new ArrayList ();
 		Hashtable method_source_hash = new Hashtable ();
 		Hashtable type_hash = new Hashtable ();
+#if !DISABLE_TERRANIA_CHANGES
+		Hashtable anonymous_scopes;
+#endif
 
 		OffsetTable ot;
 		int last_type_index;
 		int last_method_index;
 		int last_source_index;
 		int last_namespace_index;
+
+#if DISABLE_TERRANIA_CHANGES
+		public readonly int Version = OffsetTable.CompatibilityVersion;
+		public readonly bool CompatibilityMode = true;
+#else
+		public readonly int Version = OffsetTable.Version;
+		public readonly bool CompatibilityMode = false;
+#endif
 
 		public int NumLineNumbers;
 
@@ -163,6 +174,29 @@ namespace Mono.CompilerServices.SymbolWriter
 		{
 			methods.Add (entry);
 		}
+
+#if !DISABLE_TERRANIA_CHANGES
+		internal void DefineAnonymousScope (int id)
+		{
+			if (anonymous_scopes == null)
+				anonymous_scopes = new Hashtable ();
+
+			anonymous_scopes.Add (id, new AnonymousScopeEntry (id));
+		}
+
+		internal void DefineCapturedVariable (int scope_id, string name, string captured_name,
+						      CapturedVariable.CapturedKind kind)
+		{
+			AnonymousScopeEntry scope = (AnonymousScopeEntry) anonymous_scopes [scope_id];
+			scope.AddCapturedVariable (name, captured_name, kind);
+		}
+
+		internal void DefineCapturedScope (int scope_id, int id, string captured_name)
+		{
+			AnonymousScopeEntry scope = (AnonymousScopeEntry) anonymous_scopes [scope_id];
+			scope.AddCapturedScope (id, captured_name);
+		}
+#endif
 
 		internal int GetNextTypeIndex ()
 		{
@@ -194,7 +228,7 @@ namespace Mono.CompilerServices.SymbolWriter
 		{
 			// Magic number and file version.
 			bw.Write (OffsetTable.Magic);
-			bw.Write (OffsetTable.Version);
+			bw.Write (Version);
 
 			bw.Write (guid.ToByteArray ());
 
@@ -203,7 +237,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			// writing the whole file, so we just reserve the space for it here.
 			//
 			long offset_table_offset = bw.BaseStream.Position;
-			ot.Write (bw);
+			ot.Write (bw, Version);
 
 			//
 			// Sort the methods according to their tokens and update their index.
@@ -240,6 +274,21 @@ namespace Mono.CompilerServices.SymbolWriter
 			}
 			ot.SourceTableSize = (int) bw.BaseStream.Position - ot.SourceTableOffset;
 
+#if !DISABLE_TERRANIA_CHANGES
+			if (!CompatibilityMode) {
+				//
+				// Write anonymous scope table.
+				//
+				ot.AnonymousScopeCount = anonymous_scopes != null ? anonymous_scopes.Count : 0;
+				ot.AnonymousScopeTableOffset = (int) bw.BaseStream.Position;
+				if (anonymous_scopes != null) {
+					foreach (AnonymousScopeEntry scope in anonymous_scopes.Values)
+						scope.Write (bw);
+				}
+				ot.AnonymousScopeTableSize = (int) bw.BaseStream.Position - ot.AnonymousScopeTableOffset;
+			}
+#endif
+
 			//
 			// Fixup offset table.
 			//
@@ -252,7 +301,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			//
 			ot.TotalFileSize = (int) bw.BaseStream.Position;
 			bw.Seek ((int) offset_table_offset, SeekOrigin.Begin);
-			ot.Write (bw);
+			ot.Write (bw, Version);
 			bw.Seek (0, SeekOrigin.End);
 		}
 
@@ -285,15 +334,20 @@ namespace Mono.CompilerServices.SymbolWriter
 					throw new MonoSymbolFileException (
 						"Symbol file `{0}' is not a valid " +
 						"Mono symbol file", filename);
-				if (version != OffsetTable.Version)
+				if ((version != OffsetTable.Version) &&
+				    (version != OffsetTable.CompatibilityVersion))
 					throw new MonoSymbolFileException (
 						"Symbol file `{0}' has version {1}, " +
 						"but expected {2}", filename, version,
 						OffsetTable.Version);
 
+				Version = (int) version;
+				if (version == OffsetTable.CompatibilityVersion)
+					CompatibilityMode = true;
+
 				guid = new Guid (reader.ReadBytes (16));
 
-				ot = new OffsetTable (reader);
+				ot = new OffsetTable (reader, (int) version);
 			} catch {
 				throw new MonoSymbolFileException (
 					"Cannot read symbol file `{0}'", filename);
@@ -366,6 +420,12 @@ namespace Mono.CompilerServices.SymbolWriter
 		public int TypeCount {
 			get { return ot.TypeCount; }
 		}
+
+#if !DISABLE_TERRANIA_CHANGES
+		public int AnonymousScopeCount {
+			get { return ot.AnonymousScopeCount; }
+		}
+#endif
 
 		public int NamespaceCount {
 			get { return last_namespace_index; }
@@ -524,6 +584,25 @@ namespace Mono.CompilerServices.SymbolWriter
 				return -1;
 			return (int) value;
 		}
+
+#if !DISABLE_TERRANIA_CHANGES
+		public AnonymousScopeEntry GetAnonymousScope (int id)
+		{
+			if (anonymous_scopes != null)
+				return (AnonymousScopeEntry) anonymous_scopes [id];
+			if (reader == null)
+				throw new InvalidOperationException ();
+
+			anonymous_scopes = new Hashtable ();
+			reader.BaseStream.Position = ot.AnonymousScopeTableOffset;
+			for (int i = 0; i < ot.AnonymousScopeCount; i++) {
+				AnonymousScopeEntry scope = new AnonymousScopeEntry (reader);
+				anonymous_scopes.Add (scope.ID, scope);
+			}
+
+			return (AnonymousScopeEntry) anonymous_scopes [id];
+		}
+#endif
 
 		internal MyBinaryReader BinaryReader {
 			get {

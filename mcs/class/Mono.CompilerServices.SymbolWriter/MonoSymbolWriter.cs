@@ -96,13 +96,52 @@ namespace Mono.CompilerServices.SymbolWriter
 		public void CloseNamespace ()
 		{ }
 
+		[Obsolete("The signature argument is gone")]
 		public void DefineLocalVariable (int index, string name, byte[] signature)
+		{
+			DefineLocalVariable (index, name);
+		}
+
+		public void DefineLocalVariable (int index, string name)
 		{
 			if (current_method == null)
 				return;
 
-			current_method.AddLocal (index, name, signature);
+			current_method.AddLocal (index, name);
 		}
+
+#if !DISABLE_TERRANIA_CHANGES
+		public void DefineCapturedLocal (int scope_id, string name, string captured_name)
+		{
+			file.DefineCapturedVariable (scope_id, name, captured_name,
+						     CapturedVariable.CapturedKind.Local);
+		}
+
+		public void DefineCapturedParameter (int scope_id, string name, string captured_name)
+		{
+			file.DefineCapturedVariable (scope_id, name, captured_name,
+						     CapturedVariable.CapturedKind.Parameter);
+		}
+
+		public void DefineCapturedThis (int scope_id, string captured_name)
+		{
+			file.DefineCapturedVariable (scope_id, "this", captured_name,
+						     CapturedVariable.CapturedKind.This);
+		}
+
+		public void DefineCapturedScope (int scope_id, int id, string captured_name)
+		{
+			file.DefineCapturedScope (scope_id, id, captured_name);
+		}
+
+		public void DefineScopeVariable (int scope, int index)
+		{
+			if (current_method == null)
+				return;
+
+			current_method.AddScopeVariable (scope, index);
+		}
+#endif
 
 		public void MarkSequencePoint (int offset, int line, int column)
 		{
@@ -129,6 +168,13 @@ namespace Mono.CompilerServices.SymbolWriter
 			methods.Add (current_method);
 		}
 
+#if !DISABLE_TERRANIA_CHANGES
+		public void SetRealMethodName (string name)
+		{
+			current_method.RealMethodName = name;
+		}
+#endif
+
 		public void CloseMethod ()
 		{
 			current_method.SetLineNumbers (
@@ -154,31 +200,88 @@ namespace Mono.CompilerServices.SymbolWriter
 			return source.DefineNamespace (name, using_clauses, parent);
 		}
 
-		public int OpenScope (int startOffset)
+		public int OpenScope (int start_offset)
 		{
+#if !DISABLE_TERRANIA_CHANGES
 			if (current_method == null)
 				return 0;
 
-			current_method.StartBlock (startOffset);
+			current_method.StartBlock (CodeBlockEntry.Type.Lexical, start_offset);
+#endif
 			return 0;
 		}
 
-		public void CloseScope (int endOffset)
+		public void CloseScope (int end_offset)
+		{
+#if !DISABLE_TERRANIA_CHANGES
+			if (current_method == null)
+				return;
+
+			current_method.EndBlock (end_offset);
+#endif
+		}
+
+#if !DISABLE_TERRANIA_CHANGES
+		public void OpenCompilerGeneratedBlock (int start_offset)
 		{
 			if (current_method == null)
 				return;
 
-			current_method.EndBlock (endOffset);
+			current_method.StartBlock (CodeBlockEntry.Type.CompilerGenerated,
+						   start_offset);
 		}
+
+		public void CloseCompilerGeneratedBlock (int end_offset)
+		{
+			if (current_method == null)
+				return;
+
+			current_method.EndBlock (end_offset);
+		}
+
+		public void StartIteratorBody (int start_offset)
+		{
+			current_method.StartBlock (CodeBlockEntry.Type.IteratorBody,
+						   start_offset);
+		}
+
+		public void EndIteratorBody (int end_offset)
+		{
+			current_method.EndBlock (end_offset);
+		}
+
+		public void StartIteratorDispatcher (int start_offset)
+		{
+			current_method.StartBlock (CodeBlockEntry.Type.IteratorDispatcher,
+						   start_offset);
+		}
+
+		public void EndIteratorDispatcher (int end_offset)
+		{
+			current_method.EndBlock (end_offset);
+		}
+
+		public void DefineAnonymousScope (int id)
+		{
+			file.DefineAnonymousScope (id);
+		}
+#endif
 
 		public void WriteSymbolFile (Guid guid)
 		{
 			foreach (SourceMethod method in methods) {
+#if !DISABLE_TERRANIA_CHANGES
 				method.SourceFile.Entry.DefineMethod (
-					method.Method.Name, method.Method.Token,
-					method.Locals, method.Lines, method.Blocks,
+					method.Method.Token, method.ScopeVariables, method.Locals,
+					method.Lines, method.Blocks, method.RealMethodName,
 					method.Start.Row, method.End.Row,
 					method.Method.NamespaceID);
+#else
+				method.SourceFile.Entry.DefineMethod (
+					method.Method.Token, null, method.Locals,
+					method.Lines, null, null, method.Start.Row, method.End.Row,
+					method.Method.NamespaceID);
+#endif
 			}
 
 			try {
@@ -196,14 +299,15 @@ namespace Mono.CompilerServices.SymbolWriter
 		{
 			LineNumberEntry [] lines;
 			private ArrayList _locals;
+#if !DISABLE_TERRANIA_CHANGES
 			private ArrayList _blocks;
+			private ArrayList _scope_vars;
 			private Stack _block_stack;
-			private int next_block_id = 0;
+			private string _real_name;
+#endif
 			private ISourceMethod _method;
 			private ISourceFile _file;
 			private LineNumberEntry _start, _end;
-
-			private LexicalBlockEntry _implicit_block;
 
 			public SourceMethod (ISourceFile file, ISourceMethod method,
 					     int startLine, int startColumn,
@@ -214,51 +318,51 @@ namespace Mono.CompilerServices.SymbolWriter
 
 				this._start = new LineNumberEntry (startLine, 0);
 				this._end = new LineNumberEntry (endLine, 0);
-
-				this._implicit_block = new LexicalBlockEntry (0, 0);
 			}
 
-			public void StartBlock (int startOffset)
+#if !DISABLE_TERRANIA_CHANGES
+			public void StartBlock (CodeBlockEntry.Type type, int start_offset)
 			{
-				LexicalBlockEntry block = new LexicalBlockEntry (
-					++next_block_id, startOffset);
 				if (_block_stack == null)
 					_block_stack = new Stack ();
-				_block_stack.Push (block);
 				if (_blocks == null)
 					_blocks = new ArrayList ();
+
+				int parent = CurrentBlock != null ? CurrentBlock.Index : -1;
+
+				CodeBlockEntry block = new CodeBlockEntry (
+					_blocks.Count + 1, parent, type, start_offset);
+
+				_block_stack.Push (block);
 				_blocks.Add (block);
 			}
 
-			public void EndBlock (int endOffset)
+			public void EndBlock (int end_offset)
 			{
-				LexicalBlockEntry block =
-					(LexicalBlockEntry) _block_stack.Pop ();
-
-				block.Close (endOffset);
+				CodeBlockEntry block = (CodeBlockEntry) _block_stack.Pop ();
+				block.Close (end_offset);
 			}
 
-			public LexicalBlockEntry[] Blocks {
+			public CodeBlockEntry[] Blocks {
 				get {
 					if (_blocks == null)
-						return new LexicalBlockEntry [0];
-					else {
-						LexicalBlockEntry[] retval =
-							new LexicalBlockEntry [_blocks.Count];
-						_blocks.CopyTo (retval, 0);
-						return retval;
-					}
+						return new CodeBlockEntry [0];
+
+					CodeBlockEntry[] retval = new CodeBlockEntry [_blocks.Count];
+					_blocks.CopyTo (retval, 0);
+					return retval;
 				}
 			}
 
-			public LexicalBlockEntry CurrentBlock {
+			public CodeBlockEntry CurrentBlock {
 				get {
 					if ((_block_stack != null) && (_block_stack.Count > 0))
-						return (LexicalBlockEntry) _block_stack.Peek ();
+						return (CodeBlockEntry) _block_stack.Peek ();
 					else
-						return _implicit_block;
+						return null;
 				}
 			}
+#endif
 
 			public LineNumberEntry[] Lines {
 				get {
@@ -279,13 +383,43 @@ namespace Mono.CompilerServices.SymbolWriter
 				}
 			}
 
-			public void AddLocal (int index, string name, byte[] signature)
+			public void AddLocal (int index, string name)
 			{
 				if (_locals == null)
 					_locals = new ArrayList ();
-				_locals.Add (new LocalVariableEntry (
-						     index, name, signature, CurrentBlock.Index));
+#if !DISABLE_TERRANIA_CHANGES
+				int block_idx = CurrentBlock != null ? CurrentBlock.Index : 0;
+#else
+				int block_idx = 0;
+#endif
+				_locals.Add (new LocalVariableEntry (index, name, block_idx));
 			}
+
+#if !DISABLE_TERRANIA_CHANGES
+			public ScopeVariable[] ScopeVariables {
+				get {
+					if (_scope_vars == null)
+						return new ScopeVariable [0];
+
+					ScopeVariable[] retval = new ScopeVariable [_scope_vars.Count];
+					_scope_vars.CopyTo (retval);
+					return retval;
+				}
+			}
+
+			public void AddScopeVariable (int scope, int index)
+			{
+				if (_scope_vars == null)
+					_scope_vars = new ArrayList ();
+				_scope_vars.Add (
+					new ScopeVariable (scope, index));
+			}
+
+			public string RealMethodName {
+				get { return _real_name; }
+				set { _real_name = value; }
+			}
+#endif
 
 			public ISourceFile SourceFile {
 				get { return _file; }
