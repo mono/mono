@@ -1,5 +1,9 @@
 2008-03-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* MonoGenericClass.cs (GetField): Construct a FieldOnTypeBuilderInst object
+	instead of using GetCorrespondingInflatedField. This is needed so this class can
+	reflect the changes made to the type builder after initialize () has been called.
+
 	* Binder.cs (ChangeType): Add support for Char->Double/Single conversations. Fixes
 	#367655.
 

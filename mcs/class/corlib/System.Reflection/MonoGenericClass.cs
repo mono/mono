@@ -50,8 +50,12 @@ namespace System.Reflection
 	 */
 	internal class MonoGenericClass : MonoType
 	{
+		#region Keep in sync with object-internals.h
 		protected TypeBuilder generic_type;
 		bool initialized;
+		#endregion
+
+		Hashtable fields;
 
 		internal MonoGenericClass ()
 			: base (null)
@@ -149,6 +153,17 @@ namespace System.Reflection
 		{
 			initialize ();
 
+#if NET_2_0
+			if (fromNoninstanciated is FieldBuilder) {
+				FieldBuilder fb = (FieldBuilder)fromNoninstanciated;
+				if (fields == null)
+					fields = new Hashtable ();
+				if (!fields.ContainsKey (fb))
+					fields [fb] = new FieldOnTypeBuilderInst (this, fb);
+				return (FieldInfo)fields [fb];
+			}
+#endif
+			/* Keep the old code for a while in case the code above needs to be reverted */
 			return GetCorrespondingInflatedField (fromNoninstanciated.Name);
 		}
 		
