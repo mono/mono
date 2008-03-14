@@ -441,8 +441,6 @@ namespace System.Windows.Forms {
 
 		protected internal virtual void Paint (Graphics graphics, Rectangle clipBounds, Rectangle rowBounds, int rowIndex, DataGridViewElementStates rowState, bool isFirstDisplayedRow, bool isLastVisibleRow)
 		{
-			graphics.FillRectangle (Brushes.White, rowBounds);
-			
 			DataGridViewRowPrePaintEventArgs pre = new DataGridViewRowPrePaintEventArgs (DataGridView, graphics, clipBounds, rowBounds, rowIndex, rowState, string.Empty, InheritedStyle, isFirstDisplayedRow, isLastVisibleRow);
 			pre.PaintParts = DataGridViewPaintParts.All;
 
@@ -475,6 +473,8 @@ namespace System.Windows.Forms {
 			foreach (DataGridViewCell cell in Cells) {
 				bounds.Width = DataGridView.Columns[cell.ColumnIndex].Width;
 				cell.SetSize (bounds.Size);
+				
+				graphics.FillRectangle (Brushes.White, bounds);
 				
 				DataGridViewCellStyle style;
 
