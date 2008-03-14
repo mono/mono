@@ -11,13 +11,6 @@ LOCAL_MCS_FLAGS = -r:System.ServiceProcess.dll -r:Mono.Posix.dll -unsafe
 # Copied from library.make
 
 # -- begin --
-ifdef NO_INSTALL
-GACUTIL = :
-else
-gacutil = $(topdir)/class/lib/net_1_1_bootstrap/gacutil.exe
-GACUTIL = MONO_PATH="$(topdir)/class/lib/net_1_1_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(gacutil)
-endif
-
 ifeq ($(PLATFORM), win32)
 GACDIR = `cygpath -w $(mono_libdir)`
 GACROOT = `cygpath -w $(DESTDIR)$(mono_libdir)`

@@ -1,3 +1,10 @@
+
+Fri Mar 14 09:29:29 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* driver.cs: added a bootstrap option to ignore sn failures for now
+	when bootstrapping a build. The option name will periodically change
+	so no one else can use it.
+
 2008-03-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* driver.cs : temporarily disable r98206 strongname check

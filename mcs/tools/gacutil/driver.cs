@@ -37,6 +37,7 @@ namespace Mono.Tools {
 		}
 
 		private static bool silent;
+		static bool in_bootstrap;
 
 		public static int Main (string [] args)
 		{
@@ -78,6 +79,11 @@ namespace Mono.Tools {
 
 					if (args [i] == "-check_refs" || args [i] == "/check_refs") {
 						check_refs = true;
+						continue;
+					}
+
+					if (args [i] == "-bootstrap" || args [i] == "/bootstrap") {
+						in_bootstrap = true;
 						continue;
 					}
 
@@ -234,14 +240,25 @@ namespace Mono.Tools {
 			}
 
 			an = assembly.GetName ();
-			/*
-			Process sn_cmd = Process.Start ("sn", "-q -v " + name);
-			sn_cmd.WaitForExit ();
-			if (sn_cmd.ExitCode != 0) {
-				WriteLine (string.Format (failure_msg, name) + "Attempt to install an assembly without a strong name.");
-				return false;
+			try {
+				Process sn_cmd = Process.Start ("sn", "-q -v " + name);
+				sn_cmd.WaitForExit ();
+				if (sn_cmd.ExitCode != 0) {
+					if (in_bootstrap) {
+						WriteLine (string.Format (failure_msg, name) + "Attempt to install an assembly without a strong name (sn failed, continuing anyway).");
+					} else {
+						WriteLine (string.Format (failure_msg, name) + "Attempt to install an assembly without a strong name.");
+						return false;
+					}
+				}
+			} catch {
+				if (in_bootstrap) {
+					WriteLine (string.Format (failure_msg, name) + "Attempt to install an assembly without a strong name (sn failed, continuing anyway).");
+				} else {
+					WriteLine (string.Format (failure_msg, name) + "Attempt to install an assembly without a strong name.");
+					return false;
+				}
 			}
-			*/
 			pub_tok = an.GetPublicKeyToken ();
 			if (pub_tok == null || pub_tok.Length == 0) {
 				WriteLine (string.Format (failure_msg, name) + "Attempt to install an assembly without a strong name.");
