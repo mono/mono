@@ -183,7 +183,7 @@ namespace TestRunner {
 			}
 
 #if NET_2_0			
-			public static VerificationData FromFile (string name, XmlTextReader r)
+			public static VerificationData FromFile (string name, XmlReader r)
 			{
 				VerificationData tc = new VerificationData (name);
 				ArrayList methods = new ArrayList ();
@@ -862,7 +862,7 @@ namespace TestRunner {
 		{
 			LogLine ("Loading verification data {0} ...", file);
 
-			using (XmlTextReader r = new XmlTextReader (file)) {
+			using (XmlReader r = XmlReader.Create (file)) {
 				r.ReadStartElement ("tests");
 				verif_data = new Hashtable ();
 
@@ -875,16 +875,15 @@ namespace TestRunner {
 					verif_data.Add (name, tc);
 				}
 			}
-			throw new NotSupportedException ();
 		}
 
 		void UpdateVerificationData (string file)
 		{
 			LogLine ("Updating verification data {0}...", file);
 
-			using (XmlTextWriter w = new XmlTextWriter (file, null)) {
-				w.Formatting = Formatting.Indented;
-
+			XmlWriterSettings s = new XmlWriterSettings ();
+			s.Indent = true;
+			using (XmlWriter w = XmlWriter.Create (file, s)) {
 				w.WriteStartDocument ();
 				w.WriteComment ("This file contains expected IL and metadata produced by compiler for each test");
 				w.WriteStartElement ("tests");

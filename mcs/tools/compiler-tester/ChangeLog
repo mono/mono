@@ -1,5 +1,10 @@
 2008-03-14  Marek Safar  <marek.safar@gmail.com>
 
+	* compiler-tester.cs: Replaced XmlTextWriter and XmlTextReader with
+	XmlWriter and XmlReader.
+
+2008-03-14  Marek Safar  <marek.safar@gmail.com>
+
 	* compiler-tester.cs: Added IL regression support.
 
 2008-03-13  Marek Safar  <marek.safar@gmail.com>
