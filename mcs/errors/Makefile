@@ -61,13 +61,16 @@ test-everything:
 
 ifeq (net_2_1, $(PROFILE))
 COMPILER_NAME = smcs
+TEST_PATTERN = '*cs*.cs'
 LOCAL_RUNTIME_FLAGS = --security=temporary-smcs-hack
 endif
 ifeq (net_2_0, $(PROFILE))
 COMPILER_NAME = gmcs
+TEST_PATTERN = '*cs*.cs'
 endif
 ifeq (default, $(PROFILE))
 COMPILER_NAME = mcs
+TEST_PATTERN = 'cs*.cs'
 endif
 
 COMPILER = $(topdir)/class/lib/$(PROFILE)/$(COMPILER_NAME).exe
@@ -77,7 +80,7 @@ run-mcs-tests: $(TEST_SUPPORT_FILES)
 
 run-mcs-tests:
 	rm -f *.exe
-	$(TESTER) negative 0 $(COMPILER) known-issues-$(COMPILER_NAME) $(COMPILER_NAME).log
+	$(TESTER) -mode:neg -files:$(TEST_PATTERN) -compiler:$(COMPILER) -issues:known-issues-$(COMPILER_NAME) -log:$(COMPILER_NAME).log $(TESTER_OPTIONS)
 
 clean-local:
 	rm -f *.exe *.dll *.log *.mdb dummy.xml *.junk

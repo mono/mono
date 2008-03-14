@@ -1,3 +1,7 @@
+2008-03-14 Marek Safar <marek.safar@gmail.com>
+
+	* Makefile: New compiler-tester options.
+
 2008-02-25  Raja R Harinath  <harinath@hurrynot.org>
 
 	* cs0152-3.cs: New testcase from #363791.
