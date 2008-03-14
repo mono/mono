@@ -1,5 +1,11 @@
 2008-03-14  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #370577
+	* statement.cs, lambda.cs: Added extra limitations when dealing with void
+	return type.
+	
+2008-03-14  Marek Safar  <marek.safar@gmail.com>
+
 	* typemanager.cs (CSharpName): Made 250 times faster.
 
 2008-03-13  Marek Safar  <marek.safar@gmail.com>

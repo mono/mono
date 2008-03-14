@@ -778,6 +778,12 @@ namespace Mono.CSharp {
 
 			if (Expr.Type != ec.ReturnType) {
 				if (ec.InferReturnType) {
+					//
+					// void cannot be used in contextual return
+					//
+					if (Expr.Type == TypeManager.void_type)
+						return false;
+
 					ec.ReturnType = Expr.Type;
 				} else {
 					Expr = Convert.ImplicitConversionRequired (
