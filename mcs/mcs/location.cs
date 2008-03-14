@@ -189,7 +189,7 @@ namespace Mono.CSharp {
 		//   and code generation to register all the source files with the
 		//   symbol writer.
 		// </remarks>
-		static public void DefineSymbolDocuments (SymbolWriter symwriter)
+		static public void DefineSymbolDocuments (MonoSymbolWriter symwriter)
 		{
 			foreach (SourceFile file in source_list) {
 				file.SourceFileEntry = symwriter.DefineDocument (file.Path);

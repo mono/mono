@@ -38,7 +38,6 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class CodeGen {
 		static AppDomain current_domain;
-		static public SymbolWriter SymbolWriter;
 
 		public static AssemblyClass Assembly;
 		public static ModuleClass Module;
@@ -89,12 +88,7 @@ namespace Mono.CSharp {
 		//
 		static void InitializeSymbolWriter (string filename)
 		{
-			SymbolWriter = SymbolWriter.GetSymbolWriter (Module.Builder, filename);
-
-			//
-			// If we got an ISymbolWriter instance, initialize it.
-			//
-			if (SymbolWriter == null) {
+			if (!SymbolWriter.Initialize (Module.Builder, filename)) {
 				Report.Warning (
 					-18, 1, "Could not find the symbol writer assembly (Mono.CompilerServices.SymbolWriter.dll). This is normally an installation problem. Please make sure to compile and install the mcs/class/Mono.CompilerServices.SymbolWriter directory.");
 				return;
@@ -185,8 +179,7 @@ namespace Mono.CSharp {
 			try {
 				Assembly.Builder.Save (Basename (name));
 
-				if (SymbolWriter != null)
-					SymbolWriter.WriteSymbolFile ();
+				SymbolWriter.WriteSymbolFile ();
 			}
 			catch (COMException) {
 				if ((RootContext.StrongNameKeyFile == null) || (!RootContext.StrongNameDelaySign))
@@ -851,37 +844,30 @@ namespace Mono.CSharp {
 		/// </summary>
 		public void Mark (Location loc, bool check_file)
 		{
-			if ((CodeGen.SymbolWriter == null) || loc.IsNull)
+			if (!SymbolWriter.HasSymbolWriter || loc.IsNull)
 				return;
 
 			if (check_file && (CurrentFile != loc.File))
 				return;
 
-			CodeGen.SymbolWriter.MarkSequencePoint (ig, loc.Row, loc.Column);
+			SymbolWriter.MarkSequencePoint (ig, loc.Row, loc.Column);
 		}
 
 		public void DefineLocalVariable (string name, LocalBuilder builder)
 		{
-			if (CodeGen.SymbolWriter == null)
-				return;
-
-			CodeGen.SymbolWriter.DefineLocalVariable (name, builder);
+			SymbolWriter.DefineLocalVariable (name, builder);
 		}
 
 		public void BeginScope ()
 		{
 			ig.BeginScope();
-
-			if (CodeGen.SymbolWriter != null)
-				CodeGen.SymbolWriter.OpenScope(ig);
+			SymbolWriter.OpenScope(ig);
 		}
 
 		public void EndScope ()
 		{
 			ig.EndScope();
-
-			if (CodeGen.SymbolWriter != null)
-				CodeGen.SymbolWriter.CloseScope(ig);
+			SymbolWriter.CloseScope(ig);
 		}
 
 		/// <summary>

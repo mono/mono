@@ -4215,7 +4215,7 @@ namespace Mono.CSharp {
 			this.parent = parent;
 			this.builder = builder;
 			
-			CodeGen.SymbolWriter.OpenMethod (file, this, start.Row, start.Column, end.Row, start.Column);
+			SymbolWriter.OpenMethod (file, this, start.Row, start.Column, end.Row, start.Column);
 		}
 
 		public string Name {
@@ -4239,13 +4239,12 @@ namespace Mono.CSharp {
 
 		public void CloseMethod ()
 		{
-			if (CodeGen.SymbolWriter != null)
-				CodeGen.SymbolWriter.CloseMethod ();
+			SymbolWriter.CloseMethod ();
 		}
 
 		public static SourceMethod Create (DeclSpace parent, MethodBase builder, Block block)
 		{
-			if (CodeGen.SymbolWriter == null)
+			if (!SymbolWriter.HasSymbolWriter)
 				return null;
 			if (block == null)
 				return null;

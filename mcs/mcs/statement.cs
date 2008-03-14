@@ -2310,7 +2310,7 @@ namespace Mono.CSharp {
 
 			ec.CurrentBlock = this;
 
-			bool emit_debug_info = (CodeGen.SymbolWriter != null);
+			bool emit_debug_info = SymbolWriter.HasSymbolWriter;
 			bool is_lexical_block = this == Explicit && Parent != null;
 
 			if (emit_debug_info) {
