@@ -1,5 +1,12 @@
 2008-03-14  Martin Baulig  <martin@ximian.com>
 
+	* symbolwriter.cs: Added the new symbol writer function from the
+	debugger's `terrania' branch; temporarily enclose them inside
+	`#if !DISABLE_TERRANIA_CHANGES' conditionals until I'm back from
+	my vacations.
+
+2008-03-14  Martin Baulig  <martin@ximian.com>
+
 	* symbolwriter.cs
 	(SymbolWriter): Make this a public static class.
 
