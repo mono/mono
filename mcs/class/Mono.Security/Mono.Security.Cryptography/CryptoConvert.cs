@@ -92,6 +92,7 @@ namespace Mono.Security.Cryptography {
 			if (offset >= blob.Length)
 				throw new ArgumentException ("blob is too small.");
 
+			RSAParameters rsap = new RSAParameters ();
 			try {
 				if ((blob [offset]   != 0x07) ||				// PRIVATEKEYBLOB (0x07)
 				    (blob [offset+1] != 0x02) ||				// Version (0x02)
@@ -107,7 +108,6 @@ namespace Mono.Security.Cryptography {
 				int bitLen = ToInt32LE (blob, offset+12);
 
 				// DWORD public exponent
-				RSAParameters rsap = new RSAParameters ();
 				byte[] exp = new byte [4];
 				Buffer.BlockCopy (blob, offset+16, exp, 0, 4);
 				Array.Reverse (exp);
@@ -161,26 +161,32 @@ namespace Mono.Security.Cryptography {
 					Buffer.BlockCopy (blob, pos, rsap.D, 0, byteLen);
 					Array.Reverse (rsap.D);
 				}
+			}
+			catch (Exception e) {
+				throw new CryptographicException ("Invalid blob.", e);
+			}
 
-				RSA rsa = null;
+			RSA rsa = null;
+			try {
+				rsa = RSA.Create ();
+				rsa.ImportParameters (rsap);
+			}
+			catch (CryptographicException ce) {
+				// this may cause problem when this code is run under
+				// the SYSTEM identity on Windows (e.g. ASP.NET). See
+				// http://bugzilla.ximian.com/show_bug.cgi?id=77559
 				try {
-					rsa = RSA.Create ();
-					rsa.ImportParameters (rsap);
-				}
-				catch (CryptographicException) {
-					// this may cause problem when this code is run under
-					// the SYSTEM identity on Windows (e.g. ASP.NET). See
-					// http://bugzilla.ximian.com/show_bug.cgi?id=77559
 					CspParameters csp = new CspParameters ();
 					csp.Flags = CspProviderFlags.UseMachineKeyStore;
 					rsa = new RSACryptoServiceProvider (csp);
 					rsa.ImportParameters (rsap);
 				}
-				return rsa;
+				catch {
+					// rethrow original, not the later, exception if this fails
+					throw ce;
+				}
 			}
-			catch (Exception e) {
-				throw new CryptographicException ("Invalid blob.", e);
-			}
+			return rsa;
 		}
 
 		static public DSA FromCapiPrivateKeyBlobDSA (byte[] blob)
@@ -195,6 +201,7 @@ namespace Mono.Security.Cryptography {
 			if (offset >= blob.Length)
 				throw new ArgumentException ("blob is too small.");
 
+			DSAParameters dsap = new DSAParameters ();
 			try {
 				if ((blob [offset] != 0x07) ||				// PRIVATEKEYBLOB (0x07)
 				    (blob [offset + 1] != 0x02) ||			// Version (0x02)
@@ -204,7 +211,6 @@ namespace Mono.Security.Cryptography {
 					throw new CryptographicException ("Invalid blob header");
 
 				int bitlen = ToInt32LE (blob, offset + 12);
-				DSAParameters dsap = new DSAParameters ();
 				int bytelen = bitlen >> 3;
 				int pos = offset + 16;
 
@@ -235,14 +241,32 @@ namespace Mono.Security.Cryptography {
 				Buffer.BlockCopy (blob, pos, dsap.Seed, 0, 20);
 				Array.Reverse (dsap.Seed);
 				pos += 20;
-
-				DSA dsa = (DSA)DSA.Create ();
-				dsa.ImportParameters (dsap);
-				return dsa;
 			}
 			catch (Exception e) {
 				throw new CryptographicException ("Invalid blob.", e);
 			}
+
+			DSA dsa = null;
+			try {
+				dsa = (DSA)DSA.Create ();
+				dsa.ImportParameters (dsap);
+			}
+			catch (CryptographicException ce) {
+				// this may cause problem when this code is run under
+				// the SYSTEM identity on Windows (e.g. ASP.NET). See
+				// http://bugzilla.ximian.com/show_bug.cgi?id=77559
+				try {
+					CspParameters csp = new CspParameters ();
+					csp.Flags = CspProviderFlags.UseMachineKeyStore;
+					dsa = new DSACryptoServiceProvider (csp);
+					dsa.ImportParameters (dsap);
+				}
+				catch {
+					// rethrow original, not the later, exception if this fails
+					throw ce;
+				}
+			}
+			return dsa;
 		}
 
 		static public byte[] ToCapiPrivateKeyBlob (RSA rsa) 

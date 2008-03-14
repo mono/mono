@@ -1,3 +1,10 @@
+2008-03-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoConvert.cs: Re-order exception handling to report the most
+	precise error to caller. Apply RSA extra check to DSA.
+	* RSAManaged.cs: Test imported parameters to ensure the public and 
+	private parts of the keypair match together.
+
 2008-03-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SymmetricTransform.cs: Sync with corlib. Fix ANSIX923 padding check
