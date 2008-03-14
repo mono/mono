@@ -671,9 +671,15 @@ namespace Mono.CSharp {
 			resume_points.Add (entry_point);
 			entry_point.Define (ig);
 
+			SymbolWriter.StartIteratorBody (ec.ig);
+
 			original_block.Emit (ec);
 
+			SymbolWriter.EndIteratorBody (ec.ig);
+
 			EmitYieldBreak (ig);
+
+			SymbolWriter.StartIteratorDispatcher (ec.ig);
 
 			ig.MarkLabel (dispatcher);
 
@@ -685,7 +691,11 @@ namespace Mono.CSharp {
 			ig.Emit (OpCodes.Ldfld, IteratorHost.PC.FieldBuilder);
 			ig.Emit (OpCodes.Switch, labels);
 
+			SymbolWriter.EndIteratorDispatcher (ec.ig);
+
 			Label end = ig.DefineLabel ();
+
+			SymbolWriter.StartIteratorDispatcher (ec.ig);
 
 			ig.MarkLabel (move_next_error);
   			ig.Emit (OpCodes.Ldc_I4_0); 
@@ -696,6 +706,8 @@ namespace Mono.CSharp {
 			ig.Emit (OpCodes.Ldc_I4_1);
 			ig.Emit (OpCodes.Stloc, retval);
 			ig.Emit (OpCodes.Leave, end);
+
+			SymbolWriter.EndIteratorDispatcher (ec.ig);
 
 			ig.BeginFaultBlock ();
 
@@ -938,11 +950,14 @@ namespace Mono.CSharp {
 		{
 			Report.Debug (128, "CREATE METHOD HOST", this, IteratorHost);
 
+			MemberCore mc = ec.ResolveContext as MemberCore;
+
 			IteratorHost.CaptureScopes ();
 
 			return new AnonymousMethodMethod (
 				this, RootScope, null, TypeManager.system_boolean_expr,
-				Modifiers.PUBLIC, new MemberName ("MoveNext", Location),
+				Modifiers.PUBLIC, mc.GetSignatureForError (),
+				new MemberName ("MoveNext", Location),
 				Parameters.EmptyReadOnlyParameters);
 		}
 

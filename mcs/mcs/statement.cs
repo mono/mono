@@ -540,6 +540,7 @@ namespace Mono.CSharp {
 				Statement.Emit (ec);
 			
 				ig.MarkLabel (ec.LoopBegin);
+				ec.Mark (loc, true);
 
 				expr.EmitBranchable (ec, while_loop, true);
 				
@@ -548,6 +549,11 @@ namespace Mono.CSharp {
 
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			DoEmit (ec);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)
@@ -1287,7 +1293,7 @@ namespace Mono.CSharp {
 		public void EmitSymbolInfo (EmitContext ec, string name)
 		{
 			if (builder != null)
-				ec.DefineLocalVariable (name, builder);
+				ec.DefineLocalVariable (Name, builder);
 		}
 
 		public bool IsThisAssigned (EmitContext ec)
@@ -2311,38 +2317,57 @@ namespace Mono.CSharp {
 			ec.CurrentBlock = this;
 
 			bool emit_debug_info = SymbolWriter.HasSymbolWriter;
-			bool is_lexical_block = this == Explicit && Parent != null;
+			bool is_lexical_block = (this == Explicit) && (Parent != null) &&
+				((flags & Flags.IsIterator) == 0);
+
+			bool omit_debug_info = ec.OmitDebuggingInfo;
 
 			if (emit_debug_info) {
 				if (is_lexical_block)
 					ec.BeginScope ();
 			}
-			ec.Mark (StartLocation, true);
-			if (scope_init != null)
+
+			if ((scope_init != null) || (scope_initializers != null))
+				SymbolWriter.OpenCompilerGeneratedBlock (ec.ig);
+
+			if (scope_init != null) {
+				ec.OmitDebuggingInfo = true;
 				scope_init.EmitStatement (ec);
+				ec.OmitDebuggingInfo = omit_debug_info;
+			}
 			if (scope_initializers != null) {
+				ec.OmitDebuggingInfo = true;
 				foreach (StatementExpression s in scope_initializers)
 					s.Emit (ec);
+				ec.OmitDebuggingInfo = omit_debug_info;
 			}
 
+			if ((scope_init != null) || (scope_initializers != null))
+				SymbolWriter.CloseCompilerGeneratedBlock (ec.ig);
+
+			ec.Mark (StartLocation, true);
 			DoEmit (ec);
-			ec.Mark (EndLocation, true); 
 
 			if (emit_debug_info) {
+				EmitSymbolInfo (ec);
+
 				if (is_lexical_block)
 					ec.EndScope ();
-
-				if (variables != null) {
-					foreach (DictionaryEntry de in variables) {
-						string name = (string) de.Key;
-						LocalInfo vi = (LocalInfo) de.Value;
-
-						vi.EmitSymbolInfo (ec, name);
-					}
-				}
 			}
 
 			ec.CurrentBlock = prev_block;
+		}
+
+		protected virtual void EmitSymbolInfo (EmitContext ec)
+		{
+			if (variables != null) {
+				foreach (DictionaryEntry de in variables) {
+					string name = (string) de.Key;
+					LocalInfo vi = (LocalInfo) de.Value;
+
+					vi.EmitSymbolInfo (ec, name);
+				}
+			}
 		}
 
 		public override string ToString ()
@@ -2398,6 +2423,10 @@ namespace Mono.CSharp {
 			: base (parent, flags, start, end)
 		{
 			this.Explicit = this;
+		}
+
+		public bool IsIterator {
+			get { return (flags & Flags.IsIterator) != 0; }
 		}
 
 		HybridDictionary known_variables;
@@ -2472,10 +2501,6 @@ namespace Mono.CSharp {
 		public bool HasVarargs {
 			get { return (flags & Flags.HasVarargs) != 0; }
 			set { flags |= Flags.HasVarargs; }
-		}
-
-		public bool IsIterator {
-			get { return (flags & Flags.IsIterator) != 0; }
 		}
 
 		//
@@ -2830,11 +2855,19 @@ namespace Mono.CSharp {
 			parameters.ResolveVariable (this);
 		}
 
+		protected override void EmitSymbolInfo (EmitContext ec)
+		{
+			if ((AnonymousContainer != null) && (AnonymousContainer.Scope != null))
+				SymbolWriter.DefineScopeVariable (AnonymousContainer.Scope.ID);
+
+			base.EmitSymbolInfo (ec);
+		}
+
 		public void MakeIterator (Iterator iterator)
 		{
 			flags |= Flags.IsIterator;
 
-			Block block = new ExplicitBlock (this, StartLocation, EndLocation);
+			Block block = new ExplicitBlock (this, flags, StartLocation, EndLocation);
 			foreach (Statement stmt in statements)
 				block.AddStatement (stmt);
 			statements.Clear ();

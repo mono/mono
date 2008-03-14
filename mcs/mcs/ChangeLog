@@ -1,3 +1,42 @@
+2008-02-19  Martin Baulig  <martin@ximian.com>
+
+	* class.cs
+	(IMethodData.EmitExtraSymbolInfo): New interface method.
+	(MethodData.Emit): Call method.EmitExtraSymbolInfo().
+	(MethodOrOperator.EmitExtraSymbolInfo): Implement this new
+	interface method here as an empty public virtual method.
+
+	* anonymous.cs
+	(AnonymousMethodMethod.ctor): Added `string real_name' argument.
+	(AnonymousMethodMethod.EmitExtraSymbolInfo): Override and call
+	CodeGen.SymbolWriter.SetRealMethodName().	
+
+2008-02-18  Martin Baulig  <martin@ximian.com>
+
+	* anonymous.cs
+	(ScopeInfo.EmitType): Override this and emit debugging
+	information for captured variables.
+	(RootScopeInfo.EmitType): Override this and emit symbol
+	information for a captured `this'.
+
+2008-02-15  Martin Baulig  <martin@ximian.com>
+
+	* iterators.cs: Emit debugging info.
+
+	* codegen.cs
+	(EmitContext.Flags): Add `OmitDebuggingInfo'.
+	(EmitContext.OmitDebuggingInfo): New public property.
+
+	* statement.cs
+	(While): Override Emit() and don't emit symbol info there; do it
+	inside DoEmit() instead.
+	(Block.Emit): Omit symbol information while emitting the scope
+	initializers; don't ec.Mark() the `EndLocation'.  Fix the lexical
+	block logic.
+	(ExplicitBlock.IsIterator): Moved here from `ToplevelBlock'.
+	(ToplevelBlock.MakeIterator): Pass the `flags' to `ExplicitBlock's
+	.ctor to make `IsIterator' work.
+
 2008-03-14  Martin Baulig  <martin@ximian.com>
 
 	* symbolwriter.cs: Added the new symbol writer function from the

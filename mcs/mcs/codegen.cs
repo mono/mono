@@ -285,7 +285,9 @@ namespace Mono.CSharp {
 			
 			InferReturnType = 1 << 9,
 			
-			InCompoundAssignment = 1 << 10
+			InCompoundAssignment = 1 << 10,
+
+			OmitDebuggingInfo = 1 << 11
 		}
 
 		Flags flags;
@@ -592,6 +594,16 @@ namespace Mono.CSharp {
 			get { return current_flow_branching; }
 		}
 
+		public bool OmitDebuggingInfo {
+			get { return (flags & Flags.OmitDebuggingInfo) != 0; }
+			set {
+				if (value)
+					flags |= Flags.OmitDebuggingInfo;
+				else
+					flags &= ~Flags.OmitDebuggingInfo;
+			}
+		}
+
 		// <summary>
 		//   Starts a new code branching.  This inherits the state of all local
 		//   variables and parameters from the current branching.
@@ -844,7 +856,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public void Mark (Location loc, bool check_file)
 		{
-			if (!SymbolWriter.HasSymbolWriter || loc.IsNull)
+			if (!SymbolWriter.HasSymbolWriter || OmitDebuggingInfo || loc.IsNull)
 				return;
 
 			if (check_file && (CurrentFile != loc.File))

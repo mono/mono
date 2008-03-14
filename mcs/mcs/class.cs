@@ -4200,6 +4200,9 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public virtual void EmitExtraSymbolInfo ()
+		{ }
+
 		#endregion
 
 	}
@@ -5080,6 +5083,9 @@ namespace Mono.CSharp {
 			}
 		}
 
+		void IMethodData.EmitExtraSymbolInfo ()
+		{ }
+
 		#endregion
 	}
 
@@ -5106,6 +5112,7 @@ namespace Mono.CSharp {
 		bool IsExcluded ();
 		bool IsClsComplianceRequired ();
 		void SetMemberIsUsed ();
+		void EmitExtraSymbolInfo ();
 	}
 
 	//
@@ -5388,7 +5395,7 @@ namespace Mono.CSharp {
 
 			if (GenericMethod != null)
 				GenericMethod.EmitAttributes ();
-			
+
 			SourceMethod source = SourceMethod.Create (parent, MethodBuilder, method.Block);
 
 			//
@@ -5401,8 +5408,10 @@ namespace Mono.CSharp {
 			else
 				ec.EmitTopBlock (method, block);
 
-			if (source != null)
+			if (source != null) {
+				method.EmitExtraSymbolInfo ();
 				source.CloseMethod ();
+			}
 		}
 
 		void EmitDestructor (EmitContext ec, ToplevelBlock block)
@@ -6355,6 +6364,8 @@ namespace Mono.CSharp {
 			get { throw new InvalidOperationException ("Unexpected attempt to get doc comment from " + this.GetType () + "."); }
 		}
 
+		void IMethodData.EmitExtraSymbolInfo ()
+		{ }
 	}
 
 	//
