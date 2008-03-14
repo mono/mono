@@ -1,5 +1,5 @@
 //
-// CustomizableLocalFileSettingsProvider.cs
+// CustomizableFileSettingsProvider.cs
 //
 // Authors:
 //	Noriaki Okimoto  <seara@ojk.sppd.ne.jp>

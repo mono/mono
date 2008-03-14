@@ -1,3 +1,8 @@
+2008-03-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CustomizableFileSettingsProvider.cs : cosmetic header fix
+	  requested by the author.
+
 2008-01-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SettingsPropertyValue.cs: Fix typo. Found using Gendarme.
