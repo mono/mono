@@ -1,3 +1,13 @@
+2008-03-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (mono_image_get_field_on_inst_token): New helper function to
+	create a token from a FieldOnTypeBuilderInst.
+	(mono_image_create_token): Handle FieldOnTypeBuilderInst.
+	(resolve_object): Ditto.
+
+	* object-internals.h (MonoReflectionFieldOnTypeBuilderInst): New structure
+	mirroring System.Reflection.Emit.FieldOnTypeBuilderInst.
+
 2008-03-14  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.h (MONO_DEBUGGER_VERSION): Bump to 68.
