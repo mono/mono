@@ -1,3 +1,9 @@
+2008-03-14 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Use the generic definition MonoGenericContext when available.
+	Remove code for checking generics instance compatibility in favor of
+	mono_class_is_assignable_from.
+
 2008-03-14  Mark Probst  <mark.probst@gmail.com>
 
 	* marshal.c, marshal.h, metadata-internals.h, image.c,
