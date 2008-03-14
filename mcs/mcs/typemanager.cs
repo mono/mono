@@ -25,7 +25,6 @@ using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Runtime.CompilerServices;
 using System.Diagnostics;
 
@@ -586,18 +585,39 @@ namespace Mono.CSharp {
 		return CSharpName (GetFullName (t));
     }
 
+	static readonly char [] elements = new char [] { '*', '[' };
+
 	public static string CSharpName (string name)
 	{
-		if (name.StartsWith (AnonymousTypeClass.ClassNamePrefix))
-				return AnonymousTypeClass.SignatureForError;
-			
-		return Regex.Replace (name,
-			@"^System\." +
-			@"(Int32|UInt32|Int16|UInt16|Int64|UInt64|" +
-			@"Single|Double|Char|Decimal|Byte|SByte|Object|" +
-			@"Boolean|String|Void|Null)" +
-			@"(\W+|\b)",
-			new MatchEvaluator (CSharpNameMatch)).Replace ('+', '.');
+		if (name.Length > 10) {
+			switch (name) {
+			case "System.Int32": return "int";
+			case "System.Int64": return "long";
+			case "System.String": return "string";
+			case "System.Boolean": return "bool";
+			case "System.Void": return "void";
+			case "System.Object": return "object";
+			case "System.UInt32": return "uint";
+			case "System.Int16": return "short";
+			case "System.UInt16": return "ushort";
+			case "System.UInt64": return "ulong";
+			case "System.Single": return "float";
+			case "System.Double": return "double";
+			case "System.Decimal": return "decimal";
+			case "System.Char": return "char";
+			case "System.Byte": return "byte";
+			case "System.SByte": return "sbyte";
+			}
+
+			int idx = name.IndexOfAny (elements, 10);
+			if (idx > 0)
+				return CSharpName (name.Substring (0, idx)) + name.Substring (idx);
+		}
+
+		if (name [0] == AnonymousTypeClass.ClassNamePrefix [0] && name.StartsWith (AnonymousTypeClass.ClassNamePrefix))
+			return AnonymousTypeClass.SignatureForError;
+
+		return name.Replace ('+', '.');
 	}
 
 	static public string CSharpName (Type[] types)
@@ -615,21 +635,6 @@ namespace Mono.CSharp {
 		return sb.ToString ();
 	}
 	
-	static String CSharpNameMatch (Match match) 
-	{
-		string s = match.Groups [1].Captures [0].Value;
-		return s.ToLower ().
-		Replace ("int32", "int").
-		Replace ("uint32", "uint").
-		Replace ("int16", "short").
-		Replace ("uint16", "ushort").
-		Replace ("int64", "long").
-		Replace ("uint64", "ulong").
-		Replace ("single", "float").
-		Replace ("boolean", "bool")
-		+ match.Groups [2].Captures [0].Value;
-	}
-
 	// Used for error reporting to show symbolic name instead of underlying value
 	public static string CSharpEnumValue (Type t, object value)
 	{

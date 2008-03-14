@@ -1,3 +1,7 @@
+2008-03-14  Marek Safar  <marek.safar@gmail.com>
+
+	* typemanager.cs (CSharpName): Made 250 times faster.
+
 2008-03-13  Marek Safar  <marek.safar@gmail.com>
 
 	* ecore.cs, expression.cs: Emit conversion for ET shift argument.
