@@ -19,14 +19,46 @@
 //
 // Copyright (c) 2007 Novell, Inc.
 //
+// Author:
+// 	Carlos Alberto Cortez <calberto.cortez@gmail.com>
+//
 
 using System;
+using System.Collections;
+using System.ComponentModel;
 
 #if NET_2_0
 
 namespace System.Windows.Forms
 {
-	public static class ListBindingHelper {
+	public static class ListBindingHelper 
+	{
+		public static object GetList (object source)
+		{
+			return GetList (source, String.Empty);
+		}
+
+		public static object GetList (object dataSource, string dataMember)
+		{
+			if (dataMember == null || dataMember.Length == 0)
+				return dataSource is IListSource ? ((IListSource) dataSource).GetList () : dataSource;
+
+			PropertyDescriptor property = GetProperty (dataSource.GetType (), dataMember);
+			if (property == null || property.PropertyType != typeof (IList))
+				throw new ArgumentException ("dataMember");
+
+			return property.GetValue (dataSource);
+		}
+
+		static PropertyDescriptor GetProperty (Type type, string property_name)
+		{
+			PropertyDescriptorCollection properties = TypeDescriptor.GetProperties (type);
+			foreach (PropertyDescriptor prop in properties)
+				if (prop.Name == property_name)
+					return prop;
+
+			return null;
+		}
 	}
 }
 
