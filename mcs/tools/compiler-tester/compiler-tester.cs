@@ -1,9 +1,40 @@
+//
+// compiler-tester.cs
+//
+// Author:
+//   Marek Safar (marek.safar@gmail.com)
+//
+
+//
+// Copyright (C) 2008 Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+
 using System;
 using System.IO;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text;
 using System.Collections;
+using System.Xml;
 
 namespace TestRunner {
 
@@ -118,6 +149,143 @@ namespace TestRunner {
 		}
 	}
 
+	class PositiveTestCase : TestCase
+	{
+		public class VerificationData
+		{
+			public class MethodData
+			{
+				public MethodData (MethodBase mi, int il_size)
+				{
+					this.Type = mi.DeclaringType.ToString ();
+					this.MethodName = mi.ToString ();
+					this.ILSize = il_size;
+				}
+
+				public MethodData (string type_name, string method_name, int il_size)
+				{
+					this.Type = type_name;
+					this.MethodName = method_name;
+					this.ILSize = il_size;
+				}
+
+				public string Type;
+				public string MethodName;
+				public int ILSize;
+			}
+
+			string test_file;
+			ArrayList methods;
+
+			public VerificationData (string test_file)
+			{
+				this.test_file = test_file;
+			}
+
+			public static VerificationData FromFile (string name, XmlTextReader r)
+			{
+				VerificationData tc = new VerificationData (name);
+				ArrayList methods = new ArrayList ();
+				r.Read ();
+				while (r.ReadToNextSibling ("type")) {
+					string type_name = r ["name"];
+					r.Read ();
+					while (r.ReadToNextSibling ("method")) {
+						string m_name = r ["name"];
+
+						r.ReadToDescendant ("size");
+						int il_size = r.ReadElementContentAsInt ();
+						methods.Add (new MethodData (type_name, m_name, il_size));
+						r.Read ();
+					}
+					r.Read ();
+				}
+
+				tc.methods = methods;
+				return tc;
+			}
+
+			public void WriteCodeInfoTo (XmlWriter w)
+			{
+				w.WriteStartElement ("test");
+				w.WriteAttributeString ("name", test_file);
+
+				string type = null;
+				foreach (MethodData data in methods) {
+					if (type != data.Type) {
+						if (type != null)
+							w.WriteEndElement ();
+
+						type = data.Type;
+						w.WriteStartElement ("type");
+						w.WriteAttributeString ("name", type);
+					}
+
+					w.WriteStartElement ("method");
+					w.WriteAttributeString ("name", data.MethodName);
+					w.WriteStartElement ("size");
+					w.WriteValue (data.ILSize);
+					w.WriteEndElement ();
+					w.WriteEndElement ();
+				}
+				w.WriteEndElement ();
+
+				w.WriteEndElement ();
+			}
+
+			public MethodData FindMethodData (string method_name, string declaring_type)
+			{
+				foreach (MethodData md in methods) {
+					if (md.MethodName == method_name && md.Type == declaring_type)
+						return md;
+				}
+
+				return null;
+			}
+		}
+
+		VerificationData verif_data;
+
+		public PositiveTestCase (string filename, string [] options, string [] deps)
+			: base (filename, options, deps)
+		{
+		}
+
+		public VerificationData VerificationProvider {
+			set {
+				verif_data = value;
+			}
+			get {
+				return verif_data;
+			}
+		}
+
+		public bool CompareIL (MethodBase mi, PositiveChecker checker)
+		{
+			if (verif_data == null)
+				verif_data = new VerificationData (FileName);
+
+			string m_name = mi.ToString ();
+			VerificationData.MethodData md = verif_data.FindMethodData (m_name, mi.DeclaringType.ToString ());
+			if (md == null) {
+				checker.HandleFailure (FileName, PositiveChecker.TestResult.ILError, m_name + " (new method?)");
+				return false;
+			}
+
+			MethodBody body = mi.GetMethodBody ();
+			int il_size = 0;
+			if (body != null)
+				il_size = body.GetILAsByteArray ().Length;
+
+			if (md.ILSize == il_size)
+				return true;
+
+			checker.HandleFailure (FileName, PositiveChecker.TestResult.ILError,
+				string.Format ("{0} (code size {1} -> {2})", m_name, md.ILSize, il_size));
+			return false;
+		}
+	}
+
 	class Checker: IDisposable
 	{
 		protected ITester tester;
@@ -137,16 +305,32 @@ namespace TestRunner {
 		protected ArrayList ignore_list = new ArrayList ();
 		protected ArrayList no_error_list = new ArrayList ();
 		
-		protected bool verbose; // = true;
+		protected bool verbose;
 			
 		int total_known_issues;
 
-		protected Checker (ITester tester, string log_file, string issue_file)
+		protected Checker (ITester tester)
 		{
 			this.tester = tester;
-			this.issue_file = issue_file;
-			ReadWrongErrors (issue_file);
-			this.log_file = new StreamWriter (log_file, false);
+		}
+
+		public string IssueFile {
+			set {
+				this.issue_file = value;
+				ReadWrongErrors (issue_file);
+			}
+		}
+		
+		public string LogFile {
+			set {
+				this.log_file = new StreamWriter (value, false);
+			}
+		}
+
+		public bool Verbose {
+			set {
+				verbose = value;
+			}
 		}
 
 		protected virtual bool GetExtraOptions (string file, out string[] compiler_options,
@@ -215,7 +399,7 @@ namespace TestRunner {
 				return false;
 			}
 
-			TestCase test = new TestCase (filename, compiler_options, dependencies);
+			TestCase test = CreateTestCase (filename, compiler_options, dependencies);
 			test_hash.Add (filename, test);
 
 			++total;
@@ -248,6 +432,10 @@ namespace TestRunner {
 			return tester.Invoke (test_args);
 		}
 
+		protected virtual TestCase CreateTestCase (string filename, string [] options, string [] deps)
+		{
+			return new TestCase (filename, options, deps);
+		}
 
 		void ReadWrongErrors (string file)
 		{
@@ -277,10 +465,13 @@ namespace TestRunner {
 			total_known_issues = know_issues.Count;
 		}
 
-		public virtual void PrintSummary ()
+		protected virtual void PrintSummary ()
 		{
 			LogLine ("Done" + Environment.NewLine);
-			LogLine ("{0} test cases passed ({1:0.##%})", success, (float) (success) / (float)total);
+			float rate = 0;
+			if (total > 0)
+				rate = (float) (success) / (float)total;
+			LogLine ("{0} test cases passed ({1:0.##%})", success, rate);
 
 			if (syntax_errors > 0)
 				LogLine ("{0} test(s) ignored because of wrong syntax !", syntax_errors);
@@ -316,30 +507,43 @@ namespace TestRunner {
 		protected void Log (string msg, params object [] rest)
 		{
 			Console.Write (msg, rest);
-			log_file.Write (msg, rest);
+			if (log_file != null)
+				log_file.Write (msg, rest);
 		}
 
 		protected void LogLine (string msg, params object [] rest)
 		{
 			Console.WriteLine (msg, rest);
-			log_file.WriteLine (msg, rest);
+			if (log_file != null)
+				log_file.WriteLine (msg, rest);
 		}
 		
 		protected void LogFileLine (string file, string msg, params object [] args)
 		{
 			string s = file + "...\t" + string.Format (msg, args); 
 			Console.WriteLine (s);
-			log_file.WriteLine (s);
+			if (log_file != null)
+				log_file.WriteLine (s);
 		}
 
 		#region IDisposable Members
 
 		public void Dispose()
 		{
-			log_file.Close ();
+			if (log_file != null)
+				log_file.Close ();
 		}
 
 		#endregion
+
+		public virtual void Initialize ()
+		{
+		}
+
+		public virtual void CleanUp ()
+		{
+			PrintSummary ();
+		}
 	}
 
 	class PositiveChecker: Checker
@@ -347,24 +551,29 @@ namespace TestRunner {
 		readonly string files_folder;
 		readonly static object[] default_args = new object[1] { new string[] {} };
 		string doc_output;
+		string verif_file;
+		bool update_verif_file;
+		Hashtable verif_data;
 
 #if !NET_2_1
 		ProcessStartInfo pi;
 #endif
 		readonly string mono;
 
-		protected enum TestResult {
+		public enum TestResult {
 			CompileError,
 			ExecError,
 			LoadError,
 			XmlError,
-			Success
+			Success,
+			ILError
 		}
 
-		public PositiveChecker (ITester tester, string log_file, string issue_file):
-			base (tester, log_file, issue_file)
+		public PositiveChecker (ITester tester, string verif_file):
+			base (tester)
 		{
 			files_folder = Directory.GetCurrentDirectory ();
+			this.verif_file = verif_file;
 
 #if !NET_2_1
 			pi = new ProcessStartInfo ();
@@ -379,6 +588,12 @@ namespace TestRunner {
 				pi.FileName = mono;
 			}
 #endif
+		}
+
+		public bool UpdateVerificationDataFile {
+			set {
+				update_verif_file = value;
+			}
 		}
 
 		protected override bool GetExtraOptions(string file, out string[] compiler_options,
@@ -432,8 +647,10 @@ namespace TestRunner {
 				return true;
 			}
 
+			Assembly assembly = null;
 			try {
-				mi = Assembly.LoadFile (file).EntryPoint;
+				assembly = Assembly.LoadFile (file);
+				mi = assembly.EntryPoint;
 			}
 			catch (FileNotFoundException) {
 				if (File.Exists (file)) {
@@ -459,10 +676,45 @@ namespace TestRunner {
 					HandleFailure (filename, TestResult.XmlError, e.Message);
 					return false;
 				}
+			} else {
+				if (verif_file != null) {
+					PositiveTestCase pt = (PositiveTestCase) test;
+					pt.VerificationProvider = (PositiveTestCase.VerificationData) verif_data [filename];
+					if (!CheckILSize (assembly, pt))
+						return false;
+				}
 			}
 
 			HandleFailure (filename, TestResult.Success, null);
 			return true;
+		}
+
+		protected override TestCase CreateTestCase (string filename, string [] options, string [] deps)
+		{
+			return new PositiveTestCase (filename, options, deps);
+		}
+
+		bool CheckILSize (Assembly assembly, PositiveTestCase test)
+		{
+			bool success = true;
+			Type[] types = assembly.GetTypes ();
+			foreach (Type t in types) {
+				if (!t.IsClass && t.IsValueType)
+					continue;
+
+				foreach (MemberInfo m in t.GetMembers (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly)) {
+					MethodBase mi = m as MethodBase;
+					if (mi == null)
+						continue;
+
+					if ((mi.Attributes & (MethodAttributes.PinvokeImpl)) != 0)
+						continue;
+
+					success &= test.CompareIL (mi, this);
+				}
+			}
+
+			return success;
 		}
 
 #if !NET_2_1
@@ -517,7 +769,7 @@ namespace TestRunner {
 			return true;
 		}
 
-		void HandleFailure (string file, TestResult status, string extra)
+		public void HandleFailure (string file, TestResult status, string extra)
 		{
 			switch (status) {
 				case TestResult.Success:
@@ -560,12 +812,70 @@ namespace TestRunner {
 				case TestResult.LoadError:
 					LogFileLine (file, "REGRESSION (SUCCESS -> LOAD ERROR)");
 					break;
+
+				case TestResult.ILError:
+					LogFileLine (file, "IL REGRESSION: " + extra);
+					extra = null;
+					break;
 			}
 
 			if (extra != null)
 				LogLine ("{0}", extra);
 
 			regression.Add (file);
+		}
+
+		public override void Initialize ()
+		{
+			if (verif_file != null)
+				LoadVerificationData (verif_file);
+
+			base.Initialize ();
+		}
+
+		public override void CleanUp ()
+		{
+			base.CleanUp ();
+
+			if (update_verif_file)
+				UpdateVerificationData (verif_file);
+		}
+
+		void LoadVerificationData (string file)
+		{
+			LogLine ("Loading verification data {0} ...", file);
+
+			using (XmlTextReader r = new XmlTextReader (file)) {
+				r.ReadStartElement ("tests");
+				verif_data = new Hashtable ();
+
+				while (r.Read ()) {
+					if (r.Name != "test")
+						continue;
+
+					string name = r.GetAttribute ("name");
+					PositiveTestCase.VerificationData tc = PositiveTestCase.VerificationData.FromFile (name, r);
+					verif_data.Add (name, tc);
+				}
+			}
+		}
+
+		void UpdateVerificationData (string file)
+		{
+			LogLine ("Updating verification data {0}...", file);
+
+			using (XmlTextWriter w = new XmlTextWriter (file, null)) {
+				w.Formatting = Formatting.Indented;
+
+				w.WriteStartDocument ();
+				w.WriteComment ("This file contains expected IL and metadata produced by compiler for each test");
+				w.WriteStartElement ("tests");
+				foreach (PositiveTestCase tc in tests) {
+					if (tc.VerificationProvider != null)
+						tc.VerificationProvider.WriteCodeInfoTo (w);
+				}
+				w.WriteEndElement ();
+			}
 		}
 	}
 
@@ -587,8 +897,8 @@ namespace TestRunner {
 			Duplicate
 		}
 
-		public NegativeChecker (ITester tester, string log_file, string issue_file, bool check_msg):
-			base (tester, log_file, issue_file)
+		public NegativeChecker (ITester tester, bool check_msg):
+			base (tester)
 		{
 			this.check_msg = check_msg;
 			wrong_warning = new Hashtable ();
@@ -828,7 +1138,7 @@ namespace TestRunner {
 			return false;
 		}
 
-		public override void PrintSummary()
+		protected override void PrintSummary()
 		{
 			base.PrintSummary ();
 
@@ -845,54 +1155,87 @@ namespace TestRunner {
 
 	class Tester {
 
-		static int Main(string[] args) {
-			if (args.Length != 5) {
-				Console.Error.WriteLine ("Usage: TestRunner [negative|positive] test-pattern compiler know-issues log-file");
+		static int Main(string[] args)
+		{
+			string temp;
+
+			if (GetOption ("help", args, false, out temp)) {
+				Usage ();
+				return 0;
+			}
+
+			string compiler;
+			if (!GetOption ("compiler", args, true, out compiler)) {
+				Usage ();
 				return 1;
 			}
 
-			string mode = args[0].ToLower ();
-#if NET_2_0
-			string test_pattern = args [1] == "0" ? "*cs*.cs" : "*test-*.cs"; //args [1];
-#else
-			string test_pattern = args [1] == "0" ? "cs*.cs" : "test-*.cs"; //args [1];
-#endif
-			string mcs = args [2];
-			string issue_file = args [3];
-			string log_fname = args [4];
-
-			string[] files = Directory.GetFiles (".", test_pattern);
-
 			ITester tester;
 			try {
-				Console.WriteLine ("Testing: " + mcs);
-				tester = new ReflectionTester (Assembly.LoadFile (mcs));
+				Console.WriteLine ("Loading " + compiler + " ...");
+				tester = new ReflectionTester (Assembly.LoadFile (compiler));
 			}
 			catch (Exception) {
 #if NET_2_1
 				throw;
 #else
 				Console.Error.WriteLine ("Switching to command line mode (compiler entry point was not found)");
-				if (!File.Exists (mcs)) {
+				if (!File.Exists (compiler)) {
 					Console.Error.WriteLine ("ERROR: Tested compiler was not found");
 					return 1;
 				}
-				tester = new ProcessTester (mcs);
+				tester = new ProcessTester (compiler);
 #endif
+			}
+
+			string mode;
+			if (!GetOption ("mode", args, true, out mode)) {
+				Usage ();
+				return 1;
 			}
 
 			Checker checker;
 			switch (mode) {
-				case "negative":
-					checker = new NegativeChecker (tester, log_fname, issue_file, true);
+				case "neg":
+					checker = new NegativeChecker (tester, true);
 					break;
-				case "positive":
-					checker = new PositiveChecker (tester, log_fname, issue_file);
+				case "pos":
+					string iltest;
+					GetOption ("il", args, false, out iltest);
+					checker = new PositiveChecker (tester, iltest);
+
+					if (iltest != null && GetOption ("update-il", args, false, out temp)) {
+						((PositiveChecker) checker).UpdateVerificationDataFile = true;
+					}
+
 					break;
 				default:
-					Console.Error.WriteLine ("You must specify testing mode (positive or negative)");
+					Console.Error.WriteLine ("Invalid -mode argument");
 					return 1;
 			}
+
+
+			if (GetOption ("issues", args, true, out temp))
+				checker.IssueFile = temp;
+			if (GetOption ("log", args, true, out temp))
+				checker.LogFile = temp;
+			if (GetOption ("verbose", args, false, out temp))
+				checker.Verbose = true;
+
+
+			string test_pattern;
+			if (!GetOption ("files", args, true, out test_pattern)) {
+				Usage ();
+				return 1;
+			}
+
+			string [] files = Directory.GetFiles (".", test_pattern);
+			if (files.Length == 0) {
+				Console.Error.WriteLine ("No files matching `{0}' found", test_pattern);
+				return 2;
+			}
+
+			checker.Initialize ();
 
 			foreach (string s in files) {
 				string filename = Path.GetFileName (s);
@@ -906,11 +1249,52 @@ namespace TestRunner {
 				checker.Do (filename);
 			}
 
-			checker.PrintSummary ();
+			checker.CleanUp ();
 
 			checker.Dispose ();
 
 			return checker.ResultCode;
+		}
+
+		static bool GetOption (string opt, string[] args, bool req_arg, out string value)
+		{
+			opt = "-" + opt;
+			foreach (string a in args) {
+				if (a.StartsWith (opt)) {
+					int sep = a.IndexOf (':');
+					if (sep > 0) {
+						value = a.Substring (sep + 1);
+					} else {
+						value = null;
+						if (req_arg) {
+							Console.Error.WriteLine ("Missing argument in option " + opt);
+							return false;
+						}
+					}
+
+					return true;
+				}
+			}
+
+			value = null;
+			return false;
+		}
+
+		static void Usage ()
+		{
+			Console.WriteLine (
+				"Mono compiler tester, (C) 2008 Novell, Inc.\n" +
+				"compiler-tester -mode:[pos|neg] -compiler:FILE -files:file-list [options]\n" +
+				"   \n" +
+				"   -compiler:FILE   The file which will be used to compiler tests\n" +
+				"   -il:IL-FILE      XML file with expected IL details for each test\n" +
+				"   -issues:FILE     The list of expected failures\n" +
+				"   -log:FILE        Writes any output also to the file\n" +
+				"   -help            Lists all options\n" +
+				"   -mode:[pos|neg]  Specifies compiler test mode\n" +
+				"   -update-il       Updates IL-FILE to match compiler output\n" +
+				"   -verbose         Prints more details during testing\n"
+				);
 		}
 	}
 }
