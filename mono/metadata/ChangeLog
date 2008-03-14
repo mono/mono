@@ -1,5 +1,7 @@
 2008-03-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* reflection.c (mono_image_get_field_on_inst_token): Add caching.
+	
 	* reflection.c (mono_image_get_field_on_inst_token): New helper function to
 	create a token from a FieldOnTypeBuilderInst.
 	(mono_image_create_token): Handle FieldOnTypeBuilderInst.
