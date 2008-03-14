@@ -1,3 +1,8 @@
+2008-03-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* Binder.cs (ChangeType): Add support for Char->Double/Single conversations. Fixes
+	#367655.
+
 2008-03-10  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Assembly.cs (GetFile): Fixed exception messages and param name.

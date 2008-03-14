@@ -212,8 +212,16 @@ namespace System.Reflection
 						return value;
 				}
 
-				if (check_type (vtype, type))
+				if (check_type (vtype, type)) {
+					// These are not supported by Convert
+					if (vtype == typeof (Char)) {
+						if (type == typeof (double))
+							return (double)(char)value;
+						if (type == typeof (float))
+							return (float)(char)value;
+					}
 					return Convert.ChangeType (value, type);
+				}
 				return null;
 			}
 
