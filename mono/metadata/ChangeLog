@@ -1,3 +1,7 @@
+2008-03-14 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* icall-def.h: Add missing function PerformanceCounterCategory::GetInstanceNames.
+
 2008-03-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (mono_image_get_field_on_inst_token): Add caching.
