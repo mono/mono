@@ -111,43 +111,36 @@ namespace System.Windows.Forms {
 			get { return cellValue; }
 		}
 
+		[MonoTODO ("Does not draw Focus or ErrorIcon")]
 		public void Paint (Rectangle clipBounds, DataGridViewPaintParts paintParts) {
-			if (rowIndex < -1 || rowIndex >= dataGridView.Rows.Count) {
+			if (rowIndex < -1 || rowIndex >= dataGridView.Rows.Count)
 				throw new InvalidOperationException("Invalid \"RowIndex.\"");
-			}
-			if (columnIndex < -1 || columnIndex >= dataGridView.Columns.Count) {
+			if (columnIndex < -1 || columnIndex >= dataGridView.Columns.Count)
 				throw new InvalidOperationException("Invalid \"ColumnIndex.\"");
-			}
-			throw new NotImplementedException();
+
+			DataGridViewCell cell;
+
+			if (rowIndex == -1 && columnIndex == -1)
+				cell = dataGridView.TopLeftHeaderCell;
+			else if (rowIndex == -1)
+				cell = dataGridView.Columns[columnIndex].HeaderCell;
+			else if (columnIndex == -1)
+				cell = dataGridView.Rows[rowIndex].HeaderCell;
+			else
+				cell = dataGridView.Rows[rowIndex].Cells[columnIndex];
+
+			cell.PaintInternal (graphics, clipBounds, cellBounds, rowIndex, cellState, Value, formattedValue, errorText, cellStyle, advancedBorderStyle, paintParts);				
 		}
 
-		public void PaintBackground (Rectangle clipBounds, bool cellsPaintSelectionBackground) {
-			if (rowIndex < -1 || rowIndex >= dataGridView.Rows.Count) {
-				throw new InvalidOperationException("Invalid \"RowIndex.\"");
-			}
-			if (columnIndex < -1 || columnIndex >= dataGridView.Columns.Count) {
-				throw new InvalidOperationException("Invalid \"ColumnIndex.\"");
-			}
-			DataGridViewCell cell = dataGridView.Rows[rowIndex].Cells[columnIndex];
-			Color color;
-			if (cellsPaintSelectionBackground) {
-				color = cell.InheritedStyle.SelectionBackColor;
-			}
-			else {
-				color = cell.InheritedStyle.BackColor;
-			}
-			///////// NOT CHECKED //////////////
-			graphics.FillRectangle(new SolidBrush(color), clipBounds);
+		public void PaintBackground (Rectangle clipBounds, bool cellsPaintSelectionBackground)
+		{
+			Paint (clipBounds, DataGridViewPaintParts.Background | DataGridViewPaintParts.Border);
 		}
-
-		public void PaintContent (Rectangle clipBounds) {
-			if (rowIndex < -1 || rowIndex >= dataGridView.Rows.Count) {
-				throw new InvalidOperationException("Invalid \"RowIndex.\"");
-			}
-			if (columnIndex < -1 || columnIndex >= dataGridView.Columns.Count) {
-				throw new InvalidOperationException("Invalid \"ColumnIndex.\"");
-			}
-			throw new NotImplementedException();
+			
+		[MonoTODO ("Needs column header sort glyph and row header cell selected/edit pencil glyphs")]
+		public void PaintContent (Rectangle clipBounds)
+		{
+			Paint (clipBounds, DataGridViewPaintParts.ContentBackground | DataGridViewPaintParts.ContentForeground);
 		}
 
 	}

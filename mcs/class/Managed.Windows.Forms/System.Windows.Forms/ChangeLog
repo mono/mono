@@ -1,3 +1,10 @@
+2008-03-14  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridView*: Completely revamp the drawing to match the
+	public API.  Our grids now look better, and call all the
+	appropriate methods and event to allow users to override
+	the painting and do their own.
+
 2008-03-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListBindingHelper.cs: Implement 2.0 GetList methods.

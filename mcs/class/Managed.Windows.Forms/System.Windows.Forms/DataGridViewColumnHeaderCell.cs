@@ -153,18 +153,33 @@ namespace System.Windows.Forms {
 			return null;
 		}
 
+		[MonoTODO ("Paint sort arrows")]
 		protected override void Paint (Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates dataGridViewElementState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts) {
-			graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (cellStyle.BackColor), cellBounds);
-			
-			StringFormat format = cellStyle.SetAlignment ((StringFormat) StringFormat.GenericTypographic.Clone ());
-			Rectangle text_rect = cellBounds;
-			Rectangle borders = BorderWidths (advancedBorderStyle);
-			text_rect.X += borders.X;
-			text_rect.Y += borders.Y;
-			text_rect.Height -= (borders.Y + borders.Height);
-			text_rect.Width -= (borders.X + borders.Width);
-			graphics.DrawString ((string) formattedValue, cellStyle.Font, ThemeEngine.Current.ResPool.GetSolidBrush (cellStyle.ForeColor), text_rect, format);
-			PaintBorder(graphics, clipBounds, cellBounds, cellStyle, advancedBorderStyle);
+			// Prepaint
+			DataGridViewPaintParts pre = DataGridViewPaintParts.Background | DataGridViewPaintParts.SelectionBackground;
+			pre = pre & paintParts;
+
+			base.Paint (graphics, clipBounds, cellBounds, rowIndex, dataGridViewElementState, value, formattedValue, errorText, cellStyle, advancedBorderStyle, pre);
+
+			// Paint content
+			if ((paintParts & DataGridViewPaintParts.ContentForeground) == DataGridViewPaintParts.ContentForeground) {
+				Color color = Selected ? cellStyle.SelectionForeColor : cellStyle.ForeColor;
+
+				TextFormatFlags flags = TextFormatFlags.EndEllipsis | TextFormatFlags.VerticalCenter | TextFormatFlags.TextBoxControl;
+
+				Rectangle contentbounds = cellBounds;
+				contentbounds.Height -= 2;
+				contentbounds.Width -= 2;
+
+				if (formattedValue != null)
+					TextRenderer.DrawText (graphics, formattedValue.ToString (), cellStyle.Font, contentbounds, color, flags);
+			}
+
+			// Postpaint
+			DataGridViewPaintParts post = DataGridViewPaintParts.Border;
+			post = post & paintParts;
+
+			base.Paint (graphics, clipBounds, cellBounds, rowIndex, dataGridViewElementState, value, formattedValue, errorText, cellStyle, advancedBorderStyle, post);
 		}
 
 		protected override bool SetValue (int rowIndex, object value) {

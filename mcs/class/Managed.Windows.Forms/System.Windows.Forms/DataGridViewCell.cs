@@ -1134,9 +1134,26 @@ namespace System.Windows.Forms {
 		internal void OnMouseUpInternal (DataGridViewCellMouseEventArgs e) {
 			OnMouseUp (e);
 		}
-		
-		protected virtual void Paint (Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts) {
-			throw new NotImplementedException();
+
+		internal void PaintInternal (Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts)
+		{
+			Paint (graphics, clipBounds, cellBounds, rowIndex, cellState, value, formattedValue, errorText, cellStyle, advancedBorderStyle, paintParts);
+		}
+			
+		protected virtual void Paint (Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts)
+		{
+			if ((paintParts & DataGridViewPaintParts.Background) == DataGridViewPaintParts.Background)
+				PaintPartBackground (graphics, cellBounds);
+			if ((paintParts & DataGridViewPaintParts.SelectionBackground) == DataGridViewPaintParts.SelectionBackground)
+				PaintPartSelectionBackground (graphics, cellBounds, cellState, cellStyle);
+			if ((paintParts & DataGridViewPaintParts.Border) == DataGridViewPaintParts.Border)
+				PaintPartBorder (graphics, cellBounds, rowIndex);
+			if ((paintParts & DataGridViewPaintParts.ContentForeground) == DataGridViewPaintParts.ContentForeground)
+				PaintPartContent (graphics, cellBounds, rowIndex, cellState, cellStyle, formattedValue);
+			if ((paintParts & DataGridViewPaintParts.Focus) == DataGridViewPaintParts.Focus)
+				{ } // Have to figure out how to tell if cell is focused
+			if ((paintParts & DataGridViewPaintParts.ErrorIcon) == DataGridViewPaintParts.ErrorIcon)
+				PaintErrorIcon (graphics, clipBounds, cellBounds, errorText);
 		}
 
 		protected virtual void PaintBorder (Graphics graphics, Rectangle clipBounds, Rectangle bounds, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle) {
@@ -1227,10 +1244,68 @@ namespace System.Windows.Forms {
 			//}
 		}
 
-		protected virtual void PaintErrorIcon (Graphics graphics, Rectangle clipBounds, Rectangle cellValueBounds, string errorText) {
-			throw new NotImplementedException();
+		[MonoTODO ("Stub, not implemented")]
+		protected virtual void PaintErrorIcon (Graphics graphics, Rectangle clipBounds, Rectangle cellValueBounds, string errorText)
+		{
 		}
 
+		private void PaintPartBackground (Graphics graphics, Rectangle cellBounds)
+		{
+			Color color = InheritedStyle.BackColor;
+			graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (color), cellBounds);
+		}
+		
+		private void PaintPartBorder (Graphics graphics, Rectangle cellBounds, int rowIndex)
+		{
+			Pen p = SystemPens.ControlDark;
+
+			if (columnIndex == -1) {
+				graphics.DrawLine (p, cellBounds.Left, cellBounds.Top, cellBounds.Left, cellBounds.Bottom);
+				graphics.DrawLine (p, cellBounds.Right - 1, cellBounds.Top, cellBounds.Right - 1, cellBounds.Bottom);
+
+				if (rowIndex == DataGridView.Rows.Count - 1 || rowIndex == -1)
+					graphics.DrawLine (p, cellBounds.Left, cellBounds.Bottom - 1, cellBounds.Right - 1, cellBounds.Bottom - 1);
+				else
+					graphics.DrawLine (p, cellBounds.Left + 3, cellBounds.Bottom - 1, cellBounds.Right - 3, cellBounds.Bottom - 1);
+			} else {
+				graphics.DrawLine (p, cellBounds.Right - 1, cellBounds.Top, cellBounds.Right - 1, cellBounds.Bottom);
+				graphics.DrawLine (p, cellBounds.Left, cellBounds.Bottom - 1, cellBounds.Right - 1, cellBounds.Bottom - 1);
+			}
+		}
+
+		private void PaintPartContent (Graphics graphics, Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState, DataGridViewCellStyle cellStyle, object formattedValue)
+		{
+			Color color = Selected ? cellStyle.SelectionForeColor : cellStyle.ForeColor;
+
+			TextFormatFlags flags = TextFormatFlags.EndEllipsis | TextFormatFlags.VerticalCenter | TextFormatFlags.TextBoxControl;
+
+			cellBounds.Height -= 2;
+			cellBounds.Width -= 2;
+
+			if (formattedValue != null)
+				TextRenderer.DrawText (graphics, formattedValue.ToString (), cellStyle.Font, cellBounds, color, flags);
+		}
+		
+		private void PaintPartSelectionBackground (Graphics graphics, Rectangle cellBounds, DataGridViewElementStates cellState, DataGridViewCellStyle cellStyle)
+		{
+			if ((cellState & DataGridViewElementStates.Selected) != DataGridViewElementStates.Selected)
+				return;
+
+			Color color = cellStyle.SelectionBackColor;
+			graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (color), cellBounds);
+		}
+
+		internal void PaintWork (Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts)
+		{
+			DataGridViewCellPaintingEventArgs pea = new DataGridViewCellPaintingEventArgs (DataGridView, graphics, clipBounds, cellBounds, rowIndex, columnIndex, cellState, Value, Value, ErrorText, cellStyle, advancedBorderStyle, paintParts);
+			DataGridView.OnCellPaintingInternal (pea);
+			
+			if (pea.Handled)
+				return;
+				
+			pea.Paint (pea.ClipBounds, pea.PaintParts);
+		}
+		
 		protected virtual bool SetValue (int rowIndex, object value) {
 			if (valuex != value) {
 				valuex = value;

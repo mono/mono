@@ -1153,6 +1153,7 @@ namespace System.Windows.Forms {
 			}
 			set {
 				topLeftHeaderCell = value;
+				topLeftHeaderCell.SetDataGridView (this);
 			}
 		}
 
@@ -3680,7 +3681,6 @@ namespace System.Windows.Forms {
 			// Paint the background
 			PaintBackground (g, e.ClipRectangle, bounds);
 			
-			int i = 0;
 			ArrayList sortedColumns = columns.ColumnDisplayIndexSortedArrayList;
 			bounds.Y = -verticalScrollingOffset;
 			bounds.X = -horizontalScrollingOffset;
@@ -3688,50 +3688,58 @@ namespace System.Windows.Forms {
 			// Take borders into account
 			bounds.Inflate (-BorderWidth, -BorderWidth);
 			
-			gridWidth = 0;
-			foreach (DataGridViewColumn col in sortedColumns) {
-				gridWidth += col.Width;
+			// Paint the top left cell
+			if (rowHeadersVisible && columnHeadersVisible) {
+				Rectangle topleftbounds = new Rectangle (bounds.X, bounds.Y, rowHeadersWidth, columnHeadersHeight);
+				
+				TopLeftHeaderCell.PaintWork (g, e.ClipRectangle, topleftbounds, -1, TopLeftHeaderCell.State, ColumnHeadersDefaultCellStyle, AdvancedColumnHeadersBorderStyle, DataGridViewPaintParts.All);
 			}
+			
+			// Paint the column headers
 			if (columnHeadersVisible) {
 				Rectangle headerBounds = bounds;
-				if (rowHeadersVisible) {
-					headerBounds.X += rowHeadersWidth;
-				}
 				headerBounds.Height = columnHeadersHeight;
-				int j = 0;
+				
+				if (rowHeadersVisible)
+					headerBounds.X += rowHeadersWidth;
+				
 				foreach (DataGridViewColumn col in sortedColumns) {
 					headerBounds.Width = col.Width;
 					DataGridViewCell cell = col.HeaderCell;
-					DataGridViewCellStyle style = columnHeadersDefaultCellStyle;
-					DataGridViewAdvancedBorderStyle intermediateBorderStyle = (DataGridViewAdvancedBorderStyle) ((ICloneable)this.AdvancedColumnHeadersBorderStyle).Clone();
-					DataGridViewAdvancedBorderStyle borderStyle = AdjustColumnHeaderBorderStyle(this.AdvancedColumnHeadersBorderStyle, intermediateBorderStyle, j == 0, j == columns.Count - 1);
-					cell.InternalPaint(e.Graphics, e.ClipRectangle, headerBounds, cell.RowIndex, cell.State, cell.Value, cell.FormattedValue, cell.ErrorText, style, borderStyle, DataGridViewPaintParts.All);
+
+					DataGridViewAdvancedBorderStyle intermediateBorderStyle = (DataGridViewAdvancedBorderStyle)((ICloneable)this.AdvancedColumnHeadersBorderStyle).Clone ();
+					DataGridViewAdvancedBorderStyle borderStyle = AdjustColumnHeaderBorderStyle (this.AdvancedColumnHeadersBorderStyle, intermediateBorderStyle, cell.ColumnIndex == 0, cell.ColumnIndex == columns.Count - 1);
+
+					cell.PaintWork (g, e.ClipRectangle, headerBounds, -1, cell.State, columnHeadersDefaultCellStyle, borderStyle, DataGridViewPaintParts.All);
+					
 					headerBounds.X += col.Width;
-					j++;
 				}
+
 				bounds.Y += columnHeadersHeight;
 			}
-			gridHeight = 0;
+			
+			
+			// Draw rows
 			foreach (DataGridViewRow row in rows) {
-				gridHeight += row.Height;
-				if (rowHeadersVisible) {
-					Rectangle rowHeaderBounds = bounds;
-					rowHeaderBounds.Height = row.Height;
-					rowHeaderBounds.Width = rowHeadersWidth;
-					DataGridViewCell cell = row.HeaderCell;
-					DataGridViewCellStyle style = rowHeadersDefaultCellStyle;
-					DataGridViewAdvancedBorderStyle intermediateBorderStyle = (DataGridViewAdvancedBorderStyle) ((ICloneable)this.AdvancedRowHeadersBorderStyle).Clone();
-					DataGridViewAdvancedBorderStyle borderStyle = cell.AdjustCellBorderStyle(this.AdvancedRowHeadersBorderStyle, intermediateBorderStyle, true, true, false, cell.RowIndex == 0);
-					cell.InternalPaint(e.Graphics, e.ClipRectangle, rowHeaderBounds, cell.RowIndex, cell.State, cell.Value, cell.FormattedValue, cell.ErrorText, style, borderStyle, DataGridViewPaintParts.All);
-					//e.Graphics.FillRectangle(new SolidBrush(rowHeadersDefaultCellStyle.BackColor), rowHeadersBounds);
-					bounds.X += rowHeadersWidth;
-				}
 				bounds.Height = row.Height;
-				row.Paint (e.Graphics, e.ClipRectangle, bounds, row.Index, row.State, row.Index == 0, row.Index == rows.Count - 1);
+				bool is_first = row.Index == 0;
+				bool is_last = row.Index == rows.Count - 1;
+				
+				DataGridViewElementStates state = DataGridViewElementStates.Visible;
+				state |= DataGridViewElementStates.Displayed;
+
+				row.Paint (g, e.ClipRectangle, bounds, row.Index, state, is_first, is_last);
+								
 				bounds.Y += bounds.Height;
 				bounds.X = -horizontalScrollingOffset + BorderWidth;
-				i++;
 			}
+			
+			gridWidth = 0;
+			gridHeight = 0;
+			
+			foreach (DataGridViewColumn col in sortedColumns)
+				gridWidth += col.Width;
+
 			if (rowHeadersVisible) {
 				gridWidth += rowHeadersWidth;
 			}

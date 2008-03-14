@@ -154,39 +154,31 @@ namespace System.Windows.Forms {
 
 		protected override void Paint (Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts)
 		{
-			//////////////////
-			/*
-			Size size = DataGridViewCell.MeasureTextSize(graphics, (string) formattedValue, cellStyle.Font, TextFormatFlags.Default);
-			switch (cellStyle.Alignment) {
-				case DataGridViewContentAlignment.TopLeft:
-					break;
-			}
-			//cell.SetContentBounds(cellBounds);
-			*/
-			//////////////////
-			StringFormat format;
-			Brush forecolor_brush;
-			Brush backcolor_brush;
-			Rectangle text_rect = cellBounds;
-			Rectangle borders = BorderWidths (advancedBorderStyle);
+			// Prepaint
+			DataGridViewPaintParts pre = DataGridViewPaintParts.Background | DataGridViewPaintParts.SelectionBackground;
+			pre = pre & paintParts;
 			
-			text_rect.X += borders.X;
-			text_rect.Y += borders.Y;
-			text_rect.Height -= (borders.Y + borders.Height);
-			text_rect.Width -= (borders.X + borders.Width);
-			
-			format = cellStyle.SetAlignment ((StringFormat) StringFormat.GenericTypographic.Clone ());
-			if ((cellState & DataGridViewElementStates.Selected) != 0 && !IsInEditMode) {
-				backcolor_brush =  ThemeEngine.Current.ResPool.GetSolidBrush (cellStyle.SelectionBackColor);
-				forecolor_brush = ThemeEngine.Current.ResPool.GetSolidBrush (cellStyle.SelectionForeColor);
-			} else {
-				backcolor_brush =  ThemeEngine.Current.ResPool.GetSolidBrush (cellStyle.BackColor);
-				forecolor_brush = ThemeEngine.Current.ResPool.GetSolidBrush (cellStyle.ForeColor);
+			base.Paint (graphics, clipBounds, cellBounds, rowIndex, cellState, value, formattedValue, errorText, cellStyle, advancedBorderStyle, pre);
+
+			// Paint content
+			if ((paintParts & DataGridViewPaintParts.ContentForeground) == DataGridViewPaintParts.ContentForeground) {
+				Color color = Selected ? cellStyle.SelectionForeColor : cellStyle.ForeColor;
+
+				TextFormatFlags flags = TextFormatFlags.EndEllipsis | TextFormatFlags.VerticalCenter | TextFormatFlags.TextBoxControl;
+
+				Rectangle contentbounds = cellBounds;
+				contentbounds.Height -= 2;
+				contentbounds.Width -= 2;
+
+				if (formattedValue != null)
+					TextRenderer.DrawText (graphics, formattedValue.ToString (), cellStyle.Font, contentbounds, color, flags);
 			}
 
-			graphics.FillRectangle (backcolor_brush, cellBounds);
-			graphics.DrawString ((string) formattedValue, cellStyle.Font, forecolor_brush, text_rect, format);
-			PaintBorder (graphics, clipBounds, cellBounds, cellStyle, advancedBorderStyle);
+			// Postpaint
+			DataGridViewPaintParts post = DataGridViewPaintParts.Border;
+			post = post & paintParts;
+
+			base.Paint (graphics, clipBounds, cellBounds, rowIndex, cellState, value, formattedValue, errorText, cellStyle, advancedBorderStyle, post);
 		}
 
 	}

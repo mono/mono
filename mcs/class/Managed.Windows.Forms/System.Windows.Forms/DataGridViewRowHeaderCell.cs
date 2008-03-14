@@ -158,13 +158,66 @@ namespace System.Windows.Forms {
 			return null;
 		}
 
+		[MonoTODO ("Needs row header cell selected/edit pencil glyphs")]
 		protected override void Paint (Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts)
 		{
-			graphics.FillRectangle(new SolidBrush(cellStyle.BackColor), cellBounds);
-			if ((cellState & DataGridViewElementStates.Selected) != 0) {
-				graphics.DrawString("*", cellStyle.Font, new SolidBrush(cellStyle.ForeColor), cellBounds, StringFormat.GenericDefault);
+			// Prepaint
+			DataGridViewPaintParts pre = DataGridViewPaintParts.Background | DataGridViewPaintParts.SelectionBackground;
+			pre = pre & paintParts;
+
+			base.Paint (graphics, clipBounds, cellBounds, rowIndex, cellState, value, formattedValue, errorText, cellStyle, advancedBorderStyle, pre);
+
+			// Paint content background
+			if ((paintParts & DataGridViewPaintParts.ContentBackground) == DataGridViewPaintParts.ContentBackground) {
+				Color color = Selected ? cellStyle.SelectionForeColor : cellStyle.ForeColor;
+				Pen p = ThemeEngine.Current.ResPool.GetPen (color);
+				int x = cellBounds.Left + 6;
+
+				if (DataGridView.Rows[rowIndex].Selected) {
+					DrawRightArrowGlyph (graphics, p, x, cellBounds.Top + (cellBounds.Height / 2) - 4);
+					x += 7;
+				}
+
+				if (DataGridView.Rows[rowIndex].IsNewRow)
+					DrawNewRowGlyph (graphics, p, x, cellBounds.Top + (cellBounds.Height / 2) - 4);
 			}
-			PaintBorder(graphics, clipBounds, cellBounds, cellStyle, advancedBorderStyle);
+
+			// Paint content
+			if ((paintParts & DataGridViewPaintParts.ContentForeground) == DataGridViewPaintParts.ContentForeground) {
+				Color color = Selected ? cellStyle.SelectionForeColor : cellStyle.ForeColor;
+
+				TextFormatFlags flags = TextFormatFlags.EndEllipsis | TextFormatFlags.VerticalCenter | TextFormatFlags.TextBoxControl;
+
+				Rectangle contentbounds = cellBounds;
+				contentbounds.Height -= 2;
+				contentbounds.Width -= 2;
+
+				if (formattedValue != null)
+					TextRenderer.DrawText (graphics, formattedValue.ToString (), cellStyle.Font, contentbounds, color, flags);
+			}
+
+			// Postpaint
+			DataGridViewPaintParts post = DataGridViewPaintParts.Border;
+			post = post & paintParts;
+
+			base.Paint (graphics, clipBounds, cellBounds, rowIndex, cellState, value, formattedValue, errorText, cellStyle, advancedBorderStyle, post);
+		}
+
+		private void DrawRightArrowGlyph (Graphics g, Pen p, int x, int y)
+		{
+			g.DrawLine (p, x, y, x, y + 8);
+			g.DrawLine (p, x + 1, y + 1, x + 1, y + 7);
+			g.DrawLine (p, x + 2, y + 2, x + 2, y + 6);
+			g.DrawLine (p, x + 3, y + 3, x + 3, y + 5);
+			g.DrawLine (p, x + 3, y + 4, x + 4, y + 4);
+		}
+
+		private void DrawNewRowGlyph (Graphics g, Pen p, int x, int y)
+		{
+			g.DrawLine (p, x, y + 4, x + 8, y + 4);
+			g.DrawLine (p, x + 4, y, x + 4, y + 8);
+			g.DrawLine (p, x + 1, y + 1, x + 7, y + 7);
+			g.DrawLine (p, x + 7, y + 1, x + 1, y + 7);
 		}
 
 		protected override bool SetValue (int rowIndex, object value)
