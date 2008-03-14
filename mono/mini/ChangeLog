@@ -1,3 +1,7 @@
+2008-03-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel-long.brg (reg): Fix 64 bit build.
+
 2008-03-14  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.c, mini.h: Share static generic code by passing it an
