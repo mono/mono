@@ -1,3 +1,7 @@
+2008-03-14 Marek Safar <marek.safar@gmail.com>
+
+	* Makefile: New compiler-tester options.
+
 2008-02-17  Raja R Harinath  <harinath@hurrynot.org>
 
 	* Makefile: Enable smcs testing.

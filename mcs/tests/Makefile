@@ -74,7 +74,7 @@ TESTER = MONO_RUNTIME='$(RUNTIME)' $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(LOCAL_RUNT
 TEST_ILS := $(wildcard *-lib.il)
 
 run-test-local: $(TEST_ILS:.il=.dll)
-	$(TESTER) positive $(TEST_PATTERN) '$(COMPILER)' known-issues-$(COMPILER_NAME) $(COMPILER_NAME).log
+	$(TESTER) -mode:pos -files:$(TEST_PATTERN) -compiler:$(COMPILER) -issues:known-issues-$(COMPILER_NAME) -log:$(COMPILER_NAME).log $(TESTER_OPTIONS)
 
 test-everything:
 	$(MAKE) PROFILE=default run-test
