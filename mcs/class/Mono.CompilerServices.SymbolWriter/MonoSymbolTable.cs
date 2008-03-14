@@ -262,7 +262,6 @@ namespace Mono.CompilerServices.SymbolWriter
 		public int StartOffset;
 		public int EndOffset;
 		#endregion
-		bool HasData;
 
 		public enum Type {
 			Lexical			= 1,
@@ -829,7 +828,9 @@ namespace Mono.CompilerServices.SymbolWriter
 		public readonly ScopeVariable[] ScopeVariables;
 
 		[Obsolete]
-		public readonly LexicalBlockEntry[] LexicalBlocks;
+		public LexicalBlockEntry[] LexicalBlocks {
+			get { return new LexicalBlockEntry [0]; }
+		}
 
 		public readonly string RealName;
 
@@ -858,8 +859,6 @@ namespace Mono.CompilerServices.SymbolWriter
 			reader.ReadInt32 (); /* Likewise. */
 			NamespaceID = reader.ReadInt32 ();
 			LocalNamesAmbiguous = reader.ReadInt32 () != 0;
-
-			LexicalBlocks = new LexicalBlockEntry [0];
 
 			if (!file.CompatibilityMode) {
 				NumCodeBlocks = reader.ReadInt32 ();
