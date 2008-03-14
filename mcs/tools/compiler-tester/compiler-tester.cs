@@ -182,6 +182,7 @@ namespace TestRunner {
 				this.test_file = test_file;
 			}
 
+#if NET_2_0			
 			public static VerificationData FromFile (string name, XmlTextReader r)
 			{
 				VerificationData tc = new VerificationData (name);
@@ -232,6 +233,7 @@ namespace TestRunner {
 
 				w.WriteEndElement ();
 			}
+#endif
 
 			public MethodData FindMethodData (string method_name, string declaring_type)
 			{
@@ -272,6 +274,7 @@ namespace TestRunner {
 				return false;
 			}
 
+#if NET_2_0
 			MethodBody body = mi.GetMethodBody ();
 			int il_size = 0;
 			if (body != null)
@@ -283,6 +286,9 @@ namespace TestRunner {
 			checker.HandleFailure (FileName, PositiveChecker.TestResult.ILError,
 				string.Format ("{0} (code size {1} -> {2})", m_name, md.ILSize, il_size));
 			return false;
+#else
+			throw new NotSupportedException ();
+#endif
 		}
 	}
 
@@ -827,8 +833,13 @@ namespace TestRunner {
 
 		public override void Initialize ()
 		{
-			if (verif_file != null)
+			if (verif_file != null) {
+#if NET_2_0
 				LoadVerificationData (verif_file);
+#else
+				throw new NotSupportedException ();
+#endif
+			}
 
 			base.Initialize ();
 		}
@@ -837,10 +848,16 @@ namespace TestRunner {
 		{
 			base.CleanUp ();
 
-			if (update_verif_file)
+			if (update_verif_file) {
+#if NET_2_0
 				UpdateVerificationData (verif_file);
+#else
+				throw new NotSupportedException ();
+#endif
+			}
 		}
 
+#if NET_2_0
 		void LoadVerificationData (string file)
 		{
 			LogLine ("Loading verification data {0} ...", file);
@@ -858,6 +875,7 @@ namespace TestRunner {
 					verif_data.Add (name, tc);
 				}
 			}
+			throw new NotSupportedException ();
 		}
 
 		void UpdateVerificationData (string file)
@@ -877,6 +895,7 @@ namespace TestRunner {
 				w.WriteEndElement ();
 			}
 		}
+#endif
 	}
 
 	class NegativeChecker: Checker
