@@ -1,3 +1,9 @@
+
+Fri Mar 14 09:31:59 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* rules.make, library.make: move GACUTIL definition into rules.make as
+	it's used also by the tools. Add the hidden -bootstrap option.
+
 2008-02-18  Raja R Harinath  <harinath@hurrynot.org>
 
 	* rules.make (%/.stamp): Unify all directory creation targets here.
