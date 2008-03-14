@@ -8281,6 +8281,39 @@ namespace MonoTests.System.Reflection.Emit
 
 			Assert.AreEqual (1, inflated.GetCustomAttributes (false).Length);
 		}
+
+		[Test]
+		public void GetField ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
+			GenericTypeParameterBuilder [] typeParams = tb.DefineGenericParameters ("T");
+
+			ConstructorBuilder cb = tb.DefineDefaultConstructor (MethodAttributes.Public);
+
+			FieldBuilder fb1 = tb.DefineField ("field1", typeParams [0], FieldAttributes.Public);
+
+			Type t = tb.MakeGenericType (typeof (int));
+
+			// Check that the instantiation of a type builder contains live data
+			TypeBuilder.GetField (t, fb1);
+			FieldBuilder fb2 = tb.DefineField ("field2", typeParams [0], FieldAttributes.Public);
+			FieldInfo fi2 = TypeBuilder.GetField (t, fb1);
+
+			MethodBuilder mb = tb.DefineMethod ("get_int", MethodAttributes.Public|MethodAttributes.Static, typeof (int), Type.EmptyTypes);
+			ILGenerator ilgen = mb.GetILGenerator ();
+			ilgen.Emit (OpCodes.Newobj, TypeBuilder.GetConstructor (t, cb));
+			ilgen.Emit (OpCodes.Dup);
+			ilgen.Emit (OpCodes.Ldc_I4, 42);
+			ilgen.Emit (OpCodes.Stfld, fi2);
+			ilgen.Emit (OpCodes.Ldfld, fi2);
+			ilgen.Emit (OpCodes.Ret);
+
+			Type created = tb.CreateType ();
+
+			Type inst = created.MakeGenericType (typeof (object));
+
+			Assert.AreEqual (42, inst.GetMethod ("get_int").Invoke (null, null));
+		}
 #endif
 
 		public interface IDelegateFactory {

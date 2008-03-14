@@ -1,3 +1,7 @@
+2008-03-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* TypeBuilderTest.cs: Add tests for GetField ().
+
 2008-03-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* DynamicMethodTest.cs: Add a test for anon-hosted dynamic methods.
