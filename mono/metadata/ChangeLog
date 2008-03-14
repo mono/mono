@@ -1,3 +1,34 @@
+2008-03-14  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h (MONO_DEBUGGER_VERSION): Bump to 68.
+
+	* debug-mono-symfile.h
+	(MONO_SYMBOL_FILE_VERSION): Bump to 41.
+	(MONO_SYMBOL_FILE_COMPATIBILITY_VERSION): New #define.
+
+2008-03-10  Martin Baulig  <martin@ximian.com>
+
+	* debug-mono-symfile.h
+	(MonoSymbolFileMethodAddress): Removed `num_lexical_blocks' and
+	`lexical_block_table_offset'.
+	(MonoDebugMethodInfo): Removed `num_lexical_blocks' and
+	`lexical_blocks'.
+	(MonoSymbolFile): Added `version'.
+
+	* mono-debug.h
+	(MonoDebugLexicalBlockEntry): Removed.
+	(MonoDebugMethodJitInfo): Removed `num_lexical_blocks' and
+	`lexical_blocks'.
+
+	* mono-debug.c (mono_debug_add_method): Don't compute lexical
+	blocks here; the debugger now does this internally.
+
+2008-02-27  Martin Baulig  <martin@ximian.com>
+
+	* object.c (mono_runtime_exec_main): Call
+	`mono_debugger_event (MONO_DEBUGGER_EVENT_REACHED_MAIN)' and
+	`mono_debugger_event (MONO_DEBUGGER_EVENT_MAIN_EXITED)' here.
+
 2008-03-12 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (verify_type_compatibility_full): Allow native int to be converted

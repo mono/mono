@@ -1,3 +1,10 @@
+2008-03-14  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.c (main_thread_handler): Call
+	mono_runtime_run_main() without sending any notifications.
+
+	* debug-debugger.h (MonoDebuggerInfo): Added `get_method_signature.
+
 2008-03-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-trampolines.c (mono_magic_trampoline): Fix build on platforms without IMT.
