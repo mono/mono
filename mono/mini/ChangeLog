@@ -1,3 +1,8 @@
+2008-03-14  Mark Probst  <mark.probst@gmail.com>
+
+	* tramp-x86.c: Fixed register restore offsets in the trampoline
+	code for ECX and EDX.
+
 2008-03-12  Geoff Norton  <gnorton@novell.com>
 
 	* mini-arm.h: Add some #defines for locating sp, pc, r4 with
