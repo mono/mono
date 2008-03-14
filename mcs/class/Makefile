@@ -118,6 +118,7 @@ net_2_1_dirs := \
 	System.Core
 
 net_3_5_dirs := \
+	System.Data.DataSetExtensions	\
 	System.Web.Extensions		\
 	System.Web.Extensions.Design
 
