@@ -1,3 +1,8 @@
+2008-03-15  Mark Probst  <mark.probst@gmail.com>
+
+	* class.c (mono_class_generic_sharing_enabled): Disable generic
+	sharing for all architectures except AMD64 and x86 to fix build.
+
 2008-03-14 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c: Use the generic definition MonoGenericContext when available.
