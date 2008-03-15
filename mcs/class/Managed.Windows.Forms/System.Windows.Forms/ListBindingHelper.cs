@@ -26,8 +26,11 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.Reflection;
 
 #if NET_2_0
+
+using System.Collections.Generic;
 
 namespace System.Windows.Forms
 {
@@ -50,10 +53,61 @@ namespace System.Windows.Forms
 			return property.GetValue (dataSource);
 		}
 
+		public static Type GetListItemType (object list)
+		{
+			return GetListItemType (list, String.Empty);
+		}
+
+		public static Type GetListItemType (object dataSource, string dataMember)
+		{
+			if (dataSource == null)
+				return null;
+
+			if (dataMember != null && dataMember.Length > 0) {
+				PropertyDescriptor property = GetProperty (dataSource.GetType (), dataMember);
+				if (property == null)
+					return typeof (object);
+
+				return property.PropertyType;
+			}
+
+			if (dataSource is Array)
+				return dataSource.GetType ().GetElementType ();
+
+			// IEnumerable seems to have higher precedence over IList
+			if (dataSource is IEnumerable) {
+				IEnumerator enumerator = ((IEnumerable) dataSource).GetEnumerator ();
+				if (enumerator.MoveNext ())
+					return enumerator.Current.GetType ();
+
+				if (dataSource is IList || dataSource.GetType () == typeof (IList<>)) {
+					PropertyInfo property = GetPropertyByReflection (dataSource.GetType (), "Item");
+					return property.PropertyType;
+				}
+
+				// fallback to object
+				return typeof (object);
+			}
+
+			return dataSource.GetType ();
+		}
+
 		static PropertyDescriptor GetProperty (Type type, string property_name)
 		{
 			PropertyDescriptorCollection properties = TypeDescriptor.GetProperties (type);
 			foreach (PropertyDescriptor prop in properties)
+				if (prop.Name == property_name)
+					return prop;
+
+			return null;
+		}
+
+		// 
+		// Need to use reflection as we need to bypass the TypeDescriptor.GetProperties () limitations
+		//
+		static PropertyInfo GetPropertyByReflection (Type type, string property_name)
+		{
+			foreach (PropertyInfo prop in type.GetProperties (BindingFlags.Public | BindingFlags.Instance))
 				if (prop.Name == property_name)
 					return prop;
 
