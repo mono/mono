@@ -1,3 +1,10 @@
+2008-03-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ResourceManagerTest.cs: Enabled and added ResourceSetType asserts.
+	Added test for disposed ResourceSet. Avoid using ExpectedException.
+	* ResourceSetTest.cs: Improved tests for ctor argument checks. Avoid
+	using ExpectedException.
+
 2008-03-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ResourceManagerTest.cs: Add test case for ResourceSetType which 

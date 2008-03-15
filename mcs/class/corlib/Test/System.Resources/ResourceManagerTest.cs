@@ -89,7 +89,7 @@ namespace MonoTests.System.Resources
 			Assert.IsNull (rm.ResourceSets, "#5");
 			Assert.IsNotNull (rm.ResourceSetType, "#6");
 			Assert.IsTrue (typeof (ResourceSet).IsAssignableFrom (rm.ResourceSetType), "#7");
-			//Assert.IsFalse (typeof (ResourceSet) == rm.ResourceSetType, "#8");
+			Assert.IsFalse (typeof (ResourceSet) == rm.ResourceSetType, "#8");
 		}
 
 		[Test] // ResourceManager (Type)
@@ -107,7 +107,8 @@ namespace MonoTests.System.Resources
 			Assert.AreEqual (0, rm.ResourceSets.Count, "#9");
 			Assert.IsNotNull (rm.ResourceSetType, "#10");
 			Assert.IsTrue (typeof (ResourceSet).IsAssignableFrom (rm.ResourceSetType), "#11");
-			//Assert.IsFalse (typeof (ResourceSet) == rm.ResourceSetType, "#12");
+			Assert.IsFalse (typeof (ResourceSet) == rm.ResourceSetType, "#12");
+			Assert.AreEqual ("RuntimeResourceSet", rm.ResourceSetType.Name, "#13");
 		}
 
 		[Test] // ResourceManager (Type)
@@ -144,7 +145,8 @@ namespace MonoTests.System.Resources
 			Assert.AreEqual (0, rm.ResourceSets.Count, "#A9");
 			Assert.IsNotNull (rm.ResourceSetType, "#A10");
 			Assert.IsTrue (typeof (ResourceSet).IsAssignableFrom (rm.ResourceSetType), "#A11");
-			//Assert.IsFalse (typeof (ResourceSet) == rm.ResourceSetType, "#A12");
+			Assert.IsFalse (typeof (ResourceSet) == rm.ResourceSetType, "#A12");
+			Assert.AreEqual ("RuntimeResourceSet", rm.ResourceSetType.Name, "#A13");
 
 			assembly = typeof (int).Assembly;
 			rm = new MockResourceManager (string.Empty, assembly);
@@ -159,7 +161,8 @@ namespace MonoTests.System.Resources
 			Assert.AreEqual (0, rm.ResourceSets.Count, "#B9");
 			Assert.IsNotNull (rm.ResourceSetType, "#B10");
 			Assert.IsTrue (typeof (ResourceSet).IsAssignableFrom (rm.ResourceSetType), "#B11");
-			//Assert.IsFalse (typeof (ResourceSet) == rm.ResourceSetType, "#B12");
+			Assert.IsFalse (typeof (ResourceSet) == rm.ResourceSetType, "#B12");
+			Assert.AreEqual ("RuntimeResourceSet", rm.ResourceSetType.Name, "#B13");
 		}
 
 		[Test] // ResourceManager (String, Assembly)
@@ -196,7 +199,8 @@ namespace MonoTests.System.Resources
 			Assert.AreEqual (0, rm.ResourceSets.Count, "#9");
 			Assert.IsNotNull (rm.ResourceSetType, "#10");
 			Assert.IsTrue (typeof (ResourceSet).IsAssignableFrom (rm.ResourceSetType), "#11");
-			//Assert.IsFalse (typeof (ResourceSet) == rm.ResourceSetType, "#12");
+			Assert.IsFalse (typeof (ResourceSet) == rm.ResourceSetType, "#12");
+			Assert.AreEqual ("RuntimeResourceSet", rm.ResourceSetType.Name, "#13");
 #else
 			try {
 				new ResourceManager ("mono.resources",
@@ -378,7 +382,8 @@ namespace MonoTests.System.Resources
 			Assert.AreEqual (0, rm.ResourceSets.Count, "#9");
 			Assert.IsNotNull (rm.ResourceSetType, "#10");
 			Assert.IsTrue (typeof (ResourceSet).IsAssignableFrom (rm.ResourceSetType), "#11");
-			//Assert.IsFalse (typeof (ResourceSet) == rm.ResourceSetType, "#12");
+			Assert.IsFalse (typeof (ResourceSet) == rm.ResourceSetType, "#12");
+			Assert.AreEqual ("RuntimeResourceSet", rm.ResourceSetType.Name, "#13");
 		}
 
 		[Test]
@@ -478,7 +483,8 @@ namespace MonoTests.System.Resources
 			Assert.IsFalse (rm.IgnoreCase, "#3");
 			Assert.IsNotNull (rm.ResourceSetType, "#4");
 			Assert.IsTrue (typeof (ResourceSet).IsAssignableFrom (rm.ResourceSetType), "#5");
-			//Assert.IsFalse (typeof (ResourceSet) == rm.ResourceSetType, "#6");
+			Assert.IsFalse (typeof (ResourceSet) == rm.ResourceSetType, "#6");
+			Assert.AreEqual ("RuntimeResourceSet", rm.ResourceSetType.Name, "#7");
 		}
 
 		[Test]
@@ -542,6 +548,37 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
+		public void GetObject_ResourceSet_Disposed ()
+		{
+			Thread.CurrentThread.CurrentUICulture = new CultureInfo ("de");
+			ResourceManager rm = ResourceManager.
+				CreateFileBasedResourceManager ("MyResources", "Test/resources", null);
+			ResourceSet rs = rm.GetResourceSet (new CultureInfo ("de"),
+				true, true);
+			rs.Dispose ();
+
+			try {
+				rm.GetObject ("deHelloWorld");
+				Assert.Fail ("#1");
+#if NET_2_0
+			} catch (ObjectDisposedException ex) {
+				// Cannot access a closed resource set
+				Assert.AreEqual (typeof (ObjectDisposedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+#else
+			} catch (InvalidOperationException ex) {
+				// Cannot access a closed resource set
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+#endif
+			} finally {
+				rm.ReleaseAllResources ();
+			}
+		}
+
+		[Test]
 		public void GetResourceFileName ()
 		{
 			MockResourceManager rm = new MockResourceManager ();
@@ -562,11 +599,14 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
 		public void GetResourceFileName_Culture_Null ()
 		{
 			MockResourceManager rm = new MockResourceManager ();
-			rm.GetResourceFileName ((CultureInfo) null);
+			try {
+				rm.GetResourceFileName ((CultureInfo) null);
+				Assert.Fail ("#1");
+			} catch (NullReferenceException) {
+			}
 		}
 
 		[Test]
@@ -644,6 +684,37 @@ namespace MonoTests.System.Resources
 				Assert.AreEqual ("name", ex.ParamName, "#B6");
 			}
 			rm.ReleaseAllResources ();
+		}
+
+		[Test]
+		public void GetString_ResourceSet_Disposed ()
+		{
+			Thread.CurrentThread.CurrentUICulture = new CultureInfo ("de");
+			ResourceManager rm = ResourceManager.
+				CreateFileBasedResourceManager ("MyResources", "Test/resources", null);
+			ResourceSet rs = rm.GetResourceSet (new CultureInfo ("de"),
+				true, true);
+			rs.Dispose ();
+
+			try {
+				rm.GetString ("deHelloWorld");
+				Assert.Fail ("#1");
+#if NET_2_0
+			} catch (ObjectDisposedException ex) {
+				// Cannot access a closed resource set
+				Assert.AreEqual (typeof (ObjectDisposedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+#else
+			} catch (InvalidOperationException ex) {
+				// ResourceSet is closed
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+#endif
+			} finally {
+				rm.ReleaseAllResources ();
+			}
 		}
 
 #if NET_2_0
@@ -770,6 +841,29 @@ namespace MonoTests.System.Resources
 				Assert.IsNotNull (ex.Message, "#4");
 			}
 		}
+
+		[Test]
+		public void GetStream_ResourceSet_Disposed ()
+		{
+			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+			ResourceManager rm = ResourceManager.
+				CreateFileBasedResourceManager ("StreamTest", "Test/resources", null);
+			ResourceSet rs = rm.GetResourceSet (new CultureInfo ("ja-JP"),
+				true, true);
+			rs.Dispose ();
+
+			try {
+				rm.GetStream ("test", new CultureInfo ("ja-JP"));
+				Assert.Fail ("#1");
+			} catch (ObjectDisposedException ex) {
+				// Cannot access a closed resource set
+				Assert.AreEqual (typeof (ObjectDisposedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			} finally {
+				rm.ReleaseAllResources ();
+			}
+		}
 #endif
 
 		[Test]
@@ -805,21 +899,28 @@ namespace MonoTests.System.Resources
 		}
 
 		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
 		public void TestResourceManagerGetResourceSetEmpty ()
 		{
 			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 			ResourceManagerPoker rm = new ResourceManagerPoker ();
-			rm.GetResourceSet (CultureInfo.InvariantCulture, true, true);
+			try {
+				rm.GetResourceSet (CultureInfo.InvariantCulture,
+					true, true);
+				Assert.Fail ("#1");
+			} catch (NullReferenceException) {
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
 		public void TestResourceManagerReleaseAllResourcesEmpty ()
 		{
 			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 			ResourceManagerPoker rm = new ResourceManagerPoker ();
-			rm.ReleaseAllResources ();
+			try {
+				rm.ReleaseAllResources ();
+				Assert.Fail ("#1");
+			} catch (NullReferenceException) {
+			}
 		}
 
 		[Test]
@@ -874,21 +975,22 @@ namespace MonoTests.System.Resources
 			try {
 				rm.GetString ("HelloWorld");
 				Assert.Fail ("#1");
+#if NET_2_0
+			} catch (ObjectDisposedException ex) {
+				// ResourceSet is closed
+				Assert.AreEqual (typeof (ObjectDisposedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+#else
 			} catch (InvalidOperationException ex) {
 				// ResourceSet is closed
 				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
+#endif
 			} finally {
 				rm.ReleaseAllResources ();
 			}
-		}
-
-		[Test]
-		public void ResourceSetType ()
-		{
-			ResourceManager rm = new ResourceManager (typeof (string));
-			Assert.AreEqual ("RuntimeResourceSet", rm.ResourceSetType.Name, "Name");
 		}
 
 		class MockResourceManager : ResourceManager

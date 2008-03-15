@@ -74,20 +74,11 @@ namespace System.Resources
 		[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
 		public ResourceSet (Stream stream)
 		{
-			if (stream == null)
-				throw new ArgumentNullException ("stream");
-
-			if (!stream.CanRead)
-				throw new ArgumentException ("stream is not readable");
-			
 			Reader = new ResourceReader (stream);
 		}
 
 		public ResourceSet (string fileName)
 		{
-			if (fileName == null)
-				throw new ArgumentNullException ("fileName");
-			
 			Reader = new ResourceReader (fileName);
 		}
 
@@ -107,9 +98,8 @@ namespace System.Resources
 		protected virtual void Dispose (bool disposing)
 		{
 			if (disposing) {
-				if(Reader!=null) {
+				if(Reader != null)
 					Reader.Close();
-				}
 			}
 
 			Reader = null;
@@ -127,30 +117,37 @@ namespace System.Resources
 			return (typeof (ResourceWriter));
 		}
 
-#if (NET_1_1)
-
+#if NET_1_1
 		[ComVisible (false)]
 		public virtual IDictionaryEnumerator GetEnumerator ()
 		{
 			if (disposed)
-				throw new ObjectDisposedException ("Instance was disposed.");
+#if NET_2_0
+				throw new ObjectDisposedException ("ResourceSet is closed.");
+#else
+				throw new InvalidOperationException ("ResourceSet is closed.");
+#endif
 			if (Table == null)
 				ReadResources ();
-			return Table.GetEnumerator(); 
+			return Table.GetEnumerator();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			return this.GetEnumerator (); 
+			return this.GetEnumerator ();
 		}
-
 #endif
+
 		private object GetObjectInternal (string name, bool ignoreCase)
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
 			if (disposed)
-				throw new ObjectDisposedException ("Instance was disposed.");
+#if NET_2_0
+				throw new ObjectDisposedException ("ResourceSet is closed.");
+#else
+				throw new InvalidOperationException ("ResourceSet is closed.");
+#endif
 			if (Table == null)
 				ReadResources ();
 
@@ -162,7 +159,7 @@ namespace System.Resources
 				}
 				return null;
 			} else
-				return Table[name];
+				return Table [name];
 		}
 
 		public virtual object GetObject (string name)
@@ -183,7 +180,9 @@ namespace System.Resources
 
 			string s = (value as string);
 			if (s == null)
-				throw new InvalidOperationException ("Resource is not a string.");
+				throw new InvalidOperationException (string.Format (
+					"Resource '{0}' is not a String. Use " +
+					"GetObject instead.", name));
 
 			return s;
 		}
@@ -201,7 +200,11 @@ namespace System.Resources
 		protected virtual void ReadResources ()
 		{
 			if (Reader == null)
+#if NET_2_0
+				throw new ObjectDisposedException ("ResourceSet is closed.");
+#else
 				throw new InvalidOperationException ("ResourceSet is closed.");
+#endif
 			
 			IDictionaryEnumerator i = Reader.GetEnumerator();
 
@@ -217,7 +220,7 @@ namespace System.Resources
 		internal UnmanagedMemoryStream GetStream (string name)
 		{
 			if (Reader == null)
-				throw new InvalidOperationException ("ResourceSet is closed.");
+				throw new ObjectDisposedException ("ResourceSet is closed.");
 
 			IDictionaryEnumerator i = Reader.GetEnumerator();
 			i.Reset ();

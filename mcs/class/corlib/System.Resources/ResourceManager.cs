@@ -102,7 +102,7 @@ namespace System.Resources
 		private Type CheckResourceSetType (Type usingResourceSet, bool verifyType)
 		{
 			if (usingResourceSet == null)
-				return typeof (ResourceSet);
+				return resourceSetType;
 
 			if (verifyType && !typeof (ResourceSet).IsAssignableFrom (usingResourceSet))
 				throw new ArgumentException ("Type parameter"

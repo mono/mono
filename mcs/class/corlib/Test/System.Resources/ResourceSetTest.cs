@@ -89,32 +89,79 @@ namespace MonoTests.System.Resources {
 	[TestFixture]
 	public class ResourceSetTest {
 
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void Constructor_IResourceReader_Null ()
+		[Test] // ctor (IResourceReader)
+		public void Constructor1_Reader_Null ()
 		{
-			new ResourceSet ((IResourceReader) null);
+			try {
+				new ResourceSet ((IResourceReader) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("reader", ex.ParamName, "#5");
+			}
 		}
 
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void Constructor_Stream_Null ()
+		[Test] // ctor (Stream)
+		public void Constructor2_Stream_Closed ()
 		{
-			new ResourceSet ((Stream) null);
+			MemoryStream ms = new MemoryStream ();
+			ms.Close ();
+
+			try {
+				new ResourceSet (ms);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Stream was not readable
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void Constructor_String_Null ()
+		[Test] // ctor (Stream)
+		public void Constructor2_Stream_Null ()
 		{
-			new ResourceSet ((string) null);
+			try {
+				new ResourceSet ((Stream) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("stream", ex.ParamName, "#5");
+			}
 		}
 
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void Constructor_String_Empty ()
+		[Test] // ctor (String)
+		public void Constructor3_FileName_Null ()
 		{
-			new ResourceSet (String.Empty);
+			try {
+				new ResourceSet ((string) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("path", ex.ParamName, "#5");
+			}
+		}
+
+		[Test] // ctor (String)
+		public void Constructor3_FileName_Empty ()
+		{
+			try {
+				new ResourceSet (string.Empty);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Empty path name is not legal
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
@@ -148,6 +195,7 @@ namespace MonoTests.System.Resources {
 		{
 			CloneResourceSet rs = new CloneResourceSet (new ClonableObject ());
 			rs.Dispose ();
+			rs.Dispose ();
 		}
 
 		[Test]
@@ -158,12 +206,28 @@ namespace MonoTests.System.Resources {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ObjectDisposedException))]
 		public void GetEnumerator_Disposed ()
 		{
 			CloneResourceSet rs = new CloneResourceSet (new ClonableObject ());
 			rs.Dispose ();
-			Assert.IsNotNull (rs.GetEnumerator ());
+			try {
+				rs.GetEnumerator ();
+				Assert.Fail ("#1");
+#if NET_2_0
+			} catch (ObjectDisposedException ex) {
+				// Cannot access a closed resource set
+				Assert.AreEqual (typeof (ObjectDisposedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+#else
+			} catch (InvalidOperationException ex) {
+				// Resource table is closed
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+#endif
 		}
 
 		[Test]
@@ -176,12 +240,28 @@ namespace MonoTests.System.Resources {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ObjectDisposedException))]
 		public void GetObject_Disposed ()
 		{
 			CloneResourceSet rs = new CloneResourceSet (new ClonableObject ());
 			rs.Dispose ();
-			rs.GetObject ("doesnotexists");
+			try {
+				rs.GetObject ("doesnotexists");
+				Assert.Fail ("#1");
+#if NET_2_0
+			} catch (ObjectDisposedException ex) {
+				// Cannot access a closed resource set
+				Assert.AreEqual (typeof (ObjectDisposedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+#else
+			} catch (InvalidOperationException ex) {
+				// Resource table is closed
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+#endif
 		}
 
 		[Test]
@@ -194,20 +274,47 @@ namespace MonoTests.System.Resources {
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
 		public void GetString_NotAString ()
 		{
 			CloneResourceSet rs = new CloneResourceSet (new ClonableObject ());
-			rs.GetString ("clone");
+			try {
+				rs.GetString ("clone");
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// This particular resource was not a String -
+				// call GetObject instead.  Resource name: clone
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("String") != -1, "#5");
+				Assert.IsTrue (ex.Message.IndexOf ("GetObject") != -1, "#6");
+				Assert.IsTrue (ex.Message.IndexOf ("clone") != -1, "#7");
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ObjectDisposedException))]
 		public void GetString_Disposed ()
 		{
 			CloneResourceSet rs = new CloneResourceSet (new ClonableObject ());
 			rs.Dispose ();
-			rs.GetString ("doesnotexists");
+			try {
+				rs.GetString ("doesnotexists");
+				Assert.Fail ("#1");
+#if NET_2_0
+			} catch (ObjectDisposedException ex) {
+				// Cannot access a closed resource set
+				Assert.AreEqual (typeof (ObjectDisposedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+#else
+			} catch (InvalidOperationException ex) {
+				// Resource table is closed
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+#endif
 		}
 	}
 }

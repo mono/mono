@@ -1,3 +1,11 @@
+2008-03-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ResourceManager.cs: Default to RuntimeResourceSet for all ctors.
+	* ResourceSet.cs: Avoid duplicate argument checks. On 2.0 profile,
+	throw ObjectDisposedException when ResourceSet is disposed.
+	* RuntimeResourceSet.cs: On 2.0 profile, throw ObjectDisposedException
+	when ResourceSet is disposed.
+
 2008-03-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ResourceManager.cs: Use RuntimeResourceSet, an internal type, just
