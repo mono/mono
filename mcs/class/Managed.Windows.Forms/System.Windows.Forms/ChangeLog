@@ -1,3 +1,13 @@
+2008-03-15  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridView.cs: When row/column visible/height properties
+	change, invalidate.  Take the NIEX out of InvalidateRow/Column
+	etc.  We don't support them yet, but we can just invalidate
+	everything until we do support them.  (Added MonoTODO).  Set
+	proper control styles.
+	* DataGridViewRow.cs: Don't call PaintHeader if row headers
+	are turned off.	
+
 2008-03-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListBindingHelper.cs: Implement 2.0 GetListItemType methods.

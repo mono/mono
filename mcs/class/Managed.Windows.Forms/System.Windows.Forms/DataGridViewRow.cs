@@ -450,7 +450,9 @@ namespace System.Windows.Forms {
 			if (pre.Handled)
 				return;
 
-			PaintHeader (graphics, pre.ClipBounds, rowBounds, rowIndex, rowState, isFirstDisplayedRow, isLastVisibleRow, pre.PaintParts);
+			if (DataGridView.RowHeadersVisible)
+				PaintHeader (graphics, pre.ClipBounds, rowBounds, rowIndex, rowState, isFirstDisplayedRow, isLastVisibleRow, pre.PaintParts);
+			
 			PaintCells (graphics, pre.ClipBounds, rowBounds, rowIndex, rowState, isFirstDisplayedRow, isLastVisibleRow, pre.PaintParts);
 
 			DataGridViewRowPostPaintEventArgs post = new DataGridViewRowPostPaintEventArgs (DataGridView, graphics, pre.ClipBounds, rowBounds, rowIndex, rowState, pre.ErrorText, InheritedStyle, isFirstDisplayedRow, isLastVisibleRow);

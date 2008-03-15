@@ -128,7 +128,11 @@ namespace System.Windows.Forms {
 		internal int gridWidth;
 		internal int gridHeight;
 
-		public DataGridView () {
+		public DataGridView ()
+		{
+			SetStyle (ControlStyles.Opaque, true);
+			SetStyle (ControlStyles.UserMouse, true);
+			
 			adjustedTopLeftHeaderBorderStyle = new DataGridViewAdvancedBorderStyle();
 			adjustedTopLeftHeaderBorderStyle.All = DataGridViewAdvancedCellBorderStyle.Single;
 			advancedCellBorderStyle = new DataGridViewAdvancedBorderStyle();
@@ -528,6 +532,9 @@ namespace System.Windows.Forms {
 					}
 					columnHeadersHeight = value;
 					OnColumnHeadersHeightChanged(EventArgs.Empty);
+					
+					if (columnHeadersVisible)
+						Invalidate ();
 				}
 			}
 		}
@@ -550,7 +557,12 @@ namespace System.Windows.Forms {
 		[DefaultValue (true)]
 		public bool ColumnHeadersVisible {
 			get { return columnHeadersVisible; }
-			set { columnHeadersVisible = value; }
+			set {
+				if (columnHeadersVisible != value) {
+					columnHeadersVisible = value;
+					Invalidate ();
+				}
+			}
 		}
 
 		[MergableProperty (false)]
@@ -930,7 +942,12 @@ namespace System.Windows.Forms {
 		[DefaultValue (true)]
 		public bool RowHeadersVisible {
 			get { return rowHeadersVisible; }
-			set { rowHeadersVisible = value; }
+			set {
+				if (rowHeadersVisible != value) {
+					rowHeadersVisible = value;
+					Invalidate ();
+				}
+			}
 		}
 
 		[Localizable (true)]
@@ -948,6 +965,9 @@ namespace System.Windows.Forms {
 					}
 					rowHeadersWidth = value;
 					OnRowHeadersWidthChanged(EventArgs.Empty);
+					
+					if (rowHeadersVisible)
+						Invalidate ();
 				}
 			}
 		}
@@ -2476,45 +2496,53 @@ namespace System.Windows.Forms {
 			return result;
 		}
 
-		public void InvalidateCell (DataGridViewCell dataGridViewCell) {
-			if (dataGridViewCell == null) {
-				throw new ArgumentNullException("Cell is null");
-			}
-			if (dataGridViewCell.DataGridView != this) {
-				throw new ArgumentException("The specified cell does not belong to this DataGridView.");
-			}
-			throw new NotImplementedException();
+		[MonoTODO ("Invalidates whole grid")]
+		public void InvalidateCell (DataGridViewCell dataGridViewCell)
+		{
+			if (dataGridViewCell == null)
+				throw new ArgumentNullException ("Cell is null");
+
+			if (dataGridViewCell.DataGridView != this)
+				throw new ArgumentException ("The specified cell does not belong to this DataGridView.");
+
+			Invalidate ();
 		}
 
-		public void InvalidateCell (int columnIndex, int rowIndex) {
-			if (columnIndex < 0 || columnIndex >= columns.Count) {
-				throw new ArgumentOutOfRangeException("Column index is out of range.");
-			}
-			if (rowIndex < 0 || rowIndex >= rows.Count) {
-				throw new ArgumentOutOfRangeException("Row index is out of range.");
-			}
+		[MonoTODO ("Invalidates whole grid")]
+		public void InvalidateCell (int columnIndex, int rowIndex)
+		{
+			if (columnIndex < 0 || columnIndex >= columns.Count)
+				throw new ArgumentOutOfRangeException ("Column index is out of range.");
+
+			if (rowIndex < 0 || rowIndex >= rows.Count)
+				throw new ArgumentOutOfRangeException ("Row index is out of range.");
+
 			foreach (DataGridViewRow row in rows) {
 				foreach (DataGridViewCell cell in row.Cells) {
 					if (cell.RowIndex == rowIndex && cell.ColumnIndex == columnIndex) {
-						InvalidateCell(cell); //// O al revés, que el otro llame a este !!!
+						InvalidateCell (cell);
 						return;
 					}
 				}
 			}
 		}
 
-		public void InvalidateColumn (int columnIndex) {
-			if (columnIndex < 0 || columnIndex >= columns.Count) {
-				throw new ArgumentOutOfRangeException("Column index is out of range.");
-			}
-			throw new NotImplementedException();
+		[MonoTODO ("Invalidates whole grid")]
+		public void InvalidateColumn (int columnIndex)
+		{
+			if (columnIndex < 0 || columnIndex >= columns.Count)
+				throw new ArgumentOutOfRangeException ("Column index is out of range.");
+
+			Invalidate ();
 		}
 
-		public void InvalidateRow (int rowIndex) {
-			if (rowIndex < 0 || rowIndex >= rows.Count) {
-				throw new ArgumentOutOfRangeException("Row index is out of range.");
-			}
-			throw new NotImplementedException();
+		[MonoTODO ("Invalidates whole grid")]
+		public void InvalidateRow (int rowIndex)
+		{
+			if (rowIndex < 0 || rowIndex >= rows.Count)
+				throw new ArgumentOutOfRangeException ("Row index is out of range.");
+
+			Invalidate ();
 		}
 
 		public virtual void NotifyCurrentCellDirty (bool dirty) {
