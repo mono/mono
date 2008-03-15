@@ -1,3 +1,7 @@
+2008-03-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System_test.dll.sources: Added DesignerAttributeTest.cs.
+
 2008-03-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* System.dll.sources: Add the new regex interpreter/compiler sources, not yet

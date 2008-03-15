@@ -1,3 +1,8 @@
+2008-03-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DesignerAttribute.cs: To match MS, throw NRE when designerTypeName
+	argument is null in ctors.
+
 2008-03-13  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DesignerAttribute.cs: For the TypeId strip type name only 
