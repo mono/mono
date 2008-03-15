@@ -1,3 +1,12 @@
+2008-03-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* image.c (mono_image_close): Move the dynamic image freeing code to a separate
+	function in reflection.c so it is easier to keep in sync with the dynamic image
+	creation code.
+
+	* reflection.c (mono_dynamic_image_free): New internal function, extracted from
+	mono_image_close ().
+
 2008-03-15  Mark Probst  <mark.probst@gmail.com>
 
 	* class.c (mono_class_generic_sharing_enabled): Disable generic
