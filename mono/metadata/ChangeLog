@@ -1,5 +1,17 @@
 2008-03-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* metadata-internals.h (MonoDynamicImage): Add 'generic_def_objects' hash table.
+
+	* class-internals.h (MonoMethodInflated): Remove the rarely used reflection_info
+	field, replace it with a hash table in MonoDynamicImage.
+
+	* reflection.c (inflate_mono_method): Access the generic definition object from
+	image->generic_def_objects instead of imethod->reflection_info.
+
+	* reflection.c (mono_reflection_bind_generic_method_parameters): Ditto.	
+
+	* icall.c (ves_icall_MonoMethod_GetGenericMethodDefinition): Ditto.
+	
 	* image.c (mono_image_close): Move the dynamic image freeing code to a separate
 	function in reflection.c so it is easier to keep in sync with the dynamic image
 	creation code.
