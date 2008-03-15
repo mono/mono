@@ -1,3 +1,10 @@
+2008-03-15  Martin Baulig  <martin@ximian.com>
+
+	* tramp-amd64.c
+	(mono_arch_nullify_class_init_trampoline): Add call to
+	mono_breakpoint_clean_code() to make things work when running
+	inside the debugger.
+
 2008-03-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* inssel-long.brg (reg): Fix 64 bit build.
