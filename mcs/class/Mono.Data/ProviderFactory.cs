@@ -99,6 +99,10 @@ namespace Mono.Data
 				throw new System.ArgumentNullException ("ConnectionString");
 
 			Provider provider = providers [ProviderName];
+
+			if (provider == null)
+				throw new ArgumentException ("ProviderName", "The specified provider does not exist");
+			
 			IDbConnection conn = provider.CreateConnection ();
 			conn.ConnectionString = ConnectionString;
 			return conn;
