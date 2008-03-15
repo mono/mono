@@ -31,6 +31,8 @@
 using System;
 using System.ComponentModel;
 using System.Collections;
+using System.Collections.Specialized;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 using NUnit.Framework;
@@ -116,6 +118,40 @@ namespace MonoTests.System.Windows.Forms
 				}
 			}
 		}
+
+		[Test]
+		public void GetListItemTypeTest ()
+		{
+			List<int> list = new List<int> ();
+			DateTime [] date_list = new DateTime [0];
+			StringCollection string_coll = new StringCollection ();
+
+			Assert.AreEqual (typeof (int), ListBindingHelper.GetListItemType (list), "#A1");
+			Assert.AreEqual (typeof (DateTime), ListBindingHelper.GetListItemType (date_list), "#A2");
+			Assert.AreEqual (typeof (string), ListBindingHelper.GetListItemType (string_coll), "#A4");
+
+			// Returns the type of the first item if could enumerate
+			ArrayList arraylist = new ArrayList ();
+			arraylist.Add ("hellou");
+			arraylist.Add (3.1416);
+			Assert.AreEqual (typeof (string), ListBindingHelper.GetListItemType (arraylist), "#B1");
+
+			// Returns the type of the public Item property, not the explicit one
+			ListView.ColumnHeaderCollection col_collection = new ListView.ColumnHeaderCollection (null);
+			Assert.AreEqual (typeof (ColumnHeader), ListBindingHelper.GetListItemType (col_collection), "#C1");
+
+			ListContainer list_container = new ListContainer ();
+			String str = "A";
+			Assert.AreEqual (typeof (IList), ListBindingHelper.GetListItemType (list_container, "List"), "#D1");
+			Assert.AreEqual (typeof (int), ListBindingHelper.GetListItemType (str, "Length"), "#D2");
+			// Property doesn't exist - fallback to object type
+			Assert.AreEqual (typeof (object), ListBindingHelper.GetListItemType (str, "DoesntExist"), "#D3");
+
+			// finally, objects that are not array nor list
+			Assert.AreEqual (typeof (double), ListBindingHelper.GetListItemType (3.1416), "#E1");
+			Assert.AreEqual (null, ListBindingHelper.GetListItemType (null), "#E2");
+		}
+
 	}
 }
 
