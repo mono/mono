@@ -1,3 +1,10 @@
+2008-03-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c: Remove the unused cache_interface_offsets stuff.
+
+	* class.c loader.c domain.c verify.c metadata.c debug-helpers.c threadpool.c
+	profiler.c: Fix warnings.
+
 2008-03-16  Mark Probst  <mark.probst@gmail.com>
 
 	* generic-sharing.c, class-internals.h: Support for putting
