@@ -1,3 +1,8 @@
+2008-03-16  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-sharing.c: Change due to a change in the runtime genric
+	context API.
+
 2008-03-15  Martin Baulig  <martin@ximian.com>
 
 	* tramp-x86.c

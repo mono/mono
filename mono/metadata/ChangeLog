@@ -1,3 +1,8 @@
+2008-03-16  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-sharing.c, class-internals.h: Support for putting
+	methods into the runtime generic context.
+
 2008-03-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_setup_fields): Ignore calls made to this function for
