@@ -1,3 +1,11 @@
+2008-03-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_setup_fields): Ignore calls made to this function for
+	classes which are generic instances of not-yet finished typebuilders. Fixes
+	#351172.
+
+	* reflection.c (fixup_method): Add support for FieldOnTypeBuilderInst.
+
 2008-03-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* metadata-internals.h (MonoDynamicImage): Add 'generic_def_objects' hash table.
