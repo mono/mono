@@ -8294,6 +8294,10 @@ namespace MonoTests.System.Reflection.Emit
 
 			Type t = tb.MakeGenericType (typeof (int));
 
+			// Chect that calling MakeArrayType () does not initialize the class
+			// (bug #351172)
+			t.MakeArrayType ();
+
 			// Check that the instantiation of a type builder contains live data
 			TypeBuilder.GetField (t, fb1);
 			FieldBuilder fb2 = tb.DefineField ("field2", typeParams [0], FieldAttributes.Public);

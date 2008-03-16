@@ -1,3 +1,7 @@
+2008-03-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* TypeBuilderTest.cs (GetField): Add test for #351172.
+
 2008-03-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* TypeBuilderTest.cs: Add tests for GetField ().
