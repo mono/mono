@@ -3837,13 +3837,12 @@ namespace Mono.CSharp {
 			set { SetMemberName (new MemberName (MemberName.Left, value, Location)); }
 		}
 		
-		public string FullName {
-			get {
-				if (!IsExplicitImpl)
-					return ShortName;
+		public string GetFullName (MemberName name)
+		{
+			if (!IsExplicitImpl)
+				return name.Name;
 
-				return InterfaceType.FullName.Replace ('+', '.') + "." + ShortName;
-			}
+			return InterfaceType.FullName.Replace ('+', '.') + "." + name.Name;
 		}
 
 		protected override bool VerifyClsCompliance ()
@@ -3953,9 +3952,9 @@ namespace Mono.CSharp {
 			if (GenericMethod != null) {
 
 #if MS_COMPATIBLE
-				MethodBuilder = Parent.TypeBuilder.DefineMethod (FullName, flags); //, ReturnType, null);
+				MethodBuilder = Parent.TypeBuilder.DefineMethod (GetFullName (MemberName), flags); //, ReturnType, null);
 #else
-				MethodBuilder = Parent.TypeBuilder.DefineMethod (FullName, flags);
+				MethodBuilder = Parent.TypeBuilder.DefineMethod (GetFullName (MemberName), flags);
 #endif
 
 				if (!GenericMethod.Define (MethodBuilder, block))
@@ -4024,7 +4023,7 @@ namespace Mono.CSharp {
 			MethodData = new MethodData (
 				this, ModFlags, flags, this, MethodBuilder, GenericMethod, base_method);
 
-			if (!MethodData.Define (Parent.PartialContainer))
+			if (!MethodData.Define (Parent.PartialContainer, GetFullName (MemberName)))
 				return false;
 					
 			MethodBuilder = MethodData.MethodBuilder;
@@ -5172,10 +5171,9 @@ namespace Mono.CSharp {
 			this.parent_method = parent_method;
 		}
 
-		public bool Define (DeclSpace parent)
+		public bool Define (DeclSpace parent, string method_full_name)
 		{
 			string name = method.MethodName.Basename;
-			string method_name = method.MethodName.FullName;
 
 			TypeContainer container = parent.PartialContainer;
 
@@ -5208,8 +5206,6 @@ namespace Mono.CSharp {
 							member.GetSignatureForError (), TypeManager.CSharpSignature (implementing));
 						return false;
 					}
-
-					method_name = member.FullName; 
 				} else {
 					if (implementing != null) {
 						AbstractPropertyEventMethod prop_method = method as AbstractPropertyEventMethod;
@@ -5309,7 +5305,7 @@ namespace Mono.CSharp {
 					flags |= MethodAttributes.Final;
 			}
 
-			DefineMethodBuilder (container, method_name, method.ParameterInfo.Types);
+			DefineMethodBuilder (container, method_full_name, method.ParameterInfo.Types);
 
 			if (builder == null)
 				return false;
@@ -6400,7 +6396,7 @@ namespace Mono.CSharp {
 				
 				method_data = new MethodData (method, ModFlags, flags, this);
 
-				if (!method_data.Define (parent))
+				if (!method_data.Define (parent, method.GetFullName (MemberName)))
 					return null;
 
 				return method_data.MethodBuilder;
@@ -6480,7 +6476,7 @@ namespace Mono.CSharp {
 
 				method_data = new MethodData (method, ModFlags, flags, this);
 
-				if (!method_data.Define (parent))
+				if (!method_data.Define (parent, method.GetFullName (MemberName)))
 					return null;
 
 				return method_data.MethodBuilder;
@@ -6974,7 +6970,7 @@ namespace Mono.CSharp {
 			// FIXME - PropertyAttributes.HasDefault ?
 
 			PropertyBuilder = Parent.TypeBuilder.DefineProperty (
-				FullName, PropertyAttributes.None, MemberType, null);
+				GetFullName (MemberName), PropertyAttributes.None, MemberType, null);
 
 			if (!Get.IsDummy) {
 				PropertyBuilder.SetGetMethod (GetBuilder);
@@ -7459,7 +7455,7 @@ namespace Mono.CSharp {
 				method_data = new MethodData (method, method.ModFlags,
 					method.flags | MethodAttributes.HideBySig | MethodAttributes.SpecialName, this);
 
-				if (!method_data.Define (parent))
+				if (!method_data.Define (parent, method.GetFullName (MemberName)))
 					return null;
 
 				MethodBuilder mb = method_data.MethodBuilder;
@@ -7816,7 +7812,7 @@ namespace Mono.CSharp {
 			// Now name the parameters
 			//
 			PropertyBuilder = Parent.TypeBuilder.DefineProperty (
-				FullName, PropertyAttributes.None, MemberType, parameters.Types);
+				GetFullName (MemberName), PropertyAttributes.None, MemberType, parameters.Types);
 
 			if (!Get.IsDummy) {
 				PropertyBuilder.SetGetMethod (GetBuilder);

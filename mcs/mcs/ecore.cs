@@ -4157,7 +4157,7 @@ namespace Mono.CSharp {
 			// should be better than all the others
 			//
 			MethodBase ambiguous = null;
-			for (int ix = 0; ix < candidate_top; ix++) {
+			for (int ix = 1; ix < candidate_top; ix++) {
 				MethodBase candidate = (MethodBase) candidates [ix];
 
 				if (candidate == best_candidate)
