@@ -2654,6 +2654,9 @@ namespace System.Windows.Forms
 		{
 			if (e.KeyCode == Keys.Back) {
 				OneDirUp ();
+			} else if (e.Control && e.KeyCode == Keys.A && MultiSelect) {
+				foreach (ListViewItem lvi in Items)
+					lvi.Selected = true;
 			}
 		}
 		

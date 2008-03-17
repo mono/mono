@@ -1,3 +1,8 @@
+2008-03-16  Jonathan Pobst  <monkey@jpobst.com>
+
+	* FileDialog.cs: Support Control-A for selecting everything
+	in an OpenFileDialog.  [Fixes bug #371564]
+
 2008-03-15  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridView.cs: When row/column visible/height properties
