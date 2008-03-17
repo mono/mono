@@ -1,5 +1,9 @@
 2008-03-17  Mark Probst  <mark.probst@gmail.com>
 
+	* mini.c: Generic sharing for the isinst instruction.
+
+2008-03-17  Mark Probst  <mark.probst@gmail.com>
+
 	* mini-ops.h, inssel.brg, inssel-long.brg, inssel-long32.brg,
 	inssel-long32-mips.brg: Added opcodes for doing indirect calls
 	with the runtime generic context argument.
