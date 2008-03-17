@@ -1,5 +1,9 @@
 2008-03-17  Marek Safar  <marek.safar@gmail.com>
 
+	* anonymous.cs, driver.cs: Reset anonymous types counters.
+
+2008-03-17  Marek Safar  <marek.safar@gmail.com>
+
 	* ecore.cs (MethodGroupExpr): Skip first candidate, it's already the best.
 	
 	* class.cs: Use fullname for all type member definitions.

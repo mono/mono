@@ -42,6 +42,11 @@ namespace Mono.CSharp {
 		{
 			return "<" + host + ">c__" + prefix + next_index++;
 		}
+		
+		public static void Reset ()
+		{
+			next_index = 0;
+		}
 
 		protected CompilerGeneratedClass (DeclSpace parent,
 					MemberName name, int mod, Location loc) :
@@ -1972,8 +1977,6 @@ namespace Mono.CSharp {
 		public const string ClassNamePrefix = "<>__AnonType";
 		public const string SignatureForError = "anonymous type";
 		
-		static readonly IntConstant FNV_prime = new IntConstant (16777619, Location.Null);
-
 		readonly ArrayList parameters;
 
 		private AnonymousTypeClass (DeclSpace parent, MemberName name, ArrayList parameters, Location loc)
@@ -2049,6 +2052,11 @@ namespace Mono.CSharp {
 			a_type.AddConstructor (c);
 			return a_type;
 		}
+		
+		public new static void Reset ()
+		{
+			types_counter = 0;
+		}
 
 		protected override bool AddToContainer (MemberCore symbol, string name)
 		{
@@ -2113,6 +2121,7 @@ namespace Mono.CSharp {
 				Expression field_hashcode = new Invocation (new MemberAccess (equality_comparer,
 					"GetHashCode", loc), arguments_hashcode);
 
+				IntConstant FNV_prime = new IntConstant (16777619, loc);				
 				rs_hashcode = new Binary (Binary.Operator.Multiply,
 					new Binary (Binary.Operator.ExclusiveOr, rs_hashcode, field_hashcode),
 					FNV_prime);

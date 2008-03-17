@@ -2010,6 +2010,8 @@ namespace Mono.CSharp
 			CodeGen.Reset ();
 			Attribute.Reset ();
 			AttributeTester.Reset ();
+			CompilerGeneratedClass.Reset ();
+			AnonymousTypeClass.Reset ();
 		}
 	}
 }
