@@ -1,3 +1,15 @@
+2008-03-17 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (VerifyContext): Added instruction prefix data to the struct.
+
+	* verify.c (is_compatible_boxed_valuetype): Don't check if the type is a valuetype, been boxed is enough.
+
+	* verify.c (do_invoke): Support constrained callvirt form. Grouped similar checks together.
+
+	* verify.c (do_cast): Let the result value keep the boxed status.
+
+	* verify.c (mono_method_verify): Add proper support for prefixed and implement contrained.
+
 2008-03-17  Jb Evain  <jbevain@novell.com>
 
 	* reflection.c: when running on a 2.0 runtime, emit
