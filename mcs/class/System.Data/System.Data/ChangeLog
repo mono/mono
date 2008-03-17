@@ -1,3 +1,10 @@
+2008-03-17  Veerapuram Varadhan <vvaradhan@novell.com>
+	
+	** Fixes part1 of #357947
+	* DataView.cs: (OnRowDeleted): Don't call update, instead delete the row 
+	directly from Index.  Peformance fix submitted by Hubert FONGARNAND 
+	<informatique.internet@fiducial.fr>.
+
 2008-02-04 Arina Itkes <arinai@mainsoft.com>
 	
 	* DataTable.cs: Fix for IXmlSerializable.ReadXml.
