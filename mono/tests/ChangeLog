@@ -1,3 +1,10 @@
+2008-03-17  Mark Probst  <mark.probst@gmail.com>
+
+	* shared-generic-methods.2.cs: Test case for calls from shared
+	code to generic methods.
+
+	* Makefile.am: Added the new test.
+
 2008-03-14  Mark Probst  <mark.probst@gmail.com>
 
 	* generics-sharing.2.cs: New tests for static methods.

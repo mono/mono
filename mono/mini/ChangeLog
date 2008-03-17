@@ -1,3 +1,16 @@
+2008-03-17  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-ops.h, inssel.brg, inssel-long.brg, inssel-long32.brg,
+	inssel-long32-mips.brg: Added opcodes for doing indirect calls
+	with the runtime generic context argument.
+
+	* mini.c: Share calls to several types of unsharable methods by
+	putting the address of the method code in the runtime generic
+	context and doing an indirect call.
+
+	* graph.c, local-propagation.c, aliasing.c: Added the new opcodes
+	to switches.
+
 2008-03-16  Mark Probst  <mark.probst@gmail.com>
 
 	* generic-sharing.c: Change due to a change in the runtime genric
