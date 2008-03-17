@@ -1,3 +1,7 @@
+2008-03-17  Marek Safar  <marek.safar@gmail.com>
+
+	* MonoMethod.cs (ToString): Print VarArgs argument.
+
 2008-03-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* MonoGenericClass.cs (GetField): Construct a FieldOnTypeBuilderInst object

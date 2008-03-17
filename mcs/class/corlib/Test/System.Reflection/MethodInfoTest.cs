@@ -175,6 +175,10 @@ namespace MonoTests.System.Reflection
 		{
 			out1 = null;
 		}
+		
+		public void SignatureTest (__arglist)
+		{
+		}
 
 		[Test] // bug #81538
 		public void InvokeThreadAbort ()
@@ -208,6 +212,13 @@ namespace MonoTests.System.Reflection
 		{
 			Assert.AreEqual ("Void HeyHey(System.String ByRef, System.String ByRef)",
 				this.GetType ().GetMethod ("HeyHey").ToString ());
+		}
+		
+		[Test]
+		public void ToStringArgList ()
+		{
+			Assert.AreEqual ("Void SignatureTest(...)",
+				this.GetType ().GetMethod ("SignatureTest").ToString ());
 		}
 
 #if NET_2_0

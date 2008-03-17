@@ -283,6 +283,12 @@ namespace System.Reflection {
 				if (byref)
 					sb.Append (" ByRef");
 			}
+			if ((CallingConvention & CallingConventions.VarArgs) != 0) {
+				if (p.Length > 0)
+					sb.Append (", ");
+				sb.Append ("...");
+			}
+			
 			sb.Append (")");
 			return sb.ToString ();
 		}
