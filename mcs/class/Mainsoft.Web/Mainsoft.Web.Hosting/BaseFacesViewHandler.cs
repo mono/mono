@@ -73,11 +73,7 @@ namespace Mainsoft.Web.Hosting
 		}
 
 		public virtual string EncodeNamespace (FacesContext facesContext, string value) {
-			HttpContext context = ((AspNetFacesContext) facesContext).Context;
-			string ns = context.Request.Form [NAMESPACE];
-			if (String.IsNullOrEmpty (ns))
-				return value;
-			return ns + value;
+			return value;
 		}
 	}
 }
