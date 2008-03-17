@@ -1649,6 +1649,8 @@ namespace Mono.CSharp {
 
 		public override bool Define ()
 		{
+			CheckProtectedModifier ();
+
 			if (compiler_generated != null) {
 				foreach (CompilerGeneratedClass c in compiler_generated) {
 					if (!c.Define ())
@@ -2966,7 +2968,7 @@ namespace Mono.CSharp {
 				}
 
 				if ((m.ModFlags & Modifiers.PROTECTED) != 0) {
-					Report.Error (1057, m.Location, "`{0}': Static classes cannot contain protected members", m.GetSignatureForError ());
+					m.CheckProtectedModifier ();
 					continue;
 				}
 
@@ -4822,16 +4824,9 @@ namespace Mono.CSharp {
 						"Structs cannot contain explicit parameterless constructors");
 					return false;
 				}
-
-				if ((ModFlags & Modifiers.PROTECTED) != 0) {
-					Report.Error (666, Location, "`{0}': new protected member declared in struct", GetSignatureForError ());
-					return false;
-				}
 			}
 
-			if ((Parent.ModFlags & Modifiers.SEALED) != 0 && (ModFlags & Modifiers.PROTECTED) != 0) {
-				Report.Warning (628, 4, Location, "`{0}': new protected member declared in sealed class", GetSignatureForError ());
-			}
+			CheckProtectedModifier ();
 			
 			return true;
 		}
@@ -5519,18 +5514,9 @@ namespace Mono.CSharp {
 
 		protected virtual bool CheckBase ()
 		{
-  			if ((ModFlags & Modifiers.PROTECTED) != 0 && Parent.PartialContainer.Kind == Kind.Struct) {
-  				Report.Error (666, Location, "`{0}': new protected member declared in struct", GetSignatureForError ());
-  				return false;
-   			}
-   
-  			if (Report.WarningLevel >= 4 &&
-			    ((Parent.ModFlags & Modifiers.SEALED) != 0) &&
-			    ((ModFlags & Modifiers.PROTECTED) != 0) &&
-			    ((ModFlags & Modifiers.OVERRIDE) == 0) && (Name != "Finalize")) {
-  				Report.Warning (628, 4, Location, "`{0}': new protected member declared in sealed class", GetSignatureForError ());
-   			}
-				return true;
+			CheckProtectedModifier ();
+
+			return true;
 		}
 
 		protected virtual bool DoDefine ()

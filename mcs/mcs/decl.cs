@@ -167,7 +167,7 @@ namespace Mono.CSharp {
 		public string FullName {
 			get {
 				if (TypeArguments != null)
-					return Name + "<" + TypeArguments + ">";
+					return Name + "<" + TypeArguments.ToString () + ">";
 				else
 					return Name;
 			}
@@ -385,7 +385,32 @@ namespace Mono.CSharp {
 			}
 
 			return true;
-		}		
+		}
+
+		public void CheckProtectedModifier ()
+		{
+			if ((ModFlags & Modifiers.PROTECTED) == 0)
+				return;
+
+			if (Parent.PartialContainer.Kind == Kind.Struct) {
+				Report.Error (666, Location, "`{0}': Structs cannot contain protected members",
+					GetSignatureForError ());
+				return;
+			}
+
+			if ((Parent.ModFlags & Modifiers.STATIC) != 0) {
+				Report.Error (1057, Location, "`{0}': Static classes cannot contain protected members",
+					GetSignatureForError ());
+				return;
+			}
+
+			if (((Parent.ModFlags & Modifiers.SEALED) != 0) &&
+				((ModFlags & Modifiers.OVERRIDE) == 0) && (Name != "Finalize")) {
+				Report.Warning (628, 4, Location, "`{0}': new protected member declared in sealed class",
+					GetSignatureForError ());
+				return;
+			}
+		}
 
 		public abstract bool Define ();
 

@@ -1,5 +1,11 @@
 2008-03-17  Marek Safar  <marek.safar@gmail.com>
 
+	* class.cs, decl.cs, delegate.cs: Do protected modifier check on each member
+	
+	* symbolwriter.cs: Fixed.
+
+2008-03-17  Marek Safar  <marek.safar@gmail.com>
+
 	* anonymous.cs, driver.cs: Reset anonymous types counters.
 
 2008-03-17  Marek Safar  <marek.safar@gmail.com>

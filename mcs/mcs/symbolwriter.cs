@@ -23,7 +23,7 @@ namespace Mono.CSharp {
 
 		private static SymbolWriterImpl symwriter;
 
-		protected class SymbolWriterImpl : MonoSymbolWriter {
+		class SymbolWriterImpl : MonoSymbolWriter {
 			delegate int GetILOffsetFunc (ILGenerator ig);
 			delegate Guid GetGuidFunc (ModuleBuilder mb);
 
