@@ -1,5 +1,10 @@
 2008-03-16  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ComboBox.cs: When the user types into the textbox, reset
+	the selected index to -1.  [Fixes bug #371672]
+
+2008-03-16  Jonathan Pobst  <monkey@jpobst.com>
+
 	* FileDialog.cs: Support Control-A for selecting everything
 	in an OpenFileDialog.  [Fixes bug #371564]
 

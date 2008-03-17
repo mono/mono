@@ -1671,6 +1671,8 @@ namespace System.Windows.Forms
 			if (process_textchanged_event == false)
 				return; 
 				
+			selected_index = -1;
+
 			OnTextChanged (EventArgs.Empty);
 
 			int item = FindStringCaseInsensitive (textbox_ctrl.Text);
