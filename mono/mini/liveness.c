@@ -733,7 +733,14 @@ mono_linterval_print (MonoLiveInterval *interval)
 	MonoLiveRange2 *range;
 
 	for (range = interval->range; range != NULL; range = range->next)
-		printf ("[%x-%x) ", range->from, range->to);
+		printf ("[%x-%x] ", range->from, range->to);
+}
+
+void
+mono_linterval_print_nl (MonoLiveInterval *interval)
+{
+	mono_linterval_print (interval);
+	printf ("\n");
 }
 
 /**
@@ -747,7 +754,7 @@ mono_linterval_covers (MonoLiveInterval *interval, int pos)
 	MonoLiveRange2 *range;
 
 	for (range = interval->range; range != NULL; range = range->next) {
-		if (pos >= range->from && pos < range->to)
+		if (pos >= range->from && pos <= range->to)
 			return TRUE;
 		if (range->from > pos)
 			return FALSE;
@@ -780,6 +787,37 @@ mono_linterval_get_intersect_pos (MonoLiveInterval *i1, MonoLiveInterval *i2)
 	}
 
 	return -1;
+}
+ 
+/**
+ * mono_linterval_split
+ *
+ *   Split L at POS and store the newly created intervals into L1 and L2. POS becomes
+ * part of L2.
+ */
+void
+mono_linterval_split (MonoCompile *cfg, MonoLiveInterval *interval, MonoLiveInterval **i1, MonoLiveInterval **i2, int pos)
+{
+	MonoLiveRange2 *r;
+
+	g_assert (pos > interval->range->from && pos <= interval->last_range->to);
+
+	*i1 = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoLiveInterval));
+	*i2 = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoLiveInterval));
+
+	for (r = interval->range; r; r = r->next) {
+		if (pos > r->to) {
+			/* Add it to the first child */
+			mono_linterval_add_range (cfg, *i1, r->from, r->to);
+		} else if (pos > r->from && pos <= r->to) {
+			/* Split at pos */
+			mono_linterval_add_range (cfg, *i1, r->from, pos - 1);
+			mono_linterval_add_range (cfg, *i2, pos, r->to);
+		} else {
+			/* Add it to the second child */
+			mono_linterval_add_range (cfg, *i2, r->from, r->to);
+		}
+	}
 }
 
 #if 0

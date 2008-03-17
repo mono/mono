@@ -82,6 +82,8 @@ struct sigcontext {
 
 #define MONO_MAX_FREGS AMD64_XMM_NREG
 
+#define MONO_ARCH_FP_RETURN_REG AMD64_XMM0
+
 /* xmm15 is reserved for use by some opcodes */
 #define MONO_ARCH_CALLEE_FREGS 0xef
 #define MONO_ARCH_CALLEE_SAVED_FREGS 0
@@ -273,7 +275,6 @@ typedef struct {
 #define MONO_ARCH_HAVE_ATOMIC_ADD 1
 #define MONO_ARCH_HAVE_ATOMIC_EXCHANGE 1
 #define MONO_ARCH_HAVE_IMT 1
-#define MONO_ARCH_IMT_REG AMD64_R11
 #define MONO_ARCH_VTABLE_REG AMD64_R11
 #define MONO_ARCH_COMMON_VTABLE_TRAMPOLINE 1
 #define MONO_ARCH_HAVE_CMOV_OPS 1

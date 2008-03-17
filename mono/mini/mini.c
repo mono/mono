@@ -12039,7 +12039,8 @@ mono_codegen (MonoCompile *cfg)
 		if (cfg->opt & MONO_OPT_PEEPHOLE)
 			mono_arch_peephole_pass_1 (cfg, bb);
 
-		mono_local_regalloc (cfg, bb);
+		if (!cfg->globalra)
+			mono_local_regalloc (cfg, bb);
 
 		if (cfg->opt & MONO_OPT_PEEPHOLE)
 			mono_arch_peephole_pass_2 (cfg, bb);
@@ -12215,8 +12216,9 @@ if (valgrind_register){
 	mono_debug_close_method (cfg);
 }
 
-static void
-remove_critical_edges (MonoCompile *cfg) {
+void
+mono_remove_critical_edges (MonoCompile *cfg)
+{
 	MonoBasicBlock *bb;
 	MonoBasicBlock *previous_bb;
 	
@@ -12362,7 +12364,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	guint8 *ip;
 	MonoCompile *cfg;
 	MonoJitInfo *jinfo;
-	int dfn = 0, i, code_size_ratio;
+	int dfn, i, code_size_ratio;
 	gboolean deadce_has_run = FALSE;
 	gboolean try_generic_shared;
 	MonoMethod *method_to_compile;
@@ -12468,6 +12470,45 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 			cfg->new_ir = TRUE;
 	}
 
+	/* 
+	if ((cfg->method->klass->image != mono_defaults.corlib) || (strstr (cfg->method->klass->name, "StackOverflowException") && strstr (cfg->method->name, ".ctor")) || (strstr (cfg->method->klass->name, "OutOfMemoryException") && strstr (cfg->method->name, ".ctor")))
+		cfg->globalra = TRUE;
+	*/
+
+	//cfg->globalra = TRUE;
+
+	//if (!strcmp (cfg->method->klass->name, "Tests") && !cfg->method->wrapper_type)
+	//	cfg->globalra = TRUE;
+
+	{
+		static int count = 0;
+		count ++;
+
+		if (getenv ("COUNT2")) {
+			if (count == atoi (getenv ("COUNT2")))
+				printf ("LAST: %s\n", mono_method_full_name (cfg->method, TRUE));
+			if (count > atoi (getenv ("COUNT2")))
+				cfg->globalra = FALSE;
+		}
+	}
+
+	if (header->clauses)
+		cfg->globalra = FALSE;
+
+	if (cfg->method->wrapper_type == MONO_WRAPPER_NATIVE_TO_MANAGED)
+		/* The code in the prolog clobbers caller saved registers */
+		cfg->globalra = FALSE;
+
+	// FIXME: Disable globalra in case of tracing/profiling
+
+	if (cfg->method->save_lmf)
+		/* The LMF saving code might clobber caller saved registers */
+		cfg->globalra = FALSE;
+
+	// FIXME:
+	if (!strcmp (cfg->method->name, "CompareInternal"))
+		cfg->globalra = FALSE;
+
 	/*
 	if (strstr (cfg->method->name, "LoadData"))
 		cfg->new_ir = FALSE;
@@ -12524,15 +12565,12 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		mono_decompose_long_opts (cfg);
 
 		/* Should be done before branch opts */
-		mono_local_cprop2 (cfg);
+		if (cfg->opt & (MONO_OPT_CONSPROP | MONO_OPT_COPYPROP))
+			mono_local_cprop2 (cfg);
 	}
 
 	if (cfg->opt & MONO_OPT_BRANCH)
 		mono_optimize_branches (cfg);
-
-	if (cfg->opt & MONO_OPT_SSAPRE) {
-		remove_critical_edges (cfg);
-	}
 
 	if (cfg->new_ir) {
 		/* This must be done _before_ global reg alloc and _after_ decompose */
@@ -12541,9 +12579,13 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		mono_branch_to_cmov (cfg);
 	}
 
+	if ((cfg->opt & MONO_OPT_SSAPRE) || cfg->globalra)
+		mono_remove_critical_edges (cfg);
+
 	/* Depth-first ordering on basic blocks */
 	cfg->bblocks = mono_mempool_alloc (cfg->mempool, sizeof (MonoBasicBlock*) * (cfg->num_bblocks + 1));
 
+	dfn = 0;
 	df_visit (cfg->bb_entry, &dfn, cfg->bblocks);
 	if (cfg->num_bblocks != dfn + 1) {
 		MonoBasicBlock *bb;
@@ -12676,8 +12718,26 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		else
 			mono_ssa_remove (cfg);
 
-		if (cfg->opt & MONO_OPT_BRANCH)
+		if (cfg->opt & MONO_OPT_BRANCH) {
+			MonoBasicBlock *bb;
+
 			mono_optimize_branches (cfg);
+
+			/* Have to recompute cfg->bblocks and bb->dfn */
+			if (cfg->globalra) {
+				mono_remove_critical_edges (cfg);
+
+				for (bb = cfg->bb_entry; bb; bb = bb->next_bb)
+					bb->dfn = 0;
+
+				/* Depth-first ordering on basic blocks */
+				cfg->bblocks = mono_mempool_alloc (cfg->mempool, sizeof (MonoBasicBlock*) * (cfg->num_bblocks + 1));
+
+				dfn = 0;
+				df_visit (cfg->bb_entry, &dfn, cfg->bblocks);
+				cfg->num_bblocks = dfn + 1;
+			}
+		}
 	}
 #endif
 
@@ -12731,7 +12791,17 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	 */
 	mono_liveness_handle_exception_clauses (cfg);
 
-	if (cfg->opt & MONO_OPT_LINEARS) {
+	if (cfg->globalra) {
+		MonoBasicBlock *bb;
+
+		/* Have to do this before regalloc since it can create vregs */
+		for (bb = cfg->bb_entry; bb; bb = bb->next_bb)
+			mono_arch_lowering_pass (cfg, bb);
+
+		mono_global_regalloc (cfg);
+	}
+
+	if ((cfg->opt & MONO_OPT_LINEARS) && !cfg->globalra) {
 		GList *vars, *regs;
 		
 		/* For now, compute aliasing info only if needed for deadce... */
@@ -12767,7 +12837,8 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
     //print_dfn (cfg);
 	
 	/* variables are allocated after decompose, since decompose could create temps */
-	mono_arch_allocate_vars (cfg);
+	if (!cfg->globalra)
+		mono_arch_allocate_vars (cfg);
 
 	if (cfg->opt & MONO_OPT_CFOLD)
 		mono_constant_fold (cfg);
@@ -12776,12 +12847,14 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		MonoBasicBlock *bb;
 		gboolean need_local_opts;
 
-		mono_spill_global_vars (cfg, &need_local_opts);
+		if (!cfg->globalra) {
+			mono_spill_global_vars (cfg, &need_local_opts);
 
-		if (need_local_opts || cfg->compile_aot) {
-			/* To optimize code created by spill_global_vars */
-			mono_local_cprop2 (cfg);
-			mono_local_deadce (cfg);
+			if (need_local_opts || cfg->compile_aot) {
+				/* To optimize code created by spill_global_vars */
+				mono_local_cprop2 (cfg);
+				mono_local_deadce (cfg);
+			}
 		}
 
 		/* Add branches between non-consecutive bblocks */
@@ -12806,7 +12879,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 			}
 		}
 
-		if (cfg->verbose_level >= 4) {
+		if (cfg->verbose_level >= 4 && !cfg->globalra) {
 			for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
 				MonoInst *tree = bb->code;	
 				g_print ("DUMP BLOCK %d:\n", bb->block_num);

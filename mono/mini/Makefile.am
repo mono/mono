@@ -214,6 +214,7 @@ common_sources = \
 	debug-mini.c	\
 	debug-mini.h	\
 	linear-scan.c	\
+	regalloc2.c 		\
 	aot-compiler.c		\
 	aot-runtime.c		\
 	graph.c		\

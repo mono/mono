@@ -720,6 +720,7 @@ typedef struct {
 	guint            ret_var_is_local : 1;
 	guint            ret_var_set : 1;
 	guint            new_ir : 1;
+	guint            globalra : 1;
 	guint            dont_verify_stack_merge : 1;
 	guint            unverifiable : 1;
 	guint            skip_visibility : 1;
@@ -1089,6 +1090,7 @@ GList    *mono_varlist_insert_sorted        (MonoCompile *cfg, GList *list, Mono
 GList    *mono_varlist_sort                 (MonoCompile *cfg, GList *list, int sort_type) MONO_INTERNAL;
 void      mono_analyze_liveness             (MonoCompile *cfg) MONO_INTERNAL;
 void      mono_linear_scan                  (MonoCompile *cfg, GList *vars, GList *regs, regmask_t *used_mask) MONO_INTERNAL;
+void      mono_global_regalloc              (MonoCompile *cfg) MONO_INTERNAL;
 void      mono_create_jump_table            (MonoCompile *cfg, MonoInst *label, MonoBasicBlock **bbs, int num_blocks) MONO_INTERNAL;
 int       mono_compile_assembly             (MonoAssembly *ass, guint32 opts, const char *aot_options) MONO_INTERNAL;
 MonoCompile *mini_method_compile            (MonoMethod *method, guint32 opts, MonoDomain *domain, gboolean run_cctors, gboolean compile_aot, int parts) MONO_INTERNAL;
@@ -1106,6 +1108,7 @@ void      mono_linterval_add_range          (MonoCompile *cfg, MonoLiveInterval 
 void      mono_linterval_print              (MonoLiveInterval *interval) MONO_INTERNAL;
 gboolean  mono_linterval_covers             (MonoLiveInterval *interval, int pos) MONO_INTERNAL;
 gint32    mono_linterval_get_intersect_pos  (MonoLiveInterval *i1, MonoLiveInterval *i2) MONO_INTERNAL;
+void      mono_linterval_split              (MonoCompile *cfg, MonoLiveInterval *interval, MonoLiveInterval **i1, MonoLiveInterval **i2, int pos) MONO_INTERNAL;
 void      mono_liveness_handle_exception_clauses (MonoCompile *cfg) MONO_INTERNAL;
 
 void      mono_aot_init                     (void) MONO_INTERNAL;
@@ -1171,6 +1174,7 @@ gint32*           mono_allocate_stack_slots_full (MonoCompile *cfg, gboolean bac
 gint32*           mono_allocate_stack_slots (MonoCompile *cfg, guint32 *stack_size, guint32 *stack_align) MONO_INTERNAL;
 void              mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb) MONO_INTERNAL;
 MonoInst         *mono_branch_optimize_exception_target (MonoCompile *cfg, MonoBasicBlock *bb, const char * exname) MONO_INTERNAL;
+void              mono_remove_critical_edges (MonoCompile *cfg) MONO_INTERNAL;
 gboolean          mono_is_regsize_var (MonoType *t) MONO_INTERNAL;
 void              mini_emit_memcpy2 (MonoCompile *cfg, int destreg, int doffset, int srcreg, int soffset, int size, int align) MONO_INTERNAL;
 CompRelation      mono_opcode_to_cond (int opcode) MONO_INTERNAL;
@@ -1212,6 +1216,9 @@ gpointer  mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 encoded_offset) 
 guint32	  mono_arch_get_rgctx_lazy_fetch_offset (gpointer *regs) MONO_INTERNAL;
 GList    *mono_arch_get_allocatable_int_vars    (MonoCompile *cfg) MONO_INTERNAL;
 GList    *mono_arch_get_global_int_regs         (MonoCompile *cfg) MONO_INTERNAL;
+GList    *mono_arch_get_global_fp_regs          (MonoCompile *cfg) MONO_INTERNAL;
+GList    *mono_arch_get_iregs_clobbered_by_call (MonoCallInst *call) MONO_INTERNAL;
+GList    *mono_arch_get_fregs_clobbered_by_call (MonoCallInst *call) MONO_INTERNAL;
 guint32   mono_arch_regalloc_cost               (MonoCompile *cfg, MonoMethodVar *vmv) MONO_INTERNAL;
 void      mono_arch_patch_code                  (MonoMethod *method, MonoDomain *domain, guint8 *code, MonoJumpInfo *ji, gboolean run_cctors) MONO_INTERNAL;
 void      mono_arch_flush_icache                (guint8 *code, gint size) MONO_INTERNAL;
@@ -1227,6 +1234,7 @@ gboolean  mono_arch_has_unwind_info             (gconstpointer addr) MONO_INTERN
 void      mono_arch_setup_jit_tls_data          (MonoJitTlsData *tls) MONO_INTERNAL;
 void      mono_arch_free_jit_tls_data           (MonoJitTlsData *tls) MONO_INTERNAL;
 void      mono_arch_emit_this_vret_args         (MonoCompile *cfg, MonoCallInst *inst, int this_reg, int this_type, int vt_reg) MONO_INTERNAL;
+void      mono_arch_fill_argument_info          (MonoCompile *cfg) MONO_INTERNAL;
 void      mono_arch_allocate_vars               (MonoCompile *m) MONO_INTERNAL;
 int       mono_arch_get_argument_info           (MonoMethodSignature *csig, int param_count, MonoJitArgumentInfo *arg_info) MONO_INTERNAL;
 gboolean  mono_arch_print_tree			(MonoInst *tree, int arity) MONO_INTERNAL;

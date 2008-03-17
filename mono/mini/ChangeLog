@@ -1,3 +1,14 @@
+2008-03-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.h mini-amd64.c: Emit the IMT argument right before the call to make
+	it easier for mono_arch_find_imt_method () to find it.
+
+	* regalloc2.c: New unified local/global register allocator implementation.
+
+	* mini.h mini.c mini-amd64.c: Changes required by the new register allocator.
+
+	* tests.cs: Tests for the new register allocator.
+
 2008-03-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_op_to_op_imm): Handle OP_LOCALLOC as well.
