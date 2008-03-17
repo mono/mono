@@ -1,3 +1,9 @@
+2008-03-17  Jb Evain  <jbevain@novell.com>
+
+	* reflection.c: when running on a 2.0 runtime, emit
+	unconditionally the #~ header version as 2.0, and the
+	CLI header version as 2.5, for symmetry's sake with csc.
+
 2008-03-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c: Remove the unused cache_interface_offsets stuff.
