@@ -1,3 +1,7 @@
+2008-03-17  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathNavigatorTests.cs : added test for bug #324606.
+
 2008-02-27  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathNavigatorTests.cs : added test for bug #365112.

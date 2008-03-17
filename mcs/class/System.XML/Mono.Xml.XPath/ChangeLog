@@ -1,3 +1,8 @@
+2008-03-17  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTMXPathDocumentBuilder2.cs : allow document fragment as XmlReader
+	  input. Fixed bug #324606.
+
 2007-07-02  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTMXPathDocumentBuilder2.cs : do not bork at non-document element

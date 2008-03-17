@@ -653,6 +653,27 @@ namespace MonoTests.System.Xml
 			Assert ("#4", nav.MoveToNext (XPathNodeType.All));
 			AssertEquals ("#5", "child2", nav.LocalName);
 		}
+
+		[Test] // bug #324606.
+		public void XPathDocumentFromSubtreeNodes ()
+		{
+			string xml = "<root><child1><nest1><nest2>hello!</nest2></nest1></child1><child2/><child3/></root>";
+			XmlReader r = new XmlTextReader (new StringReader (xml));
+			while (r.Read ()) {
+				if (r.Name == "child1")
+					break;
+			}
+			XPathDocument d = new XPathDocument (r);
+			XPathNavigator n = d.CreateNavigator ();
+			string result = @"<child1>
+  <nest1>
+    <nest2>hello!</nest2>
+  </nest1>
+</child1>
+<child2 />
+<child3 />";
+			AssertEquals (result, n.OuterXml.Replace ("\r\n", "\n"));
+		}
 #endif
 	}
 }

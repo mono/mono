@@ -183,9 +183,12 @@ namespace Mono.Xml.XPath
 			this.lastNsInScope = 1;
 			parentStack [0] = nodeIndex;
 
-			// LAMESPEC: it should not read more than one top-level element, but .NET sucks here. See bug #81932
-			while (!xmlReader.EOF && parentStackIndex >= 0)
+			if (xmlReader.ReadState == ReadState.Initial)
+				xmlReader.Read ();
+			int startDepth = xmlReader.Depth;
+			do {
 				Read ();
+			} while (skipRead || xmlReader.Read () && xmlReader.Depth >= startDepth);
 			SetNodeArrayLength (nodeIndex + 1);
 			SetAttributeArrayLength (attributeIndex + 1);
 			SetNsArrayLength (nsIndex + 1);
@@ -203,10 +206,8 @@ namespace Mono.Xml.XPath
 
 		public void Read ()
 		{
-			if (!skipRead)
-				if (!xmlReader.Read ())
-					return;
 			skipRead = false;
+
 			int parent = parentStack [parentStackIndex];
 			int prevSibling = nodeIndex;
 
