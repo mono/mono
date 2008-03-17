@@ -352,7 +352,7 @@ namespace System.Web.Configuration {
 				return;
 
 			Hashtable tmpTable = (Hashtable) sectionCache.Clone ();
-			if (tmpTable [key] != null)
+			if (tmpTable.Contains (key))
 				return;
 
 			tmpTable.Add (key, section);

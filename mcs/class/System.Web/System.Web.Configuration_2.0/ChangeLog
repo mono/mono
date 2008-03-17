@@ -2,6 +2,11 @@
 
 	* ProvidersHelper.cs: fixed thread safety issue in InstantiateProvider
 
+2008-02-25  Marek Habersack  <mhabersack@novell.com>
+
+	* WebConfigurationManager.cs: hashtable can contain a key with a
+	null value, avoid adding duplicate keys in such cases.
+
 2008-02-18  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* WebConfigurationManager.cs: performance improvement, cached
