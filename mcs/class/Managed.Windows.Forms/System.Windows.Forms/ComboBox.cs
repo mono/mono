@@ -417,6 +417,7 @@ namespace System.Windows.Forms
 						textbox_ctrl.Text = GetItemText (selected_item);
 					textbox_ctrl.BorderStyle = BorderStyle.None;
 					textbox_ctrl.TextChanged += new EventHandler (OnTextChangedEdit);
+					textbox_ctrl.KeyPress += new KeyPressEventHandler (OnTextKeyPress);
 					textbox_ctrl.Click += new EventHandler (OnTextBoxClick);
 					textbox_ctrl.ContextMenu = ContextMenu;
 
@@ -1670,8 +1671,6 @@ namespace System.Windows.Forms
 		{
 			if (process_textchanged_event == false)
 				return; 
-				
-			selected_index = -1;
 
 			OnTextChanged (EventArgs.Empty);
 
@@ -1691,7 +1690,12 @@ namespace System.Windows.Forms
 
 			base.Text = textbox_ctrl.Text;
 		}
-		
+
+		private void OnTextKeyPress (object sender, KeyPressEventArgs e)
+		{
+			selected_index = -1;
+		}
+
 		internal void SetControlText (string s)
 		{
 			process_textchanged_event = false;
