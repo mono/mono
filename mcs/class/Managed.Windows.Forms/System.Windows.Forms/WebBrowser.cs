@@ -29,6 +29,7 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.IO;
+using System.Drawing;
 
 namespace System.Windows.Forms
 {
@@ -66,16 +67,20 @@ namespace System.Windows.Forms
 			set { allowWebBrowserDrop = value; }
 		}
 
-		[DefaultValue (true)]
+		[BrowsableAttribute(false)]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public bool CanGoBack {
 			get { return this.WebHost.Navigation.CanGoBack; }
 		}
 
-		[DefaultValue (true)]
+		[BrowsableAttribute(false)]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public bool CanGoForward {
 			get { return this.WebHost.Navigation.CanGoForward; }
 		}
 
+		[BrowsableAttribute(false)]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public HtmlDocument Document {
 			get {
 				if (document == null && documentReady)
@@ -85,29 +90,38 @@ namespace System.Windows.Forms
 		}
 
 		[MonoTODO ("Stub, not implemented")]
+		[BrowsableAttribute(false)]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public Stream DocumentStream {
 			get { return null; }
 			set {  }
 		}
 
 		[MonoTODO ("Stub, not implemented")]
+		[BrowsableAttribute(false)]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public string DocumentText {
 			get { return String.Empty; }
 			set { throw new NotSupportedException (); }
 		}
 
+		[BrowsableAttribute(false)]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public string DocumentTitle {
 			get { return document.Title; }
-			set { document.Title = value; }
+			private set { document.Title = value; }
 		}
 
 		[MonoTODO ("Stub, not implemented")]
+		[BrowsableAttribute(false)]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public string DocumentType {
 			get { return String.Empty; }
-			set { throw new NotSupportedException (); }
 		}
 
 		[MonoTODO ("Stub, not implemented")]
+		[BrowsableAttribute(false)]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public WebBrowserEncryptionLevel EncryptionLevel {
 			get { return WebBrowserEncryptionLevel.Unknown; }
 		}
@@ -118,67 +132,97 @@ namespace System.Windows.Forms
 		}
 
 		[MonoTODO ("Stub, not implemented")]
+		[BrowsableAttribute(false)]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public bool IsBusy {
 			get { return false; }
 		}
 
 		[MonoTODO ("Stub, not implemented")]
+		[BrowsableAttribute(false)]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public bool IsOffline {
 			get { return true; }
 		}
 
 		[MonoTODO ("Stub, not implemented")]
+		[DefaultValue(true)]
 		public bool IsWebBrowserContextMenuEnabled { 
 			get { return isWebBrowserContextMenuEnabled; } 
 			set { isWebBrowserContextMenuEnabled = value; } 
 		}
 
 		[MonoTODO ("Stub, not implemented")]
+		[BrowsableAttribute(false)]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public object ObjectForScripting {
 			get { return objectForScripting; }
 			set { objectForScripting = value; }
 		}
 
 		[MonoTODO ("Stub, not implemented")]
+		[BrowsableAttribute(false)]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public WebBrowserReadyState ReadyState { 
 			get { return WebBrowserReadyState.Uninitialized; }
 		}
 
 		[MonoTODO ("Stub, not implemented")]
+		[DefaultValue(false)]
 		public bool ScriptErrorsSuppressed {
 			get { return scriptErrorsSuppressed; }
 			set { scriptErrorsSuppressed = value; }
 		}
 
 		[MonoTODO ("Stub, not implemented")]
+		[DefaultValue(true)]
 		public bool ScrollBarsEnabled {
 			get { return scrollBarsEnabled; }
 			set { scrollBarsEnabled = value; }
 		}
 
 		[MonoTODO ("Stub, not implemented")]
+		[BrowsableAttribute(false)]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public virtual string StatusText {
 			get { return statusText; }
-			set { statusText = value; }
 		}
 
 		[BindableAttribute(true)] 
+		[DefaultValue(null)]
+		[TypeConverter(typeof(UriTypeConverter))]
 		public Uri Url {
 			get { return new Uri(WebHost.Document.Url); }
 			set { this.Navigate (value); }
 		}
 
 		[MonoTODO ("Stub, not implemented")]
+		[BrowsableAttribute(false)]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public Version Version {
 			get { return null; }
 		}
 
 		[MonoTODO ("Stub, not implemented")]
+		[DefaultValue(true)]
 		public bool WebBrowserShortcutsEnabled {
 			get { return webBrowserShortcutsEnabled; }
 			set { webBrowserShortcutsEnabled = value; }
 		}
+		
+		protected override Size DefaultSize {
+			get {return base.DefaultSize;}
+		}
 
+		
+		[BrowsableAttribute(false)]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public Padding Padding {
+			get {return base.Padding;}
+			set {base.Padding = value; }
+		}
+		
 		#endregion
 
 		[MonoTODO ("Stub, not implemented")]
@@ -466,11 +510,13 @@ namespace System.Windows.Forms
 		static object ProgressChangedEvent = new object ();
 		static object StatusTextChangedEvent = new object ();
 		
+		[BrowsableAttribute(false)]
 		public event EventHandler CanGoBackChanged {
 			add { Events.AddHandler (CanGoBackChangedEvent, value); }
 			remove { Events.RemoveHandler (CanGoBackChangedEvent, value); }
 		}
 
+		[BrowsableAttribute(false)]
 		public event EventHandler CanGoForwardChanged {
 			add { Events.AddHandler (CanGoForwardChangedEvent, value); }
 			remove { Events.RemoveHandler (CanGoForwardChangedEvent, value); }
@@ -481,11 +527,13 @@ namespace System.Windows.Forms
 			remove { Events.RemoveHandler (DocumentCompletedEvent, value); }
 		}
 
+		[BrowsableAttribute(false)]
 		public event EventHandler DocumentTitleChanged {
 			add { Events.AddHandler (DocumentTitleChangedEvent, value); }
 			remove { Events.RemoveHandler (DocumentTitleChangedEvent, value); }
 		}
 
+		[BrowsableAttribute(false)]
 		public event EventHandler EncryptionLevelChanged {
 			add { Events.AddHandler (EncryptionLevelChangedEvent, value); }
 			remove { Events.RemoveHandler (EncryptionLevelChangedEvent, value); }
@@ -516,6 +564,7 @@ namespace System.Windows.Forms
 			remove { Events.RemoveHandler (ProgressChangedEvent, value); }
 		}
 
+		[BrowsableAttribute(false)]
 		public event EventHandler StatusTextChanged {
 			add { Events.AddHandler (StatusTextChangedEvent, value); }
 			remove { Events.RemoveHandler (StatusTextChangedEvent, value); }

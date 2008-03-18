@@ -1,3 +1,8 @@
+2008-03-18  Andreia Gaita <avidigal@novell.com> 
+
+	* WebBrowser.cs: Add missing attributes, missing Padding and
+	  DefaultSize properties, remove extraneous getters
+
 2008-03-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListBindingHelper.cs: Implement a pair of GetListItemProperties
