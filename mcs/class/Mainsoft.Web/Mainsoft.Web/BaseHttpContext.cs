@@ -35,6 +35,10 @@ using javax.faces.lifecycle;
 
 namespace Mainsoft.Web
 {
+	/// <summary>
+	/// BaseHttpContext contains all of the per-request state information related to the processing of a single request, 
+	/// and the rendering of the corresponding response.
+	/// </summary>
 	public abstract class BaseHttpContext
 	{
 		protected readonly HttpContext _context;
@@ -45,6 +49,11 @@ namespace Mainsoft.Web
 			context.Items [_contextKey] = this;
 		}
 
+		/// <summary>
+		/// Gets the Mainsoft.Web.BaseHttpContext object for the current request.
+		/// </summary>
+		/// <param name="context"></param>
+		/// <returns></returns>
 		public static BaseHttpContext GetCurrent(HttpContext context) {
 			if (context == null)
 				throw new ArgumentNullException ("context");
@@ -53,10 +62,16 @@ namespace Mainsoft.Web
 			return baseContext ?? GetWorker (context).CreateContext (context);
 		}
 
+		/// <summary>
+		/// Returns the javax.faces.lifecycle.Lifecycle instance.
+		/// </summary>
 		public Lifecycle Lifecycle {
 			get { return BaseHttpServlet.Lifecycle; }
 		}
 
+		/// <summary>
+		/// Returns the Mainsoft.Web.Hosting.BaseWorkerRequest object for the current request.
+		/// </summary>
 		protected BaseWorkerRequest Worker {
 			get { return GetWorker (_context); }
 		}
