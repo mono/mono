@@ -1,3 +1,9 @@
+
+Tue Mar 18 20:18:02 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: make the test to optimize ldtoken from typeof() more
+	precise.
+
 2008-03-18  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.c: Generic sharing of the initobj instruction for reference
