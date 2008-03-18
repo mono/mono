@@ -178,35 +178,36 @@ namespace System.Web.Caching
 		
 		object Remove (string key, CacheItemRemovedReason reason)
 		{
-			lock (cache) {
-				CacheItem it;
+			CacheItem it = null;
 
+			lock (cache) {
 #if NET_2_0
 				cache.TryGetValue (key, out it);
 #else
 				it = (CacheItem) cache [key];
 #endif
 				
-				if (it != null) {
-					if (it.Dependency != null) {
-#if NET_2_0
-						it.Dependency.SetCache (null);
-#endif
-						it.Dependency.DependencyChanged -= new EventHandler (OnDependencyChanged);
-						it.Dependency.Dispose ();
-					}
-					cache.Remove (key);
-					if (it.OnRemoveCallback != null) {
-						try {
-							it.OnRemoveCallback (key, it.Value, reason);
-						} catch {
-							//TODO: anything to be done here?
-						}
-					}
-					return it.Value;
-				} else
-					return null;
+				cache.Remove (key);
 			}
+
+			if (it != null) {
+				if (it.Dependency != null) {
+#if NET_2_0
+					it.Dependency.SetCache (null);
+#endif
+					it.Dependency.DependencyChanged -= new EventHandler (OnDependencyChanged);
+					it.Dependency.Dispose ();
+				}
+				if (it.OnRemoveCallback != null) {
+					try {
+						it.OnRemoveCallback (key, it.Value, reason);
+					} catch {
+						//TODO: anything to be done here?
+					}
+				}
+				return it.Value;
+			} else
+				return null;
 		}
 
 		// Used when shutting down the application so that
