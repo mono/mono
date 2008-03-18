@@ -664,8 +664,7 @@ namespace System.Web.UI
 			if (control == null)
 				return false;
 
-			UpdatePanel parent = control.Parent as UpdatePanel;
-			if (parent != null && parent.RequiresUpdate)
+			if (control is UpdatePanel && ((UpdatePanel) control).RequiresUpdate)
 				return true;
 
 			return HasBeenRendered (control.Parent);
