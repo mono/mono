@@ -1,5 +1,13 @@
 2008-03-18  Mark Probst  <mark.probst@gmail.com>
 
+	* generics-sharing-other-exc.2.il: Test case for catching
+	exceptions not derived from System.Exception specified by a type
+	variable.
+
+	* Makefile.am: Added the new test.
+
+2008-03-18  Mark Probst  <mark.probst@gmail.com>
+
 	* generic-initobj.2.cs: Test case for initobj in generic code.
 
 	* Makefile.am: Added the new test.
