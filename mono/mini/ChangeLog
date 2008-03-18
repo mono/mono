@@ -1,3 +1,7 @@
+2008-03-18  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Generic sharing of the initobj instruction for reference
+	types.
 
 Tue Mar 18 12:39:27 CET 2008 Paolo Molaro <lupus@ximian.com>
 
