@@ -41,7 +41,7 @@ namespace System.Diagnostics
 	public class Stopwatch
 	{
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal static extern long GetTimestamp ();
+		public static extern long GetTimestamp ();
 
 		public static readonly long Frequency = 10000000;
 

@@ -1,3 +1,6 @@
+2008-03-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* Stopwatch.cs: Fix visibility of GetTimestamp () method.
 
 Thu Feb 28 19:52:30 CET 2008 Paolo Molaro <lupus@ximian.com>
 
