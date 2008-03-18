@@ -34,6 +34,10 @@ using javax.servlet.http;
 
 namespace Mainsoft.Web
 {
+	/// <summary>
+	/// ServletHttpContext contains all of the per-request state information related to the processing of a single request, 
+	/// and the rendering of the corresponding response.
+	/// </summary>
 	public sealed class ServletHttpContext : BaseHttpContext
 	{
 		internal ServletHttpContext (HttpContext context)
