@@ -1,4 +1,9 @@
 
+Tue Mar 18 12:39:27 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, mini-amd64.c, mini-x86.c, tramp-amd64.c, tramp-x86.c: change
+	the mono_breakpoint_clean_code() code to perform bound checks.
+
 Tue Mar 18 11:50:14 CET 2008 Paolo Molaro <lupus@ximian.com>
 
 	* mini.h, mini-trampolines.c, tramp-*.c: change the signature of
