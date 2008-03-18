@@ -92,6 +92,35 @@ namespace System.Windows.Forms
 			return dataSource.GetType ();
 		}
 
+		public static PropertyDescriptorCollection GetListItemProperties (object list)
+		{
+			Type item_type = GetListItemType (list);
+			return TypeDescriptor.GetProperties (item_type);
+		}
+
+		public static PropertyDescriptorCollection GetListItemProperties (object dataSource, PropertyDescriptor [] listAccessors)
+		{
+			if (dataSource == null || listAccessors.Length == 0)
+				return GetListItemProperties (dataSource);
+
+			// Take into account only the first property
+			Type property_type = listAccessors [0].PropertyType;
+			if (typeof (IList).IsAssignableFrom (property_type) || 
+				typeof (IList<>).IsAssignableFrom (property_type)) {
+
+				PropertyInfo property = GetPropertyByReflection (property_type, "Item");
+				return TypeDescriptor.GetProperties (property.PropertyType);
+			}
+
+			return new PropertyDescriptorCollection (new PropertyDescriptor [0]);
+		}
+
+		public static PropertyDescriptorCollection GetListItemProperties (object dataSource, string dataMember, 
+			PropertyDescriptor [] listAccessors)
+		{
+			throw new NotImplementedException ();
+		}
+
 		static PropertyDescriptor GetProperty (Type type, string property_name)
 		{
 			PropertyDescriptorCollection properties = TypeDescriptor.GetProperties (type);
