@@ -1,3 +1,10 @@
+
+Tue Mar 18 11:50:14 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, mini-trampolines.c, tramp-*.c: change the signature of
+	mono_arch_patch_callsite() to include the start of the managed method
+	to be able to perform bound checks.
+
 2008-03-17  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.c: Generic sharing for the isinst instruction.
