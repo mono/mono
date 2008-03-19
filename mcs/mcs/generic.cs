@@ -3060,6 +3060,7 @@ namespace Mono.CSharp {
 			public readonly Type UnderlyingType;
 			public readonly MethodInfo HasValue;
 			public readonly MethodInfo Value;
+			public readonly MethodInfo GetValueOrDefault;
 			public readonly ConstructorInfo Constructor;
 
 			public NullableInfo (Type type)
@@ -3069,6 +3070,7 @@ namespace Mono.CSharp {
 
 				PropertyInfo has_value_pi = TypeManager.GetPredefinedProperty (type, "HasValue", Location.Null);
 				PropertyInfo value_pi = TypeManager.GetPredefinedProperty (type, "Value", Location.Null);
+				GetValueOrDefault = TypeManager.GetPredefinedMethod (type, "GetValueOrDefault", Location.Null, Type.EmptyTypes);
 
 				HasValue = has_value_pi.GetGetMethod (false);
 				Value = value_pi.GetGetMethod (false);
@@ -3176,6 +3178,23 @@ namespace Mono.CSharp {
 				ec.ig.EmitCall (OpCodes.Call, info.HasValue, null);
 			}
 
+			public void EmitGetValueOrDefault (EmitContext ec)
+			{
+				AddressOf (ec, AddressOp.LoadStore);
+				ec.ig.EmitCall (OpCodes.Call, info.GetValueOrDefault, null);
+			}
+
+			public override bool Equals (object obj)
+			{
+				Unwrap uw = obj as Unwrap;
+				return uw != null && expr.Equals (uw.expr);
+			}
+			
+			public override int GetHashCode ()
+			{
+				return expr.GetHashCode ();
+			}
+
 			public override bool IsNull {
 				get {
 					return expr.IsNull;
@@ -3194,6 +3213,11 @@ namespace Mono.CSharp {
 					temp.Store (ec);
 					has_temp = true;
 				}
+			}
+
+			public void LoadTemporary (EmitContext ec)
+			{
+				temp.Emit (ec);
 			}
 
 			public void AddressOf (EmitContext ec, AddressOp mode)
@@ -3253,15 +3277,13 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public class Wrap : Expression
+		public class Wrap : EmptyCast
 		{
-			Expression expr;
 			NullableInfo info;
 
-			protected Wrap (Expression expr)
+			Wrap (Expression expr)
+				: base (expr, null)
 			{
-				this.expr = expr;
-				this.loc = expr.Location;
 			}
 
 			public static Wrap Create (Expression expr, EmitContext ec)
@@ -3269,20 +3291,9 @@ namespace Mono.CSharp {
 				return new Wrap (expr).Resolve (ec) as Wrap;
 			}
 			
-			public override Expression CreateExpressionTree (EmitContext ec)
-			{
-				ArrayList args = new ArrayList (2);
-				args.Add (new Argument (expr.CreateExpressionTree (ec)));
-				args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
-				return CreateExpressionFactoryCall ("Convert", args);
-			}			
-
 			public override Expression DoResolve (EmitContext ec)
 			{
-				if (expr == null)
-					return null;
-
-				TypeExpr target_type = new NullableType (expr.Type, loc);
+				TypeExpr target_type = new NullableType (child.Type, loc);
 				target_type = target_type.ResolveAsTypeTerminal (ec, false);
 				if (target_type == null)
 					return null;
@@ -3295,7 +3306,7 @@ namespace Mono.CSharp {
 
 			public override void Emit (EmitContext ec)
 			{
-				expr.Emit (ec);
+				child.Emit (ec);
 				ec.ig.Emit (OpCodes.Newobj, info.Constructor);
 			}
 		}
@@ -3303,24 +3314,12 @@ namespace Mono.CSharp {
 		//
 		// Represents null value converted to nullable type
 		//
-		public class Null : Expression, IMemoryLocation
+		public class Null : EmptyCast, IMemoryLocation
 		{
 			public Null (Type target_type, Location loc)
+				: base (new NullLiteral (loc), target_type)
 			{
-				this.type = target_type;
-				this.loc = loc;
-
 				eclass = ExprClass.Value;
-			}
-			
-			public override Expression CreateExpressionTree (EmitContext ec)
-			{
-				return EmptyCast.Create (new NullLiteral (loc), type).CreateExpressionTree (ec);
-			}			
-		
-			public override Expression DoResolve (EmitContext ec)
-			{
-				return this;
 			}
 
 			public override void Emit (EmitContext ec)
@@ -3331,7 +3330,7 @@ namespace Mono.CSharp {
 				ec.ig.Emit (OpCodes.Initobj, type);
 				value_target.Emit (ec);
 			}
-			
+
 			public override bool IsNull {
 				get {
 					return true;
@@ -3465,9 +3464,7 @@ namespace Mono.CSharp {
 
 		public class LiftedBinaryOperator : Binary
 		{
-			Expression underlying, null_value, bool_wrap;
 			Unwrap left_unwrap, right_unwrap;
-			bool is_equality, is_comparision, is_boolean;
 
 			public LiftedBinaryOperator (Binary.Operator op, Expression left, Expression right,
 						     Location loc)
@@ -3478,28 +3475,13 @@ namespace Mono.CSharp {
 
 			public override Expression DoResolve (EmitContext ec)
 			{
+				// TODO: How does it work with use-operators?
 				if ((Oper == Binary.Operator.LogicalAnd) ||
 				    (Oper == Binary.Operator.LogicalOr)) {
 					Error_OperatorCannotBeApplied ();
 					return null;
 				}
 
-				//
-				// Optimize null comparisons
-				//
-				if (Oper == Binary.Operator.Equality) {
-					if (left.IsNull)
-						return new Unary (Unary.Operator.LogicalNot, Nullable.HasValue.Create (right, ec), loc).Resolve (ec);
-					if (right.IsNull)
-						return new Unary (Unary.Operator.LogicalNot, Nullable.HasValue.Create (left, ec), loc).Resolve (ec);
-				}
-				if (Oper == Binary.Operator.Inequality) {
-					if (left.IsNull)
-						return Nullable.HasValue.Create (right, ec);
-					if (right.IsNull)
-						return Nullable.HasValue.Create (left, ec);
-				}
-				
 				if (TypeManager.IsNullableType (left.Type)) {
 					left = left_unwrap = Unwrap.Create (left, ec);
 					if (left == null)
@@ -3512,151 +3494,119 @@ namespace Mono.CSharp {
 						return null;
 				}
 
-				if (((Oper == Binary.Operator.BitwiseAnd) || (Oper == Binary.Operator.BitwiseOr)) &&
-				    ((left.Type == TypeManager.bool_type) && (right.Type == TypeManager.bool_type))) {
-					Expression empty = new EmptyExpression (TypeManager.bool_type);
-					bool_wrap = Wrap.Create (empty, ec);
-					null_value = new Null (bool_wrap.Type, loc).Resolve (ec);
+				if ((Oper & Operator.ComparisonMask) != 0)
+					return base.DoResolve (ec);
 
-					type = bool_wrap.Type;
-					is_boolean = true;
-				} else if ((Oper == Binary.Operator.Equality) || (Oper == Binary.Operator.Inequality)) {
-					underlying = new Binary (Oper, left, right).Resolve (ec);
-					if (underlying == null)
-						return null;
-					type = TypeManager.bool_type;
-					is_equality = true;
-				} else if ((Oper == Binary.Operator.LessThan) ||
-					   (Oper == Binary.Operator.GreaterThan) ||
-					   (Oper == Binary.Operator.LessThanOrEqual) ||
-					   (Oper == Binary.Operator.GreaterThanOrEqual)) {
-					underlying = new Binary (Oper, left, right).Resolve (ec);
-					if (underlying == null)
-						return null;
+				Expression expr = base.DoResolve (ec);
+				if (expr != this)
+					return expr;
 
-					type = TypeManager.bool_type;
-					is_comparision = true;
-				} else {
-					underlying = new Binary (Oper, left, right).Resolve (ec);
-					if (underlying == null)
-						return null;
+				TypeExpr target_type = new NullableType (type, loc);
+				target_type = target_type.ResolveAsTypeTerminal (ec, false);
+				if (target_type == null)
+					return null;
 
-					underlying = Wrap.Create (underlying, ec);
-					if (underlying == null)
-						return null;
-
-					type = underlying.Type;
-					null_value = new Null (type, loc).Resolve (ec);
-				}
-
+				type = target_type.Type;
 				eclass = ExprClass.Value;
-				return this;
+				return expr;
 			}
 
-			void EmitBoolean (EmitContext ec)
+			void EmitBitwiseBoolean (EmitContext ec)
 			{
 				ILGenerator ig = ec.ig;
 
-				Label left_is_null_label = ig.DefineLabel ();
-				Label right_is_null_label = ig.DefineLabel ();
-				Label is_null_label = ig.DefineLabel ();
-				Label wrap_label = ig.DefineLabel ();
+				Label load_left = ig.DefineLabel ();
+				Label load_right = ig.DefineLabel ();
 				Label end_label = ig.DefineLabel ();
 
-				if (left_unwrap != null) {
-					left_unwrap.EmitCheck (ec);
-					ig.Emit (OpCodes.Brfalse, left_is_null_label);
+				left_unwrap.EmitGetValueOrDefault (ec);
+				ig.Emit (OpCodes.Brtrue_S, load_right);
+
+				right_unwrap.EmitGetValueOrDefault (ec);
+				ig.Emit (OpCodes.Brtrue_S, load_left);
+
+				left_unwrap.EmitCheck (ec);
+				ig.Emit (OpCodes.Brfalse_S, load_right);
+
+				// load left
+				ig.MarkLabel (load_left);
+
+				if (Oper == Operator.BitwiseAnd) {
+					left_unwrap.LoadTemporary (ec);
+				} else {
+					right_unwrap.LoadTemporary (ec);
+					right_unwrap = left_unwrap;
 				}
+				ig.Emit (OpCodes.Br_S, end_label);
 
-				left.Emit (ec);
-				ig.Emit (OpCodes.Dup);
-				if ((Oper == Binary.Operator.BitwiseOr) || (Oper == Binary.Operator.LogicalOr))
-					ig.Emit (OpCodes.Brtrue, wrap_label);
-				else
-					ig.Emit (OpCodes.Brfalse, wrap_label);
-
-				if (right_unwrap != null) {
-					right_unwrap.EmitCheck (ec);
-					ig.Emit (OpCodes.Brfalse, right_is_null_label);
-				}
-
-				if ((Oper == Binary.Operator.LogicalAnd) || (Oper == Binary.Operator.LogicalOr))
-					ig.Emit (OpCodes.Pop);
-
-				right.Emit (ec);
-				if (Oper == Binary.Operator.BitwiseOr)
-					ig.Emit (OpCodes.Or);
-				else if (Oper == Binary.Operator.BitwiseAnd)
-					ig.Emit (OpCodes.And);
-				ig.Emit (OpCodes.Br, wrap_label);
-
-				ig.MarkLabel (left_is_null_label);
-				if (right_unwrap != null) {
-					right_unwrap.EmitCheck (ec);
-					ig.Emit (OpCodes.Brfalse, is_null_label);
-				}
-
-				right.Emit (ec);
-				ig.Emit (OpCodes.Dup);
-				if ((Oper == Binary.Operator.BitwiseOr) || (Oper == Binary.Operator.LogicalOr))
-					ig.Emit (OpCodes.Brtrue, wrap_label);
-				else
-					ig.Emit (OpCodes.Brfalse, wrap_label);
-
-				ig.MarkLabel (right_is_null_label);
-				ig.Emit (OpCodes.Pop);
-				ig.MarkLabel (is_null_label);
-				null_value.Emit (ec);
-				ig.Emit (OpCodes.Br, end_label);
-
-				ig.MarkLabel (wrap_label);
-				ig.Emit (OpCodes.Nop);
-				bool_wrap.Emit (ec);
-				ig.Emit (OpCodes.Nop);
+				// load right
+				ig.MarkLabel (load_right);
+				right_unwrap.LoadTemporary (ec);
 
 				ig.MarkLabel (end_label);
 			}
 
 			void EmitEquality (EmitContext ec)
 			{
-				if (left.IsNull || right.IsNull)
-					throw new InternalErrorException ("Unoptimized nullable comparison");
-
 				ILGenerator ig = ec.ig;
 
 				Label both_have_value_label = ig.DefineLabel ();
 				Label end_label = ig.DefineLabel ();
 
-				if (left_unwrap != null && right_unwrap != null) {
+				//
+				// Both are nullable types
+				//
+				if (left_unwrap != null && right_unwrap != null && !right.IsNull && !left.IsNull) {
 					Label dissimilar_label = ig.DefineLabel ();
 
+					left_unwrap.EmitGetValueOrDefault (ec);
+					right_unwrap.EmitGetValueOrDefault (ec);
+					ig.Emit (OpCodes.Bne_Un_S, dissimilar_label);
+
 					left_unwrap.EmitCheck (ec);
-					ig.Emit (OpCodes.Dup);
 					right_unwrap.EmitCheck (ec);
-					ig.Emit (OpCodes.Bne_Un, dissimilar_label);
+					if (Oper == Operator.Inequality)
+						ig.Emit (OpCodes.Xor);
+					else
+						ig.Emit (OpCodes.Ceq);
 
-					ig.Emit (OpCodes.Brtrue, both_have_value_label);
+					ig.Emit (OpCodes.Br_S, end_label);
 
-					// both are null
-					if (Oper == Binary.Operator.Equality)
+					ig.MarkLabel (dissimilar_label);
+					if (Oper == Operator.Inequality)
 						ig.Emit (OpCodes.Ldc_I4_1);
 					else
 						ig.Emit (OpCodes.Ldc_I4_0);
-					ig.Emit (OpCodes.Br, end_label);
 
-					ig.MarkLabel (dissimilar_label);
-					ig.Emit (OpCodes.Pop);
-				} else if (left_unwrap != null) {
-					left_unwrap.EmitCheck (ec);
-					ig.Emit (OpCodes.Brtrue, both_have_value_label);
-				} else if (right_unwrap != null) {
-					right_unwrap.EmitCheck (ec);
-					ig.Emit (OpCodes.Brtrue, both_have_value_label);
-				} else {
-					throw new InternalErrorException ("shouldn't get here");
+					ig.MarkLabel (end_label);
+					return;
 				}
 
-				// one is null while the other isn't
+				//
+				// Either left or right is nullable
+				//
+				if (left_unwrap != null) {
+					left_unwrap.EmitCheck (ec);
+					if (right.IsNull) {
+						if (Oper == Binary.Operator.Equality) {
+							ig.Emit (OpCodes.Ldc_I4_0);
+							ig.Emit (OpCodes.Ceq);
+						}
+						return;
+					}
+					ig.Emit (OpCodes.Brtrue_S, both_have_value_label);
+				} else {
+					right_unwrap.EmitCheck (ec);
+					if (left.IsNull) {
+						if (Oper == Binary.Operator.Equality) {
+							ig.Emit (OpCodes.Ldc_I4_0);
+							ig.Emit (OpCodes.Ceq);
+						}
+						return;
+					}
+					ig.Emit (OpCodes.Brtrue_S, both_have_value_label);
+				}
+
 				if (Oper == Binary.Operator.Equality)
 					ig.Emit (OpCodes.Ldc_I4_0);
 				else
@@ -3664,7 +3614,7 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Br, end_label);
 
 				ig.MarkLabel (both_have_value_label);
-				underlying.Emit (ec);
+				EmitOperator (ec);
 
 				ig.MarkLabel (end_label);
 			}
@@ -3686,8 +3636,8 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Brfalse, is_null_label);
 				}
 
-				underlying.Emit (ec);
-				ig.Emit (OpCodes.Br, end_label);
+				EmitOperator (ec);
+				ig.Emit (OpCodes.Br_S, end_label);
 
 				ig.MarkLabel (is_null_label);
 				ig.Emit (OpCodes.Ldc_I4_0);
@@ -3708,13 +3658,18 @@ namespace Mono.CSharp {
 				if (right_unwrap != null)
 					right_unwrap.Store (ec);
 
-				if (is_boolean) {
-					EmitBoolean (ec);
+				if (((Oper & Operator.BitwiseMask) != 0) &&
+					left.Type == TypeManager.bool_type && right.Type == TypeManager.bool_type) {
+					EmitBitwiseBoolean (ec);
 					return;
-				} else if (is_equality) {
+				}
+
+				if ((Oper & Operator.EqualityMask) != 0) {
 					EmitEquality (ec);
 					return;
-				} else if (is_comparision) {
+				}
+
+				if ((Oper & Operator.ComparisonMask) != 0) {
 					EmitComparision (ec);
 					return;
 				}
@@ -3734,11 +3689,14 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Brfalse, is_null_label);
 				}
 
-				underlying.Emit (ec);
-				ig.Emit (OpCodes.Br, end_label);
+				base.EmitOperator (ec);
+
+				NullableInfo info = new NullableInfo (type);
+				ig.Emit (OpCodes.Newobj, info.Constructor);
+				ig.Emit (OpCodes.Br_S, end_label);
 
 				ig.MarkLabel (is_null_label);
-				null_value.Emit (ec);
+				new Null (type, loc).Emit (ec);
 
 				ig.MarkLabel (end_label);
 			}

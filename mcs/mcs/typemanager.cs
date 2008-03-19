@@ -1662,6 +1662,7 @@ namespace Mono.CSharp {
 		return is_friend;
 	}
 
+#if GMCS_SOURCE
 	static bool CompareKeyTokens (byte [] token1, byte [] token2)
 	{
 		for (int i = 0; i < token1.Length; i++)
@@ -1671,7 +1672,6 @@ namespace Mono.CSharp {
 		return true;
 	}
 
-#if GMCS_SOURCE
 	static void Error_FriendAccessNameNotMatching (string other_name)
 	{
 		Report.Error (281, "Friend access was granted to `" + other_name + 

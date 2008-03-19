@@ -411,6 +411,19 @@ namespace Mono.CSharp
 			}
 		}
 		
+		public class Unwrap : Expression
+		{
+			public override Expression DoResolve (EmitContext ec)
+			{
+				throw new NotImplementedException ();
+			}
+			
+			public override void Emit (EmitContext ec)
+			{
+				throw new NotImplementedException ();
+			}
+		}
+		
 		public class HasValue
 		{
 			public static Expression Create (Expression expr, EmitContext ec)

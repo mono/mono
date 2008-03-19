@@ -1,3 +1,12 @@
+2008-03-19  Marek Safar  <marek.safar@gmail.com>
+
+	* generic.cs, generic-mcs.cs, expression.cs, ecore.cs: Rewrote nullable
+	binary operations to be purely based on binary operations and optimized
+	emitted code (30% less in some cases). Introduced ReducedExpression for ETs
+	and other ET refactoring.
+	
+	* typemanager.cs: Fixed warning.
+	
 2008-03-17  Marek Safar  <marek.safar@gmail.com>
 
 	* class.cs, decl.cs, delegate.cs: Do protected modifier check on each member

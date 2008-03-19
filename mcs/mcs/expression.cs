@@ -1617,6 +1617,48 @@ namespace Mono.CSharp {
 			}
 		}
 
+		//
+		// 7.9.9 Equality operators and null
+		//
+		// CSC 2 has this behavior, it allows structs to be compared
+		// with the null literal *outside* of a generics context and
+		// inlines that as true or false.
+		//
+		class PredefinedNullableEquality : PredefinedOperator
+		{
+			public PredefinedNullableEquality (Type type, Operator op_mask)
+				: base (type, op_mask, type)
+			{
+			}
+
+			public override bool IsApplicable (EmitContext ec, Expression lexpr, Expression rexpr)
+			{
+				if (RootContext.Version < LanguageVersion.ISO_2)
+					return false;
+
+				return (lexpr is NullLiteral && (rexpr is Nullable.Unwrap || TypeManager.IsPrimitiveType (rexpr.Type))) ||
+					(rexpr is NullLiteral && (lexpr is Nullable.Unwrap || TypeManager.IsPrimitiveType (lexpr.Type)));
+			}
+
+			public override Expression ConvertResult (EmitContext ec, Binary b)
+			{
+				if (b.right is Nullable.Unwrap || b.left is Nullable.Unwrap) {
+					b.type = ReturnType;
+					return b;
+				}
+
+				// FIXME: Handle side effect constants
+				Constant expr = new BoolConstant (b.oper == Operator.Inequality, b.loc);
+
+				Expression non_nullable = b.right is NullLiteral ? b.left : b.right;
+				Report.Warning (472, 2, b.loc, "The result of comparing `{0}' against null is always `{1}'. " +
+						"This operation is undocumented and it is temporary supported for compatibility reasons only",
+						non_nullable.GetSignatureForError (), expr.AsString ());
+				
+				return ReducedExpression.Create (expr, b).Resolve (ec);
+			}
+		}
+
 		class PredefinedStringOperator : PredefinedOperator {
 			public PredefinedStringOperator (Type type, Operator op_mask)
 				: base (type, op_mask, type)
@@ -1642,25 +1684,6 @@ namespace Mono.CSharp {
 		}
 
 		class PredefinedShiftOperator : PredefinedOperator {
-			class ShiftArgumentConversion : EmptyCast
-			{
-				readonly int mask;
-
-				public ShiftArgumentConversion (Expression child, bool int_mask) :
-					base (child, TypeManager.int32_type)
-				{
-					mask = int_mask ? 0x1f : 0x3f;
-				}
-
-				public override void Emit (EmitContext ec)
-				{
-					base.Emit (ec);
-
-					IntConstant.EmitInt (ec.ig, mask);
-					ec.ig.Emit (OpCodes.And);
-				}
-			}
-
 			public PredefinedShiftOperator (Type ltype, Operator op_mask) :
 				base (ltype, TypeManager.int32_type, op_mask)
 			{
@@ -1669,9 +1692,22 @@ namespace Mono.CSharp {
 			public override Expression ConvertResult (EmitContext ec, Binary b)
 			{
 				b.left = Convert.ImplicitConversion (ec, b.left, left, b.left.Location);
-				b.right = new ShiftArgumentConversion (b.right, left == TypeManager.int32_type || left == TypeManager.uint32_type);
+
+				Expression expr_tree_expr = EmptyCast.Create (b.right, TypeManager.int32_type);
+
+				int right_mask = left == TypeManager.int32_type || left == TypeManager.uint32_type ? 0x1f : 0x3f;
+
+				//
+				// b = b.left >> b.right & (0x1f|0x3f)
+				//
+				b.right = new Binary (Operator.BitwiseAnd,
+					b.right, new IntConstant (right_mask, b.right.Location)).Resolve (ec);
+
+				//
+				// Expression tree representation does not use & mask
+				//
+				b.right = ReducedExpression.Create (b.right, expr_tree_expr).Resolve (ec);
 				b.type = ReturnType;
-				
 				return b;
 			}
 		}
@@ -1931,71 +1967,15 @@ namespace Mono.CSharp {
 				t == TypeManager.ushort_type || t == TypeManager.byte_type);
 		}
 
-		static void Warning_Constant_Result (Location loc, bool result, Type type)
-		{
-			Report.Warning (472, 2, loc, "The result of comparing `{0}' against null is always `{1}'. " +
-					"This operation is undocumented and it is temporary supported for compatibility reasons only",
-					TypeManager.CSharpName (type), result ? "true" : "false"); 
-		}
-
 		Expression ResolveOperator (EmitContext ec)
 		{
 			Type l = left.Type;
 			Type r = right.Type;
-
-			if (oper == Operator.Equality || oper == Operator.Inequality){
-				if (right.Type == TypeManager.null_type){
-					//
-					// 7.9.9 Equality operators and null
-					//
-					// CSC 2 has this behavior, it allows structs to be compared
-					// with the null literal *outside* of a generics context and
-					// inlines that as true or false.
-					//
-					// This is, in my opinion, completely wrong.
-					//
-					if (RootContext.Version != LanguageVersion.ISO_1 && l.IsValueType) {
-						if (!TypeManager.IsPrimitiveType (l) && !TypeManager.IsEnumType (l)) {
-							if (MemberLookup (ec.ContainerType, l, GetOperatorMetadataName (Operator.Equality), MemberTypes.Method, AllBindingFlags, loc) == null &&
-								MemberLookup (ec.ContainerType, l, GetOperatorMetadataName (Operator.Inequality), MemberTypes.Method, AllBindingFlags, loc) == null) {
-								return null;
-							}
-						}
-
-						Warning_Constant_Result (loc, oper == Operator.Inequality, l);
-						return new BoolConstant (oper == Operator.Inequality, loc);
-					}
-				}
-
-				if (left is NullLiteral){
-					//
-					// 7.9.9 Equality operators and null
-					//
-					// CSC 2 has this behavior, it allows structs to be compared
-					// with the null literal *outside* of a generics context and
-					// inlines that as true or false.
-					//
-					// This is, in my opinion, completely wrong.
-					//
-					if (RootContext.Version != LanguageVersion.ISO_1 && r.IsValueType){
-						if (!TypeManager.IsPrimitiveType (r) && !TypeManager.IsEnumType (r)) {
-							if (MemberLookup (ec.ContainerType, r, GetOperatorMetadataName (Operator.Equality), MemberTypes.Method, AllBindingFlags, loc) == null &&
-								MemberLookup (ec.ContainerType, r, GetOperatorMetadataName (Operator.Inequality), MemberTypes.Method, AllBindingFlags, loc) == null) {
-								return null;
-							}
-						}
-
-						Warning_Constant_Result (loc, oper == Operator.Inequality, r);
-						return new BoolConstant (oper == Operator.Inequality, loc);
-					}
-				}
-			}
-
 			Expression expr;
 			bool primitives_only = false;
 
 			//
-			// Handle predefined non-primitive types
+			// Handles predefined primitive types
 			//
 			if (TypeManager.IsPrimitiveType (l) && TypeManager.IsPrimitiveType (r)) {
 				if ((oper & Operator.ShiftMask) == 0) {
@@ -2033,8 +2013,9 @@ namespace Mono.CSharp {
 
 				// Predefined reference types equality
 				if ((oper & Operator.EqualityMask) != 0) {
-					if (!l.IsValueType && !r.IsValueType)
-						return ResolveOperatorEqualityRerefence (ec, l, r);
+					expr = ResolveOperatorEqualityRerefence (ec, l, r);
+					if (expr != null)
+						return expr;
 				}
 			}
 
@@ -2176,6 +2157,8 @@ namespace Mono.CSharp {
 			temp.Add (new PredefinedShiftOperator (TypeManager.uint32_type, Operator.ShiftMask));
 			temp.Add (new PredefinedShiftOperator (TypeManager.int64_type, Operator.ShiftMask));
 			temp.Add (new PredefinedShiftOperator (TypeManager.uint64_type, Operator.ShiftMask));
+
+			temp.Add (new PredefinedNullableEquality (bool_type, Operator.EqualityMask));
 
 			standard_operators = (PredefinedOperator []) temp.ToArray (typeof (PredefinedOperator));
 		}
@@ -2366,9 +2349,7 @@ namespace Mono.CSharp {
 #endif
 
 			// Comparison warnings
-			if (oper == Operator.Equality || oper == Operator.Inequality ||
-			    oper == Operator.LessThanOrEqual || oper == Operator.LessThan ||
-			    oper == Operator.GreaterThanOrEqual || oper == Operator.GreaterThan){
+			if ((oper & Operator.ComparisonMask) != 0) {
 				if (left.Equals (right)) {
 					Report.Warning (1718, 3, loc, "A comparison made to same variable. Did you mean to compare something else?");
 				}
@@ -2681,7 +2662,7 @@ namespace Mono.CSharp {
 			PredefinedOperator best_operator = null;
 			Type l = left.Type;
 			Operator oper_mask = oper & ~Operator.ValuesOnlyMask;
-
+			
 			foreach (PredefinedOperator po in operators) {
 				if ((po.OperatorsMask & oper_mask) == 0)
 					continue;
@@ -2757,6 +2738,13 @@ namespace Mono.CSharp {
 			Argument rarg = new Argument (right);
 			args.Add (rarg);
 
+			//
+			// TODO: Rewrite !
+			// Aparrently user-operators use different overloading rules especially for lifted arguments.
+			// Some details are in 6.4.2, 7.2.7
+			// Case 1: Arguments can be lifted for equal operators when the return type is bool and both
+			// arguments are of same type and they are convertible.
+			//			
 			union = union.OverloadResolve (ec, ref args, true, loc);
 			if (union == null)
 				return null;
@@ -3061,51 +3049,57 @@ namespace Mono.CSharp {
 						ig.Emit (OpCodes.Blt, target);
 				break;
 			default:
-				Console.WriteLine (oper);
-				throw new Exception ("what is THAT");
+				throw new InternalErrorException (oper.ToString ());
 			}
 		}
 		
 		public override void Emit (EmitContext ec)
 		{
+			EmitOperator (ec);
+		}
+
+		protected void EmitOperator (EmitContext ec)
+		{
 			ILGenerator ig = ec.ig;
-			Type l = left.Type;
-			OpCode opcode;
 
 			//
 			// Handle short-circuit operators differently
 			// than the rest
 			//
-			if (oper == Operator.LogicalAnd) {
-				Label load_zero = ig.DefineLabel ();
-				Label end = ig.DefineLabel ();
-								
-				left.EmitBranchable (ec, load_zero, false);
-				right.Emit (ec);
-				ig.Emit (OpCodes.Br, end);
-				
-				ig.MarkLabel (load_zero);
-				ig.Emit (OpCodes.Ldc_I4_0);
-				ig.MarkLabel (end);
-				return;
-			} else if (oper == Operator.LogicalOr) {
-				Label load_one = ig.DefineLabel ();
+			if ((oper & Operator.LogicalMask) != 0) {
+				Label load_result = ig.DefineLabel ();
 				Label end = ig.DefineLabel ();
 
-				left.EmitBranchable (ec, load_one, true);
+				bool is_or = oper == Operator.LogicalOr;
+				left.EmitBranchable (ec, load_result, is_or);
 				right.Emit (ec);
-				ig.Emit (OpCodes.Br, end);
+				ig.Emit (OpCodes.Br_S, end);
 				
-				ig.MarkLabel (load_one);
-				ig.Emit (OpCodes.Ldc_I4_1);
+				ig.MarkLabel (load_result);
+				ig.Emit (is_or ? OpCodes.Ldc_I4_1 : OpCodes.Ldc_I4_0);
 				ig.MarkLabel (end);
 				return;
 			}
 
 			left.Emit (ec);
+
+			//
+			// Optimize zero-based operations
+			//
+			// TODO: Implement more optimizations, but it should probably go to PredefinedOperators
+			//
+			if ((oper & Operator.ShiftMask) != 0 || oper == Operator.Addition || oper == Operator.Subtraction) {
+				Constant rc = right as Constant;
+				if (rc != null && rc.IsDefaultValue) {
+					return;
+				}
+			}
+
 			right.Emit (ec);
 
-			bool is_unsigned = IsUnsigned (left.Type);
+			Type l = left.Type;
+			OpCode opcode;
+			bool is_unsigned = IsUnsigned (l);
 			
 			switch (oper){
 			case Operator.Multiply:
@@ -3233,8 +3227,7 @@ namespace Mono.CSharp {
 				break;
 
 			default:
-				throw new Exception ("This should not happen: Operator = "
-						     + oper.ToString ());
+				throw new InternalErrorException (oper.ToString ());
 			}
 
 			ig.Emit (opcode);

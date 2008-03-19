@@ -2056,6 +2056,114 @@ namespace Mono.CSharp {
 				ec.ig.Emit (OpCodes.Castclass, type);
 		}
 	}
+
+	//
+	// Used when resolved expression has different representations for
+	// expression trees and emit phase
+	//
+	public class ReducedExpression : Expression
+	{
+		class ReducedConstantExpression : Constant
+		{
+			readonly Constant expr;
+			readonly Expression orig_expr;
+
+			public ReducedConstantExpression (Constant expr, Expression orig_expr)
+				: base (expr.Location)
+			{
+				this.expr = expr;
+				this.orig_expr = orig_expr;
+			}
+
+			public override string AsString ()
+			{
+				return expr.AsString ();
+			}
+
+			public override Expression CreateExpressionTree (EmitContext ec)
+			{
+				return orig_expr.CreateExpressionTree (ec);
+			}
+
+			public override object GetValue ()
+			{
+				return expr.GetValue ();
+			}
+
+			public override Constant ConvertExplicitly (bool in_checked_context, Type target_type)
+			{
+				throw new NotImplementedException ();
+			}
+
+			public override Expression DoResolve (EmitContext ec)
+			{
+				eclass = expr.eclass;
+				type = expr.Type;
+				return this;
+			}
+
+			public override Constant Increment ()
+			{
+				throw new NotImplementedException ();
+			}
+
+			public override bool IsDefaultValue {
+				get {
+					return expr.IsDefaultValue;
+				}
+			}
+
+			public override bool IsNegative {
+				get {
+					return expr.IsNegative;
+				}
+			}
+
+			public override void Emit (EmitContext ec)
+			{
+				expr.Emit (ec);
+			}
+		}
+
+		readonly Expression expr, orig_expr;
+
+		private ReducedExpression (Expression expr, Expression orig_expr)
+		{
+			this.expr = expr;
+			this.orig_expr = orig_expr;
+		}
+
+		public static Expression Create (Constant expr, Expression original_expr)
+		{
+			return new ReducedConstantExpression (expr, original_expr);
+		}
+
+		public static Expression Create (Expression expr, Expression original_expr)
+		{
+			Constant c = expr as Constant;
+			if (c != null)
+				return Create (c, original_expr);
+
+			return new ReducedExpression (expr, original_expr);
+		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			return orig_expr.CreateExpressionTree (ec);
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			eclass = expr.eclass;
+			type = expr.Type;
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			expr.Emit (ec);
+		}
+	}
 	
 	/// <summary>
 	///   SimpleName expressions are formed of a single word and only happen at the beginning 
