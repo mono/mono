@@ -1,3 +1,9 @@
+2008-03-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel-long32.brg inssel-long.brg: Add rules for conv.ovf.i/conv.ovf.u.
+
+	* iltests.il.in: Add new tests.
+
 2008-03-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* inssel-long32.brg inssel-long.brg: Add rules for conv.ovf.i.un/conv.ovf.u.un.
