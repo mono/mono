@@ -77,7 +77,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestArrayAssignability ()
 		{
 			var l = Expression.Lambda<Func<int []>> (
