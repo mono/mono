@@ -2288,6 +2288,7 @@ mono_replace_ins (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, MonoInst 
 	} else {
 		int i, count;
 		MonoBasicBlock **tmp_bblocks, *tmp;
+		MonoInst *last;
 
 		/* Multiple BBs */
 
@@ -2304,17 +2305,16 @@ mono_replace_ins (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, MonoInst 
 		/* Merge the second part of the original bb into the last bb */
 		if (last_bb->last_ins) {
 			last_bb->last_ins->next = next;
-			next->prev = last_bb->last_ins;
+			if (next)
+				next->prev = last_bb->last_ins;
 		} else {
-			MonoInst *last;
-
 			last_bb->code = next;
+		}
 
-			if (next) {
-				for (last = next; last->next != NULL; last = last->next)
-					;
-				last_bb->last_ins = last;
-			}
+		if (next) {
+			for (last = next; last->next != NULL; last = last->next)
+				;
+			last_bb->last_ins = last;
 		}
 
 		for (i = 0; i < bb->out_count; ++i)

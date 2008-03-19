@@ -10,6 +10,8 @@
 #include "mini.h"
 #include <mono/metadata/debug-helpers.h>
 
+#ifdef MONO_ARCH_ENABLE_GLOBAL_RA
+
 /*
  * Documentation
  *
@@ -316,7 +318,7 @@ handle_reg_constraints (MonoCompile *cfg)
 			dest_sreg2 = MONO_ARCH_INST_FIXED_REG (spec [MONO_INST_SRC2]);
 			dest_dreg = MONO_ARCH_INST_FIXED_REG (spec [MONO_INST_DEST]);
 
-			if (MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_DREG]) ||
+			if (MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_DEST]) ||
 				MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_SRC1]) ||
 				MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_SRC2]))
 				/* FIXME: */
@@ -2242,3 +2244,13 @@ mono_global_regalloc (MonoCompile *cfg)
 
 	rewrite_code (cfg, ctx);
 }
+
+#else
+
+void
+mono_global_regalloc (MonoCompile *cfg)
+{
+	NOT_IMPLEMENTED;
+}
+
+#endif

@@ -1,5 +1,11 @@
 2008-03-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_replace_ins): Fix some issues after the ins list changes.
+
+	* regalloc2.c: Fix compilation on non-amd64 platforms.
+
+	* mini-s390.c: Ongoing porting work.
+
 	* method-to-ir.c (MONO_EMIT_BOUNDS_CHECK): Decompose this early if abcrem is
 	disabled to help some local optimizations.
 

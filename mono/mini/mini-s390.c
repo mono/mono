@@ -2905,9 +2905,42 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 
 /*========================= End of Function ========================*/
 
+#define NEW_INS(cfg,dest,op) do {	\
+        MONO_INST_NEW ((cfg), (dest), (op)); \
+        mono_bblock_insert_before_ins (bb, ins, (dest)); \
+	} while (0)
+
 void
 mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 {
+	MonoInst *ins, *next, *temp;
+
+	if (bb->max_vreg > cfg->rs->next_vreg)
+		cfg->rs->next_vreg = bb->max_vreg;
+
+	MONO_BB_FOR_EACH_INS_SAFE (bb, next, ins) {
+		switch (ins->opcode) {
+		case OP_DIV_IMM:
+		case OP_REM_IMM:
+		case OP_IDIV_IMM:
+		case OP_IREM_IMM:
+		case OP_IDIV_UN_IMM:
+		case OP_IREM_UN_IMM:
+			NEW_INS (cfg, temp, OP_ICONST);
+			temp->inst_c0 = ins->inst_imm;
+			if (cfg->globalra)
+				temp->dreg = mono_alloc_ireg (cfg);
+			else
+				temp->dreg = mono_regstate_next_int (cfg->rs);
+			ins->opcode = mono_op_imm_to_op (ins->opcode);
+			ins->sreg2 = temp->dreg;
+			break;
+		default:
+			break;
+		}
+	}
+
+	bb->max_vreg = cfg->rs->next_vreg;
 }
 
 /*========================= End of Function ========================*/
