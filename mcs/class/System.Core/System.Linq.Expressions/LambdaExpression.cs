@@ -54,7 +54,7 @@ namespace System.Linq.Expressions {
 			if (target.IsValueType ^ source.IsValueType)
 				return false;
 
-			return target.IsAssignableFrom (source);
+			return source.IsAssignableTo (target);
 		}
 
 		internal LambdaExpression (Type delegateType, Expression body, ReadOnlyCollection<ParameterExpression> parameters)

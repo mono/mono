@@ -1,5 +1,10 @@
 2008-03-19  Jb Evain  <jbevain@novell.com>
 
+	* LambdaExpression.cs: use the new standardified IsAssignableTo,
+	fixes ExpressionTest_NewArrayBounds.TestArrayAssignability.
+
+2008-03-19  Jb Evain  <jbevain@novell.com>
+
 	* Extensions.cs (Type.IsAssignableTo): deal with arrays.
 
 2008-03-13  Jb Evain  <jbevain@novell.com>
