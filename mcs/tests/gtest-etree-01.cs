@@ -697,15 +697,16 @@ class Tester
 
 	void RightShiftTest ()
 	{
-		Expression<Func<ulong, sbyte, ulong>> e = (ulong a, sbyte b) => a >> b;
+		Expression<Func<ulong, short, ulong>> e = (ulong a, short b) => a >> b;
 		AssertNodeType (e, ExpressionType.RightShift);
 		Assert ((ulong)0x1FD940L, e.Compile ().Invoke (0xFECA0000, 11));
+		Assert ((ulong)0, e.Compile ().Invoke (0xFFFFFFFF, 0xA01));
 
 		Expression<Func<MyType, MyType, int>> e2 = (MyType a, MyType b) => a >> b;
 		AssertNodeType (e2, ExpressionType.RightShift);
 		var c2 = e2.Compile ();
 		Assert (64, c2 (new MyType (256), new MyType (2)));
-/*		
+		
 		Expression<Func<long?, sbyte, long?>> e3 = (long? a, sbyte b) => a >> b;
 		AssertNodeType (e3, ExpressionType.RightShift);
 		Assert (null, e3.Compile ().Invoke (null, 11));
@@ -717,7 +718,6 @@ class Tester
 		Assert (null, c4 (new MyType (8), null));
 		Assert (null, c4 (null, new MyType (8)));
 		Assert (64, c4 (new MyType (256), new MyType (2)));
-*/
 	}	
 
 	//
