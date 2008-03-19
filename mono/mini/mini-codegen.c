@@ -239,7 +239,7 @@ mono_spillvar_offset (MonoCompile *cfg, int spillvar, gboolean fp)
 #define freg_is_freeable(r) is_hard_freg ((r))
 
 #define reg_is_freeable(r,fp) ((fp) ? freg_is_freeable ((r)) : ireg_is_freeable ((r)))
-#define is_hard_reg(r,fp) ((fp) ? ((r) < MONO_MAX_FREGS) : ((r) < MONO_MAX_IREGS))
+#define is_hard_reg(r,fp) (G_UNLIKELY (fp) ? ((r) < MONO_MAX_FREGS) : ((r) < MONO_MAX_IREGS))
 #define is_soft_reg(r,fp) (!is_hard_reg((r),(fp)))
 
 #ifdef MONO_ARCH_INST_IS_FLOAT
@@ -247,9 +247,9 @@ mono_spillvar_offset (MonoCompile *cfg, int spillvar, gboolean fp)
 #define sreg1_is_fp(spec) (MONO_ARCH_INST_IS_FLOAT (spec [MONO_INST_SRC1]))
 #define sreg2_is_fp(spec) (MONO_ARCH_INST_IS_FLOAT (spec [MONO_INST_SRC2]))
 #else
-#define sreg1_is_fp(spec) (spec [MONO_INST_SRC1] == 'f')
-#define sreg2_is_fp(spec) (spec [MONO_INST_SRC2] == 'f')
-#define dreg_is_fp(spec)  (spec [MONO_INST_DEST] == 'f')
+#define sreg1_is_fp(spec) (G_UNLIKELY (spec [MONO_INST_SRC1] == 'f'))
+#define sreg2_is_fp(spec) (G_UNLIKELY (spec [MONO_INST_SRC2] == 'f'))
+#define dreg_is_fp(spec)  (G_UNLIKELY (spec [MONO_INST_DEST] == 'f'))
 #endif
 
 #define sreg1_is_fp_ins(ins) (sreg1_is_fp (ins_get_spec ((ins)->opcode)))
@@ -534,61 +534,14 @@ mono_print_ins (MonoInst *ins)
 	mono_print_ins_index (-1, ins);
 }
 
-typedef struct InstList InstList;
-
-struct InstList {
-	InstList *prev;
-	InstList *next;
-	MonoInst *data;
-};
-
-static inline InstList*
-inst_list_prepend (guint8 *mem, InstList *list, MonoInst *data)
-{
-	InstList *item = (InstList*)(gpointer)mem;
-	item->data = data;
-	item->prev = NULL;
-	item->next = list;
-	if (list)
-		list->prev = item;
-	return item;
-}
-
 static inline void
-insert_before_ins (MonoBasicBlock *bb, MonoInst *ins, MonoInst **last, MonoInst* to_insert)
+insert_before_ins (MonoBasicBlock *bb, MonoInst *ins, MonoInst* to_insert)
 {
-	MonoInst *prev;
-
 	/*
 	 * If this function is called multiple times, the new instructions are inserted
 	 * in the proper order.
 	 */
 	mono_bblock_insert_before_ins (bb, ins, to_insert);
-
-#if 0
-	/*
-	 * If this function is called multiple times, the new instructions are inserted
-	 * in the proper order.
-	 */
-
-	if (item->next) {
-		prev = item->next->data;
-
-		while (prev->next != ins)
-			prev = prev->next;
-		to_insert->next = ins;
-		prev->next = to_insert;
-	} else {
-		to_insert->next = ins;
-	}
-
-	/*
-	 * insert_after_ins insert the new instruction before item->data, so
-	 * we have to modify it to point to the first of the prepended instructions.
-	 */
-	if (item->data == ins)
-		item->data = to_insert; 
-#endif
 }
 
 static inline void
@@ -607,16 +560,17 @@ insert_after_ins (MonoBasicBlock *bb, MonoInst *ins, MonoInst **last, MonoInst* 
  * Force the spilling of the variable in the symbolic register 'reg'.
  */
 static int
-get_register_force_spilling (MonoCompile *cfg, MonoRegState *rs, MonoBasicBlock *bb, MonoInst **last, MonoInst *ins, int reg, gboolean fp)
+get_register_force_spilling (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **last, MonoInst *ins, int reg, gboolean fp)
 {
 	MonoInst *load;
 	int i, sel, spill;
 	int *symbolic;
+	MonoRegState *rs = cfg->rs;
 
 	if (fp)
-		symbolic = cfg->rs->fsymbolic;
+		symbolic = rs->fsymbolic;
 	else
-		symbolic = cfg->rs->isymbolic;
+		symbolic = rs->isymbolic;
 
 	sel = rs->vassign [reg];
 
@@ -626,9 +580,9 @@ get_register_force_spilling (MonoCompile *cfg, MonoRegState *rs, MonoBasicBlock 
 	spill = ++cfg->spill_count;
 	rs->vassign [i] = -spill - 1;
 	if (fp)
-		mono_regstate_free_float (cfg->rs, sel);
+		mono_regstate_free_float (rs, sel);
 	else
-		mono_regstate_free_int (cfg->rs, sel);
+		mono_regstate_free_int (rs, sel);
 	/* we need to create a spill var and insert a load to sel after the current instruction */
 	if (fp)
 		MONO_INST_NEW (cfg, load, OP_LOADR8_MEMBASE);
@@ -640,9 +594,9 @@ get_register_force_spilling (MonoCompile *cfg, MonoRegState *rs, MonoBasicBlock 
 	insert_after_ins (bb, ins, last, load);
 	DEBUG (printf ("SPILLED LOAD (%d at 0x%08lx(%%ebp)) R%d (freed %s)\n", spill, (long)load->inst_offset, i, mono_regname_full (sel, fp)));
 	if (fp)
-		i = mono_regstate_alloc_float (cfg->rs, regmask (sel));
+		i = mono_regstate_alloc_float (rs, regmask (sel));
 	else
-		i = mono_regstate_alloc_int (cfg->rs, regmask (sel));
+		i = mono_regstate_alloc_int (rs, regmask (sel));
 	g_assert (i == sel);
 
 	return sel;
@@ -654,16 +608,17 @@ get_register_force_spilling (MonoCompile *cfg, MonoRegState *rs, MonoBasicBlock 
 #endif
 
 static int
-get_register_spilling (MonoCompile *cfg, MonoRegState *rs, MonoBasicBlock *bb, MonoInst **last, MonoInst *ins, regmask_t regmask, int reg, gboolean fp)
+get_register_spilling (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **last, MonoInst *ins, regmask_t regmask, int reg, gboolean fp)
 {
 	MonoInst *load;
 	int i, sel, spill;
 	int *symbolic;
+	MonoRegState *rs = cfg->rs;
 
 	if (fp)
-		symbolic = cfg->rs->fsymbolic;
+		symbolic = rs->fsymbolic;
 	else
-		symbolic = cfg->rs->isymbolic;
+		symbolic = rs->isymbolic;
 
 	DEBUG (printf ("\tstart regmask to assign R%d: 0x%08" G_GUINT64_FORMAT " (R%d <- R%d R%d)\n", reg, (guint64)regmask, ins->dreg, ins->sreg1, ins->sreg2));
 	/* exclude the registers in the current instruction */
@@ -702,7 +657,7 @@ get_register_spilling (MonoCompile *cfg, MonoRegState *rs, MonoBasicBlock *bb, M
 		i = rs->fsymbolic [sel];
 		spill = ++cfg->spill_count;
 		rs->vassign [i] = -spill - 1;
-		mono_regstate_free_float (cfg->rs, sel);
+		mono_regstate_free_float (rs, sel);
 	}
 	else {
 		for (i = 0; i < MONO_MAX_IREGS; ++i) {
@@ -716,7 +671,7 @@ get_register_spilling (MonoCompile *cfg, MonoRegState *rs, MonoBasicBlock *bb, M
 		i = rs->isymbolic [sel];
 		spill = ++cfg->spill_count;
 		rs->vassign [i] = -spill - 1;
-		mono_regstate_free_int (cfg->rs, sel);
+		mono_regstate_free_int (rs, sel);
 	}
 
 	/* we need to create a spill var and insert a load to sel after the current instruction */
@@ -727,9 +682,9 @@ get_register_spilling (MonoCompile *cfg, MonoRegState *rs, MonoBasicBlock *bb, M
 	insert_after_ins (bb, ins, last, load);
 	DEBUG (printf ("\tSPILLED LOAD (%d at 0x%08lx(%%ebp)) R%d (freed %s)\n", spill, (long)load->inst_offset, i, mono_regname_full (sel, fp)));
 	if (fp)
-		i = mono_regstate_alloc_float (cfg->rs, regmask (sel));
+		i = mono_regstate_alloc_float (rs, regmask (sel));
 	else
-		i = mono_regstate_alloc_int (cfg->rs, regmask (sel));
+		i = mono_regstate_alloc_int (rs, regmask (sel));
 	g_assert (i == sel);
 	
 	return sel;
@@ -740,7 +695,7 @@ free_up_ireg (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **last, MonoInst *i
 {
 	if (!(cfg->rs->ifree_mask & (regmask (hreg)))) {
 		DEBUG (printf ("\tforced spill of R%d\n", cfg->rs->isymbolic [hreg]));
-		get_register_force_spilling (cfg, cfg->rs, bb, last, ins, cfg->rs->isymbolic [hreg], FALSE);
+		get_register_force_spilling (cfg, bb, last, ins, cfg->rs->isymbolic [hreg], FALSE);
 		mono_regstate_free_int (cfg->rs, hreg);
 	}
 }
@@ -751,14 +706,14 @@ free_up_reg (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **last, MonoInst *in
 	if (fp) {
 		if (!(cfg->rs->ffree_mask & (regmask (hreg)))) {
 			DEBUG (printf ("\tforced spill of R%d\n", cfg->rs->isymbolic [hreg]));
-			get_register_force_spilling (cfg, cfg->rs, bb, last, ins, cfg->rs->isymbolic [hreg], fp);
+			get_register_force_spilling (cfg, bb, last, ins, cfg->rs->isymbolic [hreg], fp);
 			mono_regstate_free_float (cfg->rs, hreg);
 		}
 	}
 	else {
 		if (!(cfg->rs->ifree_mask & (regmask (hreg)))) {
 			DEBUG (printf ("\tforced spill of R%d\n", cfg->rs->isymbolic [hreg]));
-			get_register_force_spilling (cfg, cfg->rs, bb, last, ins, cfg->rs->isymbolic [hreg], fp);
+			get_register_force_spilling (cfg, bb, last, ins, cfg->rs->isymbolic [hreg], fp);
 			mono_regstate_free_int (cfg->rs, hreg);
 		}
 	}
@@ -823,7 +778,7 @@ alloc_int_reg (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **last, MonoInst *
 
 	val = mono_regstate_alloc_int (cfg->rs, dest_mask);
 	if (val < 0)
-		val = get_register_spilling (cfg, cfg->rs, bb, last, ins, dest_mask, sym_reg, FALSE);
+		val = get_register_spilling (cfg, bb, last, ins, dest_mask, sym_reg, FALSE);
 
 	return val;
 }
@@ -836,7 +791,7 @@ alloc_float_reg (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **last, MonoInst
 	val = mono_regstate_alloc_float (cfg->rs, dest_mask);
 
 	if (val < 0) {
-		val = get_register_spilling (cfg, cfg->rs, bb, last, ins, dest_mask, sym_reg, TRUE);
+		val = get_register_spilling (cfg, bb, last, ins, dest_mask, sym_reg, TRUE);
 	}
 
 	return val;
@@ -845,7 +800,7 @@ alloc_float_reg (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **last, MonoInst
 static inline int
 alloc_reg (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **last, MonoInst *ins, regmask_t dest_mask, int sym_reg, RegTrack *info, gboolean fp)
 {
-	if (fp)
+	if (G_UNLIKELY (fp))
 		return alloc_float_reg (cfg, bb, last, ins, dest_mask, sym_reg);
 	else
 		return alloc_int_reg (cfg, bb, last, ins, dest_mask, sym_reg, info);
@@ -854,7 +809,7 @@ alloc_reg (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **last, MonoInst *ins,
 static inline void
 assign_reg (MonoCompile *cfg, MonoRegState *rs, int reg, int hreg, gboolean fp)
 {
-	if (fp) {
+	if (G_UNLIKELY (fp)) {
 		g_assert (reg >= MONO_MAX_FREGS);
 		g_assert (hreg < MONO_MAX_FREGS);
 		g_assert (! is_global_freg (hreg));
@@ -877,12 +832,15 @@ assign_reg (MonoCompile *cfg, MonoRegState *rs, int reg, int hreg, gboolean fp)
 	}
 }
 
+static gint8 desc_to_fixed_reg [256];
+static gboolean desc_to_fixed_reg_inited = FALSE;
+
 /*
  * Local register allocation.
  * We first scan the list of instructions and we save the liveness info of
  * each register (when the register is first used, when it's value is set etc.).
- * We also reverse the list of instructions (in the InstList list) because assigning
- * registers backwards allows for more tricks to be used.
+ * We also reverse the list of instructions because assigning registers backwards allows 
+ * for more tricks to be used.
  */
 void
 mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
@@ -890,11 +848,11 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 	MonoInst *ins, *prev, *last;
 	MonoInst **tmp;
 	MonoRegState *rs = cfg->rs;
-	int i, val, max, ins_count;
+	int i, val, max;
 	RegTrack *reginfo;
 	const char *spec;
+	unsigned char spec_src1, spec_src2, spec_dest;
 	gboolean fp;
-	guint8 *inst_list, *mem;
 #if MONO_ARCH_USE_FPSTACK
 	gboolean has_fp = FALSE;
 	int fpstack [8];
@@ -904,6 +862,12 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 	if (!bb->code)
 		return;
 
+	if (!desc_to_fixed_reg_inited) {
+		for (i = 0; i < 256; ++i)
+			desc_to_fixed_reg [i] = MONO_ARCH_INST_FIXED_REG (i);
+		desc_to_fixed_reg_inited = TRUE;
+	}
+
 	rs->next_vreg = bb->max_vreg;
 	mono_regstate_assign (rs);
 
@@ -912,7 +876,6 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 
 
 	max = rs->next_vreg;
-	ins_count = 0;
 
 	if (cfg->reginfo && cfg->reginfo_len < max)
 		cfg->reginfo = NULL;
@@ -938,8 +901,6 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		 */
 		for (ins = bb->code; ins; ins = ins->next) {
 			spec = ins_get_spec (ins->opcode);
-
-			ins_count ++;
 
 			if ((ins->dreg != -1) && (ins->dreg < max)) {
 				memset (&reginfo [ins->dreg], 0, sizeof (RegTrack));
@@ -979,9 +940,6 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		}
 	}
 	else {
-		for (ins = bb->code; ins; ins = ins->next)
-			ins_count ++;
-
 		memset (reginfo, 0, max * sizeof (RegTrack));
 	}
 
@@ -993,6 +951,9 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 	/* forward pass on the instructions to collect register liveness info */
 	MONO_BB_FOR_EACH_INS (bb, ins) {
 		spec = ins_get_spec (ins->opcode);
+		spec_src1 = spec [MONO_INST_SRC1];
+		spec_src2 = spec [MONO_INST_SRC2];
+		spec_dest = spec [MONO_INST_DEST];
 
 		if (G_UNLIKELY (spec == MONO_ARCH_CPU_SPEC)) {
 			g_error ("Opcode '%s' missing from machine description file.", mono_inst_name (ins->opcode));
@@ -1005,7 +966,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			has_fp = TRUE;
 #endif
 
-		if (spec [MONO_INST_SRC1]) {
+		if (spec_src1) {
 			fp = sreg1_is_fp (spec);
 			g_assert (ins->sreg1 != -1);
 			if (cfg->new_ir && is_soft_reg (ins->sreg1, fp))
@@ -1014,7 +975,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			rs->vassign [ins->sreg1] = -1;
 			//reginfo [ins->sreg1].prev_use = reginfo [ins->sreg1].last_use;
 			//reginfo [ins->sreg1].last_use = i;
-			if (MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_SRC2])) {
+			if (MONO_ARCH_INST_IS_REGPAIR (spec_src2)) {
 				/* The virtual register is allocated sequentially */
 				rs->vassign [ins->sreg1 + 1] = -1;
 				//reginfo [ins->sreg1 + 1].prev_use = reginfo [ins->sreg1 + 1].last_use;
@@ -1025,7 +986,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		} else {
 			ins->sreg1 = -1;
 		}
-		if (spec [MONO_INST_SRC2]) {
+		if (spec_src2) {
 			fp = sreg2_is_fp (spec);
 			g_assert (ins->sreg2 != -1);
 			if (cfg->new_ir && is_soft_reg (ins->sreg2, fp))
@@ -1034,7 +995,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			rs->vassign [ins->sreg2] = -1;
 			//reginfo [ins->sreg2].prev_use = reginfo [ins->sreg2].last_use;
 			//reginfo [ins->sreg2].last_use = i;
-			if (MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_SRC2])) {
+			if (MONO_ARCH_INST_IS_REGPAIR (spec_src2)) {
 				/* The virtual register is allocated sequentially */
 				rs->vassign [ins->sreg2 + 1] = -1;
 				//reginfo [ins->sreg2 + 1].prev_use = reginfo [ins->sreg2 + 1].last_use;
@@ -1045,11 +1006,11 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		} else {
 			ins->sreg2 = -1;
 		}
-		if (spec [MONO_INST_DEST]) {
+		if (spec_dest) {
 			int dest_dreg;
 
 			fp = dreg_is_fp (spec);
-			if (spec [MONO_INST_DEST] != 'b') /* it's not just a base register */
+			if (spec_dest != 'b') /* it's not just a base register */
 				reginfo [ins->dreg].killed_in = i;
 			g_assert (ins->dreg != -1);
 			rs->vassign [ins->dreg] = -1;
@@ -1058,23 +1019,23 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (reginfo [ins->dreg].born_in == 0 || reginfo [ins->dreg].born_in > i)
 				reginfo [ins->dreg].born_in = i;
 
-			dest_dreg = MONO_ARCH_INST_FIXED_REG (spec [MONO_INST_DEST]);
+			dest_dreg = desc_to_fixed_reg [spec_dest];
 			if (dest_dreg != -1)
 				reginfo [ins->dreg].preferred_mask = (regmask (dest_dreg));
 
 #ifdef MONO_ARCH_INST_FIXED_MASK
-			reginfo [ins->dreg].preferred_mask |= MONO_ARCH_INST_FIXED_MASK (spec [MONO_INST_DEST]);
+			reginfo [ins->dreg].preferred_mask |= MONO_ARCH_INST_FIXED_MASK (spec_dest);
 #endif
 
-			if (MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_DEST])) {
+			if (MONO_ARCH_INST_IS_REGPAIR (spec_dest)) {
 				/* The virtual register is allocated sequentially */
 				rs->vassign [ins->dreg + 1] = -1;
 				//reginfo [ins->dreg + 1].prev_use = reginfo [ins->dreg + 1].last_use;
 				//reginfo [ins->dreg + 1].last_use = i;
 				if (reginfo [ins->dreg + 1].born_in == 0 || reginfo [ins->dreg + 1].born_in > i)
 					reginfo [ins->dreg + 1].born_in = i;
-				if (MONO_ARCH_INST_REGPAIR_REG2 (spec [MONO_INST_DEST], -1) != -1)
-					reginfo [ins->dreg + 1].preferred_mask = regpair_reg2_mask (spec [MONO_INST_DEST], -1);
+				if (MONO_ARCH_INST_REGPAIR_REG2 (spec_dest, -1) != -1)
+					reginfo [ins->dreg + 1].preferred_mask = regpair_reg2_mask (spec_dest, -1);
 			}
 		} else {
 			ins->dreg = -1;
@@ -1118,7 +1079,6 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 		}
 
-		mem += sizeof (InstList);
 		++i;
 	}
 
@@ -1134,6 +1094,9 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		const unsigned char *ip;
 		--i;
 		spec = ins_get_spec (ins->opcode);
+		spec_src1 = spec [MONO_INST_SRC1];
+		spec_src2 = spec [MONO_INST_SRC2];
+		spec_dest = spec [MONO_INST_DEST];
 		prev_dreg = -1;
 		prev_sreg2 = -1;
 		clob_dreg = -1;
@@ -1158,16 +1121,16 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		/*
 		 * FIXED REGS
 		 */
-		dest_sreg1 = MONO_ARCH_INST_FIXED_REG (spec [MONO_INST_SRC1]);
-		dest_sreg2 = MONO_ARCH_INST_FIXED_REG (spec [MONO_INST_SRC2]);
-		dest_dreg = MONO_ARCH_INST_FIXED_REG (spec [MONO_INST_DEST]);
-		clob_reg = MONO_ARCH_INST_FIXED_REG (spec [MONO_INST_CLOB]);
+		dest_sreg1 = desc_to_fixed_reg [spec_src1];
+		dest_sreg2 = desc_to_fixed_reg [spec_src2];
+		dest_dreg = desc_to_fixed_reg [spec_dest];
+		clob_reg = desc_to_fixed_reg [(int)spec [MONO_INST_CLOB]];
 		sreg2_mask &= ~ (MONO_ARCH_INST_SREG2_MASK (spec));
 
 #ifdef MONO_ARCH_INST_FIXED_MASK
-		sreg1_fixed_mask = MONO_ARCH_INST_FIXED_MASK (spec [MONO_INST_SRC1]);
-		sreg2_fixed_mask = MONO_ARCH_INST_FIXED_MASK (spec [MONO_INST_SRC2]);
-		dreg_fixed_mask = MONO_ARCH_INST_FIXED_MASK (spec [MONO_INST_DEST]);
+		sreg1_fixed_mask = MONO_ARCH_INST_FIXED_MASK (spec_src1);
+		sreg2_fixed_mask = MONO_ARCH_INST_FIXED_MASK (spec_src2);
+		dreg_fixed_mask = MONO_ARCH_INST_FIXED_MASK (spec_dest);
 #else
 		sreg1_fixed_mask = sreg2_fixed_mask = dreg_fixed_mask = 0;
 #endif
@@ -1180,7 +1143,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 				if (is_global_ireg (ins->sreg2)) {
 					/* Argument already in hard reg, need to copy */
 					MonoInst *copy = create_copy_ins (cfg, bb, tmp, dest_sreg2, ins->sreg2, NULL, ip, FALSE);
-					insert_before_ins (bb, ins, tmp, copy);
+					insert_before_ins (bb, ins, copy);
 				}
 				else {
 					val = rs->vassign [ins->sreg2];
@@ -1193,7 +1156,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 					} else {
 						/* Argument already in hard reg, need to copy */
 						MonoInst *copy = create_copy_ins (cfg, bb, tmp, dest_sreg2, val, NULL, ip, FALSE);
-						insert_before_ins (bb, ins, tmp, copy);
+						insert_before_ins (bb, ins, copy);
 					}
 				}
 			} else {
@@ -1228,7 +1191,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 
 				if (is_global_ireg (ins->sreg2)) {
 					MonoInst *copy = create_copy_ins (cfg, bb, tmp, dest_sreg2, ins->sreg2, NULL, ip, FALSE);
-					insert_before_ins (bb, ins, tmp, copy);
+					insert_before_ins (bb, ins, copy);
 				}
 				else {
 					val = rs->vassign [ins->sreg2];
@@ -1244,7 +1207,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 
 				if (need_spill) {
 					DEBUG (printf ("\tforced spill of R%d\n", rs->isymbolic [dest_sreg2]));
-					get_register_force_spilling (cfg, rs, bb, tmp, ins, rs->isymbolic [dest_sreg2], FALSE);
+					get_register_force_spilling (cfg, bb, tmp, ins, rs->isymbolic [dest_sreg2], FALSE);
 					mono_regstate_free_int (rs, dest_sreg2);
 				}
 
@@ -1259,11 +1222,11 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		 * TRACK DREG
 		 */
 		fp = dreg_is_fp (spec);
-		if (spec [MONO_INST_DEST] && is_soft_reg (ins->dreg, fp)) {
+		if (spec_dest && is_soft_reg (ins->dreg, fp)) {
 			prev_dreg = ins->dreg;
 		}
 
-		if (spec [MONO_INST_DEST] == 'b') {
+		if (spec_dest == 'b') {
 			/* 
 			 * The dest reg is read by the instruction, not written, so
 			 * avoid allocating sreg1/sreg2 to the same reg.
@@ -1276,7 +1239,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			val = rs->vassign [ins->dreg];
 			if (is_soft_reg (ins->dreg, fp) && (val >= 0) && (!(regmask (val) & dreg_mask))) {
 				/* DREG is already allocated to a register needed for sreg1 */
-				get_register_force_spilling (cfg, rs, bb, tmp, ins, ins->dreg, FALSE);
+				get_register_force_spilling (cfg, bb, tmp, ins, ins->dreg, FALSE);
 				mono_regstate_free_int (rs, val);
 			}
 		}
@@ -1285,7 +1248,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		 * If dreg is a fixed regpair, free up both of the needed hregs to avoid
 		 * various complex situations.
 		 */
-		if (MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_DEST])) {
+		if (MONO_ARCH_INST_IS_REGPAIR (spec_dest)) {
 			guint32 dreg2, dest_dreg2;
 
 			g_assert (is_soft_reg (ins->dreg, fp));
@@ -1295,7 +1258,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 					free_up_ireg (cfg, bb, tmp, ins, dest_dreg);
 
 				dreg2 = ins->dreg + 1;
-				dest_dreg2 = MONO_ARCH_INST_REGPAIR_REG2 (spec [MONO_INST_DEST], dest_dreg);
+				dest_dreg2 = MONO_ARCH_INST_REGPAIR_REG2 (spec_dest, dest_dreg);
 				if (dest_dreg2 != -1) {
 					if (rs->vassign [dreg2] != dest_dreg2)
 						free_up_ireg (cfg, bb, tmp, ins, dest_dreg2);
@@ -1312,7 +1275,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 				 */
 				val = mono_regstate_alloc_int (rs, dreg_fixed_mask);
 				if (val < 0)
-					val = get_register_spilling (cfg, rs, bb, tmp, ins, dreg_fixed_mask, -1, fp);
+					val = get_register_spilling (cfg, bb, tmp, ins, dreg_fixed_mask, -1, fp);
 				mono_regstate_free_int (rs, val);
 				dest_dreg = val;
 
@@ -1342,13 +1305,13 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		}
 
 		/* Handle regpairs */
-		if (MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_DEST])) {
+		if (MONO_ARCH_INST_IS_REGPAIR (spec_dest)) {
 			int reg2 = prev_dreg + 1;
 
 			g_assert (!fp);
 			g_assert (prev_dreg > -1);
 			g_assert (!is_global_ireg (rs->vassign [prev_dreg]));
-			mask = regpair_reg2_mask (spec [MONO_INST_DEST], rs->vassign [prev_dreg]);
+			mask = regpair_reg2_mask (spec_dest, rs->vassign [prev_dreg]);
 #ifdef __i386__
 			/* bug #80489 */
 			mask &= ~regmask (X86_ECX);
@@ -1362,7 +1325,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 				}
 				val = mono_regstate_alloc_int (rs, mask);
 				if (val < 0)
-					val = get_register_spilling (cfg, rs, bb, tmp, ins, mask, reg2, fp);
+					val = get_register_spilling (cfg, bb, tmp, ins, mask, reg2, fp);
 				if (spill)
 					create_spilled_store (cfg, bb, spill, val, reg2, tmp, ins, fp);
 			}
@@ -1370,7 +1333,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 				if (! (mask & (regmask (val)))) {
 					val = mono_regstate_alloc_int (rs, mask);
 					if (val < 0)
-						val = get_register_spilling (cfg, rs, bb, tmp, ins, mask, reg2, fp);
+						val = get_register_spilling (cfg, bb, tmp, ins, mask, reg2, fp);
 
 					/* Reallocate hreg to the correct register */
 					create_copy_ins (cfg, bb, tmp, rs->vassign [reg2], val, ins, ip, fp);
@@ -1421,7 +1384,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 		}
 
-		if (spec [MONO_INST_DEST] == 'b') {
+		if (spec_dest == 'b') {
 			/* 
 			 * The dest reg is read by the instruction, not written, so
 			 * avoid allocating sreg1/sreg2 to the same reg.
@@ -1437,7 +1400,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		 */
 		if ((clob_reg != -1) && (!(rs->ifree_mask & (regmask (clob_reg))))) {
 			DEBUG (printf ("\tforced spill of clobbered reg R%d\n", rs->isymbolic [clob_reg]));
-			get_register_force_spilling (cfg, rs, bb, tmp, ins, rs->isymbolic [clob_reg], FALSE);
+			get_register_force_spilling (cfg, bb, tmp, ins, rs->isymbolic [clob_reg], FALSE);
 			mono_regstate_free_int (rs, clob_reg);
 		}
 
@@ -1456,7 +1419,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			else
 				dreg = -1;
 
-			if (MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_DEST]))
+			if (MONO_ARCH_INST_IS_REGPAIR (spec_dest))
 				dreg2 = rs->vassign [prev_dreg + 1];
 			else
 				dreg2 = -1;
@@ -1465,7 +1428,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 				s = regmask (j);
 				if ((clob_mask & s) && !(rs->ifree_mask & s) && (j != ins->sreg1)) {
 					if ((j != dreg) && (j != dreg2))
-						get_register_force_spilling (cfg, rs, bb, tmp, ins, rs->isymbolic [j], FALSE);
+						get_register_force_spilling (cfg, bb, tmp, ins, rs->isymbolic [j], FALSE);
 					else if (rs->isymbolic [j])
 						/* The hreg is assigned to the dreg of this instruction */
 						rs->vassign [rs->isymbolic [j]] = -1;
@@ -1483,7 +1446,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 				s = regmask (j);
 				if ((clob_mask & s) && !(rs->ffree_mask & s) && (j != ins->sreg1)) {
 					if (j != dreg)
-						get_register_force_spilling (cfg, rs, bb, tmp, ins, rs->fsymbolic [j], TRUE);
+						get_register_force_spilling (cfg, bb, tmp, ins, rs->fsymbolic [j], TRUE);
 					else if (rs->fsymbolic [j])
 						/* The hreg is assigned to the dreg of this instruction */
 						rs->vassign [rs->fsymbolic [j]] = -1;
@@ -1552,7 +1515,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		 * TRACK SREG1
 		 */
 		fp = sreg1_is_fp (spec);
-		if (MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_DEST]) && (spec [MONO_INST_CLOB] == '1')) {
+		if (MONO_ARCH_INST_IS_REGPAIR (spec_dest) && (spec [MONO_INST_CLOB] == '1')) {
 			g_assert (is_soft_reg (ins->sreg1, fp));
 
 			/* To simplify things, we allocate the same regpair to sreg1 and dreg */
@@ -1564,7 +1527,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			DEBUG (printf ("\tassigned sreg1-low %s to R%d\n", mono_regname_full (val, fp), ins->sreg1));
 
-			g_assert ((regmask (dreg_high)) & regpair_reg2_mask (spec [MONO_INST_SRC1], ins->dreg));
+			g_assert ((regmask (dreg_high)) & regpair_reg2_mask (spec_src1, ins->dreg));
 			val = mono_regstate_alloc_int (rs, regmask (dreg_high));
 			g_assert (val >= 0);
 			assign_reg (cfg, rs, ins->sreg1 + 1, val, fp);
@@ -1584,7 +1547,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 				 */
 				val = mono_regstate_alloc_int (rs, sreg1_fixed_mask);
 				if (val < 0)
-					val = get_register_spilling (cfg, rs, bb, tmp, ins, sreg1_fixed_mask, -1, fp);
+					val = get_register_spilling (cfg, bb, tmp, ins, sreg1_fixed_mask, -1, fp);
 				mono_regstate_free_int (rs, val);
 				dest_sreg1 = val;
 
@@ -1599,13 +1562,13 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			if ((rs->vassign [ins->sreg1] != dest_sreg1) && !(rs->ifree_mask & (regmask (dest_sreg1)))) {
 				DEBUG (printf ("\tforced spill of R%d\n", rs->isymbolic [dest_sreg1]));
-				get_register_force_spilling (cfg, rs, bb, tmp, ins, rs->isymbolic [dest_sreg1], FALSE);
+				get_register_force_spilling (cfg, bb, tmp, ins, rs->isymbolic [dest_sreg1], FALSE);
 				mono_regstate_free_int (rs, dest_sreg1);
 			}
 			if (is_global_ireg (ins->sreg1)) {
 				/* The argument is already in a hard reg, need to copy */
 				MonoInst *copy = create_copy_ins (cfg, bb, tmp, dest_sreg1, ins->sreg1, NULL, ip, FALSE);
-				insert_before_ins (bb, ins, tmp, copy);
+				insert_before_ins (bb, ins, copy);
 				ins->sreg1 = dest_sreg1;
 			}
 		}
@@ -1638,12 +1601,12 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 					 * Need to insert before the instruction since it can
 					 * overwrite sreg1.
 					 */
-					insert_before_ins (bb, ins, tmp, store);
+					insert_before_ins (bb, ins, store);
 				}
 			}
 			else if ((dest_sreg1 != -1) && (dest_sreg1 != val)) {
 				MonoInst *copy = create_copy_ins (cfg, bb, tmp, dest_sreg1, val, NULL, ip, fp);
-				insert_before_ins (bb, ins, tmp, copy);
+				insert_before_ins (bb, ins, copy);
 				sreg2_mask &= ~(regmask (dest_sreg1));
 				val = dest_sreg1;
 			}
@@ -1656,13 +1619,13 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		sreg2_mask &= ~(regmask (ins->sreg1));
 
 		/* Handle the case when sreg1 is a regpair but dreg is not */
-		if (MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_SRC1]) && (spec [MONO_INST_CLOB] != '1')) {
+		if (MONO_ARCH_INST_IS_REGPAIR (spec_src1) && (spec [MONO_INST_CLOB] != '1')) {
 			int reg2 = prev_sreg1 + 1;
 
 			g_assert (!fp);
 			g_assert (prev_sreg1 > -1);
 			g_assert (!is_global_ireg (rs->vassign [prev_sreg1]));
-			mask = regpair_reg2_mask (spec [MONO_INST_SRC1], rs->vassign [prev_sreg1]);
+			mask = regpair_reg2_mask (spec_src1, rs->vassign [prev_sreg1]);
 			val = rs->vassign [reg2];
 			if (val < 0) {
 				int spill = 0;
@@ -1672,7 +1635,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 				}
 				val = mono_regstate_alloc_int (rs, mask);
 				if (val < 0)
-					val = get_register_spilling (cfg, rs, bb, tmp, ins, mask, reg2, fp);
+					val = get_register_spilling (cfg, bb, tmp, ins, mask, reg2, fp);
 				if (spill)
 					g_assert_not_reached ();
 			}
@@ -1684,7 +1647,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 #if 0
 					val = mono_regstate_alloc_int (rs, mask);
 					if (val < 0)
-						val = get_register_spilling (cfg, rs, bb, tmp, ins, mask, reg2, fp);
+						val = get_register_spilling (cfg, bb, tmp, ins, mask, reg2, fp);
 
 					/* Reallocate hreg to the correct register */
 					create_copy_ins (cfg, bb, tmp, rs->vassign [reg2], val, ins, ip, fp);
@@ -1700,10 +1663,10 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		}
 
 		/* Handle dreg==sreg1 */
-		if (((dreg_is_fp (spec) && spec [MONO_INST_SRC1] == 'f') || spec [MONO_INST_CLOB] == '1') && ins->dreg != ins->sreg1) {
+		if (((dreg_is_fp (spec) && spec_src1 == 'f') || spec [MONO_INST_CLOB] == '1') && ins->dreg != ins->sreg1) {
 			MonoInst *sreg2_copy = NULL;
 			MonoInst *copy;
-			gboolean fp = (spec [MONO_INST_SRC1] == 'f');
+			gboolean fp = (spec_src1 == 'f');
 
 			if (ins->dreg == ins->sreg2) {
 				/* 
@@ -1722,7 +1685,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 					mono_regstate_free_int (rs, reg2);
 			}
 
-			if (MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_SRC1])) {
+			if (MONO_ARCH_INST_IS_REGPAIR (spec_src1)) {
 				/* Copying sreg1_high to dreg could also clobber sreg2 */
 				if (rs->vassign [prev_sreg1 + 1] == ins->sreg2)
 					/* FIXME: */
@@ -1738,10 +1701,10 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			DEBUG (printf ("\tneed to copy sreg1 %s to dreg %s\n", mono_regname_full (ins->sreg1, fp), mono_regname_full (ins->dreg, fp)));
 			copy = create_copy_ins (cfg, bb, tmp, ins->dreg, ins->sreg1, NULL, ip, fp);
-			insert_before_ins (bb, ins, tmp, copy);
+			insert_before_ins (bb, ins, copy);
 
 			if (sreg2_copy)
-				insert_before_ins (bb, copy, tmp, sreg2_copy);
+				insert_before_ins (bb, copy, sreg2_copy);
 
 			/*
 			 * Need to prevent sreg2 to be allocated to sreg1, since that
@@ -1757,7 +1720,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		 * TRACK SREG2
 		 */
 		fp = sreg2_is_fp (spec);
-		if (MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_SRC2]))
+		if (MONO_ARCH_INST_IS_REGPAIR (spec_src2))
 			g_assert_not_reached ();
 		if (is_soft_reg (ins->sreg2, fp)) {
 			val = rs->vassign [ins->sreg2];
@@ -1777,7 +1740,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 					 * Need to insert before the instruction since it can
 					 * overwrite sreg2.
 					 */
-					insert_before_ins (bb, ins, tmp, store);
+					insert_before_ins (bb, ins, store);
 				}
 			}
 			ins->sreg2 = val;

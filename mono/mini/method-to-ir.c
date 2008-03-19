@@ -11342,7 +11342,6 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
  * - make the REM_IMM optimization in mini-x86.c arch-independent.
  * - LAST MERGE: 97663
  * - merge the extensible gctx changes.
- * - merge the mini-codegen.c changes.
  * - when returning vtypes in registers, generate IR and append it to the end of the
  *   last bb instead of doing it in the epilog.
  * - fix the inst list stuff in the old JIT as well.

@@ -1,5 +1,7 @@
 2008-03-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-codegen.c: Remove some dead code and add micro optimizations from HEAD.
+
 	* local-propagation.c (mono_local_cprop2): Clean up the div/rem strength 
 	reduction stuff.
 
