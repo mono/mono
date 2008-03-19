@@ -929,15 +929,23 @@ namespace System.Linq.Expressions {
 			if (methodName == null)
 				throw new ArgumentNullException ("methodName");
 
-			var method = instance.Type.GetMethod (methodName, AllInstance, null, CollectTypes (arguments), null);
-			method = TryMakeGeneric (method, typeArguments);
-			if (method == null)
-				throw new InvalidOperationException ("No such method");
+			var method = GetGenericMethod (instance.Type, methodName, AllInstance,
+				CollectTypes (arguments), typeArguments);
 
 			var args = arguments.ToReadOnlyCollection ();
 			CheckMethodArguments (method, args);
 
 			return new MethodCallExpression (instance, method, args);
+		}
+
+		static MethodInfo GetGenericMethod (Type type, string methodName, BindingFlags flags, Type [] parameterTypes, Type [] argumentTypes)
+		{
+			var method = type.GetMethod (methodName, flags, null, parameterTypes, null);
+			method = TryMakeGeneric (method, argumentTypes);
+			if (method != null)
+				return method;
+
+			throw new InvalidOperationException ("No such method");
 		}
 
 		public static MethodCallExpression Call (Type type, string methodName, Type [] typeArguments, params Expression [] arguments)
@@ -947,10 +955,8 @@ namespace System.Linq.Expressions {
 			if (methodName == null)
 				throw new ArgumentNullException ("methodName");
 
-			var method = type.GetMethod (methodName, AllStatic, null, CollectTypes (arguments), null);
-			method = TryMakeGeneric (method, typeArguments);
-			if (method == null)
-				throw new InvalidOperationException ("No such method");
+			var method = GetGenericMethod (type, methodName, AllStatic,
+				CollectTypes (arguments), typeArguments);
 
 			var args = arguments.ToReadOnlyCollection ();
 			CheckMethodArguments (method, args);
