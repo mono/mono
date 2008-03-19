@@ -2667,12 +2667,9 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 			break;
 		}
-		// Passes after the local opts passes might create new nops
-		//if (ins->opcode != OP_NOP)
+		if (ins->opcode != OP_NOP)
 			last_ins = ins;
-		ins = ins->next;
 	}
-	bb->last_ins = last_ins;
 }
 
 #define NEW_INS(cfg,dest,op) do {	\
