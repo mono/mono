@@ -36,7 +36,19 @@ namespace System.Linq.Expressions {
 
 		public static bool IsAssignableTo (this Type self, Type type)
 		{
-			return type.IsAssignableFrom (self);
+			return type.IsAssignableFrom (self) ||
+				ArrayTypeIsAssignableTo (self, type);
+		}
+
+		static bool ArrayTypeIsAssignableTo (Type type, Type candidate)
+		{
+			if (!type.IsArray || !candidate.IsArray)
+				return false;
+
+			if (type.GetArrayRank () != candidate.GetArrayRank ())
+				return false;
+
+			return type.GetElementType ().IsAssignableTo (candidate.GetElementType ());
 		}
 
 		public static void OnFieldOrProperty (this MemberInfo self,
