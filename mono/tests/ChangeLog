@@ -1,3 +1,9 @@
+2008-03-19  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* bug-340662_bug.cs: Added. Regression test for the bug.
+
+	* Makefile.am: Added the new test.
+
 2008-03-18  Mark Probst  <mark.probst@gmail.com>
 
 	* generics-sharing-other-exc.2.il: Test case for catching
