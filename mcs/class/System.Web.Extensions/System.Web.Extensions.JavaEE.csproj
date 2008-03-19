@@ -18,6 +18,8 @@
     <RootNamespace>System.Web.Extensions</RootNamespace>
     <StartupObject>
     </StartupObject>
+    <jarserver>ipa</jarserver>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -28,8 +30,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <BaseAddress>4194304</BaseAddress>
-    <SkipValidation>false</SkipValidation>
-    <KeepIntermediate>false</KeepIntermediate>
+    <SkipValidation>True</SkipValidation>
+    <KeepIntermediate>False</KeepIntermediate>
     <TargetPlatform>0</TargetPlatform>
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
@@ -57,29 +59,28 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-		<UserProperties REFS-RefInfo-myfaces="repository:vmw:framework:2.0" REFS-JarPath-myfaces="" REFS-RefInfo-rt="repository:jre:sun:1.6.0" REFS-JarPath-rt="" REFS-JarPath-system="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system-configuration="" REFS-RefInfo-system-configuration="repository:vmw:framework:2.0" REFS-JarPath-system-data="" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-JarPath-system-drawing="" REFS-RefInfo-system-drawing="repository:vmw:framework:2.0" REFS-JarPath-system-web="" REFS-RefInfo-system-web="repository:vmw:framework:2.0" REFS-JarPath-system-web-services="" REFS-RefInfo-system-web-services="repository:vmw:framework:2.0" REFS-JarPath-system-xml="" REFS-RefInfo-system-xml="repository:vmw:framework:2.0" />
+      <UserProperties REFS-RefInfo-system-xml="repository:vmw:framework:2.0" REFS-JarPath-system-xml="" REFS-RefInfo-system-web-services="repository:vmw:framework:2.0" REFS-JarPath-system-web-services="" REFS-RefInfo-system-web="repository:vmw:framework:2.0" REFS-JarPath-system-web="" REFS-RefInfo-system-drawing="repository:vmw:framework:2.0" REFS-JarPath-system-drawing="" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-JarPath-system-data="" REFS-RefInfo-system-configuration="repository:vmw:framework:2.0" REFS-JarPath-system-configuration="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system="" REFS-JarPath-rt="" REFS-RefInfo-rt="repository:jre:sun:1.6.0" REFS-JarPath-myfaces="" REFS-RefInfo-myfaces="repository:vmw:framework:2.0" />
     </VisualStudio>
   </ProjectExtensions>
   <ItemGroup>
     <Reference Include="J2SE.Helpers">
-		<Private>False</Private>
-		<HintPath>..\lib\J2SE.Helpers.dll</HintPath>
+      <Private>False</Private>
+      <HintPath>..\lib\J2SE.Helpers.dll</HintPath>
     </Reference>
     <Reference Include="Mainsoft.Configuration, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-		<HintPath>..\lib\Mainsoft.Configuration.dll</HintPath>
+      <HintPath>..\lib\Mainsoft.Configuration.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="myfaces, Version=1.6.65535.65535, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.Configuration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=x86" />
     <Reference Include="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
-    <Reference Include="System.Web, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=x86" />
-    <Reference Include="System.Web.Services, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System.Xml, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\build\common\Consts.cs">
-      <Link>Assembly\Consts.cs</Link>
+    <Compile Include="..\..\build\common\Consts.cs.in">
+      <Link>Assembly\Consts.cs.in</Link>
     </Compile>
     <Compile Include="..\..\build\common\Locale.cs">
       <Link>Assembly\Locale.cs</Link>
@@ -204,11 +205,18 @@
       <LogicalName>MicrosoftAjaxWebFormsExtension.js</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
+  <PropertyGroup>
+    <PostBuildEvent>copy "$(TargetDir)*" "C:\Program Files\Mainsoft for Java EE\java_refs\framework\MONO"
+copy "$(TargetDir)$(TargetName).jar" "C:\Program Files\Mainsoft for Java EE\java_refs\framework\"</PostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\System.Web\System.Web.Phantom\System.Web.Phantom.csproj">
-      <Project>{FBFDAD51-74B6-4660-81C0-9C8B6C8D3B47}</Project>
-      <Name>System.Web.Phantom</Name>
-      <Private>False</Private>
+    <ProjectReference Include="..\System.Web.Services\System.Web.Services20.csproj">
+      <Project>{B37A8704-33AB-48D9-B0C2-1D919755B69A}</Project>
+      <Name>System.Web.Services20</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Web\System.Web20.csproj">
+      <Project>{0F744BEF-F9B1-4953-BB86-9ADBF73C3CD4}</Project>
+      <Name>System.Web20</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
