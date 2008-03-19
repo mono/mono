@@ -1,5 +1,8 @@
 2008-03-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* local-propagation.c (mono_local_cprop2): Clean up the div/rem strength 
+	reduction stuff.
+
 	* *.h *.c: Transition to using prev-next pointers on MonoInst's using more user
 	friendly APIs.
 

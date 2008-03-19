@@ -1248,9 +1248,7 @@ mono_local_cprop2 (MonoCompile *cfg)
 	guint32 *def_index;
 	int max;
 
-#if SIZEOF_VOID_P == 4
 restart:
-#endif
 
 	max = cfg->next_vreg;
 	defs = mono_mempool_alloc (cfg->mempool, sizeof (MonoInst*) * (cfg->next_vreg + 1));
@@ -1494,27 +1492,6 @@ restart:
 				}
 				spec = INS_INFO (ins->opcode);
 				break;
-			case OP_IREM_UN:
-			case OP_IDIV_UN:
-				/* There is no _IMM version of these opcodes, so do the consprop as well */
-				if (defs [ins->sreg2] && defs [ins->sreg2]->opcode == OP_ICONST) {
-					int c = defs [ins->sreg2]->inst_c0;
-					int power2 = mono_is_power_of_two (c);
-
-					if (power2 >= 0) {
-						if (ins->opcode == OP_IREM_UN) {
-							ins->opcode = OP_IAND_IMM;
-							ins->sreg2 = -1;
-							ins->inst_imm = (1 << power2) - 1;
-						} else if (ins->opcode == OP_IDIV_UN) {
-							ins->opcode = OP_ISHR_UN_IMM;
-							ins->sreg2 = -1;
-							ins->inst_imm = power2;
-						}
-					}
-					spec = INS_INFO (ins->opcode);
-				}
-				break;
 			case OP_IREM_UN_IMM:
 			case OP_IDIV_UN_IMM: {
 				int c = ins->inst_imm;
@@ -1535,13 +1512,11 @@ restart:
 				break;
 			}
 			case OP_IDIV_IMM: {
-				/* FIXME: Make this work on 64 bit as well */
-				/* FIXME: Move this elsewhere cause its hard to implement it here */
-#if SIZEOF_VOID_P == 4
 				int c = ins->inst_imm;
 				int power2 = mono_is_power_of_two (c);
 				MonoInst *tmp1, *tmp2, *tmp3, *tmp4;
 
+				/* FIXME: Move this elsewhere cause its hard to implement it here */
 				if (power2 == 1) {
 					int r1 = mono_alloc_ireg (cfg);
 
@@ -1573,7 +1548,6 @@ restart:
 					// We allocated a new vreg, so need to restart
 					goto restart;
 				}
-#endif
 				break;
 			}
 			}
