@@ -1,5 +1,10 @@
 2008-03-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h (MONO_DEL_INS): Rename to MONO_DELETE_INS and Add a 'bb' argument for 
+	consistency with the other version on the linear IR branch.
+
+	* mini-<ARCH>.c: Update callers of MONO_DEL_INS.
+
 	* inssel-long32.brg inssel-long.brg: Add rules for conv.ovf.i/conv.ovf.u.
 
 	* iltests.il.in: Add new tests.
