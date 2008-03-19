@@ -15,3 +15,4 @@ gtest-367.cs
 ltest-11.cs
 gtest-etree-01.cs
 gtest-334.cs # Will have to really investigate why is it allowed
+gtest-358.cs # Required user-operators rewrite
