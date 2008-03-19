@@ -1,3 +1,9 @@
+2008-03-19 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* icall.c (ves_icall_get_method_info): Return correct values for the call convention.
+	Fixes #340662. 
+
+
 2008-03-17 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (VerifyContext): Added instruction prefix data to the struct.
