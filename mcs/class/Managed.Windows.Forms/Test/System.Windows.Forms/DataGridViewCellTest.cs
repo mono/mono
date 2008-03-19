@@ -32,6 +32,7 @@ using System.Drawing;
 using System.Windows.Forms;
 
 using NUnit.Framework;
+using System.Threading;
 
 namespace MonoTests.System.Windows.Forms
 {
@@ -486,120 +487,120 @@ namespace MonoTests.System.Windows.Forms
 				
 				dgv.Rows.Add (row);
 
-				Assert.IsNotNull (cell.AccessibilityObject, "#C cell.AccessibilityObject");
-				Assert.AreEqual (0, cell.ColumnIndex, "#C cell.ColumnIndex");
+				Assert.IsNotNull (cell.AccessibilityObject, "#D cell.AccessibilityObject");
+				Assert.AreEqual (0, cell.ColumnIndex, "#D cell.ColumnIndex");
 				try {
 					object zxf = cell.ContentBounds;
 					TestHelper.RemoveWarning (zxf);
-					Assert.Fail ("Expected 'System.ArgumentOutOfRangeException', but no exception was thrown.", "#C cell.ContentBounds");
+					Assert.Fail ("Expected 'System.ArgumentOutOfRangeException', but no exception was thrown.", "#D cell.ContentBounds");
 				} catch (ArgumentOutOfRangeException ex) {
 					Assert.AreEqual (string.Format (@"Specified argument was out of the range of valid values.{0}Parameter name: rowIndex", Environment.NewLine), ex.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Expected 'System.ArgumentOutOfRangeException', got '" + ex.GetType ().FullName + "'.", "#C cell.ContentBounds");
+					Assert.Fail ("Expected 'System.ArgumentOutOfRangeException', got '" + ex.GetType ().FullName + "'.", "#D cell.ContentBounds");
 				}
-				Assert.IsNull (cell.ContextMenuStrip, "#C cell.ContextMenuStrip");
-				Assert.IsNotNull (cell.DataGridView, "#C cell.DataGridView");
-				Assert.IsNull (cell.DefaultNewRowValue, "#C cell.DefaultNewRowValue");
-				Assert.AreEqual (false, cell.Displayed, "#C cell.Displayed");
+				Assert.IsNull (cell.ContextMenuStrip, "#D cell.ContextMenuStrip");
+				Assert.IsNotNull (cell.DataGridView, "#D cell.DataGridView");
+				Assert.IsNull (cell.DefaultNewRowValue, "#D cell.DefaultNewRowValue");
+				Assert.AreEqual (false, cell.Displayed, "#D cell.Displayed");
 				try {
 					object zxf = cell.EditedFormattedValue;
 					TestHelper.RemoveWarning (zxf);
-					Assert.Fail ("Expected 'System.ArgumentOutOfRangeException', but no exception was thrown.", "#C cell.EditedFormattedValue");
+					Assert.Fail ("Expected 'System.ArgumentOutOfRangeException', but no exception was thrown.", "#D cell.EditedFormattedValue");
 				} catch (ArgumentOutOfRangeException ex) {
 					Assert.AreEqual (string.Format (@"Specified argument was out of the range of valid values.{0}Parameter name: rowIndex", Environment.NewLine), ex.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Expected 'System.ArgumentOutOfRangeException', got '" + ex.GetType ().FullName + "'.", "#C cell.EditedFormattedValue");
+					Assert.Fail ("Expected 'System.ArgumentOutOfRangeException', got '" + ex.GetType ().FullName + "'.", "#D cell.EditedFormattedValue");
 				}
-				Assert.IsNotNull (cell.EditType, "#C cell.EditType");
+				Assert.IsNotNull (cell.EditType, "#D cell.EditType");
 				try {
 					object zxf = cell.ErrorIconBounds;
 					TestHelper.RemoveWarning (zxf);
-					Assert.Fail ("Expected 'System.ArgumentOutOfRangeException', but no exception was thrown.", "#C cell.ErrorIconBounds");
+					Assert.Fail ("Expected 'System.ArgumentOutOfRangeException', but no exception was thrown.", "#D cell.ErrorIconBounds");
 				} catch (ArgumentOutOfRangeException ex) {
 					Assert.AreEqual (string.Format (@"Specified argument was out of the range of valid values.{0}Parameter name: rowIndex", Environment.NewLine), ex.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Expected 'System.ArgumentOutOfRangeException', got '" + ex.GetType ().FullName + "'.", "#C cell.ErrorIconBounds");
+					Assert.Fail ("Expected 'System.ArgumentOutOfRangeException', got '" + ex.GetType ().FullName + "'.", "#D cell.ErrorIconBounds");
 				}
-				Assert.AreEqual (@"", cell.ErrorText, "#C cell.ErrorText");
+				Assert.AreEqual (@"", cell.ErrorText, "#D cell.ErrorText");
 				try {
 					object zxf = cell.FormattedValue;
 					TestHelper.RemoveWarning (zxf);
-					Assert.Fail ("Expected 'System.ArgumentOutOfRangeException', but no exception was thrown.", "#C cell.FormattedValue");
+					Assert.Fail ("Expected 'System.ArgumentOutOfRangeException', but no exception was thrown.", "#D cell.FormattedValue");
 				} catch (ArgumentOutOfRangeException ex) {
 					Assert.AreEqual (string.Format (@"Specified argument was out of the range of valid values.{0}Parameter name: rowIndex", Environment.NewLine), ex.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Expected 'System.ArgumentOutOfRangeException', got '" + ex.GetType ().FullName + "'.", "#C cell.FormattedValue");
+					Assert.Fail ("Expected 'System.ArgumentOutOfRangeException', got '" + ex.GetType ().FullName + "'.", "#D cell.FormattedValue");
 				}
-				Assert.IsNotNull (cell.FormattedValueType, "#C cell.FormattedValueType");
-				Assert.AreEqual (false, cell.Frozen, "#C cell.Frozen");
-				Assert.AreEqual (false, cell.HasStyle, "#C cell.HasStyle");
+				Assert.IsNotNull (cell.FormattedValueType, "#D cell.FormattedValueType");
+				Assert.AreEqual (false, cell.Frozen, "#D cell.Frozen");
+				Assert.AreEqual (false, cell.HasStyle, "#D cell.HasStyle");
 				try {
 					object zxf = cell.InheritedState;
 					TestHelper.RemoveWarning (zxf);
-					Assert.Fail ("Expected 'System.ArgumentOutOfRangeException', but no exception was thrown.", "#C cell.InheritedState");
+					Assert.Fail ("Expected 'System.ArgumentOutOfRangeException', but no exception was thrown.", "#D cell.InheritedState");
 				} catch (ArgumentOutOfRangeException ex) {
 					Assert.AreEqual (string.Format (@"Specified argument was out of the range of valid values.{0}Parameter name: rowIndex", Environment.NewLine), ex.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Expected 'System.ArgumentOutOfRangeException', got '" + ex.GetType ().FullName + "'.", "#C cell.InheritedState");
+					Assert.Fail ("Expected 'System.ArgumentOutOfRangeException', got '" + ex.GetType ().FullName + "'.", "#D cell.InheritedState");
 				}
 				try {
 					object zxf = cell.InheritedStyle;
 					TestHelper.RemoveWarning (zxf);
-					Assert.Fail ("Expected 'System.ArgumentOutOfRangeException', but no exception was thrown.", "#C cell.InheritedStyle");
+					Assert.Fail ("Expected 'System.ArgumentOutOfRangeException', but no exception was thrown.", "#D cell.InheritedStyle");
 				} catch (ArgumentOutOfRangeException ex) {
 					Assert.AreEqual (string.Format (@"Specified argument was out of the range of valid values.{0}Parameter name: rowIndex", Environment.NewLine), ex.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Expected 'System.ArgumentOutOfRangeException', got '" + ex.GetType ().FullName + "'.", "#C cell.InheritedStyle");
+					Assert.Fail ("Expected 'System.ArgumentOutOfRangeException', got '" + ex.GetType ().FullName + "'.", "#D cell.InheritedStyle");
 				}
 				try {
 					object zxf = cell.IsInEditMode;
 					TestHelper.RemoveWarning (zxf);
-					Assert.Fail ("Expected 'System.InvalidOperationException', but no exception was thrown.", "#C cell.IsInEditMode");
+					Assert.Fail ("Expected 'System.InvalidOperationException', but no exception was thrown.", "#D cell.IsInEditMode");
 				} catch (InvalidOperationException ex) {
 					Assert.AreEqual (@"Operation cannot be performed on a cell of a shared row.", ex.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Expected 'System.InvalidOperationException', got '" + ex.GetType ().FullName + "'.", "#C cell.IsInEditMode");
+					Assert.Fail ("Expected 'System.InvalidOperationException', got '" + ex.GetType ().FullName + "'.", "#D cell.IsInEditMode");
 				}
-				Assert.IsNotNull (cell.OwningColumn, "#C cell.OwningColumn");
-				Assert.IsNotNull (cell.OwningRow, "#C cell.OwningRow");
+				Assert.IsNotNull (cell.OwningColumn, "#D cell.OwningColumn");
+				Assert.IsNotNull (cell.OwningRow, "#D cell.OwningRow");
 				try {
 					object zxf = cell.PreferredSize;
 					TestHelper.RemoveWarning (zxf);
-					Assert.Fail ("Expected 'System.ArgumentOutOfRangeException', but no exception was thrown.", "#C cell.PreferredSize");
+					Assert.Fail ("Expected 'System.ArgumentOutOfRangeException', but no exception was thrown.", "#D cell.PreferredSize");
 				} catch (ArgumentOutOfRangeException ex) {
 					Assert.AreEqual (string.Format (@"Specified argument was out of the range of valid values.{0}Parameter name: rowIndex", Environment.NewLine), ex.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Expected 'System.ArgumentOutOfRangeException', got '" + ex.GetType ().FullName + "'.", "#C cell.PreferredSize");
+					Assert.Fail ("Expected 'System.ArgumentOutOfRangeException', got '" + ex.GetType ().FullName + "'.", "#D cell.PreferredSize");
 				}
-				Assert.AreEqual (false, cell.ReadOnly, "#C cell.ReadOnly");
-				Assert.AreEqual (false, cell.Resizable, "#C cell.Resizable");
-				Assert.AreEqual (-1, cell.RowIndex, "#C cell.RowIndex");
-				Assert.AreEqual (false, cell.Selected, "#C cell.Selected");
+				Assert.AreEqual (false, cell.ReadOnly, "#D cell.ReadOnly");
+				Assert.AreEqual (false, cell.Resizable, "#D cell.Resizable");
+				Assert.AreEqual (-1, cell.RowIndex, "#D cell.RowIndex");
+				Assert.AreEqual (false, cell.Selected, "#D cell.Selected");
 				try {
 					object zxf = cell.Size;
 					TestHelper.RemoveWarning (zxf);
-					Assert.Fail ("Expected 'System.InvalidOperationException', but no exception was thrown.", "#C cell.Size");
+					Assert.Fail ("Expected 'System.InvalidOperationException', but no exception was thrown.", "#D cell.Size");
 				} catch (InvalidOperationException ex) {
 					Assert.AreEqual (@"Getting the Size property of a cell in a shared row is not a valid operation.", ex.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Expected 'System.InvalidOperationException', got '" + ex.GetType ().FullName + "'.", "#C cell.Size");
+					Assert.Fail ("Expected 'System.InvalidOperationException', got '" + ex.GetType ().FullName + "'.", "#D cell.Size");
 				}
-				Assert.AreEqual (DataGridViewElementStates.None, cell.State, "#C cell.State");
+				Assert.AreEqual (DataGridViewElementStates.None, cell.State, "#D cell.State");
 				if (cell.HasStyle)
-					Assert.IsNotNull (cell.Style, "#C cell.Style");
-				Assert.IsNull (cell.Tag, "#C cell.Tag");
-				Assert.AreEqual (@"", cell.ToolTipText, "#C cell.ToolTipText");
+					Assert.IsNotNull (cell.Style, "#D cell.Style");
+				Assert.IsNull (cell.Tag, "#D cell.Tag");
+				Assert.AreEqual (@"", cell.ToolTipText, "#D cell.ToolTipText");
 				try {
 					object zxf = cell.Value;
 					TestHelper.RemoveWarning (zxf);
-					Assert.Fail ("Expected 'System.ArgumentOutOfRangeException', but no exception was thrown.", "#C cell.Value");
+					Assert.Fail ("Expected 'System.ArgumentOutOfRangeException', but no exception was thrown.", "#D cell.Value");
 				} catch (ArgumentOutOfRangeException ex) {
 					Assert.AreEqual (string.Format (@"Specified argument was out of the range of valid values.{0}Parameter name: rowIndex", Environment.NewLine), ex.Message);
 				} catch (Exception ex) {
-					Assert.Fail ("Expected 'System.ArgumentOutOfRangeException', got '" + ex.GetType ().FullName + "'.", "#C cell.Value");
+					Assert.Fail ("Expected 'System.ArgumentOutOfRangeException', got '" + ex.GetType ().FullName + "'.", "#D cell.Value");
 				}
-				Assert.IsNotNull (cell.ValueType, "#C cell.ValueType");
-				Assert.AreEqual (false, cell.Visible, "#C cell.Visible");
+				Assert.IsNotNull (cell.ValueType, "#D cell.ValueType");
+				Assert.AreEqual (false, cell.Visible, "#D cell.Visible");
 			}
 		}
 
@@ -616,6 +617,660 @@ namespace MonoTests.System.Windows.Forms
 		}
 		*/
 
+		[Test]
+		public void ColumnIndex ()
+		{
+			DataGridViewCell c = new BaseCell ();
+			Assert.AreEqual (-1, c.ColumnIndex, "A1");
+			
+			DataGridView dgv = new DataGridView ();
+			dgv.Columns.Add ("hi", "there");
+
+			DataGridViewRow row = new DataGridViewRow ();
+			row.Cells.Add (c);
+			dgv.Rows.Add (row);
+
+			Assert.AreEqual (0, dgv.Rows[0].Cells[0].ColumnIndex, "A2");
+		}
+
+		[Test]
+		public void ContentBounds ()
+		{
+			DataGridViewCell c = new BaseCell ();
+			Assert.AreEqual (Rectangle.Empty, c.ContentBounds, "A1");
+
+			DataGridView dgv = new DataGridView ();
+			dgv.Columns.Add ("hi", "there");
+
+			DataGridViewRow row = new DataGridViewRow ();
+			row.Cells.Add (c);
+			dgv.Rows.Add (row);
+
+			Assert.AreEqual (Rectangle.Empty, dgv.Rows[0].Cells[0].ContentBounds, "A2");
+		}
+
+		[Test]
+		public void ContextMenuStrip ()
+		{
+			DataGridViewCell c = new BaseCell ();
+			Assert.AreEqual (null, c.ContextMenuStrip, "A1");
+
+			DataGridView dgv = new DataGridView ();
+			dgv.Columns.Add ("hi", "there");
+
+			DataGridViewRow row = new DataGridViewRow ();
+			row.Cells.Add (c);
+			dgv.Rows.Add (row);
+
+			ContextMenuStrip cms1 = new ContextMenuStrip ();
+			cms1.Items.Add ("hey");
+
+			ContextMenuStrip cms2 = new ContextMenuStrip ();
+			cms2.Items.Add ("yo");
+			
+			dgv.Rows[0].ContextMenuStrip = cms1;
+			Assert.AreEqual (null, dgv.Rows[0].Cells[0].ContextMenuStrip, "A2");
+			
+			dgv.Rows[0].Cells[0].ContextMenuStrip = cms2;
+			Assert.AreSame (cms2, dgv.Rows[0].Cells[0].ContextMenuStrip, "A3");
+		}
+
+		[Test]
+		public void DataGridView ()
+		{
+			DataGridViewCell c = new BaseCell ();
+			Assert.AreEqual (null, c.DataGridView, "A1");
+
+			DataGridView dgv = new DataGridView ();
+			dgv.Columns.Add ("hi", "there");
+
+			DataGridViewRow row = new DataGridViewRow ();
+			row.Cells.Add (c);
+			dgv.Rows.Add (row);
+
+			Assert.AreSame (dgv, dgv.Rows[0].Cells[0].DataGridView, "A2");
+		}
+
+		[Test]
+		public void DefaultNewRowValue ()
+		{
+			DataGridViewCell c = new BaseCell ();
+			Assert.AreEqual (null, c.DefaultNewRowValue, "A1");
+
+			DataGridView dgv = new DataGridView ();
+			dgv.Columns.Add ("hi", "there");
+
+			DataGridViewRow row = new DataGridViewRow ();
+			row.Cells.Add (c);
+			dgv.Rows.Add (row);
+
+			Assert.AreEqual (null, dgv.Rows[0].Cells[0].DefaultNewRowValue, "A2");
+		}
+
+		[Test]
+		public void Displayed ()
+		{
+			DataGridViewCell c = new BaseCell ();
+			Assert.AreEqual (false, c.Displayed, "A1");
+
+			DataGridView dgv = new DataGridView ();
+			dgv.Columns.Add ("hi", "there");
+
+			DataGridViewRow row = new DataGridViewRow ();
+			row.Cells.Add (c);
+			dgv.Rows.Add (row);
+
+			Assert.AreEqual (false, dgv.Rows[0].Cells[0].Displayed, "A2");
+		}
+
+		[Test]
+		public void EditedFormattedValue ()
+		{
+			DataGridViewCell c = new BaseCell ();
+			Assert.AreEqual (null, c.EditedFormattedValue, "A1");
+		}
+
+		[Test]
+		public void FormattedValueType ()
+		{
+			DataGridViewCell c = new BaseCell ();
+			Assert.AreEqual (null, c.FormattedValueType, "A1");
+		}
+
+		[Test]
+		public void Frozen ()
+		{
+			DataGridViewCell c = new BaseCell ();
+			Assert.AreEqual (false, c.Frozen, "A1");
+		}
+
+		[Test]
+		public void HasStyle ()
+		{
+			DataGridViewCell c = new BaseCell ();
+			Assert.AreEqual (false, c.HasStyle, "A1");
+
+			DataGridView dgv = new DataGridView ();
+			dgv.Columns.Add ("hi", "there");
+
+			DataGridViewRow row = new DataGridViewRow ();
+			row.Cells.Add (c);
+			dgv.Rows.Add (row);
+
+			Assert.AreEqual (false, dgv.Rows[0].Cells[0].HasStyle, "A2");
+			
+			dgv.Rows[0].Cells[0].Style.BackColor = Color.Orange;
+			Assert.AreEqual (true, dgv.Rows[0].Cells[0].HasStyle, "A3");
+		}
+
+		[Test]
+		public void InheritedState ()
+		{
+			DataGridViewCell c = new BaseCell ();
+			Assert.AreEqual (DataGridViewElementStates.ResizableSet, c.InheritedState, "A1");
+
+			DataGridView dgv = new DataGridView ();
+			dgv.Columns.Add ("hi", "there");
+
+			DataGridViewRow row = new DataGridViewRow ();
+			row.Cells.Add (c);
+			dgv.Rows.Add (row);
+
+			Assert.AreEqual (DataGridViewElementStates.ResizableSet | DataGridViewElementStates.Resizable | DataGridViewElementStates.Visible, dgv.Rows[0].Cells[0].InheritedState, "A2");
+
+			dgv.Rows[0].Selected = true;
+			Assert.AreEqual (DataGridViewElementStates.Selected | DataGridViewElementStates.ResizableSet | DataGridViewElementStates.Resizable | DataGridViewElementStates.Visible, dgv.Rows[0].Cells[0].InheritedState, "A3");
+
+			dgv.Rows[0].Selected = false;
+			dgv.Columns[0].Selected = true;
+			Assert.AreEqual (DataGridViewElementStates.ResizableSet | DataGridViewElementStates.Resizable | DataGridViewElementStates.Visible, dgv.Rows[0].Cells[0].InheritedState, "A4");
+		}
+
+		[Test]
+		public void InheritedStyle ()
+		{
+			DataGridViewCell c = new BaseCell ();
+			DataGridView dgv = new DataGridView ();
+			dgv.Columns.Add ("hi", "there");
+
+			DataGridViewRow row = new DataGridViewRow ();
+			row.Cells.Add (c);
+			dgv.Rows.Add (row);
+
+			Assert.AreEqual (SystemColors.Window, dgv.Rows[0].Cells[0].InheritedStyle.BackColor, "A1");
+
+			dgv.DefaultCellStyle.BackColor = Color.Firebrick;
+			Assert.AreEqual (Color.Firebrick, dgv.Rows[0].Cells[0].InheritedStyle.BackColor, "A2");
+
+			dgv.Columns[0].DefaultCellStyle.BackColor = Color.FloralWhite;
+			Assert.AreEqual (Color.FloralWhite, dgv.Rows[0].Cells[0].InheritedStyle.BackColor, "A3");
+
+			dgv.RowsDefaultCellStyle.BackColor = Color.DeepPink;
+			Assert.AreEqual (Color.DeepPink, dgv.Rows[0].Cells[0].InheritedStyle.BackColor, "A4");
+
+			dgv.Rows[0].DefaultCellStyle.BackColor = Color.DeepSkyBlue;
+			Assert.AreEqual (Color.DeepSkyBlue, dgv.Rows[0].Cells[0].InheritedStyle.BackColor, "A5");
+
+			dgv.Rows[0].Cells[0].Style.BackColor = Color.DodgerBlue;
+			Assert.AreEqual (Color.DodgerBlue, dgv.Rows[0].Cells[0].InheritedStyle.BackColor, "A6");
+		}
+
+		[Test]
+		public void IsInEditMode ()
+		{
+			DataGridViewCell c = new BaseCell ();
+			Assert.AreEqual (false, c.IsInEditMode, "A1");
+
+			DataGridView dgv = new DataGridView ();
+			dgv.Columns.Add ("hi", "there");
+
+			DataGridViewRow row = new DataGridViewRow ();
+			row.Cells.Add (c);
+			dgv.Rows.Add (row);
+
+			Assert.AreEqual (false, dgv.Rows[0].Cells[0].IsInEditMode, "A2");
+		}
+
+		[Test]
+		public void OwningColumn ()
+		{
+			DataGridViewCell c = new BaseCell ();
+			Assert.AreEqual (null, c.OwningColumn, "A1");
+
+			DataGridView dgv = new DataGridView ();
+			dgv.Columns.Add ("hi", "there");
+
+			DataGridViewRow row = new DataGridViewRow ();
+			row.Cells.Add (c);
+			dgv.Rows.Add (row);
+
+			Assert.AreSame (dgv.Columns[0], dgv.Rows[0].Cells[0].OwningColumn, "A2");
+		}
+
+		[Test]
+		public void OwningRow ()
+		{
+			DataGridViewCell c = new BaseCell ();
+			Assert.AreEqual (null, c.OwningRow, "A1");
+
+			DataGridView dgv = new DataGridView ();
+			dgv.Columns.Add ("hi", "there");
+
+			DataGridViewRow row = new DataGridViewRow ();
+			row.Cells.Add (c);
+			dgv.Rows.Add (row);
+
+			Assert.AreSame (dgv.Rows[0], dgv.Rows[0].Cells[0].OwningRow, "A2");
+		}
+
+		[Test]
+		public void PreferredSize ()
+		{
+			DataGridViewCell c = new BaseCell ();
+			Assert.AreEqual (new Size (-1, -1), c.PreferredSize, "A1");
+
+			DataGridView dgv = new DataGridView ();
+			dgv.Columns.Add ("hi", "there");
+
+			DataGridViewRow row = new DataGridViewRow ();
+			row.Cells.Add (c);
+			dgv.Rows.Add (row);
+
+			Assert.AreEqual (new Size (-1, -1), dgv.Rows[0].Cells[0].PreferredSize, "A2");
+			
+			// Always returns (-1, -1)
+			dgv.Rows[0].Cells[0].Value = "bob";
+			Assert.AreEqual (new Size (-1, -1), dgv.Rows[0].Cells[0].PreferredSize, "A3");
+		}
+
+		[Test]
+		public void ReadOnly ()
+		{
+			DataGridViewCell c = new BaseCell ();
+			Assert.AreEqual (false, c.ReadOnly, "A1");
+
+			DataGridView dgv = new DataGridView ();
+			dgv.Columns.Add ("hi", "there");
+
+			DataGridViewRow row = new DataGridViewRow ();
+			row.Cells.Add (c);
+			dgv.Rows.Add (row);
+
+			Assert.AreEqual (false, dgv.Rows[0].Cells[0].ReadOnly, "A2");
+
+			dgv.Rows[0].ReadOnly = true;
+			Assert.AreEqual (true, dgv.Rows[0].Cells[0].ReadOnly, "A3");
+
+			dgv.Rows[0].Cells[0].ReadOnly = false;
+			Assert.AreEqual (false, dgv.Rows[0].Cells[0].ReadOnly, "A4");
+		}
+
+		[Test]
+		public void Resizable ()
+		{
+			DataGridViewCell c = new BaseCell ();
+			Assert.AreEqual (false, c.Resizable, "A1");
+
+			DataGridView dgv = new DataGridView ();
+			dgv.Columns.Add ("hi", "there");
+
+			DataGridViewRow row = new DataGridViewRow ();
+			row.Cells.Add (c);
+			dgv.Rows.Add (row);
+
+			Assert.AreEqual (true, dgv.Rows[0].Cells[0].Resizable, "A2");
+
+			dgv.Rows[0].Resizable = DataGridViewTriState.False;
+			Assert.AreEqual (true, dgv.Rows[0].Cells[0].Resizable, "A3");
+
+			dgv.Columns[0].Resizable = DataGridViewTriState.False;
+			Assert.AreEqual (false, dgv.Rows[0].Cells[0].Resizable, "A4");
+
+			dgv.Columns[0].Resizable = DataGridViewTriState.True;
+			dgv.Rows[0].Resizable = DataGridViewTriState.True;
+			Assert.AreEqual (true, dgv.Rows[0].Cells[0].Resizable, "A5");
+
+			dgv.AllowUserToResizeColumns = false;
+			Assert.AreEqual (true, dgv.Rows[0].Cells[0].Resizable, "A6");
+
+			dgv.AllowUserToResizeRows = false;
+			Assert.AreEqual (true, dgv.Rows[0].Cells[0].Resizable, "A7");
+
+			dgv.Columns[0].Resizable = DataGridViewTriState.NotSet;
+			Assert.AreEqual (true, dgv.Rows[0].Cells[0].Resizable, "A8");
+
+			dgv.Rows[0].Resizable = DataGridViewTriState.NotSet;
+			Assert.AreEqual (false, dgv.Rows[0].Cells[0].Resizable, "A9");
+		}
+
+		[Test]
+		public void RowIndex ()
+		{
+			DataGridViewCell c = new BaseCell ();
+			Assert.AreEqual (-1, c.RowIndex, "A1");
+
+			DataGridView dgv = new DataGridView ();
+			dgv.Columns.Add ("hi", "there");
+
+			DataGridViewRow row = new DataGridViewRow ();
+			row.Cells.Add (c);
+			dgv.Rows.Add (row);
+
+			Assert.AreEqual (0, dgv.Rows[0].Cells[0].RowIndex, "A2");
+		}
+
+		[Test]
+		public void Selected ()
+		{
+			DataGridViewCell c = new BaseCell ();
+			Assert.AreEqual (false, c.Selected, "A1");
+
+			DataGridView dgv = new DataGridView ();
+			dgv.Columns.Add ("hi", "there");
+
+			DataGridViewRow row = new DataGridViewRow ();
+			row.Cells.Add (c);
+			dgv.Rows.Add (row);
+
+			Assert.AreEqual (false, dgv.Rows[0].Cells[0].Selected, "A2");
+
+			dgv.Columns[0].Selected = true;
+			Assert.AreEqual (false, dgv.Rows[0].Cells[0].Selected, "A3");
+
+			dgv.Rows[0].Selected = true;
+			Assert.AreEqual (true, dgv.Rows[0].Cells[0].Selected, "A4");
+
+			dgv.Rows[0].Cells[0].Selected = false;
+			Assert.AreEqual (false, dgv.Rows[0].Cells[0].Selected, "A5");
+
+			dgv.Rows[0].Selected = false;
+			Assert.AreEqual (false, dgv.Rows[0].Cells[0].Selected, "A6");
+
+			dgv.Rows[0].Cells[0].Selected = true;
+			Assert.AreEqual (true, dgv.Rows[0].Cells[0].Selected, "A7");
+		}
+
+		[Test]
+		public void Size ()
+		{
+			DataGridViewCell c = new BaseCell ();
+			Assert.AreEqual (new Size (-1, -1), c.Size, "A1");
+
+			DataGridView dgv = new DataGridView ();
+			dgv.Columns.Add ("hi", "there");
+
+			DataGridViewRow row = new DataGridViewRow ();
+			row.Cells.Add (c);
+			dgv.Rows.Add (row);
+
+			Assert.AreEqual (new Size (100, 22), dgv.Rows[0].Cells[0].Size, "A2");
+			
+			// Does not resize to content
+			dgv.Rows[0].Cells[0].Value = "bob";
+			Assert.AreEqual (new Size (100, 22), dgv.Rows[0].Cells[0].Size, "A3");
+		}
+
+		[Test]
+		public void Style ()
+		{
+			DataGridViewCell c = new BaseCell ();
+			Assert.AreEqual (DataGridViewContentAlignment.NotSet, c.Style.Alignment, "A1");
+			Assert.AreEqual (Color.Empty, c.Style.BackColor, "A2");
+			Assert.AreEqual (DBNull.Value, c.Style.DataSourceNullValue, "A3");
+			Assert.AreEqual (null, c.Style.Font, "A4");
+			Assert.AreEqual (Color.Empty, c.Style.ForeColor, "A5");
+			Assert.AreEqual (string.Empty, c.Style.Format, "A6");
+			Assert.AreEqual (Thread.CurrentThread.CurrentCulture, c.Style.FormatProvider, "A7");
+			Assert.AreEqual (true, c.Style.IsDataSourceNullValueDefault, "A8");
+			Assert.AreEqual (true, c.Style.IsFormatProviderDefault, "A9");
+			Assert.AreEqual (true, c.Style.IsNullValueDefault, "A10");
+			Assert.AreEqual (string.Empty, c.Style.NullValue, "A11");
+			Assert.AreEqual (Padding.Empty, c.Style.Padding, "A12");
+			Assert.AreEqual (Color.Empty, c.Style.SelectionBackColor, "A13");
+			Assert.AreEqual (Color.Empty, c.Style.SelectionForeColor, "A14");
+			Assert.AreEqual (null, c.Style.Tag, "A15");
+			Assert.AreEqual (DataGridViewTriState.NotSet, c.Style.WrapMode, "A16");
+
+			DataGridView dgv = new DataGridView ();
+			dgv.Columns.Add ("hi", "there");
+
+			DataGridViewRow row = new DataGridViewRow ();
+			row.Cells.Add (c);
+			dgv.Rows.Add (row);
+
+			// Style does not change based on parent
+			// (InheritedStyle does)
+			Assert.AreEqual (DataGridViewContentAlignment.NotSet, c.Style.Alignment, "A17");
+			Assert.AreEqual (Color.Empty, c.Style.BackColor, "A18");
+			Assert.AreEqual (DBNull.Value, c.Style.DataSourceNullValue, "A19");
+			Assert.AreEqual (null, c.Style.Font, "A20");
+			Assert.AreEqual (Color.Empty, c.Style.ForeColor, "A21");
+			Assert.AreEqual (string.Empty, c.Style.Format, "A22");
+			Assert.AreEqual (Thread.CurrentThread.CurrentCulture, c.Style.FormatProvider, "A23");
+			Assert.AreEqual (true, c.Style.IsDataSourceNullValueDefault, "A24");
+			Assert.AreEqual (true, c.Style.IsFormatProviderDefault, "A25");
+			Assert.AreEqual (true, c.Style.IsNullValueDefault, "A26");
+			Assert.AreEqual (string.Empty, c.Style.NullValue, "A27");
+			Assert.AreEqual (Padding.Empty, c.Style.Padding, "A28");
+			Assert.AreEqual (Color.Empty, c.Style.SelectionBackColor, "A29");
+			Assert.AreEqual (Color.Empty, c.Style.SelectionForeColor, "A30");
+			Assert.AreEqual (null, c.Style.Tag, "A31");
+			Assert.AreEqual (DataGridViewTriState.NotSet, c.Style.WrapMode, "A32");
+		}
+
+		[Test]
+		public void Tag ()
+		{
+			DataGridViewCell c = new BaseCell ();
+			Assert.AreEqual (null, c.Tag, "A1");
+
+			DataGridView dgv = new DataGridView ();
+			dgv.Columns.Add ("hi", "there");
+
+			DataGridViewRow row = new DataGridViewRow ();
+			row.Cells.Add (c);
+			dgv.Rows.Add (row);
+
+			Assert.AreEqual (null, dgv.Rows[0].Cells[0].Tag, "A2");
+
+			dgv.Rows[0].Cells[0].Tag = "bob";
+			Assert.AreEqual ("bob", dgv.Rows[0].Cells[0].Tag, "A3");
+		}
+
+		[Test]
+		public void ToolTipText ()
+		{
+			DataGridViewCell c = new BaseCell ();
+			Assert.AreEqual (string.Empty, c.ToolTipText, "A1");
+
+			DataGridView dgv = new DataGridView ();
+			dgv.Columns.Add ("hi", "there");
+
+			DataGridViewRow row = new DataGridViewRow ();
+			row.Cells.Add (c);
+			dgv.Rows.Add (row);
+
+			Assert.AreEqual (string.Empty, dgv.Rows[0].Cells[0].ToolTipText, "A2");
+
+			dgv.Rows[0].Cells[0].ToolTipText = "bob";
+			Assert.AreEqual ("bob", dgv.Rows[0].Cells[0].ToolTipText, "A3");
+		}
+
+		[Test]
+		public void Value ()
+		{
+			DataGridViewCell c = new BaseCell ();
+			Assert.AreEqual (null, c.Value, "A1");
+
+			DataGridView dgv = new DataGridView ();
+			dgv.Columns.Add ("hi", "there");
+
+			DataGridViewRow row = new DataGridViewRow ();
+			row.Cells.Add (c);
+			dgv.Rows.Add (row);
+
+			Assert.AreEqual (null, dgv.Rows[0].Cells[0].Value, "A2");
+
+			dgv.Rows[0].Cells[0].Value = "bob";
+			Assert.AreEqual ("bob", dgv.Rows[0].Cells[0].Value, "A3");
+		}
+
+		[Test]
+		public void ValueType ()
+		{
+			DataGridViewCell c = new BaseCell ();
+			Assert.AreEqual (null, c.ValueType, "A1");
+
+			DataGridView dgv = new DataGridView ();
+			dgv.Columns.Add ("hi", "there");
+
+			DataGridViewRow row = new DataGridViewRow ();
+			row.Cells.Add (c);
+			dgv.Rows.Add (row);
+
+			Assert.AreEqual (null, dgv.Rows[0].Cells[0].ValueType, "A2");
+
+			dgv.Rows[0].Cells[0].ValueType = typeof (bool);
+			Assert.AreEqual (typeof (bool), dgv.Rows[0].Cells[0].ValueType, "A3");
+		}
+
+		[Test]
+		public void Visible ()
+		{
+			DataGridViewCell c = new BaseCell ();
+			Assert.AreEqual (false, c.Visible, "A1");
+
+			DataGridView dgv = new DataGridView ();
+			dgv.Columns.Add ("hi", "there");
+
+			DataGridViewRow row = new DataGridViewRow ();
+			row.Cells.Add (c);
+			dgv.Rows.Add (row);
+
+			Assert.AreEqual (true, dgv.Rows[0].Cells[0].Visible, "A2");
+
+			dgv.Columns[0].Visible = false;
+			Assert.AreEqual (false, dgv.Rows[0].Cells[0].Visible, "A3");
+
+			dgv.Columns[0].Visible = true;
+			Assert.AreEqual (true, dgv.Rows[0].Cells[0].Visible, "A4");
+
+			dgv.Rows[0].Visible = false;
+			Assert.AreEqual (false, dgv.Rows[0].Cells[0].Visible, "A5");
+
+			dgv.Rows[0].Visible = true;
+			Assert.AreEqual (true, dgv.Rows[0].Cells[0].Visible, "A6");
+		}
+
+		/* These can be used on windows to ensure the implementation
+		 * is correct, but are font-dependent
+		[Test]
+		public void MeasureTextHeight ()
+		{
+			Bitmap b = new Bitmap (1, 1);
+			Graphics g = Graphics.FromImage (b);
+
+			bool trunc = false;
+			int s = DataGridViewCell.MeasureTextHeight (g, "Text", Control.DefaultFont, 100, TextFormatFlags.Default, out trunc);
+
+			//Assert.AreEqual (false, trunc, "A1");
+			Assert.AreEqual (13, s, "A2");
+
+			trunc = false;
+			s = DataGridViewCell.MeasureTextHeight (g, "Text Longer than the width", Control.DefaultFont, 100, TextFormatFlags.Default, out trunc);
+
+			//Assert.AreEqual (true, trunc, "A3");
+			Assert.AreEqual (13, s, "A4");
+
+			trunc = false;
+			s = DataGridViewCell.MeasureTextHeight (g, "Text Longer than the width", Control.DefaultFont, 100, TextFormatFlags.HorizontalCenter, out trunc);
+
+			//Assert.AreEqual (true, trunc, "A5");
+			Assert.AreEqual (13, s, "A6");
+
+			g.Dispose ();
+			b.Dispose ();
+		}
+
+		[Test]
+		public void MeasureTextWidth ()
+		{
+			Bitmap b = new Bitmap (1, 1);
+			Graphics g = Graphics.FromImage (b);
+
+			int s = DataGridViewCell.MeasureTextWidth (g, "Text", Control.DefaultFont, 100, TextFormatFlags.Default);
+
+			Assert.AreEqual (28, s, "A1");
+
+			s = DataGridViewCell.MeasureTextWidth (g, "Text Longer than the width", Control.DefaultFont, 100, TextFormatFlags.Default);
+
+			Assert.AreEqual (134, s, "A2");
+
+			s = DataGridViewCell.MeasureTextWidth (g, "Text Longer than the width", Control.DefaultFont, 100, TextFormatFlags.HorizontalCenter);
+
+			Assert.AreEqual (134, s, "A3");
+
+			g.Dispose ();
+			b.Dispose ();
+		}
+
+		[Test]
+		public void MeasureTextSize ()
+		{
+			Bitmap b = new Bitmap (1, 1);
+			Graphics g = Graphics.FromImage (b);
+
+			Size s = DataGridViewCell.MeasureTextSize (g, "Text", Control.DefaultFont, TextFormatFlags.Default);
+
+			Assert.AreEqual (new Size (28, 13), s, "A1");
+
+			s = DataGridViewCell.MeasureTextSize (g, "Text Longer than the width", Control.DefaultFont, TextFormatFlags.Default);
+
+			Assert.AreEqual (new Size (134, 13), s, "A2");
+
+			s = DataGridViewCell.MeasureTextSize (g, "Text Longer than the width", Control.DefaultFont, TextFormatFlags.HorizontalCenter);
+
+			Assert.AreEqual (new Size (134, 13), s, "A3");
+			
+			s = DataGridViewCell.MeasureTextSize (g, "Text Longer \nthan the width", Control.DefaultFont, TextFormatFlags.HorizontalCenter);
+
+			Assert.AreEqual (new Size (74, 26), s, "A4");
+
+			g.Dispose ();
+			b.Dispose ();
+		}
+
+		[Test]
+		public void MeasureTextPreferredSize ()
+		{
+			Bitmap b = new Bitmap (1, 1);
+			Graphics g = Graphics.FromImage (b);
+
+			Size s = DataGridViewCell.MeasureTextPreferredSize (g, "Text", Control.DefaultFont, 1.5f, TextFormatFlags.Default);
+
+			Assert.AreEqual (new Size (28, 13), s, "A1");
+
+			s = DataGridViewCell.MeasureTextPreferredSize (g, "Text Longer than the width", Control.DefaultFont, 1.5f, TextFormatFlags.Default);
+
+			Assert.AreEqual (new Size (134, 13), s, "A2");
+
+			s = DataGridViewCell.MeasureTextPreferredSize (g, "Text Longer than the width", Control.DefaultFont, 2.0f, TextFormatFlags.Default);
+
+			Assert.AreEqual (new Size (134, 13), s, "A3");
+
+			s = DataGridViewCell.MeasureTextPreferredSize (g, "Text Longer \nthan the width", Control.DefaultFont, 0.5f, TextFormatFlags.Default);
+
+			Assert.AreEqual (new Size (74, 26), s, "A4");
+
+			g.Dispose ();
+			b.Dispose ();
+		}
+	*/
+	
+		private class BaseCell : DataGridViewCell
+		{
+		}
+		
 		class DataGridViewCellMockObject : DataGridViewCell
 		{
 			public DataGridViewCellMockObject ()

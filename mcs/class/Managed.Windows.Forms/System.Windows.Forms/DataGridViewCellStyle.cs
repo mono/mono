@@ -55,6 +55,7 @@ namespace System.Windows.Forms {
 		{
 			alignment = DataGridViewContentAlignment.NotSet;
 			backColor = Color.Empty;
+			dataSourceNullValue = DBNull.Value;
 			font = null;
 			foreColor = Color.Empty;
 			format = String.Empty;

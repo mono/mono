@@ -84,7 +84,7 @@ namespace System.Windows.Forms
 		[MonoTODO]
 		protected override object GetValue (int rowIndex)
 		{
-			throw new NotImplementedException ();
+			return base.GetValue (rowIndex);
 		}
 
 		protected override bool KeyUpUnsharesRow (KeyEventArgs e, int rowIndex)

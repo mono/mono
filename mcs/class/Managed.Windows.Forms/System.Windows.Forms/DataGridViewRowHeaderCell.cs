@@ -173,7 +173,7 @@ namespace System.Windows.Forms {
 				Pen p = ThemeEngine.Current.ResPool.GetPen (color);
 				int x = cellBounds.Left + 6;
 
-				if (DataGridView.Rows[rowIndex].Selected) {
+				if (DataGridView.CurrentRow != null && DataGridView.CurrentRow.Index == rowIndex) {
 					DrawRightArrowGlyph (graphics, p, x, cellBounds.Top + (cellBounds.Height / 2) - 4);
 					x += 7;
 				}

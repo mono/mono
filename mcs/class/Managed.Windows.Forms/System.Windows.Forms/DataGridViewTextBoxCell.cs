@@ -115,7 +115,7 @@ namespace System.Windows.Forms {
 				editingControl.Size = new Size(cellBounds.Width, cellBounds.Height + 2);
 			}
 			if (setLocation) {
-				editingControl.Location = new Point(cellBounds.X, cellBounds.Y);
+				editingControl.Location = new Point (cellBounds.X, ((cellBounds.Height - editingControl.Height) / 2) + cellBounds.Y);
 			}
 			editingControl.Invalidate();
 		}
@@ -175,7 +175,7 @@ namespace System.Windows.Forms {
 			}
 
 			// Postpaint
-			DataGridViewPaintParts post = DataGridViewPaintParts.Border;
+			DataGridViewPaintParts post = DataGridViewPaintParts.Border | DataGridViewPaintParts.Focus;
 			post = post & paintParts;
 
 			base.Paint (graphics, clipBounds, cellBounds, rowIndex, cellState, value, formattedValue, errorText, cellStyle, advancedBorderStyle, post);

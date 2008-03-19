@@ -229,7 +229,7 @@ namespace System.Windows.Forms {
 		public Size PreferredSize {
 			get { 
 				if (DataGridView == null)
-					return Size.Empty;
+					return new Size (-1, -1);
 					
 				return GetPreferredSize (Hwnd.GraphicsContext, InheritedStyle, RowIndex, Size.Empty); 
 			}
@@ -266,7 +266,14 @@ namespace System.Windows.Forms {
 		[Browsable (false)]
 		public virtual bool Resizable {
 			get {
-				return resizable; 
+				if (DataGridView == null)
+					return false;
+
+				// Shared cells aren't resizable
+				if (RowIndex == -1 || columnIndex == -1)
+					return false;
+					
+				return OwningRow.Resizable == DataGridViewTriState.True || OwningColumn.Resizable == DataGridViewTriState.True; 
 			}
 		}
 
@@ -302,6 +309,17 @@ namespace System.Windows.Forms {
 					SetState(State ^ DataGridViewElementStates.Selected);
 				}
 				selected = value;
+				
+				// If our row is selected, unselect it and select
+				// the first cell in it that isn't us
+				if (!selected && OwningRow != null && OwningRow.Selected) {
+					OwningRow.Selected = false;
+					
+					if (columnIndex != 0 && OwningRow.Cells.Count > 0)
+						OwningRow.Cells[0].Selected = true;
+					else if (OwningRow.Cells.Count > 1)
+						OwningRow.Cells[1].Selected = true;
+				}
 			}
 		}
 
@@ -309,7 +327,7 @@ namespace System.Windows.Forms {
 		public Size Size {
 			get {
 				if (DataGridView == null)
-					return Size.Empty;
+					return new Size (-1, -1);
 					
 				if (RowIndex == -1)
 					throw new InvalidOperationException ("Getting the Size property of a cell in a shared row is not a valid operation.");
@@ -474,7 +492,7 @@ namespace System.Windows.Forms {
 			DataGridViewColumn col = OwningColumn;
 			DataGridViewRow row = OwningRow;
 
-			if (DataGridView == null) {
+			//if (DataGridView == null) {
 				if (row != null) {
 					if (row.Resizable == DataGridViewTriState.True)
 						result |= DataGridViewElementStates.Resizable;
@@ -491,12 +509,12 @@ namespace System.Windows.Forms {
 					if (row.Displayed)
 						result |= DataGridViewElementStates.Displayed;
 						
-					/*if (row.Selected)
-						result |= DataGridViewElementStates.Selected;*/
+					if (row.Selected)
+						result |= DataGridViewElementStates.Selected;
 				}
 				
 				return result;
-			}
+			//}
 			
 			if (col != null) {
 				if (col.Resizable == DataGridViewTriState.True && row.Resizable == DataGridViewTriState.True)
@@ -729,57 +747,58 @@ namespace System.Windows.Forms {
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		public static int MeasureTextHeight (Graphics graphics, string text, Font font, int maxWidth, TextFormatFlags flags) {
-			if (graphics == null) {
-				throw new ArgumentNullException("Graphics argument null");
-			}
-			if (font == null) {
-				throw new ArgumentNullException("Font argument null");
-			}
-			if (maxWidth < 1) {
-				throw new ArgumentOutOfRangeException("maxWidth is less than 1.");
-			}
-			// if (flags ---> InvalidEnumArgumentException	
-			throw new NotImplementedException();
+		public static int MeasureTextHeight (Graphics graphics, string text, Font font, int maxWidth, TextFormatFlags flags)
+		{
+			if (graphics == null)
+				throw new ArgumentNullException ("Graphics argument null");
+			if (font == null)
+				throw new ArgumentNullException ("Font argument null");
+			if (maxWidth < 1)
+				throw new ArgumentOutOfRangeException ("maxWidth is less than 1.");
+
+			return TextRenderer.MeasureText (graphics, text, font, new Size (maxWidth, 0), flags).Height;
+		}
+
+		[MonoTODO ("does not use widthTruncated parameter")]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		public static int MeasureTextHeight (Graphics graphics, string text, Font font, int maxWidth, TextFormatFlags flags, out bool widthTruncated)
+		{
+			widthTruncated = false;
+			return TextRenderer.MeasureText (graphics, text, font, new Size (maxWidth, 0), flags).Height;
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		public static int MeasureTextHeight (Graphics graphics, string text, Font font, int maxWidth, TextFormatFlags flags, out bool widthTruncated) {
-			throw new NotImplementedException();
+		public static Size MeasureTextPreferredSize (Graphics graphics, string text, Font font, float maxRatio, TextFormatFlags flags)
+		{
+			if (graphics == null)
+				throw new ArgumentNullException ("Graphics argument null");
+			if (font == null)
+				throw new ArgumentNullException ("Font argument null");
+			if (maxRatio <= 0)
+				throw new ArgumentOutOfRangeException ("maxRatio is less than or equals to 0.");
+
+			// I couldn't find a case where maxRatio
+			// affected anything on MS
+			return MeasureTextSize (graphics, text, font, flags);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		public static Size MeasureTextPreferredSize (Graphics graphics, string text, Font font, float maxRatio, TextFormatFlags flags) {
-			if (graphics == null) {
-				throw new ArgumentNullException("Graphics argument null");
-			}
-			if (font == null) {
-				throw new ArgumentNullException("Font argument null");
-			}
-			if (maxRatio <= 0) {
-				throw new ArgumentOutOfRangeException("maxRatio is less than or equals to 0.");
-			}
-			throw new NotImplementedException();
+		public static Size MeasureTextSize (Graphics graphics, string text, Font font, TextFormatFlags flags)
+		{
+			return TextRenderer.MeasureText (graphics, text, font, Size.Empty, flags);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		public static Size MeasureTextSize (Graphics graphics, string text, Font font, TextFormatFlags flags) {
-			/////////////////////////// ¿flags?
-			return graphics.MeasureString(text, font).ToSize();
-		}
+		public static int MeasureTextWidth (Graphics graphics, string text, Font font, int maxHeight, TextFormatFlags flags)
+		{
+			if (graphics == null)
+				throw new ArgumentNullException ("Graphics argument null");
+			if (font == null)
+				throw new ArgumentNullException ("Font argument null");
+			if (maxHeight < 1)
+				throw new ArgumentOutOfRangeException ("maxHeight is less than 1.");
 
-		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		public static int MeasureTextWidth (Graphics graphics, string text, Font font, int maxHeight, TextFormatFlags flags) {
-			if (graphics == null) {
-				throw new ArgumentNullException("Graphics argument null");
-			}
-			if (font == null) {
-				throw new ArgumentNullException("Font argument null");
-			}
-			if (maxHeight < 1) {
-				throw new ArgumentOutOfRangeException("maxHeight is less than 1.");
-			}
-			throw new NotImplementedException();
+			return TextRenderer.MeasureText (graphics, text, font, new Size (0, maxHeight), flags).Width;
 		}
 
 		public virtual object ParseFormattedValue (object formattedValue, DataGridViewCellStyle cellStyle, TypeConverter formattedValueTypeConverter, TypeConverter valueTypeConverter) {
@@ -955,13 +974,14 @@ namespace System.Windows.Forms {
 			return value;
 		}
 
-		protected virtual Size GetPreferredSize (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex, Size constraintSize) {
-			throw new NotImplementedException();
+		protected virtual Size GetPreferredSize (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex, Size constraintSize)
+		{
+			return new Size (-1, -1);
 		}
 
-		protected virtual Size GetSize (int rowIndex) {
-			DataGridViewCellStyle style = InheritedStyle;
-			throw new NotImplementedException();
+		protected virtual Size GetSize (int rowIndex)
+		{
+			return new Size (OwningColumn.Width, OwningRow.Height);
 		}
 
 		protected virtual object GetValue (int rowIndex) {
@@ -1151,7 +1171,7 @@ namespace System.Windows.Forms {
 			if ((paintParts & DataGridViewPaintParts.ContentForeground) == DataGridViewPaintParts.ContentForeground)
 				PaintPartContent (graphics, cellBounds, rowIndex, cellState, cellStyle, formattedValue);
 			if ((paintParts & DataGridViewPaintParts.Focus) == DataGridViewPaintParts.Focus)
-				{ } // Have to figure out how to tell if cell is focused
+				PaintPartFocus (graphics, cellBounds);
 			if ((paintParts & DataGridViewPaintParts.ErrorIcon) == DataGridViewPaintParts.ErrorIcon)
 				PaintErrorIcon (graphics, clipBounds, cellBounds, errorText);
 		}
@@ -1286,11 +1306,23 @@ namespace System.Windows.Forms {
 				TextRenderer.DrawText (graphics, formattedValue.ToString (), cellStyle.Font, cellBounds, color, flags);
 		}
 		
+		private void PaintPartFocus (Graphics graphics, Rectangle cellBounds)
+		{
+			cellBounds.Width--;
+			cellBounds.Height--;
+			
+			if (DataGridView.ShowFocusCues && DataGridView.CurrentCell == this && DataGridView.Focused)
+				ControlPaint.DrawFocusRectangle (graphics, cellBounds);
+		}
+
 		private void PaintPartSelectionBackground (Graphics graphics, Rectangle cellBounds, DataGridViewElementStates cellState, DataGridViewCellStyle cellStyle)
 		{
 			if ((cellState & DataGridViewElementStates.Selected) != DataGridViewElementStates.Selected)
 				return;
 
+			if (RowIndex >= 0 && IsInEditMode)
+				return;
+				
 			Color color = cellStyle.SelectionBackColor;
 			graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (color), cellBounds);
 		}

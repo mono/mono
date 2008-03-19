@@ -587,6 +587,7 @@ namespace System.Windows.Forms {
 					throw new ArgumentException("The cell is not in this DataGridView.");
 				}
 				currentCell = value;
+				currentRow = currentCell.OwningRow;
 			}
 		}
 
@@ -3384,6 +3385,10 @@ namespace System.Windows.Forms {
 		protected override void OnGotFocus(EventArgs e)
 		{
 			base.OnGotFocus (e);
+
+			// To add focus rectangle if needed
+			if (currentCell != null && ShowFocusCues)
+				InvalidateCell (currentCell);
 		}
 
 		protected override void OnFontChanged (EventArgs e)
@@ -3447,6 +3452,10 @@ namespace System.Windows.Forms {
 		protected override void OnLostFocus(EventArgs e)
 		{
 			base.OnLostFocus (e);
+
+			// To remove focus rectangle if needed
+			if (currentCell != null && ShowFocusCues)
+				InvalidateCell (currentCell);
 		}
 
 		protected override void OnMouseClick (MouseEventArgs e)
@@ -3635,6 +3644,7 @@ namespace System.Windows.Forms {
 				OnCellLeave(new DataGridViewCellEventArgs(currentCell.ColumnIndex, currentCell.RowIndex));
 			}
 			currentCell = cell;
+			currentRow = cell.OwningRow;
 			OnCurrentCellChanged(EventArgs.Empty);
 			OnCellEnter(new DataGridViewCellEventArgs(cell.ColumnIndex, cell.RowIndex));
 			if (editMode == DataGridViewEditMode.EditOnEnter) {
@@ -3752,11 +3762,8 @@ namespace System.Windows.Forms {
 				bounds.Height = row.Height;
 				bool is_first = row.Index == 0;
 				bool is_last = row.Index == rows.Count - 1;
-				
-				DataGridViewElementStates state = DataGridViewElementStates.Visible;
-				state |= DataGridViewElementStates.Displayed;
 
-				row.Paint (g, e.ClipRectangle, bounds, row.Index, state, is_first, is_last);
+				row.Paint (g, e.ClipRectangle, bounds, row.Index, row.GetState (row.Index), is_first, is_last);
 								
 				bounds.Y += bounds.Height;
 				bounds.X = -horizontalScrollingOffset + BorderWidth;
@@ -4206,6 +4213,9 @@ namespace System.Windows.Forms {
 		}	
 		
 		protected virtual void SetSelectedColumnCore (int columnIndex, bool selected) {
+			if (selectionMode != DataGridViewSelectionMode.ColumnHeaderSelect && selectionMode != DataGridViewSelectionMode.FullColumnSelect)
+				return; 
+			
 			DataGridViewColumn col = columns [columnIndex];
 			
 			col.SelectedInternal = selected;

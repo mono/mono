@@ -390,7 +390,25 @@ namespace System.Windows.Forms {
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public virtual DataGridViewElementStates GetState (int rowIndex)
 		{
-			throw new NotImplementedException();
+			DataGridViewElementStates state = DataGridViewElementStates.None;
+			DataGridViewRow row = DataGridView.Rows[rowIndex];
+
+			if (row.Displayed)
+				state |= DataGridViewElementStates.Displayed;
+			if (row.Frozen)
+				state |= DataGridViewElementStates.Frozen;
+			if (row.ReadOnly)
+				state |= DataGridViewElementStates.ReadOnly;
+			if (row.Resizable == DataGridViewTriState.True || (row.Resizable == DataGridViewTriState.NotSet && DataGridView.AllowUserToResizeRows))
+				state |= DataGridViewElementStates.Resizable;
+			if (row.Resizable == DataGridViewTriState.True)
+				state |= DataGridViewElementStates.ResizableSet;
+			if (row.Selected)
+				state |= DataGridViewElementStates.Selected;
+			if (row.Visible)
+				state |= DataGridViewElementStates.Visible;
+				
+			return state;
 		}
 
 		public bool SetValues (params object[] values)
@@ -516,7 +534,8 @@ namespace System.Windows.Forms {
 		protected internal virtual void PaintHeader (Graphics graphics, Rectangle clipBounds, Rectangle rowBounds, int rowIndex, DataGridViewElementStates rowState, bool isFirstDisplayedRow, bool isLastVisibleRow, DataGridViewPaintParts paintParts)
 		{
 			rowBounds.Width = DataGridView.RowHeadersWidth;
-			
+			graphics.FillRectangle (Brushes.White, rowBounds);
+	
 			HeaderCell.PaintWork (graphics, clipBounds, rowBounds, rowIndex, rowState, HeaderCell.InheritedStyle, DataGridView.AdvancedRowHeadersBorderStyle, paintParts);
 		}
 
