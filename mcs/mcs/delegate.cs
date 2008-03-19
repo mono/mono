@@ -702,11 +702,13 @@ namespace Mono.CSharp {
 				return null;
 
 			delegate_method = (MethodInfo) method_group;
-			if (method_group is ExtensionMethodGroupExpr) {
-				ParameterData p = TypeManager.GetParameterData (delegate_method);
-				if (p.ExtensionMethodType.IsValueType) {
+			ExtensionMethodGroupExpr emg = method_group as ExtensionMethodGroupExpr;
+			if (emg != null) {
+				delegate_instance_expression = emg.ExtensionExpression;
+				Type e_type = delegate_instance_expression.Type;
+				if (TypeManager.IsValueType (e_type)) {
 					Report.Error (1113, loc, "Extension method `{0}' of value type `{1}' cannot be used to create delegates",
-						TypeManager.CSharpSignature (delegate_method), TypeManager.CSharpName (p.ExtensionMethodType));
+						TypeManager.CSharpSignature (delegate_method), TypeManager.CSharpName (e_type));
 				}
 			}
 
@@ -731,7 +733,7 @@ namespace Mono.CSharp {
 			
 			if (method_group.InstanceExpression != null)
 				delegate_instance_expression = method_group.InstanceExpression;
-			else if (!ec.IsStatic)
+			else if (!delegate_method.IsStatic && !ec.IsStatic)
 				delegate_instance_expression = ec.GetThis (loc);
 
 			if (delegate_instance_expression != null && delegate_instance_expression.Type.IsValueType)
@@ -741,7 +743,7 @@ namespace Mono.CSharp {
 		
 		public override void Emit (EmitContext ec)
 		{
-			if (delegate_instance_expression == null || delegate_method.IsStatic)
+			if (delegate_instance_expression == null)
 				ec.ig.Emit (OpCodes.Ldnull);
 			else
 				delegate_instance_expression.Emit (ec);
