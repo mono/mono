@@ -1,5 +1,10 @@
 2008-03-19  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridViewCellTest.cs: Ignore Size test since a
+	cell's height is based off its height.
+
+2008-03-19  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridViewCellTest.cs: Add new suite of tests.
 
 2008-03-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
