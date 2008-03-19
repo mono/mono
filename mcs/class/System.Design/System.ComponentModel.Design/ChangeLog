@@ -1,3 +1,9 @@
+2008-03-19  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* MultilineStringEditor.cs: Handle null value by forcing an 
+	empty string to be edited.
+	[Fixes bug #372264]
+
 2008-03-10  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DesignModeSite.cs: Do not return the site specific service 

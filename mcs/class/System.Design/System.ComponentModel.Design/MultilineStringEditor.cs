@@ -55,11 +55,9 @@ namespace System.ComponentModel.Design
 
 		private IWindowsFormsEditorService editorService;
 		private EditorControl control = new EditorControl ();
-		private string editContent;
 
 		public MultilineStringEditor ()
 		{
-			control.LostFocus += new EventHandler (control_LostFocus);
 		}
 
 		public override object EditValue (ITypeDescriptorContext context, IServiceProvider provider, object value)
@@ -69,24 +67,17 @@ namespace System.ComponentModel.Design
 				editorService = (IWindowsFormsEditorService)provider.GetService (typeof (IWindowsFormsEditorService));
 				if (editorService != null)
 				{
-					if (!(value is string))
+					if (value == null)
+						value = String.Empty;
+					else if (!(value is string))
 						return value;
 
-					editContent = value as string;
-					if (editContent == null)
-						editContent = String.Empty;
-					control.Text = editContent;
-
+					control.Text = (string)value;
 					editorService.DropDownControl (control);
 					return control.Text;
 				}
 			}
 			return base.EditValue (context, provider, value);
-		}
-
-		void control_LostFocus (object sender, EventArgs e)
-		{
-			editContent = control.Text;
 		}
 
 		public override UITypeEditorEditStyle GetEditStyle (ITypeDescriptorContext context)
