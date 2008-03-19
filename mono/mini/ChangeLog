@@ -1,5 +1,9 @@
 2008-03-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h (MONO_BB_FOR_EACH_INS_SAFE): New helper macro.
+
+	* mini-<ARCH>.c: Use the new macro instead in the peephole/lowering passes.
+	
 	* mini.h (MONO_DEL_INS): Rename to MONO_DELETE_INS and Add a 'bb' argument for 
 	consistency with the other version on the linear IR branch.
 
