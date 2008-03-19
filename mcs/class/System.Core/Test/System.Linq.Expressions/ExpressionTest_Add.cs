@@ -200,5 +200,47 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (null, c (null, 2), "a3");
 			Assert.AreEqual (3,    c (1, 2), "a4");
 		}
+
+		struct EineStrukt {
+			int i;
+
+			public int I {
+				get { return i; }
+			}
+
+			public EineStrukt (int i)
+			{
+				this.i = i;
+			}
+
+			public static EineStrukt operator + (EineStrukt a, EineStrukt b)
+			{
+				return new EineStrukt (a.i + b.i);
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void AddNullableStruct ()
+		{
+			var a = Expression.Parameter (typeof (EineStrukt?), "a");
+			var b = Expression.Parameter (typeof (EineStrukt?), "b");
+
+			var body = Expression.Add (a, b);
+			var lambda = Expression.Lambda<Func<EineStrukt?, EineStrukt?, EineStrukt?>> (body, a, b);
+
+			Assert.AreEqual (typeof (EineStrukt?), body.Type);
+			Assert.IsTrue (body.IsLifted);
+			Assert.IsTrue (body.IsLiftedToNull);
+
+			var add = lambda.Compile ();
+
+			var res = add (new EineStrukt (2), new EineStrukt (3));
+			Assert.IsTrue (res.HasValue);
+			Assert.AreEqual (5, res.Value.I);
+
+			res = add (null, null);
+			Assert.IsFalse (res.HasValue);
+		}
 	}
 }
