@@ -863,8 +863,9 @@ namespace System.Windows.Forms.PropertyGridInternal {
 
 		private void UpdateGridTextBoxBounds (GridEntry entry)
 		{
-			if (entry == null)
+			if (entry == null || this.RootGridItem == null)
 				return;
+
 			int y = -vbar.Value*row_height;
 			CalculateItemY (entry, this.RootGridItem.GridItems, ref y);
 			int x = SplitterLocation + ENTRY_SPACING + (entry.PaintValueSupported ? VALUE_PAINT_INDENT : 0);
@@ -890,7 +891,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 
 		private void ScrollToItem (GridEntry item)
 		{
-			if (item == null)
+			if (item == null || this.RootGridItem == null)
 				return;
 
 			int itemY = -vbar.Value*row_height;

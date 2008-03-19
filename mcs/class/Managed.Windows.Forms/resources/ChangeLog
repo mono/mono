@@ -1,3 +1,11 @@
+2008-03-19  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* propertygrid-categorized.png, PropertiesTab.bmp, 
+	propertygrid-alphabetical.png, EventsTab.bmp, 
+	propertygrid-propertypages.png: Add Tango icons for PropertyGrid.
+	* resources/System.Windows.Forms.resx: Remove some old 
+	PropertyGrid icons
+
 2008-01-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* create-keyboard.cs : added some more VK_OEM_* keys.

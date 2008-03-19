@@ -1,3 +1,7 @@
+2008-03-20  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* PropertyGrid.cs, PropertyGridView.cs: Implement PropertyTab support.
+
 2008-03-19  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridView.cs, DataGridViewCell.cs, DataGridViewCellStyle.cs,
