@@ -1,5 +1,7 @@
 2008-03-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-s390.c (mono_arch_peephole_pass_2): Fix this after the ins list changes.
+
 	* mini.c (mono_replace_ins): Fix some issues after the ins list changes.
 
 	* regalloc2.c: Fix compilation on non-amd64 platforms.
