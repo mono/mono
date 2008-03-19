@@ -240,7 +240,7 @@ namespace Mainsoft.Web.Hosting
 					if (vmw.common.TypeUtils.ToClass (o).getClassLoader () == appClassLoader)
 						dereg.DeregisterDriver ((java.sql.Driver) o);
 				}
-
+				releaseHttpclientConnectionManagers (appClassLoader);
 				java.lang.Thread.currentThread ().setContextClassLoader (null);
 			}
 			catch (Exception e) {
@@ -249,6 +249,20 @@ namespace Mainsoft.Web.Hosting
 			}
 			finally {
 				vmw.@internal.EnvironmentUtils.clearAppDomain ();
+			}
+		}
+
+		private static void releaseHttpclientConnectionManagers (java.lang.ClassLoader appLoader) {
+			try {
+				java.lang.Class connnectionManagerClass = java.lang.Class.forName ("mainsoft.apache.commons.httpclient.MultiThreadedHttpConnectionManager");
+				if (connnectionManagerClass.getClassLoader () == appLoader) {
+					java.lang.reflect.Method shutdownMethod = connnectionManagerClass.getMethod ("shutdownAll", null);
+					shutdownMethod.invoke (null, null);
+				}
+			}
+			catch (Exception e) {
+				Debug.WriteLine (String.Format ("ERROR in Servlet Destroy {0},{1}", e.GetType (), e.Message));
+				Debug.WriteLine (e.StackTrace);
 			}
 		}
 
