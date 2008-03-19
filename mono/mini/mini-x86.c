@@ -1181,7 +1181,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 	sig = call->signature;
 	n = sig->param_count + sig->hasthis;
 
-	cinfo = get_call_info (cfg, cfg->mempool, sig, FALSE);
+	cinfo = get_call_info (cfg->generic_sharing_context, cfg->mempool, sig, FALSE);
 
 	if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG))
 		sentinelpos = sig->sentinelpos + (is_virtual ? 1 : 0);
@@ -1592,12 +1592,6 @@ emit_call (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstpointer dat
 	return code;
 }
 
-#define NEW_INS(cfg,dest,op) do {	\
-		(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
-		(dest)->opcode = (op);	\
-        mono_bblock_insert_after_ins (bb, last_ins, (dest)); \
-	} while (0)
-
 #define INST_IGNORES_CFLAGS(opcode) (!(((opcode) == OP_ADC) || ((opcode) == OP_IADC) || ((opcode) == OP_ADC_IMM) || ((opcode) == OP_IADC_IMM) || ((opcode) == OP_SBB) || ((opcode) == OP_ISBB) || ((opcode) == OP_SBB_IMM) || ((opcode) == OP_ISBB_IMM)))
 
 /*
@@ -1608,10 +1602,9 @@ emit_call (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstpointer dat
 void
 mono_arch_peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 {
-	MonoInst *ins, *last_ins = NULL;
-	ins = bb->code;
+	MonoInst *ins, *next, *last_ins = NULL;
 
-	while (ins) {
+	MONO_BB_FOR_EACH_INS_SAFE (bb, next, ins) {
 		switch (ins->opcode) {
 		case OP_IADD_IMM:
 		case OP_ADD_IMM:
@@ -1681,8 +1674,7 @@ mono_arch_peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 			    ins->inst_basereg == last_ins->inst_destbasereg &&
 			    ins->inst_offset == last_ins->inst_offset) {
 				if (ins->dreg == last_ins->sreg1) {
-					last_ins->next = ins->next;				
-					ins = ins->next;				
+					MONO_DELETE_INS (bb, ins);
 					continue;
 				} else {
 					//static int c = 0; printf ("MATCHX %s %d\n", cfg->method->name,c++);
@@ -1707,8 +1699,7 @@ mono_arch_peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 			      ins->inst_offset == last_ins->inst_offset) {
 
 				if (ins->dreg == last_ins->dreg) {
-					last_ins->next = ins->next;				
-					ins = ins->next;				
+					MONO_DELETE_INS (bb, ins);
 					continue;
 				} else {
 					ins->opcode = OP_MOVE;
@@ -1777,9 +1768,7 @@ mono_arch_peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 			 * OP_MOVE reg, reg 
 			 */
 			if (ins->dreg == ins->sreg1) {
-				if (last_ins)
-					last_ins->next = ins->next;				
-				ins = ins->next;
+				MONO_DELETE_INS (bb, ins);
 				continue;
 			}
 			/* 
@@ -1791,8 +1780,7 @@ mono_arch_peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (last_ins && last_ins->opcode == OP_MOVE &&
 			    ins->sreg1 == last_ins->dreg &&
 			    ins->dreg == last_ins->sreg1) {
-				last_ins->next = ins->next;				
-				ins = ins->next;				
+				MONO_DELETE_INS (bb, ins);
 				continue;
 			}
 			break;
@@ -1807,20 +1795,17 @@ mono_arch_peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 			break;
 		}
-		last_ins = ins;
-		ins = ins->next;
+		if (ins->opcode != OP_NOP)
+			last_ins = ins;
 	}
-	bb->last_ins = last_ins;
 }
 
 void
 mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 {
-	MonoInst *ins, *last_ins = NULL;
-	ins = bb->code;
+	MonoInst *ins, *next, *last_ins = NULL;
 
-	while (ins) {
-
+	MONO_BB_FOR_EACH_INS_SAFE (bb, next, ins) {
 		switch (ins->opcode) {
 		case OP_ICONST:
 			/* reg = 0 -> XOR (reg, reg) */
@@ -1901,8 +1886,7 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 			    ins->inst_basereg == last_ins->inst_destbasereg &&
 			    ins->inst_offset == last_ins->inst_offset) {
 				if (ins->dreg == last_ins->sreg1) {
-					last_ins->next = ins->next;				
-					ins = ins->next;				
+					MONO_DELETE_INS (bb, ins);
 					continue;
 				} else {
 					//static int c = 0; printf ("MATCHX %s %d\n", cfg->method->name,c++);
@@ -1927,8 +1911,7 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 			      ins->inst_offset == last_ins->inst_offset) {
 
 				if (ins->dreg == last_ins->dreg) {
-					last_ins->next = ins->next;				
-					ins = ins->next;				
+					MONO_DELETE_INS (bb, ins);
 					continue;
 				} else {
 					ins->opcode = OP_MOVE;
@@ -1997,9 +1980,7 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 			 * OP_MOVE reg, reg 
 			 */
 			if (ins->dreg == ins->sreg1) {
-				if (last_ins)
-					last_ins->next = ins->next;				
-				ins = ins->next;
+				MONO_DELETE_INS (bb, ins);
 				continue;
 			}
 			/* 
@@ -2011,8 +1992,7 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (last_ins && last_ins->opcode == OP_MOVE &&
 			    ins->sreg1 == last_ins->dreg &&
 			    ins->dreg == last_ins->sreg1) {
-				last_ins->next = ins->next;				
-				ins = ins->next;				
+				MONO_DELETE_INS (bb, ins);
 				continue;
 			}
 			break;
@@ -2026,11 +2006,15 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 			break;
 		}
-		last_ins = ins;
-		ins = ins->next;
+		if (ins->opcode != OP_NOP)
+			last_ins = ins;
 	}
-	bb->last_ins = last_ins;
 }
+
+#define NEW_INS(cfg,dest,op) do {	\
+        MONO_INST_NEW ((cfg), (dest), (op)); \
+        mono_bblock_insert_before_ins (bb, ins, (dest)); \
+	} while (0)
 
 /*
  * mono_arch_lowering_pass:
@@ -2041,8 +2025,7 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 void
 mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 {
-	MonoInst *ins, *temp, *last_ins = NULL;
-	ins = bb->code;
+	MonoInst *ins, *next, *temp;
 
 	if (bb->max_vreg > cfg->rs->next_vreg)
 		cfg->rs->next_vreg = bb->max_vreg;
@@ -2052,7 +2035,7 @@ mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 	 * description can't model some parts of the composite instructions like
 	 * cdq.
 	 */
-	while (ins) {
+	MONO_BB_FOR_EACH_INS_SAFE (bb, next, ins) {
 		switch (ins->opcode) {
 		case OP_IREM_IMM:
 		case OP_IDIV_IMM:
@@ -2074,10 +2057,7 @@ mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 		default:
 			break;
 		}
-		last_ins = ins;
-		ins = ins->next;
 	}
-	bb->last_ins = last_ins;
 
 	bb->max_vreg = cfg->rs->next_vreg;
 }
@@ -2605,14 +2585,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_X86_XOR_MEMBASE_REG:
 			x86_alu_membase_reg (code, X86_XOR, ins->inst_basereg, ins->inst_offset, ins->sreg2);
 			break;
-		case OP_X86_ADD_MEMBASE:
-		case OP_X86_ADD_REG_MEMBASE:
-			x86_alu_reg_membase (code, X86_ADD, ins->sreg1, ins->sreg2, ins->inst_offset);
-			break;
-		case OP_X86_SUB_MEMBASE:
-		case OP_X86_SUB_REG_MEMBASE:
-			x86_alu_reg_membase (code, X86_SUB, ins->sreg1, ins->sreg2, ins->inst_offset);
-			break;
 		case OP_X86_INC_MEMBASE:
 			x86_inc_membase (code, ins->inst_basereg, ins->inst_offset);
 			break;
@@ -2625,7 +2597,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_X86_DEC_REG:
 			x86_dec_reg (code, ins->dreg);
 			break;
-		case OP_X86_MUL_REG_MEMBASE:
 		case OP_X86_MUL_REG_MEMBASE:
 			x86_imul_reg_membase (code, ins->sreg1, ins->sreg2, ins->inst_offset);
 			break;
@@ -3274,15 +3245,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			x86_jump_reg (code, ins->sreg1);
 			break;
 		case OP_CEQ:
-		case OP_ICEQ:
 		case OP_CLT:
-		case OP_ICLT:
 		case OP_CLT_UN:
-		case OP_ICLT_UN:
 		case OP_CGT:
-		case OP_ICGT:
 		case OP_CGT_UN:
-		case OP_ICGT_UN:
 		case OP_CNE:
 		case OP_ICEQ:
 		case OP_ICLT:
@@ -3630,9 +3596,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;		
 		case OP_X86_FPOP:
 			x86_fstp (code, 0);
-			break;
-		case OP_X86_FXCH:
-			x86_fxch (code, ins->inst_imm);
 			break;
 		case OP_X86_FXCH:
 			x86_fxch (code, ins->inst_imm);
