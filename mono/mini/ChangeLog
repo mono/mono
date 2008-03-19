@@ -1,3 +1,8 @@
+2008-03-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* *.h *.c: Transition to using prev-next pointers on MonoInst's using more user
+	friendly APIs.
+
 2008-03-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.h mini-amd64.c: Emit the IMT argument right before the call to make

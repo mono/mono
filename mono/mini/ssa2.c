@@ -487,7 +487,7 @@ mono_ssa_compute2 (MonoCompile *cfg)
 	}
 
 	for (i = 0; i < cfg->num_bblocks; ++i) {
-		for (ins = cfg->bblocks [i]->code; ins; ins = ins->next) {
+		MONO_BB_FOR_EACH_INS (cfg->bblocks [i], ins) {
 			if (ins->opcode == OP_NOP)
 				continue;
 
@@ -562,10 +562,7 @@ mono_ssa_compute2 (MonoCompile *cfg)
 
 			ins->dreg = cfg->varinfo [i]->dreg;
 
-			ins->next = bb->code;
-			bb->code = ins;
-			if (!bb->last_ins)
-				bb->last_ins = bb->code;
+			mono_bblock_insert_before_ins (bb, bb->code, ins);
 
 #ifdef DEBUG_SSA
 			printf ("ADD PHI BB%d %s\n", cfg->bblocks [idx]->block_num, mono_method_full_name (cfg->method, TRUE));

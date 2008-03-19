@@ -9284,9 +9284,11 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 				EMIT_NEW_TEMPLOAD (cfg, ins, vtvar->inst_c0);
 			} else {
-				if ((ip [5] == CEE_CALL) && (cmethod = mini_get_method (method, read32 (ip + 6), NULL, generic_context)) &&
-						(cmethod->klass == mono_defaults.monotype_class->parent) &&
-						(strcmp (cmethod->name, "GetTypeFromHandle") == 0) && ip_in_bb (cfg, bblock, ip + 5)) {
+				if ((ip + 5 < end) && ip_in_bb (cfg, bblock, ip + 5) && 
+					((ip [5] == CEE_CALL) || (ip [5] == CEE_CALLVIRT)) && 
+					(cmethod = mini_get_method (method, read32 (ip + 6), NULL, generic_context)) &&
+					(cmethod->klass == mono_defaults.monotype_class->parent) &&
+					(strcmp (cmethod->name, "GetTypeFromHandle") == 0)) {
 					MonoClass *tclass = mono_class_from_mono_type (handle);
 					mono_class_init (tclass);
 					if (cfg->compile_aot)
@@ -10862,18 +10864,6 @@ mono_handle_global_vregs (MonoCompile *cfg)
 		cfg->locals_start = cfg->num_varinfo;
 }
 
-static void
-insert_before_ins (MonoBasicBlock *bb, MonoInst *ins, MonoInst *ins_to_insert, MonoInst **prev)
-{
-	if (*prev)
-		(*prev)->next = ins_to_insert;
-	else
-		bb->code = ins_to_insert;
-	
-	ins_to_insert->next = ins;
-	*prev = ins_to_insert;
-}
-
 /**
  * mono_spill_global_vars:
  *
@@ -10951,8 +10941,7 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
 	
 	/* Add spill loads/stores */
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
-		MonoInst *ins = bb->code;	
-		MonoInst *prev = NULL;
+		MonoInst *ins, *next;
 
 		if (cfg->verbose_level > 1)
 			printf ("\nSPILL BLOCK %d:\n", bb->block_num);
@@ -10963,7 +10952,7 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
 		lvregs_len = 0;
 
 		cfg->cbb = bb;
-		for (; ins; ins = ins->next) {
+		MONO_BB_FOR_EACH_INS (bb, ins) {
 			const char *spec = INS_INFO (ins->opcode);
 			int regtype, srcindex, sreg, tmp_reg, prev_dreg;
 			gboolean store;
@@ -10971,10 +10960,8 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
 			if (G_UNLIKELY (cfg->verbose_level > 1))
 				mono_print_ins (ins);
 
-			if (ins->opcode == OP_NOP) {
-				prev = ins;
+			if (ins->opcode == OP_NOP)
 				continue;
-			}
 
 			/* 
 			 * We handle LDADDR here as well, since it can only be decomposed
@@ -11207,16 +11194,16 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
 
 						if (regtype == 'l') {
 							NEW_LOAD_MEMBASE (cfg, load_ins, OP_LOADI4_MEMBASE, sreg + 2, var->inst_basereg, var->inst_offset + MINI_MS_WORD_OFFSET);
-							insert_before_ins (bb, ins, load_ins, &prev);
+							mono_bblock_insert_before_ins (bb, ins, load_ins);
 							NEW_LOAD_MEMBASE (cfg, load_ins, OP_LOADI4_MEMBASE, sreg + 1, var->inst_basereg, var->inst_offset + MINI_LS_WORD_OFFSET);
-							insert_before_ins (bb, ins, load_ins, &prev);
+							mono_bblock_insert_before_ins (bb, ins, load_ins);
 						}
 						else {
 #if SIZEOF_VOID_P == 4
 							g_assert (load_opcode != OP_LOADI8_MEMBASE);
 #endif
 							NEW_LOAD_MEMBASE (cfg, load_ins, load_opcode, sreg, var->inst_basereg, var->inst_offset);
-							insert_before_ins (bb, ins, load_ins, &prev);
+							mono_bblock_insert_before_ins (bb, ins, load_ins);
 						}
 					}
 				}
@@ -11244,8 +11231,6 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
 
 			if (cfg->verbose_level > 1)
 				mono_print_ins_index (1, ins);
-
-			prev = ins;
 		}
 	}
 }
@@ -11355,11 +11340,12 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
  *   arguments, or stores killing loads etc. Also, should we fold loads into other
  *   instructions if the result of the load is used multiple times ?
  * - make the REM_IMM optimization in mini-x86.c arch-independent.
- * - LAST MERGE: 97663 (except 92841).
+ * - LAST MERGE: 97663
  * - merge the extensible gctx changes.
  * - merge the mini-codegen.c changes.
  * - when returning vtypes in registers, generate IR and append it to the end of the
  *   last bb instead of doing it in the epilog.
+ * - fix the inst list stuff in the old JIT as well.
  */
 
 /*

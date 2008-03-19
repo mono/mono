@@ -531,7 +531,7 @@ mono_constant_fold_ins2 (MonoCompile *cfg, MonoInst *ins, MonoInst *arg1, MonoIn
 			arg2->inst_c0 = ins->inst_imm;
 		}
 
-		if ((arg1->opcode == OP_ICONST) && (arg2->opcode == OP_ICONST)) {
+		if ((arg1->opcode == OP_ICONST) && (arg2->opcode == OP_ICONST) && ins->next) {
 			MonoInst *next = ins->next;
 			gboolean res = FALSE;
 

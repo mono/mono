@@ -2176,10 +2176,14 @@ array_access_to_klass (int opcode, MonoInst *array_obj)
 	return NULL;
 }
 
+/*
+ * mono_add_ins_to_end:
+ *
+ *   Same as MONO_ADD_INS, but add INST before any branches at the end of BB.
+ */
 void
 mono_add_ins_to_end (MonoBasicBlock *bb, MonoInst *inst)
 {
-	MonoInst *prev;
 	int opcode;
 
 	if (!bb->code) {
@@ -2201,59 +2205,34 @@ mono_add_ins_to_end (MonoBasicBlock *bb, MonoInst *inst)
 	case CEE_BLE_UN:
 	case CEE_BLT_UN:
 	case OP_SWITCH:
-		prev = bb->code;
-		while (prev->next && prev->next != bb->last_ins)
-			prev = prev->next;
-
-		if (prev == bb->code) {
-			if (bb->last_ins == bb->code) {
-				inst->next = bb->code;
-				bb->code = inst;
-			} else {
-				inst->next = prev->next;
-				prev->next = inst;
-			}
-		} else {
-			inst->next = bb->last_ins;
-			prev->next = inst;
-		}
+		mono_bblock_insert_before_ins (bb, bb->last_ins, inst);
 		break;
 	default:
 		if (MONO_IS_COND_BRANCH_OP (bb->last_ins)) {
 			/* Need to insert the ins before the compare */
 			if (bb->code == bb->last_ins) {
-				inst->next = bb->last_ins;
-				bb->code = inst;
+				mono_bblock_insert_before_ins (bb, bb->last_ins, inst);
 				return;
 			}
 
-			g_assert (bb->code != bb->last_ins);
 			if (bb->code->next == bb->last_ins) {
 				/* Only two instructions */
 				opcode = bb->code->opcode;
 
 				if ((opcode == OP_COMPARE) || (opcode == OP_COMPARE_IMM) || (opcode == OP_ICOMPARE) || (opcode == OP_ICOMPARE_IMM) || (opcode == OP_FCOMPARE) || (opcode == OP_LCOMPARE) || (opcode == OP_LCOMPARE_IMM)) {
 					/* NEW IR */
-					inst->next = bb->code;
-					bb->code = inst;
+					mono_bblock_insert_before_ins (bb, bb->code, inst);
 				} else {
-					inst->next = bb->last_ins;
-					bb->code->next = inst;
+					mono_bblock_insert_before_ins (bb, bb->last_ins, inst);
 				}
 			} else {
-				/* Find the predecessor of the compare */
-				prev = bb->code;
-				while (prev->next->next && prev->next->next != bb->last_ins)
-					prev = prev->next;
-				opcode = prev->next->opcode;
+				opcode = bb->last_ins->prev->opcode;
 
 				if ((opcode == OP_COMPARE) || (opcode == OP_COMPARE_IMM) || (opcode == OP_ICOMPARE) || (opcode == OP_ICOMPARE_IMM) || (opcode == OP_FCOMPARE) || (opcode == OP_LCOMPARE) || (opcode == OP_LCOMPARE_IMM)) {
 					/* NEW IR */
-					inst->next = prev->next;
-					prev->next = inst;
+					mono_bblock_insert_before_ins (bb, bb->last_ins->prev, inst);
 				} else {
-					inst->next = bb->last_ins;
-					prev->next->next = inst;
+					mono_bblock_insert_before_ins (bb, bb->last_ins, inst);
 				}					
 			}
 		}
@@ -2292,14 +2271,18 @@ mono_replace_ins (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, MonoInst 
 			mono_unlink_bblock (cfg, first_bb, first_bb->out_bb [0]);
 
 		/* Head */
-		if (*prev)
+		if (*prev) {
 			(*prev)->next = first_bb->code;
-		else
+			first_bb->code->prev = (*prev);
+		} else {
 			bb->code = first_bb->code;
+		}
 
 		/* Tail */
 		last_bb->last_ins->next = next;
-		if (next == NULL)
+		if (next)
+			next->prev = last_bb->last_ins;
+		else
 			bb->last_ins = last_bb->last_ins;
 		*prev = last_bb->last_ins;
 	} else {
@@ -2313,13 +2296,16 @@ mono_replace_ins (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, MonoInst 
 			tmp->region = bb->region;
 
 		/* Split the original bb */
+		if (ins->next)
+			ins->next->prev = NULL;
 		ins->next = NULL;
 		bb->last_ins = ins;
 
 		/* Merge the second part of the original bb into the last bb */
-		if (last_bb->last_ins)
+		if (last_bb->last_ins) {
 			last_bb->last_ins->next = next;
-		else {
+			next->prev = last_bb->last_ins;
+		} else {
 			MonoInst *last;
 
 			last_bb->code = next;
@@ -2335,10 +2321,12 @@ mono_replace_ins (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, MonoInst 
 			link_bblock (cfg, last_bb, bb->out_bb [i]);
 
 		/* Merge the first (dummy) bb to the original bb */
-		if (*prev)
+		if (*prev) {
 			(*prev)->next = first_bb->code;
-		else
+			first_bb->code->prev = (*prev);
+		} else {
 			bb->code = first_bb->code;
+		}
 		bb->last_ins = first_bb->last_ins;
 
 		/* Delete the links between the original bb and its successors */
@@ -10413,14 +10401,7 @@ print_dfn (MonoCompile *cfg) {
 void
 mono_bblock_add_inst (MonoBasicBlock *bb, MonoInst *inst)
 {
-	inst->next = NULL;
-	if (bb->last_ins) {
-		g_assert (bb->code);
-		bb->last_ins->next = inst;
-		bb->last_ins = inst;
-	} else {
-		bb->last_ins = bb->code = inst;
-	}
+	MONO_ADD_INS (bb, inst);
 }
 
 void
@@ -10433,11 +10414,76 @@ mono_bblock_insert_after_ins (MonoBasicBlock *bb, MonoInst *ins, MonoInst *ins_t
 		if (bb->last_ins == NULL)
 			bb->last_ins = ins_to_insert;
 	} else {
+		/* Link with next */
 		ins_to_insert->next = ins->next;
+		if (ins->next)
+			ins->next->prev = ins_to_insert;
+
+		/* Link with previous */
 		ins->next = ins_to_insert;
+		ins_to_insert->prev = ins;
+
 		if (bb->last_ins == ins)
 			bb->last_ins = ins_to_insert;
 	}
+}
+
+void
+mono_bblock_insert_before_ins (MonoBasicBlock *bb, MonoInst *ins, MonoInst *ins_to_insert)
+{
+	if (ins == NULL) {
+		NOT_IMPLEMENTED;
+		ins = bb->code;
+		bb->code = ins_to_insert;
+		ins_to_insert->next = ins;
+		if (bb->last_ins == NULL)
+			bb->last_ins = ins_to_insert;
+	} else {
+		/* Link with previous */
+		if (ins->prev)
+			ins->prev->next = ins_to_insert;
+		ins_to_insert->prev = ins->prev;
+
+		/* Link with next */
+		ins->prev = ins_to_insert;
+		ins_to_insert->next = ins;
+
+		if (bb->code == ins)
+			bb->code = ins_to_insert;
+	}
+}
+
+/*
+ * mono_verify_bblock:
+ *
+ *   Verify that the next and prev pointers are consistent inside the instructions in BB.
+ */
+void
+mono_verify_bblock (MonoBasicBlock *bb)
+{
+	MonoInst *ins, *prev;
+
+	prev = NULL;
+	for (ins = bb->code; ins; ins = ins->next) {
+		g_assert (ins->prev == prev);
+		prev = ins;
+	}
+	if (bb->last_ins)
+		g_assert (!bb->last_ins->next);
+}
+
+/*
+ * mono_verify_cfg:
+ *
+ *   Perform consistency checks on the JIT data structures and the IR
+ */
+void
+mono_verify_cfg (MonoCompile *cfg)
+{
+	MonoBasicBlock *bb;
+
+	for (bb = cfg->bb_entry; bb; bb = bb->next_bb)
+		mono_verify_bblock (bb);
 }
 
 void
@@ -11263,6 +11309,7 @@ mono_merge_basic_blocks (MonoCompile *cfg, MonoBasicBlock *bb, MonoBasicBlock *b
 	if (bb->last_ins) {
 		if (bbn->code) {
 			bb->last_ins->next = bbn->code;
+			bbn->code->prev = bb->last_ins;
 			bb->last_ins = bbn->last_ins;
 		}
 	} else {
@@ -12692,7 +12739,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 			mono_perform_ssapre (cfg);
 			//mono_local_cprop (cfg);
 		}
-		
+
 		if (cfg->opt & MONO_OPT_DEADCE) {
 			if (cfg->new_ir)
 				mono_ssa_deadce2 (cfg);
@@ -12700,7 +12747,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 				mono_ssa_deadce (cfg);
 			deadce_has_run = TRUE;
 		}
-		
+
 		if (cfg->new_ir) {
 			if ((cfg->flags & (MONO_CFG_HAS_LDELEMA|MONO_CFG_HAS_CHECK_THIS)) && (cfg->opt & MONO_OPT_ABCREM))
 				mono_perform_abc_removal2 (cfg);
@@ -12753,7 +12800,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		if (cfg->flags & MONO_CFG_HAS_ARRAY_ACCESS)
 			mono_decompose_array_access_opts (cfg);
 	}
-	
+
 	if (!cfg->new_ir) {
 		if (cfg->verbose_level > 4)
 			mono_print_code (cfg, "BEFORE DECOMPOSE");

@@ -132,6 +132,24 @@ enum {
 		(ins)->ssa_op = MONO_SSA_NOP; \
     } while (0)
 
+/* Remove INS from BB */
+#define MONO_REMOVE_INS(bb,ins) do { \
+        if ((ins)->prev) \
+            (ins)->prev->next = (ins)->next; \
+        if ((ins)->next) \
+            (ins)->next->prev = (ins)->prev; \
+        if ((bb)->code == (ins)) \
+            (bb)->code = (ins)->next; \
+        if ((bb)->last_ins == (ins)) \
+            (bb)->last_ins = (ins)->prev; \
+    } while (0)
+
+/* Remove INS from BB and nullify it */
+#define MONO_DELETE_INS(bb,ins) do { \
+        MONO_REMOVE_INS ((bb), (ins)); \
+        NULLIFY_INS ((ins)); \
+    } while (0)
+
 /* 
  * this is used to determine when some branch optimizations are possible: we exclude FP compares
  * because they have weird semantics with NaNs.
@@ -191,6 +209,10 @@ extern gboolean disable_vtypes_in_regs;
 extern const char ins_info[];
 
 #define MONO_BB_FOR_EACH_INS(bb, ins) for ((ins) = (bb)->code; (ins); (ins) = (ins)->next)
+
+#define MONO_BB_FOR_EACH_INS_SAFE(bb, n, ins) for ((ins) = (bb)->code, n = (ins) ? (ins)->next : NULL; (ins); (ins) = (n), (n) = (ins) ? (ins)->next : NULL)
+
+#define MONO_BB_FOR_EACH_INS_REVERSE_SAFE(bb, p, ins) for ((ins) = (bb)->last_ins, p = (ins) ? (ins)->prev : NULL; (ins); (ins) = (p), (p) = (ins) ? (ins)->prev : NULL)
 
 #define mono_bb_first_ins(bb) (bb)->code
 
@@ -1034,6 +1056,9 @@ void      mono_precompile_assemblies        (void) MONO_INTERNAL;
 int       mono_parse_default_optimizations  (const char* p);
 void      mono_bblock_add_inst              (MonoBasicBlock *bb, MonoInst *inst) MONO_INTERNAL;
 void      mono_bblock_insert_after_ins      (MonoBasicBlock *bb, MonoInst *ins, MonoInst *ins_to_insert) MONO_INTERNAL;
+void      mono_bblock_insert_before_ins     (MonoBasicBlock *bb, MonoInst *ins, MonoInst *ins_to_insert) MONO_INTERNAL;
+void      mono_verify_bblock                (MonoBasicBlock *bb) MONO_INTERNAL;
+void      mono_verify_cfg                   (MonoCompile *cfg) MONO_INTERNAL;
 void      mono_constant_fold                (MonoCompile *cfg) MONO_INTERNAL;
 void      mono_constant_fold_inst           (MonoInst *inst, gpointer data) MONO_INTERNAL;
 MonoInst* mono_constant_fold_ins2           (MonoCompile *cfg, MonoInst *ins, MonoInst *arg1, MonoInst *arg2, gboolean overwrite) MONO_INTERNAL;
