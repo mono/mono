@@ -1,3 +1,9 @@
+2008-03-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* BindingSource.cs: When setting or resetting data source,
+	use ListBindingHelper.GetList () method, since it will get the list in
+	case datasource is IListSource.
+
 2008-03-20  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridViewCell.cs: Implement lots more stuffs.

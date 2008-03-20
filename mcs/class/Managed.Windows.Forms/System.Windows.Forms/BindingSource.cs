@@ -119,20 +119,21 @@ namespace System.Windows.Forms {
 		void ResetList ()
 		{
 			IList l;
+			object source = ListBindingHelper.GetList (datasource);
 
-			if (datasource == null) {
+			if (source == null) {
 				l = new BindingList<object>();
 //				list_defaulted = true;
 			}
-			else if (datasource is IList) {
-				l = (IList)datasource;
+			else if (source is IList) {
+				l = (IList)source;
 			}
-			else if (datasource is IEnumerable) {
-				IList new_list = GetListFromEnumerable ((IEnumerable)datasource);
+			else if (source is IEnumerable) {
+				IList new_list = GetListFromEnumerable ((IEnumerable)source);
 				l = new_list == null ? list : new_list;
 			}
 			else {
-				Type t = typeof (BindingList<>).MakeGenericType (new Type[] { datasource.GetType() });
+				Type t = typeof (BindingList<>).MakeGenericType (new Type[] { source.GetType() });
 				l = (IList)Activator.CreateInstance (t);
 			}
 
