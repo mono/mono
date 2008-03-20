@@ -1,5 +1,5 @@
 //
-// ExpressionTest_UnaryPlus.cs
+// ExpressionTest_Negate.cs
 //
 // Author:
 //   Jb Evain (jbevain@novell.com)

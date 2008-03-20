@@ -1,5 +1,5 @@
 //
-// ExpressionTest_UnaryPlus.cs
+// ExpressionTest_Not.cs
 //
 // Author:
 //   Jb Evain (jbevain@novell.com)
@@ -68,7 +68,7 @@ namespace MonoTests.System.Linq.Expressions
 		[Test]
 		public void Number ()
 		{
-			var up = Expression.Not (Expression.Constant (1));
+			var up = Expression.Not (1.ToConstant ());
 			Assert.AreEqual ("Not(1)", up.ToString ());
 		}
 
@@ -83,6 +83,28 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (mi, expr.Method);
 			Assert.AreEqual ("op_LogicalNot", expr.Method.Name);
 			Assert.AreEqual ("Not(value(MonoTests.System.Linq.Expressions.OpClass))",	expr.ToString ());
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void NotNullableInt32 ()
+		{
+			var n = Expression.Not (Expression.Parameter (typeof (int?), ""));
+			Assert.AreEqual (typeof (int?), n.Type);
+			Assert.IsTrue (n.IsLifted);
+			Assert.IsTrue (n.IsLiftedToNull);
+			Assert.IsNull (n.Method);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void NotNullableBool ()
+		{
+			var n = Expression.Not (Expression.Parameter (typeof (bool?), ""));
+			Assert.AreEqual (typeof (bool?), n.Type);
+			Assert.IsTrue (n.IsLifted);
+			Assert.IsTrue (n.IsLiftedToNull);
+			Assert.IsNull (n.Method);
 		}
 	}
 }
