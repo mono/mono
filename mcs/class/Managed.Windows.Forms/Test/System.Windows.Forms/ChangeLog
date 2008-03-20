@@ -1,3 +1,9 @@
+2008-03-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* BindingSourceTest.cs: New assertion case for DataSource, passing an
+	instance of IListSource.
+	* ListBindingHelperTest.cs: Make ListSource class internal.
+
 2008-03-20  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridViewCellTest.cs: Tests for newly implemented stuffs.

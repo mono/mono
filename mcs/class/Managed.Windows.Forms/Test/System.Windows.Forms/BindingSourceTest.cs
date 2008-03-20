@@ -224,6 +224,11 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			source.DataSource = new WorkingEnumerable (5);
 			Assert.IsTrue (source.List is BindingList<int>, "13");
 			Assert.AreEqual (5, source.List.Count, "14");
+
+			// IListSource - returns an array
+			source.DataSource = new ListBindingHelperTest.ListSource (true);
+			Assert.IsTrue (source.List is Array, "#15");
+			Assert.AreEqual (1, source.List.Count, "#16");
 		}
 
 		[Test]

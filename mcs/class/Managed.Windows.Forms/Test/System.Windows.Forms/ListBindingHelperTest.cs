@@ -101,7 +101,7 @@ namespace MonoTests.System.Windows.Forms
 
 		}
 
-		class ListSource : IListSource
+		internal class ListSource : IListSource
 		{
 			bool contains_collection;
 
