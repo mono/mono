@@ -1,3 +1,8 @@
+2008-03-20  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-sharing.c, class-internals.h: Code for putting
+	reflection types into the runtime generic context.
+
 2008-03-19 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* icall.c (ves_icall_get_method_info): Return correct values for the call convention.

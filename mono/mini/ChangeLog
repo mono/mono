@@ -1,3 +1,11 @@
+2008-03-20  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-sharing.c: Put reflection types in the extensible part
+	of the runtime generic context.
+
+	* mini.c: Generic sharing of the GetTypeHandle special case of the
+	ldtoken instruction.
+
 2008-03-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h (MONO_BB_FOR_EACH_INS_SAFE): New helper macro.
