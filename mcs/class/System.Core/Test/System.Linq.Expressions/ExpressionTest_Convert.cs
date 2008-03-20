@@ -32,11 +32,11 @@ using System.Linq;
 using System.Linq.Expressions;
 using NUnit.Framework;
 
-namespace MonoTests.System.Linq.Expressions
-{
+namespace MonoTests.System.Linq.Expressions {
+
 	[TestFixture]
-	public class ExpressionTest_Convert
-	{
+	public class ExpressionTest_Convert {
+
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void NullExpression ()
@@ -49,6 +49,208 @@ namespace MonoTests.System.Linq.Expressions
 		public void NullType ()
 		{
 			Expression.Convert (1.ToConstant (), null);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void ConvertIntToString ()
+		{
+			Expression.Convert (1.ToConstant (), typeof (string));
+		}
+
+		interface IFoo { }
+		class Foo : IFoo { }
+		class Bar : Foo { }
+		class Baz { }
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void ConvertBazToFoo ()
+		{
+			Expression.Convert (Expression.Parameter (typeof (Baz), ""), typeof (Foo));
+		}
+
+		struct EineStrukt { }
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void ConvertStructToFoo ()
+		{
+			Expression.Convert (Expression.Parameter (typeof (EineStrukt), ""), typeof (Foo));
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void ConvertInt32ToBool ()
+		{
+			Expression.Convert (Expression.Parameter (typeof (int), ""), typeof (bool));
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ConvertIFooToFoo ()
+		{
+			var c = Expression.Convert (Expression.Parameter (typeof (IFoo), ""), typeof (Foo));
+			Assert.AreEqual (typeof (Foo), c.Type);
+			Assert.IsFalse (c.IsLifted);
+			Assert.IsFalse (c.IsLiftedToNull);
+			Assert.IsNull (c.Method);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void BoxInt32 ()
+		{
+			var c = Expression.Convert (Expression.Parameter (typeof (int), ""), typeof (object));
+			Assert.AreEqual (typeof (object), c.Type);
+			Assert.IsFalse (c.IsLifted);
+			Assert.IsFalse (c.IsLiftedToNull);
+			Assert.IsNull (c.Method);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void UnBoxInt32 ()
+		{
+			var c = Expression.Convert (Expression.Parameter (typeof (object), ""), typeof (int));
+			Assert.AreEqual (typeof (int), c.Type);
+			Assert.IsFalse (c.IsLifted);
+			Assert.IsFalse (c.IsLiftedToNull);
+			Assert.IsNull (c.Method);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ConvertInt32ToInt64 ()
+		{
+			var c = Expression.Convert (Expression.Parameter (typeof (int), ""), typeof (long));
+			Assert.AreEqual (typeof (long), c.Type);
+			Assert.IsFalse (c.IsLifted);
+			Assert.IsFalse (c.IsLiftedToNull);
+			Assert.IsNull (c.Method);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ConvertInt64ToInt32 ()
+		{
+			var c = Expression.Convert (Expression.Parameter (typeof (long), ""), typeof (int));
+			Assert.AreEqual (typeof (int), c.Type);
+			Assert.IsFalse (c.IsLifted);
+			Assert.IsFalse (c.IsLiftedToNull);
+			Assert.IsNull (c.Method);
+		}
+
+		enum EineEnum { }
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ConvertEnumToInt32 ()
+		{
+			var c = Expression.Convert (Expression.Parameter (typeof (EineEnum), ""), typeof (int));
+			Assert.AreEqual (typeof (int), c.Type);
+			Assert.IsFalse (c.IsLifted);
+			Assert.IsFalse (c.IsLiftedToNull);
+			Assert.IsNull (c.Method);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ConvertNullableInt32ToInt32 ()
+		{
+			var c = Expression.Convert (Expression.Parameter (typeof (int?), ""), typeof (int));
+			Assert.AreEqual (typeof (int), c.Type);
+			Assert.IsTrue (c.IsLifted);
+			Assert.IsFalse (c.IsLiftedToNull);
+			Assert.IsNull (c.Method);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ConvertInt32ToNullableInt32 ()
+		{
+			var c = Expression.Convert (Expression.Parameter (typeof (int), ""), typeof (int?));
+			Assert.AreEqual (typeof (int?), c.Type);
+			Assert.IsTrue (c.IsLifted);
+			Assert.IsTrue (c.IsLiftedToNull);
+			Assert.IsNull (c.Method);
+		}
+
+
+		class Klang {
+			int i;
+
+			public Klang (int i)
+			{
+				this.i = i;
+			}
+
+			public static explicit operator int (Klang k)
+			{
+				return k.i;
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ConvertClassWithExplicitOp ()
+		{
+			var c = Expression.Convert (Expression.Parameter (typeof (Klang), ""), typeof (int));
+			Assert.AreEqual (typeof (int), c.Type);
+			Assert.IsFalse (c.IsLifted);
+			Assert.IsFalse (c.IsLiftedToNull);
+			Assert.IsNotNull (c.Method);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ConvertClassWithExplicitOpToNullableInt ()
+		{
+			var c = Expression.Convert (Expression.Parameter (typeof (Klang), ""), typeof (int?));
+			Assert.AreEqual (typeof (int?), c.Type);
+			Assert.IsTrue (c.IsLifted);
+			Assert.IsTrue (c.IsLiftedToNull);
+			Assert.IsNotNull (c.Method);
+		}
+
+		class Kling {
+			int i;
+
+			public Kling (int i)
+			{
+				this.i = i;
+			}
+
+			public static implicit operator int (Kling k)
+			{
+				return k.i;
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ConvertClassWithImplicitOp ()
+		{
+			var c = Expression.Convert (Expression.Parameter (typeof (Kling), ""), typeof (int));
+			Assert.AreEqual (typeof (int), c.Type);
+			Assert.IsFalse (c.IsLifted);
+			Assert.IsFalse (c.IsLiftedToNull);
+			Assert.IsNotNull (c.Method);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ConvertClassWithImplicitOpToNullableInt ()
+		{
+			var c = Expression.Convert (Expression.Parameter (typeof (Kling), ""), typeof (int?));
+			Assert.AreEqual (typeof (int?), c.Type);
+			Assert.IsTrue (c.IsLifted);
+			Assert.IsTrue (c.IsLiftedToNull);
+			Assert.IsNotNull (c.Method);
 		}
 	}
 }
