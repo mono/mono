@@ -247,9 +247,9 @@ namespace Mono.CSharp {
 		public override string ToString ()
 		{
 			if (column_bits == 0 || InEmacs)
-				return Name + "(" + Row + "):";
+				return Name + "(" + Row.ToString () + "):";
 			else
-				return Name + "(" + Row + "," + Column +
+				return Name + "(" + Row.ToString () + "," + Column.ToString () +
 					(Column == column_mask ? "+):" : "):");
 		}
 		

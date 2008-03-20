@@ -2698,6 +2698,7 @@ namespace Mono.CSharp {
 				return null;
 
 			if (primitives_only) {
+#if GMCS_SOURCE			
 				if (this is Nullable.LiftedBinaryOperator) {
 					//
 					// This is ugly, consider this conversion: byte? -> (byte -> int) -> int?
@@ -2712,7 +2713,7 @@ namespace Mono.CSharp {
 					left = EmptyCast.Create (left, lifted_type.Type);
 					right = EmptyCast.Create (right, lifted_type.Type);
 				}
-				
+#endif				
 				type = best_operator.ReturnType;
 				return this;
 			}

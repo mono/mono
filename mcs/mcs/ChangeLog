@@ -1,5 +1,11 @@
 2008-03-20  Marek Safar  <marek.safar@gmail.com>
 
+	* location.cs: Use string based concatenation.
+	
+	* expression.cs: LiftedBinaryOperator is gmcs only.
+	
+2008-03-20  Marek Safar  <marek.safar@gmail.com>
+
 	* generic.cs, literal.cs, ecore.cs, expression.cs: Ongoing work on nullable
 	conversions rules and expression trees.
 
