@@ -43,11 +43,26 @@ namespace System.Windows.Forms
 
 		public static object GetList (object dataSource, string dataMember)
 		{
+			if (dataSource is IListSource)
+				dataSource = ((IListSource) dataSource).GetList ();
+
+			if (dataSource == null)
+				return null;
+
 			if (dataMember == null || dataMember.Length == 0)
-				return dataSource is IListSource ? ((IListSource) dataSource).GetList () : dataSource;
+				return dataSource;
+
+			if (dataSource is IEnumerable) {
+				IEnumerator e = ((IEnumerable) dataSource).GetEnumerator ();
+				object obj;
+				if (e == null || !e.MoveNext () || (obj = e.Current) == null)
+					throw new ArgumentException ("dataMember");
+
+				dataSource = obj;
+			}
 
 			PropertyDescriptor property = GetProperty (dataSource.GetType (), dataMember);
-			if (property == null || property.PropertyType != typeof (IList))
+			if (property == null)
 				throw new ArgumentException ("dataMember");
 
 			return property.GetValue (dataSource);

@@ -1,3 +1,8 @@
+2008-03-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListBindingHelper.cs: Implement -previously- ignored cases. We have
+	new tests for them to be sure to be compatible with .net.
+
 2008-03-20  Andreia Gaita <avidigal@novell.com> 
 
 	* WebBrowserBase.cs: Fix attributes, add events
