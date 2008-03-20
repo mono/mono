@@ -132,7 +132,7 @@ namespace System.IO {
 			
 			char p1end = path1 [path1.Length - 1];
 			if (p1end != DirectorySeparatorChar && p1end != AltDirectorySeparatorChar && p1end != VolumeSeparatorChar)
-				return path1 + DirectorySeparatorChar + path2;
+				return path1 + DirectorySeparatorChar.ToString () + path2;
 
 			return path1 + path2;
 		}

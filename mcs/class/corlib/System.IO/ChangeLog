@@ -1,3 +1,7 @@
+2008-03-20  Marek Safar  <marek.safar@gmail.com>
+
+	* Path.cs (Combine): Call ToString to optimize concatenation.
+
 2008-03-02  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DriveInfo.cs: Removed debug code.
