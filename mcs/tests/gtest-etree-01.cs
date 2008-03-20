@@ -40,6 +40,10 @@ public struct MyType<T>
 }
 */
 
+
+// TODO: Create a clone which uses +(MyType, int) pattern and an implicit conversion
+// is required to do the user-conversion
+
 public struct MyType
 {
 	int value;
@@ -140,6 +144,22 @@ public struct MyType
 	}
 }
 
+
+class MyTypeExplicit
+{
+	int value;
+	
+	public class MyTypeExplicit (int value)
+	{
+		this.value = value;
+	}
+	
+	public static explicit operator int (MyTypeExplicit m)
+	{
+		return m.value;
+	}
+}
+
 // TODO: Add more nullable tests, follow AddTest pattern.
 
 class Tester
@@ -152,8 +172,16 @@ class Tester
 
 	static void Assert<T> (T expected, T value)
 	{
-		if (!EqualityComparer<T>.Default.Equals (expected, value))
-			throw new ApplicationException (expected + " != " + value);
+		Assert (expected, value, null);
+	}
+
+	static void Assert<T> (T expected, T value, string name)
+	{
+		if (!EqualityComparer<T>.Default.Equals (expected, value)) {
+			if (!string.IsNullOrEmpty (name))
+				name += ": ";
+			throw new ApplicationException (name + expected + " != " + value);
+		}
 	}
 
 	static void Assert<T> (T [] expected, T [] value)
@@ -399,6 +427,9 @@ class Tester
 
 		Expression<Func<MyType, MyType, bool?>> e5 = (MyType a, MyType b) => a == b;
 		AssertNodeType (e5, ExpressionType.Convert);
+		
+		// TODO: redundant return conversion
+		// Expression<Func<MyTypeExplicit, int?>> e6 = x => (int?)x;
 	}
 
 	void ConvertCheckedTest ()
@@ -445,6 +476,9 @@ class Tester
 
 	void EqualTest ()
 	{
+		// TODO: Add null equality tests
+		// TODO: Add bool? equality tests
+	
 		Expression<Func<int, int, bool>> e = (int a, int b) => a == b;
 		AssertNodeType (e, ExpressionType.Equal);
 		Assert (false, e.Compile ().Invoke (60, 30));
@@ -489,12 +523,12 @@ class Tester
 		Expression<Func<int, int, int>> e = (int a, int b) => a ^ b;
 		AssertNodeType (e, ExpressionType.ExclusiveOr);
 		Assert (34, e.Compile ().Invoke (60, 30));
-/* FIXME: missing conversion
+
 		Expression<Func<byte?, byte?, int?>> e2 = (a, b) => a ^ b;
 		AssertNodeType (e2, ExpressionType.ExclusiveOr);
 		Assert (null, e2.Compile ().Invoke (null, 3));
 		Assert (1, e2.Compile ().Invoke (3, 2));
-*/
+
 		Expression<Func<MyType, MyType, MyType>> e3 = (MyType a, MyType b) => a ^ b;
 		AssertNodeType (e3, ExpressionType.ExclusiveOr);
 		Assert (0, e3.Compile ().Invoke (new MyType (-20), new MyType (-20)));
@@ -510,7 +544,7 @@ class Tester
 		Expression<Func<int, int, bool>> e = (int a, int b) => a > b;
 		AssertNodeType (e, ExpressionType.GreaterThan);
 		Assert (true, e.Compile ().Invoke (60, 30));
-/*
+
 		Expression<Func<uint?, byte?, bool>> e2 = (a, b) => a > b;
 		AssertNodeType (e2, ExpressionType.GreaterThan);
 		Assert (false, e2.Compile ().Invoke (null, 3));
@@ -525,7 +559,6 @@ class Tester
 		Assert (false, e4.Compile ().Invoke (null, new MyType (-20)));
 		Assert (false, e4.Compile ().Invoke (null, null));
 		Assert (true, e4.Compile ().Invoke (new MyType (120), new MyType (-20)));
-*/
 	}
 
 	void GreaterThanOrEqualTest ()
@@ -541,8 +574,8 @@ class Tester
 
 		Expression<Func<MyType, MyType, bool>> e3 = (MyType a, MyType b) => a >= b;
 		AssertNodeType (e3, ExpressionType.GreaterThanOrEqual);
-		Assert (true, e3.Compile ().Invoke (new MyType (-20), new MyType (-20)));
-/*
+		Assert (true, e3.Compile ().Invoke (new MyType (-20), new MyType (-20)), "D1");
+/* FIXME: Does not compile
 		Expression<Func<MyType?, MyType?, bool>> e4 = (MyType? a, MyType? b) => a >= null;
 		AssertNodeType (e4, ExpressionType.GreaterThanOrEqual);
 		Assert (false, e4.Compile ().Invoke (null, new MyType (-20)));
@@ -711,13 +744,14 @@ class Tester
 		AssertNodeType (e3, ExpressionType.RightShift);
 		Assert (null, e3.Compile ().Invoke (null, 11));
 		Assert (512, e3.Compile ().Invoke (1024, 1));
-
+/*
 		Expression<Func<MyType?, MyType?, int?>> e4 = (MyType? a, MyType? b) => a >> b;
 		AssertNodeType (e4, ExpressionType.RightShift);
 		var c4 = e4.Compile ();
 		Assert (null, c4 (new MyType (8), null));
 		Assert (null, c4 (null, new MyType (8)));
 		Assert (64, c4 (new MyType (256), new MyType (2)));
+*/
 	}	
 
 	//
