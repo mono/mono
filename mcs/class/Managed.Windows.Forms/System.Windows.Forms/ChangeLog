@@ -1,3 +1,9 @@
+2008-03-20  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* PropertyGrid.cs: Ensure PropertiesTab is visible even if the 
+	user alters manually the PropertyTabs collection via the 
+	PropertyTabs property.
+
 2008-03-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListBindingHelper.cs: Implement -previously- ignored cases. We have

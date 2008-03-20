@@ -917,8 +917,6 @@ namespace System.Windows.Forms
 
 				GetMergedPropertyTabs (selected_objects, out tabTypes, out tabScopes);
 				if (tabTypes != null && tabScopes != null && tabTypes.Length > 0) {
-					if (!property_tabs.Contains (typeof (PropertiesTab)))
-						property_tabs.InsertTab (0, properties_tab, PropertyTabScope.Component);
 					bool selectedTabPreserved = false;
 					for (int i=0; i < tabTypes.Length; i++) {
 						property_tabs.AddTabType (tabTypes[i], tabScopes[i]);
@@ -936,6 +934,8 @@ namespace System.Windows.Forms
 
 		private void RefreshToolbar (PropertyTabCollection tabs)
 		{
+			EnsurePropertiesTab ();
+
 			toolbar.SuspendLayout ();
 			toolbar.Items.Clear ();
 			toolbar_imagelist.Images.Clear ();
@@ -970,6 +970,15 @@ namespace System.Windows.Forms
 			propertypages_toolbarbutton.ImageIndex = imageIndex;
 			
 			toolbar.ResumeLayout ();
+		}
+
+		private void EnsurePropertiesTab ()
+		{
+			if (property_tabs == null)
+				return;
+
+			if (property_tabs.Count > 0 && !property_tabs.Contains (typeof (PropertiesTab)))
+				property_tabs.InsertTab (0, properties_tab, PropertyTabScope.Component);
 		}
 
 		private void GetMergedPropertyTabs (object[] objects, out Type[] tabTypes, out PropertyTabScope[] tabScopes)
