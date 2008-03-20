@@ -1,3 +1,6 @@
+2008-03-20  Kornél Pál  <kornelpal@gmail.com>
+
+	* io-layer.h: Removed Windows version macros.
 
 Thu Mar 13 16:24:53 CET 2008 Paolo Molaro <lupus@ximian.com>
 

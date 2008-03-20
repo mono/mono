@@ -1,3 +1,8 @@
+2008-03-20  Kornél Pál  <kornelpal@gmail.com>
+
+	* file-io.c, filewatcher.c, threadpool.c, threads.c: Removed Windows
+	version macros.
+
 2008-03-20  Mark Probst  <mark.probst@gmail.com>
 
 	* generic-sharing.c, class-internals.h: Code for putting
