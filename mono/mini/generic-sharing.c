@@ -59,13 +59,22 @@ mono_method_check_context_used (MonoMethod *method)
 }
 
 static gboolean
-generic_inst_is_sharable (MonoGenericInst *inst)
+generic_inst_is_sharable (MonoGenericInst *inst, gboolean allow_type_vars)
 {
 	int i;
 
 	for (i = 0; i < inst->type_argc; ++i) {
-		if (!MONO_TYPE_IS_REFERENCE (inst->type_argv [i]))
-			return FALSE;
+		MonoType *type = inst->type_argv [i];
+		int type_type;
+
+		if (MONO_TYPE_IS_REFERENCE (type))
+			continue;
+
+		type_type = mono_type_get_type (type);
+		if (allow_type_vars && (type_type == MONO_TYPE_VAR || type_type == MONO_TYPE_MVAR))
+			continue;
+
+		return FALSE;
 	}
 
 	return TRUE;
@@ -79,14 +88,14 @@ generic_inst_is_sharable (MonoGenericInst *inst)
  * is sharable iff all of its type arguments are reference type.
  */
 gboolean
-mono_generic_context_is_sharable (MonoGenericContext *context)
+mono_generic_context_is_sharable (MonoGenericContext *context, gboolean allow_type_vars)
 {
 	g_assert (context->class_inst || context->method_inst);
 
-	if (context->class_inst && !generic_inst_is_sharable (context->class_inst))
+	if (context->class_inst && !generic_inst_is_sharable (context->class_inst, allow_type_vars))
 		return FALSE;
 
-	if (context->method_inst && !generic_inst_is_sharable (context->method_inst))
+	if (context->method_inst && !generic_inst_is_sharable (context->method_inst, allow_type_vars))
 		return FALSE;
 
 	return TRUE;
@@ -123,7 +132,7 @@ mono_method_is_generic_sharable_impl (MonoMethod *method)
 		MonoMethodInflated *inflated = (MonoMethodInflated*)method;
 		MonoGenericContext *context = &inflated->context;
 
-		if (!mono_generic_context_is_sharable (context))
+		if (!mono_generic_context_is_sharable (context, FALSE))
 			return FALSE;
 
 		g_assert (inflated->declaring);
@@ -137,7 +146,7 @@ mono_method_is_generic_sharable_impl (MonoMethod *method)
 	}
 
 	if (method->klass->generic_class) {
-		if (!mono_generic_context_is_sharable (&method->klass->generic_class->context))
+		if (!mono_generic_context_is_sharable (&method->klass->generic_class->context, FALSE))
 			return FALSE;
 
 		g_assert (method->klass->generic_class->container_class &&
@@ -301,30 +310,34 @@ mono_class_generic_class_relation (MonoClass *klass, int info_type, MonoClass *m
 		mono_class_get_runtime_generic_context_template (method_klass);
 	int i;
 
-	for (i = 0; i < rgctx_template->num_arg_infos; ++i) {
-		MonoType *arg_info = rgctx_template->arg_infos [i];
-		MonoType *inflated_arg;
+	/* Reflection types can only be handled in the extensible
+	   rgctx part. */
+	if (info_type != MONO_RGCTX_INFO_REFLECTION_TYPE) {
+		for (i = 0; i < rgctx_template->num_arg_infos; ++i) {
+			MonoType *arg_info = rgctx_template->arg_infos [i];
+			MonoType *inflated_arg;
 
-		if (arg_info == NULL)
-			continue;
+			if (arg_info == NULL)
+				continue;
 
-		inflated_arg = mono_class_inflate_generic_type(arg_info, generic_context);
+			inflated_arg = mono_class_inflate_generic_type(arg_info, generic_context);
 
-		if (inflated_type_is_equal_to_class (inflated_arg, klass)) {
-			if (arg_num)
-				*arg_num = i;
-			return MINI_GENERIC_CLASS_RELATION_ARGUMENT;
+			if (inflated_type_is_equal_to_class (inflated_arg, klass)) {
+				if (arg_num)
+					*arg_num = i;
+				return MINI_GENERIC_CLASS_RELATION_ARGUMENT;
+			}
 		}
+
+		if (!klass->generic_class && !klass->generic_container)
+			g_assert_not_reached ();
+
+		if (mini_class_get_container_class (klass) == mini_class_get_container_class (method_klass) &&
+				mono_generic_context_equal_deep (mini_class_get_context (klass), generic_context))
+			return MINI_GENERIC_CLASS_RELATION_SELF;
 	}
 
-	if (!klass->generic_class && !klass->generic_container)
-		g_assert_not_reached ();
-
-	if (mini_class_get_container_class (klass) == mini_class_get_container_class (method_klass) &&
-			mono_generic_context_equal_deep (mini_class_get_context (klass), generic_context))
-		return MINI_GENERIC_CLASS_RELATION_SELF;
-
-	i = mono_class_lookup_or_register_other_info (method_klass, klass, info_type, generic_context);
+	i = mono_class_lookup_or_register_other_info (method_klass, &klass->byval_arg, info_type, generic_context);
 	if (arg_num)
 		*arg_num = i;
 	return MINI_GENERIC_CLASS_RELATION_OTHER_TABLE;

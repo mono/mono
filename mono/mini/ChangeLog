@@ -64,6 +64,181 @@
 	instruction combination.
 	(mono_local_deadce): Ditto.
 
+2008-03-20  Kornél Pál  <kornelpal@gmail.com>
+
+	* mini.c: Removed Windows version macros.
+
+2008-03-20  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-sharing.c: Put reflection types in the extensible part
+	of the runtime generic context.
+
+	* mini.c: Generic sharing of the GetTypeHandle special case of the
+	ldtoken instruction.
+
+2008-03-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h (MONO_BB_FOR_EACH_INS_SAFE): New helper macro.
+
+	* mini-<ARCH>.c: Use the new macro instead in the peephole/lowering passes.
+	
+	* mini.h (MONO_DEL_INS): Rename to MONO_DELETE_INS and Add a 'bb' argument for 
+	consistency with the other version on the linear IR branch.
+
+	* mini-<ARCH>.c: Update callers of MONO_DEL_INS.
+
+	* inssel-long32.brg inssel-long.brg: Add rules for conv.ovf.i/conv.ovf.u.
+
+	* iltests.il.in: Add new tests.
+
+2008-03-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel-long32.brg inssel-long.brg: Add rules for conv.ovf.i.un/conv.ovf.u.un.
+
+	* iltests.il.in: Add new tests.
+
+2008-03-19  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Two variables with the same name were declared in
+	nesting contexts and one wasn't initialized.  Fixed.
+
+2008-03-19  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Generic sharing of the initobj instruction.
+
+Tue Mar 18 20:18:02 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: make the test to optimize ldtoken from typeof() more
+	precise.
+
+2008-03-18  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Generic sharing of the initobj instruction for reference
+	types.
+
+Tue Mar 18 12:39:27 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, mini-amd64.c, mini-x86.c, tramp-amd64.c, tramp-x86.c: change
+	the mono_breakpoint_clean_code() code to perform bound checks.
+
+Tue Mar 18 11:50:14 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, mini-trampolines.c, tramp-*.c: change the signature of
+	mono_arch_patch_callsite() to include the start of the managed method
+	to be able to perform bound checks.
+
+2008-03-17  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Generic sharing for the isinst instruction.
+
+2008-03-17  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-ops.h, inssel.brg, inssel-long.brg, inssel-long32.brg,
+	inssel-long32-mips.brg: Added opcodes for doing indirect calls
+	with the runtime generic context argument.
+
+	* mini.c: Share calls to several types of unsharable methods by
+	putting the address of the method code in the runtime generic
+	context and doing an indirect call.
+
+	* graph.c, local-propagation.c, aliasing.c: Added the new opcodes
+	to switches.
+
+2008-03-16  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-sharing.c: Change due to a change in the runtime genric
+	context API.
+
+2008-03-15  Martin Baulig  <martin@ximian.com>
+
+	* tramp-x86.c
+	(mono_arch_nullify_class_init_trampoline): Add call to
+	mono_breakpoint_clean_code() to make things work when running
+	inside the debugger.
+
+	* tramp-amd64.c
+	(mono_arch_nullify_class_init_trampoline): Add call to
+	mono_breakpoint_clean_code() to make things work when running
+	inside the debugger.
+
+2008-03-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel-long.brg (reg): Fix 64 bit build.
+
+2008-03-14  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c, mini.h: Share static generic code by passing it an
+	implicit argument pointing to the runtime generic context.
+
+	* mini-ops.h, inssel.brg, inssel-long.brg, inssel-long32.brg,
+	inssel-long32-mips.brg: New opcodes for calling shared static,
+	which need to be passed the runtime generic context.
+
+	* mini-amd64.c, mini-x86.c: Save the runtime generic context
+	argument on the stack in the prologue if needed.  New function for
+	finding the runtime generic context argument from the registers
+	saved by the trampoline.
+
+	* mini-amd64.h, mini-x86.h: Specify which register to use for the
+	runtime generic context argument.
+
+	* tramp-amd64.c: Also restore the register used for the runtime
+	generic context argument.
+
+	* mini-trampoline.c: Resolve shared static calls by consulting the
+	runtime generic context via the new argument.
+
+	* generic-sharing.c: Add an argument to sharability-checking
+	functions that specifies whether type variables should be treated
+	as sharable type arguments.
+
+	* inssel-x86.brg: Removed a superfluous, buggy rule.
+
+	* graph.c, local-propagation.c, aliasing.c: Added the new opcodes
+	to switches.
+
+2008-03-14  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.c (main_thread_handler): Call
+	mono_runtime_run_main() without sending any notifications.
+
+	* debug-debugger.h (MonoDebuggerInfo): Added `get_method_signature.
+
+2008-03-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c (mono_magic_trampoline): Fix build on platforms without IMT.
+
+2008-03-14  Mark Probst  <mark.probst@gmail.com>
+
+	* tramp-x86.c: Fixed register restore offsets in the trampoline
+	code for ECX and EDX.
+
+2008-03-12  Geoff Norton  <gnorton@novell.com>
+
+	* mini-arm.h: Add some #defines for locating sp, pc, r4 with
+	different ucontext_t implementations.
+	* exceptions-arm.c: Use the above defines to get exceptions working on 
+	iPhone (based on a patch by Luke Howard lukeh@padl.com)
+	* mini-arm.c: Implement iPhone icache support (based on a patch by
+	Luke Howard lukeh@padl.com)
+
+2008-03-12  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Enable generic sharing of calls to non-static
+	non-interface non-generic non-value-type methods.
+
+	* mini-trampolines.c: Resolve calls from shared generic code.
+
+2008-03-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am il2tests.il iltests.il.in: Delete il2tests, merge it into iltests.
+
+	* tramp-amd64.c (mono_arch_create_trampoline_code): Correctly save RBP as well.
+
+Mon Mar 10 11:59:34 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: some fixes for the AOT compiler.
+
 2008-03-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* cpu-amd64.md: Add clob:1 to some float opcodes.
@@ -125,6 +300,22 @@
 
 	* local-propagation.c (mono_local_deadce): Make the reverse copyprop optimization
 	more generic.
+
+2008-03-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* cpu-amd64.md: Add clob:1 to some float opcodes.
+
+2008-03-07  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini.h: Added MiniVerifierMode enumeration.
+
+	* mini.c: Added mini_verifier_set_mode to control
+	the usage of the new verifier.
+
+	* mini.c (mono_method): Integrated the new verifier.
+
+	* driver.c: Extended --security option with validil and
+	verifiable options to activate the new verifier.
 
 2008-03-07  Zoltan Varga  <vargaz@gmail.com>
 

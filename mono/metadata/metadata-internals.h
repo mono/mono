@@ -188,6 +188,7 @@ struct _MonoImage {
 	GHashTable *unbox_wrapper_cache;
 	GHashTable *cominterop_invoke_cache;
 	GHashTable *cominterop_wrapper_cache;
+	GHashTable *static_rgctx_invoke_cache; /* LOCKING: marshal lock */
 
 	/*
 	 * indexed by MonoClass pointers
@@ -287,6 +288,7 @@ struct _MonoDynamicImage {
 	GHashTable *method_to_table_idx;
 	GHashTable *field_to_table_idx;
 	GHashTable *method_aux_hash;
+	MonoGHashTable *generic_def_objects;
 	gboolean run;
 	gboolean save;
 	gboolean initial_image;
@@ -419,7 +421,9 @@ mono_metadata_inflate_generic_inst          (MonoGenericInst       *ginst,
 
 void mono_dynamic_stream_reset  (MonoDynamicStream* stream) MONO_INTERNAL;
 void mono_assembly_addref       (MonoAssembly *assembly) MONO_INTERNAL;
-void mono_assembly_load_friends (MonoAssembly* ass);
+void mono_assembly_load_friends (MonoAssembly* ass) MONO_INTERNAL;
+
+gboolean mono_public_tokens_are_equal (const unsigned char *pubt1, const unsigned char *pubt2) MONO_INTERNAL;
 
 void mono_config_parse_publisher_policy (const char *filename, MonoAssemblyBindingInfo *binding_info) MONO_INTERNAL;
 

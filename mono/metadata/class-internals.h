@@ -194,12 +194,15 @@ typedef struct {
 enum {
 	MONO_RGCTX_INFO_STATIC_DATA,
 	MONO_RGCTX_INFO_KLASS,
-	MONO_RGCTX_INFO_VTABLE
+	MONO_RGCTX_INFO_VTABLE,
+	MONO_RGCTX_INFO_REFLECTION_TYPE,
+	MONO_RGCTX_INFO_METHOD,
+	MONO_RGCTX_INFO_GENERIC_METHOD_CODE
 };
 
 typedef struct _MonoRuntimeGenericContextOtherInfoTemplate {
-	MonoType *type;
 	int info_type;
+	gpointer data;
 	struct _MonoRuntimeGenericContextOtherInfoTemplate *next;
 } MonoRuntimeGenericContextOtherInfoTemplate;
 
@@ -445,7 +448,6 @@ struct _MonoMethodInflated {
 	} method;
 	MonoMethod *declaring;		/* the generic method definition. */
 	MonoGenericContext context;	/* The current instantiation */
-	gpointer reflection_info;
 
 	/* TODO we MUST get rid of this field, it's an ugly hack nobody is proud of. */
 	guint is_mb_open : 1;		/* This is the fully open instantiation of a generic method_builder. Worse than is_tb_open, but it's temporary */
@@ -979,7 +981,7 @@ void
 mono_class_fill_runtime_generic_context (MonoRuntimeGenericContext *rgctx) MONO_INTERNAL;
 
 gboolean
-mono_class_lookup_or_register_other_info (MonoClass *class, MonoClass *other_class, int info_type, MonoGenericContext *generic_context) MONO_INTERNAL;
+mono_class_lookup_or_register_other_info (MonoClass *class, gpointer data, int info_type, MonoGenericContext *generic_context) MONO_INTERNAL;
 
 int
 mono_generic_context_check_used (MonoGenericContext *context) MONO_INTERNAL;

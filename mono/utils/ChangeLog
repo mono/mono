@@ -1,3 +1,11 @@
+
+2008-03-14  Robert Jordan  <robertj@gmx.net>
+
+	* mono-dl.c (w32_load_module): prevent error dialog by resetting
+	the Win32 error mode during LoadLibrary (). Fixes #360363.
+
+	* mono-dl.c (w32_dlerror): kill a warning.
+
 2007-MM-DD  Yoichi NAKAYAMA  <nakayama@pixela.co.jp>
  
  	* mono-membar.h: Memory barrier for mips.

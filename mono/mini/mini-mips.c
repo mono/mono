@@ -1312,10 +1312,11 @@ mono_arch_peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 void
 mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 {
-	MonoInst *ins, *last_ins = NULL;
+	MonoInst *ins, *n, *last_ins = NULL;
 	ins = bb->code;
 
-	while (ins) {
+	MONO_BB_FOR_EACH_INS_SAFE (bb, n, ins) {
+		MonoInst *last_ins = mono_inst_list_prev (&ins->node, &bb->ins_list);
 
 		switch (ins->opcode) {
 		case OP_MUL_IMM: 
@@ -1324,8 +1325,7 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 				if (ins->dreg != ins->sreg1) {
 					ins->opcode = OP_MOVE;
 				} else {
-					last_ins->next = ins->next;				
-					ins = ins->next;				
+					MONO_DELETE_INS (bb, ins);
 					continue;
 				}
 			} else {
@@ -1347,8 +1347,7 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 			    ins->inst_basereg == last_ins->inst_destbasereg &&
 			    ins->inst_offset == last_ins->inst_offset) {
 				if (ins->dreg == last_ins->sreg1) {
-					last_ins->next = ins->next;				
-					ins = ins->next;				
+					MONO_DELETE_INS (bb, ins);
 					continue;
 				} else {
 					//static int c = 0; printf ("MATCHX %s %d\n", cfg->method->name,c++);
@@ -1372,8 +1371,7 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 			      ins->inst_offset == last_ins->inst_offset) {
 
 				if (ins->dreg == last_ins->dreg) {
-					last_ins->next = ins->next;				
-					ins = ins->next;				
+					MONO_DELETE_INS (bb, ins);
 					continue;
 				} else {
 					ins->opcode = OP_MOVE;
@@ -1429,9 +1427,7 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 			 * OP_MOVE reg, reg 
 			 */
 			if (ins->dreg == ins->sreg1) {
-				if (last_ins)
-					last_ins->next = ins->next;				
-				ins = ins->next;
+				MONO_DELETE_INS (bb, ins);
 				continue;
 			}
 			/* 
@@ -1441,8 +1437,7 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (last_ins && last_ins->opcode == OP_MOVE &&
 			    ins->sreg1 == last_ins->dreg &&
 			    ins->dreg == last_ins->sreg1) {
-				last_ins->next = ins->next;				
-				ins = ins->next;				
+				MONO_DELETE_INS (bb, ins);
 				continue;
 			}
 			break;

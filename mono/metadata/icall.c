@@ -1440,12 +1440,12 @@ ves_icall_get_method_info (MonoMethod *method, MonoMethodInfo *info)
 	info->attrs = method->flags;
 	info->implattrs = method->iflags;
 	if (sig->call_convention == MONO_CALL_DEFAULT)
-		info->callconv = 1;
+		info->callconv = sig->sentinelpos >= 0 ? 2 : 1;
 	else {
-		if (sig->call_convention == MONO_CALL_VARARG)
+		if (sig->call_convention == MONO_CALL_VARARG || sig->sentinelpos >= 0)
 			info->callconv = 2;
 		else
-			info->callconv = 0;
+			info->callconv = 1;
 	}
 	info->callconv |= (sig->hasthis << 5) | (sig->explicit_this << 6); 
 }
@@ -2736,13 +2736,28 @@ ves_icall_MonoMethod_GetGenericMethodDefinition (MonoReflectionMethod *method)
 		return NULL;
 
 	imethod = (MonoMethodInflated *) method->method;
-	if (imethod->reflection_info)
-		return imethod->reflection_info;
 
 	result = imethod->declaring;
 	/* Not a generic method.  */
 	if (!result->generic_container)
 		return NULL;
+
+	if (method->method->klass->image->dynamic) {
+		MonoDynamicImage *image = (MonoDynamicImage*)method->method->klass->image;
+		MonoReflectionMethod *res;
+
+		/*
+		 * FIXME: Why is this stuff needed at all ? Why can't the code below work for
+		 * the dynamic case as well ?
+		 */
+		mono_loader_lock ();
+		res = mono_g_hash_table_lookup (image->generic_def_objects, imethod);
+		mono_loader_unlock ();
+
+		if (res)
+			return res;
+	}
+
 	if (imethod->context.class_inst) {
 		MonoClass *klass = ((MonoMethod *) imethod)->klass;
 		result = mono_class_inflate_generic_method_full (result, klass, mono_class_get_context (klass));

@@ -324,19 +324,23 @@ freg: OP_LCONV_TO_R_UN (lreg) {
 	MONO_EMIT_UNALU (s, tree, tree->opcode, state->reg1, state->left->reg1);
 }
 
-reg: CEE_CONV_OVF_I8 (reg) {
+reg: CEE_CONV_OVF_I8 (reg),
+reg: CEE_CONV_OVF_I (reg) {
 	/* Sign extend the value in the lower word into the upper word */
 	MONO_EMIT_UNALU (s, tree, CEE_CONV_I8, state->reg1, state->left->reg1);
 }
 
 reg: CEE_CONV_OVF_I8_UN (reg),
-reg: CEE_CONV_OVF_U8_UN (reg) {
+reg: CEE_CONV_OVF_U8_UN (reg),
+reg: CEE_CONV_OVF_I_UN (reg),
+reg: CEE_CONV_OVF_U_UN (reg) {
 	/* an unsigned 32 bit num always fits in an (un)signed 64 bit one */
 	/* Clean out the upper word */
 	MONO_EMIT_UNALU (s, tree, CEE_CONV_U8, state->reg1, state->left->reg1);
 }
 
-reg: CEE_CONV_OVF_U8 (reg) {
+reg: CEE_CONV_OVF_U8 (reg),
+reg: CEE_CONV_OVF_U (reg) {
 	MONO_EMIT_NEW_COMPARE_IMM_EXC (s, LT, state->left->reg1, 0, "OverflowException");
 	MONO_EMIT_UNALU (s, tree, OP_MOVE, state->reg1, state->left->reg1);
 }
@@ -350,7 +354,22 @@ reg: OP_LCALL {
 	mono_bblock_add_inst (s->cbb, tree);
 }
 
+reg: OP_LCALL_RGCTX (reg) {
+	emit_rgctx_argument (s, tree, state->left->reg1, OP_LCALL);
+
+	tree->dreg = state->reg1;
+	mono_bblock_add_inst (s->cbb, tree);
+}
+
 reg: OP_LCALL_REG (reg) {
+	tree->sreg1 = state->left->reg1;
+	tree->dreg = state->reg1;
+	mono_bblock_add_inst (s->cbb, tree);
+}
+
+reg: OP_LCALL_REG_RGCTX (reg, reg) {
+	emit_rgctx_argument (s, tree, state->right->reg1, OP_LCALL_REG);
+
 	tree->sreg1 = state->left->reg1;
 	tree->dreg = state->reg1;
 	mono_bblock_add_inst (s->cbb, tree);

@@ -1,3 +1,21 @@
+2007-03-19  Bill Holmes  <billholmes54@gmail.com>
+
+	* libmono.vcproj:  Adding a link to version.lib for the eglib targets.
+
+	Contributed under MIT/X11 license.
+
+2007-03-10  Bill Holmes  <billholmes54@gmail.com>
+
+	* mono.sln: Fixing configuration list to build the correct targets for the 
+	  specified configuration.
+
+	* runburg.bat, runmdesc.bat:  Changing the PATH environment variable assignment 
+	  to the correct location.
+
+	* libmono.vcproj:  Adding missing files.
+
+	Contributed under MIT/X11 license.
+
 2007-12-31  Jonathan Chambers  <joncham@gmail.com>
 
 	* mono.sln, libmono.vcproj, mono.vcproj, mono.def: Update .def
@@ -89,5 +107,6 @@
 	* *.vcproj: Begin Win64 port. Run bat files with $(Platform) argument.
 	* *.bat: Begin Win64 port. Run bat files with $(Platform) argument.
 	Contributed under MIT/X11 license.
+
 
 

@@ -58,11 +58,11 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 }
 
 void
-mono_arch_patch_callsite (guint8 *orig_code, guint8 *addr)
+mono_arch_patch_callsite (guint8 *method_start, guint8 *orig_code, guint8 *addr)
 {
 	guint8 *code;
 	guint8 buf [8];
-	gboolean can_write = mono_breakpoint_clean_code (orig_code - 8, buf, sizeof (buf));
+	gboolean can_write = mono_breakpoint_clean_code (method_start, orig_code, 8, buf, sizeof (buf));
 
 	code = buf + 8;
 	if (mono_running_on_valgrind ())
@@ -110,6 +110,12 @@ mono_arch_patch_plt_entry (guint8 *code, guint8 *addr)
 void
 mono_arch_nullify_class_init_trampoline (guint8 *code, gssize *regs)
 {
+	guint8 buf [16];
+	gboolean can_write = mono_breakpoint_clean_code (NULL, code, 6, buf, sizeof (buf));
+
+	if (!can_write)
+		return;
+
 	code -= 5;
 	if (code [0] == 0xe8) {
 		if (!mono_running_on_valgrind ()) {
@@ -182,7 +188,7 @@ guchar*
 mono_arch_create_trampoline_code (MonoTrampolineType tramp_type)
 {
 	guint8 *buf, *code, *tramp;
-	int pushed_args;
+	int pushed_args, pushed_args_caller_saved;
 
 	code = buf = mono_global_codeman_reserve (256);
 
@@ -228,7 +234,7 @@ mono_arch_create_trampoline_code (MonoTrampolineType tramp_type)
 	x86_push_reg (buf, X86_ECX);
 	x86_push_reg (buf, X86_EAX);
 
-	pushed_args = 8;
+	pushed_args_caller_saved = pushed_args = 8;
 
 	/* Align stack on apple */
 	x86_alu_reg_imm (buf, X86_SUB, X86_ESP, 4);
@@ -326,6 +332,8 @@ mono_arch_create_trampoline_code (MonoTrampolineType tramp_type)
 
 	x86_alu_reg_imm (buf, X86_ADD, X86_ESP, 4*4);
 
+	pushed_args -= 4;
+
 	/* Check for thread interruption */
 	/* This is not perf critical code so no need to check the interrupt flag */
 	x86_push_reg (buf, X86_EAX);
@@ -336,31 +344,50 @@ mono_arch_create_trampoline_code (MonoTrampolineType tramp_type)
 
 	/* ebx = previous_lmf */
 	x86_pop_reg (buf, X86_EBX);
+	pushed_args--;
 	x86_alu_reg_imm (buf, X86_SUB, X86_EBX, 1);
+
 	/* edi = lmf */
 	x86_pop_reg (buf, X86_EDI);
+	pushed_args--;
+
 	/* *(lmf) = previous_lmf */
 	x86_mov_membase_reg (buf, X86_EDI, 0, X86_EBX, 4);
+
 	/* discard method info */
 	x86_pop_reg (buf, X86_ESI);
+	pushed_args--;
+
 	/* discard ESP */
 	x86_pop_reg (buf, X86_ESI);
+	pushed_args--;
+
 	/* restore caller saved regs */
 	x86_pop_reg (buf, X86_EBX);
 	x86_pop_reg (buf, X86_EDI);
 	x86_pop_reg (buf, X86_ESI);
 	x86_pop_reg (buf, X86_EBP);
 
+	pushed_args -= 4;
+
 	/* discard save IP */
-	x86_alu_reg_imm (buf, X86_ADD, X86_ESP, 4);		
+	x86_alu_reg_imm (buf, X86_ADD, X86_ESP, 4);
+	pushed_args--;
+
 	/* restore LMF end */
 
 	/* Restore caller saved registers */
-	x86_mov_reg_membase (buf, X86_ECX, X86_ESP, 1 * 4, 4);
-	x86_mov_reg_membase (buf, X86_EDX, X86_ESP, 2 * 4, 4);
+	x86_mov_reg_membase (buf, X86_ECX, X86_ESP, (pushed_args - pushed_args_caller_saved + X86_ECX) * 4, 4);
+	x86_mov_reg_membase (buf, X86_EDX, X86_ESP, (pushed_args - pushed_args_caller_saved + X86_EDX) * 4, 4);
 
 	/* Pop saved reg array + stack align + method ptr */
 	x86_alu_reg_imm (buf, X86_ADD, X86_ESP, 10 * 4);
+
+	pushed_args -= 10;
+
+	/* We've popped one more stack item than we've pushed (the
+	   method ptr argument), so we must end up at -1. */
+	g_assert (pushed_args == -1);
 
 	if (tramp_type == MONO_TRAMPOLINE_CLASS_INIT ||
 			tramp_type == MONO_TRAMPOLINE_GENERIC_CLASS_INIT ||

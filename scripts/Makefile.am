@@ -77,6 +77,7 @@ scripts_2_0 = \
 	monop2 			\
 	resgen2			\
 	wsdl2			\
+	xsd2			\
 	sgen			\
 	xbuild
 

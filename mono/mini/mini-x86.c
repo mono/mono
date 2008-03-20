@@ -1602,9 +1602,9 @@ emit_call (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstpointer dat
 void
 mono_arch_peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 {
-	MonoInst *ins, *next, *last_ins = NULL;
+	MonoInst *ins, *n, *last_ins = NULL;
 
-	MONO_BB_FOR_EACH_INS_SAFE (bb, next, ins) {
+	MONO_BB_FOR_EACH_INS_SAFE (bb, n, ins) {
 		switch (ins->opcode) {
 		case OP_IADD_IMM:
 		case OP_ADD_IMM:
@@ -1803,9 +1803,9 @@ mono_arch_peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 void
 mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 {
-	MonoInst *ins, *next, *last_ins = NULL;
+	MonoInst *ins, *n, *last_ins = NULL;
 
-	MONO_BB_FOR_EACH_INS_SAFE (bb, next, ins) {
+	MONO_BB_FOR_EACH_INS_SAFE (bb, n, ins) {
 		switch (ins->opcode) {
 		case OP_ICONST:
 			/* reg = 0 -> XOR (reg, reg) */
@@ -4290,6 +4290,13 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	if (mono_jit_trace_calls != NULL && mono_trace_eval (method))
 		code = mono_arch_instrument_prolog (cfg, mono_trace_enter_method, code, TRUE);
 
+	/* store runtime generic context */
+	if (cfg->rgctx_var) {
+		g_assert (cfg->rgctx_var->opcode == OP_REGOFFSET && cfg->rgctx_var->inst_basereg == X86_EBP);
+
+		x86_mov_membase_reg (code, X86_EBP, cfg->rgctx_var->inst_offset, MONO_ARCH_RGCTX_REG, 4);
+	}
+
 	/* load arguments allocated to register from the stack */
 	sig = mono_method_signature (method);
 	pos = 0;
@@ -4819,6 +4826,12 @@ mono_arch_find_this_argument (gpointer *regs, MonoMethod *method, MonoGenericSha
 }
 #endif
 
+MonoRuntimeGenericContext*
+mono_arch_find_static_call_rgctx (gpointer *regs, guint8 *code)
+{
+	return (MonoRuntimeGenericContext*) regs [MONO_ARCH_RGCTX_REG];
+}
+
 MonoInst*
 mono_arch_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
@@ -4965,12 +4978,33 @@ mono_arch_get_patch_offset (guint8 *code)
 	}
 }
 
+/**
+ * mono_breakpoint_clean_code:
+ *
+ * Copy @size bytes from @code - @offset to the buffer @buf. If the debugger inserted software
+ * breakpoints in the original code, they are removed in the copy.
+ *
+ * Returns TRUE if no sw breakpoint was present.
+ */
 gboolean
-mono_breakpoint_clean_code (guint8 *code, guint8 *buf, int size)
+mono_breakpoint_clean_code (guint8 *method_start, guint8 *code, int offset, guint8 *buf, int size)
 {
 	int i;
 	gboolean can_write = TRUE;
-	memcpy (buf, code, size);
+	/*
+	 * If method_start is non-NULL we need to perform bound checks, since we access memory
+	 * at code - offset we could go before the start of the method and end up in a different
+	 * page of memory that is not mapped or read incorrect data anyway. We zero-fill the bytes
+	 * instead.
+	 */
+	if (!method_start || code - offset >= method_start) {
+		memcpy (buf, code - offset, size);
+	} else {
+		int diff = code - method_start;
+		memset (buf, 0, size);
+		memcpy (buf + offset - diff, method_start, diff + size - offset);
+	}
+	code -= offset;
 	for (i = 0; i < MONO_BREAKPOINT_ARRAY_SIZE; ++i) {
 		int idx = mono_breakpoint_info_index [i];
 		guint8 *ptr;
@@ -4994,7 +5028,7 @@ mono_arch_get_vcall_slot (guint8 *code, gpointer *regs, int *displacement)
 	guint8 reg = 0;
 	gint32 disp = 0;
 
-	mono_breakpoint_clean_code (code - 8, buf, sizeof (buf));
+	mono_breakpoint_clean_code (NULL, code, 8, buf, sizeof (buf));
 	code = buf + 8;
 
 	*displacement = 0;

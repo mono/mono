@@ -276,6 +276,12 @@ typedef struct {
 #define MONO_ARCH_HAVE_ATOMIC_EXCHANGE 1
 #define MONO_ARCH_HAVE_IMT 1
 #define MONO_ARCH_VTABLE_REG AMD64_R11
+/*
+ * We use r10 for the rgctx register rather than r11 because r11 is
+ * used by the trampoline as a scratch register and hence might be
+ * clobbered across method call boundaries.
+ */
+#define MONO_ARCH_RGCTX_REG AMD64_R10
 #define MONO_ARCH_COMMON_VTABLE_TRAMPOLINE 1
 #define MONO_ARCH_HAVE_CMOV_OPS 1
 #define MONO_ARCH_HAVE_NOTIFY_PENDING_EXC 1

@@ -2263,7 +2263,7 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 {
 	MonoInst *ins, *n;
 
-	MONO_INST_LIST_FOR_EACH_ENTRY_SAFE (ins, n, &bb->ins_list, node) {
+	MONO_BB_FOR_EACH_INS_SAFE (bb, n, ins) {
 		MonoInst *last_ins = mono_inst_list_prev (&ins->node, &bb->ins_list);
 
 		switch (ins->opcode) {
@@ -2273,7 +2273,7 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 				if (ins->dreg != ins->sreg1) {
 					ins->opcode = OP_MOVE;
 				} else {
-					MONO_DEL_INS (ins);
+					MONO_DELETE_INS (bb, ins);
 					continue;
 				}
 			}
@@ -2289,7 +2289,7 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 			    ins->inst_basereg == last_ins->inst_destbasereg &&
 			    ins->inst_offset == last_ins->inst_offset) {
 				if (ins->dreg == last_ins->sreg1) {
-					MONO_DEL_INS (ins);
+					MONO_DELETE_INS (bb, ins);
 					continue;
 				} else {
 					ins->opcode = OP_MOVE;
@@ -2311,7 +2311,7 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 			      ins->inst_offset == last_ins->inst_offset) {
 
 				if (ins->dreg == last_ins->dreg) {
-					MONO_DEL_INS (ins);
+					MONO_DELETE_INS (bb, ins);
 					continue;
 				} else {
 					ins->opcode = OP_MOVE;
@@ -2343,7 +2343,7 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 			 * OP_MOVE reg, reg 
 			 */
 			if (ins->dreg == ins->sreg1) {
-				MONO_DEL_INS (ins);
+				MONO_DELETE_INS (bb, ins);
 				continue;
 			}
 			/* 
@@ -2353,7 +2353,7 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (last_ins && last_ins->opcode == OP_MOVE &&
 			    ins->sreg1 == last_ins->dreg &&
 			    ins->dreg == last_ins->sreg1) {
-				MONO_DEL_INS (ins);
+				MONO_DELETE_INS (bb, ins);
 				continue;
 			}
 			break;

@@ -1,3 +1,52 @@
+2008-03-17 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_constrained_test.sh: Test generator for constrained calls.
+
+	* make_test.sh: New tests using the added generator.
+
+2008-03-12 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* valid_generic_test.cs: Tests for generic classes.
+
+	* unverifiable_generic_type_field_access.il: Tests for
+	not mixing generic arguments.
+
+	* valid_generic_test.cs: Add tests for generic
+	class and method together.
+
+2008-03-12 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* strict_native_int_converts_to_unamanged_pointer.cs: Allow
+	conversion from native int to unmanaged pointer in non-strict mode.
+	This is required to allow the C# expression "(IntPtr)null" to be
+	verifiable.
+
+2008-03-12 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* valid_ldftn_final_virtual_method.il:
+	* valid_ldftn_sealed_type_virtual_method.il: Tests the interaction
+	of sealed type and final method or ldftn verifiability.
+
+2008-03-11 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_delegate_compat_test.sh: Added. Generate tests for
+	compatibility between delegate signature and function
+	signature.
+
+	* make_tests.sh: Added tests using make_delegate_compat_test.sh.
+
+2008-03-10 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_invalid_ret_type.sh: Added. Generate return site tests
+	for invalid return types.
+
+	* make_tests.sh: Add tests using make_invalid_ret_type.sh. 
+
+2008-03-10 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* unverifiable_callvirt_static_method.il: Added. Test for callvirt and
+	static methods.
+
 2008-02-28 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* invalid_refanytype_null_stack_top.il: New test for refanytype opcode.

@@ -683,6 +683,7 @@ typedef struct {
 	MonoInst        *domainvar; /* a cache for the current domain */
 	MonoInst        *got_var; /* Global Offset Table variable */
 	MonoInst        **locals;
+	MonoInst	*rgctx_var; /* Runtime generic context variable (for static generic methods) */
 	MonoInst        **args;
 
 	/* 
@@ -1041,6 +1042,13 @@ enum {
 	MINI_TOKEN_SOURCE_FIELD
 };
 
+typedef enum {
+	MINI_VERIFIER_MODE_OFF,
+	MINI_VERIFIER_MODE_VALID,
+	MINI_VERIFIER_MODE_VERIFIABLE,
+	MINI_VERIFIER_MODE_STRICT
+} MiniVerifierMode;
+
 typedef void (*MonoInstFunc) (MonoInst *tree, gpointer data);
 
 /* main function */
@@ -1301,7 +1309,7 @@ void     mono_arch_create_vars                  (MonoCompile *cfg) MONO_INTERNAL
 void     mono_arch_save_unwind_info             (MonoCompile *cfg) MONO_INTERNAL;
 void     mono_arch_register_lowlevel_calls      (void) MONO_INTERNAL;
 gpointer mono_arch_get_unbox_trampoline         (MonoMethod *m, gpointer addr) MONO_INTERNAL;
-void     mono_arch_patch_callsite               (guint8 *code, guint8 *addr) MONO_INTERNAL;
+void     mono_arch_patch_callsite               (guint8 *method_start, guint8 *code, guint8 *addr) MONO_INTERNAL;
 void     mono_arch_patch_plt_entry              (guint8 *code, guint8 *addr) MONO_INTERNAL;
 void     mono_arch_nullify_class_init_trampoline(guint8 *code, gssize *regs) MONO_INTERNAL;
 void     mono_arch_nullify_plt_entry            (guint8 *code) MONO_INTERNAL;
@@ -1312,6 +1320,7 @@ gpointer mono_arch_get_delegate_invoke_impl     (MonoMethodSignature *sig, gbool
 gpointer mono_arch_create_specific_trampoline   (gpointer arg1, MonoTrampolineType tramp_type, MonoDomain *domain, guint32 *code_len) MONO_INTERNAL;
 void        mono_arch_emit_imt_argument         (MonoCompile *cfg, MonoCallInst *call) MONO_INTERNAL;
 MonoMethod* mono_arch_find_imt_method           (gpointer *regs, guint8 *code) MONO_INTERNAL;
+MonoRuntimeGenericContext* mono_arch_find_static_call_rgctx (gpointer *regs, guint8 *code) MONO_INTERNAL;
 MonoObject* mono_arch_find_this_argument        (gpointer *regs, MonoMethod *method, MonoGenericSharingContext *gsctx) MONO_INTERNAL;
 gpointer    mono_arch_build_imt_thunk           (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckItem **imt_entries, int count) MONO_INTERNAL;
 void    mono_arch_notify_pending_exc (void) MONO_INTERNAL;
@@ -1370,7 +1379,7 @@ void      mono_debugger_run_finally             (MonoContext *start_ctx);
 
 extern gssize mono_breakpoint_info_index [MONO_BREAKPOINT_ARRAY_SIZE];
 
-gboolean mono_breakpoint_clean_code (guint8 *code, guint8 *buf, int size);
+gboolean mono_breakpoint_clean_code (guint8 *method_start, guint8 *code, int offset, guint8 *buf, int size);
 
 /* Mono Debugger support */
 void      mono_debugger_init                    (void);
@@ -1411,7 +1420,7 @@ int mono_method_check_context_used (MonoMethod *method) MONO_INTERNAL;
 
 gboolean mono_generic_context_equal_deep (MonoGenericContext *context1, MonoGenericContext *context2) MONO_INTERNAL;
 
-gboolean mono_generic_context_is_sharable (MonoGenericContext *context) MONO_INTERNAL;
+gboolean mono_generic_context_is_sharable (MonoGenericContext *context, gboolean allow_type_vars) MONO_INTERNAL;
 
 gboolean mono_method_is_generic_impl (MonoMethod *method) MONO_INTERNAL;
 gboolean mono_method_is_generic_sharable_impl (MonoMethod *method) MONO_INTERNAL;
@@ -1433,5 +1442,8 @@ MonoGenericContext* mini_class_get_context (MonoClass *class) MONO_INTERNAL;
 MonoType* mini_get_basic_type_from_generic (MonoGenericSharingContext *gsctx, MonoType *type) MONO_INTERNAL;
 
 int mini_type_stack_size (MonoGenericSharingContext *gsctx, MonoType *t, int *align) MONO_INTERNAL;
+
+void mini_verifier_set_mode (MiniVerifierMode mode) MONO_INTERNAL;
+
 
 #endif /* __MONO_MINI_H__ */

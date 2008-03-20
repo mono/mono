@@ -12,11 +12,6 @@
 #include <config.h>
 #include <glib.h>
 
-#ifdef PLATFORM_WIN32
-#define WINVER 0x0500
-#define _WIN32_WINNT 0x0500
-#endif
-
 #define THREADS_PER_CPU	5 /* 20 + THREADS_PER_CPU * number of CPUs */
 
 #include <mono/metadata/domain-internals.h>
@@ -223,11 +218,11 @@ get_events_from_list (MonoMList *list)
 }
 
 #define ICALL_RECV(x)	ves_icall_System_Net_Sockets_Socket_Receive_internal (\
-				(SOCKET) x->handle, x->buffer, x->offset, x->size,\
+				(SOCKET)(gssize)x->handle, x->buffer, x->offset, x->size,\
 				 x->socket_flags, &x->error);
 
 #define ICALL_SEND(x)	ves_icall_System_Net_Sockets_Socket_Send_internal (\
-				(SOCKET) x->handle, x->buffer, x->offset, x->size,\
+				(SOCKET)(gssize)x->handle, x->buffer, x->offset, x->size,\
 				 x->socket_flags, &x->error);
 
 static void

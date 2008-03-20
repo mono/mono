@@ -1549,10 +1549,10 @@ mono_arch_peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 void
 mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 {
-	MonoInst *ins, *last_ins = NULL;
+	MonoInst *ins, *n, *last_ins = NULL;
 	ins = bb->code;
 
-	while (ins) {
+	MONO_BB_FOR_EACH_INS_SAFE (bb, n, ins) {
 		switch (ins->opcode) {
 		case OP_MOVE:
 		case OP_FMOVE:
@@ -1562,9 +1562,7 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 			 * OP_MOVE reg, reg 
 			 */
 			if (ins->dreg == ins->sreg1) {
-				if (last_ins)
-					last_ins->next = ins->next;				
-				ins = ins->next;
+				MONO_DELETE_INS (bb, ins);
 				continue;
 			}
 			/* 
@@ -1576,8 +1574,7 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (last_ins && last_ins->opcode == OP_MOVE &&
 			    ins->sreg1 == last_ins->dreg &&
 			    ins->dreg == last_ins->sreg1) {
-				last_ins->next = ins->next;				
-				ins = ins->next;				
+				MONO_DELETE_INS (bb, ins);
 				continue;
 			}
 			break;
@@ -1588,6 +1585,7 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 				if (ins->dreg != ins->sreg1) {
 					ins->opcode = OP_MOVE;
 				} else {
+					MONO_DELETE_INS (bb, ins);
 					continue;
 				}
 			}
@@ -1655,13 +1653,13 @@ opcode_to_ia64_cmp_imm (int opcode, int cmp_opcode)
 void
 mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 {
-	MonoInst *ins, *next, *temp, *temp2, *temp3, *last_ins = NULL;
+	MonoInst *ins, *n, *next, *temp, *temp2, *temp3, *last_ins = NULL;
 	ins = bb->code;
 
 	if (bb->max_vreg > cfg->rs->next_vreg)
 		cfg->rs->next_vreg = bb->max_vreg;
 
-	while (ins) {
+	MONO_BB_FOR_EACH_INS_SAFE (bb, n, ins) {
 		switch (ins->opcode) {
 		case OP_STOREI1_MEMBASE_IMM:
 		case OP_STOREI2_MEMBASE_IMM:

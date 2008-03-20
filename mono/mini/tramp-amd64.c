@@ -69,11 +69,11 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
  * points to the pc right after the call.
  */
 void
-mono_arch_patch_callsite (guint8 *orig_code, guint8 *addr)
+mono_arch_patch_callsite (guint8 *method_start, guint8 *orig_code, guint8 *addr)
 {
 	guint8 *code;
 	guint8 buf [16];
-	gboolean can_write = mono_breakpoint_clean_code (orig_code - 14, buf, sizeof (buf));
+	gboolean can_write = mono_breakpoint_clean_code (method_start, orig_code, 14, buf, sizeof (buf));
 
 	code = buf + 14;
 
@@ -126,6 +126,12 @@ mono_arch_patch_plt_entry (guint8 *code, guint8 *addr)
 void
 mono_arch_nullify_class_init_trampoline (guint8 *code, gssize *regs)
 {
+	guint8 buf [16];
+	gboolean can_write = mono_breakpoint_clean_code (NULL, code, 7, buf, sizeof (buf));
+
+	if (!can_write)
+		return;
+
 	code -= 3;
 
 	/* 
@@ -176,7 +182,7 @@ mono_arch_nullify_class_init_trampoline (guint8 *code, gssize *regs)
 		;
 	} else {
 		printf ("Invalid trampoline sequence: %x %x %x %x %x %x %x\n", code [0], code [1], code [2], code [3],
-				code [4], code [5], code [6]);
+			code [4], code [5], code [6]);
 		g_assert_not_reached ();
 	}
 }
@@ -388,9 +394,10 @@ mono_arch_create_trampoline_code (MonoTrampolineType tramp_type)
 	amd64_mov_reg_membase (code, AMD64_R11, AMD64_RBP, lmf_offset + G_STRUCT_OFFSET (MonoLMF, lmf_addr), 8);
 	amd64_mov_membase_reg (code, AMD64_R11, 0, AMD64_RCX, 8);
 
-	/* Restore argument registers */
+	/* Restore argument registers and r10 (needed to pass rgctx to
+	   static shared generic methods). */
 	for (i = 0; i < AMD64_NREG; ++i)
-		if (AMD64_IS_ARGUMENT_REG (i))
+		if (AMD64_IS_ARGUMENT_REG (i) || i == AMD64_R10)
 			amd64_mov_reg_membase (code, i, AMD64_RBP, saved_regs_offset + (i * 8), 8);
 
 	for (i = 0; i < 8; ++i)

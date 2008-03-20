@@ -1011,14 +1011,10 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 				MonoInst *indir;
 				MONO_INST_NEW (cfg, indir, 0);
 				*indir = *inst;
-<<<<<<< .working
 				if (cfg->new_ir)
 					inst->opcode = OP_VTARG_ADDR;
 				else
 					inst->opcode = OP_SPARC_INARG_VT;
-=======
-				inst->opcode = OP_VTARG_ADDR;
->>>>>>> .merge-right.r96975
 				inst->inst_left = indir;
 			}
 		}
@@ -1272,7 +1268,6 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 	return call;
 }
 
-<<<<<<< .working
 /* FIXME: Remove these later */
 #define NEW_LOAD_MEMBASE(cfg,dest,op,dr,base,offset) do { \
         MONO_INST_NEW ((cfg), (dest), (op)); \
@@ -1623,21 +1618,6 @@ int cond_to_sparc_cond [][3] = {
 	{sparc_bgu,  sparc_bgu,  sparc_fbg}
 };
 
-=======
-int cond_to_sparc_cond [][3] = {
-	{sparc_be,   sparc_be,   sparc_fbe},
-	{sparc_bne,  sparc_bne,  0},
-	{sparc_ble,  sparc_ble,  sparc_fble},
-	{sparc_bge,  sparc_bge,  sparc_fbge},
-	{sparc_bl,   sparc_bl,   sparc_fbl},
-	{sparc_bg,   sparc_bg,   sparc_fbg},
-	{sparc_bleu, sparc_bleu, 0},
-	{sparc_beu,  sparc_beu,  0},
-	{sparc_blu,  sparc_blu,  sparc_fbl},
-	{sparc_bgu,  sparc_bgu,  sparc_fbg}
-};
-
->>>>>>> .merge-right.r96975
 /* Map opcode to the sparc condition codes */
 static inline SparcCond
 opcode_to_sparc_cond (int opcode)
@@ -1863,11 +1843,10 @@ mono_arch_peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 void
 mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 {
-	MonoInst *ins, *last_ins = NULL;
+	MonoInst *ins, *n, *last_ins = NULL;
 	ins = bb->code;
 
-	while (ins) {
-
+	MONO_BB_FOR_EACH_INS_SAFE (bb, n, ins) {
 		switch (ins->opcode) {
 		case OP_MUL_IMM: 
 			/* remove unnecessary multiplication with 1 */
@@ -1875,8 +1854,7 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 				if (ins->dreg != ins->sreg1) {
 					ins->opcode = OP_MOVE;
 				} else {
-					last_ins->next = ins->next;				
-					ins = ins->next;				
+					MONO_DELETE_INS (bb, ins);
 					continue;
 				}
 			}
@@ -1893,8 +1871,7 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 			    ins->inst_basereg == last_ins->inst_destbasereg &&
 			    ins->inst_offset == last_ins->inst_offset) {
 				if (ins->dreg == last_ins->sreg1) {
-					last_ins->next = ins->next;				
-					ins = ins->next;				
+					MONO_DELETE_INS (bb, ins);
 					continue;
 				} else {
 					//static int c = 0; printf ("MATCHX %s %d\n", cfg->method->name,c++);
@@ -1917,8 +1894,7 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 			      ins->inst_offset == last_ins->inst_offset) {
 
 				if (ins->dreg == last_ins->dreg) {
-					last_ins->next = ins->next;				
-					ins = ins->next;				
+					MONO_DELETE_INS (bb, ins);
 					continue;
 				} else {
 					ins->opcode = OP_MOVE;
@@ -1952,8 +1928,7 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 					ins->inst_basereg == last_ins->inst_destbasereg &&
 					ins->inst_offset == last_ins->inst_offset) {
 				if (ins->dreg == last_ins->sreg1) {
-					last_ins->next = ins->next;				
-					ins = ins->next;				
+					MONO_DELETE_INS (bb, ins);
 					continue;
 				} else {
 					//static int c = 0; printf ("MATCHX %s %d\n", cfg->method->name,c++);
@@ -1967,8 +1942,7 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 					ins->inst_basereg == last_ins->inst_destbasereg &&
 					ins->inst_offset == last_ins->inst_offset) {
 				if (ins->dreg == last_ins->sreg1) {
-					last_ins->next = ins->next;				
-					ins = ins->next;				
+					MONO_DELETE_INS (bb, ins);
 					continue;
 				} else {
 					//static int c = 0; printf ("MATCHX %s %d\n", cfg->method->name,c++);
@@ -1992,8 +1966,7 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 				if (sparcv9) {
 					last_ins->opcode = OP_STOREI8_MEMBASE_IMM;
 					last_ins->inst_offset = ins->inst_offset;
-					last_ins->next = ins->next;				
-					ins = ins->next;
+					MONO_DELETE_INS (bb, ins);
 					continue;
 				}
 			}
@@ -2065,8 +2038,7 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 				}
 				ins->sreg1 = last_ins->sreg1;
 				*last_ins = *ins;
-				last_ins->next = next;
-				ins = next;
+				MONO_DELETE_INS (bb, ins);
 				continue;
 			}
 			break;
@@ -2075,9 +2047,7 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 			 * OP_MOVE reg, reg 
 			 */
 			if (ins->dreg == ins->sreg1) {
-				if (last_ins)
-					last_ins->next = ins->next;				
-				ins = ins->next;
+				MONO_DELETE_INS (bb, ins);
 				continue;
 			}
 			/* 
@@ -2087,8 +2057,7 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (last_ins && last_ins->opcode == OP_MOVE &&
 			    ins->sreg1 == last_ins->dreg &&
 			    ins->dreg == last_ins->sreg1) {
-				last_ins->next = ins->next;				
-				ins = ins->next;				
+				MONO_DELETE_INS (bb, ins);
 				continue;
 			}
 			break;

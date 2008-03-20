@@ -35,6 +35,16 @@ For comments, corrections and updates, please contact mono@novell.com
 	embedded systems, static linking or commercial settings where
 	the LGPL can not be used.
 
+	We consider non-LGPL use instances where you use this on an
+	embedded system where the end user is not able to upgrade the
+	Moonlight installation or distribution that is part of your
+	product (Section 6 and 7), you would have to obtain a
+	commercial license from Novell (consider software burned into
+	a ROM, systems where end users would not be able to upgrade,
+	an embedded console, a game console that imposes limitations
+	on the distribution and access to the code, a phone platform
+	that prevents end users from upgrading Moonlight).
+	
 	Contact mono@novell.com for details on obtaining the Mono
 	runtime under other terms.
 

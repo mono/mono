@@ -1033,6 +1033,12 @@ typedef struct {
 	MonoArray *modopts;
 } MonoReflectionSigHelper;
 
+typedef struct {
+	MonoObject object;
+	MonoReflectionGenericClass *inst;
+	MonoReflectionFieldBuilder *fb;
+} MonoReflectionFieldOnTypeBuilderInst;
+
 enum {
 	RESOURCE_LOCATION_EMBEDDED = 1,
 	RESOURCE_LOCATION_ANOTHER_ASSEMBLY = 2,
@@ -1068,6 +1074,7 @@ guint32       mono_image_create_token  (MonoDynamicImage *assembly, MonoObject *
 guint32       mono_image_create_method_token (MonoDynamicImage *assembly, MonoObject *obj, MonoArray *opt_param_types) MONO_INTERNAL;
 void          mono_image_module_basic_init (MonoReflectionModuleBuilder *module) MONO_INTERNAL;
 void          mono_image_register_token (MonoDynamicImage *assembly, guint32 token, MonoObject *obj) MONO_INTERNAL;
+void          mono_dynamic_image_free (MonoDynamicImage *image) MONO_INTERNAL;
 
 void        mono_reflection_setup_internal_class  (MonoReflectionTypeBuilder *tb) MONO_INTERNAL;
 

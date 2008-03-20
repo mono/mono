@@ -2206,9 +2206,9 @@ store_membase_imm_to_store_membase_reg (int opcode)
 void
 mono_arch_peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 {
-	MonoInst *ins, *next, *last_ins = NULL;
+	MonoInst *ins, *n, *last_ins = NULL;
 
-	MONO_BB_FOR_EACH_INS_SAFE (bb, next, ins) {
+	MONO_BB_FOR_EACH_INS_SAFE (bb, n, ins) {
 		switch (ins->opcode) {
 		case OP_ADD_IMM:
 		case OP_IADD_IMM:
@@ -2437,9 +2437,9 @@ mono_arch_peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 void
 mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 {
-	MonoInst *ins, *next, *last_ins = NULL;
+	MonoInst *ins, *n, *last_ins = NULL;
 
-	MONO_BB_FOR_EACH_INS_SAFE (bb, next, ins) {
+	MONO_BB_FOR_EACH_INS_SAFE (bb, n, ins) {
 		switch (ins->opcode) {
 		case OP_ICONST:
 		case OP_I8CONST: {
@@ -2672,8 +2672,8 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 	}
 }
 
-#define NEW_INS(cfg,dest,op) do {	\
-        MONO_INST_NEW ((cfg), (dest), (op)); \
+#define NEW_INS(cfg,ins,dest,op) do {	\
+		MONO_INST_NEW ((cfg), (dest), (op)); \
         mono_bblock_insert_before_ins (bb, ins, (dest)); \
 	} while (0)
 
@@ -2686,7 +2686,7 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 void
 mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 {
-	MonoInst *ins, *next, *temp;
+	MonoInst *ins, *n, *temp;
 
 	if (bb->max_vreg > cfg->rs->next_vreg)
 		cfg->rs->next_vreg = bb->max_vreg;
@@ -2696,7 +2696,7 @@ mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 	 * description can't model some parts of the composite instructions like
 	 * cdq.
 	 */
-	MONO_BB_FOR_EACH_INS_SAFE (bb, next, ins) {
+	MONO_BB_FOR_EACH_INS_SAFE (bb, n, ins) {
 		switch (ins->opcode) {
 		case OP_DIV_IMM:
 		case OP_REM_IMM:
@@ -2704,7 +2704,7 @@ mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_IREM_IMM:
 		case OP_IDIV_UN_IMM:
 		case OP_IREM_UN_IMM:
-			NEW_INS (cfg, temp, OP_ICONST);
+			NEW_INS (cfg, ins, temp, OP_ICONST);
 			temp->inst_c0 = ins->inst_imm;
 			if (cfg->globalra)
 				temp->dreg = mono_alloc_ireg (cfg);
@@ -2716,7 +2716,7 @@ mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_COMPARE_IMM:
 		case OP_LCOMPARE_IMM:
 			if (!amd64_is_imm32 (ins->inst_imm)) {
-				NEW_INS (cfg, temp, OP_I8CONST);
+				NEW_INS (cfg, ins, temp, OP_I8CONST);
 				temp->inst_c0 = ins->inst_imm;
 				if (cfg->globalra)
 					temp->dreg = mono_alloc_ireg (cfg);
@@ -2729,7 +2729,7 @@ mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_LOAD_MEMBASE:
 		case OP_LOADI8_MEMBASE:
 			if (!amd64_is_imm32 (ins->inst_offset)) {
-				NEW_INS (cfg, temp, OP_I8CONST);
+				NEW_INS (cfg, ins, temp, OP_I8CONST);
 				temp->inst_c0 = ins->inst_offset;
 				if (cfg->globalra)
 					temp->dreg = mono_alloc_ireg (cfg);
@@ -2742,7 +2742,7 @@ mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_STORE_MEMBASE_IMM:
 		case OP_STOREI8_MEMBASE_IMM:
 			if (!amd64_is_imm32 (ins->inst_imm)) {
-				NEW_INS (cfg, temp, OP_I8CONST);
+				NEW_INS (cfg, ins, temp, OP_I8CONST);
 				temp->inst_c0 = ins->inst_imm;
 				if (cfg->globalra)
 					temp->dreg = mono_alloc_ireg (cfg);
@@ -5200,9 +5200,11 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	 * - push rbp, mov rbp, rsp
 	 * - save callee saved regs using pushes
 	 * - allocate frame
+	 * - save rgctx if needed
 	 * - save lmf if needed
 	 * FP not present:
 	 * - allocate frame
+	 * - save rgctx if needed
 	 * - save lmf if needed
 	 * - save callee saved regs using moves
 	 */
@@ -5304,6 +5306,14 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 				save_area_offset += 8;
 				async_exc_point (code);
 			}
+	}
+
+	/* store runtime generic context */
+	if (cfg->rgctx_var) {
+		g_assert (cfg->rgctx_var->opcode == OP_REGOFFSET &&
+				(cfg->rgctx_var->inst_basereg == AMD64_RBP || cfg->rgctx_var->inst_basereg == AMD64_RSP));
+
+		amd64_mov_membase_reg (code, cfg->rgctx_var->inst_basereg, cfg->rgctx_var->inst_offset, MONO_ARCH_RGCTX_REG, 8);
 	}
 
 	/* compute max_offset in order to use short forward jumps */
@@ -6178,12 +6188,33 @@ mono_arch_get_patch_offset (guint8 *code)
 	return 3;
 }
 
+/**
+ * mono_breakpoint_clean_code:
+ *
+ * Copy @size bytes from @code - @offset to the buffer @buf. If the debugger inserted software
+ * breakpoints in the original code, they are removed in the copy.
+ *
+ * Returns TRUE if no sw breakpoint was present.
+ */
 gboolean
-mono_breakpoint_clean_code (guint8 *code, guint8 *buf, int size)
+mono_breakpoint_clean_code (guint8 *method_start, guint8 *code, int offset, guint8 *buf, int size)
 {
 	int i;
 	gboolean can_write = TRUE;
-	memcpy (buf, code, size);
+	/*
+	 * If method_start is non-NULL we need to perform bound checks, since we access memory
+	 * at code - offset we could go before the start of the method and end up in a different
+	 * page of memory that is not mapped or read incorrect data anyway. We zero-fill the bytes
+	 * instead.
+	 */
+	if (!method_start || code - offset >= method_start) {
+		memcpy (buf, code - offset, size);
+	} else {
+		int diff = code - method_start;
+		memset (buf, 0, size);
+		memcpy (buf + offset - diff, method_start, diff + size - offset);
+	}
+	code -= offset;
 	for (i = 0; i < MONO_BREAKPOINT_ARRAY_SIZE; ++i) {
 		int idx = mono_breakpoint_info_index [i];
 		guint8 *ptr;
@@ -6208,8 +6239,8 @@ mono_arch_get_vcall_slot (guint8 *code, gpointer *regs, int *displacement)
 	gint32 disp;
 	guint8 rex = 0;
 
-	mono_breakpoint_clean_code (code - 10, buf, sizeof (buf));
-	code = buf + 10;
+	mono_breakpoint_clean_code (NULL, code, 9, buf, sizeof (buf));
+	code = buf + 9;
 
 	*displacement = 0;
 
@@ -6689,6 +6720,12 @@ mono_arch_emit_imt_argument (MonoCompile *cfg, MonoCallInst *call)
 	/* Done by the implementation of the CALL_MEMBASE opcodes */
 }
 #endif
+
+MonoRuntimeGenericContext*
+mono_arch_find_static_call_rgctx (gpointer *regs, guint8 *code)
+{
+	return (MonoRuntimeGenericContext*) regs [MONO_ARCH_RGCTX_REG];
+}
 
 MonoInst*
 mono_arch_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)

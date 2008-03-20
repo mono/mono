@@ -1,3 +1,46 @@
+2008-03-20  Mark Probst  <mark.probst@gmail.com>
+
+	* generics-sharing.2.cs: Test cases for ldtoken.
+
+2008-03-19  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* bug-340662_bug.cs: Added. Regression test for the bug.
+
+	* Makefile.am: Added the new test.
+
+2008-03-18  Mark Probst  <mark.probst@gmail.com>
+
+	* generics-sharing-other-exc.2.il: Test case for catching
+	exceptions not derived from System.Exception specified by a type
+	variable.
+
+	* Makefile.am: Added the new test.
+
+2008-03-18  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-initobj.2.cs: Test case for initobj in generic code.
+
+	* Makefile.am: Added the new test.
+
+2008-03-17  Mark Probst  <mark.probst@gmail.com>
+
+	* shared-generic-methods.2.cs: Test case for calls from shared
+	code to generic methods.
+
+	* Makefile.am: Added the new test.
+
+2008-03-14  Mark Probst  <mark.probst@gmail.com>
+
+	* generics-sharing.2.cs: New tests for static methods.
+
+	* generic-inlining.2.cs: Added.  Tests generic method inlining.
+
+	* shared-generic-synchronized.2.cs: Added.  Tests shared
+	synchronized methods.
+
+	* Makefile.am: Added the new tests.  New target for running the
+	generic code sharing with the optimization enabled.
+
 2008-03-04  Mark Probst  <mark.probst@gmail.com>
 
 	* generics-sharing.2.c: Added test for open catch clauses in

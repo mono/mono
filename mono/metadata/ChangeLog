@@ -1,4 +1,310 @@
+<<<<<<< .working
+=======
+2008-03-20  Kornél Pál  <kornelpal@gmail.com>
 
+	* file-io.c, filewatcher.c, threadpool.c, threads.c: Removed Windows
+	version macros.
+
+2008-03-20  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-sharing.c, class-internals.h: Code for putting
+	reflection types into the runtime generic context.
+
+2008-03-19 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* icall.c (ves_icall_get_method_info): Return correct values for the call convention.
+	Fixes #340662. 
+
+
+2008-03-17 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (VerifyContext): Added instruction prefix data to the struct.
+
+	* verify.c (is_compatible_boxed_valuetype): Don't check if the type is a valuetype, been boxed is enough.
+
+	* verify.c (do_invoke): Support constrained callvirt form. Grouped similar checks together.
+
+	* verify.c (do_cast): Let the result value keep the boxed status.
+
+	* verify.c (mono_method_verify): Add proper support for prefixed and implement contrained.
+
+2008-03-17  Jb Evain  <jbevain@novell.com>
+
+	* reflection.c: when running on a 2.0 runtime, emit
+	unconditionally the #~ header version as 2.0, and the
+	CLI header version as 2.5, for symmetry's sake with csc.
+
+2008-03-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c: Remove the unused cache_interface_offsets stuff.
+
+	* class.c loader.c domain.c verify.c metadata.c debug-helpers.c threadpool.c
+	profiler.c: Fix warnings.
+
+2008-03-16  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-sharing.c, class-internals.h: Support for putting
+	methods into the runtime generic context.
+
+2008-03-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_setup_fields): Ignore calls made to this function for
+	classes which are generic instances of not-yet finished typebuilders. Fixes
+	#351172.
+
+	* reflection.c (fixup_method): Add support for FieldOnTypeBuilderInst.
+
+2008-03-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* metadata-internals.h (MonoDynamicImage): Add 'generic_def_objects' hash table.
+
+	* class-internals.h (MonoMethodInflated): Remove the rarely used reflection_info
+	field, replace it with a hash table in MonoDynamicImage.
+
+	* reflection.c (inflate_mono_method): Access the generic definition object from
+	image->generic_def_objects instead of imethod->reflection_info.
+
+	* reflection.c (mono_reflection_bind_generic_method_parameters): Ditto.	
+
+	* icall.c (ves_icall_MonoMethod_GetGenericMethodDefinition): Ditto.
+	
+	* image.c (mono_image_close): Move the dynamic image freeing code to a separate
+	function in reflection.c so it is easier to keep in sync with the dynamic image
+	creation code.
+
+	* reflection.c (mono_dynamic_image_free): New internal function, extracted from
+	mono_image_close ().
+
+2008-03-15  Mark Probst  <mark.probst@gmail.com>
+
+	* class.c (mono_class_generic_sharing_enabled): Disable generic
+	sharing for all architectures except AMD64 and x86 to fix build.
+
+2008-03-14 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Use the generic definition MonoGenericContext when available.
+	Remove code for checking generics instance compatibility in favor of
+	mono_class_is_assignable_from.
+
+2008-03-14  Mark Probst  <mark.probst@gmail.com>
+
+	* marshal.c, marshal.h, metadata-internals.h, image.c,
+	wrapper-types.h: New wrapper for invoking a shared static method
+	without having to pass the runtime generic context argument.
+
+2008-03-14 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* icall-def.h: Add missing function PerformanceCounterCategory::GetInstanceNames.
+
+2008-03-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (mono_image_get_field_on_inst_token): Add caching.
+	
+	* reflection.c (mono_image_get_field_on_inst_token): New helper function to
+	create a token from a FieldOnTypeBuilderInst.
+	(mono_image_create_token): Handle FieldOnTypeBuilderInst.
+	(resolve_object): Ditto.
+
+	* object-internals.h (MonoReflectionFieldOnTypeBuilderInst): New structure
+	mirroring System.Reflection.Emit.FieldOnTypeBuilderInst.
+
+2008-03-14  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h (MONO_DEBUGGER_VERSION): Bump to 68.
+
+	* debug-mono-symfile.h
+	(MONO_SYMBOL_FILE_VERSION): Bump to 41.
+	(MONO_SYMBOL_FILE_COMPATIBILITY_VERSION): New #define.
+
+2008-03-10  Martin Baulig  <martin@ximian.com>
+
+	* debug-mono-symfile.h
+	(MonoSymbolFileMethodAddress): Removed `num_lexical_blocks' and
+	`lexical_block_table_offset'.
+	(MonoDebugMethodInfo): Removed `num_lexical_blocks' and
+	`lexical_blocks'.
+	(MonoSymbolFile): Added `version'.
+
+	* mono-debug.h
+	(MonoDebugLexicalBlockEntry): Removed.
+	(MonoDebugMethodJitInfo): Removed `num_lexical_blocks' and
+	`lexical_blocks'.
+
+	* mono-debug.c (mono_debug_add_method): Don't compute lexical
+	blocks here; the debugger now does this internally.
+
+2008-02-27  Martin Baulig  <martin@ximian.com>
+
+	* object.c (mono_runtime_exec_main): Call
+	`mono_debugger_event (MONO_DEBUGGER_EVENT_REACHED_MAIN)' and
+	`mono_debugger_event (MONO_DEBUGGER_EVENT_MAIN_EXITED)' here.
+
+2008-03-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (verify_type_compatibility_full): Allow native int to be converted
+	to native pointer in non-strict mode. Required to "(IntPtr)null" work.
+
+2008-03-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (verify_ldftn_delegate): Accept a sealed type when using
+	ldftn with a virtual method.
+
+2008-03-13  Geoff Norton  <gnorton@novell.com>
+
+	* decimal.c:  Only include memory.h if the platform has it.
+
+Wed Mar 12 12:11:06 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* assembly.c, class.c, metadata-internals.h: make sure public key
+	tokesns are compared in a case-insensitive way. Also, all
+	the lookups in the GAC use a lowercase public key token
+	(gaacutil already does the lowercasing on install). Fixes
+	bug #369541.
+
+2008-03-11 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_delegate_signature_equal): Do proper variance check on arguments
+	and return value.
+
+Tue Mar 11 17:41:38 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* image.c: when someone loads a mscorlib from a file, return the
+	currently loaded mscorlib (fixes bug #369253).
+
+Tue Mar 11 16:47:32 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: handle types with no parents by forcing them to have
+	System.Object as a parent and marking them as broken (this currently
+	allows the first part of bug #369173 to work as well, likely because
+	we don't check for typeload exceptions everywhere yet).
+
+Tue Mar 11 15:23:54 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: more complete check that types belong to corlib
+	(fixes second part of bug #369173).
+
+2007-03-10  Bill Holmes  <billholmes54@gmail.com>
+
+	* generic-sharing.c:  Including glib.h for the MSVC builds to define
+	  "inline" to "__inline" before including mono-membar.h.
+	  
+	* mono-perfcounters.c:  Adding HAVE_SYS_TIME_H check for MSVC builds.
+	  Rename "Unknown" to "CatTypeUnknown" to avoid name collisions for 
+	  MSVC builds.
+
+	Contributed under MIT/X11 license.
+
+2008-03-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (do_invoke_method): Remove return type validation.
+
+	* verify.c (do_ret): Do return type validation at return site instead of
+	call site.
+
+2008-03-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (do_invoke_method): Mark callvirt to static methods unverifiable.
+
+	* verify.c: Some todos cleaned and improved a few error messages.
+
+2008-03-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_setup_mono_type): Improve the test for corlib.
+
+2008-03-07  Zoltan Varga  <vargaz@gmail.com>
+>>>>>>> .merge-right.r98671
+
+<<<<<<< .working
+=======
+	* class.c (mono_class_setup_mono_type): Handle types whose name clashes with
+	system types correctly.
+
+	* exception.h exception.c (mono_exception_from_token_two_strings): New helper
+	function.
+
+2008-03-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* assembly.c (build_assembly_name): Fix a warning.
+
+Thu Mar 6 19:43:41 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: ldfld_remote and stfld_remote needs just one wrapper as
+	the called function takes an object type argument. Fixes storing or
+	valuetypes across remoting as well as reducing memory usage.
+	* image.c, metadata-internals.h: remove now unused ldfld_remote and
+	stfld_remote wrapper caches.
+
+2008-03-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (mono_lookup_internal_call): Update the exception message when an icall
+	is not found.
+
+	* reflection.c (mono_image_register_token): New helper function to save
+	a token->object mapping.	
+
+	* icall.c (ves_icall_ModuleBuilder_RegisterToken): New icall to access it from
+	managed code.
+
+	* reflection.c (_mono_reflection_parse_type): Distinguish between vectors and
+	one dimension arrays. Fixes #367670.
+	(mono_reflection_get_type_internal): Ditto.
+
+Tue Mar 4 19:04:02 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: mono_load_remote_field_new() always returns object.
+	so use the proper signature (fixes bug #366445).
+
+2008-03-04  Zoltan Varga  <vargaz@gmail.com>
+	
+	* class-internals.h (MonoMethod): Remove unused uses_this flag, 
+	add an 'inline_failure' flag instead.
+
+2008-03-04  Mark Probst  <mark.probst@gmail.com>
+
+	* domain-internals.h, domain.c: Replaced MonoGenericSharingContext
+	with a new structure, MonoGenericJitInfo, in the MonoJitInfo.  It
+	contains the location of "this", used for exception handling.
+
+2008-03-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_layout_fields): Set the min alignment of small structs to
+	their size on all platforms for perf reasons.
+
+2008-03-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.h: Move mono_reflection_is_valid_dynamic_token to
+	object-internal.h
+
+	* object-internal.h: Same.
+
+2008-03-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.h: Fix the build I just broke.
+
+2008-03-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (mono_reflection_is_valid_dynamic_token): New function,
+	Test if a token is valid, this remove explicit usage of 
+	MonoDynamicImage::tokens from the verifier code.
+
+	* reflection.h: Added mono_reflection_is_valid_dynamic_token.
+
+	* verify.c (token_bounds_check): Use mono_reflection_is_valid_dynamic_token
+	instead of direct access to MonoDynamicImage::tokens.
+
+2008-03-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (token_bounds_check): Fix the build I just broke.
+
+2008-03-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (token_bounds_check): Fix bounds check for dynamic images.
+
+	* verify.c (verifier_load_method): Fixed the errors message.
+
+	* verify.c (mono_method_verify): Fixed a debug message.
+
+>>>>>>> .merge-right.r98671
 Thu Feb 28 19:49:45 CET 2008 Paolo Molaro <lupus@ximian.com>
 
 	* icall-def.h, domain.c, mono-perfcounters-def.h, mono-perfcounters.c,

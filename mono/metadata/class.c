@@ -121,7 +121,7 @@ mono_class_from_typeref (MonoImage *image, guint32 type_token)
 				i = mono_metadata_nesting_typedef (enclosing->image, enclosing->type_token, i + 1);
 			}
 		}
-		g_warning ("TypeRef ResolutionScope not yet handled (%d)", idx);
+		g_warning ("TypeRef ResolutionScope not yet handled (%d) for %s.%s in image %s", idx, nspace, name, image->name);
 		return NULL;
 	}
 	case MONO_RESOLTION_SCOPE_ASSEMBLYREF:
@@ -816,6 +816,16 @@ mono_class_setup_fields (MonoClass *class)
 
 	if (class->size_inited)
 		return;
+
+	if (class->generic_class && class->generic_class->container_class->image->dynamic && !class->generic_class->container_class->wastypebuilder) {
+		/*
+		 * This happens when a generic instance of an unfinished generic typebuilder
+		 * is used as an element type for creating an array type. We can't initialize
+		 * the fields of this class using the fields of gklass, since gklass is not
+		 * finished yet, fields could be added to it later.
+		 */
+		return;
+	}
 
 	if (class->generic_class) {
 		MonoClass *gklass = class->generic_class->container_class;
@@ -1670,73 +1680,6 @@ mono_class_get_implemented_interfaces (MonoClass *klass)
 
 	collect_implemented_interfaces_aux (klass, &res);
 	return res;
-}
-
-typedef struct _IOffsetInfo IOffsetInfo;
-struct _IOffsetInfo {
-	IOffsetInfo *next;
-	int size;
-	int next_free;
-	int data [MONO_ZERO_LEN_ARRAY];
-};
-
-static IOffsetInfo *cached_offset_info = NULL;
-static int next_offset_info_size = 128;
-
-static int*
-cache_interface_offsets (int max_iid, int *data)
-{
-	IOffsetInfo *cached_info;
-	int *cached;
-	int new_size;
-	for (cached_info = cached_offset_info; cached_info; cached_info = cached_info->next) {
-		cached = cached_info->data;
-		while (cached < cached_info->data + cached_info->size && *cached) {
-			if (*cached == max_iid) {
-				int i, matched = TRUE;
-				cached++;
-				for (i = 0; i < max_iid; ++i) {
-					if (cached [i] != data [i]) {
-						matched = FALSE;
-						break;
-					}
-				}
-				if (matched)
-					return cached;
-				cached += max_iid;
-			} else {
-				cached += *cached + 1;
-			}
-		}
-	}
-	/* find a free slot */
-	for (cached_info = cached_offset_info; cached_info; cached_info = cached_info->next) {
-		if (cached_info->size - cached_info->next_free >= max_iid + 1) {
-			cached = &cached_info->data [cached_info->next_free];
-			*cached++ = max_iid;
-			memcpy (cached, data, max_iid * sizeof (int));
-			cached_info->next_free += max_iid + 1;
-			return cached;
-		}
-	}
-	/* allocate a new chunk */
-	if (max_iid + 1 < next_offset_info_size) {
-		new_size = next_offset_info_size;
-		if (next_offset_info_size < 4096)
-			next_offset_info_size += next_offset_info_size >> 2;
-	} else {
-		new_size = max_iid + 1;
-	}
-	cached_info = g_malloc0 (sizeof (IOffsetInfo) + sizeof (int) * new_size);
-	cached_info->size = new_size;
-	/*g_print ("allocated %d offset entries at %p (total: %d)\n", new_size, cached_info->data, offset_info_total_size);*/
-	cached = &cached_info->data [0];
-	*cached++ = max_iid;
-	memcpy (cached, data, max_iid * sizeof (int));
-	cached_info->next_free += max_iid + 1;
-	cached_info->next = cached_offset_info;
-	cached_offset_info = cached_info;
-	return cached;
 }
 
 static int
@@ -3637,6 +3580,16 @@ mono_class_init (MonoClass *class)
 	return class_init_ok;
 }
 
+static gboolean
+is_corlib_image (MonoImage *image)
+{
+	/* FIXME: allow the dynamic case for our compilers and with full trust */
+	if (image->dynamic)
+		return image->assembly && !strcmp (image->assembly->aname.name, "mscorlib");
+	else
+		return image == mono_defaults.corlib;
+}
+
 /*
  * LOCKING: this assumes the loader lock is held
  */
@@ -3645,6 +3598,7 @@ mono_class_setup_mono_type (MonoClass *class)
 {
 	const char *name = class->name;
 	const char *nspace = class->name_space;
+	gboolean is_corlib = is_corlib_image (class->image);
 
 	class->this_arg.byref = 1;
 	class->this_arg.data.klass = class;
@@ -3652,7 +3606,7 @@ mono_class_setup_mono_type (MonoClass *class)
 	class->byval_arg.data.klass = class;
 	class->byval_arg.type = MONO_TYPE_CLASS;
 
-	if (!strcmp (nspace, "System")) {
+	if (is_corlib && !strcmp (nspace, "System")) {
 		if (!strcmp (name, "ValueType")) {
 			/*
 			 * do not set the valuetype bit for System.ValueType.
@@ -3674,10 +3628,11 @@ mono_class_setup_mono_type (MonoClass *class)
 			class->this_arg.type = class->byval_arg.type = MONO_TYPE_TYPEDBYREF;
 		}
 	}
-	
+
 	if (class->valuetype) {
 		int t = MONO_TYPE_VALUETYPE;
-		if (!strcmp (nspace, "System")) {
+
+		if (is_corlib && !strcmp (nspace, "System")) {
 			switch (*name) {
 			case 'B':
 				if (!strcmp (name, "Boolean")) {
@@ -3767,8 +3722,9 @@ void
 mono_class_setup_parent (MonoClass *class, MonoClass *parent)
 {
 	gboolean system_namespace;
+	gboolean is_corlib = is_corlib_image (class->image);
 
-	system_namespace = !strcmp (class->name_space, "System");
+	system_namespace = !strcmp (class->name_space, "System") && is_corlib;
 
 	/* if root of the hierarchy */
 	if (system_namespace && !strcmp (class->name, "Object")) {
@@ -3789,11 +3745,13 @@ mono_class_setup_parent (MonoClass *class, MonoClass *parent)
 			if (parent == mono_defaults.object_class)
 				parent = mono_defaults.com_object_class;
 		}
+		if (!parent) {
+			/* set the parent to something useful and safe, but mark the type as broken */
+			parent = mono_defaults.object_class;
+			mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, NULL);
+		}
+
 		class->parent = parent;
-
-
-		if (!parent)
-			g_assert_not_reached (); /* FIXME */
 
 		if (parent->generic_class && !parent->name) {
 			/*
@@ -3823,10 +3781,10 @@ mono_class_setup_parent (MonoClass *class, MonoClass *parent)
 				class->delegate  = 1;
 		}
 
-		if (class->parent->enumtype || ((strcmp (class->parent->name, "ValueType") == 0) && 
+		if (class->parent->enumtype || (is_corlib_image (class->parent->image) && (strcmp (class->parent->name, "ValueType") == 0) && 
 						(strcmp (class->parent->name_space, "System") == 0)))
 			class->valuetype = 1;
-		if (((strcmp (class->parent->name, "Enum") == 0) && (strcmp (class->parent->name_space, "System") == 0))) {
+		if (is_corlib_image (class->parent->image) && ((strcmp (class->parent->name, "Enum") == 0) && (strcmp (class->parent->name_space, "System") == 0))) {
 			class->valuetype = class->enumtype = 1;
 		}
 		/*class->enumtype = class->parent->enumtype; */
@@ -6584,17 +6542,8 @@ mono_classes_init (void)
 void
 mono_classes_cleanup (void)
 {
-	IOffsetInfo *cached_info, *next;
-
 	if (global_interface_bitset)
 		mono_bitset_free (global_interface_bitset);
-
-	for (cached_info = cached_offset_info; cached_info;) {
-		next = cached_info->next;
-
-		g_free (cached_info);
-		cached_info = next;
-	}
 }
 
 /**
@@ -6697,7 +6646,7 @@ can_access_internals (MonoAssembly *accessing, MonoAssembly* accessed)
 		if (friend->public_key_token [0]) {
 			if (!accessing->aname.public_key_token [0])
 				continue;
-			if (strcmp ((char*)friend->public_key_token, (char*)accessing->aname.public_key_token))
+			if (!mono_public_tokens_are_equal (friend->public_key_token, accessing->aname.public_key_token))
 				continue;
 		}
 		return TRUE;
@@ -6900,7 +6849,11 @@ mono_generic_class_is_generic_type_definition (MonoGenericClass *gklass)
 gboolean
 mono_class_generic_sharing_enabled (MonoClass *class)
 {
+#if defined(__i386__) || defined(__x86_64__)
 	static int generic_sharing = MONO_GENERIC_SHARING_CORLIB;
+#else
+	static int generic_sharing = MONO_GENERIC_SHARING_NONE;
+#endif
 	static gboolean inited = FALSE;
 
 	if (!inited) {

@@ -169,7 +169,8 @@ running a 1.1 program on a 2.0 version:
 .TP
 .I "--security", "--security=mode"
 Activate the security manager, a currently experimental feature in
-Mono and it is OFF by default.  
+Mono and it is OFF by default. The new code verifier can be enabled
+with this option as well.
 .RS
 .ne 8
 .PP
@@ -187,6 +188,20 @@ Enables the core-clr security system, typically used for
 Moonlight/Silverlight applications.  It provides a much simpler
 security system than CAS, see http://www.mono-project.com/Moonlight
 for more details and links to the descriptions of this new system. 
+.TP
+.I validil
+Enables the new verifier and performs basic verification for code
+validity.  In this mode, unsafe code and P/Invoke are allowed. This
+mode provides a better safety guarantee but it is still possible
+for managed code to crash Mono. 
+.TP
+.I verifiable
+Enables the new verifier and performs full verification of the code
+being executed.  It only allows verifiable code to be executed.
+Unsafe code is not allowed but P/Invoke is.  This mode should
+not allow managed code to crash mono.  The verification is not as
+strict as ECMA 335 standard in order to stay compatible with the MS
+runtime.
 .ne
 .RE
 .TP

@@ -132,6 +132,7 @@ struct MonoLMF {
 typedef struct ucontext MonoContext;
 
 typedef struct MonoCompileArch {
+	gboolean omit_fp, omit_fp_computed;
 } MonoCompileArch;
 
 typedef struct

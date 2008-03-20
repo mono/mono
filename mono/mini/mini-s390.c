@@ -2774,7 +2774,12 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 {
 	MonoInst *ins, *next, *last_ins = NULL;
 
+<<<<<<< .working
 	MONO_BB_FOR_EACH_INS_SAFE (bb, next, ins) {
+=======
+	MONO_BB_FOR_EACH_INS_SAFE (bb, n, ins) {
+		MonoInst *last_ins = mono_inst_list_prev (&ins->node, &bb->ins_list);
+>>>>>>> .merge-right.r98671
 		switch (ins->opcode) {
 		case OP_MUL_IMM: 
 			/* remove unnecessary multiplication with 1 */
