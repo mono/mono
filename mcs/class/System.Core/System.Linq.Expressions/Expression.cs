@@ -81,13 +81,18 @@ namespace System.Linq.Expressions {
 				if (parameters.Length != 1)
 					continue;
 
-				if (!parameters [0].ParameterType.IsAssignableFrom (expression.Type))
+				if (!IsAssignableToParameterType (expression.Type, parameters [0]))
 					continue;
 
 				return method;
 			}
 
 			return null;
+		}
+
+		static bool IsAssignableToParameterType (Type type, ParameterInfo param)
+		{
+			return GetNotNullableOf (type).IsAssignableTo (param.ParameterType);
 		}
 
 		static MethodInfo UnaryCoreCheck (string oper_name, Expression expression, MethodInfo method)
@@ -107,7 +112,7 @@ namespace System.Linq.Expressions {
 				if (parameters.Length != 1)
 					throw new ArgumentException ("Must have only one parameters", "method");
 
-				if (!parameters [0].ParameterType.IsAssignableFrom (expression.Type))
+				if (!IsAssignableToParameterType (expression.Type, parameters [0]))
 					throw new InvalidOperationException ("left-side argument type does not match left expression type");
 
 				return method;
@@ -130,22 +135,22 @@ namespace System.Linq.Expressions {
 		{
 			MethodInfo [] methods = on_type.GetMethods (PublicStatic);
 
-			foreach (MethodInfo m in methods) {
-				if (m.Name != oper_name)
+			foreach (var method in methods) {
+				if (method.Name != oper_name)
 					continue;
 
-				ParameterInfo [] pi = m.GetParameters ();
-				if (pi.Length != 2)
+				var parameters = method.GetParameters ();
+				if (parameters.Length != 2)
 					continue;
 
-				if (!pi [0].ParameterType.IsAssignableFrom (left.Type))
+				if (!IsAssignableToParameterType (left.Type, parameters [0]))
 					continue;
 
-				if (!pi [1].ParameterType.IsAssignableFrom (right.Type))
+				if (!IsAssignableToParameterType (right.Type, parameters [1]))
 					continue;
 
 				// Method has papers in order.
-				return m;
+				return method;
 			}
 
 			return null;
@@ -168,15 +173,16 @@ namespace System.Linq.Expressions {
 
 				if (!method.IsStatic)
 					throw new ArgumentException ("Method must be static", "method");
-				ParameterInfo [] pi = method.GetParameters ();
 
-				if (pi.Length != 2)
+				var parameters = method.GetParameters ();
+
+				if (parameters.Length != 2)
 					throw new ArgumentException ("Must have only two parameters", "method");
 
-				if (!pi [0].ParameterType.IsAssignableFrom (GetNotNullableOf (left.Type)))
+				if (!IsAssignableToParameterType (left.Type, parameters [0]))
 					throw new InvalidOperationException ("left-side argument type does not match left expression type");
 
-				if (!pi [1].ParameterType.IsAssignableFrom (GetNotNullableOf (right.Type)))
+				if (!IsAssignableToParameterType (right.Type, parameters [1]))
 					throw new InvalidOperationException ("right-side argument type does not match right expression type");
 
 				return method;
@@ -199,14 +205,14 @@ namespace System.Linq.Expressions {
 						return null;
 
 					if (oper_name != null){
-						method = GetBinaryOperator (oper_name, rtype, left, right);
+						method = GetBinaryOperator (oper_name, urtype, left, right);
 						if (method != null)
 							return method;
 					}
 				}
 
 				if (oper_name != null){
-					method = GetBinaryOperator (oper_name, ltype, left, right);
+					method = GetBinaryOperator (oper_name, ultype, left, right);
 					if (method != null)
 						return method;
 				}
@@ -696,20 +702,19 @@ namespace System.Linq.Expressions {
 
 			Type result = null;
 
-			if (IsNullable (left.Type)){
+			if (IsNullable (left.Type)) {
 				Type lbase = GetNullableOf (left.Type);
 
-				if (!IsNullable (right.Type) && lbase.IsAssignableFrom (right.Type))
+				if (!IsNullable (right.Type) && right.Type.IsAssignableTo (lbase))
 					result = lbase;
 			}
 
-			if (result == null && left.Type.IsAssignableFrom (right.Type))
+			if (result == null && right.Type.IsAssignableTo (left.Type))
 				result = left.Type;
 
-			if (result == null){
-				if (IsNullable (left.Type) && right.Type.IsAssignableFrom (GetNullableOf (left.Type))){
+			if (result == null) {
+				if (IsNullable (left.Type) && GetNullableOf (left.Type).IsAssignableTo (right.Type))
 					result = right.Type;
-				}
 			}
 
 			if (result == null)
@@ -845,7 +850,7 @@ namespace System.Linq.Expressions {
 			if (type == null)
 				throw new ArgumentException ("member");
 
-			if (!type.IsAssignableFrom (expression.Type))
+			if (!expression.Type.IsAssignableTo (type))
 				throw new ArgumentException ("member");
 
 			return new MemberAssignment (member, expression);
@@ -866,7 +871,7 @@ namespace System.Linq.Expressions {
 			if (setter == null)
 				throw new ArgumentException ("setter");
 
-			if (!prop.PropertyType.IsAssignableFrom (expression.Type))
+			if (!expression.Type.IsAssignableTo (prop.PropertyType))
 				throw new ArgumentException ("member");
 
 			return new MemberAssignment (prop, expression);
@@ -893,7 +898,7 @@ namespace System.Linq.Expressions {
 				throw new ArgumentNullException ("method");
 			if (instance == null && !method.IsStatic)
 				throw new ArgumentNullException ("instance");
-			if (instance != null && !method.DeclaringType.IsAssignableFrom (instance.Type))
+			if (instance != null && !instance.Type.IsAssignableTo (method.DeclaringType))
 				throw new ArgumentException ("Type is not assignable to the declaring type of the method");
 
 			var args = arguments.ToReadOnlyCollection ();
@@ -1063,7 +1068,7 @@ namespace System.Linq.Expressions {
 			if (!field.IsStatic) {
 				if (expression == null)
 					throw new ArgumentNullException ("expression");
-				if (!field.DeclaringType.IsAssignableFrom (expression.Type))
+				if (!expression.Type.IsAssignableTo (field.DeclaringType))
 					throw new ArgumentException ("field");
 			}
 
@@ -1149,7 +1154,7 @@ namespace System.Linq.Expressions {
 
 		static Type GetInvokableType (Type t)
 		{
-			if (typeof (Delegate).IsAssignableFrom (t))
+			if (t.IsAssignableTo (typeof (Delegate)))
 				return t;
 
 			return GetGenericType (t, typeof (Expression<>));
@@ -1251,7 +1256,7 @@ namespace System.Linq.Expressions {
 
 		static void CheckIsAssignableToIEnumerable (Type t)
 		{
-			if (!typeof (IEnumerable).IsAssignableFrom (t))
+			if (!t.IsAssignableTo (typeof (IEnumerable)))
 				throw new ArgumentException (string.Format ("Type {0} doesn't implemen IEnumerable", t));
 		}
 
@@ -1359,7 +1364,7 @@ namespace System.Linq.Expressions {
 				throw new ArgumentNullException ("newExpression");
 			if (initializers == null)
 				throw new ArgumentNullException ("initializers");
-			if (!typeof (IEnumerable).IsAssignableFrom (newExpression.Type))
+			if (!newExpression.Type.IsAssignableTo (typeof (IEnumerable)))
 				throw new InvalidOperationException ("The type of the new expression does not implement IEnumerable");
 
 			var inits = initializers.ToReadOnlyCollection ();
@@ -1383,10 +1388,8 @@ namespace System.Linq.Expressions {
 				if (parameters.Length != 1)
 					throw new ArgumentException ("addMethod");
 
-				var type = parameters [0].ParameterType;
-
-				foreach (var exp in inits)
-					if (!type.IsAssignableFrom (exp.Type))
+				foreach (var expression in inits)
+					if (!IsAssignableToParameterType (expression.Type, parameters [0]))
 						throw new InvalidOperationException ("Initializer not assignable to the add method parameter type");
 			}
 
@@ -1502,7 +1505,7 @@ namespace System.Linq.Expressions {
 			CheckForNull (bds, "bindings");
 
 			foreach (var binding in bds)
-				if (!binding.Member.DeclaringType.IsAssignableFrom (type))
+				if (!type.IsAssignableTo (binding.Member.DeclaringType))
 					throw new ArgumentException ("Type not assignable to member type");
 
 			return bds;
@@ -1601,7 +1604,7 @@ namespace System.Linq.Expressions {
 				if (arguments [i] == null)
 					throw new ArgumentNullException ("arguments");
 
-				if (!parameters [i].ParameterType.IsAssignableFrom (arguments [i].Type))
+				if (!IsAssignableToParameterType (arguments [i].Type, parameters [i]))
 					throw new ArgumentException ("arguments");
 			}
 		}
@@ -1648,7 +1651,7 @@ namespace System.Linq.Expressions {
 					throw new ArgumentException ("Member type not allowed");
 				}
 
-				if (!type.IsAssignableFrom (args [i].Type))
+				if (!args [i].Type.IsAssignableTo (type))
 					throw new ArgumentException ("Argument type not assignable to member type");
 			}
 
@@ -1693,7 +1696,7 @@ namespace System.Linq.Expressions {
 				if (expression == null)
 					throw new ArgumentNullException ("initializers");
 
-				if (!type.IsAssignableFrom (expression.Type))
+				if (!expression.Type.IsAssignableTo (type))
 					throw new InvalidOperationException ();
 
 				// TODO: Quote elements if type == typeof (Expression)
@@ -1730,7 +1733,7 @@ namespace System.Linq.Expressions {
 			if (!propertyAccessor.IsStatic) {
 				if (expression == null)
 					throw new ArgumentNullException ("expression");
-				if (!propertyAccessor.DeclaringType.IsAssignableFrom (expression.Type))
+				if (!expression.Type.IsAssignableTo (propertyAccessor.DeclaringType))
 					throw new ArgumentException ("expression");
 			}
 
@@ -1765,7 +1768,7 @@ namespace System.Linq.Expressions {
 			if (!getter.IsStatic) {
 				if (expression == null)
 					throw new ArgumentNullException ("expression");
-				if (!property.DeclaringType.IsAssignableFrom (expression.Type))
+				if (!expression.Type.IsAssignableTo (property.DeclaringType))
 					throw new ArgumentException ("expression");
 			}
 

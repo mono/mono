@@ -1,3 +1,8 @@
+2008-03-20  Jb Evain  <jbevain@novell.com>
+
+	* Expression.cs: use the new and more complete IsAssignableTo
+	instead of IsAssignableFrom.
+
 2008-03-19  Jb Evain  <jbevain@novell.com>
 
 	* LambdaExpression.cs: use the new standardified IsAssignableTo,
