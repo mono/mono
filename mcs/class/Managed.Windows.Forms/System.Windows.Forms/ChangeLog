@@ -1,3 +1,8 @@
+2008-03-20  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* PropertyGridView.cs, GridEntry.cs: Implement support for 
+	UITypeEditor.IsDropDownResizable.
+
 2008-03-20  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridViewCell.cs: Remove unused variables, improve how

@@ -338,6 +338,19 @@ namespace System.Windows.Forms.PropertyGridInternal
 			}
 		}
 
+		public bool EditorResizeable {
+			get {
+#if NET_2_0
+				if (this.EditorStyle == UITypeEditorEditStyle.DropDown) {
+					UITypeEditor editor = GetEditor ();
+					if (editor != null && editor.IsDropDownResizable)
+						return true;
+				}
+#endif
+				return false;
+			}
+		}
+
 		public bool EditValue (IWindowsFormsEditorService service)
 		{
 			if (service == null)

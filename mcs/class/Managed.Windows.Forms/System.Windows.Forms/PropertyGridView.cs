@@ -61,6 +61,9 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		private Font bold_font;
 		private Brush inactive_text_brush;
 		private ListBox dropdown_list;
+#if NET_2_0
+		private Padding dropdown_form_padding;
+#endif
 		#endregion
 
 		#region Contructors
@@ -84,7 +87,9 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			dialog_form.StartPosition = FormStartPosition.Manual;
 			dialog_form.FormBorderStyle = FormBorderStyle.None;
 			dialog_form.ShowInTaskbar = false;
-
+#if NET_2_0
+			dropdown_form_padding = new Padding (0, 0, 2, 2);
+#endif
 			row_height = Font.Height + font_height_padding;
 
 			grid_textbox.Visible = false;
@@ -938,14 +943,31 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			Invalidate (new Rectangle (0, item.Top, Width, Height - item.Top));
 		}
 
-		private void ShowDropDownControl (Control control) 
+		private void ShowDropDownControl (Control control, bool resizeable) 
 		{
 			dropdown_form.Size = control.Size;
 			control.Dock = DockStyle.Fill;
+
+			if (resizeable) { // always false on .Net 1.1 as UITypeEditor.IsDropDownResizable is a 2.0 property
+#if NET_2_0
+				dropdown_form.Padding = dropdown_form_padding;
+				dropdown_form.Width += dropdown_form_padding.Right;
+				dropdown_form.Height += dropdown_form_padding.Bottom;
+#endif
+				dropdown_form.FormBorderStyle = FormBorderStyle.Sizable;
+				dropdown_form.SizeGripStyle = SizeGripStyle.Show;
+			} else {
+				dropdown_form.FormBorderStyle = FormBorderStyle.None;
+				dropdown_form.SizeGripStyle = SizeGripStyle.Hide;
+#if NET_2_0
+				dropdown_form.Padding = Padding.Empty;
+#endif
+			}
+
 			dropdown_form.Controls.Add (control);
 			dropdown_form.Width = Math.Max (ClientRectangle.Width - SplitterLocation - (vbar.Visible ? vbar.Width : 0), 
 							control.Width);
-			dropdown_form.Location = PointToScreen (new Point (grid_textbox.Right - control.Width, grid_textbox.Location.Y + row_height));
+			dropdown_form.Location = PointToScreen (new Point (grid_textbox.Right - dropdown_form.Width, grid_textbox.Location.Y + row_height));
 			RepositionInScreenWorkingArea (dropdown_form);
 			Point location = dropdown_form.Location;
 
@@ -1020,8 +1042,10 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			dropdown_form.Controls.Clear ();
 		}
 
-		public void DropDownControl (Control control) {
-			ShowDropDownControl (control);
+		public void DropDownControl (Control control) 
+		{
+			bool resizeable = this.SelectedGridItem != null ? SelectedGridItem.EditorResizeable : false;
+			ShowDropDownControl (control, resizeable);
 		}
 
 		public System.Windows.Forms.DialogResult ShowDialog (Form dialog) {
@@ -1030,15 +1054,13 @@ namespace System.Windows.Forms.PropertyGridInternal {
 
 		#endregion
 
-		/*
-			class ComboListBox
-		*/
-		internal class PropertyGridDropDown : Form {
+		internal class PropertyGridDropDown : Form 
+		{
 			protected override CreateParams CreateParams {
 				get {
 					CreateParams cp = base.CreateParams;
 					cp.Style = unchecked ((int)(WindowStyles.WS_POPUP | WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_CLIPCHILDREN));
-					cp.ExStyle |= (int)(WindowExStyles.WS_EX_TOOLWINDOW | WindowExStyles.WS_EX_TOPMOST);				
+					cp.ExStyle |= (int)(WindowExStyles.WS_EX_TOPMOST);				
 					return cp;
 				}
 			}
