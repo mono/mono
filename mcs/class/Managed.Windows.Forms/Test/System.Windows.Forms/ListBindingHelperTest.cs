@@ -46,22 +46,44 @@ namespace MonoTests.System.Windows.Forms
 		public void GetListTest ()
 		{
 			ListSource lsource = new ListSource (true);
+			Stack stack = new Stack ();
+			stack.Push (3);
 
-			Assert.AreEqual (new object [0], ListBindingHelper.GetList (lsource), "#A1");
+			Assert.IsTrue (ListBindingHelper.GetList (lsource) is SimpleItem [], "#A1");
 			Assert.AreEqual ("NonList", ListBindingHelper.GetList ("NonList"), "#A2");
 			Assert.AreEqual (null, ListBindingHelper.GetList (null), "#A3");
+			Assert.AreEqual (stack, ListBindingHelper.GetList (stack), "#A4"); // IEnumerable
 
-			Assert.AreEqual (new object [0], ListBindingHelper.GetList (lsource, String.Empty), "#B1");
+			Assert.IsTrue (ListBindingHelper.GetList (lsource, String.Empty) is SimpleItem [], "#B1");
 			Assert.AreEqual ("NonList", ListBindingHelper.GetList ("NonList", String.Empty), "#B2");
-			Assert.AreEqual (null, ListBindingHelper.GetList (null, null), "#B3");
-			Assert.AreEqual (new object [0], ListBindingHelper.GetList (lsource, null), "#B4");
+			Assert.AreEqual (null, ListBindingHelper.GetList (null, "DontExist"), "#B3");
+			Assert.IsTrue (ListBindingHelper.GetList (lsource, null) is SimpleItem [], "#B4");
 
 			ListContainer list_container = new ListContainer ();
 			Assert.AreEqual (new object [0], ListBindingHelper.GetList (list_container, "List"), "#C1");
 
 			// Even if IListSource.ContainsListCollection is false, we return the result of GetList ()
 			lsource = new ListSource (false);
-			Assert.AreEqual (new object [0], ListBindingHelper.GetList (lsource), "#D1");
+			Assert.IsTrue (ListBindingHelper.GetList (lsource) is SimpleItem [], "#D1");
+
+			// DataMember is not if IList type
+			Assert.AreEqual (new SimpleItem (), ListBindingHelper.GetList (list_container, "NonList"), "#E1");
+
+			// List (IEnumerable)
+			stack.Clear ();
+			stack.Push (new SimpleItem (3));
+			stack.Push (new SimpleItem (7));
+			object obj = ListBindingHelper.GetList (stack, "Value");
+			Assert.IsTrue (obj != null, "#F1");
+			Assert.IsTrue (obj is int, "#F2");
+			Assert.AreEqual (7, (int) obj, "#F3");
+
+			// ListSource returning an IEnumerable,
+			// which in turn retrieves dataMember
+			obj = ListBindingHelper.GetList (lsource, "Value");
+			Assert.IsTrue (obj != null, "#G1");
+			Assert.IsTrue (obj is int, "#G2");
+			Assert.AreEqual (0, (int)obj, "#G3");
 
 			try {
 				ListBindingHelper.GetList (list_container, "DontExist");
@@ -69,18 +91,14 @@ namespace MonoTests.System.Windows.Forms
 			} catch (ArgumentException) {
 			}
 
+			// Empty IEnumerable
 			try {
-				ListBindingHelper.GetList (lsource, "DontExist");
-				Assert.Fail ("#EXC2");
-			} catch (ArgumentException) {
-			}
-
-			// dataMember exists, but is not of IList type
-			try {
-				ListBindingHelper.GetList (lsource, "NonList");
+				stack.Clear ();
+				obj = ListBindingHelper.GetList (stack, "Value");
 				Assert.Fail ("#EXC3");
 			} catch (ArgumentException) {
 			}
+
 		}
 
 		class ListSource : IListSource
@@ -100,7 +118,18 @@ namespace MonoTests.System.Windows.Forms
 
 			public IList GetList ()
 			{
-				return new object [0];
+				return new SimpleItem [] { new SimpleItem () };
+			}
+		}
+
+		class SuperContainer
+		{
+			public ListContainer ListContainer
+			{
+				get
+				{
+					return new ListContainer ();
+				}
 			}
 		}
 
@@ -108,15 +137,137 @@ namespace MonoTests.System.Windows.Forms
 		{
 			public IList List {
 				get {
-					return new object [0];
+					return new SimpleItem [0];
 				}
 			}
 
-			public object NonList {
+			public SimpleItem NonList {
 				get {
-					return new object ();
+					return new SimpleItem ();
 				}
 			}
+		}
+
+		class SimpleItem
+		{
+			int value;
+
+			public SimpleItem ()
+			{
+			}
+
+			public SimpleItem (int value)
+			{
+				this.value = value;
+			}
+
+			public int Value
+			{
+				get
+				{
+					return value;
+				}
+				set
+				{
+					this.value = value;
+				}
+			}
+
+			public override int GetHashCode ()
+			{
+				return base.GetHashCode ();
+			}
+
+			public override bool Equals (object obj)
+			{
+				return value == ((SimpleItem)obj).value;
+			}
+		}
+
+		[Test]
+		[NUnit.Framework.Category ("NotWorking")]
+		public void GetListItemPropertiesTest ()
+		{
+			SimpleItem [] items = new SimpleItem [0];
+			PropertyDescriptorCollection properties = ListBindingHelper.GetListItemProperties (items);
+
+			Assert.AreEqual (1, properties.Count, "#A1");
+			Assert.AreEqual ("Value", properties [0].Name, "#A2");
+
+			List<SimpleItem> items_list = new List<SimpleItem> ();
+			properties = ListBindingHelper.GetListItemProperties (items_list);
+
+			Assert.AreEqual (1, properties.Count, "#B1");
+			Assert.AreEqual ("Value", properties [0].Name, "#B2");
+
+			// Empty arraylist
+			ArrayList items_arraylist = new ArrayList ();
+			properties = ListBindingHelper.GetListItemProperties (items_arraylist);
+
+			Assert.AreEqual (0, properties.Count, "#C1");
+
+			// Non empty arraylist
+			items_arraylist.Add (new SimpleItem ());
+			properties = ListBindingHelper.GetListItemProperties (items_arraylist);
+
+			Assert.AreEqual (1, properties.Count, "#D1");
+			Assert.AreEqual ("Value", properties [0].Name, "#D2");
+
+			// non list object
+			properties = ListBindingHelper.GetListItemProperties (new SimpleItem ());
+
+			Assert.AreEqual (1, properties.Count, "#E1");
+			Assert.AreEqual ("Value", properties [0].Name, "#E2");
+
+			// null value
+			properties = ListBindingHelper.GetListItemProperties (null);
+
+			Assert.AreEqual (0, properties.Count, "#F1");
+		}
+
+		// tests for the overloads of the method
+		[Test]
+		[NUnit.Framework.Category ("NotWorking")]
+		public void GetListItemPropertiesTest2 ()
+		{
+			ListContainer list_container = new ListContainer ();
+			PropertyDescriptorCollection list_properties = TypeDescriptor.GetProperties (list_container);
+			PropertyDescriptor property = list_properties ["List"];
+
+			PropertyDescriptorCollection property_coll = ListBindingHelper.GetListItemProperties (list_container,
+				new PropertyDescriptor [] { property });
+			Assert.AreEqual (1, property_coll.Count, "#A1");
+			Assert.AreEqual ("Value", property_coll [0].Name, "#A2");
+
+			// Empty property descriptor array 
+			// Returns list_container properties, since it's not a list
+			property_coll = ListBindingHelper.GetListItemProperties (list_container, new PropertyDescriptor [0]);
+			Assert.AreEqual (2, property_coll.Count, "#B1");
+
+			// Non list property
+			// Returns the propeties of the type of that property
+			property = list_properties ["NonList"];
+			property_coll = ListBindingHelper.GetListItemProperties (list_container,
+				new PropertyDescriptor [] { property });
+			Assert.AreEqual (1, property_coll.Count, "#C1");
+			Assert.AreEqual ("Value", property_coll [0].Name, "#C2");
+
+			// Pass two properties
+			property = list_properties ["List"];
+			PropertyDescriptor property2 = list_properties ["NonList"];
+			property_coll = ListBindingHelper.GetListItemProperties (list_container,
+				new PropertyDescriptor [] { property2, property });
+			Assert.AreEqual (0, property_coll.Count, "#D1");
+
+			//
+			// Third overload - doble re-direction
+			//
+			SuperContainer super_container = new SuperContainer ();
+			property = list_properties ["List"];
+
+			property_coll = ListBindingHelper.GetListItemProperties (super_container, "ListContainer",
+				new PropertyDescriptor [] { property });
+			Assert.AreEqual (1, property_coll.Count, "#E1");
 		}
 
 		[Test]

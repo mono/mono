@@ -1,3 +1,9 @@
+2008-03-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListBindingHelperTest.cs: Update GetListTest with new assertions.
+	Also add GetListItemProperties tests - not working by now, but should
+	guide us to a correct implementation.
+
 2008-03-19  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridViewCellTest.cs: Ignore Size test since a
