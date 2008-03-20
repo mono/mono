@@ -51,16 +51,9 @@ namespace System.Linq.Expressions {
 		{
 			var member = this.Member;
 
-			switch (member.MemberType) {
-			case MemberTypes.Field:
-				EmitFieldAssignment (ec, (FieldInfo) member, local);
-				return;
-			case MemberTypes.Property:
-				EmitPropertyAssignment (ec, (PropertyInfo) member, local);
-				return;
-			default:
-				throw new NotSupportedException (member.MemberType.ToString ());
-			}
+			this.Member.OnFieldOrProperty (
+				field => EmitFieldAssignment (ec, field, local),
+				prop => EmitPropertyAssignment (ec, prop, local));
 		}
 
 		void EmitFieldAssignment (EmitContext ec, FieldInfo field, LocalBuilder local)
