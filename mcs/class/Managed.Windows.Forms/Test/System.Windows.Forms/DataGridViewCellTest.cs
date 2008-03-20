@@ -1282,9 +1282,207 @@ namespace MonoTests.System.Windows.Forms
 			b.Dispose ();
 		}
 	*/
-	
+
+		[Test]
+		public void MethodBorderWidths ()
+		{
+			BaseCell c = new BaseCell ();
+			
+			DataGridViewAdvancedBorderStyle style = new DataGridViewAdvancedBorderStyle ();
+			style.Bottom = DataGridViewAdvancedCellBorderStyle.Inset;
+			style.Left = DataGridViewAdvancedCellBorderStyle.InsetDouble;
+			style.Top = DataGridViewAdvancedCellBorderStyle.None;
+			//style.Right = DataGridViewAdvancedCellBorderStyle.NotSet;
+			
+			Assert.AreEqual (new Rectangle (2, 0, 0, 1), c.PublicBorderWidths (style), "A1");
+
+			style.Bottom = DataGridViewAdvancedCellBorderStyle.Outset;
+			style.Left = DataGridViewAdvancedCellBorderStyle.OutsetDouble;
+			style.Right = DataGridViewAdvancedCellBorderStyle.OutsetPartial;
+			style.Top = DataGridViewAdvancedCellBorderStyle.Single;
+
+			Assert.AreEqual (new Rectangle (2, 1, 1, 1), c.PublicBorderWidths (style), "A2");
+
+			DataGridView dgv = new DataGridView ();
+			dgv.Columns.Add ("hi", "there");
+
+			DataGridViewRow row = new DataGridViewRow ();
+			row.Cells.Add (c);
+			dgv.Rows.Add (row);
+
+			dgv.Rows[0].DividerHeight = 3;
+			dgv.Columns[0].DividerWidth = 5;
+
+			Assert.AreEqual (new Rectangle (2, 1, 6, 4), (dgv.Rows[0].Cells[0] as BaseCell).PublicBorderWidths (style), "A3");
+		}
+
+		[Test]
+		public void MethodGetContentBounds ()
+		{
+			DataGridViewCell c = new BaseCell ();
+			Assert.AreEqual (Rectangle.Empty, c.GetContentBounds (c.RowIndex), "A1");
+
+			DataGridView dgv = new DataGridView ();
+			dgv.Columns.Add ("hi", "there");
+
+			DataGridViewRow row = new DataGridViewRow ();
+			row.Cells.Add (c);
+			dgv.Rows.Add (row);
+
+			Assert.AreEqual (Rectangle.Empty, dgv.Rows[0].Cells[0].GetContentBounds (dgv.Rows[0].Cells[0].RowIndex), "A2");
+		}
+
+		[Test]
+		public void MethodGetContentBoundsOverload ()
+		{
+			Bitmap b = new Bitmap (1, 1);
+			Graphics g = Graphics.FromImage (b);
+
+			BaseCell c = new BaseCell ();
+			Assert.AreEqual (Rectangle.Empty, c.PublicGetContentBounds (g, c.Style, c.RowIndex), "A1");
+
+			DataGridView dgv = new DataGridView ();
+			dgv.Columns.Add ("hi", "there");
+
+			DataGridViewRow row = new DataGridViewRow ();
+			row.Cells.Add (c);
+			dgv.Rows.Add (row);
+
+			Assert.AreEqual (Rectangle.Empty, (dgv.Rows[0].Cells[0] as BaseCell).PublicGetContentBounds (g, dgv.Rows[0].Cells[0].InheritedStyle, dgv.Rows[0].Cells[0].RowIndex), "A2");
+			g.Dispose ();
+			b.Dispose ();
+		}
+
+		[Test]
+		public void MethodGetErrorIconBounds ()
+		{
+			Bitmap b = new Bitmap (1, 1);
+			Graphics g = Graphics.FromImage (b);
+
+			BaseCell c = new BaseCell ();
+			Assert.AreEqual (Rectangle.Empty, c.PublicGetErrorIconBounds (g, c.Style, c.RowIndex), "A1");
+
+			DataGridView dgv = new DataGridView ();
+			dgv.Columns.Add ("hi", "there");
+
+			DataGridViewRow row = new DataGridViewRow ();
+			row.Cells.Add (c);
+			dgv.Rows.Add (row);
+
+			Assert.AreEqual (Rectangle.Empty, (dgv.Rows[0].Cells[0] as BaseCell).PublicGetErrorIconBounds (g, dgv.Rows[0].Cells[0].InheritedStyle, dgv.Rows[0].Cells[0].RowIndex), "A2");
+			g.Dispose ();
+			b.Dispose ();
+		}
+
+		[Test]
+		public void MethodGetErrorText ()
+		{
+			Bitmap b = new Bitmap (1, 1);
+			Graphics g = Graphics.FromImage (b);
+
+			BaseCell c = new BaseCell ();
+			Assert.AreEqual (string.Empty, c.PublicGetErrorText (c.RowIndex), "A1");
+
+			DataGridView dgv = new DataGridView ();
+			dgv.Columns.Add ("hi", "there");
+
+			DataGridViewRow row = new DataGridViewRow ();
+			row.Cells.Add (c);
+			dgv.Rows.Add (row);
+
+			Assert.AreEqual (string.Empty, (dgv.Rows[0].Cells[0] as BaseCell).PublicGetErrorText (dgv.Rows[0].Cells[0].RowIndex), "A2");
+			g.Dispose ();
+			b.Dispose ();
+		}
+
+		[Test]
+		public void MethodKeyEntersEditMode ()
+		{
+			bool result = false;
+			DataGridViewCell c = new BaseCell ();
+			
+			foreach (Keys k in Enum.GetValues (typeof (Keys)))
+				result |= c.KeyEntersEditMode (new KeyEventArgs (k));
+			
+			Assert.AreEqual (false, result, "A1");
+
+			DataGridView dgv = new DataGridView ();
+			dgv.Columns.Add ("hi", "there");
+
+			DataGridViewRow row = new DataGridViewRow ();
+			row.Cells.Add (c);
+			dgv.Rows.Add (row);
+
+			result = false;
+
+			foreach (Keys k in Enum.GetValues (typeof (Keys)))
+				result |= dgv.Rows[0].Cells[0].KeyEntersEditMode (new KeyEventArgs (k));
+
+			Assert.AreEqual (false, result, "A2");
+		}
+		
+		[Test]
+		public void MethodParseFormattedValue ()
+		{
+			DataGridViewCell c = new FormattedBaseCell ();
+			c.ValueType = typeof (bool);
+			
+			BooleanConverter bc = new BooleanConverter ();
+			StringConverter sc = new StringConverter ();
+			
+			object o = c.ParseFormattedValue ("true", c.Style, sc, bc);
+			Assert.AreEqual (true, (bool)o, "A1");
+		}
+
+		[Test]
+		public void MethodGetInheritedContextMenuStrip ()
+		{
+			DataGridViewCell c = new BaseCell ();
+			Assert.AreEqual (null, c.GetInheritedContextMenuStrip (c.RowIndex), "A1");
+
+			DataGridView dgv = new DataGridView ();
+			dgv.Columns.Add ("hi", "there");
+
+			DataGridViewRow row = new DataGridViewRow ();
+			row.Cells.Add (c);
+			dgv.Rows.Add (row);
+
+			Assert.AreEqual (null, dgv.Rows[0].Cells[0].GetInheritedContextMenuStrip (dgv.Rows[0].Cells[0].RowIndex), "A2");
+
+			ContextMenuStrip cms1 = new ContextMenuStrip ();
+			cms1.Items.Add ("Moose");
+			dgv.ContextMenuStrip = cms1;
+
+			Assert.AreSame (cms1, dgv.Rows[0].Cells[0].GetInheritedContextMenuStrip (dgv.Rows[0].Cells[0].RowIndex), "A3");
+
+			ContextMenuStrip cms2 = new ContextMenuStrip ();
+			cms2.Items.Add ("Moose");
+			dgv.Columns[0].ContextMenuStrip = cms2;
+
+			Assert.AreSame (cms2, dgv.Rows[0].Cells[0].GetInheritedContextMenuStrip (dgv.Rows[0].Cells[0].RowIndex), "A4");
+
+			dgv.Rows[0].ContextMenuStrip = cms1;
+			Assert.AreSame (cms1, dgv.Rows[0].Cells[0].GetInheritedContextMenuStrip (dgv.Rows[0].Cells[0].RowIndex), "A5");
+
+			dgv.Rows[0].Cells[0].ContextMenuStrip = cms2;
+			Assert.AreSame (cms2, dgv.Rows[0].Cells[0].GetInheritedContextMenuStrip (dgv.Rows[0].Cells[0].RowIndex), "A6");
+		}
+
+		private class FormattedBaseCell : DataGridViewCell
+		{
+			public override Type FormattedValueType { get { return typeof (string); } }
+		}
+		
 		private class BaseCell : DataGridViewCell
 		{
+			public Rectangle PublicGetContentBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex)
+			{ return GetContentBounds (graphics, cellStyle, rowIndex); }
+			public Rectangle PublicGetErrorIconBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex)
+			{ return GetErrorIconBounds (graphics, cellStyle, rowIndex); }
+			public string PublicGetErrorText (int rowIndex)
+			{ return GetErrorText (rowIndex); }
+			public Rectangle PublicBorderWidths (DataGridViewAdvancedBorderStyle advancedBorderStyle)
+			{ return BorderWidths (advancedBorderStyle); }
 		}
 		
 		class DataGridViewCellMockObject : DataGridViewCell

@@ -1,5 +1,9 @@
 2008-03-20  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridViewCellTest.cs: Tests for newly implemented stuffs.
+
+2008-03-20  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridViewCellTest.cs: Don't verify exception message,
 	throwing the exception is enough.
 

@@ -43,7 +43,6 @@ namespace System.Windows.Forms {
 		private ContextMenuStrip contextMenuStrip;
 		private bool displayed;
 		private string errorText;
-		private Type formattedValueType;
 		private bool isInEditMode;
 		private DataGridViewColumn owningColumn;
 		private DataGridViewRow owningRow;
@@ -58,6 +57,7 @@ namespace System.Windows.Forms {
 		protected DataGridViewCell ()
 		{
 			columnIndex = -1;
+			errorText = string.Empty;
 		}
 
 		~DataGridViewCell ()
@@ -167,7 +167,7 @@ namespace System.Windows.Forms {
 
 		[Browsable (false)]
 		public virtual Type FormattedValueType {
-			get { return formattedValueType; }
+			get { return null; }
 		}
 
 		[Browsable (false)]
@@ -418,7 +418,6 @@ namespace System.Windows.Forms {
 			result.columnIndex = this.columnIndex;
 			result.displayed = this.displayed;
 			result.errorText = this.errorText;
-			result.formattedValueType = this.formattedValueType;
 			result.isInEditMode = this.isInEditMode;
 			result.owningColumn = this.owningColumn;
 			result.owningRow = this.owningRow;
@@ -433,21 +432,24 @@ namespace System.Windows.Forms {
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		public virtual void DetachEditingControl () {
+		public virtual void DetachEditingControl ()
+		{
 		}
 
-		//public sealed void Dispose () {
-		public void Dispose () {
+		public void Dispose ()
+		{
 		}
 
-		public Rectangle GetContentBounds (int rowIndex) {
+		public Rectangle GetContentBounds (int rowIndex)
+		{
 			if (DataGridView == null)
 				return Rectangle.Empty;
 			
 			return GetContentBounds (Hwnd.GraphicsContext, InheritedStyle, rowIndex);
 		}
 
-		public object GetEditedFormattedValue (int rowIndex, DataGridViewDataErrorContexts context) {
+		public object GetEditedFormattedValue (int rowIndex, DataGridViewDataErrorContexts context)
+		{
 			if (DataGridView == null)
 				return null;
 			
@@ -466,10 +468,26 @@ namespace System.Windows.Forms {
 
 		public virtual ContextMenuStrip GetInheritedContextMenuStrip (int rowIndex)
 		{
-			throw new NotImplementedException();
+			if (DataGridView == null)
+				return null;
+				
+			if (rowIndex < 0 || rowIndex >= DataGridView.Rows.Count)
+				throw new ArgumentOutOfRangeException ("rowIndex");
+			if (columnIndex < 0)
+				throw new InvalidOperationException ("cannot perform this on a column header cell");
+				
+			if (contextMenuStrip != null)
+				return contextMenuStrip;
+			if (OwningRow.ContextMenuStrip != null)
+				return OwningRow.ContextMenuStrip;
+			if (OwningColumn.ContextMenuStrip != null)
+				return OwningColumn.ContextMenuStrip;
+				
+			return DataGridView.ContextMenuStrip;
 		}
 
-		public virtual DataGridViewElementStates GetInheritedState (int rowIndex) {
+		public virtual DataGridViewElementStates GetInheritedState (int rowIndex)
+		{
 		
 			if (DataGridView == null && rowIndex != -1)
 				throw new ArgumentException ("msg?");
@@ -734,8 +752,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public virtual bool KeyEntersEditMode (KeyEventArgs e) {
-			throw new NotImplementedException();
+		public virtual bool KeyEntersEditMode (KeyEventArgs e)
+		{
+			return false;
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -793,24 +812,35 @@ namespace System.Windows.Forms {
 			return TextRenderer.MeasureText (graphics, text, font, new Size (0, maxHeight), flags).Width;
 		}
 
-		public virtual object ParseFormattedValue (object formattedValue, DataGridViewCellStyle cellStyle, TypeConverter formattedValueTypeConverter, TypeConverter valueTypeConverter) {
-			if (cellStyle == null) {
-				throw new ArgumentNullException("cellStyle is null.");
-			}
-			if (formattedValueType == null) {
-				throw new FormatException("The System.Windows.Forms.DataGridViewCell.FormattedValueType property value is null.");
-			}
-			if (formattedValue == null) {
-				throw new ArgumentException("formattedValue is null.");
-			}
-			if (formattedValue.GetType() != formattedValueType) {
-			}
-			return null;
+		public virtual object ParseFormattedValue (object formattedValue, DataGridViewCellStyle cellStyle, TypeConverter formattedValueTypeConverter, TypeConverter valueTypeConverter)
+		{
+			if (cellStyle == null)
+				throw new ArgumentNullException ("cellStyle is null.");
+			if (FormattedValueType == null)
+				throw new FormatException ("The System.Windows.Forms.DataGridViewCell.FormattedValueType property value is null.");
+			if (formattedValue == null)
+				throw new ArgumentException ("formattedValue is null.");
+			if (valueType == null)
+				throw new FormatException ("valuetype is null");
+			if (formattedValue.GetType () != FormattedValueType)
+				throw new ArgumentException ("formattedValue is not of formattedValueType.");
+			
+			// If formatted is null, return raw null value
+			if (formattedValue == cellStyle.NullValue)
+				return cellStyle.DataSourceNullValue;
+				
+			// Convert the formatted value to a string
+			string s = formattedValueTypeConverter.ConvertToString (formattedValue);
+			
+			// Convert the string to the raw value
+			object o = valueTypeConverter.ConvertFromString (s);
+			
+			return o;
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		public virtual void PositionEditingControl (bool setLocation, bool setSize, Rectangle cellBounds, Rectangle cellClip, DataGridViewCellStyle cellStyle, bool singleVerticalBorderAdded, bool singleHorizontalBorderAdded, bool isFirstDisplayedColumn, bool isFirstDisplayedRow) {
-			//throw new NotImplementedException();
+		public virtual void PositionEditingControl (bool setLocation, bool setSize, Rectangle cellBounds, Rectangle cellClip, DataGridViewCellStyle cellStyle, bool singleVerticalBorderAdded, bool singleHorizontalBorderAdded, bool isFirstDisplayedColumn, bool isFirstDisplayedRow)
+		{
 			if (setLocation)
 				DataGridView.EditingControl.Location = cellBounds.Location;
 				
@@ -829,22 +859,52 @@ namespace System.Windows.Forms {
 
 		protected virtual Rectangle BorderWidths (DataGridViewAdvancedBorderStyle advancedBorderStyle)
 		{
-			return new Rectangle (2, 2, 2, 2);
+			Rectangle r = Rectangle.Empty;
+
+			r.X = BorderToWidth (advancedBorderStyle.Left);
+			r.Y = BorderToWidth (advancedBorderStyle.Top);
+			r.Width = BorderToWidth (advancedBorderStyle.Right);
+			r.Height = BorderToWidth (advancedBorderStyle.Bottom);
+			
+			if (OwningColumn != null)
+				r.Width += OwningColumn.DividerWidth;
+			if (OwningRow != null)
+				r.Height += OwningRow.DividerHeight;
+				
+			return r;
 		}
 
+		private int BorderToWidth (DataGridViewAdvancedCellBorderStyle style)
+		{
+			switch (style) {
+				case DataGridViewAdvancedCellBorderStyle.None:
+					return 0;
+				case DataGridViewAdvancedCellBorderStyle.NotSet:
+				case DataGridViewAdvancedCellBorderStyle.Single:
+				case DataGridViewAdvancedCellBorderStyle.Inset:
+				case DataGridViewAdvancedCellBorderStyle.Outset:
+				case DataGridViewAdvancedCellBorderStyle.OutsetPartial:
+				default:
+					return 1;
+				case DataGridViewAdvancedCellBorderStyle.InsetDouble:
+				case DataGridViewAdvancedCellBorderStyle.OutsetDouble:
+					return 2;
+			}
+		}
+		
 		protected virtual bool ClickUnsharesRow (DataGridViewCellEventArgs e)
 		{
-			throw new NotImplementedException();
+			return false;
 		}
 
 		protected virtual bool ContentClickUnsharesRow (DataGridViewCellEventArgs e)
 		{
-			throw new NotImplementedException();
+			return false;
 		}
 
 		protected virtual bool ContentDoubleClickUnsharesRow (DataGridViewCellEventArgs e)
 		{
-			throw new NotImplementedException();
+			return false;
 		}
 
 		protected virtual AccessibleObject CreateAccessibilityInstance () {
@@ -854,12 +914,14 @@ namespace System.Windows.Forms {
 		protected virtual void Dispose (bool disposing) {
 		}
 
-		protected virtual bool DoubleClickUnsharesRow (DataGridViewCellEventArgs e) {
-			throw new NotImplementedException();
+		protected virtual bool DoubleClickUnsharesRow (DataGridViewCellEventArgs e)
+		{
+			return false;
 		}
 
-		protected virtual bool EnterUnsharesRow (int rowIndex, bool throughMouseClick) {
-			throw new NotImplementedException();
+		protected virtual bool EnterUnsharesRow (int rowIndex, bool throughMouseClick)
+		{
+			return false;
 		}
 
 		protected virtual object GetClipboardContent (int rowIndex, bool firstCell, bool lastCell, bool inFirstRow, bool inLastRow, string format) {
@@ -924,12 +986,14 @@ namespace System.Windows.Forms {
 			return Rectangle.Empty;
 		}
 
-		protected virtual Rectangle GetErrorIconBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex) {
-			throw new NotImplementedException();
+		protected virtual Rectangle GetErrorIconBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex)
+		{
+			return Rectangle.Empty;
 		}
 
-		protected internal virtual string GetErrorText (int rowIndex) {
-			throw new NotImplementedException();
+		protected internal virtual string GetErrorText (int rowIndex)
+		{
+			return errorText;
 		}
 
 		protected virtual object GetFormattedValue (object value, int rowIndex, ref DataGridViewCellStyle cellStyle, TypeConverter valueTypeConverter, TypeConverter formattedValueTypeConverter, DataGridViewDataErrorContexts context)
@@ -984,48 +1048,59 @@ namespace System.Windows.Forms {
 			return valuex;
 		}
 
-		protected virtual bool KeyDownUnsharesRow (KeyEventArgs e, int rowIndex) {
-			throw new NotImplementedException();
+		protected virtual bool KeyDownUnsharesRow (KeyEventArgs e, int rowIndex)
+		{
+			return false;
 		}
 
-		protected virtual bool KeyPressUnsharesRow (KeyPressEventArgs e, int rowIndex) {
-			throw new NotImplementedException();
+		protected virtual bool KeyPressUnsharesRow (KeyPressEventArgs e, int rowIndex)
+		{
+			return false;
 		}
 
-		protected virtual bool KeyUpUnsharesRow (KeyEventArgs e, int rowIndex) {
-			throw new NotImplementedException();
+		protected virtual bool KeyUpUnsharesRow (KeyEventArgs e, int rowIndex)
+		{
+			return false;
 		}
 
-		protected virtual bool LeaveUnsharesRow (int rowIndex, bool throughMouseClick) {
-			throw new NotImplementedException();
+		protected virtual bool LeaveUnsharesRow (int rowIndex, bool throughMouseClick)
+		{
+			return false;
 		}
 
-		protected virtual bool MouseClickUnsharesRow (DataGridViewCellMouseEventArgs e) {
-			throw new NotImplementedException();
+		protected virtual bool MouseClickUnsharesRow (DataGridViewCellMouseEventArgs e)
+		{
+			return false;
 		}
 
-		protected virtual bool MouseDoubleClickUnsharesRow (DataGridViewCellMouseEventArgs e) {
-			throw new NotImplementedException();
+		protected virtual bool MouseDoubleClickUnsharesRow (DataGridViewCellMouseEventArgs e)
+		{
+			return false;
 		}
 
-		protected virtual bool MouseDownUnsharesRow (DataGridViewCellMouseEventArgs e) {
-			throw new NotImplementedException();
+		protected virtual bool MouseDownUnsharesRow (DataGridViewCellMouseEventArgs e)
+		{
+			return false;
 		}
 
-		protected virtual bool MouseEnterUnsharesRow (int rowIndex) {
-			throw new NotImplementedException();
+		protected virtual bool MouseEnterUnsharesRow (int rowIndex)
+		{
+			return false;
 		}
 
-		protected virtual bool MouseLeaveUnsharesRow (int rowIndex) {
-			throw new NotImplementedException();
+		protected virtual bool MouseLeaveUnsharesRow (int rowIndex)
+		{
+			return false;
 		}
 
-		protected virtual bool MouseMoveUnsharesRow (DataGridViewCellMouseEventArgs e) {
-			throw new NotImplementedException();
+		protected virtual bool MouseMoveUnsharesRow (DataGridViewCellMouseEventArgs e)
+		{
+			return false;
 		}
 
-		protected virtual bool MouseUpUnsharesRow (DataGridViewCellMouseEventArgs e) {
-			throw new NotImplementedException();
+		protected virtual bool MouseUpUnsharesRow (DataGridViewCellMouseEventArgs e)
+		{
+			return false;
 		}
 
 		protected virtual void OnClick (DataGridViewCellEventArgs e) {
