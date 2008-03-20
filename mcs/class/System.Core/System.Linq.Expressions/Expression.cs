@@ -1014,28 +1014,40 @@ namespace System.Linq.Expressions {
 			return new ConstantExpression (value, type);
 		}
 
-		[MonoTODO]
 		public static UnaryExpression Convert (Expression expression, Type type)
 		{
-			throw new NotImplementedException ();
+			return Convert (expression, type, null);
 		}
 
 		[MonoTODO]
 		public static UnaryExpression Convert (Expression expression, Type type, MethodInfo method)
 		{
-			throw new NotImplementedException ();
+			if (expression == null)
+				throw new ArgumentNullException ("expression");
+			if (type == null)
+				throw new ArgumentNullException ("type");
+
+			// TODO: check for valid convertions
+
+			return new UnaryExpression (ExpressionType.Convert, expression, type, method);
 		}
 
-		[MonoTODO]
 		public static UnaryExpression ConvertChecked (Expression expression, Type type)
 		{
-			throw new NotImplementedException ();
+			return ConvertChecked (expression, type, null);
 		}
 
 		[MonoTODO]
 		public static UnaryExpression ConvertChecked (Expression expression, Type type, MethodInfo method)
 		{
-			throw new NotImplementedException ();
+			if (expression == null)
+				throw new ArgumentNullException ("expression");
+			if (type == null)
+				throw new ArgumentNullException ("type");
+
+			// TODO: check for valid convertions
+
+			return new UnaryExpression (ExpressionType.ConvertChecked, expression, type, method);
 		}
 
 		public static ElementInit ElementInit (MethodInfo addMethod, params Expression [] arguments)
