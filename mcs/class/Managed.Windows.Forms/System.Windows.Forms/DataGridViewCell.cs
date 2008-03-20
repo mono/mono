@@ -40,30 +40,20 @@ namespace System.Windows.Forms {
 
 		private AccessibleObject accessibilityObject;
 		private int columnIndex;
-		private Rectangle contentBounds;
 		private ContextMenuStrip contextMenuStrip;
-		private object defaultNewRowValue;
 		private bool displayed;
-		private object editedFormattedValue;
-		private Rectangle errorIconBounds;
 		private string errorText;
 		private Type formattedValueType;
-		private bool frozen;
-		private DataGridViewElementStates inheritedState;
 		private bool isInEditMode;
 		private DataGridViewColumn owningColumn;
 		private DataGridViewRow owningRow;
-		private Size preferredSize;
 		private DataGridViewTriState readOnly;
-		private bool resizable;
 		private bool selected;
-		private Size size;
 		private DataGridViewCellStyle style;
 		private object tag;
 		private string toolTipText;
 		private object valuex;
 		private Type valueType;
-		private bool visible;
 
 		protected DataGridViewCell ()
 		{
@@ -108,7 +98,7 @@ namespace System.Windows.Forms {
 
 		[Browsable (false)]
 		public virtual object DefaultNewRowValue {
-			get { return defaultNewRowValue; }
+			get { return null; }
 		}
 
 		[Browsable (false)]
@@ -136,8 +126,12 @@ namespace System.Windows.Forms {
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public Rectangle ErrorIconBounds {
 			get {
-				DataGridViewCellStyle style = InheritedStyle;
-				return errorIconBounds; 
+				if (DataGridView == null || columnIndex < 0)
+					throw new InvalidOperationException ();
+				if (RowIndex < 0 || RowIndex >= DataGridView.Rows.Count)
+					throw new ArgumentOutOfRangeException ("rowIndex", "Specified argument was out of the range of valid values.");
+
+				return Rectangle.Empty;
 			}
 		}
 
@@ -178,7 +172,15 @@ namespace System.Windows.Forms {
 
 		[Browsable (false)]
 		public virtual bool Frozen {
-			get { return frozen; }
+			get {
+				if (DataGridView == null)
+					return false;
+				
+				if (RowIndex >= 0)
+					return OwningRow.Frozen && OwningColumn.Frozen;
+					
+				return false;
+			}
 		}
 
 		[Browsable (false)]
@@ -409,34 +411,24 @@ namespace System.Windows.Forms {
 			return dataGridViewAdvancedBorderStyleInput;
 		}
 
-		public virtual object Clone () {
+		public virtual object Clone ()
+		{
 			DataGridViewCell result = (DataGridViewCell) Activator.CreateInstance (GetType ());
 			result.accessibilityObject = this.accessibilityObject;
 			result.columnIndex = this.columnIndex;
-			result.contentBounds = this.contentBounds;
-			//result.contextMenuStrip = this.contextMenuStrip;
-			result.defaultNewRowValue = this.defaultNewRowValue;
 			result.displayed = this.displayed;
-			result.editedFormattedValue = this.editedFormattedValue;
-			result.errorIconBounds = this.errorIconBounds;
 			result.errorText = this.errorText;
 			result.formattedValueType = this.formattedValueType;
-			result.frozen = this.frozen;
-			result.inheritedState = this.inheritedState;
 			result.isInEditMode = this.isInEditMode;
 			result.owningColumn = this.owningColumn;
 			result.owningRow = this.owningRow;
-			result.preferredSize = this.preferredSize;
 			result.readOnly = this.readOnly;
-			result.resizable = this.resizable;
 			result.selected = this.selected;
-			result.size = this.size;
 			result.style = this.style;
 			result.tag = this.tag;
 			result.toolTipText = this.toolTipText;
 			result.valuex = this.valuex;
 			result.valueType = this.valueType;
-			result.visible = this.visible;
 			return result;
 		}
 
@@ -1369,16 +1361,8 @@ namespace System.Windows.Forms {
 			columnIndex = index;
 		}
 
-		internal void SetContentBounds (Rectangle bounds) {
-			contentBounds = bounds;
-		}
-
 		internal void SetIsInEditMode (bool isInEditMode) {
 			this.isInEditMode = isInEditMode;
-		}
-
-		internal void SetSize (Size size) {
-			this.size = size;
 		}
 
 		internal void OnErrorTextChanged (DataGridViewCellEventArgs args) {

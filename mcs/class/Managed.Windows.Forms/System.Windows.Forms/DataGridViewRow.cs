@@ -492,7 +492,6 @@ namespace System.Windows.Forms {
 			
 			foreach (DataGridViewCell cell in Cells) {
 				bounds.Width = DataGridView.Columns[cell.ColumnIndex].Width;
-				cell.SetSize (bounds.Size);
 				
 				graphics.FillRectangle (Brushes.White, bounds);
 				

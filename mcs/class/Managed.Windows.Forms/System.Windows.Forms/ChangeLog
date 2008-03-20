@@ -1,3 +1,10 @@
+2008-03-20  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridViewCell.cs: Remove unused variables, improve how
+	several of the property getters work.
+	* DataGridViewRow.cs: Don't call setSize on a cell, cell should
+	get its size from the parent row/col.
+
 2008-03-20  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* PropertyGrid.cs: Ensure PropertiesTab is visible even if the 

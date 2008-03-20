@@ -1,3 +1,8 @@
+2008-03-20  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridViewCellTest.cs: Don't verify exception message,
+	throwing the exception is enough.
+
 2008-03-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListBindingHelperTest.cs: Update GetListTest with new assertions.
