@@ -1,3 +1,10 @@
+2008-03-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel-long.brg: Add rules for long conv.ovf.i/conv.ovf.u/conv.ovf.i.un/
+	conv.ovf.u.un.
+
+	* iltests.il: Add new tests.
+
 2008-03-20  Kornél Pál  <kornelpal@gmail.com>
 
 	* mini.c: Removed Windows version macros.
