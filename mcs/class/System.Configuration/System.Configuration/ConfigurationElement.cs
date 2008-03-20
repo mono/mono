@@ -46,6 +46,12 @@ namespace System.Configuration
 		bool readOnly;
 		ElementInformation elementInfo;
 		ConfigurationElementProperty elementProperty;
+		Configuration _configuration;
+
+		internal Configuration Configuration {
+			get { return _configuration; }
+			set { _configuration = value; }
+		}
 
 		protected ConfigurationElement ()
 		{
@@ -90,6 +96,8 @@ namespace System.Configuration
 		[MonoTODO]
 		protected ContextInformation EvaluationContext {
 			get {
+				if (Configuration != null)
+					return Configuration.EvaluationContext;
 				throw new NotImplementedException ();
 			}
 		}

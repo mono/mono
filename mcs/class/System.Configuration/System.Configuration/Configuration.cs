@@ -265,6 +265,7 @@ namespace System.Configuration {
 				ds.SectionHandler = secObj as IConfigurationSectionHandler;
 				sec = ds;
 			}
+			sec.Configuration = this;
 
 			ConfigurationSection parentSection = null;
 			if (parent != null) {
