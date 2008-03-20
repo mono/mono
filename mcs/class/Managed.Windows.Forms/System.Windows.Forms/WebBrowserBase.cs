@@ -40,7 +40,7 @@ namespace System.Windows.Forms
     [ComVisible(true)]
     public abstract class WebBrowserBase : Control
 	{
-		protected bool documentReady;
+		internal bool documentReady;
 
 		#region Public Properties
 		[MonoTODO ("Stub, not implemented")]
@@ -52,6 +52,7 @@ namespace System.Windows.Forms
 
 		[MonoTODO ("Stub, not implemented")]
 		[Browsable (false)]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public override bool AllowDrop {
 			get { return false; }
@@ -83,6 +84,7 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Cursor Cursor {
 			get { return null; }
@@ -90,6 +92,7 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new bool Enabled {
 			get { return true; }
@@ -97,6 +100,7 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Font Font {
 			get { return base.Font; }
@@ -104,6 +108,7 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Color ForeColor {
 			get { return base.ForeColor; }
@@ -126,11 +131,14 @@ namespace System.Windows.Forms
 			set { base.RightToLeft = value; }
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public override ISite Site {
-			set { throw new NotSupportedException (); }
+			set { base.Site = value; }
 		}
 
+		[BindableAttribute(true)] 
 		[Browsable (false)]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override string Text {
 			get { return String.Empty; }
@@ -138,6 +146,7 @@ namespace System.Windows.Forms
 		}
 
 		[Browsable (false)]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new bool UseWaitCursor {
 			get { return false; }
@@ -153,14 +162,10 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Methods
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new void DrawToBitmap (Bitmap bitmap, Rectangle targetBounds) 
 		{
 			throw new NotImplementedException ();
-		}
-
-		public new Control GetChildAtPoint (Point point)
-		{
-			return base.GetChildAtPoint (point);
 		}
 
 		public override bool  PreProcessMessage(ref Message msg)
@@ -233,6 +238,7 @@ namespace System.Windows.Forms
 //			WebHost.FocusIn (Mono.WebBrowser.FocusOption.FocusFirstElement);
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		protected override void OnHandleCreated (EventArgs e)
 		{
 			base.OnHandleCreated (e);
@@ -401,7 +407,296 @@ namespace System.Windows.Forms
 		internal abstract bool OnNewWindowInternal ();
 		internal abstract void OnWebHostCompleted (object sender, EventArgs e);
 		#endregion
-	
+
+		
+		
+#region Events
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler BackColorChanged {
+			add { throw new NotSupportedException ("Invalid event handler for BackColorChanged"); }
+			remove { }
+		}
+
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler BackgroundImageChanged {
+			add { throw new NotSupportedException ("Invalid event handler for BackgroundImageChanged"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler BackgroundImageLayoutChanged {
+			add { throw new NotSupportedException ("Invalid event handler for BackgroundImageLayoutChanged"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler BindingContextChanged {
+			add { throw new NotSupportedException ("Invalid event handler for BindingContextChanged"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event UICuesEventHandler ChangeUICues {
+			add { throw new NotSupportedException ("Invalid event handler for ChangeUICues"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler Click {
+			add { throw new NotSupportedException ("Invalid event handler for Click"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler CursorChanged {
+			add { throw new NotSupportedException ("Invalid event handler for CursorChanged"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler DoubleClick {
+			add { throw new NotSupportedException ("Invalid event handler for DoubleClick"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event DragEventHandler DragDrop {
+			add { throw new NotSupportedException ("Invalid event handler for DragDrop"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event DragEventHandler DragEnter {
+			add { throw new NotSupportedException ("Invalid event handler for DragEnter"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler DragLeave {
+			add { throw new NotSupportedException ("Invalid event handler for DragLeave"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event DragEventHandler DragOver {
+			add { throw new NotSupportedException ("Invalid event handler for DragOver"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler EnabledChanged {
+			add { throw new NotSupportedException ("Invalid event handler for EnabledChanged"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler Enter {
+			add { throw new NotSupportedException ("Invalid event handler for Enter"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler FontChanged {
+			add { throw new NotSupportedException ("Invalid event handler for FontChanged"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler ForeColorChanged {
+			add { throw new NotSupportedException ("Invalid event handler for ForeColorChanged"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event GiveFeedbackEventHandler GiveFeedback {
+			add { throw new NotSupportedException ("Invalid event handler for GiveFeedback"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event HelpEventHandler HelpRequested {
+			add { throw new NotSupportedException ("Invalid event handler for HelpRequested"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler ImeModeChanged {
+			add { throw new NotSupportedException ("Invalid event handler for ImeModeChanged"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event KeyEventHandler KeyDown {
+			add { throw new NotSupportedException ("Invalid event handler for KeyDown"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event KeyPressEventHandler KeyPress {
+			add { throw new NotSupportedException ("Invalid event handler for KeyPress"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event KeyEventHandler KeyUp {
+			add { throw new NotSupportedException ("Invalid event handler for KeyUp"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event LayoutEventHandler Layout {
+			add { throw new NotSupportedException ("Invalid event handler for Layout"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler Leave {
+			add { throw new NotSupportedException ("Invalid event handler for Leave"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler MouseCaptureChanged {
+			add { throw new NotSupportedException ("Invalid event handler for MouseCaptureChanged"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event MouseEventHandler MouseClick {
+			add { throw new NotSupportedException ("Invalid event handler for MouseClick"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event MouseEventHandler MouseDoubleClick {
+			add { throw new NotSupportedException ("Invalid event handler for MouseDoubleClick"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event MouseEventHandler MouseDown {
+			add { throw new NotSupportedException ("Invalid event handler for MouseDown"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler MouseEnter {
+			add { throw new NotSupportedException ("Invalid event handler for MouseEnter"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler MouseHover {
+			add { throw new NotSupportedException ("Invalid event handler for MouseHover"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler MouseLeave {
+			add { throw new NotSupportedException ("Invalid event handler for MouseLeave"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event MouseEventHandler MouseMove {
+			add { throw new NotSupportedException ("Invalid event handler for MouseMove"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event MouseEventHandler MouseUp {
+			add { throw new NotSupportedException ("Invalid event handler for MouseUp"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event MouseEventHandler MouseWheel {
+			add { throw new NotSupportedException ("Invalid event handler for MouseWheel"); }
+			remove { }
+		}
+		
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event PaintEventHandler Paint {
+			add { throw new NotSupportedException ("Invalid event handler for Paint"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event QueryAccessibilityHelpEventHandler QueryAccessibilityHelp {
+			add { throw new NotSupportedException ("Invalid event handler for QueryAccessibilityHelp"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event QueryContinueDragEventHandler QueryContinueDrag {
+			add { throw new NotSupportedException ("Invalid event handler for QueryContinueDrag"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler RightToLeftChanged {
+			add { throw new NotSupportedException ("Invalid event handler for RightToLeftChanged"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler StyleChanged {
+			add { throw new NotSupportedException ("Invalid event handler for StyleChanged"); }
+			remove { }
+		}
+		
+		[BrowsableAttribute(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler TextChanged {
+			add { throw new NotSupportedException ("Invalid event handler for TextChanged"); }
+			remove { }
+		}
+		
+		
+		
+		
+#endregion
 	}
 }
 

@@ -218,7 +218,7 @@ namespace System.Windows.Forms
 		[BrowsableAttribute(false)]
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public Padding Padding {
+		public new Padding Padding {
 			get {return base.Padding;}
 			set {base.Padding = value; }
 		}

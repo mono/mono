@@ -1,3 +1,8 @@
+2008-03-20  Andreia Gaita <avidigal@novell.com> 
+
+	* WebBrowserBase.cs: Fix attributes, add events
+	* WebBrowser.cs: Fix Padding signature
+
 2008-03-20  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* PropertyGrid.cs, PropertyGridView.cs: Implement PropertyTab support.
