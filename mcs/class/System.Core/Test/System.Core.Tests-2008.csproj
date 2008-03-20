@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="System.Collections.Generic\HashSetTest.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_Convert.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Add.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_AddChecked.cs" />
