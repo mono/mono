@@ -2418,7 +2418,7 @@ namespace Mono.CSharp {
 		//
 		// Enumeration operators
 		//
-		Expression ResolveOperatorEnum (EmitContext ec, bool lenum, bool renum, Type ltype, Type rtype)
+		Binary ResolveOperatorEnum (EmitContext ec, bool lenum, bool renum, Type ltype, Type rtype)
 		{
 			Expression temp;
 
@@ -2509,7 +2509,7 @@ namespace Mono.CSharp {
 		//
 		// 7.9.6 Reference type equality operators
 		//
-		Expression ResolveOperatorEqualityRerefence (EmitContext ec, Type l, Type r)
+		Binary ResolveOperatorEqualityRerefence (EmitContext ec, Type l, Type r)
 		{
 			//
 			// operator != (object a, object b)
@@ -2698,6 +2698,21 @@ namespace Mono.CSharp {
 				return null;
 
 			if (primitives_only) {
+				if (this is Nullable.LiftedBinaryOperator) {
+					//
+					// This is ugly, consider this conversion: byte? -> (byte -> int) -> int?
+					// (byte -> int) is binary operator promotion
+					// int? representation is required by expression tree
+					//
+					TypeExpr lifted_type = new NullableType (l, left.Location);
+					lifted_type = lifted_type.ResolveAsTypeTerminal (ec, false);
+					if (lifted_type == null)
+						return null;
+
+					left = EmptyCast.Create (left, lifted_type.Type);
+					right = EmptyCast.Create (right, lifted_type.Type);
+				}
+				
 				type = best_operator.ReturnType;
 				return this;
 			}
@@ -2708,7 +2723,7 @@ namespace Mono.CSharp {
 		//
 		// Performs user-operator overloading
 		//
-		Expression ResolveUserOperator (EmitContext ec, Type l, Type r)
+		protected virtual Expression ResolveUserOperator (EmitContext ec, Type l, Type r)
 		{
 			Operator user_oper;
 			if (oper == Operator.LogicalAnd)

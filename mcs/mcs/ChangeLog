@@ -1,3 +1,8 @@
+2008-03-20  Marek Safar  <marek.safar@gmail.com>
+
+	* generic.cs, literal.cs, ecore.cs, expression.cs: Ongoing work on nullable
+	conversions rules and expression trees.
+
 2008-03-19  Marek Safar  <marek.safar@gmail.com>
 
 	* delegate.cs: Use extension method source as delegate target.

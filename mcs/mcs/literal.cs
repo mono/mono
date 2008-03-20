@@ -40,6 +40,12 @@ namespace Mono.CSharp {
 		{
 			return GetSignatureForError ();
 		}
+		
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			type = TypeManager.object_type;
+			return base.CreateExpressionTree (ec);
+		}		
 
 		public override Expression DoResolve (EmitContext ec)
 		{

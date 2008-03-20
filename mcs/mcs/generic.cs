@@ -3281,7 +3281,7 @@ namespace Mono.CSharp {
 		{
 			NullableInfo info;
 
-			Wrap (Expression expr)
+			protected Wrap (Expression expr)
 				: base (expr, null)
 			{
 			}
@@ -3311,10 +3311,23 @@ namespace Mono.CSharp {
 			}
 		}
 
+		class LiftedWrap : Wrap
+		{
+			public LiftedWrap (Expression expr)
+				: base (expr)
+			{
+			}
+
+			public override Expression CreateExpressionTree (EmitContext ec)
+			{
+				return child.CreateExpressionTree (ec);
+			}
+		}
+
 		//
 		// Represents null value converted to nullable type
 		//
-		public class Null : EmptyCast, IMemoryLocation
+		public class Null : EmptyConstantCast, IMemoryLocation
 		{
 			public Null (Type target_type, Location loc)
 				: base (new NullLiteral (loc), target_type)
@@ -3659,7 +3672,7 @@ namespace Mono.CSharp {
 					right_unwrap.Store (ec);
 
 				if (((Oper & Operator.BitwiseMask) != 0) &&
-					left.Type == TypeManager.bool_type && right.Type == TypeManager.bool_type) {
+					left_unwrap.Type == TypeManager.bool_type && right_unwrap.Type == TypeManager.bool_type) {
 					EmitBitwiseBoolean (ec);
 					return;
 				}
@@ -3691,14 +3704,29 @@ namespace Mono.CSharp {
 
 				base.EmitOperator (ec);
 
+				// TODO: this is LiftedWrap
 				NullableInfo info = new NullableInfo (type);
 				ig.Emit (OpCodes.Newobj, info.Constructor);
+
 				ig.Emit (OpCodes.Br_S, end_label);
 
 				ig.MarkLabel (is_null_label);
 				new Null (type, loc).Emit (ec);
 
 				ig.MarkLabel (end_label);
+			}
+
+			protected override Expression ResolveUserOperator (EmitContext ec, Type l, Type r)
+			{
+				Expression expr = base.ResolveUserOperator (ec, l, r);
+				if (expr == null)
+					return null;
+				
+				// TODO: Handle bitwise bool 
+				if ((Oper & Operator.ComparisonMask) != 0)
+					return expr;
+
+				return new LiftedWrap (expr).Resolve (ec);
 			}
 		}
 

@@ -1321,6 +1321,21 @@ namespace Mono.CSharp {
 			if (c != null)
 				return new EmptyConstantCast (c, type);
 
+			//
+			// No double conversion required when wrapping nullable types
+			//
+			if (TypeManager.IsNullableType (type)) {
+				EmptyCast empty_cast = child as EmptyCast;
+				if (empty_cast != null) {
+					if (TypeManager.IsNullableTypeOf (empty_cast.type, type))
+						throw new InternalErrorException ("Missing nullable underlying type conversion {0} != {1}",
+							TypeManager.CSharpName (empty_cast.type), TypeManager.CSharpName (type));
+
+					empty_cast.type = type;
+					return empty_cast;
+				}
+			}
+			
 			return new EmptyCast (child, type);
 		}
 
