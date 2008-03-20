@@ -1,5 +1,10 @@
 2008-03-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* inssel-long32.brg: Add rules for long conv.ovf.i/conv.ovf.u/conv.ovf.i.un/
+	conv.ovf.u.un.
+
+2008-03-20  Zoltan Varga  <vargaz@gmail.com>
+
 	* inssel-long.brg: Add rules for long conv.ovf.i/conv.ovf.u/conv.ovf.i.un/
 	conv.ovf.u.un.
 
