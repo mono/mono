@@ -64,6 +64,7 @@ namespace System.Configuration
 		Company_Product_VersionMinor = 0x32,
 		Company_Product_VersionBuild = 0x34,
 		Company_Product_VersionRevision = 0x38,
+		Evidence = 0x40,
 		Other = 0x8000
 	}
 	
@@ -89,6 +90,7 @@ namespace System.Configuration
 		private static bool isVersionRevision = false;	// 0x0008	revision
 		private static bool isCompany = true;		// 0x0010	corporate name
 		private static bool isProduct = true;		// 0x0020	product name
+		private static bool isEvidence = false;		// 0x0040	evidence hash
 
 		private static bool userDefine = false;		// 0x8000	ignore all above and use user definition
 
@@ -228,6 +230,13 @@ namespace System.Configuration
 			set { isCompany = value; }
 		}
 
+		// whether the path to include evidence hash.
+		public static bool IsEvidence
+		{
+			get { return isEvidence; }
+			set { isEvidence = value; }
+		}
+
 		// AssemblyCompanyAttribute->Namespace->"Program"
 		private static string GetCompanyName ()
 		{
@@ -263,13 +272,10 @@ namespace System.Configuration
 #if !TARGET_JVM
 
 			byte [] pkt = assembly.GetName ().GetPublicKeyToken ();
-			byte [] hash = SHA1.Create ().ComputeHash (pkt != null ? pkt : Encoding.UTF8.GetBytes (assembly.EscapedCodeBase));
 			return String.Format ("{0}_{1}_{2}",
 				AppDomain.CurrentDomain.FriendlyName,
 				pkt != null ? "StrongName" : "Url",
-				// FIXME: it seems that something else is used
-				// here, to convert hash bytes to string.
-				Convert.ToBase64String (hash));
+				GetEvidenceHash());
 
 #else // AssemblyProductAttribute-based code
 			AssemblyProductAttribute [] attrs = (AssemblyProductAttribute[]) assembly.GetCustomAttributes (typeof (AssemblyProductAttribute), true);
@@ -279,6 +285,20 @@ namespace System.Configuration
 			}
 			return assembly.GetName ().Name;
 #endif
+		}
+
+		// FIXME: it seems that something else is used
+		// here, to convert hash bytes to string.
+		private static string GetEvidenceHash ()
+		{
+			Assembly assembly = Assembly.GetEntryAssembly ();
+			if (assembly == null)
+				assembly = Assembly.GetCallingAssembly ();
+
+			byte [] pkt = assembly.GetName ().GetPublicKeyToken ();
+			byte [] hash = SHA1.Create ().ComputeHash (pkt != null ? pkt : Encoding.UTF8.GetBytes (assembly.EscapedCodeBase));
+
+			return Convert.ToBase64String (hash);
 		}
 
 		private static string GetProductVersion ()
@@ -326,8 +346,23 @@ namespace System.Configuration
 			}
 
 			if (isProduct) {
+				string evidenceHash;
+
+				if (isEvidence) {
+					Assembly assembly = Assembly.GetEntryAssembly ();
+					if (assembly == null)
+						assembly = Assembly.GetCallingAssembly ();
+#if !TARGET_JVM
+					byte [] pkt = assembly.GetName ().GetPublicKeyToken ();
+					ProductName = String.Format ("{0}_{1}_{2}",
+						ProductName,
+						pkt != null ? "StrongName" : "Url",
+						GetEvidenceHash());
+#endif
+				}
 				userRoamingPath = Path.Combine (userRoamingPath, ProductName);
 				userLocalPath = Path.Combine (userLocalPath, ProductName);
+				
 			}
 
 			string versionName;
