@@ -358,6 +358,7 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
         (dest)->inst_p0 = (dest)->inst_p1 = (dest)->next = (dest)->prev = NULL; \
 		(dest)->opcode = (op);	\
         (dest)->flags = 0; \
+        (dest)->type = 0; \
         (dest)->dreg = (dest)->sreg1 = (dest)->sreg2 = -1;  \
         (dest)->cil_code = (cfg)->ip;  \
 	} while (0)

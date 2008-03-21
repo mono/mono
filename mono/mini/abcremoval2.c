@@ -1200,7 +1200,7 @@ mono_perform_abc_removal2 (MonoCompile *cfg)
 				effective_value_kind = get_relation_from_ins (&area, ins, &area.relations [ins->dreg], area.variable_value_kind [ins->dreg]);
 
 				MONO_MAKE_RELATIONS_EVALUATION_RANGE_WEAK (range);
-				apply_value_kind_to_range (&range, area.variable_value_kind [i]);
+				apply_value_kind_to_range (&range, area.variable_value_kind [ins->dreg]);
 				apply_value_kind_to_range (&range, effective_value_kind);
 					
 				if (range.upper < INT_MAX) {
