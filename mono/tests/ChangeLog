@@ -1,5 +1,8 @@
 2008-03-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* libtest.c: Fix missing return in mono_marshal_alloc (). Disable or fix all
+	warnings.
+
 	* assemblyresolve/Makefile.am: Use the 2.0 profile for compilation.
 
 2008-03-20  Mark Probst  <mark.probst@gmail.com>
