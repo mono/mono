@@ -69,6 +69,8 @@ namespace System.Collections.Generic {
 	
 			public override int GetHashCode (T obj)
 			{
+				if (obj == null)
+					return 0;
 				return obj.GetHashCode ();
 			}
 	
@@ -87,6 +89,8 @@ namespace System.Collections.Generic {
 
 		public override int GetHashCode (T obj)
 		{
+			if (obj == null)
+				return 0;
 			return obj.GetHashCode ();
 		}
 

@@ -1,3 +1,8 @@
+2008-03-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* EqualityComparer.cs: Add null checks in GetHashCode. Fix bug 
+	#372892
+
 2007-11-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Dictionary.cs: Ensure that the non-generic CopyTo works on Array.
