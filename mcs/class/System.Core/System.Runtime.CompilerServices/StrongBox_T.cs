@@ -26,27 +26,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace System.Runtime.CompilerServices
-{
-    public class StrongBox<T> : IStrongBox
-    {
-        #region .ctor
-        public StrongBox(T value)
-        {
-            Value = value;
-        }
-        #endregion
+namespace System.Runtime.CompilerServices {
 
-        #region Fields
-        public T Value;
-        #endregion
+	public class StrongBox<T> : IStrongBox {
 
-        #region IStrongBox Members
-        object IStrongBox.Value
-        {
-            get { return Value; }
-            set { Value = (T)value; }
-        }
-        #endregion
-    }
+		public T Value;
+
+		object IStrongBox.Value
+		{
+			get { return Value; }
+			set { Value = (T) value; }
+		}
+
+		public StrongBox (T value)
+		{
+			Value = value;
+		}
+	}
 }
