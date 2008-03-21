@@ -1,3 +1,12 @@
+2008-03-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-s390.c (calculate_sizes): Rename this to get_call_info for consistency
+	with the other architectures, add an 'mp' argument, fold 'sz' argument into the
+	return value.
+
+	* mini-s390.c: Handle DIV_IMM/REM_IMM in the lowering pass instead of in 
+	mono_arch_output_basic_block. Fix warnings.
+
 2008-03-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* inssel-long32.brg: Add rules for long conv.ovf.i/conv.ovf.u/conv.ovf.i.un/
