@@ -1,3 +1,7 @@
+2008-03-21  Geoff Norton  <gnorton@novell.com>
+
+	* KeyboardHandler.cs: Fix mapping of Delete.
+
 2008-02-26  Geoff Norton  <gnorton@novell.com>
 	
 	* WindowHandler.cs: Send WM_CLOSE instead of WM_DESTROY.  Fixes 
