@@ -1,3 +1,8 @@
+2008-03-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-s390.h mini-s390.c: Avoid using the same registers for local and global 
+	reg allocation. Finish the S390 port.
+
 2008-03-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* inssel.brg: Use MONO_INST_NEW in MONO_EMIT_NEW_ICONST () since that is called

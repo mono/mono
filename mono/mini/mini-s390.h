@@ -189,9 +189,10 @@ typedef struct
 /*-----------------------------------------------------*/
 /* use s390_r2-s390_r6 as parm registers               */
 /* s390_r0, s390_r1, s390_r12, s390_r13 used internally*/
+/* s390_r8..s390_r11 are used for global regalloc      */
 /* s390_r15 is the stack pointer                       */
 /*-----------------------------------------------------*/
-#define MONO_ARCH_CALLEE_REGS (0xffc)
+#define MONO_ARCH_CALLEE_REGS (0xfc)
 
 #define MONO_ARCH_CALLEE_SAVED_REGS 0xff80
 

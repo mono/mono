@@ -1228,8 +1228,9 @@ mono_arch_get_global_int_regs (MonoCompile *cfg)
 	if ((cfg->flags & MONO_CFG_HAS_ALLOCA) || header->num_clauses)
 		cfg->frame_reg = s390_r11;
 
-	/* FIXME: 8 is reserved for bkchain_reg. Only reserve it if needed */
-	for (i = 9; i < top; ++i) {
+	/* FIXME: s390_r12 is reserved for bkchain_reg. Only reserve it if needed */
+	top = 12;
+	for (i = 8; i < top; ++i) {
 		if (cfg->frame_reg != i)
 			regs = g_list_prepend (regs, GUINT_TO_POINTER (i));
 	}
