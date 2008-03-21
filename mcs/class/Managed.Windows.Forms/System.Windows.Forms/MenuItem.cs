@@ -498,6 +498,9 @@ namespace System.Windows.Forms
 
 		protected override void Dispose (bool disposing)
 		{
+			if (parent_menu != null)
+				parent_menu.MenuItems.Remove (this);
+				
 			base.Dispose (disposing);			
 		}
 

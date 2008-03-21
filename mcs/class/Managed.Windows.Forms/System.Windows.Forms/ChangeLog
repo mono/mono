@@ -1,5 +1,10 @@
 2008-03-21  Jonathan Pobst  <monkey@jpobst.com>
 
+	* MenuItem.cs: Remove menu item from parent when disposed.
+	[Fixes bug #372845]
+
+2008-03-21  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolBar.cs: Don't reset layout_type if Dock = None.
 
 2008-03-21  Andreia Gaita <avidigal@novell.com> 

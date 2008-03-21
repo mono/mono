@@ -1,3 +1,7 @@
+2008-03-21  Jonathan Pobst  <monkey@jpobst.com>
+
+	* MenuItemTest.cs: Add test for #372845.
+
 2008-03-21  Andreia Gaita <avidigal@novell.com> 
 
 	* FocusTest.cs: New test for #372616. Checks if a control inside a

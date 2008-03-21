@@ -372,5 +372,20 @@ namespace MonoTests.System.Windows.Forms
 				Assert.Fail("OnDrawItem");
 			}
 		}
+		
+		[Test]
+		public void RemoveOnDispose ()
+		{
+			MainMenu m = new MainMenu ();
+			MenuItem mi = new MenuItem ("yo");
+			
+			m.MenuItems.Add (mi);
+			
+			Assert.AreEqual (1, m.MenuItems.Count, "A1");
+			
+			mi.Dispose ();
+
+			Assert.AreEqual (0, m.MenuItems.Count, "A2");
+		}
 	}
 }
