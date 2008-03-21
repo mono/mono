@@ -796,6 +796,8 @@ MINI_OP(OP_S390_LSUB,          "s390_long_sub", LREG, IREG, IREG)
 MINI_OP(OP_S390_LSUB_OVF,      "s390_long_sub_ovf", LREG, IREG, IREG)
 MINI_OP(OP_S390_LSUB_OVF_UN,   "s390_long_sub_ovf_un", LREG, IREG, IREG)
 MINI_OP(OP_S390_LNEG,          "s390_long_neg", LREG, IREG, IREG)
+MINI_OP(OP_S390_ISUB_OVF,       "s390_int_sub_ovf", IREG, IREG, IREG)
+MINI_OP(OP_S390_ISUB_OVF_UN,    "s390_int_sub_ovf_un", IREG, IREG, IREG)
 #endif
 
 #if defined(__ia64__)

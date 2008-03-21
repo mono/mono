@@ -1899,9 +1899,12 @@ mono_op_imm_to_op (int opcode)
 		return OP_COMPARE;
 	case OP_ICOMPARE_IMM:
 		return OP_ICOMPARE;
+	case OP_LOCALLOC_IMM:
+		return OP_LOCALLOC;
 	default:
 		printf ("%s\n", mono_inst_name (opcode));
 		g_assert_not_reached ();
+		return -1;
 	}
 }
 

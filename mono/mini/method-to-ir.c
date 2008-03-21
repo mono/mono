@@ -4991,6 +4991,10 @@ decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 {
 	/* FIXME: Instead of = NOP, don't emit the original ins at all */
 
+#ifdef MONO_ARCH_HAVE_DECOMPOSE_OPTS
+	mono_arch_decompose_opts (cfg, ins);
+#endif
+
 	/*
 	 * The code below assumes that we are called immediately after emitting 
 	 * ins. This means we can emit code using the normal code generation
@@ -5062,6 +5066,10 @@ decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 		break;
 	case OP_ICONV_TO_OVF_U4:
 	case OP_ICONV_TO_OVF_I4_UN:
+#if SIZEOF_VOID_P == 4
+	case OP_ICONV_TO_OVF_U:
+	case OP_ICONV_TO_OVF_I_UN:
+#endif
 		MONO_EMIT_NEW_ICOMPARE_IMM (cfg, ins->sreg1, 0);
 		MONO_EMIT_NEW_COND_EXC (cfg, ILT, "OverflowException");
 		MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, ins->dreg, ins->sreg1);
@@ -5069,6 +5077,10 @@ decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 		break;
 	case OP_ICONV_TO_I4:
 	case OP_ICONV_TO_U4:
+#if SIZEOF_VOID_P == 4
+	case OP_ICONV_TO_OVF_I:
+	case OP_ICONV_TO_OVF_U_UN:
+#endif
 		ins->opcode = OP_MOVE;
 		break;
 	case OP_ICONV_TO_I:
@@ -10963,7 +10975,7 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
 		MONO_BB_FOR_EACH_INS (bb, ins) {
 			const char *spec = INS_INFO (ins->opcode);
 			int regtype, srcindex, sreg, tmp_reg, prev_dreg;
-			gboolean store;
+			gboolean store, no_lvreg;
 
 			if (G_UNLIKELY (cfg->verbose_level > 1))
 				mono_print_ins (ins);
@@ -11027,6 +11039,7 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
 				g_assert_not_reached ();
 			else
 				store = FALSE;
+			no_lvreg = FALSE;
 
 			if (G_UNLIKELY (cfg->verbose_level > 1))
 				printf ("\t %.3s %d %d %d\n", spec, ins->dreg, ins->sreg1, ins->sreg2);
@@ -11097,6 +11110,18 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
 							ins->opcode = store_opcode;
 							ins->inst_destbasereg = var->inst_basereg;
 							ins->inst_offset = var->inst_offset;
+
+							no_lvreg = TRUE;
+
+							tmp_reg = ins->dreg;
+							ins->dreg = ins->sreg2;
+							ins->sreg2 = tmp_reg;
+							store = TRUE;
+
+							spec2 [MONO_INST_DEST] = ' ';
+							spec2 [MONO_INST_SRC1] = spec [MONO_INST_SRC1];
+							spec2 [MONO_INST_SRC2] = spec [MONO_INST_DEST];
+							spec = spec2;
 						} else if (!lvreg && (op_to_op_store_membase (store_opcode, ins->opcode) != -1)) {
 							// FIXME: The backends expect the base reg to be in inst_basereg
 							ins->opcode = op_to_op_store_membase (store_opcode, ins->opcode);
@@ -11180,7 +11205,7 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
 
 							sreg = alloc_dreg (cfg, stacktypes [regtype]);
 
-							if ((!MONO_ARCH_USE_FPSTACK || ((load_opcode != OP_LOADR8_MEMBASE) && (load_opcode != OP_LOADR4_MEMBASE))) && !((var)->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT))) {
+							if ((!MONO_ARCH_USE_FPSTACK || ((load_opcode != OP_LOADR8_MEMBASE) && (load_opcode != OP_LOADR4_MEMBASE))) && !((var)->flags & (MONO_INST_VOLATILE|MONO_INST_INDIRECT)) && !no_lvreg) {
 								if (var->dreg == prev_dreg) {
 									/*
 									 * sreg refers to the value loaded by the load

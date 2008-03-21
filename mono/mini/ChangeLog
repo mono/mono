@@ -1,3 +1,13 @@
+2008-03-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (decompose_opcode): Call an arch-specific decompose function if
+	defined.
+	(mono_spill_global_vars): Fix a bug when converting moves into stores.
+
+	* mini.c (mono_op_imm_to_op): Handle LOCALLOC_IMM.
+
+	* mini-ops.h mini-s390.h mini-s390.c cpu-s390.md: Ongoing S390 porting work.
+
 2008-03-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-x86.c: Fix the x86 port after the ins list changes.
