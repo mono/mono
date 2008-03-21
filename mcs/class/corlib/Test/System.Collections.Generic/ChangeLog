@@ -1,3 +1,8 @@
+2008-03-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* EqualityComparerTest.cs: New. Add test cases for using null with 
+	GetHashCode (bug #372892).
+
 2008-01-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* ListTest.cs: Make some tests public.
