@@ -1,5 +1,13 @@
 2008-03-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* inssel.brg: Use MONO_INST_NEW in MONO_EMIT_NEW_ICONST () since that is called
+	by the backends.
+
+	* method-to-ir.c (mini_emit_inst_for_method): Fix an assert on 32 bit platforms.
+	(mono_method_to_ir2): Fix the LDLOCA+INITOBJ optimization in case of primitive types.
+
+	* mini-s390.c mini-ops.h cpu-s390.md: Ongoing S390 porting work.
+	
 	* abcremoval2.c (mono_perform_abc_removal2): Fix reading of invalid memory.
 
 	* method-to-ir.c (MONO_INST_NEW): Initialize ins->type as well.

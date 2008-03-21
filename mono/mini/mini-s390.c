@@ -310,6 +310,7 @@ typedef enum {
 	RegTypeFP,
 	RegTypeFPR4,
 	RegTypeStructByVal,
+	RegTypeStructByValInFP,
 	RegTypeStructByAddr
 } ArgStorage;
 
@@ -2212,6 +2213,37 @@ add_outarg_reg2 (MonoCompile *cfg, MonoCallInst *call, ArgStorage storage, int r
 	}
 }
 
+static void
+emit_sig_cookie2 (MonoCompile *cfg, MonoCallInst *call, CallInfo *cinfo)
+{
+	MonoMethodSignature *tmpSig;
+	MonoInst *sig_arg;
+			
+	cfg->disable_aot = TRUE;
+
+	/*----------------------------------------------------------*/
+	/* mono_ArgIterator_Setup assumes the signature cookie is   */
+	/* passed first and all the arguments which were before it  */
+	/* passed on the stack after the signature. So compensate   */
+	/* by passing a different signature.			    */
+	/*----------------------------------------------------------*/
+	tmpSig = mono_metadata_signature_dup (call->signature);
+	tmpSig->param_count -= call->signature->sentinelpos;
+	tmpSig->sentinelpos  = 0;
+	if (tmpSig->param_count > 0)
+		memcpy (tmpSig->params, 
+			call->signature->params + call->signature->sentinelpos, 
+			tmpSig->param_count * sizeof(MonoType *));
+
+	MONO_INST_NEW (cfg, sig_arg, OP_ICONST);
+	sig_arg->dreg = mono_alloc_ireg (cfg);
+	sig_arg->inst_p0 = tmpSig;
+	MONO_ADD_INS (cfg->cbb, sig_arg);
+
+	MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, STK_BASE, 
+								 cinfo->sigCookie.offset, sig_arg->dreg);
+}
+
 /*------------------------------------------------------------------*/
 /*                                                                  */
 /* Name		- mono_arch_emit_call                                   */
@@ -2264,9 +2296,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 
 		if ((sig->call_convention == MONO_CALL_VARARG) &&
 		    (i == sig->sentinelpos)) {
-			// FIXME:
-			NOT_IMPLEMENTED;
-			emit_sig_cookie (cfg, call, cinfo, ainfo->size);
+			emit_sig_cookie2 (cfg, call, cinfo);
 		}
 
 		switch (ainfo->regtype) {
@@ -2287,10 +2317,16 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 			}
 			break;
 		case RegTypeFP:
-			if (ainfo->size == 4)
-				ainfo->regtype = RegTypeFPR4;
-			add_outarg_reg2 (cfg, call, ainfo->regtype, ainfo->reg, in);
-			break;
+			if (MONO_TYPE_ISSTRUCT (t)) {
+				/* Valuetype passed in one fp register */
+				ainfo->regtype = RegTypeStructByValInFP;
+				/* Fall through */
+			} else {
+				if (ainfo->size == 4)
+					ainfo->regtype = RegTypeFPR4;
+				add_outarg_reg2 (cfg, call, ainfo->regtype, ainfo->reg, in);
+				break;
+			}
 		case RegTypeStructByVal:
 		case RegTypeStructByAddr: {
 			guint32 align;
@@ -2320,7 +2356,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 			MONO_INST_NEW (cfg, ins, OP_OUTARG_VT);
 			ins->sreg1 = in->dreg;
 			ins->klass = in->klass;
-			ins->backend.size = size;
+			ins->backend.size = ainfo->size;
 			ins->inst_p0 = call;
 			ins->inst_p1 = mono_mempool_alloc (cfg->mempool, sizeof (ArgInfo));
 			memcpy (ins->inst_p1, ainfo, sizeof (ArgInfo));
@@ -2440,9 +2476,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 	 */
 	if ((sig->call_convention == MONO_CALL_VARARG) &&
 	    (i == sig->sentinelpos)) {
-		// FIXME:
-		NOT_IMPLEMENTED;
-		emit_sig_cookie (cfg, call, cinfo, ainfo->size);
+		emit_sig_cookie2 (cfg, call, cinfo);
 	}
 }
 
@@ -2475,6 +2509,19 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 			MONO_OUTPUT_VTS2 (cfg, size, ainfo->reg, ainfo->offset,
 							  src->dreg, 0);
 		}	
+	} else if (ainfo->regtype == RegTypeStructByValInFP) {
+		int dreg = mono_alloc_freg (cfg);
+
+		if (ainfo->size == 4) {
+			MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADR4_MEMBASE, dreg, src->dreg, 0);
+			MONO_EMIT_NEW_UNALU (cfg, OP_S390_SETF4RET, dreg, dreg);
+		} else {
+			g_assert (ainfo->size == 8);
+
+			MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADR8_MEMBASE, dreg, src->dreg, 0);
+		}
+
+		mono_call_inst_add_outarg_reg (cfg, call, dreg, ainfo->reg, TRUE);
 	} else {
 		MONO_EMIT_NEW_MOVE2 (cfg, STK_BASE, ainfo->offparm,
 							 src->dreg, 0, size);
@@ -3410,13 +3457,15 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 		}
 			break;
-		case OP_IADD_OVF: {
+		case OP_IADD_OVF:
+		case OP_S390_IADD_OVF: {
 			CHECK_SRCDST_COM;
 			s390_ar   (code, ins->dreg, src2);
 			EMIT_COND_SYSTEM_EXCEPTION (S390_CC_OV, "OverflowException");
 		}
 			break;
-		case OP_IADD_OVF_UN: {
+		case OP_IADD_OVF_UN:
+		case OP_S390_IADD_OVF_UN: {
 			CHECK_SRCDST_COM;
 			s390_alr  (code, ins->dreg, src2);
 			EMIT_COND_SYSTEM_EXCEPTION (S390_CC_CY, "OverflowException");
@@ -4487,8 +4536,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			s390_lhi  (code, s390_r13, -1);
 			s390_cr   (code, ins->sreg2, s390_r13);
 			s390_jnz  (code, 0); CODEPTR(code, o[2]);
-			if (ins->dreg != ins->sreg1)
-				s390_lr   (code, ins->dreg, ins->sreg1);
 			s390_j	  (code, 0); CODEPTR(code, o[3]);
 			PTRSLOT(code, o[0]);
 			s390_ltr  (code, ins->sreg2, ins->sreg2);
@@ -4500,6 +4547,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			s390_brasl (code, s390_r14, 0);
 			PTRSLOT(code, o[3]);
 			PTRSLOT(code, o[4]);
+			if (ins->dreg != ins->sreg1)
+				s390_lr   (code, ins->dreg, ins->sreg1);
 		}
 			break;
 		case OP_SQRT: {
@@ -5518,6 +5567,12 @@ mono_arch_decompose_opts (MonoCompile *cfg, MonoInst *ins)
 		break;
 	case OP_ISUB_OVF_UN:
 		ins->opcode = OP_S390_ISUB_OVF_UN;
+		break;
+	case OP_IADD_OVF:
+		ins->opcode = OP_S390_IADD_OVF;
+		break;
+	case OP_IADD_OVF_UN:
+		ins->opcode = OP_S390_IADD_OVF_UN;
 		break;
 	default:
 		break;

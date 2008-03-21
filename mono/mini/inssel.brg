@@ -199,8 +199,7 @@
 
 #define	MONO_EMIT_NEW_ICONST(cfg,dr,imm) do { \
                 MonoInst *inst; \
-		inst = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
-		inst->opcode = OP_ICONST;	\
+        MONO_INST_NEW ((cfg), (inst), OP_ICONST); \
                 inst->dreg = dr; \
                 inst->inst_c0 = imm; \
 	        mono_bblock_add_inst ((cfg)->cbb, inst); \

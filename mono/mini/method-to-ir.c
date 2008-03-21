@@ -4105,7 +4105,7 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			ins->type = (opcode == OP_ATOMIC_ADD_NEW_I4) ? STACK_I4 : STACK_I8;
 			MONO_ADD_INS (cfg->cbb, ins);
 		} else if (strcmp (cmethod->name, "Add") == 0) {
-			guint32 opcode;
+			guint32 opcode = 0;
 
 			if (fsig->params [0]->type == MONO_TYPE_I4)
 				opcode = OP_ATOMIC_ADD_NEW_I4;
@@ -4113,16 +4113,16 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			else if (fsig->params [0]->type == MONO_TYPE_I8)
 				opcode = OP_ATOMIC_ADD_NEW_I8;
 #endif
-			else
-				g_assert_not_reached ();
 
-			MONO_INST_NEW (cfg, ins, opcode);
-			ins->dreg = mono_alloc_ireg (cfg);
-			ins->inst_basereg = args [0]->dreg;
-			ins->inst_offset = 0;
-			ins->sreg2 = args [1]->dreg;
-			ins->type = (opcode == OP_ATOMIC_ADD_I4) ? STACK_I4 : STACK_I8;
-			MONO_ADD_INS (cfg->cbb, ins);
+			if (opcode) {
+				MONO_INST_NEW (cfg, ins, opcode);
+				ins->dreg = mono_alloc_ireg (cfg);
+				ins->inst_basereg = args [0]->dreg;
+				ins->inst_offset = 0;
+				ins->sreg2 = args [1]->dreg;
+				ins->type = (opcode == OP_ATOMIC_ADD_I4) ? STACK_I4 : STACK_I8;
+				MONO_ADD_INS (cfg->cbb, ins);
+			}
 		}
 #endif /* MONO_ARCH_HAVE_ATOMIC_ADD */
 
@@ -6983,7 +6983,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				if (cfg->generic_sharing_context && mono_class_check_context_used (klass))
 					GENERIC_SHARING_FAILURE (CEE_INITOBJ);
 
-				if (MONO_TYPE_IS_REFERENCE (&klass->byval_arg)) {
+				if (MONO_TYPE_IS_REFERENCE (&klass->byval_arg) || !MONO_TYPE_ISSTRUCT (&klass->byval_arg)) {
 					MONO_EMIT_NEW_PCONST (cfg, cfg->locals [ip [1]]->dreg, NULL);
 				} else {
 					MONO_EMIT_NEW_VZERO (cfg, cfg->locals [ip [1]]->dreg, klass);
