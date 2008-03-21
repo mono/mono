@@ -207,8 +207,7 @@ namespace System.Data.Odbc
 									 ref DecDigits, ref Nullable);
 				if ((ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo))
 					throw new OdbcException (new OdbcError ("SQLDescribeCol", OdbcHandleType.Stmt, hstmt));
-				colname = System.Text.Encoding.Default.GetString (colname_buffer);
-				colname = colname.Replace ((char) 0, ' ').Trim ();
+				colname = RemoveTrailingNullChar (Encoding.Unicode.GetString (colname_buffer));
 				OdbcColumn c = new OdbcColumn (colname, (SQL_TYPE) dt);
 				c.AllowDBNull = (Nullable != 0);
 				c.Digits = DecDigits;
@@ -357,7 +356,7 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		string GetDataTypeName (int index)
 		{
-			return GetColumn (index).OdbcType.ToString ();
+			return GetColumnAttributeStr (index + 1, FieldIdentifier.TypeName);
 		}
 
 		public DateTime GetDate (int ordinal) {
@@ -678,23 +677,37 @@ namespace System.Data.Odbc
 					ret = libodbc.SQLGetData (hstmt, ColIndex, col.SqlCType, ref long_data, 0, ref outsize);
 					DataValue = long_data;
 					break;
+				case OdbcType.NChar:
+					bufsize = 255;
+					buffer = new byte [bufsize];
+					ret = libodbc.SQLGetData (hstmt, ColIndex, SQL_C_TYPE.WCHAR, buffer, bufsize, ref outsize);
+					if (outsize != (int) OdbcLengthIndicator.NullData)
+						if (!(ret == OdbcReturn.SuccessWithInfo
+						       && outsize == (int) OdbcLengthIndicator.NoTotal))
+							DataValue = Encoding.Unicode.GetString (buffer, 0, outsize);
+					break;
 				case OdbcType.NText:
 				case OdbcType.NVarChar:
 					bufsize = (col.MaxLength < 127 ? (col.MaxLength*2+1) : 255);
 					buffer = new byte[bufsize];  // According to sqlext.h, use SQL_CHAR for both char and varchar
 					StringBuilder sb = new StringBuilder ();
-					do { 
+					do {
 						ret = libodbc.SQLGetData (hstmt, ColIndex, col.SqlCType, buffer, bufsize, ref outsize);
 						if (ret == OdbcReturn.Error)
 							break;
 						// Fix for strance ODBC drivers (like psqlODBC)
 						if (ret == OdbcReturn.Success && outsize==-1)
 							ret = OdbcReturn.NoData;
+
 						if (ret != OdbcReturn.NoData && outsize > 0) {
+							string value = null;
+
 							if (outsize < bufsize)
-								sb.Append (System.Text.Encoding.Unicode.GetString(buffer,0,outsize));
+								value = Encoding.Unicode.GetString (buffer, 0, outsize);
 							else
-								sb.Append (System.Text.Encoding.Unicode.GetString(buffer,0,bufsize));
+								value = Encoding.Unicode.GetString (buffer, 0, bufsize);
+
+							sb.Append (RemoveTrailingNullChar (value));
 						}
 					} while (ret != OdbcReturn.NoData);
 					DataValue = sb.ToString ();
@@ -946,7 +959,7 @@ namespace System.Data.Odbc
 									hstmt));
 			string value = string.Empty;
 			if (outsize > 0)
-				value = Encoding.Default.GetString (buffer, 0, outsize);
+				value = Encoding.Unicode.GetString (buffer, 0, outsize);
 			return value;
 		}
 
@@ -1084,6 +1097,11 @@ namespace System.Data.Odbc
 		bool Read ()
 		{
 			return NextRow ();
+		}
+
+		static string RemoveTrailingNullChar (string value)
+		{
+			return value.TrimEnd ('\0');
 		}
 
 		#endregion

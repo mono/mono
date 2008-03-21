@@ -1,3 +1,16 @@
+2008-03-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* libodbc.cs: Always use unicode version of ODBC functions. Fixes part
+	of bug #372823.
+	* OdbcTypeMap.cs: Fixed mapping for NChar, NText and NVarChar.
+	* OdbcDataReader.cs (GetColumn): Use Unicode encoding to decode
+	column name buffer.
+	(GetDataTypeName): Use SQLColAttribute to determine type name of
+	column.
+	(GetValue): Fixed retrieving value of nchar column. When retrieving
+	variable length unicode value, use Unicode encoding to decode buffer
+	and remove trailing null characters. Fixes bug #364430.
+
 2008-03-03  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes Bug#324025

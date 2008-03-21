@@ -147,12 +147,12 @@ namespace System.Data.Odbc
 								 SQL_TYPE.INTEGER);
 			maps [OdbcType.NChar]     = new OdbcTypeMap (DbType.String, 
 								 OdbcType.NChar,
-								     SQL_C_TYPE.CHAR, //change
-								     SQL_TYPE.CHAR); //change
+								     SQL_C_TYPE.WCHAR,
+								     SQL_TYPE.WCHAR);
 			maps [OdbcType.NText]     = new OdbcTypeMap (DbType.String, 
 								 OdbcType.NText,
-								     SQL_C_TYPE.CHAR, // change
-								     SQL_TYPE.LONGVARCHAR); //change
+								     SQL_C_TYPE.WCHAR, // change
+								     SQL_TYPE.WLONGVARCHAR); //change
 			// Currently, NUMERIC types works only with NUMERIC SQL Type to CHAR C Type mapping (pgsql). Other databases return 
 			// SQL_TYPE.DECIMAL in place of numeric types.
 			maps [OdbcType.Numeric]   = new OdbcTypeMap (DbType.Decimal, 
@@ -161,8 +161,8 @@ namespace System.Data.Odbc
 								 SQL_TYPE.NUMERIC);
 			maps [OdbcType.NVarChar]  = new OdbcTypeMap (DbType.String, 
 								 OdbcType.NVarChar,
-								     SQL_C_TYPE.CHAR, // change
-								     SQL_TYPE.VARCHAR); //change
+								     SQL_C_TYPE.WCHAR,
+								     SQL_TYPE.WVARCHAR);
 			maps [OdbcType.Real]      = new OdbcTypeMap (DbType.Single, 
 								 OdbcType.Real,
 								 SQL_C_TYPE.FLOAT,
