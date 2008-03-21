@@ -1373,6 +1373,9 @@ namespace System.Windows.Forms {
 
 		private void PaintPartContent (Graphics graphics, Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState, DataGridViewCellStyle cellStyle, object formattedValue)
 		{
+			if (IsInEditMode)
+				return;
+				
 			Color color = Selected ? cellStyle.SelectionForeColor : cellStyle.ForeColor;
 
 			TextFormatFlags flags = TextFormatFlags.EndEllipsis | TextFormatFlags.VerticalCenter | TextFormatFlags.TextBoxControl;

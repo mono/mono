@@ -1,5 +1,10 @@
 2008-03-21  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridViewCell.cs, DataGridViewTextBoxCell.cs: Don't paint
+	the content if we are in edit mode.  [Fixes bug #343964]
+
+2008-03-21  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridViewCell.cs: Fix border painting for column headers.
 
 2008-03-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
