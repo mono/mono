@@ -1275,5 +1275,24 @@ OnGotFocus: ContainerControl 1 System.Windows.Forms.ContainerControl
 		class WrappedEnterLeave2: WrappedEnterLeave {
 			public WrappedEnterLeave2 (StringBuilder sb): base(sb){}
 		}
+		
+		// #372616
+		[Test]
+		public void UserControlFocus ()
+		{
+			Form form = new Form ();
+			UserControl c = new UserControl ();
+			TextBox t1 = new TextBox ();
+			TextBox t2 = new TextBox ();
+			form.Controls.Add (t1);
+			c.Controls.Add (t2);
+			form.Controls.Add (c);
+			form.Show ();
+			
+			c.Focus ();
+			
+			Assert.IsTrue (t2.Focused, "#A1");
+			Assert.AreSame (t2, c.ActiveControl, "#A2");
+		}
 	}
 }

@@ -1,3 +1,8 @@
+2008-03-21  Andreia Gaita <avidigal@novell.com> 
+
+	* UserControl.cs: Select the first available control when we get focus.
+	  Fixes #372616
+
 2008-03-21  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridViewCell.cs, DataGridViewTextBoxCell.cs: Don't paint

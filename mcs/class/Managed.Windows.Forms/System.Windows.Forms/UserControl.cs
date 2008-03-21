@@ -140,7 +140,16 @@ namespace System.Windows.Forms {
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void WndProc(ref Message m) {
-			base.WndProc(ref m);
+			switch ((Msg) m.Msg) {
+				case Msg.WM_SETFOCUS:
+					if (ActiveControl == null)
+						SelectNextControl (null, true, true, true, false);
+					base.WndProc (ref m);
+					break;
+				default:
+					base.WndProc (ref m);
+					break;
+			}
 		}
 		#endregion	// Protected Instance Methods
 

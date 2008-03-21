@@ -1,3 +1,8 @@
+2008-03-21  Andreia Gaita <avidigal@novell.com> 
+
+	* FocusTest.cs: New test for #372616. Checks if a control inside a
+	  UserControl is selected when UserControl gets focus.
+
 2008-03-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* BindingSourceTest.cs: New assertion case for DataSource, passing an
