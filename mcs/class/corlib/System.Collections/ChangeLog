@@ -1,3 +1,9 @@
+2008-03-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DictionaryBase.cs: Fix getter on IDictionary.this to avoid two
+	access to the hashtable and to behave more closely to MS 
+	implementation (see new unit tests).
+
 2007-11-06  Jb Evain  <jbevain@novell.com>
 
 	* Hashtable.cs: Don't compare user keys against the special removed

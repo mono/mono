@@ -156,8 +156,8 @@ namespace System.Collections {
 
 		object IDictionary.this [object key] {
 			get {
-				OnGet (key, hashtable [key]);
 				object value = hashtable [key];
+				OnGet (key, value);
 				return value;
 			}
 
