@@ -1,3 +1,7 @@
+2008-03-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* assemblyresolve/Makefile.am: Use the 2.0 profile for compilation.
+
 2008-03-20  Mark Probst  <mark.probst@gmail.com>
 
 	* generics-sharing.2.cs: Test cases for ldtoken.
