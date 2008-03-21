@@ -603,7 +603,7 @@ namespace System.Configuration
 				config.SectionGroups.Add ("userSettings", userGroup);
 				ApplicationSettingsBase asb = context.CurrentSettings;
 				ClientSettingsSection cs = new ClientSettingsSection ();
-				userGroup.Sections.Add (asb.GetType ().FullName, cs);
+				userGroup.Sections.Add ((asb != null ? asb.GetType () : typeof (ApplicationSettingsBase)).FullName, cs);
 			}
 
 			bool hasChanges = false;
