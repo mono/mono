@@ -618,5 +618,63 @@ namespace MonoTests.System.Collections
 			ConcreteDictionary myDictionary = new ConcreteDictionary(1);
 			AssertEquals(myDictionary, myDictionary.BaseDictionary);
 		}
+
+		public class NullDictionary : DictionaryBase {
+
+			protected override object OnGet (object key, object currentValue)
+			{
+				return null;
+			}
+		}
+
+		[Test]
+		public void NullDictionary_Get ()
+		{
+			IDictionary dictionary = new NullDictionary ();
+			dictionary ["a"] = "b";
+			AssertEquals ("a/b", "b", dictionary ["a"]);
+		}
+
+		public class ModifyDictionary : DictionaryBase {
+
+			protected override object OnGet (object key, object currentValue)
+			{
+				(this as IDictionary) [key] = key;
+				return key;
+			}
+		}
+
+		[Test]
+		public void ModifyDictionary_Get ()
+		{
+			IDictionary dictionary = new ModifyDictionary ();
+			dictionary ["a"] = "b";
+			// first time we return "b" - because the value was cached
+			AssertEquals ("a/b", "b", dictionary ["a"]);
+			// second time we return "a" - because it's the value in the dictionary
+			AssertEquals ("a/b", "a", dictionary ["a"]);
+		}
+
+		public class ThrowDictionary : DictionaryBase {
+
+			protected override object OnGet (object key, object currentValue)
+			{
+				throw new ArgumentException ((string) key, (string) currentValue);
+			}
+		}
+
+		[Test]
+		public void ThrowDictionary_Get ()
+		{
+			IDictionary dictionary = new ThrowDictionary ();
+			dictionary ["a"] = "b";
+			try {
+				AssertEquals ("a/b", "b", dictionary ["a"]);
+			}
+			catch (ArgumentException ex) {
+				Assert ("Message", ex.Message.StartsWith ("a"));
+				AssertEquals ("ParamName", "b", ex.ParamName);
+			}
+		}
 	}
 }

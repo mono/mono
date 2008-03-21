@@ -1,3 +1,8 @@
+2008-03-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DictionaryBaseTest.cs: Add test case to see when and how OnGet 
+	is being called.
+
 2007-11-06  Jb Evain  <jbevain@novell.com>
 
 	* HashtableTest.cs: Add test case for #324761.
