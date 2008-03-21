@@ -329,7 +329,8 @@ namespace System.Windows.Forms
 			set {
 				if (base.Dock == value) {
 					// Call base anyways so layout_type gets set correctly
-					base.Dock = value;
+					if (value != DockStyle.None)
+						base.Dock = value;
 					return;
 				}
 					

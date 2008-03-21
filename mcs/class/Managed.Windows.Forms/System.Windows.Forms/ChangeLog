@@ -1,3 +1,7 @@
+2008-03-21  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolBar.cs: Don't reset layout_type if Dock = None.
+
 2008-03-21  Andreia Gaita <avidigal@novell.com> 
 
 	* UserControl.cs: Select the first available control when we get focus.
