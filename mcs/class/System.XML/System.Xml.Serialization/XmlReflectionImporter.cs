@@ -223,6 +223,10 @@ namespace System.Xml.Serialization {
 					default: throw new NotSupportedException ("Type " + typeData.Type.FullName + " not supported for XML stialization");
 				}
 
+#if NET_2_0
+				// bug #372780
+				map.SetKey (typeData.Type.ToString ());
+#endif
 				map.RelatedMaps = relatedMaps;
 				map.Format = SerializationFormat.Literal;
 				Type[] extraTypes = includedTypes != null ? (Type[]) includedTypes.ToArray (typeof (Type)) : null;

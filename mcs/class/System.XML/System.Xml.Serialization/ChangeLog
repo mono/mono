@@ -1,3 +1,9 @@
+2008-03-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlReflectionImporter.cs : set key for imported type mapping so
+	  that generated serializer does not result in duplicate key error.
+	  Fixed bug #372780.
+
 2008-02-03 Arina Itkes <arinai@mainsoft.com>
 
 	* XmlSchemaExporter.cs : Generated typed DataTable and typed DataSet 
