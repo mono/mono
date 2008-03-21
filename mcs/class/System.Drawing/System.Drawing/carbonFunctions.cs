@@ -140,12 +140,16 @@ namespace System.Drawing {
 			IntPtr context = IntPtr.Zero;
 
 			lock (lockobj) { 
+#if FALSE
 				if (contextReference [port] != null) {
 					CreateCGContextForPort (port, ref context);
 				} else {
 					QDBeginCGContext (port, ref context);
 					contextReference [port] = context;
 				}
+#else
+				CreateCGContextForPort (port, ref context);
+#endif
 			}
 
 			return context;
@@ -155,12 +159,16 @@ namespace System.Drawing {
 			CGContextRestoreGState (context);
 
 			lock (lockobj) { 
+#if FALSE
 				if (contextReference [port] != null && context == (IntPtr) contextReference [port]) { 
 					QDEndCGContext (port, ref context);
 					contextReference [port] = null;
 				} else {
 					CFRelease (context);
 				}
+#else
+				CFRelease (context);
+#endif
 			}
 		}
 

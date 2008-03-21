@@ -1,3 +1,8 @@
+2008-03-31  Geoff Norton  <gnorton@novell.com>
+
+	* carbonFunctions.cs: Disable QDContext caching for now.  It's
+	causing crashes in the finalizer code.
+
 2008-03-06  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* ImageFormatConverter.cs: 
