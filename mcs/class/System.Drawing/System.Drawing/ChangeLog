@@ -1,4 +1,8 @@
-2008-03-31  Geoff Norton  <gnorton@novell.com>
+2008-03-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Graphics.cs: Fix typo in exception and provide a bit more details.
+
+2008-03-21  Geoff Norton  <gnorton@novell.com>
 
 	* carbonFunctions.cs: Disable QDContext caching for now.  It's
 	causing crashes in the finalizer code.

@@ -256,7 +256,8 @@ namespace System.Drawing
 							blue = (int) ((pixel & visual.blue_mask )) & 0xff;
 							break;
 						default:
-							throw new NotImplementedException ("Deepth not supported right now");
+							string text = Locale.GetText ("{0}bbp depth not supported.", visual.depth);
+							throw new NotImplementedException (text);
 					}
 						
 					bmp.SetPixel (x, y, Color.FromArgb (255, red, green, blue));							 
