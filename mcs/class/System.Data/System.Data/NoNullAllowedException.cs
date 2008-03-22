@@ -32,8 +32,8 @@ using System;
 using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace System.Data {
-
+namespace System.Data
+{
 	[Serializable]
 	public class NoNullAllowedException : DataException
 	{
@@ -42,8 +42,8 @@ namespace System.Data {
 		{
 		}
 
-		public NoNullAllowedException (string message)
-			: base (message)
+		public NoNullAllowedException (string s)
+			: base (s)
 		{
 		}
 
@@ -52,8 +52,8 @@ namespace System.Data {
 			: base (message, inner)
 		{
 		}
-
 #endif
+
 		protected NoNullAllowedException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{

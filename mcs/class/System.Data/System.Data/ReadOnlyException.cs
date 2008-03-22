@@ -32,9 +32,8 @@ using System;
 using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace System.Data {
-
-
+namespace System.Data
+{
 	[Serializable]
 	public class ReadOnlyException : DataException
 	{
@@ -43,8 +42,8 @@ namespace System.Data {
 		{
 		}
 
-		public ReadOnlyException (string message)
-			: base (message)
+		public ReadOnlyException (string s)
+			: base (s)
 		{
 		}
 

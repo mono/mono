@@ -32,7 +32,8 @@ using System;
 using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace System.Data {
+namespace System.Data
+{
 	[Serializable]
 	public class SyntaxErrorException : InvalidExpressionException
 	{
@@ -41,8 +42,8 @@ namespace System.Data {
 		{
 		}
 
-		public SyntaxErrorException (string message)
-			: base (message)
+		public SyntaxErrorException (string s)
+			: base (s)
 		{
 		}
 

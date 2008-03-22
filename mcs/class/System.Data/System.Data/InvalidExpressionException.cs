@@ -32,8 +32,8 @@ using System;
 using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace System.Data {
-
+namespace System.Data
+{
 	[Serializable]
 	public class InvalidExpressionException : DataException
 	{
@@ -42,8 +42,8 @@ namespace System.Data {
 		{
 		}
 
-		public InvalidExpressionException (string message)
-			: base (message)
+		public InvalidExpressionException (string s)
+			: base (s)
 		{
 		}
 
@@ -53,6 +53,7 @@ namespace System.Data {
 		{
 		}
 #endif
+
 		protected InvalidExpressionException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{

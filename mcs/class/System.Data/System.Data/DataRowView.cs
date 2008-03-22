@@ -99,10 +99,10 @@ namespace System.Data
 			return DataView.CreateChildView(relation,_index);
 		}
 
-		public DataView CreateChildView (string name)
+		public DataView CreateChildView (string relationName)
 		{
 			return CreateChildView (
-				Row.Table.ChildRelations [name]);
+				Row.Table.ChildRelations [relationName]);
 		}
 
 		public void Delete ()
@@ -150,22 +150,22 @@ namespace System.Data
 		}
 		
 		[System.Runtime.CompilerServices.IndexerName("Item")]
-		public object this[string column] {
+		public object this [string property] {
 			get {
-				DataColumn dc = _dataView.Table.Columns[column];
+				DataColumn dc = _dataView.Table.Columns [property];
 
 				if (dc == null) {
-					string error = column + " is neither a DataColumn nor a DataRelation for table " + _dataView.Table.TableName;
+					string error = property + " is neither a DataColumn nor a DataRelation for table " + _dataView.Table.TableName;
 					throw new ArgumentException(error);
 				}
 				return _dataRow[dc, GetActualRowVersion ()];
 			}
 			set {
 				CheckAllowEdit();
-				DataColumn dc = _dataView.Table.Columns[column];
+				DataColumn dc = _dataView.Table.Columns [property];
 
 				if (dc == null) {
-					string error = column + " is neither a DataColumn nor a DataRelation for table " + _dataView.Table.TableName;
+					string error = property + " is neither a DataColumn nor a DataRelation for table " + _dataView.Table.TableName;
 					throw new ArgumentException(error);
 				}
 				_dataRow[dc] = value;
@@ -174,22 +174,22 @@ namespace System.Data
 
 		// the compiler creates a DefaultMemeberAttribute from
 		// this IndexerNameAttribute
-		public object this[int column] {
+		public object this [int ndx] {
 			get {
-				DataColumn dc = _dataView.Table.Columns[column];
+				DataColumn dc = _dataView.Table.Columns [ndx];
 
 				if (dc == null) {
-					string error = column + " is neither a DataColumn nor a DataRelation for table " + _dataView.Table.TableName;
+					string error = ndx + " is neither a DataColumn nor a DataRelation for table " + _dataView.Table.TableName;
 					throw new ArgumentException(error);
 				}
 				return _dataRow[dc, GetActualRowVersion ()];
 			}
 			set {
 				CheckAllowEdit();
-				DataColumn dc = _dataView.Table.Columns[column];
+				DataColumn dc = _dataView.Table.Columns [ndx];
 
 				if (dc == null) {
-					string error = column + " is neither a DataColumn nor a DataRelation for table " + _dataView.Table.TableName;
+					string error = ndx + " is neither a DataColumn nor a DataRelation for table " + _dataView.Table.TableName;
 					throw new ArgumentException(error);
 				}
 				_dataRow[dc] = value;

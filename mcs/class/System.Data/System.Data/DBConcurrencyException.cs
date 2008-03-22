@@ -32,26 +32,28 @@ using System;
 using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace System.Data {
+namespace System.Data
+{
 	[Serializable]
 	public sealed class DBConcurrencyException : SystemException
 	{
 		DataRow row;
 
 		#region Constructors
+
 #if NET_1_1
-                public DBConcurrencyException ()
-                        : base ()
-                {
-                }
+		public DBConcurrencyException () : base ()
+		{
+		}
 #endif
+
 		public DBConcurrencyException (string message)
 			: base (message)
 		{
 		}
 
-		public DBConcurrencyException (string message, Exception innerException)
-			: base (message, innerException)
+		public DBConcurrencyException (string message, Exception inner)
+			: base (message, inner)
 		{
 		}
 
@@ -88,23 +90,23 @@ namespace System.Data {
 
 #if NET_2_0
 		[MonoTODO]
-		public void CopyToRows (DataRow[] array)
+		public void CopyToRows (DataRow [] array)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void CopyToRows (DataRow[] array, int ArrayIndex)
+		public void CopyToRows (DataRow [] array, int ArrayIndex)
 		{
 			throw new NotImplementedException ();
 		}
 #endif
-		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		public override void GetObjectData (SerializationInfo si, StreamingContext context)
 		{
-			if (info == null)
-				throw new ArgumentNullException ("info");
+			if (si == null)
+				throw new ArgumentNullException ("si");
 
-			base.GetObjectData (info, context);
+			base.GetObjectData (si, context);
 		}
 
 		#endregion // Methods

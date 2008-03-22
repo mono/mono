@@ -1,3 +1,33 @@
+2008-03-22  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DataViewSettingCollection.cs: Corcompare fixes and code formatting.
+	* SyntaxErrorException.cs: Corcompare fixes and code formatting.
+	* EvaluateException.cs: Corcompare fixes and code formatting.
+	* StrongTypingException.cs: Coecompare fixes and code formatting.
+	* ReadOnlyException.cs: Corcompare fixes and code formatting.
+	* DataTableCollection.cs: Corcompare fixes and code formatting.
+	* MissingPrimaryKeyException.cs: Corcompare fixes and code formatting.
+	* DeletedRowInaccesibleException.cs: Corcompare fixes and code
+	formatting.
+	* DataSet.cs: Corcompare fixes and code formatting.
+	* DuplicateNameException.cs: Corcompare fixes and code formatting.
+	* DataView.cs: Corcompare fixes and code formatting.
+	* VersionNotFoundException.cs: Corcompare fixes and code formatting.
+	* MergeFailedEventArgs.cs: Corcomare fixes and code formatting.
+	* InvalidExpressionException.cs: Corcompare fixes and code formatting.
+	* DBConcurrencyException.cs: Corcompare fixes and code formatting.
+	* DataRowView.cs: Corcompare fixes and code formatting.
+	* DataViewManager.cs: Corcompare fixes and code formatting.
+	* ConstraintException.cs: Corcompare fixes and code formatting.
+	* InvalidConstraintException.cs: Corcompare fixes and code formatting.
+	* IDataRecord.cs: Corcompare fixes.
+	* RowNotInTableException.cs: Corcompare fixes and code formatting.
+	* TypeDataSetGeneratorException.cs: Corcompare fixes and code
+	formatting.
+	* InRowChangingEventException.cs: Corcompare fixes and code formatting.
+	* NoNullAllowedException.cs: Corcompare fixes and code formatting.
+	* DataException.cs: Corcompare fixes and code formatting.
+
 2008-03-17  Veerapuram Varadhan <vvaradhan@novell.com>
 	
 	** Fixes part1 of #357947

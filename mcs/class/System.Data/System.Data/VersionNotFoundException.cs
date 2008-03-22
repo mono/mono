@@ -32,9 +32,9 @@ using System;
 using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace System.Data {
-
-	[Serializable]			
+namespace System.Data
+{
+	[Serializable]
 	public class VersionNotFoundException : DataException
 	{
 		public VersionNotFoundException ()
@@ -42,8 +42,8 @@ namespace System.Data {
 		{
 		}
 
-		public VersionNotFoundException (string message)
-			: base (message)
+		public VersionNotFoundException (string s)
+			: base (s)
 		{
 		}
 

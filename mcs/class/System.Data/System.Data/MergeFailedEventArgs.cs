@@ -34,21 +34,22 @@
 
 using System;
 
-namespace System.Data {
-	public class MergeFailedEventArgs : EventArgs 
+namespace System.Data
+{
+	public class MergeFailedEventArgs : EventArgs
 	{
 		#region Fields
 
-		DataTable data_table;
-		string conflict;
+		readonly DataTable data_table;
+		readonly string conflict;
 
 		#endregion // Fields
 
 		#region Constructors
 
-		public MergeFailedEventArgs (DataTable dataTable, string conflict)
+		public MergeFailedEventArgs (DataTable table, string conflict)
 		{
-			this.data_table = dataTable;
+			this.data_table = table;
 			this.conflict = conflict;
 		}
 

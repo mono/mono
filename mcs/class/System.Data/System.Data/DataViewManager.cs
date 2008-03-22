@@ -65,10 +65,10 @@ namespace System.Data
 		{
 		}
 
-		public DataViewManager (DataSet ds)
+		public DataViewManager (DataSet dataSet)
 		{
 			// Null argument is allowed here.
-			SetDataSet (ds);
+			SetDataSet (dataSet);
 		}
 
 		#endregion // Constructors
@@ -103,7 +103,7 @@ namespace System.Data
 #if !NET_2_0
 		[DataSysDescription ("Indicates the sorting/filtering/state settings for any table in the corresponding DataSet.")]
 #endif
-                [DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public DataViewSettingCollection DataViewSettings {
 			get { return settings; }
 		}
@@ -189,6 +189,7 @@ namespace System.Data
 		#endregion // Properties
 
 		#region Methods
+
 		private void SetDataSet (DataSet ds)
 		{
 			dataSet = ds;
@@ -284,7 +285,7 @@ namespace System.Data
 				.Replace (">", "&gt;");
 		}
 
-		public DataView CreateDataView (DataTable table) 
+		public DataView CreateDataView (DataTable table)
 		{
 			if (settings [table] != null) {
 				DataViewSetting s = settings [table];
@@ -400,42 +401,38 @@ namespace System.Data
 	
 		string ITypedList.GetListName (PropertyDescriptor[] listAccessors)
 		{
-			if (dataSet != null) {							
-				if (listAccessors == null || listAccessors.Length == 0) {
+			if (dataSet != null) {
+				if (listAccessors == null || listAccessors.Length == 0)
 					return  dataSet.DataSetName;
-				}				
-			}			
+			}
 			
 			return string.Empty;
 		}
 	
-		protected virtual void OnListChanged (ListChangedEventArgs e) 
+		protected virtual void OnListChanged (ListChangedEventArgs e)
 		{
 			if (ListChanged != null)
 				ListChanged (this, e);
 		}
 
-		protected virtual void RelationCollectionChanged (object sender, CollectionChangeEventArgs e) 
+		protected virtual void RelationCollectionChanged (object sender, CollectionChangeEventArgs e)
 		{
 			ListChangedEventArgs args;
 
 			if (e.Action == CollectionChangeAction.Remove) {
 				args = null;
-			}
-			else if (e.Action == CollectionChangeAction.Refresh) {
+			} else if (e.Action == CollectionChangeAction.Refresh) {
 				args = new ListChangedEventArgs(ListChangedType.PropertyDescriptorChanged, null);
-			}
-			else if (e.Action == CollectionChangeAction.Add) {
+			} else if (e.Action == CollectionChangeAction.Add) {
 				args = new ListChangedEventArgs(ListChangedType.PropertyDescriptorAdded, new DataRelationPropertyDescriptor(((DataRelation) e.Element)));
-			}
-			else {
+			} else {
 				args = new ListChangedEventArgs(ListChangedType.PropertyDescriptorDeleted, new DataRelationPropertyDescriptor(((DataRelation) e.Element)));
 			}
 
 			this.OnListChanged(args);
 		}
 
-		protected virtual void TableCollectionChanged (object sender, CollectionChangeEventArgs e) 
+		protected virtual void TableCollectionChanged (object sender, CollectionChangeEventArgs e)
 		{
 		}
 

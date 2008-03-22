@@ -32,8 +32,8 @@ using System;
 using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace System.Data {
-
+namespace System.Data
+{
 	[Serializable]
 	public class RowNotInTableException : DataException
 	{
@@ -42,17 +42,18 @@ namespace System.Data {
 		{
 		}
 
-		public RowNotInTableException (string message)
-			: base (message)
+		public RowNotInTableException (string s)
+			: base (s)
 		{
 		}
+
 #if NET_2_0
 		public RowNotInTableException (string message, Exception inner)
 			: base (message, inner)
 		{
 		}
 #endif
-		
+
 		protected RowNotInTableException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{

@@ -37,7 +37,8 @@ using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
 
-namespace System.Data {
+namespace System.Data
+{
 	/// <summary>
 	/// Represents the collection of tables for the DataSet.
 	/// </summary>
@@ -56,7 +57,8 @@ namespace System.Data {
 	{
 		DataSet dataSet;
 		DataTable[] mostRecentTables;
-		#region Constructors 
+
+		#region Constructors
 
 		internal DataTableCollection (DataSet dataSet)
 			: base ()
@@ -98,13 +100,13 @@ namespace System.Data {
 
 		#endregion
 	
-		#region Methods	
+		#region Methods
 
 		public
 #if !NET_2_0
 		virtual
 #endif
-		DataTable Add () 
+		DataTable Add ()
 		{
 			DataTable Table = new DataTable ();
 			Add (Table);
@@ -115,7 +117,7 @@ namespace System.Data {
 #if !NET_2_0
 		virtual
 #endif
-		void Add (DataTable table) 
+		void Add (DataTable table)
 		{
 			OnCollectionChanging (new CollectionChangeEventArgs (CollectionChangeAction.Add, table));
 			// check if the reference is a null reference
@@ -159,7 +161,7 @@ namespace System.Data {
 #if !NET_2_0
 		virtual
 #endif
-		DataTable Add (string name) 
+		DataTable Add (string name)
 		{
 			DataTable table = new DataTable (name);
 			this.Add (table);
@@ -205,23 +207,23 @@ namespace System.Data {
 			mostRecentTables = null;
 		}
 
-		public bool CanRemove (DataTable table) 
+		public bool CanRemove (DataTable table)
 		{
 			return CanRemove(table, false);
 		}
 
-		public void Clear () 
+		public void Clear ()
 		{
 			List.Clear ();
 		}
 
-		public bool Contains (string name) 
+		public bool Contains (string name)
 		{
 			return (-1 != IndexOf (name, false));
 		}
 		
 #if NET_2_0
-		public bool Contains (string name, string tableNamespace) 
+		public bool Contains (string name, string tableNamespace)
 		{
 			return (IndexOf (name, tableNamespace) != -1);
 		}
@@ -236,7 +238,7 @@ namespace System.Data {
 #if !NET_2_0
 		virtual
 #endif
-		int IndexOf (DataTable table) 
+		int IndexOf (DataTable table)
 		{
 			return List.IndexOf (table);
 		}
@@ -245,22 +247,22 @@ namespace System.Data {
 #if !NET_2_0
 		virtual
 #endif
-		int IndexOf (string name) 
+		int IndexOf (string tableName)
 		{
-			return IndexOf (name, false);
+			return IndexOf (tableName, false);
 		}
 
 #if NET_2_0
-		public int IndexOf (string name, string tableNamespace)
+		public int IndexOf (string tableName, string tableNamespace)
 		{
 			if (tableNamespace == null)
 				throw new ArgumentNullException ("'tableNamespace' argument cannot be null.",
 						"tableNamespace");
-			return IndexOf (name, tableNamespace, false);
+			return IndexOf (tableName, tableNamespace, false);
 		}
 #endif
-		
-		public void Remove (DataTable table) 
+
+		public void Remove (DataTable table)
 		{
 			OnCollectionChanging (new CollectionChangeEventArgs (CollectionChangeAction.Remove, table));
 			if (CanRemove(table, true))
@@ -271,7 +273,7 @@ namespace System.Data {
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, table));
 		}
 
-		public void Remove (string name) 
+		public void Remove (string name)
 		{
 			int index = IndexOf (name, false);
 			if (index == -1)
@@ -290,7 +292,7 @@ namespace System.Data {
 		}
 #endif
 
-		public void RemoveAt (int index) 
+		public void RemoveAt (int index)
 		{
 			Remove(this[index]);
 		}
@@ -299,28 +301,26 @@ namespace System.Data {
 
 		#region Protected methods
 
-		
 #if !NET_2_0
 		protected internal virtual
 #else
 		internal
 #endif
-		void OnCollectionChanging (CollectionChangeEventArgs Args)
+		void OnCollectionChanging (CollectionChangeEventArgs ccevent)
 		{
 			if (CollectionChanging != null)
-				CollectionChanging (this, Args);
+				CollectionChanging (this, ccevent);
 		}
 
-		
 #if !NET_2_0
 		protected virtual
 #else
 		internal
 #endif
-		void OnCollectionChanged (CollectionChangeEventArgs Args)
+		void OnCollectionChanged (CollectionChangeEventArgs ccevent)
 		{
 			if (CollectionChanged != null)
-				CollectionChanged (this, Args);
+				CollectionChanged (this, ccevent);
 		}
 
 		#endregion
@@ -404,24 +404,23 @@ namespace System.Data {
 		// if it is true throws an Exception, else return false.
 		private bool CanRemove(DataTable table, bool throwException)
 		{
-
 			// check if table is null reference
 			if (table == null) {
-				if(throwException)
+				if (throwException)
 					throw new ArgumentNullException("table");
 				return false;
 			}
 
 			// check if the table has the same DataSet as this collection.
-			if(table.DataSet != this.dataSet) {
-				if(!throwException)
+			if (table.DataSet != this.dataSet) {
+				if (!throwException)
 					return false;
 				throw new ArgumentException("Table " + table.TableName + " does not belong to this DataSet.");
 			}
 			
 			// check the table has a relation attached to it.
 			if (table.ParentRelations.Count > 0 || table.ChildRelations.Count > 0) {
-				if(!throwException)
+				if (!throwException)
 					return false;
 				throw new ArgumentException("Cannot remove a table that has existing relations. Remove relations first.");
 			}
@@ -439,7 +438,7 @@ namespace System.Data {
 				}
 
 				ForeignKeyConstraint fc = c as ForeignKeyConstraint;
-				if (fc == null) 
+				if (fc == null)
 					continue;
 
 				if (!throwException)

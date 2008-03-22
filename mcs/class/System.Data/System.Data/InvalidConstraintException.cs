@@ -32,9 +32,9 @@ using System;
 using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace System.Data {
-
-	[Serializable]			
+namespace System.Data
+{
+	[Serializable]
 	public class InvalidConstraintException : DataException
 	{
 		public InvalidConstraintException ()
@@ -42,8 +42,8 @@ namespace System.Data {
 		{
 		}
 
-		public InvalidConstraintException (string message)
-			: base (message)
+		public InvalidConstraintException (string s)
+			: base (s)
 		{
 		}
 

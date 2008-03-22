@@ -32,7 +32,8 @@ using System;
 using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace System.Data {
+namespace System.Data
+{
 	[Serializable]
 	public class StrongTypingException : DataException
 	{
@@ -46,8 +47,9 @@ namespace System.Data {
 		{
 		}
 #endif
-		public StrongTypingException (string message, Exception innerException)
-			: base (message, innerException)
+
+		public StrongTypingException (string s, Exception innerException)
+			: base (s, innerException)
 		{
 		}
 

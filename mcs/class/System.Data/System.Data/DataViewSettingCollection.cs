@@ -39,7 +39,8 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 
-namespace System.Data {
+namespace System.Data
+{
 	/// <summary>
 	/// Contains a read-only collection of DataViewSetting objects for each DataTable in a DataSet.
 	/// </summary>
@@ -52,7 +53,7 @@ namespace System.Data {
 	{
 		#region Fields
 
-		ArrayList settingList;
+		readonly ArrayList settingList;
 
 		#endregion // Fields
 
@@ -71,52 +72,52 @@ namespace System.Data {
 
 		#region Properties
 	
-		[Browsable (false)]	
+		[Browsable (false)]
 		public virtual int Count {
 			get { return settingList.Count; }
 		}
 
-		[Browsable (false)]	
+		[Browsable (false)]
 		public bool IsReadOnly {
 			get { return settingList.IsReadOnly; }
 		}
 
-		[Browsable (false)]	
+		[Browsable (false)]
 		public bool IsSynchronized {
 			get { return settingList.IsSynchronized; }
 		}
 
-		public virtual DataViewSetting this [DataTable dt] {
+		public virtual DataViewSetting this [DataTable table] {
 			get {
 				for (int i = 0; i < settingList.Count; i++) {
-					DataViewSetting dvs = (DataViewSetting) settingList[i];
-					if (dvs.Table == dt)
+					DataViewSetting dvs = (DataViewSetting) settingList [i];
+					if (dvs.Table == table)
 						return dvs;
 				}
 				return null;
 			}
 			set {
-				this[dt] = value;
+				this [table] = value;
 			}
 		}
 
-		public virtual DataViewSetting this[string name] {
+		public virtual DataViewSetting this [string tableName] {
 			get {
 				for (int i = 0; i < settingList.Count; i++) {
-					DataViewSetting dvs = (DataViewSetting) settingList[i];
-					if (dvs.Table.TableName == name)
+					DataViewSetting dvs = (DataViewSetting) settingList [i];
+					if (dvs.Table.TableName == tableName)
 						return dvs;
 				}
 				return null;
 			}
 		}
 
-		public virtual DataViewSetting this[int index] {
-			get { return (DataViewSetting) settingList[index]; }
-			set { settingList[index] = value; }
+		public virtual DataViewSetting this [int index] {
+			get { return (DataViewSetting) settingList [index]; }
+			set { settingList [index] = value; }
 		}
 
-		[Browsable (false)]	
+		[Browsable (false)]
 		public object SyncRoot {
 			get { return settingList.SyncRoot; }
 		}
@@ -125,19 +126,19 @@ namespace System.Data {
 
 		#region Methods
 
-		public void CopyTo (Array ar, int index) 
+		public void CopyTo (Array ar, int index)
 		{
 			settingList.CopyTo (ar, index);
 		}
 
 #if NET_2_0
-		public void CopyTo (DataViewSetting [] ar, int index) 
+		public void CopyTo (DataViewSetting [] ar, int index)
 		{
 			settingList.CopyTo (ar, index);
 		}
 #endif
 
-		public IEnumerator GetEnumerator () 
+		public IEnumerator GetEnumerator ()
 		{
 			return settingList.GetEnumerator ();
 		}

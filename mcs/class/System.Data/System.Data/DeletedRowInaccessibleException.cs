@@ -32,8 +32,8 @@ using System;
 using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace System.Data {
-
+namespace System.Data
+{
 	[Serializable]
 	public class DeletedRowInaccessibleException : DataException
 	{
@@ -42,8 +42,8 @@ namespace System.Data {
 		{
 		}
 
-		public DeletedRowInaccessibleException (string message)
-			: base (message)
+		public DeletedRowInaccessibleException (string s)
+			: base (s)
 		{
 		}
 
@@ -53,6 +53,7 @@ namespace System.Data {
 		{
 		}
 #endif
+
 		protected DeletedRowInaccessibleException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{

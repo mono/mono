@@ -32,9 +32,8 @@ using System;
 using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace System.Data {
-
-
+namespace System.Data
+{
 	[Serializable]
 	public class MissingPrimaryKeyException : DataException
 	{
@@ -43,8 +42,8 @@ namespace System.Data {
 		{
 		}
 
-		public MissingPrimaryKeyException (string message)
-			: base (message)
+		public MissingPrimaryKeyException (string s)
+			: base (s)
 		{
 		}
 

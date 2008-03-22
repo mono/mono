@@ -32,8 +32,8 @@ using System;
 using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace System.Data {
-
+namespace System.Data
+{
 	[Serializable]
 	public class DataException : SystemException
 	{
@@ -42,8 +42,7 @@ namespace System.Data {
 		{
 		}
 
-		public DataException (string message)
-			: base (message)
+		public DataException (string s) : base (s)
 		{
 		}
 
@@ -52,8 +51,8 @@ namespace System.Data {
 		{
 		}
 
-		public DataException (string message, Exception innerException)
-			: base (message, innerException)
+		public DataException (string s, Exception innerException)
+			: base (s, innerException)
 		{
 		}
 	}

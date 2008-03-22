@@ -32,8 +32,8 @@ using System;
 using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace System.Data {
-
+namespace System.Data
+{
 	[Serializable]
 	public class DuplicateNameException : DataException
 	{
@@ -42,8 +42,8 @@ namespace System.Data {
 		{
 		}
 
-		public DuplicateNameException (string message)
-			: base (message)
+		public DuplicateNameException (string s)
+			: base (s)
 		{
 		}
 

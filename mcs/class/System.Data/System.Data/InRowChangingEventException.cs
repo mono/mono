@@ -32,8 +32,8 @@ using System;
 using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace System.Data {
-
+namespace System.Data
+{
 	[Serializable]
 	public class InRowChangingEventException : DataException
 	{
@@ -42,8 +42,8 @@ namespace System.Data {
 		{
 		}
 
-		public InRowChangingEventException (string message)
-			: base (message)
+		public InRowChangingEventException (string s)
+			: base (s)
 		{
 		}
 

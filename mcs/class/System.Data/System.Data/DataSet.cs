@@ -53,8 +53,8 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using System.Data.Common;
 
-namespace System.Data {
-
+namespace System.Data
+{
 	[ToolboxItem ("Microsoft.VSDesigner.Data.VS.DataSetToolboxItem, " + Consts.AssemblyMicrosoft_VSDesigner)]
 	[DefaultProperty ("DataSetName")]
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.DataSetDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
@@ -70,7 +70,7 @@ namespace System.Data {
 #endif
 	{
 		private string dataSetName;
-		private string _namespace = "";
+		private string _namespace = string.Empty;
 		private string prefix;
 		private bool caseSensitive;
 		private bool enforceConstraints = true;
@@ -78,27 +78,26 @@ namespace System.Data {
 		private DataRelationCollection relationCollection;
 		private PropertyCollection properties;
 		private DataViewManager defaultView;
-		private CultureInfo locale = System.Threading.Thread.CurrentThread.CurrentCulture;
-		internal XmlDataDocument _xmlDataDocument = null;
+		private CultureInfo locale = Thread.CurrentThread.CurrentCulture;
+		internal XmlDataDocument _xmlDataDocument;
 #if NET_2_0
 		private bool dataSetInitialized = true;
 #endif
-		
-		bool initInProgress = false;
+		bool initInProgress;
+
 		#region Constructors
 
 		public DataSet () : this ("NewDataSet") 
 		{
 		}
-		
-		public DataSet (string name)
+
+		public DataSet (string dataSetName)
 		{
-			dataSetName = name;
+			this.dataSetName = dataSetName;
 			tableCollection = new DataTableCollection (this);
 			relationCollection = new DataRelationCollection.DataSetRelationCollection (this);
 			properties = new PropertyCollection ();
 			prefix = String.Empty;
-			
 			Locale = CultureInfo.CurrentCulture;
 		}
 
@@ -126,7 +125,7 @@ namespace System.Data {
 		public bool CaseSensitive {
 			get {
 				return caseSensitive;
-			} 
+			}
 			set {
 				caseSensitive = value; 
 				if (!caseSensitive) {
@@ -162,7 +161,7 @@ namespace System.Data {
 #endif
 		[DefaultValue ("")]
 		public string DataSetName {
-			get { return dataSetName; } 
+			get { return dataSetName; }
 			set { dataSetName = value; }
 		}
 
@@ -175,7 +174,7 @@ namespace System.Data {
 				if (defaultView == null)
 					defaultView = new DataViewManager (this);
 				return defaultView;
-			} 
+			}
 		}
 
 #if !NET_2_0
@@ -183,9 +182,9 @@ namespace System.Data {
 #endif
 		[DefaultValue (true)]
 		public bool EnforceConstraints {
-			get { return enforceConstraints; } 
-			set { 
-				InternalEnforceConstraints(value,true);
+			get { return enforceConstraints; }
+			set {
+				InternalEnforceConstraints (value, true);
 			}
 		}
 
@@ -243,7 +242,7 @@ namespace System.Data {
 			if (value) {
 				if (resetIndexes) {
 					// FIXME : is that correct?
-					// By design  the indexes should be updated at this point.
+					// By design the indexes should be updated at this point.
 					// In Fill from BeginLoadData till EndLoadData indexes are not updated (reset in EndLoadData)
 					// In DataRow.EndEdit indexes are always updated.
 					foreach (DataTable table in Tables)
@@ -330,14 +329,14 @@ namespace System.Data {
 #endif
 		[DefaultValue ("")]
 		public string Namespace {
-			get { return _namespace; } 
+			get { return _namespace; }
 			set {
 				//TODO - trigger an event if this happens?
 				if (value == null)
 					value = String.Empty;
 				 if (value != this._namespace)
-                                        RaisePropertyChanging ("Namespace");
- 				_namespace = value;
+					RaisePropertyChanging ("Namespace");
+				_namespace = value;
 			}
 		}
 
@@ -347,20 +346,16 @@ namespace System.Data {
 #endif
 		[DefaultValue ("")]
 		public string Prefix {
-			get { return prefix; } 
+			get { return prefix; }
 			set {
 				if (value == null)
 					value = String.Empty;
-                              // Prefix cannot contain any special characters other than '_' and ':'
-                               for (int i = 0; i < value.Length; i++) {
-                                       if (!(Char.IsLetterOrDigit (value [i])) && (value [i] != '_') && (value [i] != ':'))
-                                               throw new DataException ("Prefix '" + value + "' is not valid, because it contains special characters.");
-                               }
+				// Prefix cannot contain any special characters other than '_' and ':'
+				for (int i = 0; i < value.Length; i++) {
+					if (!(Char.IsLetterOrDigit (value [i])) && (value [i] != '_') && (value [i] != ':'))
+						throw new DataException ("Prefix '" + value + "' is not valid, because it contains special characters.");
+				}
 
-
-				if (value == null)
-					value = string.Empty;
-				
 				if (value != this.prefix) 
 					RaisePropertyChanging ("Prefix");
 				prefix = value;
@@ -374,7 +369,7 @@ namespace System.Data {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public DataRelationCollection Relations {
 			get {
-				return relationCollection;		
+				return relationCollection;
 			}
 		}
 
@@ -383,8 +378,7 @@ namespace System.Data {
 		public override ISite Site {
 			get {
 				return base.Site;
-			} 
-			
+			}
 			set {
 				base.Site = value;
 			}
@@ -403,11 +397,9 @@ namespace System.Data {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 		public virtual SchemaSerializationMode SchemaSerializationMode {
-
 			get {
-				return SchemaSerializationMode.IncludeSchema;		
+				return SchemaSerializationMode.IncludeSchema;
 			}
-
 			set {
 				if (value != SchemaSerializationMode.IncludeSchema) 
 					throw new InvalidOperationException (
@@ -426,19 +418,18 @@ namespace System.Data {
 				tempTable.AcceptChanges ();
 		}
 
-                /// <summary>
-                /// Clears all the tables
-                /// </summary>
+		/// <summary>
+		/// Clears all the tables
+		/// </summary>
 		public void Clear ()
 		{
 			if (_xmlDataDocument != null)
 				throw new NotSupportedException ("Clear function on dataset and datatable is not supported when XmlDataDocument is bound to the DataSet.");
-                        bool enforceConstraints = this.EnforceConstraints;
-                        this.EnforceConstraints = false;
-                        for (int t = 0; t < tableCollection.Count; t++) {
+			bool enforceConstraints = this.EnforceConstraints;
+			this.EnforceConstraints = false;
+			for (int t = 0; t < tableCollection.Count; t++)
 				tableCollection[t].Clear ();
-			}
-                        this.EnforceConstraints = enforceConstraints;
+			this.EnforceConstraints = enforceConstraints;
 		}
 
 		public virtual DataSet Clone ()
@@ -449,11 +440,10 @@ namespace System.Data {
 			CopyProperties (Copy);
 
 			foreach (DataTable Table in Tables) {
-		        // tables are often added in no-args constructor, don't add them
-		        // twice.
-		        	if (!Copy.Tables.Contains(Table.TableName)) {
-			    		Copy.Tables.Add (Table.Clone ());
-        			}
+				// tables are often added in no-args constructor, don't add them
+				// twice.
+				if (!Copy.Tables.Contains(Table.TableName))
+					Copy.Tables.Add (Table.Clone ());
 			}
 
 			//Copy Relationships between tables after existance of tables
@@ -497,15 +487,15 @@ namespace System.Data {
 			//Copy.DesignMode
 			Copy.EnforceConstraints = EnforceConstraints;
 			if(ExtendedProperties.Count > 0) {
-				//  Cannot copy extended properties directly as the property does not have a set accessor
-                Array tgtArray = Array.CreateInstance( typeof (object), ExtendedProperties.Count);
-                ExtendedProperties.Keys.CopyTo (tgtArray, 0);
-                for (int i=0; i < ExtendedProperties.Count; i++)
+				// Cannot copy extended properties directly as the property does not have a set accessor
+				Array tgtArray = Array.CreateInstance( typeof (object), ExtendedProperties.Count);
+				ExtendedProperties.Keys.CopyTo (tgtArray, 0);
+				for (int i = 0; i < ExtendedProperties.Count; i++)
 					Copy.ExtendedProperties.Add (tgtArray.GetValue (i), ExtendedProperties[tgtArray.GetValue (i)]);
 			}
-            Copy.Locale = Locale;
+			Copy.Locale = Locale;
 			Copy.Namespace = Namespace;
-			Copy.Prefix = Prefix;			
+			Copy.Prefix = Prefix;
 			//Copy.Site = Site; // FIXME : Not sure of this.
 
 		}
@@ -522,7 +512,7 @@ namespace System.Data {
 
 				// typed datasets create relations through ctor.
 				if (Copy.Relations.Contains (MyRelation.RelationName))
-				    continue;
+					continue;
 
 				string pTable = MyRelation.ParentTable.TableName;
 				string cTable = MyRelation.ChildTable.TableName;
@@ -589,8 +579,7 @@ namespace System.Data {
 				DataTable copyTable = copySet.Tables[origTable.TableName];
 				for (int j = 0; j < origTable.Rows.Count; j++) {
 					DataRow row = origTable.Rows [j];
-					if (!row.IsRowChanged (rowStates)
-					    || addedRows.Contains (row))
+					if (!row.IsRowChanged (rowStates) || addedRows.Contains (row))
 						continue;
 					AddChangedRow (addedRows, copyTable, row);
 				}
@@ -660,10 +649,10 @@ namespace System.Data {
 			return HasChanges (DataRowState.Added | DataRowState.Deleted | DataRowState.Modified);
 		}
 
-		public bool HasChanges (DataRowState rowState)
+		public bool HasChanges (DataRowState rowStates)
 		{
-			if (((int)rowState & 0xffffffe0) != 0)
-				throw new ArgumentOutOfRangeException ("rowState");
+			if (((int) rowStates & 0xffffffe0) != 0)
+				throw new ArgumentOutOfRangeException ("rowStates");
 
 			DataTableCollection tableCollection = Tables;
 			DataTable table;
@@ -675,12 +664,12 @@ namespace System.Data {
 				rowCollection = table.Rows;
 				for (int j = 0; j < rowCollection.Count; j++) {
 					row = rowCollection[j];
-					if ((row.RowState & rowState) != 0)
+					if ((row.RowState & rowStates) != 0)
 						return true;
 				}
 			}
 
-			return false;		
+			return false;
 		}
 
 		public void InferXmlSchema (XmlReader reader, string[] nsArray)
@@ -720,12 +709,12 @@ namespace System.Data {
 #if NET_2_0
 		public void Load (IDataReader reader, LoadOption loadOption, params DataTable[] tables)
 		{
-			if (reader == null) {
+			if (reader == null)
 				throw new ArgumentNullException ("Value cannot be null. Parameter name: reader");
-			}
+
 			foreach (DataTable dt in tables) {
 				if (dt.DataSet == null || dt.DataSet != this) {
-					throw new ArgumentException ("Table " +  dt.TableName + " does not belong to this DataSet.");
+					throw new ArgumentException ("Table " + dt.TableName + " does not belong to this DataSet.");
 				}
 				dt.Load (reader, loadOption);
 				reader.NextResult ();
@@ -734,9 +723,9 @@ namespace System.Data {
 
 		public void Load (IDataReader reader, LoadOption loadOption, params string[] tables)
 		{
-			if (reader == null) {
+			if (reader == null)
 				throw new ArgumentNullException ("Value cannot be null. Parameter name: reader");
-			}
+
 			foreach (string tableName in tables) {
 				DataTable dt = Tables [tableName];
 
@@ -752,12 +741,12 @@ namespace System.Data {
 		public virtual void Load (IDataReader reader, LoadOption loadOption,
 					  FillErrorEventHandler errorHandler, params DataTable[] tables)
 		{
-			if (reader == null) {
+			if (reader == null)
 				throw new ArgumentNullException ("Value cannot be null. Parameter name: reader");
-			}
+
 			foreach (DataTable dt in tables) {
 				if (dt.DataSet == null || dt.DataSet != this) {
-					throw new ArgumentException ("Table " +  dt.TableName + " does not belong to this DataSet.");
+					throw new ArgumentException ("Table " + dt.TableName + " does not belong to this DataSet.");
 				}
 				dt.Load (reader, loadOption, errorHandler);
 				reader.NextResult ();
@@ -771,7 +760,7 @@ namespace System.Data {
 			bool oldEnforceConstraints = this.EnforceConstraints;
 			this.EnforceConstraints = false;
 			
-			for (i = 0; i < this.Tables.Count;i++) 
+			for (i = 0; i < this.Tables.Count;i++)
 				this.Tables[i].RejectChanges ();
 
 			this.EnforceConstraints = oldEnforceConstraints;
@@ -814,8 +803,7 @@ namespace System.Data {
 			writer.WriteStartDocument (true);
 			try {
 				WriteXml (writer);
-			}
-			finally {
+			} finally {
 				writer.WriteEndDocument ();
 				writer.Close ();
 			}
@@ -833,16 +821,15 @@ namespace System.Data {
 			WriteXml (writer, XmlWriteMode.IgnoreSchema);
 		}
 
-		public void WriteXml (string filename, XmlWriteMode mode)
+		public void WriteXml (string fileName, XmlWriteMode mode)
 		{
-			XmlTextWriter writer = new XmlTextWriter (filename, null);
+			XmlTextWriter writer = new XmlTextWriter (fileName, null);
 			writer.Formatting = Formatting.Indented;
 			writer.WriteStartDocument (true);
 			
 			try {
 				WriteXml (writer, mode);
-			}
-			finally {
+			} finally {
 				writer.WriteEndDocument ();
 				writer.Close ();
 			}
@@ -886,7 +873,6 @@ namespace System.Data {
 			
 			if (mode == XmlWriteMode.DiffGram) {
 				if (HasChanges(DataRowState.Modified | DataRowState.Deleted)) {
-
 					DataSet beforeDS = GetChanges (DataRowState.Modified | DataRowState.Deleted);
 					WriteStartElement (writer, XmlWriteMode.DiffGram, XmlConstants.DiffgrNamespace, XmlConstants.DiffgrPrefix, "before");
 					WriteTables (writer, mode, beforeDS.Tables, DataRowVersion.Original);
@@ -944,21 +930,20 @@ namespace System.Data {
 			ReadXmlSchema (reader);
 		}
 
-		public void ReadXmlSchema (string str)
+		public void ReadXmlSchema (string fileName)
 		{
-			XmlReader reader = new XmlTextReader (str);
+			XmlReader reader = new XmlTextReader (fileName);
 			try {
 				ReadXmlSchema (reader);
-			}
-			finally {
+			} finally {
 				reader.Close ();
 			}
 		}
 
-		public void ReadXmlSchema (TextReader treader)
+		public void ReadXmlSchema (TextReader reader)
 		{
-			XmlReader reader = new XmlTextReader (treader);
-			ReadXmlSchema (reader);			
+			XmlReader xr = new XmlTextReader (reader);
+			ReadXmlSchema (xr);
 		}
 
 		public void ReadXmlSchema (XmlReader reader)
@@ -976,13 +961,12 @@ namespace System.Data {
 			return ReadXml (new XmlTextReader (stream));
 		}
 
-		public XmlReadMode ReadXml (string str)
+		public XmlReadMode ReadXml (string fileName)
 		{
-			XmlTextReader reader = new XmlTextReader (str);
+			XmlTextReader reader = new XmlTextReader (fileName);
 			try {
 				return ReadXml (reader);
-			}
-			finally {
+			} finally {
 				reader.Close ();
 			}
 		}
@@ -992,9 +976,9 @@ namespace System.Data {
 			return ReadXml (new XmlTextReader (reader));
 		}
 
-		public XmlReadMode ReadXml (XmlReader r)
+		public XmlReadMode ReadXml (XmlReader reader)
 		{
-			return ReadXml (r, XmlReadMode.Auto);
+			return ReadXml (reader, XmlReadMode.Auto);
 		}
 
 		public XmlReadMode ReadXml (Stream stream, XmlReadMode mode)
@@ -1002,13 +986,12 @@ namespace System.Data {
 			return ReadXml (new XmlTextReader (stream), mode);
 		}
 
-		public XmlReadMode ReadXml (string str, XmlReadMode mode)
+		public XmlReadMode ReadXml (string fileName, XmlReadMode mode)
 		{
-			XmlTextReader reader = new XmlTextReader (str);
+			XmlTextReader reader = new XmlTextReader (fileName);
 			try {
 				return ReadXml (reader, mode);
-			}
-			finally {
+			} finally {
 				reader.Close ();
 			}
 		}
@@ -1053,7 +1036,7 @@ namespace System.Data {
 							DiffLoader = new XmlDiffLoader (this);
 						DiffLoader.Load (reader);
 						// (and leave rest of the reader as is)
-						return  XmlReadMode.DiffGram;
+						return XmlReadMode.DiffGram;
 					case XmlReadMode.Fragment:
 						reader.Skip ();
 						// (and continue to read)
@@ -1676,11 +1659,10 @@ namespace System.Data {
 				// First check are all the rows null. If they are we just write empty element
 				bool AllNulls = true;
 				foreach (DataColumn dc in table.Columns) {
-				
 					if (row [dc.ColumnName, version] != DBNull.Value) {
 						AllNulls = false;
 						break;
-					} 
+					}
 				}
 
 				// If all of the columns were null, we have to write empty element
@@ -1691,23 +1673,19 @@ namespace System.Data {
 				
 				WriteTableElement (writer, mode, table, row, version);
 				
-				foreach (DataColumn col in atts) {					
+				foreach (DataColumn col in atts)
 					WriteColumnAsAttribute (writer, mode, col, row, version);
-				}
-				
+
 				if (simple != null) {
 					writer.WriteString (WriteObjectXml (row[simple, version]));
-				}
-				else {					
-					foreach (DataColumn col in elements) {
+				} else {
+					foreach (DataColumn col in elements)
 						WriteColumnAsElement (writer, mode, col, row, version);
-					}
 				}
 				
 				foreach (DataRelation relation in table.ChildRelations) {
-					if (relation.Nested) {
+					if (relation.Nested)
 						WriteTable (writer, row.GetChildRows (relation), mode, version, false);
-					}
 				}
 				
 				writer.WriteEndElement ();
@@ -1719,7 +1697,7 @@ namespace System.Data {
 		{
 			string colnspc = null;
 			object rowObject = row [col, version];
-									
+
 			if (rowObject == null || rowObject == DBNull.Value)
 				return;
 
@@ -1758,7 +1736,7 @@ namespace System.Data {
 					WriteAttributeString (writer, mode, XmlConstants.DiffgrNamespace, XmlConstants.DiffgrPrefix, "hasChanges", modeName);
 			}
 		}
-		    
+
 		internal static void WriteStartElement (XmlWriter writer, XmlWriteMode mode, string nspc, string prefix, string name)
 		{
 			writer.WriteStartElement (prefix, name, nspc);
@@ -1775,7 +1753,7 @@ namespace System.Data {
 					break;
 				default:
 					writer.WriteAttributeString (name, stringValue);
-					break;					
+					break;
 			};
 		}
 		

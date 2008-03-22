@@ -33,15 +33,15 @@ using System.Collections;
 using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace System.Data {
-
+namespace System.Data
+{
 	[Serializable]
 	public class TypedDataSetGeneratorException : DataException
 	{
-
-		ArrayList errorList;
+		readonly ArrayList errorList;
 
 		#region Constructors
+
 		public TypedDataSetGeneratorException ()
 			: base (Locale.GetText ("System error."))
 		{
@@ -73,25 +73,25 @@ namespace System.Data {
 		{
 		}
 #endif
-		#endregion //Constructors	
+		#endregion //Constructors
 
 		public ArrayList ErrorList {
-                        get { return errorList; }
+			get { return errorList; }
 		}
 
 		#region Methods
-                                                                                                    
-                public override void GetObjectData (SerializationInfo si, StreamingContext context)
-                {
-			base.GetObjectData (si, context);
-                                                
+
+		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			base.GetObjectData (info, context);
+
 			int count = (errorList != null) ? ErrorList.Count : 0;
-			si.AddValue ("KEY_ARRAYCOUNT", count);
+			info.AddValue ("KEY_ARRAYCOUNT", count);
 
 			for (int i=0; i < count; i++)
-				si.AddValue("KEY_ARRAYVALUES" + i, ErrorList [i]);
-                }
-                                                                                                    
-                #endregion // Methods
+				info.AddValue ("KEY_ARRAYVALUES" + i, ErrorList [i]);
+		}
+
+		#endregion // Methods
 	}
 }
