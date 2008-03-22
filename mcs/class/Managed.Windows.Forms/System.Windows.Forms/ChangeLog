@@ -1,5 +1,9 @@
 2008-03-22  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* PropertyGrid.cs: Initialize the sorting button as pushed.
+
+2008-03-22  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* PropertyGrid.cs: 
 	 - Visually select the PropertyTab.
 	 - Filter Properties by Attributes properly.

@@ -145,6 +145,7 @@ namespace System.Windows.Forms
 			toolbar = new PropertyToolBar();
 			toolbar.Dock = DockStyle.Top;
 			categorized_toolbarbutton = new PropertyToolBarButton ();
+			categorized_toolbarbutton.Pushed = true;
 			alphabetic_toolbarbutton = new PropertyToolBarButton ();
 			propertypages_toolbarbutton = new PropertyToolBarButton ();
 			separator_toolbarbutton = new PropertyToolBarSeparator ();
