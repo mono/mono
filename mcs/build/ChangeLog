@@ -1,3 +1,7 @@
+2008-03-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* profiles/net_3_5.make (PROFILE_MCS_FLAGS): Get rid of obsolete 
+	-langversion:linq option.
 
 Fri Mar 14 09:31:59 CET 2008 Paolo Molaro <lupus@ximian.com>
 
