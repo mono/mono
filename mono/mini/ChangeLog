@@ -1,5 +1,13 @@
 2008-03-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-codegen.c (mono_peephole_ins): New helper function containing the
+	arch independent peephole optimizations.
+
+	* mini-amd64.c (mono_arch_peephole_pass_1): Remove the arch independent peephole
+	opts which are now in mono_peephole_ins ().
+
+	* mini-amd64.c (mono_arch_peephole_pass_2): Ditto.
+	
 	* mini-s390.c (mono_arch_output_basic_block): Fix build.
 
 	* tramp-s390.c (mono_arch_get_vcall_slot): Handle an additional instruction
