@@ -1570,7 +1570,10 @@ namespace System.Windows.Forms
 					break;
 	
 				case Keys.Down:
-					SelectedIndex = Math.Min(SelectedIndex+1, Items.Count-1);
+					if ((e.Modifiers & Keys.Alt) == Keys.Alt)
+						DropDownListBox ();
+					else
+						SelectedIndex = Math.Min(SelectedIndex+1, Items.Count-1);
 					break;
 				
 				case Keys.PageUp:
@@ -1582,7 +1585,11 @@ namespace System.Windows.Forms
 					if (listbox_ctrl != null)
 						SelectedIndex = Math.Min(SelectedIndex+(listbox_ctrl.page_size-1), Items.Count-1);
 					break;
-				
+					
+				case Keys.Escape:
+					DropDownListBoxFinished ();
+					break;
+					
 				default:
 					break;
 			}

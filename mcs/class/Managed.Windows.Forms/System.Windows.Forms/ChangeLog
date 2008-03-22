@@ -1,3 +1,8 @@
+2008-03-22  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ComboBox.cs: Alt-Down should drop down the list, Esc should
+	retract it.  [Fixes bug #371989]
+
 2008-03-22  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* PropertyGrid.cs: Initialize the sorting button as pushed.
