@@ -106,7 +106,6 @@ namespace System.Windows.Forms
 
 			line_color = SystemColors.ScrollBar;
 			category_fore_color = line_color;
-			browsable_attributes = new AttributeCollection(new Attribute[] {});
 			commands_visible_if_available = false;
 			property_sort = PropertySort.CategorizedAlphabetical;
 			property_grid_view = new PropertyGridView(this);
@@ -229,7 +228,7 @@ namespace System.Windows.Forms
 			get {
 				if (browsable_attributes == null) {
 					browsable_attributes = new AttributeCollection (new Attribute[] { 
-						new BrowsableAttribute (true) });
+						BrowsableAttribute.Yes });
 				}
 				return browsable_attributes;
 			}
@@ -641,6 +640,8 @@ namespace System.Windows.Forms
 			}
 
 			set {
+				if (selected_objects != null && selected_objects.Length == 1 && selected_objects[0] == value)
+					return;
 				if (value == null)
 					SelectedObjects = new object[0];
 				else
@@ -890,6 +891,15 @@ namespace System.Windows.Forms
 		private void SelectPropertyTab (PropertyTab propertyTab)
 		{
 			if (propertyTab != null && selected_tab != propertyTab) {
+				foreach (object toolbarItem in toolbar.Items) {
+					PropertyToolBarButton button = toolbarItem as PropertyToolBarButton;
+					if (button != null && button.PropertyTab != null) {
+						if (button.PropertyTab == selected_tab)
+							button.Pushed = false;
+						else if (button.PropertyTab == propertyTab)
+							button.Pushed = true;
+					}
+				}
 				selected_tab = propertyTab;
 				PopulateGrid (selected_objects);
 				SelectItemCore (null, GetDefaultPropertyItem (root_grid_item, selected_tab));
@@ -927,7 +937,7 @@ namespace System.Windows.Forms
 						SelectPropertyTab (properties_tab);
 				}
 			} else {
-				selected_tab = properties_tab;
+				SelectPropertyTab (properties_tab);
 			}
 			RefreshToolbar (property_tabs);
 		}
@@ -950,7 +960,6 @@ namespace System.Windows.Forms
 			alphabetic_toolbarbutton.ImageIndex = imageIndex;
 			imageIndex++;
 			toolbar.Items.Add (separator_toolbarbutton);
-
 			if (tabs != null && tabs.Count > 0) {
 				foreach (PropertyTab tab in tabs) {
 					PropertyToolBarButton button = new PropertyToolBarButton (tab);
@@ -961,6 +970,8 @@ namespace System.Windows.Forms
 						button.ImageIndex = imageIndex;
 						imageIndex++;
 					}
+					if (tab == selected_tab)
+						button.Pushed = true;
 				}
 				toolbar.Items.Add (new PropertyToolBarSeparator ());
 			}
@@ -1545,7 +1556,8 @@ namespace System.Windows.Forms
 			description_menuitem.Checked = this.HelpVisible;
 		}
 
-		private void PopulateGrid (object[] objects) {
+		private void PopulateGrid (object[] objects) 
+		{
 			if (objects.Length > 0) {
 				root_grid_item = new RootGridEntry (this, objects);
 				PopulateRootGridItems (root_grid_item, objects, GetMergedPropertyNames (objects));
@@ -1565,13 +1577,6 @@ namespace System.Windows.Forms
 					return false;
 			}
 
-			if (browsable_attributes != null) {
-				foreach (Attribute attribute in browsable_attributes) {
-					if (property.Attributes.Contains (attribute))
-						return true;
-				}
-			}
-			
 			return true;
 		}
 
@@ -1582,7 +1587,7 @@ namespace System.Windows.Forms
 				if (objects [i] == null)
 					continue;
 
-				PropertyDescriptorCollection properties = GetProperties (objects[i]);
+				PropertyDescriptorCollection properties = GetProperties (objects[i], BrowsableAttributes);
 				ArrayList new_intersection = new ArrayList ();
 
 				foreach (PropertyDescriptor currentProperty in (i == 0 ? (ICollection)properties : (ICollection)intersection)) {
@@ -1609,17 +1614,20 @@ namespace System.Windows.Forms
 			if (propertyOwner == null || propertyName == null)
 				return null;
 
-			PropertyDescriptorCollection properties = GetProperties (propertyOwner);
+			PropertyDescriptorCollection properties = GetProperties (propertyOwner, BrowsableAttributes);
 			if (properties != null)
 				return properties[propertyName];
 			return null;
 		}
 
-		private PropertyDescriptorCollection GetProperties (object propertyOwner)
+		private PropertyDescriptorCollection GetProperties (object propertyOwner, AttributeCollection attributes)
 		{
 			if (propertyOwner == null || selected_tab == null)
-				return null;
-			return selected_tab.GetProperties (propertyOwner);
+				return new PropertyDescriptorCollection (null);
+
+			Attribute[] atts = new Attribute[attributes.Count];
+			attributes.CopyTo (atts, 0);
+			return selected_tab.GetProperties (propertyOwner, atts);
 		}
 
 		private void PopulateRootGridItems (GridEntry rootItem, object[] propertyOwners, string[] propertyNames)
@@ -1673,8 +1681,7 @@ namespace System.Windows.Forms
 			if (propertyOwners == null)
 				return;
 
-
-			PropertyDescriptorCollection propertiesCollection = GetProperties (propertyOwners[0]);
+			PropertyDescriptorCollection propertiesCollection = GetProperties (propertyOwners[0], BrowsableAttributes);
 			if (propertiesCollection == null)
 				return;
 

@@ -1,3 +1,9 @@
+2008-03-22  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* PropertyGrid.cs: 
+	 - Visually select the PropertyTab.
+	 - Filter Properties by Attributes properly.
+
 2008-03-21  Jonathan Pobst  <monkey@jpobst.com>
 
 	* MenuItem.cs: Remove menu item from parent when disposed.
