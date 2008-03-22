@@ -1,3 +1,7 @@
+2008-03-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* assemblyresolve/Makefile.am (MCS): Use gmcs.exe instead of mcs.exe.
+
 2008-03-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* libtest.c: Fix missing return in mono_marshal_alloc (). Disable or fix all
