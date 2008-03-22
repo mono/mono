@@ -1,5 +1,8 @@
 2008-03-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-exceptions.c (ves_icall_get_frame_info): Remove the ia64/s390 workarounds
+	since the extra frame is now detected automatically inside the loop.
+
 	* mini-s390.c (mono_arch_peephole_pass_2): Remove the arch independent peephole 
 	opts which are now in mono_peephole_ins ().
 	
