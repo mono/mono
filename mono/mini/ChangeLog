@@ -1,3 +1,12 @@
+2008-03-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-s390.c (mono_arch_get_vcall_slot): Handle an additional instruction
+	pattern.
+
+	* mini-s390.c (mono_arch_output_basic_block): Handle big offsets in the
+	CALL_MEMBASE opcodes. Fix setting of the destination in the OP_LCONV_TO_OVF_I
+	opcode.	
+
 2008-03-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-s390.c (calculate_sizes): Rename this to get_call_info for consistency
