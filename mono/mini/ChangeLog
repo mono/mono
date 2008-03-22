@@ -1,5 +1,8 @@
 2008-03-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-exceptions.c (ves_icall_get_frame_info): Skip native-to-managed wrapper
+	frames and skip duplicate managed-to-native frames. Fixes #367665.
+
 	* mini-x86.c (mono_arch_peephole_pass_1): Remove the arch independent peephole
 	opts which are now in mono_peephole_ins ().
 	(mono_arch_peephole_pass_2): Ditto.
