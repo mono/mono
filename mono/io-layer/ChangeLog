@@ -1,3 +1,9 @@
+2008-03-22  Kornél Pál  <kornelpal@gmail.com>
+
+	* io-layer.h: Windows: Rename GetProcessId to __GetProcessId for targets not
+	supporting it. This fixes MSVC build with new Windows SDKs that declare
+	GetProcessId unconditionally.
+
 2008-03-20  Kornél Pál  <kornelpal@gmail.com>
 
 	* io-layer.h: Removed Windows version macros.
