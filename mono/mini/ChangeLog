@@ -1,5 +1,7 @@
 2008-03-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-s390.c (mono_arch_output_basic_block): Fix OP_FCALL_MEMBASE.
+
 	* mini-exceptions.c (ves_icall_get_frame_info): Skip native-to-managed wrapper
 	frames and skip duplicate managed-to-native frames. Fixes #367665.
 
