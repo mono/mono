@@ -1,5 +1,7 @@
 2008-03-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-s390.c (mono_arch_output_basic_block): Fix build.
+
 	* tramp-s390.c (mono_arch_get_vcall_slot): Handle an additional instruction
 	pattern.
 
