@@ -29,6 +29,7 @@
 using System;
 using System.Data;
 using System.Data.Common;
+using System.Data.SqlClient;
 
 using NUnit.Framework;
 
@@ -82,6 +83,103 @@ namespace MonoTests.System.Data.Common
 				Assert.IsNotNull (ex.Message, "#4");
 			}
 		}
+
+		[Test]
+		public void AddToBatch ()
+		{
+			MyAdapter da = new MyAdapter ();
+			try {
+				da.AddToBatch (new SqlCommand ());
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test]
+		public void ClearBatch ()
+		{
+			MyAdapter da = new MyAdapter ();
+			try {
+				da.ClearBatch ();
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test]
+		public void ExecuteBatch ()
+		{
+			MyAdapter da = new MyAdapter ();
+			try {
+				da.ExecuteBatch ();
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test]
+		public void GetBatchedParameter ()
+		{
+			MyAdapter da = new MyAdapter ();
+			try {
+				da.GetBatchedParameter (1, 1);
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test]
+		public void GetBatchedRecordsAffected ()
+		{
+			MyAdapter da = new MyAdapter ();
+			int recordsAffected = 0;
+			Exception error = null;
+
+			Assert.IsTrue (da. GetBatchedRecordsAffected (int.MinValue,
+				out recordsAffected, out error), "#1");
+			Assert.AreEqual (1, recordsAffected, "#2");
+			Assert.IsNull (error, "#3");
+		}
+
+		[Test]
+		public void InitializeBatching ()
+		{
+			MyAdapter da = new MyAdapter ();
+			try {
+				da.InitializeBatching ();
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test]
+		public void TerminateBatching ()
+		{
+			MyAdapter da = new MyAdapter ();
+			try {
+				da.TerminateBatching ();
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
 #endif
 
 		class MyAdapter : DbDataAdapter
@@ -109,6 +207,43 @@ namespace MonoTests.System.Data.Common
 			protected override void OnRowUpdating (RowUpdatingEventArgs value)
 			{
 				throw new NotImplementedException ();
+			}
+#endif
+
+#if NET_2_0
+			public new int AddToBatch (IDbCommand command)
+			{
+				return base.AddToBatch (command);
+			}
+
+			public new void ClearBatch ()
+			{
+				base.ClearBatch ();
+			}
+
+			public new void ExecuteBatch ()
+			{
+				base.ClearBatch ();
+			}
+
+			public new IDataParameter GetBatchedParameter (int commandIdentifier, int parameterIndex)
+			{
+				return base.GetBatchedParameter (commandIdentifier, parameterIndex);
+			}
+
+			public new bool GetBatchedRecordsAffected (int commandIdentifier, out int recordsAffected, out Exception error)
+			{
+				return base.GetBatchedRecordsAffected (commandIdentifier, out recordsAffected, out error);
+			}
+
+			public new void InitializeBatching ()
+			{
+				base.InitializeBatching ();
+			}
+
+			public new void TerminateBatching ()
+			{
+				base.TerminateBatching ();
 			}
 #endif
 		}

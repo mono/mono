@@ -1,3 +1,8 @@
+2008-03-23  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DataContainerTest.cs: Code formatting.
+	* DbDataAdapterTest.cs: Added test for 2.0 methods.
+
 2007-10-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DBDataPermissionAttributeTest.cs: Improved test for invalid
