@@ -224,9 +224,8 @@ namespace System.Web
 				if (_position == 0)
 					return;
 
-				StreamWriter writer = new StreamWriter (stream, _encoding);
-				writer.Write (buffer, 0, _position);
-				writer.Flush ();
+				byte[] bytesToWrite =_encoding.GetBytes (buffer, 0, _position);
+				stream.Write (bytesToWrite, 0, bytesToWrite.Length);
 			}
 		}
 
