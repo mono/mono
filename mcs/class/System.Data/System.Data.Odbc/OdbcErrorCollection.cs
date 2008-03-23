@@ -42,47 +42,40 @@ namespace System.Data.Odbc
 	{
 		#region Fields
 
-		ArrayList _items = new ArrayList ();
+		readonly ArrayList _items = new ArrayList ();
 	
 		#endregion // Fields
 
 		#region Constructors
 
-		internal OdbcErrorCollection() {
+		internal OdbcErrorCollection ()
+		{
 		}
 
 		#endregion Constructors
 
 		#region Properties 
 
-		public int Count 
-		{
-			get 
-			{
+		public int Count {
+			get {
 				return _items.Count;
 			}
 		}
 
-		public OdbcError this[int index] 
-		{
-			get 
-			{
-				return (OdbcError) _items[index];
+		public OdbcError this[int i] {
+			get {
+				return (OdbcError) _items [i];
 			}
 		}
 
-		object ICollection.SyncRoot 
-		{
-			get 
-			{
+		object ICollection.SyncRoot {
+			get {
 				return _items.SyncRoot;
 			}
 		}
 
-		bool ICollection.IsSynchronized 
-		{
-			get 
-			{
+		bool ICollection.IsSynchronized {
+			get {
 				return _items.IsSynchronized;
 			}
 		}
@@ -96,19 +89,19 @@ namespace System.Data.Odbc
 			_items.Add ((object) error);
 		}
 		
-		public void CopyTo (Array array, int index)
+		public void CopyTo (Array array, int i)
 		{
 			if (array == null)
-				throw new ArgumentNullException("array");		
-			
-			if ((index < array.GetLowerBound (0)) || (index > array.GetUpperBound (0)))
+				throw new ArgumentNullException("array");
+
+			if ((i < array.GetLowerBound (0)) || (i > array.GetUpperBound (0)))
 				throw new ArgumentOutOfRangeException("index");
 		
 			// is the check for IsFixedSize required?
-			if ((array.IsFixedSize) || (index + this.Count > array.GetUpperBound (0)))
+			if ((array.IsFixedSize) || (i + this.Count > array.GetUpperBound (0)))
 				throw new ArgumentException("array");
 
-			((OdbcError[]) (_items.ToArray ())).CopyTo (array, index);
+			((OdbcError[]) (_items.ToArray ())).CopyTo (array, i);
 		}
 
 		public IEnumerator GetEnumerator ()
@@ -120,13 +113,14 @@ namespace System.Data.Odbc
 		public void CopyTo (OdbcError [] array, int index)
 		{
 			if (array == null)
-				throw new ArgumentNullException ("array");		
-			
+				throw new ArgumentNullException ("array");
+
 			if ((index < array.GetLowerBound (0)) || (index > array.GetUpperBound (0)))
 				throw new ArgumentOutOfRangeException ("index");
 			((OdbcError[]) (_items.ToArray ())).CopyTo (array, index);
 		}
 #endif
+
 		#endregion // Methods
 	}
 }

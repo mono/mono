@@ -27,16 +27,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Collections;
 using System.Data.Common;
 using System.Security;
 using System.Security.Permissions;
 
-namespace System.Data.Odbc {
-
+namespace System.Data.Odbc
+{
 	[Serializable]
-	public sealed class OdbcPermission : DBDataPermission {
-
+	public sealed class OdbcPermission : DBDataPermission
+	{
 		#region Constructors
 
 #if NET_1_1
@@ -75,9 +74,6 @@ namespace System.Data.Odbc {
 
 		#endregion
 
-		#region Properties
-		#endregion
-
 		#region Methods
 
 		public override IPermission Copy ()
@@ -85,12 +81,11 @@ namespace System.Data.Odbc {
 			return new OdbcPermission (this);
 		}
 
-#if NET_2_0
 		public override void Add (string connectionString, string restrictions, KeyRestrictionBehavior behavior)
 		{
 			base.Add (connectionString, restrictions, behavior);
 		}
-#endif
+
 		#endregion
 	}
 }

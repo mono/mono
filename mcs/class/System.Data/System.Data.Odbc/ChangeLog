@@ -1,3 +1,15 @@
+2008-03-23  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* OdbcErrorCollection.cs: Corcompare fixes and code formatting.
+	* OdbcCommandBuilder.cs: Corcompare fixes and code formatting.
+	* OdbcPermission.cs: Corcompare fixes and code formatting.
+	* OdbcDataReader.cs: Corcompare fixes and code formatting.
+	* OdbcParameterCollection.cs: Corcompare fixes and code formatting.
+	* OdbcConnection.cs: Corcompare fixes and code formatting. Use
+	unicode encoding in ChangeDatabase and GetInfo.
+	* OdbcDataAdapter.cs: Corcompare fixes and code formatting.
+	* OdbcParameter.cs: Corcompare fixes and code formatting.
+
 2008-03-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* libodbc.cs: Always use unicode version of ODBC functions. Fixes part

@@ -46,13 +46,13 @@ namespace System.Data.Odbc
 #else
 	[TypeConverterAttribute (typeof (OdbcParameterConverter))]
 #endif
-	public sealed class OdbcParameter : 
+	public sealed class OdbcParameter :
 #if NET_2_0
 	DbParameter,
 #else
 	MarshalByRefObject,
 #endif // NET_2_0
-	  ICloneable, IDbDataParameter, IDataParameter
+	ICloneable, IDbDataParameter, IDataParameter
 	{
 		#region Fields
 
@@ -69,7 +69,7 @@ namespace System.Data.Odbc
 		private OdbcTypeMap _typeMap;
 		private NativeBuffer _nativeBuffer = new NativeBuffer ();
 		private NativeBuffer _cbLengthInd;
-		private OdbcParameterCollection container = null;	
+		private OdbcParameterCollection container;
 		
 		#endregion
 
@@ -85,7 +85,7 @@ namespace System.Data.Odbc
 			_typeMap = OdbcTypeConverter.GetTypeMap (OdbcType.NVarChar);
 		}
 
-		public OdbcParameter (string name, object value) 
+		public OdbcParameter (string name, object value)
 			: this ()
 		{
 			this.ParameterName = name;
@@ -96,39 +96,39 @@ namespace System.Data.Odbc
 				Type type = value.GetType ();
 				if (type.IsArray)
 					Size = type.GetElementType () == typeof (byte) ?
-                                                ((Array) value).Length : 0;
+						((Array) value).Length : 0;
 				else
 					Size = value.ToString ().Length;
-                        }
+			}
 		}
 
-		public OdbcParameter (string name, OdbcType odbcType) 
+		public OdbcParameter (string name, OdbcType type)
 			: this ()
 		{
 			this.ParameterName = name;
-			_typeMap = (OdbcTypeMap) OdbcTypeConverter.GetTypeMap (odbcType);
+			_typeMap = (OdbcTypeMap) OdbcTypeConverter.GetTypeMap (type);
 		}
 
-		public OdbcParameter (string name, OdbcType odbcType, int size)
-			: this (name, odbcType)
+		public OdbcParameter (string name, OdbcType type, int size)
+			: this (name, type)
 		{
 			this.Size = size;
 		}
 
-		public OdbcParameter (string name, OdbcType odbcType, int size, string srcColumn)
-			: this (name, odbcType, size)
+		public OdbcParameter (string name, OdbcType type, int size, string sourcecolumn)
+			: this (name, type, size)
 		{
-			this.SourceColumn = srcColumn;
+			this.SourceColumn = sourcecolumn;
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		public OdbcParameter(string name, OdbcType odbcType, int size, 
-				     ParameterDirection direction, bool isNullable, 
+		public OdbcParameter (string parameterName, OdbcType odbcType, int size,
+				     ParameterDirection parameterDirection, bool isNullable, 
 				     byte precision, byte scale, string srcColumn, 
 				     DataRowVersion srcVersion, object value)
-			: this (name, odbcType, size, srcColumn)
+			: this (parameterName, odbcType, size, srcColumn)
 		{
-			this.Direction = direction;
+			this.Direction = parameterDirection;
 			this.IsNullable = isNullable;
 			this.SourceVersion = srcVersion;
 		}
@@ -138,24 +138,24 @@ namespace System.Data.Odbc
 		#region Properties
 
 		// Used to ensure that only one collection can contain this
-                // parameter
-                internal OdbcParameterCollection Container {
-                        get { return container; }
-                        set { container = value; }
-                }
+		// parameter
+		internal OdbcParameterCollection Container {
+			get { return container; }
+			set { container = value; }
+		}
 
 #if ONLY_1_1
 		[BrowsableAttribute (false)]
-                [RefreshPropertiesAttribute (RefreshProperties.All)]
-                [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 #endif
 		[OdbcCategory ("Data")]
-                [OdbcDescriptionAttribute ("The parameter generic type")]
-		public 
+		[OdbcDescriptionAttribute ("The parameter generic type")]
+		public
 #if NET_2_0
-                override 
+		override
 #endif
-                DbType DbType {
+		DbType DbType {
 			get { return _typeMap.DbType; }
 			set { 
 				if (value == _typeMap.DbType)
@@ -164,17 +164,17 @@ namespace System.Data.Odbc
 				_typeMap = OdbcTypeConverter.GetTypeMap (value);
 			}
 		}
-		
+
 		[OdbcCategory ("Data")]
 		[OdbcDescriptionAttribute ("Input, output, or bidirectional parameter")]  
 #if NET_2_0
-                [RefreshPropertiesAttribute (RefreshProperties.All)]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
 #else
 		[DefaultValue (ParameterDirection.Input)]
 #endif
-		public 
+		public
 #if NET_2_0
-                override 
+		override
 #endif
 		ParameterDirection Direction {
 			get { return direction; }
@@ -183,24 +183,23 @@ namespace System.Data.Odbc
 
 #if ONLY_1_1
 		[BrowsableAttribute (false)]
-                [DesignOnlyAttribute (true)]
-                [EditorBrowsableAttribute (EditorBrowsableState.Advanced)]
-                [DefaultValue (false)]
+		[DesignOnlyAttribute (true)]
+		[EditorBrowsableAttribute (EditorBrowsableState.Advanced)]
+		[DefaultValue (false)]
 #endif
-                [OdbcDescriptionAttribute ("A design-time property used for strongly typed code generation")]
-		public 
+		[OdbcDescriptionAttribute ("A design-time property used for strongly typed code generation")]
+		public
 #if NET_2_0
-                override 
+		override
 #endif
 		bool IsNullable {
 			get { return isNullable; }
 			set { isNullable = value; }
 		}
 
-
 		[DefaultValue (OdbcType.NChar)]
-                [OdbcDescriptionAttribute ("The parameter native type")]
-                [RefreshPropertiesAttribute (RefreshProperties.All)]
+		[OdbcDescriptionAttribute ("The parameter native type")]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		[OdbcCategory ("Data")]
 #if NET_2_0
 		[DbProviderSpecificTypeProperty (true)]
@@ -214,14 +213,14 @@ namespace System.Data.Odbc
 				_typeMap = OdbcTypeConverter.GetTypeMap (value);
 			}
 		}
-		
- 		[OdbcDescription ("DataParameter_ParameterName")]
+
+		[OdbcDescription ("DataParameter_ParameterName")]
 #if ONLY_1_1
-                [DefaultValue ("")]
+		[DefaultValue ("")]
 #endif
 		public 
 #if NET_2_0
-                override 
+		override
 #endif
 		string ParameterName {
 			get { return name; }
@@ -229,29 +228,29 @@ namespace System.Data.Odbc
 		}
 
 		[OdbcDescription ("DbDataParameter_Precision")]
-                [OdbcCategory ("DataCategory_Data")]
-                [DefaultValue (0)]
+		[OdbcCategory ("DataCategory_Data")]
+		[DefaultValue (0)]
 		public byte Precision {
 			get { return _precision; }
 			set { _precision = value; }
 		}
-		
-                [OdbcDescription ("DbDataParameter_Scale")]
-                [OdbcCategory ("DataCategory_Data")]
-                [DefaultValue (0)]
+
+		[OdbcDescription ("DbDataParameter_Scale")]
+		[OdbcCategory ("DataCategory_Data")]
+		[DefaultValue (0)]
 		public byte Scale {
 			get { return _scale; }
 			set { _scale = value; }
 		}
 		
 		[OdbcDescription ("DbDataParameter_Size")]
-                [OdbcCategory ("DataCategory_Data")]
+		[OdbcCategory ("DataCategory_Data")]
 #if ONLY_1_1
-                [DefaultValue (0)]
+		[DefaultValue (0)]
 #endif
-		public 
+		public
 #if NET_2_0
-                override 
+		override
 #endif
 		int Size {
 			get { return size; }
@@ -259,27 +258,27 @@ namespace System.Data.Odbc
 		}
 
 		[OdbcDescription ("DataParameter_SourceColumn")]
-                [OdbcCategory ("DataCategory_Data")]
+		[OdbcCategory ("DataCategory_Data")]
 #if ONLY_1_1
-                [DefaultValue ("")]
+		[DefaultValue ("")]
 #endif
-		public 
+		public
 #if NET_2_0
-                override 
+		override
 #endif
 		string SourceColumn {
 			get { return sourceColumn; }
 			set { sourceColumn = value; }
 		}
 		
-                [OdbcDescription ("DataParameter_SourceVersion")]
-                [OdbcCategory ("DataCategory_Data")]
+		[OdbcDescription ("DataParameter_SourceVersion")]
+		[OdbcCategory ("DataCategory_Data")]
 #if ONLY_1_1
-                [DefaultValue ("Current")]
+		[DefaultValue ("Current")]
 #endif
-		public 
+		public
 #if NET_2_0
-                override 
+		override
 #endif
 		DataRowVersion SourceVersion {
 			get { return sourceVersion; }
@@ -287,36 +286,33 @@ namespace System.Data.Odbc
 		}
 
 		[TypeConverter (typeof(StringConverter))]
-                [OdbcDescription ("DataParameter_Value")]
-                [OdbcCategory ("DataCategory_Data")]
+		[OdbcDescription ("DataParameter_Value")]
+		[OdbcCategory ("DataCategory_Data")]
 #if ONLY_1_1
-                [DefaultValue (null)]
+		[DefaultValue (null)]
 #else
-                [RefreshPropertiesAttribute (RefreshProperties.All)]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
 #endif
-		public 
+		public
 #if NET_2_0
-                override 
+		override
 #endif
 		object Value {
-			get { 
-				return _value;
-			}
-			set { 
-				_value = value;
-			}
+			get { return _value; }
+			set { _value = value; }
 		}
 
 		#endregion // Properties
 
 		#region Methods
 
-		internal void Bind(IntPtr hstmt, int ParamNum) {
+		internal void Bind (IntPtr hstmt, int ParamNum)
+		{
 			OdbcReturn ret;
 			int len;
 			
 			// Convert System.Data.ParameterDirection into odbc enum
-			OdbcInputOutputDirection paramdir = libodbc.ConvertParameterDirection(this.Direction);
+			OdbcInputOutputDirection paramdir = libodbc.ConvertParameterDirection (this.Direction);
 
 			_cbLengthInd.EnsureAlloc (Marshal.SizeOf (typeof (int)));
 			if (Value is DBNull)
@@ -324,17 +320,16 @@ namespace System.Data.Odbc
 			else {
 				len = GetNativeSize ();
 				AllocateBuffer ();
-			}	
+			}
 			
 			Marshal.WriteInt32 (_cbLengthInd, len);
-			ret = libodbc.SQLBindParameter(hstmt, (ushort) ParamNum, (short) paramdir,
-						       _typeMap.NativeType, _typeMap.SqlType, 
-			                   Convert.ToUInt32(Size),
-						       0, (IntPtr) _nativeBuffer, 0, _cbLengthInd);
+			ret = libodbc.SQLBindParameter (hstmt, (ushort) ParamNum, (short) paramdir,
+				_typeMap.NativeType, _typeMap.SqlType, Convert.ToUInt32 (Size),
+				0, (IntPtr) _nativeBuffer, 0, _cbLengthInd);
 
 			// Check for error condition
 			if ((ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo))
-				throw new OdbcException(new OdbcError("SQLBindParam", OdbcHandleType.Stmt, hstmt));
+				throw new OdbcException (new OdbcError ("SQLBindParam", OdbcHandleType.Stmt, hstmt));
 		}
 
 		[MonoTODO]
@@ -361,7 +356,7 @@ namespace System.Data.Odbc
 				else
 					return Value.ToString ().Length;
 			case OdbcType.Bit:
-				return Marshal.SizeOf (typeof  (byte));
+				return Marshal.SizeOf (typeof (byte));
 			case OdbcType.Double:
 				return Marshal.SizeOf (typeof (double));
 			case OdbcType.Real:
@@ -369,14 +364,14 @@ namespace System.Data.Odbc
 			case OdbcType.Int:
 				return Marshal.SizeOf (typeof (int));
 			case OdbcType.BigInt:
-				return Marshal.SizeOf (typeof  (long));
+				return Marshal.SizeOf (typeof (long));
 			case OdbcType.Decimal:
 			case OdbcType.Numeric:
 				return 19;
 			case OdbcType.SmallInt:
-				return Marshal.SizeOf (typeof  (Int16));
+				return Marshal.SizeOf (typeof (Int16));
 			case OdbcType.TinyInt:
-				return Marshal.SizeOf (typeof  (byte));
+				return Marshal.SizeOf (typeof (byte));
 			case OdbcType.Char:
 			case OdbcType.Text:
 			case OdbcType.VarChar:
@@ -390,7 +385,7 @@ namespace System.Data.Odbc
 			case OdbcType.Image:
 				if (Value.GetType ().IsArray &&
 				    Value.GetType ().GetElementType () == typeof (byte))
-					return ( (Array) Value).Length;
+					return ((Array) Value).Length;
 				throw new ArgumentException ("Unsupported Native Type!");
 			case OdbcType.Date:
 			case OdbcType.DateTime:
@@ -404,7 +399,7 @@ namespace System.Data.Odbc
 
 			if (Value.GetType ().IsArray &&
 			    Value.GetType ().GetElementType () == typeof (byte))
-				return ( (Array) Value).Length;
+				return ((Array) Value).Length;
 			
 			return Value.ToString ().Length;
 		}
@@ -536,19 +531,19 @@ namespace System.Data.Odbc
 
 #if NET_2_0
 		public override bool SourceColumnNullMapping {
-			get {return false;}
-			set {}
+			get { return false; }
+			set { }
 		}
 
 		public override void ResetDbType ()
-                {
+		{
 			_typeMap = OdbcTypeConverter.GetTypeMap (OdbcType.NVarChar);
-                }
+		}
 
 		public void ResetOdbcType ()
-                {
+		{
 			_typeMap = OdbcTypeConverter.GetTypeMap (OdbcType.NVarChar);
-                }
+		}
 #endif
 
 		#endregion

@@ -38,7 +38,8 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
 
-namespace System.Data.Odbc {
+namespace System.Data.Odbc
+{
 	[DefaultEvent ("RowUpdated")]
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.OdbcDataAdapterDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
 	[ToolboxItemAttribute ("Microsoft.VSDesigner.Data.VS.OdbcDataAdapterToolboxItem, "+ Consts.AssemblyMicrosoft_VSDesigner)]
@@ -137,11 +138,6 @@ namespace System.Data.Odbc {
 			set { UpdateCommand = (OdbcCommand) value; }
 		}
 
-
-		ITableMappingCollection IDataAdapter.TableMappings {
-			get { return TableMappings; }
-		}
-
 		#endregion // Properties
 
 		#region Methods
@@ -171,13 +167,13 @@ namespace System.Data.Odbc {
 		}
 #endif
 
-		protected override void OnRowUpdated (RowUpdatedEventArgs value) 
+		protected override void OnRowUpdated (RowUpdatedEventArgs value)
 		{
 			if (RowUpdated != null)
 				RowUpdated (this, (OdbcRowUpdatedEventArgs) value);
 		}
 
-		protected override void OnRowUpdating (RowUpdatingEventArgs value) 
+		protected override void OnRowUpdating (RowUpdatingEventArgs value)
 		{
 			if (RowUpdating != null)
 				RowUpdating (this, (OdbcRowUpdatingEventArgs) value);
@@ -197,6 +193,5 @@ namespace System.Data.Odbc {
 		public event OdbcRowUpdatingEventHandler RowUpdating;
 
 		#endregion // Events and Delegates
-
 	}
 }

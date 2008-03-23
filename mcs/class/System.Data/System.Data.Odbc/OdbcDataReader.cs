@@ -37,6 +37,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
+using System.Globalization;
 using System.Text;
 
 namespace System.Data.Odbc
@@ -127,19 +128,19 @@ namespace System.Data.Odbc
 #if NET_2_0
 		override
 #endif // NET_2_0
-		object this [string name] {
+		object this [string value] {
 			get {
 				int pos;
 
 				if (currentRow == -1)
 					throw new InvalidOperationException ();
 
-				pos = ColIndex(name);
+				pos = ColIndex (value);
 				
 				if (pos == -1)
 					throw new IndexOutOfRangeException ();
 
-				return this[pos];
+				return this [pos];
 			}
 		}
 
@@ -147,9 +148,9 @@ namespace System.Data.Odbc
 #if NET_2_0
 		override
 #endif // NET_2_0
-		object this [int index] {
+		object this [int i] {
 			get {
-				return (object) GetValue (index);
+				return (object) GetValue (i);
 			}
 		}
 
@@ -179,8 +180,7 @@ namespace System.Data.Odbc
 		private int ColIndex (string colname)
 		{
 			int i = 0;
-			foreach (OdbcColumn col in cols)
-			{
+			foreach (OdbcColumn col in cols) {
 				if (col != null) {
 					if (col.ColumnName == colname)
 						return i;
@@ -230,9 +230,8 @@ namespace System.Data.Odbc
 
 			this.command.FreeIfNotPrepared ();
 
-			if ((this.CommandBehavior & CommandBehavior.CloseConnection) == CommandBehavior.CloseConnection) {
+			if ((this.CommandBehavior & CommandBehavior.CloseConnection) == CommandBehavior.CloseConnection)
 				this.command.Connection.Close ();
-			}
 		}
 
 #if ONLY_1_1
@@ -246,25 +245,25 @@ namespace System.Data.Odbc
 #if NET_2_0
 		override
 #endif // NET_2_0
-		bool GetBoolean (int ordinal)
+		bool GetBoolean (int i)
 		{
-			return (bool) GetValue (ordinal);
+			return (bool) GetValue (i);
 		}
 
 		public 
 #if NET_2_0
 		override
 #endif // NET_2_0
-		byte GetByte (int ordinal)
+		byte GetByte (int i)
 		{
-			return (byte) Convert.ToByte (GetValue (ordinal));
+			return Convert.ToByte (GetValue (i));
 		}
 
 		public 
 #if NET_2_0
 		override
 #endif // NET_2_0
-		long GetBytes (int ordinal, long dataIndex, byte[] buffer, int bufferIndex, int length)
+		long GetBytes (int i, long dataIndex, byte[] buffer, int bufferIndex, int length)
 		{
 			OdbcReturn ret = OdbcReturn.Error;
 			bool copyBuffer = false;
@@ -272,7 +271,7 @@ namespace System.Data.Odbc
 			byte [] tbuff = new byte [length+1];
 
 			length = buffer == null ? 0 : length;
-			ret=libodbc.SQLGetData (hstmt, (ushort) (ordinal+1), SQL_C_TYPE.BINARY, tbuff, length, 
+			ret=libodbc.SQLGetData (hstmt, (ushort) (i + 1), SQL_C_TYPE.BINARY, tbuff, length, 
 						ref outsize);
 
 			if (ret == OdbcReturn.NoData)
@@ -307,12 +306,12 @@ namespace System.Data.Odbc
 			}
 
 			if (copyBuffer) {
-				int i = 0;
-				while (tbuff [i] != libodbc.C_NULL) {
-					buffer [bufferIndex + i] = tbuff [i];
-					i++;
+				int j = 0;
+				while (tbuff [j] != libodbc.C_NULL) {
+					buffer [bufferIndex + i] = tbuff [j];
+					j++;
 				}
-				returnVal = i;
+				returnVal = j;
 			}
 			return returnVal;
 		}
@@ -322,7 +321,7 @@ namespace System.Data.Odbc
 #if NET_2_0
 		override
 #endif // NET_2_0
-		char GetChar (int ordinal)
+		char GetChar (int i)
 		{
 			throw new NotImplementedException ();
 		}
@@ -332,7 +331,7 @@ namespace System.Data.Odbc
 #if NET_2_0
 		override
 #endif // NET_2_0
-		long GetChars (int ordinal, long dataIndex, char[] buffer, int bufferIndex, int length)
+		long GetChars (int i, long dataIndex, char[] buffer, int bufferIndex, int length)
 		{
 			throw new NotImplementedException ();
 		}
@@ -345,124 +344,125 @@ namespace System.Data.Odbc
 #if NET_2_0
 		new
 #endif
-		IDataReader GetData (int ordinal)
+		IDataReader GetData (int i)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
-		string GetDataTypeName (int index)
+		string GetDataTypeName (int i)
 		{
-			return GetColumnAttributeStr (index + 1, FieldIdentifier.TypeName);
+			return GetColumnAttributeStr (i + 1, FieldIdentifier.TypeName);
 		}
 
-		public DateTime GetDate (int ordinal) {
-			return GetDateTime (ordinal);
+		public DateTime GetDate (int i)
+		{
+			return GetDateTime (i);
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
-		DateTime GetDateTime (int ordinal)
+		DateTime GetDateTime (int i)
 		{
-			return (DateTime) GetValue (ordinal);
+			return (DateTime) GetValue (i);
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
-		decimal GetDecimal (int ordinal)
+		decimal GetDecimal (int i)
 		{
-			return (decimal) GetValue (ordinal);
+			return (decimal) GetValue (i);
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
-		double GetDouble (int ordinal)
+		double GetDouble (int i)
 		{
-			return (double) GetValue (ordinal);
+			return (double) GetValue (i);
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
-		Type GetFieldType (int index)
+		Type GetFieldType (int i)
 		{
-			return GetColumn(index).DataType;
+			return GetColumn (i).DataType;
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
-		float GetFloat (int ordinal)
+		float GetFloat (int i)
 		{
-			return (float) GetValue (ordinal);
+			return (float) GetValue (i);
 		}
 
 		[MonoTODO]
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
-		Guid GetGuid (int ordinal)
+		Guid GetGuid (int i)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
-		short GetInt16 (int ordinal)
+		short GetInt16 (int i)
 		{
-			return (short) GetValue (ordinal);
+			return (short) GetValue (i);
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
-		int GetInt32 (int ordinal)
+		int GetInt32 (int i)
 		{
-			return (int) GetValue (ordinal);
+			return (int) GetValue (i);
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
-		long GetInt64 (int ordinal)
+		long GetInt64 (int i)
 		{
-			return (long) GetValue (ordinal);
+			return (long) GetValue (i);
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
-		string GetName (int index)
+		string GetName (int i)
 		{
-			return GetColumn(index).ColumnName;
+			return GetColumn (i).ColumnName;
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
-		int GetOrdinal (string name)
+		int GetOrdinal (string value)
 		{
-			int i=ColIndex(name);
+			int i = ColIndex (value);
 
-			if (i==-1)
+			if (i == -1)
 				throw new IndexOutOfRangeException ();
 			else
 				return i;
@@ -473,7 +473,7 @@ namespace System.Data.Odbc
 #if NET_2_0
 		override
 #endif // NET_2_0
-		DataTable GetSchemaTable()
+		DataTable GetSchemaTable ()
 		{
 			// FIXME : 
 			// * Map OdbcType to System.Type and assign to DataType.
@@ -586,7 +586,7 @@ namespace System.Data.Odbc
 					lastSchemaName = schemaName;
 					lastCatalogName = catalogName;
 				}
-				dataTableSchema.AcceptChanges();
+				dataTableSchema.AcceptChanges ();
 			}
 			return (_dataTableSchema = dataTableSchema);
 		}
@@ -595,18 +595,18 @@ namespace System.Data.Odbc
 #if NET_2_0
 		override
 #endif // NET_2_0
-		string GetString (int ordinal)
+		string GetString (int i)
 		{
-			object ret = GetValue (ordinal);
+			object ret = GetValue (i);
 
 			if (ret != null && ret.GetType () != typeof (string))
-				return (string) Convert.ToString (ret);
+				return Convert.ToString (ret);
 			else
-				return (string) GetValue (ordinal);
+				return (string) GetValue (i);
 		}
 
 		[MonoTODO]
-		public TimeSpan GetTime (int ordinal)
+		public TimeSpan GetTime (int i)
 		{
 			throw new NotImplementedException ();
 		}
@@ -615,20 +615,20 @@ namespace System.Data.Odbc
 #if NET_2_0
 		override
 #endif // NET_2_0
-		object GetValue (int ordinal)
+		object GetValue (int i)
 		{
 			if (currentRow == -1)
 				throw new IndexOutOfRangeException ();
 
-			if (ordinal > cols.Length-1 || ordinal < 0)
+			if (i > cols.Length-1 || i < 0)
 				throw new IndexOutOfRangeException ();
 
 			OdbcReturn ret;
 			int outsize = 0, bufsize;
 			byte[] buffer;
-			OdbcColumn col = GetColumn (ordinal);
+			OdbcColumn col = GetColumn (i);
 			object DataValue = null;
-			ushort ColIndex = Convert.ToUInt16 (ordinal + 1);
+			ushort ColIndex = Convert.ToUInt16 (i + 1);
 
 			// Check cached values
 			if (col.Value == null) {
@@ -649,16 +649,16 @@ namespace System.Data.Odbc
 					ret = libodbc.SQLGetData (hstmt, ColIndex, SQL_C_TYPE.CHAR, buffer, bufsize, ref outsize);
 					if (outsize!=-1) {
 						byte [] temp = new byte [outsize];
-						for (int i = 0;i<outsize;i++)
-							temp[i] = buffer[i];
-						DataValue = Decimal.Parse (System.Text.Encoding.Default.GetString (temp),
-							System.Globalization.CultureInfo.InvariantCulture);
+						for (int j = 0; j < outsize; j++)
+							temp [j] = buffer [j];
+						DataValue = Decimal.Parse (Encoding.Default.GetString (temp),
+							CultureInfo.InvariantCulture);
 					}
 					break;
 				case OdbcType.TinyInt:
 					short short_data = 0;
 					ret = libodbc.SQLGetData (hstmt, ColIndex, col.SqlCType, ref short_data, 0, ref outsize);
-					DataValue = System.Convert.ToByte(short_data);
+					DataValue = Convert.ToByte (short_data);
 					break;
 				case OdbcType.Int:
 					int int_data = 0;
@@ -726,9 +726,9 @@ namespace System.Data.Odbc
 							ret = OdbcReturn.NoData;
 						if (ret != OdbcReturn.NoData && outsize > 0) {
 							if (outsize < bufsize)
-								sb1.Append (System.Text.Encoding.Default.GetString(buffer,0,outsize));
+								sb1.Append (Encoding.Default.GetString (buffer, 0, outsize));
 							else
-								sb1.Append (System.Text.Encoding.Default.GetString (buffer, 0, bufsize - 1));
+								sb1.Append (Encoding.Default.GetString (buffer, 0, bufsize - 1));
 						}
 					} while (ret != OdbcReturn.NoData);
 					DataValue = sb1.ToString ();
@@ -785,7 +785,7 @@ namespace System.Data.Odbc
 				case OdbcType.Binary :
 					bufsize = col.MaxLength;
 					buffer = new byte [bufsize];
-					long read = GetBytes (ordinal, 0, buffer, 0, bufsize);
+					long read = GetBytes (i, 0, buffer, 0, bufsize);
 					ret = OdbcReturn.Success;
 					DataValue = buffer;
 					break;
@@ -796,7 +796,7 @@ namespace System.Data.Odbc
 					if (outsize != (int) OdbcLengthIndicator.NullData)
 						if (! (ret == OdbcReturn.SuccessWithInfo
 						       && outsize == (int) OdbcLengthIndicator.NoTotal))
-							DataValue = System.Text.Encoding.Default.GetString(buffer, 0, outsize);
+							DataValue = Encoding.Default.GetString (buffer, 0, outsize);
 					break;
 				}
 
@@ -822,9 +822,9 @@ namespace System.Data.Odbc
 			// copy values
 			for (int i = 0; i < values.Length; i++) {
 				if (i < FieldCount) {
-					values[i] = GetValue (i);
+					values [i] = GetValue (i);
 				} else {
-					values[i] = null;
+					values [i] = null;
 				}
 			}
 
@@ -882,9 +882,9 @@ namespace System.Data.Odbc
 #if NET_2_0
 		override
 #endif // NET_2_0
-		bool IsDBNull (int ordinal)
+		bool IsDBNull (int i)
 		{
-			return (GetValue (ordinal) is DBNull);
+			return (GetValue (i) is DBNull);
 		}
 
 		/// <remarks>
@@ -926,7 +926,6 @@ namespace System.Data.Odbc
 			}
 			return (ret == OdbcReturn.Success);
 		}
-
 
 		private int GetColumnAttribute (int column, FieldIdentifier fieldId)
 		{

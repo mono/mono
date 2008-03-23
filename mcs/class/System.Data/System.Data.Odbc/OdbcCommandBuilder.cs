@@ -70,13 +70,11 @@ namespace System.Data.Odbc
 		
 		public OdbcCommandBuilder ()
 		{
-			_adapter = null;
-			_quotePrefix = String.Empty;
-			_quoteSuffix = String.Empty;
-			rowUpdatingHandler = null;
+			_quotePrefix = string.Empty;
+			_quoteSuffix = string.Empty;
 		}
 
-		public OdbcCommandBuilder (OdbcDataAdapter adapter) 
+		public OdbcCommandBuilder (OdbcDataAdapter adapter)
 			: this ()
 		{
 			DataAdapter = adapter;
@@ -90,7 +88,7 @@ namespace System.Data.Odbc
 		[DefaultValue (null)]
 		public
 #if NET_2_0
-        new
+		new
 #endif // NET_2_0
 		OdbcDataAdapter DataAdapter {
 			get {
@@ -111,8 +109,7 @@ namespace System.Data.Odbc
 			}
 		}
 
-		private OdbcCommand SelectCommand
-		{
+		private OdbcCommand SelectCommand {
 			get {
 				if (DataAdapter == null)
 					return null;
@@ -120,8 +117,7 @@ namespace System.Data.Odbc
 			}
 		}
 
-		private DataTable Schema 
-		{
+		private DataTable Schema {
 			get {
 				if (_schema == null)
 					RefreshSchema ();
@@ -129,10 +125,9 @@ namespace System.Data.Odbc
 			}
 		}
 		
-		private string TableName 
-		{
+		private string TableName {
 			get {
-				if (_tableName != String.Empty)
+				if (_tableName != string.Empty)
 					return _tableName;
 
 				DataRow [] schemaRows = Schema.Select ("BaseTableName is not null and BaseTableName <> ''");
@@ -173,9 +168,9 @@ namespace System.Data.Odbc
 #if ONLY_1_1
 		public
 #else
-                new
+		new
 #endif // NET_2_0
-                string QuoteSuffix {
+		string QuoteSuffix {
 			get {
 				return _quoteSuffix;
 			}
@@ -189,7 +184,7 @@ namespace System.Data.Odbc
 		#region Methods
 
 		[MonoTODO]
-		public static void DeriveParameters (OdbcCommand command) 
+		public static void DeriveParameters (OdbcCommand command)
 		{
 			throw new NotImplementedException ();
 		}
@@ -199,17 +194,21 @@ namespace System.Data.Odbc
 #else
 		new
 #endif
-		void Dispose (bool disposing) 
+		void Dispose (bool disposing)
 		{
 			if (_disposed)
 				return;
 			
 			if (disposing) {
 				// dispose managed resource
-				if (_insertCommand != null) _insertCommand.Dispose ();
-				if (_updateCommand != null) _updateCommand.Dispose ();
-				if (_deleteCommand != null) _deleteCommand.Dispose ();
-				if (_schema != null) _insertCommand.Dispose ();
+				if (_insertCommand != null)
+					_insertCommand.Dispose ();
+				if (_updateCommand != null)
+					_updateCommand.Dispose ();
+				if (_deleteCommand != null)
+					_deleteCommand.Dispose ();
+				if (_schema != null)
+					_insertCommand.Dispose ();
 
 				_insertCommand = null;
 				_updateCommand = null;
@@ -261,7 +260,6 @@ namespace System.Data.Odbc
 			int count = 0;
 
 			foreach (DataRow schemaRow in Schema.Rows) {
-				
 				// exclude non updatable columns
 				if (! IsUpdatable (schemaRow))
 					continue;
@@ -320,7 +318,6 @@ namespace System.Data.Odbc
 			int count = 0;
 
 			foreach (DataRow schemaRow in Schema.Rows) {
-				
 				// exclude non updatable columns
 				if (! IsUpdatable (schemaRow))
 					continue;
@@ -351,14 +348,14 @@ namespace System.Data.Odbc
 					       String.Join (", ", columns, 0, count),
 					       String.Join (", ", values, 0, count) );
 			_insertCommand.CommandText = query;
-			return _insertCommand;			
+			return _insertCommand;
 		}
 
 		public
 #if NET_2_0
-			new
+		new
 #endif // NET_2_0
-				OdbcCommand GetInsertCommand ()
+		OdbcCommand GetInsertCommand ()
 		{
 			// FIXME: check validity of adapter
 			if (_insertCommand != null)
@@ -366,12 +363,12 @@ namespace System.Data.Odbc
 
 			if (_schema == null)
 				RefreshSchema ();
-					
+
 			return CreateInsertCommand (false);
 		}
 
 #if NET_2_0
-		public new OdbcCommand GetInsertCommand (bool option)
+		public new OdbcCommand GetInsertCommand (bool useColumnsForParameterNames)
 		{
 			// FIXME: check validity of adapter
 			if (_insertCommand != null)
@@ -380,10 +377,10 @@ namespace System.Data.Odbc
 			if (_schema == null)
 				RefreshSchema ();
 
-			return CreateInsertCommand (option);
+			return CreateInsertCommand (useColumnsForParameterNames);
 		}
 #endif // NET_2_0
-			
+
 		private OdbcCommand CreateUpdateCommand (bool option)
 		{
 			CreateNewCommand (ref _updateCommand);
@@ -394,7 +391,6 @@ namespace System.Data.Odbc
 			int count = 0;
 
 			foreach (DataRow schemaRow in Schema.Rows) {
-				
 				// exclude non updatable columns
 				if (! IsUpdatable (schemaRow))
 					continue;
@@ -426,14 +422,14 @@ namespace System.Data.Odbc
 					       String.Join (", ", setClause, 0, count),
 					       whereClause);
 			_updateCommand.CommandText = query;
-			return _updateCommand;			
+			return _updateCommand;
 		}
 		
 		public
 #if NET_2_0
-			new
+		new
 #endif // NET_2_0
-				OdbcCommand GetUpdateCommand ()
+		OdbcCommand GetUpdateCommand ()
 		{
 			// FIXME: check validity of adapter
 			if (_updateCommand != null)
@@ -446,7 +442,7 @@ namespace System.Data.Odbc
 		}
 
 #if NET_2_0
-		public new OdbcCommand GetUpdateCommand (bool option)
+		public new OdbcCommand GetUpdateCommand (bool useColumnsForParameterNames)
 		{
 			// FIXME: check validity of adapter
 			if (_updateCommand != null)
@@ -455,10 +451,10 @@ namespace System.Data.Odbc
 			if (_schema == null)
 				RefreshSchema ();
 
-			return CreateUpdateCommand (option);
+			return CreateUpdateCommand (useColumnsForParameterNames);
 		}
 #endif // NET_2_0
-		
+
 		private OdbcCommand CreateDeleteCommand (bool option)
 		{
 			CreateNewCommand (ref _deleteCommand);
@@ -468,14 +464,14 @@ namespace System.Data.Odbc
 			
 			query = String.Format ("{0} WHERE ({1})", query, whereClause);
 			_deleteCommand.CommandText = query;
-			return _deleteCommand;			
+			return _deleteCommand;
 		}
 
 		public
 #if NET_2_0
-			new
+		new
 #endif // NET_2_0
-				OdbcCommand GetDeleteCommand ()
+		OdbcCommand GetDeleteCommand ()
 		{
 			// FIXME: check validity of adapter
 			if (_deleteCommand != null)
@@ -488,7 +484,7 @@ namespace System.Data.Odbc
 		}
 
 #if NET_2_0
-		public new OdbcCommand GetDeleteCommand (bool option)
+		public new OdbcCommand GetDeleteCommand (bool useColumnsForParameterNames)
 		{
 			// FIXME: check validity of adapter
 			if (_deleteCommand != null)
@@ -497,16 +493,16 @@ namespace System.Data.Odbc
 			if (_schema == null)
 				RefreshSchema ();
 
-			return CreateDeleteCommand (option);
+			return CreateDeleteCommand (useColumnsForParameterNames);
 		}
 #endif // NET_2_0
 
 #if ONLY_1_1
 		public
 #else
-        new
+		new
 #endif // NET_2_0
-                void RefreshSchema ()
+		void RefreshSchema ()
 		{
 			// creates metadata
 			if (SelectCommand == null)
@@ -530,68 +526,63 @@ namespace System.Data.Odbc
 			_deleteCommand 	= null;
 			_tableName	= String.Empty;
 		}
-                
+
 #if NET_2_0
-		protected override void ApplyParameterInfo (DbParameter dbParameter,
+		protected override void ApplyParameterInfo (DbParameter parameter,
 		                                            DataRow row,
 		                                            StatementType statementType,
 		                                            bool whereClause)
 		{
-			OdbcParameter parameter = (OdbcParameter) dbParameter;
-			parameter.Size = int.Parse (row ["ColumnSize"].ToString ());
-			if (row ["NumericPrecision"] != DBNull.Value) {
-				parameter.Precision = byte.Parse (row ["NumericPrecision"].ToString ());
-			}
-			if (row ["NumericScale"] != DBNull.Value) {
-				parameter.Scale = byte.Parse (row ["NumericScale"].ToString ());
-			}
-			parameter.DbType = (DbType) row ["ProviderType"];
+			OdbcParameter odbcParam = (OdbcParameter) parameter;
+			odbcParam.Size = int.Parse (row ["ColumnSize"].ToString ());
+			if (row ["NumericPrecision"] != DBNull.Value)
+				odbcParam.Precision = byte.Parse (row ["NumericPrecision"].ToString ());
+			if (row ["NumericScale"] != DBNull.Value)
+				odbcParam.Scale = byte.Parse (row ["NumericScale"].ToString ());
+			odbcParam.DbType = (DbType) row ["ProviderType"];
 		}
 
-		protected override string GetParameterName (int position)
+		protected override string GetParameterName (int parameterOrdinal)
 		{
-			return String.Format("@p{0}", position);
+			return String.Format("@p{0}", parameterOrdinal);
 		}
 
 		protected override string GetParameterName (string parameterName)
 		{
-			return String.Format("@{0}", parameterName);                       
+			return String.Format("@{0}", parameterName);
 		}
-                
-		protected override string GetParameterPlaceholder (int position)
+
+		protected override string GetParameterPlaceholder (int parameterOrdinal)
 		{
-			return GetParameterName (position);
+			return GetParameterName (parameterOrdinal);
 		}
-            
+
 		// FIXME: According to MSDN - "if this method is called again with
 		// the same DbDataAdapter, the DbCommandBuilder is unregistered for 
 		// that DbDataAdapter's RowUpdating event" - this behaviour is yet
-		// to be verified		
+		// to be verified
 		protected override void SetRowUpdatingHandler (DbDataAdapter adapter)
 		{
-			if (!(adapter is OdbcDataAdapter)) {
+			if (!(adapter is OdbcDataAdapter))
 				throw new InvalidOperationException ("Adapter needs to be a SqlDataAdapter");
-			}
-			
 			if (rowUpdatingHandler == null)
 				rowUpdatingHandler = new OdbcRowUpdatingEventHandler (OnRowUpdating);
-			
+
 			((OdbcDataAdapter) adapter).RowUpdating += rowUpdatingHandler;
 		}
-
 #endif // NET_2_0
-		
+
 #if NET_2_0
 		public override
 #else
 		private
-#endif		
+#endif
 		string QuoteIdentifier (string unquotedIdentifier)
 		{
-			if (unquotedIdentifier == null || unquotedIdentifier == String.Empty)
+			if (unquotedIdentifier == null || unquotedIdentifier.Length == 0)
 				return unquotedIdentifier;
 			return String.Format ("{0}{1}{2}", QuotePrefix, 
-					                      unquotedIdentifier, QuoteSuffix);
+				unquotedIdentifier, QuoteSuffix);
 		}
 
 #if NET_2_0
@@ -605,16 +596,16 @@ namespace System.Data.Odbc
 		{
 			return UnquoteIdentifier (quotedIdentifier);
 		}
-#endif		
+#endif
 
 #if NET_2_0
 		public override
 #else
 		private
-#endif		
+#endif
 		string UnquoteIdentifier (string quotedIdentifier)
 		{
-			if (quotedIdentifier == null || quotedIdentifier == String.Empty)
+			if (quotedIdentifier == null || quotedIdentifier.Length == 0)
 				return quotedIdentifier;
 			
 			StringBuilder sb = new StringBuilder (quotedIdentifier.Length);
@@ -647,7 +638,6 @@ namespace System.Data.Odbc
 				args.Status = UpdateStatus.ErrorsOccurred;
 			}
 		}
-		
 
 		#endregion // Methods
 	}

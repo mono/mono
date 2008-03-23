@@ -34,14 +34,14 @@
 //
 
 using System.Collections;
-using System.Data;
 using System.ComponentModel;
+using System.Data;
 using System.Data.Common;
 
 namespace System.Data.Odbc
 {
 	[ListBindable (false)]
-        [EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBParametersEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
+	[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBParametersEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 #if NET_2_0
 	public sealed class OdbcParameterCollection : DbParameterCollection
 #else
@@ -51,7 +51,7 @@ namespace System.Data.Odbc
 	{
 		#region Fields
 
-		ArrayList list = new ArrayList ();
+		readonly ArrayList list = new ArrayList ();
 		int nullParamCount = 1;
 
 		#endregion // Fields
@@ -69,7 +69,7 @@ namespace System.Data.Odbc
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 #endif
-		public 
+		public
 #if NET_2_0
 		override
 #endif
@@ -80,8 +80,8 @@ namespace System.Data.Odbc
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public new OdbcParameter this [int index] {
-			get { return (OdbcParameter) list[index]; }
-			set { list[index] = value; }
+			get { return (OdbcParameter) list [index]; }
+			set { list [index] = value; }
 		}
 
 		[Browsable (false)]
@@ -116,7 +116,7 @@ namespace System.Data.Odbc
 			get { return false; }
 		}
 		
-#if ONLY_1_1	
+#if ONLY_1_1
 		bool ICollection.IsSynchronized {
 #else
 		public override bool IsSynchronized {
@@ -142,12 +142,11 @@ namespace System.Data.Odbc
 		object IDataParameterCollection.this [string name]
 		{
 			get { return this [name]; }
-            set {
+			set {
 				if (!(value is OdbcParameter))
 					throw new InvalidCastException ("Only OdbcParameter objects can be used.");
 				this [name] = (OdbcParameter) value;
 			}
-
 		}
 #endif // ONLY_1_1
 
@@ -158,7 +157,7 @@ namespace System.Data.Odbc
 #if NET_2_0
 		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
 #endif
-		public 
+		public
 #if NET_2_0
 		override
 #endif
@@ -170,44 +169,45 @@ namespace System.Data.Odbc
 			return IndexOf (value);
 		}
 
-		public OdbcParameter Add (OdbcParameter parameter)
+		public OdbcParameter Add (OdbcParameter value)
 		{
-			if (parameter.Container != null)
-                                throw new ArgumentException ("The OdbcParameter specified in " +
+			if (value.Container != null)
+				throw new ArgumentException ("The OdbcParameter specified in " +
 							     "the value parameter is already " +
 							     "added to this or another OdbcParameterCollection.");
-			if (parameter.ParameterName == null || parameter.ParameterName == "") {
-                        	parameter.ParameterName = "Parameter" + nullParamCount;
+			if (value.ParameterName == null || value.ParameterName.Length == 0) {
+				value.ParameterName = "Parameter" + nullParamCount;
 				nullParamCount ++;
 			}
-			parameter.Container = this;
-			list.Add (parameter);
-			return parameter;
+			value.Container = this;
+			list.Add (value);
+			return value;
 		}
 
 #if NET_2_0
 		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
 		[Obsolete ("Add(String parameterName, Object value) has been deprecated.  Use AddWithValue(String parameterName, Object value).")]
 #endif
-		public OdbcParameter Add (string name, object value)
+		public OdbcParameter Add (string parameterName, object value)
 		{
-			return Add (new OdbcParameter (name, value));
+			return Add (new OdbcParameter (parameterName, value));
 		}
 
-		public OdbcParameter Add (string name, OdbcType type)
-	        {
-			return Add (new OdbcParameter (name, type));
+		public OdbcParameter Add (string parameterName, OdbcType odbcType)
+		{
+			return Add (new OdbcParameter (parameterName, odbcType));
 		}
 
-		public OdbcParameter Add (string name, OdbcType type, int width)
+		public OdbcParameter Add (string parameterName, OdbcType odbcType, int size)
 		{
-			return Add (new OdbcParameter (name, type, width));
+			return Add (new OdbcParameter (parameterName, odbcType, size));
 		}
 
-		public OdbcParameter Add (string name, OdbcType type,
-					   int width, string src_col)
+		public OdbcParameter Add (string parameterName, OdbcType odbcType,
+					   int size, string sourceColumn)
 		{
-			return Add (new OdbcParameter (name, type, width, src_col));
+			return Add (new OdbcParameter (parameterName, odbcType,
+				size, sourceColumn));
 		}
 
 		internal void Bind (IntPtr hstmt)
@@ -216,39 +216,38 @@ namespace System.Data.Odbc
 				this [i].Bind (hstmt, i + 1);
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif
 		void Clear()
-                {
-                        foreach (OdbcParameter p in list)
-                                p.Container = null;
-                                                                                                    
-                        list.Clear ();
-                }
+		{
+			foreach (OdbcParameter p in list)
+				p.Container = null;
+			list.Clear ();
+		}
 
 		public
 #if NET_2_0
-                override
+		override
 #endif // NET_2_0
-                bool Contains (object value)
-                {
+		bool Contains (object value)
+		{
 			if (value == null)
 				//should not throw ArgumentNullException
 				return false;
 			if (!(value is OdbcParameter))
 				throw new InvalidCastException ("The parameter was not an OdbcParameter.");
 			return Contains (((OdbcParameter) value).ParameterName);
-                }
-                                                                            
-                public
+		}
+
+		public
 #if NET_2_0
-                override
+		override
 #endif // NET_2_0
-                bool Contains (string value)
-                {
-			if (value == null || value == "")
+		bool Contains (string value)
+		{
+			if (value == null || value.Length == 0)
 				//should not throw ArgumentNullException
 				return false;
 			string value_upper = value.ToUpper ();
@@ -256,101 +255,100 @@ namespace System.Data.Odbc
 				if (p.ParameterName.ToUpper ().Equals (value_upper))
 					return true;
 			return false;
-                }
+		}
 
 		public
 #if NET_2_0
-                override
+		override
 #endif // NET_2_0
-                void CopyTo (Array array, int index)
-                {
-                        list.CopyTo (array, index);
-                }
+		void CopyTo (Array array, int index)
+		{
+			list.CopyTo (array, index);
+		}
 
 		public
 #if NET_2_0
-                override
+		override
 #endif // NET_2_0
-                IEnumerator GetEnumerator()
-                {
-                        return list.GetEnumerator ();
-                }
+		IEnumerator GetEnumerator()
+		{
+			return list.GetEnumerator ();
+		}
 
-  		public
+		public
 #if NET_2_0
-                override
+		override
 #endif // NET_2_0
-                int IndexOf (object value)
-                {
+		int IndexOf (object value)
+		{
 			if (value == null)
-                		return -1;
+				return -1;
 			if (!(value is OdbcParameter))
 				throw new InvalidCastException ("The parameter was not an OdbcParameter.");
 			return list.IndexOf (value);
-                }
-                                                                                                    
-                public
+		}
+
+		public
 #if NET_2_0
-                override
+		override
 #endif // NET_2_0
-                int IndexOf (string parameterName)
-                {
-			if (parameterName == null || parameterName == "")
+		int IndexOf (string parameterName)
+		{
+			if (parameterName == null || parameterName.Length == 0)
 				return -1;
 			string parameterName_upper = parameterName.ToUpper ();
 			for (int i = 0; i < Count; i += 1)
 				if (this [i].ParameterName.ToUpper ().Equals (parameterName_upper))
 					return i;
-			return -1;             
-                }
+			return -1;
+		}
 
 		public
 #if NET_2_0
-                override
+		override
 #endif // NET_2_0
-                void Insert (int index, object value)
-                {
-                	if (value == null)
+		void Insert (int index, object value)
+		{
+			if (value == null)
 				throw new ArgumentNullException ("value");
 			if (!(value is OdbcParameter))
 				throw new InvalidCastException ("The parameter was not an OdbcParameter.");
 			Insert (index, (OdbcParameter) value);
-                }
-                                                                                                    
-                public
+		}
+
+		public
 #if NET_2_0
-                override
+		override
 #endif // NET_2_0
-                void Remove (object value)
-                {
-                	if (value == null)
+		void Remove (object value)
+		{
+			if (value == null)
 				throw new ArgumentNullException ("value");
 			if (!(value is OdbcParameter))
 				throw new InvalidCastException ("The parameter was not an OdbcParameter.");
 			Remove ((OdbcParameter) value);
-                }
-                                                                                                    
-                public
+		}
+
+		public
 #if NET_2_0
-                override
+		override
 #endif // NET_2_0
-                void RemoveAt (int index)
-                {
-                	if (index >= list.Count || index < 0)
-                		throw new IndexOutOfRangeException (String.Format ("Invalid index {0} for this OdbcParameterCollection with count = {1}", index, list.Count));
+		void RemoveAt (int index)
+		{
+			if (index >= list.Count || index < 0)
+				throw new IndexOutOfRangeException (String.Format ("Invalid index {0} for this OdbcParameterCollection with count = {1}", index, list.Count));
 			this [index].Container = null;
 			list.RemoveAt (index);
-                }
-                                                                                                    
-                public
-#if NET_2_0
-                override
-#endif // NET_2_0
-                void RemoveAt (string parameterName)
-                {
-			RemoveAt (IndexOf (parameterName));
-                }
+		}
 
+		public
+#if NET_2_0
+		override
+#endif // NET_2_0
+		void RemoveAt (string parameterName)
+		{
+			RemoveAt (IndexOf (parameterName));
+		}
 
 #if NET_2_0
 		protected override DbParameter GetParameter (string name)
@@ -378,10 +376,9 @@ namespace System.Data.Odbc
 		{
 			if (values == null)
 				throw new ArgumentNullException ("values");
-			foreach (OdbcParameter p in values) {
+			foreach (OdbcParameter p in values)
 				if (p == null)
 					throw new ArgumentNullException ("values", "The OdbcParameterCollection only accepts non-null OdbcParameter type objects");
-			}	
 			// no need to check if parameter is already contained
 			foreach (OdbcParameter p in values)
 				Add (p);
@@ -447,8 +444,8 @@ namespace System.Data.Odbc
 		{
 			list.CopyTo (array, index);
 		}
- #endif
-		#endregion // Methods
+#endif
 
+		#endregion // Methods
 	}
 }

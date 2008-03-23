@@ -29,12 +29,12 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
-using System.Runtime.InteropServices;
 using System.EnterpriseServices;
+using System.Runtime.InteropServices;
+using System.Text;
 #if NET_2_0 && !TARGET_JVM
 using System.Transactions;
 #endif
@@ -80,7 +80,7 @@ namespace System.Data.Odbc
 
 		[OdbcCategoryAttribute ("DataCategory_Data")]
 		[DefaultValue ("")]
-		[OdbcDescriptionAttribute ("Information used to connect to a Data Source")]	
+		[OdbcDescriptionAttribute ("Information used to connect to a Data Source")]
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Odbc.Design.OdbcConnectionStringEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		[RecommendedAsConfigurableAttribute (true)]
@@ -200,42 +200,43 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		OdbcTransaction BeginTransaction ()
 		{
-			return BeginTransaction(IsolationLevel.Unspecified);
+			return BeginTransaction (IsolationLevel.Unspecified);
 		}
 
 #if ONLY_1_1
 		IDbTransaction IDbConnection.BeginTransaction ()
 		{
-			return (IDbTransaction) BeginTransaction();
+			return (IDbTransaction) BeginTransaction ();
 		}
 #endif // ONLY_1_1
+
 #if NET_2_0
-		protected override DbTransaction BeginDbTransaction (IsolationLevel level)
+		protected override DbTransaction BeginDbTransaction (IsolationLevel isolationLevel)
 		{
-			return BeginTransaction (level);
+			return BeginTransaction (isolationLevel);
 		}
 #endif
-		
+
 		public
 #if NET_2_0
 		new
 #endif // NET_2_0
-		OdbcTransaction BeginTransaction (IsolationLevel level)
+		OdbcTransaction BeginTransaction (IsolationLevel isolevel)
 		{
 			if (State == ConnectionState.Closed)
 				throw ExceptionHelper.ConnectionClosed ();
 
 			if (transaction == null) {
-				transaction = new OdbcTransaction (this,level);
+				transaction = new OdbcTransaction (this, isolevel);
 				return transaction;
 			} else
-				throw new InvalidOperationException();
+				throw new InvalidOperationException ();
 		}
 
 #if ONLY_1_1
-		IDbTransaction IDbConnection.BeginTransaction (IsolationLevel level)
+		IDbTransaction IDbConnection.BeginTransaction (IsolationLevel isolevel)
 		{
-			return (IDbTransaction) BeginTransaction (level);
+			return (IDbTransaction) BeginTransaction (isolevel);
 		}
 #endif // ONLY_1_1
 
@@ -271,14 +272,14 @@ namespace System.Data.Odbc
 #if NET_2_0
 		override
 #endif // NET_2_0
-		void ChangeDatabase(string Database)
+		void ChangeDatabase (string value)
 		{
 			IntPtr ptr = IntPtr.Zero;
 			OdbcReturn ret = OdbcReturn.Error;
 
 			try {
-				ptr = Marshal.StringToHGlobalAnsi (Database);
-				ret = libodbc.SQLSetConnectAttr (hdbc, OdbcConnectionAttribute.CurrentCatalog, ptr, Database.Length);
+				ptr = Marshal.StringToHGlobalUni (value);
+				ret = libodbc.SQLSetConnectAttr (hdbc, OdbcConnectionAttribute.CurrentCatalog, ptr, value.Length * 2);
 
 				if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
 					throw new OdbcException (new OdbcError ("SQLSetConnectAttr", OdbcHandleType.Dbc, hdbc));
@@ -293,11 +294,11 @@ namespace System.Data.Odbc
 			if (!this.disposed) {
 				try {
 					// release the native unmananged resources
-					this.Close();
+					this.Close ();
 					this.disposed = true;
 				} finally {
 					// call Dispose on the base class
-					base.Dispose(disposing);
+					base.Dispose (disposing);
 				}
 			}
 		}
@@ -305,7 +306,7 @@ namespace System.Data.Odbc
 		[MonoTODO]
 		object ICloneable.Clone ()
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 #if ONLY_1_1
@@ -353,15 +354,13 @@ namespace System.Data.Odbc
 					throw new OdbcException (new OdbcError ("SQLAllocHandle", OdbcHandleType.Env, henv));
 
 				// DSN connection
-				if (ConnectionString.ToLower ().IndexOf ("dsn=") >= 0)
-				{
+				if (ConnectionString.ToLower ().IndexOf ("dsn=") >= 0) {
 					string _uid = string.Empty, _pwd = string.Empty, _dsn = string.Empty;
-					string [] items = ConnectionString.Split (new char[1]{';'});
+					string [] items = ConnectionString.Split (new char[1] {';'});
 					foreach (string item in items)
 					{
 						string [] parts = item.Split (new char[1] {'='});
-						switch (parts [0].Trim ().ToLower ())
-						{
+						switch (parts [0].Trim ().ToLower ()) {
 						case "dsn":
 							_dsn = parts [1].Trim ();
 							break;
@@ -376,14 +375,12 @@ namespace System.Data.Odbc
 					ret = libodbc.SQLConnect(hdbc, _dsn, -3, _uid, -3, _pwd, -3);
 					if ((ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo)) 
 						throw new OdbcException (new OdbcError ("SQLConnect", OdbcHandleType.Dbc, hdbc));
-				}
-				else 
-				{
+				} else {
 					// DSN-less Connection
 					string OutConnectionString = new String (' ',1024);
 					short OutLen = 0;
 					ret = libodbc.SQLDriverConnect (hdbc, IntPtr.Zero, ConnectionString, -3, 
-								     OutConnectionString, (short) OutConnectionString.Length, ref OutLen, 0);
+						OutConnectionString, (short) OutConnectionString.Length, ref OutLen, 0);
 					if ((ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo)) 
 						throw new OdbcException (new OdbcError ("SQLDriverConnect", OdbcHandleType.Dbc, hdbc));
 				}
@@ -449,7 +446,7 @@ namespace System.Data.Odbc
 #endif
 
 		[MonoTODO]
-		public void EnlistDistributedTransaction ( ITransaction transaction) 
+		public void EnlistDistributedTransaction (ITransaction transaction)
 		{
 			throw new NotImplementedException ();
 		}
@@ -460,8 +457,8 @@ namespace System.Data.Odbc
 				throw new InvalidOperationException ("The connection is closed.");
 
 			OdbcReturn ret = OdbcReturn.Error;
-			short max_length = 256;
-			byte [] buffer = new byte [max_length];
+			short max_length = 512;
+			byte [] buffer = new byte [512];
 			short actualLength = 0;
 
 			ret = libodbc.SQLGetInfo (hdbc, info, buffer, max_length, ref actualLength);
@@ -469,8 +466,7 @@ namespace System.Data.Odbc
 				throw new OdbcException (new OdbcError ("SQLGetInfo",
 									OdbcHandleType.Dbc,
 									hdbc));
-
-			return System.Text.Encoding.Default.GetString (buffer).Substring (0, actualLength);
+			return Encoding.Unicode.GetString (buffer, 0, actualLength);
 		}
 
 		private void RaiseStateChange (ConnectionState from, ConnectionState to)
@@ -488,7 +484,8 @@ namespace System.Data.Odbc
 			return new OdbcInfoMessageEventArgs (errors);
 		}
 
-		private void OnOdbcInfoMessage (OdbcInfoMessageEventArgs e) {
+		private void OnOdbcInfoMessage (OdbcInfoMessageEventArgs e)
+		{
 			if (InfoMessage != null)
 				InfoMessage (this, e);
 		}
@@ -503,7 +500,7 @@ namespace System.Data.Odbc
 		public event StateChangeEventHandler StateChange;
 #endif // ONLY_1_1
 
- 		[OdbcDescription ("DbConnection_InfoMessage")]
+		[OdbcDescription ("DbConnection_InfoMessage")]
 		[OdbcCategory ("DataCategory_InfoMessage")]
 		public event OdbcInfoMessageEventHandler InfoMessage;
 
