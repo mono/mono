@@ -40,7 +40,8 @@ using System.Data;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-namespace System.Data.Common {
+namespace System.Data.Common
+{
 #if NET_2_0
 	public abstract class DbDataAdapter : DataAdapter, IDbDataAdapter, IDataAdapter, ICloneable
 #else
@@ -64,7 +65,7 @@ namespace System.Data.Common {
 		
 		#region Constructors
 
-		protected DbDataAdapter() 
+		protected DbDataAdapter ()
 		{
 		}
 
@@ -153,7 +154,7 @@ namespace System.Data.Common {
 
 		IDbCommand InsertCommand {
 			get { return ((IDbDataAdapter) this).InsertCommand; }
-		} 
+		}
 #endif
 
 		#endregion // Properties
@@ -161,7 +162,6 @@ namespace System.Data.Common {
 		#region Events
 
 #if ONLY_1_0 || ONLY_1_1
-
 		[DataCategory ("Fill")]
 		[DataSysDescription ("Event triggered when a recoverable error occurs during Fill.")]
 		public event FillErrorEventHandler FillError;
@@ -248,7 +248,7 @@ namespace System.Data.Common {
 			return Fill (dataSet, 0, 0, DefaultSourceTableName, ((IDbDataAdapter) this).SelectCommand, _behavior);
 		}
 
-		public int Fill (DataTable dataTable) 
+		public int Fill (DataTable dataTable)
 		{
 			if (dataTable == null)
 				throw new ArgumentNullException ("DataTable");
@@ -256,35 +256,31 @@ namespace System.Data.Common {
 			return Fill (dataTable, ((IDbDataAdapter) this).SelectCommand, _behavior);
 		}
 
-		public int Fill (DataSet dataSet, string srcTable) 
+		public int Fill (DataSet dataSet, string srcTable)
 		{
 			return Fill (dataSet, 0, 0, srcTable, ((IDbDataAdapter) this).SelectCommand, _behavior);
 		}
 
-#if NET_1_0
-		protected
-#else
-		internal
-#endif
-		virtual new int Fill (DataTable dataTable, IDataReader dataReader) 
+#if !NET_2_0
+		protected virtual int Fill (DataTable dataTable, IDataReader dataReader)
 		{
 			return base.FillInternal (dataTable, dataReader);
 		}
+#endif
 
-		protected virtual int Fill (DataTable dataTable, IDbCommand command, CommandBehavior behavior) 
+		protected virtual int Fill (DataTable dataTable, IDbCommand command, CommandBehavior behavior)
 		{
 			CommandBehavior commandBehavior = behavior;
 
 			// first see that the connection is not close.
-			if (command.Connection.State == ConnectionState.Closed) 
-			{
+			if (command.Connection.State == ConnectionState.Closed) {
 				command.Connection.Open ();
 				commandBehavior |= CommandBehavior.CloseConnection;
 			}
 			return Fill (dataTable, command.ExecuteReader (commandBehavior));
 		}
 
-		public int Fill (DataSet dataSet, int startRecord, int maxRecords, string srcTable) 
+		public int Fill (DataSet dataSet, int startRecord, int maxRecords, string srcTable)
 		{
 			return this.Fill (dataSet, startRecord, maxRecords, srcTable, ((IDbDataAdapter) this).SelectCommand, _behavior);
 		}
@@ -301,21 +297,18 @@ namespace System.Data.Common {
 		{
 			throw new NotImplementedException ();
 		}
-#endif
-		
-		
-#if !NET_2_0
-		protected virtual int Fill (DataSet dataSet, string srcTable, IDataReader dataReader, int startRecord, int maxRecords) 
+#else
+		protected virtual int Fill (DataSet dataSet, string srcTable, IDataReader dataReader, int startRecord, int maxRecords)
 		{
 			return base.FillInternal (dataSet, srcTable, dataReader, startRecord, maxRecords);
 		}
 #endif
-		
-		protected virtual int Fill (DataSet dataSet, int startRecord, int maxRecords, string srcTable, IDbCommand command, CommandBehavior behavior) 
+
+		protected virtual int Fill (DataSet dataSet, int startRecord, int maxRecords, string srcTable, IDbCommand command, CommandBehavior behavior)
 		{
-			if (command.Connection == null) {
+			if (command.Connection == null)
 				throw new InvalidOperationException ("Connection state is closed");
-			}
+
 			if (MissingSchemaAction == MissingSchemaAction.AddWithKey)
 				behavior |= CommandBehavior.KeyInfo;
 			CommandBehavior commandBehavior = behavior;
@@ -324,68 +317,63 @@ namespace System.Data.Common {
 				command.Connection.Open ();
 				commandBehavior |= CommandBehavior.CloseConnection;
 			}
-			return Fill (dataSet, srcTable, command.ExecuteReader (commandBehavior), startRecord, maxRecords);
+			return Fill (dataSet, srcTable, command.ExecuteReader (commandBehavior),
+				startRecord, maxRecords);
 		}
 
 #if NET_2_0
 		/// <summary>
-		///     Fills the given datatable using values from reader. if a value 
-		///     for a column is  null, that will be filled with default value. 
+		/// Fills the given datatable using values from reader. if a value 
+		/// for a column is  null, that will be filled with default value. 
 		/// </summary>
 		/// <returns>No. of rows affected </returns>
 		internal static int FillFromReader (DataTable table,
                                                     IDataReader reader,
-                                                    int start, 
+                                                    int start,
                                                     int length,
                                                     int [] mapping,
                                                     LoadOption loadOption
                                                     )
-                {
-                        if (reader.FieldCount == 0)
+		{
+			if (reader.FieldCount == 0)
 				return 0 ;
 
-                        for (int i = 0; i < start; i++)
-                                reader.Read ();
+			for (int i = 0; i < start; i++)
+				reader.Read ();
 
-                        int counter = 0;
-                        object [] values = new object [mapping.Length];
-                        while (reader.Read () &&
-                               (length == 0 || counter < length)) {
-                                
-                                for (int i = 0 ; i < mapping.Length; i++)
-                                        values [i] = mapping [i] < 0 ? null : reader [mapping [i]];
-                                        
-                                table.BeginLoadData ();
-                                table.LoadDataRow (values, loadOption);
-                                table.EndLoadData ();
-                                counter++;
-                        }
-                        return counter;
-                }
+			int counter = 0;
+			object [] values = new object [mapping.Length];
+			while (reader.Read () && (length == 0 || counter < length)) {
+				for (int i = 0 ; i < mapping.Length; i++)
+					values [i] = mapping [i] < 0 ? null : reader [mapping [i]];
+				table.BeginLoadData ();
+				table.LoadDataRow (values, loadOption);
+				table.EndLoadData ();
+				counter++;
+			}
+			return counter;
+		}
 
 		internal static int FillFromReader (DataTable table,
                                                     IDataReader reader,
-                                                    int start, 
+                                                    int start,
                                                     int length,
                                                     int [] mapping,
                                                     LoadOption loadOption,
                                                     FillErrorEventHandler errorHandler)
-                {
-                        if (reader.FieldCount == 0)
+		{
+			if (reader.FieldCount == 0)
 				return 0 ;
 
-                        for (int i = 0; i < start; i++)
-                                reader.Read ();
+			for (int i = 0; i < start; i++)
+				reader.Read ();
 
-                        int counter = 0;
-                        object [] values = new object [mapping.Length];
-                        while (reader.Read () &&
-                               (length == 0 || counter < length)) {
-                                
-                                for (int i = 0 ; i < mapping.Length; i++)
-                                        values [i] = mapping [i] < 0 ? null : reader [mapping [i]];
-                                        
-                                table.BeginLoadData ();
+			int counter = 0;
+			object [] values = new object [mapping.Length];
+			while (reader.Read () && (length == 0 || counter < length)) {
+				for (int i = 0 ; i < mapping.Length; i++)
+					values [i] = mapping [i] < 0 ? null : reader [mapping [i]];
+				table.BeginLoadData ();
 				try {
 					table.LoadDataRow (values, loadOption);
 				} catch (Exception e) {
@@ -397,30 +385,29 @@ namespace System.Data.Common {
 					if(!args.Continue)
 						throw e;
 				}
-                                table.EndLoadData ();
-                                counter++;
-                        }
-                        return counter;
-                }
-
+				table.EndLoadData ();
+				counter++;
+			}
+			return counter;
+		}
 #endif // NET_2_0
 
-		public override DataTable[] FillSchema (DataSet dataSet, SchemaType schemaType) 
+		public override DataTable [] FillSchema (DataSet dataSet, SchemaType schemaType)
 		{
 			return FillSchema (dataSet, schemaType, ((IDbDataAdapter) this).SelectCommand, DefaultSourceTableName, _behavior);
 		}
 
-		public DataTable FillSchema (DataTable dataTable, SchemaType schemaType) 
+		public DataTable FillSchema (DataTable dataTable, SchemaType schemaType)
 		{
 			return FillSchema (dataTable, schemaType, ((IDbDataAdapter) this).SelectCommand, _behavior);
 		}
 
-		public DataTable[] FillSchema (DataSet dataSet, SchemaType schemaType, string srcTable) 
+		public DataTable [] FillSchema (DataSet dataSet, SchemaType schemaType, string srcTable)
 		{
 			return FillSchema (dataSet, schemaType, ((IDbDataAdapter) this).SelectCommand, srcTable, _behavior);
 		}
 
-		protected virtual DataTable FillSchema (DataTable dataTable, SchemaType schemaType, IDbCommand command, CommandBehavior behavior) 
+		protected virtual DataTable FillSchema (DataTable dataTable, SchemaType schemaType, IDbCommand command, CommandBehavior behavior)
 		{
 			if (dataTable == null)
 				throw new ArgumentNullException ("DataTable");
@@ -432,11 +419,9 @@ namespace System.Data.Common {
 			}
 
 			IDataReader reader = command.ExecuteReader (behavior);
-			try
-			{
+			try {
 				string tableName =  SetupSchema (schemaType, dataTable.TableName);
-				if (tableName != null)
-				{
+				if (tableName != null) {
 					// FillSchema should add the KeyInfo unless MissingSchemaAction
 					// is set to Ignore or Error.
 					MissingSchemaAction schemaAction = MissingSchemaAction;
@@ -447,15 +432,13 @@ namespace System.Data.Common {
 					BuildSchema (reader, dataTable, schemaType, schemaAction,
 						MissingMappingAction, TableMappings);
 				}
-			}
-			finally
-			{
+			} finally {
 				reader.Close ();
 			}
 			return dataTable;
 		}
 
-		protected virtual DataTable[] FillSchema (DataSet dataSet, SchemaType schemaType, IDbCommand command, string srcTable, CommandBehavior behavior) 
+		protected virtual DataTable[] FillSchema (DataSet dataSet, SchemaType schemaType, IDbCommand command, string srcTable, CommandBehavior behavior)
 		{
 			if (dataSet == null)
 				throw new ArgumentNullException ("DataSet");
@@ -471,8 +454,7 @@ namespace System.Data.Common {
 			string tableName = srcTable;
 			int index = 0;
 			DataTable table;
-			try
-			{
+			try {
 				// FillSchema should add the KeyInfo unless MissingSchemaAction
 				// is set to Ignore or Error.
 				MissingSchemaAction schemaAction = MissingSchemaAction;
@@ -482,12 +464,10 @@ namespace System.Data.Common {
 
 				do {
 					tableName = SetupSchema (schemaType, tableName);
-					if (tableName != null)
-					{
+					if (tableName != null) {
 						if (dataSet.Tables.Contains (tableName))
-							table = dataSet.Tables [tableName];	
-						else
-						{
+							table = dataSet.Tables [tableName];
+						else {
 							// Do not create schema if MissingSchemAction is set to Ignore
 							if (this.MissingSchemaAction == MissingSchemaAction.Ignore)
 								continue;
@@ -500,16 +480,14 @@ namespace System.Data.Common {
 						tableName = String.Format ("{0}{1}", srcTable, ++index);
 					}
 				}while (reader.NextResult ());
-			}
-			finally
-			{
+			} finally {
 				reader.Close ();
 			}
-			return (DataTable[]) output.ToArray (typeof (DataTable));
+			return (DataTable []) output.ToArray (typeof (DataTable));
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		public override IDataParameter[] GetFillParameters () 
+		public override IDataParameter[] GetFillParameters ()
 		{
 			IDataParameter[] parameters = new IDataParameter [SelectCommand.Parameters.Count];
 			SelectCommand.Parameters.CopyTo (parameters, 0);
@@ -523,7 +501,7 @@ namespace System.Data.Common {
 			throw new NotImplementedException ();
 		}
 
-		public int Update (DataRow[] dataRows) 
+		public int Update (DataRow [] dataRows)
 		{
 			if (dataRows == null)
 				throw new ArgumentNullException("dataRows");
@@ -531,19 +509,18 @@ namespace System.Data.Common {
 			if (dataRows.Length == 0)
 				return 0;
 
-			if (dataRows[0] == null)
+			if (dataRows [0] == null)
 				throw new ArgumentException("dataRows[0].");
 
-			DataTable table = dataRows[0].Table;
+			DataTable table = dataRows [0].Table;
 			if (table == null)
 				throw new ArgumentException("table is null reference.");
 			
 			// all rows must be in the same table
-			for (int i = 0; i < dataRows.Length; i++)
-			{
-				if (dataRows[i] == null)
-					throw new ArgumentException("dataRows[" + i + "].");
-				if (dataRows[i].Table != table)
+			for (int i = 0; i < dataRows.Length; i++) {
+				if (dataRows [i] == null)
+					throw new ArgumentException ("dataRows[" + i + "].");
+				if (dataRows [i].Table != table)
 					throw new ArgumentException(
 								    " DataRow["
 								    + i
@@ -552,8 +529,7 @@ namespace System.Data.Common {
 			
 			// get table mapping for this rows
 			DataTableMapping tableMapping = TableMappings.GetByDataSetTable(table.TableName);
-			if (tableMapping == null)
-			{
+			if (tableMapping == null) {
 				tableMapping = DataTableMappingCollection.GetTableMappingBySchemaAction(
 													TableMappings,
 													table.TableName,
@@ -580,17 +556,17 @@ namespace System.Data.Common {
 				}
 			}
 
-			DataRow[] copy = table.NewRowArray(dataRows.Length);
-			Array.Copy(dataRows, 0, copy, 0, dataRows.Length);
-			return Update(copy, tableMapping);
+			DataRow[] copy = table.NewRowArray (dataRows.Length);
+			Array.Copy (dataRows, 0, copy, 0, dataRows.Length);
+			return Update (copy, tableMapping);
 		}
 
-		public override int Update (DataSet dataSet) 
+		public override int Update (DataSet dataSet)
 		{
 			return Update (dataSet, DefaultSourceTableName);
 		}
 
-		public int Update (DataTable dataTable) 
+		public int Update (DataTable dataTable)
 		{
 			/*
 			  int index = TableMappings.IndexOfDataSetTable (dataTable.TableName);
@@ -599,8 +575,7 @@ namespace System.Data.Common {
 			  return Update (dataTable, TableMappings [index]);
 			*/
 			DataTableMapping tableMapping = TableMappings.GetByDataSetTable (dataTable.TableName);
-			if (tableMapping == null)
-			{
+			if (tableMapping == null) {
 				tableMapping = DataTableMappingCollection.GetTableMappingBySchemaAction (
 													 TableMappings,
 													 dataTable.TableName,
@@ -631,12 +606,12 @@ namespace System.Data.Common {
 
 		private int Update (DataTable dataTable, DataTableMapping tableMapping)
 		{
-			DataRow[] rows = dataTable.NewRowArray(dataTable.Rows.Count);
+			DataRow [] rows = dataTable.NewRowArray(dataTable.Rows.Count);
 			dataTable.Rows.CopyTo (rows, 0);
 			return Update (rows, tableMapping);
 		}
 
-		protected virtual int Update (DataRow[] dataRows, DataTableMapping tableMapping) 
+		protected virtual int Update (DataRow [] dataRows, DataTableMapping tableMapping)
 		{
 			int updateCount = 0;
 			foreach (DataRow row in dataRows) {
@@ -673,13 +648,11 @@ namespace System.Data.Common {
 					//continue in update operation
 					break;
 				case UpdateStatus.ErrorsOccurred :
-					if (argsUpdating.Errors == null) {
+					if (argsUpdating.Errors == null)
 						argsUpdating.Errors = ExceptionHelper.RowUpdatedError();
-					}
 					row.RowError += argsUpdating.Errors.Message;
-					if (!ContinueUpdateOnError) {
+					if (!ContinueUpdateOnError)
 						throw argsUpdating.Errors;
-					}
 					continue;
 				case UpdateStatus.SkipAllRemainingRows :
 					return updateCount;
@@ -718,18 +691,15 @@ namespace System.Data.Common {
 							}
 						}
 					}
-				}
-				catch (Exception e) {
+				} catch (Exception e) {
 					argsUpdating.Errors = e;
 					argsUpdating.Status = UpdateStatus.ErrorsOccurred;
 				}
 
-				
 				IDataReader reader = null;
-				try {								
-					if (command == null) {
+				try {
+					if (command == null)
 						throw ExceptionHelper.UpdateRequiresCommand (commandName);
-					}				
 				
 					CommandBehavior commandBehavior = CommandBehavior.Default;
 					if (command.Connection.State == ConnectionState.Closed) {
@@ -769,7 +739,7 @@ namespace System.Data.Common {
 									row [dstColumnName] = reader [columnName];
 								} finally {
 									dstColumn.ReadOnly = readOnlyState;
-								}                                    
+								}
 							}
 						}
 					}
@@ -779,9 +749,9 @@ namespace System.Data.Common {
 					// if the execute does not effect any rows we throw an exception.
 					if (tmp == 0)
 						throw new DBConcurrencyException("Concurrency violation: the " + 
-                                                                                 commandName +"Command affected 0 records.");
+							commandName +"Command affected 0 records.");
 					updateCount += tmp;
-                                        
+
 					if (command.UpdatedRowSource == UpdateRowSource.Both ||
 					    command.UpdatedRowSource == UpdateRowSource.OutputParameters) {
 						// Update output parameters to row values
@@ -807,23 +777,20 @@ namespace System.Data.Common {
 							} finally {
 								dstColumn.ReadOnly = readOnlyState;
 							}
-                                    
 						}
 					}
-                    
+
 					RowUpdatedEventArgs updatedArgs = CreateRowUpdatedEvent (row, command, statementType, tableMapping);
 					OnRowUpdated (updatedArgs);
 					switch (updatedArgs.Status) {
 					case UpdateStatus.Continue:
 						break;
 					case UpdateStatus.ErrorsOccurred:
-						if (updatedArgs.Errors == null) {
+						if (updatedArgs.Errors == null)
 							updatedArgs.Errors = ExceptionHelper.RowUpdatedError();
-						}
 						row.RowError += updatedArgs.Errors.Message;
-						if (!ContinueUpdateOnError) {
+						if (!ContinueUpdateOnError)
 							throw updatedArgs.Errors;
-						}
 						break;
 					case UpdateStatus.SkipCurrentRow:
 						continue;
@@ -835,84 +802,91 @@ namespace System.Data.Common {
 						continue;
 #endif
 					row.AcceptChanges ();
-				} catch(Exception e) {
+				} catch (Exception e) {
 					row.RowError = e.Message;
-					if (!ContinueUpdateOnError) {
+					if (!ContinueUpdateOnError)
 						throw e;
-					}
 				} finally {
-					if (reader != null && ! reader.IsClosed) {
+					if (reader != null && ! reader.IsClosed)
 						reader.Close ();
-					}
-				}	
-			}		
+				}
+			}
 			return updateCount;
 		}
 
-		public int Update (DataSet dataSet, string sourceTable) 
+		public int Update (DataSet dataSet, string srcTable)
 		{
 			MissingMappingAction mappingAction = MissingMappingAction;
 
 			if (mappingAction == MissingMappingAction.Ignore)
 				mappingAction = MissingMappingAction.Error;
 
-			DataTableMapping tableMapping = DataTableMappingCollection.GetTableMappingBySchemaAction (TableMappings, sourceTable, sourceTable, mappingAction);
+			DataTableMapping tableMapping = DataTableMappingCollection.GetTableMappingBySchemaAction (TableMappings, srcTable, srcTable, mappingAction);
 
-			DataTable dataTable = dataSet.Tables[tableMapping.DataSetTable];
+			DataTable dataTable = dataSet.Tables [tableMapping.DataSetTable];
 			if (dataTable == null)
 				throw new ArgumentException (String.Format ("Missing table {0}",
-									    sourceTable));
+									    srcTable));
 			return Update (dataTable, tableMapping);
 		}
-		
+
 #if NET_2_0
 		// All the batch methods, should be implemented, if supported,
-		// by individual providers 
+		// by individual providers
 
-		protected virtual int AddToBatch (IDbCommand cmd)
+		protected virtual int AddToBatch (IDbCommand command)
 		{
-			throw new NotSupportedException ();
+			throw CreateMethodNotSupportedException ();
 		}
 
 		protected virtual void ClearBatch ()
 		{
-			throw new NotSupportedException ();
+			throw CreateMethodNotSupportedException ();
 		}
 
 		protected virtual int ExecuteBatch ()
 		{
-			throw new NotSupportedException ();
+			throw CreateMethodNotSupportedException ();
 		}
 
-		protected virtual IDataParameter GetBatchedParameter (int commandIdentifier, int parameterIdentifer)
+		protected virtual IDataParameter GetBatchedParameter (int commandIdentifier, int parameterIndex)
 		{
-			throw new NotSupportedException ();
+			throw CreateMethodNotSupportedException ();
+		}
+
+		protected virtual bool GetBatchedRecordsAffected (int commandIdentifier, out int recordsAffected, out Exception error)
+		{
+			recordsAffected = 1;
+			error = null;
+			return true;
 		}
 
 		protected virtual void InitializeBatching ()
 		{
-			throw new NotSupportedException ();
+			throw CreateMethodNotSupportedException ();
 		}
 
 		protected virtual void TerminateBatching ()
 		{
-			throw new NotSupportedException ();
+			throw CreateMethodNotSupportedException ();
 		}
-#endif
 
-#if ONLY_1_0 || ONLY_1_1
+		Exception CreateMethodNotSupportedException ()
+		{
+			return new NotSupportedException ("Method is not supported.");
+		}
+#else
 		internal override void OnFillErrorInternal (FillErrorEventArgs value)
 		{
 			OnFillError (value);
 		}
 
-		protected virtual void OnFillError (FillErrorEventArgs value) 
+		protected virtual void OnFillError (FillErrorEventArgs value)
 		{
 			if (FillError != null)
 				FillError (this, value);
 		}
 #endif
-
 		#endregion // Methods
 	}
 }

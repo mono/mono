@@ -51,7 +51,9 @@ namespace System.Data.Common {
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public abstract int Count { get; }
+		public abstract int Count {
+			get;
+		}
 
 		object IDataParameterCollection.this [string parameterName] {
 			get { return this [parameterName]; }
@@ -66,30 +68,36 @@ namespace System.Data.Common {
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public abstract bool IsFixedSize { get; }
+		public abstract bool IsFixedSize {
+			get;
+		}
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public abstract bool IsReadOnly { get; }
+		public abstract bool IsReadOnly {
+			get;
+		}
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public abstract bool IsSynchronized { get; }
+		public abstract bool IsSynchronized {
+			get;
+		}
 
-		public DbParameter this [string parameterName] { 
-			get { 
+		public DbParameter this [string parameterName] {
+			get {
 				int index = IndexOf (parameterName);
 				return this [index];
 			}
-			set { 
+			set {
 				int index = IndexOf (parameterName);
 				this [index] = value;
 			}
 		}
 
-		public DbParameter this [int index] { 
+		public DbParameter this [int index] {
 			get { return GetParameter (index); }
 			set { SetParameter (index, value); }
 		}
@@ -97,7 +105,9 @@ namespace System.Data.Common {
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public abstract object SyncRoot { get; } 
+		public abstract object SyncRoot {
+			get;
+		}
 
 		#endregion // Properties
 
@@ -115,7 +125,7 @@ namespace System.Data.Common {
 		public abstract void Clear ();
 		public abstract bool Contains (object value);
 		public abstract bool Contains (string value);
-		public abstract void CopyTo (Array ar, int index);
+		public abstract void CopyTo (Array array, int index);
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public abstract IEnumerator GetEnumerator ();

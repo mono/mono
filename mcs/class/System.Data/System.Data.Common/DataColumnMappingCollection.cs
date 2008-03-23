@@ -37,20 +37,21 @@ using System.Collections;
 using System.ComponentModel;
 using System.Data;
 
-namespace System.Data.Common {
+namespace System.Data.Common
+{
 	public sealed class DataColumnMappingCollection : MarshalByRefObject, IColumnMappingCollection , IList, ICollection, IEnumerable
 	{
 		#region Fields
 
-		ArrayList list;
-		Hashtable sourceColumns;
-		Hashtable dataSetColumns;
+		readonly ArrayList list;
+		readonly Hashtable sourceColumns;
+		readonly Hashtable dataSetColumns;
 
 		#endregion // Fields
 
 		#region Constructors 
 
-		public DataColumnMappingCollection () 
+		public DataColumnMappingCollection ()
 		{
 			list = new ArrayList ();
 			sourceColumns = new Hashtable ();
@@ -87,25 +88,27 @@ namespace System.Data.Common {
 
 		[Browsable (false)]
 #if !NET_2_0
-                [DataSysDescription ("The specified DataColumnMapping object.")]
+		[DataSysDescription ("The specified DataColumnMapping object.")]
 #endif
-                [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataColumnMapping this [string sourceColumn] {
 			get {
-				if (!Contains(sourceColumn)) {
+				if (!Contains(sourceColumn))
 					throw new IndexOutOfRangeException("DataColumnMappingCollection doesn't contain DataColumnMapping with SourceColumn '" + sourceColumn + "'.");
-				}
-				return (DataColumnMapping) sourceColumns[sourceColumn]; }
-			set { this [list.IndexOf (sourceColumns[sourceColumn])] = value; }
+				return (DataColumnMapping) sourceColumns [sourceColumn];
+			}
+			set {
+				this [list.IndexOf (sourceColumns [sourceColumn])] = value;
+			}
 		}
 
-                object ICollection.SyncRoot {
-                        get { return list.SyncRoot; }
-                }
+		object ICollection.SyncRoot {
+			get { return list.SyncRoot; }
+		}
 
-                bool ICollection.IsSynchronized {
-                        get { return list.IsSynchronized; }
-                }
+		bool ICollection.IsSynchronized {
+			get { return list.IsSynchronized; }
+		}
 
 		object IColumnMappingCollection.this [string sourceColumn] {
 			get { return this [sourceColumn]; }
@@ -116,22 +119,22 @@ namespace System.Data.Common {
 			}
 		}
 
-                object IList.this [int index] {
-                        get { return this[index]; }
-                        set {
-                                if (!(value is DataColumnMapping))
-                                        throw new ArgumentException ();
-                                this [index] = (DataColumnMapping) value;
-                         }
-                }
+		object IList.this [int index] {
+			get { return this[index]; }
+			set {
+				if (!(value is DataColumnMapping))
+					throw new ArgumentException ();
+				this [index] = (DataColumnMapping) value;
+			}
+		}
 
-                bool IList.IsReadOnly {
-                        get { return false; }
-                }
+		bool IList.IsReadOnly {
+			get { return false; }
+		}
 
-                bool IList.IsFixedSize {
-                        get { return false; }
-                }
+		bool IList.IsFixedSize {
+			get { return false; }
+		}
 		
 		#endregion // Properties
 
@@ -143,8 +146,8 @@ namespace System.Data.Common {
 				throw new InvalidCastException ();
 
 			list.Add (value);
-			sourceColumns[((DataColumnMapping)value).SourceColumn] = value;
-			dataSetColumns[((DataColumnMapping)value).DataSetColumn] = value;
+			sourceColumns [((DataColumnMapping) value).SourceColumn] = value;
+			dataSetColumns [((DataColumnMapping )value).DataSetColumn] = value;
 			return list.IndexOf (value);
 		}
 
@@ -163,20 +166,20 @@ namespace System.Data.Common {
 		}
 #endif
 
-		public void AddRange (DataColumnMapping[] values) 
+		public void AddRange (DataColumnMapping[] values)
 		{
 			foreach (DataColumnMapping mapping in values)
 				Add (mapping);
 		}
 
-		public void Clear () 
+		public void Clear ()
 		{
 			list.Clear ();
 		}
 
-		public bool Contains (object value) 
+		public bool Contains (object value)
 		{
-			if  (!(value is DataColumnMapping))
+			if (!(value is DataColumnMapping))
 				throw new InvalidCastException("Object is not of type DataColumnMapping");
 			return (list.Contains (value));
 		}
@@ -186,38 +189,38 @@ namespace System.Data.Common {
 			return (sourceColumns.Contains (value));
 		}
 
-		public void CopyTo (Array array, int index) 
+		public void CopyTo (Array array, int index)
 		{
-		 	list.CopyTo(array,index);
+			list.CopyTo (array,index);
 		}
+
 #if NET_2_0
-		public void CopyTo (DataColumnMapping[] arr, int index) 
+		public void CopyTo (DataColumnMapping [] arr, int index)
 		{
-		 	list.CopyTo (arr, index);
+			list.CopyTo (arr, index);
 		}
 #endif
 
-		public DataColumnMapping GetByDataSetColumn (string value) 
+		public DataColumnMapping GetByDataSetColumn (string value)
 		{
 			// this should work case-insenstive.
-			if (!(dataSetColumns[value] == null))
-				return (DataColumnMapping)(dataSetColumns[value]);
+			if (!(dataSetColumns [value] == null))
+				return (DataColumnMapping) (dataSetColumns [value]);
 			else {
-				string lowcasevalue = value.ToLower();
-				object [] keyarray = new object[dataSetColumns.Count];
-				dataSetColumns.Keys.CopyTo(keyarray,0);
-				for (int i=0; i<keyarray.Length; i++) {
-					string temp = (string) keyarray[i];
-					if (lowcasevalue.Equals(temp.ToLower()))
-						return (DataColumnMapping)(dataSetColumns[keyarray[i]]);
+				string lowcasevalue = value.ToLower ();
+				object [] keyarray = new object [dataSetColumns.Count];
+				dataSetColumns.Keys.CopyTo (keyarray, 0);
+				for (int i = 0; i < keyarray.Length; i++) {
+					string temp = (string) keyarray [i];
+					if (lowcasevalue.Equals (temp.ToLower ()))
+						return (DataColumnMapping) (dataSetColumns [keyarray [i]]);
 				}
 				return null;
-			
-			}	
+			}
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		public static DataColumnMapping GetColumnMappingBySchemaAction (DataColumnMappingCollection columnMappings, string sourceColumn, MissingMappingAction mappingAction) 
+		public static DataColumnMapping GetColumnMappingBySchemaAction (DataColumnMappingCollection columnMappings, string sourceColumn, MissingMappingAction mappingAction)
 		{
 			if (columnMappings.Contains (sourceColumn))
 				return columnMappings[sourceColumn];
@@ -252,90 +255,84 @@ namespace System.Data.Common {
 			return GetByDataSetColumn (dataSetColumnName);
 		}
 
-		public int IndexOf (object value) 
+		public int IndexOf (object value)
 		{
 			return list.IndexOf (value);
 		}
 
 		public int IndexOf (string sourceColumn)
 		{
-			return list.IndexOf (sourceColumns[sourceColumn]);
+			return list.IndexOf (sourceColumns [sourceColumn]);
 		}
 
-		public int IndexOfDataSetColumn (string value) 
+		public int IndexOfDataSetColumn (string dataSetColumn)
 		{
 			// this should work case-insensitive
-					
-			 if (!(dataSetColumns[value] == null))
-                                return list.IndexOf (dataSetColumns[value]);
-                        else {
-	                        string lowcasevalue = value.ToLower();
+			if (!(dataSetColumns [dataSetColumn] == null))
+				return list.IndexOf (dataSetColumns [dataSetColumn]);
+			else {
+				string lowcasevalue = dataSetColumn.ToLower ();
 				object [] keyarray = new object[dataSetColumns.Count];
-                                dataSetColumns.Keys.CopyTo(keyarray,0);
-                                for (int i=0; i<keyarray.Length; i++) {
-					string temp = (string) keyarray[i];
-					if (lowcasevalue.Equals(temp.ToLower()))
-						return list.IndexOf (dataSetColumns[keyarray[i]]);
-
-                                }
-                                return -1;
-                                                                                                    
-                        }
-	
+				dataSetColumns.Keys.CopyTo (keyarray,0);
+				for (int i = 0; i < keyarray.Length; i++) {
+					string temp = (string) keyarray [i];
+					if (lowcasevalue.Equals (temp.ToLower ()))
+						return list.IndexOf (dataSetColumns [keyarray [i]]);
+				}
+				return -1;
+			}
 		}
 
-		public void Insert (int index, object value) 
+		public void Insert (int index, object value)
 		{
 			list.Insert (index, value);
-			sourceColumns[((DataColumnMapping)value).SourceColumn] = value;
-			dataSetColumns[((DataColumnMapping)value).DataSetColumn] = value;
+			sourceColumns [((DataColumnMapping) value).SourceColumn] = value;
+			dataSetColumns [((DataColumnMapping) value).DataSetColumn] = value;
 		}
 
 #if NET_2_0
-		public void Insert (int index, DataColumnMapping mapping) 
+		public void Insert (int index, DataColumnMapping mapping)
 		{
 			list.Insert (index, mapping);
-			sourceColumns[mapping.SourceColumn] = mapping;
-			dataSetColumns[mapping.DataSetColumn] = mapping;
+			sourceColumns [mapping.SourceColumn] = mapping;
+			dataSetColumns [mapping.DataSetColumn] = mapping;
 		}
 #endif
 
-		public void Remove (object value) 
+		public void Remove (object value)
 		{
 			int index = list.IndexOf (value);
-      			sourceColumns.Remove(((DataColumnMapping)value).SourceColumn);
-			dataSetColumns.Remove(((DataColumnMapping)value).DataSetColumn);
-			if (( index < 0 ) || (index >=list.Count))
-                                    throw new ArgumentException("There is no such element in collection.");
-
+			sourceColumns.Remove (((DataColumnMapping) value).SourceColumn);
+			dataSetColumns.Remove (((DataColumnMapping) value).DataSetColumn);
+			if (index < 0 || index >=list.Count)
+				throw new ArgumentException("There is no such element in collection.");
 			list.Remove (value);
 		}
+
 #if NET_2_0
-		public void Remove (DataColumnMapping value) 
+		public void Remove (DataColumnMapping value)
 		{
 			int index = list.IndexOf (value);
-      			sourceColumns.Remove (value.SourceColumn);
+			sourceColumns.Remove (value.SourceColumn);
 			dataSetColumns.Remove (value.DataSetColumn);
-			if (( index < 0 ) || (index >=list.Count))
-                                    throw new ArgumentException("There is no such element in collection.");
-
+			if ( index < 0 || index >=list.Count)
+				throw new ArgumentException("There is no such element in collection.");
 			list.Remove (value);
 		}
 #endif
 
-		public void RemoveAt (int index) 
+		public void RemoveAt (int index)
 		{
-			if (( index < 0 ) || (index >=list.Count))
-                                    throw new IndexOutOfRangeException("There is no element in collection.");
-
-			Remove (list[index]);
+			if (index < 0 || index >=list.Count)
+				throw new IndexOutOfRangeException("There is no element in collection.");
+			Remove (list [index]);
 		}
 
 		public void RemoveAt (string sourceColumn)
 		{
-			RemoveAt (list.IndexOf (sourceColumns[sourceColumn]));
+			RemoveAt (list.IndexOf (sourceColumns [sourceColumn]));
 		}
 
-	 	#endregion // Methods
+		#endregion // Methods
 	}
 }

@@ -1,3 +1,11 @@
+2008-03-23  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DbDataAdapter.cs: Corcompare fixes and code formatting.
+	* DbDataRecord.cs: Corcompare fixes and code formatting.
+	* DataColumnMappingCollection.cs: Corcompare fixes and code formatting.
+	* RowUpdatedEventArgs.cs: Corcompare fixes and code formatting.
+	* DbParameterCollection.cs: Corcompare fixes and code formatting.
+
 2007-11-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DbProviderFactoriesConfigurationHandler.cs : Create() now takes

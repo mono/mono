@@ -34,7 +34,8 @@
 
 using System.Data;
 
-namespace System.Data.Common {
+namespace System.Data.Common
+{
 	public
 #if !NET_2_0
 	abstract
@@ -46,7 +47,7 @@ namespace System.Data.Common {
 		DataRow dataRow;
 		IDbCommand command;
 		StatementType statementType;
-		DataTableMapping tableMapping;	
+		DataTableMapping tableMapping;
 		Exception errors;
 		UpdateStatus status;
 		int recordsAffected;
@@ -66,9 +67,7 @@ namespace System.Data.Common {
 			this.command = command;
 			this.statementType = statementType;
 			this.tableMapping = tableMapping;
-			this.errors = null;
 			this.status = UpdateStatus.Continue;
-			this.recordsAffected = 0; // FIXME
 		}
 
 		#endregion // Constructors
@@ -80,11 +79,11 @@ namespace System.Data.Common {
 		}
 
 		public Exception Errors {
-			get { 
-                                if (errors == null)
-                                        errors =  new DataException ("RowUpdatedEvent: No additional information is available!");
-                                return errors; 
-                        }
+			get {
+				if (errors == null)
+					errors =  new DataException ("RowUpdatedEvent: No additional information is available!");
+				return errors; 
+			}
 			set { errors = value; }
 		}
 
@@ -114,19 +113,21 @@ namespace System.Data.Common {
 			get { return 0; }
 		}
 #endif
-		
+
 		#endregion // Properties
 
 		#region Methods
+
 #if NET_2_0
-		public void CopyToRows (DataRow[] arr)
+		public void CopyToRows (DataRow[] array)
 		{
 		}
 
-		public void CopyToRows (DataRow[] arr, int index)
+		public void CopyToRows (DataRow[] array, int arrayIndex)
 		{
 		}
 #endif
+
 		#endregion //Methods
 	}
 }

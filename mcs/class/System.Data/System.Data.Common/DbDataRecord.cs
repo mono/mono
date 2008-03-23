@@ -33,8 +33,10 @@
 using System.Collections;
 using System.ComponentModel;
 using System.Data;
+using System.Runtime.CompilerServices;
 
-namespace System.Data.Common {
+namespace System.Data.Common
+{
 	public class DbDataRecord : IDataRecord, ICustomTypeDescriptor
 	{
 		#region Fields
@@ -66,10 +68,10 @@ namespace System.Data.Common {
 			get { return this [GetOrdinal (name)]; }
 		}
 
-		[System.Runtime.CompilerServices.IndexerName("Item")]
-		public object this [int index] {
-			get { return GetValue (index); }
-		}	
+		[IndexerName ("Item")]
+		public object this [int i] {
+			get { return GetValue (i); }
+		}
 
 		#endregion
 
@@ -87,20 +89,18 @@ namespace System.Data.Common {
 
 		public long GetBytes (int i, long dataIndex, byte[] buffer, int bufferIndex, int length)
 		{
-			 object value = GetValue (i);
-                         if (!(value is byte []))
-                                throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
-                                                                                                   
-                        if ( buffer == null ) {
-                                // Return length of data
-                                return ((byte []) value).Length;
-                        }
-                        else {
-                                // Copy data into buffer
-                                Array.Copy ((byte []) value, (int) dataIndex, buffer, bufferIndex, length);
-                                return ((byte []) value).Length - dataIndex;
-                        }
+			object value = GetValue (i);
+			if (!(value is byte []))
+				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
 
+			if ( buffer == null ) {
+				// Return length of data
+				return ((byte []) value).Length;
+			} else {
+				// Copy data into buffer
+				Array.Copy ((byte []) value, (int) dataIndex, buffer, bufferIndex, length);
+				return ((byte []) value).Length - dataIndex;
+			}
 		}
 
 		public char GetChar (int i)
@@ -110,25 +110,24 @@ namespace System.Data.Common {
 
 		public long GetChars (int i, long dataIndex, char[] buffer, int bufferIndex, int length)
 		{
-	                object value = GetValue (i);
-                        char [] valueBuffer;
-                                                                                                    
-                        if (value is char[])
-                                valueBuffer = (char[])value;
-                        else if (value is string)
-                                valueBuffer = ((string)value).ToCharArray();
-                        else
-                                throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
-                                                                                                                             if ( buffer == null ) {
-                                // Return length of data
-                                return valueBuffer.Length;
-                        }
-                        else {
-                                // Copy data into buffer
-                                Array.Copy (valueBuffer, (int) dataIndex, buffer, bufferIndex, length);
-                                return valueBuffer.Length - dataIndex;
-                        }
+			object value = GetValue (i);
+			char [] valueBuffer;
 
+			if (value is char[])
+				valueBuffer = (char []) value;
+			else if (value is string)
+				valueBuffer = ((string) value).ToCharArray ();
+			else
+				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
+
+			if (buffer == null) {
+				// Return length of data
+				return valueBuffer.Length;
+			} else {
+				// Copy data into buffer
+				Array.Copy (valueBuffer, (int) dataIndex, buffer, bufferIndex, length);
+				return valueBuffer.Length - dataIndex;
+			}
 		}
 
 		public IDataReader GetData (int i)
@@ -143,7 +142,7 @@ namespace System.Data.Common {
 
 		public DateTime GetDateTime (int i)
 		{
-			return (DateTime) GetValue (i); 
+			return (DateTime) GetValue (i);
 		}
 
 		public decimal GetDecimal (int i)
@@ -173,17 +172,17 @@ namespace System.Data.Common {
 		
 		public short GetInt16 (int i)
 		{
-			return (short) GetValue (i); 
+			return (short) GetValue (i);
 		}
 	
 		public int GetInt32 (int i)
 		{
-			return (int) GetValue (i); 
+			return (int) GetValue (i);
 		}
 
 		public long GetInt64 (int i)
 		{
-			return (long) GetValue (i); 
+			return (long) GetValue (i);
 		}
 
 		public string GetName (int i)
@@ -206,21 +205,19 @@ namespace System.Data.Common {
 
 		public object GetValue (int i)
 		{
-                       if ((i < 0) || (i > fieldCount))
-                                throw new IndexOutOfRangeException();
-
+			if (i < 0 || i > fieldCount)
+				throw new IndexOutOfRangeException ();
 			return values [i];
 		}
 
 		public int GetValues (object[] values)
 		{
-			if(values == null)
+			if (values == null)
 				throw new ArgumentNullException("values");
 			
 			int count = values.Length > this.values.Length ? this.values.Length : values.Length;
 			for(int i = 0; i < count; i++)
-				values[i] = this.values[i];
-
+				values [i] = this.values [i];
 			return count;
 		}
 
@@ -233,7 +230,7 @@ namespace System.Data.Common {
 		[MonoTODO]
 		string ICustomTypeDescriptor.GetClassName ()
 		{
-			return "";
+			return string.Empty;
 		}
 
 		[MonoTODO]
@@ -246,59 +243,58 @@ namespace System.Data.Common {
 		TypeConverter ICustomTypeDescriptor.GetConverter ()
 		{
 			return null;
-		}	
+		}
 
 		[MonoTODO]
 		EventDescriptor ICustomTypeDescriptor.GetDefaultEvent ()
 		{
 			return null;
-		}	
+		}
 
 		[MonoTODO]
 		PropertyDescriptor ICustomTypeDescriptor.GetDefaultProperty ()
 		{
 			return null;
-		}	
+		}
 
 		[MonoTODO]
 		object ICustomTypeDescriptor.GetEditor (Type editorBaseType)
 		{
 			return null;
-		}	
+		}
 
 		[MonoTODO]
 		EventDescriptorCollection ICustomTypeDescriptor.GetEvents ()
 		{
-			return new EventDescriptorCollection(null);
-		}	
+			return new EventDescriptorCollection (null);
+		}
 
 		[MonoTODO]
-		EventDescriptorCollection ICustomTypeDescriptor.GetEvents (Attribute[] attributes)
+		EventDescriptorCollection ICustomTypeDescriptor.GetEvents (Attribute [] attributes)
 		{
-			return new EventDescriptorCollection(null);
-		}	
+			return new EventDescriptorCollection (null);
+		}
 
 		[MonoTODO]
 		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties ()
 		{
 			DataColumnPropertyDescriptor[] descriptors = 
-				new DataColumnPropertyDescriptor[FieldCount];
+				new DataColumnPropertyDescriptor [FieldCount];
 
 			DataColumnPropertyDescriptor descriptor;
-			for(int col = 0; col < FieldCount; col++) {
+			for (int col = 0; col < FieldCount; col++) {
 				descriptor = new DataColumnPropertyDescriptor(
-					GetName(col), col, null);
-				descriptor.SetComponentType(typeof(DbDataRecord));
-				descriptor.SetPropertyType(GetFieldType(col));
-				
-				descriptors[col] = descriptor;
+					GetName (col), col, null);
+				descriptor.SetComponentType (typeof (DbDataRecord));
+				descriptor.SetPropertyType (GetFieldType (col));
+				descriptors [col] = descriptor;
 			}
 
 			return new PropertyDescriptorCollection (descriptors);
-		}	
+		}
 
 		[MonoTODO]
-		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties (Attribute[] attributes)
+		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties (Attribute [] attributes)
 		{
 			PropertyDescriptorCollection descriptors;
 			descriptors = ((ICustomTypeDescriptor) this).GetProperties ();
@@ -307,13 +303,13 @@ namespace System.Data.Common {
 			//       except, those descriptors 
 			//       that contain DefaultMemeberAttribute
 			return descriptors;
-		}	
+		}
 
 		[MonoTODO]
 		object ICustomTypeDescriptor.GetPropertyOwner (PropertyDescriptor pd)
 		{
 			return this;
-		}	
+		}
 
 		public bool IsDBNull (int i)
 		{
