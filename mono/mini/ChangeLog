@@ -1,3 +1,17 @@
+2008-03-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_decompose_op_imm): New helper function.
+
+	* mini-s390x.c (calculate_sizes): Rename this to get_call_info for consistency
+	with the other architectures, add an 'mp' argument, fold 'sz' argument into the
+	return value.
+
+	* mini-s390x.c: Handle DIV_IMM/REM_IMM in the lowering pass instead of in 
+	mono_arch_output_basic_block. Fix warnings.
+
+	* inssel-s390x.brg: Remove the unneccesary OP_LMUL_IMM rule to fix the s390x build
+	for now.
+
 2008-03-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-exceptions.c (ves_icall_get_frame_info): Remove the ia64/s390 workarounds
