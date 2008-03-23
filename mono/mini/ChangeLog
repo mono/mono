@@ -1,5 +1,11 @@
 2008-03-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h mini.c mini-trampolines.c: Move trampoline related code to 
+	mini-trampolines.c.
+
+	* mini.h mini.c mini-exceptions.c: Move mini_init_exceptions () to 
+	mini-exceptions.c.
+
 	* mini-amd64.c mini-s390.c (mono_arch_lowering_pass): Use mono_decompose_op_imm ().
 	
 	* mini.c (mono_decompose_op_imm): New helper function.
