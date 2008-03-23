@@ -2187,7 +2187,6 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb,
 
 /*========================= End of Function ========================*/
 
-
 static void
 add_outarg_reg2 (MonoCompile *cfg, MonoCallInst *call, ArgStorage storage, int reg, MonoInst *tree)
 {
@@ -2413,68 +2412,8 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 			}
 			break;
 		default:
-			// FIXME:
-			NOT_IMPLEMENTED;
-
-			MONO_INST_NEW_CALL_ARG (cfg, arg, OP_OUTARG);
-
-			arg->ins.cil_code   = in->cil_code;
-			arg->ins.inst_left  = in;
-			arg->ins.type       = in->type;
-			/* prepend, we'll need to reverse them later */
-			arg->ins.next       = call->out_args;
-			call->out_args      = (MonoInst *) arg;
-			arg->ins.inst_right = (MonoInst *) call;
-			if (ainfo->regtype == RegTypeGeneral) {
-				arg->ins.backend.reg3   = ainfo->reg;
-				call->used_iregs |= 1 << ainfo->reg;
-				if (arg->ins.type == STACK_I8)
-					call->used_iregs |= 1 << (ainfo->reg + 1);
-			} else if (ainfo->regtype == RegTypeStructByAddr) {
-				call->used_iregs |= 1 << ainfo->reg;
-				arg->ins.sreg1    = ainfo->reg;
-				arg->ins.opcode   = OP_OUTARG_VT;
-				arg->size         = -ainfo->vtsize;
-				arg->offset       = ainfo->offset;
-				arg->offPrm       = ainfo->offparm + cinfo->sz.offStruct;
-			} else if (ainfo->regtype == RegTypeStructByVal) {
-				if (ainfo->reg != STK_BASE) {
-					switch (ainfo->size) {
-					case 0:
-					case 1:
-					case 2:
-					case 4:
-						call->used_iregs |= 1 << ainfo->reg;
-						break;
-					case 8:
-						call->used_iregs |= 1 << ainfo->reg;
-						call->used_iregs |= 1 << (ainfo->reg+1);
-						break;
-					default:
-						call->used_iregs |= 1 << ainfo->reg;
-					}
-				} 
-				arg->ins.sreg1  = ainfo->reg;
-				arg->ins.opcode = OP_OUTARG_VT;
-				arg->size       = ainfo->size;
-				arg->offset     = ainfo->offset;
-				arg->offPrm     = ainfo->offparm + cinfo->sz.offStruct;
-			} else if (ainfo->regtype == RegTypeBase) {
-				arg->ins.opcode   = OP_OUTARG_MEMBASE;
-				arg->ins.sreg1    = ainfo->reg;
-				arg->size         = ainfo->size;
-				arg->offset       = ainfo->offset;
-				call->used_iregs |= 1 << ainfo->reg;
-			} else if (ainfo->regtype == RegTypeFP) {
-				arg->ins.backend.reg3   = ainfo->reg;
-				call->used_fregs |= 1 << ainfo->reg;
-				if (ainfo->size == 4)
-					arg->ins.opcode = OP_OUTARG_R4;
-				else
-					arg->ins.opcode = OP_OUTARG_R8;
-			} else {
-				g_assert_not_reached ();
-			}
+			g_assert_not_reached ();
+			break;
 		}
 	}
 
@@ -5443,7 +5382,6 @@ mono_arch_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod,
 MonoInst*
 mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
-	// FIXME:
 	return NULL;
 }
 

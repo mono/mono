@@ -1,3 +1,9 @@
+2008-03-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-s390.c (mono_arch_emit_call): Remove some dead code.
+
+	* mini-s390x.h mini-s390x.c cpu-s390x.md: Ongoing S390x porting work.
+
 2008-03-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-s390.h mini-s390.c: Avoid using the same registers for local and global 
