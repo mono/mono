@@ -1,3 +1,8 @@
+2008-03-23  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DataSet.cs: Corcompare fix.
+	* IDataRecord.cs: Corcompare fix.
+
 2008-03-22  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DataViewSettingCollection.cs: Corcompare fixes and code formatting.

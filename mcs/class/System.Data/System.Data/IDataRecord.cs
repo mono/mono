@@ -48,7 +48,7 @@ namespace System.Data
 
 		char GetChar(int i);
 
-		long GetChars(int i, long fieldOffset, char[] buffer,
+		long GetChars (int i, long fieldoffset, char [] buffer,
 			int bufferoffset, int length);
 
 		IDataReader GetData(int i);

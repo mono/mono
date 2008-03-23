@@ -1300,7 +1300,7 @@ namespace System.Data
 #if !NET_2_0
 		ISerializable.
 #endif
-		GetObjectData (SerializationInfo si, StreamingContext sc)
+		GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 #if NET_2_0
 			if (RemotingFormat == SerializationFormat.Xml) {
@@ -1309,16 +1309,16 @@ namespace System.Data
 				XmlTextWriter writer = new XmlTextWriter (sw);
 				DoWriteXmlSchema (writer);
 				writer.Flush ();
-				si.AddValue ("XmlSchema", sw.ToString ());
+				info.AddValue ("XmlSchema", sw.ToString ());
 			
 				sw = new StringWriter ();
 				writer = new XmlTextWriter (sw);
 				WriteXml (writer, XmlWriteMode.DiffGram);
 				writer.Flush ();
-				si.AddValue ("XmlDiffGram", sw.ToString ());
+				info.AddValue ("XmlDiffGram", sw.ToString ());
 #if NET_2_0
 			} else /*if (DataSet.RemotingFormat == SerializationFormat.Binary)*/ {
-				BinarySerialize (si);
+				BinarySerialize (info);
 			}
 #endif
 		}
