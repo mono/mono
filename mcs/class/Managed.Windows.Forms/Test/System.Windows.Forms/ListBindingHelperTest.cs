@@ -85,13 +85,24 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsTrue (obj is int, "#G2");
 			Assert.AreEqual (0, (int)obj, "#G3");
 
+			// Empty IEnumerable - valid property for list item type
+			// Since it's empty, it needs to check whether the datamember is
+			// a valid value, and thus we need the datasource to also be IList
+			// Then we need a parameterized IEnumerable, which returns null.
+			// *Observation: if it is empty and it doesn't implement IList,
+			// it doesn't have a way to get the properties, and will throw an exc
+			StringCollection str_coll = new StringCollection ();
+			obj = ListBindingHelper.GetList (str_coll, "Length");
+			Assert.IsNull (obj, "#H1");
+
 			try {
 				ListBindingHelper.GetList (list_container, "DontExist");
 				Assert.Fail ("#EXC1");
 			} catch (ArgumentException) {
 			}
 
-			// Empty IEnumerable
+			// Empty IEnumerable not implementing IList
+			// Don't have a way to know whether at least datamember is valid or not.
 			try {
 				stack.Clear ();
 				obj = ListBindingHelper.GetList (stack, "Value");
