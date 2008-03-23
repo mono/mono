@@ -54,11 +54,16 @@ namespace System.Windows.Forms
 
 			if (dataSource is IEnumerable) {
 				IEnumerator e = ((IEnumerable) dataSource).GetEnumerator ();
-				object obj;
-				if (e == null || !e.MoveNext () || (obj = e.Current) == null)
-					throw new ArgumentException ("dataMember");
+				if (e == null || !e.MoveNext () || e.Current == null) {
+					PropertyDescriptorCollection properties = GetListItemProperties (dataSource);
+					if (properties [dataMember] == null)
+						throw new ArgumentException ("dataMember");
 
-				dataSource = obj;
+					// Weird
+					return null;
+				}
+					
+				dataSource = e.Current;
 			}
 
 			PropertyDescriptor property = GetProperty (dataSource.GetType (), dataMember);

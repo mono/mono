@@ -1,3 +1,10 @@
+2008-03-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListBindingHelper.cs: Add a new case for GetList () method - when we
+	get an empty IEnumerable, try to detect whether the datamember is
+	valid or not for that type, if true, return null, and throw exception
+	otherwise.
+
 2008-03-22  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ComboBox.cs: Alt-Down should drop down the list, Esc should
