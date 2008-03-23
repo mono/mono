@@ -384,8 +384,8 @@ namespace System.Web
 				// Write to the filter, which will call us back, and then Flush
 				filtering = true;
 				try {
-					StreamWriter wr = new StreamWriter (filter, response.ContentEncoding);
-					wr.Write (buffer, offset, count);
+					byte [] bytesToWrite = response.ContentEncoding.GetBytes (buffer, offset, count);
+					filter.Write (bytesToWrite, 0, bytesToWrite.Length);
 				}
 				finally {
 					filtering = false;
@@ -413,8 +413,8 @@ namespace System.Web
 				// Write to the filter, which will call us back, and then Flush
 				filtering = true;
 				try {
-					StreamWriter wr = new StreamWriter (filter, response.ContentEncoding);
-					wr.Write (s, offset, count);
+					byte [] bytesToWrite = response.ContentEncoding.GetBytes (s.ToCharArray (), offset, count);
+					filter.Write (bytesToWrite, 0, bytesToWrite.Length);
 				}
 				finally {
 					filtering = false;
