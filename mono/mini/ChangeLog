@@ -1,5 +1,7 @@
 2008-03-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c mini-s390.c (mono_arch_lowering_pass): Use mono_decompose_op_imm ().
+	
 	* mini.c (mono_decompose_op_imm): New helper function.
 
 	* mini-s390x.c (calculate_sizes): Rename this to get_call_info for consistency
