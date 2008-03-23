@@ -5254,6 +5254,7 @@ decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 		ins->opcode = OP_NOP;
 		break;
 	case OP_LCONV_TO_OVF_I:
+	case OP_LCONV_TO_OVF_U_UN:
 		ins->opcode = OP_MOVE;
 		break;
 	case OP_LCONV_TO_OVF_I_UN:
@@ -5264,6 +5265,7 @@ decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 		ins->opcode = OP_NOP;
 		break;
 	case OP_LCONV_TO_OVF_U8:
+	case OP_LCONV_TO_OVF_U:
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, ins->sreg1, 0);
 		MONO_EMIT_NEW_COND_EXC (cfg, LT, "OverflowException");
 		MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, ins->dreg, ins->sreg1);
@@ -11374,7 +11376,7 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
  *   arguments, or stores killing loads etc. Also, should we fold loads into other
  *   instructions if the result of the load is used multiple times ?
  * - make the REM_IMM optimization in mini-x86.c arch-independent.
- * - LAST MERGE: 98671.
+ * - LAST MERGE: 98831.
  * - merge the extensible gctx changes.
  * - when returning vtypes in registers, generate IR and append it to the end of the
  *   last bb instead of doing it in the epilog.

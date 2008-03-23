@@ -42,6 +42,17 @@
 #define MONO_ARCH_CONTEXT_DEF
 #endif
 
+void
+mono_exceptions_init (void)
+{
+#ifndef CUSTOM_EXCEPTION_HANDLING
+	mono_arch_get_restore_context ();
+	mono_arch_get_call_filter ();
+	mono_arch_get_throw_exception ();
+	mono_arch_get_rethrow_exception ();
+#endif
+}
+
 #ifndef mono_find_jit_info
 
 /* mono_find_jit_info:
@@ -339,6 +350,7 @@ ves_icall_get_frame_info (gint32 skip, MonoBoolean need_file_info,
 	MonoJitInfo *ji, rji;
 	MonoContext ctx, new_ctx;
 	MonoDebugSourceLocation *location;
+	MonoMethod *last_method = NULL;
 
 	MONO_ARCH_CONTEXT_DEF;
 
@@ -348,15 +360,6 @@ ves_icall_get_frame_info (gint32 skip, MonoBoolean need_file_info,
 	MONO_INIT_CONTEXT_FROM_CURRENT (&ctx);
 #else
 	MONO_INIT_CONTEXT_FROM_FUNC (&ctx, ves_icall_get_frame_info);
-#endif
-
-	/* 
-	 * FIXME: This is needed because of the LMF stuff which doesn't exist on ia64.
-	 * Probably the whole mono_find_jit_info () stuff needs to be fixed so this isn't
-	 * needed even on other platforms. This is also true for s390/s390x.
-	 */
-#if	!defined(__ia64__) && !defined(__s390__) && !defined(__s390x__)
-	skip++;
 #endif
 
 	do {
@@ -372,8 +375,20 @@ ves_icall_get_frame_info (gint32 skip, MonoBoolean need_file_info,
 		    ji->method->wrapper_type == MONO_WRAPPER_XDOMAIN_INVOKE ||
 		    ji->method->wrapper_type == MONO_WRAPPER_XDOMAIN_DISPATCH ||
 		    ji->method->wrapper_type == MONO_WRAPPER_REMOTING_INVOKE_WITH_CHECK ||
-		    ji->method->wrapper_type == MONO_WRAPPER_REMOTING_INVOKE)
+		    ji->method->wrapper_type == MONO_WRAPPER_REMOTING_INVOKE ||
+			ji->method->wrapper_type == MONO_WRAPPER_NATIVE_TO_MANAGED)
 			continue;
+
+		if (ji->method->wrapper_type == MONO_WRAPPER_MANAGED_TO_NATIVE && ji->method == last_method) {
+			/*
+			 * FIXME: Native-to-managed wrappers sometimes show up twice.
+			 * Probably the whole mono_find_jit_info () stuff needs to be fixed so this 
+			 * isn't needed.
+			 */
+			continue;
+		}
+
+		last_method = ji->method;
 
 		skip--;
 

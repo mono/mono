@@ -91,6 +91,85 @@
 	instruction combination.
 	(mono_local_deadce): Ditto.
 
+2008-03-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h mini.c mini-trampolines.c: Move trampoline related code to 
+	mini-trampolines.c.
+
+	* mini.h mini.c mini-exceptions.c: Move mini_init_exceptions () to 
+	mini-exceptions.c.
+
+	* mini-amd64.c mini-s390.c (mono_arch_lowering_pass): Use mono_decompose_op_imm ().
+	
+	* mini.c (mono_decompose_op_imm): New helper function.
+
+	* mini-s390x.c (calculate_sizes): Rename this to get_call_info for consistency
+	with the other architectures, add an 'mp' argument, fold 'sz' argument into the
+	return value.
+
+	* mini-s390x.c: Handle DIV_IMM/REM_IMM in the lowering pass instead of in 
+	mono_arch_output_basic_block. Fix warnings.
+
+	* inssel-s390x.brg: Remove the unneccesary OP_LMUL_IMM rule to fix the s390x build
+	for now.
+
+2008-03-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (ves_icall_get_frame_info): Remove the ia64/s390 workarounds
+	since the extra frame is now detected automatically inside the loop.
+
+	* mini-s390.c (mono_arch_peephole_pass_2): Remove the arch independent peephole 
+	opts which are now in mono_peephole_ins ().
+	
+	* mini-s390.c (mono_arch_output_basic_block): Fix OP_FCALL_MEMBASE.
+
+	* mini-exceptions.c (ves_icall_get_frame_info): Skip native-to-managed wrapper
+	frames and skip duplicate managed-to-native frames. Fixes #367665.
+
+	* mini-x86.c (mono_arch_peephole_pass_1): Remove the arch independent peephole
+	opts which are now in mono_peephole_ins ().
+	(mono_arch_peephole_pass_2): Ditto.
+
+	* mini-codegen.c (mono_peephole_ins): Fix a problem on 32 bit platforms.
+
+	* mini-codegen.c (mono_peephole_ins): New helper function containing the
+	arch independent peephole optimizations.
+
+	* mini-amd64.c (mono_arch_peephole_pass_1): Remove the arch independent peephole
+	opts which are now in mono_peephole_ins ().
+
+	* mini-amd64.c (mono_arch_peephole_pass_2): Ditto.
+	
+	* mini-s390.c (mono_arch_output_basic_block): Fix build.
+
+	* tramp-s390.c (mono_arch_get_vcall_slot): Handle an additional instruction
+	pattern.
+
+	* mini-s390.c (mono_arch_output_basic_block): Handle big offsets in the
+	CALL_MEMBASE opcodes. Fix setting of the destination in the OP_LCONV_TO_OVF_I
+	opcode.	
+
+2008-03-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-s390.c (calculate_sizes): Rename this to get_call_info for consistency
+	with the other architectures, add an 'mp' argument, fold 'sz' argument into the
+	return value.
+
+	* mini-s390.c: Handle DIV_IMM/REM_IMM in the lowering pass instead of in 
+	mono_arch_output_basic_block. Fix warnings.
+
+2008-03-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel-long32.brg: Add rules for long conv.ovf.i/conv.ovf.u/conv.ovf.i.un/
+	conv.ovf.u.un.
+
+2008-03-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel-long.brg: Add rules for long conv.ovf.i/conv.ovf.u/conv.ovf.i.un/
+	conv.ovf.u.un.
+
+	* iltests.il: Add new tests.
+
 2008-03-20  Kornél Pál  <kornelpal@gmail.com>
 
 	* mini.c: Removed Windows version macros.

@@ -1602,9 +1602,11 @@ emit_call (MonoCompile *cfg, guint8 *code, guint32 patch_type, gconstpointer dat
 void
 mono_arch_peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 {
-	MonoInst *ins, *n, *last_ins = NULL;
+	MonoInst *ins, *n;
 
 	MONO_BB_FOR_EACH_INS_SAFE (bb, n, ins) {
+		MonoInst *last_ins = ins->prev;
+
 		switch (ins->opcode) {
 		case OP_IADD_IMM:
 		case OP_ADD_IMM:
@@ -1657,134 +1659,7 @@ mono_arch_peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 						ins->opcode = OP_X86_TEST_NULL;
 				}
 
-			break;
-		case OP_LOAD_MEMBASE:
-		case OP_LOADI4_MEMBASE:
-			/* 
-			 * Note: if reg1 = reg2 the load op is removed
-			 *
-			 * OP_STORE_MEMBASE_REG reg1, offset(basereg) 
-			 * OP_LOAD_MEMBASE offset(basereg), reg2
-			 * -->
-			 * OP_STORE_MEMBASE_REG reg1, offset(basereg)
-			 * OP_MOVE reg1, reg2
-			 */
-			if (last_ins && (last_ins->opcode == OP_STOREI4_MEMBASE_REG 
-					 || last_ins->opcode == OP_STORE_MEMBASE_REG) &&
-			    ins->inst_basereg == last_ins->inst_destbasereg &&
-			    ins->inst_offset == last_ins->inst_offset) {
-				if (ins->dreg == last_ins->sreg1) {
-					MONO_DELETE_INS (bb, ins);
-					continue;
-				} else {
-					//static int c = 0; printf ("MATCHX %s %d\n", cfg->method->name,c++);
-					ins->opcode = OP_MOVE;
-					ins->sreg1 = last_ins->sreg1;
-				}
-
-			/* 
-			 * Note: reg1 must be different from the basereg in the second load
-			 * Note: if reg1 = reg2 is equal then second load is removed
-			 *
-			 * OP_LOAD_MEMBASE offset(basereg), reg1
-			 * OP_LOAD_MEMBASE offset(basereg), reg2
-			 * -->
-			 * OP_LOAD_MEMBASE offset(basereg), reg1
-			 * OP_MOVE reg1, reg2
-			 */
-			} if (last_ins && (last_ins->opcode == OP_LOADI4_MEMBASE
-					   || last_ins->opcode == OP_LOAD_MEMBASE) &&
-			      ins->inst_basereg != last_ins->dreg &&
-			      ins->inst_basereg == last_ins->inst_basereg &&
-			      ins->inst_offset == last_ins->inst_offset) {
-
-				if (ins->dreg == last_ins->dreg) {
-					MONO_DELETE_INS (bb, ins);
-					continue;
-				} else {
-					ins->opcode = OP_MOVE;
-					ins->sreg1 = last_ins->dreg;
-				}
-
-				//g_assert_not_reached ();
-
-#if 0
-			/* 
-			 * OP_STORE_MEMBASE_IMM imm, offset(basereg) 
-			 * OP_LOAD_MEMBASE offset(basereg), reg
-			 * -->
-			 * OP_STORE_MEMBASE_IMM imm, offset(basereg) 
-			 * OP_ICONST reg, imm
-			 */
-			} else if (last_ins && (last_ins->opcode == OP_STOREI4_MEMBASE_IMM
-						|| last_ins->opcode == OP_STORE_MEMBASE_IMM) &&
-				   ins->inst_basereg == last_ins->inst_destbasereg &&
-				   ins->inst_offset == last_ins->inst_offset) {
-				//static int c = 0; printf ("MATCHX %s %d\n", cfg->method->name,c++);
-				ins->opcode = OP_ICONST;
-				ins->inst_c0 = last_ins->inst_imm;
-				g_assert_not_reached (); // check this rule
-#endif
-			}
-			break;
-		case OP_LOADU1_MEMBASE:
-		case OP_LOADI1_MEMBASE:
-			/* 
-			 * OP_STORE_MEMBASE_REG reg1, offset(basereg) 
-			 * OP_LOAD_MEMBASE offset(basereg), reg2
-			 * -->
-			 * OP_STORE_MEMBASE_REG reg1, offset(basereg)
-			 * CONV_I2/U2 reg1, reg2
-			 */
-			if (last_ins && X86_IS_BYTE_REG (last_ins->sreg1) &&
-				(last_ins->opcode == OP_STOREI1_MEMBASE_REG) &&
-					ins->inst_basereg == last_ins->inst_destbasereg &&
-					ins->inst_offset == last_ins->inst_offset) {
-				ins->opcode = (ins->opcode == OP_LOADI1_MEMBASE) ? OP_ICONV_TO_I1 : OP_ICONV_TO_U1;
-				ins->sreg1 = last_ins->sreg1;
-			}
-			break;
-		case OP_LOADU2_MEMBASE:
-		case OP_LOADI2_MEMBASE:
-			/* 
-			 * OP_STORE_MEMBASE_REG reg1, offset(basereg) 
-			 * OP_LOAD_MEMBASE offset(basereg), reg2
-			 * -->
-			 * OP_STORE_MEMBASE_REG reg1, offset(basereg)
-			 * CONV_I2/U2 reg1, reg2
-			 */
-			if (last_ins && (last_ins->opcode == OP_STOREI2_MEMBASE_REG) &&
-					ins->inst_basereg == last_ins->inst_destbasereg &&
-					ins->inst_offset == last_ins->inst_offset) {
-				ins->opcode = (ins->opcode == OP_LOADI2_MEMBASE) ? OP_ICONV_TO_I2 : OP_ICONV_TO_U2;
-				ins->sreg1 = last_ins->sreg1;
-			}
-			break;
-		case OP_ICONV_TO_I4:
-		case OP_MOVE:
-			/*
-			 * Removes:
-			 *
-			 * OP_MOVE reg, reg 
-			 */
-			if (ins->dreg == ins->sreg1) {
-				MONO_DELETE_INS (bb, ins);
-				continue;
-			}
-			/* 
-			 * Removes:
-			 *
-			 * OP_MOVE sreg, dreg 
-			 * OP_MOVE dreg, sreg
-			 */
-			if (last_ins && last_ins->opcode == OP_MOVE &&
-			    ins->sreg1 == last_ins->dreg &&
-			    ins->dreg == last_ins->sreg1) {
-				MONO_DELETE_INS (bb, ins);
-				continue;
-			}
-			break;
-			
+			break;			
 		case OP_X86_PUSH_MEMBASE:
 			if (last_ins && (last_ins->opcode == OP_STOREI4_MEMBASE_REG ||
 				         last_ins->opcode == OP_STORE_MEMBASE_REG) &&
@@ -1795,17 +1670,19 @@ mono_arch_peephole_pass_1 (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 			break;
 		}
-		if (ins->opcode != OP_NOP)
-			last_ins = ins;
+
+		mono_peephole_ins (bb, ins);
 	}
 }
 
 void
 mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 {
-	MonoInst *ins, *n, *last_ins = NULL;
+	MonoInst *ins, *n;
 
 	MONO_BB_FOR_EACH_INS_SAFE (bb, n, ins) {
+		MonoInst *last_ins = ins->prev;
+
 		switch (ins->opcode) {
 		case OP_ICONST:
 			/* reg = 0 -> XOR (reg, reg) */
@@ -1848,173 +1725,11 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 			if ((ins->inst_imm == 1) && (ins->dreg == ins->sreg1))
 				ins->opcode = OP_X86_DEC_REG;
 			break;
-		case OP_X86_COMPARE_MEMBASE_IMM:
-			/* 
-			 * OP_STORE_MEMBASE_REG reg, offset(basereg)
-			 * OP_X86_COMPARE_MEMBASE_IMM offset(basereg), imm
-			 * -->
-			 * OP_STORE_MEMBASE_REG reg, offset(basereg)
-			 * OP_COMPARE_IMM reg, imm
-			 *
-			 * Note: if imm = 0 then OP_COMPARE_IMM replaced with OP_X86_TEST_NULL
-			 */
-			if (last_ins && (last_ins->opcode == OP_STOREI4_MEMBASE_REG) &&
-			    ins->inst_basereg == last_ins->inst_destbasereg &&
-			    ins->inst_offset == last_ins->inst_offset) {
-					ins->opcode = OP_COMPARE_IMM;
-					ins->sreg1 = last_ins->sreg1;
-
-					/* check if we can remove cmp reg,0 with test null */
-					if (!ins->inst_imm)
-						ins->opcode = OP_X86_TEST_NULL;
-				}
-
-			break;
-		case OP_LOAD_MEMBASE:
-		case OP_LOADI4_MEMBASE:
-			/* 
-			 * Note: if reg1 = reg2 the load op is removed
-			 *
-			 * OP_STORE_MEMBASE_REG reg1, offset(basereg) 
-			 * OP_LOAD_MEMBASE offset(basereg), reg2
-			 * -->
-			 * OP_STORE_MEMBASE_REG reg1, offset(basereg)
-			 * OP_MOVE reg1, reg2
-			 */
-			if (last_ins && (last_ins->opcode == OP_STOREI4_MEMBASE_REG 
-					 || last_ins->opcode == OP_STORE_MEMBASE_REG) &&
-			    ins->inst_basereg == last_ins->inst_destbasereg &&
-			    ins->inst_offset == last_ins->inst_offset) {
-				if (ins->dreg == last_ins->sreg1) {
-					MONO_DELETE_INS (bb, ins);
-					continue;
-				} else {
-					//static int c = 0; printf ("MATCHX %s %d\n", cfg->method->name,c++);
-					ins->opcode = OP_MOVE;
-					ins->sreg1 = last_ins->sreg1;
-				}
-
-			/* 
-			 * Note: reg1 must be different from the basereg in the second load
-			 * Note: if reg1 = reg2 is equal then second load is removed
-			 *
-			 * OP_LOAD_MEMBASE offset(basereg), reg1
-			 * OP_LOAD_MEMBASE offset(basereg), reg2
-			 * -->
-			 * OP_LOAD_MEMBASE offset(basereg), reg1
-			 * OP_MOVE reg1, reg2
-			 */
-			} if (last_ins && (last_ins->opcode == OP_LOADI4_MEMBASE
-					   || last_ins->opcode == OP_LOAD_MEMBASE) &&
-			      ins->inst_basereg != last_ins->dreg &&
-			      ins->inst_basereg == last_ins->inst_basereg &&
-			      ins->inst_offset == last_ins->inst_offset) {
-
-				if (ins->dreg == last_ins->dreg) {
-					MONO_DELETE_INS (bb, ins);
-					continue;
-				} else {
-					ins->opcode = OP_MOVE;
-					ins->sreg1 = last_ins->dreg;
-				}
-
-				//g_assert_not_reached ();
-
-#if 0
-			/* 
-			 * OP_STORE_MEMBASE_IMM imm, offset(basereg) 
-			 * OP_LOAD_MEMBASE offset(basereg), reg
-			 * -->
-			 * OP_STORE_MEMBASE_IMM imm, offset(basereg) 
-			 * OP_ICONST reg, imm
-			 */
-			} else if (last_ins && (last_ins->opcode == OP_STOREI4_MEMBASE_IMM
-						|| last_ins->opcode == OP_STORE_MEMBASE_IMM) &&
-				   ins->inst_basereg == last_ins->inst_destbasereg &&
-				   ins->inst_offset == last_ins->inst_offset) {
-				//static int c = 0; printf ("MATCHX %s %d\n", cfg->method->name,c++);
-				ins->opcode = OP_ICONST;
-				ins->inst_c0 = last_ins->inst_imm;
-				g_assert_not_reached (); // check this rule
-#endif
-			}
-			break;
-		case OP_LOADU1_MEMBASE:
-		case OP_LOADI1_MEMBASE:
-			/* 
-			 * OP_STORE_MEMBASE_REG reg1, offset(basereg) 
-			 * OP_LOAD_MEMBASE offset(basereg), reg2
-			 * -->
-			 * OP_STORE_MEMBASE_REG reg1, offset(basereg)
-			 * CONV_I2/U2 reg1, reg2
-			 */
-			if (last_ins && X86_IS_BYTE_REG (last_ins->sreg1) &&
-				(last_ins->opcode == OP_STOREI1_MEMBASE_REG) &&
-					ins->inst_basereg == last_ins->inst_destbasereg &&
-					ins->inst_offset == last_ins->inst_offset) {
-				ins->opcode = (ins->opcode == OP_LOADI1_MEMBASE) ? OP_ICONV_TO_I1 : OP_ICONV_TO_U1;
-				ins->sreg1 = last_ins->sreg1;
-			}
-			break;
-		case OP_LOADU2_MEMBASE:
-		case OP_LOADI2_MEMBASE:
-			/* 
-			 * OP_STORE_MEMBASE_REG reg1, offset(basereg) 
-			 * OP_LOAD_MEMBASE offset(basereg), reg2
-			 * -->
-			 * OP_STORE_MEMBASE_REG reg1, offset(basereg)
-			 * CONV_I2/U2 reg1, reg2
-			 */
-			if (last_ins && (last_ins->opcode == OP_STOREI2_MEMBASE_REG) &&
-					ins->inst_basereg == last_ins->inst_destbasereg &&
-					ins->inst_offset == last_ins->inst_offset) {
-				ins->opcode = (ins->opcode == OP_LOADI2_MEMBASE) ? OP_ICONV_TO_I2 : OP_ICONV_TO_U2;
-				ins->sreg1 = last_ins->sreg1;
-			}
-			break;
-		case OP_ICONV_TO_I4:
-		case OP_MOVE:
-			/*
-			 * Removes:
-			 *
-			 * OP_MOVE reg, reg 
-			 */
-			if (ins->dreg == ins->sreg1) {
-				MONO_DELETE_INS (bb, ins);
-				continue;
-			}
-			/* 
-			 * Removes:
-			 *
-			 * OP_MOVE sreg, dreg 
-			 * OP_MOVE dreg, sreg
-			 */
-			if (last_ins && last_ins->opcode == OP_MOVE &&
-			    ins->sreg1 == last_ins->dreg &&
-			    ins->dreg == last_ins->sreg1) {
-				MONO_DELETE_INS (bb, ins);
-				continue;
-			}
-			break;
-		case OP_X86_PUSH_MEMBASE:
-			if (last_ins && (last_ins->opcode == OP_STOREI4_MEMBASE_REG ||
-				         last_ins->opcode == OP_STORE_MEMBASE_REG) &&
-			    ins->inst_basereg == last_ins->inst_destbasereg &&
-			    ins->inst_offset == last_ins->inst_offset) {
-				    ins->opcode = OP_X86_PUSH;
-				    ins->sreg1 = last_ins->sreg1;
-			}
-			break;
 		}
-		if (ins->opcode != OP_NOP)
-			last_ins = ins;
+
+		mono_peephole_ins (bb, ins);
 	}
 }
-
-#define NEW_INS(cfg,dest,op) do {	\
-        MONO_INST_NEW ((cfg), (dest), (op)); \
-        mono_bblock_insert_before_ins (bb, ins, (dest)); \
-	} while (0)
 
 /*
  * mono_arch_lowering_pass:
@@ -2047,12 +1762,7 @@ mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 			 */
 			if ((ins->opcode == OP_IREM_IMM) && mono_is_power_of_two (ins->inst_imm) >= 0)
 				break;
-
-			NEW_INS (cfg, temp, OP_ICONST);
-			temp->inst_c0 = ins->inst_imm;
-			temp->dreg = mono_regstate_next_int (cfg->rs);
-			ins->opcode = mono_op_imm_to_op (ins->opcode);
-			ins->sreg2 = temp->dreg;
+			mono_decompose_ins_imm (ins);
 			break;
 		default:
 			break;

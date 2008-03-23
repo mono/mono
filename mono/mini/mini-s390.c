@@ -1386,7 +1386,7 @@ add_float (guint *fr,  size_data *sz, ArgInfo *ainfo)
 
 /*------------------------------------------------------------------*/
 /*                                                                  */
-/* Name		- get_call_info                                   */
+/* Name		- get_call_info                                         */
 /*                                                                  */
 /* Function	- Determine the amount of space required for code   */
 /* 		  and stack. In addition determine starting points  */
@@ -1396,13 +1396,14 @@ add_float (guint *fr,  size_data *sz, ArgInfo *ainfo)
 /*------------------------------------------------------------------*/
 
 static CallInfo *
-get_call_info (MonoCompile *cfg, MonoMemPool *mp, MonoMethodSignature *sig, gboolean string_ctor)
+get_call_info (MonoCompile *cfg, MonoMemPool *mp, MonoMethodSignature *sig, gboolean is_pinvoke)
 {
 	guint i, fr, gr, size;
 	int nParm = sig->hasthis + sig->param_count;
 	MonoType *ret_type;
 	guint32 simpletype, align;
 	CallInfo *cinfo;
+	size_data *sz;
 	MonoGenericSharingContext *gsctx = cfg ? cfg->generic_sharing_context : NULL;
 	size_data *sz;
 
@@ -1410,6 +1411,7 @@ get_call_info (MonoCompile *cfg, MonoMemPool *mp, MonoMethodSignature *sig, gboo
 		cinfo = mono_mempool_alloc0 (mp, sizeof (CallInfo) + sizeof (ArgInfo) * nParm);
 	else
 		cinfo = g_malloc0 (sizeof (CallInfo) + sizeof (ArgInfo) * nParm);
+
 	fr                = 0;
 	gr                = s390_r2;
 	nParm 		      = 0;
@@ -1782,6 +1784,10 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 
 	if (frame_reg != STK_BASE) 
 		cfg->used_int_regs |= 1 << frame_reg;		
+
+	sig     = mono_method_signature (cfg->method);
+	
+	cinfo   = get_call_info (cfg, cfg->mempool, sig, sig->pinvoke);
 
 	if (cinfo->struct_ret) {
 		if (!cfg->new_ir) {
@@ -2823,136 +2829,16 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 	MonoInst *ins, *n;
 
 	MONO_BB_FOR_EACH_INS_SAFE (bb, n, ins) {
-		MonoInst *last_ins = ins->prev;
-
-		switch (ins->opcode) {
-		case OP_MUL_IMM: 
-			/* remove unnecessary multiplication with 1 */
-			if (ins->inst_imm == 1) {
-				if (ins->dreg != ins->sreg1) {
-					ins->opcode = OP_MOVE;
-				} else {
-					MONO_DELETE_INS (bb, ins);
-					continue;
-				}
-			}
-			break;
-		case OP_LOAD_MEMBASE:
-		case OP_LOADI4_MEMBASE:
-			/* 
-			 * OP_STORE_MEMBASE_REG reg, offset(basereg) 
-			 * OP_LOAD_MEMBASE offset(basereg), reg
-			 */
-			if (last_ins && (last_ins->opcode == OP_STOREI4_MEMBASE_REG 
-					 || last_ins->opcode == OP_STORE_MEMBASE_REG) &&
-			    ins->inst_basereg == last_ins->inst_destbasereg &&
-			    ins->inst_offset == last_ins->inst_offset) {
-				if (ins->dreg == last_ins->sreg1) {
-					MONO_DELETE_INS (bb, ins);
-					continue;
-				} else {
-					ins->opcode = OP_MOVE;
-					ins->sreg1 = last_ins->sreg1;
-				}
-
-			/* 
-			 * Note: reg1 must be different from the basereg in the second load
-			 * OP_LOAD_MEMBASE offset(basereg), reg1
-			 * OP_LOAD_MEMBASE offset(basereg), reg2
-			 * -->
-			 * OP_LOAD_MEMBASE offset(basereg), reg1
-			 * OP_MOVE reg1, reg2
-			 */
-			} if (last_ins && (last_ins->opcode == OP_LOADI4_MEMBASE
-					   || last_ins->opcode == OP_LOAD_MEMBASE) &&
-			      ins->inst_basereg != last_ins->dreg &&
-			      ins->inst_basereg == last_ins->inst_basereg &&
-			      ins->inst_offset == last_ins->inst_offset) {
-
-				if (ins->dreg == last_ins->dreg) {
-					MONO_DELETE_INS (bb, ins);
-					continue;
-				} else {
-					ins->opcode = OP_MOVE;
-					ins->sreg1 = last_ins->dreg;
-				}
-
-				//g_assert_not_reached ();
-
-#if 0
-			/* 
-			 * OP_STORE_MEMBASE_IMM imm, offset(basereg) 
-			 * OP_LOAD_MEMBASE offset(basereg), reg
-			 * -->
-			 * OP_STORE_MEMBASE_IMM imm, offset(basereg) 
-			 * OP_ICONST reg, imm
-			 */
-			} else if (last_ins && (last_ins->opcode == OP_STOREI4_MEMBASE_IMM
-						|| last_ins->opcode == OP_STORE_MEMBASE_IMM) &&
-				   ins->inst_basereg == last_ins->inst_destbasereg &&
-				   ins->inst_offset == last_ins->inst_offset) {
-				//static int c = 0; printf ("MATCHX %s %d\n", cfg->method->name,c++);
-				ins->opcode = OP_ICONST;
-				ins->inst_c0 = last_ins->inst_imm;
-				g_assert_not_reached (); // check this rule
-#endif
-			}
-			break;
-		case OP_LOADU1_MEMBASE:
-		case OP_LOADI1_MEMBASE:
-			if (last_ins && (last_ins->opcode == OP_STOREI1_MEMBASE_REG) &&
-					ins->inst_basereg == last_ins->inst_destbasereg &&
-					ins->inst_offset == last_ins->inst_offset) {
-				ins->opcode = (ins->opcode == OP_LOADI1_MEMBASE) ? OP_ICONV_TO_I1 : OP_ICONV_TO_U1;
-				ins->sreg1 = last_ins->sreg1;				
-			}
-			break;
-		case OP_LOADU2_MEMBASE:
-		case OP_LOADI2_MEMBASE:
-			if (last_ins && (last_ins->opcode == OP_STOREI2_MEMBASE_REG) &&
-					ins->inst_basereg == last_ins->inst_destbasereg &&
-					ins->inst_offset == last_ins->inst_offset) {
-				ins->opcode = (ins->opcode == OP_LOADI2_MEMBASE) ? OP_ICONV_TO_I2 : OP_ICONV_TO_U2;
-				ins->sreg1 = last_ins->sreg1;				
-			}
-			break;
-		case OP_MOVE:
-			/* 
-			 * OP_MOVE reg, reg 
-			 */
-			if (ins->dreg == ins->sreg1) {
-				MONO_DELETE_INS (bb, ins);
-				continue;
-			}
-			/* 
-			 * OP_MOVE sreg, dreg 
-			 * OP_MOVE dreg, sreg
-			 */
-			if (last_ins && last_ins->opcode == OP_MOVE &&
-			    ins->sreg1 == last_ins->dreg &&
-			    ins->dreg == last_ins->sreg1) {
-				MONO_DELETE_INS (bb, ins);
-				continue;
-			}
-			break;
-		case OP_NOP:
-			MONO_DELETE_INS (bb, ins);
-			break;
-		}
+		mono_peephole_ins (bb, ins);
 	}
 }
 
 /*========================= End of Function ========================*/
 
-#define NEW_INS(cfg,dest,op) do {	\
-        MONO_INST_NEW ((cfg), (dest), (op)); \
-        mono_bblock_insert_before_ins (bb, ins, (dest)); \
-	} while (0)
-
 void
 mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 {
-	MonoInst *ins, *next, *temp;
+	MonoInst *ins, *next;
 
 	if (bb->max_vreg > cfg->rs->next_vreg)
 		cfg->rs->next_vreg = bb->max_vreg;
@@ -2966,25 +2852,12 @@ mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_IDIV_UN_IMM:
 		case OP_IREM_UN_IMM:
 		case OP_LOCALLOC_IMM:
-			NEW_INS (cfg, temp, OP_ICONST);
-			temp->inst_c0 = ins->inst_imm;
-			if (cfg->globalra)
-				temp->dreg = mono_alloc_ireg (cfg);
-			else
-				temp->dreg = mono_regstate_next_int (cfg->rs);
-			ins->opcode = mono_op_imm_to_op (ins->opcode);
-			if (ins->opcode == OP_LOCALLOC)
-				ins->sreg1 = temp->dreg;
-			else
-				ins->sreg2 = temp->dreg;
+			mono_decompose_op_imm (cfg, bb, ins);
 			break;
 		default:
 			break;
 		}
 	}
-
-	bb->max_vreg = cfg->rs->next_vreg;
-}
 
 /*========================= End of Function ========================*/
 
@@ -3704,6 +3577,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			s390_lr   (code, ins->dreg, s390_r1);
 		}
 			break;
+<<<<<<< .working
 		case OP_DIV_IMM:
 		case OP_IDIV_IMM: {
 			if (s390_is_imm16 (ins->inst_imm)) {
@@ -3721,6 +3595,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			s390_lr   (code, ins->dreg, s390_r1);
 		}
 			break;
+=======
+>>>>>>> .merge-right.r98831
 		case OP_IDIV_UN_IMM: {
 			if (s390_is_imm16 (ins->inst_imm)) {
 				s390_lhi  (code, s390_r13, ins->inst_imm);
@@ -3750,6 +3626,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			s390_lr   (code, ins->dreg, s390_r0);
 		}
 			break;
+<<<<<<< .working
 		case OP_REM_IMM:
 		case OP_IREM_IMM: {
 			if (s390_is_imm16 (ins->inst_imm)) {
@@ -3767,6 +3644,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			s390_lr   (code, ins->dreg, s390_r0);
 		}
 			break;
+=======
+>>>>>>> .merge-right.r98831
 		case OP_IOR: {
 			if (ins->sreg1 == ins->dreg) {
 				s390_or   (code, ins->dreg, ins->sreg2);
@@ -4137,21 +4016,30 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			s390_basr (code, s390_r14, s390_r1);
 		}
 			break;
-		case OP_FCALL_MEMBASE: {
-			call = (MonoCallInst*)ins;
-			s390_l    (code, s390_r1, 0, ins->sreg1, ins->inst_offset);
-			s390_basr (code, s390_r14, s390_r1);
-			if (call->signature->ret->type == MONO_TYPE_R4)
-				s390_ldebr (code, s390_f0, s390_f0);
-		}
-			break;
 		case OP_LCALL_MEMBASE:
 		case OP_VCALL_MEMBASE:
 		case OP_VCALL2_MEMBASE:
 		case OP_VOIDCALL_MEMBASE:
+		case OP_FCALL_MEMBASE:
 		case OP_CALL_MEMBASE: {
-			s390_l    (code, s390_r1, 0, ins->sreg1, ins->inst_offset);
+			call = (MonoCallInst*)ins;
+			if (s390_is_uimm12(ins->inst_offset))
+				s390_l    (code, s390_r1, 0, ins->inst_basereg, ins->inst_offset);
+			else {
+				if (s390_is_imm16(ins->inst_offset)) {
+					s390_lhi (code, s390_r13, ins->inst_offset);
+					s390_l   (code, s390_r1, s390_r13, ins->inst_basereg, 0);
+				} else {
+					s390_basr (code, s390_r13, 0);
+					s390_j    (code, 4);
+					s390_word (code, ins->inst_offset);
+					s390_l    (code, s390_r13, 0, s390_r13, 4);
+					s390_l    (code, s390_r1, s390_r13, ins->inst_basereg, 0);
+				}
+			}
 			s390_basr (code, s390_r14, s390_r1);
+			if (ins->opcode == OP_FCALL_MEMBASE && call->signature->ret->type == MONO_TYPE_R4)
+				s390_ldebr (code, s390_f0, s390_f0);
 		}
 			break;
 		case OP_OUTARG: 
@@ -4884,7 +4772,11 @@ emit_load_volatile_registers (guint8 * code, MonoCompile *cfg)
 	sig = mono_method_signature (method);
 	pos = 0;
 
+<<<<<<< .working
 	cinfo = get_call_info (NULL, NULL, sig, sig->pinvoke);
+=======
+	cinfo = get_call_info (cfg, cfg->mempool, sig, sig->pinvoke);
+>>>>>>> .merge-right.r98831
 
 	if (cinfo->struct_ret) {
 		ArgInfo *ainfo = &cinfo->ret;
@@ -4963,8 +4855,6 @@ emit_load_volatile_registers (guint8 * code, MonoCompile *cfg)
 		}
 		pos++;
 	}
-
-	g_free (cinfo);
 
 	return code;
 }
