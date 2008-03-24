@@ -339,6 +339,20 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		}
 
 		[Test]
+		public void Remove ()
+		{
+			BindingSource source = new BindingSource ();
+
+			List<string> list = new List<string> ();
+			list.Add ("A");
+			source.DataSource = list;
+			Assert.AreEqual (1, source.List.Count, "1");
+
+			source.Remove ("A");
+			Assert.AreEqual (0, list.Count, "2");
+		}
+
+		[Test]
 		public void ResetBindings ()
 		{
 			BindingSource source;
@@ -594,12 +608,21 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		}
 
 		[Test]
+		public void Add ()
+		{
+			BindingSource source = new BindingSource ();
+
+			source.Add (new object ());
+			Assert.AreEqual (1, source.List.Count, "1");
+
+			source.DataSource = new List<string> ();
+			source.Add ("A");
+			Assert.AreEqual (1, source.List.Count, "2");
+		}
+
+		[Test]
 		public void AddNew ()
 		{
-			if (TestHelper.RunningOnUnix) {
-				Assert.Ignore ("Fails at the moment");
-			}
-
 			BindingSource source = new BindingSource ();
 			source.AddNew ();
 			Assert.AreEqual (1, source.Count, "1");
@@ -608,10 +631,6 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		[Test]
 		public void AddNew_NonBindingList ()
 		{
-			if (TestHelper.RunningOnUnix) {
-				Assert.Ignore ("Fails at the moment");
-			}
-
 			IList list = new List<object> ();
 			BindingSource source = new BindingSource ();
 			source.DataSource = list;
@@ -642,10 +661,6 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		[Test]
 		public void AllowNew ()
 		{
-			if (TestHelper.RunningOnUnix) {
-				Assert.Ignore ("Fails at the moment");
-			}
-
 			BindingSource source = new BindingSource ();
 			source.AllowNew = false;
 
@@ -664,10 +679,6 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		// public constructor."
 		public void AllowNew_FixedSize ()
 		{
-			if (TestHelper.RunningOnUnix) {
-				Assert.Ignore ("Fails at the moment");
-			}
-
 			BindingSource source = new BindingSource ();
 			source.DataSource = new object[10];
 

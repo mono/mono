@@ -1,3 +1,8 @@
+2008-03-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* BindingSourceTest.cs: Re-activate some tests and also add a new
+	ones.
+
 2008-03-24  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridViewTest.cs: Add test for bug #331649.
