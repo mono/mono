@@ -1148,6 +1148,16 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void ColumnCountIncrease ()
+		{
+			DataGridView dgv = new DataGridView ();
+			dgv.ColumnCount = 1;
+			
+			// Increasing the ColumnCount adds TextBoxColumns, not generic columns
+			Assert.AreEqual ("System.Windows.Forms.DataGridViewTextBoxColumn", dgv.Columns[0].GetType ().ToString (), "A1");
+		}
+
+		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestColumnCountInvalidOperationException ()
 		{

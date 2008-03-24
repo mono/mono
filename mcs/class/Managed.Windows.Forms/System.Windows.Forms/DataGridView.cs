@@ -488,7 +488,7 @@ namespace System.Windows.Forms {
 				}
 				else if (value > columns.Count) {
 					for (int i = 0; i < value; i++) {
-						DataGridViewColumn col = new DataGridViewColumn();
+						DataGridViewTextBoxColumn col = new DataGridViewTextBoxColumn ();
 						columns.Add(col);
 					}
 				}

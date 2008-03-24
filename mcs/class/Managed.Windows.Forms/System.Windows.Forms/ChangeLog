@@ -1,5 +1,11 @@
 2008-03-24  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridView.cs: If columns are added by increasing ColumnCount,
+	they need to be DataGridViewTextBoxColumns, not DataGridViewColumn.
+	[Fixes bug #325588]
+
+2008-03-24  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridView.cs: Turn off and on the "new row" when 
 	AllowUserToAddRows is toggled.  When the handle is created,
 	set current cell and selected cell/row/col.
