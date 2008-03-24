@@ -57,7 +57,6 @@ namespace System.Windows.Forms {
 		private Stack		rtf_section_stack;
 
 		private RTF.TextMap rtf_text_map;
-		private int rtf_skip_width;
 		private int rtf_skip_count;
 		private int		rtf_cursor_x;
 		private int		rtf_cursor_y;
@@ -1388,6 +1387,8 @@ namespace System.Windows.Forms {
 			internal FontStyle rtf_rtfstyle;
 			internal HorizontalAlignment rtf_rtfalign;
 			internal int rtf_par_line_left_indent;
+			internal bool rtf_visible;
+			internal int rtf_skip_width;
 
 			public object Clone ()
 			{
@@ -1399,6 +1400,8 @@ namespace System.Windows.Forms {
 				new_style.rtf_rtffont = rtf_rtffont;
 				new_style.rtf_rtffont_size = rtf_rtffont_size;
 				new_style.rtf_rtfstyle = rtf_rtfstyle;
+				new_style.rtf_visible = rtf_visible;
+				new_style.rtf_skip_width = rtf_skip_width;
 
 				return new_style;
 			}
@@ -1416,6 +1419,9 @@ namespace System.Windows.Forms {
 
 			if (rtf.Major == RTF.Major.BeginGroup) {
 				rtf_section_stack.Push (rtf_style.Clone ());
+				//spec specifies resetting unicode ignore at begin group as an attempt at error
+				//recovery.
+				rtf_skip_count = 0;
 			} else if (rtf.Major == RTF.Major.EndGroup) {
 				if (rtf_section_stack.Count > 0) {
 					FlushText (rtf, false);
@@ -1431,12 +1437,13 @@ namespace System.Windows.Forms {
 				case RTF.Major.Unicode: {
 					switch(rtf.Minor) {
 						case RTF.Minor.UnicodeCharBytes: {
-							rtf_skip_width = rtf.Param;
+							rtf_style.rtf_skip_width = rtf.Param;
 							break;
 						}
 
 						case RTF.Minor.UnicodeChar: {
-							rtf_skip_count += rtf_skip_width;
+							FlushText (rtf, false);
+							rtf_skip_count += rtf_style.rtf_skip_width;
 							rtf_line.Append((char)rtf.Param);
 							break;
 						}
@@ -1540,6 +1547,12 @@ namespace System.Windows.Forms {
 							} else {
 								rtf_style.rtf_rtfstyle = rtf_style.rtf_rtfstyle & ~FontStyle.Underline;
 							}
+							break;
+						}
+
+						case RTF.Minor.Invisible: {
+							FlushText (rtf, false);
+							rtf_style.rtf_visible = false;
 							break;
 						}
 
@@ -1677,9 +1690,14 @@ namespace System.Windows.Forms {
 		}
 
 		private void HandleText(RTF.RTF rtf) {
-			if (rtf_skip_count > 0) {
-				rtf_skip_count--;
-				return;
+			string str = rtf.EncodedText;
+
+			//todo - simplistically skips characters, should skip bytes?
+			if (rtf_skip_count > 0 && str.Length > 0) {
+				int iToRemove = Math.Min (rtf_skip_count, str.Length);
+
+				str = str.Substring (iToRemove);
+				rtf_skip_count-=iToRemove;
 			}
 
 			/*
@@ -1694,7 +1712,9 @@ namespace System.Windows.Forms {
 				}
 			}
 			*/
-			rtf_line.Append (rtf.EncodedText);
+
+			if  (rtf_style.rtf_visible)
+				rtf_line.Append (str);
 		}
 
 		private void FlushText(RTF.RTF rtf, bool newline) {
@@ -1789,7 +1809,6 @@ namespace System.Windows.Forms {
 			rtf.ClassCallback[RTF.TokenClass.Control] = new RTF.ClassDelegate(HandleControl);
 			rtf.ClassCallback[RTF.TokenClass.Group] = new RTF.ClassDelegate(HandleGroup);
 
-			rtf_skip_width = 0;
 			rtf_skip_count = 0;
 			rtf_line = new StringBuilder();
 			rtf_style.rtf_color = Color.Empty;
@@ -1797,6 +1816,8 @@ namespace System.Windows.Forms {
 			rtf_style.rtf_rtfalign = HorizontalAlignment.Left;
 			rtf_style.rtf_rtfstyle = FontStyle.Regular;
 			rtf_style.rtf_rtffont = null;
+			rtf_style.rtf_visible = true;
+			rtf_style.rtf_skip_width = 1;
 			rtf_cursor_x = cursor_x;
 			rtf_cursor_y = cursor_y;
 			rtf_chars = 0;

@@ -1,3 +1,10 @@
+2008-03-24  Luke Page <luke.a.page@gmail.com>
+
+	* RichTextBox.cs: Handles visible rtf tag and no longer shows the text
+	on the control. Also now handles unicode compatibility characters and
+	stores the unicode compatibility length on the stack. Fixes Bugs
+	#355198 and #366436.
+
 2008-03-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* BindingSource..cs: Take into account DataMember when re-creating the
