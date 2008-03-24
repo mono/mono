@@ -1,3 +1,7 @@
+2008-03-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* iltests.il.in: Add a test for lconv.ovf.u8.un.
+
 2008-03-24  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini.c (mono_method_to_ir): Implement readonly for ldelema and
