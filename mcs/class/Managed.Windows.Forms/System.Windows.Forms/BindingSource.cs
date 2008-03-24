@@ -119,29 +119,35 @@ namespace System.Windows.Forms {
 		void ResetList ()
 		{
 			IList l;
-			object source = ListBindingHelper.GetList (datasource);
+			object source = ListBindingHelper.GetList (datasource, datamember);
 
-			if (source == null) {
+			// 
+			// If original source is null, then create a new object list
+			// Otherwise, try to infer the list item type
+			//
+
+			if (datasource == null) {
 				l = new BindingList<object>();
 //				list_defaulted = true;
-			}
-			else if (source is IList) {
+			} else if (source == null) {
+				//Infer type based on datasource and datamember,
+				// where datasource is an empty IEnumerable
+				// and need to find out the datamember type
+
+				Type property_type = ListBindingHelper.GetListItemProperties (datasource) [datamember].PropertyType;
+				Type t = typeof (BindingList<>).MakeGenericType (new Type [] { property_type } );
+				l = (IList)Activator.CreateInstance (t);
+			} else if (source is IList) {
 				l = (IList)source;
-			}
-			else if (source is IEnumerable) {
+			} else if (source is IEnumerable) {
 				IList new_list = GetListFromEnumerable ((IEnumerable)source);
 				l = new_list == null ? list : new_list;
-			}
-			else {
+			} else {
 				Type t = typeof (BindingList<>).MakeGenericType (new Type[] { source.GetType() });
 				l = (IList)Activator.CreateInstance (t);
 			}
 
-			// XXX
 			list = l;
-
-			if (datamember != "") {
-			}
 		}
 
 		[Browsable (false)]

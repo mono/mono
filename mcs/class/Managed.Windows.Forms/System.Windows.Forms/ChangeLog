@@ -1,5 +1,10 @@
 2008-03-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* BindingSource..cs: Take into account DataMember when re-creating the
+	List property, and also create a specific kind of list as needed.
+
+2008-03-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListBindingHelper.cs: Add a new case for GetList () method - when we
 	get an empty IEnumerable, try to detect whether the datamember is
 	valid or not for that type, if true, return null, and throw exception
