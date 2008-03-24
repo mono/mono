@@ -306,7 +306,7 @@ namespace System.Data.Odbc
 
 		#region Methods
 
-		internal void Bind (IntPtr hstmt, int ParamNum)
+		internal void Bind (OdbcCommand command, IntPtr hstmt, int ParamNum)
 		{
 			OdbcReturn ret;
 			int len;
@@ -329,7 +329,7 @@ namespace System.Data.Odbc
 
 			// Check for error condition
 			if ((ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo))
-				throw new OdbcException (new OdbcError ("SQLBindParam", OdbcHandleType.Stmt, hstmt));
+				throw command.Connection.CreateOdbcException (OdbcHandleType.Stmt, hstmt);
 		}
 
 		[MonoTODO]

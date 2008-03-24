@@ -1,3 +1,24 @@
+2008-03-24  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* OdbcTransaction.cs: Use internal CreateOdbcException method on
+	OdbcConnection to create OdbcException.
+	* OdbcException.cs: Added support for multiple OdbcError instances
+	and fixed Message property on 2.0 profile.
+	* OdbcCommand.cs: Use internal CreateOdbcException method on
+	OdbcConnection to create OdbcException. Code formatting.
+	* OdbcError.cs: Moved code to obtain ODBC error info to newly
+	introduced CreateOdbcException on OdbcConnection. Code formatting.
+	* OdbcDataReader.cs: Use internal CreateOdbcException method on
+	OdbcTransaction to create OdbcException.
+	* OdbcParameterCollection.cs: Removed obsolete Bind method.
+	* OdbcConnection.cs: Added SafeDriver property that returns
+	name of driver if available and a zero-length string otherwise.
+	Use CreateOdbcException method to create OdbcException from ODBC
+	error info. Added CreateOdbcException method to construct
+	OdbcException from all available ODBC error info.
+	* OdbcParameter.cs: Use internal CreateOdbcException method on
+	OdbcConnection to create OdbcException.
+
 2008-03-23  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* OdbcErrorCollection.cs: Corcompare fixes and code formatting.

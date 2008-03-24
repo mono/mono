@@ -34,8 +34,10 @@ using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+using System.Text;
 
 namespace System.Data.Odbc
 {
@@ -48,47 +50,37 @@ namespace System.Data.Odbc
 	{
 		OdbcErrorCollection odbcErrors;
 
-		internal OdbcException(OdbcError Error) : base (Error.Message)
+		internal OdbcException (OdbcErrorCollection errors)
+			: base (CreateMessage (errors))
 		{
-			odbcErrors = new OdbcErrorCollection ();
-			odbcErrors.Add (Error);
+			odbcErrors = errors;
 		}
 
-		public OdbcErrorCollection Errors 
-		{
-			get 
-			{
+		public OdbcErrorCollection Errors {
+			get {
 				return odbcErrors;
 			}
 		}
 
-		public override string Source 
-		{	
-			get
-			{
-				return odbcErrors[0].Source;
+		public override string Source {
+			get {
+				return odbcErrors [0].Source;
 			}
 		}
 
-
-#if NET_1_0 || ONLY_1_1
-		public
-		override
-#else
-		new
+#if !NET_2_0
+		public override string Message {
+			get {
+				return base.Message;
+			}
+		}
 #endif
-		string Message {
-			get 
-			{
-
-				return odbcErrors[0].Message;
-			}
-		}
 
 		private OdbcException (SerializationInfo si, StreamingContext sc) : base(si, sc)
 		{
 			odbcErrors = new OdbcErrorCollection ();
-			odbcErrors = ((OdbcErrorCollection) si.GetValue ("odbcErrors", typeof(OdbcErrorCollection)));
+			odbcErrors = ((OdbcErrorCollection) si.GetValue (
+				"odbcErrors", typeof (OdbcErrorCollection)));
 		}
 
 		#region Methods
@@ -100,6 +92,19 @@ namespace System.Data.Odbc
 
 			si.AddValue ("odbcErrors", odbcErrors, typeof(OdbcErrorCollection));
 			base.GetObjectData (si, context);
+		}
+
+		static string CreateMessage (OdbcErrorCollection errors)
+		{
+			StringBuilder sb = new StringBuilder ();
+			for (int i = 0; i < errors.Count; i++) {
+				if (i > 0)
+					sb.Append (Environment.NewLine);
+				OdbcError error = errors [i];
+				sb.AppendFormat ("ERROR [{0}] {1}", error.SQLState,
+					error.Message);
+			}
+			return sb.ToString ();
 		}
 
 		#endregion // Methods

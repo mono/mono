@@ -116,7 +116,7 @@ namespace System.Data.Odbc
 				OdbcReturn ret = libodbc.SQLSetConnectAttr (conn.hDbc,
 					attr, (IntPtr) lev, 0);
 				if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
-					throw new OdbcException (new OdbcError ("SQLSetConnectAttr", OdbcHandleType.Dbc, conn.hDbc));
+					throw conn.CreateOdbcException (OdbcHandleType.Dbc, conn.hDbc);
 			}
 			this.isolationlevel = isolationlevel;
 			connection = conn;
@@ -131,7 +131,7 @@ namespace System.Data.Odbc
 				OdbcConnectionAttribute.AutoCommit,
 				(IntPtr) (isAuto ? 1 : 0), -5);
 			if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
-				throw new OdbcException (new OdbcError ("SQLSetConnectAttr", OdbcHandleType.Dbc, conn.hDbc));
+				throw conn.CreateOdbcException (OdbcHandleType.Dbc, conn.hDbc);
 		}
 
 		private static IsolationLevel GetIsolationLevel (OdbcConnection conn)
@@ -142,8 +142,7 @@ namespace System.Data.Odbc
 				OdbcConnectionAttribute.TransactionIsolation,
 				out lev, 0, out length);
 			if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
-				throw new OdbcException (new OdbcError ("SQLGetConnectAttr",
-					OdbcHandleType.Dbc, conn.hDbc));
+				throw conn.CreateOdbcException (OdbcHandleType.Dbc, conn.hDbc);
 			return MapOdbcIsolationLevel ((OdbcIsolationLevel) lev);
 		}
 
@@ -215,7 +214,7 @@ namespace System.Data.Odbc
 			if (connection.transaction == this) {
 				OdbcReturn ret = libodbc.SQLEndTran ((short) OdbcHandleType.Dbc, connection.hDbc, 0);
 				if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
-					throw new OdbcException (new OdbcError ("SQLEndTran", OdbcHandleType.Dbc, connection.hDbc));
+					throw connection.CreateOdbcException (OdbcHandleType.Dbc, connection.hDbc);
 				SetAutoCommit (connection, true); // restore default auto-commit
 				connection.transaction = null;
 				connection = null;
@@ -235,8 +234,8 @@ namespace System.Data.Odbc
 
 			if (connection.transaction == this) {
 				OdbcReturn ret = libodbc.SQLEndTran ((short) OdbcHandleType.Dbc, connection.hDbc, 1);
-				if (ret!=OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
-					throw new OdbcException (new OdbcError ("SQLEndTran", OdbcHandleType.Dbc, connection.hDbc));
+				if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
+					throw connection.CreateOdbcException (OdbcHandleType.Dbc, connection.hDbc);
 				SetAutoCommit (connection, true);    // restore default auto-commit
 				connection.transaction = null;
 				connection = null;

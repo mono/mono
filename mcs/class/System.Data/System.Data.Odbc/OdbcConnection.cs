@@ -53,9 +53,10 @@ namespace System.Data.Odbc
 		string connectionString;
 		int connectionTimeout;
 		internal OdbcTransaction transaction;
-		IntPtr henv =IntPtr.Zero, hdbc=IntPtr.Zero;
+		IntPtr henv = IntPtr.Zero;
+		IntPtr hdbc = IntPtr.Zero;
 		bool disposed;
-		
+
 		#endregion
 
 		#region Constructors
@@ -140,10 +141,9 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		ConnectionState State {
 			get {
-				if (hdbc!=IntPtr.Zero)
+				if (hdbc != IntPtr.Zero)
 					return ConnectionState.Open;
-				else
-					return ConnectionState.Closed;
+				return ConnectionState.Closed;
 			}
 		}
 
@@ -173,6 +173,7 @@ namespace System.Data.Odbc
 			get {
 				if (State == ConnectionState.Closed)
 					return string.Empty;
+
 				return GetInfo (OdbcInfo.DriverName);
 			}
 		}
@@ -187,6 +188,15 @@ namespace System.Data.Odbc
 		string ServerVersion {
 			get {
 				return GetInfo (OdbcInfo.DbmsVersion);
+			}
+		}
+
+		internal string SafeDriver {
+			get {
+				string driver_name = GetSafeInfo (OdbcInfo.DriverName);
+				if (driver_name == null)
+					return string.Empty;
+				return driver_name;
 			}
 		}
 
@@ -251,7 +261,7 @@ namespace System.Data.Odbc
 				// disconnect
 				ret = libodbc.SQLDisconnect (hdbc);
 				if ((ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo))
-					throw new OdbcException (new OdbcError ("SQLDisconnect", OdbcHandleType.Dbc, hdbc));
+					throw CreateOdbcException (OdbcHandleType.Dbc, hdbc);
 
 				FreeHandles ();
 				transaction = null;
@@ -282,7 +292,7 @@ namespace System.Data.Odbc
 				ret = libodbc.SQLSetConnectAttr (hdbc, OdbcConnectionAttribute.CurrentCatalog, ptr, value.Length * 2);
 
 				if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
-					throw new OdbcException (new OdbcError ("SQLSetConnectAttr", OdbcHandleType.Dbc, hdbc));
+					throw CreateOdbcException (OdbcHandleType.Dbc, hdbc);
 			} finally {
 				if (ptr != IntPtr.Zero)
 					Marshal.FreeCoTaskMem (ptr);
@@ -339,19 +349,21 @@ namespace System.Data.Odbc
 				// allocate Environment handle
 				ret = libodbc.SQLAllocHandle (OdbcHandleType.Env, IntPtr.Zero, ref henv);
 				if ((ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo)) {
-					e = new OdbcException (new OdbcError ("SQLAllocHandle"));
+					OdbcErrorCollection errors = new OdbcErrorCollection ();
+					errors.Add (new OdbcError (this));
+					e = new OdbcException (errors);
 					MessageHandler (e);
 					throw e;
 				}
 
 				ret = libodbc.SQLSetEnvAttr (henv, OdbcEnv.OdbcVersion, (IntPtr) libodbc.SQL_OV_ODBC3 , 0); 
 				if ((ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo))
-					throw new OdbcException (new OdbcError ("SQLSetEnvAttr", OdbcHandleType.Env, henv));
+					throw CreateOdbcException (OdbcHandleType.Env, henv);
 
 				// allocate connection handle
 				ret = libodbc.SQLAllocHandle (OdbcHandleType.Dbc, henv, ref hdbc);
 				if ((ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo))
-					throw new OdbcException (new OdbcError ("SQLAllocHandle", OdbcHandleType.Env, henv));
+					throw CreateOdbcException (OdbcHandleType.Env, henv);
 
 				// DSN connection
 				if (ConnectionString.ToLower ().IndexOf ("dsn=") >= 0) {
@@ -373,16 +385,16 @@ namespace System.Data.Odbc
 						}
 					}
 					ret = libodbc.SQLConnect(hdbc, _dsn, -3, _uid, -3, _pwd, -3);
-					if ((ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo)) 
-						throw new OdbcException (new OdbcError ("SQLConnect", OdbcHandleType.Dbc, hdbc));
+					if ((ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo))
+						throw CreateOdbcException (OdbcHandleType.Dbc, hdbc);
 				} else {
 					// DSN-less Connection
 					string OutConnectionString = new String (' ',1024);
 					short OutLen = 0;
 					ret = libodbc.SQLDriverConnect (hdbc, IntPtr.Zero, ConnectionString, -3, 
 						OutConnectionString, (short) OutConnectionString.Length, ref OutLen, 0);
-					if ((ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo)) 
-						throw new OdbcException (new OdbcError ("SQLDriverConnect", OdbcHandleType.Dbc, hdbc));
+					if ((ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo))
+						throw CreateOdbcException (OdbcHandleType.Dbc, hdbc);
 				}
 
 				RaiseStateChange (ConnectionState.Closed, ConnectionState.Open);
@@ -405,15 +417,15 @@ namespace System.Data.Odbc
 			OdbcReturn ret = OdbcReturn.Error;
 			if (hdbc != IntPtr.Zero) {
 				ret = libodbc.SQLFreeHandle ((ushort) OdbcHandleType.Dbc, hdbc);
-				if ( (ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo)) 
-					throw new OdbcException (new OdbcError ("SQLFreeHandle", OdbcHandleType.Dbc, hdbc));
+				if ( (ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo))
+					throw CreateOdbcException (OdbcHandleType.Dbc, hdbc);
 			}
 			hdbc = IntPtr.Zero;
 
 			if (henv != IntPtr.Zero) {
 				ret = libodbc.SQLFreeHandle ((ushort) OdbcHandleType.Env, henv);
-				if ( (ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo)) 
-					throw new OdbcException (new OdbcError ("SQLFreeHandle", OdbcHandleType.Env, henv));
+				if ( (ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo))
+					throw CreateOdbcException (OdbcHandleType.Env, henv);
 			}
 			henv = IntPtr.Zero;
 		}
@@ -463,9 +475,23 @@ namespace System.Data.Odbc
 
 			ret = libodbc.SQLGetInfo (hdbc, info, buffer, max_length, ref actualLength);
 			if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
-				throw new OdbcException (new OdbcError ("SQLGetInfo",
-									OdbcHandleType.Dbc,
-									hdbc));
+				throw CreateOdbcException (OdbcHandleType.Dbc, hdbc);
+			return Encoding.Unicode.GetString (buffer, 0, actualLength);
+		}
+
+		string GetSafeInfo (OdbcInfo info)
+		{
+			if (State == ConnectionState.Closed)
+				return null;
+
+			OdbcReturn ret = OdbcReturn.Error;
+			short max_length = 512;
+			byte [] buffer = new byte [512];
+			short actualLength = 0;
+
+			ret = libodbc.SQLGetInfo (hdbc, info, buffer, max_length, ref actualLength);
+			if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
+				return null;
 			return Encoding.Unicode.GetString (buffer, 0, actualLength);
 		}
 
@@ -488,6 +514,55 @@ namespace System.Data.Odbc
 		{
 			if (InfoMessage != null)
 				InfoMessage (this, e);
+		}
+
+		internal OdbcException CreateOdbcException (OdbcHandleType HandleType, IntPtr Handle)
+		{
+			short buflen = 256;
+			short txtlen = 0;
+			int nativeerror = 0;
+			OdbcReturn ret = OdbcReturn.Success;
+			ushort recordNumber = 1;
+
+			OdbcErrorCollection errors = new OdbcErrorCollection ();
+
+			while (true) {
+				byte [] buf_MsgText = new byte [buflen * 2];
+				byte [] buf_SqlState = new byte [buflen * 2];
+
+				switch (HandleType) {
+				case OdbcHandleType.Dbc:
+					ret = libodbc.SQLError (IntPtr.Zero, Handle, IntPtr.Zero, buf_SqlState,
+						ref nativeerror, buf_MsgText, buflen, ref txtlen);
+					break;
+				case OdbcHandleType.Stmt:
+					ret = libodbc.SQLError (IntPtr.Zero, IntPtr.Zero, Handle, buf_SqlState,
+						ref nativeerror, buf_MsgText, buflen, ref txtlen);
+					break;
+				case OdbcHandleType.Env:
+					ret = libodbc.SQLError (Handle, IntPtr.Zero, IntPtr.Zero, buf_SqlState,
+						ref nativeerror, buf_MsgText, buflen, ref txtlen);
+					break;
+				}
+
+				if (ret != OdbcReturn.Success)
+					break;
+
+				string state = RemoveTrailingNullChar (Encoding.Unicode.GetString (buf_SqlState));
+				string message = Encoding.Unicode.GetString (buf_MsgText, 0, txtlen * 2);
+
+				errors.Add (new OdbcError (message, state, nativeerror));
+			}
+
+			string source = SafeDriver;
+			foreach (OdbcError error in errors)
+				error.SetSource (source);
+			return new OdbcException (errors);
+		}
+
+		static string RemoveTrailingNullChar (string value)
+		{
+			return value.TrimEnd ('\0');
 		}
 
 		#endregion

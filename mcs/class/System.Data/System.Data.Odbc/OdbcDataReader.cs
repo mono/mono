@@ -173,6 +173,14 @@ namespace System.Data.Odbc
 			get { throw new NotImplementedException(); }
 		}
 
+		private OdbcConnection Connection {
+			get {
+				if (command != null)
+					return command.Connection;
+				return null;
+			}
+		}
+
 		#endregion
 
 		#region Methods
@@ -206,7 +214,7 @@ namespace System.Data.Odbc
 									 colname_buffer, bufsize, ref colname_size, ref dt, ref ColSize, 
 									 ref DecDigits, ref Nullable);
 				if ((ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo))
-					throw new OdbcException (new OdbcError ("SQLDescribeCol", OdbcHandleType.Stmt, hstmt));
+					throw Connection.CreateOdbcException (OdbcHandleType.Stmt, hstmt);
 				colname = RemoveTrailingNullChar (Encoding.Unicode.GetString (colname_buffer));
 				OdbcColumn c = new OdbcColumn (colname, (SQL_TYPE) dt);
 				c.AllowDBNull = (Nullable != 0);
@@ -277,12 +285,13 @@ namespace System.Data.Odbc
 			if (ret == OdbcReturn.NoData)
 				return 0;
 
-			if ( (ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo)) 
-				throw new OdbcException (new OdbcError ("SQLGetData", OdbcHandleType.Stmt, hstmt));
+			if ( (ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo))
+				throw Connection.CreateOdbcException (OdbcHandleType.Stmt, hstmt);
 
-			OdbcError odbcErr = null;
+			OdbcException odbcException = null;
 			if ( (ret == OdbcReturn.SuccessWithInfo))
-				odbcErr = new OdbcError ("SQLGetData", OdbcHandleType.Stmt, hstmt);
+				odbcException = Connection.CreateOdbcException (
+					OdbcHandleType.Stmt, hstmt);
 
 			if (buffer == null)
 				return outsize; //if buffer is null,return length of the field
@@ -294,10 +303,10 @@ namespace System.Data.Odbc
 					copyBuffer = false;
 					returnVal = -1;
 				} else {
-					string sqlstate = odbcErr.SQLState;
+					string sqlstate = odbcException.Errors [0].SQLState;
 					//SQLState: String Data, Right truncated
-					if (sqlstate != libodbc.SQLSTATE_RIGHT_TRUNC) 
-						throw new OdbcException ( odbcErr);
+					if (sqlstate != libodbc.SQLSTATE_RIGHT_TRUNC)
+						throw odbcException;
 					copyBuffer = true;
 				}
 			} else {
@@ -800,8 +809,8 @@ namespace System.Data.Odbc
 					break;
 				}
 
-				if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo) && (ret!=OdbcReturn.NoData)) 
-					throw new OdbcException(new OdbcError("SQLGetData",OdbcHandleType.Stmt,hstmt));
+				if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo) && (ret!=OdbcReturn.NoData))
+					throw Connection.CreateOdbcException (OdbcHandleType.Stmt, hstmt);
 
 				if (outsize == -1) // This means SQL_NULL_DATA 
 					col.Value = DBNull.Value;
@@ -937,9 +946,8 @@ namespace System.Data.Odbc
 							buffer, (short)buffer.Length, 
 							ref outsize, ref val);
 			if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
-				throw new OdbcException (new OdbcError ("SQLColAttribute",
-							OdbcHandleType.Stmt,
-							hstmt));
+				throw Connection.CreateOdbcException (
+					OdbcHandleType.Stmt, hstmt);
 			return val;
 		}
 
@@ -953,9 +961,8 @@ namespace System.Data.Odbc
 							buffer, (short)buffer.Length,
 							ref outsize, ref val);
 			if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
-				throw new OdbcException (new OdbcError ("SQLColAttribute",
-									OdbcHandleType.Stmt,
-									hstmt));
+				throw Connection.CreateOdbcException (
+					OdbcHandleType.Stmt, hstmt);
 			string value = string.Empty;
 			if (outsize > 0)
 				value = Encoding.Unicode.GetString (buffer, 0, outsize);
@@ -990,22 +997,21 @@ namespace System.Data.Odbc
 			try {
 				ret=libodbc.SQLAllocHandle(OdbcHandleType.Stmt, 
 							   command.Connection.hDbc, ref handle);
-				if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-					throw new OdbcException(new OdbcError("SQLAllocHandle",
-								OdbcHandleType.Dbc,
-								command.Connection.hDbc));
+				if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo))
+					throw Connection.CreateOdbcException (
+						OdbcHandleType.Dbc, Connection.hDbc);
 
 				ret = libodbc.SQLPrimaryKeys (handle, catalog, -3,
 					schema, -3, table, -3);
 				if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
-					throw new OdbcException (new OdbcError ("SQLPrimaryKeys", OdbcHandleType.Stmt, handle));
+					throw Connection.CreateOdbcException (OdbcHandleType.Stmt, handle);
 
 				int length = 0;
 				byte [] primaryKey = new byte [255];
 
 				ret = libodbc.SQLBindCol (handle, 4, SQL_C_TYPE.CHAR, primaryKey, primaryKey.Length, ref length);
 				if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
-					throw new OdbcException (new OdbcError ("SQLBindCol", OdbcHandleType.Stmt, handle));
+					throw Connection.CreateOdbcException (OdbcHandleType.Stmt, handle);
 
 				int i = 0;
 				while (true) {
@@ -1018,12 +1024,12 @@ namespace System.Data.Odbc
 			} finally {
 				if (handle != IntPtr.Zero) {
 					ret = libodbc.SQLFreeStmt (handle, libodbc.SQLFreeStmtOptions.Close);
-					if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-						throw new OdbcException(new OdbcError("SQLFreeStmt",OdbcHandleType.Stmt,handle));
+					if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo))
+						throw Connection.CreateOdbcException (OdbcHandleType.Stmt, handle);
 
 					ret = libodbc.SQLFreeHandle( (ushort) OdbcHandleType.Stmt, handle);
-					if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-						throw new OdbcException(new OdbcError("SQLFreeHandle",OdbcHandleType.Stmt,handle));
+					if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo))
+						throw Connection.CreateOdbcException (OdbcHandleType.Stmt, handle);
 				}
 			}
 			return keys;
@@ -1037,10 +1043,9 @@ namespace System.Data.Odbc
 			try {
 				ret=libodbc.SQLAllocHandle(OdbcHandleType.Stmt, 
 							   command.Connection.hDbc, ref handle);
-				if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-					throw new OdbcException(new OdbcError("SQLAllocHandle",
-									      OdbcHandleType.Dbc,
-									      command.Connection.hDbc));
+				if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo))
+					throw Connection.CreateOdbcException (
+						OdbcHandleType.Dbc, Connection.hDbc);
 
 				ret = libodbc.SQLStatistics (handle, catalog, -3,  
 							     schema, -3, 
@@ -1048,21 +1053,21 @@ namespace System.Data.Odbc
 							     libodbc.SQL_INDEX_UNIQUE,
 							     libodbc.SQL_QUICK);
 				if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
-					throw new OdbcException (new OdbcError ("SQLStatistics", OdbcHandleType.Stmt, handle));
+					throw Connection.CreateOdbcException (OdbcHandleType.Stmt, handle);
 
 				// NON_UNIQUE
 				int  nonUniqueLength = 0;
 				short nonUnique = libodbc.SQL_FALSE;
 				ret = libodbc.SQLBindCol (handle, 4, SQL_C_TYPE.SHORT, ref (short) nonUnique, sizeof (short), ref nonUniqueLength);
 				if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
-					throw new OdbcException (new OdbcError ("SQLBindCol", OdbcHandleType.Stmt, handle));
+					throw Connection.CreateOdbcException (OdbcHandleType.Stmt, handle);
 
 				// COLUMN_NAME
 				int length = 0;
 				byte [] colName = new byte [255];
 				ret = libodbc.SQLBindCol (handle, 9, SQL_C_TYPE.CHAR, colName, colName.Length, ref length);
 				if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
-					throw new OdbcException (new OdbcError ("SQLBindCol", OdbcHandleType.Stmt, handle));
+					throw Connection.CreateOdbcException (OdbcHandleType.Stmt, handle);
 			
 				int i = 0;
 				while (true) {
@@ -1078,12 +1083,12 @@ namespace System.Data.Odbc
 			} finally {
 				if (handle != IntPtr.Zero) {
 					ret = libodbc.SQLFreeStmt (handle, libodbc.SQLFreeStmtOptions.Close);
-					if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-						throw new OdbcException (new OdbcError ("SQLFreeStmt", OdbcHandleType.Stmt, handle));
+					if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo))
+						throw Connection.CreateOdbcException (OdbcHandleType.Stmt, handle);
 
 					ret = libodbc.SQLFreeHandle ((ushort) OdbcHandleType.Stmt, handle);
-					if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-						throw new OdbcException (new OdbcError ("SQLFreeHandle", OdbcHandleType.Stmt, handle));
+					if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo))
+						throw Connection.CreateOdbcException (OdbcHandleType.Stmt, handle);
 				}
 			}
 			return keys;

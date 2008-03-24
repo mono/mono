@@ -34,119 +34,69 @@ using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
+using System.Text;
 
 namespace System.Data.Odbc
 {
 	[Serializable]
 	public sealed class OdbcError
 	{
-		string _message;
+		readonly string _message;
 		string _source;
-		string _state;
-		int _nativeerror;
+		readonly string _state;
+		readonly int _nativeerror;
 
 		#region Constructors
 
-		internal OdbcError (string Source)
+		internal OdbcError (OdbcConnection connection)
 		{
 			_nativeerror = 1;
-			_source = Source;
+			_source = connection.SafeDriver;
 			_message = "Error in " + _source;
-			_state = "";
+			_state = string.Empty;
 		}
 
-		internal OdbcError (string Source, OdbcHandleType HandleType, IntPtr Handle)
+		internal OdbcError (string message, string state, int nativeerror)
 		{
-			short buflen = 256, txtlen = 0;
-			OdbcReturn ret = OdbcReturn.Success;
-			byte [] buf_MsgText = new byte [buflen];
-			byte [] buf_SqlState = new byte [buflen];
-			bool NeedsDecode = true;
-			_source = Source;
-			switch (HandleType)
-			{
-				case OdbcHandleType.Dbc:
-					ret = libodbc.SQLError(IntPtr.Zero, Handle, IntPtr.Zero, buf_SqlState,
-						ref _nativeerror, buf_MsgText, buflen, ref txtlen);
-					break;
-				case OdbcHandleType.Stmt:
-					ret = libodbc.SQLError(IntPtr.Zero, IntPtr.Zero, Handle, buf_SqlState,
-						ref _nativeerror, buf_MsgText, buflen, ref txtlen);
-					break;
-				case OdbcHandleType.Env:
-					ret = libodbc.SQLError(Handle, IntPtr.Zero, IntPtr.Zero, buf_SqlState,
-						ref _nativeerror, buf_MsgText, buflen, ref txtlen);
-					break;
-				default:
-					_nativeerror = 1;
-					_source = Source;
-					_message = "Error in " + _source;
-					_state = "";
-					NeedsDecode = false;
-					break;
-			}
-			if (NeedsDecode)
-			{
-				if (ret != OdbcReturn.Success)
-				{
-					_nativeerror = 1;
-					_source = Source;
-					_message = "Unable to retrieve error information from ODBC driver manager";
-					_state = "";
-				}
-				else
-				{
-					_state = System.Text.Encoding.Default.GetString (buf_SqlState).Replace ((char) 0, ' ').Trim ();
-					_message = System.Text.Encoding.Default.GetString (buf_MsgText).Replace ((char) 0, ' ').Trim ();
-				}
-			}
+			_message = message;
+			_state = state;
+			_nativeerror = nativeerror;
 		}
 
 		#endregion // Constructors
 		
 		#region Properties
 
-		public string Message
-		{
-			get
-			{
-				return _message;
-			}
+		public string Message {
+			get { return _message; }
 		}
 
-		public int NativeError
-		{
-			get
-			{
-				return _nativeerror;
-			}
+		public int NativeError {
+			get { return _nativeerror; }
 		}
 
-		public string Source
-		{
-			get
-			{
-				return _source;
-			}
+		public string Source {
+			get { return _source; }
 		}
 
-		public string SQLState
-		{
-			get
-			{
-				return _state;
-			}
+		public string SQLState {
+			get { return _state; }
 		}
 
 		#endregion // Properties
 		
 		#region methods
 		
-		public override string ToString () 
+		public override string ToString ()
 		{
 			return Message;
-		}	
-			
+		}
+
+		internal void SetSource (string source)
+		{
+			_source = source;
+		}
+
 		#endregion
 
 	}

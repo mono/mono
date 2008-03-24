@@ -304,18 +304,16 @@ namespace System.Data.Odbc
 
 		public
 #if NET_2_0
-			override
+		override
 #endif // NET_2_0
-				void Cancel () 
+		void Cancel ()
 		{
-			if (hstmt!=IntPtr.Zero)
-			{
-				OdbcReturn Ret=libodbc.SQLCancel(hstmt);
-				if ((Ret!=OdbcReturn.Success) && (Ret!=OdbcReturn.SuccessWithInfo)) 
-					throw new OdbcException(new OdbcError("SQLCancel",OdbcHandleType.Stmt,hstmt));
-			}
-			else
-				throw new InvalidOperationException();
+			if (hstmt != IntPtr.Zero) {
+				OdbcReturn Ret = libodbc.SQLCancel (hstmt);
+				if (Ret != OdbcReturn.Success && Ret != OdbcReturn.SuccessWithInfo)
+					throw connection.CreateOdbcException (OdbcHandleType.Stmt, hstmt);
+			} else
+				throw new InvalidOperationException ();
 		}
 
 #if ONLY_1_1
@@ -354,9 +352,9 @@ namespace System.Data.Odbc
 			if (hstmt != IntPtr.Zero)
 				FreeStatement ();
 
-			ret=libodbc.SQLAllocHandle(OdbcHandleType.Stmt, Connection.hDbc, ref hstmt);
-			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-				throw new OdbcException(new OdbcError("SQLAllocHandle",OdbcHandleType.Dbc,Connection.hDbc));
+			ret = libodbc.SQLAllocHandle (OdbcHandleType.Stmt, Connection.hDbc, ref hstmt);
+			if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
+				throw connection.CreateOdbcException (OdbcHandleType.Dbc, Connection.hDbc);
 			disposed = false;
 			return hstmt;
 		}
@@ -368,12 +366,12 @@ namespace System.Data.Odbc
 			
 			// free previously allocated handle.
 			OdbcReturn ret = libodbc.SQLFreeStmt (hstmt, libodbc.SQLFreeStmtOptions.Close);
-			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-				throw new OdbcException(new OdbcError("SQLCloseCursor",OdbcHandleType.Stmt,hstmt));
+			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo))
+				throw connection.CreateOdbcException (OdbcHandleType.Stmt, hstmt);
 			
-			ret = libodbc.SQLFreeHandle( (ushort) OdbcHandleType.Stmt, hstmt);
-			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-				throw new OdbcException(new OdbcError("SQLFreeHandle",OdbcHandleType.Stmt,hstmt));
+			ret = libodbc.SQLFreeHandle ((ushort) OdbcHandleType.Stmt, hstmt);
+			if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
+				throw connection.CreateOdbcException (OdbcHandleType.Stmt, hstmt);
 			hstmt = IntPtr.Zero;
 		}
 		
@@ -387,7 +385,7 @@ namespace System.Data.Odbc
 				ret = libodbc.SQLExecDirect (hstmt, sql, libodbc.SQL_NTS);
 				if ((ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo) &&
 				    (ret != OdbcReturn.NoData))
-					throw new OdbcException(new OdbcError("SQLExecDirect",OdbcHandleType.Stmt,hstmt));
+					throw connection.CreateOdbcException (OdbcHandleType.Stmt, hstmt);
 				return;
 			}
 
@@ -395,9 +393,9 @@ namespace System.Data.Odbc
 				Prepare();
 
 			BindParameters ();
-			ret=libodbc.SQLExecute(hstmt);
-			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-				throw new OdbcException(new OdbcError("SQLExecute",OdbcHandleType.Stmt,hstmt));
+			ret = libodbc.SQLExecute (hstmt);
+			if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
+				throw connection.CreateOdbcException (OdbcHandleType.Stmt, hstmt);
 		}
 
 		internal void FreeIfNotPrepared ()
@@ -433,7 +431,7 @@ namespace System.Data.Odbc
 			    (CommandText.ToUpper().IndexOf("INSERT")!=-1) ||
 			    (CommandText.ToUpper().IndexOf("DELETE")!=-1)) {
 				int numrows = 0;
-				OdbcReturn ret = libodbc.SQLRowCount(hstmt,ref numrows);
+				OdbcReturn ret = libodbc.SQLRowCount (hstmt, ref numrows);
 				records = numrows;
 			} else
 				records = -1;
@@ -453,18 +451,17 @@ namespace System.Data.Odbc
 			ReAllocStatment ();
 			
 			OdbcReturn ret;
-			ret=libodbc.SQLPrepare(hstmt, CommandText, CommandText.Length);
-			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-				throw new OdbcException(new OdbcError("SQLPrepare",OdbcHandleType.Stmt,hstmt));
-			prepared=true;
+			ret = libodbc.SQLPrepare(hstmt, CommandText, CommandText.Length);
+			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo))
+				throw connection.CreateOdbcException (OdbcHandleType.Stmt, hstmt);
+			prepared = true;
 		}
 
 		private void BindParameters ()
 		{
-			int i=1;
-			foreach (OdbcParameter p in Parameters)
-			{
-				p.Bind(hstmt, i);
+			int i = 1;
+			foreach (OdbcParameter p in Parameters) {
+				p.Bind (this, hstmt, i);
 				p.CopyValue ();
 				i++;
 			}
@@ -498,7 +495,7 @@ namespace System.Data.Odbc
 		OdbcDataReader ExecuteReader (CommandBehavior behavior)
 		{
 			int recordsAffected = ExecuteNonQuery(false);
-			OdbcDataReader dataReader=new OdbcDataReader(this, behavior, recordsAffected);
+			OdbcDataReader dataReader = new OdbcDataReader (this, behavior, recordsAffected);
 			return dataReader;
 		}
 
@@ -516,12 +513,12 @@ namespace System.Data.Odbc
 		object ExecuteScalar ()
 		{
 			object val = null;
-			OdbcDataReader reader=ExecuteReader();
+			OdbcDataReader reader = ExecuteReader();
 			try {
 				if (reader.Read ())
-					val=reader[0];
+					val = reader [0];
 			} finally {
-				reader.Close();
+				reader.Close ();
 			}
 			return val;
 		}

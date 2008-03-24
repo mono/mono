@@ -210,12 +210,6 @@ namespace System.Data.Odbc
 				size, sourceColumn));
 		}
 
-		internal void Bind (IntPtr hstmt)
-		{
-			for (int i = 0; i < Count; i++)
-				this [i].Bind (hstmt, i + 1);
-		}
-
 		public
 #if NET_2_0
 		override
