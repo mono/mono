@@ -1278,7 +1278,7 @@ void      mono_arch_fill_argument_info          (MonoCompile *cfg) MONO_INTERNAL
 void      mono_arch_allocate_vars               (MonoCompile *m) MONO_INTERNAL;
 int       mono_arch_get_argument_info           (MonoMethodSignature *csig, int param_count, MonoJitArgumentInfo *arg_info) MONO_INTERNAL;
 gboolean  mono_arch_print_tree			(MonoInst *tree, int arity) MONO_INTERNAL;
-void      mono_arch_emit_call                   (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual) MONO_INTERNAL;
+void      mono_arch_emit_call                   (MonoCompile *cfg, MonoCallInst *call) MONO_INTERNAL;
 void      mono_arch_emit_outarg_vt              (MonoCompile *cfg, MonoInst *ins, MonoInst *src) MONO_INTERNAL;
 void      mono_arch_emit_setret                 (MonoCompile *cfg, MonoMethod *method, MonoInst *val) MONO_INTERNAL;
 MonoInst *mono_arch_emit_inst_for_method        (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args) MONO_INTERNAL;

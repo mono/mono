@@ -1170,7 +1170,7 @@ emit_sig_cookie2 (MonoCompile *cfg, MonoCallInst *call, CallInfo *cinfo)
 }
 
 void
-mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
+mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 {
 	MonoInst *arg, *in;
 	MonoMethodSignature *sig;
@@ -1184,7 +1184,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 	cinfo = get_call_info (cfg->generic_sharing_context, cfg->mempool, sig, FALSE);
 
 	if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG))
-		sentinelpos = sig->sentinelpos + (is_virtual ? 1 : 0);
+		sentinelpos = sig->sentinelpos + (sig->hasthis ? 1 : 0);
 
 	if (sig->ret && MONO_TYPE_ISSTRUCT (sig->ret)) {
 		MonoInst *vtarg;
@@ -1221,7 +1221,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 #endif 
 
 	/* Handle the case where there are no implicit arguments */
-	if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG) && (n == sig->sentinelpos)) {
+	if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG) && (n == sentinelpos)) {
 		emit_sig_cookie2 (cfg, call, cinfo);
 	}
 

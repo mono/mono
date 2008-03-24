@@ -1336,7 +1336,7 @@ emit_sig_cookie2 (MonoCompile *cfg, MonoCallInst *call, CallInfo *cinfo)
 }
 
 void
-mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
+mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 {
 	MonoInst *in;
 	MonoMethodSignature *sig;

@@ -1484,7 +1484,7 @@ restart:
 			case OP_LMUL_IMM:
 #endif
 				if (ins->inst_imm == 0) {
-					ins->opcode = (ins->opcode == OP_IMUL_IMM) ? OP_ICONST : OP_I8CONST;
+					ins->opcode = (ins->opcode == OP_LMUL_IMM) ? OP_I8CONST : OP_ICONST;
 					ins->inst_c0 = 0;
 					ins->sreg1 = -1;
 				} else if (ins->inst_imm == 1) {
@@ -2083,6 +2083,12 @@ mono_branch_to_cmov (MonoCompile *cfg)
 			branch->opcode = OP_BR;
 			branch->inst_target_bb = next_bb;
 			mono_link_bblock (cfg, bb, branch->inst_target_bb);
+
+			/* Nullify the branch at the end of code_bb */
+			if (code_bb->code) {
+				branch = code_bb->code;
+				MONO_DELETE_INS (code_bb, branch);
+			}
 
 			/* Reorder bblocks */
 			mono_unlink_bblock (cfg, bb, code_bb);

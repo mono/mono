@@ -11556,7 +11556,9 @@ mono_merge_basic_blocks (MonoCompile *cfg, MonoBasicBlock *bb, MonoBasicBlock *b
 			int i;
 			MonoJumpInfoBBTable *table = MONO_JUMP_TABLE_FROM_INS (inst);
 			for (i = 0; i < table->table_size; i++ ) {
-				g_assert (table->table [i] == bbn);
+				/* Might be already NULL from a previous merge */
+				if (table->table [i])
+					g_assert (table->table [i] == bbn);
 				table->table [i] = NULL;
 			}
 			/* Can't nullify this as later instructions depend on it */

@@ -2890,7 +2890,7 @@ mono_emit_call_args (MonoCompile *cfg, MonoMethodSignature *sig,
 	}
 #endif
 
-	mono_arch_emit_call (cfg, call, virtual);
+	mono_arch_emit_call (cfg, call);
 
 	cfg->param_area = MAX (cfg->param_area, call->stack_usage);
 	cfg->flags |= MONO_CFG_HAS_CALLS;
@@ -3444,7 +3444,7 @@ handle_cisinst (MonoCompile *cfg, MonoClass *klass, MonoInst *src)
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, tmp_reg, 0);
 		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBEQ, no_proxy_bb);
 		
-		mini_emit_isninst_cast (cfg, klass_reg, klass, NULL, true_bb);
+		mini_emit_isninst_cast (cfg, klass_reg, klass, false2_bb, true_bb);
 		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_BR, false2_bb);
 
 		MONO_START_BB (cfg, no_proxy_bb);
@@ -3485,7 +3485,7 @@ handle_ccastclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src)
 	an InvalidCastException exception is thrown otherwhise*/
 	
 	MonoInst *ins;
-	MonoBasicBlock *end_bb, *ok_result_bb, *no_proxy_bb, *interface_fail_bb;
+	MonoBasicBlock *end_bb, *ok_result_bb, *no_proxy_bb, *interface_fail_bb, *fail_1_bb;
 	int obj_reg = src->dreg;
 	int dreg = alloc_ireg (cfg);
 	int tmp_reg = alloc_preg (cfg);
@@ -3534,8 +3534,12 @@ handle_ccastclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src)
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, tmp_reg, obj_reg, G_STRUCT_OFFSET (MonoTransparentProxy, custom_type_info));
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, tmp_reg, 0);
 		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBEQ, no_proxy_bb);
+
+		NEW_BBLOCK (cfg, fail_1_bb);
 		
-		mini_emit_isninst_cast (cfg, klass_reg, klass, NULL, ok_result_bb);
+		mini_emit_isninst_cast (cfg, klass_reg, klass, fail_1_bb, ok_result_bb);
+
+		MONO_START_BB (cfg, fail_1_bb);
 
 		MONO_EMIT_NEW_ICONST (cfg, dreg, 1);
 		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_BR, end_bb);
@@ -4056,7 +4060,7 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 #ifdef MONO_ARCH_HAVE_ATOMIC_ADD
 		if (strcmp (cmethod->name, "Increment") == 0) {
 			MonoInst *ins_iconst;
-			guint32 opcode;
+			guint32 opcode = 0;
 
 			if (fsig->params [0]->type == MONO_TYPE_I4)
 				opcode = OP_ATOMIC_ADD_NEW_I4;
@@ -4064,24 +4068,23 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			else if (fsig->params [0]->type == MONO_TYPE_I8)
 				opcode = OP_ATOMIC_ADD_NEW_I8;
 #endif
-			else
-				g_assert_not_reached ();
+			if (opcode) {
+				MONO_INST_NEW (cfg, ins_iconst, OP_ICONST);
+				ins_iconst->inst_c0 = 1;
+				ins_iconst->dreg = mono_alloc_ireg (cfg);
+				MONO_ADD_INS (cfg->cbb, ins_iconst);
 
-			MONO_INST_NEW (cfg, ins_iconst, OP_ICONST);
-			ins_iconst->inst_c0 = 1;
-			ins_iconst->dreg = mono_alloc_ireg (cfg);
-			MONO_ADD_INS (cfg->cbb, ins_iconst);
-
-			MONO_INST_NEW (cfg, ins, opcode);
-			ins->dreg = mono_alloc_ireg (cfg);
-			ins->inst_basereg = args [0]->dreg;
-			ins->inst_offset = 0;
-			ins->sreg2 = ins_iconst->dreg;
-			ins->type = (opcode == OP_ATOMIC_ADD_NEW_I4) ? STACK_I4 : STACK_I8;
-			MONO_ADD_INS (cfg->cbb, ins);
+				MONO_INST_NEW (cfg, ins, opcode);
+				ins->dreg = mono_alloc_ireg (cfg);
+				ins->inst_basereg = args [0]->dreg;
+				ins->inst_offset = 0;
+				ins->sreg2 = ins_iconst->dreg;
+				ins->type = (opcode == OP_ATOMIC_ADD_NEW_I4) ? STACK_I4 : STACK_I8;
+				MONO_ADD_INS (cfg->cbb, ins);
+			}
 		} else if (strcmp (cmethod->name, "Decrement") == 0) {
 			MonoInst *ins_iconst;
-			guint32 opcode;
+			guint32 opcode = 0;
 
 			if (fsig->params [0]->type == MONO_TYPE_I4)
 				opcode = OP_ATOMIC_ADD_NEW_I4;
@@ -4089,21 +4092,20 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			else if (fsig->params [0]->type == MONO_TYPE_I8)
 				opcode = OP_ATOMIC_ADD_NEW_I8;
 #endif
-			else
-				g_assert_not_reached ();
+			if (opcode) {
+				MONO_INST_NEW (cfg, ins_iconst, OP_ICONST);
+				ins_iconst->inst_c0 = -1;
+				ins_iconst->dreg = mono_alloc_ireg (cfg);
+				MONO_ADD_INS (cfg->cbb, ins_iconst);
 
-			MONO_INST_NEW (cfg, ins_iconst, OP_ICONST);
-			ins_iconst->inst_c0 = -1;
-			ins_iconst->dreg = mono_alloc_ireg (cfg);
-			MONO_ADD_INS (cfg->cbb, ins_iconst);
-
-			MONO_INST_NEW (cfg, ins, opcode);
-			ins->dreg = mono_alloc_ireg (cfg);
-			ins->inst_basereg = args [0]->dreg;
-			ins->inst_offset = 0;
-			ins->sreg2 = ins_iconst->dreg;
-			ins->type = (opcode == OP_ATOMIC_ADD_NEW_I4) ? STACK_I4 : STACK_I8;
-			MONO_ADD_INS (cfg->cbb, ins);
+				MONO_INST_NEW (cfg, ins, opcode);
+				ins->dreg = mono_alloc_ireg (cfg);
+				ins->inst_basereg = args [0]->dreg;
+				ins->inst_offset = 0;
+				ins->sreg2 = ins_iconst->dreg;
+				ins->type = (opcode == OP_ATOMIC_ADD_NEW_I4) ? STACK_I4 : STACK_I8;
+				MONO_ADD_INS (cfg->cbb, ins);
+			}
 		} else if (strcmp (cmethod->name, "Add") == 0) {
 			guint32 opcode = 0;
 
@@ -6980,6 +6982,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			 * cases.
 			 */
 			if (ip + 8 < end && (ip [2] == CEE_PREFIX1) && (ip [3] == CEE_INITOBJ) && ip_in_bb (cfg, bblock, ip + 3)) {
+				gboolean skip = FALSE;
+
 				/* From the INITOBJ case */
 				token = read32 (ip + 4);
 				klass = mini_get_class (method, token, generic_context);
@@ -6987,15 +6991,19 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				if (cfg->generic_sharing_context && mono_class_check_context_used (klass))
 					GENERIC_SHARING_FAILURE (CEE_INITOBJ);
 
-				if (MONO_TYPE_IS_REFERENCE (&klass->byval_arg) || !MONO_TYPE_ISSTRUCT (&klass->byval_arg)) {
+				if (MONO_TYPE_IS_REFERENCE (&klass->byval_arg)) {
 					MONO_EMIT_NEW_PCONST (cfg, cfg->locals [ip [1]]->dreg, NULL);
-				} else {
+				} else if (MONO_TYPE_ISSTRUCT (&klass->byval_arg)) {
 					MONO_EMIT_NEW_VZERO (cfg, cfg->locals [ip [1]]->dreg, klass);
+				} else {
+					skip = TRUE;
 				}
-
-				ip += 2 + 6;
-				inline_costs += 1;
-				break;
+					
+				if (!skip) {
+					ip += 2 + 6;
+					inline_costs += 1;
+					break;
+				}
 			}
 
 			EMIT_NEW_LOCLOADA (cfg, ins, ip [1]);
@@ -10534,8 +10542,11 @@ static inline int
 op_to_op_src1_membase (int load_opcode, int opcode)
 {
 #ifdef __i386__
+	/* FIXME: This has sign extension issues */
+	/*
 	if ((opcode == OP_ICOMPARE_IMM) && (load_opcode == OP_LOADU1_MEMBASE))
 		return OP_X86_COMPARE_MEMBASE8_IMM;
+	*/
 
 	if (!((load_opcode == OP_LOAD_MEMBASE) || (load_opcode == OP_LOADI4_MEMBASE) || (load_opcode == OP_LOADU4_MEMBASE)))
 		return -1;
@@ -10966,7 +10977,7 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
 	
 	/* Add spill loads/stores */
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
-		MonoInst *ins, *next;
+		MonoInst *ins;
 
 		if (cfg->verbose_level > 1)
 			printf ("\nSPILL BLOCK %d:\n", bb->block_num);
