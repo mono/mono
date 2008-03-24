@@ -190,6 +190,7 @@ test_assemblies += $(btest_lib)
 endif
 
 ifdef test_assemblies
+check: run-test
 test-local: $(test_assemblies)
 run-test-local: run-test-lib
 run-test-ondotnet-local: run-test-ondotnet-lib
