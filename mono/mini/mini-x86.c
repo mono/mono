@@ -1186,6 +1186,40 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 	if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG))
 		sentinelpos = sig->sentinelpos + (is_virtual ? 1 : 0);
 
+	if (sig->ret && MONO_TYPE_ISSTRUCT (sig->ret)) {
+		MonoInst *vtarg;
+
+		if (cinfo->ret.storage == ArgValuetypeInReg) {
+			if (cinfo->ret.pair_storage [0] == ArgInIReg && cinfo->ret.pair_storage [1] == ArgNone) {
+				/*
+				 * Tell the JIT to use a more efficient calling convention: call using
+				 * OP_CALL, compute the result location after the call, and save the 
+				 * result there.
+				 */
+				call->vret_in_reg = TRUE;
+			} else {
+				/*
+				 * The valuetype is in EAX:EDX after the call, needs to be copied to
+				 * the stack. Save the address here, so the call instruction can
+				 * access it.
+				 */
+				MONO_INST_NEW (cfg, vtarg, OP_X86_PUSH);
+				vtarg->sreg1 = call->vret_var->dreg;
+				MONO_ADD_INS (cfg->cbb, vtarg);
+			}
+		}
+	}
+
+#if defined(__APPLE__)
+	if (cinfo->need_stack_align) {
+		MONO_INST_NEW (cfg, arg, OP_SUB_IMM);
+		arg->dreg = X86_ESP;
+		arg->sreg1 = X86_ESP;
+		arg->inst_imm = cinfo->stack_align_amount;
+		MONO_ADD_INS (cfg->cbb, arg);
+	}
+#endif 
+
 	/* Handle the case where there are no implicit arguments */
 	if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG) && (n == sig->sentinelpos)) {
 		emit_sig_cookie2 (cfg, call, cinfo);
@@ -1274,70 +1308,31 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call, gboolean is_virtual)
 	}
 
 	if (sig->ret && MONO_TYPE_ISSTRUCT (sig->ret)) {
+		MonoInst *vtarg;
+
 		if (cinfo->ret.storage == ArgValuetypeInReg) {
-
-			MonoInst *zero_inst;
-
+			/* Already done */
+		}
+		else if (cinfo->ret.storage == ArgInIReg) {
 			NOT_IMPLEMENTED;
-
-			/*
-			 * After the call, the struct is in registers, but needs to be saved to the memory pointed
-			 * to by vt_arg in this_vret_args. This means that vt_arg needs to be saved somewhere
-			 * before calling the function. So we add a dummy instruction to represent pushing the 
-			 * struct return address to the stack. The return address will be saved to this stack slot 
-			 * by the code emitted in this_vret_args.
-			 */
-			MONO_INST_NEW (cfg, arg, OP_OUTARG);
-			MONO_INST_NEW (cfg, zero_inst, OP_ICONST);
-			zero_inst->inst_p0 = 0;
-			arg->inst_left = zero_inst;
-			arg->type = STACK_PTR;
-			/* prepend, so they get reversed */
-			arg->next = call->out_args;
-			call->out_args = arg;
-		}
-		else {
-			MonoInst *vtarg;
-
-			if (cinfo->ret.storage == ArgValuetypeInReg) {
-				/*
-				 * The valuetype is in EAX:EDX after the call, needs to be copied to
-				 * the stack. Save the address here, so the call instruction can
-				 * access it.
-				 */
-				NOT_IMPLEMENTED;
-				MONO_INST_NEW (cfg, vtarg, OP_STORE_MEMBASE_REG);
-				vtarg->inst_destbasereg = X86_ESP;
-				vtarg->inst_offset = call->stack_usage;
-				vtarg->sreg1 = call->inst.dreg;
-				mono_bblock_add_inst (cfg->cbb, vtarg);
-			}
-			else if (cinfo->ret.storage == ArgInIReg) {
-				NOT_IMPLEMENTED;
-				/* The return address is passed in a register */
-				MONO_INST_NEW (cfg, vtarg, OP_MOVE);
-				vtarg->sreg1 = call->inst.dreg;
-				vtarg->dreg = mono_regstate_next_int (cfg->rs);
-				mono_bblock_add_inst (cfg->cbb, vtarg);
+			/* The return address is passed in a register */
+			MONO_INST_NEW (cfg, vtarg, OP_MOVE);
+			vtarg->sreg1 = call->inst.dreg;
+			vtarg->dreg = mono_regstate_next_int (cfg->rs);
+			MONO_ADD_INS (cfg->cbb, vtarg);
 				
-				mono_call_inst_add_outarg_reg (cfg, call, vtarg->dreg, cinfo->ret.reg, FALSE);
-			} else {
-				MonoInst *vtarg;
-				MONO_INST_NEW (cfg, vtarg, OP_X86_PUSH);
-				vtarg->type = STACK_MP;
-				vtarg->sreg1 = call->vret_var->dreg;
-				mono_bblock_add_inst (cfg->cbb, vtarg);
-			}
-
-			/* if the function returns a struct, the called method already does a ret $0x4 */
-			cinfo->stack_usage -= 4;
+			mono_call_inst_add_outarg_reg (cfg, call, vtarg->dreg, cinfo->ret.reg, FALSE);
+		} else {
+			MonoInst *vtarg;
+			MONO_INST_NEW (cfg, vtarg, OP_X86_PUSH);
+			vtarg->type = STACK_MP;
+			vtarg->sreg1 = call->vret_var->dreg;
+			MONO_ADD_INS (cfg->cbb, vtarg);
 		}
-	}
 
-#if defined(__APPLE__)
-	/* FIXME: */
-	g_assert_not_reached ();
-#endif
+		/* if the function returns a struct, the called method already does a ret $0x4 */
+		cinfo->stack_usage -= 4;
+	}
 
 	call->stack_usage = cinfo->stack_usage;
 }

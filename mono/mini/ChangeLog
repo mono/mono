@@ -1,3 +1,7 @@
+2008-03-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-x86.c (mono_arch_emit_call): Fix win32 and apple support.
+
 2008-03-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_decompose_long_opts): Handle OP_LCONV_TO_OVF_U and
