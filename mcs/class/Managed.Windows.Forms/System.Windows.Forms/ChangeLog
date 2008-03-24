@@ -1,3 +1,12 @@
+2008-03-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* BindingSource.cs: When resetting our internal list, compute list
+	item type information to be used for indirect list access. Also
+	implement/tune some properties and methods related to the list access
+	too.
+	* ListBindingHelper.cs: Add a stub for GetListName method, used from
+	BindingSource.
+
 2008-03-24  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridView.cs: If RowCount is increased while ColumnCount

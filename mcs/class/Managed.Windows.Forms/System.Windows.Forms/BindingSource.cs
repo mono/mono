@@ -43,6 +43,8 @@ namespace System.Windows.Forms {
 
 		IList list;
 		//bool list_defaulted;
+		Type item_type;
+		bool item_has_default_ctor;
 
 		object datasource;
 		string datamember;
@@ -128,7 +130,7 @@ namespace System.Windows.Forms {
 
 			if (datasource == null) {
 				l = new BindingList<object>();
-//				list_defaulted = true;
+				//list_defaulted = true;
 			} else if (source == null) {
 				//Infer type based on datasource and datamember,
 				// where datasource is an empty IEnumerable
@@ -148,6 +150,8 @@ namespace System.Windows.Forms {
 			}
 
 			list = l;
+			item_type = ListBindingHelper.GetListItemType (l);
+			item_has_default_ctor = item_type.GetConstructor (new Type [0]) != null;
 		}
 
 		[Browsable (false)]
@@ -171,25 +175,32 @@ namespace System.Windows.Forms {
 				if (allow_new_set)
 					return allow_new;
 
-				if (list.IsFixedSize || list.IsReadOnly)
-					return false;
-
 				if (list is IBindingList)
 					return ((IBindingList)list).AllowNew;
 
-				// XXX we need to check the element
-				// type to see if it has a default
-				// constructor
+				if (list.IsFixedSize || list.IsReadOnly || !item_has_default_ctor)
+					return false;
+
 				return true;
 			}
 			set {
-				if (allow_new != value) {
-					allow_new_set = true;
-					allow_new = value;
+				if (value == allow_new && allow_new_set)
+					return;
 
-					if (raise_list_changed_events)
-						OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, -1));
-				}
+				if (value && (list.IsReadOnly || list.IsFixedSize))
+					throw new InvalidOperationException ();
+
+				allow_new_set = true;
+				allow_new = value;
+
+				if (raise_list_changed_events)
+					OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, -1));
+			}
+		}
+
+		bool IsAddingNewHandled {
+			get {
+				return Events [AddingNewEvent] != null;
 			}
 		}
 
@@ -236,7 +247,7 @@ namespace System.Windows.Forms {
 			set {
 				/* we don't allow null DataMembers */
 				if (value == null)
-					value = "";
+					value = String.Empty;
 
 				if (datamember != value) {
 					this.datamember = value;
@@ -256,7 +267,7 @@ namespace System.Windows.Forms {
 			set {
 				if (datasource != value) {
 					this.datasource = value;
-					datamember = "";
+					datamember = String.Empty;
 
 					ResetList ();
 
@@ -402,7 +413,9 @@ namespace System.Windows.Forms {
 
 		[Browsable (false)]
 		public virtual object SyncRoot {
-			get { throw new NotImplementedException (); }
+			get { 
+				return list.SyncRoot;
+			}
 		}
 
 		static object AddingNewEvent = new object ();
@@ -462,32 +475,40 @@ namespace System.Windows.Forms {
 
 		public virtual int Add (object value)
 		{
-			throw new NotImplementedException ();
+			if (!item_type.IsAssignableFrom (value.GetType ()))
+				throw new ArgumentException ("value");
+
+			return list.Add (value);
 		}
 
 		public virtual object AddNew ()
 		{
-			if (list.IsFixedSize ||
-			    list.IsReadOnly ||
-			    (list is IBindingList && !((IBindingList)list).AllowNew))
+			if (!AllowEdit || !item_has_default_ctor)
 				throw new InvalidOperationException ("Item cannot be added to a read-onlyor fixed-size list.");
 
-			EndEdit ();
+			// FIXME - Remove the comment when we implement EndEdit
+			// EndEdit ();
 
 			AddingNewEventArgs args = new AddingNewEventArgs ();
 			OnAddingNew (args);
 
-			if (args.NewObject != null) {
-				// XXX verify the type here and make sure it matches our internal list
-				list.Add (args.NewObject);
-				return args.NewObject;
+			object new_object = args.NewObject;
+			if (new_object != null) {
+				if (item_type.IsAssignableFrom (new_object.GetType ()))
+					throw new ArgumentException ("value");
+
+				list.Add (new_object);
+				return new_object;
 			}
 
 			// if the list is a IBindingList, try to use IBindingList.AddNew
 			if (list is IBindingList)
 				return ((IBindingList)list).AddNew ();
 
-			throw new NotImplementedException ();
+			// fallback to default .ctor
+			new_object = Activator.CreateInstance (item_type);
+			list.Add (new_object);
+			return new_object;
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -509,17 +530,20 @@ namespace System.Windows.Forms {
 
 		public virtual void Clear ()
 		{
-			throw new NotImplementedException ();
+			if (list.IsReadOnly || list.IsFixedSize)
+				throw new InvalidOperationException ();
+
+			list.Clear ();
 		}
 
 		public virtual bool Contains (object value)
 		{
-			throw new NotImplementedException ();
+			return list.Contains (value);
 		}
 
 		public virtual void CopyTo (Array arr, int index)
 		{
-			throw new NotImplementedException ();
+			list.CopyTo (arr, index);
 		}
 
 		protected override void Dispose (bool disposing)
@@ -549,12 +573,12 @@ namespace System.Windows.Forms {
 
 		public virtual PropertyDescriptorCollection GetItemProperties (PropertyDescriptor[] listAccessors)
 		{
-			throw new NotImplementedException ();
+			return ListBindingHelper.GetListItemProperties (list, listAccessors);
 		}
 
 		public virtual string GetListName (PropertyDescriptor[] listAccessors)
 		{
-			throw new NotImplementedException ();
+			return ListBindingHelper.GetListName (list, listAccessors);
 		}
 
 		public virtual CurrencyManager GetRelatedCurrencyManager (string dataMember)
@@ -564,12 +588,19 @@ namespace System.Windows.Forms {
 
 		public virtual int IndexOf (object value)
 		{
-			throw new NotImplementedException ();
+			return list.IndexOf (value);
 		}
 
 		public virtual void Insert (int index, object value)
 		{
-			throw new NotImplementedException ();
+			if (index < 0 || index > list.Count)
+				throw new ArgumentOutOfRangeException ("index");
+			if (list.IsReadOnly || list.IsFixedSize)
+				throw new NotSupportedException ();
+			if (item_type.IsAssignableFrom (value.GetType ()))
+				throw new ArgumentException ("value");
+
+			list.Insert (index, value);
 		}
 
 		public void MoveFirst ()
@@ -657,12 +688,20 @@ namespace System.Windows.Forms {
 
 		public virtual void Remove (object value)
 		{
-			throw new NotImplementedException ();
+			if (list.IsReadOnly || list.IsFixedSize)
+				throw new InvalidOperationException ();
+
+			list.Remove (value);
 		}
 
 		public virtual void RemoveAt (int index)
 		{
-			throw new NotImplementedException ();
+			if (index < 0 || index > list.Count)
+				throw new ArgumentOutOfRangeException ("index");
+			if (list.IsReadOnly || list.IsFixedSize)
+				throw new InvalidOperationException ();
+
+			list.RemoveAt (index);
 		}
 
 		public void RemoveCurrent ()

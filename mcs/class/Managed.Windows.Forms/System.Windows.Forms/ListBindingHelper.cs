@@ -141,6 +141,11 @@ namespace System.Windows.Forms
 			throw new NotImplementedException ();
 		}
 
+		public static string GetListName (object list, PropertyDescriptor [] listAccessors)
+		{
+			throw new NotImplementedException ();
+		}
+
 		static PropertyDescriptor GetProperty (Type type, string property_name)
 		{
 			PropertyDescriptorCollection properties = TypeDescriptor.GetProperties (type);
