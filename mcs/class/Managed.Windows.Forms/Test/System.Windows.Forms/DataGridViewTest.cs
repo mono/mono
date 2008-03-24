@@ -1,4 +1,4 @@
-// Permission is hereby granted, free of charge, to any person obtaining
+﻿// Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
 // without limitation the rights to use, copy, modify, merge, publish,
@@ -1399,6 +1399,20 @@ namespace MonoTests.System.Windows.Forms
 
 				Application.Run (f);
 			}
+		}
+		
+		[Test]
+		public void RowCountIncrease ()
+		{
+			DataGridView dgv = new DataGridView ();
+			dgv.RowCount = 3;
+			
+			Assert.AreEqual (3, dgv.RowCount, "A1");
+			Assert.AreEqual (1, dgv.ColumnCount, "A2");
+
+			Assert.AreEqual (0, dgv.Rows[0].Index, "A3");
+			Assert.AreEqual (1, dgv.Rows[1].Index, "A4");
+			Assert.AreEqual (2, dgv.Rows[2].Index, "A5");
 		}
 	}
 	

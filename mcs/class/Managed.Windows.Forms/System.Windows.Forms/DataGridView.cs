@@ -617,7 +617,6 @@ namespace System.Windows.Forms {
 		[RefreshProperties (RefreshProperties.Repaint)]
 		[DefaultValue (null)]
 		[AttributeProvider (typeof (IListSource))]
-		// XXX AttributeProviderAtribute
 		public object DataSource {
 			get { return dataSource; }
 			set {
@@ -901,19 +900,18 @@ namespace System.Windows.Forms {
 					}
 				}
 				else if (value > rows.Count) {
-					for (int i = 0; i < value; i++) {
-						// DataGridViewRow row = new DataGridViewRow(); //(DataGridViewRow) rowTemplate.Clone();
-						DataGridViewRow row = (DataGridViewRow) rowTemplate.Clone();
-						rows.Add(row);
-						foreach (DataGridViewColumn col in columns) {
-							row.Cells.Add(col.CellTemplate.Clone() as DataGridViewCell);
-						}
+					// If we need to add rows and don't have any columns,
+					// we create one column
+					if (ColumnCount == 0)
+						ColumnCount = 1;
+
+					for (int i = rows.Count; i < value; i++) {
+						DataGridViewRow row = (DataGridViewRow) RowTemplate.Clone ();
+						rows.AddInternal (row, false);
+						
+						foreach (DataGridViewColumn col in columns)
+							row.Cells.Add (col.CellTemplate.Clone () as DataGridViewCell);
 					}
-				}
-				if (ColumnCount == 0) {
-					///////////////////////////////////////////////////////////////
-					//columns.Add(new DataGridViewTextBoxColumn());
-					throw new NotImplementedException();
 				}
 			}
 		}
