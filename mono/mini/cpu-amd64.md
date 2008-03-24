@@ -483,6 +483,7 @@ amd64_xor_membase_reg: src1:b src2:i len:13
 amd64_mul_membase_reg: src1:b src2:i len:15
 
 amd64_add_membase_imm: src1:b len:16
+amd64_sub_membase_imm: src1:b len:16
 
 float_conv_to_r4: dest:f src1:f
 
@@ -492,8 +493,8 @@ vcall2_membase: src1:b len:64 clob:c
 
 localloc_imm: dest:i len:84
 
-load_mem: dest:i len:10
-loadi8_mem: dest:i len:10
-loadi4_mem: dest:i len:10
-loadu1_mem: dest:i len:10
-loadu2_mem: dest:i len:10
+load_mem: dest:i len:16
+loadi8_mem: dest:i len:16
+loadi4_mem: dest:i len:16
+loadu1_mem: dest:i len:16
+loadu2_mem: dest:i len:16

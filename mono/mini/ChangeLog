@@ -1,5 +1,12 @@
 2008-03-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (op_to_op_src1_membase): Disable OP_X86_COMPARE_MEMBASE8_IMM on
+	amd64 as well.
+	(decompose_opcode): Add some missing opcodes.
+
+	* cpu-amd64.md: Add amd64_sub_membase_imm, fix the lengths of the load_mem 
+	opcodes.
+
 	* method-to-ir.c (mono_method_to_ir2): Fix the amd64 build.
 
 	* mini-<ARCH>.c (mono_arch_emit_call): Remove the unused 'is_virtual' argument.

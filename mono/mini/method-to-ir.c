@@ -5080,6 +5080,7 @@ decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 		break;
 	case OP_ICONV_TO_I4:
 	case OP_ICONV_TO_U4:
+	case OP_ICONV_TO_OVF_I4:
 #if SIZEOF_VOID_P == 4
 	case OP_ICONV_TO_OVF_I:
 	case OP_ICONV_TO_OVF_U_UN:
@@ -5257,6 +5258,7 @@ decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 		break;
 	case OP_LCONV_TO_OVF_I:
 	case OP_LCONV_TO_OVF_U_UN:
+	case OP_LCONV_TO_OVF_U8_UN:
 		ins->opcode = OP_MOVE;
 		break;
 	case OP_LCONV_TO_OVF_I_UN:
@@ -10564,8 +10566,11 @@ op_to_op_src1_membase (int load_opcode, int opcode)
 #endif
 
 #ifdef __x86_64__
+	/* FIXME: This has sign extension issues */
+	/*
 	if ((opcode == OP_ICOMPARE_IMM) && (load_opcode == OP_LOADU1_MEMBASE))
 		return OP_X86_COMPARE_MEMBASE8_IMM;
+	*/
 
 	switch (opcode) {
 	case OP_X86_PUSH:
