@@ -247,6 +247,7 @@ namespace System.Windows.Forms {
 				if (allowUserToAddRows != value) {
 					allowUserToAddRows = value;
 					OnAllowUserToAddRowsChanged(EventArgs.Empty);
+					PrepareEditingRow (false, false);
 				}
 			}
 		}
@@ -3411,6 +3412,24 @@ namespace System.Windows.Forms {
 		protected override void OnHandleCreated (EventArgs e)
 		{
 			base.OnHandleCreated(e);
+			
+			if (Rows.Count > 0 && Columns.Count > 0) {
+				CurrentCell = Rows[0].Cells[0];
+
+				switch (selectionMode) {
+					case DataGridViewSelectionMode.CellSelect:
+					case DataGridViewSelectionMode.RowHeaderSelect:
+					case DataGridViewSelectionMode.ColumnHeaderSelect:
+						SetSelectedCellCore (0, 0, true);
+						break;
+					case DataGridViewSelectionMode.FullRowSelect:
+						SetSelectedRowCore (0, true);
+						break;
+					case DataGridViewSelectionMode.FullColumnSelect:
+						SetSelectedColumnCore (0, true);
+						break;
+				}
+			}
 		}
 
 		protected override void OnHandleDestroyed(EventArgs e)

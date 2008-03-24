@@ -1,5 +1,11 @@
 2008-03-24  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridView.cs: Turn off and on the "new row" when 
+	AllowUserToAddRows is toggled.  When the handle is created,
+	set current cell and selected cell/row/col.
+
+2008-03-24  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ComboBox.cs: When navigating the drop down by keyboard, we
 	need to scroll the list box if our selection moves out of the
 	currently shown items.  [Fixes bug #371990]
