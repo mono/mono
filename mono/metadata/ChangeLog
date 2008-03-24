@@ -1,3 +1,7 @@
+2008-03-24 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Implemented readonly prefix and verify controled mutability pointers.
+
 2008-03-20  Kornél Pál  <kornelpal@gmail.com>
 
 	* file-io.c, filewatcher.c, threadpool.c, threads.c: Removed Windows
