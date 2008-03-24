@@ -1,7 +1,7 @@
 2008-03-24  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini.c (mono_method_to_ir): Implement readonly for ldelema and
-	Array:Address.
+	Array:Address. Fixes #372410.
 
 	* iltests.il.in: New tests for readonly prefix.
 
