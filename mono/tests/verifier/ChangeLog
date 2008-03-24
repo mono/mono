@@ -1,3 +1,9 @@
+2008-03-24 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_cmmp_test.sh: Test generator for readonly pointers.
+
+	* make_test.sh: New tests using the added generator.
+
 2008-03-17 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_constrained_test.sh: Test generator for constrained calls.
