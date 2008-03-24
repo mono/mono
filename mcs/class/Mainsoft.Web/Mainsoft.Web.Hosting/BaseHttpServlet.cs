@@ -136,6 +136,7 @@ namespace Mainsoft.Web.Hosting
 			const string assemblies = "/assemblies";
 			const string getping = "getping";
 			const string setping = "setping";
+            const string version = "2.2";
 			string servletPath = req.getServletPath ();
 
 			if (String.CompareOrdinal (assemblies, 0, servletPath, 0, assemblies.Length) == 0) {
@@ -144,7 +145,7 @@ namespace Mainsoft.Web.Hosting
 					string requestURI = req.getRequestURI ();
 					bool getp = requestURI.EndsWith (getping, StringComparison.Ordinal);
 					if (!getp && requestURI.EndsWith (setping, StringComparison.Ordinal)) {
-						getServletContext ().setAttribute (getping, "1");
+                        getServletContext().setAttribute(getping, version);
 						getp = true;
 					}
 
