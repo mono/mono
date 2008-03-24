@@ -460,6 +460,8 @@ amd64_and_reg_membase: dest:i src1:i src2:b clob:1 len:14
 amd64_or_reg_membase: dest:i src1:i src2:b clob:1 len:14
 amd64_xor_reg_membase: dest:i src1:i src2:b clob:1 len:14
 
+amd64_add_membase_imm: src1:b len:16
+amd64_sub_membase_imm: src1:b len:16
 amd64_and_membase_imm: src1:b len:13
 amd64_or_membase_imm: src1:b len:13
 amd64_xor_membase_imm: src1:b len:13
@@ -481,9 +483,6 @@ amd64_and_membase_reg: src1:b src2:i len:13
 amd64_or_membase_reg: src1:b src2:i len:13
 amd64_xor_membase_reg: src1:b src2:i len:13
 amd64_mul_membase_reg: src1:b src2:i len:15
-
-amd64_add_membase_imm: src1:b len:16
-amd64_sub_membase_imm: src1:b len:16
 
 float_conv_to_r4: dest:f src1:f
 
