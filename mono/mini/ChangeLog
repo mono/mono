@@ -1,3 +1,10 @@
+2008-03-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_decompose_long_opts): Handle OP_LCONV_TO_OVF_U and
+	OP_LCONV_TO_OVF_U_UN.
+
+	* mini-x86.c: Fix x86 build.
+	
 2008-03-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-s390.c (mono_arch_emit_call): Remove some dead code.

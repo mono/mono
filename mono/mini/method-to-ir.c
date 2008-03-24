@@ -5553,7 +5553,9 @@ mono_decompose_long_opts (MonoCompile *cfg)
 				MONO_EMIT_NEW_BIALU (cfg, OP_LCONV_TO_OVF_I4_2, tree->dreg, tree->sreg1 + 1, tree->sreg1 + 2);
 				break;
 			case OP_LCONV_TO_OVF_U4:
+			case OP_LCONV_TO_OVF_U:
 			case OP_LCONV_TO_OVF_U4_UN:
+			case OP_LCONV_TO_OVF_U_UN:
 				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, tree->sreg1 + 2, 0);
 				MONO_EMIT_NEW_COND_EXC (cfg, NE_UN, "OverflowException");
 				MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, tree->dreg, tree->sreg1 + 1);

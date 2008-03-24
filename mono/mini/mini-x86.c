@@ -1681,8 +1681,6 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 	MonoInst *ins, *n;
 
 	MONO_BB_FOR_EACH_INS_SAFE (bb, n, ins) {
-		MonoInst *last_ins = ins->prev;
-
 		switch (ins->opcode) {
 		case OP_ICONST:
 			/* reg = 0 -> XOR (reg, reg) */
@@ -1740,7 +1738,7 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 void
 mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 {
-	MonoInst *ins, *next, *temp;
+	MonoInst *ins, *next;
 
 	if (bb->max_vreg > cfg->rs->next_vreg)
 		cfg->rs->next_vreg = bb->max_vreg;
@@ -1762,7 +1760,7 @@ mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 			 */
 			if ((ins->opcode == OP_IREM_IMM) && mono_is_power_of_two (ins->inst_imm) >= 0)
 				break;
-			mono_decompose_ins_imm (ins);
+			mono_decompose_op_imm (cfg, bb, ins);
 			break;
 		default:
 			break;
