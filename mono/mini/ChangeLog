@@ -1,3 +1,10 @@
+2008-03-24  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini.c (mono_method_to_ir): Implement readonly for ldelema and
+	Array:Address.
+
+	* iltests.il.in: New tests for readonly prefix.
+
 2008-03-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h mini.c mini-trampolines.c: Move trampoline related code to 
