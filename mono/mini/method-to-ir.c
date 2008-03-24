@@ -7365,7 +7365,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				/* Handle tail calls similarly to calls */
 				call->inst.opcode = OP_TAILCALL;
 				call->args = sp;
-				mono_arch_emit_call (cfg, call, FALSE);
+				mono_arch_emit_call (cfg, call);
 #else
 				/*
 				 * We implement tail calls by storing the actual arguments into the 

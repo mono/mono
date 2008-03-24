@@ -1,5 +1,7 @@
 2008-03-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir2): Fix the amd64 build.
+
 	* mini-<ARCH>.c (mono_arch_emit_call): Remove the unused 'is_virtual' argument.
 
 	* mini-x86.c method-to-ir.c mini.c local-propagation.c: Fix some small bugs.
