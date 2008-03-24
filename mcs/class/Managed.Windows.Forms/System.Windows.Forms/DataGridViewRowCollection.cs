@@ -509,9 +509,14 @@ namespace System.Windows.Forms {
 
 		internal void InternalAdd (DataGridViewRow dataGridViewRow)
 		{
-			dataGridViewRow.SetIndex(list.Count);
-			dataGridViewRow.SetDataGridView(dataGridView);
-			list.Add(dataGridViewRow);
+			dataGridViewRow.SetDataGridView (dataGridView);
+			
+			// Add the row just before the editing row (if there is an editing row).
+			if (DataGridView != null && DataGridView.NewRowIndex >= 0) {
+				DataGridView.EditingRow.SetIndex (list.Count);
+				list.Insert (DataGridView.NewRowIndex, dataGridViewRow);
+			} else
+				list.Add (dataGridViewRow);
 		}
 
 		internal ArrayList RowIndexSortedArrayList {

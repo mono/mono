@@ -1,5 +1,11 @@
 2008-03-24  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridViewRowCollection.cs: When adding new rows for
+	databinding, make sure they are place before the add row.
+	[Fixes bug #343961]
+
+2008-03-24  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridViewRow.cs: Draw cells in column DisplayIndex order
 	instead of Index order.
 
