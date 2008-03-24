@@ -1,5 +1,7 @@
 2008-03-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* inssel.brg: Fix the build.
+
 	* iltests.il.in: Add a test for lconv.ovf.u8.un.
 
 2008-03-24  Rodrigo Kumpera  <rkumpera@novell.com>
