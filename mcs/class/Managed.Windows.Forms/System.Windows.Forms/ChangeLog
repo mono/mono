@@ -1,5 +1,10 @@
 2008-03-24  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridViewRow.cs: Draw cells in column DisplayIndex order
+	instead of Index order.
+
+2008-03-24  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridView.cs: If columns are added by increasing ColumnCount,
 	they need to be DataGridViewTextBoxColumns, not DataGridViewColumn.
 	[Fixes bug #325588]

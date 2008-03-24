@@ -490,8 +490,9 @@ namespace System.Windows.Forms {
 				bounds.Width -= DataGridView.RowHeadersWidth;
 			}
 			
-			foreach (DataGridViewCell cell in Cells) {
-				bounds.Width = DataGridView.Columns[cell.ColumnIndex].Width;
+			foreach (DataGridViewColumn col in sortedColumns) {
+				bounds.Width = col.Width;
+				DataGridViewCell cell = Cells[col.Index];
 				
 				graphics.FillRectangle (Brushes.White, bounds);
 				
