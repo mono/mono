@@ -425,6 +425,14 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		[Test]
 		public void DataMember_ListRelationship ()
 		{
+			ListView lv = new ListView ();
+			BindingSource source = new BindingSource ();
+
+			// Empty IEnumerable, that also implements IList
+			source.DataSource = lv.Items;
+			source.DataMember = "Text";
+			Assert.IsTrue (source.List is BindingList<string>, "1");
+			Assert.AreEqual (0, source.List.Count, "2");
 		}
 
 		[Test]
