@@ -1,3 +1,9 @@
+2008-03-24  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ComboBox.cs: When navigating the drop down by keyboard, we
+	need to scroll the list box if our selection moves out of the
+	currently shown items.  [Fixes bug #371990]
+
 2008-03-24  Luke Page <luke.a.page@gmail.com>
 
 	* RichTextBox.cs: Handles visible rtf tag and no longer shows the text

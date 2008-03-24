@@ -1567,6 +1567,9 @@ namespace System.Windows.Forms
 			{
 				case Keys.Up:
 					SelectedIndex = Math.Max(SelectedIndex-1, 0);
+
+					if (SelectedIndex < listbox_ctrl.FirstVisibleItem ())
+						listbox_ctrl.Scroll (SelectedIndex - listbox_ctrl.FirstVisibleItem ());
 					break;
 	
 				case Keys.Down:
@@ -1574,16 +1577,25 @@ namespace System.Windows.Forms
 						DropDownListBox ();
 					else
 						SelectedIndex = Math.Min(SelectedIndex+1, Items.Count-1);
+						
+						if (SelectedIndex >= listbox_ctrl.LastVisibleItem ())
+							listbox_ctrl.Scroll (SelectedIndex - listbox_ctrl.LastVisibleItem () + 1);
 					break;
 				
 				case Keys.PageUp:
 					if (listbox_ctrl != null)
 						SelectedIndex = Math.Max(SelectedIndex- (listbox_ctrl.page_size-1), 0);
+
+					if (SelectedIndex < listbox_ctrl.FirstVisibleItem ())
+						listbox_ctrl.Scroll (SelectedIndex - listbox_ctrl.FirstVisibleItem ());
 					break;
 	
 				case Keys.PageDown:
 					if (listbox_ctrl != null)
 						SelectedIndex = Math.Min(SelectedIndex+(listbox_ctrl.page_size-1), Items.Count-1);
+
+					if (SelectedIndex >= listbox_ctrl.LastVisibleItem ())
+						listbox_ctrl.Scroll (SelectedIndex - listbox_ctrl.LastVisibleItem () + 1);
 					break;
 					
 				case Keys.Escape:
@@ -2276,7 +2288,7 @@ namespace System.Windows.Forms
 					Invalidate (GetItemDisplayRectangle (index, top_item));
 			}
 
-			private int LastVisibleItem ()
+			public int LastVisibleItem ()
 			{
 				Rectangle item_rect;
 				int top_y = textarea_drawable.Y + textarea_drawable.Height;
@@ -2300,6 +2312,11 @@ namespace System.Windows.Forms
 				Invalidate ();
 			}
 
+			public int FirstVisibleItem ()
+			{
+				return top_item;
+			}
+			
 			bool scrollbar_grabbed = false;
 
 			bool InScrollBar {
