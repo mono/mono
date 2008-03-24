@@ -383,6 +383,7 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 #define NEW_I8CONST(cfg,dest,val) do {  \
         MONO_INST_NEW ((cfg), (dest), OP_I8CONST); \
         (dest)->dreg = alloc_lreg ((cfg)); \
+        (dest)->type = STACK_I8; \
         (dest)->inst_l = (val); \
 	} while (0)
 

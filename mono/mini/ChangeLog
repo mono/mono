@@ -1,5 +1,7 @@
 2008-03-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (NEW_I8CONST): Set ins->type.
+
 	* cpu-amd64.md (lcompare_imm): Move the _membase_imm opcodes to one place.
 
 	* method-to-ir.c (op_to_op_src1_membase): Disable OP_X86_COMPARE_MEMBASE8_IMM on
