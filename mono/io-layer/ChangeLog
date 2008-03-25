@@ -1,3 +1,11 @@
+2008-03-25  Dick Porter  <dick@ximian.com>
+
+	* wapi-private.h (_WAPI_HANDLE_VERSION): Increment file layout
+	version
+
+	* threads.c: Make thread handles private to the process that owns
+	them.
+
 2008-03-22  Kornél Pál  <kornelpal@gmail.com>
 
 	* io-layer.h: Windows: Rename GetProcessId to __GetProcessId for targets not
