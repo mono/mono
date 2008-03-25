@@ -359,6 +359,17 @@ namespace MonoTests.System.Reflection
 #endif // TARGET_JVM
 
 		[Test]
+		[ExpectedException (typeof (TargetInvocationException))]
+		public void InvokeInvalidOpExceptionThrow () {
+			MethodInfo mi = typeof (MethodInfoTest).GetMethod ("ThrowMethod");
+			mi.Invoke(null, null);
+		}
+
+		public static void ThrowMethod () {
+			throw new InvalidOperationException ();
+		}
+
+		[Test]
 		public void InvokeGenericVtype ()
 		{
 			KeyValuePair<string, uint> kvp = new KeyValuePair<string, uint> ("a", 21);

@@ -1,3 +1,7 @@
+2008-03-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* MethodInfoTest.cs: Add a test for #373448.
+
 2008-03-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* BinderTests.cs: Add tests for #367655.
