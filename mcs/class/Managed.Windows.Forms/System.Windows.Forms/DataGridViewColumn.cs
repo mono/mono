@@ -240,6 +240,8 @@ Example */
 			}
 		}
 
+		internal bool HeaderTextSet { get { return headerTextSet; } }
+		
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]

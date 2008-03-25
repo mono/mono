@@ -44,7 +44,6 @@ namespace System.Windows.Forms {
 		private bool displayed;
 		private string errorText;
 		private bool isInEditMode;
-		private DataGridViewColumn owningColumn;
 		private DataGridViewRow owningRow;
 		private DataGridViewTriState readOnly;
 		private bool selected;
@@ -218,7 +217,12 @@ namespace System.Windows.Forms {
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public DataGridViewColumn OwningColumn {
-			get { return owningColumn; }
+			get {
+				if (DataGridView == null || columnIndex == -1)
+					return null;
+					
+				return DataGridView.Columns[columnIndex];
+			}
 		}
 
 		[Browsable (false)]
@@ -419,7 +423,6 @@ namespace System.Windows.Forms {
 			result.displayed = this.displayed;
 			result.errorText = this.errorText;
 			result.isInEditMode = this.isInEditMode;
-			result.owningColumn = this.owningColumn;
 			result.owningRow = this.owningRow;
 			result.readOnly = this.readOnly;
 			result.selected = this.selected;
@@ -1443,7 +1446,7 @@ namespace System.Windows.Forms {
 		}
 		
 		internal void SetOwningColumn (DataGridViewColumn col) {
-			owningColumn = col;
+			columnIndex = col.Index;
 		}
 
 		internal void SetColumnIndex (int index) {

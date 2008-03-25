@@ -146,8 +146,8 @@ namespace System.Windows.Forms {
 		protected override object GetValue (int rowIndex) {
 			if (header_text != null)
 				return header_text;
-				
-			if (OwningColumn != null)
+
+			if (OwningColumn != null && !OwningColumn.HeaderTextSet)
 				return OwningColumn.Name;
 			
 			return null;

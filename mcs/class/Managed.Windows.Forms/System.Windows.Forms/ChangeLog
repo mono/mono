@@ -1,5 +1,14 @@
 2008-03-25  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridViewCell.cs: Remove storage for owning column, just
+	use column index.
+	* DataGridViewColumn.cs: Make getter for HeaderTextSet.
+	* DataGridViewColumnHeaderCell.cs: If the header text has been
+	explicitly set, return it.
+	[Fixes bug #325979]
+
+2008-03-25  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridViewRowCollection.cs: Disable row sharing when
 	using data binding.  Its a great feature, but lets work on
 	getting DGV usable first before we worry about optimizations.

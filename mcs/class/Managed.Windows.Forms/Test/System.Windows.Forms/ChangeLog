@@ -1,3 +1,7 @@
+2008-03-25  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridViewTest.cs: Enable gert's test for bug #325979.
+
 2008-03-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* BindingSourceTest.cs: Re-activate some tests and also add a new
