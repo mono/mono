@@ -12,6 +12,11 @@ class Program
 	{
 		return f ("function");
 	}
+	
+    static string Bar ()
+	{
+		return Foo (str => str.ToLower ());
+	}
 
 	static void Main ()
 	{
