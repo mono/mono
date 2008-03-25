@@ -1,3 +1,7 @@
+2008-03-25 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_method_verify): Proper prefix validation.
+
 2008-03-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_InternalInvoke): Return exceptions thrown by the icall
