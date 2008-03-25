@@ -82,9 +82,13 @@ PLATFORM_PATH_SEPARATOR = :
 endif
 
 # Use --compile-all as a poor man's PEVerify to detect invalid IL
+# Skip net 2.1 assemblies for now because of visibility problems
 mcs-compileall: mono-wrapper etc/mono/config
 	save_MONO_PATH=$$MONO_PATH; mcs_topdir=`cd $(mcs_topdir) && $(cur_dir_cmd)`; ok=:; \
 	for profile in $(build_profiles); do \
+	  if [ "net_2_1" = "$$profile" ]; then \
+          break; \
+      fi; \
 	  if [ "net_3_5" = "$$profile" ]; then \
 		  MONO_PATH="$$mcs_topdir/class/lib/$$profile$(PLATFORM_PATH_SEPARATOR)$$mcs_topdir/class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$save_MONO_PATH"; \
 	  else \
