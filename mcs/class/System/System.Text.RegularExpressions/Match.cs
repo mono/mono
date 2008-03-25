@@ -83,7 +83,7 @@ namespace System.Text.RegularExpressions {
 			this.groups = new GroupCollection (1);
 			groups.SetValue (this, 0);
 		}
-#if !TARGET_JVM 
+
 		internal Match (Regex regex, IMachine machine, string text, int text_length, int n_groups, 
 				int index, int length) :
 			base (text, index, length) {
@@ -91,7 +91,7 @@ namespace System.Text.RegularExpressions {
 			this.machine = machine;
 			this.text_length = text_length;
 		}
-
+#if !TARGET_JVM
 		internal Match (Regex regex, IMachine machine, string text, int text_length, int n_groups, 
 				int index, int length, int n_caps) :
 			base (text, index, length, n_caps)
