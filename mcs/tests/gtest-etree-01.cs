@@ -149,7 +149,7 @@ class MyTypeExplicit
 {
 	int value;
 	
-	public class MyTypeExplicit (int value)
+	public MyTypeExplicit (int value)
 	{
 		this.value = value;
 	}
