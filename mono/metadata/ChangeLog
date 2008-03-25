@@ -1,3 +1,10 @@
+2008-03-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_InternalInvoke): Return exceptions thrown by the icall
+	itself in a separate argument instead of throwing them. Fixes #373448.
+
+	* appdomain.c: Bump corlib version.
+
 2008-03-24 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c: Implemented readonly prefix and verify controled mutability pointers.
