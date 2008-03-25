@@ -1,7 +1,10 @@
 2008-03-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir2): Implement generic sharing of NEWOBJ and
+	LDTOKEN.
+
 	* method-to-ir.c (mono_method_to_ir2): Simplify the newobj vtype code a bit.
-	
+
 	* method-to-ir.c: Disable generic sharing for most opcodes to avoid running into
 	not-implemented parts.
 

@@ -2515,13 +2515,11 @@ mini_emit_check_array_type (MonoCompile *cfg, MonoInst *obj, MonoClass *array_cl
 {
 	int vtable_reg = alloc_preg (cfg);
 
-	MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOAD_MEMBASE, vtable_reg, 
-								   obj->dreg, G_STRUCT_OFFSET (MonoObject, vtable));
+	MONO_EMIT_NEW_LOAD_MEMBASE (cfg, vtable_reg, obj->dreg, G_STRUCT_OFFSET (MonoObject, vtable));
 				       
 	if (cfg->opt & MONO_OPT_SHARED) {
 		int class_reg = alloc_preg (cfg);
-		MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOAD_MEMBASE, class_reg, 
-									   vtable_reg, G_STRUCT_OFFSET (MonoVTable, klass));
+		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, class_reg, vtable_reg, G_STRUCT_OFFSET (MonoVTable, klass));
 		if (cfg->compile_aot) {
 			int klass_reg = alloc_preg (cfg);
 			MONO_EMIT_NEW_CLASSCONST (cfg, klass_reg, array_class);
@@ -3281,6 +3279,34 @@ handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box)
 	}
 
 	return mono_emit_jit_icall (cfg, alloc_ftn, iargs);
+}
+
+static MonoInst*
+handle_alloc_from_inst (MonoCompile *cfg, MonoClass *klass, MonoInst *vtable_inst,
+						gboolean for_box)
+{
+	MonoInst *iargs [2];
+	MonoMethod *managed_alloc = NULL;
+	/*
+	  FIXME: we cannot get managed_alloc here because we can't get
+	  the class's vtable (because it's not a closed class)
+
+	MonoVTable *vtable = mono_class_vtable (cfg->domain, klass);
+	MonoMethod *managed_alloc = mono_gc_get_managed_allocator (vtable, for_box);
+	*/
+
+	g_assert (!(cfg->opt & MONO_OPT_SHARED));
+	g_assert (!cfg->compile_aot);
+
+	if (managed_alloc) {
+		iargs [0] = vtable_inst;
+		g_assert_not_reached ();
+		//return mono_emit_method_call_spilled (cfg, bblock, managed_alloc, mono_method_signature (managed_alloc), iargs, ip, NULL);
+	}
+
+	iargs [0] = vtable_inst;
+
+	return mono_emit_jit_icall (cfg, mono_object_new_specific, iargs);
 }
 	
 static MonoInst*
@@ -8377,6 +8403,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			MonoInst *iargs [2];
 			MonoMethodSignature *fsig;
 			MonoInst *alloc;
+			gboolean generic_shared = FALSE;
 			
 			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
@@ -8390,8 +8417,15 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if (!mono_class_init (cmethod->klass))
 				goto load_error;
 
-			if (cfg->generic_sharing_context && mono_method_check_context_used (cmethod))
-				GENERIC_SHARING_FAILURE (CEE_NEWOBJ);
+			if (cfg->generic_sharing_context) {
+				int context_used = mono_method_check_context_used (cmethod);
+
+				if (context_used & MONO_GENERIC_CONTEXT_USED_METHOD)
+					GENERIC_SHARING_FAILURE (CEE_NEWOBJ);
+
+				if (context_used)
+					generic_shared = TRUE;
+			}
 
 			if (mono_security_get_mode () == MONO_SECURITY_MODE_CAS) {
 				if (check_linkdemand (cfg, method, cmethod))
@@ -8447,9 +8481,11 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			iargs [0] = NULL;
 
 			if (mini_class_is_system_array (cmethod->klass)) {
+				g_assert (!generic_shared);
 				EMIT_NEW_METHODCONST (cfg, *sp, cmethod);
 				alloc = handle_array_new (cfg, fsig->param_count, sp, ip);
 			} else if (cmethod->string_ctor) {
+				g_assert (!generic_shared);
 				/* we simply pass a null pointer */
 				EMIT_NEW_PCONST (cfg, *sp, NULL); 
 				/* now call the string ctor */
@@ -8469,6 +8505,20 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					 * iargs [0] to be a boxed instance, but luckily the vcall
 					 * will be transformed into a normal call there.
 					 */
+				} else if (generic_shared) {
+					MonoInst *this = NULL, *rgctx, *vtable;
+
+					GENERIC_SHARING_FAILURE_IF_VALUETYPE_METHOD (*ip);
+
+					if (!(method->flags & METHOD_ATTRIBUTE_STATIC))
+						EMIT_NEW_ARGLOAD (cfg, this, 0);
+					rgctx = get_runtime_generic_context (cfg, method, this);
+					vtable = get_runtime_generic_context_ptr (cfg, method, cmethod->klass,
+						token, MINI_TOKEN_SOURCE_METHOD, generic_context,
+						rgctx, MONO_RGCTX_INFO_VTABLE);
+
+					alloc = handle_alloc_from_inst (cfg, cmethod->klass, vtable, FALSE);
+					*sp = alloc;
 				} else {
 					MonoVTable *vtable = mono_class_vtable (cfg->domain, cmethod->klass);
 					/*
@@ -8513,6 +8563,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 						INLINE_FAILURE;
 						mono_emit_method_call (cfg, cmethod, fsig, sp, callvirt_this_arg);
 					}
+				} else if (generic_shared && cmethod->klass->valuetype) {
+					NOT_IMPLEMENTED;
 				} else {
 					INLINE_FAILURE;
 					mono_emit_method_call (cfg, cmethod, fsig, sp, callvirt_this_arg);
@@ -8888,6 +8940,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		case CEE_STSFLD: {
 			MonoClassField *field;
 			gpointer addr = NULL;
+			gboolean generic_shared = FALSE;
+			int relation = 0;
 
 			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
@@ -8904,8 +8958,36 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if (!dont_verify && !cfg->skip_visibility && !mono_method_can_access_field (method, field))
 				FIELD_ACCESS_FAILURE;
 
-			if (cfg->generic_sharing_context && mono_class_check_context_used (klass))
+			/*
+			 * We can only support shared generic static
+			 * field access on architectures where the
+			 * trampoline code has been extended to handle
+			 * the generic class init.
+			 */
+#ifndef MONO_ARCH_VTABLE_REG
+			GENERIC_SHARING_FAILURE (*ip);
+#endif
+
+			if (cfg->generic_sharing_context) {
+				int context_used = mono_class_check_context_used (klass);
+
+				if (context_used & MONO_GENERIC_CONTEXT_USED_METHOD ||
+						klass->valuetype)
+					GENERIC_SHARING_FAILURE (*ip);
+
+				if (context_used) {
+					relation = mono_class_generic_class_relation (klass, MONO_RGCTX_INFO_VTABLE,
+						method->klass, generic_context, NULL);
+					generic_shared = TRUE;
+				}
+
+				// FIXME:
+				if (method->flags & METHOD_ATTRIBUTE_STATIC)
+					GENERIC_SHARING_FAILURE (*ip);
+
+				// FIXME:
 				GENERIC_SHARING_FAILURE (*ip);
+			}
 
 			g_assert (!(field->type->attrs & FIELD_ATTRIBUTE_LITERAL));
 
@@ -8919,7 +9001,63 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				addr = g_hash_table_lookup (cfg->domain->special_static_fields, field);
 			mono_domain_unlock (cfg->domain);
 
-			if ((cfg->opt & MONO_OPT_SHARED) || (cfg->compile_aot && addr)) {
+			if (generic_shared) {
+				MonoInst *this, *rgctx, *static_data;
+
+				GENERIC_SHARING_FAILURE_IF_VALUETYPE_METHOD (*ip);
+
+				/*
+				g_print ("sharing static field access in %s.%s.%s - depth %d offset %d\n",
+					method->klass->name_space, method->klass->name, method->name,
+					depth, field->offset);
+				*/
+
+				if (mono_class_needs_cctor_run (klass, method)) {
+					MonoInst *vtable;
+
+					if (!(method->flags & METHOD_ATTRIBUTE_STATIC))
+						EMIT_NEW_ARGLOAD (cfg, this, 0);
+					else
+						this = NULL;
+
+					if (relation == MINI_GENERIC_CLASS_RELATION_SELF && this) {
+						int vtable_reg = mono_alloc_preg (cfg);
+						EMIT_NEW_LOAD_MEMBASE (cfg, vtable, OP_LOAD_MEMBASE, vtable_reg, this->dreg, G_STRUCT_OFFSET (MonoObject, vtable));
+					} else {
+						MonoInst *rgctx = get_runtime_generic_context (cfg, method, this);
+
+						vtable = get_runtime_generic_context_ptr (cfg, method, klass,
+							token, MINI_TOKEN_SOURCE_FIELD, generic_context,
+							rgctx, MONO_RGCTX_INFO_VTABLE);
+					}
+
+					// FIXME: This doesn't work since it tries to pass the argument
+					// in the normal way, instead of using MONO_ARCH_VTABLE_REG
+					mono_emit_native_call (cfg, mono_get_trampoline_code (MONO_TRAMPOLINE_GENERIC_CLASS_INIT), helper_sig_generic_class_init_trampoline, &vtable);
+				}
+
+				/*
+				 * The pointer we're computing here is
+				 *
+				 *   super_info.static_data + field->offset
+				 */
+
+				if (!(method->flags & METHOD_ATTRIBUTE_STATIC))
+					EMIT_NEW_ARGLOAD (cfg, this, 0);
+				else
+					this = NULL;
+				rgctx = get_runtime_generic_context (cfg, method, this);
+				static_data = get_runtime_generic_context_ptr (cfg, method, klass,
+					token, MINI_TOKEN_SOURCE_FIELD, generic_context,
+					rgctx, MONO_RGCTX_INFO_STATIC_DATA);
+
+				if (field->offset == 0) {
+					ins = static_data;
+				} else {
+					int addr_reg = mono_alloc_preg (cfg);
+					EMIT_NEW_BIALU_IMM (cfg, ins, OP_PADD_IMM, addr_reg, static_data->dreg, field->offset);
+				}
+			} else if ((cfg->opt & MONO_OPT_SHARED) || (cfg->compile_aot && addr)) {
 				MonoInst *iargs [2];
 
 				g_assert (field->parent);
@@ -8981,7 +9119,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			} else {
 				gboolean is_const = FALSE;
 				MonoVTable *vtable = mono_class_vtable (cfg->domain, klass);
-				if (!((cfg->opt & MONO_OPT_SHARED) || cfg->compile_aot) && 
+				if (!generic_shared && !((cfg->opt & MONO_OPT_SHARED) || cfg->compile_aot) && 
 				    vtable->initialized && (field->type->attrs & FIELD_ATTRIBUTE_INIT_ONLY)) {
 					gpointer addr = (char*)vtable->data + field->offset;
 					int ro_type = field->type->type;
@@ -9462,9 +9600,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 				if (context_used & MONO_GENERIC_CONTEXT_USED_METHOD)
 					GENERIC_SHARING_FAILURE (CEE_LDTOKEN);
-
-				// FIXME:
-				GENERIC_SHARING_FAILURE (CEE_LDTOKEN);
 			}
 
 			if (cfg->opt & MONO_OPT_SHARED) {
@@ -9491,10 +9626,21 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					(strcmp (cmethod->name, "GetTypeFromHandle") == 0)) {
 					MonoClass *tclass = mono_class_from_mono_type (handle);
 					mono_class_init (tclass);
-					if (cfg->compile_aot)
+					if (context_used) {
+						MonoInst *this, *rgctx;
+
+						g_assert (!cfg->compile_aot);
+						if (!(method->flags & METHOD_ATTRIBUTE_STATIC))
+							EMIT_NEW_ARGLOAD (cfg, this, 0);
+						rgctx = get_runtime_generic_context (cfg, method, this);
+						ins = get_runtime_generic_context_ptr (cfg, method, tclass,
+							token, MINI_TOKEN_SOURCE_CLASS, generic_context,
+							rgctx, MONO_RGCTX_INFO_REFLECTION_TYPE);
+					} else if (cfg->compile_aot) {
 						EMIT_NEW_TYPE_FROM_HANDLE_CONST (cfg, ins, image, n);
-					else
+					} else {
 						EMIT_NEW_PCONST (cfg, ins, mono_type_get_object (cfg->domain, handle));
+					}
 					ins->type = STACK_OBJ;
 					ins->klass = cmethod->klass;
 					ip += 5;
