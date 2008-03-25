@@ -1,5 +1,9 @@
 2008-03-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* AppDomain.cs: Update after MonoMethod.InternalInvoke signature change.
+
+	* Environment.cs: Bump corlib version.
+
 	* DateTime.cs: Fix a warning.
 
 2008-03-21  Sebastien Pouliot  <sebastien@ximian.com>

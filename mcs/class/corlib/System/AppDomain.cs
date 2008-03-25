@@ -739,10 +739,14 @@ namespace System {
 			bool pushed = false;
 
 			try {
+				Exception exc;
 				InternalPushDomainRef (domain);
 				pushed = true;
 				InternalSetDomain (domain);
-				return ((MonoMethod) method).InternalInvoke (obj, args);
+				object o = ((MonoMethod) method).InternalInvoke (obj, args, out exc);
+				if (exc != null)
+					throw exc;
+				return o;
 			}
 			finally {
 				InternalSetDomain (current);
@@ -757,10 +761,14 @@ namespace System {
 			bool pushed = false;
 
 			try {
+				Exception exc;
 				InternalPushDomainRefByID (domain_id);
 				pushed = true;
 				InternalSetDomainByID (domain_id);
-				return ((MonoMethod) method).InternalInvoke (obj, args);
+				object o = ((MonoMethod) method).InternalInvoke (obj, args, out exc);
+				if (exc != null)
+					throw exc;
+				return o;
 			}
 			finally {
 				InternalSetDomain (current);
