@@ -186,7 +186,7 @@ namespace Mono.CSharp {
 				if (Expr == null)
 					return false;
 				
-				if (Expr is ExpressionStatement)
+				if (Expr is ExpressionStatement && (Expr is Assign || TypeManager.IsEqual (Expr.Type, ec.ReturnType)))
 					return true;
 				
 				Expr.Error_InvalidExpressionStatement ();

@@ -1,5 +1,10 @@
 2008-03-25  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #370577
+	* lambda.cs: Check return type too.
+
+2008-03-25  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #372846
 	* class.cs: Automatic properties can be declared as unsafe.
 
