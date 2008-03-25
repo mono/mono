@@ -1,3 +1,8 @@
+2008-03-25  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Generic sharing of the non-nullable case of the box
+	instruction.
+
 2008-03-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* inssel.brg: Fix the build.
