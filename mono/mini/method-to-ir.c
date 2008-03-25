@@ -1985,7 +1985,8 @@ mono_save_token_info (MonoCompile *cfg, MonoImage *image, guint32 token, gpointe
  * the bb (i.e. before emitting a branch).
  */
 static int
-handle_stack_args (MonoCompile *cfg, MonoInst **sp, int count) {
+handle_stack_args (MonoCompile *cfg, MonoInst **sp, int count)
+{
 	int i, bindex;
 	MonoBasicBlock *bb = cfg->cbb;
 	MonoBasicBlock *outb;
@@ -2486,6 +2487,38 @@ mini_emit_memcpy2 (MonoCompile *cfg, int destreg, int doffset, int srcreg, int s
 		soffset += 1;
 		size -= 1;
 	}
+}
+
+static void
+mini_emit_check_array_type (MonoCompile *cfg, MonoInst *obj, MonoClass *array_class)
+{
+	int vtable_reg = alloc_preg (cfg);
+
+	MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOAD_MEMBASE, vtable_reg, 
+								   obj->dreg, G_STRUCT_OFFSET (MonoObject, vtable));
+				       
+	if (cfg->opt & MONO_OPT_SHARED) {
+		int class_reg = alloc_preg (cfg);
+		MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOAD_MEMBASE, class_reg, 
+									   vtable_reg, G_STRUCT_OFFSET (MonoVTable, klass));
+		if (cfg->compile_aot) {
+			int klass_reg = alloc_preg (cfg);
+			MONO_EMIT_NEW_CLASSCONST (cfg, klass_reg, array_class);
+			MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, class_reg, klass_reg);
+		} else {
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, class_reg, array_class);
+		}
+	} else {
+		if (cfg->compile_aot) {
+			int vt_reg = alloc_preg (cfg);
+			MONO_EMIT_NEW_VTABLECONST (cfg, vt_reg, mono_class_vtable (cfg->domain, array_class));
+			MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, vtable_reg, vt_reg);
+		} else {
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, vtable_reg, mono_class_vtable (cfg->domain, array_class));
+		}
+	}
+	
+	MONO_EMIT_NEW_COND_EXC (cfg, NE_UN, "ArrayTypeMismatchException");
 }
 
 static int
@@ -6508,7 +6541,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 	MonoSecurityManager* secman = NULL;
 	MonoDeclSecurityActions actions;
 	GSList *class_inits = NULL;
-	gboolean dont_verify, dont_verify_stloc;
+	gboolean dont_verify, dont_verify_stloc, readonly = FALSE;
 
 	/* serialization and xdomain stuff may need access to private fields and methods */
 	dont_verify = method->klass->image->assembly->corlib_internal? TRUE: FALSE;
@@ -7512,6 +7545,10 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 					*sp++ = ins;
 				} else if (strcmp (cmethod->name, "Address") == 0) { /* array Address */
+					if (!cmethod->klass->element_class->valuetype && !readonly)
+						mini_emit_check_array_type (cfg, sp [0], cmethod->klass);
+					
+					readonly = FALSE;
 					addr = mini_emit_ldelema_ins (cfg, cmethod, sp, ip, FALSE);
 					*sp++ = addr;
 				} else {
@@ -9048,37 +9085,10 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			 * to be for correctness. the wrappers are lax with their usage
 			 * so we need to ignore them here
 			 */
-			if (!klass->valuetype && method->wrapper_type == MONO_WRAPPER_NONE) {
-				MonoClass* array_class = mono_array_class_get (klass, 1);
-				int vtable_reg = alloc_preg (cfg);
+			if (!klass->valuetype && method->wrapper_type == MONO_WRAPPER_NONE && !readonly)
+				mini_emit_check_array_type (cfg, sp [0], mono_array_class_get (klass, 1));
 
-				MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOAD_MEMBASE, vtable_reg, 
-											   sp [0]->dreg, G_STRUCT_OFFSET (MonoObject, vtable));
-				       
-				if (cfg->opt & MONO_OPT_SHARED) {
-					int class_reg = alloc_preg (cfg);
-					MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOAD_MEMBASE, class_reg, 
-												   vtable_reg, G_STRUCT_OFFSET (MonoVTable, klass));
-					if (cfg->compile_aot) {
-						int klass_reg = alloc_preg (cfg);
-						MONO_EMIT_NEW_CLASSCONST (cfg, klass_reg, array_class);
-						MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, class_reg, klass_reg);
-					} else {
-						MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, class_reg, array_class);
-					}
-				} else {
-					if (cfg->compile_aot) {
-						int vt_reg = alloc_preg (cfg);
-						MONO_EMIT_NEW_VTABLECONST (cfg, vt_reg, mono_class_vtable (cfg->domain, array_class));
-						MONO_EMIT_NEW_BIALU (cfg, OP_COMPARE, -1, vtable_reg, vt_reg);
-					} else {
-						MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, vtable_reg, mono_class_vtable (cfg->domain, array_class));
-					}
-				}
-	
-				MONO_EMIT_NEW_COND_EXC (cfg, NE_UN, "ArrayTypeMismatchException");
-			}
-
+			readonly = FALSE;
 			ins = mini_emit_ldelema_1_ins (cfg, klass, sp [0], sp [1]);
 			*sp++ = ins;
 			ip += 5;
@@ -10099,6 +10109,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				break;
 			}
 			case CEE_READONLY_:
+				readonly = TRUE;
 				ip += 2;
 				break;
 			default:
@@ -11395,7 +11406,7 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
  *   arguments, or stores killing loads etc. Also, should we fold loads into other
  *   instructions if the result of the load is used multiple times ?
  * - make the REM_IMM optimization in mini-x86.c arch-independent.
- * - LAST MERGE: 98831.
+ * - LAST MERGE: 98947.
  * - merge the extensible gctx changes.
  * - when returning vtypes in registers, generate IR and append it to the end of the
  *   last bb instead of doing it in the epilog.

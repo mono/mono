@@ -1,3 +1,7 @@
+2008-03-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* interlocked-2.2.cs: Add tests for Interlocked.Increment/Decrement on longs.
+
 2008-03-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* assemblyresolve/Makefile.am (MCS): Use gmcs.exe instead of mcs.exe.

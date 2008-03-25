@@ -32,6 +32,19 @@
 
 	* mini-x86.c: Fix x86 build.
 	
+2008-03-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel.brg: Fix the build.
+
+	* iltests.il.in: Add a test for lconv.ovf.u8.un.
+
+2008-03-24  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini.c (mono_method_to_ir): Implement readonly for ldelema and
+	Array:Address. Fixes #372410.
+
+	* iltests.il.in: New tests for readonly prefix.
+
 2008-03-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-s390.c (mono_arch_emit_call): Remove some dead code.
