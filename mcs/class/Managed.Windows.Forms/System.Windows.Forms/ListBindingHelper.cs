@@ -143,7 +143,11 @@ namespace System.Windows.Forms
 
 		public static string GetListName (object list, PropertyDescriptor [] listAccessors)
 		{
-			throw new NotImplementedException ();
+			if (list == null)
+				return String.Empty;
+
+			Type item_type = GetListItemType (list);
+			return item_type.Name;
 		}
 
 		static PropertyDescriptor GetProperty (Type type, string property_name)

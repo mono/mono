@@ -1,5 +1,9 @@
 2008-03-25  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListBindingHelper.cs: Actually implement GetListName method.
+
+2008-03-25  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* BindingSource.cs: Throw the propert expceptions for some methods, as
 	well as detect the list item type for Add method if DataSource is null.
 
