@@ -1,3 +1,9 @@
+2008-03-25  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridViewRowCollection.cs: Disable row sharing when
+	using data binding.  Its a great feature, but lets work on
+	getting DGV usable first before we worry about optimizations.
+
 2008-03-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* BindingSource.cs: When resetting our internal list, compute list

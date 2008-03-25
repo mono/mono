@@ -517,6 +517,8 @@ namespace System.Windows.Forms {
 				list.Insert (DataGridView.NewRowIndex, dataGridViewRow);
 			} else
 				list.Add (dataGridViewRow);
+				
+			dataGridViewRow.SetIndex (list.IndexOf (dataGridViewRow));
 		}
 
 		internal ArrayList RowIndexSortedArrayList {
