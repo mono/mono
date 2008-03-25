@@ -314,6 +314,18 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (null, ListBindingHelper.GetListItemType (null), "#E2");
 		}
 
+		[Test]
+		public void GetListNameTest ()
+		{
+			List<int> list = new List<int> ();
+			int [] arr = new int [0];
+			SimpleItem item = new SimpleItem ();
+
+			Assert.AreEqual (typeof (int).Name, ListBindingHelper.GetListName (list, null), "1");
+			Assert.AreEqual (typeof (int).Name, ListBindingHelper.GetListName (arr, null), "2");
+			Assert.AreEqual (typeof (SimpleItem).Name, ListBindingHelper.GetListName (item, null), "3");
+			Assert.AreEqual (String.Empty, ListBindingHelper.GetListName (null, null), "4");
+		}
 	}
 }
 
