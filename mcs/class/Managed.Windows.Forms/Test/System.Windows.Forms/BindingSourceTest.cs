@@ -350,6 +350,25 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 
 			source.Remove ("A");
 			Assert.AreEqual (0, list.Count, "2");
+
+			// Different type, - no exception
+			source.Remove (7);
+
+			// Fixed size
+			try {
+				source.DataSource = new int [0];
+				source.Remove (7);
+				Assert.Fail ("exc1");
+			} catch (NotSupportedException) {
+			}
+
+			// Read only
+			try {
+				source.DataSource = Array.AsReadOnly (new int [0]);
+				source.Remove (7);
+				Assert.Fail ("exc2");
+			} catch (NotSupportedException) {
+			}
 		}
 
 		[Test]
@@ -612,12 +631,48 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		{
 			BindingSource source = new BindingSource ();
 
-			source.Add (new object ());
-			Assert.AreEqual (1, source.List.Count, "1");
-
 			source.DataSource = new List<string> ();
 			source.Add ("A");
 			Assert.AreEqual (1, source.List.Count, "2");
+
+			// Different item type
+			try {
+				source.Add (4);
+				Assert.Fail ("exc1");
+			} catch (InvalidOperationException) {
+			}
+
+			// FixedSize
+			try {
+				source.DataSource = new int [0];
+				source.Add (7);
+				Assert.Fail ("exc2");
+			} catch (NotSupportedException) {
+			}
+
+			// ReadOnly
+			try {
+				source.DataSource = Array.AsReadOnly (new int [0]);
+				source.Add (7);
+				Assert.Fail ("exc3");
+			} catch (NotSupportedException) {
+			}
+		}
+
+		[Test]
+		public void Add_NullDataSource ()
+		{
+			BindingSource source = new BindingSource ();
+
+			source.Add ("A");
+			Assert.AreEqual (1, source.List.Count, "1");
+			Assert.IsTrue (source.List is BindingList<string>, "2");
+			Assert.IsNull (source.DataSource, "3");
+
+			source = new BindingSource ();
+			source.Add (null);
+			Assert.IsTrue (source.List is BindingList<object>, "4");
+			Assert.AreEqual (1, source.List.Count, "5");
 		}
 
 		[Test]
@@ -803,6 +858,51 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			Assert.IsTrue (source.IsBindingSuspended, "3");
 			source.ResumeBinding ();
 			Assert.IsTrue (source.IsBindingSuspended, "4");
+		}
+
+		[Test]
+		public void Clear ()
+		{
+			BindingSource source = new BindingSource ();
+			List<string> list = new List<string> ();
+			list.Add ("A");
+			list.Add ("B");
+
+			source.DataSource = list;
+			source.Clear ();
+			Assert.AreEqual (0, source.List.Count, "1");
+			Assert.IsTrue (source.List is List<string>, "2");
+
+			// Exception only for ReadOnly, not for fixed size
+			source.DataSource = new int [0];
+			source.Clear ();
+
+			try {
+				source.DataSource = Array.AsReadOnly (new int [0]);
+				source.Clear ();
+				Assert.Fail ("exc1");
+			} catch (NotSupportedException) {
+			}
+		}
+
+		[Test]
+		public void Clear_NullDataSource ()
+		{
+			BindingSource source = new BindingSource ();
+
+			source.Add ("A");
+			Assert.AreEqual (1, source.List.Count, "1");
+			Assert.IsTrue (source.List is BindingList<string>, "2");
+			Assert.IsNull (source.DataSource, "3");
+
+			source.Clear ();
+			Assert.AreEqual (0, source.List.Count, "4");
+			Assert.IsTrue (source.List is BindingList<string>, "5");
+
+			// Change list item type after clearing
+			source.Add (7);
+			Assert.AreEqual (1, source.List.Count, "6");
+			Assert.IsTrue (source.List is BindingList<int>, "7");
 		}
 
 		class BindingListViewPoker : BindingList<string>, IBindingListView
