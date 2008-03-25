@@ -97,6 +97,10 @@
 			goto exception_exit;	\
 		}			\
 	} while (0)
+#define GENERIC_SHARING_FAILURE_IF_VALUETYPE_METHOD(opcode) do {			\
+		if (method->klass->valuetype)	\
+			GENERIC_SHARING_FAILURE ((opcode)); \
+	} while (0)
 
 /* Determine whenever 'ins' represents a load of the 'this' argument */
 #define MONO_CHECK_THIS(ins) (mono_method_signature (cfg->method)->hasthis && ((ins)->opcode == OP_MOVE) && ((ins)->sreg1 == cfg->args [0]->dreg))
@@ -7452,36 +7456,14 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 						(cmethod_context && cmethod_context->method_inst && cmethod->flags & METHOD_ATTRIBUTE_VIRTUAL))) {
 					GENERIC_SHARING_FAILURE (*ip);
 				}
+
+				// FIXME:
+				GENERIC_SHARING_FAILURE (*ip);
 			}
 
 			if (pass_rgctx) {
 				if (context_used) {
 					NOT_IMPLEMENTED;
-#if 0
-					MonoInst *this = NULL, *rgctx, *vtable, *field_offset, *field_addr;
-
-					GENERIC_SHARING_FAILURE_IF_VALUETYPE_METHOD (*ip);
-
-					if (!(method->flags & METHOD_ATTRIBUTE_STATIC))
-						NEW_ARGLOAD (cfg, this, 0);
-					rgctx = get_runtime_generic_context (cfg, method, this, ip);
-					vtable = get_runtime_generic_context_ptr (cfg, method, bblock, cmethod->klass,
-						token, MINI_TOKEN_SOURCE_METHOD, generic_context,
-						rgctx, MONO_RGCTX_INFO_VTABLE, ip);
-
-					NEW_ICONST (cfg, field_offset, G_STRUCT_OFFSET (MonoVTable, runtime_generic_context));
-
-					MONO_INST_NEW (cfg, field_addr, OP_PADD);
-					field_addr->cil_code = ip;
-					field_addr->inst_left = vtable;
-					field_addr->inst_right = field_offset;
-					field_addr->type = STACK_PTR;
-
-					MONO_INST_NEW (cfg, rgctx_arg, CEE_LDIND_I);
-					rgctx_arg->cil_code = ip;
-					rgctx_arg->inst_left = field_addr;
-					rgctx_arg->type = STACK_PTR;
-#endif
 				} else {
 					MonoVTable *vtable = mono_class_vtable (cfg->domain, cmethod->klass);
 
@@ -7531,7 +7513,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			/* Tail prefix */
 			if ((ins_flag & MONO_INST_TAILCALL) && cmethod && (*ip == CEE_CALL) &&
 				 (mono_metadata_signature_equal (mono_method_signature (method), mono_method_signature (cmethod)))) {
-				int i;
 				MonoCallInst *call;
 
 				GENERIC_SHARING_FAILURE (*ip);
@@ -9134,15 +9115,19 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					else
 						GENERIC_SHARING_FAILURE (CEE_NEWARR);
 				}
+
+				// FIXME:
+				GENERIC_SHARING_FAILURE (CEE_NEWARR);
 			}
 
 			if (shared_access) {
+				/* FIXME: Decompose later to help abcrem */
+				NOT_IMPLEMENTED;
+#if 0
 				MonoInst *rgctx;
 				MonoInst *args [3];
 
-				NOT_IMPLEMENTED;
-#if 0
-				/* FIXME: Decompose later to help abcrem */
+
 
 				/* domain */
 				EMIT_NEW_DOMAINCONST (cfg, args [0]);
@@ -9447,6 +9432,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		case CEE_LDTOKEN: {
 			gpointer handle;
 			MonoClass *handle_class;
+			int context_used = 0;
 
 			CHECK_STACK_OVF (1);
 
@@ -9461,13 +9447,34 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			}
 			else {
 				handle = mono_ldtoken (image, n, &handle_class, generic_context);
-				if (cfg->generic_sharing_context &&
-						mono_class_check_context_used (handle_class))
-					GENERIC_SHARING_FAILURE (CEE_LDTOKEN);
 			}
 			if (!handle)
 				goto load_error;
 			mono_class_init (handle_class);
+
+			if (cfg->generic_sharing_context) {
+				if (handle_class == mono_defaults.typehandle_class) {
+					/* If we get a MONO_TYPE_CLASS
+					   then we need to provide the
+					   open type, not an
+					   instantiation of it. */
+					if (mono_type_get_type (handle) == MONO_TYPE_CLASS)
+						context_used = 0;
+					else
+						context_used = mono_class_check_context_used (mono_class_from_mono_type (handle));
+				} else if (handle_class == mono_defaults.fieldhandle_class)
+					context_used = mono_class_check_context_used (((MonoClassField*)handle)->parent);
+				else if (handle_class == mono_defaults.methodhandle_class)
+					context_used = mono_method_check_context_used (handle);
+				else
+					g_assert_not_reached ();
+
+				if (context_used & MONO_GENERIC_CONTEXT_USED_METHOD)
+					GENERIC_SHARING_FAILURE (CEE_LDTOKEN);
+
+				// FIXME:
+				GENERIC_SHARING_FAILURE (CEE_LDTOKEN);
+			}
 
 			if (cfg->opt & MONO_OPT_SHARED) {
 				MonoInst *addr, *vtvar, *iargs [3];

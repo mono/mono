@@ -146,8 +146,8 @@ handle_store_float (MonoCompile *cfg, MonoBasicBlock *bblock, MonoInst *ptr, Mon
 /* FIXME: Make these static again */
 MonoMethodSignature *helper_sig_class_init_trampoline = NULL;
 MonoMethodSignature *helper_sig_domain_get = NULL;
-static MonoMethodSignature *helper_sig_generic_class_init_trampoline = NULL;
-static MonoMethodSignature *helper_sig_rgctx_lazy_fetch_trampoline = NULL;
+MonoMethodSignature *helper_sig_generic_class_init_trampoline = NULL;
+MonoMethodSignature *helper_sig_rgctx_lazy_fetch_trampoline = NULL;
 
 static guint32 default_opt = 0;
 static gboolean default_opt_set = FALSE;
@@ -4922,8 +4922,8 @@ get_runtime_generic_context (MonoCompile *cfg, MonoMethod *method, MonoInst *thi
 	}
 }
 
-static gpointer
-create_rgctx_lazy_fetch_trampoline (guint32 offset)
+gpointer
+mono_create_rgctx_lazy_fetch_trampoline (guint32 offset)
 {
 	gpointer tramp, ptr;
 
@@ -4952,7 +4952,7 @@ static MonoInst*
 lazy_fetch_rgctx_direct_field (MonoCompile *cfg, MonoBasicBlock *bblock, MonoInst *rgc_ptr, int offset, unsigned char *ip)
 {
 	MonoMethodSignature *sig = helper_sig_rgctx_lazy_fetch_trampoline;
-	guint8 *tramp = create_rgctx_lazy_fetch_trampoline (MONO_RGCTX_ENCODE_DIRECT_OFFSET (offset));
+	guint8 *tramp = mono_create_rgctx_lazy_fetch_trampoline (MONO_RGCTX_ENCODE_DIRECT_OFFSET (offset));
 	int temp;
 	MonoInst *field;
 
@@ -4967,7 +4967,7 @@ static MonoInst*
 lazy_fetch_rgctx_indirect_field (MonoCompile *cfg, MonoBasicBlock *bblock, MonoInst *rgc_ptr, int offset, unsigned char *ip)
 {
 	MonoMethodSignature *sig = helper_sig_rgctx_lazy_fetch_trampoline;
-	guint8 *tramp = create_rgctx_lazy_fetch_trampoline (MONO_RGCTX_ENCODE_INDIRECT_OFFSET (offset));
+	guint8 *tramp = mono_create_rgctx_lazy_fetch_trampoline (MONO_RGCTX_ENCODE_INDIRECT_OFFSET (offset));
 	int temp;
 	MonoInst *field;
 
