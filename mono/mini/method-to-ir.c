@@ -8377,7 +8377,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			MonoInst *iargs [2];
 			MonoMethodSignature *fsig;
 			MonoInst *alloc;
-			int temp;
 			
 			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
@@ -8439,9 +8438,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				break;
 			}
 
-			if (bblock->out_of_line && cmethod->klass->image == mono_defaults.corlib && n ==0)
-				printf ("HIT!\n");
-
 			/* move the args to allow room for 'this' in the first position */
 			while (n--) {
 				--sp;
@@ -8463,13 +8459,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				
 				if (cmethod->klass->valuetype) {
 					iargs [0] = mono_compile_create_var (cfg, &cmethod->klass->byval_arg, OP_LOCAL);
-					temp = iargs [0]->inst_c0;
-
-					EMIT_NEW_TEMPLOADA (cfg, *sp, temp);
-
-					handle_initobj (cfg, *sp, NULL, cmethod->klass, stack_start, sp);
-
-					EMIT_NEW_TEMPLOADA (cfg, *sp, temp);
+					MONO_EMIT_NEW_VZERO (cfg, iargs [0]->dreg, cmethod->klass);
+					EMIT_NEW_TEMPLOADA (cfg, *sp, iargs [0]->inst_c0);
 
 					alloc = NULL;
 
@@ -8502,6 +8493,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				if (alloc)
 					MONO_EMIT_NEW_UNALU (cfg, OP_NOT_NULL, -1, alloc->dreg);
 
+				/* Now call the actual ctor */
 				/* Avoid virtual calls to ctors if possible */
 				if (cmethod->klass->marshalbyref)
 					callvirt_this_arg = sp [0];
@@ -8522,7 +8514,6 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 						mono_emit_method_call (cfg, cmethod, fsig, sp, callvirt_this_arg);
 					}
 				} else {
-					/* now call the actual ctor */
 					INLINE_FAILURE;
 					mono_emit_method_call (cfg, cmethod, fsig, sp, callvirt_this_arg);
 				}
