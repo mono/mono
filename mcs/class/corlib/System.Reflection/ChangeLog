@@ -1,5 +1,8 @@
 2008-03-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* MonoCMethod.cs (Invoke): Avoid a crash if this is called on a ctor of an open
+	generic type. Fixes #373459.
+	
 	* MonoMethod.cs (InternalInvoke): Add an out 'exc' argument used to distinguish
 	exceptions thrown by the icall from the exceptions thrown by the wrapped method.
 	Fixes #373448.

@@ -412,6 +412,11 @@ namespace System.Reflection {
 				SecurityManager.ReflectedLinkDemandInvoke (this);
 			}
 
+#if NET_2_0
+			if (obj == null && DeclaringType.ContainsGenericParameters)
+				throw new MemberAccessException ("Cannot create an instance of " + DeclaringType + " because Type.ContainsGenericParameters is true.");
+#endif
+
 			Exception exc = null;
 			object o = null;
 
