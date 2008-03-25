@@ -1729,7 +1729,6 @@ namespace System
 			if (dayofweek != -1 && dayofweek != (int) result.DayOfWeek)
 				return false;
 
-			bool kind_specified = true;
 			TimeSpan utcoffset;
 
 			bool adjustToUniversal = (style & DateTimeStyles.AdjustToUniversal) != 0;
