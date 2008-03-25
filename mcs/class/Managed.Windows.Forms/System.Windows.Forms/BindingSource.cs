@@ -149,10 +149,16 @@ namespace System.Windows.Forms {
 				l = (IList)Activator.CreateInstance (t);
 			}
 
+			SetList (l);
+		}
+
+		void SetList (IList l)
+		{
 			list = l;
-			item_type = ListBindingHelper.GetListItemType (l);
+			item_type = ListBindingHelper.GetListItemType (list);
 			item_has_default_ctor = item_type.GetConstructor (new Type [0]) != null;
 		}
+
 
 		[Browsable (false)]
 		public virtual bool AllowEdit {
@@ -475,8 +481,23 @@ namespace System.Windows.Forms {
 
 		public virtual int Add (object value)
 		{
-			if (!item_type.IsAssignableFrom (value.GetType ()))
-				throw new ArgumentException ("value");
+			// 
+			// First (re)create the BindingList<T> based on value
+			// if datasource is null and the current list is empty
+			//
+			if (datasource == null && list.Count == 0 && value != null) {
+				Type t = typeof (BindingList<>).MakeGenericType (new Type [] { value.GetType () } );
+				IList l = (IList) Activator.CreateInstance (t);
+				SetList (l);
+			}
+
+			if (value != null && !item_type.IsAssignableFrom (value.GetType ()))
+				throw new InvalidOperationException ("Objects added to the list must all be of the same type.");
+			if (list.IsReadOnly)
+				throw new NotSupportedException ("Collection is read-only.");
+			if (list.IsFixedSize)
+				throw new NotSupportedException ("Collection has a fixed size.");
+
 
 			return list.Add (value);
 		}
@@ -530,8 +551,8 @@ namespace System.Windows.Forms {
 
 		public virtual void Clear ()
 		{
-			if (list.IsReadOnly || list.IsFixedSize)
-				throw new InvalidOperationException ();
+			if (list.IsReadOnly)
+				throw new NotSupportedException ("Collection is read-only.");
 
 			list.Clear ();
 		}
@@ -688,8 +709,10 @@ namespace System.Windows.Forms {
 
 		public virtual void Remove (object value)
 		{
-			if (list.IsReadOnly || list.IsFixedSize)
-				throw new InvalidOperationException ();
+			if (list.IsReadOnly)
+				throw new NotSupportedException ("Collection is read-only.");
+			if (list.IsFixedSize)
+				throw new NotSupportedException ("Collection has a fixed size.");
 
 			list.Remove (value);
 		}
