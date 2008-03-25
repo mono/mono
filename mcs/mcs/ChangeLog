@@ -1,3 +1,8 @@
+2008-03-25  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #372846
+	* class.cs: Automatic properties can be declared as unsafe.
+
 2008-03-20  Marek Safar  <marek.safar@gmail.com>
 
 	* location.cs: Use string based concatenation.

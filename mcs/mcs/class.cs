@@ -6884,7 +6884,7 @@ namespace Mono.CSharp {
 			// Make the field
 			Field field = new Field (
 				Parent, Type,
-				Modifiers.COMPILER_GENERATED | Modifiers.PRIVATE | (ModFlags & Modifiers.STATIC),
+				Modifiers.COMPILER_GENERATED | Modifiers.PRIVATE | (ModFlags & (Modifiers.STATIC | Modifiers.UNSAFE)),
 			    "<" + Name + ">k__BackingField", null, Location);
 			((TypeContainer)Parent).AddField (field);
 
