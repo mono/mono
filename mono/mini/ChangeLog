@@ -1,5 +1,7 @@
 2008-03-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c: Port some of the generic sharing changes.
+
 	* mini-amd64.c (add_valuetype): Fix handling of vtypes in the managed case.
 
 2008-03-24  Zoltan Varga  <vargaz@gmail.com>
