@@ -1,5 +1,10 @@
 2008-03-25  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridViewCell.cs: I don't know why I commented this out,
+	putting it back for now.
+
+2008-03-25  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridViewCell.cs: Remove storage for owning column, just
 	use column index.
 	* DataGridViewColumn.cs: Make getter for HeaderTextSet.

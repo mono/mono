@@ -505,7 +505,7 @@ namespace System.Windows.Forms {
 			DataGridViewColumn col = OwningColumn;
 			DataGridViewRow row = OwningRow;
 
-			//if (DataGridView == null) {
+			if (DataGridView == null) {
 				if (row != null) {
 					if (row.Resizable == DataGridViewTriState.True)
 						result |= DataGridViewElementStates.Resizable;
@@ -527,7 +527,7 @@ namespace System.Windows.Forms {
 				}
 				
 				return result;
-			//}
+			}
 			
 			if (col != null) {
 				if (col.Resizable == DataGridViewTriState.True && row.Resizable == DataGridViewTriState.True)
