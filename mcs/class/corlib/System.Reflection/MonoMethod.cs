@@ -123,7 +123,7 @@ namespace System.Reflection {
 		 * binder to match the types of the method signature.
 		 */
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern Object InternalInvoke (Object obj, Object[] parameters);
+		internal extern Object InternalInvoke (Object obj, Object[] parameters, out Exception exc);
 		
 		public override Object Invoke (Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) 
 		{
@@ -145,12 +145,14 @@ namespace System.Reflection {
 				throw new InvalidOperationException ("Late bound operations cannot be performed on types or methods for which ContainsGenericParameters is true.");
 #endif
 
+			Exception exc;
+			object o = null;
+
 			try {
-				return InternalInvoke (obj, parameters);
-			} catch (InvalidOperationException) {
-				throw;
-			} catch (TargetException) {
-				throw;
+				// The ex argument is used to distinguish exceptions thrown by the icall
+				// from the exceptions thrown by the called method (which need to be
+				// wrapped in TargetInvocationException).
+				o = InternalInvoke (obj, parameters, out exc);
 #if NET_2_0
 			} catch (ThreadAbortException) {
 				throw;
@@ -162,6 +164,10 @@ namespace System.Reflection {
 			} catch (Exception e) {
 				throw new TargetInvocationException (e);
 			}
+
+			if (exc != null)
+				throw exc;
+			return o;
 		}
 
 		public override RuntimeMethodHandle MethodHandle { 
@@ -389,7 +395,7 @@ namespace System.Reflection {
 		 * to match the types of the method signature.
 		 */
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern Object InternalInvoke (Object obj, Object[] parameters);
+		internal extern Object InternalInvoke (Object obj, Object[] parameters, out Exception exc);
 
 		public override Object Invoke (Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) 
 		{
@@ -406,12 +412,11 @@ namespace System.Reflection {
 				SecurityManager.ReflectedLinkDemandInvoke (this);
 			}
 
+			Exception exc = null;
+			object o = null;
+
 			try {
-				return InternalInvoke (obj, parameters);
-			} catch (InvalidOperationException) {
-				throw;
-			} catch (TargetException) {
-				throw;
+				o = InternalInvoke (obj, parameters, out exc);
 #if NET_2_1
 			} catch (MethodAccessException) {
 				throw;
@@ -419,6 +424,10 @@ namespace System.Reflection {
 			} catch (Exception e) {
 				throw new TargetInvocationException (e);
 			}
+
+			if (exc != null)
+				throw exc;
+			return o;
 		}
 
 		public override Object Invoke (BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) {

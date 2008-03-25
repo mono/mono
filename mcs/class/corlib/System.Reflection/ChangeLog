@@ -1,3 +1,9 @@
+2008-03-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* MonoMethod.cs (InternalInvoke): Add an out 'exc' argument used to distinguish
+	exceptions thrown by the icall from the exceptions thrown by the wrapped method.
+	Fixes #373448.
+
 2008-03-17  Marek Safar  <marek.safar@gmail.com>
 
 	* MonoMethod.cs (ToString): Print VarArgs argument.
