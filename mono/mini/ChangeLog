@@ -1,3 +1,7 @@
+2008-03-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (add_valuetype): Fix handling of vtypes in the managed case.
+
 2008-03-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (NEW_I8CONST): Set ins->type.

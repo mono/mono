@@ -528,7 +528,7 @@ add_valuetype (MonoGenericSharingContext *gsctx, MonoMethodSignature *sig, ArgIn
 			if (sig->pinvoke)
 				*stack_size += ALIGN_TO (info->native_size, 8);
 			else
-				*stack_size = nquads * sizeof (gpointer);
+				*stack_size += nquads * sizeof (gpointer);
 			ainfo->storage = ArgOnStack;
 		}
 	}
