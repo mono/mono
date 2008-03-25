@@ -1,5 +1,7 @@
 2008-03-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* ConstructorInfoTest.cs: Add a test for #373459.
+
 	* MethodInfoTest.cs: Add a test for #373448.
 
 2008-03-14  Zoltan Varga  <vargaz@gmail.com>

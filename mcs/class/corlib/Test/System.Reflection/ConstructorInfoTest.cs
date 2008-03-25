@@ -87,5 +87,18 @@ namespace MonoTests.System.Reflection
 		class Foo : AbstractFoo
 		{
 		}
+
+#if NET_2_0
+		[Test]
+		[ExpectedException (typeof (MemberAccessException))]
+		public void InvokeOpenGenericType () {
+			typeof (Gen<>).GetConstructor (Type.EmptyTypes).Invoke (null);
+		}
+
+		public class Gen<T> {
+			public Gen() {
+			}
+		}
+#endif			
 	}
 }
