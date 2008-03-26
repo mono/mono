@@ -1,3 +1,6 @@
+2008-03-25  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-oprofile.c: Fixed bug with memory region indexes.
+
 2008-03-18  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-oprofile.c:
 	OPEN_FILE(): Fixed file creation.
