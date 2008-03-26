@@ -9747,6 +9747,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					if (context_used) {
 						MonoInst *this, *rgctx;
 
+						GENERIC_SHARING_FAILURE (CEE_LDTOKEN);						
 						g_assert (!cfg->compile_aot);
 						if (!(method->flags & METHOD_ATTRIBUTE_STATIC))
 							EMIT_NEW_ARGLOAD (cfg, this, 0);
@@ -10180,6 +10181,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			case CEE_LDFTN: {
 				MonoInst *argconst;
 				MonoMethod *cil_method, *ctor_method;
+				gboolean is_shared;
 
 				CHECK_STACK_OVF (1);
 				CHECK_OPSIZE (6);
@@ -10191,6 +10193,10 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
  
 				if (cfg->generic_sharing_context && mono_method_check_context_used (cmethod))
 					GENERIC_SHARING_FAILURE (CEE_LDFTN);
+
+				is_shared = (cmethod->flags & METHOD_ATTRIBUTE_STATIC) &&
+					(cmethod->klass->generic_class || cmethod->klass->generic_container) &&
+					mono_class_generic_sharing_enabled (cmethod->klass);
 
 				cil_method = cmethod;
 				if (!dont_verify && !cfg->skip_visibility && !mono_method_can_access_method (method, cmethod))
@@ -10209,7 +10215,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				 */
 #if defined(MONO_ARCH_HAVE_CREATE_DELEGATE_TRAMPOLINE) && !defined(HAVE_WRITE_BARRIERS)
 				/* FIXME: SGEN support */
-				if ((sp > stack_start) && (ip + 6 + 5 < end) && ip_in_bb (cfg, bblock, ip + 6) && (ip [6] == CEE_NEWOBJ) && (ctor_method = mini_get_method (method, read32 (ip + 7), NULL, generic_context)) && (ctor_method->klass->parent == mono_defaults.multicastdelegate_class)) {
+				if (!is_shared && (sp > stack_start) && (ip + 6 + 5 < end) && ip_in_bb (cfg, bblock, ip + 6) && (ip [6] == CEE_NEWOBJ) && (ctor_method = mini_get_method (method, read32 (ip + 7), NULL, generic_context)) && (ctor_method->klass->parent == mono_defaults.multicastdelegate_class)) {
 					MonoInst *target_ins;
 
 					ip += 6;
@@ -10224,7 +10230,10 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				}
 #endif
 
-				EMIT_NEW_METHODCONST (cfg, argconst, cmethod);
+				if (is_shared)
+					EMIT_NEW_METHODCONST (cfg, argconst, mono_marshal_get_static_rgctx_invoke (cmethod));
+				else
+					EMIT_NEW_METHODCONST (cfg, argconst, cmethod);
 				if (method->wrapper_type != MONO_WRAPPER_SYNCHRONIZED)
 					ins = mono_emit_jit_icall (cfg, mono_ldftn, &argconst);
 				else

@@ -48,6 +48,20 @@ public class GenClass <T> where T : class, new ()
 	public static T call_static_T_static (T t) {
 		return call2_T (t);
 	}
+
+	public Type ldtoken_type_T () {
+		return typeof (T);
+	}
+
+	public Type ldtoken_type_constructed_T () {
+		return typeof (GenClass <T>);
+	}
+
+	public static int static_field = 54321;
+
+	public static int static_method () {
+		return static_field;
+	}
 }
 
 public class Tests
@@ -107,6 +121,25 @@ public class Tests
 
 	public static int test_0_call_static_T_static () {
 		if (GenClass <string>.call_static_T_static ("FOO") != "FOO2")
+			return 1;
+		return 0;
+	}
+
+	public static int test_0_ldtoken_type () {
+		if (new GenClass <object> ().ldtoken_type_T () != typeof (object))
+			return 1;
+		if (new GenClass <string> ().ldtoken_type_T () != typeof (string))
+			return 2;
+		if (new GenClass <object> ().ldtoken_type_constructed_T () != typeof (GenClass <object>))
+			return 3;
+		if (new GenClass <string> ().ldtoken_type_constructed_T () != typeof (GenClass <string>))
+			return 4;
+		return 0;
+	}
+
+	public static int test_0_static_shared_method_delegate () {
+		var ivdel = new Func <int> (GenClass<string>.static_method);
+		if (ivdel () != 54321)
 			return 1;
 		return 0;
 	}
