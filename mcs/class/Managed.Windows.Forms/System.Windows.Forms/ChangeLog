@@ -1,3 +1,9 @@
+2008-03-26  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TreeNodeCollection.cs: Don't increment count until we've
+	saved our index to return.
+	[Fixes bug #373603]
+
 2008-03-25  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Label.cs: Add padding to the label's AutoSize calculation.

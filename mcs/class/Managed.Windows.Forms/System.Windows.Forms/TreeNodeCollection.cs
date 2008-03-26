@@ -133,8 +133,9 @@ namespace System.Windows.Forms {
 			} else {
 				if (count >= nodes.Length)
 					Grow ();
-				nodes [count++] = node;
+				nodes[count] = node;
 				res = count;
+				count++;
 			}
 
 			SetupNode (node);

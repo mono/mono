@@ -66,6 +66,20 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void NodeAddIndex ()
+		{
+			TreeView tv = new TreeView ();
+
+			TreeNode tn1 = new TreeNode ("blah");
+			TreeNode tn2 = new TreeNode ("blah2");
+			TreeNode tn3 = new TreeNode ("blah3");
+
+			Assert.AreEqual (0, tv.Nodes.Add (tn1), "A1");
+			Assert.AreEqual (1, tv.Nodes.Add (tn2), "A2");
+			Assert.AreEqual (2, tv.Nodes.Add (tn3), "A3");
+		}
+		
+		[Test]
 		public void NodesCopyToTest ()
 		{
 			TreeView tv = new TreeView();
