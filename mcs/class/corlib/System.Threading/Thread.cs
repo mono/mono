@@ -103,7 +103,7 @@ namespace System.Threading {
 		 * when a new field is added to the unmanaged MonoThread structure.
 		 */
 		private IntPtr small_id;
-		private IntPtr unused6;
+		private IntPtr manage_callback;
 		private IntPtr unused7;
 		volatile int critical_region_level;
 		#endregion
