@@ -1,3 +1,7 @@
+2008-03-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir2): Ongoing generic sharing work.
+
 2008-03-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir2): Implement generic sharing of NEWOBJ and
