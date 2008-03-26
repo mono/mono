@@ -1,3 +1,12 @@
+2008-03-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (check_for_method_verify): Avoid verifying mscorlib methods even if
+	mono_verify_all is set.
+
+	* driver.c (compile_all_methods_thread_main): Don't exit at the first error.
+
+	* mini.c mini.h: Remove the unused and incomplete stack merge verification code.
+
 2008-03-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* driver.c (compile_all_methods_thread_main): Error out if compilation fails with
