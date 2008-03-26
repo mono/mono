@@ -1,5 +1,11 @@
 2008-03-26  Lluis Sanchez Gual <lluis@novell.com> 
 
+	* MapCodeGenerator.cs, XmlTypeMapMember.cs, XmlTypeMapMemberElement.cs:
+	  If a value type field has the IsNullable property set to true,
+	  generate it as System.Nullable<T>.
+
+2008-03-26  Lluis Sanchez Gual <lluis@novell.com> 
+
 	* XmlSchemaImporter.cs: Fix problem with primitive types with a forced
 	  base class. It happens for example when a web service declares a
 	  soap header of type bool. The schema exporter needs to generate a

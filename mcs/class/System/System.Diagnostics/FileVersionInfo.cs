@@ -73,6 +73,23 @@ namespace System.Diagnostics {
 
 		private FileVersionInfo ()
 		{
+#if NET_2_0
+			// no nulls (for unavailable items)
+			comments = null;
+			companyname = null;
+			filedescription = null;
+			filename = null;
+			fileversion = null;
+			internalname = null;
+			language = null;
+			legalcopyright = null;
+			legaltrademarks = null;
+			originalfilename = null;
+			privatebuild = null;
+			productname = null;
+			productversion = null;
+			specialbuild = null;
+#else
 			// no nulls (for unavailable items)
 			comments = String.Empty;
 			companyname = String.Empty;
@@ -88,6 +105,7 @@ namespace System.Diagnostics {
 			productname = String.Empty;
 			productversion = String.Empty;
 			specialbuild = String.Empty;
+#endif
 			// This is here just to shut the compiler up
 			isdebug=false;
 			ispatched=false;

@@ -100,6 +100,15 @@ namespace System.Xml.Serialization
 			get { return _isTextCollector; }
 			set { _isTextCollector = value; }
 		}
+		
+		public override bool RequiresNullable {
+			get {
+				foreach (XmlTypeMapElementInfo einfo in ElementInfo)
+					if (einfo.IsNullable)
+						return true;
+				return false;
+			}
+		}
 	}
 
 	// XmlTypeMapMemberList

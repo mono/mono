@@ -176,7 +176,7 @@ namespace System.Xml.Serialization {
 
 			if (map.BaseMap != null && map.BaseMap.TypeData.SchemaType != SchemaTypes.XmlNode)
 			{
-				CodeTypeReference ctr = GetDomType (map.BaseMap.TypeData);
+				CodeTypeReference ctr = GetDomType (map.BaseMap.TypeData, false);
 				codeClass.BaseTypes.Add (ctr);
 				if (map.BaseMap.IncludeInSchema) {
 					ExportMapCode (map.BaseMap, false);
@@ -278,12 +278,12 @@ namespace System.Xml.Serialization {
 
 		CodeTypeMember CreateFieldMember (CodeTypeDeclaration codeClass, TypeData type, string name)
 		{
-			return CreateFieldMember (codeClass, GetDomType (type), name, System.DBNull.Value, null, null);
+			return CreateFieldMember (codeClass, GetDomType (type, false), name, System.DBNull.Value, null, null);
 		}
 
 		CodeTypeMember CreateFieldMember (CodeTypeDeclaration codeClass, XmlTypeMapMember member)
 		{
-			return CreateFieldMember (codeClass, GetDomType (member.TypeData), member.Name, member.DefaultValue, member.TypeData, member.Documentation);
+			return CreateFieldMember (codeClass, GetDomType (member.TypeData, member.RequiresNullable), member.Name, member.DefaultValue, member.TypeData, member.Documentation);
 		}
 		
 		CodeTypeMember CreateFieldMember (CodeTypeDeclaration codeClass, CodeTypeReference type, string name, object defaultValue, TypeData defaultType, string documentation)
@@ -630,14 +630,14 @@ namespace System.Xml.Serialization {
 		}
 #endif
 		
-		CodeTypeReference GetDomType (TypeData data)
+		CodeTypeReference GetDomType (TypeData data, bool requiresNullable)
 		{
 #if NET_2_0
-			if (data.IsValueType && data.IsNullable)
+			if (data.IsValueType && (data.IsNullable || requiresNullable))
 				return new CodeTypeReference ("System.Nullable", new CodeTypeReference (data.FullTypeName));
 #endif
 			if (data.SchemaType == SchemaTypes.Array)
-				return new CodeTypeReference (GetDomType (data.ListItemTypeData),1);
+				return new CodeTypeReference (GetDomType (data.ListItemTypeData, false),1);
 			else
 				return new CodeTypeReference (data.FullTypeName);
 		}
@@ -682,7 +682,7 @@ namespace System.Xml.Serialization {
 					throw new InvalidOperationException ("Type " + typeData.TypeName + " not supported");
 
 				IFormattable defaultValueFormattable = defaultValue as IFormattable;
-				CodeFieldReferenceExpression fref = new CodeFieldReferenceExpression (new CodeTypeReferenceExpression (GetDomType (typeData)), defaultValueFormattable != null ? defaultValueFormattable.ToString(null, CultureInfo.InvariantCulture) : defaultValue.ToString ());
+				CodeFieldReferenceExpression fref = new CodeFieldReferenceExpression (new CodeTypeReferenceExpression (GetDomType (typeData, false)), defaultValueFormattable != null ? defaultValueFormattable.ToString(null, CultureInfo.InvariantCulture) : defaultValue.ToString ());
 				CodeAttributeArgument arg = new CodeAttributeArgument (fref);
 				AddCustomAttribute (externalField, "System.ComponentModel.DefaultValue", arg);
 				internalField.InitExpression = fref;
