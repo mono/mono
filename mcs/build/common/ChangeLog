@@ -1,3 +1,7 @@
+2008-03-26  Jb Evain  <jbevain@novell.com>
+
+	* Consts.cs.in: update SL 2.0 versions.
+
 2007-12-31  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Consts.cs.in: Add corlib assembly name.
