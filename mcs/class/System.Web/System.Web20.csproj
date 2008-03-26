@@ -1,8 +1,8 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{0F744BEF-F9B1-4953-BB86-9ADBF73C3CD4}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -16,6 +16,26 @@
     <Version>2.0</Version>
     <ProjectTypeGuids>{F6B19D50-1E2E-4e87-ADFB-10393B439DE0};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <jarserver>ip2</jarserver>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java20|AnyCPU' ">
     <OutputPath>bin\Release_Java20\</OutputPath>
@@ -680,7 +700,6 @@
     <Compile Include="System.Web.UI.WebControls\MenuItemBindingCollection.cs" />
     <Compile Include="System.Web.UI.WebControls\MenuItemCollection.cs" />
     <Compile Include="System.Web.UI.WebControls\MenuItemStyle.cs">
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="System.Web.UI.WebControls\MenuItemStyleCollection.cs" />
     <Compile Include="System.Web.UI.WebControls\MenuItemTemplateContainer.cs" />
@@ -710,7 +729,6 @@
     <Compile Include="System.Web.UI.WebControls\PagerSettings.cs" />
     <Compile Include="System.Web.UI.WebControls\Panel.cs" />
     <Compile Include="System.Web.UI.WebControls\PanelStyle.cs">
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="System.Web.UI.WebControls\Parameter.cs" />
     <Compile Include="System.Web.UI.WebControls\ParameterCollection.cs" />
@@ -772,7 +790,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="System.Web.UI.WebControls\SubMenuStyle.cs">
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="System.Web.UI.WebControls\SubMenuStyleCollection.cs" />
     <Compile Include="System.Web.UI.WebControls\Table.cs" />
@@ -790,7 +807,6 @@
     <Compile Include="System.Web.UI.WebControls\TableRowCollection.cs" />
     <Compile Include="System.Web.UI.WebControls\TableRowSection.cs" />
     <Compile Include="System.Web.UI.WebControls\TableSectionStyle.cs">
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="System.Web.UI.WebControls\TableStyle.cs">
       <SubType>Component</SubType>
@@ -811,7 +827,6 @@
     <Compile Include="System.Web.UI.WebControls\TreeNodeEventHandler.cs" />
     <Compile Include="System.Web.UI.WebControls\TreeNodeSelectAction.cs" />
     <Compile Include="System.Web.UI.WebControls\TreeNodeStyle.cs">
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="System.Web.UI.WebControls\TreeNodeStyleCollection.cs" />
     <Compile Include="System.Web.UI.WebControls\TreeNodeTypes.cs" />
@@ -990,12 +1005,8 @@
     <Compile Include="System.Web.Util\AltSerialization.cs" />
     <Compile Include="System.Web.Util\DataSourceHelper.cs" />
     <Compile Include="System.Web.Util\DataSourceResolver.cs" />
-    <Compile Include="System.Web.Util\ISectionSettingsMapper.cs" />
     <Compile Include="System.Web.Util\IWebObjectFactory.cs" />
     <Compile Include="System.Web.Util\IWebPropertyAccessor.cs" />
-    <Compile Include="System.Web.Util\SettingsMapping.cs" />
-    <Compile Include="System.Web.Util\SettingsMappingManager.cs" />
-    <Compile Include="System.Web.Util\SettingsMappingWhat.cs" />
     <Compile Include="System.Web.Util\StrUtils.cs" />
     <Compile Include="System.Web.Util\TimeUtil.cs" />
     <Compile Include="System.Web.Util\TransactedCallback.cs" />
@@ -1160,7 +1171,18 @@
     <Compile Include="System.Web.Compilation\ThemeDirectoryCompiler.jvm.cs" />
     <Compile Include="System.Web.Configuration\FileMatchingInfo.cs" />
     <Compile Include="System.Web.Configuration_2.0\AppSettings.jvm.cs" />
+    <Compile Include="System.Web.Configuration_2.0\CapabilitiesBuild.cs" />
+    <Compile Include="System.Web.Configuration_2.0\CapabilitiesChecksum.cs" />
+    <Compile Include="System.Web.Configuration_2.0\CapabilitiesResult.cs" />
+    <Compile Include="System.Web.Configuration_2.0\ICapabilitiesProcess.cs" />
     <Compile Include="System.Web.Configuration_2.0\MachineKeySectionUtils.cs" />
+    <Compile Include="System.Web.Configuration_2.0\nBrowser\Build.cs" />
+    <Compile Include="System.Web.Configuration_2.0\nBrowser\Exception.cs" />
+    <Compile Include="System.Web.Configuration_2.0\nBrowser\File.cs" />
+    <Compile Include="System.Web.Configuration_2.0\nBrowser\Identification.cs" />
+    <Compile Include="System.Web.Configuration_2.0\nBrowser\Node.cs" />
+    <Compile Include="System.Web.Configuration_2.0\nBrowser\NodeTypes.cs" />
+    <Compile Include="System.Web.Configuration_2.0\nBrowser\Result.cs" />
     <Compile Include="System.Web.J2EE\ObjectInputStream.cs" />
     <Compile Include="System.Web.J2EE\ObjectOutputStream.cs" />
     <Compile Include="System.Web.Security\AspNetDBSchemaChecker.cs" />
@@ -1436,6 +1458,23 @@
     <EmbeddedResource Include="..\..\..\mono\data\browscap.ini">
       <Link>browscap.ini</Link>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

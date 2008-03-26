@@ -708,7 +708,6 @@ namespace System.Web {
 					AppDomain.CurrentDomain.AssemblyResolve -= new ResolveEventHandler (ResolveAssemblyHandler);
 			}
 		}
-#endif
 
 		internal static bool RunningOnWindows {
 			get { return runningOnWindows; }
@@ -717,8 +716,9 @@ namespace System.Web {
 		internal static bool CaseInsensitive {
 			get { return caseInsensitive; }
 		}
-		
-		internal static TraceManager TraceManager {
+#endif
+        
+        internal static TraceManager TraceManager {
 			get {
 				return trace_manager;
 			}
