@@ -1568,8 +1568,9 @@ namespace System.Windows.Forms
 				case Keys.Up:
 					SelectedIndex = Math.Max(SelectedIndex-1, 0);
 
-					if (SelectedIndex < listbox_ctrl.FirstVisibleItem ())
-						listbox_ctrl.Scroll (SelectedIndex - listbox_ctrl.FirstVisibleItem ());
+					if (DroppedDown)
+						if (SelectedIndex < listbox_ctrl.FirstVisibleItem ())
+							listbox_ctrl.Scroll (SelectedIndex - listbox_ctrl.FirstVisibleItem ());
 					break;
 	
 				case Keys.Down:
@@ -1578,30 +1579,53 @@ namespace System.Windows.Forms
 					else
 						SelectedIndex = Math.Min(SelectedIndex+1, Items.Count-1);
 						
-						if (SelectedIndex >= listbox_ctrl.LastVisibleItem ())
-							listbox_ctrl.Scroll (SelectedIndex - listbox_ctrl.LastVisibleItem () + 1);
+						if (DroppedDown)
+							if (SelectedIndex >= listbox_ctrl.LastVisibleItem ())
+								listbox_ctrl.Scroll (SelectedIndex - listbox_ctrl.LastVisibleItem () + 1);
 					break;
 				
 				case Keys.PageUp:
 					if (listbox_ctrl != null)
 						SelectedIndex = Math.Max(SelectedIndex- (listbox_ctrl.page_size-1), 0);
 
-					if (SelectedIndex < listbox_ctrl.FirstVisibleItem ())
-						listbox_ctrl.Scroll (SelectedIndex - listbox_ctrl.FirstVisibleItem ());
+					if (DroppedDown)
+						if (SelectedIndex < listbox_ctrl.FirstVisibleItem ())
+							listbox_ctrl.Scroll (SelectedIndex - listbox_ctrl.FirstVisibleItem ());
 					break;
 	
 				case Keys.PageDown:
 					if (listbox_ctrl != null)
 						SelectedIndex = Math.Min(SelectedIndex+(listbox_ctrl.page_size-1), Items.Count-1);
 
-					if (SelectedIndex >= listbox_ctrl.LastVisibleItem ())
-						listbox_ctrl.Scroll (SelectedIndex - listbox_ctrl.LastVisibleItem () + 1);
+					if (DroppedDown)
+						if (SelectedIndex >= listbox_ctrl.LastVisibleItem ())
+							listbox_ctrl.Scroll (SelectedIndex - listbox_ctrl.LastVisibleItem () + 1);
 					break;
 					
 				case Keys.Escape:
 					DropDownListBoxFinished ();
 					break;
 					
+				case Keys.Home:
+					if (dropdown_style == ComboBoxStyle.DropDownList) {
+						SelectedIndex = 0;
+
+						if (DroppedDown)
+							if (SelectedIndex < listbox_ctrl.FirstVisibleItem ())
+								listbox_ctrl.Scroll (SelectedIndex - listbox_ctrl.FirstVisibleItem ());
+					}
+					
+					break;
+				case Keys.End:
+					if (dropdown_style == ComboBoxStyle.DropDownList) {
+						SelectedIndex = Items.Count - 1;
+
+						if (DroppedDown)
+							if (SelectedIndex >= listbox_ctrl.LastVisibleItem ())
+								listbox_ctrl.Scroll (SelectedIndex - listbox_ctrl.LastVisibleItem () + 1);
+					}
+					
+					break;
 				default:
 					break;
 			}

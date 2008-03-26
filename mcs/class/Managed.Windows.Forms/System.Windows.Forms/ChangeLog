@@ -1,5 +1,11 @@
 2008-03-26  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ComboBox.cs: Guard against NRE if an arrow key is hit while
+	we aren't dropped down.  Support Home/End in DropDownList mode.
+	[Fixes bug #371990]
+
+2008-03-26  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TreeNodeCollection.cs: Don't increment count until we've
 	saved our index to return.
 	[Fixes bug #373603]
