@@ -226,8 +226,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetDir)*" "C:\Program Files\Mainsoft for Java EE\java_refs\framework\MONO"
-copy "$(TargetDir)$(TargetName).jar" "C:\Program Files\Mainsoft for Java EE\java_refs\framework\"</PostBuildEvent>
+    <PostBuildEvent></PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\System.Web.Services\System.Web.Services20.csproj">
