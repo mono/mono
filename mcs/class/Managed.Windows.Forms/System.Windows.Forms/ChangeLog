@@ -1,3 +1,8 @@
+2008-03-25  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Label.cs: Add padding to the label's AutoSize calculation.
+	[Fixes bug #373792]
+
 2008-03-25  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListBindingHelper.cs: Actually implement GetListName method.

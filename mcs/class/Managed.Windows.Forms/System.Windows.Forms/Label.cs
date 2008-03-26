@@ -437,6 +437,9 @@ namespace System.Windows.Forms
 			}
 
 #if NET_2_0
+			size.Width += Padding.Horizontal;
+			size.Height += Padding.Vertical;
+			
 			if (!use_compatible_text_rendering)
 				return size;
 #else
