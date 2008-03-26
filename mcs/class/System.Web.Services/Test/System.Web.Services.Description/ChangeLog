@@ -1,3 +1,8 @@
+2008-03-26  Lluis Sanchez Gual <lluis@novell.com> 
+
+	* ServiceDescriptionReflectorTest.cs: Added another test for bug
+	  #345448.
+
 2008-02-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceDescriptionReflectorTest.cs : mark Bug345448() NotWorking.

@@ -282,6 +282,9 @@ namespace MonoTests.System.Web.Services.Description
 				new ServiceDescriptionReflector ();
 			r.Reflect (typeof (Bug345448Service), "urn:foo");
 			Assert.IsNotNull (r.ServiceDescriptions [0].PortTypes ["Bug345448ServiceSoap"]);
+			
+			// Make sure the map for service client is properly created
+			new Bug345448SoapHttpClientProtocol ();
 		}
 #endif
 
@@ -447,6 +450,11 @@ namespace MonoTests.System.Web.Services.Description
 			{
 				return "Hello World";
 			}
+		}
+
+		[WebServiceBindingAttribute (Name = "AnotherBinding", Namespace = "http://tempuri.org/")]
+		public class Bug345448SoapHttpClientProtocol : SoapHttpClientProtocol
+		{
 		}
 #endif
 	}
