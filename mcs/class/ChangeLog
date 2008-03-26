@@ -1,3 +1,7 @@
+2008-03-26  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: update list for SL2 assemblies.
+
 2008-03-04  Marek Safar  <marek.safar@gmail.com>
 
 	* Makefile: Added System.Data.Linq
