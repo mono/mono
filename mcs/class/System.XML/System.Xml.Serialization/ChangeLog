@@ -1,3 +1,16 @@
+2008-03-26  Lluis Sanchez Gual <lluis@novell.com> 
+
+	* XmlSchemaImporter.cs: Fix problem with primitive types with a forced
+	  base class. It happens for example when a web service declares a
+	  soap header of type bool. The schema exporter needs to generate a
+	  subclass of SoapHeader for that header type. But if bool is used in
+	  the parameters, it must use System.Boolean, not the SoapHeader
+	  subclass. The solution is to store primitive types with a forced
+	  base class in a different table. In this way it is possible to have
+	  two maps for primitive types: one with the forced base class
+	  (returned by ImportDerivedTypeMapping) and one with the regular
+	  primitive map. Fixes bug #336739.
+
 2008-03-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlReflectionImporter.cs : set key for imported type mapping so

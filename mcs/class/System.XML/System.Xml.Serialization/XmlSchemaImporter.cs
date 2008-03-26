@@ -53,6 +53,7 @@ namespace System.Xml.Serialization
 		CodeIdentifiers typeIdentifiers;
 		CodeIdentifiers elemIdentifiers = new CodeIdentifiers ();
 		Hashtable mappedTypes = new Hashtable ();
+		Hashtable primitiveDerivedMappedTypes = new Hashtable ();
 		Hashtable dataMappedTypes = new Hashtable ();
 		Queue pendingMaps = new Queue ();
 		Hashtable sharedAnonymousTypes = new Hashtable ();
@@ -230,7 +231,7 @@ namespace System.Xml.Serialization
 					return null;
 			}
 
-			XmlTypeMapping map = GetRegisteredTypeMapping (qname);
+			XmlTypeMapping map = GetRegisteredTypeMapping (qname, baseType);
 			if (map != null)
 			{
 				// If the type has already been imported, make sure that the map 
@@ -1546,14 +1547,13 @@ namespace System.Xml.Serialization
 		XmlTypeMapping ImportXmlSerializableMapping (string ns)
 		{
 			XmlQualifiedName qname = new XmlQualifiedName ("System.Data.DataSet",ns);
-			XmlTypeMapping map = mappedTypes [qname] as XmlTypeMapping;
+			XmlTypeMapping map = GetRegisteredTypeMapping (qname);
 			if (map != null) return map;
 			
 			TypeData typeData = new TypeData ("System.Data.DataSet", "System.Data.DataSet", "System.Data.DataSet", SchemaTypes.XmlSerializable, null);
 			map = new XmlTypeMapping ("System.Data.DataSet", "", typeData, "System.Data.DataSet", ns);
 			map.IncludeInSchema = true;
-			mappedTypes [qname] = map;
-			dataMappedTypes [typeData] = map;
+			RegisterTypeMapping (qname, typeData, map);
 			return map;
 		}
 		
@@ -1607,8 +1607,7 @@ namespace System.Xml.Serialization
 			
 			XmlTypeMapping map = new XmlTypeMapping (rootElem, rootNs, typeData, typeQName.Name, typeQName.Namespace);
 			map.IncludeInSchema = true;
-			mappedTypes [typeQName] = map;
-			dataMappedTypes [typeData] = map;
+			RegisterTypeMapping (typeQName, typeData, map);
 
 			return map;
 		}
@@ -1620,8 +1619,7 @@ namespace System.Xml.Serialization
 			else map = new XmlTypeMapping (arrayTypeData.XmlType, typeQName.Namespace, arrayTypeData, arrayTypeData.XmlType, typeQName.Namespace);
 			
 			map.IncludeInSchema = true;
-			mappedTypes [typeQName] = map;
-			dataMappedTypes [arrayTypeData] = map;
+			RegisterTypeMapping (typeQName, arrayTypeData, map);
 
 			return map;
 		}
@@ -1673,7 +1671,7 @@ namespace System.Xml.Serialization
 			TypeData td;
 			if (!elem.SchemaTypeName.IsEmpty) {
 				td = GetTypeData (elem.SchemaTypeName, root, elem.IsNillable);
-				map = (XmlTypeMapping) dataMappedTypes [td];
+				map = GetRegisteredTypeMapping (td);
 			}
 			else if (elem.SchemaType == null) 
 				td = TypeTranslator.GetTypeData (typeof(object));
@@ -1747,7 +1745,7 @@ namespace System.Xml.Serialization
 			if (typeData.Type == typeof(object) && !anyTypeImported)
 				ImportAllObjectTypes ();
 				
-			XmlTypeMapping map = (XmlTypeMapping) dataMappedTypes [typeData];
+			XmlTypeMapping map = GetRegisteredTypeMapping (typeData);
 			if (map != null) return map;
 			
 			if (typeData.IsListType)
@@ -1764,8 +1762,7 @@ namespace System.Xml.Serialization
 				listMap.ItemInfo.Add (CreateElementInfo (itemMap.Namespace, null, typeData.ListItemTypeData.XmlType, typeData.ListItemTypeData, false, XmlSchemaForm.None));
 				map.ObjectMap = listMap;
 				
-				mappedTypes [new XmlQualifiedName(map.ElementName, map.Namespace)] = map;
-				dataMappedTypes [typeData] = map;
+				RegisterTypeMapping (new XmlQualifiedName(map.ElementName, map.Namespace), typeData, map);
 				return map;
 			}
 			else if (typeData.SchemaType == SchemaTypes.Primitive || typeData.Type == typeof(object) || typeof(XmlNode).IsAssignableFrom(typeData.Type))
@@ -1779,7 +1776,7 @@ namespace System.Xml.Serialization
 		void AddObjectDerivedMap (XmlTypeMapping map)
 		{
 			TypeData typeData = TypeTranslator.GetTypeData (typeof(object));
-			XmlTypeMapping omap = (XmlTypeMapping) dataMappedTypes [typeData];
+			XmlTypeMapping omap = GetRegisteredTypeMapping (typeData);
 			if (omap == null)
 				omap = CreateSystemMap (typeData);
 			omap.DerivedTypes.Add (map);
@@ -1810,10 +1807,41 @@ namespace System.Xml.Serialization
 			}					
 		}
 		
-
+		XmlTypeMapping GetRegisteredTypeMapping (XmlQualifiedName typeQName, Type baseType)
+		{
+			// Primitive types with a forced base class are stored in a different table.
+			// In this way it is possible to have two maps for primitive types: one with
+			// the forced base class (returned by ImportDerivedTypeMapping) and one
+			// with the regular primitive map.
+			
+			if (IsPrimitiveTypeNamespace (typeQName.Namespace))
+				return (XmlTypeMapping) primitiveDerivedMappedTypes [typeQName];
+			else
+				return (XmlTypeMapping) mappedTypes [typeQName];
+		}
+		
 		XmlTypeMapping GetRegisteredTypeMapping (XmlQualifiedName typeQName)
 		{
 			return (XmlTypeMapping) mappedTypes [typeQName];
+		}
+		
+		XmlTypeMapping GetRegisteredTypeMapping (TypeData typeData)
+		{
+			return (XmlTypeMapping) dataMappedTypes [typeData];
+		}
+		
+		void RegisterTypeMapping (XmlQualifiedName qname, TypeData typeData, XmlTypeMapping map)
+		{
+			// Primitive types with a forced base class are stored in a different table.
+			// In this way it is possible to have two maps for primitive types: one with
+			// the forced base class (returned by ImportDerivedTypeMapping) and one
+			// with the regular primitive map.
+			
+			dataMappedTypes [typeData] = map;
+			if (IsPrimitiveTypeNamespace (qname.Namespace) && !map.IsSimpleType)
+				primitiveDerivedMappedTypes [qname] = map;
+			else
+				mappedTypes [qname] = map;
 		}
 
 		XmlSchemaParticle GetRefGroupParticle (XmlSchemaGroupRef refGroup)
