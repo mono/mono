@@ -4,7 +4,7 @@
 // Author:
 //   Kornél Pál <http://www.kornelpal.hu/>
 //
-// Copyright (C) 2005 Kornél Pál
+// Copyright (C) 2005-2008 Kornél Pál
 //
 
 //
@@ -72,7 +72,6 @@ namespace System.Drawing
 			if (cb != 0)
 			{
 				SetSizeToPosition();
-
 				read = baseStream.Read(pv, 0, cb);
 			}
 
@@ -85,7 +84,6 @@ namespace System.Drawing
 			if (cb != 0)
 			{
 				SetSizeToPosition();
-
 				baseStream.Write(pv, 0, cb);
 			}
 
@@ -95,45 +93,32 @@ namespace System.Drawing
 
 		public void Seek(long dlibMove, int dwOrigin, IntPtr plibNewPosition)
 		{
+			long length = baseStream.Length;
 			long newPosition;
 
-			if (baseStream.CanWrite)
+			switch ((SeekOrigin)dwOrigin)
 			{
-				switch ((SeekOrigin)dwOrigin)
-				{
-					case SeekOrigin.Begin:
-						newPosition = dlibMove;
-						break;
-					case SeekOrigin.Current:
-						if ((newPosition = position) == -1)
-							newPosition = baseStream.Position;
-						newPosition += dlibMove;
-						break;
-					case SeekOrigin.End:
-						newPosition = baseStream.Length + dlibMove;
-						break;
-					default:
-						throw new ExternalException(null, STG_E_INVALIDFUNCTION);
-				}
-
-				if (newPosition > baseStream.Length)
-					position = newPosition;
-				else
-				{
-					baseStream.Position = newPosition;
-					position = -1;
-				}
+				case SeekOrigin.Begin:
+					newPosition = dlibMove;
+					break;
+				case SeekOrigin.Current:
+					if (position == -1)
+						newPosition = baseStream.Position + dlibMove;
+					else
+						newPosition = position + dlibMove;
+					break;
+				case SeekOrigin.End:
+					newPosition = length + dlibMove;
+					break;
+				default:
+					throw new ExternalException(null, STG_E_INVALIDFUNCTION);
 			}
+
+			if (newPosition > length)
+				position = newPosition;
 			else
 			{
-				try
-				{
-					newPosition = baseStream.Seek(dlibMove, (SeekOrigin)dwOrigin);
-				}
-				catch (ArgumentException)
-				{
-					throw new ExternalException(null, STG_E_INVALIDFUNCTION);
-				}
+				baseStream.Position = newPosition;
 				position = -1;
 			}
 
@@ -148,25 +133,30 @@ namespace System.Drawing
 
 		public void CopyTo(IStream pstm, long cb, IntPtr pcbRead, IntPtr pcbWritten)
 		{
-			byte[] buffer = new byte[4096];
+			byte[] buffer;
 			long written = 0;
 			int read;
+			int count;
 
 			if (cb != 0)
 			{
+				if (cb < 4096)
+					count = (int)cb;
+				else
+					count = 4096;
+				buffer = new byte[count];
 				SetSizeToPosition();
-				do
+				while (true)
 				{
-					int count = 4096;
-
-					if (written + 4096 > cb)
-						count = (int)(cb - written);
-
 					if ((read = baseStream.Read(buffer, 0, count)) == 0)
 						break;
 					pstm.Write(buffer, read, IntPtr.Zero);
 					written += read;
-				} while (written < cb);
+					if (written >= cb)
+						break;
+					if (cb - written < 4096)
+						count = (int)(cb - written);
+				}
 			}
 
 			if (pcbRead != IntPtr.Zero)
@@ -178,6 +168,7 @@ namespace System.Drawing
 		public void Commit(int grfCommitFlags)
 		{
 			baseStream.Flush();
+			SetSizeToPosition();
 		}
 
 		public void Revert()
