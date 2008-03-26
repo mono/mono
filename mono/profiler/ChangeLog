@@ -1,3 +1,8 @@
+2008-03-18  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-oprofile.c:
+	OPEN_FILE(): Fixed file creation.
+	[UN]LOCK_PROFILER(): Removed logging message.
+
 2008-03-11  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-oprofile.c: Fixed heap profiler, added a new way to
 	get the symbol names for unmanaged functions, and fixed lots of bugs.
