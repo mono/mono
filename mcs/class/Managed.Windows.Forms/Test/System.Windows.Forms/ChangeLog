@@ -1,5 +1,9 @@
 2008-03-26  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridViewTest.cs: Add test for bug #343965.
+
+2008-03-26  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TreeViewTest.cs: Add test for bug #373603.
 
 2008-03-25  Carlos Alberto Cortez <calberto.cortez@gmail.com>

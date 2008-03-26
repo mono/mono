@@ -4541,6 +4541,7 @@ namespace System.Windows.Forms {
 				foreach (PropertyDescriptor property in TypeDescriptor.GetProperties(list[0])) {
 					DataGridViewColumn col = new DataGridViewColumn(template);
 					col.Name = property.DisplayName;
+					col.ReadOnly = property.IsReadOnly;
 					columns.Add(col);
 				}
 			}

@@ -1,5 +1,11 @@
 2008-03-26  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridView.cs: When binding to a property, if the property
+	doesn't have a setter, set the column to readonly.
+	[Fixes bug #343965]
+
+2008-03-26  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ComboBox.cs: Guard against NRE if an arrow key is hit while
 	we aren't dropped down.  Support Home/End in DropDownList mode.
 	[Fixes bug #371990]

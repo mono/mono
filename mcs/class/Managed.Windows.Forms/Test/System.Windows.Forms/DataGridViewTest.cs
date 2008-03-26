@@ -1413,6 +1413,31 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (1, dgv.Rows[1].Index, "A4");
 			Assert.AreEqual (2, dgv.Rows[2].Index, "A5");
 		}
+		
+		[Test]
+		public void BindToReadonlyProperty ()
+		{
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+			DataGridView dgv = new DataGridView ();
+			
+			List<cust> l = new List<cust> ();
+			l.Add (new cust ());
+
+			dgv.DataSource = l;
+			f.Controls.Add (dgv);
+			
+			f.Show ();
+			
+			Assert.AreEqual ("Name", dgv.Columns[0].Name, "A1");
+			Assert.AreEqual (true, dgv.Columns[0].ReadOnly, "A2");
+			
+			f.Close ();
+			f.Dispose ();
+		}
+
+		class cust { public string Name { get { return "test"; } } }
+	
 	}
 	
 	[TestFixture]
