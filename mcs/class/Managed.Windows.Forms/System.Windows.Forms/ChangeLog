@@ -1,5 +1,9 @@
 2008-03-27  Jonathan Pobst  <monkey@jpobst.com>
 
+	* XplatUIX11.cs: Remove a no-op line that csc was choking on.
+
+2008-03-27  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ScrollBar.cs: Create an internal safe Value setter so we
 	won't crash if we try to set a value outside the min and max.
 	* TextBoxBase.cs: Use safe value setter to guard against a

@@ -3080,7 +3080,6 @@ namespace System.Windows.Forms {
 					return IntPtr.Zero;
 
 				case Msg.WM_IME_CHAR:
-					int c = (int) msg.WParam;
 					// On Windows API it sends two WM_CHAR messages for each byte, but
 					// I wonder if it is worthy to emulate it (also no idea how to 
 					// reconstruct those bytes into chars).
