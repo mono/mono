@@ -173,5 +173,9 @@ namespace System.Xml.Serialization
 			if (_specifiedMember is PropertyInfo) ((PropertyInfo)_specifiedMember).SetValue (ob, value, null);
 			else ((FieldInfo)_specifiedMember).SetValue (ob, value);
 		}
+		
+		public virtual bool RequiresNullable {
+			get { return false; }
+		}
 	}
 }
