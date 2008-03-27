@@ -1,5 +1,11 @@
 2008-03-27  Marek Safar  <marek.safar@gmail.com>
 
+	* nullable.cs: New file, extracted from generic.cs.
+	
+	* generic.cs, generic-mcs.cs, *.csproj, *.sources: Updated.
+
+2008-03-27  Marek Safar  <marek.safar@gmail.com>
+
 	* generic.cs, convert.cs, generic-mcs.cs, expression.cs: Added lifting of
 	predefined comparison operators and null literals.
 	
