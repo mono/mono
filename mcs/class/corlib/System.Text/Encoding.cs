@@ -239,7 +239,7 @@ public abstract class Encoding
 #if NET_2_0
 		if (charIndex < 0 || charIndex > s.Length)
 			throw new ArgumentOutOfRangeException ("charIndex", _("ArgRange_Array"));
-		if (charCount < 0 || charIndex > (s.Length - charCount)
+		if (charCount < 0 || charIndex > (s.Length - charCount))
 			throw new ArgumentOutOfRangeException ("charCount", _("ArgRange_Array"));
 		if (byteIndex < 0 || byteIndex > bytes.Length)
 			throw new ArgumentOutOfRangeException ("byteIndex", _("ArgRange_Array"));
