@@ -1,3 +1,11 @@
+2008-03-27  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridView.cs, DataGridViewCell.cs, DataGridViewCell.cs,
+	DataGridViewRowCollection.cs: Do not scroll column and row headers,
+	show messagebox on data format error, use column display index
+	correctly, make sure HitTest supports new layout stuff,
+	make sure scrollbars support new layout stuff.
+
 2008-03-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XplatUIX11.cs : Patch by Doug Rintoul.

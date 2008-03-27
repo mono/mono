@@ -391,6 +391,20 @@ namespace System.Windows.Forms {
 		public virtual DataGridViewElementStates GetState (int rowIndex)
 		{
 			DataGridViewElementStates state = DataGridViewElementStates.None;
+			
+			if (rowIndex == -1) {
+				state |= DataGridViewElementStates.Displayed;
+				
+				if (DataGridView.ReadOnly)
+					state |= DataGridViewElementStates.ReadOnly;
+				if (DataGridView.AllowUserToResizeRows)
+					state |= DataGridViewElementStates.Resizable;
+				if (DataGridView.Visible)
+					state |= DataGridViewElementStates.Visible;
+			
+				return state;
+			}
+			
 			DataGridViewRow row = DataGridView.Rows[rowIndex];
 
 			if (row.Displayed)
@@ -459,7 +473,14 @@ namespace System.Windows.Forms {
 
 		protected internal virtual void Paint (Graphics graphics, Rectangle clipBounds, Rectangle rowBounds, int rowIndex, DataGridViewElementStates rowState, bool isFirstDisplayedRow, bool isLastVisibleRow)
 		{
-			DataGridViewRowPrePaintEventArgs pre = new DataGridViewRowPrePaintEventArgs (DataGridView, graphics, clipBounds, rowBounds, rowIndex, rowState, string.Empty, InheritedStyle, isFirstDisplayedRow, isLastVisibleRow);
+			DataGridViewCellStyle style;
+			
+			if (Index == -1)
+				style = DataGridView.RowsDefaultCellStyle;
+			else
+				style = InheritedStyle;
+				
+			DataGridViewRowPrePaintEventArgs pre = new DataGridViewRowPrePaintEventArgs (DataGridView, graphics, clipBounds, rowBounds, rowIndex, rowState, string.Empty, style, isFirstDisplayedRow, isLastVisibleRow);
 			pre.PaintParts = DataGridViewPaintParts.All;
 
 			DataGridView.OnRowPrePaint (pre);
@@ -473,7 +494,7 @@ namespace System.Windows.Forms {
 			
 			PaintCells (graphics, pre.ClipBounds, rowBounds, rowIndex, rowState, isFirstDisplayedRow, isLastVisibleRow, pre.PaintParts);
 
-			DataGridViewRowPostPaintEventArgs post = new DataGridViewRowPostPaintEventArgs (DataGridView, graphics, pre.ClipBounds, rowBounds, rowIndex, rowState, pre.ErrorText, InheritedStyle, isFirstDisplayedRow, isLastVisibleRow);
+			DataGridViewRowPostPaintEventArgs post = new DataGridViewRowPostPaintEventArgs (DataGridView, graphics, pre.ClipBounds, rowBounds, rowIndex, rowState, pre.ErrorText, style, isFirstDisplayedRow, isLastVisibleRow);
 			DataGridView.OnRowPostPaint (post);
 		}
 
@@ -490,7 +511,8 @@ namespace System.Windows.Forms {
 				bounds.Width -= DataGridView.RowHeadersWidth;
 			}
 			
-			foreach (DataGridViewColumn col in sortedColumns) {
+			for (int i = DataGridView.first_col_index; i < sortedColumns.Count; i++) {
+				DataGridViewColumn col = (DataGridViewColumn)sortedColumns[i];
 				bounds.Width = col.Width;
 				DataGridViewCell cell = Cells[col.Index];
 				
@@ -525,7 +547,8 @@ namespace System.Windows.Forms {
 				DataGridViewAdvancedBorderStyle borderStyle = cell.AdjustCellBorderStyle (DataGridView.AdvancedCellBorderStyle, intermediateBorderStyle, true, true, cell.ColumnIndex == 0, cell.RowIndex == 0);
 				DataGridView.OnCellFormattingInternal (new DataGridViewCellFormattingEventArgs (cell.ColumnIndex, cell.RowIndex, value, cell.FormattedValueType, style));
 
-				cell.PaintWork (graphics, clipBounds, bounds, rowIndex, cellState, cell.InheritedStyle, borderStyle, paintParts);
+
+				cell.PaintWork (graphics, clipBounds, bounds, rowIndex, cellState, style, borderStyle, paintParts);
 				bounds.X += bounds.Width;
 			}
 		}

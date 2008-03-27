@@ -125,13 +125,14 @@ namespace System.Windows.Forms {
 		private DataGridViewSelectedColumnCollection selected_columns;
 		private DataGridViewRow editing_row;
 		
-		internal int gridWidth;
-		internal int gridHeight;
+		private int gridWidth;
+		private int gridHeight;
 
 		public DataGridView ()
 		{
 			SetStyle (ControlStyles.Opaque, true);
 			SetStyle (ControlStyles.UserMouse, true);
+			SetStyle (ControlStyles.OptimizedDoubleBuffer, true);
 			
 			adjustedTopLeftHeaderBorderStyle = new DataGridViewAdvancedBorderStyle();
 			adjustedTopLeftHeaderBorderStyle.All = DataGridViewAdvancedCellBorderStyle.Single;
@@ -2205,16 +2206,18 @@ namespace System.Windows.Forms {
 			if (RowHeadersVisible)
 				x = RowHeadersWidth;
 				
-			for (int i = 0; i < Columns.Count; i++) {
-				if (i == columnIndex) {
-					w = columns [i].Width;
+			ArrayList cols = columns.ColumnDisplayIndexSortedArrayList;
+
+			for (int i = first_col_index; i < cols.Count; i++) {
+				if ((cols[i] as DataGridViewColumn).Index == columnIndex) {
+					w = (cols[i] as DataGridViewColumn).Width;
 					break;
 				}
-					
-				x += columns [i].Width;
+
+				x += (cols[i] as DataGridViewColumn).Width;
 			}
 			
-			for (int i = 0; i < Rows.Count; i++) {
+			for (int i = first_row_index; i < Rows.Count; i++) {
 				if (i == rowIndex) {
 					h = rows [i].Height;
 					break;
@@ -2444,56 +2447,64 @@ namespace System.Windows.Forms {
 			bool isInColHeader = columnHeadersVisible && y >= 0 && y <= ColumnHeadersHeight;
 			bool isInRowHeader = rowHeadersVisible && x >= 0 && x <= RowHeadersWidth;
 			
-			x += horizontalScrollingOffset;
-			y += verticalScrollingOffset;
-			int rowIndex = -1;
-			int totalHeight = (columnHeadersVisible)? 1 + columnHeadersHeight : 1;
-			if (columnHeadersVisible && y <= totalHeight) {
-				rowIndex = -1;
-			}
-			else {
-				foreach (DataGridViewRow row in rows.RowIndexSortedArrayList) {
-					totalHeight += row.Height;
-					if (y <= totalHeight) {
-						rowIndex = row.Index;
-						if (rowIndex == -1) {
-							rowIndex = rows.SharedRowIndexOf (row);
-						}
-						break;
-					}
-					totalHeight++; // sumar el ancho de las lineas...
-				}
-			}
-			int colIndex = -1;
-			int totalWidth = (rowHeadersVisible)? 1 + rowHeadersWidth : 1;
-			if (rowHeadersVisible && x <= totalWidth) {
-				colIndex = -1;
-			}
-			else {
-				foreach (DataGridViewColumn col in columns.ColumnDisplayIndexSortedArrayList) {
-					totalWidth += col.Width;
-					if (x <= totalWidth) {
-						colIndex = col.Index;
-						break;
-					}
-					totalWidth++;
-				}
-			}
-			HitTestInfo result;
+			// TopLeftHeader
+			if (isInColHeader && isInRowHeader)
+				return new HitTestInfo (-1, x, -1, y, DataGridViewHitTestType.TopLeftHeader);
 			
-			if (colIndex >= 0 && rowIndex >= 0) {
-				result = new HitTestInfo (colIndex, x, rowIndex, y, DataGridViewHitTestType.Cell);
-			} else if (isInColHeader && isInRowHeader) {
-				result = new HitTestInfo (colIndex, x, rowIndex, y, DataGridViewHitTestType.TopLeftHeader);
-			} else if (isInColHeader) {
-				result = new HitTestInfo (colIndex, x, rowIndex, y, DataGridViewHitTestType.ColumnHeader);
-			} else if (isInRowHeader) {
-				result = new HitTestInfo (colIndex, x, rowIndex, y, DataGridViewHitTestType.RowHeader);
-			} else {
-				result = new HitTestInfo (colIndex, x, rowIndex, y, DataGridViewHitTestType.None);
+			// HorizontalScrollBar
+			if (horizontalScrollBar.Visible && horizontalScrollBar.Bounds.Contains (x, y))
+				return new HitTestInfo (-1, x, -1, y, DataGridViewHitTestType.HorizontalScrollBar);
+
+			// VerticalScrollBar
+			if (verticalScrollBar.Visible && verticalScrollBar.Bounds.Contains (x, y))
+				return new HitTestInfo (-1, x, -1, y, DataGridViewHitTestType.VerticalScrollBar);
+			
+			// The little box in the bottom right if both scrollbars are shown is None
+			if (verticalScrollBar.Visible && horizontalScrollBar.Visible)
+				if (new Rectangle (verticalScrollBar.Left, horizontalScrollBar.Top, verticalScrollBar.Width, horizontalScrollBar.Height).Contains (x, y))
+					return new HitTestInfo (-1, x, -1, y, DataGridViewHitTestType.None);
+			
+			int rowindex = -1;
+			int colindex = -1;
+			
+			int top = columnHeadersVisible ? columnHeadersHeight : 0;
+			
+			for (int i = first_row_index; i < Rows.Count; i++) {
+				DataGridViewRow row = Rows[i];
+				
+				if (y > top && y <= (top + row.Height)) {
+					rowindex = i;
+					break;
+				}
+				
+				top += row.Height;
+			}
+			
+			int left = rowHeadersVisible ? RowHeadersWidth : 0;
+			
+			ArrayList cols = columns.ColumnDisplayIndexSortedArrayList;
+			
+			for (int i = first_col_index; i < cols.Count; i++) {
+				DataGridViewColumn col = (DataGridViewColumn)cols[i];
+				
+				if (x > left && x <= (left + col.Width)) {
+					colindex = col.Index;
+					break;
+				}
+			
+				left += col.Width;
 			}
 
-			return result;
+			if (colindex >= 0 && rowindex >= 0)
+				return new HitTestInfo (colindex, x, rowindex, y, DataGridViewHitTestType.Cell);
+			
+			if (isInColHeader)
+				return new HitTestInfo (colindex, x, rowindex, y, DataGridViewHitTestType.ColumnHeader);
+			
+			if (isInRowHeader)
+				return new HitTestInfo (colindex, x, rowindex, y, DataGridViewHitTestType.RowHeader);
+				
+			return new HitTestInfo (-1, x, -1, y, DataGridViewHitTestType.None);
 		}
 
 		[MonoTODO ("Invalidates whole grid")]
@@ -3319,16 +3330,14 @@ namespace System.Windows.Forms {
 				eh (this, e);
 		}
 
-		protected virtual void OnDataError (bool displayErrorDialogIfNoHandler, DataGridViewDataErrorEventArgs e) {
+		protected virtual void OnDataError (bool displayErrorDialogIfNoHandler, DataGridViewDataErrorEventArgs e)
+		{
 			DataGridViewDataErrorEventHandler eh = (DataGridViewDataErrorEventHandler)(Events [DataErrorEvent]);
-			if (eh != null) {
+			
+			if (eh != null)
 				eh (this, e);
-			}
-			else {
-				if (displayErrorDialogIfNoHandler) {
-					/////////////////////////////////// ERROR DIALOG //////////////////////////////////7
-				}
-			}
+			else if (displayErrorDialogIfNoHandler)
+				MessageBox.Show (e.ToString ());
 		}
 		protected virtual void OnDataMemberChanged (EventArgs e) {
 			EventHandler eh = (EventHandler)(Events [DataMemberChangedEvent]);
@@ -3455,10 +3464,15 @@ namespace System.Windows.Forms {
 
 		protected override void OnLayout (LayoutEventArgs e)
 		{
-			if (horizontalScrollBar.Visible)
-				horizontalScrollBar.Bounds = new Rectangle (BorderWidth, Bottom - BorderWidth - horizontalScrollBar.Height, Width - (2 * BorderWidth), horizontalScrollBar.Height);
-			if (verticalScrollBar.Visible)
-				verticalScrollBar.Bounds = new Rectangle (Right - BorderWidth - verticalScrollBar.Width, BorderWidth, verticalScrollBar.Width,  Height - (2 * BorderWidth));
+			if (horizontalScrollBar.Visible && verticalScrollBar.Visible) {
+				horizontalScrollBar.Bounds = new Rectangle (BorderWidth, Height - BorderWidth - horizontalScrollBar.Height, Width - (2 * BorderWidth) - verticalScrollBar.Width, horizontalScrollBar.Height);
+				verticalScrollBar.Bounds = new Rectangle (Width - BorderWidth - verticalScrollBar.Width, BorderWidth, verticalScrollBar.Width, Height - (2 * BorderWidth) - horizontalScrollBar.Height);
+			} else if (horizontalScrollBar.Visible)
+				horizontalScrollBar.Bounds = new Rectangle (BorderWidth, Height - BorderWidth - horizontalScrollBar.Height, Width - (2 * BorderWidth), horizontalScrollBar.Height);
+			else if (verticalScrollBar.Visible)
+				verticalScrollBar.Bounds = new Rectangle (Width - BorderWidth - verticalScrollBar.Width, BorderWidth, verticalScrollBar.Width,  Height - (2 * BorderWidth));
+				
+			Invalidate ();
 		}
 
 		protected override void OnLeave (EventArgs e)
@@ -3726,6 +3740,9 @@ namespace System.Windows.Forms {
 			if (eh != null) eh (this, e);
 		}
 
+		int first_row_index = 0;
+		internal int first_col_index = 0;
+
 		protected override void OnPaint (PaintEventArgs e)
 		{
 			base.OnPaint(e);
@@ -3737,8 +3754,6 @@ namespace System.Windows.Forms {
 			PaintBackground (g, e.ClipRectangle, bounds);
 			
 			ArrayList sortedColumns = columns.ColumnDisplayIndexSortedArrayList;
-			bounds.Y = -verticalScrollingOffset;
-			bounds.X = -horizontalScrollingOffset;
 			
 			// Take borders into account
 			bounds.Inflate (-BorderWidth, -BorderWidth);
@@ -3758,7 +3773,9 @@ namespace System.Windows.Forms {
 				if (rowHeadersVisible)
 					headerBounds.X += rowHeadersWidth;
 				
-				foreach (DataGridViewColumn col in sortedColumns) {
+				for (int index = first_col_index; index < sortedColumns.Count; index++) {
+					DataGridViewColumn col = (DataGridViewColumn)sortedColumns[index];
+					
 					headerBounds.Width = col.Width;
 					DataGridViewCell cell = col.HeaderCell;
 
@@ -3773,24 +3790,40 @@ namespace System.Windows.Forms {
 				bounds.Y += columnHeadersHeight;
 			}
 			
+			gridWidth = 0;
+			gridHeight = 0;
+			
+			int rows_displayed = 0;
+			int first_row_height = Rows[first_row_index].Height;
 			
 			// Draw rows
-			foreach (DataGridViewRow row in rows) {
+			for (int index = first_row_index; index < Rows.Count; index++) {
+				DataGridViewRow row = Rows[index];
+				
 				bounds.Height = row.Height;
 				bool is_first = row.Index == 0;
 				bool is_last = row.Index == rows.Count - 1;
 
-				row.Paint (g, e.ClipRectangle, bounds, row.Index, row.GetState (row.Index), is_first, is_last);
-								
+				row.Paint (g, e.ClipRectangle, bounds, index, row.GetState (row.Index), is_first, is_last);
+
 				bounds.Y += bounds.Height;
-				bounds.X = -horizontalScrollingOffset + BorderWidth;
+				bounds.X = BorderWidth;
+				
+				if (gridHeight + columnHeadersHeight <= ClientSize.Height)
+					rows_displayed++;
+				else
+					break;
+					
+				gridHeight += row.Height;
 			}
-			
-			gridWidth = 0;
-			gridHeight = 0;
 			
 			foreach (DataGridViewColumn col in sortedColumns)
 				gridWidth += col.Width;
+
+			gridHeight = 0;
+			
+			foreach (DataGridViewRow row in Rows)
+				gridHeight += row.Height;
 
 			if (rowHeadersVisible) {
 				gridWidth += rowHeadersWidth;
@@ -3822,30 +3855,24 @@ namespace System.Windows.Forms {
 				}
 				if (horizontalVisible) {
 					horizontalScrollBar.Minimum = 0;
-					if (verticalVisible) {
-						horizontalScrollBar.Maximum = gridWidth - ClientRectangle.Width + verticalScrollBar.Width;
-					}
-					else {
-						horizontalScrollBar.Maximum = gridWidth - ClientRectangle.Width;
-					}
-					horizontalScrollBar.LargeChange = horizontalScrollBar.Maximum / 10;
-					horizontalScrollBar.SmallChange = horizontalScrollBar.Maximum / 20;
+					horizontalScrollBar.Maximum = gridWidth;
+					horizontalScrollBar.SmallChange = Columns[first_col_index].Width;
+					horizontalScrollBar.LargeChange = ClientSize.Width - rowHeadersWidth;
 				}
 				if (verticalVisible) {
 					verticalScrollBar.Minimum = 0;
-					if (horizontalVisible) {
-						verticalScrollBar.Maximum = gridHeight - ClientRectangle.Height + horizontalScrollBar.Height;
-					}
-					else {
-						verticalScrollBar.Maximum = gridHeight - ClientRectangle.Height;
-					}
-					verticalScrollBar.LargeChange = verticalScrollBar.Maximum / 10;
-					verticalScrollBar.SmallChange = verticalScrollBar.Maximum / 20;
+					verticalScrollBar.Maximum = gridHeight;
+					verticalScrollBar.SmallChange = first_row_height + 1;
+					verticalScrollBar.LargeChange = ClientSize.Height - columnHeadersHeight;
 				}
 			}
 
 			horizontalScrollBar.Visible = horizontalVisible;
 			verticalScrollBar.Visible = verticalVisible;
+			
+			// Paint the bottom right square if both scrollbars are displayed
+			if (horizontalScrollBar.Visible && verticalScrollBar.Visible)
+				g.FillRectangle (SystemBrushes.Control, new Rectangle (horizontalScrollBar.Right, verticalScrollBar.Bottom, verticalScrollBar.Width, horizontalScrollBar.Height));
 
 			// Paint the border
 			bounds = ClientRectangle;
@@ -3868,9 +3895,10 @@ namespace System.Windows.Forms {
 
 		protected override void OnResize (EventArgs e) {
 			base.OnResize(e);
-			horizontalScrollingOffset = ((gridWidth - Size.Width) > 0)? (gridWidth - Size.Width) : 0;
-			verticalScrollingOffset = ((gridHeight - Size.Height) > 0)? (gridHeight - Size.Height) : 0;
 			AutoResizeColumnsInternal ();
+			
+			OnVScrollBarScroll (this, new ScrollEventArgs (ScrollEventType.ThumbPosition, verticalScrollBar.Value));
+			OnHScrollBarScroll (this, new ScrollEventArgs (ScrollEventType.ThumbPosition, horizontalScrollBar.Value));
 		}
 
 		protected override void OnRightToLeftChanged (EventArgs e) {
@@ -4319,16 +4347,52 @@ namespace System.Windows.Forms {
 			OnMouseWheel(e);
 		}
 
-		internal void OnHScrollBarScroll (object sender, ScrollEventArgs e) {
+		internal void OnHScrollBarScroll (object sender, ScrollEventArgs e)
+		{
 			horizontalScrollingOffset = e.NewValue;
-			Invalidate();
-			OnScroll(e);
+			int left = 0;
+
+			for (int index = 0; index < Columns.Count; index++) {
+				DataGridViewColumn col = Columns[index];
+
+				if (e.NewValue < left + col.Width) {
+					if (first_col_index != index) {
+						first_col_index = index;
+						Invalidate ();
+						OnScroll (e);
+					}
+
+					return;
+				}
+
+				left += col.Width;
+			}
 		}
 
-		internal void OnVScrollBarScroll (object sender, ScrollEventArgs e) {
+		internal void OnVScrollBarScroll (object sender, ScrollEventArgs e)
+		{
 			verticalScrollingOffset = e.NewValue;
-			Invalidate();
-			OnScroll(e);
+			int top = 0;
+			
+			for (int index = 0; index < Rows.Count; index++) {
+				DataGridViewRow row = Rows[index];
+				
+				if (e.NewValue < top + row.Height) {
+					if (first_row_index != index) {
+						first_row_index = index;
+						Invalidate ();
+						OnScroll (e);
+					}
+					
+					return;
+				}
+				
+				top += row.Height;
+			}
+			//top_row_index++;
+			//verticalScrollingOffset = e.NewValue;
+			//Invalidate();
+			//OnScroll(e);
 		}
 
 		internal void RaiseCellStyleChanged (DataGridViewCellEventArgs e) {
@@ -4546,7 +4610,7 @@ namespace System.Windows.Forms {
 				}
 			}
 			foreach (object element in list) {
-				DataGridViewRow row = new DataGridViewRow();
+				DataGridViewRow row = (DataGridViewRow)RowTemplate.Clone ();
 				rows.InternalAdd(row);
 				PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(element);
 				foreach (PropertyDescriptor property in properties) {
@@ -4641,7 +4705,7 @@ namespace System.Windows.Forms {
 			}
 
 			public override string ToString () {
-				return GetType().Name;
+				return string.Format ("Type:{0}, Column:{1}, Row:{2}", type, columnIndex, rowIndex);
 			}
 
 		}
