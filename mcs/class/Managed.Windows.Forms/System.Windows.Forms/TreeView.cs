@@ -121,6 +121,9 @@ namespace System.Windows.Forms {
 			base.background_color = ThemeEngine.Current.ColorWindow;
 			base.foreground_color = ThemeEngine.Current.ColorWindowText;
 
+			vbar = new ImplicitVScrollBar ();
+			hbar = new ImplicitHScrollBar ();
+
 			root_node = new TreeNode (this);
 			root_node.Text = "ROOT NODE";
 			nodes = new TreeNodeCollection (root_node);
@@ -145,9 +148,6 @@ namespace System.Windows.Forms {
 			string_format = new StringFormat ();
 			string_format.LineAlignment = StringAlignment.Center;
 			string_format.Alignment = StringAlignment.Center;
-
-			vbar = new ImplicitVScrollBar ();
-			hbar = new ImplicitHScrollBar ();
 
 			vbar.Visible = false;
 			hbar.Visible = false;

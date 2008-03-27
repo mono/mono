@@ -1,5 +1,10 @@
 2008-03-27  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TreeView.cs: Create the scrollbars earlier in the constructor
+	to attempt to guard against an NRE in SetTop in Reflector.
+
+2008-03-27  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridView.cs, DataGridViewCell.cs, DataGridViewCell.cs,
 	DataGridViewRowCollection.cs: Do not scroll column and row headers,
 	show messagebox on data format error, use column display index
