@@ -723,7 +723,19 @@ namespace Mono.CSharp {
 				EmitMeta (block);
 
 				current_phase = Phase.Emitting;
+#if PRODUCTION
+				try {
+#endif
 				EmitResolvedTopBlock (block, unreachable);
+#if PRODUCTION
+				} catch (Exception e){
+					Console.WriteLine ("Exception caught by the compiler while emitting:");
+					Console.WriteLine ("   Block that caused the problem begin at: " + block.loc);
+					
+					Console.WriteLine (e.GetType ().FullName + ": " + e.Message);
+					throw;
+				}
+#endif
 			}
 		}
 
