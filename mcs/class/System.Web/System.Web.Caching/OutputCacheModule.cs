@@ -113,7 +113,6 @@ namespace System.Web.Caching {
 			context.Response.BinaryWrite (c.GetData (), 0, c.ContentLength);
 
 			context.Response.ClearHeaders ();
-			c.DateHeader.Value = TimeUtil.ToUtcTimeString (DateTime.Now);
 			context.Response.SetCachedHeaders (c.Headers);
 
 			context.Response.StatusCode = c.StatusCode;

@@ -26,6 +26,12 @@
 	implementation. 
 	Remove code that's no longer needed.
 
+2008-02-26  Kornél Pál  <kornelpal@gmail.com>
+
+	* HttpResponse.cs: Don't add Date header because servers usually add
+	a Date header that would result in duplicate Date header sent to the
+	client. Fixes bug #363404.
+
 2008-02-25  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpContext.cs: correctly set the timeout if the user has
@@ -3148,7 +3154,7 @@
 
 	* HttpUtility.cs: fix InvalidCastException.
 
-2005-06-05  Korn__l P__l <kornelpal@hotmail.com>
+2005-06-05  Kornél Pál <kornelpal@hotmail.com>
 
 	* HttpWriter.cs: Fixed: _OutputFilter.Close () was called twice.
 

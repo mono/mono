@@ -2459,7 +2459,7 @@
 
 	* CreateUserWizardStep.cs: fixed validators message display
 
-2006-08-25  Korn__l P__l  <kornelpal@gmail.com>
+2006-08-25  Kornél Pál  <kornelpal@gmail.com>
 
 	* FileUpload.cs: Use assembly name constants.
 
@@ -2832,7 +2832,7 @@
 2006-07-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DataList.cs: correctly initialize editable items when there's an
-	EditItemTemplate. Patch by Jaros_�aw Pawlak.
+	EditItemTemplate. Patch by Jarosław Pawlak.
 
 2006-07-13  Juraj Skripsky <js@hotfeet.ch>
 
@@ -6949,7 +6949,7 @@
 2004-10-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ListItemCollection.cs: fixed bug when indexing changed elements in
-	LoadViewState. Patch from Alois B_�la__ka.
+	LoadViewState. Patch from Alois Bělaška.
 
 2004-10-20 Sanjay Gupta <gsanjay@novell.com>
 	

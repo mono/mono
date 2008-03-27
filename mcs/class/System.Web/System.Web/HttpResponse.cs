@@ -607,14 +607,6 @@ namespace System.Web {
 			else if (transfer_encoding != null)
 				write_headers.Add (new UnknownResponseHeader ("Transfer-Encoding", transfer_encoding));
 #endif
-
-			UnknownResponseHeader date_header = new UnknownResponseHeader ("Date",
-					DateTime.UtcNow.ToString ("r", CultureInfo.InvariantCulture));
-			write_headers.Add (date_header);
-
-			if (IsCached)
-				cached_response.DateHeader = date_header;
-					
 			if (redirect_location != null)
 				write_headers.Add (new UnknownResponseHeader ("Location", redirect_location));
 			
