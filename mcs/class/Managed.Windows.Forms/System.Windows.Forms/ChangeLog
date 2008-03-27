@@ -1,5 +1,12 @@
 2008-03-27  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ScrollBar.cs: Create an internal safe Value setter so we
+	won't crash if we try to set a value outside the min and max.
+	* TextBoxBase.cs: Use safe value setter to guard against a
+	potential NRE that is being reported by Reflector.
+
+2008-03-27  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TreeView.cs: Create the scrollbars earlier in the constructor
 	to attempt to guard against an NRE in SetTop in Reflector.
 

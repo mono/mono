@@ -2306,7 +2306,7 @@ namespace System.Windows.Forms
 				if (pos.X < (document.ViewPortX)) {
 					do {
 						if ((hscroll.Value - document.ViewPortWidth / 3) >= hscroll.Minimum) {
-							hscroll.Value -= document.ViewPortWidth / 3;
+							hscroll.SafeValueSet (hscroll.Value - document.ViewPortWidth / 3);
 						} else {
 							hscroll.Value = hscroll.Minimum;
 						}
@@ -2317,7 +2317,7 @@ namespace System.Windows.Forms
 				if ((pos.X >= (document.ViewPortWidth + document.ViewPortX)) && (hscroll.Value != hscroll.Maximum)) {
 					if ((pos.X - document.ViewPortWidth + 1) <= hscroll.Maximum) {
 						if (pos.X - document.ViewPortWidth >= 0) {
-							hscroll.Value = pos.X - document.ViewPortWidth + 1;
+							hscroll.SafeValueSet (pos.X - document.ViewPortWidth + 1);
 						} else {
 							hscroll.Value = 0;
 						}
@@ -2342,7 +2342,7 @@ namespace System.Windows.Forms
 			height = document.CaretLine.Height + 1;
 
 			if (pos.Y < document.ViewPortY)
-				vscroll.Value = pos.Y;
+				vscroll.SafeValueSet (pos.Y);
 			if ((pos.Y + height) > (document.ViewPortY + canvas_height))
 				vscroll.Value = Math.Min (vscroll.Maximum, pos.Y - canvas_height + height);
 		}
