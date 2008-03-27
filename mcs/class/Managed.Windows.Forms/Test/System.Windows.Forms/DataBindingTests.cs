@@ -140,6 +140,7 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 	public class CurrencyManagerTest2 : DataBindingTest
 	{
 		[Test]
+		[Category ("NotWorking")]
 		public void TestDeleteOnlyRow ()
 		{
 			Control c = new Control ();
@@ -186,6 +187,7 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void TestDeleteRowBeforeCurrent ()
 		{
 			Control c = new Control ();
@@ -246,6 +248,7 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void TestDeleteRowAfterCurrent ()
 		{
 			Control c = new Control ();
@@ -297,6 +300,7 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void TestDeleteCurrentRowWithOthers ()
 		{
 			Control c = new Control ();
@@ -854,6 +858,7 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 
 
 		[Test]
+		[Category ("NotWorking")]
 		public void TestDeleteInEdit ()
 		{
 			Control c = new Control ();
