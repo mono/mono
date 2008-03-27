@@ -117,12 +117,12 @@ namespace System.Windows.Forms {
 		#region Public Constructors	
 		public TreeView ()
 		{
+			vbar = new ImplicitVScrollBar ();
+			hbar = new ImplicitHScrollBar ();
+
 			InternalBorderStyle = BorderStyle.Fixed3D;
 			base.background_color = ThemeEngine.Current.ColorWindow;
 			base.foreground_color = ThemeEngine.Current.ColorWindowText;
-
-			vbar = new ImplicitVScrollBar ();
-			hbar = new ImplicitHScrollBar ();
 
 			root_node = new TreeNode (this);
 			root_node.Text = "ROOT NODE";

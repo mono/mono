@@ -1,5 +1,10 @@
 2008-03-27  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TreeView.cs: Create the scrollbars even earlier to be
+	double dog certain they are created before they are accessed.
+
+2008-03-27  Jonathan Pobst  <monkey@jpobst.com>
+
 	* XplatUIX11.cs: Remove a no-op line that csc was choking on.
 
 2008-03-27  Jonathan Pobst  <monkey@jpobst.com>
