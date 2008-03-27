@@ -31,22 +31,21 @@ namespace Mono.Mozilla
 	
 	internal class AsciiString : IDisposable
 	{
+		
 		[StructLayout(LayoutKind.Sequential)]
 		class nsStringContainer {
+			IntPtr v;
 			IntPtr d1;
 			uint d2;
 			IntPtr d3;
 		}
-		private bool disposed;
+		private bool disposed = false;
 		private nsStringContainer unmanagedContainer;
 		private HandleRef handle;
-		private string str;
-		private bool dirty;
+		private string str = String.Empty;
+		private bool dirty = false;
 		
-		public AsciiString () : this (String.Empty)
-		{
-		}
-		
+
 		public AsciiString(string value)
 		{
 			unmanagedContainer = new nsStringContainer ();
@@ -68,8 +67,8 @@ namespace Mono.Mozilla
 		{
 			if (!disposed) {
 				if (disposing) {
-					 Base.gluezilla_CStringContainerFinish (handle);
-					 Marshal.FreeHGlobal (handle.Handle);
+					Base.gluezilla_CStringContainerFinish (handle);
+					Marshal.FreeHGlobal (handle.Handle);
 				}
 				disposed = true;
 			}
@@ -86,7 +85,9 @@ namespace Mono.Mozilla
 		
 		public HandleRef Handle {
 			get {
-				dirty = false;
+				if (!str.Equals (String.Empty)) {
+					dirty = true;
+				}
 				return handle; 
 			}
 		}

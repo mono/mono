@@ -32,19 +32,16 @@ namespace Mono.Mozilla
 	{
 		[StructLayout(LayoutKind.Sequential)]
 		class nsStringContainer {
+			IntPtr v;
 			IntPtr d1;
 			uint d2;
 			IntPtr d3;
 		}
-		private bool disposed;
+		private bool disposed = false;
 		private nsStringContainer unmanagedContainer;
 		private HandleRef handle;
-		private string str;
-		private bool dirty;
-		
-		public UniString () : this (String.Empty)
-		{
-		}
+		private string str = String.Empty;
+		private bool dirty = false;
 		
 		public UniString(string value)
 		{
@@ -85,7 +82,8 @@ namespace Mono.Mozilla
 		
 		public HandleRef Handle {
 			get {
-				dirty = false;
+				if (!str.Equals (String.Empty))
+					dirty = true;
 				return handle; 
 			}
 		}
