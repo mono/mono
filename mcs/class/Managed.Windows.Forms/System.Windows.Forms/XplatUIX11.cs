@@ -1561,15 +1561,18 @@ namespace System.Windows.Forms {
 
 					XNextEvent (DisplayHandle, ref xevent);
 
-					if (xevent.AnyEvent.type == XEventName.KeyPress ||
-					    xevent.AnyEvent.type == XEventName.KeyRelease) {
+					if (xevent.AnyEvent.type == XEventName.KeyPress) {
 						if (XFilterEvent(ref xevent, FosterParent)) {
 							// probably here we could raise WM_IME_KEYDOWN and
 							// WM_IME_KEYUP, but I'm not sure it is worthy.
 							continue;
 						}
 					}
-
+					else if (xevent.AnyEvent.type == XEventName.KeyRelease)
+						// Allow the Input Method to process key releases but also pass them on to the
+						// keyboard event processing because certain states (Shift, Control) are not 
+						// correctly if we don't.                                                    
+						XFilterEvent(ref xevent, FosterParent);
 					else if (XFilterEvent (ref xevent, IntPtr.Zero))
 						continue;
 				}
@@ -1727,6 +1730,10 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.KeyPress:
+					hwnd.Queue.EnqueueLocked (xevent);
+					/* Process KeyPresses immediately. Otherwise multiple Compose messages as a result of a
+					 * single physical keypress are not processed correctly */
+					return;
 				case XEventName.ButtonPress:
 				case XEventName.ButtonRelease:
 				case XEventName.EnterNotify:

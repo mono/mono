@@ -1,5 +1,17 @@
 2008-03-27  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XplatUIX11.cs : Patch by Doug Rintoul.
+	  For some IM engines, keypress events need to delay call
+	  to XPending() and XNextEvent() in the loop so that it
+	  does not mess the orders in XIM commit callback.
+	  Some KeyRelease events such as shift keys need to be
+	  processed both in the IM engine and winforms driver
+	  itself since winforms holds its own state check.
+
+	  For details, see: http://lists.ximian.com/pipermail/mono-winforms-list/2008-March/003279.html
+
+2008-03-27  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* X11Keyboard.cs, XplatUIX11.cs :
 	  add primitive support for XIM input support (preedit-
 	  nothing and status-nothing). It requires precise event
