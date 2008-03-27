@@ -324,9 +324,9 @@ namespace Mono.CSharp {
 				// System.Enum is not a value type, it is a class, so we need
 				// a boxing conversion
 				//
-				if (expr_type.IsEnum || TypeManager.IsGenericParameter (expr_type))
+				if (target_type == TypeManager.enum_type || TypeManager.IsGenericParameter (expr_type))
 					return false;
-
+				
 				return true;
 			}
 

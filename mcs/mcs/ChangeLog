@@ -1,5 +1,10 @@
 2008-03-27  Marek Safar  <marek.safar@gmail.com>
 
+	* convert.cs (ImplicitReferenceConversionCore): Correctly compare enum type
+	and not rely on broken IsEnum.
+
+2008-03-27  Marek Safar  <marek.safar@gmail.com>
+
 	* nullable.cs: New file, extracted from generic.cs.
 	
 	* generic.cs, generic-mcs.cs, *.csproj, *.sources: Updated.
