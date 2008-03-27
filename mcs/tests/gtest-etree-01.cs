@@ -197,6 +197,7 @@ class Tester
 
 	void AddTest ()
 	{
+	/*
 		Expression<Func<int, int, int>> e = (int a, int b) => a + b;
 		AssertNodeType (e, ExpressionType.Add);
 		Assert (50, e.Compile ().Invoke (20, 30));
@@ -217,11 +218,11 @@ class Tester
 		Expression<Func<int, MyType, int>> e5 = (int a, MyType b) => a + b;
 		AssertNodeType (e5, ExpressionType.Add);
 		Assert (31, e5.Compile ().Invoke (1, new MyType (30)));
-/*
+*/
+
 		Expression<Func<int, MyType?, int?>> e6 = (int a, MyType? b) => a + b;
 		AssertNodeType (e6, ExpressionType.Add);
 		Assert (-1, e6.Compile ().Invoke (-31, new MyType (30)));		
-*/
 	}
 
 	void AddCheckedTest ()
@@ -406,6 +407,25 @@ class Tester
 		Assert (3, r4.Invoke (new InverseLogicalOperator (true), 3, 4));
 		Assert (4, r4.Invoke (new InverseLogicalOperator (false), 3, 4));
 	}
+	
+	void ConstantTest ()
+	{
+		Expression<Func<int>> e1 = () => default (int);
+		AssertNodeType (e1, ExpressionType.Constant);
+		Assert (0, e1.Compile ().Invoke ());
+
+		Expression<Func<int?>> e2 = () => default (int?);
+		AssertNodeType (e2, ExpressionType.Constant);
+		Assert (null, e2.Compile ().Invoke ());		
+		
+		Expression<Func<Tester>> e3 = () => default (Tester);
+		AssertNodeType (e3, ExpressionType.Constant);
+		Assert (null, e3.Compile ().Invoke ());
+		
+		Expression<Func<object>> e4 = () => null;
+		AssertNodeType (e4, ExpressionType.Constant);
+		Assert (null, e4.Compile ().Invoke ());
+	}
 
 	void ConvertTest ()
 	{
@@ -430,6 +450,10 @@ class Tester
 		
 		// TODO: redundant return conversion
 		// Expression<Func<MyTypeExplicit, int?>> e6 = x => (int?)x;
+		
+		// TODO: redundant convert
+		// TODO: pass null value
+		// Expression<Func<int?, object>> ex = x => (object)x;
 	}
 
 	void ConvertCheckedTest ()
@@ -790,6 +814,7 @@ class Tester
 		e.CallTest ();
 		e.CoalesceTest ();
 		e.ConditionTest ();
+		e.ConstantTest ();
 		e.ConvertTest ();
 		e.ConvertCheckedTest ();
 		e.DivideTest ();
