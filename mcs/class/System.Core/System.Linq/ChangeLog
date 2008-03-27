@@ -1,3 +1,7 @@
+2008-03-27  Leonid Freydovich  <leonidf@mainsoft.com>
+
+	* LambdaExpression.cs Add some TARGET_JVM specific code
+
 2008-02-09  Miguel de Icaza  <miguel@novell.com>
 
 	* Enumerable.cs (ToDictionary): Implement this overload. 

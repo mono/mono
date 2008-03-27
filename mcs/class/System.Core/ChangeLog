@@ -1,3 +1,7 @@
+2008-03-27  Leonid Freydovich  <leonidf@mainsoft.com>
+
+	* Add some TARGET_JVM specific code
+
 2008-01-09  Jb Evain  <jbevain@novell.com>
 
 	* Makefile: remove -langversion:linq which is
