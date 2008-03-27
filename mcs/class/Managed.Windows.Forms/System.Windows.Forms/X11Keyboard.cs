@@ -43,7 +43,9 @@ namespace System.Windows.Forms {
 		private IntPtr display;
 		private IntPtr window;
 		private IntPtr xic;
+		private EventMask xic_event_mask = EventMask.NoEventMask;
 		private StringBuilder lookup_buffer;
+		private byte [] utf8_buffer;
 		private int min_keycode, max_keycode, keysyms_per_keycode, syms;
 		private int [] keyc2vkey = new int [256];
 		private int [] keyc2scan = new int [256];
@@ -61,6 +63,16 @@ namespace System.Windows.Forms {
 			this.display = display;
 			this.window = window;
 			lookup_buffer = new StringBuilder (24);
+			EnsureLayoutInitialized ();
+		}
+
+		~X11Keyboard ()
+		{
+			if (xic != IntPtr.Zero) {
+				IntPtr im = XIMOfIC (xic);
+				XDestroyIC (xic);
+				XCloseIM (im);
+			}
 		}
 
 		public void EnsureLayoutInitialized ()
@@ -86,10 +98,27 @@ namespace System.Windows.Forms {
 				Console.Error.WriteLine ("Could not get XIM");
 			else 
 				xic = CreateXic (window, xim);
-			
+			if (xic != IntPtr.Zero)
+				utf8_buffer = new byte [100];
+			if (XGetICValues (xic, "filterEvents", out xic_event_mask, IntPtr.Zero) != null)
+				Console.Error.WriteLine ("Could not get XIC values");
+			EventMask mask = EventMask.ExposureMask | EventMask.KeyPressMask | EventMask.FocusChangeMask;
+			xic_event_mask |= mask;
+			XplatUIX11.XSelectInput(display, window, new IntPtr ((int) xic_event_mask));
+			// FIXME: without it some input methods do not show its UI (but it results in
+			// obstacle, so am disabling it).
+			// XplatUIX11.XMapWindow (display, window);
 			initialized = true;
 		}
 
+		internal IntPtr Window {
+			get { return window; }
+		}
+
+		public EventMask KeyEventMask {
+			get { return xic_event_mask; }
+		}
+		
 		public Keys ModifierKeys {
 			get {
 				Keys keys = Keys.None;
@@ -134,8 +163,6 @@ namespace System.Windows.Forms {
 
 		public void KeyEvent (IntPtr hwnd, XEvent xevent, ref MSG msg)
 		{
-			EnsureLayoutInitialized ();
-
 			XKeySym keysym;
 			int ascii_chars;
 
@@ -155,8 +182,9 @@ namespace System.Windows.Forms {
 			int event_time = (int)xevent.KeyEvent.time;
 
 			if (status == (IntPtr) 2) {
-				// Copy chars into a globally accessible var, i don't think
-				// this var is exposed anywhere though, so we can just ignore this
+				// do not ignore those inputs. They are mostly from XIM.
+				msg = SendImeComposition (lookup_buffer.ToString (0, lookup_buffer.Length));
+				msg.hwnd = hwnd;
 				return;
 			}
 
@@ -361,6 +389,22 @@ namespace System.Windows.Forms {
 			return res;
 		}
 
+		string stored_keyevent_string;
+
+		internal string GetCompositionString ()
+		{
+			return stored_keyevent_string;
+		}
+
+		private MSG SendImeComposition (string s)
+		{
+			MSG msg = new MSG ();
+			msg.message = Msg.WM_IME_COMPOSITION;
+			msg.refobject = s;
+			stored_keyevent_string = s;
+			return msg;
+		}
+
 		private MSG SendKeyboardInput (VirtualKeys vkey, int scan, KeybdEventFlags dw_flags, int time)
 		{
 			Msg message;
@@ -450,8 +494,6 @@ namespace System.Windows.Forms {
 
 		public int EventToVkey (XEvent e)
 		{
-			EnsureLayoutInitialized ();
-
 			IntPtr status;
 			XKeySym ks;
 
@@ -702,14 +744,23 @@ namespace System.Windows.Forms {
 			int res;
 
 			status = IntPtr.Zero;
-			lookup_buffer.Length = 0;
-			if (xic != IntPtr.Zero)
-				res = Xutf8LookupString (xic, ref xevent, lookup_buffer, len, out keysym_res,  out status);
-			else
+			if (xic != IntPtr.Zero) {
+				do {
+					res = Xutf8LookupString (xic, ref xevent, utf8_buffer, 100, out keysym_res,  out status);
+					if ((int) status != -1) // XLookupBufferOverflow
+						break;
+					utf8_buffer = new byte [utf8_buffer.Length << 1];
+				} while (true);
+				lookup_buffer.Length = 0;
+				string s = Encoding.UTF8.GetString (utf8_buffer, 0, res);
+				lookup_buffer.Append (s);
+				keysym = (XKeySym) keysym_res.ToInt32 ();
+				return s.Length;
+			} else {
 				res = XLookupString (ref xevent, lookup_buffer, len, out keysym_res, IntPtr.Zero);
-
-			keysym = (XKeySym) keysym_res.ToInt32 ();
-			return res;
+				keysym = (XKeySym) keysym_res.ToInt32 ();
+				return res;
+			}
 		}
 
 		[DllImport ("libX11")]
@@ -717,6 +768,18 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11")]
 		private static extern IntPtr XCreateIC (IntPtr xim, string name, XIMProperties im_style, string name2, IntPtr value2, string name3, IntPtr value3, IntPtr terminator);
+
+		[DllImport ("libX11")]
+		private static extern IntPtr XIMOfIC (IntPtr xic);
+
+		[DllImport ("libX11")]
+		private static extern void XCloseIM (IntPtr xim);
+
+		[DllImport ("libX11")]
+		private static extern void XDestroyIC (IntPtr xic);
+
+		[DllImport ("libX11")]
+		private static extern string XGetICValues (IntPtr xic, string name, out EventMask value, IntPtr terminator);
 
 		[DllImport ("libX11")]
 		private static extern void XSetICFocus (IntPtr xic);
@@ -733,28 +796,7 @@ namespace System.Windows.Forms {
 		[DllImport ("libX11")]
 		internal extern static int XLookupString(ref XEvent xevent, StringBuilder buffer, int num_bytes, out IntPtr keysym, IntPtr status);
 		[DllImport ("libX11")]
-		internal extern static int Xutf8LookupString(IntPtr xic, ref XEvent xevent, StringBuilder buffer, int num_bytes, out IntPtr keysym, out IntPtr status);
-
-		internal static int Xutf8LookupString (IntPtr xic, ref XEvent xevent, StringBuilder buffer, int num_bytes, out XKeySym keysym, out IntPtr status) {
-			IntPtr	keysym_ret;
-			int	ret;
-
-			ret = Xutf8LookupString (xic, ref xevent, buffer, num_bytes, out keysym_ret, out status);
-
-			keysym = (XKeySym)keysym_ret.ToInt32();
-
-			return ret;
-		}
-
-		internal static int XLookupString (ref XEvent xevent, StringBuilder buffer, int num_bytes, out XKeySym keysym, IntPtr status) {
-			IntPtr	keysym_ret;
-			int	ret;
-
-			ret = XLookupString (ref xevent, buffer, num_bytes, out keysym_ret, status);
-			keysym = (XKeySym)keysym_ret.ToInt32();
-
-			return ret;
-		}
+		internal extern static int Xutf8LookupString(IntPtr xic, ref XEvent xevent, byte [] buffer, int num_bytes, out IntPtr keysym, out IntPtr status);
 
 		[DllImport ("libX11")]
 		private static extern IntPtr XGetKeyboardMapping (IntPtr display, byte first_keycode, int keycode_count, 

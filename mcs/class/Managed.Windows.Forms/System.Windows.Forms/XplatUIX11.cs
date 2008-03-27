@@ -509,7 +509,7 @@ namespace System.Windows.Forms {
 				SetupAtoms();
 
 				// Grab atom changes off the root window to catch certain WM events
-				XSelectInput(DisplayHandle, RootWindow, new IntPtr ((int)EventMask.PropertyChangeMask));
+				XSelectInput(DisplayHandle, RootWindow, new IntPtr ((int) (EventMask.PropertyChangeMask | Keyboard.KeyEventMask)));
 
 				// Handle any upcoming errors
 				ErrorHandler = new XErrorHandler(HandleError);
@@ -1561,11 +1561,17 @@ namespace System.Windows.Forms {
 
 					XNextEvent (DisplayHandle, ref xevent);
 
-					if (xevent.AnyEvent.type == XEventName.KeyPress) {
+					if (xevent.AnyEvent.type == XEventName.KeyPress ||
+					    xevent.AnyEvent.type == XEventName.KeyRelease) {
 						if (XFilterEvent(ref xevent, FosterParent)) {
+							// probably here we could raise WM_IME_KEYDOWN and
+							// WM_IME_KEYUP, but I'm not sure it is worthy.
 							continue;
 						}
 					}
+
+					else if (XFilterEvent (ref xevent, IntPtr.Zero))
+						continue;
 				}
 
 				hwnd = Hwnd.GetObjectFromWindow(xevent.AnyEvent.window);
@@ -2672,9 +2678,9 @@ namespace System.Windows.Forms {
 			}
 
 			lock (XlibLock) {
-				XSelectInput(DisplayHandle, hwnd.whole_window, new IntPtr ((int)(SelectInputMask | EventMask.StructureNotifyMask | EventMask.PropertyChangeMask)));
+				XSelectInput(DisplayHandle, hwnd.whole_window, new IntPtr ((int)(SelectInputMask | EventMask.StructureNotifyMask | EventMask.PropertyChangeMask | Keyboard.KeyEventMask)));
 				if (hwnd.whole_window != hwnd.client_window)
-					XSelectInput(DisplayHandle, hwnd.client_window, new IntPtr ((int)(SelectInputMask | EventMask.StructureNotifyMask)));
+					XSelectInput(DisplayHandle, hwnd.client_window, new IntPtr ((int)(SelectInputMask | EventMask.StructureNotifyMask | Keyboard.KeyEventMask)));
 			}
 
 			if (ExStyleSet (cp.ExStyle, WindowExStyles.WS_EX_TOPMOST)) {
@@ -3059,6 +3065,21 @@ namespace System.Windows.Forms {
 
 		internal override IntPtr DefWndProc(ref Message msg) {
 			switch ((Msg)msg.Msg) {
+				
+				case Msg.WM_IME_COMPOSITION:
+					string s = Keyboard.GetCompositionString ();
+					foreach (char c in s)
+						SendMessage (msg.HWnd, Msg.WM_IME_CHAR, (IntPtr) c, msg.LParam);
+					return IntPtr.Zero;
+
+				case Msg.WM_IME_CHAR:
+					int c = (int) msg.WParam;
+					// On Windows API it sends two WM_CHAR messages for each byte, but
+					// I wonder if it is worthy to emulate it (also no idea how to 
+					// reconstruct those bytes into chars).
+					SendMessage (msg.HWnd, Msg.WM_CHAR, msg.WParam, msg.LParam);
+					return IntPtr.Zero;
+
 				case Msg.WM_PAINT: {
 					Hwnd hwnd;
 
@@ -5122,6 +5143,7 @@ namespace System.Windows.Forms {
 
 			prev_focus_window = FocusWindow;
 			FocusWindow = hwnd.client_window;
+			Keyboard.FocusIn (FocusWindow);
 
 			if (prev_focus_window != IntPtr.Zero) {
 				SendMessage(prev_focus_window, Msg.WM_KILLFOCUS, FocusWindow, IntPtr.Zero);

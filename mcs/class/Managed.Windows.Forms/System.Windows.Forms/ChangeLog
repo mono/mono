@@ -1,3 +1,16 @@
+2008-03-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* X11Keyboard.cs, XplatUIX11.cs :
+	  add primitive support for XIM input support (preedit-
+	  nothing and status-nothing). It requires precise event
+	  capturing (XSelectInput/"filterEvents") and different
+	  call to XFilterEvent against root window.
+	  Get composed string and send dummy WM_IME_COMPOSITION.
+	  Free XIM and XIC instances in finalizer.
+
+	  (This first patch does not include suggested changes
+	   by Doug Rintoul. It will follow.)
+
 2008-03-26  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridView.cs: When binding to a property, if the property
