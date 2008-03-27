@@ -1,3 +1,10 @@
+2008-03-27  Marek Safar  <marek.safar@gmail.com>
+
+	* generic.cs, convert.cs, generic-mcs.cs, expression.cs: Added lifting of
+	predefined comparison operators and null literals.
+	
+	* report.cs: New warning ID.
+	
 2008-03-25  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #370577

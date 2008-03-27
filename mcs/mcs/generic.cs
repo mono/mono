@@ -3279,31 +3279,20 @@ namespace Mono.CSharp {
 
 		public class Wrap : EmptyCast
 		{
-			NullableInfo info;
+			readonly NullableInfo info;
 
-			protected Wrap (Expression expr)
-				: base (expr, null)
+			protected Wrap (Expression expr, Type type)
+				: base (expr, type)
 			{
-			}
-
-			public static Wrap Create (Expression expr, EmitContext ec)
-			{
-				return new Wrap (expr).Resolve (ec) as Wrap;
-			}
-			
-			public override Expression DoResolve (EmitContext ec)
-			{
-				TypeExpr target_type = new NullableType (child.Type, loc);
-				target_type = target_type.ResolveAsTypeTerminal (ec, false);
-				if (target_type == null)
-					return null;
-
-				type = target_type.Type;
 				info = new NullableInfo (type);
 				eclass = ExprClass.Value;
-				return this;
 			}
 
+			public static new Expression Create (Expression expr, Type type)
+			{
+				return new Wrap (expr, type);
+			}
+			
 			public override void Emit (EmitContext ec)
 			{
 				child.Emit (ec);
@@ -3313,8 +3302,8 @@ namespace Mono.CSharp {
 
 		class LiftedWrap : Wrap
 		{
-			public LiftedWrap (Expression expr)
-				: base (expr)
+			public LiftedWrap (Expression expr, Type type)
+				: base (expr, type)
 			{
 			}
 
@@ -3390,7 +3379,12 @@ namespace Mono.CSharp {
 				if (underlying == null)
 					return null;
 
-				wrap = Wrap.Create (underlying, ec);
+				TypeExpr target_type = new NullableType (underlying.Type, loc);
+				target_type = target_type.ResolveAsTypeTerminal (ec, false);
+				if (target_type == null)
+					return null;
+
+				wrap = Wrap.Create (underlying, target_type.Type);
 				if (wrap == null)
 					return null;
 
@@ -3488,6 +3482,9 @@ namespace Mono.CSharp {
 
 			public override Expression DoResolve (EmitContext ec)
 			{
+				if (eclass != ExprClass.Invalid)
+					return this;
+
 				// TODO: How does it work with use-operators?
 				if ((Oper == Binary.Operator.LogicalAnd) ||
 				    (Oper == Binary.Operator.LogicalOr)) {
@@ -3716,6 +3713,34 @@ namespace Mono.CSharp {
 				ig.MarkLabel (end_label);
 			}
 
+			protected override Expression ResolveOperatorPredefined (EmitContext ec, Binary.PredefinedOperator [] operators, bool primitives_only)
+			{
+				Expression e = base.ResolveOperatorPredefined (ec, operators, primitives_only);
+				if (e != null)
+					return e;
+
+				//
+				// 7.9.9 Equality operators and null
+				//
+				// The == and != operators permit one operand to be a value of a nullable type and
+				// the other to be the null literal, even if no predefined or user-defined operator
+				// (in unlifted or lifted form) exists for the operation.
+				//
+				if ((Oper & Operator.EqualityMask) != 0) {
+					if (left is NullLiteral) {
+						left = WrapNullExpression (ec, right, left);
+						return this;
+					}
+
+					if (right is NullLiteral) {
+						right = WrapNullExpression (ec, left, right);
+						return this;
+					}
+				}
+
+				return null;
+			}
+
 			protected override Expression ResolveUserOperator (EmitContext ec, Type l, Type r)
 			{
 				Expression expr = base.ResolveUserOperator (ec, l, r);
@@ -3726,7 +3751,22 @@ namespace Mono.CSharp {
 				if ((Oper & Operator.ComparisonMask) != 0)
 					return expr;
 
-				return new LiftedWrap (expr).Resolve (ec);
+				TypeExpr target_type = new NullableType (expr.Type, loc);
+				target_type = target_type.ResolveAsTypeTerminal (ec, false);
+				if (target_type == null)
+					return null;
+
+				return new LiftedWrap (expr, target_type.Type).Resolve (ec);
+			}
+
+			Expression WrapNullExpression (EmitContext ec, Expression expr, Expression null_expr)
+			{
+				TypeExpr lifted_type = new NullableType (expr.Type, expr.Location);
+				lifted_type = lifted_type.ResolveAsTypeTerminal (ec, false);
+				if (lifted_type == null)
+					return null;
+
+				return new Null (lifted_type.Type, null_expr.Location);
 			}
 		}
 

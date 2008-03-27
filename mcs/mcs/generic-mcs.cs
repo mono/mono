@@ -411,6 +411,41 @@ namespace Mono.CSharp
 			}
 		}
 		
+		public class LiftedBinaryOperator : Binary
+		{
+			public LiftedBinaryOperator (Binary.Operator op, Expression left, Expression right, Location loc)
+				: base (op, left, right)
+			{
+			}
+			
+			public override Expression DoResolve (EmitContext ec)
+			{
+				throw new NotImplementedException ();
+			}
+
+			public override void Emit (EmitContext ec)
+			{
+				throw new NotImplementedException ();
+			}
+		}
+		
+		public class Null : Expression
+		{
+			public Null (Type target_type, Location loc)
+			{
+			}
+			
+			public override Expression DoResolve (EmitContext ec)
+			{
+				throw new NotImplementedException ();
+			}
+
+			public override void Emit (EmitContext ec)
+			{
+				throw new NotImplementedException ();
+			}
+		}
+		
 		public class Unwrap : Expression
 		{
 			public override Expression DoResolve (EmitContext ec)
