@@ -57,9 +57,6 @@ namespace System.Web.Hosting {
 			if (virtualDir == null || virtualDir == "")
 				throw new ArgumentNullException ("virtualDir");
 
-			if (UrlUtils.IsRelativeUrl (virtualDir))
-				throw new ArgumentException (String.Concat ("The relative virtual path '", virtualDir, "', is not allowed here."));
-
 			string phys_path = HostingEnvironment.MapPath (virtualDir);
 			return Directory.Exists (phys_path);
 		}
@@ -68,10 +65,6 @@ namespace System.Web.Hosting {
 		{
 			if (virtualPath == null || virtualPath == "")
 				throw new ArgumentNullException ("virtualPath");
-
-			// Not sure why it was put here? /grendel 2008-03-12
-// 			if (UrlUtils.IsRelativeUrl (virtualPath))
-// 				throw new ArgumentException (String.Concat ("The relative virtual path '", virtualPath, "', is not allowed here."));
 
 			string phys_path = HostingEnvironment.MapPath (virtualPath);
 			return File.Exists (phys_path);
@@ -94,9 +87,6 @@ namespace System.Web.Hosting {
 			if (virtualDir == null || virtualDir == "")
 				throw new ArgumentNullException ("virtualDir");
 
-			if (UrlUtils.IsRelativeUrl (virtualDir)) 
-				throw new ArgumentException (String.Concat ("The relative virtual path '", virtualDir, "', is not allowed here."));
-
 			return new DefaultVirtualDirectory (virtualDir);
 		}
 
@@ -104,9 +94,6 @@ namespace System.Web.Hosting {
 		{
 			if (virtualPath == null || virtualPath == "")
 				throw new ArgumentNullException ("virtualPath");
-
-			if (UrlUtils.IsRelativeUrl (virtualPath))
-				throw new ArgumentException (String.Concat ("The relative virtual path '", virtualPath, "', is not allowed here."));
 
 			return new DefaultVirtualFile (virtualPath);
 		}

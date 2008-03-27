@@ -467,10 +467,39 @@ namespace System.Web {
 			return GetGlobalResourceObject (classKey, resourceKey, Thread.CurrentThread.CurrentUICulture);
 		}
 
+		static object GetGlobalObjectFromFactory (string classKey, string resourceKey, CultureInfo culture)
+		{
+			GlobalizationSection gs = WebConfigurationManager.GetSection ("system.web/globalization") as GlobalizationSection;
+
+			if (gs == null)
+				return null;
+
+			String rsfTypeName = gs.ResourceProviderFactoryType;
+			if (String.IsNullOrEmpty (rsfTypeName))
+				return null;
+			
+			Type rsfType = Type.GetType (rsfTypeName, true);
+			ResourceProviderFactory rpf = Activator.CreateInstance (rsfType) as ResourceProviderFactory;
+			
+			if (rpf == null)
+				return null;
+
+			IResourceProvider rp = rpf.CreateGlobalResourceProvider (classKey);
+			if (rp == null)
+				return null;
+
+			return rp.GetObject (resourceKey, culture);
+		}
+		
 		public static object GetGlobalResourceObject (string classKey, string resourceKey, CultureInfo culture)
 		{
+			object ret = GetGlobalObjectFromFactory (classKey, resourceKey, culture);
+			if (ret != null)
+				return ret;
+			
 			if (AppGlobalResourcesAssembly == null)
 				throw new MissingManifestResourceException ();
+			
 			return GetResourceObject ("Resources." + classKey, resourceKey, culture, AppGlobalResourcesAssembly);
 		}
 

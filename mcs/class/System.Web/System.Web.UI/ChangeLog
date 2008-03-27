@@ -1,3 +1,8 @@
+2008-03-27  Marek Habersack  <mhabersack@novell.com>
+
+	* Page.cs: added an implementation of the ClientQueryString
+	property.
+
 2008-03-13  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateParser.cs: HttpApplication.BinaryDirectories property no longer

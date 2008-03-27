@@ -2039,9 +2039,8 @@ public partial class Page : TemplateControl, IHttpHandler
 		ClientScriptManager ClientScript {
 		get { return scriptManager; }
 	}
-	
-	#if NET_2_0
 
+#if NET_2_0
 	internal static readonly object InitCompleteEvent = new object ();
 	internal static readonly object LoadCompleteEvent = new object ();
 	internal static readonly object PreInitEvent = new object ();
@@ -2204,7 +2203,11 @@ public partial class Page : TemplateControl, IHttpHandler
 	{
 		_form = form;
 	}
-	
+
+	public string ClientQueryString {
+		get { return Request.UrlComponents.Query; }
+	}
+
 	[BrowsableAttribute (false)]
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	public Page PreviousPage {

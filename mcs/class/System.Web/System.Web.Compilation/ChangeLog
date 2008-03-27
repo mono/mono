@@ -1,3 +1,9 @@
+2008-03-27  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: AssertVirtualPathExists now queries the
+	VirtualPathProvider for path existence if physical path check
+	fails, before throwing the 404 exception.
+
 2008-03-13  Marek Habersack  <mhabersack@novell.com>
 
 	* BuildManager.cs: if we're running in a case-insensitive

@@ -72,7 +72,7 @@ namespace System.Web.Hosting {
 		public virtual bool FileExists (string virtualPath)
 		{
 			if (prev != null)
-				return FileExists (virtualPath);
+				return prev.FileExists (virtualPath);
 			
 			return false;
 		}
