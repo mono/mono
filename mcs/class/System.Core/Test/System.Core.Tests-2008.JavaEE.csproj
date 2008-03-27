@@ -21,7 +21,7 @@
     <RootNamespace>System.Core.Tests</RootNamespace>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <jarserver>ip2</jarserver>
+    <jarserver>ipa</jarserver>
     <PublishUrl>http://localhost/System.Core.Tests-2008.JavaEE/</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
@@ -77,14 +77,15 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-RefInfo-system-core-2008-javaee="j2il:" REFS-JarPath-system-core-2008-javaee="..\bin\Debug_Java\System.Core-2008.JavaEE.jar" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system="" REFS-RefInfo-nunit-framework="j2il:" REFS-JarPath-nunit-framework="..\..\..\..\..\..\Repositories\mainsoft_trunk\studio\GH\runtime\mcs\nunit20\framework\bin\Debug_Java20\nunit.framework.jar" REFS-JarPath-rt="" REFS-RefInfo-rt="repository:jre:sun:1.6.0" />
+      <UserProperties REFS-RefInfo-rt="repository:jre:sun:1.6.0" REFS-JarPath-rt="" REFS-JarPath-nunit-framework="..\..\..\nunit20\framework\bin\Debug_Java20\nunit.framework.jar" REFS-RefInfo-nunit-framework="j2il:" REFS-JarPath-system="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system-core-2008-javaee="..\bin\Debug_Java\System.Core-2008.JavaEE.jar" REFS-RefInfo-system-core-2008-javaee="j2il:" />
     </VisualStudio>
   </ProjectExtensions>
   <ItemGroup>
-    <Reference Include="nunit.framework, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Repositories\mainsoft_trunk\studio\GH\runtime\mcs\nunit20\framework\bin\Debug_Java20\nunit.framework.dll</HintPath>
-    </Reference>
+	  <Reference Include="nunit.framework">
+		  <SpecificVersion>False</SpecificVersion>
+		  <HintPath>..\..\..\nunit20\framework\bin\Debug_Java20\nunit.framework.dll</HintPath>
+		  <Private>True</Private>
+	  </Reference>
     <Reference Include="rt, Version=1.6.0.65535, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.Core-2008.JavaEE, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -114,7 +115,6 @@
     <None Include="System.Linq\ChangeLog" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Add.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_AddChecked.cs" />
@@ -170,5 +170,8 @@
     <Compile Include="System.Linq\EnumerableMoreTest.cs" />
     <Compile Include="System.Linq\EnumerableTest.cs" />
     <Compile Include="System.Linq\QueryableTest.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
 </Project>

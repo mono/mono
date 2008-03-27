@@ -21,7 +21,7 @@
     <RootNamespace>System.Core</RootNamespace>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <jarserver>ip2</jarserver>
+    <jarserver>ipa</jarserver>
     <PublishUrl>http://localhost/System.Core-2008.JavaEE/</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
@@ -46,7 +46,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug_Java\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;JAVA;NET_3_5</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;JAVA;NET_3_5;TARGET_JVM</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <BaseAddress>285212672</BaseAddress>
