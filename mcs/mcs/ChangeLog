@@ -1,5 +1,9 @@
 2008-03-27  Marek Safar  <marek.safar@gmail.com>
 
+	* lambda.cs: Check return type only for invocation.
+	
+2008-03-27  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #374214
 	* ecore.cs: Correctly report argument type mismatch.
 
