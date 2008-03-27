@@ -1,5 +1,17 @@
 using System;
 
+class TestUnary
+{
+	static void Foo (Action<int> a)
+	{
+	}
+
+	static void Bar ()
+	{
+		Foo (str => ++str);
+	}
+}
+
 class Program
 {
 
