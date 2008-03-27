@@ -1,3 +1,11 @@
+2008-03-27  Dick Porter  <dick@ximian.com>
+
+	* processes.c (ShellExecuteEx): Grotty kludge to work around
+	unpleasant feature in g_shell_parse_argv() where it treats '#'
+	embedded in a filename as a comment marker, and throws away the
+	rest of the line.  When we're directly opening URLs quote the
+	filename, to avoid this.  Fixes bug 371567.
+
 2008-03-25  Dick Porter  <dick@ximian.com>
 
 	* wapi-private.h (_WAPI_HANDLE_VERSION): Increment file layout
