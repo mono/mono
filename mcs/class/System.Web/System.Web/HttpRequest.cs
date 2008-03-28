@@ -125,7 +125,7 @@ namespace System.Web {
 			this.context = context;
 		}
 		
-		UriBuilder UrlComponents {
+		internal UriBuilder UrlComponents {
 			get {
 				if (url_components == null) {
 					string query;
@@ -1209,7 +1209,7 @@ namespace System.Web {
 				virtualPath = VirtualPathUtility.Combine (VirtualPathUtility.AppendTrailingSlash (baseVirtualDir), virtualPath);
 			}
 			virtualPath = VirtualPathUtility.ToAbsolute (virtualPath);
-
+			
 			if (!allowCrossAppMapping){
 				if (!StrUtils.StartsWith (virtualPath, appVirtualPath, true))
 					throw new HttpException ("MapPath: Mapping across applications not allowed");

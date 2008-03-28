@@ -78,6 +78,10 @@ namespace Mono.Mozilla
 			this.domEvents = null;
 		}
 
+		public bool Initialized {
+			get { return this.loaded; }
+		}
+		
 		public IWindow Window {
 			get {
 				if (Navigation != null) {
@@ -157,72 +161,71 @@ namespace Mono.Mozilla
 		}
 		
 
-		public void OpenStream (string uri, string contentType)
-		{
-			nsIServiceManager servMan = Base.gluezilla_getServiceManager ();
-			IntPtr ptr;
-			servMan.getServiceByContractID ("@mozilla.org/network/io-service;1", typeof (nsIIOService).GUID, out ptr);
-			if (ptr == IntPtr.Zero)
-				throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.IOService);
-
-			nsIIOService ioService;
-			try {
-				ioService = (nsIIOService)Marshal.GetObjectForIUnknown (ptr);
-			} catch (System.Exception ex) {
-				throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.IOService, ex);
-			}
-			AsciiString asciiUri = new AsciiString (uri);
-			nsIURI ret;
-			ioService.newURI (asciiUri.Handle, null, null, out ret);
-			AsciiString ctype = new AsciiString(contentType);
-			if (Navigation != null) {
-				nsIWebBrowserStream stream = (nsIWebBrowserStream) navigation.navigation;
-				stream.openStream (ret, ctype.Handle);
-				streamingMode = true;
-			} else
-				throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.Navigation);
-		}
-
-		public void AppendToStream (string html)
-		{
-			if (!streamingMode)
-				throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.StreamNotOpen);
-
-			if (Navigation == null)
-				throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.Navigation);
-
-			nsIWebBrowserStream stream = navigation.navigation as nsIWebBrowserStream;
-			if (stream == null)
-				throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.StreamNotOpen);
-			IntPtr native_html = Marshal.StringToHGlobalAnsi (html);
-			stream.appendToStream (native_html, (uint)html.Length);
-			Marshal.FreeHGlobal (native_html);
-		}
-
-		public void AppendToStream (byte[] data)
+		public void Render (byte[] data)
 		{
 			if (data == null)
 				throw new ArgumentNullException ("data");
 			string html = System.Text.ASCIIEncoding.UTF8.GetString (data);
-			AppendToStream (html);
+			Render (html);
 		}
-		
-		public void CloseStream ()
-		{
-			if (!streamingMode)
-				return;
 
-			if (Navigation == null)
+		public void Render (string html)
+		{
+			Render (html, "file:///", "text/html");
+		}
+
+		
+		nsIServiceManager servMan;
+		IntPtr ioServicePtr;
+		nsIIOService ioService;
+		
+		public void Render (string html, string uri, string contentType)
+		{
+			nsIWebBrowserStream stream;
+			
+			if (Navigation != null) {
+				stream = (nsIWebBrowserStream) navigation.navigation;
+			} else
 				throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.Navigation);
 
-			nsIWebBrowserStream stream = navigation.navigation as nsIWebBrowserStream;
-			if (stream == null)
-				return;
-			stream.closeStream ();
-			streamingMode = false;
-		}		
+			
+			if (servMan == null)
+				servMan = Base.gluezilla_getServiceManager ();
+			
+			
+			if (ioServicePtr == IntPtr.Zero)
+				servMan.getServiceByContractID ("@mozilla.org/network/io-service;1", typeof (nsIIOService).GUID, out ioServicePtr);
+			if (ioServicePtr == IntPtr.Zero)
+				throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.IOService);
 
+			
+			if (ioService == null) {
+				try {
+					ioService = (nsIIOService)Marshal.GetObjectForIUnknown (ioServicePtr);
+				} catch (System.Exception ex) {
+					throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.IOService, ex);
+				}
+			}
+
+			AsciiString asciiUri = new AsciiString (uri);
+			nsIURI ret;
+			ioService.newURI (asciiUri.Handle, null, null, out ret);
+
+			AsciiString ctype = new AsciiString(contentType);
+
+			HandleRef han = ctype.Handle;
+
+			stream.openStream (ret, han);
+
+			IntPtr native_html = Marshal.StringToHGlobalAnsi (html);
+			stream.appendToStream (native_html, (uint)html.Length);
+			Marshal.FreeHGlobal (native_html);
+
+			stream.closeStream ();
+
+		}
 		
+				
 		internal void AttachEvent (INode node, string eve, EventHandler handler) {
 			string key = String.Intern (node.GetHashCode() + ":" + eve);
 			Console.Error.WriteLine ("Event Attached: " + key);

@@ -1,3 +1,35 @@
+2008-03-28  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #374619
+	* nullable.cs: Fixed guarding of EmitBitwiseBoolean.
+	
+2008-03-27  Marek Safar  <marek.safar@gmail.com>
+
+	* lambda.cs: Check return type only for invocation.
+	
+2008-03-27  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #374214
+	* ecore.cs: Correctly report argument type mismatch.
+
+2008-03-27  Marek Safar  <marek.safar@gmail.com>
+
+	* convert.cs (ImplicitReferenceConversionCore): Correctly compare enum type
+	and not rely on broken IsEnum.
+
+2008-03-27  Marek Safar  <marek.safar@gmail.com>
+
+	* nullable.cs: New file, extracted from generic.cs.
+	
+	* generic.cs, generic-mcs.cs, *.csproj, *.sources: Updated.
+
+2008-03-27  Marek Safar  <marek.safar@gmail.com>
+
+	* generic.cs, convert.cs, generic-mcs.cs, expression.cs: Added lifting of
+	predefined comparison operators and null literals.
+	
+	* report.cs: New warning ID.
+	
 2008-03-25  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #370577

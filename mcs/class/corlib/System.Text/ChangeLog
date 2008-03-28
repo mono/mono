@@ -1,3 +1,7 @@
+2008-03-27  Kornél Pál  <kornelpal@gmail.com>
+
+	* Encoding.cs: Fix possible integer overflow in argument validation.
+
 2008-02-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DecoderExceptionFallback.cs: Use 'is' instead of 'as' and a null

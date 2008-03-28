@@ -1483,6 +1483,14 @@ namespace Mono.CSharp {
 			this.loc = loc;
 		}
 
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			ArrayList args = new ArrayList (2);
+			args.Add (new Argument (this));
+			args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
+			return CreateExpressionFactoryCall ("Constant", args);
+		}
+
 		public override Expression DoResolve (EmitContext ec)
 		{
 			TypeExpr texpr = expr.ResolveAsTypeTerminal (ec, false);
@@ -1501,7 +1509,7 @@ namespace Mono.CSharp {
 				if (constraints != null && constraints.IsReferenceType)
 					return new EmptyConstantCast (new NullLiteral (Location), type);
 			} else {
-				Constant c = New.Constantify(type);
+				Constant c = New.Constantify (type);
 				if (c != null)
 					return new EmptyConstantCast (c, type);
 
@@ -1534,9 +1542,10 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class Binary : Expression {
 
-		class PredefinedOperator {
+		protected class PredefinedOperator {
 			protected readonly Type left;
 			protected readonly Type right;
+			Type left_lifted, right_lifted;
 			public readonly Operator OperatorsMask;
 			public Type ReturnType;
 
@@ -1566,6 +1575,88 @@ namespace Mono.CSharp {
 				this.ReturnType = return_type;
 			}
 
+			//
+			// CSC 2 has this behavior, it allows structs to be compared
+			// with the null literal *outside* of a generics context and
+			// inlines that as true or false.
+			//
+			Expression CreateNullConstant (Binary b, Expression expr)
+			{
+				// FIXME: Handle side effect constants
+				Constant c = new BoolConstant (b.oper == Operator.Inequality, b.loc);
+
+				if ((b.oper & Operator.EqualityMask) != 0) {
+					Report.Warning (472, 2, b.loc, "The result of comparing `{0}' against null is always `{1}'. " +
+							"This operation is undocumented and it is temporary supported for compatibility reasons only",
+							expr.GetSignatureForError (), c.AsString ());
+				} else {
+					Report.Warning (464, 2, b.loc, "The result of comparing type `{0}' against null is always `{1}'",
+							expr.GetSignatureForError (), c.AsString ());
+				}
+
+				return ReducedExpression.Create (c, b);
+			}
+
+			public virtual Expression ConvertResult (EmitContext ec, Binary b)
+			{
+				b.type = ReturnType;
+
+				bool lifted = b is Nullable.LiftedBinaryOperator;
+				if (lifted) {
+					if (left_lifted == null)
+						left_lifted = GetLiftedType (ec, left, b.left);
+					if (right_lifted == null)
+						right_lifted = GetLiftedType (ec, right, b.right);
+				}
+
+				if (left != null) {
+					if (b.left is NullLiteral) {
+						if (!lifted)
+							return CreateNullConstant (b, b.right).Resolve (ec);
+
+						if ((b.oper & Operator.RelationalMask) != 0)
+							return CreateNullConstant (b, b.right).Resolve (ec);
+
+						b.left = new Nullable.Null (left_lifted, b.left.Location);
+					} else {
+						b.left = Convert.ImplicitConversion (ec, b.left, left, b.left.Location);
+
+						if (lifted)
+							b.left = EmptyCast.Create (b.left, left_lifted);
+					}
+				}
+
+				if (right != null) {
+					if (b.right is NullLiteral) {
+						if (!lifted)
+							return CreateNullConstant (b, b.left).Resolve (ec);
+
+						if ((b.oper & Operator.RelationalMask) != 0)
+							return CreateNullConstant (b, b.left).Resolve (ec);
+
+						b.right = new Nullable.Null (right_lifted, b.right.Location);
+					} else {
+						b.right = Convert.ImplicitConversion (ec, b.right, right, b.right.Location);
+
+						if (lifted)
+							b.right = EmptyCast.Create (b.right, right_lifted);
+					}
+				}
+
+				return b;
+			}
+
+			Type GetLiftedType (EmitContext ec, Type type, Expression expr)
+			{
+#if GMCS_SOURCE			
+				TypeExpr lifted_type = new NullableType (type, expr.Location);
+				lifted_type = lifted_type.ResolveAsTypeTerminal (ec, false);
+				if (lifted_type != null)
+					return lifted_type.Type;
+#endif
+				return null;
+			}
+
 			public bool IsPrimitiveApplicable (Type type)
 			{
 				//
@@ -1574,8 +1665,13 @@ namespace Mono.CSharp {
 				return left == type;
 			}
 
-			public virtual bool IsApplicable (EmitContext ec, Expression lexpr, Expression rexpr)
+			public virtual bool IsApplicable (EmitContext ec, Expression lexpr, Expression rexpr, bool lnull, bool rnull)
 			{
+				if (lnull)
+					return Convert.ImplicitConversionExists (ec, rexpr, right);
+				if (rnull)
+					return Convert.ImplicitConversionExists (ec, lexpr, left);
+
 				if (TypeManager.IsEqual (left, lexpr.Type) &&
 					TypeManager.IsEqual (right, rexpr.Type))
 					return true;
@@ -1602,60 +1698,6 @@ namespace Mono.CSharp {
 					return null;
 
 				return result == 1 ? best_operator : this;
-			}
-
-			public virtual Expression ConvertResult (EmitContext ec, Binary b)
-			{
-				if (left != null)
-					b.left = Convert.ImplicitConversion (ec, b.left, left, b.left.Location);
-
-				if (right != null)
-					b.right = Convert.ImplicitConversion (ec, b.right, right, b.right.Location);
-
-				b.type = ReturnType;
-				return b;
-			}
-		}
-
-		//
-		// 7.9.9 Equality operators and null
-		//
-		// CSC 2 has this behavior, it allows structs to be compared
-		// with the null literal *outside* of a generics context and
-		// inlines that as true or false.
-		//
-		class PredefinedNullableEquality : PredefinedOperator
-		{
-			public PredefinedNullableEquality (Type type, Operator op_mask)
-				: base (type, op_mask, type)
-			{
-			}
-
-			public override bool IsApplicable (EmitContext ec, Expression lexpr, Expression rexpr)
-			{
-				if (RootContext.Version < LanguageVersion.ISO_2)
-					return false;
-
-				return (lexpr is NullLiteral && (rexpr is Nullable.Unwrap || TypeManager.IsPrimitiveType (rexpr.Type))) ||
-					(rexpr is NullLiteral && (lexpr is Nullable.Unwrap || TypeManager.IsPrimitiveType (lexpr.Type)));
-			}
-
-			public override Expression ConvertResult (EmitContext ec, Binary b)
-			{
-				if (b.right is Nullable.Unwrap || b.left is Nullable.Unwrap) {
-					b.type = ReturnType;
-					return b;
-				}
-
-				// FIXME: Handle side effect constants
-				Constant expr = new BoolConstant (b.oper == Operator.Inequality, b.loc);
-
-				Expression non_nullable = b.right is NullLiteral ? b.left : b.right;
-				Report.Warning (472, 2, b.loc, "The result of comparing `{0}' against null is always `{1}'. " +
-						"This operation is undocumented and it is temporary supported for compatibility reasons only",
-						non_nullable.GetSignatureForError (), expr.AsString ());
-				
-				return ReducedExpression.Create (expr, b).Resolve (ec);
 			}
 		}
 
@@ -1723,7 +1765,7 @@ namespace Mono.CSharp {
 			{
 			}
 
-			public override bool IsApplicable (EmitContext ec, Expression lexpr, Expression rexpr)
+			public override bool IsApplicable (EmitContext ec, Expression lexpr, Expression rexpr, bool lnull, bool rnull)
 			{
 				if (left == null) {
 					if (!lexpr.Type.IsPointer)
@@ -1771,10 +1813,10 @@ namespace Mono.CSharp {
 			LeftShift	= 5 | ShiftMask,
 			RightShift	= 6 | ShiftMask,
 
-			LessThan	= 7 | ComparisonMask,
-			GreaterThan	= 8 | ComparisonMask,
-			LessThanOrEqual		= 9 | ComparisonMask,
-			GreaterThanOrEqual	= 10 | ComparisonMask,
+			LessThan	= 7 | ComparisonMask | RelationalMask,
+			GreaterThan	= 8 | ComparisonMask | RelationalMask,
+			LessThanOrEqual		= 9 | ComparisonMask | RelationalMask,
+			GreaterThanOrEqual	= 10 | ComparisonMask | RelationalMask,
 			Equality	= 11 | ComparisonMask | EqualityMask,
 			Inequality	= 12 | ComparisonMask | EqualityMask,
 
@@ -1796,7 +1838,8 @@ namespace Mono.CSharp {
 			BitwiseMask		= 1 << 9,
 			LogicalMask		= 1 << 10,
 			AdditionMask	= 1 << 11,
-			SubtractionMask	= 1 << 12
+			SubtractionMask	= 1 << 12,
+			RelationalMask	= 1 << 13
 		}
 
 		readonly Operator oper;
@@ -2157,8 +2200,6 @@ namespace Mono.CSharp {
 			temp.Add (new PredefinedShiftOperator (TypeManager.uint32_type, Operator.ShiftMask));
 			temp.Add (new PredefinedShiftOperator (TypeManager.int64_type, Operator.ShiftMask));
 			temp.Add (new PredefinedShiftOperator (TypeManager.uint64_type, Operator.ShiftMask));
-
-			temp.Add (new PredefinedNullableEquality (bool_type, Operator.EqualityMask));
 
 			standard_operators = (PredefinedOperator []) temp.ToArray (typeof (PredefinedOperator));
 		}
@@ -2657,11 +2698,14 @@ namespace Mono.CSharp {
 		//
 		// Build-in operators method overloading
 		//
-		Expression ResolveOperatorPredefined (EmitContext ec, PredefinedOperator [] operators, bool primitives_only)
+		protected virtual Expression ResolveOperatorPredefined (EmitContext ec, PredefinedOperator [] operators, bool primitives_only)
 		{
 			PredefinedOperator best_operator = null;
 			Type l = left.Type;
 			Operator oper_mask = oper & ~Operator.ValuesOnlyMask;
+
+			bool left_is_null = left is NullLiteral && RootContext.Version >= LanguageVersion.ISO_2;
+			bool right_is_null = right is NullLiteral && RootContext.Version >= LanguageVersion.ISO_2;
 			
 			foreach (PredefinedOperator po in operators) {
 				if ((po.OperatorsMask & oper_mask) == 0)
@@ -2671,7 +2715,7 @@ namespace Mono.CSharp {
 					if (!po.IsPrimitiveApplicable (l))
 						continue;
 				} else {
-					if (!po.IsApplicable (ec, left, right))
+					if (!po.IsApplicable (ec, left, right, left_is_null, right_is_null))
 						continue;
 				}
 
@@ -2696,27 +2740,6 @@ namespace Mono.CSharp {
 
 			if (best_operator == null)
 				return null;
-
-			if (primitives_only) {
-#if GMCS_SOURCE			
-				if (this is Nullable.LiftedBinaryOperator) {
-					//
-					// This is ugly, consider this conversion: byte? -> (byte -> int) -> int?
-					// (byte -> int) is binary operator promotion
-					// int? representation is required by expression tree
-					//
-					TypeExpr lifted_type = new NullableType (l, left.Location);
-					lifted_type = lifted_type.ResolveAsTypeTerminal (ec, false);
-					if (lifted_type == null)
-						return null;
-
-					left = EmptyCast.Create (left, lifted_type.Type);
-					right = EmptyCast.Create (right, lifted_type.Type);
-				}
-#endif				
-				type = best_operator.ReturnType;
-				return this;
-			}
 
 			return best_operator.ConvertResult (ec, this);
 		}

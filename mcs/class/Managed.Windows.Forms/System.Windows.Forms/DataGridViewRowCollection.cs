@@ -512,7 +512,7 @@ namespace System.Windows.Forms {
 			dataGridViewRow.SetDataGridView (dataGridView);
 			
 			// Add the row just before the editing row (if there is an editing row).
-			if (DataGridView != null && DataGridView.NewRowIndex >= 0) {
+			if (DataGridView != null && DataGridView.EditingRow != null && DataGridView.NewRowIndex >= 0) {
 				DataGridView.EditingRow.SetIndex (list.Count);
 				list.Insert (DataGridView.NewRowIndex, dataGridViewRow);
 			} else

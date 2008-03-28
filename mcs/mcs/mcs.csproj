@@ -188,6 +188,9 @@
     <Compile Include="namespace.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="nullable.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="parameter.cs">
       <SubType>Code</SubType>
     </Compile>

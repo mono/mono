@@ -103,8 +103,15 @@ namespace System.Linq.Expressions {
 
 		public Delegate Compile ()
 		{
+#if TARGET_JVM
+            System.Linq.jvm.Interpreter inter = 
+                new System.Linq.jvm.Interpreter(this);
+            inter.Validate();
+            return inter.CreateDelegate();        
+#else
 			var context = EmitContext.Create (this);
 			return context.CreateDelegate ();
+#endif
 		}
 	}
 }

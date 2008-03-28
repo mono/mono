@@ -117,6 +117,9 @@ namespace System.Windows.Forms {
 		#region Public Constructors	
 		public TreeView ()
 		{
+			vbar = new ImplicitVScrollBar ();
+			hbar = new ImplicitHScrollBar ();
+
 			InternalBorderStyle = BorderStyle.Fixed3D;
 			base.background_color = ThemeEngine.Current.ColorWindow;
 			base.foreground_color = ThemeEngine.Current.ColorWindowText;
@@ -145,9 +148,6 @@ namespace System.Windows.Forms {
 			string_format = new StringFormat ();
 			string_format.LineAlignment = StringAlignment.Center;
 			string_format.Alignment = StringAlignment.Center;
-
-			vbar = new ImplicitVScrollBar ();
-			hbar = new ImplicitHScrollBar ();
 
 			vbar.Visible = false;
 			hbar.Visible = false;

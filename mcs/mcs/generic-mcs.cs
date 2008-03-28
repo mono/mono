@@ -391,45 +391,4 @@ namespace Mono.CSharp
 			throw new NotImplementedException ();		
 		}
 	}
-	
-	public class Nullable
-	{
-		public class NullCoalescingOperator : Expression
-		{
-			public NullCoalescingOperator (Expression left, Expression right, Location loc)
-			{
-			}
-			
-			public override Expression DoResolve (EmitContext ec)
-			{
-				throw new NotImplementedException ();
-			}
-			
-			public override void Emit (EmitContext ec)
-			{
-				throw new NotImplementedException ();
-			}
-		}
-		
-		public class Unwrap : Expression
-		{
-			public override Expression DoResolve (EmitContext ec)
-			{
-				throw new NotImplementedException ();
-			}
-			
-			public override void Emit (EmitContext ec)
-			{
-				throw new NotImplementedException ();
-			}
-		}
-		
-		public class HasValue
-		{
-			public static Expression Create (Expression expr, EmitContext ec)
-			{
-				throw new NotImplementedException ();
-			}
-		}
-	}
 }

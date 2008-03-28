@@ -324,9 +324,9 @@ namespace Mono.CSharp {
 				// System.Enum is not a value type, it is a class, so we need
 				// a boxing conversion
 				//
-				if (expr_type.IsEnum || TypeManager.IsGenericParameter (expr_type))
+				if (target_type == TypeManager.enum_type || TypeManager.IsGenericParameter (expr_type))
 					return false;
-
+				
 				return true;
 			}
 
@@ -1296,7 +1296,7 @@ namespace Mono.CSharp {
 				} else {
 					e = ImplicitConversion (ec, expr, target, loc);
 					if (e != null)
-						return Nullable.Wrap.Create (e, ec);
+						return Nullable.Wrap.Create (e, target_type);
 				}
 			}
 #endif
@@ -2066,7 +2066,7 @@ namespace Mono.CSharp {
 
 					e = ExplicitConversionCore (ec, expr, target, loc);
 					if (e != null)
-						return Nullable.Wrap.Create (e, ec);
+						return Nullable.Wrap.Create (e, target_type);
 				}
 			} else if (TypeManager.IsNullableType (expr_type)) {
 				e = ExplicitConversion (ec, Nullable.Unwrap.Create (expr, ec), target_type, loc);

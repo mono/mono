@@ -1176,6 +1176,17 @@ namespace System.Windows.Forms
 			InvalidateDirty ();
 		}
 
+		// I hate to do this, but we don't have the resources to track
+		// down everything internal that is setting a value outside the
+		// correct range, so we'll clamp it to the acceptable values.
+		internal void SafeValueSet (int value)
+		{
+			value = Math.Min (value, maximum);
+			value = Math.Max (value, minimum);
+			
+			Value = value;
+		}
+		
 		private void SetEndPosition ()
 		{
 			ScrollEventArgs event_args;

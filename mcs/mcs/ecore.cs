@@ -4458,7 +4458,7 @@ namespace Mono.CSharp {
 			//
 			// Fill not provided arguments required by params modifier
 			//
-			if (params_initializers == null && pd.HasParams && arg_count < pd.Count) {
+			if (params_initializers == null && pd.HasParams && arg_count < pd.Count && a_idx + 1 == pd.Count) {
 				if (arguments == null)
 					arguments = new ArrayList (1);
 

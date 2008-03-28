@@ -890,9 +890,10 @@ namespace System.Web.Compilation {
 			}
 
 			if (!File.Exists (realpath) && !Directory.Exists (realpath))
-				throw new HttpException (404,
-							 "The file '" + virtualPath + "' does not exist.",
-							 fakePath ? Path.GetFileName (realpath) : virtualPath);
+				if (!HostingEnvironment.VirtualPathProvider.FileExists (virtualPath))
+					throw new HttpException (404,
+								 "The file '" + virtualPath + "' does not exist.",
+								 fakePath ? Path.GetFileName (realpath) : virtualPath);
 		}
 		
 		static void BuildAssembly (string virtualPath)

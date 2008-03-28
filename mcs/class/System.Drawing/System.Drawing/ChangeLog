@@ -1,3 +1,8 @@
+2008-03-26  Kornél Pál  <kornelpal@gmail.com>
+
+	* ComIStreamWrapper.cs: Seek: remove read-only case. CopyTo: avoid allocating
+	large buffer. Commit: call SetSizeToPosition.
+
 2008-03-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Graphics.cs: Fix typo in exception and provide a bit more details.

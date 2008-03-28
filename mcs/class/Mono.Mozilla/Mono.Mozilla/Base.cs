@@ -65,9 +65,9 @@ namespace Mono.Mozilla
 
 		public Base () { }
 
-		public static void DebugStartup ()
+		public static void Debug (int signal)
 		{
-			gluezilla_debug_startup ();
+			gluezilla_debug (signal);
 		}
 		
 		public static bool Init (WebBrowser control, Platform platform)
@@ -98,7 +98,6 @@ namespace Mono.Mozilla
 			control.enginePlatform = mozPlatform;
 			gluezillaInstalled = true;
 			boundControls.Add (control as IWebBrowser, info);
-			DebugStartup ();
 			return true;
 		}
 
@@ -223,7 +222,7 @@ namespace Mono.Mozilla
 
 		#region pinvokes
 		[DllImport("gluezilla")]
-		private static extern void gluezilla_debug_startup();
+		private static extern void gluezilla_debug(int signal);
 
 		[DllImport("gluezilla")]
 		private static extern IntPtr gluezilla_init (Platform platform, IntPtr events, string startDir, string dataDir, out Platform mozPlatform);

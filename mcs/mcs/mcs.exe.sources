@@ -24,6 +24,7 @@ literal.cs
 location.cs
 modifiers.cs
 namespace.cs
+nullable.cs
 parameter.cs
 pending.cs
 report.cs

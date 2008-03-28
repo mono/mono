@@ -1233,7 +1233,7 @@ namespace System.Windows.Forms {
 		protected virtual void Paint (Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts)
 		{
 			if ((paintParts & DataGridViewPaintParts.Background) == DataGridViewPaintParts.Background)
-				PaintPartBackground (graphics, cellBounds);
+				PaintPartBackground (graphics, cellBounds, cellStyle);
 			if ((paintParts & DataGridViewPaintParts.SelectionBackground) == DataGridViewPaintParts.SelectionBackground)
 				PaintPartSelectionBackground (graphics, cellBounds, cellState, cellStyle);
 			if ((paintParts & DataGridViewPaintParts.Border) == DataGridViewPaintParts.Border)
@@ -1339,9 +1339,9 @@ namespace System.Windows.Forms {
 		{
 		}
 
-		private void PaintPartBackground (Graphics graphics, Rectangle cellBounds)
+		private void PaintPartBackground (Graphics graphics, Rectangle cellBounds, DataGridViewCellStyle style)
 		{
-			Color color = InheritedStyle.BackColor;
+			Color color = style.BackColor;
 			graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (color), cellBounds);
 		}
 		
@@ -1413,7 +1413,14 @@ namespace System.Windows.Forms {
 
 		internal void PaintWork (Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts)
 		{
-			DataGridViewCellPaintingEventArgs pea = new DataGridViewCellPaintingEventArgs (DataGridView, graphics, clipBounds, cellBounds, rowIndex, columnIndex, cellState, Value, Value, ErrorText, cellStyle, advancedBorderStyle, paintParts);
+			object value;
+			
+			if (RowIndex == -1 && !(this is DataGridViewColumnHeaderCell))
+				value = null;
+			else
+				value = Value;
+
+			DataGridViewCellPaintingEventArgs pea = new DataGridViewCellPaintingEventArgs (DataGridView, graphics, clipBounds, cellBounds, rowIndex, columnIndex, cellState, value, value, ErrorText, cellStyle, advancedBorderStyle, paintParts);
 			DataGridView.OnCellPaintingInternal (pea);
 			
 			if (pea.Handled)
