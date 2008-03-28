@@ -1,3 +1,7 @@
+2008-03-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* BindingSource.cs: Add test for just added members in BindingSource.
+
 2008-03-28  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ComboBoxTest.cs: Add test for bug #374654.
