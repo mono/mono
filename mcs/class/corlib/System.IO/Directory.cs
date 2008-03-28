@@ -164,9 +164,12 @@ namespace System.IO
 				 * In io-layer/io.c rmdir returns error_file_not_found if directory does not exists.
 				 * So maybe this could be handled somewhere else?
 				 */
-				if (error == MonoIOError.ERROR_FILE_NOT_FOUND) 
-					throw new DirectoryNotFoundException ("Directory '" + path + "' does not exist");
-				else
+				if (error == MonoIOError.ERROR_FILE_NOT_FOUND) {
+					if (File.Exists (path))
+						throw new IOException ("Directory does not exist, but a file of the same name exist.");
+					else
+						throw new DirectoryNotFoundException ("Directory does not exist.");
+				} else
 					throw MonoIO.GetException (path, error);
 			}
 		}

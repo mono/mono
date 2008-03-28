@@ -1,3 +1,9 @@
+2008-03-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Directory.cs: Exception differs when deleting a directory if it 
+	does not exists or if a file of the same name exists. Also don't 
+	include path in exception if Delete fails.
+
 2008-03-20  Marek Safar  <marek.safar@gmail.com>
 
 	* Path.cs (Combine): Call ToString to optimize concatenation.
