@@ -383,6 +383,11 @@ mono_print_ins_index (int i, MonoInst *ins)
 #endif
 	case OP_ICOMPARE_IMM:
 	case OP_COMPARE_IMM:
+	case OP_IADD_IMM:
+	case OP_ISUB_IMM:
+	case OP_IAND_IMM:
+	case OP_IOR_IMM:
+	case OP_IXOR_IMM:
 		printf (" [%d]", (int)ins->inst_imm);
 		break;
 	case OP_ADD_IMM:
@@ -2155,8 +2160,9 @@ mono_peephole_ins (MonoBasicBlock *bb, MonoInst *ins)
 		 * OP_STORE_MEMBASE_REG reg1, offset(basereg)
 		 * OP_MOVE reg1, reg2
 		 */
-		if (last_ins && (last_ins->opcode == OP_STOREI4_MEMBASE_REG 
-						 || last_ins->opcode == OP_STORE_MEMBASE_REG) &&
+		if (last_ins &&
+			(((ins->opcode == OP_LOADI4_MEMBASE) && (last_ins->opcode == OP_STOREI4_MEMBASE_REG)) ||
+			 ((ins->opcode == OP_LOAD_MEMBASE) && (last_ins->opcode == OP_STORE_MEMBASE_REG))) &&
 			ins->inst_basereg == last_ins->inst_destbasereg &&
 			ins->inst_offset == last_ins->inst_offset) {
 			if (ins->dreg == last_ins->sreg1) {

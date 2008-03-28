@@ -256,11 +256,11 @@ int_rem_un: dest:d src1:i src2:i len:16
 int_rem_un_imm: dest:d src1:i len:24
 int_sbb: dest:i src1:i src2:i len:6
 int_sbb_imm: dest:i src1:i len:14
-int_shl: dest:i src1:i src2:i clob:s len:10
+int_shl: dest:i src1:i src2:i clob:s len:12
 int_shl_imm: dest:i src1:i len:10
-int_shr: dest:i src1:i src2:i clob:s len:10
+int_shr: dest:i src1:i src2:i clob:s len:12
 int_shr_imm: dest:i src1:i len:10
-int_shr_un: dest:i src1:i src2:i clob:s len:10
+int_shr_un: dest:i src1:i src2:i clob:s len:12
 int_shr_un_imm: dest:i src1:i len:10
 int_subcc: dest:i src1:i src2:i len:12
 int_sub: dest:i src1:i src2:i len:12
@@ -278,7 +278,7 @@ long_add_ovf_un: dest:i src1:i src2:i len:32
 long_div: dest:i src1:i src2:i len:12
 long_div_un: dest:i src1:i src2:i len:16
 long_mul: dest:i src1:i src2:i len:12
-long_mul_imm: dest:i src1:i src2:i len:20
+long_mul_imm: dest:i src1:i len:20
 long_mul_ovf: dest:i src1:i src2:i len:56 
 long_mul_ovf_un: dest:i src1:i src2:i len:64 
 long_and: dest:i src1:i src2:i len:8
