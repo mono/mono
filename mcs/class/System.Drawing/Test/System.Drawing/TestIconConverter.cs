@@ -430,6 +430,8 @@ namespace MonoTests.System.Drawing
 			} catch (Exception e) {
 				Assert.IsTrue (e is NotSupportedException, "CT#10A");
 			}*/
+
+			Assert.AreEqual ("(none)", (string) icoConv.ConvertTo (null, typeof (string)), "CT#2");
 		}
 				
 	}

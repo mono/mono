@@ -78,6 +78,8 @@ namespace System.Drawing {
 		{
 			if ((val is Icon) && (destType == typeof (string)))
 				return val.ToString ();
+			else if (val == null && destType == typeof (string))
+				return "(none)";
 			else if (CanConvertTo (null, destType)) {
 				//came here means destType is byte array ;
 				MemoryStream ms = new MemoryStream ();
