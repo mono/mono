@@ -1,13 +1,22 @@
-2008-03-28  Atsushi Enomoto  <atsushi@ximian.com>
+2008-03-28  Jonathan Pobst  <monkey@jpobst.com>
 
-	* X11Structs.cs : added couple of structs for XIM support.
-	* X11Keyboard.cs : release XIM in case it failed to create XIC.
-	  Use consts for XNblah string.
-	  Add support for IM style customization and (not-yet-working)
-	  XIC creation for preedit-position and preedit-callback.
-	  Right now use MONO_WINFORMS_XIM_STYLE environment variable
-	  (list of: over-the-spot | on-the-spot | root). I'm still
-	  looking for the reason why those preedit modes don't work.
+	* ComboBox.cs: Only adjust selectedindex if Handle has been
+	created.  Fixes failing test.
+
+2008-03-28  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ComboBox.cs: Adjust selectedindex if we insert a new item
+	above the current selectedindex in a sorted ComboBox.
+	[Fixes bug #374654]
+
+2008-03-28  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ComboBox.cs: Support PageUp/PageDown when dropdown is closed.
+	[Fixes bug #374712]
+
+2008-03-28  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridViewTextBoxCell.cs: Implement stuffs.
 
 2008-03-27  Jonathan Pobst  <monkey@jpobst.com>
 

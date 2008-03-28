@@ -1,3 +1,8 @@
+2008-03-28  Marek Safar  <marek.safar@gmail.com>
+
+	* Nullable.cs (Box): Do things explicitly and not rely on broken gmcs
+	behaviour.
+
 2008-03-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* AppDomain.cs: Update after MonoMethod.InternalInvoke signature change.

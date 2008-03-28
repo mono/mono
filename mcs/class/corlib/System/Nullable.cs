@@ -162,14 +162,19 @@ namespace System
 			return value.Value;
 		}
 
+		//
 		// These are called by the JIT
-		// Ironicly, the C#  code is the same for these two,
-		// however, on the inside they do somewhat different things
+		//
+		
+		//
+		// JIT implementation of box valuetype System.Nullable`1<T>
+		//
 		static object Box (T? o)
 		{
-			if (o == null)
+			if (!o.has_value)
 				return null;
-			return (T) o;
+				
+			return o.value;
 		}
 		
 		static T? Unbox (object o)

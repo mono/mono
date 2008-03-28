@@ -411,5 +411,64 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			
 			Assert.AreEqual (expected, actual);
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void CreateDirectory_Null ()
+		{
+			IsolatedStorageFile.GetUserStoreForAssembly ().CreateDirectory (null);
+		}
+
+		[Test]
+		public void CreateDirectory_FileWithSameNameExists ()
+		{
+			string path = "bug374377";
+			using (IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForDomain ()) {
+				using (IsolatedStorageFileStream fs = new IsolatedStorageFileStream (path, FileMode.OpenOrCreate, isf)) {
+				}
+				try {
+					isf.CreateDirectory (path);
+				}
+				catch (IOException ex) {
+					Assert.AreEqual (typeof (IOException), ex.GetType (), "Type");
+					// don't leak path information
+					Assert.IsFalse (ex.Message.IndexOf (path) >= 0, "Message");
+					Assert.IsNull (ex.InnerException, "InnerException");
+				}
+			}
+		}
+
+		[Test]
+		public void CreateDirectory_DirectoryWithSameNameExists ()
+		{
+			string dir = "new-dir";
+			string file = Path.Combine (dir, "new-file");
+			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForAssembly ();
+			try {
+				isf.CreateDirectory (dir);
+				using (IsolatedStorageFileStream isfs = new IsolatedStorageFileStream (file, FileMode.OpenOrCreate, isf)) {
+					isfs.WriteByte (0);
+				}
+				string pattern = Path.Combine (dir, "*");
+				Assert.AreEqual (1, isf.GetFileNames (file).Length, "file exists");
+
+				// create again directory
+				isf.CreateDirectory (dir);
+				Assert.AreEqual (1, isf.GetFileNames (file).Length, "file still exists");
+			}
+			finally {
+				isf.DeleteFile (file);
+				isf.DeleteDirectory (dir);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (SecurityException))]
+		public void GetFilesInSubdirs ()
+		{
+			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForAssembly ();
+			string pattern = Path.Combine ("..", "*");
+			isf.GetFileNames (pattern);
+		}
 	}
 }

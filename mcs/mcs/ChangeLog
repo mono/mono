@@ -1,5 +1,10 @@
 2008-03-28  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #372375
+	* convert.cs: Fixed boxing of nullable types.
+
+2008-03-28  Marek Safar  <marek.safar@gmail.com>
+
 	* typemanager.cs: Initialize InternalsVisibleTo as the very first optional
 	type.
 

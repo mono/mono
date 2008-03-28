@@ -1588,6 +1588,32 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (string.Empty, comboBox.SelectedText, "#I2");
 		}
 
+		[Test]
+		public void SortedSelectedItem ()
+		{
+			using (Form form = new Form ()) {
+				ComboBox box = new ComboBox ();
+				box.Sorted = true;
+
+				form.Controls.Add (box);
+				form.ShowInTaskbar = false;
+				form.Show ();
+
+				box.Items.Add ("English");
+				box.SelectedItem = "English";
+				
+				box.Items.Add ("Danish");
+				Assert.AreEqual ("English", box.SelectedItem, "A1");
+				
+				box.Items.Add ("French");
+				Assert.AreEqual ("English", box.SelectedItem, "A2");
+				
+				box.Items.Add ("Brazilian Portuguese");
+				box.Items.Add ("Arabic");
+				Assert.AreEqual ("English", box.SelectedItem, "A3");
+			}
+		}
+		
 		public class Person
 		{
 			private readonly string _name;

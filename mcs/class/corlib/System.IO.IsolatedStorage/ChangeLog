@@ -1,3 +1,9 @@
+2008-03-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IsolatedStorageFile.cs: Don't show the full path on exception if a 
+	directory can't be created (fix bug #354539). Also fix path/patterns when
+	looking for files (it behave differently than DirectoryInfo does).
+
 2008-01-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IsolatedStorageFile.cs: Fix bug #354539
