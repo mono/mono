@@ -453,7 +453,11 @@ namespace System.IO.IsolatedStorage {
 
 		public void CreateDirectory (string dir)
 		{
-			directory.CreateSubdirectory (dir);	
+			if (dir == null)
+				throw new ArgumentNullException ("dir");
+			if (directory.GetFiles (dir).Length > 0)
+				throw new IOException (Locale.GetText ("Directory name already exists as a file."));
+			directory.CreateSubdirectory (dir);
 		}
 
 		public void DeleteDirectory (string dir)
@@ -489,7 +493,28 @@ namespace System.IO.IsolatedStorage {
 
 		public string[] GetFileNames (string searchPattern)
 		{
-			FileInfo[] afi = directory.GetFiles (searchPattern);
+			if (searchPattern == null)
+				throw new ArgumentNullException ("searchPattern");
+
+			// note: IsolatedStorageFile accept a "dir/file" pattern which is not allowed by DirectoryInfo
+			// so we need to split them to get the right results
+			string path = Path.GetDirectoryName (searchPattern);
+			string pattern = Path.GetFileName (searchPattern);
+			FileInfo[] afi = null;
+			if (path == null || path.Length == 0) {
+				afi = directory.GetFiles (searchPattern);
+			} else {
+				DirectoryInfo[] subdirs = directory.GetDirectories (path);
+				// we're looking for a single result, identical to path (no pattern here)
+				// we're also looking for something under the current path (not outside isolated storage)
+				if ((subdirs.Length == 1) && (subdirs [0].Name == path) && (subdirs [0].FullName.IndexOf (directory.FullName) >= 0)) {
+					afi = subdirs [0].GetFiles (pattern);
+				} else {
+					// CAS, even in FullTrust, normally enforce IsolatedStorage
+					throw new SecurityException ();
+				}
+			}
+
 			return GetNames (afi);
 		}
 
