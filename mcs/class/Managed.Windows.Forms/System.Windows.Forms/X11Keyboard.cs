@@ -98,20 +98,16 @@ namespace System.Windows.Forms {
 				Console.Error.WriteLine ("Could not get XIM");
 			else 
 				xic = CreateXic (window, xim);
-			if (xic == IntPtr.Zero) {
-				Console.Error.WriteLine ("Could not get XIC");
-				XCloseIM (xim);
-			} else {
+			if (xic != IntPtr.Zero)
 				utf8_buffer = new byte [100];
-				if (XGetICValues (xic, "filterEvents", out xic_event_mask, IntPtr.Zero) != null)
-					Console.Error.WriteLine ("Could not get XIC values");
-				EventMask mask = EventMask.ExposureMask | EventMask.KeyPressMask | EventMask.FocusChangeMask;
-				xic_event_mask |= mask;
-				XplatUIX11.XSelectInput(display, window, new IntPtr ((int) xic_event_mask));
-				// FIXME: without it some input methods do not show its UI (but it results in
-				// obstacle, so am disabling it).
-				// XplatUIX11.XMapWindow (display, window);
-			}
+			if (XGetICValues (xic, "filterEvents", out xic_event_mask, IntPtr.Zero) != null)
+				Console.Error.WriteLine ("Could not get XIC values");
+			EventMask mask = EventMask.ExposureMask | EventMask.KeyPressMask | EventMask.FocusChangeMask;
+			xic_event_mask |= mask;
+			XplatUIX11.XSelectInput(display, window, new IntPtr ((int) xic_event_mask));
+			// FIXME: without it some input methods do not show its UI (but it results in
+			// obstacle, so am disabling it).
+			// XplatUIX11.XMapWindow (display, window);
 			initialized = true;
 		}
 
@@ -732,146 +728,13 @@ namespace System.Windows.Forms {
 			return 0;
 		}
 
-		void DoPreeditPositionStart (IntPtr xic, IntPtr clientData, IntPtr callData)
-		{
-			// FIXME: implement
-			Console.WriteLine ("DoPreeditPositionStart");
-		}
-
-		void DoPreeditPositionDone (IntPtr xic, IntPtr clientData, IntPtr callData)
-		{
-			// FIXME: implement
-			Console.WriteLine ("DoPreeditPositionDone");
-		}
-
-		void DoPreeditPositionDraw (IntPtr xic, IntPtr clientData, IntPtr callData)
-		{
-			// FIXME: implement
-			Console.WriteLine ("DoPreeditPositionDraw");
-		}
-
-		void DoPreeditPositionCaret (IntPtr xic, IntPtr clientData, IntPtr callData)
-		{
-			// FIXME: implement
-			Console.WriteLine ("DoPreeditPositionCaret");
-		}
-
-		private XIMProperties [] GetSupportedInputStyles (IntPtr xim)
-		{
-			IntPtr stylesPtr;
-			XGetIMValues (xim, XNames.XNQueryInputStyle, out stylesPtr, IntPtr.Zero);
-			XIMStyles styles = (XIMStyles) Marshal.PtrToStructure (stylesPtr, typeof (XIMStyles));
-			XIMProperties [] supportedStyles = new XIMProperties [styles.count_styles];
-			for (int i = 0; i < styles.count_styles; i++)
-				supportedStyles [i] = (XIMProperties) Marshal.PtrToStructure ((IntPtr) ((int) styles.supported_styles + i * 4), typeof (XIMProperties));
-			XplatUIX11.XFree (stylesPtr);
-			return supportedStyles;
-		}
-
-		const XIMProperties styleRoot = XIMProperties.XIMPreeditNothing | XIMProperties.XIMStatusNothing;
-		const XIMProperties styleOverTheSpot = XIMProperties.XIMPreeditPosition | XIMProperties.XIMStatusNothing;
-		const XIMProperties styleOnTheSpot = XIMProperties.XIMPreeditCallbacks | XIMProperties.XIMStatusNothing;
-		const string ENV_NAME_XIM_STYLE = "MONO_WINFORMS_XIM_STYLE";
-
-		private XIMProperties [] GetPreferredStyles ()
-		{
-			string env = Environment.GetEnvironmentVariable (ENV_NAME_XIM_STYLE);
-			if (env == null)
-				env = String.Empty;
-			string [] list = env.Split (' ');
-			XIMProperties [] ret = new XIMProperties [list.Length];
-			for (int i = 0; i < list.Length; i++) {
-				string s = list [i];
-				switch (s) {
-				case "over-the-spot":
-					ret [i] = styleOverTheSpot;
-					break;
-				case "on-the-spot":
-					ret [i] = styleOnTheSpot;
-					break;
-				case "root":
-					ret [i] = styleRoot;
-					break;
-				}
-			}
-			return ret;
-		}
-
-		private IEnumerable GetMatchingStylesInPreferredOrder (IntPtr xim)
-		{
-			XIMProperties [] supportedStyles = GetSupportedInputStyles (xim);
-			foreach (XIMProperties p in GetPreferredStyles ())
-				if (Array.IndexOf (supportedStyles, p) >= 0)
-					yield return p;
-		}
-
 		private IntPtr CreateXic (IntPtr window, IntPtr xim)
 		{
-			foreach (XIMProperties targetStyle in GetMatchingStylesInPreferredOrder (xim)) {
-				// FIXME: use __arglist when it gets working.
-				switch (targetStyle) {
-				case styleOverTheSpot:
-					IntPtr list;
-					int count;
-					IntPtr fontSet = XCreateFontSet (display, "*", out list, out count, IntPtr.Zero);
-					XPoint spot = new XPoint ();
-					// FIXME: provide proper position
-					spot.X = 0;
-					spot.Y = 20;
-					IntPtr preedit = XVaCreateNestedList (0,
-						XNames.XNSpotLocation, ref spot,
-						XNames.XNFontSet, fontSet,
-						IntPtr.Zero);
-					xic = XCreateIC (xim,
-						XNames.XNInputStyle, styleOverTheSpot,
-						XNames.XNClientWindow, window,
-						XNames.XNFocusWindow, window,
-						XNames.XNPreeditAttributes, preedit,
-						IntPtr.Zero);
-					XFreeStringList (list);
-					XplatUIX11.XFree (preedit);
-					if (xic != IntPtr.Zero)
-						break;
-					//Console.Error.WriteLine ("failed to create XIC in over-the-spot mode.");
-					continue;
-				case styleOnTheSpot:
-					XIMCallback startCB = new XIMCallback (IntPtr.Zero, DoPreeditPositionStart);
-					XIMCallback doneCB = new XIMCallback (IntPtr.Zero, DoPreeditPositionDone);
-					XIMCallback drawCB = new XIMCallback (IntPtr.Zero, DoPreeditPositionDraw);
-					XIMCallback caretCB = new XIMCallback (IntPtr.Zero, DoPreeditPositionCaret);
-					preedit = XVaCreateNestedList (0,
-						XNames.XNPreeditStartCallback, ref startCB,
-						XNames.XNPreeditDoneCallback, ref doneCB,
-						XNames.XNPreeditDrawCallback, ref drawCB,
-						XNames.XNPreeditCaretCallback, ref caretCB,
-						IntPtr.Zero);
-					xic = XCreateIC (xim,
-						XNames.XNInputStyle, styleOnTheSpot,
-						XNames.XNPreeditAttributes, preedit,
-						XNames.XNClientWindow, window,
-						XNames.XNFocusWindow, window,
-						IntPtr.Zero);
-					XplatUIX11.XFree (preedit);
-					if (xic != IntPtr.Zero)
-						break;
-					//Console.Error.WriteLine ("failed to create XIC in on-the-spot mode.");
-					continue;
-				case styleRoot:
-					xic = XCreateIC (xim,
-						XNames.XNInputStyle, styleRoot,
-						XNames.XNClientWindow, window,
-						XNames.XNFocusWindow, window,
-						IntPtr.Zero);
-					break;
-				}
-			}
-			// fall back to root mode if all modes failed
-			if (xic == IntPtr.Zero)
-				xic = XCreateIC (xim,
-					XNames.XNInputStyle, styleRoot,
-					XNames.XNClientWindow, window,
-					XNames.XNFocusWindow, window,
-					IntPtr.Zero);
+			xic = XCreateIC (xim, 
+				"inputStyle", XIMProperties.XIMPreeditNothing | XIMProperties.XIMStatusNothing,
+				"clientWindow", window,
+				"focusWindow", window,
+				IntPtr.Zero);
 			return xic;
 		}
 
@@ -905,19 +768,6 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11")]
 		private static extern IntPtr XCreateIC (IntPtr xim, string name, XIMProperties im_style, string name2, IntPtr value2, string name3, IntPtr value3, IntPtr terminator);
-		[DllImport ("libX11")]
-		private static extern IntPtr XCreateIC (IntPtr xim, string name, XIMProperties im_style, string name2, IntPtr value2, string name3, IntPtr value3, string name4, IntPtr value4, /*string name5, IntPtr value5, */IntPtr terminator);
-
-		[DllImport ("libX11")]
-		private static extern IntPtr XVaCreateNestedList (int dummy, string name0, ref XPoint value0, string name1, IntPtr value1, IntPtr terminator);
-		[DllImport ("libX11")]
-		private static extern IntPtr XVaCreateNestedList (int dummy, /*string name0, IntPtr value0, string name1, ref XPoint value1, */string name2, ref XIMCallback value2, string name3, ref XIMCallback value3, string name4, ref XIMCallback value4, string name5, ref XIMCallback value5, IntPtr terminator);
-
-		[DllImport ("libX11")]
-		private static extern IntPtr XCreateFontSet (IntPtr display, string name, out IntPtr list, out int count, IntPtr terminator);
-
-		[DllImport ("libX11")]
-		private static extern void XFreeStringList (IntPtr ptr);
 
 		[DllImport ("libX11")]
 		private static extern IntPtr XIMOfIC (IntPtr xic);
@@ -927,9 +777,6 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11")]
 		private static extern void XDestroyIC (IntPtr xic);
-
-		[DllImport ("libX11")]
-		private static extern string XGetIMValues (IntPtr xim, string name, out IntPtr value, IntPtr terminator);
 
 		[DllImport ("libX11")]
 		private static extern string XGetICValues (IntPtr xic, string name, out EventMask value, IntPtr terminator);

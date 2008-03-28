@@ -13,17 +13,6 @@
 
 	* DataGridViewTextBoxCell.cs: Implement stuffs.
 
-2008-03-28  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* X11Structs.cs : added couple of structs for XIM support.
-	* X11Keyboard.cs : release XIM in case it failed to create XIC.
-	  Use consts for XNblah string.
-	  Add support for IM style customization and (not-yet-working)
-	  XIC creation for preedit-position and preedit-callback.
-	  Right now use MONO_WINFORMS_XIM_STYLE environment variable
-	  (list of: over-the-spot | on-the-spot | root). I'm still
-	  looking for the reason why those preedit modes don't work.
-
 2008-03-27  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TreeView.cs: Create the scrollbars even earlier to be
