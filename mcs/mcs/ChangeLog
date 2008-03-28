@@ -1,5 +1,10 @@
 2008-03-28  Marek Safar  <marek.safar@gmail.com>
 
+	* typemanager.cs: Initialize InternalsVisibleTo as the very first optional
+	type.
+
+2008-03-28  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #374619
 	* nullable.cs: Fixed guarding of EmitBitwiseBoolean.
 	
