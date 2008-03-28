@@ -1,3 +1,11 @@
+2008-03-26  Massimiliano Mantione  <massi@ximian.com>
+	* threads.h: Added MonoThreadManageCallback type and
+	mono_thread_set_manage_callback prototype
+	* object-internals.h: In _MonoThread, renamed unused6 to manage_callback
+	(used to store the mono_thread_manage callback).
+	* threads.c: Added mono_thread_set_manage_callback, and handle
+	"MonoThread->manage_callback" in build_wait_tids.
+
 2008-03-26  Dick Porter  <dick@ximian.com>
 
 	* process.c (process_get_fileversion): Set FileVersionInfo strings
