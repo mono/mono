@@ -1587,6 +1587,10 @@ namespace System.Windows.Forms
 				case Keys.PageUp:
 					if (listbox_ctrl != null)
 						SelectedIndex = Math.Max(SelectedIndex- (listbox_ctrl.page_size-1), 0);
+					else if (SelectedIndex == -1)
+						SelectedIndex = 0;
+					else
+						SelectedIndex = Math.Max (SelectedIndex - MaxDropDownItems + 1, 0);
 
 					if (DroppedDown)
 						if (SelectedIndex < listbox_ctrl.FirstVisibleItem ())
@@ -1596,7 +1600,11 @@ namespace System.Windows.Forms
 				case Keys.PageDown:
 					if (listbox_ctrl != null)
 						SelectedIndex = Math.Min(SelectedIndex+(listbox_ctrl.page_size-1), Items.Count-1);
-
+					else if (SelectedIndex == -1)
+						SelectedIndex = 0;
+					else
+						SelectedIndex = Math.Min (SelectedIndex + MaxDropDownItems - 1, Items.Count - 1);
+						
 					if (DroppedDown)
 						if (SelectedIndex >= listbox_ctrl.LastVisibleItem ())
 							listbox_ctrl.Scroll (SelectedIndex - listbox_ctrl.LastVisibleItem () + 1);

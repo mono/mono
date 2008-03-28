@@ -1,5 +1,10 @@
 2008-03-28  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ComboBox.cs: Support PageUp/PageDown when dropdown is closed.
+	[Fixes bug #374712]
+
+2008-03-28  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridViewTextBoxCell.cs: Implement stuffs.
 
 2008-03-28  Atsushi Enomoto  <atsushi@ximian.com>
