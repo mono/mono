@@ -1,3 +1,7 @@
+2008-03-28  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* CollectionEditor.cs: Fix multiple bugs.
+
 2008-03-19  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* MultilineStringEditor.cs: Handle null value by forcing an 
