@@ -1,5 +1,9 @@
 2008-03-28  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ComboBoxTest.cs: Add test for bug #374654.
+
+2008-03-28  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridViewTextBoxCellTest.cs: Mark 2 of the new tests
 	as font dependent.
 

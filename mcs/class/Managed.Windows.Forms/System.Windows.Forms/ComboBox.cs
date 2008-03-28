@@ -1956,6 +1956,12 @@ namespace System.Windows.Forms
 					foreach (object o in object_items) {
 						if (String.Compare (item.ToString (), o.ToString ()) < 0) {
 							object_items.Insert (index, item);
+							
+							// If we added the new item before the selectedindex
+							// bump the selectedindex by one
+							if (index <= owner.selected_index)
+								owner.selected_index++;
+								
 							return index;
 						}
 						index++;

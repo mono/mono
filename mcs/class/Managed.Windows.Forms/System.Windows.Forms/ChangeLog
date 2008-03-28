@@ -1,5 +1,11 @@
 2008-03-28  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ComboBox.cs: Adjust selectedindex if we insert a new item
+	above the current selectedindex in a sorted ComboBox.
+	[Fixes bug #374654]
+
+2008-03-28  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ComboBox.cs: Support PageUp/PageDown when dropdown is closed.
 	[Fixes bug #374712]
 
