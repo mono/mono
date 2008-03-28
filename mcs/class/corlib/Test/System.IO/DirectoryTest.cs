@@ -138,7 +138,8 @@ public class DirectoryTest
 			Assert.Fail ("#1");
 		} catch (IOException ex) {
 			Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
-			Assert.IsNotNull (ex.Message, "#3");
+			// exception message contains the path
+			Assert.IsTrue (ex.Message.Contains (path), "#3");
 			Assert.IsNull (ex.InnerException, "#4");
 #else
 			Assert.IsFalse (dinfo.Exists, "#2");
@@ -242,6 +243,31 @@ public class DirectoryTest
 				s.Close ();
 			DeleteDirectory (path);
 		};
+	}
+
+	[Test]
+	public void DeleteDirectoryOnExistingFileName ()
+	{
+		string path = TempFolder + DSC + "DirectoryTest.Test.ExistsAsFile";
+		DeleteDirectory (path);
+		DeleteFile (path);
+		try {
+			FileStream fstream = File.Create (path);
+			fstream.Close ();
+
+			Directory.Delete (path);
+			Assert.Fail ("#1");
+		}
+		catch (IOException ex) {
+			Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
+			// exception message DOES NOT contains the path
+			Assert.IsFalse (ex.Message.IndexOf (path) >= 0, "#3");
+			Assert.IsNull (ex.InnerException, "#4");
+		}
+		finally {
+			DeleteDirectory (path);
+			DeleteFile (path);
+		}
 	}
 
 	[Test]

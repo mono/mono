@@ -1,3 +1,8 @@
+2008-03-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DirectoryTest.cs: Add test case when deleting a directory that does
+	not exists but where a file of the same name exists.
+
 2008-01-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* FileTest.cs: Rename a helper method so it does not begin with Test.
