@@ -1,5 +1,10 @@
 2008-03-28  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridViewTextBoxCellTest.cs: Mark 2 of the new tests
+	as font dependent.
+
+2008-03-28  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridViewTextBoxCellTest.cs: Bunch of new tests.
 
 2008-03-27  Carlos Alberto Cortez <calberto.cortez@gmail.com>
