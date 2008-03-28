@@ -1,5 +1,10 @@
 2008-03-28  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ComboBox.cs: Only adjust selectedindex if Handle has been
+	created.  Fixes failing test.
+
+2008-03-28  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ComboBox.cs: Adjust selectedindex if we insert a new item
 	above the current selectedindex in a sorted ComboBox.
 	[Fixes bug #374654]

@@ -1958,8 +1958,9 @@ namespace System.Windows.Forms
 							object_items.Insert (index, item);
 							
 							// If we added the new item before the selectedindex
-							// bump the selectedindex by one
-							if (index <= owner.selected_index)
+							// bump the selectedindex by one, behavior differs if
+							// Handle has not been created.
+							if (index <= owner.selected_index && owner.IsHandleCreated)
 								owner.selected_index++;
 								
 							return index;
