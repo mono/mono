@@ -1,3 +1,9 @@
+2008-03-28  Dick Porter  <dick@ximian.com>
+
+	* processes.c (GetExitCodeProcess): Check if a process has exited
+	and recorded it's exit code, before seeing if the process is
+	signalled.  Fixes bug 325463.
+
 2008-03-27  Dick Porter  <dick@ximian.com>
 
 	* processes.c (match_procname_to_modulename): Check the whole
