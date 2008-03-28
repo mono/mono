@@ -42,6 +42,7 @@ namespace System.Windows.Forms {
 		ISite site;
 
 		IList list;
+		CurrencyManager currency_manager;
 		//bool list_defaulted;
 		Type item_type;
 		bool item_has_default_ctor;
@@ -69,17 +70,13 @@ namespace System.Windows.Forms {
 
 			raise_list_changed_events = true;
 
+			currency_manager = new CurrencyManager (this);
+
 			ResetList ();
 		}
 
-		public BindingSource ()
+		public BindingSource () : this (null, String.Empty)
 		{
-			datasource = null;
-			datamember = "";
-
-			raise_list_changed_events = true;
-
-			ResetList ();
 		}
 
 		IList GetListFromEnumerable (IEnumerable enumerable)
@@ -237,12 +234,16 @@ namespace System.Windows.Forms {
 
 		[Browsable (false)]
 		public virtual CurrencyManager CurrencyManager {
-			get { throw new NotImplementedException (); }
+			get {
+				return currency_manager;
+			}
 		}
 
 		[Browsable (false)]
 		public object Current {
-			get { throw new NotImplementedException (); }
+			get {
+				return currency_manager.Current;
+			}
 		}
 
 		[DefaultValue ("")]
@@ -504,8 +505,12 @@ namespace System.Windows.Forms {
 
 		public virtual object AddNew ()
 		{
-			if (!AllowEdit || !item_has_default_ctor)
-				throw new InvalidOperationException ("Item cannot be added to a read-onlyor fixed-size list.");
+			if (!AllowEdit)
+				throw new InvalidOperationException ("Item cannot be added to a read-only or fixed-size list.");
+			if (!AllowNew || (!item_has_default_ctor && !IsAddingNewHandled)) 
+				throw new InvalidOperationException ("AddNew cannot be called on '" + item_type.Name +
+						", since it does not have a public default ctor. Set AllowNew to true " +
+						", handling AddingNew and creating the appropriate object.");
 
 			// FIXME - Remove the comment when we implement EndEdit
 			// EndEdit ();
@@ -515,8 +520,8 @@ namespace System.Windows.Forms {
 
 			object new_object = args.NewObject;
 			if (new_object != null) {
-				if (item_type.IsAssignableFrom (new_object.GetType ()))
-					throw new ArgumentException ("value");
+				if (!item_type.IsAssignableFrom (new_object.GetType ()))
+					throw new InvalidOperationException ("Objects added to the list must all be of the same type.");
 
 				list.Add (new_object);
 				return new_object;
@@ -525,6 +530,12 @@ namespace System.Windows.Forms {
 			// if the list is a IBindingList, try to use IBindingList.AddNew
 			if (list is IBindingList)
 				return ((IBindingList)list).AddNew ();
+
+			if (!item_has_default_ctor)
+				throw new InvalidOperationException ("AddNew cannot be called on '" + item_type.Name +
+						", since it does not have a public default ctor. Set AllowNew to true " +
+						", handling AddingNew and creating the appropriate object.");
+
 
 			// fallback to default .ctor
 			new_object = Activator.CreateInstance (item_type);

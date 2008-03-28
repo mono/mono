@@ -1,3 +1,9 @@
+2008-03-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* BindingSource.cs: Make one .ctor call the another, to avoid
+	duplicate code. Add the CurrencyManager property, and also for AddNew
+	throw the proper exceptions and show better error messages.
+
 2008-03-28  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ComboBox.cs: Only adjust selectedindex if Handle has been
