@@ -1,3 +1,7 @@
+2008-03-28  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridViewTextBoxCellTest.cs: Bunch of new tests.
+
 2008-03-27  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* DataBindingTests.cs: Mark as NotWorking some CurrencyManager tests by

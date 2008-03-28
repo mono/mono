@@ -1,3 +1,7 @@
+2008-03-28  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridViewTextBoxCell.cs: Implement stuffs.
+
 2008-03-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* X11Structs.cs : added couple of structs for XIM support.

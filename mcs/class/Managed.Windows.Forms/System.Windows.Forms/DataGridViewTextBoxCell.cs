@@ -46,6 +46,7 @@ namespace System.Windows.Forms {
 
 		public DataGridViewTextBoxCell ()
 		{
+			base.ValueType = typeof (object);
 		}
 
 		public override Type FormattedValueType {
@@ -64,7 +65,7 @@ namespace System.Windows.Forms {
 		}
 
 		public override Type ValueType {
-			get { return typeof(string); }
+			get { return base.ValueType; }
 		}
 
 		public override object Clone ()
@@ -106,7 +107,22 @@ namespace System.Windows.Forms {
 
 		public override bool KeyEntersEditMode (KeyEventArgs e)
 		{
-			throw new NotImplementedException();
+			if (e.KeyCode == Keys.Space)
+				return true;
+			if ((int)e.KeyCode >= 48 && (int)e.KeyCode <= 90)
+				return true;
+			if ((int)e.KeyCode >= 96 && (int)e.KeyCode <= 111)
+				return true;
+			if (e.KeyCode == Keys.BrowserSearch || e.KeyCode == Keys.SelectMedia)
+				return true;
+			if ((int)e.KeyCode >= 186 && (int)e.KeyCode <= 229)
+				return true;
+			if (e.KeyCode == Keys.Attn || e.KeyCode == Keys.Packet)
+				return true;
+			if ((int)e.KeyCode >= 248 && (int)e.KeyCode <= 254)
+				return true;
+				
+			return false;
 		}
 
 		public override void PositionEditingControl (bool setLocation, bool setSize, Rectangle cellBounds, Rectangle cellClip, DataGridViewCellStyle cellStyle, bool singleVerticalBorderAdded, bool singleHorizontalBorderAdded, bool isFirstDisplayedColumn, bool isFirstDisplayedRow)
@@ -127,17 +143,40 @@ namespace System.Windows.Forms {
 
 		protected override Rectangle GetContentBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex)
 		{
-			throw new NotImplementedException();
+			if (DataGridView == null)
+				return Rectangle.Empty;
+				
+			object o = FormattedValue;
+			Size s = Size.Empty;
+			
+			if (o != null) {
+				s = DataGridViewCell.MeasureTextSize (graphics, o.ToString (), cellStyle.Font, TextFormatFlags.Default);
+				s.Height += 2;
+			}
+			
+			return new Rectangle (0, (OwningRow.Height - s.Height) / 2, s.Width, s.Height);
 		}
 
+		[MonoTODO ()]
 		protected override Rectangle GetErrorIconBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex)
 		{
-			throw new NotImplementedException();
+			if (DataGridView == null)
+				return Rectangle.Empty;
+				
+			return Rectangle.Empty;
 		}
 
 		protected override Size GetPreferredSize (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex, Size constraintSize)
 		{
-			throw new NotImplementedException();
+			object o = FormattedValue;
+			
+			if (o != null) {
+				Size s = DataGridViewCell.MeasureTextSize (graphics, o.ToString (), cellStyle.Font, TextFormatFlags.Default);
+				s.Height = Math.Max (s.Height, 20);
+				s.Width += 1;
+				return s;
+			} else
+				return new Size (21, 20);
 		}
 
 		protected override void OnEnter (int rowIndex, bool throughMouseClick)
