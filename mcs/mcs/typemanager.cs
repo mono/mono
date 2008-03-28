@@ -1030,6 +1030,12 @@ namespace Mono.CSharp {
 		void_ptr_type = GetPointerType (void_type);
 		char_ptr_type = GetPointerType (char_type);
 
+		//
+		// Initialize InternalsVisibleTo as the very first optional type. Otherwise we would populate
+		// types cache with incorrect accessiblity when any of optional types is internal.
+		//
+		internals_visible_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "InternalsVisibleToAttribute", Kind.Class, false);
+
 		runtime_argument_handle_type = CoreLookupType ("System", "RuntimeArgumentHandle", Kind.Struct, false);
 		asynccallback_type = CoreLookupType ("System", "AsyncCallback", Kind.Delegate, false);
 		iasyncresult_type = CoreLookupType ("System", "IAsyncResult", Kind.Interface, false);
@@ -1062,7 +1068,6 @@ namespace Mono.CSharp {
 		comimport_attr_type = CoreLookupType ("System.Runtime.InteropServices", "ComImportAttribute", Kind.Class, false);
 		coclass_attr_type = CoreLookupType ("System.Runtime.InteropServices", "CoClassAttribute", Kind.Class, false);
 		attribute_usage_type = CoreLookupType ("System", "AttributeUsageAttribute", Kind.Class, false);
-		internals_visible_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "InternalsVisibleToAttribute", Kind.Class, false);
 		default_parameter_value_attribute_type = CoreLookupType ("System.Runtime.InteropServices", "DefaultParameterValueAttribute", Kind.Class, false);
 
 		// New in .NET 2.0
