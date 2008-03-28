@@ -2069,7 +2069,13 @@ namespace Mono.CSharp {
 						return Nullable.Wrap.Create (e, target_type);
 				}
 			} else if (TypeManager.IsNullableType (expr_type)) {
-				e = ExplicitConversion (ec, Nullable.Unwrap.Create (expr, ec), target_type, loc);
+				e = Nullable.Unwrap.Create (expr, ec);
+
+				bool use_class_cast;
+				if (ImplicitBoxingConversionExists (e, target_type, out use_class_cast))
+					return new BoxedCast (expr, target_type);
+				
+				e = ExplicitConversion (ec, e, target_type, loc);
 				if (e != null)
 					e = EmptyCast.Create (e, target_type);
 				return e;
