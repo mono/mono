@@ -1,3 +1,16 @@
+2008-03-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (calc_section_size): Use add_stream_zero to align the size of
+	the streams to fix reading of invalid memory later.
+
+	* metadata.h (MonoType): Use 'MonoTypeEnum' instead of int for the 'type' field
+	to ease debugging.
+
+2008-03-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (signature_dup): Use mono_metadata_signature_alloc ().
+	(cominterop_method_signature): Ditto. Fix the size passed to memcpy.
+
 2008-03-26  Massimiliano Mantione  <massi@ximian.com>
 	* threads.h: Added MonoThreadManageCallback type and
 	mono_thread_set_manage_callback prototype
