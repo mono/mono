@@ -673,7 +673,7 @@ namespace Mono.CSharp {
 				if (right_unwrap != null)
 					right_unwrap.Store (ec);
 
-				if (((Oper & Operator.BitwiseMask) != 0) &&
+				if ((Oper & Operator.BitwiseMask) != 0 && left_unwrap != null && right_unwrap != null &&
 					left_unwrap.Type == TypeManager.bool_type && right_unwrap.Type == TypeManager.bool_type) {
 					EmitBitwiseBoolean (ec);
 					return;

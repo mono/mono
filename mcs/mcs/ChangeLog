@@ -1,3 +1,8 @@
+2008-03-28  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #374619
+	* nullable.cs: Fixed guarding of EmitBitwiseBoolean.
+	
 2008-03-27  Marek Safar  <marek.safar@gmail.com>
 
 	* lambda.cs: Check return type only for invocation.
