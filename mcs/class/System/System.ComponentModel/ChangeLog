@@ -1,3 +1,10 @@
+2008-03-28  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* TypeDescriptor.cs: Do not return parent type properties, where the child 
+	has used "new" and also changed the property return type. The problem was that
+	Type.GetProperties returns both the child and parent property in this case.
+	[Fixes bug #374334]
+
 2008-03-19  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* PropertyTabAttribute.cs: Implement Equals, bugfixes and refactorings.

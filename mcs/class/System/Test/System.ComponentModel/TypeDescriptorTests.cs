@@ -227,6 +227,11 @@ namespace MonoTests.System.ComponentModel
 			set { prop = value; }
 		}
 
+		public string YetAnotherProperty
+		{
+			get { return null; }
+		}
+
 		public string Name {
 			get { return null; }
 		}
@@ -279,6 +284,11 @@ namespace MonoTests.System.ComponentModel
 		{
 			get { return base.AnotherProperty; }
 			set { base.AnotherProperty = value; }
+		}
+
+		public new object YetAnotherProperty
+		{
+			get { return null; }
 		}
 	}
 	
@@ -760,11 +770,22 @@ namespace MonoTests.System.ComponentModel
 			//
 			PropertyDescriptorCollection derivedCol = TypeDescriptor.GetProperties (typeof(MyDerivedComponent));
 			Assert.IsNotNull (derivedCol["AnotherProperty"].Attributes[typeof (DescriptionAttribute)], "#G1");
-			int propsFound = 0;
-			foreach (PropertyDescriptor props in derivedCol)
+			int anotherPropsFound = 0;
+			int yetAnotherPropsFound = 0;
+			foreach (PropertyDescriptor props in derivedCol) {
 				if (props.Name == "AnotherProperty")
-					propsFound++;
-			Assert.AreEqual (1, propsFound, "#G2");
+					anotherPropsFound++;
+				else if (props.Name == "YetAnotherProperty")
+					yetAnotherPropsFound++;
+			}
+
+			Assert.AreEqual (1, anotherPropsFound, "#G2");
+
+			// GetProperties does not return the base type property in the case 
+			// where both the "new" keyword is used and also the Property type is different 
+			// (Type.GetProperties does return both properties)
+			//
+			Assert.AreEqual (1, yetAnotherPropsFound, "#G3");
 		}
 
 		[Test]
@@ -794,14 +815,15 @@ namespace MonoTests.System.ComponentModel
 			MyComponent com = new MyComponent (new MyContainer ());
 
 			PropertyDescriptorCollection col = TypeDescriptor.GetProperties (com);
-			Assert.AreEqual (7, col.Count, "#1");
+			Assert.AreEqual (8, col.Count, "#1");
 			Assert.AreEqual ("TestProperty", col [0].Name, "#2");
 			Assert.AreEqual ("AnotherProperty", col [1].Name, "#3");
-			Assert.AreEqual ("Name", col [2].Name, "#4");
-			Assert.AreEqual ("Address", col [3].Name, "#5");
-			Assert.AreEqual ("Country", col [4].Name, "#6");
-			Assert.AreEqual ("Site", col [5].Name, "#7");
-			Assert.AreEqual ("Container", col [6].Name, "#8");
+			Assert.AreEqual ("YetAnotherProperty", col [2].Name, "#4");
+			Assert.AreEqual ("Name", col [3].Name, "#5");
+			Assert.AreEqual ("Address", col [4].Name, "#6");
+			Assert.AreEqual ("Country", col [5].Name, "#7");
+			Assert.AreEqual ("Site", col [6].Name, "#8");
+			Assert.AreEqual ("Container", col [7].Name, "#9");
 		}
 
 		[TypeConverter (typeof (TestConverter))]
