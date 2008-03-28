@@ -5,6 +5,8 @@ include ../../build/rules.make
 PROGRAM = $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe
 NO_INSTALL = yes
 
+LOCAL_MCS_FLAGS = /r:System.Xml
+
 ifeq (net_2_1, $(PROFILE))
 
 all-local: $(PROGRAM)
