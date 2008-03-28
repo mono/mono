@@ -75,6 +75,9 @@ namespace System.Windows.Forms
 			if (destinationType == null)
 				throw new ArgumentNullException ("destinationType");
 
+			if (value == null && destinationType == typeof (string))
+				return "(none)";
+
 			if ( !(value is Cursor))
 				throw new ArgumentException("object must be of class Cursor", "value");
 
