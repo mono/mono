@@ -159,6 +159,7 @@ typedef struct ucontext MonoContext;
 typedef struct MonoCompileArch {
 	gpointer    litpool;
 	glong	    litsize;
+	int         bkchain_reg;
 } MonoCompileArch;
 
 typedef struct

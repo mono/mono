@@ -12772,8 +12772,12 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 
 	cfg->intvars = mono_mempool_alloc0 (cfg->mempool, sizeof (guint16) * STACK_MAX * header->max_stack);
 
-	if (cfg->verbose_level > 2)
-		g_print ("converting method %s\n", mono_method_full_name (method, TRUE));
+	if (cfg->verbose_level > 2) {
+		if (cfg->generic_sharing_context)
+			g_print ("converting shared method %s\n", mono_method_full_name (method, TRUE));
+		else
+			g_print ("converting method %s\n", mono_method_full_name (method, TRUE));
+	}
 
 	{
 		static int count = 0;

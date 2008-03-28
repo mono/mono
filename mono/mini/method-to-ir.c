@@ -3657,7 +3657,7 @@ handle_ccastclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src)
 	return ins;
 }
 
-static MonoInst*
+static G_GNUC_UNUSED MonoInst*
 handle_delegate_ctor (MonoCompile *cfg, MonoClass *klass, MonoInst *target, MonoMethod *method)
 {
 	gpointer *trampoline;
@@ -9149,7 +9149,11 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					 * using a signature without parameters.
 					 */					
 					call = (MonoCallInst*)mono_emit_native_call (cfg, mono_get_trampoline_code (MONO_TRAMPOLINE_GENERIC_CLASS_INIT), helper_sig_generic_class_init_trampoline, &vtable);
+#ifdef MONO_ARCH_VTABLE_REG
 					mono_call_inst_add_outarg_reg (cfg, call, vtable->dreg, MONO_ARCH_VTABLE_REG, FALSE);
+#else
+					NOT_IMPLEMENTED;
+#endif
 				}
 
 				/*

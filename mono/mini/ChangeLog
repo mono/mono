@@ -1,3 +1,15 @@
+2008-03-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_method_compile): Print a different message when a shared method is
+	compiled.
+
+	* mini-s390.c (emit_load_volatile_registers): Fix a merge problem.
+
+	* method-to-ir.c (mono_method_to_ir2): Fix build on platforms without
+	MONO_ARCH_VTABLE_REG defined.
+
+	* cpu-s390x.md mini-s390x.h mini-s390x.c: Implement long/float/call support.
+
 2008-03-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir2): Fix generic sharing support in ldtoken.

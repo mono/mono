@@ -4711,11 +4711,7 @@ emit_load_volatile_registers (guint8 * code, MonoCompile *cfg)
 	sig = mono_method_signature (method);
 	pos = 0;
 
-<<<<<<< .working
-	cinfo = get_call_info (NULL, NULL, sig, sig->pinvoke);
-=======
 	cinfo = get_call_info (cfg, cfg->mempool, sig, sig->pinvoke);
->>>>>>> .merge-right.r98831
 
 	if (cinfo->struct_ret) {
 		ArgInfo *ainfo = &cinfo->ret;

@@ -360,6 +360,8 @@ cond_exc_iov: len:8
 
 lcompare_imm: src1:i len:20
 
+long_add_imm: dest:i src1:i len:20
+
 long_ceq: dest:i len:12
 long_cgt_un: dest:i len:12
 long_cgt: dest:i len:12
@@ -374,3 +376,8 @@ s390_int_add_ovf: len:32 dest:i src1:i src2:i
 s390_int_add_ovf_un: len:32 dest:i src1:i src2:i 
 s390_int_sub_ovf: len:32 dest:i src1:i src2:i
 s390_int_sub_ovf_un: len:32 dest:i src1:i src2:i 
+
+s390_long_add_ovf: dest:l src1:i src2:i len:32 clob:1
+s390_long_add_ovf_un: dest:l src1:i src2:i len:32 clob:1
+s390_long_sub_ovf: dest:l src1:i src2:i len:32 clob:1
+s390_long_sub_ovf_un: dest:l src1:i src2:i len:32 clob:1
