@@ -556,6 +556,18 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		}
 
 		[Test]
+		public void DataMemberNullDataSource ()
+		{
+			BindingSource source = new BindingSource ();
+
+			source.Add ("hellou");
+			source.DataMember = "SomeProperty"; // Should reset the list, even if data source is null
+
+			Assert.IsTrue (source.List is BindingList<object>, "A1");
+			Assert.AreEqual (0, source.List.Count, "A2");
+		}
+
+		[Test]
 		public void SuppliedDataSource ()
 		{
 			if (TestHelper.RunningOnUnix) {
@@ -840,6 +852,88 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		}
 
 		[Test]
+		public void AddingNew ()
+		{
+			// Need to use a class missing a default .ctor
+			BindingSource source = new BindingSource ();
+			List<DateTime> list = new List<DateTime> ();
+			source.DataSource = list;
+
+			Assert.AreEqual (false, source.AllowNew, "A1");
+
+			source.AllowNew = true;
+			source.AddingNew += delegate (object o, AddingNewEventArgs args)
+			{
+				args.NewObject = DateTime.Now;
+			};
+
+			source.AddNew ();
+			Assert.AreEqual (1, source.Count, "A1");
+		}
+
+		[Test]
+		public void AddingNew_Exceptions ()
+		{
+			BindingSource source = new BindingSource ();
+			List<DateTime> list = new List<DateTime> ();
+			source.DataSource = list;
+
+			Assert.AreEqual (false, source.AllowNew, "A1");
+
+			source.AllowNew = true;
+
+			// No handler for AddingNew
+			try {
+				source.AddNew ();
+				Assert.Fail ("exc1");
+			} catch (InvalidOperationException) {
+			}
+
+			// Adding new handled, but AddingNew is false
+			source.AllowNew = false;
+			source.AddingNew += delegate (object o, AddingNewEventArgs args)
+			{
+				args.NewObject = DateTime.Now;
+			};
+
+			try {
+				source.AddNew ();
+				Assert.Fail ("exc2");
+			} catch (InvalidOperationException) {
+			}
+
+			// Wrong type
+			source = new BindingSource ();
+			source.DataSource = new List<string> ();
+			source.AllowNew = true;
+			source.AddingNew += delegate (object o, AddingNewEventArgs args)
+			{
+				args.NewObject = 3.1416;
+			};
+
+			try {
+				source.AddNew ();
+				Assert.Fail ("exc3");
+			} catch (InvalidOperationException) {
+			}
+
+			// Null value
+			source = new BindingSource ();
+			source.DataSource = new List<string> ();
+			source.AllowNew = true;
+			source.AddingNew += delegate (object o, AddingNewEventArgs args)
+			{
+				args.NewObject = null;
+			};
+
+			try {
+				source.AddNew ();
+				Assert.Fail ("exc4");
+			} catch (InvalidOperationException) {
+			}
+		}
+
+		[Test]
 		public void BindingSuspended1 ()
 		{
 			if (TestHelper.RunningOnUnix) {
@@ -903,6 +997,43 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			source.Add (7);
 			Assert.AreEqual (1, source.List.Count, "6");
 			Assert.IsTrue (source.List is BindingList<int>, "7");
+		}
+
+		[Test]
+		public void CurrencyManager ()
+		{
+			BindingSource source = new BindingSource ();
+			CurrencyManager curr_manager;
+
+			// 
+			// Null data source
+			//
+			curr_manager = source.CurrencyManager;
+			Assert.IsTrue (curr_manager != null, "A1");
+			Assert.IsTrue (curr_manager.List != null, "A2");
+			Assert.IsTrue (curr_manager.List is BindingSource, "A3");
+			Assert.AreEqual (0, curr_manager.List.Count, "A4");
+			Assert.AreEqual (0, curr_manager.Count, "A5");
+			Assert.IsTrue (curr_manager.Bindings != null, "A7");
+			Assert.AreEqual (0, curr_manager.Bindings.Count, "A8");
+			Assert.AreEqual (source, curr_manager.List, "A9");
+
+			// 
+			// Non null data source
+			//
+			List<string> list = new List<string> ();
+			list.Add ("A");
+			list.Add ("B");
+			source.DataSource = list;
+			curr_manager = source.CurrencyManager;
+			Assert.IsTrue (curr_manager != null, "B1");
+			Assert.IsTrue (curr_manager.List != null, "B2");
+			Assert.IsTrue (curr_manager.List is BindingSource, "B3");
+			Assert.AreEqual (2, curr_manager.List.Count, "B4");
+			Assert.AreEqual (2, curr_manager.Count, "B5");
+			Assert.IsTrue (curr_manager.Bindings != null, "B7");
+			Assert.AreEqual (0, curr_manager.Bindings.Count, "B8");
+			Assert.AreEqual (source, curr_manager.List, "B9");
 		}
 
 		class BindingListViewPoker : BindingList<string>, IBindingListView

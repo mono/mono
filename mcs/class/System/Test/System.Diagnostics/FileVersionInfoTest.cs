@@ -68,7 +68,6 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GetVersionInfo_TextFile ()
 		{
 			string file = Path.Combine (tempDir, "lib.dll");
@@ -139,7 +138,6 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GetVersionInfo_NoNativeResources ()
 		{
 			AssemblyName aname = new AssemblyName ();
@@ -157,6 +155,12 @@ namespace MonoTests.System.Diagnostics
 				new Type [] { typeof (String) });
 			CustomAttributeBuilder cab =
 				new CustomAttributeBuilder (ci, new object [1] { "Mono Team" });
+			ab.SetCustomAttribute (cab);
+
+			// Comments
+			attrType = typeof (AssemblyDescriptionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "System Test" });
 			ab.SetCustomAttribute (cab);
 
 			// ProductName
@@ -267,7 +271,6 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test] // DefineUnmanagedResource (String)
-		[Category ("NotWorking")]
 		public void DefineUnmanagedResource1a ()
 		{
 			string resFile = Path.Combine (tempDir, "version.res");
@@ -320,7 +323,6 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test] // DefineUnmanagedResource (String)
-		[Category ("NotWorking")]
 		public void DefineUnmanagedResource1b ()
 		{
 			string resFile = Path.Combine (tempDir, "version.res");
@@ -344,6 +346,12 @@ namespace MonoTests.System.Diagnostics
 				new Type [] { typeof (String) });
 			CustomAttributeBuilder cab =
 				new CustomAttributeBuilder (ci, new object [1] { "Mono Team" });
+			ab.SetCustomAttribute (cab);
+
+			// Comments
+			attrType = typeof (AssemblyDescriptionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "System Test" });
 			ab.SetCustomAttribute (cab);
 
 			// ProductName
@@ -424,7 +432,7 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test] // DefineUnmanagedResource (String)
-		[Category ("NotWorking")]
+		[Category ("NotWorking")] // bug #374600
 		public void DefineUnmanagedResource1c ()
 		{
 			string resFile = Path.Combine (tempDir, "version.res");
@@ -477,7 +485,7 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test] // DefineUnmanagedResource (String)
-		[Category ("NotWorking")]
+		[Category ("NotWorking")] // bug #374600
 		public void DefineUnmanagedResource1d ()
 		{
 			string resFile = Path.Combine (tempDir, "version.res");
@@ -500,6 +508,12 @@ namespace MonoTests.System.Diagnostics
 				new Type [] { typeof (String) });
 			CustomAttributeBuilder cab =
 				new CustomAttributeBuilder (ci, new object [1] { "Mono Team" });
+			ab.SetCustomAttribute (cab);
+
+			// Comments
+			attrType = typeof (AssemblyDescriptionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "System Test" });
 			ab.SetCustomAttribute (cab);
 
 			// ProductName
@@ -580,7 +594,7 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test] // DefineUnmanagedResource (String)
-		[Category ("NotWorking")]
+		[Category ("NotWorking")] // bug #374600
 		public void DefineUnmanagedResource1e ()
 		{
 			string resFile = Path.Combine (tempDir, "version.res");
@@ -633,7 +647,7 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test] // DefineUnmanagedResource (String)
-		[Category ("NotWorking")]
+		[Category ("NotWorking")] // bug #374600
 		public void DefineUnmanagedResource1f ()
 		{
 			string resFile = Path.Combine (tempDir, "version.res");
@@ -656,6 +670,12 @@ namespace MonoTests.System.Diagnostics
 				new Type [] { typeof (String) });
 			CustomAttributeBuilder cab =
 				new CustomAttributeBuilder (ci, new object [1] { "Mono Team" });
+			ab.SetCustomAttribute (cab);
+
+			// Comments
+			attrType = typeof (AssemblyDescriptionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "System Test" });
 			ab.SetCustomAttribute (cab);
 
 			// ProductName
@@ -736,7 +756,6 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test] // DefineUnmanagedResource (String)
-		[Category ("NotWorking")]
 		public void DefineUnmanagedResource1g ()
 		{
 			string resFile = Path.Combine (tempDir, "version.res");
@@ -820,7 +839,6 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test] // DefineUnmanagedResource (String)
-		[Category ("NotWorking")]
 		public void DefineUnmanagedResource1h ()
 		{
 			string resFile = Path.Combine (tempDir, "version.res");
@@ -843,6 +861,12 @@ namespace MonoTests.System.Diagnostics
 				new Type [] { typeof (String) });
 			CustomAttributeBuilder cab =
 				new CustomAttributeBuilder (ci, new object [1] { "Mono Team" });
+			ab.SetCustomAttribute (cab);
+
+			// Comments
+			attrType = typeof (AssemblyDescriptionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "System Test" });
 			ab.SetCustomAttribute (cab);
 
 			// ProductName
@@ -954,7 +978,6 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test] // DefineVersionInfoResource (String, String, String, String, String)
-		[Category ("NotWorking")]
 		public void DefineVersionInfoResource1a ()
 		{
 			AssemblyName aname = new AssemblyName ();
@@ -999,7 +1022,6 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test] // DefineVersionInfoResource (String, String, String, String, String)
-		[Category ("NotWorking")]
 		public void DefineVersionInfoResource1b ()
 		{
 			AssemblyName aname = new AssemblyName ();
@@ -1044,7 +1066,6 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test] // DefineVersionInfoResource (String, String, String, String, String)
-		[Category ("NotWorking")]
 		public void DefineVersionInfoResource1c ()
 		{
 			AssemblyName aname = new AssemblyName ();
@@ -1060,6 +1081,12 @@ namespace MonoTests.System.Diagnostics
 				new Type [] { typeof (String) });
 			CustomAttributeBuilder cab =
 				new CustomAttributeBuilder (ci, new object [1] { "Mono Team" });
+			ab.SetCustomAttribute (cab);
+
+			// Comments
+			attrType = typeof (AssemblyDescriptionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "System Test" });
 			ab.SetCustomAttribute (cab);
 
 			// ProductName
@@ -1110,7 +1137,7 @@ namespace MonoTests.System.Diagnostics
 			string assemblyFile = Path.Combine (tempDir, "lib1c.dll");
 
 			FileVersionInfo fvi = FileVersionInfo.GetVersionInfo (assemblyFile);
-			Assert.AreEqual (" ", fvi.Comments, "#1");
+			Assert.AreEqual ("System Test", fvi.Comments, "#1");
 			Assert.AreEqual ("BBB", fvi.CompanyName, "#2");
 			Assert.AreEqual (0, fvi.FileBuildPart, "#3");
 			Assert.AreEqual (" ", fvi.FileDescription, "#4");
@@ -1140,7 +1167,6 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test] // DefineVersionInfoResource (String, String, String, String, String)
-		[Category ("NotWorking")]
 		public void DefineVersionInfoResource1d ()
 		{
 			AssemblyName aname = new AssemblyName ();
@@ -1156,6 +1182,12 @@ namespace MonoTests.System.Diagnostics
 				new Type [] { typeof (String) });
 			CustomAttributeBuilder cab =
 				new CustomAttributeBuilder (ci, new object [1] { "Mono Team" });
+			ab.SetCustomAttribute (cab);
+
+			// Comments
+			attrType = typeof (AssemblyDescriptionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "System Test" });
 			ab.SetCustomAttribute (cab);
 
 			// ProductName
@@ -1206,7 +1238,7 @@ namespace MonoTests.System.Diagnostics
 			string assemblyFile = Path.Combine (tempDir, "lib1d.dll");
 
 			FileVersionInfo fvi = FileVersionInfo.GetVersionInfo (assemblyFile);
-			Assert.AreEqual (" ", fvi.Comments, "#1");
+			Assert.AreEqual ("System Test", fvi.Comments, "#1");
 			Assert.AreEqual (" ", fvi.CompanyName, "#2");
 			Assert.AreEqual (0, fvi.FileBuildPart, "#3");
 			Assert.AreEqual (" ", fvi.FileDescription, "#4");
@@ -1236,21 +1268,20 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test] // DefineVersionInfoResource (String, String, String, String, String)
-		[Category ("NotWorking")]
 		public void DefineVersionInfoResource1e ()
 		{
 			AssemblyName aname = new AssemblyName ();
 			aname.CultureInfo = new CultureInfo ("nl-BE");
-			aname.Name = "lib1a";
+			aname.Name = "lib1e";
 			aname.Version = new Version (5, 4, 7, 8);
 
 			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
 				aname, AssemblyBuilderAccess.RunAndSave,
 				tempDir);
 			ab.DefineVersionInfoResource ("BBB", "1.3.2.4", "CCC", "DDD", "EEE");
-			ab.Save ("lib1a.dll");
+			ab.Save ("lib1e.dll");
 
-			string assemblyFile = Path.Combine (tempDir, "lib1a.dll");
+			string assemblyFile = Path.Combine (tempDir, "lib1e.dll");
 
 			FileVersionInfo fvi = FileVersionInfo.GetVersionInfo (assemblyFile);
 			Assert.AreEqual (" ", fvi.Comments, "#1");
@@ -1262,7 +1293,7 @@ namespace MonoTests.System.Diagnostics
 			Assert.AreEqual (assemblyFile, fvi.FileName, "#7");
 			Assert.AreEqual (8, fvi.FilePrivatePart, "#8");
 			Assert.AreEqual ("5.4.7.8", fvi.FileVersion, "#9");
-			Assert.AreEqual ("lib1a", fvi.InternalName, "#10");
+			Assert.AreEqual ("lib1e", fvi.InternalName, "#10");
 			Assert.IsFalse (fvi.IsDebug, "#11");
 			Assert.IsFalse (fvi.IsPatched, "#12");
 			Assert.IsFalse (fvi.IsPreRelease, "#13");
@@ -1271,7 +1302,7 @@ namespace MonoTests.System.Diagnostics
 			Assert.AreEqual ("Dutch (Belgium)", fvi.Language, "#16");
 			Assert.AreEqual ("DDD", fvi.LegalCopyright, "#17");
 			Assert.AreEqual ("EEE", fvi.LegalTrademarks, "#18");
-			Assert.AreEqual ("lib1a.dll", fvi.OriginalFilename, "#19");
+			Assert.AreEqual ("lib1e.dll", fvi.OriginalFilename, "#19");
 			Assert.AreEqual (string.Empty, fvi.PrivateBuild, "#20");
 			Assert.AreEqual (2, fvi.ProductBuildPart, "#21");
 			Assert.AreEqual (1, fvi.ProductMajorPart, "#22");
@@ -1283,21 +1314,20 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test] // DefineVersionInfoResource (String, String, String, String, String)
-		[Category ("NotWorking")]
 		public void DefineVersionInfoResource1f ()
 		{
 			AssemblyName aname = new AssemblyName ();
 			aname.CultureInfo = new CultureInfo ("nl");
-			aname.Name = "lib1a";
+			aname.Name = "lib1f";
 			aname.Version = new Version (5, 4, 7, 8);
 
 			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
 				aname, AssemblyBuilderAccess.RunAndSave,
 				tempDir);
 			ab.DefineVersionInfoResource (null, null, null, null, null);
-			ab.Save ("lib1a.dll");
+			ab.Save ("lib1f.dll");
 
-			string assemblyFile = Path.Combine (tempDir, "lib1a.dll");
+			string assemblyFile = Path.Combine (tempDir, "lib1f.dll");
 
 			FileVersionInfo fvi = FileVersionInfo.GetVersionInfo (assemblyFile);
 			Assert.AreEqual (" ", fvi.Comments, "#1");
@@ -1309,7 +1339,7 @@ namespace MonoTests.System.Diagnostics
 			Assert.AreEqual (assemblyFile, fvi.FileName, "#7");
 			Assert.AreEqual (8, fvi.FilePrivatePart, "#8");
 			Assert.AreEqual ("5.4.7.8", fvi.FileVersion, "#9");
-			Assert.AreEqual ("lib1a", fvi.InternalName, "#10");
+			Assert.AreEqual ("lib1f", fvi.InternalName, "#10");
 			Assert.IsFalse (fvi.IsDebug, "#11");
 			Assert.IsFalse (fvi.IsPatched, "#12");
 			Assert.IsFalse (fvi.IsPreRelease, "#13");
@@ -1318,7 +1348,7 @@ namespace MonoTests.System.Diagnostics
 			Assert.AreEqual ("Dutch (Netherlands)", fvi.Language, "#16");
 			Assert.AreEqual (" ", fvi.LegalCopyright, "#17");
 			Assert.AreEqual (" ", fvi.LegalTrademarks, "#18");
-			Assert.AreEqual ("lib1a.dll", fvi.OriginalFilename, "#19");
+			Assert.AreEqual ("lib1f.dll", fvi.OriginalFilename, "#19");
 			Assert.AreEqual (string.Empty, fvi.PrivateBuild, "#20");
 			Assert.AreEqual (0, fvi.ProductBuildPart, "#21");
 			Assert.AreEqual (0, fvi.ProductMajorPart, "#22");
@@ -1330,7 +1360,6 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test] // DefineVersionInfoResource (String, String, String, String, String)
-		[Category ("NotWorking")]
 		public void DefineVersionInfoResource1g ()
 		{
 			AssemblyName aname = new AssemblyName ();
@@ -1348,6 +1377,12 @@ namespace MonoTests.System.Diagnostics
 				new Type [] { typeof (String) });
 			CustomAttributeBuilder cab =
 				new CustomAttributeBuilder (ci, new object [1] { "Mono Team" });
+			ab.SetCustomAttribute (cab);
+
+			// Comments
+			attrType = typeof (AssemblyDescriptionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "System Test" });
 			ab.SetCustomAttribute (cab);
 
 			// ProductName
@@ -1398,7 +1433,7 @@ namespace MonoTests.System.Diagnostics
 			string assemblyFile = Path.Combine (tempDir, "lib1g.dll");
 
 			FileVersionInfo fvi = FileVersionInfo.GetVersionInfo (assemblyFile);
-			Assert.AreEqual (" ", fvi.Comments, "#1");
+			Assert.AreEqual ("System Test", fvi.Comments, "#1");
 			Assert.AreEqual ("BBB", fvi.CompanyName, "#2");
 			Assert.AreEqual (7, fvi.FileBuildPart, "#3");
 			Assert.AreEqual (" ", fvi.FileDescription, "#4");
@@ -1433,7 +1468,6 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test] // DefineVersionInfoResource (String, String, String, String, String)
-		[Category ("NotWorking")]
 		public void DefineVersionInfoResource1h ()
 		{
 			AssemblyName aname = new AssemblyName ();
@@ -1451,6 +1485,12 @@ namespace MonoTests.System.Diagnostics
 				new Type [] { typeof (String) });
 			CustomAttributeBuilder cab =
 				new CustomAttributeBuilder (ci, new object [1] { "Mono Team" });
+			ab.SetCustomAttribute (cab);
+
+			// Comments
+			attrType = typeof (AssemblyDescriptionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "System Test" });
 			ab.SetCustomAttribute (cab);
 
 			// ProductName
@@ -1501,7 +1541,7 @@ namespace MonoTests.System.Diagnostics
 			string assemblyFile = Path.Combine (tempDir, "lib1h.dll");
 
 			FileVersionInfo fvi = FileVersionInfo.GetVersionInfo (assemblyFile);
-			Assert.AreEqual (" ", fvi.Comments, "#1");
+			Assert.AreEqual ("System Test", fvi.Comments, "#1");
 			Assert.AreEqual (" ", fvi.CompanyName, "#2");
 #if NET_2_0
 			Assert.AreEqual (0, fvi.FileBuildPart, "#3");
@@ -1540,7 +1580,6 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test] // DefineVersionInfoResource (String, String, String, String, String)
-		[Category ("NotWorking")]
 		public void DefineVersionInfoResource1i ()
 		{
 			AssemblyName aname = new AssemblyName ();
@@ -1557,6 +1596,12 @@ namespace MonoTests.System.Diagnostics
 				new Type [] { typeof (String) });
 			CustomAttributeBuilder cab =
 				new CustomAttributeBuilder (ci, new object [1] { "Mono Team" });
+			ab.SetCustomAttribute (cab);
+
+			// Comments
+			attrType = typeof (AssemblyDescriptionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "System Test" });
 			ab.SetCustomAttribute (cab);
 
 			// ProductName
@@ -1595,13 +1640,14 @@ namespace MonoTests.System.Diagnostics
 			cab = new CustomAttributeBuilder (ci, new object [1] { "6.4.7.1" });
 			ab.SetCustomAttribute (cab);
 
-			ab.DefineVersionInfoResource ("AAA", "", "BBB", "CCC", "DDD");
+			ab.DefineVersionInfoResource ("AAA", string.Empty,
+				"BBB", "CCC", "DDD");
 			ab.Save ("lib1i.dll");
 
 			string assemblyFile = Path.Combine (tempDir, "lib1i.dll");
 
 			FileVersionInfo fvi = FileVersionInfo.GetVersionInfo (assemblyFile);
-			Assert.AreEqual (" ", fvi.Comments, "#1");
+			Assert.AreEqual ("System Test", fvi.Comments, "#1");
 			Assert.AreEqual ("BBB", fvi.CompanyName, "#2");
 			Assert.AreEqual (8, fvi.FileBuildPart, "#3");
 			Assert.AreEqual (" ", fvi.FileDescription, "#4");
@@ -1630,8 +1676,365 @@ namespace MonoTests.System.Diagnostics
 			Assert.AreEqual (string.Empty, fvi.SpecialBuild, "#27");
 		}
 
+		[Test] // DefineVersionInfoResource (String, String, String, String, String)
+		public void DefineVersionInfoResource1j ()
+		{
+			AssemblyName aname = new AssemblyName ();
+			aname.Name = "lib1j";
+			aname.Version = new Version (5, 4, 8, 2);
+
+			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
+				aname, AssemblyBuilderAccess.RunAndSave,
+				tempDir);
+
+			// CompanyName
+			Type attrType = typeof (AssemblyCompanyAttribute);
+			ConstructorInfo ci = attrType.GetConstructor (
+				new Type [] { typeof (String) });
+			CustomAttributeBuilder cab =
+				new CustomAttributeBuilder (ci, new object [1] { "Mono Team" });
+			ab.SetCustomAttribute (cab);
+
+			// Comments
+			attrType = typeof (AssemblyDescriptionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "System Test" });
+			ab.SetCustomAttribute (cab);
+
+			// ProductName
+			attrType = typeof (AssemblyProductAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "Mono Runtime" });
+			ab.SetCustomAttribute (cab);
+
+			// LegalCopyright
+			attrType = typeof (AssemblyCopyrightAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "Copyright 2007 Mono Hackers" });
+			ab.SetCustomAttribute (cab);
+
+			// LegalTrademarks
+			attrType = typeof (AssemblyTrademarkAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "Registered to All" });
+			ab.SetCustomAttribute (cab);
+
+			// AssemblyVersion
+			attrType = typeof (AssemblyVersionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "1.2.3.4" });
+			ab.SetCustomAttribute (cab);
+
+			// AssemblyFileVersion
+			attrType = typeof (AssemblyFileVersionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "2.4.6.8" });
+			ab.SetCustomAttribute (cab);
+
+			// AssemblyInformationalVersion
+			attrType = typeof (AssemblyInformationalVersionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "6.4.7.1" });
+			ab.SetCustomAttribute (cab);
+
+			ab.DefineVersionInfoResource (string.Empty, string.Empty,
+				string.Empty, string.Empty, string.Empty);
+			ab.Save ("lib1j.dll");
+
+			string assemblyFile = Path.Combine (tempDir, "lib1j.dll");
+
+			FileVersionInfo fvi = FileVersionInfo.GetVersionInfo (assemblyFile);
+			Assert.AreEqual ("System Test", fvi.Comments, "#1");
+			Assert.AreEqual (" ", fvi.CompanyName, "#2");
+			Assert.AreEqual (8, fvi.FileBuildPart, "#3");
+			Assert.AreEqual (" ", fvi.FileDescription, "#4");
+			Assert.AreEqual (5, fvi.FileMajorPart, "#5");
+			Assert.AreEqual (4, fvi.FileMinorPart, "#6");
+			Assert.AreEqual (assemblyFile, fvi.FileName, "#7");
+			Assert.AreEqual (2, fvi.FilePrivatePart, "#8");
+			Assert.AreEqual ("5.4.8.2", fvi.FileVersion, "#9");
+			Assert.AreEqual ("lib1j", fvi.InternalName, "#10");
+			Assert.IsFalse (fvi.IsDebug, "#11");
+			Assert.IsFalse (fvi.IsPatched, "#12");
+			Assert.IsFalse (fvi.IsPreRelease, "#13");
+			Assert.IsFalse (fvi.IsPrivateBuild, "#14");
+			Assert.IsFalse (fvi.IsSpecialBuild, "#15");
+			Assert.AreEqual ("Invariant Language (Invariant Country)", fvi.Language, "#16");
+			Assert.AreEqual (" ", fvi.LegalCopyright, "#17");
+			Assert.AreEqual (" ", fvi.LegalTrademarks, "#18");
+			Assert.AreEqual ("lib1j.dll", fvi.OriginalFilename, "#19");
+			Assert.AreEqual (string.Empty, fvi.PrivateBuild, "#20");
+			Assert.AreEqual (0, fvi.ProductBuildPart, "#21");
+			Assert.AreEqual (0, fvi.ProductMajorPart, "#22");
+			Assert.AreEqual (0, fvi.ProductMinorPart, "#23");
+			Assert.AreEqual (" ", fvi.ProductName, "#24");
+			Assert.AreEqual (0, fvi.ProductPrivatePart, "#25");
+			Assert.AreEqual (" ", fvi.ProductVersion, "#26");
+			Assert.AreEqual (string.Empty, fvi.SpecialBuild, "#27");
+		}
+
+		[Test] // DefineVersionInfoResource (String, String, String, String, String)
+		public void DefineVersionInfoResource1k ()
+		{
+			AssemblyName aname = new AssemblyName ();
+			aname.CultureInfo = new CultureInfo ("nl");
+			aname.Name = "lib1k";
+			aname.Version = new Version (5, 4, 7, 8);
+
+			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
+				aname, AssemblyBuilderAccess.RunAndSave,
+				tempDir);
+
+			// AssemblyCulture
+			Type attrType = typeof (AssemblyCultureAttribute);
+			ConstructorInfo ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			CustomAttributeBuilder cab = new CustomAttributeBuilder (
+				ci, new object [1] { string.Empty });
+			ab.SetCustomAttribute (cab);
+
+			ab.DefineVersionInfoResource (null, null, null, null, null);
+			ab.Save ("lib1k.dll");
+
+			string assemblyFile = Path.Combine (tempDir, "lib1k.dll");
+
+			FileVersionInfo fvi = FileVersionInfo.GetVersionInfo (assemblyFile);
+			Assert.AreEqual (" ", fvi.Comments, "#1");
+			Assert.AreEqual (" ", fvi.CompanyName, "#2");
+			Assert.AreEqual (7, fvi.FileBuildPart, "#3");
+			Assert.AreEqual (" ", fvi.FileDescription, "#4");
+			Assert.AreEqual (5, fvi.FileMajorPart, "#5");
+			Assert.AreEqual (4, fvi.FileMinorPart, "#6");
+			Assert.AreEqual (assemblyFile, fvi.FileName, "#7");
+			Assert.AreEqual (8, fvi.FilePrivatePart, "#8");
+			Assert.AreEqual ("5.4.7.8", fvi.FileVersion, "#9");
+			Assert.AreEqual ("lib1k", fvi.InternalName, "#10");
+			Assert.IsFalse (fvi.IsDebug, "#11");
+			Assert.IsFalse (fvi.IsPatched, "#12");
+			Assert.IsFalse (fvi.IsPreRelease, "#13");
+			Assert.IsFalse (fvi.IsPrivateBuild, "#14");
+			Assert.IsFalse (fvi.IsSpecialBuild, "#15");
+			Assert.AreEqual ("Invariant Language (Invariant Country)", fvi.Language, "#16");
+			Assert.AreEqual (" ", fvi.LegalCopyright, "#17");
+			Assert.AreEqual (" ", fvi.LegalTrademarks, "#18");
+			Assert.AreEqual ("lib1k.dll", fvi.OriginalFilename, "#19");
+			Assert.AreEqual (string.Empty, fvi.PrivateBuild, "#20");
+			Assert.AreEqual (0, fvi.ProductBuildPart, "#21");
+			Assert.AreEqual (0, fvi.ProductMajorPart, "#22");
+			Assert.AreEqual (0, fvi.ProductMinorPart, "#23");
+			Assert.AreEqual (" ", fvi.ProductName, "#24");
+			Assert.AreEqual (0, fvi.ProductPrivatePart, "#25");
+			Assert.AreEqual (" ", fvi.ProductVersion, "#26");
+			Assert.AreEqual (string.Empty, fvi.SpecialBuild, "#27");
+		}
+
+		[Test] // DefineVersionInfoResource (String, String, String, String, String)
+		public void DefineVersionInfoResource1l ()
+		{
+			AssemblyName aname = new AssemblyName ();
+			aname.CultureInfo = new CultureInfo ("nl-BE");
+			aname.Name = "lib1l";
+			aname.Version = new Version (5, 4, 7, 8);
+
+			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
+				aname, AssemblyBuilderAccess.RunAndSave,
+				tempDir);
+			ab.DefineVersionInfoResource ("AAA", "3.9.2", "BBB", "CCC", "DDD");
+
+			// CompanyName
+			Type attrType = typeof (AssemblyCompanyAttribute);
+			ConstructorInfo ci = attrType.GetConstructor (
+				new Type [] { typeof (String) });
+			CustomAttributeBuilder cab =
+				new CustomAttributeBuilder (ci, new object [1] { "Mono Team" });
+			ab.SetCustomAttribute (cab);
+
+			// Comments
+			attrType = typeof (AssemblyDescriptionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "System Test" });
+			ab.SetCustomAttribute (cab);
+
+			// ProductName
+			attrType = typeof (AssemblyProductAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "Mono Runtime" });
+			ab.SetCustomAttribute (cab);
+
+			// LegalCopyright
+			attrType = typeof (AssemblyCopyrightAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "Copyright 2007 Mono Hackers" });
+			ab.SetCustomAttribute (cab);
+
+			// LegalTrademarks
+			attrType = typeof (AssemblyTrademarkAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "Registered to All" });
+			ab.SetCustomAttribute (cab);
+
+			// AssemblyVersion
+			attrType = typeof (AssemblyVersionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "1.2.3.4" });
+			ab.SetCustomAttribute (cab);
+
+			// AssemblyFileVersion
+			attrType = typeof (AssemblyFileVersionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "2.4.6.8" });
+			ab.SetCustomAttribute (cab);
+
+			// AssemblyInformationalVersion
+			attrType = typeof (AssemblyInformationalVersionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "6.4.7.1" });
+			ab.SetCustomAttribute (cab);
+
+			// AssemblyCulture
+			attrType = typeof (AssemblyCultureAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "en-GB" });
+			ab.SetCustomAttribute (cab);
+
+			ab.Save ("lib1l.dll");
+
+			string assemblyFile = Path.Combine (tempDir, "lib1l.dll");
+
+			FileVersionInfo fvi = FileVersionInfo.GetVersionInfo (assemblyFile);
+			Assert.AreEqual ("System Test", fvi.Comments, "#1");
+			Assert.AreEqual ("BBB", fvi.CompanyName, "#2");
+			Assert.AreEqual (7, fvi.FileBuildPart, "#3");
+			Assert.AreEqual (" ", fvi.FileDescription, "#4");
+			Assert.AreEqual (5, fvi.FileMajorPart, "#5");
+			Assert.AreEqual (4, fvi.FileMinorPart, "#6");
+			Assert.AreEqual (assemblyFile, fvi.FileName, "#7");
+			Assert.AreEqual (8, fvi.FilePrivatePart, "#8");
+			Assert.AreEqual ("5.4.7.8", fvi.FileVersion, "#9");
+			Assert.AreEqual ("lib1l", fvi.InternalName, "#10");
+			Assert.IsFalse (fvi.IsDebug, "#11");
+			Assert.IsFalse (fvi.IsPatched, "#12");
+			Assert.IsFalse (fvi.IsPreRelease, "#13");
+			Assert.IsFalse (fvi.IsPrivateBuild, "#14");
+			Assert.IsFalse (fvi.IsSpecialBuild, "#15");
+			Assert.AreEqual ("English (United Kingdom)", fvi.Language, "#16");
+			Assert.AreEqual ("CCC", fvi.LegalCopyright, "#17");
+			Assert.AreEqual ("DDD", fvi.LegalTrademarks, "#18");
+			Assert.AreEqual ("lib1l.dll", fvi.OriginalFilename, "#19");
+			Assert.AreEqual (string.Empty, fvi.PrivateBuild, "#20");
+			Assert.AreEqual (2, fvi.ProductBuildPart, "#21");
+			Assert.AreEqual (3, fvi.ProductMajorPart, "#22");
+			Assert.AreEqual (9, fvi.ProductMinorPart, "#23");
+			Assert.AreEqual ("AAA", fvi.ProductName, "#24");
+			Assert.AreEqual (0, fvi.ProductPrivatePart, "#25");
+			Assert.AreEqual ("3.9.2", fvi.ProductVersion, "#26");
+			Assert.AreEqual (string.Empty, fvi.SpecialBuild, "#27");
+		}
+
+		[Test] // DefineVersionInfoResource (String, String, String, String, String)
+		public void DefineVersionInfoResource1m ()
+		{
+			AssemblyName aname = new AssemblyName ();
+			aname.CultureInfo = new CultureInfo ("nl-BE");
+			aname.Name = "lib1m";
+			aname.Version = new Version (5, 4, 7, 8);
+
+			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
+				aname, AssemblyBuilderAccess.RunAndSave,
+				tempDir);
+			ab.DefineVersionInfoResource (string.Empty, string.Empty,
+				string.Empty, string.Empty, string.Empty);
+
+			// CompanyName
+			Type attrType = typeof (AssemblyCompanyAttribute);
+			ConstructorInfo ci = attrType.GetConstructor (
+				new Type [] { typeof (String) });
+			CustomAttributeBuilder cab =
+				new CustomAttributeBuilder (ci, new object [1] { "Mono Team" });
+			ab.SetCustomAttribute (cab);
+
+			// Comments
+			attrType = typeof (AssemblyDescriptionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "System Test" });
+			ab.SetCustomAttribute (cab);
+
+			// ProductName
+			attrType = typeof (AssemblyProductAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "Mono Runtime" });
+			ab.SetCustomAttribute (cab);
+
+			// LegalCopyright
+			attrType = typeof (AssemblyCopyrightAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "Copyright 2007 Mono Hackers" });
+			ab.SetCustomAttribute (cab);
+
+			// LegalTrademarks
+			attrType = typeof (AssemblyTrademarkAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "Registered to All" });
+			ab.SetCustomAttribute (cab);
+
+			// AssemblyVersion
+			attrType = typeof (AssemblyVersionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "1.2.3.4" });
+			ab.SetCustomAttribute (cab);
+
+			// AssemblyFileVersion
+			attrType = typeof (AssemblyFileVersionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "2.4.6.8" });
+			ab.SetCustomAttribute (cab);
+
+			// AssemblyInformationalVersion
+			attrType = typeof (AssemblyInformationalVersionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "6.4.7.1" });
+			ab.SetCustomAttribute (cab);
+
+			// AssemblyCulture
+			attrType = typeof (AssemblyCultureAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "en-GB" });
+			ab.SetCustomAttribute (cab);
+
+			ab.Save ("lib1m.dll");
+
+			string assemblyFile = Path.Combine (tempDir, "lib1m.dll");
+
+			FileVersionInfo fvi = FileVersionInfo.GetVersionInfo (assemblyFile);
+			Assert.AreEqual ("System Test", fvi.Comments, "#1");
+			Assert.AreEqual (" ", fvi.CompanyName, "#2");
+			Assert.AreEqual (7, fvi.FileBuildPart, "#3");
+			Assert.AreEqual (" ", fvi.FileDescription, "#4");
+			Assert.AreEqual (5, fvi.FileMajorPart, "#5");
+			Assert.AreEqual (4, fvi.FileMinorPart, "#6");
+			Assert.AreEqual (assemblyFile, fvi.FileName, "#7");
+			Assert.AreEqual (8, fvi.FilePrivatePart, "#8");
+			Assert.AreEqual ("5.4.7.8", fvi.FileVersion, "#9");
+			Assert.AreEqual ("lib1m", fvi.InternalName, "#10");
+			Assert.IsFalse (fvi.IsDebug, "#11");
+			Assert.IsFalse (fvi.IsPatched, "#12");
+			Assert.IsFalse (fvi.IsPreRelease, "#13");
+			Assert.IsFalse (fvi.IsPrivateBuild, "#14");
+			Assert.IsFalse (fvi.IsSpecialBuild, "#15");
+			Assert.AreEqual ("English (United Kingdom)", fvi.Language, "#16");
+			Assert.AreEqual (" ", fvi.LegalCopyright, "#17");
+			Assert.AreEqual (" ", fvi.LegalTrademarks, "#18");
+			Assert.AreEqual ("lib1m.dll", fvi.OriginalFilename, "#19");
+			Assert.AreEqual (string.Empty, fvi.PrivateBuild, "#20");
+			Assert.AreEqual (0, fvi.ProductBuildPart, "#21");
+			Assert.AreEqual (0, fvi.ProductMajorPart, "#22");
+			Assert.AreEqual (0, fvi.ProductMinorPart, "#23");
+			Assert.AreEqual (" ", fvi.ProductName, "#24");
+			Assert.AreEqual (0, fvi.ProductPrivatePart, "#25");
+			Assert.AreEqual (" ", fvi.ProductVersion, "#26");
+			Assert.AreEqual (string.Empty, fvi.SpecialBuild, "#27");
+		}
+
 		[Test] // DefineVersionInfoResource ()
-		[Category ("NotWorking")]
 		public void DefineVersionInfoResource2a ()
 		{
 			AssemblyName aname = new AssemblyName ();
@@ -1676,7 +2079,6 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test] // DefineVersionInfoResource ()
-		[Category ("NotWorking")]
 		public void DefineVersionInfoResource2b ()
 		{
 			AssemblyName aname = new AssemblyName ();
@@ -1693,6 +2095,12 @@ namespace MonoTests.System.Diagnostics
 				new Type [] { typeof (String) });
 			CustomAttributeBuilder cab =
 				new CustomAttributeBuilder (ci, new object [1] { "Mono Team" });
+			ab.SetCustomAttribute (cab);
+
+			// Comments
+			attrType = typeof (AssemblyDescriptionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "System Test" });
 			ab.SetCustomAttribute (cab);
 
 			// ProductName
@@ -1743,7 +2151,7 @@ namespace MonoTests.System.Diagnostics
 			string assemblyFile = Path.Combine (tempDir, "lib2b.dll");
 
 			FileVersionInfo fvi = FileVersionInfo.GetVersionInfo (assemblyFile);
-			Assert.AreEqual (" ", fvi.Comments, "#1");
+			Assert.AreEqual ("System Test", fvi.Comments, "#1");
 			Assert.AreEqual ("Mono Team", fvi.CompanyName, "#2");
 			Assert.AreEqual (6, fvi.FileBuildPart, "#3");
 			Assert.AreEqual (" ", fvi.FileDescription, "#4");
@@ -1773,7 +2181,6 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test] // DefineVersionInfoResource ()
-		[Category ("NotWorking")]
 		public void DefineVersionInfoResource2c ()
 		{
 			AssemblyName aname = new AssemblyName ();
@@ -1832,7 +2239,6 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test] // DefineVersionInfoResource ()
-		[Category ("NotWorking")]
 		public void DefineVersionInfoResource2d ()
 		{
 			AssemblyName aname = new AssemblyName ();
@@ -1897,7 +2303,6 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test] // DefineVersionInfoResource ()
-		[Category ("NotWorking")]
 		public void DefineVersionInfoResource2e ()
 		{
 			AssemblyName aname = new AssemblyName ();
@@ -1962,7 +2367,6 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test] // DefineVersionInfoResource ()
-		[Category ("NotWorking")]
 		public void DefineVersionInfoResource2f ()
 		{
 			AssemblyName aname = new AssemblyName ();
@@ -2015,7 +2419,6 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test] // DefineVersionInfoResource ()
-		[Category ("NotWorking")]
 		public void DefineVersionInfoResource2g ()
 		{
 			AssemblyName aname = new AssemblyName ();
@@ -2033,6 +2436,12 @@ namespace MonoTests.System.Diagnostics
 				new Type [] { typeof (String) });
 			CustomAttributeBuilder cab =
 				new CustomAttributeBuilder (ci, new object [1] { "Mono Team" });
+			ab.SetCustomAttribute (cab);
+
+			// Comments
+			attrType = typeof (AssemblyDescriptionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "System Test" });
 			ab.SetCustomAttribute (cab);
 
 			// ProductName
@@ -2083,7 +2492,7 @@ namespace MonoTests.System.Diagnostics
 			string assemblyFile = Path.Combine (tempDir, "lib2b.dll");
 
 			FileVersionInfo fvi = FileVersionInfo.GetVersionInfo (assemblyFile);
-			Assert.AreEqual (" ", fvi.Comments, "#1");
+			Assert.AreEqual ("System Test", fvi.Comments, "#1");
 			Assert.AreEqual ("Mono Team", fvi.CompanyName, "#2");
 			Assert.AreEqual (6, fvi.FileBuildPart, "#3");
 			Assert.AreEqual (" ", fvi.FileDescription, "#4");
@@ -2113,7 +2522,6 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test] // DefineVersionInfoResource ()
-		[Category ("NotWorking")]
 		public void DefineVersionInfoResource2h ()
 		{
 			AssemblyName aname = new AssemblyName ();
@@ -2131,6 +2539,12 @@ namespace MonoTests.System.Diagnostics
 				new Type [] { typeof (String) });
 			CustomAttributeBuilder cab =
 				new CustomAttributeBuilder (ci, new object [1] { "Mono Team" });
+			ab.SetCustomAttribute (cab);
+
+			// Comments
+			attrType = typeof (AssemblyDescriptionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "System Test" });
 			ab.SetCustomAttribute (cab);
 
 			// ProductName
@@ -2175,7 +2589,7 @@ namespace MonoTests.System.Diagnostics
 			string assemblyFile = Path.Combine (tempDir, "lib2h.dll");
 
 			FileVersionInfo fvi = FileVersionInfo.GetVersionInfo (assemblyFile);
-			Assert.AreEqual (" ", fvi.Comments, "#1");
+			Assert.AreEqual ("System Test", fvi.Comments, "#1");
 			Assert.AreEqual ("Mono Team", fvi.CompanyName, "#2");
 			Assert.AreEqual (6, fvi.FileBuildPart, "#3");
 			Assert.AreEqual (" ", fvi.FileDescription, "#4");
@@ -2201,6 +2615,406 @@ namespace MonoTests.System.Diagnostics
 			Assert.AreEqual ("Mono Runtime", fvi.ProductName, "#24");
 			Assert.AreEqual (0, fvi.ProductPrivatePart, "#25");
 			Assert.AreEqual ("6.4.7", fvi.ProductVersion, "#26");
+			Assert.AreEqual (string.Empty, fvi.SpecialBuild, "#27");
+		}
+
+		[Test] // DefineVersionInfoResource ()
+		public void DefineVersionInfoResource2i ()
+		{
+			AssemblyName aname = new AssemblyName ();
+			aname.CultureInfo = new CultureInfo ("nl-BE");
+			aname.Name = "lib2i";
+			aname.Version = new Version (3, 5, 7);
+
+			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
+				aname, AssemblyBuilderAccess.RunAndSave,
+				tempDir);
+
+			// CompanyName
+			Type attrType = typeof (AssemblyCompanyAttribute);
+			ConstructorInfo ci = attrType.GetConstructor (
+				new Type [] { typeof (String) });
+			CustomAttributeBuilder cab =
+				new CustomAttributeBuilder (ci, new object [1] { string.Empty });
+			ab.SetCustomAttribute (cab);
+
+			// Comments
+			attrType = typeof (AssemblyDescriptionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { string.Empty });
+			ab.SetCustomAttribute (cab);
+
+			// ProductName
+			attrType = typeof (AssemblyProductAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { string.Empty });
+			ab.SetCustomAttribute (cab);
+
+			// LegalCopyright
+			attrType = typeof (AssemblyCopyrightAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { string.Empty });
+			ab.SetCustomAttribute (cab);
+
+			// LegalTrademarks
+			attrType = typeof (AssemblyTrademarkAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { string.Empty });
+			ab.SetCustomAttribute (cab);
+
+			// AssemblyVersion
+			attrType = typeof (AssemblyVersionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { string.Empty });
+			ab.SetCustomAttribute (cab);
+
+			// AssemblyFileVersion
+			attrType = typeof (AssemblyFileVersionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { string.Empty });
+			ab.SetCustomAttribute (cab);
+
+			// AssemblyInformationalVersion
+			attrType = typeof (AssemblyInformationalVersionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { string.Empty });
+			ab.SetCustomAttribute (cab);
+
+			// AssemblyCulture
+			attrType = typeof (AssemblyCultureAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { string.Empty });
+			ab.SetCustomAttribute (cab);
+
+			ab.DefineVersionInfoResource ();
+			ab.Save ("lib2i.dll");
+
+			string assemblyFile = Path.Combine (tempDir, "lib2i.dll");
+
+			FileVersionInfo fvi = FileVersionInfo.GetVersionInfo (assemblyFile);
+			Assert.AreEqual (" ", fvi.Comments, "#1");
+			Assert.AreEqual (" ", fvi.CompanyName, "#2");
+			Assert.AreEqual (0, fvi.FileBuildPart, "#3");
+			Assert.AreEqual (" ", fvi.FileDescription, "#4");
+			Assert.AreEqual (0, fvi.FileMajorPart, "#5");
+			Assert.AreEqual (0, fvi.FileMinorPart, "#6");
+			Assert.AreEqual (assemblyFile, fvi.FileName, "#7");
+			Assert.AreEqual (0, fvi.FilePrivatePart, "#8");
+			Assert.AreEqual (" ", fvi.FileVersion, "#9");
+			Assert.AreEqual ("lib2i", fvi.InternalName, "#10");
+			Assert.IsFalse (fvi.IsDebug, "#11");
+			Assert.IsFalse (fvi.IsPatched, "#12");
+			Assert.IsFalse (fvi.IsPreRelease, "#13");
+			Assert.IsFalse (fvi.IsPrivateBuild, "#14");
+			Assert.IsFalse (fvi.IsSpecialBuild, "#15");
+			Assert.AreEqual ("Invariant Language (Invariant Country)", fvi.Language, "#16");
+			Assert.AreEqual (" ", fvi.LegalCopyright, "#17");
+			Assert.AreEqual (" ", fvi.LegalTrademarks, "#18");
+			Assert.AreEqual ("lib2i.dll", fvi.OriginalFilename, "#19");
+			Assert.AreEqual (string.Empty, fvi.PrivateBuild, "#20");
+			Assert.AreEqual (0, fvi.ProductBuildPart, "#21");
+			Assert.AreEqual (0, fvi.ProductMajorPart, "#22");
+			Assert.AreEqual (0, fvi.ProductMinorPart, "#23");
+			Assert.AreEqual (" ", fvi.ProductName, "#24");
+			Assert.AreEqual (0, fvi.ProductPrivatePart, "#25");
+			Assert.AreEqual (" ", fvi.ProductVersion, "#26");
+			Assert.AreEqual (string.Empty, fvi.SpecialBuild, "#27");
+		}
+
+		[Test] // DefineVersionInfoResource ()
+		public void DefineVersionInfoResource2j ()
+		{
+			AssemblyName aname = new AssemblyName ();
+			aname.CultureInfo = new CultureInfo ("nl-BE");
+			aname.Name = "lib2j";
+			aname.Version = new Version (3, 5, 7, 9);
+
+			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
+				aname, AssemblyBuilderAccess.RunAndSave,
+				tempDir);
+			ab.DefineVersionInfoResource ();
+
+			// CompanyName
+			Type attrType = typeof (AssemblyCompanyAttribute);
+			ConstructorInfo ci = attrType.GetConstructor (
+				new Type [] { typeof (String) });
+			CustomAttributeBuilder cab =
+				new CustomAttributeBuilder (ci, new object [1] { "Mono Team" });
+			ab.SetCustomAttribute (cab);
+
+			// Comments
+			attrType = typeof (AssemblyDescriptionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "System Test" });
+			ab.SetCustomAttribute (cab);
+
+			// ProductName
+			attrType = typeof (AssemblyProductAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "Mono Runtime" });
+			ab.SetCustomAttribute (cab);
+
+			// LegalCopyright
+			attrType = typeof (AssemblyCopyrightAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "Copyright 2007 Mono Hackers" });
+			ab.SetCustomAttribute (cab);
+
+			// LegalTrademarks
+			attrType = typeof (AssemblyTrademarkAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "Registered to All" });
+			ab.SetCustomAttribute (cab);
+
+			// AssemblyVersion
+			attrType = typeof (AssemblyVersionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "1.2.3.4" });
+			ab.SetCustomAttribute (cab);
+
+			// AssemblyFileVersion
+			attrType = typeof (AssemblyFileVersionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "2.4.6" });
+			ab.SetCustomAttribute (cab);
+
+			// AssemblyInformationalVersion
+			attrType = typeof (AssemblyInformationalVersionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "6.4.7" });
+			ab.SetCustomAttribute (cab);
+
+			// AssemblyCulture
+			attrType = typeof (AssemblyCultureAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "en-GB" });
+			ab.SetCustomAttribute (cab);
+
+			ab.Save ("lib2j.dll");
+
+			string assemblyFile = Path.Combine (tempDir, "lib2j.dll");
+
+			FileVersionInfo fvi = FileVersionInfo.GetVersionInfo (assemblyFile);
+			Assert.AreEqual ("System Test", fvi.Comments, "#1");
+			Assert.AreEqual ("Mono Team", fvi.CompanyName, "#2");
+			Assert.AreEqual (6, fvi.FileBuildPart, "#3");
+			Assert.AreEqual (" ", fvi.FileDescription, "#4");
+			Assert.AreEqual (2, fvi.FileMajorPart, "#5");
+			Assert.AreEqual (4, fvi.FileMinorPart, "#6");
+			Assert.AreEqual (assemblyFile, fvi.FileName, "#7");
+			Assert.AreEqual (0, fvi.FilePrivatePart, "#8");
+			Assert.AreEqual ("2.4.6", fvi.FileVersion, "#9");
+			Assert.AreEqual ("lib2j", fvi.InternalName, "#10");
+			Assert.IsFalse (fvi.IsDebug, "#11");
+			Assert.IsFalse (fvi.IsPatched, "#12");
+			Assert.IsFalse (fvi.IsPreRelease, "#13");
+			Assert.IsFalse (fvi.IsPrivateBuild, "#14");
+			Assert.IsFalse (fvi.IsSpecialBuild, "#15");
+			Assert.AreEqual ("English (United Kingdom)", fvi.Language, "#16");
+			Assert.AreEqual ("Copyright 2007 Mono Hackers", fvi.LegalCopyright, "#17");
+			Assert.AreEqual ("Registered to All", fvi.LegalTrademarks, "#18");
+			Assert.AreEqual ("lib2j.dll", fvi.OriginalFilename, "#19");
+			Assert.AreEqual (string.Empty, fvi.PrivateBuild, "#20");
+			Assert.AreEqual (7, fvi.ProductBuildPart, "#21");
+			Assert.AreEqual (6, fvi.ProductMajorPart, "#22");
+			Assert.AreEqual (4, fvi.ProductMinorPart, "#23");
+			Assert.AreEqual ("Mono Runtime", fvi.ProductName, "#24");
+			Assert.AreEqual (0, fvi.ProductPrivatePart, "#25");
+			Assert.AreEqual ("6.4.7", fvi.ProductVersion, "#26");
+			Assert.AreEqual (string.Empty, fvi.SpecialBuild, "#27");
+		}
+
+		[Test] // DefineVersionInfoResource ()
+		public void DefineVersionInfoResource2k ()
+		{
+			AssemblyName aname = new AssemblyName ();
+			aname.CultureInfo = new CultureInfo ("nl-BE");
+			aname.Name = "lib2k";
+			aname.Version = new Version (3, 5, 7);
+
+			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
+				aname, AssemblyBuilderAccess.RunAndSave,
+				tempDir);
+
+			// CompanyName
+			Type attrType = typeof (AssemblyCompanyAttribute);
+			ConstructorInfo ci = attrType.GetConstructor (
+				new Type [] { typeof (String) });
+			CustomAttributeBuilder cab =
+				new CustomAttributeBuilder (ci, new object [1] { "Mono Team" });
+			ab.SetCustomAttribute (cab);
+
+			// Comments
+			attrType = typeof (AssemblyDescriptionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "System Test" });
+			ab.SetCustomAttribute (cab);
+
+			// ProductName
+			attrType = typeof (AssemblyProductAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "Mono Runtime" });
+			ab.SetCustomAttribute (cab);
+
+			// LegalCopyright
+			attrType = typeof (AssemblyCopyrightAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "Copyright 2007 Mono Hackers" });
+			ab.SetCustomAttribute (cab);
+
+			// LegalTrademarks
+			attrType = typeof (AssemblyTrademarkAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "Registered to All" });
+			ab.SetCustomAttribute (cab);
+
+			// AssemblyVersion
+			attrType = typeof (AssemblyVersionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "1.2.3.4" });
+			ab.SetCustomAttribute (cab);
+
+			// AssemblyFileVersion
+			attrType = typeof (AssemblyFileVersionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "abc" });
+			ab.SetCustomAttribute (cab);
+
+			// AssemblyInformationalVersion
+			attrType = typeof (AssemblyInformationalVersionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "def" });
+			ab.SetCustomAttribute (cab);
+
+			ab.DefineVersionInfoResource ();
+			ab.Save ("lib2k.dll");
+
+			string assemblyFile = Path.Combine (tempDir, "lib2k.dll");
+
+			FileVersionInfo fvi = FileVersionInfo.GetVersionInfo (assemblyFile);
+			Assert.AreEqual ("System Test", fvi.Comments, "#1");
+			Assert.AreEqual ("Mono Team", fvi.CompanyName, "#2");
+			Assert.AreEqual (0, fvi.FileBuildPart, "#3");
+			Assert.AreEqual (" ", fvi.FileDescription, "#4");
+			Assert.AreEqual (0, fvi.FileMajorPart, "#5");
+			Assert.AreEqual (0, fvi.FileMinorPart, "#6");
+			Assert.AreEqual (assemblyFile, fvi.FileName, "#7");
+			Assert.AreEqual (0, fvi.FilePrivatePart, "#8");
+			Assert.AreEqual ("abc", fvi.FileVersion, "#9");
+			Assert.AreEqual ("lib2k", fvi.InternalName, "#10");
+			Assert.IsFalse (fvi.IsDebug, "#11");
+			Assert.IsFalse (fvi.IsPatched, "#12");
+			Assert.IsFalse (fvi.IsPreRelease, "#13");
+			Assert.IsFalse (fvi.IsPrivateBuild, "#14");
+			Assert.IsFalse (fvi.IsSpecialBuild, "#15");
+			Assert.AreEqual ("Dutch (Belgium)", fvi.Language, "#16");
+			Assert.AreEqual ("Copyright 2007 Mono Hackers", fvi.LegalCopyright, "#17");
+			Assert.AreEqual ("Registered to All", fvi.LegalTrademarks, "#18");
+			Assert.AreEqual ("lib2k.dll", fvi.OriginalFilename, "#19");
+			Assert.AreEqual (string.Empty, fvi.PrivateBuild, "#20");
+			Assert.AreEqual (0, fvi.ProductBuildPart, "#21");
+			Assert.AreEqual (0, fvi.ProductMajorPart, "#22");
+			Assert.AreEqual (0, fvi.ProductMinorPart, "#23");
+			Assert.AreEqual ("Mono Runtime", fvi.ProductName, "#24");
+			Assert.AreEqual (0, fvi.ProductPrivatePart, "#25");
+			Assert.AreEqual ("def", fvi.ProductVersion, "#26");
+			Assert.AreEqual (string.Empty, fvi.SpecialBuild, "#27");
+		}
+
+		[Test] // DefineVersionInfoResource ()
+		public void DefineVersionInfoResource2l ()
+		{
+			AssemblyName aname = new AssemblyName ();
+			aname.CultureInfo = new CultureInfo ("nl-BE");
+			aname.Name = "lib2l";
+			aname.Version = new Version (3, 5, 7);
+
+			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
+				aname, AssemblyBuilderAccess.RunAndSave,
+				tempDir);
+
+			// CompanyName
+			Type attrType = typeof (AssemblyCompanyAttribute);
+			ConstructorInfo ci = attrType.GetConstructor (
+				new Type [] { typeof (String) });
+			CustomAttributeBuilder cab =
+				new CustomAttributeBuilder (ci, new object [1] { "Mono Team" });
+			ab.SetCustomAttribute (cab);
+
+			// Comments
+			attrType = typeof (AssemblyDescriptionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "System Test" });
+			ab.SetCustomAttribute (cab);
+
+			// ProductName
+			attrType = typeof (AssemblyProductAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "Mono Runtime" });
+			ab.SetCustomAttribute (cab);
+
+			// LegalCopyright
+			attrType = typeof (AssemblyCopyrightAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "Copyright 2007 Mono Hackers" });
+			ab.SetCustomAttribute (cab);
+
+			// LegalTrademarks
+			attrType = typeof (AssemblyTrademarkAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "Registered to All" });
+			ab.SetCustomAttribute (cab);
+
+			// AssemblyVersion
+			attrType = typeof (AssemblyVersionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "1.2.3.4" });
+			ab.SetCustomAttribute (cab);
+
+			// AssemblyFileVersion
+			attrType = typeof (AssemblyFileVersionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "1.b.3.c" });
+			ab.SetCustomAttribute (cab);
+
+			// AssemblyInformationalVersion
+			attrType = typeof (AssemblyInformationalVersionAttribute);
+			ci = attrType.GetConstructor (new Type [] { typeof (String) });
+			cab = new CustomAttributeBuilder (ci, new object [1] { "b.3.6.c" });
+			ab.SetCustomAttribute (cab);
+
+			ab.DefineVersionInfoResource ();
+			ab.Save ("lib2l.dll");
+
+			string assemblyFile = Path.Combine (tempDir, "lib2l.dll");
+
+			FileVersionInfo fvi = FileVersionInfo.GetVersionInfo (assemblyFile);
+			Assert.AreEqual ("System Test", fvi.Comments, "#1");
+			Assert.AreEqual ("Mono Team", fvi.CompanyName, "#2");
+			Assert.AreEqual (0, fvi.FileBuildPart, "#3");
+			Assert.AreEqual (" ", fvi.FileDescription, "#4");
+			Assert.AreEqual (1, fvi.FileMajorPart, "#5");
+			Assert.AreEqual (0, fvi.FileMinorPart, "#6");
+			Assert.AreEqual (assemblyFile, fvi.FileName, "#7");
+			Assert.AreEqual (0, fvi.FilePrivatePart, "#8");
+			Assert.AreEqual ("1.b.3.c", fvi.FileVersion, "#9");
+			Assert.AreEqual ("lib2l", fvi.InternalName, "#10");
+			Assert.IsFalse (fvi.IsDebug, "#11");
+			Assert.IsFalse (fvi.IsPatched, "#12");
+			Assert.IsFalse (fvi.IsPreRelease, "#13");
+			Assert.IsFalse (fvi.IsPrivateBuild, "#14");
+			Assert.IsFalse (fvi.IsSpecialBuild, "#15");
+			Assert.AreEqual ("Dutch (Belgium)", fvi.Language, "#16");
+			Assert.AreEqual ("Copyright 2007 Mono Hackers", fvi.LegalCopyright, "#17");
+			Assert.AreEqual ("Registered to All", fvi.LegalTrademarks, "#18");
+			Assert.AreEqual ("lib2l.dll", fvi.OriginalFilename, "#19");
+			Assert.AreEqual (string.Empty, fvi.PrivateBuild, "#20");
+			Assert.AreEqual (0, fvi.ProductBuildPart, "#21");
+			Assert.AreEqual (0, fvi.ProductMajorPart, "#22");
+			Assert.AreEqual (0, fvi.ProductMinorPart, "#23");
+			Assert.AreEqual ("Mono Runtime", fvi.ProductName, "#24");
+			Assert.AreEqual (0, fvi.ProductPrivatePart, "#25");
+			Assert.AreEqual ("b.3.6.c", fvi.ProductVersion, "#26");
 			Assert.AreEqual (string.Empty, fvi.SpecialBuild, "#27");
 		}
 

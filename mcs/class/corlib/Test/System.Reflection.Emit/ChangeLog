@@ -1,3 +1,10 @@
+2008-03-29  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AssemblyBuilderTest.cs: Enabled DefineUnmanagedResource and
+	DefineVersionInfoResource tests for ArgumentException when native
+	resource is already defined. Added tests for not supported culture
+	in AssemblyCultureAttribute when definining versioninfo resource.
+
 2008-03-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* TypeBuilderTest.cs (GetField): Add test for #351172.

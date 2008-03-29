@@ -1,3 +1,13 @@
+2008-03-29  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Win32Resources.cs: On 2.0 profile, initiale fixed info to zero-length
+	string when emitting versioninfo in compiler context. Default to
+	neutral language in compiler context. On 1.0 profile, use 0xffff as
+	default value for version parts. In Version, abort on first invalid
+	version part and also set FileVersion string. In ProductVersion and
+	FileVersion, parse version string and abort on first invalid version
+	part.  
+
 2008-03-15  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ResourceManager.cs: Default to RuntimeResourceSet for all ctors.

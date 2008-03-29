@@ -1153,7 +1153,9 @@
     <Compile Include="System.Web.Compilation\ExpressionBuilderContext.cs" />
     <Compile Include="System.Web.Compilation\ExpressionEditorAttribute.cs" />
     <Compile Include="System.Web.Compilation\ExpressionPrefixAttribute.cs" />
-    <Compile Include="System.Web.Compilation\ILocation.cs">
+    <Compile Include="System.Web.Compilation\ILocation.cs"/>
+    <Compile Include="System.Web.Compilation\IResourceProvider.cs"/>
+    <Compile Include="System.Web.Compilation\ResourceProviderFactory.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Web.Compilation\Location.cs">
