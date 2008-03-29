@@ -664,7 +664,6 @@ public class AssemblyBuilderTest
 	}
 
 	[Test] // DefineUnmanagedResource (String)
-	[Category ("NotWorking")]
 	public void TestDefineUnmanagedResource2_ResourceAlreadyDefined ()
 	{
 		string version_res = Path.Combine (tempDir, "version.res");
@@ -757,7 +756,63 @@ public class AssemblyBuilderTest
 	}
 
 	[Test] // DefineVersionInfoResource ()
-	[Category ("NotWorking")]
+	public void TestDefineVersionInfoResource1_Culture_NotSupported ()
+	{
+		AssemblyName aname = new AssemblyName ();
+		aname.CultureInfo = new CultureInfo ("nl-BE");
+		aname.Name = "lib";
+		aname.Version = new Version (3, 5, 7);
+
+		AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
+			aname, AssemblyBuilderAccess.RunAndSave,
+			tempDir);
+
+		// AssemblyCulture
+		Type attrType = typeof (AssemblyCultureAttribute);
+		ConstructorInfo ci = attrType.GetConstructor (new Type [] { typeof (String) });
+		CustomAttributeBuilder cab = new CustomAttributeBuilder (
+			ci, new object [1] { "doesnotexist" });
+		ab.SetCustomAttribute (cab);
+
+		ab.DefineVersionInfoResource ();
+
+		try {
+			ab.Save ("lib.dll");
+			Assert.Fail ("#A1");
+		} catch (ArgumentException ex) {
+			// Culture name doesnotexist is not supported
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
+			Assert.IsTrue (ex.Message.IndexOf ("doesnotexist") != -1, "#A5");
+			Assert.AreEqual ("name", ex.ParamName, "#A6");
+		}
+
+		ab = AppDomain.CurrentDomain.DefineDynamicAssembly (aname,
+			AssemblyBuilderAccess.RunAndSave, tempDir);
+
+		// AssemblyCulture
+		attrType = typeof (AssemblyCultureAttribute);
+		ci = attrType.GetConstructor (new Type [] { typeof (String) });
+		cab = new CustomAttributeBuilder (ci, new object [1] { "neutral" });
+		ab.SetCustomAttribute (cab);
+
+		ab.DefineVersionInfoResource ();
+
+		try {
+			ab.Save ("lib.dll");
+			Assert.Fail ("#B1");
+		} catch (ArgumentException ex) {
+			// Culture name neutral is not supported
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.InnerException, "#B3");
+			Assert.IsNotNull (ex.Message, "#B4");
+			Assert.IsTrue (ex.Message.IndexOf ("neutral") != -1, "#B5");
+			Assert.AreEqual ("name", ex.ParamName, "#B6");
+		}
+	}
+
+	[Test] // DefineVersionInfoResource ()
 	public void TestDefineVersionInfoResource1_ResourceAlreadyDefined ()
 	{
 		string version_res = Path.Combine (tempDir, "version.res");
@@ -813,7 +868,63 @@ public class AssemblyBuilderTest
 	}
 
 	[Test] // DefineVersionInfoResource (String, String, String, String, String)
-	[Category ("NotWorking")]
+	public void TestDefineVersionInfoResource2_Culture_NotSupported ()
+	{
+		AssemblyName aname = new AssemblyName ();
+		aname.CultureInfo = new CultureInfo ("nl-BE");
+		aname.Name = "lib";
+		aname.Version = new Version (3, 5, 7);
+
+		AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
+			aname, AssemblyBuilderAccess.RunAndSave,
+			tempDir);
+
+		// AssemblyCulture
+		Type attrType = typeof (AssemblyCultureAttribute);
+		ConstructorInfo ci = attrType.GetConstructor (new Type [] { typeof (String) });
+		CustomAttributeBuilder cab = new CustomAttributeBuilder (
+			ci, new object [1] { "doesnotexist" });
+		ab.SetCustomAttribute (cab);
+
+		ab.DefineVersionInfoResource ("A", "1.0", "C", "D", "E");
+
+		try {
+			ab.Save ("lib.dll");
+			Assert.Fail ("#A1");
+		} catch (ArgumentException ex) {
+			// Culture name doesnotexist is not supported
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
+			Assert.IsTrue (ex.Message.IndexOf ("doesnotexist") != -1, "#A5");
+			Assert.AreEqual ("name", ex.ParamName, "#A6");
+		}
+
+		ab = AppDomain.CurrentDomain.DefineDynamicAssembly (aname,
+			AssemblyBuilderAccess.RunAndSave, tempDir);
+
+		// AssemblyCulture
+		attrType = typeof (AssemblyCultureAttribute);
+		ci = attrType.GetConstructor (new Type [] { typeof (String) });
+		cab = new CustomAttributeBuilder (ci, new object [1] { "neutral" });
+		ab.SetCustomAttribute (cab);
+
+		ab.DefineVersionInfoResource ("A", "1.0", "C", "D", "E");
+
+		try {
+			ab.Save ("lib.dll");
+			Assert.Fail ("#B1");
+		} catch (ArgumentException ex) {
+			// Culture name neutral is not supported
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.InnerException, "#B3");
+			Assert.IsNotNull (ex.Message, "#B4");
+			Assert.IsTrue (ex.Message.IndexOf ("neutral") != -1, "#B5");
+			Assert.AreEqual ("name", ex.ParamName, "#B6");
+		}
+	}
+
+	[Test] // DefineVersionInfoResource (String, String, String, String, String)
 	public void TestDefineVersionInfoResource2_ResourceAlreadyDefined ()
 	{
 		string version_res = Path.Combine (tempDir, "version.res");
@@ -1228,14 +1339,17 @@ public class AssemblyBuilderTest
 		Module[] arr;
 
 		arr = ab.GetModules ();
+		Assert.IsNotNull (arr, "#A1");
 		// FIXME: This doesn't work on mono
-		//Assert.IsTrue (arr.Length >= 2);
+		//Assert.IsTrue (arr.Length >= 2, "#A2");
 		foreach (Module m in arr)
-			Assert.AreEqual (typeof (ModuleBuilder), m.GetType ());
+			Assert.AreEqual (typeof (ModuleBuilder), m.GetType (), "#A3");
 
 		// Test with no modules
 		AssemblyBuilder ab2 = genAssembly ();
 		arr = ab2.GetModules ();
+		Assert.IsNotNull (arr, "#B1");
+		Assert.AreEqual (0, arr.Length, "#B2");
 	}
 
 	[Test]

@@ -1,3 +1,17 @@
+2008-03-29  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AssemblyBuilder.cs: Added enum that determines the type of the
+	native (version) resource. Added fields for holding the native
+	resource type and the version culture. The versioninfo_culture was
+	introduced to hold the original culture of the assembly, since
+	the AssemblyCultureAttribute should only affect the language of the
+	versioninfo block when not used in compiler context. Move constructin
+	of native version info to DefineVersionInfoResourceImpl to allow
+	attributes to affect the versioninfo after DefineVersionInfoResource
+	has been invoked. Allow ArgumentException for invalid culture string
+	to bubble up. In compiler context, use FileVersion as default value
+	for ProductionVersion.
+
 2008-03-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* FieldOnTypeBuilderInst.cs: New file.

@@ -47,7 +47,15 @@ using System.Security.Permissions;
 using Mono.Security;
 using Mono.Security.Cryptography;
 
-namespace System.Reflection.Emit {
+namespace System.Reflection.Emit
+{
+	internal enum NativeResourceType
+	{
+		None,
+		Unmanaged,
+		Assembly,
+		Explicit
+	}
 
 	internal struct RefEmitPermissionSet {
 		public SecurityAction action;
@@ -123,7 +131,9 @@ namespace System.Reflection.Emit {
 		bool created;
 		bool is_module_only;
 		private Mono.Security.StrongName sn;
+		NativeResourceType native_resource;
 		readonly bool is_compiler_context;
+		string versioninfo_culture;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void basic_init (AssemblyBuilder ab);
@@ -163,6 +173,7 @@ namespace System.Reflection.Emit {
 			/* Set defaults from n */
 			if (n.CultureInfo != null) {
 				culture = n.CultureInfo.Name;
+				versioninfo_culture = n.CultureInfo.Name;
 			}
 			Version v = n.Version;
 			if (v != null) {
@@ -458,6 +469,11 @@ namespace System.Reflection.Emit {
 		{
 			if (resource == null)
 				throw new ArgumentNullException ("resource");
+			if (native_resource != NativeResourceType.None)
+				throw new ArgumentException ("Native resource has already been defined.");
+
+			// avoid definition of more than one unmanaged resource
+			native_resource = NativeResourceType.Unmanaged;
 
 			/*
 			 * The format of the argument byte array is not documented
@@ -475,6 +491,11 @@ namespace System.Reflection.Emit {
 				throw new ArgumentException ("resourceFileName");
 			if (!File.Exists (resourceFileName) || Directory.Exists (resourceFileName))
 				throw new FileNotFoundException ("File '" + resourceFileName + "' does not exists or is a directory.");
+			if (native_resource != NativeResourceType.None)
+				throw new ArgumentException ("Native resource has already been defined.");
+
+			// avoid definition of more than one unmanaged resource
+			native_resource = NativeResourceType.Unmanaged;
 
 			using (FileStream fs = new FileStream (resourceFileName, FileMode.Open, FileAccess.Read)) {
 				Win32ResFileReader reader = new Win32ResFileReader (fs);
@@ -490,65 +511,30 @@ namespace System.Reflection.Emit {
 
 		public void DefineVersionInfoResource ()
 		{
-			if (version_res != null)
+			if (native_resource != NativeResourceType.None)
 				throw new ArgumentException ("Native resource has already been defined.");
 
-			version_res = new Win32VersionResource (1, 0);
+			// avoid definition of more than one unmanaged resource
+			native_resource = NativeResourceType.Assembly;
 
-			if (cattrs != null) {
-				foreach (CustomAttributeBuilder cb in cattrs) {
-					string attrname = cb.Ctor.ReflectedType.FullName;
-
-					if (attrname == "System.Reflection.AssemblyProductAttribute")
-						version_res.ProductName = cb.string_arg ();
-					else if (attrname == "System.Reflection.AssemblyCompanyAttribute")
-						version_res.CompanyName = cb.string_arg ();
-					else if (attrname == "System.Reflection.AssemblyCopyrightAttribute")
-						version_res.LegalCopyright = cb.string_arg ();
-					else if (attrname == "System.Reflection.AssemblyTrademarkAttribute")
-						version_res.LegalTrademarks = cb.string_arg ();
-					else if (attrname == "System.Reflection.AssemblyCultureAttribute"){
-						int lcid;
-						
-						try {
-							lcid = new CultureInfo (GetCultureString (cb.string_arg ())).LCID;
-						} catch (ArgumentException){
-							//
-							// This means that the resource is set to the invariant, but
-							// the locale encoded will come from the AssemblyName anyways.
-							//
-							// In fact, my exploration of MS.NEt shows that this is always
-							// set to zero, so I wonder if we should completely drop this
-							// code from here. 
-							//
-							lcid = CultureInfo.InvariantCulture.LCID;
-						}
-						version_res.FileLanguage = lcid;
-					}
-					else if (attrname == "System.Reflection.AssemblyFileVersionAttribute")
-						version_res.FileVersion = cb.string_arg ();
-					else if (attrname == "System.Reflection.AssemblyInformationalVersionAttribute")
-						version_res.ProductVersion = cb.string_arg ();
-					else if (attrname == "System.Reflection.AssemblyTitleAttribute")
-						version_res.FileDescription = cb.string_arg ();
-					else if (attrname == "System.Reflection.AssemblyDescriptionAttribute")
-						version_res.Comments = cb.string_arg ();
-				}
-			}
+			version_res = new Win32VersionResource (1, 0, IsCompilerContext);
 		}
 
 		public void DefineVersionInfoResource (string product, string productVersion,
 						       string company, string copyright, string trademark)
 		{
-			if (version_res != null)
+			if (native_resource != NativeResourceType.None)
 				throw new ArgumentException ("Native resource has already been defined.");
+
+			// avoid definition of more than one unmanaged resource
+			native_resource = NativeResourceType.Explicit;
 
 			/*
 			 * We can only create the resource later, when the file name and
 			 * the binary version is known.
 			 */
 
-			version_res = new Win32VersionResource (1, 0);
+			version_res = new Win32VersionResource (1, 0, false);
 			version_res.ProductName = product != null ? product : " ";
 			version_res.ProductVersion = productVersion != null ? productVersion : " ";
 			version_res.CompanyName = company != null ? company : " ";
@@ -584,14 +570,64 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		private void DefineVersionInfoResourceImpl (string fileName) {
-			// Add missing info
-			if (version_res.Version == "0.0.0.0")
-				version_res.Version = version;
-			if (version_res.FileVersion.Trim ().Length == 0 && version != null)
-				version_res.FileVersion = version;
-			version_res.InternalName = Path.GetFileNameWithoutExtension (fileName);
+		private void DefineVersionInfoResourceImpl (string fileName)
+		{
+			if (versioninfo_culture != null)
+				version_res.FileLanguage = new CultureInfo (versioninfo_culture).LCID;
+			version_res.Version = version == null ? "0.0.0.0" : version;
+
+			if (cattrs != null) {
+				switch (native_resource) {
+				case NativeResourceType.Assembly:
+					foreach (CustomAttributeBuilder cb in cattrs) {
+						string attrname = cb.Ctor.ReflectedType.FullName;
+
+						if (attrname == "System.Reflection.AssemblyProductAttribute")
+							version_res.ProductName = cb.string_arg ();
+						else if (attrname == "System.Reflection.AssemblyCompanyAttribute")
+							version_res.CompanyName = cb.string_arg ();
+						else if (attrname == "System.Reflection.AssemblyCopyrightAttribute")
+							version_res.LegalCopyright = cb.string_arg ();
+						else if (attrname == "System.Reflection.AssemblyTrademarkAttribute")
+							version_res.LegalTrademarks = cb.string_arg ();
+						else if (attrname == "System.Reflection.AssemblyCultureAttribute") {
+							if (!IsCompilerContext)
+								version_res.FileLanguage = new CultureInfo (cb.string_arg ()).LCID;
+						} else if (attrname == "System.Reflection.AssemblyFileVersionAttribute") {
+							string fileversion = cb.string_arg ();
+							if (!IsCompilerContext || fileversion != null && fileversion.Length != 0)
+								version_res.FileVersion = fileversion;
+						} else if (attrname == "System.Reflection.AssemblyInformationalVersionAttribute")
+							version_res.ProductVersion = cb.string_arg ();
+						else if (attrname == "System.Reflection.AssemblyTitleAttribute")
+							version_res.FileDescription = cb.string_arg ();
+						else if (attrname == "System.Reflection.AssemblyDescriptionAttribute")
+							version_res.Comments = cb.string_arg ();
+					}
+					break;
+				case NativeResourceType.Explicit:
+					foreach (CustomAttributeBuilder cb in cattrs) {
+						string attrname = cb.Ctor.ReflectedType.FullName;
+
+						if (attrname == "System.Reflection.AssemblyCultureAttribute") {
+							if (!IsCompilerContext)
+								version_res.FileLanguage = new CultureInfo (cb.string_arg ()).LCID;
+						} else if (attrname == "System.Reflection.AssemblyDescriptionAttribute")
+							version_res.Comments = cb.string_arg ();
+					}
+					break;
+				}
+			}
+
 			version_res.OriginalFilename = fileName;
+
+			if (IsCompilerContext) {
+				version_res.InternalName = fileName;
+				if (version_res.ProductVersion.Trim ().Length == 0)
+					version_res.ProductVersion = version_res.FileVersion;
+			} else {
+				version_res.InternalName = Path.GetFileNameWithoutExtension (fileName);
+			}
 
 			AddUnmanagedResource (version_res);
 		}

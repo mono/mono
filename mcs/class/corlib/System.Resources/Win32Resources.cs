@@ -34,6 +34,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -235,10 +236,14 @@ internal class Win32VersionResource : Win32Resource {
 	public string[] WellKnownProperties = {
 		"Comments",
 		"CompanyName",
+#if !NET_2_0
 		"FileDescription",
+#endif
 		"FileVersion",
 		"InternalName",
+#if !NET_2_0
 		"LegalCopyright",
+#endif
 		"LegalTrademarks",
 		"OriginalFilename",
 		"ProductName",
@@ -261,7 +266,7 @@ internal class Win32VersionResource : Win32Resource {
 
 	Hashtable properties;
 
-	public Win32VersionResource (int id, int language) : base (Win32ResourceType.RT_VERSION, id, language) {
+	public Win32VersionResource (int id, int language, bool compilercontext) : base (Win32ResourceType.RT_VERSION, id, language) {
 		// Initialize non-public members to the usual values used in
 		// resources
 		signature = 0xfeef04bd;
@@ -273,15 +278,26 @@ internal class Win32VersionResource : Win32Resource {
 		file_subtype = 0;
 		file_date = 0;
 
-		file_lang = 0x7f;
+		file_lang = compilercontext ? 0x00 : 0x7f;
 		file_codepage = 1200;
 
 		properties = new Hashtable ();
 
+#if NET_2_0
+		string defaultvalue = compilercontext ? string.Empty : " ";
+#else
+		string defaultvalue = " ";
+#endif
+
 		// Well known properties
 		foreach (string s in WellKnownProperties)
 			// The value of properties can't be empty
-			properties [s] = " ";
+			properties [s] = defaultvalue;
+
+#if NET_2_0
+		LegalCopyright = " ";
+		FileDescription = " ";
+#endif
 	}
 
 	public string Version {
@@ -294,21 +310,25 @@ internal class Win32VersionResource : Win32Resource {
 		}
 
 		set {
+#if NET_2_0
 			long[] ver = new long [4] { 0, 0, 0, 0 };
+#else
+			long [] ver = new long [4] { 0, 0xffff, 0xffff, 0xffff };
+#endif
 			if (value != null) {
 				string[] parts = value.Split ('.');
-				
-				for (int i = 0; i < parts.Length; ++i) {
-					try {
+
+				try {
+					for (int i = 0; i < parts.Length; ++i) {
 						if (i < ver.Length)
 							ver [i] = Int32.Parse (parts [i]);
 					}
-					catch (FormatException) {
-					}
+				} catch (FormatException) {
 				}
 			}
 
 			file_version = (ver [0] << 48) | (ver [1] << 32) | (ver [2] << 16) + ver [3];
+			properties ["FileVersion"] = Version;
 		}
 	}
 
@@ -379,7 +399,23 @@ internal class Win32VersionResource : Win32Resource {
 			return (string)properties ["ProductVersion"];
 		}
 		set {
-			properties ["ProductVersion"] = value == String.Empty ? " " : value;
+			if (value == null || value.Length == 0)
+				value = " ";
+
+			long [] ver = new long [4] { 0, 0, 0, 0 };
+
+			string [] parts = value.Split ('.');
+
+			try {
+				for (int i = 0; i < parts.Length; ++i) {
+					if (i < ver.Length)
+						ver [i] = Int32.Parse (parts [i]);
+				}
+			} catch (FormatException) {
+			}
+
+			properties ["ProductVersion"] = value;
+			product_version = (ver [0] << 48) | (ver [1] << 32) | (ver [2] << 16) + ver [3];
 		}
 	}
 
@@ -402,12 +438,8 @@ internal class Win32VersionResource : Win32Resource {
 	}
 
 	public virtual int FileLanguage {
-		get {
-			return file_lang;
-		}
-		set {
-			file_lang = value;
-		}
+		get { return file_lang; }
+		set { file_lang = value; }
 	}
 
 	public virtual string FileVersion {
@@ -415,7 +447,22 @@ internal class Win32VersionResource : Win32Resource {
 			return (string)properties ["FileVersion"];
 		}
 		set {
-			properties ["FileVersion"] = value == String.Empty ? " " : value;
+			if (value == null || value.Length == 0)
+				value = " ";
+
+			long[] ver = new long [4] { 0, 0, 0, 0 };
+			string[] parts = value.Split ('.');
+
+			try {
+				for (int i = 0; i < parts.Length; ++i) {
+					if (i < ver.Length)
+						ver [i] = Int32.Parse (parts [i]);
+				}
+			} catch (FormatException) {
+			}
+
+			properties ["FileVersion"] = value;
+			file_version = (ver [0] << 48) | (ver [1] << 32) | (ver [2] << 16) + ver [3];
 		}
 	}
 
