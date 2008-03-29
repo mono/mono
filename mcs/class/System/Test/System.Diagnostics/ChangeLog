@@ -1,3 +1,8 @@
+2008-03-29  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* FileVersionInfoTest.cs: Enabled tests that previously failed.
+	Increase code coverage.
+
 2008-01-23  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* FileVersionInfoTest.cs: Added set of (mostly notworking) tests for
