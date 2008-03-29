@@ -1405,7 +1405,6 @@ get_call_info (MonoCompile *cfg, MonoMemPool *mp, MonoMethodSignature *sig, gboo
 	CallInfo *cinfo;
 	size_data *sz;
 	MonoGenericSharingContext *gsctx = cfg ? cfg->generic_sharing_context : NULL;
-	size_data *sz;
 
 	if (mp)
 		cinfo = mono_mempool_alloc0 (mp, sizeof (CallInfo) + sizeof (ArgInfo) * nParm);
@@ -2262,7 +2261,6 @@ void
 mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 {
 	MonoInst *in;
-	MonoCallArgParm *arg;
 	MonoMethodSignature *sig;
 	MonoInst *ins;
 	int i, n, lParamArea;

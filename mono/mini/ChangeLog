@@ -1,3 +1,7 @@
+2008-03-29  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-s390.c: Fix build.
+
 2008-03-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-s390x.c (mono_arch_allocate_vars): Fix vararg calls which return a 
