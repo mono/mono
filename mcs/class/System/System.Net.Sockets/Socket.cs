@@ -1258,6 +1258,7 @@ namespace System.Net.Sockets
 			}
 
 			if (ipv6Supported == -1) {
+#if !NET_2_1
 #if NET_2_0 && CONFIGURATION_DEP
 				SettingsSection config;
 				config = (SettingsSection) System.Configuration.ConfigurationManager.GetSection ("system.net/settings");
@@ -1267,6 +1268,7 @@ namespace System.Net.Sockets
 				NetConfig config = (NetConfig)System.Configuration.ConfigurationSettings.GetConfig("system.net/settings");
 				if (config != null)
 					ipv6Supported = config.ipv6Enabled ? -1 : 0;
+#endif
 #endif
 				if (ipv6Supported != 0) {
 					try {

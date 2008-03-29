@@ -1,5 +1,6 @@
 using System;
 
-namespace System.Net
+namespace System.Net.Configuration
 {
+	class PlaceHolder {}
 }

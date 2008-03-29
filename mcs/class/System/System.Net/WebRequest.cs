@@ -52,7 +52,7 @@ namespace System.Net
 #endif
 		
 		// Constructors
-		
+#if !NET_2_1
 		static WebRequest ()
 		{
 #if NET_2_0 && CONFIGURATION_DEP
@@ -67,6 +67,7 @@ namespace System.Net
 #endif
 			ConfigurationSettings.GetConfig ("system.net/webRequestModules");
 		}
+#endif
 		
 		protected WebRequest () 
 		{
@@ -383,7 +384,11 @@ namespace System.Net
 		{
 			Type type = Type.GetType (typeName);
 			if (type == null)
+#if !NET_2_1
 				throw new ConfigurationException (String.Format ("Type {0} not found", typeName));
+#else
+				throw new Exception (String.Format ("Type {0} not found", typeName));
+#endif
 			AddPrefix (prefix, type);
 		}
 
