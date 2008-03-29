@@ -1,3 +1,7 @@
+2008-03-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-config.h: Add missing G_BEGIN_DECLS/G_END_DECLS. Fixes #375188.
+
 2008-03-28  Dick Porter  <dick@ximian.com>
 
 	* process.c (process_get_fileversion): Use the first language ID
