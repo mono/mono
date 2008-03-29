@@ -378,7 +378,7 @@ s390_int_add_ovf_un: len:32 dest:i src1:i src2:i
 s390_int_sub_ovf: len:32 dest:i src1:i src2:i
 s390_int_sub_ovf_un: len:32 dest:i src1:i src2:i 
 
-s390_long_add_ovf: dest:l src1:i src2:i len:32 clob:1
-s390_long_add_ovf_un: dest:l src1:i src2:i len:32 clob:1
-s390_long_sub_ovf: dest:l src1:i src2:i len:32 clob:1
-s390_long_sub_ovf_un: dest:l src1:i src2:i len:32 clob:1
+s390_long_add_ovf: dest:i src1:i src2:i len:32
+s390_long_add_ovf_un: dest:i src1:i src2:i len:32
+s390_long_sub_ovf: dest:i src1:i src2:i len:32
+s390_long_sub_ovf_un: dest:i src1:i src2:i len:32

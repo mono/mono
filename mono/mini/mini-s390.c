@@ -1613,6 +1613,7 @@ enum_retvalue:
 			    (info->fields[0].field->type->type == MONO_TYPE_R4)) {
 				cinfo->args[nParm].size = sizeof(float);
 				add_float(&fr, sz, cinfo->args+nParm);
+				nParm ++;
 				break;
 			}
 
@@ -1621,6 +1622,7 @@ enum_retvalue:
 			    (info->fields[0].field->type->type == MONO_TYPE_R8)) {
 				cinfo->args[nParm].size = sizeof(double);
 				add_float(&fr, sz, cinfo->args+nParm);
+				nParm ++;
 				break;
 			}
 

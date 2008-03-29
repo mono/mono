@@ -1,5 +1,15 @@
 2008-03-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-s390x.c (mono_arch_allocate_vars): Fix vararg calls which return a 
+	vtype.
+
+	* cpu-s390x.md: Avoid clob:1 on some opcodes, since mono_arch_output_basic_block
+	already handles them.
+
+	* mini-s390.c (get_call_info): Fix passing of small float/double structures.
+	
+	* mini-s390x.c (get_call_info): Fix passing of small float/double structures.
+
 	* method-to-ir.c (mono_method_to_ir2): Add sign extension to the SWITCH 
 	implementation just as in inssel.brg.
 
