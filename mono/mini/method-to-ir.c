@@ -8077,8 +8077,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				sp = stack_start;
 			}
 
-			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, src1->dreg, n);
-			MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBGE_UN, default_bblock);
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ICOMPARE_IMM, -1, src1->dreg, n);
+			MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGE_UN, default_bblock);
 			bblock = cfg->cbb;
 
 			for (i = 0; i < n; ++i)
@@ -8103,6 +8103,11 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SHL_IMM, offset_reg, src1->dreg, 3);
 			else
 				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SHL_IMM, offset_reg, src1->dreg, 2);
+
+#if SIZEOF_VOID_P == 8
+			/* The upper word might not be zero, and we add it to a 64 bit address later */
+			MONO_EMIT_NEW_UNALU (cfg, OP_ZEXT_I4, offset_reg, offset_reg);
+#endif
 
 			if (cfg->compile_aot) {
 				MONO_EMIT_NEW_AOTCONST (cfg, table_reg, table, MONO_PATCH_INFO_SWITCH);

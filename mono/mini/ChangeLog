@@ -1,5 +1,8 @@
 2008-03-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir2): Add sign extension to the SWITCH 
+	implementation just as in inssel.brg.
+
 	* cpu-s390x.md mini-s390x.c: Add int_conv_to_r_un.
 
 2008-03-28  Zoltan Varga  <vargaz@gmail.com>
