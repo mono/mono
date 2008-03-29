@@ -38,7 +38,12 @@ namespace System.Collections {
 	[ComVisible(true)]
 #endif
 	[Serializable]
-	public class Stack : ICollection, IEnumerable, ICloneable {
+#if INSIDE_CORLIB
+	public
+#else
+	internal
+#endif
+	class Stack : ICollection, IEnumerable, ICloneable {
 
 		// properties
 		private object[] contents;

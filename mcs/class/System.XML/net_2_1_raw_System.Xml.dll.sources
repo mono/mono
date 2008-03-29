@@ -1,6 +1,13 @@
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
+../corlib/System.Collections/ArrayList.cs
+../corlib/System.Collections/CaseInsensitiveComparer.cs
+../corlib/System.Collections/CaseInsensitiveHashCodeProvider.cs
+../corlib/System.Collections/Hashtable.cs
+../corlib/System.Collections/IHashCodeProvider.cs
+../corlib/System.Collections/Queue.cs
+../corlib/System.Collections/Stack.cs
 ../System.Xml.Core/DummySystemXmlCore.cs
 Assembly/AssemblyInfo.cs
 Mono.Xml/IHasXmlParserContext.cs

@@ -116,7 +116,12 @@ public sealed class TypeDescriptor
 #if NET_2_0
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 #endif
-	public static void AddEditorTable (Type editorBaseType, Hashtable table)
+#if !NET_2_1
+	public
+#else
+	internal
+#endif
+	static void AddEditorTable (Type editorBaseType, Hashtable table)
 	{
 		if (editorBaseType == null)
 			throw new ArgumentNullException ("editorBaseType");

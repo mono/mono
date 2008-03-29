@@ -43,7 +43,12 @@ namespace System.Collections {
 	[ComVisible(true)]
 #endif
 	[Serializable]
-	public class Hashtable : IDictionary, ICollection, 
+#if INSIDE_CORLIB
+	public
+#else
+	internal
+#endif
+	class Hashtable : IDictionary, ICollection, 
 		IEnumerable, ICloneable, ISerializable, IDeserializationCallback
 	{
 
