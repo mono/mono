@@ -1,3 +1,8 @@
+2008-03-29  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* driver.cs: Only define versioninfo resources if no win32 resource
+	file was specified.
+
 2008-03-28  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #372375

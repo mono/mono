@@ -1812,15 +1812,14 @@ namespace Mono.CSharp
 			// Add Win32 resources
 			//
 
-			CodeGen.Assembly.Builder.DefineVersionInfoResource ();
-
 			if (win32ResourceFile != null) {
 				try {
 					CodeGen.Assembly.Builder.DefineUnmanagedResource (win32ResourceFile);
-				}
-				catch (ArgumentException) {
+				} catch (ArgumentException) {
 					Report.RuntimeMissingSupport (Location.Null, "resource embeding");
 				}
+			} else {
+				CodeGen.Assembly.Builder.DefineVersionInfoResource ();
 			}
 
 			if (win32IconFile != null) {
