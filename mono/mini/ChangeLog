@@ -1,3 +1,7 @@
+2008-03-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* cpu-s390x.md mini-s390x.c: Add int_conv_to_r_un.
+
 2008-03-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* inssel-s390x.brg cpu-s390x.md mini-s390x.h mini-s390x.c: Finish S390 port.

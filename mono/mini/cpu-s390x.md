@@ -314,7 +314,7 @@ long_conv_to_u2: dest:i src1:i len:24
 long_conv_to_u4: dest:i src1:i len:4
 long_conv_to_u8: dest:i src1:i len:4
 long_conv_to_u:  dest:i src1:i len:4
-long_conv_to_r_un: dest:f src1:i src2:i len:37 
+long_conv_to_r_un: dest:f src1:i len:37 
 
 long_beq: len:8
 long_bge_un: len:8
@@ -342,6 +342,7 @@ int_conv_to_i: dest:i src1:i len:2
 int_conv_to_u1: dest:i src1:i len:8
 int_conv_to_u2: dest:i src1:i len:16
 int_conv_to_u4: dest:i src1:i
+int_conv_to_r_un: dest:f src1:i len:37 
 
 cond_exc_ic: len:8
 cond_exc_ieq: len:8

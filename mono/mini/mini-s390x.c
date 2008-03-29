@@ -4377,6 +4377,17 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			s390_ldebr (code, ins->dreg, s390_f15);
 		}
 			break;
+		case OP_ICONV_TO_R_UN: {
+			s390_cdfbr (code, ins->dreg, ins->sreg1);
+			s390_ltr   (code, ins->sreg1, ins->sreg1);
+			s390_jnl   (code, 12);
+			s390_basr  (code, s390_r13, 0);
+			s390_j	   (code, 6);
+			s390_word  (code, 0x41f00000);
+			s390_word  (code, 0);
+			s390_adb   (code, ins->dreg, 0, s390_r13, 4);
+		}
+			break;
 		case OP_LCONV_TO_R_UN: {
 			s390_cdgbr (code, ins->dreg, ins->sreg1);
 			s390_ltgr  (code, ins->sreg1, ins->sreg1);
