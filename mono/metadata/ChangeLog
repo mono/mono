@@ -1,3 +1,13 @@
+2008-03-29 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c: New functions mono_method_can_access_field_full and
+	mono_method_can_access_method_full. They perform type visibility
+	and type site check.
+
+	* class-internal.h: Added exported functions.
+
+	* verify.c: Use new functions to implement proper visibility checks.
+
 2008-03-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-config.h: Add missing G_BEGIN_DECLS/G_END_DECLS. Fixes #375188.
