@@ -39,7 +39,12 @@ namespace System.Collections {
 	[ComVisible(true)]
 #endif
 	[Serializable]
-	public sealed class BitArray : ICollection, ICloneable {
+#if INSIDE_CORLIB
+	public
+#else
+	internal
+#endif
+	sealed class BitArray : ICollection, ICloneable {
 		int [] m_array;
 		int m_length;
 		int _version = 0;

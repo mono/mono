@@ -35,7 +35,12 @@ namespace System {
 #if NET_2_0
 	[ComVisible(true)]
 #endif
-	public interface ICloneable {
+#if INSIDE_CORLIB
+	public
+#else
+	internal
+#endif
+	interface ICloneable {
 		object Clone ();
 	}
 }
