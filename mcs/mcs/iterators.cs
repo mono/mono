@@ -24,6 +24,7 @@ namespace Mono.CSharp {
 	public class Yield : Statement {
 		Expression expr;
 		ArrayList finally_blocks;
+		bool unwind_protect;
 
 		public Yield (Expression expr, Location l)
 		{
@@ -58,13 +59,16 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (ec.CurrentBranching.InTryWithCatch () && (!isYieldBreak || !ec.InCatch)) {
-				if (!ec.InCatch)
-					Report.Error (1626, loc, "Cannot yield a value in the body " +
-						      "of a try block with a catch clause");
-				else
-					Report.Error (1631, loc, "Cannot yield a value in the body " +
-						      "of a catch clause");
+			if (isYieldBreak)
+				return true;
+
+			if (ec.InCatch) {
+				Report.Error (1631, loc, "Cannot yield a value in the body of a catch clause");
+				return false;
+			}
+
+			if (ec.CurrentBranching.InTryWithCatch ()) {
+				Report.Error (1626, loc, "Cannot yield a value in the body of a try block with a catch clause");
 				return false;
 			}
 
@@ -92,13 +96,13 @@ namespace Mono.CSharp {
 					return false;
 			}
 
-			ec.CurrentBranching.StealFinallyClauses (ref finally_blocks);
+			unwind_protect = ec.CurrentBranching.StealFinallyClauses (ref finally_blocks);
 			return true;
 		}
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			ec.CurrentIterator.MarkYield (ec, expr, finally_blocks);
+			ec.CurrentIterator.MarkYield (ec, expr, unwind_protect, finally_blocks);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)
@@ -110,7 +114,7 @@ namespace Mono.CSharp {
 	}
 
 	public class YieldBreak : Statement {
-
+		bool unwind_protect;
 		public YieldBreak (Location l)
 		{
 			loc = l;
@@ -121,13 +125,15 @@ namespace Mono.CSharp {
 			if (!Yield.CheckContext (ec, loc, true))
 				return false;
 
+			// not exactly a 'return' but close enough
+			unwind_protect = ec.CurrentBranching.AddReturnOrigin (ec.CurrentBranching.CurrentUsageVector, loc);
 			ec.CurrentBranching.CurrentUsageVector.Goto ();
 			return true;
 		}
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			ec.CurrentIterator.EmitYieldBreak (ec.ig);
+			ec.CurrentIterator.EmitYieldBreak (ec.ig, unwind_protect);
 		}
 	}
 
@@ -645,12 +651,12 @@ namespace Mono.CSharp {
 			Running
 		}
 
-		public void EmitYieldBreak (ILGenerator ig)
+		public void EmitYieldBreak (ILGenerator ig, bool unwind_protect)
 		{
 			ig.Emit (OpCodes.Ldarg_0);
 			IntConstant.EmitInt (ig, (int) State.After);
 			ig.Emit (OpCodes.Stfld, IteratorHost.PC.FieldBuilder);
-			ig.Emit (OpCodes.Br, move_next_error);
+			ig.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, move_next_error);
 		}
 
 		internal void EmitMoveNext (EmitContext ec, Block original_block)
@@ -677,7 +683,7 @@ namespace Mono.CSharp {
 
 			SymbolWriter.EndIteratorBody (ec.ig);
 
-			EmitYieldBreak (ig);
+			EmitYieldBreak (ig, false);
 
 			SymbolWriter.StartIteratorDispatcher (ec.ig);
 
@@ -788,7 +794,7 @@ namespace Mono.CSharp {
 		//
 		// Called back from Yield
 		//
-		public void MarkYield (EmitContext ec, Expression expr,
+		public void MarkYield (EmitContext ec, Expression expr, bool unwind_protect,
 				       ArrayList finally_blocks)
 		{
 			ILGenerator ig = ec.ig;
@@ -805,7 +811,7 @@ namespace Mono.CSharp {
 			ig.Emit (OpCodes.Stfld, IteratorHost.PC.FieldBuilder);
 
 			// Return ok
-			ig.Emit (OpCodes.Br, move_next_ok);
+			ig.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, move_next_ok);
 
 			ResumePoint point = new ResumePoint (finally_blocks);
 			resume_points.Add (point);

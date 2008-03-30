@@ -1,3 +1,8 @@
+2008-03-30  Jb Evain  <jbevain@novell.com>
+
+	* TimeZoneInfo.cs: use generic collections instead of untyped
+	collections.
+
 2008-02-01  Jb Evain  <jbevain@novell.com>
 
 	* Funcs.cs: gross hack for SL 1.1a.
