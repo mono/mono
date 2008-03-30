@@ -879,7 +879,6 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 	rs->ifree_mask = MONO_ARCH_CALLEE_REGS;
 	rs->ffree_mask = MONO_ARCH_CALLEE_FREGS;
 
-
 	max = rs->next_vreg;
 
 	if (cfg->reginfo && cfg->reginfo_len < max)

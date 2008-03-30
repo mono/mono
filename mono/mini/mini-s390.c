@@ -2797,6 +2797,7 @@ mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		}
 	}
+}
 
 /*========================= End of Function ========================*/
 

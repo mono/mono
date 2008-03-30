@@ -1917,6 +1917,8 @@ mono_decompose_op_imm (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins)
 		ins->sreg1 = temp->dreg;
 	else
 		ins->sreg2 = temp->dreg;
+
+	bb->max_vreg = MAX (bb->max_vreg, cfg->rs->next_vreg);
 }
 
 /*

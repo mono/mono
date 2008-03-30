@@ -1,3 +1,11 @@
+2008-03-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (decompose_opcode): Handle OP_LCONV_TO_OVF_U8_UN.
+
+	* mini.c (mono_decompose_op_imm): Set bb->max_vreg.
+
+	* mini-s390.c: Fix build.
+
 2008-03-29  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-s390.c: Fix build.
