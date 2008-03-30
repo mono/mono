@@ -1,5 +1,7 @@
 2008-03-30  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-x86.c cpu-x86.md inssel-x86.brg: Add min/max intrinsics.
+
 	* mini-amd64.c mini-amd64.h cpu-amd64.md: Get rid of the non-SSE2 floating point
 	code.
 
