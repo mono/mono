@@ -1,4 +1,23 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java20|AnyCPU' ">
+    <OutputPath>bin\Release_Java20\</OutputPath>
+    <DefineConstants>TRACE;JAVA;NET_3_5;TARGET_JVM</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <SkipValidation>false</SkipValidation>
+    <KeepIntermediate>false</KeepIntermediate>
+    <PreCompile>true</PreCompile>
+    <DeploymentMethod>0</DeploymentMethod>
+    <CompressionLevel>1</CompressionLevel>
+    <UseTestingPage>true</UseTestingPage>
+    <AdditionalClassPath>
+    </AdditionalClassPath>
+    <TargetPlatform>0</TargetPlatform>
+  </PropertyGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -8,7 +27,7 @@
     <ProjectTypeGuids>{F6B19D50-1E2E-4e87-ADFB-10393B439DE0};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <AssemblyName>System.Core-2008.JavaEE</AssemblyName>
+    <AssemblyName>System.Core</AssemblyName>
     <JDKName>1.6</JDKName>
     <GHProjectType>1</GHProjectType>
     <Version>2.0</Version>
@@ -66,6 +85,25 @@
     <KeepIntermediate>false</KeepIntermediate>
     <TargetPlatform>0</TargetPlatform>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java20|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug_Java20\</OutputPath>
+    <DefineConstants>TRACE;JAVA;NET_3_5;TARGET_JVM;DEBUG</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <SkipValidation>false</SkipValidation>
+    <KeepIntermediate>false</KeepIntermediate>
+    <PreCompile>true</PreCompile>
+    <DeploymentMethod>0</DeploymentMethod>
+    <CompressionLevel>1</CompressionLevel>
+    <UseTestingPage>true</UseTestingPage>
+    <AdditionalClassPath>
+    </AdditionalClassPath>
+    <TargetPlatform>0</TargetPlatform>
+  </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.csharp.targets" />
   <Import Project="$(VMW_HOME)\bin\Mainsoft.Common.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -77,7 +115,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-RefInfo-system-xml="repository:vmw:framework:2.0" REFS-JarPath-system-xml="" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-JarPath-system-data="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system="" REFS-JarPath-rt="" REFS-RefInfo-rt="repository:jre:sun:1.6.0" />
+      <UserProperties REFS-RefInfo-rt="repository:jre:sun:1.6.0" REFS-JarPath-rt="" REFS-JarPath-system="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system-data="" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-JarPath-system-xml="" REFS-RefInfo-system-xml="repository:vmw:framework:2.0" />
     </VisualStudio>
   </ProjectExtensions>
   <ItemGroup>
