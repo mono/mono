@@ -251,11 +251,11 @@ adc_imm: dest:i src1:i len:18
 add_imm: dest:i src1:i len:18
 addcc_imm: dest:i src1:i len:18
 and_imm: dest:i src1:i len:16
-div_imm: dest:i src1:i src2:i len:24
-div_un_imm: dest:i src1:i src2:i len:24
+div_imm: dest:i src1:i len:24
+div_un_imm: dest:i src1:i len:24
 or_imm: dest:i src1:i len:16
-rem_imm: dest:i src1:i src2:i len:24
-rem_un_imm: dest:i src1:i src2:i len:24
+rem_imm: dest:i src1:i len:24
+rem_un_imm: dest:i src1:i len:24
 sbb_imm: dest:i src1:i len:18
 shl_imm: dest:i src1:i len:8
 shr_imm: dest:i src1:i len:8
@@ -323,13 +323,13 @@ vcall2: len:8 clob:c
 vcall2_membase: src1:b len:12 clob:c
 vcall2_reg: src1:i len:8 clob:c
 
-s390_long_add: dest:l src1:i src2:i len:18 clob:1
-s390_long_add_ovf: dest:l src1:i src2:i len:32 clob:1
-s390_long_add_ovf_un: dest:l src1:i src2:i len:32 clob:1
-s390_long_sub: dest:l src1:i src2:i len:18 clob:1
-s390_long_sub_ovf: dest:l src1:i src2:i len:32 clob:1
-s390_long_sub_ovf_un: dest:l src1:i src2:i len:32 clob:1
-s390_long_neg: dest:l src1:i src2:i len:18 clob:1
+s390_long_add: dest:l src1:i src2:i len:18
+s390_long_add_ovf: dest:l src1:i src2:i len:32
+s390_long_add_ovf_un: dest:l src1:i src2:i len:32
+s390_long_sub: dest:l src1:i src2:i len:18
+s390_long_sub_ovf: dest:l src1:i src2:i len:32
+s390_long_sub_ovf_un: dest:l src1:i src2:i len:32
+s390_long_neg: dest:l src1:i src2:i len:18
 
 s390_int_add_ovf: len:24 dest:i src1:i src2:i
 s390_int_add_ovf_un: len:10 dest:i src1:i src2:i 

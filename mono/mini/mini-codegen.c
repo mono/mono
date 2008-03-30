@@ -1527,6 +1527,11 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 				g_assert (dest_sreg1 == ins->dreg);
 			val = mono_regstate_alloc_int (rs, regmask (ins->dreg));
 			g_assert (val >= 0);
+
+			if (rs->vassign [ins->sreg1] >= 0 && rs->vassign [ins->sreg1] != val)
+				// FIXME:
+				g_assert_not_reached ();
+
 			assign_reg (cfg, rs, ins->sreg1, val, fp);
 
 			DEBUG (printf ("\tassigned sreg1-low %s to R%d\n", mono_regname_full (val, fp), ins->sreg1));
@@ -1534,6 +1539,11 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert ((regmask (dreg_high)) & regpair_reg2_mask (spec_src1, ins->dreg));
 			val = mono_regstate_alloc_int (rs, regmask (dreg_high));
 			g_assert (val >= 0);
+
+			if (rs->vassign [ins->sreg1 + 1] >= 0 && rs->vassign [ins->sreg1 + 1] != val)
+				// FIXME:
+				g_assert_not_reached ();
+
 			assign_reg (cfg, rs, ins->sreg1 + 1, val, fp);
 
 			DEBUG (printf ("\tassigned sreg1-high %s to R%d\n", mono_regname_full (val, fp), ins->sreg1 + 1));

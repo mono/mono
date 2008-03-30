@@ -1,5 +1,11 @@
 2008-03-30  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-codegen.c (mono_local_regalloc): Add asserts for some situations which are
+	not yet handled.
+
+	* cpu-s390.md: Remove clob:1 from some opcodes where it is not needed to avoid
+	tripping up the local register allocator.
+
 	* method-to-ir.c (decompose_opcode): Handle OP_LCONV_TO_OVF_U8_UN.
 
 	* mini.c (mono_decompose_op_imm): Set bb->max_vreg.

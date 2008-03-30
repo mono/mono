@@ -1822,7 +1822,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 		inst->opcode 	   = OP_REGOFFSET;
 		inst->inst_basereg = frame_reg;
 		offset 		  += sizeof(gpointer);
-		if ((sig->call_convention == MONO_CALL_VARARG) &&
+		if (!cfg->new_ir && (sig->call_convention == MONO_CALL_VARARG) &&
 		    (!retFitsInReg (cinfo->ret.size)))
 			cfg->sig_cookie += cinfo->ret.size;
 		if (G_UNLIKELY (cfg->verbose_level > 1)) {
