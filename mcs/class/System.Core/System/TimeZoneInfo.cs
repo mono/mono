@@ -24,12 +24,13 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-using System.Runtime.Serialization;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Runtime.Serialization;
+using System.Text;
+
 #if LIBC
 using System.IO;
-using System.Collections;
 using Mono;
 #endif
 
@@ -600,7 +601,7 @@ namespace System
 #if LIBC
 		private static bool ValidTZFile (byte [] buffer, int length)
 		{
-			System.Text.StringBuilder magic = new System.Text.StringBuilder ();
+			StringBuilder magic = new StringBuilder ();
 
 			for (int i = 0; i < 4; i++)
 				magic.Append ((char)buffer [i]);
@@ -614,34 +615,22 @@ namespace System
 			return true;
 		}
 
-		private struct TimeType 
+		struct TimeType 
 		{
-			int offset;
-			bool is_dst;
-			string abbrev;
-			
+			public readonly int Offset;
+			public readonly bool IsDst;
+			public string Name;
+
 			public TimeType (int offset, bool is_dst, string abbrev)
 			{
-				this.offset = offset;
-				this.is_dst = is_dst;
-				this.abbrev = abbrev;
-			}
-
-			public int Offset {
-				get { return offset; }
-			}
-
-			public bool IsDst {
-				get { return is_dst; }
-			}
-
-			public string Name {
-				get { return abbrev; }
+				this.Offset = offset;
+				this.IsDst = is_dst;
+				this.Name = abbrev;
 			}
 
 			public override string ToString ()
 			{
-				return "offset: " + offset + "s, is_dst: " + is_dst + ", zone name: " + abbrev;
+				return "offset: " + Offset + "s, is_dst: " + IsDst + ", zone name: " + Name;
 			}
 		}
 
@@ -660,9 +649,9 @@ namespace System
 			if (length < 44 + timecnt * 5 + typecnt * 6 + charcnt + leapcnt * 8 + ttisstdcnt + ttisgmtcnt)
 				throw new InvalidTimeZoneException ();
 
-			Hashtable abbreviations = ParseAbbreviations (buffer, 44 + 4 * timecnt + timecnt + 6 * typecnt, charcnt);
-			Hashtable time_types = ParseTimesTypes (buffer, 44 + 4 * timecnt + timecnt, typecnt, abbreviations);
-			SortedList transitions = ParseTransitions (buffer, 44, timecnt, time_types);
+			Dictionary<int, string> abbreviations = ParseAbbreviations (buffer, 44 + 4 * timecnt + timecnt + 6 * typecnt, charcnt);
+			Dictionary<int, TimeType> time_types = ParseTimesTypes (buffer, 44 + 4 * timecnt + timecnt, typecnt, abbreviations);
+			SortedList<DateTime, TimeType> transitions = ParseTransitions (buffer, 44, timecnt, time_types);
 
 			if (time_types.Count == 0)
 				throw new InvalidTimeZoneException ();
@@ -679,8 +668,8 @@ namespace System
 			List<AdjustmentRule> adjustmentRules = new List<AdjustmentRule> ();
 
 			for (int i = 0; i < transitions.Count; i++) {
-				DateTime ttime = (DateTime) transitions.GetKey (i);
-				TimeType ttype = (TimeType) transitions [ttime];
+				DateTime ttime = transitions.Keys [i];
+				TimeType ttype = transitions [ttime];
 				if (!ttype.IsDst) {
 					if (standardDisplayName != ttype.Name || baseUtcOffset.TotalSeconds != ttype.Offset) {
 						standardDisplayName = ttype.Name;
@@ -733,11 +722,11 @@ namespace System
 			}
 		}
 
-		private static Hashtable ParseAbbreviations (byte [] buffer, int index, int count)
+		static Dictionary<int, string> ParseAbbreviations (byte [] buffer, int index, int count)
 		{
-			Hashtable abbrevs = new Hashtable ();
+			var abbrevs = new Dictionary<int, string> ();
 			int abbrev_index = 0;
-			System.Text.StringBuilder sb = new System.Text.StringBuilder ();
+			var sb = new StringBuilder ();
 			for (int i = 0; i < count; i++) {
 				char c = (char) buffer [index + i];
 				if (c != '\0')
@@ -745,29 +734,29 @@ namespace System
 				else {
 					abbrevs.Add (abbrev_index, sb.ToString ());
 					abbrev_index = i + 1;
-					sb = new System.Text.StringBuilder ();
+					sb = new StringBuilder ();
 				}
 			}
 			return abbrevs;
 		}
 
-		private static Hashtable ParseTimesTypes (byte [] buffer, int index, int count, Hashtable abbreviations)
+		static Dictionary<int, TimeType> ParseTimesTypes (byte [] buffer, int index, int count, Dictionary<int, string> abbreviations)
 		{
 			DataConverter enc = DataConverter.BigEndian;
-			Hashtable types = new Hashtable (count);
+			var types = new Dictionary<int, TimeType> (count);
 			for (int i = 0; i < count; i++) {
 				int offset = enc.GetInt32 (buffer, index + 6 * i);
 				byte is_dst = buffer [index + 6 * i + 4];
 				byte abbrev = buffer [index + 6 * i + 5];
-				types.Add (i, new TimeType (offset, (is_dst != 0), abbreviations [(int)abbrev] as string));
+				types.Add (i, new TimeType (offset, (is_dst != 0), abbreviations [(int)abbrev]));
 			}
 			return types;
 		}
 
-		private static SortedList ParseTransitions (byte [] buffer, int index, int count, Hashtable time_types)
+		static SortedList<DateTime, TimeType> ParseTransitions (byte [] buffer, int index, int count, Dictionary<int, TimeType> time_types)
 		{
 			DataConverter enc = DataConverter.BigEndian;
-			SortedList trans = new SortedList (count);
+			var trans = new SortedList<DateTime, TimeType> (count);
 			for (int i = 0; i < count; i++) {
 				int unixtime = enc.GetInt32 (buffer, index + 4 * i);
 				DateTime ttime = DateTimeFromUnixTime (unixtime);
@@ -777,7 +766,7 @@ namespace System
 			return trans;
 		}
 
-		private static DateTime DateTimeFromUnixTime (long unix_time)
+		static DateTime DateTimeFromUnixTime (long unix_time)
 		{
 			DateTime date_time = new DateTime (1970, 1, 1);
 			return date_time.AddSeconds (unix_time);
