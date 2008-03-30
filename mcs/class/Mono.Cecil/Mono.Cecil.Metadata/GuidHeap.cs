@@ -41,7 +41,8 @@ namespace Mono.Cecil.Metadata {
 
 		public GuidHeap (MetadataStream stream) : base (stream, MetadataStream.GUID)
 		{
-			m_guids = new Hashtable ();
+			int capacity = (int)(stream.Header.Size / 16);
+			m_guids = new Hashtable (capacity);
 		}
 
 		public Guid this [uint index] {
@@ -57,8 +58,13 @@ namespace Mono.Cecil.Metadata {
 				if (idx + 16 > this.Data.Length)
 					throw new IndexOutOfRangeException ();
 
-				byte[] buffer = new byte [16];
-				Buffer.BlockCopy (this.Data, idx, buffer, 0, 16);
+				byte [] buffer = null;
+				if (this.Data.Length == 16) {
+					buffer = this.Data;
+				} else {
+					buffer = new byte [16];
+					Buffer.BlockCopy (this.Data, idx, buffer, 0, 16);
+				}
 				Guid res = new Guid (buffer);
 				m_guids [idx] = res;
 				return res;

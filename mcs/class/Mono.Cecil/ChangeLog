@@ -1,3 +1,21 @@
+2008-03-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Mono.Cecil/ReflectionReader.cs:
+		Avoid creating a BinaryReader+MemoryStream on LE archs for 
+		GetConstant. Saves about 400KB for Gendarme.
+		Avoid a BinaryReader creation in GetConstant which saves
+		about 50KB for Gendarme.
+	* Mono.Cecil.Metadata/GuidHeap.cs:
+		Compute ideal capacity for Hashtable. Avoid memory allocation
+		if a single GUID is present (which is the case for all of 
+		Mono 2.0 assemblies). Saves a whole 2KB for Gendarme ;-)
+	* Mono.Cecil.Binary/Image.cs:
+		Add internal GetSectionAtVirtualAddress to avoid creating
+		BinaryReader in some cases.
+	* Mono.Cecil.Binary/ResourceReader.cs:
+		Avoid a BinaryReader creation in SetInitialValue which saves 
+		about 3000KB for Gendarme.
+
 2008-03-08  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil.Binary/CopyImageVisitor.cs:

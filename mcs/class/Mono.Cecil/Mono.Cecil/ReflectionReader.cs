@@ -1141,23 +1141,65 @@ namespace Mono.Cecil {
 				return Encoding.Unicode.GetString (constant, 0, length);
 			}
 
-			BinaryReader br = new BinaryReader (new MemoryStream (constant));
-
+			// One byte types can always be read using BitConverter. However it can't be used
+			// elsewhere since it behaves differently in Mono compared to CF on BE architectures
 			switch (elemType) {
 			case ElementType.Boolean :
-				return br.ReadByte () == 1;
+				return BitConverter.ToBoolean (constant, 0);
+			case ElementType.I1 :
+				return (sbyte) constant [0];
+			case ElementType.U1 :
+				return (byte) constant [0];
+			case ElementType.Object: // illegal, but foundable
+				return null;
+			default :
+				if (BitConverter.IsLittleEndian)
+					return GetConstantLittleEndian (elemType, constant);
+				else
+					return GetConstantBigEndian (elemType, constant);
+			}
+		}
+
+		private object GetConstantLittleEndian (ElementType elemType, byte[] constant)
+		{
+			switch (elemType) {
+			case ElementType.Char :
+				return BitConverter.ToChar (constant, 0);
+			case ElementType.I2 :
+				return BitConverter.ToInt16 (constant, 0);
+			case ElementType.I4 :
+				return BitConverter.ToInt32 (constant, 0);
+			case ElementType.I8 :
+				return BitConverter.ToInt64 (constant, 0);
+			case ElementType.U2 :
+				return BitConverter.ToUInt16 (constant, 0);
+			case ElementType.U4 :
+				return BitConverter.ToUInt32 (constant, 0);
+			case ElementType.U8 :
+				return BitConverter.ToUInt64 (constant, 0);
+			case ElementType.R4 :
+				return BitConverter.ToSingle (constant, 0);
+			case ElementType.R8 :
+				return BitConverter.ToDouble (constant, 0);
+			default:
+				throw new ReflectionException ("Non valid element in constant table");
+			}
+		}
+
+		private object GetConstantBigEndian (ElementType elemType, byte[] constant)
+		{
+			// BinaryReader always read it's data in LE format
+			// note: this could be further optimized (even without unsafe code)
+			BinaryReader br = new BinaryReader (new MemoryStream (constant));
+			switch (elemType) {
 			case ElementType.Char :
 				return (char) br.ReadUInt16 ();
-			case ElementType.I1 :
-				return br.ReadSByte ();
 			case ElementType.I2 :
 				return br.ReadInt16 ();
 			case ElementType.I4 :
 				return br.ReadInt32 ();
 			case ElementType.I8 :
 				return br.ReadInt64 ();
-			case ElementType.U1 :
-				return br.ReadByte ();
 			case ElementType.U2 :
 				return br.ReadUInt16 ();
 			case ElementType.U4 :
@@ -1168,9 +1210,7 @@ namespace Mono.Cecil {
 				return br.ReadSingle ();
 			case ElementType.R8 :
 				return br.ReadDouble ();
-			case ElementType.Object: // illegal, but foundable
-				return null;
-			default :
+			default:
 				throw new ReflectionException ("Non valid element in constant table");
 			}
 		}
@@ -1211,8 +1251,11 @@ namespace Mono.Cecil {
 			}
 
 			if (size > 0 && field.RVA != RVA.Zero) {
-				BinaryReader br = m_reader.MetadataReader.GetDataReader (field.RVA);
-				field.InitialValue = br == null ? new byte [size] : br.ReadBytes (size);
+				byte [] data = new byte [size];
+				Section sect = m_reader.Image.GetSectionAtVirtualAddress (field.RVA);
+				if (sect != null)
+					Buffer.BlockCopy (sect.Data, (int) (long) (field.RVA - sect.VirtualAddress), data, 0, size);
+				field.InitialValue = data;
 			} else
 				field.InitialValue = new byte [0];
 		}

@@ -151,19 +151,26 @@ namespace Mono.Cecil.Binary {
 			throw new ArgumentOutOfRangeException ("Cannot map the rva to any section");
 		}
 
-		public BinaryReader GetReaderAtVirtualAddress (RVA rva)
+		internal Section GetSectionAtVirtualAddress (RVA rva)
 		{
 			foreach (Section sect in this.Sections) {
 				if (rva >= sect.VirtualAddress &&
 					rva < sect.VirtualAddress + sect.SizeOfRawData) {
-
-					BinaryReader br = new BinaryReader (new MemoryStream (sect.Data));
-					br.BaseStream.Position = rva - sect.VirtualAddress;
-					return br;
+					return sect;
 				}
 			}
-
 			return null;
+		}
+
+		public BinaryReader GetReaderAtVirtualAddress (RVA rva)
+		{
+			Section sect = GetSectionAtVirtualAddress (rva);
+			if (sect == null)
+				return null;
+
+			BinaryReader br = new BinaryReader (new MemoryStream (sect.Data));
+			br.BaseStream.Position = rva - sect.VirtualAddress;
+			return br;
 		}
 
 		public void AddDebugHeader ()
