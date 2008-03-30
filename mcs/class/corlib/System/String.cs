@@ -1915,17 +1915,15 @@ namespace System
 			}
 		}
 
-#if !NET_2_1
 		public CharEnumerator GetEnumerator ()
 		{
 			return new CharEnumerator (this);
 		}
-#endif
 
 #if NET_2_0
 		IEnumerator<char> IEnumerable<char>.GetEnumerator ()
 		{
-			return new CharEnumerator (this);
+			return GetEnumerator ();
 		}
 #endif
 

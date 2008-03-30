@@ -42,14 +42,9 @@ namespace System
 #if NET_2_0
 	[ComVisible (true)]
 #endif
-#if !NET_2_1
-	public
-#else
-	internal
-#endif
-	sealed class CharEnumerator : IEnumerator, ICloneable
+	public sealed class CharEnumerator : IEnumerator, ICloneable
 #if NET_2_0
-		, IEnumerator <char>
+	, IEnumerator <char>
 #endif
 	{
 		private string str;
