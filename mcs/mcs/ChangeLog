@@ -1,3 +1,16 @@
+2008-03-30  Raja R Harinath  <harinath@hurrynot.org>
+
+	Fix #368224, test-629.cs
+	* flowanalysis.cs (FlowBranching.StealFinallyClauses): Return true
+	if it crossed an unwind-protect boundary.
+	* iterators.cs (Yield.CheckContext): Relax check for 'yield break'.
+	(Yield.Resolve, Yield.DoEmit): Track whether the yield occurs
+	inside an unwind-protected region.
+	(YieldBreak.Resolve, YieldBreak.DoEmit): Likewise.
+	(Iterator.MarkYield): Add 'unwind_protect' parameter.  Emit a
+	'leave' instead of a 'br' if unwind-protected.
+	(Iterator.EmitYieldBreak): Likewise.
+
 2008-03-29  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* driver.cs: Only define versioninfo resources if no win32 resource

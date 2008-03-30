@@ -454,9 +454,10 @@ namespace Mono.CSharp
 			return Parent.AddGotoOrigin (vector, goto_stmt);
 		}
 
-		public virtual void StealFinallyClauses (ref ArrayList list)
+		// returns true if we crossed an unwind-protected region (try/catch/finally, lock, using, ...)
+		public virtual bool StealFinallyClauses (ref ArrayList list)
 		{
-			Parent.StealFinallyClauses (ref list);
+			return Parent.StealFinallyClauses (ref list);
 		}
 
 		public bool IsAssigned (VariableInfo vi)
@@ -676,9 +677,9 @@ namespace Mono.CSharp
 			return false;
 		}
 
-		public override void StealFinallyClauses (ref ArrayList list)
+		public override bool StealFinallyClauses (ref ArrayList list)
 		{
-			// nothing to do
+			return false;
 		}
 
 		public override bool AddGotoOrigin (UsageVector vector, Goto goto_stmt)
@@ -855,13 +856,14 @@ namespace Mono.CSharp
 			return true;
 		}
 
-		public override void StealFinallyClauses (ref ArrayList list)
+		public override bool StealFinallyClauses (ref ArrayList list)
 		{
 			if (list == null)
 				list = new ArrayList ();
 			list.Add (stmt);
 			emit_finally = false;
 			base.StealFinallyClauses (ref list);
+			return true;
 		}
 
 		public bool EmitFinally {
