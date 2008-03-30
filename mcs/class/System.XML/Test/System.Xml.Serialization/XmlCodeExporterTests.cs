@@ -256,9 +256,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-#if NET_2_0
-		[Category ("NotDotNet")] // regression in MS.NET 2.0
-#endif
 		[Category ("NotWorking")] // TODO: order of DefaultValueAttribute, ...
 		public void ExportTypeMapping_Field ()
 		{
@@ -281,11 +278,11 @@ namespace MonoTests.System.XmlSerialization
 				"[System.Xml.Serialization.XmlRootAttribute(\"field\", Namespace=\"\", IsNullable=true)]{0}" +
 				"public partial class Field {{{0}" +
 				"    {0}" +
-				"    private MonoTests.System.Xml.TestClasses.FlagEnum flags1Field = MonoTests.System.Xml.TestClasses.FlagEnum.e1;{0}" +
+				"    private MonoTests.System.Xml.TestClasses.FlagEnum flags1Field;{0}" +
 				"    {0}" +
-				"    private MonoTests.System.Xml.TestClasses.FlagEnum flags2Field = MonoTests.System.Xml.TestClasses.FlagEnum.e1;{0}" +
+				"    private MonoTests.System.Xml.TestClasses.FlagEnum flags2Field;{0}" +
 				"    {0}" +
-				"    private MonoTests.System.Xml.TestClasses.FlagEnum flags3Field = (MonoTests.System.Xml.TestClasses.FlagEnum.e1 | MonoTests.System.Xml.TestClasses.FlagEnum.e2);{0}" +
+				"    private MonoTests.System.Xml.TestClasses.FlagEnum flags3Field;{0}" +
 				"    {0}" +
 				"    private MonoTests.System.Xml.TestClasses.FlagEnum flags4Field;{0}" +
 				"    {0}" +
@@ -293,19 +290,27 @@ namespace MonoTests.System.XmlSerialization
 				"    {0}" +
 				"    private MonoTests.System.Xml.TestClasses.MapModifiers modifiers2Field;{0}" +
 				"    {0}" +
-				"    private MonoTests.System.Xml.TestClasses.MapModifiers modifiers3Field = MonoTests.System.Xml.TestClasses.MapModifiers.Public;{0}" +
+				"    private MonoTests.System.Xml.TestClasses.MapModifiers modifiers3Field;{0}" +
 				"    {0}" +
-				"    private MonoTests.System.Xml.TestClasses.MapModifiers modifiers4Field = MonoTests.System.Xml.TestClasses.MapModifiers.Protected;{0}" +
+				"    private MonoTests.System.Xml.TestClasses.MapModifiers modifiers4Field;{0}" +
 				"    {0}" +
-				"    private MonoTests.System.Xml.TestClasses.MapModifiers modifiers5Field = MonoTests.System.Xml.TestClasses.MapModifiers.Public;{0}" +
+				"    private MonoTests.System.Xml.TestClasses.MapModifiers modifiers5Field;{0}" +
 				"    {0}" +
 				"    private string[] namesField;{0}" +
 				"    {0}" +
 				"    private string streetField;{0}" +
 				"    {0}" +
+				"    public Field() {{{0}" +
+				"        this.flags1Field = MonoTests.System.Xml.TestClasses.FlagEnum.e1;{0}" +
+				"        this.flags2Field = MonoTests.System.Xml.TestClasses.FlagEnum.e1;{0}" +
+				"        this.flags3Field = (MonoTests.System.Xml.TestClasses.FlagEnum.e1 | MonoTests.System.Xml.TestClasses.FlagEnum.e2);{0}" +
+				"        this.modifiers3Field = MonoTests.System.Xml.TestClasses.MapModifiers.Public;{0}" +
+				"        this.modifiers4Field = MonoTests.System.Xml.TestClasses.MapModifiers.Protected;{0}" +
+				"        this.modifiers5Field = MonoTests.System.Xml.TestClasses.MapModifiers.Public;{0}" +
+				"    }}{0}" +
+				"    {0}" +
 				"    /// <remarks/>{0}" +
 				"    [System.Xml.Serialization.XmlAttributeAttribute(\"flag1\")]{0}" +
-				"    [System.ComponentModel.DefaultValueAttribute(MonoTests.System.Xml.TestClasses.FlagEnum.e1)]{0}" +
 				"    public MonoTests.System.Xml.TestClasses.FlagEnum Flags1 {{{0}" +
 				"        get {{{0}" +
 				"            return this.flags1Field;{0}" +
@@ -317,7 +322,6 @@ namespace MonoTests.System.XmlSerialization
 				"    {0}" +
 				"    /// <remarks/>{0}" +
 				"    [System.Xml.Serialization.XmlAttributeAttribute(\"flag2\")]{0}" +
-				"    [System.ComponentModel.DefaultValueAttribute(MonoTests.System.Xml.TestClasses.FlagEnum.e1)]{0}" +
 				"    public MonoTests.System.Xml.TestClasses.FlagEnum Flags2 {{{0}" +
 				"        get {{{0}" +
 				"            return this.flags2Field;{0}" +
@@ -329,7 +333,6 @@ namespace MonoTests.System.XmlSerialization
 				"    {0}" +
 				"    /// <remarks/>{0}" +
 				"    [System.Xml.Serialization.XmlAttributeAttribute(\"flag3\", Form=System.Xml.Schema.XmlSchemaForm.Qualified)]{0}" +
-				"    [System.ComponentModel.DefaultValueAttribute((MonoTests.System.Xml.TestClasses.FlagEnum.e1 | MonoTests.System.Xml.TestClasses.FlagEnum.e2))]{0}" +
 				"    public MonoTests.System.Xml.TestClasses.FlagEnum Flags3 {{{0}" +
 				"        get {{{0}" +
 				"            return this.flags3Field;{0}" +
@@ -374,7 +377,6 @@ namespace MonoTests.System.XmlSerialization
 				"    {0}" +
 				"    /// <remarks/>{0}" +
 				"    [System.Xml.Serialization.XmlAttributeAttribute(\"modifiers3\")]{0}" +
-				"    [System.ComponentModel.DefaultValueAttribute(MonoTests.System.Xml.TestClasses.MapModifiers.Public)]{0}" +
 				"    public MonoTests.System.Xml.TestClasses.MapModifiers Modifiers3 {{{0}" +
 				"        get {{{0}" +
 				"            return this.modifiers3Field;{0}" +
@@ -386,7 +388,6 @@ namespace MonoTests.System.XmlSerialization
 				"    {0}" +
 				"    /// <remarks/>{0}" +
 				"    [System.Xml.Serialization.XmlAttributeAttribute(\"modifiers4\")]{0}" +
-				"    [System.ComponentModel.DefaultValueAttribute(MonoTests.System.Xml.TestClasses.MapModifiers.Protected)]{0}" +
 				"    public MonoTests.System.Xml.TestClasses.MapModifiers Modifiers4 {{{0}" +
 				"        get {{{0}" +
 				"            return this.modifiers4Field;{0}" +
@@ -398,7 +399,6 @@ namespace MonoTests.System.XmlSerialization
 				"    {0}" +
 				"    /// <remarks/>{0}" +
 				"    [System.Xml.Serialization.XmlAttributeAttribute(\"modifiers5\", Form=System.Xml.Schema.XmlSchemaForm.Qualified)]{0}" +
-				"    [System.ComponentModel.DefaultValueAttribute(MonoTests.System.Xml.TestClasses.MapModifiers.Public)]{0}" +
 				"    public MonoTests.System.Xml.TestClasses.MapModifiers Modifiers5 {{{0}" +
 				"        get {{{0}" +
 				"            return this.modifiers5Field;{0}" +
@@ -669,9 +669,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-#if NET_2_0
-		[Category ("NotDotNet")] // regression in MS.NET 2.0
-#endif
 		[Category ("NotWorking")] // bug #78214
 		public void ExportTypeMapping_Root ()
 		{
@@ -682,10 +679,288 @@ namespace MonoTests.System.XmlSerialization
 			CodeDomProvider provider = new CSharpCodeProvider ();
 			ICodeGenerator generator = provider.CreateGenerator ();
 			generator.GenerateCodeFromNamespace (codeNamespace, sw, new CodeGeneratorOptions ());
-
+			Console.WriteLine (sw.ToString ());
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"{0}{0}" +
 				"/// <remarks/>{0}" +
+#if NET_2_0
+				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"{1}\")]{0}" +
+				"[System.SerializableAttribute()]{0}" +
+				"[System.Diagnostics.DebuggerStepThroughAttribute()]{0}" +
+				"[System.ComponentModel.DesignerCategoryAttribute(\"code\")]{0}" +
+				"[System.Xml.Serialization.XmlTypeAttribute(Namespace=\"urn:aNS\")]{0}" +
+				"[System.Xml.Serialization.XmlRootAttribute(\"root\", Namespace=\"urn:aNS\", IsNullable=false)]{0}" +
+				"public partial class Root {{{0}" +
+				"    {0}" +
+				"    private MonoTests.System.Xml.TestClasses.OptionalValueTypeContainer optionalValueField;{0}" +
+				"    {0}" +
+				"    private MonoTests.System.Xml.TestClasses.TestDefault defaultField;{0}" +
+				"    {0}" +
+				"    /// <remarks/>{0}" +
+				"    public MonoTests.System.Xml.TestClasses.OptionalValueTypeContainer OptionalValue {{{0}" +
+				"        get {{{0}" +
+				"            return this.optionalValueField;{0}" +
+				"        }}{0}" +
+				"        set {{{0}" +
+				"            this.optionalValueField = value;{0}" +
+				"        }}{0}" +
+				"    }}{0}" +
+				"    {0}" +
+				"    /// <remarks/>{0}" +
+				"    public MonoTests.System.Xml.TestClasses.TestDefault Default {{{0}" +
+				"        get {{{0}" +
+				"            return this.defaultField;{0}" +
+				"        }}{0}" +
+				"        set {{{0}" +
+				"            this.defaultField = value;{0}" +
+				"        }}{0}" +
+				"    }}{0}" +
+				"}}{0}" +
+				"{0}" +
+				"/// <remarks/>{0}" +
+				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"{1}\")]{0}" +
+				"[System.SerializableAttribute()]{0}" +
+				"[System.Diagnostics.DebuggerStepThroughAttribute()]{0}" +
+				"[System.ComponentModel.DesignerCategoryAttribute(\"code\")]{0}" +
+				"[System.Xml.Serialization.XmlTypeAttribute(TypeName=\"optionalValueType\", Namespace=\"some:urn\")]{0}" +
+				"public partial class OptionalValueTypeContainer {{{0}" +
+				"    {0}" +
+				"    private MonoTests.System.Xml.TestClasses.FlagEnum attributesField;{0}" +
+				"    {0}" +
+				"    private MonoTests.System.Xml.TestClasses.FlagEnum flagsField;{0}" +
+				"    {0}" +
+				"    private bool flagsFieldSpecified;{0}" +
+				"    {0}" +
+				"    private bool isEmptyField;{0}" +
+				"    {0}" +
+				"    private bool isEmptyFieldSpecified;{0}" +
+				"    {0}" +
+				"    private bool isNullField;{0}" +
+				"    {0}" +
+				"    public OptionalValueTypeContainer() {{{0}" +
+				"        this.attributesField = (MonoTests.System.Xml.TestClasses.FlagEnum.e1 | MonoTests.System.Xml.TestClasses.FlagEnum.e4);{0}" +
+				"        this.flagsField = MonoTests.System.Xml.TestClasses.FlagEnum.e1;{0}" +
+				"    }}{0}" +
+				"    {0}" +
+				"    /// <remarks/>{0}" +
+				"    public MonoTests.System.Xml.TestClasses.FlagEnum Attributes {{{0}" +
+				"        get {{{0}" +
+				"            return this.attributesField;{0}" +
+				"        }}{0}" +
+				"        set {{{0}" +
+				"            this.attributesField = value;{0}" +
+				"        }}{0}" +
+				"    }}{0}" +
+				"    {0}" +
+				"    /// <remarks/>{0}" +
+				"    public MonoTests.System.Xml.TestClasses.FlagEnum Flags {{{0}" +
+				"        get {{{0}" +
+				"            return this.flagsField;{0}" +
+				"        }}{0}" +
+				"        set {{{0}" +
+				"            this.flagsField = value;{0}" +
+				"        }}{0}" +
+				"    }}{0}" +
+				"    {0}" +
+				"    /// <remarks/>{0}" +
+				"    [System.Xml.Serialization.XmlIgnoreAttribute()]{0}" +
+				"    public bool FlagsSpecified {{{0}" +
+				"        get {{{0}" +
+				"            return this.flagsFieldSpecified;{0}" +
+				"        }}{0}" +
+				"        set {{{0}" +
+				"            this.flagsFieldSpecified = value;{0}" +
+				"        }}{0}" +
+				"    }}{0}" +
+				"    {0}" +
+				"    /// <remarks/>{0}" +
+				"    public bool IsEmpty {{{0}" +
+				"        get {{{0}" +
+				"            return this.isEmptyField;{0}" +
+				"        }}{0}" +
+				"        set {{{0}" +
+				"            this.isEmptyField = value;{0}" +
+				"        }}{0}" +
+				"    }}{0}" +
+				"    {0}" +
+				"    /// <remarks/>{0}" +
+				"    [System.Xml.Serialization.XmlIgnoreAttribute()]{0}" +
+				"    public bool IsEmptySpecified {{{0}" +
+				"        get {{{0}" +
+				"            return this.isEmptyFieldSpecified;{0}" +
+				"        }}{0}" +
+				"        set {{{0}" +
+				"            this.isEmptyFieldSpecified = value;{0}" +
+				"        }}{0}" +
+				"    }}{0}" +
+				"    {0}" +
+				"    /// <remarks/>{0}" +
+				"    public bool IsNull {{{0}" +
+				"        get {{{0}" +
+				"            return this.isNullField;{0}" +
+				"        }}{0}" +
+				"        set {{{0}" +
+				"            this.isNullField = value;{0}" +
+				"        }}{0}" +
+				"    }}{0}" +
+				"}}{0}" +
+				"{0}" +
+				"/// <remarks/>{0}" +
+				"[System.FlagsAttribute()]{0}" +
+				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"{1}\")]{0}" +
+				"[System.SerializableAttribute()]{0}" +
+				"[System.Xml.Serialization.XmlTypeAttribute(Namespace=\"some:urn\")]{0}" +
+				"public enum FlagEnum {{{0}" +
+				"    {0}" +
+				"    /// <remarks/>{0}" +
+				"    [System.Xml.Serialization.XmlEnumAttribute(\"one\")]{0}" +
+				"    e1 = 1,{0}" +
+				"    {0}" +
+				"    /// <remarks/>{0}" +
+				"    [System.Xml.Serialization.XmlEnumAttribute(\"two\")]{0}" +
+				"    e2 = 2,{0}" +
+				"    {0}" +
+				"    /// <remarks/>{0}" +
+				"    [System.Xml.Serialization.XmlEnumAttribute(\"four\")]{0}" +
+				"    e4 = 4,{0}" +
+				"}}{0}" +
+				"{0}" +
+				"/// <remarks/>{0}" +
+				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"{1}\")]{0}" +
+				"[System.SerializableAttribute()]{0}" +
+				"[System.Diagnostics.DebuggerStepThroughAttribute()]{0}" +
+				"[System.ComponentModel.DesignerCategoryAttribute(\"code\")]{0}" +
+				"[System.Xml.Serialization.XmlTypeAttribute(Namespace=\"urn:myNS\")]{0}" +
+				"public partial class TestDefault {{{0}" +
+				"    {0}" +
+				"    private string strField;{0}" +
+				"    {0}" +
+				"    private string strDefaultField;{0}" +
+				"    {0}" +
+				"    private bool boolTField;{0}" +
+				"    {0}" +
+				"    private bool boolFField;{0}" +
+				"    {0}" +
+				"    private decimal decimalvalField;{0}" +
+				"    {0}" +
+				"    private MonoTests.System.Xml.TestClasses.FlagEnum flagField;{0}" +
+				"    {0}" +
+				"    private MonoTests.System.Xml.TestClasses.FlagEnum_Encoded flagencodedField;{0}" +
+				"    {0}" +
+				"    public TestDefault() {{{0}" +
+				"        this.strDefaultField = \"Default Value\";{0}" +
+				"        this.flagField = (MonoTests.System.Xml.TestClasses.FlagEnum.e1 | MonoTests.System.Xml.TestClasses.FlagEnum.e4);{0}" +
+				"        this.flagencodedField = (MonoTests.System.Xml.TestClasses.FlagEnum_Encoded.e1 | MonoTests.System.Xml.TestClasses.FlagEnum_Encoded.e4);{0}" +
+				"    }}{0}" +
+				"    {0}" +
+				"    /// <remarks/>{0}" +
+				"    public string str {{{0}" +
+				"        get {{{0}" +
+				"            return this.strField;{0}" +
+				"        }}{0}" +
+				"        set {{{0}" +
+				"            this.strField = value;{0}" +
+				"        }}{0}" +
+				"    }}{0}" +
+				"    {0}" +
+				"    /// <remarks/>{0}" +
+				"    public string strDefault {{{0}" +
+				"        get {{{0}" +
+				"            return this.strDefaultField;{0}" +
+				"        }}{0}" +
+				"        set {{{0}" +
+				"            this.strDefaultField = value;{0}" +
+				"        }}{0}" +
+				"    }}{0}" +
+				"    {0}" +
+				"    /// <remarks/>{0}" +
+				"    public bool boolT {{{0}" +
+				"        get {{{0}" +
+				"            return this.boolTField;{0}" +
+				"        }}{0}" +
+				"        set {{{0}" +
+				"            this.boolTField = value;{0}" +
+				"        }}{0}" +
+				"    }}{0}" +
+				"    {0}" +
+				"    /// <remarks/>{0}" +
+				"    public bool boolF {{{0}" +
+				"        get {{{0}" +
+				"            return this.boolFField;{0}" +
+				"        }}{0}" +
+				"        set {{{0}" +
+				"            this.boolFField = value;{0}" +
+				"        }}{0}" +
+				"    }}{0}" +
+				"    {0}" +
+				"    /// <remarks/>{0}" +
+				"    public decimal decimalval {{{0}" +
+				"        get {{{0}" +
+				"            return this.decimalvalField;{0}" +
+				"        }}{0}" +
+				"        set {{{0}" +
+				"            this.decimalvalField = value;{0}" +
+				"        }}{0}" +
+				"    }}{0}" +
+				"    {0}" +
+				"    /// <remarks/>{0}" +
+				"    public MonoTests.System.Xml.TestClasses.FlagEnum flag {{{0}" +
+				"        get {{{0}" +
+				"            return this.flagField;{0}" +
+				"        }}{0}" +
+				"        set {{{0}" +
+				"            this.flagField = value;{0}" +
+				"        }}{0}" +
+				"    }}{0}" +
+				"    {0}" +
+				"    /// <remarks/>{0}" +
+				"    public MonoTests.System.Xml.TestClasses.FlagEnum_Encoded flagencoded {{{0}" +
+				"        get {{{0}" +
+				"            return this.flagencodedField;{0}" +
+				"        }}{0}" +
+				"        set {{{0}" +
+				"            this.flagencodedField = value;{0}" +
+				"        }}{0}" +
+				"    }}{0}" +
+				"}}{0}" +
+				"{0}" +
+				"/// <remarks/>{0}" +
+				"[System.FlagsAttribute()]{0}" +
+				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"{1}\")]{0}" +
+				"[System.SerializableAttribute()]{0}" +
+				"[System.Xml.Serialization.XmlTypeAttribute(Namespace=\"urn:myNS\")]{0}" +
+				"public enum FlagEnum {{{0}" +
+				"    {0}" +
+				"    /// <remarks/>{0}" +
+				"    [System.Xml.Serialization.XmlEnumAttribute(\"one\")]{0}" +
+				"    e1 = 1,{0}" +
+				"    {0}" +
+				"    /// <remarks/>{0}" +
+				"    [System.Xml.Serialization.XmlEnumAttribute(\"two\")]{0}" +
+				"    e2 = 2,{0}" +
+				"    {0}" +
+				"    /// <remarks/>{0}" +
+				"    [System.Xml.Serialization.XmlEnumAttribute(\"four\")]{0}" +
+				"    e4 = 4,{0}" +
+				"}}{0}" +
+				"{0}" +
+				"/// <remarks/>{0}" +
+				"[System.FlagsAttribute()]{0}" +
+				"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"System.Xml\", \"{1}\")]{0}" +
+				"[System.SerializableAttribute()]{0}" +
+				"[System.Xml.Serialization.XmlTypeAttribute(Namespace=\"urn:myNS\")]{0}" +
+				"public enum FlagEnum_Encoded {{{0}" +
+				"    {0}" +
+				"    /// <remarks/>{0}" +
+				"    e1 = 1,{0}" +
+				"    {0}" +
+				"    /// <remarks/>{0}" +
+				"    e2 = 2,{0}" +
+				"    {0}" +
+				"    /// <remarks/>{0}" +
+				"    e4 = 4,{0}" +
+				"}}{0}", Environment.NewLine, XmlFileVersion), sw.ToString (), "#2");
+#else
 				"[System.Xml.Serialization.XmlTypeAttribute(Namespace=\"urn:aNS\")]{0}" +
 				"[System.Xml.Serialization.XmlRootAttribute(\"root\", Namespace=\"urn:aNS\", IsNullable=false)]{0}" +
 				"public class Root {{{0}" +
@@ -808,6 +1083,7 @@ namespace MonoTests.System.XmlSerialization
 				"    /// <remarks/>{0}" +
 				"    e4 = 4,{0}" +
 				"}}{0}", Environment.NewLine), sw.ToString (), "#2");
+#endif
 		}
 
 		[Test]
@@ -932,7 +1208,6 @@ namespace MonoTests.System.XmlSerialization
 #endif
 		}
 
-#if NET_2_0
 		[Test]
 		public void DuplicateIdentifiers ()
 		{
@@ -946,19 +1221,21 @@ namespace MonoTests.System.XmlSerialization
 			XmlQualifiedName qname = new XmlQualifiedName (
 				"Operation", "http://tempuri.org/");
 			exp.ExportTypeMapping (imp.ImportTypeMapping (qname));
-#if false // this is better
 			CodeCompileUnit ccu = new CodeCompileUnit ();
 			ccu.Namespaces.Add (cns);
-			new CSharpCodeProvider ().CreateCompiler ().CompileAssemblyFromDom (new CompilerParameters (), ccu);
-#else // this is bogus, fails if the temporary field name is not "nameField1" (especially it will fail when we use auto property in C# 3.0!)
-			StringWriter sw = new StringWriter ();
+
 			CodeDomProvider provider = new CSharpCodeProvider ();
-			ICodeGenerator generator = provider.CreateGenerator ();
-			generator.GenerateCodeFromNamespace (cns, sw, new CodeGeneratorOptions ());
-			Assert.IsTrue (sw.ToString ().IndexOf ("nameField1") > 0);
-#endif
+			ICodeCompiler compiler = provider.CreateCompiler ();
+
+			CompilerParameters options = new CompilerParameters ();
+			options.ReferencedAssemblies.Add ("System.dll");
+			options.ReferencedAssemblies.Add ("System.Xml.dll");
+			options.GenerateInMemory = true;
+
+			CompilerResults result = compiler.CompileAssemblyFromDom (options, ccu);
+			Assert.AreEqual (0, result.Errors.Count, "#1");
+			Assert.IsNotNull (result.CompiledAssembly, "#2");
 		}
-#endif
 
 		[Test]
 		public void ExportSimpleContentExtensionEnum ()

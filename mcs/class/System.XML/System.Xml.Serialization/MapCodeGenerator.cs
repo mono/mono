@@ -292,7 +292,7 @@ namespace System.Xml.Serialization {
 			CodeTypeMember codeProp = null;
 
 			if ((options & CodeGenerationOptions.GenerateProperties) > 0) {
-				string field = identifiers.MakeUnique (CodeIdentifier.MakeCamel (name + "Field"));
+				string field = identifiers.AddUnique (CodeIdentifier.MakeCamel (name + "Field"), name);
 				codeField = new CodeMemberField (type, field);
 				codeField.Attributes = MemberAttributes.Private;
 				codeClass.Members.Add (codeField);

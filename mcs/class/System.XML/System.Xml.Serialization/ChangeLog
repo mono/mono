@@ -1,3 +1,7 @@
+2008-03-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* MapCodeGenerator.cs: Ensure fields that back properties are unique.
+
 2008-03-26  Lluis Sanchez Gual <lluis@novell.com> 
 
 	* MapCodeGenerator.cs, XmlTypeMapMember.cs, XmlTypeMapMemberElement.cs:
