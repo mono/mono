@@ -8,7 +8,7 @@
     <ProjectTypeGuids>{F6B19D50-1E2E-4e87-ADFB-10393B439DE0};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <AssemblyName>System.Core.Tests-2008.JavaEE</AssemblyName>
+    <AssemblyName>System.Core.Tests</AssemblyName>
     <JDKName>1.6</JDKName>
     <GHProjectType>1</GHProjectType>
     <Version>2.0</Version>
@@ -66,6 +66,44 @@
     <KeepIntermediate>false</KeepIntermediate>
     <TargetPlatform>0</TargetPlatform>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java20|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug_Java20\</OutputPath>
+    <DefineConstants>TRACE;JAVA;NET_3_5;TARGET_JVM;DEBUG</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <SkipValidation>false</SkipValidation>
+    <KeepIntermediate>false</KeepIntermediate>
+    <PreCompile>true</PreCompile>
+    <DeploymentMethod>0</DeploymentMethod>
+    <CompressionLevel>1</CompressionLevel>
+    <UseTestingPage>true</UseTestingPage>
+    <AdditionalClassPath>
+    </AdditionalClassPath>
+    <TargetPlatform>0</TargetPlatform>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java20|AnyCPU' ">
+    <OutputPath>bin\Release_Java20\</OutputPath>
+    <DefineConstants>TRACE;JAVA;NET_3_5;TARGET_JVM</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <SkipValidation>false</SkipValidation>
+    <KeepIntermediate>false</KeepIntermediate>
+    <PreCompile>true</PreCompile>
+    <DeploymentMethod>0</DeploymentMethod>
+    <CompressionLevel>1</CompressionLevel>
+    <UseTestingPage>true</UseTestingPage>
+    <AdditionalClassPath>
+    </AdditionalClassPath>
+    <TargetPlatform>0</TargetPlatform>
+  </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.csharp.targets" />
   <Import Project="$(VMW_HOME)\bin\Mainsoft.Common.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -77,20 +115,19 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-RefInfo-rt="repository:jre:sun:1.6.0" REFS-JarPath-rt="" REFS-JarPath-nunit-framework="..\..\..\nunit20\framework\bin\Debug_Java20\nunit.framework.jar" REFS-RefInfo-nunit-framework="j2il:" REFS-JarPath-system="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system-core-2008-javaee="..\bin\Debug_Java\System.Core-2008.JavaEE.jar" REFS-RefInfo-system-core-2008-javaee="j2il:" />
+      <UserProperties REFS-RefInfo-system-core="repository:vmw:framework:2.0" REFS-JarPath-system-core="" REFS-RefInfo-system-core-2008-javaee="j2il:" REFS-JarPath-system-core-2008-javaee="..\bin\Debug_Java\System.Core-2008.JavaEE.jar" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system="" REFS-RefInfo-nunit-framework="j2il:" REFS-JarPath-nunit-framework="..\..\..\nunit20\framework\bin\Debug_Java20\nunit.framework.jar" REFS-JarPath-rt="" REFS-RefInfo-rt="repository:jre:sun:1.6.0" />
     </VisualStudio>
   </ProjectExtensions>
   <ItemGroup>
-	  <Reference Include="nunit.framework">
-		  <SpecificVersion>False</SpecificVersion>
-		  <HintPath>..\..\..\nunit20\framework\bin\Debug_Java20\nunit.framework.dll</HintPath>
-		  <Private>True</Private>
-	  </Reference>
+    <Reference Include="nunit.framework">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\nunit20\framework\bin\Debug_Java20\nunit.framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="rt, Version=1.6.0.65535, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
-    <Reference Include="System.Core-2008.JavaEE, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\bin\Debug_Java\System.Core-2008.JavaEE.dll</HintPath>
+    <Reference Include="System.Core, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
   </ItemGroup>
   <ItemGroup>
