@@ -1,3 +1,8 @@
+2008-03-31  Veerapuram Varadhan <vvaradhan@novell.com>
+
+	* DataView.cs: Reverting rev#98474 changes - as it broke quite a
+	few test profiles.
+	
 2008-03-23  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DataSet.cs: Corcompare fix.
