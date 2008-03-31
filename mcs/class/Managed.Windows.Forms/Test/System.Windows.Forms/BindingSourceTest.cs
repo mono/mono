@@ -396,6 +396,43 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		}
 
 		[Test]
+		public void RemoveCurrent ()
+		{
+			BindingSource source = new BindingSource ();
+			List<string> list = new List<string> ();
+			list.Add ("A");
+			list.Add ("B");
+			list.Add ("C");
+			source.DataSource = list;
+
+			source.Position = 1;
+			Assert.AreEqual (1, source.Position, "A1");
+			Assert.AreEqual ("B", source.Current, "A2");
+
+			source.RemoveCurrent ();
+			Assert.AreEqual (1, source.Position, "B1");
+			Assert.AreEqual ("C", source.Current, "B2");
+			Assert.AreEqual (2, source.Count, "B3");
+			Assert.AreEqual ("A", source [0], "B4");
+			Assert.AreEqual ("C", source [1], "B5");
+
+			// Position is -1, since there are no items
+			source.Clear ();
+			try {
+				source.RemoveCurrent ();
+				Assert.Fail ("exc1");
+			} catch (InvalidOperationException) {
+			}
+
+			source.DataSource = new int [1];
+			try {
+				source.RemoveCurrent ();
+				Assert.Fail ("exc2");
+			} catch (InvalidOperationException) {
+			}
+		}
+
+		[Test]
 		public void ResetBindings ()
 		{
 			BindingSource source;
@@ -660,6 +697,31 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			source.DataMember = "Length";
 			Assert.IsFalse (data_source_changed, "3");
 			Assert.IsTrue (data_member_changed, "4");
+		}
+
+		[Test]
+		public void IsBindingSuspended ()
+		{
+			BindingSource source = new BindingSource ();
+			CurrencyManager currency_manager = source.CurrencyManager;
+			source.DataSource = new object [1];
+
+			source.SuspendBinding ();
+			Assert.AreEqual (true, source.IsBindingSuspended, "A1");
+			Assert.AreEqual (true, currency_manager.IsBindingSuspended, "A2");
+
+			source.ResumeBinding ();
+			Assert.AreEqual (false, source.IsBindingSuspended, "B1");
+			Assert.AreEqual (false, currency_manager.IsBindingSuspended, "B2");
+
+			// Changes made to CurrencyManager should be visible in BindingSource
+			currency_manager.SuspendBinding ();
+			Assert.AreEqual (true, source.IsBindingSuspended, "C1");
+			Assert.AreEqual (true, currency_manager.IsBindingSuspended, "C2");
+
+			currency_manager.ResumeBinding ();
+			Assert.AreEqual (false, source.IsBindingSuspended, "D1");
+			Assert.AreEqual (false, currency_manager.IsBindingSuspended, "D2");
 		}
 
 		[Test]
@@ -1442,6 +1504,48 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			Assert.AreEqual (1, iblist_raised, "C1");
 			Assert.AreEqual (ListChangedType.ItemDeleted, iblist_changed_args.ListChangedType, "C2");
 			Assert.AreEqual (0, iblist_changed_args.NewIndex, "C3");
+		}
+
+		[Test]
+		public void ListChanged_Reset ()
+		{
+			IBindingList bindinglist = new BindingList<string> ();
+			bindinglist.Add ("A");
+			bindinglist.Add ("B");
+			bindinglist.Add ("C");
+			IList arraylist = new ArrayList (bindinglist);
+
+			ResetEventsInfo ();
+
+			iblist_source.DataSource = bindinglist;
+			ilist_source.DataSource = arraylist;
+
+			// Clear after setting DataSource generated some info
+			iblist_raised = ilist_raised = 0;
+			iblist_changed_args = ilist_changed_args = null;
+
+			iblist_source.Clear ();
+			ilist_source.Clear ();
+
+			Assert.AreEqual (1, iblist_raised, "A1");
+			Assert.AreEqual (1, ilist_raised, "A2");
+			Assert.AreEqual (ListChangedType.Reset, iblist_changed_args.ListChangedType, "A3");
+			Assert.AreEqual (ListChangedType.Reset, ilist_changed_args.ListChangedType, "A4");
+			Assert.AreEqual (-1, iblist_changed_args.NewIndex, "A5");
+			Assert.AreEqual (-1, ilist_changed_args.NewIndex, "A6");
+
+			// This is only for BindingList - Direct access to Clear
+			// First add some items
+			bindinglist.Add ("D");
+			bindinglist.Add ("E");
+
+			iblist_raised = ilist_raised = 0;
+			iblist_changed_args = ilist_changed_args = null;
+
+			bindinglist.Clear ();
+			Assert.AreEqual (1, iblist_raised, "B1");
+			Assert.AreEqual (ListChangedType.Reset, iblist_changed_args.ListChangedType, "B2");
+			Assert.AreEqual (-1, iblist_changed_args.NewIndex, "B3");
 		}
 	}
 }

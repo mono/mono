@@ -1,5 +1,10 @@
 2008-03-30  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* BindingSourceTest.cs: More event tests and also a new ones for
+	RemoveCurrent and IsBindingSuspended properties.
+
+2008-03-30  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* BindingSourceTest.cs: Add tests for ListChanged event, and also new
 	assertions for Position property. Mark ListChanged_DataSourceSet as
 	not working, while I try to figure out why setting the DataSource
