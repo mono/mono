@@ -287,28 +287,52 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		public void Position ()
 		{
 			BindingSource source = new BindingSource ();
+			CurrencyManager currency_manager = source.CurrencyManager;
 
-			Assert.AreEqual (-1, source.Position, "0");
+			Assert.AreEqual (-1, source.Position, "A1");
+			Assert.AreEqual (-1, currency_manager.Position, "A2");
 
 			source.DataSource = new WorkingEnumerable (5);
 
 			int raised = 0;
+			int currency_raised = 0;
 			source.PositionChanged += delegate (object sender, EventArgs e) { raised ++; };
+			currency_manager.PositionChanged += delegate (object sender, EventArgs e) { currency_raised++; };
 
 
-			Assert.AreEqual (0, source.Position, "1");
+			Assert.AreEqual (0, source.Position, "B1");
+			Assert.AreEqual (0, currency_manager.Position, "B2");
 
 			source.Position = -1;
-			Assert.AreEqual (0, source.Position, "2");
-			Assert.AreEqual (0, raised, "3");
+			Assert.AreEqual (0, source.Position, "C1");
+			Assert.AreEqual (0, currency_manager.Position, "C2");
+			Assert.AreEqual (0, raised, "C3");
+			Assert.AreEqual (0, currency_raised, "C4");
 
 			source.Position = 10;
-			Assert.AreEqual (4, source.Position, "4");
-			Assert.AreEqual (1, raised, "5");
+			Assert.AreEqual (4, source.Position, "D1");
+			Assert.AreEqual (4, currency_manager.Position, "D2");
+			Assert.AreEqual (1, raised, "D3");
+			Assert.AreEqual (1, currency_raised, "D4");
 
 			source.Position = 10;
-			Assert.AreEqual (4, source.Position, "6");
-			Assert.AreEqual (1, raised, "7");
+			Assert.AreEqual (4, source.Position, "E1");
+			Assert.AreEqual (1, raised, "E2");
+
+			// Now make some changes in CurrencyManager.Position, which should be visible
+			// in BindingSource.Position
+
+			currency_manager.Position = 0;
+			Assert.AreEqual (0, source.Position, "F1");
+			Assert.AreEqual (0, currency_manager.Position, "F2");
+			Assert.AreEqual (2, raised, "F3");
+			Assert.AreEqual (2, currency_raised, "F4");
+
+			// Finally an etmpy collection
+			source.DataSource = new List<int> ();
+
+			Assert.AreEqual (-1, source.Position, "G1");
+			Assert.AreEqual (-1, currency_manager.Position, "G2");
 		}
 
 		[Test]
@@ -1014,6 +1038,7 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			Assert.IsTrue (curr_manager.List is BindingSource, "A3");
 			Assert.AreEqual (0, curr_manager.List.Count, "A4");
 			Assert.AreEqual (0, curr_manager.Count, "A5");
+			Assert.AreEqual (-1, curr_manager.Position, "A6");
 			Assert.IsTrue (curr_manager.Bindings != null, "A7");
 			Assert.AreEqual (0, curr_manager.Bindings.Count, "A8");
 			Assert.AreEqual (source, curr_manager.List, "A9");
@@ -1031,9 +1056,16 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			Assert.IsTrue (curr_manager.List is BindingSource, "B3");
 			Assert.AreEqual (2, curr_manager.List.Count, "B4");
 			Assert.AreEqual (2, curr_manager.Count, "B5");
+			Assert.AreEqual (0, curr_manager.Position, "B6");
 			Assert.IsTrue (curr_manager.Bindings != null, "B7");
 			Assert.AreEqual (0, curr_manager.Bindings.Count, "B8");
 			Assert.AreEqual (source, curr_manager.List, "B9");
+
+			curr_manager.Position = source.Count - 1;
+			Assert.AreEqual (1, curr_manager.Position, "C1");
+			Assert.AreEqual ("B", curr_manager.Current, "C2");
+			Assert.AreEqual (1, source.Position, "C3");
+			Assert.AreEqual ("B", source.Current, "C4");
 		}
 
 		class BindingListViewPoker : BindingList<string>, IBindingListView
@@ -1241,6 +1273,175 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 
 			Assert.IsTrue (n.IsInitialized, "2");
 			Assert.IsFalse (event_handled, "3");
+		}
+
+		//
+		// Events section
+		//
+		int iblist_raised;
+		int ilist_raised;
+		ListChangedEventArgs iblist_changed_args;
+		ListChangedEventArgs ilist_changed_args;
+		BindingSource iblist_source;
+		BindingSource ilist_source;
+
+		void ResetEventsInfo ()
+		{
+			iblist_raised = ilist_raised = 0;
+			iblist_source = new BindingSource ();
+			ilist_source = new BindingSource ();
+
+			iblist_source.ListChanged += delegate (object o, ListChangedEventArgs e)
+			{
+				iblist_raised++;
+				iblist_changed_args = e;
+			};
+			ilist_source.ListChanged += delegate (object o, ListChangedEventArgs e)
+			{
+				ilist_raised++;
+				ilist_changed_args = e;
+			};
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ListChanged_DataSourceSet ()
+		{
+			IBindingList bindinglist = new BindingList<string> ();
+			bindinglist.Add ("A");
+			IList arraylist = new ArrayList (bindinglist);
+
+			ResetEventsInfo ();
+
+			iblist_source.DataSource = bindinglist;
+			ilist_source.DataSource = arraylist;
+
+			Assert.AreEqual (2, iblist_raised, "A1");
+			Assert.AreEqual (2, ilist_raised, "A2");
+			Assert.AreEqual (ListChangedType.Reset, iblist_changed_args.ListChangedType, "A3");
+			Assert.AreEqual (ListChangedType.Reset, ilist_changed_args.ListChangedType, "A4");
+			Assert.AreEqual (-1, iblist_changed_args.NewIndex, "A5");
+			Assert.AreEqual (-1, ilist_changed_args.NewIndex, "A6");
+		}
+
+		[Test]
+		public void ListChanged_ItemAdded ()
+		{
+			IBindingList bindinglist = new BindingList<string> ();
+			bindinglist.Add ("A");
+			IList arraylist = new ArrayList (bindinglist);
+
+			ResetEventsInfo ();
+
+			iblist_source.DataSource = bindinglist;
+			ilist_source.DataSource = arraylist;
+
+			// Clear after setting DataSource generated some info
+			iblist_raised = ilist_raised = 0;
+			iblist_changed_args = ilist_changed_args = null;
+
+			iblist_source.Add ("B");
+			ilist_source.Add ("B");
+			Assert.AreEqual (1, iblist_raised, "A1");
+			Assert.AreEqual (1, ilist_raised, "A2");
+			Assert.AreEqual (ListChangedType.ItemAdded, iblist_changed_args.ListChangedType, "A3");
+			Assert.AreEqual (ListChangedType.ItemAdded, ilist_changed_args.ListChangedType, "A4");
+			Assert.AreEqual (1, iblist_changed_args.NewIndex, "A5");
+			Assert.AreEqual (1, ilist_changed_args.NewIndex, "A6");
+
+			iblist_raised = ilist_raised = 0;
+			iblist_changed_args = ilist_changed_args = null;
+
+			iblist_source.Insert (0, "C");
+			ilist_source.Insert (0, "C");
+
+			Assert.AreEqual (1, iblist_raised, "B1");
+			Assert.AreEqual (1, ilist_raised, "B2");
+			Assert.AreEqual (ListChangedType.ItemAdded, iblist_changed_args.ListChangedType, "B3");
+			Assert.AreEqual (ListChangedType.ItemAdded, ilist_changed_args.ListChangedType, "B4");
+			Assert.AreEqual (0, iblist_changed_args.NewIndex, "B5");
+			Assert.AreEqual (0, ilist_changed_args.NewIndex, "B6");
+
+			// AddNew
+			iblist_source.AddingNew += delegate (object o, AddingNewEventArgs e) { e.NewObject = "Z"; };
+			ilist_source.AddingNew += delegate (object o, AddingNewEventArgs e) { e.NewObject = "Z"; };
+
+			iblist_source.AllowNew = true;
+			ilist_source.AllowNew = true;
+
+			iblist_raised = ilist_raised = 0;
+			iblist_changed_args = ilist_changed_args = null;
+
+			iblist_source.AddNew ();
+			ilist_source.AddNew ();
+
+			Assert.AreEqual (1, iblist_raised, "C1");
+			Assert.AreEqual (1, ilist_raised, "C2");
+			Assert.AreEqual (ListChangedType.ItemAdded, iblist_changed_args.ListChangedType, "C3");
+			Assert.AreEqual (ListChangedType.ItemAdded, ilist_changed_args.ListChangedType, "C4");
+			Assert.AreEqual (3, iblist_changed_args.NewIndex, "C5");
+			Assert.AreEqual (3, ilist_changed_args.NewIndex, "C6");
+
+			iblist_raised = ilist_raised = 0;
+			iblist_changed_args = ilist_changed_args = null;
+			// This only applies to IBindingList - Direct access, not through BindingSource
+			bindinglist.Add ("D");
+
+			Assert.AreEqual (1, iblist_raised, "D1");
+			Assert.AreEqual (ListChangedType.ItemAdded, iblist_changed_args.ListChangedType, "D2");
+			Assert.AreEqual (4, iblist_changed_args.NewIndex, "D3");
+		}
+
+		[Test]
+		public void ListChanged_ItemDeleted ()
+		{
+			IBindingList bindinglist = new BindingList<string> ();
+			bindinglist.Add ("A");
+			bindinglist.Add ("B");
+			bindinglist.Add ("C");
+			IList arraylist = new ArrayList (bindinglist);
+
+			ResetEventsInfo ();
+
+			iblist_source.DataSource = bindinglist;
+			ilist_source.DataSource = arraylist;
+
+			// Clear after setting DataSource generated some info
+			iblist_raised = ilist_raised = 0;
+			iblist_changed_args = ilist_changed_args = null;
+
+			iblist_source.RemoveAt (2);
+			ilist_source.RemoveAt (2);
+
+			Assert.AreEqual (1, iblist_raised, "A1");
+			Assert.AreEqual (1, ilist_raised, "A2");
+			Assert.AreEqual (ListChangedType.ItemDeleted, iblist_changed_args.ListChangedType, "A3");
+			Assert.AreEqual (ListChangedType.ItemDeleted, ilist_changed_args.ListChangedType, "A4");
+			Assert.AreEqual (2, iblist_changed_args.NewIndex, "A5");
+			Assert.AreEqual (2, ilist_changed_args.NewIndex, "A6");
+
+			iblist_raised = ilist_raised = 0;
+			iblist_changed_args = ilist_changed_args = null;
+
+			iblist_source.Remove ("A");
+			ilist_source.Remove ("A");
+
+			Assert.AreEqual (1, iblist_raised, "B1");
+			Assert.AreEqual (1, ilist_raised, "B2");
+			Assert.AreEqual (ListChangedType.ItemDeleted, iblist_changed_args.ListChangedType, "B3");
+			Assert.AreEqual (ListChangedType.ItemDeleted, ilist_changed_args.ListChangedType, "B4");
+			Assert.AreEqual (0, iblist_changed_args.NewIndex, "B5");
+			Assert.AreEqual (0, ilist_changed_args.NewIndex, "B6");
+
+			iblist_raised = ilist_raised = 0;
+			iblist_changed_args = ilist_changed_args = null;
+
+			// This only applies to IBindingList - Direct access, not through BindingSource
+			bindinglist.Remove ("B");
+
+			Assert.AreEqual (1, iblist_raised, "C1");
+			Assert.AreEqual (ListChangedType.ItemDeleted, iblist_changed_args.ListChangedType, "C2");
+			Assert.AreEqual (0, iblist_changed_args.NewIndex, "C3");
 		}
 	}
 }
