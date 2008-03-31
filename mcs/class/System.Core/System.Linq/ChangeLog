@@ -1,3 +1,7 @@
+2008-03-31  Marek Safar  <marek.safar@gmail.com>
+
+	* Enumerable.cs: Use Math.Min and Math.Max where appropriate.
+
 2008-03-27  Leonid Freydovich  <leonidf@mainsoft.com>
 
 	* LambdaExpression.cs Add some TARGET_JVM specific code

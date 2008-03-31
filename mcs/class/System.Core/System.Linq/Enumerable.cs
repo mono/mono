@@ -1094,50 +1094,35 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
-			return Iterate (source, int.MinValue, (a, b) => a > b);
+			return Iterate (source, int.MinValue, (a, b) => Math.Max (a, b));
 		}
 
 		public static long Max (this IEnumerable<long> source)
 		{
 			Check.Source (source);
 
-			return Iterate (source, long.MinValue, (a, b) => a > b);
+			return Iterate (source, long.MinValue, (a, b) => Math.Max (a, b));
 		}
 
 		public static double Max (this IEnumerable<double> source)
 		{
 			Check.Source (source);
 
-			return Iterate (source, double.MinValue, (a, b) => a > b);
+			return Iterate (source, double.MinValue, (a, b) => Math.Max (a, b));
 		}
 
 		public static float Max (this IEnumerable<float> source)
 		{
 			Check.Source (source);
 
-			return Iterate (source, float.MinValue, (a, b) => a > b);
+			return Iterate (source, float.MinValue, (a, b) => Math.Max (a, b));
 		}
 
 		public static decimal Max (this IEnumerable<decimal> source)
 		{
 			Check.Source (source);
 
-			return Iterate (source, decimal.MinValue, (a, b) => a > b);
-		}
-
-		static T Iterate<T> (IEnumerable<T> source, T initValue, Func<T, T, bool> selector)
-		{
-			int counter = 0;
-			foreach (var element in source) {
-				if (selector (element, initValue))
-					initValue = element;
-				++counter;
-			}
-
-			if (counter == 0)
-				throw new InvalidOperationException ();
-
-			return initValue;
+			return Iterate (source, decimal.MinValue, (a, b) => Math.Max (a, b));
 		}
 
 		public static int? Max (this IEnumerable<int?> source)
@@ -1230,45 +1215,35 @@ namespace System.Linq
 		{
 			Check.SourceAndSelector (source, selector);
 
-			return Iterate (source, int.MinValue, (a, b) => {
-				var v = selector (a); return v > b ? v : b;
-			});
+			return Iterate (source, int.MinValue, (a, b) => Math.Max (selector (a), b));
 		}
 
 		public static long Max<TSource> (this IEnumerable<TSource> source, Func<TSource, long> selector)
 		{
 			Check.SourceAndSelector (source, selector);
 
-			return Iterate (source, long.MinValue, (a, b) => {
-				var v = selector (a); return v > b ? v : b;
-			});
+			return Iterate (source, long.MinValue, (a, b) => Math.Max (selector (a), b));
 		}
 
 		public static double Max<TSource> (this IEnumerable<TSource> source, Func<TSource, double> selector)
 		{
 			Check.SourceAndSelector (source, selector);
 
-			return Iterate (source, double.MinValue, (a, b) => {
-				var v = selector (a); return v > b ? v : b;
-			});
+			return Iterate (source, double.MinValue, (a, b) => Math.Max (selector (a), b));
 		}
 
 		public static float Max<TSource> (this IEnumerable<TSource> source, Func<TSource, float> selector)
 		{
 			Check.SourceAndSelector (source, selector);
 
-			return Iterate (source, float.MinValue, (a, b) => {
-				var v = selector (a); return v > b ? v : b;
-			});
+			return Iterate (source, float.MinValue, (a, b) => Math.Max (selector (a), b));
 		}
 
 		public static decimal Max<TSource> (this IEnumerable<TSource> source, Func<TSource, decimal> selector)
 		{
 			Check.SourceAndSelector (source, selector);
 
-			return Iterate (source, decimal.MinValue, (a, b) => {
-				var v = selector (a); return v > b ? v : b;
-			});
+			return Iterate (source, decimal.MinValue, (a, b) => Math.Max (selector (a), b));
 		}
 
 		static U Iterate<T, U> (IEnumerable<T> source, U initValue, Func<T, U, U> selector)
@@ -1389,35 +1364,35 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
-			return Iterate (source, int.MaxValue, (a, b) => a < b);
+			return Iterate (source, int.MaxValue, (a, b) => Math.Min (a, b));
 		}
 
 		public static long Min (this IEnumerable<long> source)
 		{
 			Check.Source (source);
 
-			return Iterate (source, long.MaxValue, (a, b) => a < b);
+			return Iterate (source, long.MaxValue, (a, b) => Math.Min (a, b));
 		}
 
 		public static double Min (this IEnumerable<double> source)
 		{
 			Check.Source (source);
 
-			return Iterate (source, double.MaxValue, (a, b) => a < b);
+			return Iterate (source, double.MaxValue, (a, b) => Math.Min (a, b));
 		}
 
 		public static float Min (this IEnumerable<float> source)
 		{
 			Check.Source (source);
 
-			return Iterate (source, float.MaxValue, (a, b) => a < b);
+			return Iterate (source, float.MaxValue, (a, b) => Math.Min (a, b));
 		}
 
 		public static decimal Min (this IEnumerable<decimal> source)
 		{
 			Check.Source (source);
 
-			return Iterate (source, decimal.MaxValue, (a, b) => a < b);
+			return Iterate (source, decimal.MaxValue, (a, b) => Math.Min (a, b));
 		}
 
 		public static int? Min (this IEnumerable<int?> source)
@@ -1491,45 +1466,35 @@ namespace System.Linq
 		{
 			Check.SourceAndSelector (source, selector);
 
-			return Iterate (source, int.MaxValue, (a, b) => {
-				var v = selector (a); return v < b ? v : b;
-			});
+			return Iterate (source, int.MaxValue, (a, b) => Math.Min (selector (a), b));
 		}
 
 		public static long Min<TSource> (this IEnumerable<TSource> source, Func<TSource, long> selector)
 		{
 			Check.SourceAndSelector (source, selector);
 
-			return Iterate (source, long.MaxValue, (a, b) => {
-				var v = selector (a); return v < b ? v : b;
-			});
+			return Iterate (source, long.MaxValue, (a, b) => Math.Min (selector (a), b));
 		}
 
 		public static double Min<TSource> (this IEnumerable<TSource> source, Func<TSource, double> selector)
 		{
 			Check.SourceAndSelector (source, selector);
 
-			return Iterate (source, double.MaxValue, (a, b) => {
-				var v = selector (a); return v < b ? v : b;
-			});
+			return Iterate (source, double.MaxValue, (a, b) => Math.Min (selector (a), b));
 		}
 
 		public static float Min<TSource> (this IEnumerable<TSource> source, Func<TSource, float> selector)
 		{
 			Check.SourceAndSelector (source, selector);
 
-			return Iterate (source, float.MaxValue, (a, b) => {
-				var v = selector (a); return v < b ? v : b;
-			});
+			return Iterate (source, float.MaxValue, (a, b) => Math.Min (selector (a), b));
 		}
 
 		public static decimal Min<TSource> (this IEnumerable<TSource> source, Func<TSource, decimal> selector)
 		{
 			Check.SourceAndSelector (source, selector);
 
-			return Iterate (source, decimal.MaxValue, (a, b) => {
-				var v = selector (a); return v < b ? v : b;
-			});
+			return Iterate (source, decimal.MaxValue, (a, b) => Math.Min (selector (a), b));
 		}
 
 		public static int? Min<TSource> (this IEnumerable<TSource> source, Func<TSource, int?> selector)
