@@ -2,6 +2,8 @@
 
 	Integrate patches from Dzintars Avots <davots@coverity.com>
 
+	* Mono.Cecil/MethodBody.cs (Clone): deals with switches.
+
 	* Mono.Cecil/MethodBody.cs (Clone): clone the name of
 	the local variables.
 
