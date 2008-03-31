@@ -1,3 +1,7 @@
+2008-03-31 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* AssemblyRunner.cs: Mark TypeLoadException as invalid code.
+
 2008-03-25 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* valid_branch_to_first_prefix.il: Test branching to the first prefix
