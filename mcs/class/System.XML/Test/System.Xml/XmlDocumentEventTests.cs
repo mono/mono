@@ -90,11 +90,11 @@ namespace MonoTests.System.Xml
 			el.AppendChild (document.CreateTextNode ("simple text node."));
 			document.AppendChild (el);
 			AssertEquals (
-@"Inserting: Text into Element.
-Inserted: Text into Element.
-Inserting: Element into Document.
-Inserted: Element into Document.
-", EventLog);
+				"Inserting: Text into Element.\n" +
+				"Inserted: Text into Element.\n" +
+				"Inserting: Element into Document.\n" +
+				"Inserted: Element into Document.\n",
+				EventLog);
 		}
 
 		[Test]
@@ -105,13 +105,13 @@ Inserted: Element into Document.
 			SetEvents (doc);
 			doc.DocumentElement.RemoveAll ();
 			AssertEquals (
-@"Removing: Attribute from Element.
-Removed: Attribute from Element.
-Inserting: Text into Attribute.
-Inserted: Text into Attribute.
-Inserting: Attribute into Element.
-Inserted: Attribute into Element.
-", EventLog);
+				"Removing: Attribute from Element.\n" +
+				"Removed: Attribute from Element.\n" +
+				"Inserting: Text into Attribute.\n" +
+				"Inserted: Text into Attribute.\n" +
+				"Inserting: Attribute into Element.\n" +
+				"Inserted: Attribute into Element.\n",
+				EventLog);
 		}
 	}
 }
