@@ -1,5 +1,11 @@
 2008-03-31  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mini_emit_inst_for_method): Use LEA in the get_Chars 
+	implementation.
+
+	* mini-amd64.c (mono_arch_output_basic_block): Avoid a rex prefix in
+	LOADU1/LOADU2_MEMBASE.
+
 	* mini-s390.c (mono_arch_emit_call): Fix a problem when passing a vtype address 
 	on the stack.
 	

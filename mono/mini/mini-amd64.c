@@ -2629,7 +2629,7 @@ emit_move_return_value (MonoCompile *cfg, MonoInst *ins, guint8 *code)
 			/* Pop the destination address from the stack */
 			amd64_alu_reg_imm (code, X86_ADD, AMD64_RSP, 8);
 			amd64_pop_reg (code, AMD64_RCX);
-			
+
 			for (quad = 0; quad < 2; quad ++) {
 				switch (cinfo->ret.pair_storage [quad]) {
 				case ArgInIReg:
@@ -2924,13 +2924,15 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			amd64_mov_reg_membase (code, ins->dreg, ins->inst_basereg, ins->inst_offset, 4);
 			break;
 		case OP_LOADU1_MEMBASE:
-			amd64_widen_membase (code, ins->dreg, ins->inst_basereg, ins->inst_offset, FALSE, FALSE);
+			/* The cpu zero extends the result into 64 bits */
+			amd64_widen_membase_size (code, ins->dreg, ins->inst_basereg, ins->inst_offset, FALSE, FALSE, 4);
 			break;
 		case OP_LOADI1_MEMBASE:
 			amd64_widen_membase (code, ins->dreg, ins->inst_basereg, ins->inst_offset, TRUE, FALSE);
 			break;
 		case OP_LOADU2_MEMBASE:
-			amd64_widen_membase (code, ins->dreg, ins->inst_basereg, ins->inst_offset, FALSE, TRUE);
+			/* The cpu zero extends the result into 64 bits */
+			amd64_widen_membase_size (code, ins->dreg, ins->inst_basereg, ins->inst_offset, FALSE, TRUE, 4);
 			break;
 		case OP_LOADI2_MEMBASE:
 			amd64_widen_membase (code, ins->dreg, ins->inst_basereg, ins->inst_offset, TRUE, TRUE);

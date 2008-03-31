@@ -1001,6 +1001,18 @@ static int ccount = 0;
             } \
     } while (0)
 
+#if defined(__i386__) || defined(__x86_64__)
+#define EMIT_NEW_X86_LEA(cfg,dest,sr1,sr2,shift,imm) do { \
+		MONO_INST_NEW (cfg, dest, OP_X86_LEA); \
+		(dest)->dreg = alloc_preg ((cfg)); \
+		(dest)->sreg1 = (sr1); \
+		(dest)->sreg2 = (sr2); \
+		(dest)->inst_imm = (imm); \
+		(dest)->backend.shift_amount = (shift); \
+		MONO_ADD_INS ((cfg)->cbb, (dest)); \
+	} while (0)
+#endif
+			
 #define ADD_BINOP(op) do {	\
 		MONO_INST_NEW (cfg, ins, (op));	\
 		sp -= 2;	\
@@ -3852,7 +3864,6 @@ mini_emit_ldelema_1_ins (MonoCompile *cfg, MonoClass *klass, MonoInst *arr, Mono
 	size = mono_class_array_element_size (klass);
 
 	mult_reg = alloc_preg (cfg);
-	add_reg = alloc_preg (cfg);
 	array_reg = arr->dreg;
 	index_reg = index->dreg;
 
@@ -3866,38 +3877,18 @@ mini_emit_ldelema_1_ins (MonoCompile *cfg, MonoClass *klass, MonoInst *arr, Mono
 
 	MONO_EMIT_BOUNDS_CHECK (cfg, array_reg, MonoArray, max_length, index2_reg);
 
-#ifdef __i386__
+#if defined(__i386__) || defined(__x86_64__)
 	if (size == 1 || size == 2 || size == 4 || size == 8) {
 		static const int fast_log2 [] = { 1, 0, 1, -1, 2, -1, -1, -1, 3 };
-		MONO_INST_NEW (cfg, ins, OP_X86_LEA);
-		ins->dreg = add_reg;
-		ins->sreg1 = array_reg;
-		ins->sreg2 = index_reg;
-		ins->inst_imm = G_STRUCT_OFFSET (MonoArray, vector);
-		ins->backend.shift_amount = fast_log2 [size];
+
+		EMIT_NEW_X86_LEA (cfg, ins, array_reg, index2_reg, fast_log2 [size], G_STRUCT_OFFSET (MonoArray, vector));
 		ins->type = STACK_PTR;
-		MONO_ADD_INS (cfg->cbb, ins);
 
 		return ins;
 	}
 #endif		
 
-#ifdef __x86_64__
-	if (size == 1 || size == 2 || size == 4 || size == 8) {
-		static const int fast_log2 [] = { 1, 0, 1, -1, 2, -1, -1, -1, 3 };
-
-		MONO_INST_NEW (cfg, ins, OP_X86_LEA);
-		ins->dreg = add_reg;
-		ins->sreg1 = array_reg;
-		ins->sreg2 = index2_reg;
-		ins->inst_imm = G_STRUCT_OFFSET (MonoArray, vector);
-		ins->backend.shift_amount = fast_log2 [size];
-		ins->type = STACK_PTR;
-		MONO_ADD_INS (cfg->cbb, ins);
-
-		return ins;
-	}
-#endif		
+	add_reg = alloc_preg (cfg);
 
 	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_MUL_IMM, mult_reg, index2_reg, size);
 	MONO_EMIT_NEW_BIALU (cfg, OP_PADD, add_reg, array_reg, mult_reg);
@@ -4034,10 +4025,20 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			index_reg = args [1]->dreg;
 #endif	
 			MONO_EMIT_BOUNDS_CHECK (cfg, args [0]->dreg, MonoString, length, index_reg);
+
+#if defined(__i386__) || defined(__x86_64__)
+			EMIT_NEW_X86_LEA (cfg, ins, args [0]->dreg, index_reg, 1, G_STRUCT_OFFSET (MonoString, chars));
+			add_reg = ins->dreg;
+			/* Avoid a warning */
+			mult_reg = 0;
+			EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOADU2_MEMBASE, dreg, 
+								   add_reg, 0);
+#else
 			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SHL_IMM, mult_reg, index_reg, 1);
 			MONO_EMIT_NEW_BIALU (cfg, OP_PADD, add_reg, mult_reg, args [0]->dreg);
 			EMIT_NEW_LOAD_MEMBASE (cfg, ins, OP_LOADU2_MEMBASE, dreg, 
 								   add_reg, G_STRUCT_OFFSET (MonoString, chars));
+#endif
 			type_from_op (ins, NULL, NULL);
 			return ins;
 		} else if (strcmp (cmethod->name, "get_Length") == 0) {
