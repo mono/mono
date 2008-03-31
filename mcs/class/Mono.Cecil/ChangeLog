@@ -2,6 +2,13 @@
 
 	Integrate patches from Dzintars Avots <davots@coverity.com>
 
+	* Mono.Cecil/GenericParameter.cs
+	  Mono.Cecil/TypeDefinition.cs
+	  Mono.Cecil/DefaultImporter.cs
+	  Mono.Cecil/MethodDefinition.cs:
+		Fix generic parameter cloning to avoid issues when
+		the constraint reference the parameter itself.
+
 	* Mono.Cecil/MethodBody.cs (Clone): deals with switches.
 
 	* Mono.Cecil/MethodBody.cs (Clone): clone the name of
