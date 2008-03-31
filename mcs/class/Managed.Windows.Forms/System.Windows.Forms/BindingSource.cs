@@ -46,6 +46,7 @@ namespace System.Windows.Forms {
 		//bool list_defaulted;
 		Type item_type;
 		bool item_has_default_ctor;
+		bool list_is_ibinding;
 
 		object datasource;
 		string datamember;
@@ -55,8 +56,6 @@ namespace System.Windows.Forms {
 		bool allow_new_set;
 		bool allow_new;
 		bool suspended;
-
-		int position = -1;
 
 		public BindingSource (IContainer container) : this ()
 		{
@@ -70,9 +69,8 @@ namespace System.Windows.Forms {
 
 			raise_list_changed_events = true;
 
-			currency_manager = new CurrencyManager (this);
-
 			ResetList ();
+			ConnectCurrencyManager ();
 		}
 
 		public BindingSource () : this (null, String.Empty)
@@ -115,6 +113,14 @@ namespace System.Windows.Forms {
 			return l;
 		}
 
+		void ConnectCurrencyManager ()
+		{
+			currency_manager = new CurrencyManager (this);
+
+			currency_manager.PositionChanged += delegate (object o, EventArgs args) { OnPositionChanged (args); };
+			currency_manager.CurrentChanged += delegate (object o, EventArgs args) { OnCurrentChanged (args); };
+		}
+
 		void ResetList ()
 		{
 			IList l;
@@ -151,11 +157,26 @@ namespace System.Windows.Forms {
 
 		void SetList (IList l)
 		{
+			if (list is IBindingList)
+				((IBindingList) list).ListChanged -= IBindingListChangedHandler;
+
 			list = l;
 			item_type = ListBindingHelper.GetListItemType (list);
 			item_has_default_ctor = item_type.GetConstructor (new Type [0]) != null;
+
+			list_is_ibinding = list is IBindingList;
+			if (list_is_ibinding)
+				((IBindingList) list).ListChanged += IBindingListChangedHandler;
+
+			if (raise_list_changed_events)
+				OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, -1));
 		}
 
+		void IBindingListChangedHandler (object o, ListChangedEventArgs args)
+		{
+			if (raise_list_changed_events)
+				OnListChanged (args);
+		}
 
 		[Browsable (false)]
 		public virtual bool AllowEdit {
@@ -226,8 +247,6 @@ namespace System.Windows.Forms {
 		[Browsable (false)]
 		public virtual int Count {
 			get {
-				if (list == null)
-					return -1;
 				return list.Count;
 			}
 		}
@@ -277,8 +296,6 @@ namespace System.Windows.Forms {
 					datamember = String.Empty;
 
 					ResetList ();
-
-					position = 0;
 
 					OnDataSourceChanged (EventArgs.Empty);
 				}
@@ -333,15 +350,14 @@ namespace System.Windows.Forms {
 		[DefaultValue (-1)]
 		[Browsable (false)]
 		public int Position {
-			get { return position; }
+			get {
+				return currency_manager.Position;
+			}
 			set {
 				if (value >= Count) value = Count - 1;
 				if (value < 0) value = 0;
 
-				if (position != value) {
-					position = value;
-					OnPositionChanged (EventArgs.Empty);
-				}
+				currency_manager.Position = value;
 			}
 		}
 
@@ -499,8 +515,11 @@ namespace System.Windows.Forms {
 			if (list.IsFixedSize)
 				throw new NotSupportedException ("Collection has a fixed size.");
 
+			int idx = list.Add (value);
+			if (raise_list_changed_events && !list_is_ibinding)
+				OnListChanged (new ListChangedEventArgs (ListChangedType.ItemAdded, idx));
 
-			return list.Add (value);
+			return idx;
 		}
 
 		public virtual object AddNew ()
@@ -522,24 +541,19 @@ namespace System.Windows.Forms {
 			if (new_object != null) {
 				if (!item_type.IsAssignableFrom (new_object.GetType ()))
 					throw new InvalidOperationException ("Objects added to the list must all be of the same type.");
-
-				list.Add (new_object);
-				return new_object;
-			}
-
-			// if the list is a IBindingList, try to use IBindingList.AddNew
-			if (list is IBindingList)
+			} else if (list is IBindingList)
 				return ((IBindingList)list).AddNew ();
-
-			if (!item_has_default_ctor)
+			else if (!item_has_default_ctor)
 				throw new InvalidOperationException ("AddNew cannot be called on '" + item_type.Name +
 						", since it does not have a public default ctor. Set AllowNew to true " +
 						", handling AddingNew and creating the appropriate object.");
+			else // fallback to default .ctor
+				new_object = Activator.CreateInstance (item_type);
 
+			int idx = list.Add (new_object);
+			if (raise_list_changed_events && !list_is_ibinding)
+				OnListChanged (new ListChangedEventArgs (ListChangedType.ItemAdded, idx));
 
-			// fallback to default .ctor
-			new_object = Activator.CreateInstance (item_type);
-			list.Add (new_object);
 			return new_object;
 		}
 
@@ -629,10 +643,12 @@ namespace System.Windows.Forms {
 				throw new ArgumentOutOfRangeException ("index");
 			if (list.IsReadOnly || list.IsFixedSize)
 				throw new NotSupportedException ();
-			if (item_type.IsAssignableFrom (value.GetType ()))
+			if (!item_type.IsAssignableFrom (value.GetType ()))
 				throw new ArgumentException ("value");
 
 			list.Insert (index, value);
+			if (raise_list_changed_events && !list_is_ibinding)
+				OnListChanged (new ListChangedEventArgs (ListChangedType.ItemAdded, index));
 		}
 
 		public void MoveFirst ()
@@ -725,7 +741,11 @@ namespace System.Windows.Forms {
 			if (list.IsFixedSize)
 				throw new NotSupportedException ("Collection has a fixed size.");
 
+			int idx = list_is_ibinding ? - 1 : list.IndexOf (value);
 			list.Remove (value);
+
+			if (idx != -1 && raise_list_changed_events)
+				OnListChanged (new ListChangedEventArgs (ListChangedType.ItemDeleted, idx));
 		}
 
 		public virtual void RemoveAt (int index)
@@ -736,6 +756,8 @@ namespace System.Windows.Forms {
 				throw new InvalidOperationException ();
 
 			list.RemoveAt (index);
+			if (raise_list_changed_events && !list_is_ibinding)
+				OnListChanged (new ListChangedEventArgs (ListChangedType.ItemDeleted, index));
 		}
 
 		public void RemoveCurrent ()
