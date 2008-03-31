@@ -679,7 +679,7 @@ namespace MonoTests.System.XmlSerialization
 			CodeDomProvider provider = new CSharpCodeProvider ();
 			ICodeGenerator generator = provider.CreateGenerator ();
 			generator.GenerateCodeFromNamespace (codeNamespace, sw, new CodeGeneratorOptions ());
-			Console.WriteLine (sw.ToString ());
+
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"{0}{0}" +
 				"/// <remarks/>{0}" +
