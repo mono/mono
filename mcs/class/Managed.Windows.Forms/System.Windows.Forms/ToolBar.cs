@@ -912,7 +912,13 @@ namespace System.Windows.Forms
 
 		internal override void OnPaintInternal (PaintEventArgs pevent)
 		{
+			if (GetStyle (ControlStyles.UserPaint))
+				return;
+				
 			ThemeEngine.Current.DrawToolBar (pevent.Graphics, pevent.ClipRectangle, this);
+			
+			// Toolbars do not raise OnPaint unless UserPaint is set
+			pevent.Handled = true;
 		}
 
 		internal void Redraw (bool recalculate)
