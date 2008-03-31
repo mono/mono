@@ -3087,29 +3087,19 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			s390_lr  (code, ins->dreg, s390_r0);
 		}
 			break;
+
 		case OP_ICONV_TO_I1: {
-			s390_lhi  (code, s390_r0, 0x80);
-			if (ins->dreg != ins->sreg1) {
+			if (ins->dreg != ins->sreg1)
 				s390_lr	  (code, ins->dreg, ins->sreg1);
-			}
-			s390_nr   (code, s390_r0, ins->sreg1);
-			s390_jz   (code, 7);
-			s390_lhi  (code, s390_r13, -1);
-			s390_sll  (code, s390_r13, 0, 8);
-			s390_or	  (code, ins->dreg, s390_r13);
+			s390_sll (code, ins->dreg, 0, 24);
+			s390_sra (code, ins->dreg, 0, 24);
 		}
 			break;
 		case OP_ICONV_TO_I2: {
-			s390_lhi  (code, s390_r0, 0x80);
-			s390_sll  (code, s390_r0, 0, 8);
-			if (ins->dreg != ins->sreg1) {
-				s390_lr   (code, ins->dreg, ins->sreg1);
-			}
-			s390_nr   (code, s390_r0, ins->sreg1);
-			s390_jz   (code, 7);
-			s390_lhi  (code, s390_r13, -1);
-			s390_sll  (code, s390_r13, 0, 16);
-			s390_or	  (code, ins->dreg, s390_r13);
+			if (ins->dreg != ins->sreg1)
+				s390_lr	  (code, ins->dreg, ins->sreg1);
+			s390_sll (code, ins->dreg, 0, 16);
+			s390_sra (code, ins->dreg, 0, 16);
 		}
 			break;
 		case OP_ICONV_TO_U1: {

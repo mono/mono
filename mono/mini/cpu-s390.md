@@ -223,10 +223,9 @@ int_mul_ovf_un: dest:i src1:i src2:i len:20
 
 int_neg: dest:i src1:i len:4
 int_not: dest:i src1:i len:8
-int_conv_to_i1: dest:i src1:i len:26
-int_conv_to_i2: dest:i src1:i len:26
+int_conv_to_i1: dest:i src1:i len:16
+int_conv_to_i2: dest:i src1:i len:16
 int_conv_to_i4: dest:i src1:i len:2
-int_conv_to_i: dest:i src1:i len:2
 int_conv_to_r4: dest:f src1:i len:4
 int_conv_to_r8: dest:f src1:i len:4
 int_conv_to_u1: dest:i src1:i len:8

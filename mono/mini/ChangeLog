@@ -1,3 +1,9 @@
+2008-04-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-s390.c (mono_arch_output_basic_block): Fix OP_ICONV_TO_I1/I2.
+
+	* basic.cs: Add new tests.
+
 2008-03-31  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mini_emit_inst_for_method): Use LEA in the get_Chars 
