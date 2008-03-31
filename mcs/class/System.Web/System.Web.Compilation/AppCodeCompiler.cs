@@ -637,7 +637,7 @@ namespace System.Web.Compilation
 
 			if (!haveCode)
 				return;
-
+			
 			HttpRuntime.EnableAssemblyMapping (true);
 			string[] binAssemblies = HttpApplication.BinDirectoryAssemblies;
 			
@@ -645,6 +645,8 @@ namespace System.Web.Compilation
 				aca.Build (binAssemblies);
 			_alreadyCompiled = true;
 			DefaultAppCodeAssemblyName = Path.GetFileNameWithoutExtension (defasm.OutputAssemblyName);
+
+			RunAppInitialize ();
 			
 			if (haveCustomProfile && providerTypeName != null) {
 				if (Type.GetType (providerTypeName, false) == null) {
@@ -664,6 +666,42 @@ namespace System.Web.Compilation
 			}
 		}
 
+		// Documented (sort of...) briefly in:
+		//
+		//   http://quickstarts.asp.net/QuickStartv20/aspnet/doc/extensibility.aspx
+		//   http://msdn2.microsoft.com/en-us/library/system.web.hosting.virtualpathprovider.aspx
+		void RunAppInitialize ()
+		{
+			MethodInfo mi = null, tmi;
+			Type[] types;
+			
+			foreach (Assembly asm in BuildManager.CodeAssemblies) {
+				types = asm.GetExportedTypes ();
+				if (types == null || types.Length == 0)
+					continue;
+
+				foreach (Type type in types) {
+					tmi = type.GetMethod ("AppInitialize",
+							      BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase,
+							      null,
+							      new Type[0],
+							      null);
+					if (tmi == null)
+						continue;
+
+					if (mi != null)
+						throw new HttpException ("The static AppInitialize method found in more than one type in the App_Code directory.");
+
+					mi = tmi;
+				}
+			}
+
+			if (mi == null)
+				return;
+
+			mi.Invoke (null, null);
+		}
+		
 		private bool CollectFiles (string dir, AppCodeAssembly aca)
 		{
 			bool haveFiles = false;
