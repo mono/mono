@@ -1,3 +1,9 @@
+2008-03-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlAttributeTests.cs: Use Assert instead of deprecated Assertion
+	class. Improved a few tests. Added link to MS bug report for regression
+	in .NET 2.0. Numbered tests.
+
 2008-02-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlParserContextTests.cs : they are working. case #3 should not
