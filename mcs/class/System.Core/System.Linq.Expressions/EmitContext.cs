@@ -54,9 +54,10 @@ namespace System.Linq.Expressions {
 
 		public static EmitContext Create (LambdaExpression lambda)
 		{
+#if !NET_2_1
 			if (Environment.GetEnvironmentVariable ("LINQ_DBG") != null)
 				return new DebugEmitContext (lambda);
-
+#endif
 			return new DynamicEmitContext (lambda);
 		}
 
@@ -186,6 +187,7 @@ namespace System.Linq.Expressions {
 		}
 	}
 
+#if !NET_2_1
 	class DebugEmitContext : EmitContext {
 
 		DynamicEmitContext dynamic_context;
@@ -217,4 +219,5 @@ namespace System.Linq.Expressions {
 			return dynamic_context.CreateDelegate ();
 		}
 	}
+#endif
 }

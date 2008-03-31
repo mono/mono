@@ -1,3 +1,8 @@
+2008-03-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* 82078.xsd: Added new complex type as test for duplicate field
+	name.
+
 2008-02-19  Atsushi Enomoto <atsushi@ximian.com>
 
 	* 361818.xsd, 361818-2.xsd, 361818-3.xsd : new test files.

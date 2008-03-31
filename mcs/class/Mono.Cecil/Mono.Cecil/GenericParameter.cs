@@ -169,6 +169,15 @@ namespace Mono.Cecil {
 			m_owner = owner;
 		}
 
+		internal static void CloneInto (IGenericParameterProvider old, IGenericParameterProvider np, ImportContext	context)
+		{
+			foreach (GenericParameter gp in old.GenericParameters) {
+				GenericParameter ngp = Clone (gp, context);
+				np.GenericParameters.Add (ngp);
+				CloneConstraints (gp, ngp, context);
+			}
+		}
+
 		internal static GenericParameter Clone (GenericParameter gp, ImportContext context)
 		{
 			GenericParameter ngp;
@@ -182,12 +191,16 @@ namespace Mono.Cecil {
 			ngp.Position = gp.Owner.GenericParameters.IndexOf (gp);
 			ngp.Attributes = gp.Attributes;
 
-			foreach (TypeReference constraint in gp.Constraints)
-				ngp.Constraints.Add (context.Import (constraint));
 			foreach (CustomAttribute ca in gp.CustomAttributes)
 				ngp.CustomAttributes.Add (CustomAttribute.Clone (ca, context));
 
 			return ngp;
+		}
+
+		static void CloneConstraints (GenericParameter gp, GenericParameter ngp, ImportContext context)
+		{
+			foreach (TypeReference constraint in gp.Constraints)
+				ngp.Constraints.Add (context.Import (constraint));
 		}
 	}
 }

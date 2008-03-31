@@ -1,3 +1,11 @@
+2008-03-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlSerializationReaderTests.cs: Marked HandleOutAttributeParameters
+	test as NotDotNet on 1.0 profile.
+	* XmlCodeExporterTests.cs: Improved test for duplicate identifiers.
+	Fixed ExportTypeMapping_Root and ExportTypeMapping_Field tests to
+	pass on .NET 2.0.
+
 2008-02-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSchemasTests.cs : new test file (for bug #360541).

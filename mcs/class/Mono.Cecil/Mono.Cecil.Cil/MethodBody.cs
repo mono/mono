@@ -121,6 +121,7 @@ namespace Mono.Cecil.Cil {
 
 			foreach (VariableDefinition var in body.Variables)
 				nb.Variables.Add (new VariableDefinition (
+					var.Name, var.Index, parent,
 					context.Import (var.VariableType)));
 
 			foreach (Instruction instr in body.Instructions) {
@@ -160,6 +161,7 @@ namespace Mono.Cecil.Cil {
 					break;
 				case OperandType.ShortInlineBrTarget :
 				case OperandType.InlineBrTarget :
+				case OperandType.InlineSwitch :
 					break;
 				default :
 					ni.Operand = instr.Operand;
@@ -171,11 +173,18 @@ namespace Mono.Cecil.Cil {
 
 			for (int i = 0; i < body.Instructions.Count; i++) {
 				Instruction instr = nb.Instructions [i];
-				if (instr.OpCode.OperandType != OperandType.ShortInlineBrTarget &&
-					instr.OpCode.OperandType != OperandType.InlineBrTarget)
-					continue;
+				Instruction oldi = body.Instructions [i];
 
-				instr.Operand = GetInstruction (body, nb, (Instruction) body.Instructions [i].Operand);
+				if (instr.OpCode.OperandType == OperandType.InlineSwitch) {
+					Instruction [] olds = (Instruction []) oldi.Operand;
+					Instruction [] targets = new Instruction [olds.Length];
+
+					for (int j = 0; j < targets.Length; j++)
+						targets [i] = GetInstruction (body, nb, olds [i]);
+
+					instr.Operand = targets;
+				} else if (instr.OpCode.OperandType == OperandType.ShortInlineBrTarget || instr.OpCode.OperandType == OperandType.InlineBrTarget)
+					instr.Operand = GetInstruction (body, nb, (Instruction) oldi.Operand);
 			}
 
 			foreach (ExceptionHandler eh in body.ExceptionHandlers) {

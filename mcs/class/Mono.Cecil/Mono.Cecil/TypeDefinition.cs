@@ -447,8 +447,7 @@ namespace Mono.Cecil {
 
 			context.GenericContext.Type = nt;
 
-			foreach (GenericParameter p in type.GenericParameters)
-				nt.GenericParameters.Add (GenericParameter.Clone (p, context));
+			GenericParameter.CloneInto (type, nt, context);
 
 			if (type.BaseType != null)
 				nt.BaseType = context.Import (type.BaseType);

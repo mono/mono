@@ -157,8 +157,7 @@ namespace Mono.Cecil {
 
 			context.GenericContext.Type = type;
 
-			foreach (GenericParameter gp in t.GenericParameters)
-				type.GenericParameters.Add (GenericParameter.Clone (gp, context));
+			GenericParameter.CloneInto (t, type, context);
 
 			m_module.TypeReferences.Add (type);
 			return type;
@@ -222,8 +221,7 @@ namespace Mono.Cecil {
 			context.GenericContext.Method = meth;
 			context.GenericContext.Type = contextType;
 
-			foreach (GenericParameter gp in mr.GenericParameters)
-				meth.GenericParameters.Add (GenericParameter.Clone (gp, context));
+			GenericParameter.CloneInto (mr, meth, context);
 
 			meth.ReturnType.ReturnType = ImportTypeReference (mr.ReturnType.ReturnType, context);
 

@@ -573,8 +573,7 @@ namespace Mono.Cecil {
 
 			context.GenericContext.Method = nm;
 
-			foreach (GenericParameter p in meth.GenericParameters)
-				nm.GenericParameters.Add (GenericParameter.Clone (p, context));
+			GenericParameter.CloneInto (meth, nm, context);
 
 			nm.ReturnType.ReturnType = context.Import (meth.ReturnType.ReturnType);
 
