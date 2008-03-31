@@ -1,3 +1,8 @@
+2008-03-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-s390.c (mono_arch_output_basic_block): Fix SUBCC implementation.
+	(mono_arch_decompose_long_opts): Remove LSUB, the generic code works on s390 too.
+
 2008-03-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-codegen.c (mono_local_regalloc): Add asserts for some situations which are
@@ -1040,7 +1045,6 @@ Mon Mar 10 11:59:34 CET 2008 Paolo Molaro <lupus@ximian.com>
 
 2008-02-06  Zoltan Varga  <vargaz@gmail.com>
 
-=======
 	* mini-s390.c (mono_arch_get_inst_for_method): Remove the Interlocked cases
 	as they are handled in mini.c.
 
@@ -1066,7 +1070,6 @@ Mon Mar 10 11:59:34 CET 2008 Paolo Molaro <lupus@ximian.com>
 
 2008-02-06  Zoltan Varga  <vargaz@gmail.com>
 
->>>>>>> .merge-right.r95529
 	* tramp-amd64.c (mono_arch_patch_callsite): Add more diagnostics.
 
 	* inssel.brg mini-<ARCH>.c cpu-<ARCH>.md: Get rid of unused CEE_RET opcode.

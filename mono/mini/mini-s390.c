@@ -3338,7 +3338,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_SUBCC:
 		case OP_ISUBCC: {
 			CHECK_SRCDST_NCOM;
-			s390_sr (code, ins->dreg, src2);
+			s390_slr (code, ins->dreg, src2);
 		}
 			break;
 		case OP_ISUB: {
@@ -5360,11 +5360,14 @@ mono_arch_decompose_opts (MonoCompile *cfg, MonoInst *ins)
 void
 mono_arch_decompose_long_opts (MonoCompile *cfg, MonoInst *ins)
 {
+	// The generic code seems to work for OP_LSUB fine on s390, why is a different
+	// implementation needed ? gcc also seems to use the different implementation.
+	// FIXME: What about the other OP_L opcodes below ?
+
 	switch (ins->opcode) {
 	case OP_LADD:
 	case OP_LADD_OVF:
 	case OP_LADD_OVF_UN:
-	case OP_LSUB:
 	case OP_LSUB_OVF:
 	case OP_LSUB_OVF_UN: {
 		int opcode = 0;
