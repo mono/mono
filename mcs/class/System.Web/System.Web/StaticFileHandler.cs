@@ -32,6 +32,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Web.Util;
+using System.Web.Hosting;
 
 namespace System.Web
 {
@@ -60,6 +61,25 @@ namespace System.Web
 		{
 			HttpRequest request = context.Request;
 			HttpResponse response = context.Response;
+
+#if NET_2_0
+			if (HostingEnvironment.HaveCustomVPP) {
+				VirtualFile vf = null;
+				VirtualPathProvider vpp = HostingEnvironment.VirtualPathProvider;
+				string vpath = request.FilePath;
+				
+				if (vpp.FileExists (vpath))
+					vf = vpp.GetFile (vpath);
+
+				if (vf == null)
+					throw new HttpException (404, "Path '" + vpath + "' was not found.", vpath);
+
+				response.ContentType = MimeTypes.GetMimeType (vpath);
+				response.TransmitFile (vf);
+				return;
+			}
+#endif
+			
 			string fileName = request.PhysicalPath;
 			FileInfo fi = new FileInfo (fileName);
 			if (!fi.Exists || !ValidFileName (fileName))
@@ -69,7 +89,7 @@ namespace System.Web
 				response.Redirect (request.Path + '/');
 				return;
 			}
-
+			
 			string strHeader = request.Headers ["If-Modified-Since"];
 			try {
 				if (strHeader != null) {
@@ -103,7 +123,6 @@ namespace System.Web
 			try {
 				DateTime lastWT = fi.LastWriteTime.ToUniversalTime ();
 				response.AddHeader ("Last-Modified", lastWT.ToString ("r"));
-
 				response.ContentType = MimeTypes.GetMimeType (fileName);
 				response.TransmitFile (fileName, true);
 			} catch (Exception) {
