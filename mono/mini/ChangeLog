@@ -1,3 +1,16 @@
+2008-03-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.c cpu-x86.md inssel-x86.brg: Add min/max intrinsics.
+
+	* mini-amd64.c mini-amd64.h cpu-amd64.md: Get rid of the non-SSE2 floating point
+	code.
+
+2008-03-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_get_this_arg_reg): Add a 'gsctx' argument and pass it
+	to get_call_info.
+	(get_call_info): Take a gsctx argument instead of 'cfg'.
+
 2008-03-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (check_for_method_verify): Avoid verifying mscorlib methods even if
