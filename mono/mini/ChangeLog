@@ -1,5 +1,8 @@
 2008-03-31  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-s390.c (mono_arch_emit_call): Fix a problem when passing a vtype address 
+	on the stack.
+	
 	* mini-s390.c (mono_arch_output_basic_block): Fix SUBCC implementation.
 	(mono_arch_decompose_long_opts): Remove LSUB, the generic code works on s390 too.
 

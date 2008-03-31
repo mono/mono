@@ -2378,7 +2378,16 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 				int treg = mono_alloc_preg (cfg);
 				MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ADD_IMM, treg, 
 										 STK_BASE, ainfo->offparm);
-				mono_call_inst_add_outarg_reg (cfg, call, treg, ainfo->reg, FALSE);
+				if (ainfo->reg == STK_BASE) {
+					/* The address is passed on the stack */
+					MONO_INST_NEW (cfg, ins, OP_STORE_MEMBASE_REG);
+					ins->inst_destbasereg = STK_BASE;
+					ins->inst_offset = ainfo->offset;
+					ins->sreg1 = treg;
+					MONO_ADD_INS (cfg->cbb, ins);
+				} else {
+					mono_call_inst_add_outarg_reg (cfg, call, treg, ainfo->reg, FALSE);
+				}
 			}
 			break;
 		}
