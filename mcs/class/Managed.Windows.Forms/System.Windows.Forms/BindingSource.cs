@@ -55,7 +55,6 @@ namespace System.Windows.Forms {
 
 		bool allow_new_set;
 		bool allow_new;
-		bool suspended;
 
 		public BindingSource (IContainer container) : this ()
 		{
@@ -119,6 +118,10 @@ namespace System.Windows.Forms {
 
 			currency_manager.PositionChanged += delegate (object o, EventArgs args) { OnPositionChanged (args); };
 			currency_manager.CurrentChanged += delegate (object o, EventArgs args) { OnCurrentChanged (args); };
+			currency_manager.BindingComplete += delegate (object o, BindingCompleteEventArgs args) { OnBindingComplete (args); };
+			currency_manager.DataError += delegate (object o, BindingManagerDataErrorEventArgs args) { OnDataError (args); };
+			currency_manager.CurrentChanged += delegate (object o, EventArgs args) { OnCurrentChanged (args); };
+			currency_manager.CurrentItemChanged += delegate (object o, EventArgs args) { OnCurrentItemChanged (args); };
 		}
 
 		void ResetList ()
@@ -310,7 +313,7 @@ namespace System.Windows.Forms {
 
 		[Browsable (false)]
 		public bool IsBindingSuspended {
-			get { return suspended; }
+			get { return currency_manager.IsBindingSuspended; }
 		}
 
 		[Browsable (false)]
@@ -580,6 +583,8 @@ namespace System.Windows.Forms {
 				throw new NotSupportedException ("Collection is read-only.");
 
 			list.Clear ();
+			if (raise_list_changed_events && !list_is_ibinding)
+				OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, -1));
 		}
 
 		public virtual bool Contains (object value)
@@ -762,7 +767,12 @@ namespace System.Windows.Forms {
 
 		public void RemoveCurrent ()
 		{
-			throw new NotImplementedException ();
+			if (Position < 0)
+				throw new InvalidOperationException ("Cannot remove item because there is no current item.");
+			if (!AllowRemove)
+				throw new InvalidOperationException ("Cannot remove item because list does not allow removal of items.");
+
+			RemoveAt (Position);
 		}
 
 		public virtual void RemoveFilter ()
@@ -801,14 +811,12 @@ namespace System.Windows.Forms {
 
 		public void ResumeBinding ()
 		{
-			suspended = false;
-			throw new NotImplementedException ();
+			currency_manager.ResumeBinding ();
 		}
 
 		public void SuspendBinding ()
 		{
-			suspended = true;
-			throw new NotImplementedException ();
+			currency_manager.SuspendBinding ();
 		}
 
 		/* explicit interface implementations */

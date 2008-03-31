@@ -1,5 +1,12 @@
 2008-03-30  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* BindingSource.cs: IsBindingSuspended, ResumeBinding and
+	SuspendBinding depend on CurrencyManager. Implement RemoveCurrent,
+	hookup the remaining events related to CurrencyManager, and fire
+	OnListChanged also for the Clear () method.
+
+2008-03-30  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* BindingSource.cs: Use Current and Position implementations in
 	CurrencyManager instead of using our own routines, since we need 
 	to be in synch with it. Count should NEVER return a -1 value, and 
