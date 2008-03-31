@@ -1,3 +1,8 @@
+2008-03-31  Mark Probst  <mark.probst@gmail.com>
+
+	* MonoType.cs: Don't do CAS security checks in CheckMethodSecurity
+	for 2.1 profile.
+
 2008-03-28  Marek Safar  <marek.safar@gmail.com>
 
 	* Nullable.cs (Box): Do things explicitly and not rely on broken gmcs
