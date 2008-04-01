@@ -1,3 +1,7 @@
+2008-04-01  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridView.cs: Implement a bunch of keyboard commands.
+
 2008-03-31  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolBar.cs: Don't do our painting if UserPaint is set.  If UserPaint

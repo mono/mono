@@ -1331,6 +1331,36 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void MethodIsInputKey ()
+		{
+			string result = string.Empty;
+			string expected = "13;13;33;33;34;34;35;36;37;38;39;40;46;48;96;113;";
+
+			ExposeProtectedProperties dgv = new ExposeProtectedProperties ();
+		
+			foreach (Keys k in Enum.GetValues (typeof (Keys)))
+				if (dgv.PublicIsInputKey (k))
+					result += ((int)k).ToString () + ";";
+
+			Assert.AreEqual (expected, result, "A1");
+		}
+
+		[Test]
+		public void MethodIsInputChar ()
+		{
+			bool result = false;
+
+			ExposeProtectedProperties dgv = new ExposeProtectedProperties ();
+
+			for (int i = 0; i < 255; i++)
+				if (!dgv.PublicIsInputChar ((char)i))
+					result = true;
+
+			// Basically, it always returns true
+			Assert.AreEqual (false, result, "A1");
+		}
+
+		[Test]
 		public void RowsDefaultCellStyle ()
 		{
 			DataGridView grid = new DataGridView();
