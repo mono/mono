@@ -203,6 +203,7 @@ extern MonoMethodDesc *mono_break_at_bb_method;
 extern int mono_break_at_bb_bb_num;
 extern gboolean check_for_pending_exc;
 extern gboolean disable_vtypes_in_regs;
+extern gboolean mono_verify_all;
 
 #define INS_INFO(opcode) (&ins_info [((opcode) - OP_START - 1) * 3])
 
@@ -225,17 +226,6 @@ struct MonoEdge {
 struct MonoSpillInfo {
 	int offset;
 };
-
-/*
- * This structure contains the information maintained by the verifier for each CIL
- * stack slot. This information is also available in MonoInst, but the verifier needs to
- * update the type information during stack merges, which could lead to problems if done
- * on MonoInsts, so we use a dedicated structure instead.
- */
-typedef struct {
-	int type;
-	MonoClass *klass;
-} MonoStackSlot;
 
 /*
  * The IR-level extended basic block.  
@@ -324,7 +314,6 @@ struct MonoBasicBlock {
 	guint16 out_scount, in_scount;
 	MonoInst **out_stack;
 	MonoInst **in_stack;
-	MonoStackSlot *stack_state; /* Verification stack state on enter to bblock */
 
 	/* we use that to prevent merging of bblocks covered by different clauses*/
 	guint real_offset;
@@ -744,7 +733,6 @@ typedef struct {
 	guint            ret_var_set : 1;
 	guint            new_ir : 1;
 	guint            globalra : 1;
-	guint            dont_verify_stack_merge : 1;
 	guint            unverifiable : 1;
 	guint            skip_visibility : 1;
 	gpointer         debug_info;
@@ -1322,15 +1310,14 @@ void     mono_arch_patch_callsite               (guint8 *method_start, guint8 *c
 void     mono_arch_patch_plt_entry              (guint8 *code, guint8 *addr) MONO_INTERNAL;
 void     mono_arch_nullify_class_init_trampoline(guint8 *code, gssize *regs) MONO_INTERNAL;
 void     mono_arch_nullify_plt_entry            (guint8 *code) MONO_INTERNAL;
-int      mono_arch_get_this_arg_reg             (MonoMethodSignature *sig) MONO_INTERNAL;
+int      mono_arch_get_this_arg_reg             (MonoMethodSignature *sig, MonoGenericSharingContext *gsctx) MONO_INTERNAL;
 gpointer mono_arch_get_this_arg_from_call       (MonoMethodSignature *sig, gssize *regs, guint8 *code) MONO_INTERNAL;
-
+MonoObject* mono_arch_find_this_argument        (gpointer *regs, MonoMethod *method, MonoGenericSharingContext *gsctx) MONO_INTERNAL;
 gpointer mono_arch_get_delegate_invoke_impl     (MonoMethodSignature *sig, gboolean has_target) MONO_INTERNAL;
 gpointer mono_arch_create_specific_trampoline   (gpointer arg1, MonoTrampolineType tramp_type, MonoDomain *domain, guint32 *code_len) MONO_INTERNAL;
 void        mono_arch_emit_imt_argument         (MonoCompile *cfg, MonoCallInst *call) MONO_INTERNAL;
 MonoMethod* mono_arch_find_imt_method           (gpointer *regs, guint8 *code) MONO_INTERNAL;
 MonoRuntimeGenericContext* mono_arch_find_static_call_rgctx (gpointer *regs, guint8 *code) MONO_INTERNAL;
-MonoObject* mono_arch_find_this_argument        (gpointer *regs, MonoMethod *method, MonoGenericSharingContext *gsctx) MONO_INTERNAL;
 gpointer    mono_arch_build_imt_thunk           (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckItem **imt_entries, int count) MONO_INTERNAL;
 void    mono_arch_notify_pending_exc (void) MONO_INTERNAL;
 

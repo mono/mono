@@ -1,3 +1,60 @@
+2008-04-01  Dick Porter  <dick@ximian.com>
+
+	* process.c (process_get_fileversion): If there's no string block,
+	set the file language to en_US.  Fixes the other new part of bug
+	374600.
+
+2008-03-29 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c: New functions mono_method_can_access_field_full and
+	mono_method_can_access_method_full. They perform type visibility
+	and type site check.
+
+	* class-internal.h: Added exported functions.
+
+	* verify.c: Use new functions to implement proper visibility checks.
+
+2008-03-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-config.h: Add missing G_BEGIN_DECLS/G_END_DECLS. Fixes #375188.
+
+2008-03-28  Dick Porter  <dick@ximian.com>
+
+	* process.c (process_get_fileversion): Use the first language ID
+	we see, rather than insisting on an invariant language.  Fixes bug
+	374600.
+
+2008-03-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (calc_section_size): Use add_stream_zero to align the size of
+	the streams to fix reading of invalid memory later.
+
+	* metadata.h (MonoType): Use 'MonoTypeEnum' instead of int for the 'type' field
+	to ease debugging.
+
+2008-03-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (signature_dup): Use mono_metadata_signature_alloc ().
+	(cominterop_method_signature): Ditto. Fix the size passed to memcpy.
+
+2008-03-26  Massimiliano Mantione  <massi@ximian.com>
+	* threads.h: Added MonoThreadManageCallback type and
+	mono_thread_set_manage_callback prototype
+	* object-internals.h: In _MonoThread, renamed unused6 to manage_callback
+	(used to store the mono_thread_manage callback).
+	* threads.c: Added mono_thread_set_manage_callback, and handle
+	"MonoThread->manage_callback" in build_wait_tids.
+
+2008-03-26  Dick Porter  <dick@ximian.com>
+
+	* process.c (process_get_fileversion): Set FileVersionInfo strings
+	to Empty when the resource doesn't have the particular info.
+	Fixes bug 355717.
+
+2008-03-25 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_method_verify): Proper prefix validation.
+
 2008-03-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_InternalInvoke): Return exceptions thrown by the icall

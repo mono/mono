@@ -1,3 +1,7 @@
+2008-03-31  Miguel de Icaza  <miguel@novell.com>
+
+	* serial.c (write_serial): Avoid infinite loops, see #375580.
+
 2008-02-12  Jonathan Pryor  <jpryor@novell.com>
 
 	* signal.c: SLES9 has glib 2.2, so we can't rely on g_atomic_int_*().

@@ -1,3 +1,6 @@
+2008-03-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-logger.h: Move G_END_DECLS outside of an #ifdef. Fixes #375107.
 
 2008-03-14  Robert Jordan  <robertj@gmx.net>
 

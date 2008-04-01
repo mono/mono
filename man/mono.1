@@ -462,6 +462,96 @@ use it, use:
 The output of this profile can be fed back into Mono's AOT compiler to
 order the functions on the disk to produce precompiled images that
 have methods in sequential pages.
+.PP
+The
+.I logging profiler
+will eventually replace the default one. It is a
+"general purpose" profiler, which can report method execution time,
+allocations, jit time, and can also work in statistical mode. You invoke
+it with:
+.nf
+	mono --profile=logging program.exe
+.fi
+Its main characteristic is that it does not print the profiling data
+at the end of the program execution, and in fact it does not elaborate
+the events at all; instead, it logs them into a file periodically
+during the program execution. The file is binary, and encoded as packed
+as possible, so to see the data you must use a decoder program, which
+you can find in svn in the "Mono.Profiler" module.
+.PP
+Some examples: to use the statistical profiler:
+.nf
+	mono --profile=logging:s program.exe
+.fi
+To profile method enter-exit and allocations:
+.nf
+	mono --profile=logging:c,a program.exe
+.fi
+To profile method enter-exit and jit time, and write the data to "mydata.mprof":
+.nf
+	mono --profile=logging:c,j,o=mydata.mprof program.exe
+.fi
+Then you would need to invoke the decoder on "mydata.mprof" to see the
+profiling results.
+.PP
+In its current state, this profiler can also perform heap analysis (like
+heap-shot), and the decoder is already able to read the data, however
+the user interface for this feature has not yet been written (which means
+that the data is not printed by the decoder).
+.PP
+More explanations are provided here: "http://www.mono-project.com/LoggingProfiler".
+.PP
+The whole set of options accepted by the logging profiler is the following:
+.TP
+.I output
+(or "out" or "o", default "o=profiler-log.prof"): the name of the output file.
+.TP
+.I jit
+(or "j"): collect information about time spent jitting methods.
+.TP
+.I allocations
+(or "alloc" or "a"): collect information about each allocation (object class
+and size).
+.TP
+.I enter-leave
+(or "calls" or "c"): measure the time spent inside each method call.
+.TP
+.I statistical
+(or "stat" or "s"): do statistical profiling. 
+.TP
+.I unreachable
+(or "free" or "f"): enable garbage collection profiling in its lightweight
+form (at each collection, the list if unreachable objects is dumped, and
+for each object the class and size is provided, which together with the
+basic allocation information allows to compute the heap size broken down
+by class).
+.TP
+.I heap-shot
+(or "heap" or "h"): enable full heap profiling, in this case at each
+collection a full heap snapshot is dumped to disk.
+.TP
+.I gc-commands
+(or "gc-c" or "gcc", default none, file name required): the name of the
+file that controls the heap snapshot dumps.
+.TP
+.I gc-dumps
+(or "gc-d" or "gcd", default "gcd=0"): the initial number of heap
+snapshots to dump (if the control file is not used). 
+.TP
+.I per-thread-buffer-size
+(or "tbs", default "tbs=10000"): the number of events that a thread buffer
+can hold, when it's full it is written to disk (the writing thread is the
+one that filled its buffer).
+.TP
+.I statistical-thread-buffer-size
+(or "sbs", default "sbs=10000"): the number of statistical samples that
+are hold in memory before they are dumped to disk (the system does
+double-buffering and the statistical samples are written by a helper
+thread).
+.TP
+.I write-buffer-size
+(or "wbs", default "wbs=1024"): size in bytes of the internal write
+buffers. 
 .SH CUSTOM PROFILERS
 Mono provides a mechanism for loading other profiling modules which in
 the form of shared libraries.  These profiling modules can hook up to

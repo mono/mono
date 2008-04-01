@@ -101,7 +101,9 @@ static gboolean process_set_termination_details (gpointer handle, int status)
 	 */
 	
 #ifdef DEBUG
-	g_message ("%s: Setting handle %p signalled", __func__, handle);
+	g_message ("%s: Setting handle %p pid %d signalled, exit status %d",
+		   __func__, handle, process_handle->id,
+		   process_handle->exitstatus);
 #endif
 
 	_wapi_shared_handle_set_signal_state (handle, TRUE);
@@ -378,6 +380,8 @@ utf16_concat (const gunichar2 *first, ...)
 
 static const gunichar2 utf16_space_bytes [2] = { 0x20, 0 };
 static const gunichar2 *utf16_space = utf16_space_bytes; 
+static const gunichar2 utf16_quote_bytes [2] = { 0x22, 0 };
+static const gunichar2 *utf16_quote = utf16_quote_bytes;
 
 /* Implemented as just a wrapper around CreateProcess () */
 gboolean ShellExecuteEx (WapiShellExecuteInfo *sei)
@@ -448,7 +452,15 @@ gboolean ShellExecuteEx (WapiShellExecuteInfo *sei)
 #endif
 		handler_utf16 = g_utf8_to_utf16 (handler, -1, NULL, NULL, NULL);
 		g_free (handler);
-		args = utf16_concat (handler_utf16, utf16_space, sei->lpFile,
+
+		/* Put quotes around the filename, in case it's a url
+		 * that contains #'s (CreateProcess() calls
+		 * g_shell_parse_argv(), which deliberately throws
+		 * away anything after an unquoted #).  Fixes bug
+		 * 371567.
+		 */
+		args = utf16_concat (handler_utf16, utf16_space, utf16_quote,
+				     sei->lpFile, utf16_quote,
 				     sei->lpParameters == NULL ? NULL : utf16_space,
 				     sei->lpParameters, NULL);
 		if (args == NULL){
@@ -1484,8 +1496,13 @@ gboolean GetExitCodeProcess (gpointer process, guint32 *code)
 	
 	/* A process handle is only signalled if the process has exited
 	 * and has been waited for */
-	if (_wapi_handle_issignalled (process) == TRUE ||
-	    process_wait (process, 0) == WAIT_OBJECT_0) {
+
+	/* Make sure any process exit has been noticed, before
+	 * checking if the process is signalled.  Fixes bug 325463.
+	 */
+	process_wait (process, 0);
+	
+	if (_wapi_handle_issignalled (process) == TRUE) {
 		*code = process_handle->exitstatus;
 	} else {
 		*code = STILL_ACTIVE;
@@ -1714,15 +1731,15 @@ static gboolean match_procname_to_modulename (gchar *procname, gchar *modulename
 	if (procname == NULL || modulename == NULL)
 		return (FALSE);
 
+	if (!strcmp (procname, modulename))
+		return (TRUE);
+
 	lastsep = strrchr (modulename, '/');
 	if (lastsep) {
-		if (0 == strcmp (lastsep+1, procname))
+		if (!strcmp (lastsep+1, procname))
 			return (TRUE);
 		return (FALSE);
 	}
-
-	if (0 == strcmp (procname, modulename))
-		return (TRUE);
 
 	return (FALSE);
 }
