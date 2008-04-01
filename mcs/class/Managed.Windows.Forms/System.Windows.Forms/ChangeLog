@@ -1,3 +1,8 @@
+2008-04-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* CurrencyManager.cs: When calling EndCurrentEdit/CancelCurrentEdit,
+	call EndNew/CancelNew if list is ICancelAddNew.
+
 2008-04-01  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridView.cs: Guard against an exception while painting
