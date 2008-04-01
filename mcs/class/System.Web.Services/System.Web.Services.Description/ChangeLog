@@ -1,3 +1,10 @@
+2008-04-01  Lluis Sanchez Gual <lluis@novell.com> 
+
+	* ProtocolImporter.cs: Use the binding name as class name for the
+	  proxy.
+	* SoapProtocolImporter.cs: Use the element name as field name for soap
+	  headers. In 2.0, generate a property for accessing the field.
+
 2008-02-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ProtocolReflector.cs : reverted previous change, which caused
