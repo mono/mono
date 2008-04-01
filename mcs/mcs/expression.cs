@@ -8499,7 +8499,7 @@ namespace Mono.CSharp {
 
 #if GMCS_SOURCE
 			if ((dim.Length > 0) && (dim [0] == '?')) {
-				TypeExpr nullable = new NullableType (left, loc);
+				TypeExpr nullable = new Nullable.NullableType (left, loc);
 				if (dim.Length > 1)
 					nullable = new ComposedCast (nullable, dim.Substring (1), loc);
 				return nullable.ResolveAsTypeTerminal (ec, false);
