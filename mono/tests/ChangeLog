@@ -1,3 +1,7 @@
+2008-03-31  Mark Probst  <mark.probst@gmail.com>
+
+	* Makefile.am: Re-enabled CoreCLR security tests.  Fixes #362626.
+
 2008-03-25  Mark Probst  <mark.probst@gmail.com>
 
 	* generic-box.2.cs: Test case for generic box.

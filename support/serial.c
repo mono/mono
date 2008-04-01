@@ -95,7 +95,7 @@ write_serial (int fd, guchar *buffer, int offset, int count, int timeout)
 	fd_set writefs;
 	guint32 n;
 
-	n = count - offset;
+	n = count;
 
 	FD_SET(fd, &writefs);
 	tmval.tv_sec = timeout / 1000;
@@ -113,7 +113,12 @@ write_serial (int fd, guchar *buffer, int offset, int count, int timeout)
 			}
 		}		
 
- 		t = write(fd, buffer + offset, count);
+		do {
+			t = write (fd, buffer + offset, n);
+		} while (t == -1 && errno == EINTR);
+
+		if (t < 0)
+			return -1;
 		
 		if (timeout > 0)
 		{
@@ -121,7 +126,7 @@ write_serial (int fd, guchar *buffer, int offset, int count, int timeout)
 			{
 				return -1;
 			}
-	}
+		}
 
 		offset += t;
 		n -= t; 
