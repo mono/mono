@@ -961,6 +961,7 @@ namespace System.Web {
 			IHttpHandler handler = null;
 			try {
 				handler = GetHandler (context, context.Request.FilePath);
+				context.Handler = handler;
 #if NET_2_0
 				context.PushHandler (handler);
 #endif
