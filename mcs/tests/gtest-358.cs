@@ -6,12 +6,12 @@ struct Foo
 {
 	public static bool operator == (Foo d1, Foo d2)
 	{
-		return false;
+		throw new ApplicationException ();
 	}
 		
 	public static bool operator != (Foo d1, Foo d2)
 	{
-		return true;
+		throw new ApplicationException ();	
 	}
 }
 
