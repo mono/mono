@@ -103,7 +103,7 @@ namespace Mono.CSharp {
   		protected void ComputeNamespaces (Assembly assembly)
   		{
 			// How to test whether attribute exists without loading the assembly :-(
-#if SMCS_SOURCE
+#if NET_2_1
 			const string SystemCore = "System.Core, Version=2.0.5.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"; 
 #else
 			const string SystemCore = "System.Core, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"; 

@@ -10,7 +10,7 @@
 //
 //
 
-#if BOOTSTRAP_WITH_OLDLIB || SMCS_SOURCE
+#if BOOTSTRAP_WITH_OLDLIB || NET_2_1
 
 using XmlElement = System.Object;
 
