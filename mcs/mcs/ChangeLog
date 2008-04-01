@@ -1,5 +1,10 @@
 2008-04-01  Marek Safar  <marek.safar@gmail.com>
 
+	* nullable.cs, ecore.cs, expression.cs: Convert null arithmetic to lifted
+	null.
+
+2008-04-01  Marek Safar  <marek.safar@gmail.com>
+
 	* nullable.cs, expression.cs: Use namespace instead heavily nested
 	monster abstract class.
 

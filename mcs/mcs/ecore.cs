@@ -2067,6 +2067,8 @@ namespace Mono.CSharp {
 			{
 				this.expr = expr;
 				this.orig_expr = orig_expr;
+				eclass = expr.eclass;
+				type = expr.Type;
 			}
 
 			public override string AsString ()
@@ -2091,8 +2093,6 @@ namespace Mono.CSharp {
 
 			public override Expression DoResolve (EmitContext ec)
 			{
-				eclass = expr.eclass;
-				type = expr.Type;
 				return this;
 			}
 

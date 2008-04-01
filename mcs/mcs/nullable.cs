@@ -338,6 +338,14 @@ namespace Mono.CSharp.Nullable
 			return new LiftedNull (nullable, loc);
 		}
 
+		public static Expression CreateFromExpression (Expression e)
+		{
+			Report.Warning (458, 2, e.Location, "The result of the expression is always `null' of type `{0}'",
+				TypeManager.CSharpName (e.Type));
+
+			return ReducedExpression.Create (Create (e.Type, e.Location) , e);
+		}
+
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
 			ArrayList args = new ArrayList (2);
@@ -788,6 +796,16 @@ namespace Mono.CSharp.Nullable
 				right = EmptyCast.Create (right, lifted_type.Type);
 			}
 
+			// TODO: Handle bitwise bool 
+			if ((Oper & Operator.ComparisonMask) == 0 && !IsBitwiseBoolean) {
+				lifted_type = new NullableType (res_expr.Type, loc);
+				lifted_type = lifted_type.ResolveAsTypeTerminal (ec, false);
+				if (lifted_type == null)
+					return null;
+
+				res_expr = new LiftedWrap (res_expr, lifted_type.Type).Resolve (ec);
+			}
+
 			if (left_null_lifted) {
 				left = LiftedNull.Create (right.Type, left.Location);
 
@@ -796,6 +814,9 @@ namespace Mono.CSharp.Nullable
 				//
 				if (right_unwrap == null || (Oper & Operator.RelationalMask) != 0)
 					return CreateNullConstant (right_orig).Resolve (ec);
+
+				if ((Oper & Operator.ArithmeticMask) != 0)
+					return LiftedNull.CreateFromExpression (res_expr);
 			}
 
 			if (right_null_lifted) {
@@ -806,18 +827,12 @@ namespace Mono.CSharp.Nullable
 				//
 				if (left_unwrap == null || (Oper & Operator.RelationalMask) != 0)
 					return CreateNullConstant (left_orig).Resolve (ec);
+
+				if ((Oper & Operator.ArithmeticMask) != 0)
+					return LiftedNull.CreateFromExpression (res_expr);
 			}
 
-			// TODO: Handle bitwise bool 
-			if ((Oper & Operator.ComparisonMask) != 0 || IsBitwiseBoolean)
-				return res_expr;
-
-			lifted_type = new NullableType (res_expr.Type, loc);
-			lifted_type = lifted_type.ResolveAsTypeTerminal (ec, false);
-			if (lifted_type == null)
-				return null;
-
-			return new LiftedWrap (res_expr, lifted_type.Type).Resolve (ec);
+			return res_expr;
 		}
 
 		protected override Expression ResolveOperatorPredefined (EmitContext ec, Binary.PredefinedOperator [] operators, bool primitives_only)

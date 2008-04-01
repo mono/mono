@@ -1349,8 +1349,7 @@ namespace Mono.CSharp {
 			}
 #endif
 			if (expr.IsNull && TypeManager.IsNullableType (type)) {
-				Report.Warning (458, 2, loc, "The result of the expression is always `null' of type `{0}'",
-					TypeManager.CSharpName (type));
+				return Nullable.LiftedNull.CreateFromExpression (this);
 			}
 			
 			Expression e = Convert.ImplicitConversion (ec, expr, type, loc);
