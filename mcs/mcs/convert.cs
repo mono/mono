@@ -1284,7 +1284,7 @@ namespace Mono.CSharp {
 				// From null to any nullable type
 				//
 				if (expr_type == TypeManager.null_type)
-					return new Nullable.Null (target_type, loc);
+					return Nullable.LiftedNull.Create (target_type, loc);
 				
 				Type target = TypeManager.GetTypeArguments (target_type) [0];
 

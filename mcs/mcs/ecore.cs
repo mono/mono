@@ -1321,21 +1321,6 @@ namespace Mono.CSharp {
 			if (c != null)
 				return new EmptyConstantCast (c, type);
 
-			//
-			// No double conversion required when wrapping nullable types
-			//
-			if (TypeManager.IsNullableType (type)) {
-				EmptyCast empty_cast = child as EmptyCast;
-				if (empty_cast != null) {
-					if (TypeManager.IsNullableTypeOf (empty_cast.type, type))
-						throw new InternalErrorException ("Missing nullable underlying type conversion {0} != {1}",
-							TypeManager.CSharpName (empty_cast.type), TypeManager.CSharpName (type));
-
-					empty_cast.type = type;
-					return empty_cast;
-				}
-			}
-			
 			return new EmptyCast (child, type);
 		}
 
@@ -1574,7 +1559,7 @@ namespace Mono.CSharp {
 
 		public override bool IsZeroInteger {
 			get { return child.IsZeroInteger; }
-		}		
+		}
 		
 		public override void Emit (EmitContext ec)
 		{
@@ -2007,12 +1992,6 @@ namespace Mono.CSharp {
 			this.op = op;
 			this.op2 = op2;
 			second_valid = true;
-		}
-
-		public override Expression CreateExpressionTree (EmitContext ec)
-		{
-			// A cast has no expresion tree representation
-			return child.CreateExpressionTree (ec);
 		}
 
 		public override Expression DoResolve (EmitContext ec)

@@ -1,3 +1,9 @@
+2008-04-01  Marek Safar  <marek.safar@gmail.com>
+
+	* ecore.cs, convert.cs, constant.cs, nullable.cs, expression.cs: Implemented
+	lifting of null literal and user operators. Clean up of some temporary
+	nullable hacks.
+	
 2008-03-30  Raja R Harinath  <harinath@hurrynot.org>
 
 	Fix #368224, test-629.cs

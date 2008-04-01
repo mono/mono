@@ -194,6 +194,12 @@ namespace Mono.CSharp {
 				Unwrap uw = obj as Unwrap;
 				return uw != null && expr.Equals (uw.expr);
 			}
+
+			public Expression Original {
+				get {
+					return expr;
+				}
+			}
 			
 			public override int GetHashCode ()
 			{
@@ -319,30 +325,39 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// Represents null value converted to nullable type
+		// Represents null literal lifted to nullable type
 		//
-		public class Null : EmptyConstantCast, IMemoryLocation
+		public class LiftedNull : EmptyConstantCast, IMemoryLocation
 		{
-			public Null (Type target_type, Location loc)
-				: base (new NullLiteral (loc), target_type)
+			private LiftedNull (Type nullable_type, Location loc)
+				: base (new NullLiteral (loc), nullable_type)
 			{
 				eclass = ExprClass.Value;
 			}
 
+			public static Constant Create (Type nullable, Location loc)
+			{
+				return new LiftedNull (nullable, loc);
+			}
+
+			public override Expression CreateExpressionTree (EmitContext ec)
+			{
+				ArrayList args = new ArrayList (2);
+				args.Add (new Argument (this));
+				args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
+
+				return CreateExpressionFactoryCall ("Constant", args);
+			}
+
 			public override void Emit (EmitContext ec)
 			{
+				// TODO: generate less temporary variables
 				LocalTemporary value_target = new LocalTemporary (type);
 
 				value_target.AddressOf (ec, AddressOp.Store);
 				ec.ig.Emit (OpCodes.Initobj, type);
 				value_target.Emit (ec);
 			}
-
-			public override bool IsNull {
-				get {
-					return true;
-				}
-			}			
 
 			public void AddressOf (EmitContext ec, AddressOp Mode)
 			{
@@ -393,9 +408,7 @@ namespace Mono.CSharp {
 				if (wrap == null)
 					return null;
 
-				null_value = new Null (wrap.Type, loc).Resolve (ec);
-				if (null_value == null)
-					return null;
+				null_value = LiftedNull.Create (wrap.Type, loc);
 
 				type = wrap.Type;
 				eclass = ExprClass.Value;
@@ -477,12 +490,36 @@ namespace Mono.CSharp {
 		public class LiftedBinaryOperator : Binary
 		{
 			Unwrap left_unwrap, right_unwrap;
+			bool left_null_lifted, right_null_lifted;
+			Expression left_orig, right_orig;
 
 			public LiftedBinaryOperator (Binary.Operator op, Expression left, Expression right,
 						     Location loc)
 				: base (op, left, right)
 			{
 				this.loc = loc;
+			}
+
+			//
+			// CSC 2 has this behavior, it allows structs to be compared
+			// with the null literal *outside* of a generics context and
+			// inlines that as true or false.
+			//
+			Expression CreateNullConstant (Expression expr)
+			{
+				// FIXME: Handle side effect constants
+				Constant c = new BoolConstant (Oper == Operator.Inequality, loc);
+
+				if ((Oper & Operator.EqualityMask) != 0) {
+					Report.Warning (472, 2, loc, "The result of comparing `{0}' against null is always `{1}'. " +
+							"This operation is undocumented and it is temporary supported for compatibility reasons only",
+							expr.GetSignatureForError (), c.AsString ());
+				} else {
+					Report.Warning (464, 2, loc, "The result of comparing type `{0}' against null is always `{1}'",
+							expr.GetSignatureForError (), c.AsString ());
+				}
+
+				return ReducedExpression.Create (c, this);
 			}
 
 			public override Expression DoResolve (EmitContext ec)
@@ -493,27 +530,37 @@ namespace Mono.CSharp {
 				// TODO: How does it work with use-operators?
 				if ((Oper == Binary.Operator.LogicalAnd) ||
 				    (Oper == Binary.Operator.LogicalOr)) {
-					Error_OperatorCannotBeApplied ();
+					Error_OperatorCannotBeApplied (left, right);
 					return null;
 				}
 
+				left_orig = left;
 				if (TypeManager.IsNullableType (left.Type)) {
 					left = left_unwrap = Unwrap.Create (left, ec);
 					if (left == null)
 						return null;
 				}
 
+				right_orig = right;
 				if (TypeManager.IsNullableType (right.Type)) {
 					right = right_unwrap = Unwrap.Create (right, ec);
 					if (right == null)
 						return null;
 				}
 
-				if ((Oper & Operator.ComparisonMask) != 0)
-					return base.DoResolve (ec);
+				if (left is NullLiteral) {
+					left = right;
+					left_null_lifted = true;
+				}
 
-				Expression expr = base.DoResolve (ec);
-				if (expr != this)
+				if (right is NullLiteral) {
+					right = left;
+					right_null_lifted = true;
+				}
+
+				eclass = ExprClass.Value;
+				Expression expr = DoResolveCore (ec, left_orig, right_orig);
+				if (expr != this || (Oper & Operator.ComparisonMask) != 0)
 					return expr;
 
 				TypeExpr target_type = new NullableType (type, loc);
@@ -522,8 +569,7 @@ namespace Mono.CSharp {
 					return null;
 
 				type = target_type.Type;
-				eclass = ExprClass.Value;
-				return expr;
+				return this;
 			}
 
 			void EmitBitwiseBoolean (EmitContext ec)
@@ -673,8 +719,7 @@ namespace Mono.CSharp {
 				if (right_unwrap != null)
 					right_unwrap.Store (ec);
 
-				if ((Oper & Operator.BitwiseMask) != 0 && left_unwrap != null && right_unwrap != null &&
-					left_unwrap.Type == TypeManager.bool_type && right_unwrap.Type == TypeManager.bool_type) {
+				if (IsBitwiseBoolean) {
 					EmitBitwiseBoolean (ec);
 					return;
 				}
@@ -706,23 +751,83 @@ namespace Mono.CSharp {
 
 				base.EmitOperator (ec);
 
-				// TODO: this is LiftedWrap
-				NullableInfo info = new NullableInfo (type);
-				ig.Emit (OpCodes.Newobj, info.Constructor);
-
 				ig.Emit (OpCodes.Br_S, end_label);
-
 				ig.MarkLabel (is_null_label);
-				new Null (type, loc).Emit (ec);
+				LiftedNull.Create (type, loc).Emit (ec);
 
 				ig.MarkLabel (end_label);
+			}
+
+			bool IsBitwiseBoolean {
+				get {
+					return (Oper & Operator.BitwiseMask) != 0 && left_unwrap != null && right_unwrap != null &&
+					left_unwrap.Type == TypeManager.bool_type && right_unwrap.Type == TypeManager.bool_type;
+				}
+			}
+
+			Expression LiftResult (EmitContext ec, Expression res_expr)
+			{
+				TypeExpr lifted_type;
+
+				//
+				// Avoid double conversion
+				//
+				if (left_unwrap == null || left_null_lifted || !TypeManager.IsEqual (left_unwrap.Type, left.Type)) {
+					lifted_type = new NullableType (left.Type, loc);
+					lifted_type = lifted_type.ResolveAsTypeTerminal (ec, false);
+					if (lifted_type == null)
+						return null;
+
+					left = EmptyCast.Create (left, lifted_type.Type);
+				}
+
+				if (right_unwrap == null || right_null_lifted || !TypeManager.IsEqual (right_unwrap.Type, right.Type)) {
+					lifted_type = new NullableType (right.Type, loc);
+					lifted_type = lifted_type.ResolveAsTypeTerminal (ec, false);
+					if (lifted_type == null)
+						return null;
+
+					right = EmptyCast.Create (right, lifted_type.Type);
+				}
+
+				if (left_null_lifted) {
+					left = LiftedNull.Create (right.Type, left.Location);
+
+					//
+					// Value types and null comparison
+					//
+					if (right_unwrap == null || (Oper & Operator.RelationalMask) != 0)
+						return CreateNullConstant (right_orig).Resolve (ec);
+				}
+
+				if (right_null_lifted) {
+					right = LiftedNull.Create (left.Type, right.Location);
+
+					//
+					// Value types and null comparison
+					//
+					if (left_unwrap == null || (Oper & Operator.RelationalMask) != 0)
+						return CreateNullConstant (left_orig).Resolve (ec);
+				}
+
+				// TODO: Handle bitwise bool 
+				if ((Oper & Operator.ComparisonMask) != 0 || IsBitwiseBoolean)
+					return res_expr;
+
+				lifted_type = new NullableType (res_expr.Type, loc);
+				lifted_type = lifted_type.ResolveAsTypeTerminal (ec, false);
+				if (lifted_type == null)
+					return null;
+
+				return new LiftedWrap (res_expr, lifted_type.Type).Resolve (ec);
 			}
 
 			protected override Expression ResolveOperatorPredefined (EmitContext ec, Binary.PredefinedOperator [] operators, bool primitives_only)
 			{
 				Expression e = base.ResolveOperatorPredefined (ec, operators, primitives_only);
-				if (e != null)
-					return e;
+
+				if (e == this)
+					return LiftResult (ec, e);
 
 				//
 				// 7.9.9 Equality operators and null
@@ -731,19 +836,12 @@ namespace Mono.CSharp {
 				// the other to be the null literal, even if no predefined or user-defined operator
 				// (in unlifted or lifted form) exists for the operation.
 				//
-				if ((Oper & Operator.EqualityMask) != 0) {
-					if (left is NullLiteral) {
-						left = WrapNullExpression (ec, right, left);
-						return this;
-					}
-
-					if (right is NullLiteral) {
-						right = WrapNullExpression (ec, left, right);
-						return this;
-					}
+				if (e == null && (Oper & Operator.EqualityMask) != 0) {
+					if ((left_null_lifted && right_unwrap != null) || (right_null_lifted && left_unwrap != null))
+						return LiftResult (ec, this);
 				}
 
-				return null;
+				return e;
 			}
 
 			protected override Expression ResolveUserOperator (EmitContext ec, Type l, Type r)
@@ -751,27 +849,8 @@ namespace Mono.CSharp {
 				Expression expr = base.ResolveUserOperator (ec, l, r);
 				if (expr == null)
 					return null;
-				
-				// TODO: Handle bitwise bool 
-				if ((Oper & Operator.ComparisonMask) != 0)
-					return expr;
 
-				TypeExpr target_type = new NullableType (expr.Type, loc);
-				target_type = target_type.ResolveAsTypeTerminal (ec, false);
-				if (target_type == null)
-					return null;
-
-				return new LiftedWrap (expr, target_type.Type).Resolve (ec);
-			}
-
-			Expression WrapNullExpression (EmitContext ec, Expression expr, Expression null_expr)
-			{
-				TypeExpr lifted_type = new NullableType (expr.Type, expr.Location);
-				lifted_type = lifted_type.ResolveAsTypeTerminal (ec, false);
-				if (lifted_type == null)
-					return null;
-
-				return new Null (lifted_type.Type, null_expr.Location);
+				return LiftResult (ec, expr);
 			}
 		}
 
@@ -932,11 +1011,8 @@ namespace Mono.CSharp {
 				if (underlying == null)
 					return null;
 
-				null_value = new Null (expr.Type, loc).Resolve (ec);
-				if (null_value == null)
-					return null;
-
 				type = expr.Type;
+				null_value = LiftedNull.Create (type, loc);
 				return this;
 			}
 
