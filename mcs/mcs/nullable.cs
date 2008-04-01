@@ -554,14 +554,21 @@ namespace Mono.CSharp.Nullable
 					return null;
 			}
 
+			//
+			// Some details are in 6.4.2, 7.2.7
+			// Arguments can be lifted for equal operators when the return type is bool and both
+			// arguments are of same type
+			//	
 			if (left is NullLiteral) {
 				left = right;
 				left_null_lifted = true;
+				type = TypeManager.bool_type;
 			}
 
 			if (right is NullLiteral) {
 				right = left;
 				right_null_lifted = true;
+				type = TypeManager.bool_type;
 			}
 
 			eclass = ExprClass.Value;
@@ -862,6 +869,12 @@ namespace Mono.CSharp.Nullable
 			Expression expr = base.ResolveUserOperator (ec, l, r);
 			if (expr == null)
 				return null;
+
+			//
+			// When lifting null literal and user operator exists, no call is made
+			//
+			if (left_null_lifted || right_null_lifted)
+				expr = ReducedExpression.Create (this, expr).Resolve (ec);
 
 			return LiftResult (ec, expr);
 		}

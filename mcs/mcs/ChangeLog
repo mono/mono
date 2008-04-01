@@ -1,5 +1,10 @@
 2008-04-01  Marek Safar  <marek.safar@gmail.com>
 
+	* nullable.cs: When lifting null literal and a user operator exists, no call 
+	is made.
+	
+2008-04-01  Marek Safar  <marek.safar@gmail.com>
+
 	* nullable.cs, ecore.cs, expression.cs: Convert null arithmetic to lifted
 	null.
 
