@@ -1,5 +1,8 @@
 2008-04-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* local-propagation.c (mono_local_cprop2): Avoid copy propagation if it would
+	make it impossible to use reverse copy propagation later.
+	
 	* local-propagation.c (mono_local_cprop2): Make def_index a gint32, so the
 	def_index checks actually work. Also, disable copy propagation for floats.
 

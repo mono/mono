@@ -1348,6 +1348,10 @@ restart:
 				 * The second check avoids volatile variables.
 				 * The third check avoids copy propagating local vregs through a call, 
 				 * since the lvreg will be spilled 
+				 * The fourth check avoids copy propagating a vreg in cases where
+				 * it would be eliminated anyway by reverse copy propagation later,
+				 * because propagating it would create another use for it, thus making 
+				 * it impossible to use reverse copy propagation.
 				 */
 				/* Enabling this for floats trips up the fp stack */
 				/* 
@@ -1360,6 +1364,7 @@ restart:
 					!vreg_is_volatile (cfg, def->sreg1) &&
 					/* This avoids propagating local vregs across calls */
 					((get_vreg_to_inst (cfg, def->sreg1) || !defs [def->sreg1] || (def_index [def->sreg1] >= last_call_index) || (def->opcode == OP_VMOVE))) &&
+					!(defs [def->sreg1] && defs [def->sreg1]->next == def) &&
 					(!MONO_ARCH_USE_FPSTACK || (def->opcode != OP_FMOVE)) &&
 					(def->opcode != OP_FMOVE)) {
 					int vreg = def->sreg1;
