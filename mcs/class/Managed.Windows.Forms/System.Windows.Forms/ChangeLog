@@ -1,5 +1,10 @@
 2008-04-01  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridView.cs: Guard against an exception while painting
+	if there are no rows.
+
+2008-04-01  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridView.cs: Implement a bunch of keyboard commands.
 
 2008-03-31  Jonathan Pobst  <monkey@jpobst.com>

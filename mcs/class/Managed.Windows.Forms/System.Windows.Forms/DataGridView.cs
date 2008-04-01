@@ -3809,7 +3809,7 @@ namespace System.Windows.Forms {
 			gridHeight = 0;
 			
 			int rows_displayed = 0;
-			int first_row_height = Rows[first_row_index].Height;
+			int first_row_height = Rows.Count > 0 ? Rows[first_row_index].Height : 0;
 			
 			// Draw rows
 			for (int index = first_row_index; index < Rows.Count; index++) {
