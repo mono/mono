@@ -36,6 +36,7 @@ using System.Security.Permissions;
 using System.Web.Compilation;
 using System.Web.Util;
 using System.Xml;
+using System.IO;
 
 namespace System.Web.UI {
 
@@ -266,15 +267,34 @@ namespace System.Web.UI {
 				eh (this, e);
 		}
 
-		[MonoTODO ("Not implemented, always returns null")]
+#if !NET_2_0
+	        [MonoTODO ("Not implemented, always returns null")]
+#endif
 		public Control ParseControl (string content)
 		{
 			if (content == null)
 				throw new ArgumentNullException ("content");
 
+#if NET_2_0
+			TextReader reader = new StringReader (content);
+			Type control = UserControlParser.GetCompiledType (reader, HttpContext.Current);
+			if (control == null)
+				return null;
+			
+			return Activator.CreateInstance (control, null) as Control;
+#else
 			return null;
+#endif
 		}
 
+#if NET_2_0
+	        [MonoTODO ("Parser filters not implemented yet. Calls ParseControl (string) for now.")]
+		public Control ParseControl (string content, bool ignoreParserFilter)
+		{
+			return ParseControl (content);
+		}
+#endif
+	
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public 
 #if !NET_2_0

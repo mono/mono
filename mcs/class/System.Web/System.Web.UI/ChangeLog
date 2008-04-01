@@ -1,3 +1,16 @@
+2008-04-01  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControl.cs: ParseControl implemented for the 2.0
+	profile.
+
+	* UserControlParser.cs: added support for compiling controls
+	without input file (e.g. from TemplateControl.ParseControl).
+
+	* TemplateParser.cs: implemented VirtualPathProvider support for
+	registering UserControls.
+	If there is no input file path provided, auto-generate the class
+	name in the ClassName property getter.
+
 2008-03-27  Marek Habersack  <mhabersack@novell.com>
 
 	* Page.cs: added an implementation of the ClientQueryString

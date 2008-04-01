@@ -37,6 +37,7 @@ using System.Reflection;
 using System.Security.Permissions;
 using System.Web.Compilation;
 using System.Web.Configuration;
+using System.Web.Hosting;
 using System.Web.Util;
 
 #if NET_2_0
@@ -197,15 +198,35 @@ namespace System.Web.UI {
 		
 		internal void RegisterCustomControl (string tagPrefix, string tagName, string src)
                 {
-                        string realpath = MapPath (src);
-                        if (String.Compare (realpath, inputFile, false, invariantCulture) == 0)
+                        string realpath = null;
+			bool fileExists = false;
+			
+#if NET_2_0
+			VirtualFile vf = null;
+			VirtualPathProvider vpp = HostingEnvironment.VirtualPathProvider;
+			if (vpp.FileExists (src)) {
+				fileExists = true;
+				vf = vpp.GetFile (src);
+				if (vf != null)
+					realpath = MapPath (vf.VirtualPath);
+			}
+#else
+			realpath = MapPath (src);
+			fileExists = File.Exists (realpath);
+#endif
+			if (!fileExists)
+				throw new ParseException (Location, "Could not find file \"" + src + "\".");
+
+			if (String.Compare (realpath, inputFile, false, invariantCulture) == 0)
                                 return;
-                        
-                        if (!File.Exists (realpath))
-                                throw new ParseException (Location, "Could not find file \"" + realpath + "\".");
+			
+#if NET_2_0
+			string vpath = vf.VirtualPath;
+#else
 			string vpath = VirtualPathUtility.Combine (BaseVirtualDir, src);
 			if (VirtualPathUtility.IsAbsolute (vpath))
 				vpath = VirtualPathUtility.ToAppRelative (vpath);
+#endif
 			
                         Type type = null;
                         AddDependency (vpath);
@@ -907,6 +928,9 @@ namespace System.Web.UI {
 			get { return baseTypeIsGlobal; }
 			set { baseTypeIsGlobal = value; }
 		}
+
+		static long autoClassCounter = 0;
+		static object autoClassCounterLock = new object ();
 		
 		internal string ClassName {
 			get {
@@ -929,8 +953,16 @@ namespace System.Web.UI {
 				} else
 					inFile = inputFile;
 
-				if (String.IsNullOrEmpty (inFile))
-					throw new HttpException ("Unable to determine class name - no input file found.");
+				if (String.IsNullOrEmpty (inFile)) {
+					// generate a unique class name
+					long suffix;
+					lock (autoClassCounterLock) {
+						suffix = autoClassCounter++;
+					}
+
+					className = String.Format ("autoclass_nosource_{0:x}", suffix);
+					return className;
+				}
 				
 				if (StrUtils.StartsWith (inFile, physPath)) {
 					className = inputFile.Substring (physPath.Length).ToLower (CultureInfo.InvariantCulture);
