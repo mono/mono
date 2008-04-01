@@ -46,6 +46,7 @@ namespace System.Drawing.Design
 		private IWindowsFormsEditorService editorService;
 		private Color selected_color;
 		private bool color_chosen;
+		private Control editor_control = null;
 
 		public ColorEditor()
 		{
@@ -57,83 +58,86 @@ namespace System.Drawing.Design
 			if (context != null && provider != null) {
 				editorService = (IWindowsFormsEditorService)provider.GetService(typeof(IWindowsFormsEditorService));
 				if (editorService != null) {
-					// Create the UI editor control
-					
-					TabControl tab_control = new TabControl();
-					tab_control.Dock = DockStyle.Fill;
-					TabPage custom_tab = new TabPage("Custom");
-					TabPage web_tab = new TabPage("Web");
-					TabPage system_tab = new TabPage("System");
-
-					ColorListBox web_listbox = new ColorListBox();
-					ColorListBox system_listbox = new ColorListBox();
-					web_listbox.Dock = DockStyle.Fill;
-					system_listbox.Dock = DockStyle.Fill;
-
-					web_tab.Controls.Add(web_listbox);
-					system_tab.Controls.Add(system_listbox);
-
-					SystemColorCompare system_compare = new SystemColorCompare();
-					System.Collections.ArrayList color_list = new System.Collections.ArrayList();
-					foreach (System.Reflection.PropertyInfo property in typeof(SystemColors).GetProperties(System.Reflection.BindingFlags.Public |System.Reflection.BindingFlags.Static)) {
-						Color clr = (Color)property.GetValue(null,null);
-						color_list.Add(clr);
-					}
-					color_list.Sort(system_compare);
-					system_listbox.Items.AddRange(color_list.ToArray());
-					system_listbox.MouseUp+=new MouseEventHandler(HandleMouseUp);
-					system_listbox.SelectedValueChanged+=new EventHandler(HandleChange);
-
-					WebColorCompare web_compare = new WebColorCompare();
-					color_list = new System.Collections.ArrayList();
-					foreach (KnownColor known_color in Enum.GetValues(typeof(KnownColor))) 
-					{
-						Color color = Color.FromKnownColor(known_color);
-						if (color.IsSystemColor)
-							continue;
-						color_list.Add(color);
-					}
-					color_list.Sort(web_compare);
-					web_listbox.Items.AddRange(color_list.ToArray());
-					web_listbox.MouseUp+=new MouseEventHandler(HandleMouseUp);
-					web_listbox.SelectedValueChanged+=new EventHandler(HandleChange);
-
-					CustomColorPicker custom_picker = new CustomColorPicker ();
-					custom_picker.Dock = DockStyle.Fill;
-					custom_picker.ColorChanged += new EventHandler (CustomColorPicked);
-					custom_tab.Controls.Add (custom_picker);
-
-					tab_control.TabPages.Add(custom_tab);
-					tab_control.TabPages.Add(web_tab);
-					tab_control.TabPages.Add(system_tab);
-
-					if (value != null) {
-						Color current_color = (Color)value;
-						if (current_color.IsSystemColor) 
-						{
-							system_listbox.SelectedValue = current_color;
-							tab_control.SelectedTab = system_tab;
-						}
-						else if (current_color.IsKnownColor)
-						{
-							web_listbox.SelectedValue = current_color;
-							tab_control.SelectedTab = web_tab;
-						}
-						selected_color = current_color;
-						color_chosen = true;
-					}
-
-					tab_control.Height = 216; // the height of the custom colors tab
-					editorService.DropDownControl(tab_control);
-					if (color_chosen) {
+					if (editor_control == null)
+						editor_control = GetEditorControl (value);
+					editorService.DropDownControl(editor_control);
+					if (color_chosen)
 						return selected_color;
-					}
-					else {
+					else
 						return null;
-					}
 				}
 			}
 			return base.EditValue(context, provider, value);
+		}
+
+		private Control GetEditorControl (object value)
+		{
+			TabControl tab_control = new TabControl();
+			tab_control.Dock = DockStyle.Fill;
+			TabPage custom_tab = new TabPage("Custom");
+			TabPage web_tab = new TabPage("Web");
+			TabPage system_tab = new TabPage("System");
+
+			ColorListBox web_listbox = new ColorListBox();
+			ColorListBox system_listbox = new ColorListBox();
+			web_listbox.Dock = DockStyle.Fill;
+			system_listbox.Dock = DockStyle.Fill;
+
+			web_tab.Controls.Add(web_listbox);
+			system_tab.Controls.Add(system_listbox);
+
+			SystemColorCompare system_compare = new SystemColorCompare();
+			System.Collections.ArrayList color_list = new System.Collections.ArrayList();
+			foreach (System.Reflection.PropertyInfo property in typeof(SystemColors).GetProperties(System.Reflection.BindingFlags.Public |System.Reflection.BindingFlags.Static)) {
+				Color clr = (Color)property.GetValue(null,null);
+				color_list.Add(clr);
+			}
+			color_list.Sort(system_compare);
+			system_listbox.Items.AddRange(color_list.ToArray());
+			system_listbox.MouseUp+=new MouseEventHandler(HandleMouseUp);
+			system_listbox.SelectedValueChanged+=new EventHandler(HandleChange);
+
+			WebColorCompare web_compare = new WebColorCompare();
+			color_list = new System.Collections.ArrayList();
+			foreach (KnownColor known_color in Enum.GetValues(typeof(KnownColor))) 
+			{
+				Color color = Color.FromKnownColor(known_color);
+				if (color.IsSystemColor)
+					continue;
+				color_list.Add(color);
+			}
+			color_list.Sort(web_compare);
+			web_listbox.Items.AddRange(color_list.ToArray());
+			web_listbox.MouseUp+=new MouseEventHandler(HandleMouseUp);
+			web_listbox.SelectedValueChanged+=new EventHandler(HandleChange);
+
+			CustomColorPicker custom_picker = new CustomColorPicker ();
+			custom_picker.Dock = DockStyle.Fill;
+			custom_picker.ColorChanged += new EventHandler (CustomColorPicked);
+			custom_tab.Controls.Add (custom_picker);
+
+			tab_control.TabPages.Add(custom_tab);
+			tab_control.TabPages.Add(web_tab);
+			tab_control.TabPages.Add(system_tab);
+
+			if (value != null) {
+				Color current_color = (Color)value;
+				if (current_color.IsSystemColor) 
+				{
+					system_listbox.SelectedValue = current_color;
+					tab_control.SelectedTab = system_tab;
+				}
+				else if (current_color.IsKnownColor)
+				{
+					web_listbox.SelectedValue = current_color;
+					tab_control.SelectedTab = web_tab;
+				}
+				selected_color = current_color;
+				color_chosen = true;
+			}
+
+			tab_control.Height = 216; // the height of the custom colors tab
+			return tab_control;
 		}
 
 		private void HandleChange(object sender, EventArgs e) 
