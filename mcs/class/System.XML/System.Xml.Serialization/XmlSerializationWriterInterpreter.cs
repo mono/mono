@@ -499,6 +499,8 @@ namespace System.Xml.Serialization
 
 		string GetEnumXmlValue (XmlTypeMapping typeMap, object ob)
 		{
+			if (ob == null)
+				return null;
 			EnumMap map = (EnumMap)typeMap.ObjectMap;
 			return map.GetXmlName (typeMap.TypeFullName, ob);
 		}

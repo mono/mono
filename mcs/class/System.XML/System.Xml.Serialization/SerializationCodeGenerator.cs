@@ -788,7 +788,7 @@ namespace System.Xml.Serialization
 						
 						if (cond != null) WriteLineInd ("if (" + cond + ") {");
 						
-						string strVal = GenerateGetStringValue (attr.MappedType, attr.TypeData, val);
+						string strVal = GenerateGetStringValue (attr.MappedType, attr.TypeData, val, false);
 						WriteLine ("WriteAttribute (" + GetLiteral(attr.AttributeName) + ", " + GetLiteral(attr.Namespace) + ", " + strVal + ");");
 	
 						if (cond != null) WriteLineUni ("}");
@@ -1014,7 +1014,7 @@ namespace System.Xml.Serialization
 
 		void GenerateWritePrimitiveElement (XmlTypeMapping typeMap, string ob)
 		{
-			string strVal = GenerateGetStringValue (typeMap, typeMap.TypeData, ob);
+			string strVal = GenerateGetStringValue (typeMap, typeMap.TypeData, ob, false);
 			WriteLine ("Writer.WriteString (" + strVal + ");");
 		}
 
@@ -1024,7 +1024,7 @@ namespace System.Xml.Serialization
 			WriteLine ("Writer.WriteString (" + strVal + ");");
 		}
 
-		string GenerateGetStringValue (XmlTypeMapping typeMap, TypeData type, string value)
+		string GenerateGetStringValue (XmlTypeMapping typeMap, TypeData type, string value, bool isNullable)
 		{
 			if (type.SchemaType == SchemaTypes.Array) {
 				string str = GetStrTempVar ();
@@ -1036,7 +1036,10 @@ namespace System.Xml.Serialization
 				return str;
 			}
 			else if (type.SchemaType == SchemaTypes.Enum) {
-				return GenerateGetEnumXmlValue (typeMap, value);
+				if (isNullable)
+					return "(" + value + ").HasValue ? " + GenerateGetEnumXmlValue (typeMap, "(" + value + ").Value") + " : null";
+				else
+					return GenerateGetEnumXmlValue (typeMap, value);
 			}
 			else if (type.Type == typeof (XmlQualifiedName))
 				return "FromXmlQualifiedName (" + value + ")";
@@ -1152,7 +1155,7 @@ namespace System.Xml.Serialization
 					GenerateWriteMemberElement (info, GetCast (info.TypeData, itemTypeData, item));
 				else
 				{
-					string strVal = GenerateGetStringValue (info.MappedType, info.TypeData, GetCast (info.TypeData, itemTypeData, item));
+					string strVal = GenerateGetStringValue (info.MappedType, info.TypeData, GetCast (info.TypeData, itemTypeData, item), false);
 					WriteLine (targetString + ".Append (" + strVal + ").Append (\" \");");
 				}
 
@@ -1167,14 +1170,14 @@ namespace System.Xml.Serialization
 		void GenerateWritePrimitiveValueLiteral (string memberValue, string name, string ns, XmlTypeMapping mappedType, TypeData typeData, bool wrapped, bool isNullable)
 		{
 			if (!wrapped) {
-				string strVal = GenerateGetStringValue (mappedType, typeData, memberValue);
+				string strVal = GenerateGetStringValue (mappedType, typeData, memberValue, false);
 				WriteMetCall ("WriteValue", strVal);
 			}
 			else if (isNullable) {
 				if (typeData.Type == typeof(XmlQualifiedName)) 
 					WriteMetCall ("WriteNullableQualifiedNameLiteral", GetLiteral(name), GetLiteral(ns), memberValue);
 				else  {
-					string strVal = GenerateGetStringValue (mappedType, typeData, memberValue);
+					string strVal = GenerateGetStringValue (mappedType, typeData, memberValue, true);
 					WriteMetCall ("WriteNullableStringLiteral", GetLiteral(name), GetLiteral(ns), strVal);
 				}
 			}
@@ -1182,7 +1185,7 @@ namespace System.Xml.Serialization
 				if (typeData.Type == typeof(XmlQualifiedName))
 					WriteMetCall ("WriteElementQualifiedName", GetLiteral(name), GetLiteral(ns), memberValue);
 				else {
-					string strVal = GenerateGetStringValue (mappedType, typeData, memberValue);
+					string strVal = GenerateGetStringValue (mappedType, typeData, memberValue, false);
 					WriteMetCall ("WriteElementString", GetLiteral(name),GetLiteral(ns), strVal);
 				}
 			}
@@ -1191,14 +1194,14 @@ namespace System.Xml.Serialization
 		void GenerateWritePrimitiveValueEncoded (string memberValue, string name, string ns, XmlQualifiedName xsiType, XmlTypeMapping mappedType, TypeData typeData, bool wrapped, bool isNullable)
 		{
 			if (!wrapped) {
-				string strVal = GenerateGetStringValue (mappedType, typeData, memberValue);
+				string strVal = GenerateGetStringValue (mappedType, typeData, memberValue, false);
 				WriteMetCall ("WriteValue", strVal);
 			}
 			else if (isNullable) {
 				if (typeData.Type == typeof(XmlQualifiedName)) 
 					WriteMetCall ("WriteNullableQualifiedNameEncoded", GetLiteral(name), GetLiteral(ns), memberValue, GetLiteral(xsiType));
 				else  {
-					string strVal = GenerateGetStringValue (mappedType, typeData, memberValue);
+					string strVal = GenerateGetStringValue (mappedType, typeData, memberValue, true);
 					WriteMetCall ("WriteNullableStringEncoded", GetLiteral(name), GetLiteral(ns), strVal, GetLiteral(xsiType));
 				}
 			}
@@ -1206,7 +1209,7 @@ namespace System.Xml.Serialization
 				if (typeData.Type == typeof(XmlQualifiedName))
 					WriteMetCall ("WriteElementQualifiedName", GetLiteral(name), GetLiteral(ns), memberValue, GetLiteral(xsiType));
 				else {
-					string strVal = GenerateGetStringValue (mappedType, typeData, memberValue);
+					string strVal = GenerateGetStringValue (mappedType, typeData, memberValue, false);
 					WriteMetCall ("WriteElementString", GetLiteral(name),GetLiteral(ns), strVal, GetLiteral(xsiType));
 				}
 			}
@@ -1328,7 +1331,7 @@ namespace System.Xml.Serialization
 				
 				GenerateReadObject (map);
 				if (map.TypeData.SchemaType == SchemaTypes.Enum)
-					GenerateGetEnumValue (map);
+					GenerateGetEnumValueMethod (map);
 			}
 			
 			GenerateReadInitCallbacks ();
@@ -1638,14 +1641,22 @@ namespace System.Xml.Serialization
 				string[] readFlag = null;
 				if (map.ElementMembers != null && !readByOrder)
 				{
-					string readFlagsVars = "bool ";
+					string readFlagsVars = string.Empty;
 					readFlag = new string[map.ElementMembers.Count];
-					for (int n=0; n<map.ElementMembers.Count; n++) {
-						readFlag[n] = GetBoolTempVar ();
-						if (n > 0) readFlagsVars += ", ";
-						readFlagsVars += readFlag[n] + "=false";
+					int n=0;
+					foreach (XmlTypeMapMember mem in map.ElementMembers) {
+						// The text collector doesn't need a flag
+						if (!((mem is XmlTypeMapMemberElement) && ((XmlTypeMapMemberElement)mem).IsXmlTextCollector)) {
+							readFlag[n] = GetBoolTempVar ();
+							if (readFlagsVars.Length > 0) readFlagsVars += ", ";
+							readFlagsVars += readFlag[n] + "=false";
+						}
+						n++;
 					}
-					if (map.ElementMembers.Count > 0) WriteLine (readFlagsVars + ";");
+					if (readFlagsVars.Length > 0) {
+						readFlagsVars = "bool " + readFlagsVars;
+						WriteLine (readFlagsVars + ";");
+					}
 					WriteLine ("");
 				}
 				
@@ -1929,8 +1940,8 @@ namespace System.Xml.Serialization
 								WriteLineInd ("{");
 								string str = GetStrTempVar ();
 								WriteLine ("string " + str + " = Reader.ReadString();");
-								GenerateSetMemberValue (mem, ob, GenerateGetValueFromXmlString (str, info.TypeData, info.MappedType), isValueList);
-								WriteLineInd ("}");
+								GenerateSetMemberValue (mem, ob, GenerateGetValueFromXmlString (str, info.TypeData, info.MappedType, info.IsNullable), isValueList);
+								WriteLineUni ("}");
 							}
 							GenerateEndHook ();
 						}
@@ -2011,7 +2022,7 @@ namespace System.Xml.Serialization
 				{
 					WriteLineInd ((first?"":"else ") + "if (Reader.LocalName == " + GetLiteral (at.AttributeName) + " && Reader.NamespaceURI == " + GetLiteral (at.Namespace) + ") {");
 					if (!GenerateReadMemberHook (xmlMapType, at)) {
-						GenerateSetMemberValue (at, ob, GenerateGetValueFromXmlString ("Reader.Value", at.TypeData, at.MappedType), isValueList);
+						GenerateSetMemberValue (at, ob, GenerateGetValueFromXmlString ("Reader.Value", at.TypeData, at.MappedType, false), isValueList);
 						GenerateEndHook ();
 					}
 					WriteLineUni ("}");
@@ -2151,21 +2162,21 @@ namespace System.Xml.Serialization
 			else if (elem.IsNullable) {
 				string str = GetStrTempVar ();
 				WriteLine ("string " + str + " = ReadNullableString ();");
-				return GenerateGetValueFromXmlString (str, elem.TypeData, elem.MappedType);
+				return GenerateGetValueFromXmlString (str, elem.TypeData, elem.MappedType, true);
 			}
 			else {
 				string str = GetStrTempVar ();
 				WriteLine ("string " + str + " = Reader.ReadElementString ();");
-				return GenerateGetValueFromXmlString (str, elem.TypeData, elem.MappedType);
+				return GenerateGetValueFromXmlString (str, elem.TypeData, elem.MappedType, false);
 			}
 		}
 		
-		string GenerateGetValueFromXmlString (string value, TypeData typeData, XmlTypeMapping typeMap)
+		string GenerateGetValueFromXmlString (string value, TypeData typeData, XmlTypeMapping typeMap, bool isNullable)
 		{
 			if (typeData.SchemaType == SchemaTypes.Array)
 				return GenerateReadListString (typeMap, value);
 			else if (typeData.SchemaType == SchemaTypes.Enum)
-				return GenerateGetEnumValue (typeMap, value);
+				return GenerateGetEnumValue (typeMap, value, isNullable);
 			else if (typeData.Type == typeof (XmlQualifiedName))
 				return "ToXmlQualifiedName (" + value + ")";
 			else 
@@ -2276,7 +2287,7 @@ namespace System.Xml.Serialization
 
 			string index = GetNumTempVar ();
 			WriteLineInd ("for (int " + index + " = 0; " + index + " < " + valueArray + ".Length; " + index + "++)");
-			WriteLine (list + "[" + index + "] = " + GenerateGetValueFromXmlString (valueArray + "[" + index + "]", info.TypeData, info.MappedType) + ";");
+			WriteLine (list + "[" + index + "] = " + GenerateGetValueFromXmlString (valueArray + "[" + index + "]", info.TypeData, info.MappedType, info.IsNullable) + ";");
 			Unindent ();
 			WriteLineUni ("}");
 			WriteLine ("else");
@@ -2367,18 +2378,21 @@ namespace System.Xml.Serialization
 		void GenerateReadEnumElement (XmlTypeMapping typeMap, string isNullable)
 		{
 			WriteLine ("Reader.ReadStartElement ();");
-			WriteLine (typeMap.TypeData.CSharpFullName + " res = " + GenerateGetEnumValue (typeMap, "Reader.ReadString()") + ";");
+			WriteLine (typeMap.TypeData.CSharpFullName + " res = " + GenerateGetEnumValue (typeMap, "Reader.ReadString()", false) + ";");
 			WriteLineInd ("if (Reader.NodeType != XmlNodeType.None)");
 			WriteLineUni ("Reader.ReadEndElement ();");
 			WriteLine ("return res;");
 		}
 
-		string GenerateGetEnumValue (XmlTypeMapping typeMap, string val)
+		string GenerateGetEnumValue (XmlTypeMapping typeMap, string val, bool isNullable)
 		{
-			return GetGetEnumValueName (typeMap) + " (" + val + ")";
+			if (isNullable)
+				return "(" + val + ") != null ? " + GetGetEnumValueName (typeMap) + " (" + val + ") : (" + typeMap.TypeData.CSharpFullName + "?) null";
+			else
+				return GetGetEnumValueName (typeMap) + " (" + val + ")";
 		}
 		
-		void GenerateGetEnumValue (XmlTypeMapping typeMap)
+		void GenerateGetEnumValueMethod (XmlTypeMapping typeMap)
 		{
 			string metName = GetGetEnumValueName (typeMap);
 			EnumMap map = (EnumMap) typeMap.ObjectMap;

@@ -931,7 +931,7 @@ namespace System.Xml.Serialization {
 			Type choiceEnumType = null;
 			
 			XmlTypeMapElementInfoList list = new XmlTypeMapElementInfoList();
-			ImportTextElementInfo (list, defaultType, member, atts);
+			ImportTextElementInfo (list, defaultType, member, atts, defaultNamespace);
 			
 			if (atts.XmlChoiceIdentifier != null) {
 				if (cls == null)
@@ -1027,7 +1027,7 @@ namespace System.Xml.Serialization {
 		{
 			XmlTypeMapElementInfoList list = new XmlTypeMapElementInfoList();
 
-			ImportTextElementInfo (list, rmember.MemberType, member, atts);
+			ImportTextElementInfo (list, rmember.MemberType, member, atts, defaultNamespace);
 
 			foreach (XmlAnyElementAttribute att in atts.XmlAnyElements)
 			{
@@ -1049,7 +1049,7 @@ namespace System.Xml.Serialization {
 			return list;
 		}
 
-		void ImportTextElementInfo (XmlTypeMapElementInfoList list, Type defaultType, XmlTypeMapMemberElement member, XmlAttributes atts)
+		void ImportTextElementInfo (XmlTypeMapElementInfoList list, Type defaultType, XmlTypeMapMemberElement member, XmlAttributes atts, string defaultNamespace)
 		{
 			if (atts.XmlText != null)
 			{
@@ -1072,6 +1072,8 @@ namespace System.Xml.Serialization {
 				 )
 					throw new InvalidOperationException ("XmlText cannot be used to encode complex types");
 
+				if (elem.TypeData.IsComplexType)
+					elem.MappedType = ImportTypeMapping (defaultType, null, defaultNamespace);
 				elem.IsTextElement = true;
 				elem.WrappedElement = false;
 				list.Add (elem);
