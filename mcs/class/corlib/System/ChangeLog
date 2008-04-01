@@ -1,5 +1,9 @@
 ﻿2008-04-01  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
 
+	* Char.cs: Fix parameter names
+
+2008-04-01  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
+
 	* String.cs: Update of String that moves all remaining non-culture-sensitive
 	  code to managed C# code. Improves performance for most cases and most methods
 	  allows code-optimizations tools to perform better optimizations by removing the
