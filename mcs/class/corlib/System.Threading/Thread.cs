@@ -120,6 +120,7 @@ namespace System.Threading {
 		private int managed_id;
 		
 		private IPrincipal _principal;
+		internal NumberFormatter _numberFormatter;
 
 		public static Context CurrentContext {
 			[SecurityPermission (SecurityAction.LinkDemand, Infrastructure=true)]
@@ -236,6 +237,18 @@ namespace System.Threading {
 				local_slots = slots;
 			}
 			slots [slot.slot] = data;
+		}
+
+		internal NumberFormatter AcquireNumberFormatter() {
+			NumberFormatter res = _numberFormatter;
+			_numberFormatter = null;
+			if (res == null)
+				return new NumberFormatter (this);
+			return res;
+		}
+
+		internal void ReleaseNumberFormatter (NumberFormatter formatter) {
+			_numberFormatter = formatter;
 		}
 
 		public static AppDomain GetDomain() {
@@ -407,6 +420,8 @@ namespace System.Threading {
 						//
 						SetCachedCurrentCulture (culture);
 						in_currentculture = false;
+						if (_numberFormatter != null)
+							_numberFormatter.CurrentCulture = culture;
 						return culture;
 					}
 				}
@@ -425,6 +440,8 @@ namespace System.Threading {
 					in_currentculture = false;
 				}
 
+				if (_numberFormatter != null)
+					_numberFormatter.CurrentCulture = culture;
 				return culture;
 			}
 			
@@ -460,6 +477,8 @@ namespace System.Threading {
 				} finally {
 					in_currentculture = false;
 				}
+				if (_numberFormatter != null)
+					_numberFormatter.CurrentCulture = value;
 			}
 		}
 

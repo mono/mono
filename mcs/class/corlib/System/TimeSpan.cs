@@ -375,17 +375,16 @@ namespace System
 				sb.Append ('.');
 			}
 
-			System.Globalization.NumberFormatInfo nfi = System.Globalization.CultureInfo.CurrentCulture.NumberFormat;
-			sb.Append (new NumberFormatter (null, (int)Math.Abs (Hours)).FormatDecimal(2, nfi));
+			sb.Append (Math.Abs (Hours).ToString ("D2"));
 			sb.Append (':');
-			sb.Append (new NumberFormatter (null, (int)Math.Abs (Minutes)).FormatDecimal(2, nfi));
+			sb.Append (Math.Abs (Minutes).ToString ("D2"));
 			sb.Append (':');
-			sb.Append (new NumberFormatter (null, (int)Math.Abs (Seconds)).FormatDecimal(2, nfi));
+			sb.Append (Math.Abs (Seconds).ToString ("D2"));
 
 			int fractional = (int) Math.Abs (_ticks % TicksPerSecond);
 			if (fractional != 0) {
 				sb.Append ('.');
-				sb.Append (new NumberFormatter (null, (int)Math.Abs (fractional)).FormatDecimal(7, nfi));
+				sb.Append (fractional.ToString ("D7"));
 			}
 
 			return sb.ToString ();

@@ -3291,6 +3291,7 @@ namespace MonoTests.System
 		public void Test13000 ()
 		{
 			AssertEquals ("#01", "0", 0.0.ToString ("G", _nfi));
+			AssertEquals ("#01.1", "0", (-0.0).ToString ("G", _nfi));
 			AssertEquals ("#02", "0", 0.0.ToString ("g", _nfi));
 			AssertEquals ("#03", "-1.79769313486232E+308", Double.MinValue.ToString ("G", _nfi));
 			AssertEquals ("#04", "-1.79769313486232e+308", Double.MinValue.ToString ("g", _nfi));

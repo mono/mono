@@ -498,13 +498,12 @@ namespace System {
 
 		public override string ToString ()
 		{
-			return new NumberFormatter(null, m_value).FormatDecimal(-1, null);
+			return NumberFormatter.NumberToString (m_value, null);
 		}
 
 		public string ToString (IFormatProvider provider)
 		{
-			NumberFormatInfo nfi = NumberFormatInfo.GetInstance (provider);
-			return new NumberFormatter(null, m_value).FormatDecimal(-1, nfi);
+			return NumberFormatter.NumberToString (m_value, provider);
 		}
 
 		public string ToString (string format)
@@ -514,8 +513,7 @@ namespace System {
 
 		public string ToString (string format, IFormatProvider fp)
 		{
-			NumberFormatInfo nfi = NumberFormatInfo.GetInstance( fp );
-			return NumberFormatter.NumberToString (format, m_value, nfi);
+			return NumberFormatter.NumberToString (format, m_value, fp);
 		}
 
 		// =========== IConvertible Methods =========== //

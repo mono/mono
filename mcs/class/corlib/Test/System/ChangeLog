@@ -1,3 +1,7 @@
+2008-04-01  Eyal Alaluf <eyala@mainsoft.com>
+
+	* NumberFormatterTest.cs: Test (-0.0).ToString.
+
 2008-03-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* TypeTest.cs (PublicKeyToken): Add a test for #367670.
