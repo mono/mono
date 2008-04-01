@@ -360,9 +360,19 @@ namespace System.Data.SqlClient {
 				throw new InvalidOperationException (String.Format ("SqlCommand DeriveParameters only supports CommandType.StoredProcedure, not CommandType.{0}", commandType));
 			ValidateCommand ("DeriveParameters");
 
+			string procName = CommandText;
+			string schemaName = String.Empty;
+			int dotPosition = procName.IndexOf ('.');
+			if (dotPosition >= 0) {
+				schemaName = procName.Substring (0, dotPosition);
+				procName = procName.Substring (dotPosition + 1);
+			}
+			
 			SqlParameterCollection localParameters = new SqlParameterCollection (this);
-			localParameters.Add ("@procedure_name", SqlDbType.NVarChar, CommandText.Length).Value = CommandText;
-
+			localParameters.Add ("@procedure_name", SqlDbType.NVarChar, procName.Length).Value = procName;
+			if (schemaName.Length > 0)
+				localParameters.Add ("@procedure_schema", SqlDbType.NVarChar, schemaName.Length).Value = schemaName;
+			
 			string sql = "sp_procedure_params_rowset";
 
 			try {

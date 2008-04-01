@@ -865,6 +865,10 @@ namespace System.Data.SqlClient {
 		{
 			if (value == null || value == DBNull.Value)
 				return value;
+			
+			if (value is string && ((string)value).Length == 0)
+				return DBNull.Value;
+			
 			switch (sqlDbType)  {
 			case SqlDbType.BigInt :
 				return Convert.ChangeType (value, typeof (Int64));
