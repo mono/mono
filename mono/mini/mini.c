@@ -2051,7 +2051,8 @@ mono_compile_create_var_for_vreg (MonoCompile *cfg, MonoType *type, int opcode, 
 		/* Allocate a dummy MonoInst for the first vreg */
 		MONO_INST_NEW (cfg, tree, OP_LOCAL);
 		tree->dreg = inst->dreg + 1;
-		tree->flags = MONO_INST_VOLATILE;
+		if (cfg->opt & (MONO_OPT_SSA | MONO_OPT_ABCREM | MONO_OPT_SSAPRE))
+			tree->flags = MONO_INST_VOLATILE;
 		tree->inst_c0 = num;
 		tree->type = STACK_I4;
 		tree->inst_vtype = &mono_defaults.int32_class->byval_arg;
@@ -2062,7 +2063,8 @@ mono_compile_create_var_for_vreg (MonoCompile *cfg, MonoType *type, int opcode, 
 		/* Allocate a dummy MonoInst for the second vreg */
 		MONO_INST_NEW (cfg, tree, OP_LOCAL);
 		tree->dreg = inst->dreg + 2;
-		tree->flags = MONO_INST_VOLATILE;
+		if (cfg->opt & (MONO_OPT_SSA | MONO_OPT_ABCREM | MONO_OPT_SSAPRE))
+			tree->flags = MONO_INST_VOLATILE;
 		tree->inst_c0 = num;
 		tree->type = STACK_I4;
 		tree->inst_vtype = &mono_defaults.int32_class->byval_arg;

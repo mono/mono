@@ -1,5 +1,11 @@
 2008-04-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_handle_global_vregs): Make the component vregs of a long
+	vreg volatile if the IR also uses the original vreg.
+
+	* mini.c (mono_compile_create_var_for_vreg): Only make the component vregs of
+	a long vreg volatile if it is needed by optimizations.
+
 	* mini-x86.c (mono_arch_emit_inst_for_method): Add support for Min/Max.
 
 	* local-propagation.c (mono_local_cprop2): Avoid copy propagation if it would
