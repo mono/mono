@@ -147,6 +147,25 @@ namespace MonoTests.System.Xml.TestClasses
 			nestedinner = new GenNestedClass<T1, T2>.InnerClass<T1> ();
 		}
 	}
+		
+	public class WithNulls
+	{
+		[XmlElement (IsNullable=true)]
+		public int? nint;
+		
+		[XmlElement (IsNullable=true)]
+		public TestEnumWithNulls? nenum;
+		
+		[XmlElement (IsNullable=true)]
+		public DateTime? ndate;
+	}
+	
+	public enum TestEnumWithNulls
+	{
+		aa,
+		bb
+	}
+	
 #endif
 
 	#endregion // GenericsTestClasses
