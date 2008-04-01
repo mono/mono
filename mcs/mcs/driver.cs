@@ -646,7 +646,7 @@ namespace Mono.CSharp
 			string [] default_config = {
 				"System",
 				"System.Xml",
-#if NET_2_1
+#if SMCS_SOURCE
 				"System.Core",
 				"System.Net",
 				"System.Windows",
