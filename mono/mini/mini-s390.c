@@ -1335,14 +1335,16 @@ add_stackParm (guint *gr, size_data *sz, ArgInfo *ainfo, gint size)
 {
 	if (*gr > S390_LAST_ARG_REG) {
 		sz->stack_size  = S390_ALIGN(sz->stack_size, sizeof(long));
-		ainfo->reg	= STK_BASE;
+		ainfo->reg	    = STK_BASE;
+		ainfo->offset   = sz->stack_size;
+		sz->stack_size += sizeof (gpointer);
 		sz->parm_size  += sizeof(gpointer);
 		sz->offStruct  += sizeof(gpointer);
 	} else {
 		ainfo->reg      = *gr;
+		ainfo->offset   = sz->stack_size;
 	}
 	(*gr) ++;
-	ainfo->offset   = sz->stack_size;
 	ainfo->offparm  = sz->offset;
 	sz->offset      = S390_ALIGN(sz->offset+size, sizeof(long));
 	ainfo->size     = size;
@@ -1860,9 +1862,18 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 
 						size = sizeof (gpointer);
 
-						inst->opcode = OP_REGOFFSET;
-						inst->inst_basereg = frame_reg;
-						inst->inst_offset = S390_ALIGN(offset, sizeof (gpointer));
+						if (cinfo->args [iParm].reg == STK_BASE) {
+							cfg->arch.bkchain_reg = s390_r12;
+							cfg->used_int_regs |= 1 << cfg->arch.bkchain_reg;
+
+							inst->opcode 	   = OP_REGOFFSET;
+							inst->inst_basereg = cfg->arch.bkchain_reg;
+							inst->inst_offset  = cinfo->args [iParm].offset;
+						} else {
+							inst->opcode = OP_REGOFFSET;
+							inst->inst_basereg = frame_reg;
+							inst->inst_offset = S390_ALIGN(offset, sizeof (gpointer));
+						}
 
 						/* Add a level of indirection */
 						MONO_INST_NEW (cfg, indir, 0);
@@ -3188,7 +3199,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_ADDCC:
 		case OP_IADDCC: {
 			CHECK_SRCDST_COM;
-			s390_ar  (code, ins->dreg, src2);
+			s390_alr  (code, ins->dreg, src2);
 		}
 			break;
 		case OP_IADD: {
@@ -5364,7 +5375,6 @@ mono_arch_decompose_long_opts (MonoCompile *cfg, MonoInst *ins)
 	// FIXME: What about the other OP_L opcodes below ?
 
 	switch (ins->opcode) {
-	case OP_LADD:
 	case OP_LADD_OVF:
 	case OP_LADD_OVF_UN:
 	case OP_LSUB_OVF:

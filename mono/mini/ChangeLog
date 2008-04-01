@@ -1,5 +1,13 @@
 2008-04-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-s390.c (add_stackParm): Increase sz->stack_size.
+	(mono_arch_allocate_vars): Handle vtype addresses passed on the stack.
+	(mono_arch_output_basic_block): Fix OP_ADDCC.
+	(mono_arch_decompose_long_opts): Remove OP_LADD, the generic code works for that
+	too.
+
+	* object.cs: Add tests for passing a vtype addr on the stack on s390.
+	
 	* mini-s390.c (mono_arch_output_basic_block): Fix OP_ICONV_TO_I1/I2.
 
 	* basic.cs: Add new tests.
