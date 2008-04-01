@@ -1,4 +1,4 @@
-// StringTest.cs - NUnit Test Cases for the System.String class
+﻿// StringTest.cs - NUnit Test Cases for the System.String class
 //
 // Authors:
 //   Jeffrey Stedfast <fejj@ximian.com>
@@ -400,6 +400,7 @@ public class StringTest : Assertion
 		// TODO - extended format call with CultureInfo
 	}
 
+	[Test]
 	public void TestCompareOrdinal ()
 	{
 		string lesser = "abc";
@@ -531,6 +532,25 @@ public class StringTest : Assertion
 		char[] dest = new char [4];
 		"Mono".CopyTo (0, dest, 0, Int32.MaxValue);
 	}
+
+#if NET_2_0
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void TestEndsWithWrongParameter () {
+		"ABC".EndsWith ("C", (StringComparison)80);
+	}
+
+	[Test]
+	public void TestEndsWithCultureMissing () {
+		bool errorThrown = false;
+		try {
+			"ABC".EndsWith ("C", true, null);
+		} catch (NullReferenceException) {
+			errorThrown = true;
+		}
+		Assert("should not throw error", !errorThrown);
+	}
+#endif
 
 	[Test]
 	public void EndsWith()
@@ -791,6 +811,13 @@ public class StringTest : Assertion
 	}
 
 #if NET_2_0
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void IndexOf_StringComparison () 
+	{
+		" ".IndexOf ("", 0, 1, (StringComparison)Int32.MinValue);
+	}
+
 	public void IndexOfStringComparison ()
 	{
 		string text = "testing123456";
@@ -1168,6 +1195,15 @@ public class StringTest : Assertion
 		AssertEquals ("bug #77412", 0, s3.LastIndexOf ("test123"));
 	}
 
+#if NET_2_0
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void LastIndexOf_StringComparison () 
+	{
+		" ".LastIndexOf ("", 0, 1, (StringComparison)Int32.MinValue);
+	}
+#endif
+
 	[Test]
 	[ExpectedException (typeof (ArgumentOutOfRangeException))]
 	public void LastIndexOf_Char_StartIndexStringLength () 
@@ -1422,6 +1458,14 @@ public class StringTest : Assertion
 		AssertEquals("double string", "oreigeinal", 
 			     s1.Replace("i", "ei"));
 
+		AssertEquals("start", "ooriginal", s1.Replace("o", "oo"));
+		AssertEquals("end", "originall", s1.Replace("l", "ll"));
+
+		AssertEquals("start empty", "riginal", s1.Replace("o", ""));
+		AssertEquals("end empty", "origina", s1.Replace("l", ""));
+
+		AssertEquals("replace bigger that original", "original", s1.Replace("original2", "original3"));
+
 		AssertEquals ("result longer", ":!:", "::".Replace ("::", ":!:"));
 
 		// Test overlapping matches (bug #54988)
@@ -1531,6 +1575,14 @@ public class StringTest : Assertion
 		st = test.Split (null);
 		AssertEquals ("#02", "123", st [0]);
 	}
+
+#if NET_2_0
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void TestStartsWithWrongParameter () {
+		"ABC".StartsWith ("A", (StringComparison)80);
+	}
+#endif
 
 	[Test]
 	public void StartsWith() {
@@ -1916,6 +1968,15 @@ public class StringTest : Assertion
 		AssertEquals ("#03-01", 1, res.Length);
 		AssertEquals ("#03-02", "..A..B..", res [0]);
 		
+		// Strange Case A+B A
+		res = "...".Split (new Char[] { '.' }, 1, StringSplitOptions.RemoveEmptyEntries);
+		AssertEquals ("#ABA-01", 1, res.Length);
+		AssertEquals ("#ABA-02", "...", res [0]);
+
+		// Strange Case A+B B
+		res = "...".Split (new Char[] { '.' }, 2, StringSplitOptions.RemoveEmptyEntries);
+		AssertEquals ("#ABB-01", 0, res.Length);
+
 		// Keeping Empties and multipe split chars
 		res = "..A;.B.;".Split (new Char[] { '.', ';' }, StringSplitOptions.None);
 		AssertEquals ("#04-01", 7, res.Length);
