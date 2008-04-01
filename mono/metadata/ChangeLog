@@ -1,3 +1,9 @@
+2008-04-01  Dick Porter  <dick@ximian.com>
+
+	* process.c (process_get_fileversion): If there's no string block,
+	set the file language to en_US.  Fixes the other new part of bug
+	374600.
+
 2008-03-29 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c: New functions mono_method_can_access_field_full and

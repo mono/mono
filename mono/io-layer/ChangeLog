@@ -1,3 +1,8 @@
+2008-04-01  Dick Porter  <dick@ximian.com>
+
+	* versioninfo.c (get_string_block): Refine the fix for bug 354856
+	(r93661) so that it also fixes the new part of bug 374600.
+
 2008-03-28  Dick Porter  <dick@ximian.com>
 
 	* processes.c (GetExitCodeProcess): Check if a process has exited
