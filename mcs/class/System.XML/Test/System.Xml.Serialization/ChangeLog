@@ -1,3 +1,8 @@
+2008-04-01  Lluis Sanchez Gual <lluis@novell.com> 
+
+	* XmlSerializerTestClasses.cs, XmlSerializerTests.cs: Test nullable
+	  enums.
+
 2008-03-31  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XmlCodeExporterTests.cs: Remove CWL.

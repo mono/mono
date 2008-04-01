@@ -2213,6 +2213,58 @@ namespace MonoTests.System.XmlSerialization
 			int? i = (int?) ser.Deserialize (new StringReader (sw.ToString ()));
 			Assert.AreEqual (5, i);
 		}
+
+		[Test]
+		public void NullableEnums ()
+		{
+			WithNulls w = new WithNulls ();
+			XmlSerializer ser = new XmlSerializer (typeof(WithNulls));
+			StringWriter tw = new StringWriter ();
+			ser.Serialize (tw, w);
+
+			string expected = "<?xml version='1.0' encoding='utf-16'?>" +
+				"<WithNulls xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsd='http://www.w3.org/2001/XMLSchema'>" +
+					"<nint xsi:nil='true' />" +
+					"<nenum xsi:nil='true' />" +
+					"<ndate xsi:nil='true' />" +
+					"</WithNulls>";
+			
+			Assert.AreEqual (Infoset (expected), Infoset (tw.ToString ()));
+			
+			StringReader sr = new StringReader (tw.ToString ());
+			w = (WithNulls) ser.Deserialize (sr);
+			
+			Assert.IsFalse (w.nint.HasValue);
+			Assert.IsFalse (w.nenum.HasValue);
+			Assert.IsFalse (w.ndate.HasValue);
+			
+			DateTime t = new DateTime (2008,4,1);
+			w.nint = 4;
+			w.ndate = t;
+			w.nenum = TestEnumWithNulls.bb;
+			
+			tw = new StringWriter ();
+			ser.Serialize (tw, w);
+			
+			expected = "<?xml version='1.0' encoding='utf-16'?>" +
+				"<WithNulls xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsd='http://www.w3.org/2001/XMLSchema'>" +
+					"<nint>4</nint>" +
+					"<nenum>bb</nenum>" +
+					"<ndate>2008-04-01T00:00:00</ndate>" +
+					"</WithNulls>";
+			
+			Assert.AreEqual (Infoset (expected), Infoset (tw.ToString ()));
+			
+			sr = new StringReader (tw.ToString ());
+			w = (WithNulls) ser.Deserialize (sr);
+			
+			Assert.IsTrue (w.nint.HasValue);
+			Assert.IsTrue (w.nenum.HasValue);
+			Assert.IsTrue (w.ndate.HasValue);
+			Assert.AreEqual (4, w.nint.Value);
+			Assert.AreEqual (TestEnumWithNulls.bb, w.nenum.Value);
+			Assert.AreEqual (t, w.ndate.Value);
+		}
 #endif
 
 		[Test]
