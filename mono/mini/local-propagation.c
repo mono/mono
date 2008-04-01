@@ -1255,7 +1255,7 @@ mono_local_cprop2 (MonoCompile *cfg)
 {
 	MonoBasicBlock *bb;
 	MonoInst **defs;
-	guint32 *def_index;
+	gint32 *def_index;
 	int max;
 
 restart:
@@ -1350,12 +1350,18 @@ restart:
 				 * since the lvreg will be spilled 
 				 */
 				/* Enabling this for floats trips up the fp stack */
+				/* 
+				 * Enabling this for floats on amd64 seems to cause a failure in 
+				 * basic-math.cs, most likely because it gets rid of some r8->r4 
+				 * conversions.
+				 */
 				if (MONO_IS_MOVE (def) &&
 					(!defs [def->sreg1] || (def_index [def->sreg1] < def_index [sreg])) &&
 					!vreg_is_volatile (cfg, def->sreg1) &&
 					/* This avoids propagating local vregs across calls */
 					((get_vreg_to_inst (cfg, def->sreg1) || !defs [def->sreg1] || (def_index [def->sreg1] >= last_call_index) || (def->opcode == OP_VMOVE))) &&
-					(!MONO_ARCH_USE_FPSTACK || (def->opcode != OP_FMOVE))) {
+					(!MONO_ARCH_USE_FPSTACK || (def->opcode != OP_FMOVE)) &&
+					(def->opcode != OP_FMOVE)) {
 					int vreg = def->sreg1;
 
 					//printf ("CCOPY: R%d -> R%d\n", sreg, vreg);

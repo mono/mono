@@ -11549,15 +11549,13 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
 					g_assert (var->opcode == OP_REGOFFSET);
 
 					prev_dreg = ins->dreg;
-					lvreg = vreg_to_lvreg [ins->dreg];
 
-					if (lvreg) {
-						if (G_UNLIKELY (cfg->verbose_level > 1))
-							printf ("\t\tUse lvreg R%d for R%d.\n", lvreg, ins->dreg);
-						ins->dreg = lvreg;
-					} else {
-						ins->dreg = alloc_dreg (cfg, stacktypes [regtype]);
-					}
+					/* Invalidate any previous lvreg for this vreg */
+					vreg_to_lvreg [ins->dreg] = 0;
+
+					lvreg = 0;
+
+					ins->dreg = alloc_dreg (cfg, stacktypes [regtype]);
 
 					if (regtype == 'l') {
 						NEW_STORE_MEMBASE (cfg, store_ins, OP_STOREI4_MEMBASE_REG, var->inst_basereg, var->inst_offset + MINI_LS_WORD_OFFSET, ins->dreg + 1);

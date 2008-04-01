@@ -1,5 +1,12 @@
 2008-04-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* local-propagation.c (mono_local_cprop2): Make def_index a gint32, so the
+	def_index checks actually work. Also, disable copy propagation for floats.
+
+	* method-to-ir.c (mono_spill_global_vars): Avoid using a previous lvreg for the
+	destination, since this makes little sense, and it makes the liveness interval of
+	the lvreg longer, leading to worse generated code.
+
 	* mini-s390.c (add_stackParm): Increase sz->stack_size.
 	(mono_arch_allocate_vars): Handle vtype addresses passed on the stack.
 	(mono_arch_output_basic_block): Fix OP_ADDCC.
