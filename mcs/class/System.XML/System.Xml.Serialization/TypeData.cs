@@ -187,7 +187,22 @@ namespace System.Xml.Serialization
 			string name = full ? type.FullName : type.Name;
 			name = name.Replace ('+', '.');
 			int idx = name.IndexOf ('`'); // generic definition has extra `n.
-			return idx > 0 ? name.Substring (0, idx) : name;
+			name = idx > 0 ? name.Substring (0, idx) : name;
+			if (IsKeyword (name))
+				return "@" + name;
+			else
+				return name;
+		}
+		
+		static bool IsKeyword (string name)
+		{
+			if (keywordsTable == null) {
+				Hashtable t = new Hashtable ();
+				foreach (string s in keywords)
+					t [s] = s;
+				keywordsTable = t;
+			}
+			return keywordsTable.Contains (name);
 		}
 
 		public SchemaTypes SchemaType
@@ -378,6 +393,24 @@ namespace System.Xml.Serialization
 				"hierarchy. {2} does not implement Add({1}).", inheritFrom, 
 				argumentType.FullName, type.FullName));
 		}
+
+		private static Hashtable keywordsTable;
+		private static string[] keywords = new string[] {
+			"abstract","event","new","struct","as","explicit","null","switch","base","extern",
+			"this","false","operator","throw","break","finally","out","true",
+			"fixed","override","try","case","params","typeof","catch","for",
+			"private","foreach","protected","checked","goto","public",
+			"unchecked","class","if","readonly","unsafe","const","implicit","ref",
+			"continue","in","return","using","virtual","default",
+			"interface","sealed","volatile","delegate","internal","do","is",
+			"sizeof","while","lock","stackalloc","else","static","enum",
+			"namespace",
+			"object","bool","byte","float","uint","char","ulong","ushort",
+			"decimal","int","sbyte","short","double","long","string","void",
+#if NET_2_0
+			"partial", "yield", "where"
+#endif
+		};
 
 #if NET_2_0
 		private bool IsGenericList (Type type)
