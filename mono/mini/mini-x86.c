@@ -4633,6 +4633,27 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 			MONO_ADD_INS (cfg->cbb, ins);
 		}
 
+		if (cfg->opt & MONO_OPT_CMOV) {
+			int opcode = 0;
+
+			if (strcmp (cmethod->name, "Min") == 0) {
+				if (fsig->params [0]->type == MONO_TYPE_I4)
+					opcode = OP_IMIN;
+			} else if (strcmp (cmethod->name, "Max") == 0) {
+				if (fsig->params [0]->type == MONO_TYPE_I4)
+					opcode = OP_IMAX;
+			}		
+
+			if (opcode) {
+				MONO_INST_NEW (cfg, ins, opcode);
+				ins->type = STACK_I4;
+				ins->dreg = mono_alloc_ireg (cfg);
+				ins->sreg1 = args [0]->dreg;
+				ins->sreg2 = args [1]->dreg;
+				MONO_ADD_INS (cfg->cbb, ins);
+			}
+		}
+
 #if 0
 		/* OP_FREM is not IEEE compatible */
 		else if (strcmp (cmethod->name, "IEEERemainder") == 0) {

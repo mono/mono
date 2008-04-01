@@ -1,5 +1,7 @@
 2008-04-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-x86.c (mono_arch_emit_inst_for_method): Add support for Min/Max.
+
 	* local-propagation.c (mono_local_cprop2): Avoid copy propagation if it would
 	make it impossible to use reverse copy propagation later.
 	
