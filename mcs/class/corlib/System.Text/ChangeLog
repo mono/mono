@@ -1,3 +1,7 @@
+﻿2008-04-01  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
+
+	* StringBuilder.cs: Use the new managed String functions.
+
 2008-03-27  Kornél Pál  <kornelpal@gmail.com>
 
 	* Encoding.cs: Fix possible integer overflow in argument validation.
