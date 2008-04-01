@@ -39,6 +39,7 @@ using System.Web.Util;
 using System.Web.Configuration;
 using System.Globalization;
 using System.Security.Permissions;
+using System.Web.Hosting;
 
 namespace System.Web {
 	
@@ -959,8 +960,29 @@ namespace System.Web {
 			output_stream.ApplyFilter (final_flush);
 			Flush (final_flush);
 		}
-		
 
+#if NET_2_0
+		internal void TransmitFile (VirtualFile vf)
+		{
+			TransmitFile (vf, false);
+		}
+		
+		internal void TransmitFile (VirtualFile vf, bool final_flush)
+		{
+			if (vf == null)
+				throw new ArgumentNullException ("vf");
+
+			using (Stream s = vf.Open ()) {
+				long len = s.Length;
+				byte[] buf = new byte [len];
+				int readBytes = s.Read (buf, 0, (int) len);
+				output_stream.Write (buf, 0, readBytes);
+				output_stream.ApplyFilter (final_flush);
+				Flush (final_flush);
+			}
+		}
+#endif
+		
 #region Session state support
 		internal void SetAppPathModifier (string app_modifier)
 		{

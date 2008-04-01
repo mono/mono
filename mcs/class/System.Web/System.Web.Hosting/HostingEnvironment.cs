@@ -53,6 +53,11 @@ namespace System.Web.Hosting {
 								new DefaultVirtualPathProvider ();
 		static int busy_count;
 
+		internal static bool HaveCustomVPP {
+			get;
+			private set;
+		}
+		
 		public HostingEnvironment ()
 		{
 			// The documentation says that this is called once per domain by the ApplicationManager and
@@ -161,8 +166,13 @@ namespace System.Web.Hosting {
 			if (virtualPathProvider == null)
 				throw new ArgumentNullException ("virtualPathProvider");
 
-			virtualPathProvider.SetPrevious (vpath_provider);
+			VirtualPathProvider previous = vpath_provider;
 			vpath_provider = virtualPathProvider;
+			vpath_provider.InitializeAndSetPrevious (previous);
+			if (!(virtualPathProvider is DefaultVirtualPathProvider))
+				HaveCustomVPP = true;
+			else
+				HaveCustomVPP = false;
 		}
 		
 		public static IDisposable SetCultures (string virtualPath)

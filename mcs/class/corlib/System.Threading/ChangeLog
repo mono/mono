@@ -1,3 +1,8 @@
+2008-04-01: Eyal Alaluf <eyala@mainsoft.com>
+
+	* Thread.cs: Put a NumberFormatter instance as a member of the current
+	  thread so it can reused for performint ToString conversions.
+
 2008-03-26  Massimiliano Mantione <massi@ximian.com>
 	* Thread.cs: Renamed "unused6" because it will be used to hold
 	the "mono_thread_manage" callback.

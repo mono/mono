@@ -15,7 +15,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
-	public class XmlAttributeTests : Assertion
+	public class XmlAttributeTests
 	{
 		XmlDocument doc;
 		XmlAttribute attr;
@@ -49,7 +49,7 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void Attributes ()
 		{
-			AssertNull (attr.Attributes);
+			Assert.IsNull (attr.Attributes);
 		}
 
 		[Test]
@@ -57,19 +57,19 @@ namespace MonoTests.System.Xml
 		{
 			attr = doc.CreateAttribute ("foo", "bar", "http://abc.def");
 			attr.Value = "baz";
-			AssertEquals ("baz", attr.InnerXml);
-			AssertEquals ("foo:bar=\"baz\"", attr.OuterXml);
+			Assert.AreEqual ("baz", attr.InnerXml, "#1");
+			Assert.AreEqual ("foo:bar=\"baz\"", attr.OuterXml, "#2");
 		}
 
 		[Test]
 		public void AttributeWithNoValue ()
 		{
 			XmlAttribute attribute = doc.CreateAttribute ("name");
-			AssertEquals (String.Empty, attribute.Value);
-			Assert (!attribute.HasChildNodes);
-			AssertNull (attribute.FirstChild);
-			AssertNull (attribute.LastChild);
-			AssertEquals (0, attribute.ChildNodes.Count);
+			Assert.AreEqual (String.Empty, attribute.Value, "#1");
+			Assert.IsFalse (attribute.HasChildNodes, "#2");
+			Assert.IsNull (attribute.FirstChild, "#3");
+			Assert.IsNull (attribute.LastChild, "#4");
+			Assert.AreEqual (0, attribute.ChildNodes.Count, "#5");
 		}
 
 		[Test]
@@ -77,82 +77,108 @@ namespace MonoTests.System.Xml
 		{
 			XmlAttribute attribute = doc.CreateAttribute ("name");
 			attribute.Value = "value";
-			AssertEquals ("value", attribute.Value);
-			Assert (attribute.HasChildNodes);
-			AssertNotNull (attribute.FirstChild);
-			AssertNotNull (attribute.LastChild);
-			AssertEquals (1, attribute.ChildNodes.Count);
-			AssertEquals (XmlNodeType.Text, attribute.ChildNodes [0].NodeType);
-			AssertEquals ("value", attribute.ChildNodes [0].Value);
+			Assert.AreEqual ("value", attribute.Value, "#1");
+			Assert.IsTrue (attribute.HasChildNodes, "#2");
+			Assert.IsNotNull (attribute.FirstChild, "#3");
+			Assert.IsNotNull (attribute.LastChild, "#4");
+			Assert.AreEqual (1, attribute.ChildNodes.Count, "#5");
+			Assert.AreEqual (XmlNodeType.Text, attribute.ChildNodes [0].NodeType, "#6");
+			Assert.AreEqual ("value", attribute.ChildNodes [0].Value, "#7");
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void CheckPrefixWithNamespace ()
 		{
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml ("<root xmlns:foo='urn:foo' foo='attfoo' foo:foo='attfoofoo' />");
 			// hogehoge does not match to any namespace.
-			AssertEquals ("xmlns:foo", doc.DocumentElement.Attributes [0].Name);
-			doc.DocumentElement.Attributes [0].Prefix="hogehoge";
-			doc.Save (Console.Out);
+			Assert.AreEqual ("xmlns:foo", doc.DocumentElement.Attributes [0].Name);
+			try {
+				doc.DocumentElement.Attributes [0].Prefix = "hogehoge";
+				doc.Save (TextWriter.Null);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Cannot bind to the reserved namespace
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
 		public void NamespaceAttributes ()
 		{
 			try {
-				doc.CreateAttribute ("", "xmlns", "urn:foo");
-				Assertion.Fail ("Creating xmlns attribute with invalid nsuri should be error.");
-			} catch (Exception) {
+				doc.CreateAttribute (string.Empty, "xmlns", "urn:foo");
+				Assert.Fail ("#A1");
+			} catch (ArgumentException ex) {
+				// The namespace declaration attribute has an
+				// incorrect namespaceURI: urn:foo
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNull (ex.ParamName, "#A5");
 			}
+
 			doc.LoadXml ("<root/>");
+
 			try {
 				doc.DocumentElement.SetAttribute ("xmlns", "urn:foo", "urn:bar");
-				Assertion.Fail ("SetAttribute for xmlns with invalid nsuri should be error.");
-			} catch (ArgumentException) {
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// The namespace declaration attribute has an
+				// incorrect namespaceURI: urn:foo
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsNull (ex.ParamName, "#B5");
 			}
 		}
 
 		[Test]
 		public void HasChildNodes ()
 		{
-			Assert (attr.HasChildNodes);
+			Assert.IsTrue (attr.HasChildNodes, "#1");
+			XmlAttribute attr2 = doc.CreateAttribute ("attr2");
+			Assert.IsFalse (attr2.HasChildNodes, "#2");
 		}
 
 		[Test]
 		public void Name ()
 		{
-			AssertEquals ("attr1", attr.Name);
+			Assert.AreEqual ("attr1", attr.Name);
 		}
 
 		[Test]
 		public void NodeType ()
 		{
-			AssertEquals (XmlNodeType.Attribute, attr.NodeType);
+			Assert.AreEqual (XmlNodeType.Attribute, attr.NodeType);
 		}
 
 		[Test]
 		public void OwnerDocument ()
 		{
-			AssertSame (doc, attr.OwnerDocument);
+			Assert.AreSame (doc, attr.OwnerDocument);
 		}
 
 		[Test]
 		public void ParentNode ()
 		{
-			AssertNull ("Attr parents not allowed", attr.ParentNode);
+			Assert.IsNull (attr.ParentNode, "Attr parents not allowed");
 		}
 
 		[Test]
 		public void Value ()
 		{
-			AssertEquals ("val1", attr.Value);
+			Assert.AreEqual ("val1", attr.Value, "#1");
+			XmlAttribute attr2 = doc.CreateAttribute ("attr2");
+			Assert.AreEqual (string.Empty, attr2.Value, "#2");
 		}
 
 		[Test]
 #if NET_2_0
-		[Category ("NotDotNet")] // enbug in 2.0
+		[Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=336180
 #endif
 		public void SetInnerTextAndXml ()
 		{
@@ -160,19 +186,18 @@ namespace MonoTests.System.Xml
 			doc.LoadXml ("<root name='value' />");
 			XmlAttribute attr = doc.DocumentElement.Attributes ["name"];
 			attr.InnerText = "a&b";
-			AssertEquals ("setInnerText", "a&b", attr.Value);
+			Assert.AreEqual ("a&b", attr.Value, "setInnerText");
 			attr.InnerXml = "a&amp;b";
-			AssertEquals ("setInnerXml", "a&b", attr.Value);
+			Assert.AreEqual ("a&b", attr.Value, "setInnerXml");
 			attr.InnerXml = "'a&amp;b'";
-			AssertEquals ("setInnerXml.InnerXml", "'a&amp;b'", attr.InnerXml);
-			AssertEquals ("setInnerXml.Value", "'a&b'", attr.Value);
+			Assert.AreEqual ("'a&amp;b'", attr.InnerXml, "setInnerXml.InnerXml");
+			Assert.AreEqual ("'a&b'", attr.Value, "setInnerXml.Value");
 			attr.InnerXml = "\"a&amp;b\"";
-			AssertEquals ("Double_Quote", "\"a&amp;b\"", attr.InnerXml);
+			Assert.AreEqual ("\"a&amp;b\"", attr.InnerXml, "Double_Quote");
 			attr.InnerXml = "\"a&amp;b'";
-			AssertEquals ("DoubleQuoteStart_SingleQuoteEnd",
-				"\"a&amp;b'", attr.InnerXml);
+			Assert.AreEqual ("\"a&amp;b'", attr.InnerXml, "DoubleQuoteStart_SingleQuoteEnd");
 
-			attr.Value = "";
+			attr.Value = string.Empty;
 			XmlNodeChangedEventHandler evInserted = new XmlNodeChangedEventHandler (EventNodeInserted);
 			XmlNodeChangedEventHandler evChanged = new XmlNodeChangedEventHandler (EventNodeChanged);
 			XmlNodeChangedEventHandler evRemoved = new XmlNodeChangedEventHandler (EventNodeRemoved);
@@ -182,15 +207,15 @@ namespace MonoTests.System.Xml
 			try {
 				// set_InnerText event
 				attr.InnerText = "fire";
-				AssertEquals ("setInnerText.NodeInserted", false, inserted);
-				AssertEquals ("setInnerText.NodeChanged", true, changed);
-				AssertEquals ("setInnerText.NodeRemoved", false, removed);
+				Assert.IsFalse (inserted, "setInnerText.NodeInserted");
+				Assert.IsTrue (changed, "setInnerText.NodeChanged");
+				Assert.IsFalse (removed, "setInnerText.NodeRemoved");
 				inserted = changed = removed = false;
 				// set_InnerXml event
 				attr.InnerXml = "fire";
-				AssertEquals ("setInnserXml.NodeInserted", true, inserted);
-				AssertEquals ("setInnserXml.NodeChanged", false, changed);
-				AssertEquals ("setInnserXml.NodeRemoved", true, removed);
+				Assert.IsTrue (inserted, "setInnserXml.NodeInserted");
+				Assert.IsFalse (changed, "setInnserXml.NodeChanged");
+				Assert.IsTrue (removed, "setInnserXml.NodeRemoved");
 				inserted = changed = removed = false;
 			} finally {
 				doc.NodeInserted -= evInserted;
@@ -198,8 +223,6 @@ namespace MonoTests.System.Xml
 				doc.NodeRemoved -= evRemoved;
 			}
 		}
-
-
 
 		private void OnSetInnerText (object o, XmlNodeChangedEventArgs e)
 		{
@@ -211,7 +234,7 @@ namespace MonoTests.System.Xml
 		public void WriteTo ()
 		{
 			doc.AppendChild (doc.CreateElement ("root"));
-			doc.DocumentElement.SetAttribute ("attr","");
+			doc.DocumentElement.SetAttribute ("attr", string.Empty);
 			doc.DocumentElement.Attributes ["attr"].InnerXml = "&ent;";
 			StringWriter sw = new StringWriter ();
 			XmlTextWriter xtw = new XmlTextWriter (sw);
@@ -219,7 +242,7 @@ namespace MonoTests.System.Xml
 			XmlAttribute attr = doc.DocumentElement.Attributes ["attr"];
 			attr.WriteTo (xtw);
 			xtw.Close ();
-			Assertion.AssertEquals ("<result attr=\"&ent;\" />", sw.ToString ());
+			Assert.AreEqual ("<result attr=\"&ent;\" />", sw.ToString ());
 		}
 
 		[Test]
@@ -229,23 +252,23 @@ namespace MonoTests.System.Xml
 			string xml = dtd + "<root><c foo='id1' bar='1' /><c foo='id2' bar='2'/></root>";
 			XmlValidatingReader vr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
 			doc.Load (vr);
-			AssertNotNull (doc.GetElementById ("id1"));
-			AssertNotNull (doc.GetElementById ("id2"));
+			Assert.IsNotNull (doc.GetElementById ("id1"));
+			Assert.IsNotNull (doc.GetElementById ("id2"));
 			// MS.NET BUG: Later I try to append it to another element, but
 			// it should raise InvalidOperationException.
 			// (and if MS.NET conform to DOM 1.0, it should be XmlException.)
 //			XmlAttribute attr = doc.DocumentElement.FirstChild.Attributes [0];
 			XmlAttribute attr = doc.DocumentElement.FirstChild.Attributes.RemoveAt (0);
-			AssertEquals ("id1", attr.Value);
+			Assert.AreEqual ("id1", attr.Value);
 
 			doc.DocumentElement.LastChild.Attributes.SetNamedItem (attr);
-			AssertNotNull (doc.GetElementById ("id1"));
+			Assert.IsNotNull (doc.GetElementById ("id1"));
 			XmlElement elem2 = doc.GetElementById ("id2");
 			// MS.NET BUG: it doesn't remove replaced attribute with SetNamedItem!
 //			AssertNull (elem2);
 //			AssertEquals ("2", elem2.GetAttribute ("bar"));
 //			elem2.RemoveAttribute ("foo");
-//			AssertEquals ("", elem2.GetAttribute ("foo"));
+//			AssertEquals (string.Empty, elem2.GetAttribute ("foo"));
 
 			// MS.NET BUG: elem should be the element which has the attribute bar='1'!
 			XmlElement elem = doc.GetElementById ("id1");
@@ -256,9 +279,9 @@ namespace MonoTests.System.Xml
 			doc.DocumentElement.AppendChild (elemNew);
 			// but once attribute is set, document recognizes this ID.
 			elemNew.SetAttribute ("foo", "id3");
-			AssertNotNull (doc.GetElementById ("id3"));
+			Assert.IsNotNull (doc.GetElementById ("id3"));
 			elemNew.RemoveAttribute ("foo");
-			AssertNull (doc.GetElementById ("id3"));
+			Assert.IsNull (doc.GetElementById ("id3"));
 
 			// MS.NET BUG: multiple IDs are allowed.
 			// In such case GetElementById fails.
@@ -270,9 +293,9 @@ namespace MonoTests.System.Xml
 
 			// Finally...
 			doc.RemoveAll ();
-			AssertNull (doc.GetElementById ("id1"));
-			AssertNull (doc.GetElementById ("id2"));
-			AssertNull (doc.GetElementById ("id3"));
+			Assert.IsNull (doc.GetElementById ("id1"));
+			Assert.IsNull (doc.GetElementById ("id2"));
+			Assert.IsNull (doc.GetElementById ("id3"));
 		}
 
 		int removeAllStep;
@@ -290,23 +313,24 @@ namespace MonoTests.System.Xml
 		private void OnInsert (object o, XmlNodeChangedEventArgs e)
 		{
 			if (removeAllStep == 1)
-				AssertEquals (XmlNodeType.Text, e.Node.NodeType);
+				Assert.AreEqual (XmlNodeType.Text, e.Node.NodeType);
 			else if (removeAllStep == 2) {
-				AssertEquals ("foo", e.Node.Name);
-				Assert (! ((XmlAttribute) e.Node).Specified);
-			}
-			else
-				Fail ();
+				Assert.AreEqual ("foo", e.Node.Name);
+				Assert.IsFalse (((XmlAttribute) e.Node).Specified);
+			} else
+				Assert.Fail ();
 			removeAllStep++;
 		}
+
 		private void OnChange (object o, XmlNodeChangedEventArgs e)
 		{
-			Fail ("Should not be called.");
+			Assert.Fail ("Should not be called.");
 		}
+
 		private void OnRemove (object o, XmlNodeChangedEventArgs e)
 		{
-			AssertEquals (0, removeAllStep);
-			AssertEquals ("foo", e.Node.Name);
+			Assert.AreEqual (0, removeAllStep, "#1");
+			Assert.AreEqual ("foo", e.Node.Name, "#2");
 			removeAllStep++;
 		}
 
@@ -315,10 +339,10 @@ namespace MonoTests.System.Xml
 		{
 			doc.LoadXml ("<root attr=''/>");
 			XmlAttribute attr = doc.DocumentElement.GetAttributeNode ("attr");
-			AssertNotNull (attr);
-			AssertEquals (1, attr.ChildNodes.Count);
-			AssertEquals (XmlNodeType.Text, attr.ChildNodes [0].NodeType);
-			AssertEquals (String.Empty, attr.ChildNodes [0].Value);
+			Assert.IsNotNull (attr, "#1");
+			Assert.AreEqual (1, attr.ChildNodes.Count, "#2");
+			Assert.AreEqual (XmlNodeType.Text, attr.ChildNodes [0].NodeType, "#3");
+			Assert.AreEqual (String.Empty, attr.ChildNodes [0].Value, "#4");
 		}
 
 		[Test]
@@ -330,7 +354,7 @@ namespace MonoTests.System.Xml
 			XmlAttribute a = doc.DocumentElement.Attributes [0];
 			a.Prefix ="hoge:hoge:hoge";
 			// This test is nothing more than ****.
-			AssertEquals ("hoge:hoge:hoge", a.Prefix);
+			Assert.AreEqual ("hoge:hoge:hoge", a.Prefix);
 			// The resulting string is not XML (so broken), so 
 			// it should not be tested.
 			// doc.Save (TextWriter.Null);
@@ -355,25 +379,26 @@ namespace MonoTests.System.Xml
 		{
 			XmlDocument doc = new XmlDocument ();
 			doc.LoadXml ("<!DOCTYPE USS[<!ELEMENT USS EMPTY><!ATTLIST USS Id ID #REQUIRED>]><USS Id='foo'/>");
-			AssertNotNull ("#1", doc.SelectSingleNode ("id ('foo')"));
+			Assert.IsNotNull (doc.SelectSingleNode ("id ('foo')"), "#1");
 			doc.DocumentElement.Attributes [0].Value = "bar";
-			AssertNull ("#2", doc.SelectSingleNode ("id ('foo')"));
-			AssertNotNull ("#3", doc.SelectSingleNode ("id ('bar')"));
+			Assert.IsNull (doc.SelectSingleNode ("id ('foo')"), "#2");
+			Assert.IsNotNull (doc.SelectSingleNode ("id ('bar')"), "#3");
 			doc.DocumentElement.Attributes [0].ChildNodes [0].Value = "baz";
 			// Tests below don't work fine under MS.NET
-//			AssertNull ("#4", doc.SelectSingleNode ("id ('bar')"));
-//			AssertNotNull ("#5", doc.SelectSingleNode ("id ('baz')"));
+//			Assert.IsNull (doc.SelectSingleNode ("id ('bar')"), "#4");
+//			Assert.IsNotNull (doc.SelectSingleNode ("id ('baz')"), "#5");
 			doc.DocumentElement.Attributes [0].AppendChild (doc.CreateTextNode ("baz"));
-			AssertNull ("#6", doc.SelectSingleNode ("id ('baz')"));
-//			AssertNull ("#6-2", doc.SelectSingleNode ("id ('bar')"));
-//			AssertNotNull ("#7", doc.SelectSingleNode ("id ('bazbaz')"));
+			Assert.IsNull (doc.SelectSingleNode ("id ('baz')"), "#6");
+//			Assert.IsNull (doc.SelectSingleNode ("id ('bar')"), "#7");
+//			Assert.IsNotNull (doc.SelectSingleNode ("id ('bazbaz')"), "#7");
 		}
 
 		[Test] // http://lists.ximian.com/pipermail/mono-list/2006-May/031557.html
 		public void NonEmptyPrefixWithEmptyNS ()
 		{
 			XmlDocument xmlDoc = new XmlDocument ();
-			xmlDoc.AppendChild (xmlDoc.CreateNode (XmlNodeType.XmlDeclaration, "", ""));
+			xmlDoc.AppendChild (xmlDoc.CreateNode (XmlNodeType.XmlDeclaration,
+				string.Empty, string.Empty));
 
 			XmlElement docElement = xmlDoc.CreateElement ("doc");
 			docElement.SetAttribute ("xmlns", "http://whatever.org/XMLSchema/foo");

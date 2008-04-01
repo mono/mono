@@ -1,3 +1,15 @@
+2008-04-01  Marek Habersack  <mhabersack@novell.com>
+
+	* HostingEnvironment.cs: initialize custom VPP on
+	registration.
+	Added an internal boolena property to signal if we're using a
+	custom VPP or not (HaveCustomVPP)
+
+2008-03-31  Marek Habersack  <mhabersack@novell.com>
+
+	* VirtualPathProvider.cs: internal SetPrevious method renamed to
+	InitializeAndSetPrevious.
+
 2008-03-27  Marek Habersack  <mhabersack@novell.com>
 
 	* DefaultVirtualPathProvider.cs: support relative virtual paths in

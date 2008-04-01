@@ -233,14 +233,12 @@ namespace System
 #endif
 		public override string ToString ()
 		{
-			NumberFormatInfo nfi = NumberFormatInfo.GetInstance (null);
-			return new NumberFormatter(null, m_value).FormatGeneral (nfi);
+			return NumberFormatter.NumberToString (m_value, null);
 		}
 
 		public string ToString (IFormatProvider provider)
 		{
-			NumberFormatInfo nfi = NumberFormatInfo.GetInstance (provider);
-			return new NumberFormatter(null, m_value).FormatGeneral (nfi);
+			return NumberFormatter.NumberToString (m_value, provider);
 		}
 
 		public string ToString (string format)
@@ -250,8 +248,7 @@ namespace System
 
 		public string ToString (string format, IFormatProvider provider)
 		{
-			NumberFormatInfo nfi = NumberFormatInfo.GetInstance (provider);
-			return NumberFormatter.NumberToString (format, m_value, nfi);
+			return NumberFormatter.NumberToString (format, m_value, provider);
 		}
 
 		// ============= IConvertible Methods ============ //

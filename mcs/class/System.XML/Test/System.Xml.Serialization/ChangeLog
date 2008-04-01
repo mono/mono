@@ -1,3 +1,7 @@
+2008-03-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlCodeExporterTests.cs: Remove CWL.
+
 2008-03-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XmlSerializationReaderTests.cs: Marked HandleOutAttributeParameters

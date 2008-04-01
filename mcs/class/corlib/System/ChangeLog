@@ -1,3 +1,18 @@
+2008-04-01  Eyal Alaluf <eyala@mainsoft.com>
+
+	* NumberFormatter.cs NumberFormatter.jvm.cs: Performance optimizations.
+	  Reuse a per thread instance to format all the primitive types. Modify
+	  class accordingly so the same
+	  instance can be used multiple times.
+	* Int16.cs UInt64.cs Double.cs SByte.cs UInt16.cs Byte.csDecimal.cs
+	  TimeSpan.cs Int32.cs Int64.cs Single.cs UInt32.cs: Change use of
+	  NumberFormatter to adapt to above changes in class interface.
+
+2008-03-31  Mark Probst  <mark.probst@gmail.com>
+
+	* MonoType.cs: Don't do CAS security checks in CheckMethodSecurity
+	for 2.1 profile.
+
 2008-03-28  Marek Safar  <marek.safar@gmail.com>
 
 	* Nullable.cs (Box): Do things explicitly and not rely on broken gmcs

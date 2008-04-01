@@ -641,6 +641,9 @@ namespace System
 
 		private MethodBase CheckMethodSecurity (MethodBase mb)
 		{
+#if NET_2_1
+			return mb;
+#else
 			if (!SecurityManager.SecurityEnabled || (mb == null))
 				return mb;
 
@@ -651,6 +654,7 @@ namespace System
 
 			// this (unlike the Invoke step) is _and stays_ a LinkDemand (caller)
 			return SecurityManager.ReflectedLinkDemandQuery (mb) ? mb : null;
+#endif
 		}
 
 		void ReorderParamArrayArguments(ref object[] args, MethodBase method)

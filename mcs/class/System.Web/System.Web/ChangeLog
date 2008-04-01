@@ -1,3 +1,12 @@
+2008-03-31  Marek Habersack  <mhabersack@novell.com>
+
+	* StaticFileHandler.cs: added code to use custom
+	VirtualPathProvider, if present, to serve files from virtual
+	storage.
+
+	* HttpResponse.cs: added two internal TransmitFile overloads which
+	take a VirtualFile as a parameter.
+
 2008-03-27  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpRequest.cs: make UrlComponents internal.

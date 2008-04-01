@@ -1326,13 +1326,7 @@ namespace System
 
         public string ToString (string format, IFormatProvider provider) 
         {
-		NumberFormatInfo nfi = NumberFormatInfo.GetInstance (provider);
-
-		// use "G" for null or empty string
-		if ((format == null) || (format.Length == 0))
-			format = "G";	
-		
-		return NumberFormatter.NumberToString (format, this, nfi);
+            return NumberFormatter.NumberToString (format, this, provider);
         }
 
         public override string ToString() 
