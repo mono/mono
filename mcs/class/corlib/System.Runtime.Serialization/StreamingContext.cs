@@ -64,14 +64,14 @@ namespace System.Runtime.Serialization {
 			}
 		}
 
-		override public bool Equals (Object o)
+		override public bool Equals (Object obj)
 		{
 			StreamingContext other;
 			
-			if (!(o is StreamingContext))
+			if (!(obj is StreamingContext))
 				return false;
 
-			other = (StreamingContext) o;
+			other = (StreamingContext) obj;
 
 			return (other.state == this.state) && (other.additional == this.additional);
 		}
