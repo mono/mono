@@ -127,18 +127,18 @@ namespace System
 			return x.Equals (y);
 		}
 
-		public int GetHashCode (object o)
+		public int GetHashCode (object obj)
 		{
-			if (o == null)
-				throw new ArgumentNullException("o");
+			if (obj == null)
+				throw new ArgumentNullException("obj");
 
-			string s = o as string;
-			return s == null ? o.GetHashCode (): GetHashCode(s);
+			string s = obj as string;
+			return s == null ? obj.GetHashCode (): GetHashCode(s);
 		}
 
 		public abstract int Compare (string x, string y);
 		public abstract bool Equals (string x, string y);
-		public abstract int GetHashCode (string s);
+		public abstract int GetHashCode (string obj);
 	}
 
 	[Serializable]

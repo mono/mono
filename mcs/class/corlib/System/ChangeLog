@@ -1,4 +1,9 @@
-﻿2008-04-01  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
+﻿2008-04-02  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
+
+	* StringComparer.cs
+	* String.cs: Fix parameter names
+
+2008-04-01  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
 
 	* Char.cs: Fix parameter names
 
