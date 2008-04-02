@@ -752,7 +752,7 @@ namespace Mono.CSharp {
 
 				foreach (ExceptionStatement stmt in point.FinallyBlocks) {
 					if (stmt != null)
-						stmt.EmitFinally (ec);
+						stmt.EmitFinallyBody (ec);
 				}
 
 				ig.EndExceptionBlock ();

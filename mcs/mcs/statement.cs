@@ -3780,18 +3780,18 @@ namespace Mono.CSharp {
 
 	public abstract class ExceptionStatement : Statement
 	{
-		public abstract void EmitFinally (EmitContext ec);
+		public abstract void EmitFinallyBody (EmitContext ec);
 
 		protected bool emit_finally = true;
 		ArrayList parent_vectors;
 
-		protected void DoEmitFinally (EmitContext ec)
+		protected void EmitFinally (EmitContext ec)
 		{
 			if (emit_finally)
 				ec.ig.BeginFinallyBlock ();
 			else if (ec.InIterator)
 				ec.CurrentIterator.MarkFinally (ec, parent_vectors);
-			EmitFinally (ec);
+			EmitFinallyBody (ec);
 		}
 
 		protected void ResolveFinally (FlowBranchingException branching)
@@ -3872,12 +3872,12 @@ namespace Mono.CSharp {
 			Statement.Emit (ec);
 			
 			// finally
-			DoEmitFinally (ec);
+			EmitFinally (ec);
 			if (emit_finally)
 				ig.EndExceptionBlock ();
 		}
 
-		public override void EmitFinally (EmitContext ec)
+		public override void EmitFinallyBody (EmitContext ec)
 		{
 			temp.Emit (ec);
 			ec.ig.Emit (OpCodes.Call, TypeManager.void_monitor_exit_object);
@@ -4522,12 +4522,12 @@ namespace Mono.CSharp {
 			if (General != null)
 				General.Emit (ec);
 
-			DoEmitFinally (ec);
+			EmitFinally (ec);
 			if (need_exc_block)
 				ig.EndExceptionBlock ();
 		}
 
-		public override void EmitFinally (EmitContext ec)
+		public override void EmitFinallyBody (EmitContext ec)
 		{
 			if (Fini != null)
 				Fini.Emit (ec);
@@ -4661,7 +4661,7 @@ namespace Mono.CSharp {
 
 			var_list.Reverse ();
 
-			DoEmitFinally (ec);
+			EmitFinally (ec);
 		}
 
 		void EmitLocalVariableDeclFinally (EmitContext ec)
@@ -4734,7 +4734,7 @@ namespace Mono.CSharp {
 
 			Statement.Emit (ec);
 			
-			DoEmitFinally (ec);
+			EmitFinally (ec);
 			if (emit_finally)
 				ig.EndExceptionBlock ();
 		}
@@ -4829,7 +4829,7 @@ namespace Mono.CSharp {
 				EmitExpression (ec);
 		}
 
-		public override void EmitFinally (EmitContext ec)
+		public override void EmitFinallyBody (EmitContext ec)
 		{
 			if (expression_or_block is DictionaryEntry)
 				EmitLocalVariableDeclFinally (ec);
@@ -5498,14 +5498,14 @@ namespace Mono.CSharp {
 				// Now the finally block
 				//
 				if (is_disposable) {
-					DoEmitFinally (ec);
+					EmitFinally (ec);
 					if (emit_finally)
 						ig.EndExceptionBlock ();
 				}
 			}
 
 
-			public override void EmitFinally (EmitContext ec)
+			public override void EmitFinallyBody (EmitContext ec)
 			{
 				ILGenerator ig = ec.ig;
 

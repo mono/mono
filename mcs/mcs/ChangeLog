@@ -1,3 +1,11 @@
+2008-03-31  Raja R Harinath  <harinath@hurrynot.org>
+
+	Avoid lopsided use of Foo/DoFoo names
+	* statement.cs (ExpressionStatement.EmitFinallyBody):
+	Rename from EmitFinally.
+	(ExpressionStatement.EmitFinally): Rename from DoEmitFinally.
+	* iterator.cs: Update to changes.
+
 2008-04-02  Marek Safar  <marek.safar@gmail.com>
 
 	* ecore.cs, expression.cs, nullable.cs: ConditionalLogicalOperator is now
