@@ -1,3 +1,9 @@
+2008-04-02  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: We always need to invalidate our children with
+	transparent backgrounds when we are invalidated.
+	[Fixes bug #376081]
+
 2008-04-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* BindingSource.cs: EndEdit and CancelEdit should call EndCurrentEdit

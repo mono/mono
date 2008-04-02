@@ -3948,6 +3948,12 @@ namespace System.Windows.Forms
 					Control [] controls = child_controls.GetAllControls ();
 					for (int i=0; i<controls.Length; i++)
 						controls [i].Invalidate ();
+				} else {
+					// If any of our children are transparent, we
+					// have to invalidate them anyways
+					foreach (Control c in child_controls.GetAllControls ())
+						if (c.BackColor == Color.Transparent)
+							c.Invalidate ();
 				}
 			}
 			OnInvalidated(new InvalidateEventArgs(rc));
