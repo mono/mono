@@ -128,7 +128,7 @@ namespace System.Security {
 		// if you got the context then you can use it
 		[SecurityPermission (SecurityAction.Assert, ControlPrincipal = true)]
 		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
-		static public void Run (SecurityContext securityContext, ContextCallback callBack, object state)
+		static public void Run (SecurityContext securityContext, ContextCallback callback, object state)
 		{
 			if (securityContext == null) {
 				throw new InvalidOperationException (Locale.GetText (
@@ -145,9 +145,9 @@ namespace System.Security {
 				// FIXME: is the security manager isn't active then we may not have
 				// a compressed stack (bug #78652)
 				if (securityContext.CompressedStack != null)
-					CompressedStack.Run (securityContext.CompressedStack, callBack, state);
+					CompressedStack.Run (securityContext.CompressedStack, callback, state);
 				else
-					callBack (state);
+					callback (state);
 			}
 			finally {
 				if ((original != null) && (sc.IdentityToken != IntPtr.Zero))

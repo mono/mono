@@ -364,14 +364,14 @@ namespace System.Security {
 			return value != null && value.IndexOfAny (invalid_attr_value_chars) == -1;
 		}
 
-		public static bool IsValidTag (string value)
+		public static bool IsValidTag (string tag)
 		{
-			return value != null && value.IndexOfAny (invalid_tag_chars) == -1;
+			return tag != null && tag.IndexOfAny (invalid_tag_chars) == -1;
 		}
 
-		public static bool IsValidText (string value)
+		public static bool IsValidText (string text)
 		{
-			return value != null && value.IndexOfAny (invalid_text_chars) == -1;
+			return text != null && text.IndexOfAny (invalid_text_chars) == -1;
 		}
 
 		public SecurityElement SearchForChildByTag (string tag) 
