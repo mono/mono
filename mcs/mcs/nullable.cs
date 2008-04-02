@@ -533,9 +533,7 @@ namespace Mono.CSharp.Nullable
 			if (eclass != ExprClass.Invalid)
 				return this;
 
-			// TODO: How does it work with use-operators?
-			if ((Oper == Binary.Operator.LogicalAnd) ||
-			    (Oper == Binary.Operator.LogicalOr)) {
+			if ((Oper & Operator.LogicalMask) != 0) {
 				Error_OperatorCannotBeApplied (left, right);
 				return null;
 			}

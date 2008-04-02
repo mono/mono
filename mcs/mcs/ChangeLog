@@ -1,3 +1,8 @@
+2008-04-02  Marek Safar  <marek.safar@gmail.com>
+
+	* ecore.cs, expression.cs, nullable.cs: ConditionalLogicalOperator is now
+	based on UserOperatorCall. More binary nullable operators clean up.
+
 2008-04-02  Martin Baulig  <martin@ximian.com>
 
 	* symbolwriter.cs: Remove the `#if !DISABLE_TERRANIA_CHANGES' conditionals.

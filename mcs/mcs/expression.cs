@@ -24,8 +24,8 @@ namespace Mono.CSharp {
 	public class UserOperatorCall : Expression {
 		public delegate Expression ExpressionTreeExpression (EmitContext ec, MethodGroupExpr mg);
 
-		readonly ArrayList arguments;
-		readonly MethodGroupExpr mg;
+		protected readonly ArrayList arguments;
+		protected readonly MethodGroupExpr mg;
 		readonly ExpressionTreeExpression expr_tree;
 
 		public UserOperatorCall (MethodGroupExpr mg, ArrayList args, ExpressionTreeExpression expr_tree, Location loc)
@@ -1594,13 +1594,8 @@ namespace Mono.CSharp {
 				return left == type;
 			}
 
-			public virtual bool IsApplicable (EmitContext ec, Expression lexpr, Expression rexpr, bool lnull, bool rnull)
+			public virtual bool IsApplicable (EmitContext ec, Expression lexpr, Expression rexpr)
 			{
-				if (lnull)
-					return Convert.ImplicitConversionExists (ec, rexpr, right);
-				if (rnull)
-					return Convert.ImplicitConversionExists (ec, lexpr, left);
-
 				if (TypeManager.IsEqual (left, lexpr.Type) &&
 					TypeManager.IsEqual (right, rexpr.Type))
 					return true;
@@ -1706,7 +1701,7 @@ namespace Mono.CSharp {
 			{
 			}
 
-			public override bool IsApplicable (EmitContext ec, Expression lexpr, Expression rexpr, bool lnull, bool rnull)
+			public override bool IsApplicable (EmitContext ec, Expression lexpr, Expression rexpr)
 			{
 				if (left == null) {
 					if (!lexpr.Type.IsPointer)
@@ -2332,8 +2327,7 @@ namespace Mono.CSharp {
 			}
 
 			if ((TypeManager.IsNullableType (left.Type) || TypeManager.IsNullableType (right.Type) ||
-				(left is NullLiteral && right.Type.IsValueType) || (right is NullLiteral && left.Type.IsValueType)) &&
-				!(this is Nullable.LiftedBinaryOperator))
+				(left is NullLiteral && right.Type.IsValueType) || (right is NullLiteral && left.Type.IsValueType)))
 				return new Nullable.LiftedBinaryOperator (oper, left, right, loc).Resolve (ec);
 
 			return DoResolveCore (ec, left, right);
@@ -2650,9 +2644,6 @@ namespace Mono.CSharp {
 			Type l = left.Type;
 			Operator oper_mask = oper & ~Operator.ValuesOnlyMask;
 
-			bool left_is_null = left is NullLiteral && RootContext.Version >= LanguageVersion.ISO_2;
-			bool right_is_null = right is NullLiteral && RootContext.Version >= LanguageVersion.ISO_2;
-			
 			foreach (PredefinedOperator po in operators) {
 				if ((po.OperatorsMask & oper_mask) == 0)
 					continue;
@@ -2661,7 +2652,7 @@ namespace Mono.CSharp {
 					if (!po.IsPrimitiveApplicable (l))
 						continue;
 				} else {
-					if (!po.IsApplicable (ec, left, right, left_is_null, right_is_null))
+					if (!po.IsApplicable (ec, left, right))
 						continue;
 				}
 
@@ -2727,35 +2718,37 @@ namespace Mono.CSharp {
 			if (union == null)
 				return null;
 
-			if (user_oper != oper) {
-				// FIXME: This has to derive from UserOperatorCall to handle expression tree
-				return new ConditionalLogicalOperator (oper == Operator.LogicalAnd,
-					left, right, left.Type, loc).Resolve (ec);
-			}
+			Expression oper_expr;
 
-			//
-			// This is used to check if a test 'x == null' can be optimized to a reference equals,
-			// and not invoke user operator
-			//
-			if ((oper & Operator.EqualityMask) != 0) {
-				if ((left is NullLiteral && IsBuildInEqualityOperator (r)) ||
-					(right is NullLiteral && IsBuildInEqualityOperator (l))) {
-					type = TypeManager.bool_type;
-					// FIXME: this breaks expression tree
-					if (left is NullLiteral || right is NullLiteral)
-						return this;
-				} else if (union.DeclaringType == TypeManager.delegate_type && l != r) {
-					//
-					// Two System.Delegate(s) are never equal
-					//
-					return null;
+			// TODO: CreateExpressionTree is allocated every time
+			if (user_oper != oper) {
+				oper_expr = new ConditionalLogicalOperator (union, args, CreateExpressionTree,
+					oper == Operator.LogicalAnd, loc).Resolve (ec);
+			} else {
+				oper_expr = new UserOperatorCall (union, args, CreateExpressionTree, loc);
+
+				//
+				// This is used to check if a test 'x == null' can be optimized to a reference equals,
+				// and not invoke user operator
+				//
+				if ((oper & Operator.EqualityMask) != 0) {
+					if ((left is NullLiteral && IsBuildInEqualityOperator (r)) ||
+						(right is NullLiteral && IsBuildInEqualityOperator (l))) {
+						type = TypeManager.bool_type;
+						if (left is NullLiteral || right is NullLiteral)
+							oper_expr = ReducedExpression.Create (this, oper_expr).Resolve (ec);
+					} else if (union.DeclaringType == TypeManager.delegate_type && l != r) {
+						//
+						// Two System.Delegate(s) are never equal
+						//
+						return null;
+					}
 				}
 			}
 
 			left = larg.Expr;
 			right = rarg.Expr;
-			// TODO: CreateExpressionTree is allocated every time
-			return new UserOperatorCall (union, args, CreateExpressionTree, loc);
+			return oper_expr;
 		}
 
 		public override TypeExpr ResolveAsTypeTerminal (IResolveContext ec, bool silent)
@@ -3482,101 +3475,59 @@ namespace Mono.CSharp {
 	//
 	// User-defined conditional logical operator
 	//
-	public class ConditionalLogicalOperator : Expression {
-		Expression left, right;
-		bool is_and;
-		Expression op_true, op_false;
-		UserOperatorCall op;
-		LocalTemporary left_temp;
+	public class ConditionalLogicalOperator : UserOperatorCall {
+		readonly bool is_and;
+		Expression oper;
 
-		public ConditionalLogicalOperator (bool is_and, Expression left, Expression right, Type t, Location loc)
+		public ConditionalLogicalOperator (MethodGroupExpr oper_method, ArrayList arguments,
+			ExpressionTreeExpression expr_tree, bool is_and, Location loc)
+			: base (oper_method, arguments, expr_tree, loc)
 		{
-			type = t;
-			eclass = ExprClass.Value;
-			this.loc = loc;
-			this.left = left;
-			this.right = right;
 			this.is_and = is_and;
 		}
 		
-		public override Expression CreateExpressionTree (EmitContext ec)
-		{
-			ArrayList args = new ArrayList (3);
-			args.Add (new Argument (left.CreateExpressionTree (ec)));
-			args.Add (new Argument (right.CreateExpressionTree (ec)));
-			args.Add (new Argument (op.Method.CreateExpressionTree (ec)));
-			return CreateExpressionFactoryCall (is_and ? "AndAlso" : "OrElse", args);
-		}		
-
-		protected void Error19 ()
-		{
-			Binary.Error_OperatorCannotBeApplied (loc, is_and ? "&&" : "||", left.GetSignatureForError (), right.GetSignatureForError ());
-		}
-
-		protected void Error218 ()
-		{
-			Error (218, "The type ('" + TypeManager.CSharpName (type) + "') must contain " +
-			       "declarations of operator true and operator false");
-		}
-
 		public override Expression DoResolve (EmitContext ec)
 		{
-			MethodGroupExpr operator_group;
-
-			operator_group = MethodLookup (ec.ContainerType, type, is_and ? "op_BitwiseAnd" : "op_BitwiseOr", loc) as MethodGroupExpr;
-			if (operator_group == null) {
-				Error19 ();
+			MethodInfo method = (MethodInfo)mg;
+			type = TypeManager.TypeToCoreType (method.ReturnType);
+			ParameterData pd = TypeManager.GetParameterData (method);
+			if (!TypeManager.IsEqual (type, type) || !TypeManager.IsEqual (type, pd.Types [0]) || !TypeManager.IsEqual (type, pd.Types [1])) {
+				Report.Error (217, loc,
+					"A user-defined operator `{0}' must have parameters and return values of the same type in order to be applicable as a short circuit operator",
+					TypeManager.CSharpSignature (method));
 				return null;
 			}
 
-			left_temp = new LocalTemporary (type);
-
-			ArrayList arguments = new ArrayList (2);
-			arguments.Add (new Argument (left_temp, Argument.AType.Expression));
-			arguments.Add (new Argument (right, Argument.AType.Expression));
-			operator_group = operator_group.OverloadResolve (ec, ref arguments, false, loc);
-			if (operator_group == null) {
-				Error19 ();
+			Expression left_dup = new EmptyExpression (type);
+			Expression op_true = GetOperatorTrue (ec, left_dup, loc);
+			Expression op_false = GetOperatorFalse (ec, left_dup, loc);
+			if (op_true == null || op_false == null) {
+				Report.Error (218, loc,
+					"The type `{0}' must have operator `true' and operator `false' defined when `{1}' is used as a short circuit operator",
+					TypeManager.CSharpName (type), TypeManager.CSharpSignature (method));
 				return null;
 			}
 
-			MethodInfo method = (MethodInfo)operator_group;
-			if (method.ReturnType != type) {
-				Report.Error (217, loc, "In order to be applicable as a short circuit operator a user-defined logical operator `{0}' " +
-						"must have the same return type as the type of its 2 parameters", TypeManager.CSharpSignature (method));
-				return null;
-			}
-
-			op = new UserOperatorCall (operator_group, arguments, null, loc);
-
-			op_true = GetOperatorTrue (ec, left_temp, loc);
-			op_false = GetOperatorFalse (ec, left_temp, loc);
-			if ((op_true == null) || (op_false == null)) {
-				Error218 ();
-				return null;
-			}
-
+			oper = is_and ? op_false : op_true;
+			eclass = ExprClass.Value;
 			return this;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			Label false_target = ig.DefineLabel ();
 			Label end_target = ig.DefineLabel ();
 
-			left.Emit (ec);
-			left_temp.Store (ec);
+			//
+			// Emit and duplicate left argument
+			//
+			((Argument)arguments [0]).Expr.Emit (ec);
+			ig.Emit (OpCodes.Dup);
+			arguments.RemoveAt (0);
 
-			(is_and ? op_false : op_true).EmitBranchable (ec, false_target, false);
-			left_temp.Emit (ec);
-			ig.Emit (OpCodes.Br, end_target);
-			ig.MarkLabel (false_target);
-			op.Emit (ec);
+			oper.EmitBranchable (ec, end_target, true);
+			base.Emit (ec);
 			ig.MarkLabel (end_target);
-
-			// We release 'left_temp' here since 'op' may refer to it too
-			left_temp.Release (ec);
 		}
 	}
 
