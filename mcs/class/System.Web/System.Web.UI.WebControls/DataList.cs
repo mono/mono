@@ -470,8 +470,9 @@ namespace System.Web.UI.WebControls {
 				if (DataKeyField.Length == 0)
 					throw new InvalidOperationException (Locale.GetText ("No DataKeyField present."));
 
-				if ((SelectedIndex >= 0) && (selectedIndex < DataKeys.Count)) {
-					return DataKeys [selectedIndex];
+				int idx = SelectedIndex;
+				if ((idx >= 0) && (idx < DataKeys.Count)) {
+					return DataKeys [idx];
 				}
 
 				return null;

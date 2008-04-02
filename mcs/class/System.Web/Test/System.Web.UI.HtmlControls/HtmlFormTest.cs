@@ -55,10 +55,12 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			}
 		}
 
+#if NET_2_0
 		public void SetContext ()
 		{
 			SetContext (Context);
 		}
+#endif
 	}
 	
 	public class FormPoker : HtmlForm {
@@ -198,6 +200,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			Assert.AreEqual ("target", a.GetAttribute ("target"), "A11");
 		}
 
+#if NET_2_0
 #if !TARGET_DOTNET
 		[Test]
 		public void ActionStringWithQuery ()
@@ -212,6 +215,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			// https://bugzilla.novell.com/show_bug.cgi?id=376352
 			Assert.AreEqual (" method=\"post\" action=\"?q=1\"", attrs, "A1");
 		}
+#endif
 #endif
 		
 		[Test]
