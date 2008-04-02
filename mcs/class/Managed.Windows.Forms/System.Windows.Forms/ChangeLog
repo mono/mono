@@ -1,5 +1,11 @@
 2008-04-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* BindingSource.cs: EndEdit and CancelEdit should call EndCurrentEdit
+	and CancelCurrentEdit on CurrencyManager respectively. Implement
+	support for ICancelAddNew too.
+
+2008-04-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* CurrencyManager.cs: When calling EndCurrentEdit/CancelCurrentEdit,
 	call EndNew/CancelNew if list is ICancelAddNew.
 
