@@ -1,3 +1,8 @@
+2008-04-02  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
+
+	* DebuggerTypeProxyAttribute.cs
+	* StackFrame.cs: Fix parameter names
+
 2007-11-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DebuggableAttribute.cs: Don't throw on DebuggingFlags property.
