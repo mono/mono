@@ -3787,11 +3787,16 @@ namespace Mono.CSharp {
 
 		protected void EmitFinally (EmitContext ec)
 		{
+			Label end_finally = ec.ig.DefineLabel ();
 			if (emit_finally)
 				ec.ig.BeginFinallyBlock ();
-			else if (ec.InIterator)
+			else if (ec.InIterator) {
 				ec.CurrentIterator.MarkFinally (ec, parent_vectors);
+				ec.ig.Emit (OpCodes.Ldloc, ec.CurrentIterator.SkipFinally);
+				ec.ig.Emit (OpCodes.Brtrue, end_finally);
+			}
 			EmitFinallyBody (ec);
+			ec.ig.MarkLabel (end_finally);
 		}
 
 		protected void ResolveFinally (FlowBranchingException branching)
