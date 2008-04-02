@@ -1,3 +1,10 @@
+2008-04-03  Raja R Harinath  <harinath@hurrynot.org>
+
+	Now all ExceptionStatements are unconditional
+	* statement.cs (CollectionForeach.DisposableWrapper): New.
+	Extract out the try/finally code into a new wrapper.
+	(CollectionForeach.Resolve): Use it to simplify the code.
+
 2008-04-02  Raja R Harinath  <harinath@hurrynot.org>
 
 	Start at simplifying ExceptionStatement semantics a bit

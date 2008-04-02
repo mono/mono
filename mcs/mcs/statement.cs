@@ -5107,7 +5107,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected class CollectionForeach : ExceptionStatement
+		protected class CollectionForeach : Statement
 		{
 			Expression variable, expr;
 			Statement statement;
@@ -5121,7 +5121,6 @@ namespace Mono.CSharp {
 			MethodInfo move_next;
 			Expression var_type;
 			Type enumerator_type;
-			bool is_disposable;
 			bool enumerator_found;
 
 			public CollectionForeach (Expression var_type, Expression var,
@@ -5217,9 +5216,6 @@ namespace Mono.CSharp {
 				}
 
 				enumerator_type = return_type;
-				is_disposable = !enumerator_type.IsSealed ||
-					TypeManager.ImplementsInterface (
-						enumerator_type, TypeManager.idisposable_type);
 
 				return true;
 			}
@@ -5427,12 +5423,14 @@ namespace Mono.CSharp {
 			public override bool Resolve (EmitContext ec)
 			{
 				enumerator_type = TypeManager.ienumerator_type;
-				is_disposable = true;
 
 				if (!ProbeCollectionType (ec, expr.Type)) {
 					Error_Enumerator ();
 					return false;
 				}
+
+				bool is_disposable = !enumerator_type.IsSealed ||
+					TypeManager.ImplementsInterface (enumerator_type, TypeManager.idisposable_type);
 
 				VarExpr ve = var_type as VarExpr;
 				if (ve != null) {
@@ -5468,16 +5466,37 @@ namespace Mono.CSharp {
 
 				loop = new While (move_next_expr, block, loc);
 
-				bool ok = true;
-
-				FlowBranchingException branching = null;
 				if (is_disposable)
-					branching = ec.StartFlowBranching (this);
+					loop = new DisposableWrapper (this, loop);
 
-				if (!loop.Resolve (ec))
-					ok = false;
+				return loop.Resolve (ec);
+			}
 
-				if (is_disposable) {
+			protected override void DoEmit (EmitContext ec)
+			{
+				enumerator.Store (ec, init);
+				loop.Emit (ec);
+			}
+
+			class DisposableWrapper : ExceptionStatement {
+				CollectionForeach parent;
+				Statement loop;
+
+				internal DisposableWrapper (CollectionForeach parent, Statement loop)
+				{
+					this.parent = parent;
+					this.loop = loop;
+				}
+
+				public override bool Resolve (EmitContext ec)
+				{
+					bool ok = true;
+
+					FlowBranchingException branching = ec.StartFlowBranching (this);
+
+					if (!loop.Resolve (ec))
+						ok = false;
+
 					ResolveFinally (branching);
 					ec.EndFlowBranching ();
 
@@ -5485,44 +5504,29 @@ namespace Mono.CSharp {
 						TypeManager.void_dispose_void = TypeManager.GetPredefinedMethod (
 							TypeManager.idisposable_type, "Dispose", loc, Type.EmptyTypes);
 					}
-				} else
-					emit_finally = true;
+					return ok;
+				}
 
-				return ok;
-			}
+				protected override void DoEmit (EmitContext ec)
+				{
+					ILGenerator ig = ec.ig;
 
-			protected override void DoEmit (EmitContext ec)
-			{
-				ILGenerator ig = ec.ig;
-
-				enumerator.Store (ec, init);
-
-				//
-				// Protect the code in a try/finalize block, so that
-				// if the beast implement IDisposable, we get rid of it
-				//
-				if (is_disposable && emit_finally)
-					ig.BeginExceptionBlock ();
-			
-				loop.Emit (ec);
-
-				//
-				// Now the finally block
-				//
-				if (is_disposable) {
+					if (emit_finally)
+						ig.BeginExceptionBlock ();
+					loop.Emit (ec);
 					EmitFinally (ec);
 					if (emit_finally)
 						ig.EndExceptionBlock ();
 				}
+
+				public override void EmitFinallyBody (EmitContext ec)
+				{
+					parent.EmitFinallyBody (ec);
+				}
 			}
 
-
-			public override void EmitFinallyBody (EmitContext ec)
+			void EmitFinallyBody (EmitContext ec)
 			{
-				// this might be called from StealFinallyClauses
-				if (!is_disposable)
-					return;
-
 				ILGenerator ig = ec.ig;
 
 				if (enumerator_type.IsValueType) {
