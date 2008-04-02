@@ -23,7 +23,7 @@ namespace System.Runtime.InteropServices
 	{
 		void AddEventHandler (object target, Delegate handler);
 
-		bool Equals (object obj);
+		bool Equals (object other);
 
 		MethodInfo GetAddMethod ();
 

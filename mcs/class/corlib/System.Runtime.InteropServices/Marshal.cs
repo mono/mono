@@ -249,10 +249,10 @@ namespace System.Runtime.InteropServices
 				WriteByte (ptr, i, 0);
 		}
 		
-		public static void ZeroFreeBSTR (IntPtr ptr)
+		public static void ZeroFreeBSTR (IntPtr s)
 		{
-			ClearBSTR (ptr);
-			FreeBSTR (ptr);
+			ClearBSTR (s);
+			FreeBSTR (s);
 		}
 
 		static void ClearAnsi (IntPtr ptr)
@@ -267,28 +267,28 @@ namespace System.Runtime.InteropServices
 				WriteInt16 (ptr, i, 0);
 		}
 		
-		public static void ZeroFreeCoTaskMemAnsi (IntPtr ptr)
+		public static void ZeroFreeCoTaskMemAnsi (IntPtr s)
 		{
-			ClearAnsi (ptr);
-			FreeCoTaskMem (ptr);
+			ClearAnsi (s);
+			FreeCoTaskMem (s);
 		}
 
-		public static void ZeroFreeCoTaskMemUnicode (IntPtr ptr)
+		public static void ZeroFreeCoTaskMemUnicode (IntPtr s)
 		{
-			ClearUnicode (ptr);
-			FreeCoTaskMem (ptr);
+			ClearUnicode (s);
+			FreeCoTaskMem (s);
 		}
 
-		public static void ZeroFreeGlobalAllocAnsi (IntPtr hglobal)
+		public static void ZeroFreeGlobalAllocAnsi (IntPtr s)
 		{
-			ClearAnsi (hglobal);
-			FreeHGlobal (hglobal);
+			ClearAnsi (s);
+			FreeHGlobal (s);
 		}
 
-		public static void ZeroFreeGlobalAllocUnicode (IntPtr hglobal)
+		public static void ZeroFreeGlobalAllocUnicode (IntPtr s)
 		{
-			ClearUnicode (hglobal);
-			FreeHGlobal (hglobal);
+			ClearUnicode (s);
+			FreeHGlobal (s);
 		}
 #endif
 

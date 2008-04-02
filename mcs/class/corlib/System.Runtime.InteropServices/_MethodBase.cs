@@ -22,7 +22,7 @@ namespace System.Runtime.InteropServices
 #endif
 	public interface _MethodBase
 	{
-		bool Equals (object obj);
+		bool Equals (object other);
 		
 		object[] GetCustomAttributes (bool inherit);
 		

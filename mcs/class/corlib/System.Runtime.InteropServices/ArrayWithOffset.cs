@@ -64,14 +64,14 @@ namespace System.Runtime.InteropServices {
 		}
 
 #if NET_2_0
-		public static bool operator == (ArrayWithOffset obj1, ArrayWithOffset obj2)
+		public static bool operator == (ArrayWithOffset a, ArrayWithOffset b)
 		{
-			return obj1.Equals (obj2);
+			return a.Equals (b);
 		}
 
-		public static bool operator != (ArrayWithOffset obj1, ArrayWithOffset obj2)
+		public static bool operator != (ArrayWithOffset a, ArrayWithOffset b)
 		{
-			return !obj1.Equals (obj2);
+			return !a.Equals (b);
 		}
 #endif
 

@@ -42,9 +42,9 @@ namespace System.Runtime.InteropServices {
 	public sealed class BestFitMappingAttribute : Attribute {
 		bool bfm;
 		
-		public BestFitMappingAttribute (bool bfm)
+		public BestFitMappingAttribute (bool BestFitMapping)
 		{
-			this.bfm = bfm;
+			this.bfm = BestFitMapping;
 		}
 
 		public bool ThrowOnUnmappableChar = false;

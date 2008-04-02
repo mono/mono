@@ -22,7 +22,7 @@ namespace System.Runtime.InteropServices
 #endif
 	public interface _MethodInfo
 	{
-		bool Equals (object obj);
+		bool Equals (object other);
 
 		MethodInfo GetBaseDefinition();
 		
