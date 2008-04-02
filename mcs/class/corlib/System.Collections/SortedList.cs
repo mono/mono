@@ -77,18 +77,18 @@ namespace System.Collections {
 		{
 		}
 
-		public SortedList (IComparer comparer, int initialCapacity)
+		public SortedList (IComparer comparer, int capacity)
 		{
-			if (initialCapacity < 0)
-				throw new ArgumentOutOfRangeException ("initialCapacity");
+			if (capacity < 0)
+				throw new ArgumentOutOfRangeException ("capacity");
 
-			if (initialCapacity == 0)
+			if (capacity == 0)
 				defaultCapacity = 0;
 			else
 				defaultCapacity = INITIAL_SIZE;
 
 			this.comparer = comparer;
-			InitTable (initialCapacity, true);
+			InitTable (capacity, true);
 		}
 
 		public SortedList (IComparer comparer)

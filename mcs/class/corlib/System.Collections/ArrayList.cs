@@ -2859,9 +2859,9 @@ namespace System.Collections
 			_version++;
 		}
 
-		public virtual bool Contains(object value) 
+		public virtual bool Contains(object item) 
 		{
-			return IndexOf(value, 0, _size) > -1;
+			return IndexOf(item, 0, _size) > -1;
 		}
 
 		internal virtual bool Contains(object value, int startIndex, int count) 
@@ -2986,11 +2986,11 @@ namespace System.Collections
 			_version++;
 		}
 
-		public virtual void Remove(object value) 
+		public virtual void Remove(object obj) 
 		{
 			int x;
 
-			x = IndexOf(value);
+			x = IndexOf(obj);
 
 			if (x > -1) 
 			{
@@ -3041,9 +3041,9 @@ namespace System.Collections
 			Array.Copy(_items, array, _size);
 		}
 
-		public virtual void CopyTo(System.Array array, int index) 
+		public virtual void CopyTo(System.Array array, int arrayIndex) 
 		{			
-			CopyTo(0, array, index, _size);
+			CopyTo(0, array, arrayIndex, _size);
 		}
 
 		public virtual void CopyTo(int index, System.Array array, int arrayIndex, int count) 
@@ -3198,11 +3198,11 @@ namespace System.Collections
 			return retval;
 		}
 
-		public virtual Array ToArray(Type elementType) 
+		public virtual Array ToArray(Type type) 
 		{
 			Array retval;
 			
-			retval = Array.CreateInstance(elementType, _size);
+			retval = Array.CreateInstance(type, _size);
 
 			CopyTo(retval);
 
@@ -3265,19 +3265,19 @@ namespace System.Collections
 				return arrayList;
 		}
 
-		public static ArrayList Synchronized(ArrayList arrayList) 
+		public static ArrayList Synchronized(ArrayList list) 
 		{
-			if (arrayList == null) 
+			if (list == null) 
 			{
-				throw new ArgumentNullException("arrayList");
+				throw new ArgumentNullException("list");
 			}
 
-			if (arrayList.IsSynchronized)
+			if (list.IsSynchronized)
 			{
-				return arrayList;
+				return list;
 			}
 
-			return new SynchronizedArrayListWrapper(arrayList);
+			return new SynchronizedArrayListWrapper(list);
 		}
 
 		public static IList Synchronized(IList list) 
@@ -3295,19 +3295,19 @@ namespace System.Collections
 			return new SynchronizedListWrapper(list);
 		}
 
-		public static ArrayList ReadOnly(ArrayList arrayList) 
+		public static ArrayList ReadOnly(ArrayList list) 
 		{
-			if (arrayList == null) 
+			if (list == null) 
 			{
-				throw new ArgumentNullException("arrayList");
+				throw new ArgumentNullException("list");
 			}
 
-			if (arrayList.IsReadOnly)
+			if (list.IsReadOnly)
 			{
-				return arrayList;
+				return list;
 			}
 
-			return new ReadOnlyArrayListWrapper(arrayList);
+			return new ReadOnlyArrayListWrapper(list);
 		}
 
 		public static IList ReadOnly(IList list) 
@@ -3325,19 +3325,19 @@ namespace System.Collections
 			return new ReadOnlyListWrapper(list);
 		}
 
-		public static ArrayList FixedSize(ArrayList arrayList) 
+		public static ArrayList FixedSize(ArrayList list) 
 		{
-			if (arrayList == null) 
+			if (list == null) 
 			{
-				throw new ArgumentNullException("arrayList");
+				throw new ArgumentNullException("list");
 			}
 
-			if (arrayList.IsFixedSize)
+			if (list.IsFixedSize)
 			{
-				return arrayList;
+				return list;
 			}
 
-			return new FixedSizeArrayListWrapper(arrayList);
+			return new FixedSizeArrayListWrapper(list);
 		}
 
 		public static IList FixedSize(IList list) 

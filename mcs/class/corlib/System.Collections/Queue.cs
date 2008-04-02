@@ -1,4 +1,4 @@
-//
+﻿//
 // System.Collections.Queue
 //
 // Author:
@@ -50,7 +50,9 @@ namespace System.Collections {
 		private int _version = 0;
 
 		public Queue () : this (32, 2.0F) {}
-		public Queue (int initialCapacity) : this (initialCapacity, 2.0F) {}
+
+		public Queue (int capacity) : this (capacity, 2.0F) {}
+
 		public Queue(ICollection col) : this (col == null ? 32 : col.Count)
 		{
 			if (col == null)
@@ -63,13 +65,13 @@ namespace System.Collections {
 				Enqueue (o);	
 		}
 			
-		public Queue (int initialCapacity, float growFactor) {
-			if (initialCapacity < 0)
+		public Queue (int capacity, float growFactor) {
+			if (capacity < 0)
 				throw new ArgumentOutOfRangeException("capacity", "Needs a non-negative number");
 			if (!(growFactor >= 1.0F && growFactor <= 10.0F))
 				throw new ArgumentOutOfRangeException("growFactor", "Queue growth factor must be between 1.0 and 10.0, inclusive");
 	    
-			_array = new object[initialCapacity];
+			_array = new object[capacity];
 
 			this._growFactor = (int)(growFactor * 100);
 		}
