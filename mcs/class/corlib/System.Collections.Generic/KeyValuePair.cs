@@ -48,10 +48,10 @@ namespace System.Collections.Generic {
 			get { return value; }
 		}
 		
-		public KeyValuePair (TKey Key, TValue Value)
+		public KeyValuePair (TKey key, TValue value)
 		{
-			this.key = Key;
-			this.value = Value;
+			this.key = key;
+			this.value = value;
 		}
 
 		public override string ToString()
