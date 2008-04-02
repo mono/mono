@@ -1,3 +1,8 @@
+2008-04-02  Marek Habersack  <mhabersack@novell.com>
+
+	* HtmlFormTest.cs: added an indirect test for bug #376352
+	(HttpRequest.QueryStringRaw internal property) - Mono only.
+
 2008-01-31  Igor Zelmanovich  <igorz@mainsoft.com>
 
 	* HtmlInputControlTest.cs:

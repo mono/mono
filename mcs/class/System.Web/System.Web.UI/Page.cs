@@ -1659,7 +1659,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		Trace.Write ("aspx.page", "End Render");
 	}
 
-	void SetContext (HttpContext context) {
+	internal void SetContext (HttpContext context) {
 		_context = context;
 
 		_application = context.Application;
