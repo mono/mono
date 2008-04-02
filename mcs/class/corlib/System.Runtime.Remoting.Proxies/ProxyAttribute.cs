@@ -57,9 +57,9 @@ namespace System.Runtime.Remoting.Proxies {
 			return (MarshalByRefObject) proxy.GetTransparentProxy();
 		}
 
-		public virtual RealProxy CreateProxy (ObjRef objref, Type serverType, object serverObject, Context serverContext)
+		public virtual RealProxy CreateProxy (ObjRef objRef, Type serverType, object serverObject, Context serverContext)
 		{
-			return RemotingServices.GetRealProxy (RemotingServices.GetProxyForRemoteObject (objref, serverType));
+			return RemotingServices.GetRealProxy (RemotingServices.GetProxyForRemoteObject (objRef, serverType));
 		}
 
 #if NET_2_0

@@ -1,3 +1,7 @@
+2008-04-02  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
+
+	* ProxyAttribute.cs: Fix parameter names
+
 2008-02-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RealProxy.cs: Use 'is' instead of 'as' and a null check. Found 
