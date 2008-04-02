@@ -37,15 +37,13 @@ namespace System.Security.AccessControl
 	{
 		CompoundAceType compound_ace_type;
 		
-		public CompoundAce (AceFlags flags, int accessMask,
-				    CompoundAceType compoundAceType,
-				    SecurityIdentifier side)
+		public CompoundAce (AceFlags flags, int accessMask, CompoundAceType compoundAceType, SecurityIdentifier sid)
 			: base (InheritanceFlags.None, PropagationFlags.None)
 		{
 			this.compound_ace_type = compoundAceType;
 			this.AceFlags = flags;
 			this.AccessMask = accessMask;
-			this.SecurityIdentifier = side;
+			this.SecurityIdentifier = sid;
 		}
 		
 		[MonoTODO]
