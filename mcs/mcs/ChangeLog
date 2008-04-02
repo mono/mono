@@ -1,3 +1,10 @@
+2008-04-02  Marek Safar  <marek.safar@gmail.com>
+
+	* nullable.cs: Merge user and empty conversions when lifting expression
+	trees.
+	
+	* expression.cs (StringConcat): Implemented expression tree representation.
+
 2008-04-01  Marek Safar  <marek.safar@gmail.com>
 
 	* nullable.cs: When lifting null literal and a user operator exists, no call 

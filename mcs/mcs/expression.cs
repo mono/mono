@@ -2723,13 +2723,6 @@ namespace Mono.CSharp {
 			Argument rarg = new Argument (right);
 			args.Add (rarg);
 
-			//
-			// TODO: Rewrite !
-			// Aparrently user-operators use different overloading rules especially for lifted arguments.
-			// Some details are in 6.4.2, 7.2.7
-			// Case 1: Arguments can be lifted for equal operators when the return type is bool and both
-			// arguments are of same type and they are convertible.
-			//			
 			union = union.OverloadResolve (ec, ref args, true, loc);
 			if (union == null)
 				return null;
@@ -3354,7 +3347,45 @@ namespace Mono.CSharp {
 			Append (ec, left);
 			Append (ec, right);
 		}
-		
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			Argument arg = (Argument) arguments [0];
+			return CreateExpressionAddCall (ec, arg, arg.Expr.CreateExpressionTree (ec), 1);
+		}
+
+		//
+		// Creates nested calls tree from an array of arguments used for IL emit
+		//
+		Expression CreateExpressionAddCall (EmitContext ec, Argument left, Expression left_etree, int pos)
+		{
+			ArrayList concat_args = new ArrayList (2);
+			ArrayList add_args = new ArrayList (3);
+
+			concat_args.Add (left);
+			add_args.Add (new Argument (left_etree));
+
+			concat_args.Add (arguments [pos]);
+			add_args.Add (new Argument (((Argument) arguments [pos]).Expr.CreateExpressionTree (ec)));
+
+			MethodGroupExpr method = CreateConcatMemberExpression ().Resolve (ec) as MethodGroupExpr;
+			if (method == null)
+				return null;
+
+			method = method.OverloadResolve (ec, ref concat_args, false, loc);
+			if (method == null)
+				return null;
+
+			add_args.Add (new Argument (method.CreateExpressionTree (ec)));
+
+			Expression expr = CreateExpressionFactoryCall ("Add", add_args);
+			if (++pos == arguments.Count)
+				return expr;
+
+			left = new Argument (new EmptyExpression (method.Type));
+			return CreateExpressionAddCall (ec, left, expr, pos);
+		}
+
 		public override Expression DoResolve (EmitContext ec)
 		{
 			return this;
@@ -3390,16 +3421,14 @@ namespace Mono.CSharp {
 			arguments.Add (new Argument (operand));
 		}
 
-		Expression CreateConcatInvocation ()
+		Expression CreateConcatMemberExpression ()
 		{
-			return new Invocation (
-				new MemberAccess (new MemberAccess (new QualifiedAliasMember ("global", "System", loc), "String", loc), "Concat", loc),
-				arguments, true);
+			return new MemberAccess (new MemberAccess (new QualifiedAliasMember ("global", "System", loc), "String", loc), "Concat", loc);
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			Expression concat = CreateConcatInvocation ();
+			Expression concat = new Invocation (CreateConcatMemberExpression (), arguments, true);
 			concat = concat.Resolve (ec);
 			if (concat != null)
 				concat.Emit (ec);

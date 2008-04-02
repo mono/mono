@@ -791,7 +791,10 @@ namespace Mono.CSharp.Nullable
 				if (lifted_type == null)
 					return null;
 
-				left = EmptyCast.Create (left, lifted_type.Type);
+				if (left is UserCast || left is EmptyCast)
+					left.Type = lifted_type.Type;
+				else
+					left = EmptyCast.Create (left, lifted_type.Type);
 			}
 
 			if (right_unwrap == null || right_null_lifted || !TypeManager.IsEqual (right_unwrap.Type, right.Type)) {
@@ -800,7 +803,10 @@ namespace Mono.CSharp.Nullable
 				if (lifted_type == null)
 					return null;
 
-				right = EmptyCast.Create (right, lifted_type.Type);
+				if (right is UserCast || right is EmptyCast)
+					right.Type = lifted_type.Type;
+				else
+					right = EmptyCast.Create (right, lifted_type.Type);
 			}
 
 			// TODO: Handle bitwise bool 
