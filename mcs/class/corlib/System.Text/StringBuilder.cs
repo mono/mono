@@ -86,7 +86,7 @@ namespace System.Text {
 
 			_str = String.InternalAllocateStr ((length > capacity) ? length : capacity);
 			if (length > 0)
-				String.CharCopy (_str, 0, value, startIndex, length);
+				String.InternalStrcpy(_str, 0, value, startIndex, length);
 			
 			_length = length;
 		}
@@ -258,7 +258,7 @@ namespace System.Text {
 			// Copy everything after the 'removed' part to the start 
 			// of the removed part and truncate the sLength
 			if (_length - (startIndex + length) > 0)
-				String.CharCopy (_str, startIndex, _str, startIndex + length, _length - (startIndex + length));
+				String.InternalStrcpy (_str, startIndex, _str, startIndex + length, _length - (startIndex + length));
 
 			_length -= length;
 
@@ -309,8 +309,8 @@ namespace System.Text {
 
 			string end = _str.Substring (startIndex + count, _length - startIndex - count );
 
-			String.CharCopy (_str, startIndex, replace, 0, replace.Length);
-			String.CharCopy (_str, startIndex + replace.Length, end, 0, end.Length);
+			String.InternalStrcpy (_str, startIndex, replace);
+			String.InternalStrcpy (_str, startIndex + replace.Length, end);
 			
 			_length = replace.Length + (_length - count);
 
@@ -328,7 +328,7 @@ namespace System.Text {
 			if (null != _cached_str || _str.Length < needed_cap)
 				InternalEnsureCapacity (needed_cap);
 			
-			String.CharCopy (_str, _length, value, 0, value.Length);
+			String.InternalStrcpy (_str, _length, value);
 			_length = needed_cap;
 
 			return this;
@@ -349,7 +349,7 @@ namespace System.Text {
 			if (null != _cached_str || _str.Length < needed_cap)
 				InternalEnsureCapacity (needed_cap);
 
-			String.CharCopy (_str, _length, value, 0, value.Length);
+			String.InternalStrcpy (_str, _length, value);
 			_length = needed_cap;
 			return this;
 		}
@@ -453,7 +453,7 @@ namespace System.Text {
 			int needed_cap = _length + charCount;
 			InternalEnsureCapacity (needed_cap);
 
-			String.CharCopy (_str, _length, value, startIndex, charCount);
+			String.InternalStrcpy (_str, _length, value, startIndex, charCount);
 			_length = needed_cap;
 
 			return this;
@@ -475,7 +475,7 @@ namespace System.Text {
 			if (null != _cached_str || _str.Length < needed_cap)
 				InternalEnsureCapacity (needed_cap);
 
-			String.CharCopy (_str, _length, value, startIndex, count);
+			String.InternalStrcpy (_str, _length, value, startIndex, count);
 			
 			_length = needed_cap;
 
@@ -557,10 +557,10 @@ namespace System.Text {
 			InternalEnsureCapacity (_length + value.Length);
 
 			// Move everything to the right of the insert point across
-			String.CharCopyReverse (_str, index + value.Length, _str, index, _length - index);
+			String.InternalStrcpy (_str, index + value.Length, _str, index, _length - index);
 			
 			// Copy in stuff from the insert buffer
-			String.CharCopy (_str, index, value, 0, value.Length);
+			String.InternalStrcpy (_str, index, value);
 			
 			_length += value.Length;
 
@@ -583,7 +583,7 @@ namespace System.Text {
 			InternalEnsureCapacity (_length + 1);
 			
 			// Move everything to the right of the insert point across
-			String.CharCopyReverse (_str, index + 1, _str, index, _length - index);
+			String.InternalStrcpy (_str, index + 1, _str, index, _length - index);
 			
 			_str.InternalSetChar (index, value);
 			_length++;
@@ -698,7 +698,7 @@ namespace System.Text {
 
 				string tmp = String.InternalAllocateStr (capacity);
 				if (_length > 0)
-					String.CharCopy (tmp, 0, _str, 0, _length);
+					String.InternalStrcpy (tmp, 0, _str, 0, _length);
 
 				_str = tmp;
 			}
