@@ -110,7 +110,6 @@ namespace Mono.CompilerServices.SymbolWriter
 			current_method.AddLocal (index, name);
 		}
 
-#if !DISABLE_TERRANIA_CHANGES
 		public void DefineCapturedLocal (int scope_id, string name, string captured_name)
 		{
 			file.DefineCapturedVariable (scope_id, name, captured_name,
@@ -141,7 +140,6 @@ namespace Mono.CompilerServices.SymbolWriter
 
 			current_method.AddScopeVariable (scope, index);
 		}
-#endif
 
 		public void MarkSequencePoint (int offset, int line, int column)
 		{
@@ -168,12 +166,10 @@ namespace Mono.CompilerServices.SymbolWriter
 			methods.Add (current_method);
 		}
 
-#if !DISABLE_TERRANIA_CHANGES
 		public void SetRealMethodName (string name)
 		{
 			current_method.RealMethodName = name;
 		}
-#endif
 
 		public void CloseMethod ()
 		{
@@ -202,26 +198,21 @@ namespace Mono.CompilerServices.SymbolWriter
 
 		public int OpenScope (int start_offset)
 		{
-#if !DISABLE_TERRANIA_CHANGES
 			if (current_method == null)
 				return 0;
 
 			current_method.StartBlock (CodeBlockEntry.Type.Lexical, start_offset);
-#endif
 			return 0;
 		}
 
 		public void CloseScope (int end_offset)
 		{
-#if !DISABLE_TERRANIA_CHANGES
 			if (current_method == null)
 				return;
 
 			current_method.EndBlock (end_offset);
-#endif
 		}
 
-#if !DISABLE_TERRANIA_CHANGES
 		public void OpenCompilerGeneratedBlock (int start_offset)
 		{
 			if (current_method == null)
@@ -265,23 +256,15 @@ namespace Mono.CompilerServices.SymbolWriter
 		{
 			file.DefineAnonymousScope (id);
 		}
-#endif
 
 		public void WriteSymbolFile (Guid guid)
 		{
 			foreach (SourceMethod method in methods) {
-#if !DISABLE_TERRANIA_CHANGES
 				method.SourceFile.Entry.DefineMethod (
 					method.Method.Token, method.ScopeVariables, method.Locals,
 					method.Lines, method.Blocks, method.RealMethodName,
 					method.Start.Row, method.End.Row,
 					method.Method.NamespaceID);
-#else
-				method.SourceFile.Entry.DefineMethod (
-					method.Method.Token, null, method.Locals,
-					method.Lines, null, null, method.Start.Row, method.End.Row,
-					method.Method.NamespaceID);
-#endif
 			}
 
 			try {
@@ -299,12 +282,10 @@ namespace Mono.CompilerServices.SymbolWriter
 		{
 			LineNumberEntry [] lines;
 			private ArrayList _locals;
-#if !DISABLE_TERRANIA_CHANGES
 			private ArrayList _blocks;
 			private ArrayList _scope_vars;
 			private Stack _block_stack;
 			private string _real_name;
-#endif
 			private ISourceMethod _method;
 			private ISourceFile _file;
 			private LineNumberEntry _start, _end;
@@ -320,7 +301,6 @@ namespace Mono.CompilerServices.SymbolWriter
 				this._end = new LineNumberEntry (endLine, 0);
 			}
 
-#if !DISABLE_TERRANIA_CHANGES
 			public void StartBlock (CodeBlockEntry.Type type, int start_offset)
 			{
 				if (_block_stack == null)
@@ -362,7 +342,6 @@ namespace Mono.CompilerServices.SymbolWriter
 						return null;
 				}
 			}
-#endif
 
 			public LineNumberEntry[] Lines {
 				get {
@@ -387,15 +366,10 @@ namespace Mono.CompilerServices.SymbolWriter
 			{
 				if (_locals == null)
 					_locals = new ArrayList ();
-#if !DISABLE_TERRANIA_CHANGES
 				int block_idx = CurrentBlock != null ? CurrentBlock.Index : 0;
-#else
-				int block_idx = 0;
-#endif
 				_locals.Add (new LocalVariableEntry (index, name, block_idx));
 			}
 
-#if !DISABLE_TERRANIA_CHANGES
 			public ScopeVariable[] ScopeVariables {
 				get {
 					if (_scope_vars == null)
@@ -419,7 +393,6 @@ namespace Mono.CompilerServices.SymbolWriter
 				get { return _real_name; }
 				set { _real_name = value; }
 			}
-#endif
 
 			public ISourceFile SourceFile {
 				get { return _file; }
