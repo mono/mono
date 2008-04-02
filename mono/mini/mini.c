@@ -12800,7 +12800,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	 * a branch inside a bblock become part of the kill set, even though the assignment
 	 * might not get executed. This causes the optimize_initlocals pass to delete some
 	 * assignments which are needed.
-	 * Also, the mono_branch_to_cmov pass needs to be modified to recognize the code
+	 * Also, the mono_if_conversion pass needs to be modified to recognize the code
 	 * created by this.
 	 */
 	//cfg->enable_extended_bblocks = TRUE;
@@ -12855,7 +12855,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		/* This must be done _before_ global reg alloc and _after_ decompose */
 		mono_handle_global_vregs (cfg);
 		mono_local_deadce (cfg);
-		mono_branch_to_cmov (cfg);
+		mono_if_conversion (cfg);
 	}
 
 	if ((cfg->opt & MONO_OPT_SSAPRE) || cfg->globalra)

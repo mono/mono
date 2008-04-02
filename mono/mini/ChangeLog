@@ -1,5 +1,7 @@
 2008-04-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* local-propagation.c (mono_branch_to_cmov): Rename this to mono_if_conversion ().
+
 	* mini.h mini.c method-to-ir.c: Rename cfg->disable_extended_bblocks to 
 	cfg->enable_extended_bblocks. Add some comments as to why it is currently 
 	disabled.

@@ -1783,7 +1783,7 @@ mono_local_deadce (MonoCompile *cfg)
 }
 
 void
-mono_branch_to_cmov (MonoCompile *cfg)
+mono_if_conversion (MonoCompile *cfg)
 {
 #ifdef MONO_ARCH_HAVE_CMOV_OPS
 	MonoBasicBlock *bb;

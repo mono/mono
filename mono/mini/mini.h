@@ -1217,7 +1217,7 @@ void              mono_decompose_array_access_opts (MonoCompile *cfg) MONO_INTER
 void              mono_handle_soft_float (MonoCompile *cfg) MONO_INTERNAL;
 void              mono_handle_global_vregs (MonoCompile *cfg) MONO_INTERNAL;
 void              mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts) MONO_INTERNAL;
-void              mono_branch_to_cmov (MonoCompile *cfg) MONO_INTERNAL;
+void              mono_if_conversion (MonoCompile *cfg) MONO_INTERNAL;
 
 /* methods that must be provided by the arch-specific port */
 void      mono_arch_init                        (void) MONO_INTERNAL;
