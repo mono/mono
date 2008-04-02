@@ -1,4 +1,4 @@
-// cs0218.cs: The type ('UserOperatorClass') must contain declarations of operator true and operator false
+// CS0218: The type `UserOperatorClass' must have operator `true' and operator `false' defined when `UserOperatorClass.operator &(UserOperatorClass, UserOperatorClass)' is used as a short circuit operator
 // Line: 22
 
 public class UserOperatorClass
