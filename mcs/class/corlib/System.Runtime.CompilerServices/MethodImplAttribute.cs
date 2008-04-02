@@ -47,14 +47,14 @@ namespace System.Runtime.CompilerServices {
 		{
 		}
 
-		public MethodImplAttribute (short options)
+		public MethodImplAttribute (short value)
 		{
-			_val = (MethodImplOptions) options;
+			_val = (MethodImplOptions) value;
 		}
 
-		public MethodImplAttribute (MethodImplOptions options)
+		public MethodImplAttribute (MethodImplOptions methodImplOptions)
 		{
-			_val = options;
+			_val = methodImplOptions;
 		}
 
 		public MethodCodeType MethodCodeType;
