@@ -1069,6 +1069,10 @@ namespace System
 		internal unsafe int IndexOfOrdinalUnchecked (string value, int startIndex, int count)
 		{
 			int valueLen = value.Length;
+
+			if (count < valueLen)
+				return -1;
+
 			if (valueLen <= 1) {
 				if (valueLen == 1)
 					return IndexOfUnchecked (value[0], startIndex, count);
