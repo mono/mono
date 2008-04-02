@@ -1024,6 +1024,41 @@ namespace MonoTests.System.IO
 			} catch (ObjectDisposedException) {
 			}
 		}
+
+		[Test]
+		[ExpectedException (typeof(IOException))]
+		public void PositionPointer_Underflow ()
+		{
+			byte [] n = new byte [8];
+			fixed (byte *p = n){
+				UnmanagedMemoryStream m = new UnmanagedMemoryStream (p, 8);
+				m.PositionPointer = p-1;
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof(ArgumentOutOfRangeException))]
+		public void PositionPointer_Overflow ()
+		{
+			byte [] n = new byte [8];
+			fixed (byte *p = n){
+				UnmanagedMemoryStream m = new UnmanagedMemoryStream (p, 8);
+				m.PositionPointer = p+9;
+			}
+		}
+
+		[Test]
+		public void PositionPointer_Set ()
+		{
+			byte [] n = new byte [8];
+			n [4] = 65;
+			fixed (byte *p = n){
+				UnmanagedMemoryStream m = new UnmanagedMemoryStream (p, 8);
+				m.PositionPointer = p + 4;
+				Assert.AreEqual (65, m.ReadByte ());
+			}
+		}
+		
 	}
 }
 #endif
