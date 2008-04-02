@@ -619,18 +619,10 @@ namespace Mono.CSharp {
 		// </summary>
 		public FlowBranching StartFlowBranching (Block block)
 		{
-			FlowBranching.BranchingType type;
-
-			if ((CurrentBranching != null) &&
-			    (CurrentBranching.Type == FlowBranching.BranchingType.Switch))
-				type = FlowBranching.BranchingType.SwitchSection;
-			else
-				type = FlowBranching.BranchingType.Block;
-
 			flags |= Flags.DoFlowAnalysis;
 
 			current_flow_branching = FlowBranching.CreateBranching (
-				CurrentBranching, type, block, block.StartLocation);
+				CurrentBranching, FlowBranching.BranchingType.Block, block, block.StartLocation);
 			return current_flow_branching;
 		}
 

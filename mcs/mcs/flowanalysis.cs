@@ -48,9 +48,6 @@ namespace Mono.CSharp
 			// Switch block.
 			Switch,
 
-			// Switch section.
-			SwitchSection,
-
 			// The toplevel block of a function
 			Toplevel
 		}
@@ -77,9 +74,6 @@ namespace Mono.CSharp
 
 			case BranchingType.Switch:
 				return new FlowBranchingBreakable (parent, type, SiblingType.SwitchSection, block, loc);
-
-			case BranchingType.SwitchSection:
-				return new FlowBranchingBlock (parent, type, SiblingType.Block, block, loc);
 
 			case BranchingType.Block:
 				return new FlowBranchingBlock (parent, type, SiblingType.Block, block, loc);
@@ -523,6 +517,8 @@ namespace Mono.CSharp
 
 		protected override void AddSibling (UsageVector sibling)
 		{
+			if (sibling.Type == SiblingType.Block && sibling_list != null)
+				throw new InternalErrorException ("Blocks don't have sibling flow paths");
 			sibling.Next = sibling_list;
 			sibling_list = sibling;
 		}

@@ -1,5 +1,11 @@
 2008-04-02  Raja R Harinath  <harinath@hurrynot.org>
 
+	* flowanalysis.cs (FlowBranching.BranchingType.SwitchSection): Kill.
+	(FlowBranching.CreateBranching): Update to changes.
+	(FlowBranchingBlock.AddSibling): Add sanity check.
+	* codegen.cs (EmitContext.StartFlowBranching) <Block variant>:
+	Update to changes.
+
 	* iterators.cs (Iterator.MarkFinally): Remove.
 	* statement.cs (ExceptionStatement): Update to changes.
 
