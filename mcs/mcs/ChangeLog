@@ -1,5 +1,8 @@
 2008-04-03  Raja R Harinath  <harinath@hurrynot.org>
 
+	* statement.cs (TryFinally.need_exc_block): Delete.
+	(TryFinally): Update to changes.
+
 	Now all ExceptionStatements are unconditional
 	* statement.cs (CollectionForeach.DisposableWrapper): New.
 	Extract out the try/finally code into a new wrapper.

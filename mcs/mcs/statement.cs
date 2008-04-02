@@ -4386,7 +4386,6 @@ namespace Mono.CSharp {
 	public class TryFinally : ExceptionStatement {
 		Statement stmt;
 		Block fini;
-		bool need_exc_block;
 
 		public TryFinally (Statement stmt, Block fini, Location l)
 		{
@@ -4411,11 +4410,7 @@ namespace Mono.CSharp {
 					ok = false;
 			}
 
-			need_exc_block = true;
-			if (ec.InIterator) {
-				ResolveFinally (branching);
-				need_exc_block = emit_finally;
-			}
+			ResolveFinally (branching);
 			ec.EndFlowBranching ();
 
 			// System.Reflection.Emit automatically emits a 'leave' at the end of a try clause
@@ -4429,12 +4424,12 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 
-			if (need_exc_block)
+			if (emit_finally)
 				ig.BeginExceptionBlock ();
 			stmt.Emit (ec);
 
 			EmitFinally (ec);
-			if (need_exc_block)
+			if (emit_finally)
 				ig.EndExceptionBlock ();
 		}
 
