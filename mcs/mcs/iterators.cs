@@ -832,21 +832,6 @@ namespace Mono.CSharp {
 			point.Define (ig);
 		}
 
-		public void MarkFinally (EmitContext ec, ArrayList finally_blocks)
-		{
-			ILGenerator ig = ec.ig;
-
-			// increment pc
-			pc++;
-			ig.Emit (OpCodes.Ldarg_0);
-			IntConstant.EmitInt (ig, pc);
-			ig.Emit (OpCodes.Stfld, IteratorHost.PC.FieldBuilder);
-
-			ResumePoint point = new ResumePoint (finally_blocks);
-			resume_points.Add (point);
-			point.Define (ig);
-		}
-
 		public override string ContainerType {
 			get { return "iterator"; }
 		}

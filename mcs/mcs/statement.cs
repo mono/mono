@@ -3783,7 +3783,6 @@ namespace Mono.CSharp {
 		public abstract void EmitFinallyBody (EmitContext ec);
 
 		protected bool emit_finally = true;
-		ArrayList parent_vectors;
 
 		protected void EmitFinally (EmitContext ec)
 		{
@@ -3791,7 +3790,6 @@ namespace Mono.CSharp {
 			if (emit_finally)
 				ec.ig.BeginFinallyBlock ();
 			else if (ec.InIterator) {
-				ec.CurrentIterator.MarkFinally (ec, parent_vectors);
 				ec.ig.Emit (OpCodes.Ldloc, ec.CurrentIterator.SkipFinally);
 				ec.ig.Emit (OpCodes.Brtrue, end_finally);
 			}
@@ -3802,8 +3800,6 @@ namespace Mono.CSharp {
 		protected void ResolveFinally (FlowBranchingException branching)
 		{
 			emit_finally = branching.EmitFinally;
-			if (!emit_finally)
-				branching.Parent.StealFinallyClauses (ref parent_vectors);
 		}
 	}
 

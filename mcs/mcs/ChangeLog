@@ -1,5 +1,8 @@
 2008-04-02  Raja R Harinath  <harinath@hurrynot.org>
 
+	* iterators.cs (Iterator.MarkFinally): Remove.
+	* statement.cs (ExceptionStatement): Update to changes.
+
 	Add support for skipping over finally blocks at runtime.  First
 	in a series to fix #324708
 	* iterators.cs (Iterator.SkipFinally): New LocalBuilder.
