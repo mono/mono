@@ -264,7 +264,7 @@ namespace System.Web.Services.Description {
 		void ImportPortBinding (bool multipleBindings)
 		{
 			if (port != null) {
-				if (multipleBindings) className = port.Name;
+				if (multipleBindings) className = binding.Name;
 				else className = service.Name;
 			}
 			else

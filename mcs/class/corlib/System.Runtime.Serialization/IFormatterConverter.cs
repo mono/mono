@@ -37,23 +37,23 @@ namespace System.Runtime.Serialization {
 	[System.Runtime.InteropServices.ComVisibleAttribute (true)]
 #endif
 	public interface IFormatterConverter {
-		object Convert (object o, Type t);
-		object Convert (object o, TypeCode tc);
+		object Convert (object value, Type type);
+		object Convert (object value, TypeCode typeCode);
 		
-		bool        ToBoolean  (object o);
-		byte        ToByte     (object o);
-		char        ToChar     (object o);
-		DateTime    ToDateTime (object o);
-		Decimal     ToDecimal  (object o);
-		double      ToDouble   (object o);
-		Int16       ToInt16    (object o);
-		Int32       ToInt32    (object o);
-		Int64       ToInt64    (object o);
-		sbyte       ToSByte    (object o);
-		float       ToSingle   (object o);
-		string      ToString   (object o);
-		UInt16      ToUInt16   (object o);
-		UInt32      ToUInt32   (object o);
-		UInt64      ToUInt64   (object o);
+		bool        ToBoolean  (object value);
+		byte        ToByte     (object value);
+		char        ToChar     (object value);
+		DateTime    ToDateTime (object value);
+		Decimal     ToDecimal  (object value);
+		double      ToDouble   (object value);
+		Int16       ToInt16    (object value);
+		Int32       ToInt32    (object value);
+		Int64       ToInt64    (object value);
+		sbyte       ToSByte    (object value);
+		float       ToSingle   (object value);
+		string      ToString   (object value);
+		UInt16      ToUInt16   (object value);
+		UInt32      ToUInt32   (object value);
+		UInt64      ToUInt64   (object value);
 	}
 }

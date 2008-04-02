@@ -1,3 +1,15 @@
+2008-04-01  Lluis Sanchez Gual <lluis@novell.com> 
+
+	* TypeData.cs: Prefix with a '@' type names that are equal to keywords.
+	* XmlSerializationReaderInterpreter.cs,
+	  XmlSerializationWriterInterpreter.cs: Properly handle nullable enum
+	  values.
+	* SerializationCodeGenerator.cs: Properly handle nullable enum values.
+	  Don't generate read flags for text collectors (avoid var not used
+	  warning).
+	* XmlReflectionImporter.cs: Assign the MappedType to text collector
+	  members. It is needed when the member is an enum.
+
 2008-03-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* MapCodeGenerator.cs: Ensure fields that back properties are unique.

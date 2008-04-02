@@ -54,8 +54,8 @@ namespace System.Security {
 		{
 		}
 
-		public VerificationException (string message, Exception inner) 
-			: base (message, inner)
+		public VerificationException (string message, Exception innerException) 
+			: base (message, innerException)
 		{
 		}
 	}

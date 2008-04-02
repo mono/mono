@@ -68,6 +68,34 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 
+		private class ExposeProtectedProperties : DataGridView
+		{
+			public new Padding DefaultPadding { get { return base.DefaultPadding; } }
+			public new Size DefaultSize { get { return base.DefaultSize; } }
+			public new bool IsDoubleBuffered { get { return base.DoubleBuffered; } }
+
+			public ControlStyles GetControlStyles ()
+			{
+				ControlStyles retval = (ControlStyles)0;
+
+				foreach (ControlStyles cs in Enum.GetValues (typeof (ControlStyles)))
+					if (this.GetStyle (cs) == true)
+						retval |= cs;
+
+				return retval;
+			}
+			
+			public bool PublicIsInputKey (Keys keyData)
+			{
+				return base.IsInputKey (keyData);
+			}
+			
+			public bool PublicIsInputChar (char charCode)
+			{
+				return base.IsInputChar (charCode);
+			}
+		}
+
 #region GenerateClipboardTest
 		public static void GenerateClipboardTest ()
 		{
@@ -1328,6 +1356,36 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreSame (grid.Font, grid.DefaultCellStyle.Font, "#A5");
 			Assert.AreEqual (DataGridViewContentAlignment.MiddleLeft, grid.DefaultCellStyle.Alignment, "#A6");
 			Assert.AreEqual (DataGridViewTriState.False, grid.DefaultCellStyle.WrapMode, "#A7");
+		}
+
+		[Test]
+		public void MethodIsInputKey ()
+		{
+			string result = string.Empty;
+			string expected = "13;13;33;33;34;34;35;36;37;38;39;40;46;48;96;113;";
+
+			ExposeProtectedProperties dgv = new ExposeProtectedProperties ();
+		
+			foreach (Keys k in Enum.GetValues (typeof (Keys)))
+				if (dgv.PublicIsInputKey (k))
+					result += ((int)k).ToString () + ";";
+
+			Assert.AreEqual (expected, result, "A1");
+		}
+
+		[Test]
+		public void MethodIsInputChar ()
+		{
+			bool result = false;
+
+			ExposeProtectedProperties dgv = new ExposeProtectedProperties ();
+
+			for (int i = 0; i < 255; i++)
+				if (!dgv.PublicIsInputChar ((char)i))
+					result = true;
+
+			// Basically, it always returns true
+			Assert.AreEqual (false, result, "A1");
 		}
 
 		[Test]

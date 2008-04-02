@@ -1,5 +1,5 @@
 //
-// System.Runtime.Serialization/SerializationException.cd
+// System.Runtime.Serialization/SerializationException.cs
 //
 // Author:
 //   Paolo Molaro (lupus@ximian.com)
@@ -51,13 +51,12 @@ namespace System.Runtime.Serialization {
 		{
 		}
 
-		public SerializationException (string message, Exception inner)
-			: base (message, inner)
+		public SerializationException (string message, Exception innerException)
+			: base (message, innerException)
 		{
 		}
 
-		protected SerializationException (SerializationInfo info,
-					       StreamingContext context)
+		protected SerializationException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 		}

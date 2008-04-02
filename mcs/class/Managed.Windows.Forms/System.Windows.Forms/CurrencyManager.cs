@@ -216,6 +216,11 @@ namespace System.Windows.Forms {
 				editable.CancelEdit ();
 				OnItemChanged (new ItemChangedEventArgs (Position));
 			}
+#if NET_2_0
+			if (list is ICancelAddNew)
+				((ICancelAddNew)list).CancelNew (listposition);
+#endif
+
 		}
 		
 		public override void EndCurrentEdit ()
@@ -229,6 +234,11 @@ namespace System.Windows.Forms {
 				editing = false;
 				editable.EndEdit ();
 			}
+
+#if NET_2_0
+			if (list is ICancelAddNew)
+				((ICancelAddNew)list).EndNew (listposition);
+#endif
 		}
 
 		public void Refresh ()

@@ -181,13 +181,13 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 		}
 		
 		[SecurityPermission (SecurityAction.Demand, SerializationFormatter = true)]
-		public object DeserializeMethodResponse (Stream serializationStream, HeaderHandler handler, IMethodCallMessage methodCallmessage)
+		public object DeserializeMethodResponse (Stream serializationStream, HeaderHandler handler, IMethodCallMessage methodCallMessage)
 		{
-			return NoCheckDeserializeMethodResponse (serializationStream, handler, methodCallmessage);
+			return NoCheckDeserializeMethodResponse (serializationStream, handler, methodCallMessage);
 		}
 
 		// shared by DeserializeMethodResponse and UnsafeDeserializeMethodResponse which both involve different security checks
-		private object NoCheckDeserializeMethodResponse (Stream serializationStream, HeaderHandler handler, IMethodCallMessage methodCallmessage)
+		private object NoCheckDeserializeMethodResponse (Stream serializationStream, HeaderHandler handler, IMethodCallMessage methodCallMessage)
 		{
 			if(serializationStream==null) {
 				throw new ArgumentNullException("serializationStream");
@@ -201,7 +201,7 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 
 			bool hasHeader;
 			ReadBinaryHeader (reader, out hasHeader);
-			return MessageFormatter.ReadMethodResponse (reader, hasHeader, handler, methodCallmessage, this);
+			return MessageFormatter.ReadMethodResponse (reader, hasHeader, handler, methodCallMessage, this);
 		}
 
 		public void Serialize(Stream serializationStream, object graph)

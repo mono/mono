@@ -1349,8 +1349,7 @@ namespace Mono.CSharp {
 			}
 #endif
 			if (expr.IsNull && TypeManager.IsNullableType (type)) {
-				Report.Warning (458, 2, loc, "The result of the expression is always `null' of type `{0}'",
-					TypeManager.CSharpName (type));
+				return Nullable.LiftedNull.CreateFromExpression (this);
 			}
 			
 			Expression e = Convert.ImplicitConversion (ec, expr, type, loc);
@@ -1545,7 +1544,6 @@ namespace Mono.CSharp {
 		protected class PredefinedOperator {
 			protected readonly Type left;
 			protected readonly Type right;
-			Type left_lifted, right_lifted;
 			public readonly Operator OperatorsMask;
 			public Type ReturnType;
 
@@ -1575,86 +1573,17 @@ namespace Mono.CSharp {
 				this.ReturnType = return_type;
 			}
 
-			//
-			// CSC 2 has this behavior, it allows structs to be compared
-			// with the null literal *outside* of a generics context and
-			// inlines that as true or false.
-			//
-			Expression CreateNullConstant (Binary b, Expression expr)
-			{
-				// FIXME: Handle side effect constants
-				Constant c = new BoolConstant (b.oper == Operator.Inequality, b.loc);
-
-				if ((b.oper & Operator.EqualityMask) != 0) {
-					Report.Warning (472, 2, b.loc, "The result of comparing `{0}' against null is always `{1}'. " +
-							"This operation is undocumented and it is temporary supported for compatibility reasons only",
-							expr.GetSignatureForError (), c.AsString ());
-				} else {
-					Report.Warning (464, 2, b.loc, "The result of comparing type `{0}' against null is always `{1}'",
-							expr.GetSignatureForError (), c.AsString ());
-				}
-
-				return ReducedExpression.Create (c, b);
-			}
-
 			public virtual Expression ConvertResult (EmitContext ec, Binary b)
 			{
 				b.type = ReturnType;
 
-				bool lifted = b is Nullable.LiftedBinaryOperator;
-				if (lifted) {
-					if (left_lifted == null)
-						left_lifted = GetLiftedType (ec, left, b.left);
-					if (right_lifted == null)
-						right_lifted = GetLiftedType (ec, right, b.right);
-				}
+				if (left != null)
+					b.left = Convert.ImplicitConversion (ec, b.left, left, b.left.Location);
 
-				if (left != null) {
-					if (b.left is NullLiteral) {
-						if (!lifted)
-							return CreateNullConstant (b, b.right).Resolve (ec);
-
-						if ((b.oper & Operator.RelationalMask) != 0)
-							return CreateNullConstant (b, b.right).Resolve (ec);
-
-						b.left = new Nullable.Null (left_lifted, b.left.Location);
-					} else {
-						b.left = Convert.ImplicitConversion (ec, b.left, left, b.left.Location);
-
-						if (lifted)
-							b.left = EmptyCast.Create (b.left, left_lifted);
-					}
-				}
-
-				if (right != null) {
-					if (b.right is NullLiteral) {
-						if (!lifted)
-							return CreateNullConstant (b, b.left).Resolve (ec);
-
-						if ((b.oper & Operator.RelationalMask) != 0)
-							return CreateNullConstant (b, b.left).Resolve (ec);
-
-						b.right = new Nullable.Null (right_lifted, b.right.Location);
-					} else {
-						b.right = Convert.ImplicitConversion (ec, b.right, right, b.right.Location);
-
-						if (lifted)
-							b.right = EmptyCast.Create (b.right, right_lifted);
-					}
-				}
+				if (right != null)
+					b.right = Convert.ImplicitConversion (ec, b.right, right, b.right.Location);
 
 				return b;
-			}
-
-			Type GetLiftedType (EmitContext ec, Type type, Expression expr)
-			{
-#if GMCS_SOURCE			
-				TypeExpr lifted_type = new NullableType (type, expr.Location);
-				lifted_type = lifted_type.ResolveAsTypeTerminal (ec, false);
-				if (lifted_type != null)
-					return lifted_type.Type;
-#endif
-				return null;
 			}
 
 			public bool IsPrimitiveApplicable (Type type)
@@ -1716,7 +1645,19 @@ namespace Mono.CSharp {
 
 			public override Expression ConvertResult (EmitContext ec, Binary b)
 			{
-				base.ConvertResult (ec, b);
+				//
+				// Use original expression for nullable arguments
+				//
+				Nullable.Unwrap unwrap = b.left as Nullable.Unwrap;
+				if (unwrap != null)
+					b.left = unwrap.Original;
+
+				unwrap = b.right as Nullable.Unwrap;
+				if (unwrap != null)
+					b.right = unwrap.Original;
+
+				b.left = Convert.ImplicitConversion (ec, b.left, left, b.left.Location);
+				b.right = Convert.ImplicitConversion (ec, b.right, right, b.right.Location);
 
 				//
 				// Start a new concat expression using converted expression
@@ -1979,7 +1920,7 @@ namespace Mono.CSharp {
 				name, left, right);
 		}
 		
-		protected void Error_OperatorCannotBeApplied ()
+		protected void Error_OperatorCannotBeApplied (Expression left, Expression right)
 		{
 			string l, r;
 			// TODO: This should be handled as Type of method group in CSharpName
@@ -2101,7 +2042,7 @@ namespace Mono.CSharp {
 					break;
 				return left;
 			}
-			Error_OperatorCannotBeApplied ();
+			Error_OperatorCannotBeApplied (this.left, this.right);
 			return null;
 		}
 
@@ -2362,7 +2303,7 @@ namespace Mono.CSharp {
 					((lc != null && lc.IsDefaultValue) || (rc != null && rc.IsDefaultValue))) {
 
 					if ((ResolveOperator (ec)) == null) {
-						Error_OperatorCannotBeApplied ();
+						Error_OperatorCannotBeApplied (left, right);
 						return null;
 					}
 
@@ -2381,14 +2322,6 @@ namespace Mono.CSharp {
 				}
 			}
 
-#if GMCS_SOURCE
-			if ((left is NullLiteral || left.Type.IsValueType) &&
-			    (right is NullLiteral || right.Type.IsValueType) &&
-			    !(left is NullLiteral && right is NullLiteral) &&
-			    (TypeManager.IsNullableType (left.Type) || TypeManager.IsNullableType (right.Type)))
-				return new Nullable.LiftedBinaryOperator (oper, left, right, loc).Resolve (ec);
-#endif
-
 			// Comparison warnings
 			if ((oper & Operator.ComparisonMask) != 0) {
 				if (left.Equals (right)) {
@@ -2398,9 +2331,19 @@ namespace Mono.CSharp {
 				CheckUselessComparison (rc, left.Type);
 			}
 
+			if ((TypeManager.IsNullableType (left.Type) || TypeManager.IsNullableType (right.Type) ||
+				(left is NullLiteral && right.Type.IsValueType) || (right is NullLiteral && left.Type.IsValueType)) &&
+				!(this is Nullable.LiftedBinaryOperator))
+				return new Nullable.LiftedBinaryOperator (oper, left, right, loc).Resolve (ec);
+
+			return DoResolveCore (ec, left, right);
+		}
+
+		protected Expression DoResolveCore (EmitContext ec, Expression left_orig, Expression right_orig)
+		{
 			Expression expr = ResolveOperator (ec);
 			if (expr == null)
-				Error_OperatorCannotBeApplied ();
+				Error_OperatorCannotBeApplied (left_orig, right_orig);
 
 			if (left == null || right == null)
 				throw new InternalErrorException ("Invalid conversion");
@@ -2580,6 +2523,9 @@ namespace Mono.CSharp {
 				}
 
 				if (l == TypeManager.anonymous_method_type)
+					return null;
+
+				if (TypeManager.IsValueType (l))
 					return null;
 
 				return this;
@@ -8552,7 +8498,7 @@ namespace Mono.CSharp {
 
 #if GMCS_SOURCE
 			if ((dim.Length > 0) && (dim [0] == '?')) {
-				TypeExpr nullable = new NullableType (left, loc);
+				TypeExpr nullable = new Nullable.NullableType (left, loc);
 				if (dim.Length > 1)
 					nullable = new ComposedCast (nullable, dim.Substring (1), loc);
 				return nullable.ResolveAsTypeTerminal (ec, false);

@@ -1,3 +1,13 @@
+2008-04-01  Marek Habersack  <mhabersack@novell.com>
+
+	* SqlParameter.cs: ConvertToFrameworkType must handle empty
+	strings gracefully - a DBNull.Value must be returned in this
+	case.
+
+	* SqlCommand.cs: DeriveParameters should split the stored
+	procedure name into the schema name and procedure name before
+	querying its parameters.
+
 2008-03-03  Ankit Jain  <jankit@novell.com>
 
 	* SqlClientMetaDataCollectionNames.cs: Set the field values.

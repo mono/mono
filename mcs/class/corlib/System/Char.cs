@@ -79,15 +79,15 @@ namespace System
 				out ushort *to_lower_data_low, out ushort *to_lower_data_high,
 				out ushort *to_upper_data_low, out ushort *to_upper_data_high);
 
-		public int CompareTo (object v)
+		public int CompareTo (object value)
 		{
-			if (v == null)
+			if (value == null)
 				return 1;
 			
-			if (!(v is System.Char))
+			if (!(value is System.Char))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.Char"));
 
-			char xv = (char) v;
+			char xv = (char) value;
 			if (m_value == xv)
 				return 0;
 
@@ -97,12 +97,12 @@ namespace System
 				return -1;
 		}
 
-		public override bool Equals (object o)
+		public override bool Equals (object obj)
 		{
-			if (!(o is Char))
+			if (!(obj is Char))
 				return false;
 
-			return ((char) o) == m_value;
+			return ((char) obj) == m_value;
 		}
 
 #if NET_2_0
@@ -156,15 +156,15 @@ namespace System
 			return ConvertToUtf32 (s [index], s [index + 1]);
 		}
 
-		public bool Equals (char value)
+		public bool Equals (char obj)
 		{
-			return m_value == value;
+			return m_value == obj;
 		}
 
-		public static bool IsSurrogatePair (char high, char low)
+		public static bool IsSurrogatePair (char highSurrogate, char lowSurrogate)
 		{
-			return '\uD800' <= high && high <= '\uDBFF'
-				&& '\uDC00' <= low && low <= '\uDFFF';
+			return '\uD800' <= highSurrogate && highSurrogate <= '\uDBFF'
+				&& '\uDC00' <= lowSurrogate && lowSurrogate <= '\uDFFF';
 		}
 
 		public static bool IsSurrogatePair (string s, int index)
@@ -199,16 +199,16 @@ namespace System
 			
 		}
 
-		public static double GetNumericValue (string str, int index)
+		public static double GetNumericValue (string s, int index)
 		{
-			if (str == null) 
-				throw new ArgumentNullException ("str");
+			if (s == null) 
+				throw new ArgumentNullException ("s");
 			
-			if (index < 0 || index >= str.Length)
+			if (index < 0 || index >= s.Length)
 				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of str."));	
+					"The value of index is less than zero, or greater than or equal to the length of s."));	
 			
-			return GetNumericValue (str[index]);
+			return GetNumericValue (s[index]);
 		}
 
 		public static UnicodeCategory GetUnicodeCategory (char c)
@@ -218,16 +218,16 @@ namespace System
 			}
 		}
 
-		public static UnicodeCategory GetUnicodeCategory (string str, int index)
+		public static UnicodeCategory GetUnicodeCategory (string s, int index)
 		{
-			if (str == null) 
-				throw new ArgumentNullException ("str");
+			if (s == null) 
+				throw new ArgumentNullException ("s");
 			
-			if (index < 0 || index >= str.Length)
+			if (index < 0 || index >= s.Length)
 				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of str."));
+					"The value of index is less than zero, or greater than or equal to the length of s."));
 			
-			return GetUnicodeCategory (str[index]);
+			return GetUnicodeCategory (s[index]);
 		}
 
 		public static bool IsControl (char c)
@@ -237,16 +237,16 @@ namespace System
 			}
 		}
 
-		public static bool IsControl (string str, int index)
+		public static bool IsControl (string s, int index)
 		{
-			if (str == null) 
-				throw new ArgumentNullException ("str");
+			if (s == null) 
+				throw new ArgumentNullException ("s");
 			
-			if (index < 0 || index >= str.Length)
+			if (index < 0 || index >= s.Length)
 				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of str."));
+					"The value of index is less than zero, or greater than or equal to the length of s."));
 			
-			return IsControl (str[index]);
+			return IsControl (s[index]);
 		}	
 
 		public static bool IsDigit (char c)
@@ -256,16 +256,16 @@ namespace System
 			}
 		}
 
-		public static bool IsDigit (string str, int index)
+		public static bool IsDigit (string s, int index)
 		{
-			if (str == null) 
-				throw new ArgumentNullException ("str");
+			if (s == null) 
+				throw new ArgumentNullException ("s");
 			
-			if (index < 0 || index >= str.Length)
+			if (index < 0 || index >= s.Length)
 				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of str."));
+					"The value of index is less than zero, or greater than or equal to the length of s."));
 			
-			return IsDigit (str[index]);
+			return IsDigit (s[index]);
 		}
 
 #if NET_2_0
@@ -293,16 +293,16 @@ namespace System
 			}
 		}
 
-		public static bool IsLetter (string str, int index)
+		public static bool IsLetter (string s, int index)
 		{
-			if (str == null) 
-				throw new ArgumentNullException ("str");
+			if (s == null) 
+				throw new ArgumentNullException ("s");
 			
-			if (index < 0 || index >= str.Length)
+			if (index < 0 || index >= s.Length)
 				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of str."));
+					"The value of index is less than zero, or greater than or equal to the length of s."));
 			
-			return IsLetter (str[index]);
+			return IsLetter (s[index]);
 		}
 
 		public static bool IsLetterOrDigit (char c)
@@ -323,16 +323,16 @@ namespace System
 			}
 		}
 
-		public static bool IsLetterOrDigit (string str, int index)
+		public static bool IsLetterOrDigit (string s, int index)
 		{
-			if (str == null) 
-				throw new ArgumentNullException ("str");
+			if (s == null) 
+				throw new ArgumentNullException ("s");
 			
-			if (index < 0 || index >= str.Length)
+			if (index < 0 || index >= s.Length)
 				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of str."));
+					"The value of index is less than zero, or greater than or equal to the length of s."));
 			
-			return IsLetterOrDigit (str[index]);
+			return IsLetterOrDigit (s[index]);
 		}
 
 		public static bool IsLower (char c)
@@ -342,16 +342,16 @@ namespace System
 			}
 		}
 		
-		public static bool IsLower (string str, int index)
+		public static bool IsLower (string s, int index)
 		{
-			if (str == null) 
-				throw new ArgumentNullException ("str");
+			if (s == null) 
+				throw new ArgumentNullException ("s");
 			
-			if (index < 0 || index >= str.Length)
+			if (index < 0 || index >= s.Length)
 				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of str."));
+					"The value of index is less than zero, or greater than or equal to the length of s."));
 			
-			return IsLower (str[index]);
+			return IsLower (s[index]);
 		}
 
 #if NET_2_0
@@ -387,16 +387,16 @@ namespace System
 			}
 		}
 		
-		public static bool IsNumber (string str, int index)
+		public static bool IsNumber (string s, int index)
 		{
-			if (str == null) 
-				throw new ArgumentNullException ("str");
+			if (s == null) 
+				throw new ArgumentNullException ("s");
 			
-			if (index < 0 || index >= str.Length)
+			if (index < 0 || index >= s.Length)
 				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of str."));
+					"The value of index is less than zero, or greater than or equal to the length of s."));
 			
-			return IsNumber (str[index]);
+			return IsNumber (s[index]);
 		}
 
 		public static bool IsPunctuation (char c)
@@ -418,16 +418,16 @@ namespace System
 			}
 		}
 		
-		public static bool IsPunctuation (string str, int index)
+		public static bool IsPunctuation (string s, int index)
 		{
-			if (str == null) 
-				throw new ArgumentNullException ("str");
+			if (s == null) 
+				throw new ArgumentNullException ("s");
 			
-			if (index < 0 || index >= str.Length)
+			if (index < 0 || index >= s.Length)
 				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of str."));
+					"The value of index is less than zero, or greater than or equal to the length of s."));
 			
-			return IsPunctuation (str[index]);
+			return IsPunctuation (s[index]);
 		}
 
 		public static bool IsSeparator (char c)
@@ -445,16 +445,16 @@ namespace System
 			}
 		}
 		
-		public static bool IsSeparator (string str, int index)
+		public static bool IsSeparator (string s, int index)
 		{
-			if (str == null) 
-				throw new ArgumentNullException ("str");
+			if (s == null) 
+				throw new ArgumentNullException ("s");
 			
-			if (index < 0 || index >= str.Length)
+			if (index < 0 || index >= s.Length)
 				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of str."));
+					"The value of index is less than zero, or greater than or equal to the length of s."));
 			
-			return IsSeparator (str[index]);
+			return IsSeparator (s[index]);
 		}
 
 		public static bool IsSurrogate (char c)
@@ -464,16 +464,16 @@ namespace System
 			}
 		}
 		
-		public static bool IsSurrogate (string str, int index)
+		public static bool IsSurrogate (string s, int index)
 		{
-			if (str == null) 
-				throw new ArgumentNullException ("str");
+			if (s == null) 
+				throw new ArgumentNullException ("s");
 			
-			if (index < 0 || index >= str.Length)
+			if (index < 0 || index >= s.Length)
 				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of str."));
+					"The value of index is less than zero, or greater than or equal to the length of s."));
 			
-			return IsSurrogate (str[index]);
+			return IsSurrogate (s[index]);
 		}
 
 		public static bool IsSymbol (char c)
@@ -492,16 +492,16 @@ namespace System
 			}
 		}
 		
-		public static bool IsSymbol (string str, int index)
+		public static bool IsSymbol (string s, int index)
 		{
-			if (str == null) 
-				throw new ArgumentNullException ("str");
+			if (s == null) 
+				throw new ArgumentNullException ("s");
 			
-			if (index < 0 || index >= str.Length)
+			if (index < 0 || index >= s.Length)
 				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of str."));
+					"The value of index is less than zero, or greater than or equal to the length of s."));
 			
-			return IsSymbol (str[index]);
+			return IsSymbol (s[index]);
 		}
 
 		public static bool IsUpper (char c)
@@ -511,16 +511,16 @@ namespace System
 			}
 		}
 		
-		public static bool IsUpper (string str, int index)
+		public static bool IsUpper (string s, int index)
 		{
-			if (str == null) 
-				throw new ArgumentNullException ("str");
+			if (s == null) 
+				throw new ArgumentNullException ("s");
 			
-			if (index < 0 || index >= str.Length)
+			if (index < 0 || index >= s.Length)
 				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of str."));
+					"The value of index is less than zero, or greater than or equal to the length of s."));
 			
-			return IsUpper (str[index]);
+			return IsUpper (s[index]);
 		}
 
 		public static bool IsWhiteSpace (char c)
@@ -548,16 +548,16 @@ namespace System
 			}
 		}
 		
-		public static bool IsWhiteSpace (string str, int index)
+		public static bool IsWhiteSpace (string s, int index)
 		{
-			if (str == null) 
-				throw new ArgumentNullException ("str");
+			if (s == null) 
+				throw new ArgumentNullException ("s");
 			
-			if (index < 0 || index >= str.Length)
+			if (index < 0 || index >= s.Length)
 				throw new ArgumentOutOfRangeException (Locale.GetText (
-					"The value of index is less than zero, or greater than or equal to the length of str."));
+					"The value of index is less than zero, or greater than or equal to the length of s."));
 			
-			return IsWhiteSpace (str[index]);
+			return IsWhiteSpace (s[index]);
 		}
 
 #if NET_2_0
@@ -573,15 +573,15 @@ namespace System
 		}
 #endif
 
-		public static char Parse (string str)
+		public static char Parse (string s)
 		{
-			if (str == null) 
-				throw new ArgumentNullException ("str");
+			if (s == null) 
+				throw new ArgumentNullException ("s");
 
-			if (str.Length != 1)
-				throw new FormatException ("string contains more than one character.");
+			if (s.Length != 1)
+				throw new FormatException (Locale.GetText ("s contains more than one character."));
 			
-			return str [0];
+			return s [0];
 		}
 
 		public static char ToLower (char c)
@@ -651,12 +651,12 @@ namespace System
 			return new String (m_value, 1);
 		}
 
-		public static string ToString(char c)
+		public static string ToString (char c)
 		{
 			return new String (c, 1);
 		}
 
-		public string ToString (IFormatProvider fp)
+		public string ToString (IFormatProvider provider)
 		{
 			// LAMESPEC: ECMA draft doesn't say Char implements IFormattable
 			return new String (m_value, 1);

@@ -127,18 +127,18 @@ namespace System
 			return x.Equals (y);
 		}
 
-		public int GetHashCode (object o)
+		public int GetHashCode (object obj)
 		{
-			if (o == null)
-				throw new ArgumentNullException("o");
+			if (obj == null)
+				throw new ArgumentNullException("obj");
 
-			string s = o as string;
-			return s == null ? o.GetHashCode (): GetHashCode(s);
+			string s = obj as string;
+			return s == null ? obj.GetHashCode (): GetHashCode(s);
 		}
 
 		public abstract int Compare (string x, string y);
 		public abstract bool Equals (string x, string y);
-		public abstract int GetHashCode (string s);
+		public abstract int GetHashCode (string obj);
 	}
 
 	[Serializable]
@@ -179,6 +179,8 @@ namespace System
 	[Serializable]
 	internal class OrdinalComparer : StringComparer
 	{
+		readonly bool _ignoreCase;
+
 		public OrdinalComparer (bool ignoreCase)
 		{
 			_ignoreCase = ignoreCase;
@@ -187,30 +189,9 @@ namespace System
 		public override int Compare (string x, string y)
 		{
 			if (!_ignoreCase)
-				return String.CompareOrdinal (x, y);
+				return String.CompareOrdinalUnchecked (x, 0, Int32.MaxValue, y, 0, Int32.MaxValue);
 
-			// copied from String.CompareOrdinal()
-			if (x == null) {
-				if (y == null)
-					return 0;
-				else
-					return -1;
-			}
-			else if (y == null) {
-				return 1;
-			}
-
-			int max = x.Length > y.Length ? y.Length : x.Length;
-			for (int i = 0; i < max; i++) {
-				if (x [i] == y [i])
-					continue;
-				char xc = Char.ToUpperInvariant (x [i]);
-				char yc = Char.ToUpperInvariant (y [i]);
-				if (xc != yc)
-					return xc - yc;
-			}
-			return max < x.Length ? -1 :
-				max == y.Length ? 0 : 1;
+			return String.CompareOrdinalCaseInsensitiveUnchecked (x, 0, Int32.MaxValue, y, 0, Int32.MaxValue);
 		}
 
 		public override bool Equals (string x, string y)
@@ -227,8 +208,6 @@ namespace System
 
 			return s.GetCaseInsensitiveHashCode ();
 		}
-
-		readonly bool _ignoreCase;
 	}
 }
 

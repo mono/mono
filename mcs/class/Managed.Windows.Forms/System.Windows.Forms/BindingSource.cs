@@ -56,6 +56,9 @@ namespace System.Windows.Forms {
 		bool allow_new_set;
 		bool allow_new;
 
+		bool add_pending;
+		int pending_add_index;
+
 		public BindingSource (IContainer container) : this ()
 		{
 			container.Add (this);
@@ -534,8 +537,7 @@ namespace System.Windows.Forms {
 						", since it does not have a public default ctor. Set AllowNew to true " +
 						", handling AddingNew and creating the appropriate object.");
 
-			// FIXME - Remove the comment when we implement EndEdit
-			// EndEdit ();
+			EndEdit ();
 
 			AddingNewEventArgs args = new AddingNewEventArgs ();
 			OnAddingNew (args);
@@ -557,6 +559,9 @@ namespace System.Windows.Forms {
 			if (raise_list_changed_events && !list_is_ibinding)
 				OnListChanged (new ListChangedEventArgs (ListChangedType.ItemAdded, idx));
 
+			add_pending = true;
+			pending_add_index = idx;
+
 			return new_object;
 		}
 
@@ -574,7 +579,7 @@ namespace System.Windows.Forms {
 
 		public void CancelEdit ()
 		{
-			throw new NotImplementedException ();
+			currency_manager.CancelCurrentEdit ();
 		}
 
 		public virtual void Clear ()
@@ -604,7 +609,7 @@ namespace System.Windows.Forms {
 
 		public void EndEdit ()
 		{
-			throw new NotImplementedException ();
+			currency_manager.EndCurrentEdit ();
 		}
 
 		public int Find (string propertyName, object key)
@@ -823,12 +828,28 @@ namespace System.Windows.Forms {
 
 		void ICancelAddNew.CancelNew (int itemIndex)
 		{
-			throw new NotImplementedException ();
+			if (!add_pending)
+				return;
+
+			if (itemIndex != pending_add_index)
+				return;
+
+			add_pending = false;
+			list.RemoveAt (itemIndex);
+
+			if (raise_list_changed_events && !list_is_ibinding)
+				OnListChanged (new ListChangedEventArgs (ListChangedType.ItemDeleted, itemIndex));
 		}
 
 		void ICancelAddNew.EndNew (int itemIndex)
 		{
-			throw new NotImplementedException ();
+			if (!add_pending)
+				return;
+
+			if (itemIndex != pending_add_index)
+				return;
+
+			add_pending = false;
 		}
 		
 		void ISupportInitialize.BeginInit ()

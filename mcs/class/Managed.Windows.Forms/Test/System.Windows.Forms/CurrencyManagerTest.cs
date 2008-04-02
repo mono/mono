@@ -31,6 +31,10 @@ using System.Windows.Forms;
 
 using NUnit.Framework;
 
+#if NET_2_0
+using System.Collections.ObjectModel;
+#endif
+
 namespace MonoTests.System.Windows.Forms.DataBinding
 {
 	[TestFixture]
@@ -782,6 +786,62 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			cm.PositionChanged -= new EventHandler (PositionChanged);
 		}
 
+#if NET_2_0
+		class CancelAddNewList<T> : Collection<T>, ICancelAddNew
+		{
+			public bool EndNewCalled;
+			public bool CancelNewCalled;
+			public int LastIndex = -1;
+
+			public void EndNew (int index)
+			{
+				EndNewCalled = true;
+				LastIndex = index;
+			}
+
+			public void CancelNew (int index)
+			{
+				CancelNewCalled = true;
+				LastIndex = index;
+			}
+
+			public void Reset ()
+			{
+				EndNewCalled = CancelNewCalled = false;
+				LastIndex = -1;
+			}
+		}
+
+		// Support for ICancelNew interface
+		[Test]
+		public void CancelAddNew2 ()
+		{
+			BindingContext bc = new BindingContext ();
+			CancelAddNewList<int> list = new CancelAddNewList<int> ();
+			list.Add (4);
+			list.Add (6);
+
+			CurrencyManager cm = (CurrencyManager)bc [list];
+
+			Assert.AreEqual (false, list.EndNewCalled, "A1");
+			Assert.AreEqual (false, list.CancelNewCalled, "A2");
+			Assert.AreEqual (-1, list.LastIndex, "A3");
+
+			cm.CancelCurrentEdit ();
+			Assert.AreEqual (false, list.EndNewCalled, "B1");
+			Assert.AreEqual (true, list.CancelNewCalled, "B2");
+			Assert.AreEqual (0, list.LastIndex, "B3");
+
+			cm.Position = 1;
+			list.Reset ();
+
+			cm.CancelCurrentEdit ();
+			Assert.AreEqual (false, list.EndNewCalled, "C1");
+			Assert.AreEqual (true, list.CancelNewCalled, "C2");
+			Assert.AreEqual (1, list.LastIndex, "C3");
+		}
+#endif
+
 		[Test]
 		public void EndAddNew ()
 		{
@@ -832,6 +892,37 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 		{
 			Console.WriteLine ("{0} {1} {2}", e.ListChangedType, e.OldIndex, e.NewIndex);
 		}
+
+#if NET_2_0
+		// Support for ICancelNew interface
+		[Test]
+		public void EndAddNew2 ()
+		{
+			BindingContext bc = new BindingContext ();
+			CancelAddNewList<int> list = new CancelAddNewList<int> ();
+			list.Add (4);
+			list.Add (6);
+
+			CurrencyManager cm = (CurrencyManager)bc [list];
+
+			Assert.AreEqual (false, list.EndNewCalled, "A1");
+			Assert.AreEqual (false, list.CancelNewCalled, "A2");
+			Assert.AreEqual (-1, list.LastIndex, "A3");
+
+			cm.EndCurrentEdit ();
+			Assert.AreEqual (true, list.EndNewCalled, "B1");
+			Assert.AreEqual (false, list.CancelNewCalled, "B2");
+			Assert.AreEqual (0, list.LastIndex, "B3");
+
+			cm.Position = 1;
+			list.Reset ();
+
+			cm.EndCurrentEdit ();
+			Assert.AreEqual (true, list.EndNewCalled, "C1");
+			Assert.AreEqual (false, list.CancelNewCalled, "C2");
+			Assert.AreEqual (1, list.LastIndex, "C3");
+		}
+#endif
 
 		[Test]
 		public void AddNew2 ()

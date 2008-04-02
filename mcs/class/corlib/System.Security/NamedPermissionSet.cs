@@ -49,8 +49,8 @@ namespace System.Security {
 		{
 		}
 
-		public NamedPermissionSet (string name, PermissionSet set) 
-			: base (set) 
+		public NamedPermissionSet (string name, PermissionSet permSet) 
+			: base (permSet) 
 		{
 			Name = name;
 		}
@@ -61,11 +61,11 @@ namespace System.Security {
 			Name = name;
 		}
 
-		public NamedPermissionSet (NamedPermissionSet set) 
-			: base (set)
+		public NamedPermissionSet (NamedPermissionSet permSet) 
+			: base (permSet)
 		{
-			name = set.name; // name can be null here
-			description = set.description;
+			name = permSet.name; // name can be null here
+			description = permSet.description;
 		}
 
 		public NamedPermissionSet (string name) 
@@ -104,12 +104,12 @@ namespace System.Security {
 			return nps;
 		}
 
-		public override void FromXml (SecurityElement e) 
+		public override void FromXml (SecurityElement et) 
 		{
-			base.FromXml (e);
+			base.FromXml (et);
 			// strangely it can import a null Name (bypassing property setter)
-			name = e.Attribute ("Name");
-			description = e.Attribute ("Description");
+			name = et.Attribute ("Name");
+			description = et.Attribute ("Description");
 			if (description == null)
 				description = String.Empty;
 		}

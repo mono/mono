@@ -1,3 +1,9 @@
+2008-04-02  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
+
+	* IFormatterConverter.cs
+	* SerializationException.cs
+	* StreamingContext.cs: Fix parameter names
+
 2006-12-18  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* FormatterServices.cs: In GetFields, avoid creating a field

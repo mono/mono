@@ -154,7 +154,7 @@ namespace Mono.CSharp {
 			ArrayList args = new ArrayList (2);
 			args.Add (new Argument (this));
 			args.Add (new Argument (
-				new TypeOf (new TypeExpression (type, Location), Location)));
+				new TypeOf (new TypeExpression (type, loc), loc)));
 
 			return CreateExpressionFactoryCall ("Constant", args);
 		}

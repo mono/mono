@@ -57,6 +57,7 @@ namespace System.Windows.Forms {
 		private bool allowUserToResizeColumns;
 		private bool allowUserToResizeRows;
 		private DataGridViewCellStyle alternatingRowsDefaultCellStyle;
+		private Point anchor_cell;
 		private bool autoGenerateColumns;
 		private bool autoSize;
 		private DataGridViewAutoSizeColumnsMode autoSizeColumnsMode;
@@ -131,7 +132,7 @@ namespace System.Windows.Forms {
 		public DataGridView ()
 		{
 			SetStyle (ControlStyles.Opaque, true);
-			SetStyle (ControlStyles.UserMouse, true);
+			//SetStyle (ControlStyles.UserMouse, true);
 			SetStyle (ControlStyles.OptimizedDoubleBuffer, true);
 			
 			adjustedTopLeftHeaderBorderStyle = new DataGridViewAdvancedBorderStyle();
@@ -2126,10 +2127,14 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException();
 		}
 
-		public void ClearSelection () {
-			foreach (DataGridViewCell cell in SelectedCells) {
+		public void ClearSelection ()
+		{
+			foreach (DataGridViewColumn col in SelectedColumns)
+				col.Selected = false;
+			foreach (DataGridViewRow row in SelectedRows)
+				row.Selected = false;
+			foreach (DataGridViewCell cell in SelectedCells)
 				cell.Selected = false;
-			}
 		}
 
 		public bool CommitEdit (DataGridViewDataErrorContexts context) {
@@ -2589,6 +2594,8 @@ namespace System.Windows.Forms {
 					}
 					break;
 			}
+			
+			Invalidate ();
 		}
 
 		public virtual void Sort (IComparer comparer) {
@@ -2764,12 +2771,32 @@ namespace System.Windows.Forms {
 
 		protected override bool IsInputChar (char charCode)
 		{
-			return base.IsInputChar(charCode);
+			return true;
 		}
 
 		protected override bool IsInputKey (Keys keyData)
 		{
-			return base.IsInputKey(keyData);
+			// Don't look at the modifiers
+			keyData = keyData & ~Keys.Modifiers;
+			
+			switch (keyData) {
+				case Keys.Return:
+				case Keys.PageUp:
+				case Keys.Next:
+				case Keys.End:
+				case Keys.Home:
+				case Keys.Left:
+				case Keys.Up:
+				case Keys.Right:
+				case Keys.Down:
+				case Keys.Delete:
+				case Keys.D0:
+				case Keys.NumPad0:
+				case Keys.F2:
+					return true;
+			}
+
+			return false;
 		}
 
 		protected virtual void OnAllowUserToAddRowsChanged (EventArgs e)
@@ -3420,23 +3447,8 @@ namespace System.Windows.Forms {
 		{
 			base.OnHandleCreated(e);
 			
-			if (Rows.Count > 0 && Columns.Count > 0) {
-				CurrentCell = Rows[0].Cells[0];
-
-				switch (selectionMode) {
-					case DataGridViewSelectionMode.CellSelect:
-					case DataGridViewSelectionMode.RowHeaderSelect:
-					case DataGridViewSelectionMode.ColumnHeaderSelect:
-						SetSelectedCellCore (0, 0, true);
-						break;
-					case DataGridViewSelectionMode.FullRowSelect:
-						SetSelectedRowCore (0, true);
-						break;
-					case DataGridViewSelectionMode.FullColumnSelect:
-						SetSelectedColumnCore (0, true);
-						break;
-				}
-			}
+			if (Rows.Count > 0 && Columns.Count > 0)
+				MoveCurrentCell (ColumnDisplayIndexToIndex (0), 0, true, false, false);
 		}
 
 		protected override void OnHandleDestroyed(EventArgs e)
@@ -3447,7 +3459,9 @@ namespace System.Windows.Forms {
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override void OnKeyDown (KeyEventArgs e)
 		{
-			base.OnKeyDown(e);
+			base.OnKeyDown (e);
+
+			e.Handled = ProcessDataGridViewKey (e);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -3675,6 +3689,7 @@ namespace System.Windows.Forms {
 				OnCellLeave(new DataGridViewCellEventArgs(currentCell.ColumnIndex, currentCell.RowIndex));
 			}
 			currentCell = cell;
+			currentCellAddress = new Point (currentCell.ColumnIndex, currentCell.RowIndex);
 			currentRow = cell.OwningRow;
 			OnCurrentCellChanged(EventArgs.Empty);
 			OnCellEnter(new DataGridViewCellEventArgs(cell.ColumnIndex, cell.RowIndex));
@@ -3794,7 +3809,7 @@ namespace System.Windows.Forms {
 			gridHeight = 0;
 			
 			int rows_displayed = 0;
-			int first_row_height = Rows[first_row_index].Height;
+			int first_row_height = Rows.Count > 0 ? Rows[first_row_index].Height : 0;
 			
 			// Draw rows
 			for (int index = first_row_index; index < Rows.Count; index++) {
@@ -4151,17 +4166,56 @@ namespace System.Windows.Forms {
 
 		protected bool ProcessAKey (Keys keyData)
 		{
-			throw new NotImplementedException();
+			if (!MultiSelect)
+				return false;
+				
+			if ((keyData & Keys.Control) == Keys.Control) {
+				SelectAll ();
+				return true;
+			}
+			
+			return false;
 		}
 
 		protected virtual bool ProcessDataGridViewKey (KeyEventArgs e)
 		{
-			throw new NotImplementedException();
+			switch (e.KeyCode) {
+				case Keys.A:
+					return ProcessAKey (e.KeyData);
+				case Keys.Delete:
+					return ProcessDeleteKey (e.KeyData);
+				case Keys.Down:
+					return ProcessDownKey (e.KeyData);
+				case Keys.Escape:
+					return ProcessEscapeKey (e.KeyData);
+				case Keys.End:
+					return ProcessEndKey (e.KeyData);
+				case Keys.Enter:
+					return ProcessEnterKey (e.KeyData);
+				case Keys.F2:
+					return ProcessF2Key (e.KeyData);
+				case Keys.Home:
+					return ProcessHomeKey (e.KeyData);
+				case Keys.Left:
+					return ProcessLeftKey (e.KeyData);
+				case Keys.Right:
+					return ProcessRightKey (e.KeyData);
+				case Keys.Space:
+					return ProcessSpaceKey (e.KeyData);
+				case Keys.Up:
+					return ProcessUpKey (e.KeyData);
+				case Keys.D0:
+				case Keys.NumPad0:
+					return ProcessZeroKey (e.KeyData);
+			}
+			
+			return false;
 		}
 
+		[MonoTODO ("What does delete do?")]
 		protected bool ProcessDeleteKey (Keys keyData)
 		{
-			throw new NotImplementedException();
+			return false;
 		}
 
 		protected override bool ProcessDialogKey (Keys keyData)
@@ -4169,32 +4223,103 @@ namespace System.Windows.Forms {
 			return base.ProcessDialogKey(keyData);
 		}
 
-		protected bool ProcessDownKey (Keys keyData) {
-			throw new NotImplementedException();
+		protected bool ProcessDownKey (Keys keyData)
+		{
+			int current_row = CurrentCellAddress.Y;
+			
+			if (current_row < Rows.Count - 1) {
+				// Move to the last cell in the column
+				if ((keyData & Keys.Control) == Keys.Control)
+					MoveCurrentCell (CurrentCellAddress.X, Rows.Count - 1, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
+				// Move one cell down
+				else
+					MoveCurrentCell (CurrentCellAddress.X, current_row + 1, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
+				
+				return true;
+			}
+			
+			return false;
 		}
 
-		protected bool ProcessEndKey (Keys keyData) {
-			throw new NotImplementedException();
+		protected bool ProcessEndKey (Keys keyData)
+		{
+			int disp_index = ColumnIndexToDisplayIndex (currentCellAddress.X);
+
+			// Move to the last cell in the control
+			if ((keyData & Keys.Control) == Keys.Control) {
+				MoveCurrentCell (ColumnDisplayIndexToIndex (Columns.Count - 1), Rows.Count - 1, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
+				return true;
+			}
+			
+			// Move to the last cell in the row
+			if (disp_index < Columns.Count - 1) {
+				MoveCurrentCell (ColumnDisplayIndexToIndex (Columns.Count - 1), currentCellAddress.Y, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
+				return true;
+			}
+
+			return false;
 		}
 
-		protected bool ProcessEnterKey (Keys keyData) {
-			throw new NotImplementedException();
+		protected bool ProcessEnterKey (Keys keyData)
+		{
+			if (!IsCurrentCellInEditMode)
+				return false;
+				
+			CommitEdit (DataGridViewDataErrorContexts.Commit);
+			
+			// Move one cell down
+			if ((keyData & Keys.Control) == 0) {
+				int current_row = CurrentCellAddress.Y;
+				
+				if (current_row < Rows.Count - 1)
+					MoveCurrentCell (CurrentCellAddress.X, current_row + 1, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
+			}
+			
+			return true;
 		}
 
-		protected bool ProcessEscapeKey (Keys keyData) {
-			throw new NotImplementedException();
+		protected bool ProcessEscapeKey (Keys keyData)
+		{
+			if (!IsCurrentCellInEditMode)
+				return false;
+
+			CancelEdit ();
+			return true;
 		}
 
-		protected bool ProcessF2Key (Keys keyData) {
-			throw new NotImplementedException();
+		protected bool ProcessF2Key (Keys keyData)
+		{
+			if (editMode == DataGridViewEditMode.EditOnF2 || editMode == DataGridViewEditMode.EditOnKeystrokeOrF2) {
+				BeginEdit (true);
+				return true;
+			}
+			
+			return false;
 		}
 
-		protected bool ProcessHomeKey (Keys keyData) {
-			throw new NotImplementedException();
+		protected bool ProcessHomeKey (Keys keyData)
+		{
+			int disp_index = ColumnIndexToDisplayIndex (currentCellAddress.X);
+
+			// Move to the first cell in the control
+			if ((keyData & Keys.Control) == Keys.Control) {
+				MoveCurrentCell (ColumnDisplayIndexToIndex (0), 0, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
+				return true;
+			}
+			
+			// Move to the first cell in the row
+			if (disp_index > 0) {
+				MoveCurrentCell (ColumnDisplayIndexToIndex (0), currentCellAddress.Y, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
+				return true;
+			}
+
+			return false;
 		}
 
-		protected bool ProcessInsertKey (Keys keyData) {
-			throw new NotImplementedException();
+		[MonoTODO ("What does delete do?")]
+		protected bool ProcessInsertKey (Keys keyData)
+		{
+			return false;
 		}
 
 		protected override bool ProcessKeyEventArgs (ref Message m) {
@@ -4207,8 +4332,22 @@ namespace System.Windows.Forms {
 			//throw new NotImplementedException();
 		}
 
-		protected bool ProcessLeftKey (Keys keyData) {
-			throw new NotImplementedException();
+		protected bool ProcessLeftKey (Keys keyData)
+		{
+			int disp_index = ColumnIndexToDisplayIndex (currentCellAddress.X);
+
+			if (disp_index > 0) {
+				// Move to the first cell in the row
+				if ((keyData & Keys.Control) == Keys.Control)
+					MoveCurrentCell (ColumnDisplayIndexToIndex (0), currentCellAddress.Y, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
+				// Move one cell to the left
+				else
+					MoveCurrentCell (ColumnDisplayIndexToIndex (disp_index - 1), currentCellAddress.Y, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
+
+				return true;
+			}
+
+			return false;
 		}
 
 		protected bool ProcessNextKey (Keys keyData) {
@@ -4221,32 +4360,120 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException();
 		}
 
-		protected bool ProcessRightKey (Keys keyData) {
-			throw new NotImplementedException();
+		protected bool ProcessRightKey (Keys keyData)
+		{
+			int disp_index = ColumnIndexToDisplayIndex (currentCellAddress.X);
+
+			if (disp_index < Columns.Count - 1) {
+				// Move to the last cell in the row
+				if ((keyData & Keys.Control) == Keys.Control)
+					MoveCurrentCell (ColumnDisplayIndexToIndex (Columns.Count - 1), currentCellAddress.Y, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
+				// Move one cell to the right
+				else
+					MoveCurrentCell (ColumnDisplayIndexToIndex (disp_index + 1), currentCellAddress.Y, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
+				
+				return true;
+			}
+
+			return false;
 		}
 
-		protected bool ProcessSpaceKey (Keys keyData) {
-			throw new NotImplementedException();
+		protected bool ProcessSpaceKey (Keys keyData)
+		{
+			if ((keyData & Keys.Shift) == Keys.Shift) {
+				if (selectionMode == DataGridViewSelectionMode.RowHeaderSelect) {
+					SetSelectedRowCore (CurrentCellAddress.Y, true);
+					InvalidateRow (CurrentCellAddress.Y);
+					return true;
+				}
+				if (selectionMode == DataGridViewSelectionMode.ColumnHeaderSelect) {
+					SetSelectedColumnCore (CurrentCellAddress.X, true);
+					InvalidateColumn (CurrentCellAddress.X);
+					return true;
+				}
+			}
+			
+			if (CurrentCell is DataGridViewButtonCell || CurrentCell is DataGridViewLinkCell || CurrentCell is DataGridViewCheckBoxCell) {
+				DataGridViewCellEventArgs e = new DataGridViewCellEventArgs (CurrentCell.ColumnIndex, CurrentCell.RowIndex);
+				
+				OnCellClick (e);
+				OnCellContentClick (e);
+				
+				if (CurrentCell is DataGridViewButtonCell)
+					(CurrentCell as DataGridViewButtonCell).OnClickInternal (e);
+				if (CurrentCell is DataGridViewCheckBoxCell)
+					(CurrentCell as DataGridViewCheckBoxCell).OnClickInternal (e);
+					
+				return true;
+			}
+			
+			return false;
 		}
 
 		protected bool ProcessTabKey (Keys keyData) {
 			throw new NotImplementedException();
 		}
 
-		protected bool ProcessUpKey (Keys keyData) {
-			throw new NotImplementedException();
+		protected bool ProcessUpKey (Keys keyData)
+		{
+			int current_row = CurrentCellAddress.Y;
+
+			if (current_row > 0) {
+				// Move to the first cell in the column
+				if ((keyData & Keys.Control) == Keys.Control)
+					MoveCurrentCell (CurrentCellAddress.X, 0, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
+				// Move one cell up
+				else
+					MoveCurrentCell (CurrentCellAddress.X, current_row - 1, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
+
+				return true;
+			}
+
+			return false;
 		}
 
-		protected bool ProcessZeroKey (Keys keyData) {
-			throw new NotImplementedException();
+		protected bool ProcessZeroKey (Keys keyData)
+		{
+			if ((keyData & Keys.Control) == Keys.Control && CurrentCell.EditType != null) {
+				CurrentCell.Value = DBNull.Value;
+				InvalidateCell (CurrentCell);
+				return true;
+			}
+			
+			return false;
 		}
 
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified) {
 			base.SetBoundsCore(x, y, width, height, specified);
 		}
 
-		protected virtual bool SetCurrentCellAddressCore (int columnIndex, int rowIndex, bool setAnchorCellAddress, bool validateCurrentCell, bool throughMouseClick) {
-			throw new NotImplementedException();
+		[MonoTODO ("Does not use validateCurrentCell or throughMouseClick")]
+		protected virtual bool SetCurrentCellAddressCore (int columnIndex, int rowIndex, bool setAnchorCellAddress, bool validateCurrentCell, bool throughMouseClick)
+		{
+			if ((columnIndex < 0 || columnIndex > Columns.Count - 1) && rowIndex != -1)
+				throw new ArgumentOutOfRangeException ("columnIndex");
+			if ((rowIndex < 0 || rowIndex > Rows.Count - 1) && columnIndex != -1)
+				throw new ArgumentOutOfRangeException ("rowIndex");
+			
+			DataGridViewCell cell;
+			
+			if (columnIndex == -1 && rowIndex == -1)
+				cell = null;
+			else
+				cell = Rows.SharedRow (rowIndex).Cells[columnIndex];
+			
+			if (cell != null && !cell.Visible)
+				throw new InvalidOperationException ("cell is not visible");
+				
+			if (setAnchorCellAddress)
+				anchor_cell = new Point (columnIndex, rowIndex);
+
+			currentCellAddress = new Point (columnIndex, rowIndex);
+			CurrentCell = cell;
+			
+			OnCurrentCellChanged (EventArgs.Empty);
+			
+			return true;
 		}
 
 		protected virtual void SetSelectedCellCore (int columnIndex, int rowIndex, bool selected) {
@@ -4634,6 +4861,61 @@ namespace System.Windows.Forms {
 			BindIList(list);
 		}
 
+		private void MoveCurrentCell (int x, int y, bool select, bool isControl, bool isShift)
+		{
+			bool full_row_selected = Rows.SharedRow(CurrentCellAddress.Y).Selected;
+			bool full_col_selected = Columns[CurrentCellAddress.X].Selected;
+			
+			// Move Selection
+			DataGridViewSelectionMode mode = selectionMode;
+			
+			// If we are row header select and we clicked a row header, use full row
+			if (mode == DataGridViewSelectionMode.RowHeaderSelect && (x == -1 || (full_row_selected && CurrentCellAddress.X == x)))
+				mode = DataGridViewSelectionMode.FullRowSelect;
+			else if (mode == DataGridViewSelectionMode.RowHeaderSelect)
+				mode = DataGridViewSelectionMode.CellSelect;
+				
+			// If we are col header select and we clicked a col header, use full col
+			if (mode == DataGridViewSelectionMode.ColumnHeaderSelect && (y == -1 || (full_col_selected && CurrentCellAddress.Y == y)))
+				mode = DataGridViewSelectionMode.FullColumnSelect;
+			else if (mode == DataGridViewSelectionMode.ColumnHeaderSelect)
+				mode = DataGridViewSelectionMode.CellSelect;
+			
+			// Move CurrentCell
+			SetCurrentCellAddressCore (x, y, true, false, false);
+			
+			if (!select)
+				return;
+			
+			// Clear old selection unless multi-selecting
+			if (!isShift)
+				ClearSelection ();
+			
+			switch (mode) {
+				case DataGridViewSelectionMode.CellSelect:
+					SetSelectedCellCore (x, y, true);
+					break;
+				case DataGridViewSelectionMode.FullRowSelect:
+					SetSelectedRowCore (y, true);
+					break;
+				case DataGridViewSelectionMode.FullColumnSelect:
+					SetSelectedColumnCore (x, true);
+					break;
+			}
+			
+			Invalidate ();
+		}
+		
+		private int ColumnIndexToDisplayIndex (int index)
+		{
+			return Columns[index].DisplayIndex;
+		}
+		
+		private int ColumnDisplayIndexToIndex (int index)
+		{
+			return ((Columns.ColumnDisplayIndexSortedArrayList[index]) as DataGridViewColumn).Index;
+		}
+		
 		private void OnListChanged (object sender, ListChangedEventArgs args) {
 			if (args.OldIndex >= 0) {
 			}

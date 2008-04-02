@@ -30,7 +30,6 @@ gtest-349.cs
 gtest-352.cs
 gtest-353.cs
 gtest-354.cs
-gtest-358.cs # Required user-operators rewrite
 gtest-374.cs
 gtest-exmethod-12.cs
 gtest-exmethod-19.cs

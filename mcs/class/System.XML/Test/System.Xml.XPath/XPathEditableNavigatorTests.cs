@@ -758,6 +758,19 @@ namespace MonoTests.System.Xml.XPath
 			Assert.IsTrue (doc.CreateNavigator ().CanEdit);
 			Assert.IsTrue (GetInstance ("<root/>").CanEdit);
 		}
+
+		[Test]
+		public void DeleteSelfAttribute ()
+		{
+			// bug #376210.
+			XmlDocument document = new XmlDocument ();
+			document.LoadXml ("<test><node date='2000-12-23'>z</node></test>");
+			XPathNavigator navigator = document.CreateNavigator ();
+			XPathNavigator nodeElement = navigator.SelectSingleNode ("//node");
+			nodeElement.MoveToAttribute ("date", String.Empty);
+			nodeElement.DeleteSelf ();
+			Assert.AreEqual ("<test><node>z</node></test>", document.OuterXml);
+		}
 	}
 }
 

@@ -664,11 +664,18 @@ namespace Mono.Xml.XPath
 		public override void DeleteSelf ()
 		{
 			XmlNode n = ((IHasXmlNode) navigator).GetNode ();
-			if (!navigator.MoveToNext ())
+			XmlAttribute a = n as XmlAttribute;
+			if (a != null) {
+				if (a.OwnerElement == null)
+					throw new InvalidOperationException ("This attribute node cannot be removed since it has no owner element.");
 				navigator.MoveToParent ();
-			if (n.ParentNode == null)
-				throw new InvalidOperationException ("This node cannot be removed since it has no parent.");
-			n.ParentNode.RemoveChild (n);
+				a.OwnerElement.RemoveAttributeNode (a);
+			} else {
+				if (n.ParentNode == null)
+					throw new InvalidOperationException ("This node cannot be removed since it has no parent.");
+				navigator.MoveToParent ();
+				n.ParentNode.RemoveChild (n);
+			}
 		}
 
 		public override void ReplaceSelf (XmlReader reader)

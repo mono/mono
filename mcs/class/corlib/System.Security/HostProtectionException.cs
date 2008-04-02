@@ -56,7 +56,7 @@ namespace System.Security {
 		{
 		}
 
-		public HostProtectionException (string message, HostProtectionResource protectedResources, HostProtectionResource demandedRessources)
+		public HostProtectionException (string message, HostProtectionResource protectedResources, HostProtectionResource demandedResources)
 			: base (message)
 		{
 		}

@@ -627,25 +627,50 @@ namespace System.Web.Services.Description {
 			if (part == null) throw new InvalidOperationException ("Message part " + hb.Part + " not found in message " + hb.Message);
 
 			XmlTypeMapping map;
+			string hname;
 			if (hb.Use == SoapBindingUse.Literal)
 			{
 				map = xmlImporter.ImportDerivedTypeMapping (part.Element, typeof (SoapHeader));
+				hname = part.Element.Name;
 				xmlExporter.ExportTypeMapping (map);
 			}
 			else
 			{
 				map = soapImporter.ImportDerivedTypeMapping (part.Type, typeof (SoapHeader), true);
+				hname = part.Type.Name;
 				soapExporter.ExportTypeMapping (map);
 			}
 
 			string varName = headerVariables [map] as string;
 			if (varName == null) 
 			{
-				varName = memberIds.AddUnique(CodeIdentifier.MakeValid (map.TypeName + "Value"),hb);
+				if (hname == map.TypeName)
+					varName = memberIds.AddUnique(CodeIdentifier.MakeValid (hname + "Value"),hb);
+				else
+					varName = memberIds.AddUnique(CodeIdentifier.MakeValid (hname),hb);
+				
+#if NET_2_0
+				string propName = varName;
+				varName = varName + "Field";
+#endif
 				headerVariables.Add (map, varName);
 				CodeMemberField codeField = new CodeMemberField (map.TypeFullName, varName);
-				codeField.Attributes = MemberAttributes.Public;
 				CodeTypeDeclaration.Members.Add (codeField);
+				
+#if NET_2_0
+				codeField.Attributes = MemberAttributes.Private;
+				CodeMemberProperty codeProperty = new CodeMemberProperty ();
+				codeProperty.Name = propName;
+				codeProperty.Type = new CodeTypeReference (map.TypeFullName);
+				codeProperty.Attributes = MemberAttributes.Public | MemberAttributes.Final;
+				codeProperty.HasGet = codeProperty.HasSet = true;
+				CodeExpression ce = new CodeFieldReferenceExpression (new CodeThisReferenceExpression(), varName);
+				codeProperty.SetStatements.Add (new CodeAssignStatement (ce, new CodePropertySetValueReferenceExpression()));
+				codeProperty.GetStatements.Add (new CodeMethodReturnStatement (ce));
+				CodeTypeDeclaration.Members.Add (codeProperty);
+#else
+				codeField.Attributes = MemberAttributes.Public;
+#endif
 			}
 			
 			CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Web.Services.Protocols.SoapHeaderAttribute");
