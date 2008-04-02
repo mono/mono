@@ -132,11 +132,11 @@ public struct MyType
 	{
 		return a.value > 0;
 	}
-	
+
 	public static int operator >> (MyType a, int b)
 	{
 		return a.value >> b;
-	}	
+	}
 
 	public override string ToString ()
 	{
@@ -197,7 +197,6 @@ class Tester
 
 	void AddTest ()
 	{
-	/*
 		Expression<Func<int, int, int>> e = (int a, int b) => a + b;
 		AssertNodeType (e, ExpressionType.Add);
 		Assert (50, e.Compile ().Invoke (20, 30));
@@ -209,7 +208,7 @@ class Tester
 		Expression<Func<MyType, MyType, MyType>> e3 = (MyType a, MyType b) => a + b;
 		AssertNodeType (e3, ExpressionType.Add);
 		Assert (10, e3.Compile ().Invoke (new MyType (-20), new MyType (30)));
-		
+
 		Expression<Func<MyType?, MyType?, MyType?>> e4 = (MyType? a, MyType? b) => a + b;
 		AssertNodeType (e4, ExpressionType.Add);
 		Assert (new MyType (10), e4.Compile ().Invoke (new MyType (-20), new MyType (30)));
@@ -218,11 +217,10 @@ class Tester
 		Expression<Func<int, MyType, int>> e5 = (int a, MyType b) => a + b;
 		AssertNodeType (e5, ExpressionType.Add);
 		Assert (31, e5.Compile ().Invoke (1, new MyType (30)));
-*/
 
 		Expression<Func<int, MyType?, int?>> e6 = (int a, MyType? b) => a + b;
 		AssertNodeType (e6, ExpressionType.Add);
-		Assert (-1, e6.Compile ().Invoke (-31, new MyType (30)));		
+		Assert (-1, e6.Compile ().Invoke (-31, new MyType (30)));
 	}
 
 	void AddCheckedTest ()
@@ -240,6 +238,28 @@ class Tester
 		AssertNodeType (e3, ExpressionType.Add);
 		Assert (10, e3.Compile ().Invoke (new MyType (-20), new MyType (30)));
 		}
+	}
+	
+	void AddStringTest ()
+	{
+		Expression<Func<string, string>> e6 = (a) => 1 + a;
+		AssertNodeType (e6, ExpressionType.Add);
+		Assert ("1to", e6.Compile ().Invoke ("to"));
+	
+		Expression<Func<object, string, string>> e7 = (object a, string b) => a + b;
+		AssertNodeType (e7, ExpressionType.Add);
+		Assert ("testme", e7.Compile ().Invoke ("test", "me"));
+		Assert ("test", e7.Compile ().Invoke ("test", null));
+		Assert ("", e7.Compile ().Invoke (null, null));
+
+		Expression<Func<string, int, string>> e8 = (a, b) => a + " " + "-" + "> " + b;
+		AssertNodeType (e8, ExpressionType.Add);
+		Assert ("test -> 2", e8.Compile ().Invoke ("test", 2));
+
+		Expression<Func<string, ushort?, string>> e9 = (a, b) => a + b;
+		AssertNodeType (e9, ExpressionType.Add);
+		Assert ("test2", e9.Compile ().Invoke ("test", 2));
+		Assert ("test", e9.Compile ().Invoke ("test", null));	
 	}
 
 	void AndTest ()
@@ -294,15 +314,18 @@ class Tester
 	void AndAlsoTest ()
 	{
 		Expression<Func<bool, bool, bool>> e = (bool a, bool b) => a && b;
-
 		AssertNodeType (e, ExpressionType.AndAlso);
 		Assert (false, e.Compile ().Invoke (true, false));
 
 		Expression<Func<MyType, MyType, MyType>> e2 = (MyType a, MyType b) => a && b;
-
 		AssertNodeType (e2, ExpressionType.AndAlso);
 		Assert (new MyType (64), e2.Compile ().Invoke (new MyType (64), new MyType (64)));
 		Assert (new MyType (0), e2.Compile ().Invoke (new MyType (32), new MyType (64)));
+
+		Expression<Func<bool, bool>> e3 = (bool a) => a && true;
+		AssertNodeType (e3, ExpressionType.AndAlso);
+		Assert (false, e3.Compile ().Invoke (false));
+		Assert (true, e3.Compile ().Invoke (true));
 	}
 
 	void ArrayIndexTest ()
@@ -416,7 +439,7 @@ class Tester
 
 		Expression<Func<int?>> e2 = () => default (int?);
 		AssertNodeType (e2, ExpressionType.Constant);
-		Assert (null, e2.Compile ().Invoke ());		
+		Assert (null, e2.Compile ().Invoke ());
 		
 		Expression<Func<Tester>> e3 = () => default (Tester);
 		AssertNodeType (e3, ExpressionType.Constant);
@@ -425,6 +448,14 @@ class Tester
 		Expression<Func<object>> e4 = () => null;
 		AssertNodeType (e4, ExpressionType.Constant);
 		Assert (null, e4.Compile ().Invoke ());
+
+		Expression<Func<int>> e5 = () => 8 / 4;
+		AssertNodeType (e5, ExpressionType.Constant);
+		Assert (2, e5.Compile ().Invoke ());
+
+		Expression<Func<int>> e6 = () => 0xFFFFFF >> 0x40;
+		AssertNodeType (e6, ExpressionType.Constant);
+		Assert (0xFFFFFF, e6.Compile ().Invoke ());
 	}
 
 	void ConvertTest ()
@@ -447,6 +478,12 @@ class Tester
 
 		Expression<Func<MyType, MyType, bool?>> e5 = (MyType a, MyType b) => a == b;
 		AssertNodeType (e5, ExpressionType.Convert);
+
+		Expression<Func<MyType?, MyType?, bool?>> e6 = (MyType? a, MyType? b) => a == b;
+		AssertNodeType (e6, ExpressionType.Convert);
+		Assert (false, e6.Compile ().Invoke (null, new MyType (-20)));
+		Assert (true, e6.Compile ().Invoke (null, null));
+		Assert (true, e6.Compile ().Invoke (new MyType (120), new MyType (120)));
 		
 		// TODO: redundant return conversion
 		// Expression<Func<MyTypeExplicit, int?>> e6 = x => (int?)x;
@@ -496,13 +533,19 @@ class Tester
 		AssertNodeType (e4, ExpressionType.Divide);
 		Assert (null, e4.Compile ().Invoke (null, new MyType (-20)));
 		Assert (new MyType (-6), e4.Compile ().Invoke (new MyType (120), new MyType (-20)));
+
+		Expression<Func<int, MyType, int>> e5 = (int a, MyType b) => a / b;
+		AssertNodeType (e5, ExpressionType.Divide);
+		Assert (50, e5.Compile ().Invoke (100, new MyType (2)));
+		
+		Expression<Func<int, MyType?, int?>> e6 = (int a, MyType? b) => a / b;
+		AssertNodeType (e6, ExpressionType.Divide);
+		Assert (50, e6.Compile ().Invoke (100, new MyType (2)));
+		Assert (null, e6.Compile ().Invoke (20, null));
 	}
 
 	void EqualTest ()
 	{
-		// TODO: Add null equality tests
-		// TODO: Add bool? equality tests
-	
 		Expression<Func<int, int, bool>> e = (int a, int b) => a == b;
 		AssertNodeType (e, ExpressionType.Equal);
 		Assert (false, e.Compile ().Invoke (60, 30));
@@ -522,8 +565,31 @@ class Tester
 		Assert (false, e4.Compile ().Invoke (null, new MyType (-20)));
 		Assert (true, e4.Compile ().Invoke (null, null));
 		Assert (true, e4.Compile ().Invoke (new MyType (120), new MyType (120)));
+
+		Expression<Func<bool?, bool?, bool>> e5 = (bool? a, bool? b) => a == b;
+		AssertNodeType (e5, ExpressionType.Equal);
+		Assert (false, e5.Compile ().Invoke (true, null));
+		Assert (true, e5.Compile ().Invoke (null, null));
+		Assert (true, e5.Compile ().Invoke (false, false));
+		
+		Expression<Func<bool, bool>> e6 = (bool a) => a == null;
+		AssertNodeType (e6, ExpressionType.Equal);
+		Assert (false, e6.Compile ().Invoke (true));
+		Assert (false, e6.Compile ().Invoke (false));
+
+		Expression<Func<string, string, bool>> e7 = (string a, string b) => a == b;
+		AssertNodeType (e7, ExpressionType.Equal);
+		Assert (true, e7.Compile ().Invoke (null, null));
+		Assert (false, e7.Compile ().Invoke ("a", "A"));
+		Assert (true, e7.Compile ().Invoke ("a", "a"));
+
+		Expression<Func<object, bool>> e8 = (object a) => null == a;
+		AssertNodeType (e8, ExpressionType.Equal);
+		Assert (true, e8.Compile ().Invoke (null));
+		Assert (false, e8.Compile ().Invoke ("a"));
+		Assert (false, e8.Compile ().Invoke (this));
 	}
-	
+
 	delegate void EmptyDelegate ();
 	
 	void EqualTestDelegate ()
@@ -544,7 +610,7 @@ class Tester
 
 	void ExclusiveOrTest ()
 	{
-		Expression<Func<int, int, int>> e = (int a, int b) => a ^ b;
+		Expression<Func<int, short, int>> e = (int a, short b) => a ^ b;
 		AssertNodeType (e, ExpressionType.ExclusiveOr);
 		Assert (34, e.Compile ().Invoke (60, 30));
 
@@ -561,6 +627,11 @@ class Tester
 		AssertNodeType (e4, ExpressionType.ExclusiveOr);
 		Assert (null, e4.Compile ().Invoke (null, new MyType (-20)));
 		Assert (new MyType (-108), e4.Compile ().Invoke (new MyType (120), new MyType (-20)));
+
+		Expression<Func<MyType?, byte, int?>> e5 = (MyType? a, byte b) => a ^ b;
+		AssertNodeType (e5, ExpressionType.ExclusiveOr);
+		Assert (null, e5.Compile ().Invoke (null, 64));
+		Assert (96, e5.Compile ().Invoke (new MyType (64), 32));
 	}
 
 	void GreaterThanTest ()
@@ -583,6 +654,16 @@ class Tester
 		Assert (false, e4.Compile ().Invoke (null, new MyType (-20)));
 		Assert (false, e4.Compile ().Invoke (null, null));
 		Assert (true, e4.Compile ().Invoke (new MyType (120), new MyType (-20)));
+
+		Expression<Func<MyType?, sbyte, bool>> e5 = (MyType? a, sbyte b) => a > b;
+		AssertNodeType (e5, ExpressionType.GreaterThan);
+		Assert (false, e5.Compile ().Invoke (null, 33));
+		Assert (false, e5.Compile ().Invoke (null, 0));
+		Assert (true, e5.Compile ().Invoke (new MyType (120), 3));
+
+		Expression<Func<ushort, bool>> e6 = (ushort a) => a > null;
+		AssertNodeType (e6, ExpressionType.GreaterThan);
+		Assert (false, e6.Compile ().Invoke (60));
 	}
 
 	void GreaterThanOrEqualTest ()
@@ -599,13 +680,22 @@ class Tester
 		Expression<Func<MyType, MyType, bool>> e3 = (MyType a, MyType b) => a >= b;
 		AssertNodeType (e3, ExpressionType.GreaterThanOrEqual);
 		Assert (true, e3.Compile ().Invoke (new MyType (-20), new MyType (-20)), "D1");
-/* FIXME: Does not compile
-		Expression<Func<MyType?, MyType?, bool>> e4 = (MyType? a, MyType? b) => a >= null;
+
+		Expression<Func<MyType?, MyType?, bool>> e4 = (MyType? a, MyType? b) => a >= b;
 		AssertNodeType (e4, ExpressionType.GreaterThanOrEqual);
 		Assert (false, e4.Compile ().Invoke (null, new MyType (-20)));
 		Assert (false, e4.Compile ().Invoke (null, null));
 		Assert (true, e4.Compile ().Invoke (new MyType (120), new MyType (-20)));
-*/
+
+		Expression<Func<MyType?, sbyte, bool>> e5 = (MyType? a, sbyte b) => a >= b;
+		AssertNodeType (e5, ExpressionType.GreaterThanOrEqual);
+		Assert (false, e5.Compile ().Invoke (null, 33));
+		Assert (false, e5.Compile ().Invoke (null, 0));
+		Assert (true, e5.Compile ().Invoke (new MyType (120), 3));
+
+		Expression<Func<ushort, bool>> e6 = (ushort a) => a >= null;
+		AssertNodeType (e6, ExpressionType.GreaterThanOrEqual);
+		Assert (false, e6.Compile ().Invoke (60));
 	}
 
 	void NewArrayInitTest ()
@@ -626,7 +716,7 @@ class Tester
 		AssertNodeType (e3, ExpressionType.NewArrayInit);
 		Assert (new char [] { 'a' }, e3.Compile ().Invoke () [0]);
 	}
-	
+
 	void NotTest ()
 	{
 		Expression<Func<bool, bool>> e = (bool a) => !a;
@@ -651,7 +741,7 @@ class Tester
 		Assert (true, e2.Compile ().Invoke (new MyType (1)));
 		Assert (null, e2.Compile ().Invoke (null));
 	}
-	
+
 	void NotEqualTest ()
 	{
 		Expression<Func<int, int, bool>> e = (int a, int b) => a != b;
@@ -673,7 +763,30 @@ class Tester
 		Assert (true, e4.Compile ().Invoke (null, new MyType (-20)));
 		Assert (false, e4.Compile ().Invoke (null, null));
 		Assert (false, e4.Compile ().Invoke (new MyType (120), new MyType (120)));
-	}	
+
+		Expression<Func<bool?, bool?, bool>> e5 = (bool? a, bool? b) => a != b;
+		AssertNodeType (e5, ExpressionType.NotEqual);
+		Assert (true, e5.Compile ().Invoke (true, null));
+		Assert (false, e5.Compile ().Invoke (null, null));
+		Assert (false, e5.Compile ().Invoke (false, false));
+
+		Expression<Func<bool, bool>> e6 = (bool a) => a != null;
+		AssertNodeType (e6, ExpressionType.NotEqual);
+		Assert (true, e6.Compile ().Invoke (true));
+		Assert (true, e6.Compile ().Invoke (false));
+
+		Expression<Func<string, string, bool>> e7 = (string a, string b) => a != b;
+		AssertNodeType (e7, ExpressionType.NotEqual);
+		Assert (false, e7.Compile ().Invoke (null, null));
+		Assert (true, e7.Compile ().Invoke ("a", "A"));
+		Assert (false, e7.Compile ().Invoke ("a", "a"));
+
+		Expression<Func<object, bool>> e8 = (object a) => null != a;
+		AssertNodeType (e8, ExpressionType.NotEqual);
+		Assert (false, e8.Compile ().Invoke (null));
+		Assert (true, e8.Compile ().Invoke ("a"));
+		Assert (true, e8.Compile ().Invoke (this));
+	}
 
 	void OrTest ()
 	{
@@ -716,8 +829,17 @@ class Tester
 		var c2 = e2.Compile ();
 		Assert (new MyType (3), c2 (new MyType (1), new MyType (2)));
 		Assert (null, c2 (new MyType (1), null));
+
+		/* BUG: This does not work with csc either, because nullable conversions on top of user conversion is required
+		
+		Expression<Func<MyType?, uint, long?>> e3 = (MyType? a, uint b) => a | b;
+		AssertNodeType (e3, ExpressionType.Or);
+		var c3 = e3.Compile ();
+		Assert (9, c3 (new MyType (1), 8));
+		Assert (null, c3 (null, 4));
+		*/
 	}
-	
+
 	void OrElseTest ()
 	{
 		Expression<Func<bool, bool, bool>> e = (bool a, bool b) => a || b;
@@ -729,7 +851,7 @@ class Tester
 		Assert (new MyType (64), e2.Compile ().Invoke (new MyType (64), new MyType (64)));
 		Assert (new MyType (32), e2.Compile ().Invoke (new MyType (32), new MyType (64)));
 	}
-	
+
 	void ParameterTest ()
 	{
 		Expression<Func<string, string>> e = (string a) => a;
@@ -738,13 +860,13 @@ class Tester
 
 		Expression<Func<object[], object[]>> e2 = (object[] a) => a;
 		AssertNodeType (e2, ExpressionType.Parameter);
-		Assert (new object[0], e2.Compile ().Invoke (new object[0]));
+		Assert (new object [0], e2.Compile ().Invoke (new object [0]));
 
 		Expression<Func<IntPtr, IntPtr>> e3 = a => a;
 		AssertNodeType (e3, ExpressionType.Parameter);
 		Assert (IntPtr.Zero, e3.Compile ().Invoke (IntPtr.Zero));
 	}
-	
+
 	void QuoteTest ()
 	{
 		Expression<Func<Expression<Func<int>>>> e = () => () => 2;
@@ -768,15 +890,14 @@ class Tester
 		AssertNodeType (e3, ExpressionType.RightShift);
 		Assert (null, e3.Compile ().Invoke (null, 11));
 		Assert (512, e3.Compile ().Invoke (1024, 1));
-/*
+
 		Expression<Func<MyType?, MyType?, int?>> e4 = (MyType? a, MyType? b) => a >> b;
 		AssertNodeType (e4, ExpressionType.RightShift);
 		var c4 = e4.Compile ();
 		Assert (null, c4 (new MyType (8), null));
 		Assert (null, c4 (null, new MyType (8)));
 		Assert (64, c4 (new MyType (256), new MyType (2)));
-*/
-	}	
+	}
 
 	//
 	// Test helpers
@@ -805,6 +926,7 @@ class Tester
 	{
 		Tester e = new Tester ();
 		e.AddTest ();
+		e.AddStringTest ();
 		e.AndNullableTest ();
 		e.AddCheckedTest ();
 		e.AndTest ();
