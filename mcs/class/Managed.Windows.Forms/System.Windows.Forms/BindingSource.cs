@@ -153,6 +153,9 @@ namespace System.Windows.Forms {
 			} else if (source is IEnumerable) {
 				IList new_list = GetListFromEnumerable ((IEnumerable)source);
 				l = new_list == null ? list : new_list;
+			} else if (source is Type) {
+				Type t = typeof (BindingList<>).MakeGenericType (new Type [] { (Type)source });
+				l = (IList)Activator.CreateInstance (t);
 			} else {
 				Type t = typeof (BindingList<>).MakeGenericType (new Type[] { source.GetType() });
 				l = (IList)Activator.CreateInstance (t);
