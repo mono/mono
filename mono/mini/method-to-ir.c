@@ -922,7 +922,7 @@ static int ccount = 0;
             ins->inst_false_bb = NULL; \
             link_bblock ((cfg), (cfg)->cbb, (truebb)); \
             MONO_ADD_INS ((cfg)->cbb, ins); \
-            if (cfg->disable_extended_bblocks) { \
+            if (!cfg->enable_extended_bblocks) { \
                 NEW_BBLOCK ((cfg), falsebb); \
                 ins->inst_false_bb = falsebb; \
                 link_bblock ((cfg), (cfg)->cbb, (falsebb)); \

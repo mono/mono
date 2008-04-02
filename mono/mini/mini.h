@@ -724,7 +724,7 @@ typedef struct {
 	gint32           sig_cookie;
 	guint            disable_aot : 1;
 	guint            disable_ssa : 1;
-	guint            disable_extended_bblocks : 1;
+	guint            enable_extended_bblocks : 1;
 	guint            run_cctors : 1;
 	guint            need_lmf_area : 1;
 	guint            compile_aot : 1;

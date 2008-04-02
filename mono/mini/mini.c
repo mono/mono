@@ -11916,7 +11916,7 @@ mono_optimize_branches (MonoCompile *cfg)
 					 * would require addition of an extra branch at the end of bbn 
 					 * slowing down loops.
 					 */
-					if (cfg->new_ir && bbn && bb->region == bbn->region && bbn->in_count == 1 && !cfg->disable_extended_bblocks && bbn != cfg->bb_exit && !bb->extended && !bbn->out_of_line && !mono_bblocks_linked (bbn, bb)) {
+					if (cfg->new_ir && bbn && bb->region == bbn->region && bbn->in_count == 1 && cfg->enable_extended_bblocks && bbn != cfg->bb_exit && !bb->extended && !bbn->out_of_line && !mono_bblocks_linked (bbn, bb)) {
 						g_assert (bbn->in_bb [0] == bb);
 						if (cfg->verbose_level > 2)
 							g_print ("merge false branch target triggered BB%d -> BB%d\n", bb->block_num, bbn->block_num);
@@ -12793,10 +12793,17 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 
 	/* FIXME: Fix SSA to handle branches inside bblocks */
 	if (cfg->opt & (MONO_OPT_SSA | MONO_OPT_ABCREM | MONO_OPT_SSAPRE))
-		cfg->disable_extended_bblocks = TRUE;
+		cfg->enable_extended_bblocks = FALSE;
 
-	// FIXME:
-	cfg->disable_extended_bblocks = TRUE;
+	/*
+	 * FIXME: This confuses liveness analysis because variables which are assigned after
+	 * a branch inside a bblock become part of the kill set, even though the assignment
+	 * might not get executed. This causes the optimize_initlocals pass to delete some
+	 * assignments which are needed.
+	 * Also, the mono_branch_to_cmov pass needs to be modified to recognize the code
+	 * created by this.
+	 */
+	//cfg->enable_extended_bblocks = TRUE;
 
 	/*
 	 * create MonoInst* which represents arguments and local variables
