@@ -68,6 +68,34 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 
+		private class ExposeProtectedProperties : DataGridView
+		{
+			public new Padding DefaultPadding { get { return base.DefaultPadding; } }
+			public new Size DefaultSize { get { return base.DefaultSize; } }
+			public new bool IsDoubleBuffered { get { return base.DoubleBuffered; } }
+
+			public ControlStyles GetControlStyles ()
+			{
+				ControlStyles retval = (ControlStyles)0;
+
+				foreach (ControlStyles cs in Enum.GetValues (typeof (ControlStyles)))
+					if (this.GetStyle (cs) == true)
+						retval |= cs;
+
+				return retval;
+			}
+			
+			public bool PublicIsInputKey (Keys keyData)
+			{
+				return base.IsInputKey (keyData);
+			}
+			
+			public bool PublicIsInputChar (char charCode)
+			{
+				return base.IsInputChar (charCode);
+			}
+		}
+
 #region GenerateClipboardTest
 		public static void GenerateClipboardTest ()
 		{

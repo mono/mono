@@ -1,5 +1,10 @@
 2008-04-01  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridViewTest.cs: Commit the rest of my test so the tests
+	compile.
+
+2008-04-01  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridViewTest.cs: Add tests for IsInputChar and IsInputKey.
 
 2008-03-30  Carlos Alberto Cortez <calberto.cortez@gmail.com>
