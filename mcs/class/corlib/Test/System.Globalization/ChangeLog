@@ -1,3 +1,7 @@
+2008-04-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SortKeyTest.cs : new test, for bug #376171.
+
 2007-11-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeFormatInfoTest.cs : enabled test for bug #332553.

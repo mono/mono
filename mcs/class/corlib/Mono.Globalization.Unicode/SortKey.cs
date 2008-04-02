@@ -42,6 +42,11 @@ namespace System.Globalization
 		#region Static members
 		public static int Compare (SortKey sk1, SortKey sk2)
 		{
+			if (sk1 == null)
+				throw new ArgumentNullException ("sk1");
+			if (sk2 == null)
+				throw new ArgumentNullException ("sk2");
+
 			if (Object.ReferenceEquals (sk1, sk2)
 				|| Object.ReferenceEquals (sk1.OriginalString,
 				sk2.OriginalString))
