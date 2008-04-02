@@ -463,6 +463,7 @@ namespace Mono.Xml.Schema
 		public override XsdValidationState EvaluateStartElement (string localName, string ns)
 		{
 			emptiableComputed = false;
+			bool allChildrenEmptiable = true;
 
 			for (int i = 0; i < choice.CompiledItems.Count; i++) {
 				XmlSchemaParticle xsobj = (XmlSchemaParticle) choice.CompiledItems [i];
@@ -477,9 +478,16 @@ namespace Mono.Xml.Schema
 					else
 						return Manager.MakeSequence (result, this);
 				}
+				if (!emptiableComputed)
+					allChildrenEmptiable &= xa.EvaluateIsEmptiable ();
 			}
-			emptiable = choice.ValidatedMinOccurs <= Occured;
-			emptiableComputed = true;
+			if (!emptiableComputed) {
+				if (allChildrenEmptiable)
+					emptiable = true;
+				if (!emptiable)
+					emptiable = choice.ValidatedMinOccurs <= Occured;
+				emptiableComputed = true;
+			}
 			return XsdValidationState.Invalid;
 		}
 

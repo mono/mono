@@ -1,0 +1,19 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="A">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="B">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:choice>
+                <xs:element name="C" minOccurs="0" />
+                <xs:element name="D" minOccurs="0" />
+              </xs:choice>
+              <xs:element name="E" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
