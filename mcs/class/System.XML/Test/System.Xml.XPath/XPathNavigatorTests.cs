@@ -674,6 +674,20 @@ namespace MonoTests.System.Xml
 <child3 />";
 			AssertEquals (result, n.OuterXml.Replace ("\r\n", "\n"));
 		}
+
+		[Test] // bug #376191
+		public void InnerXmlOnRoot ()
+		{
+			XmlDocument document = new XmlDocument ();
+			document.LoadXml (@"<test>
+			<node>z</node>
+			<node>a</node>
+			<node>b</node>
+			<node>q</node>
+			</test>");
+			XPathNavigator navigator = document.CreateNavigator();
+			AssertEquals (navigator.OuterXml, navigator.InnerXml);
+		}
 #endif
 	}
 }

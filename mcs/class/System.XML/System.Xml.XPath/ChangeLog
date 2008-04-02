@@ -1,3 +1,8 @@
+2008-04-02  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathNavigator.cs : fixed InnerXml to not give up with root node.
+	  Indent InnerXml. Fixed bug #376191.
+
 2008-02-27  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathNavigator.cs : in some MoveTo*() methods, it should allow any

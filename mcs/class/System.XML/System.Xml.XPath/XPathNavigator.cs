@@ -928,8 +928,11 @@ namespace System.Xml.XPath
 				int depth = r.Depth;
 				if (NodeType != XPathNodeType.Root)
 					r.Read ();
+				else
+					depth = -1; // for Root, it should consume the entire tree, so no depth check is done.
 				StringWriter sw = new StringWriter ();
 				XmlWriterSettings s = new XmlWriterSettings ();
+				s.Indent = true;
 				s.ConformanceLevel = ConformanceLevel.Fragment;
 				s.OmitXmlDeclaration = true;
 				XmlWriter xtw = XmlWriter.Create (sw, s);
