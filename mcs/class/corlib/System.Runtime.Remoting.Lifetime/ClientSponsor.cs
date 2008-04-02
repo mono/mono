@@ -49,9 +49,9 @@ namespace System.Runtime.Remoting.Lifetime {
 			renewal_time = new TimeSpan (0, 2, 0); // default is 2 mins
 		}
 
-		public ClientSponsor (TimeSpan time)
+		public ClientSponsor (TimeSpan renewalTime)
 		{
-			renewal_time = time;
+			renewal_time = renewalTime;
 		}
 
 		public TimeSpan RenewalTime {
