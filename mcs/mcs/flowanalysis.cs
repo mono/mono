@@ -42,7 +42,10 @@ namespace Mono.CSharp
 			// part of a block headed by a jump target
 			Labeled,
 
-			// Try/Catch block.
+			// TryCatch block.
+			TryCatch,
+
+			// TryFinally, Using, Lock, CollectionForeach
 			Exception,
 
 			// Switch block.
@@ -83,6 +86,9 @@ namespace Mono.CSharp
 
 			case BranchingType.Embedded:
 				return new FlowBranchingContinuable (parent, type, SiblingType.Conditional, block, loc);
+
+			case BranchingType.TryCatch:
+				return new FlowBranchingTryCatch (parent, loc);
 
 			default:
 				return new FlowBranchingBlock (parent, type, SiblingType.Conditional, block, loc);
@@ -714,11 +720,54 @@ namespace Mono.CSharp
 		}
 	}
 
+	public class FlowBranchingTryCatch : FlowBranchingBlock
+	{
+		public FlowBranchingTryCatch (FlowBranching parent, Location loc)
+			: base (parent, BranchingType.Block, SiblingType.Try, null, loc)
+		{
+		}
+
+		public override bool InTryWithCatch ()
+		{
+			return true;
+		}
+
+		public override bool AddBreakOrigin (UsageVector vector, Location loc)
+		{
+			Parent.AddBreakOrigin (vector, loc);
+			return true;
+		}
+
+		public override bool AddContinueOrigin (UsageVector vector, Location loc)
+		{
+			Parent.AddContinueOrigin (vector, loc);
+			return true;
+		}
+
+		public override bool AddReturnOrigin (UsageVector vector, Location loc)
+		{
+			Parent.AddReturnOrigin (vector, loc);
+			return true;
+		}
+
+		public override bool AddGotoOrigin (UsageVector vector, Goto goto_stmt)
+		{
+			Parent.AddGotoOrigin (vector, goto_stmt);
+			return true;
+		}
+
+		public override bool StealFinallyClauses (ref ArrayList list)
+		{
+			Parent.StealFinallyClauses (ref list);
+			return true;
+		}
+	}
+
 	public class FlowBranchingException : FlowBranching
 	{
 		ExceptionStatement stmt;
 		UsageVector current_vector;
-		UsageVector catch_vectors;
+		UsageVector try_vector;
 		UsageVector finally_vector;
 
 		UsageVector break_origins;
@@ -754,9 +803,7 @@ namespace Mono.CSharp
 		{
 			switch (sibling.Type) {
 			case SiblingType.Try:
-			case SiblingType.Catch:
-				sibling.Next = catch_vectors;
-				catch_vectors = sibling;
+				try_vector = sibling;
 				break;
 			case SiblingType.Finally:
 				finally_vector = sibling;
@@ -771,22 +818,10 @@ namespace Mono.CSharp
 			get { return current_vector; }
 		}
 
-		public override bool InTryWithCatch ()
-		{
-			if (finally_vector == null) {
-				Try t = stmt as Try;
-				if (t != null && t.HasCatch)
-					return true;
-			}
-
-			return base.InTryWithCatch ();
-		}
-
 		public override bool AddBreakOrigin (UsageVector vector, Location loc)
 		{
 			vector = vector.Clone ();
 			if (finally_vector != null) {
-				vector.MergeChild (finally_vector, false);
 				int errors = Report.Errors;
 				Parent.AddBreakOrigin (vector, loc);
 				if (errors == Report.Errors)
@@ -803,7 +838,6 @@ namespace Mono.CSharp
 		{
 			vector = vector.Clone ();
 			if (finally_vector != null) {
-				vector.MergeChild (finally_vector, false);
 				int errors = Report.Errors;
 				Parent.AddContinueOrigin (vector, loc);
 				if (errors == Report.Errors)
@@ -820,7 +854,6 @@ namespace Mono.CSharp
 		{
 			vector = vector.Clone ();
 			if (finally_vector != null) {
-				vector.MergeChild (finally_vector, false);
 				int errors = Report.Errors;
 				Parent.AddReturnOrigin (vector, loc);
 				if (errors == Report.Errors)
@@ -841,7 +874,6 @@ namespace Mono.CSharp
 
 			vector = vector.Clone ();
 			if (finally_vector != null) {
-				vector.MergeChild (finally_vector, false);
 				int errors = Report.Errors;
 				Parent.AddGotoOrigin (vector, goto_stmt);
 				if (errors == Report.Errors)
@@ -868,9 +900,7 @@ namespace Mono.CSharp
 
 		protected override UsageVector Merge ()
 		{
-			Report.Debug (2, "  MERGING TRY/CATCH", Name);
-			UsageVector vector = UsageVector.MergeSiblings (catch_vectors, Location);
-			Report.Debug (2, "  MERGING TRY/CATCH DONE", vector);
+			UsageVector vector = try_vector.Clone ();
 
 			if (finally_vector != null)
 				vector.MergeChild (finally_vector, false);

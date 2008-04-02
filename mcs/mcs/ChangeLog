@@ -1,5 +1,13 @@
 2008-04-02  Raja R Harinath  <harinath@hurrynot.org>
 
+	Start at simplifying ExceptionStatement semantics a bit
+	* statement.cs (TryCatch, TryFinally): Split 'Try' into two pieces.
+	* cs-parser.jay (try_statement): Update to changes.
+	(opt_catch_clauses): Remove.
+	* flowanalysis.cs: Update to changes.
+	(FlowBranching.BranchingType.TryCatch): New.
+	(FlowBranchingTryCatch): New.
+
 	* flowanalysis.cs (FlowBranching.BranchingType.SwitchSection): Kill.
 	(FlowBranching.CreateBranching): Update to changes.
 	(FlowBranchingBlock.AddSibling): Add sanity check.
