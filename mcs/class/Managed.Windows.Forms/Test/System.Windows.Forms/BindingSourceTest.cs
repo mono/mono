@@ -1041,6 +1041,89 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		}
 
 		[Test]
+		public void ICancelAddNew ()
+		{
+			BindingSource source = new BindingSource ();
+			source.DataSource = new List<string> ();
+			source.AddingNew += delegate (object o, AddingNewEventArgs args) { args.NewObject = "A"; };
+			source.AllowNew = true;
+
+			// CancelNew
+			source.AddNew ();
+			Assert.AreEqual (1, source.Count, "A1");
+			Assert.AreEqual ("A", source [0], "A2");
+
+			((ICancelAddNew)source).CancelNew (0);
+			Assert.AreEqual (0, source.Count, "A3");
+
+			// EndNew
+			source.AddNew ();
+			((ICancelAddNew)source).EndNew (0);
+			((ICancelAddNew)source).CancelNew (0);
+			Assert.AreEqual (1, source.Count, "B1");
+			Assert.AreEqual ("A", source [0], "B2");
+
+			//
+			// Access operations are suppoused to automatically
+			// call EndNew, but that only happens with AddNew
+			//
+
+			// AddNew
+			source.Clear ();
+
+			source.AddNew ();
+			source.AddNew ();
+			((ICancelAddNew)source).CancelNew (0);
+			Assert.AreEqual (2, source.Count, "C1");
+			Assert.AreEqual ("A", source [0], "C2");
+			Assert.AreEqual ("A", source [1], "C3");
+
+			// Add - Does not call EndNew
+			source.Clear ();
+			source.AddNew ();
+			source.Add ("B");
+
+			((ICancelAddNew)source).CancelNew (0);
+			Assert.AreEqual (1, source.Count, "D1");
+			Assert.AreEqual ("B", source [0], "D2");
+
+			// Remove - Does not neither
+			source.Clear ();
+			source.AddNew ();
+			source.Add ("B");
+			source.Remove ("B");
+
+			((ICancelAddNew)source).CancelNew (0);
+			Assert.AreEqual (0, source.Count, "E1");
+
+			// Wrong index param passed to CancelNew
+			source.Clear ();
+			source.AddNew ();
+			source.Add ("B");
+
+			((ICancelAddNew)source).CancelNew (1); // Should pass 0
+			Assert.AreEqual (2, source.Count, "F1");
+
+			// Multiple pending items - Only takes into account the last one
+			source.Clear ();
+			source.AddNew ();
+			source.AddNew ();
+
+			((ICancelAddNew)source).CancelNew (1);
+			((ICancelAddNew)source).CancelNew (0);
+			Assert.AreEqual (1, source.Count, "G1");
+
+			// Bug?
+			source.Clear ();
+			source.AddNew ();
+			source.Add ("B");
+
+			source.RemoveAt (0); // Added with AddNew
+			((ICancelAddNew)source).CancelNew (0); // Removed item that wasn't added with AddNew
+			Assert.AreEqual (0, source.Count, "H1");
+		}
+
+		[Test]
 		public void Clear ()
 		{
 			BindingSource source = new BindingSource ();
