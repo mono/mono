@@ -71,7 +71,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (0, dgv.Rows[0].Cells[0].ColumnIndex, "A2");
 		}
 
-		/* font measurement dependent*/
+		/* font measurement dependent
 		[Test]
 		public void ContentBounds ()
 		{
@@ -87,7 +87,7 @@ namespace MonoTests.System.Windows.Forms
 
 			Assert.AreEqual (new Rectangle (0, 0, 99, 21), dgv.Rows[0].Cells[0].ContentBounds, "A2");
 		}
-		
+		*/
 
 		[Test]
 		public void ContextMenuStrip ()
@@ -316,7 +316,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreSame (dgv.Rows[0], dgv.Rows[0].Cells[0].OwningRow, "A2");
 		}
 
-		/* Font measurement dependent * */
+		/* Font measurement dependent *
 		[Test]
 		public void PreferredSize ()
 		{
@@ -338,7 +338,7 @@ namespace MonoTests.System.Windows.Forms
 			dgv.Rows[0].Cells[0].Value = "roasted quail";
 			Assert.AreEqual (new Size (77, 21), dgv.Rows[0].Cells[0].PreferredSize, "A3");
 		}
-		
+		 */
 
 		[Test]
 		public void ReadOnly ()
@@ -447,7 +447,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (true, dgv.Rows[0].Cells[0].Selected, "A7");
 		}
 
-		/* The height of a cell (row) is based on Font*/
+		/* The height of a cell (row) is based on Font
 		[Test]
 		public void Size ()
 		{
@@ -467,7 +467,7 @@ namespace MonoTests.System.Windows.Forms
 			dgv.Rows[0].Cells[0].Value = "bob";
 			Assert.AreEqual (new Size (100, 22), dgv.Rows[0].Cells[0].Size, "A3");
 		}
-		
+		*/
 
 		[Test]
 		public void Style ()
@@ -654,7 +654,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (new Rectangle (2, 1, 6, 4), (dgv.Rows[0].Cells[0] as BaseCell).PublicBorderWidths (style), "A3");
 		}
 
-		/* Font measurement dependent*/
+		/* Font measurement dependent
 		[Test]
 		public void MethodGetContentBounds ()
 		{
@@ -695,7 +695,7 @@ namespace MonoTests.System.Windows.Forms
 			g.Dispose ();
 			b.Dispose ();
 		}
-		
+		*/
 		
 		[Test]
 		public void MethodGetErrorIconBounds ()
