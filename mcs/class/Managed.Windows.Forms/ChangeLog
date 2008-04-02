@@ -1,3 +1,7 @@
+2008-04-02  Jonathan Pobst  <monkey@jpobst.com>
+
+	* System.Windows.Forms_test.dll.sources: Add DataGridViewButtonCellTest.cs.
+
 2008-03-19  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* Makefile, System.Windows.Forms.dll.resources: Updated to reflect 

@@ -1,5 +1,11 @@
 2008-04-02  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridView.cs: Minor cleanups and call CellMouseUp.
+	* DataGridViewCell.cs: Make some painting routines internally virtual.
+	* DataGridViewButtonCell.cs: Implement.
+
+2008-04-02  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Control.cs: We always need to invalidate our children with
 	transparent backgrounds when we are invalidated.
 	[Fixes bug #376081]

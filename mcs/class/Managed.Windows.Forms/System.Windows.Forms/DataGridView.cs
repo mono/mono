@@ -2533,14 +2533,7 @@ namespace System.Windows.Forms {
 			if (rowIndex < 0 || rowIndex >= rows.Count)
 				throw new ArgumentOutOfRangeException ("Row index is out of range.");
 
-			foreach (DataGridViewRow row in rows) {
-				foreach (DataGridViewCell cell in row.Cells) {
-					if (cell.RowIndex == rowIndex && cell.ColumnIndex == columnIndex) {
-						InvalidateCell (cell);
-						return;
-					}
-				}
-			}
+			InvalidateCell (Rows[rowIndex].Cells[columnIndex]);
 		}
 
 		[MonoTODO ("Invalidates whole grid")]
@@ -3737,6 +3730,13 @@ namespace System.Windows.Forms {
 		protected override void OnMouseUp (MouseEventArgs e)
 		{
 			base.OnMouseUp(e);
+
+			HitTestInfo hit = this.HitTest (e.X, e.Y);
+
+			if (hit.Type == DataGridViewHitTestType.Cell) {
+				Rectangle display = GetCellDisplayRectangle (hit.ColumnIndex, hit.RowIndex, false);
+				OnCellMouseUp (new DataGridViewCellMouseEventArgs (hit.ColumnIndex, hit.RowIndex, e.X - display.X, e.Y - display.Y, e));
+			}
 		}
 
 		protected override void OnMouseWheel (MouseEventArgs e)
@@ -4316,7 +4316,7 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
-		[MonoTODO ("What does delete do?")]
+		[MonoTODO ("What does insert do?")]
 		protected bool ProcessInsertKey (Keys keyData)
 		{
 			return false;
@@ -4616,10 +4616,6 @@ namespace System.Windows.Forms {
 				
 				top += row.Height;
 			}
-			//top_row_index++;
-			//verticalScrollingOffset = e.NewValue;
-			//Invalidate();
-			//OnScroll(e);
 		}
 
 		internal void RaiseCellStyleChanged (DataGridViewCellEventArgs e) {

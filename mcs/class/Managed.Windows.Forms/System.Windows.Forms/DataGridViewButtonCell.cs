@@ -27,6 +27,7 @@
 
 using System.Drawing;
 using System.ComponentModel;
+using System.Windows.Forms.VisualStyles;
 
 namespace System.Windows.Forms {
 
@@ -34,9 +35,12 @@ namespace System.Windows.Forms {
 
 		private FlatStyle flatStyle;
 		private bool useColumnTextForButtonValue;
-
-		public DataGridViewButtonCell () {
+		private PushButtonState button_state;
+		
+		public DataGridViewButtonCell ()
+		{
 			useColumnTextForButtonValue = false;
+			button_state = PushButtonState.Normal;
 		}
 
 		public override Type EditType {
@@ -57,7 +61,7 @@ namespace System.Windows.Forms {
 		}
 
 		public override Type FormattedValueType {
-			get { return base.FormattedValueType; }
+			get { return typeof (string); }
 		}
 
 		[DefaultValue (false)]
@@ -67,7 +71,7 @@ namespace System.Windows.Forms {
 		}
 
 		public override Type ValueType {
-			get { return base.ValueType; }
+			get { return base.ValueType == null ? typeof (object) : base.ValueType; }
 		}
 
 		public override object Clone () {
@@ -85,31 +89,56 @@ namespace System.Windows.Forms {
 			return new DataGridViewButtonCellAccessibleObject(this);
 		}
 
-		protected override Rectangle GetContentBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex) {
-			throw new NotImplementedException();
+		protected override Rectangle GetContentBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex)
+		{
+			if (DataGridView == null)
+				return Rectangle.Empty;
+				
+			Rectangle retval = Rectangle.Empty;
+			
+			retval.Height = OwningRow.Height - 1;
+			retval.Width = OwningColumn.Width - 1;
+			
+			return retval;
 		}
 
-		protected override Rectangle GetErrorIconBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex) {
-			throw new NotImplementedException();
+		[MonoTODO ("Not implemented")]
+		protected override Rectangle GetErrorIconBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex)
+		{
+			return Rectangle.Empty;
 		}
 
-		protected override Size GetPreferredSize (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex, Size constraintSize) {
-			throw new NotImplementedException();
+		protected override Size GetPreferredSize (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex, Size constraintSize)
+		{
+			object o = FormattedValue;
+
+			if (o != null) {
+				Size s = DataGridViewCell.MeasureTextSize (graphics, o.ToString (), cellStyle.Font, TextFormatFlags.Default);
+				s.Height = Math.Max (s.Height, 21);
+				s.Width += 10;
+				return s;
+			} else
+				return new Size (21, 21);
 		}
 
-		protected override object GetValue (int rowIndex) {
-			throw new NotImplementedException();
+		protected override object GetValue (int rowIndex)
+		{
+			if (useColumnTextForButtonValue)
+				return (OwningColumn as DataGridViewButtonColumn).Text;
+				
+			return base.GetValue (rowIndex);
 		}
 
-		protected override bool KeyDownUnsharesRow (KeyEventArgs e, int rowIndex) {
+		protected override bool KeyDownUnsharesRow (KeyEventArgs e, int rowIndex)
+		{
 			// true if the user pressed the SPACE key without modifier keys; otherwise, false
-			throw new NotImplementedException();
+			return e.KeyData == Keys.Space;
 		}
 
-		protected override bool KeyUpUnsharesRow (KeyEventArgs e, int rowIndex) {
+		protected override bool KeyUpUnsharesRow (KeyEventArgs e, int rowIndex)
+		{
 			// true if the user released the SPACE key; otherwise false
-			throw new NotImplementedException();
-
+			return e.KeyData == Keys.Space;
 		}
 
 		protected override bool MouseDownUnsharesRow (DataGridViewCellMouseEventArgs e) {
@@ -119,65 +148,110 @@ namespace System.Windows.Forms {
 		protected override bool MouseEnterUnsharesRow (int rowIndex)
 		{
 			// true if the cell was the last cell receiving a mouse click; otherwise, false.
-			throw new NotImplementedException();
+			return false;
 		}
 
 		protected override bool MouseLeaveUnsharesRow (int rowIndex)
 		{
 			// true if the button displayed by the cell is in the pressed state; otherwise, false.
-			throw new NotImplementedException();
+			return button_state == PushButtonState.Pressed;
 		}
 
 		protected override bool MouseUpUnsharesRow (DataGridViewCellMouseEventArgs e)
 		{
 			// true if the mouse up was caused by the release of the left mouse button; otherwise false.
-			throw new NotImplementedException();
+			return e.Button == MouseButtons.Left;
 		}
 
 		protected override void OnKeyDown (KeyEventArgs e, int rowIndex)
 		{
 			// when activated by the SPACE key, this method updates the cell's user interface
-			throw new NotImplementedException();
+			if ((e.KeyData & Keys.Space) == Keys.Space) {
+				button_state = PushButtonState.Pressed;
+				DataGridView.InvalidateCell (this);
+			}
 		}
 
 		protected override void OnKeyUp (KeyEventArgs e, int rowIndex)
 		{
 			// when activated by the SPACE key, this method updates the cell's user interface
-			throw new NotImplementedException();
+			if ((e.KeyData & Keys.Space) == Keys.Space) {
+				button_state = PushButtonState.Normal;
+				DataGridView.InvalidateCell (this);
+			}
 		}
 
 		protected override void OnLeave (int rowIndex, bool throughMouseClick)
 		{
-			throw new NotImplementedException();
+			if (button_state != PushButtonState.Normal) {
+				button_state = PushButtonState.Normal;
+				DataGridView.InvalidateCell (this);
+			}
 		}
 
 		protected override void OnMouseDown (DataGridViewCellMouseEventArgs e)
 		{
-			// if activated by depresing the left mouse button, this method updates the cell's user interface
-			throw new NotImplementedException();
+			if ((e.Button & MouseButtons.Left) == MouseButtons.Left) {
+				button_state = PushButtonState.Pressed;
+				DataGridView.InvalidateCell (this);
+			}
 		}
 
 		protected override void OnMouseLeave (int rowIndex)
 		{
-			// if the cell's button is not in its normal state, this method causes the cell's user interface to be updated.
-			throw new NotImplementedException();
+			if (button_state != PushButtonState.Normal) {
+				button_state = PushButtonState.Normal;
+				DataGridView.InvalidateCell (this);
+			}
 		}
 
 		protected override void OnMouseMove (DataGridViewCellMouseEventArgs e)
 		{
-			throw new NotImplementedException ();
+			if (button_state != PushButtonState.Normal && button_state != PushButtonState.Hot) {
+				button_state = PushButtonState.Hot;
+				DataGridView.InvalidateCell (this);
+			}
 		}
 
 		protected override void OnMouseUp (DataGridViewCellMouseEventArgs e)
 		{
-			// if activated by the left mouse button, this method updates the cell's user interface
-			throw new NotImplementedException();
+			if ((e.Button & MouseButtons.Left) == MouseButtons.Left) {
+				button_state = PushButtonState.Normal;
+				DataGridView.InvalidateCell (this);
+			}
 		}
 
-		protected override void Paint (Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates elementState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts) {
-			throw new NotImplementedException();
+		protected override void Paint (Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates elementState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts)
+		{
+			// The internal paint routines are overridden instead of
+			// doing the custom paint logic here
+			base.Paint (graphics, clipBounds, cellBounds, rowIndex, elementState, value, formattedValue, errorText, cellStyle, advancedBorderStyle, paintParts);
 		}
 
+		internal override void PaintPartBackground (Graphics graphics, Rectangle cellBounds, DataGridViewCellStyle style)
+		{
+			ButtonRenderer.DrawButton (graphics, cellBounds, button_state);
+		}
+
+		internal override void PaintPartSelectionBackground (Graphics graphics, Rectangle cellBounds, DataGridViewElementStates cellState, DataGridViewCellStyle cellStyle)
+		{
+			cellBounds.Inflate (-2, -2);
+			base.PaintPartSelectionBackground (graphics, cellBounds, cellState, cellStyle);
+		}
+		
+		internal override void PaintPartContent (Graphics graphics, Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState, DataGridViewCellStyle cellStyle, object formattedValue)
+		{
+			Color color = Selected ? cellStyle.SelectionForeColor : cellStyle.ForeColor;
+
+			TextFormatFlags flags = TextFormatFlags.EndEllipsis | TextFormatFlags.VerticalCenter | TextFormatFlags.TextBoxControl | TextFormatFlags.HorizontalCenter;
+
+			cellBounds.Height -= 2;
+			cellBounds.Width -= 2;
+
+			if (formattedValue != null)
+				TextRenderer.DrawText (graphics, formattedValue.ToString (), cellStyle.Font, cellBounds, color, flags);
+		}
+		
 		protected class DataGridViewButtonCellAccessibleObject : DataGridViewCellAccessibleObject {
 
 			public DataGridViewButtonCellAccessibleObject (DataGridViewCell owner) : base(owner) {
