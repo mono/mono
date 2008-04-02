@@ -1,3 +1,7 @@
+2008-04-02  Martin Baulig  <martin@ximian.com>
+
+	* symbolwriter.cs: Remove the `#if !DISABLE_TERRANIA_CHANGES' conditionals.
+
 2008-04-02  Marek Safar  <marek.safar@gmail.com>
 
 	* nullable.cs: Merge user and empty conversions when lifting expression
