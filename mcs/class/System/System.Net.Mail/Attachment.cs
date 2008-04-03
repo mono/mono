@@ -149,7 +149,7 @@ namespace System.Net.Mail {
 				throw new ArgumentNullException ("fileName");
 			}
 
-			Name = fileName.Substring (fileName.LastIndexOf ('\\') + 1);
+			Name = Path.GetFileName (fileName);
 		}
 
 	}

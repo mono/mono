@@ -109,36 +109,36 @@ namespace System.Collections {
 		{
 		}
 
-		protected virtual object OnGet (object key, object current_value)
+		protected virtual object OnGet (object key, object currentValue)
 		{
-			return current_value;
+			return currentValue;
 		}
 
-		protected virtual void OnInsert (object key, object current_value)
+		protected virtual void OnInsert (object key, object value)
 		{
 		}
 		
-		protected virtual void OnInsertComplete (object key, object current_value)
-		{
-		}
-
-		protected virtual void OnSet (object key, object current_value, object new_value)
-		{
-		}
-		
-		protected virtual void OnSetComplete (object key, object current_value, object new_value)
+		protected virtual void OnInsertComplete (object key, object value)
 		{
 		}
 
-		protected virtual void OnRemove (object key, object current_value)
+		protected virtual void OnSet (object key, object oldValue, object newValue)
 		{
 		}
 		
-		protected virtual void OnRemoveComplete (object key, object current_value)
+		protected virtual void OnSetComplete (object key, object oldValue, object newValue)
+		{
+		}
+
+		protected virtual void OnRemove (object key, object value)
 		{
 		}
 		
-		protected virtual void OnValidate (object key, object current_value)
+		protected virtual void OnRemoveComplete (object key, object value)
+		{
+		}
+		
+		protected virtual void OnValidate (object key, object value)
 		{
 		}
 

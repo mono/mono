@@ -65,7 +65,7 @@ namespace System.Reflection {
 				     Binder binder, object target, object [] args,
 				     ParameterModifier [] modifiers,
 				     CultureInfo culture,
-				     string [] named_parameters);
+				     string [] namedParameters);
 				     
 	}
 }

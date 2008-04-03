@@ -1,3 +1,16 @@
+﻿2008-04-02  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
+
+	* _EventInfo.cs
+	* _FieldInfo.cs
+ 	* _MemberInfo.cs
+	* _MethodBase.cs
+	* _MethodInfo.cs
+	* _PropertyInfo.cs
+	* _Type.cs
+	* ArrayWithOffset.cs
+	* BestFitMappingAttribute.cs
+	* Marshal.cs: Fix parameter names
+
 2008-02-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* Marshal.cs (GetDelegateForFunctionPointer): Add a nullref check.

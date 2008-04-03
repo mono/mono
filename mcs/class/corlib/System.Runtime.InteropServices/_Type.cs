@@ -22,7 +22,7 @@ namespace System.Runtime.InteropServices
 #endif
 	public interface _Type
 	{
-		bool Equals (object o);
+		bool Equals (object other);
 
 		bool Equals (Type o);
 

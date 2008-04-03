@@ -811,6 +811,8 @@ namespace Mono.CSharp {
 						return DelegateCreation.ImplicitStandardConversionExists (mg, target_type) != null;
 					}
 				}
+
+				return false;
 			}
 
 			if (ImplicitReferenceConversionExists (expr, target_type))

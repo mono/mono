@@ -1,3 +1,7 @@
+2008-04-02  Martin Baulig  <martin@ximian.com>
+
+	* *.cs: Remove the `#if !DISABLE_TERRANIA_CHANGES' conditionals.
+
 2008-03-14  Martin Baulig  <martin@ximian.com>
 
 	Merged the debugger's `terrania' branch into trunk.

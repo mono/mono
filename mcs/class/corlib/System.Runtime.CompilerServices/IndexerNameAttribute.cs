@@ -40,7 +40,7 @@ namespace System.Runtime.CompilerServices {
 	[ComVisible (true)]
 #endif
 	public sealed class IndexerNameAttribute : Attribute {
-		public IndexerNameAttribute (string indexer_name)
+		public IndexerNameAttribute (string indexerName)
 		{
 		}
 	}

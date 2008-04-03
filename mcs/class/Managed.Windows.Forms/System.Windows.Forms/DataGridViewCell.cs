@@ -1339,7 +1339,7 @@ namespace System.Windows.Forms {
 		{
 		}
 
-		private void PaintPartBackground (Graphics graphics, Rectangle cellBounds, DataGridViewCellStyle style)
+		internal virtual void PaintPartBackground (Graphics graphics, Rectangle cellBounds, DataGridViewCellStyle style)
 		{
 			Color color = style.BackColor;
 			graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (color), cellBounds);
@@ -1374,7 +1374,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void PaintPartContent (Graphics graphics, Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState, DataGridViewCellStyle cellStyle, object formattedValue)
+		internal virtual void PaintPartContent (Graphics graphics, Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState, DataGridViewCellStyle cellStyle, object formattedValue)
 		{
 			if (IsInEditMode)
 				return;
@@ -1399,7 +1399,7 @@ namespace System.Windows.Forms {
 				ControlPaint.DrawFocusRectangle (graphics, cellBounds);
 		}
 
-		private void PaintPartSelectionBackground (Graphics graphics, Rectangle cellBounds, DataGridViewElementStates cellState, DataGridViewCellStyle cellStyle)
+		internal virtual void PaintPartSelectionBackground (Graphics graphics, Rectangle cellBounds, DataGridViewElementStates cellState, DataGridViewCellStyle cellStyle)
 		{
 			if ((cellState & DataGridViewElementStates.Selected) != DataGridViewElementStates.Selected)
 				return;

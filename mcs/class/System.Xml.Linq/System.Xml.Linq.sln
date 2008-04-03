@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Xml.Linq", "System.Xml.Linq.csproj", "{8EF1DA1B-BB96-4248-B059-8F2C8F40721D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Xml.Linq.Tests", "Test\System.Xml.Linq.Tests.csproj", "{EF1A17B1-3987-44F1-B796-7F89C9A1642A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug_Java|Any CPU = Debug_Java|Any CPU
+		Debug_Java35|Any CPU = Debug_Java35|Any CPU
+		Release_Java|Any CPU = Release_Java|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8EF1DA1B-BB96-4248-B059-8F2C8F40721D}.Debug_Java|Any CPU.ActiveCfg = Debug_Java|Any CPU
+		{8EF1DA1B-BB96-4248-B059-8F2C8F40721D}.Debug_Java|Any CPU.Build.0 = Debug_Java|Any CPU
+		{8EF1DA1B-BB96-4248-B059-8F2C8F40721D}.Debug_Java35|Any CPU.ActiveCfg = Debug_Java|Any CPU
+		{8EF1DA1B-BB96-4248-B059-8F2C8F40721D}.Debug_Java35|Any CPU.Build.0 = Debug_Java|Any CPU
+		{8EF1DA1B-BB96-4248-B059-8F2C8F40721D}.Release_Java|Any CPU.ActiveCfg = Release_Java|Any CPU
+		{8EF1DA1B-BB96-4248-B059-8F2C8F40721D}.Release_Java|Any CPU.Build.0 = Release_Java|Any CPU
+		{EF1A17B1-3987-44F1-B796-7F89C9A1642A}.Debug_Java|Any CPU.ActiveCfg = Debug_Java|Any CPU
+		{EF1A17B1-3987-44F1-B796-7F89C9A1642A}.Debug_Java|Any CPU.Build.0 = Debug_Java|Any CPU
+		{EF1A17B1-3987-44F1-B796-7F89C9A1642A}.Debug_Java35|Any CPU.ActiveCfg = Debug_Java|Any CPU
+		{EF1A17B1-3987-44F1-B796-7F89C9A1642A}.Debug_Java35|Any CPU.Build.0 = Debug_Java|Any CPU
+		{EF1A17B1-3987-44F1-B796-7F89C9A1642A}.Release_Java|Any CPU.ActiveCfg = Release_Java|Any CPU
+		{EF1A17B1-3987-44F1-B796-7F89C9A1642A}.Release_Java|Any CPU.Build.0 = Release_Java|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

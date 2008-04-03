@@ -21,7 +21,7 @@ namespace System.Runtime.InteropServices
 #endif
 	public interface _MemberInfo
 	{
-		bool Equals (object obj);
+		bool Equals (object other);
 
 		object[] GetCustomAttributes (bool inherit);
 

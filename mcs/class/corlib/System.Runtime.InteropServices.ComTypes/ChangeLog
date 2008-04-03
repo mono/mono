@@ -1,3 +1,7 @@
+﻿2008-04-02  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
+
+	* IEnumVARIANT.cs: Fix parameter names
+
 2007-08-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ITypeInfo2.cs, ITypeLib2.cs : added missing 2.0 members.

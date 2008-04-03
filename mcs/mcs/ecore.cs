@@ -2157,6 +2157,11 @@ namespace Mono.CSharp {
 		{
 			expr.Emit (ec);
 		}
+
+		public override void EmitBranchable (EmitContext ec, Label target, bool on_true)
+		{
+			expr.EmitBranchable (ec, target, on_true);
+		}
 	}
 	
 	/// <summary>

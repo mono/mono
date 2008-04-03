@@ -1,3 +1,27 @@
+2008-04-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* BindingContext.cs: When retrieving a BindingManagerBase, if the
+	dataSource parameter is ICurrencyManagerProvider, then return
+	ICurrencyManagerProvider.CurrencyManager/GetRelatedCurrencyManager
+	instead of creating a new one.
+
+2008-04-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* BindingSource.cs: Implement support for Type instances as
+	DataSource.
+
+2008-04-02  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridView.cs: Minor cleanups and call CellMouseUp.
+	* DataGridViewCell.cs: Make some painting routines internally virtual.
+	* DataGridViewButtonCell.cs: Implement.
+
+2008-04-02  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: We always need to invalidate our children with
+	transparent backgrounds when we are invalidated.
+	[Fixes bug #376081]
+
 2008-04-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* BindingSource.cs: EndEdit and CancelEdit should call EndCurrentEdit

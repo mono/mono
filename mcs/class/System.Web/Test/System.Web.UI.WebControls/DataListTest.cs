@@ -653,7 +653,30 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.IsNotNull (vs[i++], "GridLines");
 #endif
 		}
+
 #if NET_2_0
+		[Test]
+		public void SelectedValue_SelectedIndex ()
+		{
+			// Test for bug https://bugzilla.novell.com/show_bug.cgi?id=376519
+			DataTable table = new DataTable();
+			table.Columns.Add("id");
+			table.Columns.Add("text");
+
+			table.Rows.Add(new object[] {"id1", "Item N1"});
+			table.Rows.Add(new object[] {"id2", "Item N2"});
+			table.Rows.Add(new object[] {"id3", "Item N3"});
+			
+			TestDataList dl = new TestDataList ();
+			dl.DataKeyField = "id";
+			dl.DataSource = table;
+			dl.DataBind ();
+
+			Assert.AreEqual (null, dl.SelectedValue, "A1");
+			dl.SelectedIndex = 0;
+			Assert.AreEqual ("id1", dl.SelectedValue.ToString (), "A2");
+		}		
+
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void SelectedValue_WithoutDataKeyField ()

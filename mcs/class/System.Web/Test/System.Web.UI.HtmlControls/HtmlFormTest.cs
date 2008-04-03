@@ -38,6 +38,31 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Web.UI.HtmlControls {
 
+	class TestPage : Page {
+
+		private HttpContext ctx;
+
+		// don't call base class (so _context is never set to a non-null value)
+		protected override HttpContext Context {
+			get {
+				if (ctx == null) {
+					ctx = new HttpContext (
+						new HttpRequest ("default.aspx", "http://mono-project.com/", "q=1"),
+						new HttpResponse (new StringWriter ())
+						);
+				}
+				return ctx;
+			}
+		}
+
+#if NET_2_0
+		public void SetContext ()
+		{
+			SetContext (Context);
+		}
+#endif
+	}
+	
 	public class FormPoker : HtmlForm {
 		public FormPoker () {
 			TrackViewState ();
@@ -70,6 +95,15 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			return sw.ToString();
 		}
 
+		public string RenderAttributes ()
+		{
+			StringWriter sw = new StringWriter();
+			HtmlTextWriter w = new HtmlTextWriter (sw);
+			
+			RenderAttributes (w);
+
+			return sw.ToString ();
+		}
 #if NET_2_0
 		public ControlCollection GetControlCollection ()
 		{
@@ -166,6 +200,24 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			Assert.AreEqual ("target", a.GetAttribute ("target"), "A11");
 		}
 
+#if NET_2_0
+#if !TARGET_DOTNET
+		[Test]
+		public void ActionStringWithQuery ()
+		{
+			TestPage p = new TestPage ();
+			p.SetContext ();
+			FormPoker form = new FormPoker ();
+			form.Page = p;
+			string attrs = form.RenderAttributes ();
+
+			// Indirect test for HttpRequest.QueryStringRaw, see
+			// https://bugzilla.novell.com/show_bug.cgi?id=376352
+			Assert.AreEqual (" method=\"post\" action=\"?q=1\"", attrs, "A1");
+		}
+#endif
+#endif
+		
 		[Test]
 		public void ViewState ()
 		{

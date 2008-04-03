@@ -464,6 +464,27 @@ namespace MonoTests.System.Xml
 			}
 		}
 
+		[Test]
+		public void Bug376395 ()
+		{
+			string xmlfile = "Test/XmlFiles/xsd/376395.xml";
+			string xsdfile = "Test/XmlFiles/xsd/376395.xsd";
+			XmlTextReader xr = null, xr2 = null;
+			try {
+				xr = new XmlTextReader (xsdfile);
+				xr2 = new XmlTextReader (xmlfile);
+				XmlValidatingReader xvr = new XmlValidatingReader (xr2);
+				xvr.Schemas.Add (XmlSchema.Read (xr, null));
+				while (!xvr.EOF)
+					xvr.Read ();
+			} finally {
+				if (xr2 != null)
+					xr2.Close ();
+				if (xr != null)
+					xr.Close ();
+			}
+		}
+
 #if NET_2_0
 		[Test]
 		public void WhitespaceAndElementOnly ()

@@ -65,14 +65,14 @@ namespace System.Diagnostics.SymbolStore
 		}
 		
 
-		public static bool operator == (SymbolToken obj1, SymbolToken obj2)
+		public static bool operator == (SymbolToken a, SymbolToken b)
 		{
-			return obj1.Equals (obj2);
+			return a.Equals (b);
 		}
 
-		public static bool operator != (SymbolToken obj1, SymbolToken obj2)
+		public static bool operator != (SymbolToken a, SymbolToken b)
 		{
-			return !obj1.Equals (obj2);
+			return !a.Equals (b);
 		}
 #endif
 

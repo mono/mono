@@ -1,3 +1,7 @@
+2008-04-03  Dick Porter  <dick@ximian.com>
+
+	* DirectoryTest.cs: Enable tests now that bug 346123 is fixed.
+
 2008-03-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DirectoryTest.cs: Add test case when deleting a directory that does

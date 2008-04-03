@@ -64,9 +64,9 @@ namespace System.Collections.ObjectModel
 			throw new NotSupportedException ();
 		}
 
-		public bool Contains (T item)
+		public bool Contains (T value)
 		{
-			return list.Contains (item);
+			return list.Contains (value);
 		}
 
 		public void CopyTo (T [] array, int index)
@@ -79,9 +79,9 @@ namespace System.Collections.ObjectModel
 			return list.GetEnumerator ();
 		}
 
-		public int IndexOf (T item)
+		public int IndexOf (T value)
 		{
-			return list.IndexOf (item);
+			return list.IndexOf (value);
 		}
 
 		void IList<T>.Insert (int index, T item)

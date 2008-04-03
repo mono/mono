@@ -1,3 +1,12 @@
+2008-04-02  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
+
+	* ArrayList.cs
+	* DictionaryBase.cs
+	* IEqualityComparer.cs
+	* Queue.cs
+	* SortedList.cs
+	* Stack.cs: Fix parameter names
+
 2008-03-24  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DictionaryBase.cs: Restore previous behavior of indexer for the

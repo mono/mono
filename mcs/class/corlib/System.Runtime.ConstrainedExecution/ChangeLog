@@ -1,3 +1,7 @@
+2008-04-02  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
+
+	* ReliabilityContractAttribute.cs: Fix parameter names
+
 2005-10-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CriticialFinalizerObject.cs: Added [ReliabilityContract] to ctor.

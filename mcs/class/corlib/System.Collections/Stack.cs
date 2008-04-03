@@ -168,12 +168,12 @@ namespace System.Collections {
 			}
 		}
 
-		public static Stack Synchronized(Stack s) {
-			if (s == null) {
-				throw new ArgumentNullException();
-			}
+		public static Stack Synchronized (Stack stack)
+		{
+			if (stack == null)
+				throw new ArgumentNullException ("stack");
 
-			return new SyncStack(s);
+			return new SyncStack (stack);
 		}
 
 		public virtual int Count {
@@ -348,7 +348,8 @@ namespace System.Collections {
 			}
 		}
 
-		public virtual void Push(Object o) {
+		public virtual void Push (Object obj)
+		{
 			modCount++;
 
 			if (capacity == count) {
@@ -358,7 +359,7 @@ namespace System.Collections {
 			count++;
 			current++;
 
-			contents[current] = o;
+			contents[current] = obj;
 		}
 
 		public virtual object[] ToArray() {

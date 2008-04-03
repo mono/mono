@@ -1,4 +1,4 @@
-// cs0217.cs: In order to be applicable as a short circuit operator a user-defined logical operator `UserOperatorClass.operator &(UserOperatorClass, UserOperatorClass)' must have the same return type as the type of its 2 parameters
+// CS0217: A user-defined operator `UserOperatorClass.operator &(UserOperatorClass, UserOperatorClass)' must have parameters and return values of the same type in order to be applicable as a short circuit operator
 // Line: 22
 
 public class UserOperatorClass

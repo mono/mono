@@ -639,6 +639,12 @@ namespace Mono.CSharp {
 		// The state as we generate the iterator
 		//
 		Label move_next_ok, move_next_error;
+		LocalBuilder skip_finally;
+
+		public LocalBuilder SkipFinally {
+			get { return skip_finally; }
+		}
+
 		ArrayList resume_points = new ArrayList ();
 		int pc;
 		
@@ -667,6 +673,10 @@ namespace Mono.CSharp {
 			move_next_error = ig.DefineLabel ();
 
 			LocalBuilder retval = ec.GetTemporaryLocal (TypeManager.int32_type);
+			skip_finally = ec.GetTemporaryLocal (TypeManager.bool_type);
+
+			ig.Emit (OpCodes.Ldc_I4_0);
+			ig.Emit (OpCodes.Stloc, skip_finally);
 
 			ig.BeginExceptionBlock ();
 
@@ -752,7 +762,7 @@ namespace Mono.CSharp {
 
 				foreach (ExceptionStatement stmt in point.FinallyBlocks) {
 					if (stmt != null)
-						stmt.EmitFinally (ec);
+						stmt.EmitFinallyBody (ec);
 				}
 
 				ig.EndExceptionBlock ();
@@ -810,23 +820,12 @@ namespace Mono.CSharp {
 			IntConstant.EmitInt (ig, pc);
 			ig.Emit (OpCodes.Stfld, IteratorHost.PC.FieldBuilder);
 
+			// mark finally blocks as disabled
+			ig.Emit (OpCodes.Ldc_I4_1);
+			ig.Emit (OpCodes.Stloc, skip_finally);
+
 			// Return ok
 			ig.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, move_next_ok);
-
-			ResumePoint point = new ResumePoint (finally_blocks);
-			resume_points.Add (point);
-			point.Define (ig);
-		}
-
-		public void MarkFinally (EmitContext ec, ArrayList finally_blocks)
-		{
-			ILGenerator ig = ec.ig;
-
-			// increment pc
-			pc++;
-			ig.Emit (OpCodes.Ldarg_0);
-			IntConstant.EmitInt (ig, pc);
-			ig.Emit (OpCodes.Stfld, IteratorHost.PC.FieldBuilder);
 
 			ResumePoint point = new ResumePoint (finally_blocks);
 			resume_points.Add (point);

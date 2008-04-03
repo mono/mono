@@ -1,3 +1,85 @@
+2008-04-03  Marek Safar  <marek.safar@gmail.com>
+
+	* class.cs, typemanager.cs: Emit volatile field with IsVolatile modifier.
+	
+2008-04-03  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #376508
+	* convert.cs, expression.cs: Fixed difference between ImplicitConversion and
+	ImplicitConversionExists.
+
+2008-04-03  Marek Safar  <marek.safar@gmail.com>
+
+	* expression.cs (Binary): Added remaining binary operators to expression
+	tree builder.
+	
+	* nullable.cs: Optimize shift with null argument.
+
+2008-04-03  Raja R Harinath  <harinath@hurrynot.org>
+
+	Fix minor IL regression
+	* statement.cs (TryCatch..ctor): Add 'inside_try_finally' argument.
+	(TryCatch.DoEmit): Use it to avoid creating another ExceptionBlock.
+	* cs-parser.jay (try_statement): Update to changes.
+
+	* statement.cs (TryFinally.need_exc_block): Delete.
+	(TryFinally): Update to changes.
+
+	Now all ExceptionStatements are unconditional
+	* statement.cs (CollectionForeach.DisposableWrapper): New.
+	Extract out the try/finally code into a new wrapper.
+	(CollectionForeach.Resolve): Use it to simplify the code.
+
+2008-04-02  Raja R Harinath  <harinath@hurrynot.org>
+
+	Start at simplifying ExceptionStatement semantics a bit
+	* statement.cs (TryCatch, TryFinally): Split 'Try' into two pieces.
+	* cs-parser.jay (try_statement): Update to changes.
+	(opt_catch_clauses): Remove.
+	* flowanalysis.cs: Update to changes.
+	(FlowBranching.BranchingType.TryCatch): New.
+	(FlowBranchingTryCatch): New.
+
+	* flowanalysis.cs (FlowBranching.BranchingType.SwitchSection): Kill.
+	(FlowBranching.CreateBranching): Update to changes.
+	(FlowBranchingBlock.AddSibling): Add sanity check.
+	* codegen.cs (EmitContext.StartFlowBranching) <Block variant>:
+	Update to changes.
+
+	* iterators.cs (Iterator.MarkFinally): Remove.
+	* statement.cs (ExceptionStatement): Update to changes.
+
+	Add support for skipping over finally blocks at runtime.  First
+	in a series to fix #324708
+	* iterators.cs (Iterator.SkipFinally): New LocalBuilder.
+	(Iterator.EmitMoveNext): Initialize it.
+	* statement.cs (ExceptionStatement.EmitFinally): Use it to emit a
+	branch over the body of the 'finally' clause.
+
+2008-03-31  Raja R Harinath  <harinath@hurrynot.org>
+
+	Avoid lopsided use of Foo/DoFoo names
+	* statement.cs (ExpressionStatement.EmitFinallyBody):
+	Rename from EmitFinally.
+	(ExpressionStatement.EmitFinally): Rename from DoEmitFinally.
+	* iterator.cs: Update to changes.
+
+2008-04-02  Marek Safar  <marek.safar@gmail.com>
+
+	* ecore.cs, expression.cs, nullable.cs: ConditionalLogicalOperator is now
+	based on UserOperatorCall. More binary nullable operators clean up.
+
+2008-04-02  Martin Baulig  <martin@ximian.com>
+
+	* symbolwriter.cs: Remove the `#if !DISABLE_TERRANIA_CHANGES' conditionals.
+
+2008-04-02  Marek Safar  <marek.safar@gmail.com>
+
+	* nullable.cs: Merge user and empty conversions when lifting expression
+	trees.
+	
+	* expression.cs (StringConcat): Implemented expression tree representation.
+
 2008-04-01  Marek Safar  <marek.safar@gmail.com>
 
 	* nullable.cs: When lifting null literal and a user operator exists, no call 

@@ -533,9 +533,7 @@ namespace Mono.CSharp.Nullable
 			if (eclass != ExprClass.Invalid)
 				return this;
 
-			// TODO: How does it work with use-operators?
-			if ((Oper == Binary.Operator.LogicalAnd) ||
-			    (Oper == Binary.Operator.LogicalOr)) {
+			if ((Oper & Operator.LogicalMask) != 0) {
 				Error_OperatorCannotBeApplied (left, right);
 				return null;
 			}
@@ -791,7 +789,10 @@ namespace Mono.CSharp.Nullable
 				if (lifted_type == null)
 					return null;
 
-				left = EmptyCast.Create (left, lifted_type.Type);
+				if (left is UserCast || left is EmptyCast)
+					left.Type = lifted_type.Type;
+				else
+					left = EmptyCast.Create (left, lifted_type.Type);
 			}
 
 			if (right_unwrap == null || right_null_lifted || !TypeManager.IsEqual (right_unwrap.Type, right.Type)) {
@@ -800,7 +801,10 @@ namespace Mono.CSharp.Nullable
 				if (lifted_type == null)
 					return null;
 
-				right = EmptyCast.Create (right, lifted_type.Type);
+				if (right is UserCast || right is EmptyCast)
+					right.Type = lifted_type.Type;
+				else
+					right = EmptyCast.Create (right, lifted_type.Type);
 			}
 
 			// TODO: Handle bitwise bool 
@@ -816,27 +820,27 @@ namespace Mono.CSharp.Nullable
 			if (left_null_lifted) {
 				left = LiftedNull.Create (right.Type, left.Location);
 
+				if ((Oper & (Operator.ArithmeticMask | Operator.ShiftMask)) != 0)
+					return LiftedNull.CreateFromExpression (res_expr);
+
 				//
 				// Value types and null comparison
 				//
 				if (right_unwrap == null || (Oper & Operator.RelationalMask) != 0)
 					return CreateNullConstant (right_orig).Resolve (ec);
-
-				if ((Oper & Operator.ArithmeticMask) != 0)
-					return LiftedNull.CreateFromExpression (res_expr);
 			}
 
 			if (right_null_lifted) {
 				right = LiftedNull.Create (left.Type, right.Location);
+
+				if ((Oper & (Operator.ArithmeticMask | Operator.ShiftMask)) != 0)
+					return LiftedNull.CreateFromExpression (res_expr);
 
 				//
 				// Value types and null comparison
 				//
 				if (left_unwrap == null || (Oper & Operator.RelationalMask) != 0)
 					return CreateNullConstant (left_orig).Resolve (ec);
-
-				if ((Oper & Operator.ArithmeticMask) != 0)
-					return LiftedNull.CreateFromExpression (res_expr);
 			}
 
 			return res_expr;

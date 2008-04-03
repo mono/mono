@@ -1,3 +1,8 @@
+﻿2008-04-02  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
+
+	* IReflect.cs
+	* MethodInfo.cs: Fix parameter names
+
 2008-03-31  Mark Probst  <mark.probst@gmail.com>
 
 	* MonoMethod.cs: Don't do CAS security checks in Invoke for 2.1

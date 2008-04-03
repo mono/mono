@@ -41,8 +41,8 @@ namespace System.Collections.Generic {
 		public KeyNotFoundException (string message)
 			: base (message) {}
 
-		public KeyNotFoundException (string message, Exception inner)
-			: base (message, inner) {}
+		public KeyNotFoundException (string message, Exception innerException)
+			: base (message, innerException) {}
 
 		protected KeyNotFoundException (SerializationInfo info, StreamingContext context)
 			: base (info, context) {}

@@ -3780,25 +3780,26 @@ namespace Mono.CSharp {
 
 	public abstract class ExceptionStatement : Statement
 	{
-		public abstract void EmitFinally (EmitContext ec);
+		public abstract void EmitFinallyBody (EmitContext ec);
 
 		protected bool emit_finally = true;
-		ArrayList parent_vectors;
 
-		protected void DoEmitFinally (EmitContext ec)
+		protected void EmitFinally (EmitContext ec)
 		{
+			Label end_finally = ec.ig.DefineLabel ();
 			if (emit_finally)
 				ec.ig.BeginFinallyBlock ();
-			else if (ec.InIterator)
-				ec.CurrentIterator.MarkFinally (ec, parent_vectors);
-			EmitFinally (ec);
+			else if (ec.InIterator) {
+				ec.ig.Emit (OpCodes.Ldloc, ec.CurrentIterator.SkipFinally);
+				ec.ig.Emit (OpCodes.Brtrue, end_finally);
+			}
+			EmitFinallyBody (ec);
+			ec.ig.MarkLabel (end_finally);
 		}
 
 		protected void ResolveFinally (FlowBranchingException branching)
 		{
 			emit_finally = branching.EmitFinally;
-			if (!emit_finally)
-				branching.Parent.StealFinallyClauses (ref parent_vectors);
 		}
 	}
 
@@ -3834,8 +3835,8 @@ namespace Mono.CSharp {
 
 			ec.EndFlowBranching ();
 
-			// System.Reflection.Emit automatically emits a 'leave' to the end of the finally block.
-			// So, ensure there's some IL code after the finally block.
+			// System.Reflection.Emit automatically emits a 'leave' at the end of a try clause
+			// So, ensure there's some IL code after this statement.
 			ec.NeedReturnLabel ();
 
 			// Avoid creating libraries that reference the internal
@@ -3872,12 +3873,12 @@ namespace Mono.CSharp {
 			Statement.Emit (ec);
 			
 			// finally
-			DoEmitFinally (ec);
+			EmitFinally (ec);
 			if (emit_finally)
 				ig.EndExceptionBlock ();
 		}
 
-		public override void EmitFinally (EmitContext ec)
+		public override void EmitFinallyBody (EmitContext ec)
 		{
 			temp.Emit (ec);
 			ec.ig.Emit (OpCodes.Call, TypeManager.void_monitor_exit_object);
@@ -4309,7 +4310,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected override void DoEmit(EmitContext ec)
+		protected override void DoEmit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 
@@ -4382,51 +4383,111 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class Try : ExceptionStatement {
-		public Block Fini, Block;
-		public ArrayList Specific;
-		public Catch General;
+	public class TryFinally : ExceptionStatement {
+		Statement stmt;
+		Block fini;
 
-		bool need_exc_block;
-		
-		//
-		// specific, general and fini might all be null.
-		//
-		public Try (Block block, ArrayList specific, Catch general, Block fini, Location l)
+		public TryFinally (Statement stmt, Block fini, Location l)
 		{
-			if (specific == null && general == null){
-				Console.WriteLine ("CIR.Try: Either specific or general have to be non-null");
-			}
-			
-			this.Block = block;
-			this.Specific = specific;
-			this.General = general;
-			this.Fini = fini;
+			this.stmt = stmt;
+			this.fini = fini;
 			loc = l;
 		}
 
 		public override bool Resolve (EmitContext ec)
 		{
 			bool ok = true;
-			
+
 			FlowBranchingException branching = ec.StartFlowBranching (this);
 
-			Report.Debug (1, "START OF TRY BLOCK", Block.StartLocation);
+			if (!stmt.Resolve (ec))
+				ok = false;
+
+			if (ok)
+				ec.CurrentBranching.CreateSibling (fini, FlowBranching.SiblingType.Finally);
+			using (ec.With (EmitContext.Flags.InFinally, true)) {
+				if (!fini.Resolve (ec))
+					ok = false;
+			}
+
+			ResolveFinally (branching);
+			ec.EndFlowBranching ();
+
+			// System.Reflection.Emit automatically emits a 'leave' at the end of a try clause
+			// So, ensure there's some IL code after this statement.
+			ec.NeedReturnLabel ();
+
+			return ok;
+		}
+
+		protected override void DoEmit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+
+			if (emit_finally)
+				ig.BeginExceptionBlock ();
+			stmt.Emit (ec);
+
+			EmitFinally (ec);
+			if (emit_finally)
+				ig.EndExceptionBlock ();
+		}
+
+		public override void EmitFinallyBody (EmitContext ec)
+		{
+			fini.Emit (ec);
+		}
+
+		protected override void CloneTo (CloneContext clonectx, Statement t)
+		{
+			TryFinally target = (TryFinally) t;
+
+			target.stmt = (Statement) stmt.Clone (clonectx);
+			if (fini != null)
+				target.fini = clonectx.LookupBlock (fini);
+		}
+	}
+
+	public class TryCatch : Statement {
+		public Block Block;
+		public ArrayList Specific;
+		public Catch General;
+		bool inside_try_finally;
+
+		public TryCatch (Block block, ArrayList catch_clauses, Location l, bool inside_try_finally)
+		{
+			this.Block = block;
+			this.Specific = catch_clauses;
+			this.General = null;
+			this.inside_try_finally = inside_try_finally;
+
+			for (int i = 0; i < catch_clauses.Count; ++i) {
+				Catch c = (Catch) catch_clauses [i];
+				if (c.IsGeneral) {
+					if (i != catch_clauses.Count - 1)
+						Report.Error (1017, c.loc, "Try statement already has an empty catch block");
+					this.General = c;
+					catch_clauses.RemoveAt (i);
+					i--;
+				}
+			}
+
+			loc = l;
+		}
+
+		public override bool Resolve (EmitContext ec)
+		{
+			bool ok = true;
+
+			ec.StartFlowBranching (FlowBranching.BranchingType.TryCatch, loc);
 
 			if (!Block.Resolve (ec))
 				ok = false;
 
-			FlowBranching.UsageVector vector = ec.CurrentBranching.CurrentUsageVector;
-
-			Report.Debug (1, "START OF CATCH BLOCKS", vector);
-
 			Type[] prev_catches = new Type [Specific.Count];
 			int last_index = 0;
 			foreach (Catch c in Specific){
-				ec.CurrentBranching.CreateSibling (
-					c.Block, FlowBranching.SiblingType.Catch);
-
-				Report.Debug (1, "STARTED SIBLING FOR CATCH", ec.CurrentBranching);
+				ec.CurrentBranching.CreateSibling (c.Block, FlowBranching.SiblingType.Catch);
 
 				if (c.Name != null) {
 					LocalInfo vi = c.Block.GetLocalInfo (c.Name);
@@ -4437,23 +4498,20 @@ namespace Mono.CSharp {
 				}
 
 				if (!c.Resolve (ec))
-					return false;
+					ok = false;
 
 				Type resolved_type = c.CatchType;
 				for (int ii = 0; ii < last_index; ++ii) {
 					if (resolved_type == prev_catches [ii] || TypeManager.IsSubclassOf (resolved_type, prev_catches [ii])) {
 						Report.Error (160, c.loc, "A previous catch clause already catches all exceptions of this or a super type `{0}'", prev_catches [ii].FullName);
-						return false;
+						ok = false;
 					}
 				}
 
 				prev_catches [last_index++] = resolved_type;
-				need_exc_block = true;
 			}
 
-			Report.Debug (1, "END OF CATCH BLOCKS", ec.CurrentBranching);
-
-			if (General != null){
+			if (General != null) {
 				if (CodeGen.Assembly.WrapNonExceptionThrows) {
 					foreach (Catch c in Specific){
 						if (c.CatchType == TypeManager.exception_type) {
@@ -4462,48 +4520,17 @@ namespace Mono.CSharp {
 					}
 				}
 
-				ec.CurrentBranching.CreateSibling (
-					General.Block, FlowBranching.SiblingType.Catch);
-
-				Report.Debug (1, "STARTED SIBLING FOR GENERAL", ec.CurrentBranching);
+				ec.CurrentBranching.CreateSibling (General.Block, FlowBranching.SiblingType.Catch);
 
 				if (!General.Resolve (ec))
 					ok = false;
-
-				need_exc_block = true;
 			}
-
-			Report.Debug (1, "END OF GENERAL CATCH BLOCKS", ec.CurrentBranching);
-
-			if (Fini != null) {
-				if (ok)
-					ec.CurrentBranching.CreateSibling (Fini, FlowBranching.SiblingType.Finally);
-
-				Report.Debug (1, "STARTED SIBLING FOR FINALLY", ec.CurrentBranching, vector);
-				using (ec.With (EmitContext.Flags.InFinally, true)) {
-					if (!Fini.Resolve (ec))
-						ok = false;
-				}
-
-				if (!ec.InIterator)
-					need_exc_block = true;
-			}
-
-			if (ec.InIterator) {
-				ResolveFinally (branching);
-				need_exc_block |= emit_finally;
-			} else
-				emit_finally = Fini != null;
 
 			ec.EndFlowBranching ();
 
-			// System.Reflection.Emit automatically emits a 'leave' to the end of the finally block.
-			// So, ensure there's some IL code after the finally block.
+			// System.Reflection.Emit automatically emits a 'leave' at the end of a try/catch clause
+			// So, ensure there's some IL code after this statement
 			ec.NeedReturnLabel ();
-
-			FlowBranching.UsageVector f_vector = ec.CurrentBranching.CurrentUsageVector;
-
-			Report.Debug (1, "END OF TRY", ec.CurrentBranching, vector, f_vector);
 
 			return ok;
 		}
@@ -4512,8 +4539,10 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 
-			if (need_exc_block)
+			// FIXME: remove the InIterator
+			if (!inside_try_finally || ec.InIterator)
 				ig.BeginExceptionBlock ();
+
 			Block.Emit (ec);
 
 			foreach (Catch c in Specific)
@@ -4522,31 +4551,16 @@ namespace Mono.CSharp {
 			if (General != null)
 				General.Emit (ec);
 
-			DoEmitFinally (ec);
-			if (need_exc_block)
+			// FIXME: remove the InIterator
+			if (!inside_try_finally || ec.InIterator)
 				ig.EndExceptionBlock ();
-		}
-
-		public override void EmitFinally (EmitContext ec)
-		{
-			if (Fini != null)
-				Fini.Emit (ec);
-		}
-
-		public bool HasCatch
-		{
-			get {
-				return General != null || Specific.Count > 0;
-			}
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)
 		{
-			Try target = (Try) t;
+			TryCatch target = (TryCatch) t;
 
 			target.Block = clonectx.LookupBlock (Block);
-			if (Fini != null)
-				target.Fini = clonectx.LookupBlock (Fini);
 			if (General != null)
 				target.General = (Catch) General.Clone (clonectx);
 			if (Specific != null){
@@ -4661,7 +4675,7 @@ namespace Mono.CSharp {
 
 			var_list.Reverse ();
 
-			DoEmitFinally (ec);
+			EmitFinally (ec);
 		}
 
 		void EmitLocalVariableDeclFinally (EmitContext ec)
@@ -4734,7 +4748,7 @@ namespace Mono.CSharp {
 
 			Statement.Emit (ec);
 			
-			DoEmitFinally (ec);
+			EmitFinally (ec);
 			if (emit_finally)
 				ig.EndExceptionBlock ();
 		}
@@ -4809,8 +4823,8 @@ namespace Mono.CSharp {
 
 			ec.EndFlowBranching ();
 
-			// System.Reflection.Emit automatically emits a 'leave' to the end of the finally block.
-			// So, ensure there's some IL code after the finally block.
+			// System.Reflection.Emit automatically emits a 'leave' at the end of a try clause
+			// So, ensure there's some IL code after this statement.
 			ec.NeedReturnLabel ();
 
 			if (TypeManager.void_dispose_void == null) {
@@ -4829,7 +4843,7 @@ namespace Mono.CSharp {
 				EmitExpression (ec);
 		}
 
-		public override void EmitFinally (EmitContext ec)
+		public override void EmitFinallyBody (EmitContext ec)
 		{
 			if (expression_or_block is DictionaryEntry)
 				EmitLocalVariableDeclFinally (ec);
@@ -5095,7 +5109,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected class CollectionForeach : ExceptionStatement
+		protected class CollectionForeach : Statement
 		{
 			Expression variable, expr;
 			Statement statement;
@@ -5109,7 +5123,6 @@ namespace Mono.CSharp {
 			MethodInfo move_next;
 			Expression var_type;
 			Type enumerator_type;
-			bool is_disposable;
 			bool enumerator_found;
 
 			public CollectionForeach (Expression var_type, Expression var,
@@ -5205,9 +5218,6 @@ namespace Mono.CSharp {
 				}
 
 				enumerator_type = return_type;
-				is_disposable = !enumerator_type.IsSealed ||
-					TypeManager.ImplementsInterface (
-						enumerator_type, TypeManager.idisposable_type);
 
 				return true;
 			}
@@ -5415,12 +5425,14 @@ namespace Mono.CSharp {
 			public override bool Resolve (EmitContext ec)
 			{
 				enumerator_type = TypeManager.ienumerator_type;
-				is_disposable = true;
 
 				if (!ProbeCollectionType (ec, expr.Type)) {
 					Error_Enumerator ();
 					return false;
 				}
+
+				bool is_disposable = !enumerator_type.IsSealed ||
+					TypeManager.ImplementsInterface (enumerator_type, TypeManager.idisposable_type);
 
 				VarExpr ve = var_type as VarExpr;
 				if (ve != null) {
@@ -5456,16 +5468,37 @@ namespace Mono.CSharp {
 
 				loop = new While (move_next_expr, block, loc);
 
-				bool ok = true;
-
-				FlowBranchingException branching = null;
 				if (is_disposable)
-					branching = ec.StartFlowBranching (this);
+					loop = new DisposableWrapper (this, loop);
 
-				if (!loop.Resolve (ec))
-					ok = false;
+				return loop.Resolve (ec);
+			}
 
-				if (is_disposable) {
+			protected override void DoEmit (EmitContext ec)
+			{
+				enumerator.Store (ec, init);
+				loop.Emit (ec);
+			}
+
+			class DisposableWrapper : ExceptionStatement {
+				CollectionForeach parent;
+				Statement loop;
+
+				internal DisposableWrapper (CollectionForeach parent, Statement loop)
+				{
+					this.parent = parent;
+					this.loop = loop;
+				}
+
+				public override bool Resolve (EmitContext ec)
+				{
+					bool ok = true;
+
+					FlowBranchingException branching = ec.StartFlowBranching (this);
+
+					if (!loop.Resolve (ec))
+						ok = false;
+
 					ResolveFinally (branching);
 					ec.EndFlowBranching ();
 
@@ -5473,39 +5506,28 @@ namespace Mono.CSharp {
 						TypeManager.void_dispose_void = TypeManager.GetPredefinedMethod (
 							TypeManager.idisposable_type, "Dispose", loc, Type.EmptyTypes);
 					}
-				} else
-					emit_finally = true;
+					return ok;
+				}
 
-				return ok;
-			}
+				protected override void DoEmit (EmitContext ec)
+				{
+					ILGenerator ig = ec.ig;
 
-			protected override void DoEmit (EmitContext ec)
-			{
-				ILGenerator ig = ec.ig;
-
-				enumerator.Store (ec, init);
-
-				//
-				// Protect the code in a try/finalize block, so that
-				// if the beast implement IDisposable, we get rid of it
-				//
-				if (is_disposable && emit_finally)
-					ig.BeginExceptionBlock ();
-			
-				loop.Emit (ec);
-
-				//
-				// Now the finally block
-				//
-				if (is_disposable) {
-					DoEmitFinally (ec);
+					if (emit_finally)
+						ig.BeginExceptionBlock ();
+					loop.Emit (ec);
+					EmitFinally (ec);
 					if (emit_finally)
 						ig.EndExceptionBlock ();
 				}
+
+				public override void EmitFinallyBody (EmitContext ec)
+				{
+					parent.EmitFinallyBody (ec);
+				}
 			}
 
-
-			public override void EmitFinally (EmitContext ec)
+			void EmitFinallyBody (EmitContext ec)
 			{
 				ILGenerator ig = ec.ig;
 

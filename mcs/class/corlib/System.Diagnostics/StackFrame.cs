@@ -70,9 +70,9 @@ namespace System.Diagnostics {
 					out columnNumber);			
                 }
                 
-		public StackFrame (bool needFileInfo)
+		public StackFrame (bool fNeedFileInfo)
 		{
-			get_frame_info (2, needFileInfo, out methodBase, out ilOffset,
+			get_frame_info (2, fNeedFileInfo, out methodBase, out ilOffset,
 					out nativeOffset, out fileName, out lineNumber,
 					out columnNumber);			
                 }
@@ -84,9 +84,9 @@ namespace System.Diagnostics {
 					out columnNumber);			
                 }
                 
-                public StackFrame (int skipFrames, bool needFileInfo) 
+                public StackFrame (int skipFrames, bool fNeedFileInfo) 
 		{
-			get_frame_info (skipFrames + 2, needFileInfo, out methodBase, out ilOffset,
+			get_frame_info (skipFrames + 2, fNeedFileInfo, out methodBase, out ilOffset,
 					out nativeOffset, out fileName, out lineNumber,
 					out columnNumber);
                 }

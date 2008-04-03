@@ -37,9 +37,9 @@ namespace System.Runtime.ConstrainedExecution
                 Consistency consistency;
                 Cer cer;
 
-		public ReliabilityContractAttribute (Consistency consistency, Cer cer)
+		public ReliabilityContractAttribute (Consistency consistencyGuarantee, Cer cer)
                 {
-                        this.consistency = consistency;
+                        this.consistency = consistencyGuarantee;
                         this.cer = cer;
                 }
 

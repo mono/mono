@@ -1,3 +1,7 @@
+2008-04-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XsdValidatingReaderTests.cs : added test for bug #376395.
+
 2008-03-31  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XmlDocumentTests.cs: Fixed line endings.

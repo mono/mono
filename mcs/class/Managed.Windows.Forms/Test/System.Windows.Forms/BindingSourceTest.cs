@@ -595,6 +595,17 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		}
 
 		[Test]
+		public void DataSourceSetType ()
+		{
+			BindingSource source = new BindingSource ();
+			source.DataSource = typeof (DateTime);
+
+			Assert.IsTrue (source.List is BindingList<DateTime>, "A1");
+			Assert.AreEqual (0, source.List.Count, "A2");
+			Assert.AreEqual (typeof (DateTime), source.DataSource);
+		}
+
+		[Test]
 		public void DataMemberChanged ()
 		{
 			ArrayList list = new ArrayList ();

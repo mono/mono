@@ -1,22 +1,3 @@
-﻿2008-04-02  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
-
-	* StringComparer.cs
-	* String.cs: Fix parameter names
-
-2008-04-01  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
-
-	* Char.cs: Fix parameter names
-
-2008-04-01  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
-
-	* String.cs: Update of String that moves all remaining non-culture-sensitive
-	  code to managed C# code. Improves performance for most cases and most methods
-	  allows code-optimizations tools to perform better optimizations by removing the
-	  internalcalls. Reduces the total number of lines of code used for String.
-	  Allows code duplication reduction in several other classes and the runtime.
-
-	* StringComparer.cs: Remove duplicate code and call relevant String methods.
-
 2008-04-01  Eyal Alaluf <eyala@mainsoft.com>
 
 	* NumberFormatter.cs NumberFormatter.jvm.cs: Performance optimizations.

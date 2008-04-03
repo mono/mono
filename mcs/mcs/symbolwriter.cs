@@ -128,130 +128,102 @@ namespace Mono.CSharp {
 #region Terrania additions
 		public static void DefineAnonymousScope (int id)
 		{
-#if !DISABLE_TERRANIA_CHANGES
 			if (symwriter != null)
 				symwriter.DefineAnonymousScope (id);
-#endif
 		}
 
 		public static void DefineScopeVariable (int scope, LocalBuilder builder)
 		{
-#if !DISABLE_TERRANIA_CHANGES
 			if (symwriter != null) {
 				int index = MonoDebuggerSupport.GetLocalIndex (builder);
 				symwriter.DefineScopeVariable (scope, index);
 			}
-#endif
 		}
 
 		public static void DefineScopeVariable (int scope)
 		{
-#if !DISABLE_TERRANIA_CHANGES
 			if (symwriter != null)
 				symwriter.DefineScopeVariable (scope, -1);
-#endif
 		}
 
 		public static void DefineCapturedLocal (int scope_id, string name,
 							string captured_name)
 		{
-#if !DISABLE_TERRANIA_CHANGES
 			if (symwriter != null)
 				symwriter.DefineCapturedLocal (scope_id, name, captured_name);
-#endif
 		}
 
 		public static void DefineCapturedParameter (int scope_id, string name,
 							    string captured_name)
 		{
-#if !DISABLE_TERRANIA_CHANGES
 			if (symwriter != null)
 				symwriter.DefineCapturedParameter (scope_id, name, captured_name);
-#endif
 		}
 
 		public static void DefineCapturedThis (int scope_id, string captured_name)
 		{
-#if !DISABLE_TERRANIA_CHANGES
 			if (symwriter != null)
 				symwriter.DefineCapturedThis (scope_id, captured_name);
-#endif
 		}
 
 		public static void DefineCapturedScope (int scope_id, int id, string captured_name)
 		{
-#if !DISABLE_TERRANIA_CHANGES
 			if (symwriter != null)
 				symwriter.DefineCapturedScope (scope_id, id, captured_name);
-#endif
 		}
 
 		public static void SetRealMethodName (string name)
 		{
-#if !DISABLE_TERRANIA_CHANGES
 			if (symwriter != null)
 				symwriter.SetRealMethodName (name);
-#endif
 		}
 
 		public static void OpenCompilerGeneratedBlock (ILGenerator ig)
 		{
-#if !DISABLE_TERRANIA_CHANGES
 			if (symwriter != null) {
 				int offset = symwriter.GetILOffset (ig);
 				symwriter.OpenCompilerGeneratedBlock (offset);
 			}
-#endif
 		}
 
 		public static void CloseCompilerGeneratedBlock (ILGenerator ig)
 		{
-#if !DISABLE_TERRANIA_CHANGES
 			if (symwriter != null) {
 				int offset = symwriter.GetILOffset (ig);
 				symwriter.CloseCompilerGeneratedBlock (offset);
 			}
-#endif
 		}
 
 		public static void StartIteratorBody (ILGenerator ig)
 		{
-#if !DISABLE_TERRANIA_CHANGES
 			if (symwriter != null) {
 				int offset = symwriter.GetILOffset (ig);
 				symwriter.StartIteratorBody (offset);
 			}
-#endif
 		}
 
 		public static void EndIteratorBody (ILGenerator ig)
 		{
-#if !DISABLE_TERRANIA_CHANGES
 			if (symwriter != null) {
 				int offset = symwriter.GetILOffset (ig);
 				symwriter.EndIteratorBody (offset);
 			}
-#endif
 		}
 
 		public static void StartIteratorDispatcher (ILGenerator ig)
 		{
-#if !DISABLE_TERRANIA_CHANGES
 			if (symwriter != null) {
 				int offset = symwriter.GetILOffset (ig);
 				symwriter.StartIteratorDispatcher (offset);
 			}
-#endif
 		}
 
 		public static void EndIteratorDispatcher (ILGenerator ig)
 		{
-#if !DISABLE_TERRANIA_CHANGES
 			if (symwriter != null) {
 				int offset = symwriter.GetILOffset (ig);
 				symwriter.EndIteratorDispatcher (offset);
 			}
-#endif
 		}
 #endregion
 

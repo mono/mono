@@ -5091,54 +5091,23 @@ opt_expression
 	;
 
 try_statement
-	: TRY block catch_clauses 
+	: TRY block catch_clauses
 	  {
-		Catch g = null;
-		
-		ArrayList c = (ArrayList)$3;
-		for (int i = 0; i < c.Count; ++i) {
-			Catch cc = (Catch) c [i];
-			if (cc.IsGeneral) {
-				if (i != c.Count - 1)
-					Report.Error (1017, cc.loc, "Try statement already has an empty catch block");
-				g = cc;
-				c.RemoveAt (i);
-				i--;
-			}
-		}
-
-		// Now s contains the list of specific catch clauses
-		// and g contains the general one.
-		
-		$$ = new Try ((Block) $2, c, g, null, ((Block) $2).loc);
+		$$ = new TryCatch ((Block) $2, (ArrayList) $3, (Location) $1, false);
 	  }
-	| TRY block opt_catch_clauses FINALLY block
+	| TRY block FINALLY block
 	  {
-		Catch g = null;
-		ArrayList s = new ArrayList (4);
-		ArrayList catch_list = (ArrayList) $3;
-
-		if (catch_list != null){
-			foreach (Catch cc in catch_list) {
-				if (cc.IsGeneral)
-					g = cc;
-				else
-					s.Add (cc);
-			}
-		}
-
-		$$ = new Try ((Block) $2, s, g, (Block) $5, ((Block) $2).loc);
+		$$ = new TryFinally ((Statement) $2, (Block) $4, (Location) $1);
+	  }
+	| TRY block catch_clauses FINALLY block
+	  {
+		$$ = new TryFinally (new TryCatch ((Block) $2, (ArrayList) $3, (Location) $1, true), (Block) $5, (Location) $1);
 	  }
 	| TRY block error 
 	  {
 		Report.Error (1524, (Location) $1, "Expected catch or finally");
 		$$ = null;
 	  }
-	;
-
-opt_catch_clauses
-	: /* empty */  { $$ = null; }
-        | catch_clauses
 	;
 
 catch_clauses

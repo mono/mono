@@ -1,5 +1,5 @@
 //
-// System.Collections.Generic.IEqualityComparer
+// System.Collections.IEqualityComparer.cs
 //
 // Authors:
 //	David Waite (mass@akuma.org)
@@ -32,12 +32,13 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace System.Collections {
-
+namespace System.Collections
+{
 	[ComVisible(true)]
-	public interface IEqualityComparer {
+	public interface IEqualityComparer 
+	{
 		bool Equals (object x, object y);
-		int GetHashCode(object x);
+		int GetHashCode (object obj);
 	}
 }
 #endif

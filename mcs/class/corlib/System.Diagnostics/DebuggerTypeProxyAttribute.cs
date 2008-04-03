@@ -50,8 +50,8 @@ namespace System.Diagnostics {
 		string target_type_name;
 		Type target_type;
 
-		public DebuggerTypeProxyAttribute (string typename) {
-			proxy_type_name = typename;
+		public DebuggerTypeProxyAttribute (string typeName) {
+			proxy_type_name = typeName;
 		}
 
 		public DebuggerTypeProxyAttribute (Type type) {
