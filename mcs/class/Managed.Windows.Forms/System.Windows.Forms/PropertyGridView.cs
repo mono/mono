@@ -248,13 +248,8 @@ namespace System.Windows.Forms.PropertyGridInternal {
 
 		protected override void OnResize (EventArgs e) {
 			base.OnResize (e);
-			if (this.SelectedGridItem != null) { // initialized already
+			if (this.SelectedGridItem != null) // initialized already
 				UpdateView ();
-				// MS scrolls to the currently selected item on resize, even
-				// when it's not in the visible area.
-				// 
-				ScrollToItem (this.SelectedGridItem);
-			}
 		}
 
 		private void UnfocusSelection ()
