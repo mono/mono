@@ -1,5 +1,10 @@
 2008-04-03  Dick Porter  <dick@ximian.com>
 
+	* io-portability.c (_wapi_basename, _wapi_dirname): Only turn \
+	into / when MONO_IOMAP is in effect.  Fixes bug 346123.
+
+2008-04-03  Dick Porter  <dick@ximian.com>
+
 	* timefuncs.c (GetTickCount): Use mono_msec_ticks(), see bug
 	347476.
 
