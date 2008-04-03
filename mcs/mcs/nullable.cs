@@ -820,27 +820,27 @@ namespace Mono.CSharp.Nullable
 			if (left_null_lifted) {
 				left = LiftedNull.Create (right.Type, left.Location);
 
+				if ((Oper & (Operator.ArithmeticMask | Operator.ShiftMask)) != 0)
+					return LiftedNull.CreateFromExpression (res_expr);
+
 				//
 				// Value types and null comparison
 				//
 				if (right_unwrap == null || (Oper & Operator.RelationalMask) != 0)
 					return CreateNullConstant (right_orig).Resolve (ec);
-
-				if ((Oper & Operator.ArithmeticMask) != 0)
-					return LiftedNull.CreateFromExpression (res_expr);
 			}
 
 			if (right_null_lifted) {
 				right = LiftedNull.Create (left.Type, right.Location);
+
+				if ((Oper & (Operator.ArithmeticMask | Operator.ShiftMask)) != 0)
+					return LiftedNull.CreateFromExpression (res_expr);
 
 				//
 				// Value types and null comparison
 				//
 				if (left_unwrap == null || (Oper & Operator.RelationalMask) != 0)
 					return CreateNullConstant (left_orig).Resolve (ec);
-
-				if ((Oper & Operator.ArithmeticMask) != 0)
-					return LiftedNull.CreateFromExpression (res_expr);
 			}
 
 			return res_expr;

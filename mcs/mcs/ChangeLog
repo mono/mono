@@ -1,3 +1,10 @@
+2008-04-03  Marek Safar  <marek.safar@gmail.com>
+
+	* expression.cs (Binary): Added remaining binary operators to expression
+	tree builder.
+	
+	* nullable.cs: Optimize shift with null argument.
+
 2008-04-03  Raja R Harinath  <harinath@hurrynot.org>
 
 	* statement.cs (TryFinally.need_exc_block): Delete.

@@ -1946,6 +1946,11 @@ namespace Mono.CSharp {
 				t == TypeManager.ushort_type || t == TypeManager.byte_type);
 		}
 
+		static bool IsFloat (Type t)
+		{
+			return t == TypeManager.float_type || t == TypeManager.double_type;
+		}
+
 		Expression ResolveOperator (EmitContext ec)
 		{
 			Type l = left.Type;
@@ -3070,14 +3075,13 @@ namespace Mono.CSharp {
 
 			Type l = left.Type;
 			OpCode opcode;
-			bool is_unsigned = IsUnsigned (l);
 			
 			switch (oper){
 			case Operator.Multiply:
 				if (ec.CheckState){
 					if (l == TypeManager.int32_type || l == TypeManager.int64_type)
 						opcode = OpCodes.Mul_Ovf;
-					else if (is_unsigned)
+					else if (!IsFloat (l))
 						opcode = OpCodes.Mul_Ovf_Un;
 					else
 						opcode = OpCodes.Mul;
@@ -3087,14 +3091,14 @@ namespace Mono.CSharp {
 				break;
 				
 			case Operator.Division:
-				if (is_unsigned)
+				if (IsUnsigned (l))
 					opcode = OpCodes.Div_Un;
 				else
 					opcode = OpCodes.Div;
 				break;
 				
 			case Operator.Modulus:
-				if (is_unsigned)
+				if (IsUnsigned (l))
 					opcode = OpCodes.Rem_Un;
 				else
 					opcode = OpCodes.Rem;
@@ -3104,7 +3108,7 @@ namespace Mono.CSharp {
 				if (ec.CheckState){
 					if (l == TypeManager.int32_type || l == TypeManager.int64_type)
 						opcode = OpCodes.Add_Ovf;
-					else if (is_unsigned)
+					else if (!IsFloat (l))
 						opcode = OpCodes.Add_Ovf_Un;
 					else
 						opcode = OpCodes.Add;
@@ -3116,7 +3120,7 @@ namespace Mono.CSharp {
 				if (ec.CheckState){
 					if (l == TypeManager.int32_type || l == TypeManager.int64_type)
 						opcode = OpCodes.Sub_Ovf;
-					else if (is_unsigned)
+					else if (!IsFloat (l))
 						opcode = OpCodes.Sub_Ovf_Un;
 					else
 						opcode = OpCodes.Sub;
@@ -3125,7 +3129,7 @@ namespace Mono.CSharp {
 				break;
 
 			case Operator.RightShift:
-				if (is_unsigned)
+				if (IsUnsigned (l))
 					opcode = OpCodes.Shr_Un;
 				else
 					opcode = OpCodes.Shr;
@@ -3147,23 +3151,21 @@ namespace Mono.CSharp {
 				break;
 
 			case Operator.LessThan:
-				if (is_unsigned)
+				if (IsUnsigned (l))
 					opcode = OpCodes.Clt_Un;
 				else
 					opcode = OpCodes.Clt;
 				break;
 
 			case Operator.GreaterThan:
-				if (is_unsigned)
+				if (IsUnsigned (l))
 					opcode = OpCodes.Cgt_Un;
 				else
 					opcode = OpCodes.Cgt;
 				break;
 
 			case Operator.LessThanOrEqual:
-				Type lt = left.Type;
-				
-				if (is_unsigned || (lt == TypeManager.double_type || lt == TypeManager.float_type))
+				if (IsUnsigned (l) || IsFloat (l))
 					ig.Emit (OpCodes.Cgt_Un);
 				else
 					ig.Emit (OpCodes.Cgt);
@@ -3173,9 +3175,7 @@ namespace Mono.CSharp {
 				break;
 
 			case Operator.GreaterThanOrEqual:
-				Type le = left.Type;
-				
-				if (is_unsigned || (le == TypeManager.double_type || le == TypeManager.float_type))
+				if (IsUnsigned (l) || IsFloat (l))
 					ig.Emit (OpCodes.Clt_Un);
 				else
 					ig.Emit (OpCodes.Clt);
@@ -3224,13 +3224,16 @@ namespace Mono.CSharp {
 			
 			switch (oper) {
 			case Operator.Addition:
-				if (method == null && ec.CheckState)
+				if (method == null && ec.CheckState && !IsFloat (left.Type))
 					method_name = "AddChecked";
 				else
 					method_name = "Add";
 				break;
 			case Operator.BitwiseAnd:
 				method_name = "And";
+				break;
+			case Operator.BitwiseOr:
+				method_name = "Or";
 				break;
 			case Operator.Division:
 				method_name = "Divide";
@@ -3249,28 +3252,47 @@ namespace Mono.CSharp {
 			case Operator.GreaterThanOrEqual:
 				method_name = "GreaterThanOrEqual";
 				lift_arg = true;
-				break;				
-			case Operator.LessThan:
-				method_name = "LessThan";
-				break;
-			case Operator.LogicalAnd:
-				method_name = "AndAlso";
 				break;
 			case Operator.Inequality:
 				method_name = "NotEqual";
 				lift_arg = true;
 				break;
-			case Operator.RightShift:
-				method_name = "RightShift";
+			case Operator.LeftShift:
+				method_name = "LeftShift";
 				break;
-				
-			case Operator.BitwiseOr:
-				method_name = "Or";
+			case Operator.LessThan:
+				method_name = "LessThan";
+				lift_arg = true;
 				break;
-
+			case Operator.LessThanOrEqual:
+				method_name = "LessThanOrEqual";
+				lift_arg = true;
+				break;
+			case Operator.LogicalAnd:
+				method_name = "AndAlso";
+				break;
 			case Operator.LogicalOr:
 				method_name = "OrElse";
 				break;
+			case Operator.Modulus:
+				method_name = "Modulo";
+				break;
+			case Operator.Multiply:
+				if (method == null && ec.CheckState && !IsFloat (left.Type))
+					method_name = "MultiplyChecked";
+				else
+					method_name = "Multiply";
+				break;
+			case Operator.RightShift:
+				method_name = "RightShift";
+				break;
+			case Operator.Subtraction:
+				if (method == null && ec.CheckState && !IsFloat (left.Type))
+					method_name = "SubtractChecked";
+				else
+					method_name = "Subtract";
+				break;
+
 			default:
 				throw new InternalErrorException ("Unknown expression tree binary operator " + oper);
 			}
