@@ -5093,7 +5093,7 @@ opt_expression
 try_statement
 	: TRY block catch_clauses
 	  {
-		$$ = new TryCatch ((Block) $2, (ArrayList) $3, (Location) $1);
+		$$ = new TryCatch ((Block) $2, (ArrayList) $3, (Location) $1, false);
 	  }
 	| TRY block FINALLY block
 	  {
@@ -5101,7 +5101,7 @@ try_statement
 	  }
 	| TRY block catch_clauses FINALLY block
 	  {
-		$$ = new TryFinally (new TryCatch ((Block) $2, (ArrayList) $3, (Location) $1), (Block) $5, (Location) $1);
+		$$ = new TryFinally (new TryCatch ((Block) $2, (ArrayList) $3, (Location) $1, true), (Block) $5, (Location) $1);
 	  }
 	| TRY block error 
 	  {

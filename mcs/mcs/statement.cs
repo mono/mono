@@ -4452,12 +4452,14 @@ namespace Mono.CSharp {
 		public Block Block;
 		public ArrayList Specific;
 		public Catch General;
+		bool inside_try_finally;
 
-		public TryCatch (Block block, ArrayList catch_clauses, Location l)
+		public TryCatch (Block block, ArrayList catch_clauses, Location l, bool inside_try_finally)
 		{
 			this.Block = block;
 			this.Specific = catch_clauses;
 			this.General = null;
+			this.inside_try_finally = inside_try_finally;
 
 			for (int i = 0; i < catch_clauses.Count; ++i) {
 				Catch c = (Catch) catch_clauses [i];
@@ -4537,7 +4539,10 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 
-			ig.BeginExceptionBlock ();
+			// FIXME: remove the InIterator
+			if (!inside_try_finally || ec.InIterator)
+				ig.BeginExceptionBlock ();
+
 			Block.Emit (ec);
 
 			foreach (Catch c in Specific)
@@ -4546,7 +4551,9 @@ namespace Mono.CSharp {
 			if (General != null)
 				General.Emit (ec);
 
-			ig.EndExceptionBlock ();
+			// FIXME: remove the InIterator
+			if (!inside_try_finally || ec.InIterator)
+				ig.EndExceptionBlock ();
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)

@@ -13,6 +13,11 @@
 
 2008-04-03  Raja R Harinath  <harinath@hurrynot.org>
 
+	Fix minor IL regression
+	* statement.cs (TryCatch..ctor): Add 'inside_try_finally' argument.
+	(TryCatch.DoEmit): Use it to avoid creating another ExceptionBlock.
+	* cs-parser.jay (try_statement): Update to changes.
+
 	* statement.cs (TryFinally.need_exc_block): Delete.
 	(TryFinally): Update to changes.
 
