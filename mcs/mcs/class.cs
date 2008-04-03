@@ -6038,9 +6038,23 @@ namespace Mono.CSharp {
 			FieldAttributes fa = Modifiers.FieldAttr (ModFlags);
 
 			try {
+#if GMCS_SOURCE
+				Type[] required_modifier = null;
+				if ((ModFlags & Modifiers.VOLATILE) != 0) {
+					if (TypeManager.isvolatile_type == null)
+						TypeManager.isvolatile_type = TypeManager.CoreLookupType (
+							"System.Runtime.CompilerServices", "IsVolatile", Kind.Class, true);
+
+					if (TypeManager.isvolatile_type != null)
+						required_modifier = new Type [] { TypeManager.isvolatile_type };
+				}
+
+				FieldBuilder = Parent.TypeBuilder.DefineField (
+					Name, MemberType, required_modifier, null, Modifiers.FieldAttr (ModFlags));
+#else
 				FieldBuilder = Parent.TypeBuilder.DefineField (
 					Name, MemberType, Modifiers.FieldAttr (ModFlags));
-
+#endif
 				Parent.MemberCache.AddMember (FieldBuilder, this);
 				TypeManager.RegisterFieldBase (FieldBuilder, this);
 			}

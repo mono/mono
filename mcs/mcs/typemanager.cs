@@ -112,6 +112,7 @@ namespace Mono.CSharp {
 	static internal Type fixed_buffer_attr_type;
 	static internal Type default_charset_type;
 	static internal Type type_forwarder_attr_type;
+	static internal Type isvolatile_type;
 	static public Type activator_type;
 	static public Type generic_ilist_type;
 	static public Type generic_icollection_type;
