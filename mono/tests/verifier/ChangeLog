@@ -1,3 +1,17 @@
+2008-04-02 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_prefix_test.sh: New test generator for
+	instruction prefix.
+
+	* make_testS: Added tests using the new generator.
+
+2008-04-02 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_type_constraint_test.sh: New test generator for
+	constraints on generic type arguments.
+
+	* make_testS: Added tests using the new generator.
+
 2008-03-31 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* AssemblyRunner.cs: Mark TypeLoadException as invalid code.

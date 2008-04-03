@@ -1,3 +1,8 @@
+2008-04-02  Rodrigo Kumpera <rkumpera@novell.com>
+
+	* mono-profiler-logging.c: Fix the arm build. G_BREAKPOINT() does
+	a "raise(SIGTRAL)" and in some platforms <signal.h> must be included.
+
 2008-03-27  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-oprofile.c: setup_user_options: set default log file
 	name to the name of the executed application.
