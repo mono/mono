@@ -1,5 +1,10 @@
 2008-04-03  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Control.cs: Invalidate when the alpha channel is less than 255,
+	not only when control is transparent.
+
+2008-04-03  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridViewRowPrePaintEventArgs.cs, DataGridViewRowPostPaintEventArgs.cs:
 	Implement some painting convenience methods that threw NIEX.
 

@@ -3952,7 +3952,7 @@ namespace System.Windows.Forms
 					// If any of our children are transparent, we
 					// have to invalidate them anyways
 					foreach (Control c in child_controls.GetAllControls ())
-						if (c.BackColor == Color.Transparent)
+						if (c.BackColor.A != 255)
 							c.Invalidate ();
 				}
 			}
