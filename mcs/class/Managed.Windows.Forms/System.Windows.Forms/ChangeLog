@@ -1,5 +1,10 @@
 2008-04-03  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* GridEntry.cs: Report the conversion exception error description.
+	[Fixes bug #375792]
+
+2008-04-03  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* PropertyGridView.cs: Do not scroll to item on resize.
 	[Fixes bug #375789]
 

@@ -453,21 +453,24 @@ namespace System.Windows.Forms.PropertyGridInternal
 						value = converter.ConvertFrom (value);
 					else
 						conversionError = true;
-				} catch {
+				} catch (Exception e) {
+					error = e.Message;
 					conversionError = true;
 				}
 				if (conversionError) {
 					string valueText = ConvertToString (value);
+					string errorShortDescription = null;
 					if (valueText != null) {
-						error = "Property value '" + valueText + "' of '" +
+						errorShortDescription = "Property value '" + valueText + "' of '" +
 							PropertyDescriptor.Name + "' is not convertible to type '" +
 							this.PropertyDescriptor.PropertyType.Name + "'";
 
 					} else {
-						error = "Property value of '" +
+						errorShortDescription = "Property value of '" +
 							PropertyDescriptor.Name + "' is not convertible to type '" +
 							this.PropertyDescriptor.PropertyType.Name + "'";
 					}
+					error = errorShortDescription + Environment.NewLine + Environment.NewLine + error;
 					return false;
 				}
 			}
