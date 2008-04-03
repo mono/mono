@@ -1,9 +1,8 @@
 //
-// System.Net.HttpWebRequest (for 2.1 profile)
+// System.Net.HttpWebResponse (for 2.1 profile)
 //
 // Authors:
-//	Atsushi Enomoto  <atsushi@ximian.com>
-//  Jb Evain  <jbevain@novell.com>
+//	Jb Evain  <jbevain@novell.com>
 //
 // (c) 2007 Novell, Inc. (http://www.novell.com)
 //
@@ -16,10 +15,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -32,12 +31,28 @@
 #if NET_2_1
 
 using System;
+using System.IO;
 
-namespace System.Net { 
+namespace System.Net {
 
-	public abstract class HttpWebRequest : WebRequest {
+	public abstract class WebResponse : IDisposable {
 
-		public abstract bool HaveResponse { get; }
+		public abstract long ContentLength { get; }
+		public abstract string ContentType { get; }
+		public abstract Uri ResponseUri { get; }
+
+		protected WebResponse ()
+		{
+		}
+
+		public abstract void Close ();
+		public abstract void Dispose (bool disposing);
+		public abstract Stream GetResponseStream ();
+
+		void IDisposable.Dispose ()
+		{
+			Dispose (true);
+		}
 	}
 }
 
