@@ -166,6 +166,22 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			Assert.AreSame (a, b, "INWM4");
 		}
 
+#if NET_2_0
+		[Test]
+		public void TestIndexerICurrencyManagerProvider ()
+		{
+			BindingContext bc = new BindingContext ();
+			BindingSource source = new BindingSource ();
+
+			// This way the actual CurrencyManager instance is NOT added to
+			// BindingContext
+			CurrencyManager cm = (CurrencyManager) bc [source];
+			Assert.AreSame (cm, source.CurrencyManager, "A1");
+			Assert.AreEqual (false, bc.Contains (source), "A2");
+			Assert.AreEqual (0, ((ICollection)bc).Count, "A3");
+		}
+#endif
+
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void CantCreateChildList ()

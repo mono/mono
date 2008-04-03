@@ -1,5 +1,10 @@
 2008-04-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* BindingContextTest.cs: New test for ICurrencyManagerProvider
+	instances passed as data sources.
+
+2008-04-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* BindingSourceTest.cs: New test for type instances as data sources.
 
 2008-04-02  Jonathan Pobst  <monkey@jpobst.com>
