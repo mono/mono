@@ -533,8 +533,19 @@ namespace System.ComponentModel.Design
 
 			private void doRemove_Click (object sender, EventArgs e)
 			{
-				if (itemsList.SelectedIndex != -1)
-					itemsList.Items.RemoveAt (itemsList.SelectedIndex);
+				if (itemsList.SelectedIndex != -1) {
+					int[] selected = new int[itemsList.SelectedItems.Count];
+					for (int i=0; i < itemsList.SelectedItems.Count; i++)
+						selected[i] = itemsList.Items.IndexOf (itemsList.SelectedItems[i]);
+
+					for (int i = selected.Length - 1; i >= 0; i--)
+						itemsList.Items.RemoveAt (selected[i]);
+
+					int prevIndex = --selected[0];
+					if (prevIndex == -1 && itemsList.Items.Count > 0)
+						prevIndex = 0;
+					itemsList.SelectedIndex = prevIndex;
+				}
 				if (itemsList.SelectedItems.Count == 0)
 					itemDisplay.SelectedObject = null;
 			}
