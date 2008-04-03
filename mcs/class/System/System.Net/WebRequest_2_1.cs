@@ -37,6 +37,8 @@ namespace System.Net {
 
 	public abstract class WebRequest {
 
+		static Type browser_http_request;
+
 		public abstract string ContentType { get; set; }
 		public abstract WebHeaderCollection Headers { get; set; }
 		public abstract string Method { get; set; }
@@ -52,16 +54,34 @@ namespace System.Net {
 		public abstract Stream EndGetRequestStream (IAsyncResult asyncResult);
 		public abstract WebResponse EndGetResponse (IAsyncResult asyncResult);
 
-		[MonoTODO]
 		public static WebRequest Create (Uri uri)
 		{
-			throw new NotImplementedException ("WebRequest::Create factory method");
+			if (!uri.Scheme.StartsWith ("http"))
+				throw new NotSupportedException (string.Format ("Scheme {0} not supported", uri.Scheme));
+
+			return CreateBrowserHttpRequest (uri);
 		}
 
-		[MonoTODO]
+		static WebRequest CreateBrowserHttpRequest (Uri uri)
+		{
+			if (browser_http_request == null)
+				browser_http_request = GetBrowserHttpFromMoonlight ();
+
+			return (WebRequest) Activator.CreateInstance (browser_http_request, new object [] { uri });
+		}
+
+		static Type GetBrowserHttpFromMoonlight ()
+		{
+			var type = Type.GetType ("System.Windows.Browser.Net.BrowserHttpWebRequest, Mono.Moonlight");
+			if (type == null)
+				throw new NotSupportedException ("Can not get BrowserHttpWebRequest");
+
+			return type;
+		}
+
 		public static bool RegisterPrefix (string prefix, IWebRequestCreate creator)
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ();
 		}
 	}
 }
