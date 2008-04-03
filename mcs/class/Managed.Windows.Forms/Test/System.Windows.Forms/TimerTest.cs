@@ -105,6 +105,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 #endif
 
+		/* Application.DoEvents and Sleep are not guarenteed on Linux
 		[Test]
 		public void EnabledTest ()
 		{
@@ -130,6 +131,7 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual (false, timer.Enabled, "6");
 			}
 		}
+		*/
 
 		void TickHandler (object sender, EventArgs e)
 		{

@@ -1,3 +1,7 @@
+2008-04-03  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TimerTest.cs: Disable a finicky test that occasionally fails.
+
 2008-04-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* BindingContextTest.cs: New test for ICurrencyManagerProvider
