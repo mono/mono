@@ -23,7 +23,6 @@ DummySystemNet.cs
 ../System/System.Net/EndPointListener.cs
 ../System/System.Net/EndPointManager.cs
 ../System/System.Net/EndpointPermission.cs
-../System/System.Net/GlobalProxySelection.cs
 ../System/System.Net/HttpConnection.cs
 ../System/System.Net/HttpContinueDelegate.cs
 ../System/System.Net/HttpListenerBasicIdentity.cs
@@ -50,8 +49,6 @@ DummySystemNet.cs
 ../System/System.Net/IPEndPoint.cs
 ../System/System.Net/IPHostEntry.cs
 ../System/System.Net/IPv6Address.cs
-../System/System.Net/IWebProxy.cs
-../System/System.Net/IWebProxyScript.cs
 ../System/System.Net/IWebRequestCreate.cs
 ../System/System.Net/ListenerAsyncResult.cs
 ../System/System.Net/ListenerPrefix.cs
@@ -155,10 +152,9 @@ DummySystemNet.cs
 ../System/System.Net/WebException.cs
 ../System/System.Net/WebExceptionStatus.cs
 ../System/System.Net/WebHeaderCollection_2_1.cs
-../System/System.Net/WebProxy.cs
-../System/System.Net/WebRequest.cs
+../System/System.Net/WebRequest_2_1.cs
 ../System/System.Net/WebRequestMethods.cs
-../System/System.Net/WebResponse.cs
+../System/System.Net/WebResponse_2_1.cs
 ../System/System.Net/UploadDataCompletedEventArgs.cs
 ../System/System.Net/UploadFileCompletedEventArgs.cs
 ../System/System.Net/UploadFileCompletedEventHandler.cs
