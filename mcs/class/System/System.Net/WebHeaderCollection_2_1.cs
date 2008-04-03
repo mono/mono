@@ -47,6 +47,10 @@ namespace System.Net {
 			get { return headers.Count; }
 		}
 
+		public ICollection<string> Headers {
+			get { return new List<string> (headers.Keys); }
+		}
+
 		public string this [string header] {
 			get {
 				string value;
