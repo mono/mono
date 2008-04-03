@@ -89,6 +89,7 @@ namespace System.Windows.Forms {
 		private int firstDisplayedScrollingRowIndex;
 		private Color gridColor = Color.FromKnownColor(KnownColor.ControlDark);
 		private int horizontalScrollingOffset;
+		private DataGridViewCell hover_cell = null;
 		private bool isCurrentCellDirty;
 		//private bool isCurrentRowDirty;
 		private bool multiSelect;
@@ -3700,30 +3701,59 @@ namespace System.Windows.Forms {
 
 		protected override void OnMouseLeave (EventArgs e)
 		{
-			base.OnMouseLeave(e);
+			base.OnMouseLeave (e);
+			
+			if (hover_cell != null) {
+				OnCellMouseLeave (new DataGridViewCellEventArgs (hover_cell.ColumnIndex, hover_cell.RowIndex));
+				hover_cell = null;
+			}
 		}
-
+		
 		protected override void OnMouseMove (MouseEventArgs e)
 		{
-			base.OnMouseMove(e);
+			base.OnMouseMove (e);
+			
 			HitTestInfo hit = this.HitTest (e.X, e.Y);
 			
-			switch (hit.Type)
-			{
-			case DataGridViewHitTestType.Cell:
-				Rectangle display = GetCellDisplayRectangle (hit.ColumnIndex, hit.RowIndex, false);
-				OnCellMouseMove (new DataGridViewCellMouseEventArgs (hit.ColumnIndex, hit.RowIndex, e.X - display.X, e.Y - display.Y, e));
-				break;
-			case DataGridViewHitTestType.ColumnHeader:
-			case DataGridViewHitTestType.RowHeader:
-			case DataGridViewHitTestType.TopLeftHeader:
+			if (hit.Type == DataGridViewHitTestType.Cell) {
+				DataGridViewCell new_cell = GetCellInternal (hit.ColumnIndex, hit.RowIndex);
+				
+				// We have never been in a cell before
+				if (hover_cell == null) {
+					hover_cell = new_cell;
+					OnCellMouseEnter (new DataGridViewCellEventArgs (hit.ColumnIndex, hit.RowIndex));
+					
+					Rectangle display = GetCellDisplayRectangle (hit.ColumnIndex, hit.RowIndex, false);
+					OnCellMouseMove (new DataGridViewCellMouseEventArgs (hit.ColumnIndex, hit.RowIndex, e.X - display.X, e.Y - display.Y, e));
+					
+					return;
+				}
 			
-			case DataGridViewHitTestType.HorizontalScrollBar:
-			case DataGridViewHitTestType.VerticalScrollBar:
+				// Were we already in this cell?
+				if (hover_cell.RowIndex == hit.RowIndex && hover_cell.ColumnIndex == hit.ColumnIndex) {
+					Rectangle display = GetCellDisplayRectangle (hit.ColumnIndex, hit.RowIndex, false);
+					OnCellMouseMove (new DataGridViewCellMouseEventArgs (hit.ColumnIndex, hit.RowIndex, e.X - display.X, e.Y - display.Y, e));
+				
+					return;
+				}
 			
-			
-			case DataGridViewHitTestType.None:
-				break;
+				// We are changing cells
+				OnCellMouseLeave (new DataGridViewCellEventArgs (hover_cell.ColumnIndex, hover_cell.RowIndex));
+
+				hover_cell = new_cell;
+				
+				OnCellMouseEnter (new DataGridViewCellEventArgs (hit.ColumnIndex, hit.RowIndex));
+
+				Rectangle display2 = GetCellDisplayRectangle (hit.ColumnIndex, hit.RowIndex, false);
+				OnCellMouseMove (new DataGridViewCellMouseEventArgs (hit.ColumnIndex, hit.RowIndex, e.X - display2.X, e.Y - display2.Y, e));
+
+				return;
+			} else {
+				// We have left the cell area
+				if (hover_cell != null) {
+					OnCellMouseLeave (new DataGridViewCellEventArgs (hover_cell.ColumnIndex, hover_cell.RowIndex));
+					hover_cell = null;
+				}
 			}
 		}
 
