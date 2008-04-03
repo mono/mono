@@ -1,5 +1,12 @@
 2008-04-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* BindingContext.cs: When retrieving a BindingManagerBase, if the
+	dataSource parameter is ICurrencyManagerProvider, then return
+	ICurrencyManagerProvider.CurrencyManager/GetRelatedCurrencyManager
+	instead of creating a new one.
+
+2008-04-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* BindingSource.cs: Implement support for Type instances as
 	DataSource.
 
