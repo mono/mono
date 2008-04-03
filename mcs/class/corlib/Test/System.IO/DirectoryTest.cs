@@ -1485,7 +1485,6 @@ public class DirectoryTest
 	}
 
 	[Test] // bug #346123
-	[Category ("NotWorking")]
 	public void GetDirectories_Backslash ()
 	{
 		if (!RunningOnUnix)
@@ -1537,7 +1536,6 @@ public class DirectoryTest
 	}
 
 	[Test] // bug #346123
-	[Category ("NotWorking")]
 	public void GetFiles_Backslash ()
 	{
 		if (!RunningOnUnix)
