@@ -1,5 +1,10 @@
 2008-04-03  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridViewRowPrePaintEventArgs.cs, DataGridViewRowPostPaintEventArgs.cs:
+	Implement some painting convenience methods that threw NIEX.
+
+2008-04-03  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridView.cs: Call CellMouse[Enter|Move|Leave] properly.
 	* DataGridViewLinkCell.cs: Implement.
 
