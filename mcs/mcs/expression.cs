@@ -1925,7 +1925,7 @@ namespace Mono.CSharp {
 				l = TypeManager.CSharpName (left.Type);
 
 			if (right.eclass == ExprClass.MethodGroup)
-				r = left.ExprClassName;
+				r = right.ExprClassName;
 			else
 				r = TypeManager.CSharpName (right.Type);
 

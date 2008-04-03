@@ -1,5 +1,11 @@
 2008-04-03  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #376508
+	* convert.cs, expression.cs: Fixed difference between ImplicitConversion and
+	ImplicitConversionExists.
+
+2008-04-03  Marek Safar  <marek.safar@gmail.com>
+
 	* expression.cs (Binary): Added remaining binary operators to expression
 	tree builder.
 	
