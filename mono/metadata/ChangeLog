@@ -1,3 +1,8 @@
+2008-04-04 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Fix the detection of branches to the middle
+	of an instruction.
+
 2008-04-03 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c: Implemented verification of volatile. and
