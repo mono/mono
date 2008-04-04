@@ -26,6 +26,8 @@ namespace Mono.CSharp {
 		ArrayList finally_blocks;
 		bool unwind_protect;
 
+		int resume_pc;
+
 		public Yield (Expression expr, Location l)
 		{
 			this.expr = expr;
@@ -53,25 +55,6 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (isYieldBreak)
-				return true;
-
-			if (ec.InFinally) {
-				Report.Error (1625, loc, "Cannot yield in the body of a " +
-					      "finally clause");
-				return false;
-			}
-
-			if (ec.InCatch) {
-				Report.Error (1631, loc, "Cannot yield a value in the body of a catch clause");
-				return false;
-			}
-
-			if (ec.CurrentBranching.InTryWithCatch ()) {
-				Report.Error (1626, loc, "Cannot yield a value in the body of a try block with a catch clause");
-				return false;
-			}
-
 			return true;
 		}
 		
@@ -96,13 +79,19 @@ namespace Mono.CSharp {
 					return false;
 			}
 
-			unwind_protect = ec.CurrentBranching.StealFinallyClauses (ref finally_blocks);
+			unwind_protect = ec.CurrentBranching.AddResumePoint (this, loc, out resume_pc);
+
+			if (ec.CurrentBranching.StealFinallyClauses (ref finally_blocks) != unwind_protect)
+				throw new InternalErrorException ();
+
 			return true;
 		}
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			ec.CurrentIterator.MarkYield (ec, expr, unwind_protect, finally_blocks);
+			int pc = ec.CurrentIterator.MarkYield (ec, expr, unwind_protect, finally_blocks);
+			if (pc != resume_pc)
+				throw new InternalErrorException ();
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)
@@ -802,7 +791,7 @@ namespace Mono.CSharp {
 		//
 		// Called back from Yield
 		//
-		public void MarkYield (EmitContext ec, Expression expr, bool unwind_protect,
+		public int MarkYield (EmitContext ec, Expression expr, bool unwind_protect,
 				       ArrayList finally_blocks)
 		{
 			ILGenerator ig = ec.ig;
@@ -828,6 +817,8 @@ namespace Mono.CSharp {
 			ResumePoint point = new ResumePoint (finally_blocks);
 			resume_points.Add (point);
 			point.Define (ig);
+
+			return pc;
 		}
 
 		public override string ContainerType {

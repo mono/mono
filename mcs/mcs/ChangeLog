@@ -1,3 +1,18 @@
+2008-04-05  Raja R Harinath  <harinath@hurrynot.org>
+
+	New infrastructure for try/finally in iterators (still unused)
+	* flowanalysis.cs (FlowBranching.AddResumePoint): New.
+	(FlowBranchingToplevel.AddResumePoint): Hook into
+	ToplevelBlock.AddResumePoint.
+	(FlowBranchingTryCatch): Move CS01626 and CS01631 checks here.
+	(FlowBranchingException): Hook into ExceptionBlock.AddResumePoint.
+	* statement.cs (ToplevelBlock.AddResumePoint): New.  Collect
+	resume points and assign program-counter values.
+	(ExceptionBlock.AddResumePoint): Collect resume points for
+	de-muxer at the top of try block.
+	* iterators.cs (Yield.CheckContext): Simplify.
+	(Yield.Resolve): Use FlowBranching.AddResumePoint.
+
 2008-04-04  Raja R Harinath  <harinath@hurrynot.org>
 
 	* flowanalysis.cs (FlowBranching.AddReturnOrigin): Change Location

@@ -430,6 +430,11 @@ namespace Mono.CSharp
 			return Parent.InTryWithCatch ();
 		}
 
+		public virtual bool AddResumePoint (ResumableStatement stmt, Location loc, out int pc)
+		{
+			return Parent.AddResumePoint (stmt, loc, out pc);
+		}
+
 		// returns true if we crossed an unwind-protected region (try/catch/finally, lock, using, ...)
 		public virtual bool AddBreakOrigin (UsageVector vector, Location loc)
 		{
@@ -658,6 +663,12 @@ namespace Mono.CSharp
 			return false;
 		}
 
+		public override bool AddResumePoint (ResumableStatement stmt, Location loc, out int pc)
+		{
+			pc = Block.Toplevel.AddResumePoint (stmt, loc);
+			return false;
+		}
+
 		public override bool AddBreakOrigin (UsageVector vector, Location loc)
 		{
 			Report.Error (139, loc, "No enclosing loop out of which to break or continue");
@@ -729,6 +740,19 @@ namespace Mono.CSharp
 
 		public override bool InTryWithCatch ()
 		{
+			return true;
+		}
+
+		public override bool AddResumePoint (ResumableStatement stmt, Location loc, out int pc)
+		{
+			int errors = Report.Errors;
+			Parent.AddResumePoint (stmt, loc, out pc);
+			if (errors == Report.Errors) {
+				if (CurrentUsageVector.Next == null)
+					Report.Error (1626, loc, "Cannot yield a value in the body of a try block with a catch clause");
+				else
+					Report.Error (1631, loc, "Cannot yield a value in the body of a catch clause");
+			}
 			return true;
 		}
 
@@ -877,6 +901,19 @@ namespace Mono.CSharp
 
 		public override UsageVector CurrentUsageVector {
 			get { return current_vector; }
+		}
+
+		public override bool AddResumePoint (ResumableStatement stmt, Location loc, out int pc)
+		{
+			int errors = Report.Errors;
+			Parent.AddResumePoint (this.stmt, loc, out pc);
+			if (errors == Report.Errors) {
+				if (finally_vector == null)
+					this.stmt.AddResumePoint (stmt, loc, pc);
+				else
+					Report.Error (1625, loc, "Cannot yield in the body of a finally clause");
+			}
+			return true;
 		}
 
 		public override bool AddBreakOrigin (UsageVector vector, Location loc)

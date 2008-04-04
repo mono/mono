@@ -2763,7 +2763,6 @@ namespace Mono.CSharp {
 			get { return this_variable; }
 		}
 
-
 		// <summary>
 		//   This is used by non-static `struct' constructors which do not have an
 		//   initializer - in this case, the constructor must initialize all of the
@@ -2897,6 +2896,18 @@ namespace Mono.CSharp {
 			{
 				iterator.EmitMoveNext (ec, block);
 			}
+		}
+
+		public ArrayList ResumePoints;
+		public int AddResumePoint (ResumableStatement stmt, Location loc)
+		{
+			if ((flags & Flags.IsIterator) == 0)
+				throw new InternalErrorException ();
+
+			if (ResumePoints == null)
+				ResumePoints = new ArrayList ();
+			ResumePoints.Add (stmt);
+			return ResumePoints.Count;
 		}
 
 		public override string ToString ()
@@ -3809,6 +3820,21 @@ namespace Mono.CSharp {
 		protected void ResolveFinally (FlowBranchingException branching)
 		{
 			emit_finally = branching.EmitFinally;
+		}
+
+		ArrayList resume_points;
+		int first_resume_pc;
+		public void AddResumePoint (ResumableStatement stmt, Location loc, int pc)
+		{
+			if (resume_points == null) {
+				resume_points = new ArrayList ();
+				first_resume_pc = pc;
+			}
+
+			if (pc != first_resume_pc + resume_points.Count)
+				throw new InternalErrorException ("missed an intervening AddResumePoint?");
+
+			resume_points.Add (stmt);
 		}
 	}
 
