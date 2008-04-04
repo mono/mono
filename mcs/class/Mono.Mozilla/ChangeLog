@@ -1,5 +1,11 @@
 2008-04-04  Andreia Gaita <avidigal@novell.com> 
 
+	* Mono.Mozilla/DOM/Document.cs: Differentiate between html and non-html
+	elements when creating the wrapper object for the active element, as
+	certain properties are only implemented in html elements.
+
+2008-04-04  Andreia Gaita <avidigal@novell.com> 
+
 	* Mono.Mozilla/AsciiString.cs, Mono.Mozilla/UniString.cs: Fix for string
 	getter cache, always mark the string as dirty when fetching the handle.
 
