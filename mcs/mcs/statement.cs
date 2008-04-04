@@ -741,20 +741,37 @@ namespace Mono.CSharp {
 		}
 	}
 
+	// A 'return' or a 'yield break'
+	public abstract class ExitStatement : Statement
+	{
+		protected bool unwind_protect;
+		protected abstract bool DoResolve (EmitContext ec);
+
+		public sealed override bool Resolve (EmitContext ec)
+		{
+			if (!DoResolve (ec))
+				return false;
+
+			unwind_protect = ec.CurrentBranching.AddReturnOrigin (ec.CurrentBranching.CurrentUsageVector, loc);
+			if (unwind_protect)
+				ec.NeedReturnLabel ();
+			ec.CurrentBranching.CurrentUsageVector.Goto ();
+			return true;
+		}
+	}
+
 	/// <summary>
 	///   Implements the return statement
 	/// </summary>
-	public class Return : Statement {
+	public class Return : ExitStatement {
 		protected Expression Expr;
-		bool unwind_protect;
-		
 		public Return (Expression expr, Location l)
 		{
 			Expr = expr;
 			loc = l;
 		}
 		
-		bool DoResolve (EmitContext ec)
+		protected override bool DoResolve (EmitContext ec)
 		{
 			if (Expr == null) {
 				if (ec.ReturnType == TypeManager.void_type)
@@ -807,18 +824,6 @@ namespace Mono.CSharp {
 			}
 
 			return true;			
-		}
-
-		public override bool Resolve (EmitContext ec)
-		{
-			if (!DoResolve (ec))
-				return false;
-			
-			unwind_protect = ec.CurrentBranching.AddReturnOrigin (ec.CurrentBranching.CurrentUsageVector, loc);
-			if (unwind_protect)
-				ec.NeedReturnLabel ();
-			ec.CurrentBranching.CurrentUsageVector.Goto ();
-			return true;
 		}
 		
 		protected override void DoEmit (EmitContext ec)
@@ -3771,7 +3776,13 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public abstract class ExceptionStatement : Statement
+	// A place where execution can restart in an iterator
+	public abstract class ResumableStatement : Statement
+	{
+		public Label ResumePoint;
+	}
+
+	public abstract class ExceptionStatement : ResumableStatement
 	{
 		public abstract void EmitFinallyBody (EmitContext ec);
 

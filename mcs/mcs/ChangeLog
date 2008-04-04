@@ -1,5 +1,12 @@
 2008-04-04  Raja R Harinath  <harinath@hurrynot.org>
 
+	* statement.cs (ResumableStatement): New.  Common base class for
+	YieldReturn and ExceptionStatement.
+	(ExitStatement): New.  Common base class for Return and YieldBreak.
+	(Return): Update to changes.
+	* iterator.cs (YieldBreak): Likewise.
+	* lambda.cs (ContextualReturn): Likewise.
+
 	Fix #377028
 	* ecore.cs (Expression.ResolveAsTypeStep): If '!silent' attempt to
 	emit a meaningful error message.

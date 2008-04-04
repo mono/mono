@@ -21,7 +21,7 @@ using System.Reflection.Emit;
 
 namespace Mono.CSharp {
 
-	public class Yield : Statement {
+	public class Yield : ResumableStatement {
 		Expression expr;
 		ArrayList finally_blocks;
 		bool unwind_protect;
@@ -113,22 +113,15 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class YieldBreak : Statement {
-		bool unwind_protect;
+	public class YieldBreak : ExitStatement {
 		public YieldBreak (Location l)
 		{
 			loc = l;
 		}
 
-		public override bool Resolve (EmitContext ec)
+		protected override bool DoResolve (EmitContext ec)
 		{
-			if (!Yield.CheckContext (ec, loc, true))
-				return false;
-
-			// not exactly a 'return' but close enough
-			unwind_protect = ec.CurrentBranching.AddReturnOrigin (ec.CurrentBranching.CurrentUsageVector, loc);
-			ec.CurrentBranching.CurrentUsageVector.Goto ();
-			return true;
+			return Yield.CheckContext (ec, loc, true);
 		}
 
 		protected override void DoEmit (EmitContext ec)
