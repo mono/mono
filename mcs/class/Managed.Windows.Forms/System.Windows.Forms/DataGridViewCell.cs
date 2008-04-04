@@ -1347,11 +1347,11 @@ namespace System.Windows.Forms {
 		
 		private void PaintPartBorder (Graphics graphics, Rectangle cellBounds, int rowIndex)
 		{
-			Pen p = SystemPens.ControlDark;
+			Pen p = ThemeEngine.Current.ResPool.GetPen (DataGridView.GridColor);
 
 			if (columnIndex == -1) {
-				graphics.DrawLine (p, cellBounds.Left, cellBounds.Top, cellBounds.Left, cellBounds.Bottom);
-				graphics.DrawLine (p, cellBounds.Right - 1, cellBounds.Top, cellBounds.Right - 1, cellBounds.Bottom);
+				graphics.DrawLine (p, cellBounds.Left, cellBounds.Top, cellBounds.Left, cellBounds.Bottom - 1);
+				graphics.DrawLine (p, cellBounds.Right - 1, cellBounds.Top, cellBounds.Right - 1, cellBounds.Bottom - 1);
 
 				if (rowIndex == DataGridView.Rows.Count - 1 || rowIndex == -1)
 					graphics.DrawLine (p, cellBounds.Left, cellBounds.Bottom - 1, cellBounds.Right - 1, cellBounds.Bottom - 1);
@@ -1365,11 +1365,11 @@ namespace System.Windows.Forms {
 				graphics.DrawLine (p, cellBounds.Left, cellBounds.Top, cellBounds.Right - 1, cellBounds.Top);
 
 				if (columnIndex == DataGridView.Columns.Count - 1 || columnIndex == -1)
-					graphics.DrawLine (p, cellBounds.Right - 1, cellBounds.Top, cellBounds.Right - 1, cellBounds.Bottom);
+					graphics.DrawLine (p, cellBounds.Right - 1, cellBounds.Top, cellBounds.Right - 1, cellBounds.Bottom - 1);
 				else
 					graphics.DrawLine (p, cellBounds.Right - 1, cellBounds.Top + 3, cellBounds.Right - 1, cellBounds.Bottom - 3);
 			} else {
-				graphics.DrawLine (p, cellBounds.Right - 1, cellBounds.Top, cellBounds.Right - 1, cellBounds.Bottom);
+				graphics.DrawLine (p, cellBounds.Right - 1, cellBounds.Top, cellBounds.Right - 1, cellBounds.Bottom - 1);
 				graphics.DrawLine (p, cellBounds.Left, cellBounds.Bottom - 1, cellBounds.Right - 1, cellBounds.Bottom - 1);
 			}
 		}

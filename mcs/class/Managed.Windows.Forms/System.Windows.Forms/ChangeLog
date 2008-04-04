@@ -1,3 +1,7 @@
+2008-04-04  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridViewCell.cs: Respect DataGridView.GridColor.
+
 2008-04-03  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: Invalidate when the alpha channel is less than 255,
