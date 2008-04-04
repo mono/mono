@@ -1,5 +1,10 @@
 2008-04-04  Dick Porter  <dick@ximian.com>
 
+	* io.c (MoveFile): Check file shares before moving a file.  Fixes
+	bug 377049.
+
+2008-04-04  Dick Porter  <dick@ximian.com>
+
 	* error.c (errno_to_WSA): handle ENODEV.  Fixes the reopened part
 	of bug 324035.
 
