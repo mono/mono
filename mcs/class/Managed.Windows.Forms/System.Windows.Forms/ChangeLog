@@ -1,4 +1,9 @@
 2008-04-04  Ivan N. Zlatev  <contact@i-nz.net>
+	
+	* GridEntry.cs: ICustomTypeDescriptor support for PropertyOwner, 
+	TypeConverter and UITypeEditors.
+
+2008-04-04  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* Control.cs: Visibility should be set synchronously, 
 	so we must also redraw once it is and not rely on layouting or 
