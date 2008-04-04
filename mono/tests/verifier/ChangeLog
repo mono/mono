@@ -1,3 +1,9 @@
+2008-04-04 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* invalid_branch_middle_of_instruction.il: Recent
+	work on prefixes broke the verification for branching
+	in the middle of an instruction.
+
 2008-04-02 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_prefix_test.sh: New test generator for
