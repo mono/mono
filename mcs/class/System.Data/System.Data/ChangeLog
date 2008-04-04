@@ -1,3 +1,9 @@
+2008-04-04  Veerapuram Varadhan <vvaradhan@novell.com>
+
+	* DataView.cs:  Reverting previous commit as it breaks quite a few
+	tests.  Need to find a better way to resolve the performance
+	issue. 
+	
 2008-03-17  Veerapuram Varadhan <vvaradhan@novell.com>
 	
 	** Fixes part1 of #357947

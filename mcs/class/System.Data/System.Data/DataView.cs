@@ -757,8 +757,7 @@ namespace System.Data
 			/* ItemDeleted */
 			int newIndex;
 			newIndex = IndexOf (args.Row);
-			if (Index != null)
-				Index.Delete (args.Row);
+			UpdateIndex (true);
 			OnListChanged (new ListChangedEventArgs (ListChangedType.ItemDeleted, newIndex, -1));
 		}
 		
