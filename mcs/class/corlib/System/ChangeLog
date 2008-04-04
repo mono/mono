@@ -1,3 +1,9 @@
+2008-04-04  Raja R Harinath  <harinath@hurrynot.org>
+
+	* String.cs (EndsWith) [CultureInfo variant]: Handle null 'culture'.
+	(StartsWith, EndsWith, IndexOf, LastIndexOf) [StringComparison variant]:
+	Throw exception on invalid StringComparison.
+
 2008-04-01  Eyal Alaluf <eyala@mainsoft.com>
 
 	* NumberFormatter.cs NumberFormatter.jvm.cs: Performance optimizations.

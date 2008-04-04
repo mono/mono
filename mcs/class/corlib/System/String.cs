@@ -510,7 +510,7 @@ namespace System
 				return CompareOrdinal (strA, strB, CompareOptions.Ordinal | CompareOptions.IgnoreCase);
 			default:
 				string msg = Locale.GetText ("Invalid value '{0}' for StringComparison", comparisonType);
-				throw new ArgumentException ("comparisonType", msg);
+				throw new ArgumentException (msg, "comparisonType");
 			}
 		}
 
@@ -531,7 +531,7 @@ namespace System
 				return CompareOrdinal (strA, indexA, strB, indexB, length, CompareOptions.Ordinal | CompareOptions.IgnoreCase);
 			default:
 				string msg = Locale.GetText ("Invalid value '{0}' for StringComparison", comparisonType);
-				throw new ArgumentException ("comparisonType", msg);
+				throw new ArgumentException (msg, "comparisonType");
 			}
 		}
 
@@ -657,9 +657,11 @@ namespace System
 #endif
 		bool EndsWith (String value, bool ignoreCase, CultureInfo culture)
 		{
-			return (culture.CompareInfo.IsSuffix (this, value,
-				ignoreCase ? CompareOptions.IgnoreCase :
-				CompareOptions.None));
+			if (culture == null)
+				culture = CultureInfo.CurrentCulture;
+
+			return culture.CompareInfo.IsSuffix (this, value,
+				ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None);
 		}
 
 		public int IndexOfAny (char [] anyOf)
@@ -775,7 +777,9 @@ namespace System
 			case StringComparison.OrdinalIgnoreCase:
 				return CultureInfo.InvariantCulture.CompareInfo.IndexOf (this, value, startIndex, count, CompareOptions.OrdinalIgnoreCase);
 			}
-			throw new SystemException ("INTERNAL ERROR: should not reach here ...");
+
+			string msg = Locale.GetText ("Invalid value '{0}' for StringComparison", comparison);
+			throw new ArgumentException  (msg, "comparison");
 		}
 
 		public int LastIndexOf (string value, StringComparison comparison)
@@ -804,7 +808,9 @@ namespace System
 			case StringComparison.OrdinalIgnoreCase:
 				return CultureInfo.InvariantCulture.CompareInfo.LastIndexOf (this, value, startIndex, count, CompareOptions.OrdinalIgnoreCase);
 			}
-			throw new SystemException ("INTERNAL ERROR: should not reach here ...");
+
+			string msg = Locale.GetText ("Invalid value '{0}' for StringComparison", comparison);
+			throw new ArgumentException  (msg, "comparison");
 		}
 #endif
 
@@ -1191,7 +1197,8 @@ namespace System
 			case StringComparison.OrdinalIgnoreCase:
 				return CultureInfo.CurrentCulture.CompareInfo.IsPrefix (this, value, CompareOptions.OrdinalIgnoreCase);
 			default:
-				return false;
+				string msg = Locale.GetText ("Invalid value '{0}' for StringComparison", comparisonType);
+				throw new ArgumentException (msg, "comparisonType");
 			}
 		}
 
@@ -1212,7 +1219,8 @@ namespace System
 			case StringComparison.OrdinalIgnoreCase:
 				return CultureInfo.CurrentCulture.CompareInfo.IsSuffix (this, value, CompareOptions.OrdinalIgnoreCase);
 			default:
-				return false;
+				string msg = Locale.GetText ("Invalid value '{0}' for StringComparison", comparisonType);
+				throw new ArgumentException (msg, "comparisonType");
 			}
 		}
 
