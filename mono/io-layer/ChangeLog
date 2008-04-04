@@ -1,5 +1,10 @@
 2008-04-04  Dick Porter  <dick@ximian.com>
 
+	* error.c (errno_to_WSA): handle ENODEV.  Fixes the reopened part
+	of bug 324035.
+
+2008-04-04  Dick Porter  <dick@ximian.com>
+
 	* processes.c (GetModuleInformation): 
 	* versioninfo.h: 
 	* versioninfo.c: 64bit fixes
