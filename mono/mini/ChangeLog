@@ -1,3 +1,8 @@
+2008-04-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (check_for_method_verify): Remove the mscorlib comment since it is no
+	longer valid.
+
 2008-04-04  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini.c (check_for_method_verify): Enabling verification of
