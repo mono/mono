@@ -4992,8 +4992,14 @@ namespace System.Windows.Forms
 
 				if (IsHandleCreated) {
 					XplatUI.SetVisible (Handle, is_visible, true);
-					
-					if (is_visible && this is Form) {
+					if (!is_visible) {
+						if (parent != null && parent.IsHandleCreated) {
+							parent.Invalidate (bounds);
+							parent.Update ();
+						} else {
+							Refresh ();
+						}
+					} else if (is_visible && this is Form) {
 						// If we are Min or Max, we won't get a WM_SHOWWINDOW from SetWindowState,
 						// so we need to manually create our children, and set them visible
 						// (This normally happens in WmShowWindow.)

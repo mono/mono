@@ -1,3 +1,10 @@
+2008-04-04  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* Control.cs: Visibility should be set synchronously, 
+	so we must also redraw once it is and not rely on layouting or 
+	other code to repaint.
+	[Fixes bug #339898]
+
 2008-04-04  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridViewCell.cs: Respect DataGridView.GridColor.
