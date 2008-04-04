@@ -1,5 +1,7 @@
 2008-04-04  Raja R Harinath  <harinath@hurrynot.org>
 
+	* cs0119-4.cs, cs0119-5: New tests from #377028.
+
 	* cs0219-3.cs: New test from #319508.
 	* cs0219-2.cs: New test from #324765.
 

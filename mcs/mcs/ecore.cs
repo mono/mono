@@ -228,8 +228,16 @@ namespace Mono.CSharp {
 		// This is used if the expression should be resolved as a type or namespace name.
 		// the default implementation fails.   
 		//
-		public virtual FullNamedExpression ResolveAsTypeStep (IResolveContext ec,  bool silent)
+		public virtual FullNamedExpression ResolveAsTypeStep (IResolveContext rc,  bool silent)
 		{
+			if (!silent) {
+				Expression e = this;
+				EmitContext ec = rc as EmitContext;
+				if (ec != null)
+					e = e.Resolve (ec);
+				if (e != null)
+					e.Error_UnexpectedKind (ResolveFlags.Type, loc);
+			}
 			return null;
 		}
 

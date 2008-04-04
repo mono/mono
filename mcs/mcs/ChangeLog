@@ -1,5 +1,9 @@
 2008-04-04  Raja R Harinath  <harinath@hurrynot.org>
 
+	Fix #377028
+	* ecore.cs (Expression.ResolveAsTypeStep): If '!silent' attempt to
+	emit a meaningful error message.
+
 	Fix #324765, #319508
 	* flowanalysis.cs (VariableInfo.IsEverAssigned): New.
 	(VariableInfo.SetAssigned): Set it.
