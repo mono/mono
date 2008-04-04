@@ -1,3 +1,8 @@
+2008-04-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions-amd64.c (mono_arch_get_restore_context): Restore most caller
+	saved registers as well.
+
 2008-03-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-x86.c cpu-x86.md inssel-x86.brg: Add min/max intrinsics.
