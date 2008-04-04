@@ -80,6 +80,22 @@ namespace Mono.Mozilla.DOM
 			}
 		}
 
+		public override bool Disabled
+		{			
+			get {
+				if (this.HasAttribute ("disabled")) {
+					string dis = this.GetAttribute ("disabled");
+					return bool.Parse (dis);
+				}
+				return false;
+			}
+			set {
+				if (this.HasAttribute ("disabled")) {
+					this.SetAttribute ("disabled", value.ToString ());
+				}
+			}
+		}
+
 		public override int GetHashCode () {
 			return this.hashcode;
 		}

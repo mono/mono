@@ -1,5 +1,13 @@
 2008-04-04  Andreia Gaita <avidigal@novell.com> 
 
+	* Mono.Mozilla/DOM/Element.cs,
+	* Mono.Mozilla/DOM/HTMLElement.cs,
+	* Mono.WebBrowser/DOM/IElement.cs: Implement ClientWidth, ClientHeight, 
+	ScrollWidth, ScrollHeight, ScrollLeft, ScrollTop, OffsetHeight, 
+	OffsetWidth, OffsetLeft, OffsetTop, OffsetParent, Disabled.
+
+2008-04-04  Andreia Gaita <avidigal@novell.com> 
+
 	* Mono.Mozilla/DOM/Document.cs: Differentiate between html and non-html
 	elements when creating the wrapper object for the active element, as
 	certain properties are only implemented in html elements.
