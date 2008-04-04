@@ -1,5 +1,13 @@
 2008-04-04 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (do_conversion): Improved error message to something
+	more meanfull.
+
+	* verify.c (check_is_valid_type_for_field_ops): Fix to work
+	with primitive types.
+
+2008-04-04 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c: Added tail prefix checking. Marked icall
 	as unverifible.
 
