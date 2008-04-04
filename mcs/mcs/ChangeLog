@@ -1,5 +1,9 @@
 2008-04-05  Raja R Harinath  <harinath@hurrynot.org>
 
+	* iterators.cs (Iterator.OldResumePoint): Rename from ResumePoint.
+	(Iterator.old_resume_points): Rename from 'resume_points'.
+	(Iterator.MoveNextStatement): Remove unused class.
+
 	New infrastructure for try/finally in iterators (still unused)
 	* flowanalysis.cs (FlowBranching.AddResumePoint): New.
 	(FlowBranchingToplevel.AddResumePoint): Hook into

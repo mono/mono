@@ -632,7 +632,7 @@ namespace Mono.CSharp {
 			get { return skip_finally; }
 		}
 
-		ArrayList resume_points = new ArrayList ();
+		ArrayList old_resume_points = new ArrayList ();
 		int pc;
 		
 		public readonly Type OriginalIteratorType;
@@ -670,8 +670,8 @@ namespace Mono.CSharp {
 			Label dispatcher = ig.DefineLabel ();
 			ig.Emit (OpCodes.Br, dispatcher);
 
-			ResumePoint entry_point = new ResumePoint (null);
-			resume_points.Add (entry_point);
+			OldResumePoint entry_point = new OldResumePoint (null);
+			old_resume_points.Add (entry_point);
 			entry_point.Define (ig);
 
 			SymbolWriter.StartIteratorBody (ec.ig);
@@ -686,9 +686,9 @@ namespace Mono.CSharp {
 
 			ig.MarkLabel (dispatcher);
 
-			Label [] labels = new Label [resume_points.Count];
+			Label [] labels = new Label [old_resume_points.Count];
 			for (int i = 0; i < labels.Length; i++)
-				labels [i] = ((ResumePoint) resume_points [i]).Label;
+				labels [i] = ((OldResumePoint) old_resume_points [i]).Label;
 
 			ig.Emit (OpCodes.Ldarg_0);
 			ig.Emit (OpCodes.Ldfld, IteratorHost.PC.FieldBuilder);
@@ -732,9 +732,9 @@ namespace Mono.CSharp {
 			Label dispatcher = ig.DefineLabel ();
 			ig.Emit (OpCodes.Br, dispatcher);
 
-			Label [] labels = new Label [resume_points.Count];
+			Label [] labels = new Label [old_resume_points.Count];
 			for (int i = 0; i < labels.Length; i++) {
-				ResumePoint point = (ResumePoint) resume_points [i];
+				OldResumePoint point = (OldResumePoint) old_resume_points [i];
 
 				if (point.FinallyBlocks == null) {
 					labels [i] = end;
@@ -768,12 +768,12 @@ namespace Mono.CSharp {
 			ig.MarkLabel (end);
 		}
 
-		protected class ResumePoint
+		protected class OldResumePoint
 		{
 			public Label Label;
 			public readonly ExceptionStatement[] FinallyBlocks;
 
-			public ResumePoint (ArrayList list)
+			public OldResumePoint (ArrayList list)
 			{
 				if (list != null) {
 					FinallyBlocks = new ExceptionStatement [list.Count];
@@ -814,8 +814,8 @@ namespace Mono.CSharp {
 			// Return ok
 			ig.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, move_next_ok);
 
-			ResumePoint point = new ResumePoint (finally_blocks);
-			resume_points.Add (point);
+			OldResumePoint point = new OldResumePoint (finally_blocks);
+			old_resume_points.Add (point);
 			point.Define (ig);
 
 			return pc;
@@ -958,26 +958,6 @@ namespace Mono.CSharp {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			throw new NotSupportedException ();
-		}
-
-		protected class MoveNextStatement : Statement {
-			Iterator iterator;
-
-			public MoveNextStatement (Iterator iterator, Location loc)
-			{
-				this.loc = loc;
-				this.iterator = iterator;
-			}
-
-			public override bool Resolve (EmitContext ec)
-			{
-				return iterator.OriginalBlock.Resolve (ec);
-			}
-
-			protected override void DoEmit (EmitContext ec)
-			{
-				iterator.EmitMoveNext (ec, iterator.Block);
-			}
 		}
 
 		public Type IteratorType {
