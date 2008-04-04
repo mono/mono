@@ -651,22 +651,12 @@ namespace Mono.CSharp {
 		//   Ends a code branching.  Merges the state of locals and parameters
 		//   from all the children of the ending branching.
 		// </summary>
-		public FlowBranching.UsageVector DoEndFlowBranching ()
+		public bool EndFlowBranching ()
 		{
 			FlowBranching old = current_flow_branching;
 			current_flow_branching = current_flow_branching.Parent;
 
-			return current_flow_branching.MergeChild (old);
-		}
-
-		// <summary>
-		//   Ends a code branching.  Merges the state of locals and parameters
-		//   from all the children of the ending branching.
-		// </summary>
-		public bool EndFlowBranching ()
-		{
-			FlowBranching.UsageVector vector = DoEndFlowBranching ();
-
+			FlowBranching.UsageVector vector = current_flow_branching.MergeChild (old);
 			return vector.IsUnreachable;
 		}
 
@@ -674,6 +664,7 @@ namespace Mono.CSharp {
 		//   Kills the current code branching.  This throws away any changed state
 		//   information and should only be used in case of an error.
 		// </summary>
+		// FIXME: this is evil
 		public void KillFlowBranching ()
 		{
 			current_flow_branching = current_flow_branching.Parent;

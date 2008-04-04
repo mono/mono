@@ -2124,31 +2124,28 @@ namespace Mono.CSharp {
 					((LocalInfo)temporary_variables[i]).ResolveVariable(ec);
 			}
 
-			if (children != null){
+			if (children != null) {
 				for (int i = 0; i < children.Count; i++)
 					((Block)children[i]).EmitMeta(ec);
 			}
 		}
 
-		void UsageWarning (FlowBranching.UsageVector vector)
+		void UsageWarning ()
 		{
-			string name;
+			if (variables == null || Report.WarningLevel < 3)
+				return;
 
-			if ((variables != null) && (Report.WarningLevel >= 3)) {
-				foreach (DictionaryEntry de in variables){
-					LocalInfo vi = (LocalInfo) de.Value;
+			foreach (DictionaryEntry de in variables) {
+				LocalInfo vi = (LocalInfo) de.Value;
 
-					if (vi.Used)
-						continue;
-
-					name = (string) de.Key;
+				if (!vi.Used) {
+					string name = (string) de.Key;
 
 					// vi.VariableInfo can be null for 'catch' variables
-					if (vi.VariableInfo != null && vector.IsAssigned (vi.VariableInfo, true)){
+					if (vi.VariableInfo != null && vi.VariableInfo.IsEverAssigned)
 						Report.Warning (219, 3, vi.Location, "The variable `{0}' is assigned but its value is never used", name);
-					} else {
+					else
 						Report.Warning (168, 3, vi.Location, "The variable `{0}' is declared but never used", name);
-					}
 				}
 			}
 		}
@@ -2259,30 +2256,26 @@ namespace Mono.CSharp {
 			while (ec.CurrentBranching is FlowBranchingLabeled)
 				ec.EndFlowBranching ();
 
-			FlowBranching.UsageVector vector = ec.DoEndFlowBranching ();
+			bool flow_unreachable = ec.EndFlowBranching ();
 
 			ec.CurrentBlock = prev_block;
 
+			if (flow_unreachable)
+				flags |= Flags.HasRet;
+
 			// If we're a non-static `struct' constructor which doesn't have an
 			// initializer, then we must initialize all of the struct's fields.
-			if (this == Toplevel && !Toplevel.IsThisAssigned (ec) && !vector.IsUnreachable)
+			if (this == Toplevel && !Toplevel.IsThisAssigned (ec) && !flow_unreachable)
 				ok = false;
 
 			if ((labels != null) && (Report.WarningLevel >= 2)) {
 				foreach (LabeledStatement label in labels.Values)
 					if (!label.HasBeenReferenced)
-						Report.Warning (164, 2, label.loc,
-								"This label has not been referenced");
+						Report.Warning (164, 2, label.loc, "This label has not been referenced");
 			}
 
-			Report.Debug (4, "RESOLVE BLOCK DONE #2", StartLocation, vector);
-
-			if (vector.IsUnreachable)
-				flags |= Flags.HasRet;
-
-			if (ok && (errors == Report.Errors)) {
-				UsageWarning (vector);
-			}
+			if (ok && errors == Report.Errors)
+				UsageWarning ();
 
 			return ok;
 		}

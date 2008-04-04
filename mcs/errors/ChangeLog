@@ -1,3 +1,8 @@
+2008-04-04  Raja R Harinath  <harinath@hurrynot.org>
+
+	* cs0219-3.cs: New test from #319508.
+	* cs0219-2.cs: New test from #324765.
+
 2008-03-14 Marek Safar <marek.safar@gmail.com>
 
 	* Makefile: New compiler-tester options.

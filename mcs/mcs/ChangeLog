@@ -1,7 +1,19 @@
+2008-04-04  Raja R Harinath  <harinath@hurrynot.org>
+
+	Fix #324765, #319508
+	* flowanalysis.cs (VariableInfo.IsEverAssigned): New.
+	(VariableInfo.SetAssigned): Set it.
+	* statement.cs (Block.UsageWarning): Use 'IsEverAssigned' to
+	determine if CS0219 or CS0168 is appropriate.  Don't use
+	flow-analysis information.
+	(Block.Resolve): Use ec.EndFlowBranching, not ec.DoEndFlowBranching.
+	* codegen.cs (EmitContext.DoEndFlowBranching): Kill.  Inline into ...
+	(EmitContext.EndFlowBranching): ... this.
+
 2008-04-03  Marek Safar  <marek.safar@gmail.com>
 
 	* class.cs, typemanager.cs: Emit volatile field with IsVolatile modifier.
-	
+
 2008-04-03  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #376508
@@ -12,7 +24,7 @@
 
 	* expression.cs (Binary): Added remaining binary operators to expression
 	tree builder.
-	
+
 	* nullable.cs: Optimize shift with null argument.
 
 2008-04-03  Raja R Harinath  <harinath@hurrynot.org>

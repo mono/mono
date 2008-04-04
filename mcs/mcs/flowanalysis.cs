@@ -1280,6 +1280,11 @@ namespace Mono.CSharp
 		readonly VariableInfo Parent;
 		VariableInfo[] sub_info;
 
+		bool is_ever_assigned;
+		public bool IsEverAssigned {
+			get { return is_ever_assigned; }
+		}
+
 		protected VariableInfo (string name, Type type, int offset)
 		{
 			this.Name = name;
@@ -1387,6 +1392,7 @@ namespace Mono.CSharp
 			}
 
 			vector [Offset] = true;
+			is_ever_assigned = true;
 			return true;
 		}
 
@@ -1402,6 +1408,7 @@ namespace Mono.CSharp
 				vector [Offset] = true;
 			else
 				vector.SetRange (Offset, Length);
+			is_ever_assigned = true;
 		}
 
 		public bool IsFieldAssigned (EmitContext ec, string name, Location loc)
@@ -1441,6 +1448,7 @@ namespace Mono.CSharp
 				return;
 
 			vector [Offset + field_idx] = true;
+			is_ever_assigned = true;
 		}
 
 		public VariableInfo GetSubStruct (string name)
