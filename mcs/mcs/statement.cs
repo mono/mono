@@ -747,12 +747,17 @@ namespace Mono.CSharp {
 		protected bool unwind_protect;
 		protected abstract bool DoResolve (EmitContext ec);
 
+		public virtual void Error_FinallyClause ()
+		{
+			Report.Error (157, loc, "Control cannot leave the body of a finally clause");
+		}
+
 		public sealed override bool Resolve (EmitContext ec)
 		{
 			if (!DoResolve (ec))
 				return false;
 
-			unwind_protect = ec.CurrentBranching.AddReturnOrigin (ec.CurrentBranching.CurrentUsageVector, loc);
+			unwind_protect = ec.CurrentBranching.AddReturnOrigin (ec.CurrentBranching.CurrentUsageVector, this);
 			if (unwind_protect)
 				ec.NeedReturnLabel ();
 			ec.CurrentBranching.CurrentUsageVector.Goto ();

@@ -1,5 +1,11 @@
 2008-04-04  Raja R Harinath  <harinath@hurrynot.org>
 
+	* flowanalysis.cs (FlowBranching.AddReturnOrigin): Change Location
+	argument to an ExitStatement.
+	(FlowBranchingException): Refactor saved origins code.
+	* statement.cs (ExitStatement): Update to cahges.
+	* iterator.cs (YieldBreak): Likewise.
+
 	* statement.cs (ResumableStatement): New.  Common base class for
 	YieldReturn and ExceptionStatement.
 	(ExitStatement): New.  Common base class for Return and YieldBreak.

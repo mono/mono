@@ -443,9 +443,9 @@ namespace Mono.CSharp
 		}
 
 		// returns true if we crossed an unwind-protected region (try/catch/finally, lock, using, ...)
-		public virtual bool AddReturnOrigin (UsageVector vector, Location loc)
+		public virtual bool AddReturnOrigin (UsageVector vector, ExitStatement stmt)
 		{
-			return Parent.AddReturnOrigin (vector, loc);
+			return Parent.AddReturnOrigin (vector, stmt);
 		}
 
 		// returns true if we crossed an unwind-protected region (try/catch/finally, lock, using, ...)
@@ -670,10 +670,10 @@ namespace Mono.CSharp
 			return false;
 		}
 
-		public override bool AddReturnOrigin (UsageVector vector, Location loc)
+		public override bool AddReturnOrigin (UsageVector vector, ExitStatement stmt)
 		{
 			vector = vector.Clone ();
-			vector.Location = loc;
+			vector.Location = stmt.loc;
 			vector.Next = return_origins;
 			return_origins = vector;
 			return false;
@@ -744,9 +744,9 @@ namespace Mono.CSharp
 			return true;
 		}
 
-		public override bool AddReturnOrigin (UsageVector vector, Location loc)
+		public override bool AddReturnOrigin (UsageVector vector, ExitStatement stmt)
 		{
-			Parent.AddReturnOrigin (vector, loc);
+			Parent.AddReturnOrigin (vector, stmt);
 			return true;
 		}
 
@@ -770,23 +770,84 @@ namespace Mono.CSharp
 		UsageVector try_vector;
 		UsageVector finally_vector;
 
-		UsageVector break_origins;
-		UsageVector continue_origins;
-		UsageVector return_origins;
-		GotoOrigin goto_origins;
-
-		class GotoOrigin {
-			public GotoOrigin Next;
-			public Goto GotoStmt;
+		abstract class SavedOrigin {
+			public SavedOrigin Next;
 			public UsageVector Vector;
 
-			public GotoOrigin (UsageVector vector, Goto goto_stmt, GotoOrigin next)
+			public SavedOrigin (SavedOrigin next, UsageVector vector)
 			{
-				Vector = vector;
-				GotoStmt = goto_stmt;
 				Next = next;
+				Vector = vector.Clone ();
+			}
+
+			protected abstract void DoPropagateFinally (FlowBranching parent);
+			public void PropagateFinally (UsageVector finally_vector, FlowBranching parent)
+			{
+				if (finally_vector != null)
+					Vector.MergeChild (finally_vector, false);
+				DoPropagateFinally (parent);
 			}
 		}
+
+		class BreakOrigin : SavedOrigin {
+			Location Loc;
+			public BreakOrigin (SavedOrigin next, UsageVector vector, Location loc)
+				: base (next, vector)
+			{
+				Loc = loc;
+			}
+
+			protected override void DoPropagateFinally (FlowBranching parent)
+			{
+				parent.AddBreakOrigin (Vector, Loc);
+			}
+		}
+
+		class ContinueOrigin : SavedOrigin {
+			Location Loc;
+			public ContinueOrigin (SavedOrigin next, UsageVector vector, Location loc)
+				: base (next, vector)
+			{
+				Loc = loc;
+			}
+
+			protected override void DoPropagateFinally (FlowBranching parent)
+			{
+				parent.AddContinueOrigin (Vector, Loc);
+			}
+		}
+
+		class ReturnOrigin : SavedOrigin {
+			public ExitStatement Stmt;
+
+			public ReturnOrigin (SavedOrigin next, UsageVector vector, ExitStatement stmt)
+				: base (next, vector)
+			{
+				Stmt = stmt;
+			}
+
+			protected override void DoPropagateFinally (FlowBranching parent)
+			{
+				parent.AddReturnOrigin (Vector, Stmt);
+			}
+		}
+
+		class GotoOrigin : SavedOrigin {
+			public Goto Stmt;
+
+			public GotoOrigin (SavedOrigin next, UsageVector vector, Goto stmt)
+				: base (next, vector)
+			{
+				Stmt = stmt;
+			}
+
+			protected override void DoPropagateFinally (FlowBranching parent)
+			{
+				parent.AddGotoOrigin (Vector, Stmt);
+			}
+		}
+
+		SavedOrigin saved_origins;
 
 		bool emit_finally;
 
@@ -820,48 +881,39 @@ namespace Mono.CSharp
 
 		public override bool AddBreakOrigin (UsageVector vector, Location loc)
 		{
-			vector = vector.Clone ();
 			if (finally_vector != null) {
 				int errors = Report.Errors;
 				Parent.AddBreakOrigin (vector, loc);
 				if (errors == Report.Errors)
 					Report.Error (157, loc, "Control cannot leave the body of a finally clause");
 			} else {
-				vector.Location = loc;
-				vector.Next = break_origins;
-				break_origins = vector;
+				saved_origins = new BreakOrigin (saved_origins, vector, loc);
 			}
 			return true;
 		}
 
 		public override bool AddContinueOrigin (UsageVector vector, Location loc)
 		{
-			vector = vector.Clone ();
 			if (finally_vector != null) {
 				int errors = Report.Errors;
 				Parent.AddContinueOrigin (vector, loc);
 				if (errors == Report.Errors)
 					Report.Error (157, loc, "Control cannot leave the body of a finally clause");
 			} else {
-				vector.Location = loc;
-				vector.Next = continue_origins;
-				continue_origins = vector;
+				saved_origins = new ContinueOrigin (saved_origins, vector, loc);
 			}
 			return true;
 		}
 
-		public override bool AddReturnOrigin (UsageVector vector, Location loc)
+		public override bool AddReturnOrigin (UsageVector vector, ExitStatement stmt)
 		{
-			vector = vector.Clone ();
 			if (finally_vector != null) {
 				int errors = Report.Errors;
-				Parent.AddReturnOrigin (vector, loc);
+				Parent.AddReturnOrigin (vector, stmt);
 				if (errors == Report.Errors)
-					Report.Error (157, loc, "Control cannot leave the body of a finally clause");
+					stmt.Error_FinallyClause ();
 			} else {
-				vector.Location = loc;
-				vector.Next = return_origins;
-				return_origins = vector;
+				saved_origins = new ReturnOrigin (saved_origins, vector, stmt);
 			}
 			return true;
 		}
@@ -872,14 +924,13 @@ namespace Mono.CSharp
 			if (s != null)
 				throw new InternalErrorException ("Shouldn't get here");
 
-			vector = vector.Clone ();
 			if (finally_vector != null) {
 				int errors = Report.Errors;
 				Parent.AddGotoOrigin (vector, goto_stmt);
 				if (errors == Report.Errors)
 					Report.Error (157, goto_stmt.loc, "Control cannot leave the body of a finally clause");
 			} else {
-				goto_origins = new GotoOrigin (vector, goto_stmt, goto_origins);
+				saved_origins = new GotoOrigin (saved_origins, vector, goto_stmt);
 			}
 			return true;
 		}
@@ -905,29 +956,8 @@ namespace Mono.CSharp
 			if (finally_vector != null)
 				vector.MergeChild (finally_vector, false);
 
-			for (UsageVector origin = break_origins; origin != null; origin = origin.Next) {
-				if (finally_vector != null)
-					origin.MergeChild (finally_vector, false);
-				Parent.AddBreakOrigin (origin, origin.Location);
-			}
-
-			for (UsageVector origin = continue_origins; origin != null; origin = origin.Next) {
-				if (finally_vector != null)
-					origin.MergeChild (finally_vector, false);
-				Parent.AddContinueOrigin (origin, origin.Location);
-			}
-
-			for (UsageVector origin = return_origins; origin != null; origin = origin.Next) {
-				if (finally_vector != null)
-					origin.MergeChild (finally_vector, false);
-				Parent.AddReturnOrigin (origin, origin.Location);
-			}
-
-			for (GotoOrigin origin = goto_origins; origin != null; origin = origin.Next) {
-				if (finally_vector != null)
-					origin.Vector.MergeChild (finally_vector, false);
-				Parent.AddGotoOrigin (origin.Vector, origin.GotoStmt);
-			}
+			for (SavedOrigin origin = saved_origins; origin != null; origin = origin.Next)
+				origin.PropagateFinally (finally_vector, Parent);
 
 			return vector;
 		}

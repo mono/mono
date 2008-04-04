@@ -34,12 +34,6 @@ namespace Mono.CSharp {
 
 		public static bool CheckContext (EmitContext ec, Location loc, bool isYieldBreak)
 		{
-			if (ec.InFinally) {
-				Report.Error (1625, loc, "Cannot yield in the body of a " +
-					      "finally clause");
-				return false;
-			}
-
 			for (Block block = ec.CurrentBlock; block != null; block = block.Parent) {
 				if (!block.Unsafe)
 					continue;
@@ -61,6 +55,12 @@ namespace Mono.CSharp {
 
 			if (isYieldBreak)
 				return true;
+
+			if (ec.InFinally) {
+				Report.Error (1625, loc, "Cannot yield in the body of a " +
+					      "finally clause");
+				return false;
+			}
 
 			if (ec.InCatch) {
 				Report.Error (1631, loc, "Cannot yield a value in the body of a catch clause");
@@ -117,6 +117,11 @@ namespace Mono.CSharp {
 		public YieldBreak (Location l)
 		{
 			loc = l;
+		}
+
+		public override void Error_FinallyClause ()
+		{
+			Report.Error (1625, loc, "Cannot yield in the body of a finally clause");
 		}
 
 		protected override bool DoResolve (EmitContext ec)
