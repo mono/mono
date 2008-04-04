@@ -1,5 +1,8 @@
 2008-04-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-amd64.c (throw_exception): Unify the win32/non-win32 cases, save
+	caller saved registers as well.
+	
 	* exceptions-amd64.c (mono_arch_get_restore_context): Restore most caller
 	saved registers as well.
 
