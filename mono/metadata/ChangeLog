@@ -1,5 +1,10 @@
 2008-04-04 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c: Added tail prefix checking. Marked icall
+	as unverifible.
+
+2008-04-04 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c: Fix the detection of branches to the middle
 	of an instruction.
 
