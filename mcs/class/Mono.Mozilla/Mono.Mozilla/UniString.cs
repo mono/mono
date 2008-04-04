@@ -41,7 +41,7 @@ namespace Mono.Mozilla
 		private nsStringContainer unmanagedContainer;
 		private HandleRef handle;
 		private string str = String.Empty;
-		private bool dirty = false;
+		private bool dirty;
 		
 		public UniString(string value)
 		{
@@ -82,8 +82,7 @@ namespace Mono.Mozilla
 		
 		public HandleRef Handle {
 			get {
-				if (!str.Equals (String.Empty))
-					dirty = true;
+				dirty = true;
 				return handle; 
 			}
 		}
@@ -108,12 +107,12 @@ namespace Mono.Mozilla
 		}
 		
 		public int Length {
-			get { return str.Length; }
+			get { return String.Length; }
 		}
 		
 		public override string ToString ()
 		{
-			return str;
+			return String;
 		}
 		
 	}

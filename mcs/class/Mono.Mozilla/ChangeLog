@@ -1,3 +1,8 @@
+2008-04-04  Andreia Gaita <avidigal@novell.com> 
+
+	* Mono.Mozilla/AsciiString.cs, Mono.Mozilla/UniString.cs: Fix for string
+	getter cache, always mark the string as dirty when fetching the handle.
+
 2008-03-27  Andreia Gaita <avidigal@novell.com> 
 
 	* Mono.WebBrowser/IWebBrowser.cs, Mono.Mozilla/WebBrowser.cs: Add
