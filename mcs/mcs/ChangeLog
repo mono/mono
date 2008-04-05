@@ -1,5 +1,8 @@
 2008-04-05  Raja R Harinath  <harinath@hurrynot.org>
 
+	* statement.cs (ExceptionStatement.EmitForDispose): Use
+	EmitFinallyBody, not EmitFinally.
+
 	* flowanalysis.cs (FlowBranching.StealFinallyClauses): Remove.
 	* iterator.cs: Update to changes.
 

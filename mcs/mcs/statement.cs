@@ -3786,7 +3786,16 @@ namespace Mono.CSharp {
 	// A place where execution can restart in an iterator
 	public abstract class ResumableStatement : Statement
 	{
+		bool prepared;
 		public Label ResumePoint;
+
+		public void PrepareForEmit (EmitContext ec)
+		{
+			if (!prepared) {
+				prepared = true;
+				ResumePoint = ec.ig.DefineLabel ();
+			}
+		}
 
 		public virtual Label PrepareForDispose (EmitContext ec, Label end)
 		{
@@ -3799,6 +3808,11 @@ namespace Mono.CSharp {
 
 	public abstract class ExceptionStatement : ResumableStatement
 	{
+		public virtual void EmitTryHeader (EmitContext ec)
+		{
+		}
+
+		//public abstract void EmitTryBody (EmitContext ec);
 		public abstract void EmitFinallyBody (EmitContext ec);
 
 		protected bool emit_finally = true;
@@ -3861,8 +3875,8 @@ namespace Mono.CSharp {
 			// Ensure that the only way we can get into this code is through a dispatcher
 			ig.Emit (OpCodes.Br, end);
 
-			// FIXME: 'using' with multiple variables will break
 			ig.BeginExceptionBlock ();
+			EmitTryHeader (ec);
 
 			ig.MarkLabel (dispose_try_block);
 
@@ -3898,7 +3912,7 @@ namespace Mono.CSharp {
 
 			ig.BeginFinallyBlock ();
 
-			EmitFinally (ec);
+			EmitFinallyBody (ec);
 
 			ig.EndExceptionBlock ();
 		}
