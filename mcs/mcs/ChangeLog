@@ -1,5 +1,11 @@
 2008-04-05  Raja R Harinath  <harinath@hurrynot.org>
 
+	* iterator.cs (Iterator.AddResumePoint): Move here from ...
+	* statement.cs (Toplevel.AddResumePoint): ... here.
+	(Toplevel.MoveNextStatement.Resolve): Create FlowBranchingIterator.
+	* flowanalysis.cs (FlowBranchingIterator): New.
+	* codegen.cs (EmitContext): Update to changes.
+
 	* iterators.cs (Iterator.OldResumePoint): Rename from ResumePoint.
 	(Iterator.old_resume_points): Rename from 'resume_points'.
 	(Iterator.MoveNextStatement): Remove unused class.

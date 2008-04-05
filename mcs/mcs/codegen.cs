@@ -640,6 +640,13 @@ namespace Mono.CSharp {
 			return branching;
 		}
 
+		public FlowBranchingIterator StartFlowBranching (Iterator iterator)
+		{
+			FlowBranchingIterator branching = new FlowBranchingIterator (CurrentBranching, iterator);
+			current_flow_branching = branching;
+			return branching;
+		}
+
 		public FlowBranchingToplevel StartFlowBranching (ToplevelBlock stmt)
 		{
 			FlowBranchingToplevel branching = new FlowBranchingToplevel (CurrentBranching, stmt);

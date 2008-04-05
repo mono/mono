@@ -52,7 +52,10 @@ namespace Mono.CSharp
 			Switch,
 
 			// The toplevel block of a function
-			Toplevel
+			Toplevel,
+
+			// An iterator block
+			Iterator
 		}
 
 		// <summary>
@@ -425,11 +428,6 @@ namespace Mono.CSharp
 			return result;
  		}
 
-		public virtual bool InTryWithCatch ()
-		{
-			return Parent.InTryWithCatch ();
-		}
-
 		public virtual bool AddResumePoint (ResumableStatement stmt, Location loc, out int pc)
 		{
 			return Parent.AddResumePoint (stmt, loc, out pc);
@@ -528,7 +526,7 @@ namespace Mono.CSharp
 
 		protected override void AddSibling (UsageVector sibling)
 		{
-			if (sibling.Type == SiblingType.Block && sibling_list != null)
+			if (sibling_list != null && sibling_list.Type == SiblingType.Block)
 				throw new InternalErrorException ("Blocks don't have sibling flow paths");
 			sibling.Next = sibling_list;
 			sibling_list = sibling;
@@ -649,6 +647,22 @@ namespace Mono.CSharp
 		}
 	}
 
+	public class FlowBranchingIterator : FlowBranchingBlock
+	{
+		Iterator iterator;
+		public FlowBranchingIterator (FlowBranching parent, Iterator iterator)
+			: base (parent, BranchingType.Iterator, SiblingType.Block, null, iterator.Location)
+		{
+			this.iterator = iterator;
+		}
+
+		public override bool AddResumePoint (ResumableStatement stmt, Location loc, out int pc)
+		{
+			pc = iterator.AddResumePoint (stmt, loc);
+			return false;
+		}
+	}
+
 	public class FlowBranchingToplevel : FlowBranchingBlock
 	{
 		UsageVector return_origins;
@@ -658,14 +672,10 @@ namespace Mono.CSharp
 		{
 		}
 
-		public override bool InTryWithCatch ()
-		{
-			return false;
-		}
-
 		public override bool AddResumePoint (ResumableStatement stmt, Location loc, out int pc)
 		{
-			pc = Block.Toplevel.AddResumePoint (stmt, loc);
+			pc = -1;
+			Report.Error (-6, loc, "Internal Error: A yield in a non-iterator");
 			return false;
 		}
 
@@ -736,11 +746,6 @@ namespace Mono.CSharp
 		public FlowBranchingTryCatch (FlowBranching parent, Location loc)
 			: base (parent, BranchingType.Block, SiblingType.Try, null, loc)
 		{
-		}
-
-		public override bool InTryWithCatch ()
-		{
-			return true;
 		}
 
 		public override bool AddResumePoint (ResumableStatement stmt, Location loc, out int pc)

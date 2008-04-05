@@ -768,6 +768,15 @@ namespace Mono.CSharp {
 			ig.MarkLabel (end);
 		}
 
+		ArrayList resume_points;
+		public int AddResumePoint (ResumableStatement stmt, Location loc)
+		{
+			if (resume_points == null)
+				resume_points = new ArrayList ();
+			resume_points.Add (stmt);
+			return resume_points.Count;
+		}
+
 		protected class OldResumePoint
 		{
 			public Label Label;

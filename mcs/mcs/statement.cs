@@ -2889,25 +2889,16 @@ namespace Mono.CSharp {
 
 			public override bool Resolve (EmitContext ec)
 			{
-				return block.Resolve (ec);
+				ec.StartFlowBranching (iterator);
+				bool ok = block.Resolve (ec);
+				ec.EndFlowBranching ();
+				return ok;
 			}
 
 			protected override void DoEmit (EmitContext ec)
 			{
 				iterator.EmitMoveNext (ec, block);
 			}
-		}
-
-		public ArrayList ResumePoints;
-		public int AddResumePoint (ResumableStatement stmt, Location loc)
-		{
-			if ((flags & Flags.IsIterator) == 0)
-				throw new InternalErrorException ();
-
-			if (ResumePoints == null)
-				ResumePoints = new ArrayList ();
-			ResumePoints.Add (stmt);
-			return ResumePoints.Count;
 		}
 
 		public override string ToString ()
