@@ -1,6 +1,7 @@
 2008-04-05  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TODO: Removed, as all items are obsolete.
+	* Makefile: Removed TODO from DISTFILES.
 
 2008-04-05  Gert Driesen  <drieseng@users.sourceforge.net>
 
