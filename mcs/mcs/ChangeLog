@@ -1,5 +1,13 @@
 2008-04-05  Raja R Harinath  <harinath@hurrynot.org>
 
+	Start using the ResumableStatement infrastructure
+	* statement.cs (ResumeableStatement.PrepareForDispose): New.
+	(ResumableStatement.EmitForDispose): New.
+	(ExceptionStatement): Override them.
+	* iterators.cs (Iterator.EmitDispose): Use PrepareForDispose and
+	EmitForDispose to create the body of the Dispose method.  Don't
+	use OldResumePoint.
+
 	* iterator.cs (Iterator.AddResumePoint): Move here from ...
 	* statement.cs (Toplevel.AddResumePoint): ... here.
 	(Toplevel.MoveNextStatement.Resolve): Create FlowBranchingIterator.

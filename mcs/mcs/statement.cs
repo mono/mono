@@ -3787,6 +3787,14 @@ namespace Mono.CSharp {
 	public abstract class ResumableStatement : Statement
 	{
 		public Label ResumePoint;
+
+		public virtual Label PrepareForDispose (EmitContext ec, Label end)
+		{
+			return end;
+		}
+		public virtual void EmitForDispose (EmitContext ec, Iterator iterator, Label end)
+		{
+		}
 	}
 
 	public abstract class ExceptionStatement : ResumableStatement
@@ -3826,6 +3834,73 @@ namespace Mono.CSharp {
 				throw new InternalErrorException ("missed an intervening AddResumePoint?");
 
 			resume_points.Add (stmt);
+		}
+
+		Label dispose_try_block;
+		bool prepared_for_dispose, emitted_dispose;
+		public override Label PrepareForDispose (EmitContext ec, Label end)
+		{
+			if (!prepared_for_dispose) {
+				prepared_for_dispose = true;
+				dispose_try_block = ec.ig.DefineLabel ();
+			}
+			return dispose_try_block;
+		}
+
+		public override void EmitForDispose (EmitContext ec, Iterator iterator, Label end)
+		{
+			if (emitted_dispose)
+				return;
+
+			emitted_dispose = true;
+
+			ILGenerator ig = ec.ig;
+
+			Label end_of_try = ig.DefineLabel ();
+
+			// Ensure that the only way we can get into this code is through a dispatcher
+			ig.Emit (OpCodes.Br, end);
+
+			// FIXME: 'using' with multiple variables will break
+			ig.BeginExceptionBlock ();
+
+			ig.MarkLabel (dispose_try_block);
+
+			Label [] labels = null;
+			for (int i = 0; i < resume_points.Count; ++i) {
+				ResumableStatement s = (ResumableStatement) resume_points [i];
+				Label ret = s.PrepareForDispose (ec, end_of_try);
+				if (ret.Equals (end_of_try) && labels == null)
+					continue;
+				if (labels == null) {
+					labels = new Label [resume_points.Count];
+					for (int j = 0; j < i; ++j)
+						labels [j] = end_of_try;
+				}
+				labels [i] = ret;
+			}
+
+			if (labels != null) {
+				//SymbolWriter.StartIteratorDispatcher (ec.ig);
+
+				ig.Emit (OpCodes.Ldloc, iterator.CurrentPC);
+				IntConstant.EmitInt (ig, first_resume_pc);
+				ig.Emit (OpCodes.Sub);
+				ig.Emit (OpCodes.Switch, labels);
+
+				//SymbolWriter.EndIteratorDispatcher (ec.ig);
+
+				foreach (ResumableStatement s in resume_points)
+					s.EmitForDispose (ec, iterator, end_of_try);
+			}
+
+			ig.MarkLabel (end_of_try);
+
+			ig.BeginFinallyBlock ();
+
+			EmitFinally (ec);
+
+			ig.EndExceptionBlock ();
 		}
 	}
 

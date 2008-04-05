@@ -626,10 +626,14 @@ namespace Mono.CSharp {
 		// The state as we generate the iterator
 		//
 		Label move_next_ok, move_next_error;
-		LocalBuilder skip_finally;
+		LocalBuilder skip_finally, current_pc;
 
 		public LocalBuilder SkipFinally {
 			get { return skip_finally; }
+		}
+
+		public LocalBuilder CurrentPC {
+			get { return current_pc; }
 		}
 
 		ArrayList old_resume_points = new ArrayList ();
@@ -729,41 +733,42 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 
 			Label end = ig.DefineLabel ();
-			Label dispatcher = ig.DefineLabel ();
-			ig.Emit (OpCodes.Br, dispatcher);
 
-			Label [] labels = new Label [old_resume_points.Count];
-			for (int i = 0; i < labels.Length; i++) {
-				OldResumePoint point = (OldResumePoint) old_resume_points [i];
-
-				if (point.FinallyBlocks == null) {
-					labels [i] = end;
+			Label [] labels = null;
+			int n_resume_points = resume_points == null ? 0 : resume_points.Count;
+			for (int i = 0; i < n_resume_points; ++i) {
+				ResumableStatement s = (ResumableStatement) resume_points [i];
+				Label ret = s.PrepareForDispose (ec, end);
+				if (ret.Equals (end) && labels == null)
 					continue;
+				if (labels == null) {
+					labels = new Label [resume_points.Count + 1];
+					for (int j = 0; j <= i; ++j)
+						labels [j] = end;
 				}
-
-				labels [i] = ig.DefineLabel ();
-				ig.MarkLabel (labels [i]);
-
-				ig.BeginExceptionBlock ();
-				ig.BeginFinallyBlock ();
-
-				foreach (ExceptionStatement stmt in point.FinallyBlocks) {
-					if (stmt != null)
-						stmt.EmitFinallyBody (ec);
-				}
-
-				ig.EndExceptionBlock ();
-				ig.Emit (OpCodes.Br, end);
+				labels [i+1] = ret;
 			}
 
-			ig.MarkLabel (dispatcher);
-			ig.Emit (OpCodes.Ldarg_0);
-			ig.Emit (OpCodes.Ldfld, IteratorHost.PC.FieldBuilder);
-			ig.Emit (OpCodes.Switch, labels);
+			if (labels != null) {
+				current_pc = ec.GetTemporaryLocal (TypeManager.uint32_type);
+				ig.Emit (OpCodes.Ldarg_0);
+				ig.Emit (OpCodes.Ldfld, IteratorHost.PC.FieldBuilder);
+				ig.Emit (OpCodes.Stloc, current_pc);
+			}
 
 			ig.Emit (OpCodes.Ldarg_0);
 			IntConstant.EmitInt (ig, (int) State.After);
 			ig.Emit (OpCodes.Stfld, IteratorHost.PC.FieldBuilder);
+
+			if (labels != null) {
+				//SymbolWriter.StartIteratorDispatcher (ec.ig);
+				ig.Emit (OpCodes.Ldloc, current_pc);
+				ig.Emit (OpCodes.Switch, labels);
+				//SymbolWriter.EndIteratorDispatcher (ec.ig);
+
+				foreach (ResumableStatement s in resume_points)
+					s.EmitForDispose (ec, this, end);
+			}
 
 			ig.MarkLabel (end);
 		}
