@@ -115,7 +115,7 @@ namespace System.Windows.Forms
 		public static PropertyDescriptorCollection GetListItemProperties (object list)
 		{
 			Type item_type = GetListItemType (list);
-			return TypeDescriptor.GetProperties (item_type);
+			return TypeDescriptor.GetProperties (item_type, new Attribute [] { new BrowsableAttribute (true) });
 		}
 
 		public static PropertyDescriptorCollection GetListItemProperties (object dataSource, PropertyDescriptor [] listAccessors)
@@ -152,12 +152,10 @@ namespace System.Windows.Forms
 
 		static PropertyDescriptor GetProperty (Type type, string property_name)
 		{
-			PropertyDescriptorCollection properties = TypeDescriptor.GetProperties (type);
-			foreach (PropertyDescriptor prop in properties)
-				if (prop.Name == property_name)
-					return prop;
+			PropertyDescriptorCollection properties = TypeDescriptor.GetProperties (type, 
+				new Attribute [] { new BrowsableAttribute (true) });
 
-			return null;
+			return properties [property_name];
 		}
 
 		// 
