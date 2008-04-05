@@ -1,5 +1,8 @@
 2008-04-05  Raja R Harinath  <harinath@hurrynot.org>
 
+	* statement.cs (ExceptionStatement.ResolveFinally): Move setting
+	of NeedReturnLabel here.
+
 	Introduce a common point for emitting try/finally to IL
 	* statement.cs (ExceptionStatement.DoEmit): New.  Combines all the
 	features of the various subclasses, which are now driven by ...

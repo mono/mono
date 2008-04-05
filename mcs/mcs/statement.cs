@@ -3845,8 +3845,11 @@ namespace Mono.CSharp {
 				ig.EndExceptionBlock ();
 		}
 
-		protected void ResolveFinally (FlowBranchingException branching)
+		protected void ResolveFinally (EmitContext ec, FlowBranchingException branching)
 		{
+			// System.Reflection.Emit automatically emits a 'leave' at the end of a try clause
+			// So, ensure there's some IL code after this statement.
+			ec.NeedReturnLabel ();
 			emit_finally = branching.EmitFinally;
 		}
 
@@ -3967,13 +3970,9 @@ namespace Mono.CSharp {
 			FlowBranchingException branching = ec.StartFlowBranching (this);
 			bool ok = Statement.Resolve (ec);
 
-			ResolveFinally (branching);
+			ResolveFinally (ec, branching);
 
 			ec.EndFlowBranching ();
-
-			// System.Reflection.Emit automatically emits a 'leave' at the end of a try clause
-			// So, ensure there's some IL code after this statement.
-			ec.NeedReturnLabel ();
 
 			// Avoid creating libraries that reference the internal
 			// mcs NullType:
@@ -4541,12 +4540,8 @@ namespace Mono.CSharp {
 					ok = false;
 			}
 
-			ResolveFinally (branching);
+			ResolveFinally (ec, branching);
 			ec.EndFlowBranching ();
-
-			// System.Reflection.Emit automatically emits a 'leave' at the end of a try clause
-			// So, ensure there's some IL code after this statement.
-			ec.NeedReturnLabel ();
 
 			return ok;
 		}
@@ -4729,13 +4724,9 @@ namespace Mono.CSharp {
 
 			bool ok = Statement.Resolve (ec);
 
-			ResolveFinally (branching);
+			ResolveFinally (ec, branching);
 
 			ec.EndFlowBranching ();
-
-			// System.Reflection.Emit automatically emits a 'leave' at the end of a try clause
-			// So, ensure there's some IL code after this statement.
-			ec.NeedReturnLabel ();
 
 			if (TypeManager.void_dispose_void == null) {
 				TypeManager.void_dispose_void = TypeManager.GetPredefinedMethod (
@@ -4924,13 +4915,9 @@ namespace Mono.CSharp {
 
 			bool ok = stmt.Resolve (ec);
 
-			ResolveFinally (branching);
+			ResolveFinally (ec, branching);
 
 			ec.EndFlowBranching ();
-
-			// System.Reflection.Emit automatically emits a 'leave' at the end of a try clause
-			// So, ensure there's some IL code after this statement.
-			ec.NeedReturnLabel ();
 
 			if (TypeManager.void_dispose_void == null) {
 				TypeManager.void_dispose_void = TypeManager.GetPredefinedMethod (
@@ -5573,7 +5560,7 @@ namespace Mono.CSharp {
 					if (!loop.Resolve (ec))
 						ok = false;
 
-					ResolveFinally (branching);
+					ResolveFinally (ec, branching);
 					ec.EndFlowBranching ();
 
 					if (TypeManager.void_dispose_void == null) {
