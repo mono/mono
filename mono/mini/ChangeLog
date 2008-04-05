@@ -1,5 +1,7 @@
 2008-04-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* local-propagation.c: Move the if-conversion pass to branch-opts.c where it belongs.
+
 	* mini.c: Enable MONO_OPT_SSA if abcrem or ssapre is enabled, so code only needs to
 	check whenever SSA is enabled.
 
