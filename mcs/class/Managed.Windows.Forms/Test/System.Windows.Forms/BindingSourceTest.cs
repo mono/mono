@@ -1224,6 +1224,44 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			Assert.AreEqual ("B", source.Current, "C4");
 		}
 
+		[Test]
+		public void GetRelatedCurrencyManagerList ()
+		{
+			ListView lv = new ListView ();
+			lv.Columns.Add ("A");
+			BindingSource source = new BindingSource ();
+			source.DataSource = lv;
+
+			CurrencyManager cm = source.GetRelatedCurrencyManager ("Columns");
+			BindingSource related_source = (BindingSource)cm.List;
+			Assert.AreEqual (1, cm.Count, "A1");
+			Assert.AreEqual (1, related_source.Count, "A2");
+			Assert.AreEqual ("Columns", related_source.DataMember, "A3");
+			Assert.AreSame (source, related_source.DataSource, "A4");
+			Assert.IsTrue (related_source.List is ListView.ColumnHeaderCollection, "A5");
+			Assert.AreSame (cm, source.GetRelatedCurrencyManager ("Columns"), "A6");
+
+			// A path string returns null
+			cm = source.GetRelatedCurrencyManager ("Columns.Count");
+			Assert.IsNull (cm, "B1");
+
+			// String.Empty and null
+			Assert.AreSame (source.CurrencyManager, source.GetRelatedCurrencyManager (String.Empty), "C1");
+			Assert.AreSame (source.CurrencyManager, source.GetRelatedCurrencyManager (null), "C2");
+		}
+
+		[Test]
+		public void GetRelatedCurrencyManagerObject ()
+		{
+			BindingSource source = new BindingSource ();
+			ListViewItem item = new ListViewItem ();
+
+			source.DataSource = item;
+			CurrencyManager font_cm = source.GetRelatedCurrencyManager ("Font");
+			CurrencyManager name_cm = source.GetRelatedCurrencyManager ("Font.Name");
+			Assert.IsNull (name_cm, "A1");
+		}
+
 		class BindingListViewPoker : BindingList<string>, IBindingListView
 		{
 			public bool supports_filter;

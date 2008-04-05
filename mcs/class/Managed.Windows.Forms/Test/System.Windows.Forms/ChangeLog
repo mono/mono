@@ -1,3 +1,8 @@
+2008-04-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* BindingSourceTest.cs: Add new tests for GetRelatedCurrencyManager
+	method.
+
 2008-04-03  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridViewLinkCellTest.cs: Add.
