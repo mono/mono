@@ -1,3 +1,7 @@
+2008-04-06  Raja R Harinath  <harinath@hurrynot.org>
+
+	* gtest-381.cs: New test from #324708.
+
 2008-03-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile (check): Add a standard 'check' target which is the same as run-test.

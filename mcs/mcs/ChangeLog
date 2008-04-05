@@ -1,5 +1,11 @@
 2008-04-06  Raja R Harinath  <harinath@hurrynot.org>
 
+	The denouement!  Fix #324708
+	* iterators.cs (Iterator.EmitMoveNext): Reset $PC to -1 on entry.
+	(Iterator.EmitYieldBreak): We no longer need to reset $PC.
+	* statement.cs (ExceptionStatement.DoEmit): Actually emit the
+	'finally' inside the finally clause.
+
 	* statement.cs (ExceptionStatement.DoEmit): Emit try/finally block
 	inside an iterator.  Don't emit the body of the 'finally' inside
 	the finally clause yet.

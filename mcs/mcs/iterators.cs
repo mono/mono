@@ -642,9 +642,6 @@ namespace Mono.CSharp {
 
 		public void EmitYieldBreak (ILGenerator ig, bool unwind_protect)
 		{
-			ig.Emit (OpCodes.Ldarg_0);
-			IntConstant.EmitInt (ig, (int) State.After);
-			ig.Emit (OpCodes.Stfld, IteratorHost.PC.FieldBuilder);
 			ig.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, move_next_error);
 		}
 
@@ -687,6 +684,11 @@ namespace Mono.CSharp {
 			ig.Emit (OpCodes.Ldarg_0);
 			ig.Emit (OpCodes.Ldfld, IteratorHost.PC.FieldBuilder);
 			ig.Emit (OpCodes.Stloc, current_pc);
+
+			// We're actually in state 'running', but this is as good a PC value as any if there's an abnormal exit
+			ig.Emit (OpCodes.Ldarg_0);
+			IntConstant.EmitInt (ig, (int) State.After);
+			ig.Emit (OpCodes.Stfld, IteratorHost.PC.FieldBuilder);
 
 			Label [] labels = new Label [1 + resume_points.Count];
 			labels [0] = ig.DefineLabel ();

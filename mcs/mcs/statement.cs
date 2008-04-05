@@ -3850,22 +3850,18 @@ namespace Mono.CSharp {
 
 			EmitTryBody (ec);
 
-			if (emit_finally)
-				ig.BeginFinallyBlock ();
+			ig.BeginFinallyBlock ();
 
-			Label end_finally = ec.ig.DefineLabel ();
+			Label start_finally = ec.ig.DefineLabel ();
 			if (resume_points != null) {
 				ig.Emit (OpCodes.Ldloc, ec.CurrentIterator.SkipFinally);
-				ig.Emit (OpCodes.Brtrue, end_finally);
-				// should be: ig.Emit (OpCodes.Endfinally);
+				ig.Emit (OpCodes.Brfalse_S, start_finally);
+				ig.Emit (OpCodes.Endfinally);
 			}
 
+			ig.MarkLabel (start_finally);
 			EmitFinallyBody (ec);
-			ig.MarkLabel (end_finally);
 
-			// yeah, it's empty -- but we'll kill this soon enough
-			if (!emit_finally)
-				ig.BeginFinallyBlock ();
 			ig.EndExceptionBlock ();
 		}
 
