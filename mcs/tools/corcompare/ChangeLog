@@ -1,5 +1,9 @@
 2008-04-05  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* TODO: Removed, as all items are obsolete.
+
+2008-04-05  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* mono-api-diff.cs: Output type for extra classes, to allow it to
 	show up on class status pages.
 
