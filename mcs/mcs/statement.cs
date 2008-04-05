@@ -3803,7 +3803,7 @@ namespace Mono.CSharp {
 		{
 			return end;
 		}
-		public virtual void EmitForDispose (EmitContext ec, Iterator iterator, Label end)
+		public virtual void EmitForDispose (EmitContext ec, Iterator iterator, Label end, bool have_dispatcher)
 		{
 		}
 	}
@@ -3863,7 +3863,7 @@ namespace Mono.CSharp {
 			return dispose_try_block;
 		}
 
-		public override void EmitForDispose (EmitContext ec, Iterator iterator, Label end)
+		public override void EmitForDispose (EmitContext ec, Iterator iterator, Label end, bool have_dispatcher)
 		{
 			if (emitted_dispose)
 				return;
@@ -3875,10 +3875,10 @@ namespace Mono.CSharp {
 			Label end_of_try = ig.DefineLabel ();
 
 			// Ensure that the only way we can get into this code is through a dispatcher
-			ig.Emit (OpCodes.Br, end);
+			if (have_dispatcher)
+				ig.Emit (OpCodes.Br, end);
 
 			ig.BeginExceptionBlock ();
-			EmitTryHeader (ec);
 
 			ig.MarkLabel (dispose_try_block);
 
@@ -3897,17 +3897,23 @@ namespace Mono.CSharp {
 			}
 
 			if (labels != null) {
-				//SymbolWriter.StartIteratorDispatcher (ec.ig);
+				int j;
+				for (j = 1; j < labels.Length; ++j)
+					if (!labels [0].Equals (labels [j]))
+						break;
+				bool emit_dispatcher = j < labels.Length;
 
-				ig.Emit (OpCodes.Ldloc, iterator.CurrentPC);
-				IntConstant.EmitInt (ig, first_resume_pc);
-				ig.Emit (OpCodes.Sub);
-				ig.Emit (OpCodes.Switch, labels);
-
-				//SymbolWriter.EndIteratorDispatcher (ec.ig);
+				if (emit_dispatcher) {
+					//SymbolWriter.StartIteratorDispatcher (ec.ig);
+					ig.Emit (OpCodes.Ldloc, iterator.CurrentPC);
+					IntConstant.EmitInt (ig, first_resume_pc);
+					ig.Emit (OpCodes.Sub);
+					ig.Emit (OpCodes.Switch, labels);
+					//SymbolWriter.EndIteratorDispatcher (ec.ig);
+				}
 
 				foreach (ResumableStatement s in resume_points)
-					s.EmitForDispose (ec, iterator, end_of_try);
+					s.EmitForDispose (ec, iterator, end_of_try, emit_dispatcher);
 			}
 
 			ig.MarkLabel (end_of_try);

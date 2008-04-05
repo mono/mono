@@ -763,7 +763,7 @@ namespace Mono.CSharp {
 				//SymbolWriter.EndIteratorDispatcher (ec.ig);
 
 				foreach (ResumableStatement s in resume_points)
-					s.EmitForDispose (ec, this, end);
+					s.EmitForDispose (ec, this, end, true);
 			}
 
 			ig.MarkLabel (end);

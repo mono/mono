@@ -1,5 +1,9 @@
 2008-04-05  Raja R Harinath  <harinath@hurrynot.org>
 
+	* statement.cs (ExceptionStatement.EmitForDispose): If all labels
+	of the dispatcher are the same, skip emitting the 'switch'.
+	* iterator.cs (Iterator.EmitDispose): Update to changes.
+
 	Clean up handling of 'using' statement
 	* statement.cs (UsingTemporary): New.  Carved out of ...
 	(Using): ... this.  Simplify drastically.  Handle exactly
