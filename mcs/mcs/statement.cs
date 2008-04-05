@@ -3810,26 +3810,39 @@ namespace Mono.CSharp {
 
 	public abstract class ExceptionStatement : ResumableStatement
 	{
-		public virtual void EmitTryHeader (EmitContext ec)
+		protected virtual void EmitPreTryBody (EmitContext ec)
 		{
 		}
 
-		//public abstract void EmitTryBody (EmitContext ec);
-		public abstract void EmitFinallyBody (EmitContext ec);
+		protected abstract void EmitTryBody (EmitContext ec);
+		protected abstract void EmitFinallyBody (EmitContext ec);
 
-		protected bool emit_finally = true;
+		bool emit_finally = true;
 
-		protected void EmitFinally (EmitContext ec)
+		protected sealed override void DoEmit (EmitContext ec)
 		{
+			ILGenerator ig = ec.ig;
+
+			EmitPreTryBody (ec);
+
+			if (emit_finally)
+				ig.BeginExceptionBlock ();
+
+			EmitTryBody (ec);
+
 			Label end_finally = ec.ig.DefineLabel ();
 			if (emit_finally)
 				ec.ig.BeginFinallyBlock ();
-			else if (ec.InIterator) {
+
+			if (resume_points != null) {
 				ec.ig.Emit (OpCodes.Ldloc, ec.CurrentIterator.SkipFinally);
 				ec.ig.Emit (OpCodes.Brtrue, end_finally);
 			}
 			EmitFinallyBody (ec);
 			ec.ig.MarkLabel (end_finally);
+
+			if (emit_finally)
+				ig.EndExceptionBlock ();
 		}
 
 		protected void ResolveFinally (FlowBranchingException branching)
@@ -3982,26 +3995,21 @@ namespace Mono.CSharp {
 			return ok;
 		}
 		
-		protected override void DoEmit (EmitContext ec)
+		protected override void EmitPreTryBody (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 
 			temp.Store (ec, expr);
 			temp.Emit (ec);
 			ig.Emit (OpCodes.Call, TypeManager.void_monitor_enter_object);
-
-			// try
-			if (emit_finally)
-				ig.BeginExceptionBlock ();
-			Statement.Emit (ec);
-			
-			// finally
-			EmitFinally (ec);
-			if (emit_finally)
-				ig.EndExceptionBlock ();
 		}
 
-		public override void EmitFinallyBody (EmitContext ec)
+		protected override void EmitTryBody (EmitContext ec)
+		{
+			Statement.Emit (ec);
+		}
+
+		protected override void EmitFinallyBody (EmitContext ec)
 		{
 			temp.Emit (ec);
 			ec.ig.Emit (OpCodes.Call, TypeManager.void_monitor_exit_object);
@@ -4543,20 +4551,12 @@ namespace Mono.CSharp {
 			return ok;
 		}
 
-		protected override void DoEmit (EmitContext ec)
+		protected override void EmitTryBody (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
-
-			if (emit_finally)
-				ig.BeginExceptionBlock ();
 			stmt.Emit (ec);
-
-			EmitFinally (ec);
-			if (emit_finally)
-				ig.EndExceptionBlock ();
 		}
 
-		public override void EmitFinallyBody (EmitContext ec)
+		protected override void EmitFinallyBody (EmitContext ec)
 		{
 			fini.Emit (ec);
 		}
@@ -4745,26 +4745,17 @@ namespace Mono.CSharp {
 			return ok;
 		}
 
-		protected override void DoEmit (EmitContext ec)
+		protected override void EmitPreTryBody (EmitContext ec)
 		{
-			//
-			// Make a copy of the expression and operate on that.
-			//
-			ILGenerator ig = ec.ig;
-
 			local_copy.Store (ec, expr);
-
-			if (emit_finally)
-				ig.BeginExceptionBlock ();
-
-			Statement.Emit (ec);
-
-			EmitFinally (ec);
-			if (emit_finally)
-				ig.EndExceptionBlock ();
 		}
 
-	        public override void EmitFinallyBody (EmitContext ec)
+		protected override void EmitTryBody (EmitContext ec)
+		{
+			Statement.Emit (ec);
+		}
+
+	        protected override void EmitFinallyBody (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 			if (!expr_type.IsValueType) {
@@ -4867,33 +4858,23 @@ namespace Mono.CSharp {
 				expr.GetSignatureForError ());
 		}
 
-		//
-		// Emits the code for the case of using using a local variable declaration.
-		//
-		protected override void DoEmit (EmitContext ec)
+		protected override void EmitPreTryBody (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
-
 			ExpressionStatement es = assign as ExpressionStatement;
 			if (es != null) {
 				es.EmitStatement (ec);
 			} else {
 				assign.Emit (ec);
-				ig.Emit (OpCodes.Pop);
+				ec.ig.Emit (OpCodes.Pop);
 			}
-
-			if (emit_finally)
-				ig.BeginExceptionBlock ();
-
-			stmt.Emit (ec);
-
-			EmitFinally (ec);
-
-			if (emit_finally)
-				ig.EndExceptionBlock ();
 		}
 
-		public override void EmitFinallyBody (EmitContext ec)
+		protected override void EmitTryBody (EmitContext ec)
+		{
+			stmt.Emit (ec);
+		}
+
+		protected override void EmitFinallyBody (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 
@@ -5602,19 +5583,12 @@ namespace Mono.CSharp {
 					return ok;
 				}
 
-				protected override void DoEmit (EmitContext ec)
+				protected override void EmitTryBody (EmitContext ec)
 				{
-					ILGenerator ig = ec.ig;
-
-					if (emit_finally)
-						ig.BeginExceptionBlock ();
 					loop.Emit (ec);
-					EmitFinally (ec);
-					if (emit_finally)
-						ig.EndExceptionBlock ();
 				}
 
-				public override void EmitFinallyBody (EmitContext ec)
+				protected override void EmitFinallyBody (EmitContext ec)
 				{
 					parent.EmitFinallyBody (ec);
 				}

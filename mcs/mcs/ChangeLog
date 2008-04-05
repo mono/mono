@@ -1,5 +1,14 @@
 2008-04-05  Raja R Harinath  <harinath@hurrynot.org>
 
+	Introduce a common point for emitting try/finally to IL
+	* statement.cs (ExceptionStatement.DoEmit): New.  Combines all the
+	features of the various subclasses, which are now driven by ...
+	(ExceptionStatement.EmitPreTryBody): ... this and ...
+	(ExceptionStatement.EmitTryBody): ... this and the original
+	EmitFinallyBody.
+	(TryFinally, Lock, Using, UsingTemporary, DisposableWrapper):
+	Remove DoEmit and update to follow above protocol.
+
 	* statement.cs (ExceptionStatement.EmitForDispose): If all labels
 	of the dispatcher are the same, skip emitting the 'switch'.
 	* iterator.cs (Iterator.EmitDispose): Update to changes.
