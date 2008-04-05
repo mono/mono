@@ -1,5 +1,14 @@
 2008-04-05  Raja R Harinath  <harinath@hurrynot.org>
 
+	Clean up handling of 'using' statement
+	* statement.cs (UsingTemporary): New.  Carved out of ...
+	(Using): ... this.  Simplify drastically.  Handle exactly
+	one variable.
+	* cs-parser.jay (using_statement): Split.  Create UsingTemporary
+	or Using as appropriate.  If there are multiple variable declared,
+	create nested Using statements.
+	(resource_acquisition): Kill.
+
 	* statement.cs (ExceptionStatement.EmitForDispose): Use
 	EmitFinallyBody, not EmitFinally.
 
