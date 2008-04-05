@@ -1,5 +1,9 @@
 2008-04-05  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* PropertyGrid.cs: Fix unused variable warnings.
+
+2008-04-05  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* PropertyGridView.cs: Fix expansion via [+] misbehavior on 
 	double-click. It expanded it once in the mouse down and then 
 	again in the double-click handler.

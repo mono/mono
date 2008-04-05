@@ -76,8 +76,6 @@ namespace System.Windows.Forms
 		private PropertyToolBarButton alphabetic_toolbarbutton;
 		private PropertyToolBarButton propertypages_toolbarbutton;
 		private PropertyToolBarSeparator separator_toolbarbutton;
-		private PropertyToolBarButton properties_toolbarbutton;
-		private PropertyToolBarButton events_toolbarbutton;
 		private bool events_tab_visible;
 
 		private PropertyToolBar toolbar;
