@@ -3789,14 +3789,15 @@ namespace Mono.CSharp {
 	public abstract class ResumableStatement : Statement
 	{
 		bool prepared;
-		public Label ResumePoint;
+		protected Label resume_point;
 
-		public void PrepareForEmit (EmitContext ec)
+		public Label PrepareForEmit (EmitContext ec)
 		{
 			if (!prepared) {
 				prepared = true;
-				ResumePoint = ec.ig.DefineLabel ();
+				resume_point = ec.ig.DefineLabel ();
 			}
+			return resume_point;
 		}
 
 		public virtual Label PrepareForDispose (EmitContext ec, Label end)
@@ -3825,21 +3826,43 @@ namespace Mono.CSharp {
 
 			EmitPreTryBody (ec);
 
+			if (resume_points != null) {
+				IntConstant.EmitInt (ig, (int) Iterator.State.Running);
+				ig.Emit (OpCodes.Stloc, ec.CurrentIterator.CurrentPC);
+			}
+
 			if (emit_finally)
 				ig.BeginExceptionBlock ();
 
+			if (resume_points != null) {
+				ig.MarkLabel (resume_point);
+
+				// For normal control flow, we want to fall-through the Switch
+				// So, we use CurrentPC rather than the $PC field, and initialize it to an outside value above
+				ig.Emit (OpCodes.Ldloc, ec.CurrentIterator.CurrentPC);
+				IntConstant.EmitInt (ig, first_resume_pc);
+				ig.Emit (OpCodes.Sub);
+
+				Label [] labels = new Label [resume_points.Count];
+				for (int i = 0; i < resume_points.Count; ++i)
+					labels [i] = ((ResumableStatement) resume_points [i]).PrepareForEmit (ec);
+				ig.Emit (OpCodes.Switch, labels);
+			}
+
 			EmitTryBody (ec);
 
-			Label end_finally = ec.ig.DefineLabel ();
 			if (emit_finally)
-				ec.ig.BeginFinallyBlock ();
+				ig.BeginFinallyBlock ();
 
+			Label end_finally = ec.ig.DefineLabel ();
 			if (resume_points != null) {
-				ec.ig.Emit (OpCodes.Ldloc, ec.CurrentIterator.SkipFinally);
-				ec.ig.Emit (OpCodes.Brtrue, end_finally);
+				ig.Emit (OpCodes.Ldloc, ec.CurrentIterator.SkipFinally);
+				ig.Emit (OpCodes.Brtrue, end_finally);
+				// should be: ig.Emit (OpCodes.Endfinally);
 			}
+
 			EmitFinallyBody (ec);
-			ec.ig.MarkLabel (end_finally);
+			ig.MarkLabel (end_finally);
 
 			if (emit_finally)
 				ig.EndExceptionBlock ();

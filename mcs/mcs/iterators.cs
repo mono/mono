@@ -85,9 +85,7 @@ namespace Mono.CSharp {
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			int pc = ec.CurrentIterator.MarkYield (ec, expr, unwind_protect);
-			if (pc != resume_pc)
-				throw new InternalErrorException ();
+			ec.CurrentIterator.MarkYield (ec, expr, resume_pc, unwind_protect, resume_point);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)
@@ -346,11 +344,11 @@ namespace Mono.CSharp {
 			protected override bool DoResolveInternal (EmitContext ec)
 			{
 				if (this is EnumeratorScopeInitializer)
-					state = Iterator.State.Running;
+					state = Iterator.State.Start;
 				else if (Host.Iterator.IsEnumerable)
 					state = Iterator.State.Uninitialized;
 				else
-					state = Iterator.State.Running;
+					state = Iterator.State.Start;
 
 				return base.DoResolveInternal (ec);
 			}
@@ -454,7 +452,7 @@ namespace Mono.CSharp {
 
 					ig.Emit (OpCodes.Ldarg_0);
 					ig.Emit (OpCodes.Ldflda, host.PC.FieldBuilder);
-					ig.Emit (OpCodes.Ldc_I4, (int) Iterator.State.Running);
+					ig.Emit (OpCodes.Ldc_I4, (int) Iterator.State.Start);
 					ig.Emit (OpCodes.Ldc_I4, (int) Iterator.State.Uninitialized);
 					ig.Emit (OpCodes.Call, ce);
 
@@ -594,7 +592,7 @@ namespace Mono.CSharp {
 
 				ig.Emit (OpCodes.Ldarg_0);
 				ig.Emit (OpCodes.Ldfld, host.PC.FieldBuilder);
-				ig.Emit (OpCodes.Ldc_I4, (int) Iterator.State.Running);
+				ig.Emit (OpCodes.Ldc_I4, (int) Iterator.State.Start);
 				ig.Emit (OpCodes.Bgt, label_ok);
 
 				ig.Emit (OpCodes.Newobj, TypeManager.invalid_operation_exception_ctor);
@@ -632,16 +630,14 @@ namespace Mono.CSharp {
 			get { return current_pc; }
 		}
 
-		ArrayList old_resume_points = new ArrayList ();
-		int pc;
-		
 		public readonly Type OriginalIteratorType;
 		public readonly IteratorHost IteratorHost;
 
 		public enum State {
-			Uninitialized	= -2,
-			After,
-			Running
+			Running = -3, // Used only in CurrentPC, never stored into $PC
+			Uninitialized = -2,
+			After = -1,
+			Start = 0
 		}
 
 		public void EmitYieldBreak (ILGenerator ig, bool unwind_protect)
@@ -652,6 +648,29 @@ namespace Mono.CSharp {
 			ig.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, move_next_error);
 		}
 
+		void EmitMoveNext_NoResumePoints (EmitContext ec, Block original_block)
+		{
+			ILGenerator ig = ec.ig;
+
+			ig.Emit (OpCodes.Ldarg_0);
+			ig.Emit (OpCodes.Ldfld, IteratorHost.PC.FieldBuilder);
+
+			ig.Emit (OpCodes.Ldarg_0);
+			IntConstant.EmitInt (ig, (int) State.After);
+			ig.Emit (OpCodes.Stfld, IteratorHost.PC.FieldBuilder);
+
+			// We only care if the PC is zero (start executing) or non-zero (don't do anything)
+			ig.Emit (OpCodes.Brtrue, move_next_error);
+
+			SymbolWriter.StartIteratorBody (ec.ig);
+			original_block.Emit (ec);
+			SymbolWriter.EndIteratorBody (ec.ig);
+
+			ig.MarkLabel (move_next_error);
+			ig.Emit (OpCodes.Ldc_I4_0);
+			ig.Emit (OpCodes.Ret);
+		}
+
 		internal void EmitMoveNext (EmitContext ec, Block original_block)
 		{
 			ILGenerator ig = ec.ig;
@@ -659,56 +678,65 @@ namespace Mono.CSharp {
 			move_next_ok = ig.DefineLabel ();
 			move_next_error = ig.DefineLabel ();
 
-			LocalBuilder retval = ec.GetTemporaryLocal (TypeManager.int32_type);
-			skip_finally = ec.GetTemporaryLocal (TypeManager.bool_type);
+			if (resume_points == null) {
+				EmitMoveNext_NoResumePoints (ec, original_block);
+				return;
+			}
 
-			ig.Emit (OpCodes.Ldc_I4_0);
-			ig.Emit (OpCodes.Stloc, skip_finally);
+			current_pc = ec.GetTemporaryLocal (TypeManager.uint32_type);
+			ig.Emit (OpCodes.Ldarg_0);
+			ig.Emit (OpCodes.Ldfld, IteratorHost.PC.FieldBuilder);
+			ig.Emit (OpCodes.Stloc, current_pc);
+
+			Label [] labels = new Label [1 + resume_points.Count];
+			labels [0] = ig.DefineLabel ();
+
+			bool need_skip_finally = false;
+			for (int i = 0; i < resume_points.Count; ++i) {
+				ResumableStatement s = (ResumableStatement) resume_points [i];
+				need_skip_finally |= s is ExceptionStatement;
+				labels [i+1] = s.PrepareForEmit (ec);
+			}
+
+			if (need_skip_finally) {
+				skip_finally = ec.GetTemporaryLocal (TypeManager.bool_type);
+				ig.Emit (OpCodes.Ldc_I4_0);
+				ig.Emit (OpCodes.Stloc, skip_finally);
+			}
 
 			ig.BeginExceptionBlock ();
 
-			Label dispatcher = ig.DefineLabel ();
-			ig.Emit (OpCodes.Br, dispatcher);
-
-			OldResumePoint entry_point = new OldResumePoint ();
-			old_resume_points.Add (entry_point);
-			entry_point.Define (ig);
-
-			SymbolWriter.StartIteratorBody (ec.ig);
-
-			original_block.Emit (ec);
-
-			SymbolWriter.EndIteratorBody (ec.ig);
-
-			EmitYieldBreak (ig, false);
-
 			SymbolWriter.StartIteratorDispatcher (ec.ig);
-
-			ig.MarkLabel (dispatcher);
-
-			Label [] labels = new Label [old_resume_points.Count];
-			for (int i = 0; i < labels.Length; i++)
-				labels [i] = ((OldResumePoint) old_resume_points [i]).Label;
-
-			ig.Emit (OpCodes.Ldarg_0);
-			ig.Emit (OpCodes.Ldfld, IteratorHost.PC.FieldBuilder);
+			ig.Emit (OpCodes.Ldloc, current_pc);
 			ig.Emit (OpCodes.Switch, labels);
 
+			ig.Emit (OpCodes.Br, move_next_error);
 			SymbolWriter.EndIteratorDispatcher (ec.ig);
 
-			Label end = ig.DefineLabel ();
+			ig.MarkLabel (labels [0]);
+
+			SymbolWriter.StartIteratorBody (ec.ig);
+			original_block.Emit (ec);
+			SymbolWriter.EndIteratorBody (ec.ig);
 
 			SymbolWriter.StartIteratorDispatcher (ec.ig);
+
+			ig.Emit (OpCodes.Ldarg_0);
+			IntConstant.EmitInt (ig, (int) State.After);
+			ig.Emit (OpCodes.Stfld, IteratorHost.PC.FieldBuilder);
+
+			Label end = ig.DefineLabel ();
+			LocalBuilder retval = ec.GetTemporaryLocal (TypeManager.int32_type);
 
 			ig.MarkLabel (move_next_error);
   			ig.Emit (OpCodes.Ldc_I4_0); 
 			ig.Emit (OpCodes.Stloc, retval);
-			ig.Emit (OpCodes.Leave, end);
+			ig.Emit (OpCodes.Leave_S, end);
 
 			ig.MarkLabel (move_next_ok);
 			ig.Emit (OpCodes.Ldc_I4_1);
 			ig.Emit (OpCodes.Stloc, retval);
-			ig.Emit (OpCodes.Leave, end);
+			//ig.Emit (OpCodes.Leave_S, end);            // SRE automatically emits a Leave on the BeginFaultBlock
 
 			SymbolWriter.EndIteratorDispatcher (ec.ig);
 
@@ -778,21 +806,10 @@ namespace Mono.CSharp {
 			return resume_points.Count;
 		}
 
-		protected class OldResumePoint
-		{
-			public Label Label;
-
-			public void Define (ILGenerator ig)
-			{
-				Label = ig.DefineLabel ();
-				ig.MarkLabel (Label);
-			}
-		}
-
 		//
 		// Called back from Yield
 		//
-		public int MarkYield (EmitContext ec, Expression expr, bool unwind_protect)
+		public void MarkYield (EmitContext ec, Expression expr, int resume_pc, bool unwind_protect, Label resume_point)
 		{
 			ILGenerator ig = ec.ig;
 
@@ -801,24 +818,21 @@ namespace Mono.CSharp {
 			expr.Emit (ec);
 			ig.Emit (OpCodes.Stfld, IteratorHost.CurrentField.FieldBuilder);
 
-			// increment pc
-			pc++;
+			// store resume program-counter
 			ig.Emit (OpCodes.Ldarg_0);
-			IntConstant.EmitInt (ig, pc);
+			IntConstant.EmitInt (ig, resume_pc);
 			ig.Emit (OpCodes.Stfld, IteratorHost.PC.FieldBuilder);
 
 			// mark finally blocks as disabled
-			ig.Emit (OpCodes.Ldc_I4_1);
-			ig.Emit (OpCodes.Stloc, skip_finally);
+			if (unwind_protect && skip_finally != null) {
+				ig.Emit (OpCodes.Ldc_I4_1);
+				ig.Emit (OpCodes.Stloc, skip_finally);
+			}
 
 			// Return ok
 			ig.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, move_next_ok);
 
-			OldResumePoint point = new OldResumePoint ();
-			old_resume_points.Add (point);
-			point.Define (ig);
-
-			return pc;
+			ig.MarkLabel (resume_point);
 		}
 
 		public override string ContainerType {

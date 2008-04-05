@@ -1,3 +1,16 @@
+2008-04-06  Raja R Harinath  <harinath@hurrynot.org>
+
+	Use the ResumableStatement infrastructure for MoveNext ()
+	* iterators.cs (Iterator.EmitMoveNext_NoResumePoints): New.
+	(Iterator.EmitMoveNext): Use 'resume_points'.  Get rid of
+	'old_resume_points'.  Move dispatcher upfront.
+	(Iterator.MarkYield): Mark the 'resume_point' of a Yield.
+	* statement.cs (ExceptionStatement.DoEmit): Emit a dispatcher if
+	in an enumerator.  This encodes the main fix in this patch series
+	-- we can only jump into the first instruction of a try from the
+	outside, but we want to emit try/finally regions in iterators and
+	resume in the middle of them.
+
 2008-04-05  Raja R Harinath  <harinath@hurrynot.org>
 
 	* statement.cs (ExceptionStatement.ResolveFinally): Move setting
