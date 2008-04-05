@@ -457,12 +457,6 @@ namespace Mono.CSharp
 			return Parent.AddGotoOrigin (vector, goto_stmt);
 		}
 
-		// returns true if we crossed an unwind-protected region (try/catch/finally, lock, using, ...)
-		public virtual bool StealFinallyClauses (ref ArrayList list)
-		{
-			return Parent.StealFinallyClauses (ref list);
-		}
-
 		public bool IsAssigned (VariableInfo vi)
 		{
 			return CurrentUsageVector.IsAssigned (vi, false);
@@ -700,11 +694,6 @@ namespace Mono.CSharp
 			return false;
 		}
 
-		public override bool StealFinallyClauses (ref ArrayList list)
-		{
-			return false;
-		}
-
 		public override bool AddGotoOrigin (UsageVector vector, Goto goto_stmt)
 		{
 			string name = goto_stmt.Target;
@@ -782,12 +771,6 @@ namespace Mono.CSharp
 		public override bool AddGotoOrigin (UsageVector vector, Goto goto_stmt)
 		{
 			Parent.AddGotoOrigin (vector, goto_stmt);
-			return true;
-		}
-
-		public override bool StealFinallyClauses (ref ArrayList list)
-		{
-			Parent.StealFinallyClauses (ref list);
 			return true;
 		}
 	}
@@ -918,6 +901,7 @@ namespace Mono.CSharp
 				else
 					Report.Error (1625, loc, "Cannot yield in the body of a finally clause");
 			}
+			emit_finally = false;
 			return true;
 		}
 
@@ -974,16 +958,6 @@ namespace Mono.CSharp
 			} else {
 				saved_origins = new GotoOrigin (saved_origins, vector, goto_stmt);
 			}
-			return true;
-		}
-
-		public override bool StealFinallyClauses (ref ArrayList list)
-		{
-			if (list == null)
-				list = new ArrayList ();
-			list.Add (stmt);
-			emit_finally = false;
-			base.StealFinallyClauses (ref list);
 			return true;
 		}
 

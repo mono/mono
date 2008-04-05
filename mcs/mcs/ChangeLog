@@ -1,5 +1,8 @@
 2008-04-05  Raja R Harinath  <harinath@hurrynot.org>
 
+	* flowanalysis.cs (FlowBranching.StealFinallyClauses): Remove.
+	* iterator.cs: Update to changes.
+
 	Start using the ResumableStatement infrastructure
 	* statement.cs (ResumeableStatement.PrepareForDispose): New.
 	(ResumableStatement.EmitForDispose): New.

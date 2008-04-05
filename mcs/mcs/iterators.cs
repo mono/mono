@@ -23,7 +23,6 @@ namespace Mono.CSharp {
 
 	public class Yield : ResumableStatement {
 		Expression expr;
-		ArrayList finally_blocks;
 		bool unwind_protect;
 
 		int resume_pc;
@@ -81,15 +80,12 @@ namespace Mono.CSharp {
 
 			unwind_protect = ec.CurrentBranching.AddResumePoint (this, loc, out resume_pc);
 
-			if (ec.CurrentBranching.StealFinallyClauses (ref finally_blocks) != unwind_protect)
-				throw new InternalErrorException ();
-
 			return true;
 		}
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			int pc = ec.CurrentIterator.MarkYield (ec, expr, unwind_protect, finally_blocks);
+			int pc = ec.CurrentIterator.MarkYield (ec, expr, unwind_protect);
 			if (pc != resume_pc)
 				throw new InternalErrorException ();
 		}
@@ -674,7 +670,7 @@ namespace Mono.CSharp {
 			Label dispatcher = ig.DefineLabel ();
 			ig.Emit (OpCodes.Br, dispatcher);
 
-			OldResumePoint entry_point = new OldResumePoint (null);
+			OldResumePoint entry_point = new OldResumePoint ();
 			old_resume_points.Add (entry_point);
 			entry_point.Define (ig);
 
@@ -785,15 +781,6 @@ namespace Mono.CSharp {
 		protected class OldResumePoint
 		{
 			public Label Label;
-			public readonly ExceptionStatement[] FinallyBlocks;
-
-			public OldResumePoint (ArrayList list)
-			{
-				if (list != null) {
-					FinallyBlocks = new ExceptionStatement [list.Count];
-					list.CopyTo (FinallyBlocks, 0);
-				}
-			}
 
 			public void Define (ILGenerator ig)
 			{
@@ -805,8 +792,7 @@ namespace Mono.CSharp {
 		//
 		// Called back from Yield
 		//
-		public int MarkYield (EmitContext ec, Expression expr, bool unwind_protect,
-				       ArrayList finally_blocks)
+		public int MarkYield (EmitContext ec, Expression expr, bool unwind_protect)
 		{
 			ILGenerator ig = ec.ig;
 
@@ -828,7 +814,7 @@ namespace Mono.CSharp {
 			// Return ok
 			ig.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, move_next_ok);
 
-			OldResumePoint point = new OldResumePoint (finally_blocks);
+			OldResumePoint point = new OldResumePoint ();
 			old_resume_points.Add (point);
 			point.Define (ig);
 
