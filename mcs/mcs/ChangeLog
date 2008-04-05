@@ -1,5 +1,9 @@
 2008-04-06  Raja R Harinath  <harinath@hurrynot.org>
 
+	* statement.cs (ExceptionStatement.DoEmit): Emit try/finally block
+	inside an iterator.  Don't emit the body of the 'finally' inside
+	the finally clause yet.
+
 	Use the ResumableStatement infrastructure for MoveNext ()
 	* iterators.cs (Iterator.EmitMoveNext_NoResumePoints): New.
 	(Iterator.EmitMoveNext): Use 'resume_points'.  Get rid of

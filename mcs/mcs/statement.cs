@@ -3831,8 +3831,7 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Stloc, ec.CurrentIterator.CurrentPC);
 			}
 
-			if (emit_finally)
-				ig.BeginExceptionBlock ();
+			ig.BeginExceptionBlock ();
 
 			if (resume_points != null) {
 				ig.MarkLabel (resume_point);
@@ -3864,8 +3863,10 @@ namespace Mono.CSharp {
 			EmitFinallyBody (ec);
 			ig.MarkLabel (end_finally);
 
-			if (emit_finally)
-				ig.EndExceptionBlock ();
+			// yeah, it's empty -- but we'll kill this soon enough
+			if (!emit_finally)
+				ig.BeginFinallyBlock ();
+			ig.EndExceptionBlock ();
 		}
 
 		protected void ResolveFinally (EmitContext ec, FlowBranchingException branching)
