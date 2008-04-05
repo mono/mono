@@ -373,6 +373,16 @@ namespace Cairo {
                         }
                 }
 
+		public Cairo.ScaledFont ScaledFont {
+                        set {
+				NativeMethods.cairo_set_scaled_font (state, value.Handle);
+                        }
+
+                        get {
+                                return new ScaledFont (NativeMethods.cairo_get_scaled_font (state));
+                        }
+                }
+
 		public void SetSourceRGB (double r, double g, double b)
 		{
 			NativeMethods.cairo_set_source_rgb (state, r, g, b);

@@ -516,7 +516,7 @@ namespace Cairo
 		internal static extern IntPtr cairo_scaled_font_destroy (IntPtr scaled_font);
 		
 		[DllImport (cairo)]
-		internal static extern void cairo_scaled_font_extents (IntPtr scaled_font, out TextExtents extents);
+		internal static extern void cairo_scaled_font_extents (IntPtr scaled_font, out FontExtents extents);
 
 		[DllImport (cairo)]
 		internal static extern void cairo_scaled_font_get_ctm (IntPtr scaled_font, out Matrix matrix);
@@ -541,6 +541,12 @@ namespace Cairo
 
 		[DllImport (cairo)]
 		internal static extern Status cairo_scaled_font_status (IntPtr scaled_font);
+
+		[DllImport (cairo)]
+		internal static extern void cairo_set_scaled_font (IntPtr cr, IntPtr scaled_font);
+
+		[DllImport (cairo)]
+		internal static extern IntPtr cairo_get_scaled_font (IntPtr cr);
 
 		[DllImport (cairo)]
 		internal static extern void cairo_scaled_font_text_extents (IntPtr scaled_font, string utf8, out TextExtents extents);

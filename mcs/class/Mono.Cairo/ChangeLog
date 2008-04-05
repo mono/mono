@@ -1,3 +1,10 @@
+2008-04-05 Jordi Mas i Hernandez <jordimash@gmail.com>
+
+	* ScaledFont.cs: Adds class to encapsulate scaled font API
+	* Mono.Cairo.dll.sources: Adds new class
+	* Context.cs: Access to Scaled Fonts
+	* NativeMethods.cs: Add some missing scale_font APIs and fixes 
+
 2007-07-07  Miguel de Icaza  <miguel@novell.com>
 
 	* Mono.Cairo/Context.cs: Integrate Alp's patch for looking up
