@@ -43,6 +43,7 @@ namespace System.Windows.Forms {
 
 		IList list;
 		CurrencyManager currency_manager;
+		Dictionary<string,CurrencyManager> related_currency_managers = new Dictionary<string,CurrencyManager> ();
 		//bool list_defaulted;
 		Type item_type;
 		bool item_has_default_ctor;
@@ -159,6 +160,7 @@ namespace System.Windows.Forms {
 			} else {
 				Type t = typeof (BindingList<>).MakeGenericType (new Type[] { source.GetType() });
 				l = (IList)Activator.CreateInstance (t);
+				l.Add (source);
 			}
 
 			SetList (l);
@@ -642,7 +644,21 @@ namespace System.Windows.Forms {
 
 		public virtual CurrencyManager GetRelatedCurrencyManager (string dataMember)
 		{
-			throw new NotImplementedException ();
+			if (dataMember == null || dataMember.Length == 0)
+				return currency_manager;
+
+			if (related_currency_managers.ContainsKey (dataMember))
+				return related_currency_managers [dataMember];
+
+			// FIXME - Why passing invalid dataMembers containing a . return
+			// a null value?
+			if (dataMember.IndexOf ('.') != -1)
+				return null;
+
+			BindingSource source = new BindingSource (this, dataMember);
+			related_currency_managers [dataMember] = source.CurrencyManager;
+
+			return source.CurrencyManager;
 		}
 
 		public virtual int IndexOf (object value)
