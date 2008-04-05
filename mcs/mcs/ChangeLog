@@ -1,5 +1,12 @@
 2008-04-06  Raja R Harinath  <harinath@hurrynot.org>
 
+	* iterators.cs (Iterator.EmitMoveNext): Remove try/fault wrapper.
+	Since $PC is always -1 inside the body of MoveNext, the fault
+	handler is a no-op.
+	* flowanalysis.cs (FlowBranchingException.EmitFinally): Kill.
+	* statement.cs (ExceptionStatement.emit_finally): Likewise.
+	(ExceptionStatement.ResolveFinally): Drop 'branching' argument.
+
 	The denouement!  Fix #324708
 	* iterators.cs (Iterator.EmitMoveNext): Reset $PC to -1 on entry.
 	(Iterator.EmitYieldBreak): We no longer need to reset $PC.

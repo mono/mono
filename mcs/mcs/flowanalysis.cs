@@ -861,15 +861,12 @@ namespace Mono.CSharp
 
 		SavedOrigin saved_origins;
 
-		bool emit_finally;
-
 		public FlowBranchingException (FlowBranching parent,
 					       ExceptionStatement stmt)
 			: base (parent, BranchingType.Exception, SiblingType.Try,
 				null, stmt.loc)
 		{
 			this.stmt = stmt;
-			this.emit_finally = true;
 		}
 
 		protected override void AddSibling (UsageVector sibling)
@@ -901,7 +898,6 @@ namespace Mono.CSharp
 				else
 					Report.Error (1625, loc, "Cannot yield in the body of a finally clause");
 			}
-			emit_finally = false;
 			return true;
 		}
 
@@ -959,10 +955,6 @@ namespace Mono.CSharp
 				saved_origins = new GotoOrigin (saved_origins, vector, goto_stmt);
 			}
 			return true;
-		}
-
-		public bool EmitFinally {
-			get { return emit_finally; }
 		}
 
 		protected override UsageVector Merge ()

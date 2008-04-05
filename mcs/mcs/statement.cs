@@ -3818,8 +3818,6 @@ namespace Mono.CSharp {
 		protected abstract void EmitTryBody (EmitContext ec);
 		protected abstract void EmitFinallyBody (EmitContext ec);
 
-		bool emit_finally = true;
-
 		protected sealed override void DoEmit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
@@ -3865,12 +3863,11 @@ namespace Mono.CSharp {
 			ig.EndExceptionBlock ();
 		}
 
-		protected void ResolveFinally (EmitContext ec, FlowBranchingException branching)
+		protected void ResolveFinally (EmitContext ec)
 		{
 			// System.Reflection.Emit automatically emits a 'leave' at the end of a try clause
 			// So, ensure there's some IL code after this statement.
 			ec.NeedReturnLabel ();
-			emit_finally = branching.EmitFinally;
 		}
 
 		ArrayList resume_points;
@@ -3987,10 +3984,10 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			FlowBranchingException branching = ec.StartFlowBranching (this);
+			ec.StartFlowBranching (this);
 			bool ok = Statement.Resolve (ec);
 
-			ResolveFinally (ec, branching);
+			ResolveFinally (ec);
 
 			ec.EndFlowBranching ();
 
@@ -4548,7 +4545,7 @@ namespace Mono.CSharp {
 		{
 			bool ok = true;
 
-			FlowBranchingException branching = ec.StartFlowBranching (this);
+			ec.StartFlowBranching (this);
 
 			if (!stmt.Resolve (ec))
 				ok = false;
@@ -4560,7 +4557,7 @@ namespace Mono.CSharp {
 					ok = false;
 			}
 
-			ResolveFinally (ec, branching);
+			ResolveFinally (ec);
 			ec.EndFlowBranching ();
 
 			return ok;
@@ -4740,11 +4737,11 @@ namespace Mono.CSharp {
 			local_copy = new TemporaryVariable (expr_type, loc);
 			local_copy.Resolve (ec);
 
-			FlowBranchingException branching = ec.StartFlowBranching (this);
+			ec.StartFlowBranching (this);
 
 			bool ok = Statement.Resolve (ec);
 
-			ResolveFinally (ec, branching);
+			ResolveFinally (ec);
 
 			ec.EndFlowBranching ();
 
@@ -4931,11 +4928,11 @@ namespace Mono.CSharp {
 			if (!ResolveVariable (ec))
 				return false;
 
-			FlowBranchingException branching = ec.StartFlowBranching (this);
+			ec.StartFlowBranching (this);
 
 			bool ok = stmt.Resolve (ec);
 
-			ResolveFinally (ec, branching);
+			ResolveFinally (ec);
 
 			ec.EndFlowBranching ();
 
@@ -5575,12 +5572,12 @@ namespace Mono.CSharp {
 				{
 					bool ok = true;
 
-					FlowBranchingException branching = ec.StartFlowBranching (this);
+					ec.StartFlowBranching (this);
 
 					if (!loop.Resolve (ec))
 						ok = false;
 
-					ResolveFinally (ec, branching);
+					ResolveFinally (ec);
 					ec.EndFlowBranching ();
 
 					if (TypeManager.void_dispose_void == null) {

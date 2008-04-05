@@ -706,8 +706,6 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Stloc, skip_finally);
 			}
 
-			ig.BeginExceptionBlock ();
-
 			SymbolWriter.StartIteratorDispatcher (ec.ig);
 			ig.Emit (OpCodes.Ldloc, current_pc);
 			ig.Emit (OpCodes.Switch, labels);
@@ -727,31 +725,15 @@ namespace Mono.CSharp {
 			IntConstant.EmitInt (ig, (int) State.After);
 			ig.Emit (OpCodes.Stfld, IteratorHost.PC.FieldBuilder);
 
-			Label end = ig.DefineLabel ();
-			LocalBuilder retval = ec.GetTemporaryLocal (TypeManager.int32_type);
-
 			ig.MarkLabel (move_next_error);
-  			ig.Emit (OpCodes.Ldc_I4_0); 
-			ig.Emit (OpCodes.Stloc, retval);
-			ig.Emit (OpCodes.Leave_S, end);
+			ig.Emit (OpCodes.Ldc_I4_0);
+			ig.Emit (OpCodes.Ret);
 
 			ig.MarkLabel (move_next_ok);
 			ig.Emit (OpCodes.Ldc_I4_1);
-			ig.Emit (OpCodes.Stloc, retval);
-			//ig.Emit (OpCodes.Leave_S, end);            // SRE automatically emits a Leave on the BeginFaultBlock
+			ig.Emit (OpCodes.Ret);
 
 			SymbolWriter.EndIteratorDispatcher (ec.ig);
-
-			ig.BeginFaultBlock ();
-
-			ig.Emit (OpCodes.Ldarg_0);
-			ig.Emit (OpCodes.Callvirt, IteratorHost.Dispose);
-
-			ig.EndExceptionBlock ();
-
-			ig.MarkLabel (end);
-			ig.Emit (OpCodes.Ldloc, retval);
-			ig.Emit (OpCodes.Ret);
 		}
 
 		public void EmitDispose (EmitContext ec)
