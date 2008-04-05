@@ -89,10 +89,10 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public GridItem this [string key] 
+		public GridItem this [string label] 
 		{
 			get {
-				return (GridItem)list[key];
+				return (GridItem)list[label];
 			}
 		}
 		#endregion	// Public Instance Properties

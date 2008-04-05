@@ -27,6 +27,7 @@
 // NOT COMPLETE
 
 using System;
+using System.IO;
 using System.Drawing;
 using System.Drawing.Design;
 using System.ComponentModel;
@@ -37,18 +38,19 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms.Design;
 using System.Windows.Forms.PropertyGridInternal;
 
-namespace System.Windows.Forms {
+namespace System.Windows.Forms 
+{
 	[Designer("System.Windows.Forms.Design.PropertyGridDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 #if NET_2_0
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[ComVisible (true)]
 #endif
-	public class PropertyGrid : System.Windows.Forms.ContainerControl, ComponentModel.Com2Interop.IComPropertyBrowser {
+	public class PropertyGrid : System.Windows.Forms.ContainerControl, ComponentModel.Com2Interop.IComPropertyBrowser 
+	{
 		#region Private Members
 		
 		
 		private const string UNCATEGORIZED_CATEGORY_LABEL = "Misc";
-
 		private AttributeCollection browsable_attributes = null;
 		private bool can_show_commands = false;
 		private Color commands_back_color;
@@ -63,25 +65,26 @@ namespace System.Windows.Forms {
 		private GridEntry selected_grid_item;
 		private GridEntry root_grid_item;
 		private object[] selected_objects;
+		private PropertyTab properties_tab;
 		private PropertyTab selected_tab;
 
 		private ImageList toolbar_imagelist;
+		private Image categorized_image;
+		private Image alphabetical_image;
+		private Image propertypages_image;
 		private PropertyToolBarButton categorized_toolbarbutton;
 		private PropertyToolBarButton alphabetic_toolbarbutton;
-#if NET_2_0
-		private ToolStripSeparator separator_toolbarbutton;
-#else
-		private ToolBarButton separator_toolbarbutton;
-#endif
 		private PropertyToolBarButton propertypages_toolbarbutton;
+		private PropertyToolBarSeparator separator_toolbarbutton;
+		private bool events_tab_visible;
 
-		internal PropertyToolBar toolbar;
+		private PropertyToolBar toolbar;
 
-		internal PropertyGridView property_grid_view;
-		internal Splitter splitter;
-		internal Panel help_panel;
-		internal Label help_title_label;
-		internal Label help_description_label;
+		private PropertyGridView property_grid_view;
+		private Splitter splitter;
+		private Panel help_panel;
+		private Label help_title_label;
+		private Label help_description_label;
 		private MenuItem reset_menuitem;
 		private MenuItem description_menuitem;
 
@@ -97,11 +100,10 @@ namespace System.Windows.Forms {
 		public PropertyGrid ()
 		{
 			selected_objects = new object[0];
-			property_tabs = new PropertyTabCollection();
+			property_tabs = new PropertyTabCollection(this);
 
 			line_color = SystemColors.ScrollBar;
 			category_fore_color = line_color;
-			browsable_attributes = new AttributeCollection(new Attribute[] {});
 			commands_visible_if_available = false;
 			property_sort = PropertySort.CategorizedAlphabetical;
 			property_grid_view = new PropertyGridView(this);
@@ -141,22 +143,20 @@ namespace System.Windows.Forms {
 			toolbar = new PropertyToolBar();
 			toolbar.Dock = DockStyle.Top;
 			categorized_toolbarbutton = new PropertyToolBarButton ();
+			categorized_toolbarbutton.Pushed = true;
 			alphabetic_toolbarbutton = new PropertyToolBarButton ();
-#if NET_2_0
-			separator_toolbarbutton = new ToolStripSeparator ();
-#else
-			separator_toolbarbutton = new ToolBarButton ();
-#endif
 			propertypages_toolbarbutton = new PropertyToolBarButton ();
+			separator_toolbarbutton = new PropertyToolBarSeparator ();
 			ContextMenu context_menu = new ContextMenu();
+
+			categorized_image = new Bitmap (typeof (PropertyGrid), "propertygrid-categorized.png");
+			alphabetical_image = new Bitmap (typeof (PropertyGrid), "propertygrid-alphabetical.png");
+			propertypages_image = new Bitmap (typeof (PropertyGrid), "propertygrid-propertypages.png");
 
 			toolbar_imagelist = new ImageList();
 			toolbar_imagelist.ColorDepth = ColorDepth.Depth32Bit;
 			toolbar_imagelist.ImageSize = new System.Drawing.Size(16, 16);
 			toolbar_imagelist.TransparentColor = System.Drawing.Color.Transparent;
-			toolbar_imagelist.Images.Add( (Image)Locale.GetResource( "propertygrid_sort_category") );
-			toolbar_imagelist.Images.Add( (Image)Locale.GetResource( "propertygrid_sort_alphabetical") );
-			toolbar_imagelist.Images.Add( (Image)Locale.GetResource( "propertygrid_tab_properties") );
 
 			toolbar.Appearance = ToolBarAppearance.Flat;
 			toolbar.AutoSize = false;
@@ -169,34 +169,32 @@ namespace System.Windows.Forms {
 #if NET_2_0
 			toolbar.Items.AddRange (new ToolStripItem [] {categorized_toolbarbutton,
 								      alphabetic_toolbarbutton,
-								      separator_toolbarbutton,
+								      new PropertyToolBarSeparator (),
 								      propertypages_toolbarbutton});
 			//toolbar.ButtonSize = new System.Drawing.Size (20, 20);
 			toolbar.ItemClicked += new ToolStripItemClickedEventHandler (toolbar_ButtonClick);
 #else
 			toolbar.Buttons.AddRange(new ToolBarButton [] {categorized_toolbarbutton,
 								      alphabetic_toolbarbutton,
-								      separator_toolbarbutton,
+								      new PropertyToolBarSeparator (),
 								      propertypages_toolbarbutton});
 			toolbar.ButtonSize = new System.Drawing.Size(20, 20);
 			toolbar.ButtonClick += new ToolBarButtonClickEventHandler(toolbar_ButtonClick);
-			
-			separator_toolbarbutton.Style = ToolBarButtonStyle.Separator;
 #endif
 
-			categorized_toolbarbutton.ImageIndex = 0;
 			categorized_toolbarbutton.Style = ToolBarButtonStyle.ToggleButton;
 			categorized_toolbarbutton.ToolTipText = Locale.GetText ("Categorized");
 
-			alphabetic_toolbarbutton.ImageIndex = 1;
 			alphabetic_toolbarbutton.Style = ToolBarButtonStyle.ToggleButton;
 			alphabetic_toolbarbutton.ToolTipText = Locale.GetText ("Alphabetic");
 
 			propertypages_toolbarbutton.Enabled = false;
-			propertypages_toolbarbutton.ImageIndex = 2;
 			propertypages_toolbarbutton.Style = ToolBarButtonStyle.ToggleButton;
 			propertypages_toolbarbutton.ToolTipText = "Property Pages";
 
+			properties_tab = new PropertiesTab ();
+			selected_tab = properties_tab;
+			RefreshToolbar (property_tabs);
 			
 			reset_menuitem = context_menu.MenuItems.Add("Reset");
 			reset_menuitem.Click +=new EventHandler(OnResetPropertyClick);
@@ -217,9 +215,6 @@ namespace System.Windows.Forms {
 			this.Controls.Add(help_panel);
 			this.Name = "PropertyGrid";
 			this.Size = new System.Drawing.Size(256, 400);
-
-			UpdateToolBarButtons();
-			
 		}
 		#endregion	// Constructors
 
@@ -230,15 +225,20 @@ namespace System.Windows.Forms {
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public AttributeCollection BrowsableAttributes {
 			get {
+				if (browsable_attributes == null) {
+					browsable_attributes = new AttributeCollection (new Attribute[] { 
+						BrowsableAttribute.Yes });
+				}
 				return browsable_attributes;
 			}
-
 			set {
-				if (browsable_attributes == value) {
+				if (browsable_attributes == value)
 					return;
-				}
 
-				browsable_attributes = value;
+				if (browsable_attributes == null || browsable_attributes.Count == 0)
+					browsable_attributes = null;
+				else
+					browsable_attributes = value;
 			}
 		}
 		
@@ -524,11 +524,8 @@ namespace System.Windows.Forms {
 				if (!Enum.IsDefined (typeof (PropertySort), value))
 					throw new InvalidEnumArgumentException ("value", (int) value, typeof (PropertySort));
 #endif
-
-				if (property_sort == value) {
-					UpdateToolBarButtons ();
+				if (property_sort == value)
 					return;
-				}
 
 				// we do not need to update the the grid items and fire
 				// a PropertySortChanged event when switching between
@@ -536,7 +533,6 @@ namespace System.Windows.Forms {
 				bool needUpdate = (property_sort & PropertySort.Categorized) == 0 ||
 					(value & PropertySort.Categorized) == 0;
 				property_sort = value;
-				UpdateToolBarButtons ();
 				if (needUpdate) {
 					UpdateSortLayout (root_grid_item);
 					// update selection
@@ -562,9 +558,7 @@ namespace System.Windows.Forms {
 		[EditorBrowsableAttribute(EditorBrowsableState.Advanced)]
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public PropertyTabCollection PropertyTabs {
-			get {
-				return property_tabs;
-			}
+			get { return property_tabs; }
 		}
 
 		[BrowsableAttribute(false)]
@@ -606,7 +600,8 @@ namespace System.Windows.Forms {
 			property_grid_view.SelectItem (oldItem, item);
 		}
 
-		internal void OnPropertyValueChangedInternal (GridItem item, object property_value) {
+		internal void OnPropertyValueChangedInternal (GridItem item, object property_value) 
+		{
 			PopulateSubGridItems (selected_grid_item);
 			property_grid_view.UpdateView ();
 			OnPropertyValueChanged (new PropertyValueChangedEventArgs (item, property_value));
@@ -644,6 +639,8 @@ namespace System.Windows.Forms {
 			}
 
 			set {
+				if (selected_objects != null && selected_objects.Length == 1 && selected_objects[0] == value)
+					return;
 				if (value == null)
 					SelectedObjects = new object[0];
 				else
@@ -660,6 +657,7 @@ namespace System.Windows.Forms {
 			}
 
 			set {
+				SelectItemCore (null, null); // unselect current item in the view
 				if (value != null) {
 					for (int i = 0; i < value.Length; i++) {
 						if (value [i] == null)
@@ -670,21 +668,11 @@ namespace System.Windows.Forms {
 					selected_objects = new object [0];
 				}
 
-				if (selected_objects.Length > 0) {
-					PropertyTabAttribute[] propTabs = (PropertyTabAttribute[])this.SelectedObject.GetType().GetCustomAttributes(typeof(PropertyTabAttribute),true);
-					if (propTabs.Length > 0) {
-						foreach (Type tabType in propTabs[0].TabClasses) {
-							this.PropertyTabs.AddTabType(tabType);
-						}
-					}
-				} else {
-					SelectItemCore (null, null);
-				}
-
-				RefreshTabs(PropertyTabScope.Component);
+				ShowEventsButton (false);
 				PopulateGrid (selected_objects);
+				RefreshTabs(PropertyTabScope.Component);
 				if (root_grid_item != null)
-					SelectItemCore (null, GetDefaultPropertyItem (root_grid_item));
+					SelectItemCore (null, GetDefaultPropertyItem (root_grid_item, selected_tab));
 				property_grid_view.UpdateView ();
 				OnSelectedObjectsChanged (EventArgs.Empty);
 			}
@@ -694,40 +682,26 @@ namespace System.Windows.Forms {
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public PropertyTab SelectedTab {
-			get {
-				return selected_tab;
-			}
+			get { return selected_tab; }
 		}
 
 		public override ISite Site {
-			get {
-				return base.Site;
-			}
-
-			set {
-				base.Site = value;
-			}
+			get { return base.Site; }
+			set { base.Site = value; }
 		}
 
 #if NET_2_0
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override string Text {
-			get {
-				return base.Text;
-			}
-			set {
-				base.Text = value;
-			}
+			get { return base.Text; }
+			set { base.Text = value; }
 		}
  #endif
 
 		[DefaultValue(true)]
 		public virtual bool ToolbarVisible {
-			get {
-				return toolbar.Visible;
-			}
-
+			get { return toolbar.Visible; }
 			set {
 				if (toolbar.Visible == value) {
 					return;
@@ -758,10 +732,7 @@ namespace System.Windows.Forms {
 		[DefaultValue ("Color [Window]")]
 #endif
 		public Color ViewBackColor {
-			get {
-				return property_grid_view.BackColor;
-			}
-
+			get { return property_grid_view.BackColor; }
 			set {
 				if (property_grid_view.BackColor == value) {
 					return;
@@ -775,10 +746,7 @@ namespace System.Windows.Forms {
 		[DefaultValue ("Color [WindowText]")]
 #endif
 		public Color ViewForeColor {
-			get {
-				return property_grid_view.ForeColor;
-			}
-
+			get { return property_grid_view.ForeColor; }
 			set {
 				if (property_grid_view.ForeColor == value) {
 					return;
@@ -791,13 +759,8 @@ namespace System.Windows.Forms {
 
 		[DefaultValue (false)]
 		public bool UseCompatibleTextRendering {
-			get {
-
-				return use_compatible_text_rendering;
-			}
-			set {
-				use_compatible_text_rendering = value;
-			}
+			get { return use_compatible_text_rendering; }
+			set { use_compatible_text_rendering = value; }
 		}
 #endif
 
@@ -806,9 +769,7 @@ namespace System.Windows.Forms {
 		#region Protected Instance Properties
 
 		protected override Size DefaultSize {
-			get {
-				return base.DefaultSize;
-			}
+			get { return base.DefaultSize; }
 		}
 
 
@@ -816,15 +777,11 @@ namespace System.Windows.Forms {
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		protected virtual Type DefaultTabType {
-			get {
-				return typeof(PropertiesTab);
-			}
+			get { return typeof(PropertiesTab); }
 		}
 		
 		protected bool DrawFlatToolbar {
-			get {
-				return (toolbar.Appearance == ToolBarAppearance.Flat);
-			}			
+			get { return (toolbar.Appearance == ToolBarAppearance.Flat); }			
 			set {
 				if (value) 
 					toolbar.Appearance = ToolBarAppearance.Flat;
@@ -834,17 +791,15 @@ namespace System.Windows.Forms {
 		}
 
 		protected internal override bool ShowFocusCues {
-			get {
-				return base.ShowFocusCues;
-			}
+			get { return base.ShowFocusCues; }
 		}
 
 		#endregion	// Protected Instance Properties
 
 		#region Public Instance Methods
 		
-		protected override void Dispose(bool val) {
-			base.Dispose(val);
+		protected override void Dispose(bool disposing) {
+			base.Dispose(disposing);
 		}
 
 		public void CollapseAllGridItems () 
@@ -913,28 +868,165 @@ namespace System.Windows.Forms {
 			property_grid_view.UpdateView ();
 		}
 
-		public void RefreshTabs (PropertyTabScope tabScope) {
-			
-			/*button = new ToolBarButton("C");
-			button.ImageIndex = 0;
-			this.toolbar.Buttons.Add(button);
-			button = new ToolBarButton();
-			button.ImageIndex = 0;
-			button.Style = ToolBarButtonStyle.Separator;
-			this.toolbar.Buttons.Add(button);
-			foreach (PropertyTab tab in this.PropertyTabs)
-			{
+		private void toolbar_Clicked (PropertyToolBarButton button)
+		{
+			if (button == null) 
+				return;
 
-				int index = toolbar.ImageList.Images.Count;
-				this.toolbar.ImageList.Images.Add(tab.Bitmap);
-				button = new ToolBarButton();
-				button.ImageIndex = index;
-				this.toolbar.Buttons.Add(button);
-			}*/
-			
+			if (button == alphabetic_toolbarbutton) {
+				this.PropertySort = PropertySort.Alphabetical;
+				alphabetic_toolbarbutton.Pushed = true;
+				categorized_toolbarbutton.Pushed = false;
+			} else if (button == categorized_toolbarbutton) {
+				this.PropertySort = PropertySort.CategorizedAlphabetical;
+				categorized_toolbarbutton.Pushed = true;
+				alphabetic_toolbarbutton.Pushed = false;
+			} else {
+				if (button.Enabled)
+					SelectPropertyTab (button.PropertyTab);
+			}
 		}
 
-		public void ResetSelectedProperty() {
+		private void SelectPropertyTab (PropertyTab propertyTab)
+		{
+			if (propertyTab != null && selected_tab != propertyTab) {
+				foreach (object toolbarItem in toolbar.Items) {
+					PropertyToolBarButton button = toolbarItem as PropertyToolBarButton;
+					if (button != null && button.PropertyTab != null) {
+						if (button.PropertyTab == selected_tab)
+							button.Pushed = false;
+						else if (button.PropertyTab == propertyTab)
+							button.Pushed = true;
+					}
+				}
+				selected_tab = propertyTab;
+				PopulateGrid (selected_objects);
+				SelectItemCore (null, GetDefaultPropertyItem (root_grid_item, selected_tab));
+			}
+		}
+		
+		protected void ShowEventsButton (bool value) 
+		{
+			if (value && property_tabs.Contains (typeof (EventsTab)))
+				events_tab_visible = true;
+			else
+				events_tab_visible = false;
+			RefreshTabs (PropertyTabScope.Component);
+		}
+
+		public void RefreshTabs (PropertyTabScope tabScope) 
+		{
+			property_tabs.Clear (tabScope);
+			if (selected_objects != null) {
+				Type[] tabTypes = null;
+				PropertyTabScope[] tabScopes = null;
+
+				if (events_tab_visible && property_tabs.Contains (typeof (EventsTab)))
+					property_tabs.InsertTab (0, properties_tab, PropertyTabScope.Component);
+
+				GetMergedPropertyTabs (selected_objects, out tabTypes, out tabScopes);
+				if (tabTypes != null && tabScopes != null && tabTypes.Length > 0) {
+					bool selectedTabPreserved = false;
+					for (int i=0; i < tabTypes.Length; i++) {
+						property_tabs.AddTabType (tabTypes[i], tabScopes[i]);
+						if (tabTypes[i] == selected_tab.GetType ())
+							selectedTabPreserved = true;
+					}
+					if (!selectedTabPreserved)
+						SelectPropertyTab (properties_tab);
+				}
+			} else {
+				SelectPropertyTab (properties_tab);
+			}
+			RefreshToolbar (property_tabs);
+		}
+
+		private void RefreshToolbar (PropertyTabCollection tabs)
+		{
+			EnsurePropertiesTab ();
+
+			toolbar.SuspendLayout ();
+			toolbar.Items.Clear ();
+			toolbar_imagelist.Images.Clear ();
+
+			int imageIndex = 0;
+			toolbar.Items.Add (categorized_toolbarbutton);
+			toolbar_imagelist.Images.Add (categorized_image);
+			categorized_toolbarbutton.ImageIndex = imageIndex;
+			imageIndex++;
+			toolbar.Items.Add (alphabetic_toolbarbutton);
+			toolbar_imagelist.Images.Add (alphabetical_image);
+			alphabetic_toolbarbutton.ImageIndex = imageIndex;
+			imageIndex++;
+			toolbar.Items.Add (separator_toolbarbutton);
+			if (tabs != null && tabs.Count > 0) {
+				foreach (PropertyTab tab in tabs) {
+					PropertyToolBarButton button = new PropertyToolBarButton (tab);
+					toolbar.Items.Add (button);
+					if (tab.Bitmap != null) {
+						tab.Bitmap.MakeTransparent ();
+						toolbar_imagelist.Images.Add (tab.Bitmap);
+						button.ImageIndex = imageIndex;
+						imageIndex++;
+					}
+					if (tab == selected_tab)
+						button.Pushed = true;
+				}
+				toolbar.Items.Add (new PropertyToolBarSeparator ());
+			}
+
+			toolbar.Items.Add (propertypages_toolbarbutton);
+			toolbar_imagelist.Images.Add (propertypages_image);
+			propertypages_toolbarbutton.ImageIndex = imageIndex;
+			
+			toolbar.ResumeLayout ();
+		}
+
+		private void EnsurePropertiesTab ()
+		{
+			if (property_tabs == null)
+				return;
+
+			if (property_tabs.Count > 0 && !property_tabs.Contains (typeof (PropertiesTab)))
+				property_tabs.InsertTab (0, properties_tab, PropertyTabScope.Component);
+		}
+
+		private void GetMergedPropertyTabs (object[] objects, out Type[] tabTypes, out PropertyTabScope[] tabScopes)
+		{
+			tabTypes = null;
+			tabScopes = null;
+			if (objects == null || objects.Length == 0)
+				return;
+
+			ArrayList intersection = null;
+			ArrayList scopes = new ArrayList ();
+			for (int i=0; i < objects.Length; i++) {
+				if (objects[i] == null)
+					continue;
+				PropertyTabAttribute tabAttribute = (PropertyTabAttribute)TypeDescriptor.GetAttributes (objects[i])[typeof (PropertyTabAttribute)];
+				if (tabAttribute == null || tabAttribute.TabClasses == null || tabAttribute.TabClasses.Length == 0)
+					return;
+
+				ArrayList new_intersection = new ArrayList ();
+				scopes.Clear ();
+				IList currentIntersection = (i == 0 ? (IList)tabAttribute.TabClasses : (IList)intersection);
+				for (int j=0; j < currentIntersection.Count; j++) {
+					if ((Type)intersection[j] == tabAttribute.TabClasses[j]) {
+						new_intersection.Add (tabAttribute.TabClasses[j]);
+						scopes.Add (tabAttribute.TabScopes[j]);
+					}
+				}
+				intersection = new_intersection;
+			}
+
+			tabTypes = new Type[intersection.Count];
+			intersection.CopyTo (tabTypes);
+			tabScopes = new PropertyTabScope[tabTypes.Length];
+			scopes.CopyTo (tabScopes);
+		}
+
+		public void ResetSelectedProperty() 
+		{
 			if (selected_grid_item == null)
 				return;
 			selected_grid_item.ResetValue ();
@@ -943,8 +1035,19 @@ namespace System.Windows.Forms {
 
 		#region Protected Instance Methods
 
-		protected virtual PropertyTab CreatePropertyTab(Type tabType) {
-			return (PropertyTab)Activator.CreateInstance(tabType);
+		protected virtual PropertyTab CreatePropertyTab (Type tabType) 
+		{
+			if (!typeof(PropertyTab).IsAssignableFrom (tabType))
+				return null;
+
+			PropertyTab tab = null;
+
+			ConstructorInfo ctor = tabType.GetConstructor (new Type[] { typeof (IServiceProvider) });
+			if (ctor != null)
+				tab = (PropertyTab)ctor.Invoke (new object[] { this.Site });
+			else
+				tab = (PropertyTab)Activator.CreateInstance (tabType);
+			return tab;
 		}
 		
 		[MonoTODO]
@@ -978,16 +1081,16 @@ namespace System.Windows.Forms {
 			base.OnHandleDestroyed (e);
 		}
 
-		protected override void OnMouseDown (MouseEventArgs e) {
-			base.OnMouseDown (e);
+		protected override void OnMouseDown (MouseEventArgs me) {
+			base.OnMouseDown (me);
 		}
 
-		protected override void OnMouseMove (MouseEventArgs e) {
-			base.OnMouseMove (e);
+		protected override void OnMouseMove (MouseEventArgs me) {
+			base.OnMouseMove (me);
 		}
 
-		protected override void OnMouseUp (MouseEventArgs e) {
-			base.OnMouseUp (e);
+		protected override void OnMouseUp (MouseEventArgs me) {
+			base.OnMouseUp (me);
 		}
 		
 		protected void OnNotifyPropertyValueUIItemsChanged(object sender, EventArgs e) 
@@ -1008,9 +1111,11 @@ namespace System.Windows.Forms {
 		}		
 #endif
 		
-		[MonoTODO]
-		protected virtual void OnPropertyTabChanged (PropertyTabChangedEventArgs e) {
-			throw new NotImplementedException();
+		protected virtual void OnPropertyTabChanged (PropertyTabChangedEventArgs e) 
+		{
+			PropertyTabChangedEventHandler eh = (PropertyTabChangedEventHandler)(Events [PropertyTabChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnPropertyValueChanged (PropertyValueChangedEventArgs e) {
@@ -1054,12 +1159,8 @@ namespace System.Windows.Forms {
 			base.ScaleCore (dx, dy);
 		}
 		
-		[MonoTODO]
-		protected void ShowEventsButton(bool value) {
-			throw new NotImplementedException();
-		}
-
-		protected override void WndProc (ref Message m) {
+		protected override void WndProc (ref Message m) 
+		{
 			base.WndProc (ref m);
 		}
 		#endregion
@@ -1231,74 +1332,140 @@ namespace System.Windows.Forms {
 		#endregion	// Com2Interop.IComPropertyBrowser Interface
 
 		#region PropertyTabCollection Class
-		public class PropertyTabCollection : ICollection, IEnumerable {
-			System.Collections.ArrayList list;
-			#region Private Constructors
-			internal PropertyTabCollection() {
-				list = new ArrayList();
-			}
+		public class PropertyTabCollection : ICollection, IEnumerable 
+		{
+			ArrayList property_tabs;
+			ArrayList property_tabs_scopes;
+			PropertyGrid property_grid;
 
-			#endregion	// Private Constructors
+			internal PropertyTabCollection (PropertyGrid propertyGrid) 
+			{
+				property_grid = propertyGrid;
+				property_tabs = new ArrayList ();
+				property_tabs_scopes = new ArrayList ();
+			}
 
 			public PropertyTab this[int index] {
-				get {
-					return (PropertyTab)list[index];
-				}
+				get { return (PropertyTab)property_tabs[index]; }
 			}
 		
-			#region ICollection Members
 			bool ICollection.IsSynchronized {
-				get {
-					return list.IsSynchronized;
-				}
+				get { return property_tabs.IsSynchronized; }
 			}
 
-			void ICollection.CopyTo(Array array, int index) {
-				list.CopyTo(array, index);
+			void ICollection.CopyTo (Array array, int index) 
+			{
+				property_tabs.CopyTo (array, index);
 			}
 
 			object ICollection.SyncRoot {
-				get {
-					return list.SyncRoot;
-				}
+				get { return property_tabs.SyncRoot; }
 			}
 
-			#endregion
-
-			#region IEnumerable Members
-			public IEnumerator GetEnumerator() {
-				return list.GetEnumerator();
+			public IEnumerator GetEnumerator ()
+			{
+				return property_tabs.GetEnumerator ();
 			}
 
-			#endregion
-		
-			#region ICollection Members
 			public int Count {
-				get {
-					return list.Count;
+				get { return property_tabs.Count; }
+			}
+
+			public void AddTabType (Type propertyTabType)
+			{
+				AddTabType (propertyTabType, PropertyTabScope.Global);
+			}
+
+			public void AddTabType (Type propertyTabType, PropertyTabScope tabScope)
+			{
+				if (propertyTabType == null)
+					throw new ArgumentNullException ("propertyTabType");
+
+				// Avoid duplicates
+				if (this.Contains (propertyTabType))
+					return;
+				PropertyTab tab = property_grid.CreatePropertyTab (propertyTabType);
+				if (tab != null) {
+					property_tabs.Add (tab);
+					property_tabs_scopes.Add (tabScope);
+				}
+				property_grid.RefreshToolbar (this);
+			}
+
+			internal PropertyTabScope GetTabScope (PropertyTab tab)
+			{
+				if (tab == null)
+					throw new ArgumentNullException ("tab");
+
+				int index = property_tabs.IndexOf (tab);
+				if (index != -1)
+					return (PropertyTabScope)property_tabs_scopes[index];
+				return PropertyTabScope.Global;
+			}
+
+			internal void InsertTab (int index, PropertyTab propertyTab, PropertyTabScope tabScope)
+			{
+				if (propertyTab == null)
+					throw new ArgumentNullException ("propertyTab");
+				
+				if (!this.Contains (propertyTab.GetType ())) {
+					property_tabs.Insert (index, propertyTab);
+					property_tabs_scopes.Insert (index, tabScope);
 				}
 			}
 
-			#endregion
-			
-			#region Public Instance Methods
-			public void AddTabType(System.Type propertyTabType) {
-				list.Add(Activator.CreateInstance(propertyTabType));
+			internal bool Contains (Type propertyType)
+			{
+				if (propertyType == null)
+					throw new ArgumentNullException ("propertyType");
+
+				foreach (PropertyTab t in property_tabs) {
+					if (t.GetType () == propertyType)
+						return true;
+				}
+				return false;
 			}
-			[MonoTODO]
-			public void AddTabType(System.Type propertyTabType,
-				System.ComponentModel.PropertyTabScope tabScope) {
-				AddTabType(propertyTabType);
+
+			internal PropertyTab this[Type tabType] {
+				get {
+					foreach (PropertyTab tab in property_tabs) {
+						if (tabType == tab.GetType ())
+							return tab;
+					}
+					return null;
+				}
 			}
-			[MonoTODO]
-			public void Clear(System.ComponentModel.PropertyTabScope tabScope) {
-				throw new NotImplementedException();
+
+			public void Clear (PropertyTabScope tabScope)
+			{
+				ArrayList toRemove = new ArrayList ();
+				for (int i=0; i < property_tabs_scopes.Count; i++) {
+					if ((PropertyTabScope)property_tabs_scopes[i] == tabScope)
+						toRemove.Add (i);
+				}
+				foreach (int indexToRemove in toRemove) {
+					property_tabs.RemoveAt (indexToRemove);
+					property_tabs_scopes.RemoveAt (indexToRemove);
+				}
+				property_grid.RefreshToolbar (this);
 			}
-			[MonoTODO]
-			public void RemoveTabType(System.Type propertyTabType) {
-				throw new NotImplementedException();
+
+			public void RemoveTabType (Type propertyTabType)
+			{
+				if (propertyTabType == null)
+					throw new ArgumentNullException ("propertyTabType");
+
+				ArrayList toRemove = new ArrayList ();
+				for (int i=0; i < property_tabs.Count; i++) {
+					if (property_tabs[i].GetType () == propertyTabType)
+						toRemove.Add (i);
+				}
+				foreach (int indexToRemove in toRemove) {
+					property_tabs.RemoveAt (indexToRemove);
+					property_tabs_scopes.RemoveAt (indexToRemove);
+				}
+				property_grid.RefreshToolbar (this);
 			}
-			#endregion
 		}
 		#endregion	// PropertyTabCollection Class
 
@@ -1318,29 +1485,19 @@ namespace System.Windows.Forms {
 			return null;
 		}
 
-		// TODO: Should use the current tab's GetDefaultProperty and the current
-		// code should be PropertyTab specific
-		//
-		private GridEntry GetDefaultPropertyItem (GridEntry rootItem)
+		private GridEntry GetDefaultPropertyItem (GridEntry rootItem, PropertyTab propertyTab)
 		{
-			if (rootItem == null || rootItem.GridItems.Count == 0)
+			if (rootItem == null || rootItem.GridItems.Count == 0 || propertyTab == null)
 				return null;
 			object[] propertyOwners = rootItem.Values;
 			if (propertyOwners == null || propertyOwners.Length == 0 || propertyOwners[0] == null)
 				return null;
 
-			//return (GridEntry) FindFirstItem (rootItem);
 			GridItem defaultSelected = null;
 			if (propertyOwners.Length > 1)
 				defaultSelected = rootItem.GridItems[0];
 			else {
-				PropertyDescriptor defaultProperty = null;
-				ICustomTypeDescriptor customTypeDescriptor = propertyOwners[0] as ICustomTypeDescriptor;
-				if (customTypeDescriptor != null)   // try 1: ICustomTypeDescriptor
-					defaultProperty = customTypeDescriptor.GetDefaultProperty ();
-				if (defaultProperty == null)   // try 2: TypeDescriptor
-					defaultProperty = TypeDescriptor.GetDefaultProperty (propertyOwners[0]);
-
+				PropertyDescriptor defaultProperty = propertyTab.GetDefaultProperty (propertyOwners[0]);
 				if (defaultProperty != null)
 					defaultSelected = FindItem (defaultProperty.Name, rootItem);
 				if (defaultSelected == null)
@@ -1387,35 +1544,6 @@ namespace System.Windows.Forms {
 		}
 #endif
 
-		private void toolbar_Clicked (PropertyToolBarButton button)
-		{
-			if (button == null) 
-				return;
-
-			if (button == alphabetic_toolbarbutton) {
-				this.PropertySort = PropertySort.Alphabetical;
-			} else if (button == categorized_toolbarbutton) {
-				if ((this.PropertySort & PropertySort.Categorized) == 0)
-					this.PropertySort = PropertySort.CategorizedAlphabetical;
-				else
-					UpdateToolBarButtons ();
-			}
-		}
-		
-		private void UpdateToolBarButtons ()
-		{
-			if ((PropertySort & PropertySort.Categorized) != 0) {
-				categorized_toolbarbutton.Pushed = true;
-				alphabetic_toolbarbutton.Pushed = false;
-			} else if ((PropertySort & PropertySort.Alphabetical) != 0) {
-				categorized_toolbarbutton.Pushed = false;
-				alphabetic_toolbarbutton.Pushed = true;
-			} else {
-				categorized_toolbarbutton.Pushed = false;
-				alphabetic_toolbarbutton.Pushed = false;
-			}
-		}
-
 		private void OnResetPropertyClick (object sender, EventArgs e)
 		{
 			ResetSelectedProperty();
@@ -1427,7 +1555,8 @@ namespace System.Windows.Forms {
 			description_menuitem.Checked = this.HelpVisible;
 		}
 
-		private void PopulateGrid (object[] objects) {
+		private void PopulateGrid (object[] objects) 
+		{
 			if (objects.Length > 0) {
 				root_grid_item = new RootGridEntry (this, objects);
 				PopulateRootGridItems (root_grid_item, objects, GetMergedPropertyNames (objects));
@@ -1436,25 +1565,17 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private bool IsPropertyVisible (PropertyDescriptor property, bool mergable)
+		private bool IsPropertyVisible (PropertyDescriptor property, bool merging)
 		{
 			if (property == null)
 				return false;
 				
-			if (!property.IsBrowsable)
-				return false;
-				
-			if (mergable) {
+			if (merging) {
 				MergablePropertyAttribute attrib = property.Attributes [typeof (MergablePropertyAttribute)] as MergablePropertyAttribute;
 				if (attrib != null && !attrib.AllowMerge)
 					return false;
 			}
-			
-			EditorBrowsableAttribute browsable = property.Attributes [typeof (EditorBrowsableAttribute)] as EditorBrowsableAttribute;
-			if (browsable != null && (browsable.State == EditorBrowsableState.Advanced || browsable.State == EditorBrowsableState.Never)) {
-				return false;
-			}
-			
+
 			return true;
 		}
 
@@ -1465,7 +1586,7 @@ namespace System.Windows.Forms {
 				if (objects [i] == null)
 					continue;
 
-				PropertyDescriptorCollection properties = GetProperties (objects[i]);
+				PropertyDescriptorCollection properties = GetProperties (objects[i], BrowsableAttributes);
 				ArrayList new_intersection = new ArrayList ();
 
 				foreach (PropertyDescriptor currentProperty in (i == 0 ? (ICollection)properties : (ICollection)intersection)) {
@@ -1492,33 +1613,20 @@ namespace System.Windows.Forms {
 			if (propertyOwner == null || propertyName == null)
 				return null;
 
-			PropertyDescriptorCollection properties = GetProperties (propertyOwner);
+			PropertyDescriptorCollection properties = GetProperties (propertyOwner, BrowsableAttributes);
 			if (properties != null)
 				return properties[propertyName];
 			return null;
 		}
 
-		// TODO: Should use the current tab's GetProperties and the current code
-		// should be PropertyTab specific
-		//
-		private PropertyDescriptorCollection GetProperties (object propertyOwner)
+		private PropertyDescriptorCollection GetProperties (object propertyOwner, AttributeCollection attributes)
 		{
-			if (propertyOwner == null)
-				return null;
+			if (propertyOwner == null || selected_tab == null)
+				return new PropertyDescriptorCollection (null);
 
-			PropertyDescriptorCollection properties = null;
-			ICustomTypeDescriptor customTypeDescriptor = propertyOwner as ICustomTypeDescriptor;
-			if (customTypeDescriptor != null)   // try 1: ICustomTypeDescriptor
-				properties = customTypeDescriptor.GetProperties ();
-			if (properties == null) { // try 2: Converter with PropertiesSupported
-				TypeConverter converter = TypeDescriptor.GetConverter (propertyOwner);
-				if (converter.GetPropertiesSupported ())
-					properties = converter.GetProperties (propertyOwner);
-			}
-			if (properties == null)   // try 3: TypeDescriptor
-				properties = TypeDescriptor.GetProperties (propertyOwner);
-
-			return properties;
+			Attribute[] atts = new Attribute[attributes.Count];
+			attributes.CopyTo (atts, 0);
+			return selected_tab.GetProperties (propertyOwner, atts);
 		}
 
 		private void PopulateRootGridItems (GridEntry rootItem, object[] propertyOwners, string[] propertyNames)
@@ -1572,8 +1680,7 @@ namespace System.Windows.Forms {
 			if (propertyOwners == null)
 				return;
 
-
-			PropertyDescriptorCollection propertiesCollection = GetProperties (propertyOwners[0]);
+			PropertyDescriptorCollection propertiesCollection = GetProperties (propertyOwners[0], BrowsableAttributes);
 			if (propertiesCollection == null)
 				return;
 
@@ -1611,6 +1718,8 @@ namespace System.Windows.Forms {
 			GridItemCollection reordered = new GridItemCollection ();
 
 			if (property_sort == PropertySort.Alphabetical || property_sort == PropertySort.NoSort) {
+				alphabetic_toolbarbutton.Pushed = true;
+				categorized_toolbarbutton.Pushed = false;
 				foreach (GridItem item in rootItem.GridItems) {
 					if (item.GridItemType == GridItemType.Category) {
 						foreach (GridItem categoryChild in item.GridItems) {
@@ -1623,6 +1732,8 @@ namespace System.Windows.Forms {
 				}
 			} else if (property_sort == PropertySort.Categorized || 
 				   property_sort == PropertySort.CategorizedAlphabetical) {
+				alphabetic_toolbarbutton.Pushed = false;
+				categorized_toolbarbutton.Pushed = true;
 				GridItemCollection categories = new GridItemCollection ();
 
 				foreach (GridItem item in rootItem.GridItems) {
@@ -1693,15 +1804,46 @@ namespace System.Windows.Forms {
 				base.OnSizeChanged (e);
 			}
 		}
-		
-		internal class PropertyToolBarButton :
+
+		private class PropertyToolBarSeparator : 
+#if NET_2_0
+		ToolStripSeparator
+#else
+		ToolBarButton
+#endif
+		{
+			public PropertyToolBarSeparator ()
+			{
+#if !NET_2_0
+				this.Style = ToolBarButtonStyle.Separator;
+#endif
+			}
+		}
+
+		private class PropertyToolBarButton :
 #if NET_2_0
 		ToolStripButton
 #else
 		ToolBarButton
 #endif
 		{
-		
+			private PropertyTab property_tab;
+
+			public PropertyToolBarButton ()
+			{
+			}
+
+			public PropertyToolBarButton (PropertyTab propertyTab)
+			{
+				if (propertyTab == null)
+					throw new ArgumentNullException ("propertyTab");
+				property_tab = propertyTab;
+			}
+
+			public PropertyTab PropertyTab {
+				get { return property_tab; }
+			}
+
 #if NET_2_0
 			public bool Pushed {
 				get { return base.Checked; }
@@ -1735,6 +1877,13 @@ namespace System.Windows.Forms {
 				GripStyle = ToolStripGripStyle.Hidden;
 #endif
 			}
+
+#if !NET_2_0
+			public IList Items {
+				get { return base.Buttons; }
+			}
+#endif
+
 #if NET_2_0
 			public bool ShowToolTips {
 				get { return base.ShowItemToolTips; }
@@ -1764,7 +1913,7 @@ namespace System.Windows.Forms {
 
 
 		[MonoTODO ("not sure what this class does, but it's listed as a type converter for a property in this class, and this causes problems if it's not present")]
-		internal class SelectedObjectConverter : TypeConverter
+		private class SelectedObjectConverter : TypeConverter
 		{
 		}
 #endregion

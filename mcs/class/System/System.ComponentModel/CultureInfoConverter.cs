@@ -41,7 +41,6 @@ namespace System.ComponentModel
 {
 	public class CultureInfoConverter : TypeConverter
 	{
-
 		private class CultureInfoComparer : IComparer
 		{
 			public int Compare (object first,  object second)
@@ -60,7 +59,7 @@ namespace System.ComponentModel
 			}
 		}
 
-		private StandardValuesCollection _standardValues = null;
+		private StandardValuesCollection _standardValues;
 
 		public CultureInfoConverter()
 		{
@@ -87,21 +86,28 @@ namespace System.ComponentModel
 		public override object ConvertFrom (ITypeDescriptorContext context,
 			CultureInfo culture, object value)
 		{
-			if (value.GetType() == typeof (string)) {
-				string CultureString = (String) value;
-				if (String.Compare (CultureString, "(default)", true) == 0) {
+			string culture_string = value as string;
+			if (culture_string != null) {
+#if NET_2_0
+				if (String.Compare (culture_string, "(Default)", false) == 0)
+#else
+				if (String.Compare (culture_string, "(Default)", true) == 0)
+#endif
 					return CultureInfo.InvariantCulture;
-				}
+
 				try {
 					// try to create a new CultureInfo if form is RFC 1766
-					return new CultureInfo (CultureString);
+					return new CultureInfo (culture_string);
 				} catch {
 					// try to create a new CultureInfo if form is verbose name
 					foreach (CultureInfo CI in CultureInfo.GetCultures (CultureTypes.AllCultures))
-						if (CI.DisplayName.IndexOf (CultureString) >= 0)
+						if (string.Compare (CI.DisplayName, 0, culture_string, 0, culture_string.Length, true) == 0)
 							return CI;
 				}
-				throw new ArgumentException ("Culture incorrect or not available in this environment.", "value");
+				throw new ArgumentException (string.Format (
+					"Culture {0} cannot be converted to a " +
+					"CultureInfo or is not available in " +
+					"this environment.", value));
 			}
 			return base.ConvertFrom (context, culture, value);
 		}
@@ -112,11 +118,11 @@ namespace System.ComponentModel
 			if (destinationType == typeof (string)) {
 				if (value != null && (value is CultureInfo)) {
 					if (value == CultureInfo.InvariantCulture)
-						return "(default)";
+						return "(Default)";
 					else
 						return ((CultureInfo) value).DisplayName; 
 				} else {
-					return "(default)";
+					return "(Default)";
 				}
 			}
 			if (destinationType == typeof (InstanceDescriptor) && value is CultureInfo) {

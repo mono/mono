@@ -46,6 +46,8 @@ namespace System.ComponentModel
 			
 		public DesignerAttribute (string designerTypeName)
 		{
+			if (designerTypeName == null)
+				throw new NullReferenceException ();
 			name = designerTypeName;
 			basetypename = typeof(IDesigner).FullName;
 		}
@@ -67,12 +69,14 @@ namespace System.ComponentModel
 
 		public DesignerAttribute (string designerTypeName, string designerBaseTypeName)
 		{
+			if (designerTypeName == null)
+				throw new NullReferenceException ();
 			name = designerTypeName;
 			basetypename = designerBaseTypeName;
-        	}
+		}
 
 		public string DesignerBaseTypeName {
-            		get {
+			get {
 				return basetypename;
  			}
 		}
@@ -99,7 +103,7 @@ namespace System.ComponentModel
 				return false;
 			return ((DesignerAttribute) obj).DesignerBaseTypeName.Equals (basetypename) && 
 				((DesignerAttribute) obj).DesignerTypeName.Equals (name);
-		}				
+		}
 
 		public override int GetHashCode ()
 		{

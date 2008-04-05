@@ -250,8 +250,8 @@ namespace System.Drawing
 			return true;
 		}
 
-		class CompareColors : IComparer
-		{
+		sealed class CompareColors : IComparer {
+
 			public int Compare (object x, object y)
 			{
 				return String.Compare (((Color) x).Name, ((Color) y).Name);

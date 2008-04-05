@@ -70,22 +70,20 @@ namespace System.Windows.Forms.PropertyGridInternal
 			SuspendLayout();
 
 			dialog_button.Dock = DockStyle.Right;
+			dialog_button.BackColor = SystemColors.Control;
 			dialog_button.Size = new Size(16, 16);
 			dialog_button.TabIndex = 1;
 			dialog_button.Visible = false;
 			dialog_button.Click += new System.EventHandler(dialog_button_Click);
 
 			dropdown_button.Dock = DockStyle.Right;
+			dropdown_button.BackColor = SystemColors.Control;
 			dropdown_button.Size = new Size(16, 16);
 			dropdown_button.TabIndex = 2;
 			dropdown_button.Visible = false;
 			dropdown_button.Click += new System.EventHandler(dropdown_button_Click);
 
 			textbox.AutoSize = false;
-			// this is to explicitly set bgcolor to avoid
-			// default ReadOnly color (which makes grid item
-			// bgcolor inconsistent).
-			textbox.BackColor = textbox.BackColor;
 			textbox.BorderStyle = BorderStyle.None;
 			textbox.Dock = DockStyle.Fill;
 			textbox.TabIndex = 3;
@@ -156,8 +154,6 @@ namespace System.Windows.Forms.PropertyGridInternal
 			}
 			set {
 				textbox.BackColor = value;
-				dropdown_button.BackColor = value;
-				dialog_button.BackColor = value;
 				base.BackColor = value;
 			}
 		}

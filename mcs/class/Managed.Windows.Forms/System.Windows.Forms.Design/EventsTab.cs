@@ -17,14 +17,15 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2008 Novell, Inc.
 //
 // Authors:
 //	Dennis Hayes (dennish@raytek.com)
-//  Rafael Teixeira (rafaelteixeirabr@hotmail.com)
+//	Rafael Teixeira (rafaelteixeirabr@hotmail.com)
+// 	Ivan N. Zlatev (contact@i-nz.net)
 //
 
-// NOT COMPLETE
+// COMPLETE
 
 using System;
 using System.ComponentModel;
@@ -34,47 +35,33 @@ namespace System.Windows.Forms.Design
 {
 	public class EventsTab : PropertyTab
 	{
-		[MonoTODO]
 		private EventsTab()
 		{
 		}
 		
 		private IServiceProvider serviceProvider;
 
-		[MonoTODO]
-		public EventsTab(IServiceProvider serviceProvider)
+		public EventsTab(IServiceProvider sp)
 		{
-			this.serviceProvider = serviceProvider;
+			this.serviceProvider = sp;
 		}
 
-		[MonoTODO("What value should we return?")]
-		public override string HelpKeyword 
-		{
-			get {
-				return TabName;				
-			}
+		public override string HelpKeyword {
+			get { return TabName; }
 		}
 		
-		[MonoTODO("Localization")]
-		public override string TabName 
-		{
-			get {
-				return "Events";
-			}
+		public override string TabName {
+			get { return Locale.GetText ("Events"); }
 		}
 		
-		[MonoTODO("Test")]
-		public override PropertyDescriptorCollection GetProperties(
-			ITypeDescriptorContext context,
-			object component,
-			Attribute[] attributes)
+		public override PropertyDescriptorCollection GetProperties(ITypeDescriptorContext context, object component, 
+									   Attribute[] attributes)
 		{
 			IEventBindingService eventPropertySvc = null;
-			EventDescriptorCollection events;
+			EventDescriptorCollection events = null;
 			
 			if (serviceProvider != null)
-				eventPropertySvc = (IEventBindingService)
-					serviceProvider.GetService(typeof(IEventBindingService));
+				eventPropertySvc = (IEventBindingService) serviceProvider.GetService(typeof(IEventBindingService));
 
 			if (eventPropertySvc == null)			 
 				return new PropertyDescriptorCollection(null);
@@ -93,28 +80,20 @@ namespace System.Windows.Forms.Design
 			return this.GetProperties(null, component, attributes);
 		}
 		
-		[MonoTODO]
-		public override bool CanExtend(object component)
+		public override bool CanExtend(object extendee)
 		{
 			return false;
 		}
 		
-		[MonoTODO("Test")]
-		public override PropertyDescriptor GetDefaultProperty(object component)
+		public override PropertyDescriptor GetDefaultProperty(object obj)
 		{
-			object[] attributes = component.GetType().GetCustomAttributes(typeof(DefaultEventAttribute), true);
-			if (attributes.Length > 0) {
-				DefaultEventAttribute defaultEvent = attributes[0] as DefaultEventAttribute;
-				if (defaultEvent != null && serviceProvider != null) {
-					IEventBindingService eventPropertySvc = (IEventBindingService)
-						serviceProvider.GetService(typeof(IEventBindingService));
-	
-					if (eventPropertySvc == null)
-						foreach (EventDescriptor ed in TypeDescriptor.GetEvents(component))
-							if (ed.Name == defaultEvent.Name)
-								return eventPropertySvc.GetEventProperty(ed);
-				}
-			}	
+			if (serviceProvider == null)
+				return null;
+
+			EventDescriptor defaultEvent = TypeDescriptor.GetDefaultEvent (obj);
+			IEventBindingService eventPropertySvc = (IEventBindingService) serviceProvider.GetService(typeof(IEventBindingService));
+			if (defaultEvent != null && eventPropertySvc != null)
+				return eventPropertySvc.GetEventProperty (defaultEvent);
 			return null;
 		}
 

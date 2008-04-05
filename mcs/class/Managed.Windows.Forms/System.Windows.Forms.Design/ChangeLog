@@ -1,3 +1,11 @@
+2008-03-20  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* EventsTab.cs: Complete implementation.
+
+2008-03-05  Jonathan Pobst  <monkey@jpobst.com>
+
+	EventsTab.cs: corcompare - fix parameter names.
+
 2007-08-30  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ComponentEditorPage.cs, ComponentEditorForm.cs: Override AutoSize,

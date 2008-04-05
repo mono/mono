@@ -1,7 +1,32 @@
+2008-03-28  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* TypeDescriptor.cs: Do not return parent type properties, where the child 
+	has used "new" and also changed the property return type. The problem was that
+	Type.GetProperties returns both the child and parent property in this case.
+	[Fixes bug #374334]
+
+2008-03-19  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* PropertyTabAttribute.cs: Implement Equals, bugfixes and refactorings.
+
+2008-03-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DesignerAttribute.cs: To match MS, throw NRE when designerTypeName
+	argument is null in ctors.
+
 2008-03-13  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DesignerAttribute.cs: For the TypeId strip type name only 
 	of the base type to prevent AssemblyQualifiedName and not clashes.
+	* TypeDescriptor.cs: GetAttributes should ask for the inherited
+	attributes. I was wrong.
+
+2008-03-10  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* TypeDescriptor.cs: GetAttributes should not ask the Type
+	for the inherited attributes. Until recently it didn't 
+	make a difference if we did or not, because 
+	Type.GetCustomAttributes never returned inherited such.
 
 2008-03-06  Ivan N. Zlatev  <contact@i-nz.net>
 
@@ -14,6 +39,31 @@
 
 	* Component.cs: Do not set the Site to null on disposing as this 
 	is the Containers job. Instead try to remove from Container if sited.
+
+2008-02-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CharConverter.cs: Use trimmed value in FormatException.
+
+2008-02-26  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* PropertyDescriptor.cs: 
+	 - Implement CreateInstance and GetTypeFromName
+	 and refactor GetEditor and Converter use them.
+	 - Drop TypeDescriptor.GetTypeFromName as we also want to check the
+	 ComponentType assembly, which it doesn't do.
+	* TypeDescriptor.cs: Make GetTypeFromName private as it is no longer
+	used from the outside.
+
+2008-02-17  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CharConverter.cs (ConvertFrom): Avoid NRE when value is null.
+	Provide more info when left of value > 1.
+	* CultureInfoConverter.cs (ConvertFrom): Avoid NRE when value is null.
+	On 2.0 profile, use case-sensitive comparison for (Default) value.
+	Use case-insensitive comparing when value is considered as displayname.
+	Provide more info in exception message.
+	(ConvertTo): Use '(Default)' instead of '(default)' for invariant
+	culture.
 
 2008-02-16  Ivan N. Zlatev  <contact@i-nz.net>
 

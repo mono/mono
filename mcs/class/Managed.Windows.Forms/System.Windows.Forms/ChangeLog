@@ -1,3 +1,7 @@
+2008-04-05  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* Backport PropertyGrid bugfixes.
+
 2008-02-22  Jonathan Pobst  <monkey@jpobst.com>
 	[Backport to 1.9]
 	* TreeView.cs: Make selected_node and highlighted_node internal.

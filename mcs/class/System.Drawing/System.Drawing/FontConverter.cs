@@ -142,7 +142,7 @@ namespace System.Drawing
 			}
 
 			font = (string)value;
-			font.Trim();
+			font = font.Trim ();
 
 			if (font.Length == 0) {
 				return null;

@@ -80,7 +80,12 @@ IMAGES_RESOURCES = \
 	resources/nav_next.png			\
 	resources/nav_plus.png			\
 	resources/image-missing.png		\
-	resources/image-x-generic.png
+	resources/image-x-generic.png		\
+	resources/propertygrid-alphabetical.png	\
+	resources/propertygrid-categorized.png	\
+	resources/EventsTab.bmp			\
+	resources/PropertiesTab.bmp 		\
+	resources/propertygrid-propertypages.png
 
 
 TEST_DISTFILES = \

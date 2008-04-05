@@ -209,15 +209,6 @@
         incEfKWcO1f7xiOP6F6+7z7NoshI3BJsXIbCMKXv+A8bjZ++/ZSOlAAAAABJRU5ErkJggg==
 </value>
   </data>
-  <data name="propertygrid_sort_category" type="System.Drawing.Bitmap, System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAIZJREFUOE+tUgkO
-        wCAI237ma3inP2NCwlIRdIuaEA+waQt3rZVLKVe2Wj7NaUIA2say+8jesW4AwE/+LHcLA+kAfMExBkTE
-        Uaj8Yx4g/UirZ9B5gK5KYdSR7E0lbANk9LELUwlSGK1fbTQABDOAT20UAJRi95Wh7xzMGNisTEd524PV
-        IGVSHnpbhD8B8EhyAAAAAElFTkSuQmCC
-</value>
-  </data>
   <data name="Yes">
     <value>Yes</value>
   </data>
@@ -291,14 +282,6 @@
         pKbadWMXGNJo6NcrKmgNWVlUQVoapeDUKUpyWBgFv45R9u7ZY/8/339v9/mmTbZvenjY/y4+nuqIAHMR
         gIYAVASgIIAdAtiieWvU07b64Pvt22fzHoNh63v6NNUjIYGy48wZyufnz1PeTU6mvMVkUv7N25vy8q5d
         9i/gy8XS1attFz7/vDXt2Wet/3+ie4/l/wOchKPj6Tjd4QAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="propertygrid_tab_properties" type="System.Drawing.Bitmap, System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAGVJREFUOE9jPHDg
-        wH8GIoCjoyMjsrL9+/dD9IEMoATDDQCaBTKRaAyzFMUAYl0CsginATBXQMMGw0Uw8VEXIAUiIyMjOCaQ
-        Q5ZQbKDEAroBJMcCVV1AVkqEuYCQv3HJUy8zkesCAKyXZMNS2ukhAAAAAElFTkSuQmCC
 </value>
   </data>
   <data name="mbox_warn.png" type="System.Drawing.Bitmap, System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -428,9 +411,6 @@
   </data>
   <data name="Cancel">
     <value>Cancel</value>
-  </data>
-  <data name="propertygrid_categorized">
-    <value>Categorized</value>
   </data>
   <data name="last_open" type="System.Drawing.Bitmap, System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -642,15 +622,6 @@
         N21EvqlSmPsn8UKYLq/+Q1MAAAAASUVORK5CYII=
 </value>
   </data>
-  <data name="propertygrid_sort_alphabetical" type="System.Drawing.Bitmap, System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAI5JREFUOE+tklEO
-        gCAMQ/XfK3j/E/gNN1NLLCljRoeaLGZQXrfBnHPepy8fACmlGieryS8DmHRR9hSgIkKtAdehdQEQaBUe
-        gPsNgO4EqOiuxQ7gCW2LmrsV2DnwAHtWk8cKIOAteLOoAOuq+atrpNPIv7yDSKzL1ujDAJgppACwMBJ1
-        iJEW3AoigF9moIYHlA+UIAsfXwEAAAAASUVORK5CYII=
-</value>
-  </data>
   <data name="errorProvider.ico" type="System.Drawing.Icon, System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAEAEBAAAAAAAABoAwAAFgAAACgAAAAQAAAAIAAAAAEAGAAAAAAAQAMAAAAAAAAAAAAAAAAAAAAA
@@ -669,9 +640,6 @@
         //////////////////////////////////////////////////////////////////8AAAAAAAAAAAAA
         AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 </value>
-  </data>
-  <data name="propertygrid_alphabetic">
-    <value>Alphabetic</value>
   </data>
   <data name="Ignore">
     <value>Ignore</value>

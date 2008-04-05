@@ -1,3 +1,8 @@
+2008-04-01  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* ColorEditor.cs: Cache the editor contorl instead of creating
+	it each time.
+
 2008-02-08  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* ColorEditor.cs: Fix Height to include the last 8th row.

@@ -38,24 +38,25 @@ namespace System.ComponentModel
 	{
 		public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
 		{
-			if (sourceType == typeof (string)) 
+			if (sourceType == typeof (string))
 				return true;
 			return base.CanConvertFrom (context, sourceType);
 		}
 
 		public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object value)
 		{
-			if (value.GetType() == typeof (string)) {
-				if (value == null)
+			string char_string = value as string;
+			if (char_string != null) {
+				if (char_string.Length > 1)
+					char_string = char_string.Trim ();
+				if (char_string.Length > 1)
+					throw new FormatException (string.Format (
+						"String {0} is not a valid Char: " +
+						"it has to be less than or equal to " +
+						"one char long.", char_string));
+				if (char_string.Length == 0)
 					return '\0';
-				string str = (String) value;
-				if (str.Length > 1)
-					str = str.Trim ();
-				if (str.Length > 1)
-					throw new FormatException ("String has to be less than or equal to one char long");
-				if (str.Length == 0)
-					return '\0';
-				return str[0];
+				return char_string [0];
 			}
 			return base.ConvertFrom (context, culture, value);
 		}

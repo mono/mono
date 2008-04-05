@@ -4,9 +4,11 @@
 // Author:
 //  Miguel de Icaza (miguel@ximian.com)
 //  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//  Ivan N. Zlatev (contact@i-nz.net)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 // (C) 2003 Andreas Nahr
+// (C) 2008 Novell, Inc.  http://www.novell.com
 //
 
 //
@@ -61,23 +63,15 @@ namespace System.ComponentModel
 
 		public virtual TypeConverter Converter {
 			get {
-				if (converter == null) {
+				if (converter == null && PropertyType != null) {
 					TypeConverterAttribute at = (TypeConverterAttribute) Attributes [typeof(TypeConverterAttribute)];
-					if (at == null || at == TypeConverterAttribute.Default)
-						converter = TypeDescriptor.GetConverter (PropertyType);
-					else {
-						Type t = Type.GetType (at.ConverterTypeName);
-						if (t == null) {
-							converter = TypeDescriptor.GetConverter (PropertyType);
-						}
-						else {
-							ConstructorInfo ci = t.GetConstructor (new Type[] { typeof(Type) });
-							if (ci != null)
-								converter = (TypeConverter) ci.Invoke (new object[] { PropertyType });
-							else
-								converter = (TypeConverter) Activator.CreateInstance (t);
-						}
+					if (at != null && at != TypeConverterAttribute.Default) {
+						Type converterType = GetTypeFromName (at.ConverterTypeName);
+						if (converterType != null && typeof (TypeConverter).IsAssignableFrom (converterType))
+							converter = (TypeConverter)CreateInstance (converterType);
 					}
+					if (converter == null)
+						converter = TypeDescriptor.GetConverter (PropertyType);
 				}
 				return converter;
 			}
@@ -220,9 +214,29 @@ namespace System.ComponentModel
 
 		public abstract bool ShouldSerializeValue (object component);
 
-		protected object CreateInstance(System.Type type)
+		protected object CreateInstance (Type type)
 		{
-			return Assembly.GetExecutingAssembly ().CreateInstance (type.Name);
+			if (type == null || PropertyType == null)
+				return null;
+
+			object instance = null;
+			Type[] paramTypes = new Type[] { typeof (Type) };
+			ConstructorInfo ctor = type.GetConstructor (paramTypes);
+			if (ctor != null) {
+				object[] parameters = new object[] { PropertyType };
+#if NET_2_0
+				instance = TypeDescriptor.CreateInstance (null, type, paramTypes, parameters);
+#else
+				instance = ctor.Invoke (parameters);
+#endif
+			} else {
+#if NET_2_0
+				instance = TypeDescriptor.CreateInstance (null, type, null, null);
+#else
+				instance = Activator.CreateInstance (type);
+#endif
+			}
+			return instance;
 		}
 
 		public override bool Equals(object obj)
@@ -258,7 +272,7 @@ namespace System.ComponentModel
 			return TypeDescriptor.GetProperties (instance, filter);
 		}
 
-		public virtual object GetEditor(Type editorBaseType)
+		public virtual object GetEditor (Type editorBaseType)
 		{
 			Type t = null;
 			Attribute [] atts = AttributeArray;
@@ -270,21 +284,34 @@ namespace System.ComponentModel
 					if (ea == null)
 						continue;
 					
-					t = TypeDescriptor.GetTypeFromName (null, ea.EditorTypeName);
+					t = GetTypeFromName (ea.EditorTypeName);
 					if (t != null && t.IsSubclassOf(editorBaseType))
 						break;
 				}
 			}
 
+			object editor = null;
 			if (t != null)
-				return TypeDescriptor.CreateEditor (t, PropertyType);
-
-			return TypeDescriptor.GetEditor (PropertyType, editorBaseType);
+				editor = CreateInstance (t);
+			if (editor == null)
+				editor = TypeDescriptor.GetEditor (PropertyType, editorBaseType);
+			return editor;
 		}
 
-		protected Type GetTypeFromName(string typeName)
+		protected Type GetTypeFromName (string typeName)
 		{
-			return Type.GetType (typeName);
+			if (typeName == null || ComponentType == null || typeName.Trim ().Length == 0)
+				return null;
+
+			Type type = Type.GetType (typeName);
+			if (type == null) {
+				// Try to strip the type typeName only
+				int index = typeName.IndexOf (",");
+				if (index != -1)
+					typeName = typeName.Substring (0, index);
+				type = ComponentType.Assembly.GetType (typeName);
+			} 
+			return type;
 		}
 	}
 }

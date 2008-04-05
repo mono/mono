@@ -55,3 +55,8 @@
 -resource:resources/nav_previous.png
 -resource:resources/image-missing.png
 -resource:resources/image-x-generic.png
+-resource:resources/propertygrid-alphabetical.png,System.Windows.Forms.propertygrid-alphabetical.png
+-resource:resources/propertygrid-categorized.png,System.Windows.Forms.propertygrid-categorized.png
+-resource:resources/propertygrid-propertypages.png,System.Windows.Forms.propertygrid-propertypages.png
+-resource:resources/EventsTab.bmp,System.Windows.Forms.Design.EventsTab.bmp
+-resource:resources/PropertiesTab.bmp,System.Windows.Forms.PropertyGridInternal.PropertiesTab.bmp

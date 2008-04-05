@@ -1,3 +1,7 @@
+2008-03-28  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* IconConverter.cs: Convert null to "(none)".
+
 2008-03-06  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* ImageFormatConverter.cs: 

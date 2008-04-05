@@ -9,6 +9,7 @@
 // (C) 2003 Martin Willemoes Hansen
 // (C) 2007 Andreas Nahr
 // (C) 2007 Ivan N. Zlatev
+// (C) 2008 Novell, Inc
 //
 
 //
@@ -198,15 +199,17 @@ namespace System.ComponentModel.Design
 			[TypeConverter (typeof (ObjectContainerConverter))]
 			private class ObjectContainer
 			{
-				internal string Name;
 				internal object Object;
 				internal CollectionEditor editor;
 
-				public ObjectContainer (string name, object obj, CollectionEditor editor)
+				public ObjectContainer (object obj, CollectionEditor editor)
 				{
-					this.Name = name;
 					this.Object = obj;
 					this.editor = editor;
+				}
+
+				internal string Name {
+					get { return editor.GetDisplayText (Object); }
 				}
 
 				public override string ToString ()
@@ -305,6 +308,7 @@ namespace System.ComponentModel.Design
 				this.moveUp.Location = new System.Drawing.Point (138, 25);
 				this.moveUp.Size = new System.Drawing.Size (31, 28);
 				this.moveUp.TabIndex = 4;
+				this.moveUp.Enabled = false;
 				this.moveUp.Text = "Up";
 				this.moveUp.Click += new System.EventHandler (this.moveUp_Click);
 				// 
@@ -313,6 +317,7 @@ namespace System.ComponentModel.Design
 				this.moveDown.Location = new System.Drawing.Point (138, 59);
 				this.moveDown.Size = new System.Drawing.Size (31, 28);
 				this.moveDown.TabIndex = 5;
+				this.moveDown.Enabled = false;
 				this.moveDown.Text = "Dn";
 				this.moveDown.Click += new System.EventHandler (this.moveDown_Click);
 				// 
@@ -391,23 +396,32 @@ namespace System.ComponentModel.Design
 					addType.SelectedIndex = 0;
 			}
 
-			private void AddItems ()
+			private void UpdateItems ()
 			{
-				foreach (object o in editor.GetItems (EditValue))
-				{
-					this.itemsList.Items.Add (new ObjectContainer (editor.GetDisplayText (o), o, editor));
+				object[] items = editor.GetItems (EditValue);
+				if (items != null) {
+					itemsList.BeginUpdate ();
+					itemsList.Items.Clear ();
+					foreach (object o in items)
+						this.itemsList.Items.Add (new ObjectContainer (o, editor));
+					if (itemsList.Items.Count > 0)
+						itemsList.SelectedIndex = 0;
+					itemsList.EndUpdate ();
 				}
-				if (itemsList.Items.Count > 0)
-					itemsList.SelectedIndex = 0;
 			}
 
 			private void doClose_Click (object sender, EventArgs e)
 			{
+				SetEditValue ();
+				this.Close ();
+			}
+
+			private void SetEditValue ()
+			{
 				object[] items = new object[itemsList.Items.Count];
 				for (int i = 0; i < itemsList.Items.Count; i++)
 					items[i] = ((ObjectContainer)itemsList.Items[i]).Object;
-				EditValue = editor.SetItems (EditValue, items);
-				this.Close ();
+				this.Items = items;
 			}
 
 			private void doCancel_Click (object sender, EventArgs e)
@@ -418,6 +432,11 @@ namespace System.ComponentModel.Design
 
 			private void itemsList_SelectedIndexChanged (object sender, EventArgs e)
 			{
+				if (itemsList.SelectedIndex == -1) {
+					itemDisplay.SelectedObject = null;
+					return;
+				}
+
 				if (itemsList.SelectedIndex <= 0 || itemsList.SelectedItems.Count > 1)
 					moveUp.Enabled = false;
 				else
@@ -426,9 +445,6 @@ namespace System.ComponentModel.Design
 					moveDown.Enabled = false;
 				else
 					moveDown.Enabled = true;
-
-				if (itemsList.SelectedIndex == -1)
-					return;
 
 				if (itemsList.SelectedItems.Count == 1)
 				{
@@ -456,16 +472,25 @@ namespace System.ComponentModel.Design
 
 			private void itemDisplay_PropertyValueChanged (object sender, EventArgs e)
 			{
-				int[] indices = new int[itemsList.SelectedIndices.Count];
-				itemsList.SelectedIndices.CopyTo (indices, 0);
-				for (int i = 0; i < indices.Length; i++)
-				{
-					ObjectContainer o = (ObjectContainer)itemsList.Items [indices[i]];
-					o.Name = editor.GetDisplayText (o.Object);
-					itemsList.DoRefreshItem (indices[i]);
+				int[] selected = new int[itemsList.SelectedItems.Count];
+				for (int i = 0; i < itemsList.SelectedItems.Count; i++)
+					selected[i] = itemsList.Items.IndexOf (itemsList.SelectedItems[i]);
+
+				// The list might be repopulated if a new instance of the collection edited
+				// is created during the update. This happen for example for Arrays.
+				SetEditValue ();
+
+				// Restore current selection in case the list gets repopulated.
+				// Refresh the item after that to reflect possible value change.
+				// 
+				itemsList.BeginUpdate ();
+				itemsList.ClearSelected ();
+				foreach (int index in selected) {
+					itemsList.DoRefreshItem (index);
+					itemsList.SetSelected (index, true);
 				}
-				for (int i = 0; i < indices.Length; i++)
-					itemsList.SetSelected (indices[i], true);
+				itemsList.SelectedIndex = selected[0];
+				itemsList.EndUpdate ();
 			}
 
 			private void moveUp_Click (object sender, EventArgs e)
@@ -495,27 +520,43 @@ namespace System.ComponentModel.Design
 			private void doAdd_Click (object sender, EventArgs e)
 			{
 				object o;
-				try
-				{
+				try {
 					o = editor.CreateInstance (editor.NewItemTypes[addType.SelectedIndex]);
-				}
-				catch (Exception ex)
-				{
+				} catch (Exception ex) {
 					DisplayError (ex);
 					return;
 				}
-				itemsList.Items.Add (new ObjectContainer (editor.GetDisplayText (o), o, editor));
+				itemsList.Items.Add (new ObjectContainer (o, editor));
+				itemsList.SelectedIndex = -1;
+				itemsList.SelectedIndex = itemsList.Items.Count - 1;
 			}
 
 			private void doRemove_Click (object sender, EventArgs e)
 			{
-				if (itemsList.SelectedIndex != -1)
-					itemsList.Items.RemoveAt (itemsList.SelectedIndex);
+				if (itemsList.SelectedIndex != -1) {
+					int[] selected = new int[itemsList.SelectedItems.Count];
+					for (int i=0; i < itemsList.SelectedItems.Count; i++)
+						selected[i] = itemsList.Items.IndexOf (itemsList.SelectedItems[i]);
+
+					for (int i = selected.Length - 1; i >= 0; i--)
+						itemsList.Items.RemoveAt (selected[i]);
+
+					int prevIndex = --selected[0];
+					if (prevIndex == -1 && itemsList.Items.Count > 0)
+						prevIndex = 0;
+					itemsList.SelectedIndex = prevIndex;
+				}
+				if (itemsList.SelectedItems.Count == 0)
+					itemDisplay.SelectedObject = null;
 			}
 
+			// OnEditValueChanged is called only if the  EditValue has changed,
+			// which is only in the case when a new instance of the collection is 
+			// required, e.g for arrays.
+			// 
 			protected override void OnEditValueChanged ()
 			{
-				AddItems ();
+				UpdateItems ();
 			}
 		}
 

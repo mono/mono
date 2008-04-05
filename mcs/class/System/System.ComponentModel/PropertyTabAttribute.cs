@@ -4,9 +4,11 @@
 // Authors:
 //  Martin Willemoes Hansen (mwh@sysrq.dk)
 //  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//  Ivan N. Zlatev (contact@i-nz.net)
 //
 // (C) 2003 Martin Willemoes Hansen
 // (C) 2003 Andreas Nahr
+// (C) 2008 Novell, Inc
 //
 
 //
@@ -30,6 +32,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+using System.Reflection;
+
 namespace System.ComponentModel
 {
 	[AttributeUsage(AttributeTargets.All)]
@@ -42,34 +47,30 @@ namespace System.ComponentModel
 
 		public PropertyTabAttribute()
 		{
-			tabs = null;
-			scopes = null;
+			tabs = new Type[0];
+			scopes = new PropertyTabScope[0];
 		}
 
-		public PropertyTabAttribute (string tabClassName)
+		public PropertyTabAttribute (string tabClassName) : this (tabClassName, PropertyTabScope.Component)
 		{
-			string[] tabArray = {tabClassName};
-			this.InitializeArrays (tabArray, null);
 		}
 
-		public PropertyTabAttribute (Type tabClass)
+		public PropertyTabAttribute (Type tabClass) : this (tabClass, PropertyTabScope.Component)
 		{
-			Type[] tabArray = {tabClass};
-			this.InitializeArrays (tabArray, null);
 		}
 
 		public PropertyTabAttribute (string tabClassName, PropertyTabScope tabScope)
 		{
-			string[] tabArray = {tabClassName};
-			PropertyTabScope[] scopeArray = {tabScope};
-			this.InitializeArrays (tabArray, scopeArray);
+			if (tabClassName == null)
+				throw new ArgumentNullException ("tabClassName");
+			this.InitializeArrays (new string[] { tabClassName }, new PropertyTabScope[] { tabScope });
 		}
 
 		public PropertyTabAttribute (Type tabClass, PropertyTabScope tabScope)
 		{
-			Type[] tabArray = {tabClass};
-			PropertyTabScope[] scopeArray = {tabScope};
-			this.InitializeArrays (tabArray, scopeArray);
+			if (tabClass == null)
+				throw new ArgumentNullException ("tabClass");
+			this.InitializeArrays (new Type[] { tabClass }, new PropertyTabScope[] { tabScope });
 		}
 
 		public Type[] TabClasses {
@@ -80,53 +81,81 @@ namespace System.ComponentModel
 			get { return scopes; }
 		}
 
+		protected string[] TabClassNames {
+			get {
+				string[] names = new string[tabs.Length];
+				for (int i=0; i < tabs.Length; i++)
+					names[i] = tabs[i].Name;
+				return names;
+			}
+		}
+
 		public override bool Equals (object other)
 		{
-			if (!(other is PropertyTabAttribute))
-				return false;
-			if (other == this)
-				return true;
-			return ((PropertyTabAttribute) other).TabClasses == tabs &&
-				((PropertyTabAttribute) other).TabScopes == scopes;
+			if (other is PropertyTabAttribute)
+				return Equals ((PropertyTabAttribute)other);
+			return false;
 		}
 
 		public bool Equals (PropertyTabAttribute other)
 		{
-			return this.Equals ((object) other);
+			if (other != this) {
+				if (other.TabClasses.Length != tabs.Length)
+					return false;
+
+				for (int i=0; i < tabs.Length; i++) {
+					if (tabs[i] != other.TabClasses[i])
+						return false;
+				}
+			}
+			return true;
 		}
 
 		public override int GetHashCode()
 		{
-			// FIXME check if other Hashcode is needed
 			return base.GetHashCode ();
-		}
-
-		protected string[] TabClassNames {
-			get {
-				// FIXME untested, maybe wrong
-				string[] tabClassName = (string[]) (Array.CreateInstance (typeof (string), tabs.Length));
-				for (int x = 0; x < tabs.Length; x++)
-					tabClassName[x] = tabs[x].AssemblyQualifiedName;
-				return tabClassName;
-			}
 		}
 
 		protected void InitializeArrays (string[] tabClassNames, PropertyTabScope[] tabScopes)
 		{
-			// FIXME untested, maybe wrong
-			Type[] tabClasses = (Type[]) (Array.CreateInstance (typeof (Type), tabClassNames.Length));
-			for (int x = 0; x < tabClassNames.Length; x++)
-				tabClasses[x] = Type.GetType (tabClassNames[x], false);
+			if (tabScopes == null)
+				throw new ArgumentNullException ("tabScopes");
+			if (tabClassNames == null)
+				throw new ArgumentNullException ("tabClassNames");
+
+			scopes = tabScopes;
+			tabs = new Type[tabClassNames.Length];
+			for (int i = 0; i < tabClassNames.Length; i++)
+				tabs[i] = GetTypeFromName (tabClassNames[i]);
+		}
+
+		protected void InitializeArrays (Type[] tabClasses, PropertyTabScope[] tabScopes)
+		{
+			if (tabScopes == null)
+				throw new ArgumentNullException ("tabScopes");
+			if (tabClasses == null)
+				throw new ArgumentNullException ("tabClasses");
+			if (tabClasses.Length != tabScopes.Length)
+				throw new ArgumentException ("tabClasses.Length != tabScopes.Length");
 
 			tabs = tabClasses;
 			scopes = tabScopes;
 		}
 
-		protected void InitializeArrays (Type[] tabClasses, PropertyTabScope[] tabScopes)
+		private Type GetTypeFromName (string typeName)
 		{
-			// FIXME untested, maybe wrong
-			tabs = tabClasses;
-			scopes = tabScopes;
+			if (typeName == null)
+				throw new ArgumentNullException ("typeName");
+
+			int index = typeName.IndexOf (",");
+			if (index != -1) {
+				string typeNameOnly = typeName.Substring (0, index);
+				string assemblyName = typeName.Substring (index + 1);
+				Assembly assembly = Assembly.Load (assemblyName);
+				if (assembly != null)
+					return assembly.GetType (typeNameOnly, true);
+			}
+			return Type.GetType (typeName, true);
 		}
 	}
 }

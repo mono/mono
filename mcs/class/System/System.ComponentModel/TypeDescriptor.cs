@@ -861,7 +861,7 @@ public sealed class TypeDescriptor
 		}
 	}
 	
-	internal static Type GetTypeFromName (IComponent component, string typeName)
+	private static Type GetTypeFromName (IComponent component, string typeName)
 	{
 		Type type = null;
 		if (component != null && component.Site != null) {
@@ -970,12 +970,8 @@ public sealed class TypeDescriptor
 			object[] ats = _infoType.GetCustomAttributes (true);
 			Hashtable t = new Hashtable ();
 
-			// Filter the custom attributes, so that only the top
-			// level of the same type are left.
-			//
-			for (int i = ats.Length -1; i >= 0; i--) {
+			for (int i = ats.Length -1; i >= 0; i--)
 				t [((Attribute) ats[i]).TypeId] = ats[i];
-			}
 					
 			if (comp != null && comp.Site != null) 
 			{
@@ -1093,14 +1089,29 @@ public sealed class TypeDescriptor
 		{
 			if (_properties != null)
 				return _properties;
-			
-			PropertyInfo[] props = InfoType.GetProperties (BindingFlags.Instance | BindingFlags.Public);
-			ArrayList descs = new ArrayList (props.Length);
-			for (int n=0; n<props.Length; n++)
-				if (props [n].GetIndexParameters ().Length == 0)
-					descs.Add (new ReflectionPropertyDescriptor (props[n]));
 
-			_properties = new PropertyDescriptorCollection ((PropertyDescriptor[]) descs.ToArray (typeof (PropertyDescriptor)), true);
+			Hashtable propertiesHash = new Hashtable (); // name - null
+			ArrayList propertiesList = new ArrayList (); // propertydescriptors
+			Type currentType = InfoType;
+			// Getting properties type by type, because in the case of a property in the child type, where
+			// the "new" keyword is used and also the return type is changed Type.GetProperties returns 
+			// also the parent property. 
+			// 
+			// Note that we also have to preserve the properties order here.
+			// 
+			while (currentType != typeof (object)) {
+				PropertyInfo[] props = currentType.GetProperties (BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
+				foreach (PropertyInfo property in props) {
+					if (property.GetIndexParameters ().Length == 0 &&
+					    !propertiesHash.ContainsKey (property.Name)) {
+						propertiesList.Add (new ReflectionPropertyDescriptor (property));
+						propertiesHash.Add (property.Name, null);
+					}
+				}
+				currentType = currentType.BaseType;
+			}
+
+			_properties = new PropertyDescriptorCollection ((PropertyDescriptor[]) propertiesList.ToArray (typeof (PropertyDescriptor)), true);
 			return _properties;
 		}
 	}
