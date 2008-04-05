@@ -1,3 +1,8 @@
+2008-04-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c: Enable MONO_OPT_SSA if abcrem or ssapre is enabled, so code only needs to
+	check whenever SSA is enabled.
+
 2008-04-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* local-propagation.c (mono_branch_to_cmov): Rename this to mono_if_conversion ().

@@ -2051,7 +2051,7 @@ mono_compile_create_var_for_vreg (MonoCompile *cfg, MonoType *type, int opcode, 
 		/* Allocate a dummy MonoInst for the first vreg */
 		MONO_INST_NEW (cfg, tree, OP_LOCAL);
 		tree->dreg = inst->dreg + 1;
-		if (cfg->opt & (MONO_OPT_SSA | MONO_OPT_ABCREM | MONO_OPT_SSAPRE))
+		if (cfg->opt & MONO_OPT_SSA)
 			tree->flags = MONO_INST_VOLATILE;
 		tree->inst_c0 = num;
 		tree->type = STACK_I4;
@@ -2063,7 +2063,7 @@ mono_compile_create_var_for_vreg (MonoCompile *cfg, MonoType *type, int opcode, 
 		/* Allocate a dummy MonoInst for the second vreg */
 		MONO_INST_NEW (cfg, tree, OP_LOCAL);
 		tree->dreg = inst->dreg + 2;
-		if (cfg->opt & (MONO_OPT_SSA | MONO_OPT_ABCREM | MONO_OPT_SSAPRE))
+		if (cfg->opt & MONO_OPT_SSA)
 			tree->flags = MONO_INST_VOLATILE;
 		tree->inst_c0 = num;
 		tree->type = STACK_I4;
@@ -12719,6 +12719,9 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 			g_print ("converting method %s\n", mono_method_full_name (method, TRUE));
 	}
 
+	if (cfg->opt & (MONO_OPT_ABCREM | MONO_OPT_SSAPRE))
+		cfg->opt |= MONO_OPT_SSA;
+
 	{
 		static int count = 0;
 
@@ -12792,7 +12795,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	}
 
 	/* FIXME: Fix SSA to handle branches inside bblocks */
-	if (cfg->opt & (MONO_OPT_SSA | MONO_OPT_ABCREM | MONO_OPT_SSAPRE))
+	if (cfg->opt & MONO_OPT_SSA)
 		cfg->enable_extended_bblocks = FALSE;
 
 	/*
@@ -12927,7 +12930,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 #endif
 	}
 #else 
-	if (cfg->opt & (MONO_OPT_SSA | MONO_OPT_ABCREM | MONO_OPT_SSAPRE)) {
+	if (cfg->opt & MONO_OPT_SSA) {
 		if (!(cfg->comp_done & MONO_COMP_SSA) && !header->num_clauses && !cfg->disable_ssa) {
 #ifndef DISABLE_SSA
 			if (!cfg->new_ir)
