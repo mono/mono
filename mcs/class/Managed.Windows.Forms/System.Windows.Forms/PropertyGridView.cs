@@ -1,3 +1,4 @@
+
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -61,6 +62,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		private Font bold_font;
 		private Brush inactive_text_brush;
 		private ListBox dropdown_list;
+		private Point last_click;
 #if NET_2_0
 		private Padding dropdown_form_padding;
 #endif
@@ -163,9 +165,13 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			}
 		}
 
+		// [+] expanding is handled in OnMouseDown, so in order to prevent 
+		// duplicate expanding ignore it here.
+		// 
 		protected override void OnDoubleClick (EventArgs e) 
 		{
-			if (this.SelectedGridItem != null && this.SelectedGridItem.Expandable)
+			if (this.SelectedGridItem != null && this.SelectedGridItem.Expandable && 
+			    !this.SelectedGridItem.PlusMinusBounds.Contains (last_click))
 				this.SelectedGridItem.Expanded = !this.SelectedGridItem.Expanded;
 			else
 				ToggleValue (this.SelectedGridItem);
@@ -213,6 +219,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		protected override void OnMouseDown (MouseEventArgs e) 
 		{
 			base.OnMouseDown (e);
+			last_click = e.Location;
 			if (this.RootGridItem == null)
 				return;
 
