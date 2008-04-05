@@ -928,9 +928,9 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		internal void UpdateView ()
 		{
 			UpdateScrollBar ();
-			UpdateItem (this.SelectedGridItem);
 			Invalidate ();
 			Update ();
+			UpdateItem (this.SelectedGridItem);
 		}
 
 		internal void ExpandItem (GridEntry item)
