@@ -182,7 +182,9 @@ hppa_sources = \
 common_sources = \
 	mini.h		\
 	mini.c		\
+	ir-emit.h   \
 	method-to-ir.c \
+	decompose.c \
 	version.h	\
 	optflags-def.h		\
 	jit-icalls.h \

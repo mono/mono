@@ -1,3 +1,9 @@
+2008-04-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c: Split up this now giant file a bit: Move the instruction 
+	emission macros to ir-emit.h, and the various decompose functions to 
+	decompose.c.
+
 2008-04-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* local-propagation.c: Move the if-conversion pass to branch-opts.c where it belongs.
