@@ -10044,6 +10044,7 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
  *   last bb instead of doing it in the epilog.
  * - when the new JIT is done, use the ins emission macros in ir-emit.h instead of the 
  *   ones in inssel.h.
+ * - change the store opcodes so they use sreg1 instead of dreg to store the base register.
  */
 
 /*
