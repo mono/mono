@@ -65,6 +65,15 @@ namespace MonoTests.System.Net {
 			return listener;
 		}
 
+		public static HttpListener CreateAndStartListener (string prefix, AuthenticationSchemes authSchemes)
+		{
+			HttpListener listener = new HttpListener ();
+			listener.AuthenticationSchemes = authSchemes;
+			listener.Prefixes.Add (prefix);
+			listener.Start ();
+			return listener;
+		}
+
 		public static MyNetworkStream CreateNS (int port)
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);

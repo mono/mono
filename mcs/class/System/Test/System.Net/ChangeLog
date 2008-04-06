@@ -1,3 +1,9 @@
+2008-04-06  Geoff Norton  <gnorton@novell.com>
+
+	* HttpListener2Test.cs:
+	* HttpListenerRequestTest.cs: HttpListener Basic authenticationt test
+	from Maciej Paszta <paszczi@go2.pl>
+
 2008-02-09  Daniel Nauck  <dna@mono-project.de>
 
 	* CookieContainerTest.cs: added some not working Add/Expired tests
