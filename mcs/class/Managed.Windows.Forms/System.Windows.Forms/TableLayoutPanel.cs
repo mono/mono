@@ -602,10 +602,10 @@ namespace System.Windows.Forms
 		#endregion
 		
 		#region IExtenderProvider
-		bool IExtenderProvider.CanExtend (object extendee)
+		bool IExtenderProvider.CanExtend (object obj)
 		{
-			if (extendee is Control)
-				if ((extendee as Control).Parent == this)
+			if (obj is Control)
+				if ((obj as Control).Parent == this)
 					return true;
 
 			return false;

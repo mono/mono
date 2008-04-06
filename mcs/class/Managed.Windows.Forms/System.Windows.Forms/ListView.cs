@@ -4496,9 +4496,15 @@ namespace System.Windows.Forms
 				return idx;
 			}
 
+#if NET_2_0
 			public virtual ColumnHeader Add (string text, int width, HorizontalAlignment textAlign)
 			{
-				ColumnHeader colHeader = new ColumnHeader (this.owner, text, textAlign, width);
+				string str = text;
+#else
+			public virtual ColumnHeader Add (string str, int width, HorizontalAlignment textAlign)
+			{
+#endif
+				ColumnHeader colHeader = new ColumnHeader (this.owner, str, textAlign, width);
 				this.Add (colHeader);
 				return colHeader;
 			}
@@ -4702,9 +4708,15 @@ namespace System.Windows.Forms
 			}
 #endif
 
+#if NET_2_0
 			public void Insert (int index, string text, int width, HorizontalAlignment textAlign)
 			{
-				ColumnHeader colHeader = new ColumnHeader (this.owner, text, textAlign, width);
+				string str = text;
+#else
+			public void Insert (int index, string str, int width, HorizontalAlignment textAlign)
+			{
+#endif
+				ColumnHeader colHeader = new ColumnHeader (this.owner, str, textAlign, width);
 				this.Insert (index, colHeader);
 			}
 
@@ -4802,10 +4814,18 @@ namespace System.Windows.Forms
 				get { return false; }
 			}
 
+#if NET_2_0
 			public virtual ListViewItem this [int index] {
+#else
+			public virtual ListViewItem this [int displayIndex] {
+#endif
 				get {
+#if !NET_2_0
+					int index = displayIndex;
+#endif
+
 					if (index < 0 || index >= Count)
-						throw new ArgumentOutOfRangeException ("displayIndex");
+						throw new ArgumentOutOfRangeException ("index");
 
 #if NET_2_0
 					if (owner != null && owner.VirtualMode)
@@ -4815,8 +4835,12 @@ namespace System.Windows.Forms
 				}
 
 				set {
+#if !NET_2_0
+					int index = displayIndex;
+#endif
+
 					if (index < 0 || index >= Count)
-						throw new ArgumentOutOfRangeException ("displayIndex");
+						throw new ArgumentOutOfRangeException ("index");
 
 #if NET_2_0
 					if (owner != null && owner.VirtualMode)
@@ -4929,10 +4953,16 @@ namespace System.Windows.Forms
 			}
 #endif
 
+#if NET_2_0
 			public void AddRange (ListViewItem [] items)
 			{
+#else
+			public void AddRange (ListViewItem [] values)
+			{
+				ListViewItem [] items = values;
+#endif
 				if (items == null)
-					throw new ArgumentNullException ("Argument cannot be null!", "values");
+					throw new ArgumentNullException ("Argument cannot be null!", "items");
 #if NET_2_0
 				if (owner != null && owner.VirtualMode)
 					throw new InvalidOperationException ();

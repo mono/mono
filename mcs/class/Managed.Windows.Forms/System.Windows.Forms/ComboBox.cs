@@ -1876,15 +1876,27 @@ namespace System.Windows.Forms
 				return object_items.Contains (value);
 			}
 
+#if NET_2_0
 			public void CopyTo (object [] destination, int arrayIndex)
 			{
 				object_items.CopyTo (destination, arrayIndex);
+			}
+
+			void ICollection.CopyTo (Array destination, int index)
+			{
+				object_items.CopyTo (destination, index);
+			}
+#else
+			public void CopyTo (object [] dest, int arrayIndex)
+			{
+				object_items.CopyTo (dest, arrayIndex);
 			}
 
 			void ICollection.CopyTo (Array dest, int index)
 			{
 				object_items.CopyTo (dest, index);
 			}
+#endif
 
 			public IEnumerator GetEnumerator ()
 			{

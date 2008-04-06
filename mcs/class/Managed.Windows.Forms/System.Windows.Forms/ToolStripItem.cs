@@ -25,6 +25,7 @@
 // Authors:
 //	Jonathan Pobst (monkey@jpobst.com)
 //
+
 #if NET_2_0
 
 using System;
@@ -1863,14 +1864,14 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region IDropTarget Members
-		void IDropTarget.OnDragDrop (DragEventArgs e)
+		void IDropTarget.OnDragDrop (DragEventArgs dragEvent)
 		{
-			OnDragDrop (e);
+			OnDragDrop (dragEvent);
 		}
 
-		void IDropTarget.OnDragEnter (DragEventArgs e)
+		void IDropTarget.OnDragEnter (DragEventArgs dragEvent)
 		{
-			OnDragEnter (e);
+			OnDragEnter (dragEvent);
 		}
 
 		void IDropTarget.OnDragLeave (EventArgs e)
@@ -1878,9 +1879,9 @@ namespace System.Windows.Forms
 			OnDragLeave (e);
 		}
 
-		void IDropTarget.OnDragOver (DragEventArgs e)
+		void IDropTarget.OnDragOver (DragEventArgs dragEvent)
 		{
-			OnDragOver (e);
+			OnDragOver (dragEvent);
 		}
 		#endregion
 
@@ -1976,10 +1977,9 @@ namespace System.Windows.Forms
 		}
 	}
 
-	#region NoneExcludedImageIndexConverter Class
 	internal class NoneExcludedImageIndexConverter : ImageIndexConverter
 	{
 	}
-	#endregion
 }
+
 #endif

@@ -122,9 +122,9 @@ namespace System.Windows.Forms
 			return (FromTableNameToIndex (name) != -1);
 		}
 
-		void ICollection.CopyTo (Array dest, int index)
+		void ICollection.CopyTo (Array array, int index)
 		{
-			items.CopyTo (dest, index);
+			items.CopyTo (array, index);
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()
@@ -167,11 +167,16 @@ namespace System.Windows.Forms
 			RemoveAt (index);
 		}
 
+#if NET_2_0
 		protected void OnCollectionChanged (CollectionChangeEventArgs e)
 		{
-			if (CollectionChanged != null) {
-				CollectionChanged (this, e);
-			}
+			CollectionChangeEventArgs ccevent = e;
+#else
+		protected void OnCollectionChanged (CollectionChangeEventArgs ccevent)
+		{
+#endif
+			if (CollectionChanged != null)
+				CollectionChanged (this, ccevent);
 		}
 
 		public void Remove (DataGridTableStyle table)

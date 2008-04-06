@@ -362,13 +362,14 @@ namespace System.Windows.Forms {
 				return list.Contains(value);
 			}
 
-			void ICollection.CopyTo (Array destination, int arrayIndex)
+			void ICollection.CopyTo (Array destination, int index)
 			{
-				CopyTo ((object[])destination, arrayIndex);
+				CopyTo ((object[]) destination, index);
 			}
 
-			public void CopyTo (object[] destination, int arrayIndex) {
-				list.CopyTo(destination, arrayIndex);
+			public void CopyTo (object[] destination, int arrayIndex)
+			{
+				list.CopyTo (destination, arrayIndex);
 			}
 
 			public IEnumerator GetEnumerator () {
@@ -392,9 +393,9 @@ namespace System.Windows.Forms {
 			}
 
 
-			int IList.Add (object value)
+			int IList.Add (object item)
 			{
-				return Add (value);
+				return Add (item);
 			}
 
 		}

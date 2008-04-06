@@ -31,11 +31,11 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Collections;
 
-namespace System.Windows.Forms {
-
-	[TypeConverter (typeof (DataGridRowConverter))]
-	public class DataGridViewRow : DataGridViewBand {
-
+namespace System.Windows.Forms
+{
+	[TypeConverter (typeof (DataGridViewRowConverter))]
+	public class DataGridViewRow : DataGridViewBand
+	{
 		private AccessibleObject accessibilityObject;
 		private DataGridViewCellCollection cells;
 		private ContextMenuStrip contextMenuStrip;
@@ -691,14 +691,10 @@ namespace System.Windows.Forms {
 						break;
 				}
 			}
-
 		}
-
-
-
 	}
 	
-	internal class DataGridRowConverter : TypeConverter
+	internal class DataGridViewRowConverter : TypeConverter
 	{
 	}
 }

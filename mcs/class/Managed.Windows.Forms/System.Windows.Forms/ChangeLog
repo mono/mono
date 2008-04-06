@@ -1,3 +1,70 @@
+2008-04-06  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* BindingContext.cs: Changed argument names to fix corcompare errors.
+	* DataGridView.cs: Removed extra explicit interface implementation
+	of IDropTarget. Code formatting.
+	* FlowLayoutPanel.cs: Changed argument names to fix corcompare errors.
+	* ComboBox.cs: Changed argument names to fix corcompare errors.
+	* DataGridTextBoxColumn.cs: Changed argument names to fix corcompare
+	errors.
+	* GridColumnStylesCollection.cs: Changed argument names to fix
+	corcompare errors. Removed extra tabs.
+	* GridTableStylesCollection.cs: Changed argument names to fix corcompare
+	errors.
+	* Control.cs: Changed argument names to fix corcompare errors. Code
+	formatting. Removed extra explicit IList implementation.
+	* TextBox.cs: Changed argument names to fix corcompare errors. Code
+	formatting. Use string.Empty instead of "".
+	* GridItemCollection.cs: Changed argument names to fix corcompare
+	errors. Code formatting.
+	* DataGridViewTopLeftHeaderCell.cs: Changed argument names to fix
+	corcompare errors. Code formatting.
+	* ImageList.cs: Changed argument names to fix corcompare errors.
+	* ToolStripItem.cs: Changed argument names to fix corcompare errors.
+	* DataGridViewRowCollection.cs: Changed argument names to fix
+	corcompare errors. Code formatting.
+	* TableLayoutPanel.cs: Changed argument names to fix corcompare errors.
+	* DataGridViewSelectedCellCollection.cs: Changed argument names to
+	fix corcompare errors. Code formatting.
+	* DataGridViewComboBoxCell.cs: Changed argument names to fix
+	corcompare errors. Code formatting.
+	* LinkLabel.cs: Changed argument names to fix corcompare errors.
+	* TreeNode.cs: Changed argument names to fix corcompare errors. Code
+	formatting.
+	* PropertyGrid.cs: Changed argument names to fix corcompare errors.
+	Code formatting.
+	* BindingSource.cs: Changed argument names to fix corcompare errors.
+	Removed extra explicit interface implementations.
+	* DataGridViewSelectedRowCollection.cs: Changed argument names to
+	fix corcompare errors. Code formatting.
+	* ToolStripItemCollection.cs: Removed extra explicit interface
+	implementation of IList.ReadOnly.
+	* DataGridViewColumnCollection.cs: Changed argument names to fix
+	corcompare errors. Code formatting.
+	* DataGridViewRow.cs: Rename converter to match MS. Code formatting.
+	* ListView.cs:  Changed argument names to fix corcompare errors.
+	* DataGridViewHeaderCell.cs: Changed argument names to fix corcompare
+	errors.
+	* DataGridBoolColumn.cs: Changed argument names to fix corcompare
+	errors.
+	* ListBindingHelper.cs: Changed argument names to fix corcompare
+	errors.
+	* DataGridViewSelectedColumnCollection.cs: Changed argument names to
+	fix corcompare errors. Code formatting.
+	* ToolStripPanel.cs: Removed extra explicit implementation of
+	IDropTarget interface.
+	* ListBox.cs: Changed argument names to fix corcompare errors. Code
+	formatting. Removed extra tabs and spaces.
+	* DataGridViewCellCollection.cs: Changed argument names to fix
+	corcompare errors.
+	* Help.cs: Changed argument names to fix corcompare errors. Code
+	formatting.
+	* TabControl.cs: Changed argument names to fix corcompare errors.
+	* DataGridColumnStyle.cs: Changed argument names to fix corcompare
+	errors.
+	* TableLayoutSettings.cs: Changed argument names to fix corcompare
+	errors.
+
 2008-04-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListBindingHelper.cs: When returning properties, only return those

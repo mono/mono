@@ -36,9 +36,9 @@ namespace System.Windows.Forms
 {
 	public static class ListBindingHelper 
 	{
-		public static object GetList (object source)
+		public static object GetList (object list)
 		{
-			return GetList (source, String.Empty);
+			return GetList (list, String.Empty);
 		}
 
 		public static object GetList (object dataSource, string dataMember)
@@ -118,10 +118,10 @@ namespace System.Windows.Forms
 			return TypeDescriptor.GetProperties (item_type, new Attribute [] { new BrowsableAttribute (true) });
 		}
 
-		public static PropertyDescriptorCollection GetListItemProperties (object dataSource, PropertyDescriptor [] listAccessors)
+		public static PropertyDescriptorCollection GetListItemProperties (object list, PropertyDescriptor [] listAccessors)
 		{
-			if (dataSource == null || listAccessors.Length == 0)
-				return GetListItemProperties (dataSource);
+			if (list == null || listAccessors.Length == 0)
+				return GetListItemProperties (list);
 
 			// Take into account only the first property
 			Type property_type = listAccessors [0].PropertyType;

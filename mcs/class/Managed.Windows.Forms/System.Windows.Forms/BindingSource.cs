@@ -845,27 +845,27 @@ namespace System.Windows.Forms {
 
 		/* explicit interface implementations */
 
-		void ICancelAddNew.CancelNew (int itemIndex)
+		void ICancelAddNew.CancelNew (int position)
 		{
 			if (!add_pending)
 				return;
 
-			if (itemIndex != pending_add_index)
+			if (position != pending_add_index)
 				return;
 
 			add_pending = false;
-			list.RemoveAt (itemIndex);
+			list.RemoveAt (position);
 
 			if (raise_list_changed_events && !list_is_ibinding)
-				OnListChanged (new ListChangedEventArgs (ListChangedType.ItemDeleted, itemIndex));
+				OnListChanged (new ListChangedEventArgs (ListChangedType.ItemDeleted, position));
 		}
 
-		void ICancelAddNew.EndNew (int itemIndex)
+		void ICancelAddNew.EndNew (int position)
 		{
 			if (!add_pending)
 				return;
 
-			if (itemIndex != pending_add_index)
+			if (position != pending_add_index)
 				return;
 
 			add_pending = false;
@@ -887,12 +887,12 @@ namespace System.Windows.Forms {
 			((IBindingList)list).AddIndex (property);
 		}
 
-		void IBindingList.RemoveIndex (PropertyDescriptor property)
+		void IBindingList.RemoveIndex (PropertyDescriptor prop)
 		{
 			if (!(list is IBindingList))
 				throw new NotSupportedException();
 
-			((IBindingList)list).RemoveIndex (property);
+			((IBindingList)list).RemoveIndex (prop);
 		}
 
 		bool ISupportInitializeNotification.IsInitialized {
@@ -906,21 +906,6 @@ namespace System.Windows.Forms {
 		event EventHandler ISupportInitializeNotification.Initialized {
 			add { Events.AddHandler (InitializedEvent, value); }
 			remove { Events.RemoveHandler (InitializedEvent, value); }
-		}
-
-		ISite IComponent.Site {
-			get { return site; }
-			set { site = value; }
-		}
-
-		event EventHandler IComponent.Disposed {
-			add { throw new NotImplementedException (); }
-			remove { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		void IDisposable.Dispose ()
-		{
 		}
 	}
 }

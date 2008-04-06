@@ -29,13 +29,15 @@ using System.Drawing;
 using System.Runtime.Serialization;
 using System.Text;
 
-namespace System.Windows.Forms {
+namespace System.Windows.Forms
+{
 #if NET_2_0
 	[DefaultProperty ("Text")]
 #endif
 	[TypeConverter(typeof(TreeNodeConverter))]
 	[Serializable]
-	public class TreeNode : MarshalByRefObject, ICloneable, ISerializable {
+	public class TreeNode : MarshalByRefObject, ICloneable, ISerializable
+	{
 		#region Fields
 		private TreeView tree_view;
 		internal TreeNode parent;
@@ -52,7 +54,7 @@ namespace System.Windows.Forms {
 		private string state_image_key = String.Empty;
 		private string tool_tip_text = String.Empty;
 #endif
-        internal TreeNodeCollection nodes;
+		internal TreeNodeCollection nodes;
 		internal TreeViewAction check_reason = TreeViewAction.Unknown;
 
 		internal int visible_order = 0;
@@ -71,7 +73,7 @@ namespace System.Windows.Forms {
 #endif
 		#endregion	// Fields
 
-		#region Internal Constructors		
+		#region Internal Constructors
 		internal TreeNode (TreeView tree_view) : this ()
 		{
 			this.tree_view = tree_view;
@@ -91,7 +93,7 @@ namespace System.Windows.Forms {
 
 			en = serializationInfo.GetEnumerator();
 			children = 0;
-			while (en.MoveNext()) { 
+			while (en.MoveNext()) {
 				e = en.Current;
 				switch(e.Name) {
 					case "Text": Text = (string)e.Value; break;
@@ -161,18 +163,18 @@ namespace System.Windows.Forms {
 		#endregion	// ICloneable Members
 
 		#region ISerializable Members
-		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
+		void ISerializable.GetObjectData (SerializationInfo si, StreamingContext context)
 		{
-			info.AddValue ("Text", Text);
-			info.AddValue ("prop_bag", prop_bag, typeof (OwnerDrawPropertyBag));
-			info.AddValue ("ImageIndex", ImageIndex);
-			info.AddValue ("SelectedImageIndex", SelectedImageIndex);
-			info.AddValue ("Tag", Tag);
-			info.AddValue ("Checked", Checked);
-			
-			info.AddValue ("NumberOfChildren", Nodes.Count);
+			si.AddValue ("Text", Text);
+			si.AddValue ("prop_bag", prop_bag, typeof (OwnerDrawPropertyBag));
+			si.AddValue ("ImageIndex", ImageIndex);
+			si.AddValue ("SelectedImageIndex", SelectedImageIndex);
+			si.AddValue ("Tag", Tag);
+			si.AddValue ("Checked", Checked);
+
+			si.AddValue ("NumberOfChildren", Nodes.Count);
 			for (int i = 0; i < Nodes.Count; i++)
-				info.AddValue ("Child-" + i, Nodes [i], typeof (TreeNode));
+				si.AddValue ("Child-" + i, Nodes [i], typeof (TreeNode));
 		}
 
 #if NET_2_0
@@ -209,14 +211,14 @@ namespace System.Windows.Forms {
 
 		#region Public Instance Properties
 		public Color BackColor {
-			get { 
+			get {
 				if (prop_bag != null)
 					return prop_bag.BackColor;
 				if (TreeView != null)
 					return TreeView.BackColor;
 				return Color.Empty;
 			}
-			set { 
+			set {
 				if (prop_bag == null)
 					prop_bag = new OwnerDrawPropertyBag ();
 				prop_bag.BackColor = value;
@@ -307,7 +309,7 @@ namespace System.Windows.Forms {
 			set {
 				if (check == value)
 					return;
-			        TreeViewCancelEventArgs args = new TreeViewCancelEventArgs (this, false, check_reason);
+				TreeViewCancelEventArgs args = new TreeViewCancelEventArgs (this, false, check_reason);
 				if (TreeView != null)
 					TreeView.OnBeforeCheck (args);
 				if (!args.Cancel) {
@@ -451,7 +453,7 @@ namespace System.Windows.Forms {
 					if (!found)
 						return false;
 				}
-					
+
 				return is_expanded;
 			}
 		}
@@ -646,7 +648,7 @@ namespace System.Windows.Forms {
 				if (state_image_index != value) {
 					state_image_index = value;
 					state_image_key = string.Empty;
-					InvalidateWidth ();				
+					InvalidateWidth ();
 				}
 			}
 		}
@@ -743,13 +745,15 @@ namespace System.Windows.Forms {
 		}
 
 		#region Public Instance Methods
-		public void BeginEdit () {
+		public void BeginEdit ()
+		{
 			TreeView tv = TreeView;
 			if (tv != null)
 				tv.BeginEdit (this);
 		}
 
-		public void Collapse () {
+		public void Collapse ()
+		{
 			CollapseInternal (false);
 		}
 
@@ -762,7 +766,8 @@ namespace System.Windows.Forms {
 				CollapseRecursive (this);
 		}
 #endif
-		public void EndEdit (bool cancel) {
+		public void EndEdit (bool cancel)
+		{
 			TreeView tv = TreeView;
 			if (!cancel && tv != null)
 				tv.EndEdit (this);
@@ -770,11 +775,13 @@ namespace System.Windows.Forms {
 				tv.CancelEdit (this);
 		}
 
-		public void Expand () {
-			Expand(false);
+		public void Expand ()
+		{
+			Expand (false);
 		}
 
-		public void ExpandAll () {
+		public void ExpandAll ()
+		{
 			ExpandRecursive (this);
 			if(TreeView != null)
 				TreeView.UpdateNode (TreeView.root_node);
@@ -796,7 +803,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public int GetNodeCount (bool includeSubTrees) {
+		public int GetNodeCount (bool includeSubTrees)
+		{
 			if (!includeSubTrees)
 				return Nodes.Count;
 
@@ -806,21 +814,24 @@ namespace System.Windows.Forms {
 			return count;
 		}
 
-		public void Remove () {
+		public void Remove ()
+		{
 			if (parent == null)
 				return;
 			int index = Index;
 			parent.Nodes.RemoveAt (index);
 		}
 
-		public void Toggle () {
+		public void Toggle ()
+		{
 			if (is_expanded)
 				Collapse ();
 			else
 				Expand ();
 		}
 
-		public override String ToString () {
+		public override String ToString ()
+		{
 			return String.Concat ("TreeNode: ", Text);
 		}
 
@@ -902,8 +913,6 @@ namespace System.Windows.Forms {
 						tree_view.ExpandBelow (this, count_to_next);
 				}
 			}
-
-			
 		}
 
 		private void CollapseInternal (bool byInternal)
@@ -965,7 +974,8 @@ namespace System.Windows.Forms {
 
 		private bool HasFocusInChildren()
 		{
-			if(TreeView == null) return false;
+			if (TreeView == null)
+				return false;
 			foreach (TreeNode node in nodes) {
 				if(node == TreeView.SelectedNode)
 					return true;
@@ -978,9 +988,8 @@ namespace System.Windows.Forms {
 		private void ExpandRecursive (TreeNode node)
 		{
 			node.Expand (true);
-			foreach (TreeNode child in node.Nodes) {
+			foreach (TreeNode child in node.Nodes)
 				ExpandRecursive (child);
-			}
 		}
 
 		private void ExpandParentRecursive (TreeNode node)
@@ -1003,18 +1012,16 @@ namespace System.Windows.Forms {
 		private void CollapseRecursive (TreeNode node)
 		{
 			node.Collapse ();
-			foreach (TreeNode child in node.Nodes) {
+			foreach (TreeNode child in node.Nodes)
 				CollapseRecursive (child);
-			}
 		}
 
 		private void CollapseUncheckRecursive (TreeNode node)
 		{
 			node.Collapse ();
 			node.Checked = false;
-			foreach (TreeNode child in node.Nodes) {
+			foreach (TreeNode child in node.Nodes)
 				CollapseUncheckRecursive (child);
-			}
 		}
 
 		internal void SetNodes (TreeNodeCollection nodes)
@@ -1025,9 +1032,8 @@ namespace System.Windows.Forms {
 		private void GetNodeCountRecursive (TreeNode node, ref int count)
 		{
 			count += node.Nodes.Count;
-			foreach (TreeNode child in node.Nodes) {
+			foreach (TreeNode child in node.Nodes)
 				GetNodeCountRecursive (child, ref count);
-			}
 		}
 
 		internal bool NeedsWidth {
@@ -1050,8 +1056,7 @@ namespace System.Windows.Forms {
 			this.parent = parent;
 		}
 
-		private bool IsInClippingRect
-		{
+		private bool IsInClippingRect {
 			get {
 				if (TreeView == null)
 					return false;
@@ -1071,16 +1076,13 @@ namespace System.Windows.Forms {
 					if (state_image_index >= 0)
 						return TreeView.StateImageList.Images[state_image_index];
 					if (state_image_key != string.Empty)
-						return TreeView.StateImageList.Images[state_image_key];				
+						return TreeView.StateImageList.Images[state_image_key];
 				}
-				
+
 				return null;
 			}
 		}
 #endif
 		#endregion	// Internal & Private Methods and Properties
-
 	}
 }
-
-

@@ -23,7 +23,6 @@
 //	Pedro Martínez Juliá <pedromj@gmail.com>
 //
 
-
 #if NET_2_0
 
 using System;
@@ -4551,57 +4550,43 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		protected override void WndProc (ref Message m) {
-			base.WndProc(ref m);
-		}
-
-		void IDropTarget.OnDragDrop (DragEventArgs e)
+		protected override void WndProc (ref Message m)
 		{
-			throw new NotImplementedException ();
+			base.WndProc (ref m);
 		}
 
-		void IDropTarget.OnDragEnter (DragEventArgs e)
+		internal void InternalOnCellClick (DataGridViewCellEventArgs e)
 		{
-			throw new NotImplementedException ();
+			OnCellClick (e);
 		}
 
-		void IDropTarget.OnDragLeave (EventArgs e)
+		internal void InternalOnCellContentClick (DataGridViewCellEventArgs e)
 		{
-			throw new NotImplementedException ();
+			OnCellContentClick (e);
 		}
 
-		void IDropTarget.OnDragOver (DragEventArgs e)
+		internal void InternalOnCellContentDoubleClick (DataGridViewCellEventArgs e)
 		{
-			throw new NotImplementedException ();
+			OnCellContentDoubleClick (e);
 		}
 
-		internal void InternalOnCellClick (DataGridViewCellEventArgs e) {
-			OnCellClick(e);
-		}
-
-		internal void InternalOnCellContentClick (DataGridViewCellEventArgs e) {
-			OnCellContentClick(e);
-		}
-
-		internal void InternalOnCellContentDoubleClick (DataGridViewCellEventArgs e) {
-			OnCellContentDoubleClick(e);
-		}
-
-		internal void InternalOnCellValueChanged (DataGridViewCellEventArgs e) {
-			OnCellValueChanged(e);
+		internal void InternalOnCellValueChanged (DataGridViewCellEventArgs e)
+		{
+			OnCellValueChanged (e);
 			
-			if (editing_row != null && e.RowIndex == editing_row.Index) {
+			if (editing_row != null && e.RowIndex == editing_row.Index)
 				PrepareEditingRow (true, false);
-			}
 		}
 
-		internal void InternalOnDataError (DataGridViewDataErrorEventArgs e) {
+		internal void InternalOnDataError (DataGridViewDataErrorEventArgs e)
+		{
 			/////////////// false? ////////////
-			OnDataError(false, e);
+			OnDataError (false, e);
 		}
 
-		internal void InternalOnMouseWheel (MouseEventArgs e) {
-			OnMouseWheel(e);
+		internal void InternalOnMouseWheel (MouseEventArgs e)
+		{
+			OnMouseWheel (e);
 		}
 
 		internal void OnHScrollBarScroll (object sender, ScrollEventArgs e)
@@ -5174,7 +5159,6 @@ namespace System.Windows.Forms {
 			#endregion
 		}
 	}
-
 }
 
 #endif

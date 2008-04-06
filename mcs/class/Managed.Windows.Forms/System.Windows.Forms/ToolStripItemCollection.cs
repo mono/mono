@@ -346,10 +346,6 @@ namespace System.Windows.Forms
 			get { return this.IsFixedSize; }
 		}
 
-		bool IList.IsReadOnly {
-			get { return this.IsReadOnly; }
-		}
-
 		void IList.Remove (object value)
 		{
 			this.Remove ((ToolStripItem)value); ;
