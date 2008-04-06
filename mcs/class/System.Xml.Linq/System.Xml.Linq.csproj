@@ -39,11 +39,11 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java20|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug_Java\</OutputPath>
+    <OutputPath>bin\Debug_Java20\</OutputPath>
     <DefineConstants>TRACE;DEBUG;JAVA;NET_1_1;NET_2_0;NET_3_5;TARGET_JVM</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -52,11 +52,11 @@
     <KeepIntermediate>false</KeepIntermediate>
     <TargetPlatform>0</TargetPlatform>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java20|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release_Java\</OutputPath>
-    <DefineConstants>TRACE;JAVA</DefineConstants>
+    <OutputPath>bin\Release_Java20\</OutputPath>
+    <DefineConstants>TRACE;JAVA;NET_1_1;NET_2_0;NET_3_5;TARGET_JVM</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <BaseAddress>285212672</BaseAddress>
@@ -71,7 +71,6 @@
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs">
       <Link>Assembly\MonoTODOAttribute.cs</Link>
     </Compile>
-    <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="System.Xml.Linq\Extensions.cs" />
     <Compile Include="System.Xml.Linq\LoadOptions.cs" />
     <Compile Include="System.Xml.Linq\SaveOptions.cs" />
@@ -108,7 +107,6 @@
     <Reference Include="System.Core, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=x86" />
     <Reference Include="System.Xml, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
@@ -147,7 +145,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-RefInfo-rt="repository:jre:sun:1.6.0" REFS-JarPath-rt="" REFS-RefInfo-system-xml="repository:vmw:framework:2.0" REFS-JarPath-system-xml="" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-JarPath-system-data="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system="" />
+      <UserProperties REFS-JarPath-system="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system-data="" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-JarPath-system-xml="" REFS-RefInfo-system-xml="repository:vmw:framework:2.0" REFS-JarPath-rt="" REFS-RefInfo-rt="repository:jre:sun:1.6.0" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
