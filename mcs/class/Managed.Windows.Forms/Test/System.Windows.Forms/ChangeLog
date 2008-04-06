@@ -1,3 +1,7 @@
+2008-04-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* DataBindingTests.cs: Enable some CurrencyManager tests.
+
 2008-04-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* BindingSourceTest.cs: Add new tests for GetRelatedCurrencyManager
