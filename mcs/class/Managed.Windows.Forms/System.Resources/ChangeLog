@@ -1,3 +1,7 @@
+2008-03-06  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ResXDataNode.cs: Modified argument name to fix corcompare error.
+
 2008-03-04  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ResXResourceWriter.cs: Implement or stub the remaining 2.0 bits
