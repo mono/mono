@@ -1,4 +1,4 @@
-2008-03-06  Gert Driesen  <drieseng@users.sourceforge.net>
+2008-04-06  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ResXDataNode.cs: Modified argument name to fix corcompare error.
 
