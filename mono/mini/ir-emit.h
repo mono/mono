@@ -591,6 +591,107 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 	    MONO_ADD_INS ((cfg)->cbb, inst); \
 	} while (0)
 
+/* Branch support */
+
+/*
+ * Basic blocks have two numeric identifiers:
+ * dfn: Depth First Number
+ * block_num: unique ID assigned at bblock creation
+ */
+#define NEW_BBLOCK(cfg,bblock) do { \
+	(bblock) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoBasicBlock)); \
+	(bblock)->block_num = cfg->num_bblocks++; \
+    } while (0)
+
+#define ADD_BBLOCK(cfg,b) do {	\
+        if ((b)->cil_code)  {\
+			cfg->cil_offset_to_bb [(b)->cil_code - cfg->cil_start] = (b);	\
+        } \
+		(b)->real_offset = cfg->real_offset;	\
+	} while (0)
+
+/* Emit a one-way conditional branch */
+/* 
+ * The inst_false_bb field of the cond branch will not be set, the JIT code should be
+ * prepared to deal with this.
+ */
+#ifdef DEBUG_EXTENDED_BBLOCKS
+static int ccount = 0;
+#define MONO_EMIT_NEW_BRANCH_BLOCK(cfg,op,truebb) do { \
+        MonoInst *ins; \
+        MonoBasicBlock *falsebb; \
+        MONO_INST_NEW ((cfg), (ins), (op)); \
+        if ((op) == OP_BR) { \
+	        NEW_BBLOCK ((cfg), falsebb); \
+            ins->inst_target_bb = (truebb); \
+            mono_link_bblock ((cfg), (cfg)->cbb, (truebb)); \
+            MONO_ADD_INS ((cfg)->cbb, ins); \
+            MONO_START_BB ((cfg), falsebb); \
+        } else { \
+            ccount ++; \
+		    ins->inst_many_bb = mono_mempool_alloc (cfg->mempool, sizeof(gpointer)*2);	\
+            ins->inst_true_bb = (truebb); \
+            ins->inst_false_bb = NULL; \
+            mono_link_bblock ((cfg), (cfg)->cbb, (truebb)); \
+            MONO_ADD_INS ((cfg)->cbb, ins); \
+            if (getenv ("COUNT2") && ccount == atoi (getenv ("COUNT2")) - 1) { printf ("HIT: %d\n", cfg->cbb->block_num); } \
+            if (getenv ("COUNT2") && ccount < atoi (getenv ("COUNT2"))) { \
+                 cfg->cbb->extended = TRUE; \
+            } else { NEW_BBLOCK ((cfg), falsebb); ins->inst_false_bb = (falsebb); mono_link_bblock ((cfg), (cfg)->cbb, (falsebb)); MONO_START_BB ((cfg), falsebb); } \
+        } \
+	} while (0)
+#else
+#define MONO_EMIT_NEW_BRANCH_BLOCK(cfg,op,truebb) do { \
+        MonoInst *ins; \
+        MonoBasicBlock *falsebb; \
+        MONO_INST_NEW ((cfg), (ins), (op)); \
+        if ((op) == OP_BR) { \
+	        NEW_BBLOCK ((cfg), falsebb); \
+            ins->inst_target_bb = (truebb); \
+            mono_link_bblock ((cfg), (cfg)->cbb, (truebb)); \
+            MONO_ADD_INS ((cfg)->cbb, ins); \
+            MONO_START_BB ((cfg), falsebb); \
+        } else { \
+		    ins->inst_many_bb = mono_mempool_alloc (cfg->mempool, sizeof(gpointer)*2);	\
+            ins->inst_true_bb = (truebb); \
+            ins->inst_false_bb = NULL; \
+            mono_link_bblock ((cfg), (cfg)->cbb, (truebb)); \
+            MONO_ADD_INS ((cfg)->cbb, ins); \
+            if (!cfg->enable_extended_bblocks) { \
+                NEW_BBLOCK ((cfg), falsebb); \
+                ins->inst_false_bb = falsebb; \
+                mono_link_bblock ((cfg), (cfg)->cbb, (falsebb)); \
+                MONO_START_BB ((cfg), falsebb); \
+            } else { \
+				cfg->cbb->extended = TRUE; \
+			} \
+        } \
+	} while (0)
+#endif
+
+/* Emit a two-way conditional branch */
+#define	MONO_EMIT_NEW_BRANCH_BLOCK2(cfg,op,truebb,falsebb) do { \
+        MonoInst *ins; \
+        MONO_INST_NEW ((cfg), (ins), (op)); \
+		ins->inst_many_bb = mono_mempool_alloc (cfg->mempool, sizeof(gpointer)*2);	\
+        ins->inst_true_bb = (truebb); \
+        ins->inst_false_bb = (falsebb); \
+        mono_link_bblock ((cfg), (cfg)->cbb, (truebb)); \
+        mono_link_bblock ((cfg), (cfg)->cbb, (falsebb)); \
+        MONO_ADD_INS ((cfg)->cbb, ins); \
+	} while (0)
+
+#define MONO_START_BB(cfg, bblock) do { \
+        ADD_BBLOCK ((cfg), (bblock)); \
+        if (cfg->cbb->last_ins && MONO_IS_COND_BRANCH_OP (cfg->cbb->last_ins) && !cfg->cbb->last_ins->inst_false_bb) { \
+            cfg->cbb->last_ins->inst_false_bb = (bblock); \
+            mono_link_bblock ((cfg), (cfg)->cbb, (bblock)); \
+        } else if (! (cfg->cbb->last_ins && ((cfg->cbb->last_ins->opcode == OP_BR) || (cfg->cbb->last_ins->opcode == OP_BR_REG) || MONO_IS_COND_BRANCH_OP (cfg->cbb->last_ins)))) \
+            mono_link_bblock ((cfg), (cfg)->cbb, (bblock)); \
+	    (cfg)->cbb->next_bb = (bblock); \
+	    (cfg)->cbb = (bblock); \
+    } while (0)
+
 G_END_DECLS
 
 #endif
