@@ -55,12 +55,12 @@ namespace System.Windows.Forms.PropertyGridInternal
 			return properties;
 		}
 
-		public override PropertyDescriptor GetDefaultProperty (object component)
+		public override PropertyDescriptor GetDefaultProperty (object obj)
 		{
-			if (component == null)
+			if (obj == null)
 				return null;
 
-			return TypeDescriptor.GetDefaultProperty (component);
+			return TypeDescriptor.GetDefaultProperty (obj);
 		}
 
 		public override string HelpKeyword {
