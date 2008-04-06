@@ -28,6 +28,7 @@
 using System;
 using System.Drawing;
 using System.ComponentModel;
+
 using Mono.WebBrowser.DOM;
 
 namespace System.Windows.Forms
@@ -42,7 +43,6 @@ namespace System.Windows.Forms
 		{
 			this.window = iWindow;
 			this.webHost = webHost;
-			event_handlers = null;
 			this.window.Load += new EventHandler (OnLoad);
 			this.window.Unload += new EventHandler (OnUnload);
 		}
@@ -114,28 +114,28 @@ namespace System.Windows.Forms
 
 		public HtmlElement WindowFrameElement {
 			get { throw new NotImplementedException (); }
-		}		
+		}
 		
-		public Uri Url { 
-			get { return this.Document.Url; } 
+		public Uri Url {
+			get { return this.Document.Url; }
 		}
 #endregion
-		
+
 #region Methods
 		public void Alert (string message) 
-		{			
-			MessageBox.Show ("Alert", message);		
+		{
+			MessageBox.Show ("Alert", message);
 		}
 
 		public bool Confirm (string message) 
-		{			
+		{
 			DialogResult ret = MessageBox.Show (message, "Confirm", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
 			return ret == DialogResult.OK;
 		}
 		
-		public string Prompt (string message, string defaultValue)
+		public string Prompt (string message, string defaultInputValue)
 		{
-			WebBrowserDialogs.Prompt prompt = new WebBrowserDialogs.Prompt ("Prompt", message, defaultValue);
+			WebBrowserDialogs.Prompt prompt = new WebBrowserDialogs.Prompt ("Prompt", message, defaultInputValue);
 			DialogResult ret = prompt.Show ();
 			return prompt.Text;
 		}
@@ -161,48 +161,48 @@ namespace System.Windows.Forms
 		}
 
 		[MonoTODO("Blank opens in current window at the moment. Missing media and search implementations. No options implemented")]
-		public HtmlWindow Open (Uri url, string target, string options, bool replace)
+		public HtmlWindow Open (Uri url, string target, string windowOptions, bool replaceEntry)
 		{
-			return Open (url.ToString(), target, options, replace);
+			return Open (url.ToString(), target, windowOptions, replaceEntry);
 		}
 
 		[MonoTODO("Blank opens in current window at the moment. Missing media and search implementations. No options implemented")]
-		public HtmlWindow Open (string url, string target, string options, bool replace) 
+		public HtmlWindow Open (string urlString, string target, string windowOptions, bool replaceEntry)
 		{
 			switch (target) {
 				case "_blank":
-					this.window.Open (url);
-				break;
+					this.window.Open (urlString);
+					break;
 				case "_media":
-				break;
+					break;
 				case "_parent":
-					this.window.Parent.Open (url);
-				break;
+					this.window.Parent.Open (urlString);
+					break;
 				case "_search":
-				break;
+					break;
 				case "_self":
-					this.window.Open (url);
-				break;
+					this.window.Open (urlString);
+					break;
 				case "_top":
-					this.window.Top.Open (url);
-				break;
+					this.window.Top.Open (urlString);
+					break;
 			}
 			return this;
 		}
 		
 		[MonoTODO("Opens in current window at the moment.")]
-		public HtmlWindow OpenNew (string url, string options)
+		public HtmlWindow OpenNew (string urlString, string windowOptions)
 		{
-			return Open (url, "_blank", options, false);
+			return Open (urlString, "_blank", windowOptions, false);
 		}
 
 		[MonoTODO("Opens in current window at the moment.")]
-		public HtmlWindow OpenNew (Uri url, string options)
+		public HtmlWindow OpenNew (Uri url, string windowOptions)
 		{
-			return OpenNew (url.ToString (), options);
+			return OpenNew (url.ToString (), windowOptions);
 		}
 
-		public void AttachEventHandler (string name, EventHandler e)
+		public void AttachEventHandler (string eventName, EventHandler eventHandler)
 		{
 			throw new NotImplementedException ();
 		}
@@ -212,7 +212,7 @@ namespace System.Windows.Forms
 			throw new NotImplementedException ();
 		}
 		
-		public void DetachEventHandler (string name, EventHandler e)
+		public void DetachEventHandler (string eventName, EventHandler eventHandler)
 		{
 			throw new NotImplementedException ();
 		}
@@ -222,7 +222,7 @@ namespace System.Windows.Forms
 			throw new NotImplementedException ();
 		}
 		
-		public void MoveTo (Point position)
+		public void MoveTo (Point point)
 		{
 			throw new NotImplementedException ();
 		}
@@ -246,7 +246,6 @@ namespace System.Windows.Forms
 		{
 			throw new NotImplementedException ();
 		}
-		
 #endregion
 
 #region Events
@@ -263,7 +262,7 @@ namespace System.Windows.Forms
 			if (eh != null) {
 				HtmlElementErrorEventArgs e = new HtmlElementErrorEventArgs (String.Empty, 0, null);
 				eh (this, e);
-			}		
+			}
 		}
 
 		static object GotFocusEvent = new object ();
@@ -295,7 +294,7 @@ namespace System.Windows.Forms
 			if (eh != null) {
 				HtmlElementEventArgs e = new HtmlElementEventArgs ();
 				eh (this, e);
-			}		
+			}
 		}
 
 		static object LoadEvent = new object ();
@@ -311,12 +310,11 @@ namespace System.Windows.Forms
 			if (eh != null) {
 				HtmlElementEventArgs e = new HtmlElementEventArgs ();
 				eh (this, e);
-			}		
+			}
 		}
 
 		static object UnloadEvent = new object ();
-		public event HtmlElementEventHandler Unload
-		{
+		public event HtmlElementEventHandler Unload {
 			add { Events.AddHandler (UnloadEvent, value); }
 			remove { Events.RemoveHandler (UnloadEvent, value); }
 		}
@@ -327,12 +325,11 @@ namespace System.Windows.Forms
 			if (eh != null) {
 				HtmlElementEventArgs e = new HtmlElementEventArgs ();
 				eh (this, e);
-			}		
+			}
 		}
 
 		static object ScrollEvent = new object ();
-		public event HtmlElementEventHandler Scroll
-		{
+		public event HtmlElementEventHandler Scroll {
 			add { Events.AddHandler (ScrollEvent, value); }
 			remove { Events.RemoveHandler (ScrollEvent, value); }
 		}
@@ -343,12 +340,11 @@ namespace System.Windows.Forms
 			if (eh != null) {
 				HtmlElementEventArgs e = new HtmlElementEventArgs ();
 				eh (this, e);
-			}		
+			}
 		}
 
 		static object ResizeEvent = new object ();
-		public event HtmlElementEventHandler Resize
-		{
+		public event HtmlElementEventHandler Resize {
 			add { Events.AddHandler (ResizeEvent, value); }
 			remove { Events.RemoveHandler (ResizeEvent, value); }
 		}
@@ -359,35 +355,34 @@ namespace System.Windows.Forms
 			if (eh != null) {
 				HtmlElementEventArgs e = new HtmlElementEventArgs ();
 				eh (this, e);
-			}		
+			}
 		}
-
 #endregion
-		
-		
+
 #region Standard stuff
-		public override int GetHashCode () 
-		{ 
-			return window.GetHashCode (); 
+		public override int GetHashCode ()
+		{
+			return window.GetHashCode ();
 		}
 	
-		public override bool Equals (object obj) {
+		public override bool Equals (object obj)
+		{
 			return this == (HtmlWindow) obj;
 		}
 		
-		public static bool operator ==(HtmlWindow left, HtmlWindow right) {
-			if ((object)left == (object)right) {
+		public static bool operator == (HtmlWindow left, HtmlWindow right)
+		{
+			if ((object)left == (object)right)
 				return true;
-			}
 
-			if ((object)left == null || (object)right == null) {
+			if ((object)left == null || (object)right == null)
 				return false;
-			}
 
-			return left.Equals (right); 
+			return left.Equals (right);
 		}
 
-		public static bool operator !=(HtmlWindow left, HtmlWindow right) {
+		public static bool operator != (HtmlWindow left, HtmlWindow right)
+		{
 			return !(left == right);
 		}
 #endregion

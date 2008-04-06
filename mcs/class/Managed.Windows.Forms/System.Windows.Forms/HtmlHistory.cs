@@ -23,18 +23,18 @@
 //	Andreia Gaita (avidigal@novell.com)
 //
 
-
 #if NET_2_0
+
 using System;
 using Mono.WebBrowser.DOM;
 
 namespace System.Windows.Forms
 {
-	public sealed class HtmlHistory : IDisposable {
-
+	public sealed class HtmlHistory : IDisposable
+	{
 		private bool disposed;
-
 		private Mono.WebBrowser.IWebBrowser webHost;
+
 		internal HtmlHistory (Mono.WebBrowser.IWebBrowser webHost)
 		{
 			this.webHost = webHost;
@@ -56,26 +56,30 @@ namespace System.Windows.Forms
 		}
 
 		#endregion
-		
-		
-		public void Back (int index) {
-			this.webHost.Navigation.Go (index * -1, true);
+
+		public void Back (int numberBack)
+		{
+			this.webHost.Navigation.Go (numberBack * -1, true);
 		}
 		
-		public void Forward (int index) {
-			this.webHost.Navigation.Go (index, true);
+		public void Forward (int numberForward)
+		{
+			this.webHost.Navigation.Go (numberForward, true);
 		}
 		
-		public void Go (int index) {
-			this.webHost.Navigation.Go (index, true);
+		public void Go (int relativePosition)
+		{
+			this.webHost.Navigation.Go (relativePosition, true);
 		}
 
-		public void Go (string url) {
-			this.webHost.Navigation.Go (url);
+		public void Go (string urlString)
+		{
+			this.webHost.Navigation.Go (urlString);
 		}
 
-		public void Go (Uri uri) {
-			this.webHost.Navigation.Go (uri.ToString ());
+		public void Go (Uri url)
+		{
+			this.webHost.Navigation.Go (url.ToString ());
 		}
 	}
 }

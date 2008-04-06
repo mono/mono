@@ -34,11 +34,11 @@ using System.Drawing.Printing;
 using System.Globalization;
 using System.Reflection;
 
-namespace System.Windows.Forms {
-
+namespace System.Windows.Forms
+{
 	[DefaultProperty("Document")]
-	public sealed class PageSetupDialog : CommonDialog {
-
+	public sealed class PageSetupDialog : CommonDialog
+	{
 		#region Local variables
 		private PrintDocument document;
 		private PageSettings page_settings;
@@ -53,7 +53,6 @@ namespace System.Windows.Forms {
 #if NET_2_0
 		private bool enable_metric;
 #endif
-
 		private GroupBox groupbox_paper;
 		private Label label_source;
 		private Label label_size;
@@ -79,7 +78,7 @@ namespace System.Windows.Forms {
 		#endregion // Local variables
 
 		#region Public Constructors
-		public PageSetupDialog () 
+		public PageSetupDialog ()
 		{
 			form = new DialogForm (this);
 			InitializeComponent();
@@ -87,9 +86,8 @@ namespace System.Windows.Forms {
 		}
 		#endregion // Public Constructors
 
-
 		#region Public Instance Methods
-		public override void Reset () 
+		public override void Reset ()
 		{
 			AllowMargins = true;
 			AllowOrientation = true;
@@ -145,6 +143,7 @@ namespace System.Windows.Forms {
 		[Browsable (true)]
 		[DefaultValue (false)]
 		[MonoTODO ("Stubbed, not implemented")]
+		[EditorBrowsableAttribute (EditorBrowsableState.Always)]
 		public bool EnableMetric {
 			get { return enable_metric; }
 			set { enable_metric = value; }
@@ -161,7 +160,7 @@ namespace System.Windows.Forms {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public PageSettings PageSettings {
 			get { return page_settings; }
-			set { 
+			set {
 				page_settings = value;
 				document = null;
 			}
@@ -172,7 +171,7 @@ namespace System.Windows.Forms {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public PrinterSettings PrinterSettings {
 			get { return printer_settings; }
-			set { 
+			set {
 				printer_settings = value;
 				document = null;
 			}
@@ -181,7 +180,7 @@ namespace System.Windows.Forms {
 		[DefaultValue(false)]
 		public bool ShowHelp {
 			get { return show_help; }
-			set { 
+			set {
 				if (value != show_help) {
 					show_help = value;
 					ShowHelpButton ();
@@ -198,13 +197,12 @@ namespace System.Windows.Forms {
 		#endregion // Public Instance Properties
 
 		#region Protected Instance Methods
-		protected override bool RunDialog (IntPtr hwndOwner) 
+		protected override bool RunDialog (IntPtr hwndOwner)
 		{
 			try {
 				SetPrinterDetails ();
 				return true;
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				MessageBox.Show (e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return false;
 			}
@@ -456,7 +454,8 @@ namespace System.Windows.Forms {
 		}
 
 		static bool UseYardPound {
-			get { return !RegionInfo.CurrentRegion.IsMetric; }			}
+			get { return !RegionInfo.CurrentRegion.IsMetric; }
+		}
 
 		// .Net uses PrinterSettings property if it is not null.
 		// Otherwise, it uses PageSettings.PrinterSettings to set values.
@@ -532,7 +531,7 @@ namespace System.Windows.Forms {
 		}
 
 		private void OnClickOkButton (object sender, EventArgs e)
-		{			
+		{
 			if (combobox_size.SelectedItem != null) {
 				foreach (PaperSize paper_size in InternalPrinterSettings.PaperSizes) {
 					if (paper_size.PaperName == (string) combobox_size.SelectedItem) {
@@ -861,11 +860,9 @@ namespace System.Windows.Forms {
 			float displayHeight;
 			new Font font;
 
-			public bool Landscape
-			{
+			public bool Landscape {
 				get { return landscape; }
-				set
-				{
+				set {
 					if (landscape != value) {
 						landscape = value;
 						Invalidate ();
@@ -875,7 +872,7 @@ namespace System.Windows.Forms {
 
 			public new float Height {
 				get { return displayHeight; }
-				set { 
+				set {
 					if (displayHeight != value) {
 						displayHeight = value; 
 						Invalidate ();

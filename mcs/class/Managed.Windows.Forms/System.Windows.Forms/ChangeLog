@@ -1,5 +1,23 @@
 2008-04-06  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* WebBrowserBase.cs: Added missing attributes and fixed attributes.
+	Fixed line endings.
+	* WebBrowser.cs: Added missing attributes and fixed attributes. Fixed
+	line endings.
+	* MaskedTextBox.cs: Added missing attribute. Code formatting.
+	* PageSetupDialog.cs: Added missing attribute. Code formatting.
+	* HtmlWindowCollection.cs: Code formatting. Fixed line endings.
+	* ImeMode.cs: Added missing field.
+	* HtmlWindow.cs: Code formatting. Fixed line endings.
+	* HtmlElement.cs: Code formatting. Fixed line endings. Fixed compiler
+	warnings.
+	* HtmlHistory.cs: Code formatting. Fixed line endings.
+	* HtmlDocument.cs: Code formatting. Fixed line endings.
+	* ToolStripPanel.cs: Added missing IList implementation.
+	* HtmlElementCollection.cs: Code formatting. Fixed line endings.
+
+2008-04-06  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* BindingContext.cs: Changed argument names to fix corcompare errors.
 	* DataGridView.cs: Removed extra explicit interface implementation
 	of IDropTarget. Code formatting.

@@ -23,7 +23,6 @@
 //	Andreia Gaita (avidigal@novell.com)
 //
 
-
 #if NET_2_0
 
 using System;
@@ -33,44 +32,40 @@ using Mono.WebBrowser.DOM;
 
 namespace System.Windows.Forms
 {
-	public sealed class HtmlWindowCollection: ICollection, IEnumerable {
+	public sealed class HtmlWindowCollection: ICollection, IEnumerable
+	{
 		private List<HtmlWindow> windows;
 		private Mono.WebBrowser.IWebBrowser webHost;
 
 		internal HtmlWindowCollection (Mono.WebBrowser.IWebBrowser webHost, IWindowCollection col)
 		{
 			windows = new List<HtmlWindow>();
-			foreach (IWindow window in col) {
+			foreach (IWindow window in col)
 				windows.Add (new HtmlWindow (webHost, window));
-			}
 
 			this.webHost = webHost;
 		}
 		
-		public int Count
-		{
-			get { 
+		public int Count {
+			get {
 				return windows.Count;
 			}
-		}		
+		}
 
-		public HtmlWindow this[string name]
-		{
+		public HtmlWindow this [string windowId] {
 			get {
-				foreach (HtmlWindow window in windows) {
-					if (window.Name.Equals (name))
+				foreach (HtmlWindow window in windows)
+					if (window.Name.Equals (windowId))
 						return window;
-				}
 				return null;
 			}
 		}
 		
-		public HtmlWindow this[int index]
-		{
+		public HtmlWindow this [int index] {
 			get {
 				if (index > windows.Count || index < 0)
 					return null;
-				return windows[index];
+				return windows [index];
 			}
 		}
 
@@ -84,17 +79,13 @@ namespace System.Windows.Forms
 			windows.CopyTo (dest as HtmlWindow[], index);
 		}
 
-		object ICollection.SyncRoot
-		{
+		object ICollection.SyncRoot {
 			get { return this; }
 		}
 
-		bool ICollection.IsSynchronized
-		{
+		bool ICollection.IsSynchronized {
 			get { return false; }
 		}
-		
-
 	}
 }
 

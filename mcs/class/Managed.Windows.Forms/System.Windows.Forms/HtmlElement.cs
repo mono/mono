@@ -32,7 +32,7 @@ namespace System.Windows.Forms
 {
 	public sealed class HtmlElement
 	{
-		private EventHandlerList events;		
+		private EventHandlerList events;
 		private Mono.WebBrowser.IWebBrowser webHost;
 		internal IElement element;
 		
@@ -77,10 +77,8 @@ namespace System.Windows.Forms
 					case "meta":
 					case "param":
 						return false;
-					break;
 					default:
 						return true;
-						break;
 				}
 			}
 		}
@@ -97,32 +95,27 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public string InnerHtml
-		{
+		public string InnerHtml {
 			get { return this.element.InnerHTML; }
 			set { throw new NotImplementedException (); }
 		}
 
-		public string InnerText
-		{
+		public string InnerText {
 			get { return this.element.InnerText; }
 			set { this.element.InnerText = value; }
 		}
 
-		public string Id
-		{
+		public string Id {
 			get { return GetAttribute("id"); }
 			set { SetAttribute ("id", value); }
 		}
 
-		public string Name
-		{
+		public string Name {
 			get { return GetAttribute ("name"); }
 			set { SetAttribute ("name", value); }
 		}
 
-		public HtmlElement FirstChild
-		{
+		public HtmlElement FirstChild {
 			get { return new HtmlElement (webHost, (IElement)element.FirstChild); }
 		}
 
@@ -148,66 +141,67 @@ namespace System.Windows.Forms
 		}
 		
 		public void AttachEventHandler (string eventName, EventHandler eventHandler)
-		{ 
+		{
 			throw new NotImplementedException ();
 		}
 
-		public void DetachEventHandler (string eventName, EventHandler eventHandler) 
+		public void DetachEventHandler (string eventName, EventHandler eventHandler)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		public void Focus () 
+		public void Focus ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		public string GetAttribute (string name) {
+		public string GetAttribute (string name)
+		{
 			return element.GetAttribute (name);
 		}
 
-		public HtmlElementCollection GetElementsByTagName (string tagName) 
+		public HtmlElementCollection GetElementsByTagName (string tagName)
 		{
 			Mono.WebBrowser.DOM.IElementCollection col = element.GetElementsByTagName (tagName);
 			return new HtmlElementCollection (webHost, col);
-		}		
+		}
 		
-		public override int GetHashCode () 
-		{ 
-			return element.GetHashCode (); 
+		public override int GetHashCode ()
+		{
+			return element.GetHashCode ();
 		}
 
-		internal bool HasAttribute (string name) {
+		internal bool HasAttribute (string name)
+		{
 			return element.HasAttribute (name);
 		}
 
-		public HtmlElement InsertAdjacentElement (HtmlElementInsertionOrientation orientation, HtmlElement newElement) {
-			
+		public HtmlElement InsertAdjacentElement (HtmlElementInsertionOrientation orientation, HtmlElement newElement)
+		{
 			switch (orientation) {
 				case HtmlElementInsertionOrientation.BeforeBegin:
 					IElement newChild1 = this.element.Parent.InsertBefore (newElement.element, this.element);
 					newElement.element = newChild1;
-					return newElement;					
-				break;
+					return newElement;
 				case HtmlElementInsertionOrientation.AfterBegin:
 					IElement newChild2 = this.element.InsertBefore (newElement.element, this.element.FirstChild);
 					newElement.element = newChild2;
-					return newElement;					
-				break;
+					return newElement;
 				case HtmlElementInsertionOrientation.BeforeEnd:
-					return this.AppendChild (newElement);					
-				break;
+					return this.AppendChild (newElement);
 				case HtmlElementInsertionOrientation.AfterEnd:
 					return this.AppendChild (newElement);
-				break;
 			}
 			return null;
 		}
 		
-		public object InvokeMember (string method) {
+		public object InvokeMember (string method)
+		{
 			throw new NotImplementedException ();
-		}		
-		public object InvokeMember (string method, object[] parameters) {
+		}
+		
+		public object InvokeMember (string method, object [] parameters)
+		{
 			throw new NotImplementedException ();
 		}
 		
@@ -231,28 +225,27 @@ namespace System.Windows.Forms
 			this.element.SetAttribute (name, value);
 		}
 
-		public override bool Equals (object obj) {
+		public override bool Equals (object obj)
+		{
 			return this == (HtmlElement) obj;
 		}
 		
-		public static bool operator ==(HtmlElement left, HtmlElement right) {
-			if ((object)left == (object)right) {
+		public static bool operator == (HtmlElement left, HtmlElement right)
+		{
+			if ((object)left == (object)right)
 				return true;
-			}
-
-			if ((object)left == null || (object)right == null) {
+			if ((object)left == null || (object)right == null)
 				return false;
-			}
-
 			return left.Equals (right); 
 		}
 
-		public static bool operator !=(HtmlElement left, HtmlElement right) {
+		public static bool operator != (HtmlElement left, HtmlElement right)
+		{
 			return !(left == right);
 		}
 		#endregion
 
-#region Events
+		#region Events
 		private void OnClick (object sender, EventArgs e)
 		{
 			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[ClickEvent];
@@ -285,11 +278,11 @@ namespace System.Windows.Forms
 
 		private static object DoubleClickEvent = new object ();
 		public event HtmlElementEventHandler DoubleClick {
-			add { 
+			add {
 				Events.AddHandler (DoubleClickEvent, value);
 				element.DoubleClick += new NodeEventHandler (OnDoubleClick);
 			}
-			remove { 
+			remove {
 				Events.RemoveHandler (DoubleClickEvent, value);
 				element.DoubleClick -= new NodeEventHandler (OnDoubleClick);
 			}
@@ -306,11 +299,11 @@ namespace System.Windows.Forms
 
 		private static object MouseDownEvent = new object ();
 		public event HtmlElementEventHandler MouseDown {
-			add { 
+			add {
 				Events.AddHandler (MouseDownEvent, value);
 				element.MouseDown += new NodeEventHandler (OnMouseDown);
 			}
-			remove { 
+			remove {
 				Events.RemoveHandler (MouseDownEvent, value);
 				element.MouseDown -= new NodeEventHandler (OnMouseDown);
 			}
@@ -327,11 +320,11 @@ namespace System.Windows.Forms
 
 		private static object MouseUpEvent = new object ();
 		public event HtmlElementEventHandler MouseUp {
-			add { 
+			add {
 				Events.AddHandler (MouseUpEvent, value);
 				element.MouseUp += new NodeEventHandler (OnMouseUp);
 			}
-			remove { 
+			remove {
 				Events.RemoveHandler (MouseUpEvent, value);
 				element.MouseUp -= new NodeEventHandler (OnMouseUp);
 			}
@@ -348,11 +341,11 @@ namespace System.Windows.Forms
 
 		private static object MouseMoveEvent = new object ();
 		public event HtmlElementEventHandler MouseMove {
-			add { 
+			add {
 				Events.AddHandler (MouseMoveEvent, value);
 				element.MouseMove += new NodeEventHandler (OnMouseMove);
 			}
-			remove { 
+			remove {
 				Events.RemoveHandler (MouseMoveEvent, value);
 				element.MouseMove -= new NodeEventHandler (OnMouseMove);
 			}
@@ -390,11 +383,11 @@ namespace System.Windows.Forms
 		
 		private static object MouseEnterEvent = new object ();
 		public event HtmlElementEventHandler MouseEnter {
-			add { 
+			add {
 				Events.AddHandler (MouseEnterEvent, value);
 				element.MouseEnter += new NodeEventHandler (OnMouseEnter);
 			}
-			remove { 
+			remove {
 				Events.RemoveHandler (MouseEnterEvent, value);
 				element.MouseEnter -= new NodeEventHandler (OnMouseEnter);
 			}
@@ -407,15 +400,15 @@ namespace System.Windows.Forms
 				HtmlElementEventArgs ev = new HtmlElementEventArgs ();
 				eh (this, ev);
 			}
-		}		
+		}
 		
 		private static object MouseLeaveEvent = new object ();
 		public event HtmlElementEventHandler MouseLeave {
-			add { 
+			add {
 				Events.AddHandler (MouseLeaveEvent, value);
 				element.MouseLeave += new NodeEventHandler (OnMouseLeave);
 			}
-			remove { 
+			remove {
 				Events.RemoveHandler (MouseLeaveEvent, value);
 				element.MouseLeave -= new NodeEventHandler (OnMouseLeave);
 			}
@@ -428,15 +421,15 @@ namespace System.Windows.Forms
 				HtmlElementEventArgs ev = new HtmlElementEventArgs ();
 				eh (this, ev);
 			}
-		}		
+		}
 		
 		private static object KeyDownEvent = new object ();
 		public event HtmlElementEventHandler KeyDown {
-			add { 
+			add {
 				Events.AddHandler (KeyDownEvent, value);
 				element.KeyDown += new NodeEventHandler (OnKeyDown);
 			}
-			remove { 
+			remove {
 				Events.RemoveHandler (KeyDownEvent, value);
 				element.KeyDown -= new NodeEventHandler (OnKeyDown);
 			}
@@ -449,15 +442,15 @@ namespace System.Windows.Forms
 				HtmlElementEventArgs ev = new HtmlElementEventArgs ();
 				eh (this, ev);
 			}
-		}		
+		}
 		
 		private static object KeyPressEvent = new object ();
 		public event HtmlElementEventHandler KeyPress {
-			add { 
+			add {
 				Events.AddHandler (KeyPressEvent, value);
 				element.KeyPress += new NodeEventHandler (OnKeyPress);
 			}
-			remove { 
+			remove {
 				Events.RemoveHandler (KeyPressEvent, value);
 				element.KeyPress -= new NodeEventHandler (OnKeyPress);
 			}
@@ -470,22 +463,20 @@ namespace System.Windows.Forms
 				HtmlElementEventArgs ev = new HtmlElementEventArgs ();
 				eh (this, ev);
 			}
-		}		
+		}
 		
 		private static object KeyUpEvent = new object ();
 		public event HtmlElementEventHandler KeyUp {
-			add { 
+			add {
 				Events.AddHandler (KeyUpEvent, value);
 				element.KeyUp += new NodeEventHandler (OnKeyUp);
 			}
-			remove { 
+			remove {
 				Events.RemoveHandler (KeyUpEvent, value);
 				element.KeyUp -= new NodeEventHandler (OnKeyUp);
 			}
 		}
-
-#endregion
-
+		#endregion
 	}
 }
 

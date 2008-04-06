@@ -23,14 +23,13 @@
 //	Peter Bartok	pbartok@novell.com
 //
 
-
-// COMPLETE
-
 using System.Runtime.InteropServices;
 
-namespace System.Windows.Forms {
+namespace System.Windows.Forms
+{
 	[ComVisible(true)]
-	public enum ImeMode {
+	public enum ImeMode
+	{
 		NoControl	= 0,
 		On		= 1,
 		Off		= 2,
@@ -44,7 +43,8 @@ namespace System.Windows.Forms {
 		Hangul		= 10,
 		Inherit		= -1,
 #if NET_2_0
-		Close		= 11
+		Close		= 11,
+		OnHalf		= 12
 #endif
 	}
 }

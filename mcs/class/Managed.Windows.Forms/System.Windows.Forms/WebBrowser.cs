@@ -33,13 +33,15 @@ using System.Drawing;
 
 namespace System.Windows.Forms
 {
+	[DefaultProperty ("Url")]
+	[DefaultEvent ("DocumentCompleted")]
+	[Docking (DockingBehavior.AutoDock)]
 	[MonoTODO ("Needs Implementation")]
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
-    [ComVisible(true)]
-    [Designer("System.Windows.Forms.Design.WebBrowserBaseDesigner, " + Consts.AssemblySystem_Design, 
-		"System.ComponentModel.Design.IDesigner")]
-    public class WebBrowser : WebBrowserBase
-    {
+	[ComVisible(true)]
+	[Designer("System.Windows.Forms.Design.WebBrowserDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
+	public class WebBrowser : WebBrowserBase
+	{
 		private bool allowNavigation;
 		private bool allowWebBrowserDrop;
 		private bool isWebBrowserContextMenuEnabled;
@@ -57,7 +59,7 @@ namespace System.Windows.Forms
 		[DefaultValue(true)]
 		public bool AllowNavigation {
 			get { return allowNavigation; }
-			set { allowNavigation = value; } 
+			set { allowNavigation = value; }
 		}
 
 		[MonoTODO ("Stub, not implemented")]
@@ -147,9 +149,9 @@ namespace System.Windows.Forms
 
 		[MonoTODO ("Stub, not implemented")]
 		[DefaultValue(true)]
-		public bool IsWebBrowserContextMenuEnabled { 
-			get { return isWebBrowserContextMenuEnabled; } 
-			set { isWebBrowserContextMenuEnabled = value; } 
+		public bool IsWebBrowserContextMenuEnabled {
+			get { return isWebBrowserContextMenuEnabled; }
+			set { isWebBrowserContextMenuEnabled = value; }
 		}
 
 		[MonoTODO ("Stub, not implemented")]
@@ -163,7 +165,7 @@ namespace System.Windows.Forms
 		[MonoTODO ("Stub, not implemented")]
 		[BrowsableAttribute(false)]
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
-		public WebBrowserReadyState ReadyState { 
+		public WebBrowserReadyState ReadyState {
 			get { return WebBrowserReadyState.Uninitialized; }
 		}
 
@@ -211,16 +213,15 @@ namespace System.Windows.Forms
 		}
 		
 		protected override Size DefaultSize {
-			get {return base.DefaultSize;}
+			get { return base.DefaultSize; }
 		}
 
-		
 		[BrowsableAttribute(false)]
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new Padding Padding {
-			get {return base.Padding;}
-			set {base.Padding = value; }
+			get { return base.Padding; }
+			set { base.Padding = value; }
 		}
 		
 		#endregion
@@ -373,8 +374,8 @@ namespace System.Windows.Forms
 
 		#endregion
 
-
 		#region Protected Overridden Methods
+
 		[MonoTODO ("Stub, not implemented")]
 		protected override void AttachInterfaces (object nativeActiveXObject)
 		{
@@ -416,9 +417,11 @@ namespace System.Windows.Forms
 		{
 			base.WndProc (ref m);
 		}
+
 		#endregion
 
 		#region OnXXX methods
+
 		protected virtual void OnCanGoBackChanged(EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [CanGoBackChangedEvent]);
@@ -495,6 +498,7 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, e);
 		}
+
 		#endregion
 
 		#region Events
@@ -569,10 +573,11 @@ namespace System.Windows.Forms
 			add { Events.AddHandler (StatusTextChangedEvent, value); }
 			remove { Events.RemoveHandler (StatusTextChangedEvent, value); }
 		}
+
 		#endregion
 
-
 		#region Internal
+
 		internal override bool OnNewWindowInternal ()
 		{
 			CancelEventArgs c = new CancelEventArgs ();
@@ -589,8 +594,8 @@ namespace System.Windows.Forms
 
 		#endregion
 
-
 		[MonoTODO ("Stub, not implemented")]
+		[ComVisible (false)]
 		protected class WebBrowserSite : WebBrowserSiteBase
 		{
 			[MonoTODO ("Stub, not implemented")]
@@ -598,9 +603,8 @@ namespace System.Windows.Forms
 				: base ()
 			{
 			}
-
 		}
-    }
+	}
 }
 
 #endif
