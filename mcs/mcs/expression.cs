@@ -1510,7 +1510,7 @@ namespace Mono.CSharp {
 			} else {
 				Constant c = New.Constantify (type);
 				if (c != null)
-					return new EmptyConstantCast (c, type);
+					return c.ConvertImplicitly (type);
 
 				if (!TypeManager.IsValueType (type))
 					return new EmptyConstantCast (new NullLiteral (Location), type);
@@ -3969,6 +3969,13 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			ArrayList arg = new ArrayList (1);
+			arg.Add (new Argument (this));
+			return CreateExpressionFactoryCall ("Constant", arg);
+		}
+
 		protected Expression DoResolveBase (EmitContext ec)
 		{
 			type = local_info.VariableType;
@@ -4414,7 +4421,7 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class Invocation : ExpressionStatement {
 		protected ArrayList Arguments;
-		Expression expr;
+		protected Expression expr;
 		protected MethodGroupExpr mg;
 		bool arguments_resolved;
 		
@@ -4431,7 +4438,8 @@ namespace Mono.CSharp {
 				this.expr = expr;
 			
 			Arguments = arguments;
-			loc = expr.Location;
+			if (expr != null)
+				loc = expr.Location;
 		}
 
 		public Invocation (Expression expr, ArrayList arguments, bool arguments_resolved)
@@ -5102,6 +5110,24 @@ namespace Mono.CSharp {
 			New proxy = new New (new TypeExpression (real_class, loc), Arguments, loc);
 			Cast cast = new Cast (new TypeExpression (type, loc), proxy, loc);
 			return cast.Resolve (ec);
+		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			ArrayList args = Arguments == null ?
+				new ArrayList (1) : new ArrayList (Arguments.Count + 1);
+
+			args.Add (new Argument (method.CreateExpressionTree (ec)));
+			if (Arguments != null) {
+				Expression expr;
+				foreach (Argument a in Arguments) {
+					expr = a.Expr.CreateExpressionTree (ec);
+					if (expr != null)
+						args.Add (new Argument (expr));
+				}
+			}
+
+			return CreateExpressionFactoryCall ("New", args);
 		}
 		
 		public override Expression DoResolve (EmitContext ec)
@@ -6655,9 +6681,9 @@ namespace Mono.CSharp {
 
 	internal class TypeOfMethod : Expression
 	{
-		readonly MethodInfo method;
+		readonly MethodBase method;
 
-		public TypeOfMethod (MethodInfo method, Location loc)
+		public TypeOfMethod (MethodBase method, Location loc)
 		{
 			this.method = method;
 			this.loc = loc;
@@ -6665,13 +6691,27 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			if (TypeManager.methodbase_get_type_from_handle == null) {
+			bool is_generic = TypeManager.IsGenericType (method.DeclaringType);
+			MethodInfo mi = is_generic ?
+				TypeManager.methodbase_get_type_from_handle_generic :
+				TypeManager.methodbase_get_type_from_handle;
+
+			if (mi == null) {
 				Type t = TypeManager.CoreLookupType ("System.Reflection", "MethodBase", Kind.Class, true);
 				Type handle_type = TypeManager.CoreLookupType ("System", "RuntimeMethodHandle", Kind.Class, true);
 
-				if (t != null && handle_type != null)
-					TypeManager.methodbase_get_type_from_handle = TypeManager.GetPredefinedMethod (t,
-						"GetMethodFromHandle", loc, handle_type);
+				if (t == null || handle_type == null)
+					return null;
+
+				mi = TypeManager.GetPredefinedMethod (t, "GetMethodFromHandle", loc,
+					is_generic ?
+					new Type[] { handle_type, TypeManager.runtime_handle_type } :
+					new Type[] { handle_type } );
+
+				if (is_generic)
+					TypeManager.methodbase_get_type_from_handle_generic = mi;
+				else
+					TypeManager.methodbase_get_type_from_handle = mi;
 			}
 
 			type = typeof (MethodBase);
@@ -6681,8 +6721,54 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			ec.ig.Emit (OpCodes.Ldtoken, method);
-			ec.ig.Emit (OpCodes.Call, TypeManager.methodbase_get_type_from_handle);
+			if (method is MethodInfo)
+				ec.ig.Emit (OpCodes.Ldtoken, (MethodInfo)method);
+			else
+				ec.ig.Emit (OpCodes.Ldtoken, (ConstructorInfo) method);
+
+			bool is_generic = TypeManager.IsGenericType (method.DeclaringType);
+			MethodInfo mi;
+			if (is_generic) {
+				mi = TypeManager.methodbase_get_type_from_handle_generic;
+				ec.ig.Emit (OpCodes.Ldtoken, method.DeclaringType);
+			} else {
+				mi = TypeManager.methodbase_get_type_from_handle;
+			}
+
+			ec.ig.Emit (OpCodes.Call, mi);
+		}
+	}
+
+	internal class TypeOfField : Expression
+	{
+		readonly FieldInfo field;
+
+		public TypeOfField (FieldInfo field, Location loc)
+		{
+			this.field = field;
+			this.loc = loc;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			if (TypeManager.fieldinfo_get_field_from_handle == null) {
+				Type t = TypeManager.CoreLookupType ("System.Reflection", "FieldInfo", Kind.Class, true);
+				Type handle_type = TypeManager.CoreLookupType ("System", "RuntimeFieldHandle", Kind.Class, true);
+
+				if (t != null && handle_type != null)
+					TypeManager.fieldinfo_get_field_from_handle = TypeManager.GetPredefinedMethod (t,
+						"GetFieldFromHandle", loc, handle_type);
+			}
+
+			type = typeof (FieldInfo);
+			eclass = ExprClass.Value;
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			ec.ig.Emit (OpCodes.Ldtoken, field);
+			ec.ig.Emit (OpCodes.Call, TypeManager.fieldinfo_get_field_from_handle);
 		}
 	}
 
@@ -8846,7 +8932,7 @@ namespace Mono.CSharp {
 	//
 	// A collection initializer expression
 	//
-	public class CollectionElementInitializer : Expression
+	public class CollectionElementInitializer : Invocation
 	{
 		public class ElementInitializerArgument : Argument
 		{
@@ -8856,49 +8942,52 @@ namespace Mono.CSharp {
 			}
 		}
 
-		ArrayList arguments;
-
 		public CollectionElementInitializer (Expression argument)
+			: base (null, new ArrayList (1), true)
 		{
-			arguments = new ArrayList (1);
-			arguments.Add (argument);
+			Arguments.Add (argument);
 			this.loc = argument.Location;
 		}
 
 		public CollectionElementInitializer (ArrayList arguments, Location loc)
+			: base (null, arguments, true)
 		{
-			this.arguments = arguments;
 			this.loc = loc;
 		}
 
-		protected override void CloneTo (CloneContext clonectx, Expression t)
+		public override Expression CreateExpressionTree (EmitContext ec)
 		{
-			CollectionElementInitializer target = (CollectionElementInitializer) t;
-			ArrayList t_arguments = target.arguments = new ArrayList (arguments.Count);
-			foreach (Expression e in arguments)
-				t_arguments.Add (e.Clone (clonectx));
+			ArrayList args = new ArrayList (2);
+			args.Add (new Argument (mg.CreateExpressionTree (ec)));
+
+			ArrayList expr_initializers = new ArrayList (Arguments.Count);
+			foreach (Argument a in Arguments)
+				expr_initializers.Add (a.Expr.CreateExpressionTree (ec));
+
+			args.Add (new Argument (new ArrayCreation (
+				CreateExpressionTypeExpression (loc), "[]", expr_initializers, loc)));
+			return CreateExpressionFactoryCall ("ElementInit", args);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			// TODO: We should call a constructor which takes element counts argument,
-			// for know types like List<T>, Dictionary<T, U>
+			if (eclass != ExprClass.Invalid)
+				return this;
+
+			// TODO: We could call a constructor which takes element count argument,
+			// for known types like List<T>, Dictionary<T, U>
 			
-			for (int i = 0; i < arguments.Count; ++i)
-				arguments [i] = new ElementInitializerArgument ((Expression)arguments [i]);
+			for (int i = 0; i < Arguments.Count; ++i) {
+				Expression expr = ((Expression) Arguments [i]).Resolve (ec);
+				if (expr == null)
+					return null;
 
-			Expression add_method = new Invocation (
-				new MemberAccess (ec.CurrentInitializerVariable, "Add", loc),
-				arguments);
+				Arguments [i] = new ElementInitializerArgument (expr);
+			}
 
-			add_method = add_method.Resolve (ec);
+			base.expr = new MemberAccess (ec.CurrentInitializerVariable, "Add", loc);
 
-			return add_method;
-		}
-		
-		public override void Emit (EmitContext ec)
-		{
-			throw new NotSupportedException ("Should not be reached");
+			return base.DoResolve (ec);
 		}
 	}
 	
@@ -8932,9 +9021,24 @@ namespace Mono.CSharp {
 			foreach (Expression e in initializers)
 				t.initializers.Add (e.Clone (clonectx));
 		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			ArrayList expr_initializers = new ArrayList (initializers.Count);
+			foreach (Expression e in initializers) {
+				Expression expr = e.CreateExpressionTree (ec);
+				if (expr != null)
+					expr_initializers.Add (expr);
+			}
+
+			return new ImplicitlyTypedArrayCreation ("[]", expr_initializers, loc);
+		}
 		
 		public override Expression DoResolve (EmitContext ec)
 		{
+			if (eclass != ExprClass.Invalid)
+				return this;
+
 			bool is_elements_initialization = false;
 			ArrayList element_names = null;
 			for (int i = 0; i < initializers.Count; ++i) {
@@ -9060,6 +9164,15 @@ namespace Mono.CSharp {
 
 			NewInitialize target = (NewInitialize) t;
 			target.initializers = (CollectionOrObjectInitializers) initializers.Clone (clonectx);
+		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			ArrayList args = new ArrayList (2);
+			args.Add (new Argument (base.CreateExpressionTree (ec)));
+			args.Add (new Argument (initializers.CreateExpressionTree (ec)));
+
+			return CreateExpressionFactoryCall ("ListInit", args);
 		}
 
 		public override Expression DoResolve (EmitContext ec)

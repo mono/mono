@@ -160,6 +160,8 @@ namespace Mono.CSharp {
 	static public MethodInfo int_interlocked_compare_exchange;
 	static public PropertyInfo ienumerator_getcurrent;
 	public static MethodInfo methodbase_get_type_from_handle;
+	public static MethodInfo methodbase_get_type_from_handle_generic;
+	public static MethodInfo fieldinfo_get_field_from_handle;
 	static public MethodInfo activator_create_instance;
 	
 	//
@@ -310,6 +312,8 @@ namespace Mono.CSharp {
 		int_get_offset_to_string_data =
 		int_interlocked_compare_exchange =
 		methodbase_get_type_from_handle =
+		methodbase_get_type_from_handle_generic =
+		fieldinfo_get_field_from_handle =
 		activator_create_instance = null;
 
 		ienumerator_getcurrent = null;
@@ -326,6 +330,8 @@ namespace Mono.CSharp {
 		param_array_attr =
 		compiler_generated_attr =
 		extension_attribute_attr = null;
+
+		isvolatile_type = null;
 			
 		// to uncover regressions
 		AllClsTopLevelTypes = null;

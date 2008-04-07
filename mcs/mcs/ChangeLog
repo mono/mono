@@ -1,3 +1,8 @@
+2008-04-07  Marek Safar  <marek.safar@gmail.com>
+
+	* anonymous.cs, expression.cs, ecore.cs, typemanager.cs: Implemented
+	ListInit and Field expressions.
+
 2008-04-06  Raja R Harinath  <harinath@hurrynot.org>
 
 	* iterators.cs (Iterator.EmitMoveNext): Remove try/fault wrapper.

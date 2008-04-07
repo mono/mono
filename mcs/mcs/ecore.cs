@@ -1255,6 +1255,11 @@ namespace Mono.CSharp {
 
 		public static Expression CreateExpressionFactoryCall (string name, TypeArguments typeArguments, ArrayList args, Location loc)
 		{
+			return new Invocation (new MemberAccess (CreateExpressionTypeExpression (loc), name, typeArguments, loc), args);
+		}
+
+		protected static TypeExpr CreateExpressionTypeExpression (Location loc)
+		{
 			TypeExpr texpr = TypeManager.expression_type_expr;
 			if (texpr == null) {
 				Type t = TypeManager.CoreLookupType ("System.Linq.Expressions", "Expression", Kind.Class, true);
@@ -1264,7 +1269,7 @@ namespace Mono.CSharp {
 				TypeManager.expression_type_expr = texpr = new TypeExpression (t, Location.Null);
 			}
 
-			return new Invocation (new MemberAccess (texpr, name, typeArguments, loc), args);
+			return texpr;
 		}
 	}
 
@@ -1546,6 +1551,14 @@ namespace Mono.CSharp {
 		{
 			// FIXME: check that 'type' can be converted to 'target_type' first
 			return child.ConvertExplicitly (in_checked_context, target_type);
+		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			ArrayList args = new ArrayList (2);
+			args.Add (new Argument (child.CreateExpressionTree (ec)));
+			args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
+			return CreateExpressionFactoryCall ("Convert", args);
 		}
 
 		public override Constant Increment ()
@@ -3633,8 +3646,10 @@ namespace Mono.CSharp {
 
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
-			return new Cast (new TypeExpression (typeof (MethodInfo), loc),
-				new TypeOfMethod ((MethodInfo)best_candidate, loc));
+			Type t = best_candidate.IsConstructor ?
+				typeof (ConstructorInfo) : typeof (MethodInfo);
+
+			return new Cast (new TypeExpression (t, loc), new TypeOfMethod (best_candidate, loc));
 		}
 		
 		override public Expression DoResolve (EmitContext ec)
@@ -4527,6 +4542,11 @@ namespace Mono.CSharp {
 			return base.ResolveMemberAccess (ec, left, loc, original);
 		}
 
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			throw new NotSupportedException ();
+		}
+
 		public override Expression DoResolve (EmitContext ec)
 		{
 			IConstant ic = TypeManager.GetConstant (constant);
@@ -4620,6 +4640,21 @@ namespace Mono.CSharp {
 			}
 
 			return base.ResolveMemberAccess (ec, left, loc, original);
+		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			Expression instance;
+			if (InstanceExpression == null) {
+				instance = new NullLiteral (loc);
+			} else {
+				instance = InstanceExpression.CreateExpressionTree (ec);
+			}
+
+			ArrayList args = new ArrayList (2);
+			args.Add (new Argument (instance));
+			args.Add (new Argument (new TypeOfField (FieldInfo, loc)));
+			return CreateExpressionFactoryCall ("Field", args);
 		}
 
 		override public Expression DoResolve (EmitContext ec)
@@ -5534,6 +5569,11 @@ namespace Mono.CSharp {
 			bool dummy;
 			return IsAccessorAccessible (invocation_type, add_accessor, out dummy) &&
 				IsAccessorAccessible (invocation_type, remove_accessor, out dummy);
+		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			throw new NotSupportedException ();
 		}
 
 		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
