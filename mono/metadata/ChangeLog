@@ -1,5 +1,12 @@
 2008-04-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify-internals.h: New header with the verifier configuration
+	extracted from mini.c.
+
+	* verify.c: Implemented the new functions exported by verify-internals.h.
+
+2008-04-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c: Add proper verification of ckfinite.
 
 2008-04-04 Rodrigo Kumpera  <rkumpera@novell.com>
