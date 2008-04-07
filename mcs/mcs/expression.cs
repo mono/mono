@@ -1510,7 +1510,7 @@ namespace Mono.CSharp {
 			} else {
 				Constant c = New.Constantify (type);
 				if (c != null)
-					return c.ConvertImplicitly (type);
+					return new EmptyConstantCast (c, type);
 
 				if (!TypeManager.IsValueType (type))
 					return new EmptyConstantCast (new NullLiteral (Location), type);
