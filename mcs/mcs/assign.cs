@@ -4,6 +4,7 @@
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
 //   Martin Baulig (martin@ximian.com)
+//   Marek Safar (marek.safar@gmail.com)	
 //
 // (C) 2001, 2002, 2003 Ximian, Inc.
 // (C) 2004 Novell, Inc
@@ -11,6 +12,7 @@
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Collections;
 
 namespace Mono.CSharp {
 
@@ -486,12 +488,6 @@ namespace Mono.CSharp {
 					a.original_source.Error_ValueCannotBeConverted (ec, loc, target_type, false);
 					return null;
 				}
-			}
-
-			if (source.eclass == ExprClass.MethodGroup && !TypeManager.IsDelegateType (target_type)) {
-				Report.Error (428, source.Location, "Cannot convert method group `{0}' to non-delegate type `{1}'. Did you intend to invoke the method?",
-					((MethodGroupExpr)source).Name, target.GetSignatureForError ());
-				return null;
 			}
 
 			source = Convert.ImplicitConversionRequired (ec, source, target_type, loc);

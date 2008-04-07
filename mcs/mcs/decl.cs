@@ -1201,7 +1201,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public virtual ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, string name)
+		public virtual ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, string name, Location loc)
 		{
 			return null;
 		}

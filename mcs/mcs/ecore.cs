@@ -3268,7 +3268,7 @@ namespace Mono.CSharp {
 				return null;
 
 			// Search continues
-			ExtensionMethodGroupExpr e = ns.LookupExtensionMethod (type, null, Name);
+			ExtensionMethodGroupExpr e = ns.LookupExtensionMethod (type, null, Name, loc);
 			if (e == null)
 				return base.OverloadResolve (ec, ref arguments, false, loc);
 
@@ -3727,6 +3727,12 @@ namespace Mono.CSharp {
 				Report.Error (1503, loc, "Argument {0}: Cannot convert type `{1}' to `{2}'", index, p1, p2);
 			}
 		}
+
+		public override void Error_ValueCannotBeConverted (EmitContext ec, Location loc, Type target, bool expl)
+		{
+			Report.Error (428, loc, "Cannot convert method group `{0}' to non-delegate type `{1}'. Consider using parentheses to invoke the method",
+				Name, TypeManager.CSharpName (target));
+		}
 		
 		protected virtual int GetApplicableParametersCount (MethodBase method, ParameterData parameters)
 		{
@@ -4133,7 +4139,7 @@ namespace Mono.CSharp {
 				// not an extension method. We start extension methods lookup from here
 				//
 				if (InstanceExpression != null) {
-					ExtensionMethodGroupExpr ex_method_lookup = ec.TypeContainer.LookupExtensionMethod (type, Name);
+					ExtensionMethodGroupExpr ex_method_lookup = ec.TypeContainer.LookupExtensionMethod (type, Name, loc);
 					if (ex_method_lookup != null) {
 						ex_method_lookup.ExtensionExpression = InstanceExpression;
 						ex_method_lookup.SetTypeArguments (type_arguments);
