@@ -1,3 +1,9 @@
+2008-04-07  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* ReflectionPropertyDescriptor.cs: ReadOnlyAttribute has a Default, 
+	so there is no need for a null reference check. Fixes the attr_ro unused 
+	value warning during compilation.
+
 2008-03-28  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* TypeDescriptor.cs: Do not return parent type properties, where the child 
