@@ -1,3 +1,9 @@
+2008-04-07 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_unary_test.sh: Clear the stack before ret.
+
+	* make_test.sh: Added tests for ckfinite.
+
 2008-04-04 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_tail_call_test.sh: New test generator for
