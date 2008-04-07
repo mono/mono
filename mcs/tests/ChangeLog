@@ -1,3 +1,7 @@
+2008-04-07 Marek Safar <marek.safar@gmail.com>
+
+	* Makefile: Enabled IL regressions check for gmcs profile.
+
 2008-04-06  Raja R Harinath  <harinath@hurrynot.org>
 
 	* gtest-381.cs: New test from #324708.
