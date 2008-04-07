@@ -1,3 +1,11 @@
+2008-04-07  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini.h: Removed verifer related stuff. This code was moved to verify.c
+
+	* mini.c: Removed verifer related stuff, code moved to verify.c.
+
+	* driver.c: Using code from verify.c instead of mini.c.
+
 2008-04-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (check_for_method_verify): Remove the mscorlib comment since it is no
