@@ -1,3 +1,24 @@
+2008-04-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (mono_handle_exception_internal): When --debug=casts is used,
+	use a more detailed exception message for InvalidCastException.
+
+	* mini.h (MonoJitTlsData): Add 'class_cast_from' and 'class_cast_to' fields.
+
+	* driver.c (mono_main): Add --debug=casts option to turn on better 
+	InvalidCastException message details.
+
+	* mini.c (mini_get_debug_options): New helper function to return the address of
+	the debug_options variable.
+
+	* mini.c (mono_get_jit_tls_intrinsic): New helper function to create a load of
+	the jit_tls TLS variable.
+
+	* mini.c (mono_jit_tls): New TLS variable.
+
+	* inssel.brg: Save the details of a cast to a TLS variable when the --debug=casts
+	option is used.
+
 2008-04-07  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini.h: Removed verifer related stuff. This code was moved to verify.c
