@@ -314,8 +314,15 @@ namespace TestRunner {
 			if (md.ILSize == il_size)
 				return true;
 
+			if (md.ILSize > il_size) {
+				checker.LogLine ("{0} (code size reduction {1} -> {2})", m_name, md.ILSize, il_size);
+				md.ILSize = il_size;
+				return true;
+			}
+
 			checker.HandleFailure (FileName, PositiveChecker.TestResult.ILError,
 				string.Format ("{0} (code size {1} -> {2})", m_name, md.ILSize, il_size));
+
 			md.ILSize = il_size;
 
 			return false;
@@ -557,7 +564,7 @@ namespace TestRunner {
 				log_file.Write (msg, rest);
 		}
 
-		protected void LogLine (string msg, params object [] rest)
+		public void LogLine (string msg, params object [] rest)
 		{
 			Console.WriteLine (msg, rest);
 			if (log_file != null)
@@ -748,8 +755,11 @@ namespace TestRunner {
 				if (!t.IsClass && t.IsValueType)
 					continue;
 
-				if (test.VerificationProvider == null)
+				if (test.VerificationProvider == null) {
+					if (!update_verif_file)
+						LogFileLine (test.FileName, "Missing IL verification data");
 					test.CreateNewTest ();
+				}
 
 				foreach (MemberInfo m in t.GetMembers (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly)) {
 					MethodBase mi = m as MethodBase;
