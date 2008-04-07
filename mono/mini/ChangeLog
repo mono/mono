@@ -1,7 +1,8 @@
 2008-04-07  Zoltan Varga  <vargaz@gmail.com>
 
-	* method-to-ir.c: Add a FIXME.
-	
+	* method-to-ir.c (MONO_ARCH_EMIT_BOUNDS_CHECK): Move the arch-specific definitions
+	to mini-amd64.h/mini-x86.h.
+
 	* method-to-ir.c: Move the branch+bblock macros to ir-emit.h as well.
 
 	* method-to-ir.c: Split up this now giant file a bit: Move the instruction 

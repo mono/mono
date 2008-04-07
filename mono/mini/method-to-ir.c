@@ -280,31 +280,7 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 		}	\
 	} while (0)
 
-#define MONO_NEW_LABEL(cfg,inst) do { \
-        MONO_INST_NEW ((cfg), (inst), OP_LABEL); \
-	} while (0)
-
-#if defined(__i386__)
-#define MONO_ARCH_EMIT_BOUNDS_CHECK(cfg, array_reg, offset, index_reg) do { \
-            MonoInst *inst; \
-            MONO_INST_NEW ((cfg), inst, OP_X86_COMPARE_MEMBASE_REG); \
-            inst->inst_basereg = array_reg; \
-            inst->inst_offset = offset; \
-            inst->sreg2 = index_reg; \
-            MONO_ADD_INS ((cfg)->cbb, inst); \
-			MONO_EMIT_NEW_COND_EXC (cfg, LE_UN, "IndexOutOfRangeException"); \
-	} while (0)
-#elif defined(__x86_64__)
-#define MONO_ARCH_EMIT_BOUNDS_CHECK(cfg, array_reg, offset, index_reg) do { \
-            MonoInst *inst; \
-            MONO_INST_NEW ((cfg), inst, OP_AMD64_ICOMPARE_MEMBASE_REG); \
-            inst->inst_basereg = array_reg; \
-            inst->inst_offset = offset; \
-            inst->sreg2 = index_reg; \
-            MONO_ADD_INS ((cfg)->cbb, inst); \
-			MONO_EMIT_NEW_COND_EXC (cfg, LE_UN, "IndexOutOfRangeException"); \
-	} while (0)
-#else
+#ifndef MONO_ARCH_EMIT_BOUNDS_CHECK
 #define MONO_ARCH_EMIT_BOUNDS_CHECK(cfg, array_reg, offset, index_reg) do { \
 			int _length_reg = alloc_ireg (cfg); \
 			MONO_EMIT_NEW_LOAD_MEMBASE_OP (cfg, OP_LOADI4_MEMBASE, _length_reg, array_reg, offset); \
