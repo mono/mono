@@ -1,3 +1,26 @@
+2008-04-04 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (do_conversion): Improved error message to something
+	more meanfull.
+
+	* verify.c (check_is_valid_type_for_field_ops): Fix to work
+	with primitive types.
+
+2008-04-04 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Added tail prefix checking. Marked icall
+	as unverifible.
+
+2008-04-04 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Fix the detection of branches to the middle
+	of an instruction.
+
+2008-04-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Implemented verification of volatile. and
+	unaligned. prefix. Check if a type is valid after retrieving it.
+
 2008-04-01  Dick Porter  <dick@ximian.com>
 
 	* process.c (process_get_fileversion): If there's no string block,
