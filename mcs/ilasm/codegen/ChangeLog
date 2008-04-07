@@ -1,3 +1,8 @@
+2008-04-07  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MethodDef.cs: Mono.CompilerServices API has changed in an incompatible way
+	since Erven's patch. Fixed it to follow the new one.
+
 2008-04-07  Erven Rohou <erven.rohou@st.com>
 
 	* DebugInfo.cs, MethodDef.cs: Add support for emitting variable names

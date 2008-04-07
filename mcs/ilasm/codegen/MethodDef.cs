@@ -272,8 +272,7 @@ namespace Mono.ILASM {
                         foreach (Local local in local_list) {
                                 if (local.Name != null) {  // only named variables
                                         PEAPI.Local plocal = local.GetPeapiLocal(codegen); 
-                                        byte[] sig = plocal.TypeSig();
-                                        locals[i++] = new LocalVariableEntry(local.Slot, local.Name, sig, 0);
+                                        locals[i++] = new LocalVariableEntry(local.Slot, local.Name, 0);
                                 }
                         }
                         return locals;
