@@ -340,11 +340,16 @@ namespace System.Threading {
 #if NET_2_0
 				TrySetApartmentState (value);
 #else
-				if ((ThreadState & ThreadState.Unstarted) == 0)
+				/* Only throw this exception when
+				 * changing the state of another
+				 * thread.  See bug 324338
+				 */
+				if ((this != CurrentThread) &&
+				    (ThreadState & ThreadState.Unstarted) == 0)
 					throw new ThreadStateException ("Thread was in an invalid state for the operation being executed.");
 
 				if (value != ApartmentState.STA && value != ApartmentState.MTA)
-					throw new ArgumentException ("value is not a valid apartment state.");
+					throw new ArgumentOutOfRangeException ("value is not a valid apartment state.");
 
 				if ((ApartmentState)apartment_state == ApartmentState.Unknown)
 					apartment_state = (byte)value;
@@ -973,7 +978,11 @@ namespace System.Threading {
 
 		public bool TrySetApartmentState (ApartmentState state) 
 		{
-			if ((ThreadState & ThreadState.Unstarted) == 0)
+			/* Only throw this exception when changing the
+			 * state of another thread.  See bug 324338
+			 */
+			if ((this != CurrentThread) &&
+			    (ThreadState & ThreadState.Unstarted) == 0)
 				throw new ThreadStateException ("Thread was in an invalid state for the operation being executed.");
 
 			if ((ApartmentState)apartment_state != ApartmentState.Unknown)
