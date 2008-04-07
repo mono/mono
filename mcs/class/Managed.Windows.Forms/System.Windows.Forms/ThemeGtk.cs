@@ -759,7 +759,7 @@ namespace System.Windows.Forms
 				DrawScrollBarThumb( dc, thumb_pos, bar );
 		}
 		
-		protected override void ScrollBar_Vertical_Draw_ThumbMoving_None (int scrollbutton_height, ScrollBar bar, Rectangle clip, Graphics dc)
+		protected void ScrollBar_Vertical_Draw_ThumbMoving_None (int scrollbutton_height, ScrollBar bar, Rectangle clip, Graphics dc)
 		{
 			Rectangle r = new Rectangle (0,
 						     scrollbutton_height, bar.ClientRectangle.Width, bar.ClientRectangle.Height - (scrollbutton_height * 2));
@@ -774,7 +774,7 @@ namespace System.Windows.Forms
 				       r.Width, r.Height);
 		}
 		
-		protected override void ScrollBar_Horizontal_Draw_ThumbMoving_None (int scrollbutton_width, ScrollBar bar, Rectangle clip, Graphics dc)
+		protected void ScrollBar_Horizontal_Draw_ThumbMoving_None (int scrollbutton_width, ScrollBar bar, Rectangle clip, Graphics dc)
 		{
 			Rectangle r = new Rectangle (scrollbutton_width,
 						     0, bar.ClientRectangle.Width - (scrollbutton_width * 2), bar.ClientRectangle.Height);

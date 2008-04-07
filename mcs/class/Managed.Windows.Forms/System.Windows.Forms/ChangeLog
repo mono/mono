@@ -1,5 +1,11 @@
 2008-04-07  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ThemeClearlooks.cs, ThemeGtk.cs, ThemeNice.cs, ThemeWin32Classic.cs:
+	Apply very nice patch from Ernesto Carrea that simplifies our
+	scrollbar drawing.  [From bug #376146]
+
+2008-04-07  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TreeView.cs: Correct the location of the root node checkbox when
 	ShowRootLines = false.  Don't draw the root lines for the root node
 	when ShowRootLines = false.  [Fixes bug #377535]
