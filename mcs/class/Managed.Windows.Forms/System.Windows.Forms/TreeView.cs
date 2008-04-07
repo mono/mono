@@ -1323,6 +1323,10 @@ namespace System.Windows.Forms {
 
 			if (show_root_lines || node.Parent != null)
 				l -= indent;
+				
+			if (!show_root_lines && node.Parent == null)
+				l -= indent;
+				
 			if (ImageList != null)
 				l -= ImageList.ImageSize.Width + 3;
 
@@ -1555,7 +1559,8 @@ namespace System.Windows.Forms {
 			if (checkboxes)
 				radjust = 3;
 
-			dc.DrawLine (dash, x - indent + ladjust, middle, x + radjust, middle);
+			if (show_root_lines || node.Parent != null)
+				dc.DrawLine (dash, x - indent + ladjust, middle, x + radjust, middle);
 
 			if (node.PrevNode != null || node.Parent != null) {
 				ladjust = 9;
