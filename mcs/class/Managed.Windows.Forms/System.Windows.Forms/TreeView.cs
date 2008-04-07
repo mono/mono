@@ -1540,7 +1540,7 @@ namespace System.Windows.Forms {
 				int check_size = 5;
 				int lineWidth = 3;
 				
-				Rectangle rect = new Rectangle (x + 5, middle - 2, check_size, check_size);
+				Rectangle rect = new Rectangle (x + 4, middle - 3, check_size, check_size);
 				
 				for (int i = 0; i < lineWidth; i++) {
 					dc.DrawLine (check_pen, rect.Left + 1, rect.Top + lineWidth + i, rect.Left + 3, rect.Top + 5 + i);
