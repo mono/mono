@@ -211,6 +211,12 @@ namespace System.Windows.Forms {
 					managers.Remove (keys[i]);
 			}
 		}
+#if NET_2_0
+		public static void UpdateBinding (BindingContext newBindingContext, Binding binding)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		#endregion	// Protected Instance Methods
 
 		#region Events
