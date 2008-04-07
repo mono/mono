@@ -108,9 +108,10 @@ namespace Mono.ILASM {
 			lines.CopyTo (lne);
 
 			uint token = ((uint) PEAPI.MDTable.Method << 24) | pemethod.Row;
+                        LocalVariableEntry[] locals = method.GetLocalVars();
 
 			file.DefineMethod (
-				method.Name, (int) token, null, lne, null,
+				method.Name, (int) token, locals, lne, null,
 				StartLine, EndLine, 0);
 		}
 	}

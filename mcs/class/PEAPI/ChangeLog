@@ -1,3 +1,8 @@
+2008-04-07  Erven Rohou <erven.rohou@st.com>
+
+	* Code.cs: Add new method: GetLocalVars() for ilasm support for
+	emitting local variable names.
+
 2007-11-05  Jackson Harper  <jackson@ximian.com>
 
 	* LICENSE: Add long lost file.

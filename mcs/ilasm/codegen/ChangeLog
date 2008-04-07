@@ -1,3 +1,8 @@
+2008-04-07  Erven Rohou <erven.rohou@st.com>
+
+	* DebugInfo.cs, MethodDef.cs: Add support for emitting variable names
+	in mdb file.
+
 2008-02-07  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CodeGen.cs: Use original filename as base name for debug file.

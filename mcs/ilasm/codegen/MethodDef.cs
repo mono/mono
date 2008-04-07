@@ -13,6 +13,8 @@ using System.Text;
 using System.Collections;
 using System.Security;
 
+using Mono.CompilerServices.SymbolWriter;
+
 namespace Mono.ILASM {
 
         public class MethodDef : ICustomAttrTarget, IDeclSecurityTarget {
@@ -48,12 +50,14 @@ namespace Mono.ILASM {
                 private TypeDef type_def;
                 private GenericParameters gen_params;
                 private Location start;
+                private CodeGen codegen;
 
                 public MethodDef (CodeGen codegen, PEAPI.MethAttr meth_attr,
 				  PEAPI.CallConv call_conv, PEAPI.ImplAttr impl_attr,
 				  string name, BaseTypeRef ret_type, ArrayList param_list,
 				  Location start, GenericParameters gen_params, TypeDef type_def)
                 {
+                        this.codegen = codegen;
                         this.meth_attr = meth_attr;
                         this.call_conv = call_conv;
                         this.impl_attr = impl_attr;
@@ -257,6 +261,24 @@ namespace Mono.ILASM {
 
                         return pos;
                 }
+
+                public LocalVariableEntry[] GetLocalVars()
+                {
+                        System.IO.MemoryStream str = new System.IO.MemoryStream();
+                        int i = 0;
+                        int num_locals = named_local_table.Count;
+                        LocalVariableEntry[] locals = new LocalVariableEntry[num_locals];
+
+                        foreach (Local local in local_list) {
+                                if (local.Name != null) {  // only named variables
+                                        PEAPI.Local plocal = local.GetPeapiLocal(codegen); 
+                                        byte[] sig = plocal.TypeSig();
+                                        locals[i++] = new LocalVariableEntry(local.Slot, local.Name, sig, 0);
+                                }
+                        }
+                        return locals;
+                }
+
 
                 /* index - 0: return type
                  *         1: params start from this
