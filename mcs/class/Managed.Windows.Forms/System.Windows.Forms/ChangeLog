@@ -1,3 +1,17 @@
+2008-04-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+        * X11Structs.cs : added couple of structs for XIM support.
+        * X11Keyboard.cs :
+          Release XIM in case it failed to create XIC. 
+          Use consts for XNblah string.
+          Add support for IM style customization and XIC creation
+          for preedit-position and preedit-callback.
+          Right now use MONO_WINFORMS_XIM_STYLE environment variable
+          (list of: over-the-spot | on-the-spot | root). Only root
+          mode works so far.
+
+	  (redoing r99172 with fix.)
+
 2008-04-07  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TreeView.cs: Center the checkbox a little better.

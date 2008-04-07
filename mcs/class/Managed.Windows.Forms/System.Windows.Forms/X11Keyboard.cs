@@ -98,16 +98,21 @@ namespace System.Windows.Forms {
 				Console.Error.WriteLine ("Could not get XIM");
 			else 
 				xic = CreateXic (window, xim);
-			if (xic != IntPtr.Zero)
+			if (xic == IntPtr.Zero) {
+				Console.Error.WriteLine ("Could not get XIC");
+				if (xim != IntPtr.Zero)
+					XCloseIM (xim);
+			} else {
 				utf8_buffer = new byte [100];
-			if (XGetICValues (xic, "filterEvents", out xic_event_mask, IntPtr.Zero) != null)
-				Console.Error.WriteLine ("Could not get XIC values");
-			EventMask mask = EventMask.ExposureMask | EventMask.KeyPressMask | EventMask.FocusChangeMask;
-			xic_event_mask |= mask;
-			XplatUIX11.XSelectInput(display, window, new IntPtr ((int) xic_event_mask));
-			// FIXME: without it some input methods do not show its UI (but it results in
-			// obstacle, so am disabling it).
-			// XplatUIX11.XMapWindow (display, window);
+				if (XGetICValues (xic, "filterEvents", out xic_event_mask, IntPtr.Zero) != null)
+					Console.Error.WriteLine ("Could not get XIC values");
+				EventMask mask = EventMask.ExposureMask | EventMask.KeyPressMask | EventMask.FocusChangeMask;
+				xic_event_mask |= mask;
+				XplatUIX11.XSelectInput(display, window, new IntPtr ((int) xic_event_mask));
+				// FIXME: without it some input methods do not show its UI (but it results in
+				// obstacle, so am disabling it).
+				// XplatUIX11.XMapWindow (display, window);
+			}
 			initialized = true;
 		}
 
@@ -728,14 +733,220 @@ namespace System.Windows.Forms {
 			return 0;
 		}
 
+		private XIMProperties [] GetSupportedInputStyles (IntPtr xim)
+		{
+			IntPtr stylesPtr;
+			XGetIMValues (xim, XNames.XNQueryInputStyle, out stylesPtr, IntPtr.Zero);
+			XIMStyles styles = (XIMStyles) Marshal.PtrToStructure (stylesPtr, typeof (XIMStyles));
+			XIMProperties [] supportedStyles = new XIMProperties [styles.count_styles];
+			for (int i = 0; i < styles.count_styles; i++)
+				supportedStyles [i] = (XIMProperties) Marshal.PtrToStructure ((IntPtr) ((int) styles.supported_styles + i * 4), typeof (XIMProperties));
+			XplatUIX11.XFree (stylesPtr);
+			return supportedStyles;
+		}
+
+		const XIMProperties styleRoot = XIMProperties.XIMPreeditNothing | XIMProperties.XIMStatusNothing;
+		const XIMProperties styleOverTheSpot = XIMProperties.XIMPreeditPosition | XIMProperties.XIMStatusNothing;
+		const XIMProperties styleOnTheSpot = XIMProperties.XIMPreeditCallbacks | XIMProperties.XIMStatusNothing;
+		const string ENV_NAME_XIM_STYLE = "MONO_WINFORMS_XIM_STYLE";
+
+		private XIMProperties [] GetPreferredStyles ()
+		{
+			string env = Environment.GetEnvironmentVariable (ENV_NAME_XIM_STYLE);
+			if (env == null)
+				env = String.Empty;
+			string [] list = env.Split (' ');
+			XIMProperties [] ret = new XIMProperties [list.Length];
+			for (int i = 0; i < list.Length; i++) {
+				string s = list [i];
+				switch (s) {
+				case "over-the-spot":
+					ret [i] = styleOverTheSpot;
+					break;
+				case "on-the-spot":
+					ret [i] = styleOnTheSpot;
+					break;
+				case "root":
+					ret [i] = styleRoot;
+					break;
+				}
+			}
+			return ret;
+		}
+
+		private IEnumerable GetMatchingStylesInPreferredOrder (IntPtr xim)
+		{
+			XIMProperties [] supportedStyles = GetSupportedInputStyles (xim);
+			foreach (XIMProperties p in GetPreferredStyles ())
+				if (Array.IndexOf (supportedStyles, p) >= 0)
+					yield return p;
+		}
+
 		private IntPtr CreateXic (IntPtr window, IntPtr xim)
 		{
-			xic = XCreateIC (xim, 
-				"inputStyle", XIMProperties.XIMPreeditNothing | XIMProperties.XIMStatusNothing,
-				"clientWindow", window,
-				"focusWindow", window,
-				IntPtr.Zero);
+			foreach (XIMProperties targetStyle in GetMatchingStylesInPreferredOrder (xim)) {
+				// FIXME: use __arglist when it gets working. See bug #321686
+				switch (targetStyle) {
+				case styleOverTheSpot:
+					xic = CreateOverTheSpotXic (window, xim);
+					if (xic != IntPtr.Zero)
+						break;
+					Console.WriteLine ("failed to create XIC in over-the-spot mode.");
+					continue;
+				case styleOnTheSpot:
+					xic = CreateOnTheSpotXic (window, xim);
+					// XplatUIX11.XFree (preedit);
+					if (xic != IntPtr.Zero)
+						break;
+					Console.WriteLine ("failed to create XIC in on-the-spot mode.");
+					continue;
+				case styleRoot:
+					xic = XCreateIC (xim,
+						XNames.XNInputStyle, styleRoot,
+						XNames.XNClientWindow, window,
+						XNames.XNFocusWindow, window,
+						IntPtr.Zero);
+					break;
+				}
+			}
+			// fall back to root mode if all modes failed
+			if (xic == IntPtr.Zero)
+				xic = XCreateIC (xim,
+					XNames.XNInputStyle, styleRoot,
+					XNames.XNClientWindow, window,
+					XNames.XNFocusWindow, window,
+					IntPtr.Zero);
 			return xic;
+		}
+
+		private IntPtr CreateOverTheSpotXic (IntPtr window, IntPtr xim)
+		{
+			IntPtr list;
+			int count;
+			IntPtr fontSet = XCreateFontSet (display, "*", out list, out count, IntPtr.Zero);
+			// FIXME: give appropriate corrdinate.
+			XPoint spot = new XPoint ();
+			spot.X = 0;
+			spot.Y = 100;
+			IntPtr pSL = IntPtr.Zero, pFS = IntPtr.Zero;
+			try {
+				pSL = Marshal.StringToHGlobalAnsi (XNames.XNSpotLocation);
+				pFS = Marshal.StringToHGlobalAnsi (XNames.XNFontSet);
+				IntPtr preedit = XVaCreateNestedList (0,
+					pSL, spot,
+					pFS, fontSet,
+					IntPtr.Zero);
+				return XCreateIC (xim,
+					XNames.XNInputStyle, styleOverTheSpot,
+					XNames.XNClientWindow, window,
+					XNames.XNFocusWindow, window,
+					XNames.XNPreeditAttributes, preedit,
+					IntPtr.Zero);
+			} finally {
+				if (pSL != IntPtr.Zero)
+					Marshal.FreeHGlobal (pSL);
+				if (pFS != IntPtr.Zero)
+					Marshal.FreeHGlobal (pFS);
+				XFreeStringList (list);
+				//XplatUIX11.XFree (preedit);
+				//XFreeFontSet (fontSet);
+			}
+		}
+
+		private IntPtr CreateOnTheSpotXic (IntPtr window, IntPtr xim)
+		{
+			callbackContext = new XIMCallbackContext ();
+			return callbackContext.CreateXic (window, xim);
+		}
+
+		XIMCallbackContext callbackContext;
+
+		class XIMCallbackContext
+		{
+			XIMCallback startCB, doneCB, drawCB, caretCB;
+			IntPtr pStartCB = IntPtr.Zero, pDoneCB = IntPtr.Zero, pDrawCB = IntPtr.Zero, pCaretCB = IntPtr.Zero;
+			IntPtr pStartCBN = IntPtr.Zero, pDoneCBN = IntPtr.Zero, pDrawCBN = IntPtr.Zero, pCaretCBN = IntPtr.Zero;
+
+			public XIMCallbackContext ()
+			{
+				startCB = new XIMCallback (IntPtr.Zero, DoPreeditStart);
+				doneCB = new XIMCallback (IntPtr.Zero, DoPreeditDone);
+				drawCB = new XIMCallback (IntPtr.Zero, DoPreeditDraw);
+				caretCB = new XIMCallback (IntPtr.Zero, DoPreeditCaret);
+				pStartCB = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (XIMCallback)));
+				pDoneCB = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (XIMCallback)));
+				pDrawCB = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (XIMCallback)));
+				pCaretCB = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (XIMCallback)));
+				pStartCBN = Marshal.StringToHGlobalAnsi (XNames.XNPreeditStartCallback);
+				pDoneCBN = Marshal.StringToHGlobalAnsi (XNames.XNPreeditDoneCallback);
+				pDrawCBN = Marshal.StringToHGlobalAnsi (XNames.XNPreeditDrawCallback);
+				pCaretCBN = Marshal.StringToHGlobalAnsi (XNames.XNPreeditCaretCallback);
+			}
+
+			~XIMCallbackContext ()
+			{
+				if (pStartCBN != IntPtr.Zero)
+					Marshal.FreeHGlobal (pStartCBN);
+				if (pDoneCBN != IntPtr.Zero)
+					Marshal.FreeHGlobal (pDoneCBN);
+				if (pDrawCBN != IntPtr.Zero)
+					Marshal.FreeHGlobal (pDrawCBN);
+				if (pCaretCBN != IntPtr.Zero)
+					Marshal.FreeHGlobal (pCaretCBN);
+
+				if (pStartCB != IntPtr.Zero)
+					Marshal.FreeHGlobal (pStartCB);
+				if (pDoneCB != IntPtr.Zero)
+					Marshal.FreeHGlobal (pDoneCB);
+				if (pDrawCB != IntPtr.Zero)
+					Marshal.FreeHGlobal (pDrawCB);
+				if (pCaretCB != IntPtr.Zero)
+					Marshal.FreeHGlobal (pCaretCB);
+			}
+
+			int DoPreeditStart (IntPtr xic, IntPtr clientData, IntPtr callData)
+			{
+				Console.WriteLine ("DoPreeditStart");
+				return 128;
+			}
+
+			int DoPreeditDone (IntPtr xic, IntPtr clientData, IntPtr callData)
+			{
+				Console.WriteLine ("DoPreeditDone");
+				return 0;
+			}
+
+			int DoPreeditDraw (IntPtr xic, IntPtr clientData, IntPtr callData)
+			{
+				Console.WriteLine ("DoPreeditDraw");
+				return 0;
+			}
+
+			int DoPreeditCaret (IntPtr xic, IntPtr clientData, IntPtr callData)
+			{
+				Console.WriteLine ("DoPreeditCaret");
+				return 0;
+			}
+
+			public IntPtr CreateXic (IntPtr window, IntPtr xim)
+			{
+				Marshal.StructureToPtr (startCB, pStartCB, false);
+				Marshal.StructureToPtr (doneCB, pDoneCB, false);
+				Marshal.StructureToPtr (drawCB, pDrawCB, false);
+				Marshal.StructureToPtr (caretCB, pCaretCB, false);
+				IntPtr preedit = XVaCreateNestedList (0,
+					pStartCBN, pStartCB,
+					pDoneCBN, pDoneCB,
+					pDrawCBN, pDrawCB,
+					pCaretCBN, pCaretCB,
+					IntPtr.Zero);
+				return XCreateIC (xim,
+					XNames.XNInputStyle, styleOnTheSpot,
+					XNames.XNClientWindow, window,
+					XNames.XNFocusWindow, window,
+					XNames.XNPreeditAttributes, preedit,
+					IntPtr.Zero);
+			}
 		}
 
 		private int LookupString (ref XEvent xevent, int len, out XKeySym keysym, out IntPtr status)
@@ -766,8 +977,24 @@ namespace System.Windows.Forms {
 		[DllImport ("libX11")]
 		private static extern IntPtr XOpenIM (IntPtr display, IntPtr rdb, IntPtr res_name, IntPtr res_class);
 
-		[DllImport ("libX11")]
+		[DllImport ("libX11", CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr XCreateIC (IntPtr xim, string name, XIMProperties im_style, string name2, IntPtr value2, string name3, IntPtr value3, IntPtr terminator);
+		[DllImport ("libX11", CallingConvention = CallingConvention.Cdecl)]
+		private static extern IntPtr XCreateIC (IntPtr xim, string name, XIMProperties im_style, string name2, IntPtr value2, string name3, IntPtr value3, string name4, IntPtr value4, IntPtr terminator);
+
+		[DllImport ("libX11", CallingConvention = CallingConvention.Cdecl)]
+		private static extern IntPtr XVaCreateNestedList (int dummy, IntPtr name0, XPoint value0, IntPtr name1, IntPtr value1, IntPtr terminator);
+		[DllImport ("libX11", CallingConvention = CallingConvention.Cdecl)]
+		private static extern IntPtr XVaCreateNestedList (int dummy, IntPtr name0, IntPtr value0, IntPtr name1, IntPtr value1, IntPtr name2, IntPtr value2, IntPtr name3, IntPtr value3, IntPtr terminator);
+
+		[DllImport ("libX11")]
+		private static extern IntPtr XCreateFontSet (IntPtr display, string name, out IntPtr list, out int count, IntPtr terminator);
+
+		[DllImport ("libX11")]
+		internal extern static void XFreeFontSet (IntPtr data);
+
+		[DllImport ("libX11")]
+		private static extern void XFreeStringList (IntPtr ptr);
 
 		[DllImport ("libX11")]
 		private static extern IntPtr XIMOfIC (IntPtr xic);
@@ -777,6 +1004,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11")]
 		private static extern void XDestroyIC (IntPtr xic);
+
+		[DllImport ("libX11")]
+		private static extern string XGetIMValues (IntPtr xim, string name, out IntPtr value, IntPtr terminator);
 
 		[DllImport ("libX11")]
 		private static extern string XGetICValues (IntPtr xic, string name, out EventMask value, IntPtr terminator);
