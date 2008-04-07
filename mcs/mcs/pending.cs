@@ -546,17 +546,14 @@ namespace Mono.CSharp {
 			if (TypeManager.ImplementsInterface (container.TypeBuilder.BaseType, iface_type))
 				return true;
 
-			//
-			// FIXME: We should be creating fewer proxies.  The runtime can handle most cases.  
-			// 	  At worst, if we can't avoid creating the proxy, we may need to make the 
-			//        proxy use Callvirt.
-			//
 			MethodInfo base_method = (MethodInfo) list [0];
 
 			if (base_method.DeclaringType.IsInterface)
 				return false;
 
 			if (!base_method.IsAbstract && !base_method.IsVirtual)
+				// FIXME: We can avoid creating a proxy if base_method can be marked 'final virtual' instead.
+				//        However, it's too late now, the MethodBuilder has already been created (see bug 377519)
 				DefineProxy (iface_type, base_method, mi, args);
 
 			return true;
