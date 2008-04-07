@@ -1224,7 +1224,6 @@ namespace PEAPI {
 	/// </summary>
 	public class Local {
 
-                private static readonly byte LocalSigByte = 0x7;
 		private static readonly byte Pinned = 0x45;
 		string name;
 		Type type;
@@ -1262,22 +1261,6 @@ namespace PEAPI {
 			type.TypeSig(str);
 		}
 
-		/// <summary>
-		/// Return the signature of this local as an array of byte
-		/// </summary>
-                public byte[] TypeSig()
-                {
-                        MemoryStream str = new MemoryStream();
-                        TypeSig(str);
-                        byte[] sig = new byte[2 + str.Length];
-                        sig[0] = LocalSigByte;
-                        sig[1] = 1;  // number of locals
-                        str.Position = 0;
-                        for(int i=0; i < str.Length; ++i)
-                                sig[i+2] = (byte)str.ReadByte();
-
-                        return sig;
-                }
 	}
 
 	/**************************************************************************/  
