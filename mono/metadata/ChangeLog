@@ -1,3 +1,7 @@
+2008-04-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Add proper verification of ckfinite.
+
 2008-04-04 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (do_conversion): Improved error message to something
