@@ -1,3 +1,27 @@
+2008-04-08  Marek Habersack  <mhabersack@novell.com>
+
+	* AppCodeCompiler.cs: VirtualPath used in PhysicalToVirtual.
+
+	* BuildManager.cs: switched to VirtualPath instead of a string
+	path in several methods.
+	Batch compilation is turned off if we have a custom
+	VirtualPathProvider which implements only the VirtualFile and
+	falls back to DefaultVirtualDirectory implementation for directory
+	access.
+
+	* GenericBuildProvider.cs: AddCodeFile accepts a virtual path.
+
+	* BuildProvider.cs: SetVirtualPath accepts a VirtualPath now.
+
+	* AssemblyBuilder.cs: constructors use the new VirtualPath class
+	now.
+	AddCodeFile can use the VirtualPathProvider if necessary now.
+	BuildAssembly overloads accept VirtualPath parameter instead of a
+	string path now.
+
+	* TemplateBuildProvider.cs: GetCodeBehindSource returns the
+	virtual path now.
+
 2008-03-31  Marek Habersack  <mhabersack@novell.com>
 
 	* AppCodeCompiler.cs: implemented support for AppInitialize (a

@@ -41,6 +41,7 @@ using System.IO;
 using System.Reflection;
 using System.Web.Configuration;
 using System.Web.Util;
+using System.Web.Hosting;
 
 namespace System.Web.Compilation {
 	internal class CompileUnitPartialType
@@ -78,6 +79,7 @@ namespace System.Web.Compilation {
 	
 	public class AssemblyBuilder {
 		const string DEFAULT_ASSEMBLY_BASE_NAME = "App_Web_";
+		const int COPY_BUFFER_SIZE = 8192;
 		
 		static bool KeepFiles = (Environment.GetEnvironmentVariable ("MONO_ASPNET_NODELETE") != null);
 		
@@ -103,11 +105,11 @@ namespace System.Web.Compilation {
 		: this (null, provider, assemblyBaseName)
 		{}
 
-		internal AssemblyBuilder (string virtualPath, CodeDomProvider provider)
+		internal AssemblyBuilder (VirtualPath virtualPath, CodeDomProvider provider)
 		: this (virtualPath, provider, DEFAULT_ASSEMBLY_BASE_NAME)
 		{}
 		
-		internal AssemblyBuilder (string virtualPath, CodeDomProvider provider, string assemblyBaseName)
+		internal AssemblyBuilder (VirtualPath virtualPath, CodeDomProvider provider, string assemblyBaseName)
 		{
 			this.provider = provider;
 			this.outputFilesPrefix = assemblyBaseName ?? DEFAULT_ASSEMBLY_BASE_NAME;
@@ -116,7 +118,7 @@ namespace System.Web.Compilation {
 
 			CompilationSection section;
 			if (virtualPath != null)
-				section = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation", virtualPath);
+				section = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation", virtualPath.Absolute);
 			else
 				section = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation");
 			string tempdir = section.TempDirectory;
@@ -296,10 +298,15 @@ namespace System.Web.Compilation {
 
 		internal void AddCodeFile (string path)
 		{
-			AddCodeFile (path, null);
+			AddCodeFile (path, null, false);
+		}
+
+		internal void AddCodeFile (string path, BuildProvider bp)
+		{
+			AddCodeFile (path, bp, false);
 		}
 		
-		internal void AddCodeFile (string path, BuildProvider bp)
+		internal void AddCodeFile (string path, BuildProvider bp, bool isVirtual)
 		{
 			if (String.IsNullOrEmpty (path))
 				return;
@@ -315,7 +322,24 @@ namespace System.Web.Compilation {
 				return; // maybe better to throw an exception here?
 			extension = extension.Substring (1);
 			string filename = GetTempFilePhysicalPath (extension);
-			File.Copy (path, filename, true);
+
+			if (isVirtual) {
+				VirtualFile vf = HostingEnvironment.VirtualPathProvider.GetFile (path);
+				if (vf == null)
+					throw new HttpException (404, "Virtual file '" + path + "' does not exist.");
+				
+				using (FileStream f = new FileStream (filename, FileMode.Create, FileAccess.Write)) {
+					using (Stream s = vf.Open ()) {
+						byte[] input = new byte [COPY_BUFFER_SIZE];
+						int retval;
+
+						while ((retval = s.Read (input, 0, COPY_BUFFER_SIZE)) > 0)
+							f.Write (input, 0, retval);
+					}
+				}
+			} else
+				File.Copy (path, filename);
+			
 			SourceFiles.Add (filename);
 		}
 		
@@ -478,7 +502,7 @@ namespace System.Web.Compilation {
 			return null;
 		}
 		
-		internal CompilerResults BuildAssembly (string virtualPath)
+		internal CompilerResults BuildAssembly (VirtualPath virtualPath)
 		{
 			return BuildAssembly (virtualPath, CompilerOptions);
 		}
@@ -488,7 +512,7 @@ namespace System.Web.Compilation {
 			return BuildAssembly (null, options);
 		}
 		
-		internal CompilerResults BuildAssembly (string virtualPath, CompilerParameters options)
+		internal CompilerResults BuildAssembly (VirtualPath virtualPath, CompilerParameters options)
 		{
 			if (options == null)
 				throw new ArgumentNullException ("options");
@@ -546,15 +570,21 @@ namespace System.Web.Compilation {
 						fileText = sr.ReadToEnd ();
 					}
 				} catch (Exception) {}
-
-				throw new CompilationException (virtualPath, results, fileText);
+				
+#if DEBUG
+				Console.WriteLine ("Compilation failed. Errors:");
+				foreach (CompilerError err in results.Errors)
+					Console.WriteLine (err);
+#endif
+				
+				throw new CompilationException (virtualPath.Original, results, fileText);
 			}
 			
 			Assembly assembly = results.CompiledAssembly;
 			if (assembly == null) {
 				if (!File.Exists (options.OutputAssembly)) {
 					results.TempFiles.Delete ();
-					throw new CompilationException (virtualPath, results.Errors,
+					throw new CompilationException (virtualPath.Original, results.Errors,
 						"No assembly returned after compilation!?");
 				}
 

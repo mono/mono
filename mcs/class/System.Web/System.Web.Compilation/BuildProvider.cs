@@ -55,16 +55,9 @@ namespace System.Web.Compilation {
 			ref_assemblies = new ArrayList ();
 		}
 
-		internal void SetVirtualPath (string virtualPath)
+		internal void SetVirtualPath (VirtualPath virtualPath)
 		{
-			if (!VirtualPathUtility.IsRooted (virtualPath))
-				virtual_path = "/" + virtualPath;
-			else {
-				if (VirtualPathUtility.IsAppRelative (virtualPath))
-					virtual_path = VirtualPathUtility.ToAbsolute (virtualPath);
-				else
-					virtual_path = virtualPath;
-			}
+			virtual_path = virtualPath.Absolute;
 		}
 
 		internal virtual void GenerateCode ()

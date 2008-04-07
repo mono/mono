@@ -1,3 +1,7 @@
+2008-04-08  Marek Habersack  <mhabersack@novell.com>
+
+	* System.Web.dll.sources: added System.Web/VirtualPath.cs
+
 2008-03-09  Dean Brettle <dean@brettle.com> 
 
 	* System.Web_test.dll.sources: added

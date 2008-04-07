@@ -629,8 +629,8 @@ namespace System.Web.UI {
 				// Make sure the source exists
 				src = UrlUtils.Combine (BaseVirtualDir, src);
 				srcRealPath = MapPath (src, false);
-				
-				if (!File.Exists (srcRealPath))
+
+				if (!HostingEnvironment.VirtualPathProvider.FileExists (src))
 					ThrowParseException ("File " + src + " not found");
 
 				// We are going to create a partial class that shares
@@ -839,7 +839,7 @@ namespace System.Web.UI {
 			abuilder.CompilerOptions = parameters;
 			abuilder.AddAssemblyReference (BuildManager.GetReferencedAssemblies () as List <Assembly>);
 			abuilder.AddCodeFile (realPath);
-			result = abuilder.BuildAssembly (vpath);
+			result = abuilder.BuildAssembly (new VirtualPath (vpath));
 #else
 			result = CachingCompiler.Compile (language, realPath, realPath, assemblies, Debug);
 #endif

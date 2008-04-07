@@ -271,9 +271,9 @@ namespace System.Web.Compilation
 			}
 		}
 		
-		private string PhysicalToVirtual (string file)
+		private VirtualPath PhysicalToVirtual (string file)
 		{
-			return file.Replace (HttpRuntime.AppDomainAppPath, "/").Replace (Path.DirectorySeparatorChar, '/');
+			return new VirtualPath (file.Replace (HttpRuntime.AppDomainAppPath, "/").Replace (Path.DirectorySeparatorChar, '/'));
 		}
 		
 		private BuildProvider GetBuildProviderFor (string file, BuildProviderCollection buildProviders)
