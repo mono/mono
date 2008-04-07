@@ -1,3 +1,9 @@
+2008-04-07  Andreia Gaita <avidigal@novell.com> 
+	[Backport to 1.9]
+	* Mono.Mozilla/Base.cs: Change the initialization logic so that
+	  gluezilla_init is only called once for every app run (no matter how
+	  many browser windows end up being created).
+
 2008-02-06  Andreia Gaita <avidigal@novell.com>
 	[Backport to 1.9]
 	* Navigation.cs: Pass the proper flags to reload
