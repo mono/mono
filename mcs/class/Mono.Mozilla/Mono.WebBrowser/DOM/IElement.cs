@@ -31,10 +31,24 @@ namespace Mono.WebBrowser.DOM
 	{
 		IElementCollection 	All { get; }
 		IElementCollection 	Children { get; }
+
+		int ClientWidth		{ get; }
+		int ClientHeight	{ get; }
+		int ScrollHeight	{ get; }
+		int ScrollWidth		{ get; }
+		int ScrollLeft		{ get; set;}
+		int ScrollTop		{ get; set; }
+		int OffsetHeight	{ get; }
+		int OffsetWidth		{ get; }
+		int OffsetLeft		{ get; }
+		int OffsetTop		{ get; }
+		IElement OffsetParent { get; }
+
 		string 				InnerText { get; set; }
 		string 				InnerHTML { get; }
 		string 				TagName { get; }
-		
+		bool				Disabled { get; set; }
+
 		IElement			AppendChild (IElement child);
 		bool 				Equals (IElement obj);
 		bool 				HasAttribute (string name);

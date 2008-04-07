@@ -409,13 +409,27 @@ namespace System.Windows.Forms
 		{
 			Edit (source, rowNum, bounds, readOnly, string.Empty);
 		}
-		
+
+#if NET_2_0
 		protected internal virtual void Edit (CurrencyManager source, int rowNum, Rectangle bounds, bool readOnly, string displayText)
-		{	
-			Edit (source, rowNum, bounds, readOnly, displayText, true);
+		{
+			string instantText = displayText;
+#else
+		protected internal virtual void Edit (CurrencyManager source, int rowNum, Rectangle bounds, bool readOnly, string instantText)
+		{
+#endif
+			Edit (source, rowNum, bounds, readOnly, instantText, true);
 		}
 
-		protected internal abstract void Edit (CurrencyManager source, int rowNum, Rectangle bounds, bool readOnly, string displayText,  bool cellIsVisible);
+		protected internal abstract void Edit (CurrencyManager source,
+			int rowNum, Rectangle bounds, bool readOnly,
+#if NET_2_0
+			string displayText,
+#else
+			string instantText,
+#endif
+			bool cellIsVisible);
+
 
 		[MonoTODO]
 		protected void EndUpdate ()
@@ -497,9 +511,15 @@ namespace System.Windows.Forms
 			SetDataGridInColumn (value);
 		}
 
+#if NET_2_0
 		protected internal virtual void UpdateUI (CurrencyManager source, int rowNum, string displayText)
 		{
 		}
+#else
+		protected internal virtual void UpdateUI (CurrencyManager source, int rowNum, string instantText)
+		{
+		}
+#endif
 
 		#endregion	// Public Instance Methods
 		
@@ -508,7 +528,7 @@ namespace System.Windows.Forms
 		virtual internal void OnKeyDown (KeyEventArgs ke, int row, int column) {}
 		
 		internal void PaintHeader (Graphics g, Rectangle bounds, int colNum)
-		{	
+		{
 			// Background
 			g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (DataGridTableStyle.CurrentHeaderBackColor), 
 				bounds);
@@ -531,7 +551,7 @@ namespace System.Windows.Forms
 			}
 			
 			bounds.X += 2;
-			bounds.Width -=	2;
+			bounds.Width -= 2;
 
 			if (arrow_drawing != ArrowDrawing.No)
 				bounds.Width -= 16;

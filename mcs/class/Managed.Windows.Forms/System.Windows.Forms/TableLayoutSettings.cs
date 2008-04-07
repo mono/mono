@@ -277,11 +277,11 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region ISerializable Members
-		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
+		void ISerializable.GetObjectData (SerializationInfo si, StreamingContext context)
 		{
 			TableLayoutSettingsTypeConverter conv = new TableLayoutSettingsTypeConverter ();
 			string text = conv.ConvertToInvariantString (this);
-			info.AddValue ("SerializedString", text);
+			si.AddValue ("SerializedString", text);
 		}
 		#endregion
 		

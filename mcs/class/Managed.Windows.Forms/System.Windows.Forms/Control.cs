@@ -425,51 +425,43 @@ namespace System.Windows.Forms
 		[DesignerSerializer("System.Windows.Forms.Design.ControlCollectionCodeDomSerializer, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
 		public class ControlCollection : IList, ICollection, ICloneable, IEnumerable {
 #endif
-			#region	ControlCollection Local Variables
+			#region ControlCollection Local Variables
 #if !NET_2_0
 			ArrayList list;
 #endif
 			ArrayList impl_list;
-			Control[] all_controls;
+			Control [] all_controls;
 			Control owner;
-			#endregion	// ControlCollection Local Variables
+			#endregion // ControlCollection Local Variables
 
 			#region ControlCollection Public Constructor
-			public ControlCollection(Control owner) {
-				this.owner=owner;
+			public ControlCollection (Control owner)
+			{
+				this.owner = owner;
 #if !NET_2_0
-				this.list=new ArrayList();
+				this.list = new ArrayList();
 #endif
 			}
 			#endregion
 
-			#region	ControlCollection Public Instance Properties
-#if NET_2_0
-			int ICollection.Count {
-				get { return Count; }
-			}
-#endif
-
+			#region ControlCollection Public Instance Properties
 
 #if !NET_2_0
 			public int Count {
 				get { return list.Count; }
 			}
-#endif
 
-#if NET_2_0
-			bool IList.IsReadOnly
-#else
-			public bool IsReadOnly
-#endif
-			{
+			public bool IsReadOnly {
 				get {
 					return list.IsReadOnly;
 				}
 			}
+#endif
 
 #if NET_2_0
-			public Control Owner { get { return this.owner; } }
+			public Control Owner {
+				get { return this.owner; }
+			}
 			
 			public virtual Control this[string key] {
 				get { 
@@ -494,10 +486,13 @@ namespace System.Windows.Forms
 				
 				
 			}
+
 			#endregion // ControlCollection Public Instance Properties
 			
-			#region	ControlCollection Instance Methods
-			public virtual void Add (Control value) {
+			#region ControlCollection Instance Methods
+
+			public virtual void Add (Control value)
+			{
 				if (value == null)
 					return;
 
@@ -554,12 +549,14 @@ namespace System.Windows.Forms
 				owner.OnControlAdded(new ControlEventArgs(value));
 			}
 			
-			internal void AddToList (Control c) {
+			internal void AddToList (Control c)
+			{
 				all_controls = null;
 				list.Add (c);
 			}
 
-			internal virtual void AddImplicit (Control control) {
+			internal virtual void AddImplicit (Control control)
+			{
 				if (impl_list == null)
 					impl_list = new ArrayList ();
 
@@ -588,7 +585,8 @@ namespace System.Windows.Forms
 #if NET_2_0
 			[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 #endif
-			public virtual void AddRange (Control[] controls) {
+			public virtual void AddRange (Control[] controls)
+			{
 				if (controls == null)
 					throw new ArgumentNullException ("controls");
 
@@ -602,7 +600,8 @@ namespace System.Windows.Forms
 				}
 			}
 
-			internal virtual void AddRangeImplicit (Control [] controls) {
+			internal virtual void AddRangeImplicit (Control [] controls)
+			{
 				if (controls == null)
 					throw new ArgumentNullException ("controls");
 
@@ -619,7 +618,8 @@ namespace System.Windows.Forms
 #if NET_2_0
 			new
 #endif
-			public virtual void Clear () {
+			public virtual void Clear ()
+			{
 				all_controls = null;
 
 				// MS sends remove events in reverse order
@@ -628,7 +628,8 @@ namespace System.Windows.Forms
 				}
 			}
 
-			internal virtual void ClearImplicit () {
+			internal virtual void ClearImplicit ()
+			{
 				if (impl_list == null)
 					return;
 				all_controls = null;
@@ -672,18 +673,16 @@ namespace System.Windows.Forms
 			{
 				return IndexOfKey (key) >= 0;
 			}
-
-			void ICollection.CopyTo (Array array, int index) {
-				CopyTo (array, index);
-			}
 #endif
 
 #if !NET_2_0
-			public void CopyTo (Array array, int index) {
-				list.CopyTo(array, index);
+			public void CopyTo (Array dest, int index)
+			{
+				list.CopyTo (dest, index);
 			}
 
-			public override bool Equals (object other) {
+			public override bool Equals (object other)
+			{
 				if (other is ControlCollection && (((ControlCollection)other).owner==this.owner)) {
 					return(true);
 				} else {
@@ -764,13 +763,15 @@ namespace System.Windows.Forms
 			}
 
 #if !NET_2_0
-			public override int GetHashCode() {
-				return base.GetHashCode();
+			public override int GetHashCode ()
+			{
+				return base.GetHashCode ();
 			}
 #endif
 
-			public int IndexOf(Control control) {
-				return list.IndexOf(control);
+			public int IndexOf (Control control)
+			{
+				return list.IndexOf (control);
 			}
 
 #if NET_2_0
@@ -787,7 +788,8 @@ namespace System.Windows.Forms
 			}
 #endif
 
-			public virtual void Remove(Control value) {
+			public virtual void Remove (Control value)
+			{
 				if (value == null)
 					return;
 
@@ -809,7 +811,8 @@ namespace System.Windows.Forms
 				owner.UpdateChildrenZOrder();
 			}
 
-			internal virtual void RemoveImplicit (Control control) {
+			internal virtual void RemoveImplicit (Control control)
+			{
 				if (impl_list != null) {
 					all_controls = null;
 					owner.PerformLayout (control, "Parent");
@@ -823,11 +826,12 @@ namespace System.Windows.Forms
 #if NET_2_0
 			new
 #endif
-			public void RemoveAt(int index) {
-				if (index < 0 || index >= list.Count) {
+			public void RemoveAt (int index)
+			{
+				if (index < 0 || index >= list.Count)
 					throw new ArgumentOutOfRangeException("index", index, "ControlCollection does not have that many controls");
-				}
-				Remove ((Control)list[index]);
+
+				Remove ((Control) list [index]);
 			}
 
 #if NET_2_0
@@ -837,7 +841,7 @@ namespace System.Windows.Forms
 				
 				if (index >= 0)
 					RemoveAt (index);
-			}	
+			}
 #endif
 
 #if NET_2_0
@@ -845,7 +849,8 @@ namespace System.Windows.Forms
 #else
 			public void
 #endif
-			SetChildIndex(Control child, int newIndex) {
+			SetChildIndex(Control child, int newIndex)
+			{
 				if (child == null)
 					throw new ArgumentNullException ("child");
 
@@ -871,10 +876,13 @@ namespace System.Windows.Forms
 				child.UpdateZOrder();
 				owner.PerformLayout();
 			}
+
 			#endregion // ControlCollection Private Instance Methods
 
-			#region	ControlCollection Interface Properties
-			object IList.this[int index] {
+			#region ControlCollection Interface Properties
+
+#if !NET_2_0
+			object IList.this [int index] {
 				get {
 					if (index<0 || index>=list.Count) {
 						throw new ArgumentOutOfRangeException("index", index, "ControlCollection does not have that many controls");
@@ -917,65 +925,73 @@ namespace System.Windows.Forms
 					return list.SyncRoot;
 				}
 			}
+#endif
+
 			#endregion // ControlCollection Interface Properties
 
-			#region	ControlCollection Interface Methods
-			int IList.Add(object value) {
-				if (!(value is Control)) {
-					throw new ArgumentException("Object of type Control required", "value");
-				}
+			#region ControlCollection Interface Methods
 
-				if (value == null) {
-					throw new ArgumentException("value", "Cannot add null controls");
-				}
+			int IList.Add (object control)
+			{
+				if (!(control is Control))
+					throw new ArgumentException ("Object of type Control required", "control");
+
+				if (control == null)
+					throw new ArgumentException ("control", "Cannot add null controls");
 
 				bool owner_permits_toplevels = (owner is MdiClient) || (owner is Form && ((Form)owner).IsMdiContainer);
-				bool child_is_toplevel = ((Control)value).GetTopLevel();
-				bool child_is_mdichild = (value is Form && ((Form)value).IsMdiChild);
+				bool child_is_toplevel = ((Control) control).GetTopLevel ();
+				bool child_is_mdichild = (control is Form && ((Form) control).IsMdiChild);
 
 				if (child_is_toplevel && !(owner_permits_toplevels && child_is_mdichild))
-					throw new ArgumentException("Cannot add a top level control to a control.", "value");
+					throw new ArgumentException ("Cannot add a top level control to a control.", "control");
 
-				return list.Add(value);
+				return list.Add (control);
 			}
 
-			bool IList.Contains(object value) {
-				if (!(value is Control)) {
+#if !NET_2_0
+			bool IList.Contains (object control)
+			{
+				if (!(control is Control))
+					throw new ArgumentException ("Object of type Control required", "control");
+
+				return this.Contains ((Control) control);
+			}
+
+			int IList.IndexOf (object control)
+			{
+				if (!(control is Control))
+					throw new ArgumentException ("Object of type Control  required", "control");
+
+				return this.IndexOf ((Control) control);
+			}
+
+			void IList.Insert (int index, object value)
+			{
+				if (!(value is Control))
 					throw new ArgumentException("Object of type Control required", "value");
-				}
 
-				return this.Contains((Control) value);
-			}
-
-			int IList.IndexOf(object value) {
-				if (!(value is Control)) {
-					throw new ArgumentException("Object of type Control  required", "value");
-				}
-
-				return this.IndexOf((Control) value);
-			}
-
-			void IList.Insert(int index, object value) {
-				if (!(value is Control)) {
-					throw new ArgumentException("Object of type Control required", "value");
-				}
 				all_controls = null;
-				list.Insert(index, value);
+				list.Insert (index, value);
 			}
+#endif
 
-			void IList.Remove(object value) {
-				if (!(value is Control)) {
-					throw new ArgumentException("Object of type Control required", "value");
-				}
+			void IList.Remove (object control)
+			{
+				if (!(control is Control))
+					throw new ArgumentException ("Object of type Control required", "control");
+
 				all_controls = null;
-				list.Remove(value);
+				list.Remove (control);
 			}
 
-			Object ICloneable.Clone() {
-				ControlCollection clone = new ControlCollection(this.owner);
-				clone.list=(ArrayList)list.Clone();		// FIXME: Do we need this?
+			Object ICloneable.Clone ()
+			{
+				ControlCollection clone = new ControlCollection (this.owner);
+				clone.list = (ArrayList)list.Clone ();		// FIXME: Do we need this?
 				return clone;
 			}
+
 			#endregion // ControlCollection Interface Methods
 		
 			private class ControlCollectionEnumerator : IEnumerator
@@ -996,7 +1012,7 @@ namespace System.Windows.Forms
 						} catch (IndexOutOfRangeException) {
 							throw new InvalidOperationException ();
 						}
-					 }
+					}
 				}
 
 				public bool MoveNext ()
@@ -1257,14 +1273,14 @@ namespace System.Windows.Forms
 		#region Private & Internal Methods
 		
 #if NET_2_0
-		void IDropTarget.OnDragDrop (DragEventArgs e)
+		void IDropTarget.OnDragDrop (DragEventArgs drgEvent)
 		{
-			OnDragDrop (e);
+			OnDragDrop (drgEvent);
 		}
 		
-		void IDropTarget.OnDragEnter (DragEventArgs e)
+		void IDropTarget.OnDragEnter (DragEventArgs drgEvent)
 		{
-			OnDragEnter (e);
+			OnDragEnter (drgEvent);
 		}
 		
 		void IDropTarget.OnDragLeave (EventArgs e)
@@ -1272,9 +1288,9 @@ namespace System.Windows.Forms
 			OnDragLeave (e);
 		}
 
-		void IDropTarget.OnDragOver (DragEventArgs e)
+		void IDropTarget.OnDragOver (DragEventArgs drgEvent)
 		{
-			OnDragOver (e);
+			OnDragOver (drgEvent);
 		}
 #endif
 
@@ -3952,7 +3968,7 @@ namespace System.Windows.Forms
 					// If any of our children are transparent, we
 					// have to invalidate them anyways
 					foreach (Control c in child_controls.GetAllControls ())
-						if (c.BackColor == Color.Transparent)
+						if (c.BackColor.A != 255)
 							c.Invalidate ();
 				}
 			}
@@ -4992,8 +5008,14 @@ namespace System.Windows.Forms
 
 				if (IsHandleCreated) {
 					XplatUI.SetVisible (Handle, is_visible, true);
-					
-					if (is_visible && this is Form) {
+					if (!is_visible) {
+						if (parent != null && parent.IsHandleCreated) {
+							parent.Invalidate (bounds);
+							parent.Update ();
+						} else {
+							Refresh ();
+						}
+					} else if (is_visible && this is Form) {
 						// If we are Min or Max, we won't get a WM_SHOWWINDOW from SetWindowState,
 						// so we need to manually create our children, and set them visible
 						// (This normally happens in WmShowWindow.)
@@ -5528,7 +5550,7 @@ namespace System.Windows.Forms
 				mouse_clicks = 1;
 			}
 		}
-					
+
 		private void WmMButtonDown (ref Message m) {
 			InternalCapture = true;
 			OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
@@ -5576,7 +5598,7 @@ namespace System.Windows.Forms
 				mouse_clicks = 1;
 			}
 		}
-					
+
 		private void WmRButtonDown (ref Message m)
 		{
 			// Menu handle.
@@ -5686,7 +5708,7 @@ namespace System.Windows.Forms
 		private void WmShowWindow (ref Message m) {
 			if (IsDisposed)
 				return;
-						
+
 			if (m.WParam.ToInt32() != 0) {
 				if (m.LParam.ToInt32 () == 0) {
 					CreateControl ();
@@ -5706,8 +5728,7 @@ namespace System.Windows.Forms
 					//if (parented)
 						UpdateChildrenZOrder ();
 				}
-			}
-			else {
+			} else {
 				if (parent != null && Focused) {
 					Control	container;
 					Form frm = this as Form;
@@ -5752,7 +5773,8 @@ namespace System.Windows.Forms
 			DefWndProc (ref m);
 		}
 
-		private void WmKeys (ref Message m) {
+		private void WmKeys (ref Message m)
+		{
 			if (ProcessKeyMessage(ref m)) {
 				m.Result = IntPtr.Zero;
 				return;

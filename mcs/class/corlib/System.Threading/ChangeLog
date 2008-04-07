@@ -1,3 +1,8 @@
+2008-04-07  Dick Porter  <dick@ximian.com>
+
+	* Thread.cs: Fix throwing of exceptions when manipulating
+	ApartmentState.  Fixes part of bug 324338.
+
 2008-04-01: Eyal Alaluf <eyala@mainsoft.com>
 
 	* Thread.cs: Put a NumberFormatter instance as a member of the current

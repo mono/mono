@@ -76,8 +76,6 @@ namespace System.Windows.Forms
 		private PropertyToolBarButton alphabetic_toolbarbutton;
 		private PropertyToolBarButton propertypages_toolbarbutton;
 		private PropertyToolBarSeparator separator_toolbarbutton;
-		private PropertyToolBarButton properties_toolbarbutton;
-		private PropertyToolBarButton events_toolbarbutton;
 		private bool events_tab_visible;
 
 		private PropertyToolBar toolbar;
@@ -1296,34 +1294,39 @@ namespace System.Windows.Forms
 		#region Com2Interop.IComPropertyBrowser Interface
 		[MonoTODO]
 		bool ComponentModel.Com2Interop.IComPropertyBrowser.InPropertySet {
-			get  {
+			get {
 				throw new NotImplementedException();
 			}
 		}
 
 		[MonoTODO]
-		void ComponentModel.Com2Interop.IComPropertyBrowser.DropDownDone() {
-			throw new NotImplementedException();
+		void ComponentModel.Com2Interop.IComPropertyBrowser.DropDownDone ()
+		{
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		bool ComponentModel.Com2Interop.IComPropertyBrowser.EnsurePendingChangesCommitted() {
-			throw new NotImplementedException();
+		bool ComponentModel.Com2Interop.IComPropertyBrowser.EnsurePendingChangesCommitted ()
+		{
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		void ComponentModel.Com2Interop.IComPropertyBrowser.HandleF4() {
-			throw new NotImplementedException();
+		void ComponentModel.Com2Interop.IComPropertyBrowser.HandleF4 ()
+		{
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		void ComponentModel.Com2Interop.IComPropertyBrowser.LoadState(Microsoft.Win32.RegistryKey key) {
-			throw new NotImplementedException();
+		void ComponentModel.Com2Interop.IComPropertyBrowser.LoadState (Microsoft.Win32.RegistryKey optRoot)
+		{
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		void ComponentModel.Com2Interop.IComPropertyBrowser.SaveState(Microsoft.Win32.RegistryKey key) {
-			throw new NotImplementedException();
+		void ComponentModel.Com2Interop.IComPropertyBrowser.SaveState (Microsoft.Win32.RegistryKey optRoot)
+		{
+			throw new NotImplementedException ();
 		}
 
 		static object ComComponentNameChangedEvent = new object ();
@@ -1355,9 +1358,9 @@ namespace System.Windows.Forms
 				get { return property_tabs.IsSynchronized; }
 			}
 
-			void ICollection.CopyTo (Array array, int index) 
+			void ICollection.CopyTo (Array dest, int index)
 			{
-				property_tabs.CopyTo (array, index);
+				property_tabs.CopyTo (dest, index);
 			}
 
 			object ICollection.SyncRoot {

@@ -85,7 +85,7 @@ namespace System.Net {
 				if ((context.Listener.AuthenticationSchemes == AuthenticationSchemes.Basic || context.Listener.AuthenticationSchemes == AuthenticationSchemes.Negotiate) && context.Request.Headers ["Authorization"] == null) {
 					context.Listener.EndGetContext (this);
 					context.Response.StatusCode = 401;
-					context.Response.Headers ["WWW-Authenticate"] = AuthenticationSchemes.Basic + "realm=\"\"";
+					context.Response.Headers ["WWW-Authenticate"] = AuthenticationSchemes.Basic + " realm=\"\"";
 					context.Response.OutputStream.Close ();
 					context.Listener.BeginGetContext (cb, state);
 				} else if (cb != null)

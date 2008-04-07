@@ -74,6 +74,8 @@ namespace Mono.Mozilla.DOM
 				if (webBrowserFocus == null)
 					return null;
 				webBrowserFocus.getFocusedElement (out element);
+				if ((element as nsIDOMHTMLElement) != null)
+					return new HTMLElement (control, element as nsIDOMHTMLElement) as IElement;
 				return new Element (control, element) as IElement;
 			}
 		}

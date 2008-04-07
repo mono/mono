@@ -97,9 +97,9 @@ namespace System.Windows.Forms
 
 		public event CollectionChangeEventHandler CollectionChanged;
 
-		int IList.Add (object o)
+		int IList.Add (object value)
 		{
-			return Add (o as DataGridViewCell);
+			return Add (value as DataGridViewCell);
 		}
 
 		public virtual int Add (DataGridViewCell dataGridViewCell)
@@ -125,9 +125,9 @@ namespace System.Windows.Forms
 			base.List.Clear();
 		}
 
-		bool IList.Contains (object o)
+		bool IList.Contains (object value)
 		{
-			return Contains (o as DataGridViewCell);
+			return Contains (value as DataGridViewCell);
 		}
 
 		public virtual bool Contains (DataGridViewCell dataGridViewCell)
@@ -140,9 +140,9 @@ namespace System.Windows.Forms
 			base.List.CopyTo (array, index);
 		}
 
-		int IList.IndexOf (object o)
+		int IList.IndexOf (object value)
 		{
-			return IndexOf (o as DataGridViewCell);
+			return IndexOf (value as DataGridViewCell);
 		}
 
 		public int IndexOf (DataGridViewCell dataGridViewCell)
@@ -150,9 +150,9 @@ namespace System.Windows.Forms
 			return base.List.IndexOf (dataGridViewCell);
 		}
 
-		void IList.Insert (int index, object o)
+		void IList.Insert (int index, object value)
 		{
-			Insert (index, o as DataGridViewCell);
+			Insert (index, value as DataGridViewCell);
 		}
 
 		public virtual void Insert (int index, DataGridViewCell dataGridViewCell)
@@ -165,9 +165,9 @@ namespace System.Windows.Forms
 				CollectionChangeAction.Add, dataGridViewCell));
 		}
 
-		void IList.Remove (object o)
+		void IList.Remove (object value)
 		{
-			Remove (o as DataGridViewCell);
+			Remove (value as DataGridViewCell);
 		}
 
 		public virtual void Remove (DataGridViewCell cell)

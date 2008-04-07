@@ -768,7 +768,11 @@ namespace System.Windows.Forms {
 		}
 		#endregion
 
+#if NET_2_0
 		protected void UpdateTabSelection (bool updateFocus)
+#else
+		protected void UpdateTabSelection (bool uiselected)
+#endif
 		{
 			ResizeTabPages ();
 		}
@@ -1490,7 +1494,7 @@ namespace System.Windows.Forms {
 				}
 				set {
 					owner.SetTab (index, value);
-				}    
+				}
 			}
 #if NET_2_0
 			public virtual TabPage this [string key] {
@@ -1667,23 +1671,27 @@ namespace System.Windows.Forms {
 				return owner.Controls.IndexOf (page);
 			}
 
-			bool IList.Contains (object value)
+			bool IList.Contains (object page)
 			{
-				TabPage page = value as TabPage;
-				if (page == null)
+				TabPage tabPage = page as TabPage;
+				if (tabPage == null)
 					return false;
-				return Contains (page);
+				return Contains (tabPage);
 			}
 
-			int IList.IndexOf (object value)
+			int IList.IndexOf (object page)
 			{
-				TabPage page = value as TabPage;
-				if (page == null)
+				TabPage tabPage = page as TabPage;
+				if (tabPage == null)
 					return -1;
-				return IndexOf ((TabPage) page);
+				return IndexOf (tabPage);
 			}
 
+#if NET_2_0
+			void IList.Insert (int index, object tabPage)
+#else
 			void IList.Insert (int index, object value)
+#endif
 			{
 				throw new NotSupportedException ();
 			}

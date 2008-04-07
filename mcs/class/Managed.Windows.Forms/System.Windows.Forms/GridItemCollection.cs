@@ -49,7 +49,7 @@ namespace System.Windows.Forms
 		#endregion	// Constructors
 
 		#region Internal Properties and Methods
-		internal void Add(GridItem grid_item)
+		internal void Add (GridItem grid_item)
 		{
 			list.Add (grid_item.Label, grid_item);
 		}
@@ -72,15 +72,13 @@ namespace System.Windows.Forms
 		#endregion	// Internal Properties and Methods
 
 		#region	Public Instance Properties
-		public int Count
-		{
+		public int Count {
 			get {
 				return list.Count;
 			}
 		}
 
-		public GridItem this [int index] 
-		{
+		public GridItem this [int index] {
 			get {
 				if (index>=list.Count) {
 					throw new ArgumentOutOfRangeException("index");
@@ -89,8 +87,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public GridItem this [string label] 
-		{
+		public GridItem this [string label] {
 			get {
 				return (GridItem)list[label];
 			}
@@ -100,7 +97,7 @@ namespace System.Windows.Forms
 		#region IEnumerable Members
 		public IEnumerator GetEnumerator()
 		{
-			return new GridItemEnumerator(this);
+			return new GridItemEnumerator (this);
 		}
 		#endregion
 
@@ -108,23 +105,27 @@ namespace System.Windows.Forms
 		internal class GridItemEnumerator : IEnumerator{
 			int nIndex;
 			GridItemCollection collection;
-			public GridItemEnumerator(GridItemCollection coll) {
+
+			public GridItemEnumerator(GridItemCollection coll)
+			{
 				collection = coll;
 				nIndex = -1;
 			}
 
-			public bool MoveNext() {
+			public bool MoveNext ()
+			{
 				nIndex++;
-				return(nIndex < collection.Count);
+				return (nIndex < collection.Count);
 			}
 
-			public void Reset() {
+			public void Reset ()
+			{
 				nIndex = -1;
 			}
 
 			object System.Collections.IEnumerator.Current {
 				get {
-					return(collection[nIndex]);
+					return collection [nIndex];
 				}
 			}
 		}
@@ -132,23 +133,19 @@ namespace System.Windows.Forms
 
 		#region ICollection Members
 
-		bool ICollection.IsSynchronized
-		{
-			get
-			{
+		bool ICollection.IsSynchronized {
+			get {
 				return list.IsSynchronized;
 			}
 		}
 
-		void ICollection.CopyTo(Array array, int index)
+		void ICollection.CopyTo(Array dest, int index)
 		{
-			list.CopyTo(array, index);
+			list.CopyTo (dest, index);
 		}
 
-		object ICollection.SyncRoot
-		{
-			get
-			{
+		object ICollection.SyncRoot {
+			get {
 				return list.SyncRoot;
 			}
 		}

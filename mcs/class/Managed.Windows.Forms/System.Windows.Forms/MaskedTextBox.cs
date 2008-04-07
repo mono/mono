@@ -26,8 +26,7 @@
 //	Rolf Bjarne Kvinge (RKvinge@novell.com)
 //
 
-
-#if NET_2_0// && notyet
+#if NET_2_0
 
 using System;
 using System.Collections;
@@ -63,8 +62,8 @@ namespace System.Windows.Forms
 		private Type validating_type;
 		private bool is_empty_mask;
 		private bool setting_text;
-		
 #endregion
+
 #region Events
 		static object AcceptsTabChangedEvent = new object ();
 		static object IsOverwriteModeChangedEvent = new object ();
@@ -117,6 +116,7 @@ namespace System.Windows.Forms
 			remove { Events.RemoveHandler (TypeValidationCompletedEvent, value); }
 		}
 #endregion
+
 #region Constructors
 		public MaskedTextBox ()
 		{
@@ -144,6 +144,7 @@ namespace System.Windows.Forms
 			is_empty_mask = false;
 			Init ();
 		}
+
 		private void Init ()
 		{
 			BackColor = SystemColors.Window;
@@ -151,6 +152,7 @@ namespace System.Windows.Forms
 			UpdateVisibleText ();
 		}
 #endregion
+
 #region Public and protected methods
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new void ClearUndo ()
@@ -343,19 +345,19 @@ namespace System.Windows.Forms
 		//[SecurityPermission (SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
 		protected override void WndProc (ref Message m)
 		{
-			switch ((Msg) m.Msg)
-			{
+			switch ((Msg) m.Msg) {
 			default:
 				base.WndProc (ref m);
 				return;
 			}
 		}
 #endregion
+
 #region Properties
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
-		public new bool AcceptsTab { 
+		public new bool AcceptsTab {
 			get {
 				return false;
 			}
@@ -364,19 +366,19 @@ namespace System.Windows.Forms
 		}
 		
 		[DefaultValue (true)]
-		public bool AllowPromptAsInput { 
-			get { 
-				return provider.AllowPromptAsInput; 
-			} 
-			set { 
+		public bool AllowPromptAsInput {
+			get {
+				return provider.AllowPromptAsInput;
+			}
+			set {
 				provider = new MaskedTextProvider (provider.Mask, provider.Culture, value, provider.PromptChar, provider.PasswordChar, provider.AsciiOnly);
 				UpdateVisibleText ();
-			} 
+			}
 		}
 		
 		[RefreshProperties (RefreshProperties.Repaint)]
 		[DefaultValue (false)]
-		public bool AsciiOnly { 
+		public bool AsciiOnly {
 			get {
 				return provider.AsciiOnly;
 			}
@@ -387,7 +389,7 @@ namespace System.Windows.Forms
 		}
 		
 		[DefaultValue (false)]
-		public bool BeepOnError { 
+		public bool BeepOnError {
 			get {
 				return beep_on_error;
 			}
@@ -405,7 +407,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		protected override CreateParams CreateParams { 
+		protected override CreateParams CreateParams {
 			//[SecurityPermission (SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)] 
 			get {
 				return base.CreateParams;
@@ -502,6 +504,7 @@ namespace System.Windows.Forms
 		[Localizable (true)]
 		[Editor ("System.Windows.Forms.Design.MaskPropertyEditor, " + Consts.AssemblySystem_Design, typeof (UITypeEditor))]
 		[RefreshProperties (RefreshProperties.Repaint)]
+		[MergablePropertyAttribute (false)]
 		[DefaultValue ("")]
 		public string Mask {
 			get {
@@ -872,5 +875,5 @@ namespace System.Windows.Forms
 #endregion
 	}
 }
-#endif
 
+#endif

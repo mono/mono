@@ -1,3 +1,16 @@
+2008-04-03  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* CollectionEditor.cs: 
+	  - Handle removing multiple items at once.
+	  - Select the previous item after removal of other(s).
+
+2008-04-03  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* CollectionEditor.cs: The display name of an object in the 
+	list is not static. It can dynamically change when the object 
+	get's modified.
+	[Fixes bug #375786]
+
 2008-03-28  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* CollectionEditor.cs: Fix multiple bugs.

@@ -176,7 +176,7 @@ namespace Mono.CSharp {
 				base.Emit (ec);
 		}
 
-		public override bool Resolve (EmitContext ec)
+		protected override bool DoResolve (EmitContext ec)
 		{	
 			//
 			// When delegate returns void, only expression statements can be used
@@ -196,7 +196,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			return base.Resolve (ec);
+			return base.DoResolve (ec);
 		}
 	}
 }

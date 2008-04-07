@@ -225,9 +225,9 @@ namespace System.Windows.Forms {
 		#endregion	// Events
 
 		#region ICollection Interfaces
-		void ICollection.CopyTo (Array array, int index)
+		void ICollection.CopyTo (Array ar, int index)
 		{
-			managers.CopyTo (array, index);
+			managers.CopyTo (ar, index);
 		}
 
 		int ICollection.Count {

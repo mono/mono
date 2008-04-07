@@ -5287,65 +5287,71 @@ lock_statement
 	;
 
 using_statement
-	: USING open_parens resource_acquisition CLOSE_PARENS
+	: USING open_parens local_variable_declaration CLOSE_PARENS
 	  {
 		start_block (lexer.Location);
 		Block assign_block = current_block;
 
-		if ($3 is DictionaryEntry){
-			DictionaryEntry de = (DictionaryEntry) $3;
-			Location l = (Location) $1;
+		DictionaryEntry de = (DictionaryEntry) $3;
+		Location l = (Location) $1;
 
-			Expression type = (Expression) de.Key;
-			ArrayList var_declarators = (ArrayList) de.Value;
+		Expression type = (Expression) de.Key;
+		ArrayList var_declarators = (ArrayList) de.Value;
 
-			ArrayList vars = new ArrayList (4);
+		Stack vars = new Stack ();
 
-			foreach (VariableDeclaration decl in var_declarators){
+		foreach (VariableDeclaration decl in var_declarators) {
+			LocalInfo vi = current_block.AddVariable (type, decl.identifier, decl.Location);
+			if (vi == null)
+				continue;
+			vi.SetReadOnlyContext (LocalInfo.ReadOnlyContext.Using);
 
-				LocalInfo vi = current_block.AddVariable (type, decl.identifier, decl.Location);
-				if (vi == null)
-					continue;
-				vi.SetReadOnlyContext (LocalInfo.ReadOnlyContext.Using);
-
-				Expression expr = decl.expression_or_array_initializer;
-				if (expr == null) {
-					Report.Error (210, l, "You must provide an initializer in a fixed or using statement declaration");
-				}
-
-				LocalVariableReference var;
-
-				// Get a writable reference to this read-only variable.
-				var = new LocalVariableReference (assign_block, decl.identifier, l, vi, false);
-
-				// This is so that it is not a warning on using variables
-				vi.Used = true;
-
-				vars.Add (new DictionaryEntry (var, expr));				
-
-				// Assign a = new Assign (var, expr, decl.Location);
-				// assign_block.AddStatement (new StatementExpression (a));
+			Expression expr = decl.expression_or_array_initializer;
+			if (expr == null) {
+				Report.Error (210, l, "You must provide an initializer in a fixed or using statement declaration");
+				continue;
 			}
+			LocalVariableReference var;
 
-			// Note: the $$ here refers to the value of this code block and not of the LHS non-terminal.
-			// It can be referred to as $5 below.
-			$$ = new DictionaryEntry (type, vars);
-		 } else {
-			$$ = $3;
-		 }
-	  } 
+			// Get a writable reference to this read-only variable.
+			var = new LocalVariableReference (assign_block, decl.identifier, l, vi, false);
+
+			// This is so that it is not a warning on using variables
+			vi.Used = true;
+
+			vars.Push (new DictionaryEntry (var, expr));
+
+			// Assign a = new Assign (var, expr, decl.Location);
+			// assign_block.AddStatement (new StatementExpression (a));
+		}
+
+		// Note: the $$ here refers to the value of this code block and not of the LHS non-terminal.
+		// It can be referred to as $5 below.
+		$$ = vars;
+	  }
 	  embedded_statement
 	  {
-		Using u = new Using ($5, (Statement) $6, (Location) $1);
-		current_block.AddStatement (u);
+		Statement stmt = (Statement) $6;
+		Stack vars = (Stack) $5;
+		Location l = (Location) $1;
+
+		while (vars.Count > 0) {
+			  DictionaryEntry de = (DictionaryEntry) vars.Pop ();
+			  stmt = new Using ((Expression) de.Key, (Expression) de.Value, stmt, l);
+		}
+		current_block.AddStatement (stmt);
+		$$ = end_block (lexer.Location);
+	  }
+	| USING open_parens expression CLOSE_PARENS
+	  {
+		start_block (lexer.Location);
+	  }
+	  embedded_statement
+	  {
+		current_block.AddStatement (new UsingTemporary ((Expression) $3, (Statement) $6, (Location) $1));
 		$$ = end_block (lexer.Location);
 	  }
 	; 
-
-resource_acquisition
-	: local_variable_declaration
-	| expression
-	;
 
 
 // LINQ

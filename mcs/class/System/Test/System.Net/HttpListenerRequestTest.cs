@@ -161,6 +161,20 @@ namespace MonoTests.System.Net
 			HttpListener2Test.Send (ctx.Response.OutputStream, "%%%OK%%%");
 			listener.Close ();
 		}
+		
+		[Test]
+        	public void HttpBasicAuthScheme()
+        	{
+        		HttpListener listener = HttpListener2Test.CreateAndStartListener("http://*:9000/authTest/", AuthenticationSchemes.Basic);
+        	    	//dummy-wait for context
+            		listener.BeginGetContext(null, listener);
+            		NetworkStream ns = HttpListener2Test.CreateNS(9000);
+            		HttpListener2Test.Send(ns, "GET /authTest/ HTTP/1.0\r\n\r\n");
+            		String response = HttpListener2Test.Receive(ns, 512);
+            		Assert.IsTrue(response.Contains("WWW-Authenticate: Basic realm"), "#A");
+            		ns.Close();
+            		listener.Close();
+        	}
 	}
 }
 

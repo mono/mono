@@ -1,3 +1,7 @@
+2008-04-07  Marek Safar  <marek.safar@gmail.com>
+
+	* compiler-tester.cs: Don't report IL reduction as regression.
+
 2008-03-14  Marek Safar  <marek.safar@gmail.com>
 
 	* compiler-tester.cs: Handle new tests correctly.

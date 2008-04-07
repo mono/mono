@@ -57,13 +57,18 @@ namespace System.Windows.Forms
 		}
 
 		
+#if NET_2_0
 		public DataGridColumnStyle this [PropertyDescriptor propertyDesciptor] {
-			get {				
+			get {
+				PropertyDescriptor propDesc = propertyDesciptor;
+#else
+		public DataGridColumnStyle this [PropertyDescriptor propDesc] {
+			get {
+#endif
 				for (int i = 0; i < items.Count; i++) {
 					DataGridColumnStyle column = (DataGridColumnStyle) items[i];
-					if (column.PropertyDescriptor.Equals (propertyDesciptor)) {
+					if (column.PropertyDescriptor.Equals (propDesc))
 						return column;
-					}
 				}
 				
 				return null;
@@ -121,7 +126,7 @@ namespace System.Windows.Forms
 			ConnectColumnEvents (column);
 			int cnt = items.Add (column);
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, column));
-			return cnt;			
+			return cnt;
 		}
 
 		public void AddRange (DataGridColumnStyle[] columns)
@@ -141,9 +146,15 @@ namespace System.Windows.Forms
 			return (FromColumnNameToIndex (column.MappingName) != -1);
 		}
 
-		public bool Contains (PropertyDescriptor propertyDescriptor)
+#if NET_2_0
+		public bool Contains (PropertyDescriptor propertyDescriptor )
 		{
-			return (this[propertyDescriptor] != null);
+			PropertyDescriptor propDesc = propertyDescriptor;
+#else
+		public bool Contains (PropertyDescriptor propDesc)
+		{
+#endif
+			return (this [propDesc] != null);
 		}
 
 		public bool Contains (string name)
@@ -151,9 +162,9 @@ namespace System.Windows.Forms
 			return (FromColumnNameToIndex (name) != -1);
 		}
 
-		void ICollection.CopyTo (Array dest, int index)
+		void ICollection.CopyTo (Array array, int index)
 		{
-			items.CopyTo (dest, index);
+			items.CopyTo (array, index);
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()
@@ -163,7 +174,7 @@ namespace System.Windows.Forms
 
 		int IList.Add (object value)
 		{
-			return Add ((DataGridColumnStyle)value);			
+			return Add ((DataGridColumnStyle)value);
 		}
 
 		void IList.Clear ()
@@ -201,11 +212,16 @@ namespace System.Windows.Forms
 			return items.IndexOf (element);
 		}
 		
+#if NET_2_0
 		protected void OnCollectionChanged (CollectionChangeEventArgs e)
-		{						
-			if (fire_event == true && CollectionChanged != null) {
-				CollectionChanged (this, e);
-			}
+		{
+			CollectionChangeEventArgs ccevent = e;
+#else
+		protected void OnCollectionChanged (CollectionChangeEventArgs ccevent)
+		{
+#endif
+			if (fire_event && CollectionChanged != null)
+				CollectionChanged (this, ccevent);
 		}
 		
 		public void Remove (DataGridColumnStyle column)
@@ -221,7 +237,7 @@ namespace System.Windows.Forms
 			items.RemoveAt (index);
 			DisconnectColumnEvents (item);
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, item));
-		}		
+		}
 		
 		public void ResetPropertyDescriptors ()
 		{
@@ -236,8 +252,8 @@ namespace System.Windows.Forms
 		#endregion Public Instance Methods
 
 		#region Events
-		public event CollectionChangeEventHandler CollectionChanged;		
-		#endregion Events		
+		public event CollectionChangeEventHandler CollectionChanged;
+		#endregion Events
 		
 		#region Private Instance Methods
 		void ConnectColumnEvents (DataGridColumnStyle col)
@@ -305,9 +321,8 @@ namespace System.Windows.Forms
 			// XXX should this do a CollectionChangedEvent (Refresh, sender)?
 		}
 
-
 		private int FromColumnNameToIndex (string columnName)
-		{	
+		{
 			for (int i = 0; i < items.Count; i++) {
 				DataGridColumnStyle column = (DataGridColumnStyle) items[i];
 				
@@ -321,7 +336,7 @@ namespace System.Windows.Forms
 			
 			return -1;
 		}
-				
+
 		#endregion Private Instance Methods
 	}
 }

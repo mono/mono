@@ -93,7 +93,7 @@ namespace System.Windows.Forms
 		private int top_index = 0;
 		private int last_visible_index = 0;
 		private Rectangle items_area;
-		private int focused_item = -1;		
+		private int focused_item = -1;
 		private ObjectCollection items;
 #if NET_2_0
 		private IntegerCollection custom_tab_offsets;
@@ -104,7 +104,7 @@ namespace System.Windows.Forms
 		public ListBox ()
 		{
 			requested_height = bounds.Height;
-			InternalBorderStyle = BorderStyle.Fixed3D;			
+			InternalBorderStyle = BorderStyle.Fixed3D;
 			BackColor = ThemeEngine.Current.ColorWindow;
 
 			items = CreateItemCollection ();
@@ -275,12 +275,12 @@ namespace System.Windows.Forms
 				if (value < 0)
 					throw new ArgumentException ("A value less than zero is assigned to the property.");
 
-    				column_width = value;
+				column_width = value;
 
-    				if (value == 0)
-    					ColumnWidthInternal = 120;
-    				else
-    					ColumnWidthInternal = value;
+				if (value == 0)
+					ColumnWidthInternal = 120;
+				else
+					ColumnWidthInternal = value;
 
 				base.Refresh ();
 			}
@@ -306,8 +306,7 @@ namespace System.Windows.Forms
 		[DefaultValue (DrawMode.Normal)]
 		public virtual DrawMode DrawMode {
 			get { return draw_mode; }
-
-    			set {
+			set {
 				if (!Enum.IsDefined (typeof (DrawMode), value))
 					throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for DrawMode", value));
 					
@@ -317,7 +316,7 @@ namespace System.Windows.Forms
 				if (draw_mode == value)
 					return;
 
-    				draw_mode = value;
+				draw_mode = value;
 
 				if (draw_mode == DrawMode.OwnerDrawVariable)
 					item_heights = new Hashtable ();
@@ -325,7 +324,7 @@ namespace System.Windows.Forms
 					item_heights = null;
 
 				base.Refresh ();
-    			}
+			}
 		}
 
 #if NET_2_0
@@ -338,11 +337,10 @@ namespace System.Windows.Forms
 		public override Color ForeColor {
 			get { return base.ForeColor; }
 			set {
-
 				if (base.ForeColor == value)
 					return;
 
-    				base.ForeColor = value;
+				base.ForeColor = value;
 				base.Refresh ();
 			}
 		}
@@ -355,7 +353,7 @@ namespace System.Windows.Forms
 				if (horizontal_extent == value)
 					return;
 
-    				horizontal_extent = value;
+				horizontal_extent = value;
 				base.Refresh ();
 			}
 		}
@@ -368,8 +366,8 @@ namespace System.Windows.Forms
 				if (horizontal_scrollbar == value)
 					return;
 
-    				horizontal_scrollbar = value;
-    				UpdateScrollBars ();
+				horizontal_scrollbar = value;
+				UpdateScrollBars ();
 				base.Refresh ();
 			}
 		}
@@ -383,7 +381,7 @@ namespace System.Windows.Forms
 				if (integral_height == value)
 					return;
 
-    				integral_height = value;
+				integral_height = value;
 				UpdateListBoxBounds ();
 			}
 		}
@@ -434,7 +432,7 @@ namespace System.Windows.Forms
 				if (value == true && DrawMode == DrawMode.OwnerDrawVariable)
 					throw new ArgumentException ("A multicolumn ListBox cannot have a variable-sized height.");
 					
-    				multicolumn = value;
+				multicolumn = value;
 				LayoutListBox ();
 			}
 		}
@@ -471,11 +469,11 @@ namespace System.Windows.Forms
 		public override RightToLeft RightToLeft {
 			get { return base.RightToLeft; }
 			set {
-    				base.RightToLeft = value;    				
+				base.RightToLeft = value;
 				if (base.RightToLeft == RightToLeft.Yes)
-					StringFormat.Alignment = StringAlignment.Far;				
+					StringFormat.Alignment = StringAlignment.Far;
 				else
-					StringFormat.Alignment = StringAlignment.Near;				
+					StringFormat.Alignment = StringAlignment.Near;
 				base.Refresh ();
 			}
 		}
@@ -489,7 +487,7 @@ namespace System.Windows.Forms
 				if (scroll_always_visible == value)
 					return;
 
-    				scroll_always_visible = value;
+				scroll_always_visible = value;
 				UpdateScrollBars ();
 			}
 		}
@@ -548,7 +546,7 @@ namespace System.Windows.Forms
 		[DefaultValue (SelectionMode.One)]
 		public virtual SelectionMode SelectionMode {
 			get { return selection_mode; }
-    			set {
+			set {
 				if (!Enum.IsDefined (typeof (SelectionMode), value))
 					throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for SelectionMode", value));
 
@@ -560,7 +558,7 @@ namespace System.Windows.Forms
 				switch (selection_mode) {
 				case SelectionMode.None: 
 					SelectedIndices.Clear ();
-					break;						
+					break;
 
 				case SelectionMode.One:
 					// FIXME: Probably this can be improved
@@ -570,23 +568,22 @@ namespace System.Windows.Forms
 					break;
 
 				default:
-					break;						
+					break;
 				}
-    			}
+			}
 		}
 
 		[DefaultValue (false)]
 		public bool Sorted {
 			get { return sorted; }
-
-    			set {
+			set {
 				if (sorted == value)
 					return;
 
-    				sorted = value;
-    				if (sorted)
+				sorted = value;
+				if (sorted)
 					Sort ();
-    			}
+			}
 		}
 
 		[Bindable (false)]
@@ -651,15 +648,13 @@ namespace System.Windows.Forms
 		[DefaultValue (true)]
 		public bool UseTabStops {
 			get { return use_tabstops; }
-
-    			set {
+			set {
 				if (use_tabstops == value)
 					return;
 
-    				use_tabstops = value;
-    				
+				use_tabstops = value;
 				CalculateTabStops ();
-    			}
+			}
 		}
 
 #if NET_2_0
@@ -811,7 +806,7 @@ namespace System.Windows.Forms
 				rect.Height = ItemHeight;
 				rect.Width = ColumnWidthInternal;
 			} else {
-				rect.X = 0;				
+				rect.X = 0;
 				rect.Height = GetItemHeight (index);
 				rect.Width = items_area.Width;
 				
@@ -828,7 +823,7 @@ namespace System.Windows.Forms
 					}
 				} else {
 					rect.Y = ItemHeight * (index - top_index);	
-				}				
+				}
 			}
 
 			if (this is CheckedListBox)
@@ -888,8 +883,7 @@ namespace System.Windows.Forms
 			
 			if (DataSource == null || DataManager == null) {
 				SelectedIndex = -1;
-			} 
-			else {
+			} else {
 				SelectedIndex = DataManager.Position;
 			}
 		}
@@ -1153,10 +1147,9 @@ namespace System.Windows.Forms
 				else
 #endif
 					StringFormat.SetTabStops (0, new float[] { (float)(Font.Height * 3.7) });
-			}	
-			else
+			} else
 				StringFormat.SetTabStops (0, new float[0]);
-				
+
 			this.Invalidate ();
 		}
 
@@ -1232,7 +1225,7 @@ namespace System.Windows.Forms
 		}
 
 		internal void Draw (Rectangle clip, Graphics dc)
-		{				
+		{
 			Theme theme = ThemeEngine.Current;
 
 			if (hscrollbar.Visible && vscrollbar.Visible) {
@@ -1245,7 +1238,7 @@ namespace System.Windows.Forms
 			dc.FillRectangle (theme.ResPool.GetSolidBrush (BackColor), items_area);
 
 			if (Items.Count == 0)
-		       		return;
+				return;
 
 			for (int i = top_index; i <= last_visible_index; i++) {
 				Rectangle rect = GetItemDisplayRectangle (i, top_index);
@@ -1346,17 +1339,13 @@ namespace System.Windows.Forms
 				return top_index;
 
 			for (i = top_index; i < Items.Count; i++) {
-
 				item_rect = GetItemDisplayRectangle (i, top_index);
 				if (MultiColumn) {
-
 					if (item_rect.X > items_area.Width)
 						return i - 1;
-				}
-				else {					
-					if (item_rect.Y + item_rect.Height > top_y) {
+				} else {
+					if (item_rect.Y + item_rect.Height > top_y)
 						return i;
-					}
 				}
 			}
 			return i - 1;
@@ -1364,7 +1353,7 @@ namespace System.Windows.Forms
 
 		private void UpdateTopItem ()
 		{
-			if (MultiColumn) {				
+			if (MultiColumn) {
 				int col = top_index / RowCount;
 				
 				if (col > hscrollbar.Maximum)
@@ -1424,7 +1413,7 @@ namespace System.Windows.Forms
 					UpdateTopItem ();
 				}
 					
-				selected_index = SelectedIndex + RowCount;					
+				selected_index = SelectedIndex + RowCount;
 				break;
 			}
 
@@ -1476,7 +1465,7 @@ namespace System.Windows.Forms
 					else
 						offset = (int) Math.Ceiling ((float)overhang / (float) ItemHeight);
 					top_index += offset;
-					UpdateTopItem ();						
+					UpdateTopItem ();
 				}
 				selected_index = SelectedIndex + 1;
 				break;
@@ -1489,7 +1478,7 @@ namespace System.Windows.Forms
 						UpdateTopItem ();
 					}
 					selected_index = SelectedIndex - 1;
-				}					
+				}
 				break;
 			}
 
@@ -1502,7 +1491,7 @@ namespace System.Windows.Forms
 				if (SelectedIndex + page_size - 1 >= Items.Count) {
 					top_index = Items.Count - page_size;
 					UpdateTopItem ();
-					selected_index = Items.Count - 1;						
+					selected_index = Items.Count - 1;
 				}
 				else {
 					if (SelectedIndex + page_size - 1  > last_visible_index) {
@@ -1510,7 +1499,7 @@ namespace System.Windows.Forms
 						UpdateTopItem ();
 					}
 					
-					selected_index = SelectedIndex + page_size - 1;						
+					selected_index = SelectedIndex + page_size - 1;
 				}
 					
 				break;
@@ -1520,15 +1509,14 @@ namespace System.Windows.Forms
 					
 				int rows = items_area.Height / ItemHeight;
 				if (SelectedIndex - (rows - 1) <= 0) {
-																		
-					top_index = 0;					
-					UpdateTopItem ();					
-					SelectedIndex = 0;					
+					top_index = 0;
+					UpdateTopItem ();
+					SelectedIndex = 0;
 				}
 				else { 
 					if (SelectedIndex - (rows - 1)  < top_index) {
 						top_index = SelectedIndex - (rows - 1);
-						UpdateTopItem ();						
+						UpdateTopItem ();
 					}
 					
 					selected_index = SelectedIndex - (rows - 1);
@@ -1537,15 +1525,15 @@ namespace System.Windows.Forms
 				break;
 			}		
 			default:
-				break;				
+				break;
 			}
 			
 			return selected_index;
 		}
 		
 		
-		private void OnGotFocus (object sender, EventArgs e) 			
-		{			
+		private void OnGotFocus (object sender, EventArgs e)
+		{
 			if (Items.Count == 0)
 				return;
 
@@ -1553,13 +1541,13 @@ namespace System.Windows.Forms
 				FocusedItem = 0;
 
 			InvalidateItem (FocusedItem);
-		}		
+		}
 		
-		private void OnLostFocus (object sender, EventArgs e) 			
-		{			
+		private void OnLostFocus (object sender, EventArgs e)
+		{
 			if (FocusedItem != -1)
 				InvalidateItem (FocusedItem);
-		}		
+		}
 
 		private bool KeySearch (Keys key)
 		{
@@ -1575,7 +1563,7 @@ namespace System.Windows.Forms
 		}
 
 		private void OnKeyDownLB (object sender, KeyEventArgs e)
-		{					
+		{
 			int new_item = -1;
 			
 			if (Items.Count == 0)
@@ -1596,25 +1584,25 @@ namespace System.Windows.Forms
 					
 				case Keys.Home:
 					new_item = NavigateItemVisually (ItemNavigation.First);
-					break;	
+					break;
 
 				case Keys.End:
 					new_item = NavigateItemVisually (ItemNavigation.Last);
-					break;	
+					break;
 
 				case Keys.Up:
 					new_item = NavigateItemVisually (ItemNavigation.Previous);
-					break;				
+					break;
 	
-				case Keys.Down:				
+				case Keys.Down:
 					new_item = NavigateItemVisually (ItemNavigation.Next);
 					break;
 				
 				case Keys.PageUp:
 					new_item = NavigateItemVisually (ItemNavigation.PreviousPage);
-					break;				
+					break;
 	
-				case Keys.PageDown:				
+				case Keys.PageDown:
 					new_item = NavigateItemVisually (ItemNavigation.NextPage);
 					break;
 
@@ -1622,10 +1610,10 @@ namespace System.Windows.Forms
 					if (multicolumn == true) {
 						new_item = NavigateItemVisually (ItemNavigation.NextColumn);
 					}
-					break;				
+					break;
 	
-				case Keys.Left:			
-					if (multicolumn == true) {	
+				case Keys.Left:
+					if (multicolumn == true) {
 						new_item = NavigateItemVisually (ItemNavigation.PreviousColumn);
 					}
 					break;
@@ -1649,7 +1637,7 @@ namespace System.Windows.Forms
 				}
 		}
 		
-		private void OnKeyUpLB (object sender, KeyEventArgs e) 			
+		private void OnKeyUpLB (object sender, KeyEventArgs e)
 		{
 			switch (e.KeyCode) {
 				case Keys.ControlKey:
@@ -1661,21 +1649,21 @@ namespace System.Windows.Forms
 				default: 
 					break;
 			}
-		}		
+		}
 
 		internal void InvalidateItem (int index)
 		{
 			if (!IsHandleCreated)
 				return;
 			Rectangle bounds = GetItemDisplayRectangle (index, top_index);
-    			if (ClientRectangle.IntersectsWith (bounds))
-    				Invalidate (bounds);
+			if (ClientRectangle.IntersectsWith (bounds))
+				Invalidate (bounds);
 		}
 
 		internal virtual void OnItemClick (int index)
 		{
-    			OnSelectedIndexChanged  (EventArgs.Empty);
-    			OnSelectedValueChanged (EventArgs.Empty);
+			OnSelectedIndexChanged  (EventArgs.Empty);
+			OnSelectedValueChanged (EventArgs.Empty);
 		}
 
 		int anchor = -1;
@@ -1711,15 +1699,14 @@ namespace System.Windows.Forms
 		}
 
 		private void OnMouseDownLB (object sender, MouseEventArgs e)
-    		{
+		{
 			// Only do stuff with the left mouse button
 			if ((e.Button & MouseButtons.Left) == 0)
 				return;
 			
 			int index = IndexAtClientPoint (e.X, e.Y);
-    			    				
 			if (index == -1)
-				return;			
+				return;
 
 			switch (SelectionMode) {
 			case SelectionMode.One:
@@ -1753,17 +1740,17 @@ namespace System.Windows.Forms
 			default:
 				return;
 			}
-				
+
 			button_pressed = true;
 			FocusedItem = index;
-    		}
+		}
 
 		private void OnMouseMoveLB (object sender, MouseEventArgs e)
-    		{
+		{
 			if (!button_pressed)
 				return;
 
-    			int index = IndexAtClientPoint (e.X, e.Y);
+			int index = IndexAtClientPoint (e.X, e.Y);
 
 			switch (SelectionMode) {
 			case SelectionMode.One:
@@ -1786,11 +1773,11 @@ namespace System.Windows.Forms
 		}
 
 		private void OnMouseUpLB (object sender, MouseEventArgs e)
-    		{
-    			// Only do stuff with the left mouse button
-    			if ((e.Button & MouseButtons.Left) == 0)
-    				return;
-    				
+		{
+			// Only do stuff with the left mouse button
+			if ((e.Button & MouseButtons.Left) == 0)
+				return;
+
 			if (e.Clicks > 1) {
 				OnDoubleClick (EventArgs.Empty);
 #if NET_2_0
@@ -1807,7 +1794,7 @@ namespace System.Windows.Forms
 			if (!button_pressed)
 				return;
 
-    			int index = IndexAtClientPoint (e.X, e.Y);
+			int index = IndexAtClientPoint (e.X, e.Y);
 			OnItemClick (index);
 			button_pressed = ctrl_pressed = shift_pressed = false;
 		}
@@ -1847,7 +1834,7 @@ namespace System.Windows.Forms
 		internal override void OnPaintInternal (PaintEventArgs pevent)
 		{
 			if (suspend_layout)
-    				return;
+				return;
 
 			Draw (pevent.ClipRectangle, pevent.Graphics);
 		}
@@ -1869,13 +1856,13 @@ namespace System.Windows.Forms
 		internal void SelectedItemFromNavigation (int index)
 		{
 			switch (SelectionMode) {
-    				case SelectionMode.None: // Do nothing
-    					break;
-    				case SelectionMode.One: {
-    					SelectedIndex = index;
-    					break;
-    				}
-    				case SelectionMode.MultiSimple: {
+				case SelectionMode.None: // Do nothing
+					break;
+				case SelectionMode.One: {
+					SelectedIndex = index;
+					break;
+				}
+				case SelectionMode.MultiSimple: {
 					if (SelectedIndex == -1) {
 						SelectedIndex = index;
 					} else {
@@ -1885,14 +1872,14 @@ namespace System.Windows.Forms
 						else {
 							SelectedIndices.AddCore (index);
 
-    							OnSelectedIndexChanged  (EventArgs.Empty);
-    							OnSelectedValueChanged (EventArgs.Empty);
-    						}
-    					}
-    					break;
-    				}
-    				
-    				case SelectionMode.MultiExtended: {
+							OnSelectedIndexChanged  (EventArgs.Empty);
+							OnSelectedValueChanged (EventArgs.Empty);
+						}
+					}
+					break;
+				}
+				
+				case SelectionMode.MultiExtended: {
 					if (SelectedIndex == -1) {
 						SelectedIndex = index;
 					} else {
@@ -1910,13 +1897,13 @@ namespace System.Windows.Forms
 
 						OnSelectedIndexChanged  (EventArgs.Empty);
 						OnSelectedValueChanged (EventArgs.Empty);
-    					}
-    					break;
-    				}    				
-    				
-    				default:
-    					break;
-    			}			
+					}
+					break;
+				}
+				
+				default:
+					break;
+			}
 		}
 		
 		private void ShiftSelection (int index)
@@ -1926,11 +1913,10 @@ namespace System.Windows.Forms
 			foreach (int idx in selected_indices) {
 				if (idx > index) {
 					cur_dist = idx - index;
+				} else {
+					cur_dist = index - idx;
 				}
-				else {
-					cur_dist = index - idx;					
-				}
-						
+
 				if (cur_dist < dist) {
 					dist = cur_dist;
 					shorter_item = idx;
@@ -1957,11 +1943,11 @@ namespace System.Windows.Forms
 		
 		internal int FocusedItem {
 			get { return focused_item; }
-			set {			
+			set {
 				if (focused_item == value)
 					return;
 
-				int prev = focused_item;			
+				int prev = focused_item;
 			
 				focused_item = value;
 			
@@ -1989,7 +1975,6 @@ namespace System.Windows.Forms
 				}
 				return string_format;
 			}
-
 		}
 
 		internal virtual void CollectionChanged ()
@@ -2073,7 +2058,7 @@ namespace System.Windows.Forms
 					hscrollbar.Maximum  = 0;
 				}
 			} else if (canvas_size.Width > ClientRectangle.Width && HorizontalScrollbar) {
-				show = true;					
+				show = true;
 				hscrollbar.Maximum = canvas_size.Width;
 				hscrollbar.LargeChange = Math.Max (0, items_area.Width);
 			}
@@ -2229,9 +2214,9 @@ namespace System.Windows.Forms
 			#endregion
 
 			#region IList Members
-			int IList.Add (object value)
+			int IList.Add (object item)
 			{
-				return Add ((int)value);
+				return Add ((int) item);
 			}
 
 			void IList.Clear ()
@@ -2239,14 +2224,14 @@ namespace System.Windows.Forms
 				Clear ();
 			}
 
-			bool IList.Contains (object value)
+			bool IList.Contains (object item)
 			{
-				return Contains ((int)value);
+				return Contains ((int) item);
 			}
 
-			int IList.IndexOf (object value)
+			int IList.IndexOf (object item)
 			{
-				return IndexOf ((int)value);
+				return IndexOf ((int) item);
 			}
 
 			void IList.Insert (int index, object value)
@@ -2302,7 +2287,7 @@ namespace System.Windows.Forms
 				public int Compare (object a, object b)
 				{
 					string str1 = a.ToString ();
-					string str2 = b.ToString ();					
+					string str2 = b.ToString ();
 					return str1.CompareTo (str2);
 				}
 			}
@@ -2424,13 +2409,25 @@ namespace System.Windows.Forms
 				return object_items.Contains (value);
 			}
 
+#if NET_2_0
 			public void CopyTo (object[] destination, int arrayIndex)
 			{
-				object_items.CopyTo (destination, arrayIndex);
+				object [] dest = destination;
+#else
+			public void CopyTo (object [] dest, int arrayIndex)
+			{
+#endif
+				object_items.CopyTo (dest, arrayIndex);
 			}
 
+#if NET_2_0
+			void ICollection.CopyTo (Array destination, int index)
+			{
+				Array dest = destination;
+#else
 			void ICollection.CopyTo (Array dest, int index)
 			{
+#endif
 				object_items.CopyTo (dest, index);
 			}
 
@@ -2466,11 +2463,11 @@ namespace System.Windows.Forms
 			}
 
 			public void Remove (object value)
-			{				
+			{
 				if (value == null)
 					return;
 
-				RemoveAt (IndexOf (value));				
+				RemoveAt (IndexOf (value));
 			}
 
 			public void RemoveAt (int index)
@@ -2615,10 +2612,16 @@ namespace System.Windows.Forms
 				return false;
 			}
 
+#if NET_2_0
 			public void CopyTo (Array destination, int index)
 			{
+				Array dest = destination;
+#else
+			public void CopyTo (Array dest, int index)
+			{
+#endif
 				CheckSorted ();
-				selection.CopyTo (destination, index);
+				selection.CopyTo (dest, index);
 			}
 
 			public IEnumerator GetEnumerator ()
@@ -2656,7 +2659,7 @@ namespace System.Windows.Forms
 				return true;
 			}
 
-			int IList.Add (object obj)
+			int IList.Add (object value)
 			{
 				throw new NotSupportedException ();
 			}
@@ -2793,10 +2796,16 @@ namespace System.Windows.Forms
 				return idx == -1 ? false : owner.selected_indices.Contains (idx);
 			}
 
+#if NET_2_0
 			public void CopyTo (Array destination, int index)
 			{
+				Array dest = destination;
+#else
+			public void CopyTo (Array dest, int index)
+			{
+#endif
 				for (int i = 0; i < Count; i++)
-					destination.SetValue (this [i], index++);
+					dest.SetValue (this [i], index++);
 			}
 
 #if NET_2_0
@@ -2858,9 +2867,5 @@ namespace System.Windows.Forms
 
 			#endregion Public Methods
 		}
-
 	}
 }
-
-
-

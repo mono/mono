@@ -43,6 +43,7 @@ namespace System.Windows.Forms {
 
 		IList list;
 		CurrencyManager currency_manager;
+		Dictionary<string,CurrencyManager> related_currency_managers = new Dictionary<string,CurrencyManager> ();
 		//bool list_defaulted;
 		Type item_type;
 		bool item_has_default_ctor;
@@ -159,6 +160,7 @@ namespace System.Windows.Forms {
 			} else {
 				Type t = typeof (BindingList<>).MakeGenericType (new Type[] { source.GetType() });
 				l = (IList)Activator.CreateInstance (t);
+				l.Add (source);
 			}
 
 			SetList (l);
@@ -642,7 +644,21 @@ namespace System.Windows.Forms {
 
 		public virtual CurrencyManager GetRelatedCurrencyManager (string dataMember)
 		{
-			throw new NotImplementedException ();
+			if (dataMember == null || dataMember.Length == 0)
+				return currency_manager;
+
+			if (related_currency_managers.ContainsKey (dataMember))
+				return related_currency_managers [dataMember];
+
+			// FIXME - Why passing invalid dataMembers containing a . return
+			// a null value?
+			if (dataMember.IndexOf ('.') != -1)
+				return null;
+
+			BindingSource source = new BindingSource (this, dataMember);
+			related_currency_managers [dataMember] = source.CurrencyManager;
+
+			return source.CurrencyManager;
 		}
 
 		public virtual int IndexOf (object value)
@@ -829,27 +845,27 @@ namespace System.Windows.Forms {
 
 		/* explicit interface implementations */
 
-		void ICancelAddNew.CancelNew (int itemIndex)
+		void ICancelAddNew.CancelNew (int position)
 		{
 			if (!add_pending)
 				return;
 
-			if (itemIndex != pending_add_index)
+			if (position != pending_add_index)
 				return;
 
 			add_pending = false;
-			list.RemoveAt (itemIndex);
+			list.RemoveAt (position);
 
 			if (raise_list_changed_events && !list_is_ibinding)
-				OnListChanged (new ListChangedEventArgs (ListChangedType.ItemDeleted, itemIndex));
+				OnListChanged (new ListChangedEventArgs (ListChangedType.ItemDeleted, position));
 		}
 
-		void ICancelAddNew.EndNew (int itemIndex)
+		void ICancelAddNew.EndNew (int position)
 		{
 			if (!add_pending)
 				return;
 
-			if (itemIndex != pending_add_index)
+			if (position != pending_add_index)
 				return;
 
 			add_pending = false;
@@ -871,12 +887,12 @@ namespace System.Windows.Forms {
 			((IBindingList)list).AddIndex (property);
 		}
 
-		void IBindingList.RemoveIndex (PropertyDescriptor property)
+		void IBindingList.RemoveIndex (PropertyDescriptor prop)
 		{
 			if (!(list is IBindingList))
 				throw new NotSupportedException();
 
-			((IBindingList)list).RemoveIndex (property);
+			((IBindingList)list).RemoveIndex (prop);
 		}
 
 		bool ISupportInitializeNotification.IsInitialized {
@@ -890,21 +906,6 @@ namespace System.Windows.Forms {
 		event EventHandler ISupportInitializeNotification.Initialized {
 			add { Events.AddHandler (InitializedEvent, value); }
 			remove { Events.RemoveHandler (InitializedEvent, value); }
-		}
-
-		ISite IComponent.Site {
-			get { return site; }
-			set { site = value; }
-		}
-
-		event EventHandler IComponent.Disposed {
-			add { throw new NotImplementedException (); }
-			remove { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		void IDisposable.Dispose ()
-		{
 		}
 	}
 }

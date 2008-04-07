@@ -1816,6 +1816,24 @@ namespace MonoTests.System.IO
 				Assert.AreEqual ("replaceFile", txt, "#3");
 			}
 		}
+
+		[Test]
+		[ExpectedException(typeof(IOException))]
+		public void FileLocks()
+		{
+			string temporaryFile = Path.GetTempFileName();
+			string temporaryFile1 = Path.Combine(Path.GetTempPath(),
+							     Path.GetRandomFileName());
+
+			using (File.Open(temporaryFile, 
+					 FileMode.Open, 
+					 FileAccess.ReadWrite, 
+					 FileShare.None))
+				{
+					File.Move(temporaryFile,
+						  temporaryFile1);
+				}
+		}
 #endif
 	}
 }

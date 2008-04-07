@@ -23,16 +23,16 @@
 //	Pedro Martínez Juliá <pedromj@gmail.com>
 //
 
-
 #if NET_2_0
 
 using System.Collections;
 using System.ComponentModel;
 
-namespace System.Windows.Forms {
-
+namespace System.Windows.Forms
+{
 	[ListBindable (false)]
-	public class DataGridViewSelectedRowCollection : BaseCollection, IList, ICollection, IEnumerable {
+	public class DataGridViewSelectedRowCollection : BaseCollection, IList, ICollection, IEnumerable
+	{
 		private DataGridView dataGridView;
 		
 		internal DataGridViewSelectedRowCollection (DataGridView dataGridView)
@@ -45,15 +45,15 @@ namespace System.Windows.Forms {
 		}
 
 		object IList.this [int index] {
-			get { return this[index]; }
+			get { return this [index]; }
 			set { throw new NotSupportedException("Can't insert or modify this collection."); }
 		}
 
 		public DataGridViewRow this [int index] {
-			get { return (DataGridViewRow) base.List[index]; }
+			get { return (DataGridViewRow) base.List [index]; }
 		}
 
-		int IList.Add (object o)
+		int IList.Add (object value)
 		{
 			throw new NotSupportedException("Can't add elements to this collection.");
 		}
@@ -66,12 +66,12 @@ namespace System.Windows.Forms {
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public void Clear ()
 		{
-			throw new NotSupportedException("This collection cannot be cleared.");
+			throw new NotSupportedException ("This collection cannot be cleared.");
 		}
 
-		bool IList.Contains (object o)
+		bool IList.Contains (object value)
 		{
-			return Contains(o as DataGridViewRow);
+			return Contains (value as DataGridViewRow);
 		}
 
 		public bool Contains (DataGridViewRow dataGridViewRow)
@@ -84,30 +84,30 @@ namespace System.Windows.Forms {
 			base.List.CopyTo(array, index);
 		}
 
-		int IList.IndexOf (object o)
+		int IList.IndexOf (object value)
 		{
-			return base.List.IndexOf(o);
+			return base.List.IndexOf (value);
 		}
 
-		void IList.Insert (int index, object o)
+		void IList.Insert (int index, object value)
 		{
-			Insert(index, o as DataGridViewRow);
+			Insert (index, value as DataGridViewRow);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public void Insert (int index, DataGridViewRow dataGridViewRow)
 		{
-			throw new NotSupportedException("Insert is not allowed.");
+			throw new NotSupportedException ("Insert is not allowed.");
 		}
 
-		void IList.Remove (object o)
+		void IList.Remove (object value)
 		{
-			throw new NotSupportedException("Can't remove elements of this collection.");
+			throw new NotSupportedException ("Can't remove elements of this collection.");
 		}
 
 		void IList.RemoveAt (int index)
 		{
-			throw new NotSupportedException("Can't remove elements of this collection.");
+			throw new NotSupportedException ("Can't remove elements of this collection.");
 		}
 
 		protected override ArrayList List {
@@ -116,7 +116,7 @@ namespace System.Windows.Forms {
 
 		internal void InternalAdd (DataGridViewRow dataGridViewRow)
 		{
-			base.List.Add(dataGridViewRow);
+			base.List.Add (dataGridViewRow);
 		}
 		
 		internal void InternalAddRange (DataGridViewSelectedRowCollection rows)
@@ -137,9 +137,7 @@ namespace System.Windows.Forms {
 		{
 			base.List.Remove(dataGridViewRow);
 		}
-
 	}
-
 }
 
 #endif

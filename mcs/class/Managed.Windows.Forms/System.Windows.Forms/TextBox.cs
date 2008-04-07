@@ -244,7 +244,7 @@ namespace System.Windows.Forms {
 					if (!Multiline)
 						document.PasswordChar = PasswordChar.ToString ();
 					else
-						document.PasswordChar = "";
+						document.PasswordChar = string.Empty;
 				}
 			}
 		}
@@ -260,7 +260,7 @@ namespace System.Windows.Forms {
 			set {
 				if (value != accepts_return) {
 					accepts_return = value;
-				}	
+				}
 			}
 		}
 
@@ -300,7 +300,7 @@ namespace System.Windows.Forms {
 					if (!Multiline) {
 						document.PasswordChar = PasswordChar.ToString ();
 					} else {
-						document.PasswordChar = "";
+						document.PasswordChar = string.Empty;
 					}
 					this.CalculateDocument();
 				}
@@ -400,34 +400,40 @@ namespace System.Windows.Forms {
 		}
 #endif
 
-		protected override bool IsInputKey(Keys keyData) {
+		protected override bool IsInputKey (Keys keyData)
+		{
 			return base.IsInputKey (keyData);
 		}
 
-		protected override void OnGotFocus(EventArgs e) {
+		protected override void OnGotFocus (EventArgs e)
+		{
 			base.OnGotFocus (e);
 			if (selection_length == -1 && !has_been_focused)
 				SelectAllNoScroll ();
 			has_been_focused = true;
 		}
 
-		protected override void OnHandleCreated(EventArgs e) {
+		protected override void OnHandleCreated (EventArgs e)
+		{
 			base.OnHandleCreated (e);
 		}
 
 #if ONLY_1_1
-		protected override void OnMouseUp(MouseEventArgs e) {
-			base.OnMouseUp (e);
+		protected override void OnMouseUp(MouseEventArgs mevent)
+		{
+			base.OnMouseUp (mevent);
 		}
 #endif
 
-		protected virtual void OnTextAlignChanged(EventArgs e) {
+		protected virtual void OnTextAlignChanged (EventArgs e)
+		{
 			EventHandler eh = (EventHandler)(Events [TextAlignChangedEvent]);
 			if (eh != null)
 				eh (this, e);
 		}
 
-		protected override void WndProc(ref Message m) {
+		protected override void WndProc (ref Message m)
+		{
 			switch ((Msg)m.Msg) {
 				case Msg.WM_LBUTTONDOWN:
 					// When the textbox gets focus by LBUTTON (but not by middle or right)
@@ -507,7 +513,7 @@ namespace System.Windows.Forms {
 		}
 
 		private void delete_Click(object sender, EventArgs e) {
-			SelectedText = "";
+			SelectedText = string.Empty;
 		}
 
 		private void select_all_Click(object sender, EventArgs e) {

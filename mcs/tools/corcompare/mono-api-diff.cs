@@ -889,6 +889,7 @@ namespace Mono.AssemblyCompare
 					node = document.CreateElement ("class", null);
 					newNodes.Add (node);
 					AddAttribute (node, "name", c.Name);
+					AddAttribute (node, "type", c.Type);
 					AddExtra (node);
 					counters.Extra++;
 					counters.ExtraTotal++;

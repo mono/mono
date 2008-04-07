@@ -134,10 +134,10 @@ namespace System.Resources
 
 		#region ISerializable Members
 
-		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
+		void ISerializable.GetObjectData (SerializationInfo si, StreamingContext context)
 		{
-			info.AddValue ("Name", this.Name);
-			info.AddValue ("Comment", this.Comment);
+			si.AddValue ("Name", this.Name);
+			si.AddValue ("Comment", this.Comment);
 		}
 
 		#endregion

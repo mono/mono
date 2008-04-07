@@ -1,3 +1,7 @@
+2008-04-04  Dick Porter  <dick@ximian.com>
+
+	* File.cs: Pretty up the file share exception with the path name.
+
 2008-03-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Directory.cs: Exception differs when deleting a directory if it 

@@ -1099,23 +1099,23 @@ namespace System.Windows.Forms
 				collection.CopyTo (dest, index);
 			}
 
-			int IList.Add (object control)
+			int IList.Add (object value)
 			{
-				int idx = collection.Add (control);
+				int idx = collection.Add (value);
 				owner.sorted_links = null;
 				owner.CheckLinks ();
 				owner.CreateLinkPieces ();
 				return idx;
 			}
 
-			bool IList.Contains (object control)
+			bool IList.Contains (object link)
 			{
-				return Contains ((Link)control);
+				return Contains ((Link) link);
 			}
 
-			int IList.IndexOf (object control)
+			int IList.IndexOf (object link)
 			{
-				return collection.IndexOf (control);
+				return collection.IndexOf (link);
 			}
 
 			void IList.Insert (int index, object value)
@@ -1126,9 +1126,9 @@ namespace System.Windows.Forms
 				owner.CreateLinkPieces ();
 			}
 
-			void IList.Remove (object control)
+			void IList.Remove (object value)
 			{
-				Remove ((Link)control);
+				Remove ((Link) value);
 			}
 		}
 #if NET_2_0

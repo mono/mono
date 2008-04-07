@@ -1,3 +1,24 @@
+2008-04-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* BindingSourceTest.cs: Enable some old not working tests.
+
+2008-04-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* DataBindingTests.cs: Enable some CurrencyManager tests.
+
+2008-04-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* BindingSourceTest.cs: Add new tests for GetRelatedCurrencyManager
+	method.
+
+2008-04-03  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridViewLinkCellTest.cs: Add.
+
+2008-04-03  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TimerTest.cs: Disable a finicky test that occasionally fails.
+
 2008-04-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* BindingContextTest.cs: New test for ICurrencyManagerProvider

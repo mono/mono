@@ -29,44 +29,59 @@
 using System;
 using System.Drawing;
 
-namespace System.Windows.Forms {
-	public class Help {
+namespace System.Windows.Forms
+{
+	public class Help
+	{
 		#region Constructor
-		private Help() {
+		private Help ()
+		{
 		}
 		#endregion
 
 		#region Public Static Methods
-		public static void ShowHelp(Control parent, string url) {
+		public static void ShowHelp (Control parent, string url)
+		{
 			ShowHelp(parent, url, HelpNavigator.TableOfContents, null);
 		}
 
-		public static void ShowHelp(Control parent, string url, HelpNavigator navigator) {
+		public static void ShowHelp (Control parent, string url, HelpNavigator navigator)
+		{
 			ShowHelp(parent, url, navigator, null);
 		}
 
 		[MonoTODO("Create glue code to tie into libCHM")]
-		public static void ShowHelp(Control parent, string url, HelpNavigator command, object parameter) {
-			MessageBox.Show(parent, (string)Locale.GetText("Help (" + command +
-					(parameter != null ? "(" + parameter + ")" : String.Empty) +
-					") not yet implemented"), (string)Locale.GetText("Popup Help"),
+#if NET_2_0
+		public static void ShowHelp (Control parent, string url, HelpNavigator command, object parameter)
+		{
+			object param = parameter;
+#else
+		public static void ShowHelp (Control parent, string url, HelpNavigator command, object param)
+		{
+#endif
+			MessageBox.Show(parent, Locale.GetText("Help (" + command +
+					(param != null ? "(" + param + ")" : String.Empty) +
+					") not yet implemented"), Locale.GetText("Popup Help"),
 					MessageBoxButtons.OK, MessageBoxIcon.Stop);
 		}
 
-		public static void ShowHelp(Control parent, string url, string keyword) {
-			if (keyword == null || keyword == String.Empty) {
-				ShowHelp(parent, url, HelpNavigator.TableOfContents, null);
-			}
-			ShowHelp(parent, url, HelpNavigator.Topic, keyword);
+		public static void ShowHelp (Control parent, string url, string keyword)
+		{
+			if (keyword == null || keyword == String.Empty)
+				ShowHelp (parent, url, HelpNavigator.TableOfContents, null);
+			ShowHelp (parent, url, HelpNavigator.Topic, keyword);
 		}
 
-		public static void ShowHelpIndex(Control parent, string url) {
-			ShowHelp(parent, url, HelpNavigator.Index, null);
+		public static void ShowHelpIndex (Control parent, string url)
+		{
+			ShowHelp (parent, url, HelpNavigator.Index, null);
 		}
 
 		[MonoTODO("Create glue code to tie into libCHM")]
-		public static void ShowPopup(Control parent, string caption, Point location) {
-			MessageBox.Show(parent, (string)Locale.GetText("Popup Help not yet implemented"), (string)Locale.GetText("Popup Help"), MessageBoxButtons.OK, MessageBoxIcon.Stop);
+		public static void ShowPopup (Control parent, string caption, Point location)
+		{
+			MessageBox.Show (parent, Locale.GetText ("Popup Help not yet implemented"),
+				Locale.GetText ("Popup Help"), MessageBoxButtons.OK, MessageBoxIcon.Stop);
 		}
 		#endregion	// Public Static Methods
 	}

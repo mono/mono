@@ -26,12 +26,13 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0	
+#if NET_2_0
+
+using System.Collections;
+using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using System.ComponentModel;
 using System.Windows.Forms.Layout;
-using System.Collections;
 
 namespace System.Windows.Forms
 {
@@ -321,7 +322,7 @@ namespace System.Windows.Forms
 				foreach (ToolStrip ts in al)
 					this.AddControlToRows (ts);
 					
-				done_first_layout = true;			
+				done_first_layout = true;
 			}
 			
 			// Lay out all the rows
@@ -387,7 +388,7 @@ namespace System.Windows.Forms
 			base.OnRightToLeftChanged (e);
 		}
 		#endregion
-		
+
 		#region Public Events
 		static object RendererChangedEvent = new object ();
 
@@ -426,25 +427,6 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Private Methods
-		void IDropTarget.OnDragDrop (DragEventArgs e)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void IDropTarget.OnDragEnter (DragEventArgs e)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void IDropTarget.OnDragLeave (EventArgs e)
-		{
-			throw new NotImplementedException ();
-		}
-
-		void IDropTarget.OnDragOver (DragEventArgs e)
-		{
-			throw new NotImplementedException ();
-		}
 
 		private void AddControlToRows (Control control)
 		{
@@ -561,6 +543,50 @@ namespace System.Windows.Forms
 			#endregion
 
 			#region IList Members
+			object IList.this [int index] {
+				get { return this [index]; }
+				[MonoTODO]
+				set { throw new NotImplementedException (); }
+			}
+
+			bool IList.IsFixedSize {
+				get { return IsFixedSize; }
+			}
+
+			bool IList.IsReadOnly {
+				get { return IsReadOnly; }
+			}
+
+			int IList.Add (object value)
+			{
+				return Add (value as ToolStripPanelRow);
+			}
+
+			void IList.Clear ()
+			{
+				Clear ();
+			}
+
+			bool IList.Contains (object value)
+			{
+				return Contains (value as ToolStripPanelRow);
+			}
+
+			int IList.IndexOf (object value)
+			{
+				return IndexOf (value as ToolStripPanelRow);
+			}
+
+			void IList.Insert (int index, object value)
+			{
+				Insert (index, value as ToolStripPanelRow);
+			}
+
+			void IList.Remove (object value)
+			{
+				Remove (value as ToolStripPanelRow);
+			}
+
 			void IList.RemoveAt (int index)
 			{
 				base.InternalRemoveAt (index);

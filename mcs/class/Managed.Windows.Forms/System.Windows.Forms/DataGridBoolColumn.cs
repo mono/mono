@@ -177,8 +177,14 @@ namespace System.Windows.Forms
 		{
 		}
 
+#if NET_2_0
 		protected internal override void Edit (CurrencyManager source, int rowNum, Rectangle bounds, bool readOnly, string displayText,  bool cellIsVisible)
 		{
+			string instantText = displayText;
+#else
+		protected internal override void Edit (CurrencyManager source, int rowNum, Rectangle bounds, bool readOnly, string instantText, bool cellIsVisible)
+		{
+#endif
 			editing_row = rowNum;
 			model_state = FromValueToState (GetColumnValueAtRow (source, rowNum));
 			editing_state = model_state | CheckState.Selected;

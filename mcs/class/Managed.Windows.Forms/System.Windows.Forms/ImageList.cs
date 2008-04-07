@@ -926,14 +926,14 @@ namespace System.Windows.Forms
 				return index;
 			}
 
-			bool IList.Contains(object value)
+			bool IList.Contains(object image)
 			{
-				return value is Image ? this.Contains((Image)value) : false;
+				return image is Image ? this.Contains ((Image) image) : false;
 			}
 
-			int IList.IndexOf(object value)
+			int IList.IndexOf (object image)
 			{
-				return value is Image ? this.IndexOf((Image)value) : -1;
+				return image is Image ? this.IndexOf ((Image) image) : -1;
 			}
 
 			void IList.Insert(int index, object value)
@@ -941,18 +941,16 @@ namespace System.Windows.Forms
 				throw new NotSupportedException();
 			}
 
-			void IList.Remove(object value)
+			void IList.Remove (object image)
 			{
-				if (value is Image)
-					this.Remove((Image)value);
+				if (image is Image)
+					this.Remove ((Image) image);
 			}
 
-			void ICollection.CopyTo(Array array, int index)
+			void ICollection.CopyTo(Array dest, int index)
 			{
-				int imageIndex;
-
-				for (imageIndex = 0; imageIndex < this.Count; imageIndex++)
-					array.SetValue(this[index], index++);
+				for (int imageIndex = 0; imageIndex < this.Count; imageIndex++)
+					dest.SetValue (this [index], index++);
 			}
 			#endregion // ImageCollection Interface Methods
 		}

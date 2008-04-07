@@ -136,6 +136,113 @@ namespace Mono.Mozilla.DOM
 			}
 		}
 
+		public virtual bool Disabled {
+			get { return false; }
+			set { }
+				
+		}
+
+		public virtual int ClientWidth { 
+			get {
+				nsIDOMNSHTMLElement e = this.element as nsIDOMNSHTMLElement;
+				int ret = 0;
+				e.getClientWidth (out ret);
+				return ret;
+			}
+		}
+		public virtual int ClientHeight	{
+			get {
+				nsIDOMNSHTMLElement e = this.element as nsIDOMNSHTMLElement;
+				int ret = 0;
+				e.getClientHeight (out ret);
+				return ret;
+			}
+		}
+		public virtual int ScrollHeight	{
+			get {
+				nsIDOMNSHTMLElement e = this.element as nsIDOMNSHTMLElement;
+				int ret = 0;
+				e.getScrollHeight(out ret);
+				return ret;
+			}
+		}
+		public virtual int ScrollWidth	{
+			get {
+				nsIDOMNSHTMLElement e = this.element as nsIDOMNSHTMLElement;
+				int ret = 0;
+				e.getScrollWidth (out ret);
+				return ret;
+			}
+		}
+		public virtual int ScrollLeft {
+			get {
+				nsIDOMNSHTMLElement e = this.element as nsIDOMNSHTMLElement;
+				int ret = 0;
+				e.getScrollLeft (out ret);
+				return ret;
+			}
+			set {
+				nsIDOMNSHTMLElement e = this.element as nsIDOMNSHTMLElement;
+				e.setScrollLeft (value);
+			}
+		}
+		public virtual int ScrollTop {
+			get {
+				nsIDOMNSHTMLElement e = this.element as nsIDOMNSHTMLElement;
+				int ret = 0;
+				e.getScrollTop (out ret);
+				return ret;
+			}
+			set {
+				nsIDOMNSHTMLElement e = this.element as nsIDOMNSHTMLElement;
+				e.setScrollTop (value);
+			}
+		}
+		public virtual int OffsetHeight {
+			get {
+				nsIDOMNSHTMLElement e = this.element as nsIDOMNSHTMLElement;
+				int ret = 0;
+				e.getOffsetHeight (out ret);
+				return ret;
+			}
+		}
+		public virtual int OffsetWidth {
+			get {
+				nsIDOMNSHTMLElement e = this.element as nsIDOMNSHTMLElement;
+				int ret = 0;
+				e.getOffsetWidth (out ret);
+				return ret;
+			}
+		}
+		public virtual int OffsetLeft {
+			get {
+				nsIDOMNSHTMLElement e = this.element as nsIDOMNSHTMLElement;
+				int ret = 0;
+				e.getOffsetLeft (out ret);
+				return ret;
+			}
+		}
+		public virtual int OffsetTop {
+			get {
+				nsIDOMNSHTMLElement e = this.element as nsIDOMNSHTMLElement;
+				int ret = 0;
+				e.getOffsetTop (out ret);
+				return ret;
+			}
+		}
+
+		public virtual IElement OffsetParent {
+			get {
+				nsIDOMNSHTMLElement e = this.element as nsIDOMNSHTMLElement;
+				nsIDOMElement ret;
+				e.getOffsetParent (out ret);
+				if ((ret as nsIDOMHTMLElement) != null)
+					return new HTMLElement (this.control, ret as nsIDOMHTMLElement);
+				return new Element (this.control, ret);
+
+			}
+		}
+
 		#endregion
 		
 		#region Methods
@@ -168,23 +275,16 @@ namespace Mono.Mozilla.DOM
 		}
 
 		public virtual string GetAttribute (string name) {
-			HandleRef ret;
-			IntPtr p = Base.StringInit ();
-			ret = new HandleRef (this, p);
-			element.getAttribute (storage, ret);
-			string val = Base.StringGet (ret);
-			Base.StringFinish (ret);
-			return val;
+			UniString ret = new UniString (String.Empty);
+			Base.StringSet (storage, name);
+			element.getAttribute (storage, ret.Handle);
+			return ret.ToString ();
 		}
 
 		public virtual void SetAttribute (string name, string value) {
-			HandleRef ret;
-			IntPtr p = Base.StringInit ();
-			ret = new HandleRef (this, p);
-			Base.StringSet (ret, value);
+			UniString strVal = new UniString (value);
 			Base.StringSet (storage, name);
-			element.setAttribute (storage, ret);
-			Base.StringFinish (ret);
+			element.setAttribute (storage, strVal.Handle);
 		}		
 		
 		#endregion

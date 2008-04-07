@@ -359,6 +359,9 @@ namespace System.IO
 			if (!MonoIO.MoveFile (src, dest, out error)) {
 				if (error == MonoIOError.ERROR_ALREADY_EXISTS)
 					throw MonoIO.GetException (dest, error);
+				else if (error == MonoIOError.ERROR_SHARING_VIOLATION)
+					throw MonoIO.GetException (src, error);
+				
 				throw MonoIO.GetException (error);
 			}
 		}

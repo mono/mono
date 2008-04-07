@@ -199,15 +199,17 @@ namespace System.ComponentModel.Design
 			[TypeConverter (typeof (ObjectContainerConverter))]
 			private class ObjectContainer
 			{
-				internal string Name;
 				internal object Object;
 				internal CollectionEditor editor;
 
-				public ObjectContainer (string name, object obj, CollectionEditor editor)
+				public ObjectContainer (object obj, CollectionEditor editor)
 				{
-					this.Name = name;
 					this.Object = obj;
 					this.editor = editor;
+				}
+
+				internal string Name {
+					get { return editor.GetDisplayText (Object); }
 				}
 
 				public override string ToString ()
@@ -401,7 +403,7 @@ namespace System.ComponentModel.Design
 					itemsList.BeginUpdate ();
 					itemsList.Items.Clear ();
 					foreach (object o in items)
-						this.itemsList.Items.Add (new ObjectContainer (editor.GetDisplayText (o), o, editor));
+						this.itemsList.Items.Add (new ObjectContainer (o, editor));
 					if (itemsList.Items.Count > 0)
 						itemsList.SelectedIndex = 0;
 					itemsList.EndUpdate ();
@@ -474,12 +476,19 @@ namespace System.ComponentModel.Design
 				for (int i = 0; i < itemsList.SelectedItems.Count; i++)
 					selected[i] = itemsList.Items.IndexOf (itemsList.SelectedItems[i]);
 
-				SetEditValue (); // ends up calling OnEditValueChanged which repopulates the list
+				// The list might be repopulated if a new instance of the collection edited
+				// is created during the update. This happen for example for Arrays.
+				SetEditValue ();
 
+				// Restore current selection in case the list gets repopulated.
+				// Refresh the item after that to reflect possible value change.
+				// 
 				itemsList.BeginUpdate ();
 				itemsList.ClearSelected ();
-				foreach (int index in selected)
+				foreach (int index in selected) {
+					itemsList.DoRefreshItem (index);
 					itemsList.SetSelected (index, true);
+				}
 				itemsList.SelectedIndex = selected[0];
 				itemsList.EndUpdate ();
 			}
@@ -517,19 +526,34 @@ namespace System.ComponentModel.Design
 					DisplayError (ex);
 					return;
 				}
-				itemsList.Items.Add (new ObjectContainer (editor.GetDisplayText (o), o, editor));
+				itemsList.Items.Add (new ObjectContainer (o, editor));
 				itemsList.SelectedIndex = -1;
 				itemsList.SelectedIndex = itemsList.Items.Count - 1;
 			}
 
 			private void doRemove_Click (object sender, EventArgs e)
 			{
-				if (itemsList.SelectedIndex != -1)
-					itemsList.Items.RemoveAt (itemsList.SelectedIndex);
+				if (itemsList.SelectedIndex != -1) {
+					int[] selected = new int[itemsList.SelectedItems.Count];
+					for (int i=0; i < itemsList.SelectedItems.Count; i++)
+						selected[i] = itemsList.Items.IndexOf (itemsList.SelectedItems[i]);
+
+					for (int i = selected.Length - 1; i >= 0; i--)
+						itemsList.Items.RemoveAt (selected[i]);
+
+					int prevIndex = --selected[0];
+					if (prevIndex == -1 && itemsList.Items.Count > 0)
+						prevIndex = 0;
+					itemsList.SelectedIndex = prevIndex;
+				}
 				if (itemsList.SelectedItems.Count == 0)
 					itemDisplay.SelectedObject = null;
 			}
 
+			// OnEditValueChanged is called only if the  EditValue has changed,
+			// which is only in the case when a new instance of the collection is 
+			// required, e.g for arrays.
+			// 
 			protected override void OnEditValueChanged ()
 			{
 				UpdateItems ();

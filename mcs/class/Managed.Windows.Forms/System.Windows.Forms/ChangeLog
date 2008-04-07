@@ -1,3 +1,156 @@
+2008-04-06  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* WebBrowserBase.cs: Added missing attributes and fixed attributes.
+	Fixed line endings.
+	* WebBrowser.cs: Added missing attributes and fixed attributes. Fixed
+	line endings.
+	* MaskedTextBox.cs: Added missing attribute. Code formatting.
+	* PageSetupDialog.cs: Added missing attribute. Code formatting.
+	* HtmlWindowCollection.cs: Code formatting. Fixed line endings.
+	* ImeMode.cs: Added missing field.
+	* HtmlWindow.cs: Code formatting. Fixed line endings.
+	* HtmlElement.cs: Code formatting. Fixed line endings. Fixed compiler
+	warnings.
+	* HtmlHistory.cs: Code formatting. Fixed line endings.
+	* HtmlDocument.cs: Code formatting. Fixed line endings.
+	* ToolStripPanel.cs: Added missing IList implementation.
+	* HtmlElementCollection.cs: Code formatting. Fixed line endings.
+
+2008-04-06  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* BindingContext.cs: Changed argument names to fix corcompare errors.
+	* DataGridView.cs: Removed extra explicit interface implementation
+	of IDropTarget. Code formatting.
+	* FlowLayoutPanel.cs: Changed argument names to fix corcompare errors.
+	* ComboBox.cs: Changed argument names to fix corcompare errors.
+	* DataGridTextBoxColumn.cs: Changed argument names to fix corcompare
+	errors.
+	* GridColumnStylesCollection.cs: Changed argument names to fix
+	corcompare errors. Removed extra tabs.
+	* GridTableStylesCollection.cs: Changed argument names to fix corcompare
+	errors.
+	* Control.cs: Changed argument names to fix corcompare errors. Code
+	formatting. Removed extra explicit IList implementation.
+	* TextBox.cs: Changed argument names to fix corcompare errors. Code
+	formatting. Use string.Empty instead of "".
+	* GridItemCollection.cs: Changed argument names to fix corcompare
+	errors. Code formatting.
+	* DataGridViewTopLeftHeaderCell.cs: Changed argument names to fix
+	corcompare errors. Code formatting.
+	* ImageList.cs: Changed argument names to fix corcompare errors.
+	* ToolStripItem.cs: Changed argument names to fix corcompare errors.
+	* DataGridViewRowCollection.cs: Changed argument names to fix
+	corcompare errors. Code formatting.
+	* TableLayoutPanel.cs: Changed argument names to fix corcompare errors.
+	* DataGridViewSelectedCellCollection.cs: Changed argument names to
+	fix corcompare errors. Code formatting.
+	* DataGridViewComboBoxCell.cs: Changed argument names to fix
+	corcompare errors. Code formatting.
+	* LinkLabel.cs: Changed argument names to fix corcompare errors.
+	* TreeNode.cs: Changed argument names to fix corcompare errors. Code
+	formatting.
+	* PropertyGrid.cs: Changed argument names to fix corcompare errors.
+	Code formatting.
+	* BindingSource.cs: Changed argument names to fix corcompare errors.
+	Removed extra explicit interface implementations.
+	* DataGridViewSelectedRowCollection.cs: Changed argument names to
+	fix corcompare errors. Code formatting.
+	* ToolStripItemCollection.cs: Removed extra explicit interface
+	implementation of IList.ReadOnly.
+	* DataGridViewColumnCollection.cs: Changed argument names to fix
+	corcompare errors. Code formatting.
+	* DataGridViewRow.cs: Rename converter to match MS. Code formatting.
+	* ListView.cs:  Changed argument names to fix corcompare errors.
+	* DataGridViewHeaderCell.cs: Changed argument names to fix corcompare
+	errors.
+	* DataGridBoolColumn.cs: Changed argument names to fix corcompare
+	errors.
+	* ListBindingHelper.cs: Changed argument names to fix corcompare
+	errors.
+	* DataGridViewSelectedColumnCollection.cs: Changed argument names to
+	fix corcompare errors. Code formatting.
+	* ToolStripPanel.cs: Removed extra explicit implementation of
+	IDropTarget interface.
+	* ListBox.cs: Changed argument names to fix corcompare errors. Code
+	formatting. Removed extra tabs and spaces.
+	* DataGridViewCellCollection.cs: Changed argument names to fix
+	corcompare errors.
+	* Help.cs: Changed argument names to fix corcompare errors. Code
+	formatting.
+	* TabControl.cs: Changed argument names to fix corcompare errors.
+	* DataGridColumnStyle.cs: Changed argument names to fix corcompare
+	errors.
+	* TableLayoutSettings.cs: Changed argument names to fix corcompare
+	errors.
+
+2008-04-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListBindingHelper.cs: When returning properties, only return those
+	that are browsable. Also, don't do a linear search of the properties,
+	but use the indexer of the PropertyDescriptorCollection class.
+
+2008-04-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* BindingSource.cs: Implement GetRelatedCurrencyManager by adding a
+	Dictionary containing the related (child) currency managers. Also,
+	when setting DataSource, add datasource to our List if it is not a list.
+
+2008-04-05  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* PropertyGridTextBox.cs: Fix background color of the buttons.
+	* PropertyGridView.cs: Make the entry less jumpy.
+
+2008-04-05  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* PropertyGrid.cs: Fix unused variable warnings.
+
+2008-04-05  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* PropertyGridView.cs: Fix expansion via [+] misbehavior on 
+	double-click. It expanded it once in the mouse down and then 
+	again in the double-click handler.
+
+2008-04-04  Ivan N. Zlatev  <contact@i-nz.net>
+	
+	* GridEntry.cs: ICustomTypeDescriptor support for PropertyOwner, 
+	TypeConverter and UITypeEditors.
+
+2008-04-04  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* Control.cs: Visibility should be set synchronously, 
+	so we must also redraw once it is and not rely on layouting or 
+	other code to repaint.
+	[Fixes bug #339898]
+
+2008-04-04  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridViewCell.cs: Respect DataGridView.GridColor.
+
+2008-04-03  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: Invalidate when the alpha channel is less than 255,
+	not only when control is transparent.
+
+2008-04-03  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridViewRowPrePaintEventArgs.cs, DataGridViewRowPostPaintEventArgs.cs:
+	Implement some painting convenience methods that threw NIEX.
+
+2008-04-03  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridView.cs: Call CellMouse[Enter|Move|Leave] properly.
+	* DataGridViewLinkCell.cs: Implement.
+
+2008-04-03  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* GridEntry.cs: Report the conversion exception error description.
+	[Fixes bug #375792]
+
+2008-04-03  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* PropertyGridView.cs: Do not scroll to item on resize.
+	[Fixes bug #375789]
+
 2008-04-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* BindingContext.cs: When retrieving a BindingManagerBase, if the

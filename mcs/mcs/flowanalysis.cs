@@ -52,7 +52,10 @@ namespace Mono.CSharp
 			Switch,
 
 			// The toplevel block of a function
-			Toplevel
+			Toplevel,
+
+			// An iterator block
+			Iterator
 		}
 
 		// <summary>
@@ -425,9 +428,9 @@ namespace Mono.CSharp
 			return result;
  		}
 
-		public virtual bool InTryWithCatch ()
+		public virtual bool AddResumePoint (ResumableStatement stmt, Location loc, out int pc)
 		{
-			return Parent.InTryWithCatch ();
+			return Parent.AddResumePoint (stmt, loc, out pc);
 		}
 
 		// returns true if we crossed an unwind-protected region (try/catch/finally, lock, using, ...)
@@ -443,21 +446,15 @@ namespace Mono.CSharp
 		}
 
 		// returns true if we crossed an unwind-protected region (try/catch/finally, lock, using, ...)
-		public virtual bool AddReturnOrigin (UsageVector vector, Location loc)
+		public virtual bool AddReturnOrigin (UsageVector vector, ExitStatement stmt)
 		{
-			return Parent.AddReturnOrigin (vector, loc);
+			return Parent.AddReturnOrigin (vector, stmt);
 		}
 
 		// returns true if we crossed an unwind-protected region (try/catch/finally, lock, using, ...)
 		public virtual bool AddGotoOrigin (UsageVector vector, Goto goto_stmt)
 		{
 			return Parent.AddGotoOrigin (vector, goto_stmt);
-		}
-
-		// returns true if we crossed an unwind-protected region (try/catch/finally, lock, using, ...)
-		public virtual bool StealFinallyClauses (ref ArrayList list)
-		{
-			return Parent.StealFinallyClauses (ref list);
 		}
 
 		public bool IsAssigned (VariableInfo vi)
@@ -523,7 +520,7 @@ namespace Mono.CSharp
 
 		protected override void AddSibling (UsageVector sibling)
 		{
-			if (sibling.Type == SiblingType.Block && sibling_list != null)
+			if (sibling_list != null && sibling_list.Type == SiblingType.Block)
 				throw new InternalErrorException ("Blocks don't have sibling flow paths");
 			sibling.Next = sibling_list;
 			sibling_list = sibling;
@@ -644,6 +641,22 @@ namespace Mono.CSharp
 		}
 	}
 
+	public class FlowBranchingIterator : FlowBranchingBlock
+	{
+		Iterator iterator;
+		public FlowBranchingIterator (FlowBranching parent, Iterator iterator)
+			: base (parent, BranchingType.Iterator, SiblingType.Block, null, iterator.Location)
+		{
+			this.iterator = iterator;
+		}
+
+		public override bool AddResumePoint (ResumableStatement stmt, Location loc, out int pc)
+		{
+			pc = iterator.AddResumePoint (stmt, loc);
+			return false;
+		}
+	}
+
 	public class FlowBranchingToplevel : FlowBranchingBlock
 	{
 		UsageVector return_origins;
@@ -653,8 +666,10 @@ namespace Mono.CSharp
 		{
 		}
 
-		public override bool InTryWithCatch ()
+		public override bool AddResumePoint (ResumableStatement stmt, Location loc, out int pc)
 		{
+			pc = -1;
+			Report.Error (-6, loc, "Internal Error: A yield in a non-iterator");
 			return false;
 		}
 
@@ -670,17 +685,12 @@ namespace Mono.CSharp
 			return false;
 		}
 
-		public override bool AddReturnOrigin (UsageVector vector, Location loc)
+		public override bool AddReturnOrigin (UsageVector vector, ExitStatement stmt)
 		{
 			vector = vector.Clone ();
-			vector.Location = loc;
+			vector.Location = stmt.loc;
 			vector.Next = return_origins;
 			return_origins = vector;
-			return false;
-		}
-
-		public override bool StealFinallyClauses (ref ArrayList list)
-		{
 			return false;
 		}
 
@@ -727,8 +737,16 @@ namespace Mono.CSharp
 		{
 		}
 
-		public override bool InTryWithCatch ()
+		public override bool AddResumePoint (ResumableStatement stmt, Location loc, out int pc)
 		{
+			int errors = Report.Errors;
+			Parent.AddResumePoint (stmt, loc, out pc);
+			if (errors == Report.Errors) {
+				if (CurrentUsageVector.Next == null)
+					Report.Error (1626, loc, "Cannot yield a value in the body of a try block with a catch clause");
+				else
+					Report.Error (1631, loc, "Cannot yield a value in the body of a catch clause");
+			}
 			return true;
 		}
 
@@ -744,21 +762,15 @@ namespace Mono.CSharp
 			return true;
 		}
 
-		public override bool AddReturnOrigin (UsageVector vector, Location loc)
+		public override bool AddReturnOrigin (UsageVector vector, ExitStatement stmt)
 		{
-			Parent.AddReturnOrigin (vector, loc);
+			Parent.AddReturnOrigin (vector, stmt);
 			return true;
 		}
 
 		public override bool AddGotoOrigin (UsageVector vector, Goto goto_stmt)
 		{
 			Parent.AddGotoOrigin (vector, goto_stmt);
-			return true;
-		}
-
-		public override bool StealFinallyClauses (ref ArrayList list)
-		{
-			Parent.StealFinallyClauses (ref list);
 			return true;
 		}
 	}
@@ -770,25 +782,84 @@ namespace Mono.CSharp
 		UsageVector try_vector;
 		UsageVector finally_vector;
 
-		UsageVector break_origins;
-		UsageVector continue_origins;
-		UsageVector return_origins;
-		GotoOrigin goto_origins;
-
-		class GotoOrigin {
-			public GotoOrigin Next;
-			public Goto GotoStmt;
+		abstract class SavedOrigin {
+			public SavedOrigin Next;
 			public UsageVector Vector;
 
-			public GotoOrigin (UsageVector vector, Goto goto_stmt, GotoOrigin next)
+			public SavedOrigin (SavedOrigin next, UsageVector vector)
 			{
-				Vector = vector;
-				GotoStmt = goto_stmt;
 				Next = next;
+				Vector = vector.Clone ();
+			}
+
+			protected abstract void DoPropagateFinally (FlowBranching parent);
+			public void PropagateFinally (UsageVector finally_vector, FlowBranching parent)
+			{
+				if (finally_vector != null)
+					Vector.MergeChild (finally_vector, false);
+				DoPropagateFinally (parent);
 			}
 		}
 
-		bool emit_finally;
+		class BreakOrigin : SavedOrigin {
+			Location Loc;
+			public BreakOrigin (SavedOrigin next, UsageVector vector, Location loc)
+				: base (next, vector)
+			{
+				Loc = loc;
+			}
+
+			protected override void DoPropagateFinally (FlowBranching parent)
+			{
+				parent.AddBreakOrigin (Vector, Loc);
+			}
+		}
+
+		class ContinueOrigin : SavedOrigin {
+			Location Loc;
+			public ContinueOrigin (SavedOrigin next, UsageVector vector, Location loc)
+				: base (next, vector)
+			{
+				Loc = loc;
+			}
+
+			protected override void DoPropagateFinally (FlowBranching parent)
+			{
+				parent.AddContinueOrigin (Vector, Loc);
+			}
+		}
+
+		class ReturnOrigin : SavedOrigin {
+			public ExitStatement Stmt;
+
+			public ReturnOrigin (SavedOrigin next, UsageVector vector, ExitStatement stmt)
+				: base (next, vector)
+			{
+				Stmt = stmt;
+			}
+
+			protected override void DoPropagateFinally (FlowBranching parent)
+			{
+				parent.AddReturnOrigin (Vector, Stmt);
+			}
+		}
+
+		class GotoOrigin : SavedOrigin {
+			public Goto Stmt;
+
+			public GotoOrigin (SavedOrigin next, UsageVector vector, Goto stmt)
+				: base (next, vector)
+			{
+				Stmt = stmt;
+			}
+
+			protected override void DoPropagateFinally (FlowBranching parent)
+			{
+				parent.AddGotoOrigin (Vector, Stmt);
+			}
+		}
+
+		SavedOrigin saved_origins;
 
 		public FlowBranchingException (FlowBranching parent,
 					       ExceptionStatement stmt)
@@ -796,7 +867,6 @@ namespace Mono.CSharp
 				null, stmt.loc)
 		{
 			this.stmt = stmt;
-			this.emit_finally = true;
 		}
 
 		protected override void AddSibling (UsageVector sibling)
@@ -818,50 +888,54 @@ namespace Mono.CSharp
 			get { return current_vector; }
 		}
 
+		public override bool AddResumePoint (ResumableStatement stmt, Location loc, out int pc)
+		{
+			int errors = Report.Errors;
+			Parent.AddResumePoint (this.stmt, loc, out pc);
+			if (errors == Report.Errors) {
+				if (finally_vector == null)
+					this.stmt.AddResumePoint (stmt, loc, pc);
+				else
+					Report.Error (1625, loc, "Cannot yield in the body of a finally clause");
+			}
+			return true;
+		}
+
 		public override bool AddBreakOrigin (UsageVector vector, Location loc)
 		{
-			vector = vector.Clone ();
 			if (finally_vector != null) {
 				int errors = Report.Errors;
 				Parent.AddBreakOrigin (vector, loc);
 				if (errors == Report.Errors)
 					Report.Error (157, loc, "Control cannot leave the body of a finally clause");
 			} else {
-				vector.Location = loc;
-				vector.Next = break_origins;
-				break_origins = vector;
+				saved_origins = new BreakOrigin (saved_origins, vector, loc);
 			}
 			return true;
 		}
 
 		public override bool AddContinueOrigin (UsageVector vector, Location loc)
 		{
-			vector = vector.Clone ();
 			if (finally_vector != null) {
 				int errors = Report.Errors;
 				Parent.AddContinueOrigin (vector, loc);
 				if (errors == Report.Errors)
 					Report.Error (157, loc, "Control cannot leave the body of a finally clause");
 			} else {
-				vector.Location = loc;
-				vector.Next = continue_origins;
-				continue_origins = vector;
+				saved_origins = new ContinueOrigin (saved_origins, vector, loc);
 			}
 			return true;
 		}
 
-		public override bool AddReturnOrigin (UsageVector vector, Location loc)
+		public override bool AddReturnOrigin (UsageVector vector, ExitStatement stmt)
 		{
-			vector = vector.Clone ();
 			if (finally_vector != null) {
 				int errors = Report.Errors;
-				Parent.AddReturnOrigin (vector, loc);
+				Parent.AddReturnOrigin (vector, stmt);
 				if (errors == Report.Errors)
-					Report.Error (157, loc, "Control cannot leave the body of a finally clause");
+					stmt.Error_FinallyClause ();
 			} else {
-				vector.Location = loc;
-				vector.Next = return_origins;
-				return_origins = vector;
+				saved_origins = new ReturnOrigin (saved_origins, vector, stmt);
 			}
 			return true;
 		}
@@ -872,30 +946,15 @@ namespace Mono.CSharp
 			if (s != null)
 				throw new InternalErrorException ("Shouldn't get here");
 
-			vector = vector.Clone ();
 			if (finally_vector != null) {
 				int errors = Report.Errors;
 				Parent.AddGotoOrigin (vector, goto_stmt);
 				if (errors == Report.Errors)
 					Report.Error (157, goto_stmt.loc, "Control cannot leave the body of a finally clause");
 			} else {
-				goto_origins = new GotoOrigin (vector, goto_stmt, goto_origins);
+				saved_origins = new GotoOrigin (saved_origins, vector, goto_stmt);
 			}
 			return true;
-		}
-
-		public override bool StealFinallyClauses (ref ArrayList list)
-		{
-			if (list == null)
-				list = new ArrayList ();
-			list.Add (stmt);
-			emit_finally = false;
-			base.StealFinallyClauses (ref list);
-			return true;
-		}
-
-		public bool EmitFinally {
-			get { return emit_finally; }
 		}
 
 		protected override UsageVector Merge ()
@@ -905,29 +964,8 @@ namespace Mono.CSharp
 			if (finally_vector != null)
 				vector.MergeChild (finally_vector, false);
 
-			for (UsageVector origin = break_origins; origin != null; origin = origin.Next) {
-				if (finally_vector != null)
-					origin.MergeChild (finally_vector, false);
-				Parent.AddBreakOrigin (origin, origin.Location);
-			}
-
-			for (UsageVector origin = continue_origins; origin != null; origin = origin.Next) {
-				if (finally_vector != null)
-					origin.MergeChild (finally_vector, false);
-				Parent.AddContinueOrigin (origin, origin.Location);
-			}
-
-			for (UsageVector origin = return_origins; origin != null; origin = origin.Next) {
-				if (finally_vector != null)
-					origin.MergeChild (finally_vector, false);
-				Parent.AddReturnOrigin (origin, origin.Location);
-			}
-
-			for (GotoOrigin origin = goto_origins; origin != null; origin = origin.Next) {
-				if (finally_vector != null)
-					origin.Vector.MergeChild (finally_vector, false);
-				Parent.AddGotoOrigin (origin.Vector, origin.GotoStmt);
-			}
+			for (SavedOrigin origin = saved_origins; origin != null; origin = origin.Next)
+				origin.PropagateFinally (finally_vector, Parent);
 
 			return vector;
 		}
@@ -1280,6 +1318,11 @@ namespace Mono.CSharp
 		readonly VariableInfo Parent;
 		VariableInfo[] sub_info;
 
+		bool is_ever_assigned;
+		public bool IsEverAssigned {
+			get { return is_ever_assigned; }
+		}
+
 		protected VariableInfo (string name, Type type, int offset)
 		{
 			this.Name = name;
@@ -1387,6 +1430,7 @@ namespace Mono.CSharp
 			}
 
 			vector [Offset] = true;
+			is_ever_assigned = true;
 			return true;
 		}
 
@@ -1402,6 +1446,7 @@ namespace Mono.CSharp
 				vector [Offset] = true;
 			else
 				vector.SetRange (Offset, Length);
+			is_ever_assigned = true;
 		}
 
 		public bool IsFieldAssigned (EmitContext ec, string name, Location loc)
@@ -1441,6 +1486,7 @@ namespace Mono.CSharp
 				return;
 
 			vector [Offset + field_idx] = true;
+			is_ever_assigned = true;
 		}
 
 		public VariableInfo GetSubStruct (string name)

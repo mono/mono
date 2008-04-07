@@ -741,20 +741,42 @@ namespace Mono.CSharp {
 		}
 	}
 
+	// A 'return' or a 'yield break'
+	public abstract class ExitStatement : Statement
+	{
+		protected bool unwind_protect;
+		protected abstract bool DoResolve (EmitContext ec);
+
+		public virtual void Error_FinallyClause ()
+		{
+			Report.Error (157, loc, "Control cannot leave the body of a finally clause");
+		}
+
+		public sealed override bool Resolve (EmitContext ec)
+		{
+			if (!DoResolve (ec))
+				return false;
+
+			unwind_protect = ec.CurrentBranching.AddReturnOrigin (ec.CurrentBranching.CurrentUsageVector, this);
+			if (unwind_protect)
+				ec.NeedReturnLabel ();
+			ec.CurrentBranching.CurrentUsageVector.Goto ();
+			return true;
+		}
+	}
+
 	/// <summary>
 	///   Implements the return statement
 	/// </summary>
-	public class Return : Statement {
+	public class Return : ExitStatement {
 		protected Expression Expr;
-		bool unwind_protect;
-		
 		public Return (Expression expr, Location l)
 		{
 			Expr = expr;
 			loc = l;
 		}
 		
-		bool DoResolve (EmitContext ec)
+		protected override bool DoResolve (EmitContext ec)
 		{
 			if (Expr == null) {
 				if (ec.ReturnType == TypeManager.void_type)
@@ -807,18 +829,6 @@ namespace Mono.CSharp {
 			}
 
 			return true;			
-		}
-
-		public override bool Resolve (EmitContext ec)
-		{
-			if (!DoResolve (ec))
-				return false;
-			
-			unwind_protect = ec.CurrentBranching.AddReturnOrigin (ec.CurrentBranching.CurrentUsageVector, loc);
-			if (unwind_protect)
-				ec.NeedReturnLabel ();
-			ec.CurrentBranching.CurrentUsageVector.Goto ();
-			return true;
 		}
 		
 		protected override void DoEmit (EmitContext ec)
@@ -2124,31 +2134,28 @@ namespace Mono.CSharp {
 					((LocalInfo)temporary_variables[i]).ResolveVariable(ec);
 			}
 
-			if (children != null){
+			if (children != null) {
 				for (int i = 0; i < children.Count; i++)
 					((Block)children[i]).EmitMeta(ec);
 			}
 		}
 
-		void UsageWarning (FlowBranching.UsageVector vector)
+		void UsageWarning ()
 		{
-			string name;
+			if (variables == null || Report.WarningLevel < 3)
+				return;
 
-			if ((variables != null) && (Report.WarningLevel >= 3)) {
-				foreach (DictionaryEntry de in variables){
-					LocalInfo vi = (LocalInfo) de.Value;
+			foreach (DictionaryEntry de in variables) {
+				LocalInfo vi = (LocalInfo) de.Value;
 
-					if (vi.Used)
-						continue;
-
-					name = (string) de.Key;
+				if (!vi.Used) {
+					string name = (string) de.Key;
 
 					// vi.VariableInfo can be null for 'catch' variables
-					if (vi.VariableInfo != null && vector.IsAssigned (vi.VariableInfo, true)){
+					if (vi.VariableInfo != null && vi.VariableInfo.IsEverAssigned)
 						Report.Warning (219, 3, vi.Location, "The variable `{0}' is assigned but its value is never used", name);
-					} else {
+					else
 						Report.Warning (168, 3, vi.Location, "The variable `{0}' is declared but never used", name);
-					}
 				}
 			}
 		}
@@ -2172,10 +2179,12 @@ namespace Mono.CSharp {
 				body = ((Foreach) s).Statement;
 			else if (s is While)
 				body = ((While) s).Statement;
-			else if (s is Using)
-				body = ((Using) s).Statement;
 			else if (s is Fixed)
 				body = ((Fixed) s).Statement;
+			else if (s is Using)
+				body = ((Using) s).EmbeddedStatement;
+			else if (s is UsingTemporary)
+				body = ((UsingTemporary) s).Statement;
 			else
 				return;
 
@@ -2259,30 +2268,26 @@ namespace Mono.CSharp {
 			while (ec.CurrentBranching is FlowBranchingLabeled)
 				ec.EndFlowBranching ();
 
-			FlowBranching.UsageVector vector = ec.DoEndFlowBranching ();
+			bool flow_unreachable = ec.EndFlowBranching ();
 
 			ec.CurrentBlock = prev_block;
 
+			if (flow_unreachable)
+				flags |= Flags.HasRet;
+
 			// If we're a non-static `struct' constructor which doesn't have an
 			// initializer, then we must initialize all of the struct's fields.
-			if (this == Toplevel && !Toplevel.IsThisAssigned (ec) && !vector.IsUnreachable)
+			if (this == Toplevel && !Toplevel.IsThisAssigned (ec) && !flow_unreachable)
 				ok = false;
 
 			if ((labels != null) && (Report.WarningLevel >= 2)) {
 				foreach (LabeledStatement label in labels.Values)
 					if (!label.HasBeenReferenced)
-						Report.Warning (164, 2, label.loc,
-								"This label has not been referenced");
+						Report.Warning (164, 2, label.loc, "This label has not been referenced");
 			}
 
-			Report.Debug (4, "RESOLVE BLOCK DONE #2", StartLocation, vector);
-
-			if (vector.IsUnreachable)
-				flags |= Flags.HasRet;
-
-			if (ok && (errors == Report.Errors)) {
-				UsageWarning (vector);
-			}
+			if (ok && errors == Report.Errors)
+				UsageWarning ();
 
 			return ok;
 		}
@@ -2760,7 +2765,6 @@ namespace Mono.CSharp {
 			get { return this_variable; }
 		}
 
-
 		// <summary>
 		//   This is used by non-static `struct' constructors which do not have an
 		//   initializer - in this case, the constructor must initialize all of the
@@ -2887,7 +2891,10 @@ namespace Mono.CSharp {
 
 			public override bool Resolve (EmitContext ec)
 			{
-				return block.Resolve (ec);
+				ec.StartFlowBranching (iterator);
+				bool ok = block.Resolve (ec);
+				ec.EndFlowBranching ();
+				return ok;
 			}
 
 			protected override void DoEmit (EmitContext ec)
@@ -3778,28 +3785,177 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public abstract class ExceptionStatement : Statement
+	// A place where execution can restart in an iterator
+	public abstract class ResumableStatement : Statement
 	{
-		public abstract void EmitFinallyBody (EmitContext ec);
+		bool prepared;
+		protected Label resume_point;
 
-		protected bool emit_finally = true;
-
-		protected void EmitFinally (EmitContext ec)
+		public Label PrepareForEmit (EmitContext ec)
 		{
-			Label end_finally = ec.ig.DefineLabel ();
-			if (emit_finally)
-				ec.ig.BeginFinallyBlock ();
-			else if (ec.InIterator) {
-				ec.ig.Emit (OpCodes.Ldloc, ec.CurrentIterator.SkipFinally);
-				ec.ig.Emit (OpCodes.Brtrue, end_finally);
+			if (!prepared) {
+				prepared = true;
+				resume_point = ec.ig.DefineLabel ();
 			}
-			EmitFinallyBody (ec);
-			ec.ig.MarkLabel (end_finally);
+			return resume_point;
 		}
 
-		protected void ResolveFinally (FlowBranchingException branching)
+		public virtual Label PrepareForDispose (EmitContext ec, Label end)
 		{
-			emit_finally = branching.EmitFinally;
+			return end;
+		}
+		public virtual void EmitForDispose (EmitContext ec, Iterator iterator, Label end, bool have_dispatcher)
+		{
+		}
+	}
+
+	public abstract class ExceptionStatement : ResumableStatement
+	{
+		protected virtual void EmitPreTryBody (EmitContext ec)
+		{
+		}
+
+		protected abstract void EmitTryBody (EmitContext ec);
+		protected abstract void EmitFinallyBody (EmitContext ec);
+
+		protected sealed override void DoEmit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+
+			EmitPreTryBody (ec);
+
+			if (resume_points != null) {
+				IntConstant.EmitInt (ig, (int) Iterator.State.Running);
+				ig.Emit (OpCodes.Stloc, ec.CurrentIterator.CurrentPC);
+			}
+
+			ig.BeginExceptionBlock ();
+
+			if (resume_points != null) {
+				ig.MarkLabel (resume_point);
+
+				// For normal control flow, we want to fall-through the Switch
+				// So, we use CurrentPC rather than the $PC field, and initialize it to an outside value above
+				ig.Emit (OpCodes.Ldloc, ec.CurrentIterator.CurrentPC);
+				IntConstant.EmitInt (ig, first_resume_pc);
+				ig.Emit (OpCodes.Sub);
+
+				Label [] labels = new Label [resume_points.Count];
+				for (int i = 0; i < resume_points.Count; ++i)
+					labels [i] = ((ResumableStatement) resume_points [i]).PrepareForEmit (ec);
+				ig.Emit (OpCodes.Switch, labels);
+			}
+
+			EmitTryBody (ec);
+
+			ig.BeginFinallyBlock ();
+
+			Label start_finally = ec.ig.DefineLabel ();
+			if (resume_points != null) {
+				ig.Emit (OpCodes.Ldloc, ec.CurrentIterator.SkipFinally);
+				ig.Emit (OpCodes.Brfalse_S, start_finally);
+				ig.Emit (OpCodes.Endfinally);
+			}
+
+			ig.MarkLabel (start_finally);
+			EmitFinallyBody (ec);
+
+			ig.EndExceptionBlock ();
+		}
+
+		protected void ResolveFinally (EmitContext ec)
+		{
+			// System.Reflection.Emit automatically emits a 'leave' at the end of a try clause
+			// So, ensure there's some IL code after this statement.
+			ec.NeedReturnLabel ();
+		}
+
+		ArrayList resume_points;
+		int first_resume_pc;
+		public void AddResumePoint (ResumableStatement stmt, Location loc, int pc)
+		{
+			if (resume_points == null) {
+				resume_points = new ArrayList ();
+				first_resume_pc = pc;
+			}
+
+			if (pc != first_resume_pc + resume_points.Count)
+				throw new InternalErrorException ("missed an intervening AddResumePoint?");
+
+			resume_points.Add (stmt);
+		}
+
+		Label dispose_try_block;
+		bool prepared_for_dispose, emitted_dispose;
+		public override Label PrepareForDispose (EmitContext ec, Label end)
+		{
+			if (!prepared_for_dispose) {
+				prepared_for_dispose = true;
+				dispose_try_block = ec.ig.DefineLabel ();
+			}
+			return dispose_try_block;
+		}
+
+		public override void EmitForDispose (EmitContext ec, Iterator iterator, Label end, bool have_dispatcher)
+		{
+			if (emitted_dispose)
+				return;
+
+			emitted_dispose = true;
+
+			ILGenerator ig = ec.ig;
+
+			Label end_of_try = ig.DefineLabel ();
+
+			// Ensure that the only way we can get into this code is through a dispatcher
+			if (have_dispatcher)
+				ig.Emit (OpCodes.Br, end);
+
+			ig.BeginExceptionBlock ();
+
+			ig.MarkLabel (dispose_try_block);
+
+			Label [] labels = null;
+			for (int i = 0; i < resume_points.Count; ++i) {
+				ResumableStatement s = (ResumableStatement) resume_points [i];
+				Label ret = s.PrepareForDispose (ec, end_of_try);
+				if (ret.Equals (end_of_try) && labels == null)
+					continue;
+				if (labels == null) {
+					labels = new Label [resume_points.Count];
+					for (int j = 0; j < i; ++j)
+						labels [j] = end_of_try;
+				}
+				labels [i] = ret;
+			}
+
+			if (labels != null) {
+				int j;
+				for (j = 1; j < labels.Length; ++j)
+					if (!labels [0].Equals (labels [j]))
+						break;
+				bool emit_dispatcher = j < labels.Length;
+
+				if (emit_dispatcher) {
+					//SymbolWriter.StartIteratorDispatcher (ec.ig);
+					ig.Emit (OpCodes.Ldloc, iterator.CurrentPC);
+					IntConstant.EmitInt (ig, first_resume_pc);
+					ig.Emit (OpCodes.Sub);
+					ig.Emit (OpCodes.Switch, labels);
+					//SymbolWriter.EndIteratorDispatcher (ec.ig);
+				}
+
+				foreach (ResumableStatement s in resume_points)
+					s.EmitForDispose (ec, iterator, end_of_try, emit_dispatcher);
+			}
+
+			ig.MarkLabel (end_of_try);
+
+			ig.BeginFinallyBlock ();
+
+			EmitFinallyBody (ec);
+
+			ig.EndExceptionBlock ();
 		}
 	}
 
@@ -3828,16 +3984,12 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			FlowBranchingException branching = ec.StartFlowBranching (this);
+			ec.StartFlowBranching (this);
 			bool ok = Statement.Resolve (ec);
 
-			ResolveFinally (branching);
+			ResolveFinally (ec);
 
 			ec.EndFlowBranching ();
-
-			// System.Reflection.Emit automatically emits a 'leave' at the end of a try clause
-			// So, ensure there's some IL code after this statement.
-			ec.NeedReturnLabel ();
 
 			// Avoid creating libraries that reference the internal
 			// mcs NullType:
@@ -3859,26 +4011,21 @@ namespace Mono.CSharp {
 			return ok;
 		}
 		
-		protected override void DoEmit (EmitContext ec)
+		protected override void EmitPreTryBody (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 
 			temp.Store (ec, expr);
 			temp.Emit (ec);
 			ig.Emit (OpCodes.Call, TypeManager.void_monitor_enter_object);
-
-			// try
-			if (emit_finally)
-				ig.BeginExceptionBlock ();
-			Statement.Emit (ec);
-			
-			// finally
-			EmitFinally (ec);
-			if (emit_finally)
-				ig.EndExceptionBlock ();
 		}
 
-		public override void EmitFinallyBody (EmitContext ec)
+		protected override void EmitTryBody (EmitContext ec)
+		{
+			Statement.Emit (ec);
+		}
+
+		protected override void EmitFinallyBody (EmitContext ec)
 		{
 			temp.Emit (ec);
 			ec.ig.Emit (OpCodes.Call, TypeManager.void_monitor_exit_object);
@@ -4398,7 +4545,7 @@ namespace Mono.CSharp {
 		{
 			bool ok = true;
 
-			FlowBranchingException branching = ec.StartFlowBranching (this);
+			ec.StartFlowBranching (this);
 
 			if (!stmt.Resolve (ec))
 				ok = false;
@@ -4410,30 +4557,18 @@ namespace Mono.CSharp {
 					ok = false;
 			}
 
-			ResolveFinally (branching);
+			ResolveFinally (ec);
 			ec.EndFlowBranching ();
-
-			// System.Reflection.Emit automatically emits a 'leave' at the end of a try clause
-			// So, ensure there's some IL code after this statement.
-			ec.NeedReturnLabel ();
 
 			return ok;
 		}
 
-		protected override void DoEmit (EmitContext ec)
+		protected override void EmitTryBody (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
-
-			if (emit_finally)
-				ig.BeginExceptionBlock ();
 			stmt.Emit (ec);
-
-			EmitFinally (ec);
-			if (emit_finally)
-				ig.EndExceptionBlock ();
 		}
 
-		public override void EmitFinallyBody (EmitContext ec)
+		protected override void EmitFinallyBody (EmitContext ec)
 		{
 			fini.Emit (ec);
 		}
@@ -4571,75 +4706,30 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class Using : ExceptionStatement {
-		object expression_or_block;
+	public class UsingTemporary : ExceptionStatement {
+		TemporaryVariable local_copy;
 		public Statement Statement;
-		ArrayList var_list;
 		Expression expr;
 		Type expr_type;
-		Expression [] resolved_vars;
-		Expression [] converted_vars;
-		Expression [] assign;
-		TemporaryVariable local_copy;
-		
-		public Using (object expression_or_block, Statement stmt, Location l)
+
+		public UsingTemporary (Expression expr, Statement stmt, Location l)
 		{
-			this.expression_or_block = expression_or_block;
+			this.expr = expr;
 			Statement = stmt;
 			loc = l;
 		}
 
-		//
-		// Resolves for the case of using using a local variable declaration.
-		//
-		bool ResolveLocalVariableDecls (EmitContext ec)
+		public override bool Resolve (EmitContext ec)
 		{
-			resolved_vars = new Expression[var_list.Count];
-			assign = new Expression [var_list.Count];
-			converted_vars = new Expression[var_list.Count];
+			expr = expr.Resolve (ec);
+			if (expr == null)
+				return false;
 
-			for (int i = 0; i < assign.Length; ++i) {
-				DictionaryEntry e = (DictionaryEntry) var_list [i];
-				Expression var = (Expression) e.Key;
-				Expression new_expr = (Expression) e.Value;
+			expr_type = expr.Type;
 
-				Expression a = new Assign (var, new_expr, loc);
-				a = a.Resolve (ec);
-				if (a == null)
-					return false;
-
-				resolved_vars [i] = var;
-				assign [i] = a;
-
-				if (TypeManager.ImplementsInterface (a.Type, TypeManager.idisposable_type)) {
-					converted_vars [i] = var;
-					continue;
-				}
-
-				a = Convert.ImplicitConversionStandard (ec, a, TypeManager.idisposable_type, var.Location);
-				if (a == null) {
-					Error_IsNotConvertibleToIDisposable (var);
-					return false;
-				}
-
-				converted_vars [i] = a;
-			}
-
-			return true;
-		}
-
-		static void Error_IsNotConvertibleToIDisposable (Expression expr)
-		{
-			Report.SymbolRelatedToPreviousError (expr.Type);
-			Report.Error (1674, expr.Location, "`{0}': type used in a using statement must be implicitly convertible to `System.IDisposable'",
-				expr.GetSignatureForError ());
-		}
-
-		bool ResolveExpression (EmitContext ec)
-		{
-			if (!TypeManager.ImplementsInterface (expr_type, TypeManager.idisposable_type)){
+			if (!TypeManager.ImplementsInterface (expr_type, TypeManager.idisposable_type)) {
 				if (Convert.ImplicitConversion (ec, expr, TypeManager.idisposable_type, loc) == null) {
-					Error_IsNotConvertibleToIDisposable (expr);
+					Using.Error_IsNotConvertibleToIDisposable (expr);
 					return false;
 				}
 			}
@@ -4647,113 +4737,33 @@ namespace Mono.CSharp {
 			local_copy = new TemporaryVariable (expr_type, loc);
 			local_copy.Resolve (ec);
 
-			return true;
-		}
-		
-		//
-		// Emits the code for the case of using using a local variable declaration.
-		//
-		void EmitLocalVariableDecls (EmitContext ec)
-		{
-			ILGenerator ig = ec.ig;
-			int i = 0;
+			ec.StartFlowBranching (this);
 
-			for (i = 0; i < assign.Length; i++) {
-				ExpressionStatement es = assign [i] as ExpressionStatement;
+			bool ok = Statement.Resolve (ec);
 
-				if (es != null)
-					es.EmitStatement (ec);
-				else {
-					assign [i].Emit (ec);
-					ig.Emit (OpCodes.Pop);
-				}
+			ResolveFinally (ec);
 
-				if (emit_finally)
-					ig.BeginExceptionBlock ();
+			ec.EndFlowBranching ();
+
+			if (TypeManager.void_dispose_void == null) {
+				TypeManager.void_dispose_void = TypeManager.GetPredefinedMethod (
+					TypeManager.idisposable_type, "Dispose", loc, Type.EmptyTypes);
 			}
-			Statement.Emit (ec);
 
-			var_list.Reverse ();
-
-			EmitFinally (ec);
+			return ok;
 		}
 
-		void EmitLocalVariableDeclFinally (EmitContext ec)
+		protected override void EmitPreTryBody (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
-
-			int i = assign.Length;
-			for (int ii = 0; ii < var_list.Count; ++ii){
-				Expression var = resolved_vars [--i];
-				Label skip = ig.DefineLabel ();
-
-				if (emit_finally)
-					ig.BeginFinallyBlock ();
-				
-				if (!var.Type.IsValueType) {
-					var.Emit (ec);
-					ig.Emit (OpCodes.Brfalse, skip);
-					converted_vars [i].Emit (ec);
-					ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
-				} else {
-					Expression ml = Expression.MemberLookup(ec.ContainerType, TypeManager.idisposable_type, var.Type, "Dispose", Mono.CSharp.Location.Null);
-
-					if (!(ml is MethodGroupExpr)) {
-						var.Emit (ec);
-						ig.Emit (OpCodes.Box, var.Type);
-						ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
-					} else {
-						MethodInfo mi = null;
-
-						foreach (MethodInfo mk in ((MethodGroupExpr) ml).Methods) {
-							if (TypeManager.GetParameterData (mk).Count == 0) {
-								mi = mk;
-								break;
-							}
-						}
-
-						if (mi == null) {
-							Report.Error(-100, Mono.CSharp.Location.Null, "Internal error: No Dispose method which takes 0 parameters.");
-							return;
-						}
-
-						IMemoryLocation mloc = (IMemoryLocation) var;
-
-						mloc.AddressOf (ec, AddressOp.Load);
-						ig.Emit (OpCodes.Call, mi);
-					}
-				}
-
-				ig.MarkLabel (skip);
-
-				if (emit_finally) {
-					ig.EndExceptionBlock ();
-					if (i > 0)
-						ig.BeginFinallyBlock ();
-				}
-			}
-		}
-
-		void EmitExpression (EmitContext ec)
-		{
-			//
-			// Make a copy of the expression and operate on that.
-			//
-			ILGenerator ig = ec.ig;
-
 			local_copy.Store (ec, expr);
-
-			if (emit_finally)
-				ig.BeginExceptionBlock ();
-
-			Statement.Emit (ec);
-			
-			EmitFinally (ec);
-			if (emit_finally)
-				ig.EndExceptionBlock ();
 		}
 
-		void EmitExpressionFinally (EmitContext ec)
+		protected override void EmitTryBody (EmitContext ec)
+		{
+			Statement.Emit (ec);
+		}
+
+	        protected override void EmitFinallyBody (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 			if (!expr_type.IsValueType) {
@@ -4763,14 +4773,132 @@ namespace Mono.CSharp {
 				local_copy.Emit (ec);
 				ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
 				ig.MarkLabel (skip);
+				return;
+			}
+
+			Expression ml = Expression.MemberLookup (
+				ec.ContainerType, TypeManager.idisposable_type, expr_type,
+				"Dispose", Location.Null);
+
+			if (!(ml is MethodGroupExpr)) {
+				local_copy.Emit (ec);
+				ig.Emit (OpCodes.Box, expr_type);
+				ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
+				return;
+			}
+
+			MethodInfo mi = null;
+
+			foreach (MethodInfo mk in ((MethodGroupExpr) ml).Methods) {
+				if (TypeManager.GetParameterData (mk).Count == 0) {
+					mi = mk;
+					break;
+				}
+			}
+
+			if (mi == null) {
+				Report.Error(-100, Mono.CSharp.Location.Null, "Internal error: No Dispose method which takes 0 parameters.");
+				return;
+			}
+
+			local_copy.AddressOf (ec, AddressOp.Load);
+			ig.Emit (OpCodes.Call, mi);
+		}
+
+		protected override void CloneTo (CloneContext clonectx, Statement t)
+		{
+			UsingTemporary target = (UsingTemporary) t;
+
+			target.expr = expr.Clone (clonectx);
+			target.Statement = Statement.Clone (clonectx);
+		}
+	}
+
+	public class Using : ExceptionStatement {
+		Statement stmt;
+		public Statement EmbeddedStatement {
+			get { return stmt is Using ? ((Using) stmt).EmbeddedStatement : stmt; }
+		}
+
+		Expression var;
+		Expression init;
+
+		Expression converted_var;
+		Expression assign;
+
+		public Using (Expression var, Expression init, Statement stmt, Location l)
+		{
+			this.var = var;
+			this.init = init;
+			this.stmt = stmt;
+			loc = l;
+		}
+
+		bool ResolveVariable (EmitContext ec)
+		{
+			Expression a = new Assign (var, init, loc);
+			a = a.Resolve (ec);
+			if (a == null)
+				return false;
+
+			assign = a;
+
+			if (TypeManager.ImplementsInterface (a.Type, TypeManager.idisposable_type)) {
+				converted_var = var;
+				return true;
+			}
+
+			a = Convert.ImplicitConversionStandard (ec, a, TypeManager.idisposable_type, var.Location);
+			if (a == null) {
+				Error_IsNotConvertibleToIDisposable (var);
+				return false;
+			}
+
+			converted_var = a;
+
+			return true;
+		}
+
+		static public void Error_IsNotConvertibleToIDisposable (Expression expr)
+		{
+			Report.SymbolRelatedToPreviousError (expr.Type);
+			Report.Error (1674, expr.Location, "`{0}': type used in a using statement must be implicitly convertible to `System.IDisposable'",
+				expr.GetSignatureForError ());
+		}
+
+		protected override void EmitPreTryBody (EmitContext ec)
+		{
+			ExpressionStatement es = assign as ExpressionStatement;
+			if (es != null) {
+				es.EmitStatement (ec);
 			} else {
-				Expression ml = Expression.MemberLookup (
-					ec.ContainerType, TypeManager.idisposable_type, expr_type,
-					"Dispose", Location.Null);
+				assign.Emit (ec);
+				ec.ig.Emit (OpCodes.Pop);
+			}
+		}
+
+		protected override void EmitTryBody (EmitContext ec)
+		{
+			stmt.Emit (ec);
+		}
+
+		protected override void EmitFinallyBody (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+
+			if (!var.Type.IsValueType) {
+				Label skip = ig.DefineLabel ();
+				var.Emit (ec);
+				ig.Emit (OpCodes.Brfalse, skip);
+				converted_var.Emit (ec);
+				ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
+				ig.MarkLabel (skip);
+			} else {
+				Expression ml = Expression.MemberLookup(ec.ContainerType, TypeManager.idisposable_type, var.Type, "Dispose", Mono.CSharp.Location.Null);
 
 				if (!(ml is MethodGroupExpr)) {
-					local_copy.Emit (ec);
-					ig.Emit (OpCodes.Box, expr_type);
+					var.Emit (ec);
+					ig.Emit (OpCodes.Box, var.Type);
 					ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
 				} else {
 					MethodInfo mi = null;
@@ -4787,45 +4915,26 @@ namespace Mono.CSharp {
 						return;
 					}
 
-					local_copy.AddressOf (ec, AddressOp.Load);
+					IMemoryLocation mloc = (IMemoryLocation) var;
+
+					mloc.AddressOf (ec, AddressOp.Load);
 					ig.Emit (OpCodes.Call, mi);
 				}
 			}
 		}
-		
+
 		public override bool Resolve (EmitContext ec)
 		{
-			if (expression_or_block is DictionaryEntry){
-				expr = (Expression) ((DictionaryEntry) expression_or_block).Key;
-				var_list = (ArrayList)((DictionaryEntry)expression_or_block).Value;
+			if (!ResolveVariable (ec))
+				return false;
 
-				if (!ResolveLocalVariableDecls (ec))
-					return false;
+			ec.StartFlowBranching (this);
 
-			} else if (expression_or_block is Expression){
-				expr = (Expression) expression_or_block;
+			bool ok = stmt.Resolve (ec);
 
-				expr = expr.Resolve (ec);
-				if (expr == null)
-					return false;
-
-				expr_type = expr.Type;
-
-				if (!ResolveExpression (ec))
-					return false;
-			}
-
-			FlowBranchingException branching = ec.StartFlowBranching (this);
-
-			bool ok = Statement.Resolve (ec);
-
-			ResolveFinally (branching);
+			ResolveFinally (ec);
 
 			ec.EndFlowBranching ();
-
-			// System.Reflection.Emit automatically emits a 'leave' at the end of a try clause
-			// So, ensure there's some IL code after this statement.
-			ec.NeedReturnLabel ();
 
 			if (TypeManager.void_dispose_void == null) {
 				TypeManager.void_dispose_void = TypeManager.GetPredefinedMethod (
@@ -4834,45 +4943,14 @@ namespace Mono.CSharp {
 
 			return ok;
 		}
-		
-		protected override void DoEmit (EmitContext ec)
-		{
-			if (expression_or_block is DictionaryEntry)
-				EmitLocalVariableDecls (ec);
-			else if (expression_or_block is Expression)
-				EmitExpression (ec);
-		}
-
-		public override void EmitFinallyBody (EmitContext ec)
-		{
-			if (expression_or_block is DictionaryEntry)
-				EmitLocalVariableDeclFinally (ec);
-			else if (expression_or_block is Expression)
-				EmitExpressionFinally (ec);
-		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)
 		{
 			Using target = (Using) t;
 
-			if (expression_or_block is Expression) {
-				target.expression_or_block = ((Expression) expression_or_block).Clone (clonectx);
-			} else {
-				DictionaryEntry de = (DictionaryEntry) expression_or_block;
-				ArrayList var_list = (ArrayList) de.Value;
-				ArrayList target_var_list = new ArrayList (var_list.Count);
-
-				foreach (DictionaryEntry de_variable in var_list)
-					target_var_list.Add (new DictionaryEntry (
-						((Expression) de_variable.Key).Clone (clonectx),
-						((Expression) de_variable.Value).Clone (clonectx)));
-
-				target.expression_or_block = new DictionaryEntry (
-					((Expression) de.Key).Clone (clonectx),
-					target_var_list);
-			}
-			
-			target.Statement = Statement.Clone (clonectx);
+			target.var = var.Clone (clonectx);
+			target.init = init.Clone (clonectx);
+			target.stmt = stmt.Clone (clonectx);
 		}
 	}
 
@@ -5494,12 +5572,12 @@ namespace Mono.CSharp {
 				{
 					bool ok = true;
 
-					FlowBranchingException branching = ec.StartFlowBranching (this);
+					ec.StartFlowBranching (this);
 
 					if (!loop.Resolve (ec))
 						ok = false;
 
-					ResolveFinally (branching);
+					ResolveFinally (ec);
 					ec.EndFlowBranching ();
 
 					if (TypeManager.void_dispose_void == null) {
@@ -5509,19 +5587,12 @@ namespace Mono.CSharp {
 					return ok;
 				}
 
-				protected override void DoEmit (EmitContext ec)
+				protected override void EmitTryBody (EmitContext ec)
 				{
-					ILGenerator ig = ec.ig;
-
-					if (emit_finally)
-						ig.BeginExceptionBlock ();
 					loop.Emit (ec);
-					EmitFinally (ec);
-					if (emit_finally)
-						ig.EndExceptionBlock ();
 				}
 
-				public override void EmitFinallyBody (EmitContext ec)
+				protected override void EmitFinallyBody (EmitContext ec)
 				{
 					parent.EmitFinallyBody (ec);
 				}

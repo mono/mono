@@ -1,7 +1,130 @@
+2008-04-06  Raja R Harinath  <harinath@hurrynot.org>
+
+	* iterators.cs (Iterator.EmitMoveNext): Remove try/fault wrapper.
+	Since $PC is always -1 inside the body of MoveNext, the fault
+	handler is a no-op.
+	* flowanalysis.cs (FlowBranchingException.EmitFinally): Kill.
+	* statement.cs (ExceptionStatement.emit_finally): Likewise.
+	(ExceptionStatement.ResolveFinally): Drop 'branching' argument.
+
+	The denouement!  Fix #324708
+	* iterators.cs (Iterator.EmitMoveNext): Reset $PC to -1 on entry.
+	(Iterator.EmitYieldBreak): We no longer need to reset $PC.
+	* statement.cs (ExceptionStatement.DoEmit): Actually emit the
+	'finally' inside the finally clause.
+
+	* statement.cs (ExceptionStatement.DoEmit): Emit try/finally block
+	inside an iterator.  Don't emit the body of the 'finally' inside
+	the finally clause yet.
+
+	Use the ResumableStatement infrastructure for MoveNext ()
+	* iterators.cs (Iterator.EmitMoveNext_NoResumePoints): New.
+	(Iterator.EmitMoveNext): Use 'resume_points'.  Get rid of
+	'old_resume_points'.  Move dispatcher upfront.
+	(Iterator.MarkYield): Mark the 'resume_point' of a Yield.
+	* statement.cs (ExceptionStatement.DoEmit): Emit a dispatcher if
+	in an enumerator.  This encodes the main fix in this patch series
+	-- we can only jump into the first instruction of a try from the
+	outside, but we want to emit try/finally regions in iterators and
+	resume in the middle of them.
+
+2008-04-05  Raja R Harinath  <harinath@hurrynot.org>
+
+	* statement.cs (ExceptionStatement.ResolveFinally): Move setting
+	of NeedReturnLabel here.
+
+	Introduce a common point for emitting try/finally to IL
+	* statement.cs (ExceptionStatement.DoEmit): New.  Combines all the
+	features of the various subclasses, which are now driven by ...
+	(ExceptionStatement.EmitPreTryBody): ... this and ...
+	(ExceptionStatement.EmitTryBody): ... this and the original
+	EmitFinallyBody.
+	(TryFinally, Lock, Using, UsingTemporary, DisposableWrapper):
+	Remove DoEmit and update to follow above protocol.
+
+	* statement.cs (ExceptionStatement.EmitForDispose): If all labels
+	of the dispatcher are the same, skip emitting the 'switch'.
+	* iterator.cs (Iterator.EmitDispose): Update to changes.
+
+	Clean up handling of 'using' statement
+	* statement.cs (UsingTemporary): New.  Carved out of ...
+	(Using): ... this.  Simplify drastically.  Handle exactly
+	one variable.
+	* cs-parser.jay (using_statement): Split.  Create UsingTemporary
+	or Using as appropriate.  If there are multiple variable declared,
+	create nested Using statements.
+	(resource_acquisition): Kill.
+
+	* statement.cs (ExceptionStatement.EmitForDispose): Use
+	EmitFinallyBody, not EmitFinally.
+
+	* flowanalysis.cs (FlowBranching.StealFinallyClauses): Remove.
+	* iterator.cs: Update to changes.
+
+	Start using the ResumableStatement infrastructure
+	* statement.cs (ResumeableStatement.PrepareForDispose): New.
+	(ResumableStatement.EmitForDispose): New.
+	(ExceptionStatement): Override them.
+	* iterators.cs (Iterator.EmitDispose): Use PrepareForDispose and
+	EmitForDispose to create the body of the Dispose method.  Don't
+	use OldResumePoint.
+
+	* iterator.cs (Iterator.AddResumePoint): Move here from ...
+	* statement.cs (Toplevel.AddResumePoint): ... here.
+	(Toplevel.MoveNextStatement.Resolve): Create FlowBranchingIterator.
+	* flowanalysis.cs (FlowBranchingIterator): New.
+	* codegen.cs (EmitContext): Update to changes.
+
+	* iterators.cs (Iterator.OldResumePoint): Rename from ResumePoint.
+	(Iterator.old_resume_points): Rename from 'resume_points'.
+	(Iterator.MoveNextStatement): Remove unused class.
+
+	New infrastructure for try/finally in iterators (still unused)
+	* flowanalysis.cs (FlowBranching.AddResumePoint): New.
+	(FlowBranchingToplevel.AddResumePoint): Hook into
+	ToplevelBlock.AddResumePoint.
+	(FlowBranchingTryCatch): Move CS01626 and CS01631 checks here.
+	(FlowBranchingException): Hook into ExceptionBlock.AddResumePoint.
+	* statement.cs (ToplevelBlock.AddResumePoint): New.  Collect
+	resume points and assign program-counter values.
+	(ExceptionBlock.AddResumePoint): Collect resume points for
+	de-muxer at the top of try block.
+	* iterators.cs (Yield.CheckContext): Simplify.
+	(Yield.Resolve): Use FlowBranching.AddResumePoint.
+
+2008-04-04  Raja R Harinath  <harinath@hurrynot.org>
+
+	* flowanalysis.cs (FlowBranching.AddReturnOrigin): Change Location
+	argument to an ExitStatement.
+	(FlowBranchingException): Refactor saved origins code.
+	* statement.cs (ExitStatement): Update to cahges.
+	* iterator.cs (YieldBreak): Likewise.
+
+	* statement.cs (ResumableStatement): New.  Common base class for
+	YieldReturn and ExceptionStatement.
+	(ExitStatement): New.  Common base class for Return and YieldBreak.
+	(Return): Update to changes.
+	* iterator.cs (YieldBreak): Likewise.
+	* lambda.cs (ContextualReturn): Likewise.
+
+	Fix #377028
+	* ecore.cs (Expression.ResolveAsTypeStep): If '!silent' attempt to
+	emit a meaningful error message.
+
+	Fix #324765, #319508
+	* flowanalysis.cs (VariableInfo.IsEverAssigned): New.
+	(VariableInfo.SetAssigned): Set it.
+	* statement.cs (Block.UsageWarning): Use 'IsEverAssigned' to
+	determine if CS0219 or CS0168 is appropriate.  Don't use
+	flow-analysis information.
+	(Block.Resolve): Use ec.EndFlowBranching, not ec.DoEndFlowBranching.
+	* codegen.cs (EmitContext.DoEndFlowBranching): Kill.  Inline into ...
+	(EmitContext.EndFlowBranching): ... this.
+
 2008-04-03  Marek Safar  <marek.safar@gmail.com>
 
 	* class.cs, typemanager.cs: Emit volatile field with IsVolatile modifier.
-	
+
 2008-04-03  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #376508
@@ -12,7 +135,7 @@
 
 	* expression.cs (Binary): Added remaining binary operators to expression
 	tree builder.
-	
+
 	* nullable.cs: Optimize shift with null argument.
 
 2008-04-03  Raja R Harinath  <harinath@hurrynot.org>

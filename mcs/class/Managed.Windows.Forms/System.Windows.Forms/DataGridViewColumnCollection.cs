@@ -29,14 +29,15 @@
 using System.ComponentModel;
 using System.Collections;
 
-namespace System.Windows.Forms {
-
+namespace System.Windows.Forms
+{
 	[ListBindable (false)]
-	public class DataGridViewColumnCollection : BaseCollection, IList, ICollection, IEnumerable {
-
+	public class DataGridViewColumnCollection : BaseCollection, IList, ICollection, IEnumerable
+	{
 		private DataGridView dataGridView;
 
-		public DataGridViewColumnCollection (DataGridView dataGridView) {
+		public DataGridViewColumnCollection (DataGridView dataGridView)
+		{
 			this.dataGridView = dataGridView;
 		}
 
@@ -45,7 +46,7 @@ namespace System.Windows.Forms {
 		}
 
 		object IList.this [int index] {
-			get { return this[index]; }
+			get { return this [index]; }
 			set { throw new NotSupportedException(); }
 		}
 
@@ -66,11 +67,13 @@ namespace System.Windows.Forms {
 
 		public event CollectionChangeEventHandler CollectionChanged;
 
-		int IList.Add (object o) {
-			return Add(o as DataGridViewColumn);
+		int IList.Add (object value)
+		{
+			return Add(value as DataGridViewColumn);
 		}
 
-		public virtual int Add (DataGridViewColumn dataGridViewColumn) {
+		public virtual int Add (DataGridViewColumn dataGridViewColumn)
+		{
 			dataGridViewColumn.SetIndex(base.List.Count);
 			dataGridViewColumn.SetDataGridView(dataGridView);
 			int result = base.List.Add(dataGridViewColumn);
@@ -80,97 +83,114 @@ namespace System.Windows.Forms {
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public virtual int Add (string columnName, string headerText) {
-			DataGridViewColumn col = new DataGridViewTextBoxColumn();
+		public virtual int Add (string columnName, string headerText)
+		{
+			DataGridViewColumn col = new DataGridViewTextBoxColumn ();
 			col.Name = columnName;
 			col.HeaderText = headerText;
-			return Add(col);
+			return Add (col);
 		}
 
-		public virtual void AddRange (params DataGridViewColumn[] dataGridViewColumns) {
-			foreach (DataGridViewColumn col in dataGridViewColumns) {
-				Add(col);
-			}
+		public virtual void AddRange (params DataGridViewColumn[] dataGridViewColumns)
+		{
+			foreach (DataGridViewColumn col in dataGridViewColumns)
+				Add (col);
 		}
 
-		public virtual void Clear () {
-			base.List.Clear();
+		public virtual void Clear ()
+		{
+			base.List.Clear ();
 		}
 
-		bool IList.Contains (object o) {
-			return Contains(o as DataGridViewColumn);
+		bool IList.Contains (object value)
+		{
+			return Contains (value as DataGridViewColumn);
 		}
 
-		public virtual bool Contains (DataGridViewColumn dataGridViewColumn) {
-			return base.List.Contains(dataGridViewColumn);
+		public virtual bool Contains (DataGridViewColumn dataGridViewColumn)
+		{
+			return base.List.Contains (dataGridViewColumn);
 		}
 
-		public virtual bool Contains (string columnName) {
-			foreach (DataGridViewColumn col in base.List) {
-				if (col.Name == columnName) {
+		public virtual bool Contains (string columnName)
+		{
+			foreach (DataGridViewColumn col in base.List)
+				if (col.Name == columnName)
 					return true;
-				}
-			}
 			return false;
 		}
 
-		public void CopyTo (DataGridViewColumn[] array, int index) {
-			base.List.CopyTo(array, index);
+		public void CopyTo (DataGridViewColumn [] array, int index)
+		{
+			base.List.CopyTo (array, index);
 		}
 
-		public int GetColumnCount (DataGridViewElementStates includeFilter) {
+		public int GetColumnCount (DataGridViewElementStates includeFilter)
+		{
 			return 0;
 		}
 
-		public int GetColumnsWidth (DataGridViewElementStates includeFilter) {
+		public int GetColumnsWidth (DataGridViewElementStates includeFilter)
+		{
 			return 0;
 		}
 
-		public DataGridViewColumn GetFirstColumn (DataGridViewElementStates includeFilter) {
+		public DataGridViewColumn GetFirstColumn (DataGridViewElementStates includeFilter)
+		{
 			return null;
 		}
 
-		public DataGridViewColumn GetFirstColumn (DataGridViewElementStates includeFilter, DataGridViewElementStates excludeFilter) {
+		public DataGridViewColumn GetFirstColumn (DataGridViewElementStates includeFilter, DataGridViewElementStates excludeFilter)
+		{
 			return null;
 		}
 
-		public DataGridViewColumn GetLastColumn (DataGridViewElementStates includeFilter, DataGridViewElementStates excludeFilter) {
+		public DataGridViewColumn GetLastColumn (DataGridViewElementStates includeFilter, DataGridViewElementStates excludeFilter)
+		{
 			return null;
 		}
 
-		public DataGridViewColumn GetNextColumn (DataGridViewColumn dataGridViewColumnStart, DataGridViewElementStates includeFilter, DataGridViewElementStates excludeFilter) {
+		public DataGridViewColumn GetNextColumn (DataGridViewColumn dataGridViewColumnStart, DataGridViewElementStates includeFilter, DataGridViewElementStates excludeFilter)
+		{
 			return null;
 		}
 
-		public DataGridViewColumn GetPreviousColumn (DataGridViewColumn dataGridViewColumnStart, DataGridViewElementStates includeFilter, DataGridViewElementStates excludeFilter) {
+		public DataGridViewColumn GetPreviousColumn (DataGridViewColumn dataGridViewColumnStart, DataGridViewElementStates includeFilter, DataGridViewElementStates excludeFilter)
+		{
 			return null;
 		}
 
-		int IList.IndexOf (object o) {
-			return IndexOf(o as DataGridViewColumn);
+		int IList.IndexOf (object value)
+		{
+			return IndexOf (value as DataGridViewColumn);
 		}
 
-		public int IndexOf (DataGridViewColumn dataGridViewColumn) {
-			return base.List.IndexOf(dataGridViewColumn);
+		public int IndexOf (DataGridViewColumn dataGridViewColumn)
+		{
+			return base.List.IndexOf (dataGridViewColumn);
 		}
 
-		void IList.Insert (int columnIndex, object o) {
-			Insert(columnIndex, o as DataGridViewColumn);
+		void IList.Insert (int index, object value)
+		{
+			Insert (index, value as DataGridViewColumn);
 		}
 
-		public virtual void Insert (int columnIndex, DataGridViewColumn dataGridViewColumn) {
-			dataGridViewColumn.SetIndex(columnIndex);
-			base.List.Insert(columnIndex, dataGridViewColumn);
-			OnCollectionChanged(new CollectionChangeEventArgs(CollectionChangeAction.Add, dataGridViewColumn));
+		public virtual void Insert (int columnIndex, DataGridViewColumn dataGridViewColumn)
+		{
+			dataGridViewColumn.SetIndex (columnIndex);
+			base.List.Insert (columnIndex, dataGridViewColumn);
+			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, dataGridViewColumn));
 		}
 
-		void IList.Remove (object o) {
-			Remove(o as DataGridViewColumn);
+		void IList.Remove (object value)
+		{
+			Remove (value as DataGridViewColumn);
 		}
 
-		public virtual void Remove (DataGridViewColumn dataGridViewColumn) {
-			base.List.Remove(dataGridViewColumn);
-			OnCollectionChanged(new CollectionChangeEventArgs(CollectionChangeAction.Remove, dataGridViewColumn));
+		public virtual void Remove (DataGridViewColumn dataGridViewColumn)
+		{
+			base.List.Remove (dataGridViewColumn);
+			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, dataGridViewColumn));
 		}
 
 		public virtual void Remove (string columnName) {
@@ -182,27 +202,26 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public virtual void RemoveAt (int index) {
-			DataGridViewColumn col = this[index];
-			base.List.RemoveAt(index);
-			OnCollectionChanged(new CollectionChangeEventArgs(CollectionChangeAction.Add, col));
+		public virtual void RemoveAt (int index)
+		{
+			DataGridViewColumn col = this [index];
+			base.List.RemoveAt (index);
+			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, col));
 		}
 
 		protected DataGridView DataGridView {
 			get { return dataGridView; }
 		}
 
-		protected virtual void OnCollectionChanged (CollectionChangeEventArgs e) {
-			if (CollectionChanged != null) {
+		protected virtual void OnCollectionChanged (CollectionChangeEventArgs e)
+		{
+			if (CollectionChanged != null)
 				CollectionChanged(this, e);
-			}
 		}
 
 		protected override ArrayList List {
 			get { return base.List; }
 		}
-
-		/************************/
 
 		internal ArrayList ColumnDisplayIndexSortedArrayList {
 			get {
@@ -212,29 +231,22 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private class ColumnDisplayIndexComparator : IComparer {
-
-			public int Compare (object o1, object o2) {
+		private class ColumnDisplayIndexComparator : IComparer
+		{
+			public int Compare (object o1, object o2)
+			{
 				DataGridViewColumn col1 = (DataGridViewColumn) o1;
 				DataGridViewColumn col2 = (DataGridViewColumn) o2;
 				if (col1.DisplayIndex < col2.DisplayIndex) {
 					return -1;
-				}
-				else if (col1.DisplayIndex > col2.DisplayIndex) {
+				} else if (col1.DisplayIndex > col2.DisplayIndex) {
 					return 1;
-				}
-				else {
+				} else {
 					return 0;
 				}
 			}
-
 		}
-
-		/************************/
-
-
 	}
-
 }
 
 #endif
