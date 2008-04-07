@@ -476,9 +476,9 @@ class Tester
 	
 	void ConstantTest ()
 	{
-		Expression<Func<int>> e1 = () => default (int);
-		AssertNodeType (e1, ExpressionType.Constant);
-		Assert (0, e1.Compile ().Invoke ());
+//		Expression<Func<int>> e1 = () => default (int);
+//		AssertNodeType (e1, ExpressionType.Constant);
+//		Assert (0, e1.Compile ().Invoke ());
 
 		Expression<Func<int?>> e2 = () => default (int?);
 		AssertNodeType (e2, ExpressionType.Constant);

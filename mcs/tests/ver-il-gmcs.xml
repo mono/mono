@@ -7404,6 +7404,31 @@
       </method>
     </type>
   </test>
+  <test name="gtest-262.cs">
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void f1(System.Object)">
+        <size>1</size>
+      </method>
+      <method name="Void f2(System.String)">
+        <size>1</size>
+      </method>
+      <method name="Void f3(Test)">
+        <size>1</size>
+      </method>
+      <method name="Void f4(Int32)">
+        <size>1</size>
+      </method>
+      <method name="Void f5(Int16)">
+        <size>1</size>
+      </method>
+      <method name="Void Main()">
+        <size>167</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-263.cs">
     <type name="Foo`1[S]">
       <method name="Void .ctor()">
@@ -20727,6 +20752,19 @@
       </method>
     </type>
   </test>
+  <test name="test-329.cs">
+    <type name="X">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor(Object)">
+        <size>21</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>74</size>
+      </method>
+    </type>
+  </test>
   <test name="test-33.cs">
     <type name="FirstOuter.FirstInner.First">
       <method name="Void .ctor()">
@@ -24486,6 +24524,31 @@
     <type name="AttrB">
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-492.cs">
+    <type name="Test.My1Attribute">
+      <method name="Void .ctor(Object)">
+        <size>19</size>
+      </method>
+    </type>
+    <type name="Test.My2Attribute">
+      <method name="Void .ctor(String[])">
+        <size>21</size>
+      </method>
+    </type>
+    <type name="Test.My3Attribute">
+      <method name="Void .ctor(Byte)">
+        <size>24</size>
+      </method>
+    </type>
+    <type name="Test.Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>60</size>
       </method>
     </type>
   </test>
