@@ -736,7 +736,9 @@ namespace System.Windows.Forms {
 		private XIMProperties [] GetSupportedInputStyles (IntPtr xim)
 		{
 			IntPtr stylesPtr;
-			XGetIMValues (xim, XNames.XNQueryInputStyle, out stylesPtr, IntPtr.Zero);
+			string ret = XGetIMValues (xim, XNames.XNQueryInputStyle, out stylesPtr, IntPtr.Zero);
+			if (ret != null || stylesPtr == IntPtr.Zero)
+				return new XIMProperties [0];
 			XIMStyles styles = (XIMStyles) Marshal.PtrToStructure (stylesPtr, typeof (XIMStyles));
 			XIMProperties [] supportedStyles = new XIMProperties [styles.count_styles];
 			for (int i = 0; i < styles.count_styles; i++)
