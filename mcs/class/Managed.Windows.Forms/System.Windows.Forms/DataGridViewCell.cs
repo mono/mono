@@ -823,7 +823,7 @@ namespace System.Windows.Forms {
 				throw new FormatException ("The System.Windows.Forms.DataGridViewCell.FormattedValueType property value is null.");
 			if (formattedValue == null)
 				throw new ArgumentException ("formattedValue is null.");
-			if (valueType == null)
+			if (ValueType == null)
 				throw new FormatException ("valuetype is null");
 			if (formattedValue.GetType () != FormattedValueType)
 				throw new ArgumentException ("formattedValue is not of formattedValueType.");

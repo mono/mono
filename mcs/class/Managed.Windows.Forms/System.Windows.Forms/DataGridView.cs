@@ -3502,13 +3502,19 @@ namespace System.Windows.Forms {
 			//Console.WriteLine("Mouse: Clicks: {0}; Delta: {1}; X: {2}; Y: {3};", e.Clicks, e.Delta, e.X, e.Y);
 			HitTestInfo hit = HitTest (e.X, e.Y);
 
-			switch (hit.Type) 
-			{
-			case DataGridViewHitTestType.Cell:
-				Rectangle display = GetCellDisplayRectangle (hit.ColumnIndex, hit.RowIndex, false);
-				OnCellMouseClick (new DataGridViewCellMouseEventArgs (hit.ColumnIndex, hit.RowIndex, e.X - display.X, e.Y - display.Y, e));
-				break;
-			
+			switch (hit.Type) {
+				case DataGridViewHitTestType.Cell:
+					Rectangle display = GetCellDisplayRectangle (hit.ColumnIndex, hit.RowIndex, false);
+					Point cellpoint = new Point (e.X - display.X, e.Y - display.Y);
+
+					OnCellMouseClick (new DataGridViewCellMouseEventArgs (hit.ColumnIndex, hit.RowIndex, cellpoint.X, cellpoint.Y, e));
+					
+					DataGridViewCell cell = GetCellInternal (hit.ColumnIndex, hit.RowIndex);
+					
+					if (cell.GetContentBounds (hit.RowIndex).Contains (cellpoint))
+						cell.OnContentClickInternal (new DataGridViewCellEventArgs (hit.ColumnIndex, hit.RowIndex));
+						
+					break;
 			}
 		}
 
