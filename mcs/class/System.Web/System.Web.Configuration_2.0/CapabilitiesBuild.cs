@@ -44,36 +44,39 @@ namespace System.Web.Configuration
 		/// 
 		/// </summary>
 		/// <param name="userAgent"></param>
+		/// <param name="initialCapabilities"></param>
 		/// <returns></returns>
-		public System.Web.Configuration.CapabilitiesResult Process(string userAgent)
+		public System.Web.Configuration.CapabilitiesResult Process(string userAgent, System.Collections.IDictionary initialCapabilities)
 		{
 			System.Collections.Specialized.NameValueCollection header;
 			header = new System.Collections.Specialized.NameValueCollection(1);
 			header.Add("User-Agent", userAgent);
-			return Process(header);
+			return Process(header, initialCapabilities);
 		}
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="request"></param>
+		/// <param name="initialCapabilities"></param>
 		/// <returns></returns>
-		public System.Web.Configuration.CapabilitiesResult Process(System.Web.HttpRequest request)
+		public System.Web.Configuration.CapabilitiesResult Process(System.Web.HttpRequest request, System.Collections.IDictionary initialCapabilities)
 		{
 			if (request != null)
 			{
-				return Process(request.Headers);
+				return Process(request.Headers, initialCapabilities);
 			}
 			else
 			{
-				return Process("");
+				return Process("", initialCapabilities);
 			}
 		}
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="header"></param>
+		/// <param name="initialCapabilities"></param>
 		/// <returns></returns>
-		public abstract System.Web.Configuration.CapabilitiesResult Process(System.Collections.Specialized.NameValueCollection header);
+		public abstract System.Web.Configuration.CapabilitiesResult Process(System.Collections.Specialized.NameValueCollection header, System.Collections.IDictionary initialCapabilities);
 		/// <summary>
 		/// Creates a Checksum from the Header values used by the Browser Detection System.
 		/// </summary>

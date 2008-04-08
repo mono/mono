@@ -35,6 +35,7 @@ using System.IO;
 using System.Globalization;
 using System.Web;
 using System.Web.UI;
+using System.Web.UI.Adapters;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.Adapters;
 using System.Text;
@@ -165,10 +166,10 @@ namespace MonoTests.System.Web.UI.WebControls
 				return SelectArguments;
 			}
 			
-			internal DataBoundControlAdapter dataBoundControlAdapter;
+			internal ControlAdapter controlAdapter;
 			protected override global::System.Web.UI.Adapters.ControlAdapter ResolveAdapter ()
 			{
-				return dataBoundControlAdapter;
+				return controlAdapter;
 			}
 
 		}
@@ -352,6 +353,10 @@ namespace MonoTests.System.Web.UI.WebControls
 			c.DoEnsureDataBound ();
 		}
 
+		class MyControlAdapter : ControlAdapter
+		{
+		}
+		
 		class MyDataBoundControlAdapter : DataBoundControlAdapter
 		{
 			internal bool perform_data_binding_called;
@@ -360,17 +365,25 @@ namespace MonoTests.System.Web.UI.WebControls
 				perform_data_binding_called = true;
 			}
 		}
-		
+
 		[Test]
 		public void PerformDataBinding_UsesAdapter ()
 		{
 			MyDataBoundControl c = new MyDataBoundControl ();
 			MyDataBoundControlAdapter a = new MyDataBoundControlAdapter();;
-			c.dataBoundControlAdapter = a;
+			c.controlAdapter = a;
 			c.DataBind ();
 			Assert.IsTrue (a.perform_data_binding_called, "PerformDataBinding_UsesAdapter");
 		}
 
+		[Test]
+		public void PerformDataBinding_WorksWithControlAdapter ()
+		{
+			MyDataBoundControl c = new MyDataBoundControl ();
+			ControlAdapter a = new MyControlAdapter();;
+			c.controlAdapter = a;
+			c.DataBind ();
+		}
 	}
 }
 #endif

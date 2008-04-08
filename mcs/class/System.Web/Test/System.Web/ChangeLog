@@ -1,3 +1,9 @@
+2008-03-23  Dean Brettle <dean@brettle.com>
+
+	* AppBrowsersTest.cs: added tests to ensure browscap.ini
+	etc/mono/2.0/Browsers/Compat.browser are being used when there
+	are App_Browser/*.browser files.
+
 2008-03-09  Dean Brettle <dean@brettle.com> 
 
 	* AppBrowsersTest.cs: added.  Includes tests for Control.Adapter,

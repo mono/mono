@@ -1,3 +1,9 @@
+2008-04-08  Dean Brettle <dean@brettle.com>
+
+	* HttpApplicationFactory.cs (CapabilitiesProcessor): changed to
+	use etc/mono/2.0/Browser/*.browser files in addition to 
+	~/App_Browsers/*.browser files.
+
 2008-04-07  Marek Habersack  <mhabersack@novell.com>
 
 	* VirtualPath.cs: added

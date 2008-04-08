@@ -1,3 +1,22 @@
+2008-03-23  Dean Brettle <dean@brettle.com>
+
+	* CapabilitiesBuild.cs (Process), ICapabilitiesProcess.cs (Process),
+	nBrowser/Build.cs (Process): Added initialCapabilities argument to 
+	facilitate using browscap.ini capabilities.
+	
+	* CapabilitiesResult.cs (ctor), nBrowserResult.cs (ctor): Change 
+	items arg to IDictionary to	facilitate using browscap.ini capabilities.
+	
+	* nBrowser/Node.cs (Reset): Removed code which checked prohibited 
+	non-alphanumerics in id attributes because .NET is not that strict.
+	
+	* nBrowser/Node.cs (MergeFrom): Fixed NullReferenceExceptions that
+	occurred when the source or destination node did not have any
+	capabilities or adapters.
+	
+	* nBrowser/Result.cs (AddAdapter): Fixed to allow types in other
+	assemblies.
+
 2008-03-09  Dean Brettle <dean@brettle.com> 
 
 	* nBrowser/Result.cs, nBrowser/NodeTypes.cs, nBrowser/Identification.cs,

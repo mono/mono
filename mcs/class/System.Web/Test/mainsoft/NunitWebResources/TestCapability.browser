@@ -1,14 +1,7 @@
 <browsers>
-	<defaultBrowser id="Default">
-		<capture>
-		</capture>
-		<capabilities>
-		</capabilities>
-		<controlAdapters />
-	</defaultBrowser>
-	<browser id="Default">
+	<browser id="testUserAgent" parentID="Default">
 		<identification>
-	  		<userAgent match="^(?'capturename'.*)$" />
+	  		<userAgent match="^(?'capturename'testUserAgent)$" />
 		</identification>
 		<capture>
 		</capture>
@@ -16,6 +9,12 @@
 			<capability name="notChanged" value="default" />
 			<capability name="changedInRefNode" value="unchanged" />
 	    	<capability name="capturedInDefaultNode" value="ua:${capturename}" />
+		</capabilities>
+		<controlAdapters />
+	</browser>
+	<browser refID="IE6to9">
+		<capabilities>
+			<capability name="addedInIE6to9RefNode" value="added" />
 		</capabilities>
 		<controlAdapters />
 	</browser>

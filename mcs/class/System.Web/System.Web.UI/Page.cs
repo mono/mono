@@ -447,7 +447,7 @@ public partial class Page : TemplateControl, IHttpHandler
 #if NET_2_0
 	public PageAdapter PageAdapter {
 		get {
-			return (PageAdapter)Adapter;
+			return Adapter as PageAdapter;
 		}
 	}
 

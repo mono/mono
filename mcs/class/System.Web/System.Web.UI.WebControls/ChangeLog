@@ -1,3 +1,10 @@
+2008-04-08  Dean Brettle <dean@brettle.com>
+
+	* DataBoundControl.cs (InternalPerformDataBinding), 
+	HierarchicalDataBoundControl.cs (InternalPerformDataBinding),
+	WebControl.cs (Render): fixed cast errors when a ControlAdapter
+	that wasn't of the type corresponding to the control was used.
+
 2008-04-03  Marek Habersack  <mhabersack@novell.com>
 
 	* DataList.cs: use the value of SelectedIndex, not selectedIndex,

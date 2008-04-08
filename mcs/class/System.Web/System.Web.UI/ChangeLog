@@ -1,3 +1,8 @@
+2008-04-08  Dean Brettle <dean@brettle.com>
+
+	* Page.cs (PageAdapter): fixed cast error when a ControlAdapter that
+	wasn't a PageAdapter was used.
+
 2008-04-08  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateParser.cs: CodeFile/Src handling uses

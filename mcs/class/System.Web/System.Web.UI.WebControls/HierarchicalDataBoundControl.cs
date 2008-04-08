@@ -137,7 +137,7 @@ namespace System.Web.UI.WebControls
 		protected void InternalPerformDataBinding ()
 		{
 			HierarchicalDataBoundControlAdapter adapter 
-				= (HierarchicalDataBoundControlAdapter)Adapter;
+				= Adapter as HierarchicalDataBoundControlAdapter;
 			if (adapter != null)
 				adapter.PerformDataBinding ();
 			else

@@ -1,3 +1,10 @@
+2008-03-23  Dean Brettle <dean@brettle.com>
+
+	* NunitWebResources/adapters.browser, 
+	NunitWebResources/TestCapability.browser: modified to work and
+	support tests of browser defs in 
+	etc/mono/2.0/Browsers/Compat.browser.
+
 2008-03-09  Dean Brettle <dean@brettle.com> 
 
 	* add new resources: 

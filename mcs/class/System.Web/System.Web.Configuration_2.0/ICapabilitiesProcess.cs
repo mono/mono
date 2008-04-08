@@ -29,9 +29,9 @@ namespace System.Web.Configuration
 
 	internal interface ICapabilitiesProcess
 	{
-		System.Web.Configuration.CapabilitiesResult Process(string userAgent);
-		System.Web.Configuration.CapabilitiesResult Process(System.Web.HttpRequest request);
-		System.Web.Configuration.CapabilitiesResult Process(System.Collections.Specialized.NameValueCollection header);
+		System.Web.Configuration.CapabilitiesResult Process(string userAgent, System.Collections.IDictionary initialCapabilities);
+		System.Web.Configuration.CapabilitiesResult Process(System.Web.HttpRequest request, System.Collections.IDictionary initialCapabilities);
+		System.Web.Configuration.CapabilitiesResult Process(System.Collections.Specialized.NameValueCollection header, System.Collections.IDictionary initialCapabilities);
 	}
 }
 #endif

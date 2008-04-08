@@ -392,7 +392,7 @@ namespace System.Web {
 					acc.Compile ();
 					
 					// Note whether there are any App_Browsers/*.browser files.  If there
-					// are we will be using *.browser files for sniffing instead of browscap.ini
+					// are we will be using *.browser files for sniffing in addition to browscap.ini
 					string app_browsers_path = Path.Combine (physical_app_path, "App_Browsers");
 					app_browsers_files = new string[0];
 					if (Directory.Exists (app_browsers_path)) {
@@ -586,8 +586,17 @@ namespace System.Web {
 				lock (capabilities_processor_lock) {
 					if (capabilities_processor == null) {
 						capabilities_processor = new System.Web.Configuration.nBrowser.Build();
-						foreach (string f in app_browsers_files)
+						string machine_browsers_path = Path.Combine (HttpRuntime.MachineConfigurationDirectory, "Browsers");
+						if (Directory.Exists (machine_browsers_path)) {
+							string[] machine_browsers_files 
+								= Directory.GetFiles (machine_browsers_path, "*.browser");
+							foreach (string f in machine_browsers_files) {
+								capabilities_processor.AddBrowserFile(f);
+							}
+						}
+						foreach (string f in app_browsers_files) {
 							capabilities_processor.AddBrowserFile(f);
+						}
 					}
 				}
 				return capabilities_processor;
