@@ -40,7 +40,15 @@ namespace Cairo {
 		protected Gradient ()
 		{
 		}
-		
+
+		public int ColorStopCount {
+			get {
+				int cnt;
+				NativeMethods.cairo_pattern_get_color_stop_count (pattern, out cnt);
+				return cnt;
+			}
+		}
+
 		public Status AddColorStop (double offset, Cairo.Color c)
 		{
 			NativeMethods.cairo_pattern_add_color_stop_rgba (pattern, offset, c.R, c.G, c.B, c.A);

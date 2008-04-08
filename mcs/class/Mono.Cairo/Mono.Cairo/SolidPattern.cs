@@ -59,6 +59,15 @@ namespace Cairo {
 			else
 				pattern = NativeMethods.cairo_pattern_create_rgba (color.R, color.G, color.B, color.A);
 		}
+
+		public Color Color {
+                        get {
+				double red, green, blue, alpha;
+
+				NativeMethods.cairo_pattern_get_rgba  (pattern, out red, out green, out blue, out alpha);
+				return new Color (red, green, blue, alpha);
+                        }
+                }
 	}
 }
 

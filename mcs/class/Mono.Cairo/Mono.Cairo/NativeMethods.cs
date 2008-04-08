@@ -61,10 +61,8 @@ namespace Cairo
 		[DllImport (cairo)]
 		internal static extern void cairo_clip_preserve (IntPtr cr);
 
-#if CAIRO_1_4
 		[DllImport (cairo)]
 		internal static extern void cairo_clip_extents (IntPtr cr, out double x1, out double y1, out double x2, out double y2);
-#endif
 		
 		[DllImport (cairo)]
 		internal static extern void cairo_close_path (IntPtr cr);
@@ -83,6 +81,9 @@ namespace Cairo
 		
 		[DllImport (cairo)]
 		internal static extern IntPtr cairo_create (IntPtr target);
+
+		[DllImport (cairo)]
+		internal static extern uint cairo_get_reference_count (IntPtr surface);
 		
 		[DllImport (cairo)]
 		internal static extern void cairo_curve_to (IntPtr cr, double x1, double y1, double x2, double y2, double x3, double y3);
@@ -129,6 +130,9 @@ namespace Cairo
 		
 		[DllImport (cairo)]
 		internal static extern Status cairo_font_face_status (IntPtr font_face);
+
+		[DllImport (cairo)]
+		internal static extern uint cairo_font_face_get_reference_count (IntPtr surface);
 		
 		// FontOptions
 		[DllImport (cairo)]
@@ -283,6 +287,9 @@ namespace Cairo
 		
 		[DllImport (cairo)]
 		internal static extern int cairo_image_surface_get_width  (IntPtr surface);
+
+		[DllImport (cairo)]
+		internal static extern uint cairo_surface_get_reference_count (IntPtr surface);
 		
 		[DllImport (cairo)]
 		[return: MarshalAs (UnmanagedType.U1)]
@@ -363,36 +370,28 @@ namespace Cairo
 		[DllImport (cairo)]
 		internal static extern void cairo_pattern_add_color_stop_rgba (IntPtr pattern, double offset, double red, double green, double blue, double alpha);
 
-#if CAIRO_1_4
 		[DllImport (cairo)]
 		internal static extern Status cairo_pattern_get_color_stop_count (IntPtr pattern, out int count);
 		[DllImport (cairo)]
 		internal static extern Status cairo_pattern_get_color_stop_rgba (IntPtr pattern, int index, out double offset, out double red, out double green, out double blue, out double alpha);
-#endif
 		
 		[DllImport (cairo)]
 		internal static extern IntPtr cairo_pattern_create_for_surface (IntPtr surface);
 
-#if CAIRO_1_4
 		[DllImport (cairo)]
 		internal static extern Status cairo_pattern_get_surface (IntPtr pattern, out IntPtr surface);
-#endif
 		
 		[DllImport (cairo)]
 		internal static extern IntPtr cairo_pattern_create_linear (double x0, double y0, double x1, double y1);
 
-#if CAIRO_1_4
 		[DllImport (cairo)]
 		internal static extern Status cairo_pattern_get_linear_points (IntPtr pattern, out double x0, out double y0, out double x1, out double y1);
-#endif
 		
 		[DllImport (cairo)]
 		internal static extern IntPtr cairo_pattern_create_radial (double cx0, double cy0, double radius0, double cx1, double cy1, double radius1);
 
-#if CAIRO_1_4
 		[DllImport (cairo)]
 		internal static extern Status cairo_pattern_get_radial_circles (IntPtr pattern, out double x0, out double y0, out double r0, out double x1, out double y1, out double r1);
-#endif
 		
 		[DllImport (cairo)]
 		internal static extern IntPtr cairo_pattern_create_rgb (double r, double g, double b);
@@ -400,10 +399,8 @@ namespace Cairo
 		[DllImport (cairo)]
 		internal static extern IntPtr cairo_pattern_create_rgba (double r, double g, double b, double a);
 
-#if CAIRO_1_4
 		[DllImport (cairo)]
 		internal static extern Status cairo_pattern_get_rgba (IntPtr pattern, out double red, out double green, out double blue, out double alpha);
-#endif
 		
 		[DllImport (cairo)]
 		internal static extern void cairo_pattern_destroy (IntPtr pattern);
@@ -560,13 +557,11 @@ namespace Cairo
 		[DllImport (cairo)]
 		internal static extern void cairo_set_dash (IntPtr cr, double [] dashes, int ndash, double offset);
 
-#if CAIRO_1_4
 		[DllImport (cairo)]
 		internal static extern void cairo_get_dash (IntPtr cr, IntPtr dashes, out double offset);
 
 		[DllImport (cairo)]
 		internal static extern int cairo_get_dash_count (IntPtr cr);
-#endif
 		
 		[DllImport (cairo)]
 		internal static extern void cairo_set_fill_rule (IntPtr cr, Cairo.FillRule fill_rule);
@@ -640,13 +635,11 @@ namespace Cairo
 		[DllImport (cairo)]
 		internal static extern void cairo_stroke_preserve (IntPtr cr);
 		
-#if CAIRO_1_4
 		[DllImport (cairo)]
 		internal static extern void cairo_rectangle_list_destroy (IntPtr rectangle_list);
 
 		[DllImport (cairo)]
 		internal static extern IntPtr cairo_copy_clip_rectangle_list (IntPtr cr);
-#endif
 
 		// Surface
 		[DllImport (cairo)]
@@ -751,10 +744,8 @@ namespace Cairo
 		[DllImport (cairo)]
 		internal static extern IntPtr cairo_win32_surface_create (IntPtr hdc);
 		
-#if CAIRO_1_4
 		[DllImport (cairo)]
 		internal static extern IntPtr cairo_win32_surface_create_with_ddb (IntPtr hdc, Format format, int width, int height);
-#endif
 
 		// XcbSurface
 		[DllImport (cairo)]

@@ -93,6 +93,10 @@ namespace Cairo
 				return NativeMethods.cairo_font_face_get_type (handle);
 			}
 		}
+
+		public uint ReferenceCount {
+			get { return NativeMethods.cairo_font_face_get_reference_count (handle); }
+		}
 	}
 }
 
