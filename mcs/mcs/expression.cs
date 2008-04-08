@@ -135,7 +135,7 @@ namespace Mono.CSharp {
 	public class Unary : Expression {
 		public enum Operator : byte {
 			UnaryPlus, UnaryNegation, LogicalNot, OnesComplement,
-			Indirection, AddressOf,  TOP
+			AddressOf,  TOP
 		}
 
 		public readonly Operator Oper;
@@ -164,8 +164,6 @@ namespace Mono.CSharp {
 				return "~";
 			case Operator.AddressOf:
 				return "&";
-			case Operator.Indirection:
-				return "*";
 			}
 
 			return oper.ToString ();
@@ -181,7 +179,6 @@ namespace Mono.CSharp {
 			oper_names [(int) Operator.UnaryNegation] = "op_UnaryNegation";
 			oper_names [(int) Operator.LogicalNot] = "op_LogicalNot";
 			oper_names [(int) Operator.OnesComplement] = "op_OnesComplement";
-			oper_names [(int) Operator.Indirection] = "op_Indirection";
 			oper_names [(int) Operator.AddressOf] = "op_AddressOf";
 		}
 
@@ -353,8 +350,6 @@ namespace Mono.CSharp {
 				case Operator.AddressOf:
 					return e;
 
-				case Operator.Indirection:
-					return e;
 			}
 			throw new Exception ("Can not constant fold: " + Oper.ToString());
 		}
@@ -483,23 +478,6 @@ namespace Mono.CSharp {
 				type = TypeManager.GetPointerType (Expr.Type);
 				return this;
 
-			case Operator.Indirection:
-				if (!ec.InUnsafe){
-					UnsafeError (loc);
-					return null;
-				}
-				
-				if (!expr_type.IsPointer){
-					Error (193, "The * or -> operator must be applied to a pointer");
-					return null;
-				}
-				
-				//
-				// We create an Indirection expression, because
-				// it can implement the IMemoryLocation.
-				// 
-				return new Indirection (Expr, loc);
-			
 			case Operator.UnaryPlus:
 				// Unary numeric promotions
 				if (expr_type == TypeManager.byte_type || expr_type == TypeManager.sbyte_type ||
@@ -632,9 +610,6 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolveLValue (EmitContext ec, Expression right)
 		{
-			if (Oper == Operator.Indirection)
-				return DoResolve (ec);
-
 			return null;
 		}
 
@@ -715,8 +690,6 @@ namespace Mono.CSharp {
 		public Indirection (Expression expr, Location l)
 		{
 			this.expr = expr;
-			type = TypeManager.HasElementType (expr.Type) ? TypeManager.GetElementType (expr.Type) : expr.Type;
-			eclass = ExprClass.Variable;
 			loc = l;
 		}
 		
@@ -774,9 +747,20 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			//
-			// Born fully resolved
-			//
+			expr = expr.Resolve (ec);
+			if (expr == null)
+				return null;
+
+			if (!ec.InUnsafe)
+				UnsafeError (loc);
+
+			if (!expr.Type.IsPointer) {
+				Error (193, "The * or -> operator must be applied to a pointer");
+				return null;
+			}
+
+			type = TypeManager.GetElementType (expr.Type);
+			eclass = ExprClass.Variable;
 			return this;
 		}
 		

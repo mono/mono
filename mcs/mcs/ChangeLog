@@ -1,5 +1,10 @@
 2008-04-08  Marek Safar  <marek.safar@gmail.com>
 
+	*  cs-parser.jay, expression.cs: Don't wrap Indirection expression in Unary
+	expression.
+	
+2008-04-08  Marek Safar  <marek.safar@gmail.com>
+
 	* expression.cs, ecore.cs: Implemented MemberInit expression.
 	
 2008-04-08  Raja R Harinath  <harinath@hurrynot.org>
