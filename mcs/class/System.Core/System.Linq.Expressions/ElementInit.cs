@@ -57,9 +57,18 @@ namespace System.Linq.Expressions {
 			return ExpressionPrinter.ToString (this);
 		}
 
+		void EmitPopIfNeeded (EmitContext ec)
+		{
+			if (add_method.ReturnType == typeof (void))
+				return;
+
+			ec.ig.Emit (OpCodes.Pop);
+		}
+
 		internal void Emit (EmitContext ec, LocalBuilder local)
 		{
 			ec.EmitCall (local, arguments, add_method);
+			EmitPopIfNeeded (ec);
 		}
 	}
 }
