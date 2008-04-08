@@ -186,12 +186,23 @@ class MemberAccessData
 	public static decimal DecimalValue = decimal.MinValue;
 	public volatile uint VolatileValue;
 	public string [] StringValues;
+	public List<string> ListValues;
 
 	event Func<bool> EventField;
 	public Expression<Func<Func<bool>>> GetEvent ()
 	{
 		return () => EventField;
 	}
+	
+	MyType mt;
+	public MyType MyTypeProperty {
+		set	{
+			mt = value;
+		}
+		get {
+			return mt;
+		}
+	}	
 }
 
 // TODO: Add more nullable tests, follow AddTest pattern.
@@ -882,6 +893,26 @@ class Tester
 		AssertNodeType (e5, ExpressionType.MemberAccess);
 		Assert (null, e5.Compile ().Invoke ());
 	}
+	
+	void MemberInitTest ()
+	{
+		Expression<Func<MemberAccessData>> e = () => new MemberAccessData { 
+			VolatileValue = 2, StringValues = new string [] { "sv" }, MyTypeProperty = new MyType (692)
+		};
+		AssertNodeType (e, ExpressionType.MemberInit);
+		var r1 = e.Compile ().Invoke ();
+		Assert<uint> (2, r1.VolatileValue);
+		Assert (new string[] { "sv" }, r1.StringValues);
+		Assert (new MyType (692), r1.MyTypeProperty);
+
+		Expression<Func<MemberAccessData>> e2 = () => new MemberAccessData {
+			ListValues = new List<string> { "a", null }
+		};
+
+		AssertNodeType (e2, ExpressionType.MemberInit);
+		var r2 = e2.Compile ().Invoke ();
+		Assert ("a", r2.ListValues [0]);
+	}	
 
 	void ModuloTest ()
 	{
@@ -1285,11 +1316,12 @@ class Tester
 		e.LessThanTest ();
 		e.LessThanOrEqualTest ();
 		e.ListInitTest ();
-
 		e.MemberAccessTest ();
+		e.MemberInitTest ();
 		e.ModuloTest ();	
 		e.MultiplyTest ();
 		e.MultiplyCheckedTest ();
+		
 		e.NewArrayInitTest ();
 		e.NotTest ();
 		e.NotNullableTest ();
