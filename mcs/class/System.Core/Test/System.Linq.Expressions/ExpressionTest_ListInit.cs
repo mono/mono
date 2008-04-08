@@ -145,6 +145,7 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void CompileArrayListOfStringsInit ()
 		{
 			var add = typeof (ArrayList).GetMethod ("Add");
