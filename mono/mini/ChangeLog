@@ -1,4 +1,10 @@
+2008-04-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c: Applied patch from Mark Spruiell (mes@zeroc.com). Fix
+	race conditions when printing thread dumps. Fixes #377738.
+
 2008-04-08  Massimiliano Mantione  <massi@ximian.com>
+	
 	aliasing.c (update_aliasing_information_on_inst): Fixed a bug which
 	shows up when both MonoInst arguments can cause aliasig.
 
