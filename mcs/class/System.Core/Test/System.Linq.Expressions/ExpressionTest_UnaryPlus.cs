@@ -84,5 +84,28 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual ("op_UnaryPlus", expr.Method.Name);
 			Assert.AreEqual ("+value(MonoTests.System.Linq.Expressions.OpClass)",	expr.ToString ());
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void PlusNullableInt32 ()
+		{
+			var n = Expression.UnaryPlus (Expression.Parameter (typeof (int?), ""));
+			Assert.AreEqual (typeof (int?), n.Type);
+			Assert.IsTrue (n.IsLifted);
+			Assert.IsTrue (n.IsLiftedToNull);
+			Assert.IsNull (n.Method);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void CompilePlusInt32 ()
+		{
+			var p = Expression.Parameter (typeof (int), "i");
+			var plus = Expression.Lambda<Func<int, int>> (Expression.UnaryPlus (p), p).Compile ();
+
+			Assert.AreEqual (-2, plus (-2));
+			Assert.AreEqual (0, plus (0));
+			Assert.AreEqual (3, plus (3));
+		}
 	}
 }
