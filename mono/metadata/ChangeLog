@@ -1,3 +1,6 @@
+2008-04-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-config.h: Add missing G_BEGIN_DECLS/G_END_DECLS. Fixes #375188.	
 
 Thu Mar 6 19:43:41 CET 2008 Paolo Molaro <lupus@ximian.com>
 
