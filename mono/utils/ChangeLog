@@ -1,3 +1,7 @@
+2008-04-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-logger.h: Move G_END_DECLS outside of an #ifdef. Fixes #375107.	
+
 2008-01-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-io-portability.c: Include errno.h since it is needed by code inside
