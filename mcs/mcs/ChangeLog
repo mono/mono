@@ -1,5 +1,9 @@
 2008-04-08  Raja R Harinath  <harinath@hurrynot.org>
 
+	Fix mono/tests/exception4.cs
+	* statement.cs (ExceptionStatement, TryCatch): Revert to using
+	ec.NeedReturnLabel () rather emitting a 'nop'.
+
 	* statement.cs (ExceptionStatement.SomeCodeFollows): A hook for a
 	simple heuristic.
 	(TryCatch.SomeCodeFollows): Likewise.

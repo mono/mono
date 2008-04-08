@@ -3799,7 +3799,7 @@ namespace Mono.CSharp {
 
 	public abstract class ExceptionStatement : ResumableStatement
 	{
-		bool code_follows, emit_nop;
+		bool code_follows;
 
 		protected abstract void EmitPreTryBody (EmitContext ec);
 		protected abstract void EmitTryBody (EmitContext ec);
@@ -3848,8 +3848,6 @@ namespace Mono.CSharp {
 			EmitFinallyBody (ec);
 
 			ig.EndExceptionBlock ();
-			if (emit_nop)
-				ig.Emit (OpCodes.Nop);
 		}
 
 		public void SomeCodeFollows ()
@@ -3861,8 +3859,8 @@ namespace Mono.CSharp {
 		{
 			// System.Reflection.Emit automatically emits a 'leave' at the end of a try clause
 			// So, ensure there's some IL code after this statement.
-			if (!code_follows && ec.CurrentBranching.CurrentUsageVector.IsUnreachable)
-				emit_nop = true;
+			if (!code_follows && resume_points == null && ec.CurrentBranching.CurrentUsageVector.IsUnreachable)
+				ec.NeedReturnLabel ();
 
 		}
 
@@ -4587,7 +4585,7 @@ namespace Mono.CSharp {
 		public Block Block;
 		public ArrayList Specific;
 		public Catch General;
-		bool inside_try_finally, code_follows, emit_nop;
+		bool inside_try_finally, code_follows;
 
 		public TryCatch (Block block, ArrayList catch_clauses, Location l, bool inside_try_finally)
 		{
@@ -4666,7 +4664,7 @@ namespace Mono.CSharp {
 			// System.Reflection.Emit automatically emits a 'leave' at the end of a try/catch clause
 			// So, ensure there's some IL code after this statement
 			if (!inside_try_finally && !code_follows && ec.CurrentBranching.CurrentUsageVector.IsUnreachable)
-				emit_nop = true;
+				ec.NeedReturnLabel ();
 
 			return ok;
 		}
@@ -4693,8 +4691,6 @@ namespace Mono.CSharp {
 
 			if (!inside_try_finally)
 				ig.EndExceptionBlock ();
-			if (emit_nop)
-				ig.Emit (OpCodes.Nop);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)

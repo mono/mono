@@ -15777,7 +15777,7 @@
         <size>35</size>
       </method>
       <method name="Int32 test19()">
-        <size>47</size>
+        <size>49</size>
       </method>
       <method name="Int32 test20()">
         <size>22</size>
@@ -21584,7 +21584,7 @@
         <size>17</size>
       </method>
       <method name="Void Test()">
-        <size>27</size>
+        <size>26</size>
       </method>
     </type>
   </test>
@@ -24842,7 +24842,7 @@
         <size>7</size>
       </method>
       <method name="Int32 f()">
-        <size>18</size>
+        <size>19</size>
       </method>
       <method name="Void Main()">
         <size>38</size>
@@ -25027,7 +25027,7 @@
         <size>17</size>
       </method>
       <method name="Void f()">
-        <size>6</size>
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -25040,7 +25040,7 @@
         <size>17</size>
       </method>
       <method name="Void f()">
-        <size>6</size>
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -25103,7 +25103,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>18</size>
+        <size>19</size>
       </method>
     </type>
   </test>
@@ -25208,7 +25208,7 @@
         <size>7</size>
       </method>
       <method name="Int32 stuff()">
-        <size>19</size>
+        <size>20</size>
       </method>
       <method name="Int32 stuff2()">
         <size>44</size>
@@ -25366,7 +25366,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>255</size>
+        <size>257</size>
       </method>
     </type>
   </test>
@@ -27667,7 +27667,25 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>95</size>
+        <size>96</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-630.cs">
+    <type name="MyEx">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Ex">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 test(Int32)">
+        <size>37</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>70</size>
       </method>
     </type>
   </test>
