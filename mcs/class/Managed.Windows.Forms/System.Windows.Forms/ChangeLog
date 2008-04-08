@@ -1,5 +1,9 @@
 2008-04-08  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridViewHeaderCell.cs: Implement some NIEX methods.
+
+2008-04-08  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridView.cs: Call OnContentClick.
 	* DataGridViewCell.cs: Do a null check on ValueType instead
 	of valueType.
