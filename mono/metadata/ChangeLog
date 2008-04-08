@@ -1,5 +1,10 @@
 2008-04-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (mono_class_init): Do class verification if the verifier
+	is enabled.
+
+2008-04-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify-internal.h: Added mono_verifier_verify_class.
 
 	* verify.c: Added mono_verifier_verify_class. It checks for
