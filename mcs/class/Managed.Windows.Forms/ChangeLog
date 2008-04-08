@@ -1,3 +1,7 @@
+2008-04-08  Jonathan Pobst  <monkey@jpobst.com>
+
+	* System.Windows.Forms_test.dll.sources: Add DataGridViewCheckBoxCellTest.cs.
+
 2008-04-03  Jonathan Pobst  <monkey@jpobst.com>
 
 	* System.Windows.Forms_test.dll.sources: Add DataGridViewLinkCellTest.cs.

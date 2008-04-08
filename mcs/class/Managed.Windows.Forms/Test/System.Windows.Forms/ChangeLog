@@ -1,3 +1,7 @@
+2008-04-08  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridViewCheckBoxCellTest.cs: Add.
+
 2008-04-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* BindingSourceTest.cs: Enable some old not working tests.
