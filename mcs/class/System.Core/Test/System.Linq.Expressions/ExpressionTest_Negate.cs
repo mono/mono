@@ -84,5 +84,28 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual ("op_UnaryNegation", expr.Method.Name);
 			Assert.AreEqual ("-value(MonoTests.System.Linq.Expressions.OpClass)",	expr.ToString ());
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void NegateNullableInt32 ()
+		{
+			var n = Expression.Negate (Expression.Parameter (typeof (int?), ""));
+			Assert.AreEqual (typeof (int?), n.Type);
+			Assert.IsTrue (n.IsLifted);
+			Assert.IsTrue (n.IsLiftedToNull);
+			Assert.IsNull (n.Method);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void CompileNegateInt32 ()
+		{
+			var p = Expression.Parameter (typeof (int), "i");
+			var negate = Expression.Lambda<Func<int, int>> (Expression.Negate (p), p).Compile ();
+
+			Assert.AreEqual (-2, negate (2));
+			Assert.AreEqual (0, negate (0));
+			Assert.AreEqual (3, negate (-3));
+		}
 	}
 }
