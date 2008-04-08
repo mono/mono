@@ -1,3 +1,8 @@
+2008-04-08  Jb Evain  <jbevain@novell.com>
+
+	* CodeGeneratorFromTypeTestBase.cs: add a generator for
+	abstract properties.
+
 2008-01-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* ExecutorTest.cs (ExecWait_NullTempFileCollection): Fix the cmdNoFound case.
