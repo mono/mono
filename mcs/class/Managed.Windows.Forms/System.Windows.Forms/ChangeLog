@@ -1,3 +1,7 @@
+2008-04-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* X11Keyboard.cs : sizeof(IntPtr) != 4 on amd64.
+
 2008-04-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* BindingContext.cs: Stub UpdateBinding method.
