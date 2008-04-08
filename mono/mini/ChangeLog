@@ -14,6 +14,11 @@
 	
 	aliasing.c (update_aliasing_information_on_inst): Fixed a bug which
 	shows up when both MonoInst arguments can cause aliasig.
+	There is likely no way in the current JIT to trigger this problem, but
+	it showed up in the development of generics sharing, when in a new
+	opcode both args of an OP_GROUP can be aliases (addresses of a local).
+	When the generics sharing code will be committed, its tests will be
+	valid also for this bug.
 
 2008-04-08  Zoltan Varga  <vargaz@gmail.com>
 
