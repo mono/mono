@@ -1,3 +1,10 @@
+2008-04-08  Marek Habersack  <mhabersack@novell.com>
+
+	* SqlConnection.cs: TCP port discovery via UDP port 1434 should
+	honor the timeout specified in the connection string (or the
+	default one). In some environments 100 microseconds might not be
+	enough to discover the port.
+
 2008-04-01  Marek Habersack  <mhabersack@novell.com>
 
 	* SqlParameter.cs: ConvertToFrameworkType must handle empty
