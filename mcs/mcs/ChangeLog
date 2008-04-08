@@ -1,5 +1,14 @@
 2008-04-08  Raja R Harinath  <harinath@hurrynot.org>
 
+	* statement.cs (ExceptionStatement.SomeCodeFollows): A hook for a
+	simple heuristic.
+	(TryCatch.SomeCodeFollows): Likewise.
+	* flowanalysis.cs (FlowBranchingException): Call 'SomeCodeFollows'
+	for 'break', 'continue' and 'return' statements inside a try.
+	We're fairly sure that the generated IL stream will have more
+	instructions textually following the try.
+	(FlowBranchingTryCatch): Likewise.
+
 	* statement.cs (Throw.Resolve): Move CS0156 and CS0724 testing ...
 	* flowanalysis.cs (FlowBranching.CheckRethrow): ... here and to its
 	overrides.

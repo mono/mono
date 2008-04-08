@@ -3799,6 +3799,8 @@ namespace Mono.CSharp {
 
 	public abstract class ExceptionStatement : ResumableStatement
 	{
+		bool code_follows, emit_nop;
+
 		protected abstract void EmitPreTryBody (EmitContext ec);
 		protected abstract void EmitTryBody (EmitContext ec);
 		protected abstract void EmitFinallyBody (EmitContext ec);
@@ -3846,13 +3848,22 @@ namespace Mono.CSharp {
 			EmitFinallyBody (ec);
 
 			ig.EndExceptionBlock ();
+			if (emit_nop)
+				ig.Emit (OpCodes.Nop);
 		}
 
-		protected void ResolveFinally (EmitContext ec)
+		public void SomeCodeFollows ()
+		{
+			code_follows = true;
+		}
+
+		protected void ResolveReachability (EmitContext ec)
 		{
 			// System.Reflection.Emit automatically emits a 'leave' at the end of a try clause
 			// So, ensure there's some IL code after this statement.
-			ec.NeedReturnLabel ();
+			if (!code_follows && ec.CurrentBranching.CurrentUsageVector.IsUnreachable)
+				emit_nop = true;
+
 		}
 
 		ArrayList resume_points;
@@ -3971,10 +3982,9 @@ namespace Mono.CSharp {
 
 			ec.StartFlowBranching (this);
 			bool ok = Statement.Resolve (ec);
-
-			ResolveFinally (ec);
-
 			ec.EndFlowBranching ();
+
+			ResolveReachability (ec);
 
 			// Avoid creating libraries that reference the internal
 			// mcs NullType:
@@ -4542,8 +4552,9 @@ namespace Mono.CSharp {
 					ok = false;
 			}
 
-			ResolveFinally (ec);
 			ec.EndFlowBranching ();
+
+			ResolveReachability (ec);
 
 			return ok;
 		}
@@ -4576,7 +4587,7 @@ namespace Mono.CSharp {
 		public Block Block;
 		public ArrayList Specific;
 		public Catch General;
-		bool inside_try_finally;
+		bool inside_try_finally, code_follows, emit_nop;
 
 		public TryCatch (Block block, ArrayList catch_clauses, Location l, bool inside_try_finally)
 		{
@@ -4603,7 +4614,7 @@ namespace Mono.CSharp {
 		{
 			bool ok = true;
 
-			ec.StartFlowBranching (FlowBranching.BranchingType.TryCatch, loc);
+			ec.StartFlowBranching (this);
 
 			if (!Block.Resolve (ec))
 				ok = false;
@@ -4654,17 +4665,22 @@ namespace Mono.CSharp {
 
 			// System.Reflection.Emit automatically emits a 'leave' at the end of a try/catch clause
 			// So, ensure there's some IL code after this statement
-			ec.NeedReturnLabel ();
+			if (!inside_try_finally && !code_follows && ec.CurrentBranching.CurrentUsageVector.IsUnreachable)
+				emit_nop = true;
 
 			return ok;
+		}
+
+		public void SomeCodeFollows ()
+		{
+			code_follows = true;
 		}
 		
 		protected override void DoEmit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 
-			// FIXME: remove the InIterator
-			if (!inside_try_finally || ec.InIterator)
+			if (!inside_try_finally)
 				ig.BeginExceptionBlock ();
 
 			Block.Emit (ec);
@@ -4675,9 +4691,10 @@ namespace Mono.CSharp {
 			if (General != null)
 				General.Emit (ec);
 
-			// FIXME: remove the InIterator
-			if (!inside_try_finally || ec.InIterator)
+			if (!inside_try_finally)
 				ig.EndExceptionBlock ();
+			if (emit_nop)
+				ig.Emit (OpCodes.Nop);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)
@@ -4730,9 +4747,9 @@ namespace Mono.CSharp {
 
 			bool ok = Statement.Resolve (ec);
 
-			ResolveFinally (ec);
-
 			ec.EndFlowBranching ();
+
+			ResolveReachability (ec);
 
 			if (TypeManager.void_dispose_void == null) {
 				TypeManager.void_dispose_void = TypeManager.GetPredefinedMethod (
@@ -4921,9 +4938,9 @@ namespace Mono.CSharp {
 
 			bool ok = stmt.Resolve (ec);
 
-			ResolveFinally (ec);
-
 			ec.EndFlowBranching ();
+
+			ResolveReachability (ec);
 
 			if (TypeManager.void_dispose_void == null) {
 				TypeManager.void_dispose_void = TypeManager.GetPredefinedMethod (
@@ -5584,8 +5601,9 @@ namespace Mono.CSharp {
 					if (!parent.ResolveLoop (ec))
 						ok = false;
 
-					ResolveFinally (ec);
 					ec.EndFlowBranching ();
+
+					ResolveReachability (ec);
 
 					if (TypeManager.void_dispose_void == null) {
 						TypeManager.void_dispose_void = TypeManager.GetPredefinedMethod (
