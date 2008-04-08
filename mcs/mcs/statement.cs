@@ -1083,39 +1083,27 @@ namespace Mono.CSharp {
 		{
 			ec.CurrentBranching.CurrentUsageVector.Goto ();
 
-			if (expr != null){
-				expr = expr.Resolve (ec);
-				if (expr == null)
-					return false;
+			if (expr == null)
+				return ec.CurrentBranching.CheckRethrow (loc);
 
-				ExprClass eclass = expr.eclass;
+			expr = expr.Resolve (ec);
+			if (expr == null)
+				return false;
 
-				if (!(eclass == ExprClass.Variable || eclass == ExprClass.PropertyAccess ||
-					eclass == ExprClass.Value || eclass == ExprClass.IndexerAccess)) {
-					expr.Error_UnexpectedKind (ec.DeclContainer, "value, variable, property or indexer access ", loc);
-					return false;
-				}
+			ExprClass eclass = expr.eclass;
 
-				Type t = expr.Type;
-				
-				if ((t != TypeManager.exception_type) &&
-				    !TypeManager.IsSubclassOf (t, TypeManager.exception_type) &&
-				    !(expr is NullLiteral)) {
-					Error (155,
-						"The type caught or thrown must be derived " +
-						"from System.Exception");
-					return false;
-				}
-				return true;
-			}
-
-			if (!ec.InCatch) {
-				Error (156, "A throw statement with no arguments is not allowed outside of a catch clause");
+			if (!(eclass == ExprClass.Variable || eclass == ExprClass.PropertyAccess ||
+			      eclass == ExprClass.Value || eclass == ExprClass.IndexerAccess)) {
+				expr.Error_UnexpectedKind (ec.DeclContainer, "value, variable, property or indexer access ", loc);
 				return false;
 			}
 
-			if (ec.InFinally) {
-				Error (724, "A throw statement with no arguments is not allowed inside of a finally clause nested inside of the innermost catch clause");
+			Type t = expr.Type;
+
+			if ((t != TypeManager.exception_type) &&
+			    !TypeManager.IsSubclassOf (t, TypeManager.exception_type) &&
+			    !(expr is NullLiteral)) {
+				Error (155, "The type caught or thrown must be derived from System.Exception");
 				return false;
 			}
 			return true;

@@ -428,6 +428,11 @@ namespace Mono.CSharp
 			return result;
  		}
 
+		public virtual bool CheckRethrow (Location loc)
+		{
+			return Parent.CheckRethrow (loc);
+		}
+
 		public virtual bool AddResumePoint (ResumableStatement stmt, Location loc, out int pc)
 		{
 			return Parent.AddResumePoint (stmt, loc, out pc);
@@ -666,6 +671,12 @@ namespace Mono.CSharp
 		{
 		}
 
+		public override bool CheckRethrow (Location loc)
+		{
+			Report.Error (156, loc, "A throw statement with no arguments is not allowed outside of a catch clause");
+			return false;
+		}
+
 		public override bool AddResumePoint (ResumableStatement stmt, Location loc, out int pc)
 		{
 			pc = -1;
@@ -735,6 +746,11 @@ namespace Mono.CSharp
 		public FlowBranchingTryCatch (FlowBranching parent, Location loc)
 			: base (parent, BranchingType.Block, SiblingType.Try, null, loc)
 		{
+		}
+
+		public override bool CheckRethrow (Location loc)
+		{
+			return CurrentUsageVector.Next != null || Parent.CheckRethrow (loc);
 		}
 
 		public override bool AddResumePoint (ResumableStatement stmt, Location loc, out int pc)
@@ -886,6 +902,16 @@ namespace Mono.CSharp
 
 		public override UsageVector CurrentUsageVector {
 			get { return current_vector; }
+		}
+
+		public override bool CheckRethrow (Location loc)
+		{
+			if (!Parent.CheckRethrow (loc))
+				return false;
+			if (finally_vector == null)
+				return true;
+			Report.Error (724, loc, "A throw statement with no arguments is not allowed inside of a finally clause nested inside of the innermost catch clause");
+			return false;
 		}
 
 		public override bool AddResumePoint (ResumableStatement stmt, Location loc, out int pc)

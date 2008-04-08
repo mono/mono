@@ -1,5 +1,9 @@
 2008-04-08  Raja R Harinath  <harinath@hurrynot.org>
 
+	* statement.cs (Throw.Resolve): Move CS0156 and CS0724 testing ...
+	* flowanalysis.cs (FlowBranching.CheckRethrow): ... here and to its
+	overrides.
+
 	* statement.cs (CollectionForeach.DisposableWrapper): Make a true
 	wrapper -- forward everything to CollectionForeach.
 	(CollectionForeach.NonDisposableWrapper): New.
