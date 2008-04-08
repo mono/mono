@@ -35,6 +35,7 @@ namespace Mono.Cecil {
 	public sealed class SecurityDeclaration : IRequireResolving, IAnnotationProvider, IReflectionVisitable {
 
 		SecurityAction m_action;
+		SecurityDeclarationReader m_reader;
 		IDictionary m_annotations;
 
 #if !CF_1_0 && !CF_2_0
@@ -77,7 +78,12 @@ namespace Mono.Cecil {
 		public SecurityDeclaration (SecurityAction action)
 		{
 			m_action = action;
-			m_resolved = true;
+		}
+
+		internal SecurityDeclaration (SecurityAction action, SecurityDeclarationReader reader)
+		{
+			m_action = action;
+			m_reader = reader;
 		}
 
 		public SecurityDeclaration Clone ()
@@ -102,7 +108,23 @@ namespace Mono.Cecil {
 
 		public bool Resolve ()
 		{
-			throw new NotImplementedException ();
+			if (m_resolved)
+				return true;
+
+			if (m_reader == null)
+				return false;
+
+			SecurityDeclaration clone = m_reader.FromByteArray (m_action, m_blob, true);
+			if (!clone.Resolved)
+				return false;
+
+			m_action = clone.Action;
+#if !CF_1_0 && !CF_2_0
+			m_permSet = clone.PermissionSet.Copy ();
+#endif
+			m_resolved = true;
+
+			return true;
 		}
 
 		public void Accept (IReflectionVisitor visitor)
