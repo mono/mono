@@ -1,5 +1,15 @@
 2008-04-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify-internal.h: Added mono_verifier_verify_class.
+
+	* verify.c: Added mono_verifier_verify_class. It checks for
+	classes with explicit layout that have overlapping reference fields.
+
+	* pedump.c: Init the verifier state prior to verification. Fixed
+	command line arguments.
+
+2008-04-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* Makefile.am: Added verify-internals.h, hopefully fix the build.
 
 2008-04-08  Zoltan Varga  <vargaz@gmail.com>
