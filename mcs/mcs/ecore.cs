@@ -4659,8 +4659,13 @@ namespace Mono.CSharp {
 
 			ArrayList args = new ArrayList (2);
 			args.Add (new Argument (instance));
-			args.Add (new Argument (new TypeOfField (FieldInfo, loc)));
+			args.Add (new Argument (CreateTypeOfExpression ()));
 			return CreateExpressionFactoryCall ("Field", args);
+		}
+
+		public Expression CreateTypeOfExpression ()
+		{
+			return new TypeOfField (FieldInfo, loc);
 		}
 
 		override public Expression DoResolve (EmitContext ec)
@@ -5094,6 +5099,11 @@ namespace Mono.CSharp {
 			//args.Add (getter expression);
 			//return CreateExpressionFactoryCall ("Property", args);
 			return base.CreateExpressionTree (ec);
+		}
+
+		public Expression CreateSetterTypeOfExpression ()
+		{
+			return new Cast (new TypeExpression (typeof (MethodInfo), loc), new TypeOfMethod (setter, loc));
 		}
 
 		public override Type DeclaringType {

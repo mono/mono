@@ -8854,60 +8854,70 @@ namespace Mono.CSharp {
 	//
 	// An object initializer expression
 	//
-	public class ElementInitializer : Expression
+	public class ElementInitializer : Assign
 	{
-		Expression initializer;
 		public readonly string Name;
 
 		public ElementInitializer (string name, Expression initializer, Location loc)
+			: base (null, initializer, loc)
 		{
 			this.Name = name;
-			this.initializer = initializer;
-			this.loc = loc;
 		}
 
-		protected override void CloneTo (CloneContext clonectx, Expression t)
+		public override Expression CreateExpressionTree (EmitContext ec)
 		{
-			if (initializer == null)
-				return;
+			ArrayList args = new ArrayList (2);
+			FieldExpr fe = target as FieldExpr;
+			if (fe != null)
+				args.Add (new Argument (fe.CreateTypeOfExpression ()));
+			else
+				args.Add (new Argument (((PropertyExpr)target).CreateSetterTypeOfExpression ()));
 
-			ElementInitializer target = (ElementInitializer) t;
-			target.initializer = initializer.Clone (clonectx);
+			args.Add (new Argument (source.CreateExpressionTree (ec)));
+			return CreateExpressionFactoryCall (
+				source is CollectionOrObjectInitializers ? "ListBind" : "Bind",
+				args);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			if (initializer == null)
+			if (source == null)
 				return EmptyExpressionStatement.Instance;
 			
-			MemberExpr element_member = MemberLookupFinal (ec, ec.CurrentInitializerVariable.Type, ec.CurrentInitializerVariable.Type,
+			MemberExpr me = MemberLookupFinal (ec, ec.CurrentInitializerVariable.Type, ec.CurrentInitializerVariable.Type,
 				Name, MemberTypes.Field | MemberTypes.Property, BindingFlags.Public | BindingFlags.Instance, loc) as MemberExpr;
 
-			if (element_member == null)
+			if (me == null)
 				return null;
 
-			element_member.InstanceExpression = ec.CurrentInitializerVariable;
+			target = me;
+			me.InstanceExpression = ec.CurrentInitializerVariable;
 
-			if (initializer is CollectionOrObjectInitializers) {
+			if (source is CollectionOrObjectInitializers) {
 				Expression previous = ec.CurrentInitializerVariable;
-				ec.CurrentInitializerVariable = element_member;
-				initializer = initializer.Resolve (ec);
+				ec.CurrentInitializerVariable = target;
+				source = source.Resolve (ec);
 				ec.CurrentInitializerVariable = previous;
-				return initializer;
+				if (source == null)
+					return null;
+					
+				eclass = source.eclass;
+				type = source.Type;
+				return this;
 			}
 
-			Assign a = new Assign (element_member, initializer, loc);
-			if (a.Resolve (ec) == null)
+			Expression expr = base.DoResolve (ec);
+			if (expr == null)
 				return null;
 
 			//
 			// Ignore field initializers with default value
 			//
-			Constant c = a.Source as Constant;
-			if (c != null && c.IsDefaultInitializer (a.Type) && a.Target.eclass == ExprClass.Variable)
+			Constant c = source as Constant;
+			if (c != null && c.IsDefaultInitializer (type) && target.eclass == ExprClass.Variable)
 				return EmptyExpressionStatement.Instance;
 
-			return a;
+			return expr;
 		}
 
 		protected override Expression Error_MemberLookupFailed (MemberInfo[] members)
@@ -8922,10 +8932,13 @@ namespace Mono.CSharp {
 
 			return null;
 		}
-
-		public override void Emit (EmitContext ec)
+		
+		public override void EmitStatement (EmitContext ec)
 		{
-			throw new NotSupportedException ("Should not be reached");
+			if (source is CollectionOrObjectInitializers)
+				source.Emit (ec);
+			else
+				base.EmitStatement (ec);
 		}
 	}
 	
@@ -9013,6 +9026,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public bool IsCollectionInitializer {
+			get {
+				return type == typeof (CollectionOrObjectInitializers);
+			}
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Expression target)
 		{
 			CollectionOrObjectInitializers t = (CollectionOrObjectInitializers) target;
@@ -9086,7 +9105,7 @@ namespace Mono.CSharp {
 					initializers [i] = e;
 			}
 
-			type = typeof (CollectionOrObjectInitializers);
+			type = is_elements_initialization ? typeof (ElementInitializer) : typeof (CollectionOrObjectInitializers);
 			eclass = ExprClass.Variable;
 			return this;
 		}
@@ -9123,6 +9142,12 @@ namespace Mono.CSharp {
 				this.loc = newInstance.loc;
 				this.eclass = newInstance.eclass;
 				this.new_instance = newInstance;
+			}
+
+			public override Expression CreateExpressionTree (EmitContext ec)
+			{
+				// Should not be reached
+				throw new NotSupportedException ();
 			}
 
 			public override Expression DoResolve (EmitContext ec)
@@ -9172,7 +9197,9 @@ namespace Mono.CSharp {
 			args.Add (new Argument (base.CreateExpressionTree (ec)));
 			args.Add (new Argument (initializers.CreateExpressionTree (ec)));
 
-			return CreateExpressionFactoryCall ("ListInit", args);
+			return CreateExpressionFactoryCall (
+				initializers.IsCollectionInitializer ? "ListInit" : "MemberInit",
+				args);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
