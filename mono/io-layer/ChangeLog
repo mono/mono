@@ -1,3 +1,9 @@
+2008-04-08  Dick Porter  <dick@ximian.com>
+
+	* processes.c (CreateProcess): Improve the managed binary support,
+	so it works when the executable is passed in as the appname.
+	Fixes bug 377815.
+
 2008-04-04  Dick Porter  <dick@ximian.com>
 
 	* io.c (MoveFile): Check file shares before moving a file.  Fixes
