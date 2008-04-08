@@ -1,3 +1,11 @@
+2008-04-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (decode_patch_info): Always transform PATCH_INFO_WRAPPER to
+	PATCH_INFO_METHOD.
+
+	* mini.c (mono_resolve_patch_target): Fix a crash in the AOT case if method is
+	NULL.
+
 2008-04-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-exceptions.c (mono_handle_exception_internal): When --debug=casts is used,
