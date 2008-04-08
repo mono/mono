@@ -222,6 +222,11 @@ Turns on the debugging mode in the runtime.  If an assembly was
 compiled with debugging information, it will produce line number
 information for stack traces. 
 .TP
+.I "--debug=casts"
+Produces a detailed error when throwing a InvalidCastException.  This
+option is turned off by default as it generates much larger code at
+runtime.
+.TP
 .I "--profile[=profiler[:profiler_args]]"
 Turns on profiling.  For more information about profiling applications
 and code coverage see the sections "PROFILING" and "CODE COVERAGE"
