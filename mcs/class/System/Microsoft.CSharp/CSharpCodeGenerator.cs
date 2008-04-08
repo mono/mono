@@ -705,6 +705,11 @@ namespace Mono.CSharp
 			}
 		}
 
+		static bool IsAbstract (MemberAttributes attributes)
+		{
+			return (attributes & MemberAttributes.Abstract) == MemberAttributes.Abstract;
+		}
+
 		protected override void GenerateProperty (CodeMemberProperty property,
 							  CodeTypeDeclaration declaration)
 		{
@@ -748,7 +753,7 @@ namespace Mono.CSharp
 			OutputStartBrace ();
 			++Indent;
 
-			if (declaration.IsInterface)
+			if (declaration.IsInterface || IsAbstract (property.Attributes))
 			{
 				if (property.HasGet) output.WriteLine("get;");
 				if (property.HasSet) output.WriteLine("set;");
