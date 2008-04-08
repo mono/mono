@@ -1,3 +1,10 @@
+2008-04-08  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Replaced uses of MONO_TYPE_IS_REFERENCE with calls to
+	generic_class_is_reference_type() to ensure the proper behaviour
+	when sharing generic code and the type in question is a type
+	argument.
+
 2008-04-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-exceptions.c: Applied patch from Mark Spruiell (mes@zeroc.com). Fix
