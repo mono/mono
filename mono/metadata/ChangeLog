@@ -1,3 +1,7 @@
+2008-04-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Makefile.am: Added verify-internals.h, hopefully fix the build.
+
 2008-04-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* verify-internals.h: Fix a warning.
