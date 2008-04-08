@@ -3811,10 +3811,7 @@ namespace Mono.CSharp {
 
 	public abstract class ExceptionStatement : ResumableStatement
 	{
-		protected virtual void EmitPreTryBody (EmitContext ec)
-		{
-		}
-
+		protected abstract void EmitPreTryBody (EmitContext ec);
 		protected abstract void EmitTryBody (EmitContext ec);
 		protected abstract void EmitFinallyBody (EmitContext ec);
 
@@ -4563,6 +4560,10 @@ namespace Mono.CSharp {
 			return ok;
 		}
 
+		protected override void EmitPreTryBody (EmitContext ec)
+		{
+		}
+
 		protected override void EmitTryBody (EmitContext ec)
 		{
 			stmt.Emit (ec);
@@ -5195,6 +5196,7 @@ namespace Mono.CSharp {
 			TemporaryVariable enumerator;
 			Expression init;
 			Statement loop;
+			Statement wrapper;
 
 			MethodGroupExpr get_enumerator;
 			PropertyExpr get_current;
@@ -5546,26 +5548,43 @@ namespace Mono.CSharp {
 
 				loop = new While (move_next_expr, block, loc);
 
-				if (is_disposable)
-					loop = new DisposableWrapper (this, loop);
-
-				return loop.Resolve (ec);
+				wrapper = is_disposable ?
+					(Statement) new DisposableWrapper (this) :
+					(Statement) new NonDisposableWrapper (this);
+				return wrapper.Resolve (ec);
 			}
 
 			protected override void DoEmit (EmitContext ec)
 			{
-				enumerator.Store (ec, init);
-				loop.Emit (ec);
+				wrapper.Emit (ec);
+			}
+
+			class NonDisposableWrapper : Statement {
+				CollectionForeach parent;
+
+				internal NonDisposableWrapper (CollectionForeach parent)
+				{
+					this.parent = parent;
+				}
+
+				public override bool Resolve (EmitContext ec)
+				{
+					return parent.ResolveLoop (ec);
+				}
+
+				protected override void DoEmit (EmitContext ec)
+				{
+					parent.EmitLoopInit (ec);
+					parent.EmitLoopBody (ec);
+				}
 			}
 
 			class DisposableWrapper : ExceptionStatement {
 				CollectionForeach parent;
-				Statement loop;
 
-				internal DisposableWrapper (CollectionForeach parent, Statement loop)
+				internal DisposableWrapper (CollectionForeach parent)
 				{
 					this.parent = parent;
-					this.loop = loop;
 				}
 
 				public override bool Resolve (EmitContext ec)
@@ -5574,7 +5593,7 @@ namespace Mono.CSharp {
 
 					ec.StartFlowBranching (this);
 
-					if (!loop.Resolve (ec))
+					if (!parent.ResolveLoop (ec))
 						ok = false;
 
 					ResolveFinally (ec);
@@ -5587,15 +5606,35 @@ namespace Mono.CSharp {
 					return ok;
 				}
 
+				protected override void EmitPreTryBody (EmitContext ec)
+				{
+					parent.EmitLoopInit (ec);
+				}
+
 				protected override void EmitTryBody (EmitContext ec)
 				{
-					loop.Emit (ec);
+					parent.EmitLoopBody (ec);
 				}
 
 				protected override void EmitFinallyBody (EmitContext ec)
 				{
 					parent.EmitFinallyBody (ec);
 				}
+			}
+
+			bool ResolveLoop (EmitContext ec)
+			{
+				return loop.Resolve (ec);
+			}
+
+			void EmitLoopInit (EmitContext ec)
+			{
+				enumerator.Store (ec, init);
+			}
+
+			void EmitLoopBody (EmitContext ec)
+			{
+				loop.Emit (ec);
 			}
 
 			void EmitFinallyBody (EmitContext ec)
@@ -5619,14 +5658,13 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Isinst, TypeManager.idisposable_type);
 					ig.Emit (OpCodes.Dup);
 					ig.Emit (OpCodes.Brtrue_S, call_dispose);
-					ig.Emit (OpCodes.Pop);
 
-					Label end_finally = ig.DefineLabel ();
-					ig.Emit (OpCodes.Br, end_finally);
+					// 'endfinally' empties the evaluation stack, and can appear anywhere inside a finally block
+					// (Partition III, Section 3.35)
+					ig.Emit (OpCodes.Endfinally);
 
 					ig.MarkLabel (call_dispose);
 					ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
-					ig.MarkLabel (end_finally);
 				}
 			}
 		}

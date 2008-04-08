@@ -1,3 +1,11 @@
+2008-04-08  Raja R Harinath  <harinath@hurrynot.org>
+
+	* statement.cs (CollectionForeach.DisposableWrapper): Make a true
+	wrapper -- forward everything to CollectionForeach.
+	(CollectionForeach.NonDisposableWrapper): New.
+	(CollectionForeach.EmitFinallyBody): Use 'endfinally' instruction
+	instead of a pop + branch to end.
+
 2008-04-07  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #377485
