@@ -264,7 +264,7 @@ namespace System.Web.Compilation
 				type = BuildManager.GetCompiledType (vpath);
 				if (type != null) {
 					AspGenerator.AddTypeToCache (other_deps, realpath, type);
-					WebConfigurationManager.ExtraAssemblies.Add (type.Assembly.Location);
+					BuildManager.AddToReferencedAssemblies (type.Assembly);
 				}
 				return type;
 #else

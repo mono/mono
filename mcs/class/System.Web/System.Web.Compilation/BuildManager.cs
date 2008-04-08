@@ -311,17 +311,16 @@ namespace System.Web.Compilation {
 
 			foreach (string assLocation in WebConfigurationManager.ExtraAssemblies)
 				LoadAssembly (assLocation, al);
-
+			
                         if (addAssembliesInBin)
 				foreach (string s in HttpApplication.BinDirectoryAssemblies)
 					LoadAssembly (s, al);
-
+			
 			lock (buildCacheLock) {
-				foreach (Assembly asm in referencedAssemblies) {
+				foreach (Assembly asm in referencedAssemblies)
 					if (!al.Contains (asm))
 						al.Add (asm);
-				}
-
+				
 				if (globalAsaxAssembly != null)
 					al.Add (globalAsaxAssembly);
 			}
@@ -946,8 +945,8 @@ namespace System.Web.Compilation {
 						lock (buildCacheLock) {
 							switch (buildKind) {
 								case BuildKind.NonPages:
-									if (compiledAssembly != null && !referencedAssemblies.Contains (compiledAssembly))
-										referencedAssemblies.Add (compiledAssembly);
+									if (compiledAssembly != null)
+										AddToReferencedAssemblies (compiledAssembly);
 									break;
 
  								case BuildKind.Application:
@@ -993,6 +992,16 @@ namespace System.Web.Compilation {
 				Monitor.Exit (ticket);
 				if (acquired)
 					ReleaseCompilationTicket (virtualDir);
+			}
+		}
+
+		internal static void AddToReferencedAssemblies (Assembly asm)
+		{
+			lock (buildCacheLock) {
+				if (referencedAssemblies.Contains (asm))
+					return;
+				
+				referencedAssemblies.Add (asm);
 			}
 		}
 		
@@ -1049,7 +1058,7 @@ namespace System.Web.Compilation {
 				string vpAbsolute = virtualPath.Absolute;
 				if (buildCache.ContainsKey (vpAbsolute))
 					buildCache.Remove (vpAbsolute);
-
+				
 				Assembly asm;
 				
 				if (nonPagesCache.TryGetValue (vpAbsolute, out asm)) {
@@ -1057,6 +1066,10 @@ namespace System.Web.Compilation {
 					if (referencedAssemblies.Contains (asm))
 						referencedAssemblies.Remove (asm);
 
+					ArrayList extraAssemblies = WebConfigurationManager.ExtraAssemblies;
+					if (extraAssemblies != null && extraAssemblies.Contains (asm.Location))
+						extraAssemblies.Remove (asm.Location);
+					
 					List <string> keysToRemove = new List <string> ();
 					foreach (KeyValuePair <string, Assembly> kvp in nonPagesCache)
 						if (kvp.Value == asm)
@@ -1156,7 +1169,7 @@ namespace System.Web.Compilation {
 			get { return haveResources; }
 			set { haveResources = value; }
 		}
-
+		
 		internal static bool BatchMode {
 			get { return CompilationConfig.Batch; }
 		}

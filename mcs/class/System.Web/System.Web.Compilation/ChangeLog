@@ -1,5 +1,9 @@
 2008-04-08  Marek Habersack  <mhabersack@novell.com>
 
+	* AspComponentFoundry.cs: add loaded assembly to the
+	BuildManager's list of referenced assemblies instead to
+	WebConfigurationmanager.ExtraAssemblies. Fixes bug #377915
+
 	* AppCodeCompiler.cs: VirtualPath used in PhysicalToVirtual.
 
 	* BuildManager.cs: switched to VirtualPath instead of a string
@@ -8,6 +12,9 @@
 	VirtualPathProvider which implements only the VirtualFile and
 	falls back to DefaultVirtualDirectory implementation for directory
 	access.
+	Added an internal method AddToReferencedAssemblies.
+	Remove invalidated entry from
+	WebConfigurationManager.ExtraAssemblies.
 
 	* GenericBuildProvider.cs: AddCodeFile accepts a virtual path.
 
