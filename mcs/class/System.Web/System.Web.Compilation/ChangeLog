@@ -3,6 +3,9 @@
 	* BuildManager.cs: refactoring - the SetCommonParameters and
 	GetDefaultCompilerTypeForLanguage moved here from BuildProvider,
 	and made internal static.
+	Do not catch compilation exceptions and wrap them in
+	HttpException, let the CompilationException pass through. Fixes
+	bug #377904
 
 	* AppWebReferencesCompiler.cs: added - support for compiling of
 	wsdl files found in the App_WebResources directory. Fixes bug
