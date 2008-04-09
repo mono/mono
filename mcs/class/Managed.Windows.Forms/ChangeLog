@@ -1,3 +1,10 @@
+2008-04-09  Everaldo Canuto  <ecanuto@novell.com>
+
+	[backported from trunk]
+	* KeyboardLayouts.cs: Uses GENERATING_RESOURCES to make VKeyTableIndex
+	and ScanTableIndex public, it fix compilations errors when compiling
+	WinForms to generate keyboard layout resources.
+
 2008-04-08  Everaldo Canuto  <ecanuto@novell.com>
 
 	[backported from trunk]
