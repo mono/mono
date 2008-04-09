@@ -1,3 +1,8 @@
+﻿2008-04-09 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeTest.cs (GetGenericArguments_ArgumentsHaveAttributes): Added test for bug #377596.
+	It verifies if it's possible to retrieve attributes from generic arguments.
+
 ﻿2008-04-01  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
 
 	* StringTest.cs: New tests for string to check for several corner-cases
