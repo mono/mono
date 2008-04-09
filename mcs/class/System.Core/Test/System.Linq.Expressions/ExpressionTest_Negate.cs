@@ -86,7 +86,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void NegateNullableInt32 ()
 		{
 			var n = Expression.Negate (Expression.Parameter (typeof (int?), ""));
@@ -97,7 +96,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CompileNegateInt32 ()
 		{
 			var p = Expression.Parameter (typeof (int), "i");

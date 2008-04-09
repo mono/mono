@@ -86,7 +86,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void PlusNullableInt32 ()
 		{
 			var n = Expression.UnaryPlus (Expression.Parameter (typeof (int?), ""));
@@ -97,7 +96,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CompilePlusInt32 ()
 		{
 			var p = Expression.Parameter (typeof (int), "i");
