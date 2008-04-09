@@ -1,4 +1,4 @@
-// CS0035 : Operator `+' is ambiguous on operands of type `Y' and `X'
+// CS0035: Operator `-' is ambiguous on an operand of type `A'
 // Line: 22
 
 class A
@@ -19,6 +19,6 @@ class M
 	static void Main()
 	{
 		A a = new A ();
-		int i = -a;  
+		float f = -a;  
 	}
 }
