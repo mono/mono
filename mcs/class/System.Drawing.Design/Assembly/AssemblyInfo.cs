@@ -33,19 +33,29 @@ using System.Reflection;
 using System.Resources;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 // General Information about the System.Drawing.Design assembly
 
 [assembly: AssemblyVersion (Consts.FxVersion)]
 [assembly: SatelliteContractVersion (Consts.FxVersion)]
-
 [assembly: AssemblyTitle("System.Drawing.Design.dll")]
 [assembly: AssemblyDescription("System.Drawing.Design.dll")]
-[assembly: AssemblyConfiguration("Development version")]
 [assembly: AssemblyCompany("MONO development team")]
 [assembly: AssemblyProduct("MONO CLI")]
 [assembly: AssemblyCopyright("(c) 2003 Various Authors")]
-[assembly: AssemblyTrademark("")]
+
+#if NET_1_0
+	[assembly: AssemblyConfiguration("Development version")]
+	[assembly: AssemblyTrademark("")]
+#elif ONLY_1_1
+	[assembly: AssemblyConfiguration("Development version")]
+	[assembly: AssemblyTrademark("")]
+#elif NET_2_0
+	[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+	[assembly: AssemblyFileVersion (Consts.VsFileVersion)]
+	[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
+#endif
 
 [assembly: CLSCompliant(true)]
 [assembly: AssemblyDefaultAlias("System.Drawing.Design.dll")]
