@@ -38,6 +38,8 @@ namespace System.Windows.Forms {
 		private DataGridViewImageCellLayout imageLayout;
 		private bool valueIsIcon;
 
+		private static Image missing_image;
+		
 		public DataGridViewImageCell (bool valueIsIcon) {
 			this.valueIsIcon = valueIsIcon;
 			this.imageLayout = DataGridViewImageCellLayout.NotSet;
@@ -46,8 +48,13 @@ namespace System.Windows.Forms {
 		public DataGridViewImageCell () : this(false) {
 		}
 
+		static DataGridViewImageCell ()
+		{
+			missing_image = ResourceImageLoader.Get ("image-missing.png");
+		}
+		
 		public override object DefaultNewRowValue {
-			get { return defaultNewRowValue; }
+			get { return missing_image; }
 		}
 
 		[DefaultValue ("")]
@@ -86,7 +93,7 @@ namespace System.Windows.Forms {
 				if (base.ValueType != null) {
 					return base.ValueType;
 				}
-				if (OwningColumn != null) {
+				if (OwningColumn != null && OwningColumn.ValueType != null) {
 					return OwningColumn.ValueType;
 				}
 				if (valueIsIcon) {
@@ -115,30 +122,113 @@ namespace System.Windows.Forms {
 			return new DataGridViewImageCellAccessibleObject(this);
 		}
 
-		protected override Rectangle GetContentBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex) {
-			throw new NotImplementedException();
+		protected override Rectangle GetContentBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex)
+		{
+			if (DataGridView == null)
+				return Rectangle.Empty;
+				
+			Rectangle image_bounds = Rectangle.Empty;
+			Image i = (Image)GetFormattedValue (Value, rowIndex, ref cellStyle, null, null, DataGridViewDataErrorContexts.PreferredSize);
+			
+			if (i == null)
+				i = missing_image;
+
+			switch (imageLayout) {
+				case DataGridViewImageCellLayout.NotSet:
+				case DataGridViewImageCellLayout.Normal:
+					image_bounds = new Rectangle ((Size.Width - i.Width) / 2, (Size.Height - i.Height) / 2, i.Width, i.Height);
+					break;
+				case DataGridViewImageCellLayout.Stretch:
+					image_bounds = new Rectangle (Point.Empty, Size);
+					break;
+				case DataGridViewImageCellLayout.Zoom:
+					Size image_size;
+
+					if (((float)i.Width / (float)i.Height) >= ((float)Size.Width / (float)Size.Height))
+						image_size = new Size (Size.Width, (i.Height * Size.Width) / i.Width);
+					else
+						image_size = new Size ((i.Width * Size.Height) / i.Height, Size.Height);
+
+					image_bounds = new Rectangle ((Size.Width - image_size.Width) / 2, (Size.Height - image_size.Height) / 2, image_size.Width, image_size.Height);
+					break;
+			}
+			
+			return image_bounds;
 		}
 
-		protected override Rectangle GetErrorIconBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex) {
-			throw new NotImplementedException();
+		[MonoTODO ()]
+		protected override Rectangle GetErrorIconBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex)
+		{
+			return Rectangle.Empty;
 		}
 
-		protected override object GetFormattedValue (object value, int rowIndex, ref DataGridViewCellStyle cellStyle, TypeConverter valueTypeConverter, TypeConverter formattedValueTypeConverter, DataGridViewDataErrorContexts context) {
-			throw new NotImplementedException();
+		protected override object GetFormattedValue (object value, int rowIndex, ref DataGridViewCellStyle cellStyle, TypeConverter valueTypeConverter, TypeConverter formattedValueTypeConverter, DataGridViewDataErrorContexts context)
+		{
+			return base.GetFormattedValue (value, rowIndex, ref cellStyle, valueTypeConverter, formattedValueTypeConverter, context);
 		}
 
-		protected override Size GetPreferredSize (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex, Size constraintSize) {
-			throw new NotImplementedException();
+		protected override Size GetPreferredSize (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex, Size constraintSize)
+		{
+			if (Value == null)
+				return new Size (21, 20);
+				
+			Image i = (Image)GetFormattedValue (Value, rowIndex, ref cellStyle, null, null, DataGridViewDataErrorContexts.PreferredSize);
+			
+			if (i != null)
+				return new Size (i.Width + 1, i.Height + 1);
+
+			return new Size (21, 20);
 		}
 
-		protected override object GetValue (int rowIndex) {
-			throw new NotImplementedException();
+		protected override object GetValue (int rowIndex)
+		{
+			return base.GetValue (rowIndex);
 		}
 
-		protected override void Paint (Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates elementState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts) {
-			throw new NotImplementedException();
+		protected override void Paint (Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts)
+		{
+			base.Paint (graphics, clipBounds, cellBounds, rowIndex, cellState, value, formattedValue, errorText, cellStyle, advancedBorderStyle, paintParts);
 		}
+		
+		internal override void PaintPartContent (Graphics graphics, Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState, DataGridViewCellStyle cellStyle, object formattedValue)
+		{
+			Image i;
+			
+			if (formattedValue == null)
+				i = missing_image;
+			else
+				i = (Image)formattedValue;
 
+			Rectangle image_bounds = Rectangle.Empty;
+
+			switch (imageLayout) {
+				case DataGridViewImageCellLayout.NotSet:
+				case DataGridViewImageCellLayout.Normal:
+					image_bounds = new Rectangle ((Size.Width - i.Width) / 2, (Size.Height - i.Height) / 2, i.Width, i.Height);
+					break;
+				case DataGridViewImageCellLayout.Stretch:
+					image_bounds = new Rectangle (Point.Empty, cellBounds.Size);
+					break;
+				case DataGridViewImageCellLayout.Zoom:
+					Size image_size;
+
+					if (((float)i.Width / (float)i.Height) >= ((float)Size.Width / (float)Size.Height))
+						image_size = new Size (Size.Width, (i.Height * Size.Width) / i.Width);
+					else
+						image_size = new Size ((i.Width * Size.Height) / i.Height, Size.Height);
+
+					image_bounds = new Rectangle ((Size.Width - image_size.Width) / 2, (Size.Height - image_size.Height) / 2, image_size.Width, image_size.Height);
+					break;
+				default:
+					break;
+			}
+
+			image_bounds.X += cellBounds.Left;
+			image_bounds.Y += cellBounds.Top;
+			
+			graphics.DrawImage (i, image_bounds);
+		}
+		
 		protected class DataGridViewImageCellAccessibleObject : DataGridViewCellAccessibleObject {
 
 			public DataGridViewImageCellAccessibleObject (DataGridViewCell owner) : base(owner) {

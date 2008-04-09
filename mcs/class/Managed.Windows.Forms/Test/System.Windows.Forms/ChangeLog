@@ -1,3 +1,7 @@
+2008-04-09  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridViewImageCellTest.cs: Add.
+
 2008-04-08  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridViewCheckBoxCellTest.cs: Add.

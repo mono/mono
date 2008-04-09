@@ -1,5 +1,10 @@
 2008-04-09  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridViewCell.cs: Fix up some formatting and painting code.
+	* DataGridViewImageCell.cs: Implement some NIEX methods.
+
+2008-04-09  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStripItemCollection.cs: What moving an item from one owner
 	to another, remove from source owner before adding to destination.
 	[Fixes bug #378109]
