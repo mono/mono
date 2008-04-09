@@ -39,6 +39,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using System.Web.Configuration;
 using System.Web.Util;
 using System.Web.Hosting;
@@ -327,20 +328,26 @@ namespace System.Web.Compilation {
 				VirtualFile vf = HostingEnvironment.VirtualPathProvider.GetFile (path);
 				if (vf == null)
 					throw new HttpException (404, "Virtual file '" + path + "' does not exist.");
-				
-				using (FileStream f = new FileStream (filename, FileMode.Create, FileAccess.Write)) {
-					using (Stream s = vf.Open ()) {
-						byte[] input = new byte [COPY_BUFFER_SIZE];
-						int retval;
 
-						while ((retval = s.Read (input, 0, COPY_BUFFER_SIZE)) > 0)
-							f.Write (input, 0, retval);
-					}
-				}
+				CopyFile (vf.Open (), filename);
 			} else
-				File.Copy (path, filename);
+				CopyFile (path, filename);
 			
 			SourceFiles.Add (filename);
+		}
+
+		void CopyFile (string input, string filename)
+		{
+			CopyFile (new FileStream (input, FileMode.Open, FileAccess.Read), filename);
+		}
+		
+		void CopyFile (Stream input, string filename)
+		{
+			using (StreamWriter sw = new StreamWriter (new FileStream (filename, FileMode.Create, FileAccess.Write), Encoding.UTF8)) {
+				using (StreamReader sr = new StreamReader (input, WebEncoding.FileEncoding)) {
+					sw.Write (sr.ReadToEnd ());
+				}
+			}
 		}
 		
 		public Stream CreateEmbeddedResource (BuildProvider buildProvider, string name)
@@ -543,7 +550,7 @@ namespace System.Web.Compilation {
 			foreach (CodeCompileUnit unit in units) {
 				filename = GetTempFilePhysicalPath (provider.FileExtension);
 				try {
-					sw = new StreamWriter (File.OpenWrite (filename));
+					sw = new StreamWriter (File.OpenWrite (filename), Encoding.UTF8);
 					provider.GenerateCodeFromCompileUnit (unit, sw, null);
 					files.Add (filename);
 				} catch {

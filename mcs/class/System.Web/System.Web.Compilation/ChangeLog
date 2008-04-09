@@ -1,3 +1,10 @@
+2008-04-09  Marek Habersack  <mhabersack@novell.com>
+
+	* AssemblyBuilder.cs: make sure Encoding.UTF8 is explicitly used
+	when generating source from code unit and use
+	WebEncoding.FileEncoding when adding code files to the unit. Fixes
+	bug #377938
+
 2008-04-08  Marek Habersack  <mhabersack@novell.com>
 
 	* AspComponentFoundry.cs: add loaded assembly to the
