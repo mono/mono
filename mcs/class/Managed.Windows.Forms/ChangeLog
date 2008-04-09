@@ -1,3 +1,10 @@
+2008-04-08  Everaldo Canuto  <ecanuto@novell.com>
+
+	[backported from trunk]
+	* X11keyboard.cs: Prevent keyboard errors when vitual table theres 
+	different element count than scan table. It prevents some errors in non
+	standard keyboards.
+
 2008-03-19  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* Makefile, System.Windows.Forms.dll.resources: Updated to reflect 
