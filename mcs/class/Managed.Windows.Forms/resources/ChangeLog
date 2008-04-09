@@ -1,5 +1,11 @@
+2008-04-09  Everaldo Canuto  <ecanuto@novell.com>
+
+	[backported from trunk]
+	* keyboards.resx : regenerated.
+
 2008-04-08  Everaldo Canuto  <ecanuto@novell.com>
 
+	[backported from trunk]
 	* create-keyboards.sh: Added, it is used to compile and generate keyboard
 	resources.
 
