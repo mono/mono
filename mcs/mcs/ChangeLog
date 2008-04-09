@@ -1,6 +1,12 @@
+2008-04-09  Marek Safar  <marek.safar@gmail.com>
+
+	* convert.cs, ecore.cs, expression.cs, nullable.cs: Initial refactoring
+	of Unary expressions to follow operator overloading rules precisely.
+	Also fixes #321794, #323794
+	
 2008-04-08  Marek Safar  <marek.safar@gmail.com>
 
-	*  cs-parser.jay, expression.cs: Don't wrap Indirection expression in Unary
+	* cs-parser.jay, expression.cs: Don't wrap Indirection expression in Unary
 	expression.
 	
 2008-04-08  Marek Safar  <marek.safar@gmail.com>

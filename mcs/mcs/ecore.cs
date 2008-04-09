@@ -384,7 +384,7 @@ namespace Mono.CSharp {
 			if (b ||
 			    Convert.ExplicitReferenceConversionExists (Type, target) ||
 			    Convert.ExplicitUnsafe (e, target) != null ||
-			    (ec != null && Convert.UserDefinedConversion (ec, this, target, Location.Null, true) != null))
+			    (ec != null && Convert.ExplicitUserConversion (ec, this, target, Location.Null) != null))
 			{
 				Report.Error (266, loc, "Cannot implicitly convert type `{0}' to `{1}'. " +
 					      "An explicit conversion exists (are you missing a cast?)",

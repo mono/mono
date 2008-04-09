@@ -1073,7 +1073,11 @@ namespace Mono.CSharp {
 		static public Expression ImplicitUserConversion (EmitContext ec, Expression source,
 								 Type target, Location loc)
 		{
-			return UserDefinedConversion (ec, source, target, loc, false);
+			Expression expr = UserDefinedConversion (ec, source, target, loc, false);
+			if (expr != null && !TypeManager.IsEqual (expr.Type, target))
+				expr = ImplicitConversionStandard (ec, expr, target, loc);
+
+			return expr;
 		}
 
 		/// <summary>
@@ -1082,7 +1086,11 @@ namespace Mono.CSharp {
 		static public Expression ExplicitUserConversion (EmitContext ec, Expression source,
 								 Type target, Location loc)
 		{
-			return UserDefinedConversion (ec, source, target, loc, true);
+			Expression expr = UserDefinedConversion (ec, source, target, loc, true);
+			if (expr != null && !TypeManager.IsEqual (expr.Type, target))
+				expr = ExplicitConversionStandard (ec, expr, target, loc);
+
+			return expr;
 		}
 
 		static void AddConversionOperators (ArrayList list,
@@ -1227,16 +1235,7 @@ namespace Mono.CSharp {
 			if (source == null)
 				return null;
 
-			Expression e;
-			e =  new UserCast (method, source, loc);
-			if (e.Type != target){
-				if (!look_for_explicit)
-					e = ImplicitConversionStandard (ec, e, target, loc);
-				else
-					e = ExplicitConversionStandard (ec, e, target, loc);
-			}
-
-			return e;
+			return new UserCast (method, source, loc);
 		}
 
 		/// <summary>
