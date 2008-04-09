@@ -67,7 +67,6 @@ namespace MonoTests.System.Linq.Expressions
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
-		[Category ("NotWorking")]
 		public void PlusBool ()
 		{
 			Expression.UnaryPlus (true.ToConstant ());
