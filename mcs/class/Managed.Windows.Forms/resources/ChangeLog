@@ -1,3 +1,7 @@
+2008-04-09  Everaldo Canuto  <ecanuto@novell.com>
+
+	* keyboards.resx : regenerated.
+
 2008-04-08  Everaldo Canuto  <ecanuto@novell.com>
 
 	* create-keyboards.sh: Added, it is used to compile and generate keyboard
