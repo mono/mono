@@ -575,10 +575,11 @@ namespace System.Windows.Forms {
 							}
 						}
 						if (maxval >= 0) {
-							if (maxval > layouts.scan_table [(int) layout.ScanIndex].Length)
+							if (maxval < layouts.scan_table [(int) layout.ScanIndex].Length)
 								scan = layouts.scan_table [(int) layout.ScanIndex][maxval];
-							if (maxval > layouts.vkey_table [(int) layout.VKeyIndex].Length)
-								vkey = layouts.vkey_table [(int) layout.VKeyIndex][maxval];						}
+							if (maxval < layouts.vkey_table [(int) layout.VKeyIndex].Length)
+								vkey = layouts.vkey_table [(int) layout.VKeyIndex][maxval];
+						}
 					}
 				}
 				keyc2vkey [e2.KeyEvent.keycode] = vkey;

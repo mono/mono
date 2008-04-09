@@ -1,5 +1,10 @@
 2008-04-08  Everaldo Canuto  <ecanuto@novell.com>
 
+	* X11keyboard.cs: Fix last patch, maxval must be less not greater than
+	array lenght.
+
+2008-04-08  Everaldo Canuto  <ecanuto@novell.com>
+
 	* KeyboardLayouts.cs: Uses GENERATING_RESOURCES to make VKeyTableIndex
 	and ScanTableIndex public, it fix compilations errors when compiling
 	WinForms to generate keyboard layout resources.
