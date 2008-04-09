@@ -35,6 +35,7 @@
 using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
@@ -252,6 +253,21 @@ namespace System.Web.Compilation {
 				AddAssemblyReference (asm);
 			} catch {
 				// ignore, it will come up later
+			}
+		}
+
+		internal void AddAssemblyReference (ICollection asmcoll)
+		{
+			if (asmcoll == null || asmcoll.Count == 0)
+				return;
+
+			Assembly asm;
+			foreach (object o in asmcoll) {
+				asm = o as Assembly;
+				if (asm == null)
+					continue;
+
+				AddAssemblyReference (asm);
 			}
 		}
 		
@@ -508,6 +524,11 @@ namespace System.Web.Compilation {
 
 			return null;
 		}
+
+		internal CompilerResults BuildAssembly ()
+		{
+			return BuildAssembly (null, CompilerOptions);
+		}
 		
 		internal CompilerResults BuildAssembly (VirtualPath virtualPath)
 		{
@@ -565,6 +586,7 @@ namespace System.Web.Compilation {
 
 			foreach (KeyValuePair <string, string> de in resources)
 				options.EmbeddedResources.Add (de.Value);
+			AddAssemblyReference (BuildManager.GetReferencedAssemblies ());
 			foreach (Assembly refasm in ReferencedAssemblies)
 				options.ReferencedAssemblies.Add (refasm.Location);
 			
@@ -584,14 +606,14 @@ namespace System.Web.Compilation {
 					Console.WriteLine (err);
 #endif
 				
-				throw new CompilationException (virtualPath.Original, results, fileText);
+				throw new CompilationException (virtualPath != null ? virtualPath.Original : String.Empty, results, fileText);
 			}
 			
 			Assembly assembly = results.CompiledAssembly;
 			if (assembly == null) {
 				if (!File.Exists (options.OutputAssembly)) {
 					results.TempFiles.Delete ();
-					throw new CompilationException (virtualPath.Original, results.Errors,
+					throw new CompilationException (virtualPath != null ? virtualPath.Original : String.Empty, results.Errors,
 						"No assembly returned after compilation!?");
 				}
 

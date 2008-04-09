@@ -1,3 +1,11 @@
+2008-04-09  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpApplicationFactory.cs: compile web references. Fixes bug
+	#377934
+
+	* VirtualPath.cs: added a method to convert a physical path into a
+	virtual one, if the physical path is under the application root.
+
 2008-04-08  Dean Brettle <dean@brettle.com>
 
 	* HttpApplicationFactory.cs (CapabilitiesProcessor): changed to

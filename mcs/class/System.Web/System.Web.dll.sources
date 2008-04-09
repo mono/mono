@@ -34,6 +34,7 @@ System.Web.Compilation/AppResourceFileInfo.cs
 System.Web.Compilation/AppResourceFilesCollection.cs
 System.Web.Compilation/AppResourcesAssemblyBuilder.cs
 System.Web.Compilation/AppResourcesCompiler.cs
+System.Web.Compilation/AppWebReferencesCompiler.cs
 System.Web.Compilation/AspGenerator.cs
 System.Web.Compilation/AspParser.cs
 System.Web.Compilation/AspTokenizer.cs

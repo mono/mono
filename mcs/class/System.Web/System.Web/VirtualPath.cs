@@ -161,6 +161,22 @@ namespace System.Web
 		{
 			return Original;
 		}
+
+		public static VirtualPath PhysicalToVirtual (string physical_path)
+		{
+			if (String.IsNullOrEmpty (physical_path))
+				return null;
+			
+			string appPhysicalPath = HttpRuntime.AppDomainAppPath;
+			if (!StrUtils.StartsWith (physical_path, appPhysicalPath))
+				return null;
+
+			string vp = physical_path.Substring (appPhysicalPath.Length - 1);
+			if (vp [0] != '/')
+				return null;
+			
+			return new VirtualPath (vp);
+		}
 	}
 }
 #endif

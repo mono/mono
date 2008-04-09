@@ -520,7 +520,45 @@ namespace System.Web.Compilation {
 			return ret;
 		}
 
-		static Type GetCodeDomProviderType (BuildProvider provider)
+		static void SetCommonParameters (CompilationSection config, CompilerParameters p)
+		{
+			p.IncludeDebugInformation = config.Debug;
+		}
+		
+		internal static CompilerType GetDefaultCompilerTypeForLanguage (string language, CompilationSection configSection)
+		{
+			// MS throws when accesing a Hashtable, we do here.
+			if (language == null || language == "")
+				throw new ArgumentNullException ("language");
+				
+			CompilationSection config;
+			if (configSection == null)
+				config = WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection;
+			else
+				config = configSection;
+			
+			Compiler compiler = config.Compilers.Get (language);
+			CompilerParameters p;
+			if (compiler != null) {
+				Type type = HttpApplication.LoadType (compiler.Type, true);
+				p = new CompilerParameters ();
+				p.CompilerOptions = compiler.CompilerOptions;
+				p.WarningLevel = compiler.WarningLevel;
+				SetCommonParameters (config, p);
+				return new CompilerType (type, p);
+			}
+
+			if (CodeDomProvider.IsDefinedLanguage (language)) {
+				CompilerInfo info = CodeDomProvider.GetCompilerInfo (language);
+				CompilerParameters par = info.CreateDefaultCompilerParameters ();
+				SetCommonParameters (config, par);
+				return new CompilerType (info.CodeDomProviderType, par);
+			}
+			
+			throw new HttpException (String.Concat ("No compiler for language '", language, "'."));
+		}
+		
+		internal static Type GetCodeDomProviderType (BuildProvider provider)
 		{
 			CompilerType codeCompilerType;
 			Type codeDomProviderType = null;

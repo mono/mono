@@ -365,7 +365,7 @@ namespace System.Web {
 #if NET_2_0
 				try {
 #endif
-					string physical_app_path = context.Request.PhysicalApplicationPath;
+					string physical_app_path = HttpRuntime.AppDomainAppPath;
 					string app_file = null;
 					
 					app_file = Path.Combine (physical_app_path, "Global.asax");
@@ -383,13 +383,13 @@ namespace System.Web {
 					AppResourcesCompiler ac = new AppResourcesCompiler (context);
 					ac.Compile ();
 				
-					// Todo: Process App_WebResources here
-				
 					// Todo: Generate profile properties assembly from Web.config here
 				
-					// Todo: Compile code from App_Code here
 					AppCodeCompiler acc = new AppCodeCompiler ();
 					acc.Compile ();
+
+					AppWebReferencesCompiler awrc = new AppWebReferencesCompiler ();
+					awrc.Compile ();
 					
 					// Note whether there are any App_Browsers/*.browser files.  If there
 					// are we will be using *.browser files for sniffing in addition to browscap.ini

@@ -1,9 +1,30 @@
 2008-04-09  Marek Habersack  <mhabersack@novell.com>
 
+	* BuildManager.cs: refactoring - the SetCommonParameters and
+	GetDefaultCompilerTypeForLanguage moved here from BuildProvider,
+	and made internal static.
+
+	* AppWebReferencesCompiler.cs: added - support for compiling of
+	wsdl files found in the App_WebResources directory. Fixes bug
+	#377934
+
+	* BuildProvider.cs: refactoring - moved the SetCommonParameters
+	and GetDefaultCompilerTypeForLanguage to BuildManager
+
+	* WsdlBuildProvider.cs: added the CodeCompilerType property
+	override.
+	Namespace for the generated code is taken from the wsdl path,
+	relative to App_Code or App_WebReferences, if the wsdl in question
+	is under on of those directories.
+	GenerateCode uses OpenReader () so that VirtualPathProvider works
+	for wsdl files.
+
 	* AssemblyBuilder.cs: make sure Encoding.UTF8 is explicitly used
 	when generating source from code unit and use
 	WebEncoding.FileEncoding when adding code files to the unit. Fixes
 	bug #377938
+	Cope with virtualPath being null in BuildAssembly.
+	Reference assemblies specified in web.config when linking.
 
 2008-04-08  Marek Habersack  <mhabersack@novell.com>
 
