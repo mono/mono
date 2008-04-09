@@ -694,7 +694,7 @@ namespace Mono.CSharp
 			GenerateGenericsConstraints (method.TypeParameters);
 #endif
 
-			if ((attributes & MemberAttributes.ScopeMask) == MemberAttributes.Abstract || declaration.IsInterface)
+			if (IsAbstract (attributes) || declaration.IsInterface)
 				output.WriteLine (';');
 			else {
 				OutputStartBrace ();
