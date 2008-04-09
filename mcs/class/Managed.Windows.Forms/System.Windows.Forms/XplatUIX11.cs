@@ -1112,7 +1112,7 @@ namespace System.Windows.Forms {
 					XSetTransientForHint (DisplayHandle, hwnd.whole_window, transient_for_parent);
 				}
 
-				XMoveResizeWindow(DisplayHandle, hwnd.client_window, client_rect.X, client_rect.Y, client_rect.Width, client_rect.Height);
+				MoveResizeWindow(DisplayHandle, hwnd.client_window, client_rect.X, client_rect.Y, client_rect.Width, client_rect.Height);
 
 				if (hide_from_taskbar) {
 					/* this line keeps the window from showing up in gnome's taskbar */
@@ -1948,7 +1948,7 @@ namespace System.Windows.Forms {
 			rect = TranslateClientRectangleToXClientRectangle (hwnd);
 
 			if (hwnd.visible) {
-				XMoveResizeWindow (DisplayHandle, hwnd.client_window, rect.X, rect.Y, rect.Width, rect.Height);
+				MoveResizeWindow (DisplayHandle, hwnd.client_window, rect.X, rect.Y, rect.Width, rect.Height);
 			}
 
 			AddExpose (hwnd, false, 0, 0, hwnd.Width, hwnd.Height);
@@ -4989,6 +4989,8 @@ namespace System.Windows.Forms {
 				Caret.X = x;
 				Caret.Y = y;
 
+				Keyboard.SetCaretPos (Caret, handle, x, y);
+
 				if (Caret.Visible == true) {
 					ShowCaret();
 					Caret.Timer.Start();
@@ -5410,7 +5412,7 @@ namespace System.Windows.Forms {
 				lock (XlibLock) {
 					Control ctrl = Control.FromHandle (handle);
 					Size TranslatedSize = TranslateWindowSizeToXWindowSize (ctrl.GetCreateParams (), new Size (width, height));
-					XMoveResizeWindow (DisplayHandle, hwnd.whole_window, x, y, TranslatedSize.Width, TranslatedSize.Height);
+					MoveResizeWindow (DisplayHandle, hwnd.whole_window, x, y, TranslatedSize.Width, TranslatedSize.Height);
 					PerformNCCalc(hwnd);
 				}
 			}
@@ -5821,7 +5823,14 @@ namespace System.Windows.Forms {
 		[DllImport ("libX11", EntryPoint="XReparentWindow")]
 		internal extern static int XReparentWindow(IntPtr display, IntPtr window, IntPtr parent, int x, int y);
 		[DllImport ("libX11", EntryPoint="XMoveResizeWindow")]
-		internal extern static int XMoveResizeWindow(IntPtr display, IntPtr window, int x, int y, int width, int height);
+		private extern static int XMoveResizeWindow(IntPtr display, IntPtr window, int x, int y, int width, int height);
+
+		internal static int MoveResizeWindow(IntPtr display, IntPtr window, int x, int y, int width, int height)
+		{
+			int ret = XMoveResizeWindow (display, window, x, y, width, height);
+			Keyboard.MoveCurrentCaretPos ();
+			return ret;
+		}
 
 		[DllImport ("libX11", EntryPoint="XResizeWindow")]
 		internal extern static int XResizeWindow(IntPtr display, IntPtr window, int width, int height);

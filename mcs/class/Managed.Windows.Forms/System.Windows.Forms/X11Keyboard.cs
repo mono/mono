@@ -32,6 +32,7 @@
 // 
 using System;
 using System.Collections;
+using System.Drawing;
 using System.Text;
 using System.Globalization;
 using System.Runtime.InteropServices;
@@ -43,6 +44,9 @@ namespace System.Windows.Forms {
 		private IntPtr display;
 		private IntPtr window;
 		private IntPtr xic;
+		private XIMPositionContext positionContext;
+		private XIMCallbackContext callbackContext;
+		private XIMProperties ximStyle;
 		private EventMask xic_event_mask = EventMask.NoEventMask;
 		private StringBuilder lookup_buffer;
 		private byte [] utf8_buffer;
@@ -788,6 +792,7 @@ namespace System.Windows.Forms {
 		private IntPtr CreateXic (IntPtr window, IntPtr xim)
 		{
 			foreach (XIMProperties targetStyle in GetMatchingStylesInPreferredOrder (xim)) {
+				ximStyle = targetStyle;
 				// FIXME: use __arglist when it gets working. See bug #321686
 				switch (targetStyle) {
 				case styleOverTheSpot:
@@ -813,12 +818,14 @@ namespace System.Windows.Forms {
 				}
 			}
 			// fall back to root mode if all modes failed
-			if (xic == IntPtr.Zero)
+			if (xic == IntPtr.Zero) {
+				ximStyle = styleRoot;
 				xic = XCreateIC (xim,
 					XNames.XNInputStyle, styleRoot,
 					XNames.XNClientWindow, window,
 					XNames.XNFocusWindow, window,
 					IntPtr.Zero);
+			}
 			return xic;
 		}
 
@@ -827,10 +834,9 @@ namespace System.Windows.Forms {
 			IntPtr list;
 			int count;
 			IntPtr fontSet = XCreateFontSet (display, "*", out list, out count, IntPtr.Zero);
-			// FIXME: give appropriate corrdinate.
 			XPoint spot = new XPoint ();
 			spot.X = 0;
-			spot.Y = 100;
+			spot.Y = 0;
 			IntPtr pSL = IntPtr.Zero, pFS = IntPtr.Zero;
 			try {
 				pSL = Marshal.StringToHGlobalAnsi (XNames.XNSpotLocation);
@@ -861,8 +867,6 @@ namespace System.Windows.Forms {
 			callbackContext = new XIMCallbackContext ();
 			return callbackContext.CreateXic (window, xim);
 		}
-
-		XIMCallbackContext callbackContext;
 
 		class XIMCallbackContext
 		{
@@ -952,6 +956,55 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		class XIMPositionContext
+		{
+			public CaretStruct Caret;
+			public int X;
+			public int Y;
+		}
+
+		internal void SetCaretPos (CaretStruct caret, IntPtr handle, int x, int y)
+		{
+			if (ximStyle != styleOverTheSpot)
+				return;
+
+			if (positionContext == null)
+				this.positionContext = new XIMPositionContext ();
+
+			positionContext.Caret = caret;
+			positionContext.X = x;
+			positionContext.Y = y;
+
+			MoveCurrentCaretPos ();
+		}
+
+		internal void MoveCurrentCaretPos ()
+		{
+			if (positionContext == null || ximStyle != styleOverTheSpot)
+				return;
+
+			int x = positionContext.X;
+			int y = positionContext.Y;
+			CaretStruct caret = positionContext.Caret;
+			int dx, dy;
+			IntPtr child;
+			XplatUIX11.XTranslateCoordinates (display, Control.FromHandle (caret.Hwnd).window.Handle, window, x, y, out dx, out dy, out child);
+
+			XPoint spot = new XPoint ();
+			spot.X = (short) dx;
+			spot.Y = (short) dy;
+
+			IntPtr pSL = IntPtr.Zero;
+			try {
+				pSL = Marshal.StringToHGlobalAnsi (XNames.XNSpotLocation);
+				IntPtr preedit = XVaCreateNestedList (0, pSL, spot, IntPtr.Zero);
+				XSetICValues (xic, XNames.XNPreeditAttributes, preedit, IntPtr.Zero);
+			} finally {
+				if (pSL != IntPtr.Zero)
+					Marshal.FreeHGlobal (pSL);
+			}
+		}
+
 		private int LookupString (ref XEvent xevent, int len, out XKeySym keysym, out IntPtr status)
 		{
 			IntPtr keysym_res;
@@ -986,6 +1039,8 @@ namespace System.Windows.Forms {
 		private static extern IntPtr XCreateIC (IntPtr xim, string name, XIMProperties im_style, string name2, IntPtr value2, string name3, IntPtr value3, string name4, IntPtr value4, IntPtr terminator);
 
 		[DllImport ("libX11", CallingConvention = CallingConvention.Cdecl)]
+		private static extern IntPtr XVaCreateNestedList (int dummy, IntPtr name0, XPoint value0, IntPtr terminator);
+		[DllImport ("libX11", CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr XVaCreateNestedList (int dummy, IntPtr name0, XPoint value0, IntPtr name1, IntPtr value1, IntPtr terminator);
 		[DllImport ("libX11", CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr XVaCreateNestedList (int dummy, IntPtr name0, IntPtr value0, IntPtr name1, IntPtr value1, IntPtr name2, IntPtr value2, IntPtr name3, IntPtr value3, IntPtr terminator);
@@ -1013,6 +1068,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11")]
 		private static extern string XGetICValues (IntPtr xic, string name, out EventMask value, IntPtr terminator);
+
+		[DllImport ("libX11", CallingConvention = CallingConvention.Cdecl)]
+		private static extern void XSetICValues (IntPtr xic, string name, IntPtr value, IntPtr terminator);
 
 		[DllImport ("libX11")]
 		private static extern void XSetICFocus (IntPtr xic);
