@@ -1,3 +1,8 @@
+2008-04-09  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* X500DistinguishedName.cs: Fixed line endings.
+	* X509Chain.cs: Fixed line endings.
+
 2008-01-13  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* X509Certificate2.cs: NotAfter and NotBefore must return local time.
