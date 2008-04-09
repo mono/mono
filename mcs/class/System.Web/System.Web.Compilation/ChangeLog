@@ -1,3 +1,9 @@
+2008-04-09  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: Do not catch compilation exceptions and wrap them in
+	HttpException, let the CompilationException pass through. Fixes
+	bug #377904
+
 2008-03-13  Marek Habersack  <mhabersack@novell.com>
 
 	* BuildManager.cs: if we're running in a case-insensitive

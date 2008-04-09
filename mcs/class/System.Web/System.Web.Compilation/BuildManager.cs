@@ -862,11 +862,7 @@ namespace System.Web.Compilation {
 				foreach (List <AssemblyBuilder> abuilders in assemblyBuilders.Values) {
 					foreach (AssemblyBuilder abuilder in abuilders) {
 						abuilder.AddAssemblyReference (GetReferencedAssemblies () as List <Assembly>);
-						try {
-							results = abuilder.BuildAssembly (virtualPath);
-						} catch (CompilationException ex) {
-							throw new HttpException ("Compilation failed for virtual path '" + virtualPath + "'.", ex);
-						}
+						results = abuilder.BuildAssembly (virtualPath);
 						
 						// No results is not an error - it is possible that the assembly builder contained only .asmx and
 						// .ashx files which had no body, just the directive. In such case, no code unit or code file is added
