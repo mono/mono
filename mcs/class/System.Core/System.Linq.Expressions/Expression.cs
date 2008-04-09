@@ -95,14 +95,7 @@ namespace System.Linq.Expressions {
 			return GetNotNullableOf (type).IsAssignableTo (param.ParameterType);
 		}
 
-		static void UnaryCheckNotBool (Expression expression, MethodInfo method)
-		{
-			var type = GetResultType (expression, method);
-			if (GetNotNullableOf (type) == typeof (bool))
-				throw new InvalidOperationException ("Unary operator doesn't accept booleans");
-		}
-
-		static MethodInfo UnaryCoreCheck (string oper_name, Expression expression, MethodInfo method)
+		static MethodInfo UnaryCoreCheck (string oper_name, Expression expression, MethodInfo method, Func<Type, bool> validator)
 		{
 			if (expression == null)
 				throw new ArgumentNullException ("expression");
@@ -126,11 +119,11 @@ namespace System.Linq.Expressions {
 			} else {
 				var type = GetNotNullableOf (expression.Type);
 
-				if (IsIntOrBool (type))
+				if (validator (type))
 					return null;
 
 				if (oper_name != null) {
-					method = GetUnaryOperator (oper_name, GetNotNullableOf (type), expression);
+					method = GetUnaryOperator (oper_name, type, expression);
 					if (method != null)
 						return method;
 				}
@@ -1546,9 +1539,7 @@ namespace System.Linq.Expressions {
 
 		public static UnaryExpression Negate (Expression expression, MethodInfo method)
 		{
-			method = UnaryCoreCheck ("op_UnaryNegation", expression, method);
-
-			UnaryCheckNotBool (expression, method);
+			method = UnaryCoreCheck ("op_UnaryNegation", expression, method, type => IsSignedNumber (type));
 
 			return MakeSimpleUnary (ExpressionType.Negate, expression, method);
 		}
@@ -1560,9 +1551,7 @@ namespace System.Linq.Expressions {
 
 		public static UnaryExpression NegateChecked (Expression expression, MethodInfo method)
 		{
-			method = UnaryCoreCheck ("op_UnaryNegation", expression, method);
-
-			UnaryCheckNotBool (expression, method);
+			method = UnaryCoreCheck ("op_UnaryNegation", expression, method, type => IsSignedNumber (type));
 
 			return MakeSimpleUnary (ExpressionType.Negate, expression, method);
 		}
@@ -1731,10 +1720,12 @@ namespace System.Linq.Expressions {
 
 		public static UnaryExpression Not (Expression expression, MethodInfo method)
 		{
-			method = UnaryCoreCheck ("op_LogicalNot", expression, method);
+			Func<Type, bool> validator = type => IsIntOrBool (type);
+
+			method = UnaryCoreCheck ("op_LogicalNot", expression, method, validator);
 
 			if (method == null)
-				method = UnaryCoreCheck ("op_OnesComplement", expression, method);
+				method = UnaryCoreCheck ("op_OnesComplement", expression, method, validator);
 
 			return MakeSimpleUnary (ExpressionType.Not, expression, method);
 		}
@@ -1864,9 +1855,7 @@ namespace System.Linq.Expressions {
 
 		public static UnaryExpression UnaryPlus (Expression expression, MethodInfo method)
 		{
-			method = UnaryCoreCheck ("op_UnaryPlus", expression, method);
-
-			UnaryCheckNotBool (expression, method);
+			method = UnaryCoreCheck ("op_UnaryPlus", expression, method, type => IsNumber (type));
 
 			return MakeSimpleUnary (ExpressionType.UnaryPlus, expression, method);
 		}
@@ -1895,6 +1884,11 @@ namespace System.Linq.Expressions {
 		internal static bool IsNullable (Type type)
 		{
 			return type.IsGenericType && type.GetGenericTypeDefinition () == typeof (Nullable<>);
+		}
+
+		static bool IsSignedNumber (Type t)
+		{
+			return IsNumber (t) && !IsUnsigned (t);
 		}
 
 		internal static bool IsUnsigned (Type t)
