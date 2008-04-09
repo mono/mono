@@ -695,7 +695,7 @@ namespace Mono.Tools {
 			return false;
 		}
 
-		// modified copy from Mono.Security in corlib
+		// modified copy from sn
 		private static VerificationResult VerifyStrongName (AssemblyName an, string assemblyFile)
 		{
 			byte [] publicKey = StrongNameManager.GetMappedPublicKey (an.GetPublicKeyToken ());
