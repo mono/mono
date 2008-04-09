@@ -388,8 +388,10 @@ namespace System.Web {
 					AppCodeCompiler acc = new AppCodeCompiler ();
 					acc.Compile ();
 
+#if WEBSERVICES_DEP
 					AppWebReferencesCompiler awrc = new AppWebReferencesCompiler ();
 					awrc.Compile ();
+#endif
 					
 					// Note whether there are any App_Browsers/*.browser files.  If there
 					// are we will be using *.browser files for sniffing in addition to browscap.ini
