@@ -1,3 +1,8 @@
+2008-04-10  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Make sure "this" is live in catch clauses with type
+	variables in shared generic code.
+
 2008-04-08  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.c: Replaced uses of MONO_TYPE_IS_REFERENCE with calls to
