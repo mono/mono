@@ -104,6 +104,10 @@ namespace System.Linq.Expressions {
 				} else
 					ig.Emit (OpCodes.Not);
 				break;
+			case ExpressionType.Negate:
+			case ExpressionType.NegateChecked:
+				ig.Emit (OpCodes.Neg);
+				break;
 			}
 		}
 
@@ -117,13 +121,14 @@ namespace System.Linq.Expressions {
 				EmitTypeAs (ec);
 				return;
 			case ExpressionType.Not:
+			case ExpressionType.Negate:
+			case ExpressionType.NegateChecked:
+			case ExpressionType.UnaryPlus:
 				if (!is_lifted) {
 					operand.Emit (ec);
 					EmitUnaryOperator (ec);
 				} else
 					throw new NotImplementedException ();
-				return;
-			case ExpressionType.UnaryPlus:
 				return;
 			default:
 				throw new NotImplementedException (this.NodeType.ToString ());

@@ -1,5 +1,9 @@
 2008-04-09  Jb Evain  <jbevain@novell.com>
 
+	* UnaryExpression.cs: implement compilation of negate.
+
+2008-04-09  Jb Evain  <jbevain@novell.com>
+
 	* UnaryExpression.cs, Expression.cs: implement IsLifted and IsLifted
 	to null for simple unary operators. Implement Not compilation.
 
