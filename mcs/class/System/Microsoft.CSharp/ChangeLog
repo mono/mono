@@ -1,9 +1,3 @@
-2008-04-08  Jb Evain  <jbevain@novell.com>
-
-	* CSharpCodeGenerator.cs: Emit bodyless getters and setters
-	for abstract properties. Based on a patch by
-	Stefan Rusek <stefan@fogcreek.com>
-
 2008-02-27  Marek Habersack  <mhabersack@novell.com>
 
 	* CSharpCodeCompiler.cs: use asynchronous method of capturing mcs
