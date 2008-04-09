@@ -70,7 +70,7 @@ class UTF7Encoding : Encoding
 	private static readonly sbyte[] base64Values = {
 		-1, -1, -1, -1, -1, -1, -1, -1,   -1, -1, -1, -1, -1, -1, -1, -1, // 00
 		-1, -1, -1, -1, -1, -1, -1, -1,   -1, -1, -1, -1, -1, -1, -1, -1, // 10
-		-1, -1, -1, -1, -1, -1, -1, -1,   -1, -1, -1, -1, 62, -1, -1, 63, // 20
+		-1, -1, -1, -1, -1, -1, -1, -1,   -1, -1, -1, 62, -1, -1, -1, 63, // 20
 		52, 53, 54, 55, 56, 57, 58, 59,   60, 61, -1, -1, -1, -1, -1, -1, // 30
 
 		-1,  0,  1,  2,  3,  4,  5,  6,    7,  8,  9, 10, 11, 12, 13, 14, // 40
@@ -424,8 +424,8 @@ class UTF7Encoding : Encoding
 					// End of a base64 sequence.
 					if (prevIsPlus) {
 						++length;
-						leftOverSize = 0;
 					}
+					leftOverSize = 0;
 					normal = true;
 				} else if (base64 [byteval] != -1) {
 					// Extra character in a base64 sequence.

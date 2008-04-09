@@ -1,3 +1,7 @@
+2008-04-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UTF7EncodingTest.cs : added test for broken GetCharCount() case.
+
 2007-12-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* EncoderReplacementFallbackTest.cs,
