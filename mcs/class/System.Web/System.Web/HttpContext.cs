@@ -583,7 +583,11 @@ namespace System.Web {
 
 		public void RewritePath (string filePath, string pathInfo, string queryString)
 		{
+#if NET_2_0
+			RewritePath (filePath, pathInfo, queryString, true);
+#else
 			RewritePath (filePath, pathInfo, queryString, false);
+#endif
 		}
 
 #if NET_2_0
@@ -612,6 +616,10 @@ namespace System.Web {
 				throw new HttpException (404, "The virtual path '" + filePath + "' maps to another application.", filePath);
 
 			Request.SetCurrentExePath (filePath);
+#if NET_2_0
+			Request.SetFilePath (filePath);
+#endif
+			
 			// A null pathInfo or queryString is ignored and previous values remain untouched
 			if (pathInfo != null)
 				Request.SetPathInfo (pathInfo);

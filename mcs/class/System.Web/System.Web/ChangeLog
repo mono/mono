@@ -1,3 +1,8 @@
+2008-04-09  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpContext.cs: make RewritePath work correctly in the 2.0
+	profile, fixes bug #371581
+
 2008-03-13  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpApplicationFactory.cs: use HttpApplication.BinDirs to
