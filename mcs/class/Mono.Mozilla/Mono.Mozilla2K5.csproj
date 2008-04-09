@@ -1,5 +1,5 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
@@ -77,8 +77,6 @@
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Mono.Mozilla\AsciiString.cs" />
@@ -91,6 +89,7 @@
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMEventTarget.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMKeyEvent.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMMouseEvent.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMNSRange.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMUIEvent.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIFile.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIIOService.cs" />
@@ -163,9 +162,9 @@
     <Compile Include="Mono.Mozilla\interfaces\extras\Options.cs" />
     <Compile Include="Mono.WebBrowser\DOM\NodeEventArgs.cs" />
     <Compile Include="Mono.WebBrowser\DOM\NodeEventHandler.cs" />
-    <Compile Include="Mono.WebBrowser\Exception.cs" />
     <Compile Include="Mono.WebBrowser\IWebBrowser.cs" />
     <Compile Include="Mono.WebBrowser\Manager.cs" />
+    <Compile Include="Mono.WebBrowser\Exception.cs" />
     <Compile Include="Mono.WebBrowser\DOM\IAttribute.cs" />
     <Compile Include="Mono.WebBrowser\DOM\IAttributeCollection.cs" />
     <Compile Include="Mono.WebBrowser\DOM\IDocument.cs" />

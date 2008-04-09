@@ -1,3 +1,27 @@
+2008-04-09  Andreia Gaita <avidigal@novell.com> 
+
+	* Mono.Mozilla2K5.csproj, Mono.Mozilla.dll.sources,
+	  Mono.Mozilla/interfaces/nsIDOMNSRange.cs: New interface for
+	  OuterHTML setter support
+	* Mono.WebBrowser/DOM/INode.cs: Add Attributes accessor
+	* Mono.WebBrowser/DOM/IElement.cs: Add OuterText, OuterHTML
+	* Mono.Mozilla/DOM/HTMLElement.cs: Use the base class's unmanaged
+	  object directly instead of storing a copy locally. Makes it easier
+	  to replace the object if needed (outerHTML setter). Implement
+	  OuterHTML
+	* Mono.Mozilla/DOM/AttributeCollection.cs: Update nodeCount on parent
+	  class
+	* Mono.Mozilla/DOM/NodeList.cs: Use the Count property getter on all
+	  methods at least once to make sure the list always gets a chance to
+	  load
+	* Mono.Mozilla/DOM/Node.cs: Use the base class's unmanaged object
+	  directly instead of storing a copy locally. Makes it easier to
+	  replace the object if needed (outerHTML setter).
+	* Mono.Mozilla/DOM/Element.cs: Use the base class's unmanaged object
+	  directly instead of storing a copy locally. Makes it easier to
+	  replace the object if needed (outerHTML setter). Implement
+	  OuterText, OuterHTML
+
 2008-04-07  Andreia Gaita <avidigal@novell.com> 
 
 	* Mono.Mozilla/Base.cs: Change the initialization logic so that

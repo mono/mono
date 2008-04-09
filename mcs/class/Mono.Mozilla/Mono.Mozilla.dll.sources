@@ -10,6 +10,7 @@ Mono.Mozilla/interfaces/nsIDOMEventListener.cs
 Mono.Mozilla/interfaces/nsIDOMEventTarget.cs
 Mono.Mozilla/interfaces/nsIDOMKeyEvent.cs
 Mono.Mozilla/interfaces/nsIDOMMouseEvent.cs
+Mono.Mozilla/interfaces/nsIDOMNSRange.cs
 Mono.Mozilla/interfaces/nsIDOMUIEvent.cs
 Mono.Mozilla/interfaces/nsIFile.cs
 Mono.Mozilla/interfaces/nsIIOService.cs

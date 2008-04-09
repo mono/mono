@@ -49,6 +49,10 @@ namespace Mono.Mozilla.DOM
 			nodes = new Node[0];
 		}
 		
+		public NodeList (WebBrowser control, bool loaded) : base (control)
+		{
+		}
+		
 		#region IDisposable Members
 		protected override  void Dispose (bool disposing)
 		{
@@ -70,6 +74,7 @@ namespace Mono.Mozilla.DOM
 				}
 				nodeCount = 0;
 				unmanagedNodes = null;
+				nodes = null;
 			}
 		}
 		
@@ -108,11 +113,11 @@ namespace Mono.Mozilla.DOM
 		public void CopyTo (Array dest, int index) 
 		{
 			if (nodes != null) {
-				Array.Copy (nodes, 0, dest, index, nodeCount);
+				Array.Copy (nodes, 0, dest, index, Count);
 			}
 		}
 	
-		public int Count {
+		public virtual int Count {
 			get {
 				if (unmanagedNodes != null && nodes == null)
 					Load ();
@@ -148,7 +153,7 @@ namespace Mono.Mozilla.DOM
 		
 		public void RemoveAt (int index)
 		{
-			if (index > nodeCount || index < 0)
+			if (index > Count || index < 0)
 				return;			
 			Array.Copy (nodes, index + 1, nodes, index, (nodeCount - index) - 1);
 			nodeCount--;
@@ -167,7 +172,7 @@ namespace Mono.Mozilla.DOM
 		
 		public void Insert (int index, INode value) 
 		{
-			if (index > nodeCount)
+			if (index > Count)
 				index = nodeCount;
 			INode[] tmp = new Node[nodeCount+1];
 			if (index > 0)
@@ -212,7 +217,7 @@ namespace Mono.Mozilla.DOM
 		
 		public int Add (INode node) 
 		{
-			this.Insert (nodeCount + 1, node as INode);
+			this.Insert (Count + 1, node as INode);
 			return nodeCount - 1;
 		}
 		
@@ -232,12 +237,12 @@ namespace Mono.Mozilla.DOM
 		
 		public INode this [int index] {
 			get {
-				if (index < 0 || index >= nodeCount)
+				if (index < 0 || index >= Count)
 					throw new ArgumentOutOfRangeException ("index");
 				return nodes [index];								
 			}
 			set {
-				if (index < 0 || index >= nodeCount)
+				if (index < 0 || index >= Count)
 					throw new ArgumentOutOfRangeException ("index");
 				nodes [index] = value as INode;
 			}

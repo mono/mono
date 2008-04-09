@@ -34,17 +34,26 @@ namespace Mono.Mozilla.DOM
 {
 	internal class Node: DOMObject, INode
 	{
-		internal nsIDOMNode node;
+		private nsIDOMNode _node;
+		internal nsIDOMNode node {
+			get { return _node; }
+			set {
+				if (!(value is nsIDOMHTMLDocument) && control.platform != control.enginePlatform)
+					_node = nsDOMNode.GetProxy (control, value);
+				else
+					_node = value;
+			}
+		}
+		
 		protected int hashcode;
 		private EventListener eventListener;
-		
+		private WebBrowser control;
+			
 		public Node (WebBrowser control, nsIDOMNode domNode) : base (control)
 		{
 			hashcode = domNode.GetHashCode ();
-			if (!(domNode is nsIDOMHTMLDocument) && control.platform != control.enginePlatform)
-				this.node = nsDOMNode.GetProxy (control, domNode);
-			else
-				this.node = domNode;
+			this.control = control;
+			this.node = domNode;
 		}
 
 		#region IDisposable Members

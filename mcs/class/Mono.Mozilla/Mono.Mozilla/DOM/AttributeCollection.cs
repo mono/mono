@@ -39,7 +39,7 @@ namespace Mono.Mozilla.DOM
 		protected new nsIDOMNamedNodeMap unmanagedNodes;
 
 		public AttributeCollection (WebBrowser control, nsIDOMNamedNodeMap nodeMap)
-			: base (control)
+			: base (control, true)
 		{
 			if (control.platform != control.enginePlatform)
 				unmanagedNodes = nsDOMNamedNodeMap.GetProxy (control, nodeMap);
@@ -52,11 +52,20 @@ namespace Mono.Mozilla.DOM
 			Clear ();
 			uint count;
 			unmanagedNodes.getLength (out count);
+			nodeCount = (int) count;
 			nodes = new Node[count];
 			for (int i = 0; i < count; i++) {
 				nsIDOMNode node;
 				unmanagedNodes.item ((uint) i, out node);
 				nodes[i] = new Attribute (control, node as nsIDOMAttr);
+			}
+		}
+
+		public override int Count {
+			get {
+				if (unmanagedNodes != null && nodes == null)
+					Load ();
+				return nodeCount; 
 			}
 		}
 

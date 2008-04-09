@@ -29,6 +29,7 @@ namespace Mono.WebBrowser.DOM
 {
 	public interface INode
 	{
+		IAttributeCollection Attributes { get; }
 		INodeList 	ChildNodes { get; }
 		INode 		FirstChild { get; }
 		IElement	InsertBefore (INode child, INode refChild);
