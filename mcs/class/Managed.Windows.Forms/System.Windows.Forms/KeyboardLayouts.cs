@@ -88,7 +88,12 @@ namespace System.Windows.Forms {
 		}
 	}
 
-	internal enum VKeyTableIndex {
+#if GENERATING_RESOURCES
+	public
+#else 
+	internal
+#endif
+	 enum VKeyTableIndex {
 		Qwerty,
 		Qwertz,
 		Dvorak,
@@ -100,7 +105,12 @@ namespace System.Windows.Forms {
 		Vnc
 	}
 
-	internal enum ScanTableIndex {
+#if GENERATING_RESOURCES
+	public
+#else 
+	internal
+#endif
+	 enum ScanTableIndex {
 		Qwerty,
 		Dvorak,
 		AbntQwerty,
