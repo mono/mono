@@ -15,6 +15,10 @@ ifeq (net_2_0, $(PROFILE))
 LIB_MCS_FLAGS += /r:System.Configuration.dll
 endif
 
+ifeq (true, $(GENERATE_RESOURCES))
+LIB_MCS_FLAGS += /define:GENERATING_RESOURCES
+endif
+
 RESX_RESOURCES = \
 	resources/System.Windows.Forms.resources \
 	resources/System.Windows.Forms.en.resources \
