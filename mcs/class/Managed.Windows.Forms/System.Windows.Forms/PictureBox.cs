@@ -172,7 +172,10 @@ namespace System.Windows.Forms {
 		[RefreshProperties (RefreshProperties.All)]
 		public string ImageLocation {
 			get { return image_location; }
-			set { image_location = value; }
+			set {
+				image_location = value;
+				Load (value);
+			}
 		}
 		
 		[Localizable (true)]

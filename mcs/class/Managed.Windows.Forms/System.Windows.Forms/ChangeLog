@@ -1,3 +1,8 @@
+2008-04-09  Jonathan Pobst  <monkey@jpobst.com>
+
+	* PictureBox.cs: Call Load when ImageLocation is set.
+	[Fixes bug #378308]
+
 2008-04-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* X11Keyboard.cs, XplatUIX11.cs :
