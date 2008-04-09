@@ -95,6 +95,13 @@ namespace System.Linq.Expressions {
 			return GetNotNullableOf (type).IsAssignableTo (param.ParameterType);
 		}
 
+		static void UnaryCheckNotBool (Expression expression, MethodInfo method)
+		{
+			var type = GetResultType (expression, method);
+			if (GetNotNullableOf (type) == typeof (bool))
+				throw new InvalidOperationException ("Unary operator doesn't accept booleans");
+		}
+
 		static MethodInfo UnaryCoreCheck (string oper_name, Expression expression, MethodInfo method)
 		{
 			if (expression == null)
@@ -1541,6 +1548,8 @@ namespace System.Linq.Expressions {
 		{
 			method = UnaryCoreCheck ("op_UnaryNegation", expression, method);
 
+			UnaryCheckNotBool (expression, method);
+
 			return MakeSimpleUnary (ExpressionType.Negate, expression, method);
 		}
 
@@ -1552,6 +1561,8 @@ namespace System.Linq.Expressions {
 		public static UnaryExpression NegateChecked (Expression expression, MethodInfo method)
 		{
 			method = UnaryCoreCheck ("op_UnaryNegation", expression, method);
+
+			UnaryCheckNotBool (expression, method);
 
 			return MakeSimpleUnary (ExpressionType.Negate, expression, method);
 		}
@@ -1854,6 +1865,8 @@ namespace System.Linq.Expressions {
 		public static UnaryExpression UnaryPlus (Expression expression, MethodInfo method)
 		{
 			method = UnaryCoreCheck ("op_UnaryPlus", expression, method);
+
+			UnaryCheckNotBool (expression, method);
 
 			return MakeSimpleUnary (ExpressionType.UnaryPlus, expression, method);
 		}

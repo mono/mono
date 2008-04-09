@@ -1,5 +1,9 @@
 2008-04-09  Jb Evain  <jbevain@novell.com>
 
+	* Expression.cs: check for illegal booleab unary expressions.
+
+2008-04-09  Jb Evain  <jbevain@novell.com>
+
 	* UnaryExpression.cs: implement compilation of negate.
 
 2008-04-09  Jb Evain  <jbevain@novell.com>
