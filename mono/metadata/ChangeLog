@@ -1,5 +1,10 @@
 2008-04-09 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* tokentype.h: Add MONO_TOKEN_GENERIC_PARAM.
+
+
+2008-04-09 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class-internals.h: Add generic_param_token to MonoClass::sizes union.
 
 	* class.c (mono_class_from_generic_parameter): Save the token of the
