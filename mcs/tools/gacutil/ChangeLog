@@ -1,5 +1,13 @@
 
-Fri Mar 14 09:29:29 CET 2008 Paolo Molaro <lupus@ximian.com>
+2008-04-09  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* driver.cs: Use Mono.Security.StrongNameManager to perform strongname
+	verification. This reduces verbosity of install action and fixes bug
+	 #376238.
+	* gacutil.exe.sources: Added StrongNameManager.cs.
+	* StrongNameManager.cs: Copied from Mono.Security in corlib. 
+
+2008-03-14  Paolo Molaro <lupus@ximian.com>
 
 	* driver.cs: added a bootstrap option to ignore sn failures for now
 	when bootstrapping a build. The option name will periodically change
