@@ -1,3 +1,9 @@
+2008-04-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* gacutil.exe.sources: Use the StrongNameManager.cs file from sn
+	(located in ../security/).
+	* StrongNameManager.cs: Removed. Two copies (sn and corlib) are 
+	already enough.
 
 2008-04-09  Gert Driesen  <drieseng@users.sourceforge.net>
 

@@ -1,2 +1,2 @@
 driver.cs
-StrongNameManager.cs
+../security/StrongNameManager.cs
