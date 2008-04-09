@@ -66,6 +66,14 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		[Category ("NotWorking")]
+		public void NegateBool ()
+		{
+			Expression.UnaryPlus (true.ToConstant ());
+		}
+
+		[Test]
 		public void Number ()
 		{
 			var up = Expression.Negate (Expression.Constant (1));
