@@ -127,12 +127,11 @@ namespace System.Windows.Forms {
 
 		public override void PositionEditingControl (bool setLocation, bool setSize, Rectangle cellBounds, Rectangle cellClip, DataGridViewCellStyle cellStyle, bool singleVerticalBorderAdded, bool singleHorizontalBorderAdded, bool isFirstDisplayedColumn, bool isFirstDisplayedRow)
 		{
-			if (setSize) {
-				editingControl.Size = new Size(cellBounds.Width, cellBounds.Height + 2);
-			}
-			if (setLocation) {
-				editingControl.Location = new Point (cellBounds.X, ((cellBounds.Height - editingControl.Height) / 2) + cellBounds.Y);
-			}
+			cellBounds.Size = new Size (cellBounds.Width - 5, cellBounds.Height + 2);
+			cellBounds.Location = new Point (cellBounds.X + 3, ((cellBounds.Height - editingControl.Height) / 2) + cellBounds.Y - 1);
+
+			base.PositionEditingControl (setLocation, setSize, cellBounds, cellClip, cellStyle, singleVerticalBorderAdded, singleHorizontalBorderAdded, isFirstDisplayedColumn, isFirstDisplayedRow);
+			
 			editingControl.Invalidate();
 		}
 

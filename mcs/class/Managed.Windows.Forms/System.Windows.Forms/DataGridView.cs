@@ -1217,8 +1217,11 @@ namespace System.Windows.Forms {
 					}
 				}
 				
-				if (value != null)
+				
+				if (value != null) {
+					value.Visible = false;
 					Controls.Add (value);
+				}
 
 				editingControl = value;
 			}
@@ -2099,7 +2102,14 @@ namespace System.Windows.Forms {
 			Type editType = cell.EditType;
 			if (editType == null)
 				return false;
+				
+			// Give user a chance to cancel the edit
+			DataGridViewCellCancelEventArgs e = new DataGridViewCellCancelEventArgs (cell.ColumnIndex, cell.RowIndex);
+			OnCellBeginEdit (e);
 
+			if (e.Cancel)
+				return false;
+				
 			cell.SetIsInEditMode (true);
 			Control ctrl = EditingControlInternal;
 			bool isCorrectType = ctrl != null && ctrl.GetType () == editType;
@@ -2114,12 +2124,13 @@ namespace System.Windows.Forms {
 			IDataGridViewEditingControl edControl = ctrl as IDataGridViewEditingControl;
 			DataGridViewCellStyle style = cell.RowIndex == -1 ? DefaultCellStyle : cell.InheritedStyle;
 			cell.InitializeEditingControl (cell.RowIndex, cell.FormattedValue, style);
+			
 			cell.PositionEditingControl (true, true, this.GetCellDisplayRectangle (cell.ColumnIndex, cell.RowIndex, false), bounds, style, false, false, (columns [cell.ColumnIndex].DisplayIndex == 0), (cell.RowIndex == 0));
+			EditingControlInternal.Visible = true;
+			
 			if (edControl != null)
-				edControl.PrepareEditingControlForEdit (selectAll);
-			ctrl.Visible = true;
+				(EditingControlInternal as IDataGridViewEditingControl).PrepareEditingControlForEdit (selectAll);
 
-			OnCellBeginEdit (new DataGridViewCellCancelEventArgs (cell.ColumnIndex, cell.RowIndex));
 			return true;
 		}
 
@@ -2205,11 +2216,14 @@ namespace System.Windows.Forms {
 			
 			int x = 0, y = 0, w = 0, h = 0;
 			
+			x = BorderWidth;
+			y = BorderWidth;
+			
 			if (ColumnHeadersVisible)
-				y = ColumnHeadersHeight;
+				y += ColumnHeadersHeight;
 			
 			if (RowHeadersVisible)
-				x = RowHeadersWidth;
+				x += RowHeadersWidth;
 				
 			ArrayList cols = columns.ColumnDisplayIndexSortedArrayList;
 

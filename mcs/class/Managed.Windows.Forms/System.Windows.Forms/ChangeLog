@@ -1,5 +1,12 @@
 2008-04-09  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridView.cs: Some fixups for showing and adding the edit control.
+	* DataGridViewButtonColumn.cs: Implement ToString.
+	* DataGridViewCell.cs: Size and position the control simultaneously.
+	* DataGridViewTextBoxCell.cs: Use base to position control.
+
+2008-04-09  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridViewCell.cs: Fix up some formatting and painting code.
 	* DataGridViewImageCell.cs: Implement some NIEX methods.
 

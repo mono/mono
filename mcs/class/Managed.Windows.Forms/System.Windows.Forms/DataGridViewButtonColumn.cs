@@ -90,8 +90,9 @@ namespace System.Windows.Forms {
 			return col;
 		}
 
-		public override string ToString () {
-			throw new NotImplementedException();
+		public override string ToString ()
+		{
+			return string.Format ("DataGridViewButtonColumn {{ Name={0}, Index={1} }}", Name, Index);
 		}
 
 	}
