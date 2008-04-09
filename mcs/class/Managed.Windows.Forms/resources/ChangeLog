@@ -1,3 +1,8 @@
+2008-04-08  Everaldo Canuto  <ecanuto@novell.com>
+
+	* create-keyboards.sh: Added, it is used to compile and generate keyboard
+	resources.
+
 2008-03-19  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* propertygrid-categorized.png, PropertiesTab.bmp, 
