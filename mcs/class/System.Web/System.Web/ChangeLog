@@ -1,5 +1,8 @@
 2008-04-09  Marek Habersack  <mhabersack@novell.com>
 
+	* HttpContext.cs: make RewritePath work correctly in the 2.0
+	profile, fixes bug #371581
+
 	* HttpApplicationFactory.cs: compile web references. Fixes bug
 	#377934
 
