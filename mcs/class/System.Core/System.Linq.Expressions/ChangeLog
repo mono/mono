@@ -1,3 +1,8 @@
+2008-04-09  Jb Evain  <jbevain@novell.com>
+
+	* UnaryExpression.cs, Expression.cs: implement IsLifted and IsLifted
+	to null for simple unary operators. Implement Not compilation.
+
 2008-04-08  Jb Evain  <jbevain@novell.com>
 
 	* ElementInit.cs: emit pop if the add method doesn't return void.

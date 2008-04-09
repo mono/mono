@@ -117,11 +117,13 @@ namespace System.Linq.Expressions {
 
 				return method;
 			} else {
-				if (IsNumber (expression.Type))
+				var type = GetNotNullableOf (expression.Type);
+
+				if (IsIntOrBool (type))
 					return null;
 
 				if (oper_name != null) {
-					method = GetUnaryOperator (oper_name, expression.Type, expression);
+					method = GetUnaryOperator (oper_name, GetNotNullableOf (type), expression);
 					if (method != null)
 						return method;
 				}
@@ -286,7 +288,16 @@ namespace System.Linq.Expressions {
 
 		static UnaryExpression MakeSimpleUnary (ExpressionType et, Expression expression, MethodInfo method)
 		{
-			return new UnaryExpression (et, expression, GetResultType (expression, method), method);
+			bool is_lifted;
+
+			if (method == null) {
+				is_lifted = IsNullable (expression.Type);
+			} else {
+				// FIXME: implement
+				is_lifted = false;
+			}
+
+			return new UnaryExpression (et, expression, GetResultType (expression, method), method, is_lifted);
 		}
 
 		static BinaryExpression MakeBoolBinary (ExpressionType et, Expression left, Expression right, bool liftToNull, MethodInfo method)
@@ -1029,7 +1040,7 @@ namespace System.Linq.Expressions {
 
 			// TODO: check for valid convertions
 
-			return new UnaryExpression (ExpressionType.Convert, expression, type, method);
+			return new UnaryExpression (ExpressionType.Convert, expression, type, method, false);
 		}
 
 		public static UnaryExpression ConvertChecked (Expression expression, Type type)
@@ -1047,7 +1058,7 @@ namespace System.Linq.Expressions {
 
 			// TODO: check for valid convertions
 
-			return new UnaryExpression (ExpressionType.ConvertChecked, expression, type, method);
+			return new UnaryExpression (ExpressionType.ConvertChecked, expression, type, method, false);
 		}
 
 		public static ElementInit ElementInit (MethodInfo addMethod, params Expression [] arguments)
@@ -1710,6 +1721,9 @@ namespace System.Linq.Expressions {
 		public static UnaryExpression Not (Expression expression, MethodInfo method)
 		{
 			method = UnaryCoreCheck ("op_LogicalNot", expression, method);
+
+			if (method == null)
+				method = UnaryCoreCheck ("op_OnesComplement", expression, method);
 
 			return MakeSimpleUnary (ExpressionType.Not, expression, method);
 		}
