@@ -1,3 +1,13 @@
+2008-04-09 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class-internals.h: Add generic_param_token to MonoClass::sizes union.
+
+	* class.c (mono_class_from_generic_parameter): Save the token of the
+	generic param in MonoClass::sizes.generic_param_token.
+
+	* reflection.c (mono_custom_attrs_from_class): If the class type is
+	VAR or MVAR retrieve the attributes of the generic param.
+
 2008-04-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c (mono_class_init): Do class verification if the verifier
