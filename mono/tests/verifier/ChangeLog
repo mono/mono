@@ -1,3 +1,11 @@
+2008-04-10 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_bad_op_test.sh: Test generator for
+	invalid opcodes.
+
+	* make_test.sh: Added tests for invalid opcodes
+	using the new generator.
+
 2008-04-08 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_overlapped_test.sh: Test generator for
