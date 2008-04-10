@@ -1,5 +1,10 @@
 2008-04-10 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	class.c (mono_class_inflate_generic_method_full): Add a long
+	explanation to the is_mb_open hack. Remove the FIXME.
+
+2008-04-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (mono_method_verify): Mark all unknown opcodes
 	as invalid. Mark jmp as unverifiable.
 
