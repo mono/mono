@@ -761,7 +761,7 @@ namespace System.Windows.Forms {
 		{
 			string env = Environment.GetEnvironmentVariable (ENV_NAME_XIM_STYLE);
 			if (env == null)
-				env = String.Empty;
+				env = "over-the-spot";
 			string [] list = env.Split (' ');
 			XIMProperties [] ret = new XIMProperties [list.Length];
 			for (int i = 0; i < list.Length; i++) {
@@ -802,8 +802,10 @@ namespace System.Windows.Forms {
 					Console.WriteLine ("failed to create XIC in over-the-spot mode.");
 					continue;
 				case styleOnTheSpot:
+					// Since .NET/Winforms seems to support only over-the-spot mode,,
+					// I'm not likely to continue on-the-spot implementation. But in
+					// case we need it, this code will be still useful.
 					xic = CreateOnTheSpotXic (window, xim);
-					// XplatUIX11.XFree (preedit);
 					if (xic != IntPtr.Zero)
 						break;
 					Console.WriteLine ("failed to create XIC in on-the-spot mode.");
@@ -914,7 +916,7 @@ namespace System.Windows.Forms {
 			int DoPreeditStart (IntPtr xic, IntPtr clientData, IntPtr callData)
 			{
 				Console.WriteLine ("DoPreeditStart");
-				return 128;
+				return 100;
 			}
 
 			int DoPreeditDone (IntPtr xic, IntPtr clientData, IntPtr callData)
@@ -926,12 +928,14 @@ namespace System.Windows.Forms {
 			int DoPreeditDraw (IntPtr xic, IntPtr clientData, IntPtr callData)
 			{
 				Console.WriteLine ("DoPreeditDraw");
+				XIMPreeditDrawCallbackStruct cd = (XIMPreeditDrawCallbackStruct) Marshal.PtrToStructure (callData, typeof (XIMPreeditDrawCallbackStruct));
 				return 0;
 			}
 
 			int DoPreeditCaret (IntPtr xic, IntPtr clientData, IntPtr callData)
 			{
 				Console.WriteLine ("DoPreeditCaret");
+				XIMPreeditCaretCallbackStruct cd = (XIMPreeditCaretCallbackStruct) Marshal.PtrToStructure (callData, typeof (XIMPreeditCaretCallbackStruct));
 				return 0;
 			}
 

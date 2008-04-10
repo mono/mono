@@ -1697,6 +1697,52 @@ namespace System.Windows.Forms {
 		}
 	}
 
+	internal struct XIMText
+	{
+		public ushort Length;
+		public IntPtr Feedback;
+		public bool EncodingIsWChar;
+		public IntPtr String; // it could be either char* or wchar_t*
+	}
+
+	internal struct XIMPreeditDrawCallbackStruct
+	{
+		public int Caret;
+		public int ChangeFirst;
+		public int ChangeLength;
+		public IntPtr Text; // to XIMText
+	}
+
+	internal enum XIMCaretDirection
+	{
+		XIMForwardChar,
+		XIMBackwardChar,
+		XIMForwardWord,
+		XIMBackwardWord,
+		XIMCaretUp,
+		XIMCaretDown,
+		XIMNextLine,
+		XIMPreviousLine,
+		XIMLineStart,
+		XIMLineEnd,
+		XIMAbsolutePosition,
+		XIMDontChange
+	}
+
+	internal enum XIMCaretStyle
+	{
+		IsInvisible,
+		IsPrimary,
+		IsSecondary
+	}
+
+	internal struct XIMPreeditCaretCallbackStruct
+	{
+		public int Position;
+		public XIMCaretDirection Direction;
+		public XIMCaretStyle Style;
+	}
+
 	// only PreeditStartCallback requires return value though.
 	internal delegate int XIMProc (IntPtr xim, IntPtr clientData, IntPtr callData);
 
