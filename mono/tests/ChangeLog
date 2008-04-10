@@ -1,3 +1,14 @@
+2008-04-10  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-box.2.cs, generic-boxing.2.il, generic-delegate.2.cs,
+	generic-ldobj.2.il, generic-ldtoken.2.il,
+	generic-ldtoken-field.2.il, generic-ldtoken-method.2.il,
+	generic-mkrefany.2.il, generic-sizeof.2.cs, generic-tailcall.2.il,
+	generic-unbox.2.cs, generic-unboxing.2.il, generic-virtual.2.cs,
+	generics-sharing.2.cs: New test cases for generic sharing.
+
+	* Makefile.am: Added tests.
+
 2008-03-31  Mark Probst  <mark.probst@gmail.com>
 
 	* Makefile.am: Re-enabled CoreCLR security tests.  Fixes #362626.
