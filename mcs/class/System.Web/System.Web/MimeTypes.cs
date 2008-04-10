@@ -30,17 +30,24 @@
 
 using System;
 using System.Collections;
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 
 namespace System.Web
 {
 	class MimeTypes
 	{
+#if NET_2_0
+		static Dictionary <string, string> mimeTypes;
+#else
 		static Hashtable mimeTypes;
-
+#endif
+		
 		static MimeTypes ()
 		{
 #if NET_2_0
-			mimeTypes = new Hashtable (StringComparer.InvariantCultureIgnoreCase);
+			mimeTypes = new Dictionary <string, string> (StringComparer.InvariantCultureIgnoreCase);
 #else
 			mimeTypes = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant,
 						   CaseInsensitiveComparer.DefaultInvariant);
