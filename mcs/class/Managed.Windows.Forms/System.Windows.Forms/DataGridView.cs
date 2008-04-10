@@ -2134,8 +2134,15 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
-		public bool CancelEdit () {
-			throw new NotImplementedException();
+		public bool CancelEdit ()
+		{
+			if (currentCell != null && currentCell.IsInEditMode) {
+				currentCell.SetIsInEditMode (false);
+				currentCell.DetachEditingControl ();
+				OnCellEndEdit (new DataGridViewCellEventArgs (currentCell.ColumnIndex, currentCell.RowIndex));
+			}
+
+			return true;
 		}
 
 		public void ClearSelection ()
@@ -2174,12 +2181,18 @@ namespace System.Windows.Forms {
 			return result;
 		}
 
-		public bool EndEdit () {
+		public bool EndEdit ()
+		{
 			if (currentCell != null && currentCell.IsInEditMode) {
+				IDataGridViewEditingControl ctrl = EditingControl as IDataGridViewEditingControl;
+				ctrl.GetEditingControlFormattedValue (DataGridViewDataErrorContexts.Commit);
+				currentCell.Value = ctrl.GetEditingControlFormattedValue (DataGridViewDataErrorContexts.Commit);
+				
 				currentCell.SetIsInEditMode (false);
 				currentCell.DetachEditingControl ();
 				OnCellEndEdit (new DataGridViewCellEventArgs (currentCell.ColumnIndex, currentCell.RowIndex));
 			}
+			
 			return true;
 		}
 
@@ -4228,7 +4241,7 @@ namespace System.Windows.Forms {
 
 		protected virtual bool ProcessDataGridViewKey (KeyEventArgs e)
 		{
-			switch (e.KeyCode) {
+			switch (e.KeyData) {
 				case Keys.A:
 					return ProcessAKey (e.KeyData);
 				case Keys.Delete:
@@ -4251,6 +4264,11 @@ namespace System.Windows.Forms {
 					return ProcessRightKey (e.KeyData);
 				case Keys.Space:
 					return ProcessSpaceKey (e.KeyData);
+				case Keys.Tab:
+				case Keys.Shift | Keys.Tab:
+				case Keys.Control | Keys.Tab:
+				case Keys.Control | Keys.Shift | Keys.Tab:
+					return ProcessTabKey (e.KeyData);
 				case Keys.Up:
 					return ProcessUpKey (e.KeyData);
 				case Keys.D0:
@@ -4269,6 +4287,27 @@ namespace System.Windows.Forms {
 
 		protected override bool ProcessDialogKey (Keys keyData)
 		{
+			switch (keyData) {
+				case Keys.Tab:
+				case Keys.Shift | Keys.Tab:
+					if (standardTab)
+						return base.ProcessDialogKey (keyData & ~Keys.Control);
+						
+					if (ProcessDataGridViewKey (new KeyEventArgs (keyData)))
+						return true;
+						
+					break;
+				case Keys.Control | Keys.Tab:
+				case Keys.Control | Keys.Shift | Keys.Tab:
+					if (!standardTab)
+						return base.ProcessDialogKey (keyData & ~Keys.Control);
+
+					if (ProcessDataGridViewKey (new KeyEventArgs (keyData)))
+						return true;
+						
+					break;
+			}
+			
 			return base.ProcessDialogKey(keyData);
 		}
 
@@ -4277,6 +4316,8 @@ namespace System.Windows.Forms {
 			int current_row = CurrentCellAddress.Y;
 			
 			if (current_row < Rows.Count - 1) {
+				EndEdit ();
+				
 				// Move to the last cell in the column
 				if ((keyData & Keys.Control) == Keys.Control)
 					MoveCurrentCell (CurrentCellAddress.X, Rows.Count - 1, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
@@ -4371,12 +4412,39 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
-		protected override bool ProcessKeyEventArgs (ref Message m) {
-			return base.ProcessKeyEventArgs(ref m);
-			//throw new NotImplementedException();
+		protected override bool ProcessKeyEventArgs (ref Message m)
+		{
+			DataGridViewCell cell = CurrentCell;
+			
+			if (cell != null)
+				if (cell.KeyEntersEditMode (new KeyEventArgs ((Keys)m.WParam.ToInt32 ())))
+					BeginEdit (true);
+
+			return base.ProcessKeyEventArgs (ref m);
 		}
 
-		protected override bool ProcessKeyPreview (ref Message m) {
+		protected override bool ProcessKeyPreview (ref Message m)
+		{
+			if ((Msg)m.Msg == Msg.WM_KEYDOWN && IsCurrentCellInEditMode) {
+				KeyEventArgs e = new KeyEventArgs ((Keys)m.WParam.ToInt32 ());
+			
+				IDataGridViewEditingControl ctrl = (IDataGridViewEditingControl)EditingControlInternal;
+				
+				if (ctrl != null)
+					if (ctrl.EditingControlWantsInputKey (e.KeyData, false))
+						return false;
+
+				switch (e.KeyData)
+				{
+					case Keys.Escape:
+					case Keys.Down:
+					case Keys.Up:
+					case Keys.Left:
+					case Keys.Right:
+					case Keys.Tab:
+						return ProcessDataGridViewKey (e);
+				}
+			}
 			return base.ProcessKeyPreview(ref m);
 			//throw new NotImplementedException();
 		}
@@ -4386,6 +4454,8 @@ namespace System.Windows.Forms {
 			int disp_index = ColumnIndexToDisplayIndex (currentCellAddress.X);
 
 			if (disp_index > 0) {
+				EndEdit ();
+				
 				// Move to the first cell in the row
 				if ((keyData & Keys.Control) == Keys.Control)
 					MoveCurrentCell (ColumnDisplayIndexToIndex (0), currentCellAddress.Y, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
@@ -4414,6 +4484,8 @@ namespace System.Windows.Forms {
 			int disp_index = ColumnIndexToDisplayIndex (currentCellAddress.X);
 
 			if (disp_index < Columns.Count - 1) {
+				EndEdit ();
+				
 				// Move to the last cell in the row
 				if ((keyData & Keys.Control) == Keys.Control)
 					MoveCurrentCell (ColumnDisplayIndexToIndex (Columns.Count - 1), currentCellAddress.Y, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
@@ -4459,8 +4531,47 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
-		protected bool ProcessTabKey (Keys keyData) {
-			throw new NotImplementedException();
+		protected bool ProcessTabKey (Keys keyData)
+		{
+			EndEdit ();
+			
+			Form f = FindForm ();
+			
+			if (f != null)
+				f.ActivateFocusCues ();
+			
+			int disp_index = ColumnIndexToDisplayIndex (currentCellAddress.X);
+
+			// Tab goes forward
+			// Shift-tab goes backwards
+			if ((keyData & Keys.Shift) == Keys.Shift) {
+				if (disp_index > 0) {
+					// Move one cell to the left
+					MoveCurrentCell (ColumnDisplayIndexToIndex (disp_index - 1), currentCellAddress.Y, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
+					return true;
+				} else if (currentCellAddress.Y > 0) {
+					// Move to the last cell in the previous row
+					MoveCurrentCell (ColumnDisplayIndexToIndex (Columns.Count - 1), currentCellAddress.Y - 1, true, false, false);
+					return true;
+				}
+			
+			} else {
+				if (disp_index < Columns.Count - 1) {
+
+					// Move one cell to the right
+					MoveCurrentCell (ColumnDisplayIndexToIndex (disp_index + 1), currentCellAddress.Y, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
+
+					return true;
+				} else if (currentCellAddress.Y < Rows.Count - 1) {
+					// Move to the first cell in the next row
+					MoveCurrentCell (ColumnDisplayIndexToIndex (0), currentCellAddress.Y + 1, true, false, false);
+					return true;
+				}
+
+			
+			}
+			
+			return false;
 		}
 
 		protected bool ProcessUpKey (Keys keyData)
@@ -4468,6 +4579,8 @@ namespace System.Windows.Forms {
 			int current_row = CurrentCellAddress.Y;
 
 			if (current_row > 0) {
+				EndEdit ();
+
 				// Move to the first cell in the column
 				if ((keyData & Keys.Control) == Keys.Control)
 					MoveCurrentCell (CurrentCellAddress.X, 0, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
