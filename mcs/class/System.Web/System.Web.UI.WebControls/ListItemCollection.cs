@@ -324,7 +324,7 @@ namespace System.Web.UI.WebControls {
 			for (int i = 0; i < count; i++) {
 #if NET_2_0
 				li = items [i] as ListItem;
-				if (li != null)
+				if (li != null && li.Enabled != enabled)
 					li.Enabled = enabled;
 #endif
 				
@@ -336,7 +336,7 @@ namespace System.Web.UI.WebControls {
 			if (!dirty && !itemsDirty)
 				return null;
 
-			return new Pair (itemsDirty, itemsState);
+			return new Pair (dirty, itemsState);
 		}
 
 		void IStateManager.TrackViewState() {

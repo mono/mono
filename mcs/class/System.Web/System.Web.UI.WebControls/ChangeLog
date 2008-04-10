@@ -1,5 +1,9 @@
 2008-04-10  Marek Habersack  <mhabersack@novell.com>
 
+	* CheckBoxList.cs: set the Selected property to the value in POST
+	data only if the item in question was enabled before postback
+	occurred. Fixes bug #377703
+
 	* ListControl.cs: make sure the owned items' Enabled property is
 	set to the same value what ListControl's. Fixes bug #377703
 
