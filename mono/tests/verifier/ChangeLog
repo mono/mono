@@ -1,5 +1,20 @@
 2008-04-10 Rodrigo Kumpera <rkumpera@novell.com>
 
+	* AssemblyRunner.cs: If a VerificationException
+	happens while running under fulltrust, it means
+	that the code is invalid.
+
+	* make_method_constraint_test.sh: Test generator for
+	generic methods argument constraints.
+
+	* make_test.sh: Added tests for invalid opcodes
+	using the new generator.
+
+	* invalid_generic_method_and_type.il: New test
+	for generic constraints.
+
+2008-04-10 Rodrigo Kumpera <rkumpera@novell.com>
+
 	* make_bad_op_test.sh: Test generator for
 	invalid opcodes.
 
