@@ -1024,7 +1024,7 @@ namespace System.Windows.Forms {
 			}
 			
 			IFormattable formattable = value as IFormattable;
-			if (formattable != null) {
+			if (formattable != null && style != null) {
 				formattable.ToString (style.Format, style.FormatProvider);
 			}
 			

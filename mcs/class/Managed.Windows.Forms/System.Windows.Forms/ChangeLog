@@ -1,5 +1,9 @@
 2008-04-09  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridViewCell.cs: Guard against an NRE causing a test to fail.
+
+2008-04-09  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridView.cs: Some fixups for showing and adding the edit control.
 	* DataGridViewButtonColumn.cs: Implement ToString.
 	* DataGridViewCell.cs: Size and position the control simultaneously.
