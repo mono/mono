@@ -1,5 +1,10 @@
 2008-04-10 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (mono_method_verify): Mark all unknown opcodes
+	as invalid. Mark jmp as unverifiable.
+
+2008-04-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c: Add code to do type constraint verification on class instances.
 
 	* verify.c (mono_verifier_verify_class): Use the type constraint 
