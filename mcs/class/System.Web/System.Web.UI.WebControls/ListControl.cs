@@ -561,9 +561,11 @@ namespace System.Web.UI.WebControls {
 			baseState = base.SaveViewState ();
 
 			IStateManager manager = items as IStateManager;
-			if (manager != null)
+			if (manager != null) {
+				items.ItemsEnabled = Enabled;
 				itemsState = manager.SaveViewState ();
-
+			}
+			
 			if (baseState == null && itemsState == null)
 				return null;
 

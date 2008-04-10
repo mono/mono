@@ -37,20 +37,27 @@ namespace System.Web.UI.WebControls {
 	// attributes
 	[Editor("System.Web.UI.Design.WebControls.ListItemsCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 	public sealed class ListItemCollection : IList, ICollection, IEnumerable, IStateManager {
-		#region Fields
+#region Fields
 		private ArrayList	items;
 		private bool		tracking;
 		private bool		dirty;
+		bool                    itemsEnabled;
+		
 		int lastDirty = 0;
-		#endregion	// Fields
+#endregion	// Fields
 
-		#region Public Constructors
+#region Public Constructors
 		public ListItemCollection() {
 			items = new ArrayList();
 		}
-		#endregion	// Public Constructors
+#endregion	// Public Constructors
 
-		#region Public Instance Properties
+		internal bool ItemsEnabled {
+			get { return itemsEnabled; }
+			set { itemsEnabled = value; }
+		}
+		
+#region Public Instance Properties
 		public int Capacity {
 			get {
 				return items.Capacity;
@@ -215,9 +222,9 @@ namespace System.Web.UI.WebControls {
 			if (tracking)
 				SetDirty ();
 		}
-		#endregion	// Public Instance Methods
+#endregion	// Public Instance Methods
 
-		#region Interface methods
+#region Interface methods
 		bool IList.IsFixedSize {
 			get {
 				return items.IsFixedSize;
@@ -288,6 +295,7 @@ namespace System.Web.UI.WebControls {
 				
 				if (newCollection) {
 					item.LoadViewState (itemsArray [i]);
+					item.SetDirty ();
 					Add (item);
 				}
 				else{
@@ -309,7 +317,17 @@ namespace System.Web.UI.WebControls {
 				return null;
 
 			object [] itemsState = new object [count];
+#if NET_2_0
+			ListItem li;
+			bool enabled = ItemsEnabled;
+#endif
 			for (int i = 0; i < count; i++) {
+#if NET_2_0
+				li = items [i] as ListItem;
+				if (li != null)
+					li.Enabled = enabled;
+#endif
+				
 				itemsState [i] = ((IStateManager) items [i]).SaveViewState ();
 				if (itemsState [i] != null)
 					itemsDirty = true;
@@ -318,7 +336,7 @@ namespace System.Web.UI.WebControls {
 			if (!dirty && !itemsDirty)
 				return null;
 
-			return new Pair (dirty, itemsState);
+			return new Pair (itemsDirty, itemsState);
 		}
 
 		void IStateManager.TrackViewState() {
@@ -328,15 +346,17 @@ namespace System.Web.UI.WebControls {
 				((ListItem)items[i]).TrackViewState();
 			}
 		}
-		#endregion	// Interface methods
+#endregion	// Interface methods
 
 		private void SetDirty ()
 		{
 			dirty = true;
 			for (int i = lastDirty; i < items.Count; i++)
 				((ListItem) items [i]).SetDirty ();
-
-			lastDirty = items.Count;
+			
+			lastDirty = items.Count - 1;
+			if (lastDirty < 0)
+				lastDirty = 0;
 		}
 	}
 }
