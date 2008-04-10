@@ -1,7 +1,13 @@
+2008-04-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_class_get_field_default_value): Don't pass cindex
+	as hint to mono_metadata_get_constant_index. The local is not initialized
+	and should contain garbage most of the time. This could only work
+	with a lot of luck.
+
 2008-04-09 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* tokentype.h: Add MONO_TOKEN_GENERIC_PARAM.
-
 
 2008-04-09 Rodrigo Kumpera  <rkumpera@novell.com>
 
