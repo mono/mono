@@ -1,3 +1,8 @@
+2008-04-10  Marek Habersack  <mhabersack@novell.com>
+
+	* Control.cs: refactoring - IdSeparator property is internally
+	present also in 1.1.
+
 2008-04-08  Dean Brettle <dean@brettle.com>
 
 	* Page.cs (PageAdapter): fixed cast error when a ControlAdapter that

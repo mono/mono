@@ -292,10 +292,6 @@ namespace System.Web.UI
 		}
 
 #if NET_2_0
-		protected char IdSeparator {
-			get { return '$'; }
-		}
-
 		protected internal bool IsChildControlStateCleared {
 			get { return _isChildControlStateCleared; }
 		}
@@ -312,6 +308,14 @@ namespace System.Web.UI
 
 		protected bool LoadViewStateByID {
 			get { return false; }
+		}
+
+		protected char IdSeparator {
+			get { return '$'; }
+		}
+#else
+		internal char IdSeparator {
+			get { return ':'; }
 		}
 #endif
 
@@ -462,11 +466,7 @@ namespace System.Web.UI
 					return uniqueID;
 				}
 
-#if NET_2_0
 				uniqueID = prefix + IdSeparator + _userId;
-#else
-				uniqueID = prefix + ":" + _userId;
-#endif
 				return uniqueID;
 			}
 		}
@@ -844,11 +844,7 @@ namespace System.Web.UI
 
 			if (!HasControls ())
 				return null;
-#if NET_2_0
 			int separatorIdx = id.IndexOf (IdSeparator, pathOffset);
-#else
-			int separatorIdx = id.IndexOf (':', pathOffset);
-#endif
 			if (separatorIdx == -1)
 				return LookForControlByName (id.Substring (pathOffset));
 

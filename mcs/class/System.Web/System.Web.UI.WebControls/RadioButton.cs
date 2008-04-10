@@ -71,11 +71,17 @@ namespace System.Web.UI.WebControls {
 				if (gn.Length == 0)
 					return unique;
 				int colon = -1;
-				if (unique != null)
-					colon = unique.IndexOf (':');
+				if (unique != null) {
+#if NET_2_0
+					colon = unique.LastIndexOf (IdSeparator);
+#else
+					colon = unique.IndexOf (IdSeparator);
+#endif
+				}
+				
 				if (colon == -1)
 					return gn;
-
+				
 				return unique.Substring (0, colon + 1) + gn;
 			}
 		}
@@ -93,8 +99,16 @@ namespace System.Web.UI.WebControls {
 		{
 			base.InternalAddAttributesToRender (w);
 			string val = ValueAttribute;
-			if (val == null || val.Length == 0)
-				val = UniqueID;
+			if (val == null || val.Length == 0) {
+#if NET_2_0
+				string id = ID;
+				if (!String.IsNullOrEmpty (id))
+					val = id;
+				else
+#endif
+					val = UniqueID;
+			}
+			
 			w.AddAttribute (HtmlTextWriterAttribute.Value, val);
 		}
 

@@ -1,5 +1,8 @@
 2008-04-10  Marek Habersack  <mhabersack@novell.com>
-
+	
+	* RadioButton.cs: adjust 'name' and 'value' attribute values to
+	match MS.NET. Fixes bug #378024
+	
 	* CheckBoxList.cs: set the Selected property to the value in POST
 	data only if the item in question was enabled before postback
 	occurred. Fixes bug #377703
