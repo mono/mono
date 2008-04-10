@@ -382,17 +382,17 @@ namespace System.Web {
 #if NET_2_0 && !TARGET_J2EE
 					AppResourcesCompiler ac = new AppResourcesCompiler (context);
 					ac.Compile ();
-				
-					// Todo: Generate profile properties assembly from Web.config here
-				
-					AppCodeCompiler acc = new AppCodeCompiler ();
-					acc.Compile ();
 
 #if WEBSERVICES_DEP
 					AppWebReferencesCompiler awrc = new AppWebReferencesCompiler ();
 					awrc.Compile ();
 #endif
 					
+					// Todo: Generate profile properties assembly from Web.config here
+				
+					AppCodeCompiler acc = new AppCodeCompiler ();
+					acc.Compile ();
+
 					// Note whether there are any App_Browsers/*.browser files.  If there
 					// are we will be using *.browser files for sniffing in addition to browscap.ini
 					string app_browsers_path = Path.Combine (physical_app_path, "App_Browsers");

@@ -1,5 +1,8 @@
 2008-04-10  Marek Habersack  <mhabersack@novell.com>
 
+	* HttpApplicationFactory.cs: compile web references before
+	App_Code. Fixes bug #377934
+
 	* MimeTypes.cs: added some missing MIME types. New entries
 	contributed by Albert Ritmeester
 	<aritmeester@vitalhealthsoftware.nl>, thanks! Fixes bug #372290
