@@ -1,5 +1,10 @@
 2008-04-10  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Form.cs: Add method for DataGridView to trigger focus cues
+	even when it handles the tab keypress.
+
+2008-04-10  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridView.cs: More keyboard handling, tab, esc.
 	* DataGridViewTextBoxEditingControl.cs: Don't request arrow keys
 	when at the beginning or end of the text in the text box.
