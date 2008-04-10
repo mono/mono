@@ -400,7 +400,8 @@ namespace MonoTests.SystemWeb.Framework
 			
 			public void OnUnload (object o, EventArgs args)
 			{
-				// Block new requests from starting
+#if !TARGET_JVM
+                // Block new requests from starting
 				lock (_syncUnloading) {
 					// Wait for pending requests to finish
 					lock (_syncNumRequestsPending) {
@@ -415,7 +416,8 @@ namespace MonoTests.SystemWeb.Framework
 					if (handler != null)
 						handler(this, null);
 				}
-			}
+#endif
+            }
 		}
 
 		public static event EventHandler AppUnloaded;
