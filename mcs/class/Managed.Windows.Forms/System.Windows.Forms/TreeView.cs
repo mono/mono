@@ -1921,7 +1921,7 @@ namespace System.Windows.Forms {
 				if (skipped_nodes > 0) {
 					int skip = Math.Min (skipped_nodes, vbar.Maximum - VisibleCount + 1);
 					skipped_nodes = 0;
-					vbar.Value = skip;
+					vbar.SafeValueSet (skip);
 					skipped_nodes = skip;
 				}
 			} else {
