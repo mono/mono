@@ -1,3 +1,7 @@
+2008-04-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile: fix extra dist file name.
+
 2008-04-10  Mark Probst  <mark.probst@gmail.com>
 
 	* generic-box.2.cs, generic-boxing.2.il, generic-delegate.2.cs,
