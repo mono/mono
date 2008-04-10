@@ -1,5 +1,9 @@
 2008-04-10 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	verify.c: Add generic method constraint verification.
+
+2008-04-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	class.c (mono_class_inflate_generic_method_full): Add a long
 	explanation to the is_mb_open hack. Remove the FIXME.
 
