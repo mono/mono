@@ -2381,7 +2381,9 @@ namespace System.Windows.Forms
 			bool details = control.View == View.Details;
 			int first = control.FirstVisibleIndex;	
 
-			for (int i = first; i <= control.LastVisibleIndex; i ++) {					
+			int lastvisibleindex = control.LastVisibleIndex;
+
+			for (int i = first; i <= lastvisibleindex; i++) {					
 				if (clip.IntersectsWith (control.Items[i].GetBounds (ItemBoundsPortion.Entire))) {
 #if NET_2_0
 					bool owner_draw = false;

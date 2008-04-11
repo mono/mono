@@ -1,5 +1,10 @@
 2008-04-11  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ThemeWin32Classic.cs: Apply patch from Ernesto to cache an expensive
+	value in ListView drawing code.
+
+2008-04-11  Jonathan Pobst  <monkey@jpobst.com>
+
 	* FileDialog.cs: Only call FileOk when Ok is clicked, not when Cancel
 	is clicked.  Respect the user setting Cancel in FileOk.
 
