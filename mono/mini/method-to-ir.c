@@ -9991,7 +9991,6 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
  * - check for fp stack leakage in other opcodes too. (-> 'exceptions' optimization)
  * - add all micro optimizations from the old JIT
  * - put tree optimizations into the deadce pass
- * - scimark slowdown.
  * - decompose op_start_handler/op_endfilter/op_endfinally earlier using an arch
  *   specific function.
  * - unify the float comparison opcodes with the other comparison opcodes, i.e.

@@ -1,5 +1,7 @@
 2008-04-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c: Remove a FIXME, we are now faster on scimark as well.
+
 	* mini-amd64.h (MONO_ARCH_EMIT_BOUNDS_CHECK): Add MONO_ARCH_EMIT_BOUNDS_CHECK
 	definition which somehow got missing.
 
