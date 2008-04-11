@@ -1814,29 +1814,10 @@ branch_b1_table [] = {
 	PPC_BR_LT 
 };
 
-static void
-insert_after_ins (MonoBasicBlock *bb, MonoInst *ins, MonoInst *to_insert)
-{
-	if (ins == NULL) {
-		ins = bb->code;
-		bb->code = to_insert;
-		to_insert->next = ins;
-		if (ins)
-			ins->prev = to_insert;
-		to_insert->prev = NULL;
-	} else {
-		to_insert->next = ins->next;
-		if (to_insert->next)
-			to_insert->next->prev = to_insert;
-		ins->next = to_insert;
-		to_insert->prev = ins;
-	}
-}
-
 #define NEW_INS(cfg,dest,op) do {					\
 		(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));       \
 		(dest)->opcode = (op);  \
-		insert_after_ins (bb, last_ins, (dest));	\
+		mono_bblock_insert_after_ins (bb, last_ins, (dest));	\
 	} while (0)
 
 static int
