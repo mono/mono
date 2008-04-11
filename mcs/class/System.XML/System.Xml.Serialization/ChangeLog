@@ -1,3 +1,8 @@
+2008-04-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlTypeMapping.cs : .NET 2.0 has a weird behavior that swallows
+	  exception from IXmlSerializable.GetSchema().
+
 2008-04-01  Lluis Sanchez Gual <lluis@novell.com> 
 
 	* TypeData.cs: Prefix with a '@' type names that are equal to keywords.

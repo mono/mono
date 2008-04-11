@@ -1,3 +1,8 @@
+2008-04-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSerializerTestClasses.cs, XmlSerializerTests.cs : added test
+	for IXmlSerializable serialization whose GetSchema() borks.
+
 2008-04-01  Lluis Sanchez Gual <lluis@novell.com> 
 
 	* XmlSerializerTestClasses.cs, XmlSerializerTests.cs: Test nullable
