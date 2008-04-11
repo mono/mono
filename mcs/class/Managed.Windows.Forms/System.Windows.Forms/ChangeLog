@@ -1,5 +1,12 @@
 2008-04-11  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridView.cs: Implement row/column autosizing methods. Implement
+	autosorting.
+	* DataGridViewColumnHeaderCell.cs: Add painting of the sort glyph.
+	* DataGridViewRowCollection.cs: Add an internal sorting method.
+
+2008-04-11  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ThemeWin32Classic.cs: Apply patch from Ernesto to cache an expensive
 	value in ListView drawing code.
 

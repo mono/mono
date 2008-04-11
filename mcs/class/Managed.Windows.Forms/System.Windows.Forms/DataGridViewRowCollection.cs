@@ -497,6 +497,19 @@ namespace System.Windows.Forms
 				return result;
 			}
 		}
+		
+		internal void Sort (IComparer comparer)
+		{
+			// Note: you will probably want to call
+			// invalidate after using this.
+			if (DataGridView != null && DataGridView.EditingRow != null)
+				list.Sort (0, Count - 1, comparer);
+			else
+				list.Sort (comparer);
+			
+			for (int i = 0; i < list.Count; i++)
+				(list[i] as DataGridViewRow).SetIndex (i);
+		}
 
 		private class RowIndexComparator : IComparer 
 		{
