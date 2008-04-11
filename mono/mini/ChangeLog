@@ -1,5 +1,8 @@
 2008-04-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mini_method_compile): Set cfg->opt by disabling SSAPRE instead of
+	enabling everything.
+
 	* mini-ppc.c (NEW_INS): Use mono_bblock_insert_after_ins ().
 
 Fri Apr 11 18:44:31 CEST 2008 Paolo Molaro <lupus@ximian.com>

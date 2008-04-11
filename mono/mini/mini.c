@@ -12814,7 +12814,8 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	mono_compile_create_vars (cfg);
 
 	if (cfg->new_ir) {
-		cfg->opt &= MONO_OPT_PEEPHOLE | MONO_OPT_INTRINS | MONO_OPT_LOOP | MONO_OPT_EXCEPTION | MONO_OPT_AOT | MONO_OPT_BRANCH | MONO_OPT_LINEARS | MONO_OPT_INLINE | MONO_OPT_SHARED | MONO_OPT_AOT | MONO_OPT_TAILC | MONO_OPT_SSA | MONO_OPT_DEADCE | MONO_OPT_CONSPROP | MONO_OPT_CMOV | MONO_OPT_FCMOV | MONO_OPT_ABCREM;
+		/* SSAPRE is not supported on linear IR */
+		cfg->opt &= ~MONO_OPT_SSAPRE;
 
 		i = mono_method_to_ir2 (cfg, method_to_compile, NULL, NULL, NULL, NULL, NULL, 0, FALSE);
 	}
@@ -13122,7 +13123,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	if (!cfg->globalra)
 		mono_arch_allocate_vars (cfg);
 
-	if (cfg->opt & MONO_OPT_CFOLD)
+	if (!cfg->new_ir && cfg->opt & MONO_OPT_CFOLD)
 		mono_constant_fold (cfg);
 
 	if (cfg->new_ir) {
