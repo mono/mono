@@ -1,3 +1,9 @@
+2008-04-02  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpRequest.cs: make sure QueryStringRaw is always returned with
+	a leading '?' and that we return something meaningful even if the
+	url components weren't collected before. Fixes bug #376352
+
 2008-04-09  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpContext.cs: make RewritePath work correctly in the 2.0

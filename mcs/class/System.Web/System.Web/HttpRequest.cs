@@ -1337,9 +1337,20 @@ namespace System.Web {
 		// Notice: there is nothing raw about this querystring.
 		internal string QueryStringRaw {
 			get {
-				if (url_components == null)
-					return worker_request.GetQueryString ();
+				UriBuilder urlComponents = UrlComponents;
 
+				if (urlComponents == null) {
+					string ret = worker_request.GetQueryString ();
+
+					if (ret == null || ret.Length == 0)
+						return String.Empty;
+
+					if (ret [0] == '?')
+						return ret;
+
+					return "?" + ret;
+				}
+				
 				return UrlComponents.Query;
 			}
 
