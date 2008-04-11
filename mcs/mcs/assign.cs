@@ -431,7 +431,7 @@ namespace Mono.CSharp {
 
 			}
 
-			if (target_type == source_type) {
+			if (TypeManager.IsEqual (target_type, source_type)) {
 				if (target.eclass == ExprClass.Variable) {
 					New n = source as New;
 					if (n == null)
