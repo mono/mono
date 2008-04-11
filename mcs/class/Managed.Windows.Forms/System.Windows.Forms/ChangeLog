@@ -1,3 +1,9 @@
+2008-04-11  Geoff Norton  <gnorton@novell.com>
+
+	* ListView.cs: Avoid setting and resetting control Width/Heights and
+	calculate the final value and set it once.  Prevents a feedback loop
+	on the mac.
+
 2008-04-10  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TreeView.cs: Clamp setting the scrollbar value using SafeValueSet.
