@@ -198,7 +198,7 @@ namespace System.Windows.Forms.CarbonInternal {
 			if (key_filter_table [bdata [0]] == 0x00) {
 				// TODO: We support 2byte/4byte unicode? how does this get packed
 				msg.message = Msg.WM_CHAR;
-				msg.wParam = (IntPtr) bdata [0];
+				msg.wParam = BitConverter.IsLittleEndian ? (IntPtr) bdata [0] : (IntPtr) bdata [size-1];
 				msg.lParam = IntPtr.Zero;
 				msg.hwnd = XplatUICarbon.FocusWindow;
 			}

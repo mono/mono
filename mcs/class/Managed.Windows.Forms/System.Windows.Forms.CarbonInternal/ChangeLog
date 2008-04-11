@@ -1,3 +1,8 @@
+2008-04-11  Geoff Norton  <gnorton@novell.com>
+
+	* KeyboardHandler.cs: Fix keyboard support on little endian
+	architectures.
+
 2008-03-21  Geoff Norton  <gnorton@novell.com>
 
 	* KeyboardHandler.cs: Fix mapping of Delete.
