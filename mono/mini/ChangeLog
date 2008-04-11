@@ -1,5 +1,12 @@
 2008-04-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (mono_arch_output_basic_block): Implement OP_ABS directly using
+	SSE2 instructions.
+
+	* basic-math.cs: Fix warnings. Add a test for Math.Abs ().
+	
+2008-04-11  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini.c (handle_stack_args): Make this return void since its return value was
 	never used. Also set cfg->unverifiable for invalid IL instead of calling
 	G_BREAKPOINT ().
