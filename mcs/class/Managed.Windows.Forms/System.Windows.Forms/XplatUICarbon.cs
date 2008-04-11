@@ -70,7 +70,7 @@ namespace System.Windows.Forms {
 		
 		// Carbon Specific
 		internal static GrabStruct Grab;
-		private static Carbon.Caret Caret;
+		internal static Carbon.Caret Caret;
 		private static Carbon.Dnd Dnd;
 		private static Hashtable WindowMapping;
 		private static Hashtable HandleMapping;
@@ -1652,13 +1652,13 @@ namespace System.Windows.Forms {
 
 
 		internal override void SetCaretPos (IntPtr hwnd, int x, int y) {
-			if (Caret.Hwnd == hwnd) {
+			if (hwnd != IntPtr.Zero && hwnd == Caret.Hwnd) {
+				Caret.X = x;
+				Caret.Y = y;
 				ClientToScreen (hwnd, ref x, ref y);
 				SizeWindow (new Rectangle (x, y, Caret.Width, Caret.Height), CaretWindow);
 				Caret.Timer.Stop ();
 				HideCaret ();
-				Caret.X = x;
-				Caret.Y = y;
 				if (Caret.Visible == 1) {
 					ShowCaret ();
 					Caret.Timer.Start ();
@@ -1877,6 +1877,7 @@ namespace System.Windows.Forms {
 					SetWindowBounds ((IntPtr) WindowMapping [hwnd.Handle], 33, ref rect);
 					Carbon.HIRect frame_rect = new Carbon.HIRect (0, 0, TranslatedSize.Width, TranslatedSize.Height);
 					HIViewSetFrame (hwnd.whole_window, ref frame_rect);
+					SetCaretPos (Caret.Hwnd, Caret.X, Caret.Y);
 				} else {
 					Carbon.HIRect frame_rect = new Carbon.HIRect (x, y, TranslatedSize.Width, TranslatedSize.Height);
 					HIViewSetFrame (hwnd.whole_window, ref frame_rect);

@@ -1,3 +1,8 @@
+2008-04-11  Geoff Norton  <gnorton@novell.com>
+
+	* XplatUICarbon.cs: Expose Caret to the Carbon layer.  Guard against
+	warping a null Caret.
+
 2008-04-11  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridView.cs: Implement row/column autosizing methods. Implement
