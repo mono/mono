@@ -237,6 +237,9 @@ namespace System.Windows.Forms {
 
 		public bool IsBinding {
 			get {
+				if (manager == null || manager.IsSuspended)
+					return false;
+
 				return is_binding;
 			}
 		}
@@ -324,7 +327,6 @@ namespace System.Windows.Forms {
 			Control ctrl = control as Control;
 			if (ctrl != null) {
 				ctrl.Validating += new CancelEventHandler (ControlValidatingHandler);
-				ctrl.BindingContextChanged += new EventHandler (ControlBindingContextChangedHandler);
 				if (!ctrl.IsHandleCreated)
 					ctrl.HandleCreated += new EventHandler (ControlCreatedHandler);
 			}
@@ -453,8 +455,6 @@ namespace System.Windows.Forms {
 			if (control == null && !control.Created)
 #endif
 				return;
-			if (manager == null || manager.IsSuspended)
-				return;
 
 			is_binding = true;
 			PushData ();
@@ -497,11 +497,6 @@ namespace System.Windows.Forms {
 		private void ControlCreatedHandler (object o, EventArgs args)
 		{
 			UpdateIsBinding ();
-		}
-
-		private void ControlBindingContextChangedHandler (object o, EventArgs args)
-		{
-			Check ();
 		}
 
 		private void PositionChangedHandler (object sender, EventArgs e)
