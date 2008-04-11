@@ -1,3 +1,79 @@
+2008-04-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	verify.c: Add generic method constraint verification.
+
+2008-04-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	class.c (mono_class_inflate_generic_method_full): Add a long
+	explanation to the is_mb_open hack. Remove the FIXME.
+
+2008-04-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_method_verify): Mark all unknown opcodes
+	as invalid. Mark jmp as unverifiable.
+
+2008-04-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Add code to do type constraint verification on class instances.
+
+	* verify.c (mono_verifier_verify_class): Use the type constraint 
+	verification code.
+
+2008-04-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_class_get_field_default_value): Don't pass cindex
+	as hint to mono_metadata_get_constant_index. The local is not initialized
+	and should contain garbage most of the time. This could only work
+	with a lot of luck.
+
+2008-04-09 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* tokentype.h: Add MONO_TOKEN_GENERIC_PARAM.
+
+2008-04-09 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class-internals.h: Add generic_param_token to MonoClass::sizes union.
+
+	* class.c (mono_class_from_generic_parameter): Save the token of the
+	generic param in MonoClass::sizes.generic_param_token.
+
+	* reflection.c (mono_custom_attrs_from_class): If the class type is
+	VAR or MVAR retrieve the attributes of the generic param.
+
+2008-04-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_class_init): Do class verification if the verifier
+	is enabled.
+
+2008-04-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify-internal.h: Added mono_verifier_verify_class.
+
+	* verify.c: Added mono_verifier_verify_class. It checks for
+	classes with explicit layout that have overlapping reference fields.
+
+	* pedump.c: Init the verifier state prior to verification. Fixed
+	command line arguments.
+
+2008-04-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Makefile.am: Added verify-internals.h, hopefully fix the build.
+
+2008-04-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* verify-internals.h: Fix a warning.
+
+2008-04-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify-internals.h: New header with the verifier configuration
+	extracted from mini.c.
+
+	* verify.c: Implemented the new functions exported by verify-internals.h.
+
+2008-04-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Add proper verification of ckfinite.
+
 2008-04-04 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (do_conversion): Improved error message to something

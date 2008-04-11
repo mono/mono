@@ -1,3 +1,12 @@
+2008-04-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* dlmalloc.h dlmalloc.c: New files, a slightly modified version of Doug
+	Lea's malloc package.
+
+	* mono-codeman.c: Use dlmalloc for managing memory in dynamic code managers,
+	this allows us to set the executable bit on the system memory dlmalloc 
+	allocates from, fixing #320036.
+
 2008-03-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-logger.h: Move G_END_DECLS outside of an #ifdef. Fixes #375107.

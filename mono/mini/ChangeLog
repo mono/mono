@@ -1,3 +1,73 @@
+2008-04-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (handle_stack_args): Make this return void since its return value was
+	never used. Also set cfg->unverifiable for invalid IL instead of calling
+	G_BREAKPOINT ().
+
+2008-04-10  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Make sure "this" is live in catch clauses with type
+	variables in shared generic code.
+
+2008-04-08  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Replaced uses of MONO_TYPE_IS_REFERENCE with calls to
+	generic_class_is_reference_type() to ensure the proper behaviour
+	when sharing generic code and the type in question is a type
+	argument.
+
+2008-04-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c: Applied patch from Mark Spruiell (mes@zeroc.com). Fix
+	race conditions when printing thread dumps. Fixes #377738.
+
+2008-04-08  Massimiliano Mantione  <massi@ximian.com>
+	
+	aliasing.c (update_aliasing_information_on_inst): Fixed a bug which
+	shows up when both MonoInst arguments can cause aliasig.
+	There is likely no way in the current JIT to trigger this problem, but
+	it showed up in the development of generics sharing, when in a new
+	opcode both args of an OP_GROUP can be aliases (addresses of a local).
+	When the generics sharing code will be committed, its tests will be
+	valid also for this bug.
+
+2008-04-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (decode_patch_info): Always transform PATCH_INFO_WRAPPER to
+	PATCH_INFO_METHOD.
+
+	* mini.c (mono_resolve_patch_target): Fix a crash in the AOT case if method is
+	NULL.
+
+2008-04-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (mono_handle_exception_internal): When --debug=casts is used,
+	use a more detailed exception message for InvalidCastException.
+
+	* mini.h (MonoJitTlsData): Add 'class_cast_from' and 'class_cast_to' fields.
+
+	* driver.c (mono_main): Add --debug=casts option to turn on better 
+	InvalidCastException message details.
+
+	* mini.c (mini_get_debug_options): New helper function to return the address of
+	the debug_options variable.
+
+	* mini.c (mono_get_jit_tls_intrinsic): New helper function to create a load of
+	the jit_tls TLS variable.
+
+	* mini.c (mono_jit_tls): New TLS variable.
+
+	* inssel.brg: Save the details of a cast to a TLS variable when the --debug=casts
+	option is used.
+
+2008-04-07  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini.h: Removed verifer related stuff. This code was moved to verify.c
+
+	* mini.c: Removed verifer related stuff, code moved to verify.c.
+
+	* driver.c: Using code from verify.c instead of mini.c.
+
 2008-04-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (check_for_method_verify): Remove the mscorlib comment since it is no
