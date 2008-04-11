@@ -747,9 +747,9 @@ MINI_OP(OP_AMD64_SAVE_SP_TO_LMF,         "amd64_save_sp_to_lmf", NONE, NONE, NON
 #endif
 
 #if  defined(__ppc__) || defined(__powerpc__)	
-MINI_OP(OP_PPC_SUBFIC,             "ppc_subfic", NONE, NONE, NONE)
-MINI_OP(OP_PPC_SUBFZE,             "ppc_subfze", NONE, NONE, NONE)
-MINI_OP(OP_CHECK_FINITE,           "ppc_check_finite")
+MINI_OP(OP_PPC_SUBFIC,             "ppc_subfic", IREG, IREG, NONE)
+MINI_OP(OP_PPC_SUBFZE,             "ppc_subfze", IREG, IREG, NONE)
+MINI_OP(OP_CHECK_FINITE,           "ppc_check_finite", NONE, IREG, NONE)
 #endif
 
 #if defined(__arm__)

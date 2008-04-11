@@ -36,6 +36,8 @@ mono_decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 	 * macros.
 	 */
 	switch (ins->opcode) {
+	/* this doesn't make sense on ppc and other architectures */
+#if !defined(MONO_ARCH_NO_IOV_CHECK)
 	case OP_IADD_OVF:
 		ins->opcode = OP_IADDCC;
 		MONO_EMIT_NEW_COND_EXC (cfg, IOV, "OverflowException");
@@ -52,6 +54,7 @@ mono_decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 		ins->opcode = OP_ISUBCC;
 		MONO_EMIT_NEW_COND_EXC (cfg, IC, "OverflowException");
 		break;
+#endif
 	case OP_ICONV_TO_OVF_I1:
 		MONO_EMIT_NEW_ICOMPARE_IMM (cfg, ins->sreg1, 127);
 		MONO_EMIT_NEW_COND_EXC (cfg, IGT, "OverflowException");

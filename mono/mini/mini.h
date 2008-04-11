@@ -389,6 +389,7 @@ struct MonoInst {
 		gint32 arg_info;
 		gint32 size;
 		MonoMemcpyArgs *memcpy_args; /* in OP_MEMSET and OP_MEMCPY */
+		gpointer data;
 		gint shift_amount;
 		gboolean is_pinvoke; /* for variables in the unmanaged marshal format */
 	} backend;
