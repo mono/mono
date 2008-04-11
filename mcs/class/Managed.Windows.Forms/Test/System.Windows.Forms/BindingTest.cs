@@ -263,7 +263,6 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void IsBindingTest ()
 		{
 			MockItem [] items = new MockItem [] { new MockItem ("A", 0) };
@@ -301,7 +300,7 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			PropertyManager prop_manager = (PropertyManager)form.BindingContext [items [0]];
 			curr_manager.SuspendBinding ();
 			prop_manager.SuspendBinding ();
-			//Assert.IsFalse (binding.IsBinding, "#E1"); // Comment by now
+			Assert.IsFalse (binding.IsBinding, "#E1"); 
 			Assert.IsTrue (binding2.IsBinding, "#E2");
 
 			curr_manager.ResumeBinding ();
