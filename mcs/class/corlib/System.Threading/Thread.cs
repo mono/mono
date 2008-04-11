@@ -390,7 +390,7 @@ namespace System.Threading {
 		 * CurrentCulture, which will throw an exception, etc.
 		 * Use a boolean to short-circuit this scenario.
 		 */
-		private static bool in_currentculture=false;
+		private bool in_currentculture=false;
 
 		static object culture_lock = new object ();
 		

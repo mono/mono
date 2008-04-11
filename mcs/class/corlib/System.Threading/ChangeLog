@@ -1,3 +1,7 @@
+2008-04-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* Thread.cs: Make in_currentculture non-static. Fixes #378892.
+
 2008-04-07  Dick Porter  <dick@ximian.com>
 
 	* Thread.cs: Fix throwing of exceptions when manipulating
