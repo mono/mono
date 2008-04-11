@@ -235,6 +235,34 @@ namespace MonoTests.Microsoft.CSharp
 		}
 
 		[Test]
+		public void AbstractPropertyTest ()
+		{
+			string code = GenerateAbstractProperty (Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public abstract class Test1 {{{0}" +
+				"    {0}" +
+				"    public abstract string Name {{{0}" +
+				"        get;{0}" +
+				"        set;{0}" +
+				"    }}{0}" +
+				"}}{0}", NewLine), code);
+		}
+
+		[Test]
+		public void StaticPropertyTest ()
+		{
+			string code = GenerateStaticProperty (Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class Test1 {{{0}" +
+				"    {0}" +
+				"    public static string Name {{{0}" +
+				"        set {{{0}" +
+				"        }}{0}" +
+				"    }}{0}" +
+				"}}{0}", NewLine), code);
+		}
+
+		[Test]
 		public override void PropertyMembersTypeTest1 ()
 		{
 			string code = GeneratePropertyMembersAttributes (Options);

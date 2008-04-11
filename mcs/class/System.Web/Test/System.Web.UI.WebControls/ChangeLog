@@ -1,3 +1,10 @@
+2008-04-08  Dean Brettle <dean@brettle.com>
+
+	* DataBoundControlTest.cs, HierarchicalDataBoundControlTest.cs,
+	WebControlTest.cs: added tests to ensure that using a 
+	ControlAdapter that is not of the type corresponding to the 
+	control doesn't	cause a cast error.
+
 2008-04-03  Marek Habersack  <mhabersack@novell.com>
 
 	* DataListTest.cs: added test for bug #376519

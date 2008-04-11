@@ -1410,8 +1410,9 @@ namespace Mono.CSharp {
 				      TypeManager.IsGenericType (delegate_type), loc);
 
 			try {
+				int errors = Report.Errors;
 				AnonymousMethod am = CompatibleMethod (ec, null, return_type, delegate_type);
-				if (am != null && delegate_type != type)
+				if (am != null && delegate_type != type && errors == Report.Errors)
 					return CreateExpressionTree (ec, delegate_type);
 
 				return am;

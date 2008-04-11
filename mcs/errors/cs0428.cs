@@ -1,4 +1,4 @@
-// cs0428.cs: Cannot convert method group `a' to non-delegate type `int'. Did you intend to invoke the method?
+// CS0428: Cannot convert method group `a' to non-delegate type `int'. Consider using parentheses to invoke the method
 // Line: 12
 
 class X {

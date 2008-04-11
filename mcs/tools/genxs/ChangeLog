@@ -1,3 +1,7 @@
+2008-04-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : use per-profile libdir to put executables.
+
 2006-11-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* README: introduced <baseSerializer> and <implementation> elements

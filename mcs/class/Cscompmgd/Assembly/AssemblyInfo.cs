@@ -58,6 +58,9 @@ using System.Runtime.InteropServices;
 	[assembly: Debuggable(DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
 	[assembly: NeutralResourcesLanguage ("en-US")]
 	[assembly: ReliabilityContract(Consistency.MayCorruptProcess, Cer.None)]
+	[assembly: AssemblyCompany ("Mono development team")]
+	[assembly: AssemblyCopyright ("Mono development team")]
+	[assembly: AssemblyProduct ("Microsoft (R) Visual Studio (R) 2005")]
 #elif (NET_1_1)
 	[assembly: AssemblyDescription ("Managed interface for C# compiler")]
 	[assembly: AssemblyTitle ("Managed C# Compiler")]

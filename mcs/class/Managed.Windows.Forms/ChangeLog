@@ -1,3 +1,15 @@
+2008-04-09  Jonathan Pobst  <monkey@jpobst.com>
+
+	* System.Windows.Forms_test.dll.sources: Add DataGridViewImageCellTest.cs.
+
+2008-04-08  Everaldo Canuto  <ecanuto@novell.com>
+
+	* Makefile: GENERATE_RESOURCES var added to help on resources generation. 
+
+2008-04-08  Jonathan Pobst  <monkey@jpobst.com>
+
+	* System.Windows.Forms_test.dll.sources: Add DataGridViewCheckBoxCellTest.cs.
+
 2008-04-03  Jonathan Pobst  <monkey@jpobst.com>
 
 	* System.Windows.Forms_test.dll.sources: Add DataGridViewLinkCellTest.cs.

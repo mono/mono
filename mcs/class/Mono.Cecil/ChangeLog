@@ -1,3 +1,9 @@
+2008-04-08  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/SecurityDeclaration.cs
+	  Mono.Cecil/SecurityDeclarationReader.cs:
+		Implement resolving of SecurityDeclarations.
+
 2008-03-31  Jb Evain  <jbevain@novell.com>
 
 	Integrate patches from Dzintars Avots <davots@coverity.com>

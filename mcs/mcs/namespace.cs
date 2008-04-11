@@ -901,13 +901,13 @@ namespace Mono.CSharp {
 		/// Does extension methods look up to find a method which matches name and extensionType.
 		/// Search starts from this namespace and continues hierarchically up to top level.
 		///
-		public ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, ClassOrStruct currentClass, string name)
+		public ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, ClassOrStruct currentClass, string name, Location loc)
 		{
 			ArrayList candidates = null;
 			if (currentClass != null) {
 				candidates = ns.LookupExtensionMethod (extensionType, currentClass, name, this);
 				if (candidates != null)
-					return new ExtensionMethodGroupExpr (candidates, this, extensionType, Location.Null);
+					return new ExtensionMethodGroupExpr (candidates, this, extensionType, loc);
 			}
 
 			foreach (Namespace n in GetUsingTable ()) {
@@ -922,12 +922,12 @@ namespace Mono.CSharp {
 			}
 
 			if (candidates != null)
-				return new ExtensionMethodGroupExpr (candidates, parent, extensionType, Location.Null);
+				return new ExtensionMethodGroupExpr (candidates, parent, extensionType, loc);
 
 			if (parent == null)
 				return null;
 
-			return parent.LookupExtensionMethod (extensionType, currentClass, name);
+			return parent.LookupExtensionMethod (extensionType, currentClass, name, loc);
 		}
 
 		public FullNamedExpression LookupNamespaceOrType (DeclSpace ds, string name, Location loc, bool ignore_cs0104)

@@ -169,7 +169,7 @@ namespace Mono.Cecil {
 			m_owner = owner;
 		}
 
-		internal static void CloneInto (IGenericParameterProvider old, IGenericParameterProvider np, ImportContext	context)
+		internal static void CloneInto (IGenericParameterProvider old, IGenericParameterProvider np, ImportContext context)
 		{
 			foreach (GenericParameter gp in old.GenericParameters) {
 				GenericParameter ngp = Clone (gp, context);

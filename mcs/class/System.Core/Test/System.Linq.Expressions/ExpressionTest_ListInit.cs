@@ -143,5 +143,25 @@ namespace MonoTests.System.Linq.Expressions {
 			Assert.AreEqual ("foo", list [0]);
 			Assert.AreEqual ("bar", list [1]);
 		}
+
+		[Test]
+		[Category ("NotDotNet")]
+		public void CompileArrayListOfStringsInit ()
+		{
+			var add = typeof (ArrayList).GetMethod ("Add");
+
+			var c = Expression.Lambda<Func<ArrayList>> (
+				Expression.ListInit (
+					Expression.New (typeof (ArrayList)),
+					Expression.ElementInit (add, "foo".ToConstant ()),
+					Expression.ElementInit (add, "bar".ToConstant ()))).Compile ();
+
+			var list = c ();
+
+			Assert.IsNotNull (list);
+			Assert.AreEqual (2, list.Count);
+			Assert.AreEqual ("foo", list [0]);
+			Assert.AreEqual ("bar", list [1]);
+		}
 	}
 }

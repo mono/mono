@@ -33,14 +33,14 @@ namespace Mono.Mozilla.DOM
 {
 	internal class HTMLElement : Element, IElement
 	{
-		private nsIDOMHTMLElement element;
+		private nsIDOMHTMLElement element {
+			get { return base.element as nsIDOMHTMLElement; }
+			set { base.element = value as nsIDOMElement; }
+		}
 
 		public HTMLElement (WebBrowser control, nsIDOMHTMLElement domHtmlElement) : base (control, domHtmlElement as nsIDOMElement)
 		{
-			if (control.platform != control.enginePlatform)
-				this.element = nsDOMHTMLElement.GetProxy (control, domHtmlElement);
-			else
-				this.element = domHtmlElement;
+			this.element = domHtmlElement;
 		}
 
 		#region IDisposable Members
@@ -80,6 +80,38 @@ namespace Mono.Mozilla.DOM
 			}
 		}
 
+		public override string OuterHTML
+		{
+			// bad emulation of outerHTML since gecko doesn't support it :P
+			get {
+				string tag = this.TagName;
+				string str = "<" + tag;
+				foreach (IAttribute att in this.Attributes) {
+					str += " " + att.Name + "=\"" + att.Value + "\"";
+				}
+				nsIDOMNSHTMLElement nsElem = this.element as nsIDOMNSHTMLElement;
+				nsElem.getInnerHTML (storage);
+				str += ">" + Base.StringGet (storage) + "</" + tag + ">";
+				return str;
+			}
+			set {
+				nsIDOMDocumentRange docRange = ((Document) control.Document).ComObject as nsIDOMDocumentRange;
+				nsIDOMRange range;
+				docRange.createRange (out range);
+				range.setStartBefore (this.element);
+				nsIDOMNSRange nsRange = range as nsIDOMNSRange;
+				Base.StringSet (storage, value);
+				nsIDOMDocumentFragment fragment;
+				nsRange.createContextualFragment (storage, out fragment);
+				nsIDOMNode parent;
+				this.element.getParentNode (out parent);
+				parent = nsDOMNode.GetProxy (this.control, parent);
+				nsIDOMNode newNode;
+				parent.replaceChild (fragment as nsIDOMNode, this.element as nsIDOMNode, out newNode);
+				this.element = newNode as Mono.Mozilla.nsIDOMHTMLElement;
+			}
+		}
+		
 		public override bool Disabled
 		{			
 			get {

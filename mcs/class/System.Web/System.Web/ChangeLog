@@ -1,3 +1,33 @@
+2008-04-10  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpApplicationFactory.cs: compile web references before
+	App_Code. Fixes bug #377934
+
+	* MimeTypes.cs: added some missing MIME types. New entries
+	contributed by Albert Ritmeester
+	<aritmeester@vitalhealthsoftware.nl>, thanks! Fixes bug #372290
+
+2008-04-09  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpContext.cs: make RewritePath work correctly in the 2.0
+	profile, fixes bug #371581
+
+	* HttpApplicationFactory.cs: compile web references. Fixes bug
+	#377934
+
+	* VirtualPath.cs: added a method to convert a physical path into a
+	virtual one, if the physical path is under the application root.
+
+2008-04-08  Dean Brettle <dean@brettle.com>
+
+	* HttpApplicationFactory.cs (CapabilitiesProcessor): changed to
+	use etc/mono/2.0/Browser/*.browser files in addition to 
+	~/App_Browsers/*.browser files.
+
+2008-04-07  Marek Habersack  <mhabersack@novell.com>
+
+	* VirtualPath.cs: added
+
 2008-04-02  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpRequest.cs: make sure QueryStringRaw is always returned with

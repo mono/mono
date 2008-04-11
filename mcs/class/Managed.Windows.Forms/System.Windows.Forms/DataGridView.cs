@@ -1217,8 +1217,11 @@ namespace System.Windows.Forms {
 					}
 				}
 				
-				if (value != null)
+				
+				if (value != null) {
+					value.Visible = false;
 					Controls.Add (value);
+				}
 
 				editingControl = value;
 			}
@@ -2099,7 +2102,14 @@ namespace System.Windows.Forms {
 			Type editType = cell.EditType;
 			if (editType == null)
 				return false;
+				
+			// Give user a chance to cancel the edit
+			DataGridViewCellCancelEventArgs e = new DataGridViewCellCancelEventArgs (cell.ColumnIndex, cell.RowIndex);
+			OnCellBeginEdit (e);
 
+			if (e.Cancel)
+				return false;
+				
 			cell.SetIsInEditMode (true);
 			Control ctrl = EditingControlInternal;
 			bool isCorrectType = ctrl != null && ctrl.GetType () == editType;
@@ -2114,17 +2124,25 @@ namespace System.Windows.Forms {
 			IDataGridViewEditingControl edControl = ctrl as IDataGridViewEditingControl;
 			DataGridViewCellStyle style = cell.RowIndex == -1 ? DefaultCellStyle : cell.InheritedStyle;
 			cell.InitializeEditingControl (cell.RowIndex, cell.FormattedValue, style);
+			
 			cell.PositionEditingControl (true, true, this.GetCellDisplayRectangle (cell.ColumnIndex, cell.RowIndex, false), bounds, style, false, false, (columns [cell.ColumnIndex].DisplayIndex == 0), (cell.RowIndex == 0));
+			EditingControlInternal.Visible = true;
+			
 			if (edControl != null)
-				edControl.PrepareEditingControlForEdit (selectAll);
-			ctrl.Visible = true;
+				(EditingControlInternal as IDataGridViewEditingControl).PrepareEditingControlForEdit (selectAll);
 
-			OnCellBeginEdit (new DataGridViewCellCancelEventArgs (cell.ColumnIndex, cell.RowIndex));
 			return true;
 		}
 
-		public bool CancelEdit () {
-			throw new NotImplementedException();
+		public bool CancelEdit ()
+		{
+			if (currentCell != null && currentCell.IsInEditMode) {
+				currentCell.SetIsInEditMode (false);
+				currentCell.DetachEditingControl ();
+				OnCellEndEdit (new DataGridViewCellEventArgs (currentCell.ColumnIndex, currentCell.RowIndex));
+			}
+
+			return true;
 		}
 
 		public void ClearSelection ()
@@ -2163,12 +2181,18 @@ namespace System.Windows.Forms {
 			return result;
 		}
 
-		public bool EndEdit () {
+		public bool EndEdit ()
+		{
 			if (currentCell != null && currentCell.IsInEditMode) {
+				IDataGridViewEditingControl ctrl = EditingControl as IDataGridViewEditingControl;
+				ctrl.GetEditingControlFormattedValue (DataGridViewDataErrorContexts.Commit);
+				currentCell.Value = ctrl.GetEditingControlFormattedValue (DataGridViewDataErrorContexts.Commit);
+				
 				currentCell.SetIsInEditMode (false);
 				currentCell.DetachEditingControl ();
 				OnCellEndEdit (new DataGridViewCellEventArgs (currentCell.ColumnIndex, currentCell.RowIndex));
 			}
+			
 			return true;
 		}
 
@@ -2205,11 +2229,14 @@ namespace System.Windows.Forms {
 			
 			int x = 0, y = 0, w = 0, h = 0;
 			
+			x = BorderWidth;
+			y = BorderWidth;
+			
 			if (ColumnHeadersVisible)
-				y = ColumnHeadersHeight;
+				y += ColumnHeadersHeight;
 			
 			if (RowHeadersVisible)
-				x = RowHeadersWidth;
+				x += RowHeadersWidth;
 				
 			ArrayList cols = columns.ColumnDisplayIndexSortedArrayList;
 
@@ -3502,13 +3529,19 @@ namespace System.Windows.Forms {
 			//Console.WriteLine("Mouse: Clicks: {0}; Delta: {1}; X: {2}; Y: {3};", e.Clicks, e.Delta, e.X, e.Y);
 			HitTestInfo hit = HitTest (e.X, e.Y);
 
-			switch (hit.Type) 
-			{
-			case DataGridViewHitTestType.Cell:
-				Rectangle display = GetCellDisplayRectangle (hit.ColumnIndex, hit.RowIndex, false);
-				OnCellMouseClick (new DataGridViewCellMouseEventArgs (hit.ColumnIndex, hit.RowIndex, e.X - display.X, e.Y - display.Y, e));
-				break;
-			
+			switch (hit.Type) {
+				case DataGridViewHitTestType.Cell:
+					Rectangle display = GetCellDisplayRectangle (hit.ColumnIndex, hit.RowIndex, false);
+					Point cellpoint = new Point (e.X - display.X, e.Y - display.Y);
+
+					OnCellMouseClick (new DataGridViewCellMouseEventArgs (hit.ColumnIndex, hit.RowIndex, cellpoint.X, cellpoint.Y, e));
+					
+					DataGridViewCell cell = GetCellInternal (hit.ColumnIndex, hit.RowIndex);
+					
+					if (cell.GetContentBounds (hit.RowIndex).Contains (cellpoint))
+						cell.OnContentClickInternal (new DataGridViewCellEventArgs (hit.ColumnIndex, hit.RowIndex));
+						
+					break;
 			}
 		}
 
@@ -4208,7 +4241,7 @@ namespace System.Windows.Forms {
 
 		protected virtual bool ProcessDataGridViewKey (KeyEventArgs e)
 		{
-			switch (e.KeyCode) {
+			switch (e.KeyData) {
 				case Keys.A:
 					return ProcessAKey (e.KeyData);
 				case Keys.Delete:
@@ -4231,6 +4264,11 @@ namespace System.Windows.Forms {
 					return ProcessRightKey (e.KeyData);
 				case Keys.Space:
 					return ProcessSpaceKey (e.KeyData);
+				case Keys.Tab:
+				case Keys.Shift | Keys.Tab:
+				case Keys.Control | Keys.Tab:
+				case Keys.Control | Keys.Shift | Keys.Tab:
+					return ProcessTabKey (e.KeyData);
 				case Keys.Up:
 					return ProcessUpKey (e.KeyData);
 				case Keys.D0:
@@ -4249,6 +4287,27 @@ namespace System.Windows.Forms {
 
 		protected override bool ProcessDialogKey (Keys keyData)
 		{
+			switch (keyData) {
+				case Keys.Tab:
+				case Keys.Shift | Keys.Tab:
+					if (standardTab)
+						return base.ProcessDialogKey (keyData & ~Keys.Control);
+						
+					if (ProcessDataGridViewKey (new KeyEventArgs (keyData)))
+						return true;
+						
+					break;
+				case Keys.Control | Keys.Tab:
+				case Keys.Control | Keys.Shift | Keys.Tab:
+					if (!standardTab)
+						return base.ProcessDialogKey (keyData & ~Keys.Control);
+
+					if (ProcessDataGridViewKey (new KeyEventArgs (keyData)))
+						return true;
+						
+					break;
+			}
+			
 			return base.ProcessDialogKey(keyData);
 		}
 
@@ -4257,6 +4316,8 @@ namespace System.Windows.Forms {
 			int current_row = CurrentCellAddress.Y;
 			
 			if (current_row < Rows.Count - 1) {
+				EndEdit ();
+				
 				// Move to the last cell in the column
 				if ((keyData & Keys.Control) == Keys.Control)
 					MoveCurrentCell (CurrentCellAddress.X, Rows.Count - 1, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
@@ -4351,12 +4412,39 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
-		protected override bool ProcessKeyEventArgs (ref Message m) {
-			return base.ProcessKeyEventArgs(ref m);
-			//throw new NotImplementedException();
+		protected override bool ProcessKeyEventArgs (ref Message m)
+		{
+			DataGridViewCell cell = CurrentCell;
+			
+			if (cell != null)
+				if (cell.KeyEntersEditMode (new KeyEventArgs ((Keys)m.WParam.ToInt32 ())))
+					BeginEdit (true);
+
+			return base.ProcessKeyEventArgs (ref m);
 		}
 
-		protected override bool ProcessKeyPreview (ref Message m) {
+		protected override bool ProcessKeyPreview (ref Message m)
+		{
+			if ((Msg)m.Msg == Msg.WM_KEYDOWN && IsCurrentCellInEditMode) {
+				KeyEventArgs e = new KeyEventArgs ((Keys)m.WParam.ToInt32 ());
+			
+				IDataGridViewEditingControl ctrl = (IDataGridViewEditingControl)EditingControlInternal;
+				
+				if (ctrl != null)
+					if (ctrl.EditingControlWantsInputKey (e.KeyData, false))
+						return false;
+
+				switch (e.KeyData)
+				{
+					case Keys.Escape:
+					case Keys.Down:
+					case Keys.Up:
+					case Keys.Left:
+					case Keys.Right:
+					case Keys.Tab:
+						return ProcessDataGridViewKey (e);
+				}
+			}
 			return base.ProcessKeyPreview(ref m);
 			//throw new NotImplementedException();
 		}
@@ -4366,6 +4454,8 @@ namespace System.Windows.Forms {
 			int disp_index = ColumnIndexToDisplayIndex (currentCellAddress.X);
 
 			if (disp_index > 0) {
+				EndEdit ();
+				
 				// Move to the first cell in the row
 				if ((keyData & Keys.Control) == Keys.Control)
 					MoveCurrentCell (ColumnDisplayIndexToIndex (0), currentCellAddress.Y, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
@@ -4394,6 +4484,8 @@ namespace System.Windows.Forms {
 			int disp_index = ColumnIndexToDisplayIndex (currentCellAddress.X);
 
 			if (disp_index < Columns.Count - 1) {
+				EndEdit ();
+				
 				// Move to the last cell in the row
 				if ((keyData & Keys.Control) == Keys.Control)
 					MoveCurrentCell (ColumnDisplayIndexToIndex (Columns.Count - 1), currentCellAddress.Y, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
@@ -4439,8 +4531,47 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
-		protected bool ProcessTabKey (Keys keyData) {
-			throw new NotImplementedException();
+		protected bool ProcessTabKey (Keys keyData)
+		{
+			EndEdit ();
+			
+			Form f = FindForm ();
+			
+			if (f != null)
+				f.ActivateFocusCues ();
+			
+			int disp_index = ColumnIndexToDisplayIndex (currentCellAddress.X);
+
+			// Tab goes forward
+			// Shift-tab goes backwards
+			if ((keyData & Keys.Shift) == Keys.Shift) {
+				if (disp_index > 0) {
+					// Move one cell to the left
+					MoveCurrentCell (ColumnDisplayIndexToIndex (disp_index - 1), currentCellAddress.Y, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
+					return true;
+				} else if (currentCellAddress.Y > 0) {
+					// Move to the last cell in the previous row
+					MoveCurrentCell (ColumnDisplayIndexToIndex (Columns.Count - 1), currentCellAddress.Y - 1, true, false, false);
+					return true;
+				}
+			
+			} else {
+				if (disp_index < Columns.Count - 1) {
+
+					// Move one cell to the right
+					MoveCurrentCell (ColumnDisplayIndexToIndex (disp_index + 1), currentCellAddress.Y, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
+
+					return true;
+				} else if (currentCellAddress.Y < Rows.Count - 1) {
+					// Move to the first cell in the next row
+					MoveCurrentCell (ColumnDisplayIndexToIndex (0), currentCellAddress.Y + 1, true, false, false);
+					return true;
+				}
+
+			
+			}
+			
+			return false;
 		}
 
 		protected bool ProcessUpKey (Keys keyData)
@@ -4448,6 +4579,8 @@ namespace System.Windows.Forms {
 			int current_row = CurrentCellAddress.Y;
 
 			if (current_row > 0) {
+				EndEdit ();
+
 				// Move to the first cell in the column
 				if ((keyData & Keys.Control) == Keys.Control)
 					MoveCurrentCell (CurrentCellAddress.X, 0, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);

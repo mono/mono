@@ -48,6 +48,7 @@ System.Windows.Forms/DataGridViewButtonCellTest.cs
 System.Windows.Forms/DataGridViewCellCollectionTest.cs
 System.Windows.Forms/DataGridViewCellStyleTest.cs
 System.Windows.Forms/DataGridViewCellTest.cs
+System.Windows.Forms/DataGridViewCheckBoxCellTest.cs
 System.Windows.Forms/DataGridViewClipboardHeaderTest.cs
 System.Windows.Forms/DataGridViewClipboardTest.cs
 System.Windows.Forms/DataGridViewColumnCollectionTest.cs
@@ -57,6 +58,7 @@ System.Windows.Forms/DataGridViewComboBoxCellTest.cs
 System.Windows.Forms/DataGridViewCommon.cs
 System.Windows.Forms/DataGridViewElementTest.cs
 System.Windows.Forms/DataGridViewLinkCellTest.cs
+System.Windows.Forms/DataGridViewImageCellTest.cs
 System.Windows.Forms/DataGridViewRowCollectionTest.cs
 System.Windows.Forms/DataGridViewRowHeaderTest.cs
 System.Windows.Forms/DataGridViewRowTest.cs

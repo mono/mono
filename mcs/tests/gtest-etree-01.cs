@@ -180,6 +180,31 @@ class MyTypeExplicit
 	}
 }
 
+class MemberAccessData
+{
+	public bool BoolValue;
+	public static decimal DecimalValue = decimal.MinValue;
+	public volatile uint VolatileValue;
+	public string [] StringValues;
+	public List<string> ListValues;
+
+	event Func<bool> EventField;
+	public Expression<Func<Func<bool>>> GetEvent ()
+	{
+		return () => EventField;
+	}
+	
+	MyType mt;
+	public MyType MyTypeProperty {
+		set	{
+			mt = value;
+		}
+		get {
+			return mt;
+		}
+	}	
+}
+
 // TODO: Add more nullable tests, follow AddTest pattern.
 
 class Tester
@@ -206,6 +231,12 @@ class Tester
 
 	static void Assert<T> (T [] expected, T [] value)
 	{
+		if (expected == null) {
+			if (value != null)
+				throw new ApplicationException ("Both arrays expected to be null");
+			return;
+		}
+	
 		if (expected.Length != value.Length)
 			throw new ApplicationException ("Array length does not match " + expected.Length + " != " + value.Length);
 
@@ -456,21 +487,22 @@ class Tester
 	
 	void ConstantTest ()
 	{
-		Expression<Func<int>> e1 = () => default (int);
-		AssertNodeType (e1, ExpressionType.Constant);
-		Assert (0, e1.Compile ().Invoke ());
+//		Expression<Func<int>> e1 = () => default (int);
+//		AssertNodeType (e1, ExpressionType.Constant);
+//		Assert (0, e1.Compile ().Invoke ());
 
 		Expression<Func<int?>> e2 = () => default (int?);
 		AssertNodeType (e2, ExpressionType.Constant);
 		Assert (null, e2.Compile ().Invoke ());
 		
-		Expression<Func<Tester>> e3 = () => default (Tester);
-		AssertNodeType (e3, ExpressionType.Constant);
-		Assert (null, e3.Compile ().Invoke ());
-		
-		Expression<Func<object>> e4 = () => null;
-		AssertNodeType (e4, ExpressionType.Constant);
-		Assert (null, e4.Compile ().Invoke ());
+//	FIXME: Redundant convert		
+//		Expression<Func<Tester>> e3 = () => default (Tester);
+//		AssertNodeType (e3, ExpressionType.Constant);
+//		Assert (null, e3.Compile ().Invoke ());
+//		
+//		Expression<Func<object>> e4 = () => null;
+//		AssertNodeType (e4, ExpressionType.Constant);
+//		Assert (null, e4.Compile ().Invoke ());
 
 		Expression<Func<int>> e5 = () => 8 / 4;
 		AssertNodeType (e5, ExpressionType.Constant);
@@ -479,6 +511,11 @@ class Tester
 		Expression<Func<int>> e6 = () => 0xFFFFFF >> 0x40;
 		AssertNodeType (e6, ExpressionType.Constant);
 		Assert (0xFFFFFF, e6.Compile ().Invoke ());
+	
+// FIXME: This is pure EmptyCast, no Convert required	
+//		Expression<Func<object>> e7 = () => "Alleluia";
+//		AssertNodeType (e7, ExpressionType.Constant);
+//		Assert ("Alleluia", e7.Compile ().Invoke ());		
 	}
 
 	void ConvertTest ()
@@ -813,6 +850,69 @@ class Tester
 		AssertNodeType (e6, ExpressionType.LessThanOrEqual);
 		Assert (false, e6.Compile ().Invoke (60));
 	}
+	
+	void ListInitTest ()
+	{
+		Expression<Func<List<object>>> e1 = () => new List<object> { "Hello", "", null, "World", 5 };
+		AssertNodeType (e1, ExpressionType.ListInit);
+		var re1 = e1.Compile ().Invoke ();
+		Assert (null, re1 [2]);
+		Assert ("World", re1 [3]);
+		Assert (5, re1 [4]);
+
+		Expression<Func<int, Dictionary<string, int>>> e2 = (int value) => new Dictionary<string, int> (3) { { "A", value }, { "B", 2 } };
+		AssertNodeType (e2, ExpressionType.ListInit);
+		var re2 = e2.Compile ().Invoke (3456);
+		Assert (3456, re2 ["A"]);
+	}
+	
+	void MemberAccessTest ()
+	{
+		MemberAccessData d = new MemberAccessData ();
+		d.BoolValue = true;
+		Expression<Func<bool>> e = () => d.BoolValue;
+		AssertNodeType (e, ExpressionType.MemberAccess);
+		Assert (true, e.Compile ().Invoke ());
+		d.BoolValue = false;
+		Assert (false, e.Compile ().Invoke ());
+
+		Expression<Func<decimal>> e2 = () => MemberAccessData.DecimalValue;
+		AssertNodeType (e2, ExpressionType.MemberAccess);
+		Assert (decimal.MinValue, e2.Compile ().Invoke ());
+
+		d.VolatileValue = 492;
+		Expression<Func<uint>> e3 = () => d.VolatileValue;
+		AssertNodeType (e3, ExpressionType.MemberAccess);
+		Assert<uint> (492, e3.Compile ().Invoke ());
+
+		Expression<Func<string[]>> e4 = () => d.StringValues;
+		AssertNodeType (e4, ExpressionType.MemberAccess);
+		Assert (null, e4.Compile ().Invoke ());
+
+		var e5 = d.GetEvent ();
+		AssertNodeType (e5, ExpressionType.MemberAccess);
+		Assert (null, e5.Compile ().Invoke ());
+	}
+	
+	void MemberInitTest ()
+	{
+		Expression<Func<MemberAccessData>> e = () => new MemberAccessData { 
+			VolatileValue = 2, StringValues = new string [] { "sv" }, MyTypeProperty = new MyType (692)
+		};
+		AssertNodeType (e, ExpressionType.MemberInit);
+		var r1 = e.Compile ().Invoke ();
+		Assert<uint> (2, r1.VolatileValue);
+		Assert (new string[] { "sv" }, r1.StringValues);
+		Assert (new MyType (692), r1.MyTypeProperty);
+
+		Expression<Func<MemberAccessData>> e2 = () => new MemberAccessData {
+			ListValues = new List<string> { "a", null }
+		};
+
+		AssertNodeType (e2, ExpressionType.MemberInit);
+		var r2 = e2.Compile ().Invoke ();
+		Assert ("a", r2.ListValues [0]);
+	}	
 
 	void ModuloTest ()
 	{
@@ -1040,7 +1140,7 @@ class Tester
 		Assert (new MyType (3), c2 (new MyType (1), new MyType (2)));
 		Assert (null, c2 (new MyType (1), null));
 
-		/* BUG: This does not work with csc either, because nullable conversions on top of user conversion is required
+		/* BUG: This does not work with csc either, nullable conversions on top of user conversion is required
 		
 		Expression<Func<MyType?, uint, long?>> e3 = (MyType? a, uint b) => a | b;
 		AssertNodeType (e3, ExpressionType.Or);
@@ -1215,10 +1315,13 @@ class Tester
 		e.LeftShiftTest ();
 		e.LessThanTest ();
 		e.LessThanOrEqualTest ();
-
+		e.ListInitTest ();
+		e.MemberAccessTest ();
+		e.MemberInitTest ();
 		e.ModuloTest ();	
 		e.MultiplyTest ();
 		e.MultiplyCheckedTest ();
+		
 		e.NewArrayInitTest ();
 		e.NotTest ();
 		e.NotNullableTest ();

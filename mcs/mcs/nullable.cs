@@ -467,7 +467,10 @@ namespace Mono.CSharp.Nullable
 			Type type = TypeManager.GetTypeArguments (TargetType) [0];
 
 			if (IsUser) {
-				return Convert.UserDefinedConversion (ec, unwrap, type, loc, IsExplicit);
+				if (IsExplicit)
+					return Convert.ExplicitUserConversion (ec, unwrap, type, loc);
+				else
+					return Convert.ImplicitUserConversion (ec, unwrap, type, loc);
 			} else {
 				if (IsExplicit)
 					return Convert.ExplicitConversion (ec, unwrap, type, loc);

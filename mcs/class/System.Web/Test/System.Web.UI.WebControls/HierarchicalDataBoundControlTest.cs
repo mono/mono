@@ -36,6 +36,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Web;
 using System.Web.UI;
+using System.Web.UI.Adapters;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.Adapters;
 using System.IO;
@@ -97,13 +98,13 @@ namespace MonoTests.System.Web.UI.WebControls
 				ValidateDataSource (dataSource);
 			}
 
-			internal HierarchicalDataBoundControlAdapter dataBoundControlAdapter;
+			internal ControlAdapter controlAdapter;
 			protected override global::System.Web.UI.Adapters.ControlAdapter ResolveAdapter ()
 			{
-				return dataBoundControlAdapter;
+				return controlAdapter;
 			}
 		}
-
+		
 		[Test]
 		public void HierarchicalDataBoundControl_DataBindFlow () {
 			Page p = new Page ();
@@ -130,14 +131,27 @@ namespace MonoTests.System.Web.UI.WebControls
 			}
 		}
 		
+		class MyControlAdapter : ControlAdapter
+		{
+		}
+
 		[Test]
 		public void PerformDataBinding_UsesAdapter ()
 		{
 			MyHierarchicalDataBoundControl c = new MyHierarchicalDataBoundControl ();
 			MyHierarchicalDataBoundControlAdapter a = new MyHierarchicalDataBoundControlAdapter();;
-			c.dataBoundControlAdapter = a;
+			c.controlAdapter = a;
 			c.DataBind ();
 			Assert.IsTrue (a.perform_data_binding_called, "PerformDataBinding_UsesAdapter");
+		}
+
+		[Test]
+		public void PerformDataBinding_WorksWithControlAdapter ()
+		{
+			MyHierarchicalDataBoundControl c = new MyHierarchicalDataBoundControl ();
+			MyControlAdapter a = new MyControlAdapter();;
+			c.controlAdapter = a;
+			c.DataBind ();
 		}
 
 	}

@@ -81,6 +81,16 @@ namespace System.Windows.Forms {
 
 		public virtual bool EditingControlWantsInputKey (Keys keyData, bool dataGridViewWantsInputKey)
 		{
+			switch (keyData) {
+				case Keys.Left:
+					return SelectionStart != 0;
+				case Keys.Right:
+					return SelectionStart != TextLength;
+				case Keys.Down:
+				case Keys.Up:
+					return false;
+			}
+			
 			return true;
 		}
 
@@ -107,9 +117,6 @@ namespace System.Windows.Forms {
 		{
 			base.OnTextChanged(e);
 			editingControlValueChanged = true;
-			if (editingControlDataGridView != null) {
-				editingControlDataGridView.CurrentCell.Value = Text;
-			}
 		}
 
 		protected override bool ProcessKeyEventArgs (ref Message m)

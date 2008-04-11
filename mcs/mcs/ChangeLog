@@ -1,3 +1,55 @@
+2008-04-09  Marek Safar  <marek.safar@gmail.com>
+
+	* convert.cs, ecore.cs, expression.cs, nullable.cs: Initial refactoring
+	of Unary expressions to follow operator overloading rules precisely.
+	Also fixes #321794, #323794
+	
+2008-04-08  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-parser.jay, expression.cs: Don't wrap Indirection expression in Unary
+	expression.
+	
+2008-04-08  Marek Safar  <marek.safar@gmail.com>
+
+	* expression.cs, ecore.cs: Implemented MemberInit expression.
+	
+2008-04-08  Raja R Harinath  <harinath@hurrynot.org>
+
+	Fix mono/tests/exception4.cs
+	* statement.cs (ExceptionStatement, TryCatch): Revert to using
+	ec.NeedReturnLabel () rather emitting a 'nop'.
+
+	* statement.cs (ExceptionStatement.SomeCodeFollows): A hook for a
+	simple heuristic.
+	(TryCatch.SomeCodeFollows): Likewise.
+	* flowanalysis.cs (FlowBranchingException): Call 'SomeCodeFollows'
+	for 'break', 'continue' and 'return' statements inside a try.
+	We're fairly sure that the generated IL stream will have more
+	instructions textually following the try.
+	(FlowBranchingTryCatch): Likewise.
+
+	* statement.cs (Throw.Resolve): Move CS0156 and CS0724 testing ...
+	* flowanalysis.cs (FlowBranching.CheckRethrow): ... here and to its
+	overrides.
+
+	* statement.cs (CollectionForeach.DisposableWrapper): Make a true
+	wrapper -- forward everything to CollectionForeach.
+	(CollectionForeach.NonDisposableWrapper): New.
+	(CollectionForeach.EmitFinallyBody): Use 'endfinally' instruction
+	instead of a pop + branch to end.
+
+2008-04-07  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #377485
+	* assign.cs, expression.cs, decl.cs, class.cs, ecore.cs, namespace.cs: 
+	Propagate location for extension method groups. Report conversion failure at
+	right place.
+
+2008-04-07  Marek Safar  <marek.safar@gmail.com>
+
+	* anonymous.cs, expression.cs, ecore.cs, typemanager.cs: Implemented
+	ListInit and Field expressions.
+
 2008-04-06  Raja R Harinath  <harinath@hurrynot.org>
 
 	* iterators.cs (Iterator.EmitMoveNext): Remove try/fault wrapper.

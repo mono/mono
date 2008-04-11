@@ -1,3 +1,20 @@
+2008-04-09  Jb Evain  <jbevain@novell.com>
+
+	* Expression.cs: check for illegal booleab unary expressions.
+
+2008-04-09  Jb Evain  <jbevain@novell.com>
+
+	* UnaryExpression.cs: implement compilation of negate.
+
+2008-04-09  Jb Evain  <jbevain@novell.com>
+
+	* UnaryExpression.cs, Expression.cs: implement IsLifted and IsLifted
+	to null for simple unary operators. Implement Not compilation.
+
+2008-04-08  Jb Evain  <jbevain@novell.com>
+
+	* ElementInit.cs: emit pop if the add method doesn't return void.
+
 2008-03-20  Jb Evain  <jbevain@novell.com>
 
 	* Expression.cs: use the new and more complete IsAssignableTo

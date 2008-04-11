@@ -384,7 +384,7 @@ namespace Mono.CSharp {
 			if (b ||
 			    Convert.ExplicitReferenceConversionExists (Type, target) ||
 			    Convert.ExplicitUnsafe (e, target) != null ||
-			    (ec != null && Convert.UserDefinedConversion (ec, this, target, Location.Null, true) != null))
+			    (ec != null && Convert.ExplicitUserConversion (ec, this, target, Location.Null) != null))
 			{
 				Report.Error (266, loc, "Cannot implicitly convert type `{0}' to `{1}'. " +
 					      "An explicit conversion exists (are you missing a cast?)",
@@ -1255,6 +1255,11 @@ namespace Mono.CSharp {
 
 		public static Expression CreateExpressionFactoryCall (string name, TypeArguments typeArguments, ArrayList args, Location loc)
 		{
+			return new Invocation (new MemberAccess (CreateExpressionTypeExpression (loc), name, typeArguments, loc), args);
+		}
+
+		protected static TypeExpr CreateExpressionTypeExpression (Location loc)
+		{
 			TypeExpr texpr = TypeManager.expression_type_expr;
 			if (texpr == null) {
 				Type t = TypeManager.CoreLookupType ("System.Linq.Expressions", "Expression", Kind.Class, true);
@@ -1264,7 +1269,7 @@ namespace Mono.CSharp {
 				TypeManager.expression_type_expr = texpr = new TypeExpression (t, Location.Null);
 			}
 
-			return new Invocation (new MemberAccess (texpr, name, typeArguments, loc), args);
+			return texpr;
 		}
 	}
 
@@ -1546,6 +1551,14 @@ namespace Mono.CSharp {
 		{
 			// FIXME: check that 'type' can be converted to 'target_type' first
 			return child.ConvertExplicitly (in_checked_context, target_type);
+		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			ArrayList args = new ArrayList (2);
+			args.Add (new Argument (child.CreateExpressionTree (ec)));
+			args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
+			return CreateExpressionFactoryCall ("Convert", args);
 		}
 
 		public override Constant Increment ()
@@ -3255,7 +3268,7 @@ namespace Mono.CSharp {
 				return null;
 
 			// Search continues
-			ExtensionMethodGroupExpr e = ns.LookupExtensionMethod (type, null, Name);
+			ExtensionMethodGroupExpr e = ns.LookupExtensionMethod (type, null, Name, loc);
 			if (e == null)
 				return base.OverloadResolve (ec, ref arguments, false, loc);
 
@@ -3633,8 +3646,10 @@ namespace Mono.CSharp {
 
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
-			return new Cast (new TypeExpression (typeof (MethodInfo), loc),
-				new TypeOfMethod ((MethodInfo)best_candidate, loc));
+			Type t = best_candidate.IsConstructor ?
+				typeof (ConstructorInfo) : typeof (MethodInfo);
+
+			return new Cast (new TypeExpression (t, loc), new TypeOfMethod (best_candidate, loc));
 		}
 		
 		override public Expression DoResolve (EmitContext ec)
@@ -3711,6 +3726,12 @@ namespace Mono.CSharp {
 				}
 				Report.Error (1503, loc, "Argument {0}: Cannot convert type `{1}' to `{2}'", index, p1, p2);
 			}
+		}
+
+		public override void Error_ValueCannotBeConverted (EmitContext ec, Location loc, Type target, bool expl)
+		{
+			Report.Error (428, loc, "Cannot convert method group `{0}' to non-delegate type `{1}'. Consider using parentheses to invoke the method",
+				Name, TypeManager.CSharpName (target));
 		}
 		
 		protected virtual int GetApplicableParametersCount (MethodBase method, ParameterData parameters)
@@ -4118,7 +4139,7 @@ namespace Mono.CSharp {
 				// not an extension method. We start extension methods lookup from here
 				//
 				if (InstanceExpression != null) {
-					ExtensionMethodGroupExpr ex_method_lookup = ec.TypeContainer.LookupExtensionMethod (type, Name);
+					ExtensionMethodGroupExpr ex_method_lookup = ec.TypeContainer.LookupExtensionMethod (type, Name, loc);
 					if (ex_method_lookup != null) {
 						ex_method_lookup.ExtensionExpression = InstanceExpression;
 						ex_method_lookup.SetTypeArguments (type_arguments);
@@ -4527,6 +4548,11 @@ namespace Mono.CSharp {
 			return base.ResolveMemberAccess (ec, left, loc, original);
 		}
 
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			throw new NotSupportedException ();
+		}
+
 		public override Expression DoResolve (EmitContext ec)
 		{
 			IConstant ic = TypeManager.GetConstant (constant);
@@ -4620,6 +4646,26 @@ namespace Mono.CSharp {
 			}
 
 			return base.ResolveMemberAccess (ec, left, loc, original);
+		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			Expression instance;
+			if (InstanceExpression == null) {
+				instance = new NullLiteral (loc);
+			} else {
+				instance = InstanceExpression.CreateExpressionTree (ec);
+			}
+
+			ArrayList args = new ArrayList (2);
+			args.Add (new Argument (instance));
+			args.Add (new Argument (CreateTypeOfExpression ()));
+			return CreateExpressionFactoryCall ("Field", args);
+		}
+
+		public Expression CreateTypeOfExpression ()
+		{
+			return new TypeOfField (FieldInfo, loc);
 		}
 
 		override public Expression DoResolve (EmitContext ec)
@@ -5053,6 +5099,11 @@ namespace Mono.CSharp {
 			//args.Add (getter expression);
 			//return CreateExpressionFactoryCall ("Property", args);
 			return base.CreateExpressionTree (ec);
+		}
+
+		public Expression CreateSetterTypeOfExpression ()
+		{
+			return new Cast (new TypeExpression (typeof (MethodInfo), loc), new TypeOfMethod (setter, loc));
 		}
 
 		public override Type DeclaringType {
@@ -5534,6 +5585,11 @@ namespace Mono.CSharp {
 			bool dummy;
 			return IsAccessorAccessible (invocation_type, add_accessor, out dummy) &&
 				IsAccessorAccessible (invocation_type, remove_accessor, out dummy);
+		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			throw new NotSupportedException ();
 		}
 
 		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)

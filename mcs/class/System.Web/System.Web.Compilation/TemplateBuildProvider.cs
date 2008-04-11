@@ -71,15 +71,9 @@ namespace System.Web.Compilation
 			if (parser != null) {
 				string codeBehind = parser.CodeBehindSource;
 				if (String.IsNullOrEmpty (codeBehind))
-					return null;
-				
-				HttpContext ctx = HttpContext.Current;
-				HttpRequest req = ctx != null ? ctx.Request : null;
+					return null;				
 
-				if (req == null)
-					throw new HttpException ("Missing current context.");
-
-				return req.MapPath (parser.CodeBehindSource);
+				return parser.CodeBehindSource;
 			}
 			
 			return null;

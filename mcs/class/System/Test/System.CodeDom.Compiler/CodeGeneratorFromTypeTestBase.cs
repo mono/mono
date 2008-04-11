@@ -357,6 +357,39 @@ namespace MonoTests.System.CodeDom.Compiler
 			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
+		protected string GenerateAbstractProperty (CodeGeneratorOptions options)
+		{
+			TypeDeclaration.Name = "Test1";
+			TypeDeclaration.TypeAttributes = TypeAttributes.Abstract | TypeAttributes.Public;
+
+			CodeMemberProperty property = new CodeMemberProperty ();
+			property.Name = "Name";
+			property.Attributes = MemberAttributes.Public | MemberAttributes.Abstract;
+			property.HasGet = true;
+			property.HasSet = true;
+			property.Type = new CodeTypeReference (typeof (string));
+
+			TypeDeclaration.Members.Add (property);
+
+			return GenerateCodeFromType (TypeDeclaration, options);
+		}
+
+		protected string GenerateStaticProperty (CodeGeneratorOptions options)
+		{
+			TypeDeclaration.Name = "Test1";
+			TypeDeclaration.TypeAttributes = TypeAttributes.Public;
+
+			CodeMemberProperty property = new CodeMemberProperty ();
+			property.Name = "Name";
+			property.Attributes = MemberAttributes.Public | MemberAttributes.Static;
+			property.HasSet = true;
+			property.Type = new CodeTypeReference (typeof (string));
+
+			TypeDeclaration.Members.Add (property);
+
+			return GenerateCodeFromType (TypeDeclaration, options);
+		}
+
 		protected string GeneratePropertyMembersType (MemberAttributes memberAttributes, bool hasGet, bool hasSet, CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";

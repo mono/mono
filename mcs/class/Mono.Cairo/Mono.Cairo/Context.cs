@@ -383,6 +383,10 @@ namespace Cairo {
                         }
                 }
 
+		public uint ReferenceCount {
+			get { return NativeMethods.cairo_get_reference_count (state); }
+		}
+
 		public void SetSourceRGB (double r, double g, double b)
 		{
 			NativeMethods.cairo_set_source_rgb (state, r, g, b);

@@ -236,10 +236,13 @@ namespace System.Web.UI.WebControls {
 			bool ischecked = val == "on";
 			ListItem item = Items [checkbox];
 
-			if (item.Selected != ischecked) {
-				item.Selected = ischecked;
-				return true;
-			}
+#if NET_2_0
+			if (item.Enabled)
+#endif
+				if (item.Selected != ischecked) {
+					item.Selected = ischecked;
+					return true;
+				}
 
 			return false;
 		}

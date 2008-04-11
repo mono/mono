@@ -106,7 +106,7 @@ namespace System.Web.Compilation
 			
 			string codeBehindSource = GetCodeBehindSource (parser);
 			if (codeBehindSource != null)
-				assemblyBuilder.AddCodeFile (codeBehindSource, this);
+				assemblyBuilder.AddCodeFile (codeBehindSource, this, true);
 
 			List <string> refasms = GetReferencedAssemblies (parser);
 			if (refasms != null && refasms.Count > 0) {

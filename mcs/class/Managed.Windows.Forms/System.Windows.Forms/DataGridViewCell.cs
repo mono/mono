@@ -160,7 +160,9 @@ namespace System.Windows.Forms {
 				if (style.Format != String.Empty && FormattedValueType == typeof(string)) {
 					return String.Format("{0:" + style.Format + "}", Value);
 				}
-				return Convert.ChangeType(Value, FormattedValueType, style.FormatProvider);
+				
+				return GetFormattedValue (Value, RowIndex, ref style, null, null, DataGridViewDataErrorContexts.Formatting);
+				//return Convert.ChangeType(Value, FormattedValueType, style.FormatProvider);
 			}
 		}
 
@@ -334,9 +336,6 @@ namespace System.Windows.Forms {
 			get {
 				if (DataGridView == null)
 					return new Size (-1, -1);
-					
-				if (RowIndex == -1)
-					throw new InvalidOperationException ("Getting the Size property of a cell in a shared row is not a valid operation.");
 					
 				return GetSize (RowIndex);
 			}
@@ -823,7 +822,7 @@ namespace System.Windows.Forms {
 				throw new FormatException ("The System.Windows.Forms.DataGridViewCell.FormattedValueType property value is null.");
 			if (formattedValue == null)
 				throw new ArgumentException ("formattedValue is null.");
-			if (valueType == null)
+			if (ValueType == null)
 				throw new FormatException ("valuetype is null");
 			if (formattedValue.GetType () != FormattedValueType)
 				throw new ArgumentException ("formattedValue is not of formattedValueType.");
@@ -844,10 +843,11 @@ namespace System.Windows.Forms {
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public virtual void PositionEditingControl (bool setLocation, bool setSize, Rectangle cellBounds, Rectangle cellClip, DataGridViewCellStyle cellStyle, bool singleVerticalBorderAdded, bool singleHorizontalBorderAdded, bool isFirstDisplayedColumn, bool isFirstDisplayedRow)
 		{
-			if (setLocation)
-				DataGridView.EditingControl.Location = cellBounds.Location;
-				
-			if (setSize)
+			if (setLocation && setSize)
+				DataGridView.EditingControl.Bounds = cellBounds;
+			else if (setLocation)
+				DataGridView.EditingControl.Location = cellBounds.Location;	
+			else if (setSize)
 				DataGridView.EditingControl.Size = cellBounds.Size;
 		}
 
@@ -1024,7 +1024,7 @@ namespace System.Windows.Forms {
 			}
 			
 			IFormattable formattable = value as IFormattable;
-			if (formattable != null) {
+			if (formattable != null && style != null) {
 				formattable.ToString (style.Format, style.FormatProvider);
 			}
 			
@@ -1040,6 +1040,9 @@ namespace System.Windows.Forms {
 
 		protected virtual Size GetSize (int rowIndex)
 		{
+			if (RowIndex == -1)
+				throw new InvalidOperationException ("Getting the Size property of a cell in a shared row is not a valid operation.");
+
 			return new Size (OwningColumn.Width, OwningRow.Height);
 		}
 
@@ -1414,13 +1417,20 @@ namespace System.Windows.Forms {
 		internal void PaintWork (Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts)
 		{
 			object value;
+			object formattedvalue;
 			
-			if (RowIndex == -1 && !(this is DataGridViewColumnHeaderCell))
+			if (RowIndex == -1 && !(this is DataGridViewColumnHeaderCell)) {
 				value = null;
-			else
+				formattedvalue = null;
+			} else if (RowIndex == -1) {
 				value = Value;
+				formattedvalue = Value;
+			} else {
+				value = Value;
+				formattedvalue = FormattedValue;
+			}
 
-			DataGridViewCellPaintingEventArgs pea = new DataGridViewCellPaintingEventArgs (DataGridView, graphics, clipBounds, cellBounds, rowIndex, columnIndex, cellState, value, value, ErrorText, cellStyle, advancedBorderStyle, paintParts);
+			DataGridViewCellPaintingEventArgs pea = new DataGridViewCellPaintingEventArgs (DataGridView, graphics, clipBounds, cellBounds, rowIndex, columnIndex, cellState, value, formattedvalue, ErrorText, cellStyle, advancedBorderStyle, paintParts);
 			DataGridView.OnCellPaintingInternal (pea);
 			
 			if (pea.Handled)
@@ -1433,6 +1443,10 @@ namespace System.Windows.Forms {
 			if (valuex != value) {
 				valuex = value;
 				RaiseCellValueChanged (new DataGridViewCellEventArgs (ColumnIndex, RowIndex));
+				
+				if (DataGridView != null)
+					DataGridView.InvalidateCell (this);
+					
 				return true;
 			}
 			return false;

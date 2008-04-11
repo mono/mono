@@ -1,3 +1,7 @@
+2008-04-08  Jb Evain  <jbevain@novell.com>
+
+	* CodeGeneratorFromTypeTest.cs: add test for abstract properties.
+
 2008-01-27  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CodeGeneratorFromExpressionTest.cs: Copied some tests from VB, and

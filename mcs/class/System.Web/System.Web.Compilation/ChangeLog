@@ -1,3 +1,65 @@
+2008-04-09  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: refactoring - the SetCommonParameters and
+	GetDefaultCompilerTypeForLanguage moved here from BuildProvider,
+	and made internal static.
+	Do not catch compilation exceptions and wrap them in
+	HttpException, let the CompilationException pass through. Fixes
+	bug #377904
+
+	* AppWebReferencesCompiler.cs: added - support for compiling of
+	wsdl files found in the App_WebResources directory. Fixes bug
+	#377934
+
+	* BuildProvider.cs: refactoring - moved the SetCommonParameters
+	and GetDefaultCompilerTypeForLanguage to BuildManager
+
+	* WsdlBuildProvider.cs: added the CodeCompilerType property
+	override.
+	Namespace for the generated code is taken from the wsdl path,
+	relative to App_Code or App_WebReferences, if the wsdl in question
+	is under on of those directories.
+	GenerateCode uses OpenReader () so that VirtualPathProvider works
+	for wsdl files.
+
+	* AssemblyBuilder.cs: make sure Encoding.UTF8 is explicitly used
+	when generating source from code unit and use
+	WebEncoding.FileEncoding when adding code files to the unit. Fixes
+	bug #377938
+	Cope with virtualPath being null in BuildAssembly.
+	Reference assemblies specified in web.config when linking.
+
+2008-04-08  Marek Habersack  <mhabersack@novell.com>
+
+	* AspComponentFoundry.cs: add loaded assembly to the
+	BuildManager's list of referenced assemblies instead to
+	WebConfigurationmanager.ExtraAssemblies. Fixes bug #377915
+
+	* AppCodeCompiler.cs: VirtualPath used in PhysicalToVirtual.
+
+	* BuildManager.cs: switched to VirtualPath instead of a string
+	path in several methods.
+	Batch compilation is turned off if we have a custom
+	VirtualPathProvider which implements only the VirtualFile and
+	falls back to DefaultVirtualDirectory implementation for directory
+	access.
+	Added an internal method AddToReferencedAssemblies.
+	Remove invalidated entry from
+	WebConfigurationManager.ExtraAssemblies.
+
+	* GenericBuildProvider.cs: AddCodeFile accepts a virtual path.
+
+	* BuildProvider.cs: SetVirtualPath accepts a VirtualPath now.
+
+	* AssemblyBuilder.cs: constructors use the new VirtualPath class
+	now.
+	AddCodeFile can use the VirtualPathProvider if necessary now.
+	BuildAssembly overloads accept VirtualPath parameter instead of a
+	string path now.
+
+	* TemplateBuildProvider.cs: GetCodeBehindSource returns the
+	virtual path now.
+
 2008-03-31  Marek Habersack  <mhabersack@novell.com>
 
 	* AppCodeCompiler.cs: implemented support for AppInitialize (a

@@ -247,7 +247,15 @@ namespace System.Xml.Serialization
 			}
 #endif
 			IXmlSerializable serializable = (IXmlSerializable)Activator.CreateInstance (typeData.Type, true);
+#if NET_2_0
+			try {
+				_schema = serializable.GetSchema();
+			} catch (Exception) {
+				// LAMESPEC: .NET has a bad exception catch and swallows it silently.
+			}
+#else
 			_schema = serializable.GetSchema();
+#endif
 			if (_schema != null) 
 			{
 				if (_schema.Id == null || _schema.Id.Length == 0) 

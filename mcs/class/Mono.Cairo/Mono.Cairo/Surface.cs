@@ -229,5 +229,9 @@ namespace Cairo {
 		public SurfaceType SurfaceType {
 			get { return NativeMethods.cairo_surface_get_type (surface); }
 		}
+
+		public uint ReferenceCount {
+			get { return NativeMethods.cairo_surface_get_reference_count (surface); }
+		}
         }
 }

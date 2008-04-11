@@ -83,15 +83,11 @@ namespace System.Web.Configuration
 		{
 			string ua = GetUserAgentForDetection (request);
 
-			HttpBrowserCapabilities bcap = null;
+			HttpBrowserCapabilities bcap = GetHttpBrowserCapabilitiesFromBrowscapini(ua);
 #if NET_2_0
 			GetConfigCapabilities_called = true;
 			if (HttpApplicationFactory.AppBrowsersFiles.Length > 0)
-				bcap = HttpApplicationFactory.CapabilitiesProcessor.Process(request);
-			else
-				bcap = GetHttpBrowserCapabilitiesFromBrowscapini(ua);
-#else
-			bcap = GetHttpBrowserCapabilitiesFromBrowscapini(ua);
+				bcap = HttpApplicationFactory.CapabilitiesProcessor.Process(request, bcap.Capabilities);
 #endif
 			bcap.useragent = ua;
 			bcap.Init ();

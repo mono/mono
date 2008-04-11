@@ -13,6 +13,8 @@ using NUnit.Framework;
 using System;
 using System.Text;
 
+using AssertType = NUnit.Framework.Assert;
+
 namespace MonoTests.System.Text
 {
         [TestFixture]
@@ -278,6 +280,17 @@ namespace MonoTests.System.Text
 		{
 			string s = new UTF7Encoding ().GetString (
 				Encoding.ASCII.GetBytes ("+2AA-"));
+		}
+
+		[Test]
+		public void GetCharCount ()
+		{
+			string original = "*123456789*123456789*123456789*123456789*123456789*123456789*123456789*123456789";
+			byte [] bytes = Encoding.UTF7.GetBytes (original);
+			AssertType.AreEqual (112, bytes.Length, "#1");
+			AssertType.AreEqual (80, Encoding.UTF7.GetCharCount (bytes), "#2");
+			string decoded = Encoding.UTF7.GetString(Encoding.UTF7.GetBytes(original));
+			AssertType.AreEqual (original, decoded, "#3");
 		}
         }
 }

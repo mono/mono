@@ -1323,6 +1323,10 @@ namespace System.Windows.Forms {
 
 			if (show_root_lines || node.Parent != null)
 				l -= indent;
+				
+			if (!show_root_lines && node.Parent == null)
+				l -= indent;
+				
 			if (ImageList != null)
 				l -= ImageList.ImageSize.Width + 3;
 
@@ -1536,7 +1540,7 @@ namespace System.Windows.Forms {
 				int check_size = 5;
 				int lineWidth = 3;
 				
-				Rectangle rect = new Rectangle (x + 5, middle - 2, check_size, check_size);
+				Rectangle rect = new Rectangle (x + 4, middle - 3, check_size, check_size);
 				
 				for (int i = 0; i < lineWidth; i++) {
 					dc.DrawLine (check_pen, rect.Left + 1, rect.Top + lineWidth + i, rect.Left + 3, rect.Top + 5 + i);
@@ -1555,7 +1559,8 @@ namespace System.Windows.Forms {
 			if (checkboxes)
 				radjust = 3;
 
-			dc.DrawLine (dash, x - indent + ladjust, middle, x + radjust, middle);
+			if (show_root_lines || node.Parent != null)
+				dc.DrawLine (dash, x - indent + ladjust, middle, x + radjust, middle);
 
 			if (node.PrevNode != null || node.Parent != null) {
 				ladjust = 9;
@@ -1916,7 +1921,7 @@ namespace System.Windows.Forms {
 				if (skipped_nodes > 0) {
 					int skip = Math.Min (skipped_nodes, vbar.Maximum - VisibleCount + 1);
 					skipped_nodes = 0;
-					vbar.Value = skip;
+					vbar.SafeValueSet (skip);
 					skipped_nodes = skip;
 				}
 			} else {

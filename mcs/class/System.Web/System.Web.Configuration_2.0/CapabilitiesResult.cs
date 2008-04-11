@@ -36,7 +36,7 @@ namespace System.Web.Configuration
 		/// <param name="items">
 		/// This is the data which this class will be handle request made though this class.
 		/// </param>
-		internal CapabilitiesResult(System.Collections.Generic.Dictionary<string, string> items)
+		internal CapabilitiesResult(System.Collections.IDictionary items)
 			: base()
 		{
 			base.Capabilities = items;

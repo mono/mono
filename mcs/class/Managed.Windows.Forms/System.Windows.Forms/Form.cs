@@ -2787,6 +2787,15 @@ namespace System.Windows.Forms {
 #endregion
 
 		#region Internal / Private Methods
+		internal void ActivateFocusCues ()
+		{
+			bool need_refresh = !show_focus_cues;
+			show_focus_cues = true;
+			
+			if (need_refresh)
+				ActiveControl.Invalidate ();
+		}
+		
 		internal override void FireEnter ()
 		{
 			// do nothing - forms don't generate OnEnter

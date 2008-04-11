@@ -62,6 +62,7 @@ endif
 ifeq (net_2_0, $(PROFILE))
 COMPILER_NAME = gmcs
 TEST_PATTERN = '*test-*.cs'
+TOPTIONS += '-il:ver-il-gmcs.xml'
 endif
 ifeq (default, $(PROFILE))
 COMPILER_NAME = mcs
@@ -76,7 +77,7 @@ TEST_ILS := $(wildcard *-lib.il)
 check: run-test
 
 run-test-local: $(TEST_ILS:.il=.dll)
-	$(TESTER) -mode:pos -files:$(TEST_PATTERN) -compiler:$(COMPILER) -issues:known-issues-$(COMPILER_NAME) -log:$(COMPILER_NAME).log $(TESTER_OPTIONS)
+	$(TESTER) -mode:pos -files:$(TEST_PATTERN) -compiler:$(COMPILER) -issues:known-issues-$(COMPILER_NAME) -log:$(COMPILER_NAME).log $(TOPTIONS)
 
 test-everything:
 	$(MAKE) PROFILE=default run-test

@@ -93,21 +93,55 @@ namespace System.Windows.Forms {
 
 		public override ContextMenuStrip GetInheritedContextMenuStrip (int rowIndex)
 		{
-			throw new NotImplementedException();
+			if (DataGridView == null)
+				return null;
+
+			if (ContextMenuStrip != null)
+				return ContextMenuStrip;
+			if (DataGridView.ContextMenuStrip != null)
+				return DataGridView.ContextMenuStrip;
+
+			return null;
 		}
 
 		public override DataGridViewElementStates GetInheritedState (int rowIndex)
 		{
-			throw new NotImplementedException();
+			DataGridViewElementStates result;
+
+			result = DataGridViewElementStates.ResizableSet | State;
+
+			return result;
 		}
 
-		public override string ToString () {
-			return "";
+		public override string ToString ()
+		{
+			return string.Format ("DataGridViewHeaderCell {{ ColumnIndex={0}, RowIndex={1} }}", ColumnIndex, RowIndex);
 		}
 
 		protected override Size GetSize (int rowIndex)
 		{
-			throw new NotImplementedException();
+			if (DataGridView == null && rowIndex != -1)
+				throw new ArgumentOutOfRangeException ("rowIndex");
+			if (OwningColumn != null && rowIndex != -1)
+				throw new ArgumentOutOfRangeException ("rowIndex");
+			if (OwningRow != null && (rowIndex < 0 || rowIndex >= DataGridView.Rows.Count))
+				throw new ArgumentOutOfRangeException ("rowIndex");
+			if (OwningColumn == null && OwningRow == null && rowIndex != -1)
+				throw new ArgumentOutOfRangeException ("rowIndex");
+			if (OwningRow != null && OwningRow.Index != rowIndex)
+				throw new ArgumentException ("rowIndex");
+				
+			if (DataGridView == null)
+				return new Size (-1, -1);
+
+			if (this is DataGridViewTopLeftHeaderCell)
+				return new Size (DataGridView.RowHeadersWidth, DataGridView.ColumnHeadersHeight);
+			if (this is DataGridViewColumnHeaderCell)
+				return new Size (100, DataGridView.ColumnHeadersHeight);
+			if (this is DataGridViewRowHeaderCell)
+				return new Size (DataGridView.RowHeadersWidth, 22);
+			
+			return Size.Empty;
 		}
 
 		protected override object GetValue (int rowIndex)
@@ -117,22 +151,46 @@ namespace System.Windows.Forms {
 
 		protected override bool MouseDownUnsharesRow (DataGridViewCellMouseEventArgs e)
 		{
-			throw new NotImplementedException ();
+			if (DataGridView == null)
+				return false;
+				
+			if (e.Button == MouseButtons.Left && Application.RenderWithVisualStyles && DataGridView.EnableHeadersVisualStyles)
+				return true;
+				
+			return false;
 		}
 
 		protected override bool MouseEnterUnsharesRow (int rowIndex)
 		{
-			throw new NotImplementedException ();
+			if (DataGridView == null)
+				return false;
+
+			if (Application.RenderWithVisualStyles && DataGridView.EnableHeadersVisualStyles)
+				return true;
+
+			return false;
 		}
 
 		protected override bool MouseLeaveUnsharesRow (int rowIndex)
 		{
-			throw new NotImplementedException ();
+			if (DataGridView == null)
+				return false;
+
+			if (ButtonState != ButtonState.Normal && Application.RenderWithVisualStyles && DataGridView.EnableHeadersVisualStyles)
+				return true;
+
+			return false;
 		}
 
 		protected override bool MouseUpUnsharesRow (DataGridViewCellMouseEventArgs e)
 		{
-			throw new NotImplementedException ();
+			if (DataGridView == null)
+				return false;
+
+			if (e.Button == MouseButtons.Left && Application.RenderWithVisualStyles && DataGridView.EnableHeadersVisualStyles)
+				return true;
+
+			return false;
 		}
 
 		protected override void OnMouseDown (DataGridViewCellMouseEventArgs e)

@@ -80,12 +80,12 @@ namespace Mono.Cecil.Mdb {
 		void ReadLocalVariables (MethodEntry entry, MethodBody body)
 		{
 			foreach (LocalVariableEntry loc in entry.Locals) {
+				VariableDefinition var = body.Variables [loc.Index];
+				var.Name = loc.Name;
+
 				Scope scope = m_scopes [loc.BlockIndex] as Scope;
 				if (scope == null)
 					continue;
-
-				VariableDefinition var = body.Variables [loc.Index];
-				var.Name = loc.Name;
 				scope.Variables.Add (var);
 			}
 		}

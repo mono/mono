@@ -18,8 +18,10 @@ using System.Reflection;
 using System.Collections;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 
 using Mono.Security;
+using Mono.Security.Cryptography;
 
 namespace Mono.Tools {
 
@@ -34,6 +36,14 @@ namespace Mono.Tools {
 			UninstallSpecific,
 			List,
 			Help
+		}
+
+		private enum VerificationResult
+		{
+			StrongNamed,
+			WeakNamed,
+			DelaySigned,
+			Skipped
 		}
 
 		private static bool silent;
@@ -154,6 +164,8 @@ namespace Mono.Tools {
 				gacdir = Path.Combine (libdir, "gac");
 			}
 
+			LoadConfig (silent);
+
 			switch (command) {
 			case Command.Install:
 				if (name == null) {
@@ -230,7 +242,6 @@ namespace Mono.Tools {
 
 			Assembly assembly = null;
 			AssemblyName an = null;
-			byte [] pub_tok;
 
 			try {
 				assembly = Assembly.LoadFrom (name);
@@ -240,29 +251,23 @@ namespace Mono.Tools {
 			}
 
 			an = assembly.GetName ();
-			try {
-				Process sn_cmd = Process.Start ("sn", "-q -v " + name);
-				sn_cmd.WaitForExit ();
-				if (sn_cmd.ExitCode != 0) {
-					if (in_bootstrap) {
-						WriteLine (string.Format (failure_msg, name) + "Attempt to install an assembly without a strong name (sn failed, continuing anyway).");
-					} else {
-						WriteLine (string.Format (failure_msg, name) + "Attempt to install an assembly without a strong name.");
-						return false;
-					}
-				}
-			} catch {
-				if (in_bootstrap) {
-					WriteLine (string.Format (failure_msg, name) + "Attempt to install an assembly without a strong name (sn failed, continuing anyway).");
-				} else {
-					WriteLine (string.Format (failure_msg, name) + "Attempt to install an assembly without a strong name.");
+
+			switch (VerifyStrongName (an, name)) {
+			case VerificationResult.StrongNamed:
+			case VerificationResult.Skipped:
+				break;
+			case VerificationResult.WeakNamed:
+				WriteLine (string.Format (failure_msg, name) + "Attempt to install an assembly without a strong name"
+					+ (in_bootstrap ? "(continuing anyway)" : string.Empty));
+				if (!in_bootstrap)
 					return false;
-				}
-			}
-			pub_tok = an.GetPublicKeyToken ();
-			if (pub_tok == null || pub_tok.Length == 0) {
-				WriteLine (string.Format (failure_msg, name) + "Attempt to install an assembly without a strong name.");
-				return false;
+				break;
+			case VerificationResult.DelaySigned:
+				WriteLine (string.Format (failure_msg, name) + "Strong name cannot be verified for delay-signed assembly"
+					+ (in_bootstrap ? "(continuing anyway)" : string.Empty));
+				if (!in_bootstrap)
+					return false;
+				break;
 			}
 
 			resources = new ArrayList ();
@@ -290,7 +295,7 @@ namespace Mono.Tools {
 			string [] siblings = { ".config", ".mdb" };
 			string version_token = an.Version + "_" +
 					       an.CultureInfo.Name.ToLower (CultureInfo.InvariantCulture) + "_" +
-					       GetStringToken (pub_tok);
+					       GetStringToken (an.GetPublicKeyToken ());
 			string full_path = Path.Combine (Path.Combine (gacdir, an.Name), version_token);
 			string asmb_file = Path.GetFileName (name);
 			string asmb_path = Path.Combine (full_path, asmb_file);
@@ -549,7 +554,6 @@ namespace Mono.Tools {
 
 			processed = failed = 0;
 
-
 			try {
 				s = new StreamReader (list_file);
 
@@ -613,8 +617,6 @@ namespace Mono.Tools {
 			} finally {
 				if (s != null)
 					s.Close ();
-
-
 			}
 		}
 
@@ -670,6 +672,53 @@ namespace Mono.Tools {
 			return String.Format ("{0}, Version={1}, Culture={2}, PublicKeyToken={3}",
 					name, pieces [0], (pieces [1] == String.Empty ? "neutral" : pieces [1]),
 					pieces [2]);
+		}
+
+		static bool LoadConfig (bool quiet)
+		{
+			MethodInfo config = typeof (System.Environment).GetMethod ("GetMachineConfigPath",
+				BindingFlags.Static | BindingFlags.NonPublic);
+
+			if (config != null) {
+				string path = (string) config.Invoke (null, null);
+
+				bool exist = File.Exists (path);
+				if (!quiet && !exist)
+					Console.WriteLine ("Couldn't find machine.config");
+
+				StrongNameManager.LoadConfig (path);
+				return exist;
+			} else if (!quiet)
+				Console.WriteLine ("Couldn't resolve machine.config location (corlib issue)");
+
+			// default CSP
+			return false;
+		}
+
+		// modified copy from sn
+		private static VerificationResult VerifyStrongName (AssemblyName an, string assemblyFile)
+		{
+			byte [] publicKey = StrongNameManager.GetMappedPublicKey (an.GetPublicKeyToken ());
+			if ((publicKey == null) || (publicKey.Length < 12)) {
+				// no mapping
+				publicKey = an.GetPublicKey ();
+				if ((publicKey == null) || (publicKey.Length < 12))
+					return VerificationResult.WeakNamed;
+			}
+
+			// Note: MustVerify is based on the original token (by design). Public key
+			// remapping won't affect if the assembly is verified or not.
+			if (StrongNameManager.MustVerify (an)) {
+				RSA rsa = CryptoConvert.FromCapiPublicKeyBlob (publicKey, 12);
+				StrongName sn = new StrongName (rsa);
+				if (sn.Verify (assemblyFile)) {
+					return VerificationResult.StrongNamed;
+				} else {
+					return VerificationResult.DelaySigned;
+				}
+			} else {
+				return VerificationResult.Skipped;
+			}
 		}
 
 		private static bool IsSwitch (string arg)

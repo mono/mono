@@ -3,7 +3,7 @@
     <windir>\Microsoft.NET\Framework\<ver>\CONFIG\Browsers
 -->
 <browsers>
-  <browser refID="Default">
+  <browser refID="testUserAgent">
   	<capture>
   		<userAgent match="^(?'refuacapturename'.*)$" />
   	</capture>

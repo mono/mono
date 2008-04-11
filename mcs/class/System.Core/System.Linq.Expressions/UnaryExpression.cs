@@ -36,6 +36,8 @@ namespace System.Linq.Expressions {
 
 		Expression operand;
 		MethodInfo method;
+		bool is_lifted;
+		bool is_lifted_to_null;
 
 		public Expression Operand {
 			get { return operand; }
@@ -45,14 +47,12 @@ namespace System.Linq.Expressions {
 			get { return method; }
 		}
 
-		[MonoTODO]
 		public bool IsLifted {
-			get { throw new NotImplementedException (); }
+			get { return is_lifted; }
 		}
 
-		[MonoTODO]
 		public bool IsLiftedToNull {
-			get { throw new NotImplementedException (); }
+			get { return is_lifted_to_null; }
 		}
 
 		internal UnaryExpression (ExpressionType node_type, Expression operand)
@@ -67,11 +67,13 @@ namespace System.Linq.Expressions {
 			this.operand = operand;
 		}
 
-		internal UnaryExpression (ExpressionType node_type, Expression operand, Type type, MethodInfo method)
+		internal UnaryExpression (ExpressionType node_type, Expression operand, Type type, MethodInfo method, bool is_lifted)
 			: base (node_type, type)
 		{
 			this.operand = operand;
 			this.method = method;
+			this.is_lifted = is_lifted;
+			this.is_lifted_to_null = is_lifted;
 		}
 
 		void EmitArrayLength (EmitContext ec)
@@ -90,6 +92,25 @@ namespace System.Linq.Expressions {
 				ec.ig.Emit (OpCodes.Unbox_Any, type);
 		}
 
+		void EmitUnaryOperator (EmitContext ec)
+		{
+			var ig = ec.ig;
+
+			switch (NodeType) {
+			case ExpressionType.Not:
+				if (GetNotNullableOf (operand.Type) == typeof (bool)) {
+					ig.Emit (OpCodes.Ldc_I4_0);
+					ig.Emit (OpCodes.Ceq);
+				} else
+					ig.Emit (OpCodes.Not);
+				break;
+			case ExpressionType.Negate:
+			case ExpressionType.NegateChecked:
+				ig.Emit (OpCodes.Neg);
+				break;
+			}
+		}
+
 		internal override void Emit (EmitContext ec)
 		{
 			switch (this.NodeType) {
@@ -98,6 +119,16 @@ namespace System.Linq.Expressions {
 				return;
 			case ExpressionType.TypeAs:
 				EmitTypeAs (ec);
+				return;
+			case ExpressionType.Not:
+			case ExpressionType.Negate:
+			case ExpressionType.NegateChecked:
+			case ExpressionType.UnaryPlus:
+				if (!is_lifted) {
+					operand.Emit (ec);
+					EmitUnaryOperator (ec);
+				} else
+					throw new NotImplementedException ();
 				return;
 			default:
 				throw new NotImplementedException (this.NodeType.ToString ());

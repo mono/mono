@@ -1,3 +1,28 @@
+2008-04-10  Marek Habersack  <mhabersack@novell.com>
+	
+	* RadioButton.cs: adjust 'name' and 'value' attribute values to
+	match MS.NET. Fixes bug #378024
+	
+	* CheckBoxList.cs: set the Selected property to the value in POST
+	data only if the item in question was enabled before postback
+	occurred. Fixes bug #377703
+
+	* ListControl.cs: make sure the owned items' Enabled property is
+	set to the same value what ListControl's. Fixes bug #377703
+
+	* ListItemCollection.cs: fixed SetDirty to store the index of the
+	last dirtied item properly. Fixes bug #377703
+	For the 2.0 profile, set the ListItem instances Enabled property
+	to the value of the owning ListControl (internal ItemsEnabled
+	property was added to make it possible). Fixes bug #377703
+
+2008-04-08  Dean Brettle <dean@brettle.com>
+
+	* DataBoundControl.cs (InternalPerformDataBinding), 
+	HierarchicalDataBoundControl.cs (InternalPerformDataBinding),
+	WebControl.cs (Render): fixed cast errors when a ControlAdapter
+	that wasn't of the type corresponding to the control was used.
+
 2008-04-03  Marek Habersack  <mhabersack@novell.com>
 
 	* DataList.cs: use the value of SelectedIndex, not selectedIndex,

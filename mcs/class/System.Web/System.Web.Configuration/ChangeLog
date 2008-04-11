@@ -1,3 +1,10 @@
+2008-03-23  Dean Brettle <dean@brettle.com>
+
+	* HttpCapabilitiesBase.cs (GetConfigCapabilities): changed to use
+	browscap.ini for default capabilities when *.browser files are
+	present, so we don't need to maintain browser capabilities in two
+	places.
+
 2008-03-09  Dean Brettle <dean@brettle.com> 
 
 	* HttpCapabilitiesBase.cs: changed to use nBrowser for *.browser 

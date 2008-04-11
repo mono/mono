@@ -3805,7 +3805,7 @@ pointer_member_access
 		Expression deref;
 		LocatedToken lt = (LocatedToken) $3;
 
-		deref = new Unary (Unary.Operator.Indirection, (Expression) $1, lt.Location);
+		deref = new Indirection ((Expression) $1, lt.Location);
 		$$ = new MemberAccess (deref, lt.Value);
 	  }
 	;
@@ -3911,7 +3911,7 @@ prefixed_unary_expression
 	  }
 	| STAR prefixed_unary_expression
 	  {
-		$$ = new Unary (Unary.Operator.Indirection, (Expression) $2, (Location) $1);
+		$$ = new Indirection ((Expression) $2, (Location) $1);
 	  }
 	| BITWISE_AND prefixed_unary_expression
 	  {

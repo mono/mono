@@ -2910,7 +2910,35 @@ PublicKeyToken=b77a5c561934e089"));
 			} catch (ArgumentException) {
 			}
 		}
+
+		[AttributeUsage (AttributeTargets.All)]
+		public class DocAttribute : Attribute {
+			public DocAttribute (string docs) {}
+		}
+		
+		class GenericClassWithAttributes<[Doc ("T")] T, [Doc ("B")] B> 
+			where T : class, new ()
+			where B : Attribute
+		{
+			public T Bar { get{return null;}}
+
+			public void M<[Doc ("X")] X> (X x)
+			{
+			}
+		}
 	
+		[Test] //bug #377596
+		public void GetGenericArguments_ArgumentsHaveAttributes ()
+		{
+			Type type = typeof(GenericClassWithAttributes<,>);
+			Type[] tArgs = type.GetGenericArguments ();
+			MethodInfo m = type.GetMethod ("M");
+			Type[] mArgs = m.GetGenericArguments ();
+			Assert.AreEqual(1, tArgs[0].GetCustomAttributes (typeof (DocAttribute), true).Length, "#1");
+			Assert.AreEqual(1, tArgs[1].GetCustomAttributes (typeof (DocAttribute), true).Length, "#1");
+			Assert.AreEqual(1, mArgs[0].GetCustomAttributes (typeof (DocAttribute), true).Length, "#1");
+
+		}
 #endif
 
 		static bool ContainsProperty (PropertyInfo [] props, string name)

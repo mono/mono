@@ -889,5 +889,24 @@ namespace MonoTests.System.Xml.TestClasses
 		[SoapEnum ("Large")]
 		B
 	}
+
+	public class ErrorneousGetSchema : IXmlSerializable
+	{
+		public XmlSchema GetSchema ()
+		{
+			throw new ApplicationException ("unexpected");
+		}
+
+		public void ReadXml (XmlReader reader)
+		{
+		}
+
+		public void WriteXml (XmlWriter writer)
+		{
+		}
+
+		// it should be serialized IF it is NOT IXmlSerializable.
+		public string Whoa = "whoa";
+	}
 }
 

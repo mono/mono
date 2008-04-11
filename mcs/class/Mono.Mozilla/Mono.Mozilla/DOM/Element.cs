@@ -32,14 +32,14 @@ namespace Mono.Mozilla.DOM
 {
 	internal class Element : Node, IElement
 	{
-		internal nsIDOMElement element;
+		internal nsIDOMElement element {
+			get { return node as nsIDOMElement;}
+			set { base.node = value as nsIDOMNode; }
+		}
 		
 		public Element(WebBrowser control, nsIDOMElement domElement) : base (control, domElement as nsIDOMNode)
 		{
-			if (control.platform != control.enginePlatform)
-				this.element = nsDOMElement.GetProxy (control, domElement);
-			else
-				this.element = domElement;
+			this.element = domElement;
 		}
 
 		#region IDisposable Members
@@ -79,10 +79,37 @@ namespace Mono.Mozilla.DOM
 				this.element.setNodeValue (storage);
 			}
 		}
+		
+		public virtual string OuterText
+		{
+			get
+			{
+				nsIDOMDocumentRange docRange = ((Document) control.Document).ComObject as nsIDOMDocumentRange;
+				nsIDOMRange range;
+				docRange.createRange (out range);
+				nsIDOMNode parent;
+				element.getParentNode (out parent);
+				range.selectNodeContents (parent);
+				range.toString (storage);
+				return Base.StringGet (storage);
+			}
+			set
+			{
+				Base.StringSet (storage, value);
+				nsIDOMNode parent;
+				element.getParentNode (out parent);
+				parent.setNodeValue (storage);
+			}
+		}		
 
 		public virtual string InnerHTML	{
 			get { return String.Empty; }
 		}
+		
+		public virtual string OuterHTML	{
+			get { return String.Empty; }
+			set {}
+		}		
 
 		public IElementCollection All {
 			get

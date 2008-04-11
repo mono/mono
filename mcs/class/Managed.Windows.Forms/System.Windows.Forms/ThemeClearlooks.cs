@@ -748,27 +748,24 @@ namespace System.Windows.Forms {
 				
 				thumb_pos.Width = bar.Width;
 				bar.ThumbPos = thumb_pos;
-				
-				/* Background */
-				switch ( bar.thumb_moving ) {
-					case ScrollBar.ThumbMoving.None: {
-							ScrollBar_Vertical_Draw_ThumbMoving_None( scrollbutton_height, bar, clip, dc );
-							break;
-						}
-					case ScrollBar.ThumbMoving.Forward: {
-							ScrollBar_Vertical_Draw_ThumbMoving_Forward( scrollbutton_height, bar, thumb_pos, clip, dc );
-							break;
-						}
-						
-					case ScrollBar.ThumbMoving.Backwards: {
-							ScrollBar_Vertical_Draw_ThumbMoving_Backwards( scrollbutton_height, bar, thumb_pos, clip, dc );
-							break;
-						}
-						
-					default:
-						break;
-				}
-				
+
+				Pen pen;
+				/* Background, upper track */
+				Rectangle UpperTrack = new Rectangle (0, 0, bar.ClientRectangle.Width, bar.ThumbPos.Top);
+				if (clip.IntersectsWith (UpperTrack))
+					dc.FillRectangle (ResPool.GetSolidBrush (scrollbar_background_color), UpperTrack);
+					pen = ResPool.GetPen (scrollbar_border_color);
+					dc.DrawLine (pen, UpperTrack.X, UpperTrack.Y, UpperTrack.X, UpperTrack.Bottom - 1);
+					dc.DrawLine (pen, UpperTrack.Right - 1, UpperTrack.Y, UpperTrack.Right - 1, UpperTrack.Bottom - 1);
+
+				/* Background, lower track */
+				Rectangle LowerTrack = new Rectangle (0, bar.ThumbPos.Bottom, bar.ClientRectangle.Width, bar.ClientRectangle.Height - bar.ThumbPos.Bottom);
+				if (clip.IntersectsWith (LowerTrack))
+					dc.FillRectangle (ResPool.GetSolidBrush (scrollbar_background_color), LowerTrack);
+					pen = ResPool.GetPen (scrollbar_border_color);
+					dc.DrawLine (pen, LowerTrack.X, LowerTrack.Y, LowerTrack.X, LowerTrack.Bottom - 1);
+					dc.DrawLine (pen, LowerTrack.Right - 1, LowerTrack.Y, LowerTrack.Right - 1, LowerTrack.Bottom - 1);
+
 				/* Buttons */
 				if ( clip.IntersectsWith( first_arrow_area ) )
 					CPDrawScrollButton( dc, first_arrow_area, ScrollButton.Up, bar.firstbutton_state );
@@ -783,24 +780,23 @@ namespace System.Windows.Forms {
 				
 				thumb_pos.Height = bar.Height;
 				bar.ThumbPos = thumb_pos;
-				
-				/* Background */					
-				switch ( bar.thumb_moving ) {
-					case ScrollBar.ThumbMoving.None: {
-							ScrollBar_Horizontal_Draw_ThumbMoving_None( scrollbutton_width, bar, clip, dc );
-							break;
-						}
-						
-					case ScrollBar.ThumbMoving.Forward: {
-							ScrollBar_Horizontal_Draw_ThumbMoving_Forward( scrollbutton_width, thumb_pos, bar, clip, dc );
-							break;
-						}
-						
-					case ScrollBar.ThumbMoving.Backwards: {
-							ScrollBar_Horizontal_Draw_ThumbMoving_Backwards( scrollbutton_width, thumb_pos, bar, clip, dc );
-							break;
-						}
-				}
+
+				Pen pen;
+				//Background, left track
+				Rectangle LeftTrack = new Rectangle (0, 0, bar.ThumbPos.Left, bar.ClientRectangle.Height);
+				if (clip.IntersectsWith (LeftTrack))
+					dc.FillRectangle (ResPool.GetSolidBrush (scrollbar_background_color), LeftTrack);
+					pen = ResPool.GetPen (scrollbar_border_color);
+					dc.DrawLine (pen, LeftTrack.X, LeftTrack.Y, LeftTrack.Right - 1, LeftTrack.Y);
+					dc.DrawLine (pen, LeftTrack.X, LeftTrack.Bottom - 1, LeftTrack.Right - 1, LeftTrack.Bottom - 1);
+
+				//Background, right track
+				Rectangle RightTrack = new Rectangle (bar.ThumbPos.Right, 0, bar.ClientRectangle.Width - bar.ThumbPos.Right, bar.ClientRectangle.Height);
+				if (clip.IntersectsWith (RightTrack))
+					dc.FillRectangle (ResPool.GetSolidBrush (scrollbar_background_color), RightTrack);
+					pen = ResPool.GetPen (scrollbar_border_color);
+					dc.DrawLine (pen, RightTrack.X, RightTrack.Y, RightTrack.Right - 1, RightTrack.Y);
+					dc.DrawLine (pen, RightTrack.X, RightTrack.Bottom - 1, RightTrack.Right - 1, RightTrack.Bottom - 1);					
 				
 				/* Buttons */
 				if ( clip.IntersectsWith( first_arrow_area ) )
@@ -816,136 +812,6 @@ namespace System.Windows.Forms {
 		protected override void ScrollBar_DrawThumb( ScrollBar bar, Rectangle thumb_pos, Rectangle clip, Graphics dc ) {
 			if ( bar.Enabled && thumb_pos.Width > 0 && thumb_pos.Height > 0 && clip.IntersectsWith( thumb_pos ) )
 				DrawScrollBarThumb( dc, thumb_pos, bar );
-		}
-		
-		protected override void ScrollBar_Vertical_Draw_ThumbMoving_None( int scrollbutton_height, ScrollBar bar, Rectangle clip, Graphics dc ) {
-			Rectangle r = new Rectangle( 0,
-						    scrollbutton_height, bar.ClientRectangle.Width, bar.ClientRectangle.Height - ( scrollbutton_height * 2 ) );
-			Rectangle intersect = Rectangle.Intersect( clip, r );
-			
-			if ( intersect != Rectangle.Empty ) {
-				dc.FillRectangle( ResPool.GetSolidBrush( scrollbar_background_color ), intersect );
-				Pen pen = ResPool.GetPen( scrollbar_border_color );
-				dc.DrawLine( pen, intersect.X, intersect.Y, intersect.X, intersect.Bottom - 1 );
-				dc.DrawLine( pen, intersect.Right - 1, intersect.Y, intersect.Right - 1, intersect.Bottom - 1 );
-			}
-		}
-		
-		protected override void ScrollBar_Vertical_Draw_ThumbMoving_Forward( int scrollbutton_height, ScrollBar bar, Rectangle thumb_pos, Rectangle clip, Graphics dc ) {
-			Rectangle r = new Rectangle( 0,	 scrollbutton_height,
-						    bar.ClientRectangle.Width, thumb_pos.Y  - scrollbutton_height );
-			Rectangle intersect = Rectangle.Intersect( clip, r );
-			
-			if ( intersect != Rectangle.Empty ) {
-				dc.FillRectangle( ResPool.GetSolidBrush( scrollbar_background_color ), intersect );
-				Pen pen = ResPool.GetPen( scrollbar_border_color );
-				dc.DrawLine( pen, intersect.X, intersect.Y, intersect.X, intersect.Bottom - 1 );
-				dc.DrawLine( pen, intersect.Right - 1, intersect.Y, intersect.Right - 1, intersect.Bottom - 1 );
-			}
-			
-			r.X = 0;
-			r.Y = thumb_pos.Y + thumb_pos.Height;
-			r.Width = bar.ClientRectangle.Width;
-			r.Height = bar.ClientRectangle.Height -	 ( thumb_pos.Y + thumb_pos.Height ) - scrollbutton_height;
-			
-			intersect = Rectangle.Intersect( clip, r );
-			if ( intersect != Rectangle.Empty ) {
-				dc.FillRectangle( ResPool.GetSolidBrush( scrollbar_background_color ), intersect );
-				Pen pen = ResPool.GetPen( scrollbar_border_color );
-				dc.DrawLine( pen, intersect.X, intersect.Y, intersect.X, intersect.Bottom - 1 );
-				dc.DrawLine( pen, intersect.Right - 1, intersect.Y, intersect.Right - 1, intersect.Bottom - 1 );
-			}
-		}
-		
-		protected override void ScrollBar_Vertical_Draw_ThumbMoving_Backwards( int scrollbutton_height, ScrollBar bar, Rectangle thumb_pos, Rectangle clip, Graphics dc ) {
-			Rectangle r = new Rectangle( 0,	 scrollbutton_height,
-						    bar.ClientRectangle.Width, thumb_pos.Y - scrollbutton_height );
-			Rectangle intersect = Rectangle.Intersect( clip, r );
-			
-			if ( intersect != Rectangle.Empty ) {
-				dc.FillRectangle( ResPool.GetSolidBrush( scrollbar_background_color ), intersect );
-				Pen pen = ResPool.GetPen( scrollbar_border_color );
-				dc.DrawLine( pen, intersect.X, intersect.Y, intersect.X, intersect.Bottom - 1 );
-				dc.DrawLine( pen, intersect.Right - 1, intersect.Y, intersect.Right - 1, intersect.Bottom - 1 );
-			}
-			
-			r.X = 0;
-			r.Y = thumb_pos.Y + thumb_pos.Height;
-			r.Width = bar.ClientRectangle.Width;
-			r.Height = bar.ClientRectangle.Height -	 ( thumb_pos.Y + thumb_pos.Height ) - scrollbutton_height;
-			
-			intersect = Rectangle.Intersect( clip, r );
-			if ( intersect != Rectangle.Empty ) {
-				dc.FillRectangle( ResPool.GetSolidBrush( scrollbar_background_color ), intersect );
-				Pen pen = ResPool.GetPen( scrollbar_border_color );
-				dc.DrawLine( pen, intersect.X, intersect.Y, intersect.X, intersect.Bottom - 1 );
-				dc.DrawLine( pen, intersect.Right - 1, intersect.Y, intersect.Right - 1, intersect.Bottom - 1 );
-			}
-		}
-		
-		protected override void ScrollBar_Horizontal_Draw_ThumbMoving_None( int scrollbutton_width, ScrollBar bar, Rectangle clip, Graphics dc ) {
-			Rectangle r = new Rectangle( scrollbutton_width,
-						    0, bar.ClientRectangle.Width - ( scrollbutton_width * 2 ), bar.ClientRectangle.Height );
-			Rectangle intersect = Rectangle.Intersect( clip, r );
-			
-			if ( intersect != Rectangle.Empty ) {
-				dc.FillRectangle( ResPool.GetSolidBrush( scrollbar_background_color ), intersect );
-				Pen pen = ResPool.GetPen( scrollbar_border_color );
-				dc.DrawLine( pen, intersect.X, intersect.Y, intersect.Right - 1, intersect.Y );
-				dc.DrawLine( pen, intersect.X, intersect.Bottom - 1, intersect.Right - 1, intersect.Bottom - 1 );
-			}
-		}
-		
-		protected override void ScrollBar_Horizontal_Draw_ThumbMoving_Forward( int scrollbutton_width, Rectangle thumb_pos, ScrollBar bar, Rectangle clip, Graphics dc ) {
-			Rectangle r = new Rectangle( scrollbutton_width,  0,
-						    thumb_pos.X - scrollbutton_width, bar.ClientRectangle.Height );
-			Rectangle intersect = Rectangle.Intersect( clip, r );
-			
-			if ( intersect != Rectangle.Empty ) {
-				dc.FillRectangle( ResPool.GetSolidBrush( scrollbar_background_color ), intersect );
-				Pen pen = ResPool.GetPen( scrollbar_border_color );
-				dc.DrawLine( pen, intersect.X, intersect.Y, intersect.Right - 1, intersect.Y );
-				dc.DrawLine( pen, intersect.X, intersect.Bottom - 1, intersect.Right - 1, intersect.Bottom - 1 );
-			}
-			
-			r.X = thumb_pos.X + thumb_pos.Width;
-			r.Y = 0;
-			r.Width = bar.ClientRectangle.Width -  ( thumb_pos.X + thumb_pos.Width ) - scrollbutton_width;
-			r.Height = bar.ClientRectangle.Height;
-			
-			intersect = Rectangle.Intersect( clip, r );
-			if ( intersect != Rectangle.Empty ) {
-				dc.FillRectangle( ResPool.GetSolidBrush( scrollbar_background_color ), intersect );
-				Pen pen = ResPool.GetPen( scrollbar_border_color );
-				dc.DrawLine( pen, intersect.X, intersect.Y, intersect.Right - 1, intersect.Y );
-				dc.DrawLine( pen, intersect.X, intersect.Bottom - 1, intersect.Right - 1, intersect.Bottom - 1 );
-			}
-		}
-		
-		protected override void ScrollBar_Horizontal_Draw_ThumbMoving_Backwards( int scrollbutton_width, Rectangle thumb_pos, ScrollBar bar, Rectangle clip, Graphics dc ) {
-			Rectangle r = new Rectangle( scrollbutton_width,  0,
-						    thumb_pos.X - scrollbutton_width, bar.ClientRectangle.Height );
-			Rectangle intersect = Rectangle.Intersect( clip, r );
-			
-			if ( intersect != Rectangle.Empty ) {
-				dc.FillRectangle( ResPool.GetSolidBrush( scrollbar_background_color ), intersect );
-				Pen pen = ResPool.GetPen( scrollbar_border_color );
-				dc.DrawLine( pen, intersect.X, intersect.Y, intersect.Right - 1, intersect.Y );
-				dc.DrawLine( pen, intersect.X, intersect.Bottom - 1, intersect.Right - 1, intersect.Bottom - 1 );
-			}
-			
-			r.X = thumb_pos.X + thumb_pos.Width;
-			r.Y = 0;
-			r.Width = bar.ClientRectangle.Width -  ( thumb_pos.X + thumb_pos.Width ) - scrollbutton_width;
-			r.Height = bar.ClientRectangle.Height;
-			
-			intersect = Rectangle.Intersect( clip, r );
-			if ( intersect != Rectangle.Empty ) {
-				dc.FillRectangle( ResPool.GetSolidBrush( scrollbar_background_color ), intersect );
-				Pen pen = ResPool.GetPen( scrollbar_border_color );
-				dc.DrawLine( pen, intersect.X, intersect.Y, intersect.Right - 1, intersect.Y );
-				dc.DrawLine( pen, intersect.X, intersect.Bottom - 1, intersect.Right - 1, intersect.Bottom - 1 );
-			}
 		}
 		#endregion	// ScrollBar
 		
@@ -3413,4 +3279,5 @@ namespace System.Windows.Forms {
 		
 	} //class
 }
+
 

@@ -36,6 +36,9 @@ using System.Threading;
 using System.Security.Principal;
 using System.Web;
 using System.Web.UI;
+#if NET_2_0
+using System.Web.UI.Adapters;
+#endif
 using MonoTests.SystemWeb.Framework;
 using MonoTests.stand_alone.WebHarness;
 using System.Web.UI.WebControls;
@@ -1145,9 +1148,23 @@ namespace MonoTests.System.Web.UI {
 		}
 
 		[Test]
-		public void PageAdapter ()
+		public void PageAdapterWithNoAdapter ()
 		{
 			Page p = new Page ();
+			Assert.AreEqual (null, p.PageAdapter, "PageAdapter");
+		}
+
+		[Test]
+		public void PageAdapterWithPageAdapter ()
+		{
+			TestPageWithAdapter p = new TestPageWithAdapter ();
+			Assert.AreEqual (p.page_adapter, p.PageAdapter, "PageAdapter");
+		}
+
+		[Test]
+		public void PageAdapterWithControlAdapter ()
+		{
+			TestPageWithControlAdapter p = new TestPageWithControlAdapter ();
 			Assert.AreEqual (null, p.PageAdapter, "PageAdapter");
 		}
 
@@ -1435,7 +1452,7 @@ namespace MonoTests.System.Web.UI {
 
 	public class TestPageWithAdapter : Page
 	{
-		private global::System.Web.UI.Adapters.PageAdapter page_adapter;
+		public global::System.Web.UI.Adapters.PageAdapter page_adapter;
 		
 		public TestPageWithAdapter () : base ()
 		{
@@ -1454,6 +1471,28 @@ namespace MonoTests.System.Web.UI {
 			get { return base.PageStatePersister; }
 		}
 					
+	}
+	
+	public class TestControlAdapter : ControlAdapter
+	{
+	}
+
+	public class TestPageWithControlAdapter : Page
+	{
+		private global::System.Web.UI.Adapters.ControlAdapter control_adapter;
+		
+		public TestPageWithControlAdapter () : base ()
+		{
+			control_adapter = new TestControlAdapter ();
+			WebTest t = WebTest.CurrentTest;
+			if (t != null)
+				t.Invoke (this);
+		}
+		
+		protected override global::System.Web.UI.Adapters.ControlAdapter ResolveAdapter ()
+		{
+			return control_adapter;
+		}					
 	}
 #endif
 }

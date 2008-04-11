@@ -151,7 +151,6 @@ System/FlagsAttribute.cs
 System/FormatException.cs
 System/GC.cs
 System/GCCollectionMode.cs
-System/GCLatencyMode.cs
 System/Guid.cs
 System/IAppDomainSetup.cs
 System/IAsyncResult.cs
@@ -551,6 +550,7 @@ System.Resources/RuntimeResourceSet.cs
 System.Resources/SatelliteContractVersionAttribute.cs
 System.Resources/UltimateResourceFallbackLocation.cs
 System.Resources/Win32Resources.cs
+System.Runtime/GCLatencyMode.cs
 System.Runtime/GCSettings.cs
 System.Runtime/MemoryFailPoint.cs
 System.Runtime.CompilerServices/AccessedThroughPropertyAttribute.cs

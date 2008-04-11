@@ -70,7 +70,7 @@ namespace Mono.Cecil {
 
 		public SecurityDeclaration FromByteArray (SecurityAction action, byte [] declaration, bool resolve)
 		{
-			SecurityDeclaration dec = new SecurityDeclaration (action);
+			SecurityDeclaration dec = new SecurityDeclaration (action, this);
 #if !CF_1_0 && !CF_2_0
 			dec.PermissionSet = new PermissionSet (SSP.PermissionState.None);
 
@@ -98,11 +98,14 @@ namespace Mono.Cecil {
 					IPermission p = sa.CreatePermission ();
 					dec.PermissionSet.AddPermission (p);
 				}
+
+				dec.Resolved = true;
 			} else {
 				Parser.LoadXml (Encoding.Unicode.GetString (declaration));
 				try {
 					dec.PermissionSet.FromXml (Parser.ToXml ());
 					dec.PermissionSet.ToXml ();
+					dec.Resolved = true;
 				} catch {
 					dec.Resolved = false;
 					dec.Blob = declaration;

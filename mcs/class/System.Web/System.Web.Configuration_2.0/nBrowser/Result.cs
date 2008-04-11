@@ -34,7 +34,7 @@ namespace System.Web.Configuration.nBrowser
 		private System.Collections.Specialized.StringCollection Track;
 		internal Type MarkupTextWriter;
 
-		internal Result(System.Collections.Generic.Dictionary<string, string> items)
+		internal Result(System.Collections.IDictionary items)
 			: base(items)
 		{
 			AdapterTypeMap = new System.Collections.Generic.Dictionary<Type, Type>();
@@ -56,15 +56,26 @@ namespace System.Web.Configuration.nBrowser
 		/// <param name="adapterTypeName"></param>
 		internal void AddAdapter(string controlTypeName, string adapterTypeName)
 		{
-			Type controlType = System.Type.GetType(controlTypeName); // case-sensitive
-			if (controlType == null)
-				controlType = System.Type.GetType(controlTypeName, true, true); // case-insensitive, throw if not found
-			Type adapterType = System.Type.GetType(adapterTypeName); // case-sensitive
-			if (adapterType == null)
-				adapterType = System.Type.GetType(adapterTypeName, true, true); // case-insensitive, throw if not found
-				
+			Type controlType = FindType(controlTypeName);
+			Type adapterType = FindType(adapterTypeName);
 			AdapterTypeMap[controlType] = adapterType;
 		}
+		
+		private Type FindType(string typeName)
+		{
+			foreach (System.Reflection.Assembly a in System.AppDomain.CurrentDomain.GetAssemblies())
+			{
+				string fullTypeName = typeName + "," + a.FullName;
+				Type t = System.Type.GetType(fullTypeName); // case-sensitive
+				if (t != null)
+					return t;
+				t = System.Type.GetType(fullTypeName, false, true); // case-insensitive
+				if (t != null)
+					return t;
+			}
+			throw new TypeLoadException(typeName);
+		}
+		
 		/// <summary>
 		/// 
 		/// </summary>

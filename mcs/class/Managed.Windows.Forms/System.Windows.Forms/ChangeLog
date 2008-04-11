@@ -1,3 +1,133 @@
+2008-04-10  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TreeView.cs: Clamp setting the scrollbar value using SafeValueSet.
+	[Fixes bug #378869]
+
+2008-04-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* X11Keyboard.cs, X11Structs.cs : make over-the-spot mode default.
+	  Add some on-the-spot code, but it seems we don't need it.
+
+2008-04-10  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Form.cs: Add method for DataGridView to trigger focus cues
+	even when it handles the tab keypress.
+
+2008-04-10  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridView.cs: More keyboard handling, tab, esc.
+	* DataGridViewTextBoxEditingControl.cs: Don't request arrow keys
+	when at the beginning or end of the text in the text box.
+
+2008-04-09  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridViewCell.cs: Guard against an NRE causing a test to fail.
+
+2008-04-09  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridView.cs: Some fixups for showing and adding the edit control.
+	* DataGridViewButtonColumn.cs: Implement ToString.
+	* DataGridViewCell.cs: Size and position the control simultaneously.
+	* DataGridViewTextBoxCell.cs: Use base to position control.
+
+2008-04-09  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridViewCell.cs: Fix up some formatting and painting code.
+	* DataGridViewImageCell.cs: Implement some NIEX methods.
+
+2008-04-09  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripItemCollection.cs: What moving an item from one owner
+	to another, remove from source owner before adding to destination.
+	[Fixes bug #378109]
+
+2008-04-09  Jonathan Pobst  <monkey@jpobst.com>
+
+	* PictureBox.cs: Call Load when ImageLocation is set.
+	[Fixes bug #378308]
+
+2008-04-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* X11Keyboard.cs, XplatUIX11.cs :
+	  Implement over-the-spot mode (with some odd offsets).
+	  - set preedit position when caret is set.
+	  - Wrap XMoveResizeWindow() to move preedit position.
+
+2008-04-08  Everaldo Canuto  <ecanuto@novell.com>
+
+	* X11keyboard.cs: Fix last patch, maxval must be less not greater than
+	array lenght.
+
+2008-04-08  Everaldo Canuto  <ecanuto@novell.com>
+
+	* KeyboardLayouts.cs: Uses GENERATING_RESOURCES to make VKeyTableIndex
+	and ScanTableIndex public, it fix compilations errors when compiling
+	WinForms to generate keyboard layout resources.
+
+2008-04-08  Everaldo Canuto  <ecanuto@novell.com>
+
+	* X11keyboard.cs: Prevent keyboard errors when vitual table theres 
+	different element count than scan table. It prevents some errors in non
+	standard keyboards.
+
+2008-04-08  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridViewHeaderCell.cs: Implement some NIEX methods.
+
+2008-04-08  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridView.cs: Call OnContentClick.
+	* DataGridViewCell.cs: Do a null check on ValueType instead
+	of valueType.
+	* DataGridViewCheckBoxCell.cs: Implement.
+
+2008-04-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* X11Keyboard.cs : Do not cast IntPtr to int. Use long.
+
+2008-04-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* X11Keyboard.cs : Check XGetIMValues() return value in
+	  case it does not return input styles in some environment.
+
+2008-04-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* X11Keyboard.cs : sizeof(IntPtr) != 4 on amd64.
+
+2008-04-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* BindingContext.cs: Stub UpdateBinding method.
+
+2008-04-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+        * X11Structs.cs : added couple of structs for XIM support.
+        * X11Keyboard.cs :
+          Release XIM in case it failed to create XIC. 
+          Use consts for XNblah string.
+          Add support for IM style customization and XIC creation
+          for preedit-position and preedit-callback.
+          Right now use MONO_WINFORMS_XIM_STYLE environment variable
+          (list of: over-the-spot | on-the-spot | root). Only root
+          mode works so far.
+
+	  (redoing r99172 with fix.)
+
+2008-04-07  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TreeView.cs: Center the checkbox a little better.
+
+2008-04-07  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ThemeClearlooks.cs, ThemeGtk.cs, ThemeNice.cs, ThemeWin32Classic.cs:
+	Apply very nice patch from Ernesto Carrea that simplifies our
+	scrollbar drawing.  [From bug #376146]
+
+2008-04-07  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TreeView.cs: Correct the location of the root node checkbox when
+	ShowRootLines = false.  Don't draw the root lines for the root node
+	when ShowRootLines = false.  [Fixes bug #377535]
+
 2008-04-06  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* WebBrowserBase.cs: Added missing attributes and fixed attributes.

@@ -1,3 +1,9 @@
+2008-04-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UTF7Encoding.cs :
+	  Fixed misplaced leftOverSize reset in InternalGetCharCount().
+	  Fixed base64 value for '+' (the value is actually unused though).
+
 2008-03-27  Kornél Pál  <kornelpal@gmail.com>
 
 	* Encoding.cs: Fix possible integer overflow in argument validation.

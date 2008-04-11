@@ -231,6 +231,9 @@ namespace System.Windows.Forms
 			if (value is ToolStripMenuItem && (value as ToolStripMenuItem).ShortcutKeys != Keys.None)
 				ToolStripManager.AddToolStripMenuItem ((ToolStripMenuItem)value);
 
+			if (value.Owner != null)
+				value.Owner.Items.Remove (value);
+				
 			base.Insert (index, value);
 			
 			if (internal_created) {

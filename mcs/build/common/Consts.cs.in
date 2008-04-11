@@ -47,6 +47,9 @@ internal
 	//
 
 	public const string MonoVersion = "@MONO_VERSION@";
+	public const string MonoCompany = "MONO development team";
+	public const string MonoProduct = "MONO Common language infrastructure";
+	public const string MonoCopyright = "(c) various MONO Authors";
 
 #if NET_3_5
 	// Versions of .NET Framework 3.5 RTM

@@ -224,7 +224,7 @@ namespace System.Web.UI.WebControls {
 		
 		protected void InternalPerformDataBinding (IEnumerable data)
 		{
-			DataBoundControlAdapter adapter = (DataBoundControlAdapter)Adapter;
+			DataBoundControlAdapter adapter = Adapter as DataBoundControlAdapter;
 			if (adapter != null)
 				adapter.PerformDataBinding (data);
 			else

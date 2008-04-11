@@ -76,6 +76,7 @@ namespace Mono.CSharp
 			case BranchingType.Exception:
 			case BranchingType.Labeled:
 			case BranchingType.Toplevel:
+			case BranchingType.TryCatch:
 				throw new InvalidOperationException ();
 
 			case BranchingType.Switch:
@@ -89,9 +90,6 @@ namespace Mono.CSharp
 
 			case BranchingType.Embedded:
 				return new FlowBranchingContinuable (parent, type, SiblingType.Conditional, block, loc);
-
-			case BranchingType.TryCatch:
-				return new FlowBranchingTryCatch (parent, loc);
 
 			default:
 				return new FlowBranchingBlock (parent, type, SiblingType.Conditional, block, loc);
@@ -428,6 +426,11 @@ namespace Mono.CSharp
 			return result;
  		}
 
+		public virtual bool CheckRethrow (Location loc)
+		{
+			return Parent.CheckRethrow (loc);
+		}
+
 		public virtual bool AddResumePoint (ResumableStatement stmt, Location loc, out int pc)
 		{
 			return Parent.AddResumePoint (stmt, loc, out pc);
@@ -666,6 +669,12 @@ namespace Mono.CSharp
 		{
 		}
 
+		public override bool CheckRethrow (Location loc)
+		{
+			Report.Error (156, loc, "A throw statement with no arguments is not allowed outside of a catch clause");
+			return false;
+		}
+
 		public override bool AddResumePoint (ResumableStatement stmt, Location loc, out int pc)
 		{
 			pc = -1;
@@ -732,9 +741,16 @@ namespace Mono.CSharp
 
 	public class FlowBranchingTryCatch : FlowBranchingBlock
 	{
-		public FlowBranchingTryCatch (FlowBranching parent, Location loc)
-			: base (parent, BranchingType.Block, SiblingType.Try, null, loc)
+		TryCatch stmt;
+		public FlowBranchingTryCatch (FlowBranching parent, TryCatch stmt)
+			: base (parent, BranchingType.Block, SiblingType.Try, null, stmt.loc)
 		{
+			this.stmt = stmt;
+		}
+
+		public override bool CheckRethrow (Location loc)
+		{
+			return CurrentUsageVector.Next != null || Parent.CheckRethrow (loc);
 		}
 
 		public override bool AddResumePoint (ResumableStatement stmt, Location loc, out int pc)
@@ -753,18 +769,21 @@ namespace Mono.CSharp
 		public override bool AddBreakOrigin (UsageVector vector, Location loc)
 		{
 			Parent.AddBreakOrigin (vector, loc);
+			stmt.SomeCodeFollows ();
 			return true;
 		}
 
 		public override bool AddContinueOrigin (UsageVector vector, Location loc)
 		{
 			Parent.AddContinueOrigin (vector, loc);
+			stmt.SomeCodeFollows ();
 			return true;
 		}
 
-		public override bool AddReturnOrigin (UsageVector vector, ExitStatement stmt)
+		public override bool AddReturnOrigin (UsageVector vector, ExitStatement exit_stmt)
 		{
-			Parent.AddReturnOrigin (vector, stmt);
+			Parent.AddReturnOrigin (vector, exit_stmt);
+			stmt.SomeCodeFollows ();
 			return true;
 		}
 
@@ -888,6 +907,16 @@ namespace Mono.CSharp
 			get { return current_vector; }
 		}
 
+		public override bool CheckRethrow (Location loc)
+		{
+			if (!Parent.CheckRethrow (loc))
+				return false;
+			if (finally_vector == null)
+				return true;
+			Report.Error (724, loc, "A throw statement with no arguments is not allowed inside of a finally clause nested inside of the innermost catch clause");
+			return false;
+		}
+
 		public override bool AddResumePoint (ResumableStatement stmt, Location loc, out int pc)
 		{
 			int errors = Report.Errors;
@@ -911,6 +940,9 @@ namespace Mono.CSharp
 			} else {
 				saved_origins = new BreakOrigin (saved_origins, vector, loc);
 			}
+
+			// either the loop test or a back jump will follow code
+			stmt.SomeCodeFollows ();
 			return true;
 		}
 
@@ -924,19 +956,25 @@ namespace Mono.CSharp
 			} else {
 				saved_origins = new ContinueOrigin (saved_origins, vector, loc);
 			}
+
+			// either the loop test or a back jump will follow code
+			stmt.SomeCodeFollows ();
 			return true;
 		}
 
-		public override bool AddReturnOrigin (UsageVector vector, ExitStatement stmt)
+		public override bool AddReturnOrigin (UsageVector vector, ExitStatement exit_stmt)
 		{
 			if (finally_vector != null) {
 				int errors = Report.Errors;
-				Parent.AddReturnOrigin (vector, stmt);
+				Parent.AddReturnOrigin (vector, exit_stmt);
 				if (errors == Report.Errors)
-					stmt.Error_FinallyClause ();
+					exit_stmt.Error_FinallyClause ();
 			} else {
-				saved_origins = new ReturnOrigin (saved_origins, vector, stmt);
+				saved_origins = new ReturnOrigin (saved_origins, vector, exit_stmt);
 			}
+
+			// sets ec.NeedReturnLabel()
+			stmt.SomeCodeFollows ();
 			return true;
 		}
 

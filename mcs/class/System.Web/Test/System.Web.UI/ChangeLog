@@ -1,3 +1,9 @@
+2008-03-23  Dean Brettle <dean@brettle.com>
+
+	* PageTest.cs: added tests to ensure that using a 
+	ControlAdapter that is not of the type corresponding to the 
+	control doesn't	cause a cast error.
+
 2008-03-09  Dean Brettle <dean@brettle.com> 
 
 	* PageTest.cs: add tests for using a PageAdapter.

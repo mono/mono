@@ -694,7 +694,7 @@ namespace Mono.CSharp
 			GenerateGenericsConstraints (method.TypeParameters);
 #endif
 
-			if ((attributes & MemberAttributes.ScopeMask) == MemberAttributes.Abstract || declaration.IsInterface)
+			if (IsAbstract (attributes) || declaration.IsInterface)
 				output.WriteLine (';');
 			else {
 				OutputStartBrace ();
@@ -703,6 +703,11 @@ namespace Mono.CSharp
 				--Indent;
 				output.WriteLine ('}');
 			}
+		}
+
+		static bool IsAbstract (MemberAttributes attributes)
+		{
+			return (attributes & MemberAttributes.ScopeMask) == MemberAttributes.Abstract;
 		}
 
 		protected override void GenerateProperty (CodeMemberProperty property,
@@ -748,7 +753,7 @@ namespace Mono.CSharp
 			OutputStartBrace ();
 			++Indent;
 
-			if (declaration.IsInterface)
+			if (declaration.IsInterface || IsAbstract (property.Attributes))
 			{
 				if (property.HasGet) output.WriteLine("get;");
 				if (property.HasSet) output.WriteLine("set;");

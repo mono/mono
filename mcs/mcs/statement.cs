@@ -1083,39 +1083,27 @@ namespace Mono.CSharp {
 		{
 			ec.CurrentBranching.CurrentUsageVector.Goto ();
 
-			if (expr != null){
-				expr = expr.Resolve (ec);
-				if (expr == null)
-					return false;
+			if (expr == null)
+				return ec.CurrentBranching.CheckRethrow (loc);
 
-				ExprClass eclass = expr.eclass;
+			expr = expr.Resolve (ec);
+			if (expr == null)
+				return false;
 
-				if (!(eclass == ExprClass.Variable || eclass == ExprClass.PropertyAccess ||
-					eclass == ExprClass.Value || eclass == ExprClass.IndexerAccess)) {
-					expr.Error_UnexpectedKind (ec.DeclContainer, "value, variable, property or indexer access ", loc);
-					return false;
-				}
+			ExprClass eclass = expr.eclass;
 
-				Type t = expr.Type;
-				
-				if ((t != TypeManager.exception_type) &&
-				    !TypeManager.IsSubclassOf (t, TypeManager.exception_type) &&
-				    !(expr is NullLiteral)) {
-					Error (155,
-						"The type caught or thrown must be derived " +
-						"from System.Exception");
-					return false;
-				}
-				return true;
-			}
-
-			if (!ec.InCatch) {
-				Error (156, "A throw statement with no arguments is not allowed outside of a catch clause");
+			if (!(eclass == ExprClass.Variable || eclass == ExprClass.PropertyAccess ||
+			      eclass == ExprClass.Value || eclass == ExprClass.IndexerAccess)) {
+				expr.Error_UnexpectedKind (ec.DeclContainer, "value, variable, property or indexer access ", loc);
 				return false;
 			}
 
-			if (ec.InFinally) {
-				Error (724, "A throw statement with no arguments is not allowed inside of a finally clause nested inside of the innermost catch clause");
+			Type t = expr.Type;
+
+			if ((t != TypeManager.exception_type) &&
+			    !TypeManager.IsSubclassOf (t, TypeManager.exception_type) &&
+			    !(expr is NullLiteral)) {
+				Error (155, "The type caught or thrown must be derived from System.Exception");
 				return false;
 			}
 			return true;
@@ -3811,10 +3799,9 @@ namespace Mono.CSharp {
 
 	public abstract class ExceptionStatement : ResumableStatement
 	{
-		protected virtual void EmitPreTryBody (EmitContext ec)
-		{
-		}
+		bool code_follows;
 
+		protected abstract void EmitPreTryBody (EmitContext ec);
 		protected abstract void EmitTryBody (EmitContext ec);
 		protected abstract void EmitFinallyBody (EmitContext ec);
 
@@ -3863,11 +3850,18 @@ namespace Mono.CSharp {
 			ig.EndExceptionBlock ();
 		}
 
-		protected void ResolveFinally (EmitContext ec)
+		public void SomeCodeFollows ()
+		{
+			code_follows = true;
+		}
+
+		protected void ResolveReachability (EmitContext ec)
 		{
 			// System.Reflection.Emit automatically emits a 'leave' at the end of a try clause
 			// So, ensure there's some IL code after this statement.
-			ec.NeedReturnLabel ();
+			if (!code_follows && resume_points == null && ec.CurrentBranching.CurrentUsageVector.IsUnreachable)
+				ec.NeedReturnLabel ();
+
 		}
 
 		ArrayList resume_points;
@@ -3986,10 +3980,9 @@ namespace Mono.CSharp {
 
 			ec.StartFlowBranching (this);
 			bool ok = Statement.Resolve (ec);
-
-			ResolveFinally (ec);
-
 			ec.EndFlowBranching ();
+
+			ResolveReachability (ec);
 
 			// Avoid creating libraries that reference the internal
 			// mcs NullType:
@@ -4557,10 +4550,15 @@ namespace Mono.CSharp {
 					ok = false;
 			}
 
-			ResolveFinally (ec);
 			ec.EndFlowBranching ();
 
+			ResolveReachability (ec);
+
 			return ok;
+		}
+
+		protected override void EmitPreTryBody (EmitContext ec)
+		{
 		}
 
 		protected override void EmitTryBody (EmitContext ec)
@@ -4587,7 +4585,7 @@ namespace Mono.CSharp {
 		public Block Block;
 		public ArrayList Specific;
 		public Catch General;
-		bool inside_try_finally;
+		bool inside_try_finally, code_follows;
 
 		public TryCatch (Block block, ArrayList catch_clauses, Location l, bool inside_try_finally)
 		{
@@ -4614,7 +4612,7 @@ namespace Mono.CSharp {
 		{
 			bool ok = true;
 
-			ec.StartFlowBranching (FlowBranching.BranchingType.TryCatch, loc);
+			ec.StartFlowBranching (this);
 
 			if (!Block.Resolve (ec))
 				ok = false;
@@ -4665,17 +4663,22 @@ namespace Mono.CSharp {
 
 			// System.Reflection.Emit automatically emits a 'leave' at the end of a try/catch clause
 			// So, ensure there's some IL code after this statement
-			ec.NeedReturnLabel ();
+			if (!inside_try_finally && !code_follows && ec.CurrentBranching.CurrentUsageVector.IsUnreachable)
+				ec.NeedReturnLabel ();
 
 			return ok;
+		}
+
+		public void SomeCodeFollows ()
+		{
+			code_follows = true;
 		}
 		
 		protected override void DoEmit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 
-			// FIXME: remove the InIterator
-			if (!inside_try_finally || ec.InIterator)
+			if (!inside_try_finally)
 				ig.BeginExceptionBlock ();
 
 			Block.Emit (ec);
@@ -4686,8 +4689,7 @@ namespace Mono.CSharp {
 			if (General != null)
 				General.Emit (ec);
 
-			// FIXME: remove the InIterator
-			if (!inside_try_finally || ec.InIterator)
+			if (!inside_try_finally)
 				ig.EndExceptionBlock ();
 		}
 
@@ -4741,9 +4743,9 @@ namespace Mono.CSharp {
 
 			bool ok = Statement.Resolve (ec);
 
-			ResolveFinally (ec);
-
 			ec.EndFlowBranching ();
+
+			ResolveReachability (ec);
 
 			if (TypeManager.void_dispose_void == null) {
 				TypeManager.void_dispose_void = TypeManager.GetPredefinedMethod (
@@ -4932,9 +4934,9 @@ namespace Mono.CSharp {
 
 			bool ok = stmt.Resolve (ec);
 
-			ResolveFinally (ec);
-
 			ec.EndFlowBranching ();
+
+			ResolveReachability (ec);
 
 			if (TypeManager.void_dispose_void == null) {
 				TypeManager.void_dispose_void = TypeManager.GetPredefinedMethod (
@@ -5195,6 +5197,7 @@ namespace Mono.CSharp {
 			TemporaryVariable enumerator;
 			Expression init;
 			Statement loop;
+			Statement wrapper;
 
 			MethodGroupExpr get_enumerator;
 			PropertyExpr get_current;
@@ -5546,26 +5549,43 @@ namespace Mono.CSharp {
 
 				loop = new While (move_next_expr, block, loc);
 
-				if (is_disposable)
-					loop = new DisposableWrapper (this, loop);
-
-				return loop.Resolve (ec);
+				wrapper = is_disposable ?
+					(Statement) new DisposableWrapper (this) :
+					(Statement) new NonDisposableWrapper (this);
+				return wrapper.Resolve (ec);
 			}
 
 			protected override void DoEmit (EmitContext ec)
 			{
-				enumerator.Store (ec, init);
-				loop.Emit (ec);
+				wrapper.Emit (ec);
+			}
+
+			class NonDisposableWrapper : Statement {
+				CollectionForeach parent;
+
+				internal NonDisposableWrapper (CollectionForeach parent)
+				{
+					this.parent = parent;
+				}
+
+				public override bool Resolve (EmitContext ec)
+				{
+					return parent.ResolveLoop (ec);
+				}
+
+				protected override void DoEmit (EmitContext ec)
+				{
+					parent.EmitLoopInit (ec);
+					parent.EmitLoopBody (ec);
+				}
 			}
 
 			class DisposableWrapper : ExceptionStatement {
 				CollectionForeach parent;
-				Statement loop;
 
-				internal DisposableWrapper (CollectionForeach parent, Statement loop)
+				internal DisposableWrapper (CollectionForeach parent)
 				{
 					this.parent = parent;
-					this.loop = loop;
 				}
 
 				public override bool Resolve (EmitContext ec)
@@ -5574,11 +5594,12 @@ namespace Mono.CSharp {
 
 					ec.StartFlowBranching (this);
 
-					if (!loop.Resolve (ec))
+					if (!parent.ResolveLoop (ec))
 						ok = false;
 
-					ResolveFinally (ec);
 					ec.EndFlowBranching ();
+
+					ResolveReachability (ec);
 
 					if (TypeManager.void_dispose_void == null) {
 						TypeManager.void_dispose_void = TypeManager.GetPredefinedMethod (
@@ -5587,15 +5608,35 @@ namespace Mono.CSharp {
 					return ok;
 				}
 
+				protected override void EmitPreTryBody (EmitContext ec)
+				{
+					parent.EmitLoopInit (ec);
+				}
+
 				protected override void EmitTryBody (EmitContext ec)
 				{
-					loop.Emit (ec);
+					parent.EmitLoopBody (ec);
 				}
 
 				protected override void EmitFinallyBody (EmitContext ec)
 				{
 					parent.EmitFinallyBody (ec);
 				}
+			}
+
+			bool ResolveLoop (EmitContext ec)
+			{
+				return loop.Resolve (ec);
+			}
+
+			void EmitLoopInit (EmitContext ec)
+			{
+				enumerator.Store (ec, init);
+			}
+
+			void EmitLoopBody (EmitContext ec)
+			{
+				loop.Emit (ec);
 			}
 
 			void EmitFinallyBody (EmitContext ec)
@@ -5619,14 +5660,13 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Isinst, TypeManager.idisposable_type);
 					ig.Emit (OpCodes.Dup);
 					ig.Emit (OpCodes.Brtrue_S, call_dispose);
-					ig.Emit (OpCodes.Pop);
 
-					Label end_finally = ig.DefineLabel ();
-					ig.Emit (OpCodes.Br, end_finally);
+					// 'endfinally' empties the evaluation stack, and can appear anywhere inside a finally block
+					// (Partition III, Section 3.35)
+					ig.Emit (OpCodes.Endfinally);
 
 					ig.MarkLabel (call_dispose);
 					ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
-					ig.MarkLabel (end_finally);
 				}
 			}
 		}

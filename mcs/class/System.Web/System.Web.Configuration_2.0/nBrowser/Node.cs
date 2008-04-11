@@ -435,30 +435,6 @@ namespace System.Web.Configuration.nBrowser
 					RefId = xmlNode.Attributes[a].Value.ToLower(System.Globalization.CultureInfo.CurrentCulture);
 				}
 			}
-			//I include bother upper and lower case so I do not run into trying to compare case and dealing
-			//with CultureInfo stuff, Less hoops, should be faster I hope.
-			const string values = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
-			for (int a = 0;a <= Id.Length - 1;a++)
-			{
-				if (values.IndexOf(Id.Substring(a, 1)) == -1)
-				{
-					throw new nBrowser.Exception("Invalid Charactors In ID name");
-				}
-			}
-			for (int a = 0;a <= ParentId.Length - 1;a++)
-			{
-				if (values.IndexOf(ParentId.Substring(a, 1)) == -1)
-				{
-					throw new nBrowser.Exception("Invalid Charactors In parentID name");
-				}
-			}
-			for (int a = 0;a <= RefId.Length - 1;a++)
-			{
-				if (values.IndexOf(RefId.Substring(a, 1)) == -1)
-				{
-					throw new nBrowser.Exception("Invalid Charactors In refID name");
-				}
-			}
 
 			for (int a = 0;a <= xmlNode.ChildNodes.Count - 1;a++)
 			{
@@ -929,7 +905,6 @@ namespace System.Web.Configuration.nBrowser
 			}
 
 			string f = this.FileName;
-			f = f.Substring(f.LastIndexOfAny("\\".ToCharArray()) + 1);
 			xmlwriter.WriteStartElement(this.NameType.ToString());
 			xmlwriter.WriteAttributeString("FileName", f);
 			xmlwriter.WriteAttributeString("ID", this.Id);
@@ -1054,8 +1029,13 @@ namespace System.Web.Configuration.nBrowser
 		/// <param name="n">node to merge with this node</param>
 		public void MergeFrom(Node n)
 		{
-			foreach (string capName in n.Capabilities)
-				Capabilities[capName] = n.Capabilities[capName];
+			if (n.Capabilities != null)
+			{
+				if (Capabilities == null)
+					Capabilities =  new System.Collections.Specialized.NameValueCollection(n.Capabilities.Count);
+				foreach (string capName in n.Capabilities)
+					Capabilities[capName] = n.Capabilities[capName];
+			}
 			
 			int newLength = 0;
 			if (Capture != null)
@@ -1066,14 +1046,19 @@ namespace System.Web.Configuration.nBrowser
 			if (Capture != null)
 				Array.Copy(Capture, 0, newCapture, 0, Capture.Length);
 			if (n.Capture != null)
-				Array.Copy(n.Capture, 0, newCapture, Capture.Length, n.Capture.Length);
+				Array.Copy(n.Capture, 0, newCapture, (Capture != null ? Capture.Length : 0), n.Capture.Length);
 			Capture = newCapture;
 			
 			if (n.MarkupTextWriterType != null && n.MarkupTextWriterType.Length > 0)
 				MarkupTextWriterType = n.MarkupTextWriterType;
 			
-			foreach (string controlType in n.Adapter)
-				Adapter[controlType] = n.Adapter[controlType];			
+			if (n.Adapter != null)
+			{
+				if (Adapter == null)
+					Adapter = new System.Collections.Specialized.NameValueCollection();
+				foreach (string controlType in n.Adapter)
+					Adapter[controlType] = n.Adapter[controlType];
+			}
 		}
 	}
 }

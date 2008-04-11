@@ -86,7 +86,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void NotNullableInt32 ()
 		{
 			var n = Expression.Not (Expression.Parameter (typeof (int?), ""));
@@ -97,7 +96,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void NotNullableBool ()
 		{
 			var n = Expression.Not (Expression.Parameter (typeof (bool?), ""));
@@ -105,6 +103,27 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.IsTrue (n.IsLifted);
 			Assert.IsTrue (n.IsLiftedToNull);
 			Assert.IsNull (n.Method);
+		}
+
+		[Test]
+		public void CompileNotInt32 ()
+		{
+			var p = Expression.Parameter (typeof (int), "i");
+			var not = Expression.Lambda<Func<int, int>> (Expression.Not (p), p).Compile ();
+
+			Assert.AreEqual (-2, not (1));
+			Assert.AreEqual (-4, not (3));
+			Assert.AreEqual (2, not (-3));
+		}
+
+		[Test]
+		public void CompileNotBool ()
+		{
+			var p = Expression.Parameter (typeof (bool), "i");
+			var not = Expression.Lambda<Func<bool, bool>> (Expression.Not (p), p).Compile ();
+
+			Assert.AreEqual (false, not (true));
+			Assert.AreEqual (true, not (false));
 		}
 	}
 }

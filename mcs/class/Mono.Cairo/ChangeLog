@@ -1,3 +1,13 @@
+2008-04-08 Jordi Mas i Hernandez <jordimash@gmail.com>
+
+	* Context.cs: New ReferenceCount property
+  	* FontFace.cs: New FontFace.cs method
+	* LinearGradient.cs: New LinearPoints property
+	* Surface.cs: New ReferenceCount property
+	* SolidPattern.cs: New Color property
+	* Gradient.cs: New ColorStopCount property
+	* NativeMethods.cs: Update new methods and remove CAIRO_1_4 define
+
 2008-04-05 Jordi Mas i Hernandez <jordimash@gmail.com>
 
 	* ScaledFont.cs: Adds class to encapsulate scaled font API

@@ -81,13 +81,33 @@ namespace MonoTests.System.Web
 			Assert.AreEqual ("added", caps["addedInRefNode"], "AppBrowsersCapabilities #5");
 			Assert.AreEqual ("changed", caps["changedInRefNode"], "AppBrowsersCapabilities #6");
 			Assert.AreEqual ("uaInRef:testUserAgent", caps["capturedInRefNode"], "AppBrowsersCapabilities #7");
+			// This property is inherited from browscap.ini
+			Assert.AreEqual ("0", caps["majorver"], "AppBrowsersCapabilities #8");
 		}
 		
+		[Test]
+		[Category ("NunitWeb")]
+		public void CompatBrowserIE7 () 
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (CompatBrowserIE7_OnLoad));
+			t.Request.UserAgent = "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)";
+			t.Run ();
+		}
+				
+		public static void CompatBrowserIE7_OnLoad (Page p) 
+		{
+			HttpRequest request = p.Request;
+			HttpCapabilitiesBase caps = request.Browser;
+
+			Assert.AreEqual ("added", caps["addedInIE6to9RefNode"], "CompatBrowserIE7 #1");
+		}
+
 		[Test]
 		[Category ("NunitWeb")]
 		public void TagWriter() 
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (TagWriter_OnLoad));
+			t.Request.UserAgent = "testUserAgent";
 			t.Run ();
 		}
 
@@ -104,6 +124,7 @@ namespace MonoTests.System.Web
 		public void CreateHtmlTextWriter() 
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (CreateHtmlTextWriter_OnLoad));
+			t.Request.UserAgent = "testUserAgent";
 			t.Run ();
 			Assert.IsTrue(t.Response.Body.Contains(@"renderedby=""CustomHtmlTextWriter"""), 
 				"CreateHtmlTextWriter #2");
@@ -123,8 +144,9 @@ namespace MonoTests.System.Web
 		[Category ("NunitWeb")]
 		public void Adapter ()
 		{
-		        WebTest t = new WebTest (PageInvoker.CreateOnInit (Adapter_Init));
-		        string html = t.Run ();
+			WebTest t = new WebTest (PageInvoker.CreateOnInit (Adapter_Init));
+			t.Request.UserAgent = "testUserAgent";
+			string html = t.Run ();
 		}
 		
 		public static void Adapter_Init (Page p)
@@ -145,8 +167,9 @@ namespace MonoTests.System.Web
 		[Category ("NunitWeb")]
 		public void ResolveAdapter_1 ()
 		{
-		        WebTest t = new WebTest (PageInvoker.CreateOnInit (ResolveAdapter_Init));
-		        string html = t.Run ();
+			WebTest t = new WebTest (PageInvoker.CreateOnInit (ResolveAdapter_Init));
+			t.Request.UserAgent = "testUserAgent";
+			string html = t.Run ();
 		}
 		
 		public static void ResolveAdapter_Init (Page p)

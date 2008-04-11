@@ -311,17 +311,16 @@ namespace System.Web.Compilation {
 
 			foreach (string assLocation in WebConfigurationManager.ExtraAssemblies)
 				LoadAssembly (assLocation, al);
-
+			
                         if (addAssembliesInBin)
 				foreach (string s in HttpApplication.BinDirectoryAssemblies)
 					LoadAssembly (s, al);
-
+			
 			lock (buildCacheLock) {
-				foreach (Assembly asm in referencedAssemblies) {
+				foreach (Assembly asm in referencedAssemblies)
 					if (!al.Contains (asm))
 						al.Add (asm);
-				}
-
+				
 				if (globalAsaxAssembly != null)
 					al.Add (globalAsaxAssembly);
 			}
@@ -353,18 +352,18 @@ namespace System.Web.Compilation {
 			return null; // null is ok here until we store the dependency set in the Cache.
 		}
 
-		internal static BuildProvider GetBuildProviderForPath (string virtualPath, bool throwOnMissing)
+		internal static BuildProvider GetBuildProviderForPath (VirtualPath virtualPath, bool throwOnMissing)
 		{
 			return GetBuildProviderForPath (virtualPath, null, throwOnMissing);
 		}
 		
-		internal static BuildProvider GetBuildProviderForPath (string virtualPath, CompilationSection section, bool throwOnMissing)
+		internal static BuildProvider GetBuildProviderForPath (VirtualPath virtualPath, CompilationSection section, bool throwOnMissing)
 		{
-			string extension = VirtualPathUtility.GetExtension (virtualPath);
+			string extension = virtualPath.Extension;
 			CompilationSection c = section;
 
 			if (c == null)
-				c = WebConfigurationManager.GetSection ("system.web/compilation", virtualPath) as CompilationSection;
+				c = WebConfigurationManager.GetSection ("system.web/compilation", virtualPath.Original) as CompilationSection;
 			
 			if (c == null)
 				if (throwOnMissing)
@@ -387,7 +386,7 @@ namespace System.Web.Compilation {
 			return provider;
 		}
 
-		static string GetAbsoluteVirtualPath (string virtualPath)
+		static VirtualPath GetAbsoluteVirtualPath (string virtualPath)
 		{
 			string vp;
 
@@ -401,19 +400,16 @@ namespace System.Web.Compilation {
 					throw new HttpException ("No context, cannot map paths.");
 			} else
 				vp = virtualPath;
-			
-			if (VirtualPathUtility.IsAppRelative (vp))
-				return VirtualPathUtility.ToAbsolute (vp);
-			else
-				return vp;
+
+			return new VirtualPath (vp);
 		}
 		
-		static BuildCacheItem GetCachedItem (string virtualPath)
+		static BuildCacheItem GetCachedItem (VirtualPath virtualPath)
 		{
 			BuildCacheItem ret;
 			
 			lock (buildCacheLock) {
-				if (buildCache.TryGetValue (virtualPath, out ret))
+				if (buildCache.TryGetValue (virtualPath.Absolute, out ret))
 					return ret;
 			}
 
@@ -422,7 +418,7 @@ namespace System.Web.Compilation {
 		
 		public static Assembly GetCompiledAssembly (string virtualPath)
 		{
-			string vp = GetAbsoluteVirtualPath (virtualPath);
+			VirtualPath vp = GetAbsoluteVirtualPath (virtualPath);
 			BuildCacheItem ret = GetCachedItem (vp);
 			if (ret != null)
 				return ret.assembly;
@@ -437,7 +433,7 @@ namespace System.Web.Compilation {
 
 		public static Type GetCompiledType (string virtualPath)
 		{
-			string vp = GetAbsoluteVirtualPath (virtualPath);
+			VirtualPath vp = GetAbsoluteVirtualPath (virtualPath);
 			BuildCacheItem ret = GetCachedItem (vp);
 
 			if (ret != null)
@@ -454,7 +450,7 @@ namespace System.Web.Compilation {
 		
 		public static string GetCompiledCustomString (string virtualPath)
 		{
-			string vp = GetAbsoluteVirtualPath (virtualPath);
+			VirtualPath vp = GetAbsoluteVirtualPath (virtualPath);
 			BuildCacheItem ret = GetCachedItem (vp);
 			if (ret != null)
 				return ret.compiledCustomString;
@@ -466,25 +462,19 @@ namespace System.Web.Compilation {
 
 			return null;
 		}
-		
-		static List <string> GetFilesForBuild (string virtualPath, string physicalDir, out BuildKind kind)
+
+		static List <VirtualFile> GetFilesForBuild (VirtualPath virtualPath, out BuildKind kind)
 		{
-			string extension = VirtualPathUtility.GetExtension (virtualPath);
-			List <string> ret = new List <string> ();
+			string extension = virtualPath.Extension;
+			var ret = new List <VirtualFile> ();
 			
-			if (StrUtils.StartsWith (virtualPath, FAKE_VIRTUAL_PATH_PREFIX)) {
+			if (virtualPath.StartsWith (FAKE_VIRTUAL_PATH_PREFIX)) {
 				kind = BuildKind.Fake;
 				return ret;
 			}
 			
 			if (!knownFileTypes.TryGetValue (extension, out kind)) {
-				string tmp;
-				if (VirtualPathUtility.IsAbsolute (virtualPath))
-					tmp = VirtualPathUtility.ToAppRelative (virtualPath);
-				else
-					tmp = virtualPath;
-					
-				if (StrUtils.StartsWith (tmp, "~/App_Themes/"))
+				if (StrUtils.StartsWith (virtualPath.AppRelative, "~/App_Themes/"))
 					kind = BuildKind.Theme;
 				else
 					kind = BuildKind.Unknown;
@@ -500,25 +490,75 @@ namespace System.Web.Compilation {
 					doBatch = false;
 				recursiveBuilds.Push (kind);
 			}
+
+			string vpAbsolute = virtualPath.Absolute;
+			VirtualPathProvider vpp = HostingEnvironment.VirtualPathProvider;
+			VirtualDirectory dir = vpp.GetDirectory (vpAbsolute);
+			
+			if (doBatch && HostingEnvironment.HaveCustomVPP && dir != null && dir is DefaultVirtualDirectory)
+				doBatch = false;
 			
 			if (doBatch) {
-				string[] files = Directory.GetFiles (physicalDir, "*.*");
+				if (dir == null)
+					throw new HttpException (404, "Virtual directory '" + virtualPath.Directory + "' does not exist.");
+				
 				BuildKind fileKind;
-			
-				foreach (string file in files) {
-					if (!knownFileTypes.TryGetValue (Path.GetExtension (file), out fileKind))
+				foreach (VirtualFile file in dir.Files) {
+					if (!knownFileTypes.TryGetValue (VirtualPathUtility.GetExtension (file.Name), out fileKind))
 						continue;
-					
+
 					if (kind == fileKind)
 						ret.Add (file);
 				}
-			} else
-				ret.Add (Path.Combine (physicalDir, VirtualPathUtility.GetFileName (virtualPath)));
+			} else {
+				VirtualFile vf = vpp.GetFile (vpAbsolute);
+				if (vf == null)
+					throw new HttpException (404, "Virtual file '" + virtualPath + "' does not exist.");
+				ret.Add (vf);
+			}
 			
 			return ret;
 		}
 
-		static Type GetCodeDomProviderType (BuildProvider provider)
+		static void SetCommonParameters (CompilationSection config, CompilerParameters p)
+		{
+			p.IncludeDebugInformation = config.Debug;
+		}
+		
+		internal static CompilerType GetDefaultCompilerTypeForLanguage (string language, CompilationSection configSection)
+		{
+			// MS throws when accesing a Hashtable, we do here.
+			if (language == null || language == "")
+				throw new ArgumentNullException ("language");
+				
+			CompilationSection config;
+			if (configSection == null)
+				config = WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection;
+			else
+				config = configSection;
+			
+			Compiler compiler = config.Compilers.Get (language);
+			CompilerParameters p;
+			if (compiler != null) {
+				Type type = HttpApplication.LoadType (compiler.Type, true);
+				p = new CompilerParameters ();
+				p.CompilerOptions = compiler.CompilerOptions;
+				p.WarningLevel = compiler.WarningLevel;
+				SetCommonParameters (config, p);
+				return new CompilerType (type, p);
+			}
+
+			if (CodeDomProvider.IsDefinedLanguage (language)) {
+				CompilerInfo info = CodeDomProvider.GetCompilerInfo (language);
+				CompilerParameters par = info.CreateDefaultCompilerParameters ();
+				SetCommonParameters (config, par);
+				return new CompilerType (info.CodeDomProviderType, par);
+			}
+			
+			throw new HttpException (String.Concat ("No compiler for language '", language, "'."));
+		}
+		
+		internal static Type GetCodeDomProviderType (BuildProvider provider)
 		{
 			CompilerType codeCompilerType;
 			Type codeDomProviderType = null;
@@ -531,24 +571,9 @@ namespace System.Web.Compilation {
 				throw new HttpException (String.Concat ("Provider '", provider, " 'fails to specify the compiler type."));
 
 			return codeDomProviderType;
-		}
-		
-		static string GetVirtualPathDirectory (string virtualPath)
-		{
-			string vp;
-			if (!VirtualPathUtility.IsRooted (virtualPath))
-				vp = VirtualPathUtility.ToAbsolute ("~/" + virtualPath);
-			else {
-				if (VirtualPathUtility.IsAppRelative (virtualPath))
-					vp = VirtualPathUtility.ToAbsolute (virtualPath);
-				else
-					vp = virtualPath;
-			}
+		}		
 
-			return VirtualPathUtility.GetDirectory (vp);
-		}
-
-		static List <BuildItem> LoadBuildProviders (string virtualPath, string virtualDir, Dictionary <string, bool> vpCache,
+		static List <BuildItem> LoadBuildProviders (VirtualPath virtualPath, string virtualDir, Dictionary <string, bool> vpCache,
 							    out BuildKind kind, out string assemblyBaseName)
 		{
 			HttpContext ctx = HttpContext.Current;
@@ -557,13 +582,12 @@ namespace System.Web.Compilation {
 			if (req == null)
 				throw new HttpException ("No context available, cannot build.");
 
-			CompilationSection section = WebConfigurationManager.GetSection ("system.web/compilation", virtualPath) as CompilationSection;
-			string physicalDir = req.MapPath (virtualDir);
-			
-			List <string> files;
+			string vpAbsolute = virtualPath.Absolute;
+			CompilationSection section = WebConfigurationManager.GetSection ("system.web/compilation", vpAbsolute) as CompilationSection;
+			List <VirtualFile> files;
 			
 			try {
-				files = GetFilesForBuild (virtualPath, physicalDir, out kind);
+				files = GetFilesForBuild (virtualPath, out kind);
 			} catch (Exception ex) {
 				throw new HttpException ("Error loading build providers for path '" + virtualDir + "'.", ex);
 			}
@@ -603,10 +627,8 @@ namespace System.Web.Compilation {
 			string fileName;
 			
 			lock (buildCacheLock) {
-				foreach (string f in files) {
-					fileName = Path.GetFileName (f);
-					fileVirtualPath = VirtualPathUtility.Combine (virtualDir, fileName);
-
+				foreach (VirtualFile f in files) {
+					fileVirtualPath = f.VirtualPath;
 					if (IgnoreVirtualPath (fileVirtualPath))
 						continue;
 					
@@ -614,7 +636,7 @@ namespace System.Web.Compilation {
 						continue;
 					
 					vpCache.Add (fileVirtualPath, true);
-					provider = GetBuildProviderForPath (fileVirtualPath, section, false);
+					provider = GetBuildProviderForPath (new VirtualPath (fileVirtualPath), section, false);
 					if (provider == null)
 						continue;
 
@@ -641,11 +663,12 @@ namespace System.Web.Compilation {
 			if (virtualPathsToIgnore == null)
 				virtualPathsToIgnore = new Dictionary <string, bool> ();
 			
-			string path = GetAbsoluteVirtualPath (vp);
-			if (virtualPathsToIgnore.ContainsKey (path))
+			VirtualPath path = GetAbsoluteVirtualPath (vp);
+			string vpAbsolute = path.Absolute;
+			if (virtualPathsToIgnore.ContainsKey (vpAbsolute))
 				return;
 
-			virtualPathsToIgnore.Add (path, true);
+			virtualPathsToIgnore.Add (vpAbsolute, true);
 			haveVirtualPathsToIgnore = true;
 		}
 
@@ -702,7 +725,7 @@ namespace System.Web.Compilation {
 			}
 		}
 		
-		static AssemblyBuilder CreateAssemblyBuilder (string assemblyBaseName, string virtualPath, BuildItem buildItem)
+		static AssemblyBuilder CreateAssemblyBuilder (string assemblyBaseName, VirtualPath virtualPath, BuildItem buildItem)
 		{
 			buildItem.assemblyBuilder = new AssemblyBuilder (virtualPath, buildItem.CreateCodeDomProvider (), assemblyBaseName);
 			buildItem.assemblyBuilder.CompilerOptions = buildItem.CompilerOptions;
@@ -843,7 +866,7 @@ namespace System.Web.Compilation {
 			return true;
 		}
 		
-		static void AssignToAssemblyBuilder (string assemblyBaseName, string virtualPath, BuildItem buildItem,
+		static void AssignToAssemblyBuilder (string assemblyBaseName, VirtualPath virtualPath, BuildItem buildItem,
 						     Dictionary <Type, List <AssemblyBuilder>> assemblyBuilders)
 		{
 			if (!buildItem.codeGenerated)
@@ -871,47 +894,44 @@ namespace System.Web.Compilation {
 			buildItem.StoreCodeUnit ();
 		}
 
-		static void AssertVirtualPathExists (string virtualPath)
+		static void AssertVirtualPathExists (VirtualPath virtualPath)
 		{
 			string realpath;
-			bool fakePath;
+			bool dothrow = false;
 			
-			if (StrUtils.StartsWith (virtualPath, FAKE_VIRTUAL_PATH_PREFIX)) {
-				realpath = virtualPath.Substring (FAKE_VIRTUAL_PATH_PREFIX.Length);
-				fakePath = true;
+			if (virtualPath.StartsWith (FAKE_VIRTUAL_PATH_PREFIX)) {
+				realpath = virtualPath.Original.Substring (FAKE_VIRTUAL_PATH_PREFIX.Length);
+				if (!File.Exists (realpath) && !Directory.Exists (realpath))
+					dothrow = true;
 			} else {
-				HttpContext ctx = HttpContext.Current;
-				HttpRequest req = ctx != null ? ctx.Request : null;
-
-				if (req == null)
-					throw new HttpException ("Missing context, cannot continue.");
-
-				realpath = req.MapPath (virtualPath);
+				VirtualPathProvider vpp = HostingEnvironment.VirtualPathProvider;
+				string vpPath = virtualPath.Original;
+				
+				if (!vpp.FileExists (vpPath) && !vpp.DirectoryExists (vpPath))
+					dothrow = true;
 			}
 
-			if (!File.Exists (realpath) && !Directory.Exists (realpath))
-				if (!HostingEnvironment.VirtualPathProvider.FileExists (virtualPath))
-					throw new HttpException (404,
-								 "The file '" + virtualPath + "' does not exist.",
-								 fakePath ? Path.GetFileName (realpath) : virtualPath);
+			if (dothrow)
+				throw new HttpException (404, "The file '" + virtualPath + "' does not exist.");
 		}
 		
-		static void BuildAssembly (string virtualPath)
+		static void BuildAssembly (VirtualPath virtualPath)
 		{
 			AssertVirtualPathExists (virtualPath);
 			LoadVirtualPathsToIgnore ();
 			
 			object ticket;
 			bool acquired;
-			string virtualDir = GetVirtualPathDirectory (virtualPath);
+			string virtualDir = virtualPath.Directory;
 			BuildKind buildKind = BuildKind.Unknown;
 			bool kindPushed = false;
+			string vpAbsolute = virtualPath.Absolute;
 			
 			acquired = AcquireCompilationTicket (virtualDir, out ticket);
 			try {
 				Monitor.Enter (ticket);
 				lock (buildCacheLock) {
-					if (buildCache.ContainsKey (virtualPath))
+					if (buildCache.ContainsKey (vpAbsolute))
 						return;
 				}
 				
@@ -948,11 +968,7 @@ namespace System.Web.Compilation {
 				foreach (List <AssemblyBuilder> abuilders in assemblyBuilders.Values) {
 					foreach (AssemblyBuilder abuilder in abuilders) {
 						abuilder.AddAssemblyReference (GetReferencedAssemblies () as List <Assembly>);
-						try {
-							results = abuilder.BuildAssembly (virtualPath);
-						} catch (CompilationException ex) {
-							throw new HttpException ("Compilation failed for virtual path '" + virtualPath + "'.", ex);
-						}
+						results = abuilder.BuildAssembly (virtualPath);
 						
 						// No results is not an error - it is possible that the assembly builder contained only .asmx and
 						// .ashx files which had no body, just the directive. In such case, no code unit or code file is added
@@ -963,8 +979,8 @@ namespace System.Web.Compilation {
 						lock (buildCacheLock) {
 							switch (buildKind) {
 								case BuildKind.NonPages:
-									if (compiledAssembly != null && !referencedAssemblies.Contains (compiledAssembly))
-										referencedAssemblies.Add (compiledAssembly);
+									if (compiledAssembly != null)
+										AddToReferencedAssemblies (compiledAssembly);
 									break;
 
  								case BuildKind.Application:
@@ -1012,6 +1028,16 @@ namespace System.Web.Compilation {
 					ReleaseCompilationTicket (virtualDir);
 			}
 		}
+
+		internal static void AddToReferencedAssemblies (Assembly asm)
+		{
+			lock (buildCacheLock) {
+				if (referencedAssemblies.Contains (asm))
+					return;
+				
+				referencedAssemblies.Add (asm);
+			}
+		}
 		
 		internal static void AddToCache (string virtualPath, BuildProvider bp)
 		{
@@ -1052,7 +1078,7 @@ namespace System.Web.Compilation {
 						       
 		}
 
-		static int RemoveVirtualPathFromCaches (string virtualPath)
+		static int RemoveVirtualPathFromCaches (VirtualPath virtualPath)
 		{
 			lock (buildCacheLock) {
 				// This is expensive, but we must do it - we must not leave
@@ -1063,16 +1089,21 @@ namespace System.Web.Compilation {
 				if (item == null)
 					return 0;
 
-				if (buildCache.ContainsKey (virtualPath))
-					buildCache.Remove (virtualPath);
-
+				string vpAbsolute = virtualPath.Absolute;
+				if (buildCache.ContainsKey (vpAbsolute))
+					buildCache.Remove (vpAbsolute);
+				
 				Assembly asm;
 				
-				if (nonPagesCache.TryGetValue (virtualPath, out asm)) {
-					nonPagesCache.Remove (virtualPath);
+				if (nonPagesCache.TryGetValue (vpAbsolute, out asm)) {
+					nonPagesCache.Remove (vpAbsolute);
 					if (referencedAssemblies.Contains (asm))
 						referencedAssemblies.Remove (asm);
 
+					ArrayList extraAssemblies = WebConfigurationManager.ExtraAssemblies;
+					if (extraAssemblies != null && extraAssemblies.Contains (asm.Location))
+						extraAssemblies.Remove (asm.Location);
+					
 					List <string> keysToRemove = new List <string> ();
 					foreach (KeyValuePair <string, Assembly> kvp in nonPagesCache)
 						if (kvp.Value == asm)
@@ -1099,7 +1130,7 @@ namespace System.Web.Compilation {
 			else
 				return;
 
-			RemoveVirtualPathFromCaches (virtualPath);
+			RemoveVirtualPathFromCaches (new VirtualPath (virtualPath));
 		}
 		
 		static bool AcquireCompilationTicket (string key, out object ticket)
@@ -1148,7 +1179,7 @@ namespace System.Web.Compilation {
 		{
 			BuildProvider provider = bprovider;
 			if (provider == null)
-				provider = GetBuildProviderForPath (virtualPath, false);
+				provider = GetBuildProviderForPath (new VirtualPath (virtualPath), false);
 			if (provider == null)
 				return null;
 			return provider.VirtualPathDependencies;
@@ -1172,7 +1203,7 @@ namespace System.Web.Compilation {
 			get { return haveResources; }
 			set { haveResources = value; }
 		}
-
+		
 		internal static bool BatchMode {
 			get { return CompilationConfig.Batch; }
 		}

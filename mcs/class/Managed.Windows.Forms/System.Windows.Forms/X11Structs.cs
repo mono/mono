@@ -1659,4 +1659,117 @@ namespace System.Windows.Forms {
 		public int nimage;     /* number of images */
 		public IntPtr images;   /* array of XcursorImage pointers */
 	}
+
+	[StructLayout (LayoutKind.Sequential)]
+	internal struct XIMStyles
+	{
+		public ushort count_styles;
+		public IntPtr supported_styles;
+	}
+
+	[StructLayout (LayoutKind.Sequential)]
+	[Serializable]
+	internal class XPoint
+	{
+		public short X;
+		public short Y;
+	}
+
+	[StructLayout (LayoutKind.Sequential)]
+	[Serializable]
+	internal class XIMCallback
+	{
+		public IntPtr client_data;
+		public XIMProc callback;
+		[NonSerialized]
+		GCHandle gch;
+
+		public XIMCallback (IntPtr clientData, XIMProc proc)
+		{
+			this.client_data = clientData;
+			this.gch = GCHandle.Alloc (proc);
+			this.callback = proc;
+		}
+
+		~XIMCallback ()
+		{
+			gch.Free ();
+		}
+	}
+
+	internal struct XIMText
+	{
+		public ushort Length;
+		public IntPtr Feedback;
+		public bool EncodingIsWChar;
+		public IntPtr String; // it could be either char* or wchar_t*
+	}
+
+	internal struct XIMPreeditDrawCallbackStruct
+	{
+		public int Caret;
+		public int ChangeFirst;
+		public int ChangeLength;
+		public IntPtr Text; // to XIMText
+	}
+
+	internal enum XIMCaretDirection
+	{
+		XIMForwardChar,
+		XIMBackwardChar,
+		XIMForwardWord,
+		XIMBackwardWord,
+		XIMCaretUp,
+		XIMCaretDown,
+		XIMNextLine,
+		XIMPreviousLine,
+		XIMLineStart,
+		XIMLineEnd,
+		XIMAbsolutePosition,
+		XIMDontChange
+	}
+
+	internal enum XIMCaretStyle
+	{
+		IsInvisible,
+		IsPrimary,
+		IsSecondary
+	}
+
+	internal struct XIMPreeditCaretCallbackStruct
+	{
+		public int Position;
+		public XIMCaretDirection Direction;
+		public XIMCaretStyle Style;
+	}
+
+	// only PreeditStartCallback requires return value though.
+	internal delegate int XIMProc (IntPtr xim, IntPtr clientData, IntPtr callData);
+
+	internal static class XNames
+	{
+		public const string XNVaNestedList = "XNVaNestedList";
+		public const string XNQueryInputStyle = "queryInputStyle";
+		public const string XNClientWindow = "clientWindow";
+		public const string XNInputStyle = "inputStyle";
+		public const string XNFocusWindow = "focusWindow";
+
+		// XIMPreeditCallbacks delegate names.
+		public const string XNPreeditStartCallback = "preeditStartCallback";
+		public const string XNPreeditDoneCallback = "preeditDoneCallback";
+		public const string XNPreeditDrawCallback = "preeditDrawCallback";
+		public const string XNPreeditCaretCallback = "preeditCaretCallback";
+		public const string XNPreeditStateNotifyCallback = "preeditStateNotifyCallback";
+		public const string XNPreeditAttributes = "preeditAttributes";
+		// XIMStatusCallbacks delegate names.
+		public const string XNStatusStartCallback = "statusStartCallback";
+		public const string XNStatusDoneCallback = "statusDoneCallback";
+		public const string XNStatusDrawCallback = "statusDrawCallback";
+		public const string XNStatusAttributes = "statusAttributes";
+
+		public const string XNArea = "area";
+		public const string XNAreaNeeded = "areaNeeded";
+		public const string XNSpotLocation = "spotLocation";
+		public const string XNFontSet = "fontSet";
+	}
 }

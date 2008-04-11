@@ -50,15 +50,15 @@ namespace System.Web.Hosting {
 		{
 			if (phys_dir == null) {
 				string vpath = VirtualPath;
-				phys_dir = HostingEnvironment.MapPath (vpath);
 				virtual_dir = VirtualPathUtility.GetDirectory (vpath);
+				phys_dir = HostingEnvironment.MapPath (virtual_dir);
 			}
 		}
 
 		ArrayList AddDirectories (ArrayList list, string dir)
 		{
 			foreach (string name in Directory.GetDirectories (phys_dir)) {
-				string vdir = VirtualPathUtility.Combine (virtual_dir, name);
+				string vdir = VirtualPathUtility.Combine (virtual_dir, Path.GetFileName (name));
 				list.Add (new DefaultVirtualDirectory (vdir));
 			}
 			return list;
@@ -67,7 +67,7 @@ namespace System.Web.Hosting {
 		ArrayList AddFiles (ArrayList list, string dir)
 		{
 			foreach (string name in Directory.GetFiles (phys_dir)) {
-				string vdir = VirtualPathUtility.Combine (virtual_dir, name);
+				string vdir = VirtualPathUtility.Combine (virtual_dir, Path.GetFileName (name));
 				list.Add (new DefaultVirtualFile (vdir));
 			}
 			return list;

@@ -190,7 +190,7 @@ namespace System.Web.Configuration.nBrowser
 					{
 						parent = this.GetNode(child.ParentId);
 						if (parent == null)
-							throw new nBrowser.Exception(String.Format("Parent not found with = {0}", child.ParentId));
+							throw new nBrowser.Exception(String.Format("Parent not found with id = {0}", child.ParentId));
 					}
 					if (parent == null)
 						parent = browser;
@@ -298,10 +298,13 @@ namespace System.Web.Configuration.nBrowser
 		/// 
 		/// </summary>
 		/// <param name="header"></param>
+		/// <param name="initialCapabilities"></param>
 		/// <returns></returns>
-		public override System.Web.Configuration.CapabilitiesResult Process(System.Collections.Specialized.NameValueCollection header)
+		public override System.Web.Configuration.CapabilitiesResult Process(System.Collections.Specialized.NameValueCollection header, System.Collections.IDictionary initialCapabilities)
 		{
-			System.Web.Configuration.nBrowser.Result r = new System.Web.Configuration.nBrowser.Result(new System.Collections.Generic.Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase));
+			if (initialCapabilities == null)
+				initialCapabilities = new System.Collections.Generic.Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
+			System.Web.Configuration.nBrowser.Result r = new System.Web.Configuration.nBrowser.Result(initialCapabilities);
 
 #if trace
 			System.Diagnostics.Trace.WriteLine(string.Join("+", new string[50]));
@@ -310,7 +313,7 @@ namespace System.Web.Configuration.nBrowser
 				System.Diagnostics.Trace.WriteLine(string.Format("{0}{1}",header.GetKey(i).PadRight(25),header[i]));
 			}
 			System.Diagnostics.Trace.WriteLine(string.Join("+", new string[50]));
-#endif
+#endif			
 			return Browser().Process(header, r, new System.Collections.Generic.List<System.Web.Configuration.nBrowser.Identification>());
 		}
 		/// <summary>

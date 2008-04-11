@@ -41,6 +41,20 @@ namespace Cairo {
 		{
 			pattern = NativeMethods.cairo_pattern_create_linear (x0, y0, x1, y1);
 		}
+
+		public PointD[] LinearPoints {
+                        get {
+				double x0, y0, x1, y1;
+				PointD[] points = new PointD [2];
+
+				NativeMethods.cairo_pattern_get_linear_points (pattern, out x0, out y0, out x1, out y1);
+
+				points[0] = new PointD (x0, y0);
+				points[1] = new PointD (x1, y1);
+				return points;
+                        }
+                }
+
 	}
 }
 

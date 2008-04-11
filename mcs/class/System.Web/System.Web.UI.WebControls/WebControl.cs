@@ -576,8 +576,7 @@ namespace System.Web.UI.WebControls {
 		{
 #if NET_2_0
 			if (Adapter != null) {
-				Adapters.WebControlAdapter wca = (Adapters.WebControlAdapter) Adapter;
-				wca.Render(writer);
+				Adapter.Render(writer);
 				return;
 			}
 #endif

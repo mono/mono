@@ -39,6 +39,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using MonoTests.stand_alone.WebHarness;
 #if NET_2_0
+using System.Web.UI.Adapters;
 using System.Web.UI.WebControls.Adapters;
 #endif
 
@@ -667,6 +668,15 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 #if NET_2_0
+		class MyControlAdapter : ControlAdapter
+		{
+			protected override void Render (HtmlTextWriter w)
+			{
+				w.WriteLine("MyControlAdapter.Render");
+			}
+
+		}
+		
 		class MyWebControlAdapter : WebControlAdapter
 		{
 			protected override void RenderBeginTag (HtmlTextWriter w)
@@ -687,21 +697,32 @@ namespace MonoTests.System.Web.UI.WebControls
 		
 		class MyWebControl : WebControl
 		{
-			WebControlAdapter my_web_control_adapter = new MyWebControlAdapter();
+			public ControlAdapter my_control_adapter = new MyWebControlAdapter();
 			protected override global::System.Web.UI.Adapters.ControlAdapter ResolveAdapter ()
 			{
-				return my_web_control_adapter;
+				return my_control_adapter;
 			}
 		}
 		
 		[Test]
-		public void Render ()
+		public void RenderWithWebControlAdapter ()
 		{
 			MyWebControl c = new MyWebControl ();
 			StringWriter sw = new StringWriter ();
 			HtmlTextWriter w = new HtmlTextWriter (sw);			
 			c.Render (w);
-			Assert.AreEqual ("RenderBeginTag\nRenderContents\nRenderEndTag\n", sw.ToString (), "Render #1");
+			Assert.AreEqual ("RenderBeginTag\nRenderContents\nRenderEndTag\n", sw.ToString (), "RenderWithWebControlAdapter #1");
+		}
+
+		[Test]
+		public void RenderWithControlAdapter ()
+		{
+			MyWebControl c = new MyWebControl ();
+			c.my_control_adapter = new MyControlAdapter ();
+			StringWriter sw = new StringWriter ();
+			HtmlTextWriter w = new HtmlTextWriter (sw);			
+			c.Render (w);
+			Assert.AreEqual ("MyControlAdapter.Render\n", sw.ToString (), "RenderWithControlAdapter #1");
 		}
 
 		[Test]

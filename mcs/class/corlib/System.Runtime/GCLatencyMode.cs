@@ -29,7 +29,7 @@
 
 #if NET_2_0
 
-namespace System
+namespace System.Runtime
 {
 	public enum GCLatencyMode {
 		Batch = 0,

@@ -2374,6 +2374,16 @@ namespace MonoTests.System.XmlSerialization
 			ser.Serialize (TextWriter.Null, new InvalidTypeContainer ());
 		}
 
+		[Test]
+#if !NET_2_0
+		[ExpectedException (typeof (ApplicationException))]
+#endif
+		public void SerializeErrorneousIXmlSerializable ()
+		{
+			Serialize (new ErrorneousGetSchema ());
+			Assert.AreEqual ("<:ErrorneousGetSchema></>", Infoset (sw.ToString ()));
+		}
+
 #if NET_2_0
 		public void DateTimeRoundtrip ()
 		{

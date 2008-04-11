@@ -95,7 +95,7 @@ namespace System.Linq.Expressions {
 			return GetNotNullableOf (type).IsAssignableTo (param.ParameterType);
 		}
 
-		static MethodInfo UnaryCoreCheck (string oper_name, Expression expression, MethodInfo method)
+		static MethodInfo UnaryCoreCheck (string oper_name, Expression expression, MethodInfo method, Func<Type, bool> validator)
 		{
 			if (expression == null)
 				throw new ArgumentNullException ("expression");
@@ -117,11 +117,13 @@ namespace System.Linq.Expressions {
 
 				return method;
 			} else {
-				if (IsNumber (expression.Type))
+				var type = GetNotNullableOf (expression.Type);
+
+				if (validator (type))
 					return null;
 
 				if (oper_name != null) {
-					method = GetUnaryOperator (oper_name, expression.Type, expression);
+					method = GetUnaryOperator (oper_name, type, expression);
 					if (method != null)
 						return method;
 				}
@@ -286,7 +288,16 @@ namespace System.Linq.Expressions {
 
 		static UnaryExpression MakeSimpleUnary (ExpressionType et, Expression expression, MethodInfo method)
 		{
-			return new UnaryExpression (et, expression, GetResultType (expression, method), method);
+			bool is_lifted;
+
+			if (method == null) {
+				is_lifted = IsNullable (expression.Type);
+			} else {
+				// FIXME: implement
+				is_lifted = false;
+			}
+
+			return new UnaryExpression (et, expression, GetResultType (expression, method), method, is_lifted);
 		}
 
 		static BinaryExpression MakeBoolBinary (ExpressionType et, Expression left, Expression right, bool liftToNull, MethodInfo method)
@@ -1029,7 +1040,7 @@ namespace System.Linq.Expressions {
 
 			// TODO: check for valid convertions
 
-			return new UnaryExpression (ExpressionType.Convert, expression, type, method);
+			return new UnaryExpression (ExpressionType.Convert, expression, type, method, false);
 		}
 
 		public static UnaryExpression ConvertChecked (Expression expression, Type type)
@@ -1047,7 +1058,7 @@ namespace System.Linq.Expressions {
 
 			// TODO: check for valid convertions
 
-			return new UnaryExpression (ExpressionType.ConvertChecked, expression, type, method);
+			return new UnaryExpression (ExpressionType.ConvertChecked, expression, type, method, false);
 		}
 
 		public static ElementInit ElementInit (MethodInfo addMethod, params Expression [] arguments)
@@ -1528,7 +1539,7 @@ namespace System.Linq.Expressions {
 
 		public static UnaryExpression Negate (Expression expression, MethodInfo method)
 		{
-			method = UnaryCoreCheck ("op_UnaryNegation", expression, method);
+			method = UnaryCoreCheck ("op_UnaryNegation", expression, method, type => IsSignedNumber (type));
 
 			return MakeSimpleUnary (ExpressionType.Negate, expression, method);
 		}
@@ -1540,7 +1551,7 @@ namespace System.Linq.Expressions {
 
 		public static UnaryExpression NegateChecked (Expression expression, MethodInfo method)
 		{
-			method = UnaryCoreCheck ("op_UnaryNegation", expression, method);
+			method = UnaryCoreCheck ("op_UnaryNegation", expression, method, type => IsSignedNumber (type));
 
 			return MakeSimpleUnary (ExpressionType.Negate, expression, method);
 		}
@@ -1709,7 +1720,12 @@ namespace System.Linq.Expressions {
 
 		public static UnaryExpression Not (Expression expression, MethodInfo method)
 		{
-			method = UnaryCoreCheck ("op_LogicalNot", expression, method);
+			Func<Type, bool> validator = type => IsIntOrBool (type);
+
+			method = UnaryCoreCheck ("op_LogicalNot", expression, method, validator);
+
+			if (method == null)
+				method = UnaryCoreCheck ("op_OnesComplement", expression, method, validator);
 
 			return MakeSimpleUnary (ExpressionType.Not, expression, method);
 		}
@@ -1839,7 +1855,7 @@ namespace System.Linq.Expressions {
 
 		public static UnaryExpression UnaryPlus (Expression expression, MethodInfo method)
 		{
-			method = UnaryCoreCheck ("op_UnaryPlus", expression, method);
+			method = UnaryCoreCheck ("op_UnaryPlus", expression, method, type => IsNumber (type));
 
 			return MakeSimpleUnary (ExpressionType.UnaryPlus, expression, method);
 		}
@@ -1868,6 +1884,11 @@ namespace System.Linq.Expressions {
 		internal static bool IsNullable (Type type)
 		{
 			return type.IsGenericType && type.GetGenericTypeDefinition () == typeof (Nullable<>);
+		}
+
+		static bool IsSignedNumber (Type t)
+		{
+			return IsNumber (t) && !IsUnsigned (t);
 		}
 
 		internal static bool IsUnsigned (Type t)

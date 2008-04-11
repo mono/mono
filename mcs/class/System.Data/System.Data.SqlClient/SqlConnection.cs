@@ -647,7 +647,7 @@ namespace System.Data.SqlClient {
 		{
 			SqlMonitorSocket msock;
 			msock = new SqlMonitorSocket (ServerName, InstanceName);
-			int SqlServerPort = msock.DiscoverTcpPort ();
+			int SqlServerPort = msock.DiscoverTcpPort (ConnectionTimeout);
 			msock = null;
 			return SqlServerPort;
 		}
@@ -948,7 +948,7 @@ namespace System.Data.SqlClient {
 				instance = InstanceName;
 			}
 
-			internal int DiscoverTcpPort () 
+			internal int DiscoverTcpPort (int timeoutSeconds) 
 			{
 				int SqlServerTcpPort;
 				Client.Blocking = false;
@@ -964,7 +964,8 @@ namespace System.Data.SqlClient {
 					return -1; // Error
 				
 				bool result;
-				result = Client.Poll (100, SelectMode.SelectRead);
+				long timeout = timeoutSeconds * 1000000;
+				result = Client.Poll ((int)timeout, SelectMode.SelectRead);
 				if (result == false)
 					return -1; // Error
 

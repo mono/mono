@@ -1,3 +1,9 @@
+2008-04-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Mono.Cecil.Mdb/MdbReader.cs:
+		Make sure we set variables names even if the scope 
+		information is missing.
+
 2007-08-28  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil.Mdb/MdbWriter.cs:

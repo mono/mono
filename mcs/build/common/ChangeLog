@@ -1,6 +1,6 @@
-2008-03-26  Jb Evain  <jbevain@novell.com>
+2008-04-09  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
-	* Consts.cs.in: update SL 2.0 versions.
+	* Consts.cs.in: Add common strings for assembly attributes
 
 2007-12-31  Gert Driesen  <drieseng@users.sourceforge.net>
 
