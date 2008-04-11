@@ -1777,9 +1777,8 @@ insert_after_ins (MonoBasicBlock *bb, MonoInst *ins, MonoInst *to_insert)
 }
 
 #define NEW_INS(cfg,dest,op) do {       \
-		(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));       \
-		(dest)->opcode = (op);  \
-		insert_after_ins (bb, last_ins, (dest)); \
+		MONO_INST_NEW ((cfg), (dest), (op)); \
+        mono_bblock_insert_before_ins (bb, ins, (dest)); \
 	} while (0)
 
 static int

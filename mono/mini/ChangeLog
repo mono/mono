@@ -1,5 +1,7 @@
 2008-04-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-arm.c (NEW_INS): Fix this after the ins_list changes.
+
 	* method-to-ir.c: Remove a FIXME, we are now faster on scimark as well.
 
 	* mini-amd64.h (MONO_ARCH_EMIT_BOUNDS_CHECK): Add MONO_ARCH_EMIT_BOUNDS_CHECK
