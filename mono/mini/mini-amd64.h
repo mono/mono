@@ -292,6 +292,16 @@ typedef struct {
 /* Used for optimization, not complete */
 #define MONO_ARCH_IS_OP_MEMBASE(opcode) ((opcode) == OP_X86_PUSH_MEMBASE)
 
+#define MONO_ARCH_EMIT_BOUNDS_CHECK(cfg, array_reg, offset, index_reg) do { \
+            MonoInst *inst; \
+            MONO_INST_NEW ((cfg), inst, OP_AMD64_ICOMPARE_MEMBASE_REG); \
+            inst->inst_basereg = array_reg; \
+            inst->inst_offset = offset; \
+            inst->sreg2 = index_reg; \
+            MONO_ADD_INS ((cfg)->cbb, inst); \
+            MONO_EMIT_NEW_COND_EXC (cfg, LE_UN, "IndexOutOfRangeException"); \
+       } while (0)
+
 void 
 mono_amd64_patch (unsigned char* code, gpointer target) MONO_INTERNAL;
 

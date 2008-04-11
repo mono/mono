@@ -1,3 +1,8 @@
+2008-04-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.h (MONO_ARCH_EMIT_BOUNDS_CHECK): Add MONO_ARCH_EMIT_BOUNDS_CHECK
+	definition which somehow got missing.
+
 2008-04-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (MONO_ARCH_EMIT_BOUNDS_CHECK): Move the arch-specific definitions
