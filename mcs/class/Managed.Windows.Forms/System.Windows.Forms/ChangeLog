@@ -1,3 +1,14 @@
+2009-04-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Binding.cs: When calling PushData, return if manager.Count == 0,
+	since we just don't have data to be read. Also, when setting the
+	Control for binding, hook up some events to refresh the IsBinding
+	state when BindingContext change or control gets created; use
+	Control.IsHandleCreated instead of Control.Created check to set
+	IsBinding state - we *actually* need to modify IsBinding when control
+	is created, but we don't have any Created event, only HandleCreated.
+	Fixes part of #349364.
+
 2008-04-11  Geoff Norton  <gnorton@novell.com>
 
 	* XplatUICarbon.cs: Expose Caret to the Carbon layer.  Guard against
