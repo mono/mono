@@ -1,3 +1,8 @@
+2008-04-11  Geoff Norton  <gnorton@novell.com>
+
+	* icall.c: The global extern environ doesn't exist on Mac.  We
+	need to call NSGetEnviron instead.
+
 2008-04-10 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	verify.c: Add generic method constraint verification.
