@@ -159,7 +159,10 @@ namespace System.Windows.Forms {
                 internal override bool IsSuspended {
                         get {
 				// Always return true if we don't have items
-				return Count > 0 && binding_suspended;
+				if (Count == 0)
+					return true;
+
+				return binding_suspended;
 			}
                 }
 

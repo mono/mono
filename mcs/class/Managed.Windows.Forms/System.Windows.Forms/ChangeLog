@@ -1,3 +1,11 @@
+2009-04-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Binding.cs: Call UpdateIsBinding when setting control - probably
+	Binding is already usable and we don't need to wait to check the
+	IsBinding state. Also for 1.1 profile use IsHandleCreated instead of
+	Created, just like 2.0 does.
+	* CurrencyManager.cs: I'm so lame - the previous check was wrong.
+
 2009-04-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Binding.cs: Just realized we don't need to have a handler for

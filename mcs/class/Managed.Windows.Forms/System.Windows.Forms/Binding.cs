@@ -337,6 +337,7 @@ namespace System.Windows.Forms {
 				prop_changed_event.AddEventHandler (control, new EventHandler (ControlPropertyChangedHandler));
 #endif
 			this.control = control;
+			UpdateIsBinding ();
 		}
 
 		internal void Check ()
@@ -452,7 +453,7 @@ namespace System.Windows.Forms {
 #if NET_2_0
 			if (control == null || (control is Control && !((Control)control).IsHandleCreated))
 #else
-			if (control == null && !control.Created)
+			if (control == null && !control.IsHandleCreated)
 #endif
 				return;
 
