@@ -1,3 +1,8 @@
+2008-04-11  Geoff Norton  <gnorton@novell.com>
+
+	* processes.c: The global extern environ doesn't exist on Mac.  We
+	need to call NSGetEnviron instead.
+
 2008-04-08  Dick Porter  <dick@ximian.com>
 
 	* processes.c (CreateProcess): Improve the managed binary support,
