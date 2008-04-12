@@ -339,7 +339,6 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void WriteValueTest ()
 		{
 			Control c = new Control ();
@@ -362,7 +361,6 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void BindableComponentTest ()
 		{
 			Control c = new Control ();
@@ -412,7 +410,6 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void DataSourceUpdateModeTest ()
 		{
 			Control c = new Control ();
