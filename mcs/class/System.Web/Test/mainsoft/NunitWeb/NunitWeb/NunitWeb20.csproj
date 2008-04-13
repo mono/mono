@@ -1,8 +1,8 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{DC2320EB-CC91-4648-AF2B-8937F6794A14}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -12,10 +12,30 @@
     <JDKName>1.6</JDKName>
     <GHProjectType>1</GHProjectType>
     <Version>2.0</Version>
-    <jarserver>iap2</jarserver>
+    <jarserver>ip2</jarserver>
     <StartupObject>
     </StartupObject>
     <ProjectTypeGuids>{F6B19D50-1E2E-4e87-ADFB-10393B439DE0};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -78,18 +98,16 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-JarPath-system-xml="..\..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\System.Xml.jar" REFS-JarPath-system-web="..\..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\System.Web.jar" REFS-JarPath-system-runtime-serialization-formatters-soap="..\..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\System.Runtime.Serialization.Formatters.Soap.jar" REFS-JarPath-system-data="..\..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\System.Data.jar" REFS-JarPath-system="..\..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\System.jar" REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\mscorlib.jar" REFS-JarPath-rt="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\jre5\lib\rt.jar" REFS-JarPath-system-configuration="C:\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.Configuration.jar" />
+      <UserProperties REFS-RefInfo-system-web="repository:vmw:framework:2.0" REFS-RefInfo-rt="repository:jre:sun:1.6.0" REFS-JarPath-system-configuration="C:\Program Files\Mainsoft\Visual MainWin for J2EE V2\java_refs\framework\System.Configuration.jar" REFS-JarPath-rt="" REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\mscorlib.jar" REFS-JarPath-system="..\..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\System.jar" REFS-JarPath-system-data="..\..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\System.Data.jar" REFS-JarPath-system-runtime-serialization-formatters-soap="..\..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\System.Runtime.Serialization.Formatters.Soap.jar" REFS-JarPath-system-web="" REFS-JarPath-system-xml="..\..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\System.Xml.jar" />
     </VisualStudio>
   </ProjectExtensions>
   <ItemGroup>
-    <Reference Include="rt, Version=0.0.0.0, Culture=neutral">
-      <Private>False</Private>
-    </Reference>
+    <Reference Include="rt, Version=1.6.0.65535, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
-    <Reference Include="System.Web" />
+    <Reference Include="System.Web, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=x86" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -128,5 +146,22 @@
     <Compile Include="Response.cs" />
     <Compile Include="StandardUrl.cs" />
     <Compile Include="WebTest.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
 </Project>

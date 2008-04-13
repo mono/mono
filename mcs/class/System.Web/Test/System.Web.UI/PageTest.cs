@@ -1409,9 +1409,15 @@ namespace MonoTests.System.Web.UI {
 				persister = new TestPersister(Page);
 			return persister;
 		}
-		
-		protected internal override string GetPostBackFormReference (string formId)
-		{
+
+        
+#if !TARGET_JVM
+        internal 
+#endif
+        protected override string GetPostBackFormReference (string formId)
+       
+
+        {
 			return String.Format("/* testFormReference */{0}", 
 				base.GetPostBackFormReference (formId));
 		}

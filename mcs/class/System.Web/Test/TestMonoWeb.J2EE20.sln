@@ -1,6 +1,5 @@
-
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestMonoWeb20", "TestMonoWeb20.csproj", "{7180B7A7-D0AB-4397-AC0A-CDB1A9DE6417}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NunitWeb20", "mainsoft\NunitWeb\NunitWeb\NunitWeb20.csproj", "{DC2320EB-CC91-4648-AF2B-8937F6794A14}"
