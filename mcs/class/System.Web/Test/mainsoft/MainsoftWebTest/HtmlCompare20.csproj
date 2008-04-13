@@ -97,7 +97,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-RefInfo-rt="repository:jre:sun:1.6.0" REFS-JarPath-rt="" REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\mscorlib.jar" REFS-JarPath-nunit-framework="..\..\..\..\..\nunit20\framework\bin\Debug_Java20\nunit.framework.jar" REFS-JarPath-system="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\System.jar" REFS-JarPath-system-xml="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\System.Xml.jar" />
+      <UserProperties REFS-RefInfo-system-xml="repository:vmw:framework:2.0" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system-xml="" REFS-JarPath-system="" REFS-JarPath-nunit-framework="..\..\..\..\..\nunit20\framework\bin\Debug_Java20\nunit.framework.jar" REFS-JarPath-mscorlib="..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE 2\java_refs\framework\mscorlib.jar" REFS-JarPath-rt="" REFS-RefInfo-rt="repository:jre:sun:1.6.0" />
     </VisualStudio>
   </ProjectExtensions>
   <ItemGroup>
@@ -106,8 +106,8 @@
       <HintPath>..\..\..\..\..\nunit20\framework\bin\Debug_Java20\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="rt, Version=1.6.0.65535, Culture=neutral, processorArchitecture=MSIL" />
-    <Reference Include="System" />
-    <Reference Include="System.Xml" />
+    <Reference Include="System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
+    <Reference Include="System.Xml, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HtmlAgilityPack\AssemblyInfo.cs" />
