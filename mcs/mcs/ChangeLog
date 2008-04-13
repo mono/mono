@@ -1,3 +1,9 @@
+2008-04-13  Jb Evain  <jbevain@novell.com>
+
+	* namespace.cs: update the System.Core fullname for 2.1
+	* driver.cs: update the list of required assemblies for 2.1.
+	Merged from the Moonlight 2 branch.
+
 2008-04-11  Marek Safar  <marek.safar@gmail.com>
 
 	* assign.cs, ecore.cs, expression.cs, nullable.cs: More work on nullable

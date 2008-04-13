@@ -1,3 +1,8 @@
+2008-04-13  Jb Evain  <jbevain@novell.com>
+
+	* CollectionsUtil.cs: internalize for the 2.1 profile.
+	Merged from the Moonlight 2 branch.
+
 2008-01-07  Juraj Skripsky <js@hotfeet.ch>
 
 	* NameObjectCollectionBase.cs: Add argument checking in CopyTo,

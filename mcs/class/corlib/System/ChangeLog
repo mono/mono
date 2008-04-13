@@ -1,3 +1,9 @@
+2008-04-13  Jb Evain  <jbevain@novell.com>
+
+	* ICloneable.cs: use the INSIDE_CORLIB pattern to
+	internalize code that is used outside the corlib.
+	Merged from the Moonlight 2 branch.
+
 2008-04-04  Raja R Harinath  <harinath@hurrynot.org>
 
 	* String.cs (EndsWith) [CultureInfo variant]: Handle null 'culture'.

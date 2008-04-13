@@ -29,8 +29,13 @@
 using System.Collections;
 
 namespace System.Collections.Specialized {
-	
-	public class CollectionsUtil {
+
+#if !NET_2_1
+	public
+#else
+	internal
+#endif
+	class CollectionsUtil {
 		
 		public CollectionsUtil () {}
 		

@@ -1,3 +1,9 @@
+2008-04-13  Jb Evain  <jbevain@novell.com>
+
+	* TypeDescriptor.cs: internalize method AddEditorTable
+	for the 2.1 profile.
+	Merged from the Moonlight 2 branch.
+
 2008-04-07  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* ReflectionPropertyDescriptor.cs: ReadOnlyAttribute has a Default, 

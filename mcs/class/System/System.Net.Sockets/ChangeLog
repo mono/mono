@@ -1,3 +1,8 @@
+2008-04-13  Jb Evain  <jbevain@novell.com>
+
+	* Socket.cs: ifdef out the Sys.Config part for the
+	2.1 profile.
+	Merged from the Moonlight 2 branch.
 
 Wed Mar 12 20:06:07 CET 2008 Paolo Molaro <lupus@ximian.com>
 

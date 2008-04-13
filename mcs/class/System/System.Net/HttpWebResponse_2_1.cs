@@ -3,6 +3,7 @@
 //
 // Authors:
 //	Atsushi Enomoto  <atsushi@ximian.com>
+//  Jb Evain  <jbevain@novell.com>
 //
 // (c) 2007 Novell, Inc. (http://www.novell.com)
 //
@@ -31,33 +32,15 @@
 #if NET_2_1
 
 using System;
-using System.Collections;
-using System.Globalization;
-using System.IO;
-using System.Net.Sockets;
-using System.Runtime.Serialization;
-using System.Text;
 
-namespace System.Net 
-{
-	public abstract class HttpWebResponse
-	{
-		public abstract void Close ();
-		public abstract string GetResponseHeader (string headerName);
-		public abstract Stream GetResponseStream ();
-		public abstract string CharacterSet { get; }
-		public abstract string ContentEncoding { get; }
-		public abstract long ContentLength { get; }
-		public abstract string ContentType { get; }
-		public abstract WebHeaderCollection Headers { get; }
-		public abstract DateTime LastModified { get; }
+namespace System.Net {
+
+	public abstract class HttpWebResponse : WebResponse {
+
 		public abstract string Method { get; }
-		public abstract Version ProtocolVersion { get; }
-		public abstract Uri ResponseUri { get; }
-		public abstract string Server { get; }
 		public abstract HttpStatusCode StatusCode { get; }
 		public abstract string StatusDescription { get; }
 	}
-
 }
+
 #endif

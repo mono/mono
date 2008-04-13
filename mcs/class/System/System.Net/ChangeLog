@@ -1,3 +1,10 @@
+2008-04-13  Jb Evain  <jbevain@novell.com>
+
+	* WebRequest_2_1.cs, WebResponse_2_1.cs: new files
+	* HttpWebRequest_2_1.cs, HttpWebResponse_2_1, WebHeaderCollection_2_1:
+	update to Silverlight 2.0b1 API.
+	Merged from the Moonlight 2 branch.
+
 2008-04-06  <gnorton@novell.com>
 
 	* ListenerAsyncContext.cs: Fix Basic authentication support.  Patch from 

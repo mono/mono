@@ -114,7 +114,8 @@ net_2_0_dirs := \
 net_2_1_dirs := \
 	corlib			\
 	System			\
-	System.Xml.Core		\
+	System.Net		\
+	System.XML		\
 	System.Core
 
 net_3_5_dirs := \

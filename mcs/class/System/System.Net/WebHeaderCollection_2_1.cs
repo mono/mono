@@ -35,19 +35,12 @@ using System.Collections.Generic;
 
 namespace System.Net {
 
-	// the public API for this class amazingly sucks
-
 	public class WebHeaderCollection {
 
 		Dictionary<string, string> headers = new Dictionary<string, string> ();
 
 		public WebHeaderCollection ()
 		{
-		}
-
-		public WebHeaderCollection (string headers)
-		{
-			throw new NotImplementedException ();
 		}
 
 		public int Count {
@@ -67,11 +60,6 @@ namespace System.Net {
 				return string.Empty;
 			}
 			set { headers [header] = value; }
-		}
-
-		public string this [HttpResponseHeader header] {
-			get { return this [HttpResponseHeaderToString (header)]; }
-			set { this [HttpResponseHeaderToString (header)] = value; }
 		}
 
 		public string this [HttpRequestHeader header] {

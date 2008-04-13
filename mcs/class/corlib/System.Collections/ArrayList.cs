@@ -33,7 +33,12 @@ namespace System.Collections
 	[ComVisible(true)]
 #endif
 	[Serializable]
-	public class ArrayList
+#if INSIDE_CORLIB
+	public
+#else
+	internal
+#endif
+	class ArrayList
 		: IList, ICloneable, ICollection, IEnumerable 
 	{
 		#region Enumerator

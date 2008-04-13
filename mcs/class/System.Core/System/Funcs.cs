@@ -25,13 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //
 
-
-#if NET_2_1 // temporary hack. SL 1.1 fly high on crack
-namespace System.Linq
-#else
-namespace System
-#endif
-{
+namespace System {
 	public delegate TResult Func<TResult> ();
 	public delegate TResult Func<T, TResult> (T arg1);
 	public delegate TResult Func<T1, T2, TResult> (T1 arg1, T2 arg2);

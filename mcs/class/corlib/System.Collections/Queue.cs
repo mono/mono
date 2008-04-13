@@ -40,7 +40,12 @@ namespace System.Collections {
 	[ComVisible(true)]
 #endif
 	[Serializable]
-	public class Queue : ICollection, IEnumerable, ICloneable {
+#if INSIDE_CORLIB
+	public
+#else
+	internal
+#endif
+	class Queue : ICollection, IEnumerable, ICloneable {
 
 		private object[] _array;
 		private int _head = 0;   // points to the first used slot

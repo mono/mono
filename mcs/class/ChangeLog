@@ -1,3 +1,8 @@
+2008-04-13  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: update the 2.1 assemblies.
+	Merged from the Moonlight 2 branch.
+
 2008-03-04  Marek Safar  <marek.safar@gmail.com>
 
 	* Makefile: Added System.Data.Linq

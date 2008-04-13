@@ -1,3 +1,8 @@
+2008-04-13  Jb Evain  <jbevain@novell.com>
+
+	* Func.cs: remove old ugly 2.1 hack.
+	Merged from the Moonlight 2 branch.
+
 2008-03-30  Jb Evain  <jbevain@novell.com>
 
 	* TimeZoneInfo.cs: use generic collections instead of untyped

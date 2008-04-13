@@ -38,7 +38,12 @@ namespace System.Collections
 	[ComVisible(true)]
 #endif
 	[Serializable]
-	public sealed class Comparer : IComparer, ISerializable {
+#if INSIDE_CORLIB
+	public
+#else
+	internal
+#endif
+	sealed class Comparer : IComparer, ISerializable {
 
 		public static readonly Comparer Default = new Comparer ();
 #if NET_1_1

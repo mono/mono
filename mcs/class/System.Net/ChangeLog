@@ -1,0 +1,4 @@
+2008-04-13  Jb Evain  <jbevain@novell.com>
+
+	* System.Net: new assembly in SL 2b1.
+	Merged from the Moonlight 2 branch.

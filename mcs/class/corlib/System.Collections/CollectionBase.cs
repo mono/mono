@@ -39,7 +39,12 @@ namespace System.Collections {
 	[ComVisible(true)]
 #endif
 	[Serializable]
-	public abstract class CollectionBase : IList, ICollection, IEnumerable {
+#if INSIDE_CORLIB
+	public
+#else
+	internal
+#endif
+	abstract class CollectionBase : IList, ICollection, IEnumerable {
 
 		// private instance properties
 		private ArrayList list;

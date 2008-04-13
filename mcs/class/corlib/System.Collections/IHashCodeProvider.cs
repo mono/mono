@@ -40,7 +40,12 @@ namespace System.Collections {
 	[Obsolete ("Please use IEqualityComparer instead.")]
 	[ComVisible(true)]
 #endif
-	public interface IHashCodeProvider {
+#if INSIDE_CORLIB
+	public
+#else
+	internal
+#endif
+	interface IHashCodeProvider {
 		int GetHashCode (object obj);
 	}
 }

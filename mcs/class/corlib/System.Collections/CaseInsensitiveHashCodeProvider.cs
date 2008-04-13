@@ -38,7 +38,12 @@ namespace System.Collections
 	[ComVisible(true)]
 	[Obsolete ("Please use StringComparer instead.")]
 #endif
-	public class CaseInsensitiveHashCodeProvider : IHashCodeProvider
+#if INSIDE_CORLIB
+	public
+#else
+	internal
+#endif
+	class CaseInsensitiveHashCodeProvider : IHashCodeProvider
 	{
 		static readonly CaseInsensitiveHashCodeProvider singletonInvariant = new CaseInsensitiveHashCodeProvider (
 			CultureInfo.InvariantCulture);

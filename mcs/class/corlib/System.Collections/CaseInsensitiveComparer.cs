@@ -39,7 +39,12 @@ namespace System.Collections
 	[ComVisible(true)]
 #endif
 	[Serializable]
-	public class CaseInsensitiveComparer : IComparer
+#if INSIDE_CORLIB
+	public
+#else
+	internal
+#endif
+	class CaseInsensitiveComparer : IComparer
 	{
 		private static CaseInsensitiveComparer defaultComparer = new CaseInsensitiveComparer ();
 		private static CaseInsensitiveComparer defaultInvariantComparer = new CaseInsensitiveComparer (true);

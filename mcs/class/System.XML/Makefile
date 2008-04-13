@@ -31,6 +31,9 @@ LIB_MCS_FLAGS += \
 	-r:unresolved.dll		\
 	/lib:../../class/lib/$(PROFILE)
 endif
+ifeq (2.1, $(FRAMEWORK_VERSION))
+LIB_MCS_FLAGS += -unsafe -d:AGCLR -d:NET_2_1_HACK
+endif
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:0618 -nowarn:219 -nowarn:169
 
 ifeq (2.0, $(FRAMEWORK_VERSION))
@@ -118,6 +121,7 @@ Mono.Xml.Xsl/PatternTokenizer.cs: System.Xml.XPath/Tokenizer.cs
 	echo "#define XSLT_PATTERN" > $@
 	cat $< >>$@
 
+ifneq (2.1, $(FRAMEWORK_VERSION))
 BUILT_SOURCES = System.Xml.XPath/Parser.cs \
 	Mono.Xml.Xsl/PatternParser.cs \
 	Mono.Xml.Xsl/PatternTokenizer.cs
@@ -126,5 +130,6 @@ CLEAN_FILES = Test/XmlFiles/xsl/result.xml \
 	System.Xml.XPath/Parser.cs \
 	Mono.Xml.Xsl/PatternParser.cs \
 	Mono.Xml.Xsl/PatternTokenizer.cs
+endif
 
 include ../../build/library.make

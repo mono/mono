@@ -1,3 +1,12 @@
+2008-04-13  Jb Evain  <jbevain@novell.com>
+
+	* ArrayList.cs, BitArray.cs, CaseInsensitiveComparer.cs
+	CaseInsensitiveHashCodeProvider.cs, CollectionBase.cs,
+	Comparer.cs, IHashCodeProvider.cs, Hashtable.cs,
+	Queue.cs, Stack.cs: use the INSIDE_CORLIB pattern to
+	internalize code that is used outside the corlib.
+	Merged from the Moonlight 2 branch.
+
 2008-04-02  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
 
 	* ArrayList.cs

@@ -492,10 +492,17 @@ namespace System.Text.RegularExpressions {
 		protected internal RegexOptions roptions;
 		
 		// MS undocumented members
+#if NET_2_1
+		[MonoTODO]
+		protected internal System.Collections.Generic.Dictionary<string, int> capnames;
+		[MonoTODO]
+		protected internal System.Collections.Generic.Dictionary<int, int> caps;
+#else
 		[MonoTODO]
 		protected internal System.Collections.Hashtable capnames;
 		[MonoTODO]
 		protected internal System.Collections.Hashtable caps;
+#endif
 		[MonoTODO]
 		protected internal int capsize;
 		[MonoTODO]
