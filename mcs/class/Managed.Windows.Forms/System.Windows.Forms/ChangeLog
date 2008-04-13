@@ -1,5 +1,13 @@
 2009-04-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListView.cs: When changing the size in VirtualMode, also Reset the
+	selection.
+	* ListViewItem.cs: Don't call SelectedIndexCollection.Reset when
+	changing selection info for VirtualMode.
+	Fixes #372618.
+
+2009-04-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ThemeWin32Classic.cs: When drawing ListViewItem instancesin Details
 	view, don't use LineLimit for the first item - use NoWrap *always*
 	instead, since ListView.LabelWrap is not used for this view.

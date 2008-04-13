@@ -489,6 +489,7 @@ namespace System.Windows.Forms
 
 		// When ListView uses VirtualMode, selection state info
 		// lives in the ListView, not in the item
+		// Also, in VirtualMode we can't Reset() the selection
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public bool Selected {
@@ -517,12 +518,13 @@ namespace System.Windows.Forms
 							owner.SelectedIndices.InsertIndex (Index);
 						else
 							owner.SelectedIndices.RemoveIndex (Index);
-					else
+					else 
 #endif
+					{
 						selected = value;
-						
-					// force re-population of list
-					owner.SelectedIndices.Reset ();
+						owner.SelectedIndices.Reset (); // force re-population of list
+					}
+
 #if NET_2_0
 					owner.OnItemSelectionChanged (new ListViewItemSelectionChangedEventArgs (this, Index, value));
 #endif

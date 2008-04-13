@@ -1075,8 +1075,10 @@ namespace System.Windows.Forms
 					return;
 
 				virtual_list_size = value;
-				if (virtual_mode)
+				if (virtual_mode) {
+					selected_indices.Reset ();
 					Redraw (true);
+				}
 			}
 		}
 #endif
@@ -5547,9 +5549,6 @@ namespace System.Windows.Forms
 			internal void Reset ()
 			{
 				// force re-population of list
-#if NET_2_0
-				if (!owner.VirtualMode)
-#endif
 				list = null;
 			}
 
