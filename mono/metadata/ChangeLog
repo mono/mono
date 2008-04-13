@@ -1,3 +1,8 @@
+2008-04-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (mono_custom_attrs_construct): Fix crash when the cattr type
+	isn't finished yet. Fixes #363447.
+
 2008-04-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_bounded_array_class_get): Fix the name of bounded array types.
