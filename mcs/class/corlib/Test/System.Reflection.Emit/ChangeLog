@@ -1,3 +1,8 @@
+2008-04-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* AssemblyBuilderTest.cs (GetCustomAttributes_NotCreated): New test for
+	#363447.
+
 2008-03-29  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AssemblyBuilderTest.cs: Enabled DefineUnmanagedResource and

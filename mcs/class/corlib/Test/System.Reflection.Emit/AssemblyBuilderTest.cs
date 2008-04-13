@@ -1702,6 +1702,21 @@ public class AssemblyBuilderTest
 		Assert.AreEqual ("Test2", t.Name, "#3");
 	}
 
+	[ExpectedException (typeof (TypeLoadException))]
+	public void GetCustomAttributes_NotCreated ()
+	{
+		AssemblyBuilder ab = genAssembly ();
+		ModuleBuilder mb = ab.DefineDynamicModule("tester", "tester.dll", false);
+		TypeBuilder tb = mb.DefineType ("T");
+		tb.SetParent (typeof (Attribute));
+		ConstructorBuilder ctor = tb.DefineDefaultConstructor (MethodAttributes.Public);
+		object [] o = new object [0];
+		CustomAttributeBuilder cab = new CustomAttributeBuilder (ctor, o);
+		ab.SetCustomAttribute (cab);
+
+		ab.GetCustomAttributes (true);
+	}
+
 	private static void AssertAssemblyName (string tempDir, AssemblyName assemblyName, string abName, string fullName)
 	{
 		AppDomain currentDomain = AppDomain.CurrentDomain;
