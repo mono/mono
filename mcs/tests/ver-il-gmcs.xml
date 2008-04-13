@@ -3880,7 +3880,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Test()">
-        <size>595</size>
+        <size>560</size>
       </method>
       <method name="Int32 Main()">
         <size>30</size>
@@ -6065,7 +6065,7 @@
         <size>59</size>
       </method>
       <method name="Void Main()">
-        <size>528</size>
+        <size>508</size>
       </method>
     </type>
   </test>
@@ -9980,7 +9980,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>337</size>
+        <size>327</size>
       </method>
     </type>
     <type name="BugReport.A">
@@ -10328,6 +10328,26 @@
     <type name="TestGoto+&lt;&gt;c__CompilerGenerated1+&lt;&gt;c__CompilerGenerated2">
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-382.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>78</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-383.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>285</size>
       </method>
     </type>
   </test>
@@ -27686,6 +27706,126 @@
       </method>
       <method name="Int32 Main()">
         <size>70</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-631.cs">
+    <type name="A">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="SByte op_Implicit(A)">
+        <size>2</size>
+      </method>
+      <method name="Byte op_Implicit(A)">
+        <size>2</size>
+      </method>
+      <method name="Int16 op_Implicit(A)">
+        <size>2</size>
+      </method>
+      <method name="UInt16 op_Implicit(A)">
+        <size>2</size>
+      </method>
+      <method name="Int32 op_Implicit(A)">
+        <size>2</size>
+      </method>
+      <method name="UInt32 op_Implicit(A)">
+        <size>2</size>
+      </method>
+      <method name="Int64 op_Implicit(A)">
+        <size>3</size>
+      </method>
+      <method name="UInt64 op_Implicit(A)">
+        <size>3</size>
+      </method>
+    </type>
+    <type name="A2">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="SByte op_Implicit(A2)">
+        <size>2</size>
+      </method>
+      <method name="Byte op_Implicit(A2)">
+        <size>2</size>
+      </method>
+      <method name="Int16 op_Implicit(A2)">
+        <size>2</size>
+      </method>
+      <method name="UInt32 op_Implicit(A2)">
+        <size>2</size>
+      </method>
+      <method name="Int64 op_Implicit(A2)">
+        <size>3</size>
+      </method>
+      <method name="UInt64 op_Implicit(A2)">
+        <size>3</size>
+      </method>
+    </type>
+    <type name="A3">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="SByte op_Implicit(A3)">
+        <size>2</size>
+      </method>
+      <method name="UInt32 op_Implicit(A3)">
+        <size>2</size>
+      </method>
+      <method name="Int64 op_Implicit(A3)">
+        <size>3</size>
+      </method>
+      <method name="UInt64 op_Implicit(A3)">
+        <size>3</size>
+      </method>
+    </type>
+    <type name="A4">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="UInt32 op_Implicit(A4)">
+        <size>2</size>
+      </method>
+      <method name="Int64 op_Implicit(A4)">
+        <size>3</size>
+      </method>
+      <method name="UInt64 op_Implicit(A4)">
+        <size>3</size>
+      </method>
+    </type>
+    <type name="A5">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="UInt32 op_Implicit(A5)">
+        <size>2</size>
+      </method>
+      <method name="Int32 op_Implicit(A5)">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="A6">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Byte op_Implicit(A6)">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="MyDecimal">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Decimal op_Implicit(MyDecimal)">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="Constraint">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>293</size>
       </method>
     </type>
   </test>

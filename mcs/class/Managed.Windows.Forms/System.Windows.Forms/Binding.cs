@@ -237,6 +237,9 @@ namespace System.Windows.Forms {
 
 		public bool IsBinding {
 			get {
+				if (manager == null || manager.IsSuspended)
+					return false;
+
 				return is_binding;
 			}
 		}
@@ -321,8 +324,12 @@ namespace System.Windows.Forms {
 				
 			data_type = control_property.PropertyType; // Getting the PropertyType is kinda slow and it should never change, so it is cached
 
-			if (control is Control)
-				((Control)control).Validating += new CancelEventHandler (ControlValidatingHandler);
+			Control ctrl = control as Control;
+			if (ctrl != null) {
+				ctrl.Validating += new CancelEventHandler (ControlValidatingHandler);
+				if (!ctrl.IsHandleCreated)
+					ctrl.HandleCreated += new EventHandler (ControlCreatedHandler);
+			}
 
 #if NET_2_0
 			EventDescriptor prop_changed_event = GetPropertyChangedEvent (control, property_name);
@@ -330,6 +337,7 @@ namespace System.Windows.Forms {
 				prop_changed_event.AddEventHandler (control, new EventHandler (ControlPropertyChangedHandler));
 #endif
 			this.control = control;
+			UpdateIsBinding ();
 		}
 
 		internal void Check ()
@@ -398,7 +406,7 @@ namespace System.Windows.Forms {
 
 		void PushData (bool force)
 		{
-			if (manager == null || manager.IsSuspended || manager.Current == null)
+			if (manager == null || manager.IsSuspended || manager.Count == 0 || manager.Current == null)
 				return;
 #if NET_2_0
 			if (!force && control_update_mode == ControlUpdateMode.Never)
@@ -443,12 +451,10 @@ namespace System.Windows.Forms {
 		{
 			is_binding = false;
 #if NET_2_0
-			if (control == null || (control is Control && !((Control)control).Created))
+			if (control == null || (control is Control && !((Control)control).IsHandleCreated))
 #else
-			if (control == null && !control.Created)
+			if (control == null && !control.IsHandleCreated)
 #endif
-				return;
-			if (manager == null || manager.IsSuspended)
 				return;
 
 			is_binding = true;
@@ -487,6 +493,11 @@ namespace System.Windows.Forms {
 			}
 
 			e.Cancel = !ok;
+		}
+
+		private void ControlCreatedHandler (object o, EventArgs args)
+		{
+			UpdateIsBinding ();
 		}
 
 		private void PositionChangedHandler (object sender, EventArgs e)

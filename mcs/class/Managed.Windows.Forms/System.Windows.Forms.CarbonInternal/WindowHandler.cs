@@ -185,6 +185,7 @@ namespace System.Windows.Forms.CarbonInternal {
 
 						msg.hwnd = hwnd.Handle;
 						msg.message = Msg.WM_WINDOWPOSCHANGED;
+						Driver.SetCaretPos (XplatUICarbon.Caret.Hwnd, XplatUICarbon.Caret.X, XplatUICarbon.Caret.Y);
 
 						return true;
 					}

@@ -1075,8 +1075,10 @@ namespace System.Windows.Forms
 					return;
 
 				virtual_list_size = value;
-				if (virtual_mode)
+				if (virtual_mode) {
+					selected_indices.Reset ();
 					Redraw (true);
+				}
 			}
 		}
 #endif
@@ -1318,13 +1320,14 @@ namespace System.Windows.Forms
 				return;
 
 			Rectangle client_area = ClientRectangle;
+			int height = client_area.Height;
+			int width = client_area.Width;
 			
 			if (!scrollable) {
 				h_scroll.Visible = false;
 				v_scroll.Visible = false;
-				item_control.Height = client_area.Height;
-				item_control.Width = client_area.Width;
-				header_control.Width = client_area.Width;
+				item_control.Size = new Size (width, height);
+				header_control.Width = width;
 				return;
 			}
 
@@ -1351,7 +1354,6 @@ namespace System.Windows.Forms
 				v_scroll.Visible = false;
 			}
 
-			item_control.Height = client_area.Height;
 
 			if (h_scroll.is_visible) {
 				h_scroll.Location = new Point (client_area.X, client_area.Bottom - h_scroll.Height);
@@ -1370,12 +1372,8 @@ namespace System.Windows.Forms
 
 				h_scroll.LargeChange = client_area.Width;
 				h_scroll.SmallChange = Font.Height;
-				item_control.Height -= h_scroll.Height;
+				height -= h_scroll.Height;
 			}
-
-			if (header_control.is_visible)
-				header_control.Width = client_area.Width;
-			item_control.Width = client_area.Width;
 
 			if (v_scroll.is_visible) {
 				v_scroll.Location = new Point (client_area.Right - v_scroll.Width, client_area.Y);
@@ -1393,10 +1391,13 @@ namespace System.Windows.Forms
 
 				v_scroll.LargeChange = client_area.Height;
 				v_scroll.SmallChange = Font.Height;
-				if (header_control.Visible)
-					header_control.Width -= v_scroll.Width;
-				item_control.Width -= v_scroll.Width;
+				width -= v_scroll.Width;
 			}
+			
+			item_control.Size = new Size (width, height);
+
+			if (header_control.is_visible)
+				header_control.Width = width;
 		}
 
 #if NET_2_0
@@ -5548,9 +5549,6 @@ namespace System.Windows.Forms
 			internal void Reset ()
 			{
 				// force re-population of list
-#if NET_2_0
-				if (!owner.VirtualMode)
-#endif
 				list = null;
 			}
 

@@ -702,6 +702,17 @@ namespace MonoTests.System.Web.UI.WebControls
 			{
 				return my_control_adapter;
 			}
+            public void DoRender(HtmlTextWriter writer)
+            {
+                Render(writer);
+            }
+            public bool GetIsEnabled
+            {
+                get
+                {
+                    return IsEnabled;
+                }
+            }
 		}
 		
 		[Test]
@@ -710,7 +721,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			MyWebControl c = new MyWebControl ();
 			StringWriter sw = new StringWriter ();
 			HtmlTextWriter w = new HtmlTextWriter (sw);			
-			c.Render (w);
+			c.DoRender (w);
 			Assert.AreEqual ("RenderBeginTag\nRenderContents\nRenderEndTag\n", sw.ToString (), "RenderWithWebControlAdapter #1");
 		}
 
@@ -721,22 +732,22 @@ namespace MonoTests.System.Web.UI.WebControls
 			c.my_control_adapter = new MyControlAdapter ();
 			StringWriter sw = new StringWriter ();
 			HtmlTextWriter w = new HtmlTextWriter (sw);			
-			c.Render (w);
+			c.DoRender (w);
 			Assert.AreEqual ("MyControlAdapter.Render\n", sw.ToString (), "RenderWithControlAdapter #1");
 		}
 
 		[Test]
 		public void IsEnabled ()
 		{
-			WebControl parent = new MyWebControl ();
-			WebControl child = new MyWebControl ();
+			MyWebControl parent = new MyWebControl ();
+			MyWebControl child = new MyWebControl ();
 			parent.Controls.Add (child);
-			Assert.IsTrue (child.IsEnabled, "IsEnabled #1");
+			Assert.IsTrue (child.GetIsEnabled, "IsEnabled #1");
 			parent.Enabled = false;
-			Assert.IsFalse (child.IsEnabled, "IsEnabled #2");
+			Assert.IsFalse (child.GetIsEnabled, "IsEnabled #2");
 			parent.Enabled = true;
 			child.Enabled = false;
-			Assert.IsFalse (child.IsEnabled, "IsEnabled #3");
+			Assert.IsFalse (child.GetIsEnabled, "IsEnabled #3");
 		}
 #endif
 	}

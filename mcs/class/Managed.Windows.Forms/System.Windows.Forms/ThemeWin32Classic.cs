@@ -2381,7 +2381,9 @@ namespace System.Windows.Forms
 			bool details = control.View == View.Details;
 			int first = control.FirstVisibleIndex;	
 
-			for (int i = first; i <= control.LastVisibleIndex; i ++) {					
+			int lastvisibleindex = control.LastVisibleIndex;
+
+			for (int i = first; i <= lastvisibleindex; i++) {					
 				if (clip.IntersectsWith (control.Items[i].GetBounds (ItemBoundsPortion.Entire))) {
 #if NET_2_0
 					bool owner_draw = false;
@@ -2669,9 +2671,9 @@ namespace System.Windows.Forms
 				format.Alignment = StringAlignment.Near;
 			
 #if NET_2_0
-			if (control.LabelWrap && control.View != View.Tile)
+			if (control.LabelWrap && control.View != View.Details && control.View != View.Tile)
 #else
-			if (control.LabelWrap)
+			if (control.LabelWrap && control.View != View.Details)
 #endif
 				format.FormatFlags = StringFormatFlags.LineLimit;
 			else

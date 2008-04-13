@@ -2036,16 +2036,26 @@ namespace System.Windows.Forms {
 			AutoResizeColumn (columnIndex, DataGridViewAutoSizeColumnMode.AllCells);
 		}
 
-		public void AutoResizeColumn (int columnIndex, DataGridViewAutoSizeColumnMode autoSizeColumnMode) {
-			AutoResizeColumn (columnIndex, autoSizeColumnMode, true);
+		public void AutoResizeColumn (int columnIndex, DataGridViewAutoSizeColumnMode autoSizeColumnMode)
+		{
+			AutoResizeColumnInternal (columnIndex, autoSizeColumnMode);
 		}
 
-		public void AutoResizeColumnHeadersHeight () {
-			throw new NotImplementedException();
+		public void AutoResizeColumnHeadersHeight ()
+		{
+			int new_height = 0;
+			
+			foreach (DataGridViewColumn col in Columns)
+				new_height = Math.Max (new_height, col.HeaderCell.PreferredSize.Height);
+			
+			if (ColumnHeadersHeight != new_height)
+				ColumnHeadersHeight = new_height;
 		}
 
-		public void AutoResizeColumnHeadersHeight (int columnIndex) {
-			throw new NotImplementedException();
+		[MonoTODO ("columnIndex parameter is not used")]
+		public void AutoResizeColumnHeadersHeight (int columnIndex)
+		{
+			AutoResizeColumnHeadersHeight ();
 		}
 
 		public void AutoResizeColumns () {
@@ -2056,36 +2066,88 @@ namespace System.Windows.Forms {
 			AutoResizeColumns (autoSizeColumnsMode, true);
 		}
 
-		public void AutoResizeRow (int rowIndex) {
-			throw new NotImplementedException();
+		public void AutoResizeRow (int rowIndex)
+		{
+			AutoResizeRow (rowIndex, DataGridViewAutoSizeRowMode.AllCells);
 		}
 
-		public void AutoResizeRow (int rowIndex, DataGridViewAutoSizeRowMode autoSizeRowMode) {
-			throw new NotImplementedException();
-		}
-
-		public void AutoResizeRowHeadersWidth (DataGridViewRowHeadersWidthSizeMode rowHeadersWidthSizeMode) {
-			throw new NotImplementedException();
-		}
-
-		public void AutoResizeRowHeadersWidth (int rowIndex, DataGridViewRowHeadersWidthSizeMode rowHeadersWidthSizeMode) {
-			throw new NotImplementedException();
-		}
-
-		public void AutoResizeRows () {
-			throw new NotImplementedException();
-		}
-
-		public void AutoResizeRows (DataGridViewAutoSizeRowsMode autoSizeRowsMode) {
-			if (!Enum.IsDefined(typeof(DataGridViewAutoSizeRowsMode), autoSizeRowsMode)) {
-				throw new InvalidEnumArgumentException("Parameter AutoSizeRowsMode is not valid DataGridViewRowsMode.");
+		public void AutoResizeRow (int rowIndex, DataGridViewAutoSizeRowMode autoSizeRowMode)
+		{
+			if (autoSizeRowMode == DataGridViewAutoSizeRowMode.RowHeader && !rowHeadersVisible)
+				throw new InvalidOperationException ("row headers are not visible");
+			if (rowIndex < 0 || rowIndex > Rows.Count - 1)
+				throw new ArgumentOutOfRangeException ("rowIndex");
+			
+			DataGridViewRow row = GetRowInternal (rowIndex);
+			
+			if (autoSizeRowMode == DataGridViewAutoSizeRowMode.RowHeader) {
+				row.Height = row.HeaderCell.PreferredSize.Width;
+				return;
 			}
-			if ((autoSizeRowsMode == DataGridViewAutoSizeRowsMode.AllHeaders || autoSizeRowsMode == DataGridViewAutoSizeRowsMode.DisplayedHeaders) && rowHeadersVisible == false) {
-				throw new InvalidOperationException("Parameter AutoSizeRowsMode cant be AllHeaders or DisplayedHeaders in this DataGridView.");
+			
+			int row_height = 0;
+			
+			foreach (DataGridViewCell cell in row.Cells)
+				row_height = Math.Max (row_height, cell.PreferredSize.Height);
+				
+			if (autoSizeRowMode == DataGridViewAutoSizeRowMode.AllCellsExceptHeader)
+				row.Height = row_height;
+			else
+				row.Height = Math.Max (row_height, row.HeaderCell.PreferredSize.Width);
+		}
+
+		public void AutoResizeRowHeadersWidth (DataGridViewRowHeadersWidthSizeMode rowHeadersWidthSizeMode)
+		{
+			if (rowHeadersWidthSizeMode == DataGridViewRowHeadersWidthSizeMode.AutoSizeToFirstHeader) {
+				RowHeadersWidth = GetRowInternal (0).HeaderCell.PreferredSize.Width;
+				return;
 			}
-			if (autoSizeRowsMode == DataGridViewAutoSizeRowsMode.None) {
-				throw new ArgumentException("Parameter AutoSieRowsMode cant be None.");
+			
+			int new_width = 0;
+			
+			if (rowHeadersWidthSizeMode == DataGridViewRowHeadersWidthSizeMode.AutoSizeToDisplayedHeaders) {
+				foreach (DataGridViewRow row in Rows)
+					if (row.Displayed)
+						new_width = Math.Max (new_width, row.HeaderCell.PreferredSize.Width);
+						
+				if (RowHeadersWidth != new_width)
+					RowHeadersWidth = new_width;
+					
+				return;
 			}
+
+			if (rowHeadersWidthSizeMode == DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders) {
+				foreach (DataGridViewRow row in Rows)
+					new_width = Math.Max (new_width, row.HeaderCell.PreferredSize.Width);
+
+				if (RowHeadersWidth != new_width)
+					RowHeadersWidth = new_width;
+
+				return;
+			}
+		}
+
+		[MonoTODO ("Does not use rowIndex parameter.")]
+		public void AutoResizeRowHeadersWidth (int rowIndex, DataGridViewRowHeadersWidthSizeMode rowHeadersWidthSizeMode)
+		{
+			AutoResizeRowHeadersWidth (rowHeadersWidthSizeMode);
+		}
+
+		public void AutoResizeRows ()
+		{
+			AutoResizeRows (0, Rows.Count, DataGridViewAutoSizeRowMode.AllCells, false);
+		}
+
+		public void AutoResizeRows (DataGridViewAutoSizeRowsMode autoSizeRowsMode)
+		{
+			if (!Enum.IsDefined(typeof(DataGridViewAutoSizeRowsMode), autoSizeRowsMode))
+				throw new InvalidEnumArgumentException ("Parameter AutoSizeRowsMode is not valid DataGridViewRowsMode.");
+			if ((autoSizeRowsMode == DataGridViewAutoSizeRowsMode.AllHeaders || autoSizeRowsMode == DataGridViewAutoSizeRowsMode.DisplayedHeaders) && rowHeadersVisible == false)
+				throw new InvalidOperationException ("Parameter AutoSizeRowsMode cant be AllHeaders or DisplayedHeaders in this DataGridView.");
+			if (autoSizeRowsMode == DataGridViewAutoSizeRowsMode.None)
+				throw new ArgumentException ("Parameter AutoSieRowsMode cant be None.");
+			
+			AutoResizeRows (autoSizeRowsMode, false);
 		}
 
 		public virtual bool BeginEdit (bool selectAll) {
@@ -2155,8 +2217,16 @@ namespace System.Windows.Forms {
 				cell.Selected = false;
 		}
 
-		public bool CommitEdit (DataGridViewDataErrorContexts context) {
-			throw new NotImplementedException();
+		public bool CommitEdit (DataGridViewDataErrorContexts context)
+		{
+			if (currentCell != null && currentCell.IsInEditMode) {
+				IDataGridViewEditingControl ctrl = EditingControl as IDataGridViewEditingControl;
+				ctrl.GetEditingControlFormattedValue (DataGridViewDataErrorContexts.Commit);
+				currentCell.Value = ctrl.GetEditingControlFormattedValue (DataGridViewDataErrorContexts.Commit);
+				return true;
+			}
+			
+			return false;
 		}
 
 		public int DisplayedColumnCount (bool includePartialColumns) {
@@ -2196,8 +2266,10 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
-		public bool EndEdit (DataGridViewDataErrorContexts context) {
-			throw new NotImplementedException();
+		[MonoTODO ("Does not use context parameter")]
+		public bool EndEdit (DataGridViewDataErrorContexts context)
+		{
+			return EndEdit ();
 		}
 
 		public int GetCellCount (DataGridViewElementStates includeFilter) {
@@ -2465,12 +2537,58 @@ namespace System.Windows.Forms {
 			return result;
 		}
 
-		public Rectangle GetColumnDisplayRectangle (int columnIndex, bool cutOverflow) {
-			throw new NotImplementedException();
+		[MonoTODO ("Does not use cutOverflow parameter")]
+		public Rectangle GetColumnDisplayRectangle (int columnIndex, bool cutOverflow)
+		{
+			if (columnIndex < 0 || columnIndex > Columns.Count - 1)
+				throw new ArgumentOutOfRangeException ("columnIndex");
+				
+			int x = 0;
+			int w = 0;
+
+			x = BorderWidth;
+
+			if (RowHeadersVisible)
+				x += RowHeadersWidth;
+
+			ArrayList cols = columns.ColumnDisplayIndexSortedArrayList;
+
+			for (int i = first_col_index; i < cols.Count; i++) {
+				if ((cols[i] as DataGridViewColumn).Index == columnIndex) {
+					w = (cols[i] as DataGridViewColumn).Width;
+					break;
+				}
+
+				x += (cols[i] as DataGridViewColumn).Width;
+			}
+
+			return new Rectangle (x, 0, w, Height);
 		}
 
-		public Rectangle GetRowDisplayRectangle (int rowIndex, bool cutOverflow) {
-			throw new NotImplementedException();
+		[MonoTODO ("Does not use cutOverflow parameter")]
+		public Rectangle GetRowDisplayRectangle (int rowIndex, bool cutOverflow)
+		{
+			if (rowIndex < 0 || rowIndex > Rows.Count - 1)
+				throw new ArgumentOutOfRangeException ("rowIndex");
+
+			int y = 0;
+			int h = 0;
+
+			y = BorderWidth;
+
+			if (ColumnHeadersVisible)
+				y += ColumnHeadersHeight;
+
+			for (int i = first_row_index; i < Rows.Count; i++) {
+				if (i == rowIndex) {
+					h = rows[i].Height;
+					break;
+				}
+
+				y += rows[i].Height;
+			}
+
+			return new Rectangle (0, y, Width, h);
 		}
 
 		public HitTestInfo HitTest (int x, int y) {
@@ -2585,13 +2703,20 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException();
 		}
 
-		public bool RefreshEdit () {
-			throw new NotImplementedException();
+		public bool RefreshEdit ()
+		{
+			if (IsCurrentCellInEditMode) {
+				currentCell.InitializeEditingControl (currentCell.RowIndex, currentCell.FormattedValue, currentCell.InheritedStyle);
+				return true;
+			}
+			
+			return false;
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public override void ResetText () {
-			throw new NotImplementedException();
+		public override void ResetText ()
+		{
+			Text = string.Empty;
 		}
 
 		public void SelectAll () {
@@ -2618,14 +2743,55 @@ namespace System.Windows.Forms {
 			Invalidate ();
 		}
 
-		public virtual void Sort (IComparer comparer) {
-			throw new NotImplementedException();
+		public virtual void Sort (IComparer comparer)
+		{
+			if (comparer == null)
+				throw new ArgumentNullException ("comparer");
+			if (VirtualMode || DataSource != null)
+				throw new InvalidOperationException ();
+
+			if (SortedColumn != null)
+				SortedColumn.HeaderCell.SortGlyphDirection = SortOrder.None;
+
+			Rows.Sort (comparer);
+			
+			sortedColumn = null;
+			sortOrder = SortOrder.None;
+			
+			currentCell = null;
+			
+			Invalidate ();
+			
+			OnSorted (EventArgs.Empty);
 		}
 
-		public virtual void Sort (DataGridViewColumn dataGridViewColumn, ListSortDirection direction) {
-			throw new NotImplementedException();
-		}
+		public virtual void Sort (DataGridViewColumn dataGridViewColumn, ListSortDirection direction)
+		{
+			if (dataGridViewColumn == null)
+				throw new ArgumentNullException ("dataGridViewColumn");
+			if (dataGridViewColumn.DataGridView != this)
+				throw new ArgumentException ("dataGridViewColumn");
+			if (DataSource != null && !dataGridViewColumn.IsDataBound)
+				throw new ArgumentException ("dataGridViewColumn");
+			if (VirtualMode && !dataGridViewColumn.IsDataBound)
+				throw new InvalidOperationException ();
 
+			if (SortedColumn != null)
+				SortedColumn.HeaderCell.SortGlyphDirection = SortOrder.None;
+
+			ColumnSorter sorter = new ColumnSorter (dataGridViewColumn, direction);
+			Rows.Sort (sorter);
+
+			sortedColumn = dataGridViewColumn;
+			sortOrder = (SortOrder)direction + 1;
+
+			dataGridViewColumn.HeaderCell.SortGlyphDirection = (SortOrder)direction + 1;
+
+			Invalidate ();
+
+			OnSorted (EventArgs.Empty);
+		}
+		
 		public void UpdateCellErrorText (int columnIndex, int rowIndex)
 		{
 			throw new NotImplementedException();
@@ -2666,16 +2832,22 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 
-		protected void AutoResizeColumn (int columnIndex, DataGridViewAutoSizeColumnMode autoSizeColumnMode, bool fixedHeight) {
-			throw new NotImplementedException();
+		[MonoTODO ("Does not use fixedHeight parameter")]
+		protected void AutoResizeColumn (int columnIndex, DataGridViewAutoSizeColumnMode autoSizeColumnMode, bool fixedHeight)
+		{
+			AutoResizeColumn (columnIndex, autoSizeColumnMode);
 		}
 
-		protected void AutoResizeColumnHeadersHeight (bool fixedRowHeadersWidth, bool fixedColumnsWidth) {
-			throw new NotImplementedException();
+		[MonoTODO ("Does not use fixedRowHeadersWidth or fixedColumnsWidth parameters")]
+		protected void AutoResizeColumnHeadersHeight (bool fixedRowHeadersWidth, bool fixedColumnsWidth)
+		{
+			AutoResizeColumnHeadersHeight ();
 		}
 
-		protected void AutoResizeColumnHeadersHeight (int columnIndex, bool fixedRowHeadersWidth, bool fixedColumnWidth) {
-			throw new NotImplementedException();
+		[MonoTODO ("Does not use columnIndex or fixedRowHeadersWidth or fixedColumnsWidth parameters")]
+		protected void AutoResizeColumnHeadersHeight (int columnIndex, bool fixedRowHeadersWidth, bool fixedColumnWidth)
+		{
+			AutoResizeColumnHeadersHeight (columnIndex);
 		}
 
 		protected void AutoResizeColumns (DataGridViewAutoSizeColumnsMode autoSizeColumnsMode, bool fixedHeight) {
@@ -2684,24 +2856,82 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		protected void AutoResizeRow (int rowIndex, DataGridViewAutoSizeRowMode autoSizeRowMode, bool fixedWidth) {
-			throw new NotImplementedException();
+		[MonoTODO ("Does not use fixedWidth parameter")]
+		protected void AutoResizeRow (int rowIndex, DataGridViewAutoSizeRowMode autoSizeRowMode, bool fixedWidth)
+		{
+			AutoResizeRow (rowIndex, autoSizeRowMode);
 		}
 
-		protected void AutoResizeRowHeadersWidth (DataGridViewRowHeadersWidthSizeMode rowHeadersWidthSizeMode, bool fixedColumnHeadersHeight, bool fixedRowsHeight) {
-			throw new NotImplementedException();
+		[MonoTODO ("Does not use fixedColumnHeadersHeight or fixedRowsHeight parameter")]
+		protected void AutoResizeRowHeadersWidth (DataGridViewRowHeadersWidthSizeMode rowHeadersWidthSizeMode, bool fixedColumnHeadersHeight, bool fixedRowsHeight)
+		{
+			AutoResizeRowHeadersWidth (rowHeadersWidthSizeMode);
 		}
 
-		protected void AutoResizeRowHeadersWidth (int rowIndex, DataGridViewRowHeadersWidthSizeMode rowHeadersWidthSizeMode, bool fixedColumnHeadersHeight, bool fixedRowHeight) {
-			throw new NotImplementedException();
+		[MonoTODO ("Does not use rowIndex or fixedColumnHeadersHeight or fixedRowsHeight parameter")]
+		protected void AutoResizeRowHeadersWidth (int rowIndex, DataGridViewRowHeadersWidthSizeMode rowHeadersWidthSizeMode, bool fixedColumnHeadersHeight, bool fixedRowHeight)
+		{
+			AutoResizeRowHeadersWidth (rowHeadersWidthSizeMode);
 		}
 
-		protected void AutoResizeRows (DataGridViewAutoSizeRowsMode autoSizeRowsMode, bool fixedWidth) {
-			throw new NotImplementedException();
+		[MonoTODO ("Does not use fixedMode parameter")]
+		protected void AutoResizeRows (DataGridViewAutoSizeRowsMode autoSizeRowsMode, bool fixedWidth)
+		{
+			if (autoSizeRowsMode == DataGridViewAutoSizeRowsMode.None)
+				return;
+				
+			bool include_headers = false;
+			bool include_cells = false;
+			bool displayed_only = false;
+
+			switch (autoSizeRowsMode) {
+				case DataGridViewAutoSizeRowsMode.AllHeaders:
+					include_headers = true;
+					break;
+				case DataGridViewAutoSizeRowsMode.AllCellsExceptHeaders:
+					include_cells = true;
+					break;
+				case DataGridViewAutoSizeRowsMode.AllCells:
+					include_cells = true;
+					include_headers = true;
+					break;
+				case DataGridViewAutoSizeRowsMode.DisplayedHeaders:
+					include_headers = true;
+					displayed_only = true;
+					break;
+				case DataGridViewAutoSizeRowsMode.DisplayedCellsExceptHeaders:
+					include_cells = true;
+					displayed_only = true;
+					break;
+				case DataGridViewAutoSizeRowsMode.DisplayedCells:
+					include_cells = true;
+					include_headers = true;
+					displayed_only = true;
+					break;
+			}
+			
+			foreach (DataGridViewRow row in Rows) {
+				int new_height = 0;
+				
+				if (include_headers)
+					if (!displayed_only || row.HeaderCell.Displayed)
+						new_height = Math.Max (new_height, row.HeaderCell.PreferredSize.Height);
+
+				if (include_cells)
+					foreach (DataGridViewCell cell in row.Cells)
+						if (!displayed_only || cell.Displayed)
+							new_height = Math.Max (new_height, cell.PreferredSize.Height);
+				
+				if (row.Height != new_height)
+					row.Height = new_height;
+			}
 		}
 
-		protected void AutoResizeRows (int rowIndexStart, int rowsCount, DataGridViewAutoSizeRowMode autoSizeRowMode, bool fixedWidth) {
-			throw new NotImplementedException();
+		[MonoTODO ("Does not use fixedMode parameter")]
+		protected void AutoResizeRows (int rowIndexStart, int rowsCount, DataGridViewAutoSizeRowMode autoSizeRowMode, bool fixedWidth)
+		{
+			for (int i = rowIndexStart; i < rowIndexStart + rowsCount; i++)
+				AutoResizeRow (i, autoSizeRowMode, fixedWidth);
 		}
 
 		protected void ClearSelection (int columnIndexException, int rowIndexException, bool selectExceptionElement) {
@@ -3262,6 +3492,37 @@ namespace System.Windows.Forms {
 
 		protected virtual void OnColumnHeaderMouseClick (DataGridViewCellMouseEventArgs e)
 		{
+			DataGridViewColumn col = Columns[e.ColumnIndex];
+			
+			if (col.SortMode == DataGridViewColumnSortMode.Automatic) {
+				SortOrder new_order;
+				
+				if (SortedColumn != col) {
+					if (SortedColumn != null)
+						SortedColumn.HeaderCell.SortGlyphDirection = SortOrder.None;
+					
+					new_order = SortOrder.Ascending;
+				} else {
+					
+					if (sortOrder == SortOrder.Ascending)
+						new_order = SortOrder.Descending;
+					else
+						new_order = SortOrder.Ascending;
+				}
+
+				ColumnSorter sorter = new ColumnSorter (col, (ListSortDirection)((int)new_order - 1));
+				Rows.Sort (sorter);
+
+				sortedColumn = col;
+				sortOrder = new_order;
+
+				col.HeaderCell.SortGlyphDirection = new_order;
+
+				Invalidate ();
+				
+				OnSorted (EventArgs.Empty);
+			}
+			
 			DataGridViewCellMouseEventHandler eh = (DataGridViewCellMouseEventHandler)(Events [ColumnHeaderMouseClickEvent]);
 			if (eh != null)
 				eh (this, e);
@@ -3542,6 +3803,12 @@ namespace System.Windows.Forms {
 						cell.OnContentClickInternal (new DataGridViewCellEventArgs (hit.ColumnIndex, hit.RowIndex));
 						
 					break;
+				case DataGridViewHitTestType.ColumnHeader:
+					Rectangle display2 = GetCellDisplayRectangle (hit.ColumnIndex, hit.RowIndex, false);
+					Point cellpoint2 = new Point (e.X - display2.X, e.Y - display2.Y);
+					
+					OnColumnHeaderMouseClick (new DataGridViewCellMouseEventArgs (hit.ColumnIndex, hit.RowIndex, cellpoint2.X, cellpoint2.Y, e));
+					break;
 			}
 		}
 
@@ -3565,9 +3832,15 @@ namespace System.Windows.Forms {
 				break;
 			case DataGridViewHitTestType.ColumnHeader:
 				mode = selectionMode == DataGridViewSelectionMode.ColumnHeaderSelect ? DataGridViewSelectionMode.FullColumnSelect : selectionMode;
+				
+				if (mode != DataGridViewSelectionMode.FullColumnSelect)
+					return;
 				break;
 			case DataGridViewHitTestType.RowHeader:
 				mode = selectionMode == DataGridViewSelectionMode.RowHeaderSelect ?  DataGridViewSelectionMode.FullRowSelect : selectionMode;
+
+				if (mode != DataGridViewSelectionMode.FullRowSelect)
+					return;
 				break; // Handled below
 			default:
 				return;
@@ -4446,7 +4719,6 @@ namespace System.Windows.Forms {
 				}
 			}
 			return base.ProcessKeyPreview(ref m);
-			//throw new NotImplementedException();
 		}
 
 		protected bool ProcessLeftKey (Keys keyData)
@@ -5076,6 +5348,40 @@ namespace System.Windows.Forms {
 				}
 				Invalidate();
 			}
+		}
+
+		private class ColumnSorter : IComparer
+		{
+			int column;
+			int direction = 1;
+
+			public ColumnSorter (DataGridViewColumn column, ListSortDirection direction)
+			{
+				this.column = column.Index;
+
+				if (direction == ListSortDirection.Descending)
+					this.direction = -1;
+			}
+
+			#region IComparer Members
+			public int Compare (object x, object y)
+			{
+				DataGridViewRow row1 = (DataGridViewRow)x;
+				DataGridViewRow row2 = (DataGridViewRow)y;
+
+				object val1 = row1.Cells[column].FormattedValue;
+				object val2 = row2.Cells[column].FormattedValue;
+
+				if (val1 == null && val2 == null)
+					return 0;
+				if (val1 == null)
+					return direction;
+				if (val2 == null)
+					return -1 * direction;
+
+				return string.Compare (val1.ToString (), val2.ToString ()) * direction;
+			}
+			#endregion
 		}
 
 		public sealed class HitTestInfo {

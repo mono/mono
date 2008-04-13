@@ -1,3 +1,75 @@
+2009-04-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: When changing the size in VirtualMode, also Reset the
+	selection.
+	* ListViewItem.cs: Don't call SelectedIndexCollection.Reset when
+	changing selection info for VirtualMode.
+	Fixes #372618.
+
+2009-04-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ThemeWin32Classic.cs: When drawing ListViewItem instancesin Details
+	view, don't use LineLimit for the first item - use NoWrap *always*
+	instead, since ListView.LabelWrap is not used for this view.
+	Fixes #378054.
+
+2009-04-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Binding.cs: Call UpdateIsBinding when setting control - probably
+	Binding is already usable and we don't need to wait to check the
+	IsBinding state. Also for 1.1 profile use IsHandleCreated instead of
+	Created, just like 2.0 does.
+	* CurrencyManager.cs: I'm so lame - the previous check was wrong.
+
+2009-04-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Binding.cs: Just realized we don't need to have a handler for
+	BindingContextChanged, since this info should be now consumed directly
+	in the BindingManagerBase. And also, the manager.IsBindingSuspended
+	state info is checked directly, instead of caching it.
+
+	* CurrencyManager.cs: IsSuspended should return always false if Count
+	== 0.
+
+2009-04-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Binding.cs: When calling PushData, return if manager.Count == 0,
+	since we just don't have data to be read. Also, when setting the
+	Control for binding, hook up some events to refresh the IsBinding
+	state when BindingContext change or control gets created; use
+	Control.IsHandleCreated instead of Control.Created check to set
+	IsBinding state - we *actually* need to modify IsBinding when control
+	is created, but we don't have any Created event, only HandleCreated.
+	Fixes part of #349364.
+
+2008-04-11  Geoff Norton  <gnorton@novell.com>
+
+	* XplatUICarbon.cs: Expose Caret to the Carbon layer.  Guard against
+	warping a null Caret.
+
+2008-04-11  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridView.cs: Implement row/column autosizing methods. Implement
+	autosorting.
+	* DataGridViewColumnHeaderCell.cs: Add painting of the sort glyph.
+	* DataGridViewRowCollection.cs: Add an internal sorting method.
+
+2008-04-11  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ThemeWin32Classic.cs: Apply patch from Ernesto to cache an expensive
+	value in ListView drawing code.
+
+2008-04-11  Jonathan Pobst  <monkey@jpobst.com>
+
+	* FileDialog.cs: Only call FileOk when Ok is clicked, not when Cancel
+	is clicked.  Respect the user setting Cancel in FileOk.
+
+2008-04-11  Geoff Norton  <gnorton@novell.com>
+
+	* ListView.cs: Avoid setting and resetting control Width/Heights and
+	calculate the final value and set it once.  Prevents a feedback loop
+	on the mac.
+
 2008-04-10  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TreeView.cs: Clamp setting the scrollbar value using SafeValueSet.

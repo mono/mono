@@ -2146,6 +2146,7 @@ namespace Mono.CSharp {
 		{
 			this.expr = expr;
 			this.orig_expr = orig_expr;
+			this.loc = orig_expr.Location;
 		}
 
 		public static Expression Create (Constant expr, Expression original_expr)

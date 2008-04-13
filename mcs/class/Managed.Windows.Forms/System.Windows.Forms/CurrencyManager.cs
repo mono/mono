@@ -157,7 +157,13 @@ namespace System.Windows.Forms {
 		}
 
                 internal override bool IsSuspended {
-                        get { return binding_suspended; }
+                        get {
+				// Always return true if we don't have items
+				if (Count == 0)
+					return true;
+
+				return binding_suspended;
+			}
                 }
 
                 // XXX this needs re-addressing once DataViewManager.AllowNew is implemented

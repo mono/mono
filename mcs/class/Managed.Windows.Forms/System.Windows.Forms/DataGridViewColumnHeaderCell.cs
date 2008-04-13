@@ -153,7 +153,6 @@ namespace System.Windows.Forms {
 			return null;
 		}
 
-		[MonoTODO ("Paint sort arrows")]
 		protected override void Paint (Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates dataGridViewElementState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts) {
 			// Prepaint
 			DataGridViewPaintParts pre = DataGridViewPaintParts.Background | DataGridViewPaintParts.SelectionBackground;
@@ -173,6 +172,26 @@ namespace System.Windows.Forms {
 
 				if (formattedValue != null)
 					TextRenderer.DrawText (graphics, formattedValue.ToString (), cellStyle.Font, contentbounds, color, flags);
+					
+				Point loc = new Point (cellBounds.Right - 14, cellBounds.Y + ((cellBounds.Height - 4) / 2));
+				
+				if (sortGlyphDirection == SortOrder.Ascending) {
+					using (Pen p = new Pen (color)) {
+						graphics.DrawLine (p, loc.X + 4, loc.Y + 1, loc.X + 4, loc.Y + 2);
+						graphics.DrawLine (p, loc.X + 3, loc.Y + 2, loc.X + 5, loc.Y + 2);
+						graphics.DrawLine (p, loc.X + 2, loc.Y + 3, loc.X + 6, loc.Y + 3);
+						graphics.DrawLine (p, loc.X + 1, loc.Y + 4, loc.X + 7, loc.Y + 4);
+						graphics.DrawLine (p, loc.X + 0, loc.Y + 5, loc.X + 8, loc.Y + 5);
+					}
+				} else if (sortGlyphDirection == SortOrder.Descending) {
+					using (Pen p = new Pen (color)) {
+						graphics.DrawLine (p, loc.X + 4, loc.Y + 5, loc.X + 4, loc.Y + 4);
+						graphics.DrawLine (p, loc.X + 3, loc.Y + 4, loc.X + 5, loc.Y + 4);
+						graphics.DrawLine (p, loc.X + 2, loc.Y + 3, loc.X + 6, loc.Y + 3);
+						graphics.DrawLine (p, loc.X + 1, loc.Y + 2, loc.X + 7, loc.Y + 2);
+						graphics.DrawLine (p, loc.X + 0, loc.Y + 1, loc.X + 8, loc.Y + 1);
+					}
+				}
 			}
 
 			// Postpaint

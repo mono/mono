@@ -679,12 +679,15 @@ namespace System.Windows.Forms
 		}
 		
 		protected void OnFileOk (CancelEventArgs e)
-		{
-			WriteConfigValues (e);
-			
+		{	
 			CancelEventHandler fo = (CancelEventHandler) Events [EventFileOk];
 			if (fo != null)
 				fo (this, e);
+		}
+		
+		private void CleanupOnClose ()
+		{
+			WriteConfigValues ();
 			
 			Mime.CleanFileCache ();
 			
@@ -973,10 +976,12 @@ namespace System.Windows.Forms
 
 			CancelEventArgs cancelEventArgs = new CancelEventArgs ();
 
-			cancelEventArgs.Cancel = false;
-
 			OnFileOk (cancelEventArgs);
 
+			if (cancelEventArgs.Cancel)
+				return;
+				
+			CleanupOnClose ();
 			form.DialogResult = DialogResult.OK;
 		}
 
@@ -1073,12 +1078,8 @@ namespace System.Windows.Forms
 		{
 			if (restoreDirectory)
 				mwfFileView.CurrentFolder = restoreDirectoryString;
-			
-			CancelEventArgs cancelEventArgs = new CancelEventArgs ();
-			
-			cancelEventArgs.Cancel = true;
-			
-			OnFileOk (cancelEventArgs);
+
+			CleanupOnClose ();
 			
 			form.DialogResult = DialogResult.Cancel;
 		}
@@ -1233,22 +1234,20 @@ namespace System.Windows.Forms
 			form.ResumeLayout ();
 		}
 		
-		private void WriteConfigValues (CancelEventArgs ce)
+		private void WriteConfigValues ()
 		{
 			MWFConfig.SetValue (filedialog_string, width_string, form.Width);
 			MWFConfig.SetValue (filedialog_string, height_string, form.Height);
 			MWFConfig.SetValue (filedialog_string, x_string, form.Location.X);
 			MWFConfig.SetValue (filedialog_string, y_string, form.Location.Y);
 			
-			if (!ce.Cancel) {
-				MWFConfig.SetValue (filedialog_string, lastfolder_string, lastFolder);
+			MWFConfig.SetValue (filedialog_string, lastfolder_string, lastFolder);
 				
-				string[] fileNameCBItems = new string [fileNameComboBox.Items.Count];
+			string[] fileNameCBItems = new string [fileNameComboBox.Items.Count];
 				
-				fileNameComboBox.Items.CopyTo (fileNameCBItems, 0);
+			fileNameComboBox.Items.CopyTo (fileNameCBItems, 0);
 				
-				MWFConfig.SetValue (filedialog_string, filenames_string, fileNameCBItems);
-			}
+			MWFConfig.SetValue (filedialog_string, filenames_string, fileNameCBItems);
 		}
 		
 		private void ReadConfigValues ()

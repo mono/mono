@@ -3048,10 +3048,10 @@ namespace Mono.CSharp {
 		
 		public override void Emit (EmitContext ec)
 		{
-			EmitOperator (ec);
+			EmitOperator (ec, left.Type);
 		}
 
-		protected void EmitOperator (EmitContext ec)
+		protected virtual void EmitOperator (EmitContext ec, Type l)
 		{
 			ILGenerator ig = ec.ig;
 
@@ -3090,7 +3090,6 @@ namespace Mono.CSharp {
 
 			right.Emit (ec);
 
-			Type l = left.Type;
 			OpCode opcode;
 			
 			switch (oper){
