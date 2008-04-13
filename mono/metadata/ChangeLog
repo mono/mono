@@ -1,3 +1,16 @@
+2008-04-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* assembly.c (mono_assembly_load_from_full): Do the check for loading other
+	mscorlibs for the non-refonly case as well.
+
+	* image.c (do_mono_image_load): Remove the mscorlib check, it is already done
+	in mono_assembly_load_from_full (). Fixes #378924.
+
+2008-04-11  Geoff Norton  <gnorton@novell.com>
+
+	* icall.c: The global extern environ doesn't exist on Mac.  We
+	need to call NSGetEnviron instead.
+
 2008-04-10 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	verify.c: Add generic method constraint verification.

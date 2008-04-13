@@ -1,3 +1,7 @@
+2008-04-11  Mark Probst  <mark.probst@gmail.com>
+
+	* Makefile.am: Added missing files to EXTRA_DIST.
+
 2008-04-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile: fix extra dist file name.
