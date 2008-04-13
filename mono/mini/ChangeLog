@@ -1,3 +1,13 @@
+2008-04-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arm.c (mono_arch_emit_call): Fix passing of r4 arguments on the stack in
+	the soft float case.
+
+	* mini.c (mono_op_imm_to_op): Use OP_IADD/OP_LADD instead of OP_PADD since the
+	later is mapped to CEE_ADD.
+
+	* method-to-ir.c (mono_handle_soft_float): Fix a typo.
+
 2008-04-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mini_method_compile): Set cfg->opt by disabling SSAPRE instead of

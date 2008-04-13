@@ -1817,7 +1817,11 @@ mono_op_imm_to_op (int opcode)
 {
 	switch (opcode) {
 	case OP_ADD_IMM:
-		return OP_PADD;
+#if SIZEOF_VOID_P == 4
+		return OP_IADD;
+#else
+		return OP_LADD;
+#endif
 	case OP_IADD_IMM:
 		return OP_IADD;
 	case OP_LADD_IMM:
@@ -3363,7 +3367,6 @@ handle_load_float (MonoCompile *cfg, MonoBasicBlock *bblock, MonoInst *ptr, cons
 	} while (0)
 #define STLOC_SOFT_FLOAT(cfg,ins,idx,ip) do {\
 		if (header->locals [(idx)]->type == MONO_TYPE_R4 && !header->locals [(idx)]->byref) {	\
-			int temp;	\
 			NEW_LOCLOADA (cfg, (ins), (idx));	\
 			handle_store_float (cfg, bblock, (ins), *sp, (ip));	\
 			MONO_INST_NEW (cfg, (ins), OP_NOP);	\
@@ -3379,7 +3382,6 @@ handle_load_float (MonoCompile *cfg, MonoBasicBlock *bblock, MonoInst *ptr, cons
 	} while (0)
 #define STARG_SOFT_FLOAT(cfg,ins,idx,ip) do {\
 		if (param_types [(idx)]->type == MONO_TYPE_R4 && !param_types [(idx)]->byref) {	\
-			int temp;	\
 			NEW_ARGLOADA (cfg, (ins), (idx));	\
 			handle_store_float (cfg, bblock, (ins), *sp, (ip));	\
 			MONO_INST_NEW (cfg, (ins), OP_NOP);	\

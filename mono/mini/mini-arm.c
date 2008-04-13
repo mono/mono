@@ -1214,7 +1214,8 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 
 		in = call->args [i];
 
-		if (ainfo->regtype == RegTypeGeneral) {
+		switch (ainfo->regtype) {
+		case RegTypeGeneral:
 			if (!t->byref && ((t->type == MONO_TYPE_I8) || (t->type == MONO_TYPE_U8))) {
 				MONO_INST_NEW (cfg, ins, OP_MOVE);
 				ins->dreg = mono_alloc_ireg (cfg);
@@ -1279,7 +1280,8 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 
 				mono_call_inst_add_outarg_reg (cfg, call, ins->dreg, ainfo->reg, FALSE);
 			}
-		} else if (ainfo->regtype == RegTypeStructByAddr) {
+			break;
+		case RegTypeStructByAddr:
 			NOT_IMPLEMENTED;
 #if 0
 			/* FIXME: where si the data allocated? */
@@ -1287,7 +1289,8 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 			call->used_iregs |= 1 << ainfo->reg;
 			g_assert_not_reached ();
 #endif
-		} else if (ainfo->regtype == RegTypeStructByVal) {
+			break;
+		case RegTypeStructByVal:
 			MONO_INST_NEW (cfg, ins, OP_OUTARG_VT);
 			ins->opcode = OP_OUTARG_VT;
 			ins->sreg1 = in->dreg;
@@ -1296,19 +1299,25 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 			ins->inst_p1 = mono_mempool_alloc (cfg->mempool, sizeof (ArgInfo));
 			memcpy (ins->inst_p1, ainfo, sizeof (ArgInfo));
 			MONO_ADD_INS (cfg->cbb, ins);
-		} else if (ainfo->regtype == RegTypeBase) {
+			break;
+		case RegTypeBase:
 			if (!t->byref && ((t->type == MONO_TYPE_I8) || (t->type == MONO_TYPE_U8))) {
 				MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STOREI8_MEMBASE_REG, ARMREG_SP, ainfo->offset, in->dreg);
 			} else if (!t->byref && ((t->type == MONO_TYPE_R4) || (t->type == MONO_TYPE_R8))) {
-				/* This works for the soft-float case too */
-				if (t->type == MONO_TYPE_R8)
+				if (t->type == MONO_TYPE_R8) {
 					MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORER8_MEMBASE_REG, ARMREG_SP, ainfo->offset, in->dreg);
-				else
+				} else {
+#ifdef MONO_ARCH_SOFT_FLOAT
+					MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STOREI4_MEMBASE_REG, ARMREG_SP, ainfo->offset, in->dreg);
+#else
 					MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORER4_MEMBASE_REG, ARMREG_SP, ainfo->offset, in->dreg);
+#endif
+				}
 			} else {
 				MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, ARMREG_SP, ainfo->offset, in->dreg);
 			}
-		} else if (ainfo->regtype == RegTypeBaseGen) {
+			break;
+		case RegTypeBaseGen:
 			if (!t->byref && ((t->type == MONO_TYPE_I8) || (t->type == MONO_TYPE_U8))) {
 				MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, ARMREG_SP, ainfo->offset, (G_BYTE_ORDER == G_BIG_ENDIAN) ? in->dreg + 1 : in->dreg + 2);
 				MONO_INST_NEW (cfg, ins, OP_MOVE);
@@ -1320,7 +1329,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 				int creg;
 
 #ifdef MONO_ARCH_SOFT_FLOAT
-				NOT_IMPLEMENTED;
+				g_assert_not_reached ();
 #endif
 
 				MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORER8_MEMBASE_REG, ARMREG_SP, (cfg->param_area - 8), in->dreg);
@@ -1334,7 +1343,8 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 			} else {
 				g_assert_not_reached ();
 			}
-		} else if (ainfo->regtype == RegTypeFP) {
+			break;
+		case RegTypeFP: {
 			/* FIXME: */
 			NOT_IMPLEMENTED;
 #if 0
@@ -1349,7 +1359,9 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 			}
 #endif
 			cfg->flags |= MONO_CFG_HAS_FPOUT;
-		} else {
+			break;
+		}
+		default:
 			g_assert_not_reached ();
 		}
 	}
@@ -1761,20 +1773,6 @@ branch_cc_table [] = {
 	ARMCOND_LS,
 	ARMCOND_LO
 };
-
-
-static void
-insert_after_ins (MonoBasicBlock *bb, MonoInst *ins, MonoInst *to_insert)
-{
-	if (ins == NULL) {
-		ins = bb->code;
-		bb->code = to_insert;
-		to_insert->next = ins;
-	} else {
-		to_insert->next = ins->next;
-		ins->next = to_insert;
-	}
-}
 
 #define NEW_INS(cfg,dest,op) do {       \
 		MONO_INST_NEW ((cfg), (dest), (op)); \

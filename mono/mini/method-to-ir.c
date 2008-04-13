@@ -4557,7 +4557,7 @@ typedef union {
  *  Soft float support on ARM. We store each double value in a pair of integer vregs,
  * similar to long support on 32 bit platforms. 32 bit float values require special
  * handling when used as locals, arguments, and in calls.
- * One big problem with soft-float is that few r4 test cases in our test suite.
+ * One big problem with soft-float is that there are few r4 test cases in our test suite.
  */
 void
 mono_handle_soft_float (MonoCompile *cfg)
