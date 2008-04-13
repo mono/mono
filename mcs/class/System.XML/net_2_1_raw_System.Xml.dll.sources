@@ -10,7 +10,6 @@
 ../corlib/System.Collections/IHashCodeProvider.cs
 ../corlib/System.Collections/Queue.cs
 ../corlib/System.Collections/Stack.cs
-../System.Xml.Core/DummySystemXmlCore.cs
 Assembly/AssemblyInfo.cs
 Mono.Xml/IHasXmlParserContext.cs
 Mono.Xml/SubtreeXmlReader.cs
@@ -57,3 +56,4 @@ System.Xml/XmlTokenizedType.cs
 System.Xml/XmlUrlResolver.cs
 System.Xml/XmlWriter.cs
 System.Xml/XmlWriterSettings.cs
+System.Xml.Schema/XmlSchemaDatatype_2_1.cs
