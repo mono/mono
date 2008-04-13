@@ -1,3 +1,7 @@
+2008-04-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* StringTest.cs: Add a test for #374511.
+
 2008-04-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* TypeTest.cs: Add a test for #346419.

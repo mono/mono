@@ -1907,6 +1907,11 @@ public class StringTest : Assertion
 		AssertEquals (" C ", res [1]);
 		AssertEquals (" E", res [2]);
 
+		// Delimiter matches once at the beginning of the string
+		res = "A B".Split (new String [] { "A" }, StringSplitOptions.RemoveEmptyEntries);
+		AssertEquals (1, res.Length);
+		AssertEquals (" B", res [0]);
+
 		// Delimiter at the beginning and at the end
 		res = "B C DD B".Split (new String[] { "B" }, StringSplitOptions.None);
 		AssertEquals (3, res.Length);
