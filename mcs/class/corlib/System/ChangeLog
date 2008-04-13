@@ -1,3 +1,8 @@
+2008-04-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* String.cs (Split): Fix the handling of RemoveEmptyEntries when the separator
+	matches at the beginning of the string. Fixes #374511.
+
 2008-04-13  Jb Evain  <jbevain@novell.com>
 
 	* ICloneable.cs: use the INSIDE_CORLIB pattern to

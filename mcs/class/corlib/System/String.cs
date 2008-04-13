@@ -257,6 +257,7 @@ namespace System
 			ArrayList arr = new ArrayList ();
 
 			int pos = 0;
+			int matchCount = 0;
 			while (pos < this.Length) {
 				int matchIndex = -1;
 				int matchPos = Int32.MaxValue;
@@ -277,21 +278,18 @@ namespace System
 				if (matchIndex == -1)
 					break;
 
-				if (matchPos == pos && removeEmpty) {
-					pos = matchPos + separator [matchIndex].Length;
-				}
-				else {
+				if (!(matchPos == pos && removeEmpty))
 					arr.Add (this.Substring (pos, matchPos - pos));
 
-					pos = matchPos + separator [matchIndex].Length;
+				pos = matchPos + separator [matchIndex].Length;
 
-					if (arr.Count == count - 1) {
-						break;
-					}
-				}
+				matchCount ++;
+
+				if (matchCount == count - 1)
+					break;
 			}
 
-			if (arr.Count == 0)
+			if (matchCount == 0)
 				return new String [] { this };
 			else {
 				if (removeEmpty && pos == this.Length) {
