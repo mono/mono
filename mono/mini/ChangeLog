@@ -1,5 +1,8 @@
 2008-04-13  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (type_from_op): Set ins->klass if ins->type is STACK_MP.
+	(mono_spill_global_vars): Handle soft float.
+
 	* mini-arm.c (mono_arch_emit_call): Fix passing of r4 arguments on the stack in
 	the soft float case.
 
