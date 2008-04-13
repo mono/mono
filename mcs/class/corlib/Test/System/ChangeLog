@@ -1,3 +1,7 @@
+2008-04-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* TypeTest.cs: Add a test for #346419.
+
 ﻿2008-04-09 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeTest.cs (GetGenericArguments_ArgumentsHaveAttributes): Added test for bug #377596.

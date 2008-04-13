@@ -1582,6 +1582,7 @@ namespace MonoTests.System
 		public void Name ()
 		{
 			Assert.AreEqual ("Int32&", typeof (TypeTest).GetMethod ("Reflected").GetParameters () [0].ParameterType.Name);
+			Assert.AreEqual ("String[*]", Array.CreateInstance (typeof(string), new int[] { 1 }, new int[] { 1 }).GetType ().Name);
 		}
 
 		[Test]
