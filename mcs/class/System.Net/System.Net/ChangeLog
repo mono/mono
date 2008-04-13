@@ -1,0 +1,4 @@
+2008-04-13  Jb Evain  <jbevain@novell.com>
+
+	* *_2_1.cs: move the specific 2.1 System.Net code to the
+	assembly System.Net.

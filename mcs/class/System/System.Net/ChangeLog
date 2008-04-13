@@ -1,5 +1,10 @@
 2008-04-13  Jb Evain  <jbevain@novell.com>
 
+	* *_2_1.cs: move the specific 2.1 System.Net code to the
+	assembly System.Net.
+
+2008-04-13  Jb Evain  <jbevain@novell.com>
+
 	* WebRequest_2_1.cs, WebResponse_2_1.cs: new files
 	* HttpWebRequest_2_1.cs, HttpWebResponse_2_1, WebHeaderCollection_2_1:
 	update to Silverlight 2.0b1 API.
