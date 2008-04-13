@@ -1,3 +1,13 @@
+2008-04-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* local-propagation.c (mono_local_deadce): Eliminate OP_IADD_IMM/OP_ISUB_IMM
+	as well.
+	(mono_local_cprop2): Allow further iterations after a constant fold. Also
+	special case ISUB/IADD pairs.
+
+	* mini-codegen.c (mono_local_regalloc): If CLOB is '1', try to allocate
+	sreg1 to the same hreg as dreg, to avoid a copy later.
+
 2008-04-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (type_from_op): Set ins->klass if ins->type is STACK_MP.

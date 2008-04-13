@@ -1605,6 +1605,10 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 					sreg1_mask = regmask (ins->dreg);
 				}
 
+				if (spec [MONO_INST_CLOB] == '1' && (rs->ifree_mask & (regmask (ins->dreg))))
+					/* Allocate the same reg to sreg1 to avoid a copy later */
+					sreg1_mask = regmask (ins->dreg);
+
 				val = alloc_reg (cfg, bb, tmp, ins, sreg1_mask, ins->sreg1, &reginfo [ins->sreg1], fp);
 				assign_reg (cfg, rs, ins->sreg1, val, fp);
 				DEBUG (printf ("\tassigned sreg1 %s to R%d\n", mono_regname_full (val, fp), ins->sreg1));
