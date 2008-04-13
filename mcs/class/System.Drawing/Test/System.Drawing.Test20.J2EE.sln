@@ -1,6 +1,5 @@
-
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exocortex.DSP20.v1.J2EE", "DrawingTest\Exocortex.DSP\src\Exocortex.DSP20.v1.J2EE.csproj", "{995DE32D-06AB-4926-97FF-565B9205D5F8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrawingTestHelper20.J2EE", "DrawingTest\DrawingTestHelper\DrawingTestHelper20.J2EE.csproj", "{C4329BA9-2E08-4EB3-B6ED-0FA3BB6285AF}"

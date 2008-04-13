@@ -238,6 +238,7 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (32, clone.Size.Height, "Size.Height");
 		}
 
+#if !TARGET_JVM
 		[Test]
 		public void CloneHandleIcon ()
 		{
@@ -247,6 +248,7 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (SystemIcons.Hand.Size.Width, clone.Size.Width, "Size.Width");
 			Assert.AreEqual (SystemIcons.Hand.Size.Height, clone.Size.Height, "Size.Height");
 		}
+#endif
 
 		private void XPIcon (int size)
 		{
