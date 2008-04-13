@@ -99,11 +99,14 @@ namespace Mono.Cecil {
 
 		public ModuleDefinition MainModule {
 			get {
-				if (m_mainModule == null)
-					foreach (ModuleDefinition module in m_modules)
-						if (module.Main)
+				if (m_mainModule == null) {
+					foreach (ModuleDefinition module in m_modules) {
+						if (module.Main) {
 							m_mainModule = module;
-
+							break;
+						}
+					}
+				}
 				return m_mainModule;
 			}
 		}

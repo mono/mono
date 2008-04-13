@@ -1,3 +1,8 @@
+2008-04-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Mono.Cecil/AssemblyDefinition.cs:
+		Short circut loop when module is found.
+
 2008-04-08  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/SecurityDeclaration.cs
