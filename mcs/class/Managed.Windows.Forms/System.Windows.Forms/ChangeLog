@@ -1,3 +1,11 @@
+2009-04-13  Andy Hume <andyhume32@yahoo.co.uk>
+
+	* ComboBox.cs: Support item navigation by entering text.  Firstly, 
+	in DropDownList mode, for each key-press select the next item 
+	starting with that letter.
+	For other modes, when no item selected, on arrow-up/-down and open 
+	drop-down select the first item matching the text in the textbox.
+
 2008-04-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* X11Keyboard.cs : Control.FromHandle() could return null

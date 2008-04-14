@@ -1110,9 +1110,19 @@ namespace System.Windows.Forms
 
 		protected override void OnKeyPress (KeyPressEventArgs e)
 		{
-			// int index = FindStringCaseInsensitive (e.KeyChar.ToString (), SelectedIndex);
-			//if (index != -1)
-			//	SelectedIndex = index;
+			if (dropdown_style == ComboBoxStyle.DropDownList) {
+				int index = FindStringCaseInsensitive (e.KeyChar.ToString (), SelectedIndex + 1);
+				if (index != -1) {
+					SelectedIndex = index;
+					if (DroppedDown) { //Scroll into view
+						if (SelectedIndex >= listbox_ctrl.LastVisibleItem ())
+							listbox_ctrl.Scroll (SelectedIndex - listbox_ctrl.LastVisibleItem () + 1);
+						// Or, selecting an item earlier in the list.
+						if (SelectedIndex < listbox_ctrl.FirstVisibleItem ())
+							listbox_ctrl.Scroll (SelectedIndex - listbox_ctrl.FirstVisibleItem ());
+					}
+				}
+			}
 
 			base.OnKeyPress (e);
 		}
@@ -1479,6 +1489,8 @@ namespace System.Windows.Forms
 
 			listbox_ctrl.Location = PointToScreen (new Point (text_area.X, text_area.Y + text_area.Height));
 
+			FindMatchOrSetIndex(SelectedIndex);
+
 			if (listbox_ctrl.ShowWindow ())
 				dropped_down = true;
 
@@ -1526,11 +1538,16 @@ namespace System.Windows.Forms
 			return -1;
 		}
 
+		// Search in the list for the substring, starting the search at the list 
+		// position specified, the search wraps thus covering all the list.
 		internal int FindStringCaseInsensitive (string search, int start_index)
 		{
 			if (search.Length == 0) {
 				return -1;
 			}
+			// Accept from first item to after last item. i.e. all cases of (SelectedIndex+1).
+			if (start_index < 0 || start_index > Items.Count)
+				throw new ArgumentOutOfRangeException("start_index");
 
 			for (int i = 0; i < Items.Count; i++) {
 				int index = (i + start_index) % Items.Count;
@@ -1566,7 +1583,7 @@ namespace System.Windows.Forms
 			switch (e.KeyCode) 
 			{
 				case Keys.Up:
-					SelectedIndex = Math.Max(SelectedIndex-1, 0);
+					FindMatchOrSetIndex(Math.Max(SelectedIndex - 1, 0));
 
 					if (DroppedDown)
 						if (SelectedIndex < listbox_ctrl.FirstVisibleItem ())
@@ -1577,11 +1594,11 @@ namespace System.Windows.Forms
 					if ((e.Modifiers & Keys.Alt) == Keys.Alt)
 						DropDownListBox ();
 					else
-						SelectedIndex = Math.Min(SelectedIndex+1, Items.Count-1);
+						FindMatchOrSetIndex(Math.Min(SelectedIndex + 1, Items.Count - 1));
 						
-						if (DroppedDown)
-							if (SelectedIndex >= listbox_ctrl.LastVisibleItem ())
-								listbox_ctrl.Scroll (SelectedIndex - listbox_ctrl.LastVisibleItem () + 1);
+					if (DroppedDown)
+						if (SelectedIndex >= listbox_ctrl.LastVisibleItem ())
+							listbox_ctrl.Scroll (SelectedIndex - listbox_ctrl.LastVisibleItem () + 1);
 					break;
 				
 				case Keys.PageUp:
@@ -1637,6 +1654,20 @@ namespace System.Windows.Forms
 				default:
 					break;
 			}
+		}
+
+		// If no item is currently selected, and an item is found matching the text 
+		// in the textbox, then selected that item.  Otherwise the item at the given 
+		// index is selected.
+		private void FindMatchOrSetIndex(int index)
+		{
+			int match = -1;
+			if (SelectedIndex == -1 && Text.Length != 0)
+				match = FindStringCaseInsensitive(Text);
+			if (match != -1)
+				SelectedIndex = match;
+			else
+				SelectedIndex = index;
 		}
 		
 		void OnMouseDownCB (object sender, MouseEventArgs e)
