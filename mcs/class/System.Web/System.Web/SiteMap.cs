@@ -92,18 +92,13 @@ namespace System.Web {
 				return section.Enabled;
 			}
 		}
-
+		
 		static SiteMapNode FindCurrentNode ()
 		{
-			SiteMapNode node = null;
-
-			foreach(SiteMapProvider provider in SiteMap.Providers) {
-				node = provider.CurrentNode;
-
-				if(node != null)
-					return node;
-			}
-
+			SiteMapNode node = Provider.CurrentNode;
+			if (node != null)
+				return node;
+			
 			return null;
 		}
 

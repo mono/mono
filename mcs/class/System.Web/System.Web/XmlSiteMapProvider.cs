@@ -45,7 +45,8 @@ namespace System.Web
 	public class XmlSiteMapProvider : StaticSiteMapProvider, IDisposable
 	{
 		static readonly char [] seperators = { ';', ',' };
-
+		static readonly StringComparison stringComparison = HttpRuntime.RunningOnWindows ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+		
 		bool building;
 		string file;
 		SiteMapNode root = null;
@@ -63,6 +64,11 @@ namespace System.Web
 
 		XmlNode FindStartingNode (string file, out bool enableLocalization)
 		{
+			if (String.Compare (Path.GetExtension (file), ".sitemap", stringComparison) != 0)
+				throw new InvalidOperationException (
+					String.Format ("The file {0} has an invalid extension, only .sitemap files are allowed in XmlSiteMapProvider.",
+						       Path.GetFileName (file)));
+			
 			XmlDocument d = new XmlDocument ();
 			d.Load (file);
 
@@ -296,17 +302,18 @@ namespace System.Web
 
 		public override void Initialize (string name, NameValueCollection attributes)
 		{
-
 			base.Initialize (name, attributes);
 			file = attributes ["siteMapFile"];
+			if (String.IsNullOrEmpty (file))
+				throw new ArgumentException ("The siteMapFile attribute must be specified on the XmlSiteMapProvider.");
 
-			if (file == null && file.Length == 0)
-				throw new ArgumentException ("you must provide a file");
-
-			if (HttpContext.Current != null)
-				file = HttpContext.Current.Request.MapPath (file, HttpRuntime.AppDomainAppVirtualPath, false);
+			HttpContext ctx = HttpContext.Current;
+			HttpRequest req = ctx != null ? ctx.Request : null;
+			
+			if (req != null)
+				file = req.MapPath (file, HttpRuntime.AppDomainAppVirtualPath, false);
 			else
-				throw new InvalidOperationException ("HttpContext is missing");
+				throw new InvalidOperationException ("Request is missing - cannot map paths.");
 
 			if (File.Exists (file)) {
 				watcher = new FileSystemWatcher ();

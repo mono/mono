@@ -1,3 +1,14 @@
+2008-04-14  Marek Habersack  <mhabersack@novell.com>
+
+	* XmlSiteMapProvider.cs: FindStartingNode throws an exception when
+	it is passed a file which ends in an extension other than
+	.sitemap.
+	Fixed a check for the siteMapFile attribute presence. Fixes bug
+	#379566.
+
+	* SiteMap.cs: FindCurrent node uses the default provider
+	exclusively. Fixes bug #379566
+
 2008-04-10  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpApplicationFactory.cs: compile web references before
