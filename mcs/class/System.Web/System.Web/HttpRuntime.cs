@@ -59,6 +59,8 @@ namespace System.Web {
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class HttpRuntime {
+		static bool caseInsensitive;
+		static bool runningOnWindows;
 #if TARGET_J2EE
 		static QueueManager queue_manager { get { return _runtime._queue_manager; } }
 		static TraceManager trace_manager { get { return _runtime._trace_manager; } }
@@ -70,11 +72,6 @@ namespace System.Web {
 		TraceManager _trace_manager;
 		Cache _cache;
 		Cache _internalCache;
-
-		static HttpRuntime ()
-		{
-			do_RealProcessRequest = new WaitCallback (RealProcessRequest);
-		}
 
 		public HttpRuntime ()
 		{
@@ -118,8 +115,6 @@ namespace System.Web {
 		static WaitCallback do_RealProcessRequest;
 		static Exception initialException;
 		static bool firstRun;
-		static bool caseInsensitive;
-		static bool runningOnWindows;
 		
 #if NET_2_0
 		static bool assemblyMappingEnabled;
@@ -127,6 +122,15 @@ namespace System.Web {
 		static object appOfflineLock = new object ();
 #endif
 		
+#if ONLY_1_1
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
+#endif
+		public HttpRuntime ()
+		{
+
+		}
+#endif
+
 		static HttpRuntime ()
 		{
 			PlatformID pid = Environment.OSVersion.Platform;
@@ -151,6 +155,7 @@ namespace System.Web {
 				}
 			}
 			
+#if !TARGET_J2EE
 			firstRun = true;
 #if NET_2_0
 			try {
@@ -177,17 +182,9 @@ namespace System.Web {
 			cache = new Cache ();
 			internalCache = new Cache ();
 			internalCache.DependencyCache = cache;
+#endif
 			do_RealProcessRequest = new WaitCallback (RealProcessRequest);
 		}
-
-#if ONLY_1_1
-		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
-#endif
-		public HttpRuntime ()
-		{
-
-		}
-#endif
 		
 #region AppDomain handling
 		//
@@ -643,7 +640,8 @@ namespace System.Web {
 			wr.CloseConnection ();
 		}
 
-#if NET_2_0 && !TARGET_J2EE
+#if NET_2_0 
+#if !TARGET_J2EE
 		static internal void WritePreservationFile (Assembly asm, string genericNameBase)
 		{
 			if (asm == null)
@@ -708,7 +706,7 @@ namespace System.Web {
 					AppDomain.CurrentDomain.AssemblyResolve -= new ResolveEventHandler (ResolveAssemblyHandler);
 			}
 		}
-
+#endif // #if !TARGET_J2EE
 		internal static bool RunningOnWindows {
 			get { return runningOnWindows; }
 		}

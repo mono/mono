@@ -1,3 +1,7 @@
+2008-04-14  Igor Zelmanovich <igorz@mainsoft.com>
+
+	* HttpRuntime.cs: refactoring.
+
 2008-04-14  Marek Habersack  <mhabersack@novell.com>
 
 	* XmlSiteMapProvider.cs: FindStartingNode throws an exception when
