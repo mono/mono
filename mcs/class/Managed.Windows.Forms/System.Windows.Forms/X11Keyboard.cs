@@ -990,6 +990,8 @@ namespace System.Windows.Forms {
 			int x = positionContext.X;
 			int y = positionContext.Y;
 			CaretStruct caret = positionContext.Caret;
+			if (Control.FromHandle (caret.Hwnd) == null)
+				return;
 			int dx, dy;
 			IntPtr child;
 			XplatUIX11.XTranslateCoordinates (display, Control.FromHandle (caret.Hwnd).window.Handle, window, x, y, out dx, out dy, out child);
