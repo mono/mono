@@ -1,5 +1,8 @@
 2008-04-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mini_method_compile): Print a different message when compiling a 
+	shared method.
+	
 	* mini.c (GENERIC_SHARING_FAILURE): Print a failure message when verbose_level
 	> 1.
 
