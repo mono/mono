@@ -92,9 +92,6 @@ mono_branch_optimize_exception_target (MonoCompile *cfg, MonoBasicBlock *bb, con
 	return NULL;
 }
 
-/* FIXME: Add more instructions */
-#define INS_HAS_NO_SIDE_EFFECT(ins) (MONO_IS_MOVE (ins) || (ins->opcode == OP_ICONST) || (ins->opcode == OP_I8CONST) || (ins->opcode == OP_VZERO) || (ins->opcode == OP_ADD_IMM) || (ins->opcode == OP_R8CONST) || (ins->opcode == OP_LADD_IMM) || (ins->opcode == OP_ISUB_IMM) || (ins->opcode == OP_IADD_IMM) || (ins->opcode == OP_INEG) || (ins->opcode == OP_LNEG) || (ins->opcode == OP_ISUB))
-
 static const int int_cmov_opcodes [] = {
 	OP_CMOV_IEQ,
 	OP_CMOV_INE_UN,
@@ -141,6 +138,7 @@ mono_if_conversion (MonoCompile *cfg)
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
 		MonoBasicBlock *bb1, *bb2;
 
+	restart:
 		/* Look for the IR code generated from cond ? a : b
 		 * which is:
 		 * BB:
@@ -191,7 +189,7 @@ mono_if_conversion (MonoCompile *cfg)
 				continue;
 
 			/* We move ins1/ins2 before the compare so they should have no side effect */
-			if (!(INS_HAS_NO_SIDE_EFFECT (ins1) && INS_HAS_NO_SIDE_EFFECT (ins2)))
+			if (!(MONO_INS_HAS_NO_SIDE_EFFECT (ins1) && MONO_INS_HAS_NO_SIDE_EFFECT (ins2)))
 				continue;
 
 			if (bb->last_ins && (bb->last_ins->opcode == OP_BR_REG || bb->last_ins->opcode == OP_BR))
@@ -304,6 +302,7 @@ mono_if_conversion (MonoCompile *cfg)
 			if ((bb->out_bb [0]->in_count == 1) && (bb->out_bb [0] != cfg->bb_exit) &&
 				(bb->region == bb->out_bb [0]->region)) {
 				mono_merge_basic_blocks (cfg, bb, bb->out_bb [0]);
+				goto restart;
 			}
 		}
 
@@ -349,7 +348,7 @@ mono_if_conversion (MonoCompile *cfg)
 				continue;
 
 			/* We move ins1 before the compare so it should have no side effect */
-			if (!INS_HAS_NO_SIDE_EFFECT (ins1))
+			if (!MONO_INS_HAS_NO_SIDE_EFFECT (ins1))
 				continue;
 
 			if (bb->last_ins && bb->last_ins->opcode == OP_BR_REG)
@@ -448,6 +447,7 @@ mono_if_conversion (MonoCompile *cfg)
 			if ((bb->out_bb [0]->in_count == 1) && (bb->out_bb [0] != cfg->bb_exit) &&
 				(bb->region == bb->out_bb [0]->region)) {
 				mono_merge_basic_blocks (cfg, bb, bb->out_bb [0]);
+				goto restart;
 			}
 		}
 	}
@@ -492,6 +492,9 @@ mono_if_conversion (MonoCompile *cfg)
 			mono_optimize_branches (cfg);
 		/* Merging bblocks could make some variables local */
 		mono_handle_global_vregs (cfg);
+		if (cfg->opt & (MONO_OPT_CONSPROP | MONO_OPT_COPYPROP))
+			mono_local_cprop2 (cfg);
+		mono_local_deadce (cfg);
 	}
 #endif
 }

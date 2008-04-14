@@ -1,5 +1,13 @@
 2008-04-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* branch-opts.c (mono_if_conversion): Re-run the if conversion on merged blocks
+	too. Rerun local optimizations if there was an if-conversion.
+
+	* local-propagation.c (mono_local_deadce): Use MONO_INS_HAS_NO_SIDE_EFFECT.
+
+	* mini.h (MONO_INS_HAS_NO_SIDE_EFFECT): Moved here from branch-opts.c, renamed from
+	INS_HAS_NO_SIDE_EFFECT, added more instructions.
+
 	* local-propagation.c (mono_local_deadce): Eliminate OP_IADD_IMM/OP_ISUB_IMM
 	as well.
 	(mono_local_cprop2): Allow further iterations after a constant fold. Also
