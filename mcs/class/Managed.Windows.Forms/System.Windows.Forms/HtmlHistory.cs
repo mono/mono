@@ -57,6 +57,19 @@ namespace System.Windows.Forms
 
 		#endregion
 
+		#region Properties
+		[MonoTODO ("Needs implementation")]
+		public int Length {
+			get { return 0; }
+		}
+
+		[MonoTODO ("Needs implementation")]
+		public object DomHistory {
+			get { return null; }
+		}
+		#endregion
+
+
 		public void Back (int numberBack)
 		{
 			this.webHost.Navigation.Go (numberBack * -1, true);

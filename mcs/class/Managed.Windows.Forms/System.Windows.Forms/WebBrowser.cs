@@ -513,6 +513,7 @@ namespace System.Windows.Forms
 		static object NewWindowEvent = new object ();
 		static object ProgressChangedEvent = new object ();
 		static object StatusTextChangedEvent = new object ();
+		static object PaddingChangedEvent = new object ();
 		
 		[BrowsableAttribute(false)]
 		public event EventHandler CanGoBackChanged {
@@ -574,6 +575,11 @@ namespace System.Windows.Forms
 			remove { Events.RemoveHandler (StatusTextChangedEvent, value); }
 		}
 
+		public event EventHandler PaddingChanged
+		{
+			add { Events.AddHandler (PaddingChangedEvent, value); }
+			remove { Events.RemoveHandler (PaddingChangedEvent, value); }
+		}
 		#endregion
 
 		#region Internal

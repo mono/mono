@@ -25,6 +25,7 @@
 #if NET_2_0
 
 using System;
+using System.Drawing;
 using System.ComponentModel;
 using Mono.WebBrowser.DOM;
 
@@ -62,7 +63,7 @@ namespace System.Windows.Forms
 		public bool CanHaveChildren {
 			get {
 				string tag = this.TagName;
-				switch (tag.ToLower ()) {
+				switch (tag.ToLowerInvariant ()) {
 					case "area":
 					case "base":
 					case "basefont":
@@ -88,14 +89,48 @@ namespace System.Windows.Forms
 				return new HtmlElementCollection (webHost, this.element.Children);
 			}
 		}
+
+		public Rectangle ClientRectangle {
+			get { return new Rectangle (0, 0, this.element.ClientWidth, this.element.ClientHeight); }
+		}
 		
+		public Rectangle OffsetRectangle {
+			get { return new Rectangle (this.element.OffsetLeft, this.element.OffsetTop, this.element.OffsetWidth, this.element.OffsetHeight); }
+		}
+
+		public Rectangle ScrollRectangle {
+			get { return new Rectangle (this.element.ScrollLeft, this.element.ScrollTop, this.element.ScrollWidth, this.element.ScrollHeight); }
+		}
+
+		public int ScrollLeft {
+			get { return this.element.ScrollLeft; }
+			set { this.element.ScrollLeft = value; }
+		}
+
+		public int ScrollTop
+		{
+			get { return this.element.ScrollTop; }
+			set { this.element.ScrollTop = value; }
+		}
+
+		public HtmlElement OffsetParent {
+			get { return new HtmlElement (this.webHost, this.element.OffsetParent); }
+		}
+
 		public HtmlDocument Document {
 			get {
 				return new HtmlDocument (webHost, element.Owner);
 			}
 		}
 
-		public string InnerHtml {
+		public bool Enabled
+		{
+			get { return !this.element.Disabled; }
+			set { this.element.Disabled = !value; }
+		}
+
+		public string InnerHtml
+		{
 			get { return this.element.InnerHTML; }
 			set { throw new NotImplementedException (); }
 		}
@@ -130,6 +165,30 @@ namespace System.Windows.Forms
 		public string TagName {
 			get { return element.TagName; }
 		}
+
+		[MonoTODO ("Needs implementation")]
+		public short TabIndex {
+			get { return 0; }
+		}
+
+		[MonoTODO ("Needs implementation")]
+		public object DomElement {
+			get { return null; }
+		}
+
+		public string OuterHtml {
+			get { return this.element.OuterHTML; }
+		}
+
+		public string OuterText {
+			get { return this.element.OuterText; }
+		}
+
+		[MonoTODO ("Needs implementation")]
+		public string Style {
+			get { return String.Empty; }
+		}
+
 		#endregion
 		
 		#region Methods
@@ -476,6 +535,155 @@ namespace System.Windows.Forms
 				element.KeyUp -= new NodeEventHandler (OnKeyUp);
 			}
 		}
+
+		private static object DragEvent = new object ();
+		public event HtmlElementEventHandler Drag {
+			add {
+				Events.AddHandler (DragEvent, value);
+			}
+			remove {
+				Events.RemoveHandler (DragEvent, value);
+			}
+		}
+
+		private void OnDrag (object sender, EventArgs e)
+		{
+			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[DragEvent];
+			if (eh != null) {
+				HtmlElementEventArgs ev = new HtmlElementEventArgs ();
+				eh (this, ev);
+			}
+		}
+
+
+		private static object DragEndEvent = new object ();
+		public event HtmlElementEventHandler DragEnd {
+			add	{
+				Events.AddHandler (DragEndEvent, value);
+			}
+			remove {
+				Events.RemoveHandler (DragEndEvent, value);
+			}
+		}
+
+		private void OnDragEnd (object sender, EventArgs e)
+		{
+			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[DragEndEvent];
+			if (eh != null) {
+				HtmlElementEventArgs ev = new HtmlElementEventArgs ();
+				eh (this, ev);
+			}
+		}
+		private static object DragLeaveEvent = new object ();
+		public event HtmlElementEventHandler DragLeave {
+			add {
+				Events.AddHandler (DragLeaveEvent, value);
+			}
+			remove {
+				Events.RemoveHandler (DragLeaveEvent, value);
+			}
+		}
+
+		private void OnDragLeave (object sender, EventArgs e)
+		{
+			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[DragLeaveEvent];
+			if (eh != null) {
+				HtmlElementEventArgs ev = new HtmlElementEventArgs ();
+				eh (this, ev);
+			}
+		}
+		private static object DragOverEvent = new object ();
+		public event HtmlElementEventHandler DragOver {
+			add {
+				Events.AddHandler (DragOverEvent, value);
+			}
+			remove {
+				Events.RemoveHandler (DragOverEvent, value);
+			}
+		}
+
+		private void OnDragOver (object sender, EventArgs e)
+		{
+			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[DragOverEvent];
+			if (eh != null) {
+				HtmlElementEventArgs ev = new HtmlElementEventArgs ();
+				eh (this, ev);
+			}
+		}
+		private static object FocusingEvent = new object ();
+		public event HtmlElementEventHandler Focusing {
+			add {
+				Events.AddHandler (FocusingEvent, value);
+			}
+			remove {
+				Events.RemoveHandler (FocusingEvent, value);
+			}
+		}
+
+		private void OnFocusing (object sender, EventArgs e)
+		{
+			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[FocusingEvent];
+			if (eh != null) {
+				HtmlElementEventArgs ev = new HtmlElementEventArgs ();
+				eh (this, ev);
+			}
+		}
+
+		private static object GotFocusEvent = new object ();
+		public event HtmlElementEventHandler GotFocus {
+			add {
+				Events.AddHandler (GotFocusEvent, value);
+			}
+			remove {
+				Events.RemoveHandler (GotFocusEvent, value);
+			}
+		}
+
+		private void OnGotFocus (object sender, EventArgs e)
+		{
+			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[GotFocusEvent];
+			if (eh != null) {
+				HtmlElementEventArgs ev = new HtmlElementEventArgs ();
+				eh (this, ev);
+			}
+		}
+		private static object LosingFocusEvent = new object ();
+		public event HtmlElementEventHandler LosingFocus {
+			add {
+				Events.AddHandler (LosingFocusEvent, value);
+			}
+			remove {
+				Events.RemoveHandler (LosingFocusEvent, value);
+			}
+		}
+
+		private void OnLosingFocus (object sender, EventArgs e)
+		{
+			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[LosingFocusEvent];
+			if (eh != null) {
+				HtmlElementEventArgs ev = new HtmlElementEventArgs ();
+				eh (this, ev);
+			}
+		}
+		private static object LostFocusEvent = new object ();
+		public event HtmlElementEventHandler LostFocus {
+			add {
+				Events.AddHandler (LostFocusEvent, value);
+			}
+			remove {
+				Events.RemoveHandler (LostFocusEvent, value);
+			}
+		}
+
+		private void OnLostFocus (object sender, EventArgs e)
+		{
+			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[LostFocusEvent];
+			if (eh != null) {
+				HtmlElementEventArgs ev = new HtmlElementEventArgs ();
+				eh (this, ev);
+			}
+		}
+
 		#endregion
 	}
 }

@@ -35,8 +35,9 @@ namespace System.Windows.Forms
 	[MonoTODO ("Needs Implementation")]
 	public sealed class HtmlDocument
 	{
-		Mono.WebBrowser.IWebBrowser webHost;
-		IDocument document;
+		private EventHandlerList events;
+		private Mono.WebBrowser.IWebBrowser webHost;
+		private IDocument document;
 
 		internal HtmlDocument (Mono.WebBrowser.IWebBrowser webHost) : this (webHost, webHost.Document)
 		{
@@ -46,6 +47,16 @@ namespace System.Windows.Forms
 		{
 			this.webHost = webHost;
 			this.document = doc;
+		}
+
+
+		internal EventHandlerList Events {
+			get {
+				if (events == null)
+					events = new EventHandlerList ();
+
+				return events;
+			}
 		}
 
 		#region Methods
@@ -252,7 +263,222 @@ namespace System.Windows.Forms
 
 
 		#endregion
-		
+
+		#region Events
+		private static object ClickEvent = new object ();
+		public event HtmlElementEventHandler Click {
+			add { 
+				Events.AddHandler (ClickEvent, value);
+				document.Click += new NodeEventHandler (OnClick);
+			}
+			remove { 
+				Events.RemoveHandler (ClickEvent, value);
+				document.Click -= new NodeEventHandler (OnClick);
+			}
+		}
+		private void OnClick (object sender, EventArgs e)
+		{
+			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[ClickEvent];
+			if (eh != null) {
+				HtmlElementEventArgs ev = new HtmlElementEventArgs ();
+				eh (this, ev);
+			}
+		}
+
+		private static object ContextMenuShowingEvent = new object ();
+		public event HtmlElementEventHandler ContextMenuShowing
+		{
+			add
+			{
+				Events.AddHandler (ContextMenuShowingEvent, value);
+			}
+			remove
+			{
+				Events.RemoveHandler (ContextMenuShowingEvent, value);
+			}
+		}
+		private void OnContextMenuShowing (object sender, EventArgs e)
+		{
+			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[ContextMenuShowingEvent];
+			if (eh != null) {
+				HtmlElementEventArgs ev = new HtmlElementEventArgs ();
+				eh (this, ev);
+			}
+		}
+
+		private static object FocusingEvent = new object ();
+		public event HtmlElementEventHandler Focusing
+		{
+			add
+			{
+				Events.AddHandler (FocusingEvent, value);
+		}
+			remove
+			{
+				Events.RemoveHandler (FocusingEvent, value);
+			}
+		}
+		private void OnFocusing (object sender, EventArgs e)
+		{
+			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[FocusingEvent];
+			if (eh != null) {
+				HtmlElementEventArgs ev = new HtmlElementEventArgs ();
+				eh (this, ev);
+			}
+		}
+
+		private static object LosingFocusEvent = new object ();
+		public event HtmlElementEventHandler LosingFocus
+		{
+			add
+			{
+				Events.AddHandler (LosingFocusEvent, value);
+			}
+			remove
+			{
+				Events.RemoveHandler (LosingFocusEvent, value);
+			}
+		}
+		private void OnLosingFocus (object sender, EventArgs e)
+		{
+			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[LosingFocusEvent];
+			if (eh != null) {
+				HtmlElementEventArgs ev = new HtmlElementEventArgs ();
+				eh (this, ev);
+			}
+		}
+
+
+		private static object MouseDownEvent = new object ();
+		public event HtmlElementEventHandler MouseDown
+		{
+			add
+			{
+				Events.AddHandler (MouseDownEvent, value);
+			}
+			remove
+			{
+				Events.RemoveHandler (MouseDownEvent, value);
+			}
+		}
+		private void OnMouseDown (object sender, EventArgs e)
+		{
+			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[MouseDownEvent];
+			if (eh != null) {
+				HtmlElementEventArgs ev = new HtmlElementEventArgs ();
+				eh (this, ev);
+			}
+		}
+
+
+		private static object MouseLeaveEvent = new object ();
+		public event HtmlElementEventHandler MouseLeave
+		{
+			add
+			{
+				Events.AddHandler (MouseLeaveEvent, value);
+			}
+			remove
+			{
+				Events.RemoveHandler (MouseLeaveEvent, value);
+			}
+		}
+		private void OnMouseLeave (object sender, EventArgs e)
+		{
+			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[MouseLeaveEvent];
+			if (eh != null) {
+				HtmlElementEventArgs ev = new HtmlElementEventArgs ();
+				eh (this, ev);
+			}
+		}
+
+		private static object MouseMoveEvent = new object ();
+		public event HtmlElementEventHandler MouseMove
+		{
+			add
+			{
+				Events.AddHandler (MouseMoveEvent, value);
+			}
+			remove
+			{
+				Events.RemoveHandler (MouseMoveEvent, value);
+			}
+		}
+		private void OnMouseMove (object sender, EventArgs e)
+		{
+			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[MouseMoveEvent];
+			if (eh != null) {
+				HtmlElementEventArgs ev = new HtmlElementEventArgs ();
+				eh (this, ev);
+			}
+		}
+
+		private static object MouseOverEvent = new object ();
+		public event HtmlElementEventHandler MouseOver
+		{
+			add
+			{
+				Events.AddHandler (MouseOverEvent, value);
+			}
+			remove
+			{
+				Events.RemoveHandler (MouseOverEvent, value);
+			}
+		}
+		private void OnMouseOver (object sender, EventArgs e)
+		{
+			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[MouseOverEvent];
+			if (eh != null) {
+				HtmlElementEventArgs ev = new HtmlElementEventArgs ();
+				eh (this, ev);
+			}
+		}
+
+		private static object MouseUpEvent = new object ();
+		public event HtmlElementEventHandler MouseUp
+		{
+			add
+			{
+				Events.AddHandler (MouseUpEvent, value);
+			}
+			remove
+			{
+				Events.RemoveHandler (MouseUpEvent, value);
+			}
+		}
+		private void OnMouseUp (object sender, EventArgs e)
+		{
+			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[MouseUpEvent];
+			if (eh != null) {
+				HtmlElementEventArgs ev = new HtmlElementEventArgs ();
+				eh (this, ev);
+			}
+		}
+
+		private static object StopEvent = new object ();
+		public event HtmlElementEventHandler Stop
+		{
+			add
+			{
+				Events.AddHandler (StopEvent, value);
+			}
+			remove
+			{
+				Events.RemoveHandler (StopEvent, value);
+			}
+		}
+		private void OnStop (object sender, EventArgs e)
+		{
+			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[StopEvent];
+			if (eh != null) {
+				HtmlElementEventArgs ev = new HtmlElementEventArgs ();
+				eh (this, ev);
+			}
+		}
+
+		#endregion
+
+
 		private Color ParseColor (string color) {
 			if (color.IndexOf ("#") >= 0) {
 				return Color.FromArgb (int.Parse (color.Substring (color.IndexOf ("#") + 1), NumberStyles.HexNumber));

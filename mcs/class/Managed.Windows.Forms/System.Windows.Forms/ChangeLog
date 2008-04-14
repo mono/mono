@@ -1,9 +1,15 @@
+2008-04-12  Andreia Gaita <avidigal@novell.com> 
+
+	* HtmlDocument.cs, HtmlElement.cs, HtmlHistory.cs, WebBrowser.cs:
+	Implement OuterHtml, OuterText, Enabled, Scroll*, *Rectangle properties,
+	add missing properties and event handlers.
+	
 2008-04-14  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ListBox.cs: Make sure the LargeChange we are setting is at least
 	zero, to prevent an IOORE.  [Fixes bug #379531]
 
-2009-04-13  Andy Hume <andyhume32@yahoo.co.uk>
+2008-04-13  Andy Hume <andyhume32@yahoo.co.uk>
 
 	* ComboBox.cs: Support item navigation by entering text.  Firstly, 
 	in DropDownList mode, for each key-press select the next item 
@@ -16,7 +22,7 @@
 	* X11Keyboard.cs : Control.FromHandle() could return null
 	  in MoveCurrentCaretPos().
 
-2009-04-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+2008-04-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: When changing the size in VirtualMode, also Reset the
 	selection.
@@ -24,14 +30,14 @@
 	changing selection info for VirtualMode.
 	Fixes #372618.
 
-2009-04-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+2008-04-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ThemeWin32Classic.cs: When drawing ListViewItem instancesin Details
 	view, don't use LineLimit for the first item - use NoWrap *always*
 	instead, since ListView.LabelWrap is not used for this view.
 	Fixes #378054.
 
-2009-04-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+2008-04-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Binding.cs: Call UpdateIsBinding when setting control - probably
 	Binding is already usable and we don't need to wait to check the
@@ -39,7 +45,7 @@
 	Created, just like 2.0 does.
 	* CurrencyManager.cs: I'm so lame - the previous check was wrong.
 
-2009-04-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+2008-04-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Binding.cs: Just realized we don't need to have a handler for
 	BindingContextChanged, since this info should be now consumed directly
@@ -49,7 +55,7 @@
 	* CurrencyManager.cs: IsSuspended should return always false if Count
 	== 0.
 
-2009-04-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+2008-04-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Binding.cs: When calling PushData, return if manager.Count == 0,
 	since we just don't have data to be read. Also, when setting the
