@@ -1358,7 +1358,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 		}
 
-		if (prev_dreg >= 0 && is_soft_reg (prev_dreg, fp) && reginfo [prev_dreg].born_in >= i) {
+		if (prev_dreg >= 0 && is_soft_reg (prev_dreg, fp) && (spec_dest != 'b') && (cfg->new_ir || reginfo [prev_dreg].born_in >= i)) {
 			/* 
 			 * In theory, we could free up the hreg even if the vreg is alive,
 			 * but branches inside bblocks force us to assign the same hreg
@@ -1371,6 +1371,8 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 				mono_regstate_free_float (rs, dreg);
 			else
 				mono_regstate_free_int (rs, dreg);
+			if (cfg->new_ir)
+				rs->vassign [prev_dreg] = -1;
 		}
 
 		if ((dest_dreg != -1) && (ins->dreg != dest_dreg)) {
@@ -1605,7 +1607,7 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 					sreg1_mask = regmask (ins->dreg);
 				}
 
-				if (spec [MONO_INST_CLOB] == '1' && (rs->ifree_mask & (regmask (ins->dreg))))
+				if (spec [MONO_INST_CLOB] == '1' && !dreg_is_fp (spec) && (rs->ifree_mask & (regmask (ins->dreg))))
 					/* Allocate the same reg to sreg1 to avoid a copy later */
 					sreg1_mask = regmask (ins->dreg);
 

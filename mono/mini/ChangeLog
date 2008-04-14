@@ -1,5 +1,9 @@
 2008-04-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-codegen.c (mono_local_regalloc): Free the hreg of a dreg even if the
+	dreg is alive since the branches inside bblocks problem doesn't exist on
+	the linear IR branch.
+
 	* branch-opts.c (mono_if_conversion): Re-run the if conversion on merged blocks
 	too. Rerun local optimizations if there was an if-conversion.
 
