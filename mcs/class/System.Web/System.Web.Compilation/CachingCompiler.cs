@@ -242,14 +242,16 @@ namespace System.Web.Compilation
 		{
 			CompilerResults result = CachingCompiler.Compile (language, key, file, assemblies);
 			if (result.NativeCompilerReturnValue != 0) {
-				StreamReader reader = new StreamReader (file);
-				throw new CompilationException (file, result.Errors, reader.ReadToEnd ());
+				using (StreamReader reader = new StreamReader (file)) {
+					throw new CompilationException (file, result.Errors, reader.ReadToEnd ());
+				}
 			}
 
 			Assembly assembly = result.CompiledAssembly;
 			if (assembly == null) {
-				StreamReader reader = new StreamReader (file);
-				throw new CompilationException (file, result.Errors, reader.ReadToEnd ());
+				using (StreamReader reader = new StreamReader (file)) {
+					throw new CompilationException (file, result.Errors, reader.ReadToEnd ());
+				}
 			}
 		
 			Type type = assembly.GetType (typename, true);

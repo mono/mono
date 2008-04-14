@@ -260,9 +260,10 @@ namespace System.Web.Handlers {
 				throw new HttpException (404, String.Concat ("Resource ", resourceName, " not found"));
 
 			if (wra.PerformSubstitution) {
-				StreamReader r = new StreamReader (s);
-				TextWriter w = context.Response.Output;
-				new PerformSubstitutionHelper (assembly).PerformSubstitution (r, w);
+				using (StreamReader r = new StreamReader (s)) {
+					TextWriter w = context.Response.Output;
+					new PerformSubstitutionHelper (assembly).PerformSubstitution (r, w);
+				}
 			}
 			else {
 				byte [] buf = new byte [1024];

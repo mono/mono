@@ -108,9 +108,9 @@ namespace System.Web.UI.WebControls
 				else
 					filePath = Path.Combine (owner.TemplateSourceDirectory, BodyFileName);
 
-				StreamReader sr = new StreamReader (filePath);
-				bodyText = sr.ReadToEnd ();
-				sr.Close ();
+				using (StreamReader sr = new StreamReader (filePath)) {
+					bodyText = sr.ReadToEnd ();
+				}
 			}
 			else
 				bodyText = "";

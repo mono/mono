@@ -568,36 +568,37 @@ namespace System.Web {
 		void LoadWwwForm ()
 #endif
 		{
-			Stream input = GetSubStream (InputStream);
-			StreamReader s = new StreamReader (input, ContentEncoding);
+			using (Stream input = GetSubStream (InputStream)) {
+				using (StreamReader s = new StreamReader (input, ContentEncoding)) {
+					StringBuilder key = new StringBuilder ();
+					StringBuilder value = new StringBuilder ();
+					int c;
 
-			StringBuilder key = new StringBuilder ();
-			StringBuilder value = new StringBuilder ();
-			int c;
-
-			while ((c = s.Read ()) != -1){
-				if (c == '='){
-					value.Length = 0;
 					while ((c = s.Read ()) != -1){
-						if (c == '&'){
+						if (c == '='){
+							value.Length = 0;
+							while ((c = s.Read ()) != -1){
+								if (c == '&'){
+									AddRawKeyValue (key, value);
+									break;
+								} else
+									value.Append ((char) c);
+							}
+							if (c == -1){
+								AddRawKeyValue (key, value);
+								return;
+							}
+						} else if (c == '&')
 							AddRawKeyValue (key, value);
-							break;
-						} else
-							value.Append ((char) c);
+						else
+							key.Append ((char) c);
 					}
-					if (c == -1){
+					if (c == -1)
 						AddRawKeyValue (key, value);
-						return;
-					}
-				} else if (c == '&')
-					AddRawKeyValue (key, value);
-				else
-					key.Append ((char) c);
-			}
-			if (c == -1)
-				AddRawKeyValue (key, value);
 
-			EndSubStream (input);
+					EndSubStream (input);
+				}
+			}
 		}
 
 		bool IsContentType (string ct, bool starts_with)

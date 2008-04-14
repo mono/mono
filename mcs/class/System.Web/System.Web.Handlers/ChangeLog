@@ -1,3 +1,8 @@
+2008-04-15  Marek Habersack  <mhabersack@novell.com>
+
+	* AssemblyResourceLoader.cs: dispose of streams the way it should
+	be done.
+
 2007-12-13  Marek Habersack  <mhabersack@novell.com>
 
 	* AssemblyResourceLoader.cs: speed optimization - use String.Concat
