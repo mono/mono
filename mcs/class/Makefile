@@ -1,12 +1,5 @@
 thisdir = class
 
-MONO_POSIX := Mono.Posix
-MONO_SYMBOLWRITER := Mono.CompilerServices.SymbolWriter
-
-ifeq (net_2_0, $(PROFILE))
-MONO_WEB := Mono.Web
-endif
-
 bootstrap_dirs := \
 	corlib					\
 	System					\
@@ -15,7 +8,7 @@ bootstrap_dirs := \
 	System.Security				\
 	System.Configuration			\
 	System					\
-	$(MONO_SYMBOLWRITER)
+	Mono.CompilerServices.SymbolWriter
 
 # Note that Mono.Security and System.Security aren't listed.
 # We may have to add those if 'mcs' starts using them.
@@ -52,15 +45,15 @@ common_dirs := \
 	System.Data			\
 	Mono.Data			\
 	Mono.GetOptions			\
-	$(MONO_SYMBOLWRITER)		\
-	$(MONO_POSIX)			\
+	Mono.CompilerServices.SymbolWriter \
+	Mono.Posix			\
 	Accessibility			\
 	Mono.Mozilla			\
 	Managed.Windows.Forms		\
 	Mono.Data.Sqlite		\
 	Mono.Data.SqliteClient		\
 	System.Web			\
-	$(MONO_WEB)			\
+	Mono.Web			\
 	System.Web.Services		\
 	System.Web			\
 	System.Runtime.Serialization.Formatters.Soap \
@@ -134,12 +127,8 @@ include ../build/rules.make
 SUBDIRS = $(common_dirs) $(default_dirs) $(net_2_0_dirs) $(net_2_1_dirs) $(net_3_5_dirs)
 
 # These libraries below are either unimplemented or don't compile, but
-# I wrote makefiles for them.
-
-BROKEN_SUBDIRS =
-
-DIST_ONLY_SUBDIRS = \
-	$(BROKEN_SUBDIRS) Mono.Web
+#BROKEN_SUBDIRS =
+#DIST_ONLY_SUBDIRS = $(BROKEN_SUBDIRS)
 
 # No new makefiles for: System.Messaging, System.Web.Mobile,
 # System.ServiceProcess
