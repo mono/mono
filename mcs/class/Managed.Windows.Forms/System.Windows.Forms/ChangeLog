@@ -1,3 +1,8 @@
+2008-04-14  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ListBox.cs: Make sure the LargeChange we are setting is at least
+	zero, to prevent an IOORE.  [Fixes bug #379531]
+
 2009-04-13  Andy Hume <andyhume32@yahoo.co.uk>
 
 	* ComboBox.cs: Support item navigation by entering text.  Firstly, 
