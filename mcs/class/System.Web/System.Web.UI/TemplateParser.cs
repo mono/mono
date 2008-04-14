@@ -844,8 +844,9 @@ namespace System.Web.UI {
 			result = CachingCompiler.Compile (language, realPath, realPath, assemblies, Debug);
 #endif
 			if (result.NativeCompilerReturnValue != 0) {
-				StreamReader reader = new StreamReader (realPath);
-				throw new CompilationException (realPath, result.Errors, reader.ReadToEnd ());
+				using (StreamReader reader = new StreamReader (realPath)) {
+					throw new CompilationException (realPath, result.Errors, reader.ReadToEnd ());
+				}
 			}
 
 			AddAssembly (result.CompiledAssembly, true);
@@ -943,12 +944,12 @@ namespace System.Web.UI {
 				
 				if (String.IsNullOrEmpty (inputFile)) {
 					inFile = null;
-					StreamReader sr = Reader as StreamReader;
-
-					if (sr != null) {
-						FileStream fr = sr.BaseStream as FileStream;
-						if (fr != null)
-							inFile = fr.Name;
+					using (StreamReader sr = Reader as StreamReader) {
+						if (sr != null) {
+							FileStream fr = sr.BaseStream as FileStream;
+							if (fr != null)
+								inFile = fr.Name;
+						}
 					}
 				} else
 					inFile = inputFile;

@@ -136,10 +136,18 @@ namespace System.Web.UI
 			bool inDirective = false;
 			StringBuilder directive = null;
 			StringBuilder content = new StringBuilder ();
-			int idxStart, idxEnd, length;			
+			int idxStart, idxEnd, length;
+			StreamReader sr;
 
-			using (StreamReader reader = new StreamReader (File.OpenRead (physPath), WebEncoding.FileEncoding)) {
-				while ((line = reader.ReadLine ()) != null && cachedType == null) {
+#if NET_2_0
+			if (reader != null)
+				sr = reader as StreamReader;
+			else
+#endif
+				sr = new StreamReader (File.OpenRead (physPath), WebEncoding.FileEncoding);
+			
+			using (sr) {
+				while ((line = sr.ReadLine ()) != null && cachedType == null) {
 					length = line.Length;
 					if (length == 0) {
 						content.Append ("\n");
@@ -244,7 +252,12 @@ namespace System.Web.UI
 		
 		void ParseDirective (string line)
 		{
-			AspParser parser = new AspParser (physPath, new StringReader (line));
+			AspParser parser;
+
+			using (StringReader input = new StringReader (line)) {
+				parser = new AspParser (physPath, input);
+			}
+			
 			parser.Error += new ParseErrorHandler (ParseError);
 			parser.TagParsed += new TagParsedHandler (TagParsed);
 			parser.TextParsed += new TextParsedHandler (TextParsed);
@@ -408,8 +421,9 @@ namespace System.Web.UI
 
 			CompilerResults result = CachingCompiler.Compile (language, realPath, realPath, assemblies);
 			if (result.NativeCompilerReturnValue != 0) {
-				StreamReader reader = new StreamReader (realPath);
-				throw new CompilationException (realPath, result.Errors, reader.ReadToEnd ());
+				using (StreamReader sr = new StreamReader (realPath)) {
+					throw new CompilationException (realPath, result.Errors, sr.ReadToEnd ());
+				}
 			}
 
 			AddAssembly (result.CompiledAssembly, true);

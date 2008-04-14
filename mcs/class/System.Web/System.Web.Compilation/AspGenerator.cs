@@ -235,7 +235,7 @@ namespace System.Web.Compilation
 		void InitParser (TextReader reader, string filename)
 		{
 			AspParser parser = new AspParser (filename, reader);
-			reader.Close ();
+			((IDisposable)reader).Dispose ();
 			parser.Error += new ParseErrorHandler (ParseError);
 			parser.TagParsed += new TagParsedHandler (TagParsed);
 			parser.TextParsed += new TextParsedHandler (TextParsed);
