@@ -1,3 +1,8 @@
+2008-04-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (GENERIC_SHARING_FAILURE): Print a failure message when verbose_level
+	> 1.
+
 2008-04-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (mono_arch_output_basic_block): Implement OP_ABS directly using
