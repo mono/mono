@@ -28,6 +28,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
+
 using System;
 using System.Reflection;
 using System.Resources;
@@ -58,3 +60,5 @@ using System.Web.UI;
 [assembly: TagPrefix("System.Web.UI.WebControls", "asp")]
 [assembly: AssemblyDelaySign(true)]
 [assembly: AssemblyKeyFile("../mono.pub")]
+
+#endif
