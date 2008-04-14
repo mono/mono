@@ -137,6 +137,30 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			Assert.AreEqual (0, cm.Position, "#B2");
 		}
 
+#if NET_2_0
+		[Test]
+		public void IsBindingEmptyDataSource ()
+		{
+			Control c = new Control ();
+			c.BindingContext = new BindingContext ();
+			c.CreateControl ();
+
+			BindingList<string> list = new BindingList<string> ();
+			CurrencyManager cm = (CurrencyManager)c.BindingContext [list];
+
+			Assert.AreEqual (true, cm.IsBindingSuspended, "A1");
+
+			cm.ResumeBinding ();
+			Assert.AreEqual (true, cm.IsBindingSuspended, "B1");
+
+			list.Add ("A");
+			Assert.AreEqual (false, cm.IsBindingSuspended, "D1");
+
+			list.Clear ();
+			Assert.AreEqual (true, cm.IsBindingSuspended, "E1");
+		}
+#endif
+
 		[Test]
 		public void MoveArrayListForward ()
 		{
@@ -1075,7 +1099,7 @@ namespace MonoTests.System.Windows.Forms.DataBinding
 			Assert.AreEqual (5, rcm.Count, "count3");
 			Assert.AreEqual (3, list.Count, "listcount3");
 		}
-		
+
 		[Test]
 		public void TestCurrencyManagerBindings ()
 		{
