@@ -1,3 +1,18 @@
+2008-04-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_method_to_ir): Set cfg->ip before processing an IL instruction
+	so the cil_code field of created MonoInst's is properly set.
+	(mini_select_instructions): Ditto.
+
+	* mini.h (MONO_INST_NEW): Initialize the cil_code field using cfg->ip.
+	(MONO_INST_NEW_CALL): Ditto.
+
+	* mini.c inssel.brg inssel-x86.brg inssel-amd64.brg: Use MONO_INST_NEW ()
+	in many places so the ins->cil_code field is properly initialized.
+
+	* mini.c (mono_bblock_add_inst): Call MONO_ADD_INS () so the logic is in one
+	place.
+
 2008-04-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mini_method_compile): Print a different message when compiling a 
