@@ -1,3 +1,8 @@
+2008-04-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* main.c (disassemble_file): Do not use mono_assembly_open () to load an image,
+	since it does not allow loading a different mscorlib. Fixes #379866.
+
 2008-03-05  Ankit Jain  <jankit@novell.com>
 
 	* dis-cil.c (disassemble_cil): For catch clause, emit stringified class
