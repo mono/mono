@@ -1,8 +1,3 @@
-2008-04-15  Marek Habersack  <mhabersack@novell.com>
-
-	* ApplicationHost.cs: restore Bin;bin to PrivateBinPath, as a
-	work-around for an IOMAP bug. Fixes bugs #379890 and #379888
-
 2008-04-08  Marek Habersack  <mhabersack@novell.com>
 
 	* DefaultVirtualDirectory.cs: fixed the constructor - derive
