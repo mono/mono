@@ -1,3 +1,8 @@
+2008-04-15  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Makefile.am (generic-box.2.exe, generic-unbox.2.exe): Create in
+	build-dir.
+
 2008-04-11  Mark Probst  <mark.probst@gmail.com>
 
 	* Makefile.am: Added missing files to EXTRA_DIST.
