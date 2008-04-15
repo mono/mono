@@ -191,7 +191,7 @@ namespace System.Web.Hosting {
 				}
 			}
 
-			setup.PrivateBinPath = BuildPrivateBinPath (physicalDir, bindirPath);
+			setup.PrivateBinPath = BuildPrivateBinPath (physicalDir, HttpApplication.BinDirs);
 			setup.PrivateBinPathProbe = "*";
 			setup.ShadowCopyFiles = "true";
 			setup.ShadowCopyDirectories = setup.PrivateBinPath;

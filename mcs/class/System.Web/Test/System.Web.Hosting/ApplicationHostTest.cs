@@ -171,9 +171,9 @@ namespace MonoTests.System.Web.Hosting {
 			p ("LoaderOptimization is: ", setup.LoaderOptimization);
 			Assert.AreEqual (
 #if NET_2_0
-				String.Format ("{0}{1}bin", tb, Path.DirectorySeparatorChar),
+				String.Format ("{0}{1}Bin;{0}{1}bin", tb, Path.DirectorySeparatorChar),
 #else
-				"bin",
+				"Bin;bin",
 #endif
 				setup.PrivateBinPath, "D9"
 			);
