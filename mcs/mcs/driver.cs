@@ -28,9 +28,8 @@ namespace Mono.CSharp
 	/// <summary>
 	///    The compiler driver.
 	/// </summary>
-	public class Driver
+	class Driver
 	{
-		
 		//
 		// Assemblies references to be linked.   Initialized with
 		// mscorlib.dll here.
@@ -57,21 +56,18 @@ namespace Mono.CSharp
 		static ArrayList link_paths;
 
 		// Whether we want to only run the tokenizer
-		static bool tokenize = false;
+		bool tokenize;
 		
-		static string first_source;
+		string first_source;
 
-		static bool want_debugging_support = false;
-
-		static bool parse_only = false;
-		static bool timestamps = false;
-		static bool pause = false;
-		static bool show_counters = false;
+		bool want_debugging_support;
+		bool parse_only;
+		bool timestamps;
 		
 		//
 		// Whether to load the initial config file (what CSC.RSP has by default)
 		// 
-		static bool load_default_config = true;
+		bool load_default_config = true;
 
 		//
 		// A list of resource files
@@ -88,35 +84,47 @@ namespace Mono.CSharp
 		//
 		// Output file
 		//
-		static string output_file = null;
+		static string output_file;
 
 		//
 		// Last time we took the time
 		//
-		static DateTime last_time, first_time;
+		DateTime last_time, first_time;
 
 		//
 		// Encoding.
 		//
-		static Encoding encoding;
+		Encoding encoding;
 
 		static public void Reset ()
 		{
-			want_debugging_support = false;
-			parse_only = false;
-			timestamps = false;
-			pause = false;
-			show_counters = false;
-			load_default_config = true;
 			embedded_resources = null;
 			win32ResourceFile = win32IconFile = null;
 			defines = null;
 			output_file = null;
-			encoding = null;
-			first_source = null;
 		}
 
-		public static void ShowTime (string msg)
+		public Driver ()
+		{
+			encoding = Encoding.Default;
+
+			//
+			// Setup default defines
+			//
+			defines = new ArrayList ();
+			defines.Add ("__MonoCS__");
+		}
+
+		public static Driver Create (string [] args)
+		{
+			Driver d = new Driver ();
+			if (!d.ParseArguments (args))
+				return null;
+
+			return d;
+		}
+
+		void ShowTime (string msg)
 		{
 			if (!timestamps)
 				return;
@@ -130,7 +138,7 @@ namespace Mono.CSharp
 				(int) span.TotalSeconds, span.Milliseconds, msg);
 		}
 
-		public static void ShowTotalTime (string msg)
+		void ShowTotalTime (string msg)
 		{
 			if (!timestamps)
 				return;
@@ -144,7 +152,7 @@ namespace Mono.CSharp
 				(int) span.TotalSeconds, span.Milliseconds, msg);
 		}	       
 	       
-		static void tokenize_file (SourceFile file)
+		void tokenize_file (SourceFile file)
 		{
 			Stream input;
 
@@ -172,7 +180,7 @@ namespace Mono.CSharp
 		}
 
 		// MonoTODO("Change error code for aborted compilation to something reasonable")]		
-		static void parse (SourceFile file)
+		void Parse (SourceFile file)
 		{
 			CSharpParser parser;
 			Stream input;
@@ -284,26 +292,20 @@ namespace Mono.CSharp
 			Environment.Exit (0);
 		}
 
-		public static int counter1, counter2;
-		
 		public static int Main (string[] args)
 		{
 			RootContext.Version = LanguageVersion.Default;
 
 			Location.InEmacs = Environment.GetEnvironmentVariable ("EMACS") == "t";
 
-			bool ok = MainDriver (args);
-			
-			if (ok && Report.Errors == 0) {
+			Driver d = Driver.Create (args);
+			if (d == null)
+				return 1;
+
+			if (d.Compile () && Report.Errors == 0) {
 				if (Report.Warnings > 0) {
 					Console.WriteLine ("Compilation succeeded - {0} warning(s)", Report.Warnings);
 				}
-				if (show_counters){
-					Console.WriteLine ("Counter1: " + counter1);
-					Console.WriteLine ("Counter2: " + counter2);
-				}
-				if (pause)
-					Console.ReadLine ();
 				return 0;
 			} else {
 				Console.WriteLine("Compilation failed: {0} error(s), {1} warnings",
@@ -479,12 +481,6 @@ namespace Mono.CSharp
 			return;
 		}
 
-		static void SetupDefaultDefines ()
-		{
-			defines = new ArrayList ();
-			defines.Add ("__MonoCS__");
-		}
-
 		static string [] LoadArgs (string file)
 		{
 			StreamReader f;
@@ -574,7 +570,7 @@ namespace Mono.CSharp
 			pattern = spec;
 		}
 
-		static void ProcessFile (string f)
+		void ProcessFile (string f)
 		{
 			if (first_source == null)
 				first_source = f;
@@ -582,20 +578,119 @@ namespace Mono.CSharp
 			Location.AddFile (f);
 		}
 
-		static void ProcessFiles ()
+		bool ParseArguments (string[] args)
+		{
+			references = new ArrayList ();
+			external_aliases = new Hashtable ();
+			soft_references = new ArrayList ();
+			modules = new ArrayList (2);
+			link_paths = new ArrayList ();
+
+			ArrayList response_file_list = null;
+			bool parsing_options = true;
+
+			for (int i = 0; i < args.Length; i++) {
+				string arg = args [i];
+				if (arg.Length == 0)
+					continue;
+
+				if (arg.StartsWith ("@")) {
+					string [] extra_args;
+					string response_file = arg.Substring (1);
+
+					if (response_file_list == null)
+						response_file_list = new ArrayList ();
+
+					if (response_file_list.Contains (response_file)) {
+						Report.Error (
+							1515, "Response file `" + response_file +
+							"' specified multiple times");
+						return false;
+					}
+
+					response_file_list.Add (response_file);
+
+					extra_args = LoadArgs (response_file);
+					if (extra_args == null) {
+						Report.Error (2011, "Unable to open response file: " +
+								  response_file);
+						return false;
+					}
+
+					args = AddArgs (args, extra_args);
+					continue;
+				}
+
+				if (parsing_options) {
+					if (arg == "--") {
+						parsing_options = false;
+						continue;
+					}
+
+					if (arg.StartsWith ("-")) {
+						if (UnixParseOption (arg, ref args, ref i))
+							continue;
+
+						// Try a -CSCOPTION
+						string csc_opt = "/" + arg.Substring (1);
+						if (CSCParseOption (csc_opt, ref args, ref i))
+							continue;
+
+						Error_WrongOption (arg);
+						return false;
+					}
+					if (arg [0] == '/') {
+						if (CSCParseOption (arg, ref args, ref i))
+							continue;
+
+						// Need to skip `/home/test.cs' however /test.cs is considered as error
+						if (arg.Length < 2 || arg.IndexOf ('/', 2) == -1) {
+							Error_WrongOption (arg);
+							return false;
+						}
+					}
+				}
+
+				ProcessSourceFiles (arg, false);
+			}
+
+			//
+			// If we are an exe, require a source file for the entry point
+			//
+			if (RootContext.Target == Target.Exe || RootContext.Target == Target.WinExe || RootContext.Target == Target.Module) {
+				if (first_source == null) {
+					Report.Error (2008, "No files to compile were specified");
+					return false;
+				}
+
+			}
+
+			//
+			// If there is nothing to put in the assembly, and we are not a library
+			//
+			if (first_source == null && embedded_resources == null) {
+				Report.Error (2008, "No files to compile were specified");
+				return false;
+			}
+
+			return true;
+		}
+
+		public void Parse ()
 		{
 			Location.Initialize ();
 
-			foreach (SourceFile file in Location.SourceFiles) {
+			int files_count = Location.SourceFiles.Length;
+			for (int i = 0; i < files_count; ++i) {
 				if (tokenize) {
-					tokenize_file (file);
+					tokenize_file (Location.SourceFiles [i]);
 				} else {
-					parse (file);
+					Parse (Location.SourceFiles [i]);
 				}
 			}
 		}
 
-		static void CompileFiles (string spec, bool recurse)
+		void ProcessSourceFiles (string spec, bool recurse)
 		{
 			string path, pattern;
 
@@ -633,7 +728,7 @@ namespace Mono.CSharp
 					
 				// Don't include path in this string, as each
 				// directory entry already does
-				CompileFiles (d + "/" + pattern, true);
+				ProcessSourceFiles (d + "/" + pattern, true);
 			}
 		}
 
@@ -720,7 +815,7 @@ namespace Mono.CSharp
 		// deprecated in favor of the CSCParseOption, which will also handle the
 		// options that start with a dash in the future.
 		//
-		static bool UnixParseOption (string arg, ref string [] args, ref int i)
+		bool UnixParseOption (string arg, ref string [] args, ref int i)
 		{
 			switch (arg){
 			case "-v":
@@ -764,23 +859,6 @@ namespace Mono.CSharp
 				defines.Add (args [++i]);
 				return true;
 
-			case "--show-counters":
-				show_counters = true;
-				return true;
-				
-			case "--expect-error": {
-				int code = 0;
-				
-				try {
-					code = Int32.Parse (
-						args [++i], NumberStyles.AllowLeadingSign);
-					Report.ExpectedError = code;
-				} catch {
-					Report.Error (-14, "Invalid number specified");
-				} 
-				return true;
-			}
-				
 			case "--tokenize": 
 				tokenize = true;
 				return true;
@@ -959,7 +1037,7 @@ namespace Mono.CSharp
 					Report.Error (5, "--recurse requires an argument");
 					Environment.Exit (1);
 				}
-				CompileFiles (args [++i], true); 
+				ProcessSourceFiles (args [++i], true); 
 				return true;
 				
 			case "--timestamp":
@@ -967,10 +1045,6 @@ namespace Mono.CSharp
 				last_time = first_time = DateTime.Now;
 				return true;
 
-			case "--pause":
-				pause = true;
-				return true;
-				
 			case "--debug": case "-g":
 				Report.Warning (-29, 1, "Compatibility: Use -debug option instead of -g or --debug");
 				want_debugging_support = true;
@@ -989,7 +1063,7 @@ namespace Mono.CSharp
 		// This parses the -arg and /arg options to the compiler, even if the strings
 		// in the following text use "/arg" on the strings.
 		//
-		static bool CSCParseOption (string option, ref string [] args, ref int i)
+		bool CSCParseOption (string option, ref string [] args, ref int i)
 		{
 			int idx = option.IndexOf (':');
 			string arg, value;
@@ -1164,7 +1238,7 @@ namespace Mono.CSharp
 					Report.Error (5, "-recurse requires an argument");
 					Environment.Exit (1);
 				}
-				CompileFiles (value, true); 
+				ProcessSourceFiles (value, true); 
 				return true;
 
 			case "/r":
@@ -1489,138 +1563,20 @@ namespace Mono.CSharp
 			return true;
 		}
 		
-		/// <summary>
-		///    Parses the arguments, and drives the compilation
-		///    process.
-		/// </summary>
-		///
-		/// <remarks>
-		///    TODO: Mostly structured to debug the compiler
-		///    now, needs to be turned into a real driver soon.
-		/// </remarks>
-		// [MonoTODO("Change error code for unknown argument to something reasonable")]
-		internal static bool MainDriver (string [] args)
+		//
+		// Main compilation method
+		//
+		public bool Compile ()
 		{
-			int i;
-			bool parsing_options = true;
+			Parse ();
+			if (Report.Errors > 0)
+				return false;
 
-			encoding = Encoding.Default;
-
-			references = new ArrayList ();
-			external_aliases = new Hashtable ();
-			soft_references = new ArrayList ();
-			modules = new ArrayList ();
-			link_paths = new ArrayList ();
-
-			SetupDefaultDefines ();
-			
-			//
-			// Setup defaults
-			//
-			// This is not required because Assembly.Load knows about this
-			// path.
-			//
-
-			Hashtable response_file_list = null;
-
-			for (i = 0; i < args.Length; i++){
-				string arg = args [i];
-				if (arg.Length == 0)
-					continue;
-
-				if (arg.StartsWith ("@")){
-					string [] extra_args;
-					string response_file = arg.Substring (1);
-
-					if (response_file_list == null)
-						response_file_list = new Hashtable ();
-					
-					if (response_file_list.Contains (response_file)){
-						Report.Error (
-							1515, "Response file `" + response_file +
-							"' specified multiple times");
-						Environment.Exit (1);
-					}
-					
-					response_file_list.Add (response_file, response_file);
-						    
-					extra_args = LoadArgs (response_file);
-					if (extra_args == null){
-						Report.Error (2011, "Unable to open response file: " +
-							      response_file);
-						return false;
-					}
-
-					args = AddArgs (args, extra_args);
-					continue;
-				}
-
-				if (parsing_options){
-					if (arg == "--"){
-						parsing_options = false;
-						continue;
-					}
-					
-					if (arg.StartsWith ("-")){
-						if (UnixParseOption (arg, ref args, ref i))
-							continue;
-
-						// Try a -CSCOPTION
-						string csc_opt = "/" + arg.Substring (1);
-						if (CSCParseOption (csc_opt, ref args, ref i))
-							continue;
-
-						Error_WrongOption (arg);
-						return false;
-					} else {
-						if (arg [0] == '/'){
-							if (CSCParseOption (arg, ref args, ref i))
-								continue;
-
-							// Need to skip `/home/test.cs' however /test.cs is considered as error
-							if (arg.Length < 2 || arg.IndexOf ('/', 2) == -1) {
-								Error_WrongOption (arg);
-								return false;
-							}
-						}
-					}
-				}
-
-				CompileFiles (arg, false); 
-			}
-
-			ProcessFiles ();
-
-			if (tokenize)
+			if (tokenize || parse_only)
 				return true;
 
 			if (RootContext.ToplevelTypes.NamespaceEntry != null)
 				throw new InternalErrorException ("who set it?");
-
-			//
-			// If we are an exe, require a source file for the entry point
-			//
-			if (RootContext.Target == Target.Exe || RootContext.Target == Target.WinExe || RootContext.Target == Target.Module){
-				if (first_source == null){
-					Report.Error (2008, "No files to compile were specified");
-					return false;
-				}
-
-			}
-
-			//
-			// If there is nothing to put in the assembly, and we are not a library
-			//
-			if (first_source == null && embedded_resources == null){
-				Report.Error (2008, "No files to compile were specified");
-				return false;
-			}
-
-			if (Report.Errors > 0)
-				return false;
-			
-			if (parse_only)
-				return true;
 
 			if (load_default_config)
 				DefineDefaultConfig ();
@@ -1980,7 +1936,11 @@ namespace Mono.CSharp
 		{
 			Report.Stderr = error;
 			try {
-				return Driver.MainDriver (args) && Report.Errors == 0;
+				Driver d = Driver.Create (args);
+				if (d == null)
+					return false;
+
+				return d.Compile () && Report.Errors == 0;
 			}
 			finally {
 				Report.Stderr = Console.Error;

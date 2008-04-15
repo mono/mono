@@ -89,9 +89,6 @@ namespace Mono.CSharp
 
 		static public int yacc_verbose_flag;
 
-		// Name of the file we are parsing
-		public string name;
-
 		///
 		/// The current file.
 		///
@@ -5899,7 +5896,6 @@ static CSharpParser ()
 
 public CSharpParser (SeekableStreamReader reader, SourceFile file, ArrayList defines)
 {
-	this.name = file.Name;
 	this.file = file;
 	current_namespace = new NamespaceEntry (null, file, null);
 	current_class = current_namespace.SlaveDeclSpace;

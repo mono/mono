@@ -1,3 +1,9 @@
+2008-04-15  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-paser.jay: Removed unused variable.
+	
+	* driver.cs: Made Compile instance method.
+
 2008-04-15  Raja R Harinath  <harinath@hurrynot.org>
 
 	* flowanalysis.cs (FlowBranching.MergeChild): Simplify.
