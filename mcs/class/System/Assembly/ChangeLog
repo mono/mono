@@ -1,3 +1,7 @@
+2008-04-15  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* AssemblyInfo.cs: Added missing Attributes
+
 2008-04-13  Jb Evain  <jbevain@novell.com>
 
 	* AssemblyInfo.cs: rename agmono to Mono.Moonlight

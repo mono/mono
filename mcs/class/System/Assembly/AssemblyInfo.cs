@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.Resources;
 using System.Security;
@@ -38,34 +39,44 @@ using System.Runtime.InteropServices;
 
 // General Information about the system assembly
 
+[assembly: AssemblyTitle ("System.dll")]
+[assembly: AssemblyDescription ("System.dll")]
+[assembly: AssemblyDefaultAlias ("System.dll")]
+
+[assembly: AssemblyCompany (Consts.MonoCompany)]
+[assembly: AssemblyProduct (Consts.MonoProduct)]
+[assembly: AssemblyCopyright (Consts.MonoCopyright)]
 [assembly: AssemblyVersion (Consts.FxVersion)]
 [assembly: SatelliteContractVersion (Consts.FxVersion)]
+[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
 
-#if (ONLY_1_1)
-[assembly: ComCompatibleVersion (1, 0, 3300, 0)]
-[assembly: TypeLibVersion (1, 10)]
+[assembly: CLSCompliant (true)]
+[assembly: NeutralResourcesLanguage ("en-US")]
+
+[assembly: ComVisible (false)]
+[assembly: AllowPartiallyTrustedCallers]
+
+#if !BOOTSTRAP_WITH_OLDLIB
+	[assembly: SecurityPermission (SecurityAction.RequestMinimum, SkipVerification = true)]
+	[assembly: AssemblyDelaySign (true)]
+	[assembly: AssemblyKeyFile ("../ecma.pub")]
 #endif
 
-[assembly: AssemblyTitle("System.dll")]
-[assembly: AssemblyDescription("System.dll")]
-[assembly: AssemblyConfiguration("Development version")]
-[assembly: AssemblyCompany("MONO development team")]
-[assembly: AssemblyProduct("MONO CLI")]
-[assembly: AssemblyCopyright("(c) 2003 Various Authors")]
-[assembly: AssemblyTrademark("")]
-
-[assembly: CLSCompliant(true)]
-[assembly: AssemblyDefaultAlias("System.dll")]
-[assembly: AssemblyInformationalVersion("0.0.0.1")]
-[assembly: NeutralResourcesLanguage("en-US")]
-
-[assembly: AllowPartiallyTrustedCallers]
-[assembly: ComVisible(false)]
-
-#if ! BOOTSTRAP_WITH_OLDLIB
-[assembly: SecurityPermission (SecurityAction.RequestMinimum, SkipVerification=true)]
-[assembly: AssemblyDelaySign(true)]
-[assembly: AssemblyKeyFile("../ecma.pub")]
+#if NET_2_0
+	[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+	[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+	[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
+	[assembly: StringFreezing]
+	[assembly: ComCompatibleVersion (1, 0, 3300, 0)]
+	[assembly: DefaultDependency (LoadHint.Always)]
+#elif NET_1_1
+	[assembly: AssemblyTrademark ("")]
+	[assembly: AssemblyConfiguration ("")]
+	[assembly: ComCompatibleVersion (1, 0, 3300, 0)]
+	[assembly: TypeLibVersion (1, 10)]
+#elif NET_1_0
+	[assembly: AssemblyTrademark ("")]
+	[assembly: AssemblyConfiguration ("")]
 #endif
 
 #if NET_2_1
