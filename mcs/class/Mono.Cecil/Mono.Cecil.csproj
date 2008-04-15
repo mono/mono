@@ -97,6 +97,7 @@
     <Compile Include="Mono.Cecil.Cil\MethodHeader.cs" />
     <Compile Include="Mono.Cecil.Cil\OpCode.cs" />
     <Compile Include="Mono.Cecil.Cil\OpCodes.cs" />
+    <Compile Include="Mono.Cecil.Cil\OpCodeName.cs" />
     <Compile Include="Mono.Cecil.Cil\OpCodeType.cs" />
     <Compile Include="Mono.Cecil.Cil\OperandType.cs" />
     <Compile Include="Mono.Cecil.Cil\Scope.cs" />

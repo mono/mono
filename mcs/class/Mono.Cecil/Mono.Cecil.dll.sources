@@ -262,6 +262,7 @@
 ./Mono.Cecil.Cil/MethodHeader.cs
 ./Mono.Cecil.Cil/OpCode.cs
 ./Mono.Cecil.Cil/OpCodes.cs
+./Mono.Cecil.Cil/OpCodeNames.cs
 ./Mono.Cecil.Cil/OpCodeType.cs
 ./Mono.Cecil.Cil/OperandType.cs
 ./Mono.Cecil.Cil/Scope.cs

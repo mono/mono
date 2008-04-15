@@ -1,3 +1,15 @@
+2008-04-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Mono.Cecil.csproj
+	* Mono.Cecil.dll.sources:
+		Add Mono.Cecil.Cil/OpCodeNames.cs to the build.
+
+	* Mono.Cecil.Cil/OpCodeNames.cs
+	* Mono.Cecil.Cil/OpCode.cs
+	* Mono.Cecil.Cil/OpCodes.cs:
+		Reduce the OpCode struct size to 8 bytes (instead of 36).
+		Based on the SRE.OpCode code found in corlib.
+
 2008-04-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Mono.Cecil/AssemblyDefinition.cs:

@@ -37,1320 +37,1320 @@ namespace Mono.Cecil.Cil {
 		internal static readonly OpCode [] TwoBytesOpCode = new OpCode [0x1e + 1];
 
 		public static readonly OpCode Nop = new OpCode (
-			"nop", 0xff, 0x00, 1,
+			0xff, 0x00,
 			Code.Nop, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop0, StackBehaviour.Push0);
 
 		public static readonly OpCode Break = new OpCode (
-			"break", 0xff, 0x01, 1,
+			0xff, 0x01,
 			Code.Break, FlowControl.Break,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop0, StackBehaviour.Push0);
 
 		public static readonly OpCode Ldarg_0 = new OpCode (
-			"ldarg.0", 0xff, 0x02, 1,
+			0xff, 0x02,
 			Code.Ldarg_0, FlowControl.Next,
 			OpCodeType.Macro, OperandType.InlineNone,
 			StackBehaviour.Pop0, StackBehaviour.Push1);
 
 		public static readonly OpCode Ldarg_1 = new OpCode (
-			"ldarg.1", 0xff, 0x03, 1,
+			0xff, 0x03,
 			Code.Ldarg_1, FlowControl.Next,
 			OpCodeType.Macro, OperandType.InlineNone,
 			StackBehaviour.Pop0, StackBehaviour.Push1);
 
 		public static readonly OpCode Ldarg_2 = new OpCode (
-			"ldarg.2", 0xff, 0x04, 1,
+			0xff, 0x04,
 			Code.Ldarg_2, FlowControl.Next,
 			OpCodeType.Macro, OperandType.InlineNone,
 			StackBehaviour.Pop0, StackBehaviour.Push1);
 
 		public static readonly OpCode Ldarg_3 = new OpCode (
-			"ldarg.3", 0xff, 0x05, 1,
+			0xff, 0x05,
 			Code.Ldarg_3, FlowControl.Next,
 			OpCodeType.Macro, OperandType.InlineNone,
 			StackBehaviour.Pop0, StackBehaviour.Push1);
 
 		public static readonly OpCode Ldloc_0 = new OpCode (
-			"ldloc.0", 0xff, 0x06, 1,
+			0xff, 0x06,
 			Code.Ldloc_0, FlowControl.Next,
 			OpCodeType.Macro, OperandType.InlineNone,
 			StackBehaviour.Pop0, StackBehaviour.Push1);
 
 		public static readonly OpCode Ldloc_1 = new OpCode (
-			"ldloc.1", 0xff, 0x07, 1,
+			0xff, 0x07,
 			Code.Ldloc_1, FlowControl.Next,
 			OpCodeType.Macro, OperandType.InlineNone,
 			StackBehaviour.Pop0, StackBehaviour.Push1);
 
 		public static readonly OpCode Ldloc_2 = new OpCode (
-			"ldloc.2", 0xff, 0x08, 1,
+			0xff, 0x08,
 			Code.Ldloc_2, FlowControl.Next,
 			OpCodeType.Macro, OperandType.InlineNone,
 			StackBehaviour.Pop0, StackBehaviour.Push1);
 
 		public static readonly OpCode Ldloc_3 = new OpCode (
-			"ldloc.3", 0xff, 0x09, 1,
+			0xff, 0x09,
 			Code.Ldloc_3, FlowControl.Next,
 			OpCodeType.Macro, OperandType.InlineNone,
 			StackBehaviour.Pop0, StackBehaviour.Push1);
 
 		public static readonly OpCode Stloc_0 = new OpCode (
-			"stloc.0", 0xff, 0x0a, 1,
+			0xff, 0x0a,
 			Code.Stloc_0, FlowControl.Next,
 			OpCodeType.Macro, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Push0);
 
 		public static readonly OpCode Stloc_1 = new OpCode (
-			"stloc.1", 0xff, 0x0b, 1,
+			0xff, 0x0b,
 			Code.Stloc_1, FlowControl.Next,
 			OpCodeType.Macro, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Push0);
 
 		public static readonly OpCode Stloc_2 = new OpCode (
-			"stloc.2", 0xff, 0x0c, 1,
+			0xff, 0x0c,
 			Code.Stloc_2, FlowControl.Next,
 			OpCodeType.Macro, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Push0);
 
 		public static readonly OpCode Stloc_3 = new OpCode (
-			"stloc.3", 0xff, 0x0d, 1,
+			0xff, 0x0d,
 			Code.Stloc_3, FlowControl.Next,
 			OpCodeType.Macro, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Push0);
 
 		public static readonly OpCode Ldarg_S = new OpCode (
-			"ldarg.s", 0xff, 0x0e, 1,
+			0xff, 0x0e,
 			Code.Ldarg_S, FlowControl.Next,
 			OpCodeType.Macro, OperandType.ShortInlineParam,
 			StackBehaviour.Pop0, StackBehaviour.Push1);
 
 		public static readonly OpCode Ldarga_S = new OpCode (
-			"ldarga.s", 0xff, 0x0f, 1,
+			0xff, 0x0f,
 			Code.Ldarga_S, FlowControl.Next,
 			OpCodeType.Macro, OperandType.ShortInlineParam,
 			StackBehaviour.Pop0, StackBehaviour.Pushi);
 
 		public static readonly OpCode Starg_S = new OpCode (
-			"starg.s", 0xff, 0x10, 1,
+			0xff, 0x10,
 			Code.Starg_S, FlowControl.Next,
 			OpCodeType.Macro, OperandType.ShortInlineParam,
 			StackBehaviour.Pop1, StackBehaviour.Push0);
 
 		public static readonly OpCode Ldloc_S = new OpCode (
-			"ldloc.s", 0xff, 0x11, 1,
+			0xff, 0x11,
 			Code.Ldloc_S, FlowControl.Next,
 			OpCodeType.Macro, OperandType.ShortInlineVar,
 			StackBehaviour.Pop0, StackBehaviour.Push1);
 
 		public static readonly OpCode Ldloca_S = new OpCode (
-			"ldloca.s", 0xff, 0x12, 1,
+			0xff, 0x12,
 			Code.Ldloca_S, FlowControl.Next,
 			OpCodeType.Macro, OperandType.ShortInlineVar,
 			StackBehaviour.Pop0, StackBehaviour.Pushi);
 
 		public static readonly OpCode Stloc_S = new OpCode (
-			"stloc.s", 0xff, 0x13, 1,
+			0xff, 0x13,
 			Code.Stloc_S, FlowControl.Next,
 			OpCodeType.Macro, OperandType.ShortInlineVar,
 			StackBehaviour.Pop1, StackBehaviour.Push0);
 
 		public static readonly OpCode Ldnull = new OpCode (
-			"ldnull", 0xff, 0x14, 1,
+			0xff, 0x14,
 			Code.Ldnull, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop0, StackBehaviour.Pushref);
 
 		public static readonly OpCode Ldc_I4_M1 = new OpCode (
-			"ldc.i4.m1", 0xff, 0x15, 1,
+			0xff, 0x15,
 			Code.Ldc_I4_M1, FlowControl.Next,
 			OpCodeType.Macro, OperandType.InlineNone,
 			StackBehaviour.Pop0, StackBehaviour.Pushi);
 
 		public static readonly OpCode Ldc_I4_0 = new OpCode (
-			"ldc.i4.0", 0xff, 0x16, 1,
+			0xff, 0x16,
 			Code.Ldc_I4_0, FlowControl.Next,
 			OpCodeType.Macro, OperandType.InlineNone,
 			StackBehaviour.Pop0, StackBehaviour.Pushi);
 
 		public static readonly OpCode Ldc_I4_1 = new OpCode (
-			"ldc.i4.1", 0xff, 0x17, 1,
+			0xff, 0x17,
 			Code.Ldc_I4_1, FlowControl.Next,
 			OpCodeType.Macro, OperandType.InlineNone,
 			StackBehaviour.Pop0, StackBehaviour.Pushi);
 
 		public static readonly OpCode Ldc_I4_2 = new OpCode (
-			"ldc.i4.2", 0xff, 0x18, 1,
+			0xff, 0x18,
 			Code.Ldc_I4_2, FlowControl.Next,
 			OpCodeType.Macro, OperandType.InlineNone,
 			StackBehaviour.Pop0, StackBehaviour.Pushi);
 
 		public static readonly OpCode Ldc_I4_3 = new OpCode (
-			"ldc.i4.3", 0xff, 0x19, 1,
+			0xff, 0x19,
 			Code.Ldc_I4_3, FlowControl.Next,
 			OpCodeType.Macro, OperandType.InlineNone,
 			StackBehaviour.Pop0, StackBehaviour.Pushi);
 
 		public static readonly OpCode Ldc_I4_4 = new OpCode (
-			"ldc.i4.4", 0xff, 0x1a, 1,
+			0xff, 0x1a,
 			Code.Ldc_I4_4, FlowControl.Next,
 			OpCodeType.Macro, OperandType.InlineNone,
 			StackBehaviour.Pop0, StackBehaviour.Pushi);
 
 		public static readonly OpCode Ldc_I4_5 = new OpCode (
-			"ldc.i4.5", 0xff, 0x1b, 1,
+			0xff, 0x1b,
 			Code.Ldc_I4_5, FlowControl.Next,
 			OpCodeType.Macro, OperandType.InlineNone,
 			StackBehaviour.Pop0, StackBehaviour.Pushi);
 
 		public static readonly OpCode Ldc_I4_6 = new OpCode (
-			"ldc.i4.6", 0xff, 0x1c, 1,
+			0xff, 0x1c,
 			Code.Ldc_I4_6, FlowControl.Next,
 			OpCodeType.Macro, OperandType.InlineNone,
 			StackBehaviour.Pop0, StackBehaviour.Pushi);
 
 		public static readonly OpCode Ldc_I4_7 = new OpCode (
-			"ldc.i4.7", 0xff, 0x1d, 1,
+			0xff, 0x1d,
 			Code.Ldc_I4_7, FlowControl.Next,
 			OpCodeType.Macro, OperandType.InlineNone,
 			StackBehaviour.Pop0, StackBehaviour.Pushi);
 
 		public static readonly OpCode Ldc_I4_8 = new OpCode (
-			"ldc.i4.8", 0xff, 0x1e, 1,
+			0xff, 0x1e,
 			Code.Ldc_I4_8, FlowControl.Next,
 			OpCodeType.Macro, OperandType.InlineNone,
 			StackBehaviour.Pop0, StackBehaviour.Pushi);
 
 		public static readonly OpCode Ldc_I4_S = new OpCode (
-			"ldc.i4.s", 0xff, 0x1f, 1,
+			0xff, 0x1f,
 			Code.Ldc_I4_S, FlowControl.Next,
 			OpCodeType.Macro, OperandType.ShortInlineI,
 			StackBehaviour.Pop0, StackBehaviour.Pushi);
 
 		public static readonly OpCode Ldc_I4 = new OpCode (
-			"ldc.i4", 0xff, 0x20, 1,
+			0xff, 0x20,
 			Code.Ldc_I4, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineI,
 			StackBehaviour.Pop0, StackBehaviour.Pushi);
 
 		public static readonly OpCode Ldc_I8 = new OpCode (
-			"ldc.i8", 0xff, 0x21, 1,
+			0xff, 0x21,
 			Code.Ldc_I8, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineI8,
 			StackBehaviour.Pop0, StackBehaviour.Pushi8);
 
 		public static readonly OpCode Ldc_R4 = new OpCode (
-			"ldc.r4", 0xff, 0x22, 1,
+			0xff, 0x22,
 			Code.Ldc_R4, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.ShortInlineR,
 			StackBehaviour.Pop0, StackBehaviour.Pushr4);
 
 		public static readonly OpCode Ldc_R8 = new OpCode (
-			"ldc.r8", 0xff, 0x23, 1,
+			0xff, 0x23,
 			Code.Ldc_R8, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineR,
 			StackBehaviour.Pop0, StackBehaviour.Pushr8);
 
 		public static readonly OpCode Dup = new OpCode (
-			"dup", 0xff, 0x25, 1,
+			0xff, 0x25,
 			Code.Dup, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Push1_push1);
 
 		public static readonly OpCode Pop = new OpCode (
-			"pop", 0xff, 0x26, 1,
+			0xff, 0x26,
 			Code.Pop, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Push0);
 
 		public static readonly OpCode Jmp = new OpCode (
-			"jmp", 0xff, 0x27, 1,
+			0xff, 0x27,
 			Code.Jmp, FlowControl.Call,
 			OpCodeType.Primitive, OperandType.InlineMethod,
 			StackBehaviour.Pop0, StackBehaviour.Push0);
 
 		public static readonly OpCode Call = new OpCode (
-			"call", 0xff, 0x28, 1,
+			0xff, 0x28,
 			Code.Call, FlowControl.Call,
 			OpCodeType.Primitive, OperandType.InlineMethod,
 			StackBehaviour.Varpop, StackBehaviour.Varpush);
 
 		public static readonly OpCode Calli = new OpCode (
-			"calli", 0xff, 0x29, 1,
+			0xff, 0x29,
 			Code.Calli, FlowControl.Call,
 			OpCodeType.Primitive, OperandType.InlineSig,
 			StackBehaviour.Varpop, StackBehaviour.Varpush);
 
 		public static readonly OpCode Ret = new OpCode (
-			"ret", 0xff, 0x2a, 1,
+			0xff, 0x2a,
 			Code.Ret, FlowControl.Return,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Varpop, StackBehaviour.Push0);
 
 		public static readonly OpCode Br_S = new OpCode (
-			"br.s", 0xff, 0x2b, 1,
+			0xff, 0x2b,
 			Code.Br_S, FlowControl.Branch,
 			OpCodeType.Macro, OperandType.ShortInlineBrTarget,
 			StackBehaviour.Pop0, StackBehaviour.Push0);
 
 		public static readonly OpCode Brfalse_S = new OpCode (
-			"brfalse.s", 0xff, 0x2c, 1,
+			0xff, 0x2c,
 			Code.Brfalse_S, FlowControl.Cond_Branch,
 			OpCodeType.Macro, OperandType.ShortInlineBrTarget,
 			StackBehaviour.Popi, StackBehaviour.Push0);
 
 		public static readonly OpCode Brtrue_S = new OpCode (
-			"brtrue.s", 0xff, 0x2d, 1,
+			0xff, 0x2d,
 			Code.Brtrue_S, FlowControl.Cond_Branch,
 			OpCodeType.Macro, OperandType.ShortInlineBrTarget,
 			StackBehaviour.Popi, StackBehaviour.Push0);
 
 		public static readonly OpCode Beq_S = new OpCode (
-			"beq.s", 0xff, 0x2e, 1,
+			0xff, 0x2e,
 			Code.Beq_S, FlowControl.Cond_Branch,
 			OpCodeType.Macro, OperandType.ShortInlineBrTarget,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push0);
 
 		public static readonly OpCode Bge_S = new OpCode (
-			"bge.s", 0xff, 0x2f, 1,
+			0xff, 0x2f,
 			Code.Bge_S, FlowControl.Cond_Branch,
 			OpCodeType.Macro, OperandType.ShortInlineBrTarget,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push0);
 
 		public static readonly OpCode Bgt_S = new OpCode (
-			"bgt.s", 0xff, 0x30, 1,
+			0xff, 0x30,
 			Code.Bgt_S, FlowControl.Cond_Branch,
 			OpCodeType.Macro, OperandType.ShortInlineBrTarget,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push0);
 
 		public static readonly OpCode Ble_S = new OpCode (
-			"ble.s", 0xff, 0x31, 1,
+			0xff, 0x31,
 			Code.Ble_S, FlowControl.Cond_Branch,
 			OpCodeType.Macro, OperandType.ShortInlineBrTarget,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push0);
 
 		public static readonly OpCode Blt_S = new OpCode (
-			"blt.s", 0xff, 0x32, 1,
+			0xff, 0x32,
 			Code.Blt_S, FlowControl.Cond_Branch,
 			OpCodeType.Macro, OperandType.ShortInlineBrTarget,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push0);
 
 		public static readonly OpCode Bne_Un_S = new OpCode (
-			"bne.un.s", 0xff, 0x33, 1,
+			0xff, 0x33,
 			Code.Bne_Un_S, FlowControl.Cond_Branch,
 			OpCodeType.Macro, OperandType.ShortInlineBrTarget,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push0);
 
 		public static readonly OpCode Bge_Un_S = new OpCode (
-			"bge.un.s", 0xff, 0x34, 1,
+			0xff, 0x34,
 			Code.Bge_Un_S, FlowControl.Cond_Branch,
 			OpCodeType.Macro, OperandType.ShortInlineBrTarget,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push0);
 
 		public static readonly OpCode Bgt_Un_S = new OpCode (
-			"bgt.un.s", 0xff, 0x35, 1,
+			0xff, 0x35,
 			Code.Bgt_Un_S, FlowControl.Cond_Branch,
 			OpCodeType.Macro, OperandType.ShortInlineBrTarget,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push0);
 
 		public static readonly OpCode Ble_Un_S = new OpCode (
-			"ble.un.s", 0xff, 0x36, 1,
+			0xff, 0x36,
 			Code.Ble_Un_S, FlowControl.Cond_Branch,
 			OpCodeType.Macro, OperandType.ShortInlineBrTarget,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push0);
 
 		public static readonly OpCode Blt_Un_S = new OpCode (
-			"blt.un.s", 0xff, 0x37, 1,
+			0xff, 0x37,
 			Code.Blt_Un_S, FlowControl.Cond_Branch,
 			OpCodeType.Macro, OperandType.ShortInlineBrTarget,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push0);
 
 		public static readonly OpCode Br = new OpCode (
-			"br", 0xff, 0x38, 1,
+			0xff, 0x38,
 			Code.Br, FlowControl.Branch,
 			OpCodeType.Primitive, OperandType.InlineBrTarget,
 			StackBehaviour.Pop0, StackBehaviour.Push0);
 
 		public static readonly OpCode Brfalse = new OpCode (
-			"brfalse", 0xff, 0x39, 1,
+			0xff, 0x39,
 			Code.Brfalse, FlowControl.Cond_Branch,
 			OpCodeType.Primitive, OperandType.InlineBrTarget,
 			StackBehaviour.Popi, StackBehaviour.Push0);
 
 		public static readonly OpCode Brtrue = new OpCode (
-			"brtrue", 0xff, 0x3a, 1,
+			0xff, 0x3a,
 			Code.Brtrue, FlowControl.Cond_Branch,
 			OpCodeType.Primitive, OperandType.InlineBrTarget,
 			StackBehaviour.Popi, StackBehaviour.Push0);
 
 		public static readonly OpCode Beq = new OpCode (
-			"beq", 0xff, 0x3b, 1,
+			0xff, 0x3b,
 			Code.Beq, FlowControl.Cond_Branch,
 			OpCodeType.Macro, OperandType.InlineBrTarget,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push0);
 
 		public static readonly OpCode Bge = new OpCode (
-			"bge", 0xff, 0x3c, 1,
+			0xff, 0x3c,
 			Code.Bge, FlowControl.Cond_Branch,
 			OpCodeType.Macro, OperandType.InlineBrTarget,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push0);
 
 		public static readonly OpCode Bgt = new OpCode (
-			"bgt", 0xff, 0x3d, 1,
+			0xff, 0x3d,
 			Code.Bgt, FlowControl.Cond_Branch,
 			OpCodeType.Macro, OperandType.InlineBrTarget,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push0);
 
 		public static readonly OpCode Ble = new OpCode (
-			"ble", 0xff, 0x3e, 1,
+			0xff, 0x3e,
 			Code.Ble, FlowControl.Cond_Branch,
 			OpCodeType.Macro, OperandType.InlineBrTarget,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push0);
 
 		public static readonly OpCode Blt = new OpCode (
-			"blt", 0xff, 0x3f, 1,
+			0xff, 0x3f,
 			Code.Blt, FlowControl.Cond_Branch,
 			OpCodeType.Macro, OperandType.InlineBrTarget,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push0);
 
 		public static readonly OpCode Bne_Un = new OpCode (
-			"bne.un", 0xff, 0x40, 1,
+			0xff, 0x40,
 			Code.Bne_Un, FlowControl.Cond_Branch,
 			OpCodeType.Macro, OperandType.InlineBrTarget,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push0);
 
 		public static readonly OpCode Bge_Un = new OpCode (
-			"bge.un", 0xff, 0x41, 1,
+			0xff, 0x41,
 			Code.Bge_Un, FlowControl.Cond_Branch,
 			OpCodeType.Macro, OperandType.InlineBrTarget,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push0);
 
 		public static readonly OpCode Bgt_Un = new OpCode (
-			"bgt.un", 0xff, 0x42, 1,
+			0xff, 0x42,
 			Code.Bgt_Un, FlowControl.Cond_Branch,
 			OpCodeType.Macro, OperandType.InlineBrTarget,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push0);
 
 		public static readonly OpCode Ble_Un = new OpCode (
-			"ble.un", 0xff, 0x43, 1,
+			0xff, 0x43,
 			Code.Ble_Un, FlowControl.Cond_Branch,
 			OpCodeType.Macro, OperandType.InlineBrTarget,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push0);
 
 		public static readonly OpCode Blt_Un = new OpCode (
-			"blt.un", 0xff, 0x44, 1,
+			0xff, 0x44,
 			Code.Blt_Un, FlowControl.Cond_Branch,
 			OpCodeType.Macro, OperandType.InlineBrTarget,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push0);
 
 		public static readonly OpCode Switch = new OpCode (
-			"switch", 0xff, 0x45, 1,
+			0xff, 0x45,
 			Code.Switch, FlowControl.Cond_Branch,
 			OpCodeType.Primitive, OperandType.InlineSwitch,
 			StackBehaviour.Popi, StackBehaviour.Push0);
 
 		public static readonly OpCode Ldind_I1 = new OpCode (
-			"ldind.i1", 0xff, 0x46, 1,
+			0xff, 0x46,
 			Code.Ldind_I1, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Popi, StackBehaviour.Pushi);
 
 		public static readonly OpCode Ldind_U1 = new OpCode (
-			"ldind.u1", 0xff, 0x47, 1,
+			0xff, 0x47,
 			Code.Ldind_U1, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Popi, StackBehaviour.Pushi);
 
 		public static readonly OpCode Ldind_I2 = new OpCode (
-			"ldind.i2", 0xff, 0x48, 1,
+			0xff, 0x48,
 			Code.Ldind_I2, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Popi, StackBehaviour.Pushi);
 
 		public static readonly OpCode Ldind_U2 = new OpCode (
-			"ldind.u2", 0xff, 0x49, 1,
+			0xff, 0x49,
 			Code.Ldind_U2, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Popi, StackBehaviour.Pushi);
 
 		public static readonly OpCode Ldind_I4 = new OpCode (
-			"ldind.i4", 0xff, 0x4a, 1,
+			0xff, 0x4a,
 			Code.Ldind_I4, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Popi, StackBehaviour.Pushi);
 
 		public static readonly OpCode Ldind_U4 = new OpCode (
-			"ldind.u4", 0xff, 0x4b, 1,
+			0xff, 0x4b,
 			Code.Ldind_U4, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Popi, StackBehaviour.Pushi);
 
 		public static readonly OpCode Ldind_I8 = new OpCode (
-			"ldind.i8", 0xff, 0x4c, 1,
+			0xff, 0x4c,
 			Code.Ldind_I8, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Popi, StackBehaviour.Pushi8);
 
 		public static readonly OpCode Ldind_I = new OpCode (
-			"ldind.i", 0xff, 0x4d, 1,
+			0xff, 0x4d,
 			Code.Ldind_I, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Popi, StackBehaviour.Pushi);
 
 		public static readonly OpCode Ldind_R4 = new OpCode (
-			"ldind.r4", 0xff, 0x4e, 1,
+			0xff, 0x4e,
 			Code.Ldind_R4, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Popi, StackBehaviour.Pushr4);
 
 		public static readonly OpCode Ldind_R8 = new OpCode (
-			"ldind.r8", 0xff, 0x4f, 1,
+			0xff, 0x4f,
 			Code.Ldind_R8, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Popi, StackBehaviour.Pushr8);
 
 		public static readonly OpCode Ldind_Ref = new OpCode (
-			"ldind.ref", 0xff, 0x50, 1,
+			0xff, 0x50,
 			Code.Ldind_Ref, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Popi, StackBehaviour.Pushref);
 
 		public static readonly OpCode Stind_Ref = new OpCode (
-			"stind.ref", 0xff, 0x51, 1,
+			0xff, 0x51,
 			Code.Stind_Ref, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Popi_popi, StackBehaviour.Push0);
 
 		public static readonly OpCode Stind_I1 = new OpCode (
-			"stind.i1", 0xff, 0x52, 1,
+			0xff, 0x52,
 			Code.Stind_I1, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Popi_popi, StackBehaviour.Push0);
 
 		public static readonly OpCode Stind_I2 = new OpCode (
-			"stind.i2", 0xff, 0x53, 1,
+			0xff, 0x53,
 			Code.Stind_I2, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Popi_popi, StackBehaviour.Push0);
 
 		public static readonly OpCode Stind_I4 = new OpCode (
-			"stind.i4", 0xff, 0x54, 1,
+			0xff, 0x54,
 			Code.Stind_I4, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Popi_popi, StackBehaviour.Push0);
 
 		public static readonly OpCode Stind_I8 = new OpCode (
-			"stind.i8", 0xff, 0x55, 1,
+			0xff, 0x55,
 			Code.Stind_I8, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Popi_popi8, StackBehaviour.Push0);
 
 		public static readonly OpCode Stind_R4 = new OpCode (
-			"stind.r4", 0xff, 0x56, 1,
+			0xff, 0x56,
 			Code.Stind_R4, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Popi_popr4, StackBehaviour.Push0);
 
 		public static readonly OpCode Stind_R8 = new OpCode (
-			"stind.r8", 0xff, 0x57, 1,
+			0xff, 0x57,
 			Code.Stind_R8, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Popi_popr8, StackBehaviour.Push0);
 
 		public static readonly OpCode Add = new OpCode (
-			"add", 0xff, 0x58, 1,
+			0xff, 0x58,
 			Code.Add, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push1);
 
 		public static readonly OpCode Sub = new OpCode (
-			"sub", 0xff, 0x59, 1,
+			0xff, 0x59,
 			Code.Sub, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push1);
 
 		public static readonly OpCode Mul = new OpCode (
-			"mul", 0xff, 0x5a, 1,
+			0xff, 0x5a,
 			Code.Mul, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push1);
 
 		public static readonly OpCode Div = new OpCode (
-			"div", 0xff, 0x5b, 1,
+			0xff, 0x5b,
 			Code.Div, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push1);
 
 		public static readonly OpCode Div_Un = new OpCode (
-			"div.un", 0xff, 0x5c, 1,
+			0xff, 0x5c,
 			Code.Div_Un, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push1);
 
 		public static readonly OpCode Rem = new OpCode (
-			"rem", 0xff, 0x5d, 1,
+			0xff, 0x5d,
 			Code.Rem, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push1);
 
 		public static readonly OpCode Rem_Un = new OpCode (
-			"rem.un", 0xff, 0x5e, 1,
+			0xff, 0x5e,
 			Code.Rem_Un, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push1);
 
 		public static readonly OpCode And = new OpCode (
-			"and", 0xff, 0x5f, 1,
+			0xff, 0x5f,
 			Code.And, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push1);
 
 		public static readonly OpCode Or = new OpCode (
-			"or", 0xff, 0x60, 1,
+			0xff, 0x60,
 			Code.Or, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push1);
 
 		public static readonly OpCode Xor = new OpCode (
-			"xor", 0xff, 0x61, 1,
+			0xff, 0x61,
 			Code.Xor, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push1);
 
 		public static readonly OpCode Shl = new OpCode (
-			"shl", 0xff, 0x62, 1,
+			0xff, 0x62,
 			Code.Shl, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push1);
 
 		public static readonly OpCode Shr = new OpCode (
-			"shr", 0xff, 0x63, 1,
+			0xff, 0x63,
 			Code.Shr, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push1);
 
 		public static readonly OpCode Shr_Un = new OpCode (
-			"shr.un", 0xff, 0x64, 1,
+			0xff, 0x64,
 			Code.Shr_Un, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push1);
 
 		public static readonly OpCode Neg = new OpCode (
-			"neg", 0xff, 0x65, 1,
+			0xff, 0x65,
 			Code.Neg, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Push1);
 
 		public static readonly OpCode Not = new OpCode (
-			"not", 0xff, 0x66, 1,
+			0xff, 0x66,
 			Code.Not, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Push1);
 
 		public static readonly OpCode Conv_I1 = new OpCode (
-			"conv.i1", 0xff, 0x67, 1,
+			0xff, 0x67,
 			Code.Conv_I1, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Pushi);
 
 		public static readonly OpCode Conv_I2 = new OpCode (
-			"conv.i2", 0xff, 0x68, 1,
+			0xff, 0x68,
 			Code.Conv_I2, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Pushi);
 
 		public static readonly OpCode Conv_I4 = new OpCode (
-			"conv.i4", 0xff, 0x69, 1,
+			0xff, 0x69,
 			Code.Conv_I4, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Pushi);
 
 		public static readonly OpCode Conv_I8 = new OpCode (
-			"conv.i8", 0xff, 0x6a, 1,
+			0xff, 0x6a,
 			Code.Conv_I8, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Pushi8);
 
 		public static readonly OpCode Conv_R4 = new OpCode (
-			"conv.r4", 0xff, 0x6b, 1,
+			0xff, 0x6b,
 			Code.Conv_R4, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Pushr4);
 
 		public static readonly OpCode Conv_R8 = new OpCode (
-			"conv.r8", 0xff, 0x6c, 1,
+			0xff, 0x6c,
 			Code.Conv_R8, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Pushr8);
 
 		public static readonly OpCode Conv_U4 = new OpCode (
-			"conv.u4", 0xff, 0x6d, 1,
+			0xff, 0x6d,
 			Code.Conv_U4, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Pushi);
 
 		public static readonly OpCode Conv_U8 = new OpCode (
-			"conv.u8", 0xff, 0x6e, 1,
+			0xff, 0x6e,
 			Code.Conv_U8, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Pushi8);
 
 		public static readonly OpCode Callvirt = new OpCode (
-			"callvirt", 0xff, 0x6f, 1,
+			0xff, 0x6f,
 			Code.Callvirt, FlowControl.Call,
 			OpCodeType.Objmodel, OperandType.InlineMethod,
 			StackBehaviour.Varpop, StackBehaviour.Varpush);
 
 		public static readonly OpCode Cpobj = new OpCode (
-			"cpobj", 0xff, 0x70, 1,
+			0xff, 0x70,
 			Code.Cpobj, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineType,
 			StackBehaviour.Popi_popi, StackBehaviour.Push0);
 
 		public static readonly OpCode Ldobj = new OpCode (
-			"ldobj", 0xff, 0x71, 1,
+			0xff, 0x71,
 			Code.Ldobj, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineType,
 			StackBehaviour.Popi, StackBehaviour.Push1);
 
 		public static readonly OpCode Ldstr = new OpCode (
-			"ldstr", 0xff, 0x72, 1,
+			0xff, 0x72,
 			Code.Ldstr, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineString,
 			StackBehaviour.Pop0, StackBehaviour.Pushref);
 
 		public static readonly OpCode Newobj = new OpCode (
-			"newobj", 0xff, 0x73, 1,
+			0xff, 0x73,
 			Code.Newobj, FlowControl.Call,
 			OpCodeType.Objmodel, OperandType.InlineMethod,
 			StackBehaviour.Varpop, StackBehaviour.Pushref);
 
 		public static readonly OpCode Castclass = new OpCode (
-			"castclass", 0xff, 0x74, 1,
+			0xff, 0x74,
 			Code.Castclass, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineType,
 			StackBehaviour.Popref, StackBehaviour.Pushref);
 
 		public static readonly OpCode Isinst = new OpCode (
-			"isinst", 0xff, 0x75, 1,
+			0xff, 0x75,
 			Code.Isinst, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineType,
 			StackBehaviour.Popref, StackBehaviour.Pushi);
 
 		public static readonly OpCode Conv_R_Un = new OpCode (
-			"conv.r.un", 0xff, 0x76, 1,
+			0xff, 0x76,
 			Code.Conv_R_Un, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Pushr8);
 
 		public static readonly OpCode Unbox = new OpCode (
-			"unbox", 0xff, 0x79, 1,
+			0xff, 0x79,
 			Code.Unbox, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineType,
 			StackBehaviour.Popref, StackBehaviour.Pushi);
 
 		public static readonly OpCode Throw = new OpCode (
-			"throw", 0xff, 0x7a, 1,
+			0xff, 0x7a,
 			Code.Throw, FlowControl.Throw,
 			OpCodeType.Objmodel, OperandType.InlineNone,
 			StackBehaviour.Popref, StackBehaviour.Push0);
 
 		public static readonly OpCode Ldfld = new OpCode (
-			"ldfld", 0xff, 0x7b, 1,
+			0xff, 0x7b,
 			Code.Ldfld, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineField,
 			StackBehaviour.Popref, StackBehaviour.Push1);
 
 		public static readonly OpCode Ldflda = new OpCode (
-			"ldflda", 0xff, 0x7c, 1,
+			0xff, 0x7c,
 			Code.Ldflda, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineField,
 			StackBehaviour.Popref, StackBehaviour.Pushi);
 
 		public static readonly OpCode Stfld = new OpCode (
-			"stfld", 0xff, 0x7d, 1,
+			0xff, 0x7d,
 			Code.Stfld, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineField,
 			StackBehaviour.Popref_pop1, StackBehaviour.Push0);
 
 		public static readonly OpCode Ldsfld = new OpCode (
-			"ldsfld", 0xff, 0x7e, 1,
+			0xff, 0x7e,
 			Code.Ldsfld, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineField,
 			StackBehaviour.Pop0, StackBehaviour.Push1);
 
 		public static readonly OpCode Ldsflda = new OpCode (
-			"ldsflda", 0xff, 0x7f, 1,
+			0xff, 0x7f,
 			Code.Ldsflda, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineField,
 			StackBehaviour.Pop0, StackBehaviour.Pushi);
 
 		public static readonly OpCode Stsfld = new OpCode (
-			"stsfld", 0xff, 0x80, 1,
+			0xff, 0x80,
 			Code.Stsfld, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineField,
 			StackBehaviour.Pop1, StackBehaviour.Push0);
 
 		public static readonly OpCode Stobj = new OpCode (
-			"stobj", 0xff, 0x81, 1,
+			0xff, 0x81,
 			Code.Stobj, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineType,
 			StackBehaviour.Popi_pop1, StackBehaviour.Push0);
 
 		public static readonly OpCode Conv_Ovf_I1_Un = new OpCode (
-			"conv.ovf.i1.un", 0xff, 0x82, 1,
+			0xff, 0x82,
 			Code.Conv_Ovf_I1_Un, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Pushi);
 
 		public static readonly OpCode Conv_Ovf_I2_Un = new OpCode (
-			"conv.ovf.i2.un", 0xff, 0x83, 1,
+			0xff, 0x83,
 			Code.Conv_Ovf_I2_Un, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Pushi);
 
 		public static readonly OpCode Conv_Ovf_I4_Un = new OpCode (
-			"conv.ovf.i4.un", 0xff, 0x84, 1,
+			0xff, 0x84,
 			Code.Conv_Ovf_I4_Un, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Pushi);
 
 		public static readonly OpCode Conv_Ovf_I8_Un = new OpCode (
-			"conv.ovf.i8.un", 0xff, 0x85, 1,
+			0xff, 0x85,
 			Code.Conv_Ovf_I8_Un, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Pushi8);
 
 		public static readonly OpCode Conv_Ovf_U1_Un = new OpCode (
-			"conv.ovf.u1.un", 0xff, 0x86, 1,
+			0xff, 0x86,
 			Code.Conv_Ovf_U1_Un, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Pushi);
 
 		public static readonly OpCode Conv_Ovf_U2_Un = new OpCode (
-			"conv.ovf.u2.un", 0xff, 0x87, 1,
+			0xff, 0x87,
 			Code.Conv_Ovf_U2_Un, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Pushi);
 
 		public static readonly OpCode Conv_Ovf_U4_Un = new OpCode (
-			"conv.ovf.u4.un", 0xff, 0x88, 1,
+			0xff, 0x88,
 			Code.Conv_Ovf_U4_Un, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Pushi);
 
 		public static readonly OpCode Conv_Ovf_U8_Un = new OpCode (
-			"conv.ovf.u8.un", 0xff, 0x89, 1,
+			0xff, 0x89,
 			Code.Conv_Ovf_U8_Un, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Pushi8);
 
 		public static readonly OpCode Conv_Ovf_I_Un = new OpCode (
-			"conv.ovf.i.un", 0xff, 0x8a, 1,
+			0xff, 0x8a,
 			Code.Conv_Ovf_I_Un, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Pushi);
 
 		public static readonly OpCode Conv_Ovf_U_Un = new OpCode (
-			"conv.ovf.u.un", 0xff, 0x8b, 1,
+			0xff, 0x8b,
 			Code.Conv_Ovf_U_Un, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Pushi);
 
 		public static readonly OpCode Box = new OpCode (
-			"box", 0xff, 0x8c, 1,
+			0xff, 0x8c,
 			Code.Box, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineType,
 			StackBehaviour.Pop1, StackBehaviour.Pushref);
 
 		public static readonly OpCode Newarr = new OpCode (
-			"newarr", 0xff, 0x8d, 1,
+			0xff, 0x8d,
 			Code.Newarr, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineType,
 			StackBehaviour.Popi, StackBehaviour.Pushref);
 
 		public static readonly OpCode Ldlen = new OpCode (
-			"ldlen", 0xff, 0x8e, 1,
+			0xff, 0x8e,
 			Code.Ldlen, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineNone,
 			StackBehaviour.Popref, StackBehaviour.Pushi);
 
 		public static readonly OpCode Ldelema = new OpCode (
-			"ldelema", 0xff, 0x8f, 1,
+			0xff, 0x8f,
 			Code.Ldelema, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineType,
 			StackBehaviour.Popref_popi, StackBehaviour.Pushi);
 
 		public static readonly OpCode Ldelem_I1 = new OpCode (
-			"ldelem.i1", 0xff, 0x90, 1,
+			0xff, 0x90,
 			Code.Ldelem_I1, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineNone,
 			StackBehaviour.Popref_popi, StackBehaviour.Pushi);
 
 		public static readonly OpCode Ldelem_U1 = new OpCode (
-			"ldelem.u1", 0xff, 0x91, 1,
+			0xff, 0x91,
 			Code.Ldelem_U1, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineNone,
 			StackBehaviour.Popref_popi, StackBehaviour.Pushi);
 
 		public static readonly OpCode Ldelem_I2 = new OpCode (
-			"ldelem.i2", 0xff, 0x92, 1,
+			0xff, 0x92,
 			Code.Ldelem_I2, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineNone,
 			StackBehaviour.Popref_popi, StackBehaviour.Pushi);
 
 		public static readonly OpCode Ldelem_U2 = new OpCode (
-			"ldelem.u2", 0xff, 0x93, 1,
+			0xff, 0x93,
 			Code.Ldelem_U2, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineNone,
 			StackBehaviour.Popref_popi, StackBehaviour.Pushi);
 
 		public static readonly OpCode Ldelem_I4 = new OpCode (
-			"ldelem.i4", 0xff, 0x94, 1,
+			0xff, 0x94,
 			Code.Ldelem_I4, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineNone,
 			StackBehaviour.Popref_popi, StackBehaviour.Pushi);
 
 		public static readonly OpCode Ldelem_U4 = new OpCode (
-			"ldelem.u4", 0xff, 0x95, 1,
+			0xff, 0x95,
 			Code.Ldelem_U4, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineNone,
 			StackBehaviour.Popref_popi, StackBehaviour.Pushi);
 
 		public static readonly OpCode Ldelem_I8 = new OpCode (
-			"ldelem.i8", 0xff, 0x96, 1,
+			0xff, 0x96,
 			Code.Ldelem_I8, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineNone,
 			StackBehaviour.Popref_popi, StackBehaviour.Pushi8);
 
 		public static readonly OpCode Ldelem_I = new OpCode (
-			"ldelem.i", 0xff, 0x97, 1,
+			0xff, 0x97,
 			Code.Ldelem_I, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineNone,
 			StackBehaviour.Popref_popi, StackBehaviour.Pushi);
 
 		public static readonly OpCode Ldelem_R4 = new OpCode (
-			"ldelem.r4", 0xff, 0x98, 1,
+			0xff, 0x98,
 			Code.Ldelem_R4, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineNone,
 			StackBehaviour.Popref_popi, StackBehaviour.Pushr4);
 
 		public static readonly OpCode Ldelem_R8 = new OpCode (
-			"ldelem.r8", 0xff, 0x99, 1,
+			0xff, 0x99,
 			Code.Ldelem_R8, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineNone,
 			StackBehaviour.Popref_popi, StackBehaviour.Pushr8);
 
 		public static readonly OpCode Ldelem_Ref = new OpCode (
-			"ldelem.ref", 0xff, 0x9a, 1,
+			0xff, 0x9a,
 			Code.Ldelem_Ref, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineNone,
 			StackBehaviour.Popref_popi, StackBehaviour.Pushref);
 
 		public static readonly OpCode Stelem_I = new OpCode (
-			"stelem.i", 0xff, 0x9b, 1,
+			0xff, 0x9b,
 			Code.Stelem_I, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineNone,
 			StackBehaviour.Popref_popi_popi, StackBehaviour.Push0);
 
 		public static readonly OpCode Stelem_I1 = new OpCode (
-			"stelem.i1", 0xff, 0x9c, 1,
+			0xff, 0x9c,
 			Code.Stelem_I1, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineNone,
 			StackBehaviour.Popref_popi_popi, StackBehaviour.Push0);
 
 		public static readonly OpCode Stelem_I2 = new OpCode (
-			"stelem.i2", 0xff, 0x9d, 1,
+			0xff, 0x9d,
 			Code.Stelem_I2, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineNone,
 			StackBehaviour.Popref_popi_popi, StackBehaviour.Push0);
 
 		public static readonly OpCode Stelem_I4 = new OpCode (
-			"stelem.i4", 0xff, 0x9e, 1,
+			0xff, 0x9e,
 			Code.Stelem_I4, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineNone,
 			StackBehaviour.Popref_popi_popi, StackBehaviour.Push0);
 
 		public static readonly OpCode Stelem_I8 = new OpCode (
-			"stelem.i8", 0xff, 0x9f, 1,
+			0xff, 0x9f,
 			Code.Stelem_I8, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineNone,
 			StackBehaviour.Popref_popi_popi8, StackBehaviour.Push0);
 
 		public static readonly OpCode Stelem_R4 = new OpCode (
-			"stelem.r4", 0xff, 0xa0, 1,
+			0xff, 0xa0,
 			Code.Stelem_R4, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineNone,
 			StackBehaviour.Popref_popi_popr4, StackBehaviour.Push0);
 
 		public static readonly OpCode Stelem_R8 = new OpCode (
-			"stelem.r8", 0xff, 0xa1, 1,
+			0xff, 0xa1,
 			Code.Stelem_R8, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineNone,
 			StackBehaviour.Popref_popi_popr8, StackBehaviour.Push0);
 
 		public static readonly OpCode Stelem_Ref = new OpCode (
-			"stelem.ref", 0xff, 0xa2, 1,
+			0xff, 0xa2,
 			Code.Stelem_Ref, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineNone,
 			StackBehaviour.Popref_popi_popref, StackBehaviour.Push0);
 
 		public static readonly OpCode Ldelem_Any = new OpCode (
-			"ldelem.any", 0xff, 0xa3, 1,
+			0xff, 0xa3,
 			Code.Ldelem_Any, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineType,
 			StackBehaviour.Popref_popi, StackBehaviour.Push1);
 
 		public static readonly OpCode Stelem_Any = new OpCode (
-			"stelem.any", 0xff, 0xa4, 1,
+			0xff, 0xa4,
 			Code.Stelem_Any, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineType,
 			StackBehaviour.Popref_popi_popref, StackBehaviour.Push0);
 
 		public static readonly OpCode Unbox_Any = new OpCode (
-			"unbox.any", 0xff, 0xa5, 1,
+			0xff, 0xa5,
 			Code.Unbox_Any, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineType,
 			StackBehaviour.Popref, StackBehaviour.Push1);
 
 		public static readonly OpCode Conv_Ovf_I1 = new OpCode (
-			"conv.ovf.i1", 0xff, 0xb3, 1,
+			0xff, 0xb3,
 			Code.Conv_Ovf_I1, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Pushi);
 
 		public static readonly OpCode Conv_Ovf_U1 = new OpCode (
-			"conv.ovf.u1", 0xff, 0xb4, 1,
+			0xff, 0xb4,
 			Code.Conv_Ovf_U1, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Pushi);
 
 		public static readonly OpCode Conv_Ovf_I2 = new OpCode (
-			"conv.ovf.i2", 0xff, 0xb5, 1,
+			0xff, 0xb5,
 			Code.Conv_Ovf_I2, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Pushi);
 
 		public static readonly OpCode Conv_Ovf_U2 = new OpCode (
-			"conv.ovf.u2", 0xff, 0xb6, 1,
+			0xff, 0xb6,
 			Code.Conv_Ovf_U2, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Pushi);
 
 		public static readonly OpCode Conv_Ovf_I4 = new OpCode (
-			"conv.ovf.i4", 0xff, 0xb7, 1,
+			0xff, 0xb7,
 			Code.Conv_Ovf_I4, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Pushi);
 
 		public static readonly OpCode Conv_Ovf_U4 = new OpCode (
-			"conv.ovf.u4", 0xff, 0xb8, 1,
+			0xff, 0xb8,
 			Code.Conv_Ovf_U4, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Pushi);
 
 		public static readonly OpCode Conv_Ovf_I8 = new OpCode (
-			"conv.ovf.i8", 0xff, 0xb9, 1,
+			0xff, 0xb9,
 			Code.Conv_Ovf_I8, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Pushi8);
 
 		public static readonly OpCode Conv_Ovf_U8 = new OpCode (
-			"conv.ovf.u8", 0xff, 0xba, 1,
+			0xff, 0xba,
 			Code.Conv_Ovf_U8, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Pushi8);
 
 		public static readonly OpCode Refanyval = new OpCode (
-			"refanyval", 0xff, 0xc2, 1,
+			0xff, 0xc2,
 			Code.Refanyval, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineType,
 			StackBehaviour.Pop1, StackBehaviour.Pushi);
 
 		public static readonly OpCode Ckfinite = new OpCode (
-			"ckfinite", 0xff, 0xc3, 1,
+			0xff, 0xc3,
 			Code.Ckfinite, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Pushr8);
 
 		public static readonly OpCode Mkrefany = new OpCode (
-			"mkrefany", 0xff, 0xc6, 1,
+			0xff, 0xc6,
 			Code.Mkrefany, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineType,
 			StackBehaviour.Popi, StackBehaviour.Push1);
 
 		public static readonly OpCode Ldtoken = new OpCode (
-			"ldtoken", 0xff, 0xd0, 1,
+			0xff, 0xd0,
 			Code.Ldtoken, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineTok,
 			StackBehaviour.Pop0, StackBehaviour.Pushi);
 
 		public static readonly OpCode Conv_U2 = new OpCode (
-			"conv.u2", 0xff, 0xd1, 1,
+			0xff, 0xd1,
 			Code.Conv_U2, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Pushi);
 
 		public static readonly OpCode Conv_U1 = new OpCode (
-			"conv.u1", 0xff, 0xd2, 1,
+			0xff, 0xd2,
 			Code.Conv_U1, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Pushi);
 
 		public static readonly OpCode Conv_I = new OpCode (
-			"conv.i", 0xff, 0xd3, 1,
+			0xff, 0xd3,
 			Code.Conv_I, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Pushi);
 
 		public static readonly OpCode Conv_Ovf_I = new OpCode (
-			"conv.ovf.i", 0xff, 0xd4, 1,
+			0xff, 0xd4,
 			Code.Conv_Ovf_I, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Pushi);
 
 		public static readonly OpCode Conv_Ovf_U = new OpCode (
-			"conv.ovf.u", 0xff, 0xd5, 1,
+			0xff, 0xd5,
 			Code.Conv_Ovf_U, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Pushi);
 
 		public static readonly OpCode Add_Ovf = new OpCode (
-			"add.ovf", 0xff, 0xd6, 1,
+			0xff, 0xd6,
 			Code.Add_Ovf, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push1);
 
 		public static readonly OpCode Add_Ovf_Un = new OpCode (
-			"add.ovf.un", 0xff, 0xd7, 1,
+			0xff, 0xd7,
 			Code.Add_Ovf_Un, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push1);
 
 		public static readonly OpCode Mul_Ovf = new OpCode (
-			"mul.ovf", 0xff, 0xd8, 1,
+			0xff, 0xd8,
 			Code.Mul_Ovf, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push1);
 
 		public static readonly OpCode Mul_Ovf_Un = new OpCode (
-			"mul.ovf.un", 0xff, 0xd9, 1,
+			0xff, 0xd9,
 			Code.Mul_Ovf_Un, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push1);
 
 		public static readonly OpCode Sub_Ovf = new OpCode (
-			"sub.ovf", 0xff, 0xda, 1,
+			0xff, 0xda,
 			Code.Sub_Ovf, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push1);
 
 		public static readonly OpCode Sub_Ovf_Un = new OpCode (
-			"sub.ovf.un", 0xff, 0xdb, 1,
+			0xff, 0xdb,
 			Code.Sub_Ovf_Un, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Push1);
 
 		public static readonly OpCode Endfinally = new OpCode (
-			"endfinally", 0xff, 0xdc, 1,
+			0xff, 0xdc,
 			Code.Endfinally, FlowControl.Return,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop0, StackBehaviour.Push0);
 
 		public static readonly OpCode Leave = new OpCode (
-			"leave", 0xff, 0xdd, 1,
+			0xff, 0xdd,
 			Code.Leave, FlowControl.Branch,
 			OpCodeType.Primitive, OperandType.InlineBrTarget,
 			StackBehaviour.PopAll, StackBehaviour.Push0);
 
 		public static readonly OpCode Leave_S = new OpCode (
-			"leave.s", 0xff, 0xde, 1,
+			0xff, 0xde,
 			Code.Leave_S, FlowControl.Branch,
 			OpCodeType.Macro, OperandType.ShortInlineBrTarget,
 			StackBehaviour.PopAll, StackBehaviour.Push0);
 
 		public static readonly OpCode Stind_I = new OpCode (
-			"stind.i", 0xff, 0xdf, 1,
+			0xff, 0xdf,
 			Code.Stind_I, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Popi_popi, StackBehaviour.Push0);
 
 		public static readonly OpCode Conv_U = new OpCode (
-			"conv.u", 0xff, 0xe0, 1,
+			0xff, 0xe0,
 			Code.Conv_U, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Pushi);
 
 		public static readonly OpCode Arglist = new OpCode (
-			"arglist", 0xfe, 0x00, 2,
+			0xfe, 0x00,
 			Code.Arglist, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop0, StackBehaviour.Pushi);
 
 		public static readonly OpCode Ceq = new OpCode (
-			"ceq", 0xfe, 0x01, 2,
+			0xfe, 0x01,
 			Code.Ceq, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Pushi);
 
 		public static readonly OpCode Cgt = new OpCode (
-			"cgt", 0xfe, 0x02, 2,
+			0xfe, 0x02,
 			Code.Cgt, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Pushi);
 
 		public static readonly OpCode Cgt_Un = new OpCode (
-			"cgt.un", 0xfe, 0x03, 2,
+			0xfe, 0x03,
 			Code.Cgt_Un, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Pushi);
 
 		public static readonly OpCode Clt = new OpCode (
-			"clt", 0xfe, 0x04, 2,
+			0xfe, 0x04,
 			Code.Clt, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Pushi);
 
 		public static readonly OpCode Clt_Un = new OpCode (
-			"clt.un", 0xfe, 0x05, 2,
+			0xfe, 0x05,
 			Code.Clt_Un, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1_pop1, StackBehaviour.Pushi);
 
 		public static readonly OpCode Ldftn = new OpCode (
-			"ldftn", 0xfe, 0x06, 2,
+			0xfe, 0x06,
 			Code.Ldftn, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineMethod,
 			StackBehaviour.Pop0, StackBehaviour.Pushi);
 
 		public static readonly OpCode Ldvirtftn = new OpCode (
-			"ldvirtftn", 0xfe, 0x07, 2,
+			0xfe, 0x07,
 			Code.Ldvirtftn, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineMethod,
 			StackBehaviour.Popref, StackBehaviour.Pushi);
 
 		public static readonly OpCode Ldarg = new OpCode (
-			"ldarg", 0xfe, 0x09, 2,
+			0xfe, 0x09,
 			Code.Ldarg, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineParam,
 			StackBehaviour.Pop0, StackBehaviour.Push1);
 
 		public static readonly OpCode Ldarga = new OpCode (
-			"ldarga", 0xfe, 0x0a, 2,
+			0xfe, 0x0a,
 			Code.Ldarga, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineParam,
 			StackBehaviour.Pop0, StackBehaviour.Pushi);
 
 		public static readonly OpCode Starg = new OpCode (
-			"starg", 0xfe, 0x0b, 2,
+			0xfe, 0x0b,
 			Code.Starg, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineParam,
 			StackBehaviour.Pop1, StackBehaviour.Push0);
 
 		public static readonly OpCode Ldloc = new OpCode (
-			"ldloc", 0xfe, 0x0c, 2,
+			0xfe, 0x0c,
 			Code.Ldloc, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineVar,
 			StackBehaviour.Pop0, StackBehaviour.Push1);
 
 		public static readonly OpCode Ldloca = new OpCode (
-			"ldloca", 0xfe, 0x0d, 2,
+			0xfe, 0x0d,
 			Code.Ldloca, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineVar,
 			StackBehaviour.Pop0, StackBehaviour.Pushi);
 
 		public static readonly OpCode Stloc = new OpCode (
-			"stloc", 0xfe, 0x0e, 2,
+			0xfe, 0x0e,
 			Code.Stloc, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineVar,
 			StackBehaviour.Pop1, StackBehaviour.Push0);
 
 		public static readonly OpCode Localloc = new OpCode (
-			"localloc", 0xfe, 0x0f, 2,
+			0xfe, 0x0f,
 			Code.Localloc, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Popi, StackBehaviour.Pushi);
 
 		public static readonly OpCode Endfilter = new OpCode (
-			"endfilter", 0xfe, 0x11, 2,
+			0xfe, 0x11,
 			Code.Endfilter, FlowControl.Return,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Popi, StackBehaviour.Push0);
 
 		public static readonly OpCode Unaligned = new OpCode (
-			"unaligned.", 0xfe, 0x12, 2,
+			0xfe, 0x12,
 			Code.Unaligned, FlowControl.Meta,
 			OpCodeType.Prefix, OperandType.ShortInlineI,
 			StackBehaviour.Pop0, StackBehaviour.Push0);
 
 		public static readonly OpCode Volatile = new OpCode (
-			"volatile.", 0xfe, 0x13, 2,
+			0xfe, 0x13,
 			Code.Volatile, FlowControl.Meta,
 			OpCodeType.Prefix, OperandType.InlineNone,
 			StackBehaviour.Pop0, StackBehaviour.Push0);
 
 		public static readonly OpCode Tail = new OpCode (
-			"tail.", 0xfe, 0x14, 2,
+			0xfe, 0x14,
 			Code.Tail, FlowControl.Meta,
 			OpCodeType.Prefix, OperandType.InlineNone,
 			StackBehaviour.Pop0, StackBehaviour.Push0);
 
 		public static readonly OpCode Initobj = new OpCode (
-			"initobj", 0xfe, 0x15, 2,
+			0xfe, 0x15,
 			Code.Initobj, FlowControl.Next,
 			OpCodeType.Objmodel, OperandType.InlineType,
 			StackBehaviour.Popi, StackBehaviour.Push0);
 
 		public static readonly OpCode Constrained = new OpCode (
-			"constrained.", 0xfe, 0x16, 2,
+			0xfe, 0x16,
 			Code.Constrained, FlowControl.Next,
 			OpCodeType.Prefix, OperandType.InlineTok,
 			StackBehaviour.Pop0, StackBehaviour.Push0);
 
 		public static readonly OpCode Cpblk = new OpCode (
-			"cpblk", 0xfe, 0x17, 2,
+			0xfe, 0x17,
 			Code.Cpblk, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Popi_popi_popi, StackBehaviour.Push0);
 
 		public static readonly OpCode Initblk = new OpCode (
-			"initblk", 0xfe, 0x18, 2,
+			0xfe, 0x18,
 			Code.Initblk, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Popi_popi_popi, StackBehaviour.Push0);
 
 		public static readonly OpCode No = new OpCode (
-			"no.", 0xfe, 0x19, 2,
+			0xfe, 0x19,
 			Code.No, FlowControl.Next,
 			OpCodeType.Prefix, OperandType.ShortInlineI,
 			StackBehaviour.Pop0, StackBehaviour.Push0);
 
 		public static readonly OpCode Rethrow = new OpCode (
-			"rethrow", 0xfe, 0x1a, 2,
+			0xfe, 0x1a,
 			Code.Rethrow, FlowControl.Throw,
 			OpCodeType.Objmodel, OperandType.InlineNone,
 			StackBehaviour.Pop0, StackBehaviour.Push0);
 
 		public static readonly OpCode Sizeof = new OpCode (
-			"sizeof", 0xfe, 0x1c, 2,
+			0xfe, 0x1c,
 			Code.Sizeof, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineType,
 			StackBehaviour.Pop0, StackBehaviour.Pushi);
 
 		public static readonly OpCode Refanytype = new OpCode (
-			"refanytype", 0xfe, 0x1d, 2,
+			0xfe, 0x1d,
 			Code.Refanytype, FlowControl.Next,
 			OpCodeType.Primitive, OperandType.InlineNone,
 			StackBehaviour.Pop1, StackBehaviour.Pushi);
 
 		public static readonly OpCode Readonly = new OpCode (
-			"readonly.", 0xfe, 0x1e, 2,
+			0xfe, 0x1e,
 			Code.Readonly, FlowControl.Next,
 			OpCodeType.Prefix, OperandType.InlineNone,
 			StackBehaviour.Pop0, StackBehaviour.Push0);
 
-		OpCodes()
+		OpCodes ()
 		{
 		}
 
