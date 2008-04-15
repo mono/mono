@@ -36,18 +36,24 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion (Consts.FxVersion)]
 [assembly: SatelliteContractVersion (Consts.FxVersion)]
 
-/* TODO COMPLETE INFORMATION
-
-[assembly: AssemblyTitle ("")]
-[assembly: AssemblyDescription ("")]
-
-[assembly: CLSCompliant (true)]
-[assembly: AssemblyFileVersion ("0.0.0.1")]
-
-[assembly: ComVisible (false)]
-
-*/
+[assembly: NeutralResourcesLanguage ("en-US")]
 
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile("../msfinal.pub")]
+[assembly: AssemblyKeyFile ("../msfinal.pub")]
 
+#if NET_2_0
+	[assembly: AssemblyTitle ("CustomMarshalers.dll")]
+	[assembly: AssemblyDescription ("CustomMarshalers.dll")]
+	[assembly: AssemblyDefaultAlias ("CustomMarshalers.dll")]
+
+	[assembly: AssemblyCompany (Consts.MonoCompany)]
+	[assembly: AssemblyProduct (Consts.MonoProduct)]
+	[assembly: AssemblyCopyright (Consts.MonoCopyright)]
+	[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+	[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
+
+	[assembly: CLSCompliant (true)]
+	[assembly: ComVisible (false)]
+#elif NET_1_1
+#elif NET_1_0
+#endif
