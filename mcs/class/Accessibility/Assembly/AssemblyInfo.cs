@@ -37,32 +37,42 @@ using System.Runtime.InteropServices;
 
 // General Information about the system assembly
 
+[assembly: AssemblyTitle ("Accessibility.dll")]
+[assembly: AssemblyDescription ("Accessibility.dll")]
+[assembly: AssemblyDefaultAlias ("Accessibility.dll")]
+
+[assembly: AssemblyCompany (Consts.MonoCompany)]
+[assembly: AssemblyProduct (Consts.MonoProduct)]
+[assembly: AssemblyCopyright (Consts.MonoCopyright)]
 [assembly: AssemblyVersion (Consts.FxVersion)]
 [assembly: SatelliteContractVersion (Consts.FxVersion)]
+[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
 
-#if (ONLY_1_1)
-[assembly: ComCompatibleVersion (1, 0, 3300, 0)]
-[assembly: TypeLibVersion (1, 10)]
-#endif
-                
-[assembly: AssemblyTitle("Accessibility.dll")]
-[assembly: AssemblyDescription("Accessibility.dll")]
-[assembly: AssemblyConfiguration("Development version")]
-[assembly: AssemblyCompany("MONO development team")]
-[assembly: AssemblyProduct("MONO CLI")]
-[assembly: AssemblyCopyright("(c) 2003 Various Authors")]
-[assembly: AssemblyTrademark("")]
+[assembly: CLSCompliant (true)]
+[assembly: NeutralResourcesLanguage ("en-US")]
 
-[assembly: CLSCompliant(true)]
-[assembly: AssemblyDefaultAlias("Accessibility.dll")]
-[assembly: AssemblyInformationalVersion("0.0.0.1")]
-[assembly: NeutralResourcesLanguage("en-US")]
-
-[assembly: ComVisible(false)]
+[assembly: ComVisible (true)]
+[assembly: Guid ("1ea4dbf0-3c3b-11cf-810c-00aa00389b71")]
 [assembly: AllowPartiallyTrustedCallers]
-[assembly: Guid("1ea4dbf0-3c3b-11cf-810c-00aa00389b71")]
 
-[assembly: AssemblyDelaySign(true)]
+[assembly: AssemblyDelaySign (true)]
 #if !TARGET_JVM
-[assembly: AssemblyKeyFile("../msfinal.pub")]
+	[assembly: AssemblyKeyFile ("../msfinal.pub")]
+#endif
+
+[assembly: ImportedFromTypeLib ("Accessibility")]
+
+#if NET_2_0
+	[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+	[assembly: TypeLibVersion (1, 1)]
+	[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
+	[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
+#elif NET_1_1
+	[assembly: AssemblyTrademark ("")]
+	[assembly: AssemblyConfiguration ("")]
+	[assembly: ComCompatibleVersion (1, 0, 3300, 0)]
+	[assembly: TypeLibVersion (1, 10)]
+#elif NET_1_0
+	[assembly: AssemblyTrademark ("")]
+	[assembly: AssemblyConfiguration ("")]
 #endif
