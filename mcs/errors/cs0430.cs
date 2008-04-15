@@ -1,4 +1,4 @@
-// cs0430.cs: The extern alias 'dontdefined' was not specified in a /reference option
+// CS0430: The extern alias `dontdefined' was not specified in -reference option
 // Line: 4
 
 extern alias dontdefined;
