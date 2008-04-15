@@ -403,27 +403,9 @@ namespace Mono.CSharp
 
 		protected abstract UsageVector Merge ();
 
-		// <summary>
-		//   Merge a child branching.
-		// </summary>
 		public UsageVector MergeChild (FlowBranching child)
 		{
-			bool overwrite = false;
-
-			switch (child.Type) {
-			case BranchingType.Labeled:
-				overwrite = true;
-				break;
-			case BranchingType.Block:
-				if (child.Block != null && child.Block != child.Block.Explicit)
-					overwrite = true;
-				break;
-			}
-
-			Report.Debug (2, "  MERGING CHILD", this, child);
-			UsageVector result = CurrentUsageVector.MergeChild (child.Merge (), overwrite);
-			Report.Debug (2, "  MERGING CHILD DONE", this, result);
-			return result;
+			return CurrentUsageVector.MergeChild (child.Merge (), true);
  		}
 
 		public virtual bool CheckRethrow (Location loc)

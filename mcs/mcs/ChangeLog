@@ -1,3 +1,7 @@
+2008-04-15  Raja R Harinath  <harinath@hurrynot.org>
+
+	* flowanalysis.cs (FlowBranching.MergeChild): Simplify.
+
 2008-04-15  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-paser.jay, namespace.cs: Simplified handling of namespace imports. 
