@@ -1,3 +1,8 @@
+2008-04-15  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridView.cs: Call EndEdit when a sort is performed so we take
+	away the edit textbox.  Refactor to reuse column sort code.
+
 2008-04-12  Everaldo Canuto  <ecanuto@novell.com>
 
 	* MenuAPI.cs: Remove the code that save and restore capture status of 

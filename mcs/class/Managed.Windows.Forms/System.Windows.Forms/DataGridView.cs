@@ -2753,6 +2753,8 @@ namespace System.Windows.Forms {
 			if (SortedColumn != null)
 				SortedColumn.HeaderCell.SortGlyphDirection = SortOrder.None;
 
+			EndEdit ();
+
 			Rows.Sort (comparer);
 			
 			sortedColumn = null;
@@ -2779,6 +2781,8 @@ namespace System.Windows.Forms {
 			if (SortedColumn != null)
 				SortedColumn.HeaderCell.SortGlyphDirection = SortOrder.None;
 
+			EndEdit ();
+			
 			ColumnSorter sorter = new ColumnSorter (dataGridViewColumn, direction);
 			Rows.Sort (sorter);
 
@@ -3495,32 +3499,16 @@ namespace System.Windows.Forms {
 			DataGridViewColumn col = Columns[e.ColumnIndex];
 			
 			if (col.SortMode == DataGridViewColumnSortMode.Automatic) {
-				SortOrder new_order;
+				ListSortDirection new_order;
 				
-				if (SortedColumn != col) {
-					if (SortedColumn != null)
-						SortedColumn.HeaderCell.SortGlyphDirection = SortOrder.None;
-					
-					new_order = SortOrder.Ascending;
-				} else {
-					
-					if (sortOrder == SortOrder.Ascending)
-						new_order = SortOrder.Descending;
-					else
-						new_order = SortOrder.Ascending;
-				}
+				// Always use ascending unless we are clicking on a
+				// column that is already sorted ascending.
+				if (SortedColumn != col || sortOrder != SortOrder.Ascending)
+					new_order = ListSortDirection.Ascending;
+				else
+					new_order = ListSortDirection.Descending;
 
-				ColumnSorter sorter = new ColumnSorter (col, (ListSortDirection)((int)new_order - 1));
-				Rows.Sort (sorter);
-
-				sortedColumn = col;
-				sortOrder = new_order;
-
-				col.HeaderCell.SortGlyphDirection = new_order;
-
-				Invalidate ();
-				
-				OnSorted (EventArgs.Empty);
+				Sort (col, new_order);
 			}
 			
 			DataGridViewCellMouseEventHandler eh = (DataGridViewCellMouseEventHandler)(Events [ColumnHeaderMouseClickEvent]);
