@@ -611,7 +611,6 @@ namespace System.Web {
 			int code = e.GetHttpCode ();
 			wr.SendStatus (code, HttpWorkerRequest.GetStatusDescription (code));
 			wr.SendUnknownResponseHeader ("Connection", "close");
-			wr.SendUnknownResponseHeader ("Date", DateTime.Now.ToUniversalTime ().ToString ("r"));
 			Encoding enc = Encoding.ASCII;
 			wr.SendUnknownResponseHeader ("Content-Type", "text/html; charset=" + enc.WebName);
 			string msg = e.GetHtmlErrorMessage ();
@@ -631,7 +630,6 @@ namespace System.Web {
 		{
 			wr.SendStatus (503, "Service unavailable");
 			wr.SendUnknownResponseHeader ("Connection", "close");
-			wr.SendUnknownResponseHeader ("Date", DateTime.Now.ToUniversalTime ().ToString ("r"));
 			Encoding enc = Encoding.ASCII;
 			wr.SendUnknownResponseHeader ("Content-Type", "text/html; charset=" + enc.WebName);
 			byte [] contentBytes = enc.GetBytes (content503);
