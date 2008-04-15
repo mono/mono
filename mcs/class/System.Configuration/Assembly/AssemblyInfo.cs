@@ -33,33 +33,38 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Resources;
 using System.Security;
+using System.Security.Permissions;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-// General Information about the System.Configuration.Install assembly
-
-[assembly: AssemblyVersion (Consts.FxVersion)]
-[assembly: SatelliteContractVersion (Consts.FxVersion)]
+// General Information about the System.Configuration (.Net 2.0 only) assembly
 
 [assembly: AssemblyTitle ("System.Configuration.dll")]
 [assembly: AssemblyDescription ("System.Configuration.dll")]
-[assembly: AssemblyCompany ("MONO development team")]
-[assembly: AssemblyProduct ("MONO CLI")]
-[assembly: AssemblyCopyright ("(c) 2005 Various Authors")]
+[assembly: AssemblyDefaultAlias ("System.Configuration.dll")]
+
+[assembly: AssemblyCompany (Consts.MonoCompany)]
+[assembly: AssemblyProduct (Consts.MonoProduct)]
+[assembly: AssemblyCopyright (Consts.MonoCopyright)]
+[assembly: AssemblyVersion (Consts.FxVersion)]
+[assembly: SatelliteContractVersion (Consts.FxVersion)]
+[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
 
 [assembly: CLSCompliant (true)]
-[assembly: AssemblyDefaultAlias ("System.Configuration.dll")]
-[assembly: AssemblyInformationalVersion ("0.0.0.1")]
 [assembly: NeutralResourcesLanguage ("en-US")]
 
 [assembly: ComVisible (false)]
+[assembly: AllowPartiallyTrustedCallers]
 
 #if !TARGET_JVM //TARGET_JVM does not support signing
-[assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile("../msfinal.pub")]
+	[assembly: AssemblyDelaySign (true)]
+	[assembly: AssemblyKeyFile ("../msfinal.pub")]
 #endif
 
 #if NET_2_0
-[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+	[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+	[assembly: SecurityPermission (SecurityAction.RequestMinimum, SkipVerification = true)]
+	[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+	[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
+	[assembly: ComCompatibleVersion (1, 0, 3300, 0)]
 #endif
-[assembly: AllowPartiallyTrustedCallers]
