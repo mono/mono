@@ -1,3 +1,8 @@
+2008-04-15  Kornél Pál  <kornelpal@gmail.com>
+
+	* HttpRuntime.cs: Don't add Date header for error pages either. Fixes bug
+	#363404.
+
 2008-04-15  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpRequest.cs: dispose of streams the way it should
