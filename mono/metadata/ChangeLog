@@ -1,3 +1,11 @@
+2008-04-15 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	verify.c (mono_type_is_generic_argument): Extracted this check
+	from a dozen places to here.
+
+	verify.c: Fixed all issues related to boxing generic arguments
+	and their constraints.
+
 2008-04-14 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	verify.c (mono_class_interface_implements_interface): Fix win32 build.
