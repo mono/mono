@@ -1,3 +1,7 @@
+2008-04-15  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-paser.jay, namespace.cs: Simplified handling of namespace imports. 
+
 2008-04-13  Jb Evain  <jbevain@novell.com>
 
 	* namespace.cs: update the System.Core fullname for 2.1

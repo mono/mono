@@ -368,7 +368,7 @@ extern_alias_directive
 			Report.FeatureIsNotAvailable (lt.Location, "external alias");
 		} else {
 			lt = (LocatedToken) $3; 
-			current_namespace.UsingExternalAlias (lt.Value, lt.Location);
+			current_namespace.AddUsingExternalAlias (lt.Value, lt.Location);
 		}
 	  }
 	;
@@ -396,7 +396,7 @@ using_alias_directive
 	  namespace_or_type_name SEMICOLON
 	  {
 		LocatedToken lt = (LocatedToken) $2;
-		current_namespace.UsingAlias (lt.Value, (MemberName) $4, (Location) $1);
+		current_namespace.AddUsingAlias (lt.Value, (MemberName) $4, (Location) $1);
 	  }
 	| USING error {
 		CheckIdentifierToken (yyToken, GetLocation ($2));
@@ -406,8 +406,8 @@ using_alias_directive
 using_namespace_directive
 	: USING namespace_name SEMICOLON 
 	  {
-		current_namespace.Using ((MemberName) $2, (Location) $1);
-          }
+		current_namespace.AddUsing ((MemberName) $2, (Location) $1);
+	  }
 	;
 
 //

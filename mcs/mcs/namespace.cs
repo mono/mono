@@ -568,169 +568,116 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class NamespaceEntry {
-		Namespace ns;
-		NamespaceEntry parent, implicit_parent;
-		SourceFile file;
-		int symfile_id;
-		Hashtable aliases;
-		ArrayList using_clauses;
-		public bool DeclarationFound = false;
-		bool UsingFound;
+	//
+	// Namespace container as created by the parser
+	//
+	public class NamespaceEntry : IResolveContext {
 
-		public readonly DeclSpace SlaveDeclSpace;
-
-		ListDictionary extern_aliases;
-
-		static ArrayList entries = new ArrayList ();
-
-		public static void Reset ()
-		{
-			entries = new ArrayList ();
-		}
-
-		//
-		// This class holds the location where a using definition is
-		// done, and whether it has been used by the program or not.
-		//
-		// We use this to flag using clauses for namespaces that do not
-		// exist.
-		//
-		public class UsingEntry : IResolveContext {
+		class UsingEntry {
 			public readonly MemberName Name;
-			readonly NamespaceEntry NamespaceEntry;
-			readonly Location Location;
+			Namespace resolved;
 			
-			public UsingEntry (NamespaceEntry entry, MemberName name, Location loc)
+			public UsingEntry (MemberName name)
 			{
 				Name = name;
-				NamespaceEntry = entry;
-				Location = loc;
 			}
 
-			internal Namespace resolved;
-
-			public Namespace Resolve ()
+			public Namespace Resolve (IResolveContext rc)
 			{
 				if (resolved != null)
 					return resolved;
 
-				FullNamedExpression fne = Name.GetTypeExpression ().ResolveAsTypeStep (this, false);
+				FullNamedExpression fne = Name.GetTypeExpression ().ResolveAsTypeStep (rc, false);
 				if (fne == null)
 					return null;
 
 				resolved = fne as Namespace;
 				if (resolved == null) {
 					Report.SymbolRelatedToPreviousError (fne.Type);
-					Report.Error (138, Location,
-						"`{0}' is a type not a namespace. A using namespace directive can only be applied to namespaces", Name.GetSignatureForError ());
+					Report.Error (138, Name.Location,
+						"`{0}' is a type not a namespace. A using namespace directive can only be applied to namespaces",
+						Name.GetSignatureForError ());
 				}
 				return resolved;
 			}
+		}
 
-			DeclSpace IResolveContext.DeclContainer {
-				get { return NamespaceEntry.SlaveDeclSpace; }
+		class UsingAliasEntry {
+			public readonly string Alias;
+			public Location Location;
+
+			public UsingAliasEntry (string alias, Location loc)
+			{
+				this.Alias = alias;
+				this.Location = loc;
 			}
 
-			DeclSpace IResolveContext.GenericDeclContainer {
-				get { return NamespaceEntry.SlaveDeclSpace; }
-			}
+			public virtual FullNamedExpression Resolve (IResolveContext rc)
+			{
+				FullNamedExpression fne = RootNamespace.GetRootNamespace (Alias);
+				if (fne == null) {
+					Report.Error (430, Location,
+						"The extern alias `{0}' was not specified in -reference option",
+						Alias);
+				}
 
-			bool IResolveContext.IsInObsoleteScope {
-				get { return false; }
-			}
-			bool IResolveContext.IsInUnsafeScope {
-				get { return false; }
+				return fne;
 			}
 		}
 
-		public abstract class AliasEntry {
-			public readonly string Name;
-			public readonly NamespaceEntry NamespaceEntry;
-			public readonly Location Location;
-			
-			protected AliasEntry (NamespaceEntry entry, string name, Location loc)
-			{
-				Name = name;
-				NamespaceEntry = entry;
-				Location = loc;
-			}
-			
-			protected FullNamedExpression resolved;
-			bool error;
+		class LocalUsingAliasEntry : UsingAliasEntry {
+			Expression resolved;
 
-			public FullNamedExpression Resolve ()
+			public LocalUsingAliasEntry (string alias, MemberName name, Location loc)
+				: base (alias, loc)
 			{
-				if (resolved != null || error)
-					return resolved;
-				resolved = DoResolve ();
-				if (resolved == null)
-					error = true;
-				return resolved;
+				this.resolved = name.GetTypeExpression ();
 			}
 
-			protected abstract FullNamedExpression DoResolve ();
-		}
-
-		public class LocalAliasEntry : AliasEntry, IResolveContext {
-			public readonly Expression Alias;
-			
-			public LocalAliasEntry (NamespaceEntry entry, string name, MemberName alias, Location loc) :
-				base (entry, name, loc)
+			public override FullNamedExpression Resolve (IResolveContext rc)
 			{
-				Alias = alias.GetTypeExpression ();
-			}
+				if (resolved == null || resolved.Type != null)
+					return (FullNamedExpression)resolved;
 
-			protected override FullNamedExpression DoResolve ()
-			{
-				resolved = Alias.ResolveAsTypeStep (this, false);
+				resolved = resolved.ResolveAsTypeStep (rc, false);
 				if (resolved == null)
 					return null;
 
+				// FIXME: This is quite wrong, the accessibility is not global
 				if (resolved.Type != null) {
 					TypeAttributes attr = resolved.Type.Attributes & TypeAttributes.VisibilityMask;
 					if (attr == TypeAttributes.NestedPrivate || attr == TypeAttributes.NestedFamily ||
 					 	((attr == TypeAttributes.NestedFamORAssem || attr == TypeAttributes.NestedAssembly) && 
 						TypeManager.LookupDeclSpace (resolved.Type) == null)) {
-						Expression.ErrorIsInaccesible (Alias.Location, Alias.ToString ());
+						Expression.ErrorIsInaccesible (resolved.Location, resolved.GetSignatureForError ());
 						return null;
 					}
 				}
 
-				return resolved;
-			}
-
-			DeclSpace IResolveContext.DeclContainer {
-				get { return NamespaceEntry.SlaveDeclSpace; }
-			}
-
-			DeclSpace IResolveContext.GenericDeclContainer {
-				get { return NamespaceEntry.SlaveDeclSpace; }
-			}
-
-			bool IResolveContext.IsInObsoleteScope {
-				get { return false; }
-			}
-			bool IResolveContext.IsInUnsafeScope {
-				get { return false; }
+				return (FullNamedExpression)resolved;
 			}
 		}
 
-		public class ExternAliasEntry : AliasEntry {
-			public ExternAliasEntry (NamespaceEntry entry, string name, Location loc) :
-				base (entry, name, loc)
-			{
-			}
+		Namespace ns;
+		NamespaceEntry parent, implicit_parent;
+		SourceFile file;
+		int symfile_id;
 
-			protected override FullNamedExpression DoResolve ()
-			{
-				resolved = RootNamespace.GetRootNamespace (Name);
-				if (resolved == null)
-					Report.Error (430, Location, "The extern alias '" + Name +
-									"' was not specified in a /reference option");
+		// Namespace using import block
+		ArrayList using_aliases;
+		ArrayList using_clauses;
+		public bool DeclarationFound = false;
+		// End
 
-				return resolved;
-			}
+		public readonly int ID;
+		public readonly bool IsImplicit;
+		public readonly DeclSpace SlaveDeclSpace;
+
+		static ArrayList entries = new ArrayList ();
+
+		public static void Reset ()
+		{
+			entries = new ArrayList ();
 		}
 
 		public NamespaceEntry (NamespaceEntry parent, SourceFile file, string name)
@@ -773,14 +720,13 @@ namespace Mono.CSharp {
 		NamespaceEntry doppelganger;
 		NamespaceEntry Doppelganger {
 			get {
-				if (!IsImplicit && doppelganger == null)
+				if (!IsImplicit && doppelganger == null) {
 					doppelganger = new NamespaceEntry (ImplicitParent, file, ns, true);
+					doppelganger.using_aliases = using_aliases;
+				}
 				return doppelganger;
 			}
 		}
-
-		public readonly int ID;
-		public readonly bool IsImplicit;
 
 		public Namespace NS {
 			get { return ns; }
@@ -806,95 +752,81 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Records a new namespace for resolving name references
 		/// </summary>
-		public void Using (MemberName name, Location loc)
+		public void AddUsing (MemberName name, Location loc)
 		{
 			if (DeclarationFound){
 				Report.Error (1529, loc, "A using clause must precede all other namespace elements except extern alias declarations");
-				return;
 			}
 
-			UsingFound = true;
-
-			if (name.Equals (ns.MemberName))
-				return;
-			
-			if (using_clauses == null)
+			if (using_clauses == null) {
 				using_clauses = new ArrayList ();
-
-			foreach (UsingEntry old_entry in using_clauses) {
-				if (name.Equals (old_entry.Name)) {
-					Report.Warning (105, 3, loc, "The using directive for `{0}' appeared previously in this namespace", name.GetName ());
-					return;
+			} else {
+				foreach (UsingEntry old_entry in using_clauses) {
+					if (name.Equals (old_entry.Name)) {
+						Report.SymbolRelatedToPreviousError (old_entry.Name.Location, old_entry.Name.GetSignatureForError ());
+						Report.Warning (105, 3, loc, "The using directive for `{0}' appeared previously in this namespace", name.GetName ());
+						return;
+					}
 				}
 			}
 
-			UsingEntry ue = new UsingEntry (Doppelganger, name, loc);
-			using_clauses.Add (ue);
+			using_clauses.Add (new UsingEntry (name));
 		}
 
-		public void UsingAlias (string name, MemberName alias, Location loc)
+		public void AddUsingAlias (string alias, MemberName name, Location loc)
 		{
+			// TODO: This is parser bussines
 			if (DeclarationFound){
 				Report.Error (1529, loc, "A using clause must precede all other namespace elements except extern alias declarations");
-				return;
 			}
 
-			UsingFound = true;
-
-			if (aliases == null)
-				aliases = new Hashtable ();
-
-			if (aliases.Contains (name)) {
-				AliasEntry ae = (AliasEntry) aliases [name];
-				Report.SymbolRelatedToPreviousError (ae.Location, ae.Name);
-				Report.Error (1537, loc, "The using alias `{0}' appeared previously in this namespace", name);
-				return;
-			}
-
-			if (RootContext.Version != LanguageVersion.ISO_1 && name == "global")
+			if (RootContext.Version != LanguageVersion.ISO_1 && alias == "global")
 				Report.Warning (440, 2, loc, "An alias named `global' will not be used when resolving 'global::';" +
 					" the global namespace will be used instead");
 
-			// FIXME: get correct error number.  See if the above check can be merged
-			if (extern_aliases != null && extern_aliases.Contains (name)) {
-				AliasEntry ae = (AliasEntry) extern_aliases [name];
-				Report.SymbolRelatedToPreviousError (ae.Location, ae.Name);
-				Report.Error (1537, loc, "The using alias `{0}' appeared previously in this namespace", name);
-				return;
-			}
-
-			aliases [name] = new LocalAliasEntry (Doppelganger, name, alias, loc);
+			AddUsingAlias (new LocalUsingAliasEntry (alias, name, loc));
 		}
 
-		public void UsingExternalAlias (string name, Location loc)
+		public void AddUsingExternalAlias (string alias, Location loc)
 		{
-			if (UsingFound || DeclarationFound) {
+			// TODO: Do this in parser
+			bool not_first = using_clauses != null || DeclarationFound;
+			if (using_aliases != null && !not_first) {
+				foreach (UsingAliasEntry uae in using_aliases) {
+					if (uae is LocalUsingAliasEntry) {
+						not_first = true;
+						break;
+					}
+				}
+			}
+
+			if (not_first)
 				Report.Error (439, loc, "An extern alias declaration must precede all other elements");
-				return;
-			}
-			
-			// Share the extern_aliases field with the Doppelganger
-			if (extern_aliases == null) {
-				extern_aliases = new ListDictionary ();
-				Doppelganger.extern_aliases = extern_aliases;
-			}
 
-			if (extern_aliases.Contains (name)) {
-				AliasEntry ae = (AliasEntry) extern_aliases [name];
-				Report.SymbolRelatedToPreviousError (ae.Location, ae.Name);
-				Report.Error (1537, loc, "The using alias `{0}' appeared previously in this namespace", name);
-				return;
-			}
-
-			if (name == "global") {
+			if (alias == "global") {
 				Error_GlobalNamespaceRedefined (loc);
 				return;
 			}
 
-			// Register the alias in aliases and extern_aliases, since we need both of them
-			// to keep things simple (different resolution scenarios)
-			ExternAliasEntry alias = new ExternAliasEntry (Doppelganger, name, loc);
-			extern_aliases [name] = alias;
+			AddUsingAlias (new UsingAliasEntry (alias, loc));
+		}
+
+		void AddUsingAlias (UsingAliasEntry uae)
+		{
+			if (using_aliases == null) {
+				using_aliases = new ArrayList ();
+			} else {
+				foreach (UsingAliasEntry entry in using_aliases) {
+					if (uae.Alias == entry.Alias) {
+						Report.SymbolRelatedToPreviousError (uae.Location, uae.Alias);
+						Report.Error (1537, entry.Location, "The using alias `{0}' appeared previously in this namespace",
+							entry.Alias);
+						return;
+					}
+				}
+			}
+
+			using_aliases.Add (uae);
 		}
 
 		///
@@ -952,14 +884,17 @@ namespace Mono.CSharp {
 		// Looks-up a alias named @name in this and surrounding namespace declarations
 		public FullNamedExpression LookupAlias (string name)
 		{
-			AliasEntry entry = null;
 			for (NamespaceEntry n = this; n != null; n = n.ImplicitParent) {
-				if (n.extern_aliases != null && (entry = n.extern_aliases [name] as AliasEntry) != null)
-					break;
-				if (n.aliases != null && (entry = n.aliases [name] as AliasEntry) != null)
-					break;
+				if (n.using_aliases == null)
+					continue;
+
+				foreach (UsingAliasEntry ue in n.using_aliases) {
+					if (ue.Alias == name)
+						return ue.Resolve (Doppelganger);
+				}
 			}
-			return entry == null ? null : entry.Resolve ();
+
+			return null;
 		}
 
 		private FullNamedExpression Lookup (DeclSpace ds, string name, Location loc, bool ignore_cs0104)
@@ -971,23 +906,18 @@ namespace Mono.CSharp {
 			if (fne != null)
 				return fne;
 
-			if (extern_aliases != null) {
-				AliasEntry entry = extern_aliases [name] as AliasEntry;
-				if (entry != null)
-					return entry.Resolve ();
-			}
-			
-			if (IsImplicit)
-				return null;
-			
 			//
 			// Check aliases. 
 			//
-			if (aliases != null) {
-				AliasEntry entry = aliases [name] as AliasEntry;
-				if (entry != null)
-					return entry.Resolve ();
+			if (using_aliases != null) {
+				foreach (UsingAliasEntry ue in using_aliases) {
+					if (ue.Alias == name)
+						return ue.Resolve (Doppelganger);
+				}
 			}
+
+			if (IsImplicit)
+				return null;
 
 			//
 			// Check using entries.
@@ -1024,15 +954,14 @@ namespace Mono.CSharp {
 			ArrayList list = new ArrayList (using_clauses.Count);
 
 			foreach (UsingEntry ue in using_clauses) {
-				Namespace using_ns = ue.Resolve ();
+				Namespace using_ns = ue.Resolve (Doppelganger);
 				if (using_ns == null)
 					continue;
 
 				list.Add (using_ns);
 			}
 
-			namespace_using_table = new Namespace [list.Count];
-			list.CopyTo (namespace_using_table, 0);
+			namespace_using_table = (Namespace[])list.ToArray (typeof (Namespace));
 			return namespace_using_table;
 		}
 
@@ -1105,19 +1034,14 @@ namespace Mono.CSharp {
 		/// </summary>
 		void VerifyUsing ()
 		{
-			if (extern_aliases != null) {
-				foreach (DictionaryEntry de in extern_aliases)
-					((AliasEntry) de.Value).Resolve ();
-			}		
+			if (using_aliases != null) {
+				foreach (UsingAliasEntry ue in using_aliases)
+					ue.Resolve (Doppelganger);
+			}
 
 			if (using_clauses != null) {
 				foreach (UsingEntry ue in using_clauses)
-					ue.Resolve ();
-			}
-
-			if (aliases != null) {
-				foreach (DictionaryEntry de in aliases)
-					((AliasEntry) de.Value).Resolve ();
+					ue.Resolve (Doppelganger);
 			}
 		}
 
@@ -1140,5 +1064,25 @@ namespace Mono.CSharp {
 		{
 			return ns.ToString ();
 		}
+
+		#region IResolveContext Members
+
+		public DeclSpace DeclContainer {
+			get { return SlaveDeclSpace; }
+		}
+
+		public bool IsInObsoleteScope {
+			get { return SlaveDeclSpace.IsInObsoleteScope; }
+		}
+
+		public bool IsInUnsafeScope {
+			get { return SlaveDeclSpace.IsInUnsafeScope; }
+		}
+
+		public DeclSpace GenericDeclContainer {
+			get { return SlaveDeclSpace; }
+		}
+
+		#endregion
 	}
 }
