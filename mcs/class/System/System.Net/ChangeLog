@@ -1,3 +1,9 @@
+2008-04-16  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpWebRequest.cs: fix an off-by-one bug - the number of
+	redirects must not exceed the value of
+	MaximumAutomaticRedirections. Fixes bug #380131
+
 2008-04-13  Jb Evain  <jbevain@novell.com>
 
 	* *_2_1.cs: move the specific 2.1 System.Net code to the
