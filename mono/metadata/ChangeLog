@@ -1,3 +1,7 @@
+2008-04-14 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	verify.c (mono_class_interface_implements_interface): Fix win32 build.
+
 2008-04-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (mono_custom_attrs_construct): Fix crash when the cattr type
