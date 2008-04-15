@@ -273,9 +273,6 @@ namespace System.Windows.Forms {
 
 			queue_id = XplatUI.StartLoop(Thread.CurrentThread);
 
-			// Save result of capture status.
-			bool captured = tracker.grab_control.Capture;
-			
 			while ((menu.Wnd != null) && menu.Wnd.Visible && no_quit) {
 				MSG msg = new MSG ();
 				no_quit = XplatUI.GetMessage(queue_id, ref msg, IntPtr.Zero, 0, 0);
@@ -285,9 +282,6 @@ namespace System.Windows.Forms {
 
 			if (tracker.grab_control.IsDisposed)
 				return true;
-
-			if (captured)
-				tracker.grab_control.Capture = true;
 
 			if (!no_quit)
 				XplatUI.PostQuitMessage(0);

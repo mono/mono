@@ -1,3 +1,11 @@
+2008-04-12  Everaldo Canuto  <ecanuto@novell.com>
+
+	* MenuAPI.cs: Remove the code that save and restore capture status of 
+	grab_control, this fixes some Menu and Context menu bugs but maybe it can
+	cause some others, I cant figure the possible problems of this patch but
+	right now remove the code looks to be better than keep it. This patch fixes
+	bugs #357638, #378721 and #379570.
+
 2008-04-12  Andreia Gaita <avidigal@novell.com> 
 
 	* HtmlDocument.cs, HtmlElement.cs, HtmlHistory.cs, WebBrowser.cs:
