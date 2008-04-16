@@ -36,10 +36,12 @@ namespace System.Windows.Forms
 	public class DataGridViewColumnCollection : BaseCollection, IList, ICollection, IEnumerable
 	{
 		private DataGridView dataGridView;
-
+		private List<DataGridViewColumn> display_index_sorted;
+		
 		public DataGridViewColumnCollection (DataGridView dataGridView)
 		{
 			this.dataGridView = dataGridView;
+			RegenerateSortedList ();
 		}
 
 		bool IList.IsFixedSize {
@@ -101,6 +103,7 @@ namespace System.Windows.Forms
 		public virtual void Clear ()
 		{
 			base.List.Clear ();
+			RegenerateSortedList ();
 		}
 
 		bool IList.Contains (object value)
@@ -216,6 +219,8 @@ namespace System.Windows.Forms
 
 		protected virtual void OnCollectionChanged (CollectionChangeEventArgs e)
 		{
+			RegenerateSortedList ();
+			
 			if (CollectionChanged != null)
 				CollectionChanged(this, e);
 		}
@@ -225,15 +230,18 @@ namespace System.Windows.Forms
 		}
 
 		internal List<DataGridViewColumn> ColumnDisplayIndexSortedArrayList {
-			get {
-				DataGridViewColumn[] array = (DataGridViewColumn[])base.List.ToArray (typeof (DataGridViewColumn));
-				List<DataGridViewColumn> result = new List<DataGridViewColumn> (array);
-
-				result.Sort (new ColumnDisplayIndexComparator ());
-				return result;
-			}
+			get { return display_index_sorted; }
 		}
 
+		internal void RegenerateSortedList ()
+		{
+			DataGridViewColumn[] array = (DataGridViewColumn[])base.List.ToArray (typeof (DataGridViewColumn));
+			List<DataGridViewColumn> result = new List<DataGridViewColumn> (array);
+
+			result.Sort (new ColumnDisplayIndexComparator ());
+			display_index_sorted = result;
+		}
+		
 		private class ColumnDisplayIndexComparator : IComparer<DataGridViewColumn>
 		{
 			public int Compare (DataGridViewColumn o1, DataGridViewColumn o2)

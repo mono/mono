@@ -170,6 +170,7 @@ namespace System.Windows.Forms {
 					}
 					displayIndex = value;
 					if (DataGridView != null) {
+						DataGridView.Columns.RegenerateSortedList ();
 						DataGridView.OnColumnDisplayIndexChanged(new DataGridViewColumnEventArgs(this));
 					}
 				}
