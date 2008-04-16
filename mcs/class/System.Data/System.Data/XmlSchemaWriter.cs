@@ -185,7 +185,21 @@ namespace System.Data
 				w.WriteAttributeString ("schemaLocation", includes [ns] as string);
 				w.WriteEndElement ();
 			}
-
+			
+			foreach (DataTable table in tables) {
+				bool isTopLevel = true;
+				foreach (DataRelation rel in table.ParentRelations) {
+					if (rel.Nested) {
+						isTopLevel = false;
+						break;
+					}
+				}
+				// LAMESPEC: You have a nested relationship but only one table, 
+				// write table element first
+				if (!isTopLevel && tables.Length < 2)
+						WriteTableElement (table);
+			}
+	
 			WriteDataSetElement ();
 
 			w.WriteEndElement (); // xs:schema
@@ -242,9 +256,18 @@ namespace System.Data
 						break;
 					}
 				}
+
+				// If there is a relation but only one table, could be that
+				// we have to add a ref attribute
+				bool addref = false;
+				if (!isTopLevel && tables.Length < 2) {
+					isTopLevel = true;
+					addref = true;
+				}
 				
 				if (isTopLevel) {
-					if (dataSetNamespace != table.Namespace) {
+					if (dataSetNamespace != table.Namespace ||
+					    addref) {
 						// <xs:element ref="X:y" />
 						w.WriteStartElement ("xs",
 							"element",
@@ -591,8 +614,17 @@ namespace System.Data
 				w.WriteEndElement ();
 			} else {
 				WriteTableAttributes (atts);
-
-				if (elements.Count > 0) {
+				bool isNested = false;
+				foreach (DataRelation rel in table.ParentRelations) {
+					if (rel.Nested) {
+						isNested = true;
+						break;
+					}
+				}
+				
+				// When we have a nested relationship and only one table,
+				// could be that we have a reference attribute
+				if (elements.Count > 0 || (isNested && tables.Length < 2)) {
 					w.WriteStartElement ("xs", "sequence",
 						xmlnsxs);
 
@@ -696,7 +728,10 @@ namespace System.Data
 
 		private void WriteChildRelations (DataRelation rel)
 		{
-			if (rel.ChildTable.Namespace != dataSetNamespace) {
+			// If there is a parent/child relation and only one table,
+			// it would just be a ref element.
+			if (rel.ChildTable.Namespace != dataSetNamespace ||
+			    tables.Length < 2) {
 				w.WriteStartElement ("xs", "element", xmlnsxs);
 				w.WriteStartAttribute ("ref", String.Empty);
 				w.WriteQualifiedName (
@@ -715,7 +750,10 @@ namespace System.Data
 
 				globalTypeTables.Add (rel.ChildTable);
 			}
-			WriteTableType (rel.ChildTable);
+			
+			// Iff there is a genuine ChildTable and not just a ref, call WriteTableType
+			if (tables.Length > 1)
+				WriteTableType (rel.ChildTable);
 			w.WriteEndElement ();
 		}
 

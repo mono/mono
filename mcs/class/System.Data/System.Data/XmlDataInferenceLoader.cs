@@ -32,6 +32,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 using System;
 using System.Collections;
 using System.Data;
@@ -201,9 +202,21 @@ namespace System.Data
 				}
 			}
 
+			int count = 0;			
 			foreach (TableMapping map in tables) {
+				
+				// Make sure name of RK column is unique
+				string rkName = map.Table.TableName + "_Id";
+				if (map.ChildTables [map.Table.TableName] != null) {
+					rkName = map.Table.TableName + "_Id_" + count;
+					while (map.GetColumn (rkName) != null) {
+						count++;
+						rkName = map.Table.TableName + "_Id_" + count;
+					}
+				}
+				
 				foreach (TableMapping ct in map.ChildTables) {
-					ct.ReferenceKey = GetMappedColumn (ct, map.Table.TableName + "_Id", map.Table.Prefix, map.Table.Namespace, MappingType.Hidden);
+					ct.ReferenceKey = GetMappedColumn (ct, rkName, map.Table.Prefix, map.Table.Namespace, MappingType.Hidden);
 				}
 			}
 
@@ -212,13 +225,17 @@ namespace System.Data
 					continue;
 				if (map.PrimaryKey != null)
 					map.Table.Columns.Add (map.PrimaryKey);
-				foreach (DataColumn col in map.Elements)
+
+				foreach (DataColumn col in map.Elements) 
 					map.Table.Columns.Add (col);
+
 				foreach (DataColumn col in map.Attributes)
 					map.Table.Columns.Add (col);
-				if (map.SimpleContent != null)
+				
+				if (map.SimpleContent != null) 
 					map.Table.Columns.Add (map.SimpleContent);
-				if (map.ReferenceKey != null)
+				
+				if (map.ReferenceKey != null) 
 					map.Table.Columns.Add (map.ReferenceKey);
 				dataset.Tables.Add (map.Table);
 			}
@@ -228,7 +245,16 @@ namespace System.Data
 				DataTable pt = dataset.Tables [rs.ParentTableName];
 				DataTable ct = dataset.Tables [rs.ChildTableName];
 				DataColumn pc = pt.Columns [rs.ParentColumnName];
-				DataColumn cc = ct.Columns [rs.ChildColumnName];
+				DataColumn cc = null;
+				
+				// If both parent and child tables have same name, it is quite
+				// possible to have column names suffixed with some numbers.
+				if (rs.ParentTableName == rs.ChildTableName) {
+					cc = ct.Columns [rs.ChildColumnName + "_" + count];
+				}
+				if (cc == null)
+					cc = ct.Columns [rs.ChildColumnName];
+				
 				if (pt == null)
 					throw new DataException ("Parent table was not found : " + rs.ParentTableName);
 				else if (ct == null)
@@ -310,7 +336,6 @@ namespace System.Data
 		{
 			if (relations [parent, child] != null)
 				return;
-
 			RelationStructure rs = new RelationStructure ();
 			rs.ParentTableName = parent;
 			rs.ChildTableName = child;
