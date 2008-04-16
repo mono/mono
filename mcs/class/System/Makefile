@@ -20,7 +20,7 @@ TEST_RESOURCES = \
 	Test/System/test-uri-props-manual.txt \
 	Test/System/test-uri-relative-props.txt
 
-TEST_MCS_FLAGS = -r:System.Drawing.dll -r:Mono.Security.dll -nowarn:1595 -nowarn:0618 -nowarn:219 -nowarn:67 -nowarn:169 -nowarn:612 \
+TEST_MCS_FLAGS = -r:System.Drawing.dll -r:Mono.Security.dll -r:System.Data -nowarn:1595 -nowarn:0618 -nowarn:219 -nowarn:67 -nowarn:169 -nowarn:612 \
 	$(foreach f, $(TEST_RESOURCES), -resource:$(f),$(notdir $(f)))
 
 ifeq (2, $(FRAMEWORK_VERSION_MAJOR))

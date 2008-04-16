@@ -1,3 +1,10 @@
+2008-04-16  Marek Habersack  <mhabersack@novell.com>
+
+	* ReferenceConverter.cs: fix ConvertFrom and ConvertTo when
+	converting from/to string - base must be called only if the
+	conversion target type is NOT string, otherwise the result of the
+	conversion will be the value type name.
+
 2008-04-13  Jb Evain  <jbevain@novell.com>
 
 	* TypeDescriptor.cs: internalize method AddEditorTable
