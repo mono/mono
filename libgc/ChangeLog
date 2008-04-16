@@ -1,3 +1,7 @@
+2008-04-15  Jonathan Chambers  <joncham@gmail.com>
+	* include/private/gcconfig.h: Backport GC7 code to support Win64.
+	* win32_threads.c: Backport GC7 code to support Win64.
+
 2008-02-07  Massimiliano Mantione  <massi@ximian.com>
 	* include/gc.h: (GCEventType): Added start-stop the world events.
 	* pthread_stop_world.c: (GC_stop_world and GC_start_world): hooked

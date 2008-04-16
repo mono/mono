@@ -386,6 +386,10 @@ void GC_push_all_stacks()
 #       if defined(I386)
           PUSH4(Edi,Esi,Ebx,Edx), PUSH2(Ecx,Eax), PUSH1(Ebp);
 	  sp = (ptr_t)context.Esp;
+#	elif defined(X86_64)
+	  PUSH4(Rax,Rcx,Rdx,Rbx); PUSH2(Rbp, Rsi); PUSH1(Rdi);
+	  PUSH4(R8, R9, R10, R11); PUSH4(R12, R13, R14, R15);
+	  sp = (ptr_t)context.Rsp;
 #       elif defined(ARM32)
 	  PUSH4(R0,R1,R2,R3),PUSH4(R4,R5,R6,R7),PUSH4(R8,R9,R10,R11),PUSH1(R12);
 	  sp = (ptr_t)context.Sp;
