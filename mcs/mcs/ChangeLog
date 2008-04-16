@@ -1,5 +1,9 @@
 2008-04-16  Marek Safar  <marek.safar@gmail.com>
 
+	* decl.cs (MemberName): Declare PrettyName as obsolete.
+
+2008-04-16  Marek Safar  <marek.safar@gmail.com>
+
 	* namespace.cs: Use MemberName comparison.
 
 2008-04-16  Raja R Harinath  <harinath@hurrynot.org>

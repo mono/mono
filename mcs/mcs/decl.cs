@@ -164,6 +164,7 @@ namespace Mono.CSharp {
 			}
 		}
 
+		[Obsolete ("Use GetSignatureForError ()")]
 		public string PrettyName {
 			get { return TypeArguments == null ? Name : MethodName + "<" + TypeArguments.ToString () + ">"; }
 		}
