@@ -180,6 +180,7 @@ namespace Mono.CSharp {
 
 		// Please, pretty please, with sugar on top, DON'T USE THIS -- just use the Equals and GetHashCode methods
 		// that make MemberName a proper hash key, and avoid tons of memory allocations
+		[Obsolete ("The whole reason for making MemberName was to avoid this property.  Please, just use MemberName directly")]
 		public string FullyQualifiedName {
 			get { return TypeArguments == null ? MethodName : MethodName + "<" + TypeArguments.ToString () + ">"; }
 		}
