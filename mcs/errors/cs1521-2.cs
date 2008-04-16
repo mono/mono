@@ -1,4 +1,4 @@
-// CS1521: Invalid base type
+// CS1521: Invalid base type `C*'
 // Line: 9
 // Compiler options: -unsafe
 

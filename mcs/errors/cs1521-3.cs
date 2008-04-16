@@ -1,5 +1,5 @@
-// cs1521-3.cs: Invalid base type
-// Line: 9
+// CS1521: Invalid base type
+// Line: 4
 
 class C2: object[]
 {
