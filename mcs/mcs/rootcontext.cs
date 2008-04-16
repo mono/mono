@@ -36,6 +36,55 @@ namespace Mono.CSharp {
 	public class RootContext {
 
 		//
+		// COMPILER OPTIONS CLASS
+		//
+		public static Target Target;
+		public static string TargetExt;
+		public static bool VerifyClsCompliance = true;
+		public static bool Optimize = true;
+		public static LanguageVersion Version;
+
+		//
+		// We keep strongname related info here because
+		// it's also used as complier options from CSC 8.x
+		//
+		public static string StrongNameKeyFile;
+		public static string StrongNameKeyContainer;
+		public static bool StrongNameDelaySign;
+
+		//
+		// If set, enable XML documentation generation
+		//
+		public static Documentation Documentation;
+
+		static public string MainClass;
+
+		// 
+		// The default compiler checked state
+		//
+		static public bool Checked;
+
+		//
+		// Whether to allow Unsafe code
+		//
+		static public bool Unsafe;
+
+		//
+		// Whether we are being linked against the standard libraries.
+		// This is only used to tell whether `System.Object' should
+		// have a base class or not.
+		//
+		public static bool StdLib;
+
+		public static bool NeedsEntryPoint {
+			get { return Target == Target.Exe || Target == Target.WinExe; }
+		}
+
+		//
+		// COMPILER OPTIONS CLASS END
+		//
+
+		//
 		// Contains the parsed tree
 		//
 		static RootTypes root;
@@ -46,13 +95,6 @@ namespace Mono.CSharp {
 		//
 		public static Hashtable AllDefines = new Hashtable ();
 		
-		//
-		// Whether we are being linked against the standard libraries.
-		// This is only used to tell whether `System.Object' should
-		// have a base class or not.
-		//
-		public static bool StdLib;
-
 		//
 		// This keeps track of the order in which classes were defined
 		// so that we can poulate them in that order.
@@ -71,33 +113,6 @@ namespace Mono.CSharp {
 		static ArrayList helper_classes;
 		
 		static TypeBuilder impl_details_class;
-
-		public static Target Target;
-		public static string TargetExt;
-
-		public static bool VerifyClsCompliance = true;
-
-		/// <summary>
-		/// Holds /optimize option
-		/// </summary>
-		public static bool Optimize = true;
-
-		public static LanguageVersion Version;
-
-		//
-		// We keep strongname related info here because
-		// it's also used as complier options from CSC 8.x
-		//
-		public static string StrongNameKeyFile;
-		public static string StrongNameKeyContainer;
-		public static bool StrongNameDelaySign;
-
-		//
-		// If set, enable XML documentation generation
-		//
-		public static Documentation Documentation;
-
-		static public string MainClass;
 
 		//
 		// Constructor
@@ -128,10 +143,6 @@ namespace Mono.CSharp {
 			helper_classes = null;
 		}
 
-		public static bool NeedsEntryPoint {
-			get { return RootContext.Target == Target.Exe || RootContext.Target == Target.WinExe; }
-		}
-
 		static public RootTypes ToplevelTypes {
 			get { return root; }
 		}
@@ -140,16 +151,6 @@ namespace Mono.CSharp {
 		{
 			type_container_resolve_order.Add (tc);
 		}
-		
-		// 
-		// The default compiler checked state
-		//
-		static public bool Checked;
-
-		//
-		// Whether to allow Unsafe code
-		//
-		static public bool Unsafe;
 		
 		// <remarks>
 		//   This function is used to resolve the hierarchy tree.
@@ -293,16 +294,6 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// A generic hook delegate
-		//
-		public delegate void Hook ();
-
-		//
-		// A hook invoked when the code has been generated.
-		//
-		public static event Hook EmitCodeHook;
-
-		//
 		// DefineTypes is used to fill in the members of each type.
 		//
 		static public void DefineTypes ()
@@ -346,13 +337,6 @@ namespace Mono.CSharp {
 				foreach (Delegate d in root.Delegates)
 					d.Emit ();
 			}			
-			//
-			// Run any hooks after all the types have been defined.
-			// This is used to create nested auxiliary classes for example
-			//
-
-			if (EmitCodeHook != null)
-				EmitCodeHook ();
 
 			CodeGen.Assembly.Emit (root);
 			CodeGen.Module.Emit (root);

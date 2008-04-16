@@ -1,5 +1,13 @@
 2008-04-16  Marek Safar  <marek.safar@gmail.com>
 
+	* report.cs: ColorFormat is protected.
+	
+	* rootcontext.cs: Unused fields clean-up.
+	
+	* namespace.cs: Made UsingEntry name private.
+
+2008-04-16  Marek Safar  <marek.safar@gmail.com>
+
 	* cs-tokenizer.cs, location.cs: Removed unused field.
 
 2008-04-16  Jan Oravec <jan.oravec@6com.sk>

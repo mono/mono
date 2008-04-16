@@ -358,7 +358,7 @@ namespace Mono.CSharp {
 				Check (code);
 			}
 
-			public virtual string ColorFormat (string s)
+			protected virtual string ColorFormat (string s)
 			{
 				return s;
 			}
@@ -537,7 +537,7 @@ namespace Mono.CSharp {
 			{
 			}
 
-			public override string ColorFormat (string s)
+			protected override string ColorFormat (string s)
 			{
 				if (prefix != null)
 					return prefix + s + postfix;

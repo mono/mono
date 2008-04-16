@@ -574,29 +574,47 @@ namespace Mono.CSharp {
 	public class NamespaceEntry : IResolveContext {
 
 		class UsingEntry {
-			public readonly MemberName Name;
+			readonly MemberName name;
 			Namespace resolved;
 			
 			public UsingEntry (MemberName name)
 			{
-				Name = name;
+				this.name = name;
 			}
+
+			public string GetSignatureForError ()
+			{
+				return name.GetSignatureForError ();
+			}
+
+			public string GetTypeName ()
+			{
+				return name.GetTypeName ();
+			}
+
+			public Location Location {
+				get { return name.Location; }
+			}
+			
+			public string Name {
+				get { return name.FullName; }
+			}			
 
 			public Namespace Resolve (IResolveContext rc)
 			{
 				if (resolved != null)
 					return resolved;
 
-				FullNamedExpression fne = Name.GetTypeExpression ().ResolveAsTypeStep (rc, false);
+				FullNamedExpression fne = name.GetTypeExpression ().ResolveAsTypeStep (rc, false);
 				if (fne == null)
 					return null;
 
 				resolved = fne as Namespace;
 				if (resolved == null) {
 					Report.SymbolRelatedToPreviousError (fne.Type);
-					Report.Error (138, Name.Location,
+					Report.Error (138, Location,
 						"`{0}' is a type not a namespace. A using namespace directive can only be applied to namespaces",
-						Name.GetSignatureForError ());
+						GetSignatureForError ());
 				}
 				return resolved;
 			}
@@ -627,19 +645,20 @@ namespace Mono.CSharp {
 
 		class LocalUsingAliasEntry : UsingAliasEntry {
 			Expression resolved;
+			MemberName value;
 
 			public LocalUsingAliasEntry (string alias, MemberName name, Location loc)
 				: base (alias, loc)
 			{
-				this.resolved = name.GetTypeExpression ();
+				this.value = name;
 			}
 
 			public override FullNamedExpression Resolve (IResolveContext rc)
 			{
-				if (resolved == null || resolved.Type != null)
+				if (resolved != null)
 					return (FullNamedExpression)resolved;
 
-				resolved = resolved.ResolveAsTypeStep (rc, false);
+				resolved = value.GetTypeExpression ().ResolveAsTypeStep (rc, false);
 				if (resolved == null)
 					return null;
 
@@ -669,9 +688,10 @@ namespace Mono.CSharp {
 		public bool DeclarationFound = false;
 		// End
 
-		public readonly int ID;
 		public readonly bool IsImplicit;
 		public readonly DeclSpace SlaveDeclSpace;
+		static readonly Namespace [] empty_namespaces = new Namespace [0];
+		Namespace [] namespace_using_table;
 
 		static ArrayList entries = new ArrayList ();
 
@@ -685,7 +705,6 @@ namespace Mono.CSharp {
 			this.parent = parent;
 			this.file = file;
 			entries.Add (this);
-			this.ID = entries.Count;
 
 			if (parent != null)
 				ns = parent.NS.GetNamespace (name, true);
@@ -700,8 +719,6 @@ namespace Mono.CSharp {
 		{
 			this.parent = parent;
 			this.file = file;
-			// no need to add self to 'entries', since we don't have any aliases or using entries.
-			this.ID = -1;
 			this.IsImplicit = true;
 			this.ns = ns;
 			this.SlaveDeclSpace = slave ? new RootDeclSpace (this) : null;
@@ -762,9 +779,9 @@ namespace Mono.CSharp {
 				using_clauses = new ArrayList ();
 			} else {
 				foreach (UsingEntry old_entry in using_clauses) {
-					if (name.Equals (old_entry.Name)) {
-						Report.SymbolRelatedToPreviousError (old_entry.Name.Location, old_entry.Name.GetSignatureForError ());
-						Report.Warning (105, 3, loc, "The using directive for `{0}' appeared previously in this namespace", name.GetName ());
+					if (name.FullName == old_entry.Name) {
+						Report.SymbolRelatedToPreviousError (old_entry.Location, old_entry.GetSignatureForError ());
+						Report.Warning (105, 3, loc, "The using directive for `{0}' appeared previously in this namespace", name.GetSignatureForError ());
 						return;
 					}
 				}
@@ -938,9 +955,6 @@ namespace Mono.CSharp {
 			return fne;
 		}
 
-		// Our cached computation.
-		static readonly Namespace [] empty_namespaces = new Namespace [0];
-		Namespace [] namespace_using_table;
 		Namespace [] GetUsingTable ()
 		{
 			if (namespace_using_table != null)
@@ -976,7 +990,7 @@ namespace Mono.CSharp {
 					if (using_clauses != null) {
 						using_list = new string [using_clauses.Count];
 						for (int i = 0; i < using_clauses.Count; i++)
-							using_list [i] = ((UsingEntry) using_clauses [i]).Name.GetTypeName ();
+							using_list [i] = ((UsingEntry) using_clauses [i]).GetTypeName ();
 					}
 
 					symfile_id = SymbolWriter.DefineNamespace (ns.Name, file.SourceFileEntry, using_list, parent_id);
