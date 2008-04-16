@@ -728,7 +728,7 @@ namespace MonoTests.System.Data
 				"  </Table>" +
 				"</NewDataSet>";
 
-			DataSet ds = new DataSet ();
+ 			DataSet ds = new DataSet ();
 			ds.ReadXml (new StringReader (xml));
 #if NET_2_0
 			Assert.AreEqual (1, ds.Tables.Count, "#1");
@@ -759,6 +759,30 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("Table_Id", ds.Tables [1].Columns [2].ColumnName, "#11a");
 			Assert.AreEqual (2, ds.Tables [1].Columns [2].Ordinal, "#11b");
 #endif
+		}
+
+		public void TestSameParentChildName ()
+		{
+			string xml = "<?xml version=\"1.0\" encoding=\"utf-8\" ?><resource type=\"parent\">" +
+			       	     "<resource type=\"child\" /></resource>";
+ 			DataSet ds = new DataSet ();
+			ds.ReadXml (new StringReader (xml));
+
+			AssertReadXml (ds, "SameNameParentChild", xml,
+				XmlReadMode.Auto, XmlReadMode.IgnoreSchema,
+				"NewDataSet", 1);
+		}
+
+		public void TestSameColumnName ()
+		{
+			string xml = "<?xml version=\"1.0\" encoding=\"utf-8\" ?><resource resource_Id_0=\"parent\">" +
+			       	     "<resource resource_Id_0=\"child\" /></resource>";
+ 			DataSet ds = new DataSet ();
+			ds.ReadXml (new StringReader (xml));
+
+			AssertReadXml (ds, "SameColumnName", xml,
+				XmlReadMode.Auto, XmlReadMode.IgnoreSchema,
+				"NewDataSet", 1);
 		}
 	}
 }

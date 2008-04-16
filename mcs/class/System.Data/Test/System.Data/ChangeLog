@@ -1,3 +1,8 @@
+2008-04-16  Veerapuram Varadhan <vvaradhan@novell.com>
+
+	* DataSetReadXmlTest.cs: Added tests for same parent/child table
+	name and id columns. 
+	
 2008-02-04 Arina Itkes <arinai@mainsoft.com>
 
 	* DataTableTest5.cs: Removing of "Ignore" category
