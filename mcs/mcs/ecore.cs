@@ -1616,6 +1616,16 @@ namespace Mono.CSharp {
 			child.Emit (ec);
 		}
 
+		public override void EmitBranchable (EmitContext ec, Label label, bool on_true)
+		{
+			child.EmitBranchable (ec, label, on_true);
+		}
+
+		public override void EmitSideEffect (EmitContext ec)
+		{
+			child.EmitSideEffect (ec);
+		}
+
 		public override Constant ConvertImplicitly (Type target_type)
 		{
 			// FIXME: Do we need to check user conversions?
@@ -1651,6 +1661,16 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			Child.Emit (ec);
+		}
+
+		public override void EmitBranchable (EmitContext ec, Label label, bool on_true)
+		{
+			Child.EmitBranchable (ec, label, on_true);
+		}
+
+		public override void EmitSideEffect (EmitContext ec)
+		{
+			Child.EmitSideEffect (ec);
 		}
 
 		public override bool GetAttributableValue (Type value_type, out object value)
@@ -1767,28 +1787,15 @@ namespace Mono.CSharp {
 			ec.ig.Emit (OpCodes.Box, child.Type);
 		}
 
-		public override void EmitBranchable (EmitContext ec, Label label, bool on_true)
-		{
-			if (child.Type.IsValueType &&
-			    (type == TypeManager.object_type || type == TypeManager.value_type)) {
-				// 'Box' involves runtime checks for interface types, so we can't unconditionally assume we'll get a non-null here
-				child.EmitSideEffect (ec);
-				if (on_true)
-					ec.ig.Emit (OpCodes.Br, label);
-				return;
-			}
-			base.EmitBranchable (ec, label, on_true);
-		}
-
 		public override void EmitSideEffect (EmitContext ec)
 		{
+			// boxing is side-effectful, since it involves runtime checks, except when boxing to Object or ValueType
+			// so, we need to emit the box+pop instructions in most cases
 			if (child.Type.IsValueType &&
-			    (type == TypeManager.object_type || type == TypeManager.value_type)) {
+			    (type == TypeManager.object_type || type == TypeManager.value_type))
 				child.EmitSideEffect (ec);
-				return;
-			}
-			// boxing is side-effectful, since it involves runtime checks
-			base.EmitSideEffect (ec);
+			else
+				base.EmitSideEffect (ec);
 		}
 	}
 
@@ -4905,9 +4912,14 @@ namespace Mono.CSharp {
 			return this;
 		}
 
+		bool is_marshal_by_ref ()
+		{
+			return !IsStatic && Type.IsValueType && TypeManager.mbr_type != null && TypeManager.IsSubclassOf (DeclaringType, TypeManager.mbr_type);
+		}
+
 		public override void CheckMarshalByRefAccess (EmitContext ec)
 		{
-			if (!IsStatic && Type.IsValueType && !(InstanceExpression is This) && TypeManager.mbr_type != null && TypeManager.IsSubclassOf (DeclaringType, TypeManager.mbr_type)) {
+			if (is_marshal_by_ref () && !(InstanceExpression is This)) {
 				Report.SymbolRelatedToPreviousError (DeclaringType);
 				Report.Warning (1690, 1, loc, "Cannot call methods, properties, or indexers on `{0}' because it is a value type member of a marshal-by-reference class",
 						GetSignatureForError ());
@@ -5035,6 +5047,15 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			Emit (ec, false);
+		}
+
+		public override void EmitSideEffect (EmitContext ec)
+		{
+			FieldBase f = TypeManager.GetField (FieldInfo);
+			bool is_volatile = f != null && (f.ModFlags & Modifiers.VOLATILE) != 0;
+
+			if (is_volatile || is_marshal_by_ref ())
+				base.EmitSideEffect (ec);
 		}
 
 		public void AddressOf (EmitContext ec, AddressOp mode)

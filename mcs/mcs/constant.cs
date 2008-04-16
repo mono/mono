@@ -228,6 +228,11 @@ namespace Mono.CSharp {
 			get { return false; }
 		}
 
+		public override void EmitSideEffect (EmitContext ec)
+		{
+			// do nothing
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Expression target)
 		{
 			// CloneTo: Nothing, we do not keep any state on this expression
@@ -1801,15 +1806,13 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			if (side_effect is Constant) {
-				// do nothing -- we're sure it doesn't have side effects
-			} else if (side_effect is ExpressionStatement) {
-				((ExpressionStatement) side_effect).EmitStatement (ec);
-			} else {
-				side_effect.Emit (ec);
-				ec.ig.Emit (OpCodes.Pop);
-			}
+			side_effect.EmitSideEffect (ec);
 			value.Emit (ec);
+		}
+
+		public override void EmitSideEffect (EmitContext ec)
+		{
+			side_effect.EmitSideEffect (ec);
 		}
 
 		public override bool IsDefaultValue {

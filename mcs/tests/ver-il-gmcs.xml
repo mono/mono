@@ -26666,7 +26666,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>24</size>
+        <size>19</size>
       </method>
     </type>
   </test>
@@ -27370,7 +27370,7 @@
         <size>7</size>
       </method>
       <method name="Void And()">
-        <size>109</size>
+        <size>79</size>
       </method>
       <method name="Void Or()">
         <size>137</size>
@@ -27838,7 +27838,7 @@
         <size>19</size>
       </method>
       <method name="Void TestAnd(Boolean)">
-        <size>85</size>
+        <size>79</size>
       </method>
       <method name="Void TestOr(Boolean)">
         <size>92</size>

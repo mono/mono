@@ -1,3 +1,16 @@
+2008-04-17  Raja R Harinath  <harinath@hurrynot.org>
+
+	Hook up 'EmitSideEffect'
+	* constant.cs (Constant.EmitSideEffect): New.
+	(SideEffectConstant.Emit): Simplify.  Use EmitSideEffect.
+	(SideEffectConstant.EmitSideEffect): New.
+	* ecore.cs (BoxedCast.EmitBranchable): Remove.  We can't use an
+	unconditional branch in EmitBranchable.
+	(FieldExpr.EmitBranchable): New.
+	* expression.cs (Unary.EmitSideEffect): New.
+	(Binary.EmitSideEffect): New.
+	(VariableReference.EmitSideEffect): New.  Do nothing.
+
 2008-04-16  Raja R Harinath  <harinath@hurrynot.org>
 
 	Introduce 'EmitSideEffect'

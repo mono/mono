@@ -538,6 +538,11 @@ namespace Mono.CSharp {
 				base.EmitBranchable (ec, target, on_true);
 		}
 
+		public override void EmitSideEffect (EmitContext ec)
+		{
+			Expr.EmitSideEffect (ec);
+		}
+
 		public static void Error_OperatorCannotBeApplied (Location loc, string oper, Type t)
 		{
 			Report.Error (23, loc, "The `{0}' operator cannot be applied to operand of type `{1}'",
@@ -1172,6 +1177,11 @@ namespace Mono.CSharp {
 			expr.Emit (ec);
 			ig.Emit (OpCodes.Isinst, probe_type_expr.Type);
 			ig.Emit (on_true ? OpCodes.Brtrue : OpCodes.Brfalse, target);
+		}
+
+		public override void EmitSideEffect (EmitContext ec)
+		{
+			expr.EmitSideEffect (ec);
 		}
 
 		Expression CreateConstantResult (bool result)
@@ -3220,6 +3230,17 @@ namespace Mono.CSharp {
 			ig.Emit (opcode);
 		}
 
+		public override void EmitSideEffect (EmitContext ec)
+		{
+			if ((oper & Operator.LogicalMask) != 0 ||
+			    (ec.CheckState && (oper == Operator.Multiply || oper == Operator.Addition || oper == Operator.Subtraction))) {
+				base.EmitSideEffect (ec);
+			} else {
+				left.EmitSideEffect (ec);
+				right.EmitSideEffect (ec);
+			}
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			Binary target = (Binary) t;
@@ -3838,6 +3859,11 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			Emit (ec, false);
+		}
+
+		public override void EmitSideEffect (EmitContext ec)
+		{
+			// do nothing
 		}
 
 		//
@@ -8465,6 +8491,10 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			// nothing, as we only exist to not do anything.
+		}
+
+		public override void EmitSideEffect (EmitContext ec)
+		{
 		}
 
 		//
