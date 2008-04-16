@@ -30,6 +30,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace System.Windows.Forms
 {
@@ -501,7 +502,7 @@ namespace System.Windows.Forms
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected internal virtual void PaintCells (Graphics graphics, Rectangle clipBounds, Rectangle rowBounds, int rowIndex, DataGridViewElementStates rowState, bool isFirstDisplayedRow, bool isLastVisibleRow, DataGridViewPaintParts paintParts)
 		{
-			ArrayList sortedColumns = DataGridView.Columns.ColumnDisplayIndexSortedArrayList;
+			List<DataGridViewColumn> sortedColumns = DataGridView.Columns.ColumnDisplayIndexSortedArrayList;
 			
 			Rectangle bounds = rowBounds;
 			
@@ -512,7 +513,7 @@ namespace System.Windows.Forms
 			}
 			
 			for (int i = DataGridView.first_col_index; i < sortedColumns.Count; i++) {
-				DataGridViewColumn col = (DataGridViewColumn)sortedColumns[i];
+				DataGridViewColumn col = sortedColumns[i];
 				
 				if (!col.Displayed)
 					break;

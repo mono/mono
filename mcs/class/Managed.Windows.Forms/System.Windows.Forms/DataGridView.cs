@@ -2240,7 +2240,7 @@ namespace System.Windows.Forms {
 			int result = 0;
 			
 			for (int i = first_col_index; i < Columns.Count; i++)
-				if ((Columns.ColumnDisplayIndexSortedArrayList[i] as DataGridViewColumn).Displayed)
+				if (Columns.ColumnDisplayIndexSortedArrayList[i].Displayed)
 					result++;
 				else
 					break;
@@ -2320,16 +2320,16 @@ namespace System.Windows.Forms {
 			
 			if (RowHeadersVisible)
 				x += RowHeadersWidth;
-				
-			ArrayList cols = columns.ColumnDisplayIndexSortedArrayList;
+
+			List<DataGridViewColumn> cols = columns.ColumnDisplayIndexSortedArrayList;
 
 			for (int i = first_col_index; i < cols.Count; i++) {
-				if ((cols[i] as DataGridViewColumn).Index == columnIndex) {
-					w = (cols[i] as DataGridViewColumn).Width;
+				if (cols[i].Index == columnIndex) {
+					w = cols[i].Width;
 					break;
 				}
 
-				x += (cols[i] as DataGridViewColumn).Width;
+				x += cols[i].Width;
 			}
 			
 			for (int i = first_row_index; i < Rows.Count; i++) {
@@ -2562,15 +2562,15 @@ namespace System.Windows.Forms {
 			if (RowHeadersVisible)
 				x += RowHeadersWidth;
 
-			ArrayList cols = columns.ColumnDisplayIndexSortedArrayList;
+			List<DataGridViewColumn> cols = columns.ColumnDisplayIndexSortedArrayList;
 
 			for (int i = first_col_index; i < cols.Count; i++) {
-				if ((cols[i] as DataGridViewColumn).Index == columnIndex) {
-					w = (cols[i] as DataGridViewColumn).Width;
+				if (cols[i].Index == columnIndex) {
+					w = cols[i].Width;
 					break;
 				}
 
-				x += (cols[i] as DataGridViewColumn).Width;
+				x += cols[i].Width;
 			}
 
 			return new Rectangle (x, 0, w, Height);
@@ -2642,18 +2642,16 @@ namespace System.Windows.Forms {
 			}
 			
 			int left = rowHeadersVisible ? RowHeadersWidth : 0;
-			
-			ArrayList cols = columns.ColumnDisplayIndexSortedArrayList;
+
+			List<DataGridViewColumn> cols = columns.ColumnDisplayIndexSortedArrayList;
 			
 			for (int i = first_col_index; i < cols.Count; i++) {
-				DataGridViewColumn col = (DataGridViewColumn)cols[i];
-				
-				if (x > left && x <= (left + col.Width)) {
-					colindex = col.Index;
+				if (x > left && x <= (left + cols[i].Width)) {
+					colindex = cols[i].Index;
 					break;
 				}
-			
-				left += col.Width;
+
+				left += cols[i].Width;
 			}
 
 			if (colindex >= 0 && rowindex >= 0)
@@ -4101,8 +4099,8 @@ namespace System.Windows.Forms {
 			
 			// Paint the background
 			PaintBackground (g, e.ClipRectangle, bounds);
-			
-			ArrayList sortedColumns = columns.ColumnDisplayIndexSortedArrayList;
+
+			List<DataGridViewColumn> sortedColumns = columns.ColumnDisplayIndexSortedArrayList;
 			
 			// Take borders into account
 			bounds.Inflate (-BorderWidth, -BorderWidth);
@@ -4123,7 +4121,7 @@ namespace System.Windows.Forms {
 					headerBounds.X += rowHeadersWidth;
 				
 				for (int index = first_col_index; index < sortedColumns.Count; index++) {
-					DataGridViewColumn col = (DataGridViewColumn)sortedColumns[index];
+					DataGridViewColumn col = sortedColumns[index];
 					
 					headerBounds.Width = col.Width;
 					DataGridViewCell cell = col.HeaderCell;
@@ -4152,7 +4150,7 @@ namespace System.Windows.Forms {
 			
 			// Set Displayed columns
 			for (int i = first_col_index; i < Columns.Count; i++) {
-				DataGridViewColumn col = Columns.ColumnDisplayIndexSortedArrayList[i] as DataGridViewColumn;
+				DataGridViewColumn col = Columns.ColumnDisplayIndexSortedArrayList[i];
 				
 				col.DisplayedInternal = true;
 				gridWidth += col.Width;
@@ -5350,7 +5348,7 @@ namespace System.Windows.Forms {
 		
 		private int ColumnDisplayIndexToIndex (int index)
 		{
-			return ((Columns.ColumnDisplayIndexSortedArrayList[index]) as DataGridViewColumn).Index;
+			return Columns.ColumnDisplayIndexSortedArrayList[index].Index;
 		}
 		
 		private void OnListChanged (object sender, ListChangedEventArgs args) {

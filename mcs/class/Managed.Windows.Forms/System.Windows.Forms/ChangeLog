@@ -1,5 +1,12 @@
 2008-04-16  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridViewColumnCollection.cs: Convert our internal sorted columns
+	list to use generics.
+	* DataGridView.cs, DataGridViewRow.cs: Use generic sorted column list
+	and remove unneccessay casts.
+
+2008-04-16  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridViewBand.cs: Add internal way to set displayed variable.
 	* DataGridViewRow.cs: Don't paint cells in non-displayed columns.
 	* DataGridView.cs: Make sure we always keep track of Displayed

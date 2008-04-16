@@ -28,6 +28,7 @@
 
 using System.ComponentModel;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace System.Windows.Forms
 {
@@ -223,27 +224,21 @@ namespace System.Windows.Forms
 			get { return base.List; }
 		}
 
-		internal ArrayList ColumnDisplayIndexSortedArrayList {
+		internal List<DataGridViewColumn> ColumnDisplayIndexSortedArrayList {
 			get {
-				ArrayList result = (ArrayList) base.List.Clone();
-				result.Sort(new ColumnDisplayIndexComparator());
+				DataGridViewColumn[] array = (DataGridViewColumn[])base.List.ToArray (typeof (DataGridViewColumn));
+				List<DataGridViewColumn> result = new List<DataGridViewColumn> (array);
+
+				result.Sort (new ColumnDisplayIndexComparator ());
 				return result;
 			}
 		}
 
-		private class ColumnDisplayIndexComparator : IComparer
+		private class ColumnDisplayIndexComparator : IComparer<DataGridViewColumn>
 		{
-			public int Compare (object o1, object o2)
+			public int Compare (DataGridViewColumn o1, DataGridViewColumn o2)
 			{
-				DataGridViewColumn col1 = (DataGridViewColumn) o1;
-				DataGridViewColumn col2 = (DataGridViewColumn) o2;
-				if (col1.DisplayIndex < col2.DisplayIndex) {
-					return -1;
-				} else if (col1.DisplayIndex > col2.DisplayIndex) {
-					return 1;
-				} else {
-					return 0;
-				}
+				return o1.DisplayIndex - o2.DisplayIndex;
 			}
 		}
 	}
