@@ -1,3 +1,10 @@
+2008-04-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* FileTest.cs: Renamed and improved existing tests. Avoid use of
+	ExpectedException.
+	* FileSystemInfoTest.cs: No longer derive from deprecated Assertion
+	class. Added (de)serialization tests.
+
 2008-04-04  Dick Porter  <dick@ximian.com>
 
 	* FileTest.cs: Test moving a file when the access mode disallows

@@ -8,6 +8,8 @@
 using System;
 using System.Globalization;
 using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 
 using NUnit.Framework;
@@ -15,14 +17,14 @@ using NUnit.Framework;
 namespace MonoTests.System.IO
 {
 	[TestFixture]
-	public class FileSystemInfoTest : Assertion
+	public class FileSystemInfoTest
 	{
 		CultureInfo old_culture;
 		string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
 		static readonly char DSC = Path.DirectorySeparatorChar;
 
 		[SetUp]
-		protected void SetUp()
+		public void SetUp()
 		{
 			if (Directory.Exists (TempFolder))
 				Directory.Delete (TempFolder, true);
@@ -32,29 +34,26 @@ namespace MonoTests.System.IO
 		}
 
 		[TearDown]
-		protected void TearDown()
+		public void TearDown()
 		{
 			if (Directory.Exists (TempFolder))
 				Directory.Delete (TempFolder, true);
 			Thread.CurrentThread.CurrentCulture = old_culture;
 		}
 		
-		bool Windows
-		{
+		bool Windows {
 			get {
 				return Path.DirectorySeparatorChar == '\\';
 			}
 		}
 
-		bool Unix
-		{
+		bool Unix {
 			get {
 				return Path.DirectorySeparatorChar == '/';
 			}
 		}
 
-		bool Mac
-		{
+		bool Mac {
 			get {
 				return Path.DirectorySeparatorChar == ':';
 			}
@@ -76,50 +75,50 @@ namespace MonoTests.System.IO
 		[Category("TargetJvmNotSupported")] // CreationTime not supported for TARGET_JVM
 		public void CreationTimeFile ()
 		{
+			if (Unix)
+				Assert.Ignore ("Unix doesn't support CreationTimes");
+
 			string path = TempFolder + DSC + "FSIT.CreationTime.Test";
 			DeleteFile (path);
-			if (Unix) {  // Unix doesn't support CreationTimes
-				return;
-			}
+
 			try {
 				File.Create (path).Close ();
 				FileSystemInfo info = new FileInfo (path);
 				info.CreationTime = new DateTime (1999, 12, 31, 11, 59, 59);
 
 				DateTime time = info.CreationTime;
-				AssertEquals ("test#01", 1999, time.Year);
-				AssertEquals ("test#02", 12, time.Month);
-				AssertEquals ("test#03", 31, time.Day);
-				AssertEquals ("test#04", 11, time.Hour);
-				AssertEquals ("test#05", 59, time.Minute);
-				AssertEquals ("test#06", 59, time.Second);
+				Assert.AreEqual (1999, time.Year, "#A1");
+				Assert.AreEqual (12, time.Month, "#A2");
+				Assert.AreEqual (31, time.Day, "#A3");
+				Assert.AreEqual (11, time.Hour, "#A4");
+				Assert.AreEqual (59, time.Minute, "#A5");
+				Assert.AreEqual (59, time.Second, "#A6");
 				
 				time = TimeZone.CurrentTimeZone.ToLocalTime (info.CreationTimeUtc);
-				AssertEquals ("test#07", 1999, time.Year);
-				AssertEquals ("test#08", 12, time.Month);
-				AssertEquals ("test#09", 31, time.Day);
-				AssertEquals ("test#10", 11, time.Hour);
-				AssertEquals ("test#11", 59, time.Minute);
-				AssertEquals ("test#12", 59, time.Second);
+				Assert.AreEqual (1999, time.Year, "#B1");
+				Assert.AreEqual (12, time.Month, "#B2");
+				Assert.AreEqual (31, time.Day, "#B3");
+				Assert.AreEqual (11, time.Hour, "#B4");
+				Assert.AreEqual (59, time.Minute, "#B5");
+				Assert.AreEqual (59, time.Second, "#B6");
 				
 				info.CreationTimeUtc = new DateTime (1999, 12, 31, 11, 59, 59);
 
 				time = TimeZone.CurrentTimeZone.ToUniversalTime (info.CreationTime);
-				AssertEquals ("test#13", 1999, time.Year);
-				AssertEquals ("test#14", 12, time.Month);
-				AssertEquals ("test#15", 31, time.Day);
-				AssertEquals ("test#16", 11, time.Hour);
-				AssertEquals ("test#17", 59, time.Minute);
-				AssertEquals ("test#18", 59, time.Second);
+				Assert.AreEqual (1999, time.Year, "#C1");
+				Assert.AreEqual (12, time.Month, "#C2");
+				Assert.AreEqual (31, time.Day, "#C3");
+				Assert.AreEqual (11, time.Hour, "#C4");
+				Assert.AreEqual (59, time.Minute, "#C5");
+				Assert.AreEqual (59, time.Second, "#C6");
 
 				time = info.CreationTimeUtc;
-				AssertEquals ("test#19", 1999, time.Year);
-				AssertEquals ("test#20", 12, time.Month);
-				AssertEquals ("test#21", 31, time.Day);
-				AssertEquals ("test#22", 11, time.Hour);
-				AssertEquals ("test#23", 59, time.Minute);
-				AssertEquals ("test#24", 59, time.Second);
-
+				Assert.AreEqual (1999, time.Year, "#D1");
+				Assert.AreEqual (12, time.Month, "#D2");
+				Assert.AreEqual (31, time.Day, "#D3");
+				Assert.AreEqual (11, time.Hour, "#D4");
+				Assert.AreEqual (59, time.Minute, "#D5");
+				Assert.AreEqual (59, time.Second, "#D6");
 			} finally {
 				DeleteFile (path);
 			}
@@ -129,39 +128,38 @@ namespace MonoTests.System.IO
 		[Category("TargetJvmNotSupported")] // CreationTime not supported for TARGET_JVM
 		public void CreationTimeDirectory ()
 		{
+			if (Unix)
+				Assert.Ignore ("Unix doesn't support CreationTimes");
+
 			string path = TempFolder + DSC + "FSIT.CreationTimeDirectory.Test";
 			DeleteDir (path);
-			if (Unix) {  // Unix doesn't support CreationTimes
-				return;
-			}
-			
+
 			try {
 				FileSystemInfo info = Directory.CreateDirectory (path);
 				info.CreationTime = new DateTime (1999, 12, 31, 11, 59, 59);
 				DateTime time = info.CreationTime;
-				
-				AssertEquals ("test#01", 1999, time.Year);
-				AssertEquals ("test#02", 12, time.Month);
-				AssertEquals ("test#03", 31, time.Day);
+
+				Assert.AreEqual (1999, time.Year, "#A1");
+				Assert.AreEqual (12, time.Month, "#A2");
+				Assert.AreEqual (31, time.Day, "#A3");
 				
 				time = TimeZone.CurrentTimeZone.ToLocalTime (info.CreationTimeUtc);
-				AssertEquals ("test#07", 1999, time.Year);
-				AssertEquals ("test#08", 12, time.Month);
-				AssertEquals ("test#09", 31, time.Day);
-				AssertEquals ("test#10", 11, time.Hour);
+				Assert.AreEqual (1999, time.Year, "#B1");
+				Assert.AreEqual (12, time.Month, "#B2");
+				Assert.AreEqual (31, time.Day, "#B3");
+				Assert.AreEqual (11, time.Hour, "#B4");
 				
 				info.CreationTimeUtc = new DateTime (1999, 12, 31, 11, 59, 59);
 				
 				time = TimeZone.CurrentTimeZone.ToUniversalTime (info.CreationTime);
-				AssertEquals ("test#13", 1999, time.Year);
-				AssertEquals ("test#14", 12, time.Month);
-				AssertEquals ("test#15", 31, time.Day);
+				Assert.AreEqual (1999, time.Year, "#C1");
+				Assert.AreEqual (12, time.Month, "#C2");
+				Assert.AreEqual (31, time.Day, "#C3");
 				
 				time = TimeZone.CurrentTimeZone.ToLocalTime (info.CreationTimeUtc);
-				AssertEquals ("test#19", 1999, time.Year);
-				AssertEquals ("test#20", 12, time.Month);
-				AssertEquals ("test#21", 31, time.Day);
-				
+				Assert.AreEqual (1999, time.Year, "#D1");
+				Assert.AreEqual (12, time.Month, "#D2");
+				Assert.AreEqual (31, time.Day, "#D3");
 			} finally {
 				DeleteDir (path);
 			}
@@ -179,24 +177,24 @@ namespace MonoTests.System.IO
 				FileSystemInfo info = new FileInfo (path);
 				
 				DateTime time = TimeZone.CurrentTimeZone.ToUniversalTime(info.CreationTime);
-				AssertEquals ("test#01", 1601, time.Year);
-				AssertEquals ("test#02", 1, time.Month);
-				AssertEquals ("test#03", 1, time.Day);
-				AssertEquals ("test#04", 0, time.Hour);
-				AssertEquals ("test#05", 0, time.Minute);
-				AssertEquals ("test#06", 0, time.Second);
-				AssertEquals ("test#07", 0, time.Millisecond);
+				Assert.AreEqual (1601, time.Year, "#A1");
+				Assert.AreEqual (1, time.Month, "#A2");
+				Assert.AreEqual (1, time.Day, "#A3");
+				Assert.AreEqual (0, time.Hour, "#A4");
+				Assert.AreEqual (0, time.Minute, "#A5");
+				Assert.AreEqual (0, time.Second, "#A6");
+				Assert.AreEqual (0, time.Millisecond, "#A7");
 				
 				info = new DirectoryInfo (path);
 				
 				time = TimeZone.CurrentTimeZone.ToUniversalTime(info.CreationTime);
-				AssertEquals ("test#08", 1601, time.Year);
-				AssertEquals ("test#09", 1, time.Month);
-				AssertEquals ("test#10", 1, time.Day);
-				AssertEquals ("test#11", 0, time.Hour);
-				AssertEquals ("test#12", 0, time.Minute);
-				AssertEquals ("test#13", 0, time.Second);
-				AssertEquals ("test#14", 0, time.Millisecond);
+				Assert.AreEqual (1601, time.Year, "#B1");
+				Assert.AreEqual (1, time.Month, "#B2");
+				Assert.AreEqual (1, time.Day, "#B3");
+				Assert.AreEqual (0, time.Hour, "#B4");
+				Assert.AreEqual (0, time.Minute, "#B5");
+				Assert.AreEqual (0, time.Second, "#B6");
+				Assert.AreEqual (0, time.Millisecond, "#B7");
 			} finally {
 				DeleteFile (path);
 				DeleteDir (path);
@@ -211,7 +209,7 @@ namespace MonoTests.System.IO
 			
 			try {
 				FileSystemInfo info = new FileInfo (path);
-				AssertEquals ("test#01", ".Test", info.Extension);
+				Assert.AreEqual (".Test", info.Extension);
 			} finally {
 				DeleteFile (path);
 			}
@@ -225,17 +223,16 @@ namespace MonoTests.System.IO
 			DeleteFile (path);
 			
 			try {
-				
 				FileSystemInfo info = new FileInfo (path);
 				DateTime time = TimeZone.CurrentTimeZone.ToUniversalTime(info.LastAccessTime);
 
-				AssertEquals ("test#01", 1601, time.Year);
-				AssertEquals ("test#02", 1, time.Month);
-				AssertEquals ("test#03", 1, time.Day);
-				AssertEquals ("test#04", 0, time.Hour);
-				AssertEquals ("test#05", 0, time.Minute);
-				AssertEquals ("test#06", 0, time.Second);
-				AssertEquals ("test#07", 0, time.Millisecond);
+				Assert.AreEqual (1601, time.Year, "#1");
+				Assert.AreEqual (1, time.Month, "#2");
+				Assert.AreEqual (1, time.Day, "#3");
+				Assert.AreEqual (0, time.Hour, "#4");
+				Assert.AreEqual (0, time.Minute, "#5");
+				Assert.AreEqual (0, time.Second, "#6");
+				Assert.AreEqual (0, time.Millisecond, "#7");
 			} finally {
 				DeleteFile (path);
 			}
@@ -256,30 +253,29 @@ namespace MonoTests.System.IO
 				
 				info.LastAccessTime = new DateTime (2000, 1, 1, 1, 1, 1);
 				time = info.LastAccessTime;
-				AssertEquals ("test#01", 2000, time.Year);
-				AssertEquals ("test#02", 1, time.Month);
-				AssertEquals ("test#03", 1, time.Day);
-				AssertEquals ("test#04", 1, time.Hour);
+				Assert.AreEqual (2000, time.Year, "#A1");
+				Assert.AreEqual (1, time.Month, "#A2");
+				Assert.AreEqual (1, time.Day, "#A3");
+				Assert.AreEqual (1, time.Hour, "#A4");
 				
 				time = TimeZone.CurrentTimeZone.ToLocalTime (info.LastAccessTimeUtc);
-				AssertEquals ("test#05", 2000, time.Year);
-				AssertEquals ("test#06", 1, time.Month);
-				AssertEquals ("test#07", 1, time.Day);
-				AssertEquals ("test#08", 1, time.Hour);
+				Assert.AreEqual (2000, time.Year, "#B1");
+				Assert.AreEqual (1, time.Month, "#B2");
+				Assert.AreEqual (1, time.Day, "#B3");
+				Assert.AreEqual (1, time.Hour, "#B4");
 				
 				info.LastAccessTimeUtc = new DateTime (2000, 1, 1, 1, 1, 1);
 				time = TimeZone.CurrentTimeZone.ToUniversalTime (info.LastAccessTime);
-				AssertEquals ("test#09", 2000, time.Year);
-				AssertEquals ("test#10", 1, time.Month);
-				AssertEquals ("test#11", 1, time.Day);
-				AssertEquals ("test#12", 1, time.Hour);
+				Assert.AreEqual (2000, time.Year, "#C1");
+				Assert.AreEqual (1, time.Month, "#C2");
+				Assert.AreEqual (1, time.Day, "#C3");
+				Assert.AreEqual (1, time.Hour, "#C4");
 
 				time = info.LastAccessTimeUtc;
-				AssertEquals ("test#13", 2000, time.Year);
-				AssertEquals ("test#14", 1, time.Month);
-				AssertEquals ("test#15", 1, time.Day);
-				AssertEquals ("test#16", 1, time.Hour);
-				
+				Assert.AreEqual (2000, time.Year, "#D1");
+				Assert.AreEqual (1, time.Month, "#D2");
+				Assert.AreEqual (1, time.Day, "#D3");
+				Assert.AreEqual (1, time.Hour, "#D4");
 			} finally {
 				DeleteFile (path);
 			}
@@ -296,14 +292,14 @@ namespace MonoTests.System.IO
 
 				FileSystemInfo info = new DirectoryInfo (path);
 				DateTime time = TimeZone.CurrentTimeZone.ToUniversalTime(info.LastWriteTime);
-				
-				AssertEquals ("test#01", 1601, time.Year);
-				AssertEquals ("test#02", 1, time.Month);
-				AssertEquals ("test#03", 1, time.Day);
-				AssertEquals ("test#04", 0, time.Hour);
-				AssertEquals ("test#05", 0, time.Minute);
-				AssertEquals ("test#06", 0, time.Second);
-				AssertEquals ("test#07", 0, time.Millisecond);
+
+				Assert.AreEqual (1601, time.Year, "#1");
+				Assert.AreEqual (1, time.Month, "#2");
+				Assert.AreEqual (1, time.Day, "#3");
+				Assert.AreEqual (0, time.Hour, "#4");
+				Assert.AreEqual (0, time.Minute, "#5");
+				Assert.AreEqual (0, time.Second, "#6");
+				Assert.AreEqual (0, time.Millisecond, "#7");
 			} finally {
 				DeleteDir (path);
 			}
@@ -320,31 +316,72 @@ namespace MonoTests.System.IO
 				
 				info.LastWriteTime = new DateTime (2000, 1, 1, 1, 1, 1);
 				DateTime time = info.LastWriteTime;
-				
-				AssertEquals ("test#01", 2000, time.Year);
-				AssertEquals ("test#02", 1, time.Month);
-				AssertEquals ("test#03", 1, time.Day);
-				AssertEquals ("test#04", 1, time.Hour);
+
+				Assert.AreEqual (2000, time.Year, "#A1");
+				Assert.AreEqual (1, time.Month, "#A2");
+				Assert.AreEqual (1, time.Day, "#A3");
+				Assert.AreEqual (1, time.Hour, "#A4");
 				
 				time = info.LastWriteTimeUtc.ToLocalTime ();
-				AssertEquals ("test#05", 2000, time.Year);
-				AssertEquals ("test#06", 1, time.Month);
-				AssertEquals ("test#07", 1, time.Day);
-				AssertEquals ("test#08", 1, time.Hour);
+				Assert.AreEqual (2000, time.Year, "#B1");
+				Assert.AreEqual (1, time.Month, "#B2");
+				Assert.AreEqual (1, time.Day, "#B3");
+				Assert.AreEqual (1, time.Hour, "#B4");
 
 				info.LastWriteTimeUtc = new DateTime (2000, 1, 1, 1, 1, 1);
 				time = info.LastWriteTimeUtc;
-				AssertEquals ("test#09", 2000, time.Year);
-				AssertEquals ("test#10", 1, time.Month);
-				AssertEquals ("test#11", 1, time.Day);
-				AssertEquals ("test#12", 1, time.Hour);
+				Assert.AreEqual (2000, time.Year, "#C1");
+				Assert.AreEqual (1, time.Month, "#C2");
+				Assert.AreEqual (1, time.Day, "#C3");
+				Assert.AreEqual (1, time.Hour, "#C4");
 
 				time = info.LastWriteTime.ToUniversalTime ();
-				AssertEquals ("test#13", 2000, time.Year);
-				AssertEquals ("test#14", 1, time.Month);
-				AssertEquals ("test#15", 1, time.Day);
-				AssertEquals ("test#16", 1, time.Hour);
+				Assert.AreEqual (2000, time.Year, "#D1");
+				Assert.AreEqual (1, time.Month, "#D2");
+				Assert.AreEqual (1, time.Day, "#D3");
+				Assert.AreEqual (1, time.Hour, "#D4");
+			} finally {
+				DeleteDir (path);
+			}
+		}
 
+		[Test]
+		public void Serialization ()
+		{
+			string path = TempFolder + DSC + "FSIT.Serialization.Test";
+			DeleteDir (path);
+
+			try {
+				FileSystemInfo info = Directory.CreateDirectory (path);
+
+				SerializationInfo si = new SerializationInfo (
+					typeof (FileSystemInfo), new FormatterConverter ());
+				info.GetObjectData (si, new StreamingContext ());
+
+				Assert.AreEqual (2, si.MemberCount, "#1");
+				Assert.AreEqual (path, si.GetString ("OriginalPath"), "#2");
+				Assert.AreEqual (path, si.GetString ("FullPath"), "#3");
+			} finally {
+				DeleteDir (path);
+			}
+		}
+
+		[Test]
+		public void Deserialization ()
+		{
+			string path = TempFolder + DSC + "FSIT.Deserialization.Test";
+			DeleteDir (path);
+
+			try {
+				FileSystemInfo info = Directory.CreateDirectory (path);
+
+				MemoryStream ms = new MemoryStream ();
+				BinaryFormatter bf = new BinaryFormatter ();
+				bf.Serialize (ms, info);
+				ms.Position = 0;
+
+				FileSystemInfo clone = (FileSystemInfo) bf.Deserialize (ms);
+				Assert.AreEqual (clone.FullName, info.FullName);
 			} finally {
 				DeleteDir (path);
 			}

@@ -1,3 +1,9 @@
+2008-04-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* File.cs: Changed argument names and thrown exception to better match
+	.NET. Use String.Length instead of comparison with empty string.
+	* DirectoryInfo.cs: Added missing deserialization ctor.
+
 2008-04-04  Dick Porter  <dick@ximian.com>
 
 	* File.cs: Pretty up the file share exception with the path name.

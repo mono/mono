@@ -33,6 +33,7 @@
 
 using System.Collections;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 using System.Text;
 #if NET_2_0
 using System.Security.AccessControl;
@@ -75,6 +76,11 @@ namespace System.IO {
 						parent += Path.DirectorySeparatorChar;
 				}
 			}
+		}
+
+		private DirectoryInfo (SerializationInfo info, StreamingContext context)
+			: base (info, context)
+		{
 		}
 
 		// properties

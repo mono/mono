@@ -42,9 +42,6 @@ using System.Security.AccessControl;
 
 namespace System.IO
 {
-	/// <summary>
-	/// 
-	/// </summary>
 #if NET_2_0
 	[ComVisible (true)]
 #endif
@@ -60,17 +57,17 @@ namespace System.IO
 #if !NET_2_0
 		private File () {}
 #endif
-		
+
 #if NET_2_0
 		public static void AppendAllText (string path, string contents)
-		{	
+		{
 			using (TextWriter w = new StreamWriter (path, true)) {
 				w.Write (contents);
 			}
 		}
 
 		public static void AppendAllText (string path, string contents, Encoding encoding)
-		{	
+		{
 			using (TextWriter w = new StreamWriter (path, true, encoding)) {
 				w.Write (contents);
 			}
@@ -78,61 +75,62 @@ namespace System.IO
 #endif
 
 		public static StreamWriter AppendText (string path)
-		{	
+		{
 			return new StreamWriter (path, true);
 		}
 
-		public static void Copy (string sourceFilename, string destFilename)
+		public static void Copy (string sourceFileName, string destFileName)
 		{
-			Copy (sourceFilename, destFilename, false);
+			Copy (sourceFileName, destFileName, false);
 		}
 
-		public static void Copy (string src, string dest, bool overwrite)
-		{	
-			if (src == null)
-				throw new ArgumentNullException ("src");
-			if (dest == null)
-				throw new ArgumentNullException ("dest");
-			if (src.Trim () == "" || src.IndexOfAny (Path.InvalidPathChars) != -1)
-				throw new ArgumentException (Locale.GetText ("src is null"));
-			if (dest.Trim () == "" || dest.IndexOfAny (Path.InvalidPathChars) != -1)
-				throw new ArgumentException (Locale.GetText ("dest is empty or contains invalid characters"));
-			if (!Exists (src))
-				throw new FileNotFoundException (Locale.GetText ("{0} does not exist", src), src);
+		public static void Copy (string sourceFileName, string destFileName, bool overwrite)
+		{
+			MonoIOError error;
 
-			if ((GetAttributes(src) & FileAttributes.Directory) == FileAttributes.Directory){
-				throw new ArgumentException(Locale.GetText ("{0} is a directory", src));
-			}
-			
-			if (Exists (dest)) {
-				if ((GetAttributes(dest) & FileAttributes.Directory) == FileAttributes.Directory){
-					throw new ArgumentException (Locale.GetText ("{0} is a directory", dest));
-				}
+			if (sourceFileName == null)
+				throw new ArgumentNullException ("sourceFileName");
+			if (destFileName == null)
+				throw new ArgumentNullException ("destFileName");
+			if (sourceFileName.Length == 0)
+				throw new ArgumentException ("An empty file name is not valid.", "sourceFileName");
+			if (sourceFileName.Trim ().Length == 0 || sourceFileName.IndexOfAny (Path.InvalidPathChars) != -1)
+				throw new ArgumentException ("The file name is not valid.");
+			if (destFileName.Length == 0)
+				throw new ArgumentException ("An empty file name is not valid.", "destFileName");
+			if (destFileName.Trim ().Length == 0 || destFileName.IndexOfAny (Path.InvalidPathChars) != -1)
+				throw new ArgumentException ("The file name is not valid.");
+
+			if (!MonoIO.Exists (sourceFileName, out error))
+				throw new FileNotFoundException (Locale.GetText ("{0} does not exist", sourceFileName), sourceFileName);
+			if ((GetAttributes (sourceFileName) & FileAttributes.Directory) == FileAttributes.Directory)
+				throw new ArgumentException (Locale.GetText ("{0} is a directory", sourceFileName));
+
+			if (MonoIO.Exists (destFileName, out error)) {
+				if ((GetAttributes (destFileName) & FileAttributes.Directory) == FileAttributes.Directory)
+					throw new ArgumentException (Locale.GetText ("{0} is a directory", destFileName));
 				if (!overwrite)
-					throw new IOException (Locale.GetText ("{0} already exists", dest));
+					throw new IOException (Locale.GetText ("{0} already exists", destFileName));
 			}
 
-			string DirName = Path.GetDirectoryName(dest);
+			string DirName = Path.GetDirectoryName (destFileName);
 			if (DirName != String.Empty && !Directory.Exists (DirName))
 				throw new DirectoryNotFoundException (Locale.GetText ("Destination directory not found: {0}",DirName));
 
-			MonoIOError error;
-			
-			if (!MonoIO.CopyFile (src, dest, overwrite, out error)){
-				string p = Locale.GetText ("{0}\" or \"{1}", src, dest);
+			if (!MonoIO.CopyFile (sourceFileName, destFileName, overwrite, out error)) {
+				string p = Locale.GetText ("{0}\" or \"{1}", sourceFileName, destFileName);
 				throw MonoIO.GetException (p, error);
 			}
 		}
 
 		public static FileStream Create (string path)
 		{
-			return(Create (path, 8192, FileOptions.None, null));
+			return Create (path, 8192, FileOptions.None, null);
 		}
 
-		public static FileStream Create (string path, int buffersize)
+		public static FileStream Create (string path, int bufferSize)
 		{
-			return(Create (path, buffersize, FileOptions.None,
-				       null));
+			return Create (path, bufferSize, FileOptions.None, null);
 		}
 
 #if NET_2_0
@@ -140,7 +138,7 @@ namespace System.IO
 		public static FileStream Create (string path, int bufferSize,
 						 FileOptions options)
 		{
-			return(Create (path, bufferSize, options, null));
+			return Create (path, bufferSize, options, null);
 		}
 		
 		[MonoTODO ("options and fileSecurity not implemented")]
@@ -172,14 +170,10 @@ namespace System.IO
 		}
 
 		public static StreamWriter CreateText(string path)
-		
 		{
 			return new StreamWriter (path, false);
-		
 		}
-		
-		
-		
+
 		public static void Delete (string path)
 		{
 			if (null == path)
@@ -208,7 +202,7 @@ namespace System.IO
 			// any problem with the path or permissions.
 			// Minimizes what information can be
 			// discovered by using this method.
-			if (null == path || String.Empty == path.Trim()
+			if (null == path || path.Trim().Length == 0
 			    || path.IndexOfAny(Path.InvalidPathChars) >= 0) {
 				return false;
 			}
@@ -231,27 +225,20 @@ namespace System.IO
 
 		public static FileAttributes GetAttributes (string path)
 		{
-			if (null == path) {
+			if (path == null)
 				throw new ArgumentNullException("path");
-			}
-			
-			if (String.Empty == path.Trim()) {
+			if (path.Trim ().Length == 0)
 				throw new ArgumentException (Locale.GetText ("Path is empty"));
-			}
-
-			if (path.IndexOfAny(Path.InvalidPathChars) >= 0) {
-				throw new ArgumentException(Locale.GetText ("Path contains invalid chars"));
-			}
+			if (path.IndexOfAny (Path.InvalidPathChars) >= 0)
+				throw new ArgumentException (Locale.GetText ("Path contains invalid chars"));
 
 			MonoIOError error;
 			FileAttributes attrs;
 			
 			attrs = MonoIO.GetFileAttributes (path, out error);
-			if (error != MonoIOError.ERROR_SUCCESS) {
+			if (error != MonoIOError.ERROR_SUCCESS)
 				throw MonoIO.GetException (path, error);
-			}
-
-			return(attrs);
+			return attrs;
 		}
 
 		public static DateTime GetCreationTime (string path)
@@ -267,7 +254,7 @@ namespace System.IO
 				else
 					throw new IOException (path);
 #else
-				throw new IOException (path);
+				throw CreatePartOfPathNotFoundException (path);
 #endif
 			}
 			return DateTime.FromFileTime (stat.CreationTime);
@@ -291,7 +278,7 @@ namespace System.IO
 				else
 					throw new IOException (path);
 #else
-				throw new IOException (path);
+				throw CreatePartOfPathNotFoundException (path);
 #endif
 			}
 			return DateTime.FromFileTime (stat.LastAccessTime);
@@ -315,7 +302,7 @@ namespace System.IO
 				else
 					throw new IOException (path);
 #else
-				throw new IOException (path);
+				throw CreatePartOfPathNotFoundException (path);
 #endif
 			}
 			return DateTime.FromFileTime (stat.LastWriteTime);
@@ -326,53 +313,55 @@ namespace System.IO
 			return GetLastWriteTime (path).ToUniversalTime ();
 		}
 
-		public static void Move (string src, string dest)
+		public static void Move (string sourceFileName, string destFileName)
 		{
 			MonoIOError error;
 
-			if (src == null)
-				throw new ArgumentNullException ("src");
-			if (dest == null)
-				throw new ArgumentNullException ("dest");
-			if (src.Trim () == "" || src.IndexOfAny (Path.InvalidPathChars) != -1)
-				throw new ArgumentException ("src");
-			if (dest.Trim () == "" || dest.IndexOfAny (Path.InvalidPathChars) != -1)
-				throw new ArgumentException ("dest");
-			if (!MonoIO.Exists (src, out error))
-				throw new FileNotFoundException (Locale.GetText ("{0} does not exist", src), src);
-			if (MonoIO.ExistsDirectory (dest, out error))
-					throw new IOException (Locale.GetText ("{0} is a directory", dest));	
+			if (sourceFileName == null)
+				throw new ArgumentNullException ("sourceFileName");
+			if (destFileName == null)
+				throw new ArgumentNullException ("destFileName");
+			if (sourceFileName.Length == 0)
+				throw new ArgumentException ("An empty file name is not valid.", "sourceFileName");
+			if (sourceFileName.Trim ().Length == 0 || sourceFileName.IndexOfAny (Path.InvalidPathChars) != -1)
+				throw new ArgumentException ("The file name is not valid.");
+			if (destFileName.Length == 0)
+				throw new ArgumentException ("An empty file name is not valid.", "destFileName");
+			if (destFileName.Trim ().Length == 0 || destFileName.IndexOfAny (Path.InvalidPathChars) != -1)
+				throw new ArgumentException ("The file name is not valid.");
+			if (!MonoIO.Exists (sourceFileName, out error))
+				throw new FileNotFoundException (Locale.GetText ("{0} does not exist", sourceFileName), sourceFileName);
+			if (MonoIO.ExistsDirectory (destFileName, out error))
+				throw new IOException (Locale.GetText ("{0} is a directory", destFileName));
 
-			// Don't check for this error here to allow the runtime to check if src and dest
-			// are equal. Comparing src and dest is not enough.
-			//if (MonoIO.Exists (dest, out error))
-			//	throw new IOException (Locale.GetText ("{0} already exists", dest));
+			// Don't check for this error here to allow the runtime
+			// to check if sourceFileName and destFileName are equal.
+			// Comparing sourceFileName and destFileName is not enough.
+			//if (MonoIO.Exists (destFileName, out error))
+			//	throw new IOException (Locale.GetText ("{0} already exists", destFileName));
 
 			string DirName;
-			DirName = Path.GetDirectoryName(src);
-			if (DirName != String.Empty && !Directory.Exists (DirName))
-				throw new DirectoryNotFoundException(Locale.GetText ("Source directory not found: {0}", DirName));
-			DirName = Path.GetDirectoryName(dest);
+			DirName = Path.GetDirectoryName (destFileName);
 			if (DirName != String.Empty && !Directory.Exists (DirName))
 				throw new DirectoryNotFoundException(Locale.GetText ("Destination directory not found: {0}", DirName));
 
-			if (!MonoIO.MoveFile (src, dest, out error)) {
+			if (!MonoIO.MoveFile (sourceFileName, destFileName, out error)) {
 				if (error == MonoIOError.ERROR_ALREADY_EXISTS)
-					throw MonoIO.GetException (dest, error);
+					throw MonoIO.GetException (destFileName, error);
 				else if (error == MonoIOError.ERROR_SHARING_VIOLATION)
-					throw MonoIO.GetException (src, error);
+					throw MonoIO.GetException (sourceFileName, error);
 				
 				throw MonoIO.GetException (error);
 			}
 		}
 		
 		public static FileStream Open (string path, FileMode mode)
-		{	
+		{
 			return new FileStream (path, mode, mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite, FileShare.None);
 		}
 		
 		public static FileStream Open (string path, FileMode mode, FileAccess access)
-		{	
+		{
 			return new FileStream (path, mode, access, FileShare.None);
 		}
 
@@ -383,7 +372,7 @@ namespace System.IO
 		}
 		
 		public static FileStream OpenRead (string path)
-		{	
+		{
 			return new FileStream (path, FileMode.Open, FileAccess.Read, FileShare.Read);
 		}
 
@@ -416,9 +405,9 @@ namespace System.IO
 				throw new ArgumentNullException ("sourceFileName");
 			if (destinationFileName == null)
 				throw new ArgumentNullException ("destinationFileName");
-			if (sourceFileName.Trim () == "" || sourceFileName.IndexOfAny (Path.InvalidPathChars) != -1)
+			if (sourceFileName.Trim ().Length == 0 || sourceFileName.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException ("sourceFileName");
-			if (destinationFileName.Trim () == "" || destinationFileName.IndexOfAny (Path.InvalidPathChars) != -1)
+			if (destinationFileName.Trim ().Length == 0 || destinationFileName.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException ("destinationFileName");
 
 			string fullSource = Path.GetFullPath (sourceFileName);
@@ -439,7 +428,7 @@ namespace System.IO
 
 			string fullBackup = null;
 			if (destinationBackupFileName != null) {
-				if (destinationBackupFileName.Trim () == "" || 
+				if (destinationBackupFileName.Trim ().Length == 0 || 
 				    destinationBackupFileName.IndexOfAny (Path.InvalidPathChars) != -1)
 					throw new ArgumentException ("destinationBackupFileName");
 
@@ -467,70 +456,60 @@ namespace System.IO
 #endif
 
 		public static void SetAttributes (string path,
-						  FileAttributes attributes)
+						  FileAttributes fileAttributes)
 		{
 			MonoIOError error;
 			CheckPathExceptions (path);
-			
-			if (!MonoIO.SetFileAttributes (path, attributes,
-						       out error)) {
+
+			if (!MonoIO.SetFileAttributes (path, fileAttributes, out error))
 				throw MonoIO.GetException (path, error);
-			}
 		}
 
-		public static void SetCreationTime (string path,
-						    DateTime creation_time)
+		public static void SetCreationTime (string path, DateTime creationTime)
 		{
 			MonoIOError error;
 			CheckPathExceptions (path);
 			if (!MonoIO.Exists (path, out error))
 				throw MonoIO.GetException (path, error);
-			
-			if (!MonoIO.SetCreationTime (path, creation_time, out error)) {
+			if (!MonoIO.SetCreationTime (path, creationTime, out error))
 				throw MonoIO.GetException (path, error);
-			}
 		}
 
-		public static void SetCreationTimeUtc (string path,
-						    DateTime creation_time)
+		public static void SetCreationTimeUtc (string path, DateTime creationTimeUtc)
 		{
-			SetCreationTime (path, creation_time.ToLocalTime ());
+			SetCreationTime (path, creationTimeUtc.ToLocalTime ());
 		}
 
-		public static void SetLastAccessTime (string path,DateTime last_access_time)
+		public static void SetLastAccessTime (string path, DateTime lastAccessTime)
 		{
 			MonoIOError error;
 			CheckPathExceptions (path);
 			if (!MonoIO.Exists (path, out error))
 				throw MonoIO.GetException (path, error);
-
-			if (!MonoIO.SetLastAccessTime (path, last_access_time, out error)) {
+			if (!MonoIO.SetLastAccessTime (path, lastAccessTime, out error))
 				throw MonoIO.GetException (path, error);
-			}
 		}
 
-		public static void SetLastAccessTimeUtc (string path,DateTime last_access_time)
+		public static void SetLastAccessTimeUtc (string path, DateTime lastAccessTimeUtc)
 		{
-			SetLastAccessTime (path, last_access_time.ToLocalTime ());
+			SetLastAccessTime (path, lastAccessTimeUtc.ToLocalTime ());
 		}
 
 		public static void SetLastWriteTime (string path,
-						     DateTime last_write_time)
+						     DateTime lastWriteTime)
 		{
 			MonoIOError error;
 			CheckPathExceptions (path);
 			if (!MonoIO.Exists (path, out error))
 				throw MonoIO.GetException (path, error);
-
-			if (!MonoIO.SetLastWriteTime (path, last_write_time, out error)) {
+			if (!MonoIO.SetLastWriteTime (path, lastWriteTime, out error))
 				throw MonoIO.GetException (path, error);
-			}
 		}
 
 		public static void SetLastWriteTimeUtc (string path,
-						     DateTime last_write_time)
+						     DateTime lastWriteTimeUtc)
 		{
-			SetLastWriteTime (path, last_write_time.ToLocalTime ());
+			SetLastWriteTime (path, lastWriteTimeUtc.ToLocalTime ());
 		}
 
 		#region Private
@@ -539,7 +518,7 @@ namespace System.IO
 		{
 			if (path == null)
 				throw new System.ArgumentNullException("path");
-			if (path == "")
+			if (path.Length == 0)
 				throw new System.ArgumentException(Locale.GetText ("Path is empty"));
 			if (path.Trim().Length == 0)
 				throw new ArgumentException (Locale.GetText ("Path is empty"));
@@ -547,10 +526,17 @@ namespace System.IO
 				throw new ArgumentException (Locale.GetText ("Path contains invalid chars"));
 		}
 
+		private static IOException CreatePartOfPathNotFoundException (string path)
+		{
+			string msg = Locale.GetText ("Part of the path \"{0}\" could not be found.", path);
+			return new IOException (msg);
+		}
+
 		#endregion
 
 #if NET_2_0
-		static File() {
+		static File ()
+		{
 			_defaultLocalFileTime = new DateTime (1601, 1, 1);
 			_defaultLocalFileTime = _defaultLocalFileTime.ToLocalTime ();
 		}

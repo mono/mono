@@ -48,7 +48,7 @@ namespace MonoTests.System.IO
 			string path = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
 			try {
 				Assert.IsFalse (File.Exists (null), "#1");
-				Assert.IsFalse (File.Exists (""), "#2");
+				Assert.IsFalse (File.Exists (string.Empty), "#2");
 				Assert.IsFalse (File.Exists ("  \t\t  \t \n\t\n \n"), "#3");
 				DeleteFile (path);
 				s = File.Create (path);
@@ -76,35 +76,62 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[ExpectedException(typeof (ArgumentNullException))]
-		public void CtorArgumentNullException1 ()
+		public void Create_Path_Null ()
 		{
-			File.Create (null);
+			try {
+				File.Create (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("path", ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
-		[ExpectedException(typeof (ArgumentException))]
-		public void CtorArgumentException1 ()
+		public void Create_Path_Empty ()
 		{
-			File.Create ("");
+			try {
+				File.Create (string.Empty);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Empty file name is not legal
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
-		[ExpectedException(typeof (ArgumentException))]
-		public void CtorArgumentException2 ()
+		public void Create_Path_Whitespace ()
 		{
-			File.Create (" ");
+			try {
+				File.Create (" ");
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// The path is not of a legal form
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
-		[ExpectedException(typeof (DirectoryNotFoundException))]
-		public void CtorDirectoryNotFoundException ()
+		public void Create_Directory_DoesNotExist ()
 		{
 			FileStream stream = null;
 			string path = TempFolder + Path.DirectorySeparatorChar + "directory_does_not_exist" + Path.DirectorySeparatorChar + "foo";
 			
 			try {
 				stream = File.Create (path);
+				Assert.Fail ("#1");
+			} catch (DirectoryNotFoundException ex) {
+				Assert.AreEqual (typeof (DirectoryNotFoundException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
 			} finally {
 				if (stream != null)
 					stream.Close ();
@@ -113,13 +140,15 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		public void TestCreate ()
+		public void Create ()
 		{
 			FileStream stream = null;
-			string path = "";
+			string path = null;
+
 			/* positive test: create resources/foo */
+			path = TempFolder + Path.DirectorySeparatorChar + "foo";
 			try {
-				path = TempFolder + Path.DirectorySeparatorChar + "foo";
+
 				stream = File.Create (path);
 				Assert.IsTrue (File.Exists (path), "#1");
 				stream.Close ();
@@ -128,13 +157,12 @@ namespace MonoTests.System.IO
 					stream.Close ();
 				DeleteFile (path);
 			}
-			
-			path = "";
+
 			stream = null;
 
 			/* positive test: repeat test above again to test for overwriting file */
+			path = TempFolder + Path.DirectorySeparatorChar + "foo";
 			try {
-				path = TempFolder + Path.DirectorySeparatorChar + "foo";
 				stream = File.Create (path);
 				Assert.IsTrue (File.Exists (path), "#2");
 				stream.Close ();
@@ -146,71 +174,135 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
-		public void CopyArgumentNullException1 ()
+		public void Copy_SourceFileName_Null ()
 		{
-			File.Copy (null, "b");
-		}
-
-		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
-		public void CopyArgumentNullException2 ()
-		{
-			File.Copy ("a", null);
-		}
-
-		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void CopyArgumentException1 ()
-		{
-			File.Copy ("", "b");
-		}
-
-		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void CopyArgumentException2 ()
-		{
-			File.Copy ("a", "");
-		}
-
-		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void CopyArgumentException3 ()
-		{
-			File.Copy (" ", "b");
-		}
-
-		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void CopyArgumentException4 ()
-		{
-			File.Copy ("a", " ");
-		}
-
-		[Test]
-		[ExpectedException(typeof(FileNotFoundException))]
-		public void CopyFileNotFoundException ()
-		{
-			File.Copy ("doesnotexist", "b");
-		}
-
-		[ExpectedException(typeof(IOException))]
-		public void CopyIOException ()
-		{
-			DeleteFile (TempFolder + Path.DirectorySeparatorChar + "bar");
-			DeleteFile (TempFolder + Path.DirectorySeparatorChar + "AFile.txt");
 			try {
-				File.Create (TempFolder + Path.DirectorySeparatorChar + "AFile.txt").Close ();
-				File.Copy (TempFolder + Path.DirectorySeparatorChar + "AFile.txt", TempFolder + Path.DirectorySeparatorChar + "bar");
-				File.Copy (TempFolder + Path.DirectorySeparatorChar + "AFile.txt", TempFolder + Path.DirectorySeparatorChar + "bar");
-			} finally {
-				DeleteFile (TempFolder + Path.DirectorySeparatorChar + "bar");
-				DeleteFile (TempFolder + Path.DirectorySeparatorChar + "AFile.txt");
+				File.Copy (null, "b");
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("sourceFileName", ex.ParamName, "#5");
 			}
 		}
 
 		[Test]
-		public void TestCopy ()
+		public void Copy_DestFileName_Null ()
+		{
+			try {
+				File.Copy ("a", null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("destFileName", ex.ParamName, "#5");
+			}
+		}
+
+		[Test]
+		public void Copy_SourceFileName_Empty ()
+		{
+			try {
+				File.Copy (string.Empty, "b");
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Empty file name is not legal
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("sourceFileName", ex.ParamName, "#5");
+			}
+		}
+
+		[Test]
+		public void Copy_DestFileName_Empty ()
+		{
+			try {
+				File.Copy ("a", string.Empty);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Empty file name is not legal
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("destFileName", ex.ParamName, "#5");
+			}
+		}
+
+		[Test]
+		public void Copy_SourceFileName_Whitespace ()
+		{
+			try {
+				File.Copy (" ", "b");
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// The path is not of a legal form
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+		}
+
+		[Test]
+		public void Copy_DestFileName_Whitespace ()
+		{
+			try {
+				File.Copy ("a", " ");
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// The path is not of a legal form
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+		}
+
+		[Test]
+		public void Copy_SourceFileName_DoesNotExist ()
+		{
+			try {
+				File.Copy ("doesnotexist", "b");
+				Assert.Fail ("#1");
+			} catch (FileNotFoundException ex) {
+				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#2");
+				Assert.AreEqual ("doesnotexist", ex.FileName, "#3");
+				Assert.IsNull (ex.InnerException, "#4");
+				Assert.IsNotNull (ex.Message, "#5");
+			}
+		}
+
+		[Test]
+		public void Copy_DestFileName_AlreadyExists ()
+		{
+			string source = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
+			string dest = TempFolder + Path.DirectorySeparatorChar + "bar";
+			DeleteFile (source);
+			DeleteFile (dest);
+			try {
+				File.Create (source).Close ();
+				File.Copy (source, dest);
+				try {
+					File.Copy (source, dest);
+					Assert.Fail ("#1");
+				} catch (IOException ex) {
+					// The file '...' already exists.
+					Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.IsTrue (ex.Message.IndexOf (dest) != -1, "#5");
+				}
+			} finally {
+				DeleteFile (dest);
+				DeleteFile (source);
+			}
+		}
+
+		[Test]
+		public void Copy ()
 		{
 			string path1 = TempFolder + Path.DirectorySeparatorChar + "bar";
 			string path2 = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
@@ -235,39 +327,68 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void DeleteArgumentNullException ()
+		public void Delete_Path_Null ()
 		{
-			File.Delete (null);
+			try {
+				File.Delete (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("path", ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void DeleteArgumentException1 ()
+		public void Delete_Path_Empty ()
 		{
-			File.Delete ("");
+			try {
+				File.Delete (string.Empty);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Empty file name is not legal
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void DeleteArgumentException2 ()
+		public void Delete_Path_Whitespace ()
 		{
-			File.Delete (" ");
+			try {
+				File.Delete (" ");
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// The path is not of a legal form
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (DirectoryNotFoundException))]
-		public void DeleteDirectoryNotFoundException ()
+		public void Delete_Directory_DoesNotExist ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "directory_does_not_exist" + Path.DirectorySeparatorChar + "foo";
 			if (Directory.Exists (path))
 				Directory.Delete (path, true);
-			File.Delete (path);
+
+			try {
+				File.Delete (path);
+				Assert.Fail ("#1");
+			} catch (DirectoryNotFoundException ex) {
+				Assert.AreEqual (typeof (DirectoryNotFoundException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 
-
 		[Test]
-		public void TestDelete ()
+		public void Delete ()
 		{
 			string foopath = TempFolder + Path.DirectorySeparatorChar + "foo";
 			DeleteFile (foopath);
@@ -280,17 +401,25 @@ namespace MonoTests.System.IO
 			}
 		}
 
-		[Test]
-		[ExpectedException(typeof (IOException))]
-		[Category("NotWorking")]
-		public void DeleteOpenStreamException ()
+		[Test] // bug #323389
+		[Category ("NotWorking")]
+		public void Delete_FileLock ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "DeleteOpenStreamException";
 			DeleteFile (path);
 			FileStream stream = null;
 			try {
 				stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.ReadWrite);
-				File.Delete (path);
+				try {
+					File.Delete (path);
+					Assert.Fail ("#1");
+				} catch (IOException ex) {
+					// The process cannot access the file because
+					// it is being used by another process
+					Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+				}
 			} finally {
 				if (stream != null)
 					stream.Close ();
@@ -298,10 +427,12 @@ namespace MonoTests.System.IO
 			}
 		}
 
-		[Test] // bug #82514
-		[Category ("NotWorking")]
+		[Test]
 		public void GetAttributes_Archive ()
 		{
+			if (RunningOnUnix)
+				Assert.Ignore ("bug #325181: FileAttributes.Archive has no effect on Unix.");
+
 			FileAttributes attrs;
 
 			string path = Path.Combine (TempFolder, "GetAttributes.tmp");
@@ -317,10 +448,12 @@ namespace MonoTests.System.IO
 			Assert.IsFalse ((attrs & FileAttributes.Archive) != 0, "#2");
 		}
 
-		[Test] // bug #82514
-		[Category ("NotWorking")]
+		[Test]
 		public void GetAttributes_Default_File ()
 		{
+			if (RunningOnUnix)
+				Assert.Ignore ("bug #325181: FileAttributes.Archive has no effect on Unix.");
+
 			string path = Path.Combine (TempFolder, "GetAttributes.tmp");
 			File.Create (path).Close ();
 
@@ -413,11 +546,18 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[ExpectedException (typeof (FileNotFoundException))]
 		public void GetAttributes_Path_DoesNotExist ()
 		{
 			string path = Path.Combine (TempFolder, "GetAttributes.tmp");
-			File.GetAttributes (path);
+			try {
+				File.GetAttributes (path);
+				Assert.Fail ("#1");
+			} catch (FileNotFoundException ex) {
+				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#2");
+				Assert.AreEqual (path, ex.FileName, "#3");
+				Assert.IsNull (ex.InnerException, "#4");
+				Assert.IsNotNull (ex.Message, "#5");
+			}
 		}
 
 		[Test]
@@ -427,7 +567,7 @@ namespace MonoTests.System.IO
 				File.GetAttributes (string.Empty);
 				Assert.Fail ("#1");
 			} catch (ArgumentException ex) {
-				// The path is not of a legal form
+				// Empty file name is not legal
 				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
@@ -445,92 +585,156 @@ namespace MonoTests.System.IO
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsNotNull (ex.ParamName, "#5");
-				Assert.AreEqual ("path", ex.ParamName, "#6");
+				Assert.AreEqual ("path", ex.ParamName, "#5");
 			}
 		}
 
 		[Test]
-		[ExpectedException(typeof (ArgumentNullException))]
-		public void MoveException1 ()
+		public void Move_SourceFileName_Null ()
 		{
-			File.Move (null, "b");
-		}
-
-		[Test]
-		[ExpectedException(typeof (ArgumentNullException))]
-		public void MoveException2 ()
-		{
-			File.Move ("a", null);
-		}
-
-		[Test]
-		[ExpectedException(typeof (ArgumentException))]
-		public void MoveException3 ()
-		{
-			File.Move ("", "b");
-		}
-
-		[Test]
-		[ExpectedException(typeof (ArgumentException))]
-		public void MoveException4 ()
-		{
-			File.Move ("a", "");
-		}
-
-		[Test]
-		[ExpectedException(typeof (ArgumentException))]
-		public void MoveException5 ()
-		{
-			File.Move (" ", "b");
-		}
-
-		[Test]
-		[ExpectedException(typeof (ArgumentException))]
-		public void MoveException6 ()
-		{
-			File.Move ("a", " ");
-		}
-
-		[Test]
-		[ExpectedException(typeof (FileNotFoundException))]
-		public void MoveException7 ()
-		{
-			DeleteFile (TempFolder + Path.DirectorySeparatorChar + "doesnotexist");
-			File.Move (TempFolder + Path.DirectorySeparatorChar + "doesnotexist", "b");
-		}
-
-		[Test]
-		[ExpectedException(typeof (DirectoryNotFoundException))]
-		public void MoveException8 ()
-		{
-			string path = TempFolder + Path.DirectorySeparatorChar + "foo";
-			DeleteFile (path);
 			try {
-				File.Create (TempFolder + Path.DirectorySeparatorChar + "AFile.txt").Close ();
-				File.Copy(TempFolder + Path.DirectorySeparatorChar + "AFile.txt", path, true);
-				DeleteFile (TempFolder + Path.DirectorySeparatorChar + "doesnotexist" + Path.DirectorySeparatorChar + "b");
-				File.Move (TempFolder + Path.DirectorySeparatorChar + "foo", TempFolder + Path.DirectorySeparatorChar + "doesnotexist" + Path.DirectorySeparatorChar + "b");
-			} finally {
-				DeleteFile (TempFolder + Path.DirectorySeparatorChar + "AFile.txt");
-				DeleteFile (path);
+				File.Move (null, "b");
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("sourceFileName", ex.ParamName, "#5");
 			}
 		}
 
 		[Test]
-		[ExpectedException(typeof (IOException))]
-		public void MoveException9 ()
+		public void Move_DestFileName_Null ()
+		{
+			try {
+				File.Move ("a", null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("destFileName", ex.ParamName, "#5");
+			}
+		}
+
+		[Test]
+		public void Move_SourceFileName_Empty ()
+		{
+			try {
+				File.Move (string.Empty, "b");
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Empty file name is not legal
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("sourceFileName", ex.ParamName, "#5");
+			}
+		}
+
+		[Test]
+		public void Move_DestFileName_Empty ()
+		{
+			try {
+				File.Move ("a", string.Empty);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Empty file name is not legal
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("destFileName", ex.ParamName, "#5");
+			}
+		}
+
+		[Test]
+		public void Move_SourceFileName_Whitespace ()
+		{
+			try {
+				File.Move (" ", "b");
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// The path is not of a legal form
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+		}
+
+		[Test]
+		public void Move_DestFileName_Whitespace ()
+		{
+			try {
+				File.Move ("a", " ");
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// The path is not of a legal form
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+		}
+
+		[Test]
+		public void Move_SourceFileName_DoesNotExist ()
+		{
+			string file = TempFolder + Path.DirectorySeparatorChar + "doesnotexist";
+			DeleteFile (file);
+			try {
+				File.Move (file, "b");
+				Assert.Fail ("#1");
+			} catch (FileNotFoundException ex) {
+				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#2");
+				Assert.AreEqual (file, ex.FileName, "#3");
+				Assert.IsNull (ex.InnerException, "#4");
+				Assert.IsNotNull (ex.Message, "#5");
+			}
+		}
+
+		[Test]
+		//[ExpectedException(typeof (DirectoryNotFoundException))]
+		public void Move_DestFileName_DirectoryDoesNotExist ()
+		{
+			string sourceFile = TempFolder + Path.DirectorySeparatorChar + "foo";
+			string destDir = TempFolder + Path.DirectorySeparatorChar + "doesnotexist";
+			DeleteFile (sourceFile);
+			try {
+				File.Create (sourceFile).Close ();
+				try {
+					File.Move (sourceFile, destDir + Path.DirectorySeparatorChar + "b");
+					Assert.Fail ("#1");
+				} catch (DirectoryNotFoundException ex) {
+					// Could not find a part of the path
+					Assert.AreEqual (typeof (DirectoryNotFoundException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#4");
+					Assert.IsNotNull (ex.Message, "#5");
+				}
+			} finally {
+				DeleteFile (sourceFile);
+			}
+		}
+
+		[Test]
+		public void Move_DestFileName_AlreadyExists ()
 		{
 			File.Create (TempFolder + Path.DirectorySeparatorChar + "foo").Close ();
 			try {
 				File.Move (TempFolder + Path.DirectorySeparatorChar + "foo", TempFolder);
+				Assert.Fail ("#1");
+			} catch (IOException ex) {
+				// Cannot create a file when that file already exists
+				Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
 			} finally {
 				DeleteFile (TempFolder + Path.DirectorySeparatorChar + "foo");
 			}
 		}
 
 		[Test]
-		public void TestMove ()
+		public void Move ()
 		{
 			string bar = TempFolder + Path.DirectorySeparatorChar + "bar";
 			string baz = TempFolder + Path.DirectorySeparatorChar + "baz";
@@ -566,12 +770,48 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		public void TestOpen ()
+		public void Move_FileLock ()
 		{
-			string path = "";
+			string sourceFile = Path.GetTempFileName ();
+			string destFile = Path.GetTempFileName ();
+
+			// source file locked
+			using (File.Open (sourceFile, FileMode.Open, FileAccess.ReadWrite, FileShare.None)) {
+				try {
+					File.Move (sourceFile, destFile);
+					Assert.Fail ("#A1");
+				} catch (IOException ex) {
+					// The process cannot access the file because
+					// it is being used by another process
+					Assert.AreEqual (typeof (IOException), ex.GetType (), "#A2");
+					Assert.IsNull (ex.InnerException, "#A3");
+					Assert.IsNotNull (ex.Message, "#A4");
+				}
+			}
+
+			// destination file locked
+			using (File.Open (destFile, FileMode.Open, FileAccess.ReadWrite, FileShare.None)) {
+				try {
+					File.Move (sourceFile, destFile);
+					Assert.Fail ("#B1");
+				} catch (IOException ex) {
+					// The process cannot access the file because
+					// it is being used by another process
+					Assert.AreEqual (typeof (IOException), ex.GetType (), "#B2");
+					Assert.IsNull (ex.InnerException, "#B3");
+					Assert.IsNotNull (ex.Message, "#B4");
+				}
+			}
+		}
+
+		[Test]
+		public void Open ()
+		{
+			string path = null;
 			FileStream stream = null;
+
+			path = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
 			try {
-				path = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
 				if (!File.Exists (path))
 					stream = File.Create (path);
 				stream.Close ();
@@ -582,30 +822,11 @@ namespace MonoTests.System.IO
 					stream.Close ();
 				DeleteFile (path);
 			}
-			
-			path = "";
-			stream = null;
-			/* Exception tests */
-			try {
-				path = TempFolder + Path.DirectorySeparatorChar + "filedoesnotexist";
-				stream = File.Open (path, FileMode.Open);
-				Assert.Fail ("File 'filedoesnotexist' should not exist");
-			} catch (FileNotFoundException) {
-				// do nothing, this is what we expect
-			} finally {
-				if (stream != null)
-					stream.Close ();
-				DeleteFile (path);
-			}
-		}
 
-		[Test]
-		public void Open () 
-		{
-			string path = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
+			stream = null;
+
 			if (!File.Exists (path))
 				File.Create (path).Close ();
-			FileStream stream = null;
 			try {
 				stream = File.Open (path, FileMode.Open);
 				Assert.IsTrue (stream.CanRead, "#A1");
@@ -629,17 +850,19 @@ namespace MonoTests.System.IO
 					stream.Close ();
 				DeleteFile (path);
 			}
-		}
 
-		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void OpenException1 ()
-		{
-			string path = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
-			FileStream stream = null;
-			// CreateNew + Read throws an exceptoin
+			stream = null;
+
+			/* Exception tests */
+			path = TempFolder + Path.DirectorySeparatorChar + "filedoesnotexist";
 			try {
-				stream = File.Open (TempFolder + Path.DirectorySeparatorChar + "AFile.txt", FileMode.CreateNew, FileAccess.Read);
+				stream = File.Open (path, FileMode.Open);
+				Assert.Fail ("#D1");
+			} catch (FileNotFoundException ex) {
+				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#D2");
+				Assert.AreEqual (path, ex.FileName, "#D3");
+				Assert.IsNull (ex.InnerException, "#D4");
+				Assert.IsNotNull (ex.Message, "#D5");
 			} finally {
 				if (stream != null)
 					stream.Close ();
@@ -648,16 +871,42 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void OpenException2 ()
+		public void Open_CreateNewMode_ReadAccess ()
+		{
+			string path = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
+			FileStream stream = null;
+			try {
+				stream = File.Open (TempFolder + Path.DirectorySeparatorChar + "AFile.txt", FileMode.CreateNew, FileAccess.Read);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Combining FileMode: CreateNew with FileAccess: Read is invalid
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			} finally {
+				if (stream != null)
+					stream.Close ();
+				DeleteFile (path);
+			}
+		}
+
+		[Test]
+		public void Open_AppendMode_ReadAccess ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
 			FileStream s = null;
-			// Append + Read throws an exceptoin
 			if (!File.Exists (path))
 				File.Create (path).Close ();
 			try {
 				s = File.Open (path, FileMode.Append, FileAccess.Read);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Combining FileMode: Append with FileAccess: Read is invalid
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
 			} finally {
 				if (s != null)
 					s.Close ();
@@ -863,33 +1112,45 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
-		public void GetCreationTimeException1 ()
+		public void GetCreationTime_Path_Null ()
 		{
-			File.GetCreationTime (null as string);
+			try {
+				File.GetCreationTime (null as string);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("path", ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
-		public void GetCreationTimeException2 ()
+		public void GetCreationTime_Path_Empty ()
 		{
-			File.GetCreationTime ("");
+			try {
+				File.GetCreationTime (string.Empty);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Empty file name is not legal
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 	
 		[Test]
-#if !NET_2_0
-		[ExpectedException(typeof(IOException))]
-#endif
-		[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
-		public void GetCreationTime_NonExistingPath ()
+		//[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
+		public void GetCreationTime_Path_DoesNotExist ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "GetCreationTimeException3";
 			DeleteFile (path);
-			DateTime time = File.GetCreationTime (path);
 
 #if NET_2_0
+			DateTime time = File.GetCreationTime (path);
 			DateTime expectedTime = (new DateTime (1601, 1, 1)).ToLocalTime ();
 			Assert.AreEqual (expectedTime.Year, time.Year, "#1");
 			Assert.AreEqual (expectedTime.Month, time.Month, "#2");
@@ -897,106 +1158,184 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (expectedTime.Hour, time.Hour, "#4");
 			Assert.AreEqual (expectedTime.Second, time.Second, "#5");
 			Assert.AreEqual (expectedTime.Millisecond, time.Millisecond, "#6");
+#else
+			try {
+				File.GetCreationTime (path);
+				Assert.Fail ("#1");
+			} catch (IOException ex) {
+				// Could not find a part of the path "..."
+				Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("\"" + path + "\"") != -1, "#5");
+			}
 #endif
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
-		public void GetCreationTimeException4 ()
+		public void GetCreationTime_Path_Whitespace ()
 		{
-			File.GetCreationTime ("    ");
+			try {
+				File.GetCreationTime ("    ");
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// The path is not of a legal form
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
-		public void GetCreationTimeException5 ()
+		public void GetCreationTime_Path_InvalidPathChars ()
 		{
-			File.GetCreationTime (Path.InvalidPathChars [0].ToString ());
+			try {
+				File.GetCreationTime (Path.InvalidPathChars [0].ToString ());
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Illegal characters in path
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
-		public void GetCreationTimeUtcException1 ()
+		public void GetCreationTimeUtc_Path_Null ()
 		{
-			File.GetCreationTimeUtc (null as string);
+			try {
+				File.GetCreationTimeUtc (null as string);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("path", ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
-		public void GetCreationTimeUtcException2 ()
+		public void GetCreationTimeUtc_Path_Empty ()
 		{
-			File.GetCreationTimeUtc ("");
+			try {
+				File.GetCreationTimeUtc (string.Empty);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Empty file name is not legal
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 	
 		[Test]
-#if !NET_2_0
-		[ExpectedException (typeof (IOException))]
-#endif
 		[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
-		public void GetCreationTimeUtc_NonExistingPath ()
+		public void GetCreationTimeUtc_Path_DoesNotExist ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "GetCreationTimeUtcException3";
 			DeleteFile (path);
-			DateTime time = File.GetCreationTimeUtc (path);
 
 #if NET_2_0
+			DateTime time = File.GetCreationTimeUtc (path);
 			Assert.AreEqual (1601, time.Year, "#1");
 			Assert.AreEqual (1, time.Month, "#2");
 			Assert.AreEqual (1, time.Day, "#3");
 			Assert.AreEqual (0, time.Hour, "#4");
 			Assert.AreEqual (0, time.Second, "#5");
 			Assert.AreEqual (0, time.Millisecond, "#6");
+#else
+			try {
+				File.GetCreationTimeUtc (path);
+				Assert.Fail ("#1");
+			} catch (IOException ex) {
+				// Could not find a part of the path "..."
+				Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("\"" + path + "\"") != -1, "#5");
+			}
 #endif
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
-		public void GetCreationTimeUtcException4 ()
+		public void GetCreationTimeUtc_Path_Whitespace ()
 		{
-			File.GetCreationTimeUtc ("    ");
+			try {
+				File.GetCreationTimeUtc ("    ");
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// The path is not of a legal form
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
-		public void GetCreationTimeUtcException5 ()
+		public void GetCreationTimeUtc_Path_InvalidPathChars ()
 		{
-			File.GetCreationTime (Path.InvalidPathChars [0].ToString ());
+			try {
+				File.GetCreationTimeUtc (Path.InvalidPathChars [0].ToString ());
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Illegal characters in path
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		[Category("TargetJvmNotSupported")] // GetLastAccessTime not supported for TARGET_JVM
-		public void GetLastAccessTimeException1 ()
+		public void GetLastAccessTime_Path_Null ()
 		{
-			File.GetLastAccessTime (null as string);
+			try {
+				File.GetLastAccessTime (null as string);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("path", ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		[Category("TargetJvmNotSupported")] // GetLastAccessTime not supported for TARGET_JVM
-		public void GetLastAccessTimeException2 ()
+		public void GetLastAccessTime_Path_Empty ()
 		{
-			File.GetLastAccessTime ("");
+			try {
+				File.GetLastAccessTime (string.Empty);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Empty file name is not legal
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 	
 		[Test]
-#if !NET_2_0
-		[ExpectedException (typeof (IOException))]
-#endif
 		[Category("TargetJvmNotSupported")] // GetLastAccessTime not supported for TARGET_JVM
-		public void GetLastAccessTime_NonExistingPath ()
+		public void GetLastAccessTime_Path_DoesNotExist ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "GetLastAccessTimeException3";
 			DeleteFile (path);
-			DateTime time = File.GetLastAccessTime (path);
 
 #if NET_2_0
+			DateTime time = File.GetLastAccessTime (path);
 			DateTime expectedTime = (new DateTime (1601, 1, 1)).ToLocalTime ();
 			Assert.AreEqual (expectedTime.Year, time.Year, "#1");
 			Assert.AreEqual (expectedTime.Month, time.Month, "#2");
@@ -1004,103 +1343,181 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (expectedTime.Hour, time.Hour, "#4");
 			Assert.AreEqual (expectedTime.Second, time.Second, "#5");
 			Assert.AreEqual (expectedTime.Millisecond, time.Millisecond, "#6");
+#else
+			try {
+				File.GetLastAccessTime (path);
+				Assert.Fail ("#1");
+			} catch (IOException ex) {
+				// Could not find a part of the path "..."
+				Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("\"" + path + "\"") != -1, "#5");
+			}
 #endif
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		[Category("TargetJvmNotSupported")] // GetLastAccessTime not supported for TARGET_JVM
-		public void GetLastAccessTimeException4 ()
+		public void GetLastAccessTime_Path_Whitespace ()
 		{
-			File.GetLastAccessTime ("    ");
+			try {
+				File.GetLastAccessTime ("    ");
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// The path is not of a legal form
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		[Category("TargetJvmNotSupported")] // GetLastAccessTime not supported for TARGET_JVM
-		public void GetLastAccessTimeException5 ()
+		public void GetLastAccessTime_Path_InvalidPathChars ()
 		{
-			File.GetLastAccessTime (Path.InvalidPathChars [0].ToString ());
+			try {
+				File.GetLastAccessTime (Path.InvalidPathChars [0].ToString ());
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Illegal characters in path
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
 		[Category("TargetJvmNotSupported")] // GetLastAccessTime not supported for TARGET_JVM
-		public void GetLastAccessTimeUtcException1 ()
+		public void GetLastAccessTimeUtc_Path_Null ()
 		{
-			File.GetLastAccessTimeUtc (null as string);
+			try {
+				File.GetLastAccessTimeUtc (null as string);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("path", ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		[Category("TargetJvmNotSupported")] // GetLastAccessTime not supported for TARGET_JVM
-		public void GetLastAccessTimeUtcException2 ()
+		public void GetLastAccessTimeUtc_Path_Empty ()
 		{
-			File.GetLastAccessTimeUtc ("");
+			try {
+				File.GetLastAccessTimeUtc (string.Empty);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Empty file name is not legal
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 	
 		[Test]
-#if !NET_2_0
-		[ExpectedException (typeof (IOException))]
-#endif
 		[Category("TargetJvmNotSupported")] // GetLastAccessTime not supported for TARGET_JVM
-		public void GetLastAccessTimeUtc_NonExistingPath ()
+		public void GetLastAccessTimeUtc_Path_DoesNotExist ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "GetLastAccessTimeUtcException3";
 			DeleteFile (path);
-			DateTime time = File.GetLastAccessTimeUtc (path);
 
 #if NET_2_0
+			DateTime time = File.GetLastAccessTimeUtc (path);
 			Assert.AreEqual (1601, time.Year, "#1");
 			Assert.AreEqual (1, time.Month, "#2");
 			Assert.AreEqual (1, time.Day, "#3");
 			Assert.AreEqual (0, time.Hour, "#4");
 			Assert.AreEqual (0, time.Second, "#5");
 			Assert.AreEqual (0, time.Millisecond, "#6");
+#else
+			try {
+				File.GetLastAccessTimeUtc (path);
+				Assert.Fail ("#1");
+			} catch (IOException ex) {
+				// Could not find a part of the path "..."
+				Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("\"" + path + "\"") != -1, "#5");
+			}
 #endif
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		[Category("TargetJvmNotSupported")] // GetLastAccessTime not supported for TARGET_JVM
-		public void GetLastAccessTimeUtcException4 ()
+		public void GetLastAccessTimeUtc_Path_Whitespace ()
 		{
-			File.GetLastAccessTimeUtc ("    ");
+			try {
+				File.GetLastAccessTimeUtc ("    ");
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// The path is not of a legal form
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
 		[Category("TargetJvmNotSupported")] // GetLastAccessTime not supported for TARGET_JVM
-		public void GetLastAccessTimeUtcException5 ()
+		public void GetLastAccessTimeUtc_Path_InvalidPathChars ()
 		{
-			File.GetLastAccessTimeUtc (Path.InvalidPathChars [0].ToString ());
+			try {
+				File.GetLastAccessTimeUtc (Path.InvalidPathChars [0].ToString ());
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Illegal characters in path
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
-		public void GetLastWriteTimeException1 ()
+		public void GetLastWriteTime_Path_Null ()
 		{
-			File.GetLastWriteTime (null as string);
+			try {
+				File.GetLastWriteTime (null as string);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("path", ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void GetLastWriteTimeException2 ()
+		public void GetLastWriteTime_Path_Empty ()
 		{
-			File.GetLastWriteTime ("");
+			try {
+				File.GetLastWriteTime (string.Empty);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Empty file name is not legal
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 	
 		[Test]
-#if !NET_2_0
-		[ExpectedException (typeof (IOException))]
-#endif
-		public void GetLastWriteTime_NonExistingPath ()
+		public void GetLastWriteTime_Path_DoesNotExist ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "GetLastAccessTimeUtcException3";
 			DeleteFile (path);
-			DateTime time = File.GetLastWriteTime (path);
 
 #if NET_2_0
+			DateTime time = File.GetLastWriteTime (path);
 			DateTime expectedTime = (new DateTime (1601, 1, 1)).ToLocalTime ();
 			Assert.AreEqual (expectedTime.Year, time.Year, "#1");
 			Assert.AreEqual (expectedTime.Month, time.Month, "#2");
@@ -1108,70 +1525,136 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (expectedTime.Hour, time.Hour, "#4");
 			Assert.AreEqual (expectedTime.Second, time.Second, "#5");
 			Assert.AreEqual (expectedTime.Millisecond, time.Millisecond, "#6");
+#else
+			try {
+				File.GetLastWriteTime (path);
+				Assert.Fail ("#1");
+			} catch (IOException ex) {
+				// Could not find a part of the path "..."
+				Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("\"" + path + "\"") != -1, "#5");
+			}
 #endif
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void GetLastWriteTimeException4 ()
+		public void GetLastWriteTime_Path_Whitespace ()
 		{
-			File.GetLastWriteTime ("    ");
+			try {
+				File.GetLastWriteTime ("    ");
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// The path is not of a legal form
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void GetLastWriteTimeException5 ()
+		public void GetLastWriteTime_Path_InvalidPathChars ()
 		{
-			File.GetLastWriteTime (Path.InvalidPathChars [0].ToString ());
+			try {
+				File.GetLastWriteTime (Path.InvalidPathChars [0].ToString ());
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Illegal characters in path
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
-		public void GetLastWriteTimeUtcException1 ()
+		public void GetLastWriteTimeUtc_Path_Null ()
 		{
-			File.GetLastWriteTimeUtc (null as string);
+			try {
+				File.GetLastWriteTimeUtc (null as string);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("path", ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void GetLastWriteTimeUtcException2 ()
+		public void GetLastWriteTimeUtc_Path_Empty ()
 		{
-			File.GetLastWriteTimeUtc ("");
+			try {
+				File.GetLastWriteTimeUtc (string.Empty);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Empty file name is not legal
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 	
 		[Test]
-#if !NET_2_0
-		[ExpectedException (typeof (IOException))]
-#endif
-		public void GetLastWriteTimeUtc_NonExistingPath ()
+		public void GetLastWriteTimeUtc_Path_DoesNotExist ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "GetLastWriteTimeUtcException3";
 			DeleteFile (path);
-			DateTime time = File.GetLastWriteTimeUtc (path);
 
 #if NET_2_0
+			DateTime time = File.GetLastWriteTimeUtc (path);
 			Assert.AreEqual (1601, time.Year, "#1");
 			Assert.AreEqual (1, time.Month, "#2");
 			Assert.AreEqual (1, time.Day, "#3");
 			Assert.AreEqual (0, time.Hour, "#4");
 			Assert.AreEqual (0, time.Second, "#5");
 			Assert.AreEqual (0, time.Millisecond, "#6");
+#else
+			try {
+				File.GetLastWriteTimeUtc (path);
+				Assert.Fail ("#1");
+			} catch (IOException ex) {
+				// Could not find a part of the path "..."
+				Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("\"" + path + "\"") != -1, "#5");
+			}
 #endif
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void GetLastWriteTimeUtcException4 ()
+		public void GetLastWriteTimeUtc_Path_Whitespace ()
 		{
-			File.GetLastWriteTimeUtc ("    ");
+			try {
+				File.GetLastWriteTimeUtc ("    ");
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// The path is not of a legal form
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void GetLastWriteTimeUtcException5 ()
+		public void GetLastWriteTimeUtc_Path_InvalidPathChars ()
 		{
-			File.GetLastWriteTimeUtc (Path.InvalidPathChars [0].ToString ());
-		}		
+			try {
+				File.GetLastWriteTimeUtc (Path.InvalidPathChars [0].ToString ());
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Illegal characters in path
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+		}
 
 		[Test]
 		public void FileStreamClose ()
@@ -1192,32 +1675,55 @@ namespace MonoTests.System.IO
 		// SetCreationTime and SetCreationTimeUtc exceptions
 
 		[Test]
-		[ExpectedException(typeof (ArgumentNullException))]
 		[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
-		public void SetCreationTimeArgumentNullException1 ()
+		public void SetCreationTime_Path_Null ()
 		{
-			File.SetCreationTime (null as string, new DateTime (2000, 12, 12, 11, 59, 59));
-		}
-
-		[Test]
-		[ExpectedException(typeof (ArgumentException))]
-		[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
-		public void SetCreationTimeArgumenException1 ()
-		{
-			File.SetCreationTime ("", new DateTime (2000, 12, 12, 11, 59, 59));
-		}
-
-		[Test]
-		[ExpectedException(typeof (ArgumentException))]
-		[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
-		public void SetCreationTimeArgumenException2 ()
-		{
-			File.SetCreationTime ("     ", new DateTime (2000, 12, 12, 11, 59, 59));
+			try {
+				File.SetCreationTime (null as string, new DateTime (2000, 12, 12, 11, 59, 59));
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("path", ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
 		[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
-		public void SetCreationTimeArgumenException3 ()
+		public void SetCreationTime_Path_Empty ()
+		{
+			try {
+				File.SetCreationTime (string.Empty, new DateTime (2000, 12, 12, 11, 59, 59));
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Empty file name is not legal
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+		}
+
+		[Test]
+		[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
+		public void SetCreationTime_Path_Whitespace ()
+		{
+			try {
+				File.SetCreationTime ("     ", new DateTime (2000, 12, 12, 11, 59, 59));
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// The path is not of a legal form
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+		}
+
+		[Test]
+		[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
+		public void SetCreationTime_Path_InvalidPathChars ()
 		{
 			// On Unix there are no invalid path chars.
 			if (Path.InvalidPathChars.Length > 1) {
@@ -1226,6 +1732,7 @@ namespace MonoTests.System.IO
 						new DateTime (2000, 12, 12, 11, 59, 59));
 					Assert.Fail ("#1");
 				} catch (ArgumentException ex) {
+					// Illegal characters in path
 					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 					Assert.IsNull (ex.InnerException, "#3");
 					Assert.IsNotNull (ex.Message, "#4");
@@ -1235,14 +1742,21 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[ExpectedException(typeof (FileNotFoundException))]
 		[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
-		public void SetCreationTimeFileNotFoundException1 ()
+		public void SetCreationTime_Path_DoesNotExist ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "SetCreationTimeFileNotFoundException1";
 			DeleteFile (path);
 			
-			File.SetCreationTime (path, new DateTime (2000, 12, 12, 11, 59, 59));
+			try {
+				File.SetCreationTime (path, new DateTime (2000, 12, 12, 11, 59, 59));
+				Assert.Fail ("#1");
+			} catch (FileNotFoundException ex) {
+				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#2");
+				Assert.AreEqual (path, ex.FileName, "#3");
+				Assert.IsNull (ex.InnerException, "#4");
+				Assert.IsNotNull (ex.Message, "#5");
+			}
 		}
 
 //		[Test]
@@ -1264,16 +1778,25 @@ namespace MonoTests.System.IO
 //		}
 
 		[Test]
-		[ExpectedException(typeof (IOException))]
 		[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
-		public void SetCreationTimeIOException1 ()
+		public void SetCreationTime_FileLock ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "CreationTimeIOException1";
 			DeleteFile (path);
 			FileStream stream = null;
 			try {
 				stream = File.Create (path);
-				File.SetCreationTime (path, new DateTime (1000, 12, 12, 11, 59, 59));
+				try {
+					File.SetCreationTime (path, new DateTime (1000, 12, 12, 11, 59, 59));
+					Assert.Fail ("#1");
+				} catch (IOException ex) {
+					// The process cannot access the file '...'
+					// because it is being used by another process
+					Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.IsTrue (ex.Message.IndexOf (path) != -1, "#5");
+				}
 			} finally {
 				if (stream != null)
 					stream.Close ();
@@ -1282,32 +1805,55 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[ExpectedException(typeof (ArgumentNullException))]
 		[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
-		public void SetCreationTimeUtcArgumentNullException1 ()
+		public void SetCreationTimeUtc_Path_Null ()
 		{ 
-			File.SetCreationTimeUtc (null as string, new DateTime (2000, 12, 12, 11, 59, 59));
+			try {
+				File.SetCreationTimeUtc (null as string, new DateTime (2000, 12, 12, 11, 59, 59));
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("path", ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
-		[ExpectedException(typeof (ArgumentException))]
 		[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
-		public void SetCreationTimeUtcArgumenException1 ()
+		public void SetCreationTimeUtc_Path_Empty ()
 		{
-			File.SetCreationTimeUtc ("", new DateTime (2000, 12, 12, 11, 59, 59));
+			try {
+				File.SetCreationTimeUtc (string.Empty, new DateTime (2000, 12, 12, 11, 59, 59));
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Empty file name is not legal
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
-		[ExpectedException(typeof (ArgumentException))]
 		[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
-		public void SetCreationTimeUtcArgumenException2 ()
+		public void SetCreationTimeUtc_Path_Whitespace ()
 		{
-			File.SetCreationTimeUtc ("     ", new DateTime (2000, 12, 12, 11, 59, 59));
+			try {
+				File.SetCreationTimeUtc ("     ", new DateTime (2000, 12, 12, 11, 59, 59));
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// The path is not of a legal form
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
 		[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
-		public void SetCreationTimeUtcArgumentException3 ()
+		public void SetCreationTimeUtc_Path_InvalidPathChars ()
 		{
 			// On Unix there are no invalid path chars.
 			if (Path.InvalidPathChars.Length > 1) {
@@ -1316,6 +1862,7 @@ namespace MonoTests.System.IO
 						new DateTime (2000, 12, 12, 11, 59, 59));
 					Assert.Fail ("#1");
 				} catch (ArgumentException ex) {
+					// Illegal characters in path
 					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 					Assert.IsNull (ex.InnerException, "#3");
 					Assert.IsNotNull (ex.Message, "#4");
@@ -1325,14 +1872,21 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[ExpectedException(typeof (FileNotFoundException))]
 		[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
-		public void SetCreationTimeUtcFileNotFoundException1 ()
+		public void SetCreationTimeUtc_Path_DoesNotExist ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "SetCreationTimeUtcFileNotFoundException1";
 			DeleteFile (path);
-			
-			File.SetCreationTimeUtc (path, new DateTime (2000, 12, 12, 11, 59, 59));
+
+			try {
+				File.SetCreationTimeUtc (path, new DateTime (2000, 12, 12, 11, 59, 59));
+				Assert.Fail ("#1");
+			} catch (FileNotFoundException ex) {
+				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#2");
+				Assert.AreEqual (path, ex.FileName, "#3");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 
 //		[Test]
@@ -1354,16 +1908,25 @@ namespace MonoTests.System.IO
 //		}
 
 		[Test]
-		[ExpectedException(typeof (IOException))]
 		[Category("TargetJvmNotSupported")] // SetCreationTime not supported for TARGET_JVM
-		public void SetCreationTimeUtcIOException1 ()
+		public void SetCreationTimeUtc_FileLock ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "SetCreationTimeUtcIOException1";
 			DeleteFile (path);
 			FileStream stream = null;
 			try {
 				stream = File.Create (path);
-				File.SetCreationTimeUtc (path, new DateTime (1000, 12, 12, 11, 59, 59));
+				try {
+					File.SetCreationTimeUtc (path, new DateTime (1000, 12, 12, 11, 59, 59));
+					Assert.Fail ("#1");
+				} catch (IOException ex) {
+					// The process cannot access the file "..."
+					// because it is being used by another process
+					Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.IsTrue (ex.Message.IndexOf (path) != -1, "#5");
+				}
 			} finally {
 				if (stream != null)
 					stream.Close ();
@@ -1374,32 +1937,55 @@ namespace MonoTests.System.IO
 		// SetLastAccessTime and SetLastAccessTimeUtc exceptions
 
 		[Test]
-		[ExpectedException(typeof (ArgumentNullException))]
 		[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
-		public void SetLastAccessTimeArgumentNullException1 ()
+		public void SetLastAccessTime_Path_Null ()
 		{
-			File.SetLastAccessTime (null as string, new DateTime (2000, 12, 12, 11, 59, 59));
-		}
-
-		[Test]
-		[ExpectedException(typeof (ArgumentException))]
-		[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
-		public void SetLastAccessTimeArgumenException1 ()
-		{
-			File.SetLastAccessTime ("", new DateTime (2000, 12, 12, 11, 59, 59));
-		}
-
-		[Test]
-		[ExpectedException(typeof (ArgumentException))]
-		[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
-		public void SetLastAccessTimeArgumenException2 ()
-		{
-			File.SetLastAccessTime ("     ", new DateTime (2000, 12, 12, 11, 59, 59));
+			try {
+				File.SetLastAccessTime (null as string, new DateTime (2000, 12, 12, 11, 59, 59));
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("path", ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
 		[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
-		public void SetLastAccessTimeArgumenException3 ()
+		public void SetLastAccessTime_Path_Empty ()
+		{
+			try {
+				File.SetLastAccessTime (string.Empty, new DateTime (2000, 12, 12, 11, 59, 59));
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Empty file name is not legal
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+		}
+
+		[Test]
+		[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
+		public void SetLastAccessTime_Path_Whitespace ()
+		{
+			try {
+				File.SetLastAccessTime ("     ", new DateTime (2000, 12, 12, 11, 59, 59));
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// The path is not of a legal form
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+		}
+
+		[Test]
+		[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
+		public void SetLastAccessTime_Path_InvalidPathChars ()
 		{
 			// On Unix there are no invalid path chars.
 			if (Path.InvalidPathChars.Length > 1) {
@@ -1408,6 +1994,7 @@ namespace MonoTests.System.IO
 						new DateTime (2000, 12, 12, 11, 59, 59));
 					Assert.Fail ("#1");
 				} catch (ArgumentException ex) {
+					// Illegal characters in path
 					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 					Assert.IsNull (ex.InnerException, "#3");
 					Assert.IsNotNull (ex.Message, "#4");
@@ -1417,14 +2004,21 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[ExpectedException(typeof (FileNotFoundException))]
 		[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
-		public void SetLastAccessTimeFileNotFoundException1 ()
+		public void SetLastAccessTime_Path_DoesNotExist ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "SetLastAccessTimeFileNotFoundException1";
 			DeleteFile (path);
-			
-			File.SetLastAccessTime (path, new DateTime (2000, 12, 12, 11, 59, 59));
+
+			try {
+				File.SetLastAccessTime (path, new DateTime (2000, 12, 12, 11, 59, 59));
+				Assert.Fail ("#1");
+			} catch (FileNotFoundException ex) {
+				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#2");
+				Assert.AreEqual (path, ex.FileName, "#3");
+				Assert.IsNull (ex.InnerException, "#4");
+				Assert.IsNotNull (ex.Message, "#5");
+			}
 		}
 
 //		[Test]
@@ -1446,16 +2040,25 @@ namespace MonoTests.System.IO
 //		}
 
 		[Test]
-		[ExpectedException(typeof (IOException))]
 		[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
-		public void SetLastAccessTimeIOException1 ()
+		public void SetLastAccessTime_FileLock ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "LastAccessIOException1";
 			DeleteFile (path);
 			FileStream stream = null;
 			try {
 				stream = File.Create (path);
-				File.SetLastAccessTime (path, new DateTime (1000, 12, 12, 11, 59, 59));
+				try {
+					File.SetLastAccessTime (path, new DateTime (1000, 12, 12, 11, 59, 59));
+					Assert.Fail ("#1");
+				} catch (IOException ex) {
+					// The process cannot access the file "..."
+					// because it is being used by another process
+					Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.IsTrue (ex.Message.IndexOf (path) != -1, "#5");
+				}
 			} finally {
 				if (stream != null)
 					stream.Close ();
@@ -1464,32 +2067,55 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[ExpectedException(typeof (ArgumentNullException))]
 		[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
-		public void SetLastAccessTimeUtcArgumentNullException1 ()
+		public void SetLastAccessTimeUtc_Path_Null ()
 		{
-			File.SetLastAccessTimeUtc (null as string, new DateTime (2000, 12, 12, 11, 59, 59));
-		}
-
-		[Test]
-		[ExpectedException(typeof (ArgumentException))]
-		[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
-		public void SetCLastAccessTimeUtcArgumenException1 ()
-		{
-			File.SetLastAccessTimeUtc ("", new DateTime (2000, 12, 12, 11, 59, 59));
-		}
-
-		[Test]
-		[ExpectedException(typeof (ArgumentException))]
-		[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
-		public void SetLastAccessTimeUtcArgumenException2 ()
-		{
-			File.SetLastAccessTimeUtc ("     ", new DateTime (2000, 12, 12, 11, 59, 59));
+			try {
+				File.SetLastAccessTimeUtc (null as string, new DateTime (2000, 12, 12, 11, 59, 59));
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("path", ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
 		[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
-		public void SetLastAccessTimeUtcArgumenException3 ()
+		public void SetCLastAccessTimeUtc_Path_Empty ()
+		{
+			try {
+				File.SetLastAccessTimeUtc (string.Empty, new DateTime (2000, 12, 12, 11, 59, 59));
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Empty file name is not legal
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+		}
+
+		[Test]
+		[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
+		public void SetLastAccessTimeUtc_Path_Whitespace ()
+		{
+			try {
+				File.SetLastAccessTimeUtc ("     ", new DateTime (2000, 12, 12, 11, 59, 59));
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// The path is not of a legal form
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+		}
+
+		[Test]
+		[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
+		public void SetLastAccessTimeUtc_Path_InvalidPathChars ()
 		{
 			// On Unix there are no invalid path chars.
 			if (Path.InvalidPathChars.Length > 1) {
@@ -1498,6 +2124,7 @@ namespace MonoTests.System.IO
 						new DateTime (2000, 12, 12, 11, 59, 59));
 					Assert.Fail ("#1");
 				} catch (ArgumentException ex) {
+					// Illegal characters in path
 					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 					Assert.IsNull (ex.InnerException, "#3");
 					Assert.IsNotNull (ex.Message, "#4");
@@ -1507,14 +2134,21 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[ExpectedException(typeof (FileNotFoundException))]
 		[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
-		public void SetLastAccessTimeUtcFileNotFoundException1 ()
+		public void SetLastAccessTimeUtc_Path_DoesNotExist ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "SetLastAccessTimeUtcFileNotFoundException1";
 			DeleteFile (path);
-			
-			File.SetLastAccessTimeUtc (path, new DateTime (2000, 12, 12, 11, 59, 59));
+
+			try {
+				File.SetLastAccessTimeUtc (path, new DateTime (2000, 12, 12, 11, 59, 59));
+				Assert.Fail ("#1");
+			} catch (FileNotFoundException ex) {
+				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#2");
+				Assert.AreEqual (path, ex.FileName, "#3");
+				Assert.IsNull (ex.InnerException, "#4");
+				Assert.IsNotNull (ex.Message, "#5");
+			}
 		}
 
 //		[Test]
@@ -1536,16 +2170,25 @@ namespace MonoTests.System.IO
 //		}
 
 		[Test]
-		[ExpectedException(typeof (IOException))]
 		[Category("TargetJvmNotSupported")] // SetLastAccessTime not supported for TARGET_JVM
-		public void SetLastAccessTimeUtcIOException1 ()
+		public void SetLastAccessTimeUtc_FileLock ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "SetLastAccessTimeUtcIOException1";
 			DeleteFile (path);
 			FileStream stream = null;
 			try {
 				stream = File.Create (path);
-				File.SetLastAccessTimeUtc (path, new DateTime (1000, 12, 12, 11, 59, 59));
+				try {
+					File.SetLastAccessTimeUtc (path, new DateTime (1000, 12, 12, 11, 59, 59));
+					Assert.Fail ("#1");
+				} catch (IOException ex) {
+					// The process cannot access the file "..."
+					// because it is being used by another process
+					Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.IsTrue (ex.Message.IndexOf (path) != -1, "#5");
+				}
 			} finally {
 				if (stream != null)
 					stream.Close ();
@@ -1556,28 +2199,51 @@ namespace MonoTests.System.IO
 		// SetLastWriteTime and SetLastWriteTimeUtc exceptions
 
 		[Test]
-		[ExpectedException(typeof (ArgumentNullException))]
-		public void SetLastWriteTimeArgumentNullException1 ()
+		public void SetLastWriteTime_Path_Null ()
 		{
-			File.SetLastWriteTime (null as string, new DateTime (2000, 12, 12, 11, 59, 59));
+			try {
+				File.SetLastWriteTime (null as string, new DateTime (2000, 12, 12, 11, 59, 59));
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("path", ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
-		[ExpectedException(typeof (ArgumentException))]
-		public void SetLastWriteTimeArgumenException1 ()
+		public void SetLastWriteTime_Path_Empty ()
 		{
-			File.SetLastWriteTime ("", new DateTime (2000, 12, 12, 11, 59, 59));
+			try {
+				File.SetLastWriteTime (string.Empty, new DateTime (2000, 12, 12, 11, 59, 59));
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Empty file name is not legal
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
-		[ExpectedException(typeof (ArgumentException))]
-		public void SetLastWriteTimeArgumenException2 ()
+		public void SetLastWriteTime_Path_Whitespace ()
 		{
-			File.SetLastWriteTime ("     ", new DateTime (2000, 12, 12, 11, 59, 59));
+			try {
+				File.SetLastWriteTime ("     ", new DateTime (2000, 12, 12, 11, 59, 59));
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// The path is not of a legal form
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
-		public void SetLastWriteTimeArgumenException3 ()
+		public void SetLastWriteTime_Path_InvalidPathChars ()
 		{
 			// On Unix there are no invalid path chars.
 			if (Path.InvalidPathChars.Length > 1) {
@@ -1586,6 +2252,7 @@ namespace MonoTests.System.IO
 						new DateTime (2000, 12, 12, 11, 59, 59));
 					Assert.Fail ("#1");
 				} catch (ArgumentException ex) {
+					// Illegal characters in path
 					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 					Assert.IsNull (ex.InnerException, "#3");
 					Assert.IsNotNull (ex.Message, "#4");
@@ -1595,13 +2262,20 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[ExpectedException(typeof (FileNotFoundException))]
-		public void SetLastWriteTimeFileNotFoundException1 ()
+		public void SetLastWriteTime_Path_DoesNotExist ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "SetLastWriteTimeFileNotFoundException1";
 			DeleteFile (path);
-			
-			File.SetLastWriteTime (path, new DateTime (2000, 12, 12, 11, 59, 59));
+
+			try {
+				File.SetLastWriteTime (path, new DateTime (2000, 12, 12, 11, 59, 59));
+				Assert.Fail ("#1");
+			} catch (FileNotFoundException ex) {
+				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#2");
+				Assert.AreEqual (path, ex.FileName, "#3");
+				Assert.IsNull (ex.InnerException, "#4");
+				Assert.IsNotNull (ex.Message, "#5");
+			}
 		}
 
 //		[Test]
@@ -1623,15 +2297,24 @@ namespace MonoTests.System.IO
 //		}
 
 		[Test]
-		[ExpectedException(typeof (IOException))]
-		public void SetLastWriteTimeIOException1 ()
+		public void SetLastWriteTime_FileLock ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "LastWriteTimeIOException1";
 			DeleteFile (path);
 			FileStream stream = null;
 			try {
 				stream = File.Create (path);
-				File.SetLastWriteTime (path, new DateTime (1000, 12, 12, 11, 59, 59));
+				try {
+					File.SetLastWriteTime (path, new DateTime (1000, 12, 12, 11, 59, 59));
+					Assert.Fail ("#1");
+				} catch (IOException ex) {
+					// The process cannot access the file '...'
+					// because it is being used by another process
+					Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.IsTrue (ex.Message.IndexOf (path) != -1, "#5");
+				}
 			} finally {
 				if (stream != null)
 					stream.Close ();
@@ -1640,28 +2323,51 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[ExpectedException(typeof (ArgumentNullException))]
-		public void SetLastWriteTimeUtcArgumentNullException1 ()
+		public void SetLastWriteTimeUtc_Path_Null ()
 		{
-			File.SetLastWriteTimeUtc (null as string, new DateTime (2000, 12, 12, 11, 59, 59));
+			try {
+				File.SetLastWriteTimeUtc (null as string, new DateTime (2000, 12, 12, 11, 59, 59));
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("path", ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
-		[ExpectedException(typeof (ArgumentException))]
-		public void SetCLastWriteTimeUtcArgumenException1 ()
+		public void SetLastWriteTimeUtc_Path_Empty ()
 		{
-			File.SetLastWriteTimeUtc ("", new DateTime (2000, 12, 12, 11, 59, 59));
+			try {
+				File.SetLastWriteTimeUtc (string.Empty, new DateTime (2000, 12, 12, 11, 59, 59));
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Empty file name is not legal
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
-		[ExpectedException(typeof (ArgumentException))]
-		public void SetLastWriteTimeUtcArgumenException2 ()
+		public void SetLastWriteTimeUtc_Path_Whitespace ()
 		{
-			File.SetLastWriteTimeUtc ("     ", new DateTime (2000, 12, 12, 11, 59, 59));
+			try {
+				File.SetLastWriteTimeUtc ("     ", new DateTime (2000, 12, 12, 11, 59, 59));
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// The path is not of a legal form
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
-		public void SetLastWriteTimeUtcArgumenException3 ()
+		public void SetLastWriteTimeUtc_Path_InvalidPathChars ()
 		{
 			// On Unix there are no invalid path chars.
 			if (Path.InvalidPathChars.Length > 1) {
@@ -1670,6 +2376,7 @@ namespace MonoTests.System.IO
 						new DateTime (2000, 12, 12, 11, 59, 59));
 					Assert.Fail ("#1");
 				} catch (ArgumentException ex) {
+					// Illegal characters in path
 					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
 					Assert.IsNull (ex.InnerException, "#3");
 					Assert.IsNotNull (ex.Message, "#4");
@@ -1679,13 +2386,20 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[ExpectedException(typeof (FileNotFoundException))]
-		public void SetLastWriteTimeUtcFileNotFoundException1 ()
+		public void SetLastWriteTimeUtc_Path_DoesNotExist ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "SetLastWriteTimeUtcFileNotFoundException1";
 			DeleteFile (path);
-			
-			File.SetLastWriteTimeUtc (path, new DateTime (2000, 12, 12, 11, 59, 59));
+
+			try {
+				File.SetLastWriteTimeUtc (path, new DateTime (2000, 12, 12, 11, 59, 59));
+				Assert.Fail ("#1");
+			} catch (FileNotFoundException ex) {
+				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#2");
+				Assert.AreEqual (path, ex.FileName, "#3");
+				Assert.IsNull (ex.InnerException, "#4");
+				Assert.IsNotNull (ex.Message, "#5");
+			}
 		}
 
 //		[Test]
@@ -1705,17 +2419,26 @@ namespace MonoTests.System.IO
 //				DeleteFile (path);
 //			}
 //		}
-//
+
 		[Test]
-		[ExpectedException(typeof (IOException))]
-		public void SetLastWriteTimeUtcIOException1 ()
+		public void SetLastWriteTimeUtc_FileLock ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "SetLastWriteTimeUtcIOException1";
 			DeleteFile (path);
 			FileStream stream = null;
 			try {
 				stream = File.Create (path);
-				File.SetLastWriteTimeUtc (path, new DateTime (1000, 12, 12, 11, 59, 59));
+				try {
+					File.SetLastWriteTimeUtc (path, new DateTime (1000, 12, 12, 11, 59, 59));
+					Assert.Fail ("#1");
+				} catch (IOException ex) {
+					// The process cannot access the file '...'
+					// because it is being used by another process
+					Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.IsTrue (ex.Message.IndexOf (path) != -1, "#5");
+				}
 			} finally {
 				if (stream != null)
 					stream.Close ();
@@ -1751,7 +2474,7 @@ namespace MonoTests.System.IO
 			// not including a final new line. it looks
 			// like that was not true. I'm not sure what
 			// that was talking about
-			read_all ("");
+			read_all (string.Empty);
 			read_all ("\r");
 			read_all ("\n");
 			read_all ("\r\n");
@@ -1815,24 +2538,6 @@ namespace MonoTests.System.IO
 				string txt = sr.ReadLine ();
 				Assert.AreEqual ("replaceFile", txt, "#3");
 			}
-		}
-
-		[Test]
-		[ExpectedException(typeof(IOException))]
-		public void FileLocks()
-		{
-			string temporaryFile = Path.GetTempFileName();
-			string temporaryFile1 = Path.Combine(Path.GetTempPath(),
-							     Path.GetRandomFileName());
-
-			using (File.Open(temporaryFile, 
-					 FileMode.Open, 
-					 FileAccess.ReadWrite, 
-					 FileShare.None))
-				{
-					File.Move(temporaryFile,
-						  temporaryFile1);
-				}
 		}
 #endif
 	}
