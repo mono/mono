@@ -160,7 +160,8 @@ PROVIDES=$(
 # TODO: make this use the mono-find-provides script, to share code
 
 # Filter out dups from both lists
-REQUIRES=$(echo "$REQUIRES" "$config_REQUIRES"  | sort | uniq)
+REQUIRES=$(echo "$REQUIRES
+$config_REQUIRES"  | sort | uniq)
 PROVIDES=$(echo "$PROVIDES" | sort | uniq)
 
 #
