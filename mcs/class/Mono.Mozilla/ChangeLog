@@ -1,3 +1,8 @@
+2008-04-16  Andreia Gaita <avidigal@novell.com> 
+
+	* Mono.Mozilla/DOM/Navigation.cs, Mono.WebBrowser/DOM/INavigation.cs:
+	  Add history count getter
+
 2008-04-09  Andreia Gaita <avidigal@novell.com> 
 
 	* Mono.Mozilla2K5.csproj, Mono.Mozilla.dll.sources,

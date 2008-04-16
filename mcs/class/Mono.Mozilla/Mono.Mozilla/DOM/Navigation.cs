@@ -200,6 +200,16 @@ namespace Mono.Mozilla.DOM
 			navigation.loadURI (url, (uint)flags, null, null, null);
 		}
 
+		public int HistoryCount {
+			get {
+				nsISHistory history;
+				int count;
+				navigation.getSessionHistory (out history);
+				history.getCount (out count);
+				return count;
+			}
+		}
+
 		#endregion
 
 		internal Document Document

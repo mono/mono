@@ -84,6 +84,8 @@ namespace Mono.WebBrowser.DOM
 		/// A <see cref="LoadFlags"/> that control if the page comes from cache or not.
 		/// </param>
 		void Go (string url, LoadFlags flags);
+
+		int HistoryCount { get; }
 		
 		int GetHashCode ();
 	}
