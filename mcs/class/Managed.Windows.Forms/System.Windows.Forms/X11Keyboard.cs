@@ -170,6 +170,31 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
+		// Almost identical to UpdateKeyState() but does not call LookupString().
+		// The actual purpose is to handle shift state correctly.
+		public void PreFilter (XEvent xevent)
+		{
+			// It is still possible that some keyboards could have some shift
+			// keys outside this range, but let's think about such cases only
+			// if it actually happened.
+			if (xevent.KeyEvent.keycode >= keyc2vkey.Length)
+				return;
+
+			int vkey = keyc2vkey [xevent.KeyEvent.keycode];
+
+			switch (xevent.type) {
+			case XEventName.KeyRelease:
+				key_state_table [vkey & 0xff] &= unchecked ((byte) ~0x80);
+				break;
+			case XEventName.KeyPress:
+				if ((key_state_table [vkey & 0xff] & 0x80) == 0) {
+					key_state_table [vkey & 0xff] ^= 0x01;
+				}
+				key_state_table [vkey & 0xff] |= 0x80;
+				break;
+			}
+		}
+
 		public void KeyEvent (IntPtr hwnd, XEvent xevent, ref MSG msg)
 		{
 			XKeySym keysym;

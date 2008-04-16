@@ -1,3 +1,10 @@
+2008-04-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* X11Keyboard.cs, XplatUIX11.cs : manage key state regardless of
+	  whether the key events are filtered or not. Introduced
+	  PreFilter() process for this purpose. This fixes atokx3/iiimx
+	  shift state issue.
+
 2008-04-16  Andreia Gaita <avidigal@novell.com> 
 
 	* HtmlHistory.cs: Implement Length property
