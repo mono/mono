@@ -513,6 +513,10 @@ namespace System.Windows.Forms
 			
 			for (int i = DataGridView.first_col_index; i < sortedColumns.Count; i++) {
 				DataGridViewColumn col = (DataGridViewColumn)sortedColumns[i];
+				
+				if (!col.Displayed)
+					break;
+					
 				bounds.Width = col.Width;
 				DataGridViewCell cell = Cells[col.Index];
 				

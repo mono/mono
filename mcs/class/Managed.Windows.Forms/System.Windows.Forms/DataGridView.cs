@@ -1107,9 +1107,14 @@ namespace System.Windows.Forms {
 		public DataGridViewSelectionMode SelectionMode {
 			get { return selectionMode; }
 			set {
-				if (!Enum.IsDefined(typeof(DataGridViewSelectionMode), value)) {
-					throw new InvalidEnumArgumentException("Value is not valid DataGridViewSelectionMode.");
-				}
+				if (!Enum.IsDefined (typeof(DataGridViewSelectionMode), value))
+					throw new InvalidEnumArgumentException ("Value is not valid DataGridViewSelectionMode.");
+
+				if (value == DataGridViewSelectionMode.ColumnHeaderSelect || value == DataGridViewSelectionMode.FullColumnSelect)
+					foreach (DataGridViewColumn col in Columns)
+						if (col.SortMode == DataGridViewColumnSortMode.Automatic)
+							throw new InvalidOperationException (string.Format ("Cannot set SelectionMode to {0} because there are Automatic sort columns.", value));
+				
 				selectionMode = value;
 			}
 		}
@@ -2229,25 +2234,31 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
-		public int DisplayedColumnCount (bool includePartialColumns) {
-			/////////////////////// PartialColumns?
+		[MonoTODO ("Always includes partial columns")]
+		public int DisplayedColumnCount (bool includePartialColumns)
+		{
 			int result = 0;
-			foreach (DataGridViewColumn col in columns) {
-				if (col.Visible) {
+			
+			for (int i = first_col_index; i < Columns.Count; i++)
+				if ((Columns.ColumnDisplayIndexSortedArrayList[i] as DataGridViewColumn).Displayed)
 					result++;
-				}
-			}
+				else
+					break;
+
 			return result;
 		}
 
-		public int DisplayedRowCount (bool includePartialRow) {
-			/////////////////////// PartialRows?
+		[MonoTODO ("Always includes partial rows")]
+		public int DisplayedRowCount (bool includePartialRow)
+		{
 			int result = 0;
-			foreach (DataGridViewRow row in rows) {
-				if (row.Visible) {
+			
+			for (int i = first_row_index; i < Rows.Count; i++)
+				if (Rows[i].Displayed)
 					result++;
-				}
-			}
+				else
+					break;
+					
 			return result;
 		}
 
@@ -4128,16 +4139,37 @@ namespace System.Windows.Forms {
 				bounds.Y += columnHeadersHeight;
 			}
 			
-			gridWidth = 0;
+			gridWidth = rowHeadersVisible ? rowHeadersWidth : 0;
 			gridHeight = 0;
 			
 			int rows_displayed = 0;
 			int first_row_height = Rows.Count > 0 ? Rows[first_row_index].Height : 0;
+			int room_left = this.Height;
+			
+			// Reset all columns to !Displayed
+			for (int i = 0; i < Columns.Count; i++)
+				Columns[i].DisplayedInternal = false;
+			
+			// Set Displayed columns
+			for (int i = first_col_index; i < Columns.Count; i++) {
+				DataGridViewColumn col = Columns.ColumnDisplayIndexSortedArrayList[i] as DataGridViewColumn;
+				
+				col.DisplayedInternal = true;
+				gridWidth += col.Width;
+				
+				if (gridWidth >= Width)
+					break;
+			}
+			
+			// Reset all rows to !Displayed
+			for (int i = 0; i < Rows.Count; i++)
+				GetRowInternal (i).DisplayedInternal = false;
 			
 			// Draw rows
 			for (int index = first_row_index; index < Rows.Count; index++) {
 				DataGridViewRow row = Rows[index];
-				
+				GetRowInternal (index).DisplayedInternal = true;
+	
 				bounds.Height = row.Height;
 				bool is_first = row.Index == 0;
 				bool is_last = row.Index == rows.Count - 1;
@@ -4154,6 +4186,8 @@ namespace System.Windows.Forms {
 					
 				gridHeight += row.Height;
 			}
+
+			gridWidth = 0;
 			
 			foreach (DataGridViewColumn col in sortedColumns)
 				gridWidth += col.Width;
@@ -4163,12 +4197,11 @@ namespace System.Windows.Forms {
 			foreach (DataGridViewRow row in Rows)
 				gridHeight += row.Height;
 
-			if (rowHeadersVisible) {
+			if (rowHeadersVisible)
 				gridWidth += rowHeadersWidth;
-			}
-			if (columnHeadersVisible) {
+
+			if (columnHeadersVisible)
 				gridHeight += columnHeadersHeight;
-			}
 			
 			bool horizontalVisible = false;
 			bool verticalVisible = false;

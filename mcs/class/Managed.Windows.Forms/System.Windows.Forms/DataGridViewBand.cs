@@ -154,6 +154,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal bool DisplayedInternal {
+			get { return displayed; }
+			set { displayed = value; }
+		}
+		
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public object Tag {

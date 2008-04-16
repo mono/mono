@@ -1,3 +1,10 @@
+2008-04-16  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridViewBand.cs: Add internal way to set displayed variable.
+	* DataGridViewRow.cs: Don't paint cells in non-displayed columns.
+	* DataGridView.cs: Make sure we always keep track of Displayed
+	rows and columns, and only draw things that are displayed.
+
 2008-04-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* X11Keyboard.cs, XplatUIX11.cs : manage key state regardless of
