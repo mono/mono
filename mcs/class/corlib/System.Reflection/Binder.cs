@@ -214,6 +214,8 @@ namespace System.Reflection
 
 				if (check_type (vtype, type)) {
 					// These are not supported by Convert
+					if (type.IsEnum)
+						return Enum.ToObject (type, value);
 					if (vtype == typeof (Char)) {
 						if (type == typeof (double))
 							return (double)(char)value;
@@ -239,14 +241,20 @@ namespace System.Reflection
 				if (from == null)
 					return true;
 
-				TypeCode fromt = Type.GetTypeCode (from);
-				TypeCode tot = Type.GetTypeCode (to);
-
 				if (to.IsByRef != from.IsByRef)
 					return false;
 
 				if (to.IsInterface)
 					return to.IsAssignableFrom (from);
+
+				if (to.IsEnum) {
+					to = Enum.GetUnderlyingType (to);
+					if (from == to)
+						return true;
+				}
+
+				TypeCode fromt = Type.GetTypeCode (from);
+				TypeCode tot = Type.GetTypeCode (to);
 
 				switch (fromt) {
 				case TypeCode.Char:

@@ -1,3 +1,8 @@
+2008-04-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* Binder.cs: Applied patch from Yves Bastide (doc.formatique@gmail.com). Add 
+	support for converting integers to enums. Fixes #380361.
+
 ﻿2008-04-02  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
 
 	* IReflect.cs
