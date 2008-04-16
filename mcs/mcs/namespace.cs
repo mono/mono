@@ -595,9 +595,9 @@ namespace Mono.CSharp {
 			public Location Location {
 				get { return name.Location; }
 			}
-			
+
 			public string Name {
-				get { return name.FullName; }
+				get { return name.FullyQualifiedName; }
 			}			
 
 			public Namespace Resolve (IResolveContext rc)
@@ -779,7 +779,7 @@ namespace Mono.CSharp {
 				using_clauses = new ArrayList ();
 			} else {
 				foreach (UsingEntry old_entry in using_clauses) {
-					if (name.FullName == old_entry.Name) {
+					if (name.FullyQualifiedName == old_entry.Name) {
 						Report.SymbolRelatedToPreviousError (old_entry.Location, old_entry.GetSignatureForError ());
 						Report.Warning (105, 3, loc, "The using directive for `{0}' appeared previously in this namespace", name.GetSignatureForError ());
 						return;

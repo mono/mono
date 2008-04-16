@@ -2980,11 +2980,11 @@ namespace Mono.CSharp {
 		}
 
 		public override string Name {
-			get { return name.FullName; }
+			get { return name.PrettyName; }
 		}
 
 		public override string FullName {
-			get { return name.FullName; }
+			get { return name.FullyQualifiedName; }
 		}
 	}
 

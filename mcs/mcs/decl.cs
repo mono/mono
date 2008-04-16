@@ -164,31 +164,33 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public string FullName {
-			get {
-				if (TypeArguments != null)
-					return Name + "<" + TypeArguments.ToString () + ">";
-				else
-					return Name;
-			}
+		public string PrettyName {
+			get { return TypeArguments == null ? Name : MethodName + "<" + TypeArguments.ToString () + ">"; }
 		}
 
 		public string MethodName {
 			get {
 				string connect = is_double_colon ? "::" : ".";
 				if (Left != null)
-					return Left.FullName + connect + Name;
+					return Left.FullyQualifiedName + connect + Name;
 				else
 					return Name;
 			}
 		}
+
+		// Please, pretty please, with sugar on top, DON'T USE THIS -- just use the Equals and GetHashCode methods
+		// that make MemberName a proper hash key, and avoid tons of memory allocations
+		public string FullyQualifiedName {
+			get { return TypeArguments == null ? MethodName : MethodName + "<" + TypeArguments.ToString () + ">"; }
+		}
 		
 		public string GetSignatureForError ()
 		{
-			if (TypeArguments != null)
-				return MethodName + "<" + TypeArguments.GetSignatureForError () + ">";
-
-			return MethodName;
+			string append = TypeArguments == null ? "" : "<" + TypeArguments.GetSignatureForError () + ">";
+			if (Left == null)
+				return Name + append;
+			string connect = is_double_colon ? "::" : ".";
+			return Left.GetSignatureForError () + connect + Name + append;
 		}
 
 		public override bool Equals (object other)

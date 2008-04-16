@@ -1,5 +1,13 @@
 2008-04-16  Raja R Harinath  <harinath@hurrynot.org>
 
+	Fix build break
+	* decl.cs (MemberName.PrettyName): New.  Replaces the misnamed
+	FullName.
+	(MemberName.MethodName, MemberName.GetSignatureForError): Improve.
+	(MemberName.FullyQualifiedName): New.  Provides the functionality
+	that users assume FullName would have.
+	* ecore.cs, namespace.cs: Update to changes.
+
 	* statement.cs (Using.assign): Make into ExpressionStatement.
 	(Using.EmitPreTryBody): Simplify.
 
