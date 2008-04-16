@@ -1,3 +1,18 @@
+2008-04-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* liveness.c (mono_analyze_liveness): Disable the initlocals optimization if 
+	running under the debugger.
+
+	* linear-scan.c (mono_linear_scan): Avoid sharing registers if running under the
+	debugger.
+
+	* mini.c (mini_method_compile): Set a few flags in cfg if running under the
+	debugger. Also move the disabling of optimizations here from driver.c.
+	(mono_allocate_stack_slots_full): Avoid sharing stack slots if running under the
+	debugger.
+
+	* mini.h (MonoCompile): Add a few new flags.
+
 2008-04-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_method_to_ir): Set cfg->ip before processing an IL instruction
