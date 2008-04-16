@@ -1,3 +1,8 @@
+2008-04-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* DateTimeOffsetTest.cs (ToStringWithFormatAndCulture): Avoid dependency on
+	invariant culture. Fixes #380345.
+
 2008-04-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* StringTest.cs: Add a test for #374511.
