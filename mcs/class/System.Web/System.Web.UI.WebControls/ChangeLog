@@ -1,3 +1,9 @@
+2008-04-16  Marek Habersack  <mhabersack@novell.com>
+
+	* ObjectDataSourceView.cs: ExecuteSelect should return an empty
+	aray when no data has been retrieved from the specified source
+	type. Fixes bug #380106
+
 2008-04-15  Marek Habersack  <mhabersack@novell.com>
 
 	* MailDefinition.cs: dispose of streams the way it should

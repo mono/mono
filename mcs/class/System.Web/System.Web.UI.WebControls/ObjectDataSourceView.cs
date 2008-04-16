@@ -773,7 +773,7 @@ namespace System.Web.UI.WebControls
 			if (result is IEnumerable)
 				return (IEnumerable) result;
 			else
-				return new object[] { result };
+				return new object[] {};
 		}
 		
 		int QueryTotalRowCount (IOrderedDictionary mergedParameters, DataSourceSelectArguments arguments)
