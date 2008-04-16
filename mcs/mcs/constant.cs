@@ -1776,45 +1776,44 @@ namespace Mono.CSharp {
 	/// </summary>
 	
 	public class SideEffectConstant : Constant {
-		public Constant left;
-		Expression right;
+		public Constant value;
+		Expression side_effect;
 		
-		public SideEffectConstant (Constant left, Expression right, Location loc) : base (loc)
+		public SideEffectConstant (Constant value, Expression side_effect, Location loc) : base (loc)
 		{
-			this.left = left;
-			this.right = right;
+			this.value = value;
+			while (side_effect is SideEffectConstant)
+				side_effect = ((SideEffectConstant) side_effect).side_effect;
+			this.side_effect = side_effect;
 			eclass = ExprClass.Value;
-			type = left.Type;
+			type = value.Type;
 		}
 
 		public override string AsString ()
 		{
-			return left.AsString ();
+			return value.AsString ();
 		}
 
 		public override object GetValue ()
 		{
-			return left.GetValue ();
+			return value.GetValue ();
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			//
-			// This happens when both sides have side-effects and
-			// the result is a constant
-			//
-			if (left is SideEffectConstant) {
-				left.Emit (ec);
+			if (side_effect is Constant) {
+				// do nothing -- we're sure it doesn't have side effects
+			} else if (side_effect is ExpressionStatement) {
+				((ExpressionStatement) side_effect).EmitStatement (ec);
+			} else {
+				side_effect.Emit (ec);
 				ec.ig.Emit (OpCodes.Pop);
 			}
-
-			right.Emit (ec);
+			value.Emit (ec);
 		}
 
 		public override bool IsDefaultValue {
-			get {
-				return left.IsDefaultValue;
-			}
+			get { return value.IsDefaultValue; }
 		}
 
 		public override Constant Increment ()
@@ -1823,22 +1822,17 @@ namespace Mono.CSharp {
 		}
 		
 		public override bool IsNegative {
-			get {
-				return left.IsNegative;
-			}
+			get { return value.IsNegative; }
 		}
 
 		public override bool IsZeroInteger {
-			get {
-				return left.IsZeroInteger;
-			}
+			get { return value.IsZeroInteger; }
 		}
 
 		public override Constant ConvertExplicitly (bool in_checked_context, Type target_type)
 		{
-			return left.ConvertExplicitly (in_checked_context, target_type);
+			Constant new_value = value.ConvertExplicitly (in_checked_context, target_type);
+			return new_value == null ? null : new SideEffectConstant (new_value, side_effect, new_value.Location);
 		}
 	}
 }
-
-

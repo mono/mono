@@ -80,7 +80,7 @@ namespace Mono.CSharp {
 				return BinaryFold (ec, oper, ((EmptyConstantCast)left).child, right, loc);
 
 			if (left is SideEffectConstant) {
-				result = BinaryFold (ec, oper, ((SideEffectConstant) left).left, right, loc);
+				result = BinaryFold (ec, oper, ((SideEffectConstant) left).value, right, loc);
 				if (result == null)
 					return null;
 				return new SideEffectConstant (result, left, loc);
@@ -90,7 +90,7 @@ namespace Mono.CSharp {
 				return BinaryFold (ec, oper, left, ((EmptyConstantCast)right).child, loc);
 
 			if (right is SideEffectConstant) {
-				result = BinaryFold (ec, oper, left, ((SideEffectConstant) right).left, loc);
+				result = BinaryFold (ec, oper, left, ((SideEffectConstant) right).value, loc);
 				if (result == null)
 					return null;
 				return new SideEffectConstant (result, right, loc);

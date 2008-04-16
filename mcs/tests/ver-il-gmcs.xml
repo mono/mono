@@ -26666,7 +26666,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>22</size>
+        <size>24</size>
       </method>
     </type>
   </test>
@@ -27360,7 +27360,7 @@
         <size>8</size>
       </method>
       <method name="Int32 Main()">
-        <size>60</size>
+        <size>62</size>
       </method>
     </type>
   </test>
@@ -27370,7 +27370,7 @@
         <size>7</size>
       </method>
       <method name="Void And()">
-        <size>103</size>
+        <size>109</size>
       </method>
       <method name="Void Or()">
         <size>137</size>
@@ -27826,6 +27826,28 @@
       </method>
       <method name="Int32 Main()">
         <size>293</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-632.cs">
+    <type name="Bug379822">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Assert(Boolean, Boolean)">
+        <size>19</size>
+      </method>
+      <method name="Void TestAnd(Boolean)">
+        <size>85</size>
+      </method>
+      <method name="Void TestOr(Boolean)">
+        <size>92</size>
+      </method>
+      <method name="Void Test(Boolean)">
+        <size>13</size>
+      </method>
+      <method name="Void Main()">
+        <size>13</size>
       </method>
     </type>
   </test>

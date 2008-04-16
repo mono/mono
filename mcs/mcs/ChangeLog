@@ -1,3 +1,14 @@
+2008-04-16  Jan Oravec <jan.oravec@6com.sk>
+	    Raja R Harinath  <harinath@hurrynot.org>
+
+	Fix #379822
+	* constant.cs (SideEffectConstant.value): Rename from 'left'.
+	(SideEffectConstant.side_effect): Rename from 'right'.
+	(SideEffectConstant..ctor): Normalize 'side_effect'.
+	(SideEffectConstant.Emit): Emit 'value', not 'side_effect' as the
+	value of this constant.
+	* cfold.cs: Update to changes.
+
 2008-04-15  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-paser.jay: Removed unused variable.
