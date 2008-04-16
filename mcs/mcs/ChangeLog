@@ -1,3 +1,8 @@
+2008-04-16  Raja R Harinath  <harinath@hurrynot.org>
+
+	* statement.cs (Using.assign): Make into ExpressionStatement.
+	(Using.EmitPreTryBody): Simplify.
+
 2008-04-16  Marek Safar  <marek.safar@gmail.com>
 
 	* report.cs: ColorFormat is protected.

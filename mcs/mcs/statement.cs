@@ -4826,7 +4826,7 @@ namespace Mono.CSharp {
 		Expression init;
 
 		Expression converted_var;
-		Expression assign;
+		ExpressionStatement assign;
 
 		public Using (Expression var, Expression init, Statement stmt, Location l)
 		{
@@ -4838,8 +4838,8 @@ namespace Mono.CSharp {
 
 		bool ResolveVariable (EmitContext ec)
 		{
-			Expression a = new Assign (var, init, loc);
-			a = a.Resolve (ec);
+			ExpressionStatement a = new Assign (var, init, loc);
+			a = a.ResolveStatement (ec);
 			if (a == null)
 				return false;
 
@@ -4850,13 +4850,13 @@ namespace Mono.CSharp {
 				return true;
 			}
 
-			a = Convert.ImplicitConversionStandard (ec, a, TypeManager.idisposable_type, var.Location);
-			if (a == null) {
+			Expression e = Convert.ImplicitConversionStandard (ec, a, TypeManager.idisposable_type, var.Location);
+			if (e == null) {
 				Error_IsNotConvertibleToIDisposable (var);
 				return false;
 			}
 
-			converted_var = a;
+			converted_var = e;
 
 			return true;
 		}
@@ -4870,13 +4870,7 @@ namespace Mono.CSharp {
 
 		protected override void EmitPreTryBody (EmitContext ec)
 		{
-			ExpressionStatement es = assign as ExpressionStatement;
-			if (es != null) {
-				es.EmitStatement (ec);
-			} else {
-				assign.Emit (ec);
-				ec.ig.Emit (OpCodes.Pop);
-			}
+			assign.EmitStatement (ec);
 		}
 
 		protected override void EmitTryBody (EmitContext ec)
