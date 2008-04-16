@@ -563,7 +563,7 @@ System.IO/DefaultWatcher.cs
 System.IO/ErrorEventArgs.cs
 System.IO/ErrorEventHandler.cs
 System.IO/FAMWatcher.cs
-System.IO/NoOpWatcher.cs
+System.IO/NullFileWatcher.cs
 System.IO/FileAction.cs
 System.IO/FileSystemEventArgs.cs
 System.IO/FileSystemEventHandler.cs

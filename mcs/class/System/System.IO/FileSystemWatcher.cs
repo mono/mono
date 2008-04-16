@@ -32,6 +32,7 @@
 //
 
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
@@ -117,7 +118,7 @@ namespace System.IO {
 				int mode = 0;
 				if (managed == null)
 					mode = InternalSupportsFSW ();
-
+				
 				bool ok = false;
 				switch (mode) {
 				case 1: // windows
@@ -138,11 +139,23 @@ namespace System.IO {
 					break;
 				}
 
-				if (mode == 0 || !ok)
-					DefaultWatcher.GetInstance (out watcher);
+				if (mode == 0 || !ok) {
+					if (String.Compare (managed, "disabled", true) == 0)
+						NullFileWatcher.GetInstance (out watcher);
+					else
+						DefaultWatcher.GetInstance (out watcher);
+				}
+
+				ShowWatcherInfo ();
 			}
 		}
 
+		[Conditional ("DEBUG"), Conditional ("TRACE")]
+		void ShowWatcherInfo ()
+		{
+			Console.WriteLine ("Watcher implementation: {0}", watcher != null ? watcher.GetType ().ToString () : "<none>");
+		}
+		
 		#endregion // Constructors
 
 		#region Properties

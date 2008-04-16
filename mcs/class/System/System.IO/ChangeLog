@@ -1,3 +1,11 @@
+2008-04-17  Marek Habersack  <mhabersack@novell.com>
+
+	* FileSystemWatcher.cs: added support for NullFileWatcher. Fixes
+	bug #354701
+
+	* NullFileWatcher.cs: added an IFileWatcher implementation which
+	does nothing. Selected only by setting the MONO_MANAGED_WATCHER
+	environment variable to 'disabled'. Fixes bug #354701
 
 Tue Mar 11 14:29:22 CET 2008 Paolo Molaro <lupus@ximian.com>
 
