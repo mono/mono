@@ -1,5 +1,13 @@
 2008-04-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-trampolines.c (mono_create_jump_trampoline): Add an assert to check that
+	the arch specific function initializes code_size.
+	(mono_create_delegate_trampoline): Ditto.
+
+	* mini-mips.h mini-mips.c inssel-mips.brg inssel-long32-mips.brg cpu-mips.md
+	tramp-mips.c: Resurrect MIPS port and also fix the issues on little-endian
+	platforms.
+
 	* liveness.c (mono_analyze_liveness): Disable the initlocals optimization if 
 	running under the debugger.
 
