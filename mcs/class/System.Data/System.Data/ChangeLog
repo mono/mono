@@ -1,3 +1,13 @@
+2008-04-16  Veerapuram Varadhan <vvaradhan@novell.com>
+
+	* XmlDataInferenceLoader.cs (ReadXml): Make sure the name of
+	reference key column(s) in child tables are unique.
+
+	* XmlSchemaWriter.cs (WriteSchema, WriteDataSetElement,
+	WriteTableType, WriteChildRelations): Handle the scenario wherein
+	we have a relation and only one table.  This can occur when we
+	have an XML with same parent/child table names. 
+	
 2008-03-31  Veerapuram Varadhan <vvaradhan@novell.com>
 
 	* DataView.cs: Reverting rev#98474 changes - as it broke quite a
