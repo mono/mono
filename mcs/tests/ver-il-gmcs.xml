@@ -27851,6 +27851,16 @@
       </method>
     </type>
   </test>
+  <test name="test-633.cs">
+    <type name="Test.C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
   <test name="test-64.cs">
     <type name="Operator">
       <method name="Void .ctor()">
