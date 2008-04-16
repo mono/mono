@@ -590,6 +590,12 @@ namespace Mono.CSharp {
 			ec.ig.Emit (on_true ? OpCodes.Brtrue : OpCodes.Brfalse, target);
 		}
 
+		public virtual void EmitSideEffect (EmitContext ec)
+		{
+			Emit (ec);
+			ec.ig.Emit (OpCodes.Pop);
+		}
+
 		/// <summary>
 		///   Protected constructor.  Only derivate types should
 		///   be able to be created
@@ -1302,6 +1308,11 @@ namespace Mono.CSharp {
 		///   Emit that will always leave a value on the stack).
 		/// </summary>
 		public abstract void EmitStatement (EmitContext ec);
+
+		public override void EmitSideEffect (EmitContext ec)
+		{
+			EmitStatement (ec);
+		}
 	}
 
 	/// <summary>
@@ -1316,25 +1327,16 @@ namespace Mono.CSharp {
 	///   would be "unsigned int".
 	///
 	/// </summary>
-	public class EmptyCast : Expression
+	public abstract class TypeCast : Expression
 	{
 		protected Expression child;
 
-		protected EmptyCast (Expression child, Type return_type)
+		protected TypeCast (Expression child, Type return_type)
 		{
 			eclass = child.eclass;
 			loc = child.Location;
 			type = return_type;
 			this.child = child;
-		}
-		
-		public static Expression Create (Expression child, Type type)
-		{
-			Constant c = child as Constant;
-			if (c != null)
-				return new EmptyConstantCast (c, type);
-
-			return new EmptyCast (child, type);
 		}
 
 		public override Expression CreateExpressionTree (EmitContext ec)
@@ -1365,16 +1367,43 @@ namespace Mono.CSharp {
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
-			EmptyCast target = (EmptyCast) t;
+			TypeCast target = (TypeCast) t;
 
 			target.child = child.Clone (clonectx);
 		}
 	}
 
+	public class EmptyCast : TypeCast {
+		EmptyCast (Expression child, Type target_type)
+			: base (child, target_type)
+		{
+		}
+		
+		public static Expression Create (Expression child, Type type)
+		{
+			Constant c = child as Constant;
+			if (c != null)
+				return new EmptyConstantCast (c, type);
+
+			return new EmptyCast (child, type);
+		}
+
+		public override void EmitBranchable (EmitContext ec, Label label, bool on_true)
+		{
+			child.EmitBranchable (ec, label, on_true);
+		}
+
+		public override void EmitSideEffect (EmitContext ec)
+		{
+			child.EmitSideEffect (ec);
+		}
+
+	}
+
 	/// <summary>
 	///    Performs a cast using an operator (op_Explicit or op_Implicit)
 	/// </summary>
-	public class OperatorCast : EmptyCast {
+	public class OperatorCast : TypeCast {
 		MethodInfo conversion_operator;
 		bool find_explicit;
 			
@@ -1431,7 +1460,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	/// 	This is a numeric cast to a Decimal
 	/// </summary>
-	public class CastToDecimal : EmptyCast {
+	public class CastToDecimal : TypeCast {
 		MethodInfo conversion_operator;
 
 		public CastToDecimal (Expression child)
@@ -1478,7 +1507,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	/// 	This is an explicit numeric cast from a Decimal
 	/// </summary>
-	public class CastFromDecimal : EmptyCast
+	public class CastFromDecimal : TypeCast
 	{
 		static IDictionary operators;
 
@@ -1715,7 +1744,7 @@ namespace Mono.CSharp {
 	///   The effect of it is to box the value type emitted by the previous
 	///   operation.
 	/// </summary>
-	public class BoxedCast : EmptyCast {
+	public class BoxedCast : TypeCast {
 
 		public BoxedCast (Expression expr, Type target_type)
 			: base (expr, target_type)
@@ -1737,9 +1766,33 @@ namespace Mono.CSharp {
 			
 			ec.ig.Emit (OpCodes.Box, child.Type);
 		}
+
+		public override void EmitBranchable (EmitContext ec, Label label, bool on_true)
+		{
+			if (child.Type.IsValueType &&
+			    (type == TypeManager.object_type || type == TypeManager.value_type)) {
+				// 'Box' involves runtime checks for interface types, so we can't unconditionally assume we'll get a non-null here
+				child.EmitSideEffect (ec);
+				if (on_true)
+					ec.ig.Emit (OpCodes.Br, label);
+				return;
+			}
+			base.EmitBranchable (ec, label, on_true);
+		}
+
+		public override void EmitSideEffect (EmitContext ec)
+		{
+			if (child.Type.IsValueType &&
+			    (type == TypeManager.object_type || type == TypeManager.value_type)) {
+				child.EmitSideEffect (ec);
+				return;
+			}
+			// boxing is side-effectful, since it involves runtime checks
+			base.EmitSideEffect (ec);
+		}
 	}
 
-	public class UnboxCast : EmptyCast {
+	public class UnboxCast : TypeCast {
 		public UnboxCast (Expression expr, Type return_type)
 			: base (expr, return_type)
 		{
@@ -1786,7 +1839,7 @@ namespace Mono.CSharp {
 	///   context, so they should generate the conv.ovf opcodes instead of
 	///   conv opcodes.
 	/// </summary>
-	public class ConvCast : EmptyCast {
+	public class ConvCast : TypeCast {
 		public enum Mode : byte {
 			I1_U1, I1_U2, I1_U4, I1_U8, I1_CH,
 			U1_I1, U1_CH,
@@ -1994,7 +2047,7 @@ namespace Mono.CSharp {
 		}
 	}
 	
-	public class OpcodeCast : EmptyCast {
+	public class OpcodeCast : TypeCast {
 		OpCode op, op2;
 		bool second_valid;
 		
@@ -2041,7 +2094,7 @@ namespace Mono.CSharp {
 	///   This kind of cast is used to encapsulate a child and cast it
 	///   to the class requested
 	/// </summary>
-	public class ClassCast : EmptyCast {
+	public class ClassCast : TypeCast {
 		public ClassCast (Expression child, Type return_type)
 			: base (child, return_type)
 			

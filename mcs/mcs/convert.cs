@@ -1808,7 +1808,7 @@ namespace Mono.CSharp {
 			// Unboxing conversion.
 			//
 			if (((source_type == TypeManager.enum_type &&
-				!(source is EmptyCast)) ||
+				!(source is TypeCast)) ||
 				source_type == TypeManager.value_type) && target_is_value_type)
 				return new UnboxCast (source, target_type);
 

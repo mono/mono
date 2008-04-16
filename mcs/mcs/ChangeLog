@@ -1,3 +1,13 @@
+2008-04-16  Raja R Harinath  <harinath@hurrynot.org>
+
+	Introduce 'EmitSideEffect'
+	* ecore.cs (Expression.EmitSideEffect): New.
+	(TypeCast): Rename from EmptyCast.
+	(EmptyCast): New.
+	(EmptyCast.EmitBranchable, EmptyCast.EmitSideEffect): Implement.
+	(BoxedCast.EmitBranchable, BoxedCast.EmitSideEffect): Implement.
+	* convert.cs, nullable.cs: Update to changes.
+
 2008-04-16  Marek Safar  <marek.safar@gmail.com>
 
 	* class.cs, cs-parser.jay: Early check for base types expression.

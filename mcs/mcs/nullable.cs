@@ -286,7 +286,7 @@ namespace Mono.CSharp.Nullable
 		}
 	}
 
-	public class Wrap : EmptyCast
+	public class Wrap : TypeCast
 	{
 		readonly NullableInfo info;
 
@@ -774,7 +774,7 @@ namespace Mono.CSharp.Nullable
 				if (lifted_type == null)
 					return null;
 
-				if (left is UserCast || left is EmptyCast)
+				if (left is UserCast || left is TypeCast)
 					left.Type = lifted_type.Type;
 				else
 					left = EmptyCast.Create (left, lifted_type.Type);
@@ -786,7 +786,7 @@ namespace Mono.CSharp.Nullable
 				if (lifted_type == null)
 					return null;
 
-				if (right is UserCast || right is EmptyCast)
+				if (right is UserCast || right is TypeCast)
 					right.Type = lifted_type.Type;
 				else
 					right = EmptyCast.Create (right, lifted_type.Type);
