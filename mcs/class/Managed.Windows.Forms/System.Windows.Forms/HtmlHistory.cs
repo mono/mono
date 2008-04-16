@@ -58,9 +58,8 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Properties
-		[MonoTODO ("Needs implementation")]
 		public int Length {
-			get { return 0; }
+			get { return webHost.Navigation.HistoryCount; }
 		}
 
 		[MonoTODO ("Needs implementation")]

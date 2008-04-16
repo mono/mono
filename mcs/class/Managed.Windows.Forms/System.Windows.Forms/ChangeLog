@@ -1,3 +1,7 @@
+2008-04-16  Andreia Gaita <avidigal@novell.com> 
+
+	* HtmlHistory.cs: Implement Length property
+
 2008-04-15  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridView.cs: Call EndEdit when a sort is performed so we take
