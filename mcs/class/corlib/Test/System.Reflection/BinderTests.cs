@@ -455,6 +455,25 @@ namespace MonoTests.System.Reflection
 		public void Bug324998Bad () {
 			typeof(Bug324998BBad).GetMethod("f", BUG324998_BINDING_FLAGS);
 		}
-	}
+
+        void Bug380361 (MyEnum e) { }
+
+        [Test]
+        public void TestEnumConversion ()
+        {
+            Type type = this.GetType ();
+            MethodInfo mi = type.GetMethod ("Bug380361", BindingFlags.NonPublic | BindingFlags.Instance, binder, new Type [] { typeof (MyEnum) }, null);
+            mi.Invoke (this, new object [] { (int)MyEnum.Zero });
+        }
+
+        [Test]
+        [ExpectedException(typeof (ArgumentException))]
+        public void TestEnumConversion2 ()
+        {
+            Type type = this.GetType ();
+            MethodInfo mi = type.GetMethod ("Bug380361", BindingFlags.NonPublic | BindingFlags.Instance, binder, new Type [] { typeof (MyEnum) }, null);
+            mi.Invoke (this, new object [] { (long)MyEnum.Zero });
+        }
+    }
 }
 

@@ -1,3 +1,8 @@
+2008-04-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* BinderTests.cs: Applied patch from Yves Bastide (doc.formatique@gmail.com). Add 
+	tests for converting integers to enums.
+
 2008-03-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* ConstructorInfoTest.cs: Add a test for #373459.
