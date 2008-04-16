@@ -1,3 +1,11 @@
+2008-04-16  Jonathan Chambers  <joncham@gmail.com>
+	* monobitset.c (find_first_unset): Use gsize instead of gulong for platform
+	  dependent size; fixes Win64.
+	* mono-member.h: Implement mono_memory_barrier, mono_memory_read_barrier, and 
+	  mono_memory_write_barrier for Win64.
+
+	Contributed under MIT/X11 license.
+
 2008-04-16  Marek Habersack  <mhabersack@novell.com>
 
 	* mono-io-portability.c (mono_portability_find_file): properly
