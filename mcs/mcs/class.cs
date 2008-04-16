@@ -3048,11 +3048,6 @@ namespace Mono.CSharp {
 					return ifaces;
 				}
 
-				if (base_class.Type.IsArray || base_class.Type.IsPointer) {
-					Report.Error (1521, base_class.Location, "Invalid base type");
-					return ifaces;
-				}
-
 				if (base_class.IsSealed){
 					Report.SymbolRelatedToPreviousError (base_class.Type);
 					if (base_class.Type.IsAbstract) {

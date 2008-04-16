@@ -3068,22 +3068,29 @@ non_expression_type
 	;
 
 type_list
-	: type
+	: base_type_name
 	  {
-		ArrayList types = new ArrayList (4);
-
+		ArrayList types = new ArrayList (2);
 		types.Add ($1);
 		$$ = types;
 	  }
-	| type_list COMMA type
+	| type_list COMMA base_type_name
 	  {
 		ArrayList types = (ArrayList) $1;
-
 		types.Add ($3);
 		$$ = types;
 	  }
 	;
 
+base_type_name
+	: type
+	  {
+		if ($1 is ComposedCast)
+			Report.Error (1521, GetLocation ($1), "Invalid base type `{0}'", ((ComposedCast)$1).GetSignatureForError ());
+		$$ = $1;
+	  }
+	;
+	
 /*
  * replaces all the productions for isolating the various
  * simple types, but we need this to reuse it easily in local_variable_type

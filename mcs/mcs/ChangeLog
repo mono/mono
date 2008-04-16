@@ -1,5 +1,9 @@
 2008-04-16  Marek Safar  <marek.safar@gmail.com>
 
+	* class.cs, cs-parser.jay: Early check for base types expression.
+
+2008-04-16  Marek Safar  <marek.safar@gmail.com>
+
 	* decl.cs (MemberName): Declare PrettyName as obsolete.
 
 2008-04-16  Marek Safar  <marek.safar@gmail.com>
