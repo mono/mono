@@ -366,11 +366,6 @@ mono_if_conversion (MonoCompile *cfg)
 			g_assert (compare->next && MONO_IS_COND_BRANCH_OP (compare->next));
 			branch = compare->next;
 
-			/* Moving ins1 could change the comparison */
-			/* FIXME: */
-			if (!((compare->sreg1 != ins1->dreg) && (compare->sreg2 != ins1->dreg)))
-				continue;
-
 			/* FIXME: */
 			comp_type = mono_opcode_to_type (branch->opcode, compare->opcode);
 			if (!((comp_type == CMP_TYPE_I) || (comp_type == CMP_TYPE_L)))

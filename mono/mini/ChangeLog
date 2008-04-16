@@ -1,3 +1,8 @@
+2008-04-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* branch-opts.c (mono_if_conversion): Remove some restrictions which are not
+	 needed.
+
 2008-04-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-codegen.c (mono_local_regalloc): Free the hreg of a dreg even if the
