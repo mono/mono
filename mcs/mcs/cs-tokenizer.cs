@@ -1629,8 +1629,6 @@ namespace Mono.CSharp
 					
 					string name = arg.Substring (pos). Trim (quotes);
 					ref_name = Location.LookupFile (name);
-					file_name.HasLineDirective = true;
-					ref_name.HasLineDirective = true;
 					Location.Push (ref_name);
 				} else {
 					ref_line = System.Int32.Parse (arg);

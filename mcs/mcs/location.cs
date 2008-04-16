@@ -27,7 +27,6 @@ namespace Mono.CSharp {
 		public readonly string Path;
 		public readonly int Index;
 		public SourceFileEntry SourceFileEntry;
-		public bool HasLineDirective;
 
 		public SourceFile (string name, string path, int index)
 		{
