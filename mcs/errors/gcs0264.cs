@@ -1,4 +1,4 @@
-// gcs0264.cs: Partial declarations of `Partial<T>' must have the same type parameter names in the same order
+// CS0264: Partial declarations of `Partial<U>' must have the same type parameter names in the same order
 // Line: 4
 
 partial class Partial<T>
