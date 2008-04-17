@@ -331,23 +331,23 @@ namespace System.Windows.Forms
 					
 				if (infoVersion != null)
 					version = infoVersion.InformationalVersion;
-					
-				// If [AssemblyFileVersion] is present it is used before 
-				// resorting to 1.0
+
+				// If [AssemblyFileVersion] is present it is used
+				// before resorting to assembly version
 				if (version == null || version.Length == 0) {
 					AssemblyFileVersionAttribute fileVersion =
 						Attribute.GetCustomAttribute (assembly,
 						typeof (AssemblyFileVersionAttribute))
 						as AssemblyFileVersionAttribute;
-
 					if (fileVersion != null)
 						version = fileVersion.Version;
 				}
 
-				// If [AssemblyInformationalVersion] is not present, it
-				// seems 1.0.0.0 is always returned, despite the documentation
+				// If neither [AssemblyInformationalVersionAttribute]
+				// nor [AssemblyFileVersion] are present, then use
+				// the assembly version
 				if (version == null || version.Length == 0)
-					version = new Version (1, 0, 0, 0).ToString ();
+					version = assembly.GetName ().Version.ToString ();
 
 				return version;
 			}
