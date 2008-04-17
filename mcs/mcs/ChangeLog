@@ -1,5 +1,10 @@
 2008-04-17  Marek Safar  <marek.safar@gmail.com>
 
+	* decl.cs, class.cs, generic.cs: Verify partial parts type parameters and
+	constraints.
+
+2008-04-17  Marek Safar  <marek.safar@gmail.com>
+
 	* decl.cs, class.cs, cs-parser.jay, ecore.cs, expression.cs: Unify all type
 	name expressions.
 	Also fixes #340463.

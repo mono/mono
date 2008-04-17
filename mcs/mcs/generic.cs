@@ -1203,9 +1203,10 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				Report.Error (81, Location, "Type parameter declaration " +
-					      "must be an identifier not a type");
-				return null;
+				Expression expr = (Expression) args [i];
+				// TODO: Wrong location
+				Report.Error (81, Location, "Type parameter declaration must be an identifier not a type");
+				ret [i] = new TypeParameterName (expr.GetSignatureForError (), null, expr.Location);
 			}
 			return ret;
 		}

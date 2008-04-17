@@ -886,9 +886,8 @@ namespace Mono.CSharp {
 
 		public TypeContainer PartialContainer;		
 
-		readonly bool is_generic;
+		protected readonly bool is_generic;
 		readonly int count_type_params;
-		readonly int count_current_type_params;
 
 		//
 		// Whether we are Generic
@@ -916,7 +915,7 @@ namespace Mono.CSharp {
 			PartialContainer = null;
 			if (name.TypeArguments != null) {
 				is_generic = true;
-				count_type_params = count_current_type_params = name.TypeArguments.Count;
+				count_type_params = name.TypeArguments.Count;
 			}
 			if (parent != null)
 				count_type_params += parent.count_type_params;
@@ -1039,7 +1038,7 @@ namespace Mono.CSharp {
 		public override string GetSignatureForError ()
 		{	
 			if (IsGeneric) {
-				return SimpleName.RemoveGenericArity (Name) + TypeParameter.GetSignatureForError (CurrentTypeParameters);
+				return SimpleName.RemoveGenericArity (Name) + TypeParameter.GetSignatureForError (type_params);
 			}
 			// Parent.GetSignatureForError
 			return Name;
@@ -1270,7 +1269,7 @@ namespace Mono.CSharp {
 		//
 		// Extensions for generics
 		//
-		TypeParameter[] type_params;
+		protected TypeParameter[] type_params;
 		TypeParameter[] type_param_list;
 
 		protected string GetInstantiationName ()
@@ -1408,24 +1407,18 @@ namespace Mono.CSharp {
 			get {
 				if (!IsGeneric)
 					throw new InvalidOperationException ();
-				if ((PartialContainer != null) && (PartialContainer != this))
-					return PartialContainer.CurrentTypeParameters;
-				if (type_params != null)
-					return type_params;
-				else
+
+				// TODO: Something is seriously broken here
+				if (type_params == null)
 					return new TypeParameter [0];
+
+				return type_params;
 			}
 		}
 
 		public int CountTypeParameters {
 			get {
 				return count_type_params;
-			}
-		}
-
-		public int CountCurrentTypeParameters {
-			get {
-				return count_current_type_params;
 			}
 		}
 
