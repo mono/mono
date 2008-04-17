@@ -198,7 +198,7 @@ namespace Mono.CSharp {
 			list.Add (generic_enumerator_type);
 #endif
 
-			Bases = list;
+			type_bases = list;
 
 			return base.GetClassBases (out base_class);
 		}
