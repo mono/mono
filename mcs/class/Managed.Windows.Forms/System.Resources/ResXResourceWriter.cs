@@ -36,7 +36,12 @@ using System.Reflection;
 
 namespace System.Resources
 {
-	public class ResXResourceWriter : IResourceWriter, IDisposable
+#if INSIDE_SYSTEM_WEB
+	internal
+#else
+	public
+#endif
+	class ResXResourceWriter : IResourceWriter, IDisposable
 	{
 		#region Local Variables
 		private string		filename;

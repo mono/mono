@@ -35,7 +35,12 @@ using System.ComponentModel.Design;
 namespace System.Resources
 {
 	[SerializableAttribute]
-	public sealed class ResXDataNode : ISerializable
+#if INSIDE_SYSTEM_WEB
+	internal
+#else
+	public
+#endif
+	sealed class ResXDataNode : ISerializable
 	{
 		private string name;
 		private object value;

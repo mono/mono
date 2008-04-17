@@ -42,7 +42,12 @@ using System.Drawing;
 
 namespace System.Resources
 {
-	public class ResXResourceReader : IResourceReader, IDisposable
+#if INSIDE_SYSTEM_WEB
+	internal
+#else
+	public
+#endif
+	class ResXResourceReader : IResourceReader, IDisposable
 	{
 		#region Local Variables
 		private string fileName;

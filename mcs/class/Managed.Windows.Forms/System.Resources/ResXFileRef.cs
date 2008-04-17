@@ -37,7 +37,12 @@ namespace System.Resources {
 	[Serializable]
 	[TypeConverter(typeof(ResXFileRef.Converter))]
 	public class ResXFileRef {
-		public class Converter : TypeConverter {
+#if INSIDE_SYSTEM_WEB
+		internal
+#else
+		public
+#endif
+		class Converter : TypeConverter {
 			public Converter() {
 			}
 
