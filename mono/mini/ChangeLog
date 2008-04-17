@@ -1,5 +1,7 @@
 2008-04-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* inssel.brg (OP_SWITCH): Use (gint64) instead of (long) to cast a large constant.
+
 	* mini-amd64.c (NEW_INS): Set cil_code.
 
 	* mini.c (mini_method_compile): Move the disabling of fp elimination to here
