@@ -1,5 +1,10 @@
 2008-04-17  Dick Porter  <dick@ximian.com>
 
+	* io.c (DeleteFile): Check file shares before deleting a file.
+	Fixes bug 323389.
+
+2008-04-17  Dick Porter  <dick@ximian.com>
+
 	* io.c (DeleteFile): Return ERROR_ACCESS_DENIED if the file is
 	readonly.  Fixes bug 378229.
 
