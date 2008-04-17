@@ -6887,83 +6887,73 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Implements the qualified-alias-member (::) expression.
 	/// </summary>
-	public class QualifiedAliasMember : Expression
+	public class QualifiedAliasMember : MemberAccess
 	{
-		string alias, identifier;
+		readonly string alias;
 
-		public QualifiedAliasMember (string alias, string identifier, Location l)
+		public QualifiedAliasMember (string alias, string identifier, TypeArguments targs, Location l)
+			: base (null, identifier, targs, l)
 		{
 			this.alias = alias;
-			this.identifier = identifier;
-			loc = l;
+		}
+
+		public QualifiedAliasMember (string alias, string identifier, Location l)
+			: base (null, identifier, l)
+		{
+			this.alias = alias;
 		}
 
 		public override FullNamedExpression ResolveAsTypeStep (IResolveContext ec, bool silent)
 		{
-			if (alias == "global")
-				return new MemberAccess (RootNamespace.Global, identifier, loc).ResolveAsTypeStep (ec, silent);
+			if (alias == "global") {
+				expr = RootNamespace.Global;
+				return base.ResolveAsTypeStep (ec, silent);
+			}
 
 			int errors = Report.Errors;
-			FullNamedExpression fne = ec.DeclContainer.NamespaceEntry.LookupAlias (alias);
-			if (fne == null) {
+			expr = ec.DeclContainer.NamespaceEntry.LookupAlias (alias);
+			if (expr == null) {
 				if (errors == Report.Errors)
 					Report.Error (432, loc, "Alias `{0}' not found", alias);
 				return null;
 			}
-			if (fne.eclass != ExprClass.Namespace) {
-				if (!silent)
-					Report.Error (431, loc, "`{0}' cannot be used with '::' since it denotes a type", alias);
+
+			FullNamedExpression fne = base.ResolveAsTypeStep (ec, silent);
+			if (fne == null)
+				return null;
+
+			if (expr.eclass == ExprClass.Type) {
+				if (!silent) {
+					Report.Error (431, loc,
+						"Alias `{0}' cannot be used with '::' since it denotes a type. Consider replacing '::' with '.'", alias);
+				}
 				return null;
 			}
-			return new MemberAccess (fne, identifier).ResolveAsTypeStep (ec, silent);
+
+			return fne;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			FullNamedExpression fne;
-			if (alias == "global") {
-				fne = RootNamespace.Global;
-			} else {
-				int errors = Report.Errors;
-				fne = ec.DeclContainer.NamespaceEntry.LookupAlias (alias);
-				if (fne == null) {
-					if (errors == Report.Errors)
-						Report.Error (432, loc, "Alias `{0}' not found", alias);
-					return null;
-				}
-			}
-
-			Expression retval = new MemberAccess (fne, identifier).DoResolve (ec);
-			if (retval == null)
-				return null;
-
-			if (!(retval is FullNamedExpression)) {
-				Report.Error (687, loc, "The expression `{0}::{1}' did not resolve to a namespace or a type", alias, identifier);
-				return null;
-			}
-
-			// We defer this check till the end to match the behaviour of CSC
-			if (fne.eclass != ExprClass.Namespace) {
-				Report.Error (431, loc, "`{0}' cannot be used with '::' since it denotes a type", alias);
-				return null;
-			}
-			return retval;
+			return ResolveAsTypeStep (ec, false);
 		}
 
-		public override void Emit (EmitContext ec)
+		protected override void Error_IdentifierNotFound (IResolveContext rc, FullNamedExpression expr_type, string identifier)
 		{
-			throw new InternalErrorException ("QualifiedAliasMember found in resolved tree");
-		}
-
-
-		public override string ToString ()
-		{
-			return alias + "::" + identifier;
+			Report.Error (687, loc,
+				"A namespace alias qualifier `{0}' did not resolve to a namespace or a type",
+				GetSignatureForError ());
 		}
 
 		public override string GetSignatureForError ()
 		{
-			return ToString ();
+			string name = Name;
+			if (targs != null) {
+				name = TypeManager.RemoveGenericArity (Name) + "<" +
+					targs.GetSignatureForError () + ">";
+			}
+
+			return alias + "::" + name;
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
@@ -6975,31 +6965,25 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Implements the member access expression
 	/// </summary>
-	public class MemberAccess : Expression {
-		public readonly string Identifier;
-		Expression expr;
-		readonly TypeArguments args;
+	public class MemberAccess : ATypeNameExpression {
+		protected Expression expr;
 
 		public MemberAccess (Expression expr, string id)
-			: this (expr, id, expr.Location)
+			: base (id, expr.Location)
 		{
+			this.expr = expr;
 		}
 
 		public MemberAccess (Expression expr, string identifier, Location loc)
+			: base (identifier, loc)
 		{
 			this.expr = expr;
-			Identifier = identifier;
-			this.loc = loc;
 		}
 
 		public MemberAccess (Expression expr, string identifier, TypeArguments args, Location loc)
-			: this (expr, identifier, loc)
+			: base (identifier, args, loc)
 		{
-			this.args = args;
-		}
-
-		protected string LookupIdentifier {
-			get { return MemberName.MakeName (Identifier, args); }
+			this.expr = expr;
 		}
 
 		// TODO: this method has very poor performace for Enum fields and
@@ -7024,16 +7008,18 @@ namespace Mono.CSharp {
 			if (expr_resolved == null)
 				return null;
 
+			string LookupIdentifier = MemberName.MakeName (Name, targs);
+
 			if (expr_resolved is Namespace) {
 				Namespace ns = (Namespace) expr_resolved;
 				FullNamedExpression retval = ns.Lookup (ec.DeclContainer, LookupIdentifier, loc);
 #if GMCS_SOURCE
-				if ((retval != null) && (args != null))
-					retval = new ConstructedType (retval, args, loc).ResolveAsTypeStep (ec, false);
+				if ((retval != null) && (targs != null))
+					retval = new ConstructedType (retval, targs, loc).ResolveAsTypeStep (ec, false);
 #endif
 
 				if (retval == null)
-					ns.Error_NamespaceDoesNotExist (ec.DeclContainer, loc, Identifier);
+					ns.Error_NamespaceDoesNotExist (ec.DeclContainer, loc, Name);
 				return retval;
 			}
 
@@ -7050,16 +7036,16 @@ namespace Mono.CSharp {
 					"System.NullReferenceException");
 			}
 
-			if (args != null) {
-				if (!args.Resolve (ec))
+			if (targs != null) {
+				if (!targs.Resolve (ec))
 					return null;
 			}
 
 			Expression member_lookup;
 			member_lookup = MemberLookup (
-				ec.ContainerType, expr_type, expr_type, Identifier, loc);
+				ec.ContainerType, expr_type, expr_type, Name, loc);
 #if GMCS_SOURCE
-			if ((member_lookup == null) && (args != null)) {
+			if ((member_lookup == null) && (targs != null)) {
 				member_lookup = MemberLookup (
 					ec.ContainerType, expr_type, expr_type, LookupIdentifier, loc);
 			}
@@ -7073,12 +7059,12 @@ namespace Mono.CSharp {
 				if (expr_eclass == ExprClass.Value || expr_eclass == ExprClass.Variable ||
 					expr_eclass == ExprClass.IndexerAccess || expr_eclass == ExprClass.PropertyAccess ||
 					expr_eclass == ExprClass.EventAccess) {
-					ExtensionMethodGroupExpr ex_method_lookup = ec.TypeContainer.LookupExtensionMethod (expr_type, Identifier, loc);
+					ExtensionMethodGroupExpr ex_method_lookup = ec.TypeContainer.LookupExtensionMethod (expr_type, Name, loc);
 					if (ex_method_lookup != null) {
 						ex_method_lookup.ExtensionExpression = expr_resolved;
 
-						if (args != null) {
-							ex_method_lookup.SetTypeArguments (args);
+						if (targs != null) {
+							ex_method_lookup.SetTypeArguments (targs);
 						}
 
 						return ex_method_lookup.DoResolve (ec);
@@ -7087,7 +7073,7 @@ namespace Mono.CSharp {
 
 				expr = expr_resolved;
 				Error_MemberLookupFailed (
-					ec.ContainerType, expr_type, expr_type, Identifier, null,
+					ec.ContainerType, expr_type, expr_type, Name, null,
 					AllMemberTypes, AllBindingFlags);
 				return null;
 			}
@@ -7097,7 +7083,7 @@ namespace Mono.CSharp {
 				if (!(expr_resolved is TypeExpr) && 
 				    (original == null || !original.IdenticalNameAndTypeName (ec, expr_resolved, loc))) {
 					Report.Error (572, loc, "`{0}': cannot reference a type through an expression; try `{1}' instead",
-						Identifier, member_lookup.GetSignatureForError ());
+						Name, member_lookup.GetSignatureForError ());
 					return null;
 				}
 
@@ -7131,8 +7117,8 @@ namespace Mono.CSharp {
 			if (me == null)
 				return null;
 
-			if (args != null) {
-				me.SetTypeArguments (args);
+			if (targs != null) {
+				me.SetTypeArguments (targs);
 			}
 
 			if (original != null && !TypeManager.IsValueType (expr_type)) {
@@ -7174,12 +7160,14 @@ namespace Mono.CSharp {
 			if (new_expr == null)
 				return null;
 
+			string LookupIdentifier = MemberName.MakeName (Name, targs);
+
 			if (new_expr is Namespace) {
 				Namespace ns = (Namespace) new_expr;
 				FullNamedExpression retval = ns.Lookup (rc.DeclContainer, LookupIdentifier, loc);
 #if GMCS_SOURCE
-				if ((retval != null) && (args != null))
-					retval = new ConstructedType (retval, args, loc).ResolveAsTypeStep (rc, false);
+				if ((retval != null) && (targs != null))
+					retval = new ConstructedType (retval, targs, loc).ResolveAsTypeStep (rc, false);
 #endif
 				if (!silent && retval == null)
 					ns.Error_NamespaceDoesNotExist (rc.DeclContainer, loc, LookupIdentifier);
@@ -7205,30 +7193,7 @@ namespace Mono.CSharp {
 				if (silent)
 					return null;
 
-				member_lookup = MemberLookup (
-					rc.DeclContainer.TypeBuilder, expr_type, expr_type, SimpleName.RemoveGenericArity (LookupIdentifier),
-					MemberTypes.NestedType, BindingFlags.Public | BindingFlags.NonPublic, loc);
-
-				if (member_lookup != null) {
-					tnew_expr = member_lookup.ResolveAsTypeTerminal (rc, false);
-					if (tnew_expr == null)
-						return null;
-
-					Namespace.Error_TypeArgumentsCannotBeUsed (tnew_expr.Type, loc);
-					return null;
-				}
-
-				member_lookup = MemberLookup (
-					rc.DeclContainer.TypeBuilder, expr_type, expr_type, LookupIdentifier,
-						MemberTypes.All, BindingFlags.Public | BindingFlags.NonPublic, loc);
-
-				if (member_lookup == null) {
-					Report.Error (426, loc, "The nested type `{0}' does not exist in the type `{1}'",
-							  Identifier, new_expr.GetSignatureForError ());
-				} else {
-					// TODO: Report.SymbolRelatedToPreviousError
-					member_lookup.Error_UnexpectedKind (null, "type", loc);
-				}
+				Error_IdentifierNotFound (rc, new_expr, LookupIdentifier);
 				return null;
 			}
 
@@ -7237,7 +7202,7 @@ namespace Mono.CSharp {
 				return null;
 
 #if GMCS_SOURCE
-			TypeArguments the_args = args;
+			TypeArguments the_args = targs;
 			Type declaring_type = texpr.Type.DeclaringType;
 			if (TypeManager.HasGenericArguments (declaring_type)) {
 				while (!TypeManager.IsEqual (TypeManager.DropGenericTypeArguments (expr_type), declaring_type)) {
@@ -7248,8 +7213,8 @@ namespace Mono.CSharp {
 				foreach (Type decl in TypeManager.GetTypeArguments (expr_type))
 					new_args.Add (new TypeExpression (decl, loc));
 
-				if (args != null)
-					new_args.Add (args);
+				if (targs != null)
+					new_args.Add (targs);
 
 				the_args = new_args;
 			}
@@ -7263,9 +7228,32 @@ namespace Mono.CSharp {
 			return texpr;
 		}
 
-		public override void Emit (EmitContext ec)
+		protected virtual void Error_IdentifierNotFound (IResolveContext rc, FullNamedExpression expr_type, string identifier)
 		{
-			throw new Exception ("Should not happen");
+			Expression member_lookup = MemberLookup (
+				rc.DeclContainer.TypeBuilder, expr_type.Type, expr_type.Type, SimpleName.RemoveGenericArity (identifier),
+				MemberTypes.NestedType, BindingFlags.Public | BindingFlags.NonPublic, loc);
+
+			if (member_lookup != null) {
+				expr_type = member_lookup.ResolveAsTypeTerminal (rc, false);
+				if (expr_type == null)
+					return;
+
+				Namespace.Error_TypeArgumentsCannotBeUsed (expr_type.Type, loc);
+				return;
+			}
+
+			member_lookup = MemberLookup (
+				rc.DeclContainer.TypeBuilder, expr_type.Type, expr_type.Type, identifier,
+					MemberTypes.All, BindingFlags.Public | BindingFlags.NonPublic, loc);
+
+			if (member_lookup == null) {
+				Report.Error (426, loc, "The nested type `{0}' does not exist in the type `{1}'",
+						  Name, expr_type.GetSignatureForError ());
+			} else {
+				// TODO: Report.SymbolRelatedToPreviousError
+				member_lookup.Error_UnexpectedKind (null, "type", loc);
+			}
 		}
 
 		protected override void Error_TypeDoesNotContainDefinition (Type type, string name)
@@ -7282,14 +7270,9 @@ namespace Mono.CSharp {
 			base.Error_TypeDoesNotContainDefinition (type, name);
 		}
 
-		public override string ToString ()
-		{
-			return expr + "." + MemberName.MakeName (Identifier, args);
-		}
-
 		public override string GetSignatureForError ()
 		{
-			return expr.GetSignatureForError () + "." + Identifier;
+			return expr.GetSignatureForError () + "." + base.GetSignatureForError ();
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)

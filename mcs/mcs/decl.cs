@@ -142,7 +142,7 @@ namespace Mono.CSharp {
 			if (is_double_colon) {
 				if (Left.Left != null)
 					throw new InternalErrorException ("The left side of a :: should be an identifier");
-				return new QualifiedAliasMember (Left.Name, Basename, Location);
+				return new QualifiedAliasMember (Left.Name, Name, TypeArguments, Location);
 			}
 
 			Expression lexpr = Left.GetTypeExpression ();

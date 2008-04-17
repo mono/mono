@@ -2893,7 +2893,10 @@ namespace_or_type_name
 	| IDENTIFIER DOUBLE_COLON IDENTIFIER opt_type_argument_list {
 		LocatedToken lt1 = (LocatedToken) $1;
 		LocatedToken lt2 = (LocatedToken) $3;
-		$$ = new MemberName (lt1.Value, lt2.Value, (TypeArguments) $4, lt2.Location);
+		if (RootContext.Version == LanguageVersion.ISO_1)
+			Report.FeatureIsNotAvailable (lt1.Location, "namespace alias qualifier");
+		
+		$$ = new MemberName (lt1.Value, lt2.Value, (TypeArguments) $4, lt1.Location);
 	  }
 	| namespace_or_type_name DOT IDENTIFIER opt_type_argument_list {
 		LocatedToken lt = (LocatedToken) $3;
@@ -3142,14 +3145,14 @@ primary_expression
 		MemberName mn = (MemberName) $1;
 		$$ = mn.GetTypeExpression ();
 	  }
-	| IDENTIFIER DOUBLE_COLON IDENTIFIER
+	| IDENTIFIER DOUBLE_COLON IDENTIFIER opt_type_argument_list
 	  {
 		LocatedToken lt1 = (LocatedToken) $1;
 		LocatedToken lt2 = (LocatedToken) $3;
 		if (RootContext.Version == LanguageVersion.ISO_1)
 			Report.FeatureIsNotAvailable (lt1.Location, "namespace alias qualifier");
 
-		$$ = new QualifiedAliasMember (lt1.Value, lt2.Value, lt2.Location);
+		$$ = new QualifiedAliasMember (lt1.Value, lt2.Value, (TypeArguments) $4, lt1.Location);
 	  }
 	| parenthesized_expression
 	| default_value_expression
@@ -3435,16 +3438,17 @@ element_access
 		Expression expr = (Expression) $1;  
 		if (expr is ComposedCast){
 			$$ = new ComposedCast (expr, (string) $2);
-		} else if (!(expr is SimpleName || expr is MemberAccess || expr is ConstructedType || expr is QualifiedAliasMember)){
-			Error_ExpectingTypeName (expr);
-			$$ = TypeManager.system_object_expr;
-		} else {
+		} else if (expr is ATypeNameExpression){
 			//
 			// So we extract the string corresponding to the SimpleName
 			// or MemberAccess
 			// 
 			$$ = new ComposedCast (expr, (string) $2);
+		} else {
+			Error_ExpectingTypeName (expr);
+			$$ = TypeManager.system_object_expr;
 		}
+		
 		current_array_type = (Expression)$$;
 	  }
 	;
@@ -3598,7 +3602,7 @@ anonymous_type_parameter
 	| member_access
 	  {
 	  	MemberAccess ma = (MemberAccess) $1;
-	  	$$ = new AnonymousTypeParameter (ma, ma.Identifier, ma.Location);
+	  	$$ = new AnonymousTypeParameter (ma, ma.Name, ma.Location);
 	  }
 	| error
 	  {
@@ -3763,6 +3767,9 @@ unbound_type_name
 		MemberName left = new MemberName (lt.Value, lt.Location);
 		lt = (LocatedToken) $3;
 		TypeArguments ta = new TypeArguments ((int)$4, lt.Location);
+		
+		if (RootContext.Version == LanguageVersion.ISO_1)
+			Report.FeatureIsNotAvailable (lt.Location, "namespace alias qualifier");
 		
 		$$ = new MemberName (left, lt.Value, ta, lt.Location);
 	  }
@@ -4584,25 +4591,28 @@ local_variable_type
 		// Foo.Bar.Blah i;
 		// SimpleName is when you have
 		// Blah i;
-		  
-		Expression expr = (Expression) $1;
-		SimpleName sn = expr as SimpleName;
-		if (!(sn != null || expr is MemberAccess || expr is ComposedCast || expr is ConstructedType || expr is QualifiedAliasMember)) {
-			Error_ExpectingTypeName (expr);
-			$$ = null;
-		} else {
+		
+		Expression expr = (Expression) $1;  
+		if (expr is ComposedCast){
+			$$ = new ComposedCast (expr, (string) $2);
+		} else if (expr is ATypeNameExpression){
 			//
 			// So we extract the string corresponding to the SimpleName
 			// or MemberAccess
-			// 
-
+			//
+			
 			if ((string) $2 == "") {
+				SimpleName sn = expr as SimpleName;
 				if (sn != null && RootContext.Version > LanguageVersion.ISO_2 && sn.Name == "var")
 					$$ = new VarExpr (sn.Location);
 				else
 					$$ = $1;
-			} else
-				$$ = new ComposedCast ((Expression) $1, (string) $2);
+			} else {
+				$$ = new ComposedCast (expr, (string) $2);
+			}
+		} else {
+			Error_ExpectingTypeName (expr);
+			$$ = TypeManager.system_object_expr;
 		}
 	  }
 	| builtin_types opt_rank_specifier_or_nullable
@@ -4619,12 +4629,12 @@ local_variable_pointer_type
 	  {
 		Expression expr = (Expression) $1;  
 
-		if (!(expr is SimpleName || expr is MemberAccess || expr is ComposedCast || expr is ConstructedType || expr is QualifiedAliasMember)) {
+		if (expr is ATypeNameExpression) {
+			$$ = new ComposedCast (expr, "*");
+		} else {
 			Error_ExpectingTypeName (expr);
-
-			$$ = null;
-		} else 
-			$$ = new ComposedCast ((Expression) $1, "*");
+			$$ = expr;
+		}
 	  }
         | builtin_types STAR
 	  {

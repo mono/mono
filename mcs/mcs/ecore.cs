@@ -2245,37 +2245,67 @@ namespace Mono.CSharp {
 			expr.EmitBranchable (ec, target, on_true);
 		}
 	}
+
+	//
+	// Unresolved type name expressions
+	//
+	public abstract class ATypeNameExpression : Expression
+	{
+		public readonly string Name;
+		protected TypeArguments targs;
+
+		protected ATypeNameExpression (string name, Location l)
+		{
+			Name = name;
+			loc = l;
+		}
+
+		protected ATypeNameExpression (string name, TypeArguments targs, Location l)
+		{
+			Name = name;
+			this.targs = targs;
+			loc = l;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			throw new InternalErrorException ("ATypeNameExpression found in resolved tree");
+		}
+
+		public override string GetSignatureForError ()
+		{
+			if (targs != null) {
+				return TypeManager.RemoveGenericArity (Name) + "<" +
+					targs.GetSignatureForError () + ">";
+			}
+
+			return Name;
+		}
+	}
 	
 	/// <summary>
 	///   SimpleName expressions are formed of a single word and only happen at the beginning 
 	///   of a dotted-name.
 	/// </summary>
-	public class SimpleName : Expression {
-		public readonly string Name;
-		public readonly TypeArguments Arguments;
+	public class SimpleName : ATypeNameExpression {
 		bool in_transit;
 
 		public SimpleName (string name, Location l)
+			: base (name, l)
 		{
-			Name = name;
-			loc = l;
 		}
 
 		public SimpleName (string name, TypeArguments args, Location l)
+			: base (name, args, l)
 		{
-			Name = name;
-			Arguments = args;
-			loc = l;
 		}
 
 		public SimpleName (string name, TypeParameter[] type_params, Location l)
+			: base (name, l)
 		{
-			Name = name;
-			loc = l;
-
-			Arguments = new TypeArguments (l);
+			targs = new TypeArguments (l);
 			foreach (TypeParameter type_param in type_params)
-				Arguments.Add (new TypeParameterExpr (type_param, l));
+				targs.Add (new TypeParameterExpr (type_param, l));
 		}
 
 		public static string RemoveGenericArity (string name)
@@ -2308,7 +2338,7 @@ namespace Mono.CSharp {
 
 		public SimpleName GetMethodGroup ()
 		{
-			return new SimpleName (RemoveGenericArity (Name), Arguments, loc);
+			return new SimpleName (RemoveGenericArity (Name), targs, loc);
 		}
 
 		public static void Error_ObjectRefRequired (EmitContext ec, Location l, string name)
@@ -2372,7 +2402,7 @@ namespace Mono.CSharp {
 
 			Type[] gen_params = TypeManager.GetTypeArguments (t);
 
-			int arg_count = Arguments != null ? Arguments.Count : 0;
+			int arg_count = targs != null ? targs.Count : 0;
 
 			for (; (ds != null) && ds.IsGeneric; ds = ds.Parent) {
 				if (arg_count + ds.CountTypeParameters == gen_params.Length) {
@@ -2380,8 +2410,8 @@ namespace Mono.CSharp {
 					foreach (TypeParameter param in ds.TypeParameters)
 						new_args.Add (new TypeParameterExpr (param, loc));
 
-					if (Arguments != null)
-						new_args.Add (Arguments);
+					if (targs != null)
+						new_args.Add (targs);
 
 					return new ConstructedType (t, new_args, loc);
 				}
@@ -2407,8 +2437,8 @@ namespace Mono.CSharp {
 				if (nested != null)
 					return nested.ResolveAsTypeStep (ec, false);
 
-				if (Arguments != null) {
-					ConstructedType ct = new ConstructedType (fne, Arguments, loc);
+				if (targs != null) {
+					ConstructedType ct = new ConstructedType (fne, targs, loc);
 					return ct.ResolveAsTypeStep (ec, false);
 				}
 
@@ -2447,7 +2477,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (Arguments != null) {
+			if (targs != null) {
 				FullNamedExpression retval = ec.DeclContainer.LookupNamespaceOrType (SimpleName.RemoveGenericArity (Name), loc, true);
 				if (retval != null) {
 					Namespace.Error_TypeArgumentsCannotBeUsed (retval.Type, loc);
@@ -2524,7 +2554,7 @@ namespace Mono.CSharp {
 			if (current_block != null){
 				LocalInfo vi = current_block.GetLocalInfo (Name);
 				if (vi != null){
-					if (Arguments != null) {
+					if (targs != null) {
 						Report.Error (307, loc,
 							      "The variable `{0}' cannot be used with type arguments",
 							      Name);
@@ -2544,7 +2574,7 @@ namespace Mono.CSharp {
 
 				ParameterReference pref = current_block.Toplevel.GetParameterReference (Name, loc);
 				if (pref != null) {
-					if (Arguments != null) {
+					if (targs != null) {
 						Report.Error (307, loc,
 							      "The variable `{0}' cannot be used with type arguments",
 							      Name);
@@ -2630,11 +2660,11 @@ namespace Mono.CSharp {
 			}
 
 			if (e is TypeExpr) {
-				if (Arguments == null)
+				if (targs == null)
 					return e;
 
 				ConstructedType ct = new ConstructedType (
-					(FullNamedExpression) e, Arguments, loc);
+					(FullNamedExpression) e, targs, loc);
 				return ct.ResolveAsTypeStep (ec, false);
 			}
 
@@ -2672,9 +2702,9 @@ namespace Mono.CSharp {
 				if (me == null)
 					return null;
 
-				if (Arguments != null) {
-					Arguments.Resolve (ec);
-					me.SetTypeArguments (Arguments);
+				if (targs != null) {
+					targs.Resolve (ec);
+					me.SetTypeArguments (targs);
 				}
 
 				if (!me.IsStatic && (me.InstanceExpression != null) &&
@@ -2695,26 +2725,6 @@ namespace Mono.CSharp {
 			return e;
 		}
 		
-		public override void Emit (EmitContext ec)
-		{
-			throw new InternalErrorException ("The resolve phase was not executed");
-		}
-
-		public override string ToString ()
-		{
-			return Name;
-		}
-
-		public override string GetSignatureForError ()
-		{
-			if (Arguments != null) {
-				return TypeManager.RemoveGenericArity (Name) + "<" +
-					Arguments.GetSignatureForError () + ">";
-			}
-
-			return Name;
-		}
-
 		protected override void CloneTo (CloneContext clonectx, Expression target)
 		{
 			// CloneTo: Nothing, we do not keep any state on this expression

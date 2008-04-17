@@ -8218,7 +8218,8 @@ namespace Mono.CSharp {
 		{
 			StringBuilder sb = new StringBuilder ();
 			if (OperatorType == OpType.Implicit || OperatorType == OpType.Explicit) {
-				sb.AppendFormat ("{0}.{1} operator {2}", Parent.GetSignatureForError (), GetName (OperatorType), Type.Type == null ? Type.ToString () : TypeManager.CSharpName (Type.Type));
+				sb.AppendFormat ("{0}.{1} operator {2}",
+					Parent.GetSignatureForError (), GetName (OperatorType), Type.GetSignatureForError ());
 			}
 			else {
 				sb.AppendFormat ("{0}.operator {1}", Parent.GetSignatureForError (), GetName (OperatorType));
