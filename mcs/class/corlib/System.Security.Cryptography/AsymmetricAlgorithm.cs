@@ -6,7 +6,7 @@
 //	Sebastien Pouliot (sebastien@ximian.com)
 //
 // Portions (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005, 2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -36,7 +36,7 @@ namespace System.Security.Cryptography {
 #if NET_2_0
 	[ComVisible (true)]
 #endif
-	public abstract class AsymmetricAlgorithm : IDisposable	{
+	public abstract class AsymmetricAlgorithm : IDisposable {
 
 		protected int KeySizeValue;
 		protected KeySizes[] LegalKeySizesValue; 
@@ -92,6 +92,25 @@ namespace System.Security.Cryptography {
 		public static AsymmetricAlgorithm Create (string algName) 
 		{
 			return (AsymmetricAlgorithm) CryptoConfig.CreateFromName (algName);
+		}
+
+		// parsing helper shared between DSA and RSA
+		internal static byte [] GetNamedParam (string xml, string param)
+		{
+			string start_element = "<" + param + ">";
+			int start = xml.IndexOf (start_element);
+			if (start == -1)
+				return null;
+
+			string end_element = "</" + param + ">";
+			int end = xml.IndexOf (end_element);
+			if ((end == -1) || (end <= start))
+				return null;
+
+			start += start_element.Length;
+
+			string base64 = xml.Substring (start, end - start);
+			return Convert.FromBase64String (base64);
 		}
 	}
 }

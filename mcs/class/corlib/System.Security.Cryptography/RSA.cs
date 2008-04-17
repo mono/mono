@@ -7,7 +7,7 @@
 //
 // (C) 2002
 // Portions (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004-2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2006,2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -84,14 +84,6 @@ namespace System.Security.Cryptography {
 				Array.Clear (parameters.D, 0, parameters.D.Length);
 		}
 
-		private byte[] GetNamedParam (SecurityElement se, string param) 
-		{
-			SecurityElement sep = se.SearchForChildByTag (param);
-			if (sep == null)
-				return null;
-			return Convert.FromBase64String (sep.Text);
-		}
-
 		public override void FromXmlString (string xmlString) 
 		{
 			if (xmlString == null)
@@ -99,18 +91,14 @@ namespace System.Security.Cryptography {
 
 			RSAParameters rsaParams = new RSAParameters ();
 			try {
-				SecurityParser sp = new SecurityParser ();
-				sp.LoadXml (xmlString);
-				SecurityElement se = sp.ToXml ();
-
-				rsaParams.P = GetNamedParam (se, "P");
-				rsaParams.Q = GetNamedParam (se, "Q");
-				rsaParams.D = GetNamedParam (se, "D");
-				rsaParams.DP = GetNamedParam (se, "DP");
-				rsaParams.DQ = GetNamedParam (se, "DQ");
-				rsaParams.InverseQ = GetNamedParam (se, "InverseQ");
-				rsaParams.Exponent = GetNamedParam (se, "Exponent");
-				rsaParams.Modulus = GetNamedParam (se, "Modulus");
+				rsaParams.P = GetNamedParam (xmlString, "P");
+				rsaParams.Q = GetNamedParam (xmlString, "Q");
+				rsaParams.D = GetNamedParam (xmlString, "D");
+				rsaParams.DP = GetNamedParam (xmlString, "DP");
+				rsaParams.DQ = GetNamedParam (xmlString, "DQ");
+				rsaParams.InverseQ = GetNamedParam (xmlString, "InverseQ");
+				rsaParams.Exponent = GetNamedParam (xmlString, "Exponent");
+				rsaParams.Modulus = GetNamedParam (xmlString, "Modulus");
 				ImportParameters (rsaParams);
 			}
 			catch (Exception e) {

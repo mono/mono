@@ -6,7 +6,7 @@
 //	Sebastien Pouliot (sebastien@ximian.com)
 //
 // Portions (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005, 2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -44,7 +44,7 @@ namespace System.Security.Cryptography {
 #if NET_2_0
 	[ComVisible (true)]
 #endif
-	public abstract class DSA : AsymmetricAlgorithm	{
+	public abstract class DSA : AsymmetricAlgorithm {
 
 #if NET_2_0
 		// Constructor visibility fixed in Fx 2.0
@@ -78,14 +78,6 @@ namespace System.Security.Cryptography {
 				Array.Clear (parameters.X, 0, parameters.X.Length);
 		}
 
-		private byte[] GetNamedParam (SecurityElement se, string param) 
-		{
-			SecurityElement sep = se.SearchForChildByTag (param);
-			if (sep == null)
-				return null;
-			return Convert.FromBase64String (sep.Text);
-		}
-
 		public override void FromXmlString (string xmlString) 
 		{
 			if (xmlString == null)
@@ -93,19 +85,14 @@ namespace System.Security.Cryptography {
 			
 			DSAParameters dsaParams = new DSAParameters ();
 			try {
-				SecurityParser sp = new SecurityParser ();
-				sp.LoadXml (xmlString);
-				SecurityElement se = sp.ToXml ();
-				if (se.Tag != "DSAKeyValue")
-					throw new Exception ();
-				dsaParams.P = GetNamedParam (se, "P");
-				dsaParams.Q = GetNamedParam (se, "Q");
-				dsaParams.G = GetNamedParam (se, "G");
-				dsaParams.J = GetNamedParam (se, "J");
-				dsaParams.Y = GetNamedParam (se, "Y");
-				dsaParams.X = GetNamedParam (se, "X");
-				dsaParams.Seed = GetNamedParam (se, "Seed");
-				byte[] counter = GetNamedParam (se, "PgenCounter");
+				dsaParams.P = GetNamedParam (xmlString, "P");
+				dsaParams.Q = GetNamedParam (xmlString, "Q");
+				dsaParams.G = GetNamedParam (xmlString, "G");
+				dsaParams.J = GetNamedParam (xmlString, "J");
+				dsaParams.Y = GetNamedParam (xmlString, "Y");
+				dsaParams.X = GetNamedParam (xmlString, "X");
+				dsaParams.Seed = GetNamedParam (xmlString, "Seed");
+				byte[] counter = GetNamedParam (xmlString, "PgenCounter");
 				if (counter != null) {
 					byte[] counter4b = new byte [4]; // always 4 bytes
 					Buffer.BlockCopy (counter, 0, counter4b, 0, counter.Length);

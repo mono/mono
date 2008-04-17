@@ -1,3 +1,9 @@
+2008-04-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AsymmetricAlgorithm.cs: Add shared GetNamedParam helper method.
+	* DSA.cs, RSA.cs: Rework FromXmlString to be more "careless" like
+	MS implementation. Fix #355464
+
 2008-02-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Rfc2898DeriveBytes.cs: Fix GetByte not to throw an exception if
