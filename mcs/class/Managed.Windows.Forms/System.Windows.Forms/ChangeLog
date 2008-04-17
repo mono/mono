@@ -1,3 +1,16 @@
+2008-04-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: When accessing an item in a specific display
+	position, use the helper method GetItemAtDisplayIndex, instead of
+	direct access to the reordered_items_indices array. When doing layout
+	for groups set the correct Items index for the display position (since
+	in groups mode items don't have the same position as in Items
+	collection).
+	* ListViewGroup.cs: Add a field to store the starting item number,
+	which is later used when calculating the layout.
+
+	Fixes #360805.
+
 2008-04-17  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Application.cs: Fixed ProductVersion to fallback to the assembly

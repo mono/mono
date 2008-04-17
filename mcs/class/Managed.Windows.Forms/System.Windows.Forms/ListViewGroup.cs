@@ -50,6 +50,7 @@ namespace System.Windows.Forms
 		private object tag = null;
 		private Rectangle header_bounds = Rectangle.Empty;
 		internal int starting_row;	// At which row the group starts
+		internal int starting_item; 	// The first display item in group
 		internal int rows;
 		internal int current_item;	// Current item when doing layout
 		internal Point items_area_location;

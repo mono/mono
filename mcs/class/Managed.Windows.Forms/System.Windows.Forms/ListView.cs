@@ -1697,6 +1697,7 @@ namespace System.Windows.Forms
 				// When groups are used the alignment is always top-aligned
 				rows = 0;
 				cols = 0;
+				int items = 0;
 
 				groups.DefaultGroup.ItemCount = GetDefaultGroupItems ();
 				for (int i = 0; i < groups.InternalCount; i++) {
@@ -1713,9 +1714,12 @@ namespace System.Windows.Forms
 
 					group.starting_row = rows;
 					group.rows = group_rows;
+					group.starting_item = items;
+					group.current_item = 0; // Reset layout
 
 					cols = Math.Max (group_cols, cols);
 					rows += group_rows;
+					items += items_in_group;
 				}
 			} else
 #endif
@@ -1783,6 +1787,7 @@ namespace System.Windows.Forms
 
 			int row = 0, col = 0;
 			int x = 0, y = 0;
+			int display_index = 0;
 
 			for (int i = 0; i < items.Count; i++) {
 				ListViewItem item = items [i];
@@ -1796,19 +1801,23 @@ namespace System.Windows.Forms
 					int current_item = group.current_item++;
 					int starting_row = group.starting_row;
 
+					display_index = group.starting_item + current_item;
 					row = (current_item / cols);
 					col = current_item % cols;
 
 					x = UseCustomColumnWidth ? col * custom_column_width : col * (item_size.Width + x_spacing);
 					y = row * (item_size.Height + y_spacing) + group_items_loc.Y;
 
-					SetItemLocation (i, x, y, row + starting_row, col);
+					SetItemLocation (display_index, x, y, row + starting_row, col);
+					SetItemAtDisplayIndex (display_index, i);
 					item_index_matrix [row + starting_row, col] = i;
+
 				} else
 #endif
 				{
 					x = UseCustomColumnWidth ? col * custom_column_width : col * (item_size.Width + x_spacing);
 					y = row * (item_size.Height + y_spacing);
+					display_index = i; // Same as item index in Items
 
 					SetItemLocation (i, x, y, row, col);
 					item_index_matrix [row, col] = i;
@@ -1831,7 +1840,7 @@ namespace System.Windows.Forms
 #endif
 				{
 					item.Layout ();
-					item.DisplayIndex = i;
+					item.DisplayIndex = display_index;
 					item.SetPosition (new Point (x, y));
 				}
 
@@ -1852,7 +1861,6 @@ namespace System.Windows.Forms
 				if (group.ItemCount == 0)
 					continue;
 
-				group.current_item = 0; // Reset layout
 				y += LayoutGroupHeader (group, y, item_size.Height, y_spacing, details ? group.ItemCount : group.rows);
 			}
 
@@ -2031,6 +2039,11 @@ namespace System.Windows.Forms
 		internal ListViewItem GetItemAtDisplayIndex (int display_index)
 		{
 			return items [reordered_items_indices [display_index]];
+		}
+
+		internal void SetItemAtDisplayIndex (int display_index, int index)
+		{
+			reordered_items_indices [display_index] = index;
 		}
 
 		private bool KeySearchString (KeyEventArgs ke)
@@ -2448,7 +2461,7 @@ namespace System.Windows.Forms
 							intersects = BoxIntersectsItem (i);
 
 						if (intersects)
-							result.Add (owner.Items [i]);
+							result.Add (owner.GetItemAtDisplayIndex (i));
 					}
 					return result;
 				}
@@ -2515,7 +2528,7 @@ namespace System.Windows.Forms
 						continue;
 
 					// Actual item in 'i' position
-					ListViewItem item = owner.items [owner.reordered_items_indices [i]];
+					ListViewItem item = owner.GetItemAtDisplayIndex (i);
 
 					if (item.CheckRectReal.Contains (pt)) {
 						// Don't modify check state if we have only one image
