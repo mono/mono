@@ -1272,19 +1272,6 @@ namespace Mono.CSharp {
 		protected TypeParameter[] type_params;
 		TypeParameter[] type_param_list;
 
-		protected string GetInstantiationName ()
-		{
-			StringBuilder sb = new StringBuilder (Name);
-			sb.Append ("<");
-			for (int i = 0; i < type_param_list.Length; i++) {
-				if (i > 0)
-					sb.Append (",");
-				sb.Append (type_param_list [i].Name);
-			}
-			sb.Append (">");
-			return sb.ToString ();
-		}
-
 		bool check_type_parameter (ArrayList list, int start, string name)
 		{
 			for (int i = 0; i < start; i++) {

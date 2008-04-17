@@ -249,7 +249,7 @@ namespace Mono.CSharp {
 		TypeExpr[] iface_exprs;
 		Type GenericType;
 
-		ArrayList type_bases;
+		protected ArrayList type_bases;
 
 		bool members_resolved;
 		bool members_resolved_ok;
@@ -619,16 +619,6 @@ namespace Mono.CSharp {
 				return TypeBuilder.BaseType;
 			}
 		}
-		
-		public ArrayList Bases {
-			get {
-				return type_bases;
-			}
-
-			set {
-				type_bases = value;
-			}
-		}
 
 		public ArrayList Fields {
 			get {
@@ -831,20 +821,20 @@ namespace Mono.CSharp {
 		{
 			// FIXME: get rid of partial_parts and store lists of bases of each part here
 			// assumed, not verified: 'part' is in 'partial_parts' 
-			((TypeContainer) part).Bases = bases;
+			((TypeContainer) part).type_bases = bases;
 		}
 
 		TypeExpr[] GetNormalBases (out TypeExpr base_class)
 		{
 			base_class = null;
-			if (Bases == null)
+			if (type_bases == null)
 				return null;
 
-			int count = Bases.Count;
+			int count = type_bases.Count;
 			int start = 0, i, j;
 
 			if (Kind == Kind.Class){
-				TypeExpr name = ((Expression) Bases [0]).ResolveAsBaseTerminal (this, false);
+				TypeExpr name = ((Expression) type_bases [0]).ResolveAsBaseTerminal (this, false);
 
 				if (name == null){
 					return null;
@@ -861,7 +851,7 @@ namespace Mono.CSharp {
 			TypeExpr [] ifaces = new TypeExpr [count-start];
 			
 			for (i = start, j = 0; i < count; i++, j++){
-				TypeExpr resolved = ((Expression) Bases [i]).ResolveAsBaseTerminal (this, false);
+				TypeExpr resolved = ((Expression) type_bases [i]).ResolveAsBaseTerminal (this, false);
 				if (resolved == null) {
 					return null;
 				}
