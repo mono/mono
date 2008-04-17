@@ -252,36 +252,36 @@ namespace MonoTests.System.Xml
 			string xml = dtd + "<root><c foo='id1' bar='1' /><c foo='id2' bar='2'/></root>";
 			XmlValidatingReader vr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
 			doc.Load (vr);
-			Assert.IsNotNull (doc.GetElementById ("id1"));
-			Assert.IsNotNull (doc.GetElementById ("id2"));
+			Assert.IsNotNull (doc.GetElementById ("id1"), "#1");
+			Assert.IsNotNull (doc.GetElementById ("id2"), "#2");
 			// MS.NET BUG: Later I try to append it to another element, but
 			// it should raise InvalidOperationException.
 			// (and if MS.NET conform to DOM 1.0, it should be XmlException.)
 //			XmlAttribute attr = doc.DocumentElement.FirstChild.Attributes [0];
 			XmlAttribute attr = doc.DocumentElement.FirstChild.Attributes.RemoveAt (0);
-			Assert.AreEqual ("id1", attr.Value);
+			Assert.AreEqual ("id1", attr.Value, "#3");
 
 			doc.DocumentElement.LastChild.Attributes.SetNamedItem (attr);
-			Assert.IsNotNull (doc.GetElementById ("id1"));
+			Assert.IsNotNull (doc.GetElementById ("id1"), "#4");
 			XmlElement elem2 = doc.GetElementById ("id2");
 			// MS.NET BUG: it doesn't remove replaced attribute with SetNamedItem!
-//			AssertNull (elem2);
-//			AssertEquals ("2", elem2.GetAttribute ("bar"));
+//			AssertNull (elem2, "#5");
+//			AssertEquals ("2", elem2.GetAttribute ("bar"), "#6");
 //			elem2.RemoveAttribute ("foo");
-//			AssertEquals (string.Empty, elem2.GetAttribute ("foo"));
+//			AssertEquals (string.Empty, elem2.GetAttribute ("foo"), "#7");
 
 			// MS.NET BUG: elem should be the element which has the attribute bar='1'!
 			XmlElement elem = doc.GetElementById ("id1");
-//			AssertEquals ("2", elem.GetAttribute ("bar"));
+//			AssertEquals ("2", elem.GetAttribute ("bar"), "#8");
 
 			// Here, required attribute foo is no more required,
 			XmlElement elemNew = doc.CreateElement ("c");
 			doc.DocumentElement.AppendChild (elemNew);
 			// but once attribute is set, document recognizes this ID.
 			elemNew.SetAttribute ("foo", "id3");
-			Assert.IsNotNull (doc.GetElementById ("id3"));
+			Assert.IsNotNull (doc.GetElementById ("id3"), "#9");
 			elemNew.RemoveAttribute ("foo");
-			Assert.IsNull (doc.GetElementById ("id3"));
+			Assert.IsNull (doc.GetElementById ("id3"), "#10");
 
 			// MS.NET BUG: multiple IDs are allowed.
 			// In such case GetElementById fails.
@@ -293,9 +293,9 @@ namespace MonoTests.System.Xml
 
 			// Finally...
 			doc.RemoveAll ();
-			Assert.IsNull (doc.GetElementById ("id1"));
-			Assert.IsNull (doc.GetElementById ("id2"));
-			Assert.IsNull (doc.GetElementById ("id3"));
+			Assert.IsNull (doc.GetElementById ("id1"), "#11");
+			Assert.IsNull (doc.GetElementById ("id2"), "#12");
+			Assert.IsNull (doc.GetElementById ("id3"), "#13");
 		}
 
 		int removeAllStep;

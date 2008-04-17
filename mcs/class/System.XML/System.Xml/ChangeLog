@@ -1,3 +1,8 @@
+2008-04-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlAttributeCollection.cs : check attribute identity only if the
+	  source node is in the document tree. Fixed bug #380720.
+
 2008-02-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlParserContext.cs : .net does not populate XmlNamespaceManager
