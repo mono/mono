@@ -54,9 +54,14 @@ namespace System.ComponentModel
 						    CultureInfo culture,
 						    object value)
 		{
-			if (value is string && ((string)value) == "(none)")
+			if (!(value is string))
+				return base.ConvertFrom(context, culture, value);
+			
+			if (((string)value) == "(none)")
 				return null;
-			return base.ConvertFrom(context, culture, value);
+			
+			// There must be something else to do here...
+			return null;
 		}
 
 		public override object ConvertTo (ITypeDescriptorContext context,
@@ -64,9 +69,13 @@ namespace System.ComponentModel
 						  object value,
 						  Type destinationType)
 		{
-			if (destinationType == typeof (string) && value == null)
+			if (destinationType != typeof (string))
+				return base.ConvertTo(context, culture, value, destinationType);
+			
+			if (value == null)
 				return "(none)";
-			return base.ConvertTo(context, culture, value, destinationType);
+			
+			return String.Empty;
 		}
 
 		public override StandardValuesCollection GetStandardValues (ITypeDescriptorContext context)

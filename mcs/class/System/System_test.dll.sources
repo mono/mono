@@ -114,6 +114,7 @@ System.ComponentModel/BindingListTest.cs
 System.ComponentModel/ByteConverterTests.cs
 System.ComponentModel/CollectionConverterTest.cs
 System.ComponentModel/ComplexBindingPropertiesAttributeTest.cs
+System.ComponentModel/ComponentConverterTests.cs
 System.ComponentModel/ComponentResourceManagerTest.cs
 System.ComponentModel/ContainerTest.cs
 System.ComponentModel/DataObjectMethodAttributeTests.cs
