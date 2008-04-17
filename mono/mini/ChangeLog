@@ -1,3 +1,13 @@
+2008-04-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (NEW_INS): Set cil_code.
+
+	* mini.c (mini_method_compile): Move the disabling of fp elimination to here
+	from mini-amd64.c so all debugger related logic is in one place.
+
+	* mini.c: Set cfg->ip to NULL after passes which set it so instructions created
+	later won't have a random ip assigned to them.
+
 2008-04-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-trampolines.c (mono_create_jump_trampoline): Add an assert to check that
