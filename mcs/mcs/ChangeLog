@@ -2,7 +2,7 @@
 
 	* decl.cs, class.cs, cs-parser.jay, ecore.cs, expression.cs: Unify all type
 	name expressions.
-	Also fixes #321794.
+	Also fixes #340463.
 
 2008-04-17  Raja R Harinath  <harinath@hurrynot.org>
 
