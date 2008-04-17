@@ -446,7 +446,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test] // bug #323389
-		[Category ("NotWorking")]
 		public void Delete_FileLock ()
 		{
 			string path = TempFolder + Path.DirectorySeparatorChar + "DeleteOpenStreamException";
