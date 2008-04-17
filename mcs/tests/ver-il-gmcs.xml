@@ -10351,6 +10351,40 @@
       </method>
     </type>
   </test>
+  <test name="gtest-384.cs">
+    <type name="N.TestG">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Foo[T]()">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="NonGeneric">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Generic`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="m">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="NonGeneric compiles_fine(NonGeneric, NonGeneric ByRef)">
+        <size>13</size>
+      </method>
+      <method name="Generic`1[System.Int32] does_not_compile(Generic`1[System.Int32], Generic`1[System.Int32] ByRef)">
+        <size>13</size>
+      </method>
+      <method name="Void Main()">
+        <size>6</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
