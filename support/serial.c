@@ -91,6 +91,13 @@ read_serial (int fd, guchar *buffer, int offset, int count)
 int
 write_serial (int fd, guchar *buffer, int offset, int count, int timeout)
 {
+	struct pollfd pinfo;
+
+	pinfo.fd = fd;
+	pinfo.events = POLLOUT;
+	pinfo.revents = POLLOUT;
+
+	
 	struct timeval tmval;
 	fd_set writefs;
 	guint32 n;
@@ -105,12 +112,13 @@ write_serial (int fd, guchar *buffer, int offset, int count, int timeout)
 	{
 		size_t t;
 			
-		if (timeout > 0)
-		{
-			if (select(fd+1, NULL, &writefs, NULL, &tmval) <= 0 && errno != EINTR)
-			{
+		if (timeout > 0) {
+			int c;
+			
+			while ((c = poll (&pinfo, 1, timeout)) == -1 && errno == EINTR)
+				;
+			if (c == -1)
 				return -1;
-			}
 		}		
 
 		do {
@@ -120,14 +128,6 @@ write_serial (int fd, guchar *buffer, int offset, int count, int timeout)
 		if (t < 0)
 			return -1;
 		
-		if (timeout > 0)
-		{
-			if (select(fd+1, NULL, &writefs, NULL, &tmval) <= 0  && errno != EINTR)
-			{
-				return -1;
-			}
-		}
-
 		offset += t;
 		n -= t; 
 	}
