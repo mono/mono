@@ -92,22 +92,14 @@ int
 write_serial (int fd, guchar *buffer, int offset, int count, int timeout)
 {
 	struct pollfd pinfo;
+	guint32 n;
 
 	pinfo.fd = fd;
 	pinfo.events = POLLOUT;
 	pinfo.revents = POLLOUT;
 
-	
-	struct timeval tmval;
-	fd_set writefs;
-	guint32 n;
-
 	n = count;
 
-	FD_SET(fd, &writefs);
-	tmval.tv_sec = timeout / 1000;
-	tmval.tv_usec = (timeout - tmval.tv_sec) * 1000;	
-	
 	while (n > 0)
 	{
 		size_t t;
