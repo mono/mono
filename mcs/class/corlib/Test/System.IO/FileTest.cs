@@ -473,6 +473,22 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		[ExpectedException (typeof(UnauthorizedAccessException))]
+		public void Delete_File_ReadOnly ()
+		{
+			string path = TempFolder + Path.DirectorySeparatorChar + "DeleteReadOnly";
+			DeleteFile (path);
+			try {
+				File.Create (path).Close ();
+				File.SetAttributes (path, FileAttributes.ReadOnly);
+				File.Delete (path);
+			} finally {
+				File.SetAttributes (path, FileAttributes.Normal);
+				DeleteFile (path);
+			}
+		}
+
+		[Test]
 		public void GetAttributes_Archive ()
 		{
 			if (RunningOnUnix)

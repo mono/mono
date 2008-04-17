@@ -1,3 +1,7 @@
+2008-04-17  Dick Porter  <dick@ximian.com>
+
+	* FileTest.cs: Test for bug 378229.
+
 2008-04-17  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* File.cs: Added/improved tests for Create and Move.
