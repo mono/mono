@@ -359,7 +359,7 @@ namespace MonoTests.System.IO
 				info.GetObjectData (si, new StreamingContext ());
 
 				Assert.AreEqual (2, si.MemberCount, "#1");
-				Assert.AreEqual (path, si.GetString ("OriginalPath"), "#2");
+				Assert.AreEqual ("FSIT.Serialization.Test", si.GetString ("OriginalPath"), "#2");
 				Assert.AreEqual (path, si.GetString ("FullPath"), "#3");
 			} finally {
 				DeleteDir (path);

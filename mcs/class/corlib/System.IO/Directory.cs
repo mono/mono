@@ -106,7 +106,7 @@ namespace System.IO
 				new FileIOPermission (FileIOPermissionAccess.Read | FileIOPermissionAccess.Write, path).Demand ();
 			}
 
-			DirectoryInfo info = new DirectoryInfo (path);
+			DirectoryInfo info = new DirectoryInfo (path, true);
 			if (info.Parent != null && !info.Parent.Exists)
 				 info.Parent.Create ();
 

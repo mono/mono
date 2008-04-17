@@ -233,6 +233,39 @@ namespace MonoTests.System.IO
 			string testDirName = Path.GetDirectoryName ("");
 		}
 
+		[Test]
+		public void IsPathRooted_Path_Empty ()
+		{
+			Assert (!Path.IsPathRooted (string.Empty));
+		}
+
+		[Test]
+		public void IsPathRooted_Path_Null ()
+		{
+			Assert (!Path.IsPathRooted (null));
+		}
+
+		[Test]
+		public void IsPathRooted_Path_InvalidPathChars ()
+		{
+			try {
+				Path.IsPathRooted (Path.InvalidPathChars [0].ToString ());
+				Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Illegal characters in path.
+				AssertEquals ("#2", typeof (ArgumentException), ex.GetType ());
+				AssertNull ("#3", ex.InnerException);
+				AssertNotNull ("#4", ex.Message);
+				AssertNull ("#5", ex.ParamName);
+			}
+		}
+
+		[Test]
+		public void GetDirectoryName_Path_Null ()
+		{
+			Path.GetDirectoryName (null);
+		}
+
 		public void TestDirectoryName ()
 		{
 			string [] files = new string [3];
@@ -640,6 +673,50 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		public void GetFullPath_Path_Empty ()
+		{
+			try {
+				Path.GetFullPath (string.Empty);
+				Fail ("#1");
+			} catch (ArgumentException ex) {
+				// The path is not of a legal form
+				AssertEquals ("#2", typeof (ArgumentException), ex.GetType ());
+				AssertNull ("#3", ex.InnerException);
+				AssertNotNull ("#4", ex.Message);
+				AssertNull ("#5", ex.ParamName);
+			}
+		}
+
+		[Test]
+		public void GetFullPath_Path_Null ()
+		{
+			try {
+				Path.GetFullPath (null);
+				Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				AssertEquals ("#2", typeof (ArgumentNullException), ex.GetType ());
+				AssertNull ("#3", ex.InnerException);
+				AssertNotNull ("#4", ex.Message);
+				AssertEquals ("#5", "path", ex.ParamName);
+			}
+		}
+
+		[Test]
+		public void GetFullPath_Path_Whitespace ()
+		{
+			try {
+				Path.GetFullPath ("  ");
+				Fail ("#1");
+			} catch (ArgumentException ex) {
+				// The path is not of a legal form
+				AssertEquals ("#2", typeof (ArgumentException), ex.GetType ());
+				AssertNull ("#3", ex.InnerException);
+				AssertNotNull ("#4", ex.Message);
+				AssertNull ("#5", ex.ParamName);
+			}
+		}
+
+		[Test]
 		public void GetFullPath_EndingSeparator ()
 		{
 			string fp = Path.GetFullPath ("something/");
@@ -659,7 +736,7 @@ namespace MonoTests.System.IO
 			string curdir = Directory.GetCurrentDirectory ();
 			try {
 #if TARGET_JVM
-                string system = "C:\\WINDOWS\\system32\\";
+				string system = "C:\\WINDOWS\\system32\\";
 #else
 				string system = Environment.SystemDirectory;
 #endif

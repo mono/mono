@@ -5,77 +5,108 @@
 // (C) 2003 Ville Palo
 // 
 
-
-using NUnit.Framework;
 using System;
 using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+
+using NUnit.Framework;
 
 namespace MonoTests.System.IO
 {
 	[TestFixture]
-        public class FileInfoTest : Assertion
-        {
+	public class FileInfoTest
+	{
 		string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
 		static readonly char DSC = Path.DirectorySeparatorChar;
 
-                [SetUp]
-                protected void SetUp() {
-			if (Directory.Exists (TempFolder))
-				Directory.Delete (TempFolder, true);
+		[SetUp]
+		public void SetUp ()
+		{
+			DeleteDirectory (TempFolder);
 			Directory.CreateDirectory (TempFolder);
-                }
-                
-                [TearDown]
-                protected void TearDown() {
-			if (Directory.Exists (TempFolder))
-				Directory.Delete (TempFolder, true);
-		}
-                
-                [Test]
-                public void Ctr ()
-                {
-                	string path = TempFolder + DSC + "FIT.Ctr.Test";
-                	DeleteFile (path);
-                	
-                	FileInfo info = new FileInfo (path);
-                	AssertEquals ("test#01", true, info.DirectoryName.EndsWith (".Tests"));
-                	AssertEquals ("test#02", false, info.Exists);
-                	AssertEquals ("test#03", ".Test", info.Extension);
-                	AssertEquals ("test#05", "FIT.Ctr.Test", info.Name);                	
-                }
-                
-		[Test]
-		[ExpectedException(typeof(ArgumentNullException))]
-		public void CtorArgumentNullException ()
-		{
-			FileInfo info = new FileInfo (null);			
-		}
-		
-		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void CtorArgumentException1 ()
-		{
-			FileInfo info = new FileInfo ("");			
-		}
-		
-		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void CtorArgumentException2 ()
-		{
-			FileInfo info = new FileInfo ("      ");			
 		}
 
-		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void CtorArgumentException3 ()
+		[TearDown]
+		public void TearDown ()
 		{
-			string path = "";
-			foreach (char c in Path.InvalidPathChars) {
-				path += c;
-			}
-			FileInfo info = new FileInfo (path);			
+			DeleteDirectory (TempFolder);
 		}
-			       
+
+		[Test] // ctor (String)
+		public void Constructor1 ()
+		{
+			string path = TempFolder + DSC + "FIT.Ctr.Test";
+			DeleteFile (path);
+
+			FileInfo info = new FileInfo (path);
+			Assert.IsTrue (info.DirectoryName.EndsWith (".Tests"), "#1");
+			Assert.IsFalse (info.Exists, "#2");
+			Assert.AreEqual (".Test", info.Extension, "#3");
+			Assert.AreEqual ("FIT.Ctr.Test", info.Name, "#4");
+		}
+
+		[Test] // ctor (String)
+		public void Constructor1_FileName_Null ()
+		{
+			try {
+				new FileInfo (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("fileName", ex.ParamName, "#5");
+			}
+		}
+
+		[Test] // ctor (String)
+		public void Constructor1_FileName_Empty ()
+		{
+			try {
+				new FileInfo (string.Empty);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Empty file name is not legal
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+		}
+
+		[Test] // ctor (String)
+		public void Constructor1_FileName_InvalidPathChars ()
+		{
+			string path = string.Empty;
+			foreach (char c in Path.InvalidPathChars)
+				path += c;
+			try {
+				new FileInfo (path);
+			} catch (ArgumentException ex) {
+				// The path contains illegal characters
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+		}
+
+		[Test] // ctor (String)
+		public void Constructor1_FileName_Whitespace ()
+		{
+			try {
+				new FileInfo ("      ");
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// The path is not of a legal form
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+		}
+
 		[Test]
 		public void DirectoryTest ()
 		{
@@ -84,7 +115,7 @@ namespace MonoTests.System.IO
 			
 			FileInfo info = new FileInfo (path);
 			DirectoryInfo dir = info.Directory;
-			AssertEquals ("test#01", "MonoTests.System.IO.Tests", dir.Name);
+			Assert.AreEqual ("MonoTests.System.IO.Tests", dir.Name);
 		}
 		
 		[Test]
@@ -95,46 +126,54 @@ namespace MonoTests.System.IO
 			
 			try {
 				FileInfo info = new FileInfo (path);
-				AssertEquals ("test#01", false, info.Exists);
+				Assert.IsFalse (info.Exists, "#1");
 			
 				File.Create (path).Close ();
-				AssertEquals ("test#02", false, info.Exists);
+				Assert.IsFalse (info.Exists, "#2");
 				info = new FileInfo (path);
-				AssertEquals ("test#03", true, info.Exists);			
+				Assert.IsTrue (info.Exists, "#3");
+				info = new FileInfo (TempFolder);
+				Assert.IsFalse (info.Exists, "#4");
 			} finally {
 				DeleteFile (path);
 			}
 		}
 
 #if NET_2_0
-		
-		[Test, Category ("NotWorking")]
+		[Test]
+		[Category ("NotWorking")]
 		public void IsReadOnly ()
 		{
 			string path = TempFolder + DSC + "FIT.IsReadOnly.Test";
 			DeleteFile (path);
 			
 			try {
-				FileStream stream = File.Create (path);
-				stream.WriteByte (12);
-				stream.Close ();
+				using (FileStream stream = File.Create (path)) {
+					stream.WriteByte (12);
+					stream.Close ();
+				}
 
 				FileInfo info1 = new FileInfo (path);
-				AssertEquals ("test#01", false, info1.IsReadOnly);
+				Assert.IsFalse (info1.IsReadOnly, "#1");
 
 				FileInfo info2 = new FileInfo (path);
 				info2.IsReadOnly = true;
-				AssertEquals ("test#02", true, info1.IsReadOnly);
+				Assert.IsFalse (info1.IsReadOnly, "#2");
+				Assert.IsTrue (info2.IsReadOnly, "#3");
 
 				FileInfo info3 = new FileInfo (path);
-				info2.IsReadOnly = false;
-				AssertEquals ("test#03", false, info1.IsReadOnly);
+				Assert.IsTrue (info3.IsReadOnly, "#4");
+				info3.IsReadOnly = false;
+				Assert.IsFalse (info1.IsReadOnly, "#4");
+				Assert.IsTrue (info2.IsReadOnly, "#5");
+				Assert.IsFalse (info3.IsReadOnly, "#6");
 			} finally {
+				File.SetAttributes (path, FileAttributes.Normal);
 				DeleteFile (path);
 			}
 		}
 #endif
-		
+
 		[Test]
 		public void Length ()
 		{
@@ -144,12 +183,12 @@ namespace MonoTests.System.IO
 			try {
 				FileStream stream = File.Create (path);
 				FileInfo info = new FileInfo (path);
-				AssertEquals ("test#01", 0, info.Length);
+				Assert.AreEqual (0, info.Length, "#1");
 				stream.WriteByte (12);
 				stream.Flush ();
-				AssertEquals ("test#02", 0, info.Length);
+				Assert.AreEqual (0, info.Length, "#2");
 				info = new FileInfo (path);
-				AssertEquals ("test#03", 1, info.Length);
+				Assert.AreEqual (1, info.Length, "#3");
 				stream.Close ();
 			} finally {
 				DeleteFile (path);
@@ -157,13 +196,20 @@ namespace MonoTests.System.IO
 		}
 		
 		[Test]
-		[ExpectedException (typeof (FileNotFoundException))]
-		public void LengthException ()
+		public void Length_FileDoesNotExist ()
 		{
 			string path = TempFolder + DSC + "FIT.LengthException.Test";
 			DeleteFile (path);
 			FileInfo info = new FileInfo (path);
-			long l = info.Length;
+			try {
+				long l = info.Length;
+				Assert.Fail ("#1:" + l);
+			} catch (FileNotFoundException ex) {
+				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#2");
+				Assert.AreEqual (path, ex.FileName, "#3");
+				Assert.IsNull (ex.InnerException, "#4");
+				Assert.IsNotNull (ex.Message, "#5");
+			}
 		}
 		
 		[Test]
@@ -174,28 +220,26 @@ namespace MonoTests.System.IO
 			
 			try {
 				FileInfo info = new FileInfo (path);
-			
-				AssertEquals ("test#01", false, info.Exists);
+				Assert.IsFalse (info.Exists, "#1");
 			
 				StreamWriter writer = info.AppendText ();
 				info = new FileInfo (path);
-				AssertEquals ("test#02", true, info.Exists );
+				Assert.IsTrue (info.Exists, "#2");
 				
 				writer.Write ("aaa");
 				writer.Flush ();
 				writer.Close ();
 			
-				AssertEquals ("test#03", 0, info.Length);
+				Assert.AreEqual (0, info.Length, "#3");
 				info = new FileInfo (path);
-				AssertEquals ("test#04", 3, info.Length);
+				Assert.AreEqual (3, info.Length, "#4");
 			} finally {
 				DeleteFile (path);
 			}
-			
 		}
-		
-		[Test]
-		public void CopyTo ()
+
+		[Test] // CopyTo (String)
+		public void CopyTo1 ()
 		{
 			string path1 = TempFolder + DSC + "FIT.CopyTo.Source.Test";
 			string path2 = TempFolder + DSC + "FIT.CopyTo.Dest.Test";
@@ -205,18 +249,143 @@ namespace MonoTests.System.IO
 				File.Create (path1).Close ();
 			
 				FileInfo info = new FileInfo (path1);
-				AssertEquals ("test#01", true, info.Exists);
-						
+				Assert.IsTrue (info.Exists, "#1");
+
 				FileInfo info2 = info.CopyTo (path2);
 				info = new FileInfo (path1);
-				AssertEquals ("test#02", true, info2.Exists);
+				Assert.IsTrue (info2.Exists, "#2");
 			} finally {
 				DeleteFile (path1);
-				DeleteFile (path2);			
+				DeleteFile (path2);
 			}
 		}
-		
-		[Test]
+
+		[Test] // CopyTo (String)
+		public void CopyTo1_DestFileName_AlreadyExists ()
+		{
+			string path1 = TempFolder + DSC + "FIT.CopyToException.Source.Test";
+			string path2 = TempFolder + DSC + "FIT.CopyToException.Dest.Test";
+
+			try {
+				DeleteFile (path1);
+				DeleteFile (path2);
+				File.Create (path1).Close ();
+				File.Create (path2).Close ();
+				FileInfo info = new FileInfo (path1);
+				try {
+					info.CopyTo (path2);
+					Assert.Fail ("#1");
+				} catch (IOException ex) {
+					// The file '...' already exists.
+					Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.IsTrue (ex.Message.IndexOf (path2) != -1, "#5");
+				}
+			} finally {
+				DeleteFile (path1);
+				DeleteFile (path2);
+			}
+		}
+
+		[Test] // CopyTo (String)
+		public void CopyTo1_DestFileName_Null ()
+		{
+			string path = TempFolder + DSC + "FIT.CopyToArgumentNullException.Test";
+			DeleteFile (path);
+			try {
+				File.Create (path).Close ();
+				FileInfo info = new FileInfo (path);
+				try {
+					info.CopyTo (null);
+					Assert.Fail ("#1");
+				} catch (ArgumentNullException ex) {
+					Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.AreEqual ("destFileName", ex.ParamName, "#5");
+				}
+			} finally {
+				DeleteFile (path);
+			}
+		}
+
+		[Test] // CopyTo (String)
+		public void CopyTo1_DestFileName_Empty ()
+		{
+			string path = TempFolder + DSC + "FIT.CopyToArgument1Exception.Test";
+			DeleteFile (path);
+
+			try {
+				File.Create (path).Close ();
+				FileInfo info = new FileInfo (path);
+				try {
+					info.CopyTo (string.Empty);
+					Assert.Fail ("#1");
+				} catch (ArgumentException ex) {
+					// Empty file name is not legal
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.AreEqual ("destFileName", ex.ParamName, "#5");
+				}
+			} finally {
+				DeleteFile (path);
+			}
+		}
+
+		[Test] // CopyTo (String)
+		public void CopyTo1_DestFileName_Whitespace ()
+		{
+			string path = TempFolder + DSC + "FIT.CopyToArgument2Exception.Test";
+			DeleteFile (path);
+
+			try {
+				File.Create (path).Close ();
+				FileInfo info = new FileInfo (path);
+				try {
+					info.CopyTo ("    ");
+					Assert.Fail ("#1");
+				} catch (ArgumentException ex) {
+					// The path is not of a legal form
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.IsNull (ex.ParamName, "#5");
+				}
+			} finally {
+				DeleteFile (path);
+			}
+		}
+
+		[Test] // CopyTo (String)
+		public void CopyTo1_DestFileName_InvalidPathChars ()
+		{
+			string path = TempFolder + DSC + "FIT.CopyToArgument4Exception.Test";
+			string path2 = string.Empty;
+			DeleteFile (path);
+
+			try {
+				File.Create (path).Close ();
+				FileInfo info = new FileInfo (path);
+				foreach (char c in Path.InvalidPathChars)
+					path2 += c;
+				try {
+					info.CopyTo (path2);
+					Assert.Fail ("#1");
+				} catch (ArgumentException ex) {
+					// Illegal characters in path
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.IsNull (ex.ParamName, "#5");
+				}
+			} finally {
+				DeleteFile (path);
+			}
+		}
+
+		[Test] // CopyTo (String, Boolean)
 		public void CopyTo2 ()
 		{
 			string path1 = TempFolder + DSC + "FIT.CopyTo2.Source.Test";
@@ -225,22 +394,21 @@ namespace MonoTests.System.IO
 			DeleteFile (path2);
 			try {
 				File.Create (path1).Close ();
-				File.Create (path2).Close ();		
+				File.Create (path2).Close ();
 				FileInfo info = new FileInfo (path1);
-			
+
 				FileInfo info2 = info.CopyTo (path2, true);
 				info = new FileInfo (path1);
-				AssertEquals ("test#01", true, info.Exists);
-				AssertEquals ("test#02", true, info2.Exists);
+				Assert.IsTrue (info.Exists, "#1");
+				Assert.IsTrue (info2.Exists, "#2");
 			} finally {
 				DeleteFile (path1);
 				DeleteFile (path2);
 			}
 		}
-		
-		[Test]
-		[ExpectedException (typeof (IOException))]
-		public void CopyToIOException ()
+
+		[Test] // CopyTo (String, Boolean)
+		public void CopyTo2_DestFileName_AlreadyExists ()
 		{
 			string path1 = TempFolder + DSC + "FIT.CopyToException.Source.Test";
 			string path2 = TempFolder + DSC + "FIT.CopyToException.Dest.Test";
@@ -249,53 +417,48 @@ namespace MonoTests.System.IO
 				DeleteFile (path1);
 				DeleteFile (path2);
 				File.Create (path1).Close ();
-				File.Create (path2).Close ();		
-				FileInfo info = new FileInfo (path1);			
-				FileInfo info2 = info.CopyTo (path2);			
+				File.Create (path2).Close ();
+				FileInfo info = new FileInfo (path1);
+				try {
+					info.CopyTo (path2, false);
+					Assert.Fail ("#1");
+				} catch (IOException ex) {
+					// The file '...' already exists.
+					Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.IsTrue (ex.Message.IndexOf (path2) != -1, "#5");
+				}
 			} finally {
 				DeleteFile (path1);
 				DeleteFile (path2);
 			}
 		}
 
-		[Test]
-		[ExpectedException (typeof (IOException))]
-		public void CopyToIOException2 ()
-		{
-			string path1 = TempFolder + DSC + "FIT.CopyToException.Source.Test";
-			string path2 = TempFolder + DSC + "FIT.CopyToException.Dest.Test";
-
-			try {
-				DeleteFile (path1);
-				DeleteFile (path2);
-				File.Create (path1).Close ();
-				File.Create (path2).Close ();		
-				FileInfo info = new FileInfo (path1);			
-				FileInfo info2 = info.CopyTo (path2, false);
-			} finally {
-				DeleteFile (path1);
-				DeleteFile (path2);
-			}
-		}
-		
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void CopyToArgumentNullException ()
+		[Test] // CopyTo (String, Boolean)
+		public void CopyTo2_DestFileName_Null ()
 		{
 			string path = TempFolder + DSC + "FIT.CopyToArgumentNullException.Test";
 			DeleteFile (path);
 			try {
 				File.Create (path).Close ();
 				FileInfo info = new FileInfo (path);
-				info.CopyTo (null, false);
+				try {
+					info.CopyTo (null, false);
+					Assert.Fail ("#1");
+				} catch (ArgumentNullException ex) {
+					Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.AreEqual ("destFileName", ex.ParamName, "#5");
+				}
 			} finally {
 				DeleteFile (path);
 			}
 		}
 
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void CopyToArgumentException1 ()
+		[Test] // CopyTo (String, Boolean)
+		public void CopyTo2_DestFileName_Empty ()
 		{
 			string path = TempFolder + DSC + "FIT.CopyToArgument1Exception.Test";
 			DeleteFile (path);
@@ -303,15 +466,23 @@ namespace MonoTests.System.IO
 			try {
 				File.Create (path).Close ();
 				FileInfo info = new FileInfo (path);
-				info.CopyTo ("", false);
+				try {
+					info.CopyTo (string.Empty, false);
+					Assert.Fail ("#1");
+				} catch (ArgumentException ex) {
+					// Empty file name is not legal
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.AreEqual ("destFileName", ex.ParamName, "#5");
+				}
 			} finally {
 				DeleteFile (path);
 			}
 		}
 
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void CopyToArgumentException2 ()
+		[Test] // CopyTo (String, Boolean)
+		public void CopyTo2_DestFileName_Whitespace ()
 		{
 			string path = TempFolder + DSC + "FIT.CopyToArgument2Exception.Test";
 			DeleteFile (path);
@@ -319,44 +490,43 @@ namespace MonoTests.System.IO
 			try {
 				File.Create (path).Close ();
 				FileInfo info = new FileInfo (path);
-				info.CopyTo ("    ", false);
+				try {
+					info.CopyTo ("    ", false);
+					Assert.Fail ("#1");
+				} catch (ArgumentException ex) {
+					// The path is not of a legal form
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.IsNull (ex.ParamName, "#5");
+				}
 			} finally {
 				DeleteFile (path);
 			}
 		}
 
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void CopyToArgumentException3 ()
-		{
-			string path = TempFolder + DSC + "FIT.CopyToArgument3Exception.Test";
-			DeleteFile (path);
-			
-			try {
-				File.Create (path).Close ();
-				FileInfo info = new FileInfo (path);
-				info.CopyTo ("    ", false);
-			} finally {
-				DeleteFile (path);
-			}
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void CopyToArgumentException4 ()
+		[Test] // CopyTo (String, Boolean)
+		public void CopyTo2_DestFileName_InvalidPathChars ()
 		{
 			string path = TempFolder + DSC + "FIT.CopyToArgument4Exception.Test";
-			string path2 = "";
+			string path2 = string.Empty;
 			DeleteFile (path);
 			
 			try {
 				File.Create (path).Close ();
 				FileInfo info = new FileInfo (path);
-			
-				foreach (char c in Path.InvalidPathChars) {
+				foreach (char c in Path.InvalidPathChars)
 					path2 += c;
+				try {
+					info.CopyTo (path2, false);
+					Assert.Fail ("#1");
+				} catch (ArgumentException ex) {
+					// Illegal characters in path
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.IsNull (ex.ParamName, "#5");
 				}
-				info.CopyTo (path2, false);
 			} finally {
 				DeleteFile (path);
 			}
@@ -370,14 +540,14 @@ namespace MonoTests.System.IO
 			
 			try {
 				FileInfo info = new FileInfo (path);
-				AssertEquals ("test#01", false, info.Exists);
-				FileStream stream = info.Create ();				
-				AssertEquals ("test#02", false, info.Exists);
+				Assert.IsFalse (info.Exists, "#1");
+				FileStream stream = info.Create ();
+				Assert.IsFalse (info.Exists, "#2");
 				info = new FileInfo (path);
-				AssertEquals ("test#03", true, info.Exists);
-				AssertEquals ("test#04", true, stream.CanRead);
-				AssertEquals ("test#05", true, stream.CanWrite);
-				AssertEquals ("test#06", true, stream.CanSeek);
+				Assert.IsTrue (info.Exists, "#3");
+				Assert.IsTrue (stream.CanRead, "#4");
+				Assert.IsTrue (stream.CanWrite, "#5");
+				Assert.IsTrue (stream.CanSeek, "#6");
 				stream.Close ();
 			} finally {
 				DeleteFile (path);
@@ -392,27 +562,29 @@ namespace MonoTests.System.IO
 			
 			try {
 				FileInfo info = new FileInfo (path);
-				AssertEquals ("test#01", false, info.Exists);
+				Assert.IsFalse (info.Exists, "#1");
 				StreamWriter writer = info.CreateText ();
 				writer.WriteLine ("test");
 				writer.Close ();
 				info = new FileInfo (path);
-				AssertEquals ("test#02", true, info.Exists);
+				Assert.IsTrue (info.Exists, "#2");
 			} finally {
 				DeleteFile (path);
 			}
 		}
 		
 		[Test]
-		[ExpectedException (typeof (UnauthorizedAccessException))]
-		public void CreateTextUnauthorizedAccessException ()
+		public void CreateText_Directory ()
 		{
-			string path = TempFolder;
-			
-			FileInfo info = new FileInfo (path);
-			AssertEquals ("test#01", false, info.Exists);
-			StreamWriter writer = info.CreateText ();
-			
+			FileInfo info = new FileInfo (TempFolder);
+			try {
+				info.CreateText ();
+				Assert.Fail ("#1");
+			} catch (UnauthorizedAccessException ex) {
+				Assert.AreEqual (typeof (UnauthorizedAccessException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 		
 		[Test]
@@ -423,26 +595,31 @@ namespace MonoTests.System.IO
 			
 			try {
 				FileInfo info = new FileInfo (path);
-				AssertEquals ("test#01", false, info.Exists);
+				Assert.IsFalse (info.Exists, "#1");
 				info.Create ().Close ();
 				info = new FileInfo (path);
-				AssertEquals ("test#02", true, info.Exists);
+				Assert.IsTrue (info.Exists, "#2");
 				info.Delete ();
-				AssertEquals ("test#03", true, info.Exists);
+				Assert.IsTrue (info.Exists, "#3");
 				info = new FileInfo (path);
-				AssertEquals ("test#04", false, info.Exists);								
+				Assert.IsFalse (info.Exists, "#4");
 			} finally {
 				DeleteFile (path);
 			}
 		}
 		
 		[Test]
-		[ExpectedException (typeof (UnauthorizedAccessException))]
-		public void DeleteUnauthorizedAccessException ()
+		public void Delete_Directory ()
 		{
-			string path = TempFolder;
-			FileInfo info = new FileInfo (path);
-			info.Delete ();			
+			FileInfo info = new FileInfo (TempFolder);
+			try {
+				info.Delete ();
+				Assert.Fail ("#1");
+			} catch (UnauthorizedAccessException ex) {
+				Assert.AreEqual (typeof (UnauthorizedAccessException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 		
 		[Test]
@@ -455,34 +632,19 @@ namespace MonoTests.System.IO
 			
 			try {
 				File.Create (path1).Close ();
-				FileInfo info = new FileInfo (path1);
+				FileInfo info1 = new FileInfo (path1);
 				FileInfo info2 = new FileInfo (path2);
-				AssertEquals ("test#01", false, info2.Exists);
-				
-				info.MoveTo (path2);
-				info2 = new FileInfo (path2);
-				AssertEquals ("test#02", true, info2.Exists);	
-			} finally {
-				DeleteFile (path1);
-				DeleteFile (path2);			
-			}			
-		}
-		
-		[Test]
-		[ExpectedException (typeof (IOException))]
-		public void MoveToIOException ()
-		{
-			string path1 = TempFolder + DSC + "FIT.MoveToIOException.Source.Test";
-			string path2 = TempFolder + DSC + "FIT.MoveToIOException.Dest.Test";
-			DeleteFile (path1);
-			DeleteFile (path2);
+				Assert.IsTrue (info1.Exists, "#A1");
+				Assert.AreEqual (path1, info1.FullName, "#A2");
+				Assert.IsFalse (info2.Exists, "#A3");
+				Assert.AreEqual (path2, info2.FullName, "#A4");
 
-			try {
-				File.Create (path1).Close ();
-				File.Create (path2).Close ();
-				
-				FileInfo info = new FileInfo (path1);
-				info.MoveTo (path2);
+				info1.MoveTo (path2);
+				info2 = new FileInfo (path2);
+				Assert.IsTrue (info1.Exists, "#B1");
+				Assert.AreEqual (path2, info1.FullName, "#B2");
+				Assert.IsTrue (info2.Exists, "#B3");
+				Assert.AreEqual (path2, info2.FullName, "#B4");
 			} finally {
 				DeleteFile (path1);
 				DeleteFile (path2);
@@ -490,60 +652,166 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		public void MoveToArgumentNullException ()
+		public void MoveTo_DestFileName_AlreadyExists ()
+		{
+			string sourceFile = TempFolder + DSC + "FIT.MoveTo.Source.Test";
+			string destFile;
+			FileInfo info;
+
+			// move to same directory
+			File.Create (sourceFile).Close ();
+			info = new FileInfo (sourceFile);
+			try {
+				info.MoveTo (TempFolder);
+				Assert.Fail ("#A1");
+			} catch (IOException ex) {
+				// Cannot create a file when that file already exists
+				Assert.AreEqual (typeof (IOException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsFalse (ex.Message.IndexOf (sourceFile) != -1, "#A5");
+				Assert.IsFalse (ex.Message.IndexOf (TempFolder) != -1, "#A6");
+			} finally {
+				DeleteFile (sourceFile);
+			}
+
+			// move to exist file
+			File.Create (sourceFile).Close ();
+			destFile = TempFolder + DSC + "FIT.MoveTo.Dest.Test";
+			File.Create (destFile).Close ();
+			info = new FileInfo (sourceFile);
+			try {
+				info.MoveTo (destFile);
+				Assert.Fail ("#B1");
+			} catch (IOException ex) {
+				// Cannot create a file when that file already exists
+				Assert.AreEqual (typeof (IOException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsFalse (ex.Message.IndexOf (sourceFile) != -1, "#B5");
+				Assert.IsFalse (ex.Message.IndexOf (destFile) != -1, "#B6");
+			} finally {
+				DeleteFile (sourceFile);
+				DeleteFile (destFile);
+			}
+
+			// move to existing directory
+			File.Create (sourceFile).Close ();
+			destFile = TempFolder + Path.DirectorySeparatorChar + "bar";
+			Directory.CreateDirectory (destFile);
+			info = new FileInfo (sourceFile);
+			try {
+				info.MoveTo (destFile);
+				Assert.Fail ("#C1");
+			} catch (IOException ex) {
+				// Cannot create a file when that file already exists
+				Assert.AreEqual (typeof (IOException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+				Assert.IsFalse (ex.Message.IndexOf (sourceFile) != -1, "#C5");
+				Assert.IsFalse (ex.Message.IndexOf (destFile) != -1, "#C6");
+			} finally {
+				DeleteFile (sourceFile);
+				DeleteDirectory (destFile);
+			}
+		}
+
+		[Test]
+		public void MoveTo_DestFileName_DirectoryDoesNotExist ()
+		{
+			string sourceFile = TempFolder + Path.DirectorySeparatorChar + "foo";
+			string destFile = Path.Combine (Path.Combine (TempFolder, "doesnotexist"), "b");
+			DeleteFile (sourceFile);
+			try {
+				File.Create (sourceFile).Close ();
+				FileInfo info = new FileInfo (sourceFile);
+				try {
+					info.MoveTo (destFile);
+					Assert.Fail ("#1");
+				} catch (DirectoryNotFoundException ex) {
+					// Could not find a part of the path
+					Assert.AreEqual (typeof (DirectoryNotFoundException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+				}
+			} finally {
+				DeleteFile (sourceFile);
+			}
+		}
+
+		[Test]
+		public void MoveTo_DestFileName_Null ()
 		{
 			string path = TempFolder + DSC + "FIT.MoveToArgumentNullException.Test";
 			DeleteFile (path);
 
 			try {
-				File.Create (path).Close ();				
+				File.Create (path).Close ();
 				FileInfo info = new FileInfo (path);
-				info.MoveTo (null);
+				try {
+					info.MoveTo (null);
+					Assert.Fail ("#1");
+				} catch (ArgumentNullException ex) {
+					Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.AreEqual ("destFileName", ex.ParamName, "#5");
+				}
 			} finally {
 				DeleteFile (path);
 			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void MoveToArgumentException ()
+		public void MoveTo_DestFileName_Empty ()
 		{
 			string path = TempFolder + DSC + "FIT.MoveToArgumentException.Test";
 			DeleteFile (path);
 
 			try {
-				File.Create (path).Close ();				
+				File.Create (path).Close ();
 				FileInfo info = new FileInfo (path);
-				info.MoveTo ("   ");
+				try {
+					info.MoveTo (string.Empty);
+					Assert.Fail ("#1");
+				} catch (ArgumentException ex) {
+					// Empty file name is not legal
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.AreEqual ("destFileName", ex.ParamName, "#5");
+				}
 			} finally {
 				DeleteFile (path);
 			}
 		}
 
-		/// <summary>
-		/// msdn says this should throw UnauthorizedAccessException, byt
-		/// it throws IOException.
-		/// </summary>
 		[Test]
-		[ExpectedException (typeof (IOException))]
-		public void MoveToUnauthorizedAccessException ()
+		public void MoveTo_DestFileName_Whitespace ()
 		{
-			string path = TempFolder + DSC + "FIT.UnauthorizedAccessException.Test";
+			string path = TempFolder + DSC + "FIT.MoveToArgumentException.Test";
 			DeleteFile (path);
 
 			try {
 				File.Create (path).Close ();
 				FileInfo info = new FileInfo (path);
-				info.MoveTo (TempFolder);
+				try {
+					info.MoveTo ("   ");
+					Assert.Fail ("#1");
+				} catch (ArgumentException ex) {
+					// The path is not of a legal form
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.IsNull (ex.ParamName, "#5");
+				}
 			} finally {
 				DeleteFile (path);
 			}
 		}
-		
+
 		[Test]
-		[ExpectedException (typeof (FileNotFoundException))]
-		public void MoveToFileNotFoundException ()
+		public void MoveTo_FileDoesNotExist ()
 		{
 			string path1 = TempFolder + DSC + "FIT.MoveToFileNotFoundException.Src";
 			string path2 = TempFolder + DSC + "FIT.MoveToFileNotFoundException.Dst";
@@ -552,13 +820,39 @@ namespace MonoTests.System.IO
 			
 			try {
 				FileInfo info = new FileInfo (path1);
-				info.MoveTo (path2);
+				try {
+					info.MoveTo (path2);
+					Assert.Fail ("#1");
+				} catch (FileNotFoundException ex) {
+					// Unable to find the specified file
+					Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#2");
+					Assert.IsNull (ex.FileName, "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+				}
 			} finally {
 				DeleteFile (path1);
 				DeleteFile (path2);
 			}
 		}
-				
+
+		[Test]
+		public void MoveTo_Same ()
+		{
+			string path = TempFolder + DSC + "FIT.MoveToSame.Test";
+			DeleteFile (path);
+
+			try {
+				File.Create (path).Close ();
+				FileInfo info = new FileInfo (path);
+				info.MoveTo (path);
+				Assert.IsTrue (info.Exists, "#1");
+				Assert.IsTrue (File.Exists (path), "#2");
+			} finally {
+				DeleteFile (path);
+			}
+		}
+
 		[Test]
 		public void Open ()
 		{
@@ -568,28 +862,28 @@ namespace MonoTests.System.IO
 			try {
 				FileInfo info = new FileInfo (path);
 				stream = info.Open (FileMode.CreateNew);
-				AssertEquals ("test#01", true, stream.CanRead);
-				AssertEquals ("test#02", true, stream.CanSeek);
-				AssertEquals ("test#03", true, stream.CanWrite);				
+				Assert.IsTrue (stream.CanRead, "#A1");
+				Assert.IsTrue (stream.CanSeek, "#A2");
+				Assert.IsTrue (stream.CanWrite, "#A3");
 				stream.Close ();
 				
-				stream = info.Open (FileMode.Open);				
-				AssertEquals ("test#04", true, stream.CanRead);
-				AssertEquals ("test#05", true, stream.CanSeek);
-				AssertEquals ("test#06", true, stream.CanWrite);				
+				stream = info.Open (FileMode.Open);
+				Assert.IsTrue (stream.CanRead, "#B1");
+				Assert.IsTrue (stream.CanSeek, "#B2");
+				Assert.IsTrue (stream.CanWrite, "#B3");
 				stream.Close ();
 				
 				stream = info.Open (FileMode.Append, FileAccess.Write);
-				AssertEquals ("test#07", false, stream.CanRead);
-				AssertEquals ("test#08", true, stream.CanSeek);
-				AssertEquals ("test#09", true, stream.CanWrite);				
-				stream.Close ();				
+				Assert.IsFalse (stream.CanRead, "#C1");
+				Assert.IsTrue (stream.CanSeek, "#C2");
+				Assert.IsTrue (stream.CanWrite, "#C3");
+				stream.Close ();
 
 				stream = info.Open (FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
-				AssertEquals ("test#10", true, stream.CanRead);
-				AssertEquals ("test#11", true, stream.CanSeek);
-				AssertEquals ("test#12", true, stream.CanWrite);				
-				stream.Close ();												
+				Assert.IsTrue (stream.CanRead, "#D1");
+				Assert.IsTrue (stream.CanSeek, "#D2");
+				Assert.IsTrue (stream.CanWrite, "#D3");
+				stream.Close ();
 			} finally {
 				if (stream != null)
 					stream.Close ();
@@ -598,14 +892,21 @@ namespace MonoTests.System.IO
 		}
 		
 		[Test]
-		[ExpectedException(typeof(FileNotFoundException))]
-		public void OpenFileNotFoundException ()
+		public void Open_FileDoesNotExist ()
 		{
 			string path = TempFolder + DSC + "FIT.OpenFileNotFoundException.Test";
 			DeleteFile (path);
 			
 			FileInfo info = new FileInfo (path);
-			info.Open (FileMode.Open);
+			try {
+				info.Open (FileMode.Open);
+				Assert.Fail ("#1");
+			} catch (FileNotFoundException ex) {
+				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#2");
+				Assert.AreEqual (path, ex.FileName, "#3");
+				Assert.IsNull (ex.InnerException, "#4");
+				Assert.IsNotNull (ex.Message, "#5");
+			}
 		}
 		
 		[Test]
@@ -618,9 +919,9 @@ namespace MonoTests.System.IO
 				File.Create (path).Close ();
 				FileInfo info = new FileInfo (path);
 				stream = info.OpenRead ();
-				AssertEquals ("test#01", true, stream.CanRead);
-				AssertEquals ("test#02", true, stream.CanSeek);
-				AssertEquals ("test#03", false, stream.CanWrite);
+				Assert.IsTrue (stream.CanRead, "#1");
+				Assert.IsTrue (stream.CanSeek, "#2");
+				Assert.IsFalse (stream.CanWrite, "#3");
 				stream.Close ();
 				
 			} finally {
@@ -631,9 +932,8 @@ namespace MonoTests.System.IO
 		}
 		
 		[Test]
-		[ExpectedException(typeof (IOException))]
 		[Category("TargetJvmNotSupported")] // File sharing not supported for TARGET_JVM
-		public void OpenReadIOException ()
+		public void OpenRead_FileLock ()
 		{
 			string path = TempFolder + DSC + "FIT.OpenReadIOException.Test";
 			DeleteFile (path);
@@ -642,7 +942,16 @@ namespace MonoTests.System.IO
 			try {
 				stream = File.Create (path);
 				FileInfo info = new FileInfo (path);
-				info.OpenRead ();
+				try {
+					info.OpenRead ();
+					Assert.Fail ("#1");
+				} catch (IOException ex) {
+					// The process cannot access the file because
+					// it is being used by another process
+					Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+				}
 			} finally {
 				if (stream != null)
 					stream.Close ();
@@ -651,13 +960,17 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		[ExpectedException(typeof (UnauthorizedAccessException))]
-		public void OpenReadUnauthorizedAccessException ()
+		public void OpenRead_Directory ()
 		{
-			string path = TempFolder;
-			
-			FileInfo info = new FileInfo (path);
-			info.OpenRead ();
+			FileInfo info = new FileInfo (TempFolder);
+			try {
+				info.OpenRead ();
+				Assert.Fail ("#1");
+			} catch (UnauthorizedAccessException ex) {
+				Assert.AreEqual (typeof (UnauthorizedAccessException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 		
 		[Test]
@@ -670,9 +983,8 @@ namespace MonoTests.System.IO
 				File.Create (path).Close ();
 				FileInfo info = new FileInfo (path);
 				reader = info.OpenText ();
-				AssertEquals ("test#01", -1, reader.Peek ());		
+				Assert.AreEqual (-1, reader.Peek ());
 			} finally {
-				
 				if (reader != null)
 					reader.Close ();
 				DeleteFile (path);
@@ -680,23 +992,34 @@ namespace MonoTests.System.IO
 		}
 		
 		[Test]
-		[ExpectedException(typeof (FileNotFoundException))]
-		public void OpenTextFileNotFoundException ()
+		public void OpenText_FileDoesNotExist ()
 		{
 			string path = TempFolder + DSC + "FIT.OpenTextFileNotFoundException.Test";
 			DeleteFile (path);
 			FileInfo info = new FileInfo (path);
-			info.OpenText ();
+			try {
+				info.OpenText ();
+				Assert.Fail ("#1");
+			} catch (FileNotFoundException ex) {
+				Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#2");
+				Assert.AreEqual (path, ex.FileName, "#3");
+				Assert.IsNull (ex.InnerException, "#4");
+				Assert.IsNotNull (ex.Message, "#5");
+			}
 		}
 
 		[Test]
-		[ExpectedException(typeof (UnauthorizedAccessException))]
-		public void OpenTextUnauthorizedAccessException ()
+		public void OpenText_Directory ()
 		{
-			string path = TempFolder;
-			
-			FileInfo info = new FileInfo (path);
-			info.OpenText ();
+			FileInfo info = new FileInfo (TempFolder);
+			try {
+				info.OpenText ();
+				Assert.Fail ("#1");
+			} catch (UnauthorizedAccessException ex) {
+				Assert.AreEqual (typeof (UnauthorizedAccessException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 
 		[Test]
@@ -709,11 +1032,10 @@ namespace MonoTests.System.IO
 				File.Create (path).Close ();
 				FileInfo info = new FileInfo (path);
 				stream = info.OpenWrite ();
-				AssertEquals ("test#01", false, stream.CanRead);
-				AssertEquals ("test#02", true, stream.CanSeek);
-				AssertEquals ("test#03", true, stream.CanWrite);
+				Assert.IsFalse (stream.CanRead, "#1");
+				Assert.IsTrue (stream.CanSeek, "#2");
+				Assert.IsTrue (stream.CanWrite, "#3");
 			} finally {
-				
 				if (stream != null)
 					stream.Close ();
 				DeleteFile (path);
@@ -721,33 +1043,80 @@ namespace MonoTests.System.IO
 		}
 		
 		[Test]
-		[ExpectedException(typeof (UnauthorizedAccessException))]
-		public void OpenWriteUnauthorizedAccessException ()
+		public void OpenWrite_Directory ()
 		{
-			string path = TempFolder;
-			
-			FileInfo info = new FileInfo (path);
-			info.OpenWrite ();
+			FileInfo info = new FileInfo (TempFolder);
+			try {
+				info.OpenWrite ();
+				Assert.Fail ("#1");
+			} catch (UnauthorizedAccessException ex) {
+				Assert.AreEqual (typeof (UnauthorizedAccessException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 
-		private void DeleteFile (string path)
+		[Test]
+		public void Serialization ()
 		{
-			if (File.Exists (path))
-				File.Delete (path);
+			FileInfo info;
+			SerializationInfo si;
+			
+			info = new FileInfo ("Test");
+			si = new SerializationInfo (typeof (FileInfo), new FormatterConverter ());
+			info.GetObjectData (si, new StreamingContext ());
+
+			Assert.AreEqual (2, si.MemberCount, "#A1");
+			Assert.AreEqual ("Test", si.GetString ("OriginalPath"), "#A2");
+			Assert.AreEqual (Path.Combine (Directory.GetCurrentDirectory (), "Test"), si.GetString ("FullPath"), "#A3");
+
+			info = new FileInfo (TempFolder);
+			si = new SerializationInfo (typeof (FileInfo), new FormatterConverter ());
+			info.GetObjectData (si, new StreamingContext ());
+
+			Assert.AreEqual (2, si.MemberCount, "#B1");
+			Assert.AreEqual (TempFolder, si.GetString ("OriginalPath"), "#B2");
+			Assert.AreEqual (TempFolder, si.GetString ("FullPath"), "#B3");
+		}
+
+		[Test]
+		public void Deserialization ()
+		{
+			FileInfo info = new FileInfo ("Test");
+
+			MemoryStream ms = new MemoryStream ();
+			BinaryFormatter bf = new BinaryFormatter ();
+			bf.Serialize (ms, info);
+			ms.Position = 0;
+
+			FileInfo clone = (FileInfo) bf.Deserialize (ms);
+			Assert.AreEqual (info.Name, clone.Name, "#1");
+			Assert.AreEqual (info.FullName, clone.FullName, "#2");
 		}
 
 		[Test]
 		public void ToStringVariety ()
 		{
-			AssertEquals ("foo", new FileInfo ("foo").ToString ());
-			AssertEquals ("c:/foo", new FileInfo ("c:/foo").ToString ());
-			AssertEquals ("/usr/local/foo", new FileInfo ("/usr/local/foo").ToString ());
-			AssertEquals ("c:\\foo", new FileInfo ("c:\\foo").ToString ());
-			AssertEquals ("/usr/local\\foo", new FileInfo ("/usr/local\\foo").ToString ());
-			AssertEquals ("foo/BAR/baz", new FileInfo ("foo/BAR/baz").ToString ());
-			AssertEquals ("c:/documents and settings", new FileInfo ("c:/documents and settings").ToString ());
-			AssertEquals ("c:/docUme~1", new FileInfo ("c:/docUme~1").ToString ());
+			Assert.AreEqual ("foo", new FileInfo ("foo").ToString ());
+			Assert.AreEqual ("c:/foo", new FileInfo ("c:/foo").ToString ());
+			Assert.AreEqual ("/usr/local/foo", new FileInfo ("/usr/local/foo").ToString ());
+			Assert.AreEqual ("c:\\foo", new FileInfo ("c:\\foo").ToString ());
+			Assert.AreEqual ("/usr/local\\foo", new FileInfo ("/usr/local\\foo").ToString ());
+			Assert.AreEqual ("foo/BAR/baz", new FileInfo ("foo/BAR/baz").ToString ());
+			Assert.AreEqual ("c:/documents and settings", new FileInfo ("c:/documents and settings").ToString ());
+			Assert.AreEqual ("c:/docUme~1", new FileInfo ("c:/docUme~1").ToString ());
 		}
-        }
-}
 
+		void DeleteFile (string path)
+		{
+			if (File.Exists (path))
+				File.Delete (path);
+		}
+
+		void DeleteDirectory (string path)
+		{
+			if (Directory.Exists (path))
+				Directory.Delete (path, true);
+		}
+	}
+}

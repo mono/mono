@@ -50,13 +50,31 @@ namespace System.IO {
 		private string current;
 		private string parent;
 	
-		public DirectoryInfo (string path)
+		public DirectoryInfo (string path) : this (path, false)
+		{
+		}
+
+		internal DirectoryInfo (string path, bool simpleOriginalPath)
 		{
 			CheckPath (path);
 
 			FullPath = Path.GetFullPath (path);
-			OriginalPath = path;
+			if (simpleOriginalPath)
+				OriginalPath = Path.GetFileName (path);
+			else
+				OriginalPath = path;
 
+			Initialize ();
+		}
+
+		private DirectoryInfo (SerializationInfo info, StreamingContext context)
+			: base (info, context)
+		{
+			Initialize ();
+		}
+
+		void Initialize ()
+		{
 			int len = FullPath.Length - 1;
 			if ((len > 1) && (FullPath [len] == Path.DirectorySeparatorChar))
 				len--;
@@ -76,11 +94,6 @@ namespace System.IO {
 						parent += Path.DirectorySeparatorChar;
 				}
 			}
-		}
-
-		private DirectoryInfo (SerializationInfo info, StreamingContext context)
-			: base (info, context)
-		{
 		}
 
 		// properties
@@ -123,28 +136,33 @@ namespace System.IO {
 
 		// creational methods
 
-		public void Create () {
+		public void Create ()
+		{
 			Directory.CreateDirectory (FullPath);
 		}
 
-		public DirectoryInfo CreateSubdirectory (string name) {
-			CheckPath (name);
-			
-			string path = Path.Combine (FullPath, name);
-			Directory.CreateDirectory (path);
+		public DirectoryInfo CreateSubdirectory (string path)
+		{
+			CheckPath (path);
 
+			path = Path.Combine (FullPath, path);
+			Directory.CreateDirectory (path);
 			return new DirectoryInfo (path);
 		}
 
 		// directory listing methods
 
-		public FileInfo [] GetFiles () {
+		public FileInfo [] GetFiles ()
+		{
 			return GetFiles ("*");
 		}
 
-		public FileInfo [] GetFiles (string pattern)
+		public FileInfo [] GetFiles (string searchPattern)
 		{
-			string [] names = Directory.GetFiles (FullPath, pattern);
+			if (searchPattern == null)
+				throw new ArgumentNullException ("searchPattern");
+
+			string [] names = Directory.GetFiles (FullPath, searchPattern);
 
 			FileInfo[] infos = new FileInfo [names.Length];
 			int i = 0;
@@ -154,13 +172,17 @@ namespace System.IO {
 			return infos;
 		}
 
-		public DirectoryInfo [] GetDirectories () {
+		public DirectoryInfo [] GetDirectories ()
+		{
 			return GetDirectories ("*");
 		}
 
-		public DirectoryInfo [] GetDirectories (string pattern)
+		public DirectoryInfo [] GetDirectories (string searchPattern)
 		{
-			string [] names = Directory.GetDirectories (FullPath, pattern);
+			if (searchPattern == null)
+				throw new ArgumentNullException ("searchPattern");
+
+			string [] names = Directory.GetDirectories (FullPath, searchPattern);
 
 			DirectoryInfo[] infos = new DirectoryInfo [names.Length];
 			int i = 0;
@@ -170,14 +192,18 @@ namespace System.IO {
 			return infos;
 		}
 
-		public FileSystemInfo [] GetFileSystemInfos () {
+		public FileSystemInfo [] GetFileSystemInfos ()
+		{
 			return GetFileSystemInfos ("*");
 		}
 
-		public FileSystemInfo [] GetFileSystemInfos (string pattern)
+		public FileSystemInfo [] GetFileSystemInfos (string searchPattern)
 		{
-			string[] dirs = Directory.GetDirectories (FullPath, pattern);
-			string[] files = Directory.GetFiles (FullPath, pattern);
+			if (searchPattern == null)
+				throw new ArgumentNullException ("searchPattern");
+
+			string [] dirs = Directory.GetDirectories (FullPath, searchPattern);
+			string [] files = Directory.GetFiles (FullPath, searchPattern);
 
 			FileSystemInfo[] infos = new FileSystemInfo [dirs.Length + files.Length];
 			int i = 0;
@@ -191,36 +217,44 @@ namespace System.IO {
 
 		// directory management methods
 
-		public override void Delete () {
+		public override void Delete ()
+		{
 			Delete (false);
 		}
 
-		public void Delete (bool recurse) {
+		public void Delete (bool recurse)
+		{
 			Directory.Delete (FullPath, recurse);
 		}
 
-		public void MoveTo (string dest) {
- 			Directory.Move (FullPath, Path.GetFullPath (dest));
+		public void MoveTo (string destDirName)
+		{
+			if (destDirName == null)
+				throw new ArgumentNullException ("destDirName");
+			if (destDirName.Length == 0)
+				throw new ArgumentException ("An empty file name is not valid.", "destDirName");
+
+			Directory.Move (FullPath, Path.GetFullPath (destDirName));
 		}
 
-		public override string ToString () {
+		public override string ToString ()
+		{
 			return OriginalPath;
 		}
-#if NET_2_0
-		// additional search methods
 
-		public DirectoryInfo[] GetDirectories (string pattern, SearchOption searchOption)
+#if NET_2_0
+		public DirectoryInfo[] GetDirectories (string searchPattern, SearchOption searchOption)
 		{
 			switch (searchOption) {
 			case SearchOption.TopDirectoryOnly:
-				return GetDirectories (pattern);
+				return GetDirectories (searchPattern);
 			case SearchOption.AllDirectories:
-				Queue workq = new Queue(GetDirectories(pattern));
+				Queue workq = new Queue(GetDirectories(searchPattern));
 				Queue doneq = new Queue();
 				while (workq.Count > 0)
 					{
 						DirectoryInfo cinfo = (DirectoryInfo) workq.Dequeue();
-						DirectoryInfo[] cinfoDirs = cinfo.GetDirectories(pattern);
+						DirectoryInfo[] cinfoDirs = cinfo.GetDirectories(searchPattern);
 						foreach (DirectoryInfo i in cinfoDirs) workq.Enqueue(i);
 						doneq.Enqueue(cinfo);
 					}
@@ -254,14 +288,14 @@ namespace System.IO {
 			return count;
 		}
 		
-		public FileInfo[] GetFiles (string pattern, SearchOption searchOption)
+		public FileInfo[] GetFiles (string searchPattern, SearchOption searchOption)
 		{
 			switch (searchOption) {
 			case SearchOption.TopDirectoryOnly:
-				return GetFiles (pattern);
+				return GetFiles (searchPattern);
 			case SearchOption.AllDirectories: {
 				ArrayList groups = new ArrayList ();
-				int count = GetFilesSubdirs (groups, pattern);
+				int count = GetFilesSubdirs (groups, searchPattern);
 				int current = 0;
 				
 				FileInfo [] all = new FileInfo [count];
@@ -288,11 +322,11 @@ namespace System.IO {
 		}
 
 		[MonoLimitation ("DirectorySecurity isn't implemented")]
-		public DirectoryInfo CreateSubdirectory (string name, DirectorySecurity directorySecurity)
+		public DirectoryInfo CreateSubdirectory (string path, DirectorySecurity directorySecurity)
 		{
 			if (directorySecurity != null)
 				throw new UnauthorizedAccessException ();
-			return CreateSubdirectory (name);
+			return CreateSubdirectory (path);
 		}
 
 		[MonoNotSupported ("DirectorySecurity isn't implemented")]

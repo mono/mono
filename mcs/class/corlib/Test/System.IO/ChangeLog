@@ -1,3 +1,13 @@
+2008-04-17  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* File.cs: Added/improved tests for Create and Move.
+	* DirectoryInfoTest.cs: No longer derive from deprecated Assertion
+	class. Improved tests for ctor, Create, Name, Parent, ...
+	* FileInfoTest.cs: No longer derive from deprecated Assertion class.
+	Improved/added tests,
+	* PathTest.cs: Added tests for IsPathRooted and GetFullPath.
+	* FileSystemInfoTest.cs: Fixed test. Now passes on both Mono and MS. 
+
 2008-04-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* FileTest.cs: Renamed and improved existing tests. Avoid use of

@@ -151,41 +151,32 @@ namespace System.IO
 						  object fileSecurity)
 #endif
 		{
-			if (null == path)
-				throw new ArgumentNullException ("path");
-			if (String.Empty == path.Trim() || path.IndexOfAny(Path.InvalidPathChars) >= 0)
-				throw new ArgumentException (Locale.GetText ("path is invalid"));
-
-			string DirName = Path.GetDirectoryName(path);
-			if (DirName != String.Empty && !Directory.Exists (DirName))
-				throw new DirectoryNotFoundException (Locale.GetText ("Destination directory not found: {0}", DirName));
-			if (Exists(path)){
-				if ((GetAttributes(path) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly){
-					throw new UnauthorizedAccessException (Locale.GetText ("{0} is read-only", path));
-				}
-			}
-
+#if NET_2_0
 			return new FileStream (path, FileMode.Create, FileAccess.ReadWrite,
-					       FileShare.None, bufferSize);
+				FileShare.None, bufferSize, options);
+#else
+			return new FileStream (path, FileMode.Create, FileAccess.ReadWrite,
+				FileShare.None, bufferSize);
+#endif
 		}
 
-		public static StreamWriter CreateText(string path)
+		public static StreamWriter CreateText (string path)
 		{
 			return new StreamWriter (path, false);
 		}
 
 		public static void Delete (string path)
 		{
-			if (null == path)
+			if (path == null)
 				throw new ArgumentNullException("path");
-			if (String.Empty == path.Trim() || path.IndexOfAny(Path.InvalidPathChars) >= 0)
+			if (path.Trim().Length == 0 || path.IndexOfAny(Path.InvalidPathChars) >= 0)
 				throw new ArgumentException("path");
 			if (Directory.Exists (path))
 				throw new UnauthorizedAccessException(Locale.GetText ("{0} is a directory", path));
 
 			string DirName = Path.GetDirectoryName(path);
 			if (DirName != String.Empty && !Directory.Exists (DirName))
-				throw new DirectoryNotFoundException (Locale.GetText ("Destination directory not found: {0}", DirName));
+				throw new DirectoryNotFoundException (Locale.GetText ("Could not find a part of the path \"{0}\".", path));
 
 			MonoIOError error;
 			
@@ -202,7 +193,7 @@ namespace System.IO
 			// any problem with the path or permissions.
 			// Minimizes what information can be
 			// discovered by using this method.
-			if (null == path || path.Trim().Length == 0
+			if (path == null || path.Trim().Length == 0
 			    || path.IndexOfAny(Path.InvalidPathChars) >= 0) {
 				return false;
 			}
@@ -331,8 +322,6 @@ namespace System.IO
 				throw new ArgumentException ("The file name is not valid.");
 			if (!MonoIO.Exists (sourceFileName, out error))
 				throw new FileNotFoundException (Locale.GetText ("{0} does not exist", sourceFileName), sourceFileName);
-			if (MonoIO.ExistsDirectory (destFileName, out error))
-				throw new IOException (Locale.GetText ("{0} is a directory", destFileName));
 
 			// Don't check for this error here to allow the runtime
 			// to check if sourceFileName and destFileName are equal.
@@ -343,11 +332,15 @@ namespace System.IO
 			string DirName;
 			DirName = Path.GetDirectoryName (destFileName);
 			if (DirName != String.Empty && !Directory.Exists (DirName))
-				throw new DirectoryNotFoundException(Locale.GetText ("Destination directory not found: {0}", DirName));
+#if NET_2_0
+				throw new DirectoryNotFoundException (Locale.GetText ("Could not find a part of the path."));
+#else
+				throw new DirectoryNotFoundException (Locale.GetText ("Could not find a part of the path '{0}'.", destFileName));
+#endif
 
 			if (!MonoIO.MoveFile (sourceFileName, destFileName, out error)) {
 				if (error == MonoIOError.ERROR_ALREADY_EXISTS)
-					throw MonoIO.GetException (destFileName, error);
+					throw MonoIO.GetException (error);
 				else if (error == MonoIOError.ERROR_SHARING_VIOLATION)
 					throw MonoIO.GetException (sourceFileName, error);
 				

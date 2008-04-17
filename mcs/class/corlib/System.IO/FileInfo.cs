@@ -34,6 +34,7 @@
 //
 
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 
 #if NET_2_0
 using System.Security.AccessControl;
@@ -45,23 +46,30 @@ namespace System.IO {
 #if NET_2_0
 	[ComVisible (true)]
 #endif
-	public sealed class FileInfo : FileSystemInfo {
-	
-
+	public sealed class FileInfo : FileSystemInfo
+	{
 		private bool exists;
 
-		public FileInfo (string path) {
-			CheckPath (path);
-		
-			OriginalPath = path;
-			FullPath = Path.GetFullPath (path);
+		public FileInfo (string fileName)
+		{
+			if (fileName == null)
+				throw new ArgumentNullException ("fileName");
+
+			CheckPath (fileName);
+
+			OriginalPath = fileName;
+			FullPath = Path.GetFullPath (fileName);
 		}
-		
+
+		private FileInfo (SerializationInfo info, StreamingContext context)
+			: base (info, context)
+		{
+		}
+
 		internal override void InternalRefresh ()
 		{
 			exists = File.Exists (FullPath);
 		}
-
 
 		// public properties
 
@@ -103,7 +111,7 @@ namespace System.IO {
 				if (value) 
 					attrs |= FileAttributes.ReadOnly;
 				else
-					attrs &= ~FileAttributes.ReadOnly;					
+					attrs &= ~FileAttributes.ReadOnly;
 
 				File.SetAttributes(FullPath, attrs);
 			}
@@ -155,15 +163,18 @@ namespace System.IO {
 
 		// streamreader methods
 
-		public StreamReader OpenText () {
+		public StreamReader OpenText ()
+		{
 			return new StreamReader (Open (FileMode.Open, FileAccess.Read));
 		}
 
-		public StreamWriter CreateText () {
+		public StreamWriter CreateText ()
+		{
 			return new StreamWriter (Open (FileMode.Create, FileAccess.Write));
 		}
 		
-		public StreamWriter AppendText () {
+		public StreamWriter AppendText ()
+		{
 			return new StreamWriter (Open (FileMode.Append, FileAccess.Write));
 		}
 
@@ -173,80 +184,85 @@ namespace System.IO {
 		{
 			return File.Create (FullPath);
 		}
-		
-		
-		public FileStream OpenRead () {
+
+		public FileStream OpenRead ()
+		{
 			return Open (FileMode.Open, FileAccess.Read, FileShare.Read);
 		}
 
-		public FileStream OpenWrite () {
+		public FileStream OpenWrite ()
+		{
 			return Open (FileMode.OpenOrCreate, FileAccess.Write);
 		}
 
-		public FileStream Open (FileMode mode) {
+		public FileStream Open (FileMode mode)
+		{
 			return Open (mode, FileAccess.ReadWrite);
 		}
 
-		public FileStream Open (FileMode mode, FileAccess access) {
+		public FileStream Open (FileMode mode, FileAccess access)
+		{
 			return Open (mode, access, FileShare.None);
 		}
 
-		public FileStream Open (FileMode mode, FileAccess access, FileShare share) {
+		public FileStream Open (FileMode mode, FileAccess access, FileShare share)
+		{
 			return new FileStream (FullPath, mode, access, share);
 		}
 
 		// file methods
 
-		public override void Delete () {
+		public override void Delete ()
+		{
 			MonoIOError error;
-						
-			if (!MonoIO.Exists (FullPath, out error)) {
+
+			if (!MonoIO.Exists (FullPath, out error))
 				// a weird MS.NET behaviour
 				return;
-			}
 
-			if (MonoIO.ExistsDirectory (FullPath, out error)) {
+			if (MonoIO.ExistsDirectory (FullPath, out error))
 				throw new UnauthorizedAccessException ("Access to the path \"" + FullPath + "\" is denied.");
-			}
-			
-			if (!MonoIO.DeleteFile (FullPath, out error)) {
-				throw MonoIO.GetException (OriginalPath,
-							   error);
-			}
-		}
-		
-		public void MoveTo (string dest) {
-
-			if (dest == null)
-				throw new ArgumentNullException ();
-
-                        if (dest == Name || dest == FullName)
-                                return;
-
-			MonoIOError error;
-			if (MonoIO.Exists (dest, out error) ||
-				MonoIO.ExistsDirectory (dest, out error))
-				throw new IOException ();
-			File.Move (FullPath, dest);
-			this.FullPath = Path.GetFullPath (dest);
+			if (!MonoIO.DeleteFile (FullPath, out error))
+				throw MonoIO.GetException (OriginalPath, error);
 		}
 
-		public FileInfo CopyTo (string path) {
-			return CopyTo (path, false);
+		public void MoveTo (string destFileName)
+		{
+			if (destFileName == null)
+				throw new ArgumentNullException ("destFileName");
+			if (destFileName == Name || destFileName == FullName)
+				return;
+			if (!File.Exists (FullPath))
+				throw new FileNotFoundException ();
+
+			File.Move (FullPath, destFileName);
+			this.FullPath = Path.GetFullPath (destFileName);
 		}
 
-		public FileInfo CopyTo (string path, bool overwrite) {
-			string dest = Path.GetFullPath (path);
+		public FileInfo CopyTo (string destFileName)
+		{
+			return CopyTo (destFileName, false);
+		}
 
-			if (overwrite && File.Exists (path))
-				File.Delete (path);
+		public FileInfo CopyTo (string destFileName, bool overwrite)
+		{
+			if (destFileName == null)
+				throw new ArgumentNullException ("destFileName");
+			if (destFileName.Length == 0)
+				throw new ArgumentException ("An empty file name is not valid.", "destFileName");
+
+			string dest = Path.GetFullPath (destFileName);
+
+			if (overwrite && File.Exists (dest))
+				File.Delete (dest);
 
 			File.Copy (FullPath, dest);
 		
 			return new FileInfo (dest);
 		}
 
-		public override string ToString () {
+		public override string ToString ()
+		{
 			return OriginalPath;
 		}
 

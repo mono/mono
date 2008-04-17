@@ -1,3 +1,28 @@
+2008-04-17  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DirectoryInfo.cs: Added new internal ctor, which takes a bool that
+	indicates whether the original path should only container the last
+	part of the directory. Moved logic for determining the Name and
+	Parent to Initialize method, to allow it to be re-used on
+	deserialization. Renamed argument names to fix corcompare issues.
+	Added missing argument checks.
+	* Directory.cs (CreateDirectoriesInternal): Use internal ctor for
+	DirectoryInfo to ensure OriginalPath only contains last part of
+	the directory. 
+	* File.cs: Removed redundant checks from Create. On 2.0 profile, pass
+	FileOptions to FileStream. Removed redundant directory check from
+	Delete and modified exceptions to more closely match MS.
+	* FileInfo.cs: Added argument check to ctor to match MS. Added missing
+	deserialization ctor. Modified argument checks in MoveTo, and removed
+	redundant checks. Added missing argument checks in CopyTo. Code
+	formatting.
+	* FileSystemInfo.cs: Modified argument checks in CheckPath to more
+	closely match MS.
+	* MonoIO.cs: Added msg that does not disclose filename for 
+	ERROR_FILE_EXISTS. 
+	* Path.cs: Use String.Length instead of comparing with String.Empty.
+	Removed exceptions argument names to match MS.
+
 2008-04-16  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* File.cs: Changed argument names and thrown exception to better match

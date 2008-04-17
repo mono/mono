@@ -243,12 +243,10 @@ namespace System.IO {
 		{
 			if (path == null)
 				throw new ArgumentNullException ("path");
-			
 			if (path.Length == 0)
-				throw new ArgumentException ("path", Locale.GetText ("Empty path."));
-			
+				throw new ArgumentException ("An empty file name is not valid.");
 			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
-				throw new ArgumentException ("path", Locale.GetText ("Invalid characters in path."));
+				throw new ArgumentException ("Illegal characters in path.");
 		}
 
 		internal MonoIOStat stat;

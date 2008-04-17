@@ -9,11 +9,13 @@
 //
 // TODO: Find out why ArgumentOutOfRangeExceptions does not manage to close streams properly
 //
-using NUnit.Framework;
+
 using System;
 using System.IO;
 using System.Globalization;
 using System.Threading;
+
+using NUnit.Framework;
 
 namespace MonoTests.System.IO
 {
@@ -26,8 +28,7 @@ namespace MonoTests.System.IO
 		[SetUp]
 		public void SetUp ()
 		{
-			if (Directory.Exists (TempFolder))
-				Directory.Delete (TempFolder, true);
+			DeleteDirectory (TempFolder);
 			Directory.CreateDirectory (TempFolder);
 			old_culture = Thread.CurrentThread.CurrentCulture;
 			Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US", false);
@@ -36,8 +37,7 @@ namespace MonoTests.System.IO
 		[TearDown]
 		public void TearDown ()
 		{
-			if (Directory.Exists (TempFolder))
-				Directory.Delete (TempFolder, true);
+			DeleteDirectory (TempFolder);
 			Thread.CurrentThread.CurrentCulture = old_culture;
 		}
 
@@ -90,6 +90,25 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		public void Create_Path_Directory ()
+		{
+			string path = Path.Combine (TempFolder, "foo");
+			Directory.CreateDirectory (path);
+			try {
+				File.Create (path);
+				Assert.Fail ("#1");
+			} catch (UnauthorizedAccessException ex) {
+				// Access to the path '...' is denied
+				Assert.AreEqual (typeof (UnauthorizedAccessException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf (path) != -1, "#5");
+			} finally {
+				DeleteDirectory (path);
+			}
+		}
+
+		[Test]
 		public void Create_Path_Empty ()
 		{
 			try {
@@ -101,6 +120,26 @@ namespace MonoTests.System.IO
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNull (ex.ParamName, "#5");
+			}
+		}
+
+		[Test]
+		public void Create_Path_ReadOnly ()
+		{
+			string path = Path.Combine (TempFolder, "foo");
+			File.Create (path).Close ();
+			File.SetAttributes (path, FileAttributes.ReadOnly);
+			try {
+				File.Create (path);
+				Assert.Fail ("#1");
+			} catch (UnauthorizedAccessException ex) {
+				// Access to the path '...' is denied
+				Assert.AreEqual (typeof (UnauthorizedAccessException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf (path) != -1, "#5");
+			} finally {
+				File.SetAttributes (path, FileAttributes.Normal);
 			}
 		}
 
@@ -129,9 +168,11 @@ namespace MonoTests.System.IO
 				stream = File.Create (path);
 				Assert.Fail ("#1");
 			} catch (DirectoryNotFoundException ex) {
+				// Could not find a part of the path "..."
 				Assert.AreEqual (typeof (DirectoryNotFoundException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf (path) != -1, "#5");
 			} finally {
 				if (stream != null)
 					stream.Close ();
@@ -381,9 +422,11 @@ namespace MonoTests.System.IO
 				File.Delete (path);
 				Assert.Fail ("#1");
 			} catch (DirectoryNotFoundException ex) {
+				// Could not find a part of the path "..."
 				Assert.AreEqual (typeof (DirectoryNotFoundException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf (path) != -1, "#5");
 			}
 		}
 
@@ -396,6 +439,7 @@ namespace MonoTests.System.IO
 				File.Create (foopath).Close ();
 				File.Delete (foopath);
 				Assert.IsFalse (File.Exists (foopath));
+				File.Delete (foopath);
 			} finally {
 				DeleteFile (foopath);
 			}
@@ -414,11 +458,12 @@ namespace MonoTests.System.IO
 					File.Delete (path);
 					Assert.Fail ("#1");
 				} catch (IOException ex) {
-					// The process cannot access the file because
-					// it is being used by another process
+					// The process cannot access the file '...'
+					// because it is being used by another process
 					Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
 					Assert.IsNull (ex.InnerException, "#3");
 					Assert.IsNotNull (ex.Message, "#4");
+					Assert.IsTrue (ex.Message.IndexOf (path) != -1, "#5");
 				}
 			} finally {
 				if (stream != null)
@@ -694,22 +739,26 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
-		//[ExpectedException(typeof (DirectoryNotFoundException))]
 		public void Move_DestFileName_DirectoryDoesNotExist ()
 		{
 			string sourceFile = TempFolder + Path.DirectorySeparatorChar + "foo";
-			string destDir = TempFolder + Path.DirectorySeparatorChar + "doesnotexist";
+			string destFile = Path.Combine (Path.Combine (TempFolder, "doesnotexist"), "b");
 			DeleteFile (sourceFile);
 			try {
 				File.Create (sourceFile).Close ();
 				try {
-					File.Move (sourceFile, destDir + Path.DirectorySeparatorChar + "b");
+					File.Move (sourceFile, destFile);
 					Assert.Fail ("#1");
 				} catch (DirectoryNotFoundException ex) {
 					// Could not find a part of the path
 					Assert.AreEqual (typeof (DirectoryNotFoundException), ex.GetType (), "#2");
-					Assert.IsNull (ex.InnerException, "#4");
-					Assert.IsNotNull (ex.Message, "#5");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+#if NET_2_0
+					Assert.IsFalse (ex.Message.IndexOf (destFile) != -1, "#5");
+#else
+					Assert.IsTrue (ex.Message.IndexOf (destFile) != -1, "#5");
+#endif
 				}
 			} finally {
 				DeleteFile (sourceFile);
@@ -719,17 +768,61 @@ namespace MonoTests.System.IO
 		[Test]
 		public void Move_DestFileName_AlreadyExists ()
 		{
-			File.Create (TempFolder + Path.DirectorySeparatorChar + "foo").Close ();
+			string sourceFile = TempFolder + Path.DirectorySeparatorChar + "foo";
+			string destFile;
+
+			// move to same directory
+			File.Create (sourceFile).Close ();
 			try {
-				File.Move (TempFolder + Path.DirectorySeparatorChar + "foo", TempFolder);
-				Assert.Fail ("#1");
+				File.Move (sourceFile, TempFolder);
+				Assert.Fail ("#A1");
 			} catch (IOException ex) {
 				// Cannot create a file when that file already exists
-				Assert.AreEqual (typeof (IOException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual (typeof (IOException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsFalse (ex.Message.IndexOf (sourceFile) != -1, "#A5");
+				Assert.IsFalse (ex.Message.IndexOf (TempFolder) != -1, "#A6");
 			} finally {
-				DeleteFile (TempFolder + Path.DirectorySeparatorChar + "foo");
+				DeleteFile (sourceFile);
+			}
+
+			// move to exist file
+			File.Create (sourceFile).Close ();
+			destFile = TempFolder + Path.DirectorySeparatorChar + "bar";
+			File.Create (destFile).Close ();
+			try {
+				File.Move (sourceFile, destFile);
+				Assert.Fail ("#B1");
+			} catch (IOException ex) {
+				// Cannot create a file when that file already exists
+				Assert.AreEqual (typeof (IOException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsFalse (ex.Message.IndexOf (sourceFile) != -1, "#B5");
+				Assert.IsFalse (ex.Message.IndexOf (destFile) != -1, "#B6");
+			} finally {
+				DeleteFile (sourceFile);
+				DeleteFile (destFile);
+			}
+
+			// move to existing directory
+			File.Create (sourceFile).Close ();
+			destFile = TempFolder + Path.DirectorySeparatorChar + "bar";
+			Directory.CreateDirectory (destFile);
+			try {
+				File.Move (sourceFile, destFile);
+				Assert.Fail ("#C1");
+			} catch (IOException ex) {
+				// Cannot create a file when that file already exists
+				Assert.AreEqual (typeof (IOException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+				Assert.IsFalse (ex.Message.IndexOf (sourceFile) != -1, "#C5");
+				Assert.IsFalse (ex.Message.IndexOf (destFile) != -1, "#C6");
+			} finally {
+				DeleteFile (sourceFile);
+				DeleteDirectory (destFile);
 			}
 		}
 
@@ -971,14 +1064,12 @@ namespace MonoTests.System.IO
 			}
 		}
 
-		// Setting the creation time on Unix is not possible
 		[Test]
 		[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
 		public void CreationTime ()
 		{
-			int platform = (int) Environment.OSVersion.Platform;
-			if ((platform == 4) || (platform == 128))
-				return;
+			if (RunningOnUnix)
+				Assert.Ignore ("Setting the creation time on Unix is not possible.");
 
 			string path = Path.GetTempFileName ();
 			try {
@@ -2456,17 +2547,6 @@ namespace MonoTests.System.IO
 		}
 
 #if NET_2_0
-		void read_all (string s)
-		{
-			string f = Path.GetTempFileName ();
-			try {
-				File.WriteAllText (f, s);
-				string r = File.ReadAllText (f);
-				Assert.AreEqual (s, r);
-			} finally {
-				DeleteFile (f);
-			}
-		}
 		[Test]
 		public void ReadWriteAllText ()
 		{
@@ -2489,26 +2569,7 @@ namespace MonoTests.System.IO
 			read_all ("\n\n");
 			read_all ("\r\n\r\n");
 		}
-#endif
 
-		static bool RunningOnUnix {
-			get {
-#if NET_2_0
-				return Environment.OSVersion.Platform == PlatformID.Unix;
-#else
-				int platform = (int) Environment.OSVersion.Platform;
-				return platform == 128;
-#endif
-			}
-		}
-
-		private void DeleteFile (string path)
-		{
-			if (File.Exists (path))
-				File.Delete (path);
-		}
-
-#if NET_2_0
 		[Test]
 		public void ReplaceTest ()
 		{
@@ -2537,6 +2598,43 @@ namespace MonoTests.System.IO
 			using (StreamReader sr = File.OpenText (backupFile)) {
 				string txt = sr.ReadLine ();
 				Assert.AreEqual ("replaceFile", txt, "#3");
+			}
+		}
+#endif
+
+		static bool RunningOnUnix {
+			get {
+#if NET_2_0
+				return Environment.OSVersion.Platform == PlatformID.Unix;
+#else
+				int platform = (int) Environment.OSVersion.Platform;
+				return platform == 128;
+#endif
+			}
+		}
+
+		void DeleteFile (string path)
+		{
+			if (File.Exists (path))
+				File.Delete (path);
+		}
+
+		void DeleteDirectory (string path)
+		{
+			if (Directory.Exists (path))
+				Directory.Delete (path, true);
+		}
+
+#if NET_2_0
+		void read_all (string s)
+		{
+			string f = Path.GetTempFileName ();
+			try {
+				File.WriteAllText (f, s);
+				string r = File.ReadAllText (f);
+				Assert.AreEqual (s, r);
+			} finally {
+				DeleteFile (f);
 			}
 		}
 #endif

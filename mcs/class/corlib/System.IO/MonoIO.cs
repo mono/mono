@@ -56,6 +56,9 @@ namespace System.IO
 			switch(error) {
 			case MonoIOError.ERROR_ACCESS_DENIED:
 				return new UnauthorizedAccessException ("Access to the path is denied.");
+			case MonoIOError.ERROR_FILE_EXISTS:
+				string message = "Cannot create a file that already exist.";
+				return new IOException (message, unchecked ((int) 0x80070000) | (int) error);
 			default:
 				/* Add more mappings here if other
 				 * errors trigger the named but empty

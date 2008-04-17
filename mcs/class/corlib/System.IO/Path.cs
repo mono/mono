@@ -85,7 +85,7 @@ namespace System.IO {
 
 			if (extension == null)
 				return iExt < 0 ? path : path.Substring (0, iExt);
-			else if (extension == String.Empty)
+			else if (extension.Length == 0)
 				return iExt < 0 ? path + '.' : path.Substring (0, iExt + 1);
 
 			else if (path.Length != 0) {
@@ -112,10 +112,10 @@ namespace System.IO {
 			if (path2 == null)
 				throw new ArgumentNullException ("path2");
 
-			if (path1 == String.Empty)
+			if (path1.Length == 0)
 				return path2;
 
-			if (path2 == String.Empty)
+			if (path2.Length == 0)
 				return path1;
 
 			if (path1.IndexOfAny (InvalidPathChars) != -1)
@@ -263,7 +263,7 @@ namespace System.IO {
 
 		public static string GetFileName (string path)
 		{
-			if (path == null || path == String.Empty)
+			if (path == null || path.Length == 0)
 				return path;
 
 			if (path.IndexOfAny (InvalidPathChars) != -1)
@@ -328,7 +328,7 @@ namespace System.IO {
 
 			if (path.Trim ().Length == 0) {
 				string msg = Locale.GetText ("The specified path is not of a legal form (empty).");
-				throw new ArgumentException (msg, "path");
+				throw new ArgumentException (msg);
 			}
 
 			// adjust for drives, i.e. a special case for windows
@@ -378,7 +378,7 @@ namespace System.IO {
 			if (path == null)
 				return null;
 
-			if (path == String.Empty)
+			if (path.Length == 0)
 				throw new ArgumentException ("This specified path is invalid.");
 
 			if (!IsPathRooted (path))
@@ -468,7 +468,7 @@ namespace System.IO {
 
 		public static bool HasExtension (string path)
 		{  
-			if (path == null || path.Trim () == String.Empty)
+			if (path == null || path.Trim ().Length == 0)
 				return false;
 
 			int pos = findExtension (path);
@@ -481,7 +481,7 @@ namespace System.IO {
 				return false;
 
 			if (path.IndexOfAny (InvalidPathChars) != -1)
-				throw new ArgumentException ("Illegal characters in path", "path");
+				throw new ArgumentException ("Illegal characters in path.");
 
 			char c = path [0];
 			return (c == DirectorySeparatorChar 	||
