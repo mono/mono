@@ -65,10 +65,10 @@ namespace System.Net.Sockets
 		{
 			if (socket == null)
 				throw new ArgumentNullException ("socket is null");
-			if (!socket.Connected)
-				throw new ArgumentException ("Not connected", "socket");
 			if (socket.SocketType != SocketType.Stream)
 				throw new ArgumentException ("Socket is not of type Stream", "socket");
+			if (!socket.Connected)
+				throw new IOException ("Not connected");
 			if (!socket.Blocking)
 				throw new IOException ("Operation not allowed on a non-blocking socket.");
 			

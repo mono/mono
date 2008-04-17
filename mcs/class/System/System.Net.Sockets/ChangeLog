@@ -1,3 +1,10 @@
+2008-04-17  Miguel de Icaza  <miguel@novell.com>
+
+	* NetworkStream.cs: Throw an IOException if the socket is not
+	connected, not an ArgumentException.   
+
+	Fixes #371923, it is also the way its documented on MSDN. 
+
 2008-04-13  Jb Evain  <jbevain@novell.com>
 
 	* Socket.cs: ifdef out the Sys.Config part for the

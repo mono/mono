@@ -19,6 +19,17 @@ namespace MonoTests.System.Net.Sockets
 	public class NetworkStreamTest
 	{
 #if NET_2_0
+	        [Test]
+		// See bug #371923
+		[ExpectedException(typeof(IOException))]
+		public void NetworkStreamConnection ()
+		{
+			IPEndPoint ipe = new IPEndPoint(Dns.GetHostEntry ("www.google.com").AddressList [0], 80);
+			Socket s = new Socket(ipe.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+			s.Close ();
+			NetworkStream ns = new NetworkStream (s);
+		}
+		
 		[Test]
 		public void ReadTimeout ()
 		{
