@@ -1,3 +1,8 @@
+2008-04-17  Dick Porter  <dick@ximian.com>
+
+	* io.c (DeleteFile): Return ERROR_ACCESS_DENIED if the file is
+	readonly.  Fixes bug 378229.
+
 2008-04-11  Geoff Norton  <gnorton@novell.com>
 
 	* processes.c: The global extern environ doesn't exist on Mac.  We
