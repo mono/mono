@@ -142,14 +142,14 @@ public class HashAlgorithmTest {
 	public void NullStream () 
 	{
 		Stream s = null;
-		byte[] result = hash.ComputeHash (s);
+		hash.ComputeHash (s);
 	}
 
 	[Test]
 	public void Disposable () 
 	{
 		using (HashAlgorithm hash = HashAlgorithm.Create ()) {
-			byte[] data = hash.ComputeHash (new byte [0]);
+			hash.ComputeHash (new byte [0]);
 		}
 	}
 

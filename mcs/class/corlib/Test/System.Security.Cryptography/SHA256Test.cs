@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004, 2007 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2007-2008 Novell, Inc (http://www.novell.com)
 //
 
 using NUnit.Framework;
@@ -128,7 +128,8 @@ public class SHA256Test : HashAlgorithmTest {
 		byte[] output = hash.TransformFinalBlock (input, 0, input.Length);
 		// LAMESPEC or FIXME: TransformFinalBlock doesn't return HashValue !
 		// AssertEquals( testName + ".d.1", result, output );
-		Assert.AreEqual (result, hash.Hash, testName + ".d");
+		Assert.IsNotNull (output, testName + ".d.1");
+		Assert.AreEqual (result, hash.Hash, testName + ".d.2");
 		// required or next operation will still return old hash
 		hash.Initialize ();
 	}
@@ -141,7 +142,8 @@ public class SHA256Test : HashAlgorithmTest {
 		byte[] output = hash.TransformFinalBlock (input, input.Length - 1, 1);
 		// LAMESPEC or FIXME: TransformFinalBlock doesn't return HashValue !
 		// AssertEquals (testName + ".e.1", result, output);
-		Assert.AreEqual (result, hash.Hash, testName + ".e");
+		Assert.IsNotNull (output, testName + ".e.1");
+		Assert.AreEqual (result, hash.Hash, testName + ".e.2");
 		// required or next operation will still return old hash
 		hash.Initialize ();
 	}

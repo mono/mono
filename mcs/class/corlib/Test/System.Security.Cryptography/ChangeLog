@@ -1,3 +1,12 @@
+2008-04-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DSATest.cs: Add valid test cases with invalid xml. Update to
+	NUnit 2 syntax.
+	* HashAlgorithmTest.cs: Fix compiler warnings.
+	* RSATest.cs: Add valid test cases with invalid xml. Update to
+	NUnit 2 syntax.
+	* SHA256Test.cs, SHA384Test.cs, SHA512Test.cs: Flush
+
 2008-03-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PaddingModeTest.cs: Add test case for #366623 ANSI padding bug.
