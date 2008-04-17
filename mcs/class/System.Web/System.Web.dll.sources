@@ -2,6 +2,11 @@ Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
+../Managed.Windows.Forms/System.Resources/ResXResourceReader.cs
+../Managed.Windows.Forms/System.Resources/ResXResourceWriter.cs
+../Managed.Windows.Forms/System.Resources/ResXFileRef.cs
+../Managed.Windows.Forms/System.Resources/ResXDataNode.cs
+../Managed.Windows.Forms/System.Resources/ResXNullRef.cs
 System.Web.Configuration_2.0/CapabilitiesBuild.cs
 System.Web.Configuration_2.0/CapabilitiesChecksum.cs
 System.Web.Configuration_2.0/CapabilitiesResult.cs
