@@ -1,4 +1,4 @@
-// cs0431.cs: `foo' cannot be used with '::' since it denotes a type
+// CS0431: Alias `foo' cannot be used with '::' since it denotes a type. Consider replacing '::' with '.'
 // Line: 13
 
 using foo = A;
