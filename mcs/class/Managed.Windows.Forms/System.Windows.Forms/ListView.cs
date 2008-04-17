@@ -2028,6 +2028,11 @@ namespace System.Windows.Forms
 			return reordered_items_indices [display_index];
 		}
 
+		internal ListViewItem GetItemAtDisplayIndex (int display_index)
+		{
+			return items [reordered_items_indices [display_index]];
+		}
+
 		private bool KeySearchString (KeyEventArgs ke)
 		{
 			int current_tickcnt = Environment.TickCount;

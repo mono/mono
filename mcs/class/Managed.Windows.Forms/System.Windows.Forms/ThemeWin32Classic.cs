@@ -2384,14 +2384,15 @@ namespace System.Windows.Forms
 			int lastvisibleindex = control.LastVisibleIndex;
 
 			for (int i = first; i <= lastvisibleindex; i++) {					
-				if (clip.IntersectsWith (control.Items[i].GetBounds (ItemBoundsPortion.Entire))) {
+				ListViewItem item = control.GetItemAtDisplayIndex (i);
+				if (clip.IntersectsWith (item.Bounds)) {
 #if NET_2_0
 					bool owner_draw = false;
 					if (control.OwnerDraw)
-						owner_draw = DrawListViewItemOwnerDraw (dc, control.Items [i], i);
+						owner_draw = DrawListViewItemOwnerDraw (dc, item, i);
 					if (!owner_draw)
 #endif
-						DrawListViewItem (dc, control, control.Items [i]);
+						DrawListViewItem (dc, control, item);
 				}
 			}	
 

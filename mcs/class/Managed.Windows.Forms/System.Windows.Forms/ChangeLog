@@ -1,3 +1,13 @@
+2008-04-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: New helper method to retrieve an item in a _specific
+	display_ position (the items can be displayed in a different order
+	than one of Items collection).
+	* ThemeWin32Classic.cs: When drawing, instead of iterating over Items
+	collection, use ListView.GetItemAtDisplayIndex, to get an item in a
+	specific display position (again remember that items can be sorted
+	different than Items).
+
 2008-04-16  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridViewColumnCollection.cs: Create a cached copy of our sorted
