@@ -611,6 +611,21 @@ namespace MonoTests.System.Xml
 			new MyXmlElement ("foo", "urn:foo", new XmlDocument ());
 		}
 
+		[Test] // bug #380720
+		public void SetAttributeWithIdentity ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (@"<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Strict//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd' []>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head></head>
+<body><div id='xxx'>XXX</div><div id='yyy'>YYY</div></body>
+</html>");
+			XmlElement xxx = (XmlElement) doc.GetElementsByTagName ("div") [0];
+			XmlElement yyy = (XmlElement) doc.GetElementsByTagName ("div") [1];
+			yyy.ParentNode.RemoveChild (yyy);
+			yyy.SetAttribute ("id", "xxx");
+		}
+
 		class MyXmlElement : XmlElement
 		{
 			public MyXmlElement (string localName, string ns, XmlDocument doc)
