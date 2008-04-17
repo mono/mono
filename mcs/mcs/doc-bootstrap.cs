@@ -4,9 +4,9 @@
 // Author:
 //	Raja R Harinath <rharinath@novell.com>
 //
-// Licensed under the terms of the GNU GPL
+// Dual licensed under the terms of the MIT X11 or GNU GPL
 //
-// (C) 2004 Novell, Inc.
+// Copyright 2004 Novell, Inc.
 //
 //
 

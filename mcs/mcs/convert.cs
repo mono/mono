@@ -6,7 +6,8 @@
 //   Ravi Pratap (ravi@ximian.com)
 //   Marek Safar (marek.safar@gmail.com)
 //
-// (C) 2001, 2002, 2003 Ximian, Inc.
+// Copyright 2001, 2002, 2003 Ximian, Inc.
+// Copyright 2003-2008 Novell, Inc.
 //
 
 namespace Mono.CSharp {

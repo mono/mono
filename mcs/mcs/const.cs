@@ -5,8 +5,8 @@
 //   Miguel de Icaza (miguel@ximian.com)
 //   Marek Safar (marek.safar@seznam.cz)
 //
-// (C) 2001 Ximian, Inc.
-//
+// Copyright 2001-2003 Ximian, Inc.
+// Copyright 2003-2008 Novell, Inc.
 //
 
 namespace Mono.CSharp {

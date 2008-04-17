@@ -3,10 +3,10 @@
 //
 // Author: Miguel de Icaza (miguel@gnu.org)
 //
-// Licensed under the terms of the GNU GPL
+// Dual licensed under the terms of the MIT X11 or GNU GPL
 //
-// (C) 2001, 2002, 2003 Ximian, Inc (http://www.ximian.com)
-// (C) 2004, 2005 Novell, Inc
+// Copyright 2001, 2002, 2003 Ximian, Inc (http://www.ximian.com)
+// Copyright 2004, 2005, 2006, 2007, 2008 Novell, Inc
 //
 
 namespace Mono.CSharp
@@ -232,7 +232,7 @@ namespace Mono.CSharp
 		static void Usage ()
 		{
 			Console.WriteLine (
-				"Mono C# compiler, (C) 2001 - 2008 Novell, Inc.\n" +
+				"Mono C# compiler, Copyright 2001 - 2008 Novell, Inc.\n" +
 				"mcs [options] source-files\n" +
 				"   --about            About the Mono C# compiler\n" +
 				"   -addmodule:M1[,Mn] Adds the module to the generated assembly\n" + 
@@ -282,8 +282,9 @@ namespace Mono.CSharp
 		static void About ()
 		{
 			Console.WriteLine (
-				"The Mono C# compiler is (C) 2001-2008, Novell, Inc.\n\n" +
-				"The compiler source code is released under the terms of the GNU GPL\n\n" +
+				"The Mono C# compiler is Copyright 2001-2008, Novell, Inc.\n\n" +
+				"The compiler source code is released under the terms of the \n"+
+				"MIT X11 or GNU GPL licenses\n\n" +
 
 				"For more information on Mono, visit the project Web site\n" +
 				"   http://www.mono-project.com\n\n" +

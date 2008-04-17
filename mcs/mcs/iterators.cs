@@ -4,7 +4,7 @@
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
 //
-// (C) 2003 Ximian, Inc.
+// Copyright 2003 Ximian, Inc.
 //
 // TODO:
 //    Flow analysis for Yield.

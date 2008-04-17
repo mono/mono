@@ -6,8 +6,8 @@
 //   Martin Baulig (martin@ximian.com)
 //   Marek Safar (marek.safar@seznam.cz)
 //
-// (C) 2001, 2002, 2003 Ximian, Inc.
-// (C) 2003, 2004 Novell, Inc.
+// Copyright 2001, 2002, 2003 Ximian, Inc.
+// Copyright 2003, 2004 Novell, Inc.
 //
 
 using System;

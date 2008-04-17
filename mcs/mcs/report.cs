@@ -4,7 +4,7 @@
 // Author: Miguel de Icaza (miguel@ximian.com)
 //         Marek Safar (marek.safar@seznam.cz)         
 //
-// (C) 2001 Ximian, Inc. (http://www.ximian.com)
+// Copyright 2001 Ximian, Inc. (http://www.ximian.com)
 //
 
 using System;

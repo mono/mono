@@ -3,9 +3,9 @@
 //
 // Authors: Marek Safar (marek.safar@gmail.com)
 //
-// Licensed under the terms of the GNU GPL
+// Dual licensed under the terms of the MIT X11 or GNU GPL
 //
-// (C) 2007 Novell, Inc
+// Copyright 2007-2008 Novell, Inc
 //
 
 using System;

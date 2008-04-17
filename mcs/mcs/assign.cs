@@ -6,8 +6,10 @@
 //   Martin Baulig (martin@ximian.com)
 //   Marek Safar (marek.safar@gmail.com)	
 //
-// (C) 2001, 2002, 2003 Ximian, Inc.
-// (C) 2004 Novell, Inc
+// Dual licensed under the terms of the MIT X11 or GNU GPL
+//
+// Copyright 2001, 2002, 2003 Ximian, Inc.
+// Copyright 2004-2008 Novell, Inc
 //
 using System;
 using System.Reflection;

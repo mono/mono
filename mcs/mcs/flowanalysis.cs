@@ -5,7 +5,8 @@
 //   Martin Baulig (martin@ximian.com)
 //   Raja R Harinath (rharinath@novell.com)
 //
-// (C) 2001, 2002, 2003 Ximian, Inc.
+// Copyright 2001, 2002, 2003 Ximian, Inc.
+// Copyright 2003-2008 Novell, Inc.
 //
 
 using System;

@@ -5,7 +5,8 @@
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
 //
-// (C) 2001 Ximian, Inc (http://www.ximian.com)
+// Copyright 2001 Ximian, Inc (http://www.ximian.com)
+// Copyright 2003-2008 Novell, Inc
 //
 
 using System;

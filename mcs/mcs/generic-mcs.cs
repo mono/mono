@@ -4,7 +4,7 @@
 // Author:
 //   Raja R Harinath <rharinath@novell.com>
 //
-// (C) 2006 Novell, Inc.
+// Copyright 2006 Novell, Inc.
 //
 using System;
 using System.Reflection;

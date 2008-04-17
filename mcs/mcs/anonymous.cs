@@ -5,7 +5,8 @@
 //   Miguel de Icaza (miguel@ximain.com)
 //   Marek Safar (marek.safar@gmail.com)
 //
-// (C) 2003, 2004 Novell, Inc.
+// Dual licensed under the terms of the MIT X11 or GNU GPL
+// Copyright 2003-2008 Novell, Inc.
 //
 // TODO: Ideally, we should have the helper classes emited as a hierarchy to map
 // their nesting, and have the visibility set to private, instead of NestedAssembly

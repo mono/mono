@@ -4,7 +4,8 @@
 // Author:
 //   Martin Baulig (martin@ximian.com)
 //
-// (C) 2003 Ximian, Inc.
+// Copyright 2003 Ximian, Inc.
+// Copyright 2003-2008 Novell, Inc.
 //
 
 using System;

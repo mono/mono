@@ -5,7 +5,7 @@
 //   Miguel de Icaza (miguel@ximian.com)
 //   Marek Safar (marek.safar@seznam.cz)
 //
-// (C) 2001 Ximian, Inc.
+// Copyright 2001 Ximian, Inc.
 //
 //
 // Notice that during parsing we create objects of type Literal, but the

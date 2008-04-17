@@ -4,10 +4,10 @@
 // Author: Ravi Pratap (ravi@ximian.com)
 //         Marek Safar (marek.safar@seznam.cz)
 //
-// Licensed under the terms of the GNU GPL
+// Dual licensed under the terms of the MIT X11 or GNU GPL
 //
-// (C) 2001 Ximian, Inc (http://www.ximian.com)
-//
+// Copyright 2001-2003 Ximian, Inc (http://www.ximian.com)
+// Copyright 2003-2008 Novell, Inc.
 //
 
 using System;

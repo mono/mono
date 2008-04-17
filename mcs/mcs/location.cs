@@ -5,8 +5,8 @@
 //   Miguel de Icaza
 //   Atsushi Enomoto  <atsushi@ximian.com>
 //
-// (C) 2001 Ximian, Inc.
-// (C) 2005 Novell, Inc.
+// Copyright 2001 Ximian, Inc.
+// Copyright 2005 Novell, Inc.
 //
 
 using System;
