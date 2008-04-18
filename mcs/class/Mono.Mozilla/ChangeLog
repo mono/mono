@@ -1,3 +1,7 @@
+2008-04-18  Andreia Gaita <avidigal@novell.com> 
+
+	* build-csproj2k5: Fix line endings
+
 2008-04-16  Andreia Gaita <avidigal@novell.com> 
 
 	* Mono.Mozilla/DOM/Navigation.cs, Mono.WebBrowser/DOM/INavigation.cs:
