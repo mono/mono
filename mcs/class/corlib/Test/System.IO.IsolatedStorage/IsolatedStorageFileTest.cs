@@ -470,5 +470,27 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			string pattern = Path.Combine ("..", "*");
 			isf.GetFileNames (pattern);
 		}
+
+		[Test] // https://bugzilla.novell.com/show_bug.cgi?id=376188
+		public void CreateSubDirectory ()
+		{
+			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForAssembly ();
+			isf.CreateDirectory ("subdir");
+			isf.CreateDirectory ("subdir/subdir2");
+			Assert.AreEqual (1, isf.GetDirectoryNames ("*").Length, "subdir");
+			Assert.AreEqual (1, isf.GetDirectoryNames ("subdir/*").Length, "subdir/subdir2");
+			isf.DeleteDirectory ("subdir/subdir2");
+			isf.DeleteDirectory ("subdir");
+		}
+
+		[Test]
+		[ExpectedException (typeof (IsolatedStorageException))]
+		public void DeleteDirectory_NonEmpty ()
+		{
+			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForAssembly ();
+			isf.CreateDirectory ("subdir");
+			isf.CreateDirectory ("subdir/subdir2");
+			isf.DeleteDirectory ("subdir");
+		}
 	}
 }

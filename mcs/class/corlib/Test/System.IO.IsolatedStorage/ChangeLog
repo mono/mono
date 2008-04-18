@@ -1,3 +1,8 @@
+2008-04-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IsolatedStorageFileTest.cs: Add test cases for creating sub-
+	directories and to delete them (bug #376188)
+
 2008-03-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IsolatedStorageFileTest.cs: Add test cases for creating directory 
