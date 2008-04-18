@@ -261,6 +261,7 @@ namespace Mono.Mozilla
 		internal static object CompletedEvent = new object ();
 		internal static object LoadEvent = new object ();
 		internal static object UnloadEvent = new object ();
+		internal static object StatusChangedEvent = new object ();
 		
 		public event NodeEventHandler KeyDown
 		{
@@ -359,6 +360,11 @@ namespace Mono.Mozilla
 			remove { Events.RemoveHandler (UnloadEvent, value); }
 		}
 
+		public event StatusChangedEventHandler StatusChanged
+		{
+			add { Events.AddHandler (StatusChangedEvent, value); }
+			remove { Events.RemoveHandler (StatusChangedEvent, value); }
+		}
 
 
 		internal static object GenericEvent = new object ();

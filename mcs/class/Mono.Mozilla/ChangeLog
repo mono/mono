@@ -1,5 +1,14 @@
 2008-04-18  Andreia Gaita <avidigal@novell.com> 
 
+	* Mono.WebBrowser/DOM/IDocument.cs, Mono.Mozilla/DOM/Document.cs,
+	  Mono.Mozilla/Base.cs: Add javascript script evaluation support
+	* Mono.WebBrowser/IWebBrowser.cs, Mono.Mozilla/WebBrowser.cs: Add
+	  StatusChanged event handler and args
+	* Mono.Mozilla/Callback.cs: Change OnStatusChange callback signature to
+	  unicode, implement listeners call.
+
+2008-04-18  Andreia Gaita <avidigal@novell.com> 
+
 	* Mono.Mozilla.dll.sources, Mono.Mozilla2K5.csproj: Added new generated
 	  interfaces for "Save to Disk" support and page loading monitoring
 	* Mono.Mozilla/interfaces/nsICancelable.cs,

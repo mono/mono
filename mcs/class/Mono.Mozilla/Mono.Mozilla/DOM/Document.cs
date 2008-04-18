@@ -364,6 +364,11 @@ namespace Mono.Mozilla.DOM
 			this.document.write (storage);
 		}
 
+		public string InvokeScript (string script)
+		{
+			return Base.EvalScript (this.control, script);
+		}
+		
 		#endregion
 		
 		public override int GetHashCode () {

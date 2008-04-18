@@ -151,8 +151,11 @@ using Mono.WebBrowser.DOM;
 
 		public void OnStatusChange (string message, Int32 status)
 		{
-			OnGeneric ("OnStatusChange: " + message);
-			//statusText = message;
+			StatusChangedEventHandler eh = (StatusChangedEventHandler) (owner.Events[WebBrowser.StatusChangedEvent]);
+			if (eh != null) {
+				StatusChangedEventArgs e = new StatusChangedEventArgs (message, status);
+				eh (this, e);
+			}
 		}
 
 		public bool OnClientDomKeyDown (KeyInfo keyInfo, ModifierKeys modifiers, nsIDOMNode target)
@@ -668,6 +671,7 @@ using Mono.WebBrowser.DOM;
 	
 	internal delegate void CallbackStringString (string arg1, string arg2);
 	internal delegate void CallbackStringInt		(string arg1, Int32 arg2);
+	internal delegate void CallbackWStringInt ([MarshalAs (UnmanagedType.LPWStr)] string arg1, Int32 arg2);
 	internal delegate void CallbackStringIntInt	(string arg1, Int32 arg2, Int32 arg3);
 	internal delegate void CallbackStringIntUint	(string arg1, Int32 arg2, UInt32 arg3);
 
@@ -728,7 +732,7 @@ using Mono.WebBrowser.DOM;
 		public CallbackIntInt		OnProgress;
 		public CallbackString		OnLocationChanged;
 
-		public CallbackStringInt	OnStatusChange;
+		public CallbackWStringInt	OnStatusChange;
 
 		public KeyCallback			OnKeyDown;
 		public KeyCallback			OnKeyUp;
@@ -767,7 +771,7 @@ using Mono.WebBrowser.DOM;
 
 			this.OnProgress				= new CallbackIntInt (callback.OnProgress);
 			this.OnLocationChanged		= new CallbackString (callback.OnLocationChanged);
-			this.OnStatusChange			= new CallbackStringInt (callback.OnStatusChange);
+			this.OnStatusChange			= new CallbackWStringInt (callback.OnStatusChange);
 
 			this.OnKeyDown				= new KeyCallback (callback.OnClientDomKeyDown);
 			this.OnKeyUp				= new KeyCallback (callback.OnClientDomKeyUp);

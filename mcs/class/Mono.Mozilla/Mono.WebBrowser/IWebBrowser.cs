@@ -68,7 +68,7 @@ namespace Mono.WebBrowser
 		event EventHandler Transferring;
 		event EventHandler DocumentCompleted;
 		event EventHandler Completed;
-		
+		event StatusChangedEventHandler StatusChanged;
 		event EventHandler Generic;		
 	}
 
@@ -182,7 +182,7 @@ namespace Mono.WebBrowser
 
 #endregion	// Public Constructors
 
-#region Public Instance Properties
+		#region Public Instance Properties
 		public DialogType Type {
 			get { return this.type; }
 			set { this.type = value; }
@@ -240,8 +240,7 @@ namespace Mono.WebBrowser
 			set { returnValue = value; }
 		}
 
-		public int IntReturn
-		{
+		public int IntReturn {
 			get { 
 				if (returnValue is int)
 					return (int) returnValue;
@@ -250,8 +249,7 @@ namespace Mono.WebBrowser
 			set { returnValue = value; }
 		}
 
-		public string StringReturn
-		{
+		public string StringReturn {
 			get { 
 				if (returnValue is string)
 					return (string) returnValue;
@@ -261,5 +259,28 @@ namespace Mono.WebBrowser
 		}
 
 #endregion
+	}
+
+
+	public delegate void StatusChangedEventHandler (object sender, StatusChangedEventArgs e);
+	public class StatusChangedEventArgs : EventArgs
+	{
+		private string message;
+		public string Message {
+			get { return message; }
+			set { message = value; }
+		}
+
+		private int status;
+		public int Status {
+			get { return status; }
+			set { status = value; }
+		}
+
+		public StatusChangedEventArgs (string message, int status)
+		{
+			this.message = message;
+			this.status = status;
+		}
 	}
 }

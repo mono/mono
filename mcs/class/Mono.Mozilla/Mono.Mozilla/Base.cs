@@ -230,6 +230,16 @@ namespace Mono.Mozilla
 			return o;
 		}
 
+		public static string EvalScript (IWebBrowser control, string script)
+		{
+			if (!isInitialized ())
+				return null;
+			BindingInfo info = getBinding (control);
+			IntPtr p = gluezilla_evalScript (info.gluezilla, script);
+			return Marshal.PtrToStringAuto (p);
+		}
+
+
 		#region pinvokes
 		[DllImport("gluezilla")]
 		private static extern void gluezilla_debug(int signal);
@@ -316,6 +326,8 @@ namespace Mono.Mozilla
 		[return: MarshalAs (UnmanagedType.Interface)]
 		public static extern nsIServiceManager  gluezilla_getServiceManager ();
 
+		[DllImport ("gluezilla")]
+		private static extern IntPtr gluezilla_evalScript (IntPtr instance, string script);
 
 		#endregion
 	}
