@@ -130,7 +130,7 @@ namespace Mono.CSharp {
 				return MakeName (Name, TypeArguments);
 		}
 
-		public Expression GetTypeExpression ()
+		public ATypeNameExpression GetTypeExpression ()
 		{
 			if (Left == null) {
 				if (TypeArguments != null)

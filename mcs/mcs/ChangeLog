@@ -1,3 +1,10 @@
+2008-04-19  Marek Safar  <marek.safar@gmail.com>
+
+	* generic.cs, parameter.cs, namespace.cs, ecore.cs, class.cs, decl.cs,
+	delegate.cs, iterators.cs, cs-parser.jay, const.cs, enum.cs: Use
+	FullNamedExpression in all declaration type expression, statements will come
+	later.
+
 2008-04-18  Marek Safar  <marek.safar@gmail.com>
 
 	* generic.cs, namespace.cs, ecore.cs, class.cs, decl.cs, generic-mcs.cs,

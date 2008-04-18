@@ -60,7 +60,7 @@ namespace Mono.CSharp
 		///   value parameter that is passed to the "set" and "get"accesor
 		///   methods (properties and indexers).
 		/// </summary>
-		Expression implicit_value_parameter_type;
+		FullNamedExpression implicit_value_parameter_type;
 		Parameters indexer_parameters;
 
 		/// <summary>
@@ -930,7 +930,7 @@ constant_declaration
 			}
 
 			Const c = new Const (
-				current_class, (Expression) $4, (string) constant.identifier, 
+				current_class, (FullNamedExpression) $4, (string) constant.identifier, 
 				(Expression) constant.expression_or_array_initializer, modflags, 
 				(Attributes) $1, l);
 
@@ -980,7 +980,7 @@ field_declaration
 	  variable_declarators
 	  SEMICOLON
 	  { 
-		Expression type = (Expression) $3;
+		FullNamedExpression type = (FullNamedExpression) $3;
 		int mod = (int) $2;
 
 		current_array_type = null;
@@ -1006,7 +1006,7 @@ field_declaration
 	  fixed_variable_declarators
 	  SEMICOLON
 	  { 
-			Expression type = (Expression) $4;
+			FullNamedExpression type = (FullNamedExpression) $4;
 			int mod = (int) $2;
 
 			current_array_type = null;
@@ -1204,12 +1204,12 @@ method_header
 		GenericMethod generic = null;
 		if (name.TypeArguments != null) {
 			generic = new GenericMethod (current_namespace, current_class, name,
-						     (Expression) $3, current_local_parameters);
+						     (FullNamedExpression) $3, current_local_parameters);
 
 			generic.SetParameterInfo ((ArrayList) $10);
 		}
 
-		method = new Method (current_class, generic, (Expression) $3, (int) $2, false,
+		method = new Method (current_class, generic, (FullNamedExpression) $3, (int) $2, false,
 				     name, current_local_parameters, (Attributes) $1);
 
 		anonymous_host = method;
@@ -1455,7 +1455,7 @@ fixed_parameter
 	  IDENTIFIER
 	  {
 		LocatedToken lt = (LocatedToken) $4;
-		$$ = new Parameter ((Expression) $3, lt.Value, (Parameter.Modifier) $2, (Attributes) $1, lt.Location);
+		$$ = new Parameter ((FullNamedExpression) $3, lt.Value, (Parameter.Modifier) $2, (Attributes) $1, lt.Location);
 	  }
 	| opt_attributes
 	  opt_parameter_modifier
@@ -1557,7 +1557,7 @@ parameter_array
 	: opt_attributes params_modifier type IDENTIFIER
 	  { 
 		LocatedToken lt = (LocatedToken) $4;
-		$$ = new ParamsParameter ((Expression) $3, lt.Value, (Attributes) $1, lt.Location);
+		$$ = new ParamsParameter ((FullNamedExpression) $3, lt.Value, (Attributes) $1, lt.Location);
 	  }
 	| opt_attributes params_modifier type error {
 		CheckIdentifierToken (yyToken, GetLocation ($4));
@@ -1605,7 +1605,7 @@ property_declaration
 	  }
 	  OPEN_BRACE 
 	  {
-		implicit_value_parameter_type = (Expression) $3;
+		implicit_value_parameter_type = (FullNamedExpression) $3;
 
 		lexer.PropertyParsing = true;
 	  }
@@ -1629,7 +1629,7 @@ property_declaration
 		if (name.TypeArguments != null)
 			syntax_error (lexer.Location, "a property can't have type arguments");
 
-		prop = new Property (current_class, (Expression) $3, (int) $2, false,
+		prop = new Property (current_class, (FullNamedExpression) $3, (int) $2, false,
 				     name, (Attributes) $1, get_block, set_block, accessors.declared_in_reverse, current_block);
 
 		current_container.AddProperty (prop);
@@ -1974,12 +1974,12 @@ interface_method_declaration
 		GenericMethod generic = null;
 		if (name.TypeArguments != null) {
 			generic = new GenericMethod (current_namespace, current_class, name,
-						     (Expression) $3, (Parameters) $6);
+						     (FullNamedExpression) $3, (Parameters) $6);
 
 			generic.SetParameterInfo ((ArrayList) $9);
 		}
 
-		$$ = new Method (current_class, generic, (Expression) $3, (int) $2, true, name,
+		$$ = new Method (current_class, generic, (FullNamedExpression) $3, (int) $2, true, name,
 				 (Parameters) $6, (Attributes) $1);
 		if (RootContext.Documentation != null)
 			((Method) $$).DocComment = Lexer.consume_doc_comment ();
@@ -2025,7 +2025,7 @@ interface_property_declaration
 	  OPEN_BRACE 
 	  {
 		lexer.PropertyParsing = true;
-		implicit_value_parameter_type = (Expression)$3;
+		implicit_value_parameter_type = (FullNamedExpression)$3;
 	  }
 	  accessor_declarations 
 	  {
@@ -2045,7 +2045,7 @@ interface_property_declaration
 
 		Property p = null;
 		if ($7 == null) {
-			p = new Property (current_class, (Expression) $3, (int) $2, true,
+			p = new Property (current_class, (FullNamedExpression) $3, (int) $2, true,
 				   name, (Attributes) $1,
 				   null, null, false);
 
@@ -2054,7 +2054,7 @@ interface_property_declaration
 		}
 
 		Accessors accessor = (Accessors) $7;
-		p = new Property (current_class, (Expression) $3, (int) $2, true,
+		p = new Property (current_class, (FullNamedExpression) $3, (int) $2, true,
 				   name, (Attributes) $1,
 				   accessor.get_or_add, accessor.set_or_remove, accessor.declared_in_reverse);
 
@@ -2088,7 +2088,7 @@ interface_event_declaration
 	: opt_attributes opt_new EVENT type IDENTIFIER SEMICOLON
 	  {
 		LocatedToken lt = (LocatedToken) $5;
-		$$ = new EventField (current_class, (Expression) $4, (int) $2, true,
+		$$ = new EventField (current_class, (FullNamedExpression) $4, (int) $2, true,
 				     new MemberName (lt.Value, lt.Location),
 				     (Attributes) $1);
 		if (RootContext.Documentation != null)
@@ -2105,7 +2105,7 @@ interface_event_declaration
 	  }
 	| opt_attributes opt_new EVENT type IDENTIFIER OPEN_BRACE
 	  {
-		implicit_value_parameter_type = (Expression) $4;
+		implicit_value_parameter_type = (FullNamedExpression) $4;
 		lexer.EventParsing = true;
 	  }
 	  event_accessor_declarations
@@ -2125,7 +2125,7 @@ interface_indexer_declaration
 	  OPEN_BRACE
 	  {
 		lexer.PropertyParsing = true;
-		implicit_value_parameter_type = (Expression)$3;
+		implicit_value_parameter_type = (FullNamedExpression)$3;
 	  }
 	  accessor_declarations 
 	  { 
@@ -2137,7 +2137,7 @@ interface_indexer_declaration
 	  {
 		Indexer i = null;
 		if ($10 == null) {
-			i = new Indexer (current_class, (Expression) $3,
+			i = new Indexer (current_class, (FullNamedExpression) $3,
 				  new MemberName (TypeContainer.DefaultIndexerName, (Location) $4),
 				  (int) $2, true, (Parameters) $6, (Attributes) $1,
 				  null, null, false);
@@ -2147,7 +2147,7 @@ interface_indexer_declaration
 		}
 
 		Accessors accessors = (Accessors) $10;
-		i = new Indexer (current_class, (Expression) $3,
+		i = new Indexer (current_class, (FullNamedExpression) $3,
 				  new MemberName (TypeContainer.DefaultIndexerName, (Location) $4),
 				  (int) $2, true, (Parameters) $6, (Attributes) $1,
 				   accessors.get_or_add, accessors.set_or_remove, accessors.declared_in_reverse);
@@ -2249,7 +2249,7 @@ operator_declarator
 			Lexer.doc_state = XmlCommentState.NotAllowed;
 		}
 
-		$$ = new OperatorDeclaration (op, (Expression) $1, loc);
+		$$ = new OperatorDeclaration (op, (FullNamedExpression) $1, loc);
 	  }
 	| conversion_operator_declarator
 	;
@@ -2299,7 +2299,7 @@ conversion_operator_declarator
 			Lexer.doc_state = XmlCommentState.NotAllowed;
 		}
 
-		$$ = new OperatorDeclaration (Operator.OpType.Implicit, (Expression) $3, loc);
+		$$ = new OperatorDeclaration (Operator.OpType.Implicit, (FullNamedExpression) $3, loc);
 	  }
 	| EXPLICIT OPERATOR type open_parens
 	  {
@@ -2317,7 +2317,7 @@ conversion_operator_declarator
 			Lexer.doc_state = XmlCommentState.NotAllowed;
 		}
 
-		$$ = new OperatorDeclaration (Operator.OpType.Explicit, (Expression) $3, loc);
+		$$ = new OperatorDeclaration (Operator.OpType.Explicit, (FullNamedExpression) $3, loc);
 	  }
 	| IMPLICIT error 
 	  {
@@ -2474,7 +2474,7 @@ event_declaration
 				var.Location);
 
 			EventField e = new EventField (
-				current_class, (Expression) $4, (int) $2, false, name,
+				current_class, (FullNamedExpression) $4, (int) $2, false, name,
 				(Attributes) $1);
 
 			e.Initializer = var.expression_or_array_initializer;
@@ -2492,7 +2492,7 @@ event_declaration
 	  EVENT type namespace_or_type_name
 	  OPEN_BRACE
 	  {
-		implicit_value_parameter_type = (Expression) $4;  
+		implicit_value_parameter_type = (FullNamedExpression) $4;  
 		lexer.EventParsing = true;
 	  }
 	  event_accessor_declarations
@@ -2518,7 +2518,7 @@ event_declaration
 				$$ = null;
 			else {
 				Event e = new EventProperty (
-					current_class, (Expression) $4, (int) $2, false, name,
+					current_class, (FullNamedExpression) $4, (int) $2, false, name,
 					(Attributes) $1, accessors.get_or_add, accessors.set_or_remove);
 				if (RootContext.Documentation != null) {
 					e.DocComment = Lexer.consume_doc_comment ();
@@ -2695,7 +2695,7 @@ indexer_declarator
 			Lexer.doc_state = XmlCommentState.Allowed;
 		}
 
-		$$ = new IndexerDeclaration ((Expression) $1, null, pars, (Location) $2);
+		$$ = new IndexerDeclaration ((FullNamedExpression) $1, null, pars, (Location) $2);
 	  }
 	| type namespace_or_type_name DOT THIS OPEN_BRACKET opt_formal_parameter_list CLOSE_BRACKET
 	  {
@@ -2705,7 +2705,7 @@ indexer_declarator
 		}
 
 		MemberName name = (MemberName) $2;
-		$$ = new IndexerDeclaration ((Expression) $1, name, pars, (Location) $4);
+		$$ = new IndexerDeclaration ((FullNamedExpression) $1, name, pars, (Location) $4);
 
 		if (RootContext.Documentation != null) {
 			tmpComment = Lexer.consume_doc_comment ();
@@ -2729,7 +2729,7 @@ enum_declaration
 		Location enum_location = lt.Location;
 
 		MemberName name = MakeName (new MemberName (lt.Value, enum_location));
-		Enum e = new Enum (current_namespace, current_class, (Expression) $5, (int) $2,
+		Enum e = new Enum (current_namespace, current_class, (FullNamedExpression) $5, (int) $2,
 				   name, (Attributes) $1);
 		
 		if (RootContext.Documentation != null)
@@ -2842,7 +2842,7 @@ delegate_declaration
 		MemberName name = MakeName ((MemberName) $5);
 		Parameters p = (Parameters) $7;
 
-		Delegate del = new Delegate (current_namespace, current_class, (Expression) $4,
+		Delegate del = new Delegate (current_namespace, current_class, (FullNamedExpression) $4,
 					     (int) $2, name, p, (Attributes) $1);
 
 		if (RootContext.Documentation != null) {
@@ -4200,13 +4200,13 @@ lambda_parameter
 	  {
 		LocatedToken lt = (LocatedToken) $3;
 
-		$$ = new Parameter ((Expression) $2, lt.Value, (Parameter.Modifier) $1, null, lt.Location);
+		$$ = new Parameter ((FullNamedExpression) $2, lt.Value, (Parameter.Modifier) $1, null, lt.Location);
 	  }
 	| type IDENTIFIER
 	  {
 		LocatedToken lt = (LocatedToken) $2;
 
-		$$ = new Parameter ((Expression) $1, lt.Value, Parameter.Modifier.NONE, null, lt.Location);
+		$$ = new Parameter ((FullNamedExpression) $1, lt.Value, Parameter.Modifier.NONE, null, lt.Location);
 	  }
 	| IDENTIFIER
 	  {
@@ -5656,12 +5656,12 @@ public class VariableDeclaration {
 //   A class used to hold info about an indexer declarator
 // </summary>
 public class IndexerDeclaration {
-	public Expression type;
+	public FullNamedExpression type;
 	public MemberName interface_type;
 	public Parameters param_list;
 	public Location location;
 
-	public IndexerDeclaration (Expression type, MemberName interface_type,
+	public IndexerDeclaration (FullNamedExpression type, MemberName interface_type,
 				   Parameters param_list, Location loc)
 	{
 		this.type = type;
@@ -5714,10 +5714,10 @@ public class SimpleAnonymousHost : IAnonymousHost {
 // </summary>
 struct OperatorDeclaration {
 	public readonly Operator.OpType optype;
-	public readonly Expression ret_type;
+	public readonly FullNamedExpression ret_type;
 	public readonly Location location;
 
-	public OperatorDeclaration (Operator.OpType op, Expression ret_type, Location location)
+	public OperatorDeclaration (Operator.OpType op, FullNamedExpression ret_type, Location location)
 	{
 		optype = op;
 		this.ret_type = ret_type;

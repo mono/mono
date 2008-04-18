@@ -124,7 +124,7 @@ namespace Mono.CSharp {
 	{
 		public static readonly string UnderlyingValueField = "value__";
 
-		Expression base_type;
+		FullNamedExpression base_type;
 
 		public Type UnderlyingType;
 
@@ -135,7 +135,7 @@ namespace Mono.CSharp {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Enum (NamespaceEntry ns, DeclSpace parent, Expression type,
+		public Enum (NamespaceEntry ns, DeclSpace parent, FullNamedExpression type,
 			     int mod_flags, MemberName name, Attributes attrs)
 			: base (ns, parent, name, attrs, Kind.Enum)
 		{

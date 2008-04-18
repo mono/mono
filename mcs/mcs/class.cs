@@ -2220,7 +2220,7 @@ namespace Mono.CSharp {
 						if ((f.caching_flags & Flags.IsAssigned) != 0)
 							continue;
 						
-						Constant c = New.Constantify (f.Type.Type);
+						Constant c = New.Constantify (f.MemberType);
 						Report.Warning (649, 4, f.Location, "Field `{0}' is never assigned to, and will always have its default value `{1}'",
 							f.GetSignatureForError (), c == null ? "null" : c.AsString ());
 					}
@@ -3269,7 +3269,7 @@ namespace Mono.CSharp {
 	public abstract class PropertyBasedMember : InterfaceMemberBase
 	{
 		public PropertyBasedMember (DeclSpace parent, GenericMethod generic,
-			Expression type, int mod, int allowed_mod, bool is_iface,
+			FullNamedExpression type, int mod, int allowed_mod, bool is_iface,
 			MemberName name, Attributes attrs)
 			: base (parent, generic, type, mod, allowed_mod, is_iface, name, attrs)
 		{
@@ -3296,7 +3296,7 @@ namespace Mono.CSharp {
 		protected ToplevelBlock block;
 
 		public MethodCore (DeclSpace parent, GenericMethod generic,
-			Expression type, int mod, int allowed_mod, bool is_iface,
+			FullNamedExpression type, int mod, int allowed_mod, bool is_iface,
 			MemberName name, Attributes attrs, Parameters parameters)
 			: base (parent, generic, type, mod, allowed_mod, is_iface, name, attrs)
 		{
@@ -3445,7 +3445,7 @@ namespace Mono.CSharp {
 		public MethodAttributes flags;
 
 		public InterfaceMemberBase (DeclSpace parent, GenericMethod generic,
-				   Expression type, int mod, int allowed_mod, bool is_iface,
+				   FullNamedExpression type, int mod, int allowed_mod, bool is_iface,
 				   MemberName name, Attributes attrs)
 			: base (parent, generic, type, mod, allowed_mod, Modifiers.PRIVATE,
 				name, attrs)
@@ -3682,8 +3682,7 @@ namespace Mono.CSharp {
 				return false;
 
 			if (IsExplicitImpl) {
-				Expression expr = MemberName.Left.GetTypeExpression ();
-				TypeExpr texpr = expr.ResolveAsTypeTerminal (this, false);
+				TypeExpr texpr = MemberName.Left.GetTypeExpression ().ResolveAsTypeTerminal (this, false);
 				if (texpr == null)
 					return false;
 
@@ -3724,8 +3723,7 @@ namespace Mono.CSharp {
 			}
 
 			if (IsExplicitImpl) {
-				Expression expr = MemberName.Left.GetTypeExpression ();
-				TypeExpr iface_texpr = expr.ResolveAsTypeTerminal (this, false);
+				TypeExpr iface_texpr = MemberName.Left.GetTypeExpression ().ResolveAsTypeTerminal (this, false);
 				if (iface_texpr == null)
 					return false;
 
@@ -3845,7 +3843,7 @@ namespace Mono.CSharp {
 
 		static string[] attribute_targets = new string [] { "method", "return" };
 
-		protected MethodOrOperator (DeclSpace parent, GenericMethod generic, Expression type, int mod,
+		protected MethodOrOperator (DeclSpace parent, GenericMethod generic, FullNamedExpression type, int mod,
 				int allowed_mod, bool is_interface, MemberName name,
 				Attributes attrs, Parameters parameters)
 			: base (parent, generic, type, mod, allowed_mod, is_interface, name,
@@ -4257,7 +4255,7 @@ namespace Mono.CSharp {
 		// return_type can be "null" for VOID values.
 		//
 		public Method (DeclSpace parent, GenericMethod generic,
-			       Expression return_type, int mod, bool is_iface,
+			       FullNamedExpression return_type, int mod, bool is_iface,
 			       MemberName name, Parameters parameters, Attributes attrs)
 			: base (parent, generic, return_type, mod,
 				is_iface ? AllowedInterfaceModifiers : AllowedModifiers,
@@ -5405,7 +5403,7 @@ namespace Mono.CSharp {
 
 		static string[] attribute_targets = new string [] { "method" };
 
-		public Destructor (DeclSpace parent, Expression return_type, int mod,
+		public Destructor (DeclSpace parent, FullNamedExpression return_type, int mod,
 				   string name, Parameters parameters, Attributes attrs,
 				   Location l)
 			: base (parent, null, return_type, mod, false, new MemberName (name, l),
@@ -5435,7 +5433,7 @@ namespace Mono.CSharp {
 	}
 	
 	abstract public class MemberBase : MemberCore {
-		public Expression Type;
+		protected FullNamedExpression type_name;
 		public readonly DeclSpace ds;
 		public readonly GenericMethod GenericMethod;
 
@@ -5445,11 +5443,12 @@ namespace Mono.CSharp {
 		protected Type member_type;
 		public Type MemberType {
 			get {
-				if (member_type == null && Type != null) {
+				// TODO: Who wrote this, ResolveAsTypeTerminal can have side effects
+				if (member_type == null && type_name != null) {
 					IResolveContext rc = GenericMethod == null ? this : (IResolveContext)ds;
-					Type = Type.ResolveAsTypeTerminal (rc, false);
-					if (Type != null) {
-						member_type = Type.Type;
+					type_name = type_name.ResolveAsTypeTerminal (rc, false);
+					if (type_name != null) {
+						member_type = type_name.Type;
 					}
 				}
 				return member_type;
@@ -5460,12 +5459,12 @@ namespace Mono.CSharp {
 		// The constructor is only exposed to our children
 		//
 		protected MemberBase (DeclSpace parent, GenericMethod generic,
-				      Expression type, int mod, int allowed_mod, int def_mod,
+				      FullNamedExpression type, int mod, int allowed_mod, int def_mod,
 				      MemberName name, Attributes attrs)
 			: base (parent, name, attrs)
 		{
 			this.ds = generic != null ? generic : (DeclSpace) parent;
-			Type = type;
+			this.type_name = type;
 			ModFlags = Modifiers.Check (allowed_mod, mod, def_mod, Location);
 			GenericMethod = generic;
 			if (GenericMethod != null)
@@ -5552,7 +5551,7 @@ namespace Mono.CSharp {
 
 		static readonly string[] attribute_targets = new string [] { "field" };
 
-		protected FieldBase (DeclSpace parent, Expression type, int mod,
+		protected FieldBase (DeclSpace parent, FullNamedExpression type, int mod,
 				     int allowed_mod, MemberName name, Attributes attrs)
 			: base (parent, null, type, mod, allowed_mod | Modifiers.ABSTRACT, Modifiers.PRIVATE,
 				name, attrs)
@@ -5630,7 +5629,7 @@ namespace Mono.CSharp {
 
 		public override bool Define()
 		{
-			if (MemberType == null || Type == null)
+			if (MemberType == null || member_type == null)
 				return false;
 
 			if (TypeManager.IsGenericParameter (MemberType))
@@ -5786,7 +5785,7 @@ namespace Mono.CSharp {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public FixedField (DeclSpace parent, Expression type, int mod, string name,
+		public FixedField (DeclSpace parent, FullNamedExpression type, int mod, string name,
 			Expression size_expr, Attributes attrs, Location loc):
 			base (parent, type, mod, AllowedModifiers, new MemberName (name, loc), attrs)
 		{
@@ -5953,7 +5952,7 @@ namespace Mono.CSharp {
 			Modifiers.UNSAFE |
 			Modifiers.READONLY;
 
-		public Field (DeclSpace parent, Expression type, int mod, string name,
+		public Field (DeclSpace parent, FullNamedExpression type, int mod, string name,
 			      Attributes attrs, Location loc)
 			: base (parent, type, mod, AllowedModifiers, new MemberName (name, loc),
 				attrs)
@@ -6621,7 +6620,7 @@ namespace Mono.CSharp {
 
 		protected bool define_set_first = false;
 
-		public PropertyBase (DeclSpace parent, Expression type, int mod_flags,
+		public PropertyBase (DeclSpace parent, FullNamedExpression type, int mod_flags,
 				     int allowed_mod, bool is_iface, MemberName name,
 				     Attributes attrs, bool define_set_first)
 			: base (parent, null, type, mod_flags, allowed_mod, is_iface, name,	attrs)
@@ -6857,7 +6856,7 @@ namespace Mono.CSharp {
 		{
 			// Make the field
 			Field field = new Field (
-				Parent, Type,
+				Parent, type_name,
 				Modifiers.COMPILER_GENERATED | Modifiers.PRIVATE | (ModFlags & (Modifiers.STATIC | Modifiers.UNSAFE)),
 			    "<" + Name + ">k__BackingField", null, Location);
 			((TypeContainer)Parent).AddField (field);
@@ -6869,14 +6868,14 @@ namespace Mono.CSharp {
 			get_block.ModFlags |= Modifiers.COMPILER_GENERATED;
 
 			// Make set block
-			Parameters parameters = new Parameters (new Parameter (Type, "value", Parameter.Modifier.NONE, null, Location));
+			Parameters parameters = new Parameters (new Parameter (type_name, "value", Parameter.Modifier.NONE, null, Location));
 			set_block.Block = new ToplevelBlock (block, parameters, Location);
 			Assign a = new Assign (new SimpleName(field.Name, Location), new SimpleName ("value", Location));
 			set_block.Block.AddStatement (new StatementExpression(a));
 			set_block.ModFlags |= Modifiers.COMPILER_GENERATED;
 		}
 
-		public Property (DeclSpace parent, Expression type, int mod, bool is_iface,
+		public Property (DeclSpace parent, FullNamedExpression type, int mod, bool is_iface,
 				 MemberName name, Attributes attrs, Accessor get_block,
 				 Accessor set_block, bool define_set_first)
 			: this (parent, type, mod, is_iface, name, attrs, get_block, set_block,
@@ -6884,7 +6883,7 @@ namespace Mono.CSharp {
 		{
 		}
 		
-		public Property (DeclSpace parent, Expression type, int mod, bool is_iface,
+		public Property (DeclSpace parent, FullNamedExpression type, int mod, bool is_iface,
 				 MemberName name, Attributes attrs, Accessor get_block,
 				 Accessor set_block, bool define_set_first, Block current_block)
 			: base (parent, type, mod,
@@ -7171,7 +7170,7 @@ namespace Mono.CSharp {
 
 		static readonly string[] attribute_targets = new string [] { "event" }; // "property" target was disabled for 2.0 version
 
-		public EventProperty (DeclSpace parent, Expression type, int mod_flags,
+		public EventProperty (DeclSpace parent, FullNamedExpression type, int mod_flags,
 				      bool is_iface, MemberName name,
 				      Attributes attrs, Accessor add, Accessor remove)
 			: base (parent, type, mod_flags, is_iface, name, attrs)
@@ -7276,7 +7275,7 @@ namespace Mono.CSharp {
 		public FieldBuilder FieldBuilder;
 		public Expression Initializer;
 
-		public EventField (DeclSpace parent, Expression type, int mod_flags,
+		public EventField (DeclSpace parent, FullNamedExpression type, int mod_flags,
 				   bool is_iface, MemberName name,
 				   Attributes attrs)
 			: base (parent, type, mod_flags, is_iface, name, attrs)
@@ -7480,7 +7479,7 @@ namespace Mono.CSharp {
 
 		Parameters parameters;
 
-		protected Event (DeclSpace parent, Expression type, int mod_flags,
+		protected Event (DeclSpace parent, FullNamedExpression type, int mod_flags,
 			      bool is_iface, MemberName name, Attributes attrs)
 			: base (parent, null, type, mod_flags,
 				is_iface ? AllowedInterfaceModifiers : AllowedModifiers, is_iface,
@@ -7674,7 +7673,7 @@ namespace Mono.CSharp {
 
 		public readonly Parameters parameters;
 
-		public Indexer (DeclSpace parent, Expression type, MemberName name, int mod,
+		public Indexer (DeclSpace parent, FullNamedExpression type, MemberName name, int mod,
 				bool is_iface, Parameters parameters, Attributes attrs,
 				Accessor get_block, Accessor set_block, bool define_set_first)
 			: base (parent, type, mod,
@@ -7884,7 +7883,7 @@ namespace Mono.CSharp {
 
 		public readonly OpType OperatorType;
 		
-		public Operator (DeclSpace parent, OpType type, Expression ret_type,
+		public Operator (DeclSpace parent, OpType type, FullNamedExpression ret_type,
 				 int mod_flags, Parameters parameters,
 				 ToplevelBlock block, Attributes attrs, Location loc)
 			: base (parent, null, ret_type, mod_flags, AllowedModifiers, false,
@@ -8184,7 +8183,7 @@ namespace Mono.CSharp {
 			StringBuilder sb = new StringBuilder ();
 			if (OperatorType == OpType.Implicit || OperatorType == OpType.Explicit) {
 				sb.AppendFormat ("{0}.{1} operator {2}",
-					Parent.GetSignatureForError (), GetName (OperatorType), Type.GetSignatureForError ());
+					Parent.GetSignatureForError (), GetName (OperatorType), type_name.GetSignatureForError ());
 			}
 			else {
 				sb.AppendFormat ("{0}.operator {1}", Parent.GetSignatureForError (), GetName (OperatorType));

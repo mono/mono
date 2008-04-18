@@ -157,7 +157,7 @@ namespace Mono.CSharp {
 	}
 
 	public class ParamsParameter : Parameter {
-		public ParamsParameter (Expression type, string name, Attributes attrs, Location loc):
+		public ParamsParameter (FullNamedExpression type, string name, Attributes attrs, Location loc):
 			base (type, name, Parameter.Modifier.PARAMS, attrs, loc)
 		{
 		}
@@ -238,7 +238,7 @@ namespace Mono.CSharp {
 
 		static string[] attribute_targets = new string [] { "param" };
 
-		Expression TypeName;
+		FullNamedExpression TypeName;
 		readonly Modifier modFlags;
 		public string Name;
 		public bool IsCaptured;
@@ -268,7 +268,7 @@ namespace Mono.CSharp {
 		}
 #endif
 		
-		public Parameter (Expression type, string name, Modifier mod, Attributes attrs, Location loc)
+		public Parameter (FullNamedExpression type, string name, Modifier mod, Attributes attrs, Location loc)
 			: this (type.Type, name, mod, attrs, loc)
 		{
 			if (type == TypeManager.system_void_expr)

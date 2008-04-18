@@ -385,11 +385,6 @@ namespace Mono.CSharp {
 				type, name);
 		}
 
-		public override void Emit (EmitContext ec)
-		{
-			throw new InternalErrorException ("Expression tree referenced namespace " + fullname + " during Emit ()");
-		}
-
 		public override string GetSignatureForError ()
 		{
 			return fullname;

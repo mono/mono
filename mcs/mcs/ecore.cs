@@ -2250,7 +2250,7 @@ namespace Mono.CSharp {
 	//
 	// Unresolved type name expressions
 	//
-	public abstract class ATypeNameExpression : Expression
+	public abstract class ATypeNameExpression : FullNamedExpression
 	{
 		public readonly string Name;
 		protected TypeArguments targs;
@@ -2266,11 +2266,6 @@ namespace Mono.CSharp {
 			Name = name;
 			this.targs = targs;
 			loc = l;
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			throw new InternalErrorException ("ATypeNameExpression found in resolved tree");
 		}
 
 		public override string GetSignatureForError ()
@@ -2665,7 +2660,7 @@ namespace Mono.CSharp {
 					return e;
 
 				ConstructedType ct = new ConstructedType (
-					(FullNamedExpression) e, targs, loc);
+					e.Type, targs, loc);
 				return ct.ResolveAsTypeStep (ec, false);
 			}
 
@@ -2741,6 +2736,12 @@ namespace Mono.CSharp {
 		{
 			return this;
 		}
+
+		public override void Emit (EmitContext ec)
+		{
+			throw new InternalErrorException ("FullNamedExpression `{0}' found in resolved tree",
+				GetSignatureForError ());
+		}
 	}
 	
 	/// <summary>
@@ -2760,11 +2761,6 @@ namespace Mono.CSharp {
 		override public Expression DoResolve (EmitContext ec)
 		{
 			return ResolveAsTypeTerminal (ec, false);
-		}
-
-		override public void Emit (EmitContext ec)
-		{
-			throw new Exception ("Should never be called");
 		}
 
 		public virtual bool CheckAccessLevel (DeclSpace ds)

@@ -282,7 +282,7 @@ namespace Mono.CSharp {
 		void Define_Current (bool is_generic)
 		{
 			MemberName left;
-			Expression type;
+			TypeExpr type;
 
 			if (is_generic) {
 				left = new MemberName (
@@ -390,7 +390,7 @@ namespace Mono.CSharp {
 				host.AddMethod (this);
 
 				Block = new ToplevelBlock (host.Iterator.Container.Toplevel, null, Location);
-				Block.AddStatement (new GetEnumeratorStatement (host, Type));
+				Block.AddStatement (new GetEnumeratorStatement (host, type_name));
 			}
 
 			public override EmitContext CreateEmitContext (DeclSpace tc, ILGenerator ig)
