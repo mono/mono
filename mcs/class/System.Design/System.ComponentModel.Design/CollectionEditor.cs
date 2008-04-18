@@ -541,13 +541,8 @@ namespace System.ComponentModel.Design
 					for (int i = selected.Length - 1; i >= 0; i--)
 						itemsList.Items.RemoveAt (selected[i]);
 
-					int prevIndex = --selected[0];
-					if (prevIndex == -1 && itemsList.Items.Count > 0)
-						prevIndex = 0;
-					itemsList.SelectedIndex = prevIndex;
+					itemsList.SelectedIndex = Math.Min (selected[0], itemsList.Items.Count-1);
 				}
-				if (itemsList.SelectedItems.Count == 0)
-					itemDisplay.SelectedObject = null;
 			}
 
 			// OnEditValueChanged is called only if the  EditValue has changed,

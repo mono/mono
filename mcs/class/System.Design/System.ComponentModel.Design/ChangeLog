@@ -1,3 +1,9 @@
+2008-04-18  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* CollectionEditor.cs: Select the next item after the one 
+	removed, not the one before.
+	[Fixes bug #375788]
+
 2008-04-03  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* CollectionEditor.cs: 
