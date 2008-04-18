@@ -1,3 +1,10 @@
+2008-04-18  Marek Habersack  <mhabersack@novell.com>
+
+	* ObjectStateFormatter.cs: ObjectFormatter.WriteObject should not
+	use a converter if it can't convert _from_ the type of the object
+	being written to the stream. Fixes issues with serializing, e.g.,
+	a DataSet.
+
 2008-04-14  Marek Habersack  <mhabersack@novell.com>
 
 	* SimpleWebHandlerParser.cs, TemplateParser.cs, AspGenerator.cs:
