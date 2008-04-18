@@ -5556,19 +5556,6 @@ namespace Mono.CSharp {
 			expect_initializers = true;
 		}
 
-		public Expression FormArrayType (Expression base_type, int idx_count, string rank)
-		{
-			StringBuilder sb = new StringBuilder (rank);
-			
-			sb.Append ("[");
-			for (int i = 1; i < idx_count; i++)
-				sb.Append (",");
-			
-			sb.Append ("]");
-
-			return new ComposedCast (base_type, sb.ToString (), loc);
-		}
-
 		void Error_IncorrectArrayInitializer ()
 		{
 			Error (178, "Invalid rank specifier: expected `,' or `]'");

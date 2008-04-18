@@ -25,7 +25,7 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class Delegate : DeclSpace, IMemberContainer
 	{
- 		public Expression ReturnType;
+ 		Expression ReturnType;
 		public Parameters      Parameters;
 
 		public ConstructorBuilder ConstructorBuilder;

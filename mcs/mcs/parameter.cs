@@ -239,7 +239,7 @@ namespace Mono.CSharp {
 		static string[] attribute_targets = new string [] { "param" };
 
 		Expression TypeName;
-		public Modifier modFlags;
+		readonly Modifier modFlags;
 		public string Name;
 		public bool IsCaptured;
 		protected Type parameter_type;
@@ -256,7 +256,6 @@ namespace Mono.CSharp {
 
 #if GMCS_SOURCE
 		public bool IsTypeParameter;
-		GenericConstraints constraints;
 #else
 	    	public bool IsTypeParameter {
 			get {
@@ -377,7 +376,6 @@ namespace Mono.CSharp {
 			TypeParameterExpr tparam = texpr as TypeParameterExpr;
 			if (tparam != null) {
 				IsTypeParameter = true;
-				constraints = tparam.TypeParameter.Constraints;
 				return true;
 			}
 #endif
@@ -439,14 +437,6 @@ namespace Mono.CSharp {
 				IsTypeParameter = false;
 			}
 		}
-
-#if GMCS_SOURCE
-		public GenericConstraints GenericConstraints {
-			get {
-				return constraints;
-			}
-		}
-#endif
 
 		ParameterAttributes Attributes {
 			get {
@@ -613,7 +603,7 @@ namespace Mono.CSharp {
 
 		public Parameter Clone ()
 		{
-			Parameter p = new Parameter (parameter_type, Name, ModFlags, attributes, Location);
+			Parameter p = new Parameter (parameter_type, Name, modFlags, attributes, Location);
 			p.IsTypeParameter = IsTypeParameter;
 
 			return p;

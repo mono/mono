@@ -1440,7 +1440,7 @@ fixed_parameters
 		ArrayList pars = (ArrayList) $1;
 		Parameter p = (Parameter)$3;
 		if (p != null) {
-			if ((p.modFlags & Parameter.Modifier.This) != 0)
+			if (p.HasExtensionMethodModifier)
 				Report.Error (1100, p.Location, "The parameter modifier `this' can only be used on the first parameter");
 			pars.Add (p);
 		}
