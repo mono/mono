@@ -195,6 +195,9 @@ namespace System.Windows.Forms
 
 		internal int GetActualItemCount ()
 		{
+			if (is_default_group)
+				return item_count;
+
 			int count = 0;
 			for (int i = 0; i < items.Count; i++)
 				if (items [i].ListView != null) // Ignore.

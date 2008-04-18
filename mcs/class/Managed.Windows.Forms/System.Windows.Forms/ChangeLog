@@ -1,5 +1,11 @@
 2008-04-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListViewGroup.cs: When returning the actual item count, return the
+	proper count for default group.
+	Fix the tests.
+
+2008-04-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListView.cs:
 	* ListViewGroup.cs: When calculating groups layout, get the actual
 	number of items per group, since groups added to the group BUT not
