@@ -1,3 +1,7 @@
+2008-04-18  Andreia Gaita <avidigal@novell.com> 
+
+	* xpidl2cs.pl: Fix parsing for non-scriptable interfaces
+
 2008-03-02  Andreia Gaita <avidigal@novell.com> 
 
 	* xpidl2cs.pl: More type conversion. Fix const vs [const, array] detection.

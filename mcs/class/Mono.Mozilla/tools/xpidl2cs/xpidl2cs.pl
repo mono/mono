@@ -292,7 +292,7 @@ sub parse_file {
     while (my $line = <FILE>) {
 	chop $line;
 
-	next if !$start && $line !~ /\[scriptable/;
+	next if !$start && $line !~ /uuid\(/;
 	$start = 1;
 	last if $start && $line =~ /\};/;
 
