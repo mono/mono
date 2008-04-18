@@ -55,7 +55,8 @@ namespace System.Web.Configuration
 		static ConfigurationProperty expressionBuildersProp;
 		static ConfigurationProperty urlLinePragmasProp;
 		static ConfigurationProperty codeSubDirectoriesProp;
-
+		static bool hosted;
+		
 		static CompilationSection ()
 		{
 			assembliesProp = new ConfigurationProperty ("assemblies", typeof (AssemblyCollection), null,
@@ -111,6 +112,9 @@ namespace System.Web.Configuration
 			properties.Add (strictProp);
 			properties.Add (tempDirectoryProp);
 			properties.Add (urlLinePragmasProp);
+
+			AppDomain domain = AppDomain.CurrentDomain;
+			hosted = (domain.GetData (ApplicationHost.MonoHostedDataKey) as string) == "yes";
 		}
 
 		public CompilationSection ()
@@ -141,7 +145,12 @@ namespace System.Web.Configuration
 
 		[ConfigurationProperty ("batch", DefaultValue = "True")]
 		public bool Batch {
-			get { return (bool) base [batchProp]; }
+			get {
+				if (!hosted)
+					return false; // fix for bug #380985
+				
+				return (bool) base [batchProp];
+			}
 			set { base [batchProp] = value; }
 		}
 
