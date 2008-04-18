@@ -1070,7 +1070,7 @@ namespace Mono.CSharp {
 			if (IsGeneric && base_type != null && TypeManager.IsAttributeType (base_type.Type)) {
 				Report.Error (698, base_type.Location,
 					      "A generic type cannot derive from `{0}' because it is an attribute class",
-					      base_type.Name);
+					      base_type.GetSignatureForError ());
 				return false;
 			}
 

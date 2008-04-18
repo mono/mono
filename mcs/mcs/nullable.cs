@@ -34,14 +34,6 @@ namespace Mono.CSharp.Nullable
 			: this (new TypeExpression (type, loc), loc)
 		{ }
 
-		public override string Name {
-			get { return underlying.ToString () + "?"; }
-		}
-
-		public override string FullName {
-			get { return underlying.ToString () + "?"; }
-		}
-
 		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
 		{
 			TypeArguments args = new TypeArguments (loc);

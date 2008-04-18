@@ -312,12 +312,12 @@ namespace Mono.CSharp {
 			if (this.root == null)
 				throw new InternalErrorException ("Root namespaces must be created using RootNamespace");
 			
-			string pname = parent != null ? parent.Name : "";
+			string pname = parent != null ? parent.fullname : "";
 				
 			if (pname == "")
 				fullname = name;
 			else
-				fullname = parent.Name + "." + name;
+				fullname = parent.fullname + "." + name;
 
 			if (fullname == null)
 				throw new InternalErrorException ("Namespace has a null fullname");
@@ -357,7 +357,7 @@ namespace Mono.CSharp {
 			}
 
 			Report.Error (234, loc, "The type or namespace name `{0}' does not exist in the namespace `{1}'. Are you missing an assembly reference?",
-				name, FullName);
+				name, GetSignatureForError ());
 		}
 
 		public static void Error_InvalidNumberOfTypeArguments (Type t, Location loc)
@@ -392,7 +392,7 @@ namespace Mono.CSharp {
 
 		public override string GetSignatureForError ()
 		{
-			return Name;
+			return fullname;
 		}
 		
 		public Namespace GetNamespace (string name, bool create)
@@ -551,21 +551,12 @@ namespace Mono.CSharp {
 			get { return fullname; }
 		}
 
-		public override string FullName {
-			get { return fullname; }
-		}
-
 		/// <summary>
 		///   The parent of this namespace, used by the parser to "Pop"
 		///   the current namespace declaration
 		/// </summary>
 		public Namespace Parent {
 			get { return parent; }
-		}
-
-		public override string ToString ()
-		{
-			return String.Format ("Namespace ({0})", Name);
 		}
 	}
 
@@ -895,7 +886,7 @@ namespace Mono.CSharp {
 			Report.SymbolRelatedToPreviousError (t1.Type);
 			Report.SymbolRelatedToPreviousError (t2.Type);
 			Report.Error (104, loc, "`{0}' is an ambiguous reference between `{1}' and `{2}'",
-				name, t1.FullName, t2.FullName);
+				name, t1.GetSignatureForError (), t2.GetSignatureForError ());
 		}
 
 		// Looks-up a alias named @name in this and surrounding namespace declarations

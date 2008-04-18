@@ -260,7 +260,7 @@ namespace Mono.CSharp {
 					Report.Error (406, loc,
 						      "`{0}': the class constraint for `{1}' " +
 						      "must come before any other constraints.",
-						      expr.Name, name);
+						      expr.GetSignatureForError (), name);
 					return false;
 				} else if (HasReferenceTypeConstraint || HasValueTypeConstraint) {
 					Report.Error (450, loc, "`{0}': cannot specify both " +
@@ -372,7 +372,7 @@ namespace Mono.CSharp {
 				if (seen.Contains (expr.TypeParameter)) {
 					Report.Error (454, loc, "Circular constraint " +
 						      "dependency involving `{0}' and `{1}'",
-						      tparam.Name, expr.Name);
+						      tparam.Name, expr.GetSignatureForError ());
 					return false;
 				}
 
@@ -1090,18 +1090,6 @@ namespace Mono.CSharp {
 	public class TypeParameterExpr : TypeExpr {
 		TypeParameter type_parameter;
 
-		public override string Name {
-			get {
-				return type_parameter.Name;
-			}
-		}
-
-		public override string FullName {
-			get {
-				return type_parameter.Name;
-			}
-		}
-
 		public TypeParameter TypeParameter {
 			get {
 				return type_parameter;
@@ -1128,11 +1116,6 @@ namespace Mono.CSharp {
 		public override bool CheckAccessLevel (DeclSpace ds)
 		{
 			return true;
-		}
-
-		public void Error_CannotUseAsUnmanagedType (Location loc)
-		{
-			Report.Error (-203, loc, "Can not use type parameter as unmanaged type");
 		}
 	}
 
@@ -1347,7 +1330,6 @@ namespace Mono.CSharp {
 	///   An instantiation of a generic type.
 	/// </summary>	
 	public class ConstructedType : TypeExpr {
-		string full_name;
 		FullNamedExpression name;
 		TypeArguments args;
 		Type[] gen_params, atypes;
@@ -1363,38 +1345,22 @@ namespace Mono.CSharp {
 			this.args = args;
 
 			eclass = ExprClass.Type;
-			full_name = name + "<" + args.ToString () + ">";
-		}
-
-		protected ConstructedType (TypeArguments args, Location l)
-		{
-			loc = l;
-			this.args = args;
-
-			eclass = ExprClass.Type;
-		}
-
-		protected ConstructedType (TypeParameter[] type_params, Location l)
-		{
-			loc = l;
-
-			args = new TypeArguments (l);
-			foreach (TypeParameter type_param in type_params)
-				args.Add (new TypeParameterExpr (type_param, l));
-
-			eclass = ExprClass.Type;
 		}
 
 		/// <summary>
 		///   This is used to construct the `this' type inside a generic type definition.
 		/// </summary>
 		public ConstructedType (Type t, TypeParameter[] type_params, Location l)
-			: this (type_params, l)
 		{
 			gt = t.GetGenericTypeDefinition ();
 
+			args = new TypeArguments (l);
+			foreach (TypeParameter type_param in type_params)
+				args.Add (new TypeParameterExpr (type_param, l));
+
+			this.loc = l;
 			this.name = new TypeExpression (gt, l);
-			full_name = gt.FullName + "<" + args.ToString () + ">";
+			eclass = ExprClass.Type;
 		}
 
 		/// <summary>
@@ -1403,12 +1369,10 @@ namespace Mono.CSharp {
 		///   generic type.
 		/// </summary>		
 		public ConstructedType (Type t, TypeArguments args, Location l)
-			: this (args, l)
+			: this ((FullNamedExpression)null, args, l)
 		{
 			gt = t.GetGenericTypeDefinition ();
-
 			this.name = new TypeExpression (gt, l);
-			full_name = gt.FullName + "<" + args.ToString () + ">";
 		}
 
 		public TypeArguments TypeArguments {
@@ -1452,7 +1416,7 @@ namespace Mono.CSharp {
 			Type t = name.Type;
 
 			if (t == null) {
-				Report.Error (246, loc, "Cannot find type `{0}'<...>", Name);
+				Report.Error (246, loc, "Cannot find type `{0}'<...>", GetSignatureForError ());
 				return false;
 			}
 
@@ -1547,18 +1511,6 @@ namespace Mono.CSharp {
 		public override int GetHashCode ()
 		{
 			return base.GetHashCode ();
-		}
-
-		public override string Name {
-			get {
-				return full_name;
-			}
-		}
-
-		public override string FullName {
-			get {
-				return full_name;
-			}
 		}
 	}
 

@@ -164,11 +164,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		[Obsolete ("Use GetSignatureForError ()")]
-		public string PrettyName {
-			get { return TypeArguments == null ? Name : MethodName + "<" + TypeArguments.ToString () + ">"; }
-		}
-
 		public string MethodName {
 			get {
 				string connect = is_double_colon ? "::" : ".";
@@ -181,8 +176,8 @@ namespace Mono.CSharp {
 
 		// Please use this only for error reporting.   For normal uses, just use the Equals and GetHashCode methods that make
 		// MemberName a proper hash key, and avoid tons of memory allocations
-		public string FullyQualifiedName {
-			get { return TypeArguments == null ? MethodName : MethodName + "<" + TypeArguments.ToString () + ">"; }
+		string FullyQualifiedName {
+			get { return TypeArguments == null ? MethodName : MethodName + "<" + TypeArguments.GetSignatureForError () + ">"; }
 		}
 
 		public string GetSignatureForError ()

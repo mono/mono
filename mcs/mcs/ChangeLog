@@ -1,5 +1,10 @@
 2008-04-18  Marek Safar  <marek.safar@gmail.com>
 
+	* generic.cs, namespace.cs, ecore.cs, class.cs, decl.cs, generic-mcs.cs,
+	nullable.cs, expression.cs, enum.cs, doc.cs: Cleaning up type expressions.
+
+2008-04-18  Marek Safar  <marek.safar@gmail.com>
+
 	* parameter.cs, delegate.cs, cs-parser.jay, expression.cs: Removed unused
 	code.
 

@@ -6820,13 +6820,6 @@ namespace Mono.CSharp {
 			if (texpr == null)
 				return null;
 
-#if GMCS_SOURCE
-			if (texpr is TypeParameterExpr){
-				((TypeParameterExpr)texpr).Error_CannotUseAsUnmanagedType (loc);
-				return null;
-			}
-#endif
-
 			type_queried = texpr.Type;
 			if (TypeManager.IsEnumType (type_queried))
 				type_queried = TypeManager.GetEnumUnderlyingType (type_queried);
@@ -6841,14 +6834,14 @@ namespace Mono.CSharp {
 				return new IntConstant (size_of, loc);
 			}
 
-			if (!ec.InUnsafe) {
-				Report.Error (233, loc, "`{0}' does not have a predefined size, therefore sizeof can only be used in an unsafe context (consider using System.Runtime.InteropServices.Marshal.SizeOf)",
-					 TypeManager.CSharpName (type_queried));
+			if (!TypeManager.VerifyUnManaged (type_queried, loc)){
 				return null;
 			}
 
-			if (!TypeManager.VerifyUnManaged (type_queried, loc)){
-				return null;
+			if (!ec.InUnsafe) {
+				Report.Error (233, loc,
+					"`{0}' does not have a predefined size, therefore sizeof can only be used in an unsafe context (consider using System.Runtime.InteropServices.Marshal.SizeOf)",
+					TypeManager.CSharpName (type_queried));
 			}
 			
 			type = TypeManager.int32_type;
@@ -8630,14 +8623,6 @@ namespace Mono.CSharp {
 
 			eclass = ExprClass.Type;
 			return this;
-		}
-
-		public override string Name {
-			get { return left + dim; }
-		}
-
-		public override string FullName {
-			get { return type.FullName; }
 		}
 
 		public override string GetSignatureForError ()

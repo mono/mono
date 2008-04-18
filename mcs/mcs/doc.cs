@@ -760,7 +760,7 @@ namespace Mono.CSharp {
 			// It still might be part of namespace name.
 			Namespace ns = ds.NamespaceEntry.NS.GetNamespace (name, false);
 			if (ns != null) {
-				xref.SetAttribute ("cref", "N:" + ns.FullName);
+				xref.SetAttribute ("cref", "N:" + ns.GetSignatureForError ());
 				return; // a namespace
 			}
 			if (RootNamespace.Global.IsNamespace (name)) {

@@ -54,14 +54,6 @@ namespace Mono.CSharp {
 			{
 				return DoResolveAsTypeStep (ec);
 			}
-
-			public override string Name {
-				get { return Enum.Name; }
-			}
-
-			public override string FullName {
-				get { return Enum.Name; }
-			}
 		}
 
 		static bool IsValidEnumType (Type t)
