@@ -171,11 +171,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+		[Category ("NotWorking")] // bug #323388
 		public void Async_GetResponse_Failure ()
 		{
-			if (!RunningOnUnix)
-				Assert.Ignore ("bug #80700");
-
 			FileWebRequest req = (FileWebRequest) WebRequest.Create (_tempFileUri);
 			req.Method = "PUT";
 			req.ContentLength = 1;
@@ -283,11 +281,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+		[Category ("NotWorking")] // bug #323388
 		public void Sync_GetResponse_Failure ()
 		{
-			if (!RunningOnUnix)
-				Assert.Ignore ("bug #80700");
-
 			FileWebRequest req = (FileWebRequest) WebRequest.Create (_tempFileUri);
 			req.Method = "PUT";
 			req.ContentLength = 1;
