@@ -432,7 +432,6 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test] // DefineUnmanagedResource (String)
-		[Category ("NotWorking")] // bug #374600
 		public void DefineUnmanagedResource1c ()
 		{
 			string resFile = Path.Combine (tempDir, "version.res");
@@ -485,7 +484,6 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test] // DefineUnmanagedResource (String)
-		[Category ("NotWorking")] // bug #374600
 		public void DefineUnmanagedResource1d ()
 		{
 			string resFile = Path.Combine (tempDir, "version.res");
@@ -594,7 +592,6 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test] // DefineUnmanagedResource (String)
-		[Category ("NotWorking")] // bug #374600
 		public void DefineUnmanagedResource1e ()
 		{
 			string resFile = Path.Combine (tempDir, "version.res");
@@ -647,7 +644,6 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		[Test] // DefineUnmanagedResource (String)
-		[Category ("NotWorking")] // bug #374600
 		public void DefineUnmanagedResource1f ()
 		{
 			string resFile = Path.Combine (tempDir, "version.res");
