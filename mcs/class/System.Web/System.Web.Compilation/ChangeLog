@@ -1,3 +1,10 @@
+2008-04-18  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: when any parsing error occurs during batch
+	building, ignore the file which caused it. If the file with
+	parsing error is the one requested by user, throw the parsing
+	exception. Fixes bug #323742
+
 2008-04-15  Marek Habersack  <mhabersack@novell.com>
 
 	* CachingCompiler.cs: dispose of streams the way it should

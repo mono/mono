@@ -57,6 +57,16 @@ namespace System.Web.Compilation {
 			public Type codeDomProviderType;
 			public bool codeGenerated;
 			public Assembly compiledAssembly;
+
+			public ParseException ParserException {
+				get;
+				private set;
+			}
+			
+			public bool ParsedFine {
+				get;
+				private set;
+			}
 			
 			public CompilerParameters CompilerOptions {
 				get {
@@ -85,8 +95,15 @@ namespace System.Web.Compilation {
 			public BuildItem (BuildProvider provider)
 			{
 				this.buildProvider = provider;
-				if (provider != null)
-					codeDomProviderType = GetCodeDomProviderType (provider);
+				try {
+					if (provider != null)
+						codeDomProviderType = GetCodeDomProviderType (provider);
+					ParsedFine = true;
+					ParserException = null;
+				} catch (ParseException ex) {
+					ParsedFine = false;
+					ParserException = ex;
+				}
 			}
 
 			public void SetCompiledAssembly (AssemblyBuilder assemblyBuilder, Assembly compiledAssembly)
@@ -156,12 +173,23 @@ namespace System.Web.Compilation {
 			public Type type;
 			public string virtualPath;
 
+			public bool ValidBuild {
+				get;
+				private set;
+			}
+
+			public BuildCacheItem ()
+			{
+				ValidBuild = false;
+			}
+			
 			public BuildCacheItem (Assembly assembly, BuildProvider bp, CompilerResults results)
 			{
 				this.assembly = assembly;
 				this.compiledCustomString = bp.GetCustomString (results);
 				this.type = bp.GetGeneratedType (results);
 				this.virtualPath = bp.VirtualPath;
+				ValidBuild = true;
 			}
 			
 			public override string ToString ()
@@ -926,6 +954,7 @@ namespace System.Web.Compilation {
 			BuildKind buildKind = BuildKind.Unknown;
 			bool kindPushed = false;
 			string vpAbsolute = virtualPath.Absolute;
+			BuildItem vpBuildItem = null;
 			
 			acquired = AcquireCompilationTicket (virtualDir, out ticket);
 			try {
@@ -947,6 +976,13 @@ namespace System.Web.Compilation {
 				bool checkForRecursion = buildKind == BuildKind.NonPages;
 				
 				foreach (BuildItem buildItem in buildItems) {
+					if (buildItem.VirtualPath == vpAbsolute) {
+						if (!buildItem.ParsedFine)
+							throw buildItem.ParserException;
+						vpBuildItem = buildItem;
+					} else if (!buildItem.ParsedFine)
+						continue;
+					
 					if (checkForRecursion) {
 						// Expensive but, alas, necessary - the builder in
 						// our list might've been put into a different
