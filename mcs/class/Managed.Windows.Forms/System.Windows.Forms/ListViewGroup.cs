@@ -59,29 +59,24 @@ namespace System.Windows.Forms
 
 		#region ListViewGroup constructors
 
-		public ListViewGroup()
+		public ListViewGroup () : this ("ListViewGroup", HorizontalAlignment.Left)
 		{
-			header = "ListViewGroup";
-			header_alignment = HorizontalAlignment.Left;
 		}
 
-		public ListViewGroup(string header)
+		public ListViewGroup (string header) : this (header, HorizontalAlignment.Left)
 		{
-			this.header = header;
-			header_alignment = HorizontalAlignment.Left;
 		}
 
-		public ListViewGroup(string key, string headerText)
+		public ListViewGroup (string key, string headerText) : this (headerText, HorizontalAlignment.Left)
 		{
-			header = headerText;
 			name = key;
-			header_alignment = HorizontalAlignment.Left;
 		}
 
-		public ListViewGroup(string header, HorizontalAlignment headerAlignment)
+		public ListViewGroup (string header, HorizontalAlignment headerAlignment)
 		{
 			this.header = header;
 			header_alignment = headerAlignment;
+			items = new ListView.ListViewItemCollection (list_view_owner, this);
 		}
 
 		private ListViewGroup(SerializationInfo info, StreamingContext context)
@@ -139,9 +134,6 @@ namespace System.Windows.Forms
 		[Browsable(false)]
 		public ListView.ListViewItemCollection Items {
 			get {
-				if (items == null)
-					items = new ListView.ListViewItemCollection (list_view_owner, this);
-
 				return items;
 			}
 		}
@@ -199,6 +191,16 @@ namespace System.Windows.Forms
 
 				item_count = value;
 			}
+		}
+
+		internal int GetActualItemCount ()
+		{
+			int count = 0;
+			for (int i = 0; i < items.Count; i++)
+				if (items [i].ListView != null) // Ignore.
+					count++;
+
+			return count;
 		}
 
 		[Browsable(true)]

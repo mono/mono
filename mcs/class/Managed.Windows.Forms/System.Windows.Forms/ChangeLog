@@ -1,5 +1,16 @@
 2008-04-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListView.cs:
+	* ListViewGroup.cs: When calculating groups layout, get the actual
+	number of items per group, since groups added to the group BUT not
+	added to the ListView are just ignored, and can cause some nasty
+	exceptions because of the lack of synchronization. Also for
+	ListViewGroup don't use lazy initialization for items, since we 
+	the common scenario is to use it always - and it helps us to  refactor
+	and clean the .ctor overloads.
+
+2008-04-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListView.cs: When adding an item to a ListViewItemCollection
 	belonging to a group (ListViewGroup.Items), don't generate a redraw if
 	the added item hasn't beeen previously added to the ListView instance
