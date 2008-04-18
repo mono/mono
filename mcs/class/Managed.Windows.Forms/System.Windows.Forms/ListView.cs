@@ -4933,7 +4933,10 @@ namespace System.Windows.Forms
 #endif
 
 				AddItem (value);
-				CollectionChanged (true);
+
+				// Item is ignored until it has been added to the ListView
+				if (is_main_collection || value.ListView != null)
+					CollectionChanged (true);
 
 				return value;
 			}
@@ -5189,7 +5192,10 @@ namespace System.Windows.Forms
 #endif
 
 				list.Insert (index, item);
-				CollectionChanged (true);
+
+				if (is_main_collection || item.ListView != null)
+					CollectionChanged (true);
+
 				return item;
 			}
 

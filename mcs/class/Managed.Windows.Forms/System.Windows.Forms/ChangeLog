@@ -1,3 +1,11 @@
+2008-04-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: When adding an item to a ListViewItemCollection
+	belonging to a group (ListViewGroup.Items), don't generate a redraw if
+	the added item hasn't beeen previously added to the ListView instance
+	refered by the group, since it will be ignored. This should avoid some 
+	really nasty flickering.
+
 2008-04-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: When accessing an item in a specific display
