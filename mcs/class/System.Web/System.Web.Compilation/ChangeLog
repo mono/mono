@@ -1,3 +1,24 @@
+2008-04-19  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: use absolute virtual path to query the
+	VirtualPathProvider for path existence.
+	When ASP.NET is self-hosted, force
+        non-batch compilation. Fixes bug #380985
+
+	* ILocation.cs: added a new property, FileText.
+	
+	* Location.cs: added implementation of the ILocation.FileText
+	property.
+
+	* ParseException.cs: use the new ILocation.FileText, if defined,
+	to get the file source.
+	
+	* AspGenerator.cs: when TextReader is present, use it to read with
+	the VirtualPathProvider to read the file source. Fixes bug #381364
+
+	* AspParser.cs: added a new property FileText to provide the file
+	contents which was read in the constructor.
+
 2008-04-18  Marek Habersack  <mhabersack@novell.com>
 
 	* BuildManager.cs: when any parsing error occurs during batch

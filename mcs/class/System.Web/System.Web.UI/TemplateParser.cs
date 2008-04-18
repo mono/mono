@@ -204,9 +204,12 @@ namespace System.Web.UI {
 #if NET_2_0
 			VirtualFile vf = null;
 			VirtualPathProvider vpp = HostingEnvironment.VirtualPathProvider;
-			if (vpp.FileExists (src)) {
+			VirtualPath vp = new VirtualPath (src);
+			string vpAbsolute = vp.Absolute;
+			
+			if (vpp.FileExists (vpAbsolute)) {
 				fileExists = true;
-				vf = vpp.GetFile (src);
+				vf = vpp.GetFile (vpAbsolute);
 				if (vf != null)
 					realpath = MapPath (vf.VirtualPath);
 			}

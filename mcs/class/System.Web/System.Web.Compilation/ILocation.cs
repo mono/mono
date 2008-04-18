@@ -38,6 +38,7 @@ namespace System.Web.Compilation
 		int BeginColumn { get; }
 		int EndColumn { get; }
 		string PlainText { get; }
+		string FileText { get; }
 	}
 }
 

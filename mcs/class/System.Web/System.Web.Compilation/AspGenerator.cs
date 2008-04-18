@@ -36,6 +36,7 @@ using System.IO;
 using System.Text;
 using System.Web.Caching;
 using System.Web.Configuration;
+using System.Web.Hosting;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.Util;
@@ -266,12 +267,12 @@ namespace System.Web.Compilation
 #endif
 		}
 		
-		public void Parse (string file, bool doInitParser)
+		public void Parse (TextReader reader, string filename, bool doInitParser)
 		{
 			isApplication = tparser.DefaultDirectiveName == "application";
-			
+
 			if (doInitParser)
-				InitParser (file);
+				InitParser (reader, filename);
 
 			pstack.Parser.Parse ();
 			if (text.Length > 0)
@@ -285,7 +286,18 @@ namespace System.Web.Compilation
 
 			if (stack.Count > 1 && pstack.Count == 0)
 				throw new ParseException (stack.Builder.location,
-						"Expecting </" + stack.Builder.TagName + "> " + stack.Builder);
+							  "Expecting </" + stack.Builder.TagName + "> " + stack.Builder);
+		}
+
+		public void Parse (Stream stream, string filename, bool doInitParser)
+		{
+			Parse (new StreamReader (stream, WebEncoding.FileEncoding), filename, doInitParser);
+		}
+		
+		public void Parse (string filename, bool doInitParser)
+		{
+			StreamReader reader = new StreamReader (filename, WebEncoding.FileEncoding);
+			Parse (reader, filename, doInitParser);
 		}
 
 		public void Parse ()
@@ -306,15 +318,15 @@ namespace System.Web.Compilation
 					inputFile = "@@inner_string@@";
 			}
 
-			if (inputReader != null)
-				InitParser (inputReader, inputFile);
-			else {
+			if (inputReader != null) {
+				Parse (inputReader, inputFile, true);
+			} else {
 				if (String.IsNullOrEmpty (inputFile))
 					throw new HttpException ("Parser input file is empty, cannot continue.");
 				inputFile = Path.GetFullPath (inputFile);
 				InitParser (inputFile);
+				Parse (inputFile);
 			}
-			Parse (inputFile);
 #else
 			Parse (Path.GetFullPath (tparser.InputFile));
 #endif
@@ -459,12 +471,23 @@ namespace System.Web.Compilation
 					file = attributes ["file"] as string;
 
 				if (isvirtual) {
-					file = tparser.MapPath (file);
-				} else {
-					file = GetIncludeFilePath (tparser.BaseDir, file);
-				}
+					bool parsed = false;
+#if NET_2_0
+					VirtualPathProvider vpp = HostingEnvironment.VirtualPathProvider;
 
-				Parse (file, true);
+					if (vpp.FileExists (file)) {
+						VirtualFile vf = vpp.GetFile (file);
+						if (vf != null) {
+							Parse (vf.Open (), file, true);
+							parsed = true;
+						}
+					}
+#endif
+					
+					if (!parsed)
+						Parse (tparser.MapPath (file), true);
+				} else
+					Parse (GetIncludeFilePath (tparser.BaseDir, file), true);
 				break;
 			default:
 				break;

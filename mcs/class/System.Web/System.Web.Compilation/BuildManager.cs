@@ -235,6 +235,7 @@ namespace System.Web.Compilation {
 		internal const string FAKE_VIRTUAL_PATH_PREFIX = "/@@MonoFakeVirtualPath@@";
 		const string BUILD_MANAGER_VIRTUAL_PATH_CACHE_PREFIX = "Build_Manager";
 		static int BUILD_MANAGER_VIRTUAL_PATH_CACHE_PREFIX_LENGTH = BUILD_MANAGER_VIRTUAL_PATH_CACHE_PREFIX.Length;
+		static bool hosted;
 		
 		static object buildCacheLock = new object ();
 
@@ -288,6 +289,9 @@ namespace System.Web.Compilation {
 			buildCache = new Dictionary <string, BuildCacheItem> (comparer);
 			nonPagesCache = new Dictionary <string, Assembly> (comparer);
 			compilationTickets = new Dictionary <string, object> (comparer);
+
+			AppDomain domain = AppDomain.CurrentDomain;
+			hosted = (domain.GetData (ApplicationHost.MonoHostedDataKey) as string) == "yes";
 		}
 		
 		internal static void ThrowNoProviderException (string extension)
@@ -933,9 +937,9 @@ namespace System.Web.Compilation {
 					dothrow = true;
 			} else {
 				VirtualPathProvider vpp = HostingEnvironment.VirtualPathProvider;
-				string vpPath = virtualPath.Original;
+				string vpAbsolute = virtualPath.Absolute;
 				
-				if (!vpp.FileExists (vpPath) && !vpp.DirectoryExists (vpPath))
+				if (!vpp.FileExists (vpAbsolute) && !vpp.DirectoryExists (vpAbsolute))
 					dothrow = true;
 			}
 
@@ -1241,7 +1245,12 @@ namespace System.Web.Compilation {
 		}
 		
 		internal static bool BatchMode {
-			get { return CompilationConfig.Batch; }
+			get {
+				if (!hosted)
+					return false; // Fix for bug #380985
+				
+				return CompilationConfig.Batch;
+			}
 		}
 
 		internal static CompilationSection CompilationConfig {

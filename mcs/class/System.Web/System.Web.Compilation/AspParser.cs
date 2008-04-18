@@ -74,6 +74,10 @@ namespace System.Web.Compilation
 			get { return endColumn; }
 		}
 
+		public string FileText {
+			get { return fileText; }
+		}
+		
 		public string PlainText {
 			get {
 				if (beginPosition >= endPosition)

@@ -1,3 +1,13 @@
+2008-04-19  Marek Habersack  <mhabersack@novell.com>
+
+	* SimpleWebHandlerParser.cs: refactoring - move code between
+	constructors, reader should be set before initializing the rest of
+	the object. Fixes bug #381364
+
+	* TemplateParser.cs: RegisterCustomControl must use absolute
+	virtual path when querying the virtual path provider for
+	file. Fixes bug #381364
+
 2008-04-18  Marek Habersack  <mhabersack@novell.com>
 
 	* ObjectStateFormatter.cs: ObjectFormatter.WriteObject should not

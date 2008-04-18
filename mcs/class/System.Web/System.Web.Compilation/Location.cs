@@ -34,7 +34,8 @@ namespace System.Web.Compilation
 	{
 		int beginLine, endLine, beginColumn, endColumn;
 		string fileName, plainText;
-
+		ILocation location;
+		
 		public Location (ILocation location)
 		{
 			Init (location);
@@ -57,6 +58,7 @@ namespace System.Web.Compilation
 				fileName = location.Filename;
 				plainText = location.PlainText;
 			}
+			this.location = location;
 		}
 
 		public string Filename {
@@ -87,6 +89,15 @@ namespace System.Web.Compilation
 		public string PlainText {
 			get { return plainText; }
 			set { plainText = value; }
+		}
+
+		public string FileText {
+			get {
+				if (location != null)
+					return location.FileText;
+
+				return null;
+			}
 		}
 	}
 }
