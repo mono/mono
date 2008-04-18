@@ -32,6 +32,7 @@
 using System;
 using System.Configuration;
 using System.ComponentModel;
+using System.Web.Hosting;
 
 namespace System.Web.Configuration
 {
