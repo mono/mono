@@ -1,3 +1,8 @@
+2008-04-18  Jonathan Pobst  <monkey@jpobst.com>
+
+	* propertygrid-alphabetical.png: Make icon correct size and
+ 	add a little bit more color so it doesn't look disabled.
+
 2008-04-09  Everaldo Canuto  <ecanuto@novell.com>
 
 	* keyboards.resx : regenerated.
