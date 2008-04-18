@@ -6,7 +6,7 @@
 //	Gonzalo Paniagua (gonzalo@ximian.com)
 //
 // (C) 2003 Ben Maurer
-// (c) Copyright 2004 Novell, Inc. (http://www.novell.com)
+// (c) Copyright 2004-2008 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -414,8 +414,14 @@ namespace System.Web.UI {
 				}
 				
 				Type t = o.GetType ();
-				
+#if TRACE
+				Trace.WriteLine (String.Format ("Looking up formatter for type {0}", t));
+#endif
+
 				ObjectFormatter fmt = writeMap [t] as ObjectFormatter;
+#if TRACE
+				Trace.WriteLine (String.Format ("Formatter from writeMap: '{0}'", fmt));
+#endif
 				if (fmt == null) {
 					// Handle abstract types here
 					
@@ -428,9 +434,16 @@ namespace System.Web.UI {
 					else {
 						TypeConverter converter;
 						converter = TypeDescriptor.GetConverter (o);
+#if TRACE
+						Trace.WriteLine (String.Format ("Type converter: '{0}' (to string: {1}; from {2}: {3})",
+										converter,
+										converter != null ? converter.CanConvertTo (typeof (string)) : false,
+										t,
+										converter != null ? converter.CanConvertFrom (t) : false));
+#endif
 						if (converter == null ||
 						    !converter.CanConvertTo (typeof (string)) ||
-						    !converter.CanConvertFrom (typeof (string))) {
+						    !converter.CanConvertFrom (t)) {
 							fmt = binaryObjectFormatter;
 						} else {
 							typeConverterFormatter.Converter = converter;
@@ -439,6 +452,9 @@ namespace System.Web.UI {
 					}
 				}
 
+#if TRACE
+				Trace.WriteLine (String.Format ("Writing with formatter '{0}'", fmt.GetType ()));
+#endif
 				fmt.Write (w, o, ctx);
 #if TRACE
 				Trace.Unindent ();
