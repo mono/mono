@@ -455,15 +455,34 @@ namespace System.IO.IsolatedStorage {
 		{
 			if (dir == null)
 				throw new ArgumentNullException ("dir");
-			if (directory.GetFiles (dir).Length > 0)
-				throw new IOException (Locale.GetText ("Directory name already exists as a file."));
-			directory.CreateSubdirectory (dir);
+
+			if (dir.IndexOfAny (Path.PathSeparatorChars) < 0) {
+				if (directory.GetFiles (dir).Length > 0)
+					throw new IOException (Locale.GetText ("Directory name already exists as a file."));
+				directory.CreateSubdirectory (dir);
+			} else {
+				string[] dirs = dir.Split (Path.PathSeparatorChars);
+				DirectoryInfo dinfo = directory;
+
+				for (int i = 0; i < dirs.Length; i++) {
+					if (dinfo.GetFiles (dirs [i]).Length > 0)
+						throw new IOException (Locale.GetText (
+							"Part of the directory name already exists as a file."));
+					dinfo = dinfo.CreateSubdirectory (dirs [i]);
+				}
+			}
 		}
 
 		public void DeleteDirectory (string dir)
 		{
-			DirectoryInfo subdir = directory.CreateSubdirectory (dir);
-			subdir.Delete ();
+			try {
+				DirectoryInfo subdir = directory.CreateSubdirectory (dir);
+				subdir.Delete ();
+			}
+			catch {
+				// hide the real exception to avoid leaking the full path
+				throw new IsolatedStorageException (Locale.GetText ("Could not delete directory '{0}'", dir));
+			}
 		}
 
 		public void DeleteFile (string file)
@@ -479,7 +498,28 @@ namespace System.IO.IsolatedStorage {
 
 		public string[] GetDirectoryNames (string searchPattern)
 		{
-			DirectoryInfo[] adi = directory.GetDirectories (searchPattern);
+			if (searchPattern == null)
+				throw new ArgumentNullException ("searchPattern");
+
+			// note: IsolatedStorageFile accept a "dir/file" pattern which is not allowed by DirectoryInfo
+			// so we need to split them to get the right results
+			string path = Path.GetDirectoryName (searchPattern);
+			string pattern = Path.GetFileName (searchPattern);
+			DirectoryInfo[] adi = null;
+			if (path == null || path.Length == 0) {
+				adi = directory.GetDirectories (searchPattern);
+			} else {
+				DirectoryInfo[] subdirs = directory.GetDirectories (path);
+				// we're looking for a single result, identical to path (no pattern here)
+				// we're also looking for something under the current path (not outside isolated storage)
+				if ((subdirs.Length == 1) && (subdirs [0].Name == path) && (subdirs [0].FullName.IndexOf (directory.FullName) >= 0)) {
+					adi = subdirs [0].GetDirectories (pattern);
+				} else {
+					// CAS, even in FullTrust, normally enforce IsolatedStorage
+					throw new SecurityException ();
+				}
+			}
+			 
 			return GetNames (adi);
 		}
 
