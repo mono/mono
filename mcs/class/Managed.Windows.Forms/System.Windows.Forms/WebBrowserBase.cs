@@ -169,9 +169,9 @@ namespace System.Windows.Forms
 		#region Public Methods
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new void DrawToBitmap (Bitmap bitmap, Rectangle targetBounds)
+		public void DrawToBitmap (Bitmap bitmap, Rectangle targetBounds)
 		{
-			throw new NotImplementedException ();
+			base.DrawToBitmap (bitmap, targetBounds);
 		}
 
 		public override bool  PreProcessMessage(ref Message msg)
@@ -195,7 +195,7 @@ namespace System.Windows.Forms
 
 		protected virtual WebBrowserSiteBase CreateWebBrowserSiteBase ()
 		{
-			throw new NotImplementedException ();
+			return new WebBrowserSiteBase ();
 		}
 
 		protected virtual void DetachInterfaces ()
@@ -289,6 +289,11 @@ namespace System.Windows.Forms
 			return base.ProcessMnemonic (charCode);
 		}
 
+		protected override void WndProc (ref Message m)
+		{
+			base.WndProc (ref m);
+		}
+		
 		#endregion
 
 		#region Internal Properties

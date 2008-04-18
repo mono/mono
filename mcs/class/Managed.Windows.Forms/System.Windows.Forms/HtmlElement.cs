@@ -169,6 +169,7 @@ namespace System.Windows.Forms
 		[MonoTODO ("Needs implementation")]
 		public short TabIndex {
 			get { return 0; }
+			set { }
 		}
 
 		[MonoTODO ("Needs implementation")]
@@ -178,15 +179,18 @@ namespace System.Windows.Forms
 
 		public string OuterHtml {
 			get { return this.element.OuterHTML; }
+			set { this.element.OuterHTML = value; }
 		}
 
 		public string OuterText {
 			get { return this.element.OuterText; }
+			set { this.element.OuterText = value; }
 		}
 
 		[MonoTODO ("Needs implementation")]
 		public string Style {
 			get { return String.Empty; }
+			set { }
 		}
 
 		#endregion
