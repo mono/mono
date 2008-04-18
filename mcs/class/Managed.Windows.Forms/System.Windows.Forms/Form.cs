@@ -2544,7 +2544,7 @@ namespace System.Windows.Forms {
 				
 			return cancelled;
 		}
-		
+
 		private void WmClose (ref Message m)
 		{
 			Form act = Form.ActiveForm;
@@ -2568,7 +2568,12 @@ namespace System.Windows.Forms {
 				foreach (Form mdi_child in mdi_container.MdiChildren)
 					mdi_cancel = mdi_child.FireClosingEvents (CloseReason.MdiFormClosing, mdi_cancel);
 
-			if (suppress_closing_events || !RaiseCloseEvents (false, mdi_cancel)) {
+			bool validate_cancel = false;
+			if (!suppress_closing_events)
+				validate_cancel = !ValidateChildren ();
+
+			if (suppress_closing_events || 
+			    !RaiseCloseEvents (false, validate_cancel || mdi_cancel)) {
 				if (is_modal) {
 					Hide ();
 				} else {

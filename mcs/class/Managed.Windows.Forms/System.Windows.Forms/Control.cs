@@ -5519,10 +5519,12 @@ namespace System.Windows.Forms
 			if (CanSelect) {
 				Select (true, true);
 			}
-			InternalCapture = true;
-			OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
-				mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
-				0));
+			if (!ValidationFailed) {
+				InternalCapture = true;
+				OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
+					mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
+					0));
+			}
 		}
 
 		private void WmLButtonDblClick (ref Message m) {

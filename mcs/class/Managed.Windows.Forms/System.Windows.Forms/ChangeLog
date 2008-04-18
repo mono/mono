@@ -1,3 +1,10 @@
+2008-04-18  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* Control.cs: Do not fire MouseDown if validation of the control has 
+	failed.
+	* Form.cs: Validate the form before closing.
+	[Fixes bugs #330501 and #353310]
+
 2008-04-18  Andreia Gaita <avidigal@novell.com> 
 
 	* WebBrowserBase.cs: Added WndProc, DrawToBitmap,
