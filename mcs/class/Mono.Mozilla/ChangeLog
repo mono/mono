@@ -1,5 +1,16 @@
 2008-04-18  Andreia Gaita <avidigal@novell.com> 
 
+	* Mono.Mozilla.dll.sources, Mono.Mozilla2K5.csproj: Added new generated
+	  interfaces for "Save to Disk" support and page loading monitoring
+	* Mono.Mozilla/interfaces/nsICancelable.cs,
+	  Mono.Mozilla/interfaces/nsIWebBrowserPersist.cs: Interfaces for
+	  "Save to Disk" support
+	* Mono.Mozilla/interfaces/nsIWebProgress.cs,
+	  Mono.Mozilla/interfaces/nsIWebProgressListener.cs: Interfaces for
+	  page loading monitoring
+
+2008-04-18  Andreia Gaita <avidigal@novell.com> 
+
 	* build-csproj2k5: Fix line endings
 
 2008-04-16  Andreia Gaita <avidigal@novell.com> 

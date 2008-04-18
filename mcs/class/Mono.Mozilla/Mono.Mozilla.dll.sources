@@ -4,6 +4,7 @@ Mono.Mozilla/AsciiString.cs
 Mono.Mozilla/Base.cs
 Mono.Mozilla/Callback.cs
 Mono.Mozilla/DOM/EventListener.cs
+Mono.Mozilla/interfaces/nsICancelable.cs
 Mono.Mozilla/interfaces/nsIChannel.cs
 Mono.Mozilla/interfaces/nsIDOMEvent.cs
 Mono.Mozilla/interfaces/nsIDOMEventListener.cs
@@ -24,7 +25,10 @@ Mono.Mozilla/interfaces/nsIURIContentListener.cs
 Mono.Mozilla/interfaces/nsIWeakReference.cs
 Mono.Mozilla/interfaces/nsIWebBrowser.cs
 Mono.Mozilla/interfaces/nsIWebBrowserChrome.cs
+Mono.Mozilla/interfaces/nsIWebBrowserPersist.cs
 Mono.Mozilla/interfaces/nsIWebBrowserStream.cs
+Mono.Mozilla/interfaces/nsIWebProgress.cs
+Mono.Mozilla/interfaces/nsIWebProgressListener.cs
 Mono.Mozilla/UniString.cs
 Mono.Mozilla/WebBrowser.cs
 Mono.Mozilla/DOM/Attribute.cs
