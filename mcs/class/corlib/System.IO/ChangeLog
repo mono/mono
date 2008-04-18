@@ -1,3 +1,8 @@
+2008-04-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Path.cs: Change PathSeparatorChars from private to internal since
+	it's needed for IsolatedStorage.
+
 2008-04-17  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DirectoryInfo.cs: Added new internal ctor, which takes a bool that

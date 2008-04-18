@@ -69,7 +69,7 @@ namespace System.IO {
 		internal static readonly string DirectorySeparatorStr;
 		public static readonly char VolumeSeparatorChar;
 
-		private static readonly char[] PathSeparatorChars;
+		internal static readonly char[] PathSeparatorChars;
 		private static readonly bool dirEqualsVolume;
 
 		// class methods
