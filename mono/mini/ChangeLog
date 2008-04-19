@@ -1,3 +1,7 @@
+2008-04-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (amd64_patch): Make the check for (%rip) addressing more strict.
+
 2008-04-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* inssel.brg (OP_SWITCH): Use (gint64) instead of (long) to cast a large constant.
