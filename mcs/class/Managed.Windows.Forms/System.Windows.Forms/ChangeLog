@@ -1,5 +1,12 @@
 2008-04-19  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* XplatUIX11.cs: Implement limited support for WM_SYSCOMMAND. 
+	It's sent when the form gets moved, resized, closed.
+	* XplatUIStructs.cs: Add SystemCommands enum for WM_SYSCOMMAND.
+	[Fixes bug #359193 for X11]
+
+2008-04-19  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* Form.cs: Add a ValidateChildren for the 1.1 profile. Fixes 
 	the build.
 

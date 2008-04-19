@@ -4054,6 +4054,15 @@ namespace System.Windows.Forms {
 						#if DriverDebugExtra
 							Console.WriteLine("GetMessage(): Window {0:X} ConfigureNotify x={1} y={2} width={3} height={4}", hwnd.client_window.ToInt32(), xevent.ConfigureEvent.x, xevent.ConfigureEvent.y, xevent.ConfigureEvent.width, xevent.ConfigureEvent.height);
 						#endif
+
+						Form form = Control.FromHandle (hwnd.client_window) as Form;
+						if (form != null) {
+							if (hwnd.x != form.Bounds.X || hwnd.y != form.Bounds.Y)
+								SendMessage (form.Handle, Msg.WM_SYSCOMMAND, (IntPtr)SystemCommands.SC_MOVE, IntPtr.Zero);
+							else if (hwnd.width != form.Bounds.Width || hwnd.height != form.Bounds.Height)
+								SendMessage (form.Handle, Msg.WM_SYSCOMMAND, (IntPtr)SystemCommands.SC_SIZE, IntPtr.Zero);
+						}
+
 //						if ((hwnd.x != xevent.ConfigureEvent.x) || (hwnd.y != xevent.ConfigureEvent.y) || (hwnd.width != xevent.ConfigureEvent.width) || (hwnd.height != xevent.ConfigureEvent.height)) {
 							lock (hwnd.configure_lock) {
 								SendMessage(msg.hwnd, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
@@ -4272,6 +4281,7 @@ namespace System.Windows.Forms {
 
 					if  (xevent.ClientMessageEvent.message_type == WM_PROTOCOLS) {
 						if (xevent.ClientMessageEvent.ptr1 == WM_DELETE_WINDOW) {
+							SendMessage (msg.hwnd, Msg.WM_SYSCOMMAND, (IntPtr)SystemCommands.SC_CLOSE, IntPtr.Zero);
 							msg.message = Msg.WM_CLOSE;
 							return true;
 						}
