@@ -1878,6 +1878,23 @@ namespace System.Windows.Forms
 			int items_area_height = ((item_height + y_spacing) * rows);
 			return header_height + items_area_height + 10; // Add a small bottom margin
 		}
+
+		void CalculateDetailsGroupItemsCount ()
+		{
+			int items = 0;
+
+			for (int i = 0; i < groups.InternalCount; i++) {
+				ListViewGroup group = groups.GetInternalGroup (i);
+				int items_in_group = group.GetActualItemCount ();
+
+				if (items_in_group == 0)
+					continue;
+
+				group.starting_item = items;
+				group.current_item = 0; // Reset layout.
+				items += items_in_group;
+			}
+		}
 #endif
 
 		void LayoutHeader ()
@@ -1904,23 +1921,6 @@ namespace System.Windows.Forms
 				header_control.Width = x;
 				header_control.Height = columns.Count > 0 ? columns [0].Ht : Font.Height + 5;
 				header_control.Visible = true;
-			}
-		}
-
-		void CalculateDetailsGroupItemsCount ()
-		{
-			int items = 0;
-
-			for (int i = 0; i < groups.InternalCount; i++) {
-				ListViewGroup group = groups.GetInternalGroup (i);
-				int items_in_group = group.GetActualItemCount ();
-
-				if (items_in_group == 0)
-					continue;
-
-				group.starting_item = items;
-				group.current_item = 0; // Reset layout.
-				items += items_in_group;
 			}
 		}
 
