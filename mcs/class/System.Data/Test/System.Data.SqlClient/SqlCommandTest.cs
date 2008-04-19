@@ -238,5 +238,14 @@ namespace MonoTests.System.Data.SqlClient
 			cmd.CommandText = string.Empty;
 			Assert.AreEqual (string.Empty, cmd.CommandText, "#4");
 		}
+
+#if NET_2_0		
+		[Test] // bug #381100
+		public void ParameterCollectionTest ()
+		{
+			SqlCommand cmd = new SqlCommand();
+			cmd.Parameters.AddRange(new SqlParameter[] { });
+		}
+#endif		
 	}
 }

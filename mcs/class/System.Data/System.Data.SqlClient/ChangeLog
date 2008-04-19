@@ -1,3 +1,8 @@
+2008-04-19  Robert Jordan  <robertj@gmx.net>
+
+	* SqlParameterCollection.cs (AddRange(SqlParameter[])):
+	Fix endless recursion.
+
 2008-04-08  Marek Habersack  <mhabersack@novell.com>
 
 	* SqlConnection.cs: TCP port discovery via UDP port 1434 should

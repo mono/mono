@@ -442,7 +442,7 @@ namespace System.Data.SqlClient {
 
 		public void AddRange (SqlParameter[] values) {
 		
-			this.AddRange(values);	
+			this.AddRange((Array) values);	
 		}
 		
 		public void CopyTo (SqlParameter[] array, int index)

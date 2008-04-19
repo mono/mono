@@ -1,3 +1,7 @@
+2008-04-19  Robert Jordan  <robertj@gmx.net>
+
+	* SqlCommandTest.cs: Add test case for bug #381100.
+
 2008-03-03  Ankit Jain  <jankit@novell.com>
 
 	* SqlClientMetaDataCollectionNamesTest.cs: New.
