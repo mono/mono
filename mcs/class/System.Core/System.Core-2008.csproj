@@ -103,9 +103,7 @@
   <ItemGroup>
     <None Include="Assembly\ChangeLog" />
     <None Include="System.Collections.Generic\ChangeLog" />
-    <None Include="System.Linq.Expressions\ChangeLog" />
     <None Include="System.Linq\ChangeLog" />
-    <None Include="System.Runtime.CompilerServices\ChangeLog" />
     <None Include="System\ChangeLog" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

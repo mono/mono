@@ -46,7 +46,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="System.Collections.Generic\ChangeLog" />
-    <None Include="System.Linq.Expressions\ChangeLog" />
     <None Include="System.Linq\ChangeLog" />
     <None Include="System\ChangeLog" />
   </ItemGroup>
