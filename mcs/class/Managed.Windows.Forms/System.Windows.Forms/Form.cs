@@ -2597,13 +2597,8 @@ namespace System.Windows.Forms {
 					mdi_cancel = mdi_child.FireClosingEvents (CloseReason.MdiFormClosing, mdi_cancel);
 
 			bool validate_cancel = false;
-			if (!suppress_closing_events) {
-#if NET_2_0
+			if (!suppress_closing_events)
 				validate_cancel = !ValidateChildren ();
-#else
-				validate_cancel = !ValidateNestedControls (this, true);
-#endif
-			}
 
 			if (suppress_closing_events || 
 			    !RaiseCloseEvents (false, validate_cancel || mdi_cancel)) {

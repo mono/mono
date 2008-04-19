@@ -644,39 +644,26 @@ namespace System.Windows.Forms {
 			// do nothing here, only called if it is a Form
 		}
 
-
 #if NET_2_0
 		private bool ValidateNestedControls (Control c, ValidationConstraints constraints, bool recurse)
-
-#else
-		// Used by Form to validate its children on the 1.1 Profile
-		internal bool ValidateNestedControls (Control c, bool recurse)
-#endif
 		{
 			bool validate_result = true;
 
 			if (!c.CausesValidation)
 				validate_result = true;
-#if NET_2_0
 			else if (!ValidateThisControl (c, constraints))
 				validate_result = true;
-#endif
 			else if (!ValidateControl (c))
 				validate_result = false;
 
 			if (recurse)
-				foreach (Control control in c.Controls) {
-						if (!ValidateNestedControls (control, 
-#if NET_2_0
-									     constraints, 
-#endif
-									     recurse))
-							return false;
-				}
+				foreach (Control control in c.Controls)
+					if (!ValidateNestedControls (control, constraints, recurse))
+						return false;
 
 			return validate_result;
 		}
-#if NET_2_0
+
 		private bool ValidateThisControl (Control c, ValidationConstraints constraints)
 		{
 			if (constraints == ValidationConstraints.None)
