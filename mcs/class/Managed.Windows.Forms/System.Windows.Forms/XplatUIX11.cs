@@ -3981,7 +3981,7 @@ namespace System.Windows.Forms {
 					if (!hwnd.Enabled) {
 						goto ProcessNextMessage;
 					}
-					if (xevent.CrossingEvent.mode != NotifyMode.NotifyNormal) {
+					if (xevent.CrossingEvent.mode != NotifyMode.NotifyNormal && xevent.CrossingEvent.window != hwnd.client_window) {
 						goto ProcessNextMessage;
 					}
 					msg.message = Msg.WM_MOUSE_ENTER;
@@ -3989,6 +3989,15 @@ namespace System.Windows.Forms {
 					HoverState.Y = xevent.CrossingEvent.y;
 					HoverState.Timer.Enabled = true;
 					HoverState.Window = xevent.CrossingEvent.window;
+
+					// Win32 sends a WM_MOUSEMOVE after mouse enter
+					XEvent motionEvent = new XEvent ();
+					motionEvent.type = XEventName.MotionNotify;
+					motionEvent.MotionEvent.display = DisplayHandle;
+					motionEvent.MotionEvent.window = xevent.ButtonEvent.window;
+					motionEvent.MotionEvent.x = xevent.ButtonEvent.x;
+					motionEvent.MotionEvent.y = xevent.ButtonEvent.y;
+					hwnd.Queue.EnqueueLocked (motionEvent);
 					break;
 				}
 
@@ -4003,6 +4012,14 @@ namespace System.Windows.Forms {
 					if ((xevent.CrossingEvent.mode != NotifyMode.NotifyNormal) || (xevent.CrossingEvent.window != hwnd.client_window)) {
 						goto ProcessNextMessage;
 					}
+
+					// Reset the cursor explicitly on X11.
+					// X11 remembers the last set cursor for the window and in cases where 
+					// the control won't get a WM_SETCURSOR	X11 will restore the last 
+					// known cursor, which we don't want.
+					// 
+					SetCursor (hwnd.client_window, IntPtr.Zero);
+
 					msg.message=Msg.WM_MOUSELEAVE;
 					HoverState.Timer.Enabled = false;
 					HoverState.Window = IntPtr.Zero;

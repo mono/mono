@@ -1,5 +1,15 @@
 2008-04-19  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* XplatUIX11.cs: 
+	  - Send a mouse Enter message after say dragging the mouse with a 
+	  button down and then release it in another client.
+	  - Reset the cursor to prevent X11 from remembering it and setting it 
+	  before the control gets WM_SETCURSOR.
+	  - Qeueue a mouse move after a mouse enter like win32.
+	  [Fixes bug #323234]
+
+2008-04-19  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* XplatUIX11.cs: Implement limited support for WM_SYSCOMMAND. 
 	It's sent when the form gets moved, resized, closed.
 	* XplatUIStructs.cs: Add SystemCommands enum for WM_SYSCOMMAND.
