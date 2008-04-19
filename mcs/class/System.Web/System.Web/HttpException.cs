@@ -203,10 +203,12 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 				HtmlEncode (HttpRuntime.AppDomainAppVirtualPath));
 		}
 		
-		void WriteFileBottom (StringBuilder builder)
+		void WriteFileBottom (StringBuilder builder, bool showTrace)
 		{
 			builder.Append ("<hr style=\"color: silver\"/>");
 			builder.AppendFormat ("<strong>Version information: </strong> Mono Version: {0}; ASP.NET Version: {0}</body></html>\r\n<!--", Environment.Version);
+			if (!showTrace)
+				return;
 			
 			string trace, message;
 			bool haveTrace;
@@ -280,7 +282,7 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 
     &lt;/system.web&gt;
 &lt;/configuration&gt;</pre></td></tr></table>");
-			WriteFileBottom (builder);
+			WriteFileBottom (builder, false);
 			return builder.ToString ();
 		}
 		
@@ -314,7 +316,7 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 				WriteTextAsCode (builder, baseEx.ToString ());
 				builder.Append ("</td></tr>\r\n</table>\r\n");
 			}
-			WriteFileBottom (builder);
+			WriteFileBottom (builder, true);
 			
 			return builder.ToString ();
 		}
@@ -425,7 +427,7 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 						"}\r\n" +
 						"</script>\r\n");
 			
-			WriteFileBottom (builder);
+			WriteFileBottom (builder, true);
 			
 			return builder.ToString ();
 		}
