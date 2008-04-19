@@ -1776,6 +1776,34 @@ namespace System.Windows.Forms {
 		{
 			return base.ValidateChildren (validationConstraints);
 		}
+#else
+		private bool ValidateChildren ()
+		{
+			return ValidateChildren (this);
+		}
+
+		private bool ValidateChildren (Control c)
+		{
+			if (!ValidateControl (c))
+				return false;
+
+			foreach (Control child in c.Controls) {
+				if (!ValidateChildren (child))
+					return false;
+			}
+
+			return true;
+		}
+
+		private bool ValidateControl (Control c)
+		{
+			CancelEventArgs e = new CancelEventArgs ();
+			c.FireValidating (e);
+			if (e.Cancel)
+				return false;
+			c.FireValidated ();
+			return true;
+		}
 #endif
 		#endregion	// Public Instance Methods
 

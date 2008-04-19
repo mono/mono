@@ -1,5 +1,10 @@
 2008-04-19  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* Form.cs: Add a ValidateChildren for the 1.1 profile. Fixes 
+	the build.
+
+2008-04-19  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* ListView.cs: Move CalculateDetailsGroupItemsCount to the NET_2_0 
 	group. Fixes the 1.1 build.
 
