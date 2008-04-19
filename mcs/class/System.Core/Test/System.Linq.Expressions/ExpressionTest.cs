@@ -28,6 +28,7 @@
 
 using System;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -168,6 +169,17 @@ namespace MonoTests.System.Linq.Expressions {
 
 			method (42);
 			Assert.AreEqual (42, buffer);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ExpressionDelegateTarget ()
+		{
+			var p = Expression.Parameter (typeof (string), "str");
+			var identity = Expression.Lambda<Func<string, string>> (p, p).Compile ();
+
+			Assert.AreEqual (typeof (Func<string, string>), identity.GetType ());
+			Assert.AreEqual (typeof (ExecutionScope), identity.Target.GetType ());
 		}
 	}
 }
