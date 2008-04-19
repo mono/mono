@@ -1,3 +1,16 @@
+2008-04-19  Jonathan Chambers <joncham@gmail.com>
+
+	* mini-amd64.c (cpuid): Implement with MSVC intrinsic as inline
+	assembly is not allowed in MSVC 64-bit compiler. 
+	(mono_arch_cpu_init): Don't set floating point precision on MSVC build
+	as we get floating point exceptions everywhere.
+	
+	* exceptions-amd64.c (get_throw_trampoline): Push empty args on stack to
+	correctly align arguments for call to throw_exception.
+	(prepare_for_guard_pages): Cast to guint64 instead of unsigned long.
+	
+	Code contributed under MIT/X11 license.
+
 2008-04-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (amd64_patch): Make the check for (%rip) addressing more strict.
