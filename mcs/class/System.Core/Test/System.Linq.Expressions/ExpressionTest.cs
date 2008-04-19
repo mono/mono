@@ -173,7 +173,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ExpressionDelegateTarget ()
 		{
 			var p = Expression.Parameter (typeof (string), "str");
@@ -198,7 +197,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GlobalsInScope ()
 		{
 			var foo = new Foo { gazonk = "gazonk" };
