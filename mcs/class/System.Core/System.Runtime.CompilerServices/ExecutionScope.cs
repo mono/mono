@@ -38,8 +38,9 @@ namespace System.Runtime.CompilerServices {
 		public object [] Locals;
 		public ExecutionScope Parent;
 
-		internal ExecutionScope ()
+		internal ExecutionScope (object [] globals)
 		{
+			this.Globals = globals;
 		}
 
 		public Delegate CreateDelegate (int indexLambda, object [] locals)
