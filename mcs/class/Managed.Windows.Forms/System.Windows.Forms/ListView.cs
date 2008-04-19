@@ -579,7 +579,7 @@ namespace System.Windows.Forms
 				if (focused_item_index == -1)
 					return null;
 
-				return items [focused_item_index];
+				return GetItemAtDisplayIndex (focused_item_index);
 			}
 #if NET_2_0
 			set {
@@ -587,7 +587,7 @@ namespace System.Windows.Forms
 						!IsHandleCreated)
 					return;
 
-				SetFocusedItem (value.Index);
+				SetFocusedItem (value.DisplayIndex);
 			}
 #endif
 		}
@@ -2059,14 +2059,14 @@ namespace System.Windows.Forms
 			keysearch_text += (char)ke.KeyCode;
 			keysearch_tickcnt = current_tickcnt;
 
-			int start = FocusedItem == null ? 0 : FocusedItem.Index;
+			int start = FocusedItem == null ? 0 : FocusedItem.DisplayIndex;
 			int i = start;
 			while (true) {
-				if (CultureInfo.CurrentCulture.CompareInfo.IsPrefix (Items[i].Text, keysearch_text,
+				if (CultureInfo.CurrentCulture.CompareInfo.IsPrefix (GetItemAtDisplayIndex (i).Text, keysearch_text,
 					CompareOptions.IgnoreCase)) {
 					SetFocusedItem (i);
-					items [i].Selected = true;
-					EnsureVisible (i);
+					GetItemAtDisplayIndex (i).Selected = true;
+					EnsureVisible (GetItemIndex (i));
 					break;
 				}
 				i = (i + 1 < Items.Count) ? i+1 : 0;
@@ -2084,10 +2084,10 @@ namespace System.Windows.Forms
 			if (View == View.Details) {
 				switch (key) {
 				case Keys.Up:
-					result = FocusedItem.Index - 1;
+					result = FocusedItem.DisplayIndex - 1;
 					break;
 				case Keys.Down:
-					result = FocusedItem.Index + 1;
+					result = FocusedItem.DisplayIndex + 1;
 					if (result == items.Count)
 						result = -1;
 					break;
@@ -2096,10 +2096,10 @@ namespace System.Windows.Forms
 					Rectangle item_rect = new Rectangle (GetItemLocation (last_index), ItemSize);
 					if (item_rect.Bottom > item_control.ClientRectangle.Bottom)
 						last_index--;
-					if (FocusedItem.Index == last_index) {
-						if (FocusedItem.Index < Items.Count - 1) {
+					if (FocusedItem.DisplayIndex == last_index) {
+						if (FocusedItem.DisplayIndex < Items.Count - 1) {
 							int page_size = item_control.Height / ItemSize.Height - 1;
-							result = FocusedItem.Index + page_size - 1;
+							result = FocusedItem.DisplayIndex + page_size - 1;
 							if (result >= Items.Count)
 								result = Items.Count - 1;
 						}
@@ -2110,7 +2110,7 @@ namespace System.Windows.Forms
 					int first_index = FirstVisibleIndex;
 					if (GetItemLocation (first_index).Y < 0)
 						first_index++;
-					if (FocusedItem.Index == first_index) {
+					if (FocusedItem.DisplayIndex == first_index) {
 						if (first_index > 0) {
 							int page_size = item_control.Height / ItemSize.Height - 1;
 							result = first_index - page_size + 1;
@@ -2124,15 +2124,18 @@ namespace System.Windows.Forms
 				return result;
 			}
 
-			ItemMatrixLocation item_matrix_location = items_matrix_location [FocusedItem.Index];
+			ItemMatrixLocation item_matrix_location = items_matrix_location [FocusedItem.DisplayIndex];
 			int row = item_matrix_location.Row;
 			int col = item_matrix_location.Col;
+
+			int adjusted_index = -1;
 
 			switch (key) {
 			case Keys.Left:
 				if (col == 0)
 					return -1;
-				return item_index_matrix [row, col - 1];
+				adjusted_index = item_index_matrix [row, col - 1];
+				break;
 
 			case Keys.Right:
 				if (col == (cols - 1))
@@ -2142,7 +2145,8 @@ namespace System.Windows.Forms
 					if (row < 0)
 						return -1;
 				}
-				return item_index_matrix [row, col + 1];
+				adjusted_index = item_index_matrix [row, col + 1];
+				break;
 
 			case Keys.Up:
 				if (row == 0)
@@ -2152,7 +2156,8 @@ namespace System.Windows.Forms
 					if (col < 0)
 						return -1;
 				}
-				return item_index_matrix [row - 1, col];
+				adjusted_index = item_index_matrix [row - 1, col];
+				break;
 
 			case Keys.Down:
 				if (row == (rows - 1) || row == Items.Count - 1)
@@ -2162,11 +2167,14 @@ namespace System.Windows.Forms
 					if (col < 0)
 						return -1;
 				}
-				return item_index_matrix [row + 1, col];
+				adjusted_index = item_index_matrix [row + 1, col];
+				break;
 
 			default:
 				return -1;
 			}
+
+			return items [adjusted_index].DisplayIndex;
 		}
 
 		ListViewItem selection_start;
@@ -2191,11 +2199,11 @@ namespace System.Windows.Forms
 		{
 			bool shift_pressed = (XplatUI.State.ModifierKeys & Keys.Shift) != 0;
 			bool ctrl_pressed = (XplatUI.State.ModifierKeys & Keys.Control) != 0;
-			ListViewItem item = items [index];
+			ListViewItem item = GetItemAtDisplayIndex (index);
 
 			if (shift_pressed && selection_start != null) {
 				ArrayList list = new ArrayList ();
-				int start_index = selection_start.Index;
+				int start_index = selection_start.DisplayIndex;
 				int start = Math.Min (start_index, index);
 				int end = Math.Max (start_index, index);
 				if (View == View.Details) {
@@ -2214,7 +2222,7 @@ namespace System.Windows.Forms
 
 						if (item_matrix_loc.Row >= top && item_matrix_loc.Row <= bottom &&
 								item_matrix_loc.Col >= left && item_matrix_loc.Col <= right)
-							list.Add (items [i]);
+							list.Add (GetItemAtDisplayIndex (i));
 					}
 				}
 				SelectItems (list);
@@ -2312,18 +2320,18 @@ namespace System.Windows.Forms
 			}
 		}
 
-		void SelectIndex (int index)
+		void SelectIndex (int display_index)
 		{
-			if (index == -1)
+			if (display_index == -1)
 				return;
 
 			if (MultiSelect)
-				UpdateMultiSelection (index, true);
-			else if (!items [index].Selected)
-				items [index].Selected = true;
+				UpdateMultiSelection (display_index, true);
+			else if (!GetItemAtDisplayIndex (display_index).Selected)
+				GetItemAtDisplayIndex (display_index).Selected = true;
 
-			SetFocusedItem (index);
-			EnsureVisible (index);
+			SetFocusedItem (display_index);
+			EnsureVisible (GetItemIndex (display_index)); // Index in Items collection, not display index
 		}
 
 		private void ListView_KeyDown (object sender, KeyEventArgs ke)
@@ -2572,12 +2580,12 @@ namespace System.Windows.Forms
 				if (clicked_item != null) {
 					bool changed = !clicked_item.Selected;
 					if (me.Button == MouseButtons.Left || (XplatUI.State.ModifierKeys == Keys.None && changed))
-						owner.SetFocusedItem (clicked_item.Index);
+						owner.SetFocusedItem (clicked_item.DisplayIndex);
 
 					if (owner.MultiSelect) {
 						bool reselect = (!owner.LabelEdit || changed);
 						if (me.Button == MouseButtons.Left || (XplatUI.State.ModifierKeys == Keys.None && changed))
-							owner.UpdateMultiSelection (clicked_item.Index, reselect);
+							owner.UpdateMultiSelection (clicked_item.DisplayIndex, reselect);
 					} else {
 						clicked_item.Selected = true;
 					}
@@ -2724,7 +2732,7 @@ namespace System.Windows.Forms
 					else
 						item.Selected = true;
 					
-					owner.SetFocusedItem (item.Index);
+					owner.SetFocusedItem (item.DisplayIndex);
 					Select (); // Make sure we have the focus, since MouseHover doesn't give it to us
 				}
 
@@ -3208,14 +3216,14 @@ namespace System.Windows.Forms
 			CalculateListView (alignment);
 		}
 		
-		private void SetFocusedItem (int index)
+		private void SetFocusedItem (int display_index)
 		{
-			if (index != -1)
-				items [index].Focused = true;
+			if (display_index != -1)
+				GetItemAtDisplayIndex (display_index).Focused = true;
 			else if (focused_item_index != -1 && focused_item_index < items.Count) // Previous focused item
-				items [focused_item_index].Focused = false;
+				GetItemAtDisplayIndex (focused_item_index).Focused = false;
 
-			focused_item_index = index;
+			focused_item_index = display_index;
 		}
 
 		private void HorizontalScroller (object sender, EventArgs e)
@@ -5258,8 +5266,9 @@ namespace System.Windows.Forms
 				bool selection_changed = false;
 				if (is_main_collection && owner != null) {
 
-					if (item.Focused && index + 1 == Count) // Last item
-						owner.SetFocusedItem (index == 0 ? -1 : index - 1);
+					int display_index = item.DisplayIndex;
+					if (item.Focused && display_index + 1 == Count) // Last item
+						owner.SetFocusedItem (display_index == 0 ? -1 : display_index - 1);
 
 					selection_changed = owner.SelectedIndices.Contains (index);
 					owner.item_control.CancelEdit (item);

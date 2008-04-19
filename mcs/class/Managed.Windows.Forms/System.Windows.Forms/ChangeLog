@@ -1,3 +1,10 @@
+2008-04-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: Focused item information is now stored as a display
+	index, and display indexes are used all over the place for selection,
+	instead of ListViewItem.Index values, which doesn't give us enough
+	information to modify the selection in groups mode, and was broken.
+
 2008-04-18  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* Control.cs: Do not fire MouseDown if validation of the control has 
