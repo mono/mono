@@ -179,6 +179,7 @@ namespace MonoTests.System.Linq.Expressions {
 			var identity = Expression.Lambda<Func<string, string>> (p, p).Compile ();
 
 			Assert.AreEqual (typeof (Func<string, string>), identity.GetType ());
+			Assert.IsNotNull (identity.Target);
 			Assert.AreEqual (typeof (ExecutionScope), identity.Target.GetType ());
 		}
 	}
