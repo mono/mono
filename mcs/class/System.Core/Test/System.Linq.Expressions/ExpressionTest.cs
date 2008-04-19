@@ -216,14 +216,16 @@ namespace MonoTests.System.Linq.Expressions {
 
 			Assert.IsNotNull (scope);
 
-			Assert.IsNotNull (scope.Globals);
+			var globals = scope.Globals;
 
-			var globals = new List<object> (from IStrongBox box in scope.Globals select box.Value);
+			Assert.IsNotNull (globals);
 
-			Assert.AreEqual (2, globals.Count);
+			Assert.AreEqual (2, globals.Length);
+			Assert.AreEqual (typeof (StrongBox<Foo>), globals [0].GetType ());
+			Assert.AreEqual (typeof (StrongBox<Bar>), globals [1].GetType ());
 
-			Assert.IsTrue (globals.Contains (foo));
-			Assert.IsTrue (globals.Contains (bar));
+			Assert.AreEqual (foo, ((StrongBox<Foo>) globals [0]).Value);
+			Assert.AreEqual (bar, ((StrongBox<Bar>) globals [1]).Value);
 
 			Assert.AreEqual ("gazonk42", del ());
 		}
