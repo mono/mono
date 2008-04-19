@@ -1907,6 +1907,23 @@ namespace System.Windows.Forms
 			}
 		}
 
+		void CalculateDetailsGroupItemsCount ()
+		{
+			int items = 0;
+
+			for (int i = 0; i < groups.InternalCount; i++) {
+				ListViewGroup group = groups.GetInternalGroup (i);
+				int items_in_group = group.GetActualItemCount ();
+
+				if (items_in_group == 0)
+					continue;
+
+				group.starting_item = items;
+				group.current_item = 0; // Reset layout.
+				items += items_in_group;
+			}
+		}
+
 		void LayoutDetails ()
 		{
 			LayoutHeader ();
@@ -1927,20 +1944,15 @@ namespace System.Windows.Forms
 			int y = header_control.Height;
 #if NET_2_0
 			bool using_groups = show_groups && groups.Count > 0 && view != View.List;
-			if (using_groups) 
+			if (using_groups) {
+				CalculateDetailsGroupItemsCount ();
 				CalculateGroupsLayout (ItemSize, 2, y);
+			}
 #endif
 
 			for (int i = 0; i < items.Count; i++) {
 				ListViewItem item = items [i];
-#if NET_2_0
-				if (!virtual_mode) // Virtual mode sets Layout until draw time
-#endif
-				{
-					item.Layout ();
-					item.DisplayIndex = i;
-				}
-
+				int display_index;
 #if NET_2_0
 				if (using_groups) {
 					ListViewGroup group = item.Group;
@@ -1949,17 +1961,28 @@ namespace System.Windows.Forms
 
 					int current_item = group.current_item++;
 					Point group_items_loc = group.items_area_location;
+					display_index = group.starting_item + current_item;
 
 					y = current_item * (item_height + 2) + group_items_loc.Y;
-					SetItemLocation (i, 0, y, 0, 0);
+					SetItemLocation (display_index, 0, y, 0, 0);
+					SetItemAtDisplayIndex (display_index, i);
 					item.SetPosition (new Point (0, y));
 				} else
 #endif
 				{
+					display_index = i;
 					SetItemLocation (i, 0, y, 0, 0);
 					item.SetPosition (new Point (0, y));
 					y += item_height;
 				}
+#if NET_2_0
+				if (!virtual_mode) // Virtual mode sets Layout until draw time
+#endif
+				{
+					item.Layout ();
+					item.DisplayIndex = display_index;
+				}
+
 			}
 
 			// some space for bottom gridline
@@ -2208,7 +2231,7 @@ namespace System.Windows.Forms
 				int end = Math.Max (start_index, index);
 				if (View == View.Details) {
 					for (int i = start; i <= end; i++)
-						list.Add (items [i]);
+						list.Add (GetItemAtDisplayIndex (i));
 				} else {
 					ItemMatrixLocation start_item_matrix_location = items_matrix_location [start];
 					ItemMatrixLocation end_item_matrix_location = items_matrix_location [end];
@@ -2454,7 +2477,7 @@ namespace System.Windows.Forms
 
 			bool BoxIntersectsText (int index)
 			{
-				Rectangle r = owner.Items [index].TextBounds;
+				Rectangle r = owner.GetItemAtDisplayIndex (index).TextBounds;
 				return BoxSelectRectangle.IntersectsWith (r);
 			}
 

@@ -1,5 +1,11 @@
 2008-04-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListView.cs: Use display indexes for selection in Details view, as
+	well as do the proper layout based on display indexes for that view
+	too.
+
+2008-04-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListView.cs: Focused item information is now stored as a display
 	index, and display indexes are used all over the place for selection,
 	instead of ListViewItem.Index values, which doesn't give us enough
