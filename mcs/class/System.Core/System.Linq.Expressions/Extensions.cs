@@ -29,6 +29,7 @@
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 
 namespace System.Linq.Expressions {
 
@@ -77,6 +78,11 @@ namespace System.Linq.Expressions {
 			default:
 				throw new ArgumentException ();
 			}
+		}
+
+		public static Type MakeStrongBoxType (this Type self)
+		{
+			return typeof (StrongBox<>).MakeGenericType (self);
 		}
 	}
 }

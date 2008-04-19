@@ -184,7 +184,7 @@ namespace System.Linq.Expressions {
 			ig.Emit (OpCodes.Ldc_I4, index);
 			ig.Emit (OpCodes.Ldelem, typeof (object));
 
-			var type = typeof (StrongBox<>).MakeGenericType (global.GetType ());
+			var type = global.GetType ().MakeStrongBoxType ();
 
 			ig.Emit (OpCodes.Isinst, type);
 			ig.Emit (OpCodes.Ldfld, type.GetField ("Value"));
@@ -223,10 +223,10 @@ namespace System.Linq.Expressions {
 			globals.Add (CreateStrongBox (value));
 		}
 
-		static IStrongBox CreateStrongBox (object value)
+		static object CreateStrongBox (object value)
 		{
-			return (IStrongBox) Activator.CreateInstance (
-				typeof (StrongBox<>).MakeGenericType (value.GetType ()), value);
+			return Activator.CreateInstance (
+				value.GetType ().MakeStrongBoxType (), value);
 		}
 	}
 
