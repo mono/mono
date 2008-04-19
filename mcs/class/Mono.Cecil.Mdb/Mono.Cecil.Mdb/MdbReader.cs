@@ -47,16 +47,7 @@ namespace Mono.Cecil.Mdb {
 			m_scopes = new Hashtable ();
 		}
 
-		Hashtable GetInstructions (MethodBody body)
-		{
-			Hashtable instructions = new Hashtable (body.Instructions.Count);
-			foreach (Instruction i in body.Instructions)
-				instructions.Add (i.Offset, i);
-
-			return instructions;
-		}
-
-		Instruction GetInstruction (MethodBody body, Hashtable instructions, int offset)
+		Instruction GetInstruction (MethodBody body, IDictionary instructions, int offset)
 		{
 			Instruction instr = (Instruction) instructions [offset];
 			if (instr != null)
@@ -65,13 +56,12 @@ namespace Mono.Cecil.Mdb {
 			return body.Instructions.Outside;
 		}
 
-		public void Read (MethodBody body)
+		public void Read (MethodBody body, IDictionary instructions)
 		{
 			MethodEntry entry = m_symFile.GetMethodByToken ((int) body.Method.MetadataToken.ToUInt ());
 			if (entry == null)
 				return;
 
-			Hashtable instructions = GetInstructions(body);
 			ReadScopes (entry, body, instructions);
 			ReadLineNumbers (entry, instructions);
 			ReadLocalVariables (entry, body);
@@ -90,7 +80,7 @@ namespace Mono.Cecil.Mdb {
 			}
 		}
 
-		void ReadLineNumbers (MethodEntry entry, Hashtable instructions)
+		void ReadLineNumbers (MethodEntry entry, IDictionary instructions)
 		{
 			foreach (LineNumberEntry line in entry.LineNumbers) {
 				Instruction instr = instructions [line.Offset] as Instruction;
@@ -116,7 +106,7 @@ namespace Mono.Cecil.Mdb {
 			return doc;
 		}
 
-		void ReadScopes (MethodEntry entry, MethodBody body, Hashtable instructions)
+		void ReadScopes (MethodEntry entry, MethodBody body, IDictionary instructions)
 		{
 			foreach (LexicalBlockEntry scope in entry.LexicalBlocks) {
 				Scope s = new Scope ();

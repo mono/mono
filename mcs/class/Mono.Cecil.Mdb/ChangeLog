@@ -1,3 +1,9 @@
+2008-04-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Mono.Cecil.Mdb/MdbReader.cs: Update wrt interface change (i.e. 
+	Read now provide a Dictionary to reuse the existing Hashtable 
+	between	offsets and instructions).
+
 2008-04-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Mono.Cecil.Mdb/MdbReader.cs:
