@@ -26,12 +26,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Mono.Cecil.Cil {
+using System;
+using System.Collections;
 
-	using System;
+namespace Mono.Cecil.Cil {
 
 	public interface ISymbolReader : IDisposable {
 
-		void Read (MethodBody body);
+		void Read (MethodBody body, IDictionary instructions);
 	}
 }

@@ -1,3 +1,12 @@
+2008-04-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Mono.Cecil.Cil/CodeReader.cs:
+	* Mono.Cecil.Cil/ISymbolReader.cs:
+		Move reading of debugging symbols where it's possible to
+		reuse the existing Hashtable (offset, Instruction) in 
+		the debugging libraries. Change interface to allow 
+		passing the Hashtable.
+
 2008-04-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Mono.Cecil.csproj

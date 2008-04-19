@@ -77,9 +77,6 @@ namespace Mono.Cecil.Cil {
 					ReadSection (methBody, br);
 				break;
 			}
-
-			if (m_reflectReader.SymbolReader != null)
-				m_reflectReader.SymbolReader.Read (methBody);
 		}
 
 		public static uint GetRid (int token)
@@ -239,6 +236,9 @@ namespace Mono.Cecil.Cil {
 					break;
 				}
 			}
+
+			if (m_reflectReader.SymbolReader != null)
+				m_reflectReader.SymbolReader.Read (body, m_instructions);
 		}
 
 		Instruction GetInstruction (MethodBody body, int offset)
