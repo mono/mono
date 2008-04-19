@@ -27,6 +27,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Linq;
@@ -181,6 +182,50 @@ namespace MonoTests.System.Linq.Expressions {
 			Assert.AreEqual (typeof (Func<string, string>), identity.GetType ());
 			Assert.IsNotNull (identity.Target);
 			Assert.AreEqual (typeof (ExecutionScope), identity.Target.GetType ());
+		}
+
+		class Foo {
+			public string gazonk;
+		}
+
+		struct Bar {
+			public int baz;
+
+			public override string ToString ()
+			{
+				return baz.ToString ();
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void GlobalsInScope ()
+		{
+			var foo = new Foo { gazonk = "gazonk" };
+			var bar = new Bar { baz = 42 };
+
+			var l = Expression.Lambda<Func<string>> (
+				Expression.Call (
+					typeof (string).GetMethod ("Concat", new [] { typeof (string), typeof (string) }),
+					Expression.Field (Expression.Constant (foo), typeof (Foo).GetField ("gazonk")),
+					Expression.Call (Expression.Constant (bar), typeof (Bar).GetMethod ("ToString"))));
+
+			var del = l.Compile ();
+
+			var scope = del.Target as ExecutionScope;
+
+			Assert.IsNotNull (scope);
+
+			Assert.IsNotNull (scope.Globals);
+
+			var globals = new List<object> (from IStrongBox box in scope.Globals select box.Value);
+
+			Assert.AreEqual (2, globals.Count);
+
+			Assert.IsTrue (globals.Contains (foo));
+			Assert.IsTrue (globals.Contains (bar));
+
+			Assert.AreEqual ("gazonk42", del ());
 		}
 	}
 }
