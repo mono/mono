@@ -1,3 +1,7 @@
+2008-04-19  Jb Evain  <jbevain@novell.com>
+
+	* ExpressionVisitor.cs (Visit): don't die because of Power.
+
 2008-04-09  Jb Evain  <jbevain@novell.com>
 
 	* Expression.cs: check for illegal booleab unary expressions.

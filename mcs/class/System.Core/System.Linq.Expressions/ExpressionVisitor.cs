@@ -62,6 +62,7 @@ namespace System.Linq.Expressions {
 			case ExpressionType.MultiplyChecked:
 			case ExpressionType.Divide:
 			case ExpressionType.Modulo:
+			case ExpressionType.Power:
 			case ExpressionType.And:
 			case ExpressionType.AndAlso:
 			case ExpressionType.Or:
