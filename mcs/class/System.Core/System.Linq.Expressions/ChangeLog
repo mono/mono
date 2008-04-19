@@ -1,5 +1,12 @@
 2008-04-19  Jb Evain  <jbevain@novell.com>
 
+	* EmitContext.cs: infrastructure work to attach a compiled
+	lambda expression to an execution scope, and to detect and store
+	external globals in the scope.
+	* ConstantExpression.cs: load globals from the scope.
+
+2008-04-19  Jb Evain  <jbevain@novell.com>
+
 	* ExpressionVisitor.cs (Visit): don't die because of Power.
 
 2008-04-09  Jb Evain  <jbevain@novell.com>

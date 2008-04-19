@@ -136,7 +136,8 @@ namespace System.Linq.Expressions {
 				return;
 
 			case TypeCode.Object:
-				break;
+				ec.EmitReadGlobal (value);
+				return;
 			}
 
 			throw new NotImplementedException (String.Format ("No support for constants of type {0} yet", Type));

@@ -28,11 +28,13 @@
 //
 
 using System;
+using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 
 namespace System.Linq.Expressions {
 
@@ -42,14 +44,27 @@ namespace System.Linq.Expressions {
 		protected Type [] param_types;
 		protected Type return_type;
 
+		protected Dictionary<object, int> indexes;
+
 		public ILGenerator ig;
 
 		protected EmitContext (LambdaExpression lambda)
 		{
 			this.owner = lambda;
 
-			param_types = owner.Parameters.Select (p => p.Type).ToArray ();
+			param_types = CreateParameterTypes (owner.Parameters);
 			return_type = owner.GetReturnType ();
+		}
+
+		static Type [] CreateParameterTypes (ReadOnlyCollection<ParameterExpression> parameters)
+		{
+			var types = new Type [parameters.Count + 1];
+			types [0] = typeof (ExecutionScope);
+
+			for (int i = 0; i < parameters.Count; i++)
+				types [i + 1] = parameters [i].Type;
+
+			return types;
 		}
 
 		public static EmitContext Create (LambdaExpression lambda)
@@ -67,7 +82,7 @@ namespace System.Linq.Expressions {
 			if (position == -1)
 				throw new InvalidOperationException ("Parameter not in scope");
 
-			return position;
+			return position + 1; // + 1 because 0 is the ExecutionScope
 		}
 
 		public abstract Delegate CreateDelegate ();
@@ -150,11 +165,75 @@ namespace System.Linq.Expressions {
 
 			ig.Emit (OpCodes.Isinst, candidate);
 		}
+
+		public void EmitScope ()
+		{
+			ig.Emit (OpCodes.Ldarg_0);
+		}
+
+		public void EmitReadGlobal (object global)
+		{
+			EmitScope ();
+
+			ig.Emit (OpCodes.Ldfld, typeof (ExecutionScope).GetField ("Globals"));
+
+			int index;
+			if (!indexes.TryGetValue (global, out index))
+				throw new InvalidOperationException ();
+
+			ig.Emit (OpCodes.Ldc_I4, index);
+			ig.Emit (OpCodes.Ldelem, typeof (object));
+
+			var type = typeof (StrongBox<>).MakeGenericType (global.GetType ());
+
+			ig.Emit (OpCodes.Isinst, type);
+			ig.Emit (OpCodes.Ldfld, type.GetField ("Value"));
+		}
+	}
+
+	class GlobalCollector : ExpressionVisitor {
+
+		List<object> globals = new List<object> ();
+		Dictionary<object, int> indexes = new Dictionary<object,int> ();
+
+		public List<object> Globals {
+			get { return globals; }
+		}
+
+		public Dictionary<object, int> Indexes {
+			get { return indexes; }
+		}
+
+		public GlobalCollector (Expression expression)
+		{
+			Visit (expression);
+		}
+
+		protected override void VisitConstant (ConstantExpression constant)
+		{
+			if (constant.Value == null)
+				return;
+
+			var value = constant.Value;
+
+			if (Type.GetTypeCode (value.GetType ()) != TypeCode.Object)
+				return;
+
+			indexes.Add (value, globals.Count);
+			globals.Add (CreateStrongBox (value));
+		}
+
+		static IStrongBox CreateStrongBox (object value)
+		{
+			return (IStrongBox) Activator.CreateInstance (
+				typeof (StrongBox<>).MakeGenericType (value.GetType ()), value);
+		}
 	}
 
 	class DynamicEmitContext : EmitContext {
 
 		DynamicMethod method;
+		List<object> globals;
 
 		static object mlock = new object ();
 		static int method_count;
@@ -168,15 +247,20 @@ namespace System.Linq.Expressions {
 		{
 			// FIXME: Need to force this to be verifiable, see:
 			// https://bugzilla.novell.com/show_bug.cgi?id=355005
-			method = new DynamicMethod (GenerateName (), return_type, param_types, typeof (EmitContext), true);
+			method = new DynamicMethod (GenerateName (), return_type, param_types, typeof (ExecutionScope), true);
 			ig = method.GetILGenerator ();
+
+			var collector = new GlobalCollector (lambda);
+
+			globals = collector.Globals;
+			indexes = collector.Indexes;
 
 			owner.Emit (this);
 		}
 
 		public override Delegate CreateDelegate ()
 		{
-			return method.CreateDelegate (owner.Type);
+			return method.CreateDelegate (owner.Type, new ExecutionScope (globals.ToArray ()));
 		}
 
 		static string GenerateName ()
@@ -188,16 +272,12 @@ namespace System.Linq.Expressions {
 	}
 
 #if !NET_2_1
-	class DebugEmitContext : EmitContext {
-
-		DynamicEmitContext dynamic_context;
+	class DebugEmitContext : DynamicEmitContext {
 
 		public DebugEmitContext (LambdaExpression lambda)
 			: base (lambda)
 		{
-			dynamic_context = new DynamicEmitContext (lambda);
-
-			var name = dynamic_context.Method.Name;
+			var name = Method.Name;
 			var file_name = name + ".dll";
 
 			var assembly = AppDomain.CurrentDomain.DefineDynamicAssembly (
@@ -212,11 +292,6 @@ namespace System.Linq.Expressions {
 
 			type.CreateType ();
 			assembly.Save (file_name);
-		}
-
-		public override Delegate CreateDelegate ()
-		{
-			return dynamic_context.CreateDelegate ();
 		}
 	}
 #endif
