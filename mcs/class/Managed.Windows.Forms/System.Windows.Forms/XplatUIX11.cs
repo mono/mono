@@ -4072,24 +4072,31 @@ namespace System.Windows.Forms {
 							Console.WriteLine("GetMessage(): Window {0:X} ConfigureNotify x={1} y={2} width={3} height={4}", hwnd.client_window.ToInt32(), xevent.ConfigureEvent.x, xevent.ConfigureEvent.y, xevent.ConfigureEvent.width, xevent.ConfigureEvent.height);
 						#endif
 
-						Form form = Control.FromHandle (hwnd.client_window) as Form;
-						if (form != null) {
-							if (hwnd.x != form.Bounds.X || hwnd.y != form.Bounds.Y)
-								SendMessage (form.Handle, Msg.WM_SYSCOMMAND, (IntPtr)SystemCommands.SC_MOVE, IntPtr.Zero);
-							else if (hwnd.width != form.Bounds.Width || hwnd.height != form.Bounds.Height)
-								SendMessage (form.Handle, Msg.WM_SYSCOMMAND, (IntPtr)SystemCommands.SC_SIZE, IntPtr.Zero);
-						}
-
-//						if ((hwnd.x != xevent.ConfigureEvent.x) || (hwnd.y != xevent.ConfigureEvent.y) || (hwnd.width != xevent.ConfigureEvent.width) || (hwnd.height != xevent.ConfigureEvent.height)) {
-							lock (hwnd.configure_lock) {
-								SendMessage(msg.hwnd, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
-								hwnd.configure_pending = false;
+						lock (hwnd.configure_lock) {
+							Form form = Control.FromHandle (hwnd.client_window) as Form;
+							bool sizedOrMoved = false;;
+							if (form != null) {
+								if (hwnd.x != form.Bounds.X || hwnd.y != form.Bounds.Y) {
+									SendMessage (form.Handle, Msg.WM_SYSCOMMAND, (IntPtr)SystemCommands.SC_MOVE, IntPtr.Zero);
+									sizedOrMoved = true;
+								} else if (hwnd.width != form.Bounds.Width || hwnd.height != form.Bounds.Height) {
+									SendMessage (form.Handle, Msg.WM_SYSCOMMAND, (IntPtr)SystemCommands.SC_SIZE, IntPtr.Zero);
+									sizedOrMoved = true;
+								}
+								if (sizedOrMoved)
+									SendMessage (form.Handle, Msg.WM_ENTERSIZEMOVE, IntPtr.Zero, IntPtr.Zero);
 							}
-
+	
+							SendMessage(msg.hwnd, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
+							hwnd.configure_pending = false;
+	
 							// We need to adjust our client window to track the resize of whole_window
 							if (hwnd.whole_window != hwnd.client_window)
 								PerformNCCalc(hwnd);
-//						}
+	
+							if (sizedOrMoved)
+								SendMessage (form.Handle, Msg.WM_EXITSIZEMOVE, IntPtr.Zero, IntPtr.Zero);
+						}
 					}
 					goto ProcessNextMessage;
 				}
