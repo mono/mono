@@ -48,6 +48,12 @@ namespace MonoTests.System.Linq.Expressions {
 			public Gazonk Gazoo { get; set; }
 
 			public string Gruik { get; set; }
+
+			public Foo ()
+			{
+				Gazoo = new Gazonk ();
+				Gaz = new Gazonk ();
+			}
 		}
 
 		public class Gazonk {
@@ -130,6 +136,27 @@ namespace MonoTests.System.Linq.Expressions {
 
 			Assert.AreEqual (MemberBindingType.MemberBinding, mb.BindingType);
 			Assert.AreEqual ("Gazoo = {Tzap = \"tzap\"}", mb.ToString ());
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void CompiledMemberBinding ()
+		{
+			var getfoo = Expression.Lambda<Func<Foo>> (
+				Expression.MemberInit (
+					Expression.New (typeof (Foo)),
+					Expression.MemberBind (
+						typeof (Foo).GetProperty ("Gazoo"),
+						Expression.Bind (typeof (Gazonk).GetField ("Tzap"),
+							"tzap".ToConstant ()),
+						Expression.Bind (typeof (Gazonk).GetField ("Klang"),
+							42.ToConstant ())))).Compile ();
+
+			var foo = getfoo ();
+
+			Assert.IsNotNull (foo);
+			Assert.AreEqual ("tzap", foo.Gazoo.Tzap);
+			Assert.AreEqual (42, foo.Gazoo.Klang);
 		}
 	}
 }
