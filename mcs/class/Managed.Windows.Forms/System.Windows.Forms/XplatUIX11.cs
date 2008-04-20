@@ -996,7 +996,9 @@ namespace System.Windows.Forms {
 				   is ignored by metacity. */
 				functions |= MotifFunctions.Move | MotifFunctions.Resize | MotifFunctions.Minimize | MotifFunctions.Maximize;
 			} else if (form != null && form.FormBorderStyle == FormBorderStyle.None) {
-				// No functions nor decorations whatsoever.
+				functions |= MotifFunctions.Maximize;
+				functions |= MotifFunctions.Minimize;
+				functions |= MotifFunctions.Close;
 			} else {
 				if (StyleSet (cp.Style, WindowStyles.WS_CAPTION)) {
 					functions |= MotifFunctions.Move;

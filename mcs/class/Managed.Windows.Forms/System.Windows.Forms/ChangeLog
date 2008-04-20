@@ -1,5 +1,11 @@
 2008-04-20  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* XplatUIX11.cs: Enable Maximize/Minimize/Close ability (not decorations) 
+	for forms with FormBorderStyle.None.
+	[Fixes bug #349571]
+
+2008-04-20  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* XplatUIX11.cs: Implement support for WM_ENTERSIZEMOVE and 
 	WM_EXITSIZEMOVE.
 	[Fixes bug #346529 for the X11 backend]
