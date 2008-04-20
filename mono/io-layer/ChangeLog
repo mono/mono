@@ -1,3 +1,8 @@
+2008-04-20  Geoff Norton  <gnorton@novell.com>
+
+	* processes.c: Fix the _NSGetEnviron define to prevent an impropoer
+	pointer dereference.
+
 2008-04-18  Miguel de Icaza  <miguel@novell.com>
 
 	* Applied patch from Dick Porter from bug #380649
