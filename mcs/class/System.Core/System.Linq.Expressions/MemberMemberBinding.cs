@@ -49,8 +49,10 @@ namespace System.Linq.Expressions {
 
 		internal override void Emit (EmitContext ec, LocalBuilder local)
 		{
+			var member = EmitLoadMember (ec, local);
+
 			foreach (var binding in bindings)
-				binding.Emit (ec, EmitLoadMember (ec, local));
+				binding.Emit (ec, member);
 		}
 	}
 }
