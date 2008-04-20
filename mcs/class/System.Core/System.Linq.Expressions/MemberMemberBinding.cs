@@ -49,7 +49,8 @@ namespace System.Linq.Expressions {
 
 		internal override void Emit (EmitContext ec, LocalBuilder local)
 		{
-			throw new NotImplementedException ();
+			foreach (var binding in bindings)
+				binding.Emit (ec, EmitLoadMember (ec, local));
 		}
 	}
 }
