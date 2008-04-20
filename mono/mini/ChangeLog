@@ -1,3 +1,8 @@
+2008-04-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (set_exception_type_from_invalid_il): Avoid reading invalid memory when
+	the method has no body.
+
 2008-04-19  Jonathan Chambers <joncham@gmail.com>
 
 	* mini-amd64.c (cpuid): Implement with MSVC intrinsic as inline
