@@ -215,18 +215,19 @@ namespace System.Linq.Expressions {
 				return;
 
 			var value = constant.Value;
+			var type = value.GetType ();
 
-			if (Type.GetTypeCode (value.GetType ()) != TypeCode.Object)
+			if (Type.GetTypeCode (type) != TypeCode.Object)
 				return;
 
 			indexes.Add (value, globals.Count);
-			globals.Add (CreateStrongBox (value));
+			globals.Add (CreateStrongBox (value, type));
 		}
 
-		static object CreateStrongBox (object value)
+		static object CreateStrongBox (object value, Type type)
 		{
 			return Activator.CreateInstance (
-				value.GetType ().MakeStrongBoxType (), value);
+				type.MakeStrongBoxType (), value);
 		}
 	}
 
