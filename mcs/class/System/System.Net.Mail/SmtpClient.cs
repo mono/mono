@@ -83,6 +83,7 @@ namespace System.Net.Mail {
 		object user_async_state;
 
 		// ESMTP state
+		[Flags]
 		enum AuthMechs {
 			None        = 0,
 			CramMD5     = 0x01,
@@ -380,28 +381,28 @@ namespace System.Net.Mail {
 			}
 		}
 
+		void ResetExtensions()
+		{
+			canStartTLS = false;
+			authMechs = AuthMechs.None;
+		}
+
 		void ParseExtensions (string extens)
 		{
 			char []delims = new char [1] { ' ' };
 			int ln = 0;
-			
-			do {
-				if (ln != 0)
-					ln++;
-				
-				if (ln + 4 >= extens.Length)
-					break;
-				
-				if (extens.Substring (ln, 4) == "AUTH" &&
-				    (extens[ln + 4] == ' ' || extens[ln + 4] == '=')) {
-					int eoln = extens.IndexOf ('\n', ln + 4);
-					string mechlist = extens.Substring (ln, eoln);
-					string []mechs = mechlist.Split (delims);
-					
-					ln = eoln;
-					
-					for (int i = 0; i < mechs.Length; i++) {
-						switch (mechs[i]) {
+			string[] parts = extens.Split('\n');
+
+			foreach(string part in parts) {
+				if(part.Length < 4) {
+					continue;
+				}
+				string start = part.Substring(4);
+				if(start.StartsWith("AUTH ")) {
+					string[] options = start.Split(delims);
+					for(int k = 1; k < options.Length; k++) {
+						string option = options[k].Trim();
+						switch (option) {
 						case "CRAM-MD5":
 							authMechs |= AuthMechs.CramMD5;
 							break;
@@ -422,10 +423,10 @@ namespace System.Net.Mail {
 							break;
 						}
 					}
-				} else if (ln + 8 < extens.Length && extens.Substring (ln, 8) == "STARTTLS") {
+				} else if(start.StartsWith("STARTTLS")) {
 					canStartTLS = true;
 				}
-			} while (ln < extens.Length && ((ln = extens.IndexOf ('\n', ln)) != -1));
+			}
 		}
 
 		public void Send (MailMessage message)
@@ -504,8 +505,22 @@ namespace System.Net.Mail {
 				// SmtpClient implements STARTTLS support.
 #endif
 				InitiateSecureConnection ();
+				ResetExtensions();
+				writer = new StreamWriter (stream);
+				reader = new StreamReader (stream);
+				status = SendCommand ("EHLO " + Dns.GetHostName ());
+			
+				if (IsError (status)) {
+					status = SendCommand ("HELO " + Dns.GetHostName ());
 				
-				// FIXME: re-EHLO?
+					if (IsError (status))
+						throw new SmtpException (status.StatusCode, status.Description);
+				} else {
+					// Parse ESMTP extensions
+					string extens = status.Description;
+					if (extens != null)
+						ParseExtensions (extens);
+				}
 			}
 			
 			if (authMechs != AuthMechs.None)
@@ -993,7 +1008,6 @@ try {
 			sslStream.AuthenticateAsClient (Host, this.ClientCertificates, SslProtocols.Default, false);
 			stream = sslStream;
 
-			throw new NotImplementedException ();
 #else
 			throw new SystemException ("You are using an incomplete System.dll build");
 #endif
@@ -1024,12 +1038,12 @@ try {
 				throw new SmtpException (status.StatusCode, status.Description);
 			}
 
-			status = SendCommand (Convert.ToBase64String (Encoding.ASCII.GetBytes (Username), Base64FormattingOptions.InsertLineBreaks));
+			status = SendCommand (Convert.ToBase64String (Encoding.ASCII.GetBytes (Username)));
 			if (((int) status.StatusCode) != 334) {
 				throw new SmtpException (status.StatusCode, status.Description);
 			}
 
-			status = SendCommand (Convert.ToBase64String (Encoding.ASCII.GetBytes (Password), Base64FormattingOptions.InsertLineBreaks));
+			status = SendCommand (Convert.ToBase64String (Encoding.ASCII.GetBytes (Password)));
 			if (IsError (status)) {
 				throw new SmtpException (status.StatusCode, status.Description);
 			}

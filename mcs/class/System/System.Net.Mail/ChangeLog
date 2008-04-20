@@ -1,3 +1,9 @@
+2008-04-20 Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
+
+	* SmtpClient.cs: made ParseExtension() work. After STARTTLS, reset
+	data retrieved from EHLO.
+	Fixes bug #377463.
+
 2008-04-03  Juraj Skripsky  <js@hotfeet.ch>
 
 	* Attachment.cs (InitName): Use Path.GetFileName instead of Substring hack.
