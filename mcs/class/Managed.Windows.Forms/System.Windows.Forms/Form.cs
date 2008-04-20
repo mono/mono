@@ -2620,7 +2620,19 @@ namespace System.Windows.Forms {
 		
 		private void WmWindowPosChanged (ref Message m)
 		{
-			base.WndProc (ref m);
+			// When a form is minimized:
+			// * Win32: X and Y are set to negative values, 
+			//   size remains the same.
+			// * X11: Location and Size remain the same.
+			// 
+			// In both cases we have to fire Resize explicitly here, 
+			// because of the unmodified Size due to which Control
+			// doesn't fire it.
+			// 
+			if (WindowState == FormWindowState.Minimized)
+				OnSizeChanged (EventArgs.Empty);
+			else
+				base.WndProc (ref m);
 
 #if NET_2_0
 			if (WindowState == FormWindowState.Normal)

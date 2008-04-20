@@ -4164,6 +4164,13 @@ namespace System.Windows.Forms {
 						// XXX we're missing the lParam..
 						break;
 					}
+					if (hwnd.parent == null && GetWindowState (hwnd.Handle) == FormWindowState.Minimized) {
+						// minimized toplevel
+						msg.message = Msg.WM_WINDOWPOSCHANGED;
+						msg.wParam = IntPtr.Zero;
+						msg.lParam = IntPtr.Zero;
+						break;
+					}
 					goto ProcessNextMessage;
 				}
 

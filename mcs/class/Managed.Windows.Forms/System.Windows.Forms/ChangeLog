@@ -1,5 +1,12 @@
 2008-04-20  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* XplatUIX11.cs: Send WM_WINDOWPOSCHANGED when a toplevel is minimized.
+	* Form.cs: Handle form minimization as a special state, where size doesn't 
+	change, but we have to fire SizeChanged.
+	[Fixes bug #325122 for the win32 and x11 backends]
+
+2008-04-20  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* XplatUIX11.cs: Win32 doesn't send WM_(KILL|SET)FOCUS 
 	if the handle is disabled.
 	[Fixes bug #371751]
