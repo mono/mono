@@ -5183,6 +5183,10 @@ namespace System.Windows.Forms {
 				return;
 			}
 
+			// Win32 doesn't do anything if disabled
+			if (!hwnd.enabled)
+				return;
+
 			prev_focus_window = FocusWindow;
 			FocusWindow = hwnd.client_window;
 			Keyboard.FocusIn (FocusWindow);

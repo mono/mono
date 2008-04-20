@@ -1,5 +1,11 @@
 2008-04-20  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* XplatUIX11.cs: Win32 doesn't send WM_(KILL|SET)FOCUS 
+	if the handle is disabled.
+	[Fixes bug #371751]
+
+2008-04-20  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* XplatUIX11.cs: Enable Maximize/Minimize/Close ability (not decorations) 
 	for forms with FormBorderStyle.None.
 	[Fixes bug #349571]
