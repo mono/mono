@@ -2268,6 +2268,12 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
+		public bool HasTypeArguments {
+			get {
+				return targs != null;
+			}
+		}
+
 		public override string GetSignatureForError ()
 		{
 			if (targs != null) {

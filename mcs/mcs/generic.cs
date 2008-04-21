@@ -1179,7 +1179,7 @@ namespace Mono.CSharp {
 					continue;
 				}
 				SimpleName sn = args [i] as SimpleName;
-				if (sn != null) {
+				if (sn != null && !sn.HasTypeArguments) {
 					ret [i] = new TypeParameterName (sn.Name, null, sn.Location);
 					continue;
 				}

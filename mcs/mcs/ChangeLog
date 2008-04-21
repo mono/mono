@@ -1,5 +1,10 @@
 2008-04-21  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #365314
+	* generic.cs, ecore.cs: Type parameter declaration cannot be of generic type
+	
+2008-04-21  Marek Safar  <marek.safar@gmail.com>
+
 	* cs-parser.jay, expression.cs: ComposedCast can work with type expressions
 	only.
 
