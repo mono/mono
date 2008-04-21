@@ -53,6 +53,7 @@ namespace System.Windows.Forms
 			minimumHeight = 3;
 			height = -1;
 			headerCell = new DataGridViewRowHeaderCell();
+			headerCell.SetOwningRow (this);
 			accessibilityObject = new AccessibleObject ();
 			SetState (DataGridViewElementStates.Visible);
 		}
@@ -161,6 +162,7 @@ namespace System.Windows.Forms
 			set {
 				if (headerCell != value) {
 					headerCell = value;
+					headerCell.SetOwningRow (this);
 					if (DataGridView != null) {
 						DataGridView.OnRowHeaderCellChanged(new DataGridViewRowEventArgs(this));
 					}
@@ -330,6 +332,7 @@ namespace System.Windows.Forms
 		public override object Clone ()
 		{
 			DataGridViewRow row = (DataGridViewRow) MemberwiseClone();
+			row.HeaderCell.SetOwningRow (row);
 			row.cells = new DataGridViewCellCollection(row);
 			foreach (DataGridViewCell cell in cells) {
 				row.cells.Add(cell.Clone() as DataGridViewCell);

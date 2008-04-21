@@ -137,10 +137,10 @@ namespace System.Windows.Forms {
 		[Browsable (false)]
 		public string ErrorText {
 			get { 
-				if (errorText == null)
+				if (OwningRow == null)
 					return string.Empty;
 					
-				return errorText; 
+				return GetErrorText (OwningRow.Index); 
 			}
 			set {
 				if (errorText != value) {
@@ -1246,7 +1246,8 @@ namespace System.Windows.Forms {
 			if ((paintParts & DataGridViewPaintParts.Focus) == DataGridViewPaintParts.Focus)
 				PaintPartFocus (graphics, cellBounds);
 			if ((paintParts & DataGridViewPaintParts.ErrorIcon) == DataGridViewPaintParts.ErrorIcon)
-				PaintErrorIcon (graphics, clipBounds, cellBounds, errorText);
+				if (!string.IsNullOrEmpty (ErrorText))
+					PaintErrorIcon (graphics, clipBounds, cellBounds, ErrorText);
 		}
 
 		protected virtual void PaintBorder (Graphics graphics, Rectangle clipBounds, Rectangle bounds, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle) {
@@ -1337,9 +1338,24 @@ namespace System.Windows.Forms {
 			//}
 		}
 
-		[MonoTODO ("Stub, not implemented")]
 		protected virtual void PaintErrorIcon (Graphics graphics, Rectangle clipBounds, Rectangle cellValueBounds, string errorText)
 		{
+			Rectangle error_bounds = GetErrorIconBounds (graphics, null, RowIndex);
+			
+			if (error_bounds.IsEmpty)
+				return;
+
+			Point loc = error_bounds.Location;
+			loc.X += cellValueBounds.Left;
+			loc.Y += cellValueBounds.Top;
+
+			graphics.FillRectangle (Brushes.Red, new Rectangle (loc.X + 1, loc.Y + 2, 10, 7));
+			graphics.FillRectangle (Brushes.Red, new Rectangle (loc.X + 2, loc.Y + 1, 8, 9));
+			graphics.FillRectangle (Brushes.Red, new Rectangle (loc.X + 4, loc.Y, 4, 11));
+			graphics.FillRectangle (Brushes.Red, new Rectangle (loc.X, loc.Y + 4, 12, 3));
+
+			graphics.FillRectangle (Brushes.White, new Rectangle (loc.X + 5, loc.Y + 2, 2, 4));
+			graphics.FillRectangle (Brushes.White, new Rectangle (loc.X + 5, loc.Y + 7, 2, 2));
 		}
 
 		internal virtual void PaintPartBackground (Graphics graphics, Rectangle cellBounds, DataGridViewCellStyle style)

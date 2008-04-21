@@ -1,5 +1,9 @@
 2008-04-21  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridView*: Implement support for drawing error icons.
+
+2008-04-21  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TreeView.cs: Make vbar and hbar internal.
 	* TreeNode.cs: If collapsing the node removes one of the TreeView's
 	scrollbars, invalidate the whole thing.

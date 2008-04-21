@@ -156,10 +156,13 @@ namespace System.Windows.Forms {
 			return image_bounds;
 		}
 
-		[MonoTODO ()]
 		protected override Rectangle GetErrorIconBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex)
 		{
-			return Rectangle.Empty;
+			if (DataGridView == null || string.IsNullOrEmpty (ErrorText))
+				return Rectangle.Empty;
+
+			Size error_icon = new Size (12, 11);
+			return new Rectangle (new Point (Size.Width - error_icon.Width - 5, (Size.Height - error_icon.Height) / 2), error_icon);
 		}
 
 		protected override object GetFormattedValue (object value, int rowIndex, ref DataGridViewCellStyle cellStyle, TypeConverter valueTypeConverter, TypeConverter formattedValueTypeConverter, DataGridViewDataErrorContexts context)

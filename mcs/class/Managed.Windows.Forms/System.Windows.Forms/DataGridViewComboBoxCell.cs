@@ -223,8 +223,13 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException();
 		}
 
-		protected override Rectangle GetErrorIconBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex) {
-			throw new NotImplementedException();
+		protected override Rectangle GetErrorIconBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex)
+		{
+			if (DataGridView == null || string.IsNullOrEmpty (ErrorText))
+				return Rectangle.Empty;
+
+			Size error_icon = new Size (12, 11);
+			return new Rectangle (new Point (Size.Width - error_icon.Width - 23, (Size.Height - error_icon.Height) / 2), error_icon);
 		}
 
 		protected override object GetFormattedValue (object value, int rowIndex, ref DataGridViewCellStyle cellStyle, TypeConverter valueTypeConverter, TypeConverter formattedValueTypeConverter, DataGridViewDataErrorContexts context) {

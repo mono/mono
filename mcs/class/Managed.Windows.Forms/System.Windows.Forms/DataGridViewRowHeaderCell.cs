@@ -137,12 +137,19 @@ namespace System.Windows.Forms {
 
 		protected override Rectangle GetErrorIconBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex)
 		{
-			throw new NotImplementedException();
+			if (DataGridView == null || string.IsNullOrEmpty (DataGridView.GetRowInternal (rowIndex).ErrorText))
+				return Rectangle.Empty;
+
+			Size error_icon = new Size (12, 11);
+			return new Rectangle (new Point (Size.Width - error_icon.Width - 5, (Size.Height - error_icon.Height) / 2), error_icon);
 		}
 
 		protected internal override string GetErrorText (int rowIndex)
 		{
-			throw new NotImplementedException();
+			if (DataGridView == null)
+				return string.Empty;
+				
+			return DataGridView.GetRowInternal (rowIndex).ErrorText;
 		}
 
 		protected override Size GetPreferredSize (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex, Size constraintSize)
@@ -197,7 +204,7 @@ namespace System.Windows.Forms {
 			}
 
 			// Postpaint
-			DataGridViewPaintParts post = DataGridViewPaintParts.Border;
+			DataGridViewPaintParts post = DataGridViewPaintParts.Border | DataGridViewPaintParts.ErrorIcon;
 			post = post & paintParts;
 
 			base.Paint (graphics, clipBounds, cellBounds, rowIndex, cellState, value, formattedValue, errorText, cellStyle, advancedBorderStyle, post);

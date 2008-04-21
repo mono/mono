@@ -111,7 +111,6 @@ namespace System.Windows.Forms {
 			get { return cellValue; }
 		}
 
-		[MonoTODO ("Does not draw Focus or ErrorIcon")]
 		public void Paint (Rectangle clipBounds, DataGridViewPaintParts paintParts) {
 			if (rowIndex < -1 || rowIndex >= dataGridView.Rows.Count)
 				throw new InvalidOperationException("Invalid \"RowIndex.\"");
@@ -137,7 +136,7 @@ namespace System.Windows.Forms {
 			Paint (clipBounds, DataGridViewPaintParts.Background | DataGridViewPaintParts.Border);
 		}
 			
-		[MonoTODO ("Needs column header sort glyph and row header cell selected/edit pencil glyphs")]
+		[MonoTODO ("Needs row header cell edit pencil glyph")]
 		public void PaintContent (Rectangle clipBounds)
 		{
 			Paint (clipBounds, DataGridViewPaintParts.ContentBackground | DataGridViewPaintParts.ContentForeground);
