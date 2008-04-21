@@ -217,5 +217,22 @@ namespace MonoTests.System.Linq.Expressions {
 			var s = new EineStrukt ("foo");
 			Assert.AreEqual ("foo", foo (s));
 		}
+
+		public static int OneStaticMethod ()
+		{
+			return 42;
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void CallStaticMethodOnNonSenseInstanceExpression ()
+		{
+			var call = Expression.Lambda<Func<int>> (
+				Expression.Call (
+					Expression.Constant ("la la la"),
+					this.GetType ().GetMethod ("OneStaticMethod"))).Compile ();
+
+			Assert.AreEqual (42, call ());
+		}
 	}
 }
