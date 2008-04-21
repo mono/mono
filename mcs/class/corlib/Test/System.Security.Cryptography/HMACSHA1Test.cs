@@ -121,6 +121,7 @@ public class HMACSHA1Test : KeyedHashAlgorithmTest {
 		CheckC (testName, key, data, result);
 		CheckD (testName, key, data, result);
 		CheckE (testName, key, data, result);
+		CheckF (testName, key, data, result);
 	}
 
 	public void CheckA (string testName, byte[] key, byte[] data, byte[] result) 
@@ -173,6 +174,16 @@ public class HMACSHA1Test : KeyedHashAlgorithmTest {
 			algo.TransformBlock (data, i, 1, copy, i);
 		algo.TransformFinalBlock (data, data.Length - 1, 1);
 		Assert.AreEqual (result, algo.Hash, testName + "e");
+	}
+
+	public void CheckF (string testName, byte[] key, byte[] data, byte[] result)
+	{
+		algo = new HMACSHA1 (key);
+		byte[] temp = new byte[data.Length + 2];
+		for (int i = 0; i < data.Length; i ++)
+			temp[i + 1] = data[i];
+		byte[] hmac = algo.ComputeHash (temp, 1, data.Length);
+		Assert.AreEqual (result, hmac, testName + "f");
 	}
 
 	[Test]
