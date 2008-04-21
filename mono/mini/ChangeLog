@@ -1,3 +1,19 @@
+2008-04-21  Martin Baulig  <martin@ximian.com>
+
+	* mini.h (MonoDebugOptions): Added `mdb_optimizations'.
+
+	* mini.c
+	(mini_method_compile): In the fp elimination check, check
+	`debug_options.mdb_optimizations' in addition to
+	mono_debug_using_mono_debugger().	
+
+	* driver.c (mono_main): Added `--debug=mdb-optimizations' option to
+	disable some JIT optimizations which are only disabled when
+	running inside the debugger.
+	Added `--help-debug' option to describe the debugging options.
+	(parse_debug_options): New static function to parse the `--debug'
+	options, so we can easily add more stuff in future.
+
 2008-04-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (set_exception_type_from_invalid_il): Avoid reading invalid memory when
