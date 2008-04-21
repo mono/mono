@@ -1,5 +1,11 @@
 2008-04-21  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #378200
+	* expression.cs: Fixed crash when creating parameterless expression tree
+	method call.
+
+2008-04-21  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #375297
 	* anonymous.cs: Fixed crash when inferring from null argument anonymous
 	method.

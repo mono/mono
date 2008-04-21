@@ -4503,17 +4503,19 @@ namespace Mono.CSharp {
 				return CreateExpressionFactoryCall ("Quote", args);
 			}
 
-			args = new ArrayList (Arguments.Count + 3);
+			args = new ArrayList (Arguments == null ? 2 : Arguments.Count + 2);
 			if (mg.IsInstance)
 				args.Add (new Argument (mg.InstanceExpression.CreateExpressionTree (ec)));
 			else
 				args.Add (new Argument (new NullLiteral (loc).CreateExpressionTree (ec)));
 
 			args.Add (new Argument (mg.CreateExpressionTree (ec)));
-			foreach (Argument a in Arguments) {
-				Expression e = a.Expr.CreateExpressionTree (ec);
-				if (e != null)
-					args.Add (new Argument (e));
+			if (Arguments != null) {
+				foreach (Argument a in Arguments) {
+					Expression e = a.Expr.CreateExpressionTree (ec);
+					if (e != null)
+						args.Add (new Argument (e));
+				}
 			}
 
 			return CreateExpressionFactoryCall ("Call", args);
