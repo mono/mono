@@ -1208,7 +1208,7 @@ namespace Mono.CSharp {
 
 		public virtual bool HasExplicitParameters {
 			get {
-				return true;
+				return Parameters != null;
 			}
 		}
 

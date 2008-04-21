@@ -1,5 +1,11 @@
 2008-04-21  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #375297
+	* anonymous.cs: Fixed crash when inferring from null argument anonymous
+	method.
+
+2008-04-21  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #377596
 	* decl.cs, class.cs: Emit delegate type argument attributes.
 
