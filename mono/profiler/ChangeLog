@@ -1,4 +1,7 @@
 2008-04-16  Massimiliano Mantione <massi@ximian.com>
+	 * mono-profiler-oprofile.c (gc_event): Fix deadlock condition.
+
+2008-04-16  Massimiliano Mantione <massi@ximian.com>
 	 * mono-profiler-oprofile.c (write_current_block): Added an incremental
 	 "counter delta" field to the block header, so that each block has a
 	 timestamp directly in the header.
