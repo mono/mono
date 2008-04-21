@@ -657,6 +657,7 @@ namespace System.Windows.Forms {
 				return true;
 			case DragAction.Drop:
 				SendDrop (drag_data.LastTopLevel, source, IntPtr.Zero);
+				tracking = false;
 				return true;
 			case DragAction.Cancel:
 				drag_data.Reset ();
@@ -883,7 +884,6 @@ namespace System.Windows.Forms {
 
 		private bool HandleFinishedEvent (ref XEvent xevent)
 		{
-			tracking = false;
 			return true;
 		}
 
