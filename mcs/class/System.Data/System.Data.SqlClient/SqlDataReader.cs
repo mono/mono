@@ -44,7 +44,8 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlTypes;
 
-namespace System.Data.SqlClient {
+namespace System.Data.SqlClient
+{
 #if NET_2_0
 	public class SqlDataReader : DbDataReader, IDataReader, IDisposable, IDataRecord
 #else
@@ -55,7 +56,7 @@ namespace System.Data.SqlClient {
 
 		SqlCommand command;
 		ArrayList dataTypeNames;
-		bool disposed = false;
+		bool disposed;
 		int fieldCount;
 		bool isClosed;
 		bool moreResults;
@@ -95,7 +96,7 @@ namespace System.Data.SqlClient {
 
 		#region Properties
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -103,7 +104,7 @@ namespace System.Data.SqlClient {
 			get { return 0; }
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -111,7 +112,7 @@ namespace System.Data.SqlClient {
 			get { return fieldCount; }
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -119,7 +120,7 @@ namespace System.Data.SqlClient {
 			get { return isClosed; }
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -127,7 +128,7 @@ namespace System.Data.SqlClient {
 			get { return GetValue (i); }
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -135,17 +136,17 @@ namespace System.Data.SqlClient {
 			get { return GetValue (GetOrdinal (name)); }
 		}
 	
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
 		int RecordsAffected {
-			get { 
+			get {
 				return command.Tds.RecordsAffected; 
 			}
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -160,15 +161,15 @@ namespace System.Data.SqlClient {
 			}
 		}
 #if NET_2_0
-		public override int VisibleFieldCount { 
+		public override int VisibleFieldCount {
 			get { return visibleFieldCount; }
 		}
 
-		protected SqlConnection Connection { 
+		protected SqlConnection Connection {
 			get { return command.Connection; }
 		}
 
-		protected bool IsCommandBehavior (CommandBehavior condition) { 
+		protected bool IsCommandBehavior (CommandBehavior condition) {
 			return condition == command.CommandBehavior;
 		}
 #endif
@@ -177,7 +178,7 @@ namespace System.Data.SqlClient {
 
 		#region Methods
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -227,10 +228,11 @@ namespace System.Data.SqlClient {
 
 			return schemaTable;
 		}
+
 #if NET_2_0
 		new
 #endif
-		void Dispose (bool disposing) 
+		void Dispose (bool disposing)
 		{
 			if (!disposed) {
 				if (disposing) {
@@ -256,7 +258,7 @@ namespace System.Data.SqlClient {
 			return (bool) value;
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -270,7 +272,7 @@ namespace System.Data.SqlClient {
 			return (byte) value;
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -309,7 +311,7 @@ namespace System.Data.SqlClient {
 		}
 
 		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -323,7 +325,7 @@ namespace System.Data.SqlClient {
 			return (char) value;
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -344,7 +346,7 @@ namespace System.Data.SqlClient {
 					case TdsColumnType.NVarChar:
 					case TdsColumnType.NChar:
 						encoding = Encoding.Unicode;
-						mul = 2 ;
+						mul = 2;
 						break;
 					default :
 						return -1;
@@ -391,14 +393,14 @@ namespace System.Data.SqlClient {
 		}
 		
 #if !NET_2_0
-		[EditorBrowsableAttribute (EditorBrowsableState.Never)] 
+		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
 		public new IDataReader GetData (int i)
 		{
 			return ((IDataReader) this [i]);
 		}
 #endif
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -409,7 +411,7 @@ namespace System.Data.SqlClient {
 			return (string) dataTypeNames [i];
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -423,7 +425,7 @@ namespace System.Data.SqlClient {
 			return (DateTime) value;
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -437,7 +439,7 @@ namespace System.Data.SqlClient {
 			return (decimal) value;
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -451,7 +453,7 @@ namespace System.Data.SqlClient {
 			return (double) value;
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -462,7 +464,7 @@ namespace System.Data.SqlClient {
 			return (Type) schemaTable.Rows[i]["DataType"];
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -476,7 +478,7 @@ namespace System.Data.SqlClient {
 			return (float) value;
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -490,7 +492,7 @@ namespace System.Data.SqlClient {
 			return (Guid) value;
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -504,7 +506,7 @@ namespace System.Data.SqlClient {
 			return (short) value;
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -518,7 +520,7 @@ namespace System.Data.SqlClient {
 			return (int) value;
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -538,7 +540,7 @@ namespace System.Data.SqlClient {
 			return (long) value;
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -547,7 +549,7 @@ namespace System.Data.SqlClient {
 			return (string) schemaTable.Rows[i]["ColumnName"];
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -562,7 +564,7 @@ namespace System.Data.SqlClient {
 			throw new IndexOutOfRangeException ();
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -1064,7 +1066,7 @@ namespace System.Data.SqlClient {
 			return count;
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -1078,7 +1080,7 @@ namespace System.Data.SqlClient {
 			return (string) value;
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -1099,7 +1101,7 @@ namespace System.Data.SqlClient {
 			return command.Tds.ColumnValues [i];
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -1139,7 +1141,7 @@ namespace System.Data.SqlClient {
 			return new DbEnumerator (this);
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -1148,7 +1150,7 @@ namespace System.Data.SqlClient {
 			return GetValue (i) == DBNull.Value;
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -1178,7 +1180,7 @@ namespace System.Data.SqlClient {
 			return moreResults;
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -1221,15 +1223,14 @@ namespace System.Data.SqlClient {
 		}
 		
 #if NET_2_0
-
-		public override Type GetProviderSpecificFieldType (int position)
+		public override Type GetProviderSpecificFieldType (int i)
 		{
-			return (GetSqlValue (position).GetType());
+			return (GetSqlValue (i).GetType());
 		}
 
-		public override object GetProviderSpecificValue (int position)
+		public override object GetProviderSpecificValue (int i)
 		{
-			return (GetSqlValue (position));
+			return (GetSqlValue (i));
 		}
 
 		public override int GetProviderSpecificValues (object [] values)

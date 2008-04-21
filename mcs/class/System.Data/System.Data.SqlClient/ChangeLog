@@ -1,3 +1,21 @@
+2008-04-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SqlBulkCopyColumnMappingCollection.cs: Changed argument names to
+	match MS. Code formatting.
+	* SqlCommand.cs: Changed argument names to match MS. Code formatting.
+	Do not include explicit IDbCommand implementation on 2.0 profile.
+	* SqlCommandBuilder.cs: Changed argument names to match MS. Code
+	formatting.
+	* SqlDataReader.cs: Changed argument names to match MS. Code
+	formatting.
+	* SqlParameterCollection.cs: Do not include IList, ICollection and
+	IDataParameterCollection explicit interface implementation on 2.0
+	profile. Code formatting.
+ 	* SqlConnection.cs: Changed argument names to match MS.
+	* SqlDataAdapter.cs: Changed argument names to match MS.
+	* SqlTransaction.cs: Do not include explicit interface implementation
+	of IDbTransaction.Connection on 2.0 profile. Code formatting.
+
 2008-04-19  Robert Jordan  <robertj@gmx.net>
 
 	* SqlParameterCollection.cs (AddRange(SqlParameter[])):

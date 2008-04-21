@@ -37,7 +37,8 @@ using System.Data;
 using System.Data.Common;
 using System.Text;
 
-namespace System.Data.SqlClient {
+namespace System.Data.SqlClient
+{
 #if NET_2_0
 	public sealed class SqlCommandBuilder : DbCommandBuilder
 #else
@@ -46,7 +47,7 @@ namespace System.Data.SqlClient {
 	{
 		#region Fields
 
-		bool disposed = false;
+		bool disposed;
 
 		DataTable dbSchemaTable;
 		SqlDataAdapter adapter;
@@ -74,7 +75,7 @@ namespace System.Data.SqlClient {
 
 		#region Constructors
 
-		public SqlCommandBuilder () 
+		public SqlCommandBuilder ()
 		{
 			dbSchemaTable = null;
 			adapter = null;
@@ -124,11 +125,11 @@ namespace System.Data.SqlClient {
 #else
 		[EditorBrowsable (EditorBrowsableState.Never)]
 #endif // NET_2_0
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
-                string QuotePrefix {
+		string QuotePrefix {
 			get { return quotePrefix; }
 			set {
 				if (dbSchemaTable != null)
@@ -144,11 +145,11 @@ namespace System.Data.SqlClient {
 #else
 		[EditorBrowsable (EditorBrowsableState.Never)]
 #endif // NET_2_0
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
-                string QuoteSuffix {
+		string QuoteSuffix {
 			get { return quoteSuffix; }
 			set {
 				if (dbSchemaTable != null)
@@ -517,7 +518,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		new
 #endif // NET_2_0
-                SqlCommand GetDeleteCommand ()
+		SqlCommand GetDeleteCommand ()
 		{
 			BuildCache (true);
 			if (deleteCommand == null)
@@ -529,7 +530,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		new
 #endif // NET_2_0
-                SqlCommand GetInsertCommand ()
+		SqlCommand GetInsertCommand ()
 		{
 			BuildCache (true);
 			if (insertCommand == null)
@@ -550,7 +551,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		new
 #endif // NET_2_0
-                SqlCommand GetUpdateCommand ()
+		SqlCommand GetUpdateCommand ()
 		{
 			BuildCache (true);
 			if (updateCommand == null)
@@ -559,27 +560,27 @@ namespace System.Data.SqlClient {
 		}
 
 #if NET_2_0
-		public new SqlCommand GetUpdateCommand (bool option)
+		public new SqlCommand GetUpdateCommand (bool useColumnsForParameterNames)
 		{
 			BuildCache (true);
 			if (updateCommand == null)
-				return CreateUpdateCommand (option);
+				return CreateUpdateCommand (useColumnsForParameterNames);
 			return updateCommand;
 		}
 
-		public new SqlCommand GetDeleteCommand (bool option)
+		public new SqlCommand GetDeleteCommand (bool useColumnsForParameterNames)
 		{
 			BuildCache (true);
 			if (deleteCommand == null)
-				return CreateDeleteCommand (option);
+				return CreateDeleteCommand (useColumnsForParameterNames);
 			return deleteCommand;
 		}
 
-		public new SqlCommand GetInsertCommand (bool option)
+		public new SqlCommand GetInsertCommand (bool useColumnsForParameterNames)
 		{
 			BuildCache (true);
 			if (insertCommand == null)
-				return CreateInsertCommand (option);
+				return CreateInsertCommand (useColumnsForParameterNames);
 			return insertCommand;
 		}
 		
@@ -655,38 +656,38 @@ namespace System.Data.SqlClient {
 		}
 
 #if NET_2_0
-		protected override void ApplyParameterInfo (DbParameter dbParameter,
-		                                            DataRow row,
+		protected override void ApplyParameterInfo (DbParameter parameter,
+		                                            DataRow datarow,
 		                                            StatementType statementType,
 		                                            bool whereClause)
 		{
-			SqlParameter parameter = (SqlParameter) dbParameter;
-			parameter.Size = int.Parse (row ["ColumnSize"].ToString ());
-			if (row ["NumericPrecision"] != DBNull.Value) {
-				parameter.Precision = byte.Parse (row ["NumericPrecision"].ToString ());
+			SqlParameter sqlParam = (SqlParameter) parameter;
+			sqlParam.Size = int.Parse (datarow ["ColumnSize"].ToString ());
+			if (datarow ["NumericPrecision"] != DBNull.Value) {
+				sqlParam.Precision = byte.Parse (datarow ["NumericPrecision"].ToString ());
 			}
-			if (row ["NumericScale"] != DBNull.Value) {
-				parameter.Scale = byte.Parse (row ["NumericScale"].ToString ());
+			if (datarow ["NumericScale"] != DBNull.Value) {
+				sqlParam.Scale = byte.Parse (datarow ["NumericScale"].ToString ());
 			}
-			parameter.SqlDbType = (SqlDbType) row ["ProviderType"];
+			sqlParam.SqlDbType = (SqlDbType) datarow ["ProviderType"];
 		}
 
-		protected override string GetParameterName (int position)
+		protected override string GetParameterName (int parameterOrdinal)
 		{
-			return String.Format("@p{0}", position);
+			return String.Format ("@p{0}",  parameterOrdinal);
 		}
 
 		protected override string GetParameterName (string parameterName)
 		{
-			return String.Format("@{0}", parameterName);                       
+			return String.Format ("@{0}", parameterName);
 		}
-                
-		protected override string GetParameterPlaceholder (int position)
+
+		protected override string GetParameterPlaceholder (int parameterOrdinal)
 		{
-			return GetParameterName (position);
+			return GetParameterName (parameterOrdinal);
 		}
-                
 #endif // NET_2_0
+
 		#endregion // Methods
 
 		#region Event Handlers
@@ -723,23 +724,23 @@ namespace System.Data.SqlClient {
 			((SqlDataAdapter) adapter).RowUpdating += rowUpdatingHandler;
 		}
 
-		protected override DataTable GetSchemaTable (DbCommand cmd)
+		protected override DataTable GetSchemaTable (DbCommand srcCommand)
 		{
-			using (SqlDataReader rdr = (SqlDataReader) cmd.ExecuteReader ())
+			using (SqlDataReader rdr = (SqlDataReader) srcCommand.ExecuteReader ())
 				return rdr.GetSchemaTable ();
 		}
 
-		protected override DbCommand InitializeCommand (DbCommand cmd)
+		protected override DbCommand InitializeCommand (DbCommand command)
 		{
-			if (cmd == null) {
-				cmd = new SqlCommand ();
+			if (command == null) {
+				command = new SqlCommand ();
 			} else {
-				cmd.CommandTimeout = 30;
-				cmd.Transaction = null;
-				cmd.CommandType = CommandType.Text;
-				cmd.UpdatedRowSource = UpdateRowSource.None;
+				command.CommandTimeout = 30;
+				command.Transaction = null;
+				command.CommandType = CommandType.Text;
+				command.UpdatedRowSource = UpdateRowSource.None;
 			}
-			return cmd;
+			return command;
 		}
 #endif // NET_2_0
 

@@ -64,7 +64,7 @@ namespace System.Data.SqlClient
 
 		#region Properties
 
-		public 
+		public
 #if NET_2_0
 		new
 #endif // NET_2_0
@@ -76,7 +76,7 @@ namespace System.Data.SqlClient
 			get { return isOpen; }
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -87,10 +87,16 @@ namespace System.Data.SqlClient
 				return isolationLevel;
 			}
 		}
-		
+
+#if NET_2_0
+		protected override DbConnection DbConnection {
+			get { return Connection; }
+		}
+#else
 		IDbConnection IDbTransaction.Connection {
 			get { return Connection; }
 		}
+#endif
 
 		#endregion // Properties
 
@@ -166,11 +172,6 @@ namespace System.Data.SqlClient
 			connection.Tds.Execute (String.Format ("SAVE TRANSACTION {0}", savePointName));
 		}
 
-#if NET_2_0
-		protected override DbConnection DbConnection {
-			get { return Connection; }
-		}
-#endif // NET_2_0
 		#endregion // Methods
 	}
 }

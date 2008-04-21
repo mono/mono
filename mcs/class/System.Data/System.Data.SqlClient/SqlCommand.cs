@@ -53,7 +53,7 @@ using System.Xml;
 
 namespace System.Data.SqlClient {
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.SqlCommandDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
-	 [ToolboxItemAttribute ("System.Drawing.Design.ToolboxItem, "+ Consts.AssemblySystem_Drawing)]
+	[ToolboxItemAttribute ("System.Drawing.Design.ToolboxItem, "+ Consts.AssemblySystem_Drawing)]
 #if NET_2_0
 	[DefaultEventAttribute ("RecordsAffected")]
 	public sealed class SqlCommand : DbCommand, IDbCommand, ICloneable
@@ -90,19 +90,19 @@ namespace System.Data.SqlClient {
 		{
 		}
 
-		public SqlCommand (string commandText) 
-			: this (commandText, null, null)
+		public SqlCommand (string cmdText)
+			: this (cmdText, null, null)
 		{
 		}
 
-		public SqlCommand (string commandText, SqlConnection connection) 
-			: this (commandText, connection, null)
+		public SqlCommand (string cmdText, SqlConnection connection)
+			: this (cmdText, connection, null)
 		{
 		}
 
-		public SqlCommand (string commandText, SqlConnection connection, SqlTransaction transaction) 
+		public SqlCommand (string cmdText, SqlConnection connection, SqlTransaction transaction) 
 		{
-			this.commandText = commandText;
+			this.commandText = cmdText;
 			this.connection = connection;
 			this.transaction = transaction;
 			this.commandType = CommandType.Text;
@@ -129,6 +129,7 @@ namespace System.Data.SqlClient {
 			for (int i = 0;i < parameters.Count;i++)
 				this.parameters.Add(((ICloneable)parameters[i]).Clone());
 		}
+
 		#endregion // Constructors
 
 		#region Properties
@@ -143,9 +144,9 @@ namespace System.Data.SqlClient {
 		[DefaultValue ("")]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.SQL.Design.SqlCommandTextEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		[RefreshProperties (RefreshProperties.All)]
-		public 
+		public
 #if NET_2_0
-		override 
+		override
 #endif //NET_2_0
 		string CommandText {
 			get {
@@ -164,7 +165,7 @@ namespace System.Data.SqlClient {
 		[DataSysDescription ("Time to wait for command to execute.")]
 		[DefaultValue (DEFAULT_COMMAND_TIMEOUT)]
 #endif
-		public 
+		public
 #if NET_2_0
 		override
 #endif //NET_2_0
@@ -182,9 +183,9 @@ namespace System.Data.SqlClient {
 #endif
 		[DefaultValue (CommandType.Text)]
 		[RefreshProperties (RefreshProperties.All)]
-		public 
+		public
 #if NET_2_0
-		override 
+		override
 #endif //NET_2_0
 		CommandType CommandType {
 			get { return commandType; }
@@ -207,7 +208,7 @@ namespace System.Data.SqlClient {
 		[DataSysDescription ("Connection used by the command.")]
 #endif
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]		
-		public 
+		public
 #if NET_2_0
 		new
 #endif //NET_2_0
@@ -227,7 +228,7 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
 #endif
-		public 
+		public
 #if NET_2_0
 		override
 #endif //NET_2_0
@@ -240,9 +241,9 @@ namespace System.Data.SqlClient {
 		[DataSysDescription ("The parameters collection.")]
 #endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		public 
+		public
 #if NET_2_0
-		new 
+		new
 #endif //NET_2_0
 		SqlParameterCollection Parameters {
 			get { return parameters; }
@@ -252,6 +253,7 @@ namespace System.Data.SqlClient {
 			get { return Connection.Tds; }
 		}
 
+#if !NET_2_0
 		IDbConnection IDbCommand.Connection {
 			get { return Connection; }
 			set { 
@@ -267,12 +269,13 @@ namespace System.Data.SqlClient {
 
 		IDbTransaction IDbCommand.Transaction {
 			get { return Transaction; }
-			set { 
+			set {
 				if (!(value == null || value is SqlTransaction))
 					throw new ArgumentException ();
 				Transaction = (SqlTransaction) value; 
 			}
 		}
+#endif
 
 		[Browsable (false)]
 #if !NET_2_0
@@ -288,7 +291,7 @@ namespace System.Data.SqlClient {
 		[DataSysDescription ("When used by a DataAdapter.Update, how command results are applied to the current DataRow.")]
 #endif
 		[DefaultValue (UpdateRowSource.Both)]
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -318,7 +321,7 @@ namespace System.Data.SqlClient {
 
 		#region Methods
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -459,7 +462,7 @@ namespace System.Data.SqlClient {
 			}
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -513,7 +516,7 @@ namespace System.Data.SqlClient {
 			return Connection.DataReader;
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -619,7 +622,7 @@ namespace System.Data.SqlClient {
 		}
 #endif
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -796,24 +799,24 @@ namespace System.Data.SqlClient {
 			return BeginExecuteNonQuery (null, null);
 		}
 
-		public IAsyncResult BeginExecuteNonQuery (AsyncCallback callback, object state)
+		public IAsyncResult BeginExecuteNonQuery (AsyncCallback callback, object stateObject)
 		{
 			ValidateCommand ("BeginExecuteNonQuery");
-			SqlAsyncResult ar = new SqlAsyncResult (callback, state);
+			SqlAsyncResult ar = new SqlAsyncResult (callback, stateObject);
 			ar.EndMethod = "EndExecuteNonQuery";
 			ar.InternalResult = BeginExecuteInternal (CommandBehavior.Default, false, ar.BubbleCallback, ar);
 			return ar;
 		}
 
-		public int EndExecuteNonQuery (IAsyncResult ar)
+		public int EndExecuteNonQuery (IAsyncResult asyncResult)
 		{
-			ValidateAsyncResult (ar, "EndExecuteNonQuery");
-			EndExecuteInternal (ar);
+			ValidateAsyncResult (asyncResult, "EndExecuteNonQuery");
+			EndExecuteInternal (asyncResult);
 
 			int ret = Connection.Tds.RecordsAffected;
 
 			GetOutputParameters ();
-			((SqlAsyncResult) ar).Ended = true;
+			((SqlAsyncResult) asyncResult).Ended = true;
 			return ret;
 		}
 
@@ -827,27 +830,27 @@ namespace System.Data.SqlClient {
 			return BeginExecuteReader (null, null, behavior);
 		}
 
-		public IAsyncResult BeginExecuteReader (AsyncCallback callback, object state)
+		public IAsyncResult BeginExecuteReader (AsyncCallback callback, object stateObject)
 		{
-			return BeginExecuteReader (callback, state, CommandBehavior.Default);
+			return BeginExecuteReader (callback, stateObject, CommandBehavior.Default);
 		}
 
-		public IAsyncResult BeginExecuteReader (AsyncCallback callback, object state, CommandBehavior behavior)
+		public IAsyncResult BeginExecuteReader (AsyncCallback callback, object stateObject, CommandBehavior behavior)
 		{
 			ValidateCommand ("BeginExecuteReader");
 			this.behavior = behavior;
-			SqlAsyncResult ar = new SqlAsyncResult (callback, state);
+			SqlAsyncResult ar = new SqlAsyncResult (callback, stateObject);
 			ar.EndMethod = "EndExecuteReader";
 			IAsyncResult tdsResult = BeginExecuteInternal (behavior, true, 
-				ar.BubbleCallback, state);
+				ar.BubbleCallback, stateObject);
 			ar.InternalResult = tdsResult;
 			return ar;
 		}
 
-		public SqlDataReader EndExecuteReader (IAsyncResult ar)
+		public SqlDataReader EndExecuteReader (IAsyncResult asyncResult)
 		{
-			ValidateAsyncResult (ar, "EndExecuteReader");
-			EndExecuteInternal (ar);
+			ValidateAsyncResult (asyncResult, "EndExecuteReader");
+			EndExecuteInternal (asyncResult);
 			SqlDataReader reader = null;
 			try {
 				reader = new SqlDataReader (this);
@@ -865,17 +868,17 @@ namespace System.Data.SqlClient {
 				throw;
 			}
 
-			((SqlAsyncResult) ar).Ended = true;
+			((SqlAsyncResult) asyncResult).Ended = true;
 			return reader;
 		}
 
-		public IAsyncResult BeginExecuteXmlReader (AsyncCallback callback, object state)
+		public IAsyncResult BeginExecuteXmlReader (AsyncCallback callback, object stateObject)
 		{
 			ValidateCommand ("BeginExecuteXmlReader");
-			SqlAsyncResult ar = new SqlAsyncResult (callback, state);
+			SqlAsyncResult ar = new SqlAsyncResult (callback, stateObject);
 			ar.EndMethod = "EndExecuteXmlReader";
 			ar.InternalResult = BeginExecuteInternal (behavior, true, 
-				ar.BubbleCallback, state);
+				ar.BubbleCallback, stateObject);
 			return ar;
 		}
 
@@ -885,14 +888,14 @@ namespace System.Data.SqlClient {
 		}
 		
 
-		public XmlReader EndExecuteXmlReader (IAsyncResult ar)
+		public XmlReader EndExecuteXmlReader (IAsyncResult asyncResult)
 		{
-			ValidateAsyncResult (ar, "EndExecuteXmlReader");
-			EndExecuteInternal (ar);
+			ValidateAsyncResult (asyncResult, "EndExecuteXmlReader");
+			EndExecuteInternal (asyncResult);
 			SqlDataReader reader = new SqlDataReader (this);
 			SqlXmlTextReader textReader = new SqlXmlTextReader (reader);
 			XmlReader xmlReader = new XmlTextReader (textReader);
-			((SqlAsyncResult) ar).Ended = true;
+			((SqlAsyncResult) asyncResult).Ended = true;
 			return xmlReader;
 		}
 

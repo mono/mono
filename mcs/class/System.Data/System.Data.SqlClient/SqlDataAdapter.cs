@@ -141,17 +141,13 @@ namespace System.Data.SqlClient {
 
 		IDbCommand IDbDataAdapter.UpdateCommand {
 			get { return UpdateCommand; }
-			set {  UpdateCommand = (SqlCommand) value; }
-		}
-
-		ITableMappingCollection IDataAdapter.TableMappings {
-			get { return TableMappings; }
+			set { UpdateCommand = (SqlCommand) value; }
 		}
 
 #if NET_2_0
 		public override int UpdateBatchSize {
 			get { return updateBatchSize; }
-			set { 
+			set {
 				if (value < 0)
 					throw new ArgumentOutOfRangeException ("UpdateBatchSize");
 				updateBatchSize = value; 
@@ -211,7 +207,7 @@ namespace System.Data.SqlClient {
 		// by individual providers 
 
 		[MonoTODO]
-		protected override int AddToBatch (IDbCommand cmd)
+		protected override int AddToBatch (IDbCommand command)
 		{
 			throw new NotImplementedException ();
 		}
@@ -229,7 +225,7 @@ namespace System.Data.SqlClient {
 		}
 
 		[MonoTODO]
-		protected override IDataParameter GetBatchedParameter (int commandIdentifier, int parameterIdentifer)
+		protected override IDataParameter GetBatchedParameter (int commandIdentifier, int  parameterIndex)
 		{
 			throw new NotImplementedException ();
 		}

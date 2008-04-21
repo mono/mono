@@ -52,7 +52,8 @@ using System.Net.Sockets;
 using System.Text;
 using System.Xml;
 
-namespace System.Data.SqlClient {
+namespace System.Data.SqlClient
+{
 	[DefaultEvent ("InfoMessage")]
 #if NET_2_0
 	public sealed class SqlConnection : DbConnection, IDbConnection, ICloneable
@@ -61,6 +62,7 @@ namespace System.Data.SqlClient {
 #endif // NET_2_0
 	{
 		#region Fields
+
 		bool disposed;
 
 		// The set of SQL connection pools
@@ -112,8 +114,7 @@ namespace System.Data.SqlClient {
 
 		#region Constructors
 
-		public SqlConnection () 
-			: this (String.Empty)
+		public SqlConnection () : this (String.Empty)
 		{
 		}
 	
@@ -142,7 +143,7 @@ namespace System.Data.SqlClient {
 		[EditorAttribute ("Microsoft.VSDesigner.Data.SQL.Design.SqlConnectionStringEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		[RecommendedAsConfigurable (true)]
 		[RefreshProperties (RefreshProperties.All)]
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -164,7 +165,7 @@ namespace System.Data.SqlClient {
 		[DataSysDescription ("Current connection timeout value, 'Connect Timeout=X' in the ConnectionString.")]	
 #endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -176,7 +177,7 @@ namespace System.Data.SqlClient {
 		[DataSysDescription ("Current SQL Server database, 'Initial Catalog=X' in the connection string.")]
 #endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -199,7 +200,7 @@ namespace System.Data.SqlClient {
 		[Browsable(true)]
 #endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -224,7 +225,7 @@ namespace System.Data.SqlClient {
 		[DataSysDescription ("Version of the SQL Server accessed by the SqlConnection.")]
 #endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -242,7 +243,7 @@ namespace System.Data.SqlClient {
 		[DataSysDescription ("The ConnectionState indicating whether the connection is open or closed.")]
 #endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -399,7 +400,7 @@ namespace System.Data.SqlClient {
 			return transaction;
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -419,7 +420,7 @@ namespace System.Data.SqlClient {
 			OnStateChange (CreateStateChangeEvent (originalState, currentState));
 		}
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
@@ -470,7 +471,7 @@ namespace System.Data.SqlClient {
 			return new StateChangeEventArgs (originalState, currentState);
 		}
 
-		protected override void Dispose (bool disposing) 
+		protected override void Dispose (bool disposing)
 		{
 			if (disposed)
 				return;
@@ -500,9 +501,9 @@ namespace System.Data.SqlClient {
 		}
 
 #if NET_2_0
-		protected override DbTransaction BeginDbTransaction (IsolationLevel level)
+		protected override DbTransaction BeginDbTransaction (IsolationLevel isolationLevel)
 		{
-			return (DbTransaction)BeginTransaction (level);
+			return BeginTransaction (isolationLevel);
 		}
 
 		protected override DbCommand CreateDbCommand ()
@@ -526,11 +527,11 @@ namespace System.Data.SqlClient {
 		}
 #endif
 
-		public 
+		public
 #if NET_2_0
 		override
 #endif // NET_2_0
-		void Open () 
+		void Open ()
 		{
 			string serverName = string.Empty;
 			if (state == ConnectionState.Open)
@@ -780,7 +781,7 @@ namespace System.Data.SqlClient {
 			parameters ["ASYNCHRONOUS PROCESSING"] = "false";
  #endif
 		}
-		
+
 		private void SetProperties (string name , string value)
 		{
 			switch (name) {
