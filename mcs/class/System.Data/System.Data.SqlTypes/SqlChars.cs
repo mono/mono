@@ -90,67 +90,67 @@ namespace System.Data.SqlTypes
 
 		#region Properties
 
-                public char [] Buffer {
-                        get { return buffer; }
-                }
+		public char [] Buffer {
+			get { return buffer; }
+		}
 
-                public bool IsNull {
-                        get { return !notNull; }
-                }
+		public bool IsNull {
+			get { return !notNull; }
+		}
 
-                public char this [long offset] {
-                        set {
+		public char this [long offset] {
+			set {
 				if (notNull && offset >= 0 && offset < buffer.Length)
 					buffer [offset] = value;
 			}
-                        get {
+			get {
 				if (buffer == null)
 					throw new SqlNullValueException ("Data is Null");
 				if (offset < 0 || offset >= buffer.Length)
 					throw new ArgumentOutOfRangeException ("Parameter name: offset");
 				return buffer [offset];
 			}
-                }
+		}
 
-                public long Length {
-                        get {
+		public long Length {
+			get {
 				if (!notNull || buffer == null)
 					throw new SqlNullValueException ("Data is Null");
 				if (buffer.Length < 0)
 					return -1;
 				return buffer.Length;
 			}
-                }
+		}
 
-                public long MaxLength {
-                        get {
+		public long MaxLength {
+			get {
 				if (!notNull || buffer == null || storage == StorageState.Stream)
 					return -1;
 				return buffer.Length;
 			}
-                }
+		}
 
-                public static SqlChars Null {
-                        get {
+		public static SqlChars Null {
+			get {
 				return new SqlChars ();
 			}
-                }
+		}
 
-                public StorageState Storage {
-                        get {
+		public StorageState Storage {
+			get {
 				if (storage == StorageState.UnmanagedBuffer)
 					throw new SqlNullValueException ("Data is Null");
 				return storage;
 			}
-                }
+		}
 
-                public char [] Value {
-                        get {
+		public char [] Value {
+			get {
 				if (buffer == null)
 					return buffer;
 				return (char []) buffer.Clone ();
 			}
-                }
+		}
 
 		#endregion
 
@@ -164,40 +164,39 @@ namespace System.Data.SqlTypes
 				throw new ArgumentOutOfRangeException ("Specified argument was out of the range of valid values.");
 			Array.Resize (ref buffer, (int) value);
 		}
-                                                                                
+
 		public void SetNull ()
 		{
 			buffer = null;
 			notNull = false;
 		}
 
-		public static explicit operator SqlString (SqlChars x)
+		public static explicit operator SqlString (SqlChars value)
 		{
-			if (x.IsNull)
+			if (value.IsNull)
 				return SqlString.Null;
 			else {
-				return new SqlString (new String (x.Value));
+				return new SqlString (new String (value.Value));
 			}
 		}
 
-		public static explicit operator SqlChars (SqlString x)
+		public static explicit operator SqlChars (SqlString value)
 		{
-			if (x.IsNull)
+			if (value.IsNull)
 				return Null;
 			else
-				return new SqlChars (x.Value);
+				return new SqlChars (value.Value);
 		}
 
 		public SqlString ToSqlString ()
 		{
 			if (buffer == null) {
 				return SqlString.Null;
-			}
-			else {
+			} else {
 				return new SqlString (buffer.ToString ());
 			}
 		}
-                                                              
+
 		public long Read (long offset, char [] buffer, int offsetInBuffer, int count)
 		{
 			if (buffer == null)
@@ -322,7 +321,7 @@ namespace System.Data.SqlTypes
 		{
 			throw new NotImplementedException ();
 		}
-                                                                                
+
 		#endregion
 	}
 }

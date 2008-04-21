@@ -108,76 +108,76 @@ namespace System.Data.SqlTypes
 
 		#region Properties
 
-                public byte [] Buffer {
-                        get { return buffer; }
-                }
+		public byte [] Buffer {
+			get { return buffer; }
+		}
 
-                public bool IsNull {
-                        get { return !notNull; }
-                }
+		public bool IsNull {
+			get { return !notNull; }
+		}
 
-                public byte this [long offset] {
-                        set {
+		public byte this [long offset] {
+			set {
 				if (notNull && offset >= 0 && offset < buffer.Length)
 					buffer [offset] = value;
 			}
-                        get {
+			get {
 				if (buffer == null)
 					throw new SqlNullValueException ("Data is Null");
 				if (offset < 0 || offset >= buffer.Length)
 					throw new ArgumentOutOfRangeException ("Parameter name: offset");
 				return buffer [offset];
 			}
-                }
+		}
 
-                public long Length {
-                        get {
+		public long Length {
+			get {
 				if (!notNull || buffer == null)
 					throw new SqlNullValueException ("Data is Null");
 				if (buffer.Length < 0)
 					return -1;
 				return buffer.Length;
 			}
-                }
+		}
 
-                public long MaxLength {
-                        get {
+		public long MaxLength {
+			get {
 				if (!notNull || buffer == null || storage == StorageState.Stream)
 					return -1;
 				return buffer.Length;
 			}
-                }
+		}
 
-                public static SqlBytes Null {
-                        get {
+		public static SqlBytes Null {
+			get {
 				return new SqlBytes ();
 			}
-                }
+		}
 
-                public StorageState Storage {
-                        get {
+		public StorageState Storage {
+			get {
 				if (storage == StorageState.UnmanagedBuffer)
 					throw new SqlNullValueException ("Data is Null");
 				return storage;
 			}
-                }
+		}
 
-                public Stream Stream {
-                        set {
+		public Stream Stream {
+			set {
 				stream = value;
 			}
-                        get {
+			get {
 				return stream;
 			}
-                }
+		}
 
-                public byte [] Value {
-                        get {
+		public byte [] Value {
+			get {
 				if (buffer == null)
 					return buffer;
 				return (byte []) buffer.Clone ();
 			}
-                }
+		}
 
 		#endregion
 
@@ -191,34 +191,34 @@ namespace System.Data.SqlTypes
 				throw new ArgumentOutOfRangeException ("Specified argument was out of the range of valid values.");
 			Array.Resize (ref buffer, (int) value);
 		}
-                                                                                
+
 		public void SetNull ()
 		{
 			buffer = null;
 			notNull = false;
 		}
-                                                                                
-		public static explicit operator SqlBytes (SqlBinary x)
+
+		public static explicit operator SqlBytes (SqlBinary value)
 		{
-			if (x.IsNull)
+			if (value.IsNull)
 				return Null;
 			else
-				return new SqlBytes (x.Value);
+				return new SqlBytes (value.Value);
 		}
 
-		public static explicit operator SqlBinary (SqlBytes x)
+		public static explicit operator SqlBinary (SqlBytes value)
 		{
-			if (x.IsNull)
+			if (value.IsNull)
 				return SqlBinary.Null;
 			else
-				return new SqlBinary (x.Value);
+				return new SqlBinary (value.Value);
 		}
 
 		public SqlBinary ToSqlBinary ()
 		{
 			return new SqlBinary (buffer);
 		}
-                                                                                
+
 		public static XmlQualifiedName GetXsdType (XmlSchemaSet schemaSet)
 		{
 			XmlQualifiedName qualifiedName = new XmlQualifiedName ("base64Binary", "http://www.w3.org/2001/XMLSchema");
@@ -230,13 +230,13 @@ namespace System.Data.SqlTypes
 		{
 			throw new NotImplementedException ();
 		}
-                                                                                
+
 		[MonoTODO]
-		void IXmlSerializable.ReadXml (XmlReader reader)
+		void IXmlSerializable.ReadXml (XmlReader r)
 		{
 			throw new NotImplementedException ();
 		}
-                                                                                
+
 		[MonoTODO]
 		void IXmlSerializable.WriteXml (XmlWriter writer)
 		{
@@ -249,7 +249,6 @@ namespace System.Data.SqlTypes
 			throw new NotImplementedException ();
 		}
 
-		
 		public long Read (long offset, byte [] buffer, int offsetInBuffer, int count)
 		{
 			if (buffer == null)

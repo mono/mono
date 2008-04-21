@@ -1,3 +1,23 @@
+2008-04-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SqlDecimal.cs: Changed argument names to match MS. Code formatting.
+	* SqlNotFilledException.cs: Changed argument names to match MS. Code
+	formatting.
+	* SqlChars.cs: Changed argument names to match MS. Code formatting.
+	* SqlTypeException.cs: Changed argument names to match MS. Code
+	formatting.
+	* SqlXml.cs: Changed argument names to match MS. Code formatting.
+	* SqlInt16.cs: Changed argument names to match MS. Code formatting.
+	* SqlInt64.cs: Changed argument names to match MS. Code formatting.
+	* SqlTruncateException.cs: Changed argument names to match MS.
+	Code formatting.
+	* SqlDouble.cs: Changed argument names to match MS. Code formatting.
+	* SqlSingle.cs: Changed argument names to match MS. Code formatting.
+	* SqlBytes.cs: Changed argument names to match MS. Code formatting.
+	* SqlNullValueException.cs: Changed argument names to match MS. Code
+	formatting.
+	* SqlMoney.cs: Changed argument names to match MS. Code formatting.
+
 2007-10-02  Veerapuram Varadhan <vvaradhan@novell.com> 
 
 	* SqlChars.cs, SqlBytes.cs (Read, Write): Implemented missing 2.0 APIs.

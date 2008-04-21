@@ -68,11 +68,9 @@ namespace System.Data.SqlTypes
 		const ulong LIT_GUINT64_HIGHBIT = 0x8000000000000000;
 		const ulong LIT_GUINT32_HIGHBIT = 0x80000000;
 		const byte DECIMAL_MAX_INTFACTORS = 9;
-		static uint [] constantsDecadeInt32Factors = new uint [10]
-		        {
-				1u, 10u, 100u, 1000u, 10000u, 100000u, 1000000u, 
-				10000000u, 100000000u, 1000000000u
-			};
+		static uint [] constantsDecadeInt32Factors = new uint [10] {
+			1u, 10u, 100u, 1000u, 10000u, 100000u, 1000000u, 
+			10000000u, 100000000u, 1000000000u};
 
 		public static readonly byte MaxPrecision = 38; 
 		public static readonly byte MaxScale = 38;
@@ -88,9 +86,9 @@ namespace System.Data.SqlTypes
 		// This should be -99999999999999999999999999999999999999
 		public static readonly SqlDecimal MinValue = new SqlDecimal (MaxPrecision, 
 									     (byte)0, false,
-									     -1, 						
+									     -1,
 									     160047679,
-									     1518781562, 
+									     1518781562,
 									     1262177448);
 
 		public static readonly SqlDecimal Null;
@@ -99,7 +97,7 @@ namespace System.Data.SqlTypes
 
 		#region Constructors
 
-		public SqlDecimal (decimal value) 
+		public SqlDecimal (decimal value)
 		{
 			int[] binData = Decimal.GetBits (value);
 
@@ -116,16 +114,12 @@ namespace System.Data.SqlTypes
 			this.value[2] = binData[2];
 			this.value[3] = 0;
 
-			if (value >= 0)
-				positive = true;
-			else 
-				positive = false;
-
+			positive = (value >= 0);
 			notNull = true;
 			precision = GetPrecision (value);
 		}
-				
-		public SqlDecimal (double value) : this ((decimal)value) 
+
+		public SqlDecimal (double dVal) : this ((decimal) dVal)
 		{
 			SqlDecimal n = this;
 			int digits = 17 - precision;
@@ -140,12 +134,19 @@ namespace System.Data.SqlTypes
 			this.value = n.value;
 		}
 
-		public SqlDecimal (int value) : this ((decimal)value) { }
-		public SqlDecimal (long value) : this ((decimal)value) { }
+		public SqlDecimal (int value) : this ((decimal) value)
+		{
+		}
 
-		public SqlDecimal (byte bPrecision, byte bScale, bool fPositive, int[] bits) : this (bPrecision, bScale, fPositive, bits[0], bits[1], bits[2], bits[3]) { }
+		public SqlDecimal (long value) : this ((decimal) value)
+		{
+		}
 
-		public SqlDecimal (byte bPrecision, byte bScale, bool fPositive, int data1, int data2, int data3, int data4) 
+		public SqlDecimal (byte bPrecision, byte bScale, bool fPositive, int[] bits) : this (bPrecision, bScale, fPositive, bits[0], bits[1], bits[2], bits[3])
+		{
+		}
+
+		public SqlDecimal (byte bPrecision, byte bScale, bool fPositive, int data1, int data2, int data3, int data4)
 		{
 			this.precision = bPrecision;
 			this.scale = bScale;
@@ -163,7 +164,7 @@ namespace System.Data.SqlTypes
 			if (precision > 38)
 				throw new SqlTypeException (Locale.GetText ("Invalid precision/scale combination."));
 
-			if (this.ToDouble () > (Math.Pow (10, 38) - 1)  || 
+			if (this.ToDouble () > (Math.Pow (10, 38) - 1) ||
 			    this.ToDouble () < -(Math.Pow (10, 38)))
 				throw new OverflowException ("Can't convert to SqlDecimal, Out of range ");
 		}
@@ -173,8 +174,7 @@ namespace System.Data.SqlTypes
 		#region Properties
 
 		public byte[] BinData {
-			get { 
-
+			get {
 				byte [] b = new byte [value.Length * 4];
 				
 				int j = 0;
@@ -190,8 +190,8 @@ namespace System.Data.SqlTypes
 			}
 		}
 
-		public int[] Data { 
-			get { 
+		public int[] Data {
+			get {
 				if (this.IsNull)
 					throw new SqlNullValueException ();
 				// Data should always return clone, not to be modified
@@ -204,24 +204,24 @@ namespace System.Data.SqlTypes
 			}
 		}
 
-		public bool IsNull { 
+		public bool IsNull {
 			get { return !notNull; }
 		}
 
-		public bool IsPositive { 
+		public bool IsPositive {
 			get { return positive; }
 		}
 
-		public byte Precision { 
+		public byte Precision {
 			get { return precision; }
 		}
 
-		public byte Scale { 
+		public byte Scale {
 			get { return scale; }
 		}
 
-		public decimal Value { 
-			get { 
+		public decimal Value {
+			get {
 				if (this.IsNull) 
 					throw new SqlNullValueException ();
 
@@ -250,7 +250,7 @@ namespace System.Data.SqlTypes
 
 		public static SqlDecimal AdjustScale (SqlDecimal n, int digits, bool fRound)
 		{
-		        byte prec = n.Precision;
+			byte prec = n.Precision;
 			if (n.IsNull)
 				throw new SqlNullValueException ();
 
@@ -258,7 +258,7 @@ namespace System.Data.SqlTypes
 			if (digits == 0)
 				return n;
 			else if (digits > 0) {
-			        prec = (byte)(prec + digits);
+				prec = (byte)(prec + digits);
 				scale = (byte) (n.scale + digits);
 				// use Math.Pow once the Ctr (double) is fixed to  handle
 				// values greater than Decimal.MaxValue
@@ -296,6 +296,7 @@ namespace System.Data.SqlTypes
 
 			return CompareTo ((SqlDecimal) value);
 		}
+
 #if NET_2_0
 		public
 #endif
@@ -315,7 +316,7 @@ namespace System.Data.SqlTypes
 			if ((n.Scale >= sc) && (precision < n.Precision))
 				throw new SqlTruncateException ();
 			else{
-				prec = precision; 	
+				prec = precision;
 				return new SqlDecimal ((byte)prec, n.scale, n.IsPositive, n.Data);
 			}
 		}
@@ -330,7 +331,7 @@ namespace System.Data.SqlTypes
 			if (!(value is SqlDecimal))
 				return false;
 			else if (this.IsNull && ((SqlDecimal)value).IsNull)
-				return true;			
+				return true;
 			else if (((SqlDecimal)value).IsNull)
 				return false;
 			else
@@ -364,8 +365,8 @@ namespace System.Data.SqlTypes
 			result = 91 * result + this.Data[1];
 			result = 91 * result + this.Data[2];
 			result = 91 * result + this.Data[3];
-			result = 91 * result + (int)this.Scale;
-			result = 91 * result + (int)this.Precision;
+			result = 91 * result + (int) this.Scale;
+			result = 91 * result + (int) this.Precision;
 
 			return result;
 		}
@@ -404,7 +405,7 @@ namespace System.Data.SqlTypes
 		{
 			if (s == null)
 				throw new ArgumentNullException (Locale.GetText ("string s"));
-			else 
+			else
 				return new SqlDecimal (Decimal.Parse (s));
 		}
 
@@ -466,47 +467,47 @@ namespace System.Data.SqlTypes
 
 		public SqlBoolean ToSqlBoolean ()
 		{
-			return ((SqlBoolean)this);
+			return ((SqlBoolean) this);
 		}
 		
 		public SqlByte ToSqlByte ()
 		{
-			return ((SqlByte)this);
+			return ((SqlByte) this);
 		}
 
 		public SqlDouble ToSqlDouble ()
 		{
-			return ((SqlDouble)this);
+			return ((SqlDouble) this);
 		}
 
 		public SqlInt16 ToSqlInt16 ()
 		{
-			return ((SqlInt16)this);
+			return ((SqlInt16) this);
 		}
 
 		public SqlInt32 ToSqlInt32 ()
 		{
-			return ((SqlInt32)this);
+			return ((SqlInt32) this);
 		}
 
 		public SqlInt64 ToSqlInt64 ()
 		{
-			return ((SqlInt64)this);
+			return ((SqlInt64) this);
 		}
 
 		public SqlMoney ToSqlMoney ()
 		{
-			return ((SqlMoney)this);
+			return ((SqlMoney) this);
 		}
 
 		public SqlSingle ToSqlSingle ()
 		{
-			return ((SqlSingle)this);
+			return ((SqlSingle) this);
 		}
 
 		public SqlString ToSqlString ()
 		{
-			return ((SqlString)this);
+			return ((SqlString) this);
 		}
 
 		public override string ToString ()
@@ -521,19 +522,18 @@ namespace System.Data.SqlTypes
 			hi += (ulong)((ulong)this.Data [3] << 32);
 
 			uint rest = 0;
-			String result = "";
+			String result = string.Empty;
 			StringBuilder Result = new StringBuilder ();
 			for (int i = 0; lo != 0 || hi != 0; i++) {
-			
 				Div128By32 (ref hi, ref lo, 10, ref rest);
 				Result.Insert (0, rest.ToString ());
 			}
 
 			while (Result.Length > this.Precision)
-			       Result.Remove (Result.Length - 1, 1);
+				Result.Remove (Result.Length - 1, 1);
  
 			if (this.Scale > 0)
-			        Result.Insert (Result.Length - this.Scale, ".");
+				Result.Insert (Result.Length - this.Scale, ".");
 
 			if (!positive)
 				Result.Insert (0, '-');
@@ -553,7 +553,7 @@ namespace System.Data.SqlTypes
 		{
 			ulong a = 0;
 			ulong b = 0;
-			ulong c = 0;	
+			ulong c = 0;
 			
 			a = (uint)(hi >> 32);
 			b = a / divider;
@@ -583,8 +583,8 @@ namespace System.Data.SqlTypes
 		[MonoTODO("Find out what is the right way to set scale and precision")]
 		private static SqlDecimal DecimalDiv (SqlDecimal x, SqlDecimal y)
 		{
-			ulong lo = 0; 
-			ulong hi = 0;			
+			ulong lo = 0;
+			ulong hi = 0;
 			int sc = 0; // scale
 			int texp = 0;
 			int rc = 0;
@@ -602,11 +602,11 @@ namespace System.Data.SqlTypes
 			while (prec < sc) {
 				Div128By32(ref hi, ref lo, 10, ref r);
 				sc--;
-			}				
-				
+			}
+
 			if (r >= 5) 
 				lo++;
-		       
+
 			while ((((double)hi) * Math.Pow(2,64) + lo) - Math.Pow (10, prec) > 0)
 				prec++;
 
@@ -616,13 +616,13 @@ namespace System.Data.SqlTypes
 				if (r >= 5)
 					lo++;
 			}
-				
-			int resultLo = (int)lo;
-			int resultMi = (int)(lo >> 32);
-			int resultMi2 = (int)(hi);
-			int resultHi = (int)(hi >> 32);
 
-			return new SqlDecimal (prec, (byte)sc, positive, resultLo,
+			int resultLo = (int) lo;
+			int resultMi = (int) (lo >> 32);
+			int resultMi2 = (int) (hi);
+			int resultHi = (int) (hi >> 32);
+
+			return new SqlDecimal (prec, (byte) sc, positive, resultLo,
 						       resultMi, resultMi2,
 						       resultHi);
 		}
@@ -642,13 +642,10 @@ namespace System.Data.SqlTypes
 
 			sc = scale;
 			if (texp > 0) {
-
-      			 	// reduce exp 
+				// reduce exp 
 				while (texp > 0 && sc <= maxScale) {
-
-				  		overhang = (uint)(chi >> 64);
+					overhang = (uint)(chi >> 64);
 					while (texp > 0 && (((clo & 1) == 0) || overhang > 0)) {
-						
 						if (--texp == 0)
 							roundBit = (int)(clo & 1);
 						RShift128 (ref clo, ref chi);
@@ -672,10 +669,7 @@ namespace System.Data.SqlTypes
 
 					// 10^i/2^i=5^i 
 					factor = constantsDecadeInt32Factors [i] >> i; 
-//					System.Console.WriteLine ("***");
 					Mult128By32 (ref clo, ref chi, factor, 0);
-//			       		System.Console.WriteLine ((((double)chi) * Math.Pow (2,64) + clo));
-
 				}
 
 				while (texp > 0) {
@@ -742,13 +736,13 @@ namespace System.Data.SqlTypes
 			int bshift = 0;
 			int extraBit = 0;
 
-			xhi = (ulong)((ulong)x.Data [3] << 32) | (ulong)x.Data [2];
-			xmi = (ulong)((ulong)x.Data [1] << 32) | (ulong)x.Data [0];
-			xlo = (uint)0;			
-			ylo = (uint)y.Data [0];
-			ymi = (uint)y.Data [1];
-			ymi2 = (uint)y.Data [2];
-			yhi = (uint)y.Data [3];
+			xhi = (ulong) ((ulong) x.Data [3] << 32) | (ulong) x.Data [2];
+			xmi = (ulong) ((ulong) x.Data [1] << 32) | (ulong) x.Data [0];
+			xlo = (uint) 0;
+			ylo = (uint) y.Data [0];
+			ymi = (uint) y.Data [1];
+			ymi2 = (uint) y.Data [2];
+			yhi = (uint) y.Data [3];
 			
 			if (ylo == 0 && ymi == 0 && ymi2 == 0 && yhi == 0)
 				throw new DivideByZeroException ();
@@ -759,11 +753,11 @@ namespace System.Data.SqlTypes
 			}
 			
 			// enlarge dividend to get maximal precision
-	       		for (ashift = 0; (xhi & LIT_GUINT64_HIGHBIT) == 0; ++ashift)
+			for (ashift = 0; (xhi & LIT_GUINT64_HIGHBIT) == 0; ++ashift)
 				LShift128 (ref xmi, ref xhi);
 			
 			// ensure that divisor is at least 2^95 
-		        for (bshift = 0; (yhi & LIT_GUINT32_HIGHBIT) == 0; ++bshift) 
+			for (bshift = 0; (yhi & LIT_GUINT32_HIGHBIT) == 0; ++bshift) 
 				LShift128 (ref ylo, ref ymi, ref ymi2, ref yhi);
 			
 			thi = ((ulong)yhi) << 32 | (ulong)ymi2;
@@ -786,18 +780,17 @@ namespace System.Data.SqlTypes
 				chi += LIT_GUINT64_HIGHBIT;
 				exp--;
 			}
-			 
+
 			// try loss free right shift
 			while (exp > 0 && (clo & 1) == 0) {
 				RShift128 (ref clo, ref chi);
 				exp--;
-			}			
+			}
 		}
 
 		// From decimal.c
 		private static void RShift192(ref ulong lo, ref ulong mi, ref ulong hi)
 		{
-			
 			lo >>= 1;
 			if ((mi & 1) != 0)
 				lo |= LIT_GUINT64_HIGHBIT;
@@ -842,7 +835,7 @@ namespace System.Data.SqlTypes
 			
 			mi <<= 1;
 			if ((lo & LIT_GUINT32_HIGHBIT) != 0) 
-			       mi++;
+				mi++;
 
 			lo <<= 1;
 		}
@@ -851,7 +844,7 @@ namespace System.Data.SqlTypes
 		private static void Div192By128To128 (ulong xlo, ulong xmi, ulong xhi,
 					       uint ylo, uint ymi, uint ymi2, 
 					       uint yhi, ref ulong clo, ref ulong chi)
-	        {
+		{
 			ulong rlo, rmi, rhi; // remainders
 			uint h, c;
 
@@ -892,8 +885,8 @@ namespace System.Data.SqlTypes
 		private static uint Div192By128To32WithRest(ref ulong xlo, ref ulong xmi,
 						ref ulong xhi, uint ylo, 
 						uint ymi, uint ymi2, uint yhi)
-	        {
-			ulong rlo, rmi, rhi; // remainder		       
+		{
+			ulong rlo, rmi, rhi; // remainder
 			ulong tlo = 0;
 			ulong thi = 0;
 			uint c;
@@ -918,7 +911,7 @@ namespace System.Data.SqlTypes
 			xmi = rmi;
 			xhi = rhi;
 
-			return c;			
+			return c;
 		}
 
 		// From decimal.c
@@ -942,7 +935,7 @@ namespace System.Data.SqlTypes
 			clo = ((ulong)h1) << 32 | h0;
 
 			a >>= 32;
-			a += ((ulong)(uint)cmi) * factor;		       
+			a += ((ulong)(uint)cmi) * factor;
 			h0 = (uint)a;
 			
 			a >>= 32;
@@ -951,7 +944,7 @@ namespace System.Data.SqlTypes
 			
 			cmi = ((ulong)h1) << 32 | h0;
 			a >>= 32;
-			a += ((ulong)(uint)chi) * factor;		       
+			a += ((ulong)(uint)chi) * factor;
 			h0 = (uint)a;
 
 			a >>= 32;
@@ -982,16 +975,15 @@ namespace System.Data.SqlTypes
 			clo = ((ulong)h1) << 32 | h0;
 
 			a >>= 32;
-			a += ((ulong)(uint)chi) * factor;		       
+			a += ((ulong)(uint)chi) * factor;
 			h0 = (uint)a;
 			
 			a >>= 32;
 			a += (chi >> 32) * factor;
 			h1 = (uint)a;
-			
+
 			chi = ((ulong)h1) << 32 | h0;
 		}
-						 
 
 		// From decimal.c
 		private static void Mult128By32To128(uint xlo, uint xmi, uint xmi2, uint xhi,
@@ -1038,7 +1030,7 @@ namespace System.Data.SqlTypes
 			xhi += yhi;
 			clo = xlo;
 			cmi = xmi;
-			chi = xhi;			      
+			chi = xhi;
 		}
 
 		// From decimal.c
@@ -1091,7 +1083,7 @@ namespace System.Data.SqlTypes
 			 //if one of them is negative, perform subtraction
 			if (x.IsPositive && !y.IsPositive){
 				y = new SqlDecimal (y.Precision, y.Scale, !y.IsPositive, y.Data);
-				return (x - y);			
+				return (x - y);
 			}
 			if (!x.IsPositive && y.IsPositive){
 				x = new SqlDecimal (x.Precision, x.Scale, !x.IsPositive, x.Data);
@@ -1102,7 +1094,7 @@ namespace System.Data.SqlTypes
 				y = new SqlDecimal (y.Precision, y.Scale, !y.IsPositive, y.Data);
 				x = (x + y);
 				return new SqlDecimal (x.Precision, x.Scale, !x.IsPositive, x.Data);
-			}									
+			}
 			// adjust the scale to the larger of the two beforehand
 			if (x.scale > y.scale)
 				y = SqlDecimal.AdjustScale (y, x.scale - y.scale, false); 
@@ -1137,7 +1129,7 @@ namespace System.Data.SqlTypes
 			if (x.IsNull || y.IsNull)
 				return SqlDecimal.Null;
 
-     			return DecimalDiv (x, y);
+			return DecimalDiv (x, y);
 		}
 
 		public static SqlBoolean operator == (SqlDecimal x, SqlDecimal y)
@@ -1185,7 +1177,7 @@ namespace System.Data.SqlTypes
 
 		public static SqlBoolean operator >= (SqlDecimal x, SqlDecimal y)
 		{
-			if (x.IsNull || y.IsNull) 
+			if (x.IsNull || y.IsNull)
 				return SqlBoolean.Null;
 
 			if (x.IsPositive != y.IsPositive)
@@ -1240,11 +1232,9 @@ namespace System.Data.SqlTypes
 			else if (y.Scale > x.Scale)
 				x = SqlDecimal.AdjustScale(x, y.Scale - x.Scale, true);
 
-			for (int i = 3; i >= 0; i -= 1)
-			{
+			for (int i = 3; i >= 0; i -= 1) {
 				if (x.Data[i] == 0 && y.Data[i] == 0) 
 					continue;
-
 				return new SqlBoolean (x.Data[i] < y.Data[i]);
 			}
 			return new SqlBoolean (false);
@@ -1252,7 +1242,7 @@ namespace System.Data.SqlTypes
 
 		public static SqlBoolean operator <= (SqlDecimal x, SqlDecimal y)
 		{
-			if (x.IsNull || y.IsNull) 
+			if (x.IsNull || y.IsNull)
 				return SqlBoolean.Null;
 
 			if (x.IsPositive != y.IsPositive)
@@ -1263,8 +1253,7 @@ namespace System.Data.SqlTypes
 			else if (y.Scale > x.Scale)
 				x = SqlDecimal.AdjustScale(x, y.Scale - x.Scale, true);
 
-			for (int i = 3; i >= 0; i -= 1)
-			{
+			for (int i = 3; i >= 0; i -= 1) {
 				if (x.Data[i] == 0 && y.Data[i] == 0) 
 					continue;
 				else
@@ -1373,22 +1362,22 @@ namespace System.Data.SqlTypes
 				return new SqlDecimal (resultPrecision, x.Scale, (x>=y).Value, resultBits);
 		}
 
-		public static SqlDecimal operator - (SqlDecimal n)
+		public static SqlDecimal operator - (SqlDecimal x)
 		{
-			return new SqlDecimal (n.Precision, n.Scale, !n.IsPositive, n.Data);
+			return new SqlDecimal (x.Precision, x.Scale, !x.IsPositive, x.Data);
 		}
 
 		public static explicit operator SqlDecimal (SqlBoolean x)
 		{
-			if (x.IsNull) 
+			if (x.IsNull)
 				return Null;
 			else
 				return new SqlDecimal ((decimal)x.ByteValue);
 		}
 
-		public static explicit operator Decimal (SqlDecimal n)
+		public static explicit operator Decimal (SqlDecimal x)
 		{
-			return n.Value;
+			return x.Value;
 		}
 
 		public static explicit operator SqlDecimal (SqlDouble x)
@@ -1437,42 +1426,42 @@ namespace System.Data.SqlTypes
 
 		public static implicit operator SqlDecimal (SqlByte x)
 		{
-			if (x.IsNull) 
+			if (x.IsNull)
 				return Null;
 			else
-				return new SqlDecimal ((decimal)x.Value);
+				return new SqlDecimal ((decimal) x.Value);
 		}
 
 		public static implicit operator SqlDecimal (SqlInt16 x)
 		{
-			if (x.IsNull) 
+			if (x.IsNull)
 				return Null;
 			else
-				return new SqlDecimal ((decimal)x.Value);
+				return new SqlDecimal ((decimal) x.Value);
 		}
 
 		public static implicit operator SqlDecimal (SqlInt32 x)
 		{
-			if (x.IsNull) 
+			if (x.IsNull)
 				return Null;
 			else
-				return new SqlDecimal ((decimal)x.Value);
+				return new SqlDecimal ((decimal) x.Value);
 		}
 
 		public static implicit operator SqlDecimal (SqlInt64 x)
 		{
-			if (x.IsNull) 
+			if (x.IsNull)
 				return Null;
 			else
-				return new SqlDecimal ((decimal)x.Value);
+				return new SqlDecimal ((decimal) x.Value);
 		}
 
 		public static implicit operator SqlDecimal (SqlMoney x)
 		{
-			if (x.IsNull) 
+			if (x.IsNull)
 				return Null;
 			else
-				return new SqlDecimal ((decimal)x.Value);
+				return new SqlDecimal ((decimal) x.Value);
 		}
 
 #if NET_2_0
@@ -1496,7 +1485,7 @@ namespace System.Data.SqlTypes
 		void IXmlSerializable.ReadXml (XmlReader reader)
 		{
 			SqlDecimal retval;
-				
+
 			if (reader == null)
 				return;
 
@@ -1506,12 +1495,13 @@ namespace System.Data.SqlTypes
 			case ReadState.Closed:
 				return;
 			}
+
 			// Skip XML declaration and prolog
 			// or do I need to validate for the <SqlInt32> tag?
 			reader.MoveToContent ();
 			if (reader.EOF)
 				return;
-			
+
 			reader.Read ();
 			if (reader.NodeType == XmlNodeType.EndElement)
 				return;
@@ -1533,13 +1523,13 @@ namespace System.Data.SqlTypes
 				this.positive = retval.IsPositive;
 			}
 		}
-					                         
-		void IXmlSerializable.WriteXml (XmlWriter writer) 
+
+		void IXmlSerializable.WriteXml (XmlWriter writer)
 		{
-			Console.WriteLine ("SqlDecimal.WriteXml: Value = {0}, value={1}", this.Value, this.value);
 			writer.WriteString (this.Value.ToString ());
 		}
 #endif
+
 		#endregion
 	}
 }

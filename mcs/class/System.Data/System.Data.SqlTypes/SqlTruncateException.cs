@@ -32,11 +32,11 @@ using System;
 using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace System.Data.SqlTypes {
-
-	#if NET_1_1
+namespace System.Data.SqlTypes
+{
+#if NET_1_1
 	[Serializable]
-	#endif
+#endif
 	public sealed class SqlTruncateException : SqlTypeException, ISerializable
 	{
 		public SqlTruncateException ()
@@ -49,13 +49,13 @@ namespace System.Data.SqlTypes {
 		{
 		}
 
-		public SqlTruncateException (string message, Exception inner)
-			: base (message, inner)
+		public SqlTruncateException (string message, Exception e)
+			: base (message, e)
 		{
 		}
 
-		private SqlTruncateException (SerializationInfo si, StreamingContext sc) 
-			: base(si.GetString("SqlTruncateExceptionMessage"))
+		private SqlTruncateException (SerializationInfo si, StreamingContext sc)
+			: base (si.GetString("SqlTruncateExceptionMessage"))
 		{
 		}
 

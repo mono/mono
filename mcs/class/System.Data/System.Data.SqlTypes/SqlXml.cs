@@ -70,15 +70,15 @@ namespace System.Data.SqlTypes
 			}
 		}
 
-                public bool IsNull {
-                        get { return !notNull; }
-                }
+		public bool IsNull {
+			get { return !notNull; }
+		}
 
-                public static SqlXml Null {
-                        get {
+		public static SqlXml Null {
+			get {
 				return new SqlXml ();
 			}
-                }
+		}
 
 		public static XmlQualifiedName GetXsdType (XmlSchemaSet schemaSet)
 		{
@@ -99,7 +99,7 @@ namespace System.Data.SqlTypes
 		}
 		
 		[MonoTODO]
-		void IXmlSerializable.ReadXml (XmlReader reader)
+		void IXmlSerializable.ReadXml (XmlReader r)
 		{
 			throw new NotImplementedException ();
 		}

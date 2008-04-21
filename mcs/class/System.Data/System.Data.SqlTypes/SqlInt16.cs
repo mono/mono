@@ -50,7 +50,7 @@ namespace System.Data.SqlTypes
 	{
 		#region Fields
 
-		short value;
+		private short value;
 		private bool notNull;
 
 		public static readonly SqlInt16 MaxValue = new SqlInt16 (32767);
@@ -62,7 +62,7 @@ namespace System.Data.SqlTypes
 
 		#region Constructors
 
-		public SqlInt16 (short value) 
+		public SqlInt16 (short value)
 		{
 			this.value = value;
 			notNull = true;;
@@ -72,12 +72,12 @@ namespace System.Data.SqlTypes
 
 		#region Properties
 
-		public bool IsNull { 
+		public bool IsNull {
 			get { return !notNull; }
 		}
 
-		public short Value { 
-			get { 
+		public short Value {
+			get {
 				if (this.IsNull) 
 					throw new SqlNullValueException ();
 				else 
@@ -113,12 +113,12 @@ namespace System.Data.SqlTypes
 			return CompareSqlInt16 ((SqlInt16) value);
 		}
 
-		#if NET_2_0
-                public int CompareTo (SqlInt16 value)
-                {
-                        return CompareSqlInt16 (value);
-                }
-                #endif
+#if NET_2_0
+		public int CompareTo (SqlInt16 value)
+		{
+			return CompareSqlInt16 (value);
+		}
+#endif
 
 		private int CompareSqlInt16 (SqlInt16 value)
 		{
@@ -152,7 +152,7 @@ namespace System.Data.SqlTypes
 
 		public override int GetHashCode ()
 		{
-			return (int)value;
+			return (int) value;
 		}
 
 		public static SqlBoolean GreaterThan (SqlInt16 x, SqlInt16 y)
@@ -180,14 +180,13 @@ namespace System.Data.SqlTypes
 			return (x % y);
 		}
 		
-		#if NET_2_0
+#if NET_2_0
 		public static SqlInt16 Modulus (SqlInt16 x, SqlInt16 y)
 		{
 			return (x % y);
-		}  
-		#endif
-		
-		
+		}
+#endif
+
 		public static SqlInt16 Multiply (SqlInt16 x, SqlInt16 y)
 		{
 			return (x * y);
@@ -220,47 +219,47 @@ namespace System.Data.SqlTypes
 
 		public SqlBoolean ToSqlBoolean ()
 		{
-			return ((SqlBoolean)this);
+			return ((SqlBoolean) this);
 		}
 		
 		public SqlByte ToSqlByte ()
 		{
-			return ((SqlByte)this);
+			return ((SqlByte) this);
 		}
 
 		public SqlDecimal ToSqlDecimal ()
 		{
-			return ((SqlDecimal)this);
+			return ((SqlDecimal) this);
 		}
 
 		public SqlDouble ToSqlDouble ()
 		{
-			return ((SqlDouble)this);
+			return ((SqlDouble) this);
 		}
 
 		public SqlInt32 ToSqlInt32 ()
 		{
-			return ((SqlInt32)this);
+			return ((SqlInt32) this);
 		}
 
 		public SqlInt64 ToSqlInt64 ()
 		{
-			return ((SqlInt64)this);
+			return ((SqlInt64) this);
 		}
 
 		public SqlMoney ToSqlMoney ()
 		{
-			return ((SqlMoney)this);
+			return ((SqlMoney) this);
 		}
 
 		public SqlSingle ToSqlSingle ()
 		{
-			return ((SqlSingle)this);
+			return ((SqlSingle) this);
 		}
 
 		public SqlString ToSqlString ()
 		{
-			return ((SqlString)this);
+			return ((SqlString) this);
 		}
 
 		public override string ToString ()
@@ -302,7 +301,7 @@ namespace System.Data.SqlTypes
 
 		public static SqlBoolean operator == (SqlInt16 x, SqlInt16 y)
 		{
-			if (x.IsNull || y.IsNull) 
+			if (x.IsNull || y.IsNull)
 				return SqlBoolean.Null;
 			else
 				return new SqlBoolean (x.Value == y.Value);
@@ -315,7 +314,7 @@ namespace System.Data.SqlTypes
 
 		public static SqlBoolean operator > (SqlInt16 x, SqlInt16 y)
 		{
-			if (x.IsNull || y.IsNull) 
+			if (x.IsNull || y.IsNull)
 				return SqlBoolean.Null;
 			else
 				return new SqlBoolean (x.Value > y.Value);
@@ -323,7 +322,7 @@ namespace System.Data.SqlTypes
 
 		public static SqlBoolean operator >= (SqlInt16 x, SqlInt16 y)
 		{
-			if (x.IsNull || y.IsNull) 
+			if (x.IsNull || y.IsNull)
 				return SqlBoolean.Null;
 			else
 				return new SqlBoolean (x.Value >= y.Value);
@@ -331,7 +330,7 @@ namespace System.Data.SqlTypes
 
 		public static SqlBoolean operator != (SqlInt16 x, SqlInt16 y)
 		{
-			if (x.IsNull || y.IsNull) 
+			if (x.IsNull || y.IsNull)
 				return SqlBoolean.Null;
 			else 
 				return new SqlBoolean (!(x.Value == y.Value));
@@ -339,7 +338,7 @@ namespace System.Data.SqlTypes
 
 		public static SqlBoolean operator < (SqlInt16 x, SqlInt16 y)
 		{
-			if (x.IsNull || y.IsNull) 
+			if (x.IsNull || y.IsNull)
 				return SqlBoolean.Null;
 			else
 				return new SqlBoolean (x.Value < y.Value);
@@ -347,7 +346,7 @@ namespace System.Data.SqlTypes
 
 		public static SqlBoolean operator <= (SqlInt16 x, SqlInt16 y)
 		{
-			if (x.IsNull || y.IsNull) 
+			if (x.IsNull || y.IsNull)
 				return SqlBoolean.Null;
 			else
 				return new SqlBoolean (x.Value <= y.Value);
@@ -380,10 +379,10 @@ namespace System.Data.SqlTypes
 			}
 		}
 
-		public static SqlInt16 operator - (SqlInt16 n)
+		public static SqlInt16 operator - (SqlInt16 x)
 		{
 			checked {
-				return new SqlInt16 ((short) (-n.Value));
+				return new SqlInt16 ((short) (-x.Value));
 			}
 		}
 
@@ -392,7 +391,7 @@ namespace System.Data.SqlTypes
 			if (x.IsNull)
 				return Null;
 			else
-				return new SqlInt16 ((short)x.ByteValue);
+				return new SqlInt16 ((short) x.ByteValue);
 		}
 
 		public static explicit operator SqlInt16 (SqlDecimal x)
@@ -400,8 +399,8 @@ namespace System.Data.SqlTypes
 			checked {
 				if (x.IsNull)
 					return Null;
-				else 
-					return new SqlInt16 ((short)x.Value);
+				else
+					return new SqlInt16 ((short) x.Value);
 			}
 		}
 
@@ -410,12 +409,12 @@ namespace System.Data.SqlTypes
 			if (x.IsNull)
 				return Null;
 			else 
-				return new SqlInt16 (checked ((short)x.Value));
+				return new SqlInt16 (checked ((short) x.Value));
 		}
 
 		public static explicit operator short (SqlInt16 x)
 		{
-			return x.Value; 
+			return x.Value;
 		}
 
 		public static explicit operator SqlInt16 (SqlInt32 x)
@@ -424,7 +423,7 @@ namespace System.Data.SqlTypes
 				if (x.IsNull)
 					return Null;
 				else 
-					return new SqlInt16 ((short)x.Value);
+					return new SqlInt16 ((short) x.Value);
 			}
 		}
 
@@ -434,7 +433,7 @@ namespace System.Data.SqlTypes
 				return Null;
 			else {
 				checked {
-					return new SqlInt16 ((short)x.Value);
+					return new SqlInt16 ((short) x.Value);
 				}
 			}
 		}
@@ -446,7 +445,7 @@ namespace System.Data.SqlTypes
 					return Null;
 				else 
 					return new SqlInt16 ((short) Math.Round (x.Value));
-			}			
+			}
 		}
 
 
@@ -456,7 +455,7 @@ namespace System.Data.SqlTypes
 				return Null;
 			else {
 				checked {
-					return new SqlInt16 ((short)x.Value);
+					return new SqlInt16 ((short) x.Value);
 				}
 			}
 		}
@@ -476,7 +475,7 @@ namespace System.Data.SqlTypes
 
 		public static implicit operator SqlInt16 (SqlByte x)
 		{
-			return new SqlInt16 ((short)x.Value);
+			return new SqlInt16 ((short) x.Value);
 		}
 
 #if NET_2_0
@@ -498,7 +497,7 @@ namespace System.Data.SqlTypes
 		}
 	
 		void IXmlSerializable.ReadXml (XmlReader reader)
-		{			
+		{
 			if (reader == null)
 				return;
 
@@ -508,12 +507,13 @@ namespace System.Data.SqlTypes
 			case ReadState.Closed:
 				return;
 			}
+
 			// Skip XML declaration and prolog
 			// or do I need to validate for the <SqlInt16> tag?
 			reader.MoveToContent ();
 			if (reader.EOF)
 				return;
-			
+
 			reader.Read ();
 			if (reader.NodeType == XmlNodeType.EndElement)
 				return;
@@ -535,7 +535,7 @@ namespace System.Data.SqlTypes
 			writer.WriteString (this.ToString ());
 		}
 #endif
+
 		#endregion
 	}
 }
-			

@@ -32,10 +32,11 @@ using System;
 using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace System.Data.SqlTypes {
-	#if NET_1_1
+namespace System.Data.SqlTypes
+{
+#if NET_1_1
 	[Serializable]
-	#endif	
+#endif
 	public sealed class SqlNullValueException : SqlTypeException, ISerializable
 	{
 		public SqlNullValueException ()
@@ -48,13 +49,13 @@ namespace System.Data.SqlTypes {
 		{
 		}
 
-		public SqlNullValueException (string message, Exception inner)
-			: base (message, inner)
+		public SqlNullValueException (string message, Exception e)
+			: base (message, e)
 		{
 		}
 
 		private SqlNullValueException (SerializationInfo si, StreamingContext sc) 
-			: base(si.GetString("SqlNullValueExceptionMessage"))
+			: base (si.GetString("SqlNullValueExceptionMessage"))
 		{
 		}
 

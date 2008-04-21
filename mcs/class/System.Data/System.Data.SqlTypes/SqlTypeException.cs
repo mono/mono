@@ -32,13 +32,9 @@ using System;
 using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace System.Data.SqlTypes {
-
-#if NET_2_0	
-	[SerializableAttribute]
-#else
+namespace System.Data.SqlTypes
+{
 	[Serializable]
-#endif
 	public class SqlTypeException : SystemException, ISerializable
 	{
 		public SqlTypeException()
@@ -51,13 +47,13 @@ namespace System.Data.SqlTypes {
 		{
 		}
 
-		public SqlTypeException (string message, Exception inner)
-			: base (message, inner)
+		public SqlTypeException (string message, Exception e)
+			: base (message, e)
 		{
 		}
 
-		protected SqlTypeException (SerializationInfo si, StreamingContext sc) 
-			: base(si.GetString("SqlTypeExceptionMessage"))
+		protected SqlTypeException (SerializationInfo si, StreamingContext sc)
+			: base (si.GetString("SqlTypeExceptionMessage"))
 		{
 		}
 

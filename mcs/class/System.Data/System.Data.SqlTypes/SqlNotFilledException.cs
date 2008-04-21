@@ -33,8 +33,8 @@ using System;
 using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace System.Data.SqlTypes {
-
+namespace System.Data.SqlTypes
+{
 	[SerializableAttribute]
 	public sealed class SqlNotFilledException : SqlTypeException, ISerializable
 	{
@@ -48,8 +48,8 @@ namespace System.Data.SqlTypes {
 		{
 		}
 
-		public SqlNotFilledException (string message, Exception inner)
-			: base (message, inner)
+		public SqlNotFilledException (string message, Exception e)
+			: base (message, e)
 		{
 		}
 
