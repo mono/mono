@@ -610,7 +610,6 @@ namespace Mono.CSharp {
 		DeclSpace decl;
 		GenericConstraints gc;
 		Constraints constraints;
-		Location loc;
 		GenericTypeParameterBuilder type;
 		MemberCache member_cache;
 
@@ -621,7 +620,6 @@ namespace Mono.CSharp {
 			this.name = name;
 			this.decl = decl;
 			this.constraints = constraints;
-			this.loc = loc;
 		}
 
 		public GenericConstraints GenericConstraints {
@@ -731,7 +729,7 @@ namespace Mono.CSharp {
 
 			if (implementing != null) {
 				if (is_override && (constraints != null)) {
-					Report.Error (460, loc,
+					Report.Error (460, Location,
 						"`{0}': Cannot specify constraints for overrides or explicit interface implementation methods",
 						TypeManager.CSharpSignature (builder));
 					return false;
@@ -763,7 +761,7 @@ namespace Mono.CSharp {
 					Report.SymbolRelatedToPreviousError (implementing);
 
 					Report.Error (
-						425, loc, "The constraints for type " +
+						425, Location, "The constraints for type " +
 						"parameter `{0}' of method `{1}' must match " +
 						"the constraints for type parameter `{2}' " +
 						"of interface method `{3}'. Consider using " +
