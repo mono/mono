@@ -1,5 +1,19 @@
 2008-04-21  Martin Baulig  <martin@ximian.com>
 
+	* mini.h (mono_debugger_create_notification_function): Removed.
+	* tramp-*.c (mono_debugger_create_notification_function): Removed.
+
+	* mdb-debug-info64.s
+	(MONO_DEBUGGER__notification_function): Added this in the .text section.
+
+	* mdb-debug-info32.s
+	(MONO_DEBUGGER__notification_function): Added this in the .text section.
+
+	* Makefile.am: Fix the mdb-debug-info*.s logic; the debugger
+	currently only works on x86 and x86_64, so don't create it on ppc.
+
+2008-04-21  Martin Baulig  <martin@ximian.com>
+
 	* mini.h (MonoDebugOptions): Added `mdb_optimizations'.
 
 	* mini.c
