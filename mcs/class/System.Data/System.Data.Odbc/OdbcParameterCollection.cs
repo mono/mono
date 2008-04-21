@@ -58,7 +58,8 @@ namespace System.Data.Odbc
 	
 		#region Constructors
 
-		internal OdbcParameterCollection () {
+		internal OdbcParameterCollection ()
+		{
 		}
 
 		#endregion // Constructors
@@ -107,7 +108,7 @@ namespace System.Data.Odbc
 #endif
 			get { return false; }
 		}
-		
+
 #if ONLY_1_1
 		bool IList.IsReadOnly {
 #else
@@ -115,7 +116,7 @@ namespace System.Data.Odbc
 #endif
 			get { return false; }
 		}
-		
+
 #if ONLY_1_1
 		bool ICollection.IsSynchronized {
 #else
@@ -124,7 +125,6 @@ namespace System.Data.Odbc
 			get { return list.IsSynchronized; }
 		}
 
-		
 #if ONLY_1_1
 		object ICollection.SyncRoot {
 #else
@@ -139,13 +139,13 @@ namespace System.Data.Odbc
 			set { list [index] = value; }
 		}
 
-		object IDataParameterCollection.this [string name]
+		object IDataParameterCollection.this [string index]
 		{
-			get { return this [name]; }
+			get { return this [index]; }
 			set {
 				if (!(value is OdbcParameter))
 					throw new InvalidCastException ("Only OdbcParameter objects can be used.");
-				this [name] = (OdbcParameter) value;
+				this [index] = (OdbcParameter) value;
 			}
 		}
 #endif // ONLY_1_1
@@ -177,7 +177,7 @@ namespace System.Data.Odbc
 							     "added to this or another OdbcParameterCollection.");
 			if (value.ParameterName == null || value.ParameterName.Length == 0) {
 				value.ParameterName = "Parameter" + nullParamCount;
-				nullParamCount ++;
+				nullParamCount++;
 			}
 			value.Container = this;
 			list.Add (value);
@@ -380,7 +380,7 @@ namespace System.Data.Odbc
 
 		public void AddRange (OdbcParameter [] values)
 		{
-			AddRange ((Array)values);
+			AddRange ((Array) values);
 		}
 
 		public void Insert (int index, OdbcParameter value)
@@ -393,7 +393,7 @@ namespace System.Data.Odbc
 				throw new ArgumentException ("The OdbcParameter is already contained by another collection");
 			if (String.IsNullOrEmpty (value.ParameterName)) {
 				value.ParameterName = "Parameter" + nullParamCount;
-				nullParamCount ++;
+				nullParamCount++;
 			}
 			value.Container = this;
 			list.Insert (index, value);
