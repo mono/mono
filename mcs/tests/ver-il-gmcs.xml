@@ -10385,6 +10385,38 @@
       </method>
     </type>
   </test>
+  <test name="gtest-385.cs">
+    <type name="DocAttribute">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor(String)">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>66</size>
+      </method>
+    </type>
+    <type name="Func`2[TArg,TRet]">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
