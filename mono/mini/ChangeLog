@@ -1,5 +1,10 @@
 2008-04-21  Martin Baulig  <martin@ximian.com>
 
+	* debug-debugger.h (MonoDebuggerInfo): Added `thread_vtable_ptr',
+	`thread_vtable', `event_handler_ptr' and `event_handler'.
+
+2008-04-21  Martin Baulig  <martin@ximian.com>
+
 	* debug-debugger.h (MonoDebuggerInfo): Added `init_code_buffer';
 	allows delayed initialization of the `executable_code_buffer' when
 	attaching.
