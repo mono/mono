@@ -124,7 +124,7 @@ namespace System.Linq.Expressions {
 
 		public void EmitCall (Expression expression, IEnumerable<Expression> arguments, MethodInfo method)
 		{
-			if (expression != null)
+			if (!method.IsStatic)
 				EmitLoad (expression);
 
 			EmitCollection (arguments);

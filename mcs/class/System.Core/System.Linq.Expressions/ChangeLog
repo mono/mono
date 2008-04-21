@@ -1,3 +1,10 @@
+2008-04-21  Jb Evain  <jbevain@novell.com>
+
+	* Expression.cs (Call): don't rely on the fact that if the
+	instance expression is null, then it's a static call. Explicitely
+	check on the MethodInfo for that.
+	* EmitContext.cs (EmitCall): same pattern.
+
 2008-04-20  Jb Evain  <jbevain@novell.com>
 
 	* MemberMemberBinding.cs (Emit): implement.

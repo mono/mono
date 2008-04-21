@@ -909,7 +909,7 @@ namespace System.Linq.Expressions {
 				throw new ArgumentNullException ("method");
 			if (instance == null && !method.IsStatic)
 				throw new ArgumentNullException ("instance");
-			if (instance != null && !instance.Type.IsAssignableTo (method.DeclaringType))
+			if (!method.IsStatic && !instance.Type.IsAssignableTo (method.DeclaringType))
 				throw new ArgumentException ("Type is not assignable to the declaring type of the method");
 
 			var args = arguments.ToReadOnlyCollection ();
