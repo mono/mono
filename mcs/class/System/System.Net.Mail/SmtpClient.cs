@@ -389,18 +389,18 @@ namespace System.Net.Mail {
 
 		void ParseExtensions (string extens)
 		{
-			char []delims = new char [1] { ' ' };
+			char[] delims = new char [1] { ' ' };
 			int ln = 0;
-			string[] parts = extens.Split('\n');
+			string[] parts = extens.Split ('\n');
 
-			foreach(string part in parts) {
-				if(part.Length < 4) {
+			foreach (string part in parts) {
+				if (part.Length < 4)
 					continue;
-				}
-				string start = part.Substring(4);
-				if(start.StartsWith("AUTH ")) {
-					string[] options = start.Split(delims);
-					for(int k = 1; k < options.Length; k++) {
+
+				string start = part.Substring (4);
+				if (start.StartsWith ("AUTH ")) {
+					string[] options = start.Split (delims);
+					for (int k = 1; k < options.Length; k++) {
 						string option = options[k].Trim();
 						switch (option) {
 						case "CRAM-MD5":
@@ -423,7 +423,7 @@ namespace System.Net.Mail {
 							break;
 						}
 					}
-				} else if(start.StartsWith("STARTTLS")) {
+				} else if (start.StartsWith ("STARTTLS")) {
 					canStartTLS = true;
 				}
 			}
