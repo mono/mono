@@ -270,10 +270,6 @@ namespace Mono.CSharp {
 
 		private CachedMethods cached_method;
 
-#if GMCS_SOURCE
-		GenericTypeParameterBuilder[] gen_params;
-#endif
-
 		ArrayList partial_parts;
 
 		/// <remarks>
@@ -1036,7 +1032,7 @@ namespace Mono.CSharp {
 				for (int i = 0; i < TypeParameters.Length; i++)
 					param_names [i] = TypeParameters [i].Name;
 
-				gen_params = TypeBuilder.DefineGenericParameters (param_names);
+				GenericTypeParameterBuilder[] gen_params = TypeBuilder.DefineGenericParameters (param_names);
 
 				int offset = CountTypeParameters - CurrentTypeParameters.Length;
 				for (int i = offset; i < gen_params.Length; i++)
@@ -2272,14 +2268,6 @@ namespace Mono.CSharp {
 		{
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
-
-#if GMCS_SOURCE
-			if (IsGeneric) {
-				int offset = CountTypeParameters - CurrentTypeParameters.Length;
-				for (int i = offset; i < gen_params.Length; i++)
-					CurrentTypeParameters [i - offset].Emit ();
-			}
-#endif
 
 			//
 			// Structs with no fields need to have at least one byte.

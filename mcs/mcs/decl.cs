@@ -1030,6 +1030,19 @@ namespace Mono.CSharp {
 				type.GetSignatureForError ());
 		}
 
+		public override void Emit ()
+		{
+#if GMCS_SOURCE
+			if (type_params != null) {
+				int offset = count_type_params - type_params.Length;
+				for (int i = offset; i < type_params.Length; i++)
+					CurrentTypeParameters [i - offset].Emit ();
+			}
+#endif
+
+			base.Emit ();
+		}
+
 		public override string GetSignatureForError ()
 		{	
 			if (IsGeneric) {
