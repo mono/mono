@@ -665,6 +665,8 @@ namespace System.Windows.Forms {
 				break;
 			}
 
+			SendLeave (drag_data.LastTopLevel, toplevel);
+
 			tracking = false;
 			return false;
 		}

@@ -1,5 +1,11 @@
 2008-04-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* X11Dnd.cs: Wehn the drag and drop operation is cancelled don't
+	forget to send a Leave event to the target window - just as .net does
+	when cancelling dnd operations.
+
+2008-04-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* X11Dnd.cs: Stop tracking messages as part of the dnd operation as
 	soon as possible - this happens when we send the drop message to the
 	target window. This way we avoid firing any DragOver _after_ drop finished.
