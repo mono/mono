@@ -1,3 +1,7 @@
+2008-04-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ControlTest.cs: Enabled test for bug #330501.
+
 2008-04-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* CurrencyManagerTest.cs: New 2.0 IsBinding test.

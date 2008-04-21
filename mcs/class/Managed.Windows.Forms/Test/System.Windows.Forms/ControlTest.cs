@@ -1936,7 +1936,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // bug #330501
-		[Category ("NotWorking")]
 		public void OnValidating_Parent_Close ()
 		{
 			MockControl control = new MockControl ();
@@ -2529,8 +2528,8 @@ namespace MonoTests.System.Windows.Forms
 			f.Controls.Add(f1);
 		}
 		
-		[Category ("NotWorking")]
 		[Test]
+		[Category ("NotWorking")]
 		public void TestForm ()
 		{
 			Form f = new Form ();
