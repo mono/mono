@@ -939,6 +939,9 @@ namespace System.Windows.Forms
 				if (tree_view != null) {
 					tree_view.OnAfterCollapse (new TreeViewEventArgs (this));
 
+					bool hbar_visible = tree_view.hbar.Visible;
+					bool vbar_visible = tree_view.vbar.Visible;
+
 					tree_view.RecalculateVisibleOrder (this);
 					tree_view.UpdateScrollBars (false);
 
@@ -947,6 +950,11 @@ namespace System.Windows.Forms
 						tree_view.CollapseBelow (this, count_to_next);
 					if(!byInternal && HasFocusInChildren ())
 						tree_view.SelectedNode = this;
+
+					// If one or both of our scrollbars disappeared,
+					// invalidate everything
+					if ((hbar_visible & !tree_view.hbar.Visible) || (vbar_visible & !tree_view.vbar.Visible))
+						tree_view.Invalidate ();
 				}
 			}
 		}

@@ -1,5 +1,12 @@
 2008-04-21  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TreeView.cs: Make vbar and hbar internal.
+	* TreeNode.cs: If collapsing the node removes one of the TreeView's
+	scrollbars, invalidate the whole thing.
+	[Fixes bug #382001]
+
+2008-04-21  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TreeView.cs: Calling Sort() sets Sorted = true.
 	* TreeNodeCollection.cs: Try to find the owner TreeView to determine
 	if the nodes need to be sorted.

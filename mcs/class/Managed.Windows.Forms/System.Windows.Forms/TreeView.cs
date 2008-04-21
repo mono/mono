@@ -89,8 +89,8 @@ namespace System.Windows.Forms {
 		private bool hide_selection = true;
 
 		private int max_visible_order = -1;
-		private VScrollBar vbar;
-		private HScrollBar hbar;
+		internal VScrollBar vbar;
+		internal HScrollBar hbar;
 		private bool vbar_bounds_set;
 		private bool hbar_bounds_set;
 		internal int skipped_nodes;
