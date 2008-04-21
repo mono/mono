@@ -1,5 +1,10 @@
 2008-04-21  Marek Safar  <marek.safar@gmail.com>
 
+	* cs-parser.jay, expression.cs: ComposedCast can work with type expressions
+	only.
+
+2008-04-21  Marek Safar  <marek.safar@gmail.com>
+
 	* generic.cs (TypeParameter): Removed redundant location.
 
 2008-04-19  Marek Safar  <marek.safar@gmail.com>

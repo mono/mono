@@ -5503,7 +5503,7 @@ namespace Mono.CSharp {
 	///   specified but where initialization data is mandatory.
 	/// </remarks>
 	public class ArrayCreation : Expression {
-		Expression requested_base_type;
+		FullNamedExpression requested_base_type;
 		ArrayList initializers;
 
 		//
@@ -5526,7 +5526,7 @@ namespace Mono.CSharp {
 		int const_initializers_count;
 		bool only_constant_initializers;
 		
-		public ArrayCreation (Expression requested_base_type, ArrayList exprs, string rank, ArrayList initializers, Location l)
+		public ArrayCreation (FullNamedExpression requested_base_type, ArrayList exprs, string rank, ArrayList initializers, Location l)
 		{
 			this.requested_base_type = requested_base_type;
 			this.initializers = initializers;
@@ -5541,7 +5541,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public ArrayCreation (Expression requested_base_type, string rank, ArrayList initializers, Location l)
+		public ArrayCreation (FullNamedExpression requested_base_type, string rank, ArrayList initializers, Location l)
 		{
 			this.requested_base_type = requested_base_type;
 			this.initializers = initializers;
@@ -6157,7 +6157,7 @@ namespace Mono.CSharp {
 			ArrayCreation target = (ArrayCreation) t;
 
 			if (requested_base_type != null)
-				target.requested_base_type = requested_base_type.Clone (clonectx);
+				target.requested_base_type = (FullNamedExpression)requested_base_type.Clone (clonectx);
 
 			if (arguments != null){
 				target.arguments = new ArrayList (arguments.Count);
@@ -8552,15 +8552,15 @@ namespace Mono.CSharp {
 	//   one bit at a time.
 	// </summary>
 	public class ComposedCast : TypeExpr {
-		Expression left;
+		FullNamedExpression left;
 		string dim;
 		
-		public ComposedCast (Expression left, string dim)
+		public ComposedCast (FullNamedExpression left, string dim)
 			: this (left, dim, left.Location)
 		{
 		}
 
-		public ComposedCast (Expression left, string dim, Location l)
+		public ComposedCast (FullNamedExpression left, string dim, Location l)
 		{
 			this.left = left;
 			this.dim = dim;
@@ -8634,7 +8634,7 @@ namespace Mono.CSharp {
 		{
 			ComposedCast target = (ComposedCast) t;
 
-			target.left = left.Clone (clonectx);
+			target.left = (FullNamedExpression)left.Clone (clonectx);
 		}
 	}
 

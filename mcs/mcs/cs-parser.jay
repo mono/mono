@@ -66,8 +66,8 @@ namespace Mono.CSharp
 		/// <summary>
 		///   Hack to help create non-typed array initializer
 		/// </summary>
-		public static Expression current_array_type;
-		Expression pushed_current_array_type;
+		public static FullNamedExpression current_array_type;
+		FullNamedExpression pushed_current_array_type;
 
 		/// <summary>
 		///   Used to determine if we are parsing the get/set pair
@@ -3009,7 +3009,7 @@ type
 	| builtin_types opt_nullable
 	  {
 		if ((bool) $2)
-			$$ = new ComposedCast ((Expression) $1, "?", lexer.Location);
+			$$ = new ComposedCast ((FullNamedExpression) $1, "?", lexer.Location);
 	  }
 	| array_type
 	| pointer_type
@@ -3023,7 +3023,7 @@ pointer_type
 		// can't perform checks during this phase - we do it during
 		// semantic analysis.
 		//
-		$$ = new ComposedCast ((Expression) $1, "*", Lexer.Location);
+		$$ = new ComposedCast ((FullNamedExpression) $1, "*", Lexer.Location);
 	  }
 	| VOID STAR
 	  {
@@ -3035,29 +3035,21 @@ non_expression_type
 	: builtin_types opt_nullable
 	  {
 		if ((bool) $2)
-			$$ = new ComposedCast ((Expression) $1, "?", lexer.Location);
+			$$ = new ComposedCast ((FullNamedExpression) $1, "?", lexer.Location);
 	  }
 	| non_expression_type rank_specifier
 	  {
 		Location loc = GetLocation ($1);
 		if (loc.IsNull)
 			loc = lexer.Location;
-		$$ = new ComposedCast ((Expression) $1, (string) $2, loc);
+		$$ = new ComposedCast ((FullNamedExpression) $1, (string) $2, loc);
 	  }
 	| non_expression_type STAR
 	  {
 		Location loc = GetLocation ($1);
 		if (loc.IsNull)
 			loc = lexer.Location;
-		$$ = new ComposedCast ((Expression) $1, "*", loc);
-	  }
-	| expression rank_specifiers 
-	  {
-		$$ = new ComposedCast ((Expression) $1, (string) $2);
-	  }
-	| expression STAR 
-	  {
-		$$ = new ComposedCast ((Expression) $1, "*");
+		$$ = new ComposedCast ((FullNamedExpression) $1, "*", loc);
 	  }
 	
 	//
@@ -3066,7 +3058,11 @@ non_expression_type
 	//
 	| multiplicative_expression STAR 
 	  {
-		$$ = new ComposedCast ((Expression) $1, "*");
+		FullNamedExpression e = $1 as FullNamedExpression;
+		if (e != null)
+			$$ = new ComposedCast (e, "*");
+		else
+			Error_TypeExpected (GetLocation ($1));
 	  }
 	;
 
@@ -3128,7 +3124,7 @@ array_type
 		if ((bool) $3)
 			rank_specifiers += "?";
 
-		$$ = current_array_type = new ComposedCast ((Expression) $1, rank_specifiers);
+		$$ = current_array_type = new ComposedCast ((FullNamedExpression) $1, rank_specifiers);
 	  }
 	;
 
@@ -3437,19 +3433,19 @@ element_access
 		  
 		Expression expr = (Expression) $1;  
 		if (expr is ComposedCast){
-			$$ = new ComposedCast (expr, (string) $2);
+			$$ = new ComposedCast ((ComposedCast)expr, (string) $2);
 		} else if (expr is ATypeNameExpression){
 			//
 			// So we extract the string corresponding to the SimpleName
 			// or MemberAccess
 			// 
-			$$ = new ComposedCast (expr, (string) $2);
+			$$ = new ComposedCast ((ATypeNameExpression)expr, (string) $2);
 		} else {
 			Error_ExpectingTypeName (expr);
 			$$ = TypeManager.system_object_expr;
 		}
 		
-		current_array_type = (Expression)$$;
+		current_array_type = (FullNamedExpression)$$;
 	  }
 	;
 
@@ -3539,11 +3535,11 @@ array_creation_expression
 	  opt_rank_specifier
 	  opt_array_initializer
 	  {
-		$$ = new ArrayCreation ((Expression) $2, (ArrayList) $4, (string) $6, (ArrayList) $7, (Location) $1);
+		$$ = new ArrayCreation ((FullNamedExpression) $2, (ArrayList) $4, (string) $6, (ArrayList) $7, (Location) $1);
 	  }
 	| NEW type rank_specifiers array_initializer
 	  {
-		$$ = new ArrayCreation ((Expression) $2, (string) $3, (ArrayList) $4, (Location) $1);
+		$$ = new ArrayCreation ((FullNamedExpression) $2, (string) $3, (ArrayList) $4, (Location) $1);
 	  }
 	| NEW rank_specifiers array_initializer
 	  {
@@ -4112,7 +4108,7 @@ conditional_expression
 	// We'll be resolved into a `parenthesized_expression_0' later on.
 	| conditional_or_expression INTERR CLOSE_PARENS
 	  {
-		$$ = new ComposedCast ((Expression) $1, "?", lexer.Location);
+		$$ = new ComposedCast ((FullNamedExpression) $1, "?", lexer.Location);
 		lexer.PutbackCloseParens ();
 	  }
 	;
@@ -4594,7 +4590,7 @@ local_variable_type
 		
 		Expression expr = (Expression) $1;  
 		if (expr is ComposedCast){
-			$$ = new ComposedCast (expr, (string) $2);
+			$$ = new ComposedCast ((ComposedCast)expr, (string) $2);
 		} else if (expr is ATypeNameExpression){
 			//
 			// So we extract the string corresponding to the SimpleName
@@ -4608,7 +4604,7 @@ local_variable_type
 				else
 					$$ = $1;
 			} else {
-				$$ = new ComposedCast (expr, (string) $2);
+				$$ = new ComposedCast ((ATypeNameExpression)expr, (string) $2);
 			}
 		} else {
 			Error_ExpectingTypeName (expr);
@@ -4620,25 +4616,25 @@ local_variable_type
 		if ((string) $2 == "")
 			$$ = $1;
 		else
-			$$ = current_array_type = new ComposedCast ((Expression) $1, (string) $2, lexer.Location);
+			$$ = current_array_type = new ComposedCast ((FullNamedExpression) $1, (string) $2, lexer.Location);
 	  }
         ;
 
 local_variable_pointer_type
 	: primary_expression STAR
 	  {
-		Expression expr = (Expression) $1;  
+		ATypeNameExpression expr = $1 as ATypeNameExpression;
 
-		if (expr is ATypeNameExpression) {
+		if (expr != null) {
 			$$ = new ComposedCast (expr, "*");
 		} else {
-			Error_ExpectingTypeName (expr);
+			Error_ExpectingTypeName ((Expression)$1);
 			$$ = expr;
 		}
 	  }
         | builtin_types STAR
 	  {
-		$$ = new ComposedCast ((Expression) $1, "*", lexer.Location);
+		$$ = new ComposedCast ((FullNamedExpression) $1, "*", lexer.Location);
 	  }
         | VOID STAR
 	  {
@@ -4646,7 +4642,7 @@ local_variable_pointer_type
 	  }
 	| local_variable_pointer_type STAR
           {
-		$$ = new ComposedCast ((Expression) $1, "*");
+		$$ = new ComposedCast ((FullNamedExpression) $1, "*");
 	  }
         ;
 
@@ -4670,7 +4666,7 @@ local_variable_declaration
 			if ((string) $2 == "")
 				t = (Expression) $1;
 			else
-				t = new ComposedCast ((Expression) $1, (string) $2);
+				t = new ComposedCast ((FullNamedExpression) $1, (string) $2);
 			$$ = new DictionaryEntry (t, $3);
 		} else 
 			$$ = null;
