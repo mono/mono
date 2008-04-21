@@ -1,3 +1,7 @@
+2008-04-21  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TreeView.cs: Add tests for bug #382028.
+
 2008-04-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ControlTest.cs: Enabled test for bug #330501.

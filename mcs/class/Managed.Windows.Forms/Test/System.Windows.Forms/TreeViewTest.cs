@@ -40,6 +40,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (tv.GetControlStyle (ControlStyles.DoubleBuffer), "#A3");
 			Assert.IsFalse (tv.GetControlStyle (ControlStyles.OptimizedDoubleBuffer), "#A4");
 			Assert.IsFalse (tv.GetControlStyle (ControlStyles.UserPaint), "#A5");
+			Assert.IsFalse (tv.GetControlStyle (ControlStyles.StandardClick), "#A6");
 
 			tv.IsDoubleBuffered = true;
 			Assert.IsTrue (tv.IsDoubleBuffered, "#B1");
@@ -299,8 +300,31 @@ namespace MonoTests.System.Windows.Forms
 			
 			f.Dispose ();
 		}
-#endif
+
+		[Test]
+		public void SortChangesSorted ()
+		{
+			TreeView tv = new TreeView ();
+			
+			Assert.AreEqual (false, tv.Sorted, "A1");
+			
+			tv.Sort ();
+			Assert.AreEqual (true, tv.Sorted, "A2");
+		}
+		
+		[Test]
+		public void SortedBeforeNodeAdd ()
+		{
+			TreeView tv = new TreeView ();
+			tv.Sort ();
+			
+			tv.Nodes.Add ("bbb");
+			tv.Nodes.Add ("aaa");
+			
+			Assert.AreEqual ("aaa", tv.Nodes[0].Text, "A1");
+		}
 	}
+#endif
 
 	[TestFixture]
 	public class BeforeSelectEvent
