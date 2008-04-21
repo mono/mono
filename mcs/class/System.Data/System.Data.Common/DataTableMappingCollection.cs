@@ -36,7 +36,8 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 
-namespace System.Data.Common {
+namespace System.Data.Common
+{
 	[ListBindable (false)]
 	[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DataTableMappingCollectionEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 	public sealed class DataTableMappingCollection : MarshalByRefObject, ITableMappingCollection, IList, ICollection, IEnumerable
@@ -78,7 +79,7 @@ namespace System.Data.Common {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataTableMapping this [int index] {
 			get { return (DataTableMapping)(mappings[index]); }
-			set { 
+			set {
 				DataTableMapping mapping = (DataTableMapping) mappings[index];
 				sourceTables [mapping.SourceTable] = value;
 				dataSetTables [mapping.DataSetTable] = value;
@@ -95,14 +96,14 @@ namespace System.Data.Common {
 			get { return (DataTableMapping) sourceTables[sourceTable]; }
 			set { this [mappings.IndexOf (sourceTables[sourceTable])] = value; }
 		}
-			
+
 		object IList.this [int index] {
 			get { return (object)(this[index]); }
-			set { 
+			set {
 				if (!(value is DataTableMapping))
 					throw new ArgumentException (); 
 				this[index] = (DataTableMapping)value;
-			 } 
+			}
 		}
 
 		bool ICollection.IsSynchronized {
@@ -121,12 +122,12 @@ namespace System.Data.Common {
 			get { return false; }
 		}
 
-		object ITableMappingCollection.this [string sourceTable] {
-			get { return this [sourceTable]; }
-			set { 
+		object ITableMappingCollection.this [string index] {
+			get { return this [index]; }
+			set {
 				if (!(value is DataTableMapping))
 					throw new ArgumentException ();
-				this [sourceTable] = (DataTableMapping) value;
+				this [index] = (DataTableMapping) value;
 			}
 		}
 
@@ -134,13 +135,13 @@ namespace System.Data.Common {
 
 		#region Methods
 
-		public int Add (object value) 
+		public int Add (object value)
 		{
 			if (!(value is System.Data.Common.DataTableMapping))
 				throw new InvalidCastException ("The object passed in was not a DataTableMapping object.");
 
-			sourceTables[((DataTableMapping)value).SourceTable] = value;	
-			dataSetTables[((DataTableMapping)value).DataSetTable] = value;	
+			sourceTables [((DataTableMapping) value).SourceTable] = value;
+			dataSetTables [((DataTableMapping) value).DataSetTable] = value;
 			return mappings.Add (value);
 		}
 
@@ -159,30 +160,30 @@ namespace System.Data.Common {
 		}
 #endif
 
-		public void AddRange (DataTableMapping[] values) 
+		public void AddRange (DataTableMapping[] values)
 		{
 			foreach (DataTableMapping dataTableMapping in values)
 				this.Add (dataTableMapping);
 		}
 
-		public void Clear () 
+		public void Clear ()
 		{
 			sourceTables.Clear ();
 			dataSetTables.Clear ();
 			mappings.Clear ();
 		}
 
-		public bool Contains (object value) 
+		public bool Contains (object value)
 		{
 			return mappings.Contains (value);
 		}
 
-		public bool Contains (string value) 
+		public bool Contains (string value)
 		{
 			return sourceTables.Contains (value);
 		}
 
-		public void CopyTo (Array array, int index) 
+		public void CopyTo (Array array, int index)
 		{
 			mappings.CopyTo (array, index);
 		}
@@ -196,22 +197,20 @@ namespace System.Data.Common {
 
 		public DataTableMapping GetByDataSetTable (string dataSetTable) 
 		{
-			
 			// this should work case-insenstive.
-                        if (!(dataSetTables[dataSetTable] == null)) 
-	                         return (DataTableMapping)(dataSetTables[dataSetTable]);
-                        else {
-                                string lowcasevalue = dataSetTable.ToLower();
-                                object [] keyarray = new object[dataSetTables.Count];
-                                dataSetTables.Keys.CopyTo(keyarray,0);
-                                for (int i=0; i<keyarray.Length; i++) {
-                                        string temp = (string) keyarray[i];
-                                        if (lowcasevalue.Equals(temp.ToLower()))                                                		return (DataTableMapping)(dataSetTables[keyarray[i]]);
-                                }
-                                return null;
-                                                                                
-                        }
-
+			if (!(dataSetTables[dataSetTable] == null))
+				return (DataTableMapping) (dataSetTables [dataSetTable]);
+			else {
+				string lowcasevalue = dataSetTable.ToLower ();
+				object [] keyarray = new object [dataSetTables.Count];
+				dataSetTables.Keys.CopyTo (keyarray, 0);
+				for (int i=0; i<keyarray.Length; i++) {
+					string temp = (string) keyarray [i];
+					if (lowcasevalue.Equals (temp.ToLower ()))
+						return (DataTableMapping) (dataSetTables [keyarray [i]]);
+				}
+				return null;
+			}
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -244,39 +243,36 @@ namespace System.Data.Common {
 
 		public int IndexOfDataSetTable (string dataSetTable) 
 		{
-	 		  // this should work case-insensitive
-                	                                                                     
-                         if (!(dataSetTables[dataSetTable] == null)) 
+			// this should work case-insensitive
+			if (!(dataSetTables[dataSetTable] == null)) 
 				return IndexOf ((DataTableMapping)(dataSetTables[dataSetTable]));
-                         else {
-                                string lowcasevalue = dataSetTable.ToLower();
+			else {
+				string lowcasevalue = dataSetTable.ToLower();
 				object [] keyarray = new object[dataSetTables.Count];
-                                dataSetTables.Keys.CopyTo(keyarray,0);
-                                for (int i=0; i<keyarray.Length; i++) {
-                                        string temp = (string) keyarray[i];
-                                        if (lowcasevalue.Equals(temp.ToLower()))
+				dataSetTables.Keys.CopyTo(keyarray,0);
+				for (int i=0; i<keyarray.Length; i++) {
+					string temp = (string) keyarray[i];
+					if (lowcasevalue.Equals(temp.ToLower()))
 						return IndexOf ((DataTableMapping)(dataSetTables[keyarray[i]]));
-                                          
-                                }
+				}
 				return -1;
-                                                                                                    
-                        }
+			}
 
 		}
 
 		public void Insert (int index, object value) 
 		{
 			mappings.Insert (index, value);
-			sourceTables[((DataTableMapping)value).SourceTable] = value;
-                        dataSetTables[((DataTableMapping)value).DataSetTable] = value;
+			sourceTables [((DataTableMapping) value).SourceTable] = value;
+			dataSetTables [((DataTableMapping) value).DataSetTable] = value;
 		}
 
 #if NET_2_0
 		public void Insert (int index, DataTableMapping value) 
 		{
 			mappings.Insert (index, value);
-			sourceTables[value.SourceTable] = value;
-                        dataSetTables[value.DataSetTable] = value;
+			sourceTables [value.SourceTable] = value;
+			dataSetTables [value.DataSetTable] = value;
 		}
 #endif
 
@@ -295,10 +291,10 @@ namespace System.Data.Common {
 		public void Remove (object value) 
 		{
 			if (!(value is DataTableMapping))
-                                 throw new InvalidCastException ();
+				throw new InvalidCastException ();
 			int index = mappings.IndexOf (value);
-			if (( index < 0 ) || (index >=mappings.Count))
-                                    throw new ArgumentException("There is no such element in collection.");
+			if (index < 0 || index >= mappings.Count)
+				throw new ArgumentException("There is no such element in collection.");
 			mappings.Remove ((DataTableMapping) value);
 		}
 
@@ -306,16 +302,16 @@ namespace System.Data.Common {
 		public void Remove (DataTableMapping value) 
 		{
 			int index = mappings.IndexOf (value);
-			if (( index < 0 ) || (index >=mappings.Count))
-                                    throw new ArgumentException("There is no such element in collection."); 
+			if (index < 0 || index >= mappings.Count)
+				throw new ArgumentException("There is no such element in collection."); 
 			mappings.Remove ((DataTableMapping) value);
 		}
 #endif
 
 		public void RemoveAt (int index) 
 		{
-			 if (( index < 0 ) || (index >=mappings.Count))
-                                    throw new IndexOutOfRangeException("There is no element in collection.");
+			 if (index < 0 || index >= mappings.Count)
+				throw new IndexOutOfRangeException("There is no element in collection.");
 
 			mappings.RemoveAt (index);
 		}

@@ -110,17 +110,17 @@ namespace System.Data.Common
 			get { return list.IsSynchronized; }
 		}
 
-		object IColumnMappingCollection.this [string sourceColumn] {
-			get { return this [sourceColumn]; }
+		object IColumnMappingCollection.this [string index] {
+			get { return this [index]; }
 			set {
 				if (!(value is DataColumnMapping))
 					throw new ArgumentException ();
-				this [sourceColumn] = (DataColumnMapping) value;
+				this [index] = (DataColumnMapping) value;
 			}
 		}
 
 		object IList.this [int index] {
-			get { return this[index]; }
+			get { return this [index]; }
 			set {
 				if (!(value is DataColumnMapping))
 					throw new ArgumentException ();
