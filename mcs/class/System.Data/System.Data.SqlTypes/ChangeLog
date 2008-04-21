@@ -1,5 +1,6 @@
 2008-04-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* SqlDateTime.cs: Changed argument names to match MS. Code formatting.
 	* SqlDecimal.cs: Changed argument names to match MS. Code formatting.
 	* SqlNotFilledException.cs: Changed argument names to match MS. Code
 	formatting.

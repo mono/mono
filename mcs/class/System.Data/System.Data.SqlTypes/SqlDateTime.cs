@@ -49,6 +49,7 @@ namespace System.Data.SqlTypes
 #endif
 	{
 		#region Fields
+
 		private DateTime value;
 		private bool notNull;
 
@@ -60,7 +61,7 @@ namespace System.Data.SqlTypes
 		public static readonly int SQLTicksPerSecond = 300;
 
 		static readonly DateTime zero_day = new DateTime (1900, 1, 1);
-	      
+
 		#endregion
 
 		#region Constructors
@@ -76,14 +77,14 @@ namespace System.Data.SqlTypes
 			MinValue.notNull = true;
 		}
 
-		public SqlDateTime (DateTime value) 
+		public SqlDateTime (DateTime value)
 		{
 			this.value = value;
 			notNull = true;
 			CheckRange (this);
 		}
 
-		public SqlDateTime (int dayTicks, int timeTicks) 
+		public SqlDateTime (int dayTicks, int timeTicks)
 		{
 			try {
 				long ms = SQLTicksToMilliseconds (timeTicks);
@@ -95,7 +96,7 @@ namespace System.Data.SqlTypes
 			CheckRange (this);
 		}
 
-		public SqlDateTime (int year, int month, int day) 
+		public SqlDateTime (int year, int month, int day)
 		{
 			try {
 				this.value = new DateTime (year, month, day);
@@ -106,7 +107,7 @@ namespace System.Data.SqlTypes
 			CheckRange (this);
 		}
 
-		public SqlDateTime (int year, int month, int day, int hour, int minute, int second) 
+		public SqlDateTime (int year, int month, int day, int hour, int minute, int second)
 		{
 			try {
 				this.value = new DateTime (year, month, day, hour, minute, second);
@@ -166,7 +167,7 @@ namespace System.Data.SqlTypes
 			get { return (Value - zero_day).Days; }
 		}
 
-		public bool IsNull { 
+		public bool IsNull {
 			get { return !notNull; }
 		}
 
@@ -175,7 +176,7 @@ namespace System.Data.SqlTypes
 		}
 
 		public DateTime Value {
-			get { 
+			get {
 				if (this.IsNull) 
 					throw new SqlNullValueException ("The property contains Null.");
 				return value; 
@@ -185,6 +186,7 @@ namespace System.Data.SqlTypes
 		#endregion
 
 		#region Methods
+
 		private static void CheckRange (SqlDateTime target)
 		{
 			if (target.IsNull)
@@ -202,6 +204,7 @@ namespace System.Data.SqlTypes
 
 			return CompareTo ((SqlDateTime) value);
 		}
+
 #if NET_2_0
 		public
 #endif
@@ -274,33 +277,33 @@ namespace System.Data.SqlTypes
 
 		public static SqlDateTime Parse (string s)
 		{
-                        if (s == null)
-                                throw new ArgumentNullException ("Argument cannot be null");
+			if (s == null)
+				throw new ArgumentNullException ("Argument cannot be null");
 
-                        // try parsing in local culture
-                        DateTimeFormatInfo fmtInfo = DateTimeFormatInfo.CurrentInfo;
-                        try {
-                                return new SqlDateTime (DateTime.Parse (s, fmtInfo));
-                        } catch (Exception) { }
+			// try parsing in local culture
+			DateTimeFormatInfo fmtInfo = DateTimeFormatInfo.CurrentInfo;
+			try {
+				return new SqlDateTime (DateTime.Parse (s, fmtInfo));
+			} catch (Exception) {
+			}
 
-                        // try parsing in invariant culture
-                        try {
-                                return new SqlDateTime (DateTime.Parse (s, CultureInfo.InvariantCulture));
-                        } catch (Exception) { }
+			// try parsing in invariant culture
+			try {
+				return new SqlDateTime (DateTime.Parse (s, CultureInfo.InvariantCulture));
+			} catch (Exception) {
+			}
 
-                        // Not a recognizable format.
-                        throw new FormatException (String.Format ("String {0} is not recognized as "+
-                                                                  " valid DateTime.", s));
-
+			throw new FormatException (String.Format ("String {0}" +
+				" is not recognized as valid DateTime.", s));
 		}
 
 		public SqlString ToSqlString ()
 		{
-			return ((SqlString)this);
+			return ((SqlString) this);
 		}
 
 		public override string ToString ()
-		{	
+		{
 			if (this.IsNull)
 				return "Null";
 			else
@@ -316,42 +319,42 @@ namespace System.Data.SqlTypes
 
 		public static SqlBoolean operator == (SqlDateTime x, SqlDateTime y)
 		{
-			if (x.IsNull || y.IsNull) 
+			if (x.IsNull || y.IsNull)
 				return SqlBoolean.Null;
 			return new SqlBoolean (x.Value == y.Value);
 		}
 
 		public static SqlBoolean operator > (SqlDateTime x, SqlDateTime y)
 		{
-			if (x.IsNull || y.IsNull) 
+			if (x.IsNull || y.IsNull)
 				return SqlBoolean.Null;
 			return new SqlBoolean (x.Value > y.Value);
 		}
 
 		public static SqlBoolean operator >= (SqlDateTime x, SqlDateTime y)
 		{
-			if (x.IsNull || y.IsNull) 
+			if (x.IsNull || y.IsNull)
 				return SqlBoolean.Null;
 			return new SqlBoolean (x.Value >= y.Value);
 		}
 
 		public static SqlBoolean operator != (SqlDateTime x, SqlDateTime y)
 		{
-			if (x.IsNull || y.IsNull) 
+			if (x.IsNull || y.IsNull)
 				return SqlBoolean.Null;
 			return new SqlBoolean (!(x.Value == y.Value));
 		}
 
 		public static SqlBoolean operator < (SqlDateTime x, SqlDateTime y)
 		{
-			if (x.IsNull || y.IsNull) 
+			if (x.IsNull || y.IsNull)
 				return SqlBoolean.Null;
 			return new SqlBoolean (x.Value < y.Value);
 		}
 
 		public static SqlBoolean operator <= (SqlDateTime x, SqlDateTime y)
 		{
-			if (x.IsNull || y.IsNull) 
+			if (x.IsNull || y.IsNull)
 				return SqlBoolean.Null;
 			return new SqlBoolean (x.Value <= y.Value);
 		}
@@ -373,9 +376,9 @@ namespace System.Data.SqlTypes
 			return SqlDateTime.Parse (x.Value);
 		}
 
-		public static implicit operator SqlDateTime (DateTime x)
+		public static implicit operator SqlDateTime (DateTime value)
 		{
-			return new SqlDateTime (x);
+			return new SqlDateTime (value);
 		}
 
 #if NET_2_0
@@ -403,7 +406,7 @@ namespace System.Data.SqlTypes
 			throw new NotImplementedException ();
 		}
 #endif
+
 		#endregion
 	}
 }
-			
