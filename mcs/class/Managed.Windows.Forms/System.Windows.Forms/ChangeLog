@@ -1,3 +1,10 @@
+2008-04-21  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* Form.cs: Fire SizeChanged for both when the form is minimized and 
+	restored.
+	* XplatUIX11.cs: Instead of tracking minimization on UnmapNotify track it 
+	on PropertyNotify of _NET_WM_STATE. Much much cleaner.
+
 2008-04-21  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ComboBox.cs: If the combobox is disabled, draw a disabled

@@ -996,9 +996,7 @@ namespace System.Windows.Forms {
 				   is ignored by metacity. */
 				functions |= MotifFunctions.Move | MotifFunctions.Resize | MotifFunctions.Minimize | MotifFunctions.Maximize;
 			} else if (form != null && form.FormBorderStyle == FormBorderStyle.None) {
-				functions |= MotifFunctions.Maximize;
-				functions |= MotifFunctions.Minimize;
-				functions |= MotifFunctions.Close;
+				functions |= MotifFunctions.All;
 			} else {
 				if (StyleSet (cp.Style, WindowStyles.WS_CAPTION)) {
 					functions |= MotifFunctions.Move;
@@ -1797,6 +1795,7 @@ namespace System.Windows.Forms {
 					else if (xevent.PropertyEvent.atom == _NET_WM_STATE) {
 						// invalidate our cache - we'll query again the next time someone does GetWindowState.
 						hwnd.cached_window_state = (FormWindowState)(-1);
+						PostMessage (hwnd.Handle, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
 					}
 					break;
 
@@ -4162,13 +4161,6 @@ namespace System.Windows.Forms {
 						msg.message = Msg.WM_SHOWWINDOW;
 						msg.wParam = (IntPtr) 0;
 						// XXX we're missing the lParam..
-						break;
-					}
-					if (hwnd.parent == null && GetWindowState (hwnd.Handle) == FormWindowState.Minimized) {
-						// minimized toplevel
-						msg.message = Msg.WM_WINDOWPOSCHANGED;
-						msg.wParam = IntPtr.Zero;
-						msg.lParam = IntPtr.Zero;
 						break;
 					}
 					goto ProcessNextMessage;
