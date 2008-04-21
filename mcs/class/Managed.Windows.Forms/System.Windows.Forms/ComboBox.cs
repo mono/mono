@@ -1429,6 +1429,9 @@ namespace System.Windows.Forms
 			is_flat = style == FlatStyle.Flat || style == FlatStyle.Popup;
 #endif
 
+			if (!Enabled)
+				dc.FillRectangle (theme.ResPool.GetSolidBrush (theme.ColorControl), bounds);
+
 			if (DropDownStyle == ComboBoxStyle.Simple)
 				dc.FillRectangle (theme.ResPool.GetSolidBrush (Parent.BackColor), ClientRectangle);
 
