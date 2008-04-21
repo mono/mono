@@ -11825,6 +11825,24 @@
       </method>
     </type>
   </test>
+  <test name="gtest-etree-06.cs">
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>59</size>
+      </method>
+      <method name="Int32 Value()">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="Test+&lt;&gt;c__CompilerGenerated0">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-exmethod-01.cs">
     <type name="SimpleTest">
       <method name="System.String Prefix(System.String, System.String)">
