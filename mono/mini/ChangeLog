@@ -1,5 +1,11 @@
 2008-04-21  Martin Baulig  <martin@ximian.com>
 
+	* debug-debugger.h (MonoDebuggerInfo): Added `init_code_buffer';
+	allows delayed initialization of the `executable_code_buffer' when
+	attaching.
+
+2008-04-21  Martin Baulig  <martin@ximian.com>
+
 	* mini.h (mono_debugger_create_notification_function): Removed.
 	* tramp-*.c (mono_debugger_create_notification_function): Removed.
 
