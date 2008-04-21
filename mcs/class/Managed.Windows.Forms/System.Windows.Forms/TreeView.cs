@@ -733,6 +733,7 @@ namespace System.Windows.Forms {
 
 		void Sort (IComparer sorter) 
 		{
+			sorted = true;
 			Nodes.Sort (sorter);
 			RecalculateVisibleOrder (root_node);
 			UpdateScrollBars (false);

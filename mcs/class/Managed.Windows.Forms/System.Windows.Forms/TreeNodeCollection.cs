@@ -128,6 +128,9 @@ namespace System.Windows.Forms {
 			int res;
 			TreeView tree_view = null;
 
+			if (owner != null)
+				tree_view = owner.TreeView;
+				
 			if (tree_view != null && tree_view.Sorted) {
 				res = AddSorted (node);
 			} else {

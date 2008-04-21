@@ -1,3 +1,10 @@
+2008-04-21  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TreeView.cs: Calling Sort() sets Sorted = true.
+	* TreeNodeCollection.cs: Try to find the owner TreeView to determine
+	if the nodes need to be sorted.
+	[Fixes bug #382028]
+
 2008-04-21  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* Form.cs: Fire SizeChanged for both when the form is minimized and 
