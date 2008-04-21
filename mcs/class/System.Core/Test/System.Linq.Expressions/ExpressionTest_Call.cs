@@ -224,7 +224,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CallStaticMethodOnNonSenseInstanceExpression ()
 		{
 			var call = Expression.Lambda<Func<int>> (
