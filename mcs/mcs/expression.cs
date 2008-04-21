@@ -4507,7 +4507,7 @@ namespace Mono.CSharp {
 			if (mg.IsInstance)
 				args.Add (new Argument (mg.InstanceExpression.CreateExpressionTree (ec)));
 			else
-				args.Add (new Argument (new NullLiteral (loc).CreateExpressionTree (ec)));
+				args.Add (new Argument (new NullLiteral (loc)));
 
 			args.Add (new Argument (mg.CreateExpressionTree (ec)));
 			if (Arguments != null) {

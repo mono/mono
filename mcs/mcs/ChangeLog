@@ -1,5 +1,10 @@
 2008-04-21  Marek Safar  <marek.safar@gmail.com>
 
+	* expression.cs: Emit ldnull and not null expression as an instance argument
+	 of static method expression calls.
+
+2008-04-21  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #378200
 	* expression.cs: Fixed crash when creating parameterless expression tree
 	method call.
