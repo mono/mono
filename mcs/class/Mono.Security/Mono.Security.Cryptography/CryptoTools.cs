@@ -129,7 +129,7 @@ namespace Mono.Security.Cryptography {
 				// 4. if data is still present fill the "block" with the remainder
 				blockCount = cb - n;
 				if (blockCount > 0)
-					Buffer.BlockCopy (rgb, n, block, 0, blockCount);
+					Buffer.BlockCopy (rgb, n + ib, block, 0, blockCount);
 			}
 		}
 	

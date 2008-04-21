@@ -1,3 +1,8 @@
+2008-04-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoConvert.cs: Fix HMAC to respect start index inside an array.
+	Patch by Kazuki Oikawa.
+
 2008-03-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoConvert.cs: Re-order exception handling to report the most
