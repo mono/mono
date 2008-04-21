@@ -50,8 +50,6 @@ namespace System.Data.OleDb
 		OleDbCommand insertCommand;
 		OleDbCommand selectCommand;
 		OleDbCommand updateCommand;
-		MissingMappingAction missingMappingAction;
-		MissingSchemaAction missingSchemaAction;
 
 		#endregion
 
@@ -155,23 +153,9 @@ namespace System.Data.OleDb
 			}
 		}
 
-		MissingMappingAction IDataAdapter.MissingMappingAction {
-			get { return missingMappingAction; }
-			set { missingMappingAction = value; }
-		}
-
-		MissingSchemaAction IDataAdapter.MissingSchemaAction {
-			get { return missingSchemaAction; }
-			set { missingSchemaAction = value; }
-		}
-		
 		IDbCommand IDbDataAdapter.UpdateCommand {
 			get { return UpdateCommand; }
 			set { UpdateCommand = (OleDbCommand) value; }
-		}
-
-		ITableMappingCollection IDataAdapter.TableMappings {
-			get { return TableMappings; }
 		}
 
 		#endregion // Properties
@@ -208,13 +192,13 @@ namespace System.Data.OleDb
 		}
 		
 		[MonoTODO]
-		public int Fill(DataTable datatable, Object adoDBRecordSet)
+		public int Fill (DataTable dataTable, Object ADODBRecordSet)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public int Fill(DataSet dataset, Object adoDBRecordSet, String srcTable)
+		public int Fill (DataSet dataSet, Object ADODBRecordSet, String srcTable)
 		{
 			throw new NotImplementedException ();
 		}

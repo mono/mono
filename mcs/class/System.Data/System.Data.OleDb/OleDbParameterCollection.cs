@@ -125,8 +125,7 @@ namespace System.Data.OleDb
 				return list.SyncRoot;
 			}
 		}
-#endif
-
+#else
 		bool IList.IsFixedSize {
 			get { return false; }
 		}
@@ -148,7 +147,7 @@ namespace System.Data.OleDb
 			set { list[index] = value; }
 		}
 
-		object IDataParameterCollection.this[string name] {
+		object IDataParameterCollection.this [string index] {
 			[MonoTODO]
 			get {
 				throw new NotImplementedException ();
@@ -158,6 +157,7 @@ namespace System.Data.OleDb
 				throw new NotImplementedException ();
 			}
 		}
+#endif
 
 		internal IntPtr GdaParameterList {
 			[MonoTODO]
@@ -190,22 +190,22 @@ namespace System.Data.OleDb
 			return IndexOf (value);
 		}
 
-		public OleDbParameter Add (OleDbParameter parameter)
+		public OleDbParameter Add (OleDbParameter value)
 		{
-			if (parameter.Container != null)
+			if (value.Container != null)
 				throw new ArgumentException ("The OleDbParameter specified in the value parameter is already added to this or another OleDbParameterCollection.");
-			parameter.Container = this;
-			list.Add (parameter);
-			return parameter;
+			value.Container = this;
+			list.Add (value);
+			return value;
 		}
 
 #if NET_2_0
 		[Obsolete("OleDbParameterCollection.Add(string, value) is now obsolete. Use OleDbParameterCollection.AddWithValue(string, object) instead.")]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 #endif
-		public OleDbParameter Add (string name, object value)
+		public OleDbParameter Add (string parameterName, object value)
 		{
-			return Add (new OleDbParameter (name, value));
+			return Add (new OleDbParameter (parameterName, value));
 		}
 
 #if NET_2_0
@@ -215,19 +215,19 @@ namespace System.Data.OleDb
 		}
 #endif
 
-		public OleDbParameter Add (string name, OleDbType type)
+		public OleDbParameter Add (string parameterName, OleDbType oleDbType)
 		{
-			return Add (new OleDbParameter (name, type));
+			return Add (new OleDbParameter (parameterName, oleDbType));
 		}
 
-		public OleDbParameter Add (string name, OleDbType type, int width)
+		public OleDbParameter Add (string parameterName, OleDbType oleDbType, int size)
 		{
-			return Add (new OleDbParameter (name, type, width));
+			return Add (new OleDbParameter (parameterName, oleDbType, size));
 		}
 
-		public OleDbParameter Add (string name, OleDbType type, int width, string src_col)
+		public OleDbParameter Add (string parameterName, OleDbType oleDbType, int size, string sourceColumn)
 		{
-			return Add (new OleDbParameter (name, type, width, src_col));
+			return Add (new OleDbParameter (parameterName, oleDbType, size, sourceColumn));
 		}
 
 #if NET_2_0

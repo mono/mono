@@ -222,11 +222,11 @@ namespace System.Data.OleDb
 			return new OleDbTransaction (this);
 		}
 
-		public new OleDbTransaction BeginTransaction (IsolationLevel level)
+		public new OleDbTransaction BeginTransaction (IsolationLevel isolationLevel)
 		{
 			if (State == ConnectionState.Closed)
 				throw ExceptionHelper.ConnectionClosed ();
-			return new OleDbTransaction (this, level);
+			return new OleDbTransaction (this, isolationLevel);
 		}
 
 #if NET_2_0
@@ -245,9 +245,9 @@ namespace System.Data.OleDb
 			return BeginTransaction ();
 		}
 
-		IDbTransaction IDbConnection.BeginTransaction (IsolationLevel level)
+		IDbTransaction IDbConnection.BeginTransaction (IsolationLevel isolationLevel)
 		{
-			return BeginTransaction (level);
+			return BeginTransaction (isolationLevel);
 		}
 
 		IDbCommand IDbConnection.CreateCommand ()
@@ -260,12 +260,12 @@ namespace System.Data.OleDb
 #if NET_2_0
 		override
 #endif
-		void ChangeDatabase (string name)
+		void ChangeDatabase (string value)
 		{
 			if (State != ConnectionState.Open)
 				throw new InvalidOperationException ();
 
-			if (!libgda.gda_connection_change_database (gdaConnection, name))
+			if (!libgda.gda_connection_change_database (gdaConnection, value))
 				throw new OleDbException (this);
 		}
 
@@ -409,7 +409,7 @@ namespace System.Data.OleDb
 
 		[MonoTODO]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		public void ResetState()
+		public void ResetState ()
 		{
 			throw new NotImplementedException ();
 		}

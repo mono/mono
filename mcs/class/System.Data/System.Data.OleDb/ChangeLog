@@ -1,3 +1,15 @@
+2008-04-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* OleDbDataAdapter.cs: Changed argument names to match MS. Removed
+	extra explicit interface implementation.
+	* OleDbParameter.cs: Changed argument names to match MS.
+	* OleDbTransaction.cs: Do not include IDbConnection.Connection and
+	IDisposable.Dispose for 2.0 profile.
+	* OleDbParameterCollection.cs: Changed argument names to match MS.
+	Do not include explicit interface implementations on 2.0 profile.
+	* OleDbConnection.cs: Changed argument names to match MS. Code
+	formatting.
+
 2008-03-03  Ankit Jain  <jankit@novell.com>
 
 	* OleDbMetaDataCollectionNames.cs: New.

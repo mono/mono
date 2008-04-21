@@ -72,12 +72,9 @@ namespace System.Data.OleDb
 		
 		public OleDbParameter ()
 		{
-			name = String.Empty;
-			size = 0;
+			name = string.Empty;
 			isNullable = true;
-			precision = 0;
-			scale = 0;
-			sourceColumn = String.Empty;
+			sourceColumn = string.Empty;
 			gdaParameter = IntPtr.Zero;
 		}
 
@@ -109,8 +106,8 @@ namespace System.Data.OleDb
 		}
 		
 		[EditorBrowsableAttribute (EditorBrowsableState.Advanced)]
-		public OleDbParameter(string name, OleDbType dataType, int size, ParameterDirection direction, bool isNullable, byte precision, byte scale, string srcColumn, DataRowVersion srcVersion, object value)
-			: this (name, dataType, size, srcColumn)
+		public OleDbParameter (string parameterName, OleDbType dbType, int size, ParameterDirection direction, bool isNullable, byte precision, byte scale, string srcColumn, DataRowVersion srcVersion, object value)
+			: this (parameterName, dbType, size, srcColumn)
 		{
 			this.direction = direction;
 			this.isNullable = isNullable;
@@ -122,13 +119,13 @@ namespace System.Data.OleDb
 
 #if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		public OleDbParameter (string name, OleDbType dataType, int size, ParameterDirection direction, byte precision, byte scale, string srcColumn, DataRowVersion srcVersion, bool sourceColumnNullMapping, object value)
-			: this (name, dataType, size, srcColumn)
+		public OleDbParameter (string parameterName, OleDbType dbType, int size, ParameterDirection direction, byte precision, byte scale, string sourceColumn, DataRowVersion sourceVersion, bool sourceColumnNullMapping, object value)
+			: this (parameterName, dbType, size, sourceColumn)
 		{
 			this.direction = direction;
 			this.precision = precision;
 			this.scale = scale;
-			this.sourceVersion = srcVersion;
+			this.sourceVersion = sourceVersion;
 			this.sourceColumnNullMapping = sourceColumnNullMapping;
 			this.value = value;
 		}

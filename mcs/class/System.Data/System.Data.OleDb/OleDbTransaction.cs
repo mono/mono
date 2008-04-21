@@ -110,13 +110,13 @@ namespace System.Data.OleDb
 		protected override DbConnection DbConnection {
 			get { return connection; }
 		}
-#endif
-
+#else
 		IDbConnection IDbTransaction.Connection {
 			get {
 				return connection;
 			}
 		}
+#endif
 		
 		public
 #if NET_2_0
@@ -199,10 +199,12 @@ namespace System.Data.OleDb
 #endif
 		}
 
+#if !NET_2_0
 		void IDisposable.Dispose ()
 		{
 			Dispose (true);
 		}
+#endif
 
 		public
 #if NET_2_0
