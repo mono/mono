@@ -398,7 +398,7 @@ namespace System.Net.Mail {
 					continue;
 
 				string start = part.Substring (4);
-				if (start.StartsWith ("AUTH ")) {
+				if (start.StartsWith ("AUTH ", StringComparison.Ordinal)) {
 					string[] options = start.Split (delims);
 					for (int k = 1; k < options.Length; k++) {
 						string option = options[k].Trim();
@@ -423,7 +423,7 @@ namespace System.Net.Mail {
 							break;
 						}
 					}
-				} else if (start.StartsWith ("STARTTLS")) {
+				} else if (start.StartsWith ("STARTTLS", StringComparison.Ordinal)) {
 					canStartTLS = true;
 				}
 			}

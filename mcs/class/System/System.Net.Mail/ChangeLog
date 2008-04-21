@@ -1,5 +1,9 @@
 2008-04-21  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
+	* SmtpClient.cs: Fix bug with string handling
+
+2008-04-21  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
 	* SmtpClient.cs: Fix formatting
 
 2008-04-20 Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
