@@ -1,3 +1,15 @@
+2008-04-16  Massimiliano Mantione <massi@ximian.com>
+	 * mono-profiler-oprofile.c (write_current_block): Added an incremental
+	 "counter delta" field to the block header, so that each block has a
+	 timestamp directly in the header.
+	 This will allow tools to know when a block has been emitted without
+	 decoding (even without reading) the block contents.
+	 So, if the user is only interested in blocks emitted in a certain
+	 time interval, the tool can seek into the file instead of reading the
+	 block contents.
+	 Of course this breaks the file format, but at this stage we can still
+	 do it, and... better now than later.
+
 2008-04-10  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-oprofile.c (profiler_heap_scan): removed debugging code
 	and therefore removed unconditional inclusion of signal.h (it is now
