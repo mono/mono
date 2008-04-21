@@ -1,3 +1,7 @@
+2008-04-21  Martin Baulig  <martin@ximian.com>
+
+	* mono.1: Documented the new --debug=mdb-optimizations option.
+
 2008-04-17  Marek Habersack  <mhabersack@novell.com>
 
 	* mono.1: add description of the new NullFileWatcher to the
