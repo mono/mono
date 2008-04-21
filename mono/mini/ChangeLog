@@ -1,5 +1,10 @@
 2008-04-21  Martin Baulig  <martin@ximian.com>
 
+	* debug-debugger.h (MonoDebuggerInfo): Removed `attach', `detach'
+	and `get_lmf_addr'; `notification_address' is no longer a pointer.
+
+2008-04-21  Martin Baulig  <martin@ximian.com>
+
 	* debug-debugger.h (MonoDebuggerInfo): Added `thread_vtable_ptr',
 	`thread_vtable', `event_handler_ptr' and `event_handler'.
 
