@@ -60,7 +60,8 @@ namespace System.Data
 
 		#region Constructors
 
-		internal DataRowView (DataView dataView, DataRow row, int index) {
+		internal DataRowView (DataView dataView, DataRow row, int index)
+		{
 			_dataView = dataView;
 			_dataRow = row;
 			_index = index;
@@ -70,7 +71,7 @@ namespace System.Data
 
 		#region Methods
 
-		public override bool Equals(object other)
+		public override bool Equals (object other)
 		{
 			return (other != null &&
 					other is DataRowView && 
@@ -121,7 +122,7 @@ namespace System.Data
 			}
 		}
 
-		private void CheckAllowEdit()
+		private void CheckAllowEdit ()
 		{
 			if (!DataView.AllowEdit && (Row != DataView._lastAdded))
 				throw new DataException("Cannot edit on a DataSource where AllowEdit is false.");
@@ -229,9 +230,10 @@ namespace System.Data
 			}
 		}
 
-		public override int GetHashCode() {
+		public override int GetHashCode ()
+		{
 			return _dataRow.GetHashCode();
-		}	
+		}
 
 		internal int Index {
 			get { return _index; }
@@ -241,7 +243,7 @@ namespace System.Data
 		
 		#region ICustomTypeDescriptor implementations
 		
-		AttributeCollection ICustomTypeDescriptor.GetAttributes  ()
+		AttributeCollection ICustomTypeDescriptor.GetAttributes ()
 		{
 			System.ComponentModel.AttributeCollection attributes;
 			attributes = AttributeCollection.Empty;
@@ -251,7 +253,7 @@ namespace System.Data
 		[MonoTODO ("Not implemented.   Always returns String.Empty")]
 		string ICustomTypeDescriptor.GetClassName ()
 		{
-			return "";
+			return string.Empty;
 		}
 		
 		[MonoTODO ("Not implemented.   Always returns null")]
@@ -332,14 +334,14 @@ namespace System.Data
 		string IDataErrorInfo.Error {
 			[MonoTODO("Not implemented, always returns String.Empty")]
 			get {
-				return ""; // FIXME
+				return string.Empty; // FIXME
 			}
 		}
 
-		string IDataErrorInfo.this[string columnName] {
+		string IDataErrorInfo.this [string colName] {
 			[MonoTODO("Not implemented, always returns String.Empty")]
 			get {
-				return ""; // FIXME
+				return string.Empty; // FIXME
 			}
 		}
 
@@ -357,6 +359,7 @@ namespace System.Data
 				PropertyChanged (this, args);
 			}
 		}
+
 		#endregion
 #endif
 	}
