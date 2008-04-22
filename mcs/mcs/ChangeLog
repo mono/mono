@@ -1,3 +1,7 @@
+2008-04-22  Marek Safar  <marek.safar@gmail.com>
+
+	* expression.cs: Disabled lifted binary conversion on ISO-1 profiles.
+
 2008-04-21  Marek Safar  <marek.safar@gmail.com>
 
 	* expression.cs: Emit ldnull and not null expression as an instance argument

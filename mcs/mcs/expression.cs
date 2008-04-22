@@ -2358,7 +2358,8 @@ namespace Mono.CSharp {
 				CheckUselessComparison (rc, left.Type);
 			}
 
-			if ((TypeManager.IsNullableType (left.Type) || TypeManager.IsNullableType (right.Type) ||
+			if (RootContext.Version >= LanguageVersion.ISO_2 &&
+				(TypeManager.IsNullableType (left.Type) || TypeManager.IsNullableType (right.Type) ||
 				(left is NullLiteral && right.Type.IsValueType) || (right is NullLiteral && left.Type.IsValueType)))
 				return new Nullable.LiftedBinaryOperator (oper, left, right, loc).Resolve (ec);
 
