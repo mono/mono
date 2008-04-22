@@ -1,3 +1,7 @@
+2008-04-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* MethodOnTypeBuilderInst.cs ConstructorOnTypeBuilderInst: New files.
+
 2008-03-29  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AssemblyBuilder.cs: Added enum that determines the type of the
