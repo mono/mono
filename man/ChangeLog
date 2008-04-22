@@ -1,3 +1,7 @@
+2008-04-22  Robert Jordan  <robertj@gmx.net>
+
+	* mono.1: Document MONO_DEBUG=no-gdb-backtrace.
+
 2008-04-21  Martin Baulig  <martin@ximian.com>
 
 	* mono.1: Documented the new --debug=mdb-optimizations option.
