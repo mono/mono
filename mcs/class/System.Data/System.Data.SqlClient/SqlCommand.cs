@@ -366,7 +366,10 @@ namespace System.Data.SqlClient {
 			string sql = "sp_procedure_params_rowset";
 
 			try {
-				Connection.Tds.ExecProc (sql, localParameters.MetaParameters, 0, true);
+				Connection.Tds.ExecProc (sql,
+				localParameters.MetaParameters, 0, true);
+			} catch (TdsTimeoutException ex) {
+			  	throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
 			} catch (TdsInternalException ex) {
 				Connection.Close ();
 				throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
@@ -418,6 +421,12 @@ namespace System.Data.SqlClient {
 						Connection.Tds.ExecProc (CommandText, parms, CommandTimeout, wantResults);
 						if (keyInfo || schemaOnly)
 							Connection.Tds.Execute (sql2.ToString ());
+					} catch (TdsTimeoutException ex) {
+						// If it is a timeout exception there can be many reasons:
+						// 1) Network is down/server is down/not reachable
+						// 2) Somebody has an exclusive lock on Table/DB
+						// In any of these cases, don't close the connection. Let the user do it
+						throw SqlException.FromTdsInternalException ((TdsInternalException) ex);					
 					} catch (TdsInternalException ex) {
 						Connection.Close ();
 						throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
@@ -432,6 +441,8 @@ namespace System.Data.SqlClient {
 					}
 					try {
 						Connection.Tds.Execute (sql, parms, CommandTimeout, wantResults);
+					} catch (TdsTimeoutException ex) {
+						throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
 					} catch (TdsInternalException ex) {
 						Connection.Close ();
 						throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
@@ -442,6 +453,8 @@ namespace System.Data.SqlClient {
 			else {
 				try {
 					Connection.Tds.ExecPrepared (preparedStatement, parms, CommandTimeout, wantResults);
+				} catch (TdsTimeoutException ex) {
+					throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
 				} catch (TdsInternalException ex) {
 					Connection.Close ();
 					throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
@@ -479,26 +492,11 @@ namespace System.Data.SqlClient {
 		public new SqlDataReader ExecuteReader (CommandBehavior behavior)
 		{
 			ValidateCommand ("ExecuteReader");
-			try {
-				this.behavior = behavior;
-				if ((behavior & CommandBehavior.SequentialAccess) != 0)
-					Tds.SequentialAccess = true;
-				Execute (behavior, true);
-				Connection.DataReader = new SqlDataReader (this);
-			} catch (TdsTimeoutException e) {
-				// if behavior is closeconnection, even if it throws exception
-				// the connection has to be closed.
-				if ((behavior & CommandBehavior.CloseConnection) != 0)
-					Connection.Close ();
-				throw SqlException.FromTdsInternalException ((TdsInternalException) e);
-			} catch (SqlException) {
-				// if behavior is closeconnection, even if it throws exception
-				// the connection has to be closed.
-				if ((behavior & CommandBehavior.CloseConnection) != 0)
-					Connection.Close ();
-
-				throw;
-			}
+			this.behavior = behavior;
+			if ((behavior & CommandBehavior.SequentialAccess) != 0)
+				Tds.SequentialAccess = true;
+			Execute (behavior, true);
+			Connection.DataReader = new SqlDataReader (this);
 
 			return Connection.DataReader;
 		}
@@ -513,12 +511,7 @@ namespace System.Data.SqlClient {
 				object result = null;
 				ValidateCommand ("ExecuteScalar");
 				behavior = CommandBehavior.Default;
-				try {
-					Execute (CommandBehavior.Default, true);
-				}
-				catch (TdsTimeoutException e) {
-					throw SqlException.FromTdsInternalException ((TdsInternalException) e);
-				}
+				Execute (CommandBehavior.Default, true);
 
 				try {
 					if (Connection.Tds.NextResult () && Connection.Tds.NextRow ())
@@ -528,6 +521,8 @@ namespace System.Data.SqlClient {
 						Connection.Tds.SkipToEnd ();
 						GetOutputParameters ();
 					}
+				} catch (TdsTimeoutException ex) {
+					throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
 				} catch (TdsInternalException ex) {
 					Connection.Close ();
 					throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
@@ -544,11 +539,8 @@ namespace System.Data.SqlClient {
 		{
 			ValidateCommand ("ExecuteXmlReader");
 			behavior = CommandBehavior.Default;
-			try {
-				Execute (CommandBehavior.Default, true);
-			} catch (TdsTimeoutException e) {
-				throw SqlException.FromTdsInternalException ((TdsInternalException) e);
-			}
+
+			Execute (CommandBehavior.Default, true);
 
 			SqlDataReader dataReader = new SqlDataReader (this);
 			SqlXmlTextReader textReader = new SqlXmlTextReader (dataReader);
@@ -744,6 +736,8 @@ namespace System.Data.SqlClient {
 										      parms,
 										      callback,
 										      state);
+					} catch (TdsTimeoutException ex) {
+						throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
 					} catch (TdsInternalException ex) {
 						Connection.Close ();
 						throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
@@ -756,6 +750,8 @@ namespace System.Data.SqlClient {
 							ar = Connection.Tds.BeginExecuteQuery (sql, parms, callback, state);
 						else
 							ar = Connection.Tds.BeginExecuteNonQuery (sql, parms, callback, state);
+					} catch (TdsTimeoutException ex) {
+						throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
 					} catch (TdsInternalException ex) {
 						Connection.Close ();
 						throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
@@ -766,6 +762,8 @@ namespace System.Data.SqlClient {
 			else {
 				try {
 					Connection.Tds.ExecPrepared (preparedStatement, parms, CommandTimeout, wantResults);
+				} catch (TdsTimeoutException ex) {
+					throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
 				} catch (TdsInternalException ex) {
 					Connection.Close ();
 					throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
@@ -842,17 +840,13 @@ namespace System.Data.SqlClient {
 			try {
 				reader = new SqlDataReader (this);
 			} catch (TdsTimeoutException e) {
+				throw SqlException.FromTdsInternalException ((TdsInternalException) e);
+			} catch (TdsInternalException e) {
 				// if behavior is closeconnection, even if it throws exception
 				// the connection has to be closed.
 				if ((behavior & CommandBehavior.CloseConnection) != 0)
 					Connection.Close ();
 				throw SqlException.FromTdsInternalException ((TdsInternalException) e);
-			} catch (SqlException) {
-				// if behavior is closeconnection, even if it throws exception
-				// the connection has to be closed.
-				if ((behavior & CommandBehavior.CloseConnection) != 0)
-					Connection.Close ();
-				throw;
 			}
 
 			((SqlAsyncResult) ar).Ended = true;

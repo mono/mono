@@ -1,3 +1,9 @@
+2008-04-22  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+        ** Fixes Bug#381151
+        * SqlCommand.cs: Handle exceptions sanely and do not close
+        connection on TdsTimeoutException.
+	
 2007-10-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SqlCommand.cs: Use ExceptionHelper.CheckEnumValue for enum checks.
