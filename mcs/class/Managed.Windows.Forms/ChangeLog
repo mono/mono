@@ -1,3 +1,7 @@
+2008-04-22  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Makefile: Remove /labels option.
+
 2008-04-09  Jonathan Pobst  <monkey@jpobst.com>
 
 	* System.Windows.Forms_test.dll.sources: Add DataGridViewImageCellTest.cs.
