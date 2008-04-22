@@ -157,6 +157,11 @@ public struct MyType
 	{
 		return a.value << b;
 	}
+	
+	public static MyType operator - (MyType a)
+	{
+		return new MyType (-a.value);
+	}
 
 	public override string ToString ()
 	{
@@ -177,6 +182,21 @@ class MyTypeExplicit
 	public static explicit operator int (MyTypeExplicit m)
 	{
 		return m.value;
+	}
+}
+
+struct MyTypeImplicitOnly
+{
+	short b;
+
+	public MyTypeImplicitOnly (short b)
+	{
+		this.b = b;
+	}
+
+	public static implicit operator short (MyTypeImplicitOnly m)
+	{
+		return m.b;
 	}
 }
 
@@ -1006,6 +1026,50 @@ class Tester
 			AssertNodeType (e4, ExpressionType.Multiply);
 			Assert (double.PositiveInfinity, e4.Compile ().Invoke (double.MaxValue, int.MaxValue));
 		}
+	}
+	
+	void NegateTest ()
+	{
+		Expression<Func<int, int>> e = (a) => -a;
+		AssertNodeType (e, ExpressionType.Negate);
+		Assert (30, e.Compile ().Invoke (-30));
+
+		Expression<Func<sbyte, int>> e2 = (a) => -(-a);
+		AssertNodeType (e2, ExpressionType.Negate);
+		Assert (-10, e2.Compile ().Invoke (-10));
+
+		Expression<Func<long?, long?>> e3 = (a) => -a;
+		AssertNodeType (e3, ExpressionType.Negate);
+		Assert (long.MinValue + 1, e3.Compile ().Invoke (long.MaxValue));
+		Assert (null, e3.Compile ().Invoke (null));
+
+		Expression<Func<MyType, MyType>> e4 = (a) => -a;
+		AssertNodeType (e4, ExpressionType.Negate);
+		Assert (new MyType (14), e4.Compile ().Invoke (new MyType (-14)));
+
+		Expression<Func<MyType?, MyType?>> e5 = (a) => -a;
+		AssertNodeType (e5, ExpressionType.Negate);
+		Assert (new MyType (-33), e5.Compile ().Invoke (new MyType (33)));
+		Assert (null, e5.Compile ().Invoke (null));
+
+		Expression<Func<MyTypeImplicitOnly, int>> e6 = (MyTypeImplicitOnly a) => -a;
+		AssertNodeType (e6, ExpressionType.Negate);
+		Assert (-4, e6.Compile ().Invoke (new MyTypeImplicitOnly (4)));
+
+		Expression<Func<MyTypeImplicitOnly?, int?>> e7 = (MyTypeImplicitOnly? a) => -a;
+		AssertNodeType (e7, ExpressionType.Negate);
+		Assert (-46, e7.Compile ().Invoke (new MyTypeImplicitOnly (46)));
+		
+		// Another version of MS bug when predefined conversion is required on nullable user operator
+		// Assert (null, e7.Compile ().Invoke (null));
+
+		Expression<Func<sbyte?, int?>> e8 = (a) => -a;
+		AssertNodeType (e8, ExpressionType.Negate);
+		Assert (11, e8.Compile ().Invoke (-11));
+		
+		Expression<Func<uint, long>> e9 = (a) => -a;
+		AssertNodeType (e9, ExpressionType.Negate);
+		Assert (-2, e9.Compile ().Invoke (2));		
 	}	
 	
 	void NewArrayInitTest ()
@@ -1321,7 +1385,8 @@ class Tester
 		e.ModuloTest ();	
 		e.MultiplyTest ();
 		e.MultiplyCheckedTest ();
-		
+		e.NegateTest ();
+				
 		e.NewArrayInitTest ();
 		e.NotTest ();
 		e.NotNullableTest ();

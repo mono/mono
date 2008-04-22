@@ -3720,7 +3720,7 @@
         <size>7</size>
       </method>
       <method name="Void Main(System.String[])">
-        <size>1066</size>
+        <size>1063</size>
       </method>
     </type>
   </test>
@@ -3730,7 +3730,7 @@
         <size>7</size>
       </method>
       <method name="Void Main(System.String[])">
-        <size>1697</size>
+        <size>1492</size>
       </method>
     </type>
   </test>
@@ -3801,7 +3801,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>61</size>
+        <size>58</size>
       </method>
     </type>
   </test>
@@ -10414,6 +10414,16 @@
       </method>
       <method name="Void EndInvoke(IAsyncResult)">
         <size>0</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-386.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>229</size>
       </method>
     </type>
   </test>
