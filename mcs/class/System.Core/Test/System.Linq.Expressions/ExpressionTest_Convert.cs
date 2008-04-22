@@ -190,7 +190,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ConvertNullableInt32ToInt32 ()
 		{
 			var c = Expression.Convert (Expression.Parameter (typeof (int?), ""), typeof (int));
@@ -201,7 +200,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ConvertInt32ToNullableInt32 ()
 		{
 			var c = Expression.Convert (Expression.Parameter (typeof (int), ""), typeof (int?));
@@ -237,7 +235,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ConvertClassWithExplicitOpToNullableInt ()
 		{
 			var c = Expression.Convert (Expression.Parameter (typeof (Klang), ""), typeof (int?));
@@ -272,7 +269,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ConvertClassWithImplicitOpToNullableInt ()
 		{
 			var c = Expression.Convert (Expression.Parameter (typeof (Kling), ""), typeof (int?));
