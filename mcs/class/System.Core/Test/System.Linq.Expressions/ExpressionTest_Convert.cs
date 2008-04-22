@@ -64,6 +64,51 @@ namespace MonoTests.System.Linq.Expressions {
 		class Bar : Foo { }
 		class Baz { }
 
+		interface ITzap { }
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ConvertBackwardAssignability ()
+		{
+			var c = Expression.Convert (
+				Expression.Constant (null, typeof (Bar)), typeof (Foo));
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ConvertInterfaces ()
+		{
+			var p = Expression.Parameter (typeof (IFoo), null);
+
+			var conv = Expression.Convert (p, typeof (ITzap));
+			Assert.AreEqual (typeof (ITzap), conv.Type);
+
+			p = Expression.Parameter (typeof (ITzap), null);
+			conv = Expression.Convert (p, typeof (IFoo));
+
+			Assert.AreEqual (typeof (IFoo), conv.Type);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ConvertCheckedInt32ToInt64 ()
+		{
+			var c = Expression.ConvertChecked (
+				Expression.Constant (2, typeof (int)), typeof (long));
+
+			Assert.AreEqual (ExpressionType.ConvertChecked, c.NodeType);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ConvertCheckedFallbackToConvertForNonPrimitives ()
+		{
+			var p = Expression.ConvertChecked (
+				Expression.Constant (null, typeof (object)), typeof (IFoo));
+
+			Assert.AreEqual (ExpressionType.Convert, p.NodeType);
+		}
+
 		[Test]
 		[Category ("NotWorking")]
 		[ExpectedException (typeof (InvalidOperationException))]
