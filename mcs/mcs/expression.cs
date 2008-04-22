@@ -361,7 +361,10 @@ namespace Mono.CSharp {
 			string method_name;
 			switch (Oper) {
 			case Operator.UnaryNegation:
-				method_name = "Negate";
+				if (ec.CheckState && user_op == null && !IsFloat (type))
+					method_name = "NegateChecked";
+				else
+					method_name = "Negate";
 				break;
 			case Operator.LogicalNot:
 				method_name = "Not";
@@ -499,7 +502,7 @@ namespace Mono.CSharp {
 				throw new Exception ("This should be caught by Resolve");
 				
 			case Operator.UnaryNegation:
-				if (ec.CheckState && type != TypeManager.float_type && type != TypeManager.double_type) {
+				if (ec.CheckState && !IsFloat (type)) {
 					ig.Emit (OpCodes.Ldc_I4_0);
 					if (type == TypeManager.int64_type)
 						ig.Emit (OpCodes.Conv_U8);
@@ -550,6 +553,11 @@ namespace Mono.CSharp {
 		{
 			Report.Error (23, loc, "The `{0}' operator cannot be applied to operand of type `{1}'",
 				oper, TypeManager.CSharpName (t));
+		}
+
+		static bool IsFloat (Type t)
+		{
+			return t == TypeManager.float_type || t == TypeManager.double_type;
 		}
 
 		//
@@ -3273,7 +3281,7 @@ namespace Mono.CSharp {
 			
 			switch (oper) {
 			case Operator.Addition:
-				if (method == null && ec.CheckState && !IsFloat (left.Type))
+				if (method == null && ec.CheckState && !IsFloat (type))
 					method_name = "AddChecked";
 				else
 					method_name = "Add";
@@ -3327,7 +3335,7 @@ namespace Mono.CSharp {
 				method_name = "Modulo";
 				break;
 			case Operator.Multiply:
-				if (method == null && ec.CheckState && !IsFloat (left.Type))
+				if (method == null && ec.CheckState && !IsFloat (type))
 					method_name = "MultiplyChecked";
 				else
 					method_name = "Multiply";
@@ -3336,7 +3344,7 @@ namespace Mono.CSharp {
 				method_name = "RightShift";
 				break;
 			case Operator.Subtraction:
-				if (method == null && ec.CheckState && !IsFloat (left.Type))
+				if (method == null && ec.CheckState && !IsFloat (type))
 					method_name = "SubtractChecked";
 				else
 					method_name = "Subtract";
@@ -5173,13 +5181,17 @@ namespace Mono.CSharp {
 			ArrayList args = Arguments == null ?
 				new ArrayList (1) : new ArrayList (Arguments.Count + 1);
 
-			args.Add (new Argument (method.CreateExpressionTree (ec)));
-			if (Arguments != null) {
-				Expression expr;
-				foreach (Argument a in Arguments) {
-					expr = a.Expr.CreateExpressionTree (ec);
-					if (expr != null)
-						args.Add (new Argument (expr));
+			if (method == null) {
+				args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
+			} else {
+				args.Add (new Argument (method.CreateExpressionTree (ec)));
+				if (Arguments != null) {
+					Expression expr;
+					foreach (Argument a in Arguments) {
+						expr = a.Expr.CreateExpressionTree (ec);
+						if (expr != null)
+							args.Add (new Argument (expr));
+					}
 				}
 			}
 

@@ -1,5 +1,9 @@
 2008-04-22  Marek Safar  <marek.safar@gmail.com>
 
+	* expression.cs: Implemented NegateChecked and New expressions.
+
+2008-04-22  Marek Safar  <marek.safar@gmail.com>
+
 	* convert.cs, nullable.cs, expression.cs: Implemented Negate expression.
 
 2008-04-22  Raja R Harinath  <harinath@hurrynot.org>
