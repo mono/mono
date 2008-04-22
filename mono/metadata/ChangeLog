@@ -1,3 +1,15 @@
+2008-04-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* object-internals.h: Add MonoReflection{Method|Constructor}OnTypeBuilderInst
+	types.
+
+	* reflection.c (mono_image_create_token): Handle 
+	Method/ConstructorOnTypeBuilderInst.
+	(resolve_object): Ditto.
+	(inflate_mono_method): Receive the inflated class instead of a MonoGenericClass
+	so it can be called from resolve_object. Also handle the case when the inflated
+	class already has its methods setup.
+
 2008-04-21  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.h (MONO_DEBUGGER_VERSION): Bump to 69.
