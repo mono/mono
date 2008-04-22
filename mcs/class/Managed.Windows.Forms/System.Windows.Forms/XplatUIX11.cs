@@ -3680,6 +3680,33 @@ namespace System.Windows.Forms {
 
 			msg.hwnd = hwnd.Handle;
 
+			// Windows sends WM_ENTERSIZEMOVE when a form resize/move operation starts and WM_EXITSIZEMOVE 
+			// when it is done. The problem in X11 is that there is no concept of start-end of a moving/sizing.
+			// Configure events ("this window has resized/moved") are sent for each step of the resize. We send a
+			// WM_ENTERSIZEMOVE when we get the first Configure event. The problem is the WM_EXITSIZEMOVE.
+			// 
+			//  - There is no way for us to know which is the last Configure event. We can't traverse the events 
+			//    queue, because the next configure event might not be pending yet.
+			//  - We can't get ButtonPress/Release events for the window decorations, because they are not part 
+			//    of the window(s) we manage.
+			//  - We can't rely on the mouse state to change to "up" before the last Configure event. It doesn't.
+			// 
+			// We are almost 100% guaranteed to get another event (e.g Expose or other), but we can't know for sure 
+			// which, so we have here to check if the mouse buttons state is "up" and send the WM_EXITSIZEMOVE
+			//
+			if (hwnd.resizing_or_moving) {
+				int root_x, root_y, win_x, win_y, keys_buttons;
+				IntPtr  root, child;
+				XQueryPointer (DisplayHandle, hwnd.Handle, out root, out child, out root_x, out root_y, 
+					       out win_x, out win_y, out keys_buttons);
+				if ((keys_buttons & (int)MouseKeyMasks.Button1Mask) == 0 &&
+				    (keys_buttons & (int)MouseKeyMasks.Button2Mask) == 0 &&
+				    (keys_buttons & (int)MouseKeyMasks.Button3Mask) == 0) {
+					hwnd.resizing_or_moving = false;
+					SendMessage (hwnd.Handle, Msg.WM_EXITSIZEMOVE, IntPtr.Zero, IntPtr.Zero);
+				}
+			}
+
 			//
 			// If you add a new event to this switch make sure to add it in
 			// UpdateMessage also unless it is not coming through the X event system.
@@ -4075,16 +4102,15 @@ namespace System.Windows.Forms {
 
 						lock (hwnd.configure_lock) {
 							Form form = Control.FromHandle (hwnd.client_window) as Form;
-							bool sizedOrMoved = false;;
-							if (form != null) {
+							if (form != null && !hwnd.resizing_or_moving) {
 								if (hwnd.x != form.Bounds.X || hwnd.y != form.Bounds.Y) {
 									SendMessage (form.Handle, Msg.WM_SYSCOMMAND, (IntPtr)SystemCommands.SC_MOVE, IntPtr.Zero);
-									sizedOrMoved = true;
+									hwnd.resizing_or_moving = true;
 								} else if (hwnd.width != form.Bounds.Width || hwnd.height != form.Bounds.Height) {
 									SendMessage (form.Handle, Msg.WM_SYSCOMMAND, (IntPtr)SystemCommands.SC_SIZE, IntPtr.Zero);
-									sizedOrMoved = true;
+									hwnd.resizing_or_moving = true;
 								}
-								if (sizedOrMoved)
+								if (hwnd.resizing_or_moving)
 									SendMessage (form.Handle, Msg.WM_ENTERSIZEMOVE, IntPtr.Zero, IntPtr.Zero);
 							}
 	
@@ -4094,9 +4120,6 @@ namespace System.Windows.Forms {
 							// We need to adjust our client window to track the resize of whole_window
 							if (hwnd.whole_window != hwnd.client_window)
 								PerformNCCalc(hwnd);
-	
-							if (sizedOrMoved)
-								SendMessage (form.Handle, Msg.WM_EXITSIZEMOVE, IntPtr.Zero, IntPtr.Zero);
 						}
 					}
 					goto ProcessNextMessage;

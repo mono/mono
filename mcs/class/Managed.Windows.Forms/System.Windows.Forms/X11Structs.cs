@@ -1088,6 +1088,15 @@ namespace System.Windows.Forms {
 		ModMasks		= Mod1Mask | Mod2Mask | Mod3Mask | Mod4Mask | Mod5Mask
 	}
 
+	[Flags]
+	internal enum MouseKeyMasks {
+		Button1Mask		= (1 << 8),
+		Button2Mask		= (1 << 9),
+		Button3Mask		= (1 << 10),
+		Button4Mask		= (1 << 11),
+		Button5Mask		= (1 << 12),
+	}
+
 	[StructLayout (LayoutKind.Sequential)]
 	internal struct XModifierKeymap {
 		public int max_keypermod;

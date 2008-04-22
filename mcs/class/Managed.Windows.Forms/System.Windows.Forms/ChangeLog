@@ -1,3 +1,11 @@
+2008-04-22  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* X11Structs.cs: Add mouse button masks enum.
+	* XplatUIX11.cs, Hwnd.cs: Send WM_ENTERSIZEMOVE and 
+        WM_EXITSIZEMOVE only once at the beginning and at the end of the 
+	form resize/move operation instead of for each step of it.
+	[Fixes bug #346529 for the x11 backend]
+
 2008-04-21  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridView*: Implement support for drawing error icons.

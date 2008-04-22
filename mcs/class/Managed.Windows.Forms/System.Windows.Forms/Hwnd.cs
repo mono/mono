@@ -65,6 +65,7 @@ namespace System.Windows.Forms {
 		internal bool		expose_pending;
 		internal bool		nc_expose_pending;
 		internal bool		configure_pending;
+		internal bool		resizing_or_moving; // Used by the X11 backend to track form resize/move
 		internal bool		reparented;
 		internal Stack          drawing_stack;
 		internal object		user_data;
@@ -119,6 +120,7 @@ namespace System.Windows.Forms {
 			fixed_size = false;
 			drawing_stack = new Stack ();
 			children = new ArrayList ();
+			resizing_or_moving = false;
 		}
 
 		public void Dispose() {
