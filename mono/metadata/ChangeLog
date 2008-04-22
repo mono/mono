@@ -1,5 +1,7 @@
 2008-04-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* reflection.c (fixup_method): Handle {Method|Constructor}OnTypeBuilderInst.
+
 	* object-internals.h: Add MonoReflection{Method|Constructor}OnTypeBuilderInst
 	types.
 
