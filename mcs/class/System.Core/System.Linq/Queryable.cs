@@ -35,9 +35,11 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Linq;
 
-namespace System.Linq {
+namespace System.Linq
+{
 
-	public static class Queryable {
+	public static class Queryable
+	{
 
 		static MethodInfo MakeGeneric (MethodBase method, params Type [] parameters)
 		{
@@ -383,7 +385,7 @@ namespace System.Linq {
 		{
 			Check.Source1AndSource2 (source1, source2);
 
-			return source1.Provider.Execute<IQueryable<TSource>> (
+			return source1.Provider.CreateQuery<TSource> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource)),
 					source1.Expression,
@@ -443,21 +445,21 @@ namespace System.Linq {
 
 		#region DefaultIfEmpty
 
-		public static TSource DefaultIfEmpty<TSource> (this IQueryable<TSource> source)
+		public static IQueryable<TSource> DefaultIfEmpty<TSource> (this IQueryable<TSource> source)
 		{
 			Check.Source (source);
 
-			return source.Provider.Execute<TSource> (
+			return source.Provider.CreateQuery<TSource> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource)),
 					source.Expression));
 		}
 
-		public static TSource DefaultIfEmpty<TSource> (this IQueryable<TSource> source, TSource defaultValue)
+		public static IQueryable<TSource> DefaultIfEmpty<TSource> (this IQueryable<TSource> source, TSource defaultValue)
 		{
 			Check.Source (source);
 
-			return source.Provider.Execute<TSource> (
+			return source.Provider.CreateQuery<TSource> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource)),
 					source.Expression,
@@ -468,21 +470,21 @@ namespace System.Linq {
 
 		#region Distinct
 
-		public static bool Distinct<TSource> (this IQueryable<TSource> source)
+		public static IQueryable<TSource> Distinct<TSource> (this IQueryable<TSource> source)
 		{
 			Check.Source (source);
 
-			return source.Provider.Execute<bool> (
+			return source.Provider.CreateQuery<TSource> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource)),
 					source.Expression));
 		}
 
-		public static bool Distinct<TSource> (this IQueryable<TSource> source, IEqualityComparer<TSource> comparer)
+		public static IQueryable<TSource> Distinct<TSource> (this IQueryable<TSource> source, IEqualityComparer<TSource> comparer)
 		{
 			Check.Source (source);
 
-			return source.Provider.Execute<bool> (
+			return source.Provider.CreateQuery<TSource> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource)),
 					source.Expression,
@@ -527,7 +529,7 @@ namespace System.Linq {
 		{
 			Check.Source1AndSource2 (source1, source2);
 
-			return source1.Provider.Execute<IQueryable<TSource>> (
+			return source1.Provider.CreateQuery<TSource> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource)),
 					source1.Expression,
@@ -538,7 +540,7 @@ namespace System.Linq {
 		{
 			Check.Source1AndSource2 (source1, source2);
 
-			return source1.Provider.Execute<IQueryable<TSource>> (
+			return source1.Provider.CreateQuery<TSource> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource)),
 					source1.Expression,
@@ -604,7 +606,7 @@ namespace System.Linq {
 		{
 			Check.SourceAndKeySelector (source, keySelector);
 
-			return source.Provider.Execute<IQueryable<IGrouping<TKey, TSource>>> (
+			return source.Provider.CreateQuery<IGrouping<TKey, TSource>> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource), typeof (TKey)),
 					source.Expression,
@@ -614,7 +616,7 @@ namespace System.Linq {
 		{
 			Check.SourceAndKeySelector (source, keySelector);
 
-			return source.Provider.Execute<IQueryable<IGrouping<TKey, TSource>>> (
+			return source.Provider.CreateQuery<IGrouping<TKey, TSource>> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource), typeof (TKey)),
 					source.Expression,
@@ -625,7 +627,7 @@ namespace System.Linq {
 		{
 			Check.SourceAndKeyElementSelectors (source, keySelector, elementSelector);
 
-			return source.Provider.Execute<IQueryable<IGrouping<TKey, TSource>>> (
+			return source.Provider.CreateQuery<IGrouping<TKey, TSource>> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource), typeof (TKey), typeof (TElement)),
 					source.Expression,
@@ -636,7 +638,7 @@ namespace System.Linq {
 		{
 			Check.SourceAndKeyResultSelectors (source, keySelector, resultSelector);
 
-			return source.Provider.Execute<IQueryable<TResult>> (
+			return source.Provider.CreateQuery<TResult> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource), typeof (TKey), typeof (TResult)),
 					source.Expression,
@@ -647,7 +649,7 @@ namespace System.Linq {
 		{
 			Check.SourceAndKeyElementSelectors (source, keySelector, elementSelector);
 
-			return source.Provider.Execute<IQueryable<IGrouping<TKey, TElement>>> (
+			return source.Provider.CreateQuery<IGrouping<TKey, TElement>> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource), typeof (TKey), typeof (TElement)),
 					source.Expression,
@@ -659,7 +661,7 @@ namespace System.Linq {
 		{
 			Check.GroupBySelectors (source, keySelector, elementSelector, resultSelector);
 
-			return source.Provider.Execute<IQueryable<TResult>> (
+			return source.Provider.CreateQuery<TResult> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource), typeof (TKey), typeof (TElement), typeof (TResult)),
 					source.Expression,
@@ -672,7 +674,7 @@ namespace System.Linq {
 		{
 			Check.SourceAndKeyResultSelectors (source, keySelector, resultSelector);
 
-			return source.Provider.Execute<IQueryable<TResult>> (
+			return source.Provider.CreateQuery<TResult> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource), typeof (TKey), typeof (TResult)),
 					source.Expression,
@@ -684,7 +686,7 @@ namespace System.Linq {
 		{
 			Check.GroupBySelectors (source, keySelector, elementSelector, resultSelector);
 
-			return source.Provider.Execute<IQueryable<TResult>> (
+			return source.Provider.CreateQuery<TResult> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource), typeof (TKey), typeof (TElement), typeof (TResult)),
 					source.Expression,
@@ -710,7 +712,7 @@ namespace System.Linq {
 			if (resultSelector == null)
 				throw new ArgumentNullException ("resultSelector");
 
-			return outer.Provider.Execute<IQueryable<TResult>> (
+			return outer.Provider.CreateQuery<TResult> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TOuter), typeof (TInner), typeof (TKey), typeof (TResult)),
 					outer.Expression,
@@ -733,7 +735,7 @@ namespace System.Linq {
 			if (resultSelector == null)
 				throw new ArgumentNullException ("resultSelector");
 
-			return outer.Provider.Execute<IQueryable<TResult>> (
+			return outer.Provider.CreateQuery<TResult> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TOuter), typeof (TInner), typeof (TKey), typeof (TResult)),
 					outer.Expression,
@@ -752,7 +754,7 @@ namespace System.Linq {
 		{
 			Check.Source1AndSource2 (source1, source2);
 
-			return source1.Provider.Execute<IQueryable<TSource>> (
+			return source1.Provider.CreateQuery<TSource> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource)),
 					source1.Expression,
@@ -763,7 +765,7 @@ namespace System.Linq {
 		{
 			Check.Source1AndSource2 (source1, source2);
 
-			return source1.Provider.Execute<IQueryable<TSource>> (
+			return source1.Provider.CreateQuery<TSource> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource)),
 					source1.Expression,
@@ -779,7 +781,7 @@ namespace System.Linq {
 		{
 			Check.JoinSelectors (outer, inner, outerKeySelector, innerKeySelector, resultSelector);
 
-			return outer.Provider.Execute<IQueryable<TResult>> (
+			return outer.Provider.CreateQuery<TResult> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TOuter), typeof (TInner), typeof (TKey), typeof (TResult)),
 					outer.Expression,
@@ -793,7 +795,7 @@ namespace System.Linq {
 		{
 			Check.JoinSelectors (outer, inner, outerKeySelector, innerKeySelector, resultSelector);
 
-			return outer.Provider.Execute<IQueryable<TResult>> (
+			return outer.Provider.CreateQuery<TResult> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TOuter), typeof (TInner), typeof (TKey), typeof (TResult)),
 					outer.Expression,
@@ -951,7 +953,7 @@ namespace System.Linq {
 		{
 			Check.SourceAndKeySelector (source, keySelector);
 
-			return source.Provider.Execute<IQueryable<TSource>> (
+			return source.Provider.CreateQuery<TSource> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource), typeof (TKey)),
 					source.Expression,
@@ -962,7 +964,7 @@ namespace System.Linq {
 		{
 			Check.SourceAndKeySelector (source, keySelector);
 
-			return source.Provider.Execute<IQueryable<TSource>> (
+			return source.Provider.CreateQuery<TSource> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource), typeof (TKey)),
 					source.Expression,
@@ -978,7 +980,7 @@ namespace System.Linq {
 		{
 			Check.SourceAndKeySelector (source, keySelector);
 
-			return source.Provider.Execute<IQueryable<TSource>> (
+			return source.Provider.CreateQuery<TSource> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource), typeof (TKey)),
 					source.Expression,
@@ -989,7 +991,7 @@ namespace System.Linq {
 		{
 			Check.SourceAndKeySelector (source, keySelector);
 
-			return source.Provider.Execute<IQueryable<TSource>> (
+			return source.Provider.CreateQuery<TSource> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource), typeof (TKey)),
 					source.Expression,
@@ -1005,7 +1007,7 @@ namespace System.Linq {
 		{
 			Check.Source (source);
 
-			return source.Provider.Execute<IQueryable<TSource>> (
+			return source.Provider.CreateQuery<TSource> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource)),
 					source.Expression));
@@ -1019,7 +1021,7 @@ namespace System.Linq {
 		{
 			Check.SourceAndSelector (source, selector);
 
-			return source.Provider.Execute<IQueryable<TResult>> (
+			return source.Provider.CreateQuery<TResult> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource), typeof (TResult)),
 					source.Expression,
@@ -1030,7 +1032,7 @@ namespace System.Linq {
 		{
 			Check.SourceAndSelector (source, selector);
 
-			return source.Provider.Execute<IQueryable<TResult>> (
+			return source.Provider.CreateQuery<TResult> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource), typeof (TResult)),
 					source.Expression,
@@ -1045,7 +1047,7 @@ namespace System.Linq {
 		{
 			Check.SourceAndSelector (source, selector);
 
-			return source.Provider.Execute<IQueryable<TResult>> (
+			return source.Provider.CreateQuery<TResult> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource), typeof (TResult)),
 					source.Expression,
@@ -1056,7 +1058,7 @@ namespace System.Linq {
 		{
 			Check.SourceAndSelector (source, selector);
 
-			return source.Provider.Execute<IQueryable<TResult>> (
+			return source.Provider.CreateQuery<TResult> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource), typeof (TResult)),
 					source.Expression,
@@ -1067,7 +1069,7 @@ namespace System.Linq {
 		{
 			Check.SourceAndCollectionSelectorAndResultSelector (source, collectionSelector, resultSelector);
 
-			return source.Provider.Execute<IQueryable<TResult>> (
+			return source.Provider.CreateQuery<TResult> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource), typeof (TCollection), typeof (TResult)),
 					source.Expression,
@@ -1079,7 +1081,7 @@ namespace System.Linq {
 		{
 			Check.SourceAndCollectionSelectorAndResultSelector (source, collectionSelector, resultSelector);
 
-			return source.Provider.Execute<IQueryable<TResult>> (
+			return source.Provider.CreateQuery<TResult> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource), typeof (TCollection), typeof (TResult)),
 					source.Expression,
@@ -1172,7 +1174,7 @@ namespace System.Linq {
 		{
 			Check.Source (source);
 
-			return source.Provider.Execute<IQueryable<TSource>> (
+			return source.Provider.CreateQuery<TSource> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource)),
 					source.Expression,
@@ -1187,7 +1189,7 @@ namespace System.Linq {
 		{
 			Check.SourceAndPredicate (source, predicate);
 
-			return source.Provider.Execute<IQueryable<TSource>> (
+			return source.Provider.CreateQuery<TSource> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource)),
 					source.Expression,
@@ -1198,7 +1200,7 @@ namespace System.Linq {
 		{
 			Check.SourceAndPredicate (source, predicate);
 
-			return source.Provider.Execute<IQueryable<TSource>> (
+			return source.Provider.CreateQuery<TSource> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource)),
 					source.Expression,
@@ -1441,7 +1443,7 @@ namespace System.Linq {
 		{
 			Check.Source (source);
 
-			return source.Provider.Execute<IQueryable<TSource>> (
+			return source.Provider.CreateQuery<TSource> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource)),
 					source.Expression,
@@ -1456,7 +1458,7 @@ namespace System.Linq {
 		{
 			Check.SourceAndPredicate (source, predicate);
 
-			return source.Provider.Execute<IQueryable<TSource>> (
+			return source.Provider.CreateQuery<TSource> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource)),
 					source.Expression,
@@ -1467,7 +1469,7 @@ namespace System.Linq {
 		{
 			Check.SourceAndPredicate (source, predicate);
 
-			return source.Provider.Execute<IQueryable<TSource>> (
+			return source.Provider.CreateQuery<TSource> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource)),
 					source.Expression,
@@ -1482,7 +1484,7 @@ namespace System.Linq {
 		{
 			Check.SourceAndKeySelector (source, keySelector);
 
-			return source.Provider.Execute<IOrderedQueryable<TSource>> (
+			return (IOrderedQueryable<TSource>) source.Provider.CreateQuery (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource), typeof (TKey)),
 					source.Expression,
@@ -1493,7 +1495,7 @@ namespace System.Linq {
 		{
 			Check.SourceAndKeySelector (source, keySelector);
 
-			return source.Provider.Execute<IOrderedQueryable<TSource>> (
+			return (IOrderedQueryable<TSource>) source.Provider.CreateQuery (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource), typeof (TKey)),
 					source.Expression,
@@ -1509,7 +1511,7 @@ namespace System.Linq {
 		{
 			Check.SourceAndKeySelector (source, keySelector);
 
-			return source.Provider.Execute<IOrderedQueryable<TSource>> (
+			return (IOrderedQueryable<TSource>) source.Provider.CreateQuery (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource), typeof (TKey)),
 					source.Expression,
@@ -1520,7 +1522,7 @@ namespace System.Linq {
 		{
 			Check.SourceAndKeySelector (source, keySelector);
 
-			return source.Provider.Execute<IOrderedQueryable<TSource>> (
+			return (IOrderedQueryable<TSource>) source.Provider.CreateQuery (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource), typeof (TKey)),
 					source.Expression,
@@ -1536,7 +1538,7 @@ namespace System.Linq {
 		{
 			Check.Source1AndSource2 (source1, source2);
 
-			return source1.Provider.Execute<IOrderedQueryable<TSource>> (
+			return source1.Provider.CreateQuery<TSource> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource)),
 					source1.Expression,
@@ -1547,7 +1549,7 @@ namespace System.Linq {
 		{
 			Check.Source1AndSource2 (source1, source2);
 
-			return source1.Provider.Execute<IOrderedQueryable<TSource>> (
+			return source1.Provider.CreateQuery<TSource> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource)),
 					source1.Expression,
@@ -1564,7 +1566,7 @@ namespace System.Linq {
 		{
 			Check.SourceAndPredicate (source, predicate);
 
-			return source.Provider.Execute<IQueryable<TSource>> (
+			return source.Provider.CreateQuery<TSource> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource)),
 					source.Expression,
@@ -1575,7 +1577,7 @@ namespace System.Linq {
 		{
 			Check.SourceAndPredicate (source, predicate);
 
-			return source.Provider.Execute<IQueryable<TSource>> (
+			return source.Provider.CreateQuery<TSource> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource)),
 					source.Expression,

@@ -115,7 +115,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-RefInfo-system-core="repository:vmw:framework:2.0" REFS-JarPath-system-core="" REFS-RefInfo-system-core-2008-javaee="j2il:" REFS-JarPath-system-core-2008-javaee="..\bin\Debug_Java\System.Core-2008.JavaEE.jar" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system="" REFS-RefInfo-nunit-framework="j2il:" REFS-JarPath-nunit-framework="..\..\..\nunit20\framework\bin\Debug_Java20\nunit.framework.jar" REFS-JarPath-rt="" REFS-RefInfo-rt="repository:jre:sun:1.6.0" />
+      <UserProperties REFS-RefInfo-rt="repository:jre:sun:1.6.0" REFS-JarPath-rt="" REFS-JarPath-nunit-framework="..\..\..\nunit20\framework\bin\Debug_Java20\nunit.framework.jar" REFS-RefInfo-nunit-framework="j2il:" REFS-JarPath-system="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system-core-2008-javaee="..\bin\Debug_Java\System.Core-2008.JavaEE.jar" REFS-RefInfo-system-core-2008-javaee="j2il:" REFS-JarPath-system-core="" REFS-RefInfo-system-core="repository:vmw:framework:2.0" />
     </VisualStudio>
   </ProjectExtensions>
   <ItemGroup>
@@ -206,6 +206,7 @@
     <Compile Include="System.Linq.Expressions\ExpressionTest_Utils.cs" />
     <Compile Include="System.Linq\EnumerableMoreTest.cs" />
     <Compile Include="System.Linq\EnumerableTest.cs" />
+    <Compile Include="System.Linq\QueryableProviderTest.cs" />
     <Compile Include="System.Linq\QueryableTest.cs" />
   </ItemGroup>
   <ItemGroup>
