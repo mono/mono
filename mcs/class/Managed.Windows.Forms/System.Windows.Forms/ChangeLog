@@ -1,5 +1,9 @@
 2008-04-22  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridViewRowCollection.cs: Revert something I didn't mean to commit.
+
+2008-04-22  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridView.cs: Add support for error icon tool tips.
 	* DataGridViewCell.cs: ErrorIconBounds needs to call GetErrorIconBounds.
 	* DataGridViewRowHeaderCell.cs: Need internal way to get ErrorIconBounds.
