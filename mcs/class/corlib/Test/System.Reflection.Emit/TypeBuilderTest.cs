@@ -1572,6 +1572,71 @@ namespace MonoTests.System.Reflection.Emit
 			}
 		}
 
+#if NET_2_0
+		[Test]
+		// Test that changes made to the method builder after a call to GetMethod ()
+		// are visible
+		public void TestGetMethod ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			GenericTypeParameterBuilder [] typeParams = tb.DefineGenericParameters ("T");
+
+			ConstructorBuilder cb = tb.DefineConstructor (MethodAttributes.Public, CallingConventions.Standard, Type.EmptyTypes);
+			ILGenerator ig;
+			ig = cb.GetILGenerator ();
+			ig.Emit (OpCodes.Ret);
+
+			Type fooOfT = tb.MakeGenericType (typeParams [0]);
+
+			// Create a method builder but do not emit IL yet
+			MethodBuilder mb1 = tb.DefineMethod ("create", MethodAttributes.Public|MethodAttributes.Static, fooOfT, Type.EmptyTypes);
+
+			Type t = tb.MakeGenericType (typeof (int));
+
+			MethodBuilder mb = tb.DefineMethod ("foo", MethodAttributes.Public|MethodAttributes.Static, t, Type.EmptyTypes);
+
+			ig = mb.GetILGenerator ();
+			ig.Emit (OpCodes.Call, TypeBuilder.GetMethod (t, mb1));
+			ig.Emit (OpCodes.Ret);
+
+			// Finish the method
+			ig = mb1.GetILGenerator ();
+			ig.Emit (OpCodes.Newobj, TypeBuilder.GetConstructor (fooOfT, cb));
+			ig.Emit (OpCodes.Ret);
+
+			Type t2 = tb.CreateType ();
+
+			Assert.AreEqual (tb.Name + "[System.Int32]", t2.MakeGenericType (typeof (int)).GetMethod ("foo").Invoke (null, null).GetType ().ToString ());
+		}
+
+		public void TestGetConstructor () {
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			GenericTypeParameterBuilder [] typeParams = tb.DefineGenericParameters ("T");
+
+			ConstructorBuilder cb = tb.DefineConstructor (MethodAttributes.Public, CallingConventions.Standard, Type.EmptyTypes);
+			ILGenerator ig;
+
+			Type t = tb.MakeGenericType (typeof (int));
+
+			MethodBuilder mb = tb.DefineMethod ("foo", MethodAttributes.Public|MethodAttributes.Static, t, Type.EmptyTypes);
+
+			ig = mb.GetILGenerator ();
+
+			ConstructorInfo ci = TypeBuilder.GetConstructor (t, cb);
+
+			ig.Emit (OpCodes.Newobj, ci);
+			ig.Emit (OpCodes.Ret);
+
+			// Finish the ctorbuilder
+			ig = cb.GetILGenerator ();
+			ig.Emit (OpCodes.Ret);
+
+			Type t2 = tb.CreateType ();
+
+			Assert.AreEqual (tb.Name + "[System.Int32]", t2.MakeGenericType (typeof (int)).GetMethod ("foo").Invoke (null, null).GetType ().ToString ());
+		}
+#endif
+
 		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
 		[Category ("NotWorking")]

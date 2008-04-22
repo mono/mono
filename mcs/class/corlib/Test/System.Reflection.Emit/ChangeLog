@@ -1,3 +1,7 @@
+2008-04-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* TypeBuilderTest.cs: Add tests for GetMethod () / GetConstructor ().
+
 2008-04-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* AssemblyBuilderTest.cs (GetCustomAttributes_NotCreated): New test for
