@@ -1,3 +1,9 @@
+2008-04-21 Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
+
+	* HttpWebResponse.cs: do not check the disposed status for properties
+	and methods that return response data other than the stream itself.
+	Fixes bug #381223.
+
 2008-04-16  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpWebRequest.cs: fix an off-by-one bug - the number of
