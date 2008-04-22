@@ -52,7 +52,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void ConvertIntToString ()
 		{
@@ -67,7 +66,6 @@ namespace MonoTests.System.Linq.Expressions {
 		interface ITzap { }
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ConvertBackwardAssignability ()
 		{
 			var c = Expression.Convert (
@@ -75,7 +73,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ConvertInterfaces ()
 		{
 			var p = Expression.Parameter (typeof (IFoo), null);
@@ -90,7 +87,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ConvertCheckedInt32ToInt64 ()
 		{
 			var c = Expression.ConvertChecked (
@@ -100,7 +96,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ConvertCheckedFallbackToConvertForNonPrimitives ()
 		{
 			var p = Expression.ConvertChecked (
@@ -110,7 +105,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void ConvertBazToFoo ()
 		{
@@ -120,7 +114,6 @@ namespace MonoTests.System.Linq.Expressions {
 		struct EineStrukt { }
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void ConvertStructToFoo ()
 		{
@@ -128,7 +121,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void ConvertInt32ToBool ()
 		{
@@ -136,7 +128,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ConvertIFooToFoo ()
 		{
 			var c = Expression.Convert (Expression.Parameter (typeof (IFoo), ""), typeof (Foo));
@@ -147,7 +138,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void BoxInt32 ()
 		{
 			var c = Expression.Convert (Expression.Parameter (typeof (int), ""), typeof (object));
@@ -158,7 +148,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void UnBoxInt32 ()
 		{
 			var c = Expression.Convert (Expression.Parameter (typeof (object), ""), typeof (int));
@@ -169,7 +158,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ConvertInt32ToInt64 ()
 		{
 			var c = Expression.Convert (Expression.Parameter (typeof (int), ""), typeof (long));
@@ -180,7 +168,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ConvertInt64ToInt32 ()
 		{
 			var c = Expression.Convert (Expression.Parameter (typeof (long), ""), typeof (int));
@@ -193,7 +180,6 @@ namespace MonoTests.System.Linq.Expressions {
 		enum EineEnum { }
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ConvertEnumToInt32 ()
 		{
 			var c = Expression.Convert (Expression.Parameter (typeof (EineEnum), ""), typeof (int));
@@ -241,7 +227,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ConvertClassWithExplicitOp ()
 		{
 			var c = Expression.Convert (Expression.Parameter (typeof (Klang), ""), typeof (int));
@@ -277,7 +262,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ConvertClassWithImplicitOp ()
 		{
 			var c = Expression.Convert (Expression.Parameter (typeof (Kling), ""), typeof (int));
