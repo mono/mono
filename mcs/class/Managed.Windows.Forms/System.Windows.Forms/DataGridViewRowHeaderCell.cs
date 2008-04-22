@@ -45,7 +45,16 @@ namespace System.Windows.Forms {
 
 		public override ContextMenuStrip GetInheritedContextMenuStrip (int rowIndex)
 		{
-			throw new NotImplementedException();
+			if (DataGridView == null)
+				return null;
+
+			if (rowIndex < 0 || rowIndex >= DataGridView.Rows.Count)
+				throw new ArgumentOutOfRangeException ("rowIndex");
+
+			if (ContextMenuStrip != null)
+				return ContextMenuStrip;
+
+			return DataGridView.ContextMenuStrip;
 		}
 
 		public override DataGridViewCellStyle GetInheritedStyle (DataGridViewCellStyle inheritedCellStyle, int rowIndex, bool includeColors)
@@ -132,7 +141,11 @@ namespace System.Windows.Forms {
 
 		protected override Rectangle GetContentBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex)
 		{
-			throw new NotImplementedException();
+			if (DataGridView == null)
+				return Rectangle.Empty;
+
+			Size s = new Size (11, 18);
+			return new Rectangle (24, (OwningRow.Height - s.Height) / 2, s.Width, s.Height);
 		}
 
 		protected override Rectangle GetErrorIconBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex)
@@ -154,7 +167,15 @@ namespace System.Windows.Forms {
 
 		protected override Size GetPreferredSize (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex, Size constraintSize)
 		{
-			throw new NotImplementedException();
+			object o = FormattedValue;
+
+			if (o != null) {
+				Size s = DataGridViewCell.MeasureTextSize (graphics, o.ToString (), cellStyle.Font, TextFormatFlags.Default);
+				s.Height = Math.Max (s.Height, 17);
+				s.Width += 48;
+				return s;
+			} else
+				return new Size (39, 17);
 		}
 
 		protected override object GetValue (int rowIndex)

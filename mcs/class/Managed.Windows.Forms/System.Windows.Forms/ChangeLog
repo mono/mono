@@ -1,5 +1,9 @@
 2008-04-22  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridViewRowHeaderCell.cs: Fill in some NIEX stuff.
+
+2008-04-22  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridViewRowCollection.cs: Revert something I didn't mean to commit.
 
 2008-04-22  Jonathan Pobst  <monkey@jpobst.com>
