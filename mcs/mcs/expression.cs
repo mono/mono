@@ -45,7 +45,7 @@ namespace Mono.CSharp {
 				return expr_tree (ec, mg);
 
 			ArrayList args = new ArrayList (arguments.Count + 1);
-			args.Add (new Argument (new NullLiteral (loc).CreateExpressionTree (ec)));
+			args.Add (new Argument (new NullLiteral (loc)));
 			args.Add (new Argument (mg.CreateExpressionTree (ec)));
 			foreach (Argument a in arguments) {
 				args.Add (new Argument (a.Expr.CreateExpressionTree (ec)));
@@ -314,7 +314,7 @@ namespace Mono.CSharp {
 			throw new Exception ("Can not constant fold: " + Oper.ToString());
 		}
 
-		Expression ResolveOperator (EmitContext ec, Expression expr)
+		protected Expression ResolveOperator (EmitContext ec, Expression expr)
 		{
 			if (predefined_operators == null)
 				CreatePredefinedOperatorsTable ();
@@ -358,7 +358,7 @@ namespace Mono.CSharp {
 
 		Expression CreateExpressionTree (EmitContext ec, MethodGroupExpr user_op)
 		{
-			string method_name; 
+			string method_name;
 			switch (Oper) {
 			case Operator.UnaryNegation:
 				method_name = "Negate";
@@ -454,10 +454,8 @@ namespace Mono.CSharp {
 			if (Expr == null)
 				return null;
 
-#if GMCS_SOURCE
 			if (TypeManager.IsNullableValueType (Expr.Type))
 				return new Nullable.LiftedUnaryOperator (Oper, Expr, loc).Resolve (ec);
-#endif
 
 			//
 			// Attempt to use a constant folding operation.
@@ -488,6 +486,11 @@ namespace Mono.CSharp {
 		}
 
 		public override void Emit (EmitContext ec)
+		{
+			EmitOperator (ec, type);
+		}
+
+		protected void EmitOperator (EmitContext ec, Type type)
 		{
 			ILGenerator ig = ec.ig;
 
@@ -634,28 +637,36 @@ namespace Mono.CSharp {
 		}
 
 		//
+		// Perform user-operator overload resolution
+		//
+		protected virtual Expression ResolveUserOperator (EmitContext ec, Expression expr)
+		{
+			string op_name = oper_names [(int) Oper];
+			MethodGroupExpr user_op = MemberLookup (ec.ContainerType, expr.Type, op_name, MemberTypes.Method, AllBindingFlags, expr.Location) as MethodGroupExpr;
+			if (user_op == null)
+				return null;
+
+			ArrayList args = new ArrayList (1);
+			args.Add (new Argument (expr));
+			user_op = user_op.OverloadResolve (ec, ref args, false, expr.Location);
+
+			if (user_op == null)
+				return null;
+
+			Expr = ((Argument) args [0]).Expr;
+			return new UserOperatorCall (user_op, args, CreateExpressionTree, expr.Location);
+		}
+
+		//
 		// Unary user type overload resolution
 		//
 		Expression ResolveUserType (EmitContext ec, Expression expr)
 		{
-			//
-			// Perform user-operator overload resolution
-			//
-			string op_name = oper_names [(int) Oper];
-			MethodGroupExpr user_op = MemberLookup (ec.ContainerType, expr.Type, op_name, MemberTypes.Method, AllBindingFlags, expr.Location) as MethodGroupExpr;
-			if (user_op != null) {
-				ArrayList args = new ArrayList (1);
-				args.Add (new Argument (expr));
-				user_op = user_op.OverloadResolve (ec, ref args, false, expr.Location);
-
-				if (user_op != null) {
-					Expr = ((Argument) args [0]).Expr;
-					return new UserOperatorCall (user_op, args, CreateExpressionTree, expr.Location);
-				}
-			}
+			Expression best_expr = ResolveUserOperator (ec, expr);
+			if (best_expr != null)
+				return best_expr;
 
 			Type[] predefined = predefined_operators [(int) Oper];
-			Expression best_expr = null;
 			foreach (Type t in predefined) {
 				Expression oper_expr = Convert.UserDefinedConversion (ec, expr, t, expr.Location, false);
 				if (oper_expr == null)

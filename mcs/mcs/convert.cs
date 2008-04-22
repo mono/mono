@@ -1291,6 +1291,10 @@ namespace Mono.CSharp {
 				Type target = TypeManager.GetTypeArguments (target_type) [0];
 
 				if (TypeManager.IsNullableType (expr.Type)) {
+					Type etype = TypeManager.GetTypeArguments (expr.Type) [0];
+					if (TypeManager.IsEqual (etype, target))
+						return expr;
+
 					e = new Nullable.LiftedConversion (
 						expr, target_type, false, false, loc).Resolve (ec);
 					if (e != null)

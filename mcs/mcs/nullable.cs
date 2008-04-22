@@ -289,7 +289,7 @@ namespace Mono.CSharp.Nullable
 			eclass = ExprClass.Value;
 		}
 
-		public static new Expression Create (Expression expr, Type type)
+		public static Expression Create (Expression expr, Type type)
 		{
 			return new Wrap (expr, type);
 		}
@@ -459,19 +459,95 @@ namespace Mono.CSharp.Nullable
 		}
 	}
 
-	public class LiftedUnaryOperator : Lifted
+	public class LiftedUnaryOperator : Unary, IMemoryLocation
 	{
-		public readonly Unary.Operator Oper;
+		Unwrap unwrap;
+		Expression user_operator;
 
 		public LiftedUnaryOperator (Unary.Operator op, Expression expr, Location loc)
-			: base (expr, loc)
+			: base (op, expr, loc)
 		{
-			this.Oper = op;
 		}
 
-		protected override Expression ResolveUnderlying (Expression unwrap, EmitContext ec)
+		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
-			return new Unary (Oper, unwrap, loc).Resolve (ec);
+			unwrap.AddressOf (ec, mode);
+		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			if (user_operator != null)
+				return user_operator.CreateExpressionTree (ec);
+
+			return base.CreateExpressionTree (ec);
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			unwrap = Unwrap.Create (Expr, ec);
+			if (unwrap == null)
+				return null;
+
+			Expression res = base.ResolveOperator (ec, unwrap);
+			if (res == this)
+				res = Expr = LiftExpression (ec, Expr);
+
+			if (res == null)
+				return null;
+
+			eclass = ExprClass.Value;
+			type = res.Type;
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			Label is_null_label = ig.DefineLabel ();
+			Label end_label = ig.DefineLabel ();
+
+			unwrap.EmitCheck (ec);
+			ig.Emit (OpCodes.Brfalse, is_null_label);
+
+			if (user_operator != null) {
+				user_operator.Emit (ec);
+			} else {
+				EmitOperator (ec, unwrap.Type);
+			}
+
+			NullableInfo ni = new NullableInfo (type);
+			ig.Emit (OpCodes.Newobj, ni.Constructor);
+			ig.Emit (OpCodes.Br_S, end_label);
+
+			ig.MarkLabel (is_null_label);
+			LiftedNull.Create (type, loc).Emit (ec);
+
+			ig.MarkLabel (end_label);
+		}
+
+		Expression LiftExpression (EmitContext ec, Expression expr)
+		{
+			TypeExpr lifted_type = new NullableType (expr.Type, expr.Location);
+			lifted_type = lifted_type.ResolveAsTypeTerminal (ec, false);
+			if (lifted_type == null)
+				return null;
+
+			if (expr is UserCast || expr is TypeCast || expr is UserOperatorCall)
+				expr.Type = lifted_type.Type;
+			else
+				expr = EmptyCast.Create (expr, lifted_type.Type);
+
+			return expr;
+		}
+
+		protected override Expression ResolveUserOperator (EmitContext ec, Expression expr)
+		{
+			expr = base.ResolveUserOperator (ec, expr);
+			if (expr == null)
+				return null;
+
+			user_operator = LiftExpression (ec, expr);
+			return user_operator;
 		}
 	}
 
@@ -488,6 +564,14 @@ namespace Mono.CSharp.Nullable
 			: base (op, left, right)
 		{
 			this.loc = loc;
+		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			if (user_operator != null)
+				return user_operator.CreateExpressionTree (ec);
+
+			return base.CreateExpressionTree (ec);
 		}
 
 		//
@@ -716,7 +800,7 @@ namespace Mono.CSharp.Nullable
 			EmitOperator (ec, left.Type);
 
 			if (wrap_ctor != null)
-				ec.ig.Emit (OpCodes.Newobj, wrap_ctor);
+				ig.Emit (OpCodes.Newobj, wrap_ctor);
 
 			ig.Emit (OpCodes.Br_S, end_label);
 			ig.MarkLabel (is_null_label);
