@@ -225,6 +225,40 @@ class MemberAccessData
 	}	
 }
 
+class NewTest<T>
+{
+	T [] t;
+	public NewTest (T i)
+	{
+		t = new T [] { i };
+	}
+
+	public NewTest (params T [] t)
+	{
+		this.t = t;
+	}
+
+	public override int GetHashCode ()
+	{
+		return base.GetHashCode ();
+	}
+
+	public override bool Equals (object obj)
+	{
+		NewTest<T> obj_t = obj as NewTest<T>;
+		if (obj_t == null)
+			return false;
+
+		for (int i = 0; i < t.Length; ++i) {
+			if (!t [i].Equals (obj_t.t [i]))
+				return false;
+		}
+
+		return true;
+	}
+}
+
+
 // TODO: Add more nullable tests, follow AddTest pattern.
 
 class Tester
@@ -1025,6 +1059,10 @@ class Tester
 			Expression<Func<double, double, double>> e4 = (a, b) => a * b;
 			AssertNodeType (e4, ExpressionType.Multiply);
 			Assert (double.PositiveInfinity, e4.Compile ().Invoke (double.MaxValue, int.MaxValue));
+			
+			Expression<Func<float?, float?, float?>> e5 = (a, b) => b * a;
+			AssertNodeType (e5, ExpressionType.MultiplyChecked);
+			Assert (float.PositiveInfinity, e5.Compile ().Invoke (float.Epsilon, float.PositiveInfinity));
 		}
 	}
 	
@@ -1070,6 +1108,31 @@ class Tester
 		Expression<Func<uint, long>> e9 = (a) => -a;
 		AssertNodeType (e9, ExpressionType.Negate);
 		Assert (-2, e9.Compile ().Invoke (2));		
+	}
+	
+	void NegateTestChecked ()
+	{
+		checked {
+			Expression<Func<int, int>> e = (int a) => -a;
+			AssertNodeType (e, ExpressionType.NegateChecked);
+			try {
+				e.Compile ().Invoke (int.MinValue);
+				throw new ApplicationException ("NegateTestChecked #1");
+			} catch (OverflowException) { }
+
+			Expression<Func<byte?, int?>> e2 = (a) => -a;
+			AssertNodeType (e2, ExpressionType.NegateChecked);
+			Assert (null, e2.Compile ().Invoke (null));
+			Assert (-255, e2.Compile ().Invoke (byte.MaxValue));
+
+			Expression<Func<MyType, MyType>> e3 = (MyType a) => -a;
+			AssertNodeType (e3, ExpressionType.Negate);
+			Assert (20, e3.Compile ().Invoke (new MyType (-20)));
+
+			Expression<Func<double, double>> e4 = (a) => -a;
+			AssertNodeType (e4, ExpressionType.Negate);
+			Assert (double.NegativeInfinity, e4.Compile ().Invoke (double.PositiveInfinity));
+		}
 	}	
 	
 	void NewArrayInitTest ()
@@ -1090,6 +1153,25 @@ class Tester
 		AssertNodeType (e3, ExpressionType.NewArrayInit);
 		Assert (new char [] { 'a' }, e3.Compile ().Invoke () [0]);
 	}
+	
+	void NewTest ()
+	{
+		Expression<Func<MyType>> e = () => new MyType (2);
+		AssertNodeType (e, ExpressionType.New);
+		Assert (new MyType (2), e.Compile ().Invoke ());
+
+		Expression<Func<MyType>> e2 = () => new MyType ();
+		AssertNodeType (e2, ExpressionType.New);
+		Assert (new MyType (), e2.Compile ().Invoke ());
+
+		Expression<Func<NewTest<bool>>> e3 = () => new NewTest<bool> (true);
+		AssertNodeType (e3, ExpressionType.New);
+		Assert (new NewTest<bool> (true), e3.Compile ().Invoke ());
+
+		Expression<Func<decimal, NewTest<decimal>>> e4 = (decimal d) => new NewTest<decimal> (1, 5, d);
+		AssertNodeType (e4, ExpressionType.New);
+		Assert (new NewTest<decimal> (1, 5, -9), e4.Compile ().Invoke (-9));
+	}	
 
 	void NotTest ()
 	{
@@ -1386,6 +1468,8 @@ class Tester
 		e.MultiplyTest ();
 		e.MultiplyCheckedTest ();
 		e.NegateTest ();
+		e.NegateTestChecked ();
+		e.NewTest ();
 				
 		e.NewArrayInitTest ();
 		e.NotTest ();
