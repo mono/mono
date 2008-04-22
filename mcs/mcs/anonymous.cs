@@ -1481,6 +1481,12 @@ namespace Mono.CSharp {
 			if ((Parameters != null) && !Parameters.Resolve (ec))
 				return null;
 
+			// FIXME: The emitted code isn't very careful about reachability
+			// so, ensure we have a 'ret' at the end
+			if (ec.CurrentBranching != null &&
+			    ec.CurrentBranching.CurrentUsageVector.IsUnreachable)
+				ec.NeedReturnLabel ();
+
 			return this;
 		}
 

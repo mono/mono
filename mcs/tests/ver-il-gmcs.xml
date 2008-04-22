@@ -27945,6 +27945,32 @@
       </method>
     </type>
   </test>
+  <test name="test-634.cs">
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void TestFunc()">
+        <size>37</size>
+      </method>
+      <method name="Void Main(System.String[])">
+        <size>6</size>
+      </method>
+    </type>
+    <type name="Test+&lt;&gt;c__CompilerGenerated0">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;&gt;c__CompilerGenerated1">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;TestFunc&gt;c__2(System.Object, System.AssemblyLoadEventArgs)">
+        <size>12</size>
+      </method>
+    </type>
+  </test>
   <test name="test-64.cs">
     <type name="Operator">
       <method name="Void .ctor()">

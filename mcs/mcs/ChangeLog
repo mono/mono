@@ -1,3 +1,9 @@
+2008-04-22  Raja R Harinath  <harinath@hurrynot.org>
+
+	Fix #351102
+	* anonymous.cs (AnonymousMethodExpression.DoResolve): Mark as
+	needing final 'ret' instruction.
+
 2008-04-22  Marek Safar  <marek.safar@gmail.com>
 
 	* expression.cs: Disabled lifted binary conversion on ISO-1 profiles.
