@@ -1,3 +1,7 @@
+2008-04-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* corlib.dll.sources: Add System.Reflection.Emit/{Method,Constructor}OnTypeBuilderInst.cs.
+
 2008-04-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* corlib_test.dll.sources : added SortKeyTest.cs.

@@ -500,6 +500,7 @@ System.Reflection/TypeFilter.cs
 System.Reflection.Emit/AssemblyBuilder.cs
 System.Reflection.Emit/AssemblyBuilderAccess.cs
 System.Reflection.Emit/ConstructorBuilder.cs
+System.Reflection.Emit/ConstructorOnTypeBuilderInst.cs
 System.Reflection.Emit/CustomAttributeBuilder.cs
 System.Reflection.Emit/DynamicILInfo.cs
 System.Reflection.Emit/DynamicMethod.cs
@@ -515,6 +516,7 @@ System.Reflection.Emit/ILGenerator.cs
 System.Reflection.Emit/Label.cs
 System.Reflection.Emit/LocalBuilder.cs
 System.Reflection.Emit/MethodBuilder.cs
+System.Reflection.Emit/MethodOnTypeBuilderInst.cs
 System.Reflection.Emit/MethodToken.cs
 System.Reflection.Emit/MethodRental.cs
 System.Reflection.Emit/ModuleBuilder.cs
