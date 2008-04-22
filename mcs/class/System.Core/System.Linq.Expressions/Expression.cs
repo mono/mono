@@ -69,7 +69,7 @@ namespace System.Linq.Expressions {
 
 		#region Binary Expressions
 
-		static MethodInfo GetUnaryOperator (string oper_name, Type on_type, Expression expression)
+		static MethodInfo GetUnaryOperator (string oper_name, Type on_type, Type type)
 		{
 			var methods = on_type.GetMethods (PublicStatic);
 
@@ -81,7 +81,7 @@ namespace System.Linq.Expressions {
 				if (parameters.Length != 1)
 					continue;
 
-				if (!IsAssignableToParameterType (expression.Type, parameters [0]))
+				if (!IsAssignableToParameterType (type, parameters [0]))
 					continue;
 
 				return method;
@@ -95,25 +95,31 @@ namespace System.Linq.Expressions {
 			return GetNotNullableOf (type).IsAssignableTo (param.ParameterType);
 		}
 
+		static void CheckUnaryMethod (MethodInfo method, Type param)
+		{
+			if (method.ReturnType == typeof (void))
+				throw new ArgumentException ("Specified method must return a value", "method");
+
+			if (!method.IsStatic)
+				throw new ArgumentException ("Method must be static", "method");
+
+			var parameters = method.GetParameters ();
+
+			if (parameters.Length != 1)
+				throw new ArgumentException ("Must have only one parameters", "method");
+
+			if (!IsAssignableToParameterType (param, parameters [0]))
+				throw new InvalidOperationException ("left-side argument type does not match left expression type");
+
+		}
+
 		static MethodInfo UnaryCoreCheck (string oper_name, Expression expression, MethodInfo method, Func<Type, bool> validator)
 		{
 			if (expression == null)
 				throw new ArgumentNullException ("expression");
 
 			if (method != null) {
-				if (method.ReturnType == typeof (void))
-					throw new ArgumentException ("Specified method must return a value", "method");
-
-				if (!method.IsStatic)
-					throw new ArgumentException ("Method must be static", "method");
-
-				var parameters = method.GetParameters ();
-
-				if (parameters.Length != 1)
-					throw new ArgumentException ("Must have only one parameters", "method");
-
-				if (!IsAssignableToParameterType (expression.Type, parameters [0]))
-					throw new InvalidOperationException ("left-side argument type does not match left expression type");
+				CheckUnaryMethod (method, expression.Type);
 
 				return method;
 			} else {
@@ -123,7 +129,7 @@ namespace System.Linq.Expressions {
 					return null;
 
 				if (oper_name != null) {
-					method = GetUnaryOperator (oper_name, type, expression);
+					method = GetUnaryOperator (oper_name, type, expression.Type);
 					if (method != null)
 						return method;
 				}
@@ -1025,12 +1031,63 @@ namespace System.Linq.Expressions {
 			return new ConstantExpression (value, type);
 		}
 
+		static bool IsConvertiblePrimitive (Type type)
+		{
+			var t = GetNotNullableOf (type);
+
+			if (t == typeof (bool))
+				return false;
+
+			if (t.IsEnum)
+				return true;
+
+			return t.IsPrimitive;
+		}
+
+		static bool CheckPrimitiveConversion (Type type, Type target)
+		{
+			if (type == target)
+				return true;
+
+			if (IsConvertiblePrimitive (type) && IsConvertiblePrimitive (target))
+				return true;
+
+			return false;
+		}
+
+		static bool CheckReferenceConversion (Type type, Type target)
+		{
+			if (type == target)
+				return true;
+
+			if (type.IsAssignableTo (target) || target.IsAssignableTo (type))
+				return true;
+
+			if (type == typeof (object) || target == typeof (object))
+				return true;
+
+			if (type.IsInterface || target.IsInterface)
+				return true;
+
+			return false;
+		}
+
 		public static UnaryExpression Convert (Expression expression, Type type)
 		{
 			return Convert (expression, type, null);
 		}
 
-		[MonoTODO]
+		static MethodInfo CheckUserConversion (Type type)
+		{
+			var method = GetUnaryOperator ("op_Explicit", type, type);
+			if (method == null)
+				method = GetUnaryOperator ("op_Implicit", type, type);
+			if (method == null)
+				throw new InvalidOperationException ();
+
+			return method;
+		}
+
 		public static UnaryExpression Convert (Expression expression, Type type, MethodInfo method)
 		{
 			if (expression == null)
@@ -1038,7 +1095,12 @@ namespace System.Linq.Expressions {
 			if (type == null)
 				throw new ArgumentNullException ("type");
 
-			// TODO: check for valid convertions
+			var et = expression.Type;
+
+			if (method != null)
+				CheckUnaryMethod (method, et);
+			else if (!CheckPrimitiveConversion (et, type) && !CheckReferenceConversion (et, type))
+				method = CheckUserConversion (et);
 
 			return new UnaryExpression (ExpressionType.Convert, expression, type, method, false);
 		}
@@ -1048,7 +1110,6 @@ namespace System.Linq.Expressions {
 			return ConvertChecked (expression, type, null);
 		}
 
-		[MonoTODO]
 		public static UnaryExpression ConvertChecked (Expression expression, Type type, MethodInfo method)
 		{
 			if (expression == null)
@@ -1056,7 +1117,14 @@ namespace System.Linq.Expressions {
 			if (type == null)
 				throw new ArgumentNullException ("type");
 
-			// TODO: check for valid convertions
+			var et = expression.Type;
+
+			if (method != null)
+				CheckUnaryMethod (method, et);
+			else if (CheckReferenceConversion (et, type))
+				return new UnaryExpression (ExpressionType.Convert, expression, type, method, false);
+			else if (!CheckPrimitiveConversion (et, type))
+				method = CheckUserConversion (et);
 
 			return new UnaryExpression (ExpressionType.ConvertChecked, expression, type, method, false);
 		}

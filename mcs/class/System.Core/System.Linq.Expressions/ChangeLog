@@ -1,3 +1,7 @@
+2008-04-22  Jb Evain  <jbevain@novell.com>
+
+	* Expression.cs (Convert, ConvertChecked): implement.
+
 2008-04-21  Jb Evain  <jbevain@novell.com>
 
 	* Expression.cs (Call): don't rely on the fact that if the
