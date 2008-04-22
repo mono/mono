@@ -323,8 +323,8 @@ namespace MonoTests.System.Windows.Forms
 			
 			Assert.AreEqual ("aaa", tv.Nodes[0].Text, "A1");
 		}
-	}
 #endif
+	}
 
 	[TestFixture]
 	public class BeforeSelectEvent
