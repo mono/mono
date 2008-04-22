@@ -122,6 +122,11 @@ namespace System.Windows.Forms {
 		private int selected_row = -1;
 		private int selected_column = -1;
 		
+		// Stuff for error Tooltips
+		private Timer tooltip_timer;
+		private ToolTip tooltip_window;
+		private DataGridViewCell tooltip_currently_showing;
+
 		private DataGridViewSelectedRowCollection selected_rows;
 		private DataGridViewSelectedColumnCollection selected_columns;
 		private DataGridViewRow editing_row;
@@ -4020,6 +4025,22 @@ namespace System.Windows.Forms {
 			if (hit.Type == DataGridViewHitTestType.Cell) {
 				DataGridViewCell new_cell = GetCellInternal (hit.ColumnIndex, hit.RowIndex);
 				
+				// Check if we have moved into an error icon area
+				Rectangle icon = new_cell.ErrorIconBounds;
+
+				if (!icon.IsEmpty) {
+					Point loc = GetCellDisplayRectangle (hit.ColumnIndex, hit.RowIndex, false).Location;
+					
+					icon.X += loc.X;
+					icon.Y += loc.Y;
+					
+					if (icon.Contains (e.X, e.Y)) {
+						if (tooltip_currently_showing != new_cell)
+							MouseEnteredErrorIcon (new_cell);
+					} else
+						MouseLeftErrorIcon (new_cell);
+				}
+				
 				// We have never been in a cell before
 				if (hover_cell == null) {
 					hover_cell = new_cell;
@@ -4050,6 +4071,24 @@ namespace System.Windows.Forms {
 				OnCellMouseMove (new DataGridViewCellMouseEventArgs (hit.ColumnIndex, hit.RowIndex, e.X - display2.X, e.Y - display2.Y, e));
 
 				return;
+			} else if (hit.Type == DataGridViewHitTestType.RowHeader) {
+				DataGridViewRowHeaderCell new_cell = Rows[hit.RowIndex].HeaderCell;
+
+				// Check if we have moved into an error icon area
+				Rectangle icon = new_cell.InternalErrorIconsBounds;
+
+				if (!icon.IsEmpty) {
+					Point loc = GetCellDisplayRectangle (0, hit.RowIndex, false).Location;
+
+					icon.X += BorderWidth;
+					icon.Y += loc.Y;
+
+					if (icon.Contains (e.X, e.Y)) {
+						if (tooltip_currently_showing != new_cell)
+							MouseEnteredErrorIcon (new_cell);
+					} else
+						MouseLeftErrorIcon (new_cell);
+				}
 			} else {
 				// We have left the cell area
 				if (hover_cell != null) {
@@ -5368,6 +5407,53 @@ namespace System.Windows.Forms {
 				Invalidate();
 			}
 		}
+
+		#region Stuff for ToolTips
+		private void MouseEnteredErrorIcon (DataGridViewCell item)
+		{
+			tooltip_currently_showing = item;
+			ToolTipTimer.Start ();
+		}
+
+		private void MouseLeftErrorIcon (DataGridViewCell item)
+		{
+			ToolTipTimer.Stop ();
+			ToolTipWindow.Hide (this);
+			tooltip_currently_showing = null;
+		}
+
+		private Timer ToolTipTimer {
+			get {
+				if (tooltip_timer == null) {
+					tooltip_timer = new Timer ();
+					tooltip_timer.Enabled = false;
+					tooltip_timer.Interval = 500;
+					tooltip_timer.Tick += new EventHandler (ToolTipTimer_Tick);
+				}
+
+				return tooltip_timer;
+			}
+		}
+
+		private ToolTip ToolTipWindow {
+			get {
+				if (tooltip_window == null)
+					tooltip_window = new ToolTip ();
+
+				return tooltip_window;
+			}
+		}
+
+		private void ToolTipTimer_Tick (object o, EventArgs args)
+		{
+			string tooltip = tooltip_currently_showing.ErrorText;
+
+			if (!string.IsNullOrEmpty (tooltip))
+				ToolTipWindow.Present (this, tooltip);
+
+			ToolTipTimer.Stop ();
+		}
+		#endregion
 
 		private class ColumnSorter : IComparer
 		{

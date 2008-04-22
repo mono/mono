@@ -227,6 +227,10 @@ namespace System.Windows.Forms {
 			g.DrawLine (p, x + 7, y + 1, x + 1, y + 7);
 		}
 
+		internal Rectangle InternalErrorIconsBounds {
+			get { return GetErrorIconBounds (null, null, RowIndex); }
+		}
+		
 		protected override bool SetValue (int rowIndex, object value)
 		{
 			headerText = (string) value;

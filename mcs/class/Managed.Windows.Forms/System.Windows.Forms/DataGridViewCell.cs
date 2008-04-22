@@ -130,7 +130,7 @@ namespace System.Windows.Forms {
 				if (RowIndex < 0 || RowIndex >= DataGridView.Rows.Count)
 					throw new ArgumentOutOfRangeException ("rowIndex", "Specified argument was out of the range of valid values.");
 
-				return Rectangle.Empty;
+				return GetErrorIconBounds (null, null, RowIndex);
 			}
 		}
 
