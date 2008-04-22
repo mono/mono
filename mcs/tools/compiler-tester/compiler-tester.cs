@@ -315,7 +315,7 @@ namespace TestRunner {
 				return true;
 
 			if (md.ILSize > il_size) {
-				checker.LogLine ("{0} (code size reduction {1} -> {2})", m_name, md.ILSize, il_size);
+				checker.LogFileLine (FileName, "{0} (code size reduction {1} -> {2})", m_name, md.ILSize, il_size);
 				md.ILSize = il_size;
 				return true;
 			}
@@ -564,14 +564,14 @@ namespace TestRunner {
 				log_file.Write (msg, rest);
 		}
 
-		public void LogLine (string msg, params object [] rest)
+		protected void LogLine (string msg, params object [] rest)
 		{
 			Console.WriteLine (msg, rest);
 			if (log_file != null)
 				log_file.WriteLine (msg, rest);
 		}
 		
-		protected void LogFileLine (string file, string msg, params object [] args)
+		public void LogFileLine (string file, string msg, params object [] args)
 		{
 			string s = file + "...\t" + string.Format (msg, args); 
 			Console.WriteLine (s);
