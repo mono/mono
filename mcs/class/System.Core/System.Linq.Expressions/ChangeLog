@@ -1,5 +1,11 @@
 2008-04-22  Jb Evain  <jbevain@novell.com>
 
+	* UnaryExpression.cs: implement IsLiftedToNull properly.
+	* Expression.cs (Convert, ConvertChecked): implemented computing
+	of IsLifted and IsLiftedToNull for conversions.
+
+2008-04-22  Jb Evain  <jbevain@novell.com>
+
 	* Expression.cs (Convert, ConvertChecked): implement.
 
 2008-04-21  Jb Evain  <jbevain@novell.com>

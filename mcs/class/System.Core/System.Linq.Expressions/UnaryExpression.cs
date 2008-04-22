@@ -37,7 +37,6 @@ namespace System.Linq.Expressions {
 		Expression operand;
 		MethodInfo method;
 		bool is_lifted;
-		bool is_lifted_to_null;
 
 		public Expression Operand {
 			get { return operand; }
@@ -52,13 +51,7 @@ namespace System.Linq.Expressions {
 		}
 
 		public bool IsLiftedToNull {
-			get { return is_lifted_to_null; }
-		}
-
-		internal UnaryExpression (ExpressionType node_type, Expression operand)
-			: base (node_type, operand.Type)
-		{
-			this.operand = operand;
+			get { return is_lifted && IsNullable (this.Type); }
 		}
 
 		internal UnaryExpression (ExpressionType node_type, Expression operand, Type type)
@@ -73,7 +66,6 @@ namespace System.Linq.Expressions {
 			this.operand = operand;
 			this.method = method;
 			this.is_lifted = is_lifted;
-			this.is_lifted_to_null = is_lifted;
 		}
 
 		void EmitArrayLength (EmitContext ec)

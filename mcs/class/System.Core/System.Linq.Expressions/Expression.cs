@@ -1102,7 +1102,33 @@ namespace System.Linq.Expressions {
 			else if (!CheckPrimitiveConversion (et, type) && !CheckReferenceConversion (et, type))
 				method = CheckUserConversion (et);
 
-			return new UnaryExpression (ExpressionType.Convert, expression, type, method, false);
+			bool is_lifted = ConvertNodeIsLifted (method, expression, type);
+
+			return new UnaryExpression (ExpressionType.Convert, expression, type, method, is_lifted);
+		}
+
+		static bool ConvertNodeIsLifted (MethodInfo method, Expression operand, Type target)
+		{
+			if (method == null)
+				return IsNullable (operand.Type) || IsNullable (target);
+
+			if (IsNullable (operand.Type) && !ParameterMatch (method, operand.Type))
+				return true;
+
+			if (IsNullable (target) && !ReturnTypeMatch (method, target))
+				return true;
+
+			return false;
+		}
+
+		static bool ParameterMatch (MethodInfo method, Type type)
+		{
+			return method.GetParameters () [0].ParameterType == type;
+		}
+
+		static bool ReturnTypeMatch (MethodInfo method, Type type)
+		{
+			return method.ReturnType == type;
 		}
 
 		public static UnaryExpression ConvertChecked (Expression expression, Type type)
@@ -1122,11 +1148,13 @@ namespace System.Linq.Expressions {
 			if (method != null)
 				CheckUnaryMethod (method, et);
 			else if (CheckReferenceConversion (et, type))
-				return new UnaryExpression (ExpressionType.Convert, expression, type, method, false);
+				return Convert (expression, type, method);
 			else if (!CheckPrimitiveConversion (et, type))
 				method = CheckUserConversion (et);
 
-			return new UnaryExpression (ExpressionType.ConvertChecked, expression, type, method, false);
+			bool is_lifted = ConvertNodeIsLifted (method, expression, type);
+
+			return new UnaryExpression (ExpressionType.ConvertChecked, expression, type, method,is_lifted);
 		}
 
 		public static ElementInit ElementInit (MethodInfo addMethod, params Expression [] arguments)
