@@ -226,12 +226,15 @@ namespace MonoTests.System.Linq.Expressions {
 		[Test]
 		public void CallStaticMethodOnNonSenseInstanceExpression ()
 		{
-			var call = Expression.Lambda<Func<int>> (
-				Expression.Call (
+			var call = Expression.Call (
 					Expression.Constant ("la la la"),
-					this.GetType ().GetMethod ("OneStaticMethod"))).Compile ();
+					this.GetType ().GetMethod ("OneStaticMethod"));
 
-			Assert.AreEqual (42, call ());
+			Assert.IsNotNull (call.Object);
+
+			var callMethod = Expression.Lambda<Func<int>> (call).Compile ();
+
+			Assert.AreEqual (42, callMethod ());
 		}
 	}
 }
