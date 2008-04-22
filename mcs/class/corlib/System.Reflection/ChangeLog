@@ -1,3 +1,11 @@
+2008-04-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* MonoGenericClass.cs (GetMethod): Construct a MethodOnTypeBuilderInst object
+	instead of using GetCorrespondingInflatedMethod. This is needed so this class can
+	reflect the changes made to the builder after initialize () has been called.
+	Fixes #381547 and #354759.
+	(GetConstructor): Ditto.
+
 2008-04-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* Binder.cs: Applied patch from Yves Bastide (doc.formatique@gmail.com). Add 

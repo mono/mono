@@ -55,7 +55,7 @@ namespace System.Reflection
 		bool initialized;
 		#endregion
 
-		Hashtable fields;
+		Hashtable fields, ctors, methods;
 
 		internal MonoGenericClass ()
 			: base (null)
@@ -139,12 +139,45 @@ namespace System.Reflection
 		{
 			initialize ();
 
+#if NET_2_0
+			if (fromNoninstanciated is MethodBuilder) {
+				MethodBuilder mb = (MethodBuilder)fromNoninstanciated;
+
+				// FIXME: The MethodOnTypeBuilderInst class does not implement some methods
+				// needed by gmcs, so avoid using it in that case
+				// FIXME: We can't yet handle creating generic instantiations of
+				// MethodOnTypeBuilderInst objects
+				// Also, mono_image_get_method_on_inst_token () can't handle generic
+				// methods
+				if (!((ModuleBuilder)mb.Module).assemblyb.IsCompilerContext && !mb.IsGenericMethodDefinition) {
+					if (methods == null)
+						methods = new Hashtable ();
+					if (!methods.ContainsKey (mb))
+						methods [mb] = new MethodOnTypeBuilderInst (this, mb);
+					return (MethodInfo)methods [mb];
+				}
+			}
+#endif
+
 			return GetCorrespondingInflatedMethod (fromNoninstanciated);
 		}
 
 		internal override ConstructorInfo GetConstructor (ConstructorInfo fromNoninstanciated)
 		{
 			initialize ();
+
+#if NET_2_0
+			if (fromNoninstanciated is ConstructorBuilder) {
+				ConstructorBuilder cb = (ConstructorBuilder)fromNoninstanciated;
+				if (!((ModuleBuilder)cb.Module).assemblyb.IsCompilerContext) {
+					if (ctors == null)
+						ctors = new Hashtable ();
+					if (!ctors.ContainsKey (cb))
+						ctors [cb] = new ConstructorOnTypeBuilderInst (this, cb);
+					return (ConstructorInfo)ctors [cb];
+				}
+			}
+#endif
 
 			return GetCorrespondingInflatedConstructor (fromNoninstanciated);
 		}
