@@ -29,7 +29,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (false, rTBox.AllowDrop, "#A1");
 			rTBox.Multiline = true;
 			rTBox.AcceptsTab = true;
-			SendKeys.SendWait ("^%");
+			//SendKeys.SendWait ("^%");
 			Assert.AreEqual (false, rTBox.AutoSize, "#A2");
 			Assert.AreEqual (false, rTBox.AutoWordSelection, "#A3");
 			
