@@ -645,9 +645,7 @@ namespace System.Web {
 				throw new HttpException (404, "The virtual path '" + filePath + "' maps to another application.", filePath);
 
 			Request.SetCurrentExePath (filePath);
-#if NET_2_0
 			Request.SetFilePath (filePath);
-#endif
 			
 			// A null pathInfo or queryString is ignored and previous values remain untouched
 			if (pathInfo != null)
