@@ -1,3 +1,8 @@
+2008-04-22  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: ignore also arbitrary exceptions when
+	batch-building an assembly. Fixes bug #323556
+
 2008-04-19  Marek Habersack  <mhabersack@novell.com>
 
 	* BuildManager.cs: use absolute virtual path to query the

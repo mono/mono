@@ -58,12 +58,12 @@ namespace System.Web.Compilation {
 			public bool codeGenerated;
 			public Assembly compiledAssembly;
 
-			public ParseException ParserException {
+			public Exception ProcessingException {
 				get;
 				private set;
 			}
 			
-			public bool ParsedFine {
+			public bool ProcessedFine {
 				get;
 				private set;
 			}
@@ -72,7 +72,14 @@ namespace System.Web.Compilation {
 				get {
 					if (buildProvider == null)
 						throw new HttpException ("No build provider.");
-					return buildProvider.CodeCompilerType.CompilerParameters;
+
+					try {
+						return buildProvider.CodeCompilerType.CompilerParameters;
+					} catch (Exception ex) {
+						ProcessedFine = false;
+						ProcessingException = ex;
+						return null;
+					}
 				}
 			}
 
@@ -80,7 +87,13 @@ namespace System.Web.Compilation {
 				get {
 					if (buildProvider == null)
 						throw new HttpException ("No build provider.");
-					return buildProvider.VirtualPath;
+					try {
+						return buildProvider.VirtualPath;
+					} catch (Exception ex) {
+						ProcessedFine = false;
+						ProcessingException = ex;
+						return null;
+					}
 				}
 			}
 
@@ -88,7 +101,13 @@ namespace System.Web.Compilation {
 				get {
 					if (buildProvider == null)
 						throw new HttpException ("No build provider.");
-					return buildProvider.CodeUnit;
+					try {
+						return buildProvider.CodeUnit;
+					} catch (Exception ex) {
+						ProcessedFine = false;
+						ProcessingException = ex;
+						return null;
+					}
 				}
 			}
 			
@@ -98,11 +117,11 @@ namespace System.Web.Compilation {
 				try {
 					if (provider != null)
 						codeDomProviderType = GetCodeDomProviderType (provider);
-					ParsedFine = true;
-					ParserException = null;
+					ProcessedFine = true;
+					ProcessingException = null;
 				} catch (ParseException ex) {
-					ParsedFine = false;
-					ParserException = ex;
+					ProcessedFine = false;
+					ProcessingException = ex;
 				}
 			}
 
@@ -137,8 +156,14 @@ namespace System.Web.Compilation {
 			{
 				if (buildProvider == null)
 					throw new HttpException ("Cannot generate code - missing build provider.");
+
+				try {
+					buildProvider.GenerateCode ();
+				} catch (Exception ex) {
+					ProcessedFine = false;
+					ProcessingException = ex;
+				}
 				
-				buildProvider.GenerateCode ();
 				codeGenerated = true;
 			}
 
@@ -149,7 +174,12 @@ namespace System.Web.Compilation {
 				if (assemblyBuilder == null)
 					throw new HttpException ("Cannot generate code - missing assembly builder.");
 
-				buildProvider.GenerateCode (assemblyBuilder);
+				try {
+					buildProvider.GenerateCode (assemblyBuilder);
+				} catch (Exception ex) {
+					ProcessedFine = false;
+					ProcessingException = ex;
+				}
 			}
 
 			public override string ToString ()
@@ -901,8 +931,11 @@ namespace System.Web.Compilation {
 		static void AssignToAssemblyBuilder (string assemblyBaseName, VirtualPath virtualPath, BuildItem buildItem,
 						     Dictionary <Type, List <AssemblyBuilder>> assemblyBuilders)
 		{
-			if (!buildItem.codeGenerated)
+			if (!buildItem.codeGenerated) {
 				buildItem.GenerateCode ();
+				if (!buildItem.ProcessedFine)
+					return;
+			}
 			
 			List <AssemblyBuilder> builders;
 
@@ -981,10 +1014,10 @@ namespace System.Web.Compilation {
 				
 				foreach (BuildItem buildItem in buildItems) {
 					if (buildItem.VirtualPath == vpAbsolute) {
-						if (!buildItem.ParsedFine)
-							throw buildItem.ParserException;
+						if (!buildItem.ProcessedFine)
+							throw buildItem.ProcessingException;
 						vpBuildItem = buildItem;
-					} else if (!buildItem.ParsedFine)
+					} else if (!buildItem.ProcessedFine)
 						continue;
 					
 					if (checkForRecursion) {
@@ -1029,7 +1062,7 @@ namespace System.Web.Compilation {
 							}
 							
 							foreach (BuildItem buildItem in buildItems) {
-								if (buildItem.assemblyBuilder != abuilder)
+								if (!buildItem.ProcessedFine || buildItem.assemblyBuilder != abuilder)
 									continue;
 								
 								vp = buildItem.VirtualPath;
