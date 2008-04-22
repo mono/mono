@@ -1,5 +1,9 @@
 2008-04-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-exceptions.c (mono_handle_native_sigsegv): Rework the gdb calling code
+	so instead of calling g_spawn_command_line_sync, we do everything by hand, 
+	avoiding allocations and libc functions which might deadlock.
+	
 	* mini-exceptions.c (mono_handle_native_sigsegv): Avoid calling gdb if the
 	'no-gdb-backtrace' option is set.
 
