@@ -27976,7 +27976,23 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Void &lt;TestFunc&gt;c__2(System.Object, System.AssemblyLoadEventArgs)">
+    </type>
+    <type name="Test+D">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Test+&lt;&gt;c__CompilerGenerated1">
+      <method name="Void &lt;TestFunc&gt;c__2()">
         <size>12</size>
       </method>
     </type>

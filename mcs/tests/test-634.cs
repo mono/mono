@@ -1,20 +1,22 @@
 public class Test
 {
-   static public void TestFunc ()
-   {
-       return;
+	delegate void D ();
+	static D d;
+	
+	static public void TestFunc ()
+	{
+		return;
+		
+		string testStr;
 
-       string testStr;
-
-       System.AppDomain.CurrentDomain.AssemblyLoad += delegate
-(object Sender, System.AssemblyLoadEventArgs e)
-       {
-           testStr = "sss";
-       };
+		d += delegate ()
+		{
+        	testStr = "sss";
+		};
    }
 
-   public static void Main (string[] args)
-   {
-       TestFunc ();
-   }
+	public static void Main (string[] args)
+	{
+		TestFunc ();
+	}
 }
