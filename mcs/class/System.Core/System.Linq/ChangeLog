@@ -1,3 +1,8 @@
+2008-04-22  Jb Evain  <jbevain@novell.com>
+
+	* Enumerable.cs (ToReadOnlyCollection): optimization, use
+	a generic singleton for empty read only collections.
+
 2008-03-31  Marek Safar  <marek.safar@gmail.com>
 
 	* Enumerable.cs: Use Math.Min and Math.Max where appropriate.
@@ -8,7 +13,7 @@
 
 2008-02-09  Miguel de Icaza  <miguel@novell.com>
 
-	* Enumerable.cs (ToDictionary): Implement this overload. 
+	* Enumerable.cs (ToDictionary): Implement this overload.
 
 2008-02-01  Jb Evain  <jbevain@novell.com>
 
@@ -115,7 +120,7 @@
 
 	* Enumerable.cs: Fixed GroupJoin logic. Reused DefaultIfEmpty
 	implementation.
-	
+
 2007-09-11  Marek Safar <marek.safar@gmail.com>
 
 	* Enumerable.cs: Fixed Join recursion.
@@ -127,21 +132,21 @@
 2007-08-21  Marek Safar <marek.safar@gmail.com>
 
 	* AOrderedEnumerable: New abstract base.
-	
+
 	* Enumerable.cs, Queryable.cs: Public methods update.
-	
+
 	* InternalOrderedSequence.cs: Fixed ThenBy.
 
 2007-08-21  Marek Safar <marek.safar@gmail.com>
 
 	* Enumerable.cs, Queryable.cs: Public methods update.
-	
+
 	* InternalOrderedSequence.cs, OrderedSequence.cs: Derives from
 	IOrderedEnumerable<TElement>.
-	
+
 2007-08-17  Michael Hutchinson <m.j.hutchinson@gmail.com>
 
-	* Enumerable.cs: Fix Aggregate's counting code, and make it more 
+	* Enumerable.cs: Fix Aggregate's counting code, and make it more
 	  efficient.
 
 2007-06-08  Marek Safar <marek.safar@gmail.com>
@@ -161,7 +166,7 @@
 		- Method GroupJoin overloaded to be used with IEqualityComparer instances
 		- Implemented internal method ToReadOnlyCollection for support
 		to expressions.
-		
+
 2007-02-16  Marek Safar <marek.safar@gmail.com>
 
 	* Enumerable.cs, Queryable.cs: Remove Extension attribute.
@@ -180,4 +185,4 @@
 2007-01-19  Marek Safar <marek.safar@gmail.com>
 
 	* ChangeLog: Added
-	
+

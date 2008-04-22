@@ -2283,7 +2283,7 @@ namespace System.Linq
 
 			if (comparer == null)
 				comparer = EqualityComparer<TKey>.Default;
-			
+
 			var dict = new Dictionary<TKey, TSource> (comparer);
 			foreach (var e in source)
 				dict.Add (keySelector (e), e);
@@ -2455,10 +2455,14 @@ namespace System.Linq
 
 		#endregion
 
+		class ReadOnlyCollectionOf<T> {
+			public static readonly ReadOnlyCollection<T> Empty = new ReadOnlyCollection<T> (new T [0]);
+		}
+
 		internal static ReadOnlyCollection<TSource> ToReadOnlyCollection<TSource> (this IEnumerable<TSource> source)
 		{
 			if (source == null)
-				return new ReadOnlyCollection<TSource> (new TSource [0]); // could we singlotenize that?
+				return ReadOnlyCollectionOf<TSource>.Empty;
 
 			var ro = source as ReadOnlyCollection<TSource>;
 			if (ro != null)
