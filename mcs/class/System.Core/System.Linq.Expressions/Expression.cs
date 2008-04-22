@@ -69,9 +69,14 @@ namespace System.Linq.Expressions {
 
 		#region Binary Expressions
 
-		static MethodInfo GetUnaryOperator (string oper_name, Type on_type, Type type)
+		static MethodInfo GetUnaryOperator (string oper_name, Type declaring, Type param)
 		{
-			var methods = on_type.GetMethods (PublicStatic);
+			return GetUnaryOperator (oper_name, declaring, param, null);
+		}
+
+		static MethodInfo GetUnaryOperator (string oper_name, Type declaring, Type param, Type ret)
+		{
+			var methods = declaring.GetMethods (PublicStatic);
 
 			foreach (var method in methods) {
 				if (method.Name != oper_name)
@@ -81,7 +86,10 @@ namespace System.Linq.Expressions {
 				if (parameters.Length != 1)
 					continue;
 
-				if (!IsAssignableToParameterType (type, parameters [0]))
+				if (!IsAssignableToParameterType (param, parameters [0]))
+					continue;
+
+				if (ret != null && method.ReturnType != GetNotNullableOf (ret))
 					continue;
 
 				return method;
@@ -95,7 +103,7 @@ namespace System.Linq.Expressions {
 			return GetNotNullableOf (type).IsAssignableTo (param.ParameterType);
 		}
 
-		static void CheckUnaryMethod (MethodInfo method, Type param)
+		static MethodInfo CheckUnaryMethod (MethodInfo method, Type param)
 		{
 			if (method.ReturnType == typeof (void))
 				throw new ArgumentException ("Specified method must return a value", "method");
@@ -109,8 +117,9 @@ namespace System.Linq.Expressions {
 				throw new ArgumentException ("Must have only one parameters", "method");
 
 			if (!IsAssignableToParameterType (param, parameters [0]))
-				throw new InvalidOperationException ("left-side argument type does not match left expression type");
+				throw new InvalidOperationException ("left-side argument type does not match expression type");
 
+			return method;
 		}
 
 		static MethodInfo UnaryCoreCheck (string oper_name, Expression expression, MethodInfo method, Func<Type, bool> validator)
@@ -118,11 +127,9 @@ namespace System.Linq.Expressions {
 			if (expression == null)
 				throw new ArgumentNullException ("expression");
 
-			if (method != null) {
-				CheckUnaryMethod (method, expression.Type);
+			if (method != null)
+				return CheckUnaryMethod (method, expression.Type);
 
-				return method;
-			} else {
 				var type = GetNotNullableOf (expression.Type);
 
 				if (validator (type))
@@ -135,8 +142,7 @@ namespace System.Linq.Expressions {
 				}
 
 				throw new InvalidOperationException (
-					String.Format ("Operation {0} not defined for {1}", oper_name != null ? oper_name.Substring (3) : "is", expression.Type));
-			}
+					string.Format ("Operation {0} not defined for {1}", oper_name != null ? oper_name.Substring (3) : "is", expression.Type));
 		}
 
 		static MethodInfo GetBinaryOperator (string oper_name, Type on_type, Expression left, Expression right)
@@ -1077,11 +1083,11 @@ namespace System.Linq.Expressions {
 			return Convert (expression, type, null);
 		}
 
-		static MethodInfo CheckUserConversion (Type type)
+		static MethodInfo GetUserConversionMethod (Type type, Type target)
 		{
-			var method = GetUnaryOperator ("op_Explicit", type, type);
+			var method = GetUnaryOperator ("op_Explicit", type, type, target);
 			if (method == null)
-				method = GetUnaryOperator ("op_Implicit", type, type);
+				method = GetUnaryOperator ("op_Implicit", type, type, target);
 			if (method == null)
 				throw new InvalidOperationException ();
 
@@ -1100,7 +1106,7 @@ namespace System.Linq.Expressions {
 			if (method != null)
 				CheckUnaryMethod (method, et);
 			else if (!CheckPrimitiveConversion (et, type) && !CheckReferenceConversion (et, type))
-				method = CheckUserConversion (et);
+				method = GetUserConversionMethod (et, type);
 
 			return new UnaryExpression (ExpressionType.Convert,
 				expression, type, method,
@@ -1150,7 +1156,7 @@ namespace System.Linq.Expressions {
 			else if (CheckReferenceConversion (et, type))
 				return Convert (expression, type, method);
 			else if (!CheckPrimitiveConversion (et, type))
-				method = CheckUserConversion (et);
+				method = GetUserConversionMethod (et, type);
 
 			return new UnaryExpression (ExpressionType.ConvertChecked,
 				expression, type, method,
