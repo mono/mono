@@ -1,3 +1,8 @@
+2008-04-22  Dick Porter  <dick@ximian.com>
+
+	* wapi_glob.c (globextend): Comment out the code using ARG_MAX, as
+	that is broken on the latest opensuse.
+
 2008-04-21  Dick Porter  <dick@ximian.com>
 
 	* io.c (DeleteFile): Disable for now the bug fix for 323389, it's
