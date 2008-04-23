@@ -32,27 +32,43 @@ using System;
 using System.Reflection;
 using System.Resources;
 using System.Security;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about the System.Management assembly
+// This one is very different for version < 2.0
 
-[assembly: AssemblyVersion (Consts.FxVersion)]
-#if (NET_2_0)
-[assembly: SatelliteContractVersion (Consts.FxVersion)]
+#if NET_2_0
+	[assembly: AssemblyTitle ("System.Management.dll")]
+	[assembly: AssemblyDescription ("System.Management.dll")]
+	[assembly: AssemblyDefaultAlias ("System.Management.dll")]
 #endif
+[assembly: AssemblyCompany (Consts.MonoCompany)]
+[assembly: AssemblyProduct (Consts.MonoProduct)]
+[assembly: AssemblyCopyright (Consts.MonoCopyright)]
+[assembly: AssemblyVersion (Consts.FxVersion)]
+#if NET_2_0
+	[assembly: SatelliteContractVersion (Consts.FxVersion)]
+	[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
 
-[assembly: AssemblyTitle ("System.Management.dll")]
-[assembly: AssemblyDescription ("System.Management.dll")]
-[assembly: AssemblyConfiguration ("Development version")]
-[assembly: AssemblyCompany ("MONO development team")]
-[assembly: AssemblyProduct ("MONO CLI")]
-[assembly: AssemblyCopyright ("(c) 2003 Various Authors")]
-[assembly: AssemblyTrademark ("")]
-
-[assembly: CLSCompliant (true)]
-
+	[assembly: NeutralResourcesLanguage ("en-US")]
+#endif
 [assembly: ComVisible (false)]
 
+[assembly: CLSCompliant (true)]
 [assembly: AssemblyDelaySign (true)]
 [assembly: AssemblyKeyFile("../msfinal.pub")]
+
+#if NET_2_0
+	[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+	[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
+	[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+	[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
+#elif NET_1_1 || NET_1_0
+	[assembly: AssemblyTitle ("System.Management")]
+	[assembly: AssemblyDescription ("This assembly contains the classes necessary to access management information from managed code")]
+	[assembly: AssemblyTrademark ("")]
+	[assembly: AssemblyConfiguration ("")]
+	[assembly: AssemblyKeyName ("")]
+#endif
