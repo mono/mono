@@ -28,37 +28,44 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
+
 using System;
 using System.Reflection;
 using System.Resources;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Security.Permissions;
 
-// General Information about the system assembly
+// General Information about the System.Transactions assembly
 
+[assembly: AssemblyTitle ("System.Transactions.dll")]
+[assembly: AssemblyDescription ("System.Transactions.dll")]
+[assembly: AssemblyDefaultAlias ("System.Transactions.dll")]
+
+[assembly: AssemblyCompany (Consts.MonoCompany)]
+[assembly: AssemblyProduct (Consts.MonoProduct)]
+[assembly: AssemblyCopyright (Consts.MonoCopyright)]
 [assembly: AssemblyVersion (Consts.FxVersion)]
 [assembly: SatelliteContractVersion (Consts.FxVersion)]
+[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
 
-[assembly: CLSCompliant (true)]
-[assembly: ComVisible (false)]
 [assembly: NeutralResourcesLanguage ("en-US")]
 
-[assembly: AssemblyDelaySign (true)]
+[assembly: ComVisible (false)]
+[assembly: ComCompatibleVersion (1, 0, 3300, 0)]
+[assembly: AllowPartiallyTrustedCallers]
+
 #if !TARGET_JVM
-[assembly: AssemblyKeyFile ("../ecma.pub")]
+	[assembly: CLSCompliant (true)]
+	[assembly: AssemblyDelaySign (true)]
+	[assembly: AssemblyKeyFile("../ecma.pub")]
 #endif
 
-#if NET_2_0
-[assembly: AssemblyCompany ("MONO development team")]
-[assembly: AssemblyCopyright ("Copyright (C) 2002-2004 Various Authors")]
-[assembly: AssemblyDefaultAlias ("")]
-[assembly: AssemblyDescription ("System.Transactions.dll")]
-[assembly: AssemblyFileVersion ("")]
-[assembly: AssemblyInformationalVersion ("")]
-[assembly: AssemblyProduct ("MONO CLI")]
-[assembly: AssemblyTitle ("System.Transactions.dll")]
-[assembly: AllowPartiallyTrustedCallers ()]
+[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+[assembly: SecurityPermission (SecurityAction.RequestMinimum)]
+[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
+[assembly: BestFitMapping (false)]
 
-[module: CompilationRelaxations (0)]
 #endif
