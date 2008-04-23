@@ -1029,7 +1029,7 @@ namespace System.Linq.Expressions {
 				if (type.IsValueType && !IsNullable (type))
 					throw new ArgumentException ();
 			} else {
-				if (!(type.IsValueType && IsNullable (type)) && value.GetType () != type)
+				if (!(type.IsValueType && IsNullable (type)) && !value.GetType ().IsAssignableTo (type))
 					throw new ArgumentException ();
 
 			}
