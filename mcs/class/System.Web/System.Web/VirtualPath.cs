@@ -39,6 +39,7 @@ namespace System.Web
 		string _appRelativeNotRooted;
 		string _extension;
 		string _directory;
+		string _currentRequestDirectory;
 		
 		public bool IsAbsolute {
 			get;
@@ -128,6 +129,22 @@ namespace System.Web
 				return _directory;
 			}
 		}
+
+		public string CurrentRequestDirectory {
+			get {
+				if (_currentRequestDirectory != null)
+					return _currentRequestDirectory;
+
+				HttpContext ctx = HttpContext.Current;
+				HttpRequest req = ctx != null ? ctx.Request : null;
+				if (req != null)
+					return VirtualPathUtility.GetDirectory (req.CurrentExecutionFilePath);
+
+				return null;
+			}
+
+			set { _currentRequestDirectory = value; }
+		}
 		
 		public VirtualPath (string vpath)
 		{
@@ -138,14 +155,26 @@ namespace System.Web
 			IsAppRelative = VirtualPathUtility.IsAppRelative (vpath);
 		}
 
+		public VirtualPath (string vpath, string baseVirtualDir)
+			: this (vpath)
+		{
+			CurrentRequestDirectory = baseVirtualDir;
+		}
+		
 		public bool StartsWith (string s)
 		{
 			return StrUtils.StartsWith (Original, s);
 		}
-		
+
+		// Assumes 'original' is NOT rooted
 		string MakeRooted (string original)
 		{
-			return VirtualPathUtility.Combine (HttpRuntime.AppDomainAppVirtualPath, original);
+			string reqdir = CurrentRequestDirectory;
+			
+			if (!String.IsNullOrEmpty (reqdir))
+				return VirtualPathUtility.Combine (reqdir, original);
+			else
+				return VirtualPathUtility.Combine (HttpRuntime.AppDomainAppVirtualPath, original);
 		}
 
 		public void Dispose ()

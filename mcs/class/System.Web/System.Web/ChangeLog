@@ -1,5 +1,14 @@
 2008-04-23  Marek Habersack  <mhabersack@novell.com>
 
+	* VirtualPath.cs: introduced the CurrentRequestDirectory property,
+	which returns the virtual directory for the current request. The
+	information is taken from either current request's
+	CurrentExecutionFilePath property (if not null) or from the path
+	set externally (by setting the property or using the appropriate
+	VirtualPath constructor). The new property is used to construct
+	the correct absolute virtual path in the MakeRooted method. Fixes
+	bug #381715.
+
 	* HttpApplication.cs: events registered from Application_Start are
 	silently ignored - any event registered after the one-time
 	application initialization is completed, is ignored. Fixes bug
