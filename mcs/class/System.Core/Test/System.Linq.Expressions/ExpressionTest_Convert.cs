@@ -70,6 +70,8 @@ namespace MonoTests.System.Linq.Expressions {
 		{
 			var c = Expression.Convert (
 				Expression.Constant (null, typeof (Bar)), typeof (Foo));
+
+			Assert.AreEqual ("Convert(null)", c.ToString ());
 		}
 
 		[Test]
@@ -79,11 +81,13 @@ namespace MonoTests.System.Linq.Expressions {
 
 			var conv = Expression.Convert (p, typeof (ITzap));
 			Assert.AreEqual (typeof (ITzap), conv.Type);
+			Assert.AreEqual ("Convert(<param>)", conv.ToString ());
 
 			p = Expression.Parameter (typeof (ITzap), null);
 			conv = Expression.Convert (p, typeof (IFoo));
 
 			Assert.AreEqual (typeof (IFoo), conv.Type);
+			Assert.AreEqual ("Convert(<param>)", conv.ToString ());
 		}
 
 		[Test]
@@ -93,6 +97,7 @@ namespace MonoTests.System.Linq.Expressions {
 				Expression.Constant (2, typeof (int)), typeof (long));
 
 			Assert.AreEqual (ExpressionType.ConvertChecked, c.NodeType);
+			Assert.AreEqual ("ConvertChecked(2)", c.ToString ());
 		}
 
 		[Test]
