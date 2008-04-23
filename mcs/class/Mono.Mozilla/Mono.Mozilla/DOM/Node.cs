@@ -185,6 +185,88 @@ namespace Mono.Mozilla.DOM
 		#endregion
 		
 		#region Methods
+		public virtual void FireEvent (string eventName)
+		{
+			nsIDOMDocument doc;
+			this.node.getOwnerDocument (out doc);
+
+			nsIDOMDocumentEvent docEvent = (nsIDOMDocumentEvent) doc;
+			nsIDOMDocumentView docView = (nsIDOMDocumentView) doc;
+			nsIDOMAbstractView abstractView;
+			docView.getDefaultView (out abstractView);
+			nsIDOMEventTarget target = (nsIDOMEventTarget) this.node;
+			bool ret = false;
+
+			string eventType;
+			switch (eventName) {
+				case "mousedown":
+				case "mouseup":
+				case "click":
+				case "dblclick":
+				case "mouseover":
+				case "mouseout":
+				case "mousemove":
+				case "contextmenu":
+					eventType = "mouseevents";
+					nsIDOMEvent evtMouse;
+					Base.StringSet (storage, eventType);
+					docEvent.createEvent (storage, out evtMouse);
+					//evtMouse = nsDOMEvent.GetProxy (this.control, evtMouse);
+					nsIDOMMouseEvent domEventMouse = evtMouse as nsIDOMMouseEvent;
+					Base.StringSet (storage, eventName);
+					domEventMouse.initMouseEvent (storage, true, true, abstractView, 1, 0, 0, 0, 0, false, false, false, false, 0, target);
+					target.dispatchEvent (domEventMouse, out ret);
+					break;
+				case "keydown":
+				case "keyup":
+				case "keypress":
+					eventType = "keyevents";
+					nsIDOMEvent evtKey;
+					Base.StringSet (storage, eventType);
+					docEvent.createEvent (storage, out evtKey);
+					evtKey = nsDOMEvent.GetProxy (this.control, evtKey);
+					Base.StringSet (storage, eventName);
+					nsIDOMKeyEvent domEventKey = evtKey as nsIDOMKeyEvent;
+					domEventKey.initKeyEvent (storage, true, true, abstractView, false, false, false, false, 0, 0);
+					target.dispatchEvent (domEventKey, out ret);
+					break;
+				case "DOMActivate":
+				case "DOMFocusIn":
+				case "DOMFocusOut":
+				case "input":
+					eventType = "uievents";
+					nsIDOMEvent evtUI;
+					Base.StringSet (storage, eventType);
+					docEvent.createEvent (storage, out evtUI);
+					Base.StringSet (storage, eventName);
+					nsIDOMUIEvent domEventUI = evtUI as nsIDOMUIEvent;
+					domEventUI.initUIEvent (storage, true, true, abstractView, 1);
+					target.dispatchEvent (domEventUI, out ret);
+					break;
+				case "focus":
+				case "blur":
+				case "submit":
+				case "reset":
+				case "change":
+				case "select":
+				case "load":
+				case "beforeunload":
+				case "unload":
+				case "abort":
+				case "error":
+				default:
+					eventType = "events";
+					nsIDOMEvent domEvent;
+					Base.StringSet (storage, eventType);
+					docEvent.createEvent (storage, out domEvent);
+					Base.StringSet (storage, eventName);
+					domEvent.initEvent (storage, true, true);
+					target.dispatchEvent (domEvent, out ret);
+					break;
+			}
+
+		}
+
 		public virtual IElement InsertBefore (INode child, INode refChild) {
 			nsIDOMNode newChild;
 			Node elem = (Node) child;
@@ -193,22 +275,7 @@ namespace Mono.Mozilla.DOM
 			return new Element (control, newChild as nsIDOMElement);
 		}		
 		#endregion
-		
-		public virtual void FireEvent (string eventName) 
-		{
-			nsIDOMDocument doc;
-			this.node.getOwnerDocument (out doc);
-			nsIDOMDocumentEvent docEvent = (nsIDOMDocumentEvent) doc;
-			nsIDOMEvent evt;
-			
-			Base.StringSet (storage, "Events");
-			docEvent.createEvent (storage, out evt);
-			Base.StringSet (storage, "eventName");
-			evt.initEvent (storage, true, true);
-			nsIDOMEventTarget target = (nsIDOMEventTarget) this.node;
-			bool ret = false;
-			target.dispatchEvent (evt, out ret);
-		}
+
 		
 		
 		public override int GetHashCode () 
