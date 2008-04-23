@@ -32,36 +32,44 @@ using System;
 using System.Reflection;
 using System.Resources;
 using System.Security;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-// General Information about the system assembly
+// General Information about the System.Xml assembly
 
+[assembly: AssemblyTitle ("System.Xml.dll")]
+[assembly: AssemblyDescription ("System.Xml.dll")]
+[assembly: AssemblyDefaultAlias ("System.Xml.dll")]
+
+[assembly: AssemblyCompany (Consts.MonoCompany)]
+[assembly: AssemblyProduct (Consts.MonoProduct)]
+[assembly: AssemblyCopyright (Consts.MonoCopyright)]
 [assembly: AssemblyVersion (Consts.FxVersion)]
 [assembly: SatelliteContractVersion (Consts.FxVersion)]
+[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
 
-[assembly: AssemblyTitle("System.Xml.dll")]
-[assembly: AssemblyDescription("System.Xml.dll")]
-[assembly: AssemblyConfiguration("Development version")]
-[assembly: AssemblyCompany("MONO development team")]
-[assembly: AssemblyProduct("MONO CLI")]
-[assembly: AssemblyCopyright("(c) 2003 Various Authors")]
-[assembly: AssemblyTrademark("")]
+[assembly: NeutralResourcesLanguage ("en-US")]
 
-#if !TARGET_JVM
-[assembly: CLSCompliant(true)]
-#endif
-[assembly: AssemblyDefaultAlias("System.Xml.dll")]
-[assembly: AssemblyInformationalVersion("0.0.0.1")]
-[assembly: NeutralResourcesLanguage("en-US")]
-
-[assembly: ComVisible(false)]
+[assembly: ComVisible (false)]
 [assembly: AllowPartiallyTrustedCallers]
+
 #if !TARGET_JVM
-[assembly: AssemblyDelaySign(true)]
-[assembly: AssemblyKeyFile("../ecma.pub")]
+	[assembly: CLSCompliant (true)]
+	[assembly: AssemblyDelaySign (true)]
+	[assembly: AssemblyKeyFile("../ecma.pub")]
 #endif
 
 #if NET_2_0
-[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+	[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+	[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
+	[assembly: InternalsVisibleTo ("System.Data.SqlXml, PublicKey=00000000000000000400000000000000")]
+	[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+	[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
+#elif NET_1_1
+	[assembly: AssemblyTrademark ("")]
+	[assembly: AssemblyConfiguration ("")]
+#elif NET_1_0
+	[assembly: AssemblyTrademark ("")]
+	[assembly: AssemblyConfiguration ("")]
 #endif
