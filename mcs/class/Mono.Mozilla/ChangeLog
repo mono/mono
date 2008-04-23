@@ -1,5 +1,10 @@
 2008-04-23  Andreia Gaita <avidigal@novell.com> 
 
+	* Mono.Mozilla/DOM/Node.cs: No need to proxy event objects, they should
+	  already be proxied
+
+2008-04-23  Andreia Gaita <avidigal@novell.com> 
+
 	* Mono.Mozilla/DOM/Node.cs: Add support for different types of events
 	  that can be injected into the embedded browser
 

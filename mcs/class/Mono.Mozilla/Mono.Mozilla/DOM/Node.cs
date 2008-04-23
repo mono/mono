@@ -211,7 +211,6 @@ namespace Mono.Mozilla.DOM
 					nsIDOMEvent evtMouse;
 					Base.StringSet (storage, eventType);
 					docEvent.createEvent (storage, out evtMouse);
-					//evtMouse = nsDOMEvent.GetProxy (this.control, evtMouse);
 					nsIDOMMouseEvent domEventMouse = evtMouse as nsIDOMMouseEvent;
 					Base.StringSet (storage, eventName);
 					domEventMouse.initMouseEvent (storage, true, true, abstractView, 1, 0, 0, 0, 0, false, false, false, false, 0, target);
@@ -224,7 +223,6 @@ namespace Mono.Mozilla.DOM
 					nsIDOMEvent evtKey;
 					Base.StringSet (storage, eventType);
 					docEvent.createEvent (storage, out evtKey);
-					evtKey = nsDOMEvent.GetProxy (this.control, evtKey);
 					Base.StringSet (storage, eventName);
 					nsIDOMKeyEvent domEventKey = evtKey as nsIDOMKeyEvent;
 					domEventKey.initKeyEvent (storage, true, true, abstractView, false, false, false, false, 0, 0);
