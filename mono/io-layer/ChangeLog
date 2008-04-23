@@ -1,3 +1,7 @@
+2008-04-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c: Use #ifdef instead of #if for checking for valgrind/memcheck.h.
+
 2008-04-22  Dick Porter  <dick@ximian.com>
 
 	* wapi_glob.c (globextend): Comment out the code using ARG_MAX, as
