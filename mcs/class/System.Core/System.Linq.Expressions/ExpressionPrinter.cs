@@ -96,6 +96,9 @@ namespace System.Linq.Expressions {
 		{
 			switch (unary.NodeType) {
 			case ExpressionType.ArrayLength:
+			case ExpressionType.Convert:
+			case ExpressionType.ConvertChecked:
+			case ExpressionType.Not:
 				Print ("{0}(", unary.NodeType);
 				Visit (unary.Operand);
 				Print (")");
@@ -103,11 +106,6 @@ namespace System.Linq.Expressions {
 			case ExpressionType.Negate:
 				Print ("-");
 				Visit (unary.Operand);
-				return;
-			case ExpressionType.Not:
-				Print ("Not(");
-				Visit (unary.Operand);
-				Print (")");
 				return;
 			case ExpressionType.Quote:
 				Visit (unary.Operand);

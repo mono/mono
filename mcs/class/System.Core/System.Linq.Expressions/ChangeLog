@@ -1,3 +1,7 @@
+2008-04-23  Jb Evain  <jbevain@novell.com>
+
+	* ExpressionPrinter.cs: ToString convert properly.
+
 2008-04-22  Jb Evain  <jbevain@novell.com>
 
 	* UnaryExpression.cs: implement IsLiftedToNull properly.
