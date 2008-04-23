@@ -463,9 +463,13 @@ namespace System.Windows.Forms {
 			}
 
 			timer.Stop ();
+
+			if (!dropped)
+				return DragDropEffects.None;
 			if (drag_event != null)
 				return drag_event.Effect;
 
+			// Fallback.
 			return DragDropEffects.None;
 		}
 

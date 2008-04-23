@@ -1,3 +1,8 @@
+2008-04-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* X11Dnd.cs: When the drop was cancelled, or could just not be
+	performed, return DragDropEffect.None always (match .net).
+
 2008-04-22  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridViewRowHeaderCell.cs: Fill in some NIEX stuff.
