@@ -39,9 +39,9 @@ using System.Runtime.InteropServices;
 // General Information about the System.Runtime.Remoting assembly
 
 #if NET_2_0
-	[assembly: AssemblyTitle ("System.Drawing.dll")]
-	[assembly: AssemblyDescription ("System.Drawing.dll")]
-	[assembly: AssemblyDefaultAlias ("System.Drawing.dll")]
+	[assembly: AssemblyTitle ("System.Runtime.Remoting.dll")]
+	[assembly: AssemblyDescription ("System.Runtime.Remoting.dll")]
+	[assembly: AssemblyDefaultAlias ("System.Runtime.Remoting.dll")]
 
 	[assembly: AssemblyCompany (Consts.MonoCompany)]
 	[assembly: AssemblyProduct (Consts.MonoProduct)]
