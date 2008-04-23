@@ -1,5 +1,9 @@
 2008-04-23  Jb Evain  <jbevain@novell.com>
 
+	* ConstantExpression.cs (Emit): properly Emit null constants.
+
+2008-04-23  Jb Evain  <jbevain@novell.com>
+
 	* Expression.cs (Constant): check for assignability, not for type
 	equality, when a type is passed.
 

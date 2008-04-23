@@ -136,6 +136,11 @@ namespace System.Linq.Expressions {
 				return;
 
 			case TypeCode.Object:
+				if (value == null) {
+					ig.Emit (OpCodes.Ldnull);
+					return;
+				}
+
 				ec.EmitReadGlobal (value);
 				return;
 			}
