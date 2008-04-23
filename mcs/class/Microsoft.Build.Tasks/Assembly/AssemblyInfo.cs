@@ -37,7 +37,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-// General Information about the Microsoft.Build.Framework assembly
+// General Information about the Microsoft.Build.Tasks assembly
 
 [assembly: AssemblyTitle ("Microsoft.Build.Tasks.dll")]
 [assembly: AssemblyDescription ("Microsoft.Build.Tasks.dll")]
