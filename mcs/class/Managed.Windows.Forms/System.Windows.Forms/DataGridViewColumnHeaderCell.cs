@@ -135,12 +135,35 @@ namespace System.Windows.Forms {
 			
 		}
 
-		protected override Rectangle GetContentBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex) {
-			return new Rectangle();
+		protected override Rectangle GetContentBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex)
+		{
+			if (DataGridView == null)
+				return Rectangle.Empty;
+
+			object o = GetValue (-1);
+			
+			if (o == null || o.ToString () == string.Empty)
+				return Rectangle.Empty;
+				
+			Size s = Size.Empty;
+
+			if (o != null)
+				s = DataGridViewCell.MeasureTextSize (graphics, o.ToString (), cellStyle.Font, TextFormatFlags.Default);
+
+			return new Rectangle (3, (DataGridView.ColumnHeadersHeight - s.Height) / 2, s.Width, s.Height);
 		}
 
-		protected override Size GetPreferredSize (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex, Size constraintSize) {
-			throw new NotImplementedException();
+		protected override Size GetPreferredSize (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex, Size constraintSize)
+		{
+			object o = header_text;
+
+			if (o != null) {
+				Size s = DataGridViewCell.MeasureTextSize (graphics, o.ToString (), cellStyle.Font, TextFormatFlags.Default);
+				s.Height = Math.Max (s.Height, 18);
+				s.Width += 25;
+				return s;
+			} else
+				return new Size (19, 12);
 		}
 
 		protected override object GetValue (int rowIndex) {

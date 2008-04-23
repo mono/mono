@@ -1,3 +1,7 @@
+2008-04-23  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridViewColumnHeaderCell.cs: Implement some NIEX stuffs.
+
 2008-04-23  Andreia Gaita <avidigal@novell.com> 
 
 	* HtmlElement.cs, HtmlDocument.cs: Implement javscript method
