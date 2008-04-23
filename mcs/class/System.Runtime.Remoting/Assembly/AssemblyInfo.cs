@@ -32,30 +32,45 @@ using System;
 using System.Reflection;
 using System.Resources;
 using System.Security;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about the System.Runtime.Remoting assembly
 
+#if NET_2_0
+	[assembly: AssemblyTitle ("System.Drawing.dll")]
+	[assembly: AssemblyDescription ("System.Drawing.dll")]
+	[assembly: AssemblyDefaultAlias ("System.Drawing.dll")]
+
+	[assembly: AssemblyCompany (Consts.MonoCompany)]
+	[assembly: AssemblyProduct (Consts.MonoProduct)]
+	[assembly: AssemblyCopyright (Consts.MonoCopyright)]
+#endif
 [assembly: AssemblyVersion (Consts.FxVersion)]
 [assembly: SatelliteContractVersion (Consts.FxVersion)]
 
-#if (ONLY_1_1)
-[assembly: ComCompatibleVersion (1, 0, 3300, 0)]
-[assembly: TypeLibVersion (1, 10)]
+#if NET_2_0
+	[assembly: NeutralResourcesLanguage ("en-US")]
+	[assembly: ComCompatibleVersion (1, 0, 3300, 0)]
 #endif
 
-//[assembly: AssemblyTitle("System.Runtime.Remoting.dll")]
-//[assembly: AssemblyDescription("System.Runtime.Remoting.dll")]
-//[assembly: AssemblyConfiguration("Development version")]
-//[assembly: AssemblyCompany("MONO development team")]
-//[assembly: AssemblyProduct("MONO CLI")]
-//[assembly: AssemblyCopyright("(c) 2003 Various Authors")]
-//[assembly: AssemblyTrademark("")]
+[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
+[assembly: ComVisible (false)]
 
-[assembly: NeutralResourcesLanguage("en-US")]
-
-[assembly: AssemblyDelaySign(true)]
 #if !TARGET_JVM
-[assembly: AssemblyKeyFile("../ecma.pub")]
+	[assembly: AssemblyDelaySign (true)]
+	[assembly: AssemblyKeyFile("../ecma.pub")]
+#endif
+
+#if NET_2_0
+	[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+	[assembly: CLSCompliant (false)]
+	[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
+	[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+	[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
+#elif NET_1_1
+	[assembly: TypeLibVersion (1, 10)]
+#elif NET_1_0
+	[assembly: TypeLibVersion (1, 10)]
 #endif
