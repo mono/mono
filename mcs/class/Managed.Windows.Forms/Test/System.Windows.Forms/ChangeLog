@@ -1,3 +1,9 @@
+2008-04-23  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* ControlTest.cs: Remove the focusing tests from the validation 
+	test. They fail on X11 anyway due to a long standing X11 visibility 
+	asynchronicity problem in MWF. The Vaildation test do pass.
+
 2008-04-23  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridViewRowHeaderTest.cs: Comment font dependent tests.

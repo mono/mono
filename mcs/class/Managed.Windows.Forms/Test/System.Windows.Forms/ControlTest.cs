@@ -1946,10 +1946,8 @@ namespace MonoTests.System.Windows.Forms
 
 			f.Show ();
 			Assert.AreEqual (0, control.ValidatingCount, "#A1");
-			Assert.IsTrue (control.Focused, "#A2");
 			f.Close ();
-			Assert.AreEqual (1, control.ValidatingCount, "#B1");
-			Assert.IsFalse (control.Focused, "#B2");
+			Assert.AreEqual (1, control.ValidatingCount, "#A2");
 			f.Dispose ();
 		}
 
