@@ -274,7 +274,7 @@ namespace System.Windows.Forms
 		
 		public void RaiseEvent (string name) 
 		{
-			throw new NotImplementedException ();
+			this.element.FireEvent (name);
 		}
 
 		public void RemoveFocus () 
