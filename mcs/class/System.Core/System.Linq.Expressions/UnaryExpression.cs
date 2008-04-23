@@ -103,6 +103,46 @@ namespace System.Linq.Expressions {
 			}
 		}
 
+		void EmitConvert (EmitContext ec)
+		{
+			if (Type == operand.Type)
+				return;
+
+			operand.Emit (ec);
+
+			if (IsCast ())
+				EmitCast (ec);
+			else
+				throw new NotImplementedException ();
+		}
+
+		bool IsCast ()
+		{
+			return CheckReferenceConversion (operand.Type, Type);
+		}
+
+		bool IsBoxing ()
+		{
+			return operand.Type.IsValueType && !Type.IsValueType;
+		}
+
+		bool IsUnBoxing ()
+		{
+			return !operand.Type.IsValueType && Type.IsValueType;
+		}
+
+		void EmitCast (EmitContext ec)
+		{
+			var ig = ec.ig;
+
+			if (IsBoxing ()) {
+				ig.Emit (OpCodes.Box, Type);
+			} else if (IsUnBoxing ()) {
+				ig.Emit (OpCodes.Unbox_Any, Type);
+			} else
+				ec.ig.Emit (OpCodes.Castclass, Type);
+		}
+
 		internal override void Emit (EmitContext ec)
 		{
 			switch (this.NodeType) {
@@ -121,6 +161,10 @@ namespace System.Linq.Expressions {
 					EmitUnaryOperator (ec);
 				} else
 					throw new NotImplementedException ();
+				return;
+			case ExpressionType.Convert:
+			case ExpressionType.ConvertChecked:
+				EmitConvert (ec);
 				return;
 			default:
 				throw new NotImplementedException (this.NodeType.ToString ());
