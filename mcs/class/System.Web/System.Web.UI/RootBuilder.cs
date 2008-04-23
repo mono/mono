@@ -137,10 +137,36 @@ namespace System.Web.UI {
 				prefix = "";
 				cname = tagName;
 			}
+			
+			Type t;
+#if NET_2_0
+			string tSource;
+			bool tFromConfig;
+			t = foundry.GetComponentType (prefix, cname, out tSource, out tFromConfig);
+#else
+			t = foundry.GetComponentType (prefix, cname);
+#endif
+			
+			if (t != null) {
+#if NET_2_0
+				if (tSource != null && tSource.Length > 0) {
+					TemplateParser parser = Parser;
 
-			Type t = foundry.GetComponentType (prefix, cname);
-			if (t != null)
+					if (tFromConfig) {
+						string parserDir = parser.BaseVirtualDir;
+						VirtualPath vp = new VirtualPath (tSource);
+
+						if (parserDir == vp.Directory)
+							throw new ParseException (parser.Location,
+										  String.Format ("The page '{0}' cannot use the user control '{1}', because it is registered in web.config and lives in the same directory as the page.", parser.VirtualPath, vp.Absolute));
+						
+						Parser.AddDependency (tSource);
+					}
+				}
+#endif
 				return t;
+			}
+			
 			else if (prefix != "")
 				throw new Exception ("Unknown server tag '" + tagName + "'");
 			

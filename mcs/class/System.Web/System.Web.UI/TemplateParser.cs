@@ -870,6 +870,13 @@ namespace System.Web.UI {
 		internal ILocation DirectiveLocation {
 			get { return directiveLocation; }
 		}
+
+#if NET_2_0
+		internal VirtualPath VirtualPath {
+			get;
+			set;
+		}
+#endif
 		
 		internal string InputFile
 		{

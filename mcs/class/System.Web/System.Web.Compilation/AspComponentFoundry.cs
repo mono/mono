@@ -64,14 +64,27 @@ namespace System.Web.Compilation
 		}
 
 		public Type GetComponentType (string foundryName, string tag)
-		{			
+		{
+			string source;
+			bool fromConfig;
+
+			return GetComponentType (foundryName, tag, out source, out fromConfig);
+		}
+		
+		public Type GetComponentType (string foundryName, string tag, out string source, out bool fromConfig)
+		{
+			source = null;
+			fromConfig = false;
 			object o = foundries [foundryName];
 			if (o == null)
 				return null;
 
-			if (o is Foundry)
-				return ((Foundry)o).GetType (tag);
-
+			Foundry foundry = o as Foundry;
+			if (foundry != null) {
+				fromConfig = foundry.FromConfig;
+				return foundry.GetType (tag, out source);
+			}
+			
 			ArrayList af = o as ArrayList;
 			if (af == null)
 				return null;
@@ -80,9 +93,11 @@ namespace System.Web.Compilation
 			Exception e = null;
 			foreach (Foundry f in af) {
 				try {
-					t = f.GetType (tag);
-					if (t != null)
+					t = f.GetType (tag, out source);
+					if (t != null) {
+						fromConfig = f.FromConfig;
 						return t;
+					}
 				} catch (Exception ex) {
 					e = ex;
 				}
@@ -94,37 +109,60 @@ namespace System.Web.Compilation
 			return null;
 		}
 
+		public void RegisterFoundry (string foundryName, Assembly assembly, string nameSpace)
+		{
+			RegisterFoundry (foundryName, assembly, nameSpace, false);
+		}
+		
 		public void RegisterFoundry (string foundryName,
 					     Assembly assembly,
-					     string nameSpace)
+					     string nameSpace,
+					     bool fromConfig)
 		{
 			AssemblyFoundry foundry = new AssemblyFoundry (assembly, nameSpace);
-			InternalRegister (foundryName, foundry);
+			foundry.FromConfig = fromConfig;
+			InternalRegister (foundryName, foundry, fromConfig);
 		}
 
+		public void RegisterFoundry (string foundryName, string tagName, Type type)
+		{
+			RegisterFoundry (foundryName, tagName, type, false);
+		}
+		
 		public void RegisterFoundry (string foundryName,
 					     string tagName,
-					     Type type)
+					     Type type,
+					     bool fromConfig)
 		{
 			TagNameFoundry foundry = new TagNameFoundry (tagName, type);
-			InternalRegister (foundryName, foundry);
+			foundry.FromConfig = fromConfig;
+			InternalRegister (foundryName, foundry, fromConfig);
 		}
 
 #if NET_2_0
+		public void RegisterFoundry (string foundryName, string tagName, string source)
+		{
+			RegisterFoundry (foundryName, tagName, source, false);
+		}
+		
 		public void RegisterFoundry (string foundryName,
 					     string tagName,
-					     string source)
+					     string source,
+					     bool fromConfig)
 		{
 			TagNameFoundry foundry = new TagNameFoundry (tagName, source);
-			InternalRegister (foundryName, foundry);
+			foundry.FromConfig = fromConfig;
+			InternalRegister (foundryName, foundry, fromConfig);
 		}
 
 		public void RegisterAssemblyFoundry (string foundryName,
 						     string assemblyName,
-						     string nameSpace)
+						     string nameSpace,
+						     bool fromConfig)
 		{
 			AssemblyFoundry foundry = new AssemblyFoundry (assemblyName, nameSpace);
-			InternalRegister (foundryName, foundry);
+			foundry.FromConfig = fromConfig;
+			InternalRegister (foundryName, foundry, fromConfig);
 		}		
 
 		void RegisterConfigControls ()
@@ -142,25 +180,26 @@ namespace System.Web.Compilation
 			Assembly asm;
 			foreach (TagPrefixInfo tpi in controls) {
 				if (!String.IsNullOrEmpty (tpi.TagName))
-					RegisterFoundry (tpi.TagPrefix, tpi.TagName, tpi.Source);
+					RegisterFoundry (tpi.TagPrefix, tpi.TagName, tpi.Source, true);
 				else if (String.IsNullOrEmpty (tpi.Assembly)) {
 					if (haveCodeAssemblies) {
 						foreach (object o in appCode) {
 							asm = o as Assembly;
 							if (asm == null)
 								continue;
-							RegisterFoundry (tpi.TagPrefix, asm, tpi.Namespace);
+							RegisterFoundry (tpi.TagPrefix, asm, tpi.Namespace, true);
 						}
 					}
 				} else if (!String.IsNullOrEmpty (tpi.Namespace))
 					RegisterAssemblyFoundry (tpi.TagPrefix,
 								 tpi.Assembly,
-								 tpi.Namespace);
+								 tpi.Namespace,
+								 true);
 			}
 		}
 #endif
 		
-		void InternalRegister (string foundryName, Foundry foundry)
+		void InternalRegister (string foundryName, Foundry foundry, bool fromConfig)
 		{
 			object f = foundries [foundryName];
 			Foundry newFoundry = null;
@@ -175,6 +214,7 @@ namespace System.Web.Compilation
 				compound.Add ((Foundry) f);
 				compound.Add (foundry);
 				newFoundry = foundry;
+				newFoundry.FromConfig = fromConfig;
 			}
 
 			if (newFoundry == null)
@@ -202,7 +242,14 @@ namespace System.Web.Compilation
 
 		abstract class Foundry
 		{
-			public abstract Type GetType (string componentName);
+			bool _fromConfig;
+
+			public bool FromConfig {
+				get { return _fromConfig; }
+				set { _fromConfig = value; }
+			}
+			
+			public abstract Type GetType (string componentName, out string source);
 		}
 		
 
@@ -231,11 +278,15 @@ namespace System.Web.Compilation
 				this.type = type;
 			}
 
-			public override Type GetType (string componentName)
+			public override Type GetType (string componentName, out string source)
 			{
+				source = null;
 				if (0 != String.Compare (componentName, tagName, true))
 					return null;
 
+#if NET_2_0
+				source = this.source;
+#endif
 				return LoadType ();
 			}
 
@@ -307,8 +358,9 @@ namespace System.Web.Compilation
 			}
 #endif
 			
-			public override Type GetType (string componentName)
+			public override Type GetType (string componentName, out string source)
 			{
+				source = null;
 #if NET_2_0
 				if (assembly == null && assemblyName != null)
 					assembly = GetAssemblyByName (assemblyName, true);
@@ -405,16 +457,17 @@ namespace System.Web.Compilation
 				tagnames.Add (tagName, foundry);
 			}
 
-			public override Type GetType (string componentName)
+			public override Type GetType (string componentName, out string source)
 			{
+				source = null;
 				Type type = null;
 				Foundry foundry = tagnames [componentName] as Foundry;
 				if (foundry != null)
-					return foundry.GetType (componentName);
+					return foundry.GetType (componentName, out source);
 
 				if (assemblyFoundry != null) {
 					try {
-						type = assemblyFoundry.GetType (componentName);
+						type = assemblyFoundry.GetType (componentName, out source);
 						return type;
 					} catch { }
 				}

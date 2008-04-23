@@ -1,3 +1,9 @@
+2008-04-24  Marek Habersack  <mhabersack@novell.com>
+
+	* AspComponentFoundry.cs: added a new GetComponentType overload
+	which returns component source and a boolean flag whether the
+	control was registered from web.config (2.0).
+
 2008-04-22  Marek Habersack  <mhabersack@novell.com>
 
 	* BuildManager.cs: ignore also arbitrary exceptions when

@@ -89,6 +89,9 @@ namespace System.Web.UI
 			SetBaseType (null);
 			AddApplicationAssembly ();
 			LoadConfigDefaults ();
+#if NET_2_0
+			this.VirtualPath = new VirtualPath (virtualPath);
+#endif
 		}
 
 #if NET_2_0
@@ -111,6 +114,9 @@ namespace System.Web.UI
 			SetBaseType (null);
 			AddApplicationAssembly ();
 			LoadConfigDefaults ();
+#if NET_2_0
+			this.VirtualPath = new VirtualPath (virtualPath);
+#endif
 		}
 #endif
 

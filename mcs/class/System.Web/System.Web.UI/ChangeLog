@@ -1,3 +1,18 @@
+2008-04-24  Marek Habersack  <mhabersack@novell.com>
+
+	* RootBuilder.cs: when registering a custom control, add its path
+	to the parser dependencies. Fixes bug #377915
+	In the 2.0 profile, if the custom control being used was
+	registered from web.config and is found in the same directory what
+	the file being parsed, throw an exception. This behavior matches
+	MS.NET.
+
+	* TemplateParser.cs: added new VirtualPath property, which stores
+	the virtual path to the file being parsed.
+
+	* PageParser.cs: set the VirtualPath property in the 2.0 profile
+	when constructing the parser.
+
 2008-04-23  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateParser.cs: constructs the VirtualPath using the current
