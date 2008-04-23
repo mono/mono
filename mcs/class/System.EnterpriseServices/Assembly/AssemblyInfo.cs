@@ -31,36 +31,45 @@ using System;
 using System.Reflection;
 using System.Resources;
 using System.Security;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.EnterpriseServices;
 
+// General Information about the System.EnterpriseServices assembly
+
+#if NET_2_0
+	[assembly: AssemblyTitle ("System.EnterpriseServices.dll")]
+	[assembly: AssemblyDescription ("System.EnterpriseServices.dll")]
+	[assembly: AssemblyDefaultAlias ("System.EnterpriseServices.dll")]
+
+	[assembly: AssemblyCompany (Consts.MonoCompany)]
+	[assembly: AssemblyProduct (Consts.MonoProduct)]
+	[assembly: AssemblyCopyright (Consts.MonoCopyright)]
+#endif
 [assembly: AssemblyVersion (Consts.FxVersion)]
 [assembly: SatelliteContractVersion (Consts.FxVersion)]
 
-#if (ONLY_1_1)
+[assembly: NeutralResourcesLanguage ("en-US")]
+
 [assembly: ComCompatibleVersion (1, 0, 3300, 0)]
-[assembly: TypeLibVersion (1, 10)]
-#elif (NET_2_0)
-[assembly: ComVisible(true)]
-[assembly: AssemblyTitle("System.EnterpriseServices.dll")]
-[assembly: AssemblyDescription("System.EnterpriseServices.dll")]
-[assembly: AssemblyConfiguration("Development version")]
-[assembly: AssemblyCompany("MONO development team")]
-[assembly: AssemblyProduct("MONO CLI")]
-[assembly: AssemblyCopyright("(c) 2004 Various Authors")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyInformationalVersion(Consts.FxFileVersion)]
-[assembly: AssemblyFileVersion(Consts.FxFileVersion)]
-#endif
 
-[assembly: CLSCompliant(true)]
-[assembly: NeutralResourcesLanguage("en-US")]
+[assembly: ApplicationID ("1e246775-2281-484f-8ad4-044c15b86eb7")]
+[assembly: ApplicationName (".NET Utilities")]
+[assembly: Guid ("4fb2d46f-efc8-4643-bcd0-6e5bfa6a174c")]
 
-[assembly: ApplicationID("1e246775-2281-484f-8ad4-044c15b86eb7")]
-[assembly: ApplicationName(".NET Utilities")]
-[assembly: Guid("4fb2d46f-efc8-4643-bcd0-6e5bfa6a174c")]
-
-[assembly: AssemblyDelaySign(true)]
+[assembly: CLSCompliant (true)]
+[assembly: AssemblyDelaySign (true)]
 [assembly: AssemblyKeyFile("../msfinal.pub")]
 
+#if NET_2_0
+	[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
+	[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+	[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
+	[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+	[assembly: ComVisible (true)]
+#elif NET_1_1
+	[assembly: TypeLibVersion (1, 10)]
+#elif NET_1_0
+	[assembly: TypeLibVersion (1, 10)]
+#endif
