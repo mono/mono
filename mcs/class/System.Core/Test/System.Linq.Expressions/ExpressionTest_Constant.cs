@@ -193,5 +193,13 @@ namespace MonoTests.System.Linq.Expressions
 			// this forces the other code path for decimal.
 			Assert.AreEqual (Check<decimal> (3147483647m), 3147483647m, "decimal");
 		}
+
+		delegate void Foo ();
+
+		[Test]
+		public void DelegateTypeConstant ()
+		{
+			Expression.Constant (typeof (Foo), typeof (Type));
+		}
 	}
 }
