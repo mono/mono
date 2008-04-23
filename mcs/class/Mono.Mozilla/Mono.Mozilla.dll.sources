@@ -6,6 +6,7 @@ Mono.Mozilla/Callback.cs
 Mono.Mozilla/DOM/EventListener.cs
 Mono.Mozilla/interfaces/nsICancelable.cs
 Mono.Mozilla/interfaces/nsIChannel.cs
+Mono.Mozilla/interfaces/nsIDOMDocumentEvent.cs
 Mono.Mozilla/interfaces/nsIDOMEvent.cs
 Mono.Mozilla/interfaces/nsIDOMEventListener.cs
 Mono.Mozilla/interfaces/nsIDOMEventTarget.cs

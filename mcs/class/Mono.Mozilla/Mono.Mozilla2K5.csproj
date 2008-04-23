@@ -85,6 +85,7 @@
     <Compile Include="Mono.Mozilla\DOM\EventListener.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsICancelable.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIChannel.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMDocumentEvent.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMEvent.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMEventListener.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMEventTarget.cs" />

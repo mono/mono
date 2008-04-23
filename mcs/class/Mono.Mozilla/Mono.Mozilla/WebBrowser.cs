@@ -228,13 +228,17 @@ namespace Mono.Mozilla
 				
 		internal void AttachEvent (INode node, string eve, EventHandler handler) {
 			string key = String.Intern (node.GetHashCode() + ":" + eve);
+#if debug
 			Console.Error.WriteLine ("Event Attached: " + key);
+#endif
 			DomEvents.AddHandler (key, handler);
 		}
 
 		internal void DetachEvent (INode node, string eve, EventHandler handler) {
 			string key = String.Intern (node.GetHashCode() + ":" + eve);
+#if debug			
 			Console.Error.WriteLine ("Event Detached: " + key);
+#endif			
 			DomEvents.RemoveHandler (key, handler);
 		}
 		

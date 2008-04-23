@@ -42,6 +42,7 @@ namespace Mono.WebBrowser.DOM
 		NodeType 	Type { get;}
 		string 		Value {get;} 
 		
+		void FireEvent	(string eventName);
 		int 		GetHashCode ();
 		
 		void AttachEventHandler (string eventName, EventHandler handler);

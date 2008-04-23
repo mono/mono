@@ -194,7 +194,25 @@ namespace Mono.Mozilla.DOM
 		}		
 		#endregion
 		
-		public override int GetHashCode () {
+		public virtual void FireEvent (string eventName) 
+		{
+			nsIDOMDocument doc;
+			this.node.getOwnerDocument (out doc);
+			nsIDOMDocumentEvent docEvent = (nsIDOMDocumentEvent) doc;
+			nsIDOMEvent evt;
+			
+			Base.StringSet (storage, "Events");
+			docEvent.createEvent (storage, out evt);
+			Base.StringSet (storage, "eventName");
+			evt.initEvent (storage, true, true);
+			nsIDOMEventTarget target = (nsIDOMEventTarget) this.node;
+			bool ret = false;
+			target.dispatchEvent (evt, out ret);
+		}
+		
+		
+		public override int GetHashCode () 
+		{
 			return this.hashcode;
 		}
 		
@@ -208,11 +226,13 @@ namespace Mono.Mozilla.DOM
 			}
 		}
 		
-		public void AttachEventHandler (string eventName, EventHandler handler) {
+		public void AttachEventHandler (string eventName, EventHandler handler) 
+		{
 			EventListener.AddHandler (handler, eventName);			
 		}
 		
-		public void DetachEventHandler (string eventName, EventHandler handler) {
+		public void DetachEventHandler (string eventName, EventHandler handler) 
+		{
 			EventListener.RemoveHandler (handler, eventName);
 		}
 		

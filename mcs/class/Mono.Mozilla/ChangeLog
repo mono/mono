@@ -1,3 +1,12 @@
+2008-04-23  Andreia Gaita <avidigal@novell.com> 
+
+	* Mono.Mozilla/DOM/Node.cs, Mono.WebBrowser/DOM/INode.cs: Add event
+	  firing capability
+	* Mono.Mozilla/interfaces/nsIDOMDocumentEvent.cs,
+	  Mono.Mozilla.dll.sources, Mono.Mozilla2K5.csproj: Interface to
+	  support firing events
+	* Mono.Mozilla/WebBrowser.cs: Hide away debug CWLs
+
 2008-04-18  Andreia Gaita <avidigal@novell.com> 
 
 	* Mono.WebBrowser/DOM/IDocument.cs, Mono.Mozilla/DOM/Document.cs,
