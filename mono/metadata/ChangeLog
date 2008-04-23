@@ -1,3 +1,20 @@
+2008-04-23  Marek Habersack  <mhabersack@novell.com>
+
+	* domain-internals.h: added a declaration of
+	mono_make_shadow_copy.
+
+	* assembly.c (mono_assembly_open_full): shadow copying of
+	assemblies moved to here, so that all the assemblies within the
+	application domain's private binary directories can be
+	processed. Fixes bug #380546
+
+	* appdomain.c (mono_make_shadow_copy): make_shadow_copy renamed to
+	mono_make_shadow_copy and made non-static. The decision whether
+	to shadow-copy an assembly is made based on its location - it's
+	copied if it's in one of the private application domain binary
+	directories and its different to the target file in the shadow
+	directory. Fixes bug #380546
+
 2008-04-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (fixup_method): Handle {Method|Constructor}OnTypeBuilderInst.
