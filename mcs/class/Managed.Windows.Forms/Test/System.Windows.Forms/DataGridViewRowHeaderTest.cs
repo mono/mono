@@ -104,6 +104,7 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 
+		/* font dependent
 		[Test]
 		public void MethodGetContentBounds ()
 		{
@@ -124,7 +125,8 @@ namespace MonoTests.System.Windows.Forms
 			dgv.Rows[0].HeaderCell.Value = "whoa whoa whoa whoa";
 			Assert.AreEqual (new Rectangle (24, 2, 11, 18), dgv.Rows[0].HeaderCell.GetContentBounds (dgv.Rows[0].HeaderCell.RowIndex), "A3");
 		}
-
+		*/
+		
 		[Test]
 		public void MethodGetErrorIconBounds ()
 		{
@@ -183,6 +185,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreSame (cms2, dgv.Rows[0].HeaderCell.GetInheritedContextMenuStrip (dgv.Rows[0].HeaderCell.RowIndex), "A5");
 		}
 
+		/* font dependent
 		[Test]
 		public void PreferredSize ()
 		{
@@ -204,7 +207,8 @@ namespace MonoTests.System.Windows.Forms
 			dgv.Rows[0].HeaderCell.Value = "roasted quail";
 			Assert.AreEqual (new Size (115, 17), dgv.Rows[0].HeaderCell.PreferredSize, "A4");
 		}
-
+		*/
+		
 		private class BaseCell : DataGridViewRowHeaderCell
 		{
 			public Rectangle PublicGetContentBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex)
