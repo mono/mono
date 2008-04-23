@@ -1,3 +1,7 @@
+2008-04-23  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* AssemblyInfo.cs: Added missing attributes
+
 2004-06-11  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* Consts.cs: Replaced by Consts.cs from System.Messaging
