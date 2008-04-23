@@ -3598,10 +3598,10 @@ namespace Mono.CSharp {
 
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
-			Type t = best_candidate.IsConstructor ?
-				typeof (ConstructorInfo) : typeof (MethodInfo);
-
-			return new Cast (new TypeExpression (t, loc), new TypeOfMethod (best_candidate, loc));
+			if (best_candidate.IsConstructor)
+				return new TypeOfConstructorInfo (best_candidate, loc);
+			
+			return new TypeOfMethodInfo (best_candidate, loc);
 		}
 		
 		override public Expression DoResolve (EmitContext ec)
@@ -5069,7 +5069,7 @@ namespace Mono.CSharp {
 
 		public Expression CreateSetterTypeOfExpression ()
 		{
-			return new Cast (new TypeExpression (typeof (MethodInfo), loc), new TypeOfMethod (setter, loc));
+			return new TypeOfMethodInfo (setter, loc);
 		}
 
 		public override Type DeclaringType {

@@ -1,5 +1,10 @@
 2008-04-23  Marek Safar  <marek.safar@gmail.com>
 
+	* ecore.cs, expression.cs, delegate.cs: Implemeted delegate instantiation
+	conversion to expression tree.
+
+2008-04-23  Marek Safar  <marek.safar@gmail.com>
+
 	* ecore.cs: Removed unused expression.
 
 2008-04-22  Marek Safar  <marek.safar@gmail.com>

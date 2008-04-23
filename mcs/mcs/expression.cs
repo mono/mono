@@ -6639,6 +6639,14 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			ArrayList args = new ArrayList (2);
+			args.Add (new Argument (this));
+			args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
+			return CreateExpressionFactoryCall ("Constant", args);
+		}
+
 		public override Expression DoResolve (EmitContext ec)
 		{
 			TypeExpr texpr = QueriedType.ResolveAsTypeTerminal (ec, false);
@@ -6734,14 +6742,64 @@ namespace Mono.CSharp {
 		}
 	}
 
-	internal class TypeOfMethod : Expression
+	class TypeOfMethodInfo : TypeOfMethod
 	{
-		readonly MethodBase method;
+		public TypeOfMethodInfo (MethodBase method, Location loc)
+			: base (method, loc)
+		{
+		}
 
-		public TypeOfMethod (MethodBase method, Location loc)
+		public override Expression DoResolve (EmitContext ec)
+		{
+			type = typeof (MethodInfo);
+			return base.DoResolve (ec);
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			ec.ig.Emit (OpCodes.Ldtoken, (MethodInfo) method);
+			base.Emit (ec);
+			ec.ig.Emit (OpCodes.Castclass, type);
+		}
+	}
+
+	class TypeOfConstructorInfo : TypeOfMethod
+	{
+		public TypeOfConstructorInfo (MethodBase method, Location loc)
+			: base (method, loc)
+		{
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			type = typeof (ConstructorInfo);
+			return base.DoResolve (ec);
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			ec.ig.Emit (OpCodes.Ldtoken, (ConstructorInfo) method);
+			base.Emit (ec);
+			ec.ig.Emit (OpCodes.Castclass, type);
+		}
+	}
+
+	abstract class TypeOfMethod : Expression
+	{
+		protected readonly MethodBase method;
+
+		protected TypeOfMethod (MethodBase method, Location loc)
 		{
 			this.method = method;
 			this.loc = loc;
+		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			ArrayList args = new ArrayList (2);
+			args.Add (new Argument (this));
+			args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
+			return CreateExpressionFactoryCall ("Constant", args);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -6769,18 +6827,12 @@ namespace Mono.CSharp {
 					TypeManager.methodbase_get_type_from_handle = mi;
 			}
 
-			type = typeof (MethodBase);
 			eclass = ExprClass.Value;
 			return this;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			if (method is MethodInfo)
-				ec.ig.Emit (OpCodes.Ldtoken, (MethodInfo)method);
-			else
-				ec.ig.Emit (OpCodes.Ldtoken, (ConstructorInfo) method);
-
 			bool is_generic = TypeManager.IsGenericType (method.DeclaringType);
 			MethodInfo mi;
 			if (is_generic) {
@@ -8551,8 +8603,7 @@ namespace Mono.CSharp {
 			ArrayList args = new ArrayList (2);
 			args.Add (new Argument (source.CreateExpressionTree (ec)));
 			args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
-			args.Add (new Argument (new Cast (new TypeExpression (typeof (MethodInfo), loc),
-				new TypeOfMethod (method, loc))));
+			args.Add (new Argument (new TypeOfMethodInfo (method, loc)));
 			return CreateExpressionFactoryCall ("Convert", args);
 		}
 			

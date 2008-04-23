@@ -688,6 +688,25 @@ namespace Mono.CSharp {
 			return delegate_arguments;
 		}
 
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			MemberAccess ma = new MemberAccess (new MemberAccess (new QualifiedAliasMember ("global", "System", loc), "Delegate", loc), "CreateDelegate", loc);
+
+			ArrayList args = new ArrayList (3);
+			args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
+			args.Add (new Argument (new NullLiteral (loc)));
+			args.Add (new Argument (new TypeOfMethodInfo (delegate_method, loc)));
+			Expression e = new Invocation (ma, args).Resolve (ec);
+			if (e == null)
+				return null;
+
+			e = Convert.ExplicitConversion (ec, e, type, loc);
+			if (e == null)
+				return null;
+
+			return e.CreateExpressionTree (ec);
+		}
+
 		public override Expression DoResolve (EmitContext ec)
 		{
 			constructor_method = Delegate.GetConstructor (ec.ContainerType, type);
