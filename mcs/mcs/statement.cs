@@ -305,35 +305,17 @@ namespace Mono.CSharp {
 			// If we're a boolean constant, Resolve() already
 			// eliminated dead code for us.
 			//
-			if (expr is Constant){
-				
-				//
-				// Simple bool constant
-				//
-				if (expr is BoolConstant) {
-					bool take = ((BoolConstant) expr).Value;
+			Constant c = expr as Constant;
+			if (c != null){
+				c.EmitSideEffect (ec);
 
-					if (take)
-						TrueStatement.Emit (ec);
-					else if (FalseStatement != null)
-						FalseStatement.Emit (ec);
-					
-					return;
-				}
-
-				//
-				// Bool constant with side-effects
-				//
-				expr.Emit (ec);
-				ig.Emit (OpCodes.Pop);
-
-				if (TrueStatement != null)
+				if (!c.IsDefaultValue)
 					TrueStatement.Emit (ec);
-				if (FalseStatement != null)
+				else if (FalseStatement != null)
 					FalseStatement.Emit (ec);
 
 				return;
-			}
+			}			
 			
 			expr.EmitBranchable (ec, false_target, false);
 			

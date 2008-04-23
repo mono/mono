@@ -1,5 +1,9 @@
 2008-04-23  Marek Safar  <marek.safar@gmail.com>
 
+	* constant.cs, statement.cs: Use EmitSideEffect for constant if statement.
+
+2008-04-23  Marek Safar  <marek.safar@gmail.com>
+
 	* ecore.cs, expression.cs, delegate.cs: Implemeted delegate instantiation
 	conversion to expression tree.
 
