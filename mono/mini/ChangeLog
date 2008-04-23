@@ -1,3 +1,14 @@
+2008-04-23  Jonathan Chambers <joncham@gmail.com>
+
+	* mini-amd64.c (add_general): Always increment stack on Win64.
+	(mono_arch_call_opcode): Use OP_OUTARG_MEMBASE instead of OP_OUTARG
+	on Win64.
+	
+	* inssel-amd64.brg (OP_OUTARG_MEMBASE): Add OP_OUTARG_MEMBASE for 
+	stack based argument handling on Win64.
+	
+	Code contributed under MIT/X11 license.
+
 2008-04-23  Raja R Harinath  <harinath@hurrynot.org>
 
 	* Makefile.am (version.h): Add support for git-svn.
