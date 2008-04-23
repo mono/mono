@@ -1,3 +1,8 @@
+2008-04-23  Martin Baulig  <martin@ximian.com>
+
+	* domain.c (mono_domain_create): Move the call to
+	mono_debug_domain_create() down, after allocating the domain id.
+
 2008-04-23 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	verify.c (verify_class_for_overlapping_reference_fields): Skip
