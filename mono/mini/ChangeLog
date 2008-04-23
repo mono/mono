@@ -1,3 +1,7 @@
+2008-04-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_method_to_ir): Avoid inserting write barriers for stores of null.
+
 2008-04-23  Jonathan Chambers <joncham@gmail.com>
 
 	* mini-amd64.c (add_general): Always increment stack on Win64.
