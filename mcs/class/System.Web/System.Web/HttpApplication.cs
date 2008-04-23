@@ -132,7 +132,6 @@ namespace System.Web {
 		// Tracks the current AsyncInvocation being dispatched
 		AsyncInvoker current_ai;
 
-		// We don't use the EventHandlerList here, but derived classes might do
 		EventHandlerList events;
 
 		// Culture and IPrincipal
@@ -156,7 +155,8 @@ namespace System.Web {
 #endif
 		bool removeConfigurationFromCache;
 #endif
-
+		bool fullInitComplete = false;
+		
 		//
 		// These are used to detect the case where the EndXXX method is invoked
 		// from within the BeginXXXX delegate, so we detect whether we kick the
@@ -188,8 +188,10 @@ namespace System.Web {
 				modcoll = modules.LoadModules (this);
 
 				if (full_init) {
+					events = null;
 					HttpApplicationFactory.AttachEvents (this);
 					Init ();
+					fullInitComplete = true;
 				}
 			}
 		}
@@ -336,84 +338,158 @@ namespace System.Web {
 		public virtual event EventHandler Disposed;
 		public virtual event EventHandler Error;
 
-		public event EventHandler PreSendRequestHeaders;
-		internal void TriggerPreSendRequestHeaders ()
+		static object PreSendRequestHeadersEvent = new object ();
+		public event EventHandler PreSendRequestHeaders
 		{
-			if (PreSendRequestHeaders != null)
-				PreSendRequestHeaders (this, EventArgs.Empty);
-		}
-
-		public event EventHandler PreSendRequestContent;
-		internal void TriggerPreSendRequestContent ()
-		{
-			if (PreSendRequestContent != null)
-				PreSendRequestContent (this, EventArgs.Empty);
+			add { AddEventHandler (PreSendRequestHeadersEvent, value); }
+			remove { RemoveEventHandler (PreSendRequestHeadersEvent, value); }
 		}
 		
-		public event EventHandler AcquireRequestState;
+		internal void TriggerPreSendRequestHeaders ()
+		{
+			EventHandler handler = Events [PreSendRequestHeadersEvent] as EventHandler;
+			if (handler != null)
+				handler (this, EventArgs.Empty);
+		}
+
+		static object PreSendRequestContentEvent = new object ();
+		public event EventHandler PreSendRequestContent
+		{
+			add { AddEventHandler (PreSendRequestContentEvent, value); }
+			remove { RemoveEventHandler (PreSendRequestContentEvent, value); }
+		}
+		
+		internal void TriggerPreSendRequestContent ()
+		{
+			EventHandler handler = Events [PreSendRequestContentEvent] as EventHandler;
+			if (handler != null)
+				handler (this, EventArgs.Empty);
+		}
+
+		static object AcquireRequestStateEvent = new object ();
+		public event EventHandler AcquireRequestState
+		{
+			add { AddEventHandler (AcquireRequestStateEvent, value); }
+			remove { RemoveEventHandler (AcquireRequestStateEvent, value); }
+		}
+		
 		public void AddOnAcquireRequestStateAsync (BeginEventHandler bh, EndEventHandler eh)
 		{
 			AsyncInvoker invoker = new AsyncInvoker (bh, eh);
 			AcquireRequestState += new EventHandler (invoker.Invoke);
 		}
 
-		public event EventHandler AuthenticateRequest;
+		static object AuthenticateRequestEvent = new object ();
+		public event EventHandler AuthenticateRequest
+		{
+			add { AddEventHandler (AuthenticateRequestEvent, value); }
+			remove { RemoveEventHandler (AuthenticateRequestEvent, value); }
+		}
+		
 		public void AddOnAuthenticateRequestAsync (BeginEventHandler bh, EndEventHandler eh)
 		{
 			AsyncInvoker invoker = new AsyncInvoker (bh, eh);
 			AuthenticateRequest += new EventHandler (invoker.Invoke);
 		}
 
-		public event EventHandler AuthorizeRequest;
+		static object AuthorizeRequestEvent = new object ();
+		public event EventHandler AuthorizeRequest
+		{
+			add { AddEventHandler (AuthorizeRequestEvent, value); }
+			remove { RemoveEventHandler (AuthorizeRequestEvent, value); }
+		}
+		
 		public void AddOnAuthorizeRequestAsync (BeginEventHandler bh, EndEventHandler eh)
 		{
 			AsyncInvoker invoker = new AsyncInvoker (bh, eh);
 			AuthorizeRequest += new EventHandler (invoker.Invoke);
 		}
 
-		public event EventHandler BeginRequest;
+		static object BeginRequestEvent = new object ();
+		public event EventHandler BeginRequest
+		{
+			add { AddEventHandler (BeginRequestEvent, value); }
+			remove { RemoveEventHandler (BeginRequestEvent, value); }
+		}
+		
 		public void AddOnBeginRequestAsync (BeginEventHandler bh, EndEventHandler eh)
 		{
 			AsyncInvoker invoker = new AsyncInvoker (bh, eh);
 			BeginRequest += new EventHandler (invoker.Invoke);
 		}
 
-		public event EventHandler EndRequest;
+		static object EndRequestEvent = new object ();
+		public event EventHandler EndRequest
+		{
+			add { AddEventHandler (EndRequestEvent, value); }
+			remove { RemoveEventHandler (EndRequestEvent, value); }
+		}
+		
 		public void AddOnEndRequestAsync (BeginEventHandler bh, EndEventHandler eh)
 		{
 			AsyncInvoker invoker = new AsyncInvoker (bh, eh);
 			EndRequest += new EventHandler (invoker.Invoke);
 		}
+
+		static object PostRequestHandlerExecuteEvent = new object ();
+		public event EventHandler PostRequestHandlerExecute
+		{
+			add { AddEventHandler (PostRequestHandlerExecuteEvent, value); }
+			remove { RemoveEventHandler (PostRequestHandlerExecuteEvent, value); }
+		}
 		
-		public event EventHandler PostRequestHandlerExecute;
 		public void AddOnPostRequestHandlerExecuteAsync (BeginEventHandler bh, EndEventHandler eh)
 		{
 			AsyncInvoker invoker = new AsyncInvoker (bh, eh);
 			PostRequestHandlerExecute += new EventHandler (invoker.Invoke);
 		}
 
-		public event EventHandler PreRequestHandlerExecute;
+		static object PreRequestHandlerExecuteEvent = new object ();
+		public event EventHandler PreRequestHandlerExecute
+		{
+			add { AddEventHandler (PreRequestHandlerExecuteEvent, value); }
+			remove { RemoveEventHandler (PreRequestHandlerExecuteEvent, value); }
+		}
+		
 		public void AddOnPreRequestHandlerExecuteAsync (BeginEventHandler bh, EndEventHandler eh)
 		{
 			AsyncInvoker invoker = new AsyncInvoker (bh, eh);
 			PreRequestHandlerExecute += new EventHandler (invoker.Invoke);
 		}
 
-		public event EventHandler ReleaseRequestState;
+		static object ReleaseRequestStateEvent = new object ();
+		public event EventHandler ReleaseRequestState
+		{
+			add { AddEventHandler (ReleaseRequestStateEvent, value); }
+			remove { RemoveEventHandler (ReleaseRequestStateEvent, value); }
+		}
+		
 		public void AddOnReleaseRequestStateAsync (BeginEventHandler bh, EndEventHandler eh)
 		{
 			AsyncInvoker invoker = new AsyncInvoker (bh, eh);
 			ReleaseRequestState += new EventHandler (invoker.Invoke);
 		}
 
-		public event EventHandler ResolveRequestCache;
+		static object ResolveRequestCacheEvent = new object ();
+		public event EventHandler ResolveRequestCache
+		{
+			add { AddEventHandler (ResolveRequestCacheEvent, value); }
+			remove { RemoveEventHandler (ResolveRequestCacheEvent, value); }
+		}
+		
 		public void AddOnResolveRequestCacheAsync (BeginEventHandler bh, EndEventHandler eh)
 		{
 			AsyncInvoker invoker = new AsyncInvoker (bh, eh);
 			ResolveRequestCache += new EventHandler (invoker.Invoke);
 		}
 
-		public event EventHandler UpdateRequestCache;
+		static object UpdateRequestCacheEvent = new object ();
+		public event EventHandler UpdateRequestCache
+		{
+			add { AddEventHandler (UpdateRequestCacheEvent, value); }
+			remove { RemoveEventHandler (UpdateRequestCacheEvent, value); }
+		}
+		
 		public void AddOnUpdateRequestCacheAsync (BeginEventHandler bh, EndEventHandler eh)
 		{
 			AsyncInvoker invoker = new AsyncInvoker (bh, eh);
@@ -421,7 +497,13 @@ namespace System.Web {
 		}
 
 #if NET_2_0
-		public event EventHandler PostAuthenticateRequest;
+		static object PostAuthenticateRequestEvent = new object ();
+		public event EventHandler PostAuthenticateRequest
+		{
+			add { AddEventHandler (PostAuthenticateRequestEvent, value); }
+			remove { RemoveEventHandler (PostAuthenticateRequestEvent, value); }
+		}
+		
 		public void AddOnPostAuthenticateRequestAsync (BeginEventHandler bh, EndEventHandler eh)
 		{
 			AddOnPostAuthenticateRequestAsync (bh, eh, null);
@@ -432,8 +514,14 @@ namespace System.Web {
 			AsyncInvoker invoker = new AsyncInvoker (bh, eh, data);
 			PostAuthenticateRequest += new EventHandler (invoker.Invoke);
 		}
+
+		static object PostAuthorizeRequestEvent = new object ();
+		public event EventHandler PostAuthorizeRequest
+		{
+			add { AddEventHandler (PostAuthorizeRequestEvent, value); }
+			remove { RemoveEventHandler (PostAuthorizeRequestEvent, value); }
+		}
 		
-		public event EventHandler PostAuthorizeRequest;
 		public void AddOnPostAuthorizeRequestAsync (BeginEventHandler bh, EndEventHandler eh)
 		{
 			AddOnPostAuthorizeRequestAsync (bh, eh, null);
@@ -444,8 +532,14 @@ namespace System.Web {
 			AsyncInvoker invoker = new AsyncInvoker (bh, eh, data);
 			PostAuthorizeRequest += new EventHandler (invoker.Invoke);
 		}
-
-		public event EventHandler PostResolveRequestCache;
+		
+		static object PostResolveRequestCacheEvent = new object ();
+		public event EventHandler PostResolveRequestCache
+		{
+			add { AddEventHandler (PostResolveRequestCacheEvent, value); }
+			remove { RemoveEventHandler (PostResolveRequestCacheEvent, value); }
+		}
+		
 		public void AddOnPostResolveRequestCacheAsync (BeginEventHandler bh, EndEventHandler eh)
 		{
 			AddOnPostResolveRequestCacheAsync (bh, eh, null);
@@ -457,7 +551,13 @@ namespace System.Web {
 			PostResolveRequestCache += new EventHandler (invoker.Invoke);
 		}
 
-		public event EventHandler PostMapRequestHandler;
+		static object PostMapRequestHandlerEvent = new object ();
+		public event EventHandler PostMapRequestHandler
+		{
+			add { AddEventHandler (PostMapRequestHandlerEvent, value); }
+			remove { RemoveEventHandler (PostMapRequestHandlerEvent, value); }
+		}
+		
 		public void AddOnPostMapRequestHandlerAsync (BeginEventHandler bh, EndEventHandler eh)
 		{
 			AddOnPostMapRequestHandlerAsync (bh, eh, null);
@@ -468,8 +568,14 @@ namespace System.Web {
 			AsyncInvoker invoker = new AsyncInvoker (bh, eh, data);
 			PostMapRequestHandler += new EventHandler (invoker.Invoke);
 		}
+
+		static object PostAcquireRequestStateEvent = new object ();
+		public event EventHandler PostAcquireRequestState
+		{
+			add { AddEventHandler (PostAcquireRequestStateEvent, value); }
+			remove { RemoveEventHandler (PostAcquireRequestStateEvent, value); }
+		}
 		
-		public event EventHandler PostAcquireRequestState;
 		public void AddOnPostAcquireRequestStateAsync (BeginEventHandler bh, EndEventHandler eh)
 		{
 			AddOnPostAcquireRequestStateAsync (bh, eh, null);
@@ -480,8 +586,14 @@ namespace System.Web {
 			AsyncInvoker invoker = new AsyncInvoker (bh, eh, data);
 			PostAcquireRequestState += new EventHandler (invoker.Invoke);
 		}
+
+		static object PostReleaseRequestStateEvent = new object ();
+		public event EventHandler PostReleaseRequestState
+		{
+			add { AddEventHandler (PostReleaseRequestStateEvent, value); }
+			remove { RemoveEventHandler (PostReleaseRequestStateEvent, value); }
+		}
 		
-		public event EventHandler PostReleaseRequestState;
 		public void AddOnPostReleaseRequestStateAsync (BeginEventHandler bh, EndEventHandler eh)
 		{
 			AddOnPostReleaseRequestStateAsync (bh, eh, null);
@@ -493,7 +605,13 @@ namespace System.Web {
 			PostReleaseRequestState += new EventHandler (invoker.Invoke);
 		}
 
-		public event EventHandler PostUpdateRequestCache;
+		static object PostUpdateRequestCacheEvent = new object ();
+		public event EventHandler PostUpdateRequestCache
+		{
+			add { AddEventHandler (PostUpdateRequestCacheEvent, value); }
+			remove { RemoveEventHandler (PostUpdateRequestCacheEvent, value); }
+		}
+		
 		public void AddOnPostUpdateRequestCacheAsync (BeginEventHandler bh, EndEventHandler eh)
 		{
 			AddOnPostUpdateRequestCacheAsync (bh, eh, null);
@@ -569,8 +687,15 @@ namespace System.Web {
 		}
 
 		// Added in 2.0 SP1
-		// They are for use with the IIS7 integrated mode, but have been added for compatibility
-		public event EventHandler LogRequest;
+		// They are for use with the IIS7 integrated mode, but have been added for
+		// compatibility
+		static object LogRequestEvent = new object ();
+		public event EventHandler LogRequest
+		{
+			add { AddEventHandler (LogRequestEvent, value); }
+			remove { RemoveEventHandler (LogRequestEvent, value); }
+		}
+		
 		public void AddOnLogRequestAsync (BeginEventHandler bh, EndEventHandler eh)
 		{
 			AddOnLogRequestAsync (bh, eh, null);
@@ -582,7 +707,13 @@ namespace System.Web {
 			LogRequest += new EventHandler (invoker.Invoke);
 		}
 
-		public event EventHandler MapRequestHandler;
+		static object MapRequestHandlerEvent = new object ();
+		public event EventHandler MapRequestHandler
+		{
+			add { AddEventHandler (MapRequestHandlerEvent, value); }
+			remove { RemoveEventHandler (MapRequestHandlerEvent, value); }
+		}
+		
 		public void AddOnMapRequestHandlerAsync (BeginEventHandler bh, EndEventHandler eh)
 		{
 			AddOnMapRequestHandlerAsync (bh, eh, null);
@@ -594,7 +725,13 @@ namespace System.Web {
 			MapRequestHandler += new EventHandler (invoker.Invoke);
 		}
 
-		public event EventHandler PostLogRequest;
+		static object PostLogRequestEvent = new object ();
+		public event EventHandler PostLogRequest
+		{
+			add { AddEventHandler (PostLogRequestEvent, value); }
+			remove { RemoveEventHandler (PostLogRequestEvent, value); }
+		}
+		
 		public void AddOnPostLogRequestAsync (BeginEventHandler bh, EndEventHandler eh)
 		{
 			AddOnPostLogRequestAsync (bh, eh, null);
@@ -609,6 +746,22 @@ namespace System.Web {
 #endif
 		
 		internal event EventHandler DefaultAuthentication;
+
+		void AddEventHandler (object key, EventHandler handler)
+		{
+			if (fullInitComplete)
+				return;
+
+			Events.AddHandler (key, handler);
+		}
+
+		void RemoveEventHandler (object key, EventHandler handler)
+		{
+			if (fullInitComplete)
+				return;
+
+			Events.RemoveHandler (key, handler);
+		}
 		
 		//
 		// Bypass all the event on the Http pipeline and go directly to EndRequest
@@ -622,8 +775,9 @@ namespace System.Web {
 			set { stop_processing = value; }
 		}
 
-		public virtual void Dispose ()
+		internal void DisposeInternal ()
 		{
+			Dispose ();
 			lock (this_lock) {
 				if (modcoll != null) {
 					for (int i = modcoll.Count - 1; i >= 0; i--) {
@@ -638,6 +792,10 @@ namespace System.Web {
 			
 			done.Close ();
 			done = null;
+		}
+		
+		public virtual void Dispose ()
+		{
 		}
 
 		public virtual string GetVaryByCustomString (HttpContext context, string custom)
@@ -875,8 +1033,9 @@ namespace System.Web {
 		void PipelineDone ()
 		{
 			try {
-				if (EndRequest != null)
-					EndRequest (this, EventArgs.Empty);
+				EventHandler handler = Events [EndRequestEvent] as EventHandler;
+				if (handler != null)
+					handler (this, EventArgs.Empty);
 			} catch (Exception e){
 				ProcessError (e);
 			}
@@ -913,15 +1072,18 @@ namespace System.Web {
 		//
 		IEnumerator Pipeline ()
 		{
+			Delegate eventHandler;
 			if (stop_processing)
 				yield return true;
 
-			if (BeginRequest != null)
-				foreach (bool stop in RunHooks (BeginRequest))
+			eventHandler = Events [BeginRequestEvent];
+			if (eventHandler != null)
+				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
 
-			if (AuthenticateRequest != null)
-				foreach (bool stop in RunHooks (AuthenticateRequest))
+			eventHandler = Events [AuthenticateRequestEvent];
+			if (eventHandler != null)
+				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
 
 			if (DefaultAuthentication != null)
@@ -929,31 +1091,37 @@ namespace System.Web {
 					yield return stop;
 
 #if NET_2_0
-			if (PostAuthenticateRequest != null)
-				foreach (bool stop in RunHooks (PostAuthenticateRequest))
+			eventHandler = Events [PostAuthenticateRequestEvent];
+			if (eventHandler != null)
+				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
 #endif
-			if (AuthorizeRequest != null)
-				foreach (bool stop in RunHooks (AuthorizeRequest))
+			eventHandler = Events [AuthorizeRequestEvent];
+			if (eventHandler != null)
+				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
 #if NET_2_0
-			if (PostAuthorizeRequest != null)
-				foreach (bool stop in RunHooks (PostAuthorizeRequest))
+			eventHandler = Events [PostAuthorizeRequestEvent];
+			if (eventHandler != null)
+				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
 #endif
 
-			if (ResolveRequestCache != null)
-				foreach (bool stop in RunHooks (ResolveRequestCache))
+			eventHandler = Events [ResolveRequestCacheEvent];
+			if (eventHandler != null)
+				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
 
 #if NET_2_0
-			if (PostResolveRequestCache != null)
-				foreach (bool stop in RunHooks (PostResolveRequestCache))
+			eventHandler = Events [PostResolveRequestCacheEvent];
+			if (eventHandler != null)
+				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
 
 			// As per http://msdn2.microsoft.com/en-us/library/bb470252(VS.90).aspx
-			if (MapRequestHandler != null)
-				foreach (bool stop in RunHooks (MapRequestHandler))
+			eventHandler = Events [MapRequestHandlerEvent];
+			if (eventHandler != null)
+				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
 #endif
 			
@@ -986,19 +1154,22 @@ namespace System.Web {
 				yield return true;
 
 #if NET_2_0
-			if (PostMapRequestHandler != null)
-				foreach (bool stop in RunHooks (PostMapRequestHandler))
+			eventHandler = Events [PostMapRequestHandlerEvent];
+			if (eventHandler != null)
+				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
 #endif
-			
-			if (AcquireRequestState != null){
-				foreach (bool stop in RunHooks (AcquireRequestState))
+
+			eventHandler = Events [AcquireRequestStateEvent];
+			if (eventHandler != null){
+				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
 			}
 			
 #if NET_2_0
-			if (PostAcquireRequestState != null){
-				foreach (bool stop in RunHooks (PostAcquireRequestState))
+			eventHandler = Events [PostAcquireRequestStateEvent];
+			if (eventHandler != null){
+				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
 			}
 #endif
@@ -1008,8 +1179,9 @@ namespace System.Web {
 			// ReleaseRequestState, so the code below jumps to
 			// `release:' to guarantee it rather than yielding.
 			//
-			if (PreRequestHandlerExecute != null)
-				foreach (bool stop in RunHooks (PreRequestHandlerExecute))
+			eventHandler = Events [PreRequestHandlerExecuteEvent];
+			if (eventHandler != null)
+				foreach (bool stop in RunHooks (eventHandler))
 					if (stop)
 						goto release;
 			
@@ -1065,15 +1237,17 @@ namespace System.Web {
 			
 			// These are executed after the application has returned
 			
-			if (PostRequestHandlerExecute != null)
-				foreach (bool stop in RunHooks (PostRequestHandlerExecute))
+			eventHandler = Events [PostRequestHandlerExecuteEvent];
+			if (eventHandler != null)
+				foreach (bool stop in RunHooks (eventHandler))
 					if (stop)
 						goto release;
 			
 		release:
-			if (ReleaseRequestState != null){
+			eventHandler = Events [ReleaseRequestStateEvent];
+			if (eventHandler != null){
 #pragma warning disable 168
-				foreach (bool stop in RunHooks (ReleaseRequestState)){
+				foreach (bool stop in RunHooks (eventHandler)) {
 					//
 					// Ignore the stop signal while release the state
 					//
@@ -1086,29 +1260,34 @@ namespace System.Web {
 				yield return true;
 
 #if NET_2_0
-			if (PostReleaseRequestState != null)
-				foreach (bool stop in RunHooks (PostReleaseRequestState))
+			eventHandler = Events [PostReleaseRequestStateEvent];
+			if (eventHandler != null)
+				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
 #endif
 
 			if (context.Error == null)
 				context.Response.DoFilter (true);
 
-			if (UpdateRequestCache != null)
-				foreach (bool stop in RunHooks (UpdateRequestCache))
+			eventHandler = Events [UpdateRequestCacheEvent];
+			if (eventHandler != null)
+				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
 
 #if NET_2_0
-			if (PostUpdateRequestCache != null)
-				foreach (bool stop in RunHooks (PostUpdateRequestCache))
+			eventHandler = Events [PostUpdateRequestCacheEvent];
+			if (eventHandler != null)
+				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
 
-			if (LogRequest != null)
-				foreach (bool stop in RunHooks (LogRequest))
+			eventHandler = Events [LogRequestEvent];
+			if (eventHandler != null)
+				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
 
-			if (PostLogRequest != null)
-				foreach (bool stop in RunHooks (PostLogRequest))
+			eventHandler = Events [PostLogRequestEvent];
+			if (eventHandler != null)
+				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
 #endif
 			PipelineDone ();

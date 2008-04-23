@@ -1,5 +1,13 @@
 2008-04-23  Marek Habersack  <mhabersack@novell.com>
 
+	* HttpApplication.cs: events registered from Application_Start are
+	silently ignored - any event registered after the one-time
+	application initialization is completed, is ignored. Fixes bug
+	#381971
+
+	* HttpApplicationFactory.cs: call app.DisposeInternal instead of
+	app.Dispose.
+
 	* HttpContext.cs: Fix bug #371581 for 1.1 as well.
 
 2008-04-19  Marek Habersack  <mhabersack@novell.com>

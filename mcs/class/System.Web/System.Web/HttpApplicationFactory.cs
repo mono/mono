@@ -191,7 +191,7 @@ namespace System.Web {
 
 			HttpApplication app = (HttpApplication) Activator.CreateInstance (app_type, true);
 			FireEvent ("Application_End", app, new object [] {new object (), EventArgs.Empty});
-			app.Dispose ();
+			app.DisposeInternal ();
 			app_type = null;
 		}
 
