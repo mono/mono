@@ -570,6 +570,18 @@ class Tester
 //		Expression<Func<object>> e7 = () => "Alleluia";
 //		AssertNodeType (e7, ExpressionType.Constant);
 //		Assert ("Alleluia", e7.Compile ().Invoke ());		
+
+		Expression<Func<Type>> e8 = () => typeof (int);
+		AssertNodeType (e8, ExpressionType.Constant);
+		Assert (typeof (int), e8.Compile ().Invoke ());
+
+		Expression<Func<Type>> e9 = () => typeof (void);
+		AssertNodeType (e9, ExpressionType.Constant);
+		Assert (typeof (void), e9.Compile ().Invoke ());
+
+		Expression<Func<Type>> e10 = () => typeof (Func<,>);
+		AssertNodeType (e10, ExpressionType.Constant);
+		Assert (typeof (Func<,>), e10.Compile ().Invoke ());
 	}
 
 	void ConvertTest ()
@@ -1154,6 +1166,13 @@ class Tester
 		Assert (new char [] { 'a' }, e3.Compile ().Invoke () [0]);
 	}
 	
+	void NewArrayBoundsTest ()
+	{
+		Expression<Func<int [,]>> e = () => new int [2,3];
+		AssertNodeType (e, ExpressionType.NewArrayBounds);
+		Assert (new int [2,3].Length, e.Compile ().Invoke ().Length);
+	}	
+	
 	void NewTest ()
 	{
 		Expression<Func<MyType>> e = () => new MyType (2);
@@ -1411,6 +1430,52 @@ class Tester
 			Assert (double.PositiveInfinity, e4.Compile ().Invoke (double.MinValue, double.NegativeInfinity));
 		}
 	}
+	
+	void TypeAsTest<T> () where T : class
+	{
+		Expression<Func<object, Tester>> e = (object a) => a as Tester;
+		AssertNodeType (e, ExpressionType.TypeAs);
+		Assert (this, e.Compile ().Invoke (this));
+
+		Expression<Func<object, int?>> e2 = (object a) => a as int?;
+		AssertNodeType (e2, ExpressionType.TypeAs);
+		Assert (null, e2.Compile ().Invoke (null));
+		Assert (null, e2.Compile ().Invoke (this));
+		Assert (44, e2.Compile ().Invoke (44));
+
+		Expression<Func<object, object>> e3 = (object a) => null as object;
+		AssertNodeType (e3, ExpressionType.TypeAs);
+		Assert (null, e3.Compile ().Invoke (null));
+// TODO: Does not work because T resolves to CompilerGenerated<T> which does not exist
+//		Expression<Func<object, T>> e4 = (object a) => a as T;
+//		AssertNodeType (e4, ExpressionType.TypeAs);
+//		Assert ("a", e4.Compile ().Invoke ("a") as string);
+	}
+	
+	void TypeIsTest<T> () where T : class
+	{
+		Expression<Func<object, bool>> e = (object a) => a is Tester;
+		AssertNodeType (e, ExpressionType.TypeIs);
+		Assert (true, e.Compile ().Invoke (this));
+		Assert (false, e.Compile ().Invoke (1));
+
+		Expression<Func<object, bool>> e2 = (object a) => a is int?;
+		AssertNodeType (e2, ExpressionType.TypeIs);
+		Assert (false, e2.Compile ().Invoke (null));
+		Assert (true, e2.Compile ().Invoke (1));
+
+		Expression<Func<object, bool>> e3 = (object a) => null is object;
+		AssertNodeType (e3, ExpressionType.TypeIs);
+		Assert (false, e3.Compile ().Invoke (null));
+// TODO: Does not work because T resolves to CompilerGenerated<T> which does not exist
+//		Expression<Func<T, bool>> e4 = (T a) => a is T;
+//		AssertNodeType (e4, ExpressionType.TypeIs);
+//		Assert (false, e4.Compile ().Invoke (default (T)));
+
+		Expression<Func<bool>> e5 = () => 1 is int;
+		AssertNodeType (e5, ExpressionType.TypeIs);
+		Assert (true, e5.Compile ().Invoke ());
+	}	
 
 	//
 	// Test helpers
@@ -1470,7 +1535,7 @@ class Tester
 		e.NegateTest ();
 		e.NegateTestChecked ();
 		e.NewTest ();
-				
+		e.NewArrayBoundsTest ();				
 		e.NewArrayInitTest ();
 		e.NotTest ();
 		e.NotNullableTest ();
@@ -1483,6 +1548,8 @@ class Tester
 		e.RightShiftTest ();
 		e.SubtractTest ();
 		e.SubtractCheckedTest ();
+		e.TypeAsTest<string>();
+		e.TypeIsTest<string> ();
 
 		return 0;
 	}
