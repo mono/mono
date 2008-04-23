@@ -1061,7 +1061,7 @@ namespace System.Linq.Expressions {
 			return false;
 		}
 
-		static bool CheckReferenceConversion (Type type, Type target)
+		protected static bool CheckReferenceConversion (Type type, Type target)
 		{
 			if (type == target)
 				return true;
