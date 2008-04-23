@@ -32,28 +32,40 @@ using System;
 using System.Reflection;
 using System.Resources;
 using System.Security;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about the System.Messaging assembly
 
-[assembly: AssemblyVersion (Consts.FxVersion)]
-[assembly: SatelliteContractVersion (Consts.FxVersion)]
-
 [assembly: AssemblyTitle ("System.Messaging.dll")]
 [assembly: AssemblyDescription ("System.Messaging.dll")]
-[assembly: AssemblyConfiguration ("Development version")]
-[assembly: AssemblyCompany ("MONO development team")]
-[assembly: AssemblyProduct ("MONO CLI")]
-[assembly: AssemblyCopyright ("(c) 2003 Various Authors")]
-[assembly: AssemblyTrademark ("")]
-
-[assembly: CLSCompliant (true)]
 [assembly: AssemblyDefaultAlias ("System.Messaging.dll")]
-[assembly: AssemblyInformationalVersion ("0.0.0.1")]
+
+[assembly: AssemblyCompany (Consts.MonoCompany)]
+[assembly: AssemblyProduct (Consts.MonoProduct)]
+[assembly: AssemblyCopyright (Consts.MonoCopyright)]
+[assembly: AssemblyVersion (Consts.FxVersion)]
+[assembly: SatelliteContractVersion (Consts.FxVersion)]
+[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
+
 [assembly: NeutralResourcesLanguage ("en-US")]
 
 [assembly: ComVisible (false)]
 
+[assembly: CLSCompliant (true)]
 [assembly: AssemblyDelaySign (true)]
 [assembly: AssemblyKeyFile("../msfinal.pub")]
+
+#if NET_2_0
+	[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+	[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
+	[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+	[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
+#elif NET_1_1
+	[assembly: AssemblyTrademark ("")]
+	[assembly: AssemblyConfiguration ("")]
+#elif NET_1_0
+	[assembly: AssemblyTrademark ("")]
+	[assembly: AssemblyConfiguration ("")]
+#endif
