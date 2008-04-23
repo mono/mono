@@ -527,6 +527,7 @@
     <Compile Include="System.Windows.Forms\Hwnd.cs" />
     <Compile Include="System.Windows.Forms\IButtonControl.cs" />
     <Compile Include="System.Windows.Forms\IBindableComponent.cs" />
+    <Compile Include="System.Windows.Forms\IBounds.cs" />
     <Compile Include="System.Windows.Forms\ICommandExecutor.cs" />
     <Compile Include="System.Windows.Forms\IComponentEditorPageSite.cs" />
     <Compile Include="System.Windows.Forms\IContainerControl.cs" />
@@ -572,6 +573,7 @@
     <Compile Include="System.Windows.Forms\ItemCheckedEventHandler.cs" />
     <Compile Include="System.Windows.Forms\ItemDragEventArgs.cs" />
     <Compile Include="System.Windows.Forms\ItemDragEventHandler.cs" />
+    <Compile Include="System.Windows.Forms\IToolStripData.cs" />
     <Compile Include="System.Windows.Forms\KeyEventArgs.cs" />
     <Compile Include="System.Windows.Forms\KeyEventHandler.cs" />
     <Compile Include="System.Windows.Forms\KeyPressEventArgs.cs" />
@@ -1234,6 +1236,26 @@
     </EmbeddedResource>
     <EmbeddedResource Include="resources\image-x-generic.png">
       <LogicalName>image-x-generic.png</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\propertygrid-alphabetical.png">
+      <LogicalName>propertygrid-alphabetical.png</LogicalName>
+      <CustomToolNameSpace>System.Windows.Forms.propertygrid-alphabetical.png</CustomToolNameSpace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\propertygrid-categorized.png">
+      <LogicalName>propertygrid-categorized.png</LogicalName>
+      <CustomToolNameSpace>System.Windows.Forms.propertygrid-categorized.png</CustomToolNameSpace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\propertygrid-propertypages.png">
+      <LogicalName>propertygrid-propertypages.png</LogicalName>
+      <CustomToolNameSpace>System.Windows.Forms.propertygrid-propertypages.png</CustomToolNameSpace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\EventsTab.bmp">
+      <LogicalName>EventsTab.bmp</LogicalName>
+      <CustomToolNameSpace>System.Windows.Forms.Design.EventsTab.bmp</CustomToolNameSpace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\PropertiesTab.bmp">
+      <LogicalName>PropertiesTab.bmp</LogicalName>
+      <CustomToolNameSpace>System.Windows.Forms.PropertyGridInternal.PropertiesTab.bmp</CustomToolNameSpace>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
