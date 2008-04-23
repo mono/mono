@@ -1,3 +1,9 @@
+2008-04-23 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	class-internals.h (struct MonoMethod): Added a verification_success
+	field to cache verifier executions. Reduced MonoMethod:slot size by
+	one bit.
+
 2008-04-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* sgen-gc.c (OBJ_RUN_LEN_SIZE): Make this and other macros take a 'desc' argument
