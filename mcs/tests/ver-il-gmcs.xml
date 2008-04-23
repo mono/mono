@@ -9821,7 +9821,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>5</size>
+        <size>1</size>
       </method>
     </type>
   </test>
@@ -26760,7 +26760,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>19</size>
+        <size>17</size>
       </method>
     </type>
   </test>
@@ -27464,7 +27464,7 @@
         <size>7</size>
       </method>
       <method name="Void And()">
-        <size>79</size>
+        <size>73</size>
       </method>
       <method name="Void Or()">
         <size>137</size>
