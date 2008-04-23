@@ -205,12 +205,12 @@ namespace System.Windows.Forms
 		
 		public void AttachEventHandler (string eventName, EventHandler eventHandler)
 		{
-			throw new NotImplementedException ();
+			element.AttachEventHandler (eventName, eventHandler);
 		}
 
 		public void DetachEventHandler (string eventName, EventHandler eventHandler)
 		{
-			throw new NotImplementedException ();
+			element.DetachEventHandler (eventName, eventHandler);
 		}
 		
 		public void Focus ()

@@ -64,7 +64,7 @@ namespace System.Windows.Forms
 
 		public void AttachEventHandler (string eventName, EventHandler eventHandler)
 		{ 
-			throw new NotImplementedException ();
+			document.AttachEventHandler (eventName, eventHandler);
 		}
 
 		public HtmlElement CreateElement (string elementTag) 
@@ -75,7 +75,7 @@ namespace System.Windows.Forms
 
 		public void DetachEventHandler (string eventName, EventHandler eventHandler) 
 		{
-			throw new NotImplementedException ();
+			document.DetachEventHandler (eventName, eventHandler);
 		}
 
 		public override bool Equals (object obj) {
