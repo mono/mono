@@ -1,3 +1,10 @@
+2008-04-23  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini.c (mini_method_verify): Only verify non-inflated methods, check
+	against the root definition, peeling out method and type instantiations.
+	Cache verify success results, code that fails verification is still
+	checked multiple times.
+
 2008-04-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_method_to_ir): Avoid inserting write barriers for stores of null.
