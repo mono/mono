@@ -3779,6 +3779,7 @@ namespace Mono.CSharp {
 		}
 	}
 
+	// Base class for statements that are implemented in terms of try...finally
 	public abstract class ExceptionStatement : ResumableStatement
 	{
 		bool code_follows;

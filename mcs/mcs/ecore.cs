@@ -585,12 +585,19 @@ namespace Mono.CSharp {
 		/// </remarks>
 		public abstract void Emit (EmitContext ec);
 
+		// Emit code to branch to @target if this expression is equivalent to @on_true.
+		// The default implementation is to emit the value, and then emit a brtrue or brfalse.
+		// Subclasses can provide more efficient implementations, but those MUST be equivalent,
+		// including the use of conditional branches.  Note also that a branch MUST be emitted
 		public virtual void EmitBranchable (EmitContext ec, Label target, bool on_true)
 		{
 			Emit (ec);
 			ec.ig.Emit (on_true ? OpCodes.Brtrue : OpCodes.Brfalse, target);
 		}
 
+		// Emit this expression for its side effects, not for its value.
+		// The default implementation is to emit the value, and then throw it away.
+		// Subclasses can provide more efficient implementations, but those MUST be equivalent
 		public virtual void EmitSideEffect (EmitContext ec)
 		{
 			Emit (ec);
