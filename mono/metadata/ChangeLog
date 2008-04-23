@@ -1,3 +1,17 @@
+2008-04-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* sgen-gc.c (OBJ_RUN_LEN_SIZE): Make this and other macros take a 'desc' argument
+	instead of a 'vt' argument to save an indirection and to allow these to be used
+	for valuetypes.
+	(scan_vtype): New helper function to scan an area using a gc descriptor.
+	(mono_gc_wbarrier_value_copy): Implement this.
+	(handle_remset): Add support for REMSET_VTYPE.
+	(find_in_remset_loc): Ditto.
+	(mono_gc_base_init): Allow some debugging options to be controlled through the
+	use of the MONO_GC_DEBUG env variable.
+	(mono_gc_alloc_obj): Add support the 'collect-before-allocs' debug option.
+	(collect_nursery): Add support for the 'check-at-minor-collection' debug option.
+
 2008-04-23  Martin Baulig  <martin@ximian.com>
 
 	* domain.c (mono_domain_create): Move the call to
