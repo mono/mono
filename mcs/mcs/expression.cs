@@ -277,8 +277,8 @@ namespace Mono.CSharp {
 					if (expr_type != TypeManager.bool_type)
 						return null;
 					
-					BoolConstant b = (BoolConstant) e;
-					return new BoolConstant (!(b.Value), b.Location);
+					bool b = (bool)e.GetValue ();
+					return new BoolConstant (!b, e.Location);
 				
 				case Operator.OnesComplement:
 					// Unary numeric promotions
@@ -1178,6 +1178,14 @@ namespace Mono.CSharp {
 			: base (expr, probe_type, l)
 		{
 		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			ArrayList args = new ArrayList (2);
+			args.Add (new Argument (expr.CreateExpressionTree (ec)));
+			args.Add (new Argument (new TypeOf (probe_type_expr, loc)));
+			return CreateExpressionFactoryCall ("TypeIs", args);
+		}
 		
 		public override void Emit (EmitContext ec)
 		{
@@ -1197,12 +1205,7 @@ namespace Mono.CSharp {
 			ig.Emit (OpCodes.Isinst, probe_type_expr.Type);
 			ig.Emit (on_true ? OpCodes.Brtrue : OpCodes.Brfalse, target);
 		}
-
-		public override void EmitSideEffect (EmitContext ec)
-		{
-			expr.EmitSideEffect (ec);
-		}
-
+		
 		Expression CreateConstantResult (bool result)
 		{
 			if (result)
@@ -1212,7 +1215,7 @@ namespace Mono.CSharp {
 				Report.Warning (184, 1, loc, "The given expression is never of the provided (`{0}') type",
 					TypeManager.CSharpName (probe_type_expr.Type));
 
-			return new BoolConstant (result, loc);
+			return ReducedExpression.Create (new BoolConstant (result, loc), this);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -1319,14 +1322,22 @@ namespace Mono.CSharp {
 	///   Implementation of the `as' operator.
 	/// </summary>
 	public class As : Probe {
+		bool do_isinst;
+		Expression resolved_type;
+		
 		public As (Expression expr, Expression probe_type, Location l)
 			: base (expr, probe_type, l)
 		{
 		}
 
-		bool do_isinst = false;
-		Expression resolved_type;
-		
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			ArrayList args = new ArrayList (2);
+			args.Add (new Argument (expr.CreateExpressionTree (ec)));
+			args.Add (new Argument (new TypeOf (probe_type_expr, loc)));
+			return CreateExpressionFactoryCall ("TypeAs", args);
+		}
+
 		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
@@ -5675,12 +5686,23 @@ namespace Mono.CSharp {
 
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
+			ArrayList args;
+
 			if (dimensions != 1) {
-				Report.Error (838, loc, "An expression tree cannot contain a multidimensional array initializer");
-				return null;
+				if (initializers != null) {
+					Report.Error (838, loc, "An expression tree cannot contain a multidimensional array initializer");
+					return null;
+				}
+
+				args = new ArrayList (arguments.Count + 1);
+				args.Add (new Argument (new TypeOf (new TypeExpression (array_element_type, loc), loc)));
+				foreach (Argument a in arguments)
+					args.Add (new Argument (a.Expr.CreateExpressionTree (ec)));
+
+				return CreateExpressionFactoryCall ("NewArrayBounds", args);
 			}
 
-			ArrayList args = new ArrayList (array_data == null ? 1 : array_data.Count + 1);
+			args = new ArrayList (array_data == null ? 1 : array_data.Count + 1);
 			args.Add (new Argument (new TypeOf (new TypeExpression (array_element_type, loc), loc)));
 			if (array_data != null) {
 				foreach (Expression e in array_data)
@@ -6649,6 +6671,9 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
+			if (eclass != ExprClass.Invalid)
+				return this;
+
 			TypeExpr texpr = QueriedType.ResolveAsTypeTerminal (ec, false);
 			if (texpr == null)
 				return null;
