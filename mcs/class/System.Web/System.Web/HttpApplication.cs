@@ -176,6 +176,10 @@ namespace System.Web {
 				if (modcoll != null)
 					return;
 
+				if (full_init)
+					events = null; // discard all the event handlers registered
+						       // so far (e.g. in Application_Start)
+				
 #if NET_2_0
 				HttpModulesSection modules;
 				modules = (HttpModulesSection) WebConfigurationManager.GetSection ("system.web/httpModules", HttpRuntime.AppDomainAppVirtualPath);
@@ -188,7 +192,6 @@ namespace System.Web {
 				modcoll = modules.LoadModules (this);
 
 				if (full_init) {
-					events = null;
 					HttpApplicationFactory.AttachEvents (this);
 					Init ();
 					fullInitComplete = true;
