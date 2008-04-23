@@ -1,5 +1,9 @@
 2008-04-23  George Giolfan  <georgegiolfan@yahoo.com>
 
+	* SWF2k5.sln: Fixed configuration to support the 1.1 profile.
+
+2008-04-23  George Giolfan  <georgegiolfan@yahoo.com>
+
 	* SWF2k5.csproj: Updated.
 
 2008-04-22  Jonathan Pobst  <monkey@jpobst.com>
