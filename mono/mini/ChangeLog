@@ -1,3 +1,7 @@
+2008-04-23  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Makefile.am (version.h): Add support for git-svn.
+
 2008-04-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-exceptions.c (mono_handle_native_sigsegv): Rework the gdb calling code
