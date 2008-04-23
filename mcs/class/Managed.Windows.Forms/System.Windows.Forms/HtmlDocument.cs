@@ -84,7 +84,7 @@ namespace System.Windows.Forms
 
 		public void ExecCommand (string command, bool showUI, Object value) 
 		{
-			throw new NotImplementedException ();
+			throw new NotImplementedException ("Not Supported");
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -119,12 +119,16 @@ namespace System.Windows.Forms
 
 		public Object InvokeScript (string scriptName)
 		{ 
-			throw new NotImplementedException (); 
+			return document.InvokeScript ("eval ('" + scriptName + "()');");
 		}
 
-		public Object InvokeScript (string scriptName, Object[] args) 
+		public Object InvokeScript (string scriptName, object[] args) 
 		{
-			throw new NotImplementedException ();
+			string[] strArgs = new string[args.Length];
+			for (int i = 0; i < args.Length; i++) {
+				strArgs[i] = args.ToString();
+			}
+			return document.InvokeScript ("eval ('" + scriptName + "(" + String.Join (",", strArgs) + ")');");
 		}
 
 		public static bool operator ==(HtmlDocument left, HtmlDocument right) {

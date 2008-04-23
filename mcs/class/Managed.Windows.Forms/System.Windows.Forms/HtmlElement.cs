@@ -260,12 +260,16 @@ namespace System.Windows.Forms
 		
 		public object InvokeMember (string method)
 		{
-			throw new NotImplementedException ();
+			return this.element.Owner.InvokeScript ("eval ('" + method + "()');");
 		}
 		
-		public object InvokeMember (string method, object [] parameters)
+		public object InvokeMember (string method, object [] args)
 		{
-			throw new NotImplementedException ();
+			string[] strArgs = new string[args.Length];
+			for (int i = 0; i < args.Length; i++) {
+				strArgs[i] = args.ToString();
+			}
+			return this.element.Owner.InvokeScript  ("eval ('" + method + "(" + String.Join (",", strArgs) + ")');");
 		}
 		
 		public void RaiseEvent (string name) 
