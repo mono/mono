@@ -1,3 +1,7 @@
+2008-04-23  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* AssemblyInfo.cs: Added missing attributes
+
 2006-12-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Mono.ico: Add mono icon to be included in SystemIcons.

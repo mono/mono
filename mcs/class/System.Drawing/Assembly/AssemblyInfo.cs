@@ -31,45 +31,46 @@ using System;
 using System.Reflection;
 using System.Resources;
 using System.Security;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-// General Information about the system assembly
+// General Information about the System.Drawing assembly
 
+[assembly: AssemblyTitle ("System.Drawing.dll")]
+[assembly: AssemblyDescription ("System.Drawing.dll")]
+[assembly: AssemblyDefaultAlias ("System.Drawing.dll")]
+
+[assembly: AssemblyCompany (Consts.MonoCompany)]
+[assembly: AssemblyProduct (Consts.MonoProduct)]
+[assembly: AssemblyCopyright (Consts.MonoCopyright)]
 [assembly: AssemblyVersion (Consts.FxVersion)]
 [assembly: SatelliteContractVersion (Consts.FxVersion)]
+[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
 
-#if NET_2_0
-[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
-[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
-[assembly: Dependency ("System,", LoadHint.Always)]
-#else
-[assembly: TypeLibVersion (1, 10)]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyConfiguration("Development version")]
-#endif
+[assembly: NeutralResourcesLanguage ("en-US")]
 
-[assembly: AssemblyTitle("System.Drawing.dll")]
-[assembly: AssemblyDescription("System.Drawing.dll")]
-[assembly: AssemblyCompany("MONO development team")]
-[assembly: AssemblyProduct("MONO CLI")]
-[assembly: AssemblyCopyright("(c) 2003 Various Authors")]
-
-#if !TARGET_JVM
-[assembly: CLSCompliant(true)]
-#endif
-[assembly: AssemblyDefaultAlias("System.Drawing.dll")]
-[assembly: AssemblyInformationalVersion("0.0.0.1")]
-[assembly: NeutralResourcesLanguage("en-US")]
-
+[assembly: ComVisible (false)]
 [assembly: ComCompatibleVersion (1, 0, 3300, 0)]
-[assembly: ComVisible(false)]
 [assembly: AllowPartiallyTrustedCallers]
 
-#if TARGET_JVM
-[assembly: AssemblyDelaySign(false)]
-#else
-[assembly: AssemblyDelaySign(true)]
-[assembly: AssemblyKeyFile("../msfinal.pub")]
+#if !TARGET_JVM
+	[assembly: CLSCompliant (true)]
+	[assembly: AssemblyDelaySign (true)]
+	[assembly: AssemblyKeyFile("../msfinal.pub")]
 #endif
 
+#if NET_2_0
+	[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+	[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
+	[assembly: Dependency ("System,", LoadHint.Always)]
+	[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+#elif NET_1_1
+	[assembly: AssemblyTrademark ("")]
+	[assembly: AssemblyConfiguration ("")]
+	[assembly: TypeLibVersion (1, 10)]
+#elif NET_1_0
+	[assembly: AssemblyTrademark ("")]
+	[assembly: AssemblyConfiguration ("")]
+	[assembly: TypeLibVersion (1, 10)]
+#endif
