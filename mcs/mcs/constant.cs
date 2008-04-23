@@ -1813,8 +1813,7 @@ namespace Mono.CSharp {
 		public override void EmitSideEffect (EmitContext ec)
 		{
 			side_effect.EmitSideEffect (ec);
-			if (value is SideEffectConstant)
-				value.EmitSideEffect (ec);
+			value.EmitSideEffect (ec);
 		}
 
 		public override bool IsDefaultValue {

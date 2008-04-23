@@ -1,5 +1,7 @@
 2008-04-24  Raja R Harinath  <harinath@hurrynot.org>
 
+	* constant.cs (SideEffectConstant.EmitSideEffect): Simplify slightly.
+
 	* ecore.cs (Expression.EmitBranchable): Document some non-obvious
 	assumptions.
 	(Expression.EmitSideEffect): Document.
