@@ -37,33 +37,33 @@ using System.Diagnostics;
 
 // General Information about the System.Drawing.Design assembly
 
+[assembly: AssemblyTitle ("System.Drawing.Design.dll")]
+[assembly: AssemblyDescription ("System.Drawing.Design.dll")]
+[assembly: AssemblyDefaultAlias ("System.Drawing.Design.dll")]
+
+[assembly: AssemblyCompany (Consts.MonoCompany)]
+[assembly: AssemblyProduct (Consts.MonoProduct)]
+[assembly: AssemblyCopyright (Consts.MonoCopyright)]
 [assembly: AssemblyVersion (Consts.FxVersion)]
 [assembly: SatelliteContractVersion (Consts.FxVersion)]
-[assembly: AssemblyTitle("System.Drawing.Design.dll")]
-[assembly: AssemblyDescription("System.Drawing.Design.dll")]
-[assembly: AssemblyCompany("MONO development team")]
-[assembly: AssemblyProduct("MONO CLI")]
-[assembly: AssemblyCopyright("(c) 2003 Various Authors")]
+[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
 
-#if NET_1_0
-	[assembly: AssemblyConfiguration("Development version")]
-	[assembly: AssemblyTrademark("")]
-#elif ONLY_1_1
-	[assembly: AssemblyConfiguration("Development version")]
-	[assembly: AssemblyTrademark("")]
-#elif NET_2_0
-	[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-	[assembly: AssemblyFileVersion (Consts.VsFileVersion)]
-	[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
-#endif
+[assembly: NeutralResourcesLanguage ("en-US")]
 
-[assembly: CLSCompliant(true)]
-[assembly: AssemblyDefaultAlias("System.Drawing.Design.dll")]
-[assembly: AssemblyInformationalVersion("0.0.0.1")]
-[assembly: NeutralResourcesLanguage("en-US")]
+[assembly: ComVisible (false)]
 
-[assembly: ComVisible(false)]
-
-[assembly: AssemblyDelaySign(true)]
+[assembly: CLSCompliant (true)]
+[assembly: AssemblyDelaySign (true)]
 [assembly: AssemblyKeyFile("../msfinal.pub")]
 
+#if NET_2_0
+	[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+	[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+	[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
+#elif NET_1_1
+	[assembly: AssemblyTrademark ("")]
+	[assembly: AssemblyConfiguration ("")]
+#elif NET_1_0
+	[assembly: AssemblyTrademark ("")]
+	[assembly: AssemblyConfiguration ("")]
+#endif

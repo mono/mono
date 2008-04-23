@@ -1,3 +1,7 @@
+2008-04-23  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* AssemblyInfo.cs: New format, fix attribute
+
 2008-04-09  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* AssemblyInfo.cs: Added missing 2.0 attributes
