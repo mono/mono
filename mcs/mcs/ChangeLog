@@ -1,3 +1,7 @@
+2008-04-23  Marek Safar  <marek.safar@gmail.com>
+
+	* ecore.cs: Removed unused expression.
+
 2008-04-22  Marek Safar  <marek.safar@gmail.com>
 
 	* expression.cs: Implemented NegateChecked and New expressions.
