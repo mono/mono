@@ -1,3 +1,7 @@
+2008-04-23  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* SWF2k5.sln: Fixed file to be in line with current build
+
 2008-04-23  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* SWF2k5.sln: Fixed configuration to support the 1.1 profile.

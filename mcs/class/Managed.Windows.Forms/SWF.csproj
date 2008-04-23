@@ -229,6 +229,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms.PropertyGridInternal\PropertiesTab.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms.RTF\Charcode.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1994,6 +1999,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\IBounds.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\ICommandExecutor.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -2215,6 +2225,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\ItemDragEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\IToolStripData.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -2830,11 +2845,6 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\ProgressBarStyle.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Windows.Forms\PropertiesTab.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -4867,6 +4877,31 @@
                 />
                 <File
                     RelPath = "resources\image-x-generic.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\propertygrid-alphabetical.png"
+                    CustomToolNameSpace = "System.Windows.Forms.propertygrid-alphabetical.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\propertygrid-categorized.png"
+                    CustomToolNameSpace = "System.Windows.Forms.propertygrid-categorized.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\propertygrid-propertypages.png"
+                    CustomToolNameSpace = "System.Windows.Forms.propertygrid-propertypages.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\EventsTab.bmp"
+                    CustomToolNameSpace = "System.Windows.Forms.Design.EventsTab.bmp"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\PropertiesTab.bmp"
+                    CustomToolNameSpace = "System.Windows.Forms.PropertyGridInternal.PropertiesTab.bmp"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
