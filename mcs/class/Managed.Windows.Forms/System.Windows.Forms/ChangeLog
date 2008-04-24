@@ -1,5 +1,14 @@
 2008-04-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* X11Dnd.cs: When canceling the operation, automatically restore the
+	default cursor - normally the default cursor is restored when the
+	mouse buttons are released, but we should be able to restore it even
+	if the buttons are still pressed (for example, when pressing ESC to
+	cancel).
+	Fixes #381894.
+
+2008-04-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* X11Dnd.cs: When starting a new drad and drop operation, set control
 	field to null, just as the other fields, to avoid calling any
 	operation on a previous control. Also, when calling DndLeave on a

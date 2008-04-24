@@ -672,8 +672,23 @@ namespace System.Windows.Forms {
 
 			SendLeave (drag_data.LastTopLevel, toplevel);
 
+			RestoreDefaultCursor ();
 			tracking = false;
 			return false;
+		}
+
+		private void RestoreDefaultCursor ()
+		{
+			// Releasing the mouse buttons should automatically restore the default cursor,
+			// but canceling the operation using QueryContinue should restore it even if the
+			// mouse buttons are not released yet.
+			XplatUIX11.XChangeActivePointerGrab (display,
+					EventMask.ButtonMotionMask |
+					EventMask.PointerMotionMask |
+					EventMask.ButtonPressMask |
+					EventMask.ButtonReleaseMask,
+					Cursors.Default.Handle, IntPtr.Zero);
+
 		}
 
 		private void GiveFeedback (IntPtr action)
