@@ -1050,7 +1050,7 @@ namespace System.Linq.Expressions {
 			return t.IsPrimitive;
 		}
 
-		static bool CheckPrimitiveConversion (Type type, Type target)
+		protected static bool IsPrimitiveConversion (Type type, Type target)
 		{
 			if (type == target)
 				return true;
@@ -1061,7 +1061,7 @@ namespace System.Linq.Expressions {
 			return false;
 		}
 
-		protected static bool CheckReferenceConversion (Type type, Type target)
+		protected static bool IsReferenceConversion (Type type, Type target)
 		{
 			if (type == target)
 				return true;
@@ -1105,7 +1105,7 @@ namespace System.Linq.Expressions {
 
 			if (method != null)
 				CheckUnaryMethod (method, et);
-			else if (!CheckPrimitiveConversion (et, type) && !CheckReferenceConversion (et, type))
+			else if (!IsPrimitiveConversion (et, type) && !IsReferenceConversion (et, type))
 				method = GetUserConversionMethod (et, type);
 
 			return new UnaryExpression (ExpressionType.Convert,
@@ -1153,9 +1153,9 @@ namespace System.Linq.Expressions {
 
 			if (method != null)
 				CheckUnaryMethod (method, et);
-			else if (CheckReferenceConversion (et, type))
+			else if (IsReferenceConversion (et, type))
 				return Convert (expression, type, method);
-			else if (!CheckPrimitiveConversion (et, type))
+			else if (!IsPrimitiveConversion (et, type))
 				method = GetUserConversionMethod (et, type);
 
 			return new UnaryExpression (ExpressionType.ConvertChecked,

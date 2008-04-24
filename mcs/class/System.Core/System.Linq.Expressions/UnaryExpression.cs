@@ -100,25 +100,27 @@ namespace System.Linq.Expressions {
 			case ExpressionType.NegateChecked:
 				ig.Emit (OpCodes.Neg);
 				break;
+			case ExpressionType.Convert:
+			case ExpressionType.ConvertChecked:
+				EmitConvert (ec);
+				break;
 			}
 		}
 
 		void EmitConvert (EmitContext ec)
 		{
-			operand.Emit (ec);
+			var from = operand.Type;
+			var target = Type;
 
-			if (Type == operand.Type)
+			if (from == target)
 				return;
 
-			if (IsCast ())
+			if (IsReferenceConversion (from, target))
 				EmitCast (ec);
+			else if (IsPrimitiveConversion (from, target))
+				EmitPrimitiveConversion (ec);
 			else
 				throw new NotImplementedException ();
-		}
-
-		bool IsCast ()
-		{
-			return CheckReferenceConversion (operand.Type, Type);
 		}
 
 		bool IsBoxing ()
@@ -143,6 +145,11 @@ namespace System.Linq.Expressions {
 				ec.ig.Emit (OpCodes.Castclass, Type);
 		}
 
+		void EmitPrimitiveConversion (EmitContext ec)
+		{
+			throw new NotImplementedException ();
+		}
+
 		internal override void Emit (EmitContext ec)
 		{
 			switch (this.NodeType) {
@@ -152,6 +159,8 @@ namespace System.Linq.Expressions {
 			case ExpressionType.TypeAs:
 				EmitTypeAs (ec);
 				return;
+			case ExpressionType.Convert:
+			case ExpressionType.ConvertChecked:
 			case ExpressionType.Not:
 			case ExpressionType.Negate:
 			case ExpressionType.NegateChecked:
@@ -161,10 +170,6 @@ namespace System.Linq.Expressions {
 					EmitUnaryOperator (ec);
 				} else
 					throw new NotImplementedException ();
-				return;
-			case ExpressionType.Convert:
-			case ExpressionType.ConvertChecked:
-				EmitConvert (ec);
 				return;
 			case ExpressionType.Quote:
 				ec.EmitReadGlobal (operand, typeof (Expression));
