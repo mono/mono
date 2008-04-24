@@ -1,5 +1,13 @@
 2008-04-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* handles.c: Initialize the handle array entries on demand to save memory.
+
+	* wapi-private.h (_WAPI_HANDLE_INITIAL_COUNT): Decrease this to 256 to save
+	memory.
+
+	* handles-private.h (_WAPI_PRIVATE_MAX_SLOTS): Increase this to 1024*16 to
+	compensate for the decrease in _WAPI_HANDLE_INITIAL_COUNT.
+	
 	* threads.c: Use #ifdef instead of #if for checking for valgrind/memcheck.h.
 
 2008-04-22  Dick Porter  <dick@ximian.com>
