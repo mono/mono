@@ -68,7 +68,6 @@ namespace MonoTests.System.Linq.Expressions {
 
 		[Test]
 		[Category ("NotDotNet")]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void NewVoid ()
 		{
