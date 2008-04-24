@@ -1,5 +1,11 @@
 2008-04-24  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ErrorProvider.cs: Make the error icons come after the control
+	they refer to.  It isn't the way the MS does it, but its better
+	than what we were doing.  See bug #368587.
+
+2008-04-24  Jonathan Pobst  <monkey@jpobst.com>
+
 	* InputLanguage.cs, InputLanguageCollection.cs: Apply patch
 	from Eric Albright that lazy loads the input language as ensures
 	everything gets properly initialized.  Fixes bug #373871.

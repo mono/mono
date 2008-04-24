@@ -81,10 +81,10 @@ namespace System.Windows.Forms {
 
 				if (ep.container != null) {
 					ep.container.Controls.Add(window);
-					ep.container.Controls.SetChildIndex(window, 0);
+					ep.container.Controls.SetChildIndex (window, control.Parent.Controls.IndexOf (control) + 1);
 				} else if (control.Parent != null) {
 					control.Parent.Controls.Add(window);
-					control.Parent.Controls.SetChildIndex(window, 0);
+					control.Parent.Controls.SetChildIndex(window, control.Parent.Controls.IndexOf (control) + 1);
 				}
 
 				window.Paint += new PaintEventHandler(window_Paint);
@@ -257,10 +257,10 @@ namespace System.Windows.Forms {
 			{
 				if (ep.container != null) {
 					ep.container.Controls.Add (window);
-					ep.container.Controls.SetChildIndex (window, 0);
+					ep.container.Controls.SetChildIndex (window, control.Parent.Controls.IndexOf (control) + 1);
 				} else {
 					control.Parent.Controls.Add (window);
-					control.Parent.Controls.SetChildIndex (window, 0);
+					control.Parent.Controls.SetChildIndex (window, control.Parent.Controls.IndexOf (control) + 1);
 				}
 			}
 
