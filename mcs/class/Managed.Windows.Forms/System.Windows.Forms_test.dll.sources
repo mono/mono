@@ -85,6 +85,7 @@ System.Windows.Forms/HScrollPropertiesTest.cs
 System.Windows.Forms/ImageKeyConverterTest.cs
 System.Windows.Forms/ImageListStreamerTest.cs
 System.Windows.Forms/ImageListTest.cs
+System.Windows.Forms/InputLanguageTest.cs
 System.Windows.Forms/KeyEventArgsTest.cs
 System.Windows.Forms/KeysConverterTest.cs
 System.Windows.Forms/LabelTest.cs

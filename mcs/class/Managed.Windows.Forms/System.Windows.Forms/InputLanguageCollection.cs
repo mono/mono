@@ -36,15 +36,11 @@ namespace System.Windows.Forms {
 		#endregion	// Local Variables
 
 		#region Private Constructor
-		internal InputLanguageCollection() {
+		internal InputLanguageCollection (InputLanguage[] data)
+		{
+			list = data;
 		}
 		#endregion	// Private Constructor
-
-		#region Internal Instance Methods
-		internal void Add(InputLanguage value) {
-			list[list.Length]=value;
-		}
-		#endregion
 
 		#region Public Instance Methods
 		public InputLanguage this [int index] {

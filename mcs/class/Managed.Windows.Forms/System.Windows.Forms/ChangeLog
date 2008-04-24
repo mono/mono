@@ -1,5 +1,11 @@
 2008-04-24  Jonathan Pobst  <monkey@jpobst.com>
 
+	* InputLanguage.cs, InputLanguageCollection.cs: Apply patch
+	from Eric Albright that lazy loads the input language as ensures
+	everything gets properly initialized.  Fixes bug #373871.
+
+2008-04-24  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStrip.cs: Don't use ToolStripControlHosts when figuring up
 	implicit mnemonics.  [Fixes bug #383000]
 
