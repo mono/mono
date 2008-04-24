@@ -129,23 +129,28 @@ namespace System.Linq.Expressions {
 
 				ig.Emit (OpCodes.Newobj, typeof (Decimal).GetConstructor (new Type [5] { ti, ti, ti, typeof(bool), typeof(byte) }));
 				return;
-                        }
+			}
 
 			case TypeCode.String:
-				ig.Emit (OpCodes.Ldstr, (string) value);
+				EmitIfNotNull (ec, c => c.ig.Emit (OpCodes.Ldstr, (string) value));
 				return;
 
 			case TypeCode.Object:
-				if (value == null) {
-					ig.Emit (OpCodes.Ldnull);
-					return;
-				}
-
-				ec.EmitReadGlobal (value);
+				EmitIfNotNull (ec, c => c.EmitReadGlobal (value));
 				return;
 			}
 
 			throw new NotImplementedException (String.Format ("No support for constants of type {0} yet", Type));
+		}
+
+		void EmitIfNotNull (EmitContext ec, Action<EmitContext> emit)
+		{
+			if (value == null) {
+				ec.ig.Emit (OpCodes.Ldnull);
+				return;
+			}
+
+			emit (ec);
 		}
 	}
 }
