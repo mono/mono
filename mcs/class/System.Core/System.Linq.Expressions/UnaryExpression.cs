@@ -105,10 +105,10 @@ namespace System.Linq.Expressions {
 
 		void EmitConvert (EmitContext ec)
 		{
+			operand.Emit (ec);
+
 			if (Type == operand.Type)
 				return;
-
-			operand.Emit (ec);
 
 			if (IsCast ())
 				EmitCast (ec);
