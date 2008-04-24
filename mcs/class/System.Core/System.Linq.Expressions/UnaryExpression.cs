@@ -166,6 +166,9 @@ namespace System.Linq.Expressions {
 			case ExpressionType.ConvertChecked:
 				EmitConvert (ec);
 				return;
+			case ExpressionType.Quote:
+				ec.EmitReadGlobal (operand, typeof (Expression));
+				return;
 			default:
 				throw new NotImplementedException (this.NodeType.ToString ());
 			}

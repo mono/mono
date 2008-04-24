@@ -173,6 +173,11 @@ namespace System.Linq.Expressions {
 
 		public void EmitReadGlobal (object global)
 		{
+			EmitReadGlobal (global, global.GetType ());
+		}
+
+		public void EmitReadGlobal (object global, Type type)
+		{
 			EmitScope ();
 
 			ig.Emit (OpCodes.Ldfld, typeof (ExecutionScope).GetField ("Globals"));
@@ -184,10 +189,10 @@ namespace System.Linq.Expressions {
 			ig.Emit (OpCodes.Ldc_I4, index);
 			ig.Emit (OpCodes.Ldelem, typeof (object));
 
-			var type = global.GetType ().MakeStrongBoxType ();
+			var strongbox = type.MakeStrongBoxType ();
 
-			ig.Emit (OpCodes.Isinst, type);
-			ig.Emit (OpCodes.Ldfld, type.GetField ("Value"));
+			ig.Emit (OpCodes.Isinst, strongbox);
+			ig.Emit (OpCodes.Ldfld, strongbox.GetField ("Value"));
 		}
 	}
 
@@ -209,14 +214,28 @@ namespace System.Linq.Expressions {
 			Visit (expression);
 		}
 
+		protected override void VisitUnary (UnaryExpression unary)
+		{
+			if (unary.NodeType != ExpressionType.Quote) {
+				base.VisitUnary (unary);
+				return;
+			}
+
+			AddGlobal (unary.Operand, typeof (Expression));
+		}
+
 		protected override void VisitConstant (ConstantExpression constant)
 		{
-			if (constant.Value == null)
+			var value = constant.Value;
+
+			if (value == null)
 				return;
 
-			var value = constant.Value;
-			var type = value.GetType ();
+			AddGlobal (value, value.GetType ());
+		}
 
+		void AddGlobal (object value, Type type)
+		{
 			if (Type.GetTypeCode (type) != TypeCode.Object)
 				return;
 

@@ -1,3 +1,8 @@
+2008-04-24  Jb Evain  <jbevain@novell.com>
+
+	* UnaryExpression.cs, EmitContext.cs: implement compilation
+	of Quote as a global load.
+
 2008-04-23  Jb Evain  <jbevain@novell.com>
 
 	* UnaryExpression.cs: start implementing EmitConvert.
