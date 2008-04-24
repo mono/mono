@@ -45,5 +45,18 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (typeof (ConstantExpression), expr.Type, "Quote#02");
 			Assert.AreEqual ("1", expr.ToString(), "Quote#03");
 		}
+
+		[Test]
+		public void CompiledQuote ()
+		{
+			var quote42 = Expression.Lambda<Func<Expression<Func<int>>>> (
+				Expression.Quote (
+					Expression.Lambda<Func<int>> (
+						42.ToConstant ()))).Compile ();
+
+			var get42 = quote42 ().Compile ();
+
+			Assert.AreEqual (42, get42 ());
+		}
 	}
 }
