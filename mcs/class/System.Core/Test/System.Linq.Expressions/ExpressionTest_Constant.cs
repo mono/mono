@@ -201,5 +201,14 @@ namespace MonoTests.System.Linq.Expressions
 		{
 			Expression.Constant (typeof (Foo), typeof (Type));
 		}
+
+		[Test]
+		public void EmitNullString ()
+		{
+			var n = Expression.Lambda<Func<string>> (
+				Expression.Constant (null, typeof (string))).Compile ();
+
+			Assert.IsNull (n ());
+		}
 	}
 }
