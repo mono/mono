@@ -1673,6 +1673,7 @@ namespace System.Linq.Expressions {
 		{
 			if (type == null)
 				throw new ArgumentNullException ("type");
+			CheckVoid (type);
 
 			var args = (null as IEnumerable<Expression>).ToReadOnlyCollection ();
 
@@ -1779,6 +1780,7 @@ namespace System.Linq.Expressions {
 				throw new ArgumentNullException ("type");
 			if (bounds == null)
 				throw new ArgumentNullException ("bounds");
+			CheckVoid (type);
 
 			var array_bounds = bounds.ToReadOnlyCollection ();
 			foreach (var expression in array_bounds)
@@ -1799,6 +1801,7 @@ namespace System.Linq.Expressions {
 				throw new ArgumentNullException ("type");
 			if (initializers == null)
 				throw new ArgumentNullException ("initializers");
+			CheckVoid (type);
 
 			var array_initializers = initializers.ToReadOnlyCollection ();
 
@@ -1832,10 +1835,17 @@ namespace System.Linq.Expressions {
 			return MakeSimpleUnary (ExpressionType.Not, expression, method);
 		}
 
+		static void CheckVoid (Type type)
+		{
+			if (type == typeof (void))
+				throw new ArgumentException ("Type can't be void");
+		}
+
 		public static ParameterExpression Parameter (Type type, string name)
 		{
 			if (type == null)
 				throw new ArgumentNullException ("type");
+			CheckVoid (type);
 
 			return new ParameterExpression (type, name);
 		}
@@ -1946,6 +1956,7 @@ namespace System.Linq.Expressions {
 				throw new ArgumentNullException ("expression");
 			if (type == null)
 				throw new ArgumentNullException ("type");
+			CheckVoid (type);
 
 			return new TypeBinaryExpression (ExpressionType.TypeIs, expression, type, typeof (bool));
 		}
