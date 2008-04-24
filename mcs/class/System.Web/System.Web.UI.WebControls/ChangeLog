@@ -1,3 +1,9 @@
+2008-04-24  Marek Habersack  <mhabersack@novell.com>
+
+	* SqlDataSource.cs: raise the DataSourceChangedEvent when setting
+	ConnectionString, ProviderName or DataSourceMode properties only
+	when the new value differs from the old one. Fixes bug #359392
+
 2008-04-16  Marek Habersack  <mhabersack@novell.com>
 
 	* ObjectDataSourceView.cs: ExecuteSelect should return an empty
