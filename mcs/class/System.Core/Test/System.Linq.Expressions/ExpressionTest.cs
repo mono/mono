@@ -236,20 +236,5 @@ namespace MonoTests.System.Linq.Expressions {
 
 			Assert.AreEqual ("gazonk42", del ());
 		}
-
-		[Test]
-		public void HoistedLocals ()
-		{
-			var left = Expression.Parameter (typeof (int), "left");
-			var right = Expression.Parameter (typeof (int), "right");
-
-			var l = Expression.Lambda<Func<int, int, int>> (
-				Expression.Invoke (
-					Expression.Quote (
-						Expression.Lambda<Func<int>> (
-							Expression.Add (left, right)))), left, right);
-
-			var lc = l.Compile ();
-		}
 	}
 }
