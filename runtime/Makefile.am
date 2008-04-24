@@ -82,7 +82,8 @@ cur_dir_cmd = pwd
 PLATFORM_PATH_SEPARATOR = :
 endif
 
-# Use --compile-all as a poor man's PEVerify to detect invalid IL
+# Compile all assemblies with the verifier turned on. Code must be valid but not verifiable.
+# TODO it would be nice to split assemblies without unsafe code to use the verifier with verifiable mode.
 # Skip net 2.1 assemblies for now because of visibility problems
 mcs-compileall: mono-wrapper etc/mono/config
 	save_MONO_PATH=$$MONO_PATH; mcs_topdir=`cd $(mcs_topdir) && $(cur_dir_cmd)`; ok=:; \
@@ -100,7 +101,7 @@ mcs-compileall: mono-wrapper etc/mono/config
 		if [ ! -f $$i ] ; then \
 			continue ; \
 		fi ;  \
-	    if ./mono-wrapper --compile-all $$i; then \
+	    if ./mono-wrapper --compile-all --security=validil --verify-all $$i; then \
 	      echo $$i verified OK; \
 	    else \
 	      echo $$i verification failed; ok=false; \
