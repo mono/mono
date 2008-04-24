@@ -1,6 +1,12 @@
+2008-04-24 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* pedump.c: Added new flag valid-only, that makes the verifier
+	behaves just like --security=validil. It won't fail type load
+	due to unverifiable restrictions.
+
 2008-04-23 Rodrigo Kumpera  <rkumpera@novell.com>
 
-	class-internals.h (struct MonoMethod): Added a verification_success
+	* class-internals.h (struct MonoMethod): Added a verification_success
 	field to cache verifier executions. Reduced MonoMethod:slot size by
 	one bit.
 
