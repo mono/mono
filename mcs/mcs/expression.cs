@@ -2066,7 +2066,9 @@ namespace Mono.CSharp {
 			return ResolveOperatorPredefined (ec, standard_operators, primitives_only);
 		}
 
-		Constant EnumLiftUp (Constant left, Constant right)
+		// at least one of 'left' or 'right' is an enumeration constant (EnumConstant or SideEffectConstant or ...)
+		// if 'left' is not an enumeration constant, create one from the type of 'right'
+		Constant EnumLiftUp (EmitContext ec, Constant left, Constant right, Location loc)
 		{
 			switch (oper) {
 			case Operator.BitwiseOr:
@@ -2078,11 +2080,11 @@ namespace Mono.CSharp {
 			case Operator.LessThanOrEqual:
 			case Operator.GreaterThan:
 			case Operator.GreaterThanOrEqual:
-				if (left is EnumConstant)
+				if (TypeManager.IsEnumType (left.Type))
 					return left;
 				
 				if (left.IsZeroInteger)
-					return new EnumConstant (left, right.Type);
+					return left.TryReduce (ec, right.Type, loc);
 				
 				break;
 				
@@ -2095,7 +2097,7 @@ namespace Mono.CSharp {
 			case Operator.Modulus:
 			case Operator.LeftShift:
 			case Operator.RightShift:
-				if (right is EnumConstant || left is EnumConstant)
+				if (TypeManager.IsEnumType (right.Type) || TypeManager.IsEnumType (left.Type))
 					break;
 				return left;
 			}
@@ -2340,11 +2342,11 @@ namespace Mono.CSharp {
 
 			// The conversion rules are ignored in enum context but why
 			if (!ec.InEnumContext && lc != null && rc != null && (TypeManager.IsEnumType (left.Type) || TypeManager.IsEnumType (right.Type))) {
-				left = lc = EnumLiftUp (lc, rc);
+				left = lc = EnumLiftUp (ec, lc, rc, loc);
 				if (lc == null)
 					return null;
 
-				right = rc = EnumLiftUp (rc, lc);
+				right = rc = EnumLiftUp (ec, rc, lc, loc);
 				if (rc == null)
 					return null;
 			}
@@ -2368,11 +2370,6 @@ namespace Mono.CSharp {
 						right = left;
 						lc = rc;
 					}
-					
-					// TODO: there must be better way how to check that the expression
-					// does not have any mutator
-					if (right is MemberExpr)
-						return lc;
 
 					// The result is a constant with side-effect
 					return new SideEffectConstant (lc, right, loc);

@@ -27997,6 +27997,31 @@
       </method>
     </type>
   </test>
+  <test name="test-635.cs">
+    <type name="ShortCircuitFold">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Boolean get_False()">
+        <size>14</size>
+      </method>
+      <method name="Boolean get_True()">
+        <size>14</size>
+      </method>
+      <method name="Void a(Boolean, Boolean)">
+        <size>19</size>
+      </method>
+      <method name="Void c(Int32)">
+        <size>67</size>
+      </method>
+      <method name="Boolean f()">
+        <size>11</size>
+      </method>
+      <method name="Void Main()">
+        <size>169</size>
+      </method>
+    </type>
+  </test>
   <test name="test-64.cs">
     <type name="Operator">
       <method name="Void .ctor()">

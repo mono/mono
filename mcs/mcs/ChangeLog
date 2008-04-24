@@ -1,5 +1,11 @@
 2008-04-24  Raja R Harinath  <harinath@hurrynot.org>
 
+	Fix test-635.cs
+	* expression.cs (Binary.DoResolve) <BitwiseAnd with zero constant>:
+	Always create SideEffectConstant.
+	(Binary.EnumLiftUp): Don't assume that the enumeration constant is
+	of type EnumConstant.
+
 	* expression.cs (Binary.EmitBranchable) <Equality with constant>:
 	Handle 'right' being SideEffectConstant of type 'bool'.
 
