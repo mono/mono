@@ -1,3 +1,8 @@
+2008-04-23  Geoff Norton  <gnorton@novell.com>
+
+	* XplatUICarbon.cs: Ensure that we have a valid hwnd before accessing
+	the whole_window object.  Fixes #377084.
+
 2008-04-23  Andreia Gaita <avidigal@novell.com> 
 
 	* HtmlElement.cs: Implement RaiseEvent (event injection into the

@@ -1966,7 +1966,7 @@ namespace System.Windows.Forms {
 				return true;
 			} else if (!Bottom) {
 				Hwnd after_hwnd = Hwnd.ObjectFromHandle (after_handle);
-				HIViewSetZOrder (hwnd.whole_window, 2, after_hwnd.whole_window);
+				HIViewSetZOrder (hwnd.whole_window, 2, (after_handle == IntPtr.Zero ? IntPtr.Zero : after_hwnd.whole_window));
 			} else {
 				HIViewSetZOrder (hwnd.whole_window, 1, IntPtr.Zero);
 				return true;
