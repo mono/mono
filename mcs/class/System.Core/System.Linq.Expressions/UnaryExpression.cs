@@ -136,7 +136,7 @@ namespace System.Linq.Expressions {
 			var ig = ec.ig;
 
 			if (IsBoxing ()) {
-				ig.Emit (OpCodes.Box, Type);
+				ig.Emit (OpCodes.Box, operand.Type);
 			} else if (IsUnBoxing ()) {
 				ig.Emit (OpCodes.Unbox_Any, Type);
 			} else
