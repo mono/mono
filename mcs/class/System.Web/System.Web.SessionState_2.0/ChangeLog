@@ -1,3 +1,9 @@
+2008-04-24  Marek Habersack  <mhabersack@novell.com>
+
+	* SessionStateModule.cs: reset the storage data item timeout to
+	the HttpApplication.Session.Timeout value after the Session_Start
+	event is fired. Fixes bug #382644
+
 2007-11-05  Marek Habersack  <mhabersack@novell.com>
 
 	* SessionStateModule.cs: use TimeSpan.TotalMinutes wherever a

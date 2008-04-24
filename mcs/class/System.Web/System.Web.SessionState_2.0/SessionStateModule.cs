@@ -206,7 +206,6 @@ namespace System.Web.SessionState
 				return; // Redirected, will come back here in a while
 			string sessionId = idManager.GetSessionID (context);
 
-
 			handler.InitializeRequest (context);
 
 			GetStoreData (context, sessionId, isReadOnly);
@@ -240,8 +239,13 @@ namespace System.Web.SessionState
 
 			container = CreateContainer (sessionId, storeData, isNew, isReadOnly);
 			SessionStateUtility.AddHttpSessionStateToContext (app.Context, container);
-			if (isNew)
+			if (isNew) {
 				OnSessionStart ();
+				HttpSessionState hss = app.Session;
+
+				if (hss != null)
+					storeData.Timeout = hss.Timeout;
+			}
 		}
 
 		void OnReleaseRequestState (object o, EventArgs args) {
