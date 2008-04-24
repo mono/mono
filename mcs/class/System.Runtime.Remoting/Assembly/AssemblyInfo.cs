@@ -46,17 +46,16 @@ using System.Runtime.InteropServices;
 	[assembly: AssemblyCompany (Consts.MonoCompany)]
 	[assembly: AssemblyProduct (Consts.MonoProduct)]
 	[assembly: AssemblyCopyright (Consts.MonoCopyright)]
+
+	[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
 #endif
+
 [assembly: AssemblyVersion (Consts.FxVersion)]
 [assembly: SatelliteContractVersion (Consts.FxVersion)]
 
-#if NET_2_0
-	[assembly: NeutralResourcesLanguage ("en-US")]
-	[assembly: ComCompatibleVersion (1, 0, 3300, 0)]
-#endif
-
-[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
+[assembly: NeutralResourcesLanguage ("en-US")]
 [assembly: ComVisible (false)]
+[assembly: ComCompatibleVersion (1, 0, 3300, 0)]
 
 #if !TARGET_JVM
 	[assembly: AssemblyDelaySign (true)]
@@ -69,6 +68,7 @@ using System.Runtime.InteropServices;
 	[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
 	[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
 	[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
+	[assembly: TypeLibVersion (2, 0)]
 #elif NET_1_1
 	[assembly: TypeLibVersion (1, 10)]
 #elif NET_1_0
