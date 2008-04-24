@@ -401,6 +401,7 @@ namespace System.Windows.Forms {
 			}
 
 			drag_data.LastTopLevel = IntPtr.Zero;
+			control = null;
 
 			System.Windows.Forms.MSG msg = new MSG();
 			object queue_id = XplatUI.StartLoop (Thread.CurrentThread);
@@ -849,6 +850,7 @@ namespace System.Windows.Forms {
 					allowed, DragDropEffects.None);
 				}
 				control.DndLeave (drag_event);
+				control = null;
 			}
 			ResetTargetData ();
 		}

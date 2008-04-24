@@ -1,3 +1,12 @@
+2008-04-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* X11Dnd.cs: When starting a new drad and drop operation, set control
+	field to null, just as the other fields, to avoid calling any
+	operation on a previous control. Also, when calling DndLeave on a
+	control, set it to null, thus we don't fire that event multiple times
+	for that control.
+	Fixes #209264.
+
 2008-04-23  Geoff Norton  <gnorton@novell.com>
 
 	* XplatUICarbon.cs: Ensure that we have a valid hwnd before accessing
