@@ -114,5 +114,13 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.IsNotNull (asbar (new Baz ()));
 			Assert.IsNull (asbaz (new Bar ()));
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TypeAsVoid ()
+		{
+			Expression.TypeAs ("yoyo".ToConstant (), typeof (void));
+		}
 	}
 }

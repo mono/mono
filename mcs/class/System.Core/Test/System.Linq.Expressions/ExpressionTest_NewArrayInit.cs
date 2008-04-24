@@ -67,6 +67,15 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (ArgumentException))]
+		public void NewVoid ()
+		{
+			Expression.NewArrayInit (typeof (void), new Expression [0]);
+		}
+
+		[Test]
 		public void TestArrayInit ()
 		{
 			var a = Expression.NewArrayInit (typeof (int), 1.ToConstant (), 2.ToConstant (), 3.ToConstant ());

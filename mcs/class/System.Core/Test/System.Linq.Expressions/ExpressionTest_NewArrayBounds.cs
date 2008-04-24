@@ -60,6 +60,15 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (ArgumentException))]
+		public void NewVoid ()
+		{
+			Expression.NewArrayBounds (typeof (void), 1.ToConstant ());
+		}
+
+		[Test]
 		public void TestArrayBounds ()
 		{
 			var ab = Expression.NewArrayBounds (typeof (int), 1.ToConstant (), 2.ToConstant ());

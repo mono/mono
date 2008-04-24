@@ -140,6 +140,13 @@ namespace MonoTests.System.Linq.Expressions
 			Expression.Constant (0, typeof (double));
 		}
 
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void VoidConstant ()
+		{
+			Expression.Constant (null, typeof (void));
+		}
+
 		static T Check<T> (T val)
 		{
 			Expression<Func<T>> l = Expression.Lambda<Func<T>> (Expression.Constant (val), new ParameterExpression [0]);

@@ -103,5 +103,14 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.IsFalse (bar_is_foo (new Bar ()));
 			Assert.IsTrue (baz_is_bar (new Baz ()));
 		}
+
+		[Test]
+		[Category ("NotDotNet")]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TypeIsVoid ()
+		{
+			Expression.TypeIs ("yoyo".ToConstant (), typeof (void));
+		}
 	}
 }
