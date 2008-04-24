@@ -293,6 +293,32 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
+		public void CompiledUnBoxing ()
+		{
+			var p = Expression.Parameter (typeof (object), "o");
+
+			var u = Expression.Lambda<Func<object, int>> (
+				Expression.Convert (p, typeof (int)), p).Compile ();
+
+			Assert.AreEqual (42, u ((object) 42));
+		}
+
+		[Test]
+		public void CompiledCast ()
+		{
+			var p = Expression.Parameter (typeof (IFoo), "foo");
+
+			var c = Expression.Lambda<Func<IFoo, Bar>> (
+				Expression.Convert (p, typeof (Bar)), p).Compile ();
+
+			IFoo foo = new Bar ();
+
+			Bar b = c (foo);
+
+			Assert.AreEqual (b, foo);
+		}
+
+		[Test]
 		public void CompiledConvertToSameType ()
 		{
 			var k = new Klang (42);
