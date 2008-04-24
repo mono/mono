@@ -25,8 +25,11 @@ class C
 		AssertNodeType (e1, ExpressionType.ListInit);
 		/* Verification exception on .NET */
 		var re1 = e1.Compile ().Invoke ();
-		Assert ("World", re1 [1]);
-		Assert (5, re1 [2]);
+		
+		Assert (null, re1 [0]);
+		Assert ("Hello", re1 [1]);
+		Assert ("World", re1 [2]);
+		Assert (5, re1 [3]);
 		
 		Console.WriteLine ("OK");
 		return 0;
