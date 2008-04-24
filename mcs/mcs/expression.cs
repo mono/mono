@@ -2949,20 +2949,11 @@ namespace Mono.CSharp {
 				}
 				
 				if (((Constant) right).IsZeroInteger) {
-					left.Emit (ec);
-					if (my_on_true)
-						ig.Emit (OpCodes.Brtrue, target);
-					else
-						ig.Emit (OpCodes.Brfalse, target);
-					
+					left.EmitBranchable (ec, target, my_on_true);
 					return;
-				} else if (right is BoolConstant) {
-					left.Emit (ec);
-					if (my_on_true != ((BoolConstant) right).Value)
-						ig.Emit (OpCodes.Brtrue, target);
-					else
-						ig.Emit (OpCodes.Brfalse, target);
-					
+				}
+				if (right is BoolConstant) {
+					left.EmitBranchable (ec, target, my_on_true != ((BoolConstant) right).Value);
 					return;
 				}
 

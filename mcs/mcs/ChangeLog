@@ -1,5 +1,9 @@
 2008-04-24  Raja R Harinath  <harinath@hurrynot.org>
 
+	* expression.cs (Binary.EmitBranchable) <Equality with constant>:
+	Use left.EmitBranchable instead of open coding it, so as to
+	improve optimization opportunities.
+
 	* constant.cs (SideEffectConstant.EmitSideEffect): Simplify slightly.
 
 	* ecore.cs (Expression.EmitBranchable): Document some non-obvious
