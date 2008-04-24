@@ -14888,7 +14888,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>109</size>
+        <size>140</size>
       </method>
     </type>
   </test>

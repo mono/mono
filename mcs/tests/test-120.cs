@@ -34,20 +34,20 @@ class test
 		int errors = 0;
 		Type t = typeof (MyUnicode);
 
-		if ((t.Attributes & TypeAttributes.UnicodeClass) != TypeAttributes.UnicodeClass){
+		if ((t.Attributes & TypeAttributes.StringFormatMask) != TypeAttributes.UnicodeClass){
 			Console.WriteLine ("Class MyUnicode does not have Unicode bit set");
 			errors += 1;
 		}
 
 		t = typeof (MyAuto);
-		if ((t.Attributes & TypeAttributes.AutoClass) != TypeAttributes.AutoClass){
+		if ((t.Attributes & TypeAttributes.StringFormatMask) != TypeAttributes.AutoClass){
 			Console.WriteLine ("Class MyAuto does not have Auto bit set");
 			errors += 2;
 		}
 
 		t = typeof (MyAnsi);
 
-		if ((t.Attributes & TypeAttributes.AnsiClass) != TypeAttributes.AnsiClass){
+		if ((t.Attributes & TypeAttributes.StringFormatMask) != TypeAttributes.AnsiClass){
 			Console.WriteLine ("Class MyUnicode does not have Ansi bit set");
 			errors += 4;
 		}

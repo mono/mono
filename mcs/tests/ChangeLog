@@ -1,3 +1,9 @@
+2008-04-24  Raja R Harinath  <harinath@hurrynot.org>
+
+	* test-120.cs: Ensure we don't get falsely optimized out of the
+	AnsiClass check.  Also, ensure that only one of AnsiClass,
+	AutoClass or UnicodeClass is set.
+
 2008-04-07 Marek Safar <marek.safar@gmail.com>
 
 	* Makefile: Enabled IL regressions check for gmcs profile.
