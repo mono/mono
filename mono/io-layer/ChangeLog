@@ -1,3 +1,8 @@
+2008-04-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* handles.c (shared_init): Align _wapi_fd_reserve to a multiple of 
+	_WAPI_HANDLE_INITIAL_COUNT to avoid a problem when allocating handles.
+
 2008-04-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* handles.c: Initialize the handle array entries on demand to save memory.
