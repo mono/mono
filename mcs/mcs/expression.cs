@@ -2952,8 +2952,9 @@ namespace Mono.CSharp {
 					left.EmitBranchable (ec, target, my_on_true);
 					return;
 				}
-				if (right is BoolConstant) {
-					left.EmitBranchable (ec, target, my_on_true != ((BoolConstant) right).Value);
+				if (right.Type == TypeManager.bool_type) {
+					// right is a boolean, and it's not 'false' => it is 'true'
+					left.EmitBranchable (ec, target, !my_on_true);
 					return;
 				}
 
