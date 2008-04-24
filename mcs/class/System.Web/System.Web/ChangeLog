@@ -1,3 +1,13 @@
+2008-04-24  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpApplication.cs: added a new overload of GetHandler which
+	allows the caller to ignore the handler found in the context
+	passed to the method.
+
+	* HttpServerUtility.cs: have HttpApplication.GetHandler ignore the
+	handler found in the current context when Execute'ing another
+	page. Fixes bug #316166
+
 2008-04-23  Marek Habersack  <mhabersack@novell.com>
 
 	* VirtualPath.cs: introduced the CurrentRequestDirectory property,

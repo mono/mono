@@ -1449,11 +1449,16 @@ namespace System.Web {
 			cache [id] = ret;
 			return ret;
 		}
-		
-		// Used by HttpServerUtility.Execute
+
 		internal IHttpHandler GetHandler (HttpContext context, string url)
 		{
-			if (context.Handler != null)
+			return GetHandler (context, url, false);
+		}
+		
+		// Used by HttpServerUtility.Execute
+		internal IHttpHandler GetHandler (HttpContext context, string url, bool ignoreContextHandler)
+		{
+			if (!ignoreContextHandler && context.Handler != null)
 				return context.Handler;
 			
 			HttpRequest request = context.Request;

@@ -118,8 +118,7 @@ namespace System.Web {
 			}
 
 			string exePath = UrlUtils.Combine (context.Request.BaseVirtualDir, path);
-			IHttpHandler handler = context.ApplicationInstance.GetHandler (context, exePath);
-
+			IHttpHandler handler = context.ApplicationInstance.GetHandler (context, exePath, true);
 			Execute (handler, writer, preserveForm, exePath, queryString, isTransfer, true);
 		}
 
