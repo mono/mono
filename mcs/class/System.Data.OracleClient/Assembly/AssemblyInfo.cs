@@ -31,7 +31,6 @@ using System.Runtime.InteropServices;
 [assembly: NeutralResourcesLanguage ("en-US")]
 
 [assembly: ComVisible (false)]
-[assembly: AllowPartiallyTrustedCallers]
 
 #if !TARGET_JVM
 	[assembly: CLSCompliant (true)]
