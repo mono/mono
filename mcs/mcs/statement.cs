@@ -382,8 +382,8 @@ namespace Mono.CSharp {
 			expr = Expression.ResolveBoolean (ec, expr, loc);
 			if (expr == null)
 				ok = false;
-			else if (expr is BoolConstant){
-				bool res = ((BoolConstant) expr).Value;
+			else if (expr is Constant){
+				bool res = !((Constant) expr).IsDefaultValue;
 
 				if (res)
 					infinite = true;
@@ -413,9 +413,10 @@ namespace Mono.CSharp {
 			//
 			// Dead code elimination
 			//
-			if (expr is BoolConstant){
-				bool res = ((BoolConstant) expr).Value;
+			if (expr is Constant){
+				bool res = !((Constant) expr).IsDefaultValue;
 
+				expr.EmitSideEffect (ec);
 				if (res)
 					ec.ig.Emit (OpCodes.Br, loop); 
 			} else
@@ -459,10 +460,10 @@ namespace Mono.CSharp {
 			//
 			// Inform whether we are infinite or not
 			//
-			if (expr is BoolConstant){
-				BoolConstant bc = (BoolConstant) expr;
+			if (expr is Constant){
+				bool value = !((Constant) expr).IsDefaultValue;
 
-				if (bc.Value == false){
+				if (value == false){
 					if (!Statement.ResolveUnreachable (ec, true))
 						return false;
 					empty = true;
@@ -490,8 +491,10 @@ namespace Mono.CSharp {
 		
 		protected override void DoEmit (EmitContext ec)
 		{
-			if (empty)
+			if (empty) {
+				expr.EmitSideEffect (ec);
 				return;
+			}
 
 			ILGenerator ig = ec.ig;
 			Label old_begin = ec.LoopBegin;
@@ -503,8 +506,10 @@ namespace Mono.CSharp {
 			//
 			// Inform whether we are infinite or not
 			//
-			if (expr is BoolConstant){
+			if (expr is Constant){
+				// expr is 'true', since the 'empty' case above handles the 'false' case
 				ig.MarkLabel (ec.LoopBegin);
+				expr.EmitSideEffect (ec);
 				Statement.Emit (ec);
 				ig.Emit (OpCodes.Br, ec.LoopBegin);
 					
@@ -580,10 +585,10 @@ namespace Mono.CSharp {
 				Test = Expression.ResolveBoolean (ec, Test, loc);
 				if (Test == null)
 					ok = false;
-				else if (Test is BoolConstant){
-					BoolConstant bc = (BoolConstant) Test;
+				else if (Test is Constant){
+					bool value = !((Constant) Test).IsDefaultValue;
 
-					if (bc.Value == false){
+					if (value == false){
 						if (!Statement.ResolveUnreachable (ec, true))
 							return false;
 						if ((Increment != null) &&
@@ -628,17 +633,19 @@ namespace Mono.CSharp {
 		
 		protected override void DoEmit (EmitContext ec)
 		{
-			if (empty)
+			if (InitStatement != null && InitStatement != EmptyStatement.Value)
+				InitStatement.Emit (ec);
+
+			if (empty) {
+				Test.EmitSideEffect (ec);
 				return;
+			}
 
 			ILGenerator ig = ec.ig;
 			Label old_begin = ec.LoopBegin;
 			Label old_end = ec.LoopEnd;
 			Label loop = ig.DefineLabel ();
 			Label test = ig.DefineLabel ();
-			
-			if (InitStatement != null && InitStatement != EmptyStatement.Value)
-				InitStatement.Emit (ec);
 
 			ec.LoopBegin = ig.DefineLabel ();
 			ec.LoopEnd = ig.DefineLabel ();
@@ -659,13 +666,15 @@ namespace Mono.CSharp {
 			if (Test != null){
 				//
 				// The Resolve code already catches the case for
-				// Test == BoolConstant (false) so we know that
+				// Test == Constant (false) so we know that
 				// this is true
 				//
-				if (Test is BoolConstant)
+				if (Test is Constant) {
+					Test.EmitSideEffect (ec);
 					ig.Emit (OpCodes.Br, loop);
-				else
+				} else {
 					Test.EmitBranchable (ec, loop, true);
+				}
 				
 			} else
 				ig.Emit (OpCodes.Br, loop);

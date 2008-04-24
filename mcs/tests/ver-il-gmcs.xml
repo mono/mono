@@ -28043,6 +28043,34 @@
       </method>
     </type>
   </test>
+  <test name="test-636.cs">
+    <type name="Foo">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Boolean get_False()">
+        <size>14</size>
+      </method>
+      <method name="Void ping()">
+        <size>13</size>
+      </method>
+      <method name="Int32 test_while(Int32)">
+        <size>53</size>
+      </method>
+      <method name="Int32 test_do_while(Int32)">
+        <size>53</size>
+      </method>
+      <method name="Int32 test_for(Int32)">
+        <size>64</size>
+      </method>
+      <method name="Void test_for_empty()">
+        <size>35</size>
+      </method>
+      <method name="Void Main()">
+        <size>30</size>
+      </method>
+    </type>
+  </test>
   <test name="test-64.cs">
     <type name="Operator">
       <method name="Void .ctor()">

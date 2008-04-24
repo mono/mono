@@ -168,6 +168,11 @@ namespace Mono.CSharp {
 		// </summary>
 		Constant TryReduceConstant (EmitContext ec, Constant e)
 		{
+			if (e is SideEffectConstant) {
+				Constant r = TryReduceConstant (ec, ((SideEffectConstant) e).value);
+				return r == null ? null : new SideEffectConstant (r, e, r.Location);
+			}
+
 			Type expr_type = e.Type;
 			
 			switch (Oper){

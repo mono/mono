@@ -1,5 +1,10 @@
 2008-04-24  Raja R Harinath  <harinath@hurrynot.org>
 
+	Fix test-636.cs.  Sprinkle a few more 'EmitSideEffect's around
+	* expression.cs (Unary.TryReduceConstant): Unwrap SideEffectConstant.
+	* statement.cs (While, Do, For): Allow test to have side effects.
+	(For.DoEmit): Always emit InitStatement.
+
 	Fix test-635.cs
 	* expression.cs (Binary.DoResolve) <BitwiseAnd with zero constant>:
 	Always create SideEffectConstant.
