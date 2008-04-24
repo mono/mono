@@ -282,5 +282,28 @@ namespace MonoTests.System.Linq.Expressions {
 			Assert.IsTrue (c.IsLiftedToNull);
 			Assert.IsNotNull (c.Method);
 		}
+
+		[Test]
+		public void CompiledBoxing ()
+		{
+			var b = Expression.Lambda<Func<object>> (
+				Expression.Convert (42.ToConstant (), typeof (object))).Compile ();
+
+			Assert.AreEqual ((object) 42, b ());
+		}
+
+		[Test]
+		public void CompiledConvertToSameType ()
+		{
+			var k = new Klang (42);
+
+			var p = Expression.Parameter (typeof (Klang), "klang");
+			var c = Expression.Lambda<Func<Klang, Klang>> (
+				Expression.Convert (
+					p, typeof (Klang)),
+				p).Compile ();
+
+			Assert.AreEqual (k, c (k));
+		}
 	}
 }
