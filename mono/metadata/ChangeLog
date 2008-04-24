@@ -1,5 +1,11 @@
 2008-04-24 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (verify_class_for_overlapping_reference_fields): 
+	If class is under fulltrust allow reference types to overllap
+	if they have the same RVA.
+
+2008-04-24 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* pedump.c: Added new flag valid-only, that makes the verifier
 	behaves just like --security=validil. It won't fail type load
 	due to unverifiable restrictions.
