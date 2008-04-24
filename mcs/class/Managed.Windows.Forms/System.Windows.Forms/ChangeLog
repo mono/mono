@@ -1,3 +1,8 @@
+2008-04-24  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStrip.cs: Don't use ToolStripControlHosts when figuring up
+	implicit mnemonics.  [Fixes bug #383000]
+
 2008-04-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* X11Dnd.cs: When canceling the operation, automatically restore the
