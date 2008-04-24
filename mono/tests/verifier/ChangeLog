@@ -1,3 +1,12 @@
+2008-04-23 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_tests.sh: Add some tests for overlapping
+	aligned reference fields.
+
+	* Makefile: Added new test prefix typeunverifiable.
+	It should be used for tests that type fails to load
+	only under verifiable.
+
 2008-04-15 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_boxed_genarg_test.sh: New test generator
