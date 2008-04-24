@@ -1,3 +1,8 @@
+2008-04-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* handles.c (_wapi_handle_check_share): Fix a crash introduced by the lazy
+	creation of wapi handle slots.
+
 2008-04-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* handles.c (shared_init): Align _wapi_fd_reserve to a multiple of 
