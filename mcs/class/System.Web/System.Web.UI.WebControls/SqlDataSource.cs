@@ -220,6 +220,8 @@ namespace System.Web.UI.WebControls {
 			set { View.FilterExpression = value; }
 		}
 
+		// LAME SPEC: the event is raised on setting only when the old value is different
+		// from the new one
 		private string providerName = "";
 		[DefaultValueAttribute ("")]
 		[TypeConverterAttribute ("System.Web.UI.Design.WebControls.DataProviderNameConverter, " + Consts.AssemblySystem_Design)]
@@ -227,11 +229,15 @@ namespace System.Web.UI.WebControls {
 			get { return providerName; }
 			set
 			{
-				providerName = value;
-				RaiseDataSourceChangedEvent (EventArgs.Empty);
+				if (providerName != value) {
+					providerName = value;
+					RaiseDataSourceChangedEvent (EventArgs.Empty);
+				}
 			}
 		}
 
+		// LAME SPEC: the event is raised on setting only when the old value is different
+		// from the new one
 		private string connectionString = "";
 		[EditorAttribute ("System.Web.UI.Design.WebControls.SqlDataSourceConnectionStringEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[DefaultValueAttribute ("")]
@@ -239,21 +245,25 @@ namespace System.Web.UI.WebControls {
 			get { return connectionString; }
 			set
 			{
-
-				connectionString = value;
-				RaiseDataSourceChangedEvent (EventArgs.Empty);
+				if (connectionString != value) {
+					connectionString = value;
+					RaiseDataSourceChangedEvent (EventArgs.Empty);
+				}
 			}
 		}
 
+		// LAME SPEC: the event is raised on setting only when the old value is different
+		// from the new one
 		// LAME SPEC: MSDN says value should be saved in ViewState but tests show otherwise.
 		private SqlDataSourceMode dataSourceMode = SqlDataSourceMode.DataSet;
 		[DefaultValueAttribute (SqlDataSourceMode.DataSet)]
 		public SqlDataSourceMode DataSourceMode {
 			get { return dataSourceMode; }
-			set
-			{
-				dataSourceMode = value;
-				RaiseDataSourceChangedEvent (EventArgs.Empty);
+			set {
+				if (dataSourceMode != value) {
+					dataSourceMode = value;
+					RaiseDataSourceChangedEvent (EventArgs.Empty);
+				}
 			}
 		}
 				
