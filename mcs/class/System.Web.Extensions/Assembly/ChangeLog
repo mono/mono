@@ -1,3 +1,7 @@
+2008-04-25  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* AssemblyInfo.cs: Added missing attributes
+
 2008-03-13  Marek Habersack  <mhabersack@novell.com>
 
 	* AssemblyInfo.cs: version changed to 3.5.0.0 for the 3.5
