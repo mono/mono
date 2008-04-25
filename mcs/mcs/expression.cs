@@ -975,7 +975,7 @@ namespace Mono.CSharp {
 
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
-			return new Assign (this, this).CreateExpressionTree (ec);
+			return new SimpleAssign (this, this).CreateExpressionTree (ec);
 		}
 
 		public override Expression DoResolve (EmitContext ec)

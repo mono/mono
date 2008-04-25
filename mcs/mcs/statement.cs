@@ -4830,7 +4830,7 @@ namespace Mono.CSharp {
 
 		bool ResolveVariable (EmitContext ec)
 		{
-			ExpressionStatement a = new Assign (var, init, loc);
+			ExpressionStatement a = new SimpleAssign (var, init, loc);
 			a = a.ResolveStatement (ec);
 			if (a == null)
 				return false;
@@ -5685,7 +5685,7 @@ namespace Mono.CSharp {
 				if (conv == null)
 					return false;
 
-				assign = new Assign (variable, conv, loc);
+				assign = new SimpleAssign (variable, conv, loc);
 				if (assign.Resolve (ec) == null)
 					return false;
 

@@ -263,28 +263,13 @@ namespace Mono.CSharp {
 	///   the expression represented by target.
 	/// </summary>
 	public class Assign : ExpressionStatement {
-		protected Expression target, source, real_source;
-		protected LocalTemporary temp = null, real_temp = null;
-		protected Assign embedded = null;
-		protected bool is_embedded = false;
-		protected bool must_free_temp = false;
+		protected Expression target, source;
 
-		public Assign (Expression target, Expression source)
-			: this (target, source, target.Location)
-		{
-		}
-
-		public Assign (Expression target, Expression source, Location l)
+		protected Assign (Expression target, Expression source, Location loc)
 		{
 			this.target = target;
-			this.source = this.real_source = source;
-			this.loc = l;
-		}
-
-		protected Assign (Assign embedded, Location l)
-			: this (embedded.target, embedded.source, l)
-		{
-			this.is_embedded = true;
+			this.source = source;
+			this.loc = loc;
 		}
 		
 		public override Expression CreateExpressionTree (EmitContext ec)
@@ -293,29 +278,12 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		protected virtual Assign GetEmbeddedAssign (Location loc)
-		{
-			return new Assign (this, loc);
-		}
-
 		public Expression Target {
-			get {
-				return target;
-			}
-
-			set {
-				target = value;
-			}
+			get { return target; }
 		}
 
 		public Expression Source {
-			get {
-				return source;
-			}
-
-			set {
-				source = value;
-			}
+			get { return source; }
 		}
 
 		public static void error70 (EventInfo ei, Location l)
@@ -325,72 +293,26 @@ namespace Mono.CSharp {
 				      " used from within the type `" + ei.DeclaringType + "')");
 		}
 
-		//
-		// Will return either `this' or an instance of `New'.
-		//
 		public override Expression DoResolve (EmitContext ec)
 		{
-			// Create an embedded assignment if our source is an assignment.
-			if (source is Assign)
-				source = embedded = ((Assign) source).GetEmbeddedAssign (loc);
-
-			real_source = source = source.Resolve (ec);
+			bool ok = true;
+			source = source.Resolve (ec);
 						
 			if (source == null) {
-				// Ensure that we don't propagate the error as spurious "uninitialized variable" errors.
-				target = target.ResolveLValue (ec, EmptyExpression.Null, Location);
-				return null;
+				ok = false;
+				source = EmptyExpression.Null;
 			}
 
-			//
-			// This is used in an embedded assignment.
-			// As an example, consider the statement "A = X = Y = Z".
-			//
-			if (is_embedded && !(source is Constant)) {
-				// If this is the innermost assignment (the "Y = Z" in our example),
-				// create a new temporary local, otherwise inherit that variable
-				// from our child (the "X = (Y = Z)" inherits the local from the
-				// "Y = Z" assignment).
-
-				if (embedded == null) {
-					if (this is CompoundAssign)
-						real_temp = temp = new LocalTemporary (target.Type);
-					else
-						real_temp = temp = new LocalTemporary (source.Type);
-				} else
-					temp = embedded.temp;
-
-				// Set the source to the new temporary variable.
-				// This means that the following target.ResolveLValue () will tell
-				// the target to read it's source value from that variable.
-				source = temp;
-			}
-
-			// If we have an embedded assignment, use the embedded assignment's temporary
-			// local variable as source.
-			if (embedded != null)
-				source = (embedded.temp != null) ? embedded.temp : embedded.source;
-			
 			target = target.ResolveLValue (ec, source, Location);
 
-			if (target == null)
+			if (target == null || !ok)
 				return null;
-			
-			bool same_assignment = (embedded != null) ? embedded.Target.Equals(target) : source.Equals (target);
-			if (same_assignment) {
-				Report.Warning (1717, 3, loc, "Assignment made to same variable; did you mean to assign something else?");
-			}
 
 			Type target_type = target.Type;
-			Type source_type = real_source.Type;
+			Type source_type = source.Type;
 
-			// If we're an embedded assignment, our parent will reuse our source as its
-			// source, it won't read from our target.
-			if (is_embedded)
-				type = source_type;
-			else
-				type = target_type;
 			eclass = ExprClass.Value;
+			type = target_type;
 
 			if (target is EventExpr) {
 				EventInfo ei = ((EventExpr) target).EventInfo;
@@ -430,7 +352,6 @@ namespace Mono.CSharp {
 				   (source is MethodGroupExpr)){
 				((MethodGroupExpr) source).ReportUsageError ();
 				return null;
-
 			}
 
 			if (TypeManager.IsEqual (target_type, source_type)) {
@@ -450,134 +371,27 @@ namespace Mono.CSharp {
 				return this;
 			}
 
-			//
-			// If this assignment/operator was part of a compound binary
-			// operator, then we allow an explicit conversion, as detailed
-			// in the spec.
-			//
+			return ResolveConversions (ec);
+		}
 
-			if (this is CompoundAssign){
-				CompoundAssign a = (CompoundAssign) this;
-
-				Binary b = source as Binary;
-				if (b != null){
-					//
-					// 1. if the source is explicitly convertible to the
-					//    target_type
-					//
-
-					source = Convert.ExplicitConversion (ec, source, target_type, loc);
-					if (source == null){
-						a.original_source.Error_ValueCannotBeConverted (ec, loc, target_type, true);
-						return null;
-					}
-
-					//
-					// 2. and the original right side is implicitly convertible to
-					// the type of target
-					//
-					if (Convert.ImplicitConversionExists (ec, a.original_source, target_type))
-						return this;
-
-					//
-					// In the spec 2.4 they added: or if type of the target is int
-					// and the operator is a shift operator...
-					//
-					if (source_type == TypeManager.int32_type &&
-					    (b.Oper == Binary.Operator.LeftShift || b.Oper == Binary.Operator.RightShift))
-						return this;
-
-					a.original_source.Error_ValueCannotBeConverted (ec, loc, target_type, false);
-					return null;
-				}
-			}
-
-			source = Convert.ImplicitConversionRequired (ec, source, target_type, loc);
+		protected virtual Expression ResolveConversions (EmitContext ec)
+		{
+			source = Convert.ImplicitConversionRequired (ec, source, target.Type, loc);
 			if (source == null)
 				return null;
 
-			// If we're an embedded assignment, we need to create a new temporary variable
-			// for the converted value.  Our parent will use this new variable as its source.
-			// The same applies when we have an embedded assignment - in this case, we need
-			// to convert our embedded assignment's temporary local variable to the correct
-			// type and store it in a new temporary local.
-			if (is_embedded || embedded != null) {
-				type = target_type;
-				temp = new LocalTemporary (type);
-				must_free_temp = true;
-			}
-
 			return this;
-		}
-
-		Expression EmitEmbedded (EmitContext ec)
-		{
-			// Emit an embedded assignment.
-
-			if (real_temp != null) {
-				// If we're the innermost assignment, `real_source' is the right-hand
-				// expression which gets assigned to all the variables left of it.
-				// Emit this expression and store its result in real_temp.
-				real_source.Emit (ec);
-				real_temp.Store (ec);
-			}
-
-			if (embedded != null)
-				embedded.EmitEmbedded (ec);
-
-			// This happens when we've done a type conversion, in this case source will be
-			// the expression which does the type conversion from real_temp.
-			// So emit it and store the result in temp; this is the var which will be read
-			// by our parent.
-			if (temp != real_temp) {
-				source.Emit (ec);
-				temp.Store (ec);
-			}
-
-			Expression temp_source = (temp != null) ? temp : source;
-			((IAssignMethod) target).EmitAssign (ec, temp_source, false, false);
-			return temp_source;
-		}
-
-		void ReleaseEmbedded (EmitContext ec)
-		{
-			if (embedded != null)
-				embedded.ReleaseEmbedded (ec);
-
-			if (real_temp != null)
-				real_temp.Release (ec);
-
-			if (must_free_temp)
-				temp.Release (ec);
 		}
 
 		void Emit (EmitContext ec, bool is_statement)
 		{
 			if (target is EventExpr) {
 				((EventExpr) target).EmitAddOrRemove (ec, source);
-				return;
-			}
-
-			IAssignMethod am = (IAssignMethod) target;
-
-			Expression temp_source;
-			if (embedded != null) {
-				temp_source = embedded.EmitEmbedded (ec);
-
-				if (temp != null) {
-					source.Emit (ec);
-					temp.Store (ec);
-					temp_source = temp;
-				}
-			} else
-				temp_source = source;
-
-			am.EmitAssign (ec, temp_source, !is_statement, this is CompoundAssign);
-
-			if (embedded != null) {
-				if (temp != null)
-					temp.Release (ec);
-				embedded.ReleaseEmbedded (ec);
+				if (!is_statement)
+					throw new InternalErrorException ("don't know what to do here");
+			} else {
+				IAssignMethod am = (IAssignMethod) target;
+				am.EmitAssign (ec, source, !is_statement, this is CompoundAssign);
 			}
 		}
 
@@ -600,6 +414,40 @@ namespace Mono.CSharp {
 		}
 	}
 
+	class SimpleAssign : Assign {
+		public SimpleAssign (Expression target, Expression source)
+			: this (target, source, target.Location)
+		{
+		}
+
+		public SimpleAssign (Expression target, Expression source, Location loc)
+			: base (target, source, loc)
+		{
+		}
+
+		bool CheckEqualAssign (Expression t)
+		{
+			if (source is Assign) {
+				Assign a = (Assign) source;
+				if (t.Equals (a.Target))
+					return true;
+				return a is SimpleAssign && ((SimpleAssign) a).CheckEqualAssign (t);
+			}
+			return t.Equals (source);
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			Expression e = base.DoResolve (ec);
+			if (e == null || e != this)
+				return e;
+
+			if (CheckEqualAssign (target))
+				Report.Warning (1717, 3, loc, "Assignment made to same variable; did you mean to assign something else?");
+
+			return this;
+		}
+	}
 
 	// This class implements fields and events class initializers
 	public class FieldInitializer : Assign
@@ -610,7 +458,7 @@ namespace Mono.CSharp {
 		ExpressionStatement resolved;
 
 		public FieldInitializer (FieldBuilder field, Expression expression)
-			: base (new FieldExpr (field, expression.Location, true), expression)
+			: base (new FieldExpr (field, expression.Location, true), expression, expression.Location)
 		{
 			if (!field.IsStatic)
 				((FieldExpr)target).InstanceExpression = CompilerGeneratedThis.Instance;
@@ -619,7 +467,7 @@ namespace Mono.CSharp {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			// Field initializer can be resolved (fail) many times
-			if (Source == null)
+			if (source == null)
 				return null;
 
 			if (resolved == null)
@@ -640,12 +488,7 @@ namespace Mono.CSharp {
 		}
 		
 		public bool IsComplexInitializer {
-			get {
-				if (embedded != null)
-					return true;
-
-				return !(source is Constant);
-			}
+			get { return !(source is Constant); }
 		}
 
 		public bool IsDefaultInitializer {
@@ -666,24 +509,13 @@ namespace Mono.CSharp {
 	//
 	class CompoundAssign : Assign {
 		Binary.Operator op;
-		public Expression original_source;
+		Expression original_source;
 
 		public CompoundAssign (Binary.Operator op, Expression target, Expression source)
 			: base (target, source, target.Location)
 		{
 			original_source = source;
 			this.op = op;
-		}
-
-		protected CompoundAssign (CompoundAssign embedded, Location l)
-			: this (embedded.op, embedded.target, embedded.source)
-		{
-			this.is_embedded = true;
-		}
-
-		protected override Assign GetEmbeddedAssign (Location loc)
-		{
-			return new CompoundAssign (this, loc);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -710,6 +542,46 @@ namespace Mono.CSharp {
 			//
 			source = new Binary (op, target, original_source, true);
 			return base.DoResolve (ec);
+		}
+
+		protected override Expression ResolveConversions (EmitContext ec)
+		{
+			// source might have changed to BinaryDelegate
+			Type target_type = target.Type;
+			Type source_type = source.Type;
+			Binary b = source as Binary;
+			if (b == null)
+				return base.ResolveConversions (ec);
+
+			// FIXME: Restrict only to predefined operators
+
+			//
+			// 1. if the source is explicitly convertible to the
+			//    target_type
+			//
+			source = Convert.ExplicitConversion (ec, source, target_type, loc);
+			if (source == null){
+				original_source.Error_ValueCannotBeConverted (ec, loc, target_type, true);
+				return null;
+			}
+
+			//
+			// 2. and the original right side is implicitly convertible to
+			// the type of target
+			//
+			if (Convert.ImplicitConversionExists (ec, original_source, target_type))
+				return this;
+
+			//
+			// In the spec 2.4 they added: or if type of the target is int
+			// and the operator is a shift operator...
+			//
+			if (source_type == TypeManager.int32_type &&
+			    (b.Oper == Binary.Operator.LeftShift || b.Oper == Binary.Operator.RightShift))
+				return this;
+
+			original_source.Error_ValueCannotBeConverted (ec, loc, target_type, false);
+			return null;
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)

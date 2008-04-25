@@ -6858,7 +6858,7 @@ namespace Mono.CSharp {
 			// Make set block
 			Parameters parameters = new Parameters (new Parameter (type_name, "value", Parameter.Modifier.NONE, null, Location));
 			set_block.Block = new ToplevelBlock (block, parameters, Location);
-			Assign a = new Assign (new SimpleName(field.Name, Location), new SimpleName ("value", Location));
+			Assign a = new SimpleAssign (new SimpleName (field.Name, Location), new SimpleName ("value", Location));
 			set_block.Block.AddStatement (new StatementExpression(a));
 			set_block.ModFlags |= Modifiers.COMPILER_GENERATED;
 		}

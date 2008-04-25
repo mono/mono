@@ -2042,7 +2042,7 @@ namespace Mono.CSharp {
 				}
 
 				c.Block.AddStatement (new StatementExpression (
-					new Assign (new MemberAccess (new This (p.Location), f.Name),
+					new SimpleAssign (new MemberAccess (new This (p.Location), f.Name),
 						c.Block.GetParameterReference (p.Name, p.Location))));
 
 				ToplevelBlock get_block = new ToplevelBlock (p.Location);
@@ -2164,7 +2164,7 @@ namespace Mono.CSharp {
 			// Equals (object obj) override
 			//
 			equals_block.AddStatement (new StatementExpression (
-				new Assign (other_variable,
+				new SimpleAssign (other_variable,
 					new As (equals_block.GetParameterReference ("obj", loc),
 						current_type, loc), loc)));
 
@@ -2202,7 +2202,7 @@ namespace Mono.CSharp {
 			hashcode_block.AddVariable (TypeManager.system_int32_expr, "hash", loc);
 			LocalVariableReference hash_variable = new LocalVariableReference (hashcode_block, "hash", loc);
 			hashcode_block.AddStatement (new StatementExpression (
-				new Assign (hash_variable, rs_hashcode)));
+				new SimpleAssign (hash_variable, rs_hashcode)));
 
 			hashcode_block.AddStatement (new StatementExpression (
 				new CompoundAssign (Binary.Operator.Addition, hash_variable,

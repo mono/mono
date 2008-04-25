@@ -1,3 +1,12 @@
+2008-04-26  Raja R Harinath  <harinath@hurrynot.org>
+
+	Simplify handling of multiple assignments
+	* assign.cs (Assign): Clear out all 'embedded assign' gunk.  Make
+	inheritable-only.
+	(SimpleAssign): New.  Class to be used for normal assignments.
+	* anonymous.cs, class.cs, cs-parser.jay: Update to changes.
+	* expression.cs, parameter.cs, statement.cs: Likewise.
+
 2008-04-25  Marek Safar  <marek.safar@gmail.com>
 
 	* ecore.cs, expression.cs, nullable.cs: Implemeted enum binary add operation
@@ -8,7 +17,7 @@
 	Fix gtest-388.cs
 	* expression.cs (VariableReference.EmitAssign) <source is NewInstance>:
 	Handle 'leave_copy'.
-	
+
 2008-04-25  Marek Safar  <marek.safar@gmail.com>
 
 	* expression.cs, nullable.cs: Implemented UnaryPlus expression.

@@ -3180,7 +3180,7 @@
         <size>14</size>
       </method>
       <method name="Void Insert(Int32, T)">
-        <size>258</size>
+        <size>256</size>
       </method>
       <method name="Void RemoveAt(Int32)">
         <size>113</size>
@@ -12530,7 +12530,7 @@
         <size>15</size>
       </method>
       <method name="Void Main()">
-        <size>58</size>
+        <size>48</size>
       </method>
     </type>
   </test>
@@ -17601,7 +17601,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>116</size>
+        <size>104</size>
       </method>
     </type>
   </test>
@@ -17834,7 +17834,7 @@
         <size>12</size>
       </method>
       <method name="Int32 Main()">
-        <size>76</size>
+        <size>79</size>
       </method>
     </type>
   </test>
@@ -18718,7 +18718,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>98</size>
+        <size>92</size>
       </method>
     </type>
   </test>
@@ -22180,7 +22180,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>302</size>
+        <size>288</size>
       </method>
     </type>
   </test>
@@ -23205,7 +23205,7 @@
         <size>7</size>
       </method>
       <method name="Void .cctor()">
-        <size>19</size>
+        <size>17</size>
       </method>
       <method name="Void Main(System.String[])">
         <size>1</size>
@@ -28477,7 +28477,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main(System.String[])">
-        <size>117</size>
+        <size>115</size>
       </method>
     </type>
   </test>
@@ -28710,7 +28710,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main(System.String[])">
-        <size>109</size>
+        <size>104</size>
       </method>
     </type>
   </test>
@@ -31371,7 +31371,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Test()">
-        <size>302</size>
+        <size>297</size>
       </method>
       <method name="Int32 Main()">
         <size>45</size>
@@ -31416,7 +31416,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Test(Int32)">
-        <size>376</size>
+        <size>366</size>
       </method>
       <method name="Int32 Main()">
         <size>46</size>
@@ -31461,7 +31461,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Test(Int32)">
-        <size>554</size>
+        <size>544</size>
       </method>
       <method name="Int32 Main()">
         <size>46</size>
@@ -31511,7 +31511,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Test(Int32)">
-        <size>611</size>
+        <size>596</size>
       </method>
       <method name="Int32 Main()">
         <size>46</size>
@@ -31569,7 +31569,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Test()">
-        <size>370</size>
+        <size>360</size>
       </method>
       <method name="Int32 Main()">
         <size>59</size>
