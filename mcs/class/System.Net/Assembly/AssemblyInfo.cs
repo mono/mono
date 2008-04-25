@@ -68,37 +68,3 @@ using System.Runtime.InteropServices;
 [assembly: SecurityCritical]
 [assembly: SecurityPermission (SecurityAction.RequestMinimum, Execution = true)]
 [assembly: SecurityPermission (SecurityAction.RequestMinimum, SkipVerification = true)]
-
-
-
-
-
-[assembly: AssemblyVersion (Consts.FxVersion)]
-[assembly: SatelliteContractVersion (Consts.FxVersion)]
-
-#if (ONLY_1_1)
-[assembly: ComCompatibleVersion (1, 0, 3300, 0)]
-[assembly: TypeLibVersion (1, 10)]
-#endif
-
-[assembly: AssemblyTitle("System.Net.dll")]
-[assembly: AssemblyDescription("System.Net.dll")]
-[assembly: AssemblyConfiguration("Development version")]
-[assembly: AssemblyCompany("MONO development team")]
-[assembly: AssemblyProduct("MONO CLI")]
-[assembly: AssemblyCopyright("(c) 2003 Various Authors")]
-[assembly: AssemblyTrademark("")]
-
-[assembly: CLSCompliant(true)]
-[assembly: AssemblyDefaultAlias("System,Net.dll")]
-[assembly: AssemblyInformationalVersion("0.0.0.1")]
-[assembly: NeutralResourcesLanguage("en-US")]
-
-[assembly: AllowPartiallyTrustedCallers]
-[assembly: ComVisible(false)]
-
-#if ! BOOTSTRAP_WITH_OLDLIB
-[assembly: SecurityPermission (SecurityAction.RequestMinimum, SkipVerification=true)]
-[assembly: AssemblyDelaySign(true)]
-[assembly: AssemblyKeyFile("../ecma.pub")]
-#endif
