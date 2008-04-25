@@ -38,30 +38,29 @@ using System.Runtime.InteropServices;
 
 // General Information about the System.ServiceProcess assembly
 
-[assembly: AssemblyVersion (Consts.FxVersion)]
-[assembly: SatelliteContractVersion (Consts.FxVersion)]
-
 [assembly: AssemblyTitle ("System.ServiceProcess.dll")]
 [assembly: AssemblyDescription ("System.ServiceProcess.dll")]
-[assembly: AssemblyCompany ("MONO development team")]
-[assembly: AssemblyProduct ("MONO CLI")]
-[assembly: AssemblyCopyright ("(c) 2003 Various Authors")]
-
-[assembly: CLSCompliant (true)]
 [assembly: AssemblyDefaultAlias ("System.ServiceProcess.dll")]
-[assembly: AssemblyInformationalVersion ("0.0.0.1")]
-[assembly: NeutralResourcesLanguage ("en-US")]
 
+[assembly: AssemblyCompany (Consts.MonoCompany)]
+[assembly: AssemblyProduct (Consts.MonoProduct)]
+[assembly: AssemblyCopyright (Consts.MonoCopyright)]
+[assembly: AssemblyVersion (Consts.FxVersion)]
+[assembly: SatelliteContractVersion (Consts.FxVersion)]
+[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
+
+[assembly: NeutralResourcesLanguage ("en-US")]
 [assembly: ComVisible (false)]
 
+[assembly: CLSCompliant (true)]
 [assembly: AssemblyDelaySign (true)]
 [assembly: AssemblyKeyFile("../msfinal.pub")]
 
 #if NET_2_0
-[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
-[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
-[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-#else
-[assembly: AssemblyConfiguration ("Development version")]
-[assembly: AssemblyTrademark ("")]
+	[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+	[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
+	[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+#elif (NET_1_1 || NET_1_0)
+	[assembly: AssemblyTrademark ("")]
+	[assembly: AssemblyConfiguration ("")]
 #endif
