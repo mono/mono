@@ -1,5 +1,13 @@
 2008-04-25  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListView.cs: When doing a key search use FindItemWithText method
+	instead of doing the search by ourselves, this way we avoid
+	duplicating the code and also we handle the special case for virtual
+	mode. To achieve that make our private overload of FindItemWithText
+	internal and also have a 'roundtrip' parameter.
+
+2008-04-25  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListView.cs: When doing the layout don't request the
 	ListViewItem instance if we are in virtual mode (since we can't request it
 	until the item is actully drawn).

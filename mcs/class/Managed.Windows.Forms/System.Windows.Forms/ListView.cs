@@ -2082,21 +2082,18 @@ namespace System.Windows.Forms
 			keysearch_text += (char)ke.KeyCode;
 			keysearch_tickcnt = current_tickcnt;
 
-			int start = FocusedItem == null ? 0 : FocusedItem.DisplayIndex;
-			int i = start;
-			while (true) {
-				if (CultureInfo.CurrentCulture.CompareInfo.IsPrefix (GetItemAtDisplayIndex (i).Text, keysearch_text,
-					CompareOptions.IgnoreCase)) {
-					SetFocusedItem (i);
-					GetItemAtDisplayIndex (i).Selected = true;
-					EnsureVisible (GetItemIndex (i));
-					break;
-				}
-				i = (i + 1 < Items.Count) ? i+1 : 0;
+			int prev_focused = FocusedItem == null ? 0 : FocusedItem.DisplayIndex;
+			int start = prev_focused + 1 < Items.Count ? prev_focused + 1 : 0;
 
-				if (i == start)
-					break;
+			ListViewItem item = FindItemWithText (keysearch_text, false, start, true, true);
+			if (item != null && prev_focused != item.DisplayIndex) {
+				selected_indices.Clear ();
+
+				SetFocusedItem (item.DisplayIndex);
+				item.Selected = true;
+				EnsureVisible (GetItemIndex (item.DisplayIndex));
 			}
+
 			return true;
 		}
 
@@ -3657,10 +3654,19 @@ namespace System.Windows.Forms
 
 		public ListViewItem FindItemWithText (string text, bool includeSubItemsInSearch, int startIndex)
 		{
-			return FindItemWithText (text, includeSubItemsInSearch, startIndex, true);
+			return FindItemWithText (text, includeSubItemsInSearch, startIndex, true, false);
 		}
 
 		public ListViewItem FindItemWithText (string text, bool includeSubItemsInSearch, int startIndex, bool isPrefixSearch)
+		{
+			return FindItemWithText (text, includeSubItemsInSearch, startIndex, isPrefixSearch, false);
+		}
+
+		public 
+#else
+		internal
+#endif
+		ListViewItem FindItemWithText (string text, bool includeSubItemsInSearch, int startIndex, bool isPrefixSearch, bool roundtrip)
 		{
 			if (startIndex < 0 || startIndex >= items.Count)
 				throw new ArgumentOutOfRangeException ("startIndex");
@@ -3668,6 +3674,7 @@ namespace System.Windows.Forms
 			if (text == null)
 				throw new ArgumentNullException ("text");
 
+#if NET_2_0
 			if (virtual_mode) {
 				SearchForVirtualItemEventArgs args = new SearchForVirtualItemEventArgs (true,
 						isPrefixSearch, includeSubItemsInSearch, text, Point.Empty, 
@@ -3680,21 +3687,41 @@ namespace System.Windows.Forms
 
 				return null;
 			}
+#endif
 
-			for (int i = startIndex; i < items.Count; i++) {
+			int i = startIndex;
+			while (true) {
 				ListViewItem lvi = items [i];
 
-				if ((isPrefixSearch && lvi.Text.StartsWith (text, true, CultureInfo.CurrentCulture)) // prefix search
-						|| String.Compare (lvi.Text, text, true) == 0) // match
+				if (isPrefixSearch) { // prefix search
+					if (CultureInfo.CurrentCulture.CompareInfo.IsPrefix (lvi.Text, text, CompareOptions.IgnoreCase))
+					       	return lvi;
+				} else if (String.Compare (lvi.Text, text, true) == 0) // match
 					return lvi;
+
+				if (i + 1 >= items.Count) {
+					if (!roundtrip)
+						break;
+
+					i = 0;
+				} else 
+					i++;
+
+				if (i == startIndex)
+					break;
 			}
 
+			// Subitems have a minor priority, so we have to do a second linear search
+			// Also, we don't need to to a roundtrip search for them by now
 			if (includeSubItemsInSearch) {
-				for (int i = startIndex; i < items.Count; i++) {
+				for (i = startIndex; i < items.Count; i++) {
 					ListViewItem lvi = items [i];
 					foreach (ListViewItem.ListViewSubItem sub_item in lvi.SubItems)
-						if ((isPrefixSearch && sub_item.Text.StartsWith (text, true, CultureInfo.CurrentCulture))
-								|| String.Compare (sub_item.Text, text, true) == 0)
+						if (isPrefixSearch) {
+							if (CultureInfo.CurrentCulture.CompareInfo.IsPrefix (sub_item.Text, 
+								text, CompareOptions.IgnoreCase))
+								return lvi;
+						} else if (String.Compare (sub_item.Text, text, true) == 0)
 							return lvi;
 				}
 			}
@@ -3702,6 +3729,7 @@ namespace System.Windows.Forms
 			return null;
 		}
 
+#if NET_2_0
 		public ListViewItem FindNearestItem (SearchDirectionHint searchDirection, int x, int y)
 		{
 			return FindNearestItem (searchDirection, new Point (x, y));
