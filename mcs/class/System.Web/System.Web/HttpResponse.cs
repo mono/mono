@@ -795,7 +795,7 @@ namespace System.Web {
 
 			// Text for browsers that can't handle location header
 			Write ("<html><head><title>Object moved</title></head><body>\r\n");
-			Write ("<h2>Object moved to <a href='" + url + "'>here</a></h2>\r\n");
+			Write ("<h2>Object moved to <a href=\"" + url + "\">here</a></h2>\r\n");
 			Write ("</body><html>\r\n");
 			
 			if (endResponse)
