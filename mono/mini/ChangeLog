@@ -1,3 +1,16 @@
+2008-04-25  Jonathan Chambers <joncham@gmail.com>
+
+	* mini-amd64.c (add_general): Remove previous stack adjustment.
+	(mono_arch_call_opcode): Remove OP_OUTARG_MEMBASE and instead simply
+	adjust stack pointer after pushing args. Adjust ARGS_OFFSET to account
+	for 32 bytes of stack space reserved for all calls.
+	
+	* inssel-amd64.brg (OP_OUTARG_MEMBASE): Remove.
+	(OP_AMD64_OUTARG_ALIGN_STACK): Take argument to specify size of stack 
+	adjustment.
+	
+	Code contributed under MIT/X11 license.
+
 2008-04-23  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini.c (mini_method_verify): Only verify non-inflated methods, check
