@@ -29,47 +29,40 @@
 //
 
 using System;
-#if NET_2_0
-using System.Diagnostics;
-#endif
 using System.Reflection;
-#if NET_2_0
 using System.Resources;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using System.Runtime.ConstrainedExecution;
+#if NET_2_0
+	using System.Runtime.ConstrainedExecution;
 #endif
 using System.Runtime.InteropServices;
 
+// General Information about the cscompmgd assembly
+
 [assembly: AssemblyVersion (Consts.VsVersion)]
-#if (NET_2_0)
-[assembly: SatelliteContractVersion (Consts.VsVersion)]
-#endif
 [assembly: AssemblyFileVersion (Consts.VsFileVersion)]
 
-#if (NET_1_0)
-	[assembly: AssemblyDescription ("Managed interface for C# compiler")]
-	[assembly: AssemblyTitle ("Managed C# Compiler")]
-#elif (NET_2_0)
-	[assembly: AssemblyDefaultAlias ("cscompmgd.dll")]
-	[assembly: AssemblyDescription ("cscompmgd.dll")]
-	[assembly: AssemblyInformationalVersion (Consts.VsFileVersion)]
-	[assembly: AssemblyTitle ("cscompmgd.dll")]
-	[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
-	[assembly: Debuggable(DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-	[assembly: NeutralResourcesLanguage ("en-US")]
-	[assembly: ReliabilityContract(Consistency.MayCorruptProcess, Cer.None)]
-	[assembly: AssemblyCompany ("Mono development team")]
-	[assembly: AssemblyCopyright ("Mono development team")]
-	[assembly: AssemblyProduct ("Microsoft (R) Visual Studio (R) 2005")]
-#elif (NET_1_1)
-	[assembly: AssemblyDescription ("Managed interface for C# compiler")]
-	[assembly: AssemblyTitle ("Managed C# Compiler")]
-#endif
-
 [assembly: CLSCompliant (true)]
-
 [assembly: ComVisible (false)]
 
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile("../msfinal.pub")]
+[assembly: AssemblyKeyFile ("../msfinal.pub")]
 
+#if NET_2_0
+	[assembly: AssemblyTitle ("cscompmgd.dll")]
+	[assembly: AssemblyDefaultAlias ("cscompmgd.dll")]
+	[assembly: AssemblyDescription ("cscompmgd.dll")]
+	[assembly: AssemblyCompany (Consts.MonoCompany)]
+	[assembly: AssemblyProduct (Consts.MonoProduct)]
+	[assembly: AssemblyCopyright (Consts.MonoCopyright)]
+	[assembly: SatelliteContractVersion (Consts.VsVersion)]
+	[assembly: AssemblyInformationalVersion (Consts.VsFileVersion)]
+	[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
+	[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+	[assembly: NeutralResourcesLanguage ("en-US")]
+	[assembly: ReliabilityContract (Consistency.MayCorruptProcess, Cer.None)]
+#elif (NET_1_1 || NET_1_0)
+	[assembly: AssemblyDescription ("Managed interface for C# compiler")]
+	[assembly: AssemblyTitle ("Managed C# Compiler")]
+#endif

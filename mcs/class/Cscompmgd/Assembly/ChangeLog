@@ -1,3 +1,7 @@
+2008-04-25  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* AssemblyInfo.cs: Change to use more constants
+
 2008-04-09  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* AssemblyInfo.cs: Add missing attributes
