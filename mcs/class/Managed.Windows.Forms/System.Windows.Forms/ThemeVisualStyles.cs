@@ -150,6 +150,68 @@ namespace System.Windows.Forms
 			new VisualStyleRenderer (element).DrawBackground (dc, rectangle);
 		}
 		#endregion
+		#region ProgressBar
+		public override void DrawProgressBar (Graphics dc, Rectangle clip_rect, ProgressBar ctrl)
+		{
+			if (!VisualStyleRenderer.IsElementDefined (VisualStyleElement.ProgressBar.Bar.Normal) ||
+				!VisualStyleRenderer.IsElementDefined (VisualStyleElement.ProgressBar.Chunk.Normal)) {
+				base.DrawProgressBar (dc, clip_rect, ctrl);
+				return;
+			}
+			VisualStyleRenderer renderer = new VisualStyleRenderer (VisualStyleElement.ProgressBar.Bar.Normal);
+			renderer.DrawBackground (dc, ctrl.ClientRectangle, clip_rect);
+			Rectangle client_area = renderer.GetBackgroundContentRectangle (dc, new Rectangle (Point.Empty, ctrl.Size));
+			renderer = new VisualStyleRenderer (VisualStyleElement.ProgressBar.Chunk.Normal);
+			/* Draw Blocks */
+			int draw_mode = 0;
+			int max_blocks = int.MaxValue;
+			int start_pixel = client_area.X;
+#if NET_2_0
+			draw_mode = (int)ctrl.Style;
+#endif
+			switch (draw_mode) {
+#if NET_2_0
+			case 1: // Continuous
+				client_area.Width = (int)(client_area.Width * ((double)(ctrl.Value - ctrl.Minimum) / (double)(Math.Max (ctrl.Maximum - ctrl.Minimum, 1))));
+				renderer.DrawBackground (dc, client_area, clip_rect);
+				break;
+			case 2: // Marquee
+				int ms_diff = (int)(DateTime.Now - ctrl.start).TotalMilliseconds;
+				double percent_done = (double)ms_diff % (double)ctrl.MarqueeAnimationSpeed / (double)ctrl.MarqueeAnimationSpeed;
+				max_blocks = 5;
+				start_pixel = client_area.X + (int)(client_area.Width * percent_done);
+				goto default;
+#endif
+			default: // Blocks
+				int block_width = renderer.GetInteger (IntegerProperty.ProgressChunkSize);
+				int first_pixel_outside_filled_area = ((ctrl.Value - ctrl.Minimum) * client_area.Width) / (Math.Max (ctrl.Maximum - ctrl.Minimum, 1)) + client_area.X;
+				int block_count = 0;
+				int increment = block_width + renderer.GetInteger (IntegerProperty.ProgressSpaceSize);
+				Rectangle block_rect = new Rectangle (start_pixel, client_area.Y, block_width, client_area.Height);
+				while (true) {
+					if (max_blocks != int.MaxValue) {
+						if (block_count == max_blocks)
+							break;
+						if (block_rect.Right >= client_area.Width)
+							block_rect.X -= client_area.Width;
+					} else {
+						if (block_rect.X >= first_pixel_outside_filled_area)
+							break;
+						if (block_rect.Right >= first_pixel_outside_filled_area)
+							if (first_pixel_outside_filled_area == client_area.Right)
+								block_rect.Width = first_pixel_outside_filled_area - block_rect.X;
+							else
+								break;
+					}
+					if (clip_rect.IntersectsWith (block_rect))
+						renderer.DrawBackground (dc, block_rect, clip_rect);
+					block_rect.X += increment;
+					block_count++;
+				}
+				break;
+			}
+		}
+		#endregion
 		#region RadioButton
 		protected override void RadioButton_DrawButton (RadioButton radio_button, Graphics dc, ButtonState state, Rectangle radiobutton_rectangle) {
 			if (radio_button.Appearance == Appearance.Normal && radio_button.FlatStyle == FlatStyle.System) {
