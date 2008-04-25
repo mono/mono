@@ -82,4 +82,4 @@ using System.Runtime.InteropServices;
 #if NET_3_5
 	[assembly: InternalsVisibleTo ("System.Data.Entity, PublicKey=00000000000000000400000000000000")]
 	[assembly: InternalsVisibleTo ("System.Data.DataSetExtensions, PublicKey=00000000000000000400000000000000")]
-endif
+#endif
