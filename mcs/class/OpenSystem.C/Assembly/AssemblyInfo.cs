@@ -36,34 +36,23 @@ using System.Security.Permissions;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-// General Information about the system assembly
+// General Information about the OpenSystem.C assembly
 
+[assembly: AssemblyTitle ("OpenSystem.C.dll")]
+[assembly: AssemblyDescription ("OpenSystem.C.dll")]
+[assembly: AssemblyDefaultAlias ("OpenSystem.C.dll")]
+
+[assembly: AssemblyCompany (Consts.MonoCompany)]
+[assembly: AssemblyProduct (Consts.MonoProduct)]
+[assembly: AssemblyCopyright (Consts.MonoCopyright)]
 [assembly: AssemblyVersion (Consts.FxVersion)]
 [assembly: SatelliteContractVersion (Consts.FxVersion)]
+[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
+[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 
-#if (ONLY_1_1)
-[assembly: ComCompatibleVersion (1, 0, 3300, 0)]
-[assembly: TypeLibVersion (1, 10)]
-#endif
+[assembly: NeutralResourcesLanguage ("en-US")]
+[assembly: CLSCompliant (true)]
+[assembly: AssemblyDelaySign (true)]
+[assembly: AssemblyKeyFile ("../ecma.pub")]
 
-[assembly: AssemblyTitle("System.dll")]
-[assembly: AssemblyDescription("System.dll")]
-[assembly: AssemblyConfiguration("Development version")]
-[assembly: AssemblyCompany("MONO development team")]
-[assembly: AssemblyProduct("MONO CLI")]
-[assembly: AssemblyCopyright("(c) 2003 Various Authors")]
-[assembly: AssemblyTrademark("")]
-
-[assembly: CLSCompliant(true)]
-[assembly: AssemblyDefaultAlias("System.dll")]
-[assembly: AssemblyInformationalVersion("0.0.0.1")]
-[assembly: NeutralResourcesLanguage("en-US")]
-
-[assembly: AllowPartiallyTrustedCallers]
-[assembly: ComVisible(false)]
-
-#if ! BOOTSTRAP_WITH_OLDLIB
-[assembly: SecurityPermission (SecurityAction.RequestMinimum, SkipVerification=true)]
-[assembly: AssemblyDelaySign(true)]
-[assembly: AssemblyKeyFile("../ecma.pub")]
-#endif
+[assembly: ComVisible (false)]
