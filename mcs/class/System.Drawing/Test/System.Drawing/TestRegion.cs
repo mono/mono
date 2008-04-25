@@ -5,7 +5,7 @@
 //   Jordi Mas, jordi@ximian.com
 //   Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004-2007 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -1521,6 +1521,46 @@ namespace MonoTests.System.Drawing
 				}
 				Assert.IsTrue (r.IsInfinite (graphic), "after");
 				CheckEmpty ("InfinityRotate", r);
+			}
+		}
+
+		[Test]
+		public void Intersect_383878 ()
+		{
+			using (Region clipRegion = new Region ()) {
+				clipRegion.MakeInfinite ();
+
+				Rectangle smaller = new Rectangle (5, 5, -10, -10);
+
+				clipRegion.Intersect (smaller);
+				Assert.IsFalse (clipRegion.IsEmpty (graphic), "IsEmpty");
+				Assert.IsFalse (clipRegion.IsInfinite (graphic), "IsInfinite");
+
+				RectangleF [] rects = clipRegion.GetRegionScans (new Matrix ());
+				Assert.AreEqual (1, rects.Length, "Length");
+				Assert.AreEqual (new RectangleF (-5, -5, 10, 10), rects [0], "0");
+			}
+		}
+
+		[Test]
+		public void Complement_383878 ()
+		{
+			using (Region clipRegion = new Region ()) {
+				clipRegion.MakeInfinite ();
+
+				Rectangle smaller = new Rectangle (5, 5, -10, -10);
+				Rectangle bigger = new Rectangle (-5, -5, 12, 12);
+
+				clipRegion.Intersect (smaller);
+				clipRegion.Complement (bigger);
+
+				Assert.IsFalse (clipRegion.IsEmpty (graphic), "IsEmpty");
+				Assert.IsFalse (clipRegion.IsInfinite (graphic), "IsInfinite");
+
+				RectangleF [] rects = clipRegion.GetRegionScans (new Matrix ());
+				Assert.AreEqual (2, rects.Length, "Length");
+				Assert.AreEqual (new RectangleF (5, -5, 2, 10), rects [0], "0");
+				Assert.AreEqual (new RectangleF (-5, 5, 12, 2), rects [1], "1");
 			}
 		}
 	}

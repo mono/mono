@@ -1,3 +1,9 @@
+2008-04-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestRegion.cs: Add test cases for #383878 to verify Intersect
+	with negative width & height and to check against the crash in
+	Complement.
+
 2008-03-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestIcon.cs: Add test case for #366485.
