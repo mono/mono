@@ -197,7 +197,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO("Implement setting a null cursor, and add XplatUI method to get current cursor")]
 		public static Cursor Current {
 			get {
 				if (current != null) {
