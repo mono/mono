@@ -230,6 +230,12 @@ class MemberAccessData
 	}	
 }
 
+enum MyEnum : byte
+{
+	Value_1 = 1,
+	Value_2 = 2
+}
+
 class NewTest<T>
 {
 	T [] t;
@@ -331,6 +337,17 @@ class Tester
 		Expression<Func<int, MyType?, int?>> e6 = (int a, MyType? b) => a + b;
 		AssertNodeType (e6, ExpressionType.Add);
 		Assert (-1, e6.Compile ().Invoke (-31, new MyType (30)));
+		
+		Expression<Func<MyEnum, byte, MyEnum>> e7 = (a, b) => a + b;
+		AssertNodeType (e7, ExpressionType.Convert);
+		Assert (MyEnum.Value_2, e7.Compile ().Invoke (MyEnum.Value_1, 1));
+
+		// CSC BUG: probably due to missing numeric promotion
+		Expression<Func<MyEnum?, byte?, MyEnum?>> e8 = (a, b) => a + b;
+		AssertNodeType (e8, ExpressionType.Convert);
+		Assert<MyEnum?> (0, e8.Compile ().Invoke (MyEnum.Value_1, 255));
+		Assert (null, e8.Compile ().Invoke (MyEnum.Value_1, null));
+		Assert (null, e8.Compile ().Invoke (null, null));
 	}
 
 	void AddCheckedTest ()
