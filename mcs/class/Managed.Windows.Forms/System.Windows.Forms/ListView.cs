@@ -1790,10 +1790,9 @@ namespace System.Windows.Forms
 			int display_index = 0;
 
 			for (int i = 0; i < items.Count; i++) {
-				ListViewItem item = items [i];
 #if NET_2_0
 				if (using_groups) {
-					ListViewGroup group = item.Group;
+					ListViewGroup group = items [i].Group;
 					if (group == null)
 						group = groups.DefaultGroup;
 
@@ -1839,6 +1838,7 @@ namespace System.Windows.Forms
 				if (!virtual_mode) 
 #endif
 				{
+					ListViewItem item = items [i];
 					item.Layout ();
 					item.DisplayIndex = display_index;
 					item.SetPosition (new Point (x, y));
