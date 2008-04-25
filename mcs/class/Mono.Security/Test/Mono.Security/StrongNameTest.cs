@@ -840,6 +840,22 @@ namespace MonoTests.Mono.Security {
 		}
 
 		[Test]
+		public void VerifyValidFromStream () 
+		{
+			Stream signed = new MemoryStream (signedData);
+			// verify that hellosigned.exe is valid
+			Assert ("Verify/Valid", sn.Verify (signed));
+		}
+
+		[Test]
+		public void VerifyInvalidFromStream () 
+		{
+			Stream delay = new MemoryStream (delayData);
+			// verify that hellodelay.exe isn't valid
+			Assert ("Verify/Invalid", !sn.Verify (delay));
+		}
+
+		[Test]
 		public void Sign () 
 		{
 			// sign the (invalid) hellodelay.exe
