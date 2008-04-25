@@ -662,6 +662,7 @@ System.Windows.Forms/ThemeClearlooks.cs
 System.Windows.Forms/ThemeEngine.cs
 System.Windows.Forms/ThemeGtk.cs
 System.Windows.Forms/ThemeNice.cs
+System.Windows.Forms/ThemeVisualStyles.cs
 System.Windows.Forms/ThemeWin32Classic.cs
 System.Windows.Forms/ThreadExceptionDialog.cs
 System.Windows.Forms/TickStyle.cs
@@ -833,12 +834,15 @@ System.Windows.Forms.Theming/ThemeElementsClearlooks.cs
 System.Windows.Forms.Theming/ThemeElementsDefault.cs
 System.Windows.Forms.Theming/ThemeElementsGtk.cs
 System.Windows.Forms.Theming/ThemeElementsNice.cs
+System.Windows.Forms.Theming/ThemeElementsVisualStyles.cs
 System.Windows.Forms.Theming/Default/ButtonPainter.cs
 System.Windows.Forms.Theming/Default/CheckBoxPainter.cs
 System.Windows.Forms.Theming/Default/RadioButtonPainter.cs
 System.Windows.Forms.Theming/Default/TabControlPainter.cs
 System.Windows.Forms.Theming/Default/ToolStripPainter.cs
 System.Windows.Forms.Theming/Nice/TabControlPainter.cs
+System.Windows.Forms.Theming/VisualStyles/CheckBoxPainter.cs
+System.Windows.Forms.Theming/VisualStyles/RadioButtonPainter.cs
 System.Windows.Forms.VisualStyles/BackgroundType.cs
 System.Windows.Forms.VisualStyles/BooleanProperty.cs
 System.Windows.Forms.VisualStyles/BorderType.cs

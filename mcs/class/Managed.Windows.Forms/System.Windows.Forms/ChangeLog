@@ -1,5 +1,10 @@
 2008-04-25  George Giolfan  <georgegiolfan@yahoo.com>
 
+	* ThemeEngine.cs: Added code to select ThemeVisualStyles.
+	* ThemeVisualStyles.cs: Added.
+
+2008-04-25  George Giolfan  <georgegiolfan@yahoo.com>
+
 	* IDeviceContext.cs: Added a missing using.
 
 2008-04-25  George Giolfan  <georgegiolfan@yahoo.com>

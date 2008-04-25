@@ -17,51 +17,30 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004-2006 Novell, Inc.
+// Copyright (c) 2008 George Giolfan
 //
 // Authors:
-//	Jordi Mas i Hernandez, jordi@ximian.com
-//
-//
+//	George Giolfan (georgegiolfan@yahoo.com)
 
-
-using System;
-
-namespace System.Windows.Forms
+namespace System.Windows.Forms.Theming
 {
-	internal class ThemeEngine
+	class ThemeElementsVisualStyles : ThemeElementsDefault
 	{
-		static private Theme theme = null;
-		
-		static ThemeEngine ()
-		{
-			string theme_var;
-
-			theme_var = Environment.GetEnvironmentVariable("MONO_THEME");
-
-			if (theme_var == null) {
-				theme_var = "win32";
-			} else {
-				theme_var = theme_var.ToLower ();
-			}
-
-			if (theme_var == "gtk") {
-				theme = new ThemeGtk ();
-			} else if ( theme_var == "nice" ) {
-				theme = new ThemeNice ();
-			} else if ( theme_var == "clearlooks" ) {
-				theme = new ThemeClearlooks ();
-			} else if (theme_var == "visualstyles" && Application.RenderWithVisualStyles) {
-				theme = new ThemeVisualStyles ();
-			} else {
-				theme = new ThemeWin32Classic ();
+#if NET_2_0
+		public override Default.CheckBoxPainter CheckBoxPainter {
+			get {
+				if (checkBoxPainter == null)
+					checkBoxPainter = new VisualStyles.CheckBoxPainter ();
+				return checkBoxPainter;
 			}
 		}
-		
-			
-		public static Theme Current {
-			get { return theme; }
+		public override Default.RadioButtonPainter RadioButtonPainter {
+			get {
+				if (radioButtonPainter == null)
+					radioButtonPainter = new VisualStyles.RadioButtonPainter ();
+				return radioButtonPainter;
+			}
 		}
-		
+#endif
 	}
 }

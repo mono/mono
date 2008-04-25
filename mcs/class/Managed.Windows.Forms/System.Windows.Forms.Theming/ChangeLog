@@ -1,3 +1,8 @@
+2008-04-25  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* ThemeElements.cs: Added code to select ThemeElementsVisualStyles.
+	* ThemeElementsVisualStyles.cs: Added.
+
 2008-01-23  Everaldo Canuto  <ecanuto@novell.com>
 
 	* ThemeElementsDefault.cs: Add LinkLabelPainter references.
