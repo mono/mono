@@ -18,9 +18,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 // Copyright (c) 2008 George Giolfan
+// Copyright (c) 2004-2006 Novell, Inc.
 //
 // Authors:
 //	George Giolfan, georgegiolfan@yahoo.com
+//	Ernesto Carrea, equistango@gmail.com
 
 using System.Drawing;
 using System.Windows.Forms.VisualStyles;
@@ -117,6 +119,35 @@ namespace System.Windows.Forms
 					return CheckBoxState.UncheckedHot;
 				return CheckBoxState.UncheckedNormal;
 			}
+		}
+		#endregion
+		#region ControlPaint
+		public override void CPDrawCheckBox (Graphics dc, Rectangle rectangle, ButtonState state)
+		{
+			if ((state & ButtonState.Flat) == ButtonState.Flat) {
+				base.CPDrawCheckBox (dc, rectangle, state);
+				return;
+			}
+			VisualStyleElement element;
+			if ((state & ButtonState.Checked) == ButtonState.Checked)
+				if ((state & ButtonState.Inactive) == ButtonState.Inactive)
+					element = VisualStyleElement.Button.CheckBox.CheckedDisabled;
+				else if ((state & ButtonState.Pushed) == ButtonState.Pushed)
+					element = VisualStyleElement.Button.CheckBox.CheckedPressed;
+				else
+					element = VisualStyleElement.Button.CheckBox.CheckedNormal;
+			else
+				if ((state & ButtonState.Inactive) == ButtonState.Inactive)
+					element = VisualStyleElement.Button.CheckBox.UncheckedDisabled;
+				else if ((state & ButtonState.Pushed) == ButtonState.Pushed)
+					element = VisualStyleElement.Button.CheckBox.UncheckedPressed;
+				else
+					element = VisualStyleElement.Button.CheckBox.UncheckedNormal;
+			if (!VisualStyleRenderer.IsElementDefined (element)) {
+				base.CPDrawCheckBox (dc, rectangle, state);
+				return;
+			}
+			new VisualStyleRenderer (element).DrawBackground (dc, rectangle);
 		}
 		#endregion
 		#region RadioButton

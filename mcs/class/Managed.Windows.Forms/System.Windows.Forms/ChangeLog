@@ -1,5 +1,10 @@
 2008-04-25  George Giolfan  <georgegiolfan@yahoo.com>
 
+	* ThemeVisualStyles.cs: Added support for ControlPaint.DrawCheckBox (based on 
+	the patch from Ernesto).
+
+2008-04-25  George Giolfan  <georgegiolfan@yahoo.com>
+
 	* ThemeEngine.cs: Added code to select ThemeVisualStyles.
 	* ThemeVisualStyles.cs: Added.
 
