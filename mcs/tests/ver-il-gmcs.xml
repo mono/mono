@@ -10437,6 +10437,24 @@
       </method>
     </type>
   </test>
+  <test name="gtest-388.cs">
+    <type name="Data">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Foo">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void f(Data)">
+        <size>19</size>
+      </method>
+      <method name="Void Main()">
+        <size>20</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">

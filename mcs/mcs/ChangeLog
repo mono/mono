@@ -1,3 +1,9 @@
+2008-04-26  Raja R Harinath  <harinath@hurrynot.org>
+
+	Fix gtest-388.cs
+	* expression.cs (VariableReference.EmitAssign) <source is NewInstance>:
+	Handle 'leave_copy'.
+
 2008-04-25  Marek Safar  <marek.safar@gmail.com>
 
 	* expression.cs, nullable.cs: Implemented UnaryPlus expression.

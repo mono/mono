@@ -3955,8 +3955,13 @@ namespace Mono.CSharp {
 			source.Emit (ec);
 
 			// HACK: variable is already emitted when source is an initializer 
-			if (source is NewInitialize)
+			if (source is NewInitialize) {
+				if (leave_copy) {
+					Variable.EmitInstance (ec);
+					Variable.Emit (ec);
+				}
 				return;
+			}
 
 			if (leave_copy) {
 				ig.Emit (OpCodes.Dup);
