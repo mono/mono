@@ -1,3 +1,7 @@
+2008-04-25  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* AssemblyInfo.cs: Added missing attributes
+
 2008-03-13  Jb Evain  <jbevain@novell.com>
 
 	* new files to build System.Net.dll for ML.
