@@ -692,7 +692,7 @@ namespace Mono.CSharp.Nullable
 			//
 			// Either left or right is null
 			//
-			if (left_unwrap != null && right.IsNull) {
+			if (left_unwrap != null && (right_null_lifted || right.IsNull)) {
 				left_unwrap.EmitCheck (ec);
 				if (Oper == Binary.Operator.Equality) {
 					ig.Emit (OpCodes.Ldc_I4_0);
@@ -701,7 +701,7 @@ namespace Mono.CSharp.Nullable
 				return true;
 			}
 
-			if (right_unwrap != null && left.IsNull) {
+			if (right_unwrap != null && (left_null_lifted || left.IsNull)) {
 				right_unwrap.EmitCheck (ec);
 				if (Oper == Binary.Operator.Equality) {
 					ig.Emit (OpCodes.Ldc_I4_0);
@@ -881,7 +881,7 @@ namespace Mono.CSharp.Nullable
 					return null;
 
 				wrap_ctor = new NullableInfo (lifted_type.Type).Constructor;
-				res_expr.Type = lifted_type.Type;
+				type = res_expr.Type = lifted_type.Type;
 			}
 
 			if (left_null_lifted) {
@@ -913,11 +913,11 @@ namespace Mono.CSharp.Nullable
 			return res_expr;
 		}
 
-		protected override Expression ResolveOperatorPredefined (EmitContext ec, Binary.PredefinedOperator [] operators, bool primitives_only)
+		protected override Expression ResolveOperatorPredefined (EmitContext ec, Binary.PredefinedOperator [] operators, bool primitives_only, Type enum_type)
 		{
-			Expression e = base.ResolveOperatorPredefined (ec, operators, primitives_only);
+			Expression e = base.ResolveOperatorPredefined (ec, operators, primitives_only, enum_type);
 
-			if (e == this)
+			if (e == this || enum_type != null)
 				return LiftResult (ec, e);
 
 			//

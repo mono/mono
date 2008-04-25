@@ -1848,6 +1848,7 @@ namespace Mono.CSharp {
 		readonly Operator oper;
 		protected Expression left, right;
 		readonly bool is_compound;
+		Expression enum_conversion;
 
 		// This must be kept in sync with Operator!!!
 		public static readonly string [] oper_names;
@@ -2025,6 +2026,9 @@ namespace Mono.CSharp {
 			Expression expr;
 			bool primitives_only = false;
 
+			if (standard_operators == null)
+				CreateStandardOperatorsTable ();
+
 			//
 			// Handles predefined primitive types
 			//
@@ -2070,10 +2074,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (standard_operators == null)
-				CreateStandardOperatorsTable ();
-
-			return ResolveOperatorPredefined (ec, standard_operators, primitives_only);
+			return ResolveOperatorPredefined (ec, standard_operators, primitives_only, null);
 		}
 
 		// at least one of 'left' or 'right' is an enumeration constant (EnumConstant or SideEffectConstant or ...)
@@ -2285,7 +2286,7 @@ namespace Mono.CSharp {
 			if (ltype != int32) {
 				Constant c = left as Constant;
 				if (c != null)
-					temp = c.ImplicitConversionRequired (int32, loc);
+					temp = c.ConvertImplicitly (int32);
 				else
 					temp = Convert.ImplicitNumericConversion (left, int32);
 
@@ -2297,7 +2298,7 @@ namespace Mono.CSharp {
 			if (rtype != int32) {
 				Constant c = right as Constant;
 				if (c != null)
-					temp = c.ImplicitConversionRequired (int32, loc);
+					temp = c.ConvertImplicitly (int32);
 				else
 					temp = Convert.ImplicitNumericConversion (right, int32);
 
@@ -2466,7 +2467,7 @@ namespace Mono.CSharp {
 		//
 		// Enumeration operators
 		//
-		Binary ResolveOperatorEnum (EmitContext ec, bool lenum, bool renum, Type ltype, Type rtype)
+		Expression ResolveOperatorEnum (EmitContext ec, bool lenum, bool renum, Type ltype, Type rtype)
 		{
 			Expression temp;
 
@@ -2512,13 +2513,17 @@ namespace Mono.CSharp {
 				//
 				if (oper == Operator.Addition || oper == Operator.Subtraction) {
 					underlying_type = TypeManager.GetEnumUnderlyingType (ltype);
-					temp = Convert.ImplicitConversion (ec, right, underlying_type, loc);
-					if (temp == null)
+					temp = left;
+					left = EmptyCast.Create (left, underlying_type, true);
+					if (!DoBinaryOperatorPromotion (ec)) {
+						left = temp;
 						return null;
+					}
 
-					right = temp;
-					type = ltype;
-					return this;
+					enum_conversion = Convert.ExplicitNumericConversion (
+						new EmptyExpression (left.Type), underlying_type);
+
+					return ResolveOperatorPredefined (ec, standard_operators, true, ltype);
 				}
 
 				return null;
@@ -2702,13 +2707,13 @@ namespace Mono.CSharp {
 			if (pointer_operators == null)
 				CreatePointerOperatorsTable ();
 
-			return ResolveOperatorPredefined (ec, pointer_operators, false);
+			return ResolveOperatorPredefined (ec, pointer_operators, false, null);
 		}
 
 		//
 		// Build-in operators method overloading
 		//
-		protected virtual Expression ResolveOperatorPredefined (EmitContext ec, PredefinedOperator [] operators, bool primitives_only)
+		protected virtual Expression ResolveOperatorPredefined (EmitContext ec, PredefinedOperator [] operators, bool primitives_only, Type enum_type)
 		{
 			PredefinedOperator best_operator = null;
 			Type l = left.Type;
@@ -2748,7 +2753,15 @@ namespace Mono.CSharp {
 			if (best_operator == null)
 				return null;
 
-			return best_operator.ConvertResult (ec, this);
+			Expression expr = best_operator.ConvertResult (ec, this);
+			if (enum_type == null)
+				return expr;
+
+			//
+			// HACK: required by enum_conversion
+			//
+			expr.Type = enum_type;
+			return EmptyCast.Create (expr, enum_type);
 		}
 
 		//
@@ -3258,6 +3271,13 @@ namespace Mono.CSharp {
 			}
 
 			ig.Emit (opcode);
+
+			//
+			// Nullable enum could require underlying type cast and we cannot simply wrap binary
+			// expression because that would wrap lifted binary operation
+			//
+			if (enum_conversion != null)
+				enum_conversion.Emit (ec);
 		}
 
 		public override void EmitSideEffect (EmitContext ec)
