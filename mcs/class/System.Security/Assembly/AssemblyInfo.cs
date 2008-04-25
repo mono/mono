@@ -35,8 +35,9 @@ using System.Resources;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Security.Permissions;
 
-// General Information about the system assembly
+// General Information about the System.Security assembly
 
 [assembly: AssemblyVersion (Consts.FxVersion)]
 [assembly: SatelliteContractVersion (Consts.FxVersion)]
@@ -49,16 +50,20 @@ using System.Security;
 [assembly: AssemblyKeyFile ("../msfinal.pub")]
 
 #if NET_2_0
-[assembly: AssemblyCompany ("MONO development team")]
-[assembly: AssemblyCopyright ("Copyright (C) 2002-2005 Various Authors")]
-[assembly: AssemblyDefaultAlias ("System.Security.dll")]
-[assembly: AssemblyDescription ("System.Security.dll")]
-[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
-[assembly: AssemblyInformationalVersion ("")]
-[assembly: AssemblyProduct ("MONO CLI")]
-[assembly: AssemblyTitle ("System.Security.dll")]
-[assembly: AllowPartiallyTrustedCallers]
-[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
-[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
+	[assembly: AssemblyDefaultAlias ("System.Security.dll")]
+	[assembly: AssemblyDescription ("System.Security.dll")]
+	[assembly: AssemblyTitle ("System.Security.dll")]
+
+	[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+	[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
+
+	[assembly: AssemblyCompany (Consts.MonoCompany)]
+	[assembly: AssemblyProduct (Consts.MonoProduct)]
+	[assembly: AssemblyCopyright (Consts.MonoCopyright)]
+
+	[assembly: AllowPartiallyTrustedCallers]
+	[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
+	[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+	[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
+	[assembly: SecurityPermission (SecurityAction.RequestMinimum, SkipVerification = true)]
 #endif
