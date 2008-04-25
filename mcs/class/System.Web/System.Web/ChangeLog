@@ -6,6 +6,9 @@
 
 	* HttpContext.cs: set Request.FilePath in RewritePath only if
 	setClientFilePath is true. Fixes bug #383652
+	Revert the change in revision 100273 - the real bug was in a
+	different overload of RewritePath, fixed with the commit for the
+	above bug #383652
 
 2008-04-24  Marek Habersack  <mhabersack@novell.com>
 

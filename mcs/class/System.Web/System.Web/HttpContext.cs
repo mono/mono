@@ -612,11 +612,7 @@ namespace System.Web {
 
 		public void RewritePath (string filePath, string pathInfo, string queryString)
 		{
-#if NET_2_0
-			RewritePath (filePath, pathInfo, queryString, true);
-#else
 			RewritePath (filePath, pathInfo, queryString, false);
-#endif
 		}
 
 #if NET_2_0
