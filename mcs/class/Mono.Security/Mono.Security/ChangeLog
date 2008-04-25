@@ -1,3 +1,8 @@
+2008-04-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StrongName.cs: Add support for verifying strongnames on a stream.
+	Patch from Dave Hillier <daveh@lindenlab.com>
+
 2007-05-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ASN1Convert.cs: Synch with corlib (remove warnings)
