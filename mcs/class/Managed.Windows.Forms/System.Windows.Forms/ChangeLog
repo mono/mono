@@ -1,3 +1,7 @@
+2008-04-25  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* ThemeWin32Classic.cs: Added ShouldPaintFocusRectangle(ButtonBase).
+
 2008-04-24  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ErrorProvider.cs: Make the error icons come after the control

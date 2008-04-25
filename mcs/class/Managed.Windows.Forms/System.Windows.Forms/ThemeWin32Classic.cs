@@ -629,12 +629,17 @@ namespace System.Windows.Forms
 				ButtonBase_DrawImage(button, dc);
 			
 			// Draw the focus rectangle
-			if ((button.Focused || button.paint_as_acceptbutton) && button.Enabled && button.ShowFocusCues)
+			if (ShouldPaintFocusRectagle (button))
 				ButtonBase_DrawFocus(button, dc);
 			
 			// Now the text
 			if (button.Text != null && button.Text != String.Empty)
 				ButtonBase_DrawText(button, dc);
+		}
+
+		protected static bool ShouldPaintFocusRectagle (ButtonBase button)
+		{
+			return (button.Focused || button.paint_as_acceptbutton) && button.Enabled && button.ShowFocusCues;
 		}
 
 		protected virtual void ButtonBase_DrawButton (ButtonBase button, Graphics dc)
