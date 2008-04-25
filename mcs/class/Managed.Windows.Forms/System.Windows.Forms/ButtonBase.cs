@@ -480,7 +480,7 @@ namespace System.Windows.Forms {
 			get { return ThemeEngine.Current.ButtonBaseDefaultSize; }
 		}
 
-		protected bool IsDefault {
+		protected internal bool IsDefault {
 			get { return is_default; }
 			set {
 				if (is_default != value) {

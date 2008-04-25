@@ -127,7 +127,7 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Private Static Methods
-		private static VisualStyleRenderer GetPushButtonRenderer (PushButtonState state)
+		internal static VisualStyleRenderer GetPushButtonRenderer (PushButtonState state)
 		{
 			switch (state) {
 				case PushButtonState.Normal:

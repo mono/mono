@@ -1,5 +1,10 @@
 2008-04-25  George Giolfan  <georgegiolfan@yahoo.com>
 
+	* ButtonBase.cs: Made IsDefault protected internal.
+	* ButtonRenderer.cs: Made GetPushButtonRenderer(PushButtonState) internal.
+
+2008-04-25  George Giolfan  <georgegiolfan@yahoo.com>
+
 	* Application.cs: Included VisualStyles-related members in the 1.1 profile.
 	* ButtonRenderer.cs, CheckBoxRenderer.cs, Padding.cs, PaddingConverter.cs,
 	RadioButtonRenderer.cs: Included in the 1.1 profile.
