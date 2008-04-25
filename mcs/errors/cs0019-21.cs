@@ -8,6 +8,6 @@ public class C
 	public static void Main ()
 	{
 		const uint ul = 1;
-		const AA b = AA.a + ul;
+		AA b = AA.a + ul;
 	}
 }
