@@ -162,6 +162,11 @@ public struct MyType
 	{
 		return new MyType (-a.value);
 	}
+	
+	public static MyType operator + (MyType a)
+	{
+		return new MyType (+a.value);
+	}
 
 	public override string ToString ()
 	{
@@ -1202,6 +1207,18 @@ class Tester
 		AssertNodeType (e2, ExpressionType.Not);
 		Assert (true, e2.Compile ().Invoke (new MyType (1)));
 		Assert (false, e2.Compile ().Invoke (new MyType (-1)));
+
+		Expression<Func<int, int>> e3 = (int a) => ~a;
+		AssertNodeType (e3, ExpressionType.Not);
+		Assert (-8, e3.Compile ().Invoke (7));
+
+		Expression<Func<MyType, int>> e4 = (MyType a) => ~a;
+		AssertNodeType (e4, ExpressionType.Not);
+		Assert (0, e4.Compile ().Invoke (new MyType (-1)));
+
+		Expression<Func<ulong, ulong>> e5 = (ulong a) => ~a;
+		AssertNodeType (e5, ExpressionType.Not);
+		Assert<ulong> (18446744073709551608, e5.Compile ().Invoke (7));
 	}
 
 	void NotNullableTest ()
@@ -1215,6 +1232,16 @@ class Tester
 		AssertNodeType (e2, ExpressionType.Not);
 		Assert (true, e2.Compile ().Invoke (new MyType (1)));
 		Assert (null, e2.Compile ().Invoke (null));
+
+		Expression<Func<sbyte?, int?>> e3 = (sbyte? a) => ~a;
+		AssertNodeType (e3, ExpressionType.Not);
+		Assert (-5, e3.Compile ().Invoke (4));
+		Assert (null, e3.Compile ().Invoke (null));
+
+		Expression<Func<MyType?, int?>> e4 = (MyType? a) => ~a;
+		AssertNodeType (e4, ExpressionType.Not);
+		Assert (0, e4.Compile ().Invoke (new MyType (-1)));
+		Assert (null, e4.Compile ().Invoke (null));
 	}
 
 	void NotEqualTest ()
@@ -1475,6 +1502,30 @@ class Tester
 		Expression<Func<bool>> e5 = () => 1 is int;
 		AssertNodeType (e5, ExpressionType.TypeIs);
 		Assert (true, e5.Compile ().Invoke ());
+	}
+	
+	void UnaryPlus ()
+	{
+		Expression<Func<int, int>> e = (a) => +a;
+		AssertNodeType (e, ExpressionType.Parameter);
+		Assert (-30, e.Compile ().Invoke (-30));
+
+		Expression<Func<long?, long?>> e2 = (a) => +a;
+		AssertNodeType (e2, ExpressionType.Parameter);
+
+		Expression<Func<MyType, MyType>> e4 = (a) => +a;
+		AssertNodeType (e4, ExpressionType.UnaryPlus);
+		Assert (new MyType (-14), e4.Compile ().Invoke (new MyType (-14)));
+
+		Expression<Func<MyType?, MyType?>> e5 = (a) => +a;
+		AssertNodeType (e5, ExpressionType.UnaryPlus);
+		Assert (new MyType (33), e5.Compile ().Invoke (new MyType (33)));
+		Assert (null, e5.Compile ().Invoke (null));
+
+		Expression<Func<sbyte?, long?>> e6 = (a) => +a;
+		AssertNodeType (e6, ExpressionType.Convert);
+		Assert (3, e6.Compile ().Invoke (3));
+		Assert (null, e6.Compile ().Invoke (null));
 	}	
 
 	//
@@ -1550,6 +1601,7 @@ class Tester
 		e.SubtractCheckedTest ();
 		e.TypeAsTest<string>();
 		e.TypeIsTest<string> ();
+		e.UnaryPlus ();
 
 		return 0;
 	}
