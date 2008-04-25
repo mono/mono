@@ -36,29 +36,33 @@ using System.Web.UI;
 using System.Security;
 
 // General Information about the System.Web.Extensions.Design assembly
+// v3.5 Assembly
 
-[assembly: AssemblyVersion ("1.0.61025.0")]
+[assembly: AssemblyTitle ("System.Xml.Linq.dll")]
+[assembly: AssemblyDescription ("System.Xml.Linq.dll")]
+[assembly: AssemblyDefaultAlias ("System.Xml.Linq.dll")]
 
-[assembly: AssemblyTitle ("System.Web.Extensions.Design.dll")]
-[assembly: AssemblyDescription ("System.Web.Extensions.Design.dll")]
-[assembly: AssemblyConfiguration ("Development version")]
-[assembly: AssemblyCompany ("MONO development team")]
-[assembly: AssemblyProduct ("MONO CLI")]
-[assembly: AssemblyCopyright ("(c) 2007 Various Authors")]
-[assembly: AssemblyTrademark ("")]
-#if TARGET_JVM
-[assembly: CLSCompliant(false)]
-#else
-[assembly: CLSCompliant (true)]
-#endif
-[assembly: ComVisible (false)]
-[assembly: AssemblyDefaultAlias ("System.Web.Extensions.Design.dll")]
-[assembly: AssemblyInformationalVersion ("0.0.0.1")]
+[assembly: AssemblyCompany (Consts.MonoCompany)]
+[assembly: AssemblyProduct (Consts.MonoProduct)]
+[assembly: AssemblyCopyright (Consts.MonoCopyright)]
+[assembly: AssemblyVersion (Consts.FxVersion)]
+[assembly: SatelliteContractVersion (Consts.FxVersion)]
+[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
+[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+
 [assembly: NeutralResourcesLanguage ("en-US")]
 
-[assembly: AllowPartiallyTrustedCallers ()]
-
 #if !(TARGET_JVM || TARGET_DOTNET)
-[assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../winfx.pub")]
+	[assembly: CLSCompliant (true)]
+	[assembly: AssemblyDelaySign (true)]
+	[assembly: AssemblyKeyFile ("../winfx.pub")]
 #endif
+
+[assembly: ComVisible (false)]
+
+[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
+[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
+[assembly: InternalsVisibleTo ("System.Web.Extensions.Test, PublicKey=002400000480000094000000060200000024000052534131000400000100010007d1fa57c4aed9f0a32e84aa0faefd0de9e8fd6aec8f87fb03766c834c99921eb23be79ad9d5dcc1dd9ad236132102900b723cf980957fc4e177108fc607774f29e8320e92ea05ece4e821c0a5efe8f1645c4c0c93c1ab99285d622caa652c1dfad63d745d6f2de5f17e5eaf0fc4963d261c8a12436518206dc093344d5ad293")]
+
+//[assembly: WebResource ("System.Web.Resources.Design.Background.gif", "image/gif")]
