@@ -430,11 +430,17 @@ namespace Mono.Security {
 
 		public bool Verify (string fileName) 
 		{
-			StrongNameSignature sn;
+			bool result = false;
 			using (FileStream fs = File.OpenRead (fileName)) {
-				sn = StrongHash (fs, StrongNameOptions.Signature);
+				result = Verify (fs);
 				fs.Close ();
 			}
+			return result;
+		}
+
+		public bool Verify (Stream stream)
+		{
+			StrongNameSignature sn = StrongHash (stream, StrongNameOptions.Signature);
 			if (sn.Hash == null) {
 				return false;
 			}

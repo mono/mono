@@ -1,3 +1,8 @@
+2008-04-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StrongName.cs: New test cases to verify signatures from streams.
+	Patch from Dave Hillier <daveh@lindenlab.com>
+
 2008-03-10  Stephane Delcroix  <sdelcroix@novell.com>
 
 	* Uri.cs: port the changes I did in System.Uri in r97844.
