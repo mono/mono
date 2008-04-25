@@ -42,3 +42,8 @@ gcs0820.cs # temporary disabled
 # Reported as csc issues
 gcs0133.cs NO ERROR
 
+# Reported as csc bug
+cs0019-21.cs NO ERROR
+cs0019-22.cs NO ERROR
+
+

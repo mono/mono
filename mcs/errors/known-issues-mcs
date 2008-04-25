@@ -33,3 +33,8 @@ cs0457-2.cs
 cs0457.cs
 
 cs0214-10.cs NO ERROR
+
+# Reported as csc bug
+cs0019-21.cs NO ERROR
+cs0019-22.cs NO ERROR
+
