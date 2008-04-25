@@ -32,27 +32,34 @@ using System;
 using System.Reflection;
 using System.Resources;
 using System.Security;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about the System.Xml.Linq assembly
-
-[assembly: AssemblyVersion (Consts.FxVersion)]
-[assembly: SatelliteContractVersion (Consts.FxVersion)]
-[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+// v3.5 Assembly
 
 [assembly: AssemblyTitle ("System.Xml.Linq.dll")]
 [assembly: AssemblyDescription ("System.Xml.Linq.dll")]
-[assembly: AssemblyCompany ("MONO development team")]
-[assembly: AssemblyProduct ("MONO CLI")]
-[assembly: AssemblyCopyright ("(c) 2003 Various Authors")]
-
-[assembly: CLSCompliant (true)]
 [assembly: AssemblyDefaultAlias ("System.Xml.Linq.dll")]
-[assembly: AssemblyInformationalVersion ("0.0.0.1")]
+
+[assembly: AssemblyCompany (Consts.MonoCompany)]
+[assembly: AssemblyProduct (Consts.MonoProduct)]
+[assembly: AssemblyCopyright (Consts.MonoCopyright)]
+[assembly: AssemblyVersion (Consts.FxVersion)]
+[assembly: SatelliteContractVersion (Consts.FxVersion)]
+[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
+[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+
 [assembly: NeutralResourcesLanguage ("en-US")]
+[assembly: CLSCompliant (true)]
+[assembly: AssemblyDelaySign (true)]
+[assembly: AssemblyKeyFile ("../ecma.pub")]
 
 [assembly: ComVisible (false)]
+[assembly: AllowPartiallyTrustedCallers]
 
-[assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile("../ecma.pub")]
+[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
+[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
+// Extension attribute should be added by compiler
