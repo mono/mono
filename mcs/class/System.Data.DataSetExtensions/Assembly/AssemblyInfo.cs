@@ -33,29 +33,37 @@ using System;
 using System.Reflection;
 using System.Resources;
 using System.Security;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Web.UI;
 
-// General Information about the System.Web assembly
+// General Information about the System.Data.DataSetExtension assembly
+// v3.5 Assembly
 
+[assembly: AssemblyTitle ("System.Data.DataSetExtension.dll")]
+[assembly: AssemblyDescription ("System.Data.DataSetExtension.dll")]
+[assembly: AssemblyDefaultAlias ("System.Data.DataSetExtension.dll")]
+
+[assembly: AssemblyCompany (Consts.MonoCompany)]
+[assembly: AssemblyProduct (Consts.MonoProduct)]
+[assembly: AssemblyCopyright (Consts.MonoCopyright)]
 [assembly: AssemblyVersion (Consts.FxVersion)]
 [assembly: SatelliteContractVersion (Consts.FxVersion)]
+[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
+[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 
-[assembly: AssemblyTitle("System.Data.DataSetExtension.dll")]
-[assembly: AssemblyDescription("System.Data.DataSetExtenions.dll")]
-[assembly: AssemblyConfiguration("Development version")]
-[assembly: AssemblyCompany("MONO development team")]
-[assembly: AssemblyProduct("MONO CLI")]
-[assembly: AssemblyCopyright("Copyright 2008 Novell, Inc")]
-[assembly: AssemblyTrademark("")]
-[assembly: CLSCompliant(true)]
-[assembly: ComVisible(false)]
-[assembly: AssemblyDefaultAlias("System.Data.DataSetExtensions.dll")]
-[assembly: AssemblyInformationalVersion("0.0.0.1")]
-[assembly: NeutralResourcesLanguage("en-US")]
+[assembly: NeutralResourcesLanguage ("en-US")]
+[assembly: CLSCompliant (true)]
+[assembly: AssemblyDelaySign (true)]
+[assembly: AssemblyKeyFile ("../ecma.pub")]
 
-[assembly: AllowPartiallyTrustedCallers()]
-[assembly: AssemblyDelaySign(true)]
-[assembly: AssemblyKeyFile("../msfinal.pub")]
+[assembly: ComVisible (false)]
+[assembly: AllowPartiallyTrustedCallers]
 
+[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
+[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
+// Extension attribute should be added by compiler
+
+[assembly: SecurityCritical]
+[assembly: ComCompatibleVersion (1, 0, 3300, 0)]
