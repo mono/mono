@@ -1,3 +1,7 @@
+2008-04-25  Marek Safar  <marek.safar@gmail.com>
+
+	* expression.cs, nullable.cs: Implemented UnaryPlus expression.
+
 2008-04-24  Raja R Harinath  <harinath@hurrynot.org>
 
 	Fix test-636.cs.  Sprinkle a few more 'EmitSideEffect's around

@@ -367,7 +367,10 @@ namespace Mono.CSharp.Nullable
 		
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
-			return underlying.CreateExpressionTree (ec);
+			ArrayList args = new ArrayList (2);
+			args.Add (new Argument (expr.CreateExpressionTree (ec)));
+			args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
+			return CreateExpressionFactoryCall ("Convert", args);
 		}			
 
 		public override Expression DoResolve (EmitContext ec)
@@ -479,11 +482,17 @@ namespace Mono.CSharp.Nullable
 			if (user_operator != null)
 				return user_operator.CreateExpressionTree (ec);
 
+			if (Oper == Operator.UnaryPlus)
+				return Expr.CreateExpressionTree (ec);
+
 			return base.CreateExpressionTree (ec);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
 		{
+			if (eclass != ExprClass.Invalid)
+				return this;
+
 			unwrap = Unwrap.Create (Expr, ec);
 			if (unwrap == null)
 				return null;
@@ -509,13 +518,14 @@ namespace Mono.CSharp.Nullable
 			unwrap.EmitCheck (ec);
 			ig.Emit (OpCodes.Brfalse, is_null_label);
 
+			NullableInfo ni = new NullableInfo (type);
+
 			if (user_operator != null) {
 				user_operator.Emit (ec);
 			} else {
-				EmitOperator (ec, unwrap.Type);
+				EmitOperator (ec, ni.UnderlyingType);
 			}
 
-			NullableInfo ni = new NullableInfo (type);
 			ig.Emit (OpCodes.Newobj, ni.Constructor);
 			ig.Emit (OpCodes.Br_S, end_label);
 
@@ -532,11 +542,7 @@ namespace Mono.CSharp.Nullable
 			if (lifted_type == null)
 				return null;
 
-			if (expr is UserCast || expr is TypeCast || expr is UserOperatorCall)
-				expr.Type = lifted_type.Type;
-			else
-				expr = EmptyCast.Create (expr, lifted_type.Type);
-
+			expr.Type = lifted_type.Type;
 			return expr;
 		}
 

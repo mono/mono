@@ -371,8 +371,12 @@ namespace Mono.CSharp {
 				else
 					method_name = "Negate";
 				break;
+			case Operator.OnesComplement:
 			case Operator.LogicalNot:
 				method_name = "Not";
+				break;
+			case Operator.UnaryPlus:
+				method_name = "UnaryPlus";
 				break;
 			default:
 				throw new InternalErrorException ("Unknown unary operator " + Oper.ToString ());
@@ -504,7 +508,8 @@ namespace Mono.CSharp {
 
 			switch (Oper) {
 			case Operator.UnaryPlus:
-				throw new Exception ("This should be caught by Resolve");
+				Expr.Emit (ec);
+				break;
 				
 			case Operator.UnaryNegation:
 				if (ec.CheckState && !IsFloat (type)) {
