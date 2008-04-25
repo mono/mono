@@ -236,7 +236,6 @@ namespace System.Web.Compilation
 		void InitParser (TextReader reader, string filename)
 		{
 			AspParser parser = new AspParser (filename, reader);
-			((IDisposable)reader).Dispose ();
 			parser.Error += new ParseErrorHandler (ParseError);
 			parser.TagParsed += new TagParsedHandler (TagParsed);
 			parser.TextParsed += new TextParsedHandler (TextParsed);
@@ -269,24 +268,29 @@ namespace System.Web.Compilation
 		
 		public void Parse (TextReader reader, string filename, bool doInitParser)
 		{
-			isApplication = tparser.DefaultDirectiveName == "application";
+			try {
+				isApplication = tparser.DefaultDirectiveName == "application";
 
-			if (doInitParser)
-				InitParser (reader, filename);
+				if (doInitParser)
+					InitParser (reader, filename);
 
-			pstack.Parser.Parse ();
-			if (text.Length > 0)
-				FlushText ();
+				pstack.Parser.Parse ();
+				if (text.Length > 0)
+					FlushText ();
 
-			pstack.Pop ();
+				pstack.Pop ();
 
 #if DEBUG
-			PrintTree (rootBuilder, 0);
+				PrintTree (rootBuilder, 0);
 #endif
 
-			if (stack.Count > 1 && pstack.Count == 0)
-				throw new ParseException (stack.Builder.location,
-							  "Expecting </" + stack.Builder.TagName + "> " + stack.Builder);
+				if (stack.Count > 1 && pstack.Count == 0)
+					throw new ParseException (stack.Builder.location,
+								  "Expecting </" + stack.Builder.TagName + "> " + stack.Builder);
+			} finally {
+				if (reader != null)
+					reader.Close ();
+			}
 		}
 
 		public void Parse (Stream stream, string filename, bool doInitParser)
@@ -305,27 +309,32 @@ namespace System.Web.Compilation
 #if NET_2_0
 			string inputFile = tparser.InputFile;
 			TextReader inputReader = tparser.Reader;
-			
-			if (String.IsNullOrEmpty (inputFile)) {
-				StreamReader sr = inputReader as StreamReader;
-				if (sr != null) {
-					FileStream fr = sr.BaseStream as FileStream;
-					if (fr != null)
-						inputFile = fr.Name;
+
+			try {			
+				if (String.IsNullOrEmpty (inputFile)) {
+					StreamReader sr = inputReader as StreamReader;
+					if (sr != null) {
+						FileStream fr = sr.BaseStream as FileStream;
+						if (fr != null)
+							inputFile = fr.Name;
+					}
+
+					if (String.IsNullOrEmpty (inputFile))
+						inputFile = "@@inner_string@@";
 				}
 
-				if (String.IsNullOrEmpty (inputFile))
-					inputFile = "@@inner_string@@";
-			}
-
-			if (inputReader != null) {
-				Parse (inputReader, inputFile, true);
-			} else {
-				if (String.IsNullOrEmpty (inputFile))
-					throw new HttpException ("Parser input file is empty, cannot continue.");
-				inputFile = Path.GetFullPath (inputFile);
-				InitParser (inputFile);
-				Parse (inputFile);
+				if (inputReader != null) {
+					Parse (inputReader, inputFile, true);
+				} else {
+					if (String.IsNullOrEmpty (inputFile))
+						throw new HttpException ("Parser input file is empty, cannot continue.");
+					inputFile = Path.GetFullPath (inputFile);
+					InitParser (inputFile);
+					Parse (inputFile);
+				}
+			} finally {
+				if (inputReader != null)
+					inputReader.Close ();
 			}
 #else
 			Parse (Path.GetFullPath (tparser.InputFile));

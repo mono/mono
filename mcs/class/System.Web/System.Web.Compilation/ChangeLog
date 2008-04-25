@@ -1,3 +1,8 @@
+2008-04-25  Marek Habersack  <mhabersack@novell.com>
+
+	* AspGenerator.cs: put some safeguards in, to make sure streams
+	are closed in any case.
+
 2008-04-24  Marek Habersack  <mhabersack@novell.com>
 
 	* AspComponentFoundry.cs: added a new GetComponentType overload
