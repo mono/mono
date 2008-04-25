@@ -41,6 +41,7 @@ using System.Runtime.InteropServices;
 
 #if NET_2_0
 	[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
+	[assembly: AllowPartiallyTrustedCallers]
 	[assembly: ComCompatibleVersion (1, 0, 3300, 0)]
 	[assembly: Dependency ("System.Data,", LoadHint.Always)]
 #elif NET_1_1
