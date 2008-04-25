@@ -1,3 +1,12 @@
+2008-04-25  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpApplication.cs: use Request.CurrentExecutionFilePath when
+	querying for the handler. Makes requests work if request path was
+	rewritten without modifying the FilePath. Fixes bug #383652
+
+	* HttpContext.cs: set Request.FilePath in RewritePath only if
+	setClientFilePath is true. Fixes bug #383652
+
 2008-04-24  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpApplication.cs: added a new overload of GetHandler which

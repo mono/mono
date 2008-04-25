@@ -1131,7 +1131,7 @@ namespace System.Web {
 			// Obtain the handler for the request.
 			IHttpHandler handler = null;
 			try {
-				handler = GetHandler (context, context.Request.FilePath);
+				handler = GetHandler (context, context.Request.CurrentExecutionFilePath);
 				context.Handler = handler;
 #if NET_2_0
 				context.PushHandler (handler);
