@@ -38,9 +38,9 @@ using System.Security;
 // General Information about the System.Web.Extensions.Design assembly
 // v3.5 Assembly
 
-[assembly: AssemblyTitle ("System.Xml.Linq.dll")]
-[assembly: AssemblyDescription ("System.Xml.Linq.dll")]
-[assembly: AssemblyDefaultAlias ("System.Xml.Linq.dll")]
+[assembly: AssemblyTitle ("System.Web.Extensions.Design.dll")]
+[assembly: AssemblyDescription ("System.Web.Extensions.Design.dll")]
+[assembly: AssemblyDefaultAlias ("System.Web.Extensions.Design.dll")]
 
 [assembly: AssemblyCompany (Consts.MonoCompany)]
 [assembly: AssemblyProduct (Consts.MonoProduct)]
