@@ -26,10 +26,12 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 namespace System.Windows.Forms.VisualStyles
 {
-	public class VisualStyleElement
+#if NET_2_0
+	public
+#endif
+	class VisualStyleElement
 	{
 		#region Private Variables
 		private const string BUTTON = "BUTTON";
@@ -1140,4 +1142,3 @@ namespace System.Windows.Forms.VisualStyles
 		#endregion
 	}
 }
-#endif

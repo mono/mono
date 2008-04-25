@@ -26,10 +26,12 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 namespace System.Windows.Forms.VisualStyles
 {
-	public enum IntegerProperty
+#if NET_2_0
+	public
+#endif
+	enum IntegerProperty
 	{
 		ImageCount = 2401,
 		AlphaLevel = 2402,
@@ -57,4 +59,3 @@ namespace System.Windows.Forms.VisualStyles
 		MinDpi5 = 2424
 	}
 }
-#endif

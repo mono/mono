@@ -26,10 +26,12 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 namespace System.Windows.Forms.VisualStyles
 {
-	public struct TextMetrics
+#if NET_2_0
+	public
+#endif
+	struct TextMetrics
 	{
 		#region Private Variables
 		private int ascent;
@@ -157,4 +159,3 @@ namespace System.Windows.Forms.VisualStyles
 		#endregion
 	}
 }
-#endif

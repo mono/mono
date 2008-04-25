@@ -26,10 +26,12 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 namespace System.Windows.Forms.VisualStyles
 {
-	public enum BooleanProperty
+#if NET_2_0
+	public
+#endif
+	enum BooleanProperty
 	{
 		Transparent = 2201,
 		AutoSize = 2202,
@@ -46,4 +48,3 @@ namespace System.Windows.Forms.VisualStyles
 		SourceShrink = 2213
 	}
 }
-#endif

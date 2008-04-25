@@ -26,12 +26,13 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 namespace System.Windows.Forms.VisualStyles
 {
-	public enum StringProperty
+#if NET_2_0
+	public
+#endif
+	enum StringProperty
 	{
 		Text = 3201
 	}
 }
-#endif

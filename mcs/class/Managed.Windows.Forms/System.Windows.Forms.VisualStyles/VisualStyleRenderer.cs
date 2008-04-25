@@ -26,12 +26,14 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 using System.Drawing;
 
 namespace System.Windows.Forms.VisualStyles
 {
-	public sealed class VisualStyleRenderer
+#if NET_2_0
+	public
+#endif
+	sealed class VisualStyleRenderer
 	{
 		private string class_name;
 		private int part;
@@ -153,8 +155,9 @@ namespace System.Windows.Forms.VisualStyles
 			XplatUIWin32.RECT BoundsRect = XplatUIWin32.RECT.FromRectangle (bounds);
 
 			using (Graphics g = Graphics.FromHwnd (childControl.Handle)) {
-				last_hresult = UXTheme.DrawThemeParentBackground (childControl.Handle, g.GetHdc (), ref BoundsRect);
-				g.ReleaseHdc ();
+				IntPtr hdc = g.GetHdc ();
+				last_hresult = UXTheme.DrawThemeParentBackground (childControl.Handle, hdc, ref BoundsRect);
+				g.ReleaseHdc (hdc);
 			}
 		}
 
@@ -491,4 +494,3 @@ namespace System.Windows.Forms.VisualStyles
 		#endregion
 	}
 }
-#endif

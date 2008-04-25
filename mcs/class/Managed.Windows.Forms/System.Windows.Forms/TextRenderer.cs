@@ -80,12 +80,14 @@ namespace System.Windows.Forms
 		{
 			DrawTextInternal (dc, text, font, bounds, foreColor, backColor, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter, false);
 		}
+#endif
 
 		public static void DrawText (IDeviceContext dc, string text, Font font, Rectangle bounds, Color foreColor, TextFormatFlags flags)
 		{
 			DrawTextInternal (dc, text, font, bounds, foreColor, Color.Transparent, flags, false);
 		}
 
+#if NET_2_0
 		public static void DrawText (IDeviceContext dc, string text, Font font, Point pt, Color foreColor, Color backColor, TextFormatFlags flags)
 		{
 			DrawTextInternal (dc, text, font, pt, foreColor, backColor, flags, false);

@@ -26,10 +26,12 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 namespace System.Windows.Forms.VisualStyles
 {
-	public enum FilenameProperty
+#if NET_2_0
+	public
+#endif
+	enum FilenameProperty
 	{
 		ImageFile = 3001,
 		ImageFile1 = 3002,
@@ -41,4 +43,3 @@ namespace System.Windows.Forms.VisualStyles
 		GlyphImageFile = 3008
 	}
 }
-#endif

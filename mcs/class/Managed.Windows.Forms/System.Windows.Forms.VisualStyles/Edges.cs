@@ -26,11 +26,13 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 namespace System.Windows.Forms.VisualStyles
 {
 	[Flags]
-	public enum Edges
+#if NET_2_0
+	public
+#endif
+	enum Edges
 	{
 		Left = 1,
 		Top = 2,
@@ -39,4 +41,3 @@ namespace System.Windows.Forms.VisualStyles
 		Diagonal = 16
 	}
 }
-#endif

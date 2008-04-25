@@ -26,10 +26,12 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 namespace System.Windows.Forms.VisualStyles
 {
-	public enum VisualStyleState
+#if NET_2_0
+	public
+#endif
+	enum VisualStyleState
 	{
 		NoneEnabled = 0,
 		NonClientAreaEnabled = 1,
@@ -37,4 +39,3 @@ namespace System.Windows.Forms.VisualStyles
 		ClientAndNonClientAreasEnabled = 3
 	}
 }
-#endif

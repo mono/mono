@@ -26,11 +26,13 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 namespace System.Windows.Forms.VisualStyles
 {
 	[Flags]
-	public enum HitTestOptions
+#if NET_2_0
+	public
+#endif
+	enum HitTestOptions
 	{
 		BackgroundSegment = 0,
 		FixedBorder = 2,
@@ -44,4 +46,3 @@ namespace System.Windows.Forms.VisualStyles
 		SystemSizingMargins = 512
 	}
 }
-#endif

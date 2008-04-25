@@ -26,10 +26,12 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 namespace System.Windows.Forms.VisualStyles
 {
-	public enum TextMetricsCharacterSet
+#if NET_2_0
+	public
+#endif
+	enum TextMetricsCharacterSet
 	{
 		Ansi = 0,
 		Default = 1,
@@ -52,4 +54,3 @@ namespace System.Windows.Forms.VisualStyles
 		Oem = 255
 	}
 }
-#endif

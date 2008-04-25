@@ -20,8 +20,6 @@
 // Copyright (c) 2007 Novell, Inc.
 //
 
-#if NET_2_0
-
 using System.ComponentModel;
 using System.Collections;
 using System.Reflection;
@@ -29,7 +27,10 @@ using System.Globalization;
 
 namespace System.Windows.Forms
 {
-	public class PaddingConverter : TypeConverter
+#if NET_2_0
+	public
+#endif
+	class PaddingConverter : TypeConverter
 	{
 		public PaddingConverter ()
 		{
@@ -100,4 +101,3 @@ namespace System.Windows.Forms
 		#endregion
 	}
 }
-#endif

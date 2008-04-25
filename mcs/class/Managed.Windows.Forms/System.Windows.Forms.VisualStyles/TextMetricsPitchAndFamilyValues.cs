@@ -26,11 +26,13 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 namespace System.Windows.Forms.VisualStyles
 {
 	[Flags]
-	public enum TextMetricsPitchAndFamilyValues
+#if NET_2_0
+	public
+#endif
+	enum TextMetricsPitchAndFamilyValues
 	{
 		FixedPitch = 1,
 		Vector = 2,
@@ -38,4 +40,3 @@ namespace System.Windows.Forms.VisualStyles
 		Device = 8
 	}
 }
-#endif

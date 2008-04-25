@@ -26,10 +26,12 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 namespace System.Windows.Forms.VisualStyles
 {
-	public enum EnumProperty
+#if NET_2_0
+	public
+#endif
+	enum EnumProperty
 	{
 		BackgroundType = 4001,
 		BorderType = 4002,
@@ -48,4 +50,3 @@ namespace System.Windows.Forms.VisualStyles
 		TrueSizeScalingType = 4015
 	}
 }
-#endif

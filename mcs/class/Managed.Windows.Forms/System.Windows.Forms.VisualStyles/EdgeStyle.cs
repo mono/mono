@@ -26,10 +26,12 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 namespace System.Windows.Forms.VisualStyles
 {
-	public enum EdgeStyle
+#if NET_2_0
+	public
+#endif
+	enum EdgeStyle
 	{
 		Raised = 5,
 		Etched = 6,
@@ -37,4 +39,3 @@ namespace System.Windows.Forms.VisualStyles
 		Sunken = 10
 	}
 }
-#endif

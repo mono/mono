@@ -26,14 +26,15 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 namespace System.Windows.Forms.VisualStyles
 {
-	public enum MarginProperty
+#if NET_2_0
+	public
+#endif
+	enum MarginProperty
 	{
 		SizingMargins = 3601,
 		ContentMargins = 3602,
 		CaptionMargins = 3603
 	}
 }
-#endif

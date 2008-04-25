@@ -1,3 +1,7 @@
+2008-04-25  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* System.Windows.Forms.dll.sources: Added IDeviceContext.cs.
+
 2008-04-24  Jonathan Pobst  <monkey@jpobst.com>
 
 	* System.Windows.Forms_test.dll.sources: Add InputLanguageTest.cs.

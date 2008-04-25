@@ -26,10 +26,12 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 namespace System.Windows.Forms.VisualStyles
 {
-	public enum PointProperty
+#if NET_2_0
+	public
+#endif
+	enum PointProperty
 	{
 		Offset = 3401,
 		TextShadowOffset = 3402,
@@ -41,4 +43,3 @@ namespace System.Windows.Forms.VisualStyles
 		MinSize5 = 3408
 	}
 }
-#endif

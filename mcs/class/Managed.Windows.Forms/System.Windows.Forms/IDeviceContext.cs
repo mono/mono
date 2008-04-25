@@ -1,5 +1,5 @@
 //
-// HitTestCode.cs
+// IDeviceContext.cs
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -20,28 +20,43 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2006 Novell, Inc.
+// Copyright (c) 2008 George Giolfan
 //
 // Authors:
-//	Jonathan Pobst (monkey@jpobst.com)
-//
+//	George Giolfan (georgegiolfan@jpobst.com)
 
-namespace System.Windows.Forms.VisualStyles
+#if !NET_2_0
+namespace System.Windows.Forms
 {
-#if NET_2_0
-	public
-#endif
-	enum HitTestCode
+	class IDeviceContext
 	{
-		Nowhere = 0,
-		Client = 1,
-		Left = 10,
-		Right = 11,
-		Top = 12,
-		TopLeft = 13,
-		TopRight = 14,
-		Bottom = 15,
-		BottomLeft = 16,
-		BottomRight = 17
+		readonly Graphics g;
+		IntPtr hdc;
+		
+		IDeviceContext (Graphics g)
+		{
+			this.g = g;
+		}
+		
+		public IntPtr GetHdc ()
+		{
+			return hdc = g.GetHdc ();
+		}
+		
+		public void ReleaseHdc ()
+		{
+			g.ReleaseHdc (hdc);
+		}
+		
+		public static implicit operator IDeviceContext (Graphics g)
+		{
+			return new IDeviceContext (g);
+		}
+		
+		public static implicit operator Graphics (IDeviceContext dc)
+		{
+			return dc.g;
+		}
 	}
 }
+#endif

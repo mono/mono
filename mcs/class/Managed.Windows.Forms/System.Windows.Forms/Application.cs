@@ -41,8 +41,8 @@ using System.Runtime.InteropServices;
 using System.Threading;
 #if NET_2_0
 using System.Text;
-using System.Windows.Forms.VisualStyles;
 #endif
+using System.Windows.Forms.VisualStyles;
 
 namespace System.Windows.Forms
 {
@@ -151,8 +151,8 @@ namespace System.Windows.Forms
 #if NET_2_0
 		private static bool use_wait_cursor;
 		private static ToolStrip keyboard_capture;
-		private static VisualStyleState visual_style_state = VisualStyleState.ClientAndNonClientAreasEnabled;
 #endif
+		private static VisualStyleState visual_style_state = VisualStyleState.ClientAndNonClientAreasEnabled;
 
 		private Application ()
 		{
@@ -396,8 +396,14 @@ namespace System.Windows.Forms
 				}
 			}
 		}
+#endif
 		
-		public static bool RenderWithVisualStyles {
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		static bool RenderWithVisualStyles {
 			get {
 				if (VisualStyleInformation.IsSupportedByOS) {
 					if (!VisualStyleInformation.IsEnabledByUser)
@@ -413,11 +419,15 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public static VisualStyleState VisualStyleState {
+#if NET_2_0
+		public 
+#else
+		internal
+#endif
+		static VisualStyleState VisualStyleState {
 			get { return Application.visual_style_state; }
 			set { Application.visual_style_state = value; }
 		}
-#endif
 
 		#endregion
 

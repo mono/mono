@@ -26,10 +26,12 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 namespace System.Windows.Forms.VisualStyles
 {
-	public enum ColorProperty
+#if NET_2_0
+	public
+#endif
+	enum ColorProperty
 	{
 		BorderColor = 3801,
 		FillColor = 3802,
@@ -56,4 +58,3 @@ namespace System.Windows.Forms.VisualStyles
 		AccentColorHint = 3823
 	}
 }
-#endif

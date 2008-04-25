@@ -26,13 +26,41 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 using System.Drawing;
+#if !NET_2_0
+using System.Runtime.InteropServices;
+#endif
 
 namespace System.Windows.Forms.VisualStyles
 {
-	public static class VisualStyleInformation
+#if NET_2_0
+	public static
+#endif
+	class VisualStyleInformation
 	{
+#if !NET_2_0
+		static readonly Color system_colors_button_highlight;
+		// These are taken from System.Drawing.
+		internal enum GetSysColorIndex {
+			COLOR_BTNHIGHLIGHT		= 20,
+		}
+		// Windows values are in BGR format and without alpha
+		// so we force it to opaque (or everything will be transparent) and reverse B and R
+		static uint GetSysColor (GetSysColorIndex index)
+		{
+			uint bgr = Win32GetSysColor (index);
+			return 0xFF000000 | (bgr & 0xFF) << 16 | (bgr & 0xFF00) | (bgr >> 16);
+		}
+		[DllImport ("user32.dll", EntryPoint = "GetSysColor", CallingConvention = CallingConvention.StdCall)]
+		static extern uint Win32GetSysColor (GetSysColorIndex index);
+		static VisualStyleInformation ()
+		{
+			if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+				system_colors_button_highlight = Color.FromArgb ((int)GetSysColor (GetSysColorIndex.COLOR_BTNHIGHLIGHT));
+			else
+				system_colors_button_highlight = Color.FromArgb (0xFF, 0xFF, 0xFF, 0xFF);
+		}
+#endif
 		#region Public Static Properties
 		public static string Author {
 			get {
@@ -70,7 +98,13 @@ namespace System.Windows.Forms.VisualStyles
 		public static Color ControlHighlightHot {
 			get {
 				if (!VisualStyleRenderer.IsSupported)
-					return SystemColors.ButtonHighlight;
+					return
+#if NET_2_0
+					SystemColors.ButtonHighlight
+#else
+					system_colors_button_highlight
+#endif
+					;
 
 				IntPtr theme = UXTheme.OpenThemeData (IntPtr.Zero, "BUTTON");
 
@@ -225,4 +259,3 @@ namespace System.Windows.Forms.VisualStyles
 		#endregion
 	}
 }
-#endif

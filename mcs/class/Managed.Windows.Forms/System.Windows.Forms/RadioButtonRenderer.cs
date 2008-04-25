@@ -26,13 +26,15 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 using System.Drawing;
 using System.Windows.Forms.VisualStyles;
 
 namespace System.Windows.Forms
 {
-	public sealed class RadioButtonRenderer
+#if NET_2_0
+	public
+#endif
+	sealed class RadioButtonRenderer
 	{
 		private static bool always_use_visual_styles = false;
 
@@ -180,4 +182,3 @@ namespace System.Windows.Forms
 		#endregion
 	}
 }
-#endif

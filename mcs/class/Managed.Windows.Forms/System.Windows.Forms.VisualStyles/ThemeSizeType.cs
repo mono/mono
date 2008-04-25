@@ -26,14 +26,15 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 namespace System.Windows.Forms.VisualStyles
 {
-	public enum ThemeSizeType
+#if NET_2_0
+	public
+#endif
+	enum ThemeSizeType
 	{
 		Minimum = 0,
 		True = 1,
 		Draw = 2
 	}
 }
-#endif

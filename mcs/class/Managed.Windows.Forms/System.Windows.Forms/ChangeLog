@@ -1,5 +1,13 @@
 2008-04-25  George Giolfan  <georgegiolfan@yahoo.com>
 
+	* Application.cs: Included VisualStyles-related members in the 1.1 profile.
+	* ButtonRenderer.cs, CheckBoxRenderer.cs, Padding.cs, PaddingConverter.cs,
+	RadioButtonRenderer.cs: Included in the 1.1 profile.
+	* IDeviceContext.cs: Added.
+	* TextRenderer.cs: Included a member in the 1.1 profile.
+
+2008-04-25  George Giolfan  <georgegiolfan@yahoo.com>
+
 	* ThemeWin32Classic.cs: Added ShouldPaintFocusRectangle(ButtonBase).
 
 2008-04-24  Jonathan Pobst  <monkey@jpobst.com>

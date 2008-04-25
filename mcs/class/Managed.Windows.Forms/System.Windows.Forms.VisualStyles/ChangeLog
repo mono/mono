@@ -1,3 +1,14 @@
+2008-04-25  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* BooleanProperty.cs, CheckBoxState.cs, ColorProperty.cs, EdgeEffects.cs,
+	Edges.cs, EdgeStyle.cs, EnumProperty.cs, FileNameProperty.cs, FontProperty.cs,
+	HitTestCode.cs, HitTestOptions.cs, MarginProperty.cs, PointProperty.cs,
+	PushButtonState.cs, RadioButtonState.cs, StringProperty.cs, TextMetrics.cs,
+	TextMetricsCharacterSet.cs, TextMetricsPitchAndFamilyValues.cs,
+	ThemeSizeType.cs, UXTheme.cs, VisualStyleElement.cs,
+	VisualStyleInformation.cs, VisualStyleRenderer.cs, VisualStyleState.cs:
+	Included in the 1.1 profile.
+
 2008-03-05  Jonathan Pobst  <monkey@jpobst.com>
 
 	VisualStyleRenderer.cs: corcompare - fix parameter names.

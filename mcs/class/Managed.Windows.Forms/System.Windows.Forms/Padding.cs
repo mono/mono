@@ -24,8 +24,6 @@
 //	Daniel Nauck    (dna(at)mono-project(dot)de)
 //
 
-#if NET_2_0
-
 using System;
 using System.ComponentModel;
 using System.Drawing;
@@ -34,7 +32,10 @@ namespace System.Windows.Forms {
 
 	[Serializable]
 	[TypeConverter(typeof(PaddingConverter))]
-	public struct Padding {
+#if NET_2_0
+	public
+#endif
+	struct Padding {
 
 		//NOTE: "_var" field name is required by serialization.
 		private int _bottom;
@@ -170,4 +171,3 @@ namespace System.Windows.Forms {
 		}
 	}
 }
-#endif

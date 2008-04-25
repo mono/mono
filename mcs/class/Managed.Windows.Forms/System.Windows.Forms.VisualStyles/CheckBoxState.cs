@@ -26,10 +26,12 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 namespace System.Windows.Forms.VisualStyles
 {
-	public enum CheckBoxState
+#if NET_2_0
+	public
+#endif
+	enum CheckBoxState
 	{
 		UncheckedNormal = 1,
 		UncheckedHot = 2,
@@ -45,4 +47,3 @@ namespace System.Windows.Forms.VisualStyles
 		MixedDisabled = 12
 	}
 }
-#endif

@@ -26,11 +26,13 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 namespace System.Windows.Forms.VisualStyles
 {
 	[Flags]
-	public enum EdgeEffects
+#if NET_2_0
+	public
+#endif
+	enum EdgeEffects
 	{
 		None = 0,
 		FillInterior = 2048,
@@ -39,4 +41,3 @@ namespace System.Windows.Forms.VisualStyles
 		Mono = 32768
 	}
 }
-#endif

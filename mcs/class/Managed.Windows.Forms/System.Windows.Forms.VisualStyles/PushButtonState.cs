@@ -26,10 +26,12 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 namespace System.Windows.Forms.VisualStyles
 {
-	public enum PushButtonState
+#if NET_2_0
+	public
+#endif
+	enum PushButtonState
 	{
 		Normal = 1,
 		Hot = 2,
@@ -38,4 +40,3 @@ namespace System.Windows.Forms.VisualStyles
 		Default = 5
 	}
 }
-#endif
