@@ -1,5 +1,9 @@
 2008-04-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListView.cs: Ouch, forgot to commit.
+
+2008-04-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListView.cs: 
 	* ThemeWin32Classic.cs: Fire the -until now- forgotten CacheVirtualItems event.
 

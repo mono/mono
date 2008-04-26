@@ -3494,7 +3494,7 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
-		protected virtual void OnCacheVirtualItems (CacheVirtualItemsEventArgs e)
+		protected internal virtual void OnCacheVirtualItems (CacheVirtualItemsEventArgs e)
 		{
 			EventHandler eh = (EventHandler)Events [CacheVirtualItemsEvent];
 			if (eh != null)
