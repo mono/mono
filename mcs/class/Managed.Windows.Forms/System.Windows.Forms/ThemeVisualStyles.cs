@@ -122,6 +122,63 @@ namespace System.Windows.Forms
 		}
 		#endregion
 		#region ControlPaint
+		#region DrawCaptionButton
+		public override void CPDrawCaptionButton (Graphics graphics, Rectangle rectangle, CaptionButton button, ButtonState state)
+		{
+			if ((state & ButtonState.Flat) == ButtonState.Flat ||
+				(state & ButtonState.Checked) == ButtonState.Checked) {
+				base.CPDrawCaptionButton (graphics, rectangle, button, state);
+				return;
+			}
+			VisualStyleElement element = GetCaptionButtonVisualStyleElement (button, state);
+			if (!VisualStyleRenderer.IsElementDefined (element)) {
+				base.CPDrawCaptionButton (graphics, rectangle, button, state);
+				return;
+			}
+			new VisualStyleRenderer (element).DrawBackground (graphics, rectangle);
+		}
+		static VisualStyleElement GetCaptionButtonVisualStyleElement (CaptionButton button, ButtonState state)
+		{
+			switch (button) {
+			case CaptionButton.Minimize:
+				if ((state & ButtonState.Inactive) == ButtonState.Inactive)
+					return VisualStyleElement.Window.MinButton.Disabled;
+				else if ((state & ButtonState.Pushed) == ButtonState.Pushed)
+					return VisualStyleElement.Window.MinButton.Pressed;
+				else
+					return VisualStyleElement.Window.MinButton.Normal;
+			case CaptionButton.Maximize:
+				if ((state & ButtonState.Inactive) == ButtonState.Inactive)
+					return VisualStyleElement.Window.MaxButton.Disabled;
+				else if ((state & ButtonState.Pushed) == ButtonState.Pushed)
+					return VisualStyleElement.Window.MaxButton.Pressed;
+				else
+					return VisualStyleElement.Window.MaxButton.Normal;
+			case CaptionButton.Close:
+				if ((state & ButtonState.Inactive) == ButtonState.Inactive)
+					return VisualStyleElement.Window.CloseButton.Disabled;
+				else if ((state & ButtonState.Pushed) == ButtonState.Pushed)
+					return VisualStyleElement.Window.CloseButton.Pressed;
+				else
+					return VisualStyleElement.Window.CloseButton.Normal;
+			case CaptionButton.Restore:
+				if ((state & ButtonState.Inactive) == ButtonState.Inactive)
+					return VisualStyleElement.Window.RestoreButton.Disabled;
+				else if ((state & ButtonState.Pushed) == ButtonState.Pushed)
+					return VisualStyleElement.Window.RestoreButton.Pressed;
+				else
+					return VisualStyleElement.Window.RestoreButton.Normal;
+			default:
+				if ((state & ButtonState.Inactive) == ButtonState.Inactive)
+					return VisualStyleElement.Window.HelpButton.Disabled;
+				else if ((state & ButtonState.Pushed) == ButtonState.Pushed)
+					return VisualStyleElement.Window.HelpButton.Pressed;
+				else
+					return VisualStyleElement.Window.HelpButton.Normal;
+			}
+		}
+		#endregion
+		#region DrawCheckBox
 		public override void CPDrawCheckBox (Graphics dc, Rectangle rectangle, ButtonState state)
 		{
 			if ((state & ButtonState.Flat) == ButtonState.Flat) {
@@ -148,6 +205,192 @@ namespace System.Windows.Forms
 				return;
 			}
 			new VisualStyleRenderer (element).DrawBackground (dc, rectangle);
+		}
+		#endregion
+		#endregion
+		#region Managed windows
+		[MonoTODO("When other VisualStyles implementations are supported, check if the visual style elements are defined.")]
+		[MonoTODO("When the rest of the MDI code is fixed, make sure minimized windows are painted correctly,restrict the caption text drawing area to exclude the title buttons and handle the title bar height correctly.")]
+		public override void DrawManagedWindowDecorations (Graphics dc, Rectangle clip, InternalWindowManager wm)
+		{
+			if (!wm.HasBorders || (wm.Form.IsMdiChild && wm.IsMaximized))
+				return;
+			VisualStyleElement element;
+			#region Title bar background
+			#region Select caption visual style element
+			if (wm.IsToolWindow)
+				#region Small window
+				switch (wm.form.window_state) {
+				case FormWindowState.Minimized:
+					if (!wm.Form.Enabled)
+						element = VisualStyleElement.Window.SmallMinCaption.Disabled;
+					else if (wm.IsActive)
+						element = VisualStyleElement.Window.SmallMinCaption.Active;
+					else
+						element = VisualStyleElement.Window.SmallMinCaption.Inactive;
+					break;
+				case FormWindowState.Maximized:
+					if (!wm.Form.Enabled)
+						element = VisualStyleElement.Window.SmallMaxCaption.Disabled;
+					else if (wm.IsActive)
+						element = VisualStyleElement.Window.SmallMaxCaption.Active;
+					else
+						element = VisualStyleElement.Window.SmallMaxCaption.Inactive;
+					break;
+				default:
+					if (!wm.Form.Enabled)
+						element = VisualStyleElement.Window.SmallCaption.Disabled;
+					else if (wm.IsActive)
+						element = VisualStyleElement.Window.SmallCaption.Active;
+					else
+						element = VisualStyleElement.Window.SmallCaption.Inactive;
+					break;
+				}
+				#endregion
+			else
+				#region Normal window
+				switch (wm.form.window_state) {
+				case FormWindowState.Minimized:
+					if (!wm.Form.Enabled)
+						element = VisualStyleElement.Window.MinCaption.Disabled;
+					else if (wm.IsActive)
+						element = VisualStyleElement.Window.MinCaption.Active;
+					else
+						element = VisualStyleElement.Window.MinCaption.Inactive;
+					break;
+				case FormWindowState.Maximized:
+					if (!wm.Form.Enabled)
+						element = VisualStyleElement.Window.MaxCaption.Disabled;
+					else if (wm.IsActive)
+						element = VisualStyleElement.Window.MaxCaption.Active;
+					else
+						element = VisualStyleElement.Window.MaxCaption.Inactive;
+					break;
+				default:
+					if (!wm.Form.Enabled)
+						element = VisualStyleElement.Window.Caption.Disabled;
+					else if (wm.IsActive)
+						element = VisualStyleElement.Window.Caption.Active;
+					else
+						element = VisualStyleElement.Window.Caption.Inactive;
+					break;
+				}
+				#endregion
+			#endregion
+			VisualStyleRenderer renderer = new VisualStyleRenderer (element);
+			Rectangle title_bar_rectangle = new Rectangle (
+				0,
+				0,
+				wm.Form.Width,
+				renderer.GetPartSize (dc, ThemeSizeType.True).Height
+			);
+			Rectangle caption_text_area = title_bar_rectangle;
+			renderer.DrawBackground (dc, title_bar_rectangle, clip);
+			#endregion
+			int border_width = ManagedWindowBorderWidth (wm);
+			#region Icon
+			if (!wm.IsToolWindow && wm.Form.FormBorderStyle != FormBorderStyle.FixedDialog
+#if NET_2_0
+			&& wm.Form.ShowIcon
+#endif
+			) {
+				Rectangle icon_rectangle = new Rectangle (
+					border_width + 3,
+					border_width + 2,
+					wm.IconWidth,
+					wm.IconWidth);
+				caption_text_area.X += icon_rectangle.Width;
+				if (icon_rectangle.IntersectsWith (clip))
+					dc.DrawIcon (wm.Form.Icon, icon_rectangle);
+			}
+			#endregion
+			#region Title bar buttons
+			foreach (TitleButton button in wm.TitleButtons.AllButtons) {
+				if (!button.Visible || !button.Rectangle.IntersectsWith (clip))
+					continue;
+				new VisualStyleRenderer (GetCaptionButtonVisualStyleElement (button.Caption, button.State)).DrawBackground (dc, button.Rectangle, clip);
+			}
+			#endregion
+			#region Borders
+			if (wm.GetWindowState () == FormWindowState.Normal) {
+				#region Left
+				if (wm.IsToolWindow)
+					if (wm.IsActive)
+						element = VisualStyleElement.Window.SmallFrameLeft.Active;
+					else
+						element = VisualStyleElement.Window.SmallFrameLeft.Inactive;
+				else
+					if (wm.IsActive)
+						element = VisualStyleElement.Window.FrameLeft.Active;
+					else
+						element = VisualStyleElement.Window.FrameLeft.Inactive;
+				renderer = new VisualStyleRenderer (element);
+				renderer.DrawBackground (dc, new Rectangle (
+					0,
+					title_bar_rectangle.Bottom,
+					border_width,
+					wm.form.Height - title_bar_rectangle.Bottom
+					), clip);
+				#endregion
+				#region Right
+				if (wm.IsToolWindow)
+					if (wm.IsActive)
+						element = VisualStyleElement.Window.SmallFrameRight.Active;
+					else
+						element = VisualStyleElement.Window.SmallFrameRight.Inactive;
+				else
+					if (wm.IsActive)
+						element = VisualStyleElement.Window.FrameRight.Active;
+					else
+						element = VisualStyleElement.Window.FrameRight.Inactive;
+
+				renderer = new VisualStyleRenderer (element);
+				renderer.DrawBackground (dc, new Rectangle (
+					wm.form.Width - border_width,
+					title_bar_rectangle.Bottom,
+					border_width,
+					wm.form.Height - title_bar_rectangle.Bottom
+					), clip);
+				#endregion
+				#region Bottom
+				if (wm.IsToolWindow)
+					if (wm.IsActive)
+						element = VisualStyleElement.Window.SmallFrameBottom.Active;
+					else
+						element = VisualStyleElement.Window.SmallFrameBottom.Inactive;
+				else
+					if (wm.IsActive)
+						element = VisualStyleElement.Window.FrameBottom.Active;
+					else
+						element = VisualStyleElement.Window.FrameBottom.Inactive;
+
+				renderer = new VisualStyleRenderer (element);
+				renderer.DrawBackground (dc, new Rectangle (
+					0,
+					wm.form.Height - border_width,
+					wm.form.Width,
+					border_width
+					), clip);
+				#endregion
+				caption_text_area.X += border_width;
+			}
+			#endregion
+			#region Caption text
+			string window_caption = wm.Form.Text;
+			if (window_caption != null && window_caption.Length != 0 && caption_text_area.IntersectsWith (clip)) {
+				StringFormat format = new StringFormat ();
+				format.FormatFlags = StringFormatFlags.NoWrap;
+				format.Trimming = StringTrimming.EllipsisCharacter;
+				format.LineAlignment = StringAlignment.Center;
+				dc.DrawString (
+					window_caption,
+					WindowBorderFont,
+					ThemeEngine.Current.ResPool.GetSolidBrush (Color.White),
+					caption_text_area,
+					format
+				);
+			}
+			#endregion
 		}
 		#endregion
 		#region ProgressBar
