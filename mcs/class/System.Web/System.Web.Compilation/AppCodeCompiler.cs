@@ -684,7 +684,7 @@ namespace System.Web.Compilation
 					tmi = type.GetMethod ("AppInitialize",
 							      BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase,
 							      null,
-							      new Type[0],
+							      Type.EmptyTypes,
 							      null);
 					if (tmi == null)
 						continue;
