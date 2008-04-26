@@ -490,7 +490,7 @@ namespace System.Reflection.Emit
 			}
 
 			ConstructorBuilder cb = DefineConstructor (attributes, 
-				CallingConventions.Standard, new Type[0]);
+				CallingConventions.Standard, Type.EmptyTypes);
 			ILGenerator ig = cb.GetILGenerator ();
 			ig.Emit (OpCodes.Ldarg_0);
 			ig.Emit (OpCodes.Call, parent_constructor);

@@ -993,7 +993,7 @@ namespace System.Reflection.Emit {
 			if (! ((exceptionType == typeof (Exception)) || 
 				   exceptionType.IsSubclassOf (typeof (Exception))))
 				throw new ArgumentException ("Type should be an exception type", "exceptionType");
-			ConstructorInfo ctor = exceptionType.GetConstructor (new Type[0]);
+			ConstructorInfo ctor = exceptionType.GetConstructor (Type.EmptyTypes);
 			if (ctor == null)
 				throw new ArgumentException ("Type should have a default constructor", "exceptionType");
 			Emit (OpCodes.Newobj, ctor);

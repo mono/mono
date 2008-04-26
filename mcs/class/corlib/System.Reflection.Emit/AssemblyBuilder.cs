@@ -694,10 +694,7 @@ namespace System.Reflection.Emit
 				}
 			}
 
-			if (res == null)
-				return new Type [0];
-			else
-				return res;
+			return res == null ? Type.EmptyTypes : res;
 		}
 
 		public override ManifestResourceInfo GetManifestResourceInfo(string resourceName) {
@@ -803,7 +800,7 @@ namespace System.Reflection.Emit
 				if (entry_point.GetParameters ().Length == 1)
 					paramTypes = new Type [] { typeof (string) };
 				else
-					paramTypes = new Type [0];
+					paramTypes = Type.EmptyTypes;
 
 				MethodBuilder mb = mainModule.DefineGlobalMethod ("__EntryPoint$", MethodAttributes.Static|MethodAttributes.PrivateScope, entry_point.ReturnType, paramTypes);
 				ILGenerator ilgen = mb.GetILGenerator ();

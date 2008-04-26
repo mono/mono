@@ -1,3 +1,9 @@
+2008-04-26  Jb Evain  <jbevain@novell.com>
+
+	* ILGenerator.cs, AssemblyBuilder.cs, TypeBuilder.cs:
+	replace usages of new Type [0] by Type.EmptyTypes.
+	Found with Gendarme.
+
 2008-04-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* MethodOnTypeBuilderInst.cs ConstructorOnTypeBuilderInst: New files.
