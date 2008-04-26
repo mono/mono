@@ -451,7 +451,7 @@ namespace System.Diagnostics
 			}
 			else {
 				args = null;
-				types = new Type[0];
+				types = Type.EmptyTypes;
 			}
 				
 			System.Reflection.ConstructorInfo ctor = t.GetConstructor (types);
