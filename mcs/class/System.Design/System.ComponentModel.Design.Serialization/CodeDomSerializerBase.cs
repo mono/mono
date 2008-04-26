@@ -261,7 +261,7 @@ namespace System.ComponentModel.Design.Serialization
 						     "Value Type: " + value.GetType ().Name + System.Environment.NewLine + 
 						     "Value (ToString): " + value.ToString ());
 			} else {
-				if (value.GetType().GetConstructor (new Type[0]) != null)
+				if (value.GetType().GetConstructor (Type.EmptyTypes) != null)
 					expression = new CodeObjectCreateExpression (value.GetType ().FullName, new CodeExpression[0]);
 				isComplete = false;
 			}
@@ -750,7 +750,7 @@ namespace System.ComponentModel.Design.Serialization
 		private MethodInfo GetExactMethod (Type type, string methodName, BindingFlags flags, ICollection argsCollection)
 		{
 			object[] arguments = null;
-			Type[] types = new Type[0];
+			Type[] types = Type.EmptyTypes;
 
 			if (argsCollection != null) {
 				arguments = new object[argsCollection.Count];

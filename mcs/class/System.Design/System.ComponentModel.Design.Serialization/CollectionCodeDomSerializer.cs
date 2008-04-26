@@ -134,7 +134,7 @@ namespace System.ComponentModel.Design.Serialization
 		private MethodInfo GetExactMethod (Type type, string methodName, ICollection argsCollection)
 		{
 			object[] arguments = null;
-			Type[] types = new Type[0];
+			Type[] types = Type.EmptyTypes;
 
 			if (argsCollection != null) {
 				arguments = new object[argsCollection.Count];
