@@ -1395,6 +1395,8 @@ public class ArrayTest : Assertion
 		AssertEquals("#K05", 0, Array.LastIndexOf(s1, "this"));
 		AssertEquals("#K06", 4, Array.LastIndexOf(s1, "test"));
 		AssertEquals("#K07", 3, Array.LastIndexOf(s1, "a"));
+
+		AssertEquals (-1, Array.LastIndexOf (new String [0], "foo"));
 	}
 
 	[Test]

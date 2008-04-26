@@ -1,3 +1,7 @@
+2008-04-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* ArrayTest.cs: Add a test for #383876.
+
 2008-04-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* DateTimeOffsetTest.cs (ToStringWithFormatAndCulture): Avoid dependency on
