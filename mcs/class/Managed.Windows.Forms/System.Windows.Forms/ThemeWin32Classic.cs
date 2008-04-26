@@ -2385,8 +2385,12 @@ namespace System.Windows.Forms
 		{
 			bool details = control.View == View.Details;
 			int first = control.FirstVisibleIndex;	
-
 			int lastvisibleindex = control.LastVisibleIndex;
+
+#if NET_2_0
+			if (control.VirtualMode)
+				control.OnCacheVirtualItems (new CacheVirtualItemsEventArgs (first, lastvisibleindex));
+#endif
 
 			for (int i = first; i <= lastvisibleindex; i++) {					
 				ListViewItem item = control.GetItemAtDisplayIndex (i);

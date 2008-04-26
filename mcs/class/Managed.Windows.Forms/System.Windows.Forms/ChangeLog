@@ -1,5 +1,10 @@
 2008-04-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListView.cs: 
+	* ThemeWin32Classic.cs: Fire the -until now- forgotten CacheVirtualItems event.
+
+2008-04-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListView.cs: When calculating box selection for virtual mode, don't
 	look for intersection with item's text, but item bounds, since that
 	would mean read ListViewItem's text for _every_ item, and that's
