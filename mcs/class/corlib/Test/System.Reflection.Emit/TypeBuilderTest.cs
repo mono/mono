@@ -1609,7 +1609,9 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.AreEqual (tb.Name + "[System.Int32]", t2.MakeGenericType (typeof (int)).GetMethod ("foo").Invoke (null, null).GetType ().ToString ());
 		}
 
-		public void TestGetConstructor () {
+		[Test]
+		public void TestGetConstructor ()
+		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
 			GenericTypeParameterBuilder [] typeParams = tb.DefineGenericParameters ("T");
 

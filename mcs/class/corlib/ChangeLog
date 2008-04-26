@@ -1,3 +1,7 @@
+2008-04-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* corlib_test.dll.sources: Added MethodOnTypeBuilderInstTest.cs.
+
 2008-04-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* corlib.dll.sources: Add System.Reflection.Emit/{Method,Constructor}OnTypeBuilderInst.cs.

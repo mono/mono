@@ -1,3 +1,8 @@
+2008-04-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* MethodOnTypeBuilderInstTest.cs: Added basic set of tests.
+	* TypeBuilderTest.cs: Added Test attribute. 
+
 2008-04-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* TypeBuilderTest.cs: Add tests for GetMethod () / GetConstructor ().
