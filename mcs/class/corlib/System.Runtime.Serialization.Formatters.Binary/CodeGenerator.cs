@@ -75,7 +75,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			// *********************
 			// 	METHOD public constructor (Type t): base (t);
 			
-			parameters = new Type[0];
+			parameters = Type.EmptyTypes;
 
 			ConstructorBuilder ctor = typeBuilder.DefineConstructor (MethodAttributes.Public, CallingConventions.Standard, parameters);
 			ConstructorInfo baseCtor = typeof(ClrTypeMetadata).GetConstructor (new Type[] { typeof(Type) });
