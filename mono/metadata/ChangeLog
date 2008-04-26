@@ -1,3 +1,8 @@
+2008-04-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* sgen-gc.c: Make the 'desc' variables an mword instead of a guint32 to fix 
+	64 bit support.
+
 2008-04-24 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (verify_class_for_overlapping_reference_fields): 
