@@ -1095,7 +1095,7 @@ namespace System
 				throw new ArgumentNullException ("array");
 
 			if (array.Length == 0)
-				return -1;
+				return array.GetLowerBound (0) - 1;
 			return LastIndexOf (array, value, array.Length - 1);
 		}
 
