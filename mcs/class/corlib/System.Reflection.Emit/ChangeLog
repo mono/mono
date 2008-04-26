@@ -1,3 +1,10 @@
+2008-04-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* MethodOnTypeBuilderInst.cs: Added overrides for ReturnType and 
+	GetGenericMethodDefinition. Implement GetGenericArgument,
+	IsGenericMethod(Definition). Throw NotSupportedException instead of
+	NotImplementedException.
+
 2008-04-26  Jb Evain  <jbevain@novell.com>
 
 	* ILGenerator.cs, AssemblyBuilder.cs, TypeBuilder.cs:

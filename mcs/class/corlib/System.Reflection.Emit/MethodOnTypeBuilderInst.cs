@@ -45,7 +45,8 @@ namespace System.Reflection.Emit
 		MethodBuilder mb;
 		#endregion
 
-		public MethodOnTypeBuilderInst (MonoGenericClass instantiation, MethodBuilder mb) {
+		public MethodOnTypeBuilderInst (MonoGenericClass instantiation, MethodBuilder mb)
+		{
 			this.instantiation = instantiation;
 			this.mb = mb;
 		}
@@ -72,15 +73,22 @@ namespace System.Reflection.Emit
 			}
 		}
 
-		public override bool IsDefined (Type attributeType, bool inherit) {
+		public override Type ReturnType {
+			get { return mb.ReturnType; }
+		}
+
+		public override bool IsDefined (Type attributeType, bool inherit)
+		{
 			throw new NotSupportedException ();
 		}
 
-		public override object [] GetCustomAttributes (bool inherit) {
+		public override object [] GetCustomAttributes (bool inherit)
+		{
 			throw new NotSupportedException ();
 		}
 
-		public override object [] GetCustomAttributes (Type attributeType, bool inherit) {
+		public override object [] GetCustomAttributes (Type attributeType, bool inherit)
+		{
 			throw new NotSupportedException ();
 		}
 
@@ -88,25 +96,29 @@ namespace System.Reflection.Emit
 		// MethodBase members
 		//
 
-		public override MethodImplAttributes GetMethodImplementationFlags() {
+		public override MethodImplAttributes GetMethodImplementationFlags ()
+		{
 			return mb.GetMethodImplementationFlags ();
 		}
 
-		public override ParameterInfo[] GetParameters() {
-			throw new NotImplementedException ();
+		public override ParameterInfo [] GetParameters ()
+		{
+			throw new NotSupportedException ();
 		}
 
-		internal override int GetParameterCount () {
+		internal override int GetParameterCount ()
+		{
 			return mb.GetParameterCount ();
 		}
 
-		public override Object Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) {
-			throw new NotImplementedException ();
+		public override Object Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+		{
+			throw new NotSupportedException ();
 		}
 
 		public override RuntimeMethodHandle MethodHandle {
 			get {
-				throw new NotImplementedException ();
+				throw new NotSupportedException ();
 			}
 		}
 
@@ -122,26 +134,31 @@ namespace System.Reflection.Emit
 			}
 		}
 
-		public override Type [] GetGenericArguments () {
-			throw new NotImplementedException ();
+		public override Type [] GetGenericArguments ()
+		{
+			return mb.GetGenericArguments ();
+		}
+
+		public override MethodInfo GetGenericMethodDefinition ()
+		{
+			return mb;
 		}
 
 		public override bool ContainsGenericParameters {
 			get {
-				// FIXME:
-				throw new NotImplementedException ();
+				throw new NotSupportedException ();
 			}
 		}
 
 		public override bool IsGenericMethodDefinition {
 			get {
-				return false;
+				return mb.IsGenericMethodDefinition;
 			}
 		}
 
 		public override bool IsGenericMethod {
 			get {
-				return true;
+				return mb.IsGenericMethod;
 			}
 		}
 
@@ -149,13 +166,14 @@ namespace System.Reflection.Emit
 		// MethodInfo members
 		//
 
-		public override MethodInfo GetBaseDefinition() {
-			throw new NotImplementedException ();
+		public override MethodInfo GetBaseDefinition ()
+		{
+			throw new NotSupportedException ();
 		}
 
 		public override ICustomAttributeProvider ReturnTypeCustomAttributes {
 			get {
-				throw new NotImplementedException ();
+				throw new NotSupportedException ();
 			}
 		}
 	}
