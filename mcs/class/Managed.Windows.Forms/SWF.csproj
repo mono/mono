@@ -2049,6 +2049,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\IDeviceContext.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\IDropTarget.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -3449,6 +3454,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\ThemeVisualStyles.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\ThemeWin32Classic.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -4304,6 +4314,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms.Theming\ThemeElementsVisualStyles.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms.Theming\Default\ButtonPainter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -4330,6 +4345,16 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms.Theming\Nice\TabControlPainter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.Theming\VisualStyles\CheckBoxPainter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms.Theming\VisualStyles\RadioButtonPainter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

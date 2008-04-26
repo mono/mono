@@ -537,6 +537,7 @@
     <Compile Include="System.Windows.Forms\IDataGridViewEditingCell.cs" />
     <Compile Include="System.Windows.Forms\IDataGridViewEditingControl.cs" />
     <Compile Include="System.Windows.Forms\IDataObject.cs" />
+    <Compile Include="System.Windows.Forms\IDeviceContext.cs" />
     <Compile Include="System.Windows.Forms\IDropTarget.cs" />
     <Compile Include="System.Windows.Forms\IFeatureSupport.cs" />
     <Compile Include="System.Windows.Forms\IFileReaderService.cs" />
@@ -817,6 +818,7 @@
     <Compile Include="System.Windows.Forms\ThemeEngine.cs" />
     <Compile Include="System.Windows.Forms\ThemeGtk.cs" />
     <Compile Include="System.Windows.Forms\ThemeNice.cs" />
+    <Compile Include="System.Windows.Forms\ThemeVisualStyles.cs" />
     <Compile Include="System.Windows.Forms\ThemeWin32Classic.cs" />
     <Compile Include="System.Windows.Forms\ThreadExceptionDialog.cs" />
     <Compile Include="System.Windows.Forms\TickStyle.cs" />
@@ -988,12 +990,15 @@
     <Compile Include="System.Windows.Forms.Theming\ThemeElementsDefault.cs" />
     <Compile Include="System.Windows.Forms.Theming\ThemeElementsGtk.cs" />
     <Compile Include="System.Windows.Forms.Theming\ThemeElementsNice.cs" />
+    <Compile Include="System.Windows.Forms.Theming\ThemeElementsVisualStyles.cs" />
     <Compile Include="System.Windows.Forms.Theming\Default\ButtonPainter.cs" />
     <Compile Include="System.Windows.Forms.Theming\Default\CheckBoxPainter.cs" />
     <Compile Include="System.Windows.Forms.Theming\Default\RadioButtonPainter.cs" />
     <Compile Include="System.Windows.Forms.Theming\Default\TabControlPainter.cs" />
     <Compile Include="System.Windows.Forms.Theming\Default\ToolStripPainter.cs" />
     <Compile Include="System.Windows.Forms.Theming\Nice\TabControlPainter.cs" />
+    <Compile Include="System.Windows.Forms.Theming\VisualStyles\CheckBoxPainter.cs" />
+    <Compile Include="System.Windows.Forms.Theming\VisualStyles\RadioButtonPainter.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\BackgroundType.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\BooleanProperty.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\BorderType.cs" />

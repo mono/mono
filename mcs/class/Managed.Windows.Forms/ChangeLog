@@ -1,3 +1,7 @@
+2008-04-26  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* SWF.csproj, SWF2k5.csproj: Updated.
+
 2008-04-25  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* System.Windows.Forms.dll.sources: Added ThemeVisualStyles.cs,
