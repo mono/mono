@@ -173,7 +173,7 @@ namespace System.Windows.Forms {
 
 			list = l;
 			item_type = ListBindingHelper.GetListItemType (list);
-			item_has_default_ctor = item_type.GetConstructor (new Type [0]) != null;
+			item_has_default_ctor = item_type.GetConstructor (Type.EmptyTypes) != null;
 
 			list_is_ibinding = list is IBindingList;
 			if (list_is_ibinding)

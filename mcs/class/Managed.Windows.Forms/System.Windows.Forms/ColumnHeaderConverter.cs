@@ -73,7 +73,7 @@ namespace System.Windows.Forms
 				}
 				else
 				{
-					type = new Type[0] {};
+					type = Type.EmptyTypes;
 					constructor_info = typeof (ColumnHeader).GetConstructor (type);
 					if (constructor_info != null)
 					{
