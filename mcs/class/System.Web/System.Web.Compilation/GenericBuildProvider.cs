@@ -45,6 +45,7 @@ namespace System.Web.Compilation
 		TParser _parser;
 		CompilerType _compilerType;
 		BaseCompiler _compiler;
+		TextReader _reader;
 		bool _parsed;
 		bool _codeGenerated;
 		
@@ -67,7 +68,19 @@ namespace System.Web.Compilation
 
 			if (!IsDirectoryBuilder) {
 				AspGenerator generator = CreateAspGenerator (parser);
-				generator.Parse ();
+				if (_reader != null) {
+					HttpContext ctx = HttpContext.Current;
+					HttpRequest req = ctx != null ? ctx.Request : null;
+					string filename;
+					
+					if (req != null)
+						filename = req.MapPath (VirtualPath);
+					else
+						filename = null;
+					
+					generator.Parse (_reader, filename, true);
+				} else
+					generator.Parse ();
 			}
 			
 			_parsed = true;
@@ -172,8 +185,8 @@ namespace System.Web.Compilation
 					
 					if (!IsDirectoryBuilder) {
 						string physicalPath;
-						TextReader reader = SpecialOpenReader (vp, out physicalPath);
-						_parser = CreateParser (vp, physicalPath, reader, HttpContext.Current);
+						_reader = SpecialOpenReader (vp, out physicalPath);
+						_parser = CreateParser (vp, physicalPath, _reader, HttpContext.Current);
 					} else
 						_parser = CreateParser (vp, null,  HttpContext.Current);
 					

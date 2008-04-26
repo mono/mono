@@ -1,3 +1,7 @@
+2008-04-26  Marek Habersack  <mhabersack@novell.com>
+
+	* VirtualPath.cs: added a new property, PhysicalPath.
+
 2008-04-25  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* HttpResponse.cs: Use double quotes in link to match MS.

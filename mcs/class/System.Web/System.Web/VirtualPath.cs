@@ -40,6 +40,7 @@ namespace System.Web
 		string _extension;
 		string _directory;
 		string _currentRequestDirectory;
+		string _physicalPath;
 		
 		public bool IsAbsolute {
 			get;
@@ -145,7 +146,23 @@ namespace System.Web
 
 			set { _currentRequestDirectory = value; }
 		}
-		
+
+		public string PhysicalPath {
+			get {
+				if (_physicalPath != null)
+					return _physicalPath;
+
+				HttpContext ctx = HttpContext.Current;
+				HttpRequest req = ctx != null ? ctx.Request : null;
+				if (req != null)
+					_physicalPath = req.MapPath (Absolute);
+				else
+					return null;
+				
+				return _physicalPath;
+			}
+		}
+				
 		public VirtualPath (string vpath)
 		{
 			Original = vpath;

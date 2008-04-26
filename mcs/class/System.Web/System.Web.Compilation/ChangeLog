@@ -1,3 +1,9 @@
+2008-04-26  Marek Habersack  <mhabersack@novell.com>
+
+	* GenericBuildProvider.cs: the Parse () method should reuse the
+	previously opened TextReader when calling generator.Parse (), to
+	avoid opening the input file multiple times. Fixes bug #383881
+
 2008-04-25  Marek Habersack  <mhabersack@novell.com>
 
 	* AspGenerator.cs: put some safeguards in, to make sure streams
