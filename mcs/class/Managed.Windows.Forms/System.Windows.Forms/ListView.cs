@@ -2483,7 +2483,12 @@ namespace System.Windows.Forms
 					ArrayList result = new ArrayList ();
 					for (int i = 0; i < owner.Items.Count; i++) {
 						bool intersects;
+#if NET_2_0
+						// Can't iterate over specific items properties in virtualmode
+						if (owner.View == View.Details && !owner.FullRowSelect && !owner.VirtualMode)
+#else
 						if (owner.View == View.Details && !owner.FullRowSelect)
+#endif
 							intersects = BoxIntersectsText (i);
 						else
 							intersects = BoxIntersectsItem (i);

@@ -1,3 +1,11 @@
+2008-04-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: When calculating box selection for virtual mode, don't
+	look for intersection with item's text, but item bounds, since that
+	would mean read ListViewItem's text for _every_ item, and that's
+	something we just can't do in virtual mode (items are only requested
+	when drawn).
+
 2008-04-26  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* ThemeVisualStyles.cs: Added support for ControlPaint.DrawCaptionButton and
