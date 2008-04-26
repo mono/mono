@@ -1094,6 +1094,8 @@ namespace System
 			if (array == null)
 				throw new ArgumentNullException ("array");
 
+			if (array.Length == 0)
+				return -1;
 			return LastIndexOf (array, value, array.Length - 1);
 		}
 
@@ -2117,6 +2119,8 @@ namespace System
 			if (array == null)
 				throw new ArgumentNullException ("array");
 
+			if (array.Length == 0)
+				return -1;
 			return LastIndexOf<T> (array, value, array.Length - 1);
 		}
 
