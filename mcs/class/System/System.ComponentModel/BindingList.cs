@@ -49,7 +49,7 @@ namespace System.ComponentModel {
 
 		void CheckType ()
 		{
-			ConstructorInfo ci = typeof (T).GetConstructor (new Type[0]);
+			ConstructorInfo ci = typeof (T).GetConstructor (Type.EmptyTypes);
 			type_has_default_ctor = (ci != null);
 			type_raises_item_changed_events = typeof (INotifyPropertyChanged).IsAssignableFrom (typeof (T));
 		}

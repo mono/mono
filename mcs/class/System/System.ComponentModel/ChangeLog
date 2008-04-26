@@ -1,3 +1,9 @@
+2008-04-26  Jb Evain  <jbevain@novell.com>
+
+	* PropertyTabAttribute.cs, BindingList.cs: replace
+	usages of new Type [0] with Type.EmptyTypes.
+	Found with Gendarme.
+
 2008-04-16  Marek Habersack  <mhabersack@novell.com>
 
 	* ReferenceConverter.cs: fix ConvertFrom and ConvertTo when

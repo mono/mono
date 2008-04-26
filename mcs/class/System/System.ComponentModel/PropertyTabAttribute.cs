@@ -47,7 +47,7 @@ namespace System.ComponentModel
 
 		public PropertyTabAttribute()
 		{
-			tabs = new Type[0];
+			tabs = Type.EmptyTypes;
 			scopes = new PropertyTabScope[0];
 		}
 
