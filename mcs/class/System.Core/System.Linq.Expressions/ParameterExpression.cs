@@ -48,9 +48,7 @@ namespace System.Linq.Expressions {
 
 		internal override void Emit (EmitContext ec)
 		{
-			int p = ec.GetParameterPosition (this);
-
-			ec.ig.Emit (OpCodes.Ldarg, p);
+			ec.ig.Emit (OpCodes.Ldarg, ec.GetParameterPosition (this));
 		}
 	}
 }
