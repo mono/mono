@@ -180,21 +180,28 @@ namespace System.Linq.Expressions {
 			return expression.Type == typeof (bool) || expression.Type == typeof (bool?);
 		}
 
+		void PrintArrayIndex (BinaryExpression index)
+		{
+			Visit (index.Left);
+			Print ("[");
+			Visit (index.Right);
+			Print ("]");
+		}
+
 		protected override void VisitBinary (BinaryExpression binary)
 		{
-			if (binary.NodeType == ExpressionType.ArrayIndex) {
+			switch (binary.NodeType) {
+			case ExpressionType.ArrayIndex:
+				PrintArrayIndex (binary);
+				return;
+			default:
+				Print ("(");
 				Visit (binary.Left);
-				Print ("[");
+				Print (" {0} ", OperatorToString (binary));
 				Visit (binary.Right);
-				Print ("]");
+				Print (")");
 				return;
 			}
-
-			Print ("(");
-			Visit (binary.Left);
-			Print (" {0} ", OperatorToString (binary));
-			Visit (binary.Right);
-			Print (")");
 		}
 
 		protected override void VisitTypeIs (TypeBinaryExpression type)
