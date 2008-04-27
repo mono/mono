@@ -83,11 +83,7 @@ namespace System.Linq.Expressions {
 
 		static Type [] CreateTypeParameters (int rank)
 		{
-			var types = new Type [rank];
-			for (int i = 0; i < rank; i++)
-				types [i] = typeof (int);
-
-			return types;
+			return Enumerable.Repeat (typeof (int), rank).ToArray ();
 		}
 
 		static Type CreateArray (Type type, int rank)
