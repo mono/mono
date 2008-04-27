@@ -1,3 +1,7 @@
+2008-04-27  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* ThemeElements.cs: Fixed the code to select ThemeElementsVisualStyles.
+
 2008-04-25  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* ThemeElements.cs: Added code to select ThemeElementsVisualStyles.

@@ -53,8 +53,11 @@ namespace System.Windows.Forms.Theming
 
 		private static ThemeElementsDefault LoadTheme (string themeName) 
 		{
-			if (themeName == "visualstyles" && Application.RenderWithVisualStyles)
-				return new ThemeElementsVisualStyles ();
+			if (themeName == "visualstyles")
+				if (Application.RenderWithVisualStyles)
+					return new ThemeElementsVisualStyles ();
+				else
+					return new ThemeElementsDefault ();
 			Assembly ass = Assembly.GetExecutingAssembly ();
 			string iname = typeof(ThemeElements).FullName;
 			string assemblyname = iname + themeName;
