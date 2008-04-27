@@ -73,7 +73,7 @@ namespace MonoTests.System.Linq.Expressions {
 			Expression.Call (typeof (MemberClass), "StaticMethod", null, Expression.Constant (1));
 		}
 
-		//[Test]
+		[Test]
 		public void StaticGenericMethod ()
 		{
 			Expression.Call (typeof (MemberClass), "StaticGenericMethod", new [] { typeof (int) }, Expression.Constant (1));
