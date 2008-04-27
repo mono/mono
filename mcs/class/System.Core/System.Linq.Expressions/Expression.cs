@@ -1673,7 +1673,8 @@ namespace System.Linq.Expressions {
 		{
 			if (type == null)
 				throw new ArgumentNullException ("type");
-			CheckVoid (type);
+
+			CheckNotVoid (type);
 
 			var args = (null as IEnumerable<Expression>).ToReadOnlyCollection ();
 
@@ -1780,7 +1781,8 @@ namespace System.Linq.Expressions {
 				throw new ArgumentNullException ("type");
 			if (bounds == null)
 				throw new ArgumentNullException ("bounds");
-			CheckVoid (type);
+
+			CheckNotVoid (type);
 
 			var array_bounds = bounds.ToReadOnlyCollection ();
 			foreach (var expression in array_bounds)
@@ -1801,11 +1803,12 @@ namespace System.Linq.Expressions {
 				throw new ArgumentNullException ("type");
 			if (initializers == null)
 				throw new ArgumentNullException ("initializers");
-			CheckVoid (type);
 
-			var array_initializers = initializers.ToReadOnlyCollection ();
+			CheckNotVoid (type);
 
-			foreach (var expression in initializers) {
+			var inits = initializers.ToReadOnlyCollection ();
+
+			foreach (var expression in inits) {
 				if (expression == null)
 					throw new ArgumentNullException ("initializers");
 
@@ -1815,7 +1818,7 @@ namespace System.Linq.Expressions {
 				// TODO: Quote elements if type == typeof (Expression)
 			}
 
-			return new NewArrayExpression (ExpressionType.NewArrayInit, type.MakeArrayType (), array_initializers);
+			return new NewArrayExpression (ExpressionType.NewArrayInit, type.MakeArrayType (), inits);
 		}
 
 		public static UnaryExpression Not (Expression expression)
@@ -1835,7 +1838,7 @@ namespace System.Linq.Expressions {
 			return MakeSimpleUnary (ExpressionType.Not, expression, method);
 		}
 
-		static void CheckVoid (Type type)
+		static void CheckNotVoid (Type type)
 		{
 			if (type == typeof (void))
 				throw new ArgumentException ("Type can't be void");
@@ -1845,7 +1848,8 @@ namespace System.Linq.Expressions {
 		{
 			if (type == null)
 				throw new ArgumentNullException ("type");
-			CheckVoid (type);
+
+			CheckNotVoid (type);
 
 			return new ParameterExpression (type, name);
 		}
@@ -1956,7 +1960,8 @@ namespace System.Linq.Expressions {
 				throw new ArgumentNullException ("expression");
 			if (type == null)
 				throw new ArgumentNullException ("type");
-			CheckVoid (type);
+
+			CheckNotVoid (type);
 
 			return new TypeBinaryExpression (ExpressionType.TypeIs, expression, type, typeof (bool));
 		}
