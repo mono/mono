@@ -524,6 +524,30 @@ namespace Mono.CSharp {
 			this.op = op;
 		}
 
+		public class Helper : Expression {
+			Expression child;
+			public Helper (Expression child)
+			{
+				this.child = child;
+				this.loc = child.Location;
+			}
+
+			public override Expression DoResolve (EmitContext ec)
+			{
+				child = child.Resolve (ec);
+				if (child == null)
+					return null;
+				type = child.Type;
+				eclass = ExprClass.Value;
+				return this;
+			}
+
+			public override void Emit (EmitContext ec)
+			{
+				child.Emit (ec);
+			}
+		}
+
 		public override Expression DoResolve (EmitContext ec)
 		{
 			original_source = original_source.Resolve (ec);
@@ -550,7 +574,7 @@ namespace Mono.CSharp {
 			// into a tree, to guarantee that we do not have side
 			// effects.
 			//
-			source = new Binary (op, target, original_source, true);
+			source = new Binary (op, new Helper (target), original_source, true);
 			return base.DoResolve (ec);
 		}
 

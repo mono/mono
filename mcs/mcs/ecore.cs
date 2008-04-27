@@ -4429,7 +4429,7 @@ namespace Mono.CSharp {
 
 					continue;
 				}
-		
+
 				Expression conv;
 				if (TypeManager.IsEqual (a.Type, pt)) {
 					conv = a.Expr;
@@ -4443,12 +4443,14 @@ namespace Mono.CSharp {
 				// Convert params arguments to an array initializer
 				//
 				if (params_initializers != null) {
-					params_initializers.Add (conv);
+					// we choose to use 'a.Expr' rather than 'conv' so that
+					// we don't hide the kind of expression we have (esp. CompoundAssign.Helper)
+					params_initializers.Add (a.Expr);
 					arguments.RemoveAt (a_idx--);
 					--arg_count;
 					continue;
 				}
-				
+
 				// Update the argument with the implicit conversion
 				a.Expr = conv;
 			}
@@ -4934,10 +4936,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			//
-			// String concatenation creates a new string instance 
-			//
-			prepared = prepare_for_load && !(source is StringConcat);
+			prepared = prepare_for_load;
 			EmitInstance (ec, prepared);
 
 			source.Emit (ec);			
@@ -5418,14 +5417,9 @@ namespace Mono.CSharp {
 			Expression my_source = source;
 
 			if (prepare_for_load) {
-				if (source is StringConcat)
-					EmitInstance (ec, false);
-				else
-					prepared = true;					
-
+				prepared = true;
 				source.Emit (ec);
 				
-				prepared = true;
 				if (leave_copy) {
 					ec.ig.Emit (OpCodes.Dup);
 					if (!is_static) {

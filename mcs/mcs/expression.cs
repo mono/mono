@@ -5760,11 +5760,21 @@ namespace Mono.CSharp {
 
 		}
 
+		Expression first_emit;
+		LocalTemporary first_emit_temp;
+
 		protected virtual Expression ResolveArrayElement (EmitContext ec, Expression element)
 		{
 			element = element.Resolve (ec);
 			if (element == null)
 				return null;
+
+			if (element is CompoundAssign.Helper) {
+				if (first_emit != null)
+					throw new InternalErrorException ("Can only handle one mutator at a time");
+				first_emit = element;
+				element = first_emit_temp = new LocalTemporary (element.Type);
+			}
 
 			return Convert.ImplicitConversionRequired (
 				ec, element, array_element_type, loc);
@@ -6162,6 +6172,11 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 
+			if (first_emit != null) {
+				first_emit.Emit (ec);
+				first_emit_temp.Store (ec);
+			}
+
 			foreach (Argument a in arguments)
 				a.Emit (ec);
 
@@ -6185,7 +6200,10 @@ namespace Mono.CSharp {
 					EmitDynamicInitializers (ec, false);
 			} else {
 				EmitDynamicInitializers (ec, true);
-			}				
+			}
+
+			if (first_emit_temp != null)
+				first_emit_temp.Release (ec);
 		}
 
 		public override bool GetAttributableValue (Type value_type, out object value)
@@ -7651,7 +7669,6 @@ namespace Mono.CSharp {
 		ElementAccess ea;
 
 		LocalTemporary temp;
-		LocalTemporary prepared_value;
 
 		bool prepared;
 		
@@ -7860,36 +7877,13 @@ namespace Mono.CSharp {
 		//
 		// Load the array arguments into the stack.
 		//
-		// If we have been requested to cache the values (cached_locations array
-		// initialized), then load the arguments the first time and store them
-		// in locals.  otherwise load from local variables.
-		//
-		// prepare_for_load is used in compound assignments to cache original index
-		// values ( label[idx++] += s )
-		//
-		LocalTemporary [] LoadArrayAndArguments (EmitContext ec, bool prepare_for_load)
+		void LoadArrayAndArguments (EmitContext ec)
 		{
 			ea.Expr.Emit (ec);
 
-			LocalTemporary[] indexes = null;
-			if (prepare_for_load) {
-				ec.ig.Emit (OpCodes.Dup);
-				indexes = new LocalTemporary [ea.Arguments.Count];
-			}
-
 			for (int i = 0; i < ea.Arguments.Count; ++i) {
 				((Argument)ea.Arguments [i]).Emit (ec);
-				if (!prepare_for_load)
-					continue;
-
-				// Keep original array index value on the stack
-				ec.ig.Emit (OpCodes.Dup);
-
-				indexes [i] = new LocalTemporary (TypeManager.intptr_type);
-				indexes [i].Store (ec);
 			}
-
-			return indexes;
 		}
 
 		public void Emit (EmitContext ec, bool leave_copy)
@@ -7897,12 +7891,10 @@ namespace Mono.CSharp {
 			int rank = ea.Expr.Type.GetArrayRank ();
 			ILGenerator ig = ec.ig;
 
-			if (prepared_value != null) {
-				prepared_value.Emit (ec);
-			} else if (prepared) {
+			if (prepared) {
 				LoadFromPtr (ig, this.type);
 			} else {
-				LoadArrayAndArguments (ec, false);
+				LoadArrayAndArguments (ec);
 				EmitLoadOpcode (ig, type, rank);
 			}	
 
@@ -7923,24 +7915,13 @@ namespace Mono.CSharp {
 			int rank = ea.Expr.Type.GetArrayRank ();
 			ILGenerator ig = ec.ig;
 			Type t = source.Type;
-			prepared = prepare_for_load && !(source is StringConcat);
+			prepared = prepare_for_load;
 
 			if (prepared) {
 				AddressOf (ec, AddressOp.LoadStore);
 				ec.ig.Emit (OpCodes.Dup);
 			} else {
-				LocalTemporary[] original_indexes_values = LoadArrayAndArguments (ec,
-					prepare_for_load && (source is StringConcat));
-
-				if (original_indexes_values != null) {
-					prepared_value = new LocalTemporary (type);
-					EmitLoadOpcode (ig, type, rank);
-					prepared_value.Store (ec);
-					foreach (LocalTemporary lt in original_indexes_values) {
-						lt.Emit (ec);
-						lt.Release (ec);
-					}
-				}
+				LoadArrayAndArguments (ec);
 			}
 
 			if (rank == 1) {
@@ -8012,7 +7993,7 @@ namespace Mono.CSharp {
 			int rank = ea.Expr.Type.GetArrayRank ();
 			ILGenerator ig = ec.ig;
 
-			LoadArrayAndArguments (ec, false);
+			LoadArrayAndArguments (ec);
 
 			if (rank == 1){
 				ig.Emit (OpCodes.Ldelema, type);

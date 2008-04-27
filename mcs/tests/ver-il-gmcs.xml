@@ -26674,10 +26674,10 @@
         <size>7</size>
       </method>
       <method name="Void BuildNode(System.String ByRef)">
-        <size>41</size>
+        <size>43</size>
       </method>
       <method name="Void BuildNode(System.String[] ByRef)">
-        <size>54</size>
+        <size>56</size>
       </method>
       <method name="Void BuildNode_B(System.Object ByRef)">
         <size>18</size>
@@ -26686,10 +26686,10 @@
         <size>76</size>
       </method>
       <method name="System.String BuildNode_D()">
-        <size>155</size>
+        <size>151</size>
       </method>
       <method name="Void BuildNode_E(System.String[,] ByRef)">
-        <size>79</size>
+        <size>68</size>
       </method>
       <method name="Int32 Main()">
         <size>265</size>
@@ -26708,7 +26708,7 @@
         <size>40</size>
       </method>
       <method name="Void TestMethod()">
-        <size>173</size>
+        <size>179</size>
       </method>
     </type>
     <type name="TestNonParams">
@@ -26722,7 +26722,7 @@
         <size>40</size>
       </method>
       <method name="Void TestMethod()">
-        <size>69</size>
+        <size>71</size>
       </method>
     </type>
     <type name="M">
@@ -26928,7 +26928,7 @@
         <size>8</size>
       </method>
       <method name="Int32 Do(System.String, System.String, System.String)">
-        <size>328</size>
+        <size>334</size>
       </method>
     </type>
   </test>
@@ -28106,6 +28106,40 @@
       </method>
       <method name="Void Main()">
         <size>30</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-638.cs">
+    <type name="Fail">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>118</size>
+      </method>
+    </type>
+    <type name="Fail+&lt;&gt;c__CompilerGenerated0">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;Main&gt;c__1(System.Object, System.EventArgs)">
+        <size>28</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-639.cs">
+    <type name="Foo">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="System.String get_s()">
+        <size>13</size>
+      </method>
+      <method name="Void set_s(System.String)">
+        <size>34</size>
+      </method>
+      <method name="Void Main()">
+        <size>67</size>
       </method>
     </type>
   </test>

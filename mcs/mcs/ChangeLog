@@ -1,3 +1,20 @@
+2008-04-28  Raja R Harinath  <harinath@hurrynot.org>
+
+	Fix #381559, test-638.cs, test-639.cs
+	* assign.cs (CompoundAssign.Helper): New wrapper.
+	(CompoundAssign.DoResolve): Use it to wrap the nested 'target'
+	access.
+	* ecore.cs (MethodGroupExpr.VerifyArgumentsCompat) <params arguments>:
+	Pass unconverted expressions to the params array creation expression.
+	(FieldExpr.EmitAssign): Don't special-case StringConcat.
+	(PropertyExpr.EmitAssign): Likewise.
+	* expression.cs (ArrayCreation.ResolveArrayElement): Keep track of the
+	element if it is of kind CompoundAssign.Helper.
+	(ArrayCreation.Emit): If we saw a CompoundAssign.Helper, emit it
+	first before anything else.
+	(ArrayAccess.EmitAssign): Don't special-case StringConcat.
+	(ArrayAccess.LoadArrayAndArguments): Simplify.
+
 2008-04-27  Marek Safar  <marek.safar@gmail.com>
 
 	* expression.cs: Fixed cloning of typeof(void).
