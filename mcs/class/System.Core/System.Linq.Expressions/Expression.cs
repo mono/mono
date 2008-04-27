@@ -957,19 +957,46 @@ namespace System.Linq.Expressions {
 			if (methodName == null)
 				throw new ArgumentNullException ("methodName");
 
-			var method = GetGenericMethod (instance.Type, methodName, AllInstance,
+			var method = TryGetMethod (instance.Type, methodName, AllInstance,
 				CollectTypes (arguments), typeArguments);
 
 			var args = arguments.ToReadOnlyCollection ();
+
 			CheckMethodArguments (method, args);
 
 			return new MethodCallExpression (instance, method, args);
 		}
 
-		static MethodInfo GetGenericMethod (Type type, string methodName, BindingFlags flags, Type [] parameterTypes, Type [] argumentTypes)
+		static bool MethodMatch (MethodInfo method, string name, Type [] parameterTypes)
 		{
-			var method = type.GetMethod (methodName, flags, null, parameterTypes, null);
-			method = TryMakeGeneric (method, argumentTypes);
+			if (method.Name != name)
+				return false;
+
+			var parameters = method.GetParameters ();
+
+			if (parameters.Length != parameterTypes.Length)
+				return false;
+
+			if (method.IsGenericMethod) // if it's a generic method, when can't compare its parameters
+				return true;
+
+			for (int i = 0; i < parameters.Length; i++)
+				if (!IsAssignableToParameterType (parameterTypes [i], parameters [i]))
+					return false;
+
+			return true;
+		}
+
+		static MethodInfo TryGetMethod (Type type, string methodName, BindingFlags flags, Type [] parameterTypes, Type [] argumentTypes)
+		{
+			var methods = from meth in type.GetMethods (flags)
+						  where MethodMatch (meth, methodName, parameterTypes)
+						  select meth;
+
+			if (methods.Count () > 1)
+				throw new InvalidOperationException ("Too much method candidates");
+
+			var method = TryMakeGeneric (methods.FirstOrDefault (), argumentTypes);
 			if (method != null)
 				return method;
 
@@ -983,10 +1010,11 @@ namespace System.Linq.Expressions {
 			if (methodName == null)
 				throw new ArgumentNullException ("methodName");
 
-			var method = GetGenericMethod (type, methodName, AllStatic,
+			var method = TryGetMethod (type, methodName, AllStatic,
 				CollectTypes (arguments), typeArguments);
 
 			var args = arguments.ToReadOnlyCollection ();
+
 			CheckMethodArguments (method, args);
 
 			return new MethodCallExpression (method, args);

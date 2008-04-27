@@ -1,3 +1,7 @@
+2008-04-27  Jb Evain  <jbevain@novell.com>
+
+	* Expression.cs: improve method finder.
+
 2008-04-24  Jb Evain  <jbevain@novell.com>
 
 	* UnaryExpression.cs, EmitContext.cs: implement compilation
