@@ -6769,8 +6769,8 @@ namespace Mono.CSharp {
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			TypeOf target = (TypeOf) t;
-
-			target.QueriedType = QueriedType.Clone (clonectx);
+			if (QueriedType != null)
+				target.QueriedType = QueriedType.Clone (clonectx);
 		}
 	}
 

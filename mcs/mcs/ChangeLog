@@ -1,3 +1,7 @@
+2008-04-27  Marek Safar  <marek.safar@gmail.com>
+
+	* expression.cs: Fixed cloning of typeof(void).
+
 2008-04-27  Raja R Harinath  <harinath@hurrynot.org>
 
 	* assign.cs (Assign.DoResolve): Remove support for EventExprs.
