@@ -41,7 +41,7 @@ namespace System.Linq.Expressions {
 
 		public new TDelegate Compile ()
 		{
-			return (TDelegate) (object) ((LambdaExpression) this).Compile ();
+			return (TDelegate) (object) base.Compile ();
 		}
 	}
 }
