@@ -217,5 +217,14 @@ namespace MonoTests.System.Linq.Expressions
 
 			Assert.IsNull (n ());
 		}
+
+		[Test]
+		public void EmitNullNullableType ()
+		{
+			var n = Expression.Lambda<Func<int?>> (
+				Expression.Constant (null, typeof (int?))).Compile ();
+
+			Assert.IsNull (n ());
+		}
 	}
 }
