@@ -1,5 +1,9 @@
 2008-04-27  Jb Evain  <jbevain@novell.com>
 
+	* ConstantExpression.cs (Emit): emit properly null nullable types.
+
+2008-04-27  Jb Evain  <jbevain@novell.com>
+
 	* Expression.cs: improve method finder.
 
 2008-04-24  Jb Evain  <jbevain@novell.com>

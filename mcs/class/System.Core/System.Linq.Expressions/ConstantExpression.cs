@@ -146,7 +146,17 @@ namespace System.Linq.Expressions {
 		void EmitIfNotNull (EmitContext ec, Action<EmitContext> emit)
 		{
 			if (value == null) {
-				ec.ig.Emit (OpCodes.Ldnull);
+				var ig = ec.ig;
+
+				if (Type.IsValueType) { // happens for nullable types
+					var local = ig.DeclareLocal (Type);
+					ig.Emit (OpCodes.Ldloca, local);
+					ig.Emit (OpCodes.Initobj, Type);
+					ig.Emit (OpCodes.Ldloc, local);
+				} else {
+					ec.ig.Emit (OpCodes.Ldnull);
+				}
+
 				return;
 			}
 
