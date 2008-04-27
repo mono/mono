@@ -64,7 +64,7 @@ namespace System.Windows.Forms
 
 		[MonoTODO ("Needs implementation")]
 		public object DomHistory {
-			get { return null; }
+			get { throw new NotSupportedException ("Retrieving a reference to an mshtml interface is not supported. Sorry."); } 
 		}
 		#endregion
 

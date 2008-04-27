@@ -68,7 +68,7 @@ namespace System.Windows.Forms
 		}
 		
 		public object DomWindow {
-			get { throw new NotImplementedException (); }
+			get { throw new NotSupportedException ("Retrieving a reference to an mshtml interface is not supported. Sorry."); } 
 		}
 
 		public HtmlWindowCollection Frames {

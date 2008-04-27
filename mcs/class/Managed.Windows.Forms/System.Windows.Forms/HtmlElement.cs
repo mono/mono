@@ -107,8 +107,7 @@ namespace System.Windows.Forms
 			set { this.element.ScrollLeft = value; }
 		}
 
-		public int ScrollTop
-		{
+		public int ScrollTop {
 			get { return this.element.ScrollTop; }
 			set { this.element.ScrollTop = value; }
 		}
@@ -123,14 +122,12 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public bool Enabled
-		{
+		public bool Enabled	{
 			get { return !this.element.Disabled; }
 			set { this.element.Disabled = !value; }
 		}
 
-		public string InnerHtml
-		{
+		public string InnerHtml	{
 			get { return this.element.InnerHTML; }
 			set { throw new NotImplementedException (); }
 		}
@@ -172,9 +169,8 @@ namespace System.Windows.Forms
 			set { }
 		}
 
-		[MonoTODO ("Needs implementation")]
 		public object DomElement {
-			get { return null; }
+			get { throw new NotSupportedException ("Retrieving a reference to an mshtml interface is not supported. Sorry."); } 
 		}
 
 		public string OuterHtml {

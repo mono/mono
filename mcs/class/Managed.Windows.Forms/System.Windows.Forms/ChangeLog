@@ -1,3 +1,15 @@
+2008-04-27  Andreia Gaita <avidigal@novell.com> 
+
+	* HtmlWindow.cs, HtmlHistory.cs: Throw on DomHistory getter (it's
+	  supposed to return a reference to an mshtml interface, which we
+	  don't support).
+	* HtmlElement.cs: Throw on DomElement getter (it's supposed to return a
+	  reference to an mshtml interface, which we don't support). Code
+	  formatting cleanup.
+	* HtmlDocument.cs: Add DefaultEncoding getter implementation. Throw on
+	  DomDocument getter (it's supposed to return a reference to an
+	  mshtml interface, which we don't support). Code formatting cleanup.
+
 2008-04-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: Ouch, forgot to commit.

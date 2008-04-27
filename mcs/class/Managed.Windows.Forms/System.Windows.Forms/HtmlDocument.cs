@@ -174,20 +174,19 @@ namespace System.Windows.Forms
 			
 			}
 		}
+		
 		public Color ActiveLinkColor {
 			get { return ParseColor(document.ActiveLinkColor); }
 			set { document.ActiveLinkColor = value.ToArgb().ToString(); }
 		}
 
-		public HtmlElementCollection All
-		{
+		public HtmlElementCollection All {
 			get {
 				return new HtmlElementCollection (webHost, document.DocumentElement.All);
 			}
 		}
 
-		public Color BackColor
-		{
+		public Color BackColor {
 			get { return ParseColor(document.BackColor); }
 			set { document.BackColor = value.ToArgb().ToString(); }
 		}
@@ -195,28 +194,35 @@ namespace System.Windows.Forms
 		public HtmlElement Body {
 			get { return new HtmlElement (webHost, document.Body); }
 		}
-		public string Cookie
-		{
+		
+		public string Cookie {
 			get { return document.Cookie; }
 			set { document.Cookie = value; }
 		}
-		public string DefaultEncoding { get { throw new NotImplementedException (); } }
-		public string Domain
-		{
+		
+		public string DefaultEncoding { 
+			get { return document.Charset; }
+		}
+		
+		public string Domain {
 			get { return document.Domain; }
 			set { throw new NotSupportedException ("Setting the domain is not supported per the DOM Level 2 HTML specification. Sorry."); }
 		}
-		public Object DomDocument { get { throw new NotImplementedException (); } }
 		
-		public string Encoding
-		{
+		public Object DomDocument { 
+			get { throw new NotSupportedException ("Retrieving a reference to an mshtml interface is not supported. Sorry."); } 
+		}
+		
+		public string Encoding {
 			get { return document.Charset; }
 			set { document.Charset = value; }
 		}
 
-		public bool Focused { get { throw new NotImplementedException (); } }
-		public Color ForeColor
-		{
+		public bool Focused { 
+			get { throw new NotImplementedException (); } 
+		}
+		
+		public Color ForeColor {
 			get { return ParseColor(document.ForeColor); }
 			set { document.ForeColor = value.ToArgb().ToString(); }
 		}
@@ -228,8 +234,8 @@ namespace System.Windows.Forms
 		public HtmlElementCollection Images { 
 			get { return new HtmlElementCollection (webHost, document.Images); } 	
 		}
-		public Color LinkColor
-		{
+		
+		public Color LinkColor {
 			get { return ParseColor(document.LinkColor); }
 			set { document.LinkColor = value.ToArgb().ToString(); }
 		}
@@ -238,14 +244,12 @@ namespace System.Windows.Forms
 			get { return new HtmlElementCollection (webHost, document.Links); } 
 		}
 		
-		public bool RightToLeft
-		{
+		public bool RightToLeft {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 		
-		public string Title
-		{
+		public string Title {
 			get { return document.Title; }
 			set { document.Title = value; }
 		}
@@ -254,8 +258,7 @@ namespace System.Windows.Forms
 			get { return new Uri (document.Url); } 
 		}
 		
-		public Color VisitedLinkColor
-		{
+		public Color VisitedLinkColor {
 			get { return ParseColor(document.VisitedLinkColor); }
 			set { document.VisitedLinkColor =  value.ToArgb().ToString(); }
 		}
@@ -280,6 +283,7 @@ namespace System.Windows.Forms
 				document.Click -= new NodeEventHandler (OnClick);
 			}
 		}
+		
 		private void OnClick (object sender, EventArgs e)
 		{
 			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[ClickEvent];
@@ -292,14 +296,8 @@ namespace System.Windows.Forms
 		private static object ContextMenuShowingEvent = new object ();
 		public event HtmlElementEventHandler ContextMenuShowing
 		{
-			add
-			{
-				Events.AddHandler (ContextMenuShowingEvent, value);
-			}
-			remove
-			{
-				Events.RemoveHandler (ContextMenuShowingEvent, value);
-			}
+			add { Events.AddHandler (ContextMenuShowingEvent, value); }
+			remove { Events.RemoveHandler (ContextMenuShowingEvent, value); }
 		}
 		private void OnContextMenuShowing (object sender, EventArgs e)
 		{
@@ -311,17 +309,11 @@ namespace System.Windows.Forms
 		}
 
 		private static object FocusingEvent = new object ();
-		public event HtmlElementEventHandler Focusing
-		{
-			add
-			{
-				Events.AddHandler (FocusingEvent, value);
+		public event HtmlElementEventHandler Focusing {
+			add { Events.AddHandler (FocusingEvent, value); }
+			remove { Events.RemoveHandler (FocusingEvent, value); }
 		}
-			remove
-			{
-				Events.RemoveHandler (FocusingEvent, value);
-			}
-		}
+		
 		private void OnFocusing (object sender, EventArgs e)
 		{
 			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[FocusingEvent];
@@ -332,17 +324,11 @@ namespace System.Windows.Forms
 		}
 
 		private static object LosingFocusEvent = new object ();
-		public event HtmlElementEventHandler LosingFocus
-		{
-			add
-			{
-				Events.AddHandler (LosingFocusEvent, value);
-			}
-			remove
-			{
-				Events.RemoveHandler (LosingFocusEvent, value);
-			}
+		public event HtmlElementEventHandler LosingFocus {
+			add { Events.AddHandler (LosingFocusEvent, value); }
+			remove { Events.RemoveHandler (LosingFocusEvent, value); }
 		}
+		
 		private void OnLosingFocus (object sender, EventArgs e)
 		{
 			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[LosingFocusEvent];
@@ -352,19 +338,12 @@ namespace System.Windows.Forms
 			}
 		}
 
-
 		private static object MouseDownEvent = new object ();
-		public event HtmlElementEventHandler MouseDown
-		{
-			add
-			{
-				Events.AddHandler (MouseDownEvent, value);
-			}
-			remove
-			{
-				Events.RemoveHandler (MouseDownEvent, value);
-			}
+		public event HtmlElementEventHandler MouseDown {
+			add { Events.AddHandler (MouseDownEvent, value); }
+			remove { Events.RemoveHandler (MouseDownEvent, value); }
 		}
+		
 		private void OnMouseDown (object sender, EventArgs e)
 		{
 			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[MouseDownEvent];
@@ -374,19 +353,12 @@ namespace System.Windows.Forms
 			}
 		}
 
-
 		private static object MouseLeaveEvent = new object ();
-		public event HtmlElementEventHandler MouseLeave
-		{
-			add
-			{
-				Events.AddHandler (MouseLeaveEvent, value);
-			}
-			remove
-			{
-				Events.RemoveHandler (MouseLeaveEvent, value);
-			}
+		public event HtmlElementEventHandler MouseLeave {
+			add { Events.AddHandler (MouseLeaveEvent, value); }
+			remove { Events.RemoveHandler (MouseLeaveEvent, value); }
 		}
+		
 		private void OnMouseLeave (object sender, EventArgs e)
 		{
 			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[MouseLeaveEvent];
@@ -397,17 +369,11 @@ namespace System.Windows.Forms
 		}
 
 		private static object MouseMoveEvent = new object ();
-		public event HtmlElementEventHandler MouseMove
-		{
-			add
-			{
-				Events.AddHandler (MouseMoveEvent, value);
-			}
-			remove
-			{
-				Events.RemoveHandler (MouseMoveEvent, value);
-			}
+		public event HtmlElementEventHandler MouseMove {
+			add { Events.AddHandler (MouseMoveEvent, value); }
+			remove { Events.RemoveHandler (MouseMoveEvent, value); }
 		}
+		
 		private void OnMouseMove (object sender, EventArgs e)
 		{
 			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[MouseMoveEvent];
@@ -418,17 +384,11 @@ namespace System.Windows.Forms
 		}
 
 		private static object MouseOverEvent = new object ();
-		public event HtmlElementEventHandler MouseOver
-		{
-			add
-			{
-				Events.AddHandler (MouseOverEvent, value);
-			}
-			remove
-			{
-				Events.RemoveHandler (MouseOverEvent, value);
-			}
+		public event HtmlElementEventHandler MouseOver {
+			add { Events.AddHandler (MouseOverEvent, value); }
+			remove { Events.RemoveHandler (MouseOverEvent, value); }
 		}
+		
 		private void OnMouseOver (object sender, EventArgs e)
 		{
 			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[MouseOverEvent];
@@ -439,17 +399,11 @@ namespace System.Windows.Forms
 		}
 
 		private static object MouseUpEvent = new object ();
-		public event HtmlElementEventHandler MouseUp
-		{
-			add
-			{
-				Events.AddHandler (MouseUpEvent, value);
-			}
-			remove
-			{
-				Events.RemoveHandler (MouseUpEvent, value);
-			}
+		public event HtmlElementEventHandler MouseUp {
+			add { Events.AddHandler (MouseUpEvent, value); }
+			remove { Events.RemoveHandler (MouseUpEvent, value); }
 		}
+		
 		private void OnMouseUp (object sender, EventArgs e)
 		{
 			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[MouseUpEvent];
@@ -460,17 +414,11 @@ namespace System.Windows.Forms
 		}
 
 		private static object StopEvent = new object ();
-		public event HtmlElementEventHandler Stop
-		{
-			add
-			{
-				Events.AddHandler (StopEvent, value);
-			}
-			remove
-			{
-				Events.RemoveHandler (StopEvent, value);
-			}
+		public event HtmlElementEventHandler Stop {
+			add { Events.AddHandler (StopEvent, value); }
+			remove { Events.RemoveHandler (StopEvent, value); }
 		}
+		
 		private void OnStop (object sender, EventArgs e)
 		{
 			HtmlElementEventHandler eh = (HtmlElementEventHandler) Events[StopEvent];
