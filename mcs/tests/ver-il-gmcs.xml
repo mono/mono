@@ -31982,7 +31982,7 @@
         <size>1</size>
       </method>
       <method name="Void Main()">
-        <size>94</size>
+        <size>111</size>
       </method>
     </type>
     <type name="C+&lt;&gt;c__CompilerGenerated0">
@@ -32013,6 +32013,9 @@
       </method>
       <method name="Void &lt;Main&gt;c__3()">
         <size>34</size>
+      </method>
+      <method name="Void &lt;Main&gt;c__4()">
+        <size>16</size>
       </method>
     </type>
   </test>

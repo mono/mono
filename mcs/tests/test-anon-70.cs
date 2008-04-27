@@ -33,5 +33,10 @@ public class C
 				foreach (int t in i_a) {
 				}
 			});
+			
+		Test (delegate () {
+			Console.WriteLine (typeof (void));
+		});
+
 	}
 }
