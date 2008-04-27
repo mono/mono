@@ -4131,7 +4131,8 @@ namespace Mono.CSharp {
 			if (type == null) {
 				VarExpr ve = local_info.Type as VarExpr;
 				if (ve != null) {
-					ve.DoResolveLValue (ec, right_side);
+					if (!ve.InferType (ec, right_side))
+						return null;
 					type = local_info.VariableType = ve.Type;
 				}
 			}

@@ -1,3 +1,10 @@
+2008-04-27  Raja R Harinath  <harinath@hurrynot.org>
+
+	* cs-parser.jay (type) <namespace_or_type_name variant>: Don't
+	create VarExprs for 'foo.bar.var'.
+	* ecore.cs (VarExpr.InferType): Rename from DoResolveLValue, which
+	is a highly inappropriate name for its functionality.
+
 2008-04-26  Raja R Harinath  <harinath@hurrynot.org>
 
 	Simplify handling of multiple assignments

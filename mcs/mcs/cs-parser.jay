@@ -3000,7 +3000,7 @@ type
 		if ((bool) $2) {
 			$$ = new ComposedCast (name.GetTypeExpression (), "?", lexer.Location);
 		} else {
-			if (RootContext.Version > LanguageVersion.ISO_2 && name.Name == "var")
+			if (RootContext.Version > LanguageVersion.ISO_2 && name.Left == null && name.Name == "var")
 				$$ = new VarExpr (name.Location);
 			else
 				$$ = name.GetTypeExpression ();

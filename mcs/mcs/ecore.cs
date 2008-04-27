@@ -5736,7 +5736,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		public bool InferType (EmitContext ec, Expression right_side)
 		{
 			if (type != null)
 				throw new InternalErrorException ("An implicitly typed local variable could not be redefined");
@@ -5745,11 +5745,11 @@ namespace Mono.CSharp {
 			if (type == TypeManager.null_type || type == TypeManager.void_type || type == TypeManager.anonymous_method_type) {
 				Report.Error (815, loc, "An implicitly typed local variable declaration cannot be initialized with `{0}'",
 				              right_side.GetSignatureForError ());
-				return null;
+				return false;
 			}
 
 			eclass = ExprClass.Variable;
-			return this;
+			return true;
 		}
 
 		protected override void Error_TypeOrNamespaceNotFound (IResolveContext ec)
