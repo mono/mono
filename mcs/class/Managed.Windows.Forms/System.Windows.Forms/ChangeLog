@@ -1,3 +1,7 @@
+2008-04-27  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* ThemeVisualStyles.cs: Added support for ButtonBase.UseVisualStyleBackColor.
+
 2008-04-27  Andreia Gaita <avidigal@novell.com> 
 
 	* HtmlWindow.cs, HtmlHistory.cs: Throw on DomHistory getter (it's

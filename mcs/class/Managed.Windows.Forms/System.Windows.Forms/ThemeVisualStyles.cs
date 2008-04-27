@@ -74,6 +74,10 @@ namespace System.Windows.Forms
 		#region Button 2.0
 		public override void DrawButtonBackground (Graphics g, Button button, Rectangle clipArea)
 		{
+			if (!button.UseVisualStyleBackColor) {
+				base.DrawButtonBackground (g, button, clipArea);
+				return;
+			}
 			ButtonRenderer.GetPushButtonRenderer (GetPushButtonState (button)).DrawBackground (g, new Rectangle (Point.Empty, button.Size));
 		}
 		#endregion
