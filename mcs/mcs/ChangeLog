@@ -1,5 +1,15 @@
 2008-04-27  Raja R Harinath  <harinath@hurrynot.org>
 
+	* assign.cs (Assign.DoResolve): Remove support for EventExprs.
+	(Assign.Emit): Likewise.  Move it to ...
+	(CompoundAssign.DoResolve): ... here and ...
+	(CompoundAssign.Emit): ... here.
+	(EventAddOrRemove): New helper to handle += and -= on events, and
+	avoid the use of BinaryDelegates.
+	* ecore.cs (EventExpr.DoResolveLValue): Emit CS0070 unconditionally.
+	(EventExpr.EmitAddOrRemove): Improve.
+	* delegate.cs (DelegateInvocation.DoResolve): Simplify slightly.
+
 	* cs-parser.jay (type) <namespace_or_type_name variant>: Don't
 	create VarExprs for 'foo.bar.var'.
 	* ecore.cs (VarExpr.InferType): Rename from DoResolveLValue, which

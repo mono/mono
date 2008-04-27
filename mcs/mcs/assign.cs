@@ -286,13 +286,6 @@ namespace Mono.CSharp {
 			get { return source; }
 		}
 
-		public static void error70 (EventInfo ei, Location l)
-		{
-			Report.Error (70, l, "The event `" + TypeManager.CSharpSignature (ei) +
-				      "' can only appear on the left hand side of += or -= (except when" +
-				      " used from within the type `" + ei.DeclaringType + "')");
-		}
-
 		public override Expression DoResolve (EmitContext ec)
 		{
 			bool ok = true;
@@ -314,33 +307,7 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Value;
 			type = target_type;
 
-			if (target is EventExpr) {
-				EventInfo ei = ((EventExpr) target).EventInfo;
-
-				Expression ml = MemberLookup (
-					ec.ContainerType, ec.ContainerType, ei.Name,
-					MemberTypes.Event, AllBindingFlags | BindingFlags.DeclaredOnly, loc);
-
-				if (ml == null) {
-					//
-					// If this is the case, then the Event does not belong
-					// to this Type and so, according to the spec
-					// is allowed to only appear on the left hand of
-					// the += and -= operators
-					//
-					// Note that target will not appear as an EventExpr
-					// in the case it is being referenced within the same type container;
-					// it will appear as a FieldExpr in that case.
-					//
-
-					if (!(source is BinaryDelegate)) {
-						error70 (ei, loc);
-						return null;
-					}
-				}
-			}
-
-			if (!(target is IAssignMethod) && (target.eclass != ExprClass.EventAccess)) {
+			if (!(target is IAssignMethod)) {
 				Error_ValueAssignment (loc);
 				return null;
 			}
@@ -385,14 +352,7 @@ namespace Mono.CSharp {
 
 		void Emit (EmitContext ec, bool is_statement)
 		{
-			if (target is EventExpr) {
-				((EventExpr) target).EmitAddOrRemove (ec, source);
-				if (!is_statement)
-					throw new InternalErrorException ("don't know what to do here");
-			} else {
-				IAssignMethod am = (IAssignMethod) target;
-				am.EmitAssign (ec, source, !is_statement, this is CompoundAssign);
-			}
+			((IAssignMethod) target).EmitAssign (ec, source, !is_statement, this is CompoundAssign);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -503,6 +463,52 @@ namespace Mono.CSharp {
 		}
 	}
 
+	class EventAddOrRemove : ExpressionStatement {
+		EventExpr target;
+		Binary.Operator op;
+		Expression source;
+
+		public EventAddOrRemove (Expression target, Binary.Operator op, Expression source, Location loc)
+		{
+			this.target = target as EventExpr;
+			this.op = op;
+			this.source = source;
+			this.loc = loc;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			eclass = ExprClass.Value;
+			type = target.Type;
+
+			source = source.Resolve (ec);
+			if (source == null)
+				return null;
+
+			Type stype = source.Type;
+			if (source.eclass == ExprClass.MethodGroup || stype == TypeManager.anonymous_method_type) {
+				if (RootContext.Version != LanguageVersion.ISO_1) {
+					source = Convert.ImplicitConversionRequired (ec, source, type, loc);
+					if (source == null)
+						return null;
+					stype = source.Type;
+				}
+			} else if (!TypeManager.Equals (type, stype) && !(source is NullLiteral))
+				return null;
+
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			throw new InternalErrorException ("don't know what to emit");
+		}
+
+		public override void EmitStatement (EmitContext ec)
+		{
+			target.EmitAddOrRemove (ec, op == Binary.Operator.Addition, source);
+		}
+	}
 
 	//
 	// This class is used for compound assignments.
@@ -535,6 +541,10 @@ namespace Mono.CSharp {
 				Error_CannotAssign (((MethodGroupExpr)target).Name, target.ExprClassName);
 				return null;
 			}
+
+			if (target is EventExpr)
+				return new EventAddOrRemove (target, op, original_source, loc).DoResolve (ec);
+
 			//
 			// Only now we can decouple the original source/target
 			// into a tree, to guarantee that we do not have side

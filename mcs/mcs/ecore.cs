@@ -5542,7 +5542,6 @@ namespace Mono.CSharp {
 			return base.ResolveMemberAccess (ec, left, loc, original);
 		}
 
-
 		bool InstanceResolve (EmitContext ec, bool must_do_cs1540_check)
 		{
 			if (is_static) {
@@ -5591,9 +5590,18 @@ namespace Mono.CSharp {
 			throw new NotSupportedException ();
 		}
 
+		public void error70 ()
+		{
+			Report.Error (70, loc, "The event `" + GetSignatureForError () +
+				      "' can only appear on the left hand side of += or -= (except when" +
+				      " used from within the type `" + EventInfo.DeclaringType + "')");
+		}
+
 		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
-			return DoResolve (ec);
+			// contexts where an LValue is valid have already devolved to FieldExprs
+			error70 ();
+			return null;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -5608,6 +5616,11 @@ namespace Mono.CSharp {
 
 			if (!InstanceResolve (ec, must_do_cs1540_check))
 				return null;
+
+			if (!ec.IsInCompoundAssignment) {
+				error70 ();
+				return null;
+			}
 			
 			return this;
 		}		
@@ -5623,26 +5636,11 @@ namespace Mono.CSharp {
 			return TypeManager.CSharpSignature (EventInfo);
 		}
 
-		public void EmitAddOrRemove (EmitContext ec, Expression source)
+		public void EmitAddOrRemove (EmitContext ec, bool is_add, Expression source)
 		{
-			BinaryDelegate source_del = source as BinaryDelegate;
-			if (source_del == null) {
-				Emit (ec);
-				return;
-			}
-			Expression handler = source_del.Right;
-			
-			Argument arg = new Argument (handler, Argument.AType.Expression);
 			ArrayList args = new ArrayList ();
-				
-			args.Add (arg);
-			
-			if (source_del.IsAddition)
-				Invocation.EmitCall (
-					ec, IsBase, InstanceExpression, add_accessor, args, loc);
-			else
-				Invocation.EmitCall (
-					ec, IsBase, InstanceExpression, remove_accessor, args, loc);
+			args.Add (new Argument (source, Argument.AType.Expression));
+			Invocation.EmitCall (ec, IsBase, InstanceExpression, is_add ? add_accessor : remove_accessor, args, loc);
 		}
 	}
 
