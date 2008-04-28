@@ -1,3 +1,8 @@
+2008-04-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* image.c (mono_image_strong_name_position): Fix return value when the rva is
+	not valid.
+
 2008-04-28  Kornél Pál  <kornelpal@gmail.com>
 
 	* loader.c (mono_get_method_from_token, mono_method_signature): Add
