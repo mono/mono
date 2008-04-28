@@ -1,3 +1,52 @@
+2008-04-28  Kornél Pál  <kornelpal@gmail.com>
+
+	* loader.c (mono_get_method_from_token, mono_method_signature): Add
+	support for METHOD_IMPL_ATTRIBUTE_NATIVE.
+	* domain.c (mono_init_internal): Load and fixup mscoree.dll on startup and
+	fixup main EXE images when using mono.exe for mixed-mode assembly support.
+	* domain-internals.h: Add MonoLoadFunc, mono_install_runtime_load and
+	mono_runtime_load.
+	* appdomain.c: Add mono_install_runtime_load, mono_runtime_load to support
+	runtime initialization from metadata.
+	* assembly.c: Remove obsolete ceGetModuleFileNameA.
+	(mono_set_rootdir): Use	mono_get_module_file_name.
+	(mono_assembly_load_from_full): Call mono_image_fixup_vtable for module
+	handles.
+	* cil-coff.h: Add MonoVTableFixup. Update mono_cli_rva_image_map signature.
+	* metadata-internals.h: Add is_module_handle to _MonoImage on Windows.
+	* image.c (mono_cli_rva_image_map): Use MonoImage instead of
+	MonoCLIImageInfo. Add support for module handles.
+	(load_cli_header): Update mono_cli_rva_image_map signature.
+	(load_metadata_ptrs): Update mono_cli_rva_image_map signature.
+	(mono_image_strong_name_position): Use mono_cli_rva_image_map.
+	(mono_image_rva_map): Add support for module handles.
+	(mono_image_ensure_section_idx): Add support for module handles.
+	(mono_image_close): Add support for module handles.
+	(do_load_header): Add support for module handles.
+	(mono_image_open_from_module_handle): New function for internal use.
+	(mono_image_open_full): Load normal images using LoadLibrary on Windows.
+	(mono_image_load_module): Call mono_image_fixup_vtable for module handles.
+	(mono_image_load_file_for_image): Call mono_image_fixup_vtable for module
+	handles.
+	(mono_image_fixup_vtable): New function for mixed-mode assembly support.
+	* image.h: Add mono_image_fixup_vtable.
+	* coree.c: New file for mscoree.dll functions and mixed-mode assembly
+	support.
+	* coree.h: New file.
+	* marshal.c (mono_marshal_get_native_wrapper): Throw exception for
+	unsupported native code.
+	(mono_marshal_set_callconv_from_modopt): New function splitted from
+	mono_marshal_get_managed_wrapper.
+	(mono_marshal_get_managed_wrapper): Use
+	mono_marshal_set_callconv_from_modopt.
+	(mono_marshal_get_vtfixup_ftnptr): New function for mixed-mode assembly support.
+	* marshal.h: Add mono_marshal_get_vtfixup_ftnptr.
+	* gc.c (mono_gc_init): Don't wait for the finalizer thread on Windows because
+	that results in a deadlock when the runtime is loaded in _CorDllMain.
+	* Makefile.am: Add coree.c and coree.h.
+
+	Contributed under MIT/X11 license.
+
 2008-04-28  Mark Probst  <mark.probst@gmail.com>
 
 	* generic-sharing.c: Search for type arguments in array element

@@ -1,3 +1,15 @@
+﻿2008-04-28  Kornél Pál  <kornelpal@gmail.com>
+
+	* mini.c (mono_jit_compile_method_inner): Use g_warning instead of g_error
+	for unsupported METHOD_IMPL_ATTRIBUTE_NATIVE.
+	* main.c: Use UTF-8 encoded command line instead of Windows default code
+	page on Windows to support Unicode.
+	* driver.c (DllMain): New function for mixed-mode assembly support.
+	* Makefile.am: Add -Wl,--kill-at to libmono_la_LDFLAGS on Windows to
+	export __stdcall functions without decoration.
+
+	Contributed under MIT/X11 license.
+
 2008-04-28  Mark Probst  <mark.probst@gmail.com>
 
 	* tramp-amd64.c, mini-amd64.c: Preserve R11 in the trampoline by
@@ -419,7 +431,7 @@
 
 	* iltests.il: Add new tests.
 
-2008-03-20  Korn�l P�l  <kornelpal@gmail.com>
+2008-03-20  Kornél Pál  <kornelpal@gmail.com>
 
 	* mini.c: Removed Windows version macros.
 
@@ -2238,7 +2250,7 @@ Thu Oct 4 14:43:49 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 Thu Oct 4 12:35:27 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
-	* genmdesc.pl: patch from Henryk Pl�tz <henryk@openmoko.org> to
+	* genmdesc.pl: patch from Henryk Plötz <henryk@openmoko.org> to
 	use the preprocessor from the CPP env var if it is set.
 
 Wed Oct 3 17:11:38 CEST 2007 Paolo Molaro <lupus@ximian.com>

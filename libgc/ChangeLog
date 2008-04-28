@@ -1,3 +1,10 @@
+2008-04-28  Kornél Pál  <kornelpal@gmail.com>
+
+	* include/gc.h: Add GC_DllMain.
+	* win32_threads.c: Rename DllMain to GC_DllMain.
+
+	Contributed under MIT/X11 license.
+
 2008-04-15  Jonathan Chambers  <joncham@gmail.com>
 	* include/private/gcconfig.h: Backport GC7 code to support Win64.
 	* win32_threads.c: Backport GC7 code to support Win64.

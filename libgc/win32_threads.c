@@ -782,7 +782,7 @@ int GC_pthread_detach(pthread_t thread)
  * Pontus Rydin suggests wrapping the thread start routine instead.
  */
 #if defined(GC_DLL) || defined(GC_INSIDE_DLL)
-BOOL WINAPI DllMain(HINSTANCE inst, ULONG reason, LPVOID reserved)
+BOOL WINAPI GC_DllMain(HINSTANCE inst, ULONG reason, LPVOID reserved)
 {
   switch (reason) {
   case DLL_PROCESS_ATTACH:
