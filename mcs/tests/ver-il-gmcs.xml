@@ -15262,7 +15262,7 @@
         <size>7</size>
       </method>
       <method name="Void DecodeOp(UInt16, OpCode ByRef, OpFlags ByRef)">
-        <size>23</size>
+        <size>21</size>
       </method>
       <method name="Void get_struct(S ByRef)">
         <size>24</size>
@@ -15566,7 +15566,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>343</size>
+        <size>339</size>
       </method>
     </type>
   </test>
@@ -18587,7 +18587,7 @@
         <size>29</size>
       </method>
       <method name="Int32 test_0_conv_i()">
-        <size>77</size>
+        <size>76</size>
       </method>
       <method name="Int32 test_5_conv_r4()">
         <size>8</size>
@@ -22903,7 +22903,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>175</size>
+        <size>174</size>
       </method>
     </type>
   </test>
@@ -23000,10 +23000,10 @@
         <size>7</size>
       </method>
       <method name="Void A(Int32 ByRef, UInt32 ByRef, SByte ByRef, Byte ByRef, Int64 ByRef, UInt64 ByRef, Int16 ByRef, UInt16 ByRef, Char ByRef, X ByRef, Single ByRef, Double ByRef)">
-        <size>189</size>
+        <size>188</size>
       </method>
       <method name="Int32 Main()">
-        <size>229</size>
+        <size>228</size>
       </method>
     </type>
   </test>
@@ -23774,7 +23774,7 @@
         <size>98</size>
       </method>
       <method name="Int32 Main()">
-        <size>804</size>
+        <size>802</size>
       </method>
     </type>
     <type name="&lt;PrivateImplementationDetails&gt;">
@@ -23998,7 +23998,7 @@
         <size>8</size>
       </method>
       <method name="Int32 Main()">
-        <size>1124</size>
+        <size>1120</size>
       </method>
     </type>
   </test>
