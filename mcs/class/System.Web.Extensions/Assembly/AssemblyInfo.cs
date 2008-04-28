@@ -94,7 +94,15 @@ using System.Security.Permissions;
 	[assembly: WebResource ("MicrosoftAjaxWebFormsExtension.js", "application/x-javascript")]
 #endif
 
+// Those entries must not be enabled until the appropriate .resx files with translations for the client scripts are
+// created.
+// The default (English) strings are embedded in the scripts - maybe we should extract them on the build time and create
+// the .resx files on the fly.
+//
+// DO NOT ENABLE UNTIL THE .resx FILES ARE PRESENT - ENABLING CAUSES BUG #384144
+#if DO_NOT_ENABLE_UNLESS_RESX_FILES_ARE_PRESENT
 [assembly: ScriptResource ("MicrosoftAjax.js", "System.Web.Resources.ScriptLibrary.Res", "Sys.Res")]
 [assembly: ScriptResource ("MicrosoftAjax.debug.js", "System.Web.Resources.ScriptLibrary.Res.debug", "Sys.Res")]
 [assembly: ScriptResource ("MicrosoftAjaxWebForms.js", "System.Web.Resources.ScriptLibrary.WebForms.Res", "Sys.WebForms.Res")]
 [assembly: ScriptResource ("MicrosoftAjaxWebForms.debug.js", "System.Web.Resources.ScriptLibrary.WebForms.Res.debug", "Sys.WebForms.Res")]
+#endif
