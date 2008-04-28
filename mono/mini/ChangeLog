@@ -1,5 +1,10 @@
 2008-04-28  Mark Probst  <mark.probst@gmail.com>
 
+	* tramp-amd64.c, mini-amd64.c: Preserve R11 in the trampoline by
+	saving it very early.
+
+2008-04-28  Mark Probst  <mark.probst@gmail.com>
+
 	* mini.h, mini.c: Lots of code for accessing the old RGCTX
 	deleted.  The only way to access the new RGCTX is via the
 	trampline.
