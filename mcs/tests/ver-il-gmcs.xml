@@ -11067,6 +11067,72 @@
       </method>
     </type>
   </test>
+  <test name="gtest-anon-23.cs">
+    <type name="MemberAccessData">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void set_MyTypeProperty(Nullable`1)">
+        <size>8</size>
+      </method>
+      <method name="Nullable`1 get_MyTypeProperty()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Test(C+D)">
+        <size>1</size>
+      </method>
+      <method name="Void Main()">
+        <size>162</size>
+      </method>
+    </type>
+    <type name="C+&lt;&gt;c__CompilerGenerated0">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;Main&gt;c__1()">
+        <size>38</size>
+      </method>
+    </type>
+    <type name="C+D">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="C+&lt;&gt;c__CompilerGenerated2">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;Main&gt;c__3()">
+        <size>34</size>
+      </method>
+      <method name="Void &lt;Main&gt;c__4()">
+        <size>16</size>
+      </method>
+      <method name="Void &lt;Main&gt;c__5()">
+        <size>16</size>
+      </method>
+      <method name="Void &lt;Main&gt;c__6()">
+        <size>61</size>
+      </method>
+      <method name="Void &lt;Main&gt;c__7()">
+        <size>51</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-3.cs">
     <type name="X">
       <method name="Void .ctor()">
