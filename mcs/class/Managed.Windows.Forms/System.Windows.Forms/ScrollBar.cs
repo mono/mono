@@ -509,7 +509,7 @@ namespace System.Windows.Forms
 		[DefaultValue (1)]
 		[MWFDescription("Scroll amount when clicking scroll arrows"), MWFCategory("Behaviour")]
 		public int SmallChange {
-			get { return small_change; }
+			get { return small_change > LargeChange ? LargeChange : small_change; }
 			set {
 				if ( value < 0 )
 #if NET_2_0
@@ -694,6 +694,10 @@ namespace System.Windows.Forms
 
 					if (thumb_size < thumb_min_size)
 						thumb_size = thumb_min_size;
+						
+					// Give the user something to drag if LargeChange is zero
+					if (LargeChange == 0)
+						thumb_size = 17;
 				}
 
 				pixel_per_pos = ((float)(thumb_area.Height - thumb_size) / (float) ((maximum - minimum - this.LargeChange) + 1));
@@ -713,6 +717,10 @@ namespace System.Windows.Forms
 
 					if (thumb_size < thumb_min_size)
 						thumb_size = thumb_min_size;
+						
+					// Give the user something to drag if LargeChange is zero
+					if (LargeChange == 0)
+						thumb_size = 17;
 				}
 
 				pixel_per_pos = ((float)(thumb_area.Width - thumb_size) / (float) ((maximum - minimum - this.LargeChange) + 1));
@@ -1222,7 +1230,7 @@ namespace System.Windows.Forms
     		private void SmallIncrement ()
     		{
     			ScrollEventArgs event_args;
-    			int pos = Math.Min (Maximum - large_change + 1, position + small_change);
+    			int pos = Math.Min (Maximum - large_change + 1, position + SmallChange);
 
     			event_args = new ScrollEventArgs (ScrollEventType.SmallIncrement, pos);
     			OnScroll (event_args);
@@ -1236,7 +1244,7 @@ namespace System.Windows.Forms
     		private void SmallDecrement ()
     		{
 			ScrollEventArgs event_args;
-    			int pos = Math.Max (Minimum, position - small_change);
+    			int pos = Math.Max (Minimum, position - SmallChange);
 
     			event_args = new ScrollEventArgs (ScrollEventType.SmallDecrement, pos);
     			OnScroll (event_args);

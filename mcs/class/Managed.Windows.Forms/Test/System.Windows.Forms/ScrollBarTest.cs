@@ -468,6 +468,32 @@ public class MyScrollBar : HScrollBar
 			Assert.AreEqual (0, s.Value, "A3");
 		}
 #endif
+
+		[Test]
+		public void LargeSmallerThanSmallChange ()
+		{
+			ScrollBar s = new VScrollBar ();
+
+			s.LargeChange = 0;
+
+			Assert.AreEqual (0, s.LargeChange, "A1");
+			Assert.AreEqual (0, s.SmallChange, "A2");
+			
+			s.SmallChange = 10;
+
+			Assert.AreEqual (0, s.LargeChange, "A3");
+			Assert.AreEqual (0, s.SmallChange, "A4");
+			
+			s.LargeChange = 15;
+
+			Assert.AreEqual (15, s.LargeChange, "A5");
+			Assert.AreEqual (10, s.SmallChange, "A6");
+			
+			s.LargeChange = 5;
+
+			Assert.AreEqual (5, s.LargeChange, "A7");
+			Assert.AreEqual (5, s.SmallChange, "A8");
+		}
     }
 
    [TestFixture]

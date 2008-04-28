@@ -1,5 +1,11 @@
 2008-04-28  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ScrollBar.cs: If SmallChange is larger than LargeChange, make them
+	the same.  If LargeChange is zero, set a minimum size for the scroll
+	thumb grip.  [Fixes bug #384182]
+
+2008-04-28  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TextBoxTextRenderer.cs: Don't turn &A into a prefix for textboxen.
 	[Fixes bug #384181]
 
