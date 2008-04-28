@@ -211,6 +211,35 @@ namespace System.Windows.Forms
 			new VisualStyleRenderer (element).DrawBackground (dc, rectangle);
 		}
 		#endregion
+		#region DrawRadioButton
+		public override void CPDrawRadioButton (Graphics dc, Rectangle rectangle, ButtonState state)
+		{
+			if ((state & ButtonState.Flat) == ButtonState.Flat) {
+				base.CPDrawRadioButton (dc, rectangle, state);
+				return;
+			}
+			VisualStyleElement element;
+			if ((state & ButtonState.Checked) == ButtonState.Checked)
+				if ((state & ButtonState.Inactive) == ButtonState.Inactive)
+					element = VisualStyleElement.Button.RadioButton.CheckedDisabled;
+				else if ((state & ButtonState.Pushed) == ButtonState.Pushed)
+					element = VisualStyleElement.Button.RadioButton.CheckedPressed;
+				else
+					element = VisualStyleElement.Button.RadioButton.CheckedNormal;
+			else
+				if ((state & ButtonState.Inactive) == ButtonState.Inactive)
+					element = VisualStyleElement.Button.RadioButton.UncheckedDisabled;
+				else if ((state & ButtonState.Pushed) == ButtonState.Pushed)
+					element = VisualStyleElement.Button.RadioButton.UncheckedPressed;
+				else
+					element = VisualStyleElement.Button.RadioButton.UncheckedNormal;
+			if (!VisualStyleRenderer.IsElementDefined (element)) {
+				base.CPDrawRadioButton (dc, rectangle, state);
+				return;
+			}
+			new VisualStyleRenderer (element).DrawBackground (dc, rectangle);
+		}
+		#endregion
 		#region DrawScrollButton
 		public override void CPDrawScrollButton (Graphics dc, Rectangle area, ScrollButton type, ButtonState state)
 		{
