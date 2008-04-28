@@ -610,8 +610,7 @@ namespace Mono.CSharp {
 			// In the spec 2.4 they added: or if type of the target is int
 			// and the operator is a shift operator...
 			//
-			if (source_type == TypeManager.int32_type &&
-			    (b.Oper == Binary.Operator.LeftShift || b.Oper == Binary.Operator.RightShift))
+			if (source_type == TypeManager.int32_type && (b.Oper & Binary.Operator.ShiftMask) != 0)
 				return this;
 
 			original_source.Error_ValueCannotBeConverted (ec, loc, target_type, false);

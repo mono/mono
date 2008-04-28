@@ -5584,17 +5584,10 @@ namespace Mono.CSharp {
 			throw new NotSupportedException ();
 		}
 
-		public void error70 ()
-		{
-			Report.Error (70, loc, "The event `" + GetSignatureForError () +
-				      "' can only appear on the left hand side of += or -= (except when" +
-				      " used from within the type `" + EventInfo.DeclaringType + "')");
-		}
-
 		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
 			// contexts where an LValue is valid have already devolved to FieldExprs
-			error70 ();
+			Error_CannotAssign ();
 			return null;
 		}
 
@@ -5612,7 +5605,7 @@ namespace Mono.CSharp {
 				return null;
 
 			if (!ec.IsInCompoundAssignment) {
-				error70 ();
+				Error_CannotAssign ();
 				return null;
 			}
 			
@@ -5621,8 +5614,14 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			Report.Error (70, loc, "The event `{0}' can only appear on the left hand side of += or -= "+
-				      "(except on the defining type)", GetSignatureForError ());
+			Error_CannotAssign ();
+		}
+
+		public void Error_CannotAssign ()
+		{
+			Report.Error (70, loc,
+				"The event `{0}' can only appear on the left hand side of += or -= when used outside of the type `{1}'",
+				GetSignatureForError (), TypeManager.CSharpName (EventInfo.DeclaringType));
 		}
 
 		public override string GetSignatureForError ()
@@ -5632,7 +5631,7 @@ namespace Mono.CSharp {
 
 		public void EmitAddOrRemove (EmitContext ec, bool is_add, Expression source)
 		{
-			ArrayList args = new ArrayList ();
+			ArrayList args = new ArrayList (1);
 			args.Add (new Argument (source, Argument.AType.Expression));
 			Invocation.EmitCall (ec, IsBase, InstanceExpression, is_add ? add_accessor : remove_accessor, args, loc);
 		}

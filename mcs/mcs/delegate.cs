@@ -939,7 +939,7 @@ namespace Mono.CSharp {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			if (InstanceExpr is EventExpr) {
-				((EventExpr) InstanceExpr).error70 ();
+				((EventExpr) InstanceExpr).Error_CannotAssign ();
 				return null;
 			}
 			

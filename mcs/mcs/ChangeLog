@@ -1,3 +1,7 @@
+2008-04-28  Marek Safar  <marek.safar@gmail.com>
+
+	* ecore.cs, delegate.cs, assign.cs: Few tweaks for recent changes.
+
 2008-04-28  Raja R Harinath  <harinath@hurrynot.org>
 
 	Fix #381559, test-638.cs, test-639.cs
