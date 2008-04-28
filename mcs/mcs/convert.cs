@@ -510,11 +510,14 @@ namespace Mono.CSharp {
 				//
 				// From byte to short, ushort, int, uint, long, ulong, float, double, decimal
 				//
-				if ((real_target_type == TypeManager.short_type) ||
-				    (real_target_type == TypeManager.ushort_type) ||
-				    (real_target_type == TypeManager.int32_type) ||
-				    (real_target_type == TypeManager.uint32_type))
+				if (real_target_type == TypeManager.int32_type || real_target_type == TypeManager.uint32_type ||
+					real_target_type == TypeManager.short_type || real_target_type == TypeManager.ushort_type) {
+					if (expr is EmptyCast) {
+						expr.Type = target_type;
+						return expr;
+					}
 					return EmptyCast.Create (expr, target_type);
+				}
 
 				if (real_target_type == TypeManager.uint64_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
@@ -546,9 +549,14 @@ namespace Mono.CSharp {
 				//
 				// From ushort to int, uint, long, ulong, float, double, decimal
 				//
-				if (real_target_type == TypeManager.uint32_type)
+				if (real_target_type == TypeManager.int32_type || real_target_type == TypeManager.uint32_type) {
+					if (expr is EmptyCast) {
+						expr.Type = target_type;
+						return expr;
+					}
 					return EmptyCast.Create (expr, target_type);
-
+				}
+				
 				if (real_target_type == TypeManager.uint64_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
 				if (real_target_type == TypeManager.int32_type)
