@@ -182,9 +182,7 @@ namespace System.Linq.Expressions {
 
 			ig.Emit (OpCodes.Ldfld, typeof (ExecutionScope).GetField ("Globals"));
 
-			int index = AddGlobal (global, type);
-
-			ig.Emit (OpCodes.Ldc_I4, index);
+			ig.Emit (OpCodes.Ldc_I4, AddGlobal (global, type));
 			ig.Emit (OpCodes.Ldelem, typeof (object));
 
 			var strongbox = type.MakeStrongBoxType ();
