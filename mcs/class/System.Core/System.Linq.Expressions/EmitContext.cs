@@ -44,7 +44,7 @@ namespace System.Linq.Expressions {
 		protected Type [] param_types;
 		protected Type return_type;
 
-		protected Dictionary<object, int> indexes;
+		protected List<object> globals = new List<object> ();
 
 		public ILGenerator ig;
 
@@ -182,9 +182,7 @@ namespace System.Linq.Expressions {
 
 			ig.Emit (OpCodes.Ldfld, typeof (ExecutionScope).GetField ("Globals"));
 
-			int index;
-			if (!indexes.TryGetValue (global, out index))
-				throw new InvalidOperationException ();
+			int index = AddGlobal (global, type);
 
 			ig.Emit (OpCodes.Ldc_I4, index);
 			ig.Emit (OpCodes.Ldelem, typeof (object));
@@ -194,53 +192,11 @@ namespace System.Linq.Expressions {
 			ig.Emit (OpCodes.Isinst, strongbox);
 			ig.Emit (OpCodes.Ldfld, strongbox.GetField ("Value"));
 		}
-	}
 
-	class GlobalCollector : ExpressionVisitor {
-
-		List<object> globals = new List<object> ();
-		Dictionary<object, int> indexes = new Dictionary<object,int> ();
-
-		public List<object> Globals {
-			get { return globals; }
-		}
-
-		public Dictionary<object, int> Indexes {
-			get { return indexes; }
-		}
-
-		public GlobalCollector (Expression expression)
+		int AddGlobal (object value, Type type)
 		{
-			Visit (expression);
-		}
-
-		protected override void VisitUnary (UnaryExpression unary)
-		{
-			if (unary.NodeType != ExpressionType.Quote) {
-				base.VisitUnary (unary);
-				return;
-			}
-
-			AddGlobal (unary.Operand, typeof (Expression));
-		}
-
-		protected override void VisitConstant (ConstantExpression constant)
-		{
-			var value = constant.Value;
-
-			if (value == null)
-				return;
-
-			AddGlobal (value, value.GetType ());
-		}
-
-		void AddGlobal (object value, Type type)
-		{
-			if (Type.GetTypeCode (type) != TypeCode.Object)
-				return;
-
-			indexes.Add (value, globals.Count);
 			globals.Add (CreateStrongBox (value, type));
+			return globals.Count - 1;
 		}
 
 		static object CreateStrongBox (object value, Type type)
@@ -253,7 +209,6 @@ namespace System.Linq.Expressions {
 	class DynamicEmitContext : EmitContext {
 
 		DynamicMethod method;
-		List<object> globals;
 
 		static object mlock = new object ();
 		static int method_count;
@@ -269,11 +224,6 @@ namespace System.Linq.Expressions {
 			// https://bugzilla.novell.com/show_bug.cgi?id=355005
 			method = new DynamicMethod (GenerateName (), return_type, param_types, typeof (ExecutionScope), true);
 			ig = method.GetILGenerator ();
-
-			var collector = new GlobalCollector (lambda);
-
-			globals = collector.Globals;
-			indexes = collector.Indexes;
 
 			owner.Emit (this);
 		}

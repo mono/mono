@@ -1,3 +1,8 @@
+2008-04-28  Jb Evain  <jbevain@novell.com>
+
+	* EmitContext.cs: deal with globals when encountering them while
+	compiling, and not ahead of time with a dedicated visitor.
+
 2008-04-27  Jb Evain  <jbevain@novell.com>
 
 	* ConstantExpression.cs (Emit): emit properly null nullable types.
