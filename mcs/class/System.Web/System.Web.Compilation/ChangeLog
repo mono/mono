@@ -1,3 +1,8 @@
+2008-04-28  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: ignore bad assemblies in the bin/
+	directory. Fixes bug #315816
+
 2008-04-26  Marek Habersack  <mhabersack@novell.com>
 
 	* GenericBuildProvider.cs: the Parse () method should reuse the

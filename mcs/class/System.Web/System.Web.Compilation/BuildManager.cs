@@ -375,8 +375,13 @@ namespace System.Web.Compilation {
 				LoadAssembly (assLocation, al);
 			
                         if (addAssembliesInBin)
-				foreach (string s in HttpApplication.BinDirectoryAssemblies)
-					LoadAssembly (s, al);
+				foreach (string s in HttpApplication.BinDirectoryAssemblies) {
+					try {
+						LoadAssembly (s, al);
+					} catch (BadImageFormatException) {
+						// ignore silently
+					}
+				}
 			
 			lock (buildCacheLock) {
 				foreach (Assembly asm in referencedAssemblies)
