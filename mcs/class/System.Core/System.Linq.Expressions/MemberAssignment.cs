@@ -49,8 +49,6 @@ namespace System.Linq.Expressions {
 
 		internal override void Emit (EmitContext ec, LocalBuilder local)
 		{
-			var member = this.Member;
-
 			this.Member.OnFieldOrProperty (
 				field => EmitFieldAssignment (ec, field, local),
 				prop => EmitPropertyAssignment (ec, prop, local));
