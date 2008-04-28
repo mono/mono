@@ -233,6 +233,28 @@ namespace System.Windows.Forms
 			new VisualStyleRenderer (element).DrawBackground (dc, rectangle);
 		}
 		#endregion
+		#region DrawComboButton
+		public override void CPDrawComboButton (Graphics graphics, Rectangle rectangle, ButtonState state)
+		{
+			if ((state & ButtonState.Flat) == ButtonState.Flat ||
+				(state & ButtonState.Checked) == ButtonState.Checked) {
+				base.CPDrawComboButton (graphics, rectangle, state);
+				return;
+			}
+			VisualStyleElement element;
+			if ((state & ButtonState.Inactive) == ButtonState.Inactive)
+				element = VisualStyleElement.ComboBox.DropDownButton.Disabled;
+			else if ((state & ButtonState.Pushed) == ButtonState.Pushed)
+				element = VisualStyleElement.ComboBox.DropDownButton.Pressed;
+			else
+				element = VisualStyleElement.ComboBox.DropDownButton.Normal;
+			if (!VisualStyleRenderer.IsElementDefined (element)) {
+				base.CPDrawComboButton (graphics, rectangle, state);
+				return;
+			}
+			new VisualStyleRenderer (element).DrawBackground (graphics, rectangle);
+		}
+		#endregion
 		#region DrawRadioButton
 		public override void CPDrawRadioButton (Graphics dc, Rectangle rectangle, ButtonState state)
 		{
