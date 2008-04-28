@@ -4891,8 +4891,11 @@ namespace Mono.CSharp {
 
 			Parameters.ApplyAttributes (ConstructorBuilder);
 			
-			SourceMethod source = SourceMethod.Create (
-				Parent, ConstructorBuilder, block);
+			SourceMethod source = null;
+			if (IsDefault ())
+				ec.OmitDebuggingInfo = true;
+			else
+				source = SourceMethod.Create (Parent, ConstructorBuilder, block);
 
 			bool unreachable = false;
 			if (block != null) {
