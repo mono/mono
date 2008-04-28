@@ -134,7 +134,6 @@ namespace System.Linq.Expressions {
 				vright = ec.EmitStored (right);
 
 			Label left_is_null = ig.DefineLabel ();
-			Label left_is_false = ig.DefineLabel ();
 			Label right_is_null = ig.DefineLabel ();
 			Label create = ig.DefineLabel ();
 			Label exit = ig.DefineLabel ();
