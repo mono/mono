@@ -126,6 +126,28 @@ namespace System.Windows.Forms
 		}
 		#endregion
 		#region ControlPaint
+		#region DrawButton
+		public override void CPDrawButton (Graphics dc, Rectangle rectangle, ButtonState state)
+		{
+			if ((state & ButtonState.Flat) == ButtonState.Flat ||
+				(state & ButtonState.Checked) == ButtonState.Checked) {
+				base.CPDrawButton (dc, rectangle, state);
+				return;
+			}
+			VisualStyleElement element;
+			if ((state & ButtonState.Inactive) == ButtonState.Inactive)
+				element = VisualStyleElement.Button.PushButton.Disabled;
+			else if ((state & ButtonState.Pushed) == ButtonState.Pushed)
+				element = VisualStyleElement.Button.PushButton.Pressed;
+			else
+				element = VisualStyleElement.Button.PushButton.Normal;
+			if (!VisualStyleRenderer.IsElementDefined (element)) {
+				base.CPDrawButton (dc, rectangle, state);
+				return;
+			}
+			new VisualStyleRenderer (element).DrawBackground (dc, rectangle);
+		}
+		#endregion
 		#region DrawCaptionButton
 		public override void CPDrawCaptionButton (Graphics graphics, Rectangle rectangle, CaptionButton button, ButtonState state)
 		{
