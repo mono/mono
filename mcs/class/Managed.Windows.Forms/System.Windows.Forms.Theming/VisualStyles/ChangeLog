@@ -1,5 +1,9 @@
 2008-04-28  George Giolfan  <georgegiolfan@yahoo.com>
 
+	* TabControlPainter.cs: Fixed duplication.
+
+2008-04-28  George Giolfan  <georgegiolfan@yahoo.com>
+
 	* TabControlPainter.cs: Added.
 	
 2008-04-25  George Giolfan  <georgegiolfan@yahoo.com>
