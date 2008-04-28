@@ -1,3 +1,18 @@
+2008-04-28  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.h, mini.c: Lots of code for accessing the old RGCTX
+	deleted.  The only way to access the new RGCTX is via the
+	trampline.
+
+	* mini.c, mini-amd64, mini-x86.c, mini-exceptions.c: Pass the
+	vtable instead of the RGCTX to static methods.
+
+	* mini-tramplines.c, tramp-amd64.c, tramp-x86.c: Trampoline for
+	accessing the new RGCTX.
+
+	* generic-sharing.c: There is no separation between self, type
+	arguments and other types in the RGCTX anymore.
+
 2008-04-25  Jonathan Chambers <joncham@gmail.com>
 
 	* mini-amd64.c (add_general): Remove previous stack adjustment.

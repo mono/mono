@@ -1,3 +1,12 @@
+2008-04-28  Mark Probst  <mark.probst@gmail.com>
+
+	* class-internals.h, generic-sharing.c: New, small runtime generic context.
+
+	* metadata-internals.h, domain.c, image.c: Less bookkeeping is required for the new RGCTX.
+
+	* object.c: Don't setup the RGCTX when the vtable is created,
+	because we're setting it up lazily now.
+
 2008-04-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* sgen-gc.c: Make the 'desc' variables an mword instead of a guint32 to fix 
