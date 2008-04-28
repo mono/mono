@@ -1,3 +1,9 @@
+2008-04-28  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-array-type.2.cs: Test case for type arguments in arrays.
+
+	* Makefile.am: Added test.
+
 2008-04-25  Mark Probst  <mark.probst@gmail.com>
 
 	* generic-interface-methods.2.cs: Test case for generic interface
