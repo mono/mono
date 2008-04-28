@@ -6,7 +6,7 @@
 //	Sebastien Pouliot (sebastien@ximian.com)
 //
 // Copyright 2001 by Matthew S. Ford.
-// Copyright (C) 2004, 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2005, 2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -121,7 +121,10 @@ namespace System.Security.Cryptography {
 			int i;
 
 			count += BLOCK_SIZE_BYTES;
-		
+
+			// abc removal would not work on the fields
+			uint[] _H = this._H;
+			uint[] buff = this.buff;
 			for (i=0; i<16; i++) {
 				buff[i] = ((uint)(inputBuffer[inputOffset+4*i]) << 24)
 					| ((uint)(inputBuffer[inputOffset+4*i+1]) << 16)
@@ -129,9 +132,10 @@ namespace System.Security.Cryptography {
 					| ((uint)(inputBuffer[inputOffset+4*i+3]));
 			}
 
+			uint zt;
 			for (i=16; i<80; i++) {
-				buff[i] = ((buff[i-3] ^ buff[i-8] ^ buff[i-14] ^ buff[i-16]) << 1)
-					| ((buff[i-3] ^ buff[i-8] ^ buff[i-14] ^ buff[i-16]) >> 31);
+				zt = buff[i-3] ^ buff[i-8] ^ buff[i-14] ^ buff[i-16];
+				buff[i] = ((zt << 1) | (zt >> 31));
 			}
 		
 			a = _H[0];

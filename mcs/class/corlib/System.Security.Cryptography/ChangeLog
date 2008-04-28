@@ -1,3 +1,8 @@
+2008-04-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SHA1CryptoServiceProvider.cs: Quick optimization to get better
+	results with the JIT (a bit over 25% on a 4GB file).
+
 2008-04-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AsymmetricAlgorithm.cs: Add shared GetNamedParam helper method.
