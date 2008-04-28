@@ -211,6 +211,63 @@ namespace System.Windows.Forms
 			new VisualStyleRenderer (element).DrawBackground (dc, rectangle);
 		}
 		#endregion
+		#region DrawScrollButton
+		public override void CPDrawScrollButton (Graphics dc, Rectangle area, ScrollButton type, ButtonState state)
+		{
+			if ((state & ButtonState.Flat) == ButtonState.Flat ||
+				(state & ButtonState.Checked) == ButtonState.Checked) {
+				base.CPDrawScrollButton (dc, area, type, state);
+				return;
+			}
+			VisualStyleElement element = GetScrollButtonVisualStyleElement (type, state);
+			if (!VisualStyleRenderer.IsElementDefined (element)) {
+				base.CPDrawScrollButton (dc, area, type, state);
+				return;
+			}
+			new VisualStyleRenderer (element).DrawBackground (dc, area);
+		}
+		static VisualStyleElement GetScrollButtonVisualStyleElement (ScrollButton type, ButtonState state)
+		{
+			switch (type) {
+			case ScrollButton.Left:
+				if (IsDisabled (state))
+					return VisualStyleElement.ScrollBar.ArrowButton.LeftDisabled;
+				else if (IsPressed (state))
+					return VisualStyleElement.ScrollBar.ArrowButton.LeftPressed;
+				else
+					return VisualStyleElement.ScrollBar.ArrowButton.LeftNormal;
+			case ScrollButton.Right:
+				if (IsDisabled (state))
+					return VisualStyleElement.ScrollBar.ArrowButton.RightDisabled;
+				else if (IsPressed (state))
+					return VisualStyleElement.ScrollBar.ArrowButton.RightPressed;
+				else
+					return VisualStyleElement.ScrollBar.ArrowButton.RightNormal;
+			case ScrollButton.Up:
+				if (IsDisabled (state))
+					return VisualStyleElement.ScrollBar.ArrowButton.UpDisabled;
+				else if (IsPressed (state))
+					return VisualStyleElement.ScrollBar.ArrowButton.UpPressed;
+				else
+					return VisualStyleElement.ScrollBar.ArrowButton.UpNormal;
+			default:
+				if (IsDisabled (state))
+					return VisualStyleElement.ScrollBar.ArrowButton.DownDisabled;
+				else if (IsPressed (state))
+					return VisualStyleElement.ScrollBar.ArrowButton.DownPressed;
+				else
+					return VisualStyleElement.ScrollBar.ArrowButton.DownNormal;
+			}
+		}
+		static bool IsDisabled (ButtonState state)
+		{
+			return (state & ButtonState.Inactive) == ButtonState.Inactive;
+		}
+		static bool IsPressed (ButtonState state)
+		{
+			return (state & ButtonState.Pushed) == ButtonState.Pushed;
+		}
+		#endregion
 		#endregion
 		#region Managed windows
 		[MonoTODO("When other VisualStyles implementations are supported, check if the visual style elements are defined.")]
