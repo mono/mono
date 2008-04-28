@@ -48,6 +48,7 @@ namespace System.Web.SessionState
 						bool read_only, ref bool isNew);
 
 		void UpdateHandler (HttpContext context, SessionStateModule module);
+		void Touch (string sessionId, int timeout);
 	}
 }
 

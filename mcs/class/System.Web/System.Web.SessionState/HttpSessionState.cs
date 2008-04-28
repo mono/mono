@@ -73,9 +73,8 @@ public sealed class HttpSessionState : ICollection, IEnumerable
 	{
 		return new HttpSessionState (_id, _dict.Clone (), _staticObjects, _timeout, _newSession,
 					     _isCookieless, _mode, _isReadonly);
-
 	}
-
+	
 	public int CodePage {
 		get {
 			HttpContext current = HttpContext.Current;

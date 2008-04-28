@@ -65,6 +65,15 @@ namespace System.Web.SessionState {
 			item.DictionaryData = dict_data;
 			item.StaticObjectsData = sobjs_data;
 		}
+
+		internal void Touch (string id, int timeout)
+		{
+			StateServerItem item = Get (id);
+			if (item == null)
+				return;
+			item.Timeout = timeout;
+			cache.SetItemTimeout (id, Cache.NoAbsoluteExpiration, new TimeSpan (0, item.Timeout, 0));
+		}
 		
 		internal StateServerItem Get (string id)
 		{

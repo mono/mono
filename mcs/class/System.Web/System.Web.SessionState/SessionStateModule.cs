@@ -212,8 +212,13 @@ static private SessionConfig config {
 					context.Response.AppendCookie (cookie);
 				}
 
-				if (isNew)
+				if (isNew) {
 					OnSessionStart ();
+					HttpSessionState hss = application.Session;
+					
+					if (hss != null)
+						handler.Touch (hss.SessionID, hss.Timeout);
+				}
 			}
 		}
 

@@ -152,17 +152,46 @@ namespace System.Web.Caching
 				dependencies.DependencyChanged += new EventHandler (OnDependencyChanged);
 				dependencies.SetCache (DependencyCache);
 			}
+
+			ci.Priority = priority;
+			SetItemTimeout (ci, absoluteExpiration, slidingExpiration, onRemoveCallback, key);
+		}
+
+		internal void SetItemTimeout (string key, DateTime absoluteExpiration, TimeSpan slidingExpiration)
+		{
+			CacheItem ci = null;
+
+			lock (cache) {
+#if NET_2_0
+				cache.TryGetValue (key, out ci);
+#else
+				ci = (CacheItem) cache [key];
+#endif
+			}
+
+			if (ci != null)
+				SetItemTimeout (ci, absoluteExpiration, slidingExpiration, ci.OnRemoveCallback, null);
+		}
+
+		void SetItemTimeout (CacheItem ci, DateTime absoluteExpiration, TimeSpan slidingExpiration, CacheItemRemovedCallback onRemoveCallback, string key)
+		{
 			ci.SlidingExpiration = slidingExpiration;
 			if (slidingExpiration != NoSlidingExpiration)
 				ci.AbsoluteExpiration = DateTime.Now + slidingExpiration;
 			else
-				ci.AbsoluteExpiration = absoluteExpiration;
-			
-			ci.Priority = priority;
+				ci.AbsoluteExpiration = absoluteExpiration;			
+
 			ci.OnRemoveCallback = onRemoveCallback;
 			
 			lock (cache) {
-				cache [key] = ci;
+				if (ci.Timer != null) {
+					ci.Timer.Dispose ();
+					ci.Timer = null;
+				}
+
+				if (key != null)
+					cache [key] = ci;
+				
 				ci.LastChange = DateTime.Now;
 				if (ci.AbsoluteExpiration != NoAbsoluteExpiration) {
 					int remaining = Math.Max (0, (int)(ci.AbsoluteExpiration - DateTime.Now).TotalMilliseconds);

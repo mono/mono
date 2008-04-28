@@ -40,6 +40,8 @@ namespace System.Web.SessionState
 {
 	class SessionInProcHandler : ISessionHandler
 	{
+		const string INPROC_CACHE_PREFIX = "@@@InProc@";
+		
 		SessionConfig config;
 		CacheItemRemovedCallback removedCB;
 		
@@ -89,11 +91,20 @@ namespace System.Web.SessionState
 						read_only); //readonly
 
 			TimeSpan timeout = new TimeSpan (0, config.Timeout, 0);
-			cache.Insert ("@@@InProc@" + sessionID, state, null, Cache.NoAbsoluteExpiration,
+			cache.Insert (INPROC_CACHE_PREFIX + sessionID, state, null, Cache.NoAbsoluteExpiration,
 				      timeout, CacheItemPriority.AboveNormal, removedCB);
 
 			isNew = true;
 			return state;
+		}
+
+		public void Touch (string sessionId, int timeout)
+		{
+			Cache cache = HttpRuntime.InternalCache;
+			if (cache == null || sessionId == null || sessionId.Length == 0)
+				return;
+			
+			cache.SetItemTimeout (INPROC_CACHE_PREFIX + sessionId, Cache.NoAbsoluteExpiration, new TimeSpan (0, timeout, 0));
 		}
 	}
 }

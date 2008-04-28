@@ -1,3 +1,20 @@
+2008-04-28  Marek Habersack  <mhabersack@novell.com>
+
+	* ISessionHandler.cs: added new method, Touch, to reset the item
+	timeout.
+
+	* SessionStateServerHandler.cs, SessionSQLServerHandler.cs,
+	SessionInProcHandler.cs: added implementation of the
+	ISessionHandler Touch method, to reset item timeout. Fixes bug
+	#382644
+
+	* StateServerItem.cs: made the Timeout property writable.
+
+	* SessionStateModule.cs: reset the item timeout after
+	OnSessionStart has returned. Fixes bug #382644
+
+	* RemoteStateServer.cs: added a method to reset item timeout.
+
 2007-12-13  Marek Habersack  <mhabersack@novell.com>
 
 	* SessionId.cs: speed optimization - use String.Concat instead of

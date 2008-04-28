@@ -1,3 +1,9 @@
+2008-04-28  Marek Habersack  <mhabersack@novell.com>
+
+	* Cache.cs: refactoring - move the timeout setting code to
+	separate methods, so that it can be accessed from outside the
+	class. Fixes bug #382644
+
 2008-03-18  Geoff Norton  <gnorton@novell.com>
 
 	* Cache.cs:  MS allows calling Insert in a removed handler, we need to

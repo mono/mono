@@ -147,6 +147,19 @@ namespace System.Web.SessionState {
 			return session;
 		}
 
+		public void Touch (string sessionId, int timeout)
+		{
+			HttpContext ctx = HttpContext.Current;
+			if (ctx == null)
+				return;
+			
+			HttpSessionState session = ctx.Session;
+			if (session == null)
+				return;
+			
+			UpdateSession (sessionId, timeout, session.SessionDictionary);
+		}
+		
 		private void GetConnectionData (out string providerAssembly,
 				out string cncTypeName, out string cncString)
 		{

@@ -143,6 +143,14 @@ namespace System.Web.SessionState {
 			return session;
 		}
 
+		public void Touch (string sessionId, int timeout)
+		{
+			if (state_server == null)
+				return;
+
+			state_server.Touch (sessionId, timeout);
+		}
+		
 		private string GetId (HttpContext context)
 		{
 			if (!config.CookieLess &&

@@ -71,6 +71,7 @@ namespace System.Web.SessionState {
 
 		public int Timeout {
 			get { return timeout; }
+			set { timeout = value; }
 		}
 	}
 }
