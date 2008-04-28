@@ -4359,6 +4359,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms.Theming\VisualStyles\TabControlPainter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms.VisualStyles\BackgroundType.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

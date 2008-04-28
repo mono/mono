@@ -999,6 +999,7 @@
     <Compile Include="System.Windows.Forms.Theming\Nice\TabControlPainter.cs" />
     <Compile Include="System.Windows.Forms.Theming\VisualStyles\CheckBoxPainter.cs" />
     <Compile Include="System.Windows.Forms.Theming\VisualStyles\RadioButtonPainter.cs" />
+    <Compile Include="System.Windows.Forms.Theming\VisualStyles\TabControlPainter.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\BackgroundType.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\BooleanProperty.cs" />
     <Compile Include="System.Windows.Forms.VisualStyles\BorderType.cs" />

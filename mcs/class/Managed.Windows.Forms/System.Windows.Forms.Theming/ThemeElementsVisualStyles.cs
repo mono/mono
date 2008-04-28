@@ -42,5 +42,12 @@ namespace System.Windows.Forms.Theming
 			}
 		}
 #endif
+		public override Default.TabControlPainter TabControlPainter {
+			get {
+				if (tabControlPainter == null)
+					tabControlPainter = new VisualStyles.TabControlPainter ();
+				return tabControlPainter;
+			}
+		}
 	}
 }

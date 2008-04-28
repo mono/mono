@@ -1,3 +1,7 @@
+2008-04-28  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* ThemeElementsVisualStyles.cs: Added TabControlPainter.
+
 2008-04-27  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* ThemeElements.cs: Fixed the code to select ThemeElementsVisualStyles.

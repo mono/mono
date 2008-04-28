@@ -843,6 +843,7 @@ System.Windows.Forms.Theming/Default/ToolStripPainter.cs
 System.Windows.Forms.Theming/Nice/TabControlPainter.cs
 System.Windows.Forms.Theming/VisualStyles/CheckBoxPainter.cs
 System.Windows.Forms.Theming/VisualStyles/RadioButtonPainter.cs
+System.Windows.Forms.Theming/VisualStyles/TabControlPainter.cs
 System.Windows.Forms.VisualStyles/BackgroundType.cs
 System.Windows.Forms.VisualStyles/BooleanProperty.cs
 System.Windows.Forms.VisualStyles/BorderType.cs

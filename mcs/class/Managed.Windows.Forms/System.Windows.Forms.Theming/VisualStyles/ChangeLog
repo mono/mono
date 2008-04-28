@@ -1,3 +1,7 @@
+2008-04-28  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* TabControlPainter.cs: Added.
+	
 2008-04-25  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* CheckBoxPainter.cs, RadioButtonPainter.cs: Added.
