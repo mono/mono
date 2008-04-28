@@ -3038,6 +3038,11 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
+		protected override void CloneTo (CloneContext clonectx, Expression target)
+		{
+			// Nothing to clone
+		}
+
 		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
 		{
 			Expression expr;

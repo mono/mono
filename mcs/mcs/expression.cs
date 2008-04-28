@@ -8969,6 +8969,12 @@ namespace Mono.CSharp {
 		{
 			this.Name = name;
 		}
+		
+		protected override void CloneTo (CloneContext clonectx, Expression t)
+		{
+			ElementInitializer target = (ElementInitializer) t;
+			target.source = source.Clone (clonectx);
+		}
 
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
@@ -9086,6 +9092,15 @@ namespace Mono.CSharp {
 			args.Add (new Argument (new ArrayCreation (
 				CreateExpressionTypeExpression (loc), "[]", expr_initializers, loc)));
 			return CreateExpressionFactoryCall ("ElementInit", args);
+		}
+
+		protected override void CloneTo (CloneContext clonectx, Expression t)
+		{
+			CollectionElementInitializer target = (CollectionElementInitializer) t;
+
+			target.Arguments = new ArrayList (Arguments.Count);
+			foreach (Expression e in Arguments)
+				target.Arguments.Add (e.Clone (clonectx));
 		}
 
 		public override Expression DoResolve (EmitContext ec)

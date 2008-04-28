@@ -1,5 +1,10 @@
 2008-04-28  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #384191
+	* ecore.cs, expression.cs: Fixed expression cloning.
+
+2008-04-28  Marek Safar  <marek.safar@gmail.com>
+
 	* ecore.cs, delegate.cs, assign.cs: Few tweaks for recent changes.
 
 2008-04-28  Raja R Harinath  <harinath@hurrynot.org>
