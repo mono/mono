@@ -622,5 +622,188 @@ namespace System.Windows.Forms
 			}
 		}
 		#endregion
+		#region ScrollBar
+		[MonoTODO ("Enable the rest of the code when ScrollBar will be changed to supply the required information.")]
+		public override void DrawScrollBar (Graphics dc, Rectangle clip, ScrollBar bar)
+		{
+			VisualStyleElement element;
+			VisualStyleRenderer renderer;
+			int scroll_button_width = bar.scrollbutton_width;
+			int scroll_button_height = bar.scrollbutton_height;
+			if (bar.vert) {
+				bar.FirstArrowArea = new Rectangle (0, 0, bar.Width, scroll_button_height);
+				bar.SecondArrowArea = new Rectangle (
+					0,
+					bar.ClientRectangle.Height - scroll_button_height,
+					bar.Width,
+					scroll_button_height);
+				Rectangle thumb_pos = bar.ThumbPos;
+				thumb_pos.Width = bar.Width;
+				bar.ThumbPos = thumb_pos;
+				#region Background, upper track
+				if (bar.thumb_moving == ScrollBar.ThumbMoving.Backwards)
+					element = VisualStyleElement.ScrollBar.LowerTrackVertical.Pressed;
+				else
+					element = bar.Enabled ?
+						VisualStyleElement.ScrollBar.LowerTrackVertical.Normal :
+						VisualStyleElement.ScrollBar.LowerTrackVertical.Disabled;
+				renderer = new VisualStyleRenderer (element);
+				Rectangle upper_track_rect = new Rectangle (
+					0,
+					0,
+					bar.ClientRectangle.Width,
+					bar.ThumbPos.Top);
+				if (clip.IntersectsWith (upper_track_rect))
+					renderer.DrawBackground (dc, upper_track_rect, clip);
+				#endregion
+				#region Background, lower track
+				if (bar.thumb_moving == ScrollBar.ThumbMoving.Forward)
+					element = VisualStyles.VisualStyleElement.ScrollBar.LowerTrackVertical.Pressed;
+				else
+					element = bar.Enabled ?
+						VisualStyleElement.ScrollBar.LowerTrackVertical.Normal :
+						VisualStyleElement.ScrollBar.LowerTrackVertical.Disabled;
+				renderer = new VisualStyleRenderer (element);
+				Rectangle lower_track_rect = new Rectangle (
+					0,
+					bar.ThumbPos.Bottom,
+					bar.ClientRectangle.Width,
+					bar.ClientRectangle.Height - bar.ThumbPos.Bottom);
+				if (clip.IntersectsWith (lower_track_rect))
+					renderer.DrawBackground (dc, lower_track_rect, clip);
+				#endregion
+				#region Buttons
+				if (clip.IntersectsWith (bar.FirstArrowArea)) {
+					if (!bar.Enabled)
+						element = VisualStyleElement.ScrollBar.ArrowButton.UpDisabled;
+					else if (bar.firstbutton_state == ButtonState.Pushed)
+						element = VisualStyleElement.ScrollBar.ArrowButton.UpPressed;
+					//else if (bar.firstbutton_entered)
+					//    element = VisualStyleElement.ScrollBar.ArrowButton.UpHot;
+					else
+						element = VisualStyleElement.ScrollBar.ArrowButton.UpNormal;
+					renderer = new VisualStyleRenderer (element);
+					renderer.DrawBackground (dc, bar.FirstArrowArea);
+				}
+				if (clip.IntersectsWith (bar.SecondArrowArea)) {
+					if (!bar.Enabled)
+						element = VisualStyleElement.ScrollBar.ArrowButton.DownDisabled;
+					else if (bar.secondbutton_state == ButtonState.Pushed)
+						element = VisualStyleElement.ScrollBar.ArrowButton.DownPressed;
+					//else if (bar.secondbutton_entered)
+					//    element = VisualStyleElement.ScrollBar.ArrowButton.DownHot;
+					else
+						element = VisualStyleElement.ScrollBar.ArrowButton.DownNormal;
+					renderer = new VisualStyleRenderer (element);
+					renderer.DrawBackground (dc, bar.SecondArrowArea);
+				}
+				#endregion
+				#region Thumb and grip
+				if (!bar.Enabled)
+					element = VisualStyleElement.ScrollBar.LowerTrackVertical.Disabled;
+				//else if (bar.thumb_state == ButtonState.Pushed)
+				//    element = VisualStyleElement.ScrollBar.ThumbButtonVertical.Pressed;
+				//else if (bar.thumb_entered)
+				//    element = VisualStyleElement.ScrollBar.ThumbButtonVertical.Hot;
+				else
+					element = VisualStyleElement.ScrollBar.ThumbButtonVertical.Normal;
+				renderer = new VisualStyleRenderer (element);
+				renderer.DrawBackground (dc, bar.ThumbPos, clip);
+
+				if (bar.Enabled && bar.ThumbPos.Height >= 20) {
+					element = VisualStyleElement.ScrollBar.GripperVertical.Normal;
+					renderer = new VisualStyleRenderer (element);
+					renderer.DrawBackground (dc, bar.ThumbPos, clip);
+				}
+				#endregion
+			} else {
+				bar.FirstArrowArea = new Rectangle (0, 0, scroll_button_width, bar.Height);
+				bar.SecondArrowArea = new Rectangle (
+					bar.ClientRectangle.Width - scroll_button_width,
+					0,
+					scroll_button_width,
+					bar.Height);
+				Rectangle thumb_pos = bar.ThumbPos;
+				thumb_pos.Height = bar.Height;
+				bar.ThumbPos = thumb_pos;
+				#region Background, left track
+				if (bar.thumb_moving == ScrollBar.ThumbMoving.Backwards)
+					element = VisualStyleElement.ScrollBar.LeftTrackHorizontal.Pressed;
+				else
+					element = bar.Enabled ?
+						VisualStyleElement.ScrollBar.LeftTrackHorizontal.Normal :
+						VisualStyleElement.ScrollBar.LeftTrackHorizontal.Disabled;
+				renderer = new VisualStyleRenderer (element);
+				Rectangle left_track_rect = new Rectangle (
+					0,
+					0,
+					bar.ThumbPos.Left,
+					bar.ClientRectangle.Height);
+				if (clip.IntersectsWith (left_track_rect))
+					renderer.DrawBackground (dc, left_track_rect, clip);
+				#endregion
+				#region Background, right track
+				if (bar.thumb_moving == ScrollBar.ThumbMoving.Forward)
+					element = VisualStyleElement.ScrollBar.RightTrackHorizontal.Pressed;
+				else
+					element = bar.Enabled ?
+						VisualStyleElement.ScrollBar.RightTrackHorizontal.Normal :
+						VisualStyleElement.ScrollBar.RightTrackHorizontal.Disabled;
+				renderer = new VisualStyleRenderer (element);
+				Rectangle right_track_rect = new Rectangle (
+					bar.ThumbPos.Right,
+					0,
+					bar.ClientRectangle.Width - bar.ThumbPos.Right,
+					bar.ClientRectangle.Height);
+				if (clip.IntersectsWith (right_track_rect))
+					renderer.DrawBackground (dc, right_track_rect, clip);
+				#endregion
+				#region Buttons
+				if (clip.IntersectsWith (bar.FirstArrowArea)) {
+					if (!bar.Enabled)
+						element = VisualStyleElement.ScrollBar.ArrowButton.LeftDisabled;
+					else if (bar.firstbutton_state == ButtonState.Pushed)
+						element = VisualStyleElement.ScrollBar.ArrowButton.LeftPressed;
+					//else if (bar.firstbutton_entered)
+					//    element = VisualStyleElement.ScrollBar.ArrowButton.LeftHot;
+					else
+						element = VisualStyleElement.ScrollBar.ArrowButton.LeftNormal;
+					renderer = new VisualStyleRenderer (element);
+					renderer.DrawBackground (dc, bar.FirstArrowArea);
+				}
+				if (clip.IntersectsWith (bar.SecondArrowArea)) {
+					if (!bar.Enabled)
+						element = VisualStyleElement.ScrollBar.ArrowButton.RightDisabled;
+					else if (bar.secondbutton_state == ButtonState.Pushed)
+						element = VisualStyleElement.ScrollBar.ArrowButton.RightPressed;
+					//else if (bar.secondbutton_entered)
+					//    element = VisualStyleElement.ScrollBar.ArrowButton.RightHot;
+					else
+						element = VisualStyleElement.ScrollBar.ArrowButton.RightNormal;
+					renderer = new VisualStyleRenderer (element);
+					renderer.DrawBackground (dc, bar.SecondArrowArea);
+				}
+				#endregion
+				#region Thumb and grip
+				if (!bar.Enabled)
+					element = VisualStyleElement.ScrollBar.RightTrackHorizontal.Disabled;
+				//else if (bar.thumb_state == ButtonState.Pushed)
+				//    element = VisualStyleElement.ScrollBar.ThumbButtonHorizontal.Pressed;
+				//else if (bar.thumb_entered)
+				//    element = VisualStyleElement.ScrollBar.ThumbButtonHorizontal.Hot;
+				else
+					element = VisualStyleElement.ScrollBar.ThumbButtonHorizontal.Normal;
+				renderer = new VisualStyleRenderer (element);
+				renderer.DrawBackground (dc, bar.ThumbPos, clip);
+
+				if (bar.Enabled && bar.ThumbPos.Height >= 20) {
+					element = VisualStyleElement.ScrollBar.GripperHorizontal.Normal;
+					renderer = new VisualStyleRenderer (element);
+					renderer.DrawBackground (dc, bar.ThumbPos, clip);
+				}
+				#endregion
+			}
+		}
+		#endregion
 	}
 }

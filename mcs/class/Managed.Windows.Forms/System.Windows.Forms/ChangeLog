@@ -1,5 +1,10 @@
 2008-04-28  George Giolfan  <georgegiolfan@yahoo.com>
 
+	* ThemeVisualStyles.cs: Added partial support for ScrollBar (based on the
+	patch from Ernesto).
+
+2008-04-28  George Giolfan  <georgegiolfan@yahoo.com>
+
 	* ThemeVisualStyles.cs: Added support for ControlPaint.DrawComboButton.
 
 2008-04-28  George Giolfan  <georgegiolfan@yahoo.com>
