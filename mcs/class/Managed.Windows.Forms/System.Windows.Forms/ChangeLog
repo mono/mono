@@ -1,3 +1,7 @@
+2008-04-28  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ListBox.cs: Math.Min should be Math.Max.  [Fixes bug #384183]
+
 2008-04-28  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* ThemeVisualStyles.cs: Added partial support for ScrollBar (based on the

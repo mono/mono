@@ -2083,7 +2083,7 @@ namespace System.Windows.Forms
 			if (canvas_size.Height > items_area.Height) {
 				show = true;
 				vscrollbar.Maximum = Items.Count - 1;
-				vscrollbar.LargeChange = Math.Min (items_area.Height / ItemHeight, 0);
+				vscrollbar.LargeChange = Math.Max (items_area.Height / ItemHeight, 0);
 			} else if (ScrollAlwaysVisible) {
 				show = true;
 				enabled = false;
