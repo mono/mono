@@ -37,6 +37,7 @@ namespace System.Windows.Forms
 		private static Size max_size;
 		private static bool use_textrenderer;
 		private static StringFormat sf_nonprinting;
+		private static StringFormat sf_printing;
 		private static Hashtable measure_cache;
 				
 		static TextBoxTextRenderer ()
@@ -58,8 +59,12 @@ namespace System.Windows.Forms
 			
 			sf_nonprinting = new StringFormat (StringFormat.GenericTypographic);
 			sf_nonprinting.Trimming = StringTrimming.None;
-			sf_nonprinting.FormatFlags = StringFormatFlags.DisplayFormatControl;			
+			sf_nonprinting.FormatFlags = StringFormatFlags.DisplayFormatControl;	
+			sf_nonprinting.HotkeyPrefix = HotkeyPrefix.None;		
 
+			sf_printing = StringFormat.GenericTypographic;
+			sf_printing.HotkeyPrefix = HotkeyPrefix.None;
+			
 			measure_cache = new Hashtable ();
 		}
 		
@@ -69,12 +74,12 @@ namespace System.Windows.Forms
 				if (showNonPrint)
 					g.DrawString (text, font, ThemeEngine.Current.ResPool.GetSolidBrush (color), x, y, sf_nonprinting);
 				else
-					g.DrawString (text, font, ThemeEngine.Current.ResPool.GetSolidBrush (color), x, y, StringFormat.GenericTypographic);
+					g.DrawString (text, font, ThemeEngine.Current.ResPool.GetSolidBrush (color), x, y, sf_printing);
 			} else {
 				if (showNonPrint)
-					TextRenderer.DrawTextInternal (g, text, font, new Rectangle (new Point ((int)x, (int)y), max_size), color, TextFormatFlags.NoPadding, false);
+					TextRenderer.DrawTextInternal (g, text, font, new Rectangle (new Point ((int)x, (int)y), max_size), color, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix, false);
 				else
-					TextRenderer.DrawTextInternal (g, text, font, new Rectangle (new Point ((int)x, (int)y), max_size), color, TextFormatFlags.NoPadding, false);
+					TextRenderer.DrawTextInternal (g, text, font, new Rectangle (new Point ((int)x, (int)y), max_size), color, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix, false);
 			}
 		}
 		
@@ -97,7 +102,7 @@ namespace System.Windows.Forms
 					if (!use_textrenderer)
 						size = g.MeasureString (text, font, 10000, sf_nonprinting);
 					else
-						size = TextRenderer.MeasureTextInternal (g, text, font, Size.Empty, TextFormatFlags.NoPadding, false);
+						size = TextRenderer.MeasureTextInternal (g, text, font, Size.Empty, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix, false);
 				
 					measure_cache[key] = size;
 				
@@ -108,7 +113,7 @@ namespace System.Windows.Forms
 			if (!use_textrenderer)
 				return g.MeasureString (text, font, 10000, sf_nonprinting);
 			else
-				return TextRenderer.MeasureTextInternal (g, text, font, Size.Empty, TextFormatFlags.NoPadding, false);
+				return TextRenderer.MeasureTextInternal (g, text, font, Size.Empty, TextFormatFlags.NoPadding | TextFormatFlags.NoPrefix, false);
 		}
 	}
 }

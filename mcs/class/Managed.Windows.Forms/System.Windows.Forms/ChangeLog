@@ -1,5 +1,10 @@
 2008-04-28  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TextBoxTextRenderer.cs: Don't turn &A into a prefix for textboxen.
+	[Fixes bug #384181]
+
+2008-04-28  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ListBox.cs: Math.Min should be Math.Max.  [Fixes bug #384183]
 
 2008-04-28  George Giolfan  <georgegiolfan@yahoo.com>
