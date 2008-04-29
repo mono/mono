@@ -1,5 +1,9 @@
 2008-04-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* BindingSourceTest.cs: New Filter/RemoveFilter tests.
+
+2008-04-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* DragAndDropTest.cs: New test.
 
 2008-04-28  Jonathan Pobst  <monkey@jpobst.com>

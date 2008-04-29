@@ -228,6 +228,82 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		}
 
 		[Test]
+		public void Filter ()
+		{
+			BindingSource source = new BindingSource ();
+			DataTable table = new DataTable ();
+			string filter = "Name = 'Mono'";
+			IBindingListView view;
+
+			table.Columns.Add ("Id", typeof (int));
+			table.Columns.Add ("Name", typeof (string));
+
+			table.Rows.Add (0, "Mono");
+			table.Rows.Add (1, "Miguel");
+			table.Rows.Add (2, "Paolo");
+			table.Rows.Add (3, "Mono");
+
+			source.DataSource = table;
+			Assert.AreEqual (null, source.Filter, "A1");
+
+			source.Filter = filter;
+			view = (IBindingListView)((IListSource)table).GetList ();
+			Assert.AreEqual (filter, source.Filter, "B1");
+			Assert.AreEqual (filter, view.Filter, "B2");
+			Assert.AreEqual (2, view.Count, "B3");
+			Assert.AreEqual (2, source.List.Count, "B4");
+
+			source.Filter = String.Empty;
+			Assert.AreEqual (String.Empty, source.Filter, "C1");
+			Assert.AreEqual (String.Empty, view.Filter, "C2");
+			Assert.AreEqual (4, view.Count, "C3");
+			Assert.AreEqual (4, source.List.Count, "C4");
+
+			source.DataSource = null;
+			Assert.AreEqual (String.Empty, source.Filter, "D1"); // Keep previous value
+
+			filter = "Name = 'Miguel'"; // Apply filter before assigning data source
+			source.Filter = filter;
+			source.DataSource = table;
+
+			view = (IBindingListView)((IListSource)table).GetList ();
+			Assert.AreEqual (filter, source.Filter, "E1");
+			Assert.AreEqual (filter, view.Filter, "E2");
+			Assert.AreEqual (1, view.Count, "E3");
+			Assert.AreEqual (1, source.List.Count, "E4");
+		}
+
+		[Test]
+		public void Filter_NonBindingListView ()
+		{
+			BindingSource source = new BindingSource ();
+			List<int> list = new List<int> ();
+			list.AddRange (new int [] { 0, 1, 2 });
+			string filter = "NonExistentColumn = 'A'"; ;
+
+			source.DataSource = list;
+			Assert.AreEqual (null, source.Filter, "A1");
+
+			// List<> doesn't implement IBindingListView, but
+			// the filter string is saved
+			source.Filter = filter;
+			Assert.AreEqual (filter, source.Filter, "B1");
+
+			source.Filter = null;
+			Assert.AreEqual (null, source.Filter, "C1");
+		}
+
+		[Test]
+		public void RemoveFilter ()
+		{
+			BindingSource source = new BindingSource ();
+			source.Filter = "Name = 'Something'";
+			source.RemoveFilter ();
+
+			Assert.AreEqual (null, source.Filter, "A1");
+		}
+
+		[Test]
 		public void ResetItem ()
 		{
 			BindingSource source = new BindingSource ();
