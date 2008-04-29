@@ -1,3 +1,8 @@
+2008-04-29  Jb Evain  <jbevain@novell.com>
+
+	* HashSet.cs: clear empty slots to allow the GC to collect
+	their values.
+
 2007-11-30  Jb Evain  <jbevain@novell.com>
 
 	* HashSet.cs: corcompare love.

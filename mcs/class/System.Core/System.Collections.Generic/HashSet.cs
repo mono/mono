@@ -262,8 +262,9 @@ namespace System.Collections.Generic {
 		public void Clear ()
 		{
 			count = 0;
-			// clear the hash table
+			// clear the hash table and the slots
 			Array.Clear (table, 0, table.Length);
+			Array.Clear (slots, 0, slots.Length);
 
 			// empty the "empty slots chain"
 			empty_slot = NO_SLOT;
@@ -319,6 +320,9 @@ namespace System.Collections.Generic {
 			// mark slot as empty and prepend it to "empty slots chain"
 			links [current].Next = empty_slot;
 			empty_slot = current;
+
+			// clear slot
+			slots [current] = default (T);
 
 			generation++;
 
