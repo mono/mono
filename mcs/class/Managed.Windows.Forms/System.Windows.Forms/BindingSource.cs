@@ -60,6 +60,8 @@ namespace System.Windows.Forms {
 		bool add_pending;
 		int pending_add_index;
 
+		string filter;
+
 		public BindingSource (IContainer container) : this ()
 		{
 			container.Add (this);
@@ -176,8 +178,12 @@ namespace System.Windows.Forms {
 			item_has_default_ctor = item_type.GetConstructor (Type.EmptyTypes) != null;
 
 			list_is_ibinding = list is IBindingList;
-			if (list_is_ibinding)
+			if (list_is_ibinding) {
 				((IBindingList) list).ListChanged += IBindingListChangedHandler;
+
+				if (list is IBindingListView)
+					((IBindingListView)list).Filter = filter;
+			}
 
 			if (raise_list_changed_events)
 				OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, -1));
@@ -316,16 +322,13 @@ namespace System.Windows.Forms {
 		[DefaultValue (null)]
 		public virtual string Filter {
 			get {
-				if (list is IBindingListView)
-					return ((IBindingListView)list).Filter;
-
-				return null;
+				return filter;
 			}
 			set {
-				if (!SupportsFiltering)
-					throw new NotSupportedException ();
+				if (SupportsFiltering)
+					((IBindingListView)list).Filter = value;
 
-				((IBindingListView)list).Filter = value;
+				filter = value;
 			}
 		}
 
