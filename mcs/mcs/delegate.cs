@@ -935,6 +935,23 @@ namespace Mono.CSharp {
 			this.Arguments = args;
 			this.loc = loc;
 		}
+		
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			ArrayList args;
+			if (Arguments == null)
+				args = new ArrayList (1);
+			else
+				args = new ArrayList (Arguments.Count + 1);
+
+			args.Add (new Argument (InstanceExpr.CreateExpressionTree (ec)));
+			if (Arguments != null) {
+				foreach (Argument a in Arguments)
+					args.Add (new Argument (a.Expr.CreateExpressionTree (ec)));
+			}
+
+			return CreateExpressionFactoryCall ("Invoke", args);
+		}
 
 		public override Expression DoResolve (EmitContext ec)
 		{
