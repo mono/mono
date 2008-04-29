@@ -1299,9 +1299,11 @@ namespace System.Windows.Forms
 				else
 					pos = newPos;
 
-			// pos can't be less than minimum
+			// pos can't be less than minimum or greater than maximum
 			if (pos < minimum)
 				pos = minimum;
+			if (pos > maximum)
+				pos = maximum;
 
 			if (update_thumbpos) {
 				if (vert)
