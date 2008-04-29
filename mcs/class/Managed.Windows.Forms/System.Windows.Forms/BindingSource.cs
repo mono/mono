@@ -315,8 +315,18 @@ namespace System.Windows.Forms {
 
 		[DefaultValue (null)]
 		public virtual string Filter {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				if (list is IBindingListView)
+					return ((IBindingListView)list).Filter;
+
+				return null;
+			}
+			set {
+				if (!SupportsFiltering)
+					throw new NotSupportedException ();
+
+				((IBindingListView)list).Filter = value;
+			}
 		}
 
 		[Browsable (false)]
@@ -801,7 +811,7 @@ namespace System.Windows.Forms {
 
 		public virtual void RemoveFilter ()
 		{
-			throw new NotImplementedException ();
+			Filter = null;
 		}
 
 		public virtual void RemoveSort ()

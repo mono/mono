@@ -1,3 +1,7 @@
+2008-04-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* BindingSource.cs: Implement Filter and RemoveFilter.
+
 2008-04-28  Everaldo Canuto  <ecanuto@novell.com>
 
 	* MenuAPI.cs: Prevent sub-menu positon to be less than zero.
