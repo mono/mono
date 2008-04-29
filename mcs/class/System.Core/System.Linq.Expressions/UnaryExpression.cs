@@ -145,9 +145,89 @@ namespace System.Linq.Expressions {
 				ec.ig.Emit (OpCodes.Castclass, Type);
 		}
 
+		void EmitPrimitiveConversion (EmitContext ec,
+			OpCode signed, OpCode unsigned, OpCode signed_checked, OpCode unsigned_checked)
+		{
+			bool is_unsigned = IsUnsigned (operand.Type);
+
+			if (this.NodeType != ExpressionType.ConvertChecked)
+				ec.ig.Emit (is_unsigned ? unsigned : signed);
+			else
+				ec.ig.Emit (is_unsigned ? unsigned_checked : signed_checked);
+		}
+
 		void EmitPrimitiveConversion (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			switch (Type.GetTypeCode (this.Type)) {
+			case TypeCode.SByte:
+				EmitPrimitiveConversion (ec,
+					OpCodes.Conv_I1,
+					OpCodes.Conv_U1,
+					OpCodes.Conv_Ovf_I1,
+					OpCodes.Conv_Ovf_I1_Un);
+				return;
+			case TypeCode.Byte:
+				EmitPrimitiveConversion (ec,
+					OpCodes.Conv_I1,
+					OpCodes.Conv_U1,
+					OpCodes.Conv_Ovf_U1,
+					OpCodes.Conv_Ovf_U1_Un);
+				return;
+			case TypeCode.Int16:
+				EmitPrimitiveConversion (ec,
+					OpCodes.Conv_I2,
+					OpCodes.Conv_U2,
+					OpCodes.Conv_Ovf_I2,
+					OpCodes.Conv_Ovf_I2_Un);
+				return;
+			case TypeCode.UInt16:
+				EmitPrimitiveConversion (ec,
+					OpCodes.Conv_I2,
+					OpCodes.Conv_U2,
+					OpCodes.Conv_Ovf_U2,
+					OpCodes.Conv_Ovf_U2_Un);
+				return;
+			case TypeCode.Int32:
+				EmitPrimitiveConversion (ec,
+					OpCodes.Conv_I4,
+					OpCodes.Conv_U4,
+					OpCodes.Conv_Ovf_I4,
+					OpCodes.Conv_Ovf_I4_Un);
+				return;
+			case TypeCode.UInt32:
+				EmitPrimitiveConversion (ec,
+					OpCodes.Conv_I4,
+					OpCodes.Conv_U4,
+					OpCodes.Conv_Ovf_U4,
+					OpCodes.Conv_Ovf_U4_Un);
+				return;
+			case TypeCode.Int64:
+				EmitPrimitiveConversion (ec,
+					OpCodes.Conv_I8,
+					OpCodes.Conv_U8,
+					OpCodes.Conv_Ovf_I8,
+					OpCodes.Conv_Ovf_I8_Un);
+				return;
+			case TypeCode.UInt64:
+				EmitPrimitiveConversion (ec,
+					OpCodes.Conv_I8,
+					OpCodes.Conv_U8,
+					OpCodes.Conv_Ovf_U8,
+					OpCodes.Conv_Ovf_U8_Un);
+				return;
+			case TypeCode.Single:
+				if (IsUnsigned (operand.Type))
+					ec.ig.Emit (OpCodes.Conv_R_Un);
+				ec.ig.Emit (OpCodes.Conv_R4);
+				return;
+			case TypeCode.Double:
+				if (IsUnsigned (operand.Type))
+					ec.ig.Emit (OpCodes.Conv_R_Un);
+				ec.ig.Emit (OpCodes.Conv_R8);
+				return;
+			default:
+				throw new NotImplementedException (this.Type.ToString ());
+			}
 		}
 
 		internal override void Emit (EmitContext ec)
