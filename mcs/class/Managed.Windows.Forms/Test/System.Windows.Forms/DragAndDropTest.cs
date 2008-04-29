@@ -248,6 +248,59 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (1, form.DropControl.LeaveFiredCount, "A2");
 			Assert.AreEqual (DragDropEffects.Move, form.DragControl.PerformedEffect, "A3");
 		}
+
+		[Test]
+		public void DragDropInSameControl ()
+		{
+			DNDForm form = new DNDForm ();
+			form.Text = MethodBase.GetCurrentMethod ().Name;
+			form.InstructionsText =
+				"Instructions:" + Environment.NewLine + Environment.NewLine +
+				"1. Click with left button on the control on the left, holding it." + Environment.NewLine +
+				"2. Move the mouse inside left control. " + Environment.NewLine +
+				"3. Drop on left control (same)." + Environment.NewLine + Environment.NewLine +
+				"4. Click with left button on the control on the left again, holding it." + Environment.NewLine +
+				"5. Press ESC, release mouse button and move mouse pointer outside control." + Environment.NewLine +
+				"4. Close the form.";
+			form.DragControl.DragData = "SameControl";
+			form.DragControl.AllowDrop = true;
+			form.DragControl.AllowedEffects = DragDropEffects.Copy;
+
+			data = null;
+			drag_enter_count = drag_leave_count = 0;
+			form.DragControl.DragEnter += new DragEventHandler (DragDropInSameControl_DragEnter);
+			form.DragControl.DragLeave += new EventHandler (DragDropInSameControl_DragLeave);
+			form.DragControl.DragDrop += new DragEventHandler (DragDropInSameControl_DragDrop);
+
+			Application.Run (form);
+
+			Assert.AreEqual (2, drag_enter_count, "A1");
+			Assert.AreEqual (1, drag_leave_count, "A2");
+			Assert.AreEqual (1, drag_drop_count, "A3");
+			Assert.AreEqual ("SameControl", data, "A4");
+		}
+
+		int drag_enter_count;
+		int drag_leave_count;
+		int drag_drop_count;
+		object data;
+
+		void DragDropInSameControl_DragDrop (object sender, DragEventArgs e)
+		{
+			drag_drop_count++;
+			data = e.Data.GetData (typeof (string));
+		}
+
+		void DragDropInSameControl_DragLeave (object sender, EventArgs e)
+		{
+			drag_leave_count++;
+		}
+
+		void DragDropInSameControl_DragEnter (object sender, DragEventArgs e)
+		{
+			e.Effect = DragDropEffects.Copy;
+			drag_enter_count++;
+		}
 	}
 
 	public class DNDForm : Form
@@ -262,11 +315,12 @@ namespace MonoTests.System.Windows.Forms
 			test_name = new Label ();
 			test_name.Location = new Point (5, 5);
 			test_name.AutoSize = true;
-			//test_name.Font += new Font (Font, FontStyle.Bold | Font.Style);
+			test_name.Font = new Font (Font, FontStyle.Bold | Font.Style);
 			test_name.Text = Text;
 
 			instructions_tb = new TextBox ();
 			instructions_tb.Multiline = true;
+			instructions_tb.ScrollBars = ScrollBars.Vertical;
 			instructions_tb.Location = new Point (5, test_name.Bottom + 5);
 			instructions_tb.Size = new Size (460, 180);
 
