@@ -1,5 +1,10 @@
 2008-04-28  Everaldo Canuto  <ecanuto@novell.com>
 
+	* ToolStripDropDown.cs: Fix offscreen position for DropDown itens.
+	Fixes remaining issues of #367490.
+
+2008-04-28  Everaldo Canuto  <ecanuto@novell.com>
+
 	* ToolStripDropDown.cs: Screen.Bound dont return right value then use 
 	SystemInformation.WorkingArea to get max_screen value.
 

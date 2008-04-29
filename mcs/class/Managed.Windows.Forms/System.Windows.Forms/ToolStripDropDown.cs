@@ -481,6 +481,12 @@ namespace System.Windows.Forms
 				case ToolStripDropDownDirection.Right:
 					break;
 			}
+
+			// Fix offscreen positions
+			if ((show_point.X + this.Width) > max_screen.X)
+				show_point.X = max_screen.X - this.Width;
+			if (show_point.X < 0)
+				show_point.X = 0;
 			
 			if (this.Location != show_point)
 				this.Location = show_point;
