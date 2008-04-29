@@ -1,3 +1,8 @@
+2008-04-28  Everaldo Canuto  <ecanuto@novell.com>
+
+	* MenuAPI.cs: Implement the right key for sub-menus. Thanks Ernesto Carrea
+	for this patch. Fixes bug #384115.
+
 2008-04-28  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ScrollBar.cs: If SmallChange is larger than LargeChange, make them

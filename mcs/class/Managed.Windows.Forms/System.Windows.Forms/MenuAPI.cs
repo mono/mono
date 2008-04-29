@@ -710,12 +710,21 @@ namespace System.Windows.Forms {
 					ShowSubPopup (CurrentMenu, item);
 					SelectItem (item, item.MenuItems [0], false);
 					CurrentMenu = item;
-				} else if (CurrentMenu.parent_menu is MainMenu) {
-					item = GetNextItem (CurrentMenu.parent_menu, ItemNavigation.Next);
-					SelectItem (CurrentMenu.parent_menu, item, item.IsPopup);
-					if (item.IsPopup) {
-						SelectItem (item, item.MenuItems [0], false);
-						CurrentMenu = item;
+				} else {
+					//Search up for a main menu
+					Menu Prnt = CurrentMenu.parent_menu;
+					while (Prnt != null && !(Prnt is MainMenu)) {
+						Prnt = Prnt.parent_menu;
+ 					}
+					if (Prnt is MainMenu)
+					{
+						item = GetNextItem(Prnt, ItemNavigation.Next);
+						SelectItem(Prnt, item, item.IsPopup);
+						if (item.IsPopup)
+						{
+							SelectItem(item, item.MenuItems[0], false);
+							CurrentMenu = item;
+						}
 					}
 				}
 				break;
