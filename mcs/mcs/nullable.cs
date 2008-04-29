@@ -498,8 +498,12 @@ namespace Mono.CSharp.Nullable
 				return null;
 
 			Expression res = base.ResolveOperator (ec, unwrap);
-			if (res == this)
+			if (res != this) {
+				if (user_operator == null)
+					return res;
+			} else {
 				res = Expr = LiftExpression (ec, Expr);
+			}
 
 			if (res == null)
 				return null;
@@ -544,6 +548,16 @@ namespace Mono.CSharp.Nullable
 
 			expr.Type = lifted_type.Type;
 			return expr;
+		}
+
+		protected override Expression ResolveEnumOperator (EmitContext ec, Expression expr)
+		{
+			expr = base.ResolveEnumOperator (ec, expr);
+			if (expr == null)
+				return null;
+
+			Expr = LiftExpression (ec, Expr);
+			return LiftExpression (ec, expr);
 		}
 
 		protected override Expression ResolveUserOperator (EmitContext ec, Expression expr)

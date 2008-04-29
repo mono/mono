@@ -1,3 +1,10 @@
+2008-04-29  Marek Safar  <marek.safar@gmail.com>
+
+	* ecore.cs: Clean up EmptyCast hack.
+	
+	* expression.cs, nullable.cs: Implemented enum binary and unary operations
+	using correct conversion rules. Also fixes #383993.
+
 2008-04-28  Martin Baulig  <martin@ximian.com>
 
 	* class.cs (Constructor.Emit): Don't emit debugging information

@@ -1388,21 +1388,9 @@ namespace Mono.CSharp {
 	}
 
 	public class EmptyCast : TypeCast {
-		bool is_implicit;
-
 		EmptyCast (Expression child, Type target_type)
 			: base (child, target_type)
 		{
-		}
-
-		//
-		// HACK: This is just temporary hack before real EmptyCast clean-up required by expression trees
-		//
-		public static Expression Create (Expression child, Type type, bool is_implicit)
-		{
-			EmptyCast e = new EmptyCast (child, type);
-			e.is_implicit = true;
-			return e;
 		}
 
 		public static Expression Create (Expression child, Type type)
@@ -1412,14 +1400,6 @@ namespace Mono.CSharp {
 				return new EmptyConstantCast (c, type);
 
 			return new EmptyCast (child, type);
-		}
-
-		public override Expression CreateExpressionTree (EmitContext ec)
-		{
-			if (is_implicit)
-				return child.CreateExpressionTree (ec);
-			else
-				return base.CreateExpressionTree (ec);
 		}
 
 		public override void EmitBranchable (EmitContext ec, Label label, bool on_true)
