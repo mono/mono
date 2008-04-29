@@ -2671,6 +2671,8 @@ namespace Mono.CSharp {
 					return null;
 			} else if (l.IsInterface) {
 				l = TypeManager.object_type;
+			} else if (l.IsValueType) {
+				return null;
 			}
 
 			if (rgen) {
@@ -2679,7 +2681,10 @@ namespace Mono.CSharp {
 					return null;
 			} else if (r.IsInterface) {
 				r = TypeManager.object_type;
+			} else if (r.IsValueType) {
+				return null;
 			}
+
 
 			const string ref_comparison = "Possible unintended reference comparison. " +
 				"Consider casting the {0} side of the expression to `string' to compare the values";

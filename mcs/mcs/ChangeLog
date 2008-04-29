@@ -1,5 +1,9 @@
 2008-04-29  Marek Safar  <marek.safar@gmail.com>
 
+	* expression.cs: Fixed equality reference comparison regression.
+
+2008-04-29  Marek Safar  <marek.safar@gmail.com>
+
 	* ecore.cs: Clean up EmptyCast hack.
 	
 	* expression.cs, nullable.cs: Implemented enum binary and unary operations
