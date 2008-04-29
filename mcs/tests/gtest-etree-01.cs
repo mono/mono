@@ -280,6 +280,9 @@ class NewTest<T>
 
 class Tester
 {
+	delegate void EmptyDelegate ();
+	delegate int IntDelegate ();
+
 	static void AssertNodeType (LambdaExpression e, ExpressionType et)
 	{
 		if (e.Body.NodeType != et)
@@ -790,8 +793,6 @@ class Tester
 		Assert (false, e13.Compile ().Invoke (0));
 	}
 
-	delegate void EmptyDelegate ();
-	
 	void EqualTestDelegate ()
 	{
 		Expression<Func<Delegate, Delegate, bool>> e1 = (a, b) => a == b;
@@ -931,6 +932,18 @@ class Tester
 		AssertNodeType (e8, ExpressionType.GreaterThanOrEqual);
 		Assert (false, e8.Compile ().Invoke (MyEnum.Value_1, null));
 		Assert (true, e8.Compile ().Invoke (MyEnum.Value_2, MyEnum.Value_2));
+	}
+	
+	void InvokeTest ()
+	{
+		var del = new IntDelegate (TestInt);
+		Expression<Func<IntDelegate, int>> e = (a) => a ();
+		AssertNodeType (e, ExpressionType.Invoke);
+		Assert (29, e.Compile ().Invoke (del));
+
+		Expression<Func<Func<int, string>, int, string>> e2 = (a, b) => a (b);
+		AssertNodeType (e2, ExpressionType.Invoke);
+		Assert ("4", e2.Compile ().Invoke ((a) => (a+1).ToString (), 3));
 	}
 	
 	void LeftShiftTest ()
@@ -1319,6 +1332,11 @@ class Tester
 		Expression<Func<decimal, NewTest<decimal>>> e4 = (decimal d) => new NewTest<decimal> (1, 5, d);
 		AssertNodeType (e4, ExpressionType.New);
 		Assert (new NewTest<decimal> (1, 5, -9), e4.Compile ().Invoke (-9));
+		
+		Expression<Func<object>> e5 = () => new { A = 9, Value = "a" };
+// FIXME: Extra return convert
+//		AssertNodeType (e5, ExpressionType.New);
+		Assert (new { A = 9, Value = "a" }, e5.Compile ().Invoke ());
 	}	
 
 	void NotTest ()
@@ -1605,8 +1623,8 @@ class Tester
 
 		// CSC bug
 		Expression<Func<MyEnum?, MyEnum?, byte?>> e11 = (a, b) => a - b;
-		AssertNodeType (e9, ExpressionType.Convert);
-		Assert (1, e9.Compile ().Invoke (MyEnum.Value_2, MyEnum.Value_1));
+		AssertNodeType (e11, ExpressionType.Convert);
+		Assert<byte?> (1, e11.Compile ().Invoke (MyEnum.Value_2, MyEnum.Value_1));
 		
 	}
 
@@ -1721,6 +1739,11 @@ class Tester
 			return "<empty>";
 		return args [index];
 	}
+	
+	static int TestInt ()
+	{
+		return 29;
+	}
 
 	T GenericMethod<T> (T t)
 	{
@@ -1751,6 +1774,7 @@ class Tester
 		e.ExclusiveOrTest ();
 		e.GreaterThanTest ();
 		e.GreaterThanOrEqualTest ();
+		e.InvokeTest ();
 		e.LeftShiftTest ();
 		e.LessThanTest ();
 		e.LessThanOrEqualTest ();
