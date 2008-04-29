@@ -846,7 +846,7 @@ namespace System.Windows.Forms {
 			ThemeEngine.Current.CalcPopupMenuSize (DeviceContext, menu);
 
 			if ((pt.X + menu.Rect.Width) > SystemInformation.WorkingArea.Width) {
-				if ((pt.X - menu.Rect.Width) > 0)
+				if (((pt.X - menu.Rect.Width) > 0) && !(menu.parent_menu is MainMenu))
 					pt.X = pt.X - menu.Rect.Width;
 				else
 					pt.X = SystemInformation.WorkingArea.Width - menu.Rect.Width;
