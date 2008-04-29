@@ -1,3 +1,9 @@
+2008-04-29  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* VisualStyleRenderer.cs: Added a special case for
+	VisualStyleElement.Status.Bar.Normal. IsThemePartDefined was returning false
+	but this element is supposed to work on the default Windows theme.
+
 2008-04-25  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* BooleanProperty.cs, CheckBoxState.cs, ColorProperty.cs, EdgeEffects.cs,

@@ -80,6 +80,9 @@ namespace System.Windows.Forms.VisualStyles
 			if (!IsSupported)
 				throw new InvalidOperationException ("Visual Styles are not enabled.");
 
+			if (IsElementKnownToBeSupported (element.ClassName, element.Part, element.State))
+				return true;
+
 			IntPtr theme = UXTheme.OpenThemeData (IntPtr.Zero, element.ClassName);
 			bool retval = UXTheme.IsThemePartDefined (theme, element.Part, 0);
 			UXTheme.CloseThemeData (theme);
@@ -483,6 +486,8 @@ namespace System.Windows.Forms.VisualStyles
 			this.state = state;
 			theme = UXTheme.OpenThemeData (IntPtr.Zero, this.class_name);
 
+			if (IsElementKnownToBeSupported (className, part, state))
+				return;
 			if (!UXTheme.IsThemePartDefined (theme, this.part, 0))
 				throw new ArgumentException ("This element is not supported by the current visual style.");
 		}
@@ -490,6 +495,13 @@ namespace System.Windows.Forms.VisualStyles
 		public void SetParameters (VisualStyleElement element)
 		{
 			this.SetParameters (element.ClassName, element.Part, element.State);
+		}
+		#endregion
+
+		#region Private Static Methods
+		private static bool IsElementKnownToBeSupported (string className, int part, int state)
+		{
+			return className == "STATUS" && part == 0 && state == 0;
 		}
 		#endregion
 	}
