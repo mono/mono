@@ -1,3 +1,13 @@
+2008-04-29  Marek Habersack  <grendello@gmail.com>
+
+	* System.Web.Extensions/Makefile (EXTRA_DISTFILES): include all
+	the Microsoft AJAX library scripts in the dist tarball.
+
+2008-04-28  Marek Habersack  <mhabersack@novell.com>
+
+	* System.Web.Extensions/Makefile (RESOURCE_FILES): for the 2.0
+	profile use the 1.0.61025.0 scripts.
+
 2008-04-14  Raja R Harinath  <harinath@hurrynot.org>
 
 	* Makefile (DIST_ONLY_SUBDIRS): Remove.
