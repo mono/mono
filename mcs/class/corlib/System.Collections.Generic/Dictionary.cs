@@ -383,7 +383,10 @@ namespace System.Collections.Generic {
 		{
 			count = 0;
 			// clear the hash table
-			Array.Clear(table, 0, table.Length);
+			Array.Clear (table, 0, table.Length);
+			// clear key and value arrays
+			Array.Clear (keySlots, 0, keySlots.Length);
+			Array.Clear (valueSlots, 0, valueSlots.Length);
 
 			// empty the "empty slots chain"
 			emptySlot = NO_SLOT;
@@ -509,6 +512,10 @@ namespace System.Collections.Generic {
 			// mark slot as empty and prepend it to "empty slots chain"				
 			linkSlots [cur].Next = emptySlot;
 			emptySlot = cur;
+
+			// clear empty key and value slots
+			keySlots [cur] = default (TKey);
+			valueSlots [cur] = default (TValue);
 			
 			generation++;
 			return true;

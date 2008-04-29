@@ -1,4 +1,10 @@
-﻿2008-04-02  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
+2008-04-29  Juraj Skripsky <js@hotfeet.ch>
+
+	* Dictionary.cs (Clear, Remove): Clear empty slots in keySlots 
+	and valueSlots. Otherwise the garbage collector cannot reclaim 
+	the referenced key/value. Fixes bug #384723.
+
+2008-04-02  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
 
 	* KeyNotFoundException.cs
 	* KeyValuePair.cs: Fix parameter names
