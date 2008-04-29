@@ -949,7 +949,12 @@ namespace System.Windows.Forms {
 
 			Control mwfcontrol = MwfWindow (source);
 
+			/* To take advantage of the mwfcontrol, we have to be sure
+			   that the dnd operation is still happening (since messages are asynchronous) */
 			if (mwfcontrol != null && drag_data != null) {
+				if (!tracking)
+					return false;
+
 				IDataObject dragged = drag_data.Data as IDataObject;
 				if (dragged != null) {
 					data = dragged;

@@ -1,3 +1,10 @@
+2008-04-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* X11Dnd.cs: When trying to convert data and we know we started the
+	dnd loop, don't try to use the cached data if the loop is not running,
+	which means that the data has been resetted.
+	Fixes #378191.
+
 2008-04-28  Everaldo Canuto  <ecanuto@novell.com>
 
 	* MenuAPI.cs: Force first menu subitem to show from left to right to mimic
