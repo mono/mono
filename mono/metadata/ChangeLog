@@ -1,3 +1,7 @@
+2008-04-29  Kornél Pál  <kornelpal@gmail.com>
+
+	* appdomain.c: Use HAVE_SYS_UTIME_H that fixes MSVC build.
+
 2008-04-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* image.c (mono_image_strong_name_position): Fix return value when the rva is
