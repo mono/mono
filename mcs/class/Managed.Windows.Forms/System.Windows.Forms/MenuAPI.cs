@@ -841,18 +841,21 @@ namespace System.Windows.Forms {
 		// Called when the number of items has changed
 		internal void RefreshItems ()
 		{
+			Point pt = new Point (Location.X, Location.Y);
+			
 			ThemeEngine.Current.CalcPopupMenuSize (DeviceContext, menu);
 
 			if ((Location.X + menu.Rect.Width) > SystemInformation.WorkingArea.Width) {
-				Location = new Point (Location.X - menu.Rect.Width, Location.Y);
+				pt.X = Location.X - menu.Rect.Width;
 			}
 			if ((Location.Y + menu.Rect.Height) > SystemInformation.WorkingArea.Height) {
 				if ((Location.Y - menu.Rect.Height) > 0)
-					Location = new Point (Location.X, Location.Y - menu.Rect.Height);
+					pt.Y = Location.Y - menu.Rect.Height;
 				else
-					Location = new Point (Location.X, SystemInformation.WorkingArea.Height - menu.Rect.Height);
+					pt.Y = SystemInformation.WorkingArea.Height - menu.Rect.Height;
 			}
 
+			Location = pt;
 			Width = menu.Rect.Width;
 			Height = menu.Rect.Height;			
 		}
