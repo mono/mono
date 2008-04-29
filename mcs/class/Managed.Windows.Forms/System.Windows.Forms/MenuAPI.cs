@@ -850,12 +850,18 @@ namespace System.Windows.Forms {
 					pt.X = pt.X - menu.Rect.Width;
 				else
 					pt.X = SystemInformation.WorkingArea.Width - menu.Rect.Width;
+
+				if (pt.X < 0)
+					pt.X = 0;
 			}
 			if ((pt.Y + menu.Rect.Height) > SystemInformation.WorkingArea.Height) {
 				if ((pt.Y - menu.Rect.Height) > 0)
 					pt.Y = pt.Y - menu.Rect.Height;
 				else
 					pt.Y = SystemInformation.WorkingArea.Height - menu.Rect.Height;
+
+				if (pt.Y < 0)
+					pt.Y = 0;
 			}
 
 			Location = pt;
