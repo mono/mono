@@ -40,16 +40,17 @@ namespace System.Windows.Forms.VisualStyles
 		private int state;
 		private IntPtr theme;
 		private int last_hresult = 0;
+		private ThemeHandleManager theme_handle_manager = new ThemeHandleManager ();
 
 		#region Public Constructors
 		public VisualStyleRenderer (string className, int part, int state)
 		{
+			theme_handle_manager.VisualStyleRenderer = this;
 			this.SetParameters (className, part, state);
 		}
 
 		public VisualStyleRenderer (VisualStyleElement element)
-		{
-			this.SetParameters (element);
+			: this (element.ClassName, element.Part, element.State) {
 		}
 		#endregion
 
@@ -84,6 +85,8 @@ namespace System.Windows.Forms.VisualStyles
 				return true;
 
 			IntPtr theme = UXTheme.OpenThemeData (IntPtr.Zero, element.ClassName);
+			if (theme == IntPtr.Zero)
+				return false;
 			bool retval = UXTheme.IsThemePartDefined (theme, element.Part, 0);
 			UXTheme.CloseThemeData (theme);
 
@@ -488,7 +491,7 @@ namespace System.Windows.Forms.VisualStyles
 
 			if (IsElementKnownToBeSupported (className, part, state))
 				return;
-			if (!UXTheme.IsThemePartDefined (theme, this.part, 0))
+			if (theme == IntPtr.Zero || !UXTheme.IsThemePartDefined (theme, this.part, 0))
 				throw new ArgumentException ("This element is not supported by the current visual style.");
 		}
 
@@ -502,6 +505,19 @@ namespace System.Windows.Forms.VisualStyles
 		private static bool IsElementKnownToBeSupported (string className, int part, int state)
 		{
 			return className == "STATUS" && part == 0 && state == 0;
+		}
+		#endregion
+
+		#region Private Classes
+		private class ThemeHandleManager
+		{
+			public VisualStyleRenderer VisualStyleRenderer;
+			~ThemeHandleManager ()
+			{
+				if (VisualStyleRenderer.theme == IntPtr.Zero)
+					return;
+				UXTheme.CloseThemeData (VisualStyleRenderer.theme);
+			}
 		}
 		#endregion
 	}

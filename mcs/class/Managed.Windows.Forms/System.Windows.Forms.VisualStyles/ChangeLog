@@ -1,5 +1,11 @@
 2008-04-29  George Giolfan  <georgegiolfan@yahoo.com>
 
+	* VisualStyleRenderer.cs: Added some code to eventually call CloseThemeData.
+	Suppressed calls to IsThemePartDefined and CloseThemeData when a theme handle
+	was not obtained.
+
+2008-04-29  George Giolfan  <georgegiolfan@yahoo.com>
+
 	* VisualStyleRenderer.cs: Added a special case for
 	VisualStyleElement.Status.Bar.Normal. IsThemePartDefined was returning false
 	but this element is supposed to work on the default Windows theme.
