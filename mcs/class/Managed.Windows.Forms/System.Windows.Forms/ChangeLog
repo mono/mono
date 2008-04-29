@@ -1,5 +1,10 @@
 2008-04-28  Everaldo Canuto  <ecanuto@novell.com>
 
+	* MenuAPI.cs: Check the screen limits before show sub-menus and prevent
+	it to drawn off screen edge. Fixes bug #367490.
+
+2008-04-28  Everaldo Canuto  <ecanuto@novell.com>
+
 	* MenuAPI.cs: In PopupWindow.RefreshItems uses a temp point var to store
 	menu position to have only one assignment of Location var.
 

@@ -845,12 +845,15 @@ namespace System.Windows.Forms {
 			
 			ThemeEngine.Current.CalcPopupMenuSize (DeviceContext, menu);
 
-			if ((Location.X + menu.Rect.Width) > SystemInformation.WorkingArea.Width) {
-				pt.X = Location.X - menu.Rect.Width;
+			if ((pt.X + menu.Rect.Width) > SystemInformation.WorkingArea.Width) {
+				if ((pt.X - menu.Rect.Width) > 0)
+					pt.X = pt.X - menu.Rect.Width;
+				else
+					pt.X = SystemInformation.WorkingArea.Width - menu.Rect.Width;
 			}
-			if ((Location.Y + menu.Rect.Height) > SystemInformation.WorkingArea.Height) {
-				if ((Location.Y - menu.Rect.Height) > 0)
-					pt.Y = Location.Y - menu.Rect.Height;
+			if ((pt.Y + menu.Rect.Height) > SystemInformation.WorkingArea.Height) {
+				if ((pt.Y - menu.Rect.Height) > 0)
+					pt.Y = pt.Y - menu.Rect.Height;
 				else
 					pt.Y = SystemInformation.WorkingArea.Height - menu.Rect.Height;
 			}
