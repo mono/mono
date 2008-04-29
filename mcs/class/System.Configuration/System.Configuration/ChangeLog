@@ -1,3 +1,9 @@
+2008-04-30  Marek Habersack  <mhabersack@novell.com>
+
+	* ConfigurationElement.cs: HasLocalModifications considers a
+	property modifed locally if its origin is SetHere and it's been
+	marked as modified.
+
 2008-03-20  Igor Zelmanovich  <igorz@mainsoft.com>
 
 	* Configuration.cs:

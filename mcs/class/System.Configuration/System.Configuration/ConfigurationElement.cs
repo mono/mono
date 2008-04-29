@@ -286,7 +286,7 @@ namespace System.Configuration
 		internal virtual bool HasLocalModifications ()
 		{
 			foreach (PropertyInformation pi in ElementInformation.Properties)
-				if (pi.ValueOrigin == PropertyValueOrigin.SetHere)
+				if (pi.ValueOrigin == PropertyValueOrigin.SetHere && pi.IsModified)
 					return true;
 			
 			return false;
