@@ -1,3 +1,9 @@
+2008-04-29  Marek Habersack  <mhabersack@novell.com>
+
+	* WebServiceCompiler.cs: if compiling a body-less web service, try
+	to load the class type from the loaded assemblies before
+	attempting to find it in the assemblies on disk.
+
 2008-04-28  Marek Habersack  <mhabersack@novell.com>
 
 	* BuildManager.cs: ignore bad assemblies in the bin/

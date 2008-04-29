@@ -127,7 +127,8 @@ namespace System.Web
 		public string GetHtmlErrorMessage ()
 		{
 			try {
-				if (HttpContext.Current.IsCustomErrorEnabled)
+				HttpContext ctx = HttpContext.Current;
+				if (ctx != null && ctx.IsCustomErrorEnabled)
 					return GetCustomErrorDefaultMessage ();
 				
 				if (!(this.InnerException is HtmlizedException))

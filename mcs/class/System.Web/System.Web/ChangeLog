@@ -1,3 +1,8 @@
+2008-04-29  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpException.cs: safe guard against context being null in
+	GetHtmlErrorMessage.
+
 2008-04-26  Marek Habersack  <mhabersack@novell.com>
 
 	* VirtualPath.cs: added a new property, PhysicalPath.

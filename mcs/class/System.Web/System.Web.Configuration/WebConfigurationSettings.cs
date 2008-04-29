@@ -217,6 +217,10 @@ namespace System.Web.Configuration
 			} catch {
 				realpath = context.Request.MapPath (HttpRuntime.AppDomainAppVirtualPath);
 			}
+			
+			if (realpath == null || realpath.Length == 0)
+				realpath = HttpRuntime.AppDomainAppPath;
+			
 			string lower = Path.Combine (realpath, "web.config");
 			bool isLower = File.Exists (lower);
 			string wcfile = null;
