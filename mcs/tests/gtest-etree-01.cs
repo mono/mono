@@ -236,6 +236,12 @@ enum MyEnum : byte
 	Value_2 = 2
 }
 
+enum MyEnumUlong : ulong
+{
+	Value_1 = 1
+}
+
+
 class NewTest<T>
 {
 	T [] t;
@@ -348,6 +354,10 @@ class Tester
 		Assert<MyEnum?> (0, e8.Compile ().Invoke (MyEnum.Value_1, 255));
 		Assert (null, e8.Compile ().Invoke (MyEnum.Value_1, null));
 		Assert (null, e8.Compile ().Invoke (null, null));
+		
+		Expression<Func<byte, MyEnum, MyEnum>> e9 = (a, b) => a + b;
+		AssertNodeType (e9, ExpressionType.Convert);
+		Assert (MyEnum.Value_2, e9.Compile ().Invoke (1, MyEnum.Value_1));
 	}
 
 	void AddCheckedTest ()
@@ -408,6 +418,11 @@ class Tester
 
 		Assert (new MyType (0), c2 (new MyType (0), new MyType (1)));
 		Assert (new MyType (1), c2 (new MyType (0xFF), new MyType (0x01)));
+		
+		Expression<Func<MyEnum, MyEnum, MyEnum>> e3 = (a, b) => a & b;
+		AssertNodeType (e3, ExpressionType.Convert);
+		Assert<MyEnum> (0, e3.Compile ().Invoke (MyEnum.Value_1, MyEnum.Value_2));
+		Assert (MyEnum.Value_2, e3.Compile ().Invoke (MyEnum.Value_2, MyEnum.Value_2));
 	}
 
 	void AndNullableTest ()
@@ -436,6 +451,11 @@ class Tester
 		Assert (new MyType (0), c2 (new MyType (0), new MyType (1)));
 		Assert (new MyType (1), c2 (new MyType (0xFF), new MyType (0x01)));
 		Assert (null, c2 (new MyType (0xFF), null));
+		
+		Expression<Func<MyEnum?, MyEnum?, MyEnum?>> e3 = (a, b) => a & b;
+		AssertNodeType (e3, ExpressionType.Convert);
+		Assert (null, e3.Compile ().Invoke (null, MyEnum.Value_2));
+		Assert (MyEnum.Value_2, e3.Compile ().Invoke (MyEnum.Value_2, MyEnum.Value_2));
 	}
 
 	void AndAlsoTest ()
@@ -485,7 +505,6 @@ class Tester
 		Assert (0, e.Compile ().Invoke (new double [0]));
 		Assert (9, e.Compile ().Invoke (new double [9]));
 
-		// TODO: implement
 		//Expression<Func<string [,], int>> e2 = (string [,] a) => a.Length;
 		//AssertNodeType (e2, ExpressionType.MemberAccess);
 		//Assert (0, e2.Compile ().Invoke (new string [0, 0]));
@@ -604,6 +623,14 @@ class Tester
 		Expression<Func<Type>> e10 = () => typeof (Func<,>);
 		AssertNodeType (e10, ExpressionType.Constant);
 		Assert (typeof (Func<,>), e10.Compile ().Invoke ());
+		
+		Expression<Func<MyEnum>> e11 = () => MyEnum.Value_2;
+		AssertNodeType (e11, ExpressionType.Constant);
+		Assert (MyEnum.Value_2, e11.Compile ().Invoke ());
+		
+		Expression<Func<MyEnum>> e12 = () => new MyEnum ();
+		AssertNodeType (e12, ExpressionType.Constant);
+		Assert<MyEnum> (0, e12.Compile ().Invoke ());
 	}
 
 	void ConvertTest ()
@@ -736,6 +763,31 @@ class Tester
 		Assert (true, e8.Compile ().Invoke (null));
 		Assert (false, e8.Compile ().Invoke ("a"));
 		Assert (false, e8.Compile ().Invoke (this));
+		
+		Expression<Func<MyEnum, MyEnum, bool>> e9 = (a, b) => a == b;
+		AssertNodeType (e9, ExpressionType.Equal);
+		Assert (false, e9.Compile ().Invoke (MyEnum.Value_1, MyEnum.Value_2));
+		Assert (true, e9.Compile ().Invoke (MyEnum.Value_2, MyEnum.Value_2));
+
+		Expression<Func<MyEnum?, MyEnum?, bool>> e10 = (a, b) => a == b;
+		AssertNodeType (e10, ExpressionType.Equal);
+		Assert (false, e10.Compile ().Invoke (MyEnum.Value_1, null));
+		Assert (true, e10.Compile ().Invoke (MyEnum.Value_2, MyEnum.Value_2));
+
+		Expression<Func<MyEnum?, bool>> e11 = (a) => a == null;
+		AssertNodeType (e11, ExpressionType.Equal);
+		Assert (false, e11.Compile ().Invoke (MyEnum.Value_1));
+		Assert (true, e11.Compile ().Invoke (null));
+		
+		Expression<Func<MyEnumUlong, bool>> e12 = (a) => a == 0;
+		AssertNodeType (e12, ExpressionType.Equal);
+		Assert (false, e12.Compile ().Invoke (MyEnumUlong.Value_1));
+		Assert (true, e12.Compile ().Invoke (0));
+		
+		Expression<Func<MyEnum, bool>> e13 = (a) => a == MyEnum.Value_2;
+		AssertNodeType (e13, ExpressionType.Equal);
+		Assert (true, e13.Compile ().Invoke (MyEnum.Value_2));
+		Assert (false, e13.Compile ().Invoke (0));
 	}
 
 	delegate void EmptyDelegate ();
@@ -780,6 +832,21 @@ class Tester
 		AssertNodeType (e5, ExpressionType.ExclusiveOr);
 		Assert (null, e5.Compile ().Invoke (null, 64));
 		Assert (96, e5.Compile ().Invoke (new MyType (64), 32));
+		
+		Expression<Func<MyEnum, MyEnum, MyEnum>> e6 = (a, b) => a ^ b;
+		AssertNodeType (e6, ExpressionType.Convert);
+		Assert ((MyEnum)3, e6.Compile ().Invoke (MyEnum.Value_1, MyEnum.Value_2));
+		Assert<MyEnum> (0, e6.Compile ().Invoke (MyEnum.Value_2, MyEnum.Value_2));
+
+		Expression<Func<MyEnum?, MyEnum?, MyEnum?>> e7 = (a, b) => a ^ b;
+		AssertNodeType (e7, ExpressionType.Convert);
+		Assert (null, e7.Compile ().Invoke (MyEnum.Value_1, null));
+		Assert<MyEnum?> (0, e7.Compile ().Invoke (MyEnum.Value_2, MyEnum.Value_2));
+
+		Expression<Func<MyEnum?, MyEnum?>> e8 = (a) => a ^ null;
+		AssertNodeType (e8, ExpressionType.Convert);
+		Assert (null, e8.Compile ().Invoke (MyEnum.Value_1));
+		Assert (null, e8.Compile ().Invoke (null));
 	}
 
 	void GreaterThanTest ()
@@ -812,6 +879,16 @@ class Tester
 		Expression<Func<ushort, bool>> e6 = (ushort a) => a > null;
 		AssertNodeType (e6, ExpressionType.GreaterThan);
 		Assert (false, e6.Compile ().Invoke (60));
+		
+		Expression<Func<MyEnum, MyEnum, bool>> e7 = (a, b) => a > b;
+		AssertNodeType (e7, ExpressionType.GreaterThan);
+		Assert (true, e7.Compile ().Invoke (MyEnum.Value_2, MyEnum.Value_1));
+		Assert (false, e7.Compile ().Invoke (MyEnum.Value_2, MyEnum.Value_2));
+
+		Expression<Func<MyEnum?, MyEnum?, bool>> e8 = (a, b) => a > b;
+		AssertNodeType (e8, ExpressionType.GreaterThan);
+		Assert (false, e8.Compile ().Invoke (MyEnum.Value_1, null));
+		Assert (false, e8.Compile ().Invoke (MyEnum.Value_2, MyEnum.Value_2));
 	}
 
 	void GreaterThanOrEqualTest ()
@@ -844,6 +921,16 @@ class Tester
 		Expression<Func<ushort, bool>> e6 = (ushort a) => a >= null;
 		AssertNodeType (e6, ExpressionType.GreaterThanOrEqual);
 		Assert (false, e6.Compile ().Invoke (60));
+		
+		Expression<Func<MyEnum, MyEnum, bool>> e7 = (a, b) => a >= b;
+		AssertNodeType (e7, ExpressionType.GreaterThanOrEqual);
+		Assert (true, e7.Compile ().Invoke (MyEnum.Value_2, MyEnum.Value_1));
+		Assert (true, e7.Compile ().Invoke (MyEnum.Value_2, MyEnum.Value_2));
+
+		Expression<Func<MyEnum?, MyEnum?, bool>> e8 = (a, b) => a >= b;
+		AssertNodeType (e8, ExpressionType.GreaterThanOrEqual);
+		Assert (false, e8.Compile ().Invoke (MyEnum.Value_1, null));
+		Assert (true, e8.Compile ().Invoke (MyEnum.Value_2, MyEnum.Value_2));
 	}
 	
 	void LeftShiftTest ()
@@ -905,6 +992,16 @@ class Tester
 		Expression<Func<ushort, bool>> e6 = (ushort a) => a < null;
 		AssertNodeType (e6, ExpressionType.LessThan);
 		Assert (false, e6.Compile ().Invoke (60));
+		
+		Expression<Func<MyEnum, MyEnum, bool>> e7 = (a, b) => a < b;
+		AssertNodeType (e7, ExpressionType.LessThan);
+		Assert (false, e7.Compile ().Invoke (MyEnum.Value_2, MyEnum.Value_1));
+		Assert (false, e7.Compile ().Invoke (MyEnum.Value_2, MyEnum.Value_2));
+
+		Expression<Func<MyEnum?, MyEnum?, bool>> e8 = (a, b) => a < b;
+		AssertNodeType (e8, ExpressionType.LessThan);
+		Assert (false, e8.Compile ().Invoke (MyEnum.Value_1, null));
+		Assert (false, e8.Compile ().Invoke (MyEnum.Value_2, MyEnum.Value_2));
 	}
 
 	void LessThanOrEqualTest ()
@@ -937,6 +1034,16 @@ class Tester
 		Expression<Func<ushort, bool>> e6 = (ushort a) => a <= null;
 		AssertNodeType (e6, ExpressionType.LessThanOrEqual);
 		Assert (false, e6.Compile ().Invoke (60));
+		
+		Expression<Func<MyEnum, MyEnum, bool>> e7 = (a, b) => a <= b;
+		AssertNodeType (e7, ExpressionType.LessThanOrEqual);
+		Assert (false, e7.Compile ().Invoke (MyEnum.Value_2, MyEnum.Value_1));
+		Assert (true, e7.Compile ().Invoke (MyEnum.Value_2, MyEnum.Value_2));
+
+		Expression<Func<MyEnum?, MyEnum?, bool>> e8 = (a, b) => a <= b;
+		AssertNodeType (e8, ExpressionType.LessThanOrEqual);
+		Assert (false, e8.Compile ().Invoke (MyEnum.Value_1, null));
+		Assert (true, e8.Compile ().Invoke (MyEnum.Value_2, MyEnum.Value_2));
 	}
 	
 	void ListInitTest ()
@@ -1236,6 +1343,10 @@ class Tester
 		Expression<Func<ulong, ulong>> e5 = (ulong a) => ~a;
 		AssertNodeType (e5, ExpressionType.Not);
 		Assert<ulong> (18446744073709551608, e5.Compile ().Invoke (7));
+		
+		Expression<Func<MyEnum, MyEnum>> e6 = (MyEnum a) => ~a;
+		AssertNodeType (e6, ExpressionType.Convert);
+		Assert ((MyEnum)254, e6.Compile ().Invoke (MyEnum.Value_1));
 	}
 
 	void NotNullableTest ()
@@ -1259,6 +1370,11 @@ class Tester
 		AssertNodeType (e4, ExpressionType.Not);
 		Assert (0, e4.Compile ().Invoke (new MyType (-1)));
 		Assert (null, e4.Compile ().Invoke (null));
+		
+		Expression<Func<MyEnum?, MyEnum?>> e5 = (MyEnum? a) => ~a;
+		AssertNodeType (e5, ExpressionType.Convert);
+		Assert ((MyEnum) 254, e5.Compile ().Invoke (MyEnum.Value_1));
+		Assert (null, e5.Compile ().Invoke (null));
 	}
 
 	void NotEqualTest ()
@@ -1305,6 +1421,21 @@ class Tester
 		Assert (false, e8.Compile ().Invoke (null));
 		Assert (true, e8.Compile ().Invoke ("a"));
 		Assert (true, e8.Compile ().Invoke (this));
+		
+		Expression<Func<MyEnum, MyEnum, bool>> e9 = (a, b) => a != b;
+		AssertNodeType (e9, ExpressionType.NotEqual);
+		Assert (true, e9.Compile ().Invoke (MyEnum.Value_1, MyEnum.Value_2));
+		Assert (false, e9.Compile ().Invoke (MyEnum.Value_2, MyEnum.Value_2));
+
+		Expression<Func<MyEnum?, MyEnum?, bool>> e10 = (a, b) => a != b;
+		AssertNodeType (e10, ExpressionType.NotEqual);
+		Assert (true, e10.Compile ().Invoke (MyEnum.Value_1, null));
+		Assert (false, e10.Compile ().Invoke (MyEnum.Value_2, MyEnum.Value_2));
+
+		Expression<Func<MyEnum?, bool>> e11 = (a) => a != null;
+		AssertNodeType (e11, ExpressionType.NotEqual);
+		Assert (true, e11.Compile ().Invoke (MyEnum.Value_1));
+		Assert (false, e11.Compile ().Invoke (null));
 	}
 
 	void OrTest ()
@@ -1323,6 +1454,11 @@ class Tester
 		AssertNodeType (e2, ExpressionType.Or);
 		var c2 = e2.Compile ();
 		Assert (new MyType (3), c2 (new MyType (1), new MyType (2)));
+		
+		Expression<Func<MyEnum, MyEnum, MyEnum>> e3 = (a, b) => a | b;
+		AssertNodeType (e3, ExpressionType.Convert);
+		Assert ((MyEnum)3, e3.Compile ().Invoke (MyEnum.Value_1, MyEnum.Value_2));
+		Assert (MyEnum.Value_2, e3.Compile ().Invoke (MyEnum.Value_2, MyEnum.Value_2));
 	}
 
 	void OrNullableTest ()
@@ -1357,6 +1493,11 @@ class Tester
 		Assert (9, c3 (new MyType (1), 8));
 		Assert (null, c3 (null, 4));
 		*/
+		
+		Expression<Func<MyEnum?, MyEnum?, MyEnum?>> e4 = (a, b) => a | b;
+		AssertNodeType (e4, ExpressionType.Convert);
+		Assert (null, e4.Compile ().Invoke (null, MyEnum.Value_2));
+		Assert ((MyEnum)3, e4.Compile ().Invoke (MyEnum.Value_1, MyEnum.Value_2));
 	}
 
 	void OrElseTest ()
@@ -1448,6 +1589,25 @@ class Tester
 		Expression<Func<ushort, int?>> e7 = (ushort a) => null - a;
 		AssertNodeType (e7, ExpressionType.Subtract);
 		Assert (null, e7.Compile ().Invoke (690));
+		
+		Expression<Func<MyEnum, byte, MyEnum>> e8 = (a, b) => a - b;
+		AssertNodeType (e8, ExpressionType.Convert);
+		Assert ((MyEnum)255, e8.Compile ().Invoke (MyEnum.Value_1, 2));
+
+		Expression<Func<MyEnum, MyEnum, byte>> e9 = (a, b) => a - b;
+		AssertNodeType (e9, ExpressionType.Convert);
+		Assert (1, e9.Compile ().Invoke (MyEnum.Value_2, MyEnum.Value_1));
+
+		// CSC bug
+		Expression<Func<MyEnum?, byte?, MyEnum?>> e10 = (a, b) => a - b;
+		AssertNodeType (e10, ExpressionType.Convert);
+		Assert ((MyEnum) 255, e10.Compile ().Invoke (MyEnum.Value_1, 2));
+
+		// CSC bug
+		Expression<Func<MyEnum?, MyEnum?, byte?>> e11 = (a, b) => a - b;
+		AssertNodeType (e9, ExpressionType.Convert);
+		Assert (1, e9.Compile ().Invoke (MyEnum.Value_2, MyEnum.Value_1));
+		
 	}
 
 	void SubtractCheckedTest ()
