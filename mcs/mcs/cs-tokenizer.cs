@@ -238,6 +238,7 @@ namespace Mono.CSharp
 		Stack position_stack = new Stack (2);
 		class Position {
 			public int position;
+			public int line;
 			public int ref_line;
 			public int col;
 			public int putback_char;
@@ -249,6 +250,7 @@ namespace Mono.CSharp
 			public Position (Tokenizer t)
 			{
 				position = t.reader.Position;
+				line = t.line;
 				ref_line = t.ref_line;
 				col = t.col;
 				putback_char = t.putback_char;
@@ -271,6 +273,7 @@ namespace Mono.CSharp
 
 			reader.Position = p.position;
 			ref_line = p.ref_line;
+			line = p.line;
 			col = p.col;
 			putback_char = p.putback_char;
 			previous_col = p.previous_col;

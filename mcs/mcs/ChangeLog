@@ -1,3 +1,8 @@
+2008-04-29  Martin Baulig  <martin@ximian.com>
+
+	* cs-tokenizer.cs (Tokenizer.Position): Added `line'.
+	(Tokenizer.PopPosition): Also restore the `line'.
+
 2008-04-29  Marek Safar  <marek.safar@gmail.com>
 
 	* delegate.cs: Implemented Invoke expression.
