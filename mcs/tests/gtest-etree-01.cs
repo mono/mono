@@ -1,3 +1,5 @@
+// Compiler options: -unsafe
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -634,6 +636,16 @@ class Tester
 		Expression<Func<MyEnum>> e12 = () => new MyEnum ();
 		AssertNodeType (e12, ExpressionType.Constant);
 		Assert<MyEnum> (0, e12.Compile ().Invoke ());
+		
+		Expression<Func<int>> e13 = () => sizeof (byte);
+		AssertNodeType (e13, ExpressionType.Constant);
+		Assert (1, e13.Compile ().Invoke ());
+		
+		unsafe {
+			Expression<Func<Type>> e14 = () => typeof (bool*);
+			AssertNodeType (e14, ExpressionType.Constant);
+			Assert (typeof (bool*), e14.Compile ().Invoke ());
+		}
 	}
 
 	void ConvertTest ()
@@ -669,6 +681,13 @@ class Tester
 		// TODO: redundant convert
 		// TODO: pass null value
 		// Expression<Func<int?, object>> ex = x => (object)x;
+		
+		unsafe {
+			int*[] p = new int* [1];
+			Expression<Func<object>> e9 = () => (object)p;
+			AssertNodeType (e9, ExpressionType.Convert);
+			Assert (p, e9.Compile ().Invoke ());
+		}
 	}
 
 	void ConvertCheckedTest ()
@@ -1543,6 +1562,15 @@ class Tester
 		Expression<Func<IntPtr, IntPtr>> e3 = a => a;
 		AssertNodeType (e3, ExpressionType.Parameter);
 		Assert (IntPtr.Zero, e3.Compile ().Invoke (IntPtr.Zero));
+		
+		unsafe {
+			Expression<Func<int*[], int* []>> e4 = (a) => a;
+			AssertNodeType (e4, ExpressionType.Parameter);
+			Assert<int*[]> (null, e4.Compile ().Invoke (null));
+			int* e4_el = stackalloc int [5];
+			int*[] ptr = new int*[] { e4_el };
+			Assert<int*[]> (ptr, e4.Compile ().Invoke (ptr));
+		}
 	}
 
 	void QuoteTest ()

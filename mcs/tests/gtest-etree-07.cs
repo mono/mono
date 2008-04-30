@@ -1,7 +1,10 @@
+// Compiler options: -unsafe
+
 using System;
 using System.Linq.Expressions;
 
 delegate void EmptyDelegate ();
+unsafe delegate int* UnsafeDelegate ();
 
 class C
 {
@@ -10,6 +13,11 @@ class C
 	static void Test ()
 	{
 		i += 9;
+	}
+	
+	static unsafe int* Foo ()
+	{
+		return (int*)1;
 	}
 	
 	public static int Main ()
@@ -27,14 +35,26 @@ class C
 		
 		Expression<Func<EmptyDelegate>> e2 = () => Test;
 		if (e2.Body.ToString () != "Convert(CreateDelegate(EmptyDelegate, null, Void Test()))")
-			return 1;
+			return 3;
 
 		var v2 = e2.Compile ();
 		v2.Invoke ()();
 		
 		if (i != 18)
-			return 2;
+			return 4;
+			
+		unsafe {
+			Expression<Func<UnsafeDelegate>> e3 = () => new UnsafeDelegate (Foo);
+			if (e3.Body.ToString () != "Convert(CreateDelegate(UnsafeDelegate, null, Int32* Foo()))")
+				return 5;
+			
+			var v3 = e3.Compile ();
+			if (v3.Invoke ()() != (int*)1)
+				return 6;
+		}
 
+		Console.WriteLine ("OK");
 		return 0;
 	}
 }
+
