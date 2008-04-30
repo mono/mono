@@ -199,24 +199,40 @@ public class SHA384Managed : SHA384 {
 
 	private void processBlock ()
 	{
+		ulong a, b, c, d, e, f, g, h;
+
+		// abcrem doesn't work on fields
+		ulong[] W = this.W;
+		ulong[] K2 = SHAConstants.K2;
+
 		adjustByteCounts ();
 		// expand 16 word block into 80 word blocks.
 		for (int t = 16; t <= 79; t++)
-			W[t] = Sigma1 (W [t - 2]) + W [t - 7] + Sigma0 (W [t - 15]) + W [t - 16];
-
+		{
+			a = W[t-15];
+			a = ((a >> 1) | (a << 63)) ^ ((a >> 8) | (a << 56)) ^ (a >> 7);
+			b = W[t - 2];
+			b = ((b >> 19) | (b << 45)) ^ ((b >> 61) | (b << 3)) ^ (b >> 6);
+			W[t] = b + W[t - 7] + a + W[t - 16];
+		}
 		// set up working variables.
-		ulong a = H1;
-		ulong b = H2;
-		ulong c = H3;
-		ulong d = H4;
-		ulong e = H5;
-		ulong f = H6;
-		ulong g = H7;
-		ulong h = H8;
+		a = H1;
+		b = H2;
+		c = H3;
+		d = H4;
+		e = H5;
+		f = H6;
+		g = H7;
+		h = H8;
 
-		for (int t = 0; t <= 79; t++) {
-			ulong T1 = h + Sum1 (e) + Ch (e, f, g) + SHAConstants.K2 [t] + W [t];
-			ulong T2 = Sum0 (a) + Maj (a, b, c);
+		for (int t = 0; t <= 79; t++)
+		{
+			ulong T1 = ((e >> 14) | (e << 50)) ^ ((e >> 18) | (e << 46)) ^ ((e >> 41) | (e << 23));
+			T1 += h + ((e & f) ^ ((~e) & g)) + SHAConstants.K2[t] + W[t];
+
+			ulong T2 = ((a >> 28) | (a << 36)) ^ ((a >> 34) | (a << 30)) ^ ((a >> 39) | (a << 25));
+			T2 += ((a & b) ^ (a & c) ^ (b & c));
+
 			h = g;
 			g = f;
 			f = e;
@@ -239,43 +255,6 @@ public class SHA384Managed : SHA384 {
 		wOff = 0;
 		for (int i = 0; i != W.Length; i++)
 			W[i] = 0;
-	}
-
-	private ulong rotateRight (ulong x, int n)
-	{
-		return (x >> n) | (x << (64 - n));
-	}
-
-	/* SHA-384 and SHA-512 functions (as for SHA-256 but for longs) */
-	private ulong Ch (ulong x, ulong y, ulong z)
-	{
-		return ((x & y) ^ ((~x) & z));
-	}
-
-	private ulong Maj (ulong x, ulong y, ulong z)
-	{
-		return ((x & y) ^ (x & z) ^ (y & z));
-	}
-
-	private ulong Sum0 (ulong x)
-	{
-		return rotateRight (x, 28) ^ rotateRight (x, 34) ^ rotateRight (x, 39);
-	}
-
-	private ulong Sum1 (ulong x)
-	{
-		return rotateRight (x, 14) ^ rotateRight (x, 18) ^ rotateRight (x, 41);
-	}
-
-	private ulong Sigma0 (ulong x)
-	{
-		return rotateRight (x, 1) ^ rotateRight(x, 8) ^ (x >> 7);
-	}
-
-	private ulong Sigma1 (ulong x)
-	{
-		return rotateRight (x, 19) ^ rotateRight (x, 61) ^ (x >> 6);
-	}
 }
 
 }
