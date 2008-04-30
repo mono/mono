@@ -1,3 +1,7 @@
+2008-04-30  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* TabControlPainter.cs: Ordered usings.
+
 2008-04-28  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* TabControlPainter.cs: Fixed duplication.

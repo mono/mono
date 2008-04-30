@@ -22,8 +22,8 @@
 // Authors:
 //	George Giolfan (georgegiolfan@yahoo.com)
 
-using System.Windows.Forms.VisualStyles;
 using System.Drawing;
+using System.Windows.Forms.VisualStyles;
 namespace System.Windows.Forms.Theming.VisualStyles
 {
 	class TabControlPainter : Default.TabControlPainter
