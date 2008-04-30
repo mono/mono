@@ -45,7 +45,8 @@ namespace System.Reflection.Emit
 		ConstructorBuilder cb;
 		#endregion
 
-		public ConstructorOnTypeBuilderInst (MonoGenericClass instantiation, ConstructorBuilder cb) {
+		public ConstructorOnTypeBuilderInst (MonoGenericClass instantiation, ConstructorBuilder cb)
+		{
 			this.instantiation = instantiation;
 			this.cb = cb;
 		}
@@ -72,41 +73,49 @@ namespace System.Reflection.Emit
 			}
 		}
 
-		public override bool IsDefined (Type attributeType, bool inherit) {
-			throw new NotSupportedException ();
+		public override bool IsDefined (Type attributeType, bool inherit)
+		{
+			return cb.IsDefined (attributeType, inherit);
 		}
 
-		public override object [] GetCustomAttributes (bool inherit) {
-			throw new NotSupportedException ();
+		public override object [] GetCustomAttributes (bool inherit)
+		{
+			return cb.GetCustomAttributes (inherit);
 		}
 
-		public override object [] GetCustomAttributes (Type attributeType, bool inherit) {
-			throw new NotSupportedException ();
+		public override object [] GetCustomAttributes (Type attributeType, bool inherit)
+		{
+			return cb.GetCustomAttributes (attributeType, inherit);
 		}
 
 		//
 		// MethodBase members
 		//
 
-		public override MethodImplAttributes GetMethodImplementationFlags() {
+		public override MethodImplAttributes GetMethodImplementationFlags ()
+		{
 			return cb.GetMethodImplementationFlags ();
 		}
 
-		public override ParameterInfo[] GetParameters() {
-			throw new NotImplementedException ();
+		public override ParameterInfo[] GetParameters ()
+		{
+			return cb.GetParameters ();
 		}
 
-		internal override int GetParameterCount () {
+		internal override int GetParameterCount ()
+		{
 			return cb.GetParameterCount ();
 		}
 
-		public override Object Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) {
-			throw new NotImplementedException ();
+		public override Object Invoke (Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+		{
+			return cb.Invoke (obj, invokeAttr, binder, parameters,
+				culture);
 		}
 
 		public override RuntimeMethodHandle MethodHandle {
 			get {
-				throw new NotImplementedException ();
+				return cb.MethodHandle;
 			}
 		}
 
@@ -122,14 +131,14 @@ namespace System.Reflection.Emit
 			}
 		}
 
-		public override Type [] GetGenericArguments () {
-			throw new NotImplementedException ();
+		public override Type [] GetGenericArguments ()
+		{
+			return cb.GetGenericArguments ();
 		}
 
 		public override bool ContainsGenericParameters {
 			get {
-				// FIXME:
-				throw new NotImplementedException ();
+				return false;
 			}
 		}
 
@@ -141,7 +150,7 @@ namespace System.Reflection.Emit
 
 		public override bool IsGenericMethod {
 			get {
-				return true;
+				return false;
 			}
 		}
 
@@ -150,8 +159,9 @@ namespace System.Reflection.Emit
 		//
 
 		public override object Invoke (BindingFlags invokeAttr, Binder binder, object[] parameters,
-									   CultureInfo culture) {
-			throw new NotImplementedException ();
+									   CultureInfo culture)
+		{
+			throw new InvalidOperationException ();
 		}
 	}
 }

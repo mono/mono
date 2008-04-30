@@ -163,11 +163,17 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[ExpectedException (typeof (NotSupportedException))]
 		public void TestGUIDIncomplete ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
-			Guid g = tb.GUID;
+			try {
+				Guid g = tb.GUID;
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 
 		[Test] // bug #71302
@@ -211,6 +217,8 @@ namespace MonoTests.System.Reflection.Emit
 				bool b = tb.HasElementType;
 				Assert.Fail ("#1: " + b);
 			} catch (NotSupportedException ex) {
+				// The invoked member is not supported in a
+				// dynamic module
 				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
@@ -235,6 +243,8 @@ namespace MonoTests.System.Reflection.Emit
 				bool b = tb.HasElementType;
 				Assert.Fail ("#1: " + b);
 			} catch (NotSupportedException ex) {
+				// The invoked member is not supported in a
+				// dynamic module
 				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
@@ -902,8 +912,7 @@ namespace MonoTests.System.Reflection.Emit
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
 				Assert.IsNull (ex.InnerException, "#A3");
 				Assert.IsNotNull (ex.Message, "#A4");
-				Assert.IsNotNull (ex.ParamName, "#A5");
-				Assert.AreEqual ("parent", ex.ParamName, "#A6");
+				Assert.AreEqual ("parent", ex.ParamName, "#A5");
 			}
 #endif
 
@@ -920,8 +929,7 @@ namespace MonoTests.System.Reflection.Emit
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
 				Assert.IsNull (ex.InnerException, "#B3");
 				Assert.IsNotNull (ex.Message, "#B4");
-				Assert.IsNotNull (ex.ParamName, "#B5");
-				Assert.AreEqual ("parent", ex.ParamName, "#B6");
+				Assert.AreEqual ("parent", ex.ParamName, "#B5");
 			}
 #endif
 
@@ -976,12 +984,19 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestSetParentComplete ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
 			tb.CreateType ();
-			tb.SetParent (typeof (Attribute));
+			try {
+				tb.SetParent (typeof (Attribute));
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// Unable to change after type has been created
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 
 		[Test]
@@ -1002,19 +1017,35 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[ExpectedException (typeof (NotSupportedException))]
 		public void TestTypeHandle ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
-			RuntimeTypeHandle handle = tb.TypeHandle;
+			try {
+				RuntimeTypeHandle handle = tb.TypeHandle;
+				Assert.Fail ("#1:" + handle);
+			} catch (NotSupportedException ex) {
+				// The invoked member is not supported in a
+				// dynamic module
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (NotSupportedException))]
 		public void TestTypeInitializerIncomplete ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
-			ConstructorInfo cb = tb.TypeInitializer;
+			try {
+				ConstructorInfo cb = tb.TypeInitializer;
+				Assert.Fail ("#1:" + (cb != null));
+			} catch (NotSupportedException ex) {
+				// The invoked member is not supported in a
+				// dynamic module
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 
 		[Test]
@@ -1063,15 +1094,24 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		public void TestAddInterfaceImplementation ()
+		public void AddInterfaceImplementation_InterfaceType_Null ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
 			try {
 				tb.AddInterfaceImplementation (null);
 				Assert.Fail ("#1");
-			} catch (ArgumentNullException) {
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("interfaceType", ex.ParamName, "#5");
 			}
+		}
 
+		[Test]
+		public void TestAddInterfaceImplementation ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
 			tb.AddInterfaceImplementation (typeof (AnInterface));
 			tb.AddInterfaceImplementation (typeof (AnInterface));
 
@@ -1132,8 +1172,12 @@ namespace MonoTests.System.Reflection.Emit
 			// Can not be called on a created type
 			try {
 				tb.DefineConstructor (0, 0, null);
-				Assert.Fail ();
-			} catch (InvalidOperationException) {
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// Unable to change after type has been created
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
 			}
 		}
 
@@ -1147,19 +1191,24 @@ namespace MonoTests.System.Reflection.Emit
 			// Can not be called on a created type, altough the MSDN docs does not mention this
 			try {
 				tb.DefineDefaultConstructor (0);
-				Assert.Fail ();
-			} catch (InvalidOperationException) {
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// Unable to change after type has been created
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
 			}
 		}
-
+	
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestDefineDefaultConstructorParent ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
-			tb.DefineConstructor (MethodAttributes.Public,
+			ConstructorBuilder cb = tb.DefineConstructor (
+				MethodAttributes.Public,
 				CallingConventions.Standard,
 				new Type [] { typeof (string) });
+			cb.GetILGenerator ().Emit (OpCodes.Ret);
 			Type type = tb.CreateType ();
 
 			// create TypeBuilder for type that derived from the 
@@ -1169,7 +1218,38 @@ namespace MonoTests.System.Reflection.Emit
 
 			// you cannot create a type with a default ctor that
 			// derives from a type without a default ctor
-			tb.CreateType ();
+			try {
+				tb.CreateType ();
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				// Parent does not have a default constructor.
+				// The default constructor must be explicitly defined
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test]
+		public void DefineEvent_Name_NullChar ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+
+			try {
+				tb.DefineEvent ("\0test", EventAttributes.None,
+					typeof (int));
+				Assert.Fail ("#A1");
+			} catch (ArgumentException ex) {
+				// Illegal name
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.AreEqual ("name", ex.ParamName, "#A5");
+			}
+
+			EventBuilder eb = tb.DefineEvent ("te\0st", EventAttributes.None,
+				typeof (int));
+			Assert.IsNotNull (eb, "#B1");
 		}
 
 		[Test]
@@ -1180,29 +1260,70 @@ namespace MonoTests.System.Reflection.Emit
 			// Test invalid arguments
 			try {
 				tb.DefineEvent (null, 0, typeof (int));
-				Assert.Fail ("#1");
-			} catch (ArgumentNullException) {
+				Assert.Fail ("#A1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.AreEqual ("name", ex.ParamName, "#A5");
 			}
 
 			try {
 				tb.DefineEvent ("FOO", 0, null);
-				Assert.Fail ("#2");
-			} catch (ArgumentNullException) {
+				Assert.Fail ("#B1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.AreEqual ("type", ex.ParamName, "#B5");
 			}
 
 			try {
-				tb.DefineEvent ("", 0, typeof (int));
-				Assert.Fail ("#3");
-			} catch (ArgumentException) {
+				tb.DefineEvent (string.Empty, 0, typeof (int));
+				Assert.Fail ("#C1");
+			} catch (ArgumentException ex) {
+				// Empty name is not legal
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+				Assert.AreEqual ("name", ex.ParamName, "#C5");
 			}
 
 			tb.CreateType ();
+
 			// Can not be called on a created type
 			try {
 				tb.DefineEvent ("BAR", 0, typeof (int));
-				Assert.Fail ("#4");
-			} catch (InvalidOperationException) {
+				Assert.Fail ("#D1");
+			} catch (InvalidOperationException ex) {
+				// Unable to change after type has been created
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#D2");
+				Assert.IsNull (ex.InnerException, "#D3");
+				Assert.IsNotNull (ex.Message, "#D4");
 			}
+		}
+
+		[Test]
+		public void DefineField_Name_NullChar ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+
+			try {
+				tb.DefineField ("\0test", typeof (int),
+					FieldAttributes.Private);
+				Assert.Fail ("#A1");
+			} catch (ArgumentException ex) {
+				// Illegal name
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.AreEqual ("fieldName", ex.ParamName, "#A5");
+			}
+
+			FieldBuilder fb = tb.DefineField ("te\0st", typeof (int),
+				FieldAttributes.Private);
+			Assert.IsNotNull (fb, "#B1");
+			Assert.AreEqual ("te\0st", fb.Name, "#B2");
 		}
 
 		[Test]
@@ -1213,36 +1334,60 @@ namespace MonoTests.System.Reflection.Emit
 			// Check invalid arguments
 			try {
 				tb.DefineField (null, typeof (int), 0);
-				Assert.Fail ("#1");
-			} catch (ArgumentNullException) {
+				Assert.Fail ("#A1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.AreEqual ("fieldName", ex.ParamName, "#A5");
 			}
 
 			try {
-				tb.DefineField ("", typeof (int), 0);
-				Assert.Fail ("#2");
-			} catch (ArgumentException) {
+				tb.DefineField (string.Empty, typeof (int), 0);
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// Empty name is not legal
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.AreEqual ("fieldName", ex.ParamName, "#B5");
 			}
 
 			try {
 				// Strangely, 'A<NULL>' is accepted...
 				string name = String.Format ("{0}", (char) 0);
 				tb.DefineField (name, typeof (int), 0);
-				Assert.Fail ("#3");
-			} catch (ArgumentException) {
+				Assert.Fail ("#C1");
+			} catch (ArgumentException ex) {
+				// Illegal name
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+				Assert.AreEqual ("fieldName", ex.ParamName, "#C5");
 			}
 
 			try {
 				tb.DefineField ("A", typeof (void), 0);
-				Assert.Fail ("#4");
-			} catch (ArgumentException) {
+				Assert.Fail ("#D1");
+			} catch (ArgumentException ex) {
+				// Bad field type in defining field
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#D2");
+				Assert.IsNull (ex.InnerException, "#D3");
+				Assert.IsNotNull (ex.Message, "#D4");
+				Assert.IsNull (ex.ParamName, "#D5");
 			}
 
 			tb.CreateType ();
+
 			// Can not be called on a created type
 			try {
 				tb.DefineField ("B", typeof (int), 0);
-				Assert.Fail ("#5");
-			} catch (InvalidOperationException) {
+				Assert.Fail ("#E1");
+			} catch (InvalidOperationException ex) {
+				// Unable to change after type has been created
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#E2");
+				Assert.IsNull (ex.InnerException, "#E3");
+				Assert.IsNotNull (ex.Message, "#E4");
 			}
 		}
 
@@ -1254,34 +1399,57 @@ namespace MonoTests.System.Reflection.Emit
 			// Check invalid arguments
 			try {
 				tb.DefineInitializedData (null, new byte [1], 0);
-				Assert.Fail ("#1");
-			} catch (ArgumentNullException) {
+				Assert.Fail ("#A1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.AreEqual ("name", ex.ParamName, "#A5");
 			}
 
 			try {
 				tb.DefineInitializedData ("FOO", null, 0);
-				Assert.Fail ("#2");
-			} catch (ArgumentNullException) {
+				Assert.Fail ("#B1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.AreEqual ("data", ex.ParamName, "#B5");
 			}
 
 			try {
-				tb.DefineInitializedData ("", new byte [1], 0);
-				Assert.Fail ("#3");
-			} catch (ArgumentException) {
+				tb.DefineInitializedData (string.Empty, new byte [1], 0);
+				Assert.Fail ("#C1");
+			} catch (ArgumentException ex) {
+				// Empty name is not legal
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+				Assert.AreEqual ("name", ex.ParamName, "#C5");
 			}
 
 			// The size of the data is less than or equal to zero ???
 			try {
 				tb.DefineInitializedData ("BAR", new byte [0], 0);
-				Assert.Fail ("#4");
-			} catch (ArgumentException) {
+				Assert.Fail ("#D1");
+			} catch (ArgumentException ex) {
+				// Data size must be > 0 and < 0x3f0000
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#D2");
+				Assert.IsNull (ex.InnerException, "#D3");
+				Assert.IsNotNull (ex.Message, "#D4");
+				Assert.IsNull (ex.ParamName, "#D5");
 			}
 
 			try {
 				string name = String.Format ("{0}", (char) 0);
 				tb.DefineInitializedData (name, new byte [1], 0);
-				Assert.Fail ("#5");
-			} catch (ArgumentException) {
+				Assert.Fail ("#E1");
+			} catch (ArgumentException ex) {
+				// Illegal name
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#E2");
+				Assert.IsNull (ex.InnerException, "#E3");
+				Assert.IsNotNull (ex.Message, "#E4");
+				Assert.AreEqual ("fieldName", ex.ParamName, "#E5");
 			}
 
 			tb.CreateType ();
@@ -1289,8 +1457,12 @@ namespace MonoTests.System.Reflection.Emit
 			// Can not be called on a created type, altough the MSDN docs does not mention this
 			try {
 				tb.DefineInitializedData ("BAR2", new byte [1], 0);
-				Assert.Fail ("#6");
-			} catch (InvalidOperationException) {
+				Assert.Fail ("#F1");
+			} catch (InvalidOperationException ex) {
+				// Unable to change after type has been created
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#F2");
+				Assert.IsNull (ex.InnerException, "#F3");
+				Assert.IsNotNull (ex.Message, "#F4");
 			}
 		}
 
@@ -1301,38 +1473,64 @@ namespace MonoTests.System.Reflection.Emit
 
 			try {
 				tb.DefineUninitializedData (null, 1, 0);
-				Assert.Fail ("#1");
-			} catch (ArgumentNullException) {
+				Assert.Fail ("#A1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.AreEqual ("name", ex.ParamName, "#A5");
 			}
 
 			try {
-				tb.DefineUninitializedData ("", 1, 0);
-				Assert.Fail ("#2");
-			} catch (ArgumentException) {
+				tb.DefineUninitializedData (string.Empty, 1, 0);
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// Empty name is not legal
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.AreEqual ("name", ex.ParamName, "#B5");
 			}
 
 			// The size of the data is less than or equal to zero ???
 			try {
 				tb.DefineUninitializedData ("BAR", 0, 0);
-				Assert.Fail ("#3");
-			} catch (ArgumentException) {
+				Assert.Fail ("#C1");
+			} catch (ArgumentException ex) {
+				// Data size must be > 0 and < 0x3f0000
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+				Assert.IsNull (ex.ParamName, "#C5");
 			}
 
 			try {
 				string name = String.Format ("{0}", (char) 0);
 				tb.DefineUninitializedData (name, 1, 0);
-				Assert.Fail ("#4");
-			} catch (ArgumentException) {
+				Assert.Fail ("#D1");
+			} catch (ArgumentException ex) {
+				// Illegal name
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#D2");
+				Assert.IsNull (ex.InnerException, "#D3");
+				Assert.IsNotNull (ex.Message, "#D4");
+				Assert.AreEqual ("fieldName", ex.ParamName, "#D5");
 			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
 		public void DefineUninitializedDataAlreadyCreated ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
 			tb.CreateType ();
-			tb.DefineUninitializedData ("BAR2", 1, 0);
+			try {
+				tb.DefineUninitializedData ("BAR2", 1, 0);
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// Unable to change after type has been created
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 
 		[Test]
@@ -1356,6 +1554,28 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		public void DefineMethod_Name_NullChar ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			try {
+				tb.DefineMethod ("\0test", MethodAttributes.Private,
+					typeof (string), Type.EmptyTypes);
+				Assert.Fail ("#A1");
+			} catch (ArgumentException ex) {
+				// Illegal name
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.AreEqual ("name", ex.ParamName, "#A5");
+			}
+
+			MethodBuilder mb = tb.DefineMethod ("te\0st", MethodAttributes.Private,
+				typeof (string), Type.EmptyTypes);
+			Assert.IsNotNull (mb, "#B1");
+			Assert.AreEqual ("te\0st", mb.Name, "#B2");
+		}
+
+		[Test]
 		public void TestDefineMethod ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
@@ -1363,22 +1583,36 @@ namespace MonoTests.System.Reflection.Emit
 			// Check invalid arguments
 			try {
 				tb.DefineMethod (null, 0, null, null);
-				Assert.Fail ("#1");
-			} catch (ArgumentNullException) {
+				Assert.Fail ("#A1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.AreEqual ("name", ex.ParamName, "#A5");
 			}
 
 			try {
-				tb.DefineMethod ("", 0, null, null);
-				Assert.Fail ("#2");
-			} catch (ArgumentException) {
+				tb.DefineMethod (string.Empty, 0, null, null);
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// Empty name is not legal
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.AreEqual ("name", ex.ParamName, "#B5");
 			}
 
 			// Check non-virtual methods on an interface
 			TypeBuilder tb2 = module.DefineType (genTypeName (), TypeAttributes.Interface | TypeAttributes.Abstract);
 			try {
 				tb2.DefineMethod ("FOO", MethodAttributes.Abstract, null, null);
-				Assert.Fail ("#3");
-			} catch (ArgumentException) {
+				Assert.Fail ("#C1");
+			} catch (ArgumentException ex) {
+				// Interface method must be abstract and virtual
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+				Assert.IsNull (ex.ParamName, "#C5");
 			}
 
 			// Check static methods on an interface
@@ -1390,8 +1624,12 @@ namespace MonoTests.System.Reflection.Emit
 			// Can not be called on a created type
 			try {
 				tb.DefineMethod ("bar", 0, null, null);
-				Assert.Fail ("#4");
-			} catch (InvalidOperationException) {
+				Assert.Fail ("#D1");
+			} catch (InvalidOperationException ex) {
+				// Unable to change after type has been created
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#D2");
+				Assert.IsNull (ex.InnerException, "#D3");
+				Assert.IsNotNull (ex.Message, "#D4");
 			}
 		}
 
@@ -1456,20 +1694,34 @@ namespace MonoTests.System.Reflection.Emit
 			// Check invalid arguments
 			try {
 				tb.DefineNestedType (null);
-				Assert.Fail ("#1");
-			} catch (ArgumentNullException) {
+				Assert.Fail ("#A1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.AreEqual ("fullname", ex.ParamName, "#A5");
 			}
 
 			try {
-				tb.DefineNestedType ("");
-				Assert.Fail ("#2");
-			} catch (ArgumentException) {
+				tb.DefineNestedType (string.Empty);
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// Empty name is not legal
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.AreEqual ("fullname", ex.ParamName, "#B5");
 			}
 
 			try {
 				tb.DefineNestedType (nullName ());
-				Assert.Fail ("#3");
-			} catch (ArgumentException) {
+				Assert.Fail ("#C1");
+			} catch (ArgumentException ex) {
+				// Illegal name
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+				Assert.AreEqual ("fullname", ex.ParamName, "#C5");
 			}
 
 			// If I fix the code so this works then mcs breaks -> how can mcs
@@ -1486,8 +1738,12 @@ namespace MonoTests.System.Reflection.Emit
 			try {
 				tb.DefineNestedType ("BB", TypeAttributes.NestedPublic, null,
 									 new Type [1]);
-				Assert.Fail ("#5");
-			} catch (ArgumentException) {
+				Assert.Fail ("#D1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#D2");
+				Assert.IsNull (ex.InnerException, "#D3");
+				Assert.IsNotNull (ex.Message, "#D4");
+				Assert.AreEqual ("interfaces", ex.ParamName, "#D5");
 			}
 
 			// I think this should reject non-interfaces, but it does not
@@ -1518,13 +1774,39 @@ namespace MonoTests.System.Reflection.Emit
 			{
 				TypeBuilder nested = tb.DefineNestedType ("N1");
 
-				Assert.AreEqual ("N1", nested.Name, "#6");
-				Assert.AreEqual (typeof (object), nested.BaseType, "#7");
-				Assert.AreEqual (TypeAttributes.NestedPrivate, nested.Attributes, "#8");
-				Assert.AreEqual (0, nested.GetInterfaces ().Length, "#9");
+				Assert.AreEqual ("N1", nested.Name, "#E1");
+				Assert.AreEqual (typeof (object), nested.BaseType, "#E2");
+				Assert.AreEqual (TypeAttributes.NestedPrivate, nested.Attributes, "#E3");
+				Assert.AreEqual (0, nested.GetInterfaces ().Length, "#E4");
 			}
 
 			// TODO:
+		}
+
+		[Test]
+		public void DefinePInvokeMethod_Name_NullChar ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			try {
+				tb.DefinePInvokeMethod ("\0test", "B", "C",
+					MethodAttributes.Private, CallingConventions.Standard,
+					typeof (string),Type.EmptyTypes, CallingConvention.Cdecl,
+					CharSet.Unicode);
+				Assert.Fail ("#A1");
+			} catch (ArgumentException ex) {
+				// Illegal name
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.AreEqual ("name", ex.ParamName, "#A5");
+			}
+
+			MethodBuilder mb = tb.DefinePInvokeMethod ("te\0st", "B", "C",
+				MethodAttributes.Private, CallingConventions.Standard,
+				typeof (string), Type.EmptyTypes, CallingConvention.Cdecl,
+				CharSet.Unicode);
+			Assert.IsNotNull (mb, "#B1");
+			Assert.AreEqual ("te\0st", mb.Name, "#B2");
 		}
 
 		[Test]
@@ -1537,16 +1819,26 @@ namespace MonoTests.System.Reflection.Emit
 			// Try invalid parameters
 			try {
 				tb.DefinePInvokeMethod (null, "B", "C", 0, 0, null, null, 0, 0);
-				Assert.Fail ("#1");
-			} catch (ArgumentNullException) {
+				Assert.Fail ("#A1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.AreEqual ("name", ex.ParamName, "#A5");
 			}
 			// etc...
 
 			// Try invalid attributes
 			try {
 				tb.DefinePInvokeMethod ("A2", "B", "C", MethodAttributes.Abstract, 0, null, null, 0, 0);
-				Assert.Fail ("#2");
-			} catch (ArgumentException) {
+				Assert.Fail ("#B1");
+			} catch (ArgumentException ex) {
+				// PInvoke methods must be static and native and
+				// cannot be abstract
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsNull (ex.ParamName, "#B5");
 			}
 
 			// Try an interface parent
@@ -1554,22 +1846,58 @@ namespace MonoTests.System.Reflection.Emit
 
 			try {
 				tb2.DefinePInvokeMethod ("A", "B", "C", 0, 0, null, null, 0, 0);
-				Assert.Fail ("#3");
-			} catch (ArgumentException) {
+				Assert.Fail ("#C1");
+			} catch (ArgumentException ex) {
+				// PInvoke methods cannot exist on interfaces
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsNull (ex.ParamName, "#B5");
 			}
 		}
 
 		[Test]
-		public void TestDefineProperty ()
+		public void DefineProperty_Name_NullChar ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
 
-			// Check null parameter types
 			try {
-				tb.DefineProperty ("A", 0, null, new Type [1]);
-				Assert.Fail ();
-			} catch (ArgumentNullException) {
+				tb.DefineProperty ("\0test", 0, typeof (string), Type.EmptyTypes);
+				Assert.Fail ("#A1");
+			} catch (ArgumentException ex) {
+				// Illegal name
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.AreEqual ("name", ex.ParamName, "#A5");
 			}
+
+			PropertyBuilder pb = tb.DefineProperty ("te\0st", 0,
+				typeof (string), Type.EmptyTypes); 
+			Assert.IsNotNull (pb, "#B1");
+			Assert.AreEqual ("te\0st", pb.Name, "#B2");
+		}
+
+		[Test]
+		public void DefineProperty_ParameterTypes_ItemNull ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+
+			try {
+				tb.DefineProperty ("A", 0, typeof (string), new Type [1]);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test]
+		public void DefineProperty_ReturnType_Null ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			tb.DefineProperty ("A", 0, null, Type.EmptyTypes);
 		}
 
 #if NET_2_0
@@ -1640,12 +1968,20 @@ namespace MonoTests.System.Reflection.Emit
 #endif
 
 		[Test]
-		[ExpectedException (typeof (NotSupportedException))]
 		[Category ("NotWorking")]
 		public void TestIsDefinedIncomplete ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
-			tb.IsDefined (typeof (int), true);
+			try {
+				tb.IsDefined (typeof (int), true);
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				// The invoked member is not supported in a
+				// dynamic module
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 
 		[Test]
@@ -1678,8 +2014,7 @@ namespace MonoTests.System.Reflection.Emit
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsNotNull (ex.ParamName, "#5");
-				Assert.AreEqual ("attributeType", ex.ParamName, "#6");
+				Assert.AreEqual ("attributeType", ex.ParamName, "#5");
 			}
 		}
 
@@ -1697,6 +2032,8 @@ namespace MonoTests.System.Reflection.Emit
 				tb.GetConstructor (Type.EmptyTypes);
 				Assert.Fail ("#1");
 			} catch (NotSupportedException ex) {
+				// The invoked member is not supported in a
+				// dynamic module
 				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
@@ -2909,6 +3246,8 @@ namespace MonoTests.System.Reflection.Emit
 					new ParameterModifier [0]);
 				Assert.Fail ("#1");
 			} catch (NotSupportedException ex) {
+				// The invoked member is not supported in a
+				// dynamic module
 				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
@@ -2930,6 +3269,8 @@ namespace MonoTests.System.Reflection.Emit
 				tb.GetConstructors ();
 				Assert.Fail ("#1");
 			} catch (NotSupportedException ex) {
+				// The invoked member is not supported in a
+				// dynamic module
 				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
@@ -3225,6 +3566,8 @@ namespace MonoTests.System.Reflection.Emit
 					BindingFlags.Instance);
 				Assert.Fail ("#1");
 			} catch (NotSupportedException ex) {
+				// The invoked member is not supported in a
+				// dynamic module
 				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
@@ -3232,11 +3575,19 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[ExpectedException (typeof (NotSupportedException))]
 		public void TestGetCustomAttributesIncomplete ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
-			tb.GetCustomAttributes (false);
+			try {
+				tb.GetCustomAttributes (false);
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				// The invoked member is not supported in a
+				// dynamic module
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 
 		[Test]
@@ -3257,11 +3608,19 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[ExpectedException (typeof (NotSupportedException))]
 		public void TestGetCustomAttributesOfTypeIncomplete ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
-			tb.GetCustomAttributes (typeof (ObsoleteAttribute), false);
+			try {
+				tb.GetCustomAttributes (typeof (ObsoleteAttribute), false);
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				// The invoked member is not supported in a
+				// dynamic module
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 
 		[Test]
@@ -3283,21 +3642,35 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void TestGetCustomAttributesOfNullTypeComplete ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
 			tb.CreateType ();
-			tb.GetCustomAttributes (null, false);
+			try {
+				tb.GetCustomAttributes (null, false);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("attributeType", ex.ParamName, "#5");
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (NotSupportedException))]
 		[Ignore ("mcs depends on this")]
 		public void TestGetEventsIncomplete ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
-			tb.GetEvents ();
+			try {
+				tb.GetEvents ();
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				throw;
+			}
 		}
 
 		[Test]
@@ -3322,12 +3695,19 @@ namespace MonoTests.System.Reflection.Emit
 
 
 		[Test]
-		[ExpectedException (typeof (NotSupportedException))]
 		[Ignore ("mcs depends on this")]
 		public void TestGetEventsFlagsIncomplete ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
-			tb.GetEvents (BindingFlags.Public);
+			try {
+				tb.GetEvents (BindingFlags.Public);
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				throw;
+			}
 		}
 
 		[Test]
@@ -3553,12 +3933,19 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[ExpectedException (typeof (NotSupportedException))]
 		[Ignore ("mcs depends on this")]
 		public void TestGetEventIncomplete ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
-			tb.GetEvent ("FOO");
+			try {
+				tb.GetEvent ("FOO");
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				throw;
+			}
 		}
 
 		[Test]
@@ -3583,12 +3970,19 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[ExpectedException (typeof (NotSupportedException))]
 		[Ignore ("mcs depends on this")]
 		public void TestGetEventFlagsIncomplete ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
-			tb.GetEvent ("FOO", BindingFlags.Public);
+			try {
+				tb.GetEvent ("FOO", BindingFlags.Public);
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				throw;
+			}
 		}
 
 		[Test]
@@ -4322,6 +4716,8 @@ namespace MonoTests.System.Reflection.Emit
 				tb.GetFields (BindingFlags.Instance | BindingFlags.Public);
 				Assert.Fail ("#1");
 			} catch (NotSupportedException ex) {
+				// The invoked member is not supported in a
+				// dynamic module
 				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
@@ -4579,6 +4975,8 @@ namespace MonoTests.System.Reflection.Emit
 				tb.GetField ("test");
 				Assert.Fail ("#1");
 			} catch (NotSupportedException ex) {
+				// The invoked member is not supported in a
+				// dynamic module
 				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
@@ -4652,6 +5050,8 @@ namespace MonoTests.System.Reflection.Emit
 				tb.GetField ("test", BindingFlags.Public);
 				Assert.Fail ("#1");
 			} catch (NotSupportedException ex) {
+				// The invoked member is not supported in a
+				// dynamic module
 				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
@@ -5630,11 +6030,19 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[ExpectedException (typeof (NotSupportedException))]
 		public void TestGetPropertyIncomplete ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
-			tb.GetProperty ("test");
+			try {
+				tb.GetProperty ("test");
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				// The invoked member is not supported in a
+				// dynamic module
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 
 		[Test]
@@ -5652,6 +6060,8 @@ namespace MonoTests.System.Reflection.Emit
 				tb.GetProperty ("CustomerName");
 				Assert.Fail ("#1");
 			} catch (NotSupportedException ex) {
+				// The invoked member is not supported in a
+				// dynamic module
 				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
@@ -5659,11 +6069,19 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[ExpectedException (typeof (NotSupportedException))]
 		public void TestGetPropertyFlagsIncomplete ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
-			tb.GetProperty ("test", BindingFlags.Public);
+			try {
+				tb.GetProperty ("test", BindingFlags.Public);
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				// The invoked member is not supported in a
+				// dynamic module
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 
 		[Test]
@@ -6309,24 +6727,24 @@ namespace MonoTests.System.Reflection.Emit
 			TypeBuilder tb = module.DefineType (genTypeName (),
 				TypeAttributes.Abstract);
 			mb = tb.DefineMethod ("Hello", MethodAttributes.Public,
-				typeof (void), new Type [0]);
+				typeof (void), Type.EmptyTypes);
 			ilgen = mb.GetILGenerator ();
 			ilgen.Emit (OpCodes.Ret);
 
 			mb = tb.DefineMethod ("Run", MethodAttributes.Private,
-				typeof (void), new Type [0]);
+				typeof (void), Type.EmptyTypes);
 			ilgen = mb.GetILGenerator ();
 			ilgen.Emit (OpCodes.Ret);
 
 			mb = tb.DefineMethod ("Execute", MethodAttributes.Public |
 				MethodAttributes.Static,
-				typeof (void), new Type [0]);
+				typeof (void), Type.EmptyTypes);
 			ilgen = mb.GetILGenerator ();
 			ilgen.Emit (OpCodes.Ret);
 
 			mb = tb.DefineMethod ("Init", MethodAttributes.Public |
 				MethodAttributes.Abstract | MethodAttributes.Virtual,
-				typeof (void), new Type [0]);
+				typeof (void), Type.EmptyTypes);
 
 			MethodInfo [] methods = tb.GetMethods ();
 			Assert.AreEqual (7, methods.Length, "#A");
@@ -6370,24 +6788,24 @@ namespace MonoTests.System.Reflection.Emit
 			TypeBuilder tb = module.DefineType (genTypeName (),
 				TypeAttributes.Abstract);
 			mb = tb.DefineMethod ("Hello", MethodAttributes.Public,
-				typeof (void), new Type [0]);
+				typeof (void), Type.EmptyTypes);
 			ilgen = mb.GetILGenerator ();
 			ilgen.Emit (OpCodes.Ret);
 
 			mb = tb.DefineMethod ("Run", MethodAttributes.Private,
-				typeof (void), new Type [0]);
+				typeof (void), Type.EmptyTypes);
 			ilgen = mb.GetILGenerator ();
 			ilgen.Emit (OpCodes.Ret);
 
 			mb = tb.DefineMethod ("Execute", MethodAttributes.Public |
 				MethodAttributes.Static,
-				typeof (void), new Type [0]);
+				typeof (void), Type.EmptyTypes);
 			ilgen = mb.GetILGenerator ();
 			ilgen.Emit (OpCodes.Ret);
 
 			mb = tb.DefineMethod ("Init", MethodAttributes.Public |
 				MethodAttributes.Abstract | MethodAttributes.Virtual,
-				typeof (void), new Type [0]);
+				typeof (void), Type.EmptyTypes);
 
 			try {
 				tb.GetMethods ();
@@ -6409,7 +6827,7 @@ namespace MonoTests.System.Reflection.Emit
 			TypeBuilder tb = module.DefineType (genTypeName (),
 				TypeAttributes.Abstract);
 			mb = tb.DefineMethod ("Hello", MethodAttributes.Public,
-				typeof (string), new Type [0]);
+				typeof (string), Type.EmptyTypes);
 			ilgen = mb.GetILGenerator ();
 			ilgen.Emit (OpCodes.Ldstr, "Hi! ");
 			ilgen.Emit (OpCodes.Ldarg_1);
@@ -6419,19 +6837,19 @@ namespace MonoTests.System.Reflection.Emit
 			ilgen.Emit (OpCodes.Ret);
 
 			mb = tb.DefineMethod ("Run", MethodAttributes.Private,
-				typeof (void), new Type [0]);
+				typeof (void), Type.EmptyTypes);
 			ilgen = mb.GetILGenerator ();
 			ilgen.Emit (OpCodes.Ret);
 
 			mb = tb.DefineMethod ("Execute", MethodAttributes.Public |
 				MethodAttributes.Static,
-				typeof (void), new Type [0]);
+				typeof (void), Type.EmptyTypes);
 			ilgen = mb.GetILGenerator ();
 			ilgen.Emit (OpCodes.Ret);
 
 			mb = tb.DefineMethod ("Init", MethodAttributes.Public |
 				MethodAttributes.Abstract | MethodAttributes.Virtual,
-				typeof (void), new Type [0]);
+				typeof (void), Type.EmptyTypes);
 
 			Type emittedType = tb.CreateType ();
 
@@ -7108,24 +7526,24 @@ namespace MonoTests.System.Reflection.Emit
 			TypeBuilder tb = module.DefineType (genTypeName (),
 				TypeAttributes.Abstract);
 			mb = tb.DefineMethod ("Hello", MethodAttributes.Public,
-				typeof (void), new Type [0]);
+				typeof (void), Type.EmptyTypes);
 			ilgen = mb.GetILGenerator ();
 			ilgen.Emit (OpCodes.Ret);
 
 			mb = tb.DefineMethod ("Run", MethodAttributes.Private,
-				typeof (void), new Type [0]);
+				typeof (void), Type.EmptyTypes);
 			ilgen = mb.GetILGenerator ();
 			ilgen.Emit (OpCodes.Ret);
 
 			mb = tb.DefineMethod ("Execute", MethodAttributes.Public |
 				MethodAttributes.Static,
-				typeof (void), new Type [0]);
+				typeof (void), Type.EmptyTypes);
 			ilgen = mb.GetILGenerator ();
 			ilgen.Emit (OpCodes.Ret);
 
 			mb = tb.DefineMethod ("Init", MethodAttributes.Public |
 				MethodAttributes.Abstract | MethodAttributes.Virtual,
-				typeof (void), new Type [0]);
+				typeof (void), Type.EmptyTypes);
 
 			methods = tb.GetMethods (BindingFlags.Public |
 				BindingFlags.Instance);
@@ -7169,24 +7587,24 @@ namespace MonoTests.System.Reflection.Emit
 			TypeBuilder tb = module.DefineType (genTypeName (),
 				TypeAttributes.Abstract);
 			mb = tb.DefineMethod ("Hello", MethodAttributes.Public,
-				typeof (void), new Type [0]);
+				typeof (void), Type.EmptyTypes);
 			ilgen = mb.GetILGenerator ();
 			ilgen.Emit (OpCodes.Ret);
 
 			mb = tb.DefineMethod ("Run", MethodAttributes.Private,
-				typeof (void), new Type [0]);
+				typeof (void), Type.EmptyTypes);
 			ilgen = mb.GetILGenerator ();
 			ilgen.Emit (OpCodes.Ret);
 
 			mb = tb.DefineMethod ("Execute", MethodAttributes.Public |
 				MethodAttributes.Static,
-				typeof (void), new Type [0]);
+				typeof (void), Type.EmptyTypes);
 			ilgen = mb.GetILGenerator ();
 			ilgen.Emit (OpCodes.Ret);
 
 			mb = tb.DefineMethod ("Init", MethodAttributes.Public |
 				MethodAttributes.Abstract | MethodAttributes.Virtual,
-				typeof (void), new Type [0]);
+				typeof (void), Type.EmptyTypes);
 
 			try {
 				tb.GetMethods (BindingFlags.Public | BindingFlags.Instance);
@@ -7203,7 +7621,7 @@ namespace MonoTests.System.Reflection.Emit
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
 			MethodBuilder helloMethod = tb.DefineMethod ("HelloMethod",
-				MethodAttributes.Public, typeof (string), new Type [0]);
+				MethodAttributes.Public, typeof (string), Type.EmptyTypes);
 			ILGenerator helloMethodIL = helloMethod.GetILGenerator ();
 			helloMethodIL.Emit (OpCodes.Ldstr, "Hi! ");
 			helloMethodIL.Emit (OpCodes.Ldarg_1);
@@ -7848,11 +8266,19 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[ExpectedException (typeof (NotSupportedException))]
 		public void TestGetMemberIncomplete ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
-			tb.GetMember ("FOO", MemberTypes.All, BindingFlags.Public);
+			try {
+				tb.GetMember ("FOO", MemberTypes.All, BindingFlags.Public);
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				// The invoked member is not supported in a
+				// dynamic module
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 
 		[Test]
@@ -7868,11 +8294,19 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[ExpectedException (typeof (NotSupportedException))]
 		public void TestGetMembersIncomplete ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
-			tb.GetMembers ();
+			try {
+				tb.GetMembers ();
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				// The invoked member is not supported in a
+				// dynamic module
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 
 		[Test]
@@ -7885,11 +8319,19 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[ExpectedException (typeof (NotSupportedException))]
 		public void TestGetMembersFlagsIncomplete ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
-			tb.GetMembers (BindingFlags.Public);
+			try {
+				tb.GetMembers (BindingFlags.Public);
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				// The invoked member is not supported in a
+				// dynamic module
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 
 		[Test]
@@ -7908,11 +8350,19 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[ExpectedException (typeof (NotSupportedException))]
 		public void TestGetInterfaceIncomplete ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
-			tb.GetInterface ("FOO", true);
+			try {
+				tb.GetInterface ("FOO", true);
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				// The invoked member is not supported in a
+				// dynamic module
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 
 		[Test]
@@ -7931,23 +8381,37 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestAddDeclarativeSecurityAlreadyCreated ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
 			tb.CreateType ();
 
 			PermissionSet set = new PermissionSet (PermissionState.Unrestricted);
-			tb.AddDeclarativeSecurity (SecurityAction.Demand, set);
+			try {
+				tb.AddDeclarativeSecurity (SecurityAction.Demand, set);
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// Unable to change after type has been created
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void TestAddDeclarativeSecurityNullPermissionSet ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
+			try {
+				tb.AddDeclarativeSecurity (SecurityAction.Demand, null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("pset", ex.ParamName, "#5");
+			}
 
-			tb.AddDeclarativeSecurity (SecurityAction.Demand, null);
 		}
 
 		[Test]
@@ -7971,14 +8435,22 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestAddDeclarativeSecurityDuplicateAction ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
 
 			PermissionSet set = new PermissionSet (PermissionState.Unrestricted);
 			tb.AddDeclarativeSecurity (SecurityAction.Demand, set);
-			tb.AddDeclarativeSecurity (SecurityAction.Demand, set);
+			try {
+				tb.AddDeclarativeSecurity (SecurityAction.Demand, set);
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// Multiple permission sets specified with the
+				// same SecurityAction
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 
 		[Test]
@@ -7987,7 +8459,7 @@ namespace MonoTests.System.Reflection.Emit
 			TypeAttributes typeAttrs = TypeAttributes.Class | TypeAttributes.Public | TypeAttributes.Sealed;
 			TypeBuilder enumToCreate = module.DefineType (genTypeName (), typeAttrs,
 														 typeof (Enum));
-			enumToCreate.SetCustomAttribute (new CustomAttributeBuilder (typeof (FlagsAttribute).GetConstructors () [0], new Type [0]));
+			enumToCreate.SetCustomAttribute (new CustomAttributeBuilder (typeof (FlagsAttribute).GetConstructors () [0], Type.EmptyTypes));
 			// add value__ field, see DefineEnum method of ModuleBuilder
 			enumToCreate.DefineField ("value__", typeof (Int32),
 				FieldAttributes.Public | FieldAttributes.SpecialName | FieldAttributes.RTSpecialName);
@@ -8059,7 +8531,7 @@ namespace MonoTests.System.Reflection.Emit
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
 			ConstructorInfo attrCtor = typeof (SuppressUnmanagedCodeSecurityAttribute).
-				GetConstructor (new Type [0]);
+				GetConstructor (Type.EmptyTypes);
 			CustomAttributeBuilder caBuilder = new CustomAttributeBuilder (
 				attrCtor, new object [0]);
 			Assert.IsTrue ((tb.Attributes & TypeAttributes.HasSecurity) == 0, "#1");
@@ -8178,23 +8650,35 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
 		public void EmptyMethodBody ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
 
 			tb.DefineMethod ("foo", MethodAttributes.Public, typeof (void), new Type [] { });
-			tb.CreateType ();
+			try {
+				tb.CreateType ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
 		public void EmptyCtorBody ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
 
 			tb.DefineConstructor (0, CallingConventions.Standard, null);
-			tb.CreateType ();
+			try {
+				tb.CreateType ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 
 		[Test]
@@ -8245,11 +8729,17 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
 		public void Fail_MakeGenericType ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
-			tb.MakeGenericType (typeof (int));
+			try {
+				tb.MakeGenericType (typeof (int));
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
 		}
 
 		[Test]
@@ -8387,8 +8877,28 @@ namespace MonoTests.System.Reflection.Emit
 		}
 #endif
 
-		public interface IDelegateFactory {
+		public interface IDelegateFactory
+		{
 			Delegate Create (Delegate del);
+		}
+
+		[Test]
+		public void CreateType_Ctor_NoBody ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			tb.DefineConstructor (MethodAttributes.Public,
+				CallingConventions.Standard,
+				new Type [] { typeof (string) });
+			try {
+				tb.CreateType ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// Method '.ctor' does not have a method body
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf (".ctor") != -1, "#5");
+			}
 		}
 
 		[Test] //bug #361689
@@ -8408,7 +8918,6 @@ namespace MonoTests.System.Reflection.Emit
 			
 			}
 		}
-
 
 		static MethodInfo GetMethodByName (MethodInfo [] methods, string name)
 		{

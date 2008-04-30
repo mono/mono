@@ -126,6 +126,8 @@ namespace System.Reflection.Emit
 			this.class_size = type_size;
 			this.packing_size = packing_size;
 			this.nesting_type = nesting_type;
+				
+			check_name ("fullname", name);
 
 			if (parent == null && (attr & TypeAttributes.Interface) != 0 && (attr & TypeAttributes.Abstract) == 0)
 				throw new InvalidOperationException ("Interface must be declared abstract.");
@@ -387,7 +389,6 @@ namespace System.Reflection.Emit
 		private TypeBuilder DefineNestedType (string name, TypeAttributes attr, Type parent, Type[] interfaces,
 						      PackingSize packsize, int typesize)
 		{
-			check_name ("name", name);
 			// Visibility must be NestedXXX
 			/* This breaks mcs
 			if (((attrs & TypeAttributes.VisibilityMask) == TypeAttributes.Public) ||
@@ -538,7 +539,7 @@ namespace System.Reflection.Emit
 				!((attributes & MethodAttributes.Abstract) != 0) || 
 				!((attributes & MethodAttributes.Virtual) != 0)) &&
 				!(((attributes & MethodAttributes.Static) != 0)))
-				throw new ArgumentException ("attributes", "Interface method must be abstract and virtual.");
+				throw new ArgumentException ("Interface method must be abstract and virtual.");
 
 			if (returnType == null)
 				returnType = pmodule.assemblyb.corlib_void_type;
@@ -582,9 +583,9 @@ namespace System.Reflection.Emit
 			check_name ("dllName", dllName);
 			check_name ("entryName", entryName);
 			if ((attributes & MethodAttributes.Abstract) != 0)
-				throw new ArgumentException ("attributes", "PInvoke methods must be static and native and cannot be abstract.");
+				throw new ArgumentException ("PInvoke methods must be static and native and cannot be abstract.");
 			if (IsInterface)
-				throw new ArgumentException ("PInvoke methods cannot exist on interfaces.");		
+				throw new ArgumentException ("PInvoke methods cannot exist on interfaces.");
 			check_not_created ();
 
 			MethodBuilder res 
@@ -652,7 +653,7 @@ namespace System.Reflection.Emit
 		{
 			check_name ("fieldName", fieldName);
 			if (type == typeof (void))
-				throw new ArgumentException ("type",  "Bad field type in defining field.");
+				throw new ArgumentException ("Bad field type in defining field.");
 			check_not_created ();
 
 			FieldBuilder res = new FieldBuilder (this, fieldName, type, attributes, requiredCustomAttributes, optionalCustomAttributes);
@@ -1504,7 +1505,7 @@ namespace System.Reflection.Emit
 		{
 			check_name ("name", name);
 			if (eventtype == null)
-				throw new ArgumentNullException ("eventtype");
+				throw new ArgumentNullException ("type");
 			check_not_created ();
 
 			EventBuilder res = new EventBuilder (this, name, attributes, eventtype);
@@ -1523,22 +1524,22 @@ namespace System.Reflection.Emit
 		public FieldBuilder DefineInitializedData (string name, byte[] data, FieldAttributes attributes) {
 			if (data == null)
 				throw new ArgumentNullException ("data");
-			if ((data.Length == 0) || (data.Length > 0x3f0000))
-				throw new ArgumentException ("data", "Data size must be > 0 and < 0x3f0000");
 
 			FieldBuilder res = DefineUninitializedData (name, data.Length, attributes);
 			res.SetRVAData (data);
-
 			return res;
 		}
 
 		static int UnmanagedDataCount = 0;
 		
 		public FieldBuilder DefineUninitializedData (string name, int size, FieldAttributes attributes)
- 		{
-			check_name ("name", name);
+		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			if (name.Length == 0)
+				throw new ArgumentException ("Empty name is not legal", "name");
 			if ((size <= 0) || (size > 0x3f0000))
-				throw new ArgumentException ("size", "Data size must be > 0 and < 0x3f0000");
+				throw new ArgumentException ("Data size must be > 0 and < 0x3f0000");
 			check_not_created ();
 
 			string typeName = "$ArrayType$" + size;
@@ -1629,7 +1630,7 @@ namespace System.Reflection.Emit
 				throw new ArgumentNullException (argName);
 			if (name.Length == 0)
 				throw new ArgumentException ("Empty name is not legal", argName);
-			if (name.IndexOf ((char)0) != -1)
+			if (name [0] == ((char)0))
 				throw new ArgumentException ("Illegal name", argName);
 		}
 

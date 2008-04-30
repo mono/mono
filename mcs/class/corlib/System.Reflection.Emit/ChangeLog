@@ -1,3 +1,25 @@
+2008-04-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ModuleBuilder.cs (DefineType): Do not perform lookup of in cache if
+	name is null to allow correct exception to be thrown (in TypeBuilder
+	ctor).
+	* TypeBuilder: Moved name argument check to TypeBuilder ctor. Modified
+	ArgumentException parameter names to match MS. Removed duplicate check
+	for data length from DefineInitializedData. Modified check_name to
+	only throw when first character is null char.
+	* ConstructorBuilder.cs (GetParameters): Throw NotSupportedException
+	(2.0) or InvalidOperationException (1.0) when type is not yet created
+	and we're not in compiler context. Return empty array when no
+	parameters are defined.
+	(MethodHandle): Always throw NotSupportedException.
+	(DefineParameter): Prevent NRE when parameters is null.
+	(GetCustomAttributes): When not in compiler context, always throw
+	NotSupportedException.
+	* ConstructorOnTypeBuilderInst.cs: Delegate to ConstructorBuilder
+	where possible. Fixed ContainsGenericParameters and IsGenericMethod
+	to always return false. In MethodBase.Invoke, throw an
+	InvalidOperationException instead of NIE.
+
 2008-04-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* MethodOnTypeBuilderInst.cs: Added overrides for ReturnType and 

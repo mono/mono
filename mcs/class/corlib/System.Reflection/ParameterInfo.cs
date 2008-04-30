@@ -58,7 +58,7 @@ namespace System.Reflection
 				this.PositionImpl = pb.Position - 1;	// ParameterInfo.Position is zero-based
 				this.AttrsImpl = (ParameterAttributes) pb.Attributes;
 			} else {
-				this.NameImpl = "";
+				this.NameImpl = null;
 				this.PositionImpl = position - 1;
 				this.AttrsImpl = ParameterAttributes.None;
 			}

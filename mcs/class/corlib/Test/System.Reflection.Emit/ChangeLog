@@ -1,3 +1,17 @@
+2008-04-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* MethodOnTypeBuilderInstTest.cs: Fixed exception message in comments.
+	* TypeBuilderTest.cs: Do not use ExpectedException to avoid false
+	positives. Added argument check tests for DefineEvent, DefineField,
+	DefineMethod, DefinePInvokeMethod and DefinePropety. Use
+	Type.EmptyTypes	instead of constructing empty array.
+	* ConstructorBuilderTest.cs: Added Test attributes. Added tests
+	for DefineParameter and Invoke overloads. Added tests for
+	GetCustomAttributes overloads. Avoid use of ExpectedException.
+	* ModuleBuilderTest.cs: Added tests for DefineType name argument
+	checks.
+	* ConstructorOnTypeBuilderInstTest.cs: Added basic set of tests.
+
 2008-04-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* MethodOnTypeBuilderInstTest.cs: Added basic set of tests.

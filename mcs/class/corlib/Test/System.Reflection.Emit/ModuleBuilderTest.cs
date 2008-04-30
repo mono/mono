@@ -132,7 +132,59 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		public void TestDefineType_InterfaceNotAbstract ()
+		public void DefineType_Name_Null ()
+		{
+			AssemblyBuilder ab = genAssembly ();
+			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll", true);
+			try {
+				mb.DefineType ((string) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("fullname", ex.ParamName, "#5");
+			}
+		}
+
+		[Test]
+		public void DefineType_Name_Empty ()
+		{
+			AssemblyBuilder ab = genAssembly ();
+			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll", true);
+			try {
+				mb.DefineType (string.Empty);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Empty name is not legal
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("fullname", ex.ParamName, "#5");
+			}
+		}
+
+		[Test]
+		public void DefineType_Name_NullChar ()
+		{
+			AssemblyBuilder ab = genAssembly ();
+			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll", true);
+			try {
+				mb.DefineType ("\0test");
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Illegal name
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("fullname", ex.ParamName, "#5");
+			}
+
+			mb.DefineType ("te\0st");
+		}
+
+		[Test]
+		public void DefineType_InterfaceNotAbstract ()
 		{
 			AssemblyBuilder ab = genAssembly ();
 			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll", true);
@@ -265,9 +317,9 @@ namespace MonoTests.System.Reflection.Emit
 		{
 			AssemblyBuilder ab = genAssembly ();
 			ModuleBuilder mb = ab.DefineDynamicModule ("foo.dll", "foo.dll");
-			
-            TypeBuilder tb1 = mb.DefineType("Foo", TypeAttributes.Public);
-			
+
+			TypeBuilder tb1 = mb.DefineType("Foo", TypeAttributes.Public);
+
 			Type[] types = mb.GetTypes ();
 			Assert.AreEqual (1, types.Length);
 			Assert.AreEqual (tb1, types [0]);

@@ -187,7 +187,7 @@ namespace MonoTests.System.Reflection.Emit
 				method_create.GetCustomAttributes (false);
 				Assert.Fail ("#A1");
 			} catch (NotSupportedException ex) {
-				// Specified method is not supported
+				// The invoked member is not supported in a dynamic module
 				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#A2");
 				Assert.IsNull (ex.InnerException, "#A3");
 				Assert.IsNotNull (ex.Message, "#A4");
@@ -197,7 +197,7 @@ namespace MonoTests.System.Reflection.Emit
 				method_edit.GetCustomAttributes (false);
 				Assert.Fail ("#B1");
 			} catch (NotSupportedException ex) {
-				// Specified method is not supported
+				// The invoked member is not supported in a dynamic module
 				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#B2");
 				Assert.IsNull (ex.InnerException, "#B3");
 				Assert.IsNotNull (ex.Message, "#B4");
@@ -212,7 +212,7 @@ namespace MonoTests.System.Reflection.Emit
 				method_create.GetCustomAttributes (typeof (FlagsAttribute), false);
 				Assert.Fail ("#A1");
 			} catch (NotSupportedException ex) {
-				// Specified method is not supported
+				// The invoked member is not supported in a dynamic module
 				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#A2");
 				Assert.IsNull (ex.InnerException, "#A3");
 				Assert.IsNotNull (ex.Message, "#A4");
@@ -222,7 +222,7 @@ namespace MonoTests.System.Reflection.Emit
 				method_edit.GetCustomAttributes (typeof (FlagsAttribute), false);
 				Assert.Fail ("#B1");
 			} catch (NotSupportedException ex) {
-				// Specified method is not supported
+				// The invoked member is not supported in a dynamic module
 				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#B2");
 				Assert.IsNull (ex.InnerException, "#B3");
 				Assert.IsNotNull (ex.Message, "#B4");
@@ -278,7 +278,7 @@ namespace MonoTests.System.Reflection.Emit
 				method_create.GetParameters ();
 				Assert.Fail ("#A1");
 			} catch (NotSupportedException ex) {
-				// Specified method is not supported
+				// Type has not been created
 				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#A2");
 				Assert.IsNull (ex.InnerException, "#A3");
 				Assert.IsNotNull (ex.Message, "#A4");
@@ -288,7 +288,7 @@ namespace MonoTests.System.Reflection.Emit
 				method_edit.GetParameters ();
 				Assert.Fail ("#B1");
 			} catch (NotSupportedException ex) {
-				// Specified method is not supported
+				// Type has not been created
 				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#B2");
 				Assert.IsNull (ex.InnerException, "#B3");
 				Assert.IsNotNull (ex.Message, "#B4");
@@ -330,7 +330,7 @@ namespace MonoTests.System.Reflection.Emit
 				method_create.IsDefined (typeof (FlagsAttribute), false);
 				Assert.Fail ("#A1");
 			} catch (NotSupportedException ex) {
-				// Specified method is not supported
+				// The invoked member is not supported in a dynamic module
 				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#A2");
 				Assert.IsNull (ex.InnerException, "#A3");
 				Assert.IsNotNull (ex.Message, "#A4");
@@ -340,7 +340,7 @@ namespace MonoTests.System.Reflection.Emit
 				method_edit.IsDefined (typeof (FlagsAttribute), false);
 				Assert.Fail ("#B1");
 			} catch (NotSupportedException ex) {
-				// Specified method is not supported
+				// The invoked member is not supported in a dynamic module
 				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#B2");
 				Assert.IsNull (ex.InnerException, "#B3");
 				Assert.IsNotNull (ex.Message, "#B4");
@@ -399,7 +399,7 @@ namespace MonoTests.System.Reflection.Emit
 				RuntimeMethodHandle handle = method_create.MethodHandle;
 				Assert.Fail ("#A1:" + handle);
 			} catch (NotSupportedException ex) {
-				// Specified method is not supported
+				// The invoked member is not supported in a dynamic module
 				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#A2");
 				Assert.IsNull (ex.InnerException, "#A3");
 				Assert.IsNotNull (ex.Message, "#A4");
@@ -409,7 +409,7 @@ namespace MonoTests.System.Reflection.Emit
 				RuntimeMethodHandle handle = method_edit.MethodHandle;
 				Assert.Fail ("#B1:" + handle);
 			} catch (NotSupportedException ex) {
-				// Specified method is not supported
+				// The invoked member is not supported in a dynamic module
 				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#B2");
 				Assert.IsNull (ex.InnerException, "#B3");
 				Assert.IsNotNull (ex.Message, "#B4");

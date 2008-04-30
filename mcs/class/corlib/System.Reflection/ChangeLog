@@ -1,3 +1,8 @@
+2008-04-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ParameterInfo.cs: Name must default to null if no ParameterBuilder
+	is supplied.
+
 2008-04-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* MonoGenericClass.cs (GetMethod): Construct a MethodOnTypeBuilderInst object

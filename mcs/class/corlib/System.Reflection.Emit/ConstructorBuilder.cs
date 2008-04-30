@@ -62,7 +62,8 @@ namespace System.Reflection.Emit {
 		private Type[][] paramModOpt;
 		private RefEmitPermissionSet[] permissions;
 
-		internal ConstructorBuilder (TypeBuilder tb, MethodAttributes attributes, CallingConventions callingConvention, Type[] parameterTypes, Type[][] paramModReq, Type[][] paramModOpt) {
+		internal ConstructorBuilder (TypeBuilder tb, MethodAttributes attributes, CallingConventions callingConvention, Type[] parameterTypes, Type[][] paramModReq, Type[][] paramModOpt)
+		{
 			attrs = attributes | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName;
 			call_conv = callingConvention;
 			if (parameterTypes != null) {
@@ -78,35 +79,49 @@ namespace System.Reflection.Emit {
 			this.paramModOpt = paramModOpt;
 			table_idx = get_next_table_index (this, 0x06, true);
 
-			((ModuleBuilder)tb.Module).RegisterToken (this, GetToken ().Token);
+			((ModuleBuilder) tb.Module).RegisterToken (this, GetToken ().Token);
 		}
 
 #if NET_2_0
 		[MonoTODO]
 		public override CallingConventions CallingConvention {
-			get { return call_conv; }
+			get {
+				return call_conv;
+			}
 		}
 #endif
 		public bool InitLocals {
-			get {return init_locals;}
-			set {init_locals = value;}
+			get {
+				return init_locals;
+			}
+			set {
+				init_locals = value;
+			}
 		}
 
 		internal TypeBuilder TypeBuilder {
-			get {return type;}
+			get {
+				return type;
+			}
 		}
 		
-		public override MethodImplAttributes GetMethodImplementationFlags() {
+		public override MethodImplAttributes GetMethodImplementationFlags ()
+		{
 			return iattrs;
 		}
-		public override ParameterInfo[] GetParameters() {
+
+		public override ParameterInfo[] GetParameters ()
+		{
+			if (!type.is_created && !IsCompilerContext)
+				throw not_created ();
+
 			if (parameters == null)
-				return null;
+				return new ParameterInfo [0];
 
 			ParameterInfo[] retval = new ParameterInfo [parameters.Length];
-			for (int i = 0; i < parameters.Length; i++) {
-				retval [i] = new ParameterInfo (pinfo == null ? null : pinfo [i+1], parameters [i], this, i + 1);
-			}
+			for (int i = 0; i < parameters.Length; i++)
+				retval [i] = new ParameterInfo (pinfo == null ? null
+					: pinfo [i+1], parameters [i], this, i + 1);
 
 			return retval;
 		}
@@ -119,33 +134,60 @@ namespace System.Reflection.Emit {
 			return parameters.Length;
 		}
 		
-		public override Object Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) {
-			throw not_supported ();
-		}
-		public override object Invoke(BindingFlags invokeAttr, Binder binder, object[] parameters, CultureInfo culture) {
+		public override Object Invoke (Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+		{
 			throw not_supported ();
 		}
 
-		public override RuntimeMethodHandle MethodHandle { 
+		public override object Invoke (BindingFlags invokeAttr, Binder binder, object[] parameters, CultureInfo culture)
+		{
+			throw not_supported ();
+		}
+
+		public override RuntimeMethodHandle MethodHandle {
 			get {
-				return mhandle;
+				throw not_supported ();
 			}
 		}
 
-		public override MethodAttributes Attributes { 
-			get {return attrs;} 
-		}
-		public override Type ReflectedType { get {return type;}}
-		public override Type DeclaringType { get {return type;}}
-		public Type ReturnType { get {return null;}}
-		public override string Name { 
-			get {return (attrs & MethodAttributes.Static) != 0 ? ConstructorInfo.TypeConstructorName : ConstructorInfo.ConstructorName;}
-		}
-		public string Signature {
-			get {return "constructor signature";}
+		public override MethodAttributes Attributes {
+			get {
+				return attrs;
+			}
 		}
 
-		public void AddDeclarativeSecurity( SecurityAction action, PermissionSet pset) {
+		public override Type ReflectedType {
+			get {
+				return type;
+			}
+		}
+
+		public override Type DeclaringType {
+			get {
+				return type;
+			}
+		}
+
+		public Type ReturnType {
+			get {
+				return null;
+			}
+		}
+
+		public override string Name {
+			get {
+				return (attrs & MethodAttributes.Static) != 0 ? ConstructorInfo.TypeConstructorName : ConstructorInfo.ConstructorName;
+			}
+		}
+
+		public string Signature {
+			get {
+				return "constructor signature";
+			}
+		}
+
+		public void AddDeclarativeSecurity (SecurityAction action, PermissionSet pset)
+		{
 			if (pset == null)
 				throw new ArgumentNullException ("pset");
 			if ((action == SecurityAction.RequestMinimum) ||
@@ -172,9 +214,9 @@ namespace System.Reflection.Emit {
 			attrs |= MethodAttributes.HasSecurity;
 		}
 
-		public ParameterBuilder DefineParameter(int iSequence, ParameterAttributes attributes, string strParamName)
+		public ParameterBuilder DefineParameter (int iSequence, ParameterAttributes attributes, string strParamName)
 		{
-			if ((iSequence < 1) || (iSequence > parameters.Length))
+			if (iSequence < 1 || iSequence > GetParameterCount ())
 				throw new ArgumentOutOfRangeException ("iSequence");
 			if (type.is_created)
 				throw not_after_created ();
@@ -186,46 +228,52 @@ namespace System.Reflection.Emit {
 			return pb;
 		}
 
-		public override bool IsDefined (Type attribute_type, bool inherit) {
+		public override bool IsDefined (Type attribute_type, bool inherit)
+		{
 			throw not_supported ();
 		}
 
-		public override object [] GetCustomAttributes (bool inherit) {
+		public override object [] GetCustomAttributes (bool inherit)
+		{
 			/*
 			 * On MS.NET, this always returns not_supported, but we can't do this
 			 * since there would be no way to obtain custom attributes of 
 			 * dynamically created ctors.
 			 */
-			if (type.is_created)
+			if (type.is_created && IsCompilerContext)
 				return MonoCustomAttrs.GetCustomAttributes (this, inherit);
 			else
 				throw not_supported ();
 		}
 
-		public override object [] GetCustomAttributes (Type attributeType, bool inherit) {
-			if (type.is_created)
+		public override object [] GetCustomAttributes (Type attributeType, bool inherit)
+		{
+			if (type.is_created && IsCompilerContext)
 				return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
 			else
 				throw not_supported ();
 		}
 
-		public ILGenerator GetILGenerator () {
+		public ILGenerator GetILGenerator ()
+		{
 			return GetILGenerator (64);
 		}
 
 #if NET_2_0
 		public
 #else
-		internal 
+		internal
 #endif
-		ILGenerator GetILGenerator (int size) {
+		ILGenerator GetILGenerator (int size)
+		{
 			if (ilgen != null)
 				return ilgen;
 			ilgen = new ILGenerator (type.Module, ((ModuleBuilder)type.Module).GetTokenGenerator (), size);
 			return ilgen;
 		}
 
-		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {
+		public void SetCustomAttribute (CustomAttributeBuilder customBuilder)
+		{
 			if (customBuilder == null)
 				throw new ArgumentNullException ("customBuilder");
 
@@ -252,7 +300,8 @@ namespace System.Reflection.Emit {
 #if NET_2_0
 		[ComVisible (true)]
 #endif
-		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
+		public void SetCustomAttribute (ConstructorInfo con, byte[] binaryAttribute)
+		{
 			if (con == null)
 				throw new ArgumentNullException ("con");
 			if (binaryAttribute == null)
@@ -260,21 +309,28 @@ namespace System.Reflection.Emit {
 
 			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
 		}
-		public void SetImplementationFlags( MethodImplAttributes attributes) {
+
+		public void SetImplementationFlags (MethodImplAttributes attributes)
+		{
 			if (type.is_created)
 				throw not_after_created ();
 
 			iattrs = attributes;
 		}
-		public Module GetModule() {
+
+		public Module GetModule ()
+		{
 			return type.Module;
 		}
-		public MethodToken GetToken() {
+
+		public MethodToken GetToken ()
+		{
 			return new MethodToken (0x06000000 | table_idx);
 		}
 
 		[MonoTODO]
-		public void SetSymCustomAttribute( string name, byte[] data) {
+		public void SetSymCustomAttribute (string name, byte[] data)
+		{
 			if (type.is_created)
 				throw not_after_created ();
 		}
@@ -287,11 +343,13 @@ namespace System.Reflection.Emit {
 		}
 #endif
 
-		public override string ToString() {
+		public override string ToString ()
+		{
 			return "ConstructorBuilder ['" + type.Name + "']";
 		}
 
-		internal void fixup () {
+		internal void fixup ()
+		{
 			if (((attrs & (MethodAttributes.Abstract | MethodAttributes.PinvokeImpl)) == 0) && ((iattrs & (MethodImplAttributes.Runtime | MethodImplAttributes.InternalCall)) == 0)) {
 			if ((ilgen == null) || (ILGenerator.Mono_GetCurrentOffset (ilgen) == 0))
 				throw new InvalidOperationException ("Method '" + Name + "' does not have a method body.");
@@ -311,21 +369,42 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		internal override int get_next_table_index (object obj, int table, bool inc) {
+		internal override int get_next_table_index (object obj, int table, bool inc)
+		{
 			return type.get_next_table_index (obj, table, inc);
 		}
 
-		private void RejectIfCreated () {
+		private bool IsCompilerContext {
+			get {
+				ModuleBuilder mb = (ModuleBuilder) TypeBuilder.Module;
+				AssemblyBuilder ab = (AssemblyBuilder) mb.Assembly;
+				return ab.IsCompilerContext;
+			}
+		}
+
+		private void RejectIfCreated ()
+		{
 			if (type.is_created)
 				throw new InvalidOperationException ("Type definition of the method is complete.");
 		}
 
-		private Exception not_supported () {
+		private Exception not_supported ()
+		{
 			return new NotSupportedException ("The invoked member is not supported in a dynamic module.");
 		}
 
-		private Exception not_after_created () {
+		private Exception not_after_created ()
+		{
 			return new InvalidOperationException ("Unable to change after type has been created.");
+		}
+
+		private Exception not_created ()
+		{
+#if NET_2_0
+			return new NotSupportedException ("The type is not yet created.");
+#else
+			return new InvalidOperationException ("The type is not yet created.");
+#endif
 		}
 
 		void _ConstructorBuilder.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)

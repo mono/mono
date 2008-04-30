@@ -1,3 +1,7 @@
+2008-04-30  Gert Driesen  <drieseng@users.sourceforge.net>>
+
+	* corlib_test.dll.sources: Added ConstructorOnTypeBuilderInstTest.cs.
+
 2008-04-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* corlib_test.dll.sources: Added MethodOnTypeBuilderInstTest.cs.
