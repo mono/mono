@@ -260,7 +260,7 @@ namespace MonoTests.System.Linq.Expressions {
 			Assert.IsNotNull (c.Method);
 		}
 
-		class Kling {
+		struct Kling {
 			int i;
 
 			public Kling (int i)
@@ -275,7 +275,7 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		public void ConvertClassWithImplicitOp ()
+		public void ConvertStructWithImplicitOp ()
 		{
 			var c = Expression.Convert (Expression.Parameter (typeof (Kling), ""), typeof (int));
 			Assert.AreEqual (typeof (int), c.Type);
@@ -286,7 +286,7 @@ namespace MonoTests.System.Linq.Expressions {
 
 		[Test]
 		[Category ("NotWorking")]
-		public void CompileConvertClassWithImplicitOp ()
+		public void CompileConvertStructWithImplicitOp ()
 		{
 			var p = Expression.Parameter (typeof (Kling), "kling");
 			var c = Expression.Lambda<Func<Kling, int>> (
@@ -296,9 +296,20 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		public void ConvertClassWithImplicitOpToNullableInt ()
+		public void ConvertStructWithImplicitOpToNullableInt ()
 		{
 			var c = Expression.Convert (Expression.Parameter (typeof (Kling), ""), typeof (int?));
+			Assert.AreEqual (typeof (int?), c.Type);
+			Assert.IsTrue (c.IsLifted);
+			Assert.IsTrue (c.IsLiftedToNull);
+			Assert.IsNotNull (c.Method);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ConvertNullableStructWithImplicitOpToNullableInt ()
+		{
+			var c = Expression.Convert (Expression.Parameter (typeof (Kling?), ""), typeof (int?));
 			Assert.AreEqual (typeof (int?), c.Type);
 			Assert.IsTrue (c.IsLifted);
 			Assert.IsTrue (c.IsLiftedToNull);
