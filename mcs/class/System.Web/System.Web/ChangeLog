@@ -1,5 +1,12 @@
 2008-04-30  Marek Habersack  <mhabersack@novell.com>
 
+	* HttpApplication.cs: when the Start method is called in a new
+	thread, the thread's culture and ui culture are set to their
+	defaults, thus ignoring whatever their values were in the parent
+	thread. This is now fixed by passing an array containing the
+	culture values to the Start method, so that the new thread can be
+	properly initialized. Fixes bug #323566
+
 	* SiteMapNode.cs: the implicitResourceKey parameter to one of the
 	constructors sets the value of the ResourceKey property.
 	GetImplicitResourceString uses the provider's ResourceKey as the

@@ -1391,6 +1391,13 @@ namespace System.Web {
 
 		void Start (object x)
 		{
+			CultureInfo[] cultures = x as CultureInfo[];
+			if (cultures != null && cultures.Length == 2) {
+				Thread ct = Thread.CurrentThread;
+				ct.CurrentCulture = cultures [0];
+				ct.CurrentUICulture = cultures [1];
+			}
+			
 			try {
 				InitOnce (true);
 			} catch (Exception e) {
@@ -1510,6 +1517,10 @@ namespace System.Web {
 			
 			begin_iar = new AsyncRequestState (done, cb, extraData);
 
+			CultureInfo[] cultures = new CultureInfo [2];
+			cultures [0] = Thread.CurrentThread.CurrentCulture;
+			cultures [1] = Thread.CurrentThread.CurrentUICulture;
+			
 #if TARGET_JVM
 			if (true)
 #else
@@ -1517,7 +1528,7 @@ namespace System.Web {
 #endif
 				Start (null);
 			else
-				ThreadPool.QueueUserWorkItem (new WaitCallback (Start), null);
+				ThreadPool.QueueUserWorkItem (new WaitCallback (Start), cultures);
 			
 			return begin_iar;
 		}
