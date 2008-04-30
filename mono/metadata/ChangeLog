@@ -1,3 +1,8 @@
+2008-04-30 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_method_verify): Check the bounds of
+	all access of the code array.
+
 2008-04-29  Kornél Pál  <kornelpal@gmail.com>
 
 	* appdomain.c: Use HAVE_SYS_UTIME_H that fixes MSVC build.
