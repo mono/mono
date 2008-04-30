@@ -3354,7 +3354,7 @@
         <size>10</size>
       </method>
       <method name="Int32 TestC()">
-        <size>34</size>
+        <size>36</size>
       </method>
       <method name="Int32 Main()">
         <size>107</size>

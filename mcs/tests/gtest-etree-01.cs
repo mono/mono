@@ -277,6 +277,12 @@ class NewTest<T>
 	}
 }
 
+class Indexer
+{
+	public int this [int i] { get { return i; } set { } }
+	public string this [params string[] i] { get { return string.Concat (i); } }
+}
+
 
 // TODO: Add more nullable tests, follow AddTest pattern.
 
@@ -540,6 +546,15 @@ class Tester
 		
 		Expression<Action> e6 = () => Console.WriteLine ("call test");
 		AssertNodeType (e6, ExpressionType.Call);
+		
+		Expression<Func<Indexer, int, int>> e7 = (a, b) => a [b];
+		AssertNodeType (e7, ExpressionType.Call);
+		Assert (3, e7.Compile ().Invoke (new Indexer (), 3));
+
+
+		Expression<Func<Indexer, string, string, string, string>> e8 = (a, b, c , d) => a [b, c, d];
+		AssertNodeType (e8, ExpressionType.Call);
+		Assert ("zyb", e8.Compile ().Invoke (new Indexer (), "z", "y", "b"));
 	}
 
 	void CoalesceTest ()
@@ -688,6 +703,15 @@ class Tester
 			AssertNodeType (e9, ExpressionType.Convert);
 			Assert (p, e9.Compile ().Invoke ());
 		}
+		
+		Expression<Func<Func<int>, Delegate>> e10 = (a) => a + a;
+		AssertNodeType (e10, ExpressionType.Convert);
+		Assert (null, e10.Compile ().Invoke (null));
+		Assert (new Func<int> (TestInt) + new Func<int> (TestInt), e10.Compile ().Invoke (TestInt));
+		
+		Expression<Func<Func<int>, Delegate>> e11 = (a) => a - a;
+		AssertNodeType (e11, ExpressionType.Convert);
+		Assert (null, e11.Compile ().Invoke (null));
 	}
 
 	void ConvertCheckedTest ()
@@ -1725,6 +1749,11 @@ class Tester
 		Expression<Func<bool>> e5 = () => 1 is int;
 		AssertNodeType (e5, ExpressionType.TypeIs);
 		Assert (true, e5.Compile ().Invoke ());
+		
+		Expression<Func<int?, bool>> e6 = (a) => a is int;
+		AssertNodeType (e6, ExpressionType.TypeIs);
+		Assert (true, e6.Compile ().Invoke (1));
+		Assert (false, e6.Compile ().Invoke (null));
 	}
 	
 	void UnaryPlus ()
