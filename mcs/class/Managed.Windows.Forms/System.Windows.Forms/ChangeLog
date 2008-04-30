@@ -1,5 +1,14 @@
 2008-04-30  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridViewRow.cs: Fixes for cloning the row, ensure header cell's
+	datagridview gets set.  Only paint cells in visible columns.
+	* DataGridViewCell.cs: Draw border after cell content.
+	* DataGridView.cs: Invalidate after setting some properties.  Only
+	use visible columns.  Fit hit test bug with areas in the col/row header
+	area but not in a row or col.  Implement UpdateCell/Row methods.
+
+2008-04-30  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridViewElement.cs: Don't throw NIEX.
 	* DataGridViewColumnHeaderCell.cs: Draw error icons for top left header cells.
 	* DataGridViewColumnDesignTimeVisibleAttribute.cs: Don't throw NIEX.

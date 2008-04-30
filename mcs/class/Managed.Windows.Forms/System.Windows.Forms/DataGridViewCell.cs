@@ -1240,10 +1240,10 @@ namespace System.Windows.Forms {
 				PaintPartBackground (graphics, cellBounds, cellStyle);
 			if ((paintParts & DataGridViewPaintParts.SelectionBackground) == DataGridViewPaintParts.SelectionBackground)
 				PaintPartSelectionBackground (graphics, cellBounds, cellState, cellStyle);
-			if ((paintParts & DataGridViewPaintParts.Border) == DataGridViewPaintParts.Border)
-				PaintPartBorder (graphics, cellBounds, rowIndex);
 			if ((paintParts & DataGridViewPaintParts.ContentForeground) == DataGridViewPaintParts.ContentForeground)
 				PaintPartContent (graphics, cellBounds, rowIndex, cellState, cellStyle, formattedValue);
+			if ((paintParts & DataGridViewPaintParts.Border) == DataGridViewPaintParts.Border)
+				PaintPartBorder (graphics, cellBounds, rowIndex);
 			if ((paintParts & DataGridViewPaintParts.Focus) == DataGridViewPaintParts.Focus)
 				PaintPartFocus (graphics, cellBounds);
 			if ((paintParts & DataGridViewPaintParts.ErrorIcon) == DataGridViewPaintParts.ErrorIcon)

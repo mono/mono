@@ -255,6 +255,7 @@ namespace System.Windows.Forms {
 					allowUserToAddRows = value;
 					OnAllowUserToAddRowsChanged(EventArgs.Empty);
 					PrepareEditingRow (false, false);
+					Invalidate ();
 				}
 			}
 		}
@@ -360,7 +361,10 @@ namespace System.Windows.Forms {
 						}
 					}
 				}
+				
 				autoSizeColumnsMode = value;
+				AutoResizeColumns (value);
+				Invalidate ();
 			}
 		}
 
@@ -376,7 +380,9 @@ namespace System.Windows.Forms {
 						throw new InvalidOperationException("Cant set this property to AllHeaders or DisplayedHeaders in this DataGridView.");
 					}
 					autoSizeRowsMode = value;
+					AutoResizeRows (value);
 					OnAutoSizeRowsModeChanged(new DataGridViewAutoSizeModeEventArgs(false));
+					Invalidate ();
 					////////////////////////////////////////////////////////////////
 				}
 			}
@@ -1013,9 +1019,9 @@ namespace System.Windows.Forms {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public DataGridViewRow RowTemplate {
 			get {
-				if (rowTemplate == null) {
-					return new DataGridViewRow();
-				}
+				if (rowTemplate == null)
+					rowTemplate = new DataGridViewRow ();
+
 				return rowTemplate;
 			}
 			set {
@@ -2091,7 +2097,7 @@ namespace System.Windows.Forms {
 			DataGridViewRow row = GetRowInternal (rowIndex);
 			
 			if (autoSizeRowMode == DataGridViewAutoSizeRowMode.RowHeader) {
-				row.Height = row.HeaderCell.PreferredSize.Width;
+				row.Height = row.HeaderCell.PreferredSize.Height;
 				return;
 			}
 			
@@ -2103,7 +2109,7 @@ namespace System.Windows.Forms {
 			if (autoSizeRowMode == DataGridViewAutoSizeRowMode.AllCellsExceptHeader)
 				row.Height = row_height;
 			else
-				row.Height = Math.Max (row_height, row.HeaderCell.PreferredSize.Width);
+				row.Height = Math.Max (row_height, row.HeaderCell.PreferredSize.Height);
 		}
 
 		public void AutoResizeRowHeadersWidth (DataGridViewRowHeadersWidthSizeMode rowHeadersWidthSizeMode)
@@ -2329,6 +2335,9 @@ namespace System.Windows.Forms {
 			List<DataGridViewColumn> cols = columns.ColumnDisplayIndexSortedArrayList;
 
 			for (int i = first_col_index; i < cols.Count; i++) {
+				if (!cols[i].Visible)
+					continue;
+					
 				if (cols[i].Index == columnIndex) {
 					w = cols[i].Width;
 					break;
@@ -2570,6 +2579,9 @@ namespace System.Windows.Forms {
 			List<DataGridViewColumn> cols = columns.ColumnDisplayIndexSortedArrayList;
 
 			for (int i = first_col_index; i < cols.Count; i++) {
+				if (!cols[i].Visible)
+					continue;
+					
 				if (cols[i].Index == columnIndex) {
 					w = cols[i].Width;
 					break;
@@ -2651,6 +2663,9 @@ namespace System.Windows.Forms {
 			List<DataGridViewColumn> cols = columns.ColumnDisplayIndexSortedArrayList;
 			
 			for (int i = first_col_index; i < cols.Count; i++) {
+				if (!cols[i].Visible)
+					continue;
+					
 				if (x > left && x <= (left + cols[i].Width)) {
 					colindex = cols[i].Index;
 					break;
@@ -2662,10 +2677,10 @@ namespace System.Windows.Forms {
 			if (colindex >= 0 && rowindex >= 0)
 				return new HitTestInfo (colindex, x, rowindex, y, DataGridViewHitTestType.Cell);
 			
-			if (isInColHeader)
+			if (isInColHeader && colindex > -1)
 				return new HitTestInfo (colindex, x, rowindex, y, DataGridViewHitTestType.ColumnHeader);
 			
-			if (isInRowHeader)
+			if (isInRowHeader && rowindex > -1)
 				return new HitTestInfo (colindex, x, rowindex, y, DataGridViewHitTestType.RowHeader);
 				
 			return new HitTestInfo (-1, x, -1, y, DataGridViewHitTestType.None);
@@ -2812,21 +2827,43 @@ namespace System.Windows.Forms {
 		
 		public void UpdateCellErrorText (int columnIndex, int rowIndex)
 		{
-			throw new NotImplementedException();
+			if (columnIndex < 0 || columnIndex > Columns.Count - 1)
+				throw new ArgumentOutOfRangeException ("columnIndex");
+			if (rowIndex < 0 || rowIndex > Rows.Count - 1)
+				throw new ArgumentOutOfRangeException ("rowIndex");
+
+			InvalidateCell (columnIndex, rowIndex);
 		}
 
 		public void UpdateCellValue (int columnIndex, int rowIndex)
 		{
-			throw new NotImplementedException();
+			if (columnIndex < 0 || columnIndex > Columns.Count - 1)
+				throw new ArgumentOutOfRangeException ("columnIndex");
+			if (rowIndex < 0 || rowIndex > Rows.Count - 1)
+				throw new ArgumentOutOfRangeException ("rowIndex");
+			
+			InvalidateCell (columnIndex, rowIndex);
 		}
 
 		public void UpdateRowErrorText (int rowIndex)
 		{
-			throw new NotImplementedException();
+			if (rowIndex < 0 || rowIndex > Rows.Count - 1)
+				throw new ArgumentOutOfRangeException ("rowIndex");
+
+			InvalidateRow (rowIndex);
 		}
 
-		public void UpdateRowErrorText (int rowIndexStart, int rowIndexEnd) {
-			throw new NotImplementedException();
+		public void UpdateRowErrorText (int rowIndexStart, int rowIndexEnd)
+		{
+			if (rowIndexStart < 0 || rowIndexStart > Rows.Count - 1)
+				throw new ArgumentOutOfRangeException ("rowIndexStart");
+			if (rowIndexEnd < 0 || rowIndexEnd > Rows.Count - 1)
+				throw new ArgumentOutOfRangeException ("rowIndexEnd");
+			if (rowIndexEnd < rowIndexStart)
+				throw new ArgumentOutOfRangeException ("rowIndexEnd", "rowIndexEnd must be greater than rowIndexStart");
+				
+			for (int i = rowIndexStart; i <= rowIndexEnd; i++)
+				InvalidateRow (i);
 		}
 
 		public void UpdateRowHeightInfo (int rowIndex, bool updateToEnd) {
@@ -4162,6 +4199,9 @@ namespace System.Windows.Forms {
 				for (int index = first_col_index; index < sortedColumns.Count; index++) {
 					DataGridViewColumn col = sortedColumns[index];
 					
+					if (!col.Visible)
+						continue;
+					
 					headerBounds.Width = col.Width;
 					DataGridViewCell cell = col.HeaderCell;
 
@@ -4180,7 +4220,7 @@ namespace System.Windows.Forms {
 			gridHeight = 0;
 			
 			int rows_displayed = 0;
-			int first_row_height = Rows.Count > 0 ? Rows[first_row_index].Height : 0;
+			int first_row_height = Rows.Count > 0 ? Rows[Math.Min (Rows.Count - 1, first_row_index)].Height : 0;
 			int room_left = this.Height;
 			
 			// Reset all columns to !Displayed
@@ -4190,7 +4230,10 @@ namespace System.Windows.Forms {
 			// Set Displayed columns
 			for (int i = first_col_index; i < Columns.Count; i++) {
 				DataGridViewColumn col = Columns.ColumnDisplayIndexSortedArrayList[i];
-				
+
+				if (!col.Visible)
+					continue;
+			
 				col.DisplayedInternal = true;
 				gridWidth += col.Width;
 				
@@ -4211,7 +4254,7 @@ namespace System.Windows.Forms {
 				bool is_first = row.Index == 0;
 				bool is_last = row.Index == rows.Count - 1;
 
-				row.Paint (g, e.ClipRectangle, bounds, index, row.GetState (row.Index), is_first, is_last);
+				row.Paint (g, e.ClipRectangle, bounds, row.Index, row.GetState (row.Index), is_first, is_last);
 
 				bounds.Y += bounds.Height;
 				bounds.X = BorderWidth;
@@ -4227,7 +4270,8 @@ namespace System.Windows.Forms {
 			gridWidth = 0;
 			
 			foreach (DataGridViewColumn col in sortedColumns)
-				gridWidth += col.Width;
+				if (col.Visible)
+					gridWidth += col.Width;
 
 			gridHeight = 0;
 			
@@ -4970,6 +5014,8 @@ namespace System.Windows.Forms {
 
 		protected virtual void SetSelectedCellCore (int columnIndex, int rowIndex, bool selected) {
 			rows [rowIndex].Cells [columnIndex].Selected = selected;
+			
+			OnSelectionChanged (EventArgs.Empty);
 		}
 
 		internal void SetSelectedColumnCoreInternal (int columnIndex, bool selected) {

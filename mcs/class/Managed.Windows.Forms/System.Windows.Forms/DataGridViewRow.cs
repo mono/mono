@@ -163,7 +163,9 @@ namespace System.Windows.Forms
 				if (headerCell != value) {
 					headerCell = value;
 					headerCell.SetOwningRow (this);
+					
 					if (DataGridView != null) {
+						headerCell.SetDataGridView (DataGridView);
 						DataGridView.OnRowHeaderCellChanged(new DataGridViewRowEventArgs(this));
 					}
 				}
@@ -331,12 +333,18 @@ namespace System.Windows.Forms
 
 		public override object Clone ()
 		{
-			DataGridViewRow row = (DataGridViewRow) MemberwiseClone();
-			row.HeaderCell.SetOwningRow (row);
-			row.cells = new DataGridViewCellCollection(row);
-			foreach (DataGridViewCell cell in cells) {
-				row.cells.Add(cell.Clone() as DataGridViewCell);
-			}
+			DataGridViewRow row = (DataGridViewRow)MemberwiseClone ();
+
+			row.HeaderCell = (DataGridViewRowHeaderCell)HeaderCell.Clone ();
+			row.SetIndex (-1);
+			
+			row.cells = new DataGridViewCellCollection (row);
+			
+			foreach (DataGridViewCell cell in cells)
+				row.cells.Add (cell.Clone () as DataGridViewCell);
+
+			row.SetDataGridView (null);
+
 			return row;
 		}
 
@@ -518,6 +526,9 @@ namespace System.Windows.Forms
 			for (int i = DataGridView.first_col_index; i < sortedColumns.Count; i++) {
 				DataGridViewColumn col = sortedColumns[i];
 				
+				if (!col.Visible)
+					continue;
+					
 				if (!col.Displayed)
 					break;
 					
