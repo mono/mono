@@ -1,3 +1,8 @@
+2008-04-30  Miguel de Icaza  <miguel@novell.com>
+
+	* WebPermission.cs (ToXml): To allow code that uses WebPermission
+	to be built. 
+
 2008-04-21 Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
 
 	* HttpWebResponse.cs: do not check the disposed status for properties

@@ -227,10 +227,20 @@ namespace System.Net {
 			return root;
 		}
 
-		[MonoTODO]
 		private void ToXml (SecurityElement root, string childName, IEnumerator enumerator)
 		{
-			throw new NotImplementedException ();
+			SecurityElement child = new SecurityElement (childName, null);
+
+			root.AddChild (child);
+			while (enumerator.MoveNext ()){
+				WebPermissionInfo x = enumerator.Current as WebPermissionInfo;
+
+				if (x == null) continue;
+
+				SecurityElement uri = new SecurityElement ("URI");
+				uri.AddAttribute ("uri", x.Info);
+				child.AddChild (uri);
+			}
 		}
 
 		public override void FromXml (SecurityElement securityElement)
@@ -260,7 +270,6 @@ namespace System.Net {
 			}
 		}
 
-		[MonoTODO]
 		private void FromXml (ArrayList endpoints, NetworkAccess access)
 		{
 			throw new NotImplementedException ();
