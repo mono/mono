@@ -66,6 +66,22 @@ namespace MonoTests.System.Xml.Linq
 			Assert.AreEqual (xml.Replace ('\'', '"'), sw.ToString ());
 		}
 
+		[Test] // almost identical to CreateReader1().
+		public void CreateReader3 ()
+		{
+			string xml = "<root><foo a='v' /><bar></bar><baz>simple text<!-- comment --><mixed1 /><mixed2><![CDATA[cdata]]><?some-pi with-data ?></mixed2></baz></root>";
+			XDocument doc = XDocument.Parse (xml, LoadOptions.PreserveWhitespace);
+			XmlReader xr = doc.CreateReader ();
+			StringWriter sw = new StringWriter ();
+			XmlWriterSettings s = new XmlWriterSettings ();
+			s.OmitXmlDeclaration = true;
+			XmlWriter xw = XmlWriter.Create (sw, s);
+			while (!xr.EOF)
+				xw.WriteNode (xr, false);
+			xw.Close ();
+			Assert.AreEqual (xml.Replace ('\'', '"'), sw.ToString ());
+		}
+
 		[Test]
 		public void GetAttribute ()
 		{

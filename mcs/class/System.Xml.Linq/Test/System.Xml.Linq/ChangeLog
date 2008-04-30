@@ -1,3 +1,7 @@
+2008-04-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XNodeReaderTest.cs : added CreateReader3().
+
 2008-02-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XElementTest.cs : added test for Value (bug #360858).

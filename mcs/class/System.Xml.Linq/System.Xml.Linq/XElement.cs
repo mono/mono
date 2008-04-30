@@ -396,7 +396,7 @@ namespace System.Xml.Linq
 			}
 		}
 
-		static XElement LoadCore (XmlReader r, LoadOptions options)
+		internal static XElement LoadCore (XmlReader r, LoadOptions options)
 		{
 			r.MoveToContent ();
 			if (r.NodeType != XmlNodeType.Element)

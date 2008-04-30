@@ -1,3 +1,8 @@
+2008-04-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XElement.cs, XNode.cs : XNode.ReadFrom() should not reuse
+	  XElement.Load() which may create wrapper XmlReader.
+
 2008-02-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XElement.cs : Value is rather a value in XPath semantics than

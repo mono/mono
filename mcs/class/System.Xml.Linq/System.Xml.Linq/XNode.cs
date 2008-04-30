@@ -149,7 +149,7 @@ namespace System.Xml.Linq
 		{
 			switch (r.NodeType) {
 			case XmlNodeType.Element:
-				return XElement.Load (r, options);
+				return XElement.LoadCore (r, options);
 			case XmlNodeType.Whitespace:
 			case XmlNodeType.SignificantWhitespace:
 			case XmlNodeType.Text:
