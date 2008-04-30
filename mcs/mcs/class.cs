@@ -7873,6 +7873,39 @@ namespace Mono.CSharp {
 		};
 
 		public readonly OpType OperatorType;
+
+		static readonly string [] [] names;
+
+		static Operator ()
+		{
+			names = new string[(int)OpType.TOP][];
+			names [(int) OpType.LogicalNot] = new string [] { "!", "op_LogicalNot" };
+			names [(int) OpType.OnesComplement] = new string [] { "~", "op_OnesComplement" };
+			names [(int) OpType.Increment] = new string [] { "++", "op_Increment" };
+			names [(int) OpType.Decrement] = new string [] { "--", "op_Decrement" };
+			names [(int) OpType.True] = new string [] { "true", "op_True" };
+			names [(int) OpType.False] = new string [] { "false", "op_False" };
+			names [(int) OpType.Addition] = new string [] { "+", "op_Addition" };
+			names [(int) OpType.Subtraction] = new string [] { "-", "op_Subtraction" };
+			names [(int) OpType.UnaryPlus] = new string [] { "+", "op_UnaryPlus" };
+			names [(int) OpType.UnaryNegation] = new string [] { "-", "op_UnaryNegation" };
+			names [(int) OpType.Multiply] = new string [] { "*", "op_Multiply" };
+			names [(int) OpType.Division] = new string [] { "/", "op_Division" };
+			names [(int) OpType.Modulus] = new string [] { "%", "op_Modulus" };
+			names [(int) OpType.BitwiseAnd] = new string [] { "&", "op_BitwiseAnd" };
+			names [(int) OpType.BitwiseOr] = new string [] { "|", "op_BitwiseOr" };
+			names [(int) OpType.ExclusiveOr] = new string [] { "^", "op_ExclusiveOr" };
+			names [(int) OpType.LeftShift] = new string [] { "<<", "op_LeftShift" };
+			names [(int) OpType.RightShift] = new string [] { ">>", "op_RightShift" };
+			names [(int) OpType.Equality] = new string [] { "==", "op_Equality" };
+			names [(int) OpType.Inequality] = new string [] { "!=", "op_Inequality" };
+			names [(int) OpType.GreaterThan] = new string [] { ">", "op_GreaterThan" };
+			names [(int) OpType.LessThan] = new string [] { "<", "op_LessThan" };
+			names [(int) OpType.GreaterThanOrEqual] = new string [] { ">=", "op_GreaterThanOrEqual" };
+			names [(int) OpType.LessThanOrEqual] = new string [] { "<=", "op_LessThanOrEqual" };
+			names [(int) OpType.Implicit] = new string [] { "implicit", "op_Implicit" };
+			names [(int) OpType.Explicit] = new string [] { "explicit", "op_Explicit" };
+		}
 		
 		public Operator (DeclSpace parent, OpType type, FullNamedExpression ret_type,
 				 int mod_flags, Parameters parameters,
@@ -7907,9 +7940,9 @@ namespace Mono.CSharp {
 
 			// imlicit and explicit operator of same types are not allowed
 			if (OperatorType == OpType.Explicit)
-				Parent.MemberCache.CheckExistingMembersOverloads (this, "op_Implicit", Parameters);
+				Parent.MemberCache.CheckExistingMembersOverloads (this, GetMetadataName (OpType.Implicit), Parameters);
 			else if (OperatorType == OpType.Implicit)
-				Parent.MemberCache.CheckExistingMembersOverloads (this, "op_Explicit", Parameters);
+				Parent.MemberCache.CheckExistingMembersOverloads (this, GetMetadataName (OpType.Explicit), Parameters);
 
 			if (MemberType == TypeManager.void_type) {
 				Report.Error (590, Location, "User-defined operators cannot return void");
@@ -8072,61 +8105,30 @@ namespace Mono.CSharp {
 
 		public static string GetName (OpType ot)
 		{
-			switch (ot){
-			case OpType.LogicalNot:
-				return "!";
-			case OpType.OnesComplement:
-				return "~";
-			case OpType.Increment:
-				return "++";
-			case OpType.Decrement:
-				return "--";
-			case OpType.True:
-				return "true";
-			case OpType.False:
-				return "false";
-			case OpType.Addition:
-				return "+";
-			case OpType.Subtraction:
-				return "-";
-			case OpType.UnaryPlus:
-				return "+";
-			case OpType.UnaryNegation:
-				return "-";
-			case OpType.Multiply:
-				return "*";
-			case OpType.Division:
-				return "/";
-			case OpType.Modulus:
-				return "%";
-			case OpType.BitwiseAnd:
-				return "&";
-			case OpType.BitwiseOr:
-				return "|";
-			case OpType.ExclusiveOr:
-				return "^";
-			case OpType.LeftShift:
-				return "<<";
-			case OpType.RightShift:
-				return ">>";
-			case OpType.Equality:
-				return "==";
-			case OpType.Inequality:
-				return "!=";
-			case OpType.GreaterThan:
-				return ">";
-			case OpType.LessThan:
-				return "<";
-			case OpType.GreaterThanOrEqual:
-				return ">=";
-			case OpType.LessThanOrEqual:
-				return "<=";
-			case OpType.Implicit:
-				return "implicit";
-			case OpType.Explicit:
-				return "explicit";
-			default: return "";
+			return names [(int) ot] [0];
+		}
+
+		public static string GetName (string metadata_name)
+		{
+			for (int i = 0; i < names.Length; ++i) {
+				if (names [i] [1] == metadata_name)
+					return names [i] [0];
 			}
+			return null;
+		}
+
+		public static string GetMetadataName (OpType ot)
+		{
+			return names [(int) ot] [1];
+		}
+
+		public static string GetMetadataName (string name)
+		{
+			for (int i = 0; i < names.Length; ++i) {
+				if (names [i] [0] == name)
+					return names [i] [1];
+			}
+			return null;
 		}
 
 		public OpType GetMatchingOperator ()
@@ -8151,22 +8153,6 @@ namespace Mono.CSharp {
 				default:
 					return OpType.TOP;
 			}
-		}
-
-		public static OpType GetOperatorType (string name)
-		{
-			if (name.StartsWith ("op_")){
-				for (int i = 0; i < Unary.oper_names.Length; ++i) {
-					if (Unary.oper_names [i] == name)
-						return (OpType)i;
-				}
-
-				for (int i = 0; i < Binary.oper_names.Length; ++i) {
-					if (Binary.oper_names [i] == name)
-						return (OpType)i;
-				}
-			}
-			return OpType.TOP;
 		}
 
 		public override string GetSignatureForError ()

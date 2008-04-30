@@ -1,5 +1,10 @@
 2008-04-30  Marek Safar  <marek.safar@gmail.com>
 
+	* typemanager.cs, ecore.cs, class.cs, expression.cs, doc.cs: Merged all
+	operators method details to Operator class.
+
+2008-04-30  Marek Safar  <marek.safar@gmail.com>
+
 	* anonymous.cs: Pass unsafe flags to anonymous container.
 	
 	* ecore.cs, expression.cs, statement.cs: Block unsafe pointer operations

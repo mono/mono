@@ -940,7 +940,8 @@ namespace Mono.CSharp {
 		static Expression GetOperatorTrueOrFalse (EmitContext ec, Expression e, bool is_true, Location loc)
 		{
 			MethodGroupExpr operator_group;
-			operator_group = MethodLookup (ec.ContainerType, e.Type, is_true ? "op_True" : "op_False", loc) as MethodGroupExpr;
+			string mname = Operator.GetMetadataName (is_true ? Operator.OpType.True : Operator.OpType.False);
+			operator_group = MethodLookup (ec.ContainerType, e.Type, mname, loc) as MethodGroupExpr;
 			if (operator_group == null)
 				return null;
 

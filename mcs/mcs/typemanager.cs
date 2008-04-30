@@ -768,10 +768,10 @@ namespace Mono.CSharp {
 		int accessor_end = 0;
 
 		if (!mb.IsConstructor && TypeManager.IsSpecialMethod (mb)) {
-			Operator.OpType ot = Operator.GetOperatorType (mb.Name);
-			if (ot != Operator.OpType.TOP) {
+			string op_name = Operator.GetName (mb.Name);
+			if (op_name != null) {
 				sig.Append ("operator ");
-				sig.Append (Operator.GetName (ot));
+				sig.Append (op_name);
 				sig.Append (parameters);
 				return sig.ToString ();
 			}
@@ -3255,17 +3255,9 @@ namespace Mono.CSharp {
 			return true;
 
 		string name = mb.Name;
-		if (name.StartsWith ("op_")){
-			foreach (string oname in Unary.oper_names) {
-				if (oname == name)
-					return true;
-			}
+		if (name.StartsWith ("op_"))
+			return Operator.GetName (name) != null;
 
-			foreach (string oname in Binary.oper_names) {
-				if (oname == name)
-					return true;
-			}
-		}
 		return false;
 	}
 

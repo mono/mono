@@ -138,7 +138,6 @@ namespace Mono.CSharp {
 			AddressOf,  TOP
 		}
 
-		public static readonly string [] oper_names;
 		static Type [] [] predefined_operators;
 
 		public readonly Operator Oper;
@@ -150,17 +149,6 @@ namespace Mono.CSharp {
 			this.Oper = op;
 			this.Expr = expr;
 			this.loc = loc;
-		}
-
-		static Unary ()
-		{
-			oper_names = new string [(int)Operator.TOP];
-
-			oper_names [(int) Operator.UnaryPlus] = "op_UnaryPlus";
-			oper_names [(int) Operator.UnaryNegation] = "op_UnaryNegation";
-			oper_names [(int) Operator.LogicalNot] = "op_LogicalNot";
-			oper_names [(int) Operator.OnesComplement] = "op_OnesComplement";
-			oper_names [(int) Operator.AddressOf] = "op_AddressOf";
 		}
 
 		// <summary>
@@ -676,7 +664,21 @@ namespace Mono.CSharp {
 		//
 		protected virtual Expression ResolveUserOperator (EmitContext ec, Expression expr)
 		{
-			string op_name = oper_names [(int) Oper];
+			CSharp.Operator.OpType op_type;
+			switch (Oper) {
+			case Operator.LogicalNot:
+				op_type = CSharp.Operator.OpType.LogicalNot; break;
+			case Operator.OnesComplement:
+				op_type = CSharp.Operator.OpType.OnesComplement; break;
+			case Operator.UnaryNegation:
+				op_type = CSharp.Operator.OpType.UnaryNegation; break;
+			case Operator.UnaryPlus:
+				op_type = CSharp.Operator.OpType.UnaryPlus; break;
+			default:
+				throw new InternalErrorException (Oper.ToString ());
+			}
+
+			string op_name = CSharp.Operator.GetMetadataName (op_type);
 			MethodGroupExpr user_op = MemberLookup (ec.ContainerType, expr.Type, op_name, MemberTypes.Method, AllBindingFlags, expr.Location) as MethodGroupExpr;
 			if (user_op == null)
 				return null;
@@ -955,9 +957,9 @@ namespace Mono.CSharp {
 			string op_name;
 			
 			if (mode == Mode.PreIncrement || mode == Mode.PostIncrement)
-				op_name = "op_Increment";
-			else 
-				op_name = "op_Decrement";
+				op_name = Operator.GetMetadataName (Operator.OpType.Increment);
+			else
+				op_name = Operator.GetMetadataName (Operator.OpType.Decrement);
 
 			mg = MemberLookup (ec.ContainerType, expr_type, op_name, MemberTypes.Method, AllBindingFlags, loc);
 
@@ -1873,36 +1875,9 @@ namespace Mono.CSharp {
 		readonly bool is_compound;
 		Expression enum_conversion;
 
-		// This must be kept in sync with Operator!!!
-		public static readonly string [] oper_names;
-
 		static PredefinedOperator [] standard_operators;
 		static PredefinedOperator [] pointer_operators;
 		
-		static Binary ()
-		{
-			oper_names = new string [18];
-
-			oper_names [(int) (Operator.Multiply & Operator.ValuesOnlyMask)] = "op_Multiply";
-			oper_names [(int) (Operator.Division & Operator.ValuesOnlyMask)] = "op_Division";
-			oper_names [(int) (Operator.Modulus & Operator.ValuesOnlyMask)] = "op_Modulus";
-			oper_names [(int) (Operator.Addition & Operator.ValuesOnlyMask)] = "op_Addition";
-			oper_names [(int) (Operator.Subtraction & Operator.ValuesOnlyMask)] = "op_Subtraction";
-			oper_names [(int) (Operator.LeftShift & Operator.ValuesOnlyMask)] = "op_LeftShift";
-			oper_names [(int) (Operator.RightShift & Operator.ValuesOnlyMask)] = "op_RightShift";
-			oper_names [(int) (Operator.LessThan & Operator.ValuesOnlyMask)] = "op_LessThan";
-			oper_names [(int) (Operator.GreaterThan & Operator.ValuesOnlyMask)] = "op_GreaterThan";
-			oper_names [(int) (Operator.LessThanOrEqual & Operator.ValuesOnlyMask)] = "op_LessThanOrEqual";
-			oper_names [(int) (Operator.GreaterThanOrEqual & Operator.ValuesOnlyMask)] = "op_GreaterThanOrEqual";
-			oper_names [(int) (Operator.Equality & Operator.ValuesOnlyMask)] = "op_Equality";
-			oper_names [(int) (Operator.Inequality & Operator.ValuesOnlyMask)] = "op_Inequality";
-			oper_names [(int) (Operator.BitwiseAnd & Operator.ValuesOnlyMask)] = "op_BitwiseAnd";
-			oper_names [(int) (Operator.BitwiseOr & Operator.ValuesOnlyMask)] = "op_BitwiseOr";
-			oper_names [(int) (Operator.ExclusiveOr & Operator.ValuesOnlyMask)] = "op_ExclusiveOr";
-			oper_names [(int) (Operator.LogicalOr & Operator.ValuesOnlyMask)] = "op_LogicalOr";
-			oper_names [(int) (Operator.LogicalAnd & Operator.ValuesOnlyMask)] = "op_LogicalAnd";
-		}
-
 		public Binary (Operator oper, Expression left, Expression right, bool isCompound)
 			: this (oper, left, right)
 		{
@@ -2023,9 +1998,47 @@ namespace Mono.CSharp {
 			Error_OperatorCannotBeApplied (Location, OperName (oper), l, r);
 		}
 
-		public static string GetOperatorMetadataName (Operator op)
+		static string GetOperatorMetadataName (Operator op)
 		{
-			return oper_names [(int)(op & Operator.ValuesOnlyMask)];
+			CSharp.Operator.OpType op_type;
+			switch (op) {
+			case Operator.Addition:
+				op_type = CSharp.Operator.OpType.Addition; break;
+			case Operator.BitwiseAnd:
+				op_type = CSharp.Operator.OpType.BitwiseAnd; break;
+			case Operator.BitwiseOr:
+				op_type = CSharp.Operator.OpType.BitwiseOr; break;
+			case Operator.Division:
+				op_type = CSharp.Operator.OpType.Division; break;
+			case Operator.Equality:
+				op_type = CSharp.Operator.OpType.Equality; break;
+			case Operator.ExclusiveOr:
+				op_type = CSharp.Operator.OpType.ExclusiveOr; break;
+			case Operator.GreaterThan:
+				op_type = CSharp.Operator.OpType.GreaterThan; break;
+			case Operator.GreaterThanOrEqual:
+				op_type = CSharp.Operator.OpType.GreaterThanOrEqual; break;
+			case Operator.Inequality:
+				op_type = CSharp.Operator.OpType.Inequality; break;
+			case Operator.LeftShift:
+				op_type = CSharp.Operator.OpType.LeftShift; break;
+			case Operator.LessThan:
+				op_type = CSharp.Operator.OpType.LessThan; break;
+			case Operator.LessThanOrEqual:
+				op_type = CSharp.Operator.OpType.LessThanOrEqual; break;
+			case Operator.Modulus:
+				op_type = CSharp.Operator.OpType.Modulus; break;
+			case Operator.Multiply:
+				op_type = CSharp.Operator.OpType.Multiply; break;
+			case Operator.RightShift:
+				op_type = CSharp.Operator.OpType.RightShift; break;
+			case Operator.Subtraction:
+				op_type = CSharp.Operator.OpType.Subtraction; break;
+			default:
+				throw new InternalErrorException (op.ToString ());
+			}
+
+			return CSharp.Operator.GetMetadataName (op_type);
 		}
 
 		static bool IsUnsigned (Type t)

@@ -505,11 +505,11 @@ namespace Mono.CSharp {
 			string oper = null;
 			string return_type_name = null;
 			if (member_name.StartsWith ("implicit operator ")) {
-				oper = "op_Implicit";
+				Operator.GetMetadataName (Operator.OpType.Implicit);
 				return_type_name = member_name.Substring (18).Trim (wsChars);
 			}
 			else if (member_name.StartsWith ("explicit operator ")) {
-				oper = "op_Explicit";
+				oper = Operator.GetMetadataName (Operator.OpType.Explicit);
 				return_type_name = member_name.Substring (18).Trim (wsChars);
 			}
 			else if (member_name.StartsWith ("operator ")) {
@@ -518,58 +518,19 @@ namespace Mono.CSharp {
 				// either unary or binary
 				case "+":
 					oper = param_list.Length == 2 ?
-						Binary.GetOperatorMetadataName (Binary.Operator.Addition) :
-						Unary.oper_names [(int) Unary.Operator.UnaryPlus];
+						Operator.GetMetadataName (Operator.OpType.Addition) :
+						Operator.GetMetadataName (Operator.OpType.UnaryPlus);
 					break;
 				case "-":
 					oper = param_list.Length == 2 ?
-						Binary.GetOperatorMetadataName (Binary.Operator.Subtraction) :
-						Unary.oper_names [(int) Unary.Operator.UnaryNegation];
+						Operator.GetMetadataName (Operator.OpType.Subtraction) :
+						Operator.GetMetadataName (Operator.OpType.UnaryNegation);
 					break;
-				// unary
-				case "!":
-					oper = Unary.oper_names [(int) Unary.Operator.LogicalNot]; break;
-				case "~":
-					oper = Unary.oper_names [(int) Unary.Operator.OnesComplement]; break;
-					
-				case "++":
-					oper = "op_Increment"; break;
-				case "--":
-					oper = "op_Decrement"; break;
-				case "true":
-					oper = "op_True"; break;
-				case "false":
-					oper = "op_False"; break;
-				// binary
-				case "*":
-					oper = Binary.GetOperatorMetadataName (Binary.Operator.Multiply); break;
-				case "/":
-					oper = Binary.GetOperatorMetadataName (Binary.Operator.Division); break;
-				case "%":
-					oper = Binary.GetOperatorMetadataName (Binary.Operator.Modulus); break;
-				case "&":
-					oper = Binary.GetOperatorMetadataName (Binary.Operator.BitwiseAnd); break;
-				case "|":
-					oper = Binary.GetOperatorMetadataName (Binary.Operator.BitwiseOr); break;
-				case "^":
-					oper = Binary.GetOperatorMetadataName (Binary.Operator.ExclusiveOr); break;
-				case "<<":
-					oper = Binary.GetOperatorMetadataName (Binary.Operator.LeftShift); break;
-				case ">>":
-					oper = Binary.GetOperatorMetadataName (Binary.Operator.RightShift); break;
-				case "==":
-					oper = Binary.GetOperatorMetadataName (Binary.Operator.Equality); break;
-				case "!=":
-					oper = Binary.GetOperatorMetadataName (Binary.Operator.Inequality); break;
-				case "<":
-					oper = Binary.GetOperatorMetadataName (Binary.Operator.LessThan); break;
-				case ">":
-					oper = Binary.GetOperatorMetadataName (Binary.Operator.GreaterThan); break;
-				case "<=":
-					oper = Binary.GetOperatorMetadataName (Binary.Operator.LessThanOrEqual); break;
-				case ">=":
-					oper = Binary.GetOperatorMetadataName (Binary.Operator.GreaterThanOrEqual); break;
 				default:
+					oper = Operator.GetMetadataName (oper);
+					if (oper != null)
+						break;
+
 					warning_type = 1584;
 					Report.Warning (1020, 1, mc.Location, "Overloadable {0} operator is expected", param_list.Length == 2 ? "binary" : "unary");
 					Report.Warning (1584, 1, mc.Location, "XML comment on `{0}' has syntactically incorrect cref attribute `{1}'",
