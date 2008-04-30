@@ -374,6 +374,9 @@ namespace Mono.CSharp {
 		{
 			string method_name;
 			switch (Oper) {
+			case Operator.AddressOf:
+				Error_PointerInsideExpressionTree ();
+				return null;
 			case Operator.UnaryNegation:
 				if (ec.CheckState && user_op == null && !IsFloat (type))
 					method_name = "NegateChecked";
@@ -767,6 +770,12 @@ namespace Mono.CSharp {
 		{
 			this.expr = expr;
 			loc = l;
+		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			Error_PointerInsideExpressionTree ();
+			return null;
 		}
 		
 		public override void Emit (EmitContext ec)
@@ -3693,6 +3702,12 @@ namespace Mono.CSharp {
 			is_add = is_addition;
 		}
 
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			Error_PointerInsideExpressionTree ();
+			return null;
+		}
+
 		public override Expression DoResolve (EmitContext ec)
 		{
 			eclass = ExprClass.Variable;
@@ -4508,6 +4523,9 @@ namespace Mono.CSharp {
 
 		public bool Resolve (EmitContext ec, Location loc)
 		{
+			if (Expr == null)
+				return false;
+
 			using (ec.With (EmitContext.Flags.DoFlowAnalysis, true)) {
 				// Verify that the argument is readable
 				if (ArgType != AType.Out)
@@ -6617,6 +6635,11 @@ namespace Mono.CSharp {
 			this.loc = loc;
 		}
 
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			throw new NotSupportedException ("ET");
+		}
+
 		public override Expression DoResolve (EmitContext ec)
 		{
 			eclass = ExprClass.Variable;
@@ -6702,29 +6725,6 @@ namespace Mono.CSharp {
 			target.Arguments = new Argument [Arguments.Length];
 			for (int i = 0; i < Arguments.Length; i++)
 				target.Arguments [i] = Arguments [i].Clone (clonectx);
-		}
-	}
-
-	//
-	// This produces the value that renders an instance, used by the iterators code
-	//
-	public class ProxyInstance : Expression, IMemoryLocation  {
-		public override Expression DoResolve (EmitContext ec)
-		{
-			eclass = ExprClass.Variable;
-			type = ec.ContainerType;
-			return this;
-		}
-		
-		public override void Emit (EmitContext ec)
-		{
-			ec.ig.Emit (OpCodes.Ldarg_0);
-
-		}
-		
-		public void AddressOf (EmitContext ec, AddressOp mode)
-		{
-			ec.ig.Emit (OpCodes.Ldarg_0);
 		}
 	}
 
@@ -6995,6 +6995,12 @@ namespace Mono.CSharp {
 		{
 			this.QueriedType = queried_type;
 			loc = l;
+		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			Error_PointerInsideExpressionTree ();
+			return null;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -8795,6 +8801,12 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Value;
 		}
 
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			Error_PointerInsideExpressionTree ();
+			return null;
+		}
+
 		public override void Emit(EmitContext ec)
 		{
 			array.Emit (ec);
@@ -8837,34 +8849,24 @@ namespace Mono.CSharp {
 	//
 	// Encapsulates a conversion rules required for array indexes
 	//
-	public class ArrayIndexCast : Expression
+	public class ArrayIndexCast : TypeCast
 	{
-		Expression expr;
-
 		public ArrayIndexCast (Expression expr)
+			: base (expr, expr.Type)
 		{
-			this.expr = expr;
-			this.loc = expr.Location;
 		}
 
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
 			ArrayList args = new ArrayList (2);
-			args.Add (new Argument (expr.CreateExpressionTree (ec)));
+			args.Add (new Argument (child.CreateExpressionTree (ec)));
 			args.Add (new Argument (new TypeOf (new TypeExpression (TypeManager.int32_type, loc), loc)));
 			return CreateExpressionFactoryCall ("ConvertChecked", args);
 		}
 
-		public override Expression DoResolve (EmitContext ec)
-		{
-			type = expr.Type;
-			eclass = expr.eclass;
-			return this;
-		}
-
 		public override void Emit (EmitContext ec)
 		{
-			expr.Emit (ec);
+			child.Emit (ec);
 				
 			if (type == TypeManager.int32_type)
 				return;
@@ -8881,45 +8883,6 @@ namespace Mono.CSharp {
 	}
 
 	//
-	// Used by the fixed statement
-	//
-	public class StringPtr : Expression {
-		LocalBuilder b;
-		
-		public StringPtr (LocalBuilder b, Location l)
-		{
-			this.b = b;
-			eclass = ExprClass.Value;
-			type = TypeManager.char_ptr_type;
-			loc = l;
-		}
-
-		public override Expression DoResolve (EmitContext ec)
-		{
-			// This should never be invoked, we are born in fully
-			// initialized state.
-
-			return this;
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			if (TypeManager.int_get_offset_to_string_data == null) {
-				// TODO: Move to resolve !!
-				TypeManager.int_get_offset_to_string_data = TypeManager.GetPredefinedMethod (
-					TypeManager.runtime_helpers_type, "get_OffsetToStringData", loc, Type.EmptyTypes);
-			}
-
-			ILGenerator ig = ec.ig;
-
-			ig.Emit (OpCodes.Ldloc, b);
-			ig.Emit (OpCodes.Conv_I);
-			ig.Emit (OpCodes.Call, TypeManager.int_get_offset_to_string_data);
-			ig.Emit (OpCodes.Add);
-		}
-	}
-	
-	//
 	// Implements the `stackalloc' keyword
 	//
 	public class StackAlloc : Expression {
@@ -8932,6 +8895,11 @@ namespace Mono.CSharp {
 			t = type;
 			this.count = count;
 			loc = l;
+		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			throw new NotSupportedException ("ET");
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -9305,7 +9273,7 @@ namespace Mono.CSharp {
 			public override Expression CreateExpressionTree (EmitContext ec)
 			{
 				// Should not be reached
-				throw new NotSupportedException ();
+				throw new NotSupportedException ("ET");
 			}
 
 			public override Expression DoResolve (EmitContext ec)
@@ -9540,6 +9508,11 @@ namespace Mono.CSharp {
 		{
 			AnonymousTypeParameter t = (AnonymousTypeParameter) target;
 			t.initializer = initializer.Clone (clonectx);
+		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			throw new NotSupportedException ("ET");
 		}
 
 		public override bool Equals (object o)

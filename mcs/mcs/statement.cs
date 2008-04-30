@@ -4160,6 +4160,48 @@ namespace Mono.CSharp {
 		}
 
 		class StringEmitter : Emitter {
+			class StringPtr : Expression
+			{
+				LocalBuilder b;
+
+				public StringPtr (LocalBuilder b, Location l)
+				{
+					this.b = b;
+					eclass = ExprClass.Value;
+					type = TypeManager.char_ptr_type;
+					loc = l;
+				}
+
+				public override Expression CreateExpressionTree (EmitContext ec)
+				{
+					throw new NotSupportedException ("ET");
+				}
+
+				public override Expression DoResolve (EmitContext ec)
+				{
+					// This should never be invoked, we are born in fully
+					// initialized state.
+
+					return this;
+				}
+
+				public override void Emit (EmitContext ec)
+				{
+					if (TypeManager.int_get_offset_to_string_data == null) {
+						// TODO: Move to resolve !!
+						TypeManager.int_get_offset_to_string_data = TypeManager.GetPredefinedMethod (
+							TypeManager.runtime_helpers_type, "get_OffsetToStringData", loc, Type.EmptyTypes);
+					}
+
+					ILGenerator ig = ec.ig;
+
+					ig.Emit (OpCodes.Ldloc, b);
+					ig.Emit (OpCodes.Conv_I);
+					ig.Emit (OpCodes.Call, TypeManager.int_get_offset_to_string_data);
+					ig.Emit (OpCodes.Add);
+				}
+			}
+
 			LocalBuilder pinned_string;
 			Location loc;
 

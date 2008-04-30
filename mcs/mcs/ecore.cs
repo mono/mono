@@ -914,6 +914,11 @@ namespace Mono.CSharp {
 			throw new NotImplementedException ();
 		}
 
+		protected void Error_PointerInsideExpressionTree ()
+		{
+			Report.Error (1944, loc, "An expression tree cannot contain an unsafe pointer operation");
+		}
+
 		/// <summary>
 		///   Returns an expression that can be used to invoke operator true
 		///   on the expression if it exists.
@@ -1352,6 +1357,10 @@ namespace Mono.CSharp {
 			ArrayList args = new ArrayList (2);
 			args.Add (new Argument (child.CreateExpressionTree (ec)));
 			args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
+
+			if (type.IsPointer || child.Type.IsPointer)
+				Error_PointerInsideExpressionTree ();
+
 			return CreateExpressionFactoryCall (ec.CheckState ? "ConvertChecked" : "Convert", args);
 		}
 
@@ -1601,6 +1610,9 @@ namespace Mono.CSharp {
 			ArrayList args = new ArrayList (2);
 			args.Add (new Argument (child.CreateExpressionTree (ec)));
 			args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
+			if (type.IsPointer)
+				Error_PointerInsideExpressionTree ();
+
 			return CreateExpressionFactoryCall ("Convert", args);
 		}
 
@@ -2751,6 +2763,12 @@ namespace Mono.CSharp {
 	///   section 10.8.1 (Fully Qualified Names).
 	/// </summary>
 	public abstract class FullNamedExpression : Expression {
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			throw new NotSupportedException ("ET");
+		}
+
 		public override FullNamedExpression ResolveAsTypeStep (IResolveContext ec, bool silent)
 		{
 			return this;
@@ -4522,7 +4540,7 @@ namespace Mono.CSharp {
 
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
-			throw new NotSupportedException ();
+			throw new NotSupportedException ("ET");
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -5566,7 +5584,7 @@ namespace Mono.CSharp {
 
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
-			throw new NotSupportedException ();
+			throw new NotSupportedException ("ET");
 		}
 
 		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)

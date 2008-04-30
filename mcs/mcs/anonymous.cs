@@ -1643,6 +1643,9 @@ namespace Mono.CSharp {
 			
 			if (ec.IsInFieldInitializer)
 				flags |= EmitContext.Flags.InFieldInitializer;
+
+			if (ec.IsInUnsafeScope)
+				flags |= EmitContext.Flags.InUnsafe;
 			
 			// HACK: Flag with 0 cannot be set 
 			if (flags != 0)
