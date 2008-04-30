@@ -1,3 +1,8 @@
+2008-04-30  Jb Evain  <jbevain@novell.com>
+
+	* Enumerable.cs: Average (int|long): properly compute
+	average.
+
 2008-04-22  Jb Evain  <jbevain@novell.com>
 
 	* Enumerable.cs (ToReadOnlyCollection): optimization, use

@@ -137,12 +137,12 @@ namespace System.Linq
 
 		public static double Average (this IEnumerable<int> source)
 		{
-			return Average (source, (a, b) => a + b, (a, b) => a / b);
+			return Average (source, (a, b) => a + b, (a, b) => (double) a / (double) b);
 		}
 
 		public static double Average (this IEnumerable<long> source)
 		{
-			return Average (source, (a, b) => a + b, (a, b) => a / b);
+			return Average (source, (a, b) => a + b, (a, b) => (double) a / (double) b);
 		}
 
 		public static double Average (this IEnumerable<double> source)
