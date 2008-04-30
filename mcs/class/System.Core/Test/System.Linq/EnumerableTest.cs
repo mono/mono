@@ -234,25 +234,25 @@ namespace MonoTests.System.Linq {
 
 			Assert.AreEqual (typeof (int []), array.GetType ());
 		}
-                
-                [Test]
-                public void TestOrderBy ()
-                {
-                        int [] array = { 14, 53, 3, 9, 11, 14, 5, 32, 2 };
-                        var q = from i in array
-                                orderby i
-                                select i;
-                        AssertIsOrdered (q);
-                }
-                
-                static void AssertIsOrdered (IEnumerable<int> e)
-                {
-                        int f = int.MinValue;
-                        foreach(int i in e) {
-                                Assert.IsTrue (f <= i);
-                                f = i;
-                        }
-                }
+				
+		[Test]
+		public void TestOrderBy ()
+		{
+				int [] array = { 14, 53, 3, 9, 11, 14, 5, 32, 2 };
+				var q = from i in array
+						orderby i
+						select i;
+				AssertIsOrdered (q);
+		}
+		
+		static void AssertIsOrdered (IEnumerable<int> e)
+		{
+				int f = int.MinValue;
+				foreach(int i in e) {
+						Assert.IsTrue (f <= i);
+						f = i;
+				}
+		}
 
 		static void AssertAreSame<T> (IEnumerable<T> expected, IEnumerable<T> actual)
 		{
