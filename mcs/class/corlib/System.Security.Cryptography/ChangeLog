@@ -1,3 +1,9 @@
+2008-04-30  Alan McGovern  <alan.mcgovern@gmail.com>
+
+	* SHA256Managed.cs: Inlined helper methods removed
+	unnecessary casts and made a field a local var.
+	Gives about 1.70x faster performance.
+
 2008-04-27  Alan McGovern  <alan.mcgovern@gmail.com>
 
 	* SHA1CryptoServiceProvider.cs: Performed loop unrolling and
