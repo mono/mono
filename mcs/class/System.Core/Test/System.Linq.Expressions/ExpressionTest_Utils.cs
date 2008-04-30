@@ -275,5 +275,16 @@ namespace MonoTests.System.Linq.Expressions
 		{
 			return Expression.Constant (t);
 		}
+
+		public static void AssertThrows (this Action action, Type type)
+		{
+			try {
+				action ();
+				Assert.Fail ();
+			} catch (Exception e) {
+				if (e.GetType () != type)
+					Assert.Fail ();
+			}
+		}
 	}
 }

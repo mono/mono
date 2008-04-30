@@ -240,6 +240,17 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		public void CompileConvertClassWithExplicitOp ()
+		{
+			var p = Expression.Parameter (typeof (Klang), "klang");
+			var c = Expression.Lambda<Func<Klang, int>> (
+				Expression.Convert (p, typeof (int)), p).Compile ();
+
+			Assert.AreEqual (42, c (new Klang (42)));
+		}
+
+		[Test]
 		public void ConvertClassWithExplicitOpToNullableInt ()
 		{
 			var c = Expression.Convert (Expression.Parameter (typeof (Klang), ""), typeof (int?));
@@ -271,6 +282,17 @@ namespace MonoTests.System.Linq.Expressions {
 			Assert.IsFalse (c.IsLifted);
 			Assert.IsFalse (c.IsLiftedToNull);
 			Assert.IsNotNull (c.Method);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void CompileConvertClassWithImplicitOp ()
+		{
+			var p = Expression.Parameter (typeof (Kling), "kling");
+			var c = Expression.Lambda<Func<Kling, int>> (
+				Expression.Convert (p, typeof (int)), p).Compile ();
+
+			Assert.AreEqual (42, c (new Kling (42)));
 		}
 
 		[Test]
@@ -316,6 +338,34 @@ namespace MonoTests.System.Linq.Expressions {
 			Bar b = c (foo);
 
 			Assert.AreEqual (b, foo);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void CompileNotNullableToNullable ()
+		{
+			var p = Expression.Parameter (typeof (int), "i");
+			var c = Expression.Lambda<Func<int, int?>> (
+				Expression.Convert (p, typeof (int?)), p).Compile ();
+
+			Assert.AreEqual ((int?) 0, c (0));
+			Assert.AreEqual ((int?) 42, c (42));
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void CompileNullableToNotNullable ()
+		{
+			var p = Expression.Parameter (typeof (int?), "i");
+			var c = Expression.Lambda<Func<int?, int>> (
+				Expression.Convert (p, typeof (int)), p).Compile ();
+
+			Assert.AreEqual (0, c ((int?) 0));
+			Assert.AreEqual (42, c ((int?) 42));
+
+			Action a = () => c (null);
+
+			a.AssertThrows (typeof (InvalidOperationException));
 		}
 
 		[Test]
