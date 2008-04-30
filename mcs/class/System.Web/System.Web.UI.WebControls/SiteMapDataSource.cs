@@ -199,7 +199,7 @@ namespace System.Web.UI.WebControls
 				starting_node = Provider.RootNode;
 
 			if (starting_node == null)
-				return Provider.RootNode;
+				return null;
 			
 			int i;
 			if (StartingNodeOffset < 0) {

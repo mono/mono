@@ -1,3 +1,8 @@
+2008-04-30  Marek Habersack  <mhabersack@novell.com>
+
+	* SiteMapDataSource.cs: when no starting node is found, return
+	null instead of Provider.RootNode. Fixes bug #323994
+
 2008-04-24  Marek Habersack  <mhabersack@novell.com>
 
 	* SqlDataSource.cs: raise the DataSourceChangedEvent when setting

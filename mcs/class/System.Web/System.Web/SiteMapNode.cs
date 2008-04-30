@@ -68,7 +68,7 @@ namespace System.Web {
 			this.roles = roles;
 			this.attributes = attributes;
 			this.resourceKeys = explicitResourceKeys;
-			this.implicitResourceKey = implicitResourceKey;
+			this.resourceKey = implicitResourceKey;
 		}
 
 		public SiteMapDataSourceView GetDataSourceView (SiteMapDataSource owner, string viewName)
@@ -224,21 +224,15 @@ namespace System.Web {
 			if (attributeName == null)
 				throw new ArgumentNullException ("attributeName");
 
-			if (String.IsNullOrEmpty (implicitResourceKey))
+			string resourceKey = ResourceKey;
+			if (String.IsNullOrEmpty (resourceKey))
 				return null;
 
 			try {
-				string reskey = provider.ResourceKey;
-
-				if (!String.IsNullOrEmpty (reskey))
-					reskey = reskey + "." + implicitResourceKey + "." + attributeName;
-				else
-					reskey = String.Concat (implicitResourceKey, ".", attributeName);
-				object o = HttpContext.GetGlobalResourceObject ("Web.sitemap", reskey);
+				object o = HttpContext.GetGlobalResourceObject (provider.ResourceKey, resourceKey + "." + attributeName);
 				if (o is string)
 					return (string) o;
-			}
-			catch (MissingManifestResourceException) {
+			} catch (MissingManifestResourceException) {
 			}
 			
 			return null;
@@ -398,7 +392,11 @@ namespace System.Web {
 		
 		public string ResourceKey {
 			get { return resourceKey; }
-			set { resourceKey = value; }
+			set {
+				if (ReadOnly)
+					throw new InvalidOperationException ("The node is read-only.");
+				resourceKey = value;
+			}
 		}
 		
 		public string Key { get { return key; } }
@@ -437,7 +435,6 @@ namespace System.Web {
 		bool readOnly;
 		string resourceKey;
 		SiteMapNode parent;
-		string implicitResourceKey;
 		SiteMapNodeCollection childNodes;
 		#endregion
 		

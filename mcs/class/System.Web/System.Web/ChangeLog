@@ -1,3 +1,13 @@
+2008-04-30  Marek Habersack  <mhabersack@novell.com>
+
+	* SiteMapNode.cs: the implicitResourceKey parameter to one of the
+	constructors sets the value of the ResourceKey property.
+	GetImplicitResourceString uses the provider's ResourceKey as the
+	global resource object key and the node's ResourceKey to construct
+	the resource name. Fixes bug #323994
+	ResourceKey setter throws an InvalidOperationException now, when
+	the node is read-only.
+
 2008-04-29  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpException.cs: safe guard against context being null in
