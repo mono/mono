@@ -234,6 +234,18 @@ namespace MonoTests.System.Linq {
 
 			Assert.AreEqual (typeof (int []), array.GetType ());
 		}
+
+		[Test]
+		public void TestAverageOnInt32 ()
+		{
+			Assert.AreEqual (23.25, (new int [] { 24, 7, 28, 34 }).Average ());
+		}
+
+		[Test]
+		public void TestAverageOnInt64 ()
+		{
+				Assert.AreEqual (23.25, (new long [] { 24, 7, 28, 34 }).Average ());
+		}
 				
 		[Test]
 		public void TestOrderBy ()

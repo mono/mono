@@ -1,3 +1,7 @@
+2008-04-30  Jb Evain  <jbevain@novell.com>
+
+	* EnumerableTest.cs: tests for average on int and long.
+
 2008-04-22  Leonid Freydovich <leonidf@mainsoft.com>
 
 	* QueryableProviderTest.cs: add simple test for Queryable.
