@@ -1,3 +1,8 @@
+2008-04-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DirectoryTest.cs: Do not use ExpectedException to avoid false
+	positives. Use String.Empty instead of "".
+
 2008-04-22  Dick Porter  <dick@ximian.com>
 
 	* FileTest.cs: Disable the test for bug 323389, as I've reverted

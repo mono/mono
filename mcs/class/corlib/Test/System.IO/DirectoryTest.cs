@@ -37,7 +37,8 @@ public class DirectoryTest
 	}
 	
 	[TearDown]
-	public void TearDown () {
+	public void TearDown ()
+	{
 		if (Directory.Exists (TempFolder))
 			Directory.Delete (TempFolder, true);
 	}
@@ -64,36 +65,63 @@ public class DirectoryTest
 		DeleteDirectory (":");
 		try {
 			DirectoryInfo info = Directory.CreateDirectory (":");
-			Assert.Fail ();
-		} catch (ArgumentException) {
+			Assert.Fail ("#1");
+		} catch (ArgumentException ex) {
+			// The path is not of a legal form
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsNull (ex.ParamName, "#5");
 		}
 		DeleteDirectory (":");
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentNullException))]
-	public void CreateDirectoryArgumentNullException ()
+	public void CreateDirectory_Path_Null ()
 	{
-		DirectoryInfo info = Directory.CreateDirectory (null as string);
+		try {
+			Directory.CreateDirectory (null as string);
+			Assert.Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.AreEqual ("path", ex.ParamName, "#5");
+		}
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]
-	public void CreateDirectoryArgumentException1 ()
+	public void CreateDirectory_Path_Empty ()
 	{
-		DirectoryInfo info = Directory.CreateDirectory ("");
+		try {
+			Directory.CreateDirectory (string.Empty);
+			Assert.Fail ("#1");
+		} catch (ArgumentException ex) {
+			// Path cannot be the empty string or all whitespace
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsNull (ex.ParamName, "#5");
+		}
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]
-	public void CreateDirectoryArgumentException2 ()
+	public void CreateDirectory_Path_Whitespace ()
 	{
-		DirectoryInfo info = Directory.CreateDirectory ("            ");
+		try {
+			Directory.CreateDirectory ("            ");
+			Assert.Fail ("#1");
+		} catch (ArgumentException ex) {
+			// The path is not of a legal form
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsNull (ex.ParamName, "#5");
+		}
 	}
 
 	[Test]
-	[ExpectedException(typeof(ArgumentException))]
-	public void CreateDirectoryArgumentException3 ()
+	public void CreateDirectory_Path_InvalidChars ()
 	{
 		string path = TempFolder + DSC + "DirectoryTest.Test";
 		DeleteDirectory (path);
@@ -101,6 +129,13 @@ public class DirectoryTest
 			path += '\x00';
 			path += ".2";
 			DirectoryInfo info = Directory.CreateDirectory (path);
+			Assert.Fail ("#1");
+		} catch (ArgumentException ex) {
+			// The path contains illegal characters
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.IsNull (ex.ParamName, "#5");
 		} finally {
 			DeleteDirectory (path);
 		}
@@ -189,7 +224,7 @@ public class DirectoryTest
 	[ExpectedException(typeof(ArgumentException))]
 	public void DeleteArgumentException ()
 	{
-		Directory.Delete ("");
+		Directory.Delete (string.Empty);
 	}
 
 	[Test]	
@@ -309,7 +344,7 @@ public class DirectoryTest
 	[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
 	public void GetCreationTimeException2 ()
 	{
-		Directory.GetCreationTime ("");
+		Directory.GetCreationTime (string.Empty);
 	}
 	
 	[Test]
@@ -367,7 +402,7 @@ public class DirectoryTest
 	[Category("TargetJvmNotSupported")] // GetCreationTime not supported for TARGET_JVM
 	public void GetCreationTimeUtcException2 ()
 	{
-		Directory.GetCreationTimeUtc ("");
+		Directory.GetCreationTimeUtc (string.Empty);
 	}
 	
 	[Test]
@@ -425,7 +460,7 @@ public class DirectoryTest
 	[Category("TargetJvmNotSupported")] // GetLastAccessTime not supported for TARGET_JVM
 	public void GetLastAccessTimeException2 ()
 	{
-		Directory.GetLastAccessTime ("");
+		Directory.GetLastAccessTime (string.Empty);
 	}
 	
 	[Test]
@@ -484,7 +519,7 @@ public class DirectoryTest
 	[Category("TargetJvmNotSupported")] // GetLastAccessTime not supported for TARGET_JVM
 	public void GetLastAccessTimeUtcException2 ()
 	{
-		Directory.GetLastAccessTimeUtc ("");
+		Directory.GetLastAccessTimeUtc (string.Empty);
 	}
 	
 	[Test]
@@ -539,7 +574,7 @@ public class DirectoryTest
 	[ExpectedException(typeof(ArgumentException))]
 	public void GetLastWriteTimeException2 ()
 	{
-		Directory.GetLastWriteTime ("");
+		Directory.GetLastWriteTime (string.Empty);
 	}
 	
 	[Test]
@@ -592,7 +627,7 @@ public class DirectoryTest
 	[ExpectedException(typeof(ArgumentException))]
 	public void GetLastWriteTimeUtcException2 ()
 	{
-		Directory.GetLastWriteTimeUtc ("");
+		Directory.GetLastWriteTimeUtc (string.Empty);
 	}
 	
 	[Test]
@@ -1072,7 +1107,7 @@ public class DirectoryTest
 	public void SetLastWriteTimeException2 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
-		Directory.SetLastWriteTime ("", time);
+		Directory.SetLastWriteTime (string.Empty, time);
 	}
 	
 	[Test]
@@ -1136,7 +1171,7 @@ public class DirectoryTest
 	public void SetLastWriteTimeUtcException2 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
-		Directory.SetLastWriteTimeUtc ("", time);
+		Directory.SetLastWriteTimeUtc (string.Empty, time);
 	}
 	
 	[Test]
@@ -1200,7 +1235,7 @@ public class DirectoryTest
 	public void SetLastAccessTimeException2 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
-		Directory.SetLastAccessTime ("", time);
+		Directory.SetLastAccessTime (string.Empty, time);
 	}
 	
 	[Test]
@@ -1268,7 +1303,7 @@ public class DirectoryTest
 	public void SetLastAccessTimeUtcException2 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
-		Directory.SetLastAccessTimeUtc ("", time);
+		Directory.SetLastAccessTimeUtc (string.Empty, time);
 	}
 	
 	[Test]
@@ -1335,7 +1370,7 @@ public class DirectoryTest
 	public void SetCreationTimeException2 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
-		Directory.SetCreationTime ("", time);
+		Directory.SetCreationTime (string.Empty, time);
 	}
 	
 	[Test]
@@ -1405,7 +1440,7 @@ public class DirectoryTest
 	public void SetCreationTimeUtcException2 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);
-		Directory.SetCreationTimeUtc ("", time);
+		Directory.SetCreationTimeUtc (string.Empty, time);
 	}
 	
 	[Test]
