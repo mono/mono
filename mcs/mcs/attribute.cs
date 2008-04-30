@@ -1272,6 +1272,11 @@ namespace Mono.CSharp {
 			return e.TypeArgument;
 		}
 
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			throw new NotSupportedException ("ET");
+		}
+
 		public override Expression DoResolve (EmitContext ec)
 		{
 			throw new NotImplementedException ();

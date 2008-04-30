@@ -993,6 +993,11 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			throw new NotSupportedException ("ET");
+		}
+
 		public static Iterator CreateIterator (IMethodData method, DeclSpace parent,
 						       GenericMethod generic, int modifiers)
 		{

@@ -4554,6 +4554,11 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			throw new NotSupportedException ("ET");
+		}
+
 		public bool Resolve (ConstructorBuilder caller_builder, EmitContext ec)
 		{
 			if (argument_list != null){

@@ -1,5 +1,11 @@
 2008-04-30  Marek Safar  <marek.safar@gmail.com>
 
+	* assign.cs, anonymous.cs, lambda.cs, nullable.cs, ecore.cs, linq.cs,
+	class.cs, iterators.cs, expression.cs, attribute.cs: Filled a few more
+	expression tree conversions.
+	
+2008-04-30  Marek Safar  <marek.safar@gmail.com>
+
 	* typemanager.cs, ecore.cs, class.cs, expression.cs, doc.cs: Merged all
 	operators method details to Operator class.
 

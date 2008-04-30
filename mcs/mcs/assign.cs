@@ -206,6 +206,11 @@ namespace Mono.CSharp {
 			builder = null;
 		}
 
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			throw new NotSupportedException ("ET");
+		}
+
 		public override Expression DoResolve (EmitContext ec)
 		{
 			return this;
@@ -476,6 +481,11 @@ namespace Mono.CSharp {
 			this.loc = loc;
 		}
 
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			return new SimpleAssign (target, source).CreateExpressionTree (ec);
+		}
+
 		public override Expression DoResolve (EmitContext ec)
 		{
 			eclass = ExprClass.Value;
@@ -524,12 +534,18 @@ namespace Mono.CSharp {
 			this.op = op;
 		}
 
+		// !!! What a stupid name
 		public class Helper : Expression {
 			Expression child;
 			public Helper (Expression child)
 			{
 				this.child = child;
 				this.loc = child.Location;
+			}
+
+			public override Expression CreateExpressionTree (EmitContext ec)
+			{
+				throw new NotSupportedException ("ET");
 			}
 
 			public override Expression DoResolve (EmitContext ec)

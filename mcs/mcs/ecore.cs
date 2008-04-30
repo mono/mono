@@ -5652,6 +5652,11 @@ namespace Mono.CSharp {
 			this.loc = loc;
 			eclass = ExprClass.Value;
 		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			throw new NotSupportedException ("ET");
+		}
 		
 		public override Expression DoResolve (EmitContext ec)
 		{

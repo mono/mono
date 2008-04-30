@@ -149,6 +149,11 @@ namespace Mono.CSharp {
 				return "lambda expression";
 			}
 		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			return Block.CreateExpressionTree (ec);
+		}
 	}
 
 	//

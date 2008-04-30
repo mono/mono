@@ -194,7 +194,7 @@ namespace Mono.CSharp.Linq
 			LambdaExpression selector = new LambdaExpression (
 				null, null, (TypeContainer)ec.TypeContainer, p, ec.CurrentBlock, loc);
 			selector.Block = new SelectorBlock (ec.CurrentBlock, p, ti, loc);
-			selector.Block.AddStatement (new Return (expr, loc));
+			selector.Block.AddStatement (new ContextualReturn (expr));
 
 			if (!ec.IsInProbingMode) {
 				selector.CreateAnonymousHelpers ();

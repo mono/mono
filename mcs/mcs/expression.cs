@@ -101,6 +101,12 @@ namespace Mono.CSharp {
 		public ParenthesizedExpression (Expression expr)
 		{
 			this.Expr = expr;
+			this.loc = expr.Location;
+		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			throw new NotSupportedException ("ET");
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -112,13 +118,6 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			throw new Exception ("Should not happen");
-		}
-
-		public override Location Location
-		{
-			get {
-				return Expr.Location;
-			}
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
@@ -1209,6 +1208,8 @@ namespace Mono.CSharp {
 	///   Implementation of the `is' operator.
 	/// </summary>
 	public class Is : Probe {
+		Nullable.Unwrap expr_unwrap;
+
 		public Is (Expression expr, Expression probe_type, Location l)
 			: base (expr, probe_type, l)
 		{
@@ -1225,6 +1226,10 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
+			if (expr_unwrap != null) {
+				expr_unwrap.EmitCheck (ec);
+				return;
+			}
 
 			expr.Emit (ec);
 			ig.Emit (OpCodes.Isinst, probe_type_expr.Type);
@@ -1235,9 +1240,12 @@ namespace Mono.CSharp {
 		public override void EmitBranchable (EmitContext ec, Label target, bool on_true)
 		{
 			ILGenerator ig = ec.ig;
-
-			expr.Emit (ec);
-			ig.Emit (OpCodes.Isinst, probe_type_expr.Type);
+			if (expr_unwrap != null) {
+				expr_unwrap.EmitCheck (ec);
+			} else {
+				expr.Emit (ec);
+				ig.Emit (OpCodes.Isinst, probe_type_expr.Type);
+			}			
 			ig.Emit (on_true ? OpCodes.Brtrue : OpCodes.Brfalse, target);
 		}
 		
@@ -1287,8 +1295,10 @@ namespace Mono.CSharp {
 					//
 					// D and T are the same value types but D can be null
 					//
-					if (d_is_nullable && !t_is_nullable)
-						return Nullable.HasValue.Create (expr, ec);
+					if (d_is_nullable && !t_is_nullable) {
+						expr_unwrap = Nullable.Unwrap.Create (expr, ec);
+						return this;
+					}
 					
 					//
 					// The result is true if D and T are the same value types
@@ -1511,6 +1521,11 @@ namespace Mono.CSharp {
 
 		public Expression Expr {
 			get { return expr; }
+		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			throw new NotSupportedException ("ET");
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -2476,8 +2491,6 @@ namespace Mono.CSharp {
 
 			MethodInfo method;
 			ArrayList args = new ArrayList (2);
-
-			args = new ArrayList (2);
 			args.Add (new Argument (left, Argument.AType.Expression));
 			args.Add (new Argument (right, Argument.AType.Expression));
 
@@ -2497,7 +2510,10 @@ namespace Mono.CSharp {
 				method = TypeManager.delegate_remove_delegate_delegate;
 			}
 
-			return new BinaryDelegate (l, method, args);
+			MethodGroupExpr mg = new MethodGroupExpr (new MemberInfo [] { method }, TypeManager.delegate_type, loc);
+			mg = mg.OverloadResolve (ec, ref args, false, loc);
+
+			return new ClassCast (new UserOperatorCall (mg, args, CreateExpressionTree, loc), l);
 		}
 
 		//
@@ -3456,40 +3472,6 @@ namespace Mono.CSharp {
 			return CreateExpressionFactoryCall (method_name, args);
 		}
 	}
-
-	//
-	// Object created by Binary when the binary operator uses an method instead of being
-	// a binary operation that maps to a CIL binary operation.
-	//
-	public class BinaryMethod : Expression {
-		public MethodBase method;
-		public ArrayList  Arguments;
-		
-		public BinaryMethod (Type t, MethodBase m, ArrayList args)
-		{
-			method = m;
-			Arguments = args;
-			type = t;
-			eclass = ExprClass.Value;
-		}
-
-		public override Expression DoResolve (EmitContext ec)
-		{
-			return this;
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			ILGenerator ig = ec.ig;
-			
-			Invocation.EmitArguments (ec, Arguments, false, null);
-			
-			if (method is MethodInfo)
-				ig.Emit (OpCodes.Call, (MethodInfo) method);
-			else
-				ig.Emit (OpCodes.Call, (ConstructorInfo) method);
-		}
-	}
 	
 	//
 	// Represents the operation a + b [+ c [+ d [+ ...]]], where a is a string
@@ -3596,50 +3578,6 @@ namespace Mono.CSharp {
 		}
 	}
 
-	//
-	// Object created with +/= on delegates
-	//
-	public class BinaryDelegate : Expression {
-		MethodInfo method;
-		ArrayList  args;
-
-		public BinaryDelegate (Type t, MethodInfo mi, ArrayList args)
-		{
-			method = mi;
-			this.args = args;
-			type = t;
-			eclass = ExprClass.Value;
-		}
-
-		public override Expression DoResolve (EmitContext ec)
-		{
-			return this;
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			ILGenerator ig = ec.ig;
-			
-			Invocation.EmitArguments (ec, args, false, null);
-			
-			ig.Emit (OpCodes.Call, (MethodInfo) method);
-			ig.Emit (OpCodes.Castclass, type);
-		}
-
-		public Expression Right {
-			get {
-				Argument arg = (Argument) args [1];
-				return arg.Expr;
-			}
-		}
-
-		public bool IsAddition {
-			get {
-				return method == TypeManager.delegate_combine_delegate_delegate;
-			}
-		}
-	}
-	
 	//
 	// User-defined conditional logical operator
 	//
@@ -5043,6 +4981,11 @@ namespace Mono.CSharp {
 			this.expr = expr;
 			this.argument = argument;
 			this.loc = expr.Location;
+		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			throw new NotSupportedException ("ET");
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -6974,6 +6917,11 @@ namespace Mono.CSharp {
 			this.loc = loc;
 		}
 
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			throw new NotSupportedException ("ET");
+		}
+
 		public override Expression DoResolve (EmitContext ec)
 		{
 			if (TypeManager.fieldinfo_get_field_from_handle == null) {
@@ -8235,6 +8183,17 @@ namespace Mono.CSharp {
 			throw new NotImplementedException (at.ToString ());
 		}
 
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			ArrayList args = new ArrayList (arguments.Count + 2);
+			args.Add (new Argument (instance_expr.CreateExpressionTree (ec)));
+			args.Add (new Argument (new TypeOfMethodInfo (get, loc)));
+			foreach (Argument a in arguments)
+				args.Add (new Argument (a.Expr.CreateExpressionTree (ec)));
+
+			return CreateExpressionFactoryCall ("Call", args);
+		}
+
 		protected virtual bool CommonResolve (EmitContext ec)
 		{
 			indexer_type = instance_expr.Type;
@@ -8610,6 +8569,11 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Value;
 			loc = Location.Null;
 		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			throw new NotSupportedException ("ET");
+		}
 		
 		public override Expression DoResolve (EmitContext ec)
 		{
@@ -8648,6 +8612,11 @@ namespace Mono.CSharp {
 			type = TypeManager.object_type;
 			eclass = ExprClass.Value;
 			loc = Location.Null;
+		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			return null;
 		}
 
 		public override void EmitStatement (EmitContext ec)
@@ -9453,6 +9422,11 @@ namespace Mono.CSharp {
 
 			RootContext.ToplevelTypes.AddAnonymousType (type);
 			return type;
+		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			throw new NotSupportedException ("ET");
 		}
 
 		public override Expression DoResolve (EmitContext ec)
