@@ -1,3 +1,11 @@
+2008-04-30 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_il_overflow_test.sh: New test generator
+	for a truncated IL stream.
+
+	* make_tests.sh: Fixed generation script. Added
+	tests using the new generator.
+
 2008-04-23 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_tests.sh: Add some tests for overlapping
