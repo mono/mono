@@ -95,12 +95,12 @@ namespace System.Windows.Forms {
 			
 			editingControl.EditingControlDataGridView = DataGridView;
 			editingControl.MaxLength = maxInputLength;
-			if (initialFormattedValue == null || (string) initialFormattedValue == "") {
-				editingControl.Text = "";
-			}
-			else {
-				editingControl.Text = (string) initialFormattedValue;
-			}
+			
+			if (initialFormattedValue == null || initialFormattedValue.ToString () == string.Empty)
+				editingControl.Text = string.Empty;
+			else
+				editingControl.Text = initialFormattedValue.ToString ();
+
 			editingControl.ApplyCellStyleToEditingControl(dataGridViewCellStyle);
 			editingControl.PrepareEditingControlForEdit(true);
 		}
