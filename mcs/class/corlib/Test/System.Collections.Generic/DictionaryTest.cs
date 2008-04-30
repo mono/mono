@@ -37,6 +37,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Threading;
+
 using NUnit.Framework;
 
 namespace MonoTests.System.Collections.Generic {
@@ -208,6 +210,29 @@ namespace MonoTests.System.Collections.Generic {
 			Assert.AreEqual (20, _dictionary2 [m2].Value, "#4");
 			
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Remove_ZeroOut ()
+		{
+			object key = new object ();
+			object value = new object ();
+
+			WeakReference wrKey = new WeakReference (key);
+			WeakReference wrValue = new WeakReference (value);
+
+			Dictionary <object, object> dictionary = new Dictionary <object, object> ();
+			dictionary.Add (key, value);
+			dictionary.Remove (key);
+
+			key = null;
+			value = null;
+			GC.Collect ();
+			Thread.Sleep (200);
+
+			Assert.IsNull (wrKey.Target, "#1");
+			Assert.IsNull (wrValue.Target, "#2");
+		}
 	
 		[Test, ExpectedException(typeof(ArgumentNullException))]
 		public void IndexerSetNullTest()
@@ -226,7 +251,30 @@ namespace MonoTests.System.Collections.Generic {
 			Assert.AreEqual (0, _dictionary.Count, "Clear method failed!");
 			Assert.IsFalse (_dictionary.ContainsKey ("key2"));
 		}
-	
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Clear_ZeroOut ()
+		{
+			object key = new object ();
+			object value = new object ();
+
+			WeakReference wrKey = new WeakReference (key);
+			WeakReference wrValue = new WeakReference (value);
+
+			Dictionary <object, object> dictionary = new Dictionary <object, object> ();
+			dictionary.Add (key, value);
+			dictionary.Clear ();
+
+			key = null;
+			value = null;
+			GC.Collect ();
+			Thread.Sleep (200);
+
+			Assert.IsNull (wrKey.Target, "#1");
+			Assert.IsNull (wrValue.Target, "#2");
+		}
+
 		[Test]
 		public void ContainsKeyTest ()
 		{
@@ -302,7 +350,6 @@ namespace MonoTests.System.Collections.Generic {
 				return myt.Name.Equals (this.Name) &&
 						myt.RollNo.Equals (this.RollNo);
 			}
-	
 		}
 	
 		[Test]
@@ -362,7 +409,6 @@ namespace MonoTests.System.Collections.Generic {
 				KeyValuePair <string, object> entry = (KeyValuePair <string, object>)itr.Current;
 			}
 			Assert.AreEqual ("value4", _dictionary ["key4"].ToString (), "");
-	
 		}
 	
 		[Test]
@@ -379,7 +425,6 @@ namespace MonoTests.System.Collections.Generic {
 				DictionaryEntry entry = (DictionaryEntry) itr.Current;
 			}
 			Assert.AreEqual ("value4", _dictionary ["key4"].ToString (), "");
-	
 		}
 	
 		[Test]
@@ -445,37 +490,37 @@ namespace MonoTests.System.Collections.Generic {
 		[Test]
 		public void KeyValueEnumeratorTest ()
 		{
-                	IDictionary<int, int> d = new Dictionary<int, int>();
+			IDictionary<int, int> d = new Dictionary<int, int>();
 
 			// Values are chosen such that two keys map to the same bucket.
 			// Default dictionary table size == 10
-        	        d [9] = 1;
-	                d [10] = 2;
-                	d [19] = 3;
+			d [9] = 1;
+			d [10] = 2;
+			d [19] = 3;
 
 			Assert.AreEqual (d.Count, d.Keys.Count, "d and d.Keys don't appear to match");
 			Assert.AreEqual (d.Values.Count, d.Keys.Count, "d.Keys and d.Values don't appear to match");
 
-        	        int count = 0;
-	                foreach (int i in d.Values)
-        	       	        ++count;
+			int count = 0;
+			foreach (int i in d.Values)
+				++count;
 			Assert.AreEqual (count, d.Values.Count, "d.Values doesn't have the correct number of elements");
 	
-        	        count = 0;
+			count = 0;
 			foreach (int i in d.Keys)
 				++count;
 			Assert.AreEqual (count, d.Keys.Count, "d.Keys doesn't have the correct number of elements");
 
 			int nkeys = count;
 			count = 0;
-	                foreach (int i in d.Keys) {
+			foreach (int i in d.Keys) {
 				int foo = d [i];
 				if (count++ >= nkeys)
 					Assert.Fail ("Reading a value appears to trash enumerator state");
 			}
 		}
 
-		[Test] 		// bug 75073
+		[Test] // bug 75073
 		public void SliceCollectionsEnumeratorTest ()
 		{
 			Dictionary<string, int> values = new Dictionary<string, int> ();
@@ -692,8 +737,7 @@ namespace MonoTests.System.Collections.Generic {
 			Assert.IsNull(d["foo"]);
 		}
 
-		// Bug: #332534
-		[Test]
+		[Test] // bug #332534
 		public void Dictionary_MoveNext ()
 		{
 			Dictionary<int,int> a = new Dictionary<int,int>();
