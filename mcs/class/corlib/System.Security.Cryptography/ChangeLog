@@ -1,3 +1,9 @@
+2008-04-27  Alan McGovern  <alan.mcgovern@gmail.com>
+
+	* SHA1CryptoServiceProvider.cs: Performed loop unrolling and
+	re-rolling to reduce IL size significantly and improve
+	perf by over 30%.
+
 2008-04-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SHA1CryptoServiceProvider.cs: Quick optimization to get better
