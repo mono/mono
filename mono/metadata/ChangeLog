@@ -1,5 +1,10 @@
 2008-04-30 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (mono_method_verify): Fix the comparison
+	operator for code bounds check.
+
+2008-04-30 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (mono_method_verify): Check the bounds of
 	all access of the code array.
 
