@@ -1,5 +1,15 @@
 2008-04-30  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridViewElement.cs: Don't throw NIEX.
+	* DataGridViewColumnHeaderCell.cs: Draw error icons for top left header cells.
+	* DataGridViewColumnDesignTimeVisibleAttribute.cs: Don't throw NIEX.
+	* DataGridViewCheckBoxColumn.cs: Implement ToString.
+	* DataGridViewCheckBoxCell.cs: Allow DBNull as a value.
+	* DataGridViewCell.cs: Don't raise CellFormatting for RowHeader cells,
+	if the user filled in the formatting Value, use it.
+
+2008-04-30  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridViewTextBoxCell.cs: Fix for objects that cannot be cast
 	to a string.
 

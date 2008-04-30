@@ -137,8 +137,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public override string ToString () {
-			throw new NotImplementedException();
+		public override string ToString ()
+		{
+			return string.Format ("DataGridViewCheckBoxColumn {{ Name={0}, Index={1} }}", Name, Index);
 		}
 
 	}

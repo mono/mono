@@ -52,8 +52,8 @@ namespace System.Windows.Forms {
 			get { return state; }
 		}
 
-		protected virtual void OnDataGridViewChanged () {
-			throw new NotImplementedException();
+		protected virtual void OnDataGridViewChanged ()
+		{
 		}
 
 		protected void RaiseCellClick (DataGridViewCellEventArgs e) {

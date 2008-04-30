@@ -61,7 +61,7 @@ namespace System.Windows.Forms {
 		}
 
 		public override int GetHashCode () {
-			throw new NotImplementedException();
+			return base.GetHashCode ();
 		}
 
 		public override bool IsDefaultAttribute () {

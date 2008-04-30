@@ -219,6 +219,10 @@ namespace System.Windows.Forms {
 
 			// Postpaint
 			DataGridViewPaintParts post = DataGridViewPaintParts.Border;
+			
+			if (this is DataGridViewTopLeftHeaderCell)
+				post |= DataGridViewPaintParts.ErrorIcon;
+				
 			post = post & paintParts;
 
 			base.Paint (graphics, clipBounds, cellBounds, rowIndex, dataGridViewElementState, value, formattedValue, errorText, cellStyle, advancedBorderStyle, post);

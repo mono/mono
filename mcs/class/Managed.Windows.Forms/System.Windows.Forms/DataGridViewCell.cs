@@ -50,8 +50,8 @@ namespace System.Windows.Forms {
 		private DataGridViewCellStyle style;
 		private object tag;
 		private string toolTipText;
-		private object valuex;
-		private Type valueType;
+		internal object valuex;
+		internal Type valueType;
 
 		protected DataGridViewCell ()
 		{
@@ -1009,9 +1009,10 @@ namespace System.Windows.Forms {
 				
 			DataGridViewCellFormattingEventArgs e = new DataGridViewCellFormattingEventArgs (ColumnIndex, rowIndex, value, FormattedValueType, cellStyle);
 			
-			DataGridView.OnCellFormattingInternal (e);
+			if (!(this is DataGridViewRowHeaderCell))
+				DataGridView.OnCellFormattingInternal (e);
 			
-			if (e.FormattingApplied) {
+			if (e.FormattingApplied || e.Value != null) {
 				return e.Value;
 			}
 			
@@ -1443,7 +1444,7 @@ namespace System.Windows.Forms {
 				formattedvalue = Value;
 			} else {
 				value = Value;
-				formattedvalue = FormattedValue;
+				formattedvalue = GetFormattedValue (Value, rowIndex, ref cellStyle, null, null, DataGridViewDataErrorContexts.Formatting);
 			}
 
 			DataGridViewCellPaintingEventArgs pea = new DataGridViewCellPaintingEventArgs (DataGridView, graphics, clipBounds, cellBounds, rowIndex, columnIndex, cellState, value, formattedvalue, ErrorText, cellStyle, advancedBorderStyle, paintParts);

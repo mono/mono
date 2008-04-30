@@ -235,6 +235,8 @@ namespace System.Windows.Forms {
 				return false;
 			if (value == trueValue)
 				return true;
+			if (value == DBNull.Value)
+				return false;
 				
 			return Convert.ToBoolean (value);
 		}
