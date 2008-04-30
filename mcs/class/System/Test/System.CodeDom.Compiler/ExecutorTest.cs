@@ -35,11 +35,11 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 
-namespace MonoTests.System.CodeDom.Compiler {
-
+namespace MonoTests.System.CodeDom.Compiler
+{
 	[TestFixture]
-	public class ExecutorTest {
-
+	public class ExecutorTest
+	{
 		private bool posix;
 		private bool cmdNotFound;
 		private int errcode;
@@ -93,26 +93,36 @@ namespace MonoTests.System.CodeDom.Compiler {
 		public void ExecWait_NullTempFileCollection ()
 		{
 			if (cmdNotFound)
-				throw new NullReferenceException ();
+				Assert.Ignore ("ping command not found.");
+
 			Executor.ExecWait (cmd, null);
 		}
 
 		[Test]
-		[ExpectedException (typeof (ExternalException))]
-		[Category ("NotWorking")]
+		[Category ("NotWorking")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=341293
 		public void ExecWait ()
 		{
 			if (cmdNotFound)
-				return;
-			// why does it fail ? any case that works ?
-			Executor.ExecWait (cmd, tfc);
+				Assert.Ignore ("ping command not found.");
+
+			try {
+				Executor.ExecWait (cmd, new TempFileCollection ());
+				Assert.Fail ("#1");
+			} catch (ExternalException ex) {
+				// Cannot execute a program. The command being executed was .
+				Assert.AreEqual (typeof (ExternalException), ex.GetType (), "#2");
+				Assert.AreEqual (2, ex.ErrorCode, "#3");
+				Assert.IsNull (ex.InnerException, "#4");
+				Assert.IsNotNull (ex.Message, "#5");
+			}
 		}
 
 		[Test]
 		public void ExecWaitWithCapture ()
 		{
 			if (cmdNotFound)
-				return;
+				Assert.Ignore ("ping command not found.");
+
 			string output = null;
 			string error = null;
 			TempFileCollection tfc = new TempFileCollection ();
@@ -128,7 +138,8 @@ namespace MonoTests.System.CodeDom.Compiler {
 		public void ExecWaitWithCapture_CurrentDir ()
 		{
 			if (cmdNotFound)
-				return;
+				Assert.Ignore ("ping command not found.");
+
 			string output = null;
 			string error = null;
 			TempFileCollection tfc = new TempFileCollection ();
@@ -145,7 +156,8 @@ namespace MonoTests.System.CodeDom.Compiler {
 		public void ExecWaitWithCapture_Token ()
 		{
 			if (cmdNotFound)
-				return;
+				Assert.Ignore ("ping command not found.");
+
 			string output = null;
 			string error = null;
 			TempFileCollection tfc = new TempFileCollection ();
@@ -161,7 +173,8 @@ namespace MonoTests.System.CodeDom.Compiler {
 		public void ExecWaitWithCapture_Token_CurrentDir ()
 		{
 			if (cmdNotFound)
-				return;
+				Assert.Ignore ("ping command not found.");
+
 			string output = null;
 			string error = null;
 			TempFileCollection tfc = new TempFileCollection ();

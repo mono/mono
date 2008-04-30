@@ -219,6 +219,42 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
+		public void AbstractPropertyTest ()
+		{
+			string code = GenerateAbstractProperty (Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public MustInherit Class Test1{0}" +
+				"    {0}" +
+#if NET_2_0
+				"    Public MustOverride Property Name() As String{0}" +
+#else
+				"    Public MustOverride Property Name As String{0}" +
+#endif
+				"        Get{0}" +
+				"        Set{0}" +
+				"    End Property{0}" +
+				"End Class{0}", NewLine), code);
+		}
+
+		[Test]
+		public void StaticPropertyTest ()
+		{
+			string code = GenerateStaticProperty (Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}" +
+				"    {0}" +
+#if NET_2_0
+				"    Public Shared WriteOnly Property Name() As String{0}" +
+#else
+				"    Public Shared WriteOnly Property Name As String{0}" +
+#endif
+				"        Set{0}" +
+				"        End Set{0}" +
+				"    End Property{0}" +
+				"End Class{0}", NewLine), code);
+		}
+
+		[Test]
 		public override void PropertyMembersTypeTest1 ()
 		{
 			string code = GeneratePropertyMembersAttributes (Options);

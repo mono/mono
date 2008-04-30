@@ -24,7 +24,7 @@ namespace MonoTests.System.ComponentModel
 		public void DataSetConversions ()
 		{
 			TypeConverter converter = TypeDescriptor.GetConverter (typeof (DataSet));
-			Assert.AreEqual (typeof (global::System.ComponentModel.ComponentConverter), converter != null ? converter.GetType () : null, "A1");
+			Assert.AreEqual (typeof (ComponentConverter), converter != null ? converter.GetType () : null, "A1");
 
 			DataSet ds = new DataSet ();
 			string s = (string) converter.ConvertTo (null, CultureInfo.InvariantCulture, ds, typeof (string));

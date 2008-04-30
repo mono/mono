@@ -920,18 +920,22 @@ namespace Microsoft.VisualBasic
 				++Indent;
 				if (property.HasGet) {
 					output.WriteLine ("Get");
-					++Indent;
-					GenerateStatements (property.GetStatements);
-					--Indent;
-					output.WriteLine ("End Get");
+					if (!IsAbstract (property.Attributes)) {
+						++Indent;
+						GenerateStatements (property.GetStatements);
+						--Indent;
+						output.WriteLine ("End Get");
+					}
 				}
 
 				if (property.HasSet) {
 					output.WriteLine ("Set");
-					++Indent;
-					GenerateStatements (property.SetStatements);
-					--Indent;
-					output.WriteLine ("End Set");
+					if (!IsAbstract (property.Attributes)) {
+						++Indent;
+						GenerateStatements (property.SetStatements);
+						--Indent;
+						output.WriteLine ("End Set");
+					}
 				}
 
 				--Indent;
@@ -1733,6 +1737,11 @@ namespace Microsoft.VisualBasic
 
 			string baseType = property.PrivateImplementationType.BaseType.Replace ('.', '_');
 			return baseType + "_" + property.Name;
+		}
+
+		static bool IsAbstract (MemberAttributes attributes)
+		{
+			return (attributes & MemberAttributes.ScopeMask) == MemberAttributes.Abstract;
 		}
 
 		private enum LineHandling

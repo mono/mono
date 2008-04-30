@@ -1,3 +1,7 @@
+2008-04-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ComponentConverterTests.cs: Allow test to be compiled using csc 1.x.
+
 2008-04-16  Marek Habersack  <mhabersack@novell.com>
 
 	* ComponentConverterTests.cs: added tests for
