@@ -1,3 +1,9 @@
+2008-05-01  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ConstructorBuilderTest.cs: Use Assert class instead of deriving from
+	deprecated Assertion class. Improved some existing tests, and avoid
+	creating too much TypeBuilder instances.
+
 2008-04-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* MethodOnTypeBuilderInstTest.cs: Fixed exception message in comments.

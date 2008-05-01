@@ -1,3 +1,7 @@
+2008-05-01  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ConstructorBuilder.cs: Switch arguments for AORE.
+
 2008-04-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ModuleBuilder.cs (DefineType): Do not perform lookup of in cache if

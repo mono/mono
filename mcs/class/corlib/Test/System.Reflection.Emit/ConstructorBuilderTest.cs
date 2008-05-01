@@ -20,9 +20,8 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Reflection.Emit
 {
-
 [TestFixture]
-public class ConstructorBuilderTest : Assertion
+public class ConstructorBuilderTest
 {
 	private TypeBuilder genClass;
 	private ModuleBuilder module;
@@ -30,7 +29,7 @@ public class ConstructorBuilderTest : Assertion
 	private static int typeIndexer = 0;
 
 	[SetUp]
-	protected void SetUp ()
+	public void SetUp ()
 	{
 		AssemblyName assemblyName = new AssemblyName();
 		assemblyName.Name = "MonoTests.System.Reflection.Emit.ConstructorBuilderTest";
@@ -40,9 +39,7 @@ public class ConstructorBuilderTest : Assertion
 				assemblyName, AssemblyBuilderAccess.Run);
 
 		module = assembly.DefineDynamicModule("module1");
-		
-		genClass = module.DefineType(genTypeName (), 
-									 TypeAttributes.Public);
+		genClass = module.DefineType(genTypeName (), TypeAttributes.Public);
 	}
 
 	// Return a unique type name
@@ -52,85 +49,92 @@ public class ConstructorBuilderTest : Assertion
 	}
 
 	[Test]
-	public void TestAttributes ()
+	public void Attributes ()
 	{
 		ConstructorBuilder cb = genClass.DefineConstructor (
-			 MethodAttributes.Public, 0, new Type [0]);
+			MethodAttributes.Public, 0, new Type [0]);
 
-		Assert ("Attributes works", 
-				(cb.Attributes & MethodAttributes.Public) != 0);
-		Assert ("Attributes works", 
-				(cb.Attributes & MethodAttributes.SpecialName) != 0);
+		Assert.IsTrue ((cb.Attributes & MethodAttributes.Public) != 0, "#1");
+		Assert.IsTrue ((cb.Attributes & MethodAttributes.SpecialName) != 0, "#2");
 	}
 
 	[Test]
-	public void TestCallingConvention ()
+	public void CallingConvention ()
 	{
 		/* This does not work under MS.NET
 		ConstructorBuilder cb3 = genClass.DefineConstructor (
 			0, CallingConventions.VarArgs, new Type [0]);
-		AssertEquals ("CallingConvetion works",
-					  CallingConventions.VarArgs | CallingConventions.HasThis,
-					  cb3.CallingConvention);
+		Assert.AreEqual (CallingConventions.VarArgs | CallingConventions.HasThis,
+			cb3.CallingConvention, "#1");
 		*/
 
 		ConstructorBuilder cb4 = genClass.DefineConstructor (
 			 MethodAttributes.Static, CallingConventions.Standard, new Type [0]);
-		AssertEquals ("Static implies !HasThis",
-					  cb4.CallingConvention,
-					  CallingConventions.Standard);
+		Assert.AreEqual (CallingConventions.Standard,
+			cb4.CallingConvention, "#2");
 	}
 
 	[Test]
-	public void TestDeclaringType ()
+	public void DeclaringType ()
 	{
 		ConstructorBuilder cb = genClass.DefineConstructor (
-			 0, 0, new Type[0]);
+			0, 0, new Type[0]);
 
-		AssertEquals ("DeclaringType works",
-					  cb.DeclaringType, genClass);
+		Assert.AreSame (genClass, cb.DeclaringType);
 	}
 
 	[Test]
-	public void TestInitLocals ()
+	public void InitLocals ()
 	{
 		ConstructorBuilder cb = genClass.DefineConstructor (
-			 0, 0, new Type[0]);
+			0, 0, new Type[0]);
 
-		AssertEquals ("InitLocals defaults to true", cb.InitLocals, true);
+		Assert.IsTrue (cb.InitLocals, "#1");
 		cb.InitLocals = false;
-		AssertEquals ("InitLocals is settable", cb.InitLocals, false);
+		Assert.IsFalse (cb.InitLocals, "#2");
 	}
 	
 	[Test]
-	public void TestMethodHandle ()
+	public void MethodHandle ()
 	{
 		ConstructorBuilder cb = genClass.DefineConstructor (
-			 0, 0, new Type [0]);
+			0, 0, new Type [0]);
 		cb.GetILGenerator ().Emit (OpCodes.Ret);
+
+		try {
+			RuntimeMethodHandle handle = cb.MethodHandle;
+			Assert.Fail ("#A1:" + handle);
+		} catch (NotSupportedException ex) {
+			// The invoked member is not supported in a dynamic
+			// module
+			Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
+		}
+
 		genClass.CreateType ();
 
 		try {
 			RuntimeMethodHandle handle = cb.MethodHandle;
-			Fail ("#1:" + handle);
+			Assert.Fail ("#B1:" + handle);
 		} catch (NotSupportedException ex) {
 			// The invoked member is not supported in a dynamic
 			// module
-			AssertEquals ("#2", typeof (NotSupportedException), ex.GetType ());
-			AssertNull ("#3", ex.InnerException);
-			AssertNotNull ("#4", ex.Message);
+			Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.InnerException, "#B3");
+			Assert.IsNotNull (ex.Message, "#B4");
 		}
 	}
 
 	[Test]
-	public void TestName ()
+	public void Name ()
 	{
-		ConstructorBuilder cb = genClass.DefineConstructor (0, 0, new Type [0]);
-
-		AssertEquals ("Name works", ".ctor", cb.Name);
-
-		ConstructorBuilder cb2 = genClass.DefineConstructor (MethodAttributes.Static, 0, new Type [0]);
-		AssertEquals ("Static constructors have the right name", ".cctor", cb2.Name);
+		ConstructorBuilder cb;
+		
+		cb = genClass.DefineConstructor (0, 0, new Type [0]);
+		Assert.AreEqual (".ctor", cb.Name, "#1");
+		cb = genClass.DefineConstructor (MethodAttributes.Static, 0, new Type [0]);
+		Assert.AreEqual (".cctor", cb.Name, "#2");
 	}
 
 	[Test]
@@ -138,87 +142,84 @@ public class ConstructorBuilderTest : Assertion
 	{
 		ConstructorBuilder cb = genClass.DefineConstructor (0, 0, new Type [0]);
 
-		AssertEquals ("ReflectedType works", 
-					  genClass, cb.ReflectedType);
+		Assert.AreSame (genClass, cb.ReflectedType);
 	}
 
 	[Test]
-	public void TestReturnType ()
+	public void ReturnType ()
 	{
-		ConstructorBuilder cb = genClass.DefineConstructor (0, 0, new Type [0]);
-
-		AssertEquals ("ReturnType works", 
-					  null, cb.ReturnType);
+		ConstructorBuilder cb;
+		
+		cb = genClass.DefineConstructor (0, 0, new Type [] { typeof (string) });
+		Assert.IsNull (cb.ReturnType, "#1");
+		cb = genClass.DefineConstructor (MethodAttributes.Static, 0, new Type [0]);
+		Assert.IsNull (cb.ReturnType, "#2");
 	}
 
 	[Test]
 	public void DefineParameter_Position_Negative ()
 	{
-		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
-		ConstructorBuilder cb = tb.DefineConstructor (
-			 0, 0, new Type [2] { typeof (int), typeof (int) });
+		ConstructorBuilder cb = genClass.DefineConstructor (
+			0, 0, new Type [2] { typeof (int), typeof (int) });
 
 		try {
 			cb.DefineParameter (-1, ParameterAttributes.None, "param1");
-			Fail ("#B1");
+			Assert.Fail ("#1");
 		} catch (ArgumentOutOfRangeException ex) {
 			// Specified argument was out of the range of valid values
-			AssertEquals ("#B2", typeof (ArgumentOutOfRangeException), ex.GetType ());
-			AssertNull ("#B3", ex.ActualValue);
-			AssertNull ("#B4", ex.InnerException);
-			AssertNotNull ("#B5", ex.Message);
-			AssertNotNull ("#B6", ex.ParamName);
+			Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
+			Assert.IsNull (ex.ActualValue, "#3");
+			Assert.IsNull (ex.InnerException, "#4");
+			Assert.IsNotNull (ex.Message, "#5");
+			Assert.IsNotNull (ex.ParamName, "#6");
 		}
 	}
 
 	[Test]
 	public void DefineParameter_Position_Max ()
 	{
-		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
-		ConstructorBuilder cb = tb.DefineConstructor (
+		ConstructorBuilder cb = genClass.DefineConstructor (
 			 0, 0, new Type [2] { typeof (int), typeof (int) });
 
 		try {
 			cb.DefineParameter (3, 0, "param1");
-			Fail ("#1");
+			Assert.Fail ("#1");
 		} catch (ArgumentOutOfRangeException ex) {
 			// Specified argument was out of the range of valid values
-			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
-			AssertNull ("#3", ex.ActualValue);
-			AssertNull ("#4", ex.InnerException);
-			AssertNotNull ("#5", ex.Message);
-			AssertNotNull ("#6", ex.ParamName);
+			Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
+			Assert.IsNull (ex.ActualValue, "#3");
+			Assert.IsNull (ex.InnerException, "#4");
+			Assert.IsNotNull (ex.Message, "#5");
+			Assert.IsNotNull (ex.ParamName, "#6");
 		}
 	}
 
 	[Test]
 #if NET_2_0
-	[Category ("NotDotNet")]
+	[Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=341439
 #endif
 	public void DefineParameter_Position_Zero ()
 	{
-		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
-		ConstructorBuilder cb = tb.DefineConstructor (
-			 0, 0, new Type [2] { typeof (int), typeof (int) });
+		ConstructorBuilder cb = genClass.DefineConstructor (
+			0, 0, new Type [2] { typeof (int), typeof (int) });
 
 		try {
 			cb.DefineParameter (0, ParameterAttributes.In, "param1");
-			Fail ("#A1");
+			Assert.Fail ("#1");
 		} catch (ArgumentOutOfRangeException ex) {
 			// Specified argument was out of the range of valid values
-			AssertEquals ("#A2", typeof (ArgumentOutOfRangeException), ex.GetType ());
-			AssertNull ("#A3", ex.ActualValue);
-			AssertNull ("#A4", ex.InnerException);
-			AssertNotNull ("#A5", ex.Message);
-			AssertNotNull ("#A6", ex.ParamName);
+			Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
+			Assert.IsNull (ex.ActualValue, "#3");
+			Assert.IsNull (ex.InnerException, "#4");
+			Assert.IsNotNull (ex.Message, "#5");
+			Assert.IsNotNull (ex.ParamName, "#6");
 		}
 	}
 
 	[Test]
-	public void TestDefineParameter ()
+	public void DefineParameter ()
 	{
-		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
-		ConstructorBuilder cb = tb.DefineConstructor (
+		ConstructorBuilder cb = genClass.DefineConstructor (
 			 0, 0, new Type [2] { typeof(int), typeof(int) });
 
 		cb.DefineParameter (1, 0, "param1");
@@ -226,45 +227,80 @@ public class ConstructorBuilderTest : Assertion
 		cb.DefineParameter (2, 0, null);
 
 		cb.GetILGenerator ().Emit (OpCodes.Ret);
-		tb.CreateType ();
+		genClass.CreateType ();
 
 		try {
 			cb.DefineParameter (1, 0, "param1");
-			Fail ("#1");
+			Assert.Fail ("#1");
 		} catch (InvalidOperationException ex) {
 			// Unable to change after type has been created
-			AssertEquals ("#2", typeof (InvalidOperationException), ex.GetType ());
-			AssertNull ("#3", ex.InnerException);
-			AssertNotNull ("#4", ex.Message);
+			Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
 		}
 	}
 
-	[Test]
-	public void TestGetCustomAttributes ()
+	[Test] // GetCustomAttributes (Boolean)
+	public void GetCustomAttributes1 ()
 	{
 		ConstructorBuilder cb = genClass.DefineConstructor (
 			0, 0, new Type [1] {typeof(int)});
+		cb.GetILGenerator ().Emit (OpCodes.Ret);
 
 		try {
 			cb.GetCustomAttributes (true);
-			Fail ("#A1");
+			Assert.Fail ("#A1");
 		} catch (NotSupportedException ex) {
 			// The invoked member is not supported in a dynamic
 			// module
-			AssertEquals ("#A2", typeof (NotSupportedException), ex.GetType ());
-			AssertNull ("#A3", ex.InnerException);
-			AssertNotNull ("#A4", ex.Message);
+			Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
 		}
+
+		genClass.CreateType ();
+
+		try {
+			cb.GetCustomAttributes (true);
+			Assert.Fail ("#B1");
+		} catch (NotSupportedException ex) {
+			// The invoked member is not supported in a dynamic
+			// module
+			Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.InnerException, "#B3");
+			Assert.IsNotNull (ex.Message, "#B4");
+		}
+	}
+
+	[Test] // GetCustomAttributes (Type, Boolean)
+	public void GetCustomAttributes2 ()
+	{
+		ConstructorBuilder cb = genClass.DefineConstructor (
+			0, 0, new Type [1] { typeof (int) });
+		cb.GetILGenerator ().Emit (OpCodes.Ret);
 
 		try {
 			cb.GetCustomAttributes (null, true);
-			Fail ("#B1");
+			Assert.Fail ("#A1");
 		} catch (NotSupportedException ex) {
 			// The invoked member is not supported in a dynamic
 			// module
-			AssertEquals ("#B2", typeof (NotSupportedException), ex.GetType ());
-			AssertNull ("#B3", ex.InnerException);
-			AssertNotNull ("#B4", ex.Message);
+			Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
+		}
+
+		genClass.CreateType ();
+
+		try {
+			cb.GetCustomAttributes (null, true);
+			Assert.Fail ("#B1");
+		} catch (NotSupportedException ex) {
+			// The invoked member is not supported in a dynamic
+			// module
+			Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.InnerException, "#B3");
+			Assert.IsNotNull (ex.Message, "#B4");
 		}
 	}
 
@@ -272,17 +308,13 @@ public class ConstructorBuilderTest : Assertion
 	public void TestMethodImplementationFlags ()
 	{
 		ConstructorBuilder cb = genClass.DefineConstructor (
-			 0, 0, new Type [0]);
+			0, 0, new Type [0]);
 
-		AssertEquals ("MethodImplementationFlags defaults to Managed+IL",
-					  cb.GetMethodImplementationFlags (),
-					  MethodImplAttributes.Managed | MethodImplAttributes.IL);
-
+		Assert.AreEqual (MethodImplAttributes.Managed | MethodImplAttributes.IL,
+			cb.GetMethodImplementationFlags (), "#A1");
 		cb.SetImplementationFlags (MethodImplAttributes.OPTIL);
-
-		AssertEquals ("SetImplementationFlags works",
-					  cb.GetMethodImplementationFlags (),
-					  MethodImplAttributes.OPTIL);
+		Assert.AreEqual (MethodImplAttributes.OPTIL,
+			cb.GetMethodImplementationFlags (), "#A2");
 
 		// Can not be called on a created type
 		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
@@ -294,59 +326,57 @@ public class ConstructorBuilderTest : Assertion
 		tb.CreateType ();
 		try {
 			cb2.SetImplementationFlags (MethodImplAttributes.OPTIL);
-			Fail ("#1");
+			Assert.Fail ("#B1");
 		} catch (InvalidOperationException ex) {
 			// Unable to change after type has been created
-			AssertEquals ("#2", typeof (InvalidOperationException), ex.GetType ());
-			AssertNull ("#3", ex.InnerException);
-			AssertNotNull ("#4", ex.Message);
+			Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.InnerException, "#B3");
+			Assert.IsNotNull (ex.Message, "#B4");
 		}
 	}
 
 	[Test]
-	public void TestGetModule ()
+	public void GetModule ()
 	{
 		ConstructorBuilder cb = genClass.DefineConstructor (
-			 0, 0, new Type [0]);
+			0, 0, new Type [0]);
 
-		AssertEquals ("GetModule works",
-					  module, cb.GetModule ());
+		Assert.AreSame (module, cb.GetModule ());
 	}
 
 	[Test]
 	public void GetParameters_Complete1 ()
 	{
-		TypeBuilder tb;
 		ConstructorBuilder cb;
 		ParameterInfo [] parameters;
-		
-		tb = module.DefineType (genTypeName (), TypeAttributes.Public);
-		cb = tb.DefineConstructor (MethodAttributes.Public, CallingConventions.Standard,
+
+		cb = genClass.DefineConstructor (MethodAttributes.Public,
+			CallingConventions.Standard,
 			new Type [] { typeof (int), typeof (string), typeof (bool) });
 		cb.DefineParameter (3, ParameterAttributes.In, "param3a");
 		cb.DefineParameter (3, ParameterAttributes.In, "param3b");
 		cb.DefineParameter (2, ParameterAttributes.Out, "param2");
 		cb.GetILGenerator ().Emit (OpCodes.Ret);
-		tb.CreateType ();
+		genClass.CreateType ();
 
 		parameters = cb.GetParameters ();
-		AssertNotNull ("#A1", parameters);
-		AssertEquals ("#A2", 3, parameters.Length);
+		Assert.IsNotNull (parameters, "#A1");
+		Assert.AreEqual (3, parameters.Length, "#A2");
 
-		AssertEquals ("#B1", ParameterAttributes.None, parameters [0].Attributes);
-		AssertNull ("#B2", parameters [0].Name);
-		AssertEquals ("#B3", typeof (int), parameters [0].ParameterType);
-		AssertEquals ("#B4", 0, parameters [0].Position);
+		Assert.AreEqual (ParameterAttributes.None, parameters [0].Attributes, "#B1");
+		Assert.IsNull (parameters [0].Name, "#B2");
+		Assert.AreEqual (typeof (int), parameters [0].ParameterType, "#B3");
+		Assert.AreEqual (0, parameters [0].Position, "#B4");
 
-		AssertEquals ("#C1", ParameterAttributes.Out, parameters [1].Attributes);
-		AssertEquals ("#C2", "param2", parameters [1].Name);
-		AssertEquals ("#C3", typeof (string), parameters [1].ParameterType);
-		AssertEquals ("#C4", 1, parameters [1].Position);
+		Assert.AreEqual (ParameterAttributes.Out, parameters [1].Attributes, "#C1");
+		Assert.AreEqual ("param2", parameters [1].Name, "#C2");
+		Assert.AreEqual (typeof (string), parameters [1].ParameterType, "#C3");
+		Assert.AreEqual (1, parameters [1].Position, "#C4");
 
-		AssertEquals ("#D1", ParameterAttributes.In, parameters [2].Attributes);
-		AssertEquals ("#D2", "param3b", parameters [2].Name);
-		AssertEquals ("#D3", typeof (bool), parameters [2].ParameterType);
-		AssertEquals ("#D4", 2, parameters [2].Position);
+		Assert.AreEqual (ParameterAttributes.In, parameters [2].Attributes, "#D1");
+		Assert.AreEqual ("param3b", parameters [2].Name, "#D2");
+		Assert.AreEqual (typeof (bool), parameters [2].ParameterType, "#D3");
+		Assert.AreEqual (2, parameters [2].Position, "#D4");
 	}
 
 	[Test]
@@ -355,72 +385,99 @@ public class ConstructorBuilderTest : Assertion
 #endif
 	public void GetParameters_Complete2 ()
 	{
-		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
-		ConstructorBuilder cb = tb.DefineConstructor (MethodAttributes.Public,
+		ConstructorBuilder cb = genClass.DefineConstructor (
+			MethodAttributes.Public,
 			CallingConventions.Standard, null);
 		cb.GetILGenerator ().Emit (OpCodes.Ret);
-		tb.CreateType ();
+		genClass.CreateType ();
 
 		ParameterInfo [] parameters = cb.GetParameters ();
-		AssertNotNull ("#1", parameters);
-		AssertEquals ("#2", 0, parameters.Length);
+		Assert.IsNotNull (parameters, "#1");
+		Assert.AreEqual (0, parameters.Length, "#2");
 	}
 
 	[Test]
 	public void GetParameters_Incomplete ()
 	{
-		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
-		ConstructorBuilder cb = tb.DefineConstructor (
-			 0, 0, new Type [2] { typeof (int), typeof (string) });
+		ConstructorBuilder cb = genClass.DefineConstructor (
+			0, 0, new Type [2] { typeof (int), typeof (string) });
 		cb.DefineParameter (1, ParameterAttributes.In, "param1");
 		cb.DefineParameter (2, ParameterAttributes.In, "param2");
 		cb.GetILGenerator ().Emit (OpCodes.Ret);
 
 		try {
 			cb.GetParameters ();
-			Fail ("#1");
+			Assert.Fail ("#1");
 #if NET_2_0
 		} catch (NotSupportedException ex) {
 			// Type has not been created
-			AssertEquals ("#2", typeof (NotSupportedException), ex.GetType ());
-			AssertNull ("#3", ex.InnerException);
-			AssertNotNull ("#4", ex.Message);
+			Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
 		}
 #else
 		} catch (InvalidOperationException ex) {
 			// Type has not been created
-			AssertEquals ("#2", typeof (InvalidOperationException), ex.GetType ());
-			AssertNull ("#3", ex.InnerException);
-			AssertNotNull ("#4", ex.Message);
+			Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
 		}
 #endif
 	}
 
 	[Test]
-	public void TestGetToken ()
+	public void GetToken ()
 	{
-		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
-		ConstructorBuilder cb = tb.DefineConstructor (
-			 0, 0, new Type [1] {typeof(void)});
+		ConstructorBuilder cb = genClass.DefineConstructor (
+			0, 0, new Type [1] { typeof(int) });
+		cb.GetILGenerator ().Emit (OpCodes.Ret);
 
-		cb.GetToken ();
+		MethodToken tokenA = cb.GetToken ();
+#if NET_2_0
+		Assert.IsFalse (tokenA == MethodToken.Empty, "#1");
+#else
+		Assert.IsFalse (tokenA.Token == MethodToken.Empty.Token, "#1");
+#endif
+
+		genClass.CreateType ();
+
+		MethodToken tokenB = cb.GetToken ();
+#if NET_2_0
+		Assert.AreEqual (tokenA, tokenB, "#2");
+#else
+		Assert.AreEqual (tokenA.Token, tokenB.Token, "#2");
+#endif
 	}
 
 	[Test] // Invoke (Object [])
 	public void Invoke1 ()
 	{
 		ConstructorBuilder cb = genClass.DefineConstructor (
-			 0, 0, new Type [1] {typeof(int)});
+			0, 0, new Type [1] { typeof(int) });
+		cb.GetILGenerator ().Emit (OpCodes.Ret);
 
 		try {
 			cb.Invoke (new object [1] { 42 });
-			Fail ("#1");
+			Assert.Fail ("#A1");
 		} catch (NotSupportedException ex) {
 			// The invoked member is not supported in a dynamic
 			// module
-			AssertEquals ("#2", typeof (NotSupportedException), ex.GetType ());
-			AssertNull ("#3", ex.InnerException);
-			AssertNotNull ("#4", ex.Message);
+			Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
+		}
+
+		genClass.CreateType ();
+
+		try {
+			cb.Invoke (new object [1] { 42 });
+			Assert.Fail ("#B1");
+		} catch (NotSupportedException ex) {
+			// The invoked member is not supported in a dynamic
+			// module
+			Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.InnerException, "#B3");
+			Assert.IsNotNull (ex.Message, "#B4");
 		}
 	}
 
@@ -429,16 +486,30 @@ public class ConstructorBuilderTest : Assertion
 	{
 		ConstructorBuilder cb = genClass.DefineConstructor (
 			 0, 0, new Type [1] { typeof (int) });
+		cb.GetILGenerator ().Emit (OpCodes.Ret);
 
 		try {
 			cb.Invoke (null, new object [1] { 42 });
-			Fail ("#1");
+			Assert.Fail ("#A1");
 		} catch (NotSupportedException ex) {
 			// The invoked member is not supported in a dynamic
 			// module
-			AssertEquals ("#2", typeof (NotSupportedException), ex.GetType ());
-			AssertNull ("#3", ex.InnerException);
-			AssertNotNull ("#4", ex.Message);
+			Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
+		}
+
+		genClass.CreateType ();
+
+		try {
+			cb.Invoke (null, new object [1] { 42 });
+			Assert.Fail ("#B1");
+		} catch (NotSupportedException ex) {
+			// The invoked member is not supported in a dynamic
+			// module
+			Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.InnerException, "#B3");
+			Assert.IsNotNull (ex.Message, "#B4");
 		}
 	}
 
@@ -447,16 +518,30 @@ public class ConstructorBuilderTest : Assertion
 	{
 		ConstructorBuilder cb = genClass.DefineConstructor (
 			 0, 0, new Type [1] { typeof (int) });
+		cb.GetILGenerator ().Emit (OpCodes.Ret);
 
 		try {
 			cb.Invoke (0, null, new object [1] { 42 }, null);
-			Fail ("#1");
+			Assert.Fail ("#A1");
 		} catch (NotSupportedException ex) {
 			// The invoked member is not supported in a dynamic
 			// module
-			AssertEquals ("#2", typeof (NotSupportedException), ex.GetType ());
-			AssertNull ("#3", ex.InnerException);
-			AssertNotNull ("#4", ex.Message);
+			Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
+		}
+
+		genClass.CreateType ();
+
+		try {
+			cb.Invoke (0, null, new object [1] { 42 }, null);
+			Assert.Fail ("#B1");
+		} catch (NotSupportedException ex) {
+			// The invoked member is not supported in a dynamic
+			// module
+			Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.InnerException, "#B3");
+			Assert.IsNotNull (ex.Message, "#B4");
 		}
 	}
 
@@ -465,56 +550,82 @@ public class ConstructorBuilderTest : Assertion
 	{
 		ConstructorBuilder cb = genClass.DefineConstructor (
 			 0, 0, new Type [1] { typeof (int) });
+		cb.GetILGenerator ().Emit (OpCodes.Ret);
 
 		try {
 			cb.Invoke (null, 0, null, new object [1] { 42 }, null);
-			Fail ("#1");
+			Assert.Fail ("#A1");
 		} catch (NotSupportedException ex) {
 			// The invoked member is not supported in a dynamic
 			// module
-			AssertEquals ("#2", typeof (NotSupportedException), ex.GetType ());
-			AssertNull ("#3", ex.InnerException);
-			AssertNotNull ("#4", ex.Message);
+			Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
+		}
+
+		genClass.CreateType ();
+
+		try {
+			cb.Invoke (null, 0, null, new object [1] { 42 }, null);
+			Assert.Fail ("#B1");
+		} catch (NotSupportedException ex) {
+			// The invoked member is not supported in a dynamic
+			// module
+			Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.InnerException, "#B3");
+			Assert.IsNotNull (ex.Message, "#B4");
 		}
 	}
 
 	[Test]
-	public void TestIsDefined ()
+	public void IsDefined ()
 	{
 		ConstructorBuilder cb = genClass.DefineConstructor (
 			 0, 0, 
 			new Type [1] {typeof(int)});
+		cb.GetILGenerator ().Emit (OpCodes.Ret);
 
 		try {
 			cb.IsDefined (null, true);
-			Fail ("#1");
+			Assert.Fail ("#A1");
 		} catch (NotSupportedException ex) {
 			// The invoked member is not supported in a dynamic
 			// module
-			AssertEquals ("#2", typeof (NotSupportedException), ex.GetType ());
-			AssertNull ("#3", ex.InnerException);
-			AssertNotNull ("#4", ex.Message);
+			Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
+		}
+
+		genClass.CreateType ();
+
+		try {
+			cb.IsDefined (null, true);
+			Assert.Fail ("#B1");
+		} catch (NotSupportedException ex) {
+			// The invoked member is not supported in a dynamic
+			// module
+			Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.InnerException, "#B3");
+			Assert.IsNotNull (ex.Message, "#B4");
 		}
 	}
 
 	[Test]
 	public void TestSetCustomAttribute ()
 	{
-		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
-		ConstructorBuilder cb = tb.DefineConstructor (
-			 0, 0, 
-			new Type [1] {typeof(int)});
+		ConstructorBuilder cb = genClass.DefineConstructor (
+			 0, 0, new Type [1] {typeof(int)});
 		cb.GetILGenerator ().Emit (OpCodes.Ret);
 
 		// Null argument
 		try {
 			cb.SetCustomAttribute (null);
-			Fail ("#A1");
+			Assert.Fail ("#A1");
 		} catch (ArgumentNullException ex) {
-			AssertEquals ("#A2", typeof (ArgumentNullException), ex.GetType ());
-			AssertNull ("#A3", ex.InnerException);
-			AssertNotNull ("#A4", ex.Message);
-			AssertEquals ("#A5", "customBuilder", ex.ParamName);
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
+			Assert.AreEqual ("customBuilder", ex.ParamName, "#A5");
 		}
 
 		byte[] custAttrData = { 1, 0, 0, 0, 0};
@@ -529,31 +640,30 @@ public class ConstructorBuilderTest : Assertion
 
 		// Null arguments again
 		try {
-			cb.SetCustomAttribute (null, new byte[2]);
-			Fail ("#B1");
+			cb.SetCustomAttribute (null, new byte [2]);
+			Assert.Fail ("#B1");
 		} catch (ArgumentNullException ex) {
-			AssertEquals ("#B2", typeof (ArgumentNullException), ex.GetType ());
-			AssertNull ("#B3", ex.InnerException);
-			AssertNotNull ("#B4", ex.Message);
-			AssertEquals ("#B5", "con", ex.ParamName);
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.InnerException, "#B3");
+			Assert.IsNotNull (ex.Message, "#B4");
+			Assert.AreEqual ("con", ex.ParamName, "#B5");
 		}
 
 		try {
 			cb.SetCustomAttribute (ctorInfo, null);
-			Fail ("#C1");
+			Assert.Fail ("#C1");
 		} catch (ArgumentNullException ex) {
-			AssertEquals ("#C2", typeof (ArgumentNullException), ex.GetType ());
-			AssertNull ("#C3", ex.InnerException);
-			AssertNotNull ("#C4", ex.Message);
-			AssertEquals ("#C5", "binaryAttribute", ex.ParamName);
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#C2");
+			Assert.IsNull (ex.InnerException, "#C3");
+			Assert.IsNotNull (ex.Message, "#C4");
+			Assert.AreEqual ("binaryAttribute", ex.ParamName, "#C5");
 		}
 	}
 
 	[Test]
 	public void GetCustomAttributes_Emitted ()
 	{
-		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
-		ConstructorBuilder cb = tb.DefineConstructor (
+		ConstructorBuilder cb = genClass.DefineConstructor (
 			 MethodAttributes.Public, 0, 
 			new Type [1] {typeof(int)});
 		cb.GetILGenerator ().Emit (OpCodes.Ret);
@@ -564,34 +674,33 @@ public class ConstructorBuilderTest : Assertion
 
 		cb.SetCustomAttribute (new CustomAttributeBuilder (ctorInfo, new object [] { "FOO" }));
 
-		Type t = tb.CreateType ();
+		Type t = genClass.CreateType ();
 
 		// Try the created type
 		{
 			ConstructorInfo ci = t.GetConstructors () [0];
 			object[] attrs = ci.GetCustomAttributes (true);
 
-			AssertEquals (1, attrs.Length);
-			Assert (attrs [0] is ObsoleteAttribute);
-			AssertEquals ("FOO", ((ObsoleteAttribute)attrs [0]).Message);
+			Assert.AreEqual (1, attrs.Length, "#A1");
+			Assert.IsTrue (attrs [0] is ObsoleteAttribute, "#A2");
+			Assert.AreEqual ("FOO", ((ObsoleteAttribute)attrs [0]).Message, "#A3");
 		}
 
 		// Try the type builder
 		{
-			ConstructorInfo ci = tb.GetConstructors () [0];
+			ConstructorInfo ci = genClass.GetConstructors () [0];
 			object[] attrs = ci.GetCustomAttributes (true);
 
-			AssertEquals (1, attrs.Length);
-			Assert (attrs [0] is ObsoleteAttribute);
-			AssertEquals ("FOO", ((ObsoleteAttribute)attrs [0]).Message);
+			Assert.AreEqual (1, attrs.Length, "#B1");
+			Assert.IsTrue (attrs [0] is ObsoleteAttribute, "#B2");
+			Assert.AreEqual ("FOO", ((ObsoleteAttribute)attrs [0]).Message, "#B3");
 		}
 	}
 
 	[Test] // GetCustomAttributes (Boolean)
 	public void GetCustomAttributes1_Complete ()
 	{
-		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
-		ConstructorBuilder cb = tb.DefineConstructor (
+		ConstructorBuilder cb = genClass.DefineConstructor (
 			 MethodAttributes.Public, 0,
 			new Type [1] { typeof (int) });
 		cb.GetILGenerator ().Emit (OpCodes.Ret);
@@ -601,25 +710,24 @@ public class ConstructorBuilderTest : Assertion
 			attrType.GetConstructor (new Type [] { typeof (String) });
 		cb.SetCustomAttribute (new CustomAttributeBuilder (ctorInfo, new object [] { "FOO" }));
 
-		tb.CreateType ();
+		genClass.CreateType ();
 
 		try {
 			cb.GetCustomAttributes (false);
-			Fail ("#1");
+			Assert.Fail ("#1");
 		} catch (NotSupportedException ex) {
 			// The invoked member is not supported in a dynamic
 			// module
-			AssertEquals ("#2", typeof (NotSupportedException), ex.GetType ());
-			AssertNull ("#3", ex.InnerException);
-			AssertNotNull ("#4", ex.Message);
+			Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
 		}
 	}
 
 	[Test] // GetCustomAttributes (Boolean)
 	public void GetCustomAttributes1_Incomplete ()
 	{
-		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
-		ConstructorBuilder cb = tb.DefineConstructor (
+		ConstructorBuilder cb = genClass.DefineConstructor (
 			 MethodAttributes.Public, 0,
 			new Type [1] { typeof (int) });
 		cb.GetILGenerator ().Emit (OpCodes.Ret);
@@ -631,21 +739,20 @@ public class ConstructorBuilderTest : Assertion
 
 		try {
 			cb.GetCustomAttributes (false);
-			Fail ("#1");
+			Assert.Fail ("#1");
 		} catch (NotSupportedException ex) {
 			// The invoked member is not supported in a dynamic
 			// module
-			AssertEquals ("#2", typeof (NotSupportedException), ex.GetType ());
-			AssertNull ("#3", ex.InnerException);
-			AssertNotNull ("#4", ex.Message);
+			Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
 		}
 	}
 
 	[Test] // GetCustomAttributes (Type, Boolean)
 	public void GetCustomAttributes2_Complete ()
 	{
-		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
-		ConstructorBuilder cb = tb.DefineConstructor (
+		ConstructorBuilder cb = genClass.DefineConstructor (
 			 MethodAttributes.Public, 0,
 			new Type [1] { typeof (int) });
 		cb.GetILGenerator ().Emit (OpCodes.Ret);
@@ -655,25 +762,24 @@ public class ConstructorBuilderTest : Assertion
 			attrType.GetConstructor (new Type [] { typeof (String) });
 		cb.SetCustomAttribute (new CustomAttributeBuilder (ctorInfo, new object [] { "FOO" }));
 
-		tb.CreateType ();
+		genClass.CreateType ();
 
 		try {
 			cb.GetCustomAttributes (attrType, false);
-			Fail ("#1");
+			Assert.Fail ("#1");
 		} catch (NotSupportedException ex) {
 			// The invoked member is not supported in a dynamic
 			// module
-			AssertEquals ("#2", typeof (NotSupportedException), ex.GetType ());
-			AssertNull ("#3", ex.InnerException);
-			AssertNotNull ("#4", ex.Message);
+			Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
 		}
 	}
 
 	[Test] // GetCustomAttributes (Type, Boolean)
 	public void GetCustomAttributes2_Incomplete ()
 	{
-		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
-		ConstructorBuilder cb = tb.DefineConstructor (
+		ConstructorBuilder cb = genClass.DefineConstructor (
 			 MethodAttributes.Public, 0,
 			new Type [1] { typeof (int) });
 		cb.GetILGenerator ().Emit (OpCodes.Ret);
@@ -685,19 +791,19 @@ public class ConstructorBuilderTest : Assertion
 
 		try {
 			cb.GetCustomAttributes (attrType, false);
-			Fail ("#1");
+			Assert.Fail ("#1");
 		} catch (NotSupportedException ex) {
 			// The invoked member is not supported in a dynamic
 			// module
-			AssertEquals ("#2", typeof (NotSupportedException), ex.GetType ());
-			AssertNull ("#3", ex.InnerException);
-			AssertNotNull ("#4", ex.Message);
+			Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
 		}
 	}
 
 	// Same as in MethodBuilderTest
 	[Test]
-	public void TestAddDeclarativeSecurityAlreadyCreated ()
+	public void AddDeclarativeSecurity_Complete ()
 	{
 		ConstructorBuilder cb = genClass.DefineConstructor (
 			 MethodAttributes.Public, 0, new Type [0]);
@@ -708,32 +814,33 @@ public class ConstructorBuilderTest : Assertion
 		PermissionSet set = new PermissionSet (PermissionState.Unrestricted);
 		try {
 			cb.AddDeclarativeSecurity (SecurityAction.Demand, set);
+			Assert.Fail ("#1");
 		} catch (InvalidOperationException ex) {
 			// Type has not been created
-			AssertEquals ("#2", typeof (InvalidOperationException), ex.GetType ());
-			AssertNull ("#3", ex.InnerException);
-			AssertNotNull ("#4", ex.Message);
+			Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
 		}
 	}
 
 	[Test]
-	public void TestAddDeclarativeSecurityNullPermissionSet ()
+	public void AddDeclarativeSecurity_PSet_Null ()
 	{
 		ConstructorBuilder cb = genClass.DefineConstructor (
 			 MethodAttributes.Public, 0, new Type [0]);
 		try {
 			cb.AddDeclarativeSecurity (SecurityAction.Demand, null);
-			Fail ("#1");
+			Assert.Fail ("#1");
 		} catch (ArgumentNullException ex) {
-			AssertEquals ("#2", typeof (ArgumentNullException), ex.GetType ());
-			AssertNull ("#3", ex.InnerException);
-			AssertNotNull ("#4", ex.Message);
-			AssertEquals ("#5", "pset", ex.ParamName);
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
+			Assert.AreEqual ("pset", ex.ParamName, "#5");
 		}
 	}
 
 	[Test]
-	public void TestAddDeclarativeSecurityInvalidAction ()
+	public void AddDeclarativeSecurity_Action_Invalid ()
 	{
 		ConstructorBuilder cb = genClass.DefineConstructor (
 			 MethodAttributes.Public, 0, new Type [0]);
@@ -747,14 +854,18 @@ public class ConstructorBuilderTest : Assertion
 		foreach (SecurityAction action in actions) {
 			try {
 				cb.AddDeclarativeSecurity (action, set);
-				Fail ();
-			} catch (ArgumentOutOfRangeException) {
+				Assert.Fail ("#1");
+			} catch (ArgumentOutOfRangeException ex) {
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
+				Assert.IsNull (ex.ActualValue, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("action", ex.ParamName, "#5");
 			}
 		}
 	}
 
 	[Test]
-	public void TestAddDeclarativeSecurityDuplicateAction ()
+	public void AddDeclarativeSecurity_Action_Duplicate ()
 	{
 		ConstructorBuilder cb = genClass.DefineConstructor (
 			 MethodAttributes.Public, 0, new Type [0]);
@@ -762,12 +873,12 @@ public class ConstructorBuilderTest : Assertion
 		cb.AddDeclarativeSecurity (SecurityAction.Demand, set);
 		try {
 			cb.AddDeclarativeSecurity (SecurityAction.Demand, set);
-			Fail ("#1");
+			Assert.Fail ("#1");
 		} catch (InvalidOperationException ex) {
 			// Type has not been created
-			AssertEquals ("#2", typeof (InvalidOperationException), ex.GetType ());
-			AssertNull ("#3", ex.InnerException);
-			AssertNotNull ("#4", ex.Message);
+			Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+			Assert.IsNull (ex.InnerException, "#3");
+			Assert.IsNotNull (ex.Message, "#4");
 		}
 	}
 }
