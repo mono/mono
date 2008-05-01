@@ -263,8 +263,7 @@ namespace MonoTests.System.Linq {
 
 			public string Name
 			{
-				get
-				{
+				get {
 					if (string.IsNullOrEmpty (name))
 						return Age.ToString ();
 
@@ -315,7 +314,6 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestOrderByAgeAscendingTheByNameDescending ()
 		{
 			var q = from b in CreateBazCollection ()
