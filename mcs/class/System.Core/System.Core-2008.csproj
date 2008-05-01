@@ -73,13 +73,11 @@
     <Compile Include="System.Linq.Expressions\ParameterExpression.cs" />
     <Compile Include="System.Linq.Expressions\TypeBinaryExpression.cs" />
     <Compile Include="System.Linq.Expressions\UnaryExpression.cs" />
-    <Compile Include="System.Linq\AOrderedEnumerable.cs" />
     <Compile Include="System.Linq\Check.cs" />
     <Compile Include="System.Linq\Enumerable.cs" />
     <Compile Include="System.Linq\Grouping.cs" />
     <Compile Include="System.Linq\IGrouping.cs" />
     <Compile Include="System.Linq\ILookup_T.cs" />
-    <Compile Include="System.Linq\InternalOrderedSequence.cs" />
     <Compile Include="System.Linq\IOrderedEnumerable_T.cs" />
     <Compile Include="System.Linq\IOrderedQueryable.cs" />
     <Compile Include="System.Linq\IOrderedQueryable_T.cs" />
@@ -87,6 +85,8 @@
     <Compile Include="System.Linq\IQueryable_T.cs" />
     <Compile Include="System.Linq\IQueryProvider.cs" />
     <Compile Include="System.Linq\Lookup.cs" />
+    <Compile Include="System.Linq\OrderedEnumerable.cs" />
+    <Compile Include="System.Linq\OrderedSequence.cs" />
     <Compile Include="System.Linq\Queryable.cs" />
     <Compile Include="System.Runtime.CompilerServices\ExecutionScope.cs" />
     <Compile Include="System.Runtime.CompilerServices\ExtensionAttribute.cs" />
