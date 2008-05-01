@@ -231,7 +231,13 @@ class MemberAccessData
 		get {
 			return mt;
 		}
-	}	
+	}
+	
+	public static string StaticProperty {
+		get {
+			return "alo";
+		}
+	}
 }
 
 enum MyEnum : byte
@@ -522,9 +528,9 @@ class Tester
 		Assert (0, e.Compile ().Invoke (new double [0]));
 		Assert (9, e.Compile ().Invoke (new double [9]));
 
-		//Expression<Func<string [,], int>> e2 = (string [,] a) => a.Length;
-		//AssertNodeType (e2, ExpressionType.MemberAccess);
-		//Assert (0, e2.Compile ().Invoke (new string [0, 0]));
+		Expression<Func<string [,], int>> e2 = (string [,] a) => a.Length;
+		AssertNodeType (e2, ExpressionType.MemberAccess);
+		Assert (0, e2.Compile ().Invoke (new string [0, 0]));
 	}
 
 	void CallTest ()
@@ -611,9 +617,9 @@ class Tester
 	
 	void ConstantTest ()
 	{
-//		Expression<Func<int>> e1 = () => default (int);
-//		AssertNodeType (e1, ExpressionType.Constant);
-//		Assert (0, e1.Compile ().Invoke ());
+		Expression<Func<int>> e1 = () => default (int);
+		AssertNodeType (e1, ExpressionType.Constant);
+		Assert (0, e1.Compile ().Invoke ());
 
 		Expression<Func<int?>> e2 = () => default (int?);
 		AssertNodeType (e2, ExpressionType.Constant);
@@ -699,12 +705,14 @@ class Tester
 		Assert (true, e6.Compile ().Invoke (null, null));
 		Assert (true, e6.Compile ().Invoke (new MyType (120), new MyType (120)));
 		
-		// TODO: redundant return conversion
-		// Expression<Func<MyTypeExplicit, int?>> e6 = x => (int?)x;
+		Expression<Func<MyTypeExplicit, int?>> e7 = x => (int?)x;
+		AssertNodeType (e7, ExpressionType.Convert);
+		Assert (33, e7.Compile ().Invoke (new MyTypeExplicit (33)));
 		
-		// TODO: redundant convert
-		// TODO: pass null value
-		// Expression<Func<int?, object>> ex = x => (object)x;
+		Expression<Func<int?, object>> e8 = x => (object)x;
+		AssertNodeType (e8, ExpressionType.Convert);
+		Assert (null, e8.Compile ().Invoke (null));
+		Assert (-100, e8.Compile ().Invoke (-100));
 		
 		unsafe {
 			int*[] p = new int* [1];
@@ -725,6 +733,19 @@ class Tester
 		Expression<Func<Func<int>>> e12 = () => TestInt;
 		AssertNodeType (e12, ExpressionType.Convert);
 		Assert (29, e12.Compile ().Invoke () ());
+		
+		Expression<Func<decimal, sbyte>> e13 = a => (sbyte)a;
+		AssertNodeType (e13, ExpressionType.Convert);
+		Assert (6, e13.Compile ().Invoke (6));
+		
+		Expression<Func<long, decimal>> e14 = a => a;
+		AssertNodeType (e14, ExpressionType.Convert);
+		Assert (-66, e14.Compile ().Invoke (-66));
+
+		Expression<Func<ulong?, decimal?>> e15 = a => a;
+		AssertNodeType (e15, ExpressionType.Convert);
+		Assert (null, e15.Compile ().Invoke (null));
+		Assert (9, e15.Compile ().Invoke (9));
 	}
 
 	void ConvertCheckedTest ()
@@ -1156,6 +1177,26 @@ class Tester
 		var e5 = d.GetEvent ();
 		AssertNodeType (e5, ExpressionType.MemberAccess);
 		Assert (null, e5.Compile ().Invoke ());
+		
+		Expression<Func<MyType>> e6 = () => d.MyTypeProperty;
+		AssertNodeType (e6, ExpressionType.MemberAccess);
+		Assert (new MyType (), e6.Compile ().Invoke ());
+
+		Expression<Func<MyType, short>> e7 = a => a.ShortProp;
+		AssertNodeType (e7, ExpressionType.MemberAccess);
+		MyType mt = new MyType ();
+		mt.ShortProp = 124;
+		Assert (124, e7.Compile ().Invoke (mt));
+
+		Expression<Func<string>> e8 = () => MemberAccessData.StaticProperty;
+		AssertNodeType (e8, ExpressionType.MemberAccess);
+		Assert ("alo", e8.Compile ().Invoke ());
+		
+		string s = "localvar";
+		Expression<Func<string>> e9 = () => s;
+		// CSC emits this as MemberAccess
+		AssertNodeType (e9, ExpressionType.Constant);
+		Assert ("localvar", e9.Compile ().Invoke ());
 	}
 	
 	void MemberInitTest ()
