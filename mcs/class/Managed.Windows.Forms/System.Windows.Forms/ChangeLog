@@ -1,5 +1,10 @@
 2008-05-01  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ListBox.cs: Move some initialization around so that selected_indices
+	is not accessed before it is created.
+
+2008-05-01  Jonathan Pobst  <monkey@jpobst.com>
+
 	* InputLanguageCollection.cs: Implement the collection better.
 	[Fixes bug #385506]
 

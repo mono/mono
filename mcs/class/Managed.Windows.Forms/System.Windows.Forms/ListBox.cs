@@ -77,7 +77,7 @@ namespace System.Windows.Forms
 		private bool integral_height = true;
 		private bool multicolumn = false;
 		private bool scroll_always_visible = false;
-		private SelectedIndexCollection selected_indices;		
+		private SelectedIndexCollection selected_indices;
 		private SelectedObjectCollection selected_items;
 		private SelectionMode selection_mode = SelectionMode.One;
 		private bool sorted = false;
@@ -103,13 +103,13 @@ namespace System.Windows.Forms
 
 		public ListBox ()
 		{
-			requested_height = bounds.Height;
-			InternalBorderStyle = BorderStyle.Fixed3D;
-			BackColor = ThemeEngine.Current.ColorWindow;
-
 			items = CreateItemCollection ();
 			selected_indices = new SelectedIndexCollection (this);
 			selected_items = new SelectedObjectCollection (this);
+
+			requested_height = bounds.Height;
+			InternalBorderStyle = BorderStyle.Fixed3D;
+			BackColor = ThemeEngine.Current.ColorWindow;
 
 			/* Vertical scrollbar */
 			vscrollbar = new ImplicitVScrollBar ();
@@ -497,6 +497,9 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override int SelectedIndex {
 			get { 
+				if (selected_indices == null)
+					return -1;
+					
 				return selected_indices.Count > 0 ? selected_indices [0] : -1;
 			}
 			set {
