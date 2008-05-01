@@ -2854,23 +2854,44 @@ namespace Mono.CSharp {
 
 			string op = GetOperatorMetadataName (user_oper);
 
-			MethodGroupExpr union;
 			MethodGroupExpr left_operators = MemberLookup (ec.ContainerType, l, op, MemberTypes.Method, AllBindingFlags, loc) as MethodGroupExpr;
-			if (!TypeManager.IsEqual (r, l)) {
-				MethodGroupExpr right_operators = MemberLookup (
-					ec.ContainerType, r, op, MemberTypes.Method, AllBindingFlags, loc) as MethodGroupExpr;
-				union = MethodGroupExpr.MakeUnionSet (left_operators, right_operators, loc);
-			} else
-				union = left_operators;
+			MethodGroupExpr right_operators = null;
 
-			if (union == null)
+			if (!TypeManager.IsEqual (r, l)) {
+				right_operators = MemberLookup (ec.ContainerType, r, op, MemberTypes.Method, AllBindingFlags, loc) as MethodGroupExpr;
+				if (right_operators == null && left_operators == null)
+					return null;
+			} else if (left_operators == null) {
 				return null;
+			}
 
 			ArrayList args = new ArrayList (2);
 			Argument larg = new Argument (left);
 			args.Add (larg);
 			Argument rarg = new Argument (right);
 			args.Add (rarg);
+
+			MethodGroupExpr union;
+
+			//
+			// User-defined operator implementations always take precedence
+			// over predefined operator implementations
+			//
+			if (left_operators != null && right_operators != null) {
+				if (IsPredefinedUserOperator (l, user_oper)) {
+					union = right_operators.OverloadResolve (ec, ref args, true, loc);
+					if (union == null)
+						union = left_operators;
+				} else if (IsPredefinedUserOperator (r, user_oper)) {
+					union = left_operators.OverloadResolve (ec, ref args, true, loc);
+					if (union == null)
+						union = right_operators;
+				} else {
+					union = MethodGroupExpr.MakeUnionSet (left_operators, right_operators, loc);
+				}
+			} else {
+				union = MethodGroupExpr.MakeUnionSet (left_operators, right_operators, loc);
+			}
 
 			union = union.OverloadResolve (ec, ref args, true, loc);
 			if (union == null)
@@ -2983,6 +3004,14 @@ namespace Mono.CSharp {
 		{
 			return t == TypeManager.object_type || t == TypeManager.string_type ||
 				t == TypeManager.delegate_type || TypeManager.IsDelegateType (t);
+		}
+
+		static bool IsPredefinedUserOperator (Type t, Operator op)
+		{
+			//
+			// Some predefined types have user operators
+			//
+			return (op & Operator.EqualityMask) != 0 && (t == TypeManager.string_type || t == TypeManager.decimal_type);
 		}
 
 		private static bool IsTypeIntegral (Type type)
