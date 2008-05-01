@@ -49,11 +49,13 @@ public struct MyType<T>
 public struct MyType
 {
 	int value;
-
-	public MyType (int value)
+	
+	public MyType (int value) : this ()
 	{
 		this.value = value;
 	}
+	
+	public short ShortProp { get; set; }
 	
 	public override int GetHashCode ()
 	{
@@ -507,6 +509,10 @@ class Tester
 
 		decimal [] [] array = { new decimal [] { 1, 9 }, new decimal [] { 10, 90 } };
 		Assert (90, e4.Compile ().Invoke (array, 1));
+		
+		Expression<Func<int>> e5 = () => (new int [1]) [0];
+		AssertNodeType (e5, ExpressionType.ArrayIndex);
+		Assert (0, e5.Compile ().Invoke ());
 	}
 
 	void ArrayLengthTest ()
@@ -551,11 +557,14 @@ class Tester
 		AssertNodeType (e7, ExpressionType.Call);
 		Assert (3, e7.Compile ().Invoke (new Indexer (), 3));
 
-
 		Expression<Func<Indexer, string, string, string, string>> e8 = (a, b, c , d) => a [b, c, d];
 		AssertNodeType (e8, ExpressionType.Call);
 		Assert ("zyb", e8.Compile ().Invoke (new Indexer (), "z", "y", "b"));
-	}
+		
+		Expression<Action<int>> e9 = (a) => RefMethod (ref a);
+		AssertNodeType (e9, ExpressionType.Call);
+		e9.Compile ().Invoke (1);
+	}		
 
 	void CoalesceTest ()
 	{
@@ -712,6 +721,10 @@ class Tester
 		Expression<Func<Func<int>, Delegate>> e11 = (a) => a - a;
 		AssertNodeType (e11, ExpressionType.Convert);
 		Assert (null, e11.Compile ().Invoke (null));
+		
+		Expression<Func<Func<int>>> e12 = () => TestInt;
+		AssertNodeType (e12, ExpressionType.Convert);
+		Assert (29, e12.Compile ().Invoke () ());
 	}
 
 	void ConvertCheckedTest ()
@@ -1163,6 +1176,11 @@ class Tester
 		AssertNodeType (e2, ExpressionType.MemberInit);
 		var r2 = e2.Compile ().Invoke ();
 		Assert ("a", r2.ListValues [0]);
+		
+		Expression<Func<short, MyType>> e3 = a => new MyType { ShortProp = a };
+		AssertNodeType (e3, ExpressionType.MemberInit);
+		var r3 = e3.Compile ().Invoke (33);
+		Assert (33, r3.ShortProp);
 	}	
 
 	void ModuloTest ()
@@ -1338,9 +1356,9 @@ class Tester
 		AssertNodeType (e, ExpressionType.NewArrayInit);
 		Assert (new int [0], e.Compile ().Invoke ());
 
-		e = () => new int [] { };
-		AssertNodeType (e, ExpressionType.NewArrayInit);
-		Assert (new int [0], e.Compile ().Invoke ());
+		Expression<Func<int []>> e1 = () => new int [] { };
+		AssertNodeType (e1, ExpressionType.NewArrayInit);
+		Assert (new int [0], e1.Compile ().Invoke ());
 
 		Expression<Func<ushort, ulong? []>> e2 = (ushort a) => new ulong? [] { a };
 		AssertNodeType (e2, ExpressionType.NewArrayInit);
@@ -1356,6 +1374,10 @@ class Tester
 		Expression<Func<int [,]>> e = () => new int [2,3];
 		AssertNodeType (e, ExpressionType.NewArrayBounds);
 		Assert (new int [2,3].Length, e.Compile ().Invoke ().Length);
+		
+		Expression<Func<int[,]>> e2 = () => new int [0,0];
+		AssertNodeType (e2, ExpressionType.NewArrayBounds);
+		Assert (new int [0, 0].Length, e2.Compile ().Invoke ().Length);
 	}	
 	
 	void NewTest ()
@@ -1806,7 +1828,11 @@ class Tester
 	{
 		return t;
 	}
-
+	
+	static void RefMethod (ref int i)
+	{
+		i = 867;
+	}
 
 	public static int Main ()
 	{
