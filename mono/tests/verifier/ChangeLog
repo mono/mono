@@ -1,3 +1,13 @@
+2008-05-01 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* unverifiable_ldsfld_no_fld.il: Fixed compilation
+	and renamed to invalid_ldsfld_no_fld.il.
+
+	* BatchCompiler.cs: New driver to fast compile the
+	verifier test suite. It's about 20x faster now.
+
+	* Makefile: Use the ilasm driver for faster compilation.
+
 2008-04-30 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_il_overflow_test.sh: New test generator
