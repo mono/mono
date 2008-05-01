@@ -1610,7 +1610,7 @@ namespace System.Linq
 		{
 			Check.SourceAndKeySelector (source, keySelector);
 
-			return new InternalOrderedSequence<TSource, TKey> (
+			return new OrderedSequence<TSource, TKey> (
 					source, keySelector, comparer, false);
 		}
 
@@ -1630,7 +1630,7 @@ namespace System.Linq
 		{
 			Check.SourceAndKeySelector (source, keySelector);
 
-			return new InternalOrderedSequence<TSource, TKey> (
+			return new OrderedSequence<TSource, TKey> (
 					source, keySelector, comparer, true);
 		}
 

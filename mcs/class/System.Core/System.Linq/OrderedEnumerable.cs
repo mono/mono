@@ -1,5 +1,5 @@
 //
-// AOrderedEnumerable.cs
+// OrderedEnumerable.cs
 //
 // Authors:
 //	Marek Safar  <marek.safar@gmail.com>
@@ -30,15 +30,15 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace System.Linq
-{
-        abstract class AOrderedEnumerable<TElement> : IOrderedEnumerable<TElement>
-        {
-		protected AOrderedEnumerable<TElement> parent;
-		        
+namespace System.Linq {
+
+	abstract class OrderedEnumerable<TElement> : IOrderedEnumerable<TElement> {
+
+		protected OrderedEnumerable<TElement> parent;
+
 		public abstract IEnumerator<TElement> GetEnumerator ();
-                public abstract IEnumerable<TElement> Sort (IEnumerable<TElement> parentSource);
-                
+		public abstract IEnumerable<TElement> Sort (IEnumerable<TElement> parentSource);
+
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
 			return GetEnumerator ();
@@ -47,9 +47,8 @@ namespace System.Linq
 		public IOrderedEnumerable<TElement> CreateOrderedEnumerable<TKey> (
 			Func<TElement, TKey> selector, IComparer<TKey> comparer, bool descending)
 		{
-			parent = new InternalOrderedSequence<TElement, TKey> (this, selector, comparer, descending);
+			parent = new OrderedSequence<TElement, TKey> (this, selector, comparer, descending);
 			return parent;
 		}
-        }
+	}
 }
-
