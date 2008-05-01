@@ -1,11 +1,10 @@
+﻿//
+// SortSequenceContext.cs
 //
-// OrderedEnumerable.cs
+// Author:
+//   Jb Evain (jbevain@novell.com)
 //
-// Authors:
-//	Marek Safar  <marek.safar@gmail.com>
-//	Jb Evain  <jbevain@novell.com>
-//
-// Copyright (C) 2007 - 2008 Novell, Inc (http://www.novell.com)
+// (C) 2008 Novell, Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,39 +27,42 @@
 //
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace System.Linq {
 
-	abstract class OrderedEnumerable<TElement> : IOrderedEnumerable<TElement> {
+	class SortSequenceContext<TElement, TKey> : SortContext<TElement> {
 
-		IEnumerable<TElement> source;
+		Func<TElement, TKey> selector;
+		IComparer<TKey> comparer;
 
-		protected OrderedEnumerable (IEnumerable<TElement> source)
+		TKey [] keys;
+
+		public SortSequenceContext (Func<TElement, TKey> selector, IComparer<TKey> comparer, SortDirection direction, SortContext<TElement> child_context)
+			: base (direction, child_context)
 		{
-			this.source = source;
+			this.selector = selector;
+			this.comparer = comparer;
 		}
 
-		IEnumerator IEnumerable.GetEnumerator ()
+		public override void Initialize (TElement [] elements)
 		{
-			return GetEnumerator ();
+			if (child_context != null)
+				child_context.Initialize (elements);
+
+			keys = new TKey [elements.Length];
+			for (int i = 0; i < keys.Length; i++)
+				keys [i] = selector (elements [i]);
 		}
 
-		public IEnumerator<TElement> GetEnumerator ()
+		public override int Compare (int first_index, int second_index)
 		{
-			return Sort (source).GetEnumerator ();
-		}
+			int comparison = comparer.Compare (keys [first_index], keys [second_index]);
 
-		public abstract SortContext<TElement> CreateContext (SortContext<TElement> current);
+			if (comparison == 0 && child_context != null)
+				comparison = child_context.Compare (first_index, second_index);
 
-		protected abstract IEnumerable<TElement> Sort (IEnumerable<TElement> source);
-
-		public IOrderedEnumerable<TElement> CreateOrderedEnumerable<TKey> (
-			Func<TElement, TKey> selector, IComparer<TKey> comparer, bool descending)
-		{
-			return new OrderedSequence<TElement, TKey> (this, source, selector, comparer,
-				descending ? SortDirection.Descending : SortDirection.Ascending);
+			return direction == SortDirection.Descending ? -comparison : comparison;
 		}
 	}
 }

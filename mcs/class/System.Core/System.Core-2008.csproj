@@ -74,7 +74,11 @@
     <Compile Include="System.Linq.Expressions\TypeBinaryExpression.cs" />
     <Compile Include="System.Linq.Expressions\UnaryExpression.cs" />
     <Compile Include="System.Linq\Check.cs" />
+    <Compile Include="System.Linq\QuickSort.cs" />
+    <Compile Include="System.Linq\SortSequenceContext.cs" />
+    <Compile Include="System.Linq\SortContext.cs" />
     <Compile Include="System.Linq\Enumerable.cs" />
+    <Compile Include="System.Linq\SortDirection.cs" />
     <Compile Include="System.Linq\Grouping.cs" />
     <Compile Include="System.Linq\IGrouping.cs" />
     <Compile Include="System.Linq\ILookup_T.cs" />

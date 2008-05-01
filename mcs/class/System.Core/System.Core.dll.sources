@@ -17,7 +17,6 @@ System.Linq/Check.cs
 System.Linq/Enumerable.cs
 System.Linq/Grouping.cs
 System.Linq/IGrouping.cs
-System.Linq/OrderedSequence.cs
 System.Linq/IOrderedQueryable.cs
 System.Linq/IOrderedQueryable_T.cs
 System.Linq/IOrderedEnumerable_T.cs
@@ -26,7 +25,12 @@ System.Linq/IQueryable_T.cs
 System.Linq/Lookup.cs
 System.Linq/ILookup_T.cs
 System.Linq/OrderedEnumerable.cs
+System.Linq/OrderedSequence.cs
 System.Linq/Queryable.cs
+System.Linq/QuickSort.cs
+System.Linq/SortContext.cs
+System.Linq/SortDirection.cs
+System.Linq/SortSequenceContext.cs
 System.Linq/IQueryProvider.cs
 System.Linq.Expressions/BinaryExpression.cs
 System.Linq.Expressions/ConditionalExpression.cs

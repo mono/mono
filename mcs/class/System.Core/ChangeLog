@@ -1,3 +1,7 @@
+2008-05-01  Jb Evain  <jbevain@novell.com>
+
+	* System.Core-2008.csproj, System.Core.dll.sources: add new files.
+
 2008-03-27  Leonid Freydovich  <leonidf@mainsoft.com>
 
 	* Add some TARGET_JVM specific code
@@ -10,7 +14,7 @@
 2007-12-04  Marek Safar  <marek.safar@gmail.com>
 
 	* System.Core.dll.sources: System.Linq.Expression refresh.
-	
+
 2007-08-20  Marek Safar  <marek.safar@gmail.com>
 
 	* Makefile: Hardcoded 3.5 define for now.
@@ -27,7 +31,7 @@
 	* Implemented somme missing stuff in BinaryExpression.
 
 	* The stuff in ExpressionUtils is very generic and does quite some
-	redundant checks: I started splitting the stuff there into more   
+	redundant checks: I started splitting the stuff there into more
 	"specific" methods that should be both understandable and fast.
 
 	* Fixed the StringBuilder problem, added unique IDs to all tests,
@@ -59,7 +63,7 @@
 2007-03-29  Miguel de Icaza  <miguel@novell.com>
 
 	* Reapply the patch from Antonello, and rework the code to not use
-	extension methods on Enumerable. 
+	extension methods on Enumerable.
 
 2007-02-04  Marek Safar  <marek.safar@gmail.com>
 

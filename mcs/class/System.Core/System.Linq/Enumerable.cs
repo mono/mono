@@ -1603,7 +1603,6 @@ namespace System.Linq
 			return OrderBy<TSource, TKey> (source, keySelector, null);
 		}
 
-
 		public static IOrderedEnumerable<TSource> OrderBy<TSource, TKey> (this IEnumerable<TSource> source,
 				Func<TSource, TKey> keySelector,
 				IComparer<TKey> comparer)
@@ -1611,7 +1610,7 @@ namespace System.Linq
 			Check.SourceAndKeySelector (source, keySelector);
 
 			return new OrderedSequence<TSource, TKey> (
-					source, keySelector, comparer, false);
+					source, keySelector, comparer, SortDirection.Ascending);
 		}
 
 		#endregion
@@ -1624,14 +1623,13 @@ namespace System.Linq
 			return OrderByDescending<TSource, TKey> (source, keySelector, null);
 		}
 
-
 		public static IOrderedEnumerable<TSource> OrderByDescending<TSource, TKey> (this IEnumerable<TSource> source,
 				Func<TSource, TKey> keySelector, IComparer<TKey> comparer)
 		{
 			Check.SourceAndKeySelector (source, keySelector);
 
 			return new OrderedSequence<TSource, TKey> (
-					source, keySelector, comparer, true);
+					source, keySelector, comparer, SortDirection.Descending);
 		}
 
 		#endregion
@@ -2207,7 +2205,6 @@ namespace System.Linq
 			return ThenBy<TSource, TKey> (source, keySelector, null);
 		}
 
-
 		public static IOrderedEnumerable<TSource> ThenBy<TSource, TKey> (this IOrderedEnumerable<TSource> source,
 			Func<TSource, TKey> keySelector, IComparer<TKey> comparer)
 		{
@@ -2225,7 +2222,6 @@ namespace System.Linq
 		{
 			return ThenByDescending<TSource, TKey> (source, keySelector, null);
 		}
-
 
 		public static IOrderedEnumerable<TSource> ThenByDescending<TSource, TKey> (this IOrderedEnumerable<TSource> source,
 			Func<TSource, TKey> keySelector, IComparer<TKey> comparer)

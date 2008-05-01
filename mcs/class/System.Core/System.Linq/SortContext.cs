@@ -1,11 +1,10 @@
+﻿//
+// SortContext.cs
 //
-// OrderedEnumerable.cs
+// Author:
+//   Jb Evain (jbevain@novell.com)
 //
-// Authors:
-//	Marek Safar  <marek.safar@gmail.com>
-//	Jb Evain  <jbevain@novell.com>
-//
-// Copyright (C) 2007 - 2008 Novell, Inc (http://www.novell.com)
+// (C) 2008 Novell, Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,40 +26,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-
 namespace System.Linq {
 
-	abstract class OrderedEnumerable<TElement> : IOrderedEnumerable<TElement> {
+	abstract class SortContext<TElement> {
 
-		IEnumerable<TElement> source;
+		protected SortDirection direction;
+		protected SortContext<TElement> child_context;
 
-		protected OrderedEnumerable (IEnumerable<TElement> source)
+		protected SortContext (SortDirection direction, SortContext<TElement> child_context)
 		{
-			this.source = source;
+			this.direction = direction;
+			this.child_context = child_context;
 		}
 
-		IEnumerator IEnumerable.GetEnumerator ()
-		{
-			return GetEnumerator ();
-		}
+		public abstract void Initialize (TElement [] elements);
 
-		public IEnumerator<TElement> GetEnumerator ()
-		{
-			return Sort (source).GetEnumerator ();
-		}
-
-		public abstract SortContext<TElement> CreateContext (SortContext<TElement> current);
-
-		protected abstract IEnumerable<TElement> Sort (IEnumerable<TElement> source);
-
-		public IOrderedEnumerable<TElement> CreateOrderedEnumerable<TKey> (
-			Func<TElement, TKey> selector, IComparer<TKey> comparer, bool descending)
-		{
-			return new OrderedSequence<TElement, TKey> (this, source, selector, comparer,
-				descending ? SortDirection.Descending : SortDirection.Ascending);
-		}
+		public abstract int Compare (int first_index, int second_index);
 	}
 }

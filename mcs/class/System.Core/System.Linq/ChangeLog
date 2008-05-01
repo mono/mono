@@ -1,3 +1,11 @@
+2008-05-01  Jb Evain  <jbevain@novell.com>
+
+	* SortDirection.cs, SortContext.cs, SortSequenceContext.cs:
+	new infrastructure files for nested orderby/thenby calls.
+	* QuickSort.cs: refactored out of OrderedSequence.cs
+	* OrderedEnumerable.cs, OrderedSequence.cs: refactoring
+	to use the new SortContext infrastructure.
+
 2008-04-30  Jb Evain  <jbevain@novell.com>
 
 	* Enumerable.cs: Average (int|long): properly compute
