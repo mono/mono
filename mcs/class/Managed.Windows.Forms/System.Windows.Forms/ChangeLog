@@ -1,3 +1,8 @@
+2008-05-01  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridViewRowCollection.cs: We don't currently support shared 
+	rows.  Should fix test failures caused by previous commit.
+
 2008-04-30  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridViewRow.cs: Fixes for cloning the row, ensure header cell's

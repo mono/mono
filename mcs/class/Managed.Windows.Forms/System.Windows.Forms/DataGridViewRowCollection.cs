@@ -156,16 +156,19 @@ namespace System.Windows.Forms
 		
 		private bool CanBeShared (DataGridViewRow row)
 		{
-			foreach (DataGridViewCell cell in row.Cells) {
-				if (cell.Value != null)
-					return false;
-				if (cell.ToolTipText != string.Empty)
-					return false;
-				if (cell.ContextMenuStrip != null)
-					return false;
-			}
+			// We don't currently support shared rows
+			return false;
+			
+			//foreach (DataGridViewCell cell in row.Cells) {
+			//        if (cell.Value != null)
+			//                return false;
+			//        if (cell.ToolTipText != string.Empty)
+			//                return false;
+			//        if (cell.ContextMenuStrip != null)
+			//                return false;
+			//}
 
-			return true;
+			//return true;
 		}
 		
 
