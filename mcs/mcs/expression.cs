@@ -1617,7 +1617,7 @@ namespace Mono.CSharp {
 			} else {
 				Constant c = New.Constantify (type);
 				if (c != null)
-					return new EmptyConstantCast (c, type);
+					return c;
 
 				if (!TypeManager.IsValueType (type))
 					return new EmptyConstantCast (new NullLiteral (Location), type);
@@ -8707,7 +8707,7 @@ namespace Mono.CSharp {
 
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
-			ArrayList args = new ArrayList (2);
+			ArrayList args = new ArrayList (3);
 			args.Add (new Argument (source.CreateExpressionTree (ec)));
 			args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
 			args.Add (new Argument (new TypeOfMethodInfo (method, loc)));

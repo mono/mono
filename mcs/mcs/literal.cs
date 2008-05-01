@@ -106,8 +106,11 @@ namespace Mono.CSharp {
 			get { return true; }
 		}
 
-		public override bool IsNegative 
-		{
+		public override bool IsLiteral {
+			get { return true; }
+		}
+
+		public override bool IsNegative {
 			get { return false; }
 		}
 
@@ -115,8 +118,7 @@ namespace Mono.CSharp {
 			get { return true; }
 		}
 
-		public override bool IsZeroInteger 
-		{
+		public override bool IsZeroInteger {
 			get { return true; }
 		}
 
@@ -161,6 +163,10 @@ namespace Mono.CSharp {
 			type = TypeManager.bool_type;
 			return this;
 		}
+
+		public override bool IsLiteral {
+			get { return true; }
+		}
 	}
 
 	public class CharLiteral : CharConstant {
@@ -172,6 +178,10 @@ namespace Mono.CSharp {
 		{
 			type = TypeManager.char_type;
 			return this;
+		}
+
+		public override bool IsLiteral {
+			get { return true; }
 		}
 	}
 
@@ -201,6 +211,9 @@ namespace Mono.CSharp {
 			return base.ConvertImplicitly (type);
 		}
 
+		public override bool IsLiteral {
+			get { return true; }
+		}
 	}
 
 	public class UIntLiteral : UIntConstant {
@@ -213,6 +226,10 @@ namespace Mono.CSharp {
 			type = TypeManager.uint32_type;
 			return this;
 		}
+
+		public override bool IsLiteral {
+			get { return true; }
+		}
 	}
 	
 	public class LongLiteral : LongConstant {
@@ -223,8 +240,11 @@ namespace Mono.CSharp {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			type = TypeManager.int64_type;
-
 			return this;
+		}
+
+		public override bool IsLiteral {
+			get { return true; }
 		}
 	}
 
@@ -237,6 +257,10 @@ namespace Mono.CSharp {
 		{
 			type = TypeManager.uint64_type;
 			return this;
+		}
+
+		public override bool IsLiteral {
+			get { return true; }
 		}
 	}
 	
@@ -251,6 +275,11 @@ namespace Mono.CSharp {
 			type = TypeManager.float_type;
 			return this;
 		}
+
+		public override bool IsLiteral {
+			get { return true; }
+		}
+
 	}
 
 	public class DoubleLiteral : DoubleConstant {
@@ -286,6 +315,11 @@ namespace Mono.CSharp {
 				"Literal of type double cannot be implicitly converted to type `{0}'. Add suffix `{1}' to create a literal of this type",
 				type, suffix);
 		}
+
+		public override bool IsLiteral {
+			get { return true; }
+		}
+
 	}
 
 	public class DecimalLiteral : DecimalConstant {
@@ -297,6 +331,10 @@ namespace Mono.CSharp {
 		{
 			type = TypeManager.decimal_type;
 			return this;
+		}
+
+		public override bool IsLiteral {
+			get { return true; }
 		}
 	}
 
@@ -311,5 +349,10 @@ namespace Mono.CSharp {
 
 			return this;
 		}
+
+		public override bool IsLiteral {
+			get { return true; }
+		}
+
 	}
 }

@@ -76,6 +76,16 @@ namespace Mono.CSharp {
 			return this;
 		}
 
+		public override void Error_ValueCannotBeConverted (EmitContext ec, Location loc, Type target, bool expl)
+		{
+			if (!expl && IsLiteral && type != TypeManager.string_type) {
+				Report.Error (31, loc, "Constant value `{0}' cannot be converted to a `{1}'",
+					GetValue ().ToString (), TypeManager.CSharpName (target));
+			} else {
+				base.Error_ValueCannotBeConverted (ec, loc, target, expl);
+			}
+		}
+
 		public Constant ImplicitConversionRequired (Type type, Location loc)
 		{
 			Constant c = ConvertImplicitly (type);
@@ -218,6 +228,13 @@ namespace Mono.CSharp {
 
 		public abstract bool IsNegative {
 			get;
+		}
+
+		//
+		// When constant is declared as literal
+		//
+		public virtual bool IsLiteral {
+			get { return false; }
 		}
 
 		//

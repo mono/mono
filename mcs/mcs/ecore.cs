@@ -393,12 +393,6 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (Type != TypeManager.string_type && this is Constant && !(this is EmptyConstantCast)) {
-				Report.Error (31, loc, "Constant value `{0}' cannot be converted to a `{1}'",
-					((Constant)(this)).GetValue ().ToString (), TypeManager.CSharpName (target));
-				return;
-			}
-
 			Report.Error (29, loc, "Cannot implicitly convert type `{0}' to `{1}'",
 				TypeManager.CSharpName (type),
 				TypeManager.CSharpName (target));
@@ -5103,8 +5097,9 @@ namespace Mono.CSharp {
 
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
+			ArrayList args;
 			if (IsSingleDimensionalArrayLength ()) {
-				ArrayList args = new ArrayList (1);
+				args = new ArrayList (1);
 				args.Add (new Argument (InstanceExpression.CreateExpressionTree (ec)));
 				return CreateExpressionFactoryCall ("ArrayLength", args);
 			}
@@ -5114,12 +5109,13 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			// TODO: it's waiting for PropertyExpr refactoring
-			//ArrayList args = new ArrayList (2);
-			//args.Add (new Argument (InstanceExpression.CreateExpressionTree (ec)));
-			//args.Add (getter expression);
-			//return CreateExpressionFactoryCall ("Property", args);
-			throw new NotImplementedException ();
+			args = new ArrayList (2);
+			if (InstanceExpression == null)
+				args.Add (new Argument (new NullLiteral (loc)));
+			else
+				args.Add (new Argument (InstanceExpression.CreateExpressionTree (ec)));
+			args.Add (new Argument (new TypeOfMethodInfo (getter, loc)));
+			return CreateExpressionFactoryCall ("Property", args);
 		}
 
 		public Expression CreateSetterTypeOfExpression ()

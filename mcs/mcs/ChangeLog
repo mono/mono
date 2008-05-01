@@ -1,5 +1,11 @@
 2008-05-01  Marek Safar  <marek.safar@gmail.com>
 
+	* constant.cs, literal.cs: IsLiteral property for error reporting.
+	
+	* ecore.cs, expression.cs: Implemented Property expression.
+
+2008-05-01  Marek Safar  <marek.safar@gmail.com>
+
 	* class.cs, modifiers.cs, flowanalysis.cs: New BACKING_FIELD flag.
 	
 	* nullable.cs: Implemented nullable coalescing null operator.
