@@ -244,9 +244,9 @@ namespace MonoTests.System.Linq {
 		[Test]
 		public void TestAverageOnInt64 ()
 		{
-				Assert.AreEqual (23.25, (new long [] { 24, 7, 28, 34 }).Average ());
+			Assert.AreEqual (23.25, (new long [] { 24, 7, 28, 34 }).Average ());
 		}
-				
+
 		[Test]
 		public void TestOrderBy ()
 		{
@@ -256,7 +256,82 @@ namespace MonoTests.System.Linq {
 						select i;
 				AssertIsOrdered (q);
 		}
-		
+
+		class Baz {
+			string name;
+			int age;
+
+			public string Name
+			{
+				get
+				{
+					if (string.IsNullOrEmpty (name))
+						return Age.ToString ();
+
+					return name + " (" + Age + ")";
+				}
+			}
+
+			public int Age
+			{
+				get { return age + 1; }
+			}
+
+			public Baz (string name, int age)
+			{
+				this.name = name;
+				this.age = age;
+			}
+
+			public override int GetHashCode ()
+			{
+				return this.Age ^ this.Name.GetHashCode ();
+			}
+
+			public override bool Equals (object obj)
+			{
+				Baz b = obj as Baz;
+				if (b == null)
+					return false;
+
+				return b.Age == this.Age && b.Name == this.Name;
+			}
+
+			public override string ToString ()
+			{
+				return this.Name;
+			}
+		}
+
+		static IEnumerable<Baz> CreateBazCollection ()
+		{
+			return new [] {
+				new Baz ("jb", 25),
+				new Baz ("ana", 20),
+				new Baz ("reg", 28),
+				new Baz ("ro", 25),
+				new Baz ("jb", 7),
+			};
+		}
+
+		[Test]
+		public void TestOrderByAgeAscendingTheByNameDescending ()
+		{
+			var q = from b in CreateBazCollection ()
+					orderby b.Age ascending, b.Name descending
+					select b;
+
+			var expected = new [] {
+				new Baz ("jb", 7),
+				new Baz ("ana", 20),
+				new Baz ("ro", 25),
+				new Baz ("jb", 25),
+				new Baz ("reg", 28),
+			};
+
+			AssertAreSame (expected, q);
+		}
+
 		static void AssertIsOrdered (IEnumerable<int> e)
 		{
 				int f = int.MinValue;
