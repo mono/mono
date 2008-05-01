@@ -34,7 +34,7 @@ using System.Collections.Generic;
 
 namespace System.Linq {
 
-	class Lookup<TKey, TElement> : IEnumerable<IGrouping<TKey, TElement>>, ILookup<TKey, TElement> {
+	public class Lookup<TKey, TElement> : IEnumerable<IGrouping<TKey, TElement>>, ILookup<TKey, TElement> {
 
 		Dictionary<TKey, IGrouping<TKey, TElement>> groups;
 
