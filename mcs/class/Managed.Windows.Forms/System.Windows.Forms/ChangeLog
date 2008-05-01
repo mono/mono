@@ -1,5 +1,10 @@
 2008-05-01  Jonathan Pobst  <monkey@jpobst.com>
 
+	* InputLanguageCollection.cs: Implement the collection better.
+	[Fixes bug #385506]
+
+2008-05-01  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStripDropDownItem.cs: Get the correct event object for
 	DropDownItemClicked.
 	* ToolStripMenuItem.cs: Raise DropDownItemClicked on our owner.

@@ -31,30 +31,26 @@ using System.Globalization;
 
 namespace System.Windows.Forms {
 	public class InputLanguageCollection : ReadOnlyCollectionBase {
-		#region Local Variables
-		internal InputLanguage[]	list;
-		#endregion	// Local Variables
-
 		#region Private Constructor
 		internal InputLanguageCollection (InputLanguage[] data)
 		{
-			list = data;
+			base.InnerList.AddRange (data);
 		}
 		#endregion	// Private Constructor
 
 		#region Public Instance Methods
 		public InputLanguage this [int index] {
 			get {
-				if (index>=list.Length) {
+				if (index >= base.InnerList.Count) {
 					throw new ArgumentOutOfRangeException("index");
 				}
-				return list[index];
+				return base.InnerList[index] as InputLanguage;
 			}
 		}
 
 		public bool Contains(InputLanguage value) {
-			for (int i=0; i<list.Length; i++) {
-				if ((list[i].Culture==value.Culture) && (list[i].LayoutName==value.LayoutName)) {
+			for (int i = 0; i < base.InnerList.Count; i++) {
+				if ((this[i].Culture == value.Culture) && (this[i].LayoutName == value.LayoutName)) {
 					return true;
 				}
 			}
@@ -62,14 +58,14 @@ namespace System.Windows.Forms {
 		}
 
 		public void CopyTo(InputLanguage[] array, int index) {
-			if (list.Length>0) {
-				Array.Copy(list, 0, array, index, list.Length);
+			if (base.InnerList.Count > 0) {
+				base.InnerList.CopyTo (array, index);
 			}
 		}
 
 		public int IndexOf(InputLanguage value) {
-			for (int i=0; i<list.Length; i++) {
-				if ((list[i].Culture==value.Culture) && (list[i].LayoutName==value.LayoutName)) {
+			for (int i = 0; i < base.InnerList.Count; i++) {
+				if ((this[i].Culture == value.Culture) && (this[i].LayoutName == value.LayoutName)) {
 					return i;
 				}
 			}

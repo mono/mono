@@ -43,6 +43,12 @@ namespace MonoTests.System.Windows.Forms
 		{
 			InputLanguage.CurrentInputLanguage = InputLanguage.DefaultInputLanguage;
 		}
+
+		[Test]
+		public void InstalledInputLanguages_HasAtLeastOneLanguage ()
+		{
+			Assert.IsTrue (InputLanguage.InstalledInputLanguages.Count > 0);
+		}
 	}
 }
 #endif
