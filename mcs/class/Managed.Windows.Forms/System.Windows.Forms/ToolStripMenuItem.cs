@@ -241,6 +241,9 @@ namespace System.Windows.Forms
 				return;
 			}
 				
+			if (this.OwnerItem is ToolStripDropDownItem)
+				(this.OwnerItem as ToolStripDropDownItem).OnDropDownItemClicked (new ToolStripItemClickedEventArgs (this));
+
 			if (this.IsOnDropDown)
 				this.GetTopLevelToolStrip ().Dismiss (ToolStripDropDownCloseReason.ItemClicked);
 

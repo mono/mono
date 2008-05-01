@@ -1,5 +1,12 @@
 2008-05-01  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStripDropDownItem.cs: Get the correct event object for
+	DropDownItemClicked.
+	* ToolStripMenuItem.cs: Raise DropDownItemClicked on our owner.
+	[Fixes bug #385475]
+
+2008-05-01  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridViewRowCollection.cs: We don't currently support shared 
 	rows.  Should fix test failures caused by previous commit.
 

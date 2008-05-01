@@ -192,7 +192,7 @@ namespace System.Windows.Forms
 
 		protected internal virtual void OnDropDownItemClicked (ToolStripItemClickedEventArgs e)
 		{
-			ToolStripItemClickedEventHandler eh = (ToolStripItemClickedEventHandler)(Events [DropDownClosedEvent]);
+			ToolStripItemClickedEventHandler eh = (ToolStripItemClickedEventHandler)(Events [DropDownItemClickedEvent]);
 			if (eh != null)
 				eh (this, e);
 		}
