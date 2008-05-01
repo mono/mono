@@ -315,6 +315,7 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void TestOrderByAgeAscendingTheByNameDescending ()
 		{
 			var q = from b in CreateBazCollection ()
