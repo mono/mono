@@ -1136,9 +1136,16 @@ namespace Mono.CSharp
 				FieldInfo field = struct_info.Fields [i];
 
 				if (!branching.IsFieldAssigned (vi, field.Name)) {
-					Report.Error (171, loc,
-						"Field `{0}' must be fully assigned before control leaves the constructor",
-						TypeManager.GetFullNameSignature (field));
+					FieldBase fb = TypeManager.GetField (field);
+					if (fb != null && (fb.ModFlags & Modifiers.BACKING_FIELD) != 0) {
+						Report.Error (843, loc,
+							"An automatically implemented property `{0}' must be fully assigned before control leaves the constructor. Consider calling default contructor",
+							fb.GetSignatureForError ());
+					} else {
+						Report.Error (171, loc,
+							"Field `{0}' must be fully assigned before control leaves the constructor",
+							TypeManager.GetFullNameSignature (field));
+					}
 					ok = false;
 				}
 			}

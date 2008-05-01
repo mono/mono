@@ -5758,18 +5758,24 @@ namespace Mono.CSharp {
 		{
 			ArrayList args;
 
-			if (dimensions != 1) {
-				if (initializers != null) {
-					Report.Error (838, loc, "An expression tree cannot contain a multidimensional array initializer");
-					return null;
-				}
-
+			if (array_data == null) {
 				args = new ArrayList (arguments.Count + 1);
 				args.Add (new Argument (new TypeOf (new TypeExpression (array_element_type, loc), loc)));
-				foreach (Argument a in arguments)
+				foreach (Argument a in arguments) {
+					if (arguments.Count == 1) {
+						Constant c = a.Expr as Constant;
+						if (c.IsDefaultValue)
+							return CreateExpressionFactoryCall ("NewArrayInit", args);
+					}
 					args.Add (new Argument (a.Expr.CreateExpressionTree (ec)));
+				}
 
 				return CreateExpressionFactoryCall ("NewArrayBounds", args);
+			}
+
+			if (dimensions > 1) {
+				Report.Error (838, loc, "An expression tree cannot contain a multidimensional array initializer");
+				return null;
 			}
 
 			args = new ArrayList (array_data == null ? 1 : array_data.Count + 1);

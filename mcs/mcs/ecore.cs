@@ -3639,8 +3639,18 @@ namespace Mono.CSharp {
 
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
+			if (best_candidate == null) {
+				Report.Error (1953, loc, "An expression tree cannot contain an expression with method group");
+				return null;
+			}
+
 			if (best_candidate.IsConstructor)
 				return new TypeOfConstructorInfo (best_candidate, loc);
+
+			IMethodData md = TypeManager.GetMethod (best_candidate);
+			if (md != null && md.IsExcluded ())
+				Report.Error (765, loc,
+					"Partial methods with only a defining declaration or removed conditional methods cannot be used in an expression tree");
 			
 			return new TypeOfMethodInfo (best_candidate, loc);
 		}

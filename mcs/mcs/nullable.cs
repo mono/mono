@@ -946,6 +946,9 @@ namespace Mono.CSharp.Nullable
 		
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
+			if (left is NullLiteral)
+				Report.Error (845, loc, "An expression tree cannot contain a coalescing operator with null left side");
+
 			UserCast uc = left as UserCast;
 			Expression conversion = null;
 			if (uc != null) {
@@ -995,6 +998,13 @@ namespace Mono.CSharp.Nullable
 					type = expr.Type;
 					return this;
 				}
+			} else if (left.IsNull) {
+				if (!Convert.ImplicitConversionExists (ec, right, TypeManager.object_type)) {
+					Binary.Error_OperatorCannotBeApplied (loc, "??", ltype, rtype);
+					return null;
+				}
+			
+				return ReducedExpression.Create (right, this).Resolve (ec);
 			} else if (!TypeManager.IsReferenceType (ltype)) {
 				Binary.Error_OperatorCannotBeApplied (loc, "??", ltype, rtype);
 				return null;

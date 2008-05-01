@@ -6032,6 +6032,17 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		public override string GetSignatureForError ()
+		{
+			string s = base.GetSignatureForError ();
+			if ((ModFlags & Modifiers.BACKING_FIELD) == 0)
+				return s;
+
+			// Undecorate name mangling
+			int l = s.LastIndexOf ('>');
+			return s.Substring (0, l).Remove (s.LastIndexOf ('<'), 1);
+		}
+
 		protected override bool VerifyClsCompliance ()
 		{
 			if (!base.VerifyClsCompliance ())
@@ -6853,7 +6864,7 @@ namespace Mono.CSharp {
 			// Make the field
 			Field field = new Field (
 				Parent, type_name,
-				Modifiers.COMPILER_GENERATED | Modifiers.PRIVATE | (ModFlags & (Modifiers.STATIC | Modifiers.UNSAFE)),
+				Modifiers.BACKING_FIELD | Modifiers.PRIVATE | (ModFlags & (Modifiers.STATIC | Modifiers.UNSAFE)),
 			    "<" + Name + ">k__BackingField", null, Location);
 			((TypeContainer)Parent).AddField (field);
 
