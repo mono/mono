@@ -255,6 +255,7 @@ public class SHA384Managed : SHA384 {
 		wOff = 0;
 		for (int i = 0; i != W.Length; i++)
 			W[i] = 0;
+	}
 }
 
 }
