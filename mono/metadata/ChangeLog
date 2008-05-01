@@ -1,3 +1,8 @@
+2008-05-01  Miguel de Icaza  <miguel@novell.com>
+
+	* appdomain.c (mono_domain_from_appdomain): Add new accesor
+	method. 
+
 2008-05-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* sgen-gc.c: Implement thread-local allocation and a managed allocation routine.
