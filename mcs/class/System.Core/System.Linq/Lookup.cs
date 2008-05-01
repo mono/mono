@@ -32,46 +32,47 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace System.Linq
-{
-        public class Lookup<TKey, TElement> : IEnumerable<IGrouping<TKey, TElement>>, ILookup<TKey, TElement>
-        {
-                Dictionary<TKey, IGrouping<TKey, TElement>> groups;
-                
-                internal Lookup (Dictionary<TKey, List<TElement>> groups)
-                {
-                        this.groups = new Dictionary<TKey, IGrouping<TKey, TElement>> ();
-                        foreach (KeyValuePair<TKey, List<TElement>> group in groups)
-                                this.groups.Add (group.Key, new Grouping<TKey, TElement>(group.Key, group.Value));
-                }
-                
-                public IEnumerable<TResult> ApplyResultSelector<TResult>(Func<TKey, IEnumerable <TElement>, TResult> selector)
-                {
-                	throw new NotImplementedException ();
-                }
-                
-                public int Count {
-                        get { return groups.Count; }
-                }
-                
-                public bool Contains (TKey key)
-                {
-                        return groups.ContainsKey (key);
-                }
-                
-                public IEnumerable<TElement> this [TKey key]
-                {
-                        get { return groups[key]; }
-                }
-                
-                public IEnumerator<IGrouping<TKey, TElement>> GetEnumerator ()
-                {
-                        return groups.Values.GetEnumerator ();
-                }
-                
-                IEnumerator IEnumerable.GetEnumerator ()
-                {
-                        return groups.Values.GetEnumerator ();
-                }
-        }
+namespace System.Linq {
+
+	class Lookup<TKey, TElement> : IEnumerable<IGrouping<TKey, TElement>>, ILookup<TKey, TElement> {
+
+		Dictionary<TKey, IGrouping<TKey, TElement>> groups;
+
+		internal Lookup (Dictionary<TKey, List<TElement>> groups)
+		{
+			this.groups = new Dictionary<TKey, IGrouping<TKey, TElement>> ();
+			foreach (KeyValuePair<TKey, List<TElement>> group in groups)
+				this.groups.Add (group.Key, new Grouping<TKey, TElement> (group.Key, group.Value));
+		}
+
+		public IEnumerable<TResult> ApplyResultSelector<TResult> (Func<TKey, IEnumerable<TElement>, TResult> selector)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public int Count
+		{
+			get { return groups.Count; }
+		}
+
+		public bool Contains (TKey key)
+		{
+			return groups.ContainsKey (key);
+		}
+
+		public IEnumerable<TElement> this [TKey key]
+		{
+			get { return groups [key]; }
+		}
+
+		public IEnumerator<IGrouping<TKey, TElement>> GetEnumerator ()
+		{
+			return groups.Values.GetEnumerator ();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			return groups.Values.GetEnumerator ();
+		}
+	}
 }

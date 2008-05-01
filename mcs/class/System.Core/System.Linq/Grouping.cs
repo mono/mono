@@ -26,7 +26,7 @@ using System.Collections.Generic;
 
 namespace System.Linq
 {
-	public class Grouping<K, T> : IGrouping<K, T>
+	class Grouping<K, T> : IGrouping<K, T>
 	{
 		K key;
 		IEnumerable<T> group;

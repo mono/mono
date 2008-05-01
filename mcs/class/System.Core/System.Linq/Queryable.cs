@@ -35,11 +35,9 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Linq;
 
-namespace System.Linq
-{
+namespace System.Linq {
 
-	public static class Queryable
-	{
+	public static class Queryable {
 
 		static MethodInfo MakeGeneric (MethodBase method, params Type [] parameters)
 		{
