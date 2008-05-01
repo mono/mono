@@ -8441,6 +8441,11 @@ namespace Mono.CSharp {
 			this.args = args;
 		}
 
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			throw new NotSupportedException ("ET");
+		}
+
 		public override Expression DoResolve (EmitContext ec)
 		{
 			Expression c = CommonResolve (ec);

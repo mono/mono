@@ -1257,11 +1257,10 @@ namespace Mono.CSharp {
 			return cloned;
 		}
 
-		public virtual Expression CreateExpressionTree (EmitContext ec)
-		{
-			throw new NotImplementedException (
-				"Expression tree conversion not implemented for " + GetType ());
-		}
+		//
+		// Implementation of expression to expression tree conversion
+		//
+		public abstract Expression CreateExpressionTree (EmitContext ec);
 
 		protected Expression CreateExpressionFactoryCall (string name, ArrayList args)
 		{
@@ -5110,7 +5109,7 @@ namespace Mono.CSharp {
 			//args.Add (new Argument (InstanceExpression.CreateExpressionTree (ec)));
 			//args.Add (getter expression);
 			//return CreateExpressionFactoryCall ("Property", args);
-			return base.CreateExpressionTree (ec);
+			throw new NotImplementedException ();
 		}
 
 		public Expression CreateSetterTypeOfExpression ()

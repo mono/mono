@@ -1,5 +1,11 @@
 2008-05-01  Marek Safar  <marek.safar@gmail.com>
 
+	* ecore.cs: CreateExpressionTree is finally abstract.
+
+	* expression.cs, linq.cs: Updated.
+
+2008-05-01  Marek Safar  <marek.safar@gmail.com>
+
 	* expression.cs, ecore.cs: Block base access expression inside expression
 	tree.
 
