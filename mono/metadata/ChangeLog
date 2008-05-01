@@ -1,3 +1,7 @@
+2008-05-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* sgen-gc.c: Implement thread-local allocation and a managed allocation routine.
+
 2008-05-01  Dick Porter  <dick@ximian.com>
 
 	* process.c (process_get_fileversion): Only pass 16 bits of
