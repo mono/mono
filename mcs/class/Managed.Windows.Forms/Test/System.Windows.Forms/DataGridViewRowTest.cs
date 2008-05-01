@@ -90,6 +90,7 @@ namespace MonoTests.System.Windows.Forms {
 		
 
 		[Test]
+		[NUnit.Framework.Category ("NotWorking")]	// DGVComboBox not implemented
 		public void AddRow_Changes ()
 		{
 
@@ -347,6 +348,35 @@ namespace MonoTests.System.Windows.Forms {
 			Assert.AreEqual (DataGridViewElementStates.Visible, row.State, "#A row.State");
 			Assert.IsNull (row.Tag, "#A row.Tag");
 			Assert.AreEqual (true, row.Visible, "#A row.Visible");
+		}
+		
+		[Test]
+		public void Clone ()
+		{
+			DataGridView dgv = new DataGridView ();
+
+			dgv.Columns.Add ("Column 1", "Column 1");
+			dgv.Columns.Add ("Column 2", "Column 2");
+			
+			dgv.Rows.Add ("Cell 1", "Cell 2");
+			
+			DataGridViewRow row1 = dgv.Rows[0];
+			
+			row1.ErrorText = "Yikes!";
+			row1.Tag = "Helo";
+			row1.ReadOnly = true;
+			row1.Visible = false;
+			
+			DataGridViewRow row2 = (DataGridViewRow)row1.Clone ();
+
+			Assert.AreEqual (2, row2.Cells.Count, "A1");
+			Assert.AreEqual (null, row2.DataGridView, "A3");
+			Assert.AreEqual ("Yikes!", row2.ErrorText, "A4");
+			Assert.AreEqual (-1, row2.HeaderCell.RowIndex, "A5");
+			Assert.AreEqual (-1, row2.Index, "A6");
+			Assert.AreEqual (true, row2.ReadOnly, "A7");
+			Assert.AreEqual ("Helo", row2.Tag, "A8");
+			Assert.AreEqual (false, row2.Visible, "A9");
 		}
 	}
 }

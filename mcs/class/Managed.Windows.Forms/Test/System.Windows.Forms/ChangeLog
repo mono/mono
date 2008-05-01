@@ -1,5 +1,11 @@
 2008-05-01  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridViewRowCollectionTest.cs: Disable test requiring shared rows.
+	* DataGridViewRowTest.cs, DataGridViewCellTest.cs: Disable
+	tests requiring DGVComboBox.
+
+2008-05-01  Jonathan Pobst  <monkey@jpobst.com>
+
 	* InputLanguageTest.cs: Add test for bug #385506.
 
 2008-04-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>

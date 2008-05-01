@@ -76,6 +76,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 		
 		[Test]
+		[NUnit.Framework.Category ("NotWorking")]	// Don't currently support shared rows
 		public void AddTest ()
 		{
 			DataGridViewRow row;

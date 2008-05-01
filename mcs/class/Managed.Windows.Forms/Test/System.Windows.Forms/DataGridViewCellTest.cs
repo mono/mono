@@ -322,6 +322,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		[NUnit.Framework.Category ("NotWorking")]	// DGVComboBox not implemented
 		public void AddRow_Changes ()
 		{
 			using (DataGridView dgv = new DataGridView ()) {
