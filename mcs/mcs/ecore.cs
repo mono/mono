@@ -3117,6 +3117,11 @@ namespace Mono.CSharp {
 				      "with an instance reference, qualify it with a type name instead", name);
 		}
 
+		public static void Error_BaseAccessInExpressionTree (Location loc)
+		{
+			Report.Error (831, loc, "An expression tree may not contain a base access");
+		}
+
 		// TODO: possible optimalization
 		// Cache resolved constant result in FieldBuilder <-> expression map
 		public virtual MemberExpr ResolveMemberAccess (EmitContext ec, Expression left, Location loc,
@@ -5093,6 +5098,11 @@ namespace Mono.CSharp {
 				ArrayList args = new ArrayList (1);
 				args.Add (new Argument (InstanceExpression.CreateExpressionTree (ec)));
 				return CreateExpressionFactoryCall ("ArrayLength", args);
+			}
+
+			if (is_base) {
+				Error_BaseAccessInExpressionTree (loc);
+				return null;
 			}
 
 			// TODO: it's waiting for PropertyExpr refactoring

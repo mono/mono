@@ -1,5 +1,10 @@
 2008-05-01  Marek Safar  <marek.safar@gmail.com>
 
+	* expression.cs, ecore.cs: Block base access expression inside expression
+	tree.
+
+2008-05-01  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #385058
 	* expression.cs: User-defined operator implementations always take
 	precedence over predefined operator implementations.

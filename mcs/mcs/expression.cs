@@ -2889,8 +2889,10 @@ namespace Mono.CSharp {
 				} else {
 					union = MethodGroupExpr.MakeUnionSet (left_operators, right_operators, loc);
 				}
+			} else if (left_operators != null) {
+				union = left_operators;
 			} else {
-				union = MethodGroupExpr.MakeUnionSet (left_operators, right_operators, loc);
+				union = right_operators;
 			}
 
 			union = union.OverloadResolve (ec, ref args, true, loc);
@@ -4608,6 +4610,9 @@ namespace Mono.CSharp {
 						args.Add (new Argument (e));
 				}
 			}
+
+			if (mg.IsBase)
+				MemberExpr.Error_BaseAccessInExpressionTree (loc);
 
 			return CreateExpressionFactoryCall ("Call", args);
 		}
@@ -8551,6 +8556,12 @@ namespace Mono.CSharp {
 			}
 
 			return true;
+		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			MemberExpr.Error_BaseAccessInExpressionTree (loc);
+			return base.CreateExpressionTree (ec);
 		}
 	}
 	
