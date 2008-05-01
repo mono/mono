@@ -1,3 +1,8 @@
+2008-05-01  Dick Porter  <dick@ximian.com>
+
+	* process.c (process_get_fileversion): Only pass 16 bits of
+	language ID to VerLanguageName.  Fixes bug 381204.
+
 2008-04-30 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (mono_method_verify): Fix the comparison
