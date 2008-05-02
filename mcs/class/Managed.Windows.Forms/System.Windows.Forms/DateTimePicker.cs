@@ -922,24 +922,20 @@ namespace System.Windows.Forms {
 			if (eh != null)
 				eh (this, eventargs);
 		}
-		
+
+#if !NET_2_0
 		// overridden to set the bounds of this control properly
 		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
-			// TODO: ensure I implemented the bounds core setting properly.
-			if ((specified & BoundsSpecified.Height) == BoundsSpecified.Height ||
-				(specified & BoundsSpecified.Size) == BoundsSpecified.Size)  {
-				base.SetBoundsCore (x, y, width, DefaultSize.Height, specified);
-			} else {
-				base.SetBoundsCore (x, y, width, height, specified);
-			}
-			
-			// need to set the rectangles for all the support internal rects
-			// this is done here as a optimisation since this is an array of rects
-			if ((specified & BoundsSpecified.X) == BoundsSpecified.X ||
-				(specified & BoundsSpecified.Y) == BoundsSpecified.Y) {
-				// TODO set up all the datepart rects
-			}
+			base.SetBoundsCore (x, y, width, DefaultSize.Height, specified);
 		}
+#else
+		// SetBoundsCore was removed from the 2.0 public API, so
+		// I had to do this hack instead.  :/
+		internal override int OverrideHeight (int height)
+		{
+			return DefaultSize.Height;
+		}
+#endif
 
 		// not sure why we're overriding this
 		protected override void WndProc (ref Message m) {

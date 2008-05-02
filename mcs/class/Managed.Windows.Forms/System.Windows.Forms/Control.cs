@@ -1345,6 +1345,13 @@ namespace System.Windows.Forms
 			get { return Hwnd.GraphicsContext; }
 		}
 
+		// An internal way to have a fixed height
+		// Basically for DataTimePicker 2.0
+		internal virtual int OverrideHeight (int height)
+		{
+			return height;
+		}
+		
 		private void ProcessActiveTracker (ref Message m)
 		{
 			bool is_up = ((Msg) m.Msg == Msg.WM_LBUTTONUP) ||
@@ -4900,6 +4907,9 @@ namespace System.Windows.Forms
 		
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
+			// Nasty hack for 2.0 DateTimePicker
+			height = OverrideHeight (height);
+			
 			Rectangle old_explicit = explicit_bounds;
 			Rectangle new_bounds = new Rectangle (x, y, width, height);
 

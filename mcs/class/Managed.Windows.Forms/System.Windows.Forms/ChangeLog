@@ -1,3 +1,10 @@
+2008-05-02  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: Provide an internal way for a control to override
+	the setting of Height.
+	* DateTimePicker.cs: Remove SetBoundsCore from 2.0 profile,
+	set height using new method.
+
 2008-05-02  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* ThemeVisualStyles.cs: Added support for ControlPaint.DrawMixedCheckBox.
