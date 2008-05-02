@@ -947,22 +947,22 @@ namespace System.Linq {
 
 		#region OrderBy
 
-		public static IQueryable<TSource> OrderBy<TSource, TKey> (this IQueryable<TSource> source, Expression<Func<TSource, TKey>> keySelector)
+		public static IOrderedQueryable<TSource> OrderBy<TSource, TKey> (this IQueryable<TSource> source, Expression<Func<TSource, TKey>> keySelector)
 		{
 			Check.SourceAndKeySelector (source, keySelector);
 
-			return source.Provider.CreateQuery<TSource> (
+			return (IOrderedQueryable<TSource>) source.Provider.CreateQuery<TSource> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource), typeof (TKey)),
 					source.Expression,
 					Expression.Quote (keySelector)));
 		}
 
-		public static IQueryable<TSource> OrderBy<TSource, TKey> (this IQueryable<TSource> source, Expression<Func<TSource, TKey>> keySelector, IComparer<TKey> comparer)
+		public static IOrderedQueryable<TSource> OrderBy<TSource, TKey> (this IQueryable<TSource> source, Expression<Func<TSource, TKey>> keySelector, IComparer<TKey> comparer)
 		{
 			Check.SourceAndKeySelector (source, keySelector);
 
-			return source.Provider.CreateQuery<TSource> (
+			return (IOrderedQueryable<TSource>) source.Provider.CreateQuery<TSource> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource), typeof (TKey)),
 					source.Expression,
@@ -974,22 +974,22 @@ namespace System.Linq {
 
 		#region OrderByDescending
 
-		public static IQueryable<TSource> OrderByDescending<TSource, TKey> (this IQueryable<TSource> source, Expression<Func<TSource, TKey>> keySelector)
+		public static IOrderedQueryable<TSource> OrderByDescending<TSource, TKey> (this IQueryable<TSource> source, Expression<Func<TSource, TKey>> keySelector)
 		{
 			Check.SourceAndKeySelector (source, keySelector);
 
-			return source.Provider.CreateQuery<TSource> (
+			return (IOrderedQueryable<TSource>) source.Provider.CreateQuery<TSource> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource), typeof (TKey)),
 					source.Expression,
 					Expression.Quote (keySelector)));
 		}
 
-		public static IQueryable<TSource> OrderByDescending<TSource, TKey> (this IQueryable<TSource> source, Expression<Func<TSource, TKey>> keySelector, IComparer<TKey> comparer)
+		public static IOrderedQueryable<TSource> OrderByDescending<TSource, TKey> (this IQueryable<TSource> source, Expression<Func<TSource, TKey>> keySelector, IComparer<TKey> comparer)
 		{
 			Check.SourceAndKeySelector (source, keySelector);
 
-			return source.Provider.CreateQuery<TSource> (
+			return (IOrderedQueryable<TSource>) source.Provider.CreateQuery<TSource> (
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource), typeof (TKey)),
 					source.Expression,

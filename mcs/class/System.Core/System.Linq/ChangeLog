@@ -1,3 +1,8 @@
+2008-05-03  Jb Evain  <jbevain@novell.com>
+
+	* Queryable.cs (OrderBy, OrderByDescending): fix signature and
+	properly return a IOrderedQueryable<>.
+
 2008-05-02  Jb Evain  <jbevain@novell.com>
 
 	* SortSequenceContext.cs (Compare): fix key equality case
