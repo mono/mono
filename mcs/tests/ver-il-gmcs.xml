@@ -6465,7 +6465,7 @@
   <test name="gtest-226.cs">
     <type name="A">
       <method name="Void .ctor()">
-        <size>27</size>
+        <size>24</size>
       </method>
     </type>
     <type name="M">
@@ -6473,7 +6473,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>90</size>
+        <size>84</size>
       </method>
     </type>
   </test>
@@ -28281,6 +28281,38 @@
       </method>
       <method name="Decimal op_Implicit(Identifier)">
         <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-642.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>40</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-643.cs">
+    <type name="PointerArithmeticTest">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>105</size>
+      </method>
+      <method name="System.Int32* Conversions(Int64)">
+        <size>3</size>
+      </method>
+      <method name="Int32 CheckAdd(System.Byte*, Int32)">
+        <size>15</size>
+      </method>
+      <method name="Int32 CheckSub(System.Int16*, Int32)">
+        <size>17</size>
+      </method>
+      <method name="Int32 CheckSub2(System.Int16*, Int32)">
+        <size>24</size>
       </method>
     </type>
   </test>
