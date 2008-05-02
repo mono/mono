@@ -1,3 +1,8 @@
+2008-05-02  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* Theme.cs, ThemeWin32Classic.cs, TreeView.cs: Refactored:
+	Moved TreeView.DrawNodePlusMinus to Theme.TreeViewDrawNodePlusMinus.
+
 2008-05-02  Jonathan Pobst  <monkey@jpobst.com>
 
 	* OpenFileDialog.cs: Implement 2.0 SP1 stuffs.

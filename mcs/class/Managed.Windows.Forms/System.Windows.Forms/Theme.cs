@@ -961,6 +961,7 @@ namespace System.Windows.Forms
 
 		#region TreeView
 		public abstract Size TreeViewDefaultSize { get; }
+		public abstract void TreeViewDrawNodePlusMinus (TreeView treeView, TreeNode node, Graphics dc, int x, int middle);
 		#endregion
 
 		public virtual void DrawManagedWindowDecorations (Graphics dc, Rectangle clip, InternalWindowManager wm)

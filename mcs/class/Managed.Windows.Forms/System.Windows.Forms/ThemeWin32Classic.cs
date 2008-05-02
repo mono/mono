@@ -5640,6 +5640,20 @@ namespace System.Windows.Forms
 			}
 		}
 
+		public override void TreeViewDrawNodePlusMinus (TreeView treeView, TreeNode node, Graphics dc, int x, int middle)
+		{
+			int height = treeView.ActualItemHeight - 2;
+			dc.FillRectangle (ResPool.GetSolidBrush (treeView.BackColor), (x + 4) - (height / 2), node.GetY() + 1, height, height);
+			
+			dc.DrawRectangle (SystemPens.ControlDarkDark, x, middle - 4, 8, 8);
+
+			if (node.IsExpanded) {
+				dc.DrawLine (SystemPens.ControlDarkDark, x + 2, middle, x + 6, middle); 
+			} else {
+				dc.DrawLine (SystemPens.ControlDarkDark, x + 2, middle, x + 6, middle);
+				dc.DrawLine (SystemPens.ControlDarkDark, x + 4, middle - 2, x + 4, middle + 2);
+			}
+		}
 		#endregion
 
 		public override int ManagedWindowTitleBarHeight (InternalWindowManager wm)
