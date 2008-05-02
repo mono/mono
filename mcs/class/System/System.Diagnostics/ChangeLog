@@ -1,3 +1,8 @@
+2008-05-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* TraceImpl.cs: Update the IndentLevel property of this class when Indent ()
+	or Unindent () are called. Fixes #385666.
+
 2008-03-26  Dick Porter  <dick@ximian.com>
 
 	* FileVersionInfo.cs: Patch from Gert Driesen

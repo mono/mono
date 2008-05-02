@@ -262,20 +262,12 @@ namespace System.Diagnostics {
 
 		public static void Indent ()
 		{
-			lock (ListenersSyncRoot) {
-				foreach (TraceListener listener in Listeners) {
-					listener.IndentLevel++;
-				}
-			}
+			IndentLevel ++;
 		}
 
 		public static void Unindent ()
 		{
-			lock (ListenersSyncRoot) {
-				foreach (TraceListener listener in Listeners) {
-					listener.IndentLevel--;
-				}
-			}
+			IndentLevel --;
 		}
 
 		public static void Write (object value)
