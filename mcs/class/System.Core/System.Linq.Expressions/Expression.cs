@@ -2065,6 +2065,9 @@ namespace System.Linq.Expressions {
 		// This method must be overwritten by derived classes to
 		// compile the expression
 		//
-		internal abstract void Emit (EmitContext ec);
+		internal virtual void Emit (EmitContext ec)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

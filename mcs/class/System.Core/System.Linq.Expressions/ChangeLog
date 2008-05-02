@@ -1,3 +1,9 @@
+2008-05-02  Jb Evain  <jbevain@novell.com>
+
+	* Expression.cs: make Emit virtual instead of abstract,
+	to allow externals libraries to extend Expression.
+	Patch by Jan Oravec <jan.oravec@6com.sk>. Fixes #386097.
+
 2008-04-29  Jb Evain  <jbevain@novell.com>
 
 	* UnaryExpression.cs (EmitPrimitiveConversion): implement.
