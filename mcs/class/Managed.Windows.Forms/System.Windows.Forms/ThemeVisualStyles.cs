@@ -805,5 +805,31 @@ namespace System.Windows.Forms
 			}
 		}
 		#endregion
+		#region StatusBar
+		protected override void DrawStatusBarBackground(Graphics dc, Rectangle clip, StatusBar sb) {
+			VisualStyleElement element = VisualStyleElement.Status.Bar.Normal;
+			if (!VisualStyleRenderer.IsElementDefined (element))
+				base.DrawStatusBarBackground (dc, clip, sb);
+			new VisualStyleRenderer (element).DrawBackground (dc, sb.ClientRectangle, clip);
+		}
+		protected override void DrawStatusBarSizingGrip (Graphics dc, Rectangle clip, StatusBar sb, Rectangle area)
+		{
+			VisualStyleElement element = VisualStyleElement.Status.Gripper.Normal;
+			if (!VisualStyleRenderer.IsElementDefined (element))
+				base.DrawStatusBarSizingGrip (dc, clip, sb, area);
+			VisualStyleRenderer renderer = new VisualStyleRenderer (element);
+			Rectangle sizing_grip_rectangle = new Rectangle (Point.Empty, renderer.GetPartSize (dc, ThemeSizeType.True));
+			sizing_grip_rectangle.X = sb.Width - sizing_grip_rectangle.Width;
+			sizing_grip_rectangle.Y = sb.Height - sizing_grip_rectangle.Height;
+			renderer.DrawBackground (dc, sizing_grip_rectangle, clip);
+		}
+		protected override void DrawStatusBarPanelBackground (Graphics dc, Rectangle area, StatusBarPanel panel)
+		{
+			VisualStyleElement element = VisualStyleElement.Status.Pane.Normal;
+			if (!VisualStyleRenderer.IsElementDefined (element))
+				base.DrawStatusBarPanelBackground (dc, area, panel);
+			new VisualStyleRenderer (element).DrawBackground (dc, area);
+		}
+		#endregion
 	}
 }

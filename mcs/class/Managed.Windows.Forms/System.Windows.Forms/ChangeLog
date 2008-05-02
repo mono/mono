@@ -1,3 +1,7 @@
+2008-05-02  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* ThemeVisualStyles.cs: Added support for StatusBar.
+
 2008-05-02  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataObject.cs: Add the other IDataObject interface.
