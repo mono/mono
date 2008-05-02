@@ -164,6 +164,10 @@ namespace MonoTests.System.Linq.Expressions
 			Expression.Lambda<Func<int?,int?,int>> (add, p1, p2);
 		}
 
+		public static void Foo ()
+		{
+		}
+
 		[Test]
 		public void LambdaType ()
 		{
@@ -176,8 +180,13 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (typeof (Action<string>), l.Type);
 		}
 
-		public static void Foo ()
+		[Test]
+		[Category ("NotWorking")]
+		public void UnTypedLambdaReturnsExpressionOfDelegateType ()
 		{
+			var l = Expression.Lambda ("foo".ToConstant ());
+
+			Assert.AreEqual (typeof (Expression<Func<string>>), l.GetType ());
 		}
 	}
 }
