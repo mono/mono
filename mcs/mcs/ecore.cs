@@ -1384,9 +1384,7 @@ namespace Mono.CSharp {
 		}
 
 		public override bool IsNull {
-			get	{
-				return child.IsNull;
-			}
+			get { return child.IsNull; }
 		}
 	}
 
@@ -1402,6 +1400,10 @@ namespace Mono.CSharp {
 			if (c != null)
 				return new EmptyConstantCast (c, type);
 
+			EmptyCast e = child as EmptyCast;
+			if (e != null)
+				return new EmptyCast (e.child, type);
+
 			return new EmptyCast (child, type);
 		}
 
@@ -1414,7 +1416,6 @@ namespace Mono.CSharp {
 		{
 			child.EmitSideEffect (ec);
 		}
-
 	}
 
 	/// <summary>

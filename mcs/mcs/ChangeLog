@@ -1,3 +1,10 @@
+2008-05-02  Raja R Harinath  <harinath@hurrynot.org>
+
+	Fix #385758
+	* convert.cs (ImplicitNumericConversion): Don't modify the type of
+	'expr'.
+	* ecore.cs (EmptyCast.Create): Flatten nested EmptyCasts.
+
 2008-05-01  Marek Safar  <marek.safar@gmail.com>
 
 	* constant.cs, literal.cs: IsLiteral property for error reporting.
