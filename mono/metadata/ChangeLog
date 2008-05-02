@@ -1,5 +1,9 @@
 2008-05-02 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (do_leave): Empty the stack.
+
+2008-05-02 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (mono_class_is_assignable_from): Variance
 	doesn't work between reference and value types. For example,
 	given type C<T+>, C<int32> is not assignable to C<object>.
