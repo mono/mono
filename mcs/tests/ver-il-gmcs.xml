@@ -9240,6 +9240,50 @@
       </method>
     </type>
   </test>
+  <test name="gtest-334.cs">
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>105</size>
+      </method>
+      <method name="Void DelegateMethod(Boolean)">
+        <size>1</size>
+      </method>
+      <method name="Int32 DelegateMethod(Int32)">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="Test+DelegateA">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Void Invoke(Boolean)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(Boolean, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Test+DelegateB">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Int32 Invoke(Int32)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(Int32, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Int32 EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-335.cs">
     <type name="TestClass">
       <method name="Void .ctor()">
@@ -28313,6 +28357,45 @@
       </method>
       <method name="Int32 CheckSub2(System.Int16*, Int32)">
         <size>24</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-644.cs">
+    <type name="Program">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="System.Object M(Int32)">
+        <size>2</size>
+      </method>
+      <method name="Void Test_1()">
+        <size>59</size>
+      </method>
+      <method name="Boolean Test_2()">
+        <size>24</size>
+      </method>
+      <method name="Boolean Test_3()">
+        <size>24</size>
+      </method>
+      <method name="Boolean Test_4(Program+D)">
+        <size>13</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>75</size>
+      </method>
+    </type>
+    <type name="Program+D">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="System.Object Invoke(Int32)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(Int32, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="System.Object EndInvoke(IAsyncResult)">
+        <size>0</size>
       </method>
     </type>
   </test>
