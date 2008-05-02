@@ -1,5 +1,9 @@
 2008-05-02  Jonathan Pobst  <monkey@jpobst.com>
 
+	* OpenFileDialog.cs: Implement 2.0 SP1 stuffs.
+
+2008-05-02  Jonathan Pobst  <monkey@jpobst.com>
+
 	* FileDialogCustomPlace.cs, FileDialogCustomPlacesCollection.cs:
 	Implement 2.0 SP1 stuffs.
 

@@ -87,6 +87,25 @@ namespace System.Windows.Forms {
 			}
 		}
 		
+#if NET_2_0
+		[Browsable (false)]
+		public string SafeFileName {
+			get { return Path.GetFileName (FileName); }
+		}
+
+		[Browsable (false)]
+		public string[] SafeFileNames {
+			get {
+				string[] files = FileNames;
+				
+				for (int i = 0; i < files.Length; i++)
+					files[i] = Path.GetFileName (files[i]);
+					
+				return files;
+			 }
+		}
+#endif
+
 		[DefaultValue(false)]
 		public new bool ShowReadOnly {
 			get {
