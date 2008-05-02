@@ -1,3 +1,12 @@
+2008-05-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* icall.c : base64_to_byte_array() needs some more strict
+	  check for sequence of '=' characters. Patch by Santa
+	  Marta (http://deee.g.hatena.ne.jp/santamarta).
+
+	  Contributed under MIT/X11 license.
+	  (see http://www.lingr.com/room/mono-jp/archives/2008/04/20)
+
 2008-05-02  Jonathan Chambers  <joncham@gmail.com>
 
 	* domain.c: Disable LoadLibrary support to fix Win32 build.
