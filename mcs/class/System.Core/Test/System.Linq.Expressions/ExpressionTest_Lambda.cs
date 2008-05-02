@@ -181,7 +181,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void UnTypedLambdaReturnsExpressionOfDelegateType ()
 		{
 			var l = Expression.Lambda ("foo".ToConstant ());
