@@ -172,11 +172,11 @@ namespace System.Windows.Forms {
 
 		protected override Size GetPreferredSize (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex, Size constraintSize)
 		{
-			if (Value == null)
+			Image i = (Image)FormattedValue;
+			
+			if (i == null)
 				return new Size (21, 20);
 				
-			Image i = (Image)GetFormattedValue (Value, rowIndex, ref cellStyle, null, null, DataGridViewDataErrorContexts.PreferredSize);
-			
 			if (i != null)
 				return new Size (i.Width + 1, i.Height + 1);
 

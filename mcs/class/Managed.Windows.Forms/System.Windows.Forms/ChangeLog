@@ -1,3 +1,8 @@
+2008-05-02  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridViewImageCell.cs: Use formatted value instead of value
+	to calculate preferred size.
+
 2008-05-01  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ListBox.cs: Move some initialization around so that selected_indices
