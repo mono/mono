@@ -79,9 +79,11 @@ namespace MonoTests.System.Diagnostics {
 
 			Trace.WriteLine ("List of errors:");
 			Trace.Indent ();
+			Assertion.AssertEquals (1, Trace.IndentLevel);
 			Trace.WriteLine ("Error 1: File not found");
 			Trace.WriteLine ("Error 2: Directory not found");
 			Trace.Unindent ();
+			Assertion.AssertEquals (0, Trace.IndentLevel);
 			Trace.WriteLine ("End of list of errors");
 
 			Assertion.AssertEquals ("#In01", value, buffer.ToString());

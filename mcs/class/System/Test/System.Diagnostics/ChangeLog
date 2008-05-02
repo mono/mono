@@ -1,3 +1,7 @@
+2008-05-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* TraceTest.cs: Add a test for #385666.
+
 2008-04-18  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* FileVerionInfoTest.cs: Enabled test for bug #374600.
