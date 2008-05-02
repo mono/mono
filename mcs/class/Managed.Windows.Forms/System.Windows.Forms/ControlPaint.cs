@@ -417,7 +417,7 @@ namespace System.Windows.Forms {
 #endif		
 
 		public static void DrawMixedCheckBox(Graphics graphics, Rectangle rectangle, ButtonState state) {
-			DrawCheckBox(graphics, rectangle, state);
+			ThemeEngine.Current.CPDrawMixedCheckBox (graphics, rectangle, state);
 		}
 
 		public static void DrawMixedCheckBox(Graphics graphics, int x, int y, int width, int height, ButtonState state) {

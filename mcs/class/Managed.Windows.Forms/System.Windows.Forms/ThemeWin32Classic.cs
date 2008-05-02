@@ -6531,6 +6531,12 @@ namespace System.Windows.Forms
 
 		}
 
+		[MonoTODO]
+		public override void CPDrawMixedCheckBox (Graphics graphics, Rectangle rectangle, ButtonState state)
+		{
+			CPDrawCheckBox (graphics, rectangle, state);
+		}
+
 		public override void CPDrawRadioButton (Graphics dc, Rectangle rectangle, ButtonState state)
 		{
 			CPColor cpcolor = ResPool.GetCPColor (ColorControl);
