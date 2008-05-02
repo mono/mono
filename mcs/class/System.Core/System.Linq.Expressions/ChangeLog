@@ -1,3 +1,11 @@
+2008-05-03  Jb Evain  <jbevain@novell.com>
+
+	* LambdaExpression.cs: move checks to Expression
+	* Expression.cs: apply check for both typed and untyped lambda
+	creation, so that the constructor does not throws exception.
+	Needed to create instances of Expression<> for untyped lambda
+	factory method. Fixes #386322.
+
 2008-05-02  Jb Evain  <jbevain@novell.com>
 
 	* Expression.cs: make Emit virtual instead of abstract,

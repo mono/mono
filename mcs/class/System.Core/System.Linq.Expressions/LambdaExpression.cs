@@ -48,37 +48,11 @@ namespace System.Linq.Expressions {
 			get { return parameters; }
 		}
 
-		static bool CanAssign (Type target, Type source)
-		{
-			// This catches object and value type mixage, type compatibility is handled later
-			if (target.IsValueType ^ source.IsValueType)
-				return false;
 
-			return source.IsAssignableTo (target);
-		}
 
 		internal LambdaExpression (Type delegateType, Expression body, ReadOnlyCollection<ParameterExpression> parameters)
 			: base (ExpressionType.Lambda, delegateType)
 		{
-			if (!delegateType.IsSubclassOf (typeof (System.Delegate)))
-				throw new ArgumentException ("delegateType");
-
-			var invoke = delegateType.GetMethod ("Invoke", BindingFlags.Instance | BindingFlags.Public);
-			if (invoke == null)
-				throw new ArgumentException ("delegate must contain an Invoke method", "delegateType");
-
-			var invoke_parameters = invoke.GetParameters ();
-			if (invoke_parameters.Length != parameters.Count)
-				throw new ArgumentException (string.Format ("Different number of arguments in delegate {0}", delegateType), "delegateType");
-
-			for (int i = 0; i < invoke_parameters.Length; i++){
-				if (!CanAssign (parameters [i].Type, invoke_parameters [i].ParameterType))
-					throw new ArgumentException (String.Format ("Can not assign a {0} to a {1}", invoke_parameters [i].ParameterType, parameters [i].Type));
-			}
-
-			if (invoke.ReturnType != typeof (void) && !CanAssign (invoke.ReturnType, body.Type))
-				throw new ArgumentException (String.Format ("body type {0} can not be assigned to {1}", body.Type, invoke.ReturnType));
-
 			this.body = body;
 			this.parameters = parameters;
 		}

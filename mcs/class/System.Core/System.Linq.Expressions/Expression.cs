@@ -43,6 +43,7 @@ namespace System.Linq.Expressions {
 		Type type;
 
 		const BindingFlags PublicInstance = BindingFlags.Public | BindingFlags.Instance;
+		const BindingFlags NonPublicInstance = BindingFlags.NonPublic | BindingFlags.Instance;
 		const BindingFlags PublicStatic = BindingFlags.Public | BindingFlags.Static;
 		const BindingFlags AllInstance = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 		const BindingFlags AllStatic = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
@@ -1348,6 +1349,37 @@ namespace System.Linq.Expressions {
 			return new InvocationExpression (expression, invoke.ReturnType, args);
 		}
 
+		static bool CanAssign (Type target, Type source)
+		{
+			// This catches object and value type mixage, type compatibility is handled later
+			if (target.IsValueType ^ source.IsValueType)
+				return false;
+
+			return source.IsAssignableTo (target);
+		}
+
+		static void CheckLambda (Type delegateType, Expression body, ReadOnlyCollection<ParameterExpression> parameters)
+		{
+			if (!delegateType.IsSubclassOf (typeof (System.Delegate)))
+				throw new ArgumentException ("delegateType");
+
+			var invoke = delegateType.GetMethod ("Invoke", BindingFlags.Instance | BindingFlags.Public);
+			if (invoke == null)
+				throw new ArgumentException ("delegate must contain an Invoke method", "delegateType");
+
+			var invoke_parameters = invoke.GetParameters ();
+			if (invoke_parameters.Length != parameters.Count)
+				throw new ArgumentException (string.Format ("Different number of arguments in delegate {0}", delegateType), "delegateType");
+
+			for (int i = 0; i < invoke_parameters.Length; i++) {
+				if (!CanAssign (parameters [i].Type, invoke_parameters [i].ParameterType))
+					throw new ArgumentException (String.Format ("Can not assign a {0} to a {1}", invoke_parameters [i].ParameterType, parameters [i].Type));
+			}
+
+			if (invoke.ReturnType != typeof (void) && !CanAssign (invoke.ReturnType, body.Type))
+				throw new ArgumentException (String.Format ("body type {0} can not be assigned to {1}", body.Type, invoke.ReturnType));
+		}
+
 		public static Expression<TDelegate> Lambda<TDelegate> (Expression body, params ParameterExpression [] parameters)
 		{
 			return Lambda<TDelegate> (body, parameters as IEnumerable<ParameterExpression>);
@@ -1358,7 +1390,11 @@ namespace System.Linq.Expressions {
 			if (body == null)
 				throw new ArgumentNullException ("body");
 
-			return new Expression<TDelegate> (body, parameters.ToReadOnlyCollection ());
+			var ps = parameters.ToReadOnlyCollection ();
+
+			CheckLambda (typeof (TDelegate), body, ps);
+
+			return new Expression<TDelegate> (body, ps);
 		}
 
 		public static LambdaExpression Lambda (Expression body, params ParameterExpression [] parameters)
@@ -1392,6 +1428,13 @@ namespace System.Linq.Expressions {
 			return Lambda (delegateType, body, parameters as IEnumerable<ParameterExpression>);
 		}
 
+		static LambdaExpression CreateExpressionOf (Type type, Expression body, ReadOnlyCollection<ParameterExpression> parameters)
+		{
+			return (LambdaExpression) Activator.CreateInstance (
+				typeof (Expression<>).MakeGenericType (type),
+				NonPublicInstance, null, new object [] { body, parameters }, null);
+		}
+
 		public static LambdaExpression Lambda (Type delegateType, Expression body, IEnumerable<ParameterExpression> parameters)
 		{
 			if (delegateType == null)
@@ -1399,7 +1442,11 @@ namespace System.Linq.Expressions {
 			if (body == null)
 				throw new ArgumentNullException ("body");
 
-			return new LambdaExpression (delegateType, body, parameters.ToReadOnlyCollection ());
+			var ps = parameters.ToReadOnlyCollection ();
+
+			CheckLambda (delegateType, body, ps);
+
+			return CreateExpressionOf (delegateType, body, ps);
 		}
 
 		public static MemberListBinding ListBind (MemberInfo member, params ElementInit [] initializers)
