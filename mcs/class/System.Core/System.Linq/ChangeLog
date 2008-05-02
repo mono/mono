@@ -1,3 +1,8 @@
+2008-05-02  Jb Evain  <jbevain@novell.com>
+
+	* SortSequenceContext.cs (Compare): fix key equality case
+	when there's a nested sort.
+
 2008-05-01  Jb Evain  <jbevain@novell.com>
 
 	* SortDirection.cs, SortContext.cs, SortSequenceContext.cs:
