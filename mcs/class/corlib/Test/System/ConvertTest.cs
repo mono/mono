@@ -3080,6 +3080,20 @@ namespace MonoTests.System {
 		}
 
 		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void FromBase64StringInvalidFormat ()
+		{
+			Convert.FromBase64String ("Tgtm+DBN====");
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void FromBase64StringInvalidFormat2 ()
+		{
+			Convert.FromBase64String ("Tgtm+DBN========");
+		}
+
+		[Test]
 		public void ToByte_PrefixedHexStringInBase16 () 
 		{
 			AssertEquals ("0xff", 255, Convert.ToByte ("0xff", 16));
