@@ -1153,6 +1153,7 @@ namespace System.Windows.Forms
 				CalculateListView (this.alignment);
 
 			Refresh ();
+			Update ();
 		}
 
 		void InvalidateSelection ()
@@ -3605,6 +3606,7 @@ namespace System.Windows.Forms
 
 		public void BeginUpdate ()
 		{
+			Console.WriteLine ("BeginUpdate");
 			// flag to avoid painting
 			updating = true;
 		}
@@ -3617,6 +3619,7 @@ namespace System.Windows.Forms
 
 		public void EndUpdate ()
 		{
+			Console.WriteLine ("EndUpdate");
 			// flag to avoid painting
 			updating = false;
 
@@ -3666,12 +3669,9 @@ namespace System.Windows.Forms
 		{
 			return FindItemWithText (text, includeSubItemsInSearch, startIndex, isPrefixSearch, false);
 		}
-
-		public 
-#else
-		internal
 #endif
-		ListViewItem FindItemWithText (string text, bool includeSubItemsInSearch, int startIndex, bool isPrefixSearch, bool roundtrip)
+		
+		internal ListViewItem FindItemWithText (string text, bool includeSubItemsInSearch, int startIndex, bool isPrefixSearch, bool roundtrip)
 		{
 			if (startIndex < 0 || startIndex >= items.Count)
 				throw new ArgumentOutOfRangeException ("startIndex");
@@ -5168,6 +5168,8 @@ namespace System.Windows.Forms
 					li = new ListViewItem (item.ToString ());
 
 				li.Owner = owner;
+				
+				
 				result = list.Add (li);
 				CollectionChanged (true);
 
@@ -5399,8 +5401,8 @@ namespace System.Windows.Forms
 			void CollectionChanged (bool sort)
 			{
 				if (owner != null) {
-					if (sort)
-						owner.Sort (false);
+				        if (sort)
+				                owner.Sort (false);
 
 					OnChange ();
 					owner.Redraw (true);

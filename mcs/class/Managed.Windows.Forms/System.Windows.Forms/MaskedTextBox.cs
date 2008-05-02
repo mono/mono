@@ -504,7 +504,6 @@ namespace System.Windows.Forms
 		[Localizable (true)]
 		[Editor ("System.Windows.Forms.Design.MaskPropertyEditor, " + Consts.AssemblySystem_Design, typeof (UITypeEditor))]
 		[RefreshProperties (RefreshProperties.Repaint)]
-		[MergablePropertyAttribute (false)]
 		[DefaultValue ("")]
 		public string Mask {
 			get {

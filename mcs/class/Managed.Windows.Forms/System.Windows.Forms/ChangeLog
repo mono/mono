@@ -1,5 +1,11 @@
 2008-05-02  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridViewCheckBoxCell.cs, DataGridViewImageCell.cs: Fix parameter names.
+	* ListView.cs: Hide non-public API.
+	* MaskedTextBox.cs: Remove extra attribute.
+
+2008-05-02  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridViewImageCell.cs: Use formatted value instead of value
 	to calculate preferred size.
 
