@@ -1,3 +1,9 @@
+2008-05-02  Everaldo Canuto  <ecanuto@novell.com>
+
+	* MonthCalendar.cs: Handle every right mouse click to open context menu,
+	right now the default month menu but it will be change to have "Go to today"
+	menu.
+
 2008-05-02  Jonathan Pobst  <monkey@jpobst.com>
 
 	* FileDialog.cs, MaskedTextBox.cs, OpenFileDialog.cs: corcompare.

@@ -1935,6 +1935,9 @@ namespace System.Windows.Forms {
 		// to check if the mouse has come down on this control
 		private void MouseDownHandler (object sender, MouseEventArgs e)
 		{
+			if ((e.Button & MouseButtons.Left) == 0)
+				return;
+
 			// clear the click_state variables
 			click_state [0] = false;
 			click_state [1] = false;
@@ -2156,6 +2159,12 @@ namespace System.Windows.Forms {
 		// to check if the mouse has come up on this control
 		private void MouseUpHandler (object sender, MouseEventArgs e)
 		{
+			if ((e.Button & MouseButtons.Left) == 0) {
+				if (this.ContextMenu == null)
+					menu.Show (this, new Point (e.X, e.Y));
+				return;
+			}
+
 			if (timer.Enabled) {
 				timer.Stop ();
 			}
