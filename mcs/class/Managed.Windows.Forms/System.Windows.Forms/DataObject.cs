@@ -459,47 +459,47 @@ namespace System.Windows.Forms {
 
 #if NET_2_0
 		#region IDataObject Members
-		public int DAdvise (ref System.Runtime.InteropServices.ComTypes.FORMATETC pFormatetc, System.Runtime.InteropServices.ComTypes.ADVF advf, System.Runtime.InteropServices.ComTypes.IAdviseSink adviseSink, out int connection)
+		int System.Runtime.InteropServices.ComTypes.IDataObject.DAdvise (ref System.Runtime.InteropServices.ComTypes.FORMATETC pFormatetc, System.Runtime.InteropServices.ComTypes.ADVF advf, System.Runtime.InteropServices.ComTypes.IAdviseSink adviseSink, out int connection)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public void DUnadvise (int connection)
+		void System.Runtime.InteropServices.ComTypes.IDataObject.DUnadvise (int connection)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public int EnumDAdvise (out System.Runtime.InteropServices.ComTypes.IEnumSTATDATA enumAdvise)
+		int System.Runtime.InteropServices.ComTypes.IDataObject.EnumDAdvise (out System.Runtime.InteropServices.ComTypes.IEnumSTATDATA enumAdvise)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public System.Runtime.InteropServices.ComTypes.IEnumFORMATETC EnumFormatEtc (System.Runtime.InteropServices.ComTypes.DATADIR direction)
+		System.Runtime.InteropServices.ComTypes.IEnumFORMATETC System.Runtime.InteropServices.ComTypes.IDataObject.EnumFormatEtc (System.Runtime.InteropServices.ComTypes.DATADIR direction)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public int GetCanonicalFormatEtc (ref System.Runtime.InteropServices.ComTypes.FORMATETC formatIn, out System.Runtime.InteropServices.ComTypes.FORMATETC formatOut)
+		int System.Runtime.InteropServices.ComTypes.IDataObject.GetCanonicalFormatEtc (ref System.Runtime.InteropServices.ComTypes.FORMATETC formatIn, out System.Runtime.InteropServices.ComTypes.FORMATETC formatOut)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public void GetData (ref System.Runtime.InteropServices.ComTypes.FORMATETC format, out System.Runtime.InteropServices.ComTypes.STGMEDIUM medium)
+		void System.Runtime.InteropServices.ComTypes.IDataObject.GetData (ref System.Runtime.InteropServices.ComTypes.FORMATETC format, out System.Runtime.InteropServices.ComTypes.STGMEDIUM medium)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public void GetDataHere (ref System.Runtime.InteropServices.ComTypes.FORMATETC format, ref System.Runtime.InteropServices.ComTypes.STGMEDIUM medium)
+		void System.Runtime.InteropServices.ComTypes.IDataObject.GetDataHere (ref System.Runtime.InteropServices.ComTypes.FORMATETC format, ref System.Runtime.InteropServices.ComTypes.STGMEDIUM medium)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public int QueryGetData (ref System.Runtime.InteropServices.ComTypes.FORMATETC format)
+		int System.Runtime.InteropServices.ComTypes.IDataObject.QueryGetData (ref System.Runtime.InteropServices.ComTypes.FORMATETC format)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public void SetData (ref System.Runtime.InteropServices.ComTypes.FORMATETC formatIn, ref System.Runtime.InteropServices.ComTypes.STGMEDIUM medium, bool release)
+		void System.Runtime.InteropServices.ComTypes.IDataObject.SetData (ref System.Runtime.InteropServices.ComTypes.FORMATETC formatIn, ref System.Runtime.InteropServices.ComTypes.STGMEDIUM medium, bool release)
 		{
 			throw new NotImplementedException ();
 		}
