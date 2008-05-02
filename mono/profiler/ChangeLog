@@ -1,4 +1,7 @@
 2008-05-02  Massimiliano Mantione <massi@ximian.com>
+	 * mono-profiler-oprofile.c: Turned DEBUG_STATISTICAL_PROFILER off...
+
+2008-05-02  Massimiliano Mantione <massi@ximian.com>
 	 * mono-profiler-oprofile.c : Rework statistical profiler, adding the
 	 ability to scan symbol tables in elf files instead of using dladdr
 	 (dladdr skips lots of symbols which this way we get correctly).
