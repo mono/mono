@@ -1051,31 +1051,9 @@ namespace Mono.CSharp {
 			//
 			// Now emit the operation
 			//
-			if (ec.CheckState){
-				if (t == TypeManager.int32_type ||
-				    t == TypeManager.int64_type){
-					if ((mode & Mode.IsDecrement) != 0)
-						ig.Emit (OpCodes.Sub_Ovf);
-					else
-						ig.Emit (OpCodes.Add_Ovf);
-				} else if (t == TypeManager.uint32_type ||
-					   t == TypeManager.uint64_type){
-					if ((mode & Mode.IsDecrement) != 0)
-						ig.Emit (OpCodes.Sub_Ovf_Un);
-					else
-						ig.Emit (OpCodes.Add_Ovf_Un);
-				} else {
-					if ((mode & Mode.IsDecrement) != 0)
-						ig.Emit (OpCodes.Sub_Ovf);
-					else
-						ig.Emit (OpCodes.Add_Ovf);
-				}
-			} else {
-				if ((mode & Mode.IsDecrement) != 0)
-					ig.Emit (OpCodes.Sub);
-				else
-					ig.Emit (OpCodes.Add);
-			}
+
+			Binary.Operator op = (mode & Mode.IsDecrement) != 0 ? Binary.Operator.Subtraction : Binary.Operator.Addition;
+			Binary.EmitOperatorOpcode (ec, op, t);
 
 			if (t == TypeManager.sbyte_type){
 				if (ec.CheckState)
@@ -1840,8 +1818,7 @@ namespace Mono.CSharp {
 						r_type = b.right.Type;
 				}
 
-				return new PointerArithmetic (b.oper == Operator.Addition,
-					b.left, b.right, r_type, b.loc).Resolve (ec);
+				return new PointerArithmetic (b.oper, b.left, b.right, r_type, b.loc).Resolve (ec);
 			}
 		}
 
@@ -2054,6 +2031,139 @@ namespace Mono.CSharp {
 			}
 
 			return CSharp.Operator.GetMetadataName (op_type);
+		}
+
+		public static void EmitOperatorOpcode (EmitContext ec, Operator oper, Type l)
+		{
+			OpCode opcode;
+			ILGenerator ig = ec.ig;
+
+			switch (oper){
+			case Operator.Multiply:
+				if (ec.CheckState){
+					if (l == TypeManager.int32_type || l == TypeManager.int64_type)
+						opcode = OpCodes.Mul_Ovf;
+					else if (!IsFloat (l))
+						opcode = OpCodes.Mul_Ovf_Un;
+					else
+						opcode = OpCodes.Mul;
+				} else
+					opcode = OpCodes.Mul;
+				
+				break;
+				
+			case Operator.Division:
+				if (IsUnsigned (l))
+					opcode = OpCodes.Div_Un;
+				else
+					opcode = OpCodes.Div;
+				break;
+				
+			case Operator.Modulus:
+				if (IsUnsigned (l))
+					opcode = OpCodes.Rem_Un;
+				else
+					opcode = OpCodes.Rem;
+				break;
+
+			case Operator.Addition:
+				if (ec.CheckState){
+					if (l == TypeManager.int32_type || l == TypeManager.int64_type)
+						opcode = OpCodes.Add_Ovf;
+					else if (!IsFloat (l))
+						opcode = OpCodes.Add_Ovf_Un;
+					else
+						opcode = OpCodes.Add;
+				} else
+					opcode = OpCodes.Add;
+				break;
+
+			case Operator.Subtraction:
+				if (ec.CheckState){
+					if (l == TypeManager.int32_type || l == TypeManager.int64_type)
+						opcode = OpCodes.Sub_Ovf;
+					else if (!IsFloat (l))
+						opcode = OpCodes.Sub_Ovf_Un;
+					else
+						opcode = OpCodes.Sub;
+				} else
+					opcode = OpCodes.Sub;
+				break;
+
+			case Operator.RightShift:
+				if (IsUnsigned (l))
+					opcode = OpCodes.Shr_Un;
+				else
+					opcode = OpCodes.Shr;
+				break;
+				
+			case Operator.LeftShift:
+				opcode = OpCodes.Shl;
+				break;
+
+			case Operator.Equality:
+				opcode = OpCodes.Ceq;
+				break;
+
+			case Operator.Inequality:
+				ig.Emit (OpCodes.Ceq);
+				ig.Emit (OpCodes.Ldc_I4_0);
+				
+				opcode = OpCodes.Ceq;
+				break;
+
+			case Operator.LessThan:
+				if (IsUnsigned (l))
+					opcode = OpCodes.Clt_Un;
+				else
+					opcode = OpCodes.Clt;
+				break;
+
+			case Operator.GreaterThan:
+				if (IsUnsigned (l))
+					opcode = OpCodes.Cgt_Un;
+				else
+					opcode = OpCodes.Cgt;
+				break;
+
+			case Operator.LessThanOrEqual:
+				if (IsUnsigned (l) || IsFloat (l))
+					ig.Emit (OpCodes.Cgt_Un);
+				else
+					ig.Emit (OpCodes.Cgt);
+				ig.Emit (OpCodes.Ldc_I4_0);
+				
+				opcode = OpCodes.Ceq;
+				break;
+
+			case Operator.GreaterThanOrEqual:
+				if (IsUnsigned (l) || IsFloat (l))
+					ig.Emit (OpCodes.Clt_Un);
+				else
+					ig.Emit (OpCodes.Clt);
+				
+				ig.Emit (OpCodes.Ldc_I4_0);
+				
+				opcode = OpCodes.Ceq;
+				break;
+
+			case Operator.BitwiseOr:
+				opcode = OpCodes.Or;
+				break;
+
+			case Operator.BitwiseAnd:
+				opcode = OpCodes.And;
+				break;
+
+			case Operator.ExclusiveOr:
+				opcode = OpCodes.Xor;
+				break;
+
+			default:
+				throw new InternalErrorException (oper.ToString ());
+			}
+
+			ig.Emit (opcode);
 		}
 
 		static bool IsUnsigned (Type t)
@@ -3248,135 +3358,7 @@ namespace Mono.CSharp {
 			}
 
 			right.Emit (ec);
-
-			OpCode opcode;
-			
-			switch (oper){
-			case Operator.Multiply:
-				if (ec.CheckState){
-					if (l == TypeManager.int32_type || l == TypeManager.int64_type)
-						opcode = OpCodes.Mul_Ovf;
-					else if (!IsFloat (l))
-						opcode = OpCodes.Mul_Ovf_Un;
-					else
-						opcode = OpCodes.Mul;
-				} else
-					opcode = OpCodes.Mul;
-				
-				break;
-				
-			case Operator.Division:
-				if (IsUnsigned (l))
-					opcode = OpCodes.Div_Un;
-				else
-					opcode = OpCodes.Div;
-				break;
-				
-			case Operator.Modulus:
-				if (IsUnsigned (l))
-					opcode = OpCodes.Rem_Un;
-				else
-					opcode = OpCodes.Rem;
-				break;
-
-			case Operator.Addition:
-				if (ec.CheckState){
-					if (l == TypeManager.int32_type || l == TypeManager.int64_type)
-						opcode = OpCodes.Add_Ovf;
-					else if (!IsFloat (l))
-						opcode = OpCodes.Add_Ovf_Un;
-					else
-						opcode = OpCodes.Add;
-				} else
-					opcode = OpCodes.Add;
-				break;
-
-			case Operator.Subtraction:
-				if (ec.CheckState){
-					if (l == TypeManager.int32_type || l == TypeManager.int64_type)
-						opcode = OpCodes.Sub_Ovf;
-					else if (!IsFloat (l))
-						opcode = OpCodes.Sub_Ovf_Un;
-					else
-						opcode = OpCodes.Sub;
-				} else
-					opcode = OpCodes.Sub;
-				break;
-
-			case Operator.RightShift:
-				if (IsUnsigned (l))
-					opcode = OpCodes.Shr_Un;
-				else
-					opcode = OpCodes.Shr;
-				break;
-				
-			case Operator.LeftShift:
-				opcode = OpCodes.Shl;
-				break;
-
-			case Operator.Equality:
-				opcode = OpCodes.Ceq;
-				break;
-
-			case Operator.Inequality:
-				ig.Emit (OpCodes.Ceq);
-				ig.Emit (OpCodes.Ldc_I4_0);
-				
-				opcode = OpCodes.Ceq;
-				break;
-
-			case Operator.LessThan:
-				if (IsUnsigned (l))
-					opcode = OpCodes.Clt_Un;
-				else
-					opcode = OpCodes.Clt;
-				break;
-
-			case Operator.GreaterThan:
-				if (IsUnsigned (l))
-					opcode = OpCodes.Cgt_Un;
-				else
-					opcode = OpCodes.Cgt;
-				break;
-
-			case Operator.LessThanOrEqual:
-				if (IsUnsigned (l) || IsFloat (l))
-					ig.Emit (OpCodes.Cgt_Un);
-				else
-					ig.Emit (OpCodes.Cgt);
-				ig.Emit (OpCodes.Ldc_I4_0);
-				
-				opcode = OpCodes.Ceq;
-				break;
-
-			case Operator.GreaterThanOrEqual:
-				if (IsUnsigned (l) || IsFloat (l))
-					ig.Emit (OpCodes.Clt_Un);
-				else
-					ig.Emit (OpCodes.Clt);
-				
-				ig.Emit (OpCodes.Ldc_I4_0);
-				
-				opcode = OpCodes.Ceq;
-				break;
-
-			case Operator.BitwiseOr:
-				opcode = OpCodes.Or;
-				break;
-
-			case Operator.BitwiseAnd:
-				opcode = OpCodes.And;
-				break;
-
-			case Operator.ExclusiveOr:
-				opcode = OpCodes.Xor;
-				break;
-
-			default:
-				throw new InternalErrorException (oper.ToString ());
-			}
-
-			ig.Emit (opcode);
+			EmitOperatorOpcode (ec, oper, l);
 
 			//
 			// Nullable enum could require underlying type cast and we cannot simply wrap binary
@@ -3670,18 +3652,18 @@ namespace Mono.CSharp {
 
 	public class PointerArithmetic : Expression {
 		Expression left, right;
-		bool is_add;
+		Binary.Operator op;
 
 		//
 		// We assume that `l' is always a pointer
 		//
-		public PointerArithmetic (bool is_addition, Expression l, Expression r, Type t, Location loc)
+		public PointerArithmetic (Binary.Operator op, Expression l, Expression r, Type t, Location loc)
 		{
 			type = t;
 			this.loc = loc;
 			left = l;
 			right = r;
-			is_add = is_addition;
+			this.op = op;
 		}
 
 		public override Expression CreateExpressionTree (EmitContext ec)
@@ -3755,17 +3737,15 @@ namespace Mono.CSharp {
 							ig.Emit (OpCodes.Conv_I8);
 						else if (rtype == TypeManager.uint64_type)
 							ig.Emit (OpCodes.Conv_U8);
-						ig.Emit (OpCodes.Mul);
+
+						Binary.EmitOperatorOpcode (ec, Binary.Operator.Multiply, rtype);
 					}
 				}
 				
 				if (rtype == TypeManager.int64_type || rtype == TypeManager.uint64_type)
 					ig.Emit (OpCodes.Conv_I);
-				
-				if (is_add)
-					ig.Emit (OpCodes.Add);
-				else
-					ig.Emit (OpCodes.Sub);
+
+				Binary.EmitOperatorOpcode (ec, op, op_type);
 			}
 		}
 	}
@@ -7623,9 +7603,8 @@ namespace Mono.CSharp {
 				Error (196, "A pointer must be indexed by only one value");
 				return null;
 			}
-			Expression p;
 
-			p = new PointerArithmetic (true, Expr, ((Argument)Arguments [0]).Expr, t, loc).Resolve (ec);
+			Expression p = new PointerArithmetic (Binary.Operator.Addition, Expr, ((Argument) Arguments [0]).Expr, t, loc).Resolve (ec);
 			if (p == null)
 				return null;
 			return new Indirection (p, loc).Resolve (ec);

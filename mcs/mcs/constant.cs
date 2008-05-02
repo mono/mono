@@ -1166,7 +1166,13 @@ namespace Mono.CSharp {
 
 		static public void EmitLong (ILGenerator ig, long l)
 		{
-			if (l >= int.MinValue && l <= int.MaxValue) {
+			if (l >= 0 && l <= uint.MaxValue) {
+				IntLiteral.EmitInt (ig, unchecked ((int) l));
+				ig.Emit (OpCodes.Conv_U8);
+				return;
+			}
+
+			if (l < 0 && l >= int.MinValue) {
 				IntLiteral.EmitInt (ig, unchecked ((int) l));
 				ig.Emit (OpCodes.Conv_I8);
 				return;

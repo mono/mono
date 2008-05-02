@@ -1,5 +1,11 @@
 2008-05-02  Marek Safar  <marek.safar@gmail.com>
 
+	* constant.cs: Emit long constant as uint when fits the range.
+	
+	* convert.cs, expression.cs: Fixed few unsafe conversions.
+
+2008-05-02  Marek Safar  <marek.safar@gmail.com>
+
 	* convert.cs, literal.cs: Don't wrap implicit reference conversion to object
 
 2008-05-02  Raja R Harinath  <harinath@hurrynot.org>

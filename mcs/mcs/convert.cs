@@ -1993,13 +1993,12 @@ namespace Mono.CSharp {
 
 				if (expr_type == TypeManager.sbyte_type ||
 					expr_type == TypeManager.short_type ||
-					expr_type == TypeManager.int32_type ||
-					expr_type == TypeManager.int64_type)
+					expr_type == TypeManager.int32_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_I);
 
 				if (expr_type == TypeManager.ushort_type ||
 					expr_type == TypeManager.uint32_type ||
-					expr_type == TypeManager.uint64_type ||
+					expr_type == TypeManager.uint64_type || expr_type == TypeManager.int64_type ||
 					expr_type == TypeManager.byte_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U);
 			}
@@ -2017,11 +2016,8 @@ namespace Mono.CSharp {
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_I4);
 				else if (target_type == TypeManager.uint32_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U4);
-				else if (target_type == TypeManager.uint64_type)
+				else if (target_type == TypeManager.uint64_type || target_type == TypeManager.int64_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
-				else if (target_type == TypeManager.int64_type){
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
-				}
 			}
 			return null;
 		}
