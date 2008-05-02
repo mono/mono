@@ -1,6 +1,11 @@
+2008-05-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* sgen-gc.c: Add support for clearing nursery memory when a tlab is allocated,
+	to help with cache behaviour.
+
 2008-05-01  Miguel de Icaza  <miguel@novell.com>
 
-	* appdomain.c (mono_domain_from_appdomain): Add new accesor
+	* appdomain.c (mono_domain_from_appdomain): Add new accessor
 	method. 
 
 2008-05-01  Zoltan Varga  <vargaz@gmail.com>
