@@ -63,7 +63,8 @@ namespace System.Windows.Forms {
 		DateTime 		today_date;
 		bool 			today_date_set;
 		Color 			trailing_fore_color;
-		ContextMenu		menu;
+		ContextMenu		today_menu;
+		ContextMenu		month_menu;
 		Timer			timer;
 		Timer			updown_timer;
 		const int		initial_delay = 500;
@@ -173,9 +174,9 @@ namespace System.Windows.Forms {
 			first_select_start_date = now;
 			month_title_click_location = Point.Empty;
 
-			// set up context menu
-			SetUpContextMenu ();
-
+			// set up context menus
+			SetUpTodayMenu ();
+			SetUpMonthMenu ();
 			
 			// event handlers
 			timer.Tick += new EventHandler (TimerHandler);
@@ -1533,17 +1534,23 @@ namespace System.Windows.Forms {
 			return false;  // no match
 		}
 		
-
-		// initialise the context menu
-		private void SetUpContextMenu () {
-			menu = new ContextMenu ();
-			for (int i=0; i < 12; i++) {
-				MenuItem menu_item = new MenuItem ( new DateTime (2000, i+1, 1).ToString ("MMMM"));
-				menu_item.Click += new EventHandler (MenuItemClickHandler);
-				menu.MenuItems.Add (menu_item);
-			}
+		// initialise the 'go to today' context menu
+		private void SetUpTodayMenu () {
+			today_menu = new ContextMenu ();
+			MenuItem menu_item = new MenuItem ("Go to today");
+			menu_item.Click += new EventHandler (TodayMenuItemClickHandler);
+			today_menu.MenuItems.Add (menu_item);
 		}
 
+		// initialise the month context menu
+		private void SetUpMonthMenu () {
+			month_menu = new ContextMenu ();
+			for (int i=0; i < 12; i++) {
+				MenuItem menu_item = new MenuItem ( new DateTime (2000, i+1, 1).ToString ("MMMM"));
+				menu_item.Click += new EventHandler (MonthMenuItemClickHandler);
+				month_menu.MenuItems.Add (menu_item);
+			}
+		}
 
 		// returns the first date of the month
 		private DateTime GetFirstDateInMonth (DateTime date) {
@@ -1724,9 +1731,15 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		// called when today context menu is clicked
+		private void TodayMenuItemClickHandler (object sender, EventArgs e)
+		{
+			this.SetSelectionRange (DateTime.Now.Date, DateTime.Now.Date);
+			this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+		}
 
-		// called when context menu is clicked
-		private void MenuItemClickHandler (object sender, EventArgs e) {
+		// called when month context menu is clicked
+		private void MonthMenuItemClickHandler (object sender, EventArgs e) {
 			MenuItem item = sender as MenuItem;
 			if (item != null && month_title_click_location != Point.Empty) {
 				// establish which month we want to move to
@@ -1988,7 +2001,7 @@ namespace System.Windows.Forms {
 					break;
 				case HitArea.TitleMonth:
 					month_title_click_location = hti.Point;
-					menu.Show (this, hti.Point);
+					month_menu.Show (this, hti.Point);
 					if (this.Capture && owner != null) {
 						Capture = false;
 						Capture = true;
@@ -2160,8 +2173,8 @@ namespace System.Windows.Forms {
 		private void MouseUpHandler (object sender, MouseEventArgs e)
 		{
 			if ((e.Button & MouseButtons.Left) == 0) {
-				if (this.ContextMenu == null)
-					menu.Show (this, new Point (e.X, e.Y));
+				if (show_today && (this.ContextMenu == null))
+					today_menu.Show (this, new Point (e.X, e.Y));
 				return;
 			}
 

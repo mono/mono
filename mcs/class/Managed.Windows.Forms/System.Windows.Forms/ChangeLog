@@ -1,5 +1,11 @@
 2008-05-02  Everaldo Canuto  <ecanuto@novell.com>
 
+	* MonthCalendar.cs: Implemented "Go to today" context menu, also changed
+	some var names to better fit changes, now we have month_menu and today_menu
+	vars. Fixes bug #363711.
+
+2008-05-02  Everaldo Canuto  <ecanuto@novell.com>
+
 	* MonthCalendar.cs: Handle every right mouse click to open context menu,
 	right now the default month menu but it will be change to have "Go to today"
 	menu.
