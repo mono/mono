@@ -4480,10 +4480,7 @@ namespace System.Windows.Forms
 			Image backbuffer = new Bitmap (sb.ClientSize.Width, sb.ClientSize.Height, real_dc);
 			Graphics dc = Graphics.FromImage (backbuffer);
 			
-			bool is_color_control = sb.BackColor.ToArgb () == ColorControl.ToArgb ();
-
-			Brush brush = is_color_control ? SystemBrushes.Control : ResPool.GetSolidBrush (sb.BackColor);
-			dc.FillRectangle (brush, clip);
+			DrawStatusBarBackground (dc, clip, sb);
 			
 			if (!sb.ShowPanels && sb.Text != String.Empty) {
 				string text = sb.Text;
@@ -4519,10 +4516,8 @@ namespace System.Windows.Forms
 				}
 			}
 
-			if (sb.SizingGrip) {
-				area = new Rectangle (area.Right - 16 - 2, area.Bottom - 12 - 1, 16, 16);
-				CPDrawSizeGrip (dc, ColorControl, area);
-			}
+			if (sb.SizingGrip)
+				DrawStatusBarSizingGrip (dc, clip, sb, area);
 			
 			real_dc.DrawImage (backbuffer, 0, 0);
 			dc.Dispose ();
@@ -4530,6 +4525,19 @@ namespace System.Windows.Forms
 
 		}
 
+		protected virtual void DrawStatusBarBackground (Graphics dc, Rectangle clip, StatusBar sb)
+		{
+			bool is_color_control = sb.BackColor.ToArgb () == ColorControl.ToArgb ();
+
+			Brush brush = is_color_control ? SystemBrushes.Control : ResPool.GetSolidBrush (sb.BackColor);
+			dc.FillRectangle (brush, clip);
+		}
+
+		protected virtual void DrawStatusBarSizingGrip (Graphics dc, Rectangle clip, StatusBar sb, Rectangle area)
+		{
+			area = new Rectangle (area.Right - 16 - 2, area.Bottom - 12 - 1, 16, 16);
+			CPDrawSizeGrip (dc, ColorControl, area);
+		}
 
 		protected virtual void DrawStatusBarPanel (Graphics dc, Rectangle area, int index,
 			Brush br_forecolor, StatusBarPanel panel) {
@@ -4537,15 +4545,9 @@ namespace System.Windows.Forms
 			int icon_width = 16;
 			
 			area.Height -= border_size;
-			
-			if (panel.BorderStyle != StatusBarPanelBorderStyle.None) {
-				Border3DStyle border_style = Border3DStyle.SunkenOuter;
-				if (panel.BorderStyle == StatusBarPanelBorderStyle.Raised)
-					border_style = Border3DStyle.RaisedInner;
-					
-				CPDrawBorder3D(dc, area, border_style, Border3DSide.Left | Border3DSide.Right | Border3DSide.Top | Border3DSide.Bottom, panel.Parent.BackColor);
-			}
-			
+
+			DrawStatusBarPanelBackground (dc, area, panel);
+
 			if (panel.Style == StatusBarPanelStyle.OwnerDraw) {
 				StatusBarDrawItemEventArgs e = new StatusBarDrawItemEventArgs (
 					dc, panel.Parent.Font, area, index, DrawItemState.Default,
@@ -4623,6 +4625,17 @@ namespace System.Windows.Forms
 
 			if (panel.Icon != null) {
 				dc.DrawIcon (panel.Icon, new Rectangle (icon_x, y, icon_width, icon_width));
+			}
+		}
+
+		protected virtual void DrawStatusBarPanelBackground (Graphics dc, Rectangle area, StatusBarPanel panel)
+		{
+			if (panel.BorderStyle != StatusBarPanelBorderStyle.None) {
+				Border3DStyle border_style = Border3DStyle.SunkenOuter;
+				if (panel.BorderStyle == StatusBarPanelBorderStyle.Raised)
+					border_style = Border3DStyle.RaisedInner;
+					
+				CPDrawBorder3D(dc, area, border_style, Border3DSide.Left | Border3DSide.Right | Border3DSide.Top | Border3DSide.Bottom, panel.Parent.BackColor);
 			}
 		}
 
