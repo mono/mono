@@ -10525,7 +10525,10 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>55</size>
+        <size>75</size>
+      </method>
+      <method name="Void Test_1()">
+        <size>44</size>
       </method>
     </type>
   </test>
