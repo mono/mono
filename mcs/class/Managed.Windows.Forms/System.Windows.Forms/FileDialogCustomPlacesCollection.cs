@@ -26,12 +26,22 @@
 
 #if NET_2_0
 
-// Net 3.5 class
+// Net 2.0 SP1 class
+using System.Collections.ObjectModel;
 
-namespace System.Windows.Forms {
-
-	public class FileDialogCustomPlacesCollection
+namespace System.Windows.Forms
+{
+	public class FileDialogCustomPlacesCollection : Collection<FileDialogCustomPlace>
 	{
+		public void Add (Guid knownFolderGuid)
+		{
+			Add (new FileDialogCustomPlace (knownFolderGuid));
+		}
+		
+		public void Add (string path)
+		{
+			Add (new FileDialogCustomPlace (path));
+		}
 	}
 }
 

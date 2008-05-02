@@ -28,42 +28,46 @@
 
 using System;
 
-// Net 3.5 class
+// Net 2.0 SP1 class
 
-namespace System.Windows.Forms {
-	
+namespace System.Windows.Forms
+{
 	public class FileDialogCustomPlace
 	{
-		[MonoTODO]
-		public FileDialogCustomPlace (string path) {
-			throw new NotImplementedException ();
+		private string path;
+		private Guid guid;
+		
+		public FileDialogCustomPlace (string path)
+		{
+			this.path = path;
+			this.guid = Guid.Empty;
 		}
 
-		[MonoTODO]
-		public FileDialogCustomPlace (Guid knownFolderGuid) {
-			throw new NotImplementedException ();
+		public FileDialogCustomPlace (Guid knownFolderGuid)
+		{
+			this.path = string.Empty;
+			this.guid = knownFolderGuid;
 		}
 
 		public string Path {
-			[MonoTODO]
-				get {
-					throw new NotImplementedException ();
-				}
-			[MonoTODO]
-				set {
-					throw new NotImplementedException ();
-				}
+			get { return path; }
+			set {
+				path = value;
+				guid = Guid.Empty;
+			}
 		}
 
 		public Guid KnownFolderGuid {
-			[MonoTODO]
-				get {
-					throw new NotImplementedException ();
-				}
-			[MonoTODO]
-				set {
-					throw new NotImplementedException ();
-				}
+			get { return guid; }
+			set {
+				guid = value;
+				path = string.Empty;
+			}
+		}
+
+		public override string ToString ()
+		{
+			return string.Format ("{0} Path: {1} KnownFolderGuid: {2}", GetType ().ToString (), path, guid);
 		}
 	}
 }
