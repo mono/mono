@@ -415,6 +415,7 @@ namespace System.Windows.Forms
 #if NET_2_0
 		[MonoTODO ("Stub, collection not used")]
 		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public FileDialogCustomPlacesCollection CustomPlaces {
 			get { return custom_places; }
 		}

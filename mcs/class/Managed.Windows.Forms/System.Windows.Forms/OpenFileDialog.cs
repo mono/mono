@@ -89,11 +89,13 @@ namespace System.Windows.Forms {
 		
 #if NET_2_0
 		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string SafeFileName {
 			get { return Path.GetFileName (FileName); }
 		}
 
 		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string[] SafeFileNames {
 			get {
 				string[] files = FileNames;

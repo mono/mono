@@ -1,3 +1,7 @@
+2008-05-02  Jonathan Pobst  <monkey@jpobst.com>
+
+	* FileDialog.cs, MaskedTextBox.cs, OpenFileDialog.cs: corcompare.
+
 2008-05-02  Everaldo Canuto  <ecanuto@novell.com>
 
 	* ThemeWin32Classic.cs: Fix MonthCalendar arrows drawing.
