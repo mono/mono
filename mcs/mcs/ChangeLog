@@ -1,5 +1,11 @@
 2008-05-02  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #371016
+	* expression.cs: All predefined delegate operators require implicit method
+	group conversion.
+	
+2008-05-02  Marek Safar  <marek.safar@gmail.com>
+
 	* constant.cs: Emit long constant as uint when fits the range.
 	
 	* convert.cs, expression.cs: Fixed few unsafe conversions.

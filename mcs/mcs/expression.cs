@@ -2217,9 +2217,14 @@ namespace Mono.CSharp {
 				}
 
 				// Delegates
-				if (oper == Operator.Addition || oper == Operator.Subtraction) {
-					if (TypeManager.IsDelegateType (l))
-						return ResolveOperatorDelegateBinary (ec, l, r);
+				if ((oper == Operator.Addition || oper == Operator.Subtraction || (oper & Operator.EqualityMask) != 0) &&
+					 (TypeManager.IsDelegateType (l) || TypeManager.IsDelegateType (r))) {
+						
+					expr = ResolveOperatorDelegate (ec, l, r);
+
+					// TODO: Can this be ambiguous
+					if (expr != null)
+						return expr;
 				}
 
 				// User operators
@@ -2583,21 +2588,36 @@ namespace Mono.CSharp {
 		//
 		// D operator + (D x, D y)
 		// D operator - (D x, D y)
+		// bool operator == (D x, D y)
+		// bool operator != (D x, D y)
 		//
-		Expression ResolveOperatorDelegateBinary (EmitContext ec, Type l, Type r)
+		Expression ResolveOperatorDelegate (EmitContext ec, Type l, Type r)
 		{
-			if (((right.eclass == ExprClass.MethodGroup) || (r == TypeManager.anonymous_method_type))) {
-				if ((RootContext.Version != LanguageVersion.ISO_1)) {
-					Expression tmp = Convert.ImplicitConversionRequired (ec, right, l, loc);
+			bool is_equality = (oper & Operator.EqualityMask) != 0;
+			if (!TypeManager.IsEqual (l, r)) {
+				Expression tmp;
+				if (right.eclass == ExprClass.MethodGroup || (r == TypeManager.anonymous_method_type && !is_equality)) {
+					tmp = Convert.ImplicitConversionRequired (ec, right, l, loc);
 					if (tmp == null)
 						return null;
 					right = tmp;
 					r = right.Type;
-				}
-			} else {
-				if (!TypeManager.IsEqual (l, r) && !(right is NullLiteral))
+				} else if (left.eclass == ExprClass.MethodGroup || (l == TypeManager.anonymous_method_type && !is_equality)) {
+					tmp = Convert.ImplicitConversionRequired (ec, left, r, loc);
+					if (tmp == null)
+						return null;
+					left = tmp;
+					l = left.Type;
+				} else {
 					return null;
+				}
 			}
+
+			//
+			// Resolve delegate equality as a user operator
+			//
+			if (is_equality)
+				return ResolveUserOperator (ec, l, r);
 
 			MethodInfo method;
 			ArrayList args = new ArrayList (2);
