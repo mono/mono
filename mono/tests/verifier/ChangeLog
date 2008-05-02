@@ -1,3 +1,12 @@
+2008-05-02 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* BatchCompiler.cs: ilasm generates bad tokens when
+	compiling many times within the same appdomain.
+	Using one per source file. Compilation times are
+	now just a bit faster than before.
+
+	* Makefile: Fix typo.
+
 2008-05-01 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* unverifiable_ldsfld_no_fld.il: Fixed compilation
