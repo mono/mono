@@ -3608,44 +3608,62 @@ namespace System.Windows.Forms
 		// draws the pervious or next button
 		private void DrawMonthCalendarButton (Graphics dc, Rectangle rectangle, MonthCalendar mc, Size title_size, int x_offset, Size button_size, bool is_previous) 
 		{
+			const int arrow_width = 4;
+			const int arrow_height = 7;
+
 			bool is_clicked = false;
 			Rectangle button_rect;
-			Rectangle arrow_rect = new Rectangle (rectangle.X, rectangle.Y, 4, 7);
-			Point[] arrow_path = new Point[3];
+			PointF arrow_center;
+			PointF [] arrow_path = new PointF [3];
+			
 			// prepare the button
 			if (is_previous) 
 			{
 				is_clicked = mc.is_previous_clicked;
+
 				button_rect = new Rectangle (
 					rectangle.X + 1 + x_offset,
 					rectangle.Y + 1 + ((title_size.Height - button_size.Height)/2),
 					Math.Max(button_size.Width - 1, 0),
 					Math.Max(button_size.Height - 1, 0));
-				arrow_rect.X = button_rect.X + ((button_rect.Width - arrow_rect.Width)/2);
-				arrow_rect.Y = button_rect.Y + ((button_rect.Height - arrow_rect.Height)/2);
+
+				arrow_center = new PointF (button_rect.X + ((button_rect.Width + arrow_width) / 2.0f), 
+											rectangle.Y + ((button_rect.Height + arrow_height) / 2) + 1);
 				if (is_clicked) {
-					arrow_rect.Offset(1,1);
+					arrow_center.X += 1;
+					arrow_center.Y += 1;
 				}
-				arrow_path[0] = new Point (arrow_rect.Right, arrow_rect.Y);
-				arrow_path[1] = new Point (arrow_rect.X, arrow_rect.Y + arrow_rect.Height/2);
-				arrow_path[2] = new Point (arrow_rect.Right, arrow_rect.Bottom);
+
+				arrow_path [0].X = arrow_center.X;
+				arrow_path [0].Y = arrow_center.Y - arrow_height / 2.0f + 0.5f;
+				arrow_path [1].X = arrow_center.X;
+				arrow_path [1].Y = arrow_center.Y + arrow_height / 2.0f + 0.5f;
+				arrow_path [2].X = arrow_center.X - arrow_width;
+				arrow_path [2].Y = arrow_center.Y + 0.5f;
 			}
 			else
 			{
 				is_clicked = mc.is_next_clicked;
+
 				button_rect = new Rectangle (
 					rectangle.Right - 1 - x_offset - button_size.Width,
 					rectangle.Y + 1 + ((title_size.Height - button_size.Height)/2),
 					Math.Max(button_size.Width - 1, 0),
 					Math.Max(button_size.Height - 1, 0));
-				arrow_rect.X = button_rect.X + ((button_rect.Width - arrow_rect.Width)/2);
-				arrow_rect.Y = button_rect.Y + ((button_rect.Height - arrow_rect.Height)/2);
+
+				arrow_center = new PointF (button_rect.X + ((button_rect.Width + arrow_width) / 2.0f), 
+											rectangle.Y + ((button_rect.Height + arrow_height) / 2) + 1);
 				if (is_clicked) {
-					arrow_rect.Offset(1,1);
+					arrow_center.X += 1;
+					arrow_center.Y += 1;
 				}
-				arrow_path[0] = new Point (arrow_rect.X, arrow_rect.Y);
-				arrow_path[1] = new Point (arrow_rect.Right, arrow_rect.Y + arrow_rect.Height/2);
-				arrow_path[2] = new Point (arrow_rect.X, arrow_rect.Bottom);				
+
+				arrow_path [0].X = arrow_center.X - arrow_width;
+				arrow_path [0].Y = arrow_center.Y - arrow_height / 2.0f + 0.5f;
+				arrow_path [1].X = arrow_center.X - arrow_width;
+				arrow_path [1].Y = arrow_center.Y + arrow_height / 2.0f + 0.5f;
+				arrow_path [2].X = arrow_center.X;
+				arrow_path [2].Y = arrow_center.Y + 0.5f;
 			}
 
 			// fill the background
@@ -3659,6 +3677,7 @@ namespace System.Windows.Forms
 			}
 			// draw the arrow
 			dc.FillPolygon (SystemBrushes.ControlText, arrow_path);			
+			//dc.FillPolygon (SystemBrushes.ControlText, arrow_path, FillMode.Winding);
 		}
 		
 
