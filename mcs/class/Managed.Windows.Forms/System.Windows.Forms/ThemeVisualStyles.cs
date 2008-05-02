@@ -255,6 +255,35 @@ namespace System.Windows.Forms
 			new VisualStyleRenderer (element).DrawBackground (graphics, rectangle);
 		}
 		#endregion
+		#region DrawMixedCheckBox
+		public override void CPDrawMixedCheckBox (Graphics dc, Rectangle rectangle, ButtonState state)
+		{
+			if ((state & ButtonState.Flat) == ButtonState.Flat) {
+				base.CPDrawMixedCheckBox (dc, rectangle, state);
+				return;
+			}
+			VisualStyleElement element;
+			if ((state & ButtonState.Checked) == ButtonState.Checked)
+				if ((state & ButtonState.Inactive) == ButtonState.Inactive)
+					element = VisualStyleElement.Button.CheckBox.MixedDisabled;
+				else if ((state & ButtonState.Pushed) == ButtonState.Pushed)
+					element = VisualStyleElement.Button.CheckBox.MixedPressed;
+				else
+					element = VisualStyleElement.Button.CheckBox.MixedNormal;
+			else
+				if ((state & ButtonState.Inactive) == ButtonState.Inactive)
+					element = VisualStyleElement.Button.CheckBox.UncheckedDisabled;
+				else if ((state & ButtonState.Pushed) == ButtonState.Pushed)
+					element = VisualStyleElement.Button.CheckBox.UncheckedPressed;
+				else
+					element = VisualStyleElement.Button.CheckBox.UncheckedNormal;
+			if (!VisualStyleRenderer.IsElementDefined (element)) {
+				base.CPDrawMixedCheckBox (dc, rectangle, state);
+				return;
+			}
+			new VisualStyleRenderer (element).DrawBackground (dc, rectangle);
+		}
+		#endregion
 		#region DrawRadioButton
 		public override void CPDrawRadioButton (Graphics dc, Rectangle rectangle, ButtonState state)
 		{

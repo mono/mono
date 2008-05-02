@@ -1,5 +1,9 @@
 2008-05-02  George Giolfan  <georgegiolfan@yahoo.com>
 
+	* ThemeVisualStyles.cs: Added support for ControlPaint.DrawMixedCheckBox.
+
+2008-05-02  George Giolfan  <georgegiolfan@yahoo.com>
+
 	* ControlPaint.cs, Theme.cs, ThemeWin32Classic.cs: Refactored:
 	ControlPaint.DrawMixedCheckBox now calls Theme.CPDrawMixedCheckBox.
 
