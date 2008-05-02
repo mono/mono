@@ -860,5 +860,19 @@ namespace System.Windows.Forms
 			new VisualStyleRenderer (element).DrawBackground (dc, area);
 		}
 		#endregion
+		#region TreeView
+		[MonoTODO("Use the sizing information provided by the VisualStyles API.")]
+		public override void TreeViewDrawNodePlusMinus (TreeView treeView, TreeNode node, Graphics dc, int x, int middle)
+		{
+			VisualStyleElement element = node.IsExpanded ?
+				VisualStyleElement.TreeView.Glyph.Opened : 
+				VisualStyleElement.TreeView.Glyph.Closed;
+			if (!VisualStyleRenderer.IsElementDefined (element)) {
+				base.TreeViewDrawNodePlusMinus (treeView, node, dc, x, middle);
+				return;
+			}
+			new VisualStyleRenderer (element).DrawBackground (dc, new Rectangle (x, middle - 4, 9, 9));
+		}
+		#endregion
 	}
 }
