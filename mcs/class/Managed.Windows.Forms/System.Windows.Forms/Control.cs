@@ -3435,6 +3435,10 @@ namespace System.Windows.Forms
 
 		#region	Protected Instance Properties
 #if NET_2_0
+		protected virtual bool CanEnableIme {
+			get { return false; }
+		}
+		
 		// Is only false in some ActiveX contexts
 		protected override bool CanRaiseEvents {
 			get { return true; }

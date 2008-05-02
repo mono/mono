@@ -1,5 +1,10 @@
 2008-05-02  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Control.cs, ContainerControl.cs, DataGridView.cs, TextBoxBase.cs:
+	Implement CanEnableIme property. (2.0 SP1)
+
+2008-05-02  Jonathan Pobst  <monkey@jpobst.com>
+
 	* BindingManagerBase.cs, PropertyManager.cs: Hide GetItemProperties
 	from the 2.0 API.
 

@@ -348,6 +348,11 @@ namespace System.Windows.Forms {
 		#endregion	// Public Instance Properties
 
 		#region Protected Instance Methods
+#if NET_2_0
+		protected override bool CanEnableIme {
+			get { return false; }
+		}
+#endif
 		protected override CreateParams CreateParams {
 			get {
 				return base.CreateParams;

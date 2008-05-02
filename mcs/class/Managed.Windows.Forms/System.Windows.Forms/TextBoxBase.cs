@@ -723,6 +723,17 @@ namespace System.Windows.Forms
 		#endregion	// Public Instance Properties
 
 		#region Protected Instance Properties
+#if NET_2_0
+		protected override bool CanEnableIme {
+			get {
+				if (ReadOnly || password_char != '\0')
+					return false;
+					
+				return true;
+			}
+		}
+#endif
+
 		protected override CreateParams CreateParams {
 			get {
 				return base.CreateParams;

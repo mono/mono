@@ -2870,6 +2870,15 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException();
 		}
 
+		protected override bool CanEnableIme {
+			get {
+				if (CurrentCell != null && CurrentCell.EditType != null)
+					return true;
+				
+				return false;
+			}
+		}
+
 		protected override Size DefaultSize {
 			get { return new Size (240, 150); }
 		}
