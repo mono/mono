@@ -248,6 +248,14 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
+		public void TestRange ()
+		{
+			AssertAreSame (new [] {1, 2, 3, 4}, Enumerable.Range (1, 4));
+
+			AssertAreSame (new [] {0, 1, 2, 3}, Enumerable.Range (0, 4));
+		}
+
+		[Test]
 		public void TestOrderBy ()
 		{
 				int [] array = { 14, 53, 3, 9, 11, 14, 5, 32, 2 };
