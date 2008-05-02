@@ -69,6 +69,8 @@ namespace System.Windows.Forms
 		private string title;
 		private bool validateNames = true;
 #if NET_2_0
+		private bool auto_upgrade_enable = true;
+		private FileDialogCustomPlacesCollection custom_places;
 		private bool supportMultiDottedExtensions;
 		private bool checkForIllegalChars = true;
 #endif
@@ -362,6 +364,7 @@ namespace System.Windows.Forms
 			readonlyCheckBox.CheckedChanged += new EventHandler (OnCheckCheckChanged);
 #if NET_2_0
 			form.FormClosed += new FormClosedEventHandler (OnFileDialogFormClosed);
+			custom_places = new FileDialogCustomPlacesCollection ();
 #else
 			form.Closed += new EventHandler (OnFileDialogFormClosed);
 #endif
@@ -378,6 +381,15 @@ namespace System.Windows.Forms
 			}
 		}
 		
+#if NET_2_0
+		[MonoTODO ("Stub, value not respected")]
+		[DefaultValue (true)]
+		public bool AutoUpgradeEnabled {
+			get { return auto_upgrade_enable; }
+			set { auto_upgrade_enable = value; }
+		}
+#endif
+
 		[DefaultValue(false)]
 		public virtual bool CheckFileExists {
 			get {
@@ -400,6 +412,14 @@ namespace System.Windows.Forms
 			}
 		}
 		
+#if NET_2_0
+		[MonoTODO ("Stub, collection not used")]
+		[Browsable (false)]
+		public FileDialogCustomPlacesCollection CustomPlaces {
+			get { return custom_places; }
+		}
+#endif
+
 		[DefaultValue("")]
 		public string DefaultExt {
 			get {
