@@ -1,3 +1,9 @@
+2008-05-02  Jonathan Chambers  <joncham@gmail.com>
+
+	* domain.c: Disable LoadLibrary support to fix Win32 build.
+
+	Code is contributed under MIT/X11 license.
+
 2008-05-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* sgen-gc.c: Add support for clearing nursery memory when a tlab is allocated,
