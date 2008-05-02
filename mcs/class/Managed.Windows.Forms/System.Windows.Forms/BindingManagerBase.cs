@@ -92,6 +92,11 @@ namespace System.Windows.Forms
 #if NET_2_0
 		public virtual PropertyDescriptorCollection GetItemProperties()
 		{
+			return GetItemPropertiesInternal ();
+		}
+		
+		internal virtual PropertyDescriptorCollection GetItemPropertiesInternal ()
+		{
 			throw new NotImplementedException ();
 		}
 #else

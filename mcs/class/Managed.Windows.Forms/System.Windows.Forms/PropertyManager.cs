@@ -115,10 +115,18 @@ namespace System.Windows.Forms {
 			editable.EndEdit ();
 		}
 
+#if NET_2_0
+		// Hide this method from the 2.0 public API
+		internal override PropertyDescriptorCollection GetItemPropertiesInternal ()
+		{
+			return TypeDescriptor.GetProperties (data_source);
+		}
+#else
 		public override PropertyDescriptorCollection GetItemProperties ()
 		{
 			return TypeDescriptor.GetProperties (data_source);
 		}
+#endif
 
 		public override void RemoveAt (int index)
 		{
