@@ -1078,7 +1078,7 @@ namespace System.Linq.Expressions {
 			return t.IsPrimitive;
 		}
 
-		protected internal static bool IsPrimitiveConversion (Type type, Type target)
+		internal static bool IsPrimitiveConversion (Type type, Type target)
 		{
 			if (type == target)
 				return true;
@@ -1089,7 +1089,7 @@ namespace System.Linq.Expressions {
 			return false;
 		}
 
-		protected internal static bool IsReferenceConversion (Type type, Type target)
+		internal static bool IsReferenceConversion (Type type, Type target)
 		{
 			if (type == target)
 				return true;
