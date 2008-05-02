@@ -331,6 +331,41 @@ namespace MonoTests.System.Linq {
 			AssertAreSame (expected, q);
 		}
 
+		class Data {
+			public int ID { get; set; }
+			public string Name { get; set; }
+
+			public override string ToString ()
+			{
+				return ID + " " + Name;
+			}
+		}
+
+		IEnumerable<Data> CreateData ()
+		{
+			return new [] {
+				new Data { ID = 10, Name = "bcd" },
+				new Data { ID = 20, Name = "Abcd" },
+				new Data { ID = 20, Name = "Ab" },
+				new Data { ID = 10, Name = "Zyx" },
+			};
+		}
+
+		[Test]
+		public void TestOrderByIdDescendingThenByNameAscending ()
+		{
+			var q = from d in CreateData ()
+					orderby d.ID descending, d.Name ascending
+					select d;
+
+			var list = new List<Data> (q);
+
+			Assert.AreEqual ("Ab", list [0].Name);
+			Assert.AreEqual ("Abcd", list [1].Name);
+			Assert.AreEqual ("bcd", list [2].Name);
+			Assert.AreEqual ("Zyx", list [3].Name);
+		}
+
 		static void AssertIsOrdered (IEnumerable<int> e)
 		{
 				int f = int.MinValue;
