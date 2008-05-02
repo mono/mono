@@ -1481,7 +1481,10 @@ namespace Mono.CSharp {
 
 		return retval;
 	}
-			
+
+	//
+	// Null is considered to be a reference type
+	//			
 	public static bool IsReferenceType (Type t)
 	{
 		if (TypeManager.IsGenericParameter (t)) {
@@ -1491,9 +1494,6 @@ namespace Mono.CSharp {
 
 			return constraints.IsReferenceType;
 		}
-
-		if (t == TypeManager.null_type)
-			return false;
 
 		return !t.IsValueType;
 	}			

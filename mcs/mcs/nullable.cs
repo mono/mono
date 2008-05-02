@@ -982,61 +982,64 @@ namespace Mono.CSharp.Nullable
 
 			eclass = ExprClass.Value;
 			Type ltype = left.Type, rtype = right.Type;
-			Expression expr;
 
+			//
+			// If left is a nullable type and an implicit conversion exists from right to left,
+			// the result type is left
+			//
 			if (TypeManager.IsNullableType (ltype)) {
-				NullableInfo info = new NullableInfo (ltype);
-
 				unwrap = Unwrap.Create (left, ec);
 				if (unwrap == null)
 					return null;
 
-				expr = Convert.ImplicitConversion (ec, right, info.UnderlyingType, loc);
-				if (expr != null) {
+				if (Convert.ImplicitConversionExists (ec, right, ltype)) {
 					left = unwrap;
-					right = expr;
-					type = expr.Type;
+					right = Convert.ImplicitConversion (ec, right, ltype, loc);
+					type = left.Type;
 					return this;
 				}
-			} else if (left.IsNull) {
-				if (!Convert.ImplicitConversionExists (ec, right, TypeManager.object_type)) {
-					Binary.Error_OperatorCannotBeApplied (loc, "??", ltype, rtype);
-					return null;
+			} else if (TypeManager.IsReferenceType (ltype)) {
+				if (Convert.ImplicitConversionExists (ec, right, ltype)) {
+					//
+					// Reduce (left ?? null) to left
+					//
+					if (right.IsNull)
+						return ReducedExpression.Create (left, this).Resolve (ec);
+
+					right = Convert.ImplicitConversion (ec, right, ltype, loc);
+					type = right.Type;
+					return this;
 				}
-			
-				return ReducedExpression.Create (right, this).Resolve (ec);
-			} else if (!TypeManager.IsReferenceType (ltype)) {
+			} else {
 				Binary.Error_OperatorCannotBeApplied (loc, "??", ltype, rtype);
 				return null;
 			}
 
-			expr = Convert.ImplicitConversion (ec, right, ltype, loc);
-			if (expr != null) {
-				type = expr.Type;
-				right = expr;
-				return this;
+			if (!Convert.ImplicitConversionExists (ec, left, rtype)) {
+				Binary.Error_OperatorCannotBeApplied (loc, "??", ltype, rtype);
+				return null;
 			}
 
-			Expression left_null = unwrap != null ? unwrap : left;
-			expr = Convert.ImplicitConversion (ec, left_null, rtype, loc);
-			if (expr != null) {
-				left = expr;
-				type = rtype;
-				return this;
-			}
+			//
+			// Reduce (null ?? right) to right
+			//
+			if (left.IsNull)
+				return ReducedExpression.Create (right, this).Resolve (ec);
 
-			Binary.Error_OperatorCannotBeApplied (loc, "??", ltype, rtype);
-			return null;
+			left = Convert.ImplicitConversion (ec, left, rtype, loc);
+			type = rtype;
+			return this;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 
-			Label is_null_label = ig.DefineLabel ();
 			Label end_label = ig.DefineLabel ();
 
 			if (unwrap != null) {
+				Label is_null_label = ig.DefineLabel ();
+
 				unwrap.EmitCheck (ec);
 				ig.Emit (OpCodes.Brfalse, is_null_label);
 
@@ -1047,19 +1050,20 @@ namespace Mono.CSharp.Nullable
 				right.Emit (ec);
 
 				ig.MarkLabel (end_label);
-			} else {
-				left.Emit (ec);
-				ig.Emit (OpCodes.Dup);
-				ig.Emit (OpCodes.Brtrue, end_label);
-
-				ig.MarkLabel (is_null_label);
-
-				ig.Emit (OpCodes.Pop);
-				right.Emit (ec);
-
-				ig.MarkLabel (end_label);
+				return;
 			}
+
+			left.Emit (ec);
+
+			ig.Emit (OpCodes.Dup);
+			ig.Emit (OpCodes.Brtrue, end_label);
+
+			ig.Emit (OpCodes.Pop);
+			right.Emit (ec);
+
+			ig.MarkLabel (end_label);
 		}
+
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			NullCoalescingOperator target = (NullCoalescingOperator) t;

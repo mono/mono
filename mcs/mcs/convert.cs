@@ -471,7 +471,7 @@ namespace Mono.CSharp {
 
 			// from the null type to any reference-type.
 			if (expr_type == TypeManager.null_type){
-				return true;
+				return target_type != TypeManager.anonymous_method_type;
 			}
 
 			if (TypeManager.IsGenericParameter (expr_type))

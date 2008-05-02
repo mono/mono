@@ -90,6 +90,10 @@ namespace Mono.CSharp {
 			if (targetType.IsPointer)
 				return new EmptyConstantCast (NullPointer.Null, targetType);
 
+			// Exlude internal compiler types
+			if (targetType == TypeManager.anonymous_method_type)
+				return null;
+
 			if (TypeManager.IsReferenceType (targetType))
 				return new EmptyConstantCast (this, targetType);
 
