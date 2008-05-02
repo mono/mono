@@ -257,7 +257,7 @@ namespace Mono.CSharp {
 		}
 
 		static EmptyExpression MyEmptyExpr;
-		static public Expression ImplicitReferenceConversion (Expression expr, Type target_type)
+		static Expression ImplicitReferenceConversion (Expression expr, Type target_type, bool explicit_cast)
 		{
 			Type expr_type = expr.Type;
 
@@ -281,8 +281,15 @@ namespace Mono.CSharp {
 				return nl.ConvertImplicitly(target_type);
 			}
 
-			if (ImplicitReferenceConversionCore (expr, target_type))
+			if (ImplicitReferenceConversionCore (expr, target_type)) {
+				// 
+				// Reduce implicit reference conversion to object
+				//
+				if (!explicit_cast && target_type == TypeManager.object_type)
+					return expr;
+
 				return EmptyCast.Create (expr, target_type);
+			}
 
 			bool use_class_cast;
 			if (ImplicitBoxingConversionExists (expr, target_type, out use_class_cast)) {
@@ -1273,6 +1280,11 @@ namespace Mono.CSharp {
 		static public Expression ImplicitConversionStandard (EmitContext ec, Expression expr,
 								     Type target_type, Location loc)
 		{
+			return ImplicitConversionStandard (ec, expr, target_type, loc, false);
+		}
+
+		static Expression ImplicitConversionStandard (EmitContext ec, Expression expr, Type target_type, Location loc, bool explicit_cast)
+		{
 			Type expr_type = expr.Type;
 			Expression e;
 			
@@ -1286,15 +1298,13 @@ namespace Mono.CSharp {
 				
 				Type target = TypeManager.GetTypeArguments (target_type) [0];
 
-				if (TypeManager.IsNullableType (expr.Type)) {
-					Type etype = TypeManager.GetTypeArguments (expr.Type) [0];
+				if (TypeManager.IsNullableType (expr_type)) {
+					Type etype = TypeManager.GetTypeArguments (expr_type) [0];
 					if (TypeManager.IsEqual (etype, target))
 						return expr;
 
-					e = new Nullable.LiftedConversion (
+					return new Nullable.LiftedConversion (
 						expr, target_type, false, false, loc).Resolve (ec);
-					if (e != null)
-						return e;
 				} else {
 					e = ImplicitConversion (ec, expr, target, loc);
 					if (e != null)
@@ -1347,7 +1357,7 @@ namespace Mono.CSharp {
 			if (e != null)
 				return e;
 
-			e = ImplicitReferenceConversion (expr, target_type);
+			e = ImplicitReferenceConversion (expr, target_type, explicit_cast);
 			if (e != null)
 				return e;
 
@@ -1910,7 +1920,7 @@ namespace Mono.CSharp {
 			Type expr_type = expr.Type;
 
 			// Explicit conversion includes implicit conversion and it used for enum underlying types too
-			Expression ne = ImplicitConversionStandard (ec, expr, target_type, loc);
+			Expression ne = ImplicitConversionStandard (ec, expr, target_type, loc, true);
 			if (ne != null)
 				return ne;
 

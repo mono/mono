@@ -1,3 +1,7 @@
+2008-05-02  Marek Safar  <marek.safar@gmail.com>
+
+	* convert.cs, literal.cs: Don't wrap implicit reference conversion to object
+
 2008-05-02  Raja R Harinath  <harinath@hurrynot.org>
 
 	Fix #385758

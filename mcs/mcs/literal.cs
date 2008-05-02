@@ -43,6 +43,7 @@ namespace Mono.CSharp {
 		
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
+			// HACK: change type to be object
 			type = TypeManager.object_type;
 			return base.CreateExpressionTree (ec);
 		}		
@@ -82,6 +83,10 @@ namespace Mono.CSharp {
 
 		public override Constant ConvertImplicitly (Type targetType)
 		{
+			// FIXME: Null literal should be of object type
+			//if (targetType == TypeManager.object_type)
+			//	return this;
+		
 			if (targetType.IsPointer)
 				return new EmptyConstantCast (NullPointer.Null, targetType);
 
