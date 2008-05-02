@@ -36,7 +36,11 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 	[ClassInterface(ClassInterfaceType.None)]
-	public class DataObject : IDataObject {
+	public class DataObject : IDataObject
+#if NET_2_0
+	, System.Runtime.InteropServices.ComTypes.IDataObject
+#endif
+	 {
 		#region DataObject.Entry Class
 		private class Entry {
 			#region Local Variables
@@ -452,5 +456,54 @@ namespace System.Windows.Forms {
 		}
 #endif
 		#endregion	// Private Methods
-	}
+
+#if NET_2_0
+		#region IDataObject Members
+		public int DAdvise (ref System.Runtime.InteropServices.ComTypes.FORMATETC pFormatetc, System.Runtime.InteropServices.ComTypes.ADVF advf, System.Runtime.InteropServices.ComTypes.IAdviseSink adviseSink, out int connection)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void DUnadvise (int connection)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public int EnumDAdvise (out System.Runtime.InteropServices.ComTypes.IEnumSTATDATA enumAdvise)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public System.Runtime.InteropServices.ComTypes.IEnumFORMATETC EnumFormatEtc (System.Runtime.InteropServices.ComTypes.DATADIR direction)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public int GetCanonicalFormatEtc (ref System.Runtime.InteropServices.ComTypes.FORMATETC formatIn, out System.Runtime.InteropServices.ComTypes.FORMATETC formatOut)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void GetData (ref System.Runtime.InteropServices.ComTypes.FORMATETC format, out System.Runtime.InteropServices.ComTypes.STGMEDIUM medium)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void GetDataHere (ref System.Runtime.InteropServices.ComTypes.FORMATETC format, ref System.Runtime.InteropServices.ComTypes.STGMEDIUM medium)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public int QueryGetData (ref System.Runtime.InteropServices.ComTypes.FORMATETC format)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public void SetData (ref System.Runtime.InteropServices.ComTypes.FORMATETC formatIn, ref System.Runtime.InteropServices.ComTypes.STGMEDIUM medium, bool release)
+		{
+			throw new NotImplementedException ();
+		}
+		#endregion
+#endif
+	 }
 }
