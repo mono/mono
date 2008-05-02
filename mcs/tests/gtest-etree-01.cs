@@ -625,14 +625,15 @@ class Tester
 		AssertNodeType (e2, ExpressionType.Constant);
 		Assert (null, e2.Compile ().Invoke ());
 		
-//	FIXME: Redundant convert		
-//		Expression<Func<Tester>> e3 = () => default (Tester);
-//		AssertNodeType (e3, ExpressionType.Constant);
-//		Assert (null, e3.Compile ().Invoke ());
-//		
-//		Expression<Func<object>> e4 = () => null;
-//		AssertNodeType (e4, ExpressionType.Constant);
-//		Assert (null, e4.Compile ().Invoke ());
+		Expression<Func<Tester>> e3 = () => default (Tester);
+		// FIXME: Redundant convert, need new expression	
+		//AssertNodeType (e3, ExpressionType.Constant);
+		Assert (null, e3.Compile ().Invoke ());
+		
+		Expression<Func<object>> e4 = () => null;
+		// TODO: Extra Convert
+		//AssertNodeType (e4, ExpressionType.Constant);
+		Assert (null, e4.Compile ().Invoke ());
 
 		Expression<Func<int>> e5 = () => 8 / 4;
 		AssertNodeType (e5, ExpressionType.Constant);
@@ -642,10 +643,9 @@ class Tester
 		AssertNodeType (e6, ExpressionType.Constant);
 		Assert (0xFFFFFF, e6.Compile ().Invoke ());
 	
-// FIXME: This is pure EmptyCast, no Convert required	
-//		Expression<Func<object>> e7 = () => "Alleluia";
-//		AssertNodeType (e7, ExpressionType.Constant);
-//		Assert ("Alleluia", e7.Compile ().Invoke ());		
+		Expression<Func<object>> e7 = () => "Alleluia";
+		AssertNodeType (e7, ExpressionType.Constant);
+		Assert ("Alleluia", e7.Compile ().Invoke ());		
 
 		Expression<Func<Type>> e8 = () => typeof (int);
 		AssertNodeType (e8, ExpressionType.Constant);
@@ -676,6 +676,10 @@ class Tester
 			AssertNodeType (e14, ExpressionType.Constant);
 			Assert (typeof (bool*), e14.Compile ().Invoke ());
 		}
+		
+		Expression<Func<int?>> e15 = () => null;
+		AssertNodeType (e15, ExpressionType.Constant);
+		Assert (null, e15.Compile ().Invoke ());
 	}
 
 	void ConvertTest ()
@@ -1440,8 +1444,7 @@ class Tester
 		Assert (new NewTest<decimal> (1, 5, -9), e4.Compile ().Invoke (-9));
 		
 		Expression<Func<object>> e5 = () => new { A = 9, Value = "a" };
-// FIXME: Extra return convert
-//		AssertNodeType (e5, ExpressionType.New);
+		AssertNodeType (e5, ExpressionType.New);
 		Assert (new { A = 9, Value = "a" }, e5.Compile ().Invoke ());
 	}	
 
@@ -1609,14 +1612,11 @@ class Tester
 		Assert (new MyType (3), c2 (new MyType (1), new MyType (2)));
 		Assert (null, c2 (new MyType (1), null));
 
-		/* BUG: This does not work with csc either, nullable conversions on top of user conversion is required
-		
+		// CSC BUG: Fixed?
 		Expression<Func<MyType?, uint, long?>> e3 = (MyType? a, uint b) => a | b;
 		AssertNodeType (e3, ExpressionType.Or);
 		var c3 = e3.Compile ();
 		Assert (9, c3 (new MyType (1), 8));
-		Assert (null, c3 (null, 4));
-		*/
 		
 		Expression<Func<MyEnum?, MyEnum?, MyEnum?>> e4 = (a, b) => a | b;
 		AssertNodeType (e4, ExpressionType.Convert);
