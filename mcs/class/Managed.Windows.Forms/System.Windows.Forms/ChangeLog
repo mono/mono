@@ -1,5 +1,9 @@
 2008-05-03  Everaldo Canuto  <ecanuto@novell.com>
 
+	* MenuAPI.cs: Remove unused ProcessCmdKey method.
+
+2008-05-03  Everaldo Canuto  <ecanuto@novell.com>
+
 	* MenuAPI.cs: Prevent NRE in menu deactivation when shortcut is used. 
 	[Fixes bug #375398]
 

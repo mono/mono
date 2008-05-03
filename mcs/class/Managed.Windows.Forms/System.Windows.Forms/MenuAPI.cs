@@ -838,13 +838,6 @@ namespace System.Windows.Forms {
     		Hide ();
 		}
 
-#if false
-		protected override bool ProcessCmdKey (ref Message msg, Keys keyData)
-		{	
-			return MenuTracker.ProcessKeys (menu, ref msg, keyData, tracker);
-		}
-#endif
-
 		protected override void CreateHandle ()
 		{
 			base.CreateHandle ();
