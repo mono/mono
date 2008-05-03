@@ -23,6 +23,14 @@ class C
 		if (i != null)
 			return 3;
 
+		string p = default (string) ?? "a";
+		if (p != "a")
+			return 4;
+		
+		string p2 = "x" ?? "a";
+		if (p2 != "x")
+			return 5;
+
 		return 0;
 	}
 }
