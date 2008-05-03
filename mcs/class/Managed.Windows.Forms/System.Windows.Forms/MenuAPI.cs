@@ -110,7 +110,8 @@ namespace System.Windows.Forms {
 			if (TopMenu is ContextMenu) {
 				PopUpWindow puw = TopMenu.Wnd as PopUpWindow;
 				DeselectItem (TopMenu.SelectedItem);
-				puw.HideWindow ();
+				if (puw != null)
+					puw.HideWindow ();
 			} else {
 				DeselectItem (TopMenu.SelectedItem);
 			}
