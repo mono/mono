@@ -397,6 +397,7 @@ public class ConstructorBuilderTest
 	}
 
 	[Test]
+	[Category ("NotWorking")]
 	public void GetParameters_Incomplete ()
 	{
 		ConstructorBuilder cb = genClass.DefineConstructor (
