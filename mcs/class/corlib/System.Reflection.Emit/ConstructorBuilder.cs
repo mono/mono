@@ -112,8 +112,11 @@ namespace System.Reflection.Emit {
 
 		public override ParameterInfo[] GetParameters ()
 		{
+			/* This causes problems when it is called from CustomAttributeBuilder.Initialize () */
+			/*
 			if (!type.is_created && !IsCompilerContext)
 				throw not_created ();
+			*/
 
 			if (parameters == null)
 				return new ParameterInfo [0];

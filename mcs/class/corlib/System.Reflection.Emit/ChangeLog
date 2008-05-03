@@ -1,3 +1,8 @@
+2008-05-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* ConstructorBuilder.cs: Revert the throw not_created () change as it causes
+	vbnc bootstrap to fail. Fixes #386419.
+
 2008-05-01  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ConstructorBuilder.cs: Switch arguments for AORE.
