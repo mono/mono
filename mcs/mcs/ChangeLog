@@ -1,5 +1,9 @@
 2008-05-03  Marek Safar  <marek.safar@gmail.com>
 
+	* constant.cs: Use unsigned conversion for values which are unsigned only.
+
+2008-05-03  Marek Safar  <marek.safar@gmail.com>
+
 	* convert.cs, literal.cs, nullabel.cs, typemanager.cs: Implemeted null 
 	coalescing operator as it should be.
 
