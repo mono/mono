@@ -444,14 +444,16 @@ namespace System.Windows.Forms {
 
 		static MenuItem FindItemByKey (Menu menu, IntPtr key)
 		{
-			char key_char = (char ) (key.ToInt32() & 0xff);
-			key_char = Char.ToUpper (key_char);
-
+			char key_char = Char.ToUpper ((char) (key.ToInt32() & 0xff));
 			foreach (MenuItem item in menu.MenuItems) {
-				if (item.Mnemonic == '\0')
-					continue;
-
 				if (item.Mnemonic == key_char)
+					return item;
+			}
+
+			string key_str = key_char.ToString (); 
+			foreach (MenuItem item in menu.MenuItems) {
+				//if (item.Mnemonic == key_char)
+				if (item.Text.StartsWith (key_str))
 					return item;
 			}
 
