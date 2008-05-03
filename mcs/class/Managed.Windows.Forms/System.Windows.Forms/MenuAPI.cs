@@ -287,8 +287,25 @@ namespace System.Windows.Forms {
 			while ((menu.Wnd != null) && menu.Wnd.Visible && no_quit) {
 				MSG msg = new MSG ();
 				no_quit = XplatUI.GetMessage(queue_id, ref msg, IntPtr.Zero, 0, 0);
-				XplatUI.TranslateMessage(ref msg);
-				XplatUI.DispatchMessage(ref msg);				
+
+				switch((Msg)msg.message) {
+				case Msg.WM_KEYDOWN:
+				case Msg.WM_SYSKEYDOWN:
+				case Msg.WM_CHAR:
+				case Msg.WM_SYSCHAR:
+				case Msg.WM_KEYUP:
+				case Msg.WM_SYSKEYUP:
+					Control c = Control.FromHandle(msg.hwnd);
+					if (c != null) {
+						Message m = Message.Create(msg.hwnd, (int)msg.message, msg.wParam, msg.lParam);
+						c.PreProcessControlMessageInternal (ref m);
+					}
+					break;
+				default:
+					XplatUI.TranslateMessage (ref msg);
+					XplatUI.DispatchMessage (ref msg);
+					break;
+				}
 			}
 
 			if (tracker.grab_control.IsDisposed)

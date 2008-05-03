@@ -1,5 +1,10 @@
 2008-05-03  Everaldo Canuto  <ecanuto@novell.com>
 
+	* MenuAPI.cs: Implemented keyboard navigation for ContextMenu.
+	[Fixed bug #357004]
+
+2008-05-03  Everaldo Canuto  <ecanuto@novell.com>
+
 	* MenuAPI.cs: Remove unused ProcessCmdKey method.
 
 2008-05-03  Everaldo Canuto  <ecanuto@novell.com>
