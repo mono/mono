@@ -1,3 +1,9 @@
+2008-05-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (load_aot_module): Avoid trying to load aot code for dynamic
+	assemblies, since aot_name is not a full path, causing us to load MS.NET 
+	assemblies on windows.
+
 ﻿2008-04-28  Kornél Pál  <kornelpal@gmail.com>
 
 	* mini.c (mono_jit_compile_method_inner): Use g_warning instead of g_error
