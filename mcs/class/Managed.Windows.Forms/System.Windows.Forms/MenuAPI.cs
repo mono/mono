@@ -41,6 +41,7 @@ namespace System.Windows.Forms {
 		internal bool popup_active;
 		internal bool popdown_menu;
 		internal bool hotkey_active;
+		private bool mouse_down = false;
 		public Menu CurrentMenu;
 		public Menu TopMenu;
 		Control grab_control;
@@ -149,6 +150,8 @@ namespace System.Windows.Forms {
 		{
 			MenuItem item = GetItemAtXY (args.X, args.Y);
 
+			mouse_down = true;
+
 			if (item == null) {
 				Deactivate ();
 				return false;
@@ -225,6 +228,13 @@ namespace System.Windows.Forms {
 
 		public void OnMouseUp (MouseEventArgs args)
 		{
+			/* mouse down dont comes from menu */
+			if (!mouse_down)
+				return;
+
+			mouse_down = false;
+
+			/* is not left button */
 			if ((args.Button & MouseButtons.Left) == 0)
 				return;
 			

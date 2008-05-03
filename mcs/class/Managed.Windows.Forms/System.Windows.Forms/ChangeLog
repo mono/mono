@@ -1,3 +1,10 @@
+2008-05-03  Everaldo Canuto  <ecanuto@novell.com>
+
+	* MenuAPI.cs: Check if mouse down comes from menu, we need it because
+	sometimes we open a conext menu on mouse down of some controls and the mouse
+	up is dispatched to menu and dont need to. It fix remaining issues of 
+	#363711 and other problems related to menu mouse click events.
+
 2008-05-02  Everaldo Canuto  <ecanuto@novell.com>
 
 	* MonthCalendar.cs: Implemented "Go to today" context menu, also changed
