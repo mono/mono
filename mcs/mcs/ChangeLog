@@ -1,5 +1,14 @@
 2008-05-03  Marek Safar  <marek.safar@gmail.com>
 
+	* assign.cs: EventAddOrRemove is a statement and cannot have a type.
+	
+	* cfold.cs, constant.cs, expression.cs: Share Error_OperatorCannotBeApplied
+	method.
+	
+	* nullable.cs: Constant coalescing operator optimizations.
+
+2008-05-03  Marek Safar  <marek.safar@gmail.com>
+
 	* constant.cs: Use unsigned conversion for values which are unsigned only.
 
 2008-05-03  Marek Safar  <marek.safar@gmail.com>

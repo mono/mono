@@ -78,7 +78,7 @@ namespace Mono.CSharp {
 
 		public override void Error_ValueCannotBeConverted (EmitContext ec, Location loc, Type target, bool expl)
 		{
-			if (!expl && IsLiteral && type != TypeManager.string_type) {
+			if (!expl && IsLiteral && type != TypeManager.string_type && !TypeManager.IsDelegateType (target)) {
 				Report.Error (31, loc, "Constant value `{0}' cannot be converted to a `{1}'",
 					GetValue ().ToString (), TypeManager.CSharpName (target));
 			} else {

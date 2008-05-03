@@ -1962,18 +1962,12 @@ namespace Mono.CSharp {
 			return s;
 		}
 
-		static public void Error_OperatorCannotBeApplied (Location loc, string name, Type l, Type r)
+		public static void Error_OperatorCannotBeApplied (Expression left, Expression right, Operator oper, Location loc)
 		{
-			Error_OperatorCannotBeApplied (loc, name, TypeManager.CSharpName (l), TypeManager.CSharpName (r));
+			new Binary (oper, left, right).Error_OperatorCannotBeApplied (left, right);
 		}
 
-		public static void Error_OperatorCannotBeApplied (Location loc, string name, string left, string right)
-		{
-			Report.Error (19, loc, "Operator `{0}' cannot be applied to operands of type `{1}' and `{2}'",
-				name, left, right);
-		}
-		
-		protected void Error_OperatorCannotBeApplied (Expression left, Expression right)
+		public static void Error_OperatorCannotBeApplied (Expression left, Expression right, string oper, Location loc)
 		{
 			string l, r;
 			// TODO: This should be handled as Type of method group in CSharpName
@@ -1987,7 +1981,13 @@ namespace Mono.CSharp {
 			else
 				r = TypeManager.CSharpName (right.Type);
 
-			Error_OperatorCannotBeApplied (Location, OperName (oper), l, r);
+			Report.Error (19, loc, "Operator `{0}' cannot be applied to operands of type `{1}' and `{2}'",
+				oper, l, r);
+		}
+		
+		protected void Error_OperatorCannotBeApplied (Expression left, Expression right)
+		{
+			Error_OperatorCannotBeApplied (left, right, OperName (oper), loc);
 		}
 
 		static string GetOperatorMetadataName (Operator op)

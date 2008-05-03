@@ -987,7 +987,7 @@ namespace Mono.CSharp.Nullable
 			// If left is a nullable type and an implicit conversion exists from right to left,
 			// the result type is left
 			//
-			if (TypeManager.IsNullableType (ltype)) {
+			if (TypeManager.IsNullableType (ltype) && left.eclass != ExprClass.MethodGroup) {
 				unwrap = Unwrap.Create (left, ec);
 				if (unwrap == null)
 					return null;
@@ -998,25 +998,32 @@ namespace Mono.CSharp.Nullable
 					type = left.Type;
 					return this;
 				}
-			} else if (TypeManager.IsReferenceType (ltype)) {
+			} else if (TypeManager.IsReferenceType (ltype) && right.eclass != ExprClass.MethodGroup) {
 				if (Convert.ImplicitConversionExists (ec, right, ltype)) {
 					//
-					// Reduce (left ?? null) to left
+					// Reduce (constant ?? expr) to constant
 					//
-					if (right.IsNull)
-						return ReducedExpression.Create (left, this).Resolve (ec);
+					Constant lc = left as Constant;
+					if (lc != null && !lc.IsDefaultValue)
+						return new SideEffectConstant (lc, right, loc).Resolve (ec);
+
+					//
+					// Reduce (left ?? null) to left OR (null-constant ?? right) to right
+					//
+					if (right.IsNull || lc != null)
+						return ReducedExpression.Create (lc != null ? right : left, this).Resolve (ec);
 
 					right = Convert.ImplicitConversion (ec, right, ltype, loc);
 					type = right.Type;
 					return this;
 				}
 			} else {
-				Binary.Error_OperatorCannotBeApplied (loc, "??", ltype, rtype);
+				Binary.Error_OperatorCannotBeApplied (left, right, "??", loc);
 				return null;
 			}
 
 			if (!Convert.ImplicitConversionExists (ec, left, rtype)) {
-				Binary.Error_OperatorCannotBeApplied (loc, "??", ltype, rtype);
+				Binary.Error_OperatorCannotBeApplied (left, right, "??", loc);
 				return null;
 			}
 

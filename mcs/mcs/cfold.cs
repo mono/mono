@@ -782,7 +782,7 @@ namespace Mono.CSharp {
 			case Binary.Operator.LeftShift:
 				IntConstant ic = right.ConvertImplicitly (TypeManager.int32_type) as IntConstant;
 				if (ic == null){
-					Binary.Error_OperatorCannotBeApplied (loc, "<<", lt, rt);
+					Binary.Error_OperatorCannotBeApplied (left, right, oper, loc);
 					return null;
 				}
 
@@ -798,7 +798,7 @@ namespace Mono.CSharp {
 				if (left.Type == TypeManager.int32_type)
 					return new IntConstant (((IntConstant)left).Value << lshift_val, left.Location);
 
-				Binary.Error_OperatorCannotBeApplied (loc, "<<", lt, rt);
+				Binary.Error_OperatorCannotBeApplied (left, right, oper, loc);
 				break;
 
 				//
@@ -807,7 +807,7 @@ namespace Mono.CSharp {
 			case Binary.Operator.RightShift:
 				IntConstant sic = right.ConvertImplicitly (TypeManager.int32_type) as IntConstant;
 				if (sic == null){
-					Binary.Error_OperatorCannotBeApplied (loc, ">>", lt, rt);
+					Binary.Error_OperatorCannotBeApplied (left, right, oper, loc); ;
 					return null;
 				}
 				int rshift_val = sic.Value;
@@ -822,7 +822,7 @@ namespace Mono.CSharp {
 				if (left.Type == TypeManager.int32_type)
 					return new IntConstant (((IntConstant)left).Value >> rshift_val, left.Location);
 
-				Binary.Error_OperatorCannotBeApplied (loc, ">>", lt, rt);
+				Binary.Error_OperatorCannotBeApplied (left, right, oper, loc);
 				break;
 
 			case Binary.Operator.Equality:

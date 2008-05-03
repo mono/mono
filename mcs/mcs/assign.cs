@@ -488,24 +488,16 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			eclass = ExprClass.Value;
-			type = target.Type;
-
 			source = source.Resolve (ec);
 			if (source == null)
 				return null;
 
-			Type stype = source.Type;
-			if (source.eclass == ExprClass.MethodGroup || stype == TypeManager.anonymous_method_type) {
-				if (RootContext.Version != LanguageVersion.ISO_1) {
-					source = Convert.ImplicitConversionRequired (ec, source, type, loc);
-					if (source == null)
-						return null;
-					stype = source.Type;
-				}
-			} else if (!TypeManager.Equals (type, stype) && !(source is NullLiteral))
+			source = Convert.ImplicitConversionRequired (ec, source, target.Type, loc);
+			if (source == null)
 				return null;
 
+			eclass = ExprClass.Value;
+			type = TypeManager.void_type;
 			return this;
 		}
 
