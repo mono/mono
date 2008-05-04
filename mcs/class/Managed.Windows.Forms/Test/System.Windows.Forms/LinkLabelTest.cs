@@ -218,7 +218,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // Add (LinkLabel.Link)
-		[Category ("NotWorking")] // bug #346156
 		public void Add1_Overlap ()
 		{
 			LinkLabel l = new LinkLabel ();
@@ -337,7 +336,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // Add (int, int)
-		[Category ("NotWorking")] // bug #346156
 		public void Add2_Overlap ()
 		{
 			LinkLabel l = new LinkLabel ();

@@ -1,5 +1,9 @@
 2008-05-04  Everaldo Canuto  <ecanuto@novell.com>
 
+	* LinkLabelTest.cs: Enable tests related to bug #346156.
+
+2008-05-04  Everaldo Canuto  <ecanuto@novell.com>
+
 	* LinkLabelTest.cs: Enable tests related to bug #346154.
 
 2008-05-03  Everaldo Canuto  <ecanuto@novell.com>
