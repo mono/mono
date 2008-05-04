@@ -1,3 +1,8 @@
+2008-05-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* Type.cs (UnderlyingSystemType): Add a comment pointing people to 
+	Enum.GetUnderlyingType ().
+
 2008-04-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* Array.cs (LastIndexOf): Return GetLowerBound (0) -1 instead of -1.

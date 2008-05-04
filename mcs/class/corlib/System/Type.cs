@@ -413,6 +413,10 @@ namespace System {
 			}
 		}
 
+		/*
+		 * This has NOTHING to do with getting the base type of an enum. Use
+		 * Enum.GetUnderlyingType () for that.
+		 */
 		public abstract Type UnderlyingSystemType {get;}
 
 		public override bool Equals (object o)
