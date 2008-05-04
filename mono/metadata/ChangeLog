@@ -1,3 +1,13 @@
+2008-05-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (compute_class_bitmap): Ignore literal static fields.
+
+	* sgen-gc.c (mono_gc_base_init): Print some help when the MONO_GC_DEBUG env
+	var has an invalid format.
+	(describe_ptr): Add some sanity checks for the vtable.
+	(add_nursery_frag): Clear unused nursery fragments.
+	(major_collection): Clear all remaining nursery fragments.
+
 2008-05-03  Robert Jordan  <robertj@gmx.net>
 
 	* image.c, metadata-internals.h: add thunk_invoke_cache.
