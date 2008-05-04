@@ -1,3 +1,7 @@
+2008-05-04 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* HtmlInputButtonTest.cs: use HtmlDiff properly.
+
 2008-04-03  Marek Habersack  <mhabersack@novell.com>
 
 	* HtmlFormTest.cs: indirect test for bug #376352 is 2.0+ only.

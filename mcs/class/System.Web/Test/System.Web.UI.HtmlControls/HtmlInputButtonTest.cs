@@ -135,11 +135,13 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			Assert.AreEqual (2, p.Attributes.Count, "A1");
 #endif
 
+			tw.WriteBeginTag ("dummy");
 			p.DoRenderAttributes (tw);
+			tw.Write ('>');
 #if NET_2_0
-			HtmlDiff.AssertAreEqual (" name type=\"button\" ValidationGroup=\"VG\" /", sw.ToString (), "A2");
+			HtmlDiff.AssertAreEqual ("<dummy name type=\"button\" ValidationGroup=\"VG\" />", sw.ToString (), "A2");
 #else
-			HtmlDiff.AssertAreEqual (" name type=\"button\" /", sw.ToString (), "A2");
+			HtmlDiff.AssertAreEqual ("<dummy name type=\"button\" />", sw.ToString (), "A2");
 #endif
 		}
 
