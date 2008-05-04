@@ -1,3 +1,9 @@
+2008-05-04  Andreas Faerber  <andreas.faerber@web.de>
+
+	* mono-membar.h: Prepare support for OSX/ppc64.
+
+	Contributed under MIT/X11 license.
+
 2008-04-16  Jonathan Chambers  <joncham@gmail.com>
 	* monobitset.c (find_first_unset): Use gsize instead of gulong for platform
 	  dependent size; fixes Win64.
