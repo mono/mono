@@ -1,5 +1,10 @@
 2008-05-03  Everaldo Canuto  <ecanuto@novell.com>
 
+	* Form.cs: Remove menu before close form to prevent form to be not gaced.
+	[Fixes #386460]
+
+2008-05-03  Everaldo Canuto  <ecanuto@novell.com>
+
 	* MenuAPI.cs: Dispose popup window after hide. Thanks to Jesse Jones.
 	[Fixes #386463]
 

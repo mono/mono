@@ -1619,9 +1619,12 @@ namespace System.Windows.Forms {
 
 			if (!IsHandleCreated)
 				return;
+ 
+			if (Menu != null)
+				XplatUI.SetMenu (window.Handle, null);
 
 			XplatUI.SendMessage(this.Handle, Msg.WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
-			
+
 			closed = true;
 		}
 
