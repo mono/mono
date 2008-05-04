@@ -1,3 +1,9 @@
+2008-05-04  Andreas Färber  <andreas.faerber@web.de>
+
+	* helpers.c: Add support for OSX/ppc64 and Linux/ppc64 (dis)assemblers.
+
+	Contributed under MIT/X11 license.
+
 2008-05-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c (load_aot_module): Avoid trying to load aot code for dynamic
