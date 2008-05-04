@@ -71,6 +71,7 @@ namespace System.Windows.Forms
 		private LinkArea link_area;
 		private LinkBehavior link_behavior;
 		private LinkCollection link_collection;
+		private ArrayList links = new ArrayList();
 		internal Link[] sorted_links;
 		private bool link_visited;
 		internal Piece[] pieces;
@@ -917,7 +918,6 @@ namespace System.Windows.Forms
 		public class LinkCollection :  IList, ICollection, IEnumerable
 		{
 			private LinkLabel owner;
-			private ArrayList collection = new ArrayList();
 
 			public LinkCollection (LinkLabel owner)
 			{
@@ -929,7 +929,7 @@ namespace System.Windows.Forms
 
 			[Browsable (false)]
 			public int Count {
-				get { return collection.Count; }
+				get { return owner.links.Count; }
 			}
 
 			public bool IsReadOnly {
@@ -941,13 +941,13 @@ namespace System.Windows.Forms
 					if (index < 0 || index >= Count)
 						throw  new  ArgumentOutOfRangeException();
 
-					return (LinkLabel.Link) collection[index];
+					return (LinkLabel.Link) owner.links[index];
 				}
 				set {
 					if (index < 0 || index >= Count)
 						throw new  ArgumentOutOfRangeException();
 
-					collection[index] = value;
+					owner.links[index] = value;
 				}
 			}
 
@@ -957,7 +957,7 @@ namespace System.Windows.Forms
 					if (string.IsNullOrEmpty (key))
 						return null;
 						
-					foreach (Link l in collection)
+					foreach (Link l in owner.links)
 						if (string.Compare (l.Name, key, true) == 0)
 							return l;
 							
@@ -975,10 +975,10 @@ namespace System.Windows.Forms
 				/* remove the default 0,-1 link */
 				if (IsDefault) {
 					/* don't call Clear() here to save the additional CreateLinkPieces */
-					collection.Clear ();
+					owner.links.Clear ();
 				}
 
-				int idx = collection.Add (value);
+				int idx = owner.links.Add (value);
 
 				owner.sorted_links = null;
 				owner.CheckLinks ();
@@ -1009,19 +1009,19 @@ namespace System.Windows.Forms
 
 				int idx = Add (link);
 
-				return (Link) collection[idx];
+				return (Link) owner.links[idx];
 			}
 
 			public virtual void Clear ()
 			{
-				collection.Clear();
+				owner.links.Clear();
 				owner.sorted_links = null;
 				owner.CreateLinkPieces ();
 			}
 
 			public bool Contains (Link link)
 			{
-				return collection.Contains (link);
+				return owner.links.Contains (link);
 			}
 
 #if NET_2_0
@@ -1033,12 +1033,12 @@ namespace System.Windows.Forms
 
 			public IEnumerator GetEnumerator ()
 			{
-				return collection.GetEnumerator ();
+				return owner.links.GetEnumerator ();
 			}
 
 			public int IndexOf (Link link)
 			{
-				return collection.IndexOf (link);
+				return owner.links.IndexOf (link);
 			}
 
 #if NET_2_0
@@ -1057,7 +1057,7 @@ namespace System.Windows.Forms
 
 			public void Remove (LinkLabel.Link value)
 			{
-				collection.Remove (value);
+				owner.links.Remove (value);
 				owner.sorted_links = null;
 				owner.CreateLinkPieces ();
 			}
@@ -1074,7 +1074,7 @@ namespace System.Windows.Forms
 				if (index >= Count)
 					throw new ArgumentOutOfRangeException ("Invalid value for array index");
 
-				collection.Remove (collection[index]);
+				owner.links.Remove (owner.links[index]);
 				owner.sorted_links = null;
 				owner.CreateLinkPieces ();
 			}
@@ -1084,8 +1084,8 @@ namespace System.Windows.Forms
 			}
 
 			object IList.this[int index] {
-				get { return collection[index]; }
-				set { collection[index] = value; }
+				get { return owner.links[index]; }
+				set { owner.links[index] = value; }
 			}
 
 			object ICollection.SyncRoot {
@@ -1098,12 +1098,12 @@ namespace System.Windows.Forms
 
 			void ICollection.CopyTo (Array dest, int index)
 			{
-				collection.CopyTo (dest, index);
+				owner.links.CopyTo (dest, index);
 			}
 
 			int IList.Add (object value)
 			{
-				int idx = collection.Add (value);
+				int idx = owner.links.Add (value);
 				owner.sorted_links = null;
 				owner.CheckLinks ();
 				owner.CreateLinkPieces ();
@@ -1117,12 +1117,12 @@ namespace System.Windows.Forms
 
 			int IList.IndexOf (object link)
 			{
-				return collection.IndexOf (link);
+				return owner.links.IndexOf (link);
 			}
 
 			void IList.Insert (int index, object value)
 			{
-				collection.Insert (index, value);
+				owner.links.Insert (index, value);
 				owner.sorted_links = null;
 				owner.CheckLinks ();
 				owner.CreateLinkPieces ();

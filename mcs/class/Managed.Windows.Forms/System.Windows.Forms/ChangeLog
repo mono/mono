@@ -1,3 +1,8 @@
+2008-05-04  Everaldo Canuto  <ecanuto@novell.com>
+
+	* LinkLabel.cs: Move links collection from LinkCollection to LinkLabel
+	and refer all instances to owner.links. Partially fixes #346154.
+
 2008-05-03  Everaldo Canuto  <ecanuto@novell.com>
 
 	* LinkLabel.cs: Fix linkarea values for empty text, must have start and 
