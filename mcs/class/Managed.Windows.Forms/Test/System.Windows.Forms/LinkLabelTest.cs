@@ -121,7 +121,6 @@ namespace MonoTests.System.Windows.Forms
 	public class LinkCollectionTest
 	{
 		[Test] // ctor (LinkLabel)
-		[Category ("NotWorking")]
 		public void Constructor1 ()
 		{
 			LinkLabel l = new LinkLabel ();
@@ -180,7 +179,6 @@ namespace MonoTests.System.Windows.Forms
 
 #if NET_2_0
 		[Test] // Add (LinkLabel.Link)
-		[Category ("NotWorking")] // bug #346154
 		public void Add1 ()
 		{
 			LinkLabel l = new LinkLabel ();
@@ -296,7 +294,6 @@ namespace MonoTests.System.Windows.Forms
 #endif
 
 		[Test] // Add (int, int)
-		[Category ("NotWorking")] // bug #346154
 		public void Add2 ()
 		{
 			LinkLabel l = new LinkLabel ();
