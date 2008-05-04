@@ -37,7 +37,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
 		public void TestLinkArea ()
 		{
 			LinkLabel l = new LinkLabel();

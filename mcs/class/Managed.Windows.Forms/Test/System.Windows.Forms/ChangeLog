@@ -1,3 +1,8 @@
+2008-05-03  Everaldo Canuto  <ecanuto@novell.com>
+
+	* LinkLabelTest.cs: Remove NotWorking attribute from TestLinkArea, it is
+	fixed in r102445.
+
 2008-05-01  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridViewRowCollectionTest.cs: Disable test requiring shared rows.
