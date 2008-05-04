@@ -1,3 +1,8 @@
+2008-05-04  Marek Safar  <marek.safar@gmail.com>
+
+	* nullable.cs, statement.cs (Unwrap): Don't duplicate variable expressions,
+	it saves many redundant temporary variables for nullable operations.
+
 2008-05-03  Marek Safar  <marek.safar@gmail.com>
 
 	* assign.cs: EventAddOrRemove is a statement and cannot have a type.

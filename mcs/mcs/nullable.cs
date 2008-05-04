@@ -87,7 +87,6 @@ namespace Mono.CSharp.Nullable
 		NullableInfo info;
 
 		LocalTemporary temp;
-		bool has_temp;
 
 		protected Unwrap (Expression expr)
 		{
@@ -109,8 +108,6 @@ namespace Mono.CSharp.Nullable
 		{
 			if (expr == null)
 				return null;
-
-			temp = new LocalTemporary (expr.Type);
 
 			info = new NullableInfo (expr.Type);
 			type = info.UnderlyingType;
@@ -166,41 +163,45 @@ namespace Mono.CSharp.Nullable
 
 		public void Store (EmitContext ec)
 		{
-			create_temp (ec);
+			if (expr is VariableReference)
+				return;
+
+			expr.Emit (ec);
+			LocalVariable.Store (ec);
 		}
 
-		void create_temp (EmitContext ec)
+		public void Load (EmitContext ec)
 		{
-			if ((temp != null) && !has_temp) {
+			if (expr is VariableReference)
 				expr.Emit (ec);
-				temp.Store (ec);
-				has_temp = true;
-			}
-		}
-
-		public void LoadTemporary (EmitContext ec)
-		{
-			temp.Emit (ec);
+			else
+				LocalVariable.Emit (ec);
 		}
 
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
-			create_temp (ec);
-			if (temp != null)
-				temp.AddressOf (ec, AddressOp.LoadStore);
+			IMemoryLocation ml = expr as VariableReference;
+			if (ml != null) 
+				ml.AddressOf (ec, mode);
 			else
-				((IMemoryLocation) expr).AddressOf (ec, AddressOp.LoadStore);
+				LocalVariable.AddressOf (ec, mode);
+		}
+
+		//
+		// Keeps result of non-variable expression
+		//
+		LocalTemporary LocalVariable {
+			get {
+				if (temp == null)
+					temp = new LocalTemporary (info.Type);
+				return temp;
+			}
 		}
 
 		public void Emit (EmitContext ec, bool leave_copy)
 		{
-			create_temp (ec);
-			if (leave_copy) {
-				if (temp != null)
-					temp.Emit (ec);
-				else
-					expr.Emit (ec);
-			}
+			if (leave_copy)
+				Load (ec);
 
 			Emit (ec);
 		}
@@ -649,16 +650,16 @@ namespace Mono.CSharp.Nullable
 			ig.MarkLabel (load_left);
 
 			if (Oper == Operator.BitwiseAnd) {
-				left_unwrap.LoadTemporary (ec);
+				left_unwrap.Load (ec);
 			} else {
-				right_unwrap.LoadTemporary (ec);
+				right_unwrap.Load (ec);
 				right_unwrap = left_unwrap;
 			}
 			ig.Emit (OpCodes.Br_S, end_label);
 
 			// load right
 			ig.MarkLabel (load_right);
-			right_unwrap.LoadTemporary (ec);
+			right_unwrap.Load (ec);
 
 			ig.MarkLabel (end_label);
 		}
@@ -1083,7 +1084,7 @@ namespace Mono.CSharp.Nullable
 	public class LiftedUnaryMutator : ExpressionStatement
 	{
 		public readonly UnaryMutator.Mode Mode;
-		Expression expr, null_value;
+		Expression expr;
 		UnaryMutator underlying;
 		Unwrap unwrap;
 
@@ -1116,7 +1117,6 @@ namespace Mono.CSharp.Nullable
 				return null;
 
 			type = expr.Type;
-			null_value = LiftedNull.Create (type, loc);
 			return this;
 		}
 
@@ -1126,18 +1126,20 @@ namespace Mono.CSharp.Nullable
 			Label is_null_label = ig.DefineLabel ();
 			Label end_label = ig.DefineLabel ();
 
+			unwrap.Store (ec);
 			unwrap.EmitCheck (ec);
 			ig.Emit (OpCodes.Brfalse, is_null_label);
 
-			if (is_expr)
+			if (is_expr) {
 				underlying.Emit (ec);
-			else
+				ig.Emit (OpCodes.Br_S, end_label);
+			} else {
 				underlying.EmitStatement (ec);
-			ig.Emit (OpCodes.Br, end_label);
+			}
 
 			ig.MarkLabel (is_null_label);
 			if (is_expr)
-				null_value.Emit (ec);
+				LiftedNull.Create (type, loc).Emit (ec);
 
 			ig.MarkLabel (end_label);
 		}

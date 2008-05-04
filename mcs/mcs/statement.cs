@@ -3712,6 +3712,7 @@ namespace Mono.CSharp {
 			if (HaveUnwrap) {
 				value = ig.DeclareLocal (SwitchType);
 #if GMCS_SOURCE
+				unwrap.Store (ec);
 				unwrap.EmitCheck (ec);
 				ig.Emit (OpCodes.Brfalse, null_target);
 				new_expr.Emit (ec);
