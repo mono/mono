@@ -919,6 +919,7 @@ namespace System.Windows.Forms
 		public class LinkCollection :  IList, ICollection, IEnumerable
 		{
 			private LinkLabel owner;
+			private bool links_added = false;
 
 			public LinkCollection (LinkLabel owner)
 			{
@@ -980,6 +981,7 @@ namespace System.Windows.Forms
 				}
 
 				int idx = owner.links.Add (value);
+				links_added = true;
 
 				owner.sorted_links = null;
 				owner.CheckLinks ();
@@ -1052,7 +1054,7 @@ namespace System.Windows.Forms
 			}
 			
 			public bool LinksAdded {
-				get { return !IsDefault; }
+				get { return this.links_added; }
 			}
 #endif
 
