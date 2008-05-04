@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">  
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -115,7 +115,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-RefInfo-rt="repository:jre:sun:1.6.0" REFS-JarPath-rt="" REFS-JarPath-system="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system-data="" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-JarPath-system-xml="" REFS-RefInfo-system-xml="repository:vmw:framework:2.0" />
+      <UserProperties REFS-RefInfo-system-xml="repository:vmw:framework:2.0" REFS-JarPath-system-xml="" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-JarPath-system-data="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system="" REFS-JarPath-rt="" REFS-RefInfo-rt="repository:jre:sun:1.6.0" />
     </VisualStudio>
   </ProjectExtensions>
   <ItemGroup>
@@ -176,13 +176,11 @@
     <Compile Include="System.Linq.jvm\ExpressionValidator.cs" />
     <Compile Include="System.Linq.jvm\Interpreter.cs" />
     <Compile Include="System.Linq.jvm\Math.cs" />
-    <Compile Include="System.Linq\AOrderedEnumerable.cs" />
     <Compile Include="System.Linq\Check.cs" />
     <Compile Include="System.Linq\Enumerable.cs" />
     <Compile Include="System.Linq\Grouping.cs" />
     <Compile Include="System.Linq\IGrouping.cs" />
     <Compile Include="System.Linq\ILookup_T.cs" />
-    <Compile Include="System.Linq\InternalOrderedSequence.cs" />
     <Compile Include="System.Linq\IOrderedEnumerable_T.cs" />
     <Compile Include="System.Linq\IOrderedQueryable.cs" />
     <Compile Include="System.Linq\IOrderedQueryable_T.cs" />
@@ -190,7 +188,13 @@
     <Compile Include="System.Linq\IQueryable_T.cs" />
     <Compile Include="System.Linq\IQueryProvider.cs" />
     <Compile Include="System.Linq\Lookup.cs" />
+    <Compile Include="System.Linq\OrderedEnumerable.cs" />
+    <Compile Include="System.Linq\OrderedSequence.cs" />
     <Compile Include="System.Linq\Queryable.cs" />
+    <Compile Include="System.Linq\QuickSort.cs" />
+    <Compile Include="System.Linq\SortContext.cs" />
+    <Compile Include="System.Linq\SortDirection.cs" />
+    <Compile Include="System.Linq\SortSequenceContext.cs" />
     <Compile Include="System.Runtime.CompilerServices\ExecutionScope.cs" />
     <Compile Include="System.Runtime.CompilerServices\ExtensionAttribute.cs" />
     <Compile Include="System.Runtime.CompilerServices\IStrongBox.cs" />
