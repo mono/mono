@@ -1,3 +1,8 @@
+2008-05-04  Robert Jordan  <robertj@gmx.net>
+
+	* libtest.c: disable struct tests for platforms with incompatible
+	native/managed alignments.
+
 2008-05-03  Robert Jordan  <robertj@gmx.net>
 
 	* libtest.c, thunks.cs: tests for mono_method_get_unmanaged_thunk ().
