@@ -1,5 +1,10 @@
 2008-05-04  Everaldo Canuto  <ecanuto@novell.com>
 
+	* LinkLabel.cs: Set default value of name on constructor of Link class
+	only for 2.0 profile.
+
+2008-05-04  Everaldo Canuto  <ecanuto@novell.com>
+
 	* LinkLabel.cs: Fix implementation of LinkCollection.LinksAdded property.
 	Fixes remaining issues of bug #346154.
 

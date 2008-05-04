@@ -742,10 +742,12 @@ namespace System.Windows.Forms
 				enabled = true;
 				visited = false;
 				length = start = 0;
-				name = string.Empty;
 				linkData = null;
 				this.owner = owner;
 				pieces = new ArrayList ();
+#if NET_2_0
+				name = string.Empty;
+#endif
 			}
 
 #if NET_2_0
