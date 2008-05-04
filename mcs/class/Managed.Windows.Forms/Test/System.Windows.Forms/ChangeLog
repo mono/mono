@@ -1,5 +1,10 @@
 2008-05-03  Everaldo Canuto  <ecanuto@novell.com>
 
+	* LinkLabelTest.cs: Put LinkTest and LinkCollectionTest classes outside of 
+	LinkLabelTest class, subclasses looks to be not work with nunit.
+
+2008-05-03  Everaldo Canuto  <ecanuto@novell.com>
+
 	* LinkLabelTest.cs: Remove NotWorking attribute from TestLinkArea, it is
 	fixed in r102445.
 
