@@ -1,3 +1,8 @@
+2008-05-04 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* WebControlTest.cs: make tests compatible with Windows
+	by considering end of lines chars.	 
+
 2008-04-08  Dean Brettle <dean@brettle.com>
 
 	* DataBoundControlTest.cs, HierarchicalDataBoundControlTest.cs,

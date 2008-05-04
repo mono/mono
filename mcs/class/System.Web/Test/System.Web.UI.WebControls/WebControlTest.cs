@@ -722,7 +722,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			StringWriter sw = new StringWriter ();
 			HtmlTextWriter w = new HtmlTextWriter (sw);			
 			c.DoRender (w);
-			Assert.AreEqual ("RenderBeginTag\nRenderContents\nRenderEndTag\n", sw.ToString (), "RenderWithWebControlAdapter #1");
+			Assert.AreEqual ("RenderBeginTag\nRenderContents\nRenderEndTag\n", sw.ToString ().Replace ("\r\n", "\n"), "RenderWithWebControlAdapter #1");
 		}
 
 		[Test]
@@ -733,7 +733,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			StringWriter sw = new StringWriter ();
 			HtmlTextWriter w = new HtmlTextWriter (sw);			
 			c.DoRender (w);
-			Assert.AreEqual ("MyControlAdapter.Render\n", sw.ToString (), "RenderWithControlAdapter #1");
+			Assert.AreEqual ("MyControlAdapter.Render\n", sw.ToString ().Replace ("\r\n", "\n"), "RenderWithControlAdapter #1");
 		}
 
 		[Test]
