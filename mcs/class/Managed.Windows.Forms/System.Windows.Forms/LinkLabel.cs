@@ -742,6 +742,7 @@ namespace System.Windows.Forms
 				enabled = true;
 				visited = false;
 				length = start = 0;
+				name = string.Empty;
 				linkData = null;
 				this.owner = owner;
 				pieces = new ArrayList ();

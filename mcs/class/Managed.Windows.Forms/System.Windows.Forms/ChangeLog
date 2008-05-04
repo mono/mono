@@ -1,5 +1,10 @@
 2008-05-04  Everaldo Canuto  <ecanuto@novell.com>
 
+	* LinkLabel.cs: Set a default value for name on internal contructor of
+	Link class. It fixes assert B5 of LinkCollectionTest.Constructor1.
+
+2008-05-04  Everaldo Canuto  <ecanuto@novell.com>
+
 	* LinkLabel.cs: Move links collection from LinkCollection to LinkLabel
 	and refer all instances to owner.links. Partially fixes #346154.
 
