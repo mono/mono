@@ -127,7 +127,7 @@ namespace System.Windows.Forms
 				| ControlStyles.DoubleBuffer
 #endif
 				, true);
-
+			CreateLinkPieces ();
 		}
 
 		#region Public Properties
@@ -609,6 +609,8 @@ namespace System.Windows.Forms
 			if (Text.Length == 0) {
 				SetStyle (ControlStyles.Selectable, false);
 				TabStop = false;
+				link_area.Start = 0;
+				link_area.Length = 0;
 				return;
 			}
 			
