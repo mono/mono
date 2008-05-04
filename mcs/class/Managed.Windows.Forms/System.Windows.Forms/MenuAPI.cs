@@ -426,7 +426,10 @@ namespace System.Windows.Forms {
 				return;
 
 			PopUpWindow puw = menu.Wnd as PopUpWindow;
-			puw.Hide ();
+			if (puw != null) {
+				puw.Hide ();
+				puw.Dispose ();
+			}
 			menu.Wnd = null;
 
 #if NET_2_0
