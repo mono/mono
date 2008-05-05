@@ -1,3 +1,14 @@
+2008-05-06  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: compatibility - added the
+	__stringResource static field to the generated class and a call to
+	SetStringResourcePointer to the FrameworkInitialize method.
+
+	* PageCompiler.cs: __fileDependencies should also be defined in
+	the 1.x profile.
+	Page properties assigned in the page directive should be set
+	inside BuildControlTree in the 2.0 profile.
+
 2008-04-29  Marek Habersack  <mhabersack@novell.com>
 
 	* WebServiceCompiler.cs: if compiling a body-less web service, try

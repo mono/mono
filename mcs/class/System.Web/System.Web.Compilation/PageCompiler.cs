@@ -54,17 +54,21 @@ namespace System.Web.Compilation
 			this.pageParser = pageParser;
 		}
 
-#if NET_2_0
 		protected override void CreateStaticFields ()
 		{
 			base.CreateStaticFields ();
 			
-			CodeMemberField fld = new CodeMemberField (typeof (object), "__fileDependencies");
+			CodeMemberField fld = new CodeMemberField (
+#if NET_2_0
+				typeof (object),
+#else
+				typeof (ArrayList),
+#endif
+				"__fileDependencies");
 			fld.Attributes = MemberAttributes.Private | MemberAttributes.Static;
 			fld.InitExpression = new CodePrimitiveExpression (null);
 			mainClass.Members.Add (fld);
 		}
-#endif
 		
 		protected override void CreateConstructor (CodeStatementCollection localVars,
 							   CodeStatementCollection trueStmt)
@@ -78,7 +82,6 @@ namespace System.Web.Compilation
 				localVars.Add (new CodeAssignStatement (prop, ct));
 			}
 
-#if NET_2_0
 			ArrayList deps = pageParser.Dependencies;
 			int depsCount = deps != null ? deps.Count : 0;
 			
@@ -88,6 +91,8 @@ namespace System.Web.Compilation
 				if (trueStmt == null)
 					trueStmt = new CodeStatementCollection ();
 
+				CodeAssignStatement assign;
+#if NET_2_0
 				localVars.Add (
 					new CodeVariableDeclarationStatement (
 						typeof (string[]),
@@ -100,7 +105,6 @@ namespace System.Web.Compilation
 				);
 				
 				CodeArrayIndexerExpression arrayIndex;
-				CodeAssignStatement assign;
 				object o;
 				
 				for (int i = 0; i < depsCount; i++) {
@@ -115,11 +119,29 @@ namespace System.Web.Compilation
 					"GetWrappedFileDependencies",
 					new CodeExpression[] {dependencies}
 				);
-
 				assign = new CodeAssignStatement (GetMainClassFieldReferenceExpression ("__fileDependencies"), getDepsCall);
+#else
+				localVars.Add (new CodeVariableDeclarationStatement (
+						typeof (ArrayList),
+						"dependencies")
+				);
+
+				CodeVariableReferenceExpression dependencies = new CodeVariableReferenceExpression ("dependencies");
+				trueStmt.Add (
+					new CodeAssignStatement (dependencies, new CodeObjectCreateExpression (typeof (ArrayList), new CodeExpression[] {new CodePrimitiveExpression (depsCount)}))
+				);
+
+				CodeMethodInvokeExpression invoke;
+				for (int i = 0; i < depsCount; i++) {
+					invoke = new CodeMethodInvokeExpression (dependencies, "Add", new CodeExpression[] {new CodePrimitiveExpression (deps [i])});
+					trueStmt.Add (invoke);
+				}
+				assign = new CodeAssignStatement (GetMainClassFieldReferenceExpression ("__fileDependencies"), dependencies);
+#endif
+
 				trueStmt.Add (assign);
 			}
-#endif
+
 			base.CreateConstructor (localVars, trueStmt);
 		}
 		
@@ -181,65 +203,8 @@ namespace System.Web.Compilation
 			return CreatePropertyAssign (thisRef, name, value);
 		}
 
-		protected override void AddStatementsToInitMethod (CodeMemberMethod method)
+		void AddStatementsFromDirective (CodeMemberMethod method)
 		{
-#if NET_2_0
-			ILocation directiveLocation = pageParser.DirectiveLocation;
-			
-			CodeArgumentReferenceExpression ctrlVar = new CodeArgumentReferenceExpression("__ctrl");
-			if (pageParser.Title != null)
-				method.Statements.Add (AddLinePragma (CreatePropertyAssign (ctrlVar, "Title", pageParser.Title), directiveLocation));
-
-			if (pageParser.MasterPageFile != null)
-				method.Statements.Add (AddLinePragma (CreatePropertyAssign (ctrlVar, "MasterPageFile", pageParser.MasterPageFile), directiveLocation));
-
-			if (pageParser.Theme != null)
-				method.Statements.Add (AddLinePragma (CreatePropertyAssign (ctrlVar, "Theme", pageParser.Theme), directiveLocation));
-
-			if (pageParser.StyleSheetTheme != null)
-				method.Statements.Add (AddLinePragma (CreatePropertyAssign (ctrlVar, "StyleSheetTheme", pageParser.StyleSheetTheme), directiveLocation));
-
-			if (pageParser.Async != false)
-				method.Statements.Add (AddLinePragma (CreatePropertyAssign (ctrlVar, "AsyncMode", pageParser.Async), directiveLocation));
-
-			if (pageParser.AsyncTimeout != -1)
-				method.Statements.Add (AddLinePragma (CreatePropertyAssign (ctrlVar, "AsyncTimeout",
-											    TimeSpan.FromSeconds (pageParser.AsyncTimeout)), directiveLocation));
-
-			CodeMethodInvokeExpression expr = new CodeMethodInvokeExpression (thisRef, "InitializeCulture");
-			method.Statements.Add (AddLinePragma (new CodeExpressionStatement (expr), directiveLocation));
-#endif
-		}
-
-		protected override void PrependStatementsToFrameworkInitialize (CodeMemberMethod method)
-		{
-			base.PrependStatementsToFrameworkInitialize (method);
-#if NET_2_0
-			if (pageParser.StyleSheetTheme != null)
-				method.Statements.Add (CreatePropertyAssign ("StyleSheetTheme", pageParser.StyleSheetTheme));
-#endif
-		}
-
-		protected override void AppendStatementsToFrameworkInitialize (CodeMemberMethod method)
-		{
-			base.AppendStatementsToFrameworkInitialize (method);
-			
-#if NET_2_0
-			ArrayList deps = pageParser.Dependencies;
-			int depsCount = deps != null ? deps.Count : 0;
-			
-			if (depsCount > 0) {
-				CodeFieldReferenceExpression fileDependencies = GetMainClassFieldReferenceExpression ("__fileDependencies");
-
-				method.Statements.Add (
-					new CodeMethodInvokeExpression (
-						thisRef,
-						"AddWrappedFileDependencies",
-						new CodeExpression[] {fileDependencies})
-				);
-			}
-#endif
-			
 			string responseEncoding = pageParser.ResponseEncoding;
 			if (responseEncoding != null)
 				method.Statements.Add (CreatePropertyAssign ("ResponseEncoding", responseEncoding));
@@ -298,15 +263,6 @@ namespace System.Web.Compilation
                                 method.Statements.Add (stmt);
                         }
 
-#if NET_1_1
-			if (pageParser.ValidateRequest) {
-				CodeMethodInvokeExpression expr = new CodeMethodInvokeExpression ();
-                                CodePropertyReferenceExpression prop;
-                                prop = new CodePropertyReferenceExpression (thisRef, "Request");
-				expr.Method = new CodeMethodReferenceExpression (prop, "ValidateInput");
-				method.Statements.Add (expr);
-			}
-#endif
 #if NET_2_0
 			if (!pageParser.EnableEventValidation) {
                                 CodeAssignStatement stmt = new CodeAssignStatement ();
@@ -324,6 +280,88 @@ namespace System.Web.Compilation
 				stmt.Left = prop;
 				stmt.Right = new CodePrimitiveExpression (pageParser.MaintainScrollPositionOnPostBack);
 				method.Statements.Add (stmt);
+			}
+#endif
+		}
+		
+		protected override void AddStatementsToInitMethod (CodeMemberMethod method)
+		{
+#if NET_2_0
+			AddStatementsFromDirective (method);
+			ILocation directiveLocation = pageParser.DirectiveLocation;
+
+			CodeArgumentReferenceExpression ctrlVar = new CodeArgumentReferenceExpression("__ctrl");
+			if (pageParser.Title != null)
+				method.Statements.Add (AddLinePragma (CreatePropertyAssign (ctrlVar, "Title", pageParser.Title), directiveLocation));
+
+			if (pageParser.MasterPageFile != null)
+				method.Statements.Add (AddLinePragma (CreatePropertyAssign (ctrlVar, "MasterPageFile", pageParser.MasterPageFile), directiveLocation));
+
+			if (pageParser.Theme != null)
+				method.Statements.Add (AddLinePragma (CreatePropertyAssign (ctrlVar, "Theme", pageParser.Theme), directiveLocation));
+
+			if (pageParser.StyleSheetTheme != null)
+				method.Statements.Add (AddLinePragma (CreatePropertyAssign (ctrlVar, "StyleSheetTheme", pageParser.StyleSheetTheme), directiveLocation));
+
+			if (pageParser.Async != false)
+				method.Statements.Add (AddLinePragma (CreatePropertyAssign (ctrlVar, "AsyncMode", pageParser.Async), directiveLocation));
+
+			if (pageParser.AsyncTimeout != -1)
+				method.Statements.Add (AddLinePragma (CreatePropertyAssign (ctrlVar, "AsyncTimeout",
+											    TimeSpan.FromSeconds (pageParser.AsyncTimeout)), directiveLocation));
+
+			CodeMethodInvokeExpression expr = new CodeMethodInvokeExpression (thisRef, "InitializeCulture");
+			method.Statements.Add (AddLinePragma (new CodeExpressionStatement (expr), directiveLocation));
+#endif
+		}
+
+		protected override void PrependStatementsToFrameworkInitialize (CodeMemberMethod method)
+		{
+			base.PrependStatementsToFrameworkInitialize (method);
+#if NET_2_0
+			if (pageParser.StyleSheetTheme != null)
+				method.Statements.Add (CreatePropertyAssign ("StyleSheetTheme", pageParser.StyleSheetTheme));
+#endif
+		}
+
+		
+		protected override void AppendStatementsToFrameworkInitialize (CodeMemberMethod method)
+		{
+			base.AppendStatementsToFrameworkInitialize (method);
+
+			ArrayList deps = pageParser.Dependencies;
+			int depsCount = deps != null ? deps.Count : 0;
+
+			if (depsCount > 0) {
+				CodeFieldReferenceExpression fileDependencies = GetMainClassFieldReferenceExpression ("__fileDependencies");
+
+				method.Statements.Add (
+#if NET_2_0
+					new CodeMethodInvokeExpression (
+						thisRef,
+						"AddWrappedFileDependencies",
+						new CodeExpression[] {fileDependencies})
+#else
+					new CodeAssignStatement (
+						new CodeFieldReferenceExpression (thisRef, "FileDependencies"),
+						fileDependencies
+					)
+#endif
+				);
+
+			}			
+
+#if ONLY_1_1
+			AddStatementsFromDirective (method);
+#endif
+			
+#if NET_1_1
+			if (pageParser.ValidateRequest) {
+				CodeMethodInvokeExpression expr = new CodeMethodInvokeExpression ();
+                                CodePropertyReferenceExpression prop;
+                                prop = new CodePropertyReferenceExpression (thisRef, "Request");
+				expr.Method = new CodeMethodReferenceExpression (prop, "ValidateInput");
+				method.Statements.Add (expr);
 			}
 #endif
 		}

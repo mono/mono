@@ -1,3 +1,10 @@
+2008-05-06  Marek Habersack  <mhabersack@novell.com>
+
+	* Calendar.cs: do not create dateInfo in the constructor - culture
+	might be not set yet at this point. Fixes bug #323566
+	Added a private property, DateInfo, which creates the dateInfo
+	when requested.
+
 2008-05-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BulletedList.cs: Avoid calling ToString on a string.

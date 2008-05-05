@@ -1461,13 +1461,27 @@ namespace System.Web.Compilation
 			method.Statements.Add (invoke);
 		}
 
+		void CallSetStringResourcePointer (CodeMemberMethod method)
+		{
+			CodeFieldReferenceExpression stringResource = GetMainClassFieldReferenceExpression ("__stringResource");
+			method.Statements.Add (
+				new CodeMethodInvokeExpression (
+					thisRef,
+					"SetStringResourcePointer",
+					new CodeExpression[] {stringResource, new CodePrimitiveExpression (0)})
+			);
+		}
+		
 		void CreateFrameworkInitializeMethod ()
 		{
 			CodeMemberMethod method = new CodeMemberMethod ();
 			method.Name = "FrameworkInitialize";
 			method.Attributes = MemberAttributes.Family | MemberAttributes.Override;
 			PrependStatementsToFrameworkInitialize (method);
+#if NET_2_0
 			CallBaseFrameworkInitialize (method);
+#endif
+			CallSetStringResourcePointer (method);
 			AppendStatementsToFrameworkInitialize (method);
 			mainClass.Members.Add (method);
 		}
@@ -1503,6 +1517,16 @@ namespace System.Web.Compilation
 			}
 		}
 
+		protected override void CreateStaticFields ()
+		{
+			base.CreateStaticFields ();
+
+			CodeMemberField fld = new CodeMemberField (typeof (object), "__stringResource");
+			fld.Attributes = MemberAttributes.Private | MemberAttributes.Static;
+			fld.InitExpression = new CodePrimitiveExpression (null);
+			mainClass.Members.Add (fld);
+		}
+		
 		protected void ProcessObjectTag (ObjectTagBuilder tag)
 		{
 			string fieldName = CreateFieldForObject (tag.Type, tag.ObjectID);

@@ -73,7 +73,6 @@ namespace System.Web.UI.WebControls {
 
 		public Calendar ()
 		{
-			dateInfo = Thread.CurrentThread.CurrentCulture.DateTimeFormat;
 		}
 
 #if NET_2_0
@@ -636,6 +635,15 @@ namespace System.Web.UI.WebControls {
 
 
 		// Private properties
+		DateTimeFormatInfo DateInfo {
+			get {
+				if (dateInfo == null)
+					dateInfo = Thread.CurrentThread.CurrentCulture.DateTimeFormat;
+
+				return dateInfo;
+			}
+		}
+		
 		private DateTime DisplayDate {
 			get {
 				DateTime dateTime = VisibleDate;
@@ -651,7 +659,7 @@ namespace System.Web.UI.WebControls {
 				if (FirstDayOfWeek != FirstDayOfWeek.Default)
 					return (DayOfWeek)  FirstDayOfWeek;
 
-				return (DayOfWeek) dateInfo.FirstDayOfWeek;
+				return (DayOfWeek) DateInfo.FirstDayOfWeek;
 			}
 		}
 
@@ -935,9 +943,10 @@ namespace System.Web.UI.WebControls {
 				}
 			}
 
+			DateTimeFormatInfo dti = DateInfo;
 			while (true) {
 				DayOfWeek dayOfWeek = (DayOfWeek) i;
-				dayName = dateInfo.GetDayName (dayOfWeek);
+				dayName = dti.GetDayName (dayOfWeek);
 
 #if NET_2_0
 				if (UseAccessibleHeader) {
@@ -963,14 +972,14 @@ namespace System.Web.UI.WebControls {
 					break;
 #if NET_2_0
 				case DayNameFormat.Shortest:
-					dayName = dateInfo.GetShortestDayName (dayOfWeek);
+					dayName = dti.GetShortestDayName (dayOfWeek);
 					break;
 #endif
 				case DayNameFormat.Full:
 					break;
 				case DayNameFormat.Short:
 				default:
-					dayName = dateInfo.GetAbbreviatedDayName (dayOfWeek);
+					dayName = dti.GetAbbreviatedDayName (dayOfWeek);
 					break;
 				}
 
@@ -1184,6 +1193,7 @@ namespace System.Web.UI.WebControls {
 
 			// Current Month Table Data
 			{
+				DateTimeFormatInfo dti = DateInfo;
 				string str;
 				TableCell cellMonth = new TableCell ();
 				cellMonth.Width = Unit.Percentage (70);
@@ -1192,9 +1202,9 @@ namespace System.Web.UI.WebControls {
 				cellMonth.RenderBeginTag (writer);
 
 				if (TitleFormat == TitleFormat.MonthYear)
-					str = DisplayDate.ToString (dateInfo.YearMonthPattern, dateInfo);
+					str = DisplayDate.ToString (dti.YearMonthPattern, dti);
 				else
-					str = dateInfo.GetMonthName (GetGlobalCalendar ().GetMonth (DisplayDate));
+					str = dti.GetMonthName (GetGlobalCalendar ().GetMonth (DisplayDate));
 
 				writer.Write (str);
 				cellMonth.RenderEndTag (writer);
@@ -1221,12 +1231,13 @@ namespace System.Web.UI.WebControls {
 		private string GetNextPrevFormatText (DateTime date, bool next)
 		{
 			string text;
+			DateTimeFormatInfo dti = DateInfo;
 			switch (NextPrevFormat) {
 				case NextPrevFormat.FullMonth:
-					text = dateInfo.GetMonthName (GetGlobalCalendar ().GetMonth (date));
+					text = dti.GetMonthName (GetGlobalCalendar ().GetMonth (date));
 					break;
 				case NextPrevFormat.ShortMonth:
-					text = dateInfo.GetAbbreviatedMonthName (GetGlobalCalendar ().GetMonth (date));
+					text = dti.GetAbbreviatedMonthName (GetGlobalCalendar ().GetMonth (date));
 					break;
 				case NextPrevFormat.CustomText:
 				default:
