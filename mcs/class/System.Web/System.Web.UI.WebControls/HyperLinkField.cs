@@ -238,7 +238,7 @@ namespace System.Web.UI.WebControls {
 			if (DataTextField.Length > 0) {
 				textProperty = props [DataTextField];
 				if (textProperty == null)
-					new InvalidOperationException ("Property '" + DataTextField + "' not found in object of type " + item.GetType());
+					throw new InvalidOperationException ("Property '" + DataTextField + "' not found in object of type " + item.GetType());
 			}
 			
 			string[] urlFields = DataNavigateUrlFields;
@@ -247,7 +247,7 @@ namespace System.Web.UI.WebControls {
 				for (int n=0; n<urlFields.Length; n++) {
 					PropertyDescriptor prop = props [urlFields [n]];
 					if (prop == null)
-						new InvalidOperationException ("Property '" + urlFields [n] + "' not found in object of type " + item.GetType());
+						throw new InvalidOperationException ("Property '" + urlFields [n] + "' not found in object of type " + item.GetType());
 					urlProperties [n] = prop;
 				}
 			}

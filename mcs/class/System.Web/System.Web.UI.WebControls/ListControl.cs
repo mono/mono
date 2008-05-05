@@ -515,7 +515,7 @@ namespace System.Web.UI.WebControls {
 			for (int i = 0; i < Items.Count; i++) {
 				ListItem item = Items [i];
 				if (havePage)
-					Page.ClientScript.RegisterForEventValidation (this.UniqueID, item.Value.ToString ());
+					Page.ClientScript.RegisterForEventValidation (this.UniqueID, item.Value);
 				writer.WriteBeginTag ("option");
 				if (item.Selected) {
 					if (selected)

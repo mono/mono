@@ -1,3 +1,13 @@
+2008-05-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BulletedList.cs: Avoid calling ToString on a string.
+	* ButtonField.cs: Throw, not just create, the exceptions. 
+	* HyperLinkField.cs: Throw, not just create, the exceptions. 
+	* ImageField.cs: Throw, not just create, the exception. Avoid calling
+	ToString on a string.
+	* ListControl.cs: Avoid calling ToString on a string.
+	[All issues were found using Gendarme]
+
 2008-04-30  Marek Habersack  <mhabersack@novell.com>
 
 	* SiteMapDataSource.cs: when no starting node is found, return

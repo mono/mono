@@ -288,7 +288,7 @@ namespace System.Web.UI.WebControls {
 			IDataItemContainer dic = (IDataItemContainer) controlContainer;
 			PropertyDescriptor prop = TypeDescriptor.GetProperties (dic.DataItem) [fieldName];
 			if (prop == null)
-				new InvalidOperationException ("Property '" + fieldName + "' not found in object of type " + dic.DataItem.GetType());
+				throw new InvalidOperationException ("Property '" + fieldName + "' not found in object of type " + dic.DataItem.GetType());
 			return prop;
 		}
 		
@@ -315,7 +315,7 @@ namespace System.Web.UI.WebControls {
 			else if (c is Image) {
 				Image img = (Image)c;
 				string value =  FormatImageUrlValue (GetValue (cell.BindingContainer, DataImageUrlField, ref imageProperty));
-				if (value == null || (ConvertEmptyStringToNull && value.ToString ().Length == 0)) {
+				if (value == null || (ConvertEmptyStringToNull && value.Length == 0)) {
 					if (NullImageUrl == null || NullImageUrl.Length == 0) {
 						c.Visible = false;
 						Label label = new Label ();

@@ -155,7 +155,7 @@ namespace System.Web.UI.WebControls {
 			if (boundProperty == null) {
 				boundProperty = TypeDescriptor.GetProperties (dic.DataItem) [DataTextField];
 				if (boundProperty == null)
-					new InvalidOperationException ("Property '" + DataTextField + "' not found in object of type " + dic.DataItem.GetType());
+					throw new InvalidOperationException ("Property '" + DataTextField + "' not found in object of type " + dic.DataItem.GetType());
 			}
 			return boundProperty.GetValue (dic.DataItem);
 		}

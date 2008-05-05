@@ -180,7 +180,7 @@ namespace System.Web.UI.WebControls {
 			foreach (ListItem i in Items) {
 #if NET_2_0
 				if (havePage)
-					Page.ClientScript.RegisterForEventValidation (this.UniqueID, i.Value.ToString ());
+					Page.ClientScript.RegisterForEventValidation (this.UniqueID, i.Value);
 
 				if (i.HasAttributes)
 					i.Attributes.AddAttributes (writer);
