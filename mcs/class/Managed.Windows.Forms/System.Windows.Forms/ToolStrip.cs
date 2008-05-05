@@ -1573,6 +1573,9 @@ namespace System.Windows.Forms
 		{
 			ToolStripItem next_item = this.GetNextItem (start, forward ? ArrowDirection.Right : ArrowDirection.Left);
 			
+			if (next_item == null)
+				return next_item;
+				
 			this.ChangeSelection (next_item);
 
 			if (next_item is ToolStripControlHost)

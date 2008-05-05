@@ -200,6 +200,9 @@ namespace System.Windows.Forms
 			ToolStripManager.SetActiveToolStrip (this, true);
 			ToolStripItem tsi = this.SelectNextToolStripItem (null, true);
 			
+			if (tsi == null)
+				return false;
+				
 			if (tsi is MdiControlStrip.SystemMenuItem)
 				this.SelectNextToolStripItem (tsi, true);
 				
