@@ -108,11 +108,14 @@ namespace Mono.Cecil.Mdb {
 
 		void ReadScopes (MethodEntry entry, MethodBody body, IDictionary instructions)
 		{
-			foreach (LexicalBlockEntry scope in entry.LexicalBlocks) {
+			foreach (CodeBlockEntry cbe in entry.CodeBlocks) {
+				if (cbe.BlockType != CodeBlockEntry.Type.Lexical)
+					continue;
+
 				Scope s = new Scope ();
-				s.Start = GetInstruction (body, instructions, scope.StartOffset);
-				s.End = GetInstruction(body, instructions, scope.EndOffset);
-				m_scopes [scope.Index] = s;
+				s.Start = GetInstruction (body, instructions, cbe.StartOffset);
+				s.End = GetInstruction(body, instructions, cbe.EndOffset);
+				m_scopes [entry.Index] = s;
 
 				if (!AddScope (body, s))
 					body.Scopes.Add (s);

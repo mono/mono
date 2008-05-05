@@ -131,7 +131,7 @@ namespace Mono.Cecil.Mdb {
 		{
 			for (int i = 0; i < body.Variables.Count; i++) {
 				VariableDefinition var = body.Variables [i];
-				m_writer.DefineLocalVariable (i, var.Name, variables [i]);
+				m_writer.DefineLocalVariable (i, var.Name);
 			}
 		}
 
