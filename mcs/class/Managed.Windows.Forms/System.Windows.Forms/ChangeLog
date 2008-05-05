@@ -1,5 +1,10 @@
 2008-05-05  Everaldo Canuto  <ecanuto@novell.com>
 
+	* NotifyIcon.cs: Prevent click events to be trigger after double click 
+	events. Fixes remaining issues of bug #324832.
+
+2008-05-05  Everaldo Canuto  <ecanuto@novell.com>
+
 	* NotifyIcon.cs: Trigger click and mouseclick events after mouseup event
 	to mimic win32 behavior. Partially fixes bug #324832.
 

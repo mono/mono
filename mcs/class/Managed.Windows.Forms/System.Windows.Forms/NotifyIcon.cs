@@ -49,6 +49,7 @@ namespace System.Windows.Forms {
 		private NotifyIconWindow	window;
 		private bool			systray_active;
 		private ToolTip			tooltip;
+		private bool			double_click;
 #if NET_2_0
 		private string balloon_text;
 		private string balloon_title;
@@ -453,6 +454,7 @@ namespace System.Windows.Forms {
 
 		private void OnDoubleClick (EventArgs e)
 		{
+			double_click = true;
 			EventHandler eh = (EventHandler)(Events [DoubleClickEvent]);
 			if (eh != null)
 				eh (this, e);
@@ -493,11 +495,14 @@ namespace System.Windows.Forms {
 			MouseEventHandler eh = (MouseEventHandler)(Events [MouseUpEvent]);
 			if (eh != null)
 				eh (this, e);
-				
-			OnClick (EventArgs.Empty);
+
+			if (!double_click) {
+				OnClick (EventArgs.Empty);
 #if NET_2_0
-			OnMouseClick (e);
+				OnMouseClick (e);
 #endif
+				double_click = false;
+			}
 		}
 
 		private void OnMouseMove (MouseEventArgs e)
