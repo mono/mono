@@ -26,6 +26,8 @@ using System.ComponentModel;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace System.Windows.Forms {
 
@@ -61,6 +63,7 @@ namespace System.Windows.Forms {
 		int pending_add_index;
 
 		string filter;
+		string sort;
 
 		public BindingSource (IContainer container) : this ()
 		{
@@ -394,8 +397,72 @@ namespace System.Windows.Forms {
 
 		[DefaultValue (null)]
 		public string Sort {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				return sort;
+			}
+			set {
+				if (value == null || value.Length == 0) {
+					if (list_is_ibinding && SupportsSorting)
+						RemoveSort ();
+				
+					sort = value;
+					return;
+				}
+
+				if (!list_is_ibinding || !SupportsSorting)
+					throw new ArgumentException ("value");
+
+				ProcessSortString (value);
+				sort = value;
+			}
+		}
+
+		// NOTE: Probably the parsing can be improved
+		void ProcessSortString (string sort)
+		{
+			// Only keep simple whitespaces in the middle
+			sort = Regex.Replace (sort, "( )+", " ");
+
+			string [] properties = sort.Split (',');
+			PropertyDescriptorCollection prop_descs = GetItemProperties (null);
+			if (properties.Length == 1) {
+				ListSortDescription sort_desc = GetListSortDescription (prop_descs, properties [0]);
+				ApplySort (sort_desc.PropertyDescriptor, sort_desc.SortDirection);
+			} else {
+				if (!SupportsAdvancedSorting)
+					throw new ArgumentException ("value");
+
+				ListSortDescription [] sort_descs = new ListSortDescription [properties.Length];
+				for (int i = 0; i < properties.Length; i++)
+					sort_descs [i] = GetListSortDescription (prop_descs, properties [i]);
+
+				ApplySort (new ListSortDescriptionCollection (sort_descs));
+			}
+
+		}
+
+		public ListSortDescription GetListSortDescription (PropertyDescriptorCollection prop_descs, string property)
+		{
+			property = property.Trim ();
+			string [] p = property.Split (new char [] {' '}, 2);
+
+			string prop_name = p [0];
+			PropertyDescriptor prop_desc = prop_descs [prop_name];
+			if (prop_desc == null)
+				throw new ArgumentException ("value");
+
+			ListSortDirection sort_direction = ListSortDirection.Ascending;
+			if (p.Length > 1) {
+				string dir_s = p [1];
+				if (String.Compare (dir_s, "ASC", true) == 0)
+					sort_direction = ListSortDirection.Ascending;
+				else if (String.Compare (dir_s, "DESC", true) == 0)
+					sort_direction = ListSortDirection.Descending;
+				else
+					throw new ArgumentException ("value");
+			}
+
+			return new ListSortDescription (prop_desc, sort_direction);
 		}
 
 		[Browsable (false)]
@@ -586,13 +653,21 @@ namespace System.Windows.Forms {
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public virtual void ApplySort (PropertyDescriptor property, ListSortDirection sort)
 		{
-			throw new NotImplementedException ();
+			if (!list_is_ibinding)
+				throw new NotSupportedException ();
+
+			IBindingList iblist = (IBindingList)list;
+			iblist.ApplySort (property, sort);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public virtual void ApplySort (ListSortDescriptionCollection sorts)
 		{
-			throw new NotImplementedException ();
+			if (!(list is IBindingListView))
+				throw new NotSupportedException ();
+
+			IBindingListView iblist_view = (IBindingListView)list;
+			iblist_view.ApplySort (sorts);
 		}
 
 		public void CancelEdit ()
@@ -819,7 +894,10 @@ namespace System.Windows.Forms {
 
 		public virtual void RemoveSort ()
 		{
-			throw new NotImplementedException ();
+			if (!list_is_ibinding)
+				throw new NotSupportedException ();
+
+			((IBindingList)list).RemoveSort ();
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
