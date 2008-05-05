@@ -1,3 +1,9 @@
+2008-05-05  Andreas Färber  <andreas.faerber@web.de>
+
+	* mini-ops.h: Prepare support for ppc64.
+
+	Contributed under MIT/X11 license.
+
 2008-05-04  Andreas Färber  <andreas.faerber@web.de>
 
 	* helpers.c: Add support for OSX/ppc64 and Linux/ppc64 (dis)assemblers.
