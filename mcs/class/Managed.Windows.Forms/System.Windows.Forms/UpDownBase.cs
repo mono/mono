@@ -96,23 +96,19 @@ namespace System.Windows.Forms
 
 			private void redraw (Graphics graphics)
 			{
-				ButtonState top_button_state;
-				ButtonState bottom_button_state;
+				bool top_button_pressed = false;
+				bool bottom_button_pressed = false;
 
-				top_button_state = bottom_button_state = ButtonState.Normal;
 
 				if (mouse_pressed != 0) {
-					if ((mouse_pressed == 1) && top_button_rect.Contains(mouse_x, mouse_y)) {
-						top_button_state = ButtonState.Pushed;
-					}
+					if (mouse_pressed == 1 && top_button_rect.Contains(mouse_x, mouse_y))
+						top_button_pressed = true;
 
-					if ((mouse_pressed == 2) && bottom_button_rect.Contains(mouse_x, mouse_y)) {
-						bottom_button_state = ButtonState.Pushed;
-					}
+					if (mouse_pressed == 2 && bottom_button_rect.Contains(mouse_x, mouse_y))
+						bottom_button_pressed = true;
 				}
-
-				ControlPaint.DrawScrollButton(graphics, top_button_rect, ScrollButton.Up, top_button_state);
-				ControlPaint.DrawScrollButton(graphics, bottom_button_rect, ScrollButton.Down, bottom_button_state);
+				ThemeEngine.Current.UpDownBaseDrawButton (graphics, top_button_rect, true, top_button_pressed);
+				ThemeEngine.Current.UpDownBaseDrawButton (graphics, bottom_button_rect, false, bottom_button_pressed);
 			}
 
 			private void tmrRepeat_Tick (object sender, EventArgs e)

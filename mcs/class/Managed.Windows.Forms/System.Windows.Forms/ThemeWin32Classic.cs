@@ -5644,6 +5644,13 @@ namespace System.Windows.Forms
 
 		#endregion	// TrackBar
 
+		#region UpDownBase
+		public override void UpDownBaseDrawButton (Graphics g, Rectangle bounds, bool top, bool pressed)
+		{
+			ControlPaint.DrawScrollButton (g, bounds, top ? ScrollButton.Up : ScrollButton.Down, pressed ? ButtonState.Pushed : ButtonState.Normal);
+		}
+		#endregion
+
 		#region	VScrollBar
 		public override Size VScrollBarDefaultSize {
 			get {

@@ -955,6 +955,10 @@ namespace System.Windows.Forms
 		public abstract int TrackBarValueFromMousePosition (int x, int y, TrackBar tb);
 		#endregion	// TrackBar
 
+		#region UpDownBase
+		public abstract void UpDownBaseDrawButton (Graphics g, Rectangle bounds, bool top, bool pressed);
+		#endregion
+
 		#region VScrollBar
 		public abstract Size VScrollBarDefaultSize{get;}	// Default size of the scrollbar
 		#endregion	// VScrollBar
