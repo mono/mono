@@ -75,7 +75,6 @@ namespace System.Windows.Forms {
 				SizeChanged += new EventHandler(HandleSizeChanged);
 
 				// Events that need to be sent to our parent
-				Click += new EventHandler(HandleClick);
 				DoubleClick += new EventHandler(HandleDoubleClick);
 				MouseDown +=new MouseEventHandler(HandleMouseDown);
 				MouseUp +=new MouseEventHandler(HandleMouseUp);
@@ -120,10 +119,6 @@ namespace System.Windows.Forms {
 
 							case Msg.WM_LBUTTONUP: {
 								owner.OnMouseUp (new MouseEventArgs(MouseButtons.Left, 1, Control.MousePosition.X, Control.MousePosition.Y, 0));
-								owner.OnClick (EventArgs.Empty);
-#if NET_2_0
-								owner.OnMouseClick (new MouseEventArgs (MouseButtons.Left, 1, Control.MousePosition.X, Control.MousePosition.Y, 0));
-#endif
 								return;
 							}
 
@@ -147,10 +142,6 @@ namespace System.Windows.Forms {
 
 							case Msg.WM_RBUTTONUP: {
 								owner.OnMouseUp (new MouseEventArgs(MouseButtons.Right, 1, Control.MousePosition.X, Control.MousePosition.Y, 0));
-								owner.OnClick (EventArgs.Empty);
-#if NET_2_0
-								owner.OnMouseClick (new MouseEventArgs (MouseButtons.Right, 1, Control.MousePosition.X, Control.MousePosition.Y, 0));
-#endif
 								return;
 							}
 
@@ -218,17 +209,8 @@ namespace System.Windows.Forms {
 				base.RecreateHandle ();
 			}
 
-
 			private void HandleSizeChanged(object sender, EventArgs e) {
 				owner.Recalculate ();
-			}
-
-			private void HandleClick (object sender, EventArgs e)
-			{
-				owner.OnClick (e);
-#if NET_2_0
-				owner.OnMouseClick (new MouseEventArgs (MouseButtons.Left, 1, Control.MousePosition.X, Control.MousePosition.Y, 0));
-#endif
 			}
 
 			private void HandleDoubleClick (object sender, EventArgs e)
@@ -511,6 +493,11 @@ namespace System.Windows.Forms {
 			MouseEventHandler eh = (MouseEventHandler)(Events [MouseUpEvent]);
 			if (eh != null)
 				eh (this, e);
+				
+			OnClick (EventArgs.Empty);
+#if NET_2_0
+			OnMouseClick (e);
+#endif
 		}
 
 		private void OnMouseMove (MouseEventArgs e)
