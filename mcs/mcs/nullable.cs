@@ -122,18 +122,21 @@ namespace Mono.CSharp.Nullable
 
 		public override void Emit (EmitContext ec)
 		{
+			Store (ec);
 			AddressOf (ec, AddressOp.LoadStore);
 			ec.ig.EmitCall (OpCodes.Call, info.Value, null);
 		}
 
 		public void EmitCheck (EmitContext ec)
 		{
+			Store (ec);
 			AddressOf (ec, AddressOp.LoadStore);
 			ec.ig.EmitCall (OpCodes.Call, info.HasValue, null);
 		}
 
 		public void EmitGetValueOrDefault (EmitContext ec)
 		{
+			Store (ec);
 			AddressOf (ec, AddressOp.LoadStore);
 			ec.ig.EmitCall (OpCodes.Call, info.GetValueOrDefault, null);
 		}
@@ -161,9 +164,12 @@ namespace Mono.CSharp.Nullable
 			}
 		}
 
-		public void Store (EmitContext ec)
+		void Store (EmitContext ec)
 		{
 			if (expr is VariableReference)
+				return;
+
+			if (temp != null)
 				return;
 
 			expr.Emit (ec);
@@ -747,15 +753,11 @@ namespace Mono.CSharp.Nullable
 
 		public override void Emit (EmitContext ec)
 		{
-			if (left_unwrap != null)
-				left_unwrap.Store (ec);
-
-			if (right_unwrap != null) {
-				if (right.Equals (left))
-					right_unwrap = left_unwrap;
-				else
-					right_unwrap.Store (ec);
-			}
+			//
+			// Optimize same expression operation
+			//
+			if (right_unwrap != null && right.Equals (left))
+				right_unwrap = left_unwrap;
 
 			if (user_operator == null && IsBitwiseBoolean) {
 				EmitBitwiseBoolean (ec);
@@ -1126,7 +1128,6 @@ namespace Mono.CSharp.Nullable
 			Label is_null_label = ig.DefineLabel ();
 			Label end_label = ig.DefineLabel ();
 
-			unwrap.Store (ec);
 			unwrap.EmitCheck (ec);
 			ig.Emit (OpCodes.Brfalse, is_null_label);
 
