@@ -1,5 +1,11 @@
 2008-05-05  Andreas Färber  <andreas.faerber@web.de>
 
+	* mono-config.c: Add ppc64 architecture.
+
+	Code is contributed under MIT/X11 license.
+
+2008-05-05  Andreas Färber  <andreas.faerber@web.de>
+
 	* object.c (mono_create_ftnptr, mono_get_addr_from_ftnptr):
 	  PPC64 uses function descriptors as well.
 
