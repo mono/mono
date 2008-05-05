@@ -327,6 +327,137 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			Assert.AreEqual (ListChangedType.ItemChanged, type, "3");
 		}
 
+		DataTable CreateTable ()
+		{
+			DataTable table = new DataTable ();
+
+			table.Columns.Add ("Id", typeof (int));
+			table.Columns.Add ("Name", typeof (string));
+
+			table.Rows.Add (0, "Mono");
+			table.Rows.Add (2, "JPobst");
+			table.Rows.Add (1, "Miguel");
+
+			return table;
+		}
+
+		[Test]
+		public void Sort_IBindingList ()
+		{
+			BindingSource source = new BindingSource ();
+			BindingList<string> list = new BindingList<string> ();
+
+			source.DataSource = list;
+
+			// Implements IBindingList but SupportsSorting is false
+			try {
+				source.Sort = "Name";
+				Assert.Fail ("A1");
+			} catch (ArgumentException) {
+			}
+		}
+
+		// Not working by now due to a bug in DataView
+		[Test]
+		[Category ("NotWorking")]
+		public void Sort_IBindingListView ()
+		{
+			BindingSource source = new BindingSource ();
+			DataTable table = CreateTable ();
+
+			// 
+			// Simple
+			//
+			source.DataSource = table;
+			source.Sort = "Name";
+
+			DataView view = (DataView)((IListSource)table).GetList ();
+			Assert.AreEqual ("Name", source.Sort, "A1");
+			Assert.AreEqual (ListSortDirection.Ascending, ((IBindingListView) source).SortDirection, "A2");
+			Assert.AreEqual (ListSortDirection.Ascending, ((IBindingListView)view).SortDirection, "A3");
+			Assert.AreEqual ("Name", ((IBindingListView)source).SortProperty.Name, "A4");
+			Assert.AreEqual ("Name", ((IBindingListView)view).SortProperty.Name, "A5");
+			Assert.AreEqual (1, ((IBindingListView)view).SortDescriptions.Count, "A6");
+			Assert.AreEqual ("Name", ((IBindingListView)view).SortDescriptions [0].PropertyDescriptor.Name, "A7");
+			Assert.AreEqual ("JPobst", view [0]["Name"], "A8");
+			Assert.AreEqual ("Miguel", view [1]["Name"], "A9");
+			Assert.AreEqual ("Mono", view [2]["Name"], "A10");
+
+			//
+			// Simple with direction (extra white spaces)
+			//
+			source.Sort = "   Name  DESC   ";
+
+			//Assert.AreEqual ("Name DESC", source.Sort, "B1");
+			Assert.AreEqual (ListSortDirection.Descending, ((IBindingListView)view).SortDirection, "B2");
+			Assert.AreEqual ("Name", ((IBindingListView)view).SortProperty.Name, "B3");
+			Assert.AreEqual ("Mono", view [0]["Name"], "B4");
+			Assert.AreEqual ("Miguel", view [1]["Name"], "B5");
+			Assert.AreEqual ("JPobst", view [2]["Name"], "B6");
+
+			// 
+			// Multiple
+			//
+			source.Sort = "Name DESC, Id asc";
+
+			ListSortDescriptionCollection desc_coll = ((IBindingListView)view).SortDescriptions;
+			Assert.AreEqual ("Name DESC, Id asc", source.Sort, "C1");
+			Assert.AreEqual (2, desc_coll.Count, "C2");
+			Assert.AreEqual (ListSortDirection.Descending, desc_coll [0].SortDirection, "C3");
+			Assert.AreEqual ("Name", desc_coll [0].PropertyDescriptor.Name, "C4");
+			Assert.AreEqual (ListSortDirection.Ascending, desc_coll [1].SortDirection, "C5");
+			Assert.AreEqual ("Id", desc_coll [1].PropertyDescriptor.Name, "C6");
+		}
+
+		[Test]
+		public void Sort_NonBindingList ()
+		{
+			BindingSource source = new BindingSource ();
+			List<int> list = new List<int> (new int [] { 0, 1, 2, 3 });
+
+			source.DataSource = list;
+			Assert.AreEqual (null, source.Sort, "A1");
+
+			try {
+				source.Sort = "Name";
+				Assert.Fail ("B1");
+			} catch (ArgumentException) {
+			}
+
+			source.Sort = String.Empty;
+			Assert.AreEqual (String.Empty, source.Sort, "C1");
+		}
+
+		[Test]
+		public void Sort_Exceptions ()
+		{
+			BindingSource source = new BindingSource ();
+			DataTable table = CreateTable ();
+
+			source.DataSource = table;
+
+			// Non-existant property
+			try {
+				source.Sort = "Name, DontExist DESC";
+				Assert.Fail ("exc1");
+			} catch (ArgumentException) {
+			}
+
+			// Wrong direction
+			try {
+				source.Sort = "Name WRONGDIR";
+				Assert.Fail ("exc2");
+			} catch (ArgumentException) {
+			}
+
+			// Wrong format
+			try {
+				source.Sort = "Name, , Id";
+				Assert.Fail ("exc3");
+			} catch (ArgumentException) {
+			}
+		}
+
 		[Test]
 		public void Movement ()
 		{
