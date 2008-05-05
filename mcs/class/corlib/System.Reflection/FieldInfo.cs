@@ -153,6 +153,8 @@ namespace System.Reflection {
 
 		public static FieldInfo GetFieldFromHandle (RuntimeFieldHandle handle)
 		{
+			if (handle.Value == IntPtr.Zero)
+				throw new ArgumentException ("The handle is invalid.");
 			return internal_from_handle_type (handle.Value, IntPtr.Zero);
 		}
 
@@ -160,6 +162,8 @@ namespace System.Reflection {
 		[ComVisible (false)]
 		public static FieldInfo GetFieldFromHandle (RuntimeFieldHandle handle, RuntimeTypeHandle declaringType)
 		{
+			if (handle.Value == IntPtr.Zero)
+				throw new ArgumentException ("The handle is invalid.");
 			return internal_from_handle_type (handle.Value, declaringType.Value);
 		}
 #endif

@@ -47,6 +47,8 @@ namespace System.Reflection {
 		public extern static MethodBase GetCurrentMethod ();
 
 		public static MethodBase GetMethodFromHandle(RuntimeMethodHandle handle) {
+			if (handle.Value == IntPtr.Zero)
+				throw new ArgumentException ("The handle is invalid.");
 			return GetMethodFromHandleInternalType (handle.Value, IntPtr.Zero);
 		}
 
@@ -56,6 +58,8 @@ namespace System.Reflection {
 #if NET_2_0
 		[ComVisible (false)]
 		public static MethodBase GetMethodFromHandle(RuntimeMethodHandle handle, RuntimeTypeHandle declaringType) {
+			if (handle.Value == IntPtr.Zero)
+				throw new ArgumentException ("The handle is invalid.");
 			return GetMethodFromHandleInternalType (handle.Value, declaringType.Value);
 		}
 #endif
