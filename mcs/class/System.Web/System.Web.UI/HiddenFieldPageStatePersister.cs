@@ -48,6 +48,15 @@ namespace System.Web.UI
 		
 		public override void Load ()
 		{
+#if TARGET_J2EE
+			if (Page.FacesContext != null) {
+				if (Page.PageState != null) {
+					ViewState = Page.PageState.First;
+					ControlState = Page.PageState.Second;
+				}
+				return;
+			}
+#endif
 			IStateFormatter formatter = StateFormatter;
 			Pair pair = formatter.Deserialize (Page.RawViewState) as Pair;
 			if (pair != null) {
@@ -58,6 +67,13 @@ namespace System.Web.UI
 
 		public override void Save ()
 		{
+#if TARGET_J2EE
+			if (Page.FacesContext != null) {
+				if (ViewState != null || ControlState != null)
+					Page.PageState = new Pair (ViewState, ControlState);
+				return;
+			}
+#endif
 			IStateFormatter formatter = StateFormatter;
 			Page.RawViewState = formatter.Serialize (new Pair (ViewState, ControlState));
 		}

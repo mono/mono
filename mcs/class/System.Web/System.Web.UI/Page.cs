@@ -1882,11 +1882,6 @@ public partial class Page : TemplateControl, IHttpHandler
 					page_state_persister = PageAdapter.GetStatePersister();					
 #endif
 			if (page_state_persister == null)
-#if TARGET_J2EE
-				if (getFacesContext () != null)
-					return new FacesPageStatePersister (this);
-				else
-#endif
 				page_state_persister = new HiddenFieldPageStatePersister (this);
 			return page_state_persister;
 		}

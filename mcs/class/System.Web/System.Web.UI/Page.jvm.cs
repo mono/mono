@@ -54,7 +54,6 @@ namespace System.Web.UI
 		MethodBinding _action;
 		MethodBinding _actionListener;
 		bool _immediate;
-		Pair _state;
 		bool [] _validatorsState;
 		ICallbackEventHandler _callbackTarget;
 		string _callbackEventError = String.Empty;
@@ -81,6 +80,8 @@ namespace System.Web.UI
 				return _namespace;
 			}
 		}
+
+		internal Pair PageState { get; set; }
 
 		internal string theForm {
 			get {
@@ -202,7 +203,7 @@ namespace System.Web.UI
 		public override object processSaveState (FacesContext context) {
 			System.Diagnostics.Trace.WriteLine ("processSaveState");
 
-			object state = new Pair (_state, GetValidatorsState ());
+			object state = new Pair (PageState, GetValidatorsState ());
 			return new StateSerializer (state);
 		}
 
@@ -216,7 +217,7 @@ namespace System.Web.UI
 			IHttpHandler jsfHandler = EnterThread ();
 			try {
 				state = ((StateSerializer) state).State;
-				_state = (Pair) ((Pair) state).First;
+				PageState = (Pair) ((Pair) state).First;
 				_validatorsState = (bool []) ((Pair) state).Second;
 				RestorePageState ();
 			}
@@ -377,26 +378,9 @@ namespace System.Web.UI
 			return _facesContext ?? (_facesContext = FacesContext.getCurrentInstance ());
 		}
 
-		#region FacesPageStatePersister
-		sealed class FacesPageStatePersister : PageStatePersister
-		{
-			public FacesPageStatePersister (Page page)
-				: base (page) {
-			}
-
-			public override void Load () {
-				if (Page._state != null) {
-					ViewState = Page._state.First;
-					ControlState = Page._state.Second;
-				}
-			}
-
-			public override void Save () {
-				if (ViewState != null || ControlState != null)
-					Page._state = new Pair (ViewState, ControlState);
-			}
+		internal FacesContext FacesContext {
+			get { return getFacesContext (); }
 		}
-		#endregion
 
 		#region EventRaiserFacesEvent
 		sealed class EventRaiserFacesEvent : FacesEvent

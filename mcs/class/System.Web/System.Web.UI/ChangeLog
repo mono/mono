@@ -1,3 +1,10 @@
+2008-05-05 Igor Zelmanovich <igorz@mainsoft.com>
+
+	* HiddenFieldPageStatePersister.cs: add TARGET_J2EE def
+	* Page.cs: remove TARGET_J2EE def
+	* Page.jvm.cs: add new internal api such PageState and FacesContext.
+	all those changes make PageAdapter works with JSF under TARGET_J2EE.		
+
 2008-04-24  Marek Habersack  <mhabersack@novell.com>
 
 	* RootBuilder.cs: when registering a custom control, add its path
