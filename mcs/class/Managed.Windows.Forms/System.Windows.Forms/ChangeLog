@@ -1,3 +1,13 @@
+2008-05-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Control.cs: Avoid calling ToString on a string.
+	* Form.cs: Avoid calling ToString on a string. Found using Gendarme.
+	* GroupBox.cs: In FlatStyle property throw, not just create, the 
+	exception. Avoid calling ToString on a string.
+	* ProgressBar.cs: Avoid calling ToString on a string. 
+	* ScrollBar.cs: Avoid calling ToString on a string. 
+	[All issues were found using Gendarme]
+
 2008-05-05  Everaldo Canuto  <ecanuto@novell.com>
 
 	* NotifyIcon.cs: Prevent click events to be trigger after double click 

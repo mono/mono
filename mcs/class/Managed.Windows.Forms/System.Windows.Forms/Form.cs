@@ -1762,7 +1762,7 @@ namespace System.Windows.Forms {
 		}
 
 		public override string ToString() {
-			return GetType().FullName.ToString() + ", Text: " + Text;
+			return GetType().FullName + ", Text: " + Text;
 		}
 
 #if NET_2_0

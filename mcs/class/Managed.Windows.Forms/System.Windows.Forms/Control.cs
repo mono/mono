@@ -3730,7 +3730,7 @@ namespace System.Windows.Forms
 
 		public void CreateControl () {
 			if (is_disposed) {
-				throw new ObjectDisposedException(GetType().FullName.ToString());
+				throw new ObjectDisposedException(GetType().FullName);
 			}
 			if (is_created) {
 				return;
@@ -4440,7 +4440,7 @@ namespace System.Windows.Forms
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void CreateHandle() {
 			if (IsDisposed) {
-				throw new ObjectDisposedException(GetType().FullName.ToString());
+				throw new ObjectDisposedException(GetType().FullName);
 			}
 
 			if (IsHandleCreated && !is_recreating) {

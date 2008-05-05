@@ -218,7 +218,7 @@ namespace System.Windows.Forms
 			get { return flat_style; }
 			set {
 				if (!Enum.IsDefined (typeof (FlatStyle), value))
-					 new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for FlatStyle", value));
+					 throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for FlatStyle", value));
 
 				if (flat_style == value)
 					return;
@@ -291,7 +291,7 @@ namespace System.Windows.Forms
 
 		public override string ToString()
 		{
-			return GetType ().FullName.ToString () + ", Text: " + Text;
+			return GetType ().FullName + ", Text: " + Text;
 		}
 
 		protected override void WndProc(ref Message m) {

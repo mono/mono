@@ -643,7 +643,7 @@ namespace System.Windows.Forms
 		public override string ToString()
 		{
 			return string.Format("{0}, Minimum: {1}, Maximum: {2}, Value: {3}",
-						GetType( ).FullName.ToString( ), minimum, maximum, position);
+						GetType( ).FullName, minimum, maximum, position);
 		}
 
 		protected void UpdateScrollInfo ()

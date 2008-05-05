@@ -579,7 +579,7 @@ namespace System.Windows.Forms
 		public override string ToString()
 		{
 			return string.Format ("{0}, Minimum: {1}, Maximum: {2}, Value: {3}",
-				GetType().FullName.ToString (),
+				GetType().FullName,
 				Minimum.ToString (),
 				Maximum.ToString (),
 				Value.ToString () );
