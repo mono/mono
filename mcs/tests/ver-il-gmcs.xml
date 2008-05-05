@@ -3720,7 +3720,7 @@
         <size>7</size>
       </method>
       <method name="Void Main(System.String[])">
-        <size>933</size>
+        <size>981</size>
       </method>
     </type>
   </test>
@@ -3730,7 +3730,7 @@
         <size>7</size>
       </method>
       <method name="Void Main(System.String[])">
-        <size>1388</size>
+        <size>1420</size>
       </method>
     </type>
   </test>
@@ -3821,7 +3821,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>122</size>
+        <size>136</size>
       </method>
     </type>
   </test>
@@ -3831,7 +3831,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>121</size>
+        <size>135</size>
       </method>
     </type>
   </test>
@@ -8223,7 +8223,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>54</size>
+        <size>61</size>
       </method>
       <method name="System.String Test2(Nullable`1)">
         <size>6</size>
@@ -10045,7 +10045,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>73</size>
+        <size>51</size>
       </method>
     </type>
   </test>
@@ -10477,7 +10477,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>129</size>
+        <size>168</size>
       </method>
     </type>
   </test>
@@ -10529,6 +10529,27 @@
       </method>
       <method name="Void Test_1()">
         <size>42</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-392.cs">
+    <type name="DieSubrangeType">
+      <method name="Void .ctor()">
+        <size>19</size>
+      </method>
+      <method name="Nullable`1 get_UpperBound()">
+        <size>7</size>
+      </method>
+      <method name="Void set_UpperBound(Nullable`1)">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>61</size>
       </method>
     </type>
   </test>
