@@ -96,12 +96,6 @@ namespace Mono.CompilerServices.SymbolWriter
 		public void CloseNamespace ()
 		{ }
 
-		[Obsolete("The signature argument is gone")]
-		public void DefineLocalVariable (int index, string name, byte[] signature)
-		{
-			DefineLocalVariable (index, name);
-		}
-
 		public void DefineLocalVariable (int index, string name)
 		{
 			if (current_method == null)

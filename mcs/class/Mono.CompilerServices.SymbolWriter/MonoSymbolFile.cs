@@ -140,7 +140,6 @@ namespace Mono.CompilerServices.SymbolWriter
 		int last_namespace_index;
 
 		public readonly int Version = OffsetTable.Version;
-		public readonly bool CompatibilityMode = false;
 
 		public int NumLineNumbers;
 
@@ -265,18 +264,16 @@ namespace Mono.CompilerServices.SymbolWriter
 			}
 			ot.SourceTableSize = (int) bw.BaseStream.Position - ot.SourceTableOffset;
 
-			if (!CompatibilityMode) {
-				//
-				// Write anonymous scope table.
-				//
-				ot.AnonymousScopeCount = anonymous_scopes != null ? anonymous_scopes.Count : 0;
-				ot.AnonymousScopeTableOffset = (int) bw.BaseStream.Position;
-				if (anonymous_scopes != null) {
-					foreach (AnonymousScopeEntry scope in anonymous_scopes.Values)
-						scope.Write (bw);
-				}
-				ot.AnonymousScopeTableSize = (int) bw.BaseStream.Position - ot.AnonymousScopeTableOffset;
+			//
+			// Write anonymous scope table.
+			//
+			ot.AnonymousScopeCount = anonymous_scopes != null ? anonymous_scopes.Count : 0;
+			ot.AnonymousScopeTableOffset = (int) bw.BaseStream.Position;
+			if (anonymous_scopes != null) {
+				foreach (AnonymousScopeEntry scope in anonymous_scopes.Values)
+					scope.Write (bw);
 			}
+			ot.AnonymousScopeTableSize = (int) bw.BaseStream.Position - ot.AnonymousScopeTableOffset;
 
 			//
 			// Fixup offset table.
@@ -323,17 +320,13 @@ namespace Mono.CompilerServices.SymbolWriter
 					throw new MonoSymbolFileException (
 						"Symbol file `{0}' is not a valid " +
 						"Mono symbol file", filename);
-				if ((version != OffsetTable.Version) &&
-				    (version != OffsetTable.CompatibilityVersion))
+				if (version != OffsetTable.Version)
 					throw new MonoSymbolFileException (
 						"Symbol file `{0}' has version {1}, " +
 						"but expected {2}", filename, version,
 						OffsetTable.Version);
 
 				Version = (int) version;
-				if (version == OffsetTable.CompatibilityVersion)
-					CompatibilityMode = true;
-
 				guid = new Guid (reader.ReadBytes (16));
 
 				ot = new OffsetTable (reader, (int) version);

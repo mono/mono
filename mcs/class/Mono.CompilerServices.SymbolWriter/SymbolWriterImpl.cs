@@ -155,7 +155,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			int startOffset,
 			int endOffset)
 		{
-			msw.DefineLocalVariable (nextLocalIndex++, name, signature);
+			msw.DefineLocalVariable (nextLocalIndex++, name);
 		}
 		
 		public void DefineParameter (

@@ -1,3 +1,13 @@
+2008-05-05  Martin Baulig  <martin@ximian.com>
+
+	Drop support for old pre-terrania symbol files.
+
+	* MonoSymbolFile.cs
+	(MonoSymbolFile.CompatibilityMode): Removed.
+
+	* MonoSymbolTable.cs
+	(LexicalBlockEntry): Removed this obsolete class.
+
 2008-04-02  Martin Baulig  <martin@ximian.com>
 
 	* *.cs: Remove the `#if !DISABLE_TERRANIA_CHANGES' conditionals.
