@@ -1,3 +1,9 @@
+2008-05-05  Martin Baulig  <martin@ximian.com>
+
+	* debug-mono-symfile.h
+	(MONO_SYMBOL_FILE_COMPATIBILITY_VERSION): Removed; dropped support
+	for old pre-terrania symbol files.
+
 2008-05-05  Andreas Färber  <andreas.faerber@web.de>
 
 	* mono-config.c: Add ppc64 architecture.
