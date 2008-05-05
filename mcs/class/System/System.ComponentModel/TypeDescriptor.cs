@@ -1108,6 +1108,7 @@ public sealed class TypeDescriptor
 				PropertyInfo[] props = currentType.GetProperties (BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
 				foreach (PropertyInfo property in props) {
 					if (property.GetIndexParameters ().Length == 0 &&
+					    property.CanRead &&
 					    !propertiesHash.ContainsKey (property.Name)) {
 						propertiesList.Add (new ReflectionPropertyDescriptor (property));
 						propertiesHash.Add (property.Name, null);

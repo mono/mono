@@ -1,3 +1,8 @@
+2008-05-05  James Fitzsimons <james.fitzsimons@gmail.com>
+
+	* TypeDescriptor.cs: GetProperties should not return write-only 
+	properties.
+
 2008-04-26  Jb Evain  <jbevain@novell.com>
 
 	* PropertyTabAttribute.cs, BindingList.cs: replace

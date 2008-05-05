@@ -255,6 +255,10 @@ namespace MonoTests.System.ComponentModel
 		internal int Height {
 			get { return 0; }
 		}
+
+		public string WriteOnlyProperty {
+			set { prop = value; }
+		}
 	}
 
 	[DescriptionAttribute ("my test derived component")]
@@ -786,6 +790,10 @@ namespace MonoTests.System.ComponentModel
 			// (Type.GetProperties does return both properties)
 			//
 			Assert.AreEqual (1, yetAnotherPropsFound, "#G3");
+
+			// GetProperties does not return write-only properties (ones without a getter)
+			// 
+			Assert.IsNull (col.Find ("WriteOnlyProperty", true), "#H1");
 		}
 
 		[Test]
