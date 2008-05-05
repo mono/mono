@@ -1,3 +1,7 @@
+2008-05-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* ConstructorOnTypeBuilderInstTest.cs: Disable one more test for GetParameters ().
+
 2008-05-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* ConstructorBuilderTest.cs: Mark the GetParameters_Incomplete () test not-working,
