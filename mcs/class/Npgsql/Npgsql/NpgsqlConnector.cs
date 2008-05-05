@@ -126,6 +126,9 @@ namespace Npgsql
         // Counter of notification thread start/stop requests in order to 
         internal Int16                            _notificationThreadStopCount;
 
+        // exception thrown from notification thread
+        private Exception                         _notificationException;
+
 
 
         /// <summary>
@@ -839,7 +842,8 @@ namespace Npgsql
         
         internal void StopNotificationThread()
         {
-            
+            if (_notificationException != null)
+                throw _notificationException;
             _notificationThreadStopCount++;
             
             if (_notificationThreadStopCount == 1) // If this call was the first to increment.
@@ -887,24 +891,28 @@ namespace Npgsql
         
             internal void ProcessServerMessages()
             {
-                
-                while(true)
+                try
                 {
-                    this.connector._notificationAutoResetEvent.WaitOne();
-                    
-                    if (this.connector.Socket.Poll(1000, SelectMode.SelectRead))
+                    while (true)
                     {
-                        // reset any responses just before getting new ones
-                        this.connector.Mediator.ResetResponses();
-                        this.state.ProcessBackendResponses(this.connector);
-                        this.connector.CheckErrorsAndNotifications();
+                        this.connector._notificationAutoResetEvent.WaitOne();
+
+                        if (this.connector.Socket.Poll(1000, SelectMode.SelectRead))
+                        {
+                            // reset any responses just before getting new ones
+                            this.connector.Mediator.ResetResponses();
+                            this.state.ProcessBackendResponses(this.connector);
+                            this.connector.CheckErrorsAndNotifications();
+                        }
+
+                        this.connector._notificationAutoResetEvent.Set();
                     }
-               
+                }
+                catch (IOException ex)
+                {
+                    this.connector._notificationException = ex;
                     this.connector._notificationAutoResetEvent.Set();
                 }
-    
-                
-                
             }
         
         }

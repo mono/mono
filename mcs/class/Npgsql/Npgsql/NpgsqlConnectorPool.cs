@@ -533,7 +533,7 @@ namespace Npgsql
                 
                 ClearQueue(queue);
 
-                PooledConnectors[Connection.ConnectionString.ToString()] = null;
+                PooledConnectors.Remove(Connection.ConnectionString.ToString());
 
             }
 
