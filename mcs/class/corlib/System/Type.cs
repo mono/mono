@@ -532,6 +532,10 @@ namespace System {
 
 		public static Type GetTypeFromHandle (RuntimeTypeHandle handle)
 		{ 
+			if (handle.Value == IntPtr.Zero)
+				// This is not consistent with the other GetXXXFromHandle methods, but
+				// MS.NET seems to do this
+				return null;
 			return internal_from_handle (handle.Value);
 		}
 

@@ -1,5 +1,9 @@
 2008-05-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* Type.cs (GetTypeFromHandle): Apparently, it is possible to create a 
+	RuntimeTypeHandle with a zero handle value by calling its ctor. Add an argument
+	check for that.
+
 	* IntPtr.cs (ToInt64): Use (long)(int) on 32 bit platforms to avoid the default
 	unsigned conversion done by the compiler. Fixes #386466.
 
