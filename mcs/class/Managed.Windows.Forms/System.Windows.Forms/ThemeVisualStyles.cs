@@ -874,5 +874,26 @@ namespace System.Windows.Forms
 			new VisualStyleRenderer (element).DrawBackground (dc, new Rectangle (x, middle - 4, 9, 9));
 		}
 		#endregion
+		#region UpDownBase
+		public override void UpDownBaseDrawButton (Graphics g, Rectangle bounds, bool top, bool pressed)
+		{
+			VisualStyleElement element;
+			if (top)
+				if (pressed)
+					element = VisualStyleElement.Spin.Up.Pressed;
+				else
+					element = VisualStyleElement.Spin.Up.Normal;
+			else
+				if (pressed)
+					element = VisualStyleElement.Spin.Down.Pressed;
+				else
+					element = VisualStyleElement.Spin.Down.Normal;
+			if (!VisualStyleRenderer.IsElementDefined (element)) {
+				base.UpDownBaseDrawButton (g, bounds, top, pressed);
+				return;
+			}
+			new VisualStyleRenderer (element).DrawBackground (g, bounds);
+		}
+		#endregion
 	}
 }

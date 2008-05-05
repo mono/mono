@@ -1,5 +1,9 @@
 2008-05-05  George Giolfan  <georgegiolfan@yahoo.com>
 
+	* ThemeVisualStyles.cs: Added support for UpDownBase.
+
+2008-05-05  George Giolfan  <georgegiolfan@yahoo.com>
+
 	* Theme.cs, ThemeWin32Classic.cs, UpDownBase.cs: Refactored:
 	Extracted Theme.UpDownBaseDrawButton.
 
