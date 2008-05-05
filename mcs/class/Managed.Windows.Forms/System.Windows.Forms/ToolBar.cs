@@ -941,7 +941,7 @@ namespace System.Windows.Forms
 			get { return size_specified; }
 		}
 		
-		private bool Vertical {
+		internal bool Vertical {
 			get { return (Dock == DockStyle.Left) || (Dock == DockStyle.Right); }
 		}
 
