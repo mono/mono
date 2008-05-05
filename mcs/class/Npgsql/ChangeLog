@@ -1,3 +1,8 @@
+2008-05-05  Francisco Figueiredo Jr.  <francisco@npgsql.org>
+
+        Fixed problems when notification thread throws exception. Not is
+	correctly thrown. See http://pgfoundry.org/forum/message.php?msg_id=1003387 for discussion about that. Thanks Josh Cooley for patch.
+
 
 2007-11-15  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 	*Npgsql/NpgsqlCommand.cs:  [#1010187] Problem with parsing parameters and "<" or ">" operator with Prepare().
