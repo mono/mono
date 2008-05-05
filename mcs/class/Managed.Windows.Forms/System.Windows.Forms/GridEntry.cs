@@ -640,7 +640,8 @@ namespace System.Windows.Forms.PropertyGridInternal
 				    && ParentEntry.IsReadOnly)
 					return true;
 				else if (PropertyDescriptor == null || PropertyOwner == null ||
-				    (PropertyDescriptor.IsReadOnly && !this.ShouldCreateParentInstance))
+				    (PropertyDescriptor.IsReadOnly && !this.ShouldCreateParentInstance && 
+				     EditorStyle != UITypeEditorEditStyle.Modal))
 					return true;
 				else if (!HasCustomEditor && converter == null)
 					return true;

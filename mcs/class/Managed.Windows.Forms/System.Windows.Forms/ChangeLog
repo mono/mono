@@ -1,3 +1,9 @@
+2008-05-05  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* GridEntry.cs: Read-only properties with Editor with 
+	UITypeEditorEditStyle.Modal shouldn't be read-only in the PropertyGrid.
+	[Fixes bug #384184]
+
 2008-05-05  Jonathan Pobst  <monkey@jpobst.com>
 
 	* MenuStrip.cs, ToolStrip.cs: Guard against an NRE when pressing
