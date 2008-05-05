@@ -718,6 +718,12 @@ namespace System.Windows.Forms
 		protected override void Dispose (bool disposing)
 		{
 			if (!IsDisposed) {
+				foreach (ToolStripItem tsi in Items)
+					tsi.Dispose ();
+					
+				if (this.overflow_button != null && this.overflow_button.drop_down != null)
+					this.overflow_button.drop_down.Dispose ();
+
 				ToolStripManager.RemoveToolStrip (this);
 				base.Dispose (disposing);
 			}

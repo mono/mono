@@ -1,3 +1,9 @@
+2008-05-05  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStrip.cs, ToolStripDropDownItem.cs: Make sure toolstrips are
+	removed from the static toolstrips collection in ToolStripManager
+	when they are disposed.  Provides a workaround for bug #386483.
+
 2008-05-05  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* GridEntry.cs: Read-only properties with Editor with 

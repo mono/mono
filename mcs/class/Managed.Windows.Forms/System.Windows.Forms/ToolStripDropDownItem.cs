@@ -170,6 +170,9 @@ namespace System.Windows.Forms
 						if (tsi is ToolStripMenuItem)
 							ToolStripManager.RemoveToolStripMenuItem ((ToolStripMenuItem)tsi);
 					
+				if (drop_down != null)
+					ToolStripManager.RemoveToolStrip (drop_down);
+				
 				base.Dispose (disposing);
 			}
 		}
