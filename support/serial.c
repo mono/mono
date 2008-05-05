@@ -269,6 +269,7 @@ set_attributes (int fd, int baud_rate, MonoParity parity, int dataBits, MonoStop
 	    
 	case Even: /* Even */
 	    newtio.c_cflag &= ~(PARODD);
+	    newtio.c_cflag |= (PARENB);
 	    break;
 	    
 	case Mark: /* Mark */

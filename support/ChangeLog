@@ -1,3 +1,11 @@
+2008-04-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* serial.c (set_attributes): When setting parity to Even,
+	besides removing the PARODD bit, add the PARENB bit to actually
+	use even parity.
+	Patch by Leszek Ciesielski.
+	Fixes #365248.
+
 2008-03-31  Miguel de Icaza  <miguel@novell.com>
 
 	* serial.c (write_serial): Avoid infinite loops, see #375580.
