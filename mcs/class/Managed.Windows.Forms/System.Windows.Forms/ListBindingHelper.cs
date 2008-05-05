@@ -114,14 +114,24 @@ namespace System.Windows.Forms
 
 		public static PropertyDescriptorCollection GetListItemProperties (object list)
 		{
+			list = GetList (list);
+
+			if (list is ITypedList)
+				return ((ITypedList)list).GetItemProperties (null);
+
 			Type item_type = GetListItemType (list);
 			return TypeDescriptor.GetProperties (item_type, new Attribute [] { new BrowsableAttribute (true) });
 		}
 
 		public static PropertyDescriptorCollection GetListItemProperties (object list, PropertyDescriptor [] listAccessors)
 		{
-			if (list == null || listAccessors.Length == 0)
+			if (listAccessors == null || listAccessors.Length == 0)
 				return GetListItemProperties (list);
+
+			list = GetList (list);
+
+			if (list is ITypedList)
+				return ((ITypedList)list).GetItemProperties (listAccessors);
 
 			// Take into account only the first property
 			Type property_type = listAccessors [0].PropertyType;

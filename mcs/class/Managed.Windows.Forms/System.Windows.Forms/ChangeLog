@@ -1,3 +1,9 @@
+2008-05-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListBindingHelper.cs: When calling GetListItemProperties and the
+	passed object is ITypedList, return the result of
+	ITypedList.GetItemProperties instead.
+
 2008-05-04  Everaldo Canuto  <ecanuto@novell.com>
 
 	* LinkLabel.cs: Set default value of name on constructor of Link class
