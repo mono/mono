@@ -1,5 +1,9 @@
 2008-05-05  George Giolfan  <georgegiolfan@yahoo.com>
 
+	* ThemeVisualStyles.cs: Added support for TrackBar.
+
+2008-05-05  George Giolfan  <georgegiolfan@yahoo.com>
+
 	* ThemeWin32Classic.cs: Refactored: Extracted TrackBarGetThumbSize,
 	TrackBarDrawVerticalTrack, TrackBarDrawVerticalThumbRight,
 	TrackBarDrawVerticalThumbLeft, TrackBarDrawVerticalThumb,

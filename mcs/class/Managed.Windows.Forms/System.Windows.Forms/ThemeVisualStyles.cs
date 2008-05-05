@@ -860,6 +860,281 @@ namespace System.Windows.Forms
 			new VisualStyleRenderer (element).DrawBackground (dc, area);
 		}
 		#endregion
+		#region TrackBar
+		protected override Size TrackBarGetThumbSize (TrackBar trackBar)
+		{
+			VisualStyleElement element = TrackBarGetThumbVisualStyleElement (trackBar);
+			if (!VisualStyleRenderer.IsElementDefined (element))
+				return base.TrackBarGetThumbSize (trackBar);
+			Graphics g = trackBar.CreateGraphics ();
+			Size result = new VisualStyleRenderer (element).GetPartSize (g, ThemeSizeType.True);
+			g.Dispose ();
+			return trackBar.Orientation == Orientation.Horizontal ? result : TrackBarRotateVerticalThumbSize (result);
+		}
+		static VisualStyleElement TrackBarGetThumbVisualStyleElement (TrackBar trackBar)
+		{
+			if (trackBar.Orientation == Orientation.Horizontal)
+				switch (trackBar.TickStyle) {
+				case TickStyle.BottomRight:
+				case TickStyle.None:
+					return TrackBarGetHorizontalThumbBottomVisualStyleElement (trackBar);
+				case TickStyle.TopLeft:
+					return TrackBarGetHorizontalThumbTopVisualStyleElement (trackBar);
+				default:
+					return TrackBarGetHorizontalThumbVisualStyleElement (trackBar);
+				}
+			else
+				switch (trackBar.TickStyle) {
+				case TickStyle.BottomRight:
+				case TickStyle.None:
+					return TrackBarGetVerticalThumbRightVisualStyleElement (trackBar);
+				case TickStyle.TopLeft:
+					return TrackBarGetVerticalThumbLeftVisualStyleElement (trackBar);
+				default:
+					return TrackBarGetVerticalThumbVisualStyleElement (trackBar);
+				}
+		}
+		static Size TrackBarRotateVerticalThumbSize (Size value)
+		{
+			int temporary = value.Width;
+			value.Width = value.Height;
+			value.Height = temporary;
+			return value;
+		}
+		#region Track
+		protected override void TrackBarDrawHorizontalTrack (Graphics dc, Rectangle thumb_area, Point channel_startpoint, Rectangle clippingArea)
+		{
+			VisualStyleElement element = VisualStyleElement.TrackBar.Track.Normal;
+			if (!VisualStyleRenderer.IsElementDefined (element)) {
+				base.TrackBarDrawHorizontalTrack (dc, thumb_area, channel_startpoint, clippingArea);
+				return;
+			}
+			VisualStyleRenderer renderer = new VisualStyleRenderer (element);
+			renderer.DrawBackground (dc, new Rectangle (channel_startpoint, new Size (thumb_area.Width, renderer.GetPartSize (dc, ThemeSizeType.True).Height)), clippingArea);
+		}
+		protected override void TrackBarDrawVerticalTrack (Graphics dc, Rectangle thumb_area, Point channel_startpoint, Rectangle clippingArea)
+		{
+			VisualStyleElement element = VisualStyleElement.TrackBar.TrackVertical.Normal;
+			if (!VisualStyleRenderer.IsElementDefined (element)) {
+				base.TrackBarDrawVerticalTrack (dc, thumb_area, channel_startpoint, clippingArea);
+				return;
+			}
+			VisualStyleRenderer renderer = new VisualStyleRenderer (element);
+			renderer.DrawBackground (dc, new Rectangle (channel_startpoint, new Size (renderer.GetPartSize (dc, ThemeSizeType.True).Width, thumb_area.Height)), clippingArea);
+		}
+		#endregion
+		#region Thumb
+		static bool TrackBarIsDisabled (TrackBar trackBar)
+		{
+			return !trackBar.Enabled;
+		}
+		static bool TrackBarIsHot (TrackBar trackBar)
+		{
+			return trackBar.Entered;
+		}
+		static bool TrackBarIsPressed (TrackBar trackBar)
+		{
+			return trackBar.thumb_pressed;
+		}
+		static bool TrackBarIsFocused (TrackBar trackBar)
+		{
+			return trackBar.Focused;
+		}
+		#region Horizontal
+		protected override void TrackBarDrawHorizontalThumbBottom (Graphics dc, Rectangle thumb_pos, Brush br_thumb, Rectangle clippingArea, TrackBar trackBar)
+		{
+			VisualStyleElement element = TrackBarGetHorizontalThumbBottomVisualStyleElement (trackBar);
+			if (!VisualStyleRenderer.IsElementDefined (element)) {
+				base.TrackBarDrawHorizontalThumbBottom (dc, thumb_pos, br_thumb, clippingArea, trackBar);
+				return;
+			}
+			new VisualStyleRenderer (element).DrawBackground (dc, thumb_pos, clippingArea);
+		}
+		static VisualStyleElement TrackBarGetHorizontalThumbBottomVisualStyleElement (TrackBar trackBar)
+		{
+			if (TrackBarIsDisabled (trackBar))
+				return VisualStyleElement.TrackBar.ThumbBottom.Disabled;
+			else if (TrackBarIsHot (trackBar))
+				return VisualStyleElement.TrackBar.ThumbBottom.Hot;
+			else if (TrackBarIsPressed (trackBar))
+				return VisualStyleElement.TrackBar.ThumbBottom.Pressed;
+			else if (TrackBarIsFocused (trackBar))
+				return VisualStyleElement.TrackBar.ThumbBottom.Focused;
+			return VisualStyleElement.TrackBar.ThumbBottom.Normal;
+		}
+		protected override void TrackBarDrawHorizontalThumbTop (Graphics dc, Rectangle thumb_pos, Brush br_thumb, Rectangle clippingArea, TrackBar trackBar)
+		{
+			VisualStyleElement element = TrackBarGetHorizontalThumbTopVisualStyleElement (trackBar);
+			if (!VisualStyleRenderer.IsElementDefined (element)) {
+				base.TrackBarDrawHorizontalThumbTop (dc, thumb_pos, br_thumb, clippingArea, trackBar);
+				return;
+			}
+			new VisualStyleRenderer (element).DrawBackground (dc, thumb_pos, clippingArea);
+		}
+		static VisualStyleElement TrackBarGetHorizontalThumbTopVisualStyleElement (TrackBar trackBar)
+		{
+			if (TrackBarIsDisabled (trackBar))
+				return VisualStyleElement.TrackBar.ThumbTop.Disabled;
+			else if (TrackBarIsHot (trackBar))
+				return VisualStyleElement.TrackBar.ThumbTop.Hot;
+			else if (TrackBarIsPressed (trackBar))
+				return VisualStyleElement.TrackBar.ThumbTop.Pressed;
+			else if (TrackBarIsFocused (trackBar))
+				return VisualStyleElement.TrackBar.ThumbTop.Focused;
+			return VisualStyleElement.TrackBar.ThumbTop.Normal;
+		}
+		protected override void TrackBarDrawHorizontalThumb (Graphics dc, Rectangle thumb_pos, Brush br_thumb, Rectangle clippingArea, TrackBar trackBar)
+		{
+			VisualStyleElement element = TrackBarGetHorizontalThumbVisualStyleElement (trackBar);
+			if (!VisualStyleRenderer.IsElementDefined (element)) {
+				base.TrackBarDrawHorizontalThumb (dc, thumb_pos, br_thumb, clippingArea, trackBar);
+				return;
+			}
+			new VisualStyleRenderer (element).DrawBackground (dc, thumb_pos, clippingArea);
+		}
+		static VisualStyleElement TrackBarGetHorizontalThumbVisualStyleElement (TrackBar trackBar)
+		{
+			if (TrackBarIsDisabled (trackBar))
+				return VisualStyleElement.TrackBar.Thumb.Disabled;
+			else if (TrackBarIsHot (trackBar))
+				return VisualStyleElement.TrackBar.Thumb.Hot;
+			else if (TrackBarIsPressed (trackBar))
+				return VisualStyleElement.TrackBar.Thumb.Pressed;
+			else if (TrackBarIsFocused (trackBar))
+				return VisualStyleElement.TrackBar.Thumb.Focused;
+			return VisualStyleElement.TrackBar.Thumb.Normal;
+		}
+		#endregion
+		#region Vertical
+		static Rectangle TrackBarRotateVerticalThumbSize (Rectangle value)
+		{
+			int temporary = value.Width;
+			value.Width = value.Height;
+			value.Height = temporary;
+			return value;
+		}
+		protected override void TrackBarDrawVerticalThumbRight (Graphics dc, Rectangle thumb_pos, Brush br_thumb, Rectangle clippingArea, TrackBar trackBar)
+		{
+			VisualStyleElement element = TrackBarGetVerticalThumbRightVisualStyleElement (trackBar);
+			if (!VisualStyleRenderer.IsElementDefined (element)) {
+				base.TrackBarDrawVerticalThumbRight (dc, thumb_pos, br_thumb, clippingArea, trackBar);
+				return;
+			}
+			new VisualStyleRenderer (element).DrawBackground (dc, TrackBarRotateVerticalThumbSize (thumb_pos), clippingArea);
+		}
+		static VisualStyleElement TrackBarGetVerticalThumbRightVisualStyleElement (TrackBar trackBar)
+		{
+			if (TrackBarIsDisabled (trackBar))
+				return VisualStyleElement.TrackBar.ThumbRight.Disabled;
+			else if (TrackBarIsHot (trackBar))
+				return VisualStyleElement.TrackBar.ThumbRight.Hot;
+			else if (TrackBarIsPressed (trackBar))
+				return VisualStyleElement.TrackBar.ThumbRight.Pressed;
+			else if (TrackBarIsFocused (trackBar))
+				return VisualStyleElement.TrackBar.ThumbRight.Focused;
+			return VisualStyleElement.TrackBar.ThumbRight.Normal;
+		}
+		protected override void TrackBarDrawVerticalThumbLeft (Graphics dc, Rectangle thumb_pos, Brush br_thumb, Rectangle clippingArea, TrackBar trackBar)
+		{
+			VisualStyleElement element = TrackBarGetVerticalThumbLeftVisualStyleElement (trackBar);
+			if (!VisualStyleRenderer.IsElementDefined (element)) {
+				base.TrackBarDrawVerticalThumbLeft (dc, thumb_pos, br_thumb, clippingArea, trackBar);
+				return;
+			}
+			new VisualStyleRenderer (element).DrawBackground (dc, TrackBarRotateVerticalThumbSize (thumb_pos), clippingArea);
+		}
+		static VisualStyleElement TrackBarGetVerticalThumbLeftVisualStyleElement (TrackBar trackBar)
+		{
+			if (TrackBarIsDisabled (trackBar))
+				return VisualStyleElement.TrackBar.ThumbLeft.Disabled;
+			else if (TrackBarIsHot (trackBar))
+				return VisualStyleElement.TrackBar.ThumbLeft.Hot;
+			else if (TrackBarIsPressed (trackBar))
+				return VisualStyleElement.TrackBar.ThumbLeft.Pressed;
+			else if (TrackBarIsFocused (trackBar))
+				return VisualStyleElement.TrackBar.ThumbLeft.Focused;
+			return VisualStyleElement.TrackBar.ThumbLeft.Normal;
+		}
+		protected override void TrackBarDrawVerticalThumb (Graphics dc, Rectangle thumb_pos, Brush br_thumb, Rectangle clippingArea, TrackBar trackBar)
+		{
+			VisualStyleElement element = TrackBarGetVerticalThumbVisualStyleElement (trackBar);
+			if (!VisualStyleRenderer.IsElementDefined (element)) {
+				base.TrackBarDrawVerticalThumb (dc, thumb_pos, br_thumb, clippingArea, trackBar);
+				return;
+			}
+			new VisualStyleRenderer (element).DrawBackground (dc, TrackBarRotateVerticalThumbSize (thumb_pos), clippingArea);
+		}
+		static VisualStyleElement TrackBarGetVerticalThumbVisualStyleElement (TrackBar trackBar)
+		{
+			if (TrackBarIsDisabled (trackBar))
+				return VisualStyleElement.TrackBar.ThumbVertical.Disabled;
+			else if (TrackBarIsHot (trackBar))
+				return VisualStyleElement.TrackBar.ThumbVertical.Hot;
+			else if (TrackBarIsPressed (trackBar))
+				return VisualStyleElement.TrackBar.ThumbVertical.Pressed;
+			else if (TrackBarIsFocused (trackBar))
+				return VisualStyleElement.TrackBar.ThumbVertical.Focused;
+			return VisualStyleElement.TrackBar.ThumbVertical.Normal;
+		}
+		#endregion
+		#endregion
+		#region Ticks
+		const EdgeStyle TrackBarTickEdgeStyle = EdgeStyle.Bump;
+		const EdgeEffects TrackBarTickEdgeEffects = EdgeEffects.None;
+		#region Horizontal
+		protected override ITrackBarTickPainter TrackBarGetHorizontalTickPainter (Graphics g)
+		{
+			if (!VisualStyleRenderer.IsElementDefined (VisualStyleElement.TrackBar.Ticks.Normal))
+				return base.TrackBarGetHorizontalTickPainter (g);
+			return new TrackBarHorizontalTickPainter (g);
+		}
+		class TrackBarHorizontalTickPainter : ITrackBarTickPainter
+		{
+			readonly Graphics g;
+			readonly VisualStyleRenderer renderer;
+			public TrackBarHorizontalTickPainter (Graphics g)
+			{
+				this.g = g;
+				renderer = new VisualStyleRenderer (VisualStyleElement.TrackBar.Ticks.Normal);
+			}
+			public void Paint (float x1, float y1, float x2, float y2)
+			{
+				renderer.DrawEdge (g, new Rectangle (
+					(int)Math.Round (x1),
+					(int)Math.Round (y1),
+					1,
+					(int)Math.Round (y2 - y1) + 1), Edges.Left, TrackBarTickEdgeStyle, TrackBarTickEdgeEffects);
+			}
+		}
+		#endregion
+		#region Vertical
+		protected override ITrackBarTickPainter TrackBarGetVerticalTickPainter (Graphics g)
+		{
+			if (!VisualStyleRenderer.IsElementDefined (VisualStyleElement.TrackBar.TicksVertical.Normal))
+				return base.TrackBarGetVerticalTickPainter (g);
+			return new TrackBarVerticalTickPainter (g);
+		}
+		class TrackBarVerticalTickPainter : ITrackBarTickPainter
+		{
+			readonly Graphics g;
+			readonly VisualStyleRenderer renderer;
+			public TrackBarVerticalTickPainter (Graphics g)
+			{
+				this.g = g;
+				renderer = new VisualStyleRenderer (VisualStyleElement.TrackBar.TicksVertical.Normal);
+			}
+			public void Paint (float x1, float y1, float x2, float y2)
+			{
+				renderer.DrawEdge (g, new Rectangle (
+					(int)Math.Round (x1),
+					(int)Math.Round (y1),
+					(int)Math.Round (x2 - x1) + 1,
+					1), Edges.Top, TrackBarTickEdgeStyle, TrackBarTickEdgeEffects);
+			}
+		}
+		#endregion
+		#endregion
+		#endregion
 		#region TreeView
 		[MonoTODO("Use the sizing information provided by the VisualStyles API.")]
 		public override void TreeViewDrawNodePlusMinus (TreeView treeView, TreeNode node, Graphics dc, int x, int middle)
