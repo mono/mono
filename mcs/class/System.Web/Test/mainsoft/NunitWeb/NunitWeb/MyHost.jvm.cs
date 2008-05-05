@@ -142,6 +142,9 @@ new Uri ("http://localhost:59598/NunitWebTest/"),
 
 		public static WebTest GetCurrentTest ()
 		{
+			if (HttpContext.Current == null)
+				return null;
+
 			WebTest wt = HttpContext.Current.Items[CURRENT_WEBTEST] as WebTest;
 			if (wt != null)
 				return wt;
