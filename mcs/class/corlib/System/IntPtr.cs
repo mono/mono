@@ -140,7 +140,11 @@ namespace System
 #endif
 		public long ToInt64 ()
 		{
-			return (long) value;
+			// pointer to long conversion is done using conv.u8 by the compiler
+			if (Size == 4)
+				return (long)(int)value;
+			else
+				return (long)value;
 		}
 
 		[CLSCompliant (false)]
