@@ -5236,10 +5236,6 @@ namespace System.Windows.Forms
 				}
 
 				thumb_pos.Y = thumb_area.Bottom - space_from_bottom - (int)(pixels_betweenticks * (float)(tb.Value - tb.Minimum));
-
-				/* Draw thumb fixed 10x22 size */
-				thumb_pos.Width = 10;
-				thumb_pos.Height = 22;
 			} else {	
 				toptick_startpoint = new Point ();
 				bottomtick_startpoint = new Point ();
@@ -5288,13 +5284,44 @@ namespace System.Windows.Forms
 				}
 
 				thumb_pos.X = channel_startpoint.X + (int)(pixels_betweenticks * (float) (tb.Value - tb.Minimum));
+			}
 
-				/* Draw thumb fixed 10x22 size */
-				thumb_pos.Width = 10;
-				thumb_pos.Height = 22;
+			thumb_pos.Size = TrackBarGetThumbSize (tb);
+		}
+
+		protected virtual Size TrackBarGetThumbSize (TrackBar trackBar)
+		{
+			/* Draw thumb fixed 10x22 size */
+			return new Size (10, 22);
+		}
+
+		#region Ticks
+		protected interface ITrackBarTickPainter
+		{
+			void Paint (float x1, float y1, float x2, float y2);
+		}
+
+		class TrackBarTickPainter : ITrackBarTickPainter
+		{
+			readonly Graphics g;
+			readonly Pen pen;
+			public TrackBarTickPainter (Graphics g, Pen pen)
+			{
+				this.g = g;
+				this.pen = pen;
+			}
+			public void Paint (float x1, float y1, float x2, float y2)
+			{
+				g.DrawLine (pen, x1, y1, x2, y2);
 			}
 		}
-		
+		protected virtual ITrackBarTickPainter GetTrackBarTickPainter (Graphics g)
+		{
+			return new TrackBarTickPainter (g, ResPool.GetPen (pen_ticks_color));
+		}
+		#endregion
+
+		#region DrawTrackBar_Vertical
 		private void DrawTrackBar_Vertical (Graphics dc, Rectangle clip_rectangle, TrackBar tb,
 			ref Rectangle thumb_pos, ref Rectangle thumb_area,  Brush br_thumb,
 			float ticks, int value_pos, bool mouse_value) {			
@@ -5308,89 +5335,27 @@ namespace System.Windows.Forms
 			
 			GetTrackBarDrawingInfo (tb, out pixels_betweenticks, out thumb_area, out thumb_pos, out channel_startpoint, out bottomtick_startpoint, out toptick_startpoint);
 
-			/* Draw channel */
-			dc.FillRectangle (SystemBrushes.ControlDark, channel_startpoint.X, channel_startpoint.Y,
-				1, thumb_area.Height);
-			
-			dc.FillRectangle (SystemBrushes.ControlDarkDark, channel_startpoint.X + 1, channel_startpoint.Y,
-				1, thumb_area.Height);
+			#region Track
+			TrackBarDrawVerticalTrack (dc, thumb_area, channel_startpoint, clip_rectangle);
+			#endregion
 
-			dc.FillRectangle (SystemBrushes.ControlLight, channel_startpoint.X + 3, channel_startpoint.Y,
-				1, thumb_area.Height);
-
+			#region Thumb
 			switch (tb.TickStyle) 	{
 			case TickStyle.BottomRight:
-			case TickStyle.None: {
+			case TickStyle.None:
 				thumb_pos.X = channel_startpoint.X - 8;
-
-				Pen pen = SystemPens.ControlLightLight;
-				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y, thumb_pos.X , thumb_pos.Y + 10);
-				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y, thumb_pos.X + 16, thumb_pos.Y);
-				dc.DrawLine (pen, thumb_pos.X + 16, thumb_pos.Y, thumb_pos.X + 16 + 4, thumb_pos.Y + 4);
-				
-				pen = SystemPens.ControlDark;
-				dc.DrawLine (pen, thumb_pos.X +1, thumb_pos.Y + 9, thumb_pos.X +15, thumb_pos.Y  +9);
-				dc.DrawLine (pen, thumb_pos.X + 16, thumb_pos.Y + 9, thumb_pos.X +16 + 4, thumb_pos.Y  +9 - 4);
-
-				pen = SystemPens.ControlDarkDark;
-				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y  + 10, thumb_pos.X +16, thumb_pos.Y +10);
-				dc.DrawLine (pen, thumb_pos.X + 16, thumb_pos.Y  + 10, thumb_pos.X  +16 + 5, thumb_pos.Y +10 - 5);
-
-				dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 1, 16, 8);
-				dc.FillRectangle (br_thumb, thumb_pos.X + 17, thumb_pos.Y + 2, 1, 6);
-				dc.FillRectangle (br_thumb, thumb_pos.X + 18, thumb_pos.Y + 3, 1, 4);
-				dc.FillRectangle (br_thumb, thumb_pos.X + 19, thumb_pos.Y + 4, 1, 2);
-
+				TrackBarDrawVerticalThumbRight (dc, thumb_pos, br_thumb, clip_rectangle, tb);
 				break;
-			}
-			case TickStyle.TopLeft: {
+			case TickStyle.TopLeft:
 				thumb_pos.X = channel_startpoint.X - 10;
-
-				Pen pen = SystemPens.ControlLightLight;
-				dc.DrawLine (pen, thumb_pos.X + 4, thumb_pos.Y, thumb_pos.X + 4 + 16, thumb_pos.Y);
-				dc.DrawLine (pen, thumb_pos.X + 4, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 4);
-
-				pen = SystemPens.ControlDark;
-				dc.DrawLine (pen, thumb_pos.X  + 4, thumb_pos.Y + 9, thumb_pos.X + 4 + 16 , thumb_pos.Y+ 9);
-				dc.DrawLine (pen, thumb_pos.X + 4, thumb_pos.Y  + 9, thumb_pos.X, thumb_pos.Y + 5);
-				dc.DrawLine (pen, thumb_pos.X  + 19, thumb_pos.Y + 9, thumb_pos.X  +19 , thumb_pos.Y+ 1);
-
-				pen = SystemPens.ControlDarkDark;
-				dc.DrawLine (pen, thumb_pos.X  + 4, thumb_pos.Y+ 10, thumb_pos.X  + 4 + 16, thumb_pos.Y+ 10);
-				dc.DrawLine (pen, thumb_pos.X  + 4, thumb_pos.Y + 10, thumb_pos.X  -1, thumb_pos.Y+ 5);
-				dc.DrawLine (pen, thumb_pos.X + 20, thumb_pos.Y, thumb_pos.X+ 20, thumb_pos.Y + 10);
-
-				dc.FillRectangle (br_thumb, thumb_pos.X + 4, thumb_pos.Y + 1, 15, 8);
-				dc.FillRectangle (br_thumb, thumb_pos.X + 3, thumb_pos.Y + 2, 1, 6);
-				dc.FillRectangle (br_thumb, thumb_pos.X + 2, thumb_pos.Y + 3, 1, 4);
-				dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 4, 1, 2);
-
+				TrackBarDrawVerticalThumbLeft (dc, thumb_pos, br_thumb, clip_rectangle, tb);
 				break;
-			}
-
-			case TickStyle.Both: {
-				thumb_pos.X = area.X + 10;
-
-				Pen pen = SystemPens.ControlLightLight;
-				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 9);
-				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y, thumb_pos.X + 19, thumb_pos.Y);
-
-				pen = SystemPens.ControlDark;
-				dc.DrawLine (pen, thumb_pos.X + 1, thumb_pos.Y + 9, thumb_pos.X+ 19, thumb_pos.Y  + 9);
-				dc.DrawLine (pen, thumb_pos.X  + 10, thumb_pos.Y+ 1, thumb_pos.X + 19, thumb_pos.Y  + 8);
-
-				pen = SystemPens.ControlDarkDark;
-				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y + 10, thumb_pos.X+ 20, thumb_pos.Y  +10);
-				dc.DrawLine (pen, thumb_pos.X  + 20, thumb_pos.Y, thumb_pos.X  + 20, thumb_pos.Y+ 9);
-
-				dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 1, 18, 8);
-
-				break;
-			}
-
 			default:
+				thumb_pos.X = area.X + 10;
+				TrackBarDrawVerticalThumb (dc, thumb_pos, br_thumb, clip_rectangle, tb);
 				break;
 			}
+			#endregion
 
 			pixel_len = thumb_area.Height - 11;
 			pixels_betweenticks = pixel_len / ticks;
@@ -5398,46 +5363,128 @@ namespace System.Windows.Forms
 			thumb_area.X = thumb_pos.X;
 			thumb_area.Y = channel_startpoint.Y;
 			thumb_area.Width = thumb_pos.Height;
-			
-			/* Draw ticks*/
+
+			#region Ticks
+			if (pixels_betweenticks <= 0)
+				return;
+			if (tb.TickStyle == TickStyle.None)
+				return;
 			Region outside = new Region (area);
 			outside.Exclude (thumb_area);			
 			
-			if (outside.IsVisible (clip_rectangle)) {				
-				if (pixels_betweenticks > 0 && ((tb.TickStyle & TickStyle.BottomRight) == TickStyle.BottomRight ||
-					((tb.TickStyle & TickStyle.Both) == TickStyle.Both))) {	
-					
-					for (float inc = 0; inc < (pixel_len + 1); inc += pixels_betweenticks) 	{					
-						if (inc == 0 || (inc +  pixels_betweenticks) >= pixel_len +1)
-							dc.DrawLine (ResPool.GetPen (pen_ticks_color), area.X + bottomtick_startpoint.X , area.Y + bottomtick_startpoint.Y  + inc, 
-								area.X + bottomtick_startpoint.X  + 3, area.Y + bottomtick_startpoint.Y + inc);
-						else
-							dc.DrawLine (ResPool.GetPen (pen_ticks_color), area.X + bottomtick_startpoint.X, area.Y + bottomtick_startpoint.Y  + inc, 
-								area.X + bottomtick_startpoint.X  + 2, area.Y + bottomtick_startpoint.Y + inc);
+			if (outside.IsVisible (clip_rectangle)) {
+				ITrackBarTickPainter tick_painter = TrackBarGetVerticalTickPainter (dc);
+
+				if ((tb.TickStyle & TickStyle.BottomRight) == TickStyle.BottomRight) {
+					float x = area.X + bottomtick_startpoint.X;
+					for (float inc = 0; inc < pixel_len + 1; inc += pixels_betweenticks) 	{
+						float y = area.Y + bottomtick_startpoint.Y + inc;
+						tick_painter.Paint (
+							x, y,
+							x + (inc == 0 || inc + pixels_betweenticks >= pixel_len + 1 ? 3 : 2), y);
 					}
 				}
-	
-				if (pixels_betweenticks > 0 &&  ((tb.TickStyle & TickStyle.TopLeft) == TickStyle.TopLeft ||
-					((tb.TickStyle & TickStyle.Both) == TickStyle.Both))) {
-	
-					pixel_len = thumb_area.Height - 11;
-					pixels_betweenticks = pixel_len / ticks;
-					
+
+				if ((tb.TickStyle & TickStyle.TopLeft) == TickStyle.TopLeft) {
+					float x = area.X + toptick_startpoint.X; 
 					for (float inc = 0; inc < (pixel_len + 1); inc += pixels_betweenticks) {					
-						if (inc == 0 || (inc +  pixels_betweenticks) >= pixel_len +1)
-							dc.DrawLine (ResPool.GetPen (pen_ticks_color), area.X + toptick_startpoint.X  - 3 , area.Y + toptick_startpoint.Y + inc, 
-								area.X + toptick_startpoint.X, area.Y + toptick_startpoint.Y + inc);
-						else
-							dc.DrawLine (ResPool.GetPen (pen_ticks_color), area.X + toptick_startpoint.X  - 2, area.Y + toptick_startpoint.Y + inc, 
-								area.X + toptick_startpoint.X, area.Y + toptick_startpoint.Y  + inc);
+						float y = area.Y + toptick_startpoint.Y + inc;
+						tick_painter.Paint (
+							x - (inc == 0 || inc + pixels_betweenticks >= pixel_len + 1 ? 3 : 2), y,
+							x, y);
 					}			
 				}
 			}
 			
 			outside.Dispose ();
-			
+			#endregion
 		}
 
+		#region Track
+		protected virtual void TrackBarDrawVerticalTrack (Graphics dc, Rectangle thumb_area, Point channel_startpoint, Rectangle clippingArea)
+		{
+			dc.FillRectangle (SystemBrushes.ControlDark, channel_startpoint.X, channel_startpoint.Y,
+				1, thumb_area.Height);
+
+			dc.FillRectangle (SystemBrushes.ControlDarkDark, channel_startpoint.X + 1, channel_startpoint.Y,
+				1, thumb_area.Height);
+
+			dc.FillRectangle (SystemBrushes.ControlLight, channel_startpoint.X + 3, channel_startpoint.Y,
+				1, thumb_area.Height);
+		}
+		#endregion
+
+		#region Thumb
+		protected virtual void TrackBarDrawVerticalThumbRight (Graphics dc, Rectangle thumb_pos, Brush br_thumb, Rectangle clippingArea, TrackBar trackBar)
+		{
+			Pen pen = SystemPens.ControlLightLight;
+			dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 10);
+			dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y, thumb_pos.X + 16, thumb_pos.Y);
+			dc.DrawLine (pen, thumb_pos.X + 16, thumb_pos.Y, thumb_pos.X + 16 + 4, thumb_pos.Y + 4);
+
+			pen = SystemPens.ControlDark;
+			dc.DrawLine (pen, thumb_pos.X + 1, thumb_pos.Y + 9, thumb_pos.X + 15, thumb_pos.Y + 9);
+			dc.DrawLine (pen, thumb_pos.X + 16, thumb_pos.Y + 9, thumb_pos.X + 16 + 4, thumb_pos.Y + 9 - 4);
+
+			pen = SystemPens.ControlDarkDark;
+			dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y + 10, thumb_pos.X + 16, thumb_pos.Y + 10);
+			dc.DrawLine (pen, thumb_pos.X + 16, thumb_pos.Y + 10, thumb_pos.X + 16 + 5, thumb_pos.Y + 10 - 5);
+
+			dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 1, 16, 8);
+			dc.FillRectangle (br_thumb, thumb_pos.X + 17, thumb_pos.Y + 2, 1, 6);
+			dc.FillRectangle (br_thumb, thumb_pos.X + 18, thumb_pos.Y + 3, 1, 4);
+			dc.FillRectangle (br_thumb, thumb_pos.X + 19, thumb_pos.Y + 4, 1, 2);
+		}
+
+		protected virtual void TrackBarDrawVerticalThumbLeft (Graphics dc, Rectangle thumb_pos, Brush br_thumb, Rectangle clippingArea, TrackBar trackBar)
+		{
+			Pen pen = SystemPens.ControlLightLight;
+			dc.DrawLine (pen, thumb_pos.X + 4, thumb_pos.Y, thumb_pos.X + 4 + 16, thumb_pos.Y);
+			dc.DrawLine (pen, thumb_pos.X + 4, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 4);
+
+			pen = SystemPens.ControlDark;
+			dc.DrawLine (pen, thumb_pos.X + 4, thumb_pos.Y + 9, thumb_pos.X + 4 + 16, thumb_pos.Y + 9);
+			dc.DrawLine (pen, thumb_pos.X + 4, thumb_pos.Y + 9, thumb_pos.X, thumb_pos.Y + 5);
+			dc.DrawLine (pen, thumb_pos.X + 19, thumb_pos.Y + 9, thumb_pos.X + 19, thumb_pos.Y + 1);
+
+			pen = SystemPens.ControlDarkDark;
+			dc.DrawLine (pen, thumb_pos.X + 4, thumb_pos.Y + 10, thumb_pos.X + 4 + 16, thumb_pos.Y + 10);
+			dc.DrawLine (pen, thumb_pos.X + 4, thumb_pos.Y + 10, thumb_pos.X - 1, thumb_pos.Y + 5);
+			dc.DrawLine (pen, thumb_pos.X + 20, thumb_pos.Y, thumb_pos.X + 20, thumb_pos.Y + 10);
+
+			dc.FillRectangle (br_thumb, thumb_pos.X + 4, thumb_pos.Y + 1, 15, 8);
+			dc.FillRectangle (br_thumb, thumb_pos.X + 3, thumb_pos.Y + 2, 1, 6);
+			dc.FillRectangle (br_thumb, thumb_pos.X + 2, thumb_pos.Y + 3, 1, 4);
+			dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 4, 1, 2);
+		}
+
+		protected virtual void TrackBarDrawVerticalThumb (Graphics dc, Rectangle thumb_pos, Brush br_thumb, Rectangle clippingArea, TrackBar trackBar)
+		{
+			Pen pen = SystemPens.ControlLightLight;
+			dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 9);
+			dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y, thumb_pos.X + 19, thumb_pos.Y);
+
+			pen = SystemPens.ControlDark;
+			dc.DrawLine (pen, thumb_pos.X + 1, thumb_pos.Y + 9, thumb_pos.X + 19, thumb_pos.Y + 9);
+			dc.DrawLine (pen, thumb_pos.X + 10, thumb_pos.Y + 1, thumb_pos.X + 19, thumb_pos.Y + 8);
+
+			pen = SystemPens.ControlDarkDark;
+			dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y + 10, thumb_pos.X + 20, thumb_pos.Y + 10);
+			dc.DrawLine (pen, thumb_pos.X + 20, thumb_pos.Y, thumb_pos.X + 20, thumb_pos.Y + 9);
+
+			dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 1, 18, 8);
+		}
+		#endregion
+
+		#region Ticks
+		protected virtual ITrackBarTickPainter TrackBarGetVerticalTickPainter (Graphics g)
+		{
+			return GetTrackBarTickPainter (g);
+		}
+		#endregion
+		#endregion
+
+		#region DrawTrackBar_Horizontal
 		/* 
 			Horizontal trackbar 
 		  
@@ -5459,129 +5506,154 @@ namespace System.Windows.Forms
 			Rectangle area = tb.ClientRectangle;
 			
 			GetTrackBarDrawingInfo (tb , out pixels_betweenticks, out thumb_area, out thumb_pos, out channel_startpoint, out bottomtick_startpoint, out toptick_startpoint);
-			
-			/* Draw channel */
-			dc.FillRectangle (SystemBrushes.ControlDark, channel_startpoint.X, channel_startpoint.Y,
-				thumb_area.Width, 1);
-			
-			dc.FillRectangle (SystemBrushes.ControlDarkDark, channel_startpoint.X, channel_startpoint.Y + 1,
-				thumb_area.Width, 1);
 
-			dc.FillRectangle (SystemBrushes.ControlLight, channel_startpoint.X, channel_startpoint.Y +3,
-				thumb_area.Width, 1);
+			#region Track
+			TrackBarDrawHorizontalTrack (dc, thumb_area, channel_startpoint, clip_rectangle);
+			#endregion
 
+			#region Thumb
 			switch (tb.TickStyle) {
 			case TickStyle.BottomRight:
-			case TickStyle.None: {
+			case TickStyle.None:
 				thumb_pos.Y = channel_startpoint.Y - 8;
-
-				Pen pen = SystemPens.ControlLightLight;
-				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y, thumb_pos.X + 10, thumb_pos.Y);
-				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 16);
-				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y + 16, thumb_pos.X + 4, thumb_pos.Y + 16 + 4);
-
-				pen = SystemPens.ControlDark;
-				dc.DrawLine (pen, thumb_pos.X + 9, thumb_pos.Y + 1, thumb_pos.X +9, thumb_pos.Y +15);
-				dc.DrawLine (pen, thumb_pos.X + 9, thumb_pos.Y + 16, thumb_pos.X +9 - 4, thumb_pos.Y +16 + 4);
-
-				pen = SystemPens.ControlDarkDark;
-				dc.DrawLine (pen, thumb_pos.X + 10, thumb_pos.Y, thumb_pos.X +10, thumb_pos.Y +16);
-				dc.DrawLine (pen, thumb_pos.X + 10, thumb_pos.Y + 16, thumb_pos.X +10 - 5, thumb_pos.Y +16 + 5);
-
-				dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 1, 8, 16);
-				dc.FillRectangle (br_thumb, thumb_pos.X + 2, thumb_pos.Y + 17, 6, 1);
-				dc.FillRectangle (br_thumb, thumb_pos.X + 3, thumb_pos.Y + 18, 4, 1);
-				dc.FillRectangle (br_thumb, thumb_pos.X + 4, thumb_pos.Y + 19, 2, 1);
+				TrackBarDrawHorizontalThumbBottom (dc, thumb_pos, br_thumb, clip_rectangle, tb);
 				break;
-			}
-			case TickStyle.TopLeft:	{
+			case TickStyle.TopLeft:
 				thumb_pos.Y = channel_startpoint.Y - 10;
-
-				Pen pen = SystemPens.ControlLightLight;
-				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y + 4, thumb_pos.X, thumb_pos.Y + 4 + 16);
-				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y + 4, thumb_pos.X + 4, thumb_pos.Y);
-
-				pen = SystemPens.ControlDark;
-				dc.DrawLine (pen, thumb_pos.X + 9, thumb_pos.Y + 4, thumb_pos.X + 9, thumb_pos.Y + 4 + 16);
-				dc.DrawLine (pen, thumb_pos.X + 9, thumb_pos.Y + 4, thumb_pos.X + 5, thumb_pos.Y);
-				dc.DrawLine (pen, thumb_pos.X + 9, thumb_pos.Y + 19, thumb_pos.X + 1 , thumb_pos.Y +19);
-
-				pen = SystemPens.ControlDarkDark;
-				dc.DrawLine (pen, thumb_pos.X + 10, thumb_pos.Y + 4, thumb_pos.X + 10, thumb_pos.Y + 4 + 16);
-				dc.DrawLine (pen, thumb_pos.X + 10, thumb_pos.Y + 4, thumb_pos.X + 5, thumb_pos.Y -1);
-				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y + 20, thumb_pos.X + 10, thumb_pos.Y + 20);
-
-				dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 4, 8, 15);
-				dc.FillRectangle (br_thumb, thumb_pos.X + 2, thumb_pos.Y + 3, 6, 1);
-				dc.FillRectangle (br_thumb, thumb_pos.X + 3, thumb_pos.Y + 2, 4, 1);
-				dc.FillRectangle (br_thumb, thumb_pos.X + 4, thumb_pos.Y + 1, 2, 1);
+				TrackBarDrawHorizontalThumbTop (dc, thumb_pos, br_thumb, clip_rectangle, tb);
 				break;
-			}
-
-			case TickStyle.Both: {
-				thumb_pos.Y = area.Y + 10;
-					
-				Pen pen = SystemPens.ControlLightLight;
-				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y, thumb_pos.X + 9, thumb_pos.Y);
-				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 19);
-
-				pen = SystemPens.ControlDark;
-				dc.DrawLine (pen, thumb_pos.X + 9, thumb_pos.Y + 1, thumb_pos.X + 9, thumb_pos.Y + 19);
-				dc.DrawLine (pen, thumb_pos.X + 1, thumb_pos.Y + 10, thumb_pos.X + 8, thumb_pos.Y + 19);
-
-				pen = SystemPens.ControlDarkDark;
-				dc.DrawLine (pen, thumb_pos.X + 10, thumb_pos.Y, thumb_pos.X +10, thumb_pos.Y + 20);
-				dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y + 20, thumb_pos.X + 9, thumb_pos.Y + 20);
-
-				dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 1, 8, 18);
-
-				break;
-			}
-
 			default:
+				thumb_pos.Y = area.Y + 10;
+				TrackBarDrawHorizontalThumb (dc, thumb_pos, br_thumb, clip_rectangle, tb);
 				break;
 			}
+			#endregion
 
 			pixel_len = thumb_area.Width - 11;
 			pixels_betweenticks = pixel_len / ticks;
 
-			/* Draw ticks*/
 			thumb_area.Y = thumb_pos.Y;
 			thumb_area.X = channel_startpoint.X;
 			thumb_area.Height = thumb_pos.Height;
+			#region Ticks
+			if (pixels_betweenticks <= 0)
+				return;
+			if (tb.TickStyle == TickStyle.None)
+				return;
 			Region outside = new Region (area);
-			outside.Exclude (thumb_area);			
-			
-			if (outside.IsVisible (clip_rectangle)) {				
-				if (pixels_betweenticks > 0 && ((tb.TickStyle & TickStyle.BottomRight) == TickStyle.BottomRight ||
-					((tb.TickStyle & TickStyle.Both) == TickStyle.Both))) {				
-					
-					for (float inc = 0; inc < (pixel_len + 1); inc += pixels_betweenticks) {					
-						if (inc == 0 || (inc +  pixels_betweenticks) >= pixel_len +1)
-							dc.DrawLine (ResPool.GetPen (pen_ticks_color), area.X + bottomtick_startpoint.X + inc , area.Y + bottomtick_startpoint.Y, 
-								area.X + bottomtick_startpoint.X + inc , area.Y + bottomtick_startpoint.Y + 3);
-						else
-							dc.DrawLine (ResPool.GetPen (pen_ticks_color), area.X + bottomtick_startpoint.X + inc, area.Y + bottomtick_startpoint.Y, 
-								area.X + bottomtick_startpoint.X + inc, area.Y + bottomtick_startpoint.Y + 2);
+			outside.Exclude (thumb_area);
+
+			if (outside.IsVisible (clip_rectangle)) {
+				ITrackBarTickPainter tick_painter = TrackBarGetHorizontalTickPainter (dc);
+
+				if ((tb.TickStyle & TickStyle.BottomRight) == TickStyle.BottomRight) {
+					float y = area.Y + bottomtick_startpoint.Y;
+					for (float inc = 0; inc < pixel_len + 1; inc += pixels_betweenticks) {					
+						float x = area.X + bottomtick_startpoint.X + inc;
+						tick_painter.Paint (
+							x, y, 
+							x, y + (inc == 0 || inc + pixels_betweenticks >= pixel_len + 1 ? 3 : 2));
 					}
 				}
-	
-				if (pixels_betweenticks > 0 && ((tb.TickStyle & TickStyle.TopLeft) == TickStyle.TopLeft ||
-					((tb.TickStyle & TickStyle.Both) == TickStyle.Both))) {
-					
-					for (float inc = 0; inc < (pixel_len + 1); inc += pixels_betweenticks) {					
-						if (inc == 0 || (inc +  pixels_betweenticks) >= pixel_len +1)
-							dc.DrawLine (ResPool.GetPen (pen_ticks_color), area.X + toptick_startpoint.X + inc , area.Y + toptick_startpoint.Y - 3, 
-								area.X + toptick_startpoint.X + inc , area.Y + toptick_startpoint.Y);
-						else
-							dc.DrawLine (ResPool.GetPen (pen_ticks_color), area.X + toptick_startpoint.X + inc, area.Y + toptick_startpoint.Y - 2, 
-								area.X + toptick_startpoint.X + inc, area.Y + toptick_startpoint.Y );
+
+				if ((tb.TickStyle & TickStyle.TopLeft) == TickStyle.TopLeft) {
+					float y = area.Y + toptick_startpoint.Y;
+					for (float inc = 0; inc < pixel_len + 1; inc += pixels_betweenticks) {					
+						float x = area.X + toptick_startpoint.X + inc;
+						tick_painter.Paint (
+							x, y - (inc == 0 || (inc + pixels_betweenticks) >= pixel_len + 1 ? 3 : 2), 
+							x, y);
 					}			
 				}
 			}
 			
-			outside.Dispose ();			
+			outside.Dispose ();
+			#endregion
 		}
+
+		#region Track
+		protected virtual void TrackBarDrawHorizontalTrack (Graphics dc, Rectangle thumb_area, Point channel_startpoint, Rectangle clippingArea)
+		{
+			dc.FillRectangle (SystemBrushes.ControlDark, channel_startpoint.X, channel_startpoint.Y,
+				thumb_area.Width, 1);
+
+			dc.FillRectangle (SystemBrushes.ControlDarkDark, channel_startpoint.X, channel_startpoint.Y + 1,
+				thumb_area.Width, 1);
+
+			dc.FillRectangle (SystemBrushes.ControlLight, channel_startpoint.X, channel_startpoint.Y + 3,
+				thumb_area.Width, 1);
+		}
+		#endregion
+
+		#region Thumb
+		protected virtual void TrackBarDrawHorizontalThumbBottom (Graphics dc, Rectangle thumb_pos, Brush br_thumb, Rectangle clippingArea, TrackBar trackBar)
+		{
+			Pen pen = SystemPens.ControlLightLight;
+			dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y, thumb_pos.X + 10, thumb_pos.Y);
+			dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 16);
+			dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y + 16, thumb_pos.X + 4, thumb_pos.Y + 16 + 4);
+
+			pen = SystemPens.ControlDark;
+			dc.DrawLine (pen, thumb_pos.X + 9, thumb_pos.Y + 1, thumb_pos.X + 9, thumb_pos.Y + 15);
+			dc.DrawLine (pen, thumb_pos.X + 9, thumb_pos.Y + 16, thumb_pos.X + 9 - 4, thumb_pos.Y + 16 + 4);
+
+			pen = SystemPens.ControlDarkDark;
+			dc.DrawLine (pen, thumb_pos.X + 10, thumb_pos.Y, thumb_pos.X + 10, thumb_pos.Y + 16);
+			dc.DrawLine (pen, thumb_pos.X + 10, thumb_pos.Y + 16, thumb_pos.X + 10 - 5, thumb_pos.Y + 16 + 5);
+
+			dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 1, 8, 16);
+			dc.FillRectangle (br_thumb, thumb_pos.X + 2, thumb_pos.Y + 17, 6, 1);
+			dc.FillRectangle (br_thumb, thumb_pos.X + 3, thumb_pos.Y + 18, 4, 1);
+			dc.FillRectangle (br_thumb, thumb_pos.X + 4, thumb_pos.Y + 19, 2, 1);
+		}
+
+		protected virtual void TrackBarDrawHorizontalThumbTop (Graphics dc, Rectangle thumb_pos, Brush br_thumb, Rectangle clippingArea, TrackBar trackBar)
+		{
+			Pen pen = SystemPens.ControlLightLight;
+			dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y + 4, thumb_pos.X, thumb_pos.Y + 4 + 16);
+			dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y + 4, thumb_pos.X + 4, thumb_pos.Y);
+
+			pen = SystemPens.ControlDark;
+			dc.DrawLine (pen, thumb_pos.X + 9, thumb_pos.Y + 4, thumb_pos.X + 9, thumb_pos.Y + 4 + 16);
+			dc.DrawLine (pen, thumb_pos.X + 9, thumb_pos.Y + 4, thumb_pos.X + 5, thumb_pos.Y);
+			dc.DrawLine (pen, thumb_pos.X + 9, thumb_pos.Y + 19, thumb_pos.X + 1, thumb_pos.Y + 19);
+
+			pen = SystemPens.ControlDarkDark;
+			dc.DrawLine (pen, thumb_pos.X + 10, thumb_pos.Y + 4, thumb_pos.X + 10, thumb_pos.Y + 4 + 16);
+			dc.DrawLine (pen, thumb_pos.X + 10, thumb_pos.Y + 4, thumb_pos.X + 5, thumb_pos.Y - 1);
+			dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y + 20, thumb_pos.X + 10, thumb_pos.Y + 20);
+
+			dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 4, 8, 15);
+			dc.FillRectangle (br_thumb, thumb_pos.X + 2, thumb_pos.Y + 3, 6, 1);
+			dc.FillRectangle (br_thumb, thumb_pos.X + 3, thumb_pos.Y + 2, 4, 1);
+			dc.FillRectangle (br_thumb, thumb_pos.X + 4, thumb_pos.Y + 1, 2, 1);
+		}
+
+		protected virtual void TrackBarDrawHorizontalThumb (Graphics dc, Rectangle thumb_pos, Brush br_thumb, Rectangle clippingArea, TrackBar trackBar)
+		{
+			Pen pen = SystemPens.ControlLightLight;
+			dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y, thumb_pos.X + 9, thumb_pos.Y);
+			dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 19);
+
+			pen = SystemPens.ControlDark;
+			dc.DrawLine (pen, thumb_pos.X + 9, thumb_pos.Y + 1, thumb_pos.X + 9, thumb_pos.Y + 19);
+			dc.DrawLine (pen, thumb_pos.X + 1, thumb_pos.Y + 10, thumb_pos.X + 8, thumb_pos.Y + 19);
+
+			pen = SystemPens.ControlDarkDark;
+			dc.DrawLine (pen, thumb_pos.X + 10, thumb_pos.Y, thumb_pos.X + 10, thumb_pos.Y + 20);
+			dc.DrawLine (pen, thumb_pos.X, thumb_pos.Y + 20, thumb_pos.X + 9, thumb_pos.Y + 20);
+
+			dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 1, 8, 18);
+		}
+		#endregion
+
+		#region Ticks
+		protected virtual ITrackBarTickPainter TrackBarGetHorizontalTickPainter (Graphics g)
+		{
+			return GetTrackBarTickPainter (g);
+		}
+		#endregion
+		#endregion
 
 		public override void DrawTrackBar (Graphics dc, Rectangle clip_rectangle, TrackBar tb) 
 		{
