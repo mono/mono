@@ -707,12 +707,19 @@ namespace System.Windows.Forms {
 
 		public int Find (string propertyName, object key)
 		{
-			throw new NotImplementedException ();
+			PropertyDescriptor property = GetItemProperties (null).Find (propertyName, true);
+			if (property == null)
+				throw new ArgumentException ("propertyName");
+
+			return Find (property, key);
 		}
 
 		public virtual int Find (PropertyDescriptor prop, object key)
 		{
-			throw new NotImplementedException ();
+			if (!list_is_ibinding)
+				throw new NotSupportedException ();
+
+			return ((IBindingList)list).Find (prop, key);
 		}
 
 		public virtual IEnumerator GetEnumerator ()
