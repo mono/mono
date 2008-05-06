@@ -149,5 +149,19 @@ namespace MonoTests.System.Linq.Expressions
 
 		}
 
+		[Test]
+		[Category ("NotWorking")]
+		public void DoubleNullableEqual ()
+		{
+			var l = Expression.Parameter (typeof (double?), "l");
+			var r = Expression.Parameter (typeof (double?), "r");
+
+			var eq = Expression.Lambda<Func<double?, double?, bool>> (
+				Expression.Equal (l, r), l, r).Compile ();
+
+			Assert.AreEqual (true, eq (null, null));
+			Assert.AreEqual (false, eq (null, 1.1));
+			// TODO: .. continue
+		}
 	}
 }
