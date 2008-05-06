@@ -1,5 +1,10 @@
 2008-05-06  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TrackBar.cs: We can't set ResizeRedraw because it isn't set
+	on .Net.  So do the same thing in WndProc.
+
+2008-05-06  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TrackBar.cs: Commit patch from Andy Hume that corrects
 	the clickable areas to better match .Net.
 	[Fixes bug #387074]

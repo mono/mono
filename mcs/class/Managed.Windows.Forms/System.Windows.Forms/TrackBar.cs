@@ -229,7 +229,6 @@ namespace System.Windows.Forms
 				| ControlStyles.UseTextForAccessibility
 #endif
 				, false);
-			SetStyle (ControlStyles.ResizeRedraw, true);
 		}
 
 		#region Private & Internal Properties
@@ -635,6 +634,11 @@ namespace System.Windows.Forms
 		protected override void WndProc (ref Message m)
     		{
 			base.WndProc (ref m);
+
+			// Basically we want ControlStyles.ResizeRedraw but
+			// tests say we can't set that flag
+			if ((Msg)m.Msg == Msg.WM_WINDOWPOSCHANGED && Visible)
+				Invalidate ();
     		}
     		
 		#endregion Public Methods
