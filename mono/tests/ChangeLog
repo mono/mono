@@ -1,3 +1,8 @@
+2008-05-06  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* bug-382986.cs. bug-382986-lib.cs: Regression test for
+	bug #382986.
+
 2008-05-04  Robert Jordan  <robertj@gmx.net>
 
 	* libtest.c: disable struct tests for platforms with incompatible
