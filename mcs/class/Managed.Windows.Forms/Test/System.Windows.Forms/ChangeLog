@@ -1,5 +1,10 @@
 2008-05-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* BindingSOurceTest.cs: New assertion for
+	ISupportInitializeNotification test.
+
+2008-05-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* BindingSource.cs: New tests for ISupportInitializeNotification
 	property.
 

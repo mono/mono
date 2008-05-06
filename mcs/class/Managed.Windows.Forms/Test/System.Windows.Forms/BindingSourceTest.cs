@@ -1696,6 +1696,12 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			Assert.AreEqual (true, init_obj.IsInitialized, "J3");
 
 			Assert.IsTrue (source.List is BindingList<InitializableObject>, "K");
+
+			// Call again EndInit on datasource, which should *not* cause a
+			// EndInit call in BindingSource, since it is already initialized
+			initialized_handled = false;
+			init_obj.EndInit ();
+			Assert.AreEqual (false, initialized_handled, "L");
 		}
 
 		class InitializableObject : ISupportInitializeNotification
