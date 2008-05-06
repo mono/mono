@@ -1,5 +1,9 @@
 2008-05-06  Jb Evain  <jbevain@novell.com>
 
+	* Mono.Cecil.Metadata/MetadataRowReader.cs
+	* Mono.Cecil.Metadata/MetadataRowWriter.cs:
+		Cache row counters delegates.
+
 	* Mono.Cecil/TypeDefinition.cs
 	* Mono.Cecil/MethodDefinition.cs
 	* Mono.Cecil/DefaultImporter.cs

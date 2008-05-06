@@ -40,6 +40,8 @@ namespace Mono.Cecil.Metadata {
 
 		MetadataRoot m_root;
 		MemoryBinaryWriter m_binaryWriter;
+
+		Utilities.TableRowCounter m_counter;
 		int [] m_ciCache;
 
 		int m_blobHeapIdxSz;
@@ -51,6 +53,7 @@ namespace Mono.Cecil.Metadata {
 			m_binaryWriter = mtwv.GetWriter ();
 			m_root = mtwv.GetMetadataRoot ();
 			m_ciCache = new int [13];
+			m_counter = new Utilities.TableRowCounter (GetNumberOfRows);
 		}
 
 		void WriteBlobPointer (uint pointer)
@@ -76,8 +79,7 @@ namespace Mono.Cecil.Metadata {
 		void WriteMetadataToken (MetadataToken token, CodedIndex ci)
 		{
 			WriteByIndexSize (Utilities.CompressMetadataToken (ci, token),
-				Utilities.GetCodedIndexSize (
-					ci, new Utilities.TableRowCounter (GetNumberOfRows), m_ciCache));
+				Utilities.GetCodedIndexSize (ci, m_counter, m_ciCache));
 		}
 
 		int GetNumberOfRows (int rid)
