@@ -152,61 +152,61 @@ namespace System.Linq {
 
 		#region Average
 
-		public static int Average (this IQueryable<int> source)
+		public static double Average (this IQueryable<int> source)
 		{
 			Check.Source (source);
 
-			return source.Provider.Execute<int> (
+            return source.Provider.Execute<double>(
 				StaticCall (
 					(MethodInfo) MethodBase.GetCurrentMethod (),
 					source.Expression));
 		}
 
-		public static int? Average (this IQueryable<int?> source)
+        public static double? Average(this IQueryable<int?> source)
 		{
 			Check.Source (source);
 
-			return source.Provider.Execute<int?> (
+            return source.Provider.Execute<double?>(
 				StaticCall (
 					(MethodInfo) MethodBase.GetCurrentMethod (),
 					source.Expression));
 		}
 
-		public static long Average (this IQueryable<long> source)
+        public static double Average(this IQueryable<long> source)
 		{
 			Check.Source (source);
 
-			return source.Provider.Execute<long> (
+            return source.Provider.Execute<double>(
 				StaticCall (
 					(MethodInfo) MethodBase.GetCurrentMethod (),
 					source.Expression));
 		}
 
-		public static long? Average (this IQueryable<long?> source)
+        public static double? Average(this IQueryable<long?> source)
 		{
 			Check.Source (source);
 
-			return source.Provider.Execute<long?> (
+            return source.Provider.Execute<double?>(
 				StaticCall (
 					(MethodInfo) MethodBase.GetCurrentMethod (),
 					source.Expression));
 		}
 
-		public static float Average (this IQueryable<float> source)
+        public static float Average(this IQueryable<float> source)
 		{
 			Check.Source (source);
 
-			return source.Provider.Execute<float> (
+            return source.Provider.Execute<float>(
 				StaticCall (
-					(MethodInfo) (MethodInfo) MethodBase.GetCurrentMethod (),
+					(MethodInfo) MethodBase.GetCurrentMethod (),
 					source.Expression));
 		}
 
-		public static float? Average (this IQueryable<float?> source)
+        public static float? Average(this IQueryable<float?> source)
 		{
 			Check.Source (source);
 
-			return source.Provider.Execute<float?> (
+            return source.Provider.Execute<float?>(
 				StaticCall (
 					(MethodInfo) MethodBase.GetCurrentMethod (),
 					source.Expression));
@@ -232,86 +232,86 @@ namespace System.Linq {
 					source.Expression));
 		}
 
-		public static decimal Average (this IQueryable<decimal> source)
+        public static decimal Average(this IQueryable<decimal> source)
 		{
 			Check.Source (source);
 
-			return source.Provider.Execute<decimal> (
+            return source.Provider.Execute<decimal>(
 				StaticCall (
 				(MethodInfo) MethodBase.GetCurrentMethod (),
 					source.Expression));
 		}
 
-		public static decimal? Average (this IQueryable<decimal?> source)
+        public static decimal? Average(this IQueryable<decimal?> source)
 		{
 			Check.Source (source);
 
-			return source.Provider.Execute<decimal?> (
+            return source.Provider.Execute<decimal?>(
 				StaticCall (
 					(MethodInfo) MethodBase.GetCurrentMethod (),
 					source.Expression));
 		}
 
-		public static int Average<TSource> (this IQueryable<TSource> source, Expression<Func<TSource, int>> selector)
+        public static double Average<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, int>> selector)
 		{
 			Check.SourceAndSelector (source, selector);
 
-			return source.Provider.Execute<int> (
+            return source.Provider.Execute<double>(
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource)),
 					source.Expression,
 					Expression.Quote (selector)));
 		}
 
-		public static int? Average<TSource> (this IQueryable<TSource> source, Expression<Func<TSource, int?>> selector)
+        public static double? Average<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, int?>> selector)
 		{
 			Check.SourceAndSelector (source, selector);
 
-			return source.Provider.Execute<int?> (
+            return source.Provider.Execute<double?>(
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource)),
 					source.Expression,
 					Expression.Quote (selector)));
 		}
 
-		public static long Average<TSource> (this IQueryable<TSource> source, Expression<Func<TSource, long>> selector)
+        public static double Average<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, long>> selector)
 		{
 			Check.SourceAndSelector (source, selector);
 
-			return source.Provider.Execute<long> (
+            return source.Provider.Execute<double>(
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource)),
 					source.Expression,
 					Expression.Quote (selector)));
 		}
 
-		public static long? Average<TSource> (this IQueryable<TSource> source, Expression<Func<TSource, long?>> selector)
+        public static double? Average<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, long?>> selector)
 		{
 			Check.SourceAndSelector (source, selector);
 
-			return source.Provider.Execute<long?> (
+            return source.Provider.Execute<double?>(
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource)),
 					source.Expression,
 					Expression.Quote (selector)));
 		}
 
-		public static float Average<TSource> (this IQueryable<TSource> source, Expression<Func<TSource, float>> selector)
+        public static float Average<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, float>> selector)
 		{
 			Check.SourceAndSelector (source, selector);
 
-			return source.Provider.Execute<float> (
+            return source.Provider.Execute<float>(
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource)),
 					source.Expression,
 					Expression.Quote (selector)));
 		}
 
-		public static float? Average<TSource> (this IQueryable<TSource> source, Expression<Func<TSource, float?>> selector)
+        public static float? Average<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, float?>> selector)
 		{
 			Check.SourceAndSelector (source, selector);
 
-			return source.Provider.Execute<float?> (
+            return source.Provider.Execute<float?>(
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource)),
 					source.Expression,
@@ -340,22 +340,22 @@ namespace System.Linq {
 					Expression.Quote (selector)));
 		}
 
-		public static decimal Average<TSource> (this IQueryable<TSource> source, Expression<Func<TSource, decimal>> selector)
+        public static decimal Average<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, decimal>> selector)
 		{
 			Check.SourceAndSelector (source, selector);
 
-			return source.Provider.Execute<decimal> (
+            return source.Provider.Execute<decimal>(
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource)),
 					source.Expression,
 					Expression.Quote (selector)));
 		}
 
-		public static decimal? Average<TSource> (this IQueryable<TSource> source, Expression<Func<TSource, decimal?>> selector)
+        public static decimal? Average<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, decimal?>> selector)
 		{
 			Check.SourceAndSelector (source, selector);
 
-			return source.Provider.Execute<decimal?> (
+            return source.Provider.Execute<decimal?>(
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource)),
 					source.Expression,
@@ -621,11 +621,11 @@ namespace System.Linq {
 					Expression.Quote (keySelector),
 					Expression.Constant (comparer)));
 		}
-		public static IQueryable<IGrouping<TKey, TSource>> GroupBy<TSource, TKey, TElement> (this IQueryable<TSource> source, Expression<Func<TSource, TKey>> keySelector, Expression<Func<TSource, TElement>> elementSelector)
+		public static IQueryable<IGrouping<TKey, TElement>> GroupBy<TSource, TKey, TElement> (this IQueryable<TSource> source, Expression<Func<TSource, TKey>> keySelector, Expression<Func<TSource, TElement>> elementSelector)
 		{
 			Check.SourceAndKeyElementSelectors (source, keySelector, elementSelector);
 
-			return source.Provider.CreateQuery<IGrouping<TKey, TSource>> (
+            return source.Provider.CreateQuery<IGrouping<TKey, TElement>>(
 				StaticCall (
 					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource), typeof (TKey), typeof (TElement)),
 					source.Expression,
@@ -1532,7 +1532,7 @@ namespace System.Linq {
 
 		#region Union
 
-		public static IEnumerable<TSource> Union<TSource> (this IQueryable<TSource> source1, IEnumerable<TSource> source2)
+		public static IQueryable<TSource> Union<TSource> (this IQueryable<TSource> source1, IEnumerable<TSource> source2)
 		{
 			Check.Source1AndSource2 (source1, source2);
 
@@ -1543,7 +1543,7 @@ namespace System.Linq {
 					Expression.Constant (source2)));
 		}
 
-		public static IEnumerable<TSource> Union<TSource> (this IQueryable<TSource> source1, IEnumerable<TSource> source2, IEqualityComparer<TSource> comparer)
+        public static IQueryable<TSource> Union<TSource>(this IQueryable<TSource> source1, IEnumerable<TSource> source2, IEqualityComparer<TSource> comparer)
 		{
 			Check.Source1AndSource2 (source1, source2);
 

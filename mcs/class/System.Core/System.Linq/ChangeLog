@@ -1,3 +1,8 @@
+2008-05-06  Sasha Kogan  <sashak@mainsoft.com>
+
+	* Queryable.cs (Average, GroupBy, Union): fix signatures to
+	match MS API.
+
 2008-05-03  Jb Evain  <jbevain@novell.com>
 
 	* Queryable.cs (OrderBy, OrderByDescending): fix signature and
