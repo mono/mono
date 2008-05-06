@@ -1,3 +1,9 @@
+2008-05-07  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpRequest.cs: StripPath should handle UNC paths too. Fixes bug
+	#385870. Patch from Ivan Hamilton <ivan@chimerical.com.au>,
+	thanks!
+
 2008-05-06  Marek Habersack  <mhabersack@novell.com>
 
 	* MimeTypes.cs: mime type keys might not exist in the dictionary,

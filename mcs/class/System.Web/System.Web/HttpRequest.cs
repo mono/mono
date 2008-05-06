@@ -1734,7 +1734,7 @@ namespace System.Web {
 			if (path == null || path.Length == 0)
 				return path;
 			
-			if (path.IndexOf (":\\") != 1)
+			if (path.IndexOf (":\\") != 1 && !path.StartsWith ("\\\\"))
 				return path;
 			return path.Substring (path.LastIndexOf ("\\") + 1);
 		}
