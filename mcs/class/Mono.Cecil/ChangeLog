@@ -3,6 +3,7 @@
 	* Mono.Cecil.Metadata/MetadataRowReader.cs
 	* Mono.Cecil.Metadata/MetadataRowWriter.cs:
 		Cache row counters delegates.
+		Based on a patch by Carlo Kok <ck@remobjects.com>.
 
 	* Mono.Cecil/TypeDefinition.cs
 	* Mono.Cecil/MethodDefinition.cs
