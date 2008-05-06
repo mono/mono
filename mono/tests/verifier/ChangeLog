@@ -1,5 +1,10 @@
 2008-05-02 Rodrigo Kumpera <rkumpera@novell.com>
 
+	* valid_nullable_store.il: New test to ensure
+	that nullables are properly compared.
+
+2008-05-02 Rodrigo Kumpera <rkumpera@novell.com>
+
 	* valid_leave_before_try_block.il: New test to ensure
 	that the leave opcode empties the stack.
 
