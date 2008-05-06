@@ -1,5 +1,9 @@
 2008-05-06  Jb Evain  <jbevain@novell.com>
 
+	* Mono.Cecil.Cil/CodeWriter.cs (ComputeMaxStack): compute max
+	stack more precisely. Based on a patch by Daniel Grunwald,
+	Contains code from Cecil.FlowAnalysis.
+
 	* Mono.Cecil.Cil/MethodBody.cs (Clone): make sure the
 	instruction linked list is properly constructed.
 

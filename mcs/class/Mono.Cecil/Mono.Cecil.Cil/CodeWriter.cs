@@ -45,6 +45,8 @@ namespace Mono.Cecil.Cil {
 		IDictionary m_localSigCache;
 		IDictionary m_standaloneSigCache;
 
+		IDictionary m_stackSizes;
+
 		public CodeWriter (ReflectionWriter reflectWriter, MemoryBinaryWriter writer)
 		{
 			m_reflectWriter = reflectWriter;
@@ -53,6 +55,8 @@ namespace Mono.Cecil.Cil {
 
 			m_localSigCache = new Hashtable ();
 			m_standaloneSigCache = new Hashtable ();
+
+			m_stackSizes = new Hashtable ();
 		}
 
 		public RVA WriteMethodBody (MethodDefinition meth)
@@ -415,48 +419,145 @@ namespace Mono.Cecil.Cil {
 			return lvs;
 		}
 
-		static void ComputeMaxStack (InstructionCollection instructions)
+		void ComputeMaxStack (InstructionCollection instructions)
 		{
-			InstructionCollection ehs = new InstructionCollection (null);
+			int current = 0;
+			int max = 0;
+			m_stackSizes.Clear ();
+
 			foreach (ExceptionHandler eh in instructions.Container.ExceptionHandlers) {
 				switch (eh.Type) {
 				case ExceptionHandlerType.Catch :
-					ehs.Add (eh.HandlerStart);
-					break;
 				case ExceptionHandlerType.Filter :
-					ehs.Add (eh.FilterStart);
+					m_stackSizes [eh.HandlerStart] = 1;
+					max = 1;
 					break;
 				}
 			}
 
-			int max = 0;
 			foreach (Instruction instr in instructions) {
-				if (ehs.Contains (instr))
-					max++;
 
-				switch (instr.OpCode.StackBehaviourPush) {
-				case StackBehaviour.Push1:
-				case StackBehaviour.Pushi:
-				case StackBehaviour.Pushi8:
-				case StackBehaviour.Pushr4:
-				case StackBehaviour.Pushr8:
-				case StackBehaviour.Pushref:
-				case StackBehaviour.Varpush:
-					max++;
+				object savedSize = m_stackSizes [instr];
+				if (savedSize != null)
+					current = (int) savedSize;
+
+				current -= GetPopDelta (instructions.Container.Method, instr, current);
+
+				if (current < 0)
+					current = 0;
+
+				current += GetPushDelta (instr);
+
+				if (current > max)
+					max = current;
+
+				// for forward branches, copy the stack size for the instruction that is being branched to
+				switch (instr.OpCode.OperandType) {
+					case OperandType.InlineBrTarget:
+					case OperandType.ShortInlineBrTarget:
+						m_stackSizes [instr.Operand] = current;
 					break;
-				case StackBehaviour.Push1_push1:
-					max += 2;
+					case OperandType.InlineSwitch:
+						foreach (Instruction target in (Instruction []) instr.Operand)
+							m_stackSizes [target] = current;
 					break;
 				}
 
-				if (instr.OpCode.OperandType == OperandType.InlineMethod) {
-					IMethodSignature signature = instr.Operand as IMethodSignature;
-					if (signature != null && signature.ReturnType.ReturnType.FullName != Constants.Void)
-						max++;
+				switch (instr.OpCode.FlowControl) {
+				case FlowControl.Branch:
+				case FlowControl.Throw:
+				case FlowControl.Return:
+					// next statement is not reachable from this statement, so reset the stack depth to 0
+					current = 0;
+					break;
 				}
 			}
 
-			instructions.Container.MaxStack = max;
+			instructions.Container.MaxStack = max + 1; // you never know
+		}
+
+		static int GetPushDelta (Instruction instruction)
+		{
+			OpCode code = instruction.OpCode;
+			switch (code.StackBehaviourPush) {
+			case StackBehaviour.Push0:
+				return 0;
+
+			case StackBehaviour.Push1:
+			case StackBehaviour.Pushi:
+			case StackBehaviour.Pushi8:
+			case StackBehaviour.Pushr4:
+			case StackBehaviour.Pushr8:
+			case StackBehaviour.Pushref:
+				return 1;
+
+			case StackBehaviour.Push1_push1:
+				return 2;
+
+			case StackBehaviour.Varpush:
+				if (code.FlowControl != FlowControl.Call)
+					break;
+
+				MethodReference method = (MethodReference) instruction.Operand;
+				return IsVoid (method.ReturnType.ReturnType) ? 0 : 1;
+			}
+
+			throw new NotSupportedException ();
+		}
+
+		static int GetPopDelta (MethodDefinition current, Instruction instruction, int height)
+		{
+			OpCode code = instruction.OpCode;
+			switch (code.StackBehaviourPop) {
+			case StackBehaviour.Pop0:
+				return 0;
+			case StackBehaviour.Popi:
+			case StackBehaviour.Popref:
+			case StackBehaviour.Pop1:
+				return 1;
+
+			case StackBehaviour.Pop1_pop1:
+			case StackBehaviour.Popi_pop1:
+			case StackBehaviour.Popi_popi:
+			case StackBehaviour.Popi_popi8:
+			case StackBehaviour.Popi_popr4:
+			case StackBehaviour.Popi_popr8:
+			case StackBehaviour.Popref_pop1:
+			case StackBehaviour.Popref_popi:
+				return 2;
+
+			case StackBehaviour.Popi_popi_popi:
+			case StackBehaviour.Popref_popi_popi:
+			case StackBehaviour.Popref_popi_popi8:
+			case StackBehaviour.Popref_popi_popr4:
+			case StackBehaviour.Popref_popi_popr8:
+			case StackBehaviour.Popref_popi_popref:
+				return 3;
+
+			case StackBehaviour.PopAll:
+				return height;
+
+			case StackBehaviour.Varpop:
+				if (code == OpCodes.Ret)
+					return IsVoid (current.ReturnType.ReturnType) ? 0 : 1;
+
+				if (code.FlowControl != FlowControl.Call)
+					break;
+
+				IMethodSignature method = (IMethodSignature) instruction.Operand;
+				int count = method.Parameters.Count;
+				if (method.HasThis && code != OpCodes.Newobj)
+					++count;
+
+				return count;
+			}
+
+			throw new NotSupportedException ();
+		}
+
+		static bool IsVoid (TypeReference type)
+		{
+			return type.FullName == Constants.Void;
 		}
 	}
 }
