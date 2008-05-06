@@ -1,5 +1,10 @@
 2006-05-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* BindingSource.cs: Setting DataSource should only reset DataMember if
+	the previous value was null (make pass a not working test).
+
+2006-05-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* BindingSource.cs: When EndInit call is postponed and is called until
 	DataSource.EndInit is called, remove the handler for data source.
 

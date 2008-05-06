@@ -316,9 +316,10 @@ namespace System.Windows.Forms {
 			get { return datasource; }
 			set {
 				if (datasource != value) {
-					this.datasource = value;
-					datamember = String.Empty;
+					if (datasource == null)
+						datamember = String.Empty;
 
+					datasource = value;
 					ResetList ();
 
 					OnDataSourceChanged (EventArgs.Empty);
