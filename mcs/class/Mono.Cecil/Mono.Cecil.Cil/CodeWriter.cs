@@ -498,7 +498,7 @@ namespace Mono.Cecil.Cil {
 				if (code.FlowControl != FlowControl.Call)
 					break;
 
-				MethodReference method = (MethodReference) instruction.Operand;
+				IMethodSignature method = (IMethodSignature) instruction.Operand;
 				return IsVoid (method.ReturnType.ReturnType) ? 0 : 1;
 			}
 
