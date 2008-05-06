@@ -1,5 +1,9 @@
 2008-05-06  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStripManager.cs: Don't use IsAlive, race condition, etc. etc.
+
+2008-05-06  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStripManager.cs: Store references to toolstrips as
 	weak references so they do not prevent forms from getting collected.
 	[Fixes bug #386483]

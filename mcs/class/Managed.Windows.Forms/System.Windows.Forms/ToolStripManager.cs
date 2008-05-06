@@ -103,10 +103,10 @@ namespace System.Windows.Forms
 		{
 			lock (toolstrips)
 				foreach (WeakReference wr in toolstrips) {
-					if (!wr.IsAlive)
-						continue;
-						
 					ToolStrip ts = (ToolStrip)wr.Target;
+					
+					if (ts == null)
+						continue;
 				
 					if (ts.Name == toolStripName)
 						return ts;
@@ -466,10 +466,13 @@ namespace System.Windows.Forms
 			lock (toolstrips) {
 				List<ToolStrip> tools = new List<ToolStrip> ();
 				
-				foreach (WeakReference wr in toolstrips)
-					if (wr.IsAlive)
-						tools.Add ((ToolStrip)wr.Target);
-
+				foreach (WeakReference wr in toolstrips) {
+					ToolStrip t = (ToolStrip)wr.Target;
+					
+					if (t != null)
+						tools.Add (t);
+				}
+				
 				int index = tools.IndexOf (ts);
 
 				if (forward) {
@@ -531,10 +534,10 @@ namespace System.Windows.Forms
 			// Look for any MenuStrip in the form
 			lock (toolstrips)
 				foreach (WeakReference wr in toolstrips) {
-					if (!wr.IsAlive)
-						continue;
-						
 					ToolStrip ts = (ToolStrip)wr.Target;
+
+					if (ts == null)
+						continue;
 				
 					if (ts.TopLevelControl == f)
 						if (ts.OnMenuKey ())
