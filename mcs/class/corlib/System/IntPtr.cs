@@ -220,7 +220,7 @@ namespace System
 
 		public static explicit operator long (IntPtr value)
 		{
-			return (long) value.value;
+			return value.ToInt64 ();
 		}
 
 		[CLSCompliant (false)]

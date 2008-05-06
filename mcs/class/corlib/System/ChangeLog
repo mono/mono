@@ -1,3 +1,7 @@
+2008-05-06  Marek Safar  <marek.safar@gmail.com>
+
+	* IntPtr.cs (eplicit long): Uses ToInt64.
+
 2008-05-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* Type.cs (GetTypeFromHandle): Apparently, it is possible to create a 
