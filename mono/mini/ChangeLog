@@ -1,3 +1,8 @@
+2008-05-06  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* driver.c (mono_main): Using --verify-all enables the verifier under validil mode
+	if no related --security flag is passed.
+
 2008-05-05  Andreas Färber  <andreas.faerber@web.de>
 
 	* mini-arch.h: Prepare support for ppc64.
