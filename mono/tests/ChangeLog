@@ -1,3 +1,8 @@
+2008-05-05  Robert Jordan  <robertj@gmx.net>
+
+	* libtest.c, thunks.cs: reworked to match the new struct
+	handling.	
+	
 2008-05-06  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* bug-382986.cs. bug-382986-lib.cs: Regression test for
