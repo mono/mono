@@ -1120,7 +1120,7 @@ namespace Mono.Cecil {
 		{
 			ModType modifier = type as ModType;
 			if (modifier == null)
-				return new CustomMod [0];
+				return CustomMod.EmptyCustomMod;
 
 			ArrayList cmods = new ArrayList ();
 			do {

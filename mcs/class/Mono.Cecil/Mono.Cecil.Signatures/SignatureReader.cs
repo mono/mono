@@ -548,7 +548,7 @@ namespace Mono.Cecil.Signatures {
 
 		CustomMod [] ReadCustomMods (byte [] data, int pos, out int start)
 		{
-			ArrayList cmods = new ArrayList ();
+			ArrayList cmods = null;
 			start = pos;
 			while (true) {
 				int buf = start;
@@ -556,9 +556,14 @@ namespace Mono.Cecil.Signatures {
 				start = buf;
 				if (!((flag == ElementType.CModOpt) || (flag == ElementType.CModReqD)))
 					break;
+
+				if (cmods == null)
+					cmods = new ArrayList (2);
+
 				cmods.Add (ReadCustomMod (data, start, out start));
 			}
-			return cmods.ToArray (typeof (CustomMod)) as CustomMod [];
+
+			return cmods == null ? CustomMod.EmptyCustomMod : cmods.ToArray (typeof (CustomMod)) as CustomMod [];
 		}
 
 		CustomMod ReadCustomMod (byte [] data, int pos, out int start)

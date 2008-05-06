@@ -32,6 +32,8 @@ namespace Mono.Cecil.Signatures {
 
 	internal sealed class CustomMod {
 
+		public static CustomMod [] EmptyCustomMod = new CustomMod [0];
+
 		public enum CMODType : byte {
 			None = 0x0,
 			OPT = (byte) ElementType.CModOpt,

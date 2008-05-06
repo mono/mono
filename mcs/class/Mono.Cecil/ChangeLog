@@ -1,5 +1,12 @@
 2008-05-06  Jb Evain  <jbevain@novell.com>
 
+	* Mono.Cecil.Signatures/CustomMod.cs:
+		Introduce a EmptyCustomMod static field.
+	* Mono.Cecil/ReflectionWriter.cs
+	* Mono.Cecil.Signatures/SignatureReader.cs:
+		Use EmptyCustomMod instead of instanciating
+		empty arrays of CustomMod.
+
 	* Mono.Cecil.Metadata/MetadataRowReader.cs
 	* Mono.Cecil.Metadata/MetadataRowWriter.cs:
 		Cache row counters delegates.
