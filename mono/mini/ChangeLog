@@ -1,5 +1,18 @@
 2008-05-06  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* mini.c (mono_method_to_ir): Verify visibility of call related opcodes
+	against both inflated and non-inflated methods. We need to check against the
+	generic definition for cases where the instantiated method is not visible.
+	We need to check against the inflated types for cases where the instantiation
+	changes any super type. This fixes #382986.
+
+	Note that this doesn't need to be applied to other parts of mono_method_to_ir
+	that check for visibiliy as generic params only appears as the type subject
+	of tokens on call opcodes. Field manipulation and ldftn must always
+	target an exact type.
+
+2008-05-06  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* driver.c (mono_main): Using --verify-all enables the verifier under validil mode
 	if no related --security flag is passed.
 
