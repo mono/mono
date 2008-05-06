@@ -1,5 +1,10 @@
 2008-05-06 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.h: Ops, commited the header with debug
+	enabled.
+
+2008-05-06 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (merge_stack): Use the new value on unverifiable
 	stack merges.
 
