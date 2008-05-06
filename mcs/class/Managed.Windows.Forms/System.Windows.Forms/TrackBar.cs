@@ -716,7 +716,7 @@ namespace System.Windows.Forms
 					Invalidate (thumb_area);
 				}
 				else {
-					if (ClientRectangle.Contains (point)) {
+					if (thumb_area.Contains (point)) {
 						is_moving_right = e.X > thumb_pos.X + thumb_pos.Width; 
 						if (is_moving_right)
 							LargeIncrement ();
@@ -741,7 +741,7 @@ namespace System.Windows.Forms
 					Invalidate (thumb_area);
 				}
 				else {
-					if (ClientRectangle.Contains (point)) {
+					if (thumb_area.Contains (point)) {
 						is_moving_right = e.Y > thumb_pos.Y + thumb_pos.Width;
 						if (is_moving_right)
 							LargeDecrement ();
