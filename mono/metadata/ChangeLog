@@ -1,3 +1,7 @@
+2008-05-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c: Special case generic type definitions as well. Fixes #383444.
+
 2008-05-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_System_Reflection_Module_ResolveTypeToken): Fix handling
