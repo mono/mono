@@ -1,5 +1,11 @@
 2008-05-06  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TrackBar.cs: Commit patch from Andy Hume that adds the
+	ResizeRedraw control flag so the track bar repaints itself
+	when it is resized.  [Fixes bug #387072]
+
+2008-05-06  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TrackBar.cs: Commit patch from Andy Hume that adds better
 	support for keyboard navigation when the TrackBar is vertical.
 	[Fixes bug #387071]

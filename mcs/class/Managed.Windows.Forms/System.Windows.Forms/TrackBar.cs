@@ -229,6 +229,7 @@ namespace System.Windows.Forms
 				| ControlStyles.UseTextForAccessibility
 #endif
 				, false);
+			SetStyle (ControlStyles.ResizeRedraw, true);
 		}
 
 		#region Private & Internal Properties
