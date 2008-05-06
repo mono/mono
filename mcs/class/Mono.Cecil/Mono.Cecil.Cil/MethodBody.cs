@@ -119,6 +119,8 @@ namespace Mono.Cecil.Cil {
 			nb.InitLocals = body.InitLocals;
 			nb.CodeSize = body.CodeSize;
 
+			CilWorker worker = nb.CilWorker;
+
 			foreach (VariableDefinition var in body.Variables)
 				nb.Variables.Add (new VariableDefinition (
 					var.Name, var.Index, parent,
@@ -168,7 +170,7 @@ namespace Mono.Cecil.Cil {
 					break;
 				}
 
-				nb.Instructions.Add (ni);
+				worker.Append (ni);
 			}
 
 			for (int i = 0; i < body.Instructions.Count; i++) {
