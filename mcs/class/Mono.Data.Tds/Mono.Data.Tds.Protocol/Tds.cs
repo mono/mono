@@ -753,6 +753,11 @@ namespace Mono.Data.Tds.Protocol {
 				}
 
 				element = GetDecimalValue (precision, scale);
+				if (scale == 0) {
+					if (precision <= 19) {
+						element = Convert.ToInt64 (element);
+					}
+				}
 				break;
 			case TdsColumnType.DateTimeN :
 				if (outParam) 

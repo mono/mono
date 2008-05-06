@@ -1,3 +1,8 @@
+2008-05-05  Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
+
+	* Tds.cs: a numeric column with no decimal digits and a precision <= 80
+	is translated into a long.
+
 2007-11-10  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Tds.cs: Round milliseconds for datetime. Fixes part of bug #323646.
