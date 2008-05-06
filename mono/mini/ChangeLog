@@ -1,3 +1,13 @@
+2008-05-06  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* driver.c (mono_main): Revert r102623. The right
+	thing to do is to enable the verifier under verifiable
+	unless a --security flag was passed.
+
+	We need this non-trivial behavior for --verify-all otherwise
+	mcs-compileall won't be able to use it. As it needs everything to
+	be verified under validil.
+
 2008-05-06  Martin Baulig  <martin@ximian.com>
 
 	Fix #383749.
