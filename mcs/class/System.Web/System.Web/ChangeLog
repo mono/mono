@@ -1,3 +1,10 @@
+2008-05-06  Marek Habersack  <mhabersack@novell.com>
+
+	* MimeTypes.cs: mime type keys might not exist in the dictionary,
+	in the 2.0 profile. Patch from Rolf Kvinge <rkvinge@novell.com>
+	and Jean-Baptiste Evain <jbevain@novell.com>, thanks! Fixes bug
+	#386008
+
 2008-04-30  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpApplication.cs: when the Start method is called in a new

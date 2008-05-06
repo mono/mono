@@ -547,9 +547,14 @@ namespace System.Web
 			string result = null;
 			int dot = fileName.LastIndexOf ('.');
 
-			if (dot != -1 && fileName.Length > dot + 1)
+			if (dot != -1 && fileName.Length > dot + 1) {
+#if NET_2_0
+				mimeTypes.TryGetValue (fileName.Substring (dot + 1), out result);
+#else
 				result = mimeTypes [fileName.Substring (dot + 1)] as string;
-
+#endif
+			}
+			
 			if (result == null)
 				result = "application/octet-stream";
 
