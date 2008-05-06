@@ -1,5 +1,12 @@
 2008-05-06  Jb Evain  <jbevain@novell.com>
 
+	* Mono.Cecil/TypeDefinition.cs
+	* Mono.Cecil/MethodDefinition.cs
+	* Mono.Cecil/DefaultImporter.cs
+	* Mono.Cecil/ReflectionHelper.cs:
+		Restore the generic context values instead of blindly
+		overriding them. Based on a patch by Dzintars Avots.
+
 	* Mono.Cecil/MarshalSpec.cs (CloneInto): add new method
 	to clone MarshalSpec into a new container.
 

@@ -445,6 +445,8 @@ namespace Mono.Cecil {
 				type.Namespace,
 				type.Attributes);
 
+			TypeReference contextType = context.GenericContext.Type;
+
 			context.GenericContext.Type = nt;
 
 			GenericParameter.CloneInto (type, nt, context);
@@ -475,6 +477,8 @@ namespace Mono.Cecil {
 				nt.CustomAttributes.Add (CustomAttribute.Clone (ca, context));
 			foreach (SecurityDeclaration dec in type.SecurityDeclarations)
 				nt.SecurityDeclarations.Add (SecurityDeclaration.Clone (dec));
+
+			context.GenericContext.Type = contextType;
 
 			return nt;
 		}

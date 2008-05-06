@@ -155,9 +155,13 @@ namespace Mono.Cecil {
 			} else
 				type = new TypeReference (t.Name, t.Namespace, asm, t.IsValueType);
 
+			TypeReference contextType = context.GenericContext.Type;
+
 			context.GenericContext.Type = type;
 
 			GenericParameter.CloneInto (t, type, context);
+
+			context.GenericContext.Type = contextType;
 
 			m_module.TypeReferences.Add (type);
 			return type;
@@ -216,10 +220,11 @@ namespace Mono.Cecil {
 				mr.CallingConvention);
 			meth.DeclaringType = ImportTypeReference (mr.DeclaringType, context);
 
-			TypeReference contextType = meth.DeclaringType.GetOriginalType ();
+			TypeReference contextType = context.GenericContext.Type;
+			MethodReference contextMethod = context.GenericContext.Method;
 
 			context.GenericContext.Method = meth;
-			context.GenericContext.Type = contextType;
+			context.GenericContext.Type = meth.DeclaringType.GetOriginalType();
 
 			GenericParameter.CloneInto (mr, meth, context);
 
@@ -228,6 +233,9 @@ namespace Mono.Cecil {
 			foreach (ParameterDefinition param in mr.Parameters)
 				meth.Parameters.Add (new ParameterDefinition (
 					ImportTypeReference (param.ParameterType, context)));
+
+			context.GenericContext.Type = contextType;
+			context.GenericContext.Method = contextMethod;
 
 			m_module.MemberReferences.Add (meth);
 			return meth;

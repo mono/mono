@@ -571,6 +571,8 @@ namespace Mono.Cecil {
 				meth.ExplicitThis,
 				meth.CallingConvention);
 
+			MethodReference contextMethod = context.GenericContext.Method;
+
 			context.GenericContext.Method = nm;
 
 			GenericParameter.CloneInto (meth, nm, context);
@@ -596,6 +598,8 @@ namespace Mono.Cecil {
 
 			if (meth.Body != null)
 				nm.Body = MethodBody.Clone (meth.Body, nm, context);
+
+			context.GenericContext.Method = contextMethod;
 
 			return nm;
 		}

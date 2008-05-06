@@ -346,6 +346,9 @@ namespace Mono.Cecil {
 				foreach (Type genParam in GetGenericArguments (mb as SR.MethodInfo))
 					meth.GenericParameters.Add (new GenericParameter (genParam.Name, meth));
 
+			TypeReference contextType = context.GenericContext.Type;
+			MethodReference contextMethod = context.GenericContext.Method;
+
 			context.GenericContext.Method = meth;
 			context.GenericContext.Type = ImportSystemType (declaringTypeDef, context);
 
@@ -355,6 +358,9 @@ namespace Mono.Cecil {
 			for (int i = 0; i < parameters.Length; i++)
 				meth.Parameters.Add (new ParameterDefinition (
 					ImportSystemType (parameters [i].ParameterType, context)));
+
+			context.GenericContext.Type = contextType;
+			context.GenericContext.Method = contextMethod;
 
 			m_module.MemberReferences.Add (meth);
 			return meth;
