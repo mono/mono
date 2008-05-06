@@ -792,32 +792,51 @@ namespace System.Windows.Forms
 		}
 		private void OnKeyDownTB (object sender, KeyEventArgs e) 
 		{
+			bool horiz = Orientation == Orientation.Horizontal;
 			switch (e.KeyCode) {
 			
 			case Keys.Down:
 			case Keys.Right:
-				SmallDecrement ();
+				if(horiz)
+					SmallIncrement();
+				else
+					SmallDecrement ();
 				break;
 
 			case Keys.Up:
 			case Keys.Left:
-				SmallIncrement ();
+				if (horiz)
+					SmallDecrement();
+				else
+					SmallIncrement();
 				break;
 
 			case Keys.PageUp:
-				LargeIncrement ();
+				if (horiz)
+					LargeDecrement();
+				else
+					LargeIncrement();
 				break;
 
 			case Keys.PageDown:
-				LargeDecrement ();
+				if (horiz)
+					LargeIncrement();
+				else
+					LargeDecrement();
 				break;
 
 			case Keys.Home:
-				Value = Maximum;
+				if (horiz)
+					Value = Minimum;
+				else
+					Value = Maximum;
 				break;
 
 			case Keys.End:
-				Value = Minimum;
+				if (horiz)
+					Value = Maximum;
+				else
+					Value = Minimum;
 				break;
 
 			default:
