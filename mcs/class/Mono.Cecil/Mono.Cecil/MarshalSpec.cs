@@ -55,6 +55,11 @@ namespace Mono.Cecil {
 		{
 			visitor.VisitMarshalSpec (this);
 		}
+
+		public virtual MarshalSpec CloneInto (IHasMarshalSpec container)
+		{
+			return new MarshalSpec (m_natIntr, container);
+		}
 	}
 
 	public sealed class ArrayMarshalSpec : MarshalSpec {
@@ -86,6 +91,16 @@ namespace Mono.Cecil {
 
 		public ArrayMarshalSpec (IHasMarshalSpec container) : base (NativeType.ARRAY, container)
 		{
+		}
+
+		public override MarshalSpec CloneInto (IHasMarshalSpec container)
+		{
+			ArrayMarshalSpec spec = new ArrayMarshalSpec (container);
+			spec.m_elemType = m_elemType;
+			spec.m_paramNum = m_paramNum;
+			spec.m_elemMult = m_elemMult;
+			spec.m_numElem = m_numElem;
+			return spec;
 		}
 	}
 
@@ -119,6 +134,16 @@ namespace Mono.Cecil {
 		public CustomMarshalerSpec (IHasMarshalSpec container) : base (NativeType.CUSTOMMARSHALER, container)
 		{
 		}
+
+		public override MarshalSpec CloneInto (IHasMarshalSpec container)
+		{
+			CustomMarshalerSpec spec = new CustomMarshalerSpec (container);
+			spec.m_guid = m_guid;
+			spec.m_unmanagedType = m_unmanagedType;
+			spec.m_managedType = m_managedType;
+			spec.m_cookie = m_cookie;
+			return spec;
+		}
 	}
 
 	public sealed class SafeArraySpec : MarshalSpec {
@@ -132,6 +157,13 @@ namespace Mono.Cecil {
 
 		public SafeArraySpec (IHasMarshalSpec container) : base (NativeType.SAFEARRAY, container)
 		{
+		}
+
+		public override MarshalSpec CloneInto(IHasMarshalSpec container)
+		{
+			SafeArraySpec spec = new SafeArraySpec	(container);
+			spec.m_elemType = m_elemType;
+			return spec;
 		}
 	}
 
@@ -153,6 +185,14 @@ namespace Mono.Cecil {
 		public FixedArraySpec (IHasMarshalSpec container) : base (NativeType.FIXEDARRAY, container)
 		{
 		}
+
+		public override MarshalSpec CloneInto (IHasMarshalSpec container)
+		{
+			FixedArraySpec spec = new FixedArraySpec (container);
+			spec.m_numElem = m_numElem;
+			spec.m_elemType = m_elemType;
+			return spec;
+		}
 	}
 
 	public sealed class FixedSysStringSpec : MarshalSpec {
@@ -166,6 +206,13 @@ namespace Mono.Cecil {
 
 		public FixedSysStringSpec (IHasMarshalSpec container) : base (NativeType.FIXEDSYSSTRING, container)
 		{
+		}
+
+		public override MarshalSpec CloneInto (IHasMarshalSpec container)
+		{
+			FixedSysStringSpec spec = new FixedSysStringSpec (container);
+			spec.m_size = m_size;
+			return spec;
 		}
 	}
 }

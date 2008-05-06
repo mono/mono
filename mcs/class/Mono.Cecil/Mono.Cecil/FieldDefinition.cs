@@ -290,7 +290,7 @@ namespace Mono.Cecil {
 			if (field.HasConstant)
 				nf.Constant = field.Constant;
 			if (field.MarshalSpec != null)
-				nf.MarshalSpec = field.MarshalSpec;
+				nf.MarshalSpec = field.MarshalSpec.CloneInto (nf);
 			if (field.RVA != RVA.Zero)
 				nf.InitialValue = field.InitialValue;
 			else

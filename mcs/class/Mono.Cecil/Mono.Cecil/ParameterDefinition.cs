@@ -154,7 +154,7 @@ namespace Mono.Cecil {
 				np.Constant = param.Constant;
 
 			if (param.MarshalSpec != null)
-				np.MarshalSpec = param.MarshalSpec;
+				np.MarshalSpec = param.MarshalSpec.CloneInto (np);
 
 			foreach (CustomAttribute ca in param.CustomAttributes)
 				np.CustomAttributes.Add (CustomAttribute.Clone (ca, context));

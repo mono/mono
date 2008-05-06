@@ -35,6 +35,7 @@ namespace Mono.Cecil {
 
 		public GenericContext GenericContext {
 			get { return m_genContext; }
+			set { m_genContext = value; }
 		}
 
 		public ImportContext (IImporter importer)
