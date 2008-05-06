@@ -10527,8 +10527,8 @@
       <method name="Int32 Main()">
         <size>121</size>
       </method>
-      <method name="Void Test_1()">
-        <size>42</size>
+      <method name="Boolean Test_1()">
+        <size>36</size>
       </method>
     </type>
   </test>

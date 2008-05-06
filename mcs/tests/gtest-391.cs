@@ -2,10 +2,10 @@ using System;
 
 class C
 {
-	void Test_1 ()
+	bool Test_1 ()
 	{
 		bool? xx = null;
-		bool brxx = xx ?? true;
+		return xx ?? true;
 	}
 	
 	public static int Main ()
