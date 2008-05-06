@@ -1,3 +1,8 @@
+2006-05-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* BindingSource.cs: When EndInit call is postponed and is called until
+	DataSource.EndInit is called, remove the handler for data source.
+
 2008-05-06  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripManager.cs: Don't use IsAlive, race condition, etc. etc.

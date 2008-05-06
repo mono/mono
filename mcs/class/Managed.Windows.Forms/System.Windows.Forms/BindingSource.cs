@@ -980,6 +980,8 @@ namespace System.Windows.Forms {
 
 		void DataSourceEndInitHandler (object o, EventArgs args)
 		{
+			((ISupportInitializeNotification)datasource).Initialized -= DataSourceEndInitHandler;
+
 			ISupportInitializeNotification inotif = (ISupportInitializeNotification)this;
 			inotif.EndInit ();
 		}
