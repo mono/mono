@@ -1,3 +1,8 @@
+2008-05-05  Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
+
+	* ConfigurationElement.cs: don't fail when a mandatory property is a
+	configuration element itself.
+
 2008-04-30  Marek Habersack  <mhabersack@novell.com>
 
 	* ConfigurationElement.cs: HasLocalModifications considers a

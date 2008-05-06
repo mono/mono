@@ -396,10 +396,13 @@ namespace System.Configuration
 				
 			foreach (PropertyInformation prop in ElementInformation.Properties)
 				if (!String.IsNullOrEmpty(prop.Name) && prop.IsRequired && !readProps.ContainsKey (prop)) {
-					object val = OnRequiredPropertyNotFound (prop.Name);
-					if (!object.Equals (val, prop.DefaultValue)) {
-						prop.Value = val;
-						prop.IsModified = false;
+					PropertyInformation p = ElementInformation.Properties [prop.Name];
+					if (p == null) {
+						object val = OnRequiredPropertyNotFound (prop.Name);
+						if (!object.Equals (val, prop.DefaultValue)) {
+							prop.Value = val;
+							prop.IsModified = false;
+						}
 					}
 				}
 
