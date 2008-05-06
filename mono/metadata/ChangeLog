@@ -1,5 +1,13 @@
 2008-05-06 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	*verify.c (mono_verifier_is_class_full_trust): If under
+	verify_all and the verifier mode was not set, only
+	gac and corlib types are fulltrust. This makes --verify-all
+	usable to detect unverifiable code, which is the expected
+	use case.
+
+2008-05-06 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.h: Ops, commited the header with debug
 	enabled.
 
