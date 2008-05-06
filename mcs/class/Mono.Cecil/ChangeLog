@@ -6,6 +6,7 @@
 	* Mono.Cecil.Signatures/SignatureReader.cs:
 		Use EmptyCustomMod instead of instanciating
 		empty arrays of CustomMod.
+		Based on a patch by Carlo Kok <ck@remobjects.com>.
 
 	* Mono.Cecil.Metadata/MetadataRowReader.cs
 	* Mono.Cecil.Metadata/MetadataRowWriter.cs:
