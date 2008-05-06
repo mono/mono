@@ -1,5 +1,11 @@
 2008-05-06  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStripManager.cs: Store references to toolstrips as
+	weak references so they do not prevent forms from getting collected.
+	[Fixes bug #386483]
+
+2008-05-06  Jonathan Pobst  <monkey@jpobst.com>
+
 	* TrackBar.cs: We can't set ResizeRedraw because it isn't set
 	on .Net.  So do the same thing in WndProc.
 

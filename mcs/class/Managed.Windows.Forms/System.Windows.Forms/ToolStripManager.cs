@@ -39,7 +39,7 @@ namespace System.Windows.Forms
 		private static ToolStripRenderer renderer = new ToolStripProfessionalRenderer ();
 		private static ToolStripManagerRenderMode render_mode = ToolStripManagerRenderMode.Professional;
 		private static bool visual_styles_enabled = Application.RenderWithVisualStyles;
-		private static List<ToolStrip> toolstrips = new List<ToolStrip> ();
+		private static List<WeakReference> toolstrips = new List<WeakReference> ();
 		private static List<ToolStripMenuItem> menu_items = new List<ToolStripMenuItem> ();
 		private static bool activated_by_keyboard;
 		
@@ -102,9 +102,15 @@ namespace System.Windows.Forms
 		public static ToolStrip FindToolStrip (string toolStripName)
 		{
 			lock (toolstrips)
-				foreach (ToolStrip ts in toolstrips)
+				foreach (WeakReference wr in toolstrips) {
+					if (!wr.IsAlive)
+						continue;
+						
+					ToolStrip ts = (ToolStrip)wr.Target;
+				
 					if (ts.Name == toolStripName)
 						return ts;
+				}
 						
 			return null;
 		}
@@ -430,7 +436,7 @@ namespace System.Windows.Forms
 		internal static void AddToolStrip (ToolStrip ts)
 		{
 			lock (toolstrips)
-				toolstrips.Add (ts);
+				toolstrips.Add (new WeakReference (ts));
 		}
 
 		// When we have merged in MDI items like the min/max/close buttons, we
@@ -458,28 +464,34 @@ namespace System.Windows.Forms
 		internal static ToolStrip GetNextToolStrip (ToolStrip ts, bool forward)
 		{
 			lock (toolstrips) {
-				int index = toolstrips.IndexOf (ts);
+				List<ToolStrip> tools = new List<ToolStrip> ();
 				
+				foreach (WeakReference wr in toolstrips)
+					if (wr.IsAlive)
+						tools.Add ((ToolStrip)wr.Target);
+
+				int index = tools.IndexOf (ts);
+
 				if (forward) {
 					// Look for any toolstrip after this one in the collection
-					for (int i = index + 1; i < toolstrips.Count; i++)
-						if (toolstrips[i].TopLevelControl == ts.TopLevelControl && !(toolstrips[i] is StatusStrip))
-							return toolstrips[i];
+					for (int i = index + 1; i < tools.Count; i++)
+						if (tools[i].TopLevelControl == ts.TopLevelControl && !(tools[i] is StatusStrip))
+							return tools[i];
 
 					// Look for any toolstrip before this one in the collection
 					for (int i = 0; i < index; i++)
-						if (toolstrips[i].TopLevelControl == ts.TopLevelControl && !(toolstrips[i] is StatusStrip))
-							return toolstrips[i];
+						if (tools[i].TopLevelControl == ts.TopLevelControl && !(tools[i] is StatusStrip))
+							return tools[i];
 				} else {
 					// Look for any toolstrip before this one in the collection
 					for (int i = index - 1; i >= 0; i--)
-						if (toolstrips[i].TopLevelControl == ts.TopLevelControl && !(toolstrips[i] is StatusStrip))
-							return toolstrips[i];
+						if (tools[i].TopLevelControl == ts.TopLevelControl && !(tools[i] is StatusStrip))
+							return tools[i];
 
 					// Look for any toolstrip after this one in the collection
-					for (int i = toolstrips.Count - 1; i > index; i--)
-						if (toolstrips[i].TopLevelControl == ts.TopLevelControl && !(toolstrips[i] is StatusStrip))
-							return toolstrips[i];
+					for (int i = tools.Count - 1; i > index; i--)
+						if (tools[i].TopLevelControl == ts.TopLevelControl && !(tools[i] is StatusStrip))
+							return tools[i];
 				}
 			}
 			
@@ -518,10 +530,16 @@ namespace System.Windows.Forms
 					
 			// Look for any MenuStrip in the form
 			lock (toolstrips)
-				foreach (ToolStrip ts in toolstrips)
+				foreach (WeakReference wr in toolstrips) {
+					if (!wr.IsAlive)
+						continue;
+						
+					ToolStrip ts = (ToolStrip)wr.Target;
+				
 					if (ts.TopLevelControl == f)
 						if (ts.OnMenuKey ())
 							return true;
+				}
 
 			return false;
 		}
@@ -549,8 +567,13 @@ namespace System.Windows.Forms
 		
 		internal static void RemoveToolStrip (ToolStrip ts)
 		{
-			lock (toolstrips)
-				toolstrips.Remove (ts);
+			lock (toolstrips) {
+				foreach (WeakReference wr in toolstrips)
+					if (wr.Target == ts) {
+						toolstrips.Remove (wr);
+						return;
+					}
+			}
 		}
 
 		internal static void RemoveToolStripMenuItem (ToolStripMenuItem tsmi)
