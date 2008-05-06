@@ -1639,25 +1639,89 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		}
 
 		[Test]
-		public void InitializedEvent ()
+		public void ISupportInitializeNotification ()
 		{
-			// XXX this test is officially useless.  does
-			// BindingSource even raise the event?  it
-			// seems to always be initialized.
 			BindingSource source = new BindingSource ();
-			ISupportInitializeNotification n = (ISupportInitializeNotification)source;
+			List<string> list = new List<string> ();
 
-			bool event_handled = false;
-			n.Initialized += delegate (object sender, EventArgs e) {
-				event_handled = true;
-			};
+			bool initialized_handled = false;
+			ISupportInitializeNotification inotification = (ISupportInitializeNotification)source;
+			inotification.Initialized += delegate { initialized_handled = true; };
+			Assert.AreEqual (true, inotification.IsInitialized, "A1");
+			Assert.AreEqual (false, initialized_handled, "A2");
 
-			Assert.IsTrue (n.IsInitialized, "1");
+			inotification.BeginInit ();
+			Assert.AreEqual (false, inotification.IsInitialized, "B1");
+			Assert.AreEqual (false, initialized_handled, "B2");
 
-			source.DataSource = "hi";
+			source.DataSource = list;
+			Assert.AreEqual (list, source.DataSource, "C1");
+			Assert.AreEqual (false, initialized_handled, "C2");
 
-			Assert.IsTrue (n.IsInitialized, "2");
-			Assert.IsFalse (event_handled, "3");
+			inotification.EndInit ();
+			Assert.AreEqual (true, inotification.IsInitialized, "D1");
+			Assert.AreEqual (true, initialized_handled, "D2");
+
+			// Reset event info
+			initialized_handled = false;
+			inotification.EndInit ();
+
+			Assert.AreEqual (true, initialized_handled, "E1");
+
+			// 
+			// Case 2: use a data source that implements ISupportsInitializeNotification
+			//
+			InitializableObject init_obj = new InitializableObject ();
+			init_obj.BeginInit ();
+			source.DataSource = null;
+
+			inotification.BeginInit ();
+			initialized_handled = false;
+			source.DataSource = init_obj;
+
+			Assert.AreEqual (false, inotification.IsInitialized, "G1");
+			Assert.AreEqual (false, initialized_handled, "G2");
+			Assert.AreEqual (false, init_obj.IsInitialized, "G3");
+			Assert.AreEqual (init_obj, source.DataSource, "G4");
+			Assert.IsTrue (source.List is BindingList<object>, "G5"); // Default list
+
+			inotification.EndInit ();
+			Assert.AreEqual (false, inotification.IsInitialized, "H1");
+			Assert.AreEqual (false, initialized_handled, "H2");
+			Assert.AreEqual (false, init_obj.IsInitialized, "H3");
+
+			init_obj.EndInit ();
+			Assert.AreEqual (true, inotification.IsInitialized, "J1");
+			Assert.AreEqual (true, initialized_handled, "J2");
+			Assert.AreEqual (true, init_obj.IsInitialized, "J3");
+
+			Assert.IsTrue (source.List is BindingList<InitializableObject>, "K");
+		}
+
+		class InitializableObject : ISupportInitializeNotification
+		{
+			bool is_initialized = true;
+
+			public void BeginInit ()
+			{
+				is_initialized = false;
+			}
+
+			public void EndInit ()
+			{
+				is_initialized = true;
+
+				if (Initialized != null)
+					Initialized (this, EventArgs.Empty);
+			}
+
+			public bool IsInitialized {
+				get {
+					return is_initialized;
+				}
+			}
+
+			public event EventHandler Initialized;
 		}
 
 		//

@@ -1,3 +1,8 @@
+2008-05-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* BindingSource.cs: New tests for ISupportInitializeNotification
+	property.
+
 2008-05-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* BindingSourceTest.cs: New tests for Sort property.
