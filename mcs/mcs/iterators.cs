@@ -575,12 +575,7 @@ namespace Mono.CSharp {
 
 			public override bool Resolve (EmitContext ec)
 			{
-				if (TypeManager.invalid_operation_exception_ctor == null) {
-					Type t = TypeManager.CoreLookupType ("System", "InvalidOperationException", Kind.Class, true);
-					if (t != null)
-						TypeManager.invalid_operation_exception_ctor = TypeManager.GetPredefinedConstructor (t, loc, Type.EmptyTypes);
-				}
-
+				// We emit a 'ret', so prevent the enclosing TopLevelBlock from emitting one too
 				ec.CurrentBranching.CurrentUsageVector.Goto ();
 				return true;
 			}
@@ -588,17 +583,6 @@ namespace Mono.CSharp {
 			protected override void DoEmit (EmitContext ec)
 			{
 				ILGenerator ig = ec.ig;
-				Label label_ok = ig.DefineLabel ();
-
-				ig.Emit (OpCodes.Ldarg_0);
-				ig.Emit (OpCodes.Ldfld, host.PC.FieldBuilder);
-				ig.Emit (OpCodes.Ldc_I4, (int) Iterator.State.Start);
-				ig.Emit (OpCodes.Bgt, label_ok);
-
-				ig.Emit (OpCodes.Newobj, TypeManager.invalid_operation_exception_ctor);
-				ig.Emit (OpCodes.Throw);
-
-				ig.MarkLabel (label_ok);
 				ig.Emit (OpCodes.Ldarg_0);
 				ig.Emit (OpCodes.Ldfld, host.CurrentField.FieldBuilder);
 				if (!is_generic)

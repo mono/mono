@@ -1673,10 +1673,10 @@
         <size>6</size>
       </method>
       <method name="Int32 System.Collections.Generic.IEnumerator`1[[System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -1981,10 +1981,10 @@
         <size>6</size>
       </method>
       <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -2077,10 +2077,10 @@
     </type>
     <type name="Test+&lt;&gt;c__CompilerGenerated0">
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -2945,10 +2945,10 @@
         <size>6</size>
       </method>
       <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -4395,10 +4395,10 @@
     </type>
     <type name="Foo`1+&lt;&gt;c__CompilerGenerated0[T]">
       <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -4447,10 +4447,10 @@
         <size>6</size>
       </method>
       <method name="Int32 System.Collections.Generic.IEnumerator`1[[System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -4515,10 +4515,10 @@
     </type>
     <type name="X+&lt;&gt;c__CompilerGenerated0">
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -4946,18 +4946,18 @@
     </type>
     <type name="X+&lt;&gt;c__CompilerGenerated0">
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
     <type name="X+&lt;&gt;c__CompilerGenerated1">
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -5031,10 +5031,10 @@
     </type>
     <type name="test.Test`1+&lt;&gt;c__CompilerGenerated0[T]">
       <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -5410,58 +5410,58 @@
     </type>
     <type name="Test1.Test+&lt;&gt;c__CompilerGenerated0`1[T]">
       <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
     <type name="Test2.Test`1+&lt;&gt;c__CompilerGenerated1`1[S,T]">
       <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
     <type name="Test3.Test`1+&lt;&gt;c__CompilerGenerated2`1[S,T]">
       <method name="KeyValuePair`2 System.Collections.Generic.IEnumerator`1[[System.Collections.Generic.KeyValuePair`2[S,T], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
     <type name="Test4.Test+&lt;&gt;c__CompilerGenerated3`1[T]">
       <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
     <type name="Test5.Test+&lt;&gt;c__CompilerGenerated4`1[T]">
       <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
     <type name="Test6.Test+&lt;&gt;c__CompilerGenerated5`1[T]">
       <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
     <type name="Test7.Test+&lt;&gt;c__CompilerGenerated6`1[T]">
       <method name="T[] System.Collections.Generic.IEnumerator`1[[T[], gtest-191, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -5550,18 +5550,18 @@
     </type>
     <type name="OrderedMultiDictionary`2+&lt;&gt;c__CompilerGenerated0[T,U]">
       <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
     <type name="RedBlackTree`1+&lt;&gt;c__CompilerGenerated1[S]">
       <method name="S System.Collections.Generic.IEnumerator`1[S].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -5640,18 +5640,18 @@
     </type>
     <type name="RedBlackTree`1+&lt;&gt;c__CompilerGenerated0[S]">
       <method name="S System.Collections.Generic.IEnumerator`1[S].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
     <type name="OrderedMultiDictionary`2+&lt;&gt;c__CompilerGenerated1[T,U]">
       <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -5857,10 +5857,10 @@
         <size>6</size>
       </method>
       <method name="Int64 System.Collections.Generic.IEnumerator`1[[System.Int64, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -6259,18 +6259,18 @@
     </type>
     <type name="MyTest+&lt;&gt;c__CompilerGenerated1`4[Aa,Af,Rf,Rr]">
       <method name="Rr System.Collections.Generic.IEnumerator`1[Rr].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
     <type name="MyTest+&lt;&gt;c__CompilerGenerated2">
       <method name="Int32 System.Collections.Generic.IEnumerator`1[[System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -6583,10 +6583,10 @@
         <size>6</size>
       </method>
       <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -6983,18 +6983,18 @@
     </type>
     <type name="CircularQueue`1+&lt;&gt;c__CompilerGenerated0[T]">
       <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
     <type name="HashSet`1+&lt;&gt;c__CompilerGenerated1[T]">
       <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -7066,10 +7066,10 @@
         <size>6</size>
       </method>
       <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -7276,10 +7276,10 @@
         <size>6</size>
       </method>
       <method name="System.String System.Collections.Generic.IEnumerator`1[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -7460,10 +7460,10 @@
         <size>6</size>
       </method>
       <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -7680,18 +7680,18 @@
     </type>
     <type name="Qux`2+&lt;&gt;c__CompilerGenerated0[X,V]">
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
     <type name="Qux`2+&lt;&gt;c__CompilerGenerated1[X,V]">
       <method name="V System.Collections.Generic.IEnumerator`1[V].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -8467,10 +8467,10 @@
         <size>6</size>
       </method>
       <method name="Int32 System.Collections.Generic.IEnumerator`1[[System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -8888,10 +8888,10 @@
         <size>6</size>
       </method>
       <method name="Temp`1+Foo[T] System.Collections.Generic.IEnumerator`1[[Temp`1.Foo[T], gtest-319, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -10322,10 +10322,10 @@
         <size>14</size>
       </method>
       <method name="Boolean System.Collections.Generic.IEnumerator`1[[System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>59</size>
@@ -10348,10 +10348,10 @@
         <size>14</size>
       </method>
       <method name="Boolean System.Collections.Generic.IEnumerator`1[[System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>59</size>
@@ -10623,10 +10623,10 @@
         <size>6</size>
       </method>
       <method name="T System.Collections.Generic.IEnumerator`1[T].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -11299,10 +11299,10 @@
         <size>6</size>
       </method>
       <method name="Int32 System.Collections.Generic.IEnumerator`1[[System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -11349,10 +11349,10 @@
         <size>6</size>
       </method>
       <method name="Foo System.Collections.Generic.IEnumerator`1[[Foo, gtest-anon-5, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -11447,10 +11447,10 @@
     </type>
     <type name="X+&lt;&gt;c__CompilerGenerated0">
       <method name="Int32 System.Collections.Generic.IEnumerator`1[[System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -11584,18 +11584,18 @@
     </type>
     <type name="Test+&lt;&gt;c__CompilerGenerated1">
       <method name="Test System.Collections.Generic.IEnumerator`1[[Test, gtest-anon-9, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
     <type name="Test+&lt;&gt;c__CompilerGenerated2">
       <method name="Int32 System.Collections.Generic.IEnumerator`1[[System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -23427,10 +23427,10 @@
     </type>
     <type name="XX+&lt;&gt;c__CompilerGenerated0">
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -24984,10 +24984,10 @@
         <size>6</size>
       </method>
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -27966,10 +27966,10 @@
         <size>14</size>
       </method>
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>59</size>
@@ -28362,28 +28362,6 @@
       </method>
     </type>
   </test>
-  <test name="test-643.cs">
-    <type name="PointerArithmeticTest">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>105</size>
-      </method>
-      <method name="System.Int32* Conversions(Int64)">
-        <size>3</size>
-      </method>
-      <method name="Int32 CheckAdd(System.Byte*, Int32)">
-        <size>15</size>
-      </method>
-      <method name="Int32 CheckSub(System.Int16*, Int32)">
-        <size>17</size>
-      </method>
-      <method name="Int32 CheckSub2(System.Int16*, Int32)">
-        <size>24</size>
-      </method>
-    </type>
-  </test>
   <test name="test-644.cs">
     <type name="Program">
       <method name="Void .ctor()">
@@ -28420,6 +28398,50 @@
       </method>
       <method name="System.Object EndInvoke(IAsyncResult)">
         <size>0</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-645.cs">
+    <type name="Program">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerable get_Empty()">
+        <size>26</size>
+      </method>
+      <method name="Void Main()">
+        <size>61</size>
+      </method>
+    </type>
+    <type name="Program+&lt;&gt;c__CompilerGenerated0">
+      <method name="Void .ctor(Int32)">
+        <size>14</size>
+      </method>
+      <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
+        <size>7</size>
+      </method>
+      <method name="System.Object System.Collections.IEnumerator.get_Current()">
+        <size>12</size>
+      </method>
+      <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
+        <size>59</size>
+      </method>
+      <method name="IEnumerator`1 System.Collections.Generic.IEnumerable`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].GetEnumerator()">
+        <size>59</size>
+      </method>
+      <method name="Boolean MoveNext()">
+        <size>249</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>8</size>
+      </method>
+      <method name="Void Reset()">
+        <size>6</size>
+      </method>
+    </type>
+    <type name="Program+&lt;&gt;c__CompilerGenerated0+&lt;&gt;c__CompilerGenerated1">
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -30447,10 +30469,10 @@
     </type>
     <type name="test+&lt;&gt;c__CompilerGenerated0">
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -30636,10 +30658,10 @@
         <size>6</size>
       </method>
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -31159,10 +31181,10 @@
         <size>6</size>
       </method>
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -31358,10 +31380,10 @@
     </type>
     <type name="Test+&lt;&gt;c__CompilerGenerated0">
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -31402,10 +31424,10 @@
         <size>6</size>
       </method>
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -31494,10 +31516,10 @@
     </type>
     <type name="X+&lt;&gt;c__CompilerGenerated0">
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -32002,10 +32024,10 @@
     </type>
     <type name="X+&lt;&gt;c__CompilerGenerated0">
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -33191,18 +33213,18 @@
     </type>
     <type name="X+&lt;&gt;c__CompilerGenerated0">
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
     <type name="X+&lt;&gt;c__CompilerGenerated1">
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -33232,10 +33254,10 @@
         <size>6</size>
       </method>
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -33311,18 +33333,18 @@
     </type>
     <type name="X+&lt;&gt;c__CompilerGenerated0">
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
     <type name="X+&lt;&gt;c__CompilerGenerated1">
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -33365,10 +33387,10 @@
     </type>
     <type name="X+&lt;&gt;c__CompilerGenerated0">
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -33425,10 +33447,10 @@
     </type>
     <type name="X+&lt;&gt;c__CompilerGenerated0">
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -33529,34 +33551,34 @@
     </type>
     <type name="S+&lt;&gt;c__CompilerGenerated0">
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
     <type name="S+&lt;&gt;c__CompilerGenerated1">
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
     <type name="X+&lt;&gt;c__CompilerGenerated2">
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
     <type name="X+&lt;&gt;c__CompilerGenerated3">
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -33597,10 +33619,10 @@
         <size>6</size>
       </method>
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -33651,10 +33673,10 @@
     </type>
     <type name="X+&lt;&gt;c__CompilerGenerated0">
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -33706,10 +33728,10 @@
     </type>
     <type name="Tester+&lt;&gt;c__CompilerGenerated0">
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -33770,18 +33792,18 @@
     </type>
     <type name="X+&lt;&gt;c__CompilerGenerated0">
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
     <type name="X+&lt;&gt;c__CompilerGenerated1">
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -33820,10 +33842,10 @@
         <size>6</size>
       </method>
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -33866,10 +33888,10 @@
     </type>
     <type name="X+&lt;&gt;c__CompilerGenerated0">
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -34187,10 +34209,10 @@
         <size>6</size>
       </method>
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -34318,26 +34340,26 @@
     </type>
     <type name="Foo.X+&lt;&gt;c__CompilerGenerated0">
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
     <type name="Foo.X+&lt;&gt;c__CompilerGenerated1">
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
     <type name="Foo.X+&lt;&gt;c__CompilerGenerated2">
       <method name="System.Object System.Collections.Generic.IEnumerator`1[[System.Object, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]].get_Current()">
-        <size>29</size>
+        <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>34</size>
+        <size>12</size>
       </method>
     </type>
   </test>
