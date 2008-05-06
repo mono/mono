@@ -577,17 +577,14 @@ namespace Mono.Cecil {
 
 			nm.ReturnType.ReturnType = context.Import (meth.ReturnType.ReturnType);
 
-			if (meth.ReturnType.HasConstant)
-				nm.ReturnType.Constant = meth.ReturnType.Constant;
-
-			if (meth.ReturnType.MarshalSpec != null)
-				nm.ReturnType.MarshalSpec = meth.ReturnType.MarshalSpec;
-
-			foreach (CustomAttribute ca in meth.ReturnType.CustomAttributes)
-				nm.ReturnType.CustomAttributes.Add (CustomAttribute.Clone (ca, context));
+			if (meth.ReturnType.Parameter != null) {
+				nm.ReturnType.Parameter = ParameterDefinition.Clone (meth.ReturnType.Parameter, context);
+				nm.ReturnType.Parameter.Method = nm;
+			}
 
 			if (meth.PInvokeInfo != null)
 				nm.PInvokeInfo = meth.PInvokeInfo; // TODO: import module ?
+
 			foreach (ParameterDefinition param in meth.Parameters)
 				nm.Parameters.Add (ParameterDefinition.Clone (param, context));
 			foreach (MethodReference ov in meth.Overrides)

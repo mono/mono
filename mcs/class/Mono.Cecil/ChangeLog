@@ -1,5 +1,8 @@
 2008-05-06  Jb Evain  <jbevain@novell.com>
 
+	* Mono.Cecil/MethodDefinition.cs (Clone): fix cloning of
+	return types when they don't have a parameter.
+
 	* Mono.Cecil.Cil/CodeWriter.cs (ComputeMaxStack): compute max
 	stack more precisely. Based on a patch by Daniel Grunwald,
 	Contains code from Cecil.FlowAnalysis.
