@@ -42,6 +42,7 @@ namespace System.Windows.Forms {
 		IComponent, ICurrencyManagerProvider, IEnumerable 
 	{
 		ISite site;
+		bool is_initialized = true;
 
 		IList list;
 		CurrencyManager currency_manager;
@@ -135,6 +136,9 @@ namespace System.Windows.Forms {
 
 		void ResetList ()
 		{
+			if (!is_initialized)
+				return;
+
 			IList l;
 			object source = ListBindingHelper.GetList (datasource, datamember);
 
@@ -971,10 +975,31 @@ namespace System.Windows.Forms {
 		
 		void ISupportInitialize.BeginInit ()
 		{
+			is_initialized = false;
+		}
+
+		void DataSourceEndInitHandler (object o, EventArgs args)
+		{
+			ISupportInitializeNotification inotif = (ISupportInitializeNotification)this;
+			inotif.EndInit ();
 		}
 
 		void ISupportInitialize.EndInit ()
 		{
+			if (datasource != null && datasource is ISupportInitializeNotification) {
+				ISupportInitializeNotification inotif = (ISupportInitializeNotification)datasource;
+				if (!inotif.IsInitialized) {
+					inotif.Initialized += DataSourceEndInitHandler;
+					return;
+				}
+			}
+
+			is_initialized = true;
+			ResetList ();
+
+			EventHandler eh = (EventHandler) Events [InitializedEvent];
+			if (eh != null)
+				eh (this, EventArgs.Empty);
 		}
 
 		void IBindingList.AddIndex (PropertyDescriptor property)
@@ -994,9 +1019,9 @@ namespace System.Windows.Forms {
 		}
 
 		bool ISupportInitializeNotification.IsInitialized {
-			// XXX this is likely wrong, but i can't
-			// figure out how to make it return false
-			get { return true; }
+			get { 
+				return is_initialized;
+			}
 		}
 
 		static object InitializedEvent = new object ();
