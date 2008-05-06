@@ -1,3 +1,17 @@
+2008-05-06 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (merge_stack): Use the new value on unverifiable
+	stack merges.
+
+	* verify.c (verify_type_compatibility_full): Comparison
+	of nullable types can't use mono_class_is_assignable_from.
+
+	* verify.c, verify.h: Added MONO_VERIFY_REPORT_ALL_ERRORS
+	that makes all verification errors be reported.
+
+	* pedump.c: Pass MONO_VERIFY_REPORT_ALL_ERRORS to
+	mono_method_verify.
+
 2008-05-05  Robert Jordan  <robertj@gmx.net>
 
 	* marshal.c (mono_marshal_get_thunk_invoke_wrapper):
