@@ -858,10 +858,6 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		[Test]
 		public void DataSourceMember_set ()
 		{
-			if (TestHelper.RunningOnUnix) {
-				Assert.Ignore ("Fails at the moment");
-			}
-
 			BindingSource source = new BindingSource ();
 
 			source.DataSource = new List<string>();
@@ -872,7 +868,7 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			Assert.AreEqual ("Length", source.DataMember, "2");
 			Assert.IsNotNull (source.CurrencyManager, "3");
 
-			source.DataSource = new List<string>();
+			source.DataSource = new List<string[]>();
 			Assert.AreEqual ("Length", source.DataMember, "4");
 			Assert.IsNotNull (source.CurrencyManager, "5");
 		}
@@ -1224,11 +1220,8 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		[Test]
 		public void BindingSuspended1 ()
 		{
-			if (TestHelper.RunningOnUnix) {
-				Assert.Ignore ("Fails at the moment");
-			}
-
-			/* how does this property work? */
+			// Empty collection as datasource means CurrencyManager will remain
+			// as suspended
 			BindingSource source = new BindingSource ();
 
 			source.DataSource = new List<string>();
