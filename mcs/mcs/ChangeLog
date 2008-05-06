@@ -1,3 +1,9 @@
+2008-05-06  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #386628
+	* expression.cs (LocalVariableReference): Continue in resolving when
+	variable is not assigned.
+
 2008-05-05  Marek Safar  <marek.safar@gmail.com>
 
 	* nullable.cs, statement.cs (Unwrap): Store non-variable expression in all

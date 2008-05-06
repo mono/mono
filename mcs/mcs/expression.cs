@@ -4115,8 +4115,7 @@ namespace Mono.CSharp {
 			if (e != null)
 				return e.Resolve (ec);
 
-			if (!VerifyAssigned (ec))
-				return null;
+			VerifyAssigned (ec);
 
 			//
 			// If we are referencing a variable from the external block
