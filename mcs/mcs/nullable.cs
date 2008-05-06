@@ -987,20 +987,20 @@ namespace Mono.CSharp.Nullable
 			Type ltype = left.Type, rtype = right.Type;
 
 			//
-			// If left is a nullable type and an implicit conversion exists from right to left,
-			// the result type is left
+			// If left is a nullable type and an implicit conversion exists from right to underlying type of left,
+			// the result is underlying type of left
 			//
 			if (TypeManager.IsNullableType (ltype) && left.eclass != ExprClass.MethodGroup) {
 				unwrap = Unwrap.Create (left, ec);
 				if (unwrap == null)
 					return null;
 
-				if (Convert.ImplicitConversionExists (ec, right, ltype)) {
+				if (Convert.ImplicitConversionExists (ec, right, unwrap.Type)) {
 					left = unwrap;
-					right = Convert.ImplicitConversion (ec, right, ltype, loc);
 					type = left.Type;
+					right = Convert.ImplicitConversion (ec, right, type, loc);
 					return this;
-				}
+				}			
 			} else if (TypeManager.IsReferenceType (ltype) && right.eclass != ExprClass.MethodGroup) {
 				if (Convert.ImplicitConversionExists (ec, right, ltype)) {
 					//
@@ -1025,7 +1025,7 @@ namespace Mono.CSharp.Nullable
 				return null;
 			}
 
-			if (!Convert.ImplicitConversionExists (ec, left, rtype)) {
+			if (!Convert.ImplicitConversionExists (ec, unwrap != null ? unwrap : left, rtype)) {
 				Binary.Error_OperatorCannotBeApplied (left, right, "??", loc);
 				return null;
 			}
@@ -1036,7 +1036,7 @@ namespace Mono.CSharp.Nullable
 			if (left.IsNull)
 				return ReducedExpression.Create (right, this).Resolve (ec);
 
-			left = Convert.ImplicitConversion (ec, left, rtype, loc);
+			left = Convert.ImplicitConversion (ec, unwrap != null ? unwrap : left, rtype, loc);
 			type = rtype;
 			return this;
 		}
