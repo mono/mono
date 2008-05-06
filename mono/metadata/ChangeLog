@@ -1,3 +1,8 @@
+2008-05-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_Reflection_Module_ResolveTypeToken): Fix handling
+	of the dynamic case. Fixes #387404.
+
 2008-05-06 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	*verify.c (mono_verifier_is_class_full_trust): If under
