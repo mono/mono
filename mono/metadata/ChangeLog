@@ -5,6 +5,8 @@
 
 	* object.c: comments.
 
+	Code is contributed under MIT/X11 license.
+
 2008-05-05  Martin Baulig  <martin@ximian.com>
 
 	* debug-mono-symfile.h
