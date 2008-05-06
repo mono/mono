@@ -84,7 +84,7 @@ namespace Mono.Cecil.Cil {
 			get { return (StackBehaviour) m_stackBehaviourPush; }
 		}
 
-		internal OpCode (byte op1, byte op2, 
+		internal OpCode (byte op1, byte op2,
 			Code code, FlowControl flowControl,
 			OpCodeType opCodeType, OperandType operandType,
 			StackBehaviour pop, StackBehaviour push)
