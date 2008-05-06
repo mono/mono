@@ -111,7 +111,7 @@ namespace System
 			if (info == null)
 				throw new ArgumentNullException ("info");
 
-			info.AddValue ("value", (long) value);
+			info.AddValue ("value", ToInt64 ());
 		}
 
 		public override bool Equals (object o)
