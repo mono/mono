@@ -1,6 +1,11 @@
 2008-05-07  Andreia Gaita <avidigal@novell.com> 
 
 	* Mono.WebBrowser/DOM/IElement.cs, Mono.Mozilla/DOM/HTMLElement.cs,
+	  Mono.Mozilla/DOM/Element.cs: Implement TabIndex
+
+2008-05-07  Andreia Gaita <avidigal@novell.com> 
+
+	* Mono.WebBrowser/DOM/IElement.cs, Mono.Mozilla/DOM/HTMLElement.cs,
 	  Mono.Mozilla/DOM/Element.cs: Implement InnerHTML setter
 
 2008-05-07  Andreia Gaita <avidigal@novell.com> 

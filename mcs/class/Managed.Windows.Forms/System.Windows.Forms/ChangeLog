@@ -1,3 +1,7 @@
+2008-05-07  Andreia Gaita <avidigal@novell.com> 
+
+	* HtmlElement.cs: Implement TabIndex
+
 2008-05-07  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ListBox.cs: Respect ScrollAlwaysVisible and HorizontalScrollbar

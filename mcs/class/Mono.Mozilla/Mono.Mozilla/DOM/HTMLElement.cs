@@ -133,6 +133,17 @@ namespace Mono.Mozilla.DOM
 			}
 		}
 
+		public override int TabIndex {
+			get { 
+				int tabIndex;
+				((nsIDOMNSHTMLElement)this.element).getTabIndex (out tabIndex);
+				return tabIndex;
+			}
+			set { 
+				((nsIDOMNSHTMLElement)this.element).setTabIndex (value);
+			}
+		}
+
 		public override int GetHashCode () {
 			return this.hashcode;
 		}

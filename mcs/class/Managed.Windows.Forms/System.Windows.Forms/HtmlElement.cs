@@ -165,8 +165,8 @@ namespace System.Windows.Forms
 
 		[MonoTODO ("Needs implementation")]
 		public short TabIndex {
-			get { return 0; }
-			set { }
+			get { return (short)element.TabIndex; }
+			set { element.TabIndex = value; }
 		}
 
 		public object DomElement {

@@ -48,6 +48,7 @@ namespace Mono.WebBrowser.DOM
 		string 				InnerHTML { get; set; }
 		string 				OuterText { get; set; }
 		string 				OuterHTML { get; set; }
+		int 				TabIndex { get; set; }
 		string 				TagName { get; }
 		bool				Disabled { get; set; }
 

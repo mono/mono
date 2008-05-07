@@ -157,6 +157,11 @@ namespace Mono.Mozilla.DOM
 		}
 
 
+		public virtual int TabIndex {
+			get { return -1; }
+			set { }
+		}
+		
 		public virtual string TagName {
 			get {
 				element.getTagName (storage);
