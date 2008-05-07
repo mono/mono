@@ -1,4 +1,4 @@
-// CS1628: Parameter `i' cannot be used inside `anonymous method' when using `ref' or `our' modifier
+// CS1628: Parameter `i' cannot be used inside `anonymous method' when using `ref' or `out' modifier
 // Line: 8
 
 public class Test {

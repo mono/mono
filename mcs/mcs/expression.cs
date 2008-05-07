@@ -4325,7 +4325,7 @@ namespace Mono.CSharp {
 			if (declared != referenced) {
 				if (IsRef) {
 					Report.Error (1628, loc,
-						"Parameter `{0}' cannot be used inside `{1}' when using `ref' or `our' modifier",
+						"Parameter `{0}' cannot be used inside `{1}' when using `ref' or `out' modifier",
 						par.Name, am.ContainerType);
 					return false;
 				}

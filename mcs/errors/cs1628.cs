@@ -1,4 +1,4 @@
-// CS1628: Parameter `a' cannot be used inside `anonymous method' when using `ref' or `our' modifier
+// CS1628: Parameter `a' cannot be used inside `anonymous method' when using `ref' or `out' modifier
 // Line: 15
 using System;
 
