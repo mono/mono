@@ -1,5 +1,9 @@
 2008-05-07  Marek Safar  <marek.safar@gmail.com>
 
+	* expression.cs, parameter.cs: Small ParameterReference clean up.
+
+2008-05-07  Marek Safar  <marek.safar@gmail.com>
+
 	* anonymous.cs, codegen.cs, convert.cs, ecore.cs: Removed uber ugly TempEc
 	hack. Fixes #387502.
 

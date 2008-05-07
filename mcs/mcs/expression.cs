@@ -4240,14 +4240,19 @@ namespace Mono.CSharp {
 		readonly ToplevelBlock referenced;
 		Variable variable;
 
-		public bool is_ref, is_out;
-
-		public bool IsOut {
-			get { return is_out; }
+		public ParameterReference (ToplevelBlock referenced, ToplevelParameterInfo pi, Location loc)
+		{
+			this.pi = pi;
+			this.referenced = referenced;
+			this.loc = loc;
 		}
 
 		public override bool IsRef {
-			get { return is_ref; }
+			get { return (pi.Parameter.ModFlags & Parameter.Modifier.ISBYREF) != 0; }
+		}
+
+		bool HasOutModifier {
+			get { return pi.Parameter.ModFlags == Parameter.Modifier.OUT; }
 		}
 
 		public string Name {
@@ -4256,14 +4261,6 @@ namespace Mono.CSharp {
 
 		public Parameter Parameter {
 			get { return pi.Parameter; }
-		}
-
-		public ParameterReference (ToplevelBlock referenced, ToplevelParameterInfo pi, Location loc)
-		{
-			this.pi = pi;
-			this.referenced = referenced;
-			this.loc = loc;
-			eclass = ExprClass.Variable;
 		}
 
 		public VariableInfo VariableInfo {
@@ -4286,7 +4283,7 @@ namespace Mono.CSharp {
 			if (ec.IsInProbingMode)
 				return true;
 			
-			if (!ec.DoFlowAnalysis || !is_out || ec.CurrentBranching.IsAssigned (VariableInfo))
+			if (!ec.DoFlowAnalysis || !HasOutModifier || ec.CurrentBranching.IsAssigned (VariableInfo))
 				return true;
 
 			Report.Error (269, loc, "Use of unassigned out parameter `{0}'", Name);
@@ -4295,7 +4292,7 @@ namespace Mono.CSharp {
 
 		public bool IsFieldAssigned (EmitContext ec, string field_name, Location loc)
 		{
-			if (!ec.DoFlowAnalysis || !is_out || ec.CurrentBranching.IsFieldAssigned (VariableInfo, field_name))
+			if (!ec.DoFlowAnalysis || !HasOutModifier || ec.CurrentBranching.IsFieldAssigned (VariableInfo, field_name))
 				return true;
 
 			Report.Error (170, loc, "Use of possibly unassigned field `{0}'", field_name);
@@ -4304,27 +4301,20 @@ namespace Mono.CSharp {
 
 		public void SetAssigned (EmitContext ec)
 		{
-			if (is_out && ec.DoFlowAnalysis)
+			if (HasOutModifier && ec.DoFlowAnalysis)
 				ec.CurrentBranching.SetAssigned (VariableInfo);
 		}
 
 		public void SetFieldAssigned (EmitContext ec, string field_name)
 		{
-			if (is_out && ec.DoFlowAnalysis)
+			if (HasOutModifier && ec.DoFlowAnalysis)
 				ec.CurrentBranching.SetFieldAssigned (VariableInfo, field_name);
 		}
 
 		protected bool DoResolveBase (EmitContext ec)
 		{
 			Parameter par = Parameter;
-			if (!par.Resolve (ec)) {
-				//TODO:
-			}
-
 			type = par.ParameterType;
-			Parameter.Modifier mod = par.ModFlags;
-			is_ref = (mod & Parameter.Modifier.ISBYREF) != 0;
-			is_out = (mod & Parameter.Modifier.OUT) == Parameter.Modifier.OUT;
 			eclass = ExprClass.Variable;
 
 			AnonymousContainer am = ec.CurrentAnonymousMethod;
@@ -4332,17 +4322,19 @@ namespace Mono.CSharp {
 				return true;
 
 			ToplevelBlock declared = pi.Block;
-			if (is_ref && declared != referenced) {
-				Report.Error (1628, Location,
-					      "Cannot use ref or out parameter `{0}' inside an " +
-					      "anonymous method block", par.Name);
-				return false;
+			if (declared != referenced) {
+				if (IsRef) {
+					Report.Error (1628, loc,
+						"Parameter `{0}' cannot be used inside `{1}' when using `ref' or `our' modifier",
+						par.Name, am.ContainerType);
+					return false;
+				}
+			} else {
+				if (!am.IsIterator)
+					return true;
 			}
 
-			if (!am.IsIterator && declared == referenced)
-				return true;
-
-			// Don't capture aruments when the probing is on
+			// Don't capture parameters when the probing is on
 			if (!ec.IsInProbingMode) {
 				ScopeInfo scope = declared.CreateScopeInfo ();
 				variable = scope.AddParameter (par, pi.Index);
@@ -4387,7 +4379,7 @@ namespace Mono.CSharp {
 			if (!DoResolveBase (ec))
 				return null;
 
-			if (is_out && ec.DoFlowAnalysis &&
+			if (HasOutModifier && ec.DoFlowAnalysis &&
 			    (!ec.OmitStructFlowAnalysis || !VariableInfo.TypeInfo.IsStruct) && !IsAssigned (ec, loc))
 				return null;
 
