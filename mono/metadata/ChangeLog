@@ -1,3 +1,9 @@
+2008-05-06  Miguel de Icaza  <miguel@novell.com>
+
+	* assembly.c (mono_assembly_load_reference): Prevent crash while
+	disassembling Silverlight 2.0 executables while we still do not
+	have GACed libraries.
+
 2008-05-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c: Special case generic type definitions as well. Fixes #383444.
