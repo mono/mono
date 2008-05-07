@@ -314,12 +314,17 @@ namespace System.Xml
 		public static XmlReader Create (string url, XmlReaderSettings settings, XmlParserContext context)
 		{
 			settings = PopulateSettings (settings);
-			if (context == null)
-				context = PopulateParserContext (settings, url);
-			XmlTextReader xtr = new XmlTextReader (false, settings.XmlResolver, url, GetNodeType (settings), context);
-			XmlReader ret = CreateCustomizedTextReader (xtr, settings);
-			xtr.CloseInput = true; // forced. See XmlReaderCommonTests.CreateFromUrlClose().
-			return ret;
+			bool closeInputBak = settings.CloseInput;
+			try {
+				settings.CloseInput = true; // forced. See XmlReaderCommonTests.CreateFromUrlClose().
+				if (context == null)
+					context = PopulateParserContext (settings, url);
+				XmlTextReader xtr = new XmlTextReader (false, settings.XmlResolver, url, GetNodeType (settings), context);
+				XmlReader ret = CreateCustomizedTextReader (xtr, settings);
+				return ret;
+			} finally {
+				settings.CloseInput = closeInputBak;
+			}
 		}
 
 		public static XmlReader Create (Stream stream, XmlReaderSettings settings, XmlParserContext context)

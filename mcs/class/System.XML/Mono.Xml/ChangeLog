@@ -1,3 +1,8 @@
+2008-05-07  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlFilterReader.cs : clone settings so that it does not depend on
+	  inconsistent settings after creation. Fixed bug #385638.
+
 2007-10-19  Atsushi Enomoto <atsushi@ximian.com>
 
 	* SubtreeXmlReader.cs : when a subtree reader is closed, the original

@@ -46,7 +46,7 @@ namespace Mono.Xml
 		public XmlFilterReader (XmlReader reader, XmlReaderSettings settings)
 		{
 			this.reader = reader;
-			this.settings = settings;
+			this.settings = settings.Clone ();
 			this.lineInfo = reader as IXmlLineInfo;
 		}
 

@@ -1554,6 +1554,28 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		// a bit revised version of bug #385638
+		public void CreateFromUrlClose2 ()
+		{
+			string file = "Test/XmlFiles/385638.xml";
+			try {
+				if (File.Exists (file))
+					File.Delete (file);
+				using (TextWriter tw = File.CreateText (file))
+					tw.Write ("<xml />");
+				XmlReaderSettings s = new XmlReaderSettings ();
+				s.IgnoreWhitespace = true; // this results in XmlFilterReader, which is the key for this bug.
+				XmlReader r = XmlReader.Create (file, s);
+				r.Close ();
+				XmlTextWriter w = new XmlTextWriter (file, null);
+				w.Close ();
+			} finally {
+				if (File.Exists (file))
+					File.Delete (file);
+			}
+		}
+
+		[Test]
 		public void ReadToDescendant ()
 		{
 			string xml = @"<root><foo/><bar/><foo> test text <bar><bar></bar></bar></foo></root>";
