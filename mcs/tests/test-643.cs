@@ -16,7 +16,7 @@ class PointerArithmeticTest
 		
 		CheckSub2((short*)(-1), int.MaxValue);
 			
-		if ((long)Conversions (long.MaxValue) != uint.MaxValue)
+		if ((long)Conversions (long.MaxValue) != (IntPtr.Size <= 4 ? uint.MaxValue : long.MaxValue))
 			return 5;
 		
 		Console.WriteLine ("OK");

@@ -28424,7 +28424,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>105</size>
+        <size>130</size>
       </method>
       <method name="System.Int32* Conversions(Int64)">
         <size>3</size>
