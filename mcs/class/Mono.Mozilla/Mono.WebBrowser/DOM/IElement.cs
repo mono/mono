@@ -45,7 +45,7 @@ namespace Mono.WebBrowser.DOM
 		IElement OffsetParent { get; }
 
 		string 				InnerText { get; set; }
-		string 				InnerHTML { get; }
+		string 				InnerHTML { get; set; }
 		string 				OuterText { get; set; }
 		string 				OuterHTML { get; set; }
 		string 				TagName { get; }

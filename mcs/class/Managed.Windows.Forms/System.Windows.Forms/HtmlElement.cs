@@ -129,7 +129,7 @@ namespace System.Windows.Forms
 
 		public string InnerHtml	{
 			get { return this.element.InnerHTML; }
-			set { throw new NotImplementedException (); }
+			set { this.element.InnerHTML = value; }
 		}
 
 		public string InnerText {

@@ -78,6 +78,11 @@ namespace Mono.Mozilla.DOM
 				nsElem.getInnerHTML (storage);
 				return Base.StringGet (storage);
 			}
+			set {
+				nsIDOMNSHTMLElement nsElem = this.element as nsIDOMNSHTMLElement;
+				Base.StringSet (storage, value);
+				nsElem.setInnerHTML (storage);
+			}
 		}
 
 		public override string OuterHTML

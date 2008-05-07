@@ -104,6 +104,7 @@ namespace Mono.Mozilla.DOM
 
 		public virtual string InnerHTML	{
 			get { return String.Empty; }
+			set { }
 		}
 		
 		public virtual string OuterHTML	{

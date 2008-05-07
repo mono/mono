@@ -1,5 +1,10 @@
 2008-05-07  Andreia Gaita <avidigal@novell.com> 
 
+	* Mono.WebBrowser/DOM/IElement.cs, Mono.Mozilla/DOM/HTMLElement.cs,
+	  Mono.Mozilla/DOM/Element.cs: Implement InnerHTML setter
+
+2008-05-07  Andreia Gaita <avidigal@novell.com> 
+
 	* Mono.WebBrowser/DOM/IDocument.cs, Mono.Mozilla/DOM/Document.cs,
 	  Mono.Mozilla/DOM/Window.cs: Helper to retrieve the window of a
 	  document

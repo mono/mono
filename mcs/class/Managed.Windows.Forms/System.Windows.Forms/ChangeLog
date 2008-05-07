@@ -1,5 +1,9 @@
 2008-05-07  Andreia Gaita <avidigal@novell.com> 
 
+	* HtmlElement.cs: Implement InnerHTML setter
+
+2008-05-07  Andreia Gaita <avidigal@novell.com> 
+
 	* HtmlDocument.cs: Implement Focused
 
 2006-05-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
