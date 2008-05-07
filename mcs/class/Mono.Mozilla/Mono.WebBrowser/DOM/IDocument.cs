@@ -49,6 +49,7 @@ namespace Mono.WebBrowser.DOM
 		string 				Title { get; set;}
 		string 				Url { get; }
 		string 				VisitedLinkColor { get; set; }
+		IWindow 			Window { get; }
 
 		IElement 			CreateElement (string tagName);
 		IElement 			GetElementById (string id);

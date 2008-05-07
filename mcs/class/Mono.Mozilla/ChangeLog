@@ -1,3 +1,9 @@
+2008-05-07  Andreia Gaita <avidigal@novell.com> 
+
+	* Mono.WebBrowser/DOM/IDocument.cs, Mono.Mozilla/DOM/Document.cs,
+	  Mono.Mozilla/DOM/Window.cs: Helper to retrieve the window of a
+	  document
+
 2008-04-23  Andreia Gaita <avidigal@novell.com> 
 
 	* Mono.Mozilla/DOM/Node.cs: No need to proxy event objects, they should

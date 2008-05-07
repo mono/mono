@@ -54,6 +54,28 @@ namespace Mono.Mozilla.DOM
 		}		
 #endregion
 
+		internal static bool FindDocument (ref nsIDOMWindow window, int docHashcode) {
+			nsIDOMDocument doc;
+			window.getDocument (out doc);
+			
+			if (doc.GetHashCode () == docHashcode) {
+				return true;
+			} else {
+				uint len = 1;
+				nsIDOMWindowCollection col;
+	
+				window.getFrames (out col);
+				col.getLength (out len);
+
+				for (uint i = 0; i < len; ++i) {
+					col.item (i, out window);
+					if (Window.FindDocument (ref window, docHashcode))
+						return true;
+				}
+			}
+			return false;			
+		}
+		
 #region Properties
 		public IDocument Document {
 			get {

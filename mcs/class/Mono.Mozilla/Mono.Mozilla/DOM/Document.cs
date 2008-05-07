@@ -307,6 +307,22 @@ namespace Mono.Mozilla.DOM
 				((nsIDOMHTMLBodyElement)element).setVLink(storage);
 			}
 		}
+		
+		public IWindow Window {
+			get {
+				if (control.Navigation != null) {
+					nsIDOMWindow win;
+					nsIDOMDocument doc;
+					
+					nsIWebBrowser browser = (nsIWebBrowser) control.navigation.navigation;
+					browser.getContentDOMWindow (out win);
+					
+					if (Mono.Mozilla.DOM.Window.FindDocument (ref win, this.GetHashCode ()))
+						return new Window (control, win);					
+				}
+				return null;
+			}
+		}
 
 
 		public IElement CreateElement (string tagName)

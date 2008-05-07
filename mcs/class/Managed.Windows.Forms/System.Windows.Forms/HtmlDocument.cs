@@ -32,7 +32,6 @@ using Mono.WebBrowser.DOM;
 
 namespace System.Windows.Forms
 {
-	[MonoTODO ("Needs Implementation")]
 	public sealed class HtmlDocument
 	{
 		private EventHandlerList events;
@@ -219,7 +218,7 @@ namespace System.Windows.Forms
 		}
 
 		public bool Focused { 
-			get { throw new NotImplementedException (); } 
+			get { return webHost.Window.Document == document; }
 		}
 		
 		public Color ForeColor {
