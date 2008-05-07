@@ -1,3 +1,7 @@
+2008-05-07  Robert Jordan  <robertj@gmx.net>
+
+	* Makefile.am: don't pull libeglib.a twice. Fixes #387491.
+
 2008-05-05  Robert Jordan  <robertj@gmx.net>
 
 	* libtest.c, thunks.cs: reworked to match the new struct
