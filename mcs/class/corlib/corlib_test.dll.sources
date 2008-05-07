@@ -358,8 +358,10 @@ System/ConsoleCas.cs
 System/EnvironmentCas.cs
 System/ExceptionCas.cs
 System/MarshalByRefObjectCas.cs
+System/RuntimeFieldHandleTest.cs
 System/RuntimeMethodHandleCas.cs
 System/RuntimeMethodHandleTest.cs
+System/RuntimeTypeHandleTest.cs
 System/TypedReferenceCas.cs
 System.Diagnostics/StackFrameCas.cs
 System.Diagnostics/StackTraceCas.cs

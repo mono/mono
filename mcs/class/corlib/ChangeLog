@@ -1,3 +1,7 @@
+2008-05-07  Robert Jordan  <robertj@gmx.net>
+
+	* corlib_test.dll.sources: Add System/Runtime*HandleTest.cs
+
 2008-05-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib.dll.sources: Remove System.IO/Check[Argument|Permission].cs

@@ -1,3 +1,7 @@
+2008-05-07  Robert Jordan  <robertj@gmx.net>
+
+	* Runtime*Handle.cs: Add serialization tests.
+
 2008-05-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ConvertTest.cs : added test for Convert.FromBase64String()

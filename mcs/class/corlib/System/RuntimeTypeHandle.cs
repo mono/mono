@@ -76,6 +76,9 @@ namespace System
 			if (info == null)
 				throw new ArgumentNullException ("info");
 
+			if (value == IntPtr.Zero)
+				throw new SerializationException ("Object fields may not be properly initialized");
+
 			info.AddValue ("TypeObj", Type.GetTypeHandle (this), typeof (MonoType));
 		}
 
@@ -122,7 +125,14 @@ namespace System
 
 		[CLSCompliant (false)]
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-		public ModuleHandle GetModuleHandle () {
+		public ModuleHandle GetModuleHandle ()
+		{
+			// Although MS' runtime is crashing here, we prefer throwing an exception.
+			// The check is needed because Type.GetTypeFromHandle returns null
+			// for zero handles.
+			if (value == IntPtr.Zero)
+				throw new InvalidOperationException ("Object fields may not be properly initialized");
+
 			return Type.GetTypeFromHandle (this).Module.ModuleHandle;
 		}
 #endif

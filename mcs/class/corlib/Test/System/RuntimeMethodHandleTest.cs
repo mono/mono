@@ -27,6 +27,9 @@
 //
 
 using System;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 using NUnit.Framework;
 
@@ -98,5 +101,13 @@ namespace MonoTests.System
 			Assert.IsTrue (rmhB1 != rmhA1, "#B6");
 		}
 #endif
+
+		[Test]
+		[ExpectedException (typeof (SerializationException))]
+		public void Serialization_Of_Empty_Handle ()
+		{
+			RuntimeMethodHandle handle = new RuntimeMethodHandle ();
+			new BinaryFormatter ().Serialize (Stream.Null, handle);
+		}
 	}
 }

@@ -77,6 +77,9 @@ namespace System
 			if (info == null)
 				throw new ArgumentNullException ("info");
 
+			if (value == IntPtr.Zero)
+				throw new SerializationException ("Object fields may not be properly initialized");
+
 			info.AddValue ("MethodObj", (MonoMethod) MethodBase.GetMethodFromHandle (this), typeof (MonoMethod));
 		}
 
