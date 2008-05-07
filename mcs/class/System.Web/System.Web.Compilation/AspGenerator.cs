@@ -497,7 +497,7 @@ namespace System.Web.Compilation
 						Parse (tparser.MapPath (file), true);
 				} else {
 					string includeFilePath = GetIncludeFilePath (tparser.ParserDir, file);
-					tparser.PushIncludeDir (Path.GetDirectoryName (file));
+					tparser.PushIncludeDir (Path.GetDirectoryName (includeFilePath));
 					try {
 						Parse (includeFilePath, true);
 					} finally {
