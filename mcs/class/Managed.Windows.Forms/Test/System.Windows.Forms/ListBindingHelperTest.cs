@@ -33,6 +33,7 @@ using System.ComponentModel;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Collections.Generic;
+using System.Data;
 using System.Windows.Forms;
 
 using NUnit.Framework;
@@ -196,7 +197,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")]
 		public void GetListItemPropertiesTest ()
 		{
 			SimpleItem [] items = new SimpleItem [0];
@@ -234,6 +234,20 @@ namespace MonoTests.System.Windows.Forms
 			properties = ListBindingHelper.GetListItemProperties (null);
 
 			Assert.AreEqual (0, properties.Count, "#F1");
+
+			// ListSource
+			properties = ListBindingHelper.GetListItemProperties (new ListSource (true));
+
+			Assert.AreEqual (1, properties.Count, "#G1");
+			Assert.AreEqual ("Value", properties [0].Name, "#G2");
+
+			// ITypedList
+			DataTable table = new DataTable ();
+			table.Columns.Add ("Name", typeof (string));
+
+			properties = ListBindingHelper.GetListItemProperties (table);
+			Assert.AreEqual (1, properties.Count, "#H1");
+			Assert.AreEqual ("Name", properties [0].Name, "#H2");
 		}
 
 		// tests for the overloads of the method
