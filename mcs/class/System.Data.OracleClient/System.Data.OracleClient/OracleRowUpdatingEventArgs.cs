@@ -24,7 +24,8 @@ using System;
 using System.Data;
 using System.Data.Common;
 
-namespace System.Data.OracleClient {
+namespace System.Data.OracleClient
+{
 	public sealed class OracleRowUpdatingEventArgs : RowUpdatingEventArgs
 	{
 		#region Constructors
@@ -37,6 +38,17 @@ namespace System.Data.OracleClient {
 		#endregion // Constructors
 
 		#region Properties
+
+#if NET_2_0
+		protected override IDbCommand BaseCommand {
+			get {
+				return base.BaseCommand;
+			}
+			set {
+				base.BaseCommand = value;
+			}
+		}
+#endif
 
 		public new OracleCommand Command {
 			get { return (OracleCommand) base.Command; }

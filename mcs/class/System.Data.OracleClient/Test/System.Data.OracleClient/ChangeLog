@@ -1,3 +1,17 @@
+2008-05-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* OracleDataAdapterTest.cs: Added ctor and basic property tests.
+	* OracleParameterCollectionTest.cs: Added tests for Clear,Count,Add,
+	Add,AddRange,Contains,indexers,IndexOf,Insert,Remove and RemoveAt.
+	* OracleCommandTest.cs: Added tests for ctors and CommandText,
+	CommandTimeout, ConnectionTimeout and Connection.
+	* OracleConnectionTest.cs: Added tests for ConnectionString and
+	ConnectionTimeout.
+	* OracleParameterTest.cs: Allow for disconnected tests. Added basic
+	ctor tests and test for ParameterName.
+	* OracleTimeSpanTest.cs: Added ctor tests. Added tests for IsNull,
+	MaxValue, MinValue, Null and ToString.
+
 2007-05-25 Amit Biswas <amit@amitbiswas.com>
 
 	* OracleParameterCollectionTest.cs: Created the class OracleParameterCollectionTest and added

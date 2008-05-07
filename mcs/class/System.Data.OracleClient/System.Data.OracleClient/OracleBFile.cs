@@ -18,7 +18,8 @@ using System;
 using System.IO;
 using System.Data.SqlTypes;
 
-namespace System.Data.OracleClient {
+namespace System.Data.OracleClient
+{
 	public sealed class OracleBFile : Stream, ICloneable, IDisposable, INullable
 	{
 		#region Fields
@@ -27,7 +28,7 @@ namespace System.Data.OracleClient {
 
 		OracleConnection connection;
 		bool isOpen = true;
-		bool notNull = false;
+		bool notNull;
 
 		#endregion // Fields
 
@@ -153,11 +154,18 @@ namespace System.Data.OracleClient {
 			throw new NotImplementedException ();
 		}
 
+#if NET_2_0
+		protected override void Dispose (bool disposing)
+		{
+			throw new NotImplementedException ();
+		}
+#else
 		[MonoTODO]
 		public void Dispose ()
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
 		[MonoTODO]
 		public override void Flush ()

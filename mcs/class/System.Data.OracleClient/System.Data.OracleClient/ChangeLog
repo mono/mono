@@ -1,6 +1,51 @@
+2008-05-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* OracleTransaction.cs: Corcompare fixes for 2.0 profile. Implemented
+	DbConnection and Dispose override. Code formatting.
+	* OracleLob.cs: Implemented Dispose overloads. Code formatting.
+	* OracleCommand.cs: Removed extra connection_timeout field. Fixed
+	DesignTimeVisible. Changed CommandText to return zero-length string
+	when underlying value is null. Fixed CommandTimeout to always
+	return 0. Implemented DbConnection, DbParameterCollection and
+	DbTransaction properties. Corcompare fixes for 2.0 profile.
+	* OracleTimeSpan.cs: In OracleTimeSpan ctor, throw NRE when from
+	is Null timespan. Fixed Hours property to actually return hours instead
+	of days. Modified Value to throw InvalidOperationException when
+	current instance is Null. Fixed explicit operator argument name.
+	* OracleRowUpdatingEventArgs.cs: Added missing BaseCommand override.
+	* OracleParameterCollection.cs: Removed extra internal ctor.
+	Corcompare fixes for 2.0 profile. On 1.0 profile, perform culture
+	sensitive and case-insensitive lookup. On 2.0 profile, first perform
+	case-sensitive lookup and fallback to case-insensitive lookup.
+	Set and remove Container where necessary, and perform checks for
+	ownership. Implemented AddRange overloads, and (Get/Set)Parameter.
+	Added several 2.0 overloads taking OracleParameter. Fixed exceptions
+	to match MS.
+	* OracleDataReader.cs: Corcompare fixes for 2.0 profile. Moved
+	disposing of schematable to Close, and invoke Close from Dispose.
+	Reduce casts. Stubbed methods introduced in 2.0 profile.
+	* OracleConnection.cs: Corcompare fixes for 2.0 profile. Changed
+	ConnectionString to return zero-length string when underlying value is
+	null. Removed explicit IDisposable implementation. Use string.Empty
+	instead of "". Code formatting.
+	* OracleMonthSpan.cs: Code formatting. Changed argument name of
+	explicit operator to match MS.
+	* OracleDataAdapter.cs: Code formatting. Fixed default ctor to use
+	null for SelectCommand. In 2.0 profile, set UpdateBatchSize to 1 and
+	throw AORE when setting it to negative value. Modified *Command setters
+	to throw InvalidCastException instead of ArgumentException. Removed
+	extra TableMappings property.
+	* OracleParameter.cs: Use zero-length string as default for
+	SourceColumn. Added missing 2.0 ctor. In ParameterName return zero
+	length string when name is null. Added SourceColumnNullMapping
+	property. Corcompare fixes for 2.0 profile. Code formatting.
+	* OracleBFile.cs: Added Dispose override for 2.0 profile.
+
 2007-11-11 Leszek Ciesielski <skolima@gmail.com>
+
 	* OracleCommands.cs: fix for binging procedure parameters by name
 	rather than position (by Gary Thomas)
+
 2007-11-01  Marek Safar  <marek.safar@gmail.com>
 
 	* OracleCommand.cs,

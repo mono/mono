@@ -19,10 +19,11 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.OracleClient.Oci;
 
-namespace System.Data.OracleClient {
+namespace System.Data.OracleClient
+{
 	public sealed class OracleTransaction :
-#if NET_2_0	
-	Common.DbTransaction, IDbTransaction, IDisposable
+#if NET_2_0
+	Common.DbTransaction
 #else
 	MarshalByRefObject, IDbTransaction, IDisposable
 #endif
@@ -55,14 +56,18 @@ namespace System.Data.OracleClient {
 			get { return isOpen; }
 		}
 
-		public OracleConnection Connection {
+		public
+#if NET_2_0
+		new
+#endif
+		OracleConnection Connection {
 			get { return connection; }
 		}
 		
 #if NET_2_0
 		[MonoTODO]
 		protected override Common.DbConnection DbConnection {
-			get { return null; }
+			get { return Connection; }
 		}
 #endif
 
@@ -74,9 +79,11 @@ namespace System.Data.OracleClient {
 			get { return isolationLevel; }
 		}
 
+#if !NET_2_0
 		IDbConnection IDbTransaction.Connection {
 			get { return Connection; }
 		}
+#endif
 
 		#endregion // Properties
 
@@ -98,7 +105,10 @@ namespace System.Data.OracleClient {
 			isOpen = false;
 		}
 
-		private void Dispose (bool disposing)
+#if NET_2_0
+		protected override
+#endif
+		void Dispose (bool disposing)
 		{
 			if (!disposed) {
 				if (disposing) {
@@ -111,11 +121,13 @@ namespace System.Data.OracleClient {
 			}
 		}
 
+#if !NET_2_0
 		public void Dispose ()
 		{
 			Dispose (true);
 			GC.SuppressFinalize (this);
 		}
+#endif
 
 		public
 #if NET_2_0

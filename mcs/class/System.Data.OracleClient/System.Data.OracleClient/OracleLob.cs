@@ -20,7 +20,8 @@ using System.Data.SqlTypes;
 using System.IO;
 using System.Text;
 
-namespace System.Data.OracleClient {
+namespace System.Data.OracleClient
+{
 	public sealed class OracleLob : Stream, ICloneable, IDisposable, INullable
 	{
 		#region Fields
@@ -28,14 +29,14 @@ namespace System.Data.OracleClient {
 		public static readonly new OracleLob Null = new OracleLob ();
 
 		internal OracleConnection connection;
-		bool isBatched = false;
+		bool isBatched;
 		bool isOpen = true;
-		bool notNull = false;
+		bool notNull;
 		OciLobLocator locator;
 		OracleType type;
 
 		long length = -1;
-		long position = 0;
+		long position;
 
 		#endregion // Fields
 
@@ -78,7 +79,7 @@ namespace System.Data.OracleClient {
 
 		public int ChunkSize {
 			[MonoTODO]
-			get { 
+			get {
 				AssertConnectionIsOpen ();
 				AssertObjectNotDisposed ();
 				return locator.GetChunkSize ();
@@ -98,7 +99,7 @@ namespace System.Data.OracleClient {
 		}
 
 		public bool IsTemporary {
-			get { 
+			get {
 				AssertConnectionIsOpen ();
 				AssertObjectNotDisposed ();
 				throw new NotImplementedException ();
@@ -106,7 +107,7 @@ namespace System.Data.OracleClient {
 		}
 
 		public override long Length {
-			get { 
+			get {
 				AssertConnectionIsOpen ();
 				AssertObjectNotDisposed ();
 				if (length >= 0)
@@ -124,7 +125,7 @@ namespace System.Data.OracleClient {
 		}
 
 		public override long Position {
-			get { 
+			get {
 				AssertConnectionIsOpen ();
 				AssertObjectNotDisposed ();
 				return position;
@@ -137,7 +138,7 @@ namespace System.Data.OracleClient {
 		}
 
 		public object Value {
-			get { 
+			get {
 				AssertObjectNotDisposed ();
 				if (IsNull)
 					return DBNull.Value;
@@ -148,7 +149,7 @@ namespace System.Data.OracleClient {
 				if (len == 0) {
 					// LOB is not Null, but it is Empty
 					if (LobType == OracleType.Clob)
-						return "";
+						return string.Empty;
 					else // OracleType.Blob
 						return new byte[0];
 				}
@@ -158,8 +159,7 @@ namespace System.Data.OracleClient {
 					Read (buffer, 0, len);
 					UnicodeEncoding encoding = new UnicodeEncoding ();
 					return encoding.GetString (buffer);
-				}
-				else {
+				} else {
 					// OracleType.Blob
 					buffer = new byte [len];
 					Read (buffer, 0, len);
@@ -173,7 +173,7 @@ namespace System.Data.OracleClient {
 		#region Methods
 
 		[MonoTODO]
-		public void Append (OracleLob source) 
+		public void Append (OracleLob source)
 		{
 			if (source.IsNull)
 				throw new ArgumentNullException ();
@@ -234,10 +234,31 @@ namespace System.Data.OracleClient {
 			throw new NotImplementedException ();
 		}
 
+#if !NET_2_0
 		[MonoTODO]
 		public override void Close ()
 		{
-			locator.Dispose ();
+			Dispose (true);
+		}
+
+		[MonoTODO]
+		public void Dispose ()
+		{
+			this.Dispose (true);
+			GC.SuppressFinalize (this);
+		}
+#endif
+
+#if NET_2_0
+		protected override
+#endif
+		void Dispose (bool disposing)
+		{
+			if (disposing) {
+				if (locator != null)
+					locator.Dispose ();
+			}
+			locator = null;
 			isOpen = false;
 		}
 
@@ -263,12 +284,6 @@ namespace System.Data.OracleClient {
 			AssertConnectionIsOpen ();
 
 			return (long) locator.Copy (destination.Locator, (uint) amount, (uint) destinationOffset + 1, (uint) sourceOffset + 1);
-		}
-
-		[MonoTODO]
-		public void Dispose ()
-		{
-			throw new NotImplementedException ();
 		}
 
 		public void EndBatch ()
@@ -314,7 +329,7 @@ namespace System.Data.OracleClient {
 			AssertObjectNotDisposed ();
 
 			int bytesRead;
-			byte[] output = new byte[count];
+			byte[] output = new byte [count];
 
 			bytesRead = locator.Read (output, (uint) Position + 1, (uint) count, LobType == OracleType.Blob);
 			output.CopyTo (buffer, offset);

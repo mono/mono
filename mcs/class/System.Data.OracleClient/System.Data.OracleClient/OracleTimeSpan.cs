@@ -17,7 +17,8 @@
 using System;
 using System.Data.SqlTypes;
 
-namespace System.Data.OracleClient {
+namespace System.Data.OracleClient
+{
 	public struct OracleTimeSpan : IComparable, INullable
 	{
 		#region Fields
@@ -26,7 +27,7 @@ namespace System.Data.OracleClient {
 		public static readonly OracleTimeSpan MinValue = new OracleTimeSpan (TimeSpan.MinValue);
 		public static readonly OracleTimeSpan Null = new OracleTimeSpan ();
 
-		bool notNull; 
+		bool notNull;
 		TimeSpan value;
 
 		#endregion // Fields
@@ -39,8 +40,11 @@ namespace System.Data.OracleClient {
 		}
 
 		public OracleTimeSpan (OracleTimeSpan from)
-			: this (from.Value)
 		{
+			if (from.IsNull)
+				throw new NullReferenceException ();
+			value = from.value;
+			notNull = true;
 		}
 
 		public OracleTimeSpan (TimeSpan ts)
@@ -73,7 +77,7 @@ namespace System.Data.OracleClient {
 		}
 
 		public int Hours {
-			get { return Value.Days; }
+			get { return Value.Hours; }
 		}
 
 		public bool IsNull {
@@ -93,7 +97,11 @@ namespace System.Data.OracleClient {
 		}
 
 		public TimeSpan Value {
-			get { return value; }
+			get {
+				if (IsNull)
+					throw CreateValueNullException ();
+				return value;
+			}
 		}
 
 		#endregion // Properties
@@ -188,6 +196,11 @@ namespace System.Data.OracleClient {
 			return value.ToString ();
 		}
 
+		static Exception CreateValueNullException ()
+		{
+			return new InvalidOperationException ("The value is Null");
+		}
+
 		#endregion // Methods
 
 		#region Operators and Type Conversions
@@ -227,9 +240,9 @@ namespace System.Data.OracleClient {
 			return x.Value;
 		}
 
-		public static explicit operator OracleTimeSpan (string s)
+		public static explicit operator OracleTimeSpan (string x)
 		{
-			return Parse (s);
+			return Parse (x);
 		}
 
 		#endregion // Operators and Type Conversions

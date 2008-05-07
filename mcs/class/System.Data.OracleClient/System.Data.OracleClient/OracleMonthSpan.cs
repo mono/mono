@@ -17,7 +17,8 @@
 using System;
 using System.Data.SqlTypes;
 
-namespace System.Data.OracleClient {
+namespace System.Data.OracleClient
+{
 	public struct OracleMonthSpan : IComparable, INullable
 	{
 		#region Fields
@@ -194,9 +195,9 @@ namespace System.Data.OracleClient {
 			return x.value;
 		}
 
-		public static explicit operator OracleMonthSpan (string s)
+		public static explicit operator OracleMonthSpan (string x)
 		{
-			return Parse (s);
+			return Parse (x);
 		}
 
 		#endregion // Operators and Type Conversions

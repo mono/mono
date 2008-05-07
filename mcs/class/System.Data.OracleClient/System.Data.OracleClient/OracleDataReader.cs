@@ -27,14 +27,22 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace System.Data.OracleClient {
-	public sealed class OracleDataReader : MarshalByRefObject, IDataReader, IDisposable, IDataRecord, IEnumerable
+namespace System.Data.OracleClient
+{
+	public sealed class OracleDataReader :
+#if NET_2_0
+		DbDataReader
+#else
+		MarshalByRefObject, IDataReader, IDisposable, IDataRecord, IEnumerable
+#endif
 	{
 		#region Fields
 
 		OracleCommand command;
 		ArrayList dataTypeNames;
-		bool disposed = false;
+#if !NET_2_0
+		bool disposed;
+#endif
 		bool isClosed;
 		bool hasRows;
 		DataTable schemaTable;
@@ -48,16 +56,15 @@ namespace System.Data.OracleClient {
 
 		#region Constructors
 
-		internal OracleDataReader (OracleCommand command, OciStatementHandle statement, bool extHasRows, CommandBehavior behavior) 
+		internal OracleDataReader (OracleCommand command, OciStatementHandle statement, bool extHasRows, CommandBehavior behavior)
 		{
 			this.command = command;
 			this.hasRows = extHasRows;
-			this.isClosed = false;
 			this.schemaTable = ConstructSchemaTable ();
 			this.statement = statement;
 			this.statementType = statement.GetStatementType ();
 			this.behavior = behavior;
-	        }
+		}
 
 		~OracleDataReader ()
 		{
@@ -68,33 +75,61 @@ namespace System.Data.OracleClient {
 
 		#region Properties
 
-		public int Depth {
+		public
+#if NET_2_0
+		override
+#endif
+		int Depth {
 			get { return 0; }
 		}
 
-		public int FieldCount {
+		public
+#if NET_2_0
+		override
+#endif
+		int FieldCount {
 			get { return statement.ColumnCount; }
 		}
 
-		public bool HasRows {
+		public
+#if NET_2_0
+		override
+#endif
+		bool HasRows {
 			get { return hasRows; }
 		}
 
-		public bool IsClosed {
+		public
+#if NET_2_0
+		override
+#endif
+		bool IsClosed {
 			get { return isClosed; }
 		}
 
-		public object this [string name] {
+		public
+#if NET_2_0
+		override
+#endif
+		object this [string name] {
 			get { return GetValue (GetOrdinal (name)); }
 		}
 
-		public object this [int i] {
+		public
+#if NET_2_0
+		override
+#endif
+		object this [int i] {
 			get { return GetValue (i); }
 		}
 
-		public int RecordsAffected {
-			get { 
-				return GetRecordsAffected ();				
+		public
+#if NET_2_0
+		override
+#endif
+		int RecordsAffected {
+			get {
+				return GetRecordsAffected ();
 			}
 		}
 
@@ -102,8 +137,12 @@ namespace System.Data.OracleClient {
 
 		#region Methods
 
-		public void Close ()
-		{	
+		public
+#if NET_2_0
+		override
+#endif
+		void Close ()
+		{
 			if (!isClosed) {
 				GetRecordsAffected ();
 				if (command != null)
@@ -113,6 +152,12 @@ namespace System.Data.OracleClient {
 				statement.Dispose();
 				statement = null;
 			}
+#if NET_2_0
+			if (schemaTable != null) {
+				schemaTable.Dispose ();
+				schemaTable = null;
+			}
+#endif
 			isClosed = true;
 		}
 
@@ -145,13 +190,12 @@ namespace System.Data.OracleClient {
 			return schemaTable;
 		}
 
+#if !NET_2_0
 		private void Dispose (bool disposing)
 		{
 			if (!disposed) {
-				if (disposing) {
-					schemaTable.Dispose ();
+				if (disposing)
 					Close ();
-				}
 				disposed = true;
 			}
 		}
@@ -161,112 +205,177 @@ namespace System.Data.OracleClient {
 			Dispose (true);
 			GC.SuppressFinalize (this);
 		}
+#endif
 
-		public bool GetBoolean (int i)
+		public
+#if NET_2_0
+		override
+#endif
+		bool GetBoolean (int i)
 		{
 			throw new NotSupportedException ();
 		}
 
-		public byte GetByte (int i)
+		public
+#if NET_2_0
+		override
+#endif
+		byte GetByte (int i)
 		{
 			throw new NotSupportedException ();
 		}
 
-		public long GetBytes (int i, long fieldOffset, byte[] buffer2, int bufferoffset, int length)
+		public
+#if NET_2_0
+		override
+#endif
+		long GetBytes (int i, long fieldOffset, byte[] buffer2, int bufferoffset, int length)
 		{
-			object value = GetValue (i);
-			if (!(value is byte[]))
-				throw new InvalidCastException ();
+			byte[] value = (byte[]) GetValue (i);
 
-                        if ( buffer2 == null )
-				return ((byte []) value).Length; // Return length of data
+			if (buffer2 == null)
+				return value.Length; // Return length of data
 
-                        // Copy data into buffer
-                        long lobLength = ((byte []) value).Length;
-                        if ( (lobLength - fieldOffset) < length)
-                                length = (int) (lobLength - fieldOffset);
-                        Array.Copy ( (byte[]) value, (int) fieldOffset, buffer2, bufferoffset, length);
-                        return length; // return actual read count
-                }
+			// Copy data into buffer
+			long lobLength = value.Length;
+			if ((lobLength - fieldOffset) < length)
+				length = (int) (lobLength - fieldOffset);
+			Array.Copy (value, (int) fieldOffset, buffer2,
+				bufferoffset, length);
+			return length; // return actual read count
+		}
 
-		public char GetChar (int i)
+		public
+#if NET_2_0
+		override
+#endif
+		char GetChar (int i)
 		{
 			throw new NotSupportedException ();
 		}
 
-		public long GetChars (int i, long fieldOffset, char[] buffer2, int bufferoffset, int length)
+		public
+#if NET_2_0
+		override
+#endif
+		long GetChars (int i, long fieldOffset, char[] buffer2, int bufferoffset, int length)
 		{
-			object value = GetValue (i);
-			if (!(value is char[]))
-				throw new InvalidCastException ();
-			Array.Copy ((char[]) value, (int) fieldOffset, buffer2, bufferoffset, length);
-			return ((char[]) value).Length - fieldOffset;
+			char [] value = (char[]) GetValue (i);
+			Array.Copy (value, (int) fieldOffset, buffer2,
+				bufferoffset, length);
+			return (value.Length - fieldOffset);
 		}
 
+#if !NET_2_0
 		[MonoTODO]
 		public IDataReader GetData (int i)
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
-		public string GetDataTypeName (int i)
+		public
+#if NET_2_0
+		override
+#endif
+		string GetDataTypeName (int i)
 		{
 			return dataTypeNames [i].ToString ().ToUpper ();
 		}
 
-		public DateTime GetDateTime (int i)
+		public
+#if NET_2_0
+		override
+#endif
+		DateTime GetDateTime (int i)
 		{
 			IConvertible c = (IConvertible) GetValue (i);
 			return c.ToDateTime (CultureInfo.CurrentCulture);
 		}
 
-		public decimal GetDecimal (int i)
+		public
+#if NET_2_0
+		override
+#endif
+		decimal GetDecimal (int i)
 		{
 			IConvertible c = (IConvertible) GetValue (i);
 			return c.ToDecimal (CultureInfo.CurrentCulture);
 		}
 
-		public double GetDouble (int i)
+		public
+#if NET_2_0
+		override
+#endif
+		double GetDouble (int i)
 		{
 			IConvertible c = (IConvertible) GetValue (i);
 			return c.ToDouble (CultureInfo.CurrentCulture);
 		}
 
-		public Type GetFieldType (int i)
+		public
+#if NET_2_0
+		override
+#endif
+		Type GetFieldType (int i)
 		{
 			OciDefineHandle defineHandle = (OciDefineHandle) statement.Values [i];
 			return defineHandle.FieldType;
 		}
 
-		public float GetFloat (int i)
+		public
+#if NET_2_0
+		override
+#endif
+		float GetFloat (int i)
 		{
 			IConvertible c = (IConvertible) GetValue (i);
 			return c.ToSingle (CultureInfo.CurrentCulture);
 		}
 
-		public Guid GetGuid (int i)
+		public
+#if NET_2_0
+		override
+#endif
+		Guid GetGuid (int i)
 		{
 			throw new NotSupportedException ();
 		}
 
-		public short GetInt16 (int i)
+		public
+#if NET_2_0
+		override
+#endif
+		short GetInt16 (int i)
 		{
 			throw new NotSupportedException ();
 		}
 
-		public int GetInt32 (int i)
+		public
+#if NET_2_0
+		override
+#endif
+		int GetInt32 (int i)
 		{
 			IConvertible c = (IConvertible) GetValue (i);
 			return c.ToInt32 (CultureInfo.CurrentCulture);
 		}
 
-		public long GetInt64 (int i)
+		public
+#if NET_2_0
+		override
+#endif
+		long GetInt64 (int i)
 		{
 			IConvertible c = (IConvertible) GetValue (i);
 			return c.ToInt64 (CultureInfo.CurrentCulture);
 		}
 
-		public string GetName (int i)
+		public
+#if NET_2_0
+		override
+#endif
+		string GetName (int i)
 		{
 			return statement.GetParameter (i).GetName ();
 		}
@@ -291,8 +400,8 @@ namespace System.Data.OracleClient {
 			if (IsDBNull (i))
 				throw new InvalidOperationException("The value is null");
 
-                        OracleLob output = (OracleLob) ((OciDefineHandle) statement.Values [i]).GetValue (
-                                command.Connection.SessionFormatProvider);
+			OracleLob output = (OracleLob) ((OciDefineHandle) statement.Values [i]).GetValue (
+				command.Connection.SessionFormatProvider);
 			output.connection = command.Connection;
 			return output;
 		}
@@ -381,7 +490,11 @@ namespace System.Data.OracleClient {
 			return new OracleTimeSpan (GetTimeSpan (i));
 		}
 
-		public int GetOrdinal (string name)
+		public
+#if NET_2_0
+		override
+#endif
+		int GetOrdinal (string name)
 		{
 			int i = GetOrdinalInternal (name);
 			if (i == -1)
@@ -411,7 +524,7 @@ namespace System.Data.OracleClient {
 			if (statementType == OciStatementType.Select)
 				return -1;
 			else {
-				if (this.isClosed == false) {
+				if (!isClosed) {
 					if (recordsAffected == -1)
 						if (statement != null)
 							recordsAffected = statement.GetAttributeInt32 (OciAttributeType.RowCount, command.ErrorHandle);
@@ -435,9 +548,9 @@ namespace System.Data.OracleClient {
 		private StringCollection GetKeyColumns(string owner, string table) 
 		{
 			OracleCommand cmd = command.Connection.CreateCommand ();
-			
+
 			StringCollection columns = new StringCollection ();
-						
+
 			if (command.Transaction != null)
 				cmd.Transaction = command.Transaction;
 
@@ -478,15 +591,14 @@ namespace System.Data.OracleClient {
 			int i = 0;
 			bool bTableFound = false;
 		
-			for (; bEnd == false && i < chars.Length; i++) {
+			for (; !bEnd && i < chars.Length; i++) {
 				char ch = chars[i];
 			
 				if (Char.IsLetter (ch)) {
 					wb.Append (ch);
-				}
-				else if (Char.IsWhiteSpace (ch)) {
+				} else if (Char.IsWhiteSpace (ch)) {
 					if (wb.Length > 0) {
-						if (bFromFound == false) {
+						if (!bFromFound) {
 							string word = wb.ToString ().ToUpper ();
 							if (word.Equals ("FROM")) {
 								bFromFound = true;
@@ -494,8 +606,7 @@ namespace System.Data.OracleClient {
 							wb = null;
 							wb = new StringBuilder ();
 							bTableFound = false;
-						}
-						else {
+						} else {
 							switch (wb.ToString ().ToUpper ()) {
 							case "WHERE":
 							case "ORDER":
@@ -504,27 +615,25 @@ namespace System.Data.OracleClient {
 								bTableFound = false;
 								break;
 							default:
-								if (bTableFound == true)
+								if (bTableFound)
 									bTableFound = false; // this is done in case of a table alias
 								else {
 									bTableFound = true;
 									tables.Add (wb.ToString ().ToUpper ());
 								}
 								wb = null;
-								wb = new StringBuilder ();	
+								wb = new StringBuilder ();
 								break;
 							}
 						}
 					}
-				}
-				else if (bFromFound == true) {
+				} else if (bFromFound) {
 					switch (ch) {
 					case ',': 
-						if (bTableFound == true)
+						if (bTableFound)
 							bTableFound = false;
-						else {
+						else
 							tables.Add (wb.ToString ().ToUpper ());
-						}
 						wb = null;
 						wb = new StringBuilder ();
 						break;
@@ -536,11 +645,11 @@ namespace System.Data.OracleClient {
 					}
 				}
 			}
-			if (bEnd == false) {
+			if (!bEnd) {
 				if (wb.Length > 0) {
-					if (bFromFound == false && wb.ToString ().ToUpper ().Equals ("FROM"))
+					if (!bFromFound && wb.ToString ().ToUpper ().Equals ("FROM"))
 						bFromFound = true;
-					if (bFromFound == true) {
+					if (bFromFound) {
 						switch(wb.ToString ().ToUpper ()) {
 						case "WHERE":
 						case "ORDER":
@@ -548,9 +657,8 @@ namespace System.Data.OracleClient {
 							bEnd = true;
 							break;
 						default:
-							if (bTableFound == false) {
+							if (!bTableFound)
 								tables.Add (wb.ToString ().ToUpper ());
-							}
 							break;
 						}
 					}
@@ -574,15 +682,18 @@ namespace System.Data.OracleClient {
 				name = objectName;
 				cmd.Dispose();
 				cmd = null;
-			}
-			else {
+			} else {
 				owner = objectName.Substring (0, idx);
 				name = objectName.Substring (idx + 1);
 			}
 		}
 
 		[MonoTODO("Implement this properly, with all needed information.")]
-		public DataTable GetSchemaTable ()
+		public
+#if NET_2_0
+		override
+#endif
+		DataTable GetSchemaTable ()
 		{
 			StringCollection keyinfo = null;
 
@@ -636,8 +747,7 @@ namespace System.Data.OracleClient {
 					row ["BaseSchemaName"]	= owner;
 					row ["BaseTableName"]	= table;
 					row ["BaseColumnName"]	= row ["ColumnName"];
-				}	
-				else {
+				} else {
 					row ["IsKey"]		= DBNull.Value;	
 					row ["IsUnique"]	= DBNull.Value; 
 					row ["BaseSchemaName"]	= DBNull.Value; 
@@ -651,23 +761,25 @@ namespace System.Data.OracleClient {
 			return schemaTable;
 		}
 
-		public string GetString (int i)
+		public
+#if NET_2_0
+		override
+#endif
+		string GetString (int i)
 		{
-			object value = GetValue (i);
-			if (!(value is string))
-				throw new InvalidCastException ();
-			return (string) value;
+			return (string) GetValue (i);
 		}
 
 		public TimeSpan GetTimeSpan (int i)
 		{
-			object value = GetValue (i);
-			if (!(value is TimeSpan))
-				throw new InvalidCastException ();
-			return (TimeSpan) value;
+			return (TimeSpan) GetValue (i);
 		}
 
-		public object GetValue (int i)
+		public
+#if NET_2_0
+		override
+#endif
+		object GetValue (int i)
 		{
 			OciDefineHandle defineHandle = (OciDefineHandle) statement.Values [i];
 
@@ -682,11 +794,15 @@ namespace System.Data.OracleClient {
 				lob.Close ();
 				return value;
 			default:
-                                return defineHandle.GetValue (command.Connection.SessionFormatProvider);
+				return defineHandle.GetValue (command.Connection.SessionFormatProvider);
 			}
 		}
 
-		public int GetValues (object[] values)
+		public
+#if NET_2_0
+		override
+#endif
+		int GetValues (object [] values)
 		{
 			int len = values.Length;
 			int count = statement.ColumnCount;
@@ -703,25 +819,41 @@ namespace System.Data.OracleClient {
 			return retval;
 		}
 
+#if NET_2_0
+		public override IEnumerator GetEnumerator ()
+#else
 		IEnumerator IEnumerable.GetEnumerator ()
+#endif
 		{
 			return new DbEnumerator (this);
 		}
 
-		public bool IsDBNull (int i)
+		public
+#if NET_2_0
+		override
+#endif
+		bool IsDBNull (int i)
 		{
 			OciDefineHandle defineHandle = (OciDefineHandle) statement.Values [i];
 			return defineHandle.IsNull;
 		}
 
 		[MonoTODO]
-		public bool NextResult ()
+		public
+#if NET_2_0
+		override
+#endif
+		bool NextResult ()
 		{
 			// FIXME: get next result
 			return false; 
 		}
 
-		public bool Read ()
+		public
+#if NET_2_0
+		override
+#endif
+		bool Read ()
 		{
 			if (hasRows) {
 				bool retval = statement.Fetch ();
@@ -730,6 +862,26 @@ namespace System.Data.OracleClient {
 			}
 			return false;
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		public override Type GetProviderSpecificFieldType (int i)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public override object GetProviderSpecificValue (int i)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public override int GetProviderSpecificValues (object [] values)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		#endregion // Methods
 	}

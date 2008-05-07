@@ -36,9 +36,9 @@ using System.EnterpriseServices;
 using System.Globalization;
 using System.Text;
 
-namespace System.Data.OracleClient 
+namespace System.Data.OracleClient
 {
-	internal struct OracleConnectionInfo 
+	internal struct OracleConnectionInfo
 	{
 		internal string Username;
 		internal string Password;
@@ -50,7 +50,7 @@ namespace System.Data.OracleClient
 	[DefaultEvent ("InfoMessage")]
 	public sealed class OracleConnection :
 #if NET_2_0
-		Common.DbConnection, ICloneable, IDbConnection
+		Common.DbConnection, ICloneable
 #else
 		Component, ICloneable, IDbConnection
 #endif
@@ -60,30 +60,30 @@ namespace System.Data.OracleClient
 		OciGlue oci;
 		ConnectionState state;
 		OracleConnectionInfo conInfo;
-		OracleTransaction transaction = null;
+		OracleTransaction transaction;
 		string connectionString = String.Empty;
-		string parsedConnectionString = String.Empty;
-		OracleDataReader dataReader = null;
+		string parsedConnectionString;
+		OracleDataReader dataReader;
 		bool pooling = true;
 		static OracleConnectionPoolManager pools = new OracleConnectionPoolManager ();
 		OracleConnectionPool pool;
-		int minPoolSize = 0;
+		int minPoolSize;
 		int maxPoolSize = 100;
 		byte persistSecurityInfo = 1;
-		bool disposed = false;
-                IFormatProvider format_info;
+		bool disposed;
+		IFormatProvider format_info;
 
 		#endregion // Fields
 
 		#region Constructors
 
-		public OracleConnection () 
+		public OracleConnection ()
 		{
 			state = ConnectionState.Closed;
 		}
 
-		public OracleConnection (string connectionString) 
-			: this() 
+		public OracleConnection (string connectionString)
+			: this()
 		{
 			SetConnectionString (connectionString, false);
 		}
@@ -92,10 +92,17 @@ namespace System.Data.OracleClient
 
 		#region Properties
 
-		int IDbConnection.ConnectionTimeout {
-			[MonoTODO]
-			get { return -1; }
+#if NET_2_0
+		[MonoTODO ("Currently not respected.")]
+		public override int ConnectionTimeout {
+			get { return 0; }
 		}
+#else
+		[MonoTODO ("Currently not respected.")]
+		int IDbConnection.ConnectionTimeout {
+			get { return 0; }
+		}
+#endif
 
 #if NET_2_0
 		[Browsable (false)]
@@ -159,15 +166,17 @@ namespace System.Data.OracleClient
 		[RefreshProperties (RefreshProperties.All)]
 		[Editor ("Microsoft.VSDesigner.Data.Oracle.Design.OracleConnectionStringEditor, " + Consts.AssemblyMicrosoft_VSDesigner, typeof(UITypeEditor))]
 		public
-#if NET_2_0		
+#if NET_2_0
 		override
 #endif
 		string ConnectionString {
-			get { 
+			get {
+				if (parsedConnectionString == null)
+					return string.Empty;
 				return parsedConnectionString;
 			}
-			set { 
-				SetConnectionString (value, false); 
+			set {
+				SetConnectionString (value, false);
 			}
 		}
 
@@ -186,7 +195,7 @@ namespace System.Data.OracleClient
 			}
 		}
 
-		internal string GetOracleVersion () 
+		internal string GetOracleVersion ()
 		{
 			byte[] buffer = new Byte[256];
 			uint bufflen = (uint) buffer.Length;
@@ -221,12 +230,20 @@ namespace System.Data.OracleClient
 
 		#region Methods
 
-		public OracleTransaction BeginTransaction ()
+		public
+#if NET_2_0
+		new
+#endif
+		OracleTransaction BeginTransaction ()
 		{
 			return BeginTransaction (IsolationLevel.ReadCommitted);
 		}
 
-		public OracleTransaction BeginTransaction (IsolationLevel il)
+		public
+#if NET_2_0
+		new
+#endif
+		OracleTransaction BeginTransaction (IsolationLevel il)
 		{
 			if (state == ConnectionState.Closed)
 				throw new InvalidOperationException ("The connection is not open.");
@@ -246,22 +263,26 @@ namespace System.Data.OracleClient
 
 		[MonoTODO]
 #if NET_2_0
-		public override void ChangeDatabase (string databaseName)
+		public override void ChangeDatabase (string value)
 #else
-		void IDbConnection.ChangeDatabase (string databaseName)
+		void IDbConnection.ChangeDatabase (string value)
 #endif
 		{
 			throw new NotImplementedException ();
 		}
 
-		public OracleCommand CreateCommand ()
+		public
+#if NET_2_0
+		new
+#endif
+		OracleCommand CreateCommand ()
 		{
 			OracleCommand command = new OracleCommand ();
 			command.Connection = this;
 			return command;
 		}
 
-		[MonoTODO]	
+		[MonoTODO]
 		object ICloneable.Clone ()
 		{
 			OracleConnection con = new OracleConnection ();
@@ -270,26 +291,22 @@ namespace System.Data.OracleClient
 			return con;
 		}
 
+#if !NET_2_0
 		IDbTransaction IDbConnection.BeginTransaction ()
 		{
 			return BeginTransaction ();
 		}
 
-		IDbTransaction IDbConnection.BeginTransaction (IsolationLevel iso)
+		IDbTransaction IDbConnection.BeginTransaction (IsolationLevel il)
 		{
-			return BeginTransaction (iso);
+			return BeginTransaction (il);
 		}
 
 		IDbCommand IDbConnection.CreateCommand ()
 		{
 			return CreateCommand ();
 		}
-
-		void IDisposable.Dispose ()
-		{
-			Dispose (true);
-			GC.SuppressFinalize (this);
-		}
+#endif
 
 		[MonoTODO]
 		protected override void Dispose (bool disposing)
@@ -301,11 +318,11 @@ namespace System.Data.OracleClient
 				transaction = null;
 				oci = null;
 				pool = null;
-				conInfo.Username = "";
-				conInfo.Database = "";
-				conInfo.Password = "";
-				connectionString = "";
-				parsedConnectionString = "";
+				conInfo.Username = string.Empty;
+				conInfo.Database = string.Empty;
+				conInfo.Password = string.Empty;
+				connectionString = null;
+				parsedConnectionString = null;
 				base.Dispose (disposing);
 				disposed = true;
 			}
@@ -318,7 +335,7 @@ namespace System.Data.OracleClient
 		}
 
 		// Get NLS_DATE_FORMAT string from Oracle server
-		internal string GetSessionDateFormat () 
+		internal string GetSessionDateFormat ()
 		{
 			// 23 is 22 plus 1 for NUL terminated character
 			// a DATE format has a max size of 22
@@ -332,7 +349,7 @@ namespace System.Data.OracleClient
 		// item = OciNlsServiceType enum value
 		//
 		// if unsure how much you need, use OciNlsServiceType.MAXBUFSZ
-		internal string GetNlsInfo (OciHandle handle, uint bufflen, OciNlsServiceType item) 
+		internal string GetNlsInfo (OciHandle handle, uint bufflen, OciNlsServiceType item)
 		{
 			byte[] buffer = new Byte[bufflen];
 
@@ -350,12 +367,11 @@ namespace System.Data.OracleClient
 			return ret.ToString ();
 		}
 
-                // An instance of IFormatProvider for locale - independent IFormattable.ToString () in Bind ()
+		// An instance of IFormatProvider for locale - independent IFormattable.ToString () in Bind ()
 		[MonoTODO("Handle other culture-specific informations, restrict buffer sizes")]
-                internal IFormatProvider SessionFormatProvider {
-                        get {
-				if (format_info == null && state == ConnectionState.Open)
-				{
+		internal IFormatProvider SessionFormatProvider {
+			get {
+				if (format_info == null && state == ConnectionState.Open) {
 					NumberFormatInfo numberFormatInfo = new NumberFormatInfo ();
 					numberFormatInfo.NumberGroupSeparator
 					= GetNlsInfo (Session, (uint)OciNlsServiceType.MAXBUFSZ, OciNlsServiceType.GROUP);
@@ -367,26 +383,25 @@ namespace System.Data.OracleClient
 					= GetNlsInfo (Session, (uint)OciNlsServiceType.MAXBUFSZ, OciNlsServiceType.MONDECIMAL);
 					format_info = numberFormatInfo;
 				}
-                                return format_info;
-                        }
-                }
+				return format_info;
+			}
+		}
 
 		public
 #if NET_2_0
 		override
 #endif		
-		void Open () 
+		void Open ()
 		{
 			if (State == ConnectionState.Open)
 				return;
 
 			PersistSecurityInfo ();
 
-			if (!pooling) {	
+			if (!pooling) {
 				oci = new OciGlue ();
 				oci.CreateConnection (conInfo);
-			}
-			else {
+			} else {
 				pool = pools.GetConnectionPool (conInfo, minPoolSize, maxPoolSize);
 				oci = pool.GetConnection ();
 			}
@@ -395,35 +410,37 @@ namespace System.Data.OracleClient
 			CreateStateChange (ConnectionState.Closed, ConnectionState.Open);
 		}
 
-		internal void CreateInfoMessage (OciErrorInfo info) 
+		internal void CreateInfoMessage (OciErrorInfo info)
 		{
 			OracleInfoMessageEventArgs a = new OracleInfoMessageEventArgs (info);
 			OnInfoMessage (a);
 		}
 
-		private void OnInfoMessage (OracleInfoMessageEventArgs e) 
+		private void OnInfoMessage (OracleInfoMessageEventArgs e)
 		{
 			if (InfoMessage != null)
 				InfoMessage (this, e);
 		}
 
-		internal void CreateStateChange (ConnectionState original, ConnectionState current) 
+		internal void CreateStateChange (ConnectionState original, ConnectionState current)
 		{
 			StateChangeEventArgs a = new StateChangeEventArgs (original, current);
 			OnStateChange (a);
 		}
 
+#if !NET_2_0
 		private void OnStateChange (StateChangeEventArgs e) 
 		{
 			if (StateChange != null)
 				StateChange (this, e);
 		}
+#endif
 
 		public
 #if NET_2_0
 		override
 #endif
-		void Close () 
+		void Close ()
 		{
 			if (transaction != null)
 				transaction.Rollback ();
@@ -438,20 +455,18 @@ namespace System.Data.OracleClient
 		}
 
 #if NET_2_0
-		[MonoTODO]
-		protected override Common.DbTransaction BeginDbTransaction (IsolationLevel level)
+		protected override Common.DbTransaction BeginDbTransaction (IsolationLevel isolationLevel)
 		{
-			return null;
+			return BeginTransaction (isolationLevel);
 		}
 		
-		[MonoTODO]
 		protected override Common.DbCommand CreateDbCommand ()
 		{
-			return null;
-		}		
+			return CreateCommand ();
+		}
 #endif
 
-		private void PersistSecurityInfo () 
+		private void PersistSecurityInfo ()
 		{
 			// persistSecurityInfo:
 			// 0 = true/yes
@@ -463,12 +478,9 @@ namespace System.Data.OracleClient
 
 			persistSecurityInfo = 2;
 
-			if (connectionString == null)
+			if (connectionString == null || connectionString.Length == 0)
 				return;
 
-			if (connectionString == String.Empty)
-				return;
-			
 			string conString = connectionString + ";";
 
 			bool inQuote = false;
@@ -540,24 +552,24 @@ namespace System.Data.OracleClient
 			}
 		}
 
-		internal void SetConnectionString (string connectionString, bool persistSecurity) 
+		internal void SetConnectionString (string connectionString, bool persistSecurity)
 		{
 			persistSecurityInfo = 1;
-			this.connectionString = String.Copy (connectionString);
-			this.parsedConnectionString = this.connectionString;
-			if (this.connectionString == null)
-				this.connectionString = String.Empty;
-			conInfo.Username = "";
-			conInfo.Database = "";
-			conInfo.Password = "";
+
+			conInfo.Username = string.Empty;
+			conInfo.Database = string.Empty;
+			conInfo.Password = string.Empty;
 			conInfo.CredentialType = OciCredentialType.RDBMS;
 
-			if (connectionString == null)
+			if (connectionString == null || connectionString.Length == 0) {
+				this.connectionString = connectionString;
+				this.parsedConnectionString = connectionString;
 				return;
+			}
 
-			if (connectionString == String.Empty)
-				return;
-			
+			this.connectionString = String.Copy (connectionString);
+			this.parsedConnectionString = this.connectionString;
+
 			connectionString += ";";
 			NameValueCollection parameters = new NameValueCollection ();
 
@@ -608,12 +620,12 @@ namespace System.Data.OracleClient
 
 			conInfo.ConnectionString = this.connectionString;
 
-			if (persistSecurity == true)
+			if (persistSecurity)
 				PersistSecurityInfo ();
 		}
 
-		private void SetProperties (NameValueCollection parameters) 
-		{	
+		private void SetProperties (NameValueCollection parameters)
+		{
 			string value;
 			foreach (string name in parameters) {
 				value = parameters[name];
@@ -627,13 +639,13 @@ namespace System.Data.OracleClient
 					// TODO:
 					break;
 				case "INTEGRATED SECURITY":
-					if (ConvertToBoolean ("integrated security", value) == false)
+					if (!ConvertToBoolean ("integrated security", value))
 						conInfo.CredentialType = OciCredentialType.RDBMS;
 					else
 						conInfo.CredentialType = OciCredentialType.External;
 					break;
 				case "PERSIST SECURITY INFO":
-					if (ConvertToBoolean ("persist security info", value) == false)
+					if (!ConvertToBoolean ("persist security info", value))
 						persistSecurityInfo = 1;
 					else
 						persistSecurityInfo = 0;
@@ -665,14 +677,13 @@ namespace System.Data.OracleClient
 			}
 		}
 
-		private bool ConvertToBoolean(string key, string value) 
+		private bool ConvertToBoolean(string key, string value)
 		{
 			string upperValue = value.ToUpper();
 
-			if (upperValue == "TRUE" ||upperValue == "YES") {
+			if (upperValue == "TRUE" || upperValue == "YES") {
 				return true;
-			} 
-			else if (upperValue == "FALSE" || upperValue == "NO") {
+			} else if (upperValue == "FALSE" || upperValue == "NO") {
 				return false;
 			}
 
@@ -684,6 +695,8 @@ namespace System.Data.OracleClient
 		#endregion // Methods
 
 		public event OracleInfoMessageEventHandler InfoMessage;
+#if !NET_2_0
 		public event StateChangeEventHandler StateChange;
+#endif
 	}
 }

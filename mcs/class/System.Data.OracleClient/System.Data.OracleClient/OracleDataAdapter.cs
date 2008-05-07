@@ -27,7 +27,8 @@ using System.Data;
 using System.Data.Common;
 using System.Drawing.Design;
 
-namespace System.Data.OracleClient {
+namespace System.Data.OracleClient
+{
 	[DefaultEvent ("RowUpdated")]
 	[Designer ("Microsoft.VSDesigner.Data.VS.OracleDataAdapterDesigner, " + Consts.AssemblyMicrosoft_VSDesigner)]
 	[ToolboxItem ("Microsoft.VSDesigner.Data.VS.OracleDataAdapterToolboxItem, " + Consts.AssemblyMicrosoft_VSDesigner)]
@@ -35,7 +36,6 @@ namespace System.Data.OracleClient {
 	{
 		#region Fields
 
-		//bool disposed = false;
 		OracleCommand deleteCommand;
 		OracleCommand insertCommand;
 		OracleCommand selectCommand;
@@ -48,17 +48,16 @@ namespace System.Data.OracleClient {
 
 		#region Constructors
 
-		public OracleDataAdapter ()
-			: this (new OracleCommand ())
+		public OracleDataAdapter () : this ((OracleCommand) null)
 		{
 		}
 
 		public OracleDataAdapter (OracleCommand selectCommand)
 		{
-			DeleteCommand = null;
-			InsertCommand = null;
 			SelectCommand = selectCommand;
-			UpdateCommand = null;
+#if NET_2_0
+			UpdateBatchSize = 1;
+#endif
 		}
 
 		public OracleDataAdapter (string selectCommandText, OracleConnection selectConnection)
@@ -102,51 +101,36 @@ namespace System.Data.OracleClient {
 			get { return updateCommand; }
 			set { updateCommand = value; }
 		}
+
 #if NET_2_0
 		public override int UpdateBatchSize {
 			get { return updateBatchSize; }
-			set { updateBatchSize = value; }
+			set {
+				if (value < 0)
+					throw new ArgumentOutOfRangeException ("UpdateBatchSize");
+				updateBatchSize = value; 
+			}
 		}
 #endif
+
 		IDbCommand IDbDataAdapter.DeleteCommand {
 			get { return DeleteCommand; }
-			set {
-				if (value != null && !(value is OracleCommand))
-					throw new ArgumentException ();
-				DeleteCommand = (OracleCommand) value;
-			}
+			set { DeleteCommand = (OracleCommand) value; }
 		}
 
 		IDbCommand IDbDataAdapter.InsertCommand {
 			get { return InsertCommand; }
-			set {
-				if (value != null && !(value is OracleCommand))
-					throw new ArgumentException ();
-				InsertCommand = (OracleCommand) value;
-			}
+			set { InsertCommand = (OracleCommand) value; }
 		}
 
 		IDbCommand IDbDataAdapter.SelectCommand {
 			get { return SelectCommand; }
-			set {
-				if (value != null && !(value is OracleCommand))
-					throw new ArgumentException ();
-				SelectCommand = (OracleCommand) value;
-			}
+			set { SelectCommand = (OracleCommand) value; }
 		}
 
 		IDbCommand IDbDataAdapter.UpdateCommand {
 			get { return UpdateCommand; }
-			set {
-				if (value != null && !(value is OracleCommand))
-					throw new ArgumentException ();
-				UpdateCommand = (OracleCommand) value;
-			}
-		}
-
-
-		ITableMappingCollection IDataAdapter.TableMappings {
-			get { return TableMappings; }
+			set { UpdateCommand = (OracleCommand) value; }
 		}
 
 		#endregion // Properties
@@ -184,6 +168,5 @@ namespace System.Data.OracleClient {
 		public event OracleRowUpdatingEventHandler RowUpdating;
 
 		#endregion // Events and Delegates
-
 	}
 }

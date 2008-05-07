@@ -21,6 +21,9 @@
 using System;
 using System.ComponentModel;
 using System.Data;
+#if NET_2_0
+using System.Data.Common;
+#endif
 using System.Data.OracleClient.Oci;
 using System.Drawing.Design;
 using System.Text;
@@ -32,11 +35,11 @@ namespace System.Data.OracleClient
 #endif
 	[Designer ("Microsoft.VSDesigner.Data.VS.OracleCommandDesigner, " + Consts.AssemblyMicrosoft_VSDesigner)]
 	[ToolboxItem (true)]
-	public sealed class OracleCommand : 
+	public sealed class OracleCommand :
 #if NET_2_0
-	Common.DbCommand, ICloneable, IDbCommand
+		DbCommand, ICloneable
 #else
-	Component, ICloneable, IDbCommand
+		Component, ICloneable, IDbCommand
 #endif
 	{
 		#region Fields
@@ -49,12 +52,7 @@ namespace System.Data.OracleClient
 		OracleParameterCollection parameters;
 		OracleTransaction transaction;
 		UpdateRowSource updatedRowSource;
-		
-#if NET_2_0
-		int connection_timeout;
-#endif		
-
-		private OciStatementHandle preparedStatement;
+		OciStatementHandle preparedStatement;
 		//OciStatementType statementType;
 
 		#endregion // Fields
@@ -84,9 +82,8 @@ namespace System.Data.OracleClient
 			Transaction = tx;
 			CommandType = CommandType.Text;
 			UpdatedRowSource = UpdateRowSource.Both;
-			DesignTimeVisible = false;
-
-			parameters = new OracleParameterCollection (this);
+			DesignTimeVisible = true;
+			parameters = new OracleParameterCollection ();
 		}
 
 		#endregion // Constructors
@@ -97,18 +94,23 @@ namespace System.Data.OracleClient
 		[RefreshProperties (RefreshProperties.All)]
 		[Editor ("Microsoft.VSDesigner.Data.Oracle.Design.OracleCommandTextEditor, " + Consts.AssemblyMicrosoft_VSDesigner, typeof(UITypeEditor))]
 		public
-#if NET_2_0		
+#if NET_2_0
 		override
 #endif
 		string CommandText {
-			get { return commandText; }
+			get {
+				if (commandText == null)
+					return string.Empty;
+
+				return commandText;
+			}
 			set { commandText = value; }
 		}
 
 		[RefreshProperties (RefreshProperties.All)]
 		[DefaultValue (CommandType.Text)]
 		public
-#if NET_2_0		
+#if NET_2_0
 		override
 #endif
 		CommandType CommandType {
@@ -122,35 +124,39 @@ namespace System.Data.OracleClient
 
 		[DefaultValue (null)]
 		[Editor ("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, " + Consts.AssemblyMicrosoft_VSDesigner, typeof(UITypeEditor))]
-		public OracleConnection Connection {
+		public
+#if NET_2_0
+		new
+#endif
+		OracleConnection Connection {
 			get { return connection; }
 			set { connection = value; }
 		}
-		
+
 #if NET_2_0
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override int CommandTimeout {
-			get { return connection_timeout; }
-			set { connection_timeout = value; }
+			get { return 0; }
+			set { }
 		}
 
 		[MonoTODO]
-		protected override Common.DbConnection DbConnection {
-			get { return null; }
-			set {}
+		protected override DbConnection DbConnection {
+			get { return Connection; }
+			set { Connection = (OracleConnection) value; }
 		}
 
 		[MonoTODO]
-		protected override Common.DbParameterCollection DbParameterCollection {
-			get { return null; }
+		protected override DbParameterCollection DbParameterCollection {
+			get { return Parameters; }
 		}
 
 		[MonoTODO]
-		protected override Common.DbTransaction DbTransaction {
-			get { return null; }
-			set {}					
+		protected override DbTransaction DbTransaction {
+			get { return Transaction; }
+			set { Transaction = (OracleTransaction) value; }
 		}
 #endif
 
@@ -159,9 +165,9 @@ namespace System.Data.OracleClient
 		[DesignOnly (true)]
 #if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
-#endif		
+#endif
 		public
-#if NET_2_0		
+#if NET_2_0
 		override
 #endif
 		bool DesignTimeVisible {
@@ -177,6 +183,7 @@ namespace System.Data.OracleClient
 			get { return Connection.ErrorHandle; }
 		}
 
+#if !NET_2_0
 		int IDbCommand.CommandTimeout {
 			get { return 0; }
 			set { }
@@ -187,7 +194,7 @@ namespace System.Data.OracleClient
 		IDbConnection IDbCommand.Connection {
 			get { return Connection; }
 			set {
-                                // InvalidCastException is expected when types do not match
+				// InvalidCastException is expected when types do not match
 				Connection = (OracleConnection) value;
 			}
 		}
@@ -199,26 +206,35 @@ namespace System.Data.OracleClient
 		IDbTransaction IDbCommand.Transaction {
 			get { return Transaction; }
 			set {
-                                // InvalidCastException is expected when types do not match
+				// InvalidCastException is expected when types do not match
 				Transaction = (OracleTransaction) value;
 			}
 		}
+#endif
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-		public OracleParameterCollection Parameters {
+		public
+#if NET_2_0
+		new
+#endif
+		OracleParameterCollection Parameters {
 			get { return parameters; }
 		}
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public OracleTransaction Transaction {
+		public
+#if NET_2_0
+		new
+#endif
+		OracleTransaction Transaction {
 			get { return transaction; }
 			set { transaction = value; }
 		}
 
 		[DefaultValue (UpdateRowSource.Both)]
 		public
-#if NET_2_0		
+#if NET_2_0
 		override
 #endif
 		UpdateRowSource UpdatedRowSource {
@@ -232,7 +248,7 @@ namespace System.Data.OracleClient
 
 		private void AssertCommandTextIsSet ()
 		{
-			if (CommandText == String.Empty || CommandText == null)
+			if (CommandText.Length == 0)
 				throw new InvalidOperationException ("The command text for this Command has not been set.");
 		}
 
@@ -262,13 +278,13 @@ namespace System.Data.OracleClient
 
 		[MonoTODO]
 		public
-#if NET_2_0		
+#if NET_2_0
 		override
 #endif
 		void Cancel ()
 		{
 			throw new NotImplementedException ();
-		}	
+		}
 
 		[MonoTODO]
 		public object Clone ()
@@ -312,21 +328,20 @@ namespace System.Data.OracleClient
 
 			return cmd;
 		}
-		
-		
+
 #if NET_2_0
 		[MonoTODO]
-		protected override Common.DbParameter CreateDbParameter ()
+		protected override DbParameter CreateDbParameter ()
 		{
-			return null;
+			return CreateParameter ();
 		}
 
 		[MonoTODO]
-		protected override Common.DbDataReader ExecuteDbDataReader (CommandBehavior behaviour)
+		protected override DbDataReader ExecuteDbDataReader (CommandBehavior behavior)
 		{
-			return null;
+			return ExecuteReader (behavior);
 		}
-#endif			
+#endif
 
 		internal void UpdateParameterValues ()
 		{
@@ -345,7 +360,11 @@ namespace System.Data.OracleClient
 				Connection.Close ();
 		}
 
-		public OracleParameter CreateParameter ()
+		public
+#if NET_2_0
+		new
+#endif
+		OracleParameter CreateParameter ()
 		{
 			return new OracleParameter ();
 		}
@@ -381,9 +400,9 @@ namespace System.Data.OracleClient
 		}
 
 		public
-#if NET_2_0		
+#if NET_2_0
 		override
-#endif		
+#endif
 		int ExecuteNonQuery ()
 		{
 			AssertConnectionIsOpen ();
@@ -399,8 +418,7 @@ namespace System.Data.OracleClient
 			OciStatementHandle statement = GetStatementHandle ();
 			try {
 				return ExecuteNonQueryInternal (statement, useAutoCommit);
-			}
-			finally	{
+			} finally {
 				SafeDisposeHandle (statement);
 			}
 		}
@@ -428,8 +446,7 @@ namespace System.Data.OracleClient
 				rowid = new OracleString (descriptor.GetRowId (ErrorHandle));
 
 				return retval;
-			}
-			finally	{
+			} finally {
 				SafeDisposeHandle (statement);
 			}
 		}
@@ -463,7 +480,7 @@ namespace System.Data.OracleClient
 					if (statement.Fetch ()) {
 						OciDefineHandle defineHandle = (OciDefineHandle) statement.Values [0];
 						if (!defineHandle.IsNull)
-                                                        output = defineHandle.GetOracleValue (Connection.SessionFormatProvider);
+							output = defineHandle.GetOracleValue (Connection.SessionFormatProvider);
 						switch (defineHandle.DataType) {
 						case OciDataType.Blob:
 						case OciDataType.Clob:
@@ -475,8 +492,7 @@ namespace System.Data.OracleClient
 				}
 
 				return output;
-			}
-			finally {
+			} finally {
 				SafeDisposeHandle (statement);
 			}
 		}
@@ -492,12 +508,20 @@ namespace System.Data.OracleClient
 			return true;
 		}
 
-		public OracleDataReader ExecuteReader ()
+		public
+#if NET_2_0
+		new
+#endif
+		OracleDataReader ExecuteReader ()
 		{
 			return ExecuteReader (CommandBehavior.Default);
 		}
 
-		public OracleDataReader ExecuteReader (CommandBehavior behavior)
+		public
+#if NET_2_0
+		new
+#endif
+		OracleDataReader ExecuteReader (CommandBehavior behavior)
 		{
 			AssertConnectionIsOpen ();
 			AssertTransactionMatch ();
@@ -505,7 +529,7 @@ namespace System.Data.OracleClient
 			AssertNoDataReader ();
 			bool hasRows = false;
 
-                        this.behavior = behavior;
+			this.behavior = behavior;
 
 			if (Transaction != null)
 				Transaction.AttachToServiceContext ();
@@ -513,7 +537,7 @@ namespace System.Data.OracleClient
 			OciStatementHandle statement = GetStatementHandle ();
 			OracleDataReader rd = null;
 
-			try	{
+			try {
 				if (preparedStatement == null)
 					PrepareStatement (statement);
 				else
@@ -533,8 +557,7 @@ namespace System.Data.OracleClient
 				}
 
 				rd = new OracleDataReader (this, statement, hasRows, behavior);
-			}
-			finally	{
+			} finally {
 				if (statement != null && rd == null)
 					statement.Dispose();
 			}
@@ -543,7 +566,7 @@ namespace System.Data.OracleClient
 		}
 
 		public
-#if NET_2_0		
+#if NET_2_0
 		override
 #endif
 		object ExecuteScalar ()
@@ -578,23 +601,22 @@ namespace System.Data.OracleClient
 							switch (defineHandle.DataType) {
 							case OciDataType.Blob:
 							case OciDataType.Clob:
-                                                                OracleLob lob = (OracleLob) defineHandle.GetValue (
-                                                                        Connection.SessionFormatProvider);
+								OracleLob lob = (OracleLob) defineHandle.GetValue (
+									Connection.SessionFormatProvider);
 								lob.connection = Connection;
 								output = lob.Value;
 								lob.Close ();
 								break;
 							default:
 								output = defineHandle.GetValue (
-                                                                        Connection.SessionFormatProvider);
+									Connection.SessionFormatProvider);
 								break;
 							}
 						}
 					}
 					UpdateParameterValues ();
 				}
-			}
-			finally {
+			} finally {
 				SafeDisposeHandle (statement);
 			}
 
@@ -620,6 +642,7 @@ namespace System.Data.OracleClient
 				h.Dispose();
 		}
 
+#if !NET_2_0
 		IDbDataParameter IDbCommand.CreateParameter ()
 		{
 			return CreateParameter ();
@@ -634,6 +657,7 @@ namespace System.Data.OracleClient
 		{
 			return ExecuteReader (behavior);
 		}
+#endif
 
 		void PrepareStatement (OciStatementHandle statement)
 		{
@@ -648,13 +672,12 @@ namespace System.Data.OracleClient
 
 				string sql = "begin " + commandText + "(" + sb.ToString() + "); end;";
 				statement.Prepare (sql);
-			}
-			else	// Text
+			} else	// Text
 				statement.Prepare (commandText);
 		}
 
 		public
-#if NET_2_0		
+#if NET_2_0
 		override
 #endif
 		void Prepare ()
@@ -665,14 +688,14 @@ namespace System.Data.OracleClient
 			preparedStatement = statement;
 		}
 
-                protected override void Dispose (bool disposing)
-                {
-                        if (disposing)
-                                if (Parameters.Count > 0)
-                                        foreach (OracleParameter parm in Parameters)
-                                                parm.FreeHandle ();
-                        base.Dispose (disposing);
-                }
+		protected override void Dispose (bool disposing)
+		{
+			if (disposing)
+				if (Parameters.Count > 0)
+					foreach (OracleParameter parm in Parameters)
+						parm.FreeHandle ();
+			base.Dispose (disposing);
+		}
 
 		#endregion // Methods
 	}
