@@ -10553,6 +10553,24 @@
       </method>
     </type>
   </test>
+  <test name="gtest-393.cs">
+    <type name="B`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A">
+      <method name="Void .ctor(Type)">
+        <size>29</size>
+      </method>
+      <method name="Void .cctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>23</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
