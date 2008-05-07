@@ -1,5 +1,7 @@
 2008-05-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* generics.cs: Add a test #387034.
+
 	* mini.c (mini_get_method): Check whenever the method class is an open generic
 	type, and return NULL in that case, causing a verification error. Fixes
 	#384123.
