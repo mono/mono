@@ -362,7 +362,9 @@ namespace System.Windows.Forms {
 
 		[Browsable (false)]
 		public virtual bool IsSynchronized {
-			get { throw new NotImplementedException (); }
+			get {
+				return list.IsSynchronized;
+			}
 		}
 
 		[Browsable (false)]

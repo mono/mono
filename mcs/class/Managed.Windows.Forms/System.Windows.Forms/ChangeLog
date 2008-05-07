@@ -1,5 +1,10 @@
 2008-05-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* BindingSource.cs: When calling IsSynchronized, return the value of
+	the related IList list.
+
+2008-05-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ListBindingHelper.cs: Fix some bits in GetListItemProperties, to
 	make a test pass.
 
