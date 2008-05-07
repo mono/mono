@@ -360,8 +360,6 @@ System.Globalization/UnicodeCategory.cs
 System.IO/BinaryReader.cs
 System.IO/BinaryWriter.cs
 System.IO/BufferedStream.cs
-System.IO/CheckArgument.cs
-System.IO/CheckPermission.cs
 System.IO/Directory.cs
 System.IO/DirectoryInfo.cs
 System.IO/DirectoryNotFoundException.cs
