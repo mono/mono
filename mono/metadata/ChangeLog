@@ -1,5 +1,8 @@
 2008-05-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* object.c (mono_object_get_virtual_method): Inflate the resulting method if
+	needed. Fixes #387034.
+
 	* class.c (mono_class_inflate_generic_type): Avoid a crash if context is NULL.
 
 2008-05-06  Miguel de Icaza  <miguel@novell.com>
