@@ -1,3 +1,9 @@
+2008-05-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_get_method): Check whenever the method class is an open generic
+	type, and return NULL in that case, causing a verification error. Fixes
+	#384123.
+
 2008-05-06  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* driver.c (mono_main): Revert r102623. The right
