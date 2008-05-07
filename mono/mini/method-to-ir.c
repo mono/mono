@@ -6590,6 +6590,20 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				break;
 			}
 
+			/* Optimize the ldobj+stobj combination */
+			/* The reference case ends up being a load+store anyway */
+			if (((ip [5] == CEE_STOBJ) && ip_in_bb (cfg, bblock, ip + 9) && read32 (ip + 6) == token) && !MONO_TYPE_IS_REFERENCE (&klass->byval_arg)) {
+				CHECK_STACK (1);
+
+				sp --;
+
+				mini_emit_stobj (cfg, sp [0], sp [1], klass, FALSE);
+
+				ip += 5 + 5;
+				ins_flag = 0;
+				break;
+			}
+
 			EMIT_NEW_LOAD_MEMBASE_TYPE (cfg, ins, &klass->byval_arg, sp [0]->dreg, 0);
 			*sp++ = ins;
 

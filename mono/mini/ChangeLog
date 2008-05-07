@@ -1,3 +1,7 @@
+2008-05-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir2): Optimize ldobj+stobj pairs.
+
 2008-04-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* branch-opts.c (mono_if_conversion): Remove some restrictions which are not
