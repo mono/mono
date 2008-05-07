@@ -304,6 +304,30 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		}
 
 		[Test]
+		public void RemoveSort ()
+		{
+			BindingSource source = new BindingSource ();
+			DataTable table = CreateTable ();
+			source.DataSource = table;
+
+			source.Sort = "Name";
+			IBindingListView view = (IBindingListView)source.List;
+			Assert.AreEqual ("Name", source.Sort, "A1");
+			Assert.AreEqual ("Name", view.SortProperty.Name, "A2");
+
+			source.RemoveSort ();
+			Assert.AreEqual (null, source.Sort, "B1");
+			Assert.AreEqual (null, view.SortProperty, "B2");
+
+			// Non IBindingListView source - No exception, as opposed to what
+			// the documentation says
+			source.Sort = null;
+			source.DataSource = new List<string> ();
+
+			source.RemoveSort ();
+		}
+
+		[Test]
 		public void ResetItem ()
 		{
 			BindingSource source = new BindingSource ();
@@ -992,6 +1016,32 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			Assert.IsTrue (source.List is List<object>, "1");
 			source.AddNew ();
 			Assert.AreEqual (1, source.Count, "2");
+		}
+
+		[Test]
+		public void ApplySort ()
+		{
+			BindingSource source = new BindingSource ();
+			DataTable table = CreateTable ();
+
+			source.DataSource = table;
+			IBindingListView source_view = ((IBindingListView)source);
+			IBindingListView view = ((IBindingListView)source.List);
+			PropertyDescriptor property = source.GetItemProperties (null) ["Name"];
+
+			source_view.ApplySort (property, ListSortDirection.Ascending);
+
+			Assert.AreEqual (property, view.SortProperty, "A1");
+
+			// Non IBindingList source - Passing an invalid property
+			// but the method is not called since source is not of the required type
+
+			source.DataSource = new List<string> ();
+			try {
+				source_view.ApplySort (property, ListSortDirection.Ascending);
+				Assert.Fail ("B1");
+			} catch (NotSupportedException) {
+			}
 		}
 
 		[Test]

@@ -1,5 +1,9 @@
 2008-05-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* BindingSourceTest.cs: New tests for ApplySort and RemoveSort methods.
+
+2008-05-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* BindingSourceTest.cs: Activate a pair of tests.
 
 2008-05-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
