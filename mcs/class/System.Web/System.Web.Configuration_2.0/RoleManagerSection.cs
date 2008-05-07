@@ -64,7 +64,10 @@ namespace System.Web.Configuration {
 									  CookieProtection.All);
 			cookieRequireSSLProp = new ConfigurationProperty ("cookieRequireSSL", typeof (bool), false);
 			cookieSlidingExpirationProp = new ConfigurationProperty ("cookieSlidingExpiration", typeof (bool), true);
-			cookieTimeoutProp = new ConfigurationProperty ("cookieTimeout", typeof (TimeSpan), TimeSpan.FromMinutes (30));
+			cookieTimeoutProp = new ConfigurationProperty ("cookieTimeout", typeof (TimeSpan), TimeSpan.FromMinutes (30),
+								       PropertyHelper.TimeSpanMinutesOrInfiniteConverter,
+								       PropertyHelper.PositiveTimeSpanValidator,
+								       ConfigurationPropertyOptions.None);
 			createPersistentCookieProp = new ConfigurationProperty ("createPersistentCookie", typeof (bool), false);
 			defaultProviderProp = new ConfigurationProperty ("defaultProvider", typeof (string), "AspNetSqlRoleProvider");
 			domainProp = new ConfigurationProperty ("domain", typeof (string), "");

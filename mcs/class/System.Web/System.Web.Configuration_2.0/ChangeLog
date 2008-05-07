@@ -1,3 +1,9 @@
+2008-05-07  Marek Habersack  <mhabersack@novell.com>
+
+	* RoleManagerSection.cs: use type converter when creating the
+	cookieTimeout property in the static constructor. Fixes bug
+	#387526. Patch fromIvan Hamilton <ivan@chimerical.com.au>, thanks! 
+
 2008-03-23  Dean Brettle <dean@brettle.com>
 
 	* CapabilitiesBuild.cs (Process), ICapabilitiesProcess.cs (Process),
