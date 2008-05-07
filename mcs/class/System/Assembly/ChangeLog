@@ -1,3 +1,8 @@
+2008-05-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyInfo.cs: Change InternalsVisibleTo on Mono.Moonlight to
+	a key we control.
+
 2008-04-15  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* AssemblyInfo.cs: Added missing Attributes
