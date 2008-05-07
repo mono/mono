@@ -4364,6 +4364,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms.Theming\VisualStyles\ToolStripPainter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms.VisualStyles\BackgroundType.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

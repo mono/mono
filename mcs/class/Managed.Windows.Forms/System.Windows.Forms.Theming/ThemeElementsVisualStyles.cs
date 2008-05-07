@@ -41,6 +41,13 @@ namespace System.Windows.Forms.Theming
 				return radioButtonPainter;
 			}
 		}
+		public override Default.ToolStripPainter ToolStripPainter {
+			get {
+				if (toolStripPainter == null)
+					toolStripPainter = new VisualStyles.ToolStripPainter ();
+				return toolStripPainter;
+			}
+		}
 #endif
 		public override Default.TabControlPainter TabControlPainter {
 			get {

@@ -1,3 +1,7 @@
+2008-05-07  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* ThemeElementsVisualStyles.cs: Added ToolStripPainter.
+
 2008-04-28  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* ThemeElementsVisualStyles.cs: Added TabControlPainter.
