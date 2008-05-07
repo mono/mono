@@ -1,5 +1,10 @@
 2006-05-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* BindingSource.cs: Minor fixes to the the ApplySort and Remove sort
+	methods, as well as add messages to the exceptions.
+
+2006-05-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* BindingSource.cs: Setting DataSource should only reset DataMember if
 	the previous value was null (make pass a not working test).
 

@@ -659,7 +659,7 @@ namespace System.Windows.Forms {
 		public virtual void ApplySort (PropertyDescriptor property, ListSortDirection sort)
 		{
 			if (!list_is_ibinding)
-				throw new NotSupportedException ();
+				throw new NotSupportedException ("This operation requires an IBindingList.");
 
 			IBindingList iblist = (IBindingList)list;
 			iblist.ApplySort (property, sort);
@@ -669,7 +669,7 @@ namespace System.Windows.Forms {
 		public virtual void ApplySort (ListSortDescriptionCollection sorts)
 		{
 			if (!(list is IBindingListView))
-				throw new NotSupportedException ();
+				throw new NotSupportedException ("This operation requires an IBindingListView.");
 
 			IBindingListView iblist_view = (IBindingListView)list;
 			iblist_view.ApplySort (sorts);
@@ -907,8 +907,9 @@ namespace System.Windows.Forms {
 		public virtual void RemoveSort ()
 		{
 			if (!list_is_ibinding)
-				throw new NotSupportedException ();
+				return;
 
+			sort = null;
 			((IBindingList)list).RemoveSort ();
 		}
 
