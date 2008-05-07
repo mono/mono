@@ -1221,9 +1221,8 @@ namespace Mono.CSharp {
 		// Returns true if the body of lambda expression can be implicitly
 		// converted to the delegate of type `delegate_type'
 		//
-		public bool ImplicitStandardConversionExists (Type delegate_type)
+		public bool ImplicitStandardConversionExists (EmitContext ec, Type delegate_type)
 		{
-			EmitContext ec = EmitContext.TempEc;
 			using (ec.Set (EmitContext.Flags.ProbingMode)) {
 				return Compatible (ec, delegate_type) != null;
 			}

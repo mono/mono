@@ -3865,21 +3865,13 @@ namespace Mono.CSharp {
 				return 0;
 			}
 
-			// FIXME: Kill this abomination (EmitContext.TempEc)
-			EmitContext prevec = EmitContext.TempEc;
-			EmitContext.TempEc = ec;
-			try {
-				if (delegate_type != null ?
-					!Delegate.IsTypeCovariant (argument.Expr, parameter) :
-					!Convert.ImplicitConversionExists (ec, argument.Expr, parameter))
-					return 2;
+			if (delegate_type != null ?
+				!Delegate.IsTypeCovariant (argument.Expr, parameter) :
+				!Convert.ImplicitConversionExists (ec, argument.Expr, parameter))
+				return 2;
 
-				if (arg_mod != param_mod)
-					return 1;
-
-			} finally {
-				EmitContext.TempEc = prevec;
-			}
+			if (arg_mod != param_mod)
+				return 1;
 
 			return 0;
 		}

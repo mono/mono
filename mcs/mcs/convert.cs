@@ -661,6 +661,15 @@ namespace Mono.CSharp {
 			if (ImplicitStandardConversionExists (expr, target_type))
 				return true;
 
+			if (expr.Type == TypeManager.anonymous_method_type) {
+				if (!TypeManager.IsDelegateType (target_type) &&
+					TypeManager.DropGenericTypeArguments (target_type) != TypeManager.expression_type)
+					return false;
+
+				AnonymousMethodExpression ame = (AnonymousMethodExpression) expr;
+				return ame.ImplicitStandardConversionExists (ec, target_type);
+			}
+
 			return ImplicitUserConversion (ec, expr, target_type, Location.Null) != null;
 		}
 
@@ -877,15 +886,6 @@ namespace Mono.CSharp {
 
 			if (target_type == TypeManager.void_ptr_type && expr_type.IsPointer)
 				return true;
-
-			if (expr_type == TypeManager.anonymous_method_type){
-				if (!TypeManager.IsDelegateType (target_type) &&
-					TypeManager.DropGenericTypeArguments (target_type) != TypeManager.expression_type)
-					return false;
-				
-				AnonymousMethodExpression ame = (AnonymousMethodExpression) expr;
-				return ame.ImplicitStandardConversionExists (target_type);
-			}
 
 			return false;
 		}

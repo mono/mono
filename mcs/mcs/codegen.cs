@@ -399,8 +399,6 @@ namespace Mono.CSharp {
 			Emitting
 		}
 
-		public static EmitContext TempEc;
-		
 		bool isAnonymousMethodAllowed = true;
 
 		Phase current_phase;

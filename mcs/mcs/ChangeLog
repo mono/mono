@@ -1,3 +1,8 @@
+2008-05-07  Marek Safar  <marek.safar@gmail.com>
+
+	* anonymous.cs, codegen.cs, convert.cs, ecore.cs: Removed uber ugly TempEc
+	hack. Fixes #387502.
+
 2008-05-06  Martin Baulig  <martin@ximian.com>
 
 	* class.cs (Constructor.Emit): Fix the logic whether to emit
