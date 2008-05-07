@@ -1,0 +1,17 @@
+2008-05-07  Marek Habersack  <mhabersack@novell.com>
+
+	* ChangeLog: added and moved entries from ../ChaneLog to here.
+
+	* Makefile (RESOURCE_FILES): partially revert r102022 - always use
+	the 3.5.0.0 script library. Fixes bug #384580
+
+2008-04-29  Marek Habersack  <mhabersack@novell.com>
+
+	* System.Web.Extensions/Makefile (EXTRA_DISTFILES): include all
+	the Microsoft AJAX library scripts in the dist tarball.
+
+2008-04-28  Marek Habersack  <mhabersack@novell.com>
+
+	* System.Web.Extensions/Makefile (RESOURCE_FILES): for the 2.0
+	profile use the 1.0.61025.0 scripts.
+
