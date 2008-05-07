@@ -1,5 +1,8 @@
 2008-05-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mini_get_method): Disable the check for open generic classes when
+	using generic sharing.
+
 	* generics.cs: Add a test #387034.
 
 	* mini.c (mini_get_method): Check whenever the method class is an open generic
