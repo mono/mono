@@ -10571,6 +10571,44 @@
       </method>
     </type>
   </test>
+  <test name="gtest-394.cs">
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void FindMembers(Test+MemberFilter)">
+        <size>1</size>
+      </method>
+      <method name="Void GetMethodGroup(Test+MemberFilter)">
+        <size>40</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="Test+&lt;&gt;c__CompilerGenerated0">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Boolean &lt;GetMethodGroup&gt;c__1()">
+        <size>4</size>
+      </method>
+    </type>
+    <type name="Test+MemberFilter">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Boolean Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Boolean EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
