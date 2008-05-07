@@ -1,3 +1,11 @@
+2008-05-07  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* NativeWindow.cs: Add support for multiple handles per window.
+	* NativeWindows.cs, LibSupport.cs, Control.cs, XplatUIX11GTK.cs, 
+	XplatUIX11.cs, X11Display.cs: Do not access NativeWindow.windows_collection 
+	directly - use FromHandle instead.
+	[Fixes bug #374660]
+
 2008-05-07  Andreia Gaita <avidigal@novell.com> 
 
 	* HtmlElement.cs: Implement InnerHTML setter

@@ -181,7 +181,7 @@ namespace System.Windows.Forms
 			static internal Control ControlFromHandle(IntPtr hWnd) {
 				ControlNativeWindow	window;
 
-				window = (ControlNativeWindow)window_collection[hWnd];
+				window = (ControlNativeWindow)NativeWindow.FromHandle (hWnd);
 				if (window != null) {
 					return window.owner;
 				}
@@ -194,7 +194,7 @@ namespace System.Windows.Forms
 
 				Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
 				while (hwnd != null) {
-					window = (ControlNativeWindow)window_collection[hwnd.Handle];
+					window = (ControlNativeWindow)NativeWindow.FromHandle (handle);
 					if (window != null) {
 						return window.owner;
 					}

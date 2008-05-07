@@ -40,7 +40,7 @@ namespace System.Windows.Forms
 
 		static IntPtr FindWindow (IntPtr hWnd)
 		{
-			NativeWindow nw = NativeWindow.FindWindow (hWnd);
+			NativeWindow nw = NativeWindow.FromHandle (hWnd);
 			if (nw == null)
 				return IntPtr.Zero;
 

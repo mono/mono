@@ -1408,7 +1408,7 @@ namespace System.Windows.Forms {
 								// Modality handling, if we are modal and the new active window is one
 								// of ours but not the modal one, switch back to the modal window
 								
-								if (NativeWindow.FindWindow (ActiveWindow) != null) {
+								if (NativeWindow.FromHandle (ActiveWindow) != null) {
 									if (ActiveWindow != (IntPtr)ModalWindows.Peek ()) {
 										Activate ((IntPtr)ModalWindows.Peek ());
 									}

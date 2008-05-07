@@ -17,10 +17,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004-2006 Novell, Inc.
+// Copyright (c) 2004-2008 Novell, Inc.
 //
 // Authors:
 //	Peter Dennis Bartok	pbartok@novell.com
+//	Ivan N. Zlatev  	<contact@i-nz.net>
 //
 
 
@@ -42,8 +43,8 @@ namespace System.Windows.Forms
 		, IWin32Window
 #endif
 	{
-		internal IntPtr			window_handle;
-		static internal Hashtable	window_collection = new Hashtable();
+		IntPtr window_handle = IntPtr.Zero;
+		static Hashtable window_collection = new Hashtable();
 
 		[ThreadStatic]
 		static NativeWindow WindowCreating;
@@ -66,28 +67,14 @@ namespace System.Windows.Forms
 		#region Public Static Methods
 		public static NativeWindow FromHandle(IntPtr handle)
 		{
-			NativeWindow window=new NativeWindow();
-
-			window.AssignHandle(handle);
-			return window;
+			return FindFirstInTable (handle);
 		}
 		#endregion	// Public Static Methods
 
 		#region Private and Internal Methods
-		internal static NativeWindow FindWindow(IntPtr handle)
-		{
-			NativeWindow rv;
-			lock (window_collection) {
-				rv = (NativeWindow)window_collection[handle];
-			}
-			return rv;
-		}
-
 		internal void InvalidateHandle()
 		{
-			lock (window_collection) {
-				window_collection.Remove(window_handle);
-			}
+			RemoveFromTable (this);
 			window_handle = IntPtr.Zero;
 		}
 		#endregion
@@ -95,29 +82,93 @@ namespace System.Windows.Forms
 		#region Public Instance Methods
 		public void AssignHandle(IntPtr handle)
 		{
-			lock (window_collection) {
-				if (window_handle != IntPtr.Zero)
-					window_collection.Remove(window_handle);
-				window_handle=handle;
-				window_collection.Add(window_handle, this);
-			}
+			RemoveFromTable (this);
+			window_handle = handle;
+			AddToTable (this);
 			OnHandleChange();
+		}
+
+		private static void AddToTable (NativeWindow window)
+		{
+			IntPtr handle = window.Handle;
+			if (handle == IntPtr.Zero)
+				return;
+
+			lock (window_collection) {
+				object current = window_collection[handle];
+				if (current == null) {
+					window_collection.Add (handle, window);
+				} else {
+					NativeWindow currentWindow = current as NativeWindow;
+					if (currentWindow != null) {
+						if (currentWindow != window) {
+							ArrayList windows = new ArrayList ();
+							windows.Add (currentWindow);
+							windows.Add (window);
+							window_collection[handle] = windows;
+						}
+					} else { // list of windows
+						ArrayList windows = (ArrayList) window_collection[handle];
+						if (!windows.Contains (window))
+							windows.Add (window);
+					}
+				}
+			}
+		}
+
+		private static void RemoveFromTable (NativeWindow window)
+		{
+			IntPtr handle = window.Handle;
+			if (handle == IntPtr.Zero)
+				return;
+
+			lock (window_collection) {
+				object current = window_collection[handle];
+				if (current != null) {
+					NativeWindow currentWindow = current as NativeWindow;
+					if (currentWindow != null) {
+						window_collection.Remove (handle);
+					} else { // list of windows
+						ArrayList windows = (ArrayList) window_collection[handle];
+						windows.Remove (window);
+						if (windows.Count == 0)
+							window_collection.Remove (handle);
+						else if (windows.Count == 1)
+							window_collection[handle] = windows[0];
+					}
+				}
+			}
+		}
+
+		private static NativeWindow FindFirstInTable (IntPtr handle)
+		{
+			if (handle == IntPtr.Zero)
+				return null;
+
+			NativeWindow window = null;
+			lock (window_collection) {
+				object current = window_collection[handle];
+				if (current != null) {
+					window = current as NativeWindow;
+					if (window == null) {
+						ArrayList windows = (ArrayList) current;
+						if (windows.Count > 0)
+							window = (NativeWindow) windows[0];
+					}
+				}
+			}
+			return window;
 		}
 
 		public virtual void CreateHandle(CreateParams cp)
 		{
 			if (cp != null) {
 				WindowCreating = this;
-
 				window_handle=XplatUI.CreateWindow(cp);
-
 				WindowCreating = null;
 
-				if (window_handle != IntPtr.Zero) {
-					lock (window_collection) {
-						window_collection[window_handle] = this;
-					}
-				}
+				if (window_handle != IntPtr.Zero)
+					AddToTable (this);
 			}
 
 		}
@@ -136,9 +187,7 @@ namespace System.Windows.Forms
 
 		public virtual void ReleaseHandle()
 		{
-			lock (window_collection) {
-				window_collection.Remove(window_handle);
-			}
+			RemoveFromTable (this);
 			window_handle=IntPtr.Zero;
 			OnHandleChange();
 		}
@@ -166,41 +215,46 @@ namespace System.Windows.Forms
 
 		internal static IntPtr WndProc(IntPtr hWnd, Msg msg, IntPtr wParam, IntPtr lParam)
 		{
-			Message		m = new Message();
-			NativeWindow	window = null;
+			IntPtr result = IntPtr.Zero;
+			Message	m = new Message();
+			m.HWnd = hWnd;
+			m.Msg = (int)msg;
+			m.WParam = wParam;
+			m.LParam = lParam;
+			m.Result = IntPtr.Zero;
 					
 #if debug
 			Console.WriteLine("NativeWindow.cs ({0}, {1}, {2}, {3}): result {4}", hWnd, msg, wParam, lParam, m.Result);
 #endif
-
-
 			//try {
-				lock (window_collection) {
-					window = (NativeWindow)window_collection[hWnd];
-				}
-				m.HWnd=hWnd;
-				m.Msg=(int)msg;
-				m.WParam=wParam;
-				m.LParam=lParam;
-				m.Result=IntPtr.Zero;
+			object current = null;
+			lock (window_collection) {
+				current = window_collection[hWnd];
+			}
 
-				if (window != null)
-					window.WndProc(ref m);
-				else if (WindowCreating != null) {
-					// we need to do this AssignHandle here instead of relying on
-					// Control.WndProc to do it, because subclasses can override
-					// WndProc, install their own WM_CREATE block, and look at
-					// this.Handle, and it needs to be set.  Otherwise, we end up
-					// recursively creating windows and emitting WM_CREATE.
-					window = WindowCreating;
-					WindowCreating = null;
-					if (window.window_handle == IntPtr.Zero)
-						window.AssignHandle (hWnd);
+			NativeWindow window = current as NativeWindow;
+			if (current == null)
+				window = EnsureCreated (window, hWnd);
 
-					window.WndProc (ref m);
+			if (window != null) {
+				window.WndProc (ref m);
+				result = m.Result;
+			} else if (current is ArrayList) {
+				ArrayList windows = (ArrayList) current;
+				lock (windows) {
+					if (windows.Count > 0) {
+						window = EnsureCreated ((NativeWindow)windows[0], hWnd);
+						window.WndProc (ref m);
+						// the first one is the control's one. all others are synthetic,
+						// so we want only the result from the control
+						result = m.Result;
+						for (int i=1; i < windows.Count; i++)
+							((NativeWindow)windows[i]).WndProc (ref m);
+					}
 				}
-				else
-					m.Result=XplatUI.DefWndProc(ref m);
+			} else {
+				result = XplatUI.DefWndProc (ref m);
+			}
 //            }
 //            catch (Exception ex) {
 //#if !ExternalExceptionHandler				
@@ -210,12 +264,27 @@ namespace System.Windows.Forms
 //                throw;
 //#endif
 //            }
-
 			#if debug
 				Console.WriteLine("NativeWindow.cs: Message {0}, result {1}", msg, m.Result);
 			#endif
 
-			return m.Result;
+			return result;
+		}
+
+		private static NativeWindow EnsureCreated (NativeWindow window, IntPtr hWnd)
+		{
+			// we need to do this AssignHandle here instead of relying on
+			// Control.WndProc to do it, because subclasses can override
+			// WndProc, install their own WM_CREATE block, and look at
+			// this.Handle, and it needs to be set.  Otherwise, we end up
+			// recursively creating windows and emitting WM_CREATE.
+			if (window == null && WindowCreating != null) {
+				window = WindowCreating;
+				WindowCreating = null;
+				if (window.Handle == IntPtr.Zero)
+					window.AssignHandle (hWnd);
+			}
+			return window;
 		}
 		#endregion	// Protected Instance Methods
 	}

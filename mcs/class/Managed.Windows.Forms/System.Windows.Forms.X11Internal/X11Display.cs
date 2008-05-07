@@ -1209,7 +1209,7 @@ namespace System.Windows.Forms.X11Internal {
 				// of ours but not the modal one, switch back to the modal window
 
 				if (ActiveWindow != null &&
-				    NativeWindow.FindWindow (ActiveWindow.Handle) != null) {
+				    NativeWindow.FromHandle (ActiveWindow.Handle) != null) {
 					if (ActiveWindow != (X11Hwnd)ModalWindows.Peek())
 						((X11Hwnd)ModalWindows.Peek()).Activate ();
 				}
