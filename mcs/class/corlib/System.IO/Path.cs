@@ -217,8 +217,11 @@ namespace System.IO {
 			if (path == null || GetPathRoot (path) == path)
 				return null;
 
-			CheckArgument.WhitespaceOnly (path);
-			CheckArgument.PathChars (path);
+			if (path.Trim ().Length == 0)
+				throw new ArgumentException ("Argument string consists of whitespace characters only.");
+
+			if (path.IndexOfAny (System.IO.Path.InvalidPathChars) > -1)
+				throw new ArgumentException ("Path contains invalid characters");
 
 			int nLast = path.LastIndexOfAny (PathSeparatorChars);
 			if (nLast == 0)

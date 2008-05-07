@@ -1,3 +1,11 @@
+2008-05-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CheckArgument.cs: Removed. Lots of unused code. The two methods
+	used are now inlined into Path.cs
+	* CheckPermission.cs: Removed. Lots of unused code.
+	* Path.cs: Inlined two checks.
+	[Found using Gendarme]
+
 2008-04-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Path.cs: Change PathSeparatorChars from private to internal since
