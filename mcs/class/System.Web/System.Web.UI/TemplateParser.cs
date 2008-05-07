@@ -100,6 +100,9 @@ namespace System.Web.UI {
 		string metaResourceKey;
 		Type codeFileBaseClassType;
 		List <UnknownAttributeDescriptor> unknownMainAttributes;
+		Stack <string> includeDirs;
+#else
+		Stack includeDirs;
 #endif
 		ILocation directiveLocation;
 		
@@ -820,6 +823,27 @@ namespace System.Web.UI {
 			implicitLanguage = false;
 		}
 
+		internal void PushIncludeDir (string dir)
+		{
+			if (includeDirs == null) {
+#if NET_2_0
+				includeDirs = new Stack <string> (1);
+#else
+				includeDirs = new Stack (1);
+#endif
+			}
+
+			includeDirs.Push (dir);
+		}
+
+		internal string PopIncludeDir ()
+		{
+			if (includeDirs == null || includeDirs.Count == 0)
+				return null;
+
+			return includeDirs.Pop () as string;
+		}
+		
 		Assembly GetAssemblyFromSource (string vpath)
 		{			
 			vpath = UrlUtils.Combine (BaseVirtualDir, vpath);
@@ -877,6 +901,15 @@ namespace System.Web.UI {
 			set;
 		}
 #endif
+
+		internal string ParserDir {
+			get {
+				if (includeDirs == null || includeDirs.Count == 0)
+					return BaseDir;
+
+				return includeDirs.Peek () as string;
+			}
+		}
 		
 		internal string InputFile
 		{

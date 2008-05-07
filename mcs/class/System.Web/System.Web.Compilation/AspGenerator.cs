@@ -495,8 +495,16 @@ namespace System.Web.Compilation
 					
 					if (!parsed)
 						Parse (tparser.MapPath (file), true);
-				} else
-					Parse (GetIncludeFilePath (tparser.BaseDir, file), true);
+				} else {
+					string includeFilePath = GetIncludeFilePath (tparser.ParserDir, file);
+					tparser.PushIncludeDir (Path.GetDirectoryName (file));
+					try {
+						Parse (includeFilePath, true);
+					} finally {
+						tparser.PopIncludeDir ();
+					}
+				}
+				
 				break;
 			default:
 				break;

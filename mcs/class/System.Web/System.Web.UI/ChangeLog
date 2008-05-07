@@ -1,3 +1,9 @@
+2008-05-07  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateParser.cs: added a stack of include directories, to
+	properly resolve file relative paths when the #include file=""
+	directive is used. Fixes bug #324536
+
 2008-05-05 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* HiddenFieldPageStatePersister.cs: add TARGET_J2EE def

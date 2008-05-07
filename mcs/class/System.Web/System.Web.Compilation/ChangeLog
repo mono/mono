@@ -1,3 +1,10 @@
+2008-05-07  Marek Habersack  <mhabersack@novell.com>
+
+	* AspGenerator.cs: push the include file directory to the parser
+	include directory stack and pop it after parsing the include, so
+	that the relative file paths are resolved correctly. Fixes bug
+	#324536
+
 2008-05-06  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: compatibility - added the
