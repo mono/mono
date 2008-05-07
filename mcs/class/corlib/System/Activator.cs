@@ -38,6 +38,7 @@ using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Security.Policy;
 using System.Configuration.Assemblies;
+using System.Text;
 
 namespace System 
 {
@@ -266,8 +267,16 @@ namespace System
 					return CreateInstanceInternal (type);
 				}
 
-				throw new MissingMethodException (Locale.GetText ("Constructor not found. Class: ") +
-								type.FullName);
+				StringBuilder sb = new StringBuilder ();
+				foreach (Type t in atypes){
+					sb.Append (t.ToString ());
+					sb.Append (", ");
+				}
+				if (sb.Length > 2)
+					sb.Length -= 2;
+				
+				throw new MissingMethodException (String.Format (Locale.GetText ("No constructor found for {0}::.ctor({1})"),
+										 type.FullName, sb));
 			}
 
 			CheckAbstractType (type);
