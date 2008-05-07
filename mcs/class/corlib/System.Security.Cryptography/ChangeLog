@@ -1,3 +1,8 @@
+2008-05-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SHA384Managed.cs: Fix compiler warning and use the new local
+	variable introduced previously.
+
 2008-04-30  Alan McGovern  <alan.mcgovern@gmail.com>
 
 	* SHA384Managed.cs: Inlined helper methods and made

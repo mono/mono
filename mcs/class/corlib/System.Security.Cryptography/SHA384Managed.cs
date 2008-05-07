@@ -228,7 +228,7 @@ public class SHA384Managed : SHA384 {
 		for (int t = 0; t <= 79; t++)
 		{
 			ulong T1 = ((e >> 14) | (e << 50)) ^ ((e >> 18) | (e << 46)) ^ ((e >> 41) | (e << 23));
-			T1 += h + ((e & f) ^ ((~e) & g)) + SHAConstants.K2[t] + W[t];
+			T1 += h + ((e & f) ^ ((~e) & g)) + K2[t] + W[t];
 
 			ulong T2 = ((a >> 28) | (a << 36)) ^ ((a >> 34) | (a << 30)) ^ ((a >> 39) | (a << 25));
 			T2 += ((a & b) ^ (a & c) ^ (b & c));
