@@ -1,3 +1,9 @@
+2008-05-07  Martin Baulig  <martin@ximian.com>
+
+	* CSharpCodeCompiler.cs: Don't mess around with the
+	MONO_INSIDE_MDB environment variable, it may only be modified by
+	the debugger.
+
 2008-04-09  Jb Evain  <jbevain@novell.com>
 
 	* CSharpCodeGenerator.cs: Emit bodyless getters and setters

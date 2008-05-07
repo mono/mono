@@ -224,20 +224,9 @@ namespace Mono.CSharp
 #if NET_2_0
 			mcs.OutputDataReceived += new DataReceivedEventHandler (McsStdoutDataReceived);
 			mcs.ErrorDataReceived += new DataReceivedEventHandler (McsStderrDataReceived);
-
-			string mono_inside_mdb = null;
 #endif
 			
 			try {
-#if NET_2_0
-				mono_inside_mdb = Environment.GetEnvironmentVariable ("MONO_INSIDE_MDB");
-				if (mono_inside_mdb != null) {
-					if (mono_inside_mdb.Length == 0)
-						mono_inside_mdb = "1";
-					Environment.SetEnvironmentVariable ("MONO_INSIDE_MDB", null);
-				}
-#endif
-
 				mcs.Start();
 
 #if NET_2_0
@@ -255,9 +244,6 @@ namespace Mono.CSharp
 #if NET_2_0
 				mcs.CancelErrorRead ();
 				mcs.CancelOutputRead ();
-				
-				if (mono_inside_mdb != null)
-					Environment.SetEnvironmentVariable ("MONO_INSIDE_MDB", mono_inside_mdb);
 #endif
 
 				mcs.Close();
