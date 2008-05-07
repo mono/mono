@@ -239,7 +239,6 @@ namespace System.IO {
 				if (di != null)
 					return di;
 			} catch (Exception e) {
-				Console.WriteLine ("Got {0}", e);
 				// If anything happens.
 			}
 			
