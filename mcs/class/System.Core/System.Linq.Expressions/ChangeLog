@@ -1,3 +1,7 @@
+2008-05-07  Roei Erez  <roeie@mainsoft.com>
+
+	* Add ifdef TARGET_JVM
+
 2008-05-03  Jb Evain  <jbevain@novell.com>
 
 	* LambdaExpression.cs: move checks to Expression
