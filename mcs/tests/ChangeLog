@@ -1,3 +1,9 @@
+2008-05-06T1808  C.J. Adams-Collier  <cjac@colliertech.org>
+
+	* known-issues-gmcs: added entry for gtest-395.cs
+	* known-issues-smcs: added entry for gtest-395.cs
+	* gtest-395.cs: added test from https://bugzilla.novell.com/show_bug.cgi?id=387040
+
 2008-04-24  Raja R Harinath  <harinath@hurrynot.org>
 
 	* test-120.cs: Ensure we don't get falsely optimized out of the
