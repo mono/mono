@@ -2064,6 +2064,10 @@ namespace System.Windows.Forms
 				show = true;
 				hscrollbar.Maximum = canvas_size.Width;
 				hscrollbar.LargeChange = Math.Max (0, items_area.Width);
+			} else if (horizontal_scrollbar) {
+				show = true;
+				enabled = false;
+				hscrollbar.Maximum = 0;
 			}
 
 			hbar_offset = hscrollbar.Value;
@@ -2076,9 +2080,14 @@ namespace System.Windows.Forms
 		/* Determines if the vertical scrollbar has to be displyed */
 		private bool UpdateVerticalScrollBar ()
 		{
-			if (MultiColumn || Items.Count == 0) {
+			if (MultiColumn || (Items.Count == 0 && !scroll_always_visible)) {
 				vscrollbar.Visible = false;
 				return false;
+			} else if (Items.Count == 0) {
+				vscrollbar.Visible = true;
+				vscrollbar.Enabled = false;
+				vscrollbar.Maximum = 0;
+				return true;
 			}
 
 			bool show = false;

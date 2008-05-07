@@ -1,3 +1,9 @@
+2008-05-07  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ListBox.cs: Respect ScrollAlwaysVisible and HorizontalScrollbar
+	properties, even when there are no items.
+	[Fixes bug #387611]
+
 2008-05-07  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* NativeWindow.cs: Add support for multiple handles per window.
