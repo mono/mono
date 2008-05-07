@@ -53,7 +53,7 @@ namespace System.Web.Security {
 		private int _version = 1;
 		private string _cookiePath;
 		private DateTime _issueDate;
-		private DateTime _exprireDate;
+		private DateTime _expireDate;
 
 
 		public RolePrincipal (IIdentity identity)
@@ -64,7 +64,7 @@ namespace System.Web.Security {
 			this._identity = identity;
 			this._cookiePath = RoleManagerConfig.CookiePath;
 			this._issueDate = DateTime.Now;
-			this._exprireDate = _issueDate.Add (RoleManagerConfig.CookieTimeout);
+			this._expireDate = _issueDate.Add (RoleManagerConfig.CookieTimeout);
 		}
 
 		public RolePrincipal (IIdentity identity, string encryptedTicket)
@@ -93,7 +93,7 @@ namespace System.Web.Security {
 			if (!_identity.IsAuthenticated)
 				return new string[0];
 
-			if (!IsRoleListCached && !Expired) {
+			if (!IsRoleListCached || Expired) {
 				_cachedArray = Provider.GetRolesForUser (_identity.Name);
 				_cachedRoles = new HybridDictionary (true);
 
@@ -122,6 +122,9 @@ namespace System.Web.Security {
 			string cookiePath = RoleManagerConfig.CookiePath;
 			int approxTicketLen = roles.Length + cookiePath.Length + 64;
 
+			if (_cachedArray.Length > Roles.MaxCachedResults)
+			       return null;
+
 			MemoryStream ticket = new MemoryStream (approxTicketLen);
 			BinaryWriter writer = new BinaryWriter (ticket);
 
@@ -133,7 +136,7 @@ namespace System.Web.Security {
 			writer.Write (issueDate.Ticks);
 
 			// expiration datetime
-			writer.Write (issueDate.Add(RoleManagerConfig.CookieTimeout).Ticks); 
+			writer.Write (_expireDate.Ticks);
 
 			writer.Write (cookiePath);
 			writer.Write (roles);
@@ -236,15 +239,29 @@ namespace System.Web.Security {
 			_issueDate = new DateTime (reader.ReadInt64 ());
 
 			// expire date
-			_exprireDate = new DateTime (reader.ReadInt64 ());
+			_expireDate = new DateTime (reader.ReadInt64 ());
 
 			// cookie path
 			_cookiePath = reader.ReadString ();
 			
 			// roles
 			string roles = reader.ReadString ();
-			if (!Expired)
+
+			if (!Expired) {
 				InitializeRoles (roles);
+				//update ticket if less than half of CookieTimeout remaining.
+				if (Roles.CookieSlidingExpiration){
+					if (_expireDate-DateTime.Now < TimeSpan.FromTicks (RoleManagerConfig.CookieTimeout.Ticks/2))	{
+						_issueDate = DateTime.Now;
+						_expireDate = DateTime.Now.Add (RoleManagerConfig.CookieTimeout);
+						SetDirty ();
+					}
+				}
+			} else {
+				// issue a new ticket
+				_issueDate = DateTime.Now;
+				_expireDate = _issueDate.Add (RoleManagerConfig.CookieTimeout);
+			}
 		}
 
 		private void InitializeRoles (string decryptedRoles)
@@ -274,7 +291,7 @@ namespace System.Web.Security {
 		}
 		
 		public DateTime ExpireDate {
-			get { return _exprireDate; }
+			get { return _expireDate; }
 		}
 		
 		public IIdentity Identity {
