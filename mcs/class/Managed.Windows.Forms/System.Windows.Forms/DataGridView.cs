@@ -2695,7 +2695,7 @@ namespace System.Windows.Forms {
 			if (dataGridViewCell.DataGridView != this)
 				throw new ArgumentException ("The specified cell does not belong to this DataGridView.");
 
-			Invalidate ();
+			InvalidateCell (dataGridViewCell.ColumnIndex, dataGridViewCell.RowIndex);
 		}
 
 		[MonoTODO ("Invalidates whole grid")]
@@ -2707,7 +2707,7 @@ namespace System.Windows.Forms {
 			if (rowIndex < 0 || rowIndex >= rows.Count)
 				throw new ArgumentOutOfRangeException ("Row index is out of range.");
 
-			InvalidateCell (Rows[rowIndex].Cells[columnIndex]);
+			Invalidate (GetCellDisplayRectangle (columnIndex, rowIndex, true));
 		}
 
 		[MonoTODO ("Invalidates whole grid")]
@@ -2716,7 +2716,7 @@ namespace System.Windows.Forms {
 			if (columnIndex < 0 || columnIndex >= columns.Count)
 				throw new ArgumentOutOfRangeException ("Column index is out of range.");
 
-			Invalidate ();
+			Invalidate (GetColumnDisplayRectangle (columnIndex, true));
 		}
 
 		[MonoTODO ("Invalidates whole grid")]
@@ -2725,7 +2725,7 @@ namespace System.Windows.Forms {
 			if (rowIndex < 0 || rowIndex >= rows.Count)
 				throw new ArgumentOutOfRangeException ("Row index is out of range.");
 
-			Invalidate ();
+			Invalidate (GetRowDisplayRectangle (rowIndex, true));
 		}
 
 		public virtual void NotifyCurrentCellDirty (bool dirty) {
@@ -2985,6 +2985,8 @@ namespace System.Windows.Forms {
 					foreach (DataGridViewCell cell in row.Cells)
 						if (!displayed_only || cell.Displayed)
 							new_height = Math.Max (new_height, cell.PreferredSize.Height);
+				
+				new_height = Math.Max (new_height, row.MinimumHeight);
 				
 				if (row.Height != new_height)
 					row.Height = new_height;
@@ -3777,7 +3779,7 @@ namespace System.Windows.Forms {
 			base.OnHandleCreated(e);
 			
 			if (Rows.Count > 0 && Columns.Count > 0)
-				MoveCurrentCell (ColumnDisplayIndexToIndex (0), 0, true, false, false);
+				MoveCurrentCell (ColumnDisplayIndexToIndex (0), 0, true, false, false, false);
 		}
 
 		protected override void OnHandleDestroyed(EventArgs e)
@@ -4268,7 +4270,7 @@ namespace System.Windows.Forms {
 				bounds.Y += bounds.Height;
 				bounds.X = BorderWidth;
 				
-				if (gridHeight + columnHeadersHeight <= ClientSize.Height)
+				if (bounds.Y < ClientSize.Height - (horizontalScrollBar.Visible ? horizontalScrollBar.Height : 0))
 					rows_displayed++;
 				else
 					break;
@@ -4625,7 +4627,7 @@ namespace System.Windows.Forms {
 
 		protected virtual bool ProcessDataGridViewKey (KeyEventArgs e)
 		{
-			switch (e.KeyData) {
+			switch (e.KeyData & ~Keys.Modifiers) {
 				case Keys.A:
 					return ProcessAKey (e.KeyData);
 				case Keys.Delete:
@@ -4644,6 +4646,10 @@ namespace System.Windows.Forms {
 					return ProcessHomeKey (e.KeyData);
 				case Keys.Left:
 					return ProcessLeftKey (e.KeyData);
+				case Keys.Next:
+					return ProcessNextKey (e.KeyData);
+				case Keys.Prior:
+					return ProcessPriorKey (e.KeyData);
 				case Keys.Right:
 					return ProcessRightKey (e.KeyData);
 				case Keys.Space:
@@ -4704,10 +4710,10 @@ namespace System.Windows.Forms {
 				
 				// Move to the last cell in the column
 				if ((keyData & Keys.Control) == Keys.Control)
-					MoveCurrentCell (CurrentCellAddress.X, Rows.Count - 1, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
+					MoveCurrentCell (CurrentCellAddress.X, Rows.Count - 1, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift, true);
 				// Move one cell down
 				else
-					MoveCurrentCell (CurrentCellAddress.X, current_row + 1, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
+					MoveCurrentCell (CurrentCellAddress.X, current_row + 1, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift, true);
 				
 				return true;
 			}
@@ -4721,13 +4727,13 @@ namespace System.Windows.Forms {
 
 			// Move to the last cell in the control
 			if ((keyData & Keys.Control) == Keys.Control) {
-				MoveCurrentCell (ColumnDisplayIndexToIndex (Columns.Count - 1), Rows.Count - 1, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
+				MoveCurrentCell (ColumnDisplayIndexToIndex (Columns.Count - 1), Rows.Count - 1, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift, true);
 				return true;
 			}
 			
 			// Move to the last cell in the row
 			if (disp_index < Columns.Count - 1) {
-				MoveCurrentCell (ColumnDisplayIndexToIndex (Columns.Count - 1), currentCellAddress.Y, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
+				MoveCurrentCell (ColumnDisplayIndexToIndex (Columns.Count - 1), currentCellAddress.Y, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift, true);
 				return true;
 			}
 
@@ -4746,7 +4752,7 @@ namespace System.Windows.Forms {
 				int current_row = CurrentCellAddress.Y;
 				
 				if (current_row < Rows.Count - 1)
-					MoveCurrentCell (CurrentCellAddress.X, current_row + 1, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
+					MoveCurrentCell (CurrentCellAddress.X, current_row + 1, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift, true);
 			}
 			
 			return true;
@@ -4777,13 +4783,13 @@ namespace System.Windows.Forms {
 
 			// Move to the first cell in the control
 			if ((keyData & Keys.Control) == Keys.Control) {
-				MoveCurrentCell (ColumnDisplayIndexToIndex (0), 0, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
+				MoveCurrentCell (ColumnDisplayIndexToIndex (0), 0, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift, true);
 				return true;
 			}
 			
 			// Move to the first cell in the row
 			if (disp_index > 0) {
-				MoveCurrentCell (ColumnDisplayIndexToIndex (0), currentCellAddress.Y, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
+				MoveCurrentCell (ColumnDisplayIndexToIndex (0), currentCellAddress.Y, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift, true);
 				return true;
 			}
 
@@ -4809,7 +4815,7 @@ namespace System.Windows.Forms {
 
 		protected override bool ProcessKeyPreview (ref Message m)
 		{
-			if ((Msg)m.Msg == Msg.WM_KEYDOWN && IsCurrentCellInEditMode) {
+			if ((Msg)m.Msg == Msg.WM_KEYDOWN && (IsCurrentCellInEditMode || m.HWnd == horizontalScrollBar.Handle || m.HWnd == verticalScrollBar.Handle)) {
 				KeyEventArgs e = new KeyEventArgs ((Keys)m.WParam.ToInt32 ());
 			
 				IDataGridViewEditingControl ctrl = (IDataGridViewEditingControl)EditingControlInternal;
@@ -4818,18 +4824,20 @@ namespace System.Windows.Forms {
 					if (ctrl.EditingControlWantsInputKey (e.KeyData, false))
 						return false;
 
-				switch (e.KeyData)
-				{
+				switch (e.KeyData) {
 					case Keys.Escape:
 					case Keys.Down:
 					case Keys.Up:
 					case Keys.Left:
 					case Keys.Right:
 					case Keys.Tab:
+					case Keys.Prior:
+					case Keys.Next:
 						return ProcessDataGridViewKey (e);
 				}
 			}
-			return base.ProcessKeyPreview(ref m);
+			
+			return base.ProcessKeyPreview (ref m);
 		}
 
 		protected bool ProcessLeftKey (Keys keyData)
@@ -4841,10 +4849,10 @@ namespace System.Windows.Forms {
 				
 				// Move to the first cell in the row
 				if ((keyData & Keys.Control) == Keys.Control)
-					MoveCurrentCell (ColumnDisplayIndexToIndex (0), currentCellAddress.Y, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
+					MoveCurrentCell (ColumnDisplayIndexToIndex (0), currentCellAddress.Y, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift, true);
 				// Move one cell to the left
 				else
-					MoveCurrentCell (ColumnDisplayIndexToIndex (disp_index - 1), currentCellAddress.Y, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
+					MoveCurrentCell (ColumnDisplayIndexToIndex (disp_index - 1), currentCellAddress.Y, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift, true);
 
 				return true;
 			}
@@ -4852,14 +4860,42 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
-		protected bool ProcessNextKey (Keys keyData) {
-			// PAGE DOWN
-			throw new NotImplementedException();
+		// Page Down
+		protected bool ProcessNextKey (Keys keyData)
+		{
+			int current_row = CurrentCellAddress.Y;
+
+			if (current_row < Rows.Count - 1) {
+				EndEdit ();
+
+				// Move one "page" of cells down
+				int new_row = Math.Min (Rows.Count - 1, current_row + DisplayedRowCount (false));
+
+				MoveCurrentCell (CurrentCellAddress.X, new_row, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift, true);
+
+				return true;
+			}
+
+			return false;
 		}
 
-		protected bool ProcessPriorKey (Keys keyData) {
-			// PAGE UP
-			throw new NotImplementedException();
+		// Page Up
+		protected bool ProcessPriorKey (Keys keyData)
+		{
+			int current_row = CurrentCellAddress.Y;
+
+			if (current_row > 0) {
+				EndEdit ();
+
+				// Move one "page" of cells up
+				int new_row = Math.Max (0, current_row - DisplayedRowCount (false));
+
+				MoveCurrentCell (CurrentCellAddress.X, new_row, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift, true);
+
+				return true;
+			}
+
+			return false;
 		}
 
 		protected bool ProcessRightKey (Keys keyData)
@@ -4871,10 +4907,10 @@ namespace System.Windows.Forms {
 				
 				// Move to the last cell in the row
 				if ((keyData & Keys.Control) == Keys.Control)
-					MoveCurrentCell (ColumnDisplayIndexToIndex (Columns.Count - 1), currentCellAddress.Y, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
+					MoveCurrentCell (ColumnDisplayIndexToIndex (Columns.Count - 1), currentCellAddress.Y, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift, true);
 				// Move one cell to the right
 				else
-					MoveCurrentCell (ColumnDisplayIndexToIndex (disp_index + 1), currentCellAddress.Y, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
+					MoveCurrentCell (ColumnDisplayIndexToIndex (disp_index + 1), currentCellAddress.Y, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift, true);
 				
 				return true;
 			}
@@ -4930,24 +4966,23 @@ namespace System.Windows.Forms {
 			if ((keyData & Keys.Shift) == Keys.Shift) {
 				if (disp_index > 0) {
 					// Move one cell to the left
-					MoveCurrentCell (ColumnDisplayIndexToIndex (disp_index - 1), currentCellAddress.Y, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
+					MoveCurrentCell (ColumnDisplayIndexToIndex (disp_index - 1), currentCellAddress.Y, true, (keyData & Keys.Control) == Keys.Control, false, true);
 					return true;
 				} else if (currentCellAddress.Y > 0) {
 					// Move to the last cell in the previous row
-					MoveCurrentCell (ColumnDisplayIndexToIndex (Columns.Count - 1), currentCellAddress.Y - 1, true, false, false);
+					MoveCurrentCell (ColumnDisplayIndexToIndex (Columns.Count - 1), currentCellAddress.Y - 1, true, false, false, true);
 					return true;
 				}
 			
 			} else {
 				if (disp_index < Columns.Count - 1) {
-
 					// Move one cell to the right
-					MoveCurrentCell (ColumnDisplayIndexToIndex (disp_index + 1), currentCellAddress.Y, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
+					MoveCurrentCell (ColumnDisplayIndexToIndex (disp_index + 1), currentCellAddress.Y, true, (keyData & Keys.Control) == Keys.Control, false, true);
 
 					return true;
 				} else if (currentCellAddress.Y < Rows.Count - 1) {
 					// Move to the first cell in the next row
-					MoveCurrentCell (ColumnDisplayIndexToIndex (0), currentCellAddress.Y + 1, true, false, false);
+					MoveCurrentCell (ColumnDisplayIndexToIndex (0), currentCellAddress.Y + 1, true, false, false, true);
 					return true;
 				}
 
@@ -4966,10 +5001,10 @@ namespace System.Windows.Forms {
 
 				// Move to the first cell in the column
 				if ((keyData & Keys.Control) == Keys.Control)
-					MoveCurrentCell (CurrentCellAddress.X, 0, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
+					MoveCurrentCell (CurrentCellAddress.X, 0, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift, true);
 				// Move one cell up
 				else
-					MoveCurrentCell (CurrentCellAddress.X, current_row - 1, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift);
+					MoveCurrentCell (CurrentCellAddress.X, current_row - 1, true, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Shift) == Keys.Shift, true);
 
 				return true;
 			}
@@ -5137,7 +5172,7 @@ namespace System.Windows.Forms {
 			for (int index = 0; index < Rows.Count; index++) {
 				DataGridViewRow row = Rows[index];
 				
-				if (e.NewValue < top + row.Height) {
+				if (e.NewValue <= top + row.Height) {
 					if (first_row_index != index) {
 						first_row_index = index;
 						Invalidate ();
@@ -5149,6 +5184,13 @@ namespace System.Windows.Forms {
 				
 				top += row.Height;
 			}
+			
+			if (Rows.Count == 0)
+				return;
+				
+			first_row_index = Rows.Count - DisplayedRowCount (false) + 1;
+			Invalidate ();
+			OnScroll (e);
 		}
 
 		internal void RaiseCellStyleChanged (DataGridViewCellEventArgs e) {
@@ -5390,7 +5432,7 @@ namespace System.Windows.Forms {
 			BindIList(list);
 		}
 
-		private void MoveCurrentCell (int x, int y, bool select, bool isControl, bool isShift)
+		private void MoveCurrentCell (int x, int y, bool select, bool isControl, bool isShift, bool scroll)
 		{
 			bool full_row_selected = Rows.SharedRow(CurrentCellAddress.Y).Selected;
 			bool full_col_selected = Columns[CurrentCellAddress.X].Selected;
@@ -5412,6 +5454,50 @@ namespace System.Windows.Forms {
 			
 			// Move CurrentCell
 			SetCurrentCellAddressCore (x, y, true, false, false);
+			
+			// If the current cell isn't visible, scroll to it
+			if (scroll) {
+				int disp_x = ColumnIndexToDisplayIndex (x);
+
+				if (disp_x < first_col_index) {
+					int delta_x = 0;
+
+					if (disp_x == 0)
+						delta_x = horizontalScrollBar.Value;
+					else
+						for (int i = disp_x; i < first_col_index; i++)
+							delta_x += Columns[ColumnDisplayIndexToIndex (i)].Width;
+				
+					horizontalScrollBar.SafeValueSet (horizontalScrollBar.Value - delta_x);
+					OnHScrollBarScroll (this, new ScrollEventArgs (ScrollEventType.ThumbPosition, horizontalScrollBar.Value));
+				}
+
+				int disp_y = y;
+
+				if (disp_y < first_row_index) {
+					int delta_y = 0;
+
+					if (disp_y == 0)
+						delta_y = verticalScrollBar.Value;
+					else
+						for (int i = disp_y; i < first_row_index; i++)
+							delta_y += GetRowInternal (i).Height;
+
+					verticalScrollBar.SafeValueSet (verticalScrollBar.Value - delta_y);
+					OnVScrollBarScroll (this, new ScrollEventArgs (ScrollEventType.ThumbPosition, verticalScrollBar.Value));
+				} else if (disp_y > first_row_index + DisplayedRowCount (false) - 2) {
+					int delta_y = 0;
+					
+					if (disp_y == Rows.Count - 1)
+						delta_y = verticalScrollBar.Maximum - verticalScrollBar.Value;
+					else
+						for (int i = first_row_index + DisplayedRowCount (false) - 2; i < disp_y; i++)
+							delta_y += GetRowInternal (i).Height;
+
+					verticalScrollBar.SafeValueSet (verticalScrollBar.Value + delta_y);
+					OnVScrollBarScroll (this, new ScrollEventArgs (ScrollEventType.ThumbPosition, verticalScrollBar.Value));				
+				}
+			}
 			
 			if (!select)
 				return;

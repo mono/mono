@@ -1,3 +1,8 @@
+2008-05-07  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridView.cs: Implement PageUp/PageDown keys.  Extend keyboard
+	navigation to scroll the grid if the current cell is not visible.
+
 2008-05-07  Andreia Gaita <avidigal@novell.com> 
 
 	* HtmlElement.cs: Implement TabIndex
