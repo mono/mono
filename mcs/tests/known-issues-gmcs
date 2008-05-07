@@ -17,4 +17,3 @@ gtest-etree-03.cs
 gtest-etree-04.cs
 gtest-etree-07.cs
 
-test-643.cs # fails on amd64
