@@ -118,7 +118,7 @@ namespace System.Linq.Expressions {
 		public void EmitCall (LocalBuilder local, ReadOnlyCollection<Expression> arguments, MethodInfo method)
 		{
 			EmitLoad (local);
-			EmitCollection (arguments);
+			EmitArguments (method, arguments);
 			EmitCall (method);
 		}
 
