@@ -1,3 +1,8 @@
+2008-05-07  Everaldo Canuto  <ecanuto@novell.com>
+
+	* XplatUI.cs, XplatUIDriver.cs, XplatUIWin32.cs: SetForegroundWindow
+	method implemented.
+
 2008-05-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* BindingSource.cs: When calling IsSynchronized, return the value of

@@ -987,6 +987,13 @@ namespace System.Windows.Forms {
 			driver.SetFocus(handle);
 		}
 
+		internal static void SetForegroundWindow(IntPtr handle) {
+			#if DriverDebug
+				Console.WriteLine("SetForegroundWindow({0}): Called", Window(handle));
+			#endif
+			driver.SetForegroundWindow(handle);
+		}
+
 		internal static void SetIcon(IntPtr handle, Icon icon) {
 			#if DriverDebug
 				Console.WriteLine("SetIcon({0}, {1}): Called", Window(handle), icon);

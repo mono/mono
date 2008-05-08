@@ -3193,6 +3193,11 @@ namespace System.Windows.Forms {
 			Win32DeleteDC (wb.hdc);
 		}
 
+		internal override void SetForegroundWindow (IntPtr handle)
+		{
+			Win32SetForegroundWindow(handle);
+		}
+
 		internal override event EventHandler Idle;
 		#endregion	// Public Static Methods
 
@@ -3592,6 +3597,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", EntryPoint = "GetIconInfo", CallingConvention = CallingConvention.StdCall)]
 		internal static extern bool Win32GetIconInfo (IntPtr hIcon, out ICONINFO piconinfo);
+
+		[DllImport ("user32.dll", EntryPoint="SetForegroundWindow", CallingConvention=CallingConvention.StdCall)]
+		extern static bool Win32SetForegroundWindow(IntPtr hWnd);
 		#endregion
 	}
 }

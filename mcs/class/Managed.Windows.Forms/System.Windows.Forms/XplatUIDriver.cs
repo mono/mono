@@ -430,6 +430,10 @@ namespace System.Windows.Forms {
 		{
 			dest_dc.DrawImage ((Bitmap)offscreen_drawable, r, r, GraphicsUnit.Pixel);
 		}
+		
+		internal virtual void SetForegroundWindow (IntPtr handle)
+		{
+		}
 
 #endregion	// XplatUI Driver Methods
 	}
