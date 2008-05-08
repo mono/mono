@@ -37,5 +37,5 @@ export MONO_DISABLE_SHM=1
 if $debug; then
    exec @bindir@/@mono_interp@ $MONO_OPTIONS @mono_instdir@/@framework_version@/mono-service.exe $args
 else
-   exec @bindir@/@mono_interp@ $MONO_OPTIONS @mono_instdir@/@framework_version@/mono-service.exe $args </dev/null > /dev/null 2>&1 &
+   exec @bindir@/@mono_interp@ $MONO_OPTIONS @mono_instdir@/@framework_version@/mono-service.exe $args </dev/null 2> /dev/null 1> /dev/null &
 fi
