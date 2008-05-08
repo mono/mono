@@ -485,13 +485,19 @@ namespace System.Windows.Forms {
 
 		private void OnMouseUp (MouseEventArgs e)
 		{
-			if ((e.Button & MouseButtons.Right) == MouseButtons.Right && context_menu != null)
-				context_menu.Show (window, new Point(e.X, e.Y));
+			if ((e.Button & MouseButtons.Right) == MouseButtons.Right) {
+				if (context_menu != null) {
+					XplatUI.SetForegroundWindow (window.Handle);
+					context_menu.Show (window, new Point(e.X, e.Y));
+				} 
 #if NET_2_0
-			else if ((e.Button & MouseButtons.Right) == MouseButtons.Right && context_menu_strip != null)
-				context_menu_strip.Show (window, new Point (e.X, e.Y), ToolStripDropDownDirection.AboveLeft);
+				else if (context_menu_strip != null) {
+					XplatUI.SetForegroundWindow (window.Handle);
+					context_menu_strip.Show (window, new Point (e.X, e.Y), ToolStripDropDownDirection.AboveLeft);
+				}
 #endif
-			
+			}
+
 			MouseEventHandler eh = (MouseEventHandler)(Events [MouseUpEvent]);
 			if (eh != null)
 				eh (this, e);

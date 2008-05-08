@@ -1,3 +1,8 @@
+2008-05-08  Everaldo Canuto  <ecanuto@novell.com>
+
+	* NotifyIcon.cs: Call SetForegroundWindow before show context menu. Thanks
+	Gert Driesen. Fixes bug #324830. 
+
 2008-05-07  Everaldo Canuto  <ecanuto@novell.com>
 
 	* XplatUI.cs, XplatUIDriver.cs, XplatUIWin32.cs: SetForegroundWindow
