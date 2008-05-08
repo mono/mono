@@ -1,3 +1,11 @@
+2008-05-08  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ListBox.cs: Respect checkboxes when measuring item size.
+	* ThemeWin32Classis.cs: When drawing list items, don't draw
+	text outside of the item's bounds to prevent overlapping.
+	(.Net actually overlaps, but that's just silly.)
+	[Fixes bug #388117]
+
 2008-05-08  Everaldo Canuto  <ecanuto@novell.com>
 
 	* NotifyIcon.cs: Call SetForegroundWindow before show context menu. Thanks

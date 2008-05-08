@@ -1275,6 +1275,10 @@ namespace System.Windows.Forms
 			item_rect.X -= first_item_rect.X;
 			item_rect.Y -= first_item_rect.Y;
 			
+			// Subtract the checkboxes from the width
+			if (this is CheckedListBox)
+				item_rect.Width -= 14;
+
 			return item_rect;
 		}
 

@@ -1483,7 +1483,7 @@ namespace System.Windows.Forms
 
 			e.Graphics.DrawString (ctrl.GetItemText (ctrl.Items[e.Index]), e.Font,
 				ResPool.GetSolidBrush (fore_color),
-				item_rect.X, item_rect.Y, ctrl.StringFormat);
+				item_rect, ctrl.StringFormat);
 					
 			if ((e.State & DrawItemState.Focus) == DrawItemState.Focus) {
 				CPDrawFocusRectangle (e.Graphics, item_rect,
@@ -2371,7 +2371,7 @@ namespace System.Windows.Forms
 
 			e.Graphics.DrawString (ctrl.GetItemText (ctrl.Items[e.Index]), e.Font,
 					       ResPool.GetSolidBrush (fore_color),
-					       e.Bounds.X, e.Bounds.Y, ctrl.StringFormat);
+					       e.Bounds, ctrl.StringFormat);
 					
 			if ((e.State & DrawItemState.Focus) == DrawItemState.Focus)
 				CPDrawFocusRectangle (e.Graphics, e.Bounds, fore_color, back_color);
