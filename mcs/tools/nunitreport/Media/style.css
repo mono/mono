@@ -1,0 +1,85 @@
+body
+{
+	font-family: Arial, Helvetica, sans-serif;
+	margin-top: 0px;
+	margin-right: 0px;
+    margin-left: 0px
+}
+
+.header
+{
+	font-weight: bolder;
+	background-image: url(backbar.png);
+	vertical-align: middle;
+    color: #ffffff;
+    background-repeat: repeat-x;
+    height: 50px
+}
+
+.headerimage
+{
+	margin-left: 5px;
+	float: left
+}
+
+.headertext
+{
+	float: left;
+	margin-left: 15px;
+	width: auto;
+	margin-right: 15px;
+	padding-top: 15px;
+	height: 35px
+}
+
+.legend
+{
+	border: #d7ce28 1px solid;
+	padding: 10px;
+	margin-top: 15px;
+	margin-right: 15px;
+	font-size: small;
+	float: right;
+	width: 150px;
+	height: 136px;
+	background-color: #ffffcc
+}
+
+.maintable
+{
+	margin-top: 20px;
+	margin-right: 20px;
+	margin-left: 20px;
+	font-size: 9pt;
+	width: 740px;
+	height: 1px;
+}
+
+.tableheader
+{
+	font-weight: bold;
+	color: white;
+	background-color: #455372;
+}
+
+.errorrow
+{
+	cursor: pointer;
+}
+
+.errorlist
+{
+	cursor: pointer;
+}
+
+.errordetail
+{
+	cursor: default;
+	font-family: Consolas, Courier New, Monospace;
+}
+
+.tabletotal
+{
+	font-weight: bold;
+	border-top: 1px Black;
+}
