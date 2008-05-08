@@ -1687,23 +1687,16 @@ namespace System.Linq
 			Check.Source (source);
 
 			IList<TSource> list = source as IList<TSource>;
-			if (list != null)
-				return CreateReverseIterator (list);
+			if (list == null)
+				list = new List<TSource> (source);
 
-			return CreateReverseIterator (source);
+			return CreateReverseIterator (list);
 		}
 
 		static IEnumerable<TSource> CreateReverseIterator<TSource> (IList<TSource> source)
 		{
 			for (int i = source.Count; i > 0; --i)
 				yield return source [i - 1];
-		}
-
-		static IEnumerable<TSource> CreateReverseIterator<TSource> (IEnumerable<TSource> source)
-		{
-			var list = new List<TSource> (source);
-			list.Reverse ();
-			return list;
 		}
 
 		#endregion
