@@ -40,6 +40,15 @@ namespace System.Linq
 {
 	public static class Enumerable
 	{
+		enum Fallback {
+			Default,
+			Throw
+		}
+
+		class PredicateOf<T> {
+			public static Func<T, bool> Always = (t) => true;
+		}
+
 		#region Aggregate
 
 		public static TSource Aggregate<TSource> (this IEnumerable<TSource> source, Func<TSource, TSource, TSource> func)
@@ -597,9 +606,25 @@ namespace System.Linq
 
 		#region ElementAt
 
+		static TSource ElementAt<TSource> (this IEnumerable<TSource> source, int index, Fallback fallback)
+		{
+			long counter = 0L;
+
+			foreach (var element in source) {
+				if (index == counter++)
+					return element;
+			}
+
+			if (fallback == Fallback.Throw)
+				throw new ArgumentOutOfRangeException ();
+
+			return default (TSource);
+		}
+
 		public static TSource ElementAt<TSource> (this IEnumerable<TSource> source, int index)
 		{
 			Check.Source (source);
+
 			if (index < 0)
 				throw new ArgumentOutOfRangeException ();
 
@@ -607,14 +632,7 @@ namespace System.Linq
 			if (list != null)
 				return list [index];
 
-			int counter = 0;
-			foreach (var element in source) {
-				if (counter == index)
-					return element;
-				counter++;
-			}
-
-			throw new ArgumentOutOfRangeException ();
+			return source.ElementAt (index, Fallback.Throw);
 		}
 
 		#endregion
@@ -624,6 +642,7 @@ namespace System.Linq
 		public static TSource ElementAtOrDefault<TSource> (this IEnumerable<TSource> source, int index)
 		{
 			Check.Source (source);
+
 			if (index < 0)
 				return default (TSource);
 
@@ -631,14 +650,7 @@ namespace System.Linq
 			if (list != null)
 				return index < list.Count ? list [index] : default (TSource);
 
-			int counter = 0;
-			foreach (TSource element in source) {
-				if (counter == index)
-					return element;
-				counter++;
-			}
-
-			return default (TSource);
+			return source.ElementAt (index, Fallback.Default);
 		}
 
 		#endregion
@@ -682,27 +694,30 @@ namespace System.Linq
 
 		#region First
 
+		static TSource First<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate, Fallback fallback)
+		{
+			foreach (var element in source)
+				if (predicate (element))
+					return element;
+
+			if (fallback == Fallback.Throw)
+				throw new InvalidOperationException ();
+
+			return default (TSource);
+		}
+
 		public static TSource First<TSource> (this IEnumerable<TSource> source)
 		{
 			Check.Source (source);
 
-			foreach (TSource element in source)
-				return element;
-
-			throw new InvalidOperationException ();
+			return source.First (PredicateOf<TSource>.Always, Fallback.Throw);
 		}
-
 
 		public static TSource First<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)
 		{
 			Check.SourceAndPredicate (source, predicate);
 
-			foreach (TSource element in source) {
-				if (predicate (element))
-					return element;
-			}
-
-			throw new InvalidOperationException ();
+			return source.First (predicate, Fallback.Throw);
 		}
 
 		#endregion
@@ -713,23 +728,14 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
-			foreach (TSource element in source)
-				return element;
-
-			return default (TSource);
+			return source.First (PredicateOf<TSource>.Always, Fallback.Default);
 		}
-
 
 		public static TSource FirstOrDefault<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)
 		{
 			Check.SourceAndPredicate (source, predicate);
 
-			foreach (TSource element in source) {
-				if (predicate (element))
-					return element;
-			}
-
-			return default (TSource);
+			return source.First (predicate, Fallback.Default);
 		}
 
 		#endregion
@@ -984,45 +990,44 @@ namespace System.Linq
 			return Join<TOuter, TInner, TKey, TResult> (outer, inner, outerKeySelector, innerKeySelector, resultSelector, null);
 		}
 
-		# endregion
+		#endregion
 
 		#region Last
+
+		static TSource Last<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate, Fallback fallback)
+		{
+			var empty = true;
+			var item = default (TSource);
+
+			foreach (var element in source) {
+				if (!predicate (element))
+					continue;
+
+				item = element;
+				empty = false;
+			}
+
+			if (!empty)
+				return item;
+
+			if (fallback == Fallback.Throw)
+				throw new InvalidOperationException ();
+
+			return item;
+		}
 
 		public static TSource Last<TSource> (this IEnumerable<TSource> source)
 		{
 			Check.Source (source);
 
-			bool noElements = true;
-			TSource lastElement = default (TSource);
-			foreach (TSource element in source) {
-				if (noElements) noElements = false;
-				lastElement = element;
-			}
-
-			if (!noElements)
-				return lastElement;
-			else
-				throw new InvalidOperationException ();
+			return source.Last (PredicateOf<TSource>.Always, Fallback.Throw);
 		}
 
-		public static TSource Last<TSource> (this IEnumerable<TSource> source,
-				Func<TSource, bool> predicate)
+		public static TSource Last<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)
 		{
 			Check.SourceAndPredicate (source, predicate);
 
-			bool noElements = true;
-			TSource lastElement = default (TSource);
-			foreach (TSource element in source) {
-				if (predicate (element)) {
-					if (noElements) noElements = false;
-					lastElement = element;
-				}
-			}
-
-			if (!noElements)
-				return lastElement;
-			else
-				throw new InvalidOperationException ();
+			return source.Last (predicate, Fallback.Throw);
 		}
 
 		#endregion
@@ -1037,30 +1042,20 @@ namespace System.Linq
 			if (list != null)
 				return list.Count > 0 ? list [list.Count - 1] : default (TSource);
 
-			TSource lastElement = default (TSource);
-			foreach (TSource element in source)
-				lastElement = element;
-
-			return lastElement;
+			return source.Last (PredicateOf<TSource>.Always, Fallback.Default);
 		}
 
-		public static TSource LastOrDefault<TSource> (this IEnumerable<TSource> source,
-			Func<TSource, bool> predicate)
+		public static TSource LastOrDefault<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)
 		{
 			Check.SourceAndPredicate (source, predicate);
 
-			TSource lastElement = default (TSource);
-			foreach (TSource element in source) {
-				if (predicate (element))
-					lastElement = element;
-			}
-
-			return lastElement;
+			return source.Last (predicate, Fallback.Default);
 		}
 
 		#endregion
 
 		#region LongCount
+
 		public static long LongCount<TSource> (this IEnumerable<TSource> source)
 		{
 			Check.Source (source);
@@ -1612,8 +1607,7 @@ namespace System.Linq
 		{
 			Check.SourceAndKeySelector (source, keySelector);
 
-			return new OrderedSequence<TSource, TKey> (
-					source, keySelector, comparer, SortDirection.Ascending);
+			return new OrderedSequence<TSource, TKey> (source, keySelector, comparer, SortDirection.Ascending);
 		}
 
 		#endregion
@@ -1631,8 +1625,7 @@ namespace System.Linq
 		{
 			Check.SourceAndKeySelector (source, keySelector);
 
-			return new OrderedSequence<TSource, TKey> (
-					source, keySelector, comparer, SortDirection.Descending);
+			return new OrderedSequence<TSource, TKey> (source, keySelector, comparer, SortDirection.Descending);
 		}
 
 		#endregion
@@ -1678,7 +1671,6 @@ namespace System.Linq
 
 		#endregion
 
-
 		#region Reverse
 
 		public static IEnumerable<TSource> Reverse<TSource> (this IEnumerable<TSource> source)
@@ -1711,7 +1703,7 @@ namespace System.Linq
 
 		static IEnumerable<TResult> CreateSelectIterator<TSource, TResult> (IEnumerable<TSource> source, Func<TSource, TResult> selector)
 		{
-			foreach (TSource element in source)
+			foreach (var element in source)
 				yield return selector (element);
 		}
 
@@ -1803,44 +1795,40 @@ namespace System.Linq
 
 		#region Single
 
+		static TSource Single<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate, Fallback fallback)
+		{
+			var found = false;
+			var item = default (TSource);
+
+			foreach (var element in source) {
+				if (!predicate (element))
+					continue;
+
+				if (found)
+					throw new InvalidOperationException ();
+
+				found = true;
+				item = element;
+			}
+
+			if (!found && fallback == Fallback.Throw)
+				throw new InvalidOperationException ();
+
+			return item;
+		}
+
 		public static TSource Single<TSource> (this IEnumerable<TSource> source)
 		{
 			Check.Source (source);
 
-			bool otherElement = false;
-			TSource singleElement = default (TSource);
-			foreach (TSource element in source) {
-				if (otherElement) throw new InvalidOperationException ();
-				if (!otherElement) otherElement = true;
-				singleElement = element;
-			}
-
-			if (otherElement)
-				return singleElement;
-			else
-				throw new InvalidOperationException ();
+			return source.Single (PredicateOf<TSource>.Always, Fallback.Throw);
 		}
 
-
-		public static TSource Single<TSource> (this IEnumerable<TSource> source,
-				Func<TSource, bool> predicate)
+		public static TSource Single<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)
 		{
 			Check.SourceAndPredicate (source, predicate);
 
-			bool otherElement = false;
-			TSource singleElement = default (TSource);
-			foreach (TSource element in source) {
-				if (predicate (element)) {
-					if (otherElement) throw new InvalidOperationException ();
-					if (!otherElement) otherElement = true;
-					singleElement = element;
-				}
-			}
-
-			if (otherElement)
-				return singleElement;
-			else
-				throw new InvalidOperationException ();
+			return source.Single (predicate, Fallback.Throw);
 		}
 
 		#endregion
@@ -1851,34 +1839,15 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
-			bool otherElement = false;
-			TSource singleElement = default (TSource);
-			foreach (TSource element in source) {
-				if (otherElement) throw new InvalidOperationException ();
-				if (!otherElement) otherElement = true;
-				singleElement = element;
-			}
-
-			return singleElement;
+			return source.Single (PredicateOf<TSource>.Always, Fallback.Default);
 		}
 
 
-		public static TSource SingleOrDefault<TSource> (this IEnumerable<TSource> source,
-				Func<TSource, bool> predicate)
+		public static TSource SingleOrDefault<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)
 		{
 			Check.SourceAndPredicate (source, predicate);
 
-			bool otherElement = false;
-			TSource singleElement = default (TSource);
-			foreach (TSource element in source) {
-				if (predicate (element)) {
-					if (otherElement) throw new InvalidOperationException ();
-					if (!otherElement) otherElement = true;
-					singleElement = element;
-				}
-			}
-
-			return singleElement;
+			return source.Single (predicate, Fallback.Default);
 		}
 
 		#endregion
