@@ -48,8 +48,6 @@ namespace System.Linq.Expressions {
 			get { return parameters; }
 		}
 
-
-
 		internal LambdaExpression (Type delegateType, Expression body, ReadOnlyCollection<ParameterExpression> parameters)
 			: base (ExpressionType.Lambda, delegateType)
 		{
