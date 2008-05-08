@@ -1,5 +1,5 @@
 ﻿//
-// MemberMemberExpression.cs
+// MemberMemberBinding.cs
 //
 // Author:
 //   Jb Evain (jbevain@novell.com)
