@@ -1,3 +1,10 @@
+2008-05-08  Carlos Alberto Cortez <calebrto.cortez@gmail.com>
+
+	* FileDialog.cs: When the user types a wildcard character in the
+	filename combobox, update the contents of the folder using the text as
+	a filter.
+	Fixes part of #385261.
+
 2008-05-08  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ListBox.cs: Various fixes for MultiColumn listboxen.

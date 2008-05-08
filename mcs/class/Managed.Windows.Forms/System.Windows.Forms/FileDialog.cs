@@ -122,6 +122,8 @@ namespace System.Windows.Forms
 		private const string x_string = "X";
 		private const string y_string = "Y";
 		
+		private readonly char [] wildcard_chars = new char [] { '*', '?' };
+
 		private bool disable_form_closed_event;
 		
 		internal FileDialog ()
@@ -860,6 +862,12 @@ namespace System.Windows.Forms
 						}
 					}
 				}
+			}
+
+			// Custom filter, typed by the user, ignoring the stored filters
+			if (fileNameComboBox.Text.IndexOfAny (wildcard_chars) != -1) {
+				mwfFileView.UpdateFileView (fileNameComboBox.Text);
+				return;
 			}
 
 			ArrayList files = new ArrayList ();
@@ -2566,10 +2574,20 @@ namespace System.Windows.Forms
 				MessageBox.Show (e.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
-		
+
 		public void UpdateFileView ()
 		{
-			if (filterArrayList != null && filterArrayList.Count != 0) {
+			UpdateFileView (null);
+		}
+		
+		public void UpdateFileView (string custom_filter)
+		{
+			if (custom_filter != null) {
+				StringCollection custom_filters = new StringCollection ();
+				custom_filters.Add (custom_filter);
+
+				vfs.GetFolderContent (custom_filters);
+			} else if (filterArrayList != null && filterArrayList.Count != 0) {
 				FilterStruct fs = (FilterStruct)filterArrayList [filterIndex - 1];
 				
 				vfs.GetFolderContent (fs.filters);
