@@ -269,7 +269,7 @@ namespace System
 
 				StringBuilder sb = new StringBuilder ();
 				foreach (Type t in atypes){
-					sb.Append (t.ToString ());
+						sb.Append (t != null ? t.ToString () : "(unknown)");
 					sb.Append (", ");
 				}
 				if (sb.Length > 2)
