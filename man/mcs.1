@@ -259,6 +259,8 @@ on the browser.   Typically these applications will be launched
 with the 
 .I mopen
 command line tool.
+.TP
+For more details see the PACKAGE section in this document
 .ne
 .RE
 .TP
@@ -371,13 +373,17 @@ Cache (GAC) but also installs them into the PACKAGEBASE/PKG directory
 As a developer, if you want to consume the Gtk# libraries, you would
 invoke the compiler like this:
 .nf
+
 	$ mcs -pkg:gtk-sharp-2.0 main.cs
+
 .fi
 The -pkg: option instructs the compiler to fetch the definitions for
 gtk-sharp-2.0 from pkg-config, this is equivalent to passing to the C#
 compiler the output of:
 .nf
+
 	$ pkg-config --libs gtk-sharp-2.0
+
 .fi
 Usually this merely references the libraries from PACKAGEBASE/PKG.
 .PP
