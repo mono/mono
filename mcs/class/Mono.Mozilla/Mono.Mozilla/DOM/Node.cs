@@ -166,6 +166,36 @@ namespace Mono.Mozilla.DOM
 			}
 		}
 
+		public string Style {
+			get {				
+				nsIDOMDocument doc;
+				this.node.getOwnerDocument (out doc);
+				nsIDOMDocumentView docView = (nsIDOMDocumentView) doc;
+				nsIDOMAbstractView abstractView;
+				docView.getDefaultView (out abstractView);
+				nsIDOMViewCSS viewCss = (nsIDOMViewCSS)abstractView;
+				Base.StringSet (storage, String.Empty);
+				nsIDOMCSSStyleDeclaration styleDecl;
+				AsciiString s = new Mono.Mozilla.AsciiString(String.Empty);
+				viewCss.getComputedStyle (this.node as Mono.Mozilla.nsIDOMElement, s.Handle, out styleDecl);
+				styleDecl.getCssText (storage);
+				return Base.StringGet (storage);
+			}
+			set {
+				nsIDOMDocument doc;
+				this.node.getOwnerDocument (out doc);
+				nsIDOMDocumentView docView = (nsIDOMDocumentView) doc;
+				nsIDOMAbstractView abstractView;
+				docView.getDefaultView (out abstractView);
+				nsIDOMViewCSS viewCss = (nsIDOMViewCSS)abstractView;
+				Base.StringSet (storage, String.Empty);
+				nsIDOMCSSStyleDeclaration styleDecl;
+				viewCss.getComputedStyle (this.node as Mono.Mozilla.nsIDOMElement, storage, out styleDecl);
+				Base.StringSet (storage, value);
+				styleDecl.setCssText (storage);				
+			}
+		}
+		
 		public virtual Mono.WebBrowser.DOM.NodeType Type {
 			get {
 				ushort type;

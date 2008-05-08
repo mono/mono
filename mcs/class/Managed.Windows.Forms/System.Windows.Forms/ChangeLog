@@ -1,3 +1,7 @@
+2008-05-08  Andreia Gaita <avidigal@novell.com> 
+
+	* HtmlElement.cs: Implement Style property
+
 2008-05-08  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ListBox.cs: Respect checkboxes when measuring item size.

@@ -185,8 +185,8 @@ namespace System.Windows.Forms
 
 		[MonoTODO ("Needs implementation")]
 		public string Style {
-			get { return String.Empty; }
-			set { }
+			get { return this.element.Style; }
+			set { this.element.Style = value; }
 		}
 
 		#endregion
