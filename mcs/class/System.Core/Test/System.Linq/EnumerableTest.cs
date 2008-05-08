@@ -180,6 +180,7 @@ namespace MonoTests.System.Linq {
 			int [] result = {4, 3, 2, 1, 0};
 
 			AssertAreSame (result, data.Reverse ());
+			AssertAreSame (result, Enumerable.Range (0, 5).Reverse ());
 		}
 
 		[Test]

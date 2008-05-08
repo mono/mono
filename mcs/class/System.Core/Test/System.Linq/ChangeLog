@@ -1,3 +1,8 @@
+2008-05-08  Jonathan Pryor  <jpryor@novell.com>
+
+	* EnumerableTest.cs: test Reverse() for non-IList types.
+	* EnumerableMoreTest.cs: test LongCount() for non-array types.
+
 2008-04-30  Jb Evain  <jbevain@novell.com>
 
 	* EnumerableTest.cs: tests for average on int and long.

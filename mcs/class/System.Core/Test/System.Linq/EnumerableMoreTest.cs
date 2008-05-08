@@ -590,6 +590,7 @@ namespace MonoTests.System.Linq {
 
 			// LongCount<TSource> ()
 			Assert.AreEqual (5, data.LongCount ());
+			Assert.AreEqual (5, Enumerable.Range (0, 5).LongCount ());
 
 			// LongCount<TSource> (Func<TSource, bool>)
 			Assert.AreEqual (3, data.LongCount (x => x < 5));

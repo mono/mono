@@ -1066,6 +1066,10 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
+			TSource [] array = source as TSource [];
+			if (array != null)
+				return array.LongLength;
+
 			long counter = 0;
 			using (var enumerator = source.GetEnumerator ())
 				while (enumerator.MoveNext ())
@@ -1682,7 +1686,17 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
+			IList<TSource> list = source as IList<TSource>;
+			if (list != null)
+				return CreateReverseIterator (list);
+
 			return CreateReverseIterator (source);
+		}
+
+		static IEnumerable<TSource> CreateReverseIterator<TSource> (IList<TSource> source)
+		{
+			for (int i = source.Count; i > 0; --i)
+				yield return source [i - 1];
 		}
 
 		static IEnumerable<TSource> CreateReverseIterator<TSource> (IEnumerable<TSource> source)

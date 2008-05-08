@@ -1,3 +1,8 @@
+2008-05-08  Jonathan Pryor  <jpryor@novell.com>
+
+	* Enumerable.cs: LongCount() can be optimized for arrays, and Reverse() can
+	  be implemented in terms of IList w/o needing a temporary List<T> copy.
+
 2008-05-06  Sasha Kogan  <sashak@mainsoft.com>
 
 	* Queryable.cs (Average, GroupBy, Union): fix signatures to
