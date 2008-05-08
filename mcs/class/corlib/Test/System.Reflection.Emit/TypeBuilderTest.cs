@@ -8875,6 +8875,41 @@ namespace MonoTests.System.Reflection.Emit
 
 			Assert.AreEqual (42, inst.GetMethod ("get_int").Invoke (null, null));
 		}
+		
+		[Test] //bug #354047
+		public void CreatedTypeInstantiationOverTypeBuilderArgsIsNotAGenericTypeDefinition ()
+		{
+			TypeBuilder tb = module.DefineType ("TheType", TypeAttributes.Public, typeof (object), new Type [] {typeof (IDelegateFactory)});
+			GenericTypeParameterBuilder[] typeParams =
+tb.DefineGenericParameters (new String[] { "T" });
+			Type t = tb.CreateType ();
+
+			Type inst = tb.MakeGenericType (typeParams [0]);
+			Assert.IsFalse (inst.IsGenericTypeDefinition, "#1 create type instance is not a generic type definition");
+		}
+
+		[Test] //bug #354047
+		public void CreatedTypeAndTypeBuilderOwnTheirGenericArguments ()
+		{
+			TypeBuilder tb = module.DefineType ("TheType", TypeAttributes.Public, typeof (object), new Type [] {typeof (IDelegateFactory)});
+			GenericTypeParameterBuilder[] typeParams =
+tb.DefineGenericParameters (new String[] { "T" });
+			Type t = tb.CreateType ();
+
+			Assert.IsTrue (tb.GetGenericArguments()[0].DeclaringType == tb, "#1 TypeBuilder owns its arguments");
+			Assert.IsTrue (t.GetGenericArguments()[0].DeclaringType == t, "#1 create type owns its arguments");
+		}
+
+		[Test] //bug #354047
+		public void CreatedTypeAndTypeBuilderDontShareGenericArguments ()
+		{
+			TypeBuilder tb = module.DefineType ("TheType", TypeAttributes.Public, typeof (object), new Type [] {typeof (IDelegateFactory)});
+			GenericTypeParameterBuilder[] typeParams =
+tb.DefineGenericParameters (new String[] { "T" });
+			Type t = tb.CreateType ();
+
+			Assert.IsTrue (tb.GetGenericArguments()[0] != t.GetGenericArguments()[0], "#1 TypeBuilder and create type arguments are diferent");
+		}
 #endif
 
 		public interface IDelegateFactory

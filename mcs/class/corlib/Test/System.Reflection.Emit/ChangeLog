@@ -1,3 +1,7 @@
+2008-05-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeBuilderTest.cs: Added regression tests for #354047.
+
 2008-05-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* ConstructorOnTypeBuilderInstTest.cs: Disable one more test for GetParameters ().
