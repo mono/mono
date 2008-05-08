@@ -1,3 +1,7 @@
+2008-05-08  Dick Porter  <dick@ximian.com>
+
+	* Makefile: Test/System.IO/DirectoryInfoTest.cs needs Mono.Posix
+
 2008-05-07  Robert Jordan  <robertj@gmx.net>
 
 	* corlib_test.dll.sources: Add System/Runtime*HandleTest.cs

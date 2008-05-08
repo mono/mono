@@ -1061,6 +1061,44 @@ namespace MonoTests.System.IO
 			Assert.AreEqual (info.Name, clone.Name, "#1");
 			Assert.AreEqual (info.FullName, clone.FullName, "#2");
 		}
+		
+		// Needed so that UnixSymbolicLinkInfo doesn't have to
+		// be JITted on windows
+		private void Symlink_helper ()
+		{
+			string path = TempFolder + DSC + "DIT.Symlink";
+			string dir = path + DSC + "dir";
+			string link = path + DSC + "link";
+
+			DeleteDir (path);
+
+			try {
+				Directory.CreateDirectory (path);
+				Directory.CreateDirectory (dir);
+				Mono.Unix.UnixSymbolicLinkInfo li = new Mono.Unix.UnixSymbolicLinkInfo (link);
+				li.CreateSymbolicLinkTo (dir);
+
+				DirectoryInfo info = new DirectoryInfo (path);
+				DirectoryInfo[] dirs = info.GetDirectories ();
+				Assert.AreEqual (2, dirs.Length, "#1");
+			} finally {
+				DeleteDir (path);
+			}
+		}
+
+		[Test]
+		[Category ("NotDotNet")]
+		public void Symlink ()
+		{
+			// This test only applies to Linux and
+			// Linux-like platforms but mono-on-windows
+			// doesn't set the NotDotNet category
+			if (!RunningOnUnix) {
+				return;
+			}
+
+			Symlink_helper ();
+		}
 
 		static bool RunningOnUnix {
 			get {

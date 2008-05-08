@@ -27,7 +27,8 @@ ifneq ($(FRAMEWORK_VERSION),1.0)
 LOCAL_MCS_FLAGS += -nowarn:414
 endif
 
-TEST_MCS_FLAGS = -debug+ -debug:full -nowarn:168,219,618,672 -unsafe
+# System.IO/DirectoryInfoTest.cs needs Mono.Posix
+TEST_MCS_FLAGS = -debug+ -debug:full -nowarn:168,219,618,672 -unsafe -r:$(topdir)/class/lib/$(PROFILE)/Mono.Posix.dll
 
 EXTRA_DISTFILES = \
 	corlib.dll.win32-excludes		\

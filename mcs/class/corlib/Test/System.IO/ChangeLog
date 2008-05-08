@@ -1,3 +1,7 @@
+2008-05-08  Dick Porter  <dick@ximian.com>
+
+	* DirectoryInfoTest.cs: Added a test for bug 385765.
+
 2008-04-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DirectoryTest.cs: Do not use ExpectedException to avoid false
