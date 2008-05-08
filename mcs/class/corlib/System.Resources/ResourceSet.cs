@@ -77,6 +77,11 @@ namespace System.Resources
 			Reader = new ResourceReader (stream);
 		}
 
+		internal ResourceSet (IntPtrStream stream)
+		{
+			Reader = new ResourceReader (stream);
+		}
+		
 		public ResourceSet (string fileName)
 		{
 			Reader = new ResourceReader (fileName);
@@ -217,16 +222,17 @@ namespace System.Resources
 		}
 
 #if NET_2_0
-		internal UnmanagedMemoryStream GetStream (string name)
+		internal UnmanagedMemoryStream GetStream (string name, bool ignoreCase)
 		{
 			if (Reader == null)
 				throw new ObjectDisposedException ("ResourceSet is closed.");
 
 			IDictionaryEnumerator i = Reader.GetEnumerator();
 			i.Reset ();
-			while (i.MoveNext ())
-				if (name == (string) i.Key)
+			while (i.MoveNext ()){
+				if (String.Compare (name, (string) i.Key, ignoreCase) == 0)
 					return ((ResourceReader.ResourceEnumerator) i).ValueAsStream;
+			}
 			return null;
 		}
 #endif

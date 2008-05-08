@@ -300,7 +300,7 @@ namespace System.Resources
 			if (culture == null)
 				culture = CultureInfo.CurrentUICulture;
 			ResourceSet set = InternalGetResourceSet (culture, true, true);
-			return set.GetStream (name);
+			return set.GetStream (name, ignoreCase);
 		}
 #endif
 		protected virtual ResourceSet InternalGetResourceSet (CultureInfo culture, bool Createifnotexists, bool tryParents)
@@ -330,9 +330,11 @@ namespace System.Resources
 					try {
 						Assembly a = MainAssembly.GetSatelliteAssembly (
 							resourceCulture, sat_version);
-						stream = a.GetManifestResourceStream (filename);
-						if (stream == null)
-							stream = GetManifestResourceStreamNoCase (a, filename);
+						if (a != null){
+							stream = a.GetManifestResourceStream (filename);
+							if (stream == null)
+								stream = GetManifestResourceStreamNoCase (a, filename);
+						}
 					} catch (Exception) {
 						// Ignored
 					}

@@ -35,6 +35,11 @@ namespace System.Resources {
 	[Serializable]
 	internal class RuntimeResourceSet : ResourceSet {
 
+		// Constructor for Activator.CreateInstance from Silverlight
+		public RuntimeResourceSet (IntPtrStream stream) : base (stream)
+		{
+		}
+		
 		public RuntimeResourceSet (Stream stream) :
 			base (stream)
 		{

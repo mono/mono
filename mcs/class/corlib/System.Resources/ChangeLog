@@ -1,3 +1,20 @@
+2008-05-08  Miguel de Icaza  <miguel@novell.com>
+
+	* ResourceSet.cs: Pass the ignoreCase argument, needed to
+	implement ResourceManager.IgnoreCase.
+
+	Silverlight 2.0 applications store "page.xaml" as the key in the
+	resource keys, but request Page.xaml ones.
+
+	* ResourceManager.cs: Avoid exception throwing and catching.
+
+	* RutimeResourceSet.cs: Add a constructor that is required to
+	deserialize Silverlight 2.0 applications when deserializing the
+	resources that contains the XAML files in assemblies.
+
+	We do not take advantage of this new constructor that uses an
+	IntPtrStream, instead we stick to the Stream API.
+
 2008-03-29  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Win32Resources.cs: On 2.0 profile, initiale fixed info to zero-length
