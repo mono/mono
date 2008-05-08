@@ -2209,12 +2209,19 @@ namespace System.Linq
 		#endregion
 
 		#region ToArray
+
 		public static TSource [] ToArray<TSource> (this IEnumerable<TSource> source)
 		{
 			Check.Source (source);
 
-			List<TSource> list = new List<TSource> (source);
-			return list.ToArray ();
+			var collection = source as ICollection<TSource>;
+			if (collection != null) {
+				var array = new TSource [collection.Count];
+				collection.CopyTo (array, 0);
+				return array;
+			}
+
+			return new List<TSource> (source).ToArray ();
 		}
 
 		#endregion
