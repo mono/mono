@@ -1,0 +1,20 @@
+2008-05-08  Marek Habersack  <mhabersack@novell.com>
+
+	* DataPager.cs, DataPager.cs, DataPagerFieldCollection.cs,
+	DataPagerFieldCommandEventArgs.cs, DataPagerField.cs,
+	DataPagerFieldItem.cs, InsertItemPosition.cs,
+	IPageableItemContainer.cs, ListViewCancelEventArgs.cs,
+	ListViewCancelMode.cs, ListViewCommandEventArgs.cs, ListView.cs,
+	ListViewDataItem.cs, ListViewDeletedEventArgs.cs,
+	ListViewDeleteEventArgs.cs, ListViewEditEventArgs.cs,
+	ListViewInsertedEventArgs.cs, ListViewInsertEventArgs.cs,
+	ListViewItem.cs, ListViewItemEventArgs.cs, ListViewItemType.cs,
+	ListViewPagedDataSource.cs, ListViewSelectEventArgs.cs,
+	ListViewSortEventArgs.cs, ListViewTableRow.cs,
+	ListViewUpdatedEventArgs.cs, ListViewUpdateEventArgs.cs,
+	NextPreviousPagerField.cs, NumericPagerField.cs, PageEventArgs.cs,
+	PagePropertiesChangingEventArgs.cs, TemplatePagerField.cs:
+	added. NOTE: this is code in progress! It is not fully implemented
+	and usable, please do not file bug reports for the code - patches
+	are gladly accepted :)
+
