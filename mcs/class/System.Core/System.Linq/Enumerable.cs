@@ -671,9 +671,9 @@ namespace System.Linq
 
 		static IEnumerable<TSource> CreateExceptIterator<TSource> (IEnumerable<TSource> first, IEnumerable<TSource> second, IEqualityComparer<TSource> comparer)
 		{
-			var items = new HashSet<TSource> (Distinct (second));
-			foreach (TSource element in first) {
-				if (! items.Contains (element, comparer))
+			var items = new HashSet<TSource> (second, comparer);
+			foreach (var element in first) {
+				if (!items.Contains (element, comparer))
 					yield return element;
 			}
 		}
@@ -746,7 +746,6 @@ namespace System.Linq
 			}
 			return null;
 		}
-
 
 		public static IEnumerable<IGrouping<TKey, TSource>> GroupBy<TSource, TKey> (this IEnumerable<TSource> source,
 			Func<TSource, TKey> keySelector)
