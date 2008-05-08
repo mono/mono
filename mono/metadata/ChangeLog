@@ -1,3 +1,14 @@
+2008-05-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-internals.h: Move MONO_SECMAN_FLAG macros from mini/declsec.h
+	to here 	as they are now used in assembly.c new code.
+	Added a skipverification flag to MonoAssembly.
+	New internal function mono_assembly_has_skip_verification.
+
+	* assembly.c: New function mono_assembly_has_skip_verification. It checks
+	if an assembly has a version 2.0 SkipVerification security attribute. Fixes
+	part of #387274.
+
 2008-05-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* object.c (mono_object_get_virtual_method): Inflate the resulting method if

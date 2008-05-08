@@ -1,3 +1,11 @@
+2008-05-08  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* declsec.h: Move MONO_SECMAN_FLAG to metadata/metadata-internals.h.
+
+	* mini.c: Added mini_assembly_can_skip_verification. This
+	function checks if the assembly requested to skip verification.	
+	Fixes part of #387274.
+
 2008-05-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mini_get_method): Disable the check for open generic classes when
