@@ -101,7 +101,11 @@ namespace System.Linq.Expressions {
 
 		static bool IsAssignableToParameterType (Type type, ParameterInfo param)
 		{
-			return GetNotNullableOf (type).IsAssignableTo (param.ParameterType);
+			var ptype = param.ParameterType;
+			if (ptype.IsByRef)
+				ptype = ptype.GetElementType ();
+
+			return GetNotNullableOf (type).IsAssignableTo (ptype);
 		}
 
 		static MethodInfo CheckUnaryMethod (MethodInfo method, Type param)

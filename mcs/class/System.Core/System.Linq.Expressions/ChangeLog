@@ -1,3 +1,8 @@
+2008-05-08  Jb Evain  <jbevain@novell.com>
+
+	* Expression.cs, EmitContext.cs: deal with call to methods
+	with byref parameters.
+
 2008-05-07  Roei Erez  <roeie@mainsoft.com>
 
 	* Add ifdef TARGET_JVM

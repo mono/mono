@@ -115,20 +115,37 @@ namespace System.Linq.Expressions {
 			ig.Emit (OpCodes.Ldloc, local);
 		}
 
-		public void EmitCall (LocalBuilder local, IEnumerable<Expression> arguments, MethodInfo method)
+		public void EmitCall (LocalBuilder local, ReadOnlyCollection<Expression> arguments, MethodInfo method)
 		{
 			EmitLoad (local);
 			EmitCollection (arguments);
 			EmitCall (method);
 		}
 
-		public void EmitCall (Expression expression, IEnumerable<Expression> arguments, MethodInfo method)
+		public void EmitCall (Expression expression, ReadOnlyCollection<Expression> arguments, MethodInfo method)
 		{
 			if (!method.IsStatic)
 				EmitLoad (expression);
 
-			EmitCollection (arguments);
+			EmitArguments (method, arguments);
 			EmitCall (method);
+		}
+
+		void EmitArguments (MethodInfo method, ReadOnlyCollection<Expression> arguments)
+		{
+			var parameters = method.GetParameters ();
+
+			for (int i = 0; i < parameters.Length; i++) {
+				var parameter = parameters [i];
+				var argument = arguments [i];
+
+				if (parameter.ParameterType.IsByRef) {
+					ig.Emit (OpCodes.Ldloca, EmitStored (argument));
+					return;
+				}
+
+				Emit (arguments [i]);
+			}
 		}
 
 		public void EmitCall (MethodInfo method)
