@@ -1,3 +1,7 @@
+2008-05-08  Robert Jordan  <robertj@gmx.net>
+
+	* DictionaryEntryTest.cs: Add tests for key's argument validation.
+
 2008-03-24  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DictionaryBaseTest.cs: Improved existing tests, and use Assert class

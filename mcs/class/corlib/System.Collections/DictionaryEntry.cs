@@ -41,29 +41,33 @@ namespace System.Collections {
 #endif
 	[Serializable]
 	public struct DictionaryEntry {
-		private object key;
-		private object val;
+		private object _key;
+		private object _value;
 
 		public DictionaryEntry (object key, object value)
 		{
+#if ONLY_1_1
 			if (key == null)
 				throw new ArgumentNullException ("key");
-			
-			this.key = key;
-			val = value;
+#endif			
+			_key = key;
+			_value = value;
 		}
 		
 		public object Key {
-			get {return key;}
+			get {return _key;}
 			set {
+#if ONLY_1_1
 				if (value == null)
 					throw new ArgumentNullException ("value");
-				key = value;
+#endif				
+				_key = value;
 			}
 		}
+
 		public object Value {
-			get {return val;}
-			set {val = value;}
+			get {return _value;}
+			set {_value = value;}
 		}
 	}
 }
