@@ -817,7 +817,10 @@ System.Net.Sockets/NetworkStream.cs
 System.Net.Sockets/ProtocolFamily.cs
 System.Net.Sockets/ProtocolType.cs
 System.Net.Sockets/SelectMode.cs
+System.Net.Sockets/SendPacketsElement.cs
 System.Net.Sockets/Socket.cs
+System.Net.Sockets/SocketAsyncEventArgs.cs
+System.Net.Sockets/SocketAsyncOperation.cs
 System.Net.Sockets/SocketError.cs
 System.Net.Sockets/SocketException.cs
 System.Net.Sockets/SocketFlags.cs
