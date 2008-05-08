@@ -434,6 +434,7 @@ namespace System.Windows.Forms
 					
 				multicolumn = value;
 				LayoutListBox ();
+				Invalidate ();
 			}
 		}
 
@@ -1450,6 +1451,11 @@ namespace System.Windows.Forms
 				if (SelectedIndex == Items.Count - 1)
 					return -1;
 
+				if (multicolumn) {
+					selected_index = SelectedIndex + 1;
+					break;
+				}
+				
 				int bottom = 0;
 				ArrayList heights = new ArrayList ();
 				if (draw_mode == DrawMode.OwnerDrawVariable) {
@@ -2013,12 +2019,23 @@ namespace System.Windows.Forms
 			if (index < top_index) {
 				top_index = index;
 				UpdateTopItem ();
-			} else {
+			} else if (!multicolumn) {
 				int rows = items_area.Height / ItemHeight;
 				if (index >= (top_index + rows))
 				{
 					top_index = index - rows + 1;
 					UpdateTopItem ();
+				}
+			} else {
+				int rows = items_area.Height / ItemHeight;
+				int cols = items_area.Width / ColumnWidthInternal;
+				
+				if (index >= (top_index + (rows * cols))) {
+					int incolumn = ((index + 1) / rows);
+					top_index = (incolumn - (cols - 1)) * rows;
+
+					UpdateTopItem ();
+					Invalidate ();
 				}
 			}
 		}
