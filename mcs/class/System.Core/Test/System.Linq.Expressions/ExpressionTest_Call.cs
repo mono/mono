@@ -236,5 +236,21 @@ namespace MonoTests.System.Linq.Expressions {
 
 			Assert.AreEqual (42, callMethod ());
 		}
+
+		public static int DoSomethingWith (ref int a)
+		{
+			return a + 4;
+		}
+
+		[Test]
+		public void CallStaticMethodWithRefParameter ()
+		{
+			var p = Expression.Parameter (typeof (int), "i");
+
+			var c = Expression.Lambda<Func<int, int>> (
+				Expression.Call (GetType ().GetMethod ("DoSomethingWith"), p), p).Compile ();
+
+			Assert.AreEqual (42, c (38));
+		}
 	}
 }
