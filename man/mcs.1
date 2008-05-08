@@ -26,10 +26,12 @@ The
 compiler is used to compile against the Silverlight/Moonlight profile.
 This profile is designed to be used for creating Silverlight/Moonlight
 applications that will run on a web browser.   The API exposed by this
-profile is a small subset of the 2.0 API (even if it is commonly
+profile is a small subset of the 3.5 API (even if it is commonly
 referred as the 2.1 API, this API is a small subset of 2.0 with a few
 extensions), in addition this profile by default runs with
 -langversion:linq which turns on the C# 3.0 language by default.
+.PP
+See the section on packages for more information.
 .PP
 The Mono C# compiler accepts the same command line options that the
 Microsoft C# compiler does.  Those options can start with a slash or a
@@ -329,6 +331,60 @@ assembly.
 .I \-\-
 Use this to stop option parsing, and allow option-looking parameters
 to be passed on the command line.
+.PP
+.SH PACKAGES
+Depending on the invocation for the C# compiler (mcs, gmcs, or smcs)
+you will get a default set of libraries and versions of those
+libraries that are referenced.
+.PP
+The compiler uses the library path to locate libraries, and is able to
+reference libraries from a particular package if that directory is
+used.  To simplify the use of packages, the C# compiler includes the
+-pkg: command line option that is used to load specific collections of
+libraries. 
+.PP 
+Libraries visible to the compiler are stored relative to the
+installation prefix under PREFIX/lib/mono/ called the PACKAGEBASE and the
+defaults for mcs, gmcs and smcs are as follows:
+.TP 
+.I mcs
+References the PACKAGEBASE/1.0 directory
+.TP
+.I gmcs
+References the PACKAGEBASE/2.0 directory
+.TP
+.I smcs
+References the PACKAGEBASE/2.1 directory
+.PP
+Those are the only runtime profiles that exist.  Although other
+directories exist (like 3.0 and 3.5) those are not really runtime
+profiles, they are merely placeholders for extra libraries that build
+on the 2.0 foundation.
+.PP
+Software providers will distribute software that is installed relative
+to the PACKAGEBASE directory.  This is integrated into the 
+.I gacutil
+tool that not only installs public assemblies into the Global Assembly
+Cache (GAC) but also installs them into the PACKAGEBASE/PKG directory
+(where PKG is the name passed to the -package flag to gacutil).
+.PP
+As a developer, if you want to consume the Gtk# libraries, you would
+invoke the compiler like this:
+.nf
+	$ mcs -pkg:gtk-sharp-2.0 main.cs
+.fi
+The -pkg: option instructs the compiler to fetch the definitions for
+gtk-sharp-2.0 from pkg-config, this is equivalent to passing to the C#
+compiler the output of:
+.nf
+	$ pkg-config --libs gtk-sharp-2.0
+.fi
+Usually this merely references the libraries from PACKAGEBASE/PKG.
+.PP
+Although there are directory names for 3.0 and 3.5, that does not mean
+that there are 3.0 and 3.5 compiler editions or profiles.   Those are
+merely new libraries that must be manually referenced either with the
+proper -pkg: invocation, or by referencing the libraries directly. 
 .PP
 .SH SPECIAL DEFINES
 The 
