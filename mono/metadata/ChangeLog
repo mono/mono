@@ -1,5 +1,20 @@
 2008-05-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* reflection.c (mono_reflection_create_generic_class): The created type
+	must have a different container from its TypeBuilder. Otherwise they
+	will end sharing generic arguments, which is wrong.
+
+	Due to the sharing, making a generic instance of the created type using
+	the TypeBuider generic arguments resulted in the generic type definition
+	been returned, which is wrong as well.
+
+	As a bonus the code was leaking the type_params array. This memory should
+	be allocated from the image mempool.
+
+	This fixes bug #354047.
+
+2008-05-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-internals.h: Move MONO_SECMAN_FLAG macros from mini/declsec.h
 	to here 	as they are now used in assembly.c new code.
 	Added a skipverification flag to MonoAssembly.
