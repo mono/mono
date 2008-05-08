@@ -75,3 +75,11 @@ $(cmp_makefrag): $(cmp_response)
 
 $(cmp_response) $(cmp_makefrag): Makefile $(depsdir)/.stamp
 endif
+
+#
+# qh21 = Quick Hack for 2.1, to be used by impatient developers to get
+# test builds done quickly
+#
+qh21:
+	make PROFILE=net_2_1_raw
+	(cd ../../tools/tuner; rm tune.stamp; make tune.stamp && make PROFILE=net_2_1 install)
