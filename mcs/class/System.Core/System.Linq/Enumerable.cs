@@ -375,10 +375,9 @@ namespace System.Linq
 			if (comparer == null)
 				comparer = EqualityComparer<TSource>.Default;
 
-			foreach (TSource e in source) {
-				if (comparer.Equals (e, value))
+			foreach (var element in source)
+				if (comparer.Equals (element, value))
 					return true;
-			}
 
 			return false;
 		}
@@ -930,7 +929,7 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
-			TSource [] array = source as TSource [];
+			var array = source as TSource [];
 			if (array != null)
 				return array.LongLength;
 
@@ -1547,7 +1546,7 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
-			IList<TSource> list = source as IList<TSource>;
+			var list = source as IList<TSource>;
 			if (list == null)
 				list = new List<TSource> (source);
 
@@ -1711,7 +1710,6 @@ namespace System.Linq
 
 			return source.Single (PredicateOf<TSource>.Always, Fallback.Default);
 		}
-
 
 		public static TSource SingleOrDefault<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)
 		{
@@ -1954,7 +1952,7 @@ namespace System.Linq
 		static TR Sum<TA, TR> (this IEnumerable<TA> source, Func<TR, TA, TR> selector)
 		{
 			TR total = default (TR);
-			int counter = 0;
+			long counter = 0;
 			foreach (var element in source) {
 				total = selector (total, element);
 				++counter;
@@ -2014,7 +2012,7 @@ namespace System.Linq
 
 		static IEnumerable<TSource> CreateTakeWhileIterator<TSource> (IEnumerable<TSource> source, Func<TSource, bool> predicate)
 		{
-			foreach (TSource element in source) {
+			foreach (var element in source) {
 				if (!predicate (element))
 					yield break;
 
