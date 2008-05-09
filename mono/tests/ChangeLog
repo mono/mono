@@ -1,3 +1,7 @@
+2008-05-09  Kornél Pál  <kornelpal@gmail.com>
+
+	* mixed-mode: Added mixed-mode assembly tests.
+
 2008-05-08  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* bug-387274.2.il: Regression test for bug #387274.
