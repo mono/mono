@@ -432,6 +432,12 @@ namespace System.Windows.Forms {
 				data = pd.GetValue (manager.Current);
 			}
 
+#if NET_2_0
+			if ((data == null || data == DBNull.Value) && null_value != null)
+				data = null_value;
+#endif
+
+			Console.WriteLine ("PushData, value = " + data);
 			try {
 				data = FormatData (data);
 				SetControlValue (data);
