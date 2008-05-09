@@ -954,7 +954,18 @@ namespace Mono.CSharp
 
 		private void OutputAttributes (CodeAttributeDeclarationCollection attributes, string prefix, bool inline)
 		{
+#if NET_2_0
+			bool params_set = false;
+#endif
+
 			foreach (CodeAttributeDeclaration att in attributes) {
+#if NET_2_0
+				if (att.Name == "System.ParamArrayAttribute") {
+					params_set = true;
+					continue;
+				}
+#endif
+
 				GenerateAttributeDeclarationsStart (attributes);
 				if (prefix != null) {
 					Output.Write (prefix);
@@ -967,6 +978,18 @@ namespace Mono.CSharp
 					Output.WriteLine ();
 				}
 			}
+
+#if NET_2_0
+			if (params_set) {
+				if (prefix != null)
+					Output.Write (prefix);
+				Output.Write ("params");
+				if (inline)
+					Output.Write (" ");
+				else
+					Output.WriteLine ();
+			}
+#endif
 		}
 
 		private void OutputAttributeDeclaration (CodeAttributeDeclaration attribute)

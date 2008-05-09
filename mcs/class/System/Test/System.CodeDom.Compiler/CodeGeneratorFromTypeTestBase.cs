@@ -7,6 +7,7 @@
 // (c) Novell
 //
 
+using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Reflection;
@@ -146,6 +147,9 @@ namespace MonoTests.System.CodeDom.Compiler
 
 		[Test]
 		public abstract void MethodImplementationTypeOrder ();
+
+		[Test]
+		public abstract void MethodParamArrayAttribute ();
 
 		[Test]
 		public abstract void MethodReturnTypeAttributes ();
@@ -615,6 +619,7 @@ namespace MonoTests.System.CodeDom.Compiler
 
 		protected string GenerateMethodMembersType3 (CodeGeneratorOptions options)
 		{
+
 			TypeDeclaration.Name = "Test1";
 
 			CodeMemberMethod method = new CodeMemberMethod ();
@@ -763,6 +768,47 @@ namespace MonoTests.System.CodeDom.Compiler
 			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
+		protected string GenerateMethodParamArrayAttribute (CodeGeneratorOptions options)
+		{
+			TypeDeclaration.Name = "Test1";
+
+			CodeMemberMethod method = new CodeMemberMethod ();
+			method.Name = "Something";
+			method.Attributes = MemberAttributes.Public;
+			method.ReturnType = new CodeTypeReference (typeof (int));
+
+			// first parameter
+			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
+				typeof (object), "value");
+			param.Direction = FieldDirection.Out;
+			method.Parameters.Add (param);
+
+			CodeAttributeDeclaration attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "A";
+			param.CustomAttributes.Add (attrDec);
+
+			attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = typeof (ParamArrayAttribute).FullName;
+			param.CustomAttributes.Add (attrDec);
+
+			attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "B";
+			param.CustomAttributes.Add (attrDec);
+
+			// second parameter
+			param = new CodeParameterDeclarationExpression (typeof (int), null);
+			param.Direction = FieldDirection.Ref;
+			method.Parameters.Add (param);
+
+			attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "C";
+			param.CustomAttributes.Add (attrDec);
+
+			TypeDeclaration.Members.Add (method);
+
+			return GenerateCodeFromType (TypeDeclaration, options);
+		}
+
 		protected string GenerateMethodReturnTypeAttributes (CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
@@ -782,6 +828,10 @@ namespace MonoTests.System.CodeDom.Compiler
 			attrDec.Name = "B";
 			method.CustomAttributes.Add (attrDec);
 
+			attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = typeof (ParamArrayAttribute).FullName;
+			method.CustomAttributes.Add (attrDec);
+
 			// return TypeDeclaration custom attributes
 			attrDec = new CodeAttributeDeclaration ();
 			attrDec.Name = "C";
@@ -789,6 +839,10 @@ namespace MonoTests.System.CodeDom.Compiler
 				new CodePrimitiveExpression (false)));
 			attrDec.Arguments.Add (new CodeAttributeArgument ("A2",
 				new CodePrimitiveExpression (true)));
+			method.ReturnTypeCustomAttributes.Add (attrDec);
+
+			attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = typeof (ParamArrayAttribute).FullName;
 			method.ReturnTypeCustomAttributes.Add (attrDec);
 
 			attrDec = new CodeAttributeDeclaration ();

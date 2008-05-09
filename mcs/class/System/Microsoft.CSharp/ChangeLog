@@ -1,3 +1,9 @@
+2008-05-09  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CSharpCodeGenerator.cs: On 2.0 profile, add support for params
+	keyword when System.ParamArrayAttribute custom attribute is added.
+	Fixes bug #387877.
+
 2008-05-07  Martin Baulig  <martin@ximian.com>
 
 	* CSharpCodeCompiler.cs: Don't mess around with the

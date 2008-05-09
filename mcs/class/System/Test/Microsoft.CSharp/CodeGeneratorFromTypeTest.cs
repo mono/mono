@@ -756,6 +756,22 @@ namespace MonoTests.Microsoft.CSharp
 		}
 
 		[Test]
+		public override void MethodParamArrayAttribute ()
+		{
+			string code = GenerateMethodParamArrayAttribute (Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class Test1 {{{0}" +
+				"    {0}" +
+#if NET_2_0
+				"    public virtual int Something([A()] [B()] params out object value, [C()] ref int ) {{{0}" +
+#else
+				"    public virtual int Something([A()] [System.ParamArrayAttribute()] [B()] out object value, [C()] ref int ) {{{0}" +
+#endif
+				"    }}{0}" +
+				"}}{0}", NewLine), code);
+		}
+
+		[Test]
 		public override void MethodReturnTypeAttributes ()
 		{
 			string code = GenerateMethodReturnTypeAttributes (Options);
@@ -764,8 +780,19 @@ namespace MonoTests.Microsoft.CSharp
 				"    {0}" +
 				"    [A()]{0}" +
 				"    [B()]{0}" +
+#if NET_2_0
+				"    params{0}" +
+#else
+				"    [System.ParamArrayAttribute()]{0}" +
+#endif
 				"    [return: C(A1=false, A2=true)]{0}" +
+#if !NET_2_0
+				"    [return: System.ParamArrayAttribute()]{0}" +
+#endif
 				"    [return: D()]{0}" +
+#if NET_2_0
+				"    return: params{0}" +
+#endif
 				"    public virtual int Execute() {{{0}" +
 				"    }}{0}" +
 				"}}{0}", NewLine), code);
@@ -1378,6 +1405,14 @@ namespace MonoTests.Microsoft.CSharp
 		public override void MethodImplementationTypeOrder ()
 		{
 			string code = GenerateMethodImplementationTypeOrder (Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public delegate void Test1();{0}{0}", NewLine), code);
+		}
+
+		[Test]
+		public override void MethodParamArrayAttribute ()
+		{
+			string code = GenerateMethodParamArrayAttribute (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
@@ -2090,6 +2125,21 @@ namespace MonoTests.Microsoft.CSharp
 		}
 
 		[Test]
+		public override void MethodParamArrayAttribute ()
+		{
+			string code = GenerateMethodParamArrayAttribute (Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public interface Test1 {{{0}" +
+				"    {0}" +
+#if NET_2_0
+				"    int Something([A()] [B()] params out object value, [C()] ref int );{0}" +
+#else
+				"    int Something([A()] [System.ParamArrayAttribute()] [B()] out object value, [C()] ref int );{0}" +
+#endif
+				"}}{0}", NewLine), code);
+		}
+
+		[Test]
 		public override void MethodReturnTypeAttributes ()
 		{
 			string code = GenerateMethodReturnTypeAttributes (Options);
@@ -2098,8 +2148,19 @@ namespace MonoTests.Microsoft.CSharp
 				"    {0}" +
 				"    [A()]{0}" +
 				"    [B()]{0}" +
+#if NET_2_0
+				"    params{0}" +
+#else
+				"    [System.ParamArrayAttribute()]{0}" +
+#endif
 				"    [return: C(A1=false, A2=true)]{0}" +
+#if !NET_2_0
+				"    [return: System.ParamArrayAttribute()]{0}" +
+#endif
 				"    [return: D()]{0}" +
+#if NET_2_0
+				"    return: params{0}" +
+#endif
 				"    int Execute();{0}" +
 				"}}{0}", NewLine), code);
 		}
@@ -2898,6 +2959,22 @@ namespace MonoTests.Microsoft.CSharp
 		}
 
 		[Test]
+		public override void MethodParamArrayAttribute ()
+		{
+			string code = GenerateMethodParamArrayAttribute (Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public struct Test1 {{{0}" +
+				"    {0}" +
+#if NET_2_0
+				"    public virtual int Something([A()] [B()] params out object value, [C()] ref int ) {{{0}" +
+#else
+				"    public virtual int Something([A()] [System.ParamArrayAttribute()] [B()] out object value, [C()] ref int ) {{{0}" +
+#endif
+				"    }}{0}" +
+				"}}{0}", NewLine), code);
+		}
+
+		[Test]
 		public override void MethodReturnTypeAttributes ()
 		{
 			string code = GenerateMethodReturnTypeAttributes (Options);
@@ -2906,8 +2983,19 @@ namespace MonoTests.Microsoft.CSharp
 				"    {0}" +
 				"    [A()]{0}" +
 				"    [B()]{0}" +
+#if NET_2_0
+				"    params{0}" +
+#else
+				"    [System.ParamArrayAttribute()]{0}" +
+#endif
 				"    [return: C(A1=false, A2=true)]{0}" +
+#if !NET_2_0
+				"    [return: System.ParamArrayAttribute()]{0}" +
+#endif
 				"    [return: D()]{0}" +
+#if NET_2_0
+				"    return: params{0}" +
+#endif
 				"    public virtual int Execute() {{{0}" +
 				"    }}{0}" +
 				"}}{0}", NewLine), code);
@@ -3612,6 +3700,16 @@ namespace MonoTests.Microsoft.CSharp
 		public override void MethodNewSlotTest ()
 		{
 			string code = GenerateMethodNewSlot (Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public enum Test1 {{{0}" +
+				"    {0}" +
+				"}}{0}", NewLine), code);
+		}
+
+		[Test]
+		public override void MethodParamArrayAttribute ()
+		{
+			string code = GenerateMethodParamArrayAttribute (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +

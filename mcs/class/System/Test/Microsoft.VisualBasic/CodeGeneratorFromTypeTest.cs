@@ -762,6 +762,22 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
+		public override void MethodParamArrayAttribute ()
+		{
+			string code = GenerateMethodParamArrayAttribute (Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}" +
+				"    {0}" +
+#if NET_2_0
+				"    Public Overridable Function Something(<A(), System.ParamArrayAttribute(), B()> ByRef value As Object, <C()> ByRef __exception As Integer) As Integer{0}" +
+#else
+				"    Public Overridable Function Something(<A(), System.ParamArrayAttribute(), B()> ByRef value As Object, <C()> ByRef  As Integer) As Integer{0}" +
+#endif
+				"    End Function{0}" +
+				"End Class{0}", NewLine), code);
+		}
+
+		[Test]
 		public override void MethodReturnTypeAttributes ()
 		{
 			string code = GenerateMethodReturnTypeAttributes (Options);
@@ -769,8 +785,9 @@ namespace MonoTests.Microsoft.VisualBasic
 				"Public Class Test1{0}" +
 				"    {0}" +
 				"    <A(),  _{0}" +
-				"     B()>  _{0}" +
-				"    Public Overridable Function Execute() As <C(A1:=false, A2:=true), D()> Integer{0}" +
+				"     B(),  _{0}" +
+				"     System.ParamArrayAttribute()>  _{0}" +
+				"    Public Overridable Function Execute() As <C(A1:=false, A2:=true), System.ParamArrayAttribute(), D()> Integer{0}" +
 				"    End Function{0}" +
 				"End Class{0}", NewLine), code);
 		}
@@ -1303,6 +1320,14 @@ namespace MonoTests.Microsoft.VisualBasic
 		public override void MethodImplementationTypeOrder ()
 		{
 			string code = GenerateMethodImplementationTypeOrder (Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Delegate Sub Test1(){0}{0}", NewLine), code);
+		}
+
+		[Test]
+		public override void MethodParamArrayAttribute ()
+		{
+			string code = GenerateMethodParamArrayAttribute (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Delegate Sub Test1(){0}{0}", NewLine), code);
 		}
@@ -1992,6 +2017,21 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
+		public override void MethodParamArrayAttribute ()
+		{
+			string code = GenerateMethodParamArrayAttribute (Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Interface Test1{0}" +
+				"    {0}" +
+#if NET_2_0
+				"    Function Something(<A(), System.ParamArrayAttribute(), B()> ByRef value As Object, <C()> ByRef __exception As Integer) As Integer{0}" +
+#else
+				"    Function Something(<A(), System.ParamArrayAttribute(), B()> ByRef value As Object, <C()> ByRef  As Integer) As Integer{0}" +
+#endif
+				"End Interface{0}", NewLine), code);
+		}
+
+		[Test]
 		public override void MethodReturnTypeAttributes ()
 		{
 			string code = GenerateMethodReturnTypeAttributes (Options);
@@ -1999,8 +2039,9 @@ namespace MonoTests.Microsoft.VisualBasic
 				"Public Interface Test1{0}" +
 				"    {0}" +
 				"    <A(),  _{0}" +
-				"     B()>  _{0}" +
-				"    Function Execute() As <C(A1:=false, A2:=true), D()> Integer{0}" +
+				"     B(),  _{0}" +
+				"     System.ParamArrayAttribute()>  _{0}" +
+				"    Function Execute() As <C(A1:=false, A2:=true), System.ParamArrayAttribute(), D()> Integer{0}" +
 				"End Interface{0}", NewLine), code);
 		}
 
@@ -2762,6 +2803,22 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
+		public override void MethodParamArrayAttribute ()
+		{
+			string code = GenerateMethodParamArrayAttribute (Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Structure Test1{0}" +
+				"    {0}" +
+#if NET_2_0
+				"    Public Overridable Function Something(<A(), System.ParamArrayAttribute(), B()> ByRef value As Object, <C()> ByRef __exception As Integer) As Integer{0}" +
+#else
+				"    Public Overridable Function Something(<A(), System.ParamArrayAttribute(), B()> ByRef value As Object, <C()> ByRef  As Integer) As Integer{0}" +
+#endif
+				"    End Function{0}" +
+				"End Structure{0}", NewLine), code);
+		}
+
+		[Test]
 		public override void MethodReturnTypeAttributes ()
 		{
 			string code = GenerateMethodReturnTypeAttributes (Options);
@@ -2769,8 +2826,9 @@ namespace MonoTests.Microsoft.VisualBasic
 				"Public Structure Test1{0}" +
 				"    {0}" +
 				"    <A(),  _{0}" +
-				"     B()>  _{0}" +
-				"    Public Overridable Function Execute() As <C(A1:=false, A2:=true), D()> Integer{0}" +
+				"     B(),  _{0}" +
+				"     System.ParamArrayAttribute()>  _{0}" +
+				"    Public Overridable Function Execute() As <C(A1:=false, A2:=true), System.ParamArrayAttribute(), D()> Integer{0}" +
 				"    End Function{0}" +
 				"End Structure{0}", NewLine), code);
 		}
@@ -3384,6 +3442,16 @@ namespace MonoTests.Microsoft.VisualBasic
 		public override void MethodImplementationTypeOrder ()
 		{
 			string code = GenerateMethodImplementationTypeOrder (Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Enum Test1{0}" +
+				"    {0}" +
+				"End Enum{0}", NewLine), code);
+		}
+
+		[Test]
+		public override void MethodParamArrayAttribute ()
+		{
+			string code = GenerateMethodParamArrayAttribute (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Enum Test1{0}" +
 				"    {0}" +
