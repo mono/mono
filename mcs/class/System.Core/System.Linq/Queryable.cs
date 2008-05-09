@@ -30,6 +30,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -136,15 +137,23 @@ namespace System.Linq {
 
 		#region AsQueryable
 
+		[MonoTODO]
 		public static IQueryable<TElement> AsQueryable<TElement> (this IEnumerable<TElement> source)
 		{
-			if (source is IQueryable<TElement>)
-				return (IQueryable<TElement>) source;
+			var queryable = source as IQueryable<TElement>;
+			if (queryable != null)
+				return queryable;
+
 			throw new NotImplementedException ();
 		}
 
-		public static IQueryable AsQueryable (this IQueryable source)
+		[MonoTODO]
+		public static IQueryable AsQueryable (this IEnumerable source)
 		{
+			var queryable = source as IQueryable;
+			if (queryable != null)
+				return queryable;
+
 			throw new NotImplementedException ();
 		}
 
