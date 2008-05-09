@@ -150,6 +150,9 @@ System.Net/WebResponse_2_1.cs
 ../System/System.Net.Sockets/TcpListener.cs
 ../System/System.Net.Sockets/TransmitFileOptions.cs
 ../System/System.Net.Sockets/UdpClient.cs
+../System/System.Net.Sockets/SendPacketsElement.cs
+../System/System.Net.Sockets/SocketAsyncEventArgs.cs
+../System/System.Net.Sockets/SocketAsyncOperation.cs
 ../System/System.Net/TransportType.cs
 ../System/System.Net/WebAsyncResult.cs
 ../System/System.Net/WebException.cs
