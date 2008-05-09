@@ -1,3 +1,18 @@
+2008-05-09  Marek Habersack  <mhabersack@novell.com>
+
+	* SocketAsyncEventArgs.cs: implemented support for executing
+	asynchronous socket actions, called from the new xxxxAsync methods
+	in Socket. The asynchronous operations do not use the ThreadPool
+	as I can't get the sample applications to work (send/receive
+	callbacks don't work) - it may change in the future.
+
+	* Socket.cs: implemented several xxxxAsync 2.0sp1 methods. The
+	ones not implemented for now are: ReceiveMessageFromAsync and
+	SendPacketsAsync. AcceptAsync doesn't perform the check for the
+	buffer size for now - need to implement runtime support for that.
+	Made several methods internal, so that they can be accessed from
+	SocketAsyncEventArgs code.
+
 2008-05-08  Marek Habersack  <mhabersack@novell.com>
 
 	* SocketAsyncOperation.cs, SendPacketsElement.cs,

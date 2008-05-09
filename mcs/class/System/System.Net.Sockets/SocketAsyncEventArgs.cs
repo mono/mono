@@ -29,11 +29,12 @@
 #if NET_2_0
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace System.Net.Sockets
 {
 	public class SocketAsyncEventArgs : EventArgs, IDisposable
-	{		
+	{
 		public event EventHandler<SocketAsyncEventArgs> Completed;
 
 		IList <ArraySegment <byte>> _bufferList;
@@ -64,6 +65,8 @@ namespace System.Net.Sockets
 		public SocketFlags SocketFlags { get; set; }
 		public object UserToken { get; set; }
 
+		Socket curSocket;
+		
 		public SocketAsyncEventArgs ()
 		{
 			AcceptSocket = null;
@@ -96,12 +99,7 @@ namespace System.Net.Sockets
 
 			if (disposing)
 				GC.SuppressFinalize (this);
-		}
-		
-		public void Dispose ()
-		{
-			Dispose (true);
-		}
+		}		
 
 		void IDisposable.Dispose ()
 		{
@@ -110,8 +108,11 @@ namespace System.Net.Sockets
 		
 		protected virtual void OnCompleted (SocketAsyncEventArgs e)
 		{
-			if (Completed != null)
-				Completed (this, e);
+			if (e == null)
+				return;
+			
+			if (e.Completed != null)
+				e.Completed (e.curSocket, e);
 		}
 
 		public void SetBuffer (int offset, int count)
@@ -134,7 +135,7 @@ namespace System.Net.Sockets
 				if (offset < 0 || offset >= buflen)
 					throw new ArgumentOutOfRangeException ("offset");
 
-				if (count < 0 || count + offset >= buflen)
+				if (count < 0 || count + offset > buflen)
 					throw new ArgumentOutOfRangeException ("count");
 			}
 
@@ -142,6 +143,171 @@ namespace System.Net.Sockets
 			Offset = offset;
 			Buffer = buffer;
 		}
+
+#region Internals
+		void AcceptCallback ()
+		{
+			SocketError = SocketError.Success;
+			LastOperation = SocketAsyncOperation.Accept;
+			try {
+				curSocket.Accept (AcceptSocket);
+			} catch (SocketException ex) {
+				SocketError = ex.SocketErrorCode;
+				throw;
+			} finally {
+				OnCompleted (this);
+			}
+		}
+
+		void ReceiveCallback ()
+		{
+			SocketError = SocketError.Success;
+			LastOperation = SocketAsyncOperation.Receive;
+			SocketError error = SocketError.Success;
+			
+			try {
+				BytesTransferred = curSocket.Receive_nochecks (Buffer, Offset, Count, SocketFlags, out error);
+			} finally {
+				SocketError = error;
+				OnCompleted (this);
+			}
+		}
+
+		void ConnectCallback ()
+		{
+			SocketError = SocketError.Success;
+			LastOperation = SocketAsyncOperation.Connect;
+			SocketError error = SocketError.Success;
+
+			try {
+				if (!curSocket.Blocking) {
+					int success;
+					curSocket.Poll (-1, SelectMode.SelectWrite, out success);
+					SocketError = (SocketError)success;
+					if (success == 0)
+						curSocket.Connected = true;
+					else
+						return;
+				} else {
+					curSocket.seed_endpoint = RemoteEndPoint;
+					curSocket.Connect (RemoteEndPoint);
+					curSocket.Connected = true;
+				}
+			} finally {
+				SocketError = error;
+				OnCompleted (this);
+			}
+		}
+
+		void SendCallback ()
+		{
+			SocketError = SocketError.Success;
+			LastOperation = SocketAsyncOperation.Send;
+			SocketError error = SocketError.Success;
+
+			try {
+				BytesTransferred = curSocket.Send_nochecks (Buffer, Offset, Count, SocketFlags.None, out error);
+			} finally {
+				SocketError = error;
+				OnCompleted (this);
+			}
+		}
+
+		void DisconnectCallback ()
+		{
+			SocketError = SocketError.Success;
+			LastOperation = SocketAsyncOperation.Disconnect;
+
+			try {
+				curSocket.Disconnect (DisconnectReuseSocket);
+			} catch (SocketException ex) {
+				SocketError = ex.SocketErrorCode;
+				throw;
+			} finally {
+				OnCompleted (this);
+			}
+		}
+
+		void ReceiveFromCallback ()
+		{
+			SocketError = SocketError.Success;
+			LastOperation = SocketAsyncOperation.ReceiveFrom;
+
+			try {
+				EndPoint ep = RemoteEndPoint;
+				BytesTransferred = curSocket.ReceiveFrom_nochecks (Buffer, Offset, Count, SocketFlags, ref ep);
+			} catch (SocketException ex) {
+				SocketError = ex.SocketErrorCode;
+				throw;
+			} finally {
+				OnCompleted (this);
+			}
+		}
+
+		void SendToCallback ()
+		{
+			SocketError = SocketError.Success;
+			LastOperation = SocketAsyncOperation.SendTo;
+			int total = 0;
+			
+			try {
+				int count = Count;
+
+				while (total < count)
+					total += curSocket.SendTo_nochecks (Buffer, Offset, count, SocketFlags, RemoteEndPoint);
+				BytesTransferred = total;
+			} catch (SocketException ex) {
+				SocketError = ex.SocketErrorCode;
+				throw;
+			} finally {
+				OnCompleted (this);
+			}
+		}
+		
+		internal void DoOperation (SocketAsyncOperation operation, Socket socket)
+		{
+			ThreadStart callback;
+			curSocket = socket;
+			
+			switch (operation) {
+				case SocketAsyncOperation.Accept:
+					callback = new ThreadStart (AcceptCallback);
+					break;
+
+				case SocketAsyncOperation.Receive:
+					callback = new ThreadStart (ReceiveCallback);
+					break;
+
+				case SocketAsyncOperation.Connect:
+					callback = new ThreadStart (ConnectCallback);
+					break;
+
+				case SocketAsyncOperation.Disconnect:
+					callback = new ThreadStart (DisconnectCallback);
+					break;
+
+				case SocketAsyncOperation.ReceiveFrom:
+					callback = new ThreadStart (ReceiveFromCallback);
+					break;
+					
+				case SocketAsyncOperation.Send:
+					callback = new ThreadStart (SendCallback);
+					break;
+
+				case SocketAsyncOperation.SendTo:
+					callback = new ThreadStart (SendToCallback);
+					break;
+					
+				default:
+					throw new NotSupportedException ();
+					break;
+			}
+
+			Thread t = new Thread (callback);
+			t.IsBackground = true;
+			t.Start ();
+		}
+#endregion
 	}
 }
 #endif

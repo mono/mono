@@ -566,7 +566,7 @@ namespace System.Net.Sockets
 		 * As such, this value is set on Bind, SentTo, ReceiveFrom,
 		 * Connect, etc.
  		 */
-		private EndPoint seed_endpoint = null;
+		internal EndPoint seed_endpoint = null;
 
 #if NET_2_0
 		private bool isbound;
@@ -798,6 +798,8 @@ namespace System.Net.Sockets
 			get {
 				return(connected);
 			}
+
+			internal set { connected = value; }
 		}
 
 #if NET_2_0
@@ -1281,6 +1283,41 @@ namespace System.Net.Sockets
 			}
 		}
 
+#if NET_2_0
+		public bool AcceptAsync (SocketAsyncEventArgs e)
+		{
+			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
+			
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+			if (!IsBound)
+				throw new InvalidOperationException ("You must call the Bind method before performing this operation.");
+			if (!islistening)
+				throw new InvalidOperationException ("You must call the Listen method before performing this operation.");
+			if (e.BufferList != null)
+				throw new ArgumentException ("Multiple buffers cannot be used with this method.");
+			if (e.Count < 0)
+				throw new ArgumentOutOfRangeException ("e.Count");
+			
+			Socket acceptSocket = e.AcceptSocket;
+			if (acceptSocket != null) {
+				if (acceptSocket.IsBound || acceptSocket.Connected)
+					throw new InvalidOperationException ("AcceptSocket: The socket must not be bound or connected.");
+			} else
+				e.AcceptSocket = new Socket (AddressFamily, SocketType, ProtocolType);
+
+			try {
+				e.DoOperation (SocketAsyncOperation.Accept, this);
+			} catch {
+				((IDisposable)e).Dispose ();
+				throw;
+			}
+
+			// We always return true for now
+			return true;
+		}
+#endif
+		
 		// Creates a new system socket, returning the handle
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static IntPtr Accept_internal(IntPtr sock, out int error);
@@ -1315,7 +1352,7 @@ namespace System.Net.Sockets
 			return(accepted);
 		}
 
-		private void Accept (Socket acceptSocket)
+		internal void Accept (Socket acceptSocket)
 		{
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
@@ -1967,8 +2004,27 @@ namespace System.Net.Sockets
 		{
 			this.Close ();
 		}
-#endif
 
+		public bool ConnectAsync (SocketAsyncEventArgs e)
+		{
+			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
+			
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+			if (islistening)
+				throw new InvalidOperationException ("You may not perform this operation after calling the Listen method.");
+			if (e.RemoteEndPoint == null)
+				throw new ArgumentNullException ("remoteEP", "Value cannot be null.");
+			if (e.BufferList != null)
+				throw new ArgumentException ("Multiple buffers cannot be used with this method.");
+
+			e.DoOperation (SocketAsyncOperation.Connect, this);
+
+			// We always return true for now
+			return true;
+		}
+#endif
+		
 		// Connects to the remote address
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void Connect_internal(IntPtr sock,
@@ -2077,6 +2133,18 @@ namespace System.Net.Sockets
 			Connect (hostent.AddressList, port);
 		}
 
+#if NET_2_0
+		public bool DisconnectAsync (SocketAsyncEventArgs e)
+		{
+			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
+			e.DoOperation (SocketAsyncOperation.Disconnect, this);
+
+			return true;
+		}
+#endif
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void Disconnect_internal(IntPtr sock,
 							       bool reuse,
@@ -2523,7 +2591,7 @@ namespace System.Net.Sockets
 		 * also needs to check the socket error status, but
 		 * getsockopt(..., SO_ERROR) clears the error.
 		 */
-		private bool Poll (int time_us, SelectMode mode, out int socket_error)
+		internal bool Poll (int time_us, SelectMode mode, out int socket_error)
 		{
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
@@ -2553,6 +2621,28 @@ namespace System.Net.Sockets
 			
 			return result;
 		}
+
+#if NET_2_0
+		public bool ReceiveAsync (SocketAsyncEventArgs e)
+		{
+			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
+			//
+			// LAME SPEC: the ArgumentException is never thrown, instead an NRE is
+			// thrown when e.Buffer and e.BufferList are null (works fine when one is
+			// set to a valid object)
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
+			// We do not support recv into multiple buffers yet
+			if (e.BufferList != null)
+				throw new NotSupportedException ("Mono doesn't support using BufferList at this point.");
+			
+			e.DoOperation (SocketAsyncOperation.Receive, this);
+
+			// We always return true for now
+			return true;
+		}
+#endif
 		
 		public int Receive (byte [] buf)
 		{
@@ -2697,7 +2787,7 @@ namespace System.Net.Sockets
 							   SocketFlags flags,
 							   out int error);
 
-		int Receive_nochecks (byte [] buf, int offset, int size, SocketFlags flags, out SocketError error)
+		internal int Receive_nochecks (byte [] buf, int offset, int size, SocketFlags flags, out SocketError error)
 		{
 			int nativeError;
 			int ret = Receive_internal (socket, buf, offset, size, flags, out nativeError);
@@ -2709,6 +2799,25 @@ namespace System.Net.Sockets
 			
 			return ret;
 		}
+
+#if NET_2_0
+		public bool ReceiveFromAsync (SocketAsyncEventArgs e)
+		{
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
+			// We do not support recv into multiple buffers yet
+			if (e.BufferList != null)
+				throw new NotSupportedException ("Mono doesn't support using BufferList at this point.");
+			if (e.RemoteEndPoint == null)
+				throw new ArgumentNullException ("remoteEP", "Value cannot be null.");
+
+			e.DoOperation (SocketAsyncOperation.ReceiveFrom, this);
+
+			// We always return true for now
+			return true;
+		}
+#endif
 		
 		public int ReceiveFrom (byte [] buf, ref EndPoint remote_end)
 		{
@@ -2786,8 +2895,8 @@ namespace System.Net.Sockets
 			return ReceiveFrom_nochecks (buf, offset, size, flags, ref remote_end);
 		}
 
-		int ReceiveFrom_nochecks (byte [] buf, int offset, int size, SocketFlags flags,
-					  ref EndPoint remote_end)
+		internal int ReceiveFrom_nochecks (byte [] buf, int offset, int size, SocketFlags flags,
+						   ref EndPoint remote_end)
 		{
 			SocketAddress sockaddr = remote_end.Serialize();
 			int cnt, error;
@@ -2828,6 +2937,16 @@ namespace System.Net.Sockets
 
 #if NET_2_0
 		[MonoTODO ("Not implemented")]
+		public bool ReceiveMessageFromAsync (SocketAsyncEventArgs e)
+		{
+			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+			
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO ("Not implemented")]
 		public int ReceiveMessageFrom (byte[] buffer, int offset,
 					       int size,
 					       ref SocketFlags socketFlags,
@@ -2853,6 +2972,32 @@ namespace System.Net.Sockets
 			 * IPPacketInformation
 			 */
 			throw new NotImplementedException ();
+		}
+
+		[MonoTODO ("Not implemented")]
+		public bool SendPacketsAsync (SocketAsyncEventArgs e)
+		{
+			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
+			
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+			
+			throw new NotImplementedException ();
+		}
+
+		public bool SendAsync (SocketAsyncEventArgs e)
+		{
+			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
+			
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+			if (e.Buffer == null && e.BufferList == null)
+				throw new ArgumentException ("Either e.Buffer or e.BufferList must be valid buffers.");
+
+			e.DoOperation (SocketAsyncOperation.Send, this);
+
+			// We always return true for now
+			return true;
 		}
 #endif
 
@@ -2988,7 +3133,7 @@ namespace System.Net.Sockets
 							SocketFlags flags,
 							out int error);
 
-		int Send_nochecks (byte [] buf, int offset, int size, SocketFlags flags, out SocketError error)
+		internal int Send_nochecks (byte [] buf, int offset, int size, SocketFlags flags, out SocketError error)
 		{
 			if (size == 0) {
 				error = SocketError.Success;
@@ -3047,8 +3192,23 @@ namespace System.Net.Sockets
 			/* FIXME: Implement TransmitFile */
 			throw new NotImplementedException ();
 		}
-#endif
 
+		public bool SendToAsync (SocketAsyncEventArgs e)
+		{
+			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
+			
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+			if (e.RemoteEndPoint == null)
+				throw new ArgumentNullException ("remoteEP", "Value cannot be null.");
+			
+			e.DoOperation (SocketAsyncOperation.SendTo, this);
+
+			// We always return true for now
+			return true;
+		}
+#endif
+		
 		public int SendTo (byte [] buffer, EndPoint remote_end)
 		{
 			if (disposed && closed)
@@ -3124,8 +3284,8 @@ namespace System.Net.Sockets
 			return SendTo_nochecks (buffer, offset, size, flags, remote_end);
 		}
 
-		int SendTo_nochecks (byte [] buffer, int offset, int size, SocketFlags flags,
-				   EndPoint remote_end)
+		internal int SendTo_nochecks (byte [] buffer, int offset, int size, SocketFlags flags,
+					      EndPoint remote_end)
 		{
 			SocketAddress sockaddr = remote_end.Serialize ();
 
