@@ -441,7 +441,6 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void DataSourceNullValueTest ()
 		{
 			Control c = new Control ();
@@ -464,7 +463,6 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void NullValueTest ()
 		{
 			Control c = new Control ();
