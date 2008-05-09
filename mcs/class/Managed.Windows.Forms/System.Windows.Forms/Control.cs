@@ -746,6 +746,10 @@ namespace System.Windows.Forms
 				return res.GetEnumerator ();
 			}
 
+			internal ArrayList ImplicitControls {
+				get { return impl_list; }
+			}
+			
 			internal Control [] GetAllControls () {
 				if (all_controls != null)
 					return all_controls;
@@ -3976,9 +3980,15 @@ namespace System.Windows.Forms
 					for (int i=0; i<controls.Length; i++)
 						controls [i].Invalidate ();
 				} else {
+					// We always need to invalidate our implicit controls,
+					// for things like ListView
+					if (child_controls.ImplicitControls != null)
+						foreach (Control c in child_controls.ImplicitControls)
+							c.Invalidate ();
+				
 					// If any of our children are transparent, we
 					// have to invalidate them anyways
-					foreach (Control c in child_controls.GetAllControls ())
+					foreach (Control c in Controls)
 						if (c.BackColor.A != 255)
 							c.Invalidate ();
 				}

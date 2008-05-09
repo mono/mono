@@ -2394,6 +2394,7 @@ namespace System.Windows.Forms
 			public ItemControl (ListView owner)
 			{
 				this.owner = owner;
+				this.SetStyle (ControlStyles.DoubleBuffer, true);
 				DoubleClick += new EventHandler(ItemsDoubleClick);
 				MouseDown += new MouseEventHandler(ItemsMouseDown);
 				MouseMove += new MouseEventHandler(ItemsMouseMove);
@@ -3953,6 +3954,7 @@ namespace System.Windows.Forms
 			public HeaderControl (ListView owner)
 			{
 				this.owner = owner;
+				this.SetStyle (ControlStyles.DoubleBuffer, true);
 				MouseDown += new MouseEventHandler (HeaderMouseDown);
 				MouseMove += new MouseEventHandler (HeaderMouseMove);
 				MouseUp += new MouseEventHandler (HeaderMouseUp);
@@ -5054,9 +5056,13 @@ namespace System.Windows.Forms
 					throw new InvalidOperationException ();
 #endif
 
+				owner.BeginUpdate ();
+				
 				foreach (ListViewItem item in items)
 					AddItem (item);
 
+				owner.EndUpdate ();
+				
 				CollectionChanged (true);
 			}
 

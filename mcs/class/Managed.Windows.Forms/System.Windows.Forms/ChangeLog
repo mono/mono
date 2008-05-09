@@ -1,3 +1,14 @@
+2008-05-08  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: We need to invalidate implicit children even when
+	invalidate is called with invalidatechildren = false.  (Implicit
+	children are really part of the parent.)
+	* ListView.cs: Double-buffer internal child controls for less
+	flicker.
+	* ThemeWin32Classic.cs: Remove an extra nested loop in drawing
+	owner ListView subitems for greatly increased performance.
+	[Fixes bug #388477]
+
 2008-05-08  Carlos Alberto Cortez <calebrto.cortez@gmail.com>
 
 	* FileDialog.cs: When the user types a wildcard character in the
