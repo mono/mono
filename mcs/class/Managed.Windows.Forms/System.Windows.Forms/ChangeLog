@@ -1,5 +1,11 @@
 2008-05-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* FileDialog.cs: Apply the custom filter typed by the user in the file
+	name combobox as much as possible while navigating in the file dialog.
+	Fixes #385261.
+
+2008-05-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* Binding.cs: Actually use NullValue if the retrieved value of
 	data source is null or DBNull. Makes a test pass.
 

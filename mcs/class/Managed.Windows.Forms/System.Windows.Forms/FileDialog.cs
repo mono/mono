@@ -791,6 +791,16 @@ namespace System.Windows.Forms
 			}
 		}
 
+		internal string CustomFilter {
+			get {
+				string fname = fileNameComboBox.Text;
+				if (fname.IndexOfAny (wildcard_chars) == -1)
+					return null;
+
+				return fname;
+			}
+		}
+
 		private void SelectFilter ()
 		{
 			int filter_to_select = (filterIndex - 1);
@@ -849,14 +859,14 @@ namespace System.Windows.Forms
 						FSEntry fsEntry = item.FSEntry;
 
 						if ((fsEntry.Attributes & FileAttributes.Directory) == FileAttributes.Directory) {
-							mwfFileView.ChangeDirectory (null, fsEntry.FullName);
+							mwfFileView.ChangeDirectory (null, fsEntry.FullName, CustomFilter);
 							return;
 						}
 					} else {
 						foreach (FileViewListViewItem item in sl) {
 							FSEntry fsEntry = item.FSEntry;
 							if ((fsEntry.Attributes & FileAttributes.Directory) == FileAttributes.Directory) {
-								mwfFileView.ChangeDirectory (null, fsEntry.FullName);
+								mwfFileView.ChangeDirectory (null, fsEntry.FullName, CustomFilter);
 								return;
 							}
 						}
@@ -897,7 +907,7 @@ namespace System.Windows.Forms
 				} else {
 					DirectoryInfo dirInfo = new DirectoryInfo (fileName);
 					if (dirInfo.Exists) {
-						mwfFileView.ChangeDirectory (null, dirInfo.FullName);
+						mwfFileView.ChangeDirectory (null, dirInfo.FullName, CustomFilter);
 						fileNameComboBox.Text = null;
 						return;
 					} else {
@@ -987,9 +997,9 @@ namespace System.Windows.Forms
 					MessageBox.Show (message, openSaveButton.Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
 					if (InitialDirectory.Length == 0 || !Directory.Exists (InitialDirectory))
-						mwfFileView.ChangeDirectory (null, lastFolder);
+						mwfFileView.ChangeDirectory (null, lastFolder, CustomFilter);
 					else
-						mwfFileView.ChangeDirectory (null, InitialDirectory);
+						mwfFileView.ChangeDirectory (null, InitialDirectory, CustomFilter);
 					return;
 				}
 			}
@@ -1121,10 +1131,10 @@ namespace System.Windows.Forms
 		void OnClickSmallButtonToolBar (object sender, ToolBarButtonClickEventArgs e)
 		{
 			if (e.Button == upToolBarButton) {
-				mwfFileView.OneDirUp ();
+				mwfFileView.OneDirUp (CustomFilter);
 			} else
 			if (e.Button == backToolBarButton) {
-				mwfFileView.PopDir ();
+				mwfFileView.PopDir (CustomFilter);
 			} else
 			if (e.Button == newdirToolBarButton) {
 				mwfFileView.CreateNewFolder ();
@@ -1162,12 +1172,12 @@ namespace System.Windows.Forms
 		
 		void OnDirectoryChangedDirComboBox (object sender, EventArgs e)
 		{
-			mwfFileView.ChangeDirectory (sender, dirComboBox.CurrentFolder);
+			mwfFileView.ChangeDirectory (sender, dirComboBox.CurrentFolder, CustomFilter);
 		}
 		
 		void OnDirectoryChangedPopupButtonPanel (object sender, EventArgs e)
 		{
-			mwfFileView.ChangeDirectory (sender, popupButtonPanel.CurrentFolder);
+			mwfFileView.ChangeDirectory (sender, popupButtonPanel.CurrentFolder, CustomFilter);
 		}
 		
 		void OnCheckCheckChanged (object sender, EventArgs e)
@@ -2416,8 +2426,13 @@ namespace System.Windows.Forms
 			
 			EnableOrDisableDirstackObjects ();
 		}
-		
+
 		public void PopDir ()
+		{
+			PopDir (null);
+		}
+		
+		public void PopDir (string filter)
 		{
 			if (directoryStack.Count == 0)
 				return;
@@ -2428,7 +2443,7 @@ namespace System.Windows.Forms
 			
 			should_push = false;
 			
-			ChangeDirectory (null, new_folder);
+			ChangeDirectory (null, new_folder, filter);
 		}
 		
 		public void RegisterSender (IUpdateFolder iud)
@@ -2514,15 +2529,25 @@ namespace System.Windows.Forms
 				}
 			}
 		}
-		
+
 		public void OneDirUp ()
+		{
+			OneDirUp (null);
+		}
+		
+		public void OneDirUp (string filter)
 		{
 			string parent_folder = vfs.GetParent ();
 			if (parent_folder != null)
-				ChangeDirectory (null, parent_folder);
+				ChangeDirectory (null, parent_folder, filter);
+		}
+
+		public void ChangeDirectory (object sender, string folder)
+		{
+			ChangeDirectory (sender, folder, null);
 		}
 		
-		public void ChangeDirectory (object sender, string folder)
+		public void ChangeDirectory (object sender, string folder, string filter)
 		{
 			if (folder == MWFVFS.DesktopPrefix || folder == MWFVFS.RecentlyUsedPrefix)
 				folderUpToolBarButton.Enabled = false;
@@ -2567,7 +2592,7 @@ namespace System.Windows.Forms
 			EndUpdate ();
 
 			try {
-				UpdateFileView ();
+				UpdateFileView (filter);
 			} catch (Exception e) {
 				if (should_push)
 					PopDir ();
