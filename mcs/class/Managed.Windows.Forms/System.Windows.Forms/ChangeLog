@@ -1,3 +1,9 @@
+2008-05-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Binding.cs: When the value retrieved from the control to be assigned
+	to the data source is null, actually use the 2.0 DataSourceNullValue
+	value. Make pass a data binding test.
+
 2008-05-08  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: We need to invalidate implicit children even when

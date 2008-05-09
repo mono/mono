@@ -379,6 +379,10 @@ namespace System.Windows.Forms {
 #endif
 
 			data = control_property.GetValue (control);
+#if NET_2_0
+			if (data == null)
+				data = datasource_null_value;
+#endif
 
 			try {
 				SetPropertyValue (data);
