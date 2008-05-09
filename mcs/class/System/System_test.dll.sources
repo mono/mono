@@ -206,6 +206,7 @@ System.Net/SocketPermissionTest.cs
 System.Net/SocketResponder.cs
 System.Net/WebHeaderCollectionTest.cs
 System.Net/WebPermissionAttributeTest.cs
+System.Net/WebPermissionTest.cs
 System.Net/WebProxyTest.cs
 System.Net/WebRequestTest.cs
 System.Net/WebClientTest.cs
