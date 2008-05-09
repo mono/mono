@@ -1,5 +1,14 @@
 2008-05-09 Rodrigo Kumpera <rkumpera@novell.com>
 
+	* make_type_visibility_test.sh: New test
+	generator for visibility tests of generic
+	method and type	arguments.
+
+	* make_tests.sh: Added tests using using
+	the new generator.
+
+2008-05-09 Rodrigo Kumpera <rkumpera@novell.com>
+
 	* make_tests.sh: Changed one test from unverifiable
 	to valid as it only fails on MS runtime due to a bug
 	on its implementation.
