@@ -105,7 +105,7 @@ namespace System.Windows.Forms {
 		#region Private & Internal Methods
 		static Form ()
 		{
-			default_icon = Locale.GetResource("mono.ico") as Icon;
+			default_icon = ResourceImageLoader.GetIcon ("mono.ico");
 		}
 
 		internal bool IsActive {

@@ -26,7 +26,12 @@
 //
 //
 
-// NOT COMPLETE
+// This class is basically disabled until we decide we are going to
+// translate winforms.  There are only a handful of places where we
+// actually use this.  The GetText method has been kept so those
+// continue to work and people can still add new ones if they choose.
+// At any rate, we really don't need to localize images (or at least
+// any of the ones we had).
 
 using System;
 using System.Globalization;
@@ -35,36 +40,38 @@ using System.Resources;
 
 namespace System.Windows.Forms {
 	internal sealed class Locale {
-		#region Local Variables
-		private static ResourceManager	rm;
-		#endregion	// Local Variables
+		//#region Local Variables
+		//private static ResourceManager	rm;
+		//#endregion	// Local Variables
 
-		#region Constructors
-		static Locale () {
-			rm = new ResourceManager("System.Windows.Forms", Assembly.GetExecutingAssembly());
-		}
-		#endregion
+		//#region Constructors
+		//static Locale () {
+		//        rm = new ResourceManager("System.Windows.Forms", Assembly.GetExecutingAssembly());
+		//}
+		//#endregion
 
-		#region Static Properties
-		public static ResourceManager ResourceManager {
-			get {
-				return rm;
-			}
-		}
+		//#region Static Properties
+		//public static ResourceManager ResourceManager {
+		//        get {
+		//                return rm;
+		//        }
+		//}
 
-		#endregion	// Static Properties
+		//#endregion	// Static Properties
 
 		#region Static Methods
 		public static string GetText (string msg){
-			string ret;
-
-// This code and behaviour may change without notice. It's a placeholder until I
-// understand how Miguels wants localization of strings done.
-			ret = (string)rm.GetObject(msg);
-			if (ret != null) {
-				return ret;
-			}
 			return msg;
+			
+//                        string ret;
+
+//// This code and behaviour may change without notice. It's a placeholder until I
+//// understand how Miguels wants localization of strings done.
+//                        ret = (string)rm.GetObject(msg);
+//                        if (ret != null) {
+//                                return ret;
+//                        }
+//                        return msg;
 		}
 
 		public static string GetText (string msg, params object [] args)
@@ -72,9 +79,9 @@ namespace System.Windows.Forms {
 			return String.Format (GetText (msg), args);
 		}
 
-		public static object GetResource(string name) {
-			return rm.GetObject(name);
-		}
+		//public static object GetResource(string name) {
+		//        return rm.GetObject(name);
+		//}
 		#endregion	// Static Methods
 	}
 }

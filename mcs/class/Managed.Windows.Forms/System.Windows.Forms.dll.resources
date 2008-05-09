@@ -1,6 +1,3 @@
--resource:resources/System.Windows.Forms.resources
--resource:resources/System.Windows.Forms.en.resources
--resource:resources/System.Windows.Forms.de.resources
 -resource:resources/SplitterNS.cur,System.Windows.Forms.SplitterNS.cur
 -resource:resources/SplitterWE.cur,System.Windows.Forms.SplitterWE.cur
 -resource:resources/NESW.cur,System.Windows.Forms.NESW.cur
@@ -60,3 +57,5 @@
 -resource:resources/propertygrid-propertypages.png,System.Windows.Forms.propertygrid-propertypages.png
 -resource:resources/EventsTab.bmp,System.Windows.Forms.Design.EventsTab.bmp
 -resource:resources/PropertiesTab.bmp,System.Windows.Forms.PropertyGridInternal.PropertiesTab.bmp
+-resource:resources/mono.ico
+-resource:resources/errorProvider.ico

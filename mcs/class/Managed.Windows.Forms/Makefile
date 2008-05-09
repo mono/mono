@@ -20,9 +20,6 @@ LIB_MCS_FLAGS += /define:GENERATING_RESOURCES
 endif
 
 RESX_RESOURCES = \
-	resources/System.Windows.Forms.resources \
-	resources/System.Windows.Forms.en.resources \
-	resources/System.Windows.Forms.de.resources \
 	resources/keyboards.resources
 
 CUR_RESOURCES = resources/NWSE.cur resources/NESW.cur \
@@ -89,7 +86,9 @@ IMAGES_RESOURCES = \
 	resources/propertygrid-categorized.png	\
 	resources/EventsTab.bmp			\
 	resources/PropertiesTab.bmp 		\
-	resources/propertygrid-propertypages.png
+	resources/propertygrid-propertypages.png	\
+	resources/mono.ico			\
+	resources/errorProvider.ico
 
 
 TEST_DISTFILES = \

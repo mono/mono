@@ -1,3 +1,10 @@
+2008-05-09  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Makefile: Add .ico's to IMAGE_RESOURCES.  Remove old .resources
+	files from RESX_RESOURCES.
+	* System.Windows.Forms.dll.resources: Remove old .resources files,
+	add .ico's.	
+
 2008-05-07  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* System.Windows.Forms.dll.sources: Added VisualStyles/ToolStripPainter.cs.

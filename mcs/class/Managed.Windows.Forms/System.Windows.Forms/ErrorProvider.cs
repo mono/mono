@@ -321,7 +321,7 @@ namespace System.Windows.Forms {
 			blinkrate = 250;
 			blinkstyle = ErrorBlinkStyle.BlinkIfDifferentError;
 
-			icon = (Icon)Locale.GetResource("errorProvider.ico");
+			icon = ResourceImageLoader.GetIcon ("errorProvider.ico");
 			tooltip = new ToolTip.ToolTipWindow();
 		}
 

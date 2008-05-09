@@ -1,3 +1,8 @@
+2008-05-09  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Locale.cs: Comment out everything but GetText, modify GetText
+	to just return the parameter.
+
 2008-04-15  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* AssemblyInfo.cs: Use existing consts where possible

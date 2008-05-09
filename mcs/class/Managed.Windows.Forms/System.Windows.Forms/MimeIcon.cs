@@ -67,6 +67,18 @@ namespace System.Windows.Forms
 				
 			return new Bitmap (stream);
 		}
+		
+		static internal Icon GetIcon (string name)
+		{
+			Stream stream = assembly.GetManifestResourceStream (name);
+
+			if (stream == null) {
+				Console.WriteLine ("Failed to read {0}", name);
+				return null;
+			}
+
+			return new Icon (stream);
+		}
 	}
 	
 	internal class MimeIconEngine
