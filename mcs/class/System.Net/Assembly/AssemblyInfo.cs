@@ -55,7 +55,11 @@ using System.Runtime.InteropServices;
 [assembly: NeutralResourcesLanguage ("en-US")]
 [assembly: CLSCompliant (true)]
 [assembly: AssemblyDelaySign (true)]
-[assembly: AssemblyKeyFile ("../ecma.pub")]
+#if NET_2_1
+	[assembly: AssemblyKeyFile ("../silverlight.pub")]
+#else
+	[assembly: AssemblyKeyFile ("../ecma.pub")]
+#endif
 
 [assembly: ComVisible (false)]
 [assembly: AllowPartiallyTrustedCallers]
