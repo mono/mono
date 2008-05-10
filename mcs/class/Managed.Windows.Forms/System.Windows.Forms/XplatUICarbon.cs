@@ -1630,7 +1630,7 @@ namespace System.Windows.Forms {
 		}
 		
 		
-		internal override void ScrollWindow(IntPtr hwnd, int XAmount, int YAmount, bool clear) {
+		internal override void ScrollWindow(IntPtr handle, int XAmount, int YAmount, bool clear) {
 			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
 			Invalidate (handle, new Rectangle (0, 0, hwnd.Width, hwnd.Height), false);
 		}
