@@ -1619,20 +1619,20 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void ScrollWindow(IntPtr handle, Rectangle area, int XAmount, int YAmount, bool clear) {
-			Carbon.HIRect scroll_rect = new Carbon.HIRect ();
-			scroll_rect.origin.x = area.X;
-			scroll_rect.origin.y = area.Y;
-			scroll_rect.size.width = area.Width;
-			scroll_rect.size.height = area.Height;
-			HIViewScrollRect (handle, ref scroll_rect, (float)XAmount, (float)YAmount);
+			/*
+			 * This used to use a HIViewScrollRect but this causes issues with the fact that we dont coalesce
+			 * updates properly with our short-circuiting of the window manager.  For now we'll do a less
+			 * efficient invalidation of the entire handle which appears to fix the problem
+			 * see bug #381084
+			 */
+			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
+			Invalidate (handle, new Rectangle (0, 0, hwnd.Width, hwnd.Height), false);
 		}
 		
 		
 		internal override void ScrollWindow(IntPtr hwnd, int XAmount, int YAmount, bool clear) {
-			Carbon.HIRect scroll_rect = new Carbon.HIRect ();
-			
-			HIViewGetBounds (hwnd, ref scroll_rect);
-			HIViewScrollRect (hwnd, ref scroll_rect, (float)XAmount, (float)YAmount);
+			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
+			Invalidate (handle, new Rectangle (0, 0, hwnd.Width, hwnd.Height), false);
 		}
 		
 		[MonoTODO]

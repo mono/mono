@@ -1,5 +1,10 @@
 2008-05-10  Geoff Norton  <gnorton@novell.com>
 
+	* XplatUICarbon.cs: Dont use HIViewScrollRect as it's causing painting
+	problems with rapid scrolling of treeviews. Fixes #381084
+
+2008-05-10  Geoff Norton  <gnorton@novell.com>
+
 	* XplatUICarbon.cs: Deactivate the active window before
 	activating the desired window.  Completes fixing #386504
 
