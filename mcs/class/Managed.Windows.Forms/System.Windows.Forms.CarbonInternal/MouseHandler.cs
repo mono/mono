@@ -116,8 +116,6 @@ namespace System.Windows.Forms.CarbonInternal {
 					UpdateMouseState (button, true);
 					msg.message = (client ? Msg.WM_MOUSEMOVE : Msg.WM_NCMOUSEMOVE) + ((button - 1) * 3) + 1;
 					msg.wParam = Driver.GetMousewParam (0);
-Console.WriteLine (msg.wParam);
-Console.WriteLine ((Msg)msg.message);
 					if (ClickPending.Pending && (((DateTime.Now.Ticks - ClickPending.Time) < DoubleClickInterval) && (msg.hwnd == ClickPending.Hwnd) && (msg.wParam == ClickPending.wParam) && (msg.lParam == ClickPending.lParam) && (msg.message == ClickPending.Message))) {
 						msg.message = (client ? Msg.WM_MOUSEMOVE : Msg.WM_NCMOUSEMOVE) + ((button - 1) * 3) + 3;
 						ClickPending.Pending = false;
@@ -134,8 +132,6 @@ Console.WriteLine ((Msg)msg.message);
 					UpdateMouseState (button, false);
 					msg.message = (client ? Msg.WM_MOUSEMOVE : Msg.WM_NCMOUSEMOVE) + ((button - 1) * 3) + 2;
 					msg.wParam = Driver.GetMousewParam (0);
-Console.WriteLine (msg.wParam);
-Console.WriteLine ((Msg)msg.message);
 					break;
 				case kEventMouseDragged:
 				case kEventMouseMoved:
