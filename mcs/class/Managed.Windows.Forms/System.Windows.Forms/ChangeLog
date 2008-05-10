@@ -1,3 +1,8 @@
+2008-05-10  Geoff Norton  <gnorton@novell.com>
+
+	* XplatUICarbon.cs: Deactivate the active window before
+	activating the desired window.  Completes fixing #386504
+
 2008-05-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: When calculating scrollbars, set horizontal scroll bar

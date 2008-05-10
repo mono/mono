@@ -771,6 +771,9 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void Activate(IntPtr handle) {
+			if (ActiveWindow != IntPtr.Zero) {
+				ActivateWindow (HIViewGetWindow (ActiveWindow), false);
+			}
 			ActivateWindow (HIViewGetWindow (handle), true);
 		}
 
@@ -1030,11 +1033,8 @@ namespace System.Windows.Forms {
 							SendMessage(hwnd.Handle, Msg.WM_SHOWWINDOW, (IntPtr)1, IntPtr.Zero);
 						}
 					}
-					IntPtr active = GetActive ();
 					ShowWindow (WindowHandle);
 					WaitForHwndMessage (hwnd, Msg.WM_SHOWWINDOW);
-					if (active != IntPtr.Zero)
-						Activate (active);
 				}
 				HIViewSetVisible (WholeWindow, true);
 				HIViewSetVisible (ClientWindow, true);
