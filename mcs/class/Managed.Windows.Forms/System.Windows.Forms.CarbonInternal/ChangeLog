@@ -1,5 +1,10 @@
 2008-05-10  Geoff Norton  <gnorton@novell.com>
 
+	* MouseHandler.cs: Fix the generation of msg.wParam for mouse up/down
+	events.  Fixes #368041
+
+2008-05-10  Geoff Norton  <gnorton@novell.com>
+
 	* WindowHandler.cs: Send ENTER/EXITSIZEMOVE when doing minimize/maximize
 	events as well as resize events.  Fixes #346529
 

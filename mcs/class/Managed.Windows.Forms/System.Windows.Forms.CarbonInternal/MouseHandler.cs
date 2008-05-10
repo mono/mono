@@ -113,8 +113,11 @@ namespace System.Windows.Forms.CarbonInternal {
 
 			switch (kind) {
 				case kEventMouseDown:
+					UpdateMouseState (button, true);
 					msg.message = (client ? Msg.WM_MOUSEMOVE : Msg.WM_NCMOUSEMOVE) + ((button - 1) * 3) + 1;
-					msg.wParam = ButtonTowParam (button);
+					msg.wParam = Driver.GetMousewParam (0);
+Console.WriteLine (msg.wParam);
+Console.WriteLine ((Msg)msg.message);
 					if (ClickPending.Pending && (((DateTime.Now.Ticks - ClickPending.Time) < DoubleClickInterval) && (msg.hwnd == ClickPending.Hwnd) && (msg.wParam == ClickPending.wParam) && (msg.lParam == ClickPending.lParam) && (msg.message == ClickPending.Message))) {
 						msg.message = (client ? Msg.WM_MOUSEMOVE : Msg.WM_NCMOUSEMOVE) + ((button - 1) * 3) + 3;
 						ClickPending.Pending = false;
@@ -128,8 +131,11 @@ namespace System.Windows.Forms.CarbonInternal {
 					}
 					break;
 				case kEventMouseUp:
-					msg.message = (client ? Msg.WM_MOUSEMOVE : Msg.WM_NCMOUSEMOVE) + ((StateToButton (XplatUICarbon.MouseState) - 1) * 3) + 2;
-					msg.wParam = StateTowParam (XplatUICarbon.MouseState);
+					UpdateMouseState (button, false);
+					msg.message = (client ? Msg.WM_MOUSEMOVE : Msg.WM_NCMOUSEMOVE) + ((button - 1) * 3) + 2;
+					msg.wParam = Driver.GetMousewParam (0);
+Console.WriteLine (msg.wParam);
+Console.WriteLine ((Msg)msg.message);
 					break;
 				case kEventMouseDragged:
 				case kEventMouseMoved:
@@ -186,66 +192,19 @@ namespace System.Windows.Forms.CarbonInternal {
 			return false;
 		}
 
-		private int StateToButton (MouseButtons state) {
-			int button = 0;
-
-			switch (state) {
-				case MouseButtons.Left: 
-					button = 1;
-					break;
-				case MouseButtons.Right: 
-					button = 2;
-					break;
-				case MouseButtons.Middle:
-					button = 3;
-					break;
-			}
-			
-			return button;
-		}
-
-		private IntPtr StateTowParam (MouseButtons state) {
-			int wparam = (int) Driver.GetMousewParam (0);
-
-			switch (state) {
-				case MouseButtons.Left: 
-					XplatUICarbon.MouseState &= ~MouseButtons.Left;
-					wparam &= (int)MsgButtons.MK_LBUTTON;
-					break;
-				case MouseButtons.Right: 
-					XplatUICarbon.MouseState &= ~MouseButtons.Right;
-					wparam &= (int)MsgButtons.MK_RBUTTON;
-					break;
-				case MouseButtons.Middle:
-					XplatUICarbon.MouseState &= ~MouseButtons.Middle;
-					wparam &= (int)MsgButtons.MK_MBUTTON;
-					break;
-			}
-			
-			return (IntPtr) wparam;
-		}
-
-		private IntPtr ButtonTowParam (ushort button) {
-			int wparam = (int) Driver.GetMousewParam (0);
-
+		private void UpdateMouseState (int button, bool down) {
 			switch (button) {
 				case 1:
-					XplatUICarbon.MouseState |= MouseButtons.Left;
-					wparam |= (int)MsgButtons.MK_LBUTTON;
+					if (down) XplatUICarbon.MouseState |= MouseButtons.Left; else XplatUICarbon.MouseState &= ~MouseButtons.Left;
 					break;
 				case 2:
-					XplatUICarbon.MouseState |= MouseButtons.Right;
-					wparam |= (int)MsgButtons.MK_RBUTTON;
+					if (down) XplatUICarbon.MouseState |= MouseButtons.Right; else XplatUICarbon.MouseState &= ~MouseButtons.Right;
 					break;
 				case 3:
-					XplatUICarbon.MouseState |= MouseButtons.Middle;
-					wparam |= (int)MsgButtons.MK_MBUTTON;
+					if (down) XplatUICarbon.MouseState |= MouseButtons.Middle; else XplatUICarbon.MouseState &= ~MouseButtons.Middle;
 					break;
 			}
-			
-			return (IntPtr) wparam;
 		}
-
 
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int GetEventParameter (IntPtr eventref, uint name, uint type, IntPtr outtype, uint size, IntPtr outsize, ref QDPoint data);
