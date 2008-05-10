@@ -71,9 +71,11 @@ namespace System.Windows.Forms.CarbonInternal {
 			if (button == 1 && ((Driver.ModifierKeys & Keys.Control) != 0))
 				button = 2;
 
-
 			point.x = qdpoint.x;
 			point.y = qdpoint.y;
+
+			if (FindWindow (qdpoint, ref window_handle) == 5)
+				return true;
 
 			GetWindowBounds (handle, 33, ref window_bounds);
 			HIViewFindByID (HIViewGetRoot (handle), new HIViewID (EventHandler.kEventClassWindow, 1), ref window_handle);
@@ -252,6 +254,8 @@ namespace System.Windows.Forms.CarbonInternal {
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int GetEventParameter (IntPtr eventref, uint name, uint type, IntPtr outtype, uint size, IntPtr outsize, ref ushort data);
 
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern short FindWindow (QDPoint point, ref IntPtr handle);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int GetWindowBounds (IntPtr handle, uint region, ref Rect bounds);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]

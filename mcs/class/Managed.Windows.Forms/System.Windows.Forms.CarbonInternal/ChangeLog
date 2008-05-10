@@ -1,5 +1,13 @@
 2008-05-10  Geoff Norton  <gnorton@novell.com>
 
+	* MouseHandler.cs: For some reason carbon gives us kEventMouseDown
+	in the grow box, but not kEventMouseUp.  If a form has a managed resize
+	grow box under our unmanaged one, it can get confused into thinking the
+	mouse is permanantly down.  Lets just not report grow box events.
+	Fixes #381097
+
+2008-05-10  Geoff Norton  <gnorton@novell.com>
+
 	* WindowHandler.cs: Properly raise inactiate/activate events
 	Partially fixes #386504
 
