@@ -1,5 +1,10 @@
 2008-05-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListView.cs: When calculating scrollbars, set horizontal scroll bar
+	SmallChange to the item size width plus the padding, to match .net.
+
+2008-05-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* FileDialog.cs: Apply the custom filter typed by the user in the file
 	name combobox as much as possible while navigating in the file dialog.
 	Fixes #385261.

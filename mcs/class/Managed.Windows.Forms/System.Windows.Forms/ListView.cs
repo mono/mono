@@ -1372,7 +1372,7 @@ namespace System.Windows.Forms
 				}
 
 				h_scroll.LargeChange = client_area.Width;
-				h_scroll.SmallChange = Font.Height;
+				h_scroll.SmallChange = item_size.Width + ThemeEngine.Current.ListViewHorizontalSpacing;
 				height -= h_scroll.Height;
 			}
 
