@@ -1,3 +1,9 @@
+2008-05-07 Gonzalo Panigua Javier <gonzalo.mono@gmail.com>
+
+	* HttpApplication.cs: create a fake context while loading the
+	modules on the first request so that the modules don't mess up
+	with the actual output of that request.
+
 2008-05-07  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpRequest.cs: StripPath should handle UNC paths too. Fixes bug

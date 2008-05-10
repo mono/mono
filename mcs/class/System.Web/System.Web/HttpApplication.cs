@@ -189,7 +189,10 @@ namespace System.Web {
 				modules = (ModulesConfiguration) HttpContext.GetAppConfig ("system.web/httpModules");
 #endif
 
+				HttpContext saved = HttpContext.Current;
+				HttpContext.Current = new HttpContext (new System.Web.Hosting.SimpleWorkerRequest ("/", "", new StringWriter()));
 				modcoll = modules.LoadModules (this);
+				HttpContext.Current = saved;
 
 				if (full_init) {
 					HttpApplicationFactory.AttachEvents (this);
