@@ -1,7 +1,9 @@
 //
 // driver.cs: The compiler command line driver.
 //
-// Author: Miguel de Icaza (miguel@gnu.org)
+// Authors:
+//   Miguel de Icaza (miguel@gnu.org)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // Dual licensed under the terms of the MIT X11 or GNU GPL
 //
@@ -79,7 +81,7 @@ namespace Mono.CSharp
 		//
 		// An array of the defines from the command line
 		//
-		static ArrayList defines;
+		ArrayList defines;
 
 		//
 		// Output file
@@ -100,7 +102,6 @@ namespace Mono.CSharp
 		{
 			embedded_resources = null;
 			win32ResourceFile = win32IconFile = null;
-			defines = null;
 			output_file = null;
 		}
 
@@ -179,16 +180,14 @@ namespace Mono.CSharp
 			return;
 		}
 
-		// MonoTODO("Change error code for aborted compilation to something reasonable")]		
 		void Parse (SourceFile file)
 		{
-			CSharpParser parser;
 			Stream input;
 
 			try {
 				input = File.OpenRead (file.Name);
 			} catch {
-				Report.Error (2001, "Source file `" + file.Name + "' could not be found");
+				Report.Error (2001, "Source file `{0}' could not be found", file.Name);
 				return;
 			}
 
@@ -202,16 +201,19 @@ namespace Mono.CSharp
 			}
 
 			reader.Position = 0;
-			parser = new CSharpParser (reader, file, defines);
+			Parse (reader, file);
+			input.Close ();
+		}	
+		
+		void Parse (SeekableStreamReader reader, SourceFile file)
+		{
+			CSharpParser parser = new CSharpParser (reader, file, defines);
 			parser.ErrorOutput = Report.Stderr;
 			try {
 				parser.parse ();
 			} catch (Exception ex) {
-				Report.Error(
-					666, String.Format ("Compilation aborted in file {0}, parser at {1}: {2}",
-							    file.Name, parser.Lexer.Location, ex));
-			} finally {
-				input.Close ();
+				Report.Error(589, parser.Lexer.Location,
+					"Compilation aborted in file `{0}', {1}", file.Name, ex);
 			}
 		}
 
@@ -571,7 +573,7 @@ namespace Mono.CSharp
 			pattern = spec;
 		}
 
-		void ProcessFile (string f)
+		void AddSourceFile (string f)
 		{
 			if (first_source == null)
 				first_source = f;
@@ -697,7 +699,7 @@ namespace Mono.CSharp
 
 			SplitPathAndPattern (spec, out path, out pattern);
 			if (pattern.IndexOf ('*') == -1){
-				ProcessFile (spec);
+				AddSourceFile (spec);
 				return;
 			}
 
@@ -712,7 +714,7 @@ namespace Mono.CSharp
 				return;
 			}
 			foreach (string f in files) {
-				ProcessFile (f);
+				AddSourceFile (f);
 			}
 
 			if (!recurse)

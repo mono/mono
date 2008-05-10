@@ -1,3 +1,9 @@
+2008-05-10  Marek Safar  <marek.safar@gmail.com>
+
+	* driver.cs: Split Parse.
+	
+	* location.cs (LookupFile): Uses string.Empty.
+
 2008-05-07  Marek Safar  <marek.safar@gmail.com>
 
 	* expression.cs, parameter.cs: Small ParameterReference clean up.
