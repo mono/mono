@@ -137,6 +137,10 @@ namespace System.Windows.Forms.CarbonInternal {
 								XplatUICarbon.ShowWindow (utility_window);
 						}
 						break;
+					case kEventWindowExpanded:
+						msg.hwnd = hwnd.Handle;
+						msg.message = Msg.WM_WINDOWPOSCHANGED;
+						return true;
 					case kEventWindowDeactivated: {
 						Control c = Control.FromHandle (hwnd.client_window);
 						if (c != null) {
@@ -158,6 +162,10 @@ namespace System.Windows.Forms.CarbonInternal {
 								XplatUICarbon.HideWindow (utility_window);
 						}	
 						break;
+					case kEventWindowCollapsed:
+						msg.hwnd = hwnd.Handle;
+						msg.message = Msg.WM_WINDOWPOSCHANGED;
+						return true;
 					case kEventWindowClose:
 						NativeWindow.WndProc (hwnd.Handle, Msg.WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
 						return false;
