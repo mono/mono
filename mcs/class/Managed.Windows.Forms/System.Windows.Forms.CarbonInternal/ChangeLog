@@ -1,5 +1,10 @@
 2008-05-10  Geoff Norton  <gnorton@novell.com>
 
+	* WindowHandler.cs: Send ENTER/EXITSIZEMOVE when doing minimize/maximize
+	events as well as resize events.  Fixes #346529
+
+2008-05-10  Geoff Norton  <gnorton@novell.com>
+
 	* EventHandler.cs: Subscribe to Collapsed/Expanded.
 	* WindowHandler.cs: Send WINDOWPOSCHANGED with Collapsed/Expanded.  Fixes
 	#325122

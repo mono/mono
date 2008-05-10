@@ -136,10 +136,13 @@ namespace System.Windows.Forms.CarbonInternal {
 							if (utility_window != handle && !XplatUICarbon.IsWindowVisible (utility_window))
 								XplatUICarbon.ShowWindow (utility_window);
 						}
-						break;
-					case kEventWindowExpanded:
 						msg.hwnd = hwnd.Handle;
-						msg.message = Msg.WM_WINDOWPOSCHANGED;
+						msg.message = Msg.WM_ENTERSIZEMOVE;
+						return true;
+					case kEventWindowExpanded:
+						NativeWindow.WndProc (hwnd.Handle, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
+						msg.hwnd = hwnd.Handle;
+						msg.message = Msg.WM_EXITSIZEMOVE;
 						return true;
 					case kEventWindowDeactivated: {
 						Control c = Control.FromHandle (hwnd.client_window);
@@ -161,10 +164,13 @@ namespace System.Windows.Forms.CarbonInternal {
 							if (utility_window != handle && XplatUICarbon.IsWindowVisible (utility_window))
 								XplatUICarbon.HideWindow (utility_window);
 						}	
-						break;
-					case kEventWindowCollapsed:
 						msg.hwnd = hwnd.Handle;
-						msg.message = Msg.WM_WINDOWPOSCHANGED;
+						msg.message = Msg.WM_ENTERSIZEMOVE;
+						return true;
+					case kEventWindowCollapsed:
+						NativeWindow.WndProc (hwnd.Handle, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
+						msg.hwnd = hwnd.Handle;
+						msg.message = Msg.WM_EXITSIZEMOVE;
 						return true;
 					case kEventWindowClose:
 						NativeWindow.WndProc (hwnd.Handle, Msg.WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
@@ -180,7 +186,6 @@ namespace System.Windows.Forms.CarbonInternal {
 					case kEventWindowResizeStarted: {
 						msg.message = Msg.WM_ENTERSIZEMOVE;
 						msg.hwnd = hwnd.Handle;
-						
 						return true;
 					}
 					case kEventWindowResizeCompleted: {
