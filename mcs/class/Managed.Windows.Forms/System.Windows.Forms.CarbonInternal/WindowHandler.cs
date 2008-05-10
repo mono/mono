@@ -115,15 +115,13 @@ namespace System.Windows.Forms.CarbonInternal {
 			Hwnd hwnd = Hwnd.ObjectFromHandle (window);
 			if (window != IntPtr.Zero) {
 				switch (kind) {
-					case kEventWindowExpanding:
-					case kEventWindowActivated:
-						if (XplatUICarbon.FocusWindow == IntPtr.Zero) {
-							Control c = Control.FromHandle (hwnd.client_window);
-							if (c != null) {
-								Form form = c.FindForm ();
-								if (form != null) {
-									Driver.SendMessage (form.Handle, Msg.WM_ACTIVATE, (IntPtr) WindowActiveFlags.WA_ACTIVE, IntPtr.Zero);
-								}
+					case kEventWindowActivated: {
+						Control c = Control.FromHandle (hwnd.client_window);
+						if (c != null) {
+							Form form = c.FindForm ();
+							if (form != null) {
+								Driver.SendMessage (form.Handle, Msg.WM_ACTIVATE, (IntPtr) WindowActiveFlags.WA_ACTIVE, IntPtr.Zero);
+								XplatUICarbon.ActiveWindow = window;
 							}
 						}
 
@@ -132,8 +130,29 @@ namespace System.Windows.Forms.CarbonInternal {
 								XplatUICarbon.ShowWindow (utility_window);
 						}	
 						break;
+					}
+					case kEventWindowExpanding:
+						foreach (IntPtr utility_window in XplatUICarbon.UtilityWindows) {
+							if (utility_window != handle && !XplatUICarbon.IsWindowVisible (utility_window))
+								XplatUICarbon.ShowWindow (utility_window);
+						}
+						break;
+					case kEventWindowDeactivated: {
+						Control c = Control.FromHandle (hwnd.client_window);
+						if (c != null) {
+							Form form = c.FindForm ();
+							if (form != null) {
+								Driver.SendMessage (form.Handle, Msg.WM_ACTIVATE, (IntPtr) WindowActiveFlags.WA_INACTIVE, IntPtr.Zero);
+								XplatUICarbon.ActiveWindow = IntPtr.Zero;
+							}
+						}
+						foreach (IntPtr utility_window in XplatUICarbon.UtilityWindows) {
+							if (utility_window != handle && XplatUICarbon.IsWindowVisible (utility_window))
+								XplatUICarbon.HideWindow (utility_window);
+						}
+						break;
+					}
 					case kEventWindowCollapsing:
-					case kEventWindowDeactivated: 
 						foreach (IntPtr utility_window in XplatUICarbon.UtilityWindows) {
 							if (utility_window != handle && XplatUICarbon.IsWindowVisible (utility_window))
 								XplatUICarbon.HideWindow (utility_window);

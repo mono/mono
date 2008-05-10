@@ -1,3 +1,8 @@
+2008-05-10  Geoff Norton  <gnorton@novell.com>
+
+	* WindowHandler.cs: Properly raise inactiate/activate events
+	Partially fixes #386504
+
 2008-04-11  Geoff Norton  <gnorton@novell.com>
 
 	* WindowHandler.cs: Move the caret back to the real screen position
