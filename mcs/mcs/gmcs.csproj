@@ -2,49 +2,34 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.20404</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{D4A01C5B-A1B5-48F5-BB5B-D2E1BD236E56}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>gmcs</RootNamespace>
     <AssemblyName>gmcs</AssemblyName>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <OldToolsVersion>2.0</OldToolsVersion>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
+    <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>.\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NET_2_0;MS_COMPATIBLE;GMCS_SOURCE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_2_0;MS_COMPATIBLE;GMCS_SOURCE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <NoStdLib>false</NoStdLib>
-    <OutputType>Exe</OutputType>
-    <AssemblyName>gmcs</AssemblyName>
-    <RootNamespace>gmcs</RootNamespace>
-    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>.\</OutputPath>
+    <DefineConstants>TRACE;NET_2_0;MS_COMPATIBLE;GMCS_SOURCE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
     <DefineConstants>TRACE;NET_2_0;MS_COMPATIBLE;GMCS_SOURCE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <OutputType>Exe</OutputType>
-    <AssemblyName>gmcs</AssemblyName>
-    <DebugSymbols>true</DebugSymbols>
-    <RootNamespace>gmcs</RootNamespace>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <OutputPath>.\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
