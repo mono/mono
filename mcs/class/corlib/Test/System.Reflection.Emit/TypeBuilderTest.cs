@@ -252,8 +252,8 @@ namespace MonoTests.System.Reflection.Emit
 #endif
 		}
 
-		[Test] //bug 82018
-		public void TestEnumWithoutValueFieldThrowsException ()
+		[Test] // bug #324692
+		public void CreateType_Enum_NoInstanceField ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName (),
 				TypeAttributes.Sealed | TypeAttributes.Serializable,
@@ -270,7 +270,7 @@ namespace MonoTests.System.Reflection.Emit
 #endif
 		}
 
-		[Test] // bug 82018
+		[Test] // bug #324692
 #if ONLY_1_1
 		[Category ("NotWorking")] // we do not throw IOE when repeatedly invoking CreateType
 #endif
@@ -1064,33 +1064,60 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("NotWorking")]
-		public void TestUnderlyingSystemType ()
+		public void UnderlyingSystemType ()
 		{
-			{
-				TypeBuilder tb = module.DefineType (genTypeName ());
-				Assert.AreEqual (tb, tb.UnderlyingSystemType, "#1");
-			}
-			{
-				TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Interface | TypeAttributes.Abstract);
-				Assert.AreEqual (tb, tb.UnderlyingSystemType, "#2");
-			}
-			{
-				TypeBuilder tb = module.DefineType (genTypeName (), 0, typeof (ValueType));
-				Assert.AreEqual (tb, tb.UnderlyingSystemType, "#3");
-			}
+			TypeBuilder tb;
+			Type emitted_type;
 
-			{
-				TypeBuilder tb = module.DefineType (genTypeName (), 0, typeof (Enum));
-				try {
-					Type t = tb.UnderlyingSystemType;
-					Assert.Fail ("#4");
-				} catch (InvalidOperationException) {
-				}
+			tb = module.DefineType (genTypeName ());
+			Assert.AreSame (tb, tb.UnderlyingSystemType, "#A1");
+			emitted_type = tb.CreateType ();
+			Assert.AreSame (emitted_type, tb.UnderlyingSystemType, "#A2");
 
-				tb.DefineField ("val", typeof (int), 0);
-				Assert.AreEqual (typeof (int), tb.UnderlyingSystemType, "#5");
+			tb = module.DefineType (genTypeName (), TypeAttributes.Interface | TypeAttributes.Abstract);
+			Assert.AreSame (tb, tb.UnderlyingSystemType, "#B1");
+			emitted_type = tb.CreateType ();
+			Assert.AreSame (emitted_type, tb.UnderlyingSystemType, "#B2");
+
+			tb = module.DefineType (genTypeName (), 0, typeof (ValueType));
+			Assert.AreSame (tb, tb.UnderlyingSystemType, "#C1");
+			emitted_type = tb.CreateType ();
+			Assert.AreSame (emitted_type, tb.UnderlyingSystemType, "#C2");
+
+			tb = module.DefineType (genTypeName (), 0, typeof (Enum));
+			try {
+				Type t = tb.UnderlyingSystemType;
+				Assert.Fail ("#D1:" + t);
+			} catch (InvalidOperationException ex) {
+				// Underlying type information on enumeration
+				// is not specified
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#D2");
+				Assert.IsNull (ex.InnerException, "#D3");
+				Assert.IsNotNull (ex.Message, "#D4");
 			}
+			tb.DefineField ("val", typeof (int), FieldAttributes.Private);
+			Assert.AreEqual (typeof (int), tb.UnderlyingSystemType, "#D5");
+			emitted_type = tb.CreateType ();
+			Assert.AreSame (emitted_type, tb.UnderlyingSystemType, "#D6");
+
+			tb = module.DefineType (genTypeName (), 0, typeof (Enum));
+			tb.DefineField ("val", typeof (int), FieldAttributes.Static);
+			try {
+				Type t = tb.UnderlyingSystemType;
+				Assert.Fail ("#E1:" + t);
+			} catch (InvalidOperationException ex) {
+				// Underlying type information on enumeration
+				// is not specified
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#E2");
+				Assert.IsNull (ex.InnerException, "#E3");
+				Assert.IsNotNull (ex.Message, "#E4");
+			}
+			tb.DefineField ("foo", typeof (long), FieldAttributes.Private);
+			Assert.AreEqual (typeof (long), tb.UnderlyingSystemType, "#E5");
+			tb.DefineField ("bar", typeof (short), FieldAttributes.Private);
+			Assert.AreEqual (typeof (long), tb.UnderlyingSystemType, "#E6");
+			tb.DefineField ("boo", typeof (int), FieldAttributes.Static);
+			Assert.AreEqual (typeof (long), tb.UnderlyingSystemType, "#E7");
 		}
 
 		[Test]
@@ -8510,6 +8537,8 @@ namespace MonoTests.System.Reflection.Emit
 				typeBuilder.CreateType ();
 				Assert.Fail ("#1");
 			} catch (TypeLoadException) {
+				// Could not load type '...' from assembly
+				// 'MonoTests.System.Reflection.Emit.TypeBuilderTest, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'
 			}
 #if NET_2_0
 			Assert.IsTrue (typeBuilder.IsCreated (), "#2");
@@ -8650,7 +8679,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		public void EmptyMethodBody ()
+		public void CreateType_EmptyMethodBody ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
 
@@ -8666,7 +8695,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		public void EmptyCtorBody ()
+		public void CreateType_EmptyCtorBody ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
 
@@ -8682,12 +8711,21 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		public void ParentNull ()
+		public void CreateType_ParentNull ()
 		{
-			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public, null);
-			Type t = tb.CreateType ();
+			TypeBuilder tb;
+			Type emitted_type;
+			
+			tb = module.DefineType (genTypeName (), TypeAttributes.Public, null);
+			// bug #389171:
+			//Assert.AreEqual (typeof (object), tb.BaseType, "#A1");
+			emitted_type = tb.CreateType ();
+			Assert.AreEqual (typeof (object), emitted_type.BaseType, "#A2");
 
-			Assert.AreEqual (typeof (object), t.BaseType);
+			tb = module.DefineType (genTypeName (), TypeAttributes.Interface | TypeAttributes.Abstract, null);
+			Assert.IsNull (tb.BaseType, "#B1");
+			emitted_type = tb.CreateType ();
+			Assert.IsNull (emitted_type.BaseType, "#B2");
 		}
 
 #if NET_2_0

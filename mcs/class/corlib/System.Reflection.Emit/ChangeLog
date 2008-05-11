@@ -1,3 +1,18 @@
+2008-05-11  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TypeBuilder.cs: Use Assembly.FullName instead of AssemblyName.
+	In UnderlyingSystemType, return UnderlyingSystemType of created type
+	when available. For an enum, UnderlyingSystemType is the type of the
+	first instance field. If no instance field is available, throw an
+	InvalidOperationException. Retain original behavior when operating in
+	compiler context.
+	* ConstructorBuilder.cs: Moved implementation of GetParameters to
+	GetParametersInternal to allow it to be used internally when type is
+	not yet created.
+	* CustomAttributeBuilder.cs: Added GetParameters method that uses
+	GetParametersInternal on ConstructorBuilder, and use it where
+	necessary.	
+
 2008-05-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* ConstructorBuilder.cs: Revert the throw not_created () change as it causes

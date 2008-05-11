@@ -167,7 +167,7 @@ namespace System.Reflection.Emit {
 			}
 
 			i = 0;
-			foreach (ParameterInfo pi in con.GetParameters ()) {
+			foreach (ParameterInfo pi in GetParameters (con)) {
 				if (pi != null) {
 					Type paramType = pi.ParameterType;
 					if (!IsValidType (paramType))
@@ -225,7 +225,7 @@ namespace System.Reflection.Emit {
 			utype = (int)data [2];
 			utype |= ((int)data [3]) << 8;
 
-			string first_type_name = customBuilder.Ctor.GetParameters()[0].ParameterType.FullName;
+			string first_type_name = GetParameters (customBuilder.Ctor) [0].ParameterType.FullName;
 			int pos = 6;
 			if (first_type_name == "System.Int16")
 				pos = 4;
@@ -389,7 +389,7 @@ namespace System.Reflection.Emit {
 				throw new Exception ("Prolog invalid");
 			pos = 2;
 
-			ParameterInfo [] pi = ctor.GetParameters ();
+			ParameterInfo [] pi = GetParameters (ctor);
 			info.ctor = ctor;
 			info.ctorArgs = new object [pi.Length];
 			for (int i = 0; i < pi.Length; ++i)
@@ -456,6 +456,14 @@ namespace System.Reflection.Emit {
 		void _CustomAttributeBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
 		{
 			throw new NotImplementedException ();
+		}
+
+		static ParameterInfo [] GetParameters (ConstructorInfo ctor)
+		{
+			ConstructorBuilder cb = ctor as ConstructorBuilder;
+			if (cb != null)
+				return cb.GetParametersInternal ();
+			return ctor.GetParameters ();
 		}
 	}
 }

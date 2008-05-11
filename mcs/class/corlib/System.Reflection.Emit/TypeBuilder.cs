@@ -126,7 +126,7 @@ namespace System.Reflection.Emit
 			this.class_size = type_size;
 			this.packing_size = packing_size;
 			this.nesting_type = nesting_type;
-				
+
 			check_name ("fullname", name);
 
 			if (parent == null && (attr & TypeAttributes.Interface) != 0 && (attr & TypeAttributes.Abstract) == 0)
@@ -158,7 +158,7 @@ namespace System.Reflection.Emit
 
 		public override string AssemblyQualifiedName {
 			get {
-				return fullname + ", " + Assembly.GetName().FullName;
+				return fullname + ", " + Assembly.FullName;
 			}
 		}
 
@@ -190,6 +190,21 @@ namespace System.Reflection.Emit
 
 		public override Type UnderlyingSystemType {
 			get {
+				if (is_created)
+					return created.UnderlyingSystemType;
+
+				if (IsEnum && !IsCompilerContext) {
+					for (int i = 0; i < num_fields; i++) {
+						FieldBuilder field = fields [i];
+						if ((field.Attributes & FieldAttributes.Static) == 0) {
+							return field.FieldType;
+						}
+					}
+
+					throw new InvalidOperationException (
+						"Enumeration type is not defined.");
+				}
+
 				return this;
 			}
 		}
@@ -1599,6 +1614,12 @@ namespace System.Reflection.Emit
 				throw new NotSupportedException ("This method is not implemented for incomplete types.");
 
 			return created.GetInterfaceMap (interfaceType);
+		}
+
+		internal bool IsCompilerContext {
+			get {
+				return ((AssemblyBuilder) Assembly).IsCompilerContext;
+			}
 		}
 
 		internal bool is_created {

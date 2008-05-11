@@ -397,7 +397,6 @@ public class ConstructorBuilderTest
 	}
 
 	[Test]
-	[Category ("NotWorking")]
 	public void GetParameters_Incomplete ()
 	{
 		ConstructorBuilder cb = genClass.DefineConstructor (
@@ -611,23 +610,12 @@ public class ConstructorBuilderTest
 		}
 	}
 
-	[Test]
-	public void TestSetCustomAttribute ()
+	[Test] // SetCustomAttribute (ConstructorInfo, Byte [])
+	public void SetCustomAttribute1 ()
 	{
 		ConstructorBuilder cb = genClass.DefineConstructor (
 			 0, 0, new Type [1] {typeof(int)});
 		cb.GetILGenerator ().Emit (OpCodes.Ret);
-
-		// Null argument
-		try {
-			cb.SetCustomAttribute (null);
-			Assert.Fail ("#A1");
-		} catch (ArgumentNullException ex) {
-			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
-			Assert.IsNull (ex.InnerException, "#A3");
-			Assert.IsNotNull (ex.Message, "#A4");
-			Assert.AreEqual ("customBuilder", ex.ParamName, "#A5");
-		}
 
 		byte[] custAttrData = { 1, 0, 0, 0, 0};
 		Type attrType = Type.GetType
@@ -658,6 +646,66 @@ public class ConstructorBuilderTest
 			Assert.IsNull (ex.InnerException, "#C3");
 			Assert.IsNotNull (ex.Message, "#C4");
 			Assert.AreEqual ("binaryAttribute", ex.ParamName, "#C5");
+		}
+	}
+
+	[Test] // SetCustomAttribute (CustomAttributeBuilder)
+	public void SetCustomAttribute2 ()
+	{
+		ConstructorBuilder cb = genClass.DefineConstructor (
+			MethodAttributes.Public, CallingConventions.Standard,
+			new Type [1] { typeof (int) });
+		cb.GetILGenerator ().Emit (OpCodes.Ret);
+
+		TypeBuilder attrTb = module.DefineType ("TestAttribute",
+			TypeAttributes.Public, typeof (Attribute));
+		ConstructorBuilder attrCb = attrTb.DefineDefaultConstructor (
+			MethodAttributes.Public);
+
+		CustomAttributeBuilder cab = new CustomAttributeBuilder (
+			attrCb, new object [0]);
+		cb.SetCustomAttribute (cab);
+		attrTb.CreateType ();
+		
+		Type emittedType  = genClass.CreateType ();
+		ConstructorInfo ci = emittedType.GetConstructor (
+			new Type [1] { typeof (int) });
+
+		Assert.IsNotNull (ci, "#1");
+		object [] cas = ci.GetCustomAttributes (false);
+		Assert.IsNotNull (cas, "#2");
+		Assert.AreEqual (1, cas.Length, "#3");
+		Assert.AreEqual ("TestAttribute", cas [0].GetType ().FullName, "#4");
+	}
+
+	[Test]
+	public void SetCustomAttribute2_CustomBuilder_Null ()
+	{
+		ConstructorBuilder cb = genClass.DefineConstructor (
+			MethodAttributes.Public, CallingConventions.Standard,
+			new Type [1] { typeof (int) });
+		cb.GetILGenerator ().Emit (OpCodes.Ret);
+
+		try {
+			cb.SetCustomAttribute ((CustomAttributeBuilder) null);
+			Assert.Fail ("#A1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#A2");
+			Assert.IsNull (ex.InnerException, "#A3");
+			Assert.IsNotNull (ex.Message, "#A4");
+			Assert.AreEqual ("customBuilder", ex.ParamName, "#A5");
+		}
+
+		genClass.CreateType ();
+
+		try {
+			cb.SetCustomAttribute ((CustomAttributeBuilder) null);
+			Assert.Fail ("#B1");
+		} catch (ArgumentNullException ex) {
+			Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
+			Assert.IsNull (ex.InnerException, "#B3");
+			Assert.IsNotNull (ex.Message, "#B4");
+			Assert.AreEqual ("customBuilder", ex.ParamName, "#B5");
 		}
 	}
 

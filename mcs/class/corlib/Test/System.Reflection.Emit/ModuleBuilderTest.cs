@@ -330,5 +330,57 @@ namespace MonoTests.System.Reflection.Emit
 			types = mb.GetTypes ();
 			Assert.AreEqual (tb1.CreateType (), types [0]);
 		}
+
+		[Test] // GetTypeToken (Type)
+#if NET_2_0
+		[Category ("NotDotNet")] // http://support.microsoft.com/kb/950986
+#endif
+		public void GetTypeToken2_Type_Array ()
+		{
+			Type type;
+			TypeToken typeToken;
+			Type resolved_type;
+
+			AssemblyName aname = genAssemblyName ();
+			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
+				aname, AssemblyBuilderAccess.RunAndSave);
+			ModuleBuilder mb = ab.DefineDynamicModule ("MyModule");
+
+			type = typeof (object []);
+			typeToken = mb.GetTypeToken (type);
+#if NET_2_0
+			Assert.IsFalse (typeToken == TypeToken.Empty, "#A1");
+			resolved_type = mb.ResolveType (typeToken.Token);
+			Assert.AreEqual (type, resolved_type, "#A2");
+#else
+			Assert.IsFalse (typeToken.Token == TypeToken.Empty.Token, "#A1");
+#endif
+
+#if NET_2_0
+			type = typeof (object).MakeArrayType ();
+			typeToken = mb.GetTypeToken (type);
+			Assert.IsFalse (typeToken == TypeToken.Empty, "#B1");
+			resolved_type = mb.ResolveType (typeToken.Token);
+			Assert.AreEqual (type, resolved_type, "#B2");
+#endif
+		}
+
+		[Test] // GetTypeToken (Type)
+		public void GetTypeToken2_Type_String ()
+		{
+			AssemblyName aname = genAssemblyName ();
+			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
+				aname, AssemblyBuilderAccess.RunAndSave);
+			ModuleBuilder mb = ab.DefineDynamicModule ("MyModule");
+			Type type = typeof (string);
+			TypeToken typeToken = mb.GetTypeToken (type);
+#if NET_2_0
+			Assert.IsFalse (typeToken == TypeToken.Empty, "#1");
+			Type resolved_type = mb.ResolveType (typeToken.Token);
+			Assert.AreEqual (type, resolved_type, "#2");
+#else
+			Assert.IsFalse (typeToken.Token == TypeToken.Empty.Token, "#1");
+#endif
+		}
 	}
 }

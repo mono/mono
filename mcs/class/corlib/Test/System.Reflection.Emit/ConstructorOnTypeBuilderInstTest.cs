@@ -203,7 +203,6 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void GetParameters ()
 		{
 			try {

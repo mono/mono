@@ -1,3 +1,13 @@
+2008-05-11  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TypeBuilderTest.cs: Renamed tests and updated bug number. Enabled
+	test for UnderlyingSystemType, and improved it. Improved test for
+	null parent.
+	* ConstructorOnTypeBuilderInstTest.cs: Enabled test for GetParameters.
+	* ConstructorBuilderTest.cs: Enabled test for GetParameters. Renamed
+	test for SetCustomAttribute, and added new tests.	
+	* ModuleBuilderTest.cs: Added tests for bug #387404.
+
 2008-05-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeBuilderTest.cs: Added regression tests for #354047.
