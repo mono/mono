@@ -365,7 +365,7 @@ namespace System.Configuration
 					sections.Add (key, data.sections[key]);
 				}
 			
-			if (data.groups != null && data.sections.Count > 0)
+			if (data.groups != null && data.sections != null && data.sections.Count > 0)
 				foreach (string key in data.groups.AllKeys) {
 					actInfo = groups[key];
 					if (actInfo != null)
