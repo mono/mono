@@ -1,3 +1,11 @@
+2008-05-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ComboBox.cs: For ComboListBox control -specially in Simple mode-, give focus to
+	our ComboBox owner instead of giving it back to the previous control (
+	as done in other controls). Also remove the empty override of Select
+	method, since we want to be selected *and* give focus to our owner.
+	This should let the user do keys-navigation in Simple mode. 
+
 2008-05-10  Geoff Norton  <gnorton@novell.com>
 
 	* XplatUICarbon.cs: Dont use HIViewScrollRect as it's causing painting

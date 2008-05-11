@@ -2184,11 +2184,6 @@ namespace System.Windows.Forms
 				}
 			}
 
-			protected override void Select (bool directed, bool forward)
-			{
-				// Do nothing, we never want to be selected
-			}
-
 			internal override bool InternalCapture {
 				get {
 					return Capture;
@@ -2522,9 +2517,7 @@ namespace System.Windows.Forms
 			
 			protected override void WndProc(ref Message m) {
 				if (m.Msg == (int)Msg.WM_SETFOCUS) {
-					if (m.WParam != IntPtr.Zero) {
-						XplatUI.SetFocus(m.WParam);
-					}
+					owner.Select (false, true);
 				}
 				base.WndProc (ref m);
 			}
