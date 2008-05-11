@@ -1,5 +1,9 @@
 2008-05-11  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* TypeBuilderTest.cs: Added test for type null check in DefineField. 
+
+2008-05-11  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* TypeBuilderTest.cs: Renamed tests and updated bug number. Enabled
 	test for UnderlyingSystemType, and improved it. Improved test for
 	null parent.

@@ -1,5 +1,12 @@
 2008-05-11  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* FieldBuilder.cs: Added null check for type.
+	* TypeBuilder.cs: For enums, construct UnderlyingSystemType when
+	first instance field is defined instead of having to lookup it up on
+	demand. Avoid cast in IsCompilerContext.
+
+2008-05-11  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* TypeBuilder.cs: Use Assembly.FullName instead of AssemblyName.
 	In UnderlyingSystemType, return UnderlyingSystemType of created type
 	when available. For an enum, UnderlyingSystemType is the type of the

@@ -1330,31 +1330,8 @@ namespace MonoTests.System.Reflection.Emit
 			}
 		}
 
-		[Test]
-		public void DefineField_Name_NullChar ()
-		{
-			TypeBuilder tb = module.DefineType (genTypeName ());
-
-			try {
-				tb.DefineField ("\0test", typeof (int),
-					FieldAttributes.Private);
-				Assert.Fail ("#A1");
-			} catch (ArgumentException ex) {
-				// Illegal name
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
-				Assert.IsNull (ex.InnerException, "#A3");
-				Assert.IsNotNull (ex.Message, "#A4");
-				Assert.AreEqual ("fieldName", ex.ParamName, "#A5");
-			}
-
-			FieldBuilder fb = tb.DefineField ("te\0st", typeof (int),
-				FieldAttributes.Private);
-			Assert.IsNotNull (fb, "#B1");
-			Assert.AreEqual ("te\0st", fb.Name, "#B2");
-		}
-
-		[Test]
-		public void TestDefineField ()
+		[Test] // DefineField (String, Type, FieldAttributes)
+		public void DefineField1 ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
 
@@ -1417,6 +1394,65 @@ namespace MonoTests.System.Reflection.Emit
 				Assert.IsNotNull (ex.Message, "#E4");
 			}
 		}
+
+		[Test] // DefineField (String, Type, FieldAttributes)
+		public void DefineField1_Name_NullChar ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+
+			try {
+				tb.DefineField ("\0test", typeof (int),
+					FieldAttributes.Private);
+				Assert.Fail ("#A1");
+			} catch (ArgumentException ex) {
+				// Illegal name
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.AreEqual ("fieldName", ex.ParamName, "#A5");
+			}
+
+			FieldBuilder fb = tb.DefineField ("te\0st", typeof (int),
+				FieldAttributes.Private);
+			Assert.IsNotNull (fb, "#B1");
+			Assert.AreEqual ("te\0st", fb.Name, "#B2");
+		}
+
+		[Test] // DefineField (String, Type, FieldAttributes)
+		public void DefineField1_Type_Null ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+
+			try {
+				tb.DefineField ("test", (Type) null,
+					FieldAttributes.Private);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("type", ex.ParamName, "#5");
+			}
+		}
+
+#if NET_2_0
+		[Test] // DefineField (String, Type, Type [], Type [], FieldAttributes)
+		public void DefineField2_Type_Null ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName ());
+
+			try {
+				tb.DefineField ("test", (Type) null, Type.EmptyTypes,
+					Type.EmptyTypes, FieldAttributes.Private);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("type", ex.ParamName, "#5");
+			}
+		}
+#endif
 
 		[Test]
 		public void TestDefineInitializedData ()

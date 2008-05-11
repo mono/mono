@@ -83,6 +83,7 @@ namespace System.Reflection.Emit
 		#endregion
 		string fullname;
 		bool createTypeCalled;
+		private Type underlying_type;
 
 	public const int UnspecifiedTypeSize = 0;
 
@@ -194,13 +195,8 @@ namespace System.Reflection.Emit
 					return created.UnderlyingSystemType;
 
 				if (IsEnum && !IsCompilerContext) {
-					for (int i = 0; i < num_fields; i++) {
-						FieldBuilder field = fields [i];
-						if ((field.Attributes & FieldAttributes.Static) == 0) {
-							return field.FieldType;
-						}
-					}
-
+					if (underlying_type != null)
+						return underlying_type;
 					throw new InvalidOperationException (
 						"Enumeration type is not defined.");
 				}
@@ -686,6 +682,12 @@ namespace System.Reflection.Emit
 				num_fields ++;
 				create_internal_class (this);
 			}
+
+			if (IsEnum && !IsCompilerContext) {
+				if (underlying_type == null && (attributes & FieldAttributes.Static) == 0)
+					underlying_type = type;
+			}
+
 			return res;
 		}
 
@@ -1618,7 +1620,7 @@ namespace System.Reflection.Emit
 
 		internal bool IsCompilerContext {
 			get {
-				return ((AssemblyBuilder) Assembly).IsCompilerContext;
+				return pmodule.assemblyb.IsCompilerContext;
 			}
 		}
 

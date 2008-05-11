@@ -59,7 +59,11 @@ namespace System.Reflection.Emit {
 		private Type[] modReq;
 		private Type[] modOpt;
 
-		internal FieldBuilder (TypeBuilder tb, string fieldName, Type type, FieldAttributes attributes, Type[] modReq, Type[] modOpt) {
+		internal FieldBuilder (TypeBuilder tb, string fieldName, Type type, FieldAttributes attributes, Type[] modReq, Type[] modOpt)
+		{
+			if (type == null)
+				throw new ArgumentNullException ("type");
+
 			attrs = attributes;
 			name = fieldName;
 			this.type = type;
