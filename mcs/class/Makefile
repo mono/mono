@@ -138,6 +138,7 @@ DISTFILES = \
 	winfx.pub		\
 	mono.pub		\
 	msfinal.pub		\
+	silverlight.pub		\
 	mono.snk		\
 	LICENSE 		\
 	README			\

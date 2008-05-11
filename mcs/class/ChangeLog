@@ -1,3 +1,7 @@
+2008-05-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile: Include silverlight.pub in dist so monobuild goes on...
+
 2008-04-14  Raja R Harinath  <harinath@hurrynot.org>
 
 	* Makefile (DIST_ONLY_SUBDIRS): Remove.
