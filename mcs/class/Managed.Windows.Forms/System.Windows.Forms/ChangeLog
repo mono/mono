@@ -1,5 +1,10 @@
 2008-05-12  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ListBox.cs: Invalidate when the listbox is resized.
+	[Fixes bug #389256]
+
+2008-05-12  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ListBox.cs: There is always at least one row in the ListBox (if
 	we are doing these calculations.)  [Fixes bug #389253]
 

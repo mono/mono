@@ -974,6 +974,8 @@ namespace System.Windows.Forms
 			base.OnResize (e);
 			if (canvas_size.IsEmpty || MultiColumn)
 				LayoutListBox ();
+				
+			Invalidate ();
 		}
 
 		protected override void OnSelectedIndexChanged (EventArgs e)
