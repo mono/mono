@@ -1,5 +1,9 @@
 2008-05-12  Marek Safar  <marek.safar@gmail.com>
 
+	* class.cs (Constructor): Added IsCompilerGenerated.
+
+2008-05-12  Marek Safar  <marek.safar@gmail.com>
+
 	* expression.cs: Enum binary operators can accept non-enum operand only when
 	is implicitly convertible to underlying type.
 

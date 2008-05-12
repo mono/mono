@@ -4070,12 +4070,6 @@ namespace Mono.CSharp {
 			get { return iterator; }
 		}
 
-		public new Location Location {
-			get {
-				return base.Location;
-			}
-		}
-
 		protected override bool CheckBase ()
 		{
 			if (!base.CheckBase ())
@@ -4712,6 +4706,10 @@ namespace Mono.CSharp {
 					(Initializer.Arguments == null);
 		}
 
+		public bool IsCompilerGenerated {
+			get { return Initializer is GeneratedBaseInitializer; }
+		}
+
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
 			if (a.IsValidSecurityAttribute ()) {
@@ -4991,12 +4989,6 @@ namespace Mono.CSharp {
 				// FIXME: How is `ExplicitThis' used in C#?
 			
 				return cc;
-			}
-		}
-
-		public new Location Location {
-			get {
-				return base.Location;
 			}
 		}
 
@@ -6305,12 +6297,6 @@ namespace Mono.CSharp {
 					return false;
 
 				return base.IsUsed;
-			}
-		}
-
-		public new Location Location { 
-			get {
-				return base.Location;
 			}
 		}
 
