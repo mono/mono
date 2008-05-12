@@ -400,11 +400,8 @@ namespace System.Windows.Forms
 					show_dropdown_button = false;
 					
 					CreateComboListBox ();
-
-					if (IsHandleCreated) {
-						Controls.AddImplicit (listbox_ctrl);
-						listbox_ctrl.Visible = true;
-					}
+					Controls.AddImplicit (listbox_ctrl);
+					listbox_ctrl.Visible = true;
 				} else {
 					show_dropdown_button = true;
 					button_state = ButtonState.Normal;
@@ -1101,6 +1098,7 @@ namespace System.Windows.Forms
 				Controls.AddImplicit (textbox_ctrl);
 
 			LayoutComboBox ();
+			UpdateComboBoxBounds ();
 		}
 
 		protected override void OnHandleDestroyed (EventArgs e)

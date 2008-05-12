@@ -1,5 +1,13 @@
 2008-05-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ComboBox.cs: When handle is created call UpdateComboBoxBounds to
+	ensure in Simple mode that the height is exactly the requested one.
+	Also add the ComboBoxListControl to the controls collection in Simple
+	mode even if handle hasn't been created.
+	Fixes part of #371991.
+
+2008-05-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ComboBox.cs: For ComboListBox control -specially in Simple mode-, give focus to
 	our ComboBox owner instead of giving it back to the previous control (
 	as done in other controls). Also remove the empty override of Select
