@@ -1,5 +1,8 @@
 2008-05-13  Zoltan Varga  <vargaz@gmail.com>
 
+	* threads.c (remove_and_abort_threads): Stop and wait for threads which are
+	aborting or aborted as well. Fixes #376391.
+	
 	* threads.c (mono_thread_execute_interruption): Avoid depending on no longer
 	existing runtime state in the Suspend handler during shutdown.
 
