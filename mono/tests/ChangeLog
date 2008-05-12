@@ -1,3 +1,10 @@
+2008-05-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* exit-stress.cs: New stress test program for testing Environment.Exit () and
+	threads.
+
+	* stress-runner.cs: Add 'exit-stress', add a few new /proc/pid/status entries.
+
 2008-05-12  Jb Evain  <jbevain@novell.com>
 
 	* Makefile.am: fix compilation of 2.1 tests.
