@@ -1,5 +1,11 @@
 2008-05-12  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ThemeWin32Classic.cs: Always draw the scrollbar area under the thumb
+	button, because the thumb button will not get drawn if the scrollbar
+	is disabled.  [Fixes bug #389262]
+
+2008-05-12  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ListBox.cs: Handle End key for multi-column listboxen.
 	[Fixes bug #389266]
 

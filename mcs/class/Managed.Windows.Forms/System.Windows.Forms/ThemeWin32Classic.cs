@@ -4420,7 +4420,7 @@ namespace System.Windows.Forms
 					VerticalBrush = ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (255, 63, 63, 63), Color.Black);
 				else
 					VerticalBrush = ResPool.GetHatchBrush (HatchStyle.Percent50, ColorScrollBar, Color.White);
-				Rectangle UpperTrack = new Rectangle (0, 0, bar.ClientRectangle.Width, bar.ThumbPos.Top);
+				Rectangle UpperTrack = new Rectangle (0, 0, bar.ClientRectangle.Width, bar.ThumbPos.Bottom);
 				if (clip.IntersectsWith (UpperTrack))
 					dc.FillRectangle (VerticalBrush, UpperTrack);
 
@@ -4454,7 +4454,7 @@ namespace System.Windows.Forms
 					HorizontalBrush = ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (255, 63, 63, 63), Color.Black);
 				else
 					HorizontalBrush = ResPool.GetHatchBrush (HatchStyle.Percent50, ColorScrollBar, Color.White);
-				Rectangle LeftTrack = new Rectangle (0, 0, bar.ThumbPos.Left, bar.ClientRectangle.Height);
+				Rectangle LeftTrack = new Rectangle (0, 0, bar.ThumbPos.Right, bar.ClientRectangle.Height);
 				if (clip.IntersectsWith (LeftTrack))
 					dc.FillRectangle (HorizontalBrush, LeftTrack);
 
