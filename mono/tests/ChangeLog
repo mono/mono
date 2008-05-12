@@ -1,3 +1,7 @@
+2008-05-12  Jb Evain  <jbevain@novell.com>
+
+	* Makefile.am: fix compilation of 2.1 tests.
+
 2008-05-09  Kornél Pál  <kornelpal@gmail.com>
 
 	* mixed-mode: Added mixed-mode assembly tests.
