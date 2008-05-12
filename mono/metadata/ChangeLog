@@ -1,3 +1,16 @@
+2008-05-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (mono_thread_request_interruption): Add some FIXMEs.
+
+	* threads.c (mono_thread_suspend_all_other_threads): Add support for threads 
+	which are starting up or shutting down.
+
+	* threads.c (mono_threads_set_shutting_down): Don't return a value since
+	this function never returns if the runtime is already shutting down.
+
+	* icall.c (ves_icall_System_Environment_Exit): Update after 
+	mono_threads_set_shutting_down () signature change.
+	
 2008-05-09 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c: Added can_access_instantiation to verify if the instantiation
