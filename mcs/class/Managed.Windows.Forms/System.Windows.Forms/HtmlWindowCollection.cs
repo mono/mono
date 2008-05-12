@@ -32,7 +32,7 @@ using Mono.WebBrowser.DOM;
 
 namespace System.Windows.Forms
 {
-	public sealed class HtmlWindowCollection: ICollection, IEnumerable
+	public class HtmlWindowCollection: ICollection, IEnumerable
 	{
 		private List<HtmlWindow> windows;
 		private Mono.WebBrowser.IWebBrowser webHost;

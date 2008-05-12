@@ -192,11 +192,11 @@ namespace System.Windows.Forms
 		#endregion
 		
 		#region Methods
-		public HtmlElement AppendChild (HtmlElement child)
+		public HtmlElement AppendChild (HtmlElement newElement)
 		{
-			IElement newChild = this.element.AppendChild (child.element);
-			child.element = newChild;
-			return child;
+			IElement newChild = this.element.AppendChild (newElement.element);
+			newElement.element = newChild;
+			return newElement;
 		}
 		
 		public void AttachEventHandler (string eventName, EventHandler eventHandler)
@@ -214,9 +214,9 @@ namespace System.Windows.Forms
 			throw new NotImplementedException ();
 		}
 
-		public string GetAttribute (string name)
+		public string GetAttribute (string attributeName)
 		{
-			return element.GetAttribute (name);
+			return element.GetAttribute (attributeName);
 		}
 
 		public HtmlElementCollection GetElementsByTagName (string tagName)
@@ -235,9 +235,9 @@ namespace System.Windows.Forms
 			return element.HasAttribute (name);
 		}
 
-		public HtmlElement InsertAdjacentElement (HtmlElementInsertionOrientation orientation, HtmlElement newElement)
+		public HtmlElement InsertAdjacentElement (HtmlElementInsertionOrientation orient, HtmlElement newElement)
 		{
-			switch (orientation) {
+			switch (orient) {
 				case HtmlElementInsertionOrientation.BeforeBegin:
 					IElement newChild1 = this.element.Parent.InsertBefore (newElement.element, this.element);
 					newElement.element = newChild1;
@@ -254,23 +254,23 @@ namespace System.Windows.Forms
 			return null;
 		}
 		
-		public object InvokeMember (string method)
+		public object InvokeMember (string methodName)
 		{
-			return this.element.Owner.InvokeScript ("eval ('" + method + "()');");
+			return this.element.Owner.InvokeScript ("eval ('" + methodName + "()');");
 		}
-		
-		public object InvokeMember (string method, object [] args)
+
+		public object InvokeMember (string methodName, params object[] parameter)
 		{
-			string[] strArgs = new string[args.Length];
-			for (int i = 0; i < args.Length; i++) {
-				strArgs[i] = args.ToString();
+			string[] strArgs = new string[parameter.Length];
+			for (int i = 0; i < parameter.Length; i++) {
+				strArgs[i] = parameter.ToString();
 			}
-			return this.element.Owner.InvokeScript  ("eval ('" + method + "(" + String.Join (",", strArgs) + ")');");
+			return this.element.Owner.InvokeScript ("eval ('" + methodName + "(" + String.Join (",", strArgs) + ")');");
 		}
 		
-		public void RaiseEvent (string name) 
+		public void RaiseEvent (string eventName) 
 		{
-			this.element.FireEvent (name);
+			this.element.FireEvent (eventName);
 		}
 
 		public void RemoveFocus () 
@@ -283,9 +283,9 @@ namespace System.Windows.Forms
 			throw new NotImplementedException ();
 		}
 		
-		public void SetAttribute (string name, string value)
+		public void SetAttribute (string attributeName, string value)
 		{
-			this.element.SetAttribute (name, value);
+			this.element.SetAttribute (attributeName, value);
 		}
 
 		public override bool Equals (object obj)
