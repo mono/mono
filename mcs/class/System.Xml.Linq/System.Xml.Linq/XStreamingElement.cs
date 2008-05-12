@@ -127,17 +127,17 @@ namespace System.Xml.Linq
 
 		void WriteContents (IEnumerable<object> items, XmlWriter w)
 		{
-			foreach (object o in items) {
+			foreach (object o in XUtil.ExpandArray (items)) {
 				if (o == null)
 					continue;
+				else if (o is XNode)
+					((XNode) o).WriteTo (w);
 				else if (o is object [])
 					WriteContents ((object []) o, w);
 				else if (o is XAttribute)
 					WriteAttribute ((XAttribute) o, w);
 				else
-					// FIXME: check node validity
-					foreach (XNode n in XUtil.ToNodes (o))
-						n.WriteTo (w);
+					new XText (o.ToString ()).WriteTo (w);
 			}
 		}
 

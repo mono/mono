@@ -60,6 +60,22 @@ namespace System.Xml.Linq
 			throw new NotImplementedException ();
 		}
 
+		public static IEnumerable ExpandArray (object o)
+		{
+			XNode n = o as XNode;
+			if (n != null)
+				yield return n;
+			else if (o is string)
+				yield return o;
+			else if (o is IEnumerable)
+				foreach (object obj in (IEnumerable) o)
+					foreach (object oo in ExpandArray (obj))
+						yield return oo;
+			else
+				yield return o;
+		}
+
+		// FIXME: it will be removed. It makes attribute processing incorrect.
 		public static IEnumerable<XNode> ToNodes (object o)
 		{
 			XNode n = o as XNode;
@@ -98,6 +114,7 @@ namespace System.Xml.Linq
 			throw new ArgumentException ();
 		}
 
+		// FIXME: it will be removed. Shrinking just arguments is insufficient.
 		public static IEnumerable<object> ShrinkArray (params object [] content)
 		{
 			if (content == null || content.Length == 0)
