@@ -1214,14 +1214,13 @@ namespace System.Windows.Forms
 		private void LayoutMultiColumn ()
 		{
 			int usable_height = ClientRectangle.Height - (ScrollAlwaysVisible ? hscrollbar.Height : 0);
-			row_count = usable_height / ItemHeight;
-			if (row_count == 0)
-				row_count = 1;
+			row_count = Math.Max (1, usable_height / ItemHeight);
+
 			int cols = (int) Math.Ceiling ((float)Items.Count / (float) row_count);
 			Size sz = new Size (cols * ColumnWidthInternal, row_count * ItemHeight);
 			if (!ScrollAlwaysVisible && sz.Width > ClientRectangle.Width && row_count > 1) {
 				usable_height = ClientRectangle.Height - hscrollbar.Height;
-				row_count = usable_height / ItemHeight;
+				row_count = Math.Max (1, usable_height / ItemHeight);
 				cols = (int) Math.Ceiling ((float)Items.Count / (float) row_count);
 				sz = new Size (cols * ColumnWidthInternal, row_count * ItemHeight);
 			}
@@ -2027,7 +2026,7 @@ namespace System.Windows.Forms
 					UpdateTopItem ();
 				}
 			} else {
-				int rows = items_area.Height / ItemHeight;
+				int rows = Math.Max (1, items_area.Height / ItemHeight);
 				int cols = Math.Max (1, items_area.Width / ColumnWidthInternal);
 				
 				if (index >= (top_index + (rows * cols))) {
