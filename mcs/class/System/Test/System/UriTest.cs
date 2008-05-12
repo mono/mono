@@ -812,6 +812,15 @@ namespace MonoTests.System
 			} catch (ArgumentOutOfRangeException) {}
 		}
 
+        [Test]
+        public void MoreHexEscape()
+        {
+            string url = "http://guyc-2003-sp/wiki/wiki%20document%20library/בד%20יקה.docx";
+            string escapedAbsolutePath = "/wiki/wiki%20document%20library/%D7%91%D7%93%20%D7%99%D7%A7%D7%94.docx";
+            Uri u = new Uri(url);
+            AssertEquals("Escaped non-english combo", escapedAbsolutePath, u.AbsolutePath);
+        }
+
 		[Test]
 		public void HexUnescape () 
 		{

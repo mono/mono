@@ -1,3 +1,7 @@
+2008-05-12  Noam Lampert  <noaml@mainsoft.com>
+
+	* Uri.cs (EscapeString): Handle pre-escaped inputs that follow non-english characters. Added appropriate testcase.
+
 2008-01-23  Robert Jordan  <robertj@gmx.net>
 
 	* Uri.cs (Parse): Handle uriString.Length == 1 as a valid relative URI.

@@ -1074,11 +1074,11 @@ namespace System {
 			if (str == null)
 				return String.Empty;
 			
-			byte [] data = Encoding.UTF8.GetBytes (str);
 			StringBuilder s = new StringBuilder ();
-			int len = data.Length;	
+            int len = str.Length;
+            byte[] data = new byte[Encoding.UTF8.GetMaxByteCount(1)]; 
 			for (int i = 0; i < len; i++) {
-				char c = (char) data [i];
+                char c = str[i];
 				// reserved    = ";" | "/" | "?" | ":" | "@" | "&" | "=" | "+" | "$" | ","
 				// mark        = "-" | "_" | "." | "!" | "~" | "*" | "'" | "(" | ")"
 				// control     = <US-ASCII coded characters 00-1F and 7F hexadecimal>
@@ -1099,17 +1099,24 @@ namespace System {
 					continue;
 				}
 
-				if ((c <= 0x20) || (c >= 0x7f) || 
-				    ("<>%\"{}|\\^`".IndexOf (c) != -1) ||
-				    (escapeHex && (c == '#')) ||
-				    (escapeBrackets && (c == '[' || c == ']')) ||
-				    (escapeReserved && (";/?:@&=+$,".IndexOf (c) != -1))) {
-					s.Append (HexEscape (c));
-					continue;
-				}
-				
-					
-				s.Append (c);
+
+                int bytes = Encoding.UTF8.GetBytes(str,i,1,data,0);
+
+                for (int j = 0; j < bytes; j++)
+                {
+                    c = (char) data[j];
+                    if ((c <= 0x20) || (c >= 0x7f) ||
+                        ("<>%\"{}|\\^`".IndexOf(c) != -1) ||
+                        (escapeHex && (c == '#')) ||
+                        (escapeBrackets && (c == '[' || c == ']')) ||
+                        (escapeReserved && (";/?:@&=+$,".IndexOf(c) != -1)))
+                    {
+                        s.Append(HexEscape(c));
+                        continue;
+                    }
+
+                    s.Append(c);
+                }
 			}
 			
 			return s.ToString ();
