@@ -85,12 +85,13 @@ namespace MonoTests.System.Xml.Linq
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[Category ("NotDotNet")]
+		//[ExpectedException (typeof (ArgumentException))]
 		public void AddXDeclarationToDocument ()
 		{
 			XDocument doc = new XDocument ();
-			// XDeclaration is treated as a general object and
-			// hence converted to a string -> error
+			// LAMESPEC: XDeclaration is treated as a general object
+			// and hence converted to a string -> error
 			doc.Add (new XDeclaration ("1.0", null, null));
 		}
 

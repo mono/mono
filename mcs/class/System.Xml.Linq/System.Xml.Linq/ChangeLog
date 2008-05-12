@@ -1,5 +1,11 @@
 2008-05-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XNode.cs, XElement.cs, XUtil.cs, XDocument.cs, XContainer.cs:
+	  Add[Before|After]Self() now also checks argument node and joins
+	  concatenating strings.
+
+2008-05-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XNode.cs : fixed AddAfterSelf() to process order of inserted
 	  collection correctly (it could have resulted in reverse order).
 

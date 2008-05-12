@@ -65,31 +65,19 @@ namespace System.Xml.Linq
 				throw new ArgumentException ("Invalid child type: " + o.GetType ());
 		}
 
-/*
-		private void AddAttribute (XAttribute attr)
-		{
-			if (this is XElement)
-				((XElement) this).SetAttributeNode (attr);
-			else
-				throw new ArgumentException ("Attribute is not allowed here.");
-		}
-*/
-
 		public void Add (object content)
 		{
 			if (content == null)
 				return;
 
 			foreach (object o in XUtil.ExpandArray (content))
-				if (!OnAddingObject (o))
-					foreach (XNode n in XUtil.ToNodes (o))
-						AddNode (n);
+				if (!OnAddingObject (o, false, last, false))
+					AddNode (XUtil.ToNode (o));
 		}
 
 		void AddNode (XNode n)
 		{
 			CheckChildType (n, false);
-			OnAdded (n, false);
 			n.SetOwner (this);
 			if (first == null)
 				last = first = n;
@@ -124,11 +112,11 @@ namespace System.Xml.Linq
 				Add (content);
 			else
 				foreach (object o in XUtil.ExpandArray (content))
-					if (!OnAddingObject (o))
+					if (!OnAddingObject (o, false, first.PreviousNode, true))
 						first.AddBeforeSelf (o);
 		}
 
-		internal virtual bool OnAddingObject (object o)
+		internal virtual bool OnAddingObject (object o, bool rejectAttribute, XNode refNode, bool addFirst)
 		{
 			return false;
 		}
@@ -225,19 +213,5 @@ namespace System.Xml.Linq
 			RemoveNodes ();
 			Add (content);
 		}
-
-		/*
-		public void WriteContentTo (XmlWriter writer)
-		{
-			foreach (object o in Content ()) {
-				if (o is string)
-					writer.WriteString ((string) o);
-				else if (o is XNode)
-					((XNode) o).WriteTo (writer);
-				else
-					throw new SystemException ("INTERNAL ERROR: list content item was " + o.GetType ());
-			}
-		}
-		*/
 	}
 }

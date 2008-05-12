@@ -95,8 +95,10 @@ namespace System.Xml.Linq
 				throw new InvalidOperationException ();
 			XNode here = this;
 			XNode orgNext = next;
-			foreach (XNode n in XUtil.ToNodes (content)) {
-				OnAdded (n, false);
+			foreach (object o in XUtil.ExpandArray (content)) {
+				if (Owner.OnAddingObject (o, true, here, false))
+					continue;
+				XNode n = XUtil.ToNode (o);
 				n.SetOwner (Parent);
 				n.previous = here;
 				here.next = n;
@@ -113,19 +115,17 @@ namespace System.Xml.Linq
 		{
 			if (Parent == null)
 				throw new InvalidOperationException ();
-			XNode n = this;
-			foreach (object o in XUtil.ShrinkArray (content)) {
-				n.AddAfterSelf (o);
-				n = n.NextNode;
-			}
+			AddAfterSelf ((object) content);
 		}
 
 		public void AddBeforeSelf (object content)
 		{
 			if (Parent == null)
 				throw new InvalidOperationException ();
-			foreach (XNode n in XUtil.ToNodes (content)) {
-				OnAdded (n, true);
+			foreach (object o in XUtil.ExpandArray (content)) {
+				if (Owner.OnAddingObject (o, true, previous, true))
+					continue;
+				XNode n = XUtil.ToNode (o);
 				n.SetOwner (Parent);
 				n.previous = previous;
 				n.next = this;
@@ -141,8 +141,7 @@ namespace System.Xml.Linq
 		{
 			if (Parent == null)
 				throw new InvalidOperationException ();
-			foreach (object o in XUtil.ShrinkArray (content))
-				AddBeforeSelf (o);
+			AddBeforeSelf ((object) content);
 		}
 
 		public static XNode ReadFrom (XmlReader r)
@@ -295,10 +294,6 @@ namespace System.Xml.Linq
 		{
 			AddAfterSelf (items);
 			Remove ();
-		}
-
-		internal virtual void OnAdded (XNode item, bool addFirst)
-		{
 		}
 	}
 }

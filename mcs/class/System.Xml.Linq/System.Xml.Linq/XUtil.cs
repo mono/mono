@@ -75,22 +75,17 @@ namespace System.Xml.Linq
 				yield return o;
 		}
 
-		// FIXME: it will be removed. It makes attribute processing incorrect.
-		public static IEnumerable<XNode> ToNodes (object o)
+		public static XNode ToNode (object o)
 		{
 			if (o is XAttribute)
 				throw new ArgumentException ("Attribute node is not allowed as argument");
 			XNode n = o as XNode;
 			if (n != null)
-				yield return n;
+				return n;
 			else if (o is string)
-				yield return new XText ((string) o);
-			else if (o is IEnumerable)
-				foreach (object obj in (IEnumerable) o)
-					foreach (XNode nn in ToNodes (obj))
-						yield return nn;
+				return new XText ((string) o);
 			else
-				yield return new XText (o.ToString ());
+				return new XText (o.ToString ());
 		}
 
 		public static object Clone (object o)
@@ -114,27 +109,6 @@ namespace System.Xml.Linq
 			if (dtd != null)
 				throw new NotImplementedException ();
 			throw new ArgumentException ();
-		}
-
-		// FIXME: it will be removed. Shrinking just arguments is insufficient.
-		public static IEnumerable<object> ShrinkArray (params object [] content)
-		{
-			if (content == null || content.Length == 0)
-				yield break;
-			string prev = null;
-			foreach (object o in content) {
-				if (o is XNode) {
-					if (prev != null) {
-						yield return prev;
-						prev = null;
-					}
-					yield return o;
-				} else {
-					prev += o;
-				}
-			}
-			if (prev != null)
-				yield return prev;
 		}
 	}
 }

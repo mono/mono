@@ -228,11 +228,19 @@ namespace System.Xml.Linq
 				node.WriteTo (w);
 		}
 
-		internal override void OnAdded (XNode node, bool addFirst)
+		internal override bool OnAddingObject (object obj, bool rejectAttribute, XNode refNode, bool addFirst)
+		{
+			VerifyAddedNode (obj, addFirst);
+			return false;
+		}
+
+		void VerifyAddedNode (object node, bool addFirst)
 		{
 			if (node == null)
 				throw new InvalidOperationException ("Only a node is allowed here");
 
+			if (node is string)
+				ValidateWhitespace ((string) node);
 			if (node is XText)
 				ValidateWhitespace (((XText) node).Value);
 			else if (node is XDocumentType) {

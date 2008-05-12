@@ -1,5 +1,12 @@
 2008-05-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XElementTest.cs, XDocumentTest.cs : fixed tests; do now allow
+	  XDeclaration addition to XElement, while allow it being added
+	  to XDocument.
+	  Added test for AddAfterSelf() for concatenating string arguments.
+
+2008-05-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XElement.cs : added AddAfterSelfCollection().
 
 2008-05-12  Atsushi Enomoto  <atsushi@ximian.com>

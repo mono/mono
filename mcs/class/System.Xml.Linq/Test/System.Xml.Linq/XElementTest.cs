@@ -122,13 +122,14 @@ namespace MonoTests.System.Xml.Linq
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		[Category ("NotDotNet")]
 		public void AddXDeclarationToElement ()
 		{
 			XElement el = new XElement (XName.Get ("foo"));
-			// XDeclaration is treated as a general object and
-			// hence converted to a string. No error here.
+			// LAMESPEC: in .NET, XDeclaration is not treated as
+			// invalid, and converted to a string without error.
 			el.Add (new XDeclaration ("1.0", null, null));
-			Assert.AreEqual ("<?xml version=\"1.0\"?>", ((XText) el.FirstNode).Value, "#1");
 		}
 
 		[Test]
@@ -243,6 +244,20 @@ namespace MonoTests.System.Xml.Linq
 			el.FirstNode.AddAfterSelf (new List<XElement> (new XElement [] {new XElement ("foo"), new XElement ("bar")}));
 			Assert.AreEqual ("<root><child /><foo /><bar /></root>", el.ToString (SaveOptions.DisableFormatting), "#1");
 			Assert.AreEqual ("bar", (el.LastNode as XElement).Name.LocalName, "#2");
+		}
+
+		[Test]
+		public void AddAfterSelfJoinsStringAfterText ()
+		{
+			var el = XElement.Parse ("<foo>text1</foo>");
+			el.LastNode.AddAfterSelf ("text2");
+			el.LastNode.AddAfterSelf (new XText ("text3"));
+			IEnumerator<XNode> e = el.Nodes ().GetEnumerator ();
+			Assert.IsTrue (e.MoveNext (), "#1");
+			Assert.AreEqual ("text1text2", e.Current.ToString (), "#2");
+			Assert.IsTrue (e.MoveNext (), "#3");
+			Assert.AreEqual ("text3", e.Current.ToString (), "#4");
+			Assert.IsFalse (e.MoveNext (), "#5");
 		}
 
 		[Test]

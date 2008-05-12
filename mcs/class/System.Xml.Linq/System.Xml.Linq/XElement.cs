@@ -641,12 +641,15 @@ namespace System.Xml.Linq
 			if (value is XAttribute || value is XDocument || value is XDeclaration || value is XDocumentType)
 				throw new ArgumentException (String.Format ("Node type {0} is not allowed as element value", value.GetType ()));
 			RemoveNodes ();
-			foreach (XNode n in XUtil.ToNodes (value))
-				Add (n);
+			foreach (object o in XUtil.ExpandArray (value))
+				Add (o);
 		}
 
-		internal override bool OnAddingObject (object o)
+		internal override bool OnAddingObject (object o, bool rejectAttribute, XNode refNode, bool addFirst)
 		{
+			if (o is XDocument || o is XDocumentType || o is XDeclaration || (rejectAttribute && o is XAttribute))
+				throw new ArgumentException (String.Format ("A node of type {0} cannot be added as a content", o.GetType ()));
+
 			XAttribute a = o as XAttribute;
 			if (a != null) {
 				foreach (XAttribute ia in Attributes ())
@@ -655,18 +658,12 @@ namespace System.Xml.Linq
 				SetAttributeObject (a);
 				return true;
 			}
-			else if (o is string && LastNode is XText) {
-				((XText) LastNode).Value += o as string;
+			else if (o is string && refNode is XText) {
+				((XText) refNode).Value += o as string;
 				return true;
 			}
 			else
 				return false;
-		}
-
-		internal override void OnAdded (XNode node, bool addFirst)
-		{
-			if (node is XDocument || node is XDocumentType || node is XDeclaration)
-				throw new ArgumentException (String.Format ("A node of type {0} cannot be added as a content", node.GetType ()));
 		}
 
 		void IXmlSerializable.WriteXml (XmlWriter writer)
