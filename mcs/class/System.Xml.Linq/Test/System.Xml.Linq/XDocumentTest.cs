@@ -93,5 +93,13 @@ namespace MonoTests.System.Xml.Linq
 			// hence converted to a string -> error
 			doc.Add (new XDeclaration ("1.0", null, null));
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void AddXAttributeToDocument ()
+		{
+			var doc = new XDocument ();
+			doc.Add (new XAttribute ("foo", " "));
+		}
 	}
 }

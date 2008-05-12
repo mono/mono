@@ -525,19 +525,23 @@ namespace System.Xml.Linq
 					a.Remove ();
 			} else {
 				if (a == null) {
-					a = new XAttribute (name, value);
-					a.SetOwner (this);
-					if (attr_first == null) {
-						attr_first = a;
-						attr_last = a;
-					} else {
-						attr_last.NextAttribute = a;
-						a.PreviousAttribute = attr_last;
-						attr_last = a;
-					}
+					SetAttributeObject (new XAttribute (name, value));
 				}
 				else
 					a.Value = XUtil.ToString (value);
+			}
+		}
+
+		void SetAttributeObject (XAttribute a)
+		{
+			a.SetOwner (this);
+			if (attr_first == null) {
+				attr_first = a;
+				attr_last = a;
+			} else {
+				attr_last.NextAttribute = a;
+				a.PreviousAttribute = attr_last;
+				attr_last = a;
 			}
 		}
 
@@ -632,14 +636,36 @@ namespace System.Xml.Linq
 
 		public void SetValue (object value)
 		{
+			if (value == null)
+				throw new ArgumentNullException ("value");
+			if (value is XAttribute || value is XDocument || value is XDeclaration || value is XDocumentType)
+				throw new ArgumentException (String.Format ("Node type {0} is not allowed as element value", value.GetType ()));
 			RemoveNodes ();
 			foreach (XNode n in XUtil.ToNodes (value))
 				Add (n);
 		}
 
+		internal override bool OnAddingObject (object o)
+		{
+			XAttribute a = o as XAttribute;
+			if (a != null) {
+				foreach (XAttribute ia in Attributes ())
+					if (a.Name == ia.Name)
+						throw new InvalidOperationException (String.Format ("Duplicate attribute: {0}", a.Name));
+				SetAttributeObject (a);
+				return true;
+			}
+			else if (o is string && LastNode is XText) {
+				((XText) LastNode).Value += o as string;
+				return true;
+			}
+			else
+				return false;
+		}
+
 		internal override void OnAdded (XNode node, bool addFirst)
 		{
-			if (node is XDocument || node is XDocumentType)
+			if (node is XDocument || node is XDocumentType || node is XDeclaration)
 				throw new ArgumentException (String.Format ("A node of type {0} cannot be added as a content", node.GetType ()));
 		}
 

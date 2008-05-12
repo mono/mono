@@ -94,6 +94,7 @@ namespace System.Xml.Linq
 			if (Parent == null)
 				throw new InvalidOperationException ();
 			foreach (XNode n in XUtil.ToNodes (content)) {
+				OnAdded (n, false);
 				n.SetOwner (Parent);
 				n.previous = this;
 				n.next = next;
@@ -121,6 +122,7 @@ namespace System.Xml.Linq
 			if (Parent == null)
 				throw new InvalidOperationException ();
 			foreach (XNode n in XUtil.ToNodes (content)) {
+				OnAdded (n, true);
 				n.SetOwner (Parent);
 				n.previous = previous;
 				n.next = this;
@@ -290,6 +292,10 @@ namespace System.Xml.Linq
 		{
 			AddAfterSelf (items);
 			Remove ();
+		}
+
+		internal virtual void OnAdded (XNode item, bool addFirst)
+		{
 		}
 	}
 }

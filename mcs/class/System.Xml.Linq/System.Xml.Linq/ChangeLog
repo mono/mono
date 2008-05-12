@@ -1,5 +1,16 @@
 2008-05-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XContainer.cs, XElement.cs, XNode.cs, XUtil.cs :
+	  made several refactoring on handling "content" items in couple of
+	  Add*() methods. Attributes should be allowed in XElement.Add(),
+	  while they should be rejected in XNode.Add*Self().
+	  Similarly, Add() and SetValue() should reject any invalid content
+	  items.
+	  Add() should also append string content to the last node when the
+	  last node is text.
+
+2008-05-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XUtil.cs : added ExpandArray() and marked some members as wrong.
 	* XStreamingElement.cs : removed use of ToNodes().
 

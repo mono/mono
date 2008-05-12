@@ -80,8 +80,10 @@ namespace System.Xml.Linq
 			if (content == null)
 				return;
 
-			foreach (XNode n in XUtil.ToNodes (content))
-				AddNode (n);
+			foreach (object o in XUtil.ExpandArray (content))
+				if (!OnAddingObject (o))
+					foreach (XNode n in XUtil.ToNodes (o))
+						AddNode (n);
 		}
 
 		void AddNode (XNode n)
@@ -100,7 +102,9 @@ namespace System.Xml.Linq
 
 		public void Add (params object [] content)
 		{
-			foreach (object o in XUtil.ShrinkArray (content))
+			if (content == null)
+				return;
+			foreach (object o in XUtil.ExpandArray (content))
 				Add (o);
 		}
 
@@ -109,7 +113,7 @@ namespace System.Xml.Linq
 			if (first == null)
 				Add (content);
 			else
-				first.AddBeforeSelf (content);
+				AddFirst (XUtil.ExpandArray (content));
 		}
 
 		public void AddFirst (params object [] content)
@@ -119,7 +123,14 @@ namespace System.Xml.Linq
 			if (first == null)
 				Add (content);
 			else
-				first.AddBeforeSelf (content);
+				foreach (object o in XUtil.ExpandArray (content))
+					if (!OnAddingObject (o))
+						first.AddBeforeSelf (o);
+		}
+
+		internal virtual bool OnAddingObject (object o)
+		{
+			return false;
 		}
 
 		public XmlWriter CreateWriter ()
@@ -228,9 +239,5 @@ namespace System.Xml.Linq
 			}
 		}
 		*/
-
-		internal virtual void OnAdded (XNode item, bool addFirst)
-		{
-		}
 	}
 }

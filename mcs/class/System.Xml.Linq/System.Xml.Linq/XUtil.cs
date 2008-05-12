@@ -78,6 +78,8 @@ namespace System.Xml.Linq
 		// FIXME: it will be removed. It makes attribute processing incorrect.
 		public static IEnumerable<XNode> ToNodes (object o)
 		{
+			if (o is XAttribute)
+				throw new ArgumentException ("Attribute node is not allowed as argument");
 			XNode n = o as XNode;
 			if (n != null)
 				yield return n;

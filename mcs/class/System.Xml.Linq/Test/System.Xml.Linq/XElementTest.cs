@@ -207,6 +207,36 @@ namespace MonoTests.System.Xml.Linq
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void AddAfterSelfAttribute ()
+		{
+			var el = new XElement ("root", new XElement ("child"));
+			var el2 = el.FirstNode as XElement;
+			el2.AddAfterSelf (new XAttribute ("foo", "bar"));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void AddAfterSelfXDocument ()
+		{
+			var el = new XElement ("root", new XElement ("child"));
+			var el2 = el.FirstNode as XElement;
+			el2.AddAfterSelf (new XDocument ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		[Category ("NotDotNet")]
+		[Category ("NotWorking")]
+		// LAMESPEC: there is no reason to not reject XDeclaration while it rejects XDocument.
+		public void AddAfterSelfXDeclaration ()
+		{
+			var el = new XElement ("root", new XElement ("child"));
+			var el2 = el.FirstNode as XElement;
+			el2.AddAfterSelf (new XDeclaration ("1.0", null, null));
+		}
+
+		[Test]
 		public void AddBeforeSelf ()
 		{
 			XElement el = XElement.Parse ("<root><foo/><bar/></root>");
@@ -248,6 +278,29 @@ namespace MonoTests.System.Xml.Linq
 			XElement foo = t.NextNode as XElement;
 			Assert.IsNotNull (foo, "#3");
 			Assert.AreEqual ("foo", foo.Name.LocalName, "#4");
+		}
+
+		[Test]
+		public void AddJoinsStringAfterText ()
+		{
+			var el = XElement.Parse ("<foo>text1</foo>");
+			el.Add ("text2");
+			el.Add (new XText ("text3"));
+			IEnumerator<XNode> e = el.Nodes ().GetEnumerator ();
+			Assert.IsTrue (e.MoveNext (), "#1");
+			Assert.AreEqual ("text1text2", e.Current.ToString (), "#2");
+			Assert.IsTrue (e.MoveNext (), "#3");
+			Assert.AreEqual ("text3", e.Current.ToString (), "#4");
+			Assert.IsFalse (e.MoveNext (), "#5");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void AddDuplicateAttribute ()
+		{
+			var el = new XElement ("foo",
+				new XAttribute ("bar", "baz"));
+			el.Add (new XAttribute ("bar", "baz"));
 		}
 
 		[Test]
@@ -368,6 +421,38 @@ namespace MonoTests.System.Xml.Linq
 				new XComment ("comment"),
 				new XElement ("bar"));
 			Assert.AreEqual ("Linux&Windows", a.Value);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void SetValueXAttribute ()
+		{
+			new XElement ("foo").SetValue (new XAttribute ("foo", "bar"));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void SetValueXDocumnent ()
+		{
+			new XElement ("foo").SetValue (new XDocument ());
+		}
+
+		[Test]
+		// LAMESPEC: there is no reason to not reject XDeclaration while it rejects XDocument.
+		[ExpectedException (typeof (ArgumentException))]
+		[Category ("NotDotNet")]
+		public void SetValueXDeclaration ()
+		{
+			var el = new XElement ("foo");
+			el.SetValue (new XDeclaration ("1.0", null, null));
+			Assert.AreEqual ("<?xml version=\"1.0\"?>", el.Value);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void SetValueNull ()
+		{
+			new XElement ("foo", "text").SetValue (null);
 		}
 	}
 }

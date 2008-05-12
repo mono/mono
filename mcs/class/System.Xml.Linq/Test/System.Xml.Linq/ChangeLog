@@ -1,5 +1,10 @@
 2008-05-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XDocumentTest.cs, XElementTest.cs :
+	  Added couple of tests for Add() and AddBeforeSelf().
+
+2008-05-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XStreamingElementTest.cs : new test.
 
 2008-04-30  Atsushi Enomoto  <atsushi@ximian.com>
