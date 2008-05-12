@@ -448,7 +448,7 @@ namespace System.Windows.Forms {
 
 		}
 
-		public ListSortDescription GetListSortDescription (PropertyDescriptorCollection prop_descs, string property)
+		ListSortDescription GetListSortDescription (PropertyDescriptorCollection prop_descs, string property)
 		{
 			property = property.Trim ();
 			string [] p = property.Split (new char [] {' '}, 2);

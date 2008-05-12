@@ -1,5 +1,9 @@
 2008-05-12  Jonathan Pobst  <monkey@jpobst.com>
 
+	* BindingSource.cs: GetListSortDescription is not public.
+
+2008-05-12  Jonathan Pobst  <monkey@jpobst.com>
+
 	* WebBrowser.cs, WebBrowserBase.cs, WebBrowserSiteBase.cs: corcompare.
 
 2008-05-12  Jonathan Pobst  <monkey@jpobst.com>
