@@ -1,5 +1,10 @@
 2008-05-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XUtil.cs : added ExpandArray() and marked some members as wrong.
+	* XStreamingElement.cs : removed use of ToNodes().
+
+2008-05-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XStreamingElement.cs : couple of fixes:
 	  - object[] args are params.
 	  - Fixed WriteContents(object[],XmlWriter) wrong iteration.
