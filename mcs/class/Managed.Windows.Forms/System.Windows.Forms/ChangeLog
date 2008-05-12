@@ -1,3 +1,10 @@
+2008-05-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ComboBox.cs: Don't do any calculation for simple mode if the listbox
+	area is empty. Also calculate scrollbars in Simple mode based in area
+	height and total number of items, not in MaxDropDownItems.
+	Fixes part of #371991.
+
 2008-05-12  Jonathan Pobst  <monkey@jpobst.com>
 
 	* PictureBox.cs: Always invalidate on resize.  Fixes an app for jhill.

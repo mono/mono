@@ -2199,11 +2199,15 @@ namespace System.Windows.Forms
 			{
 				int width, height;
 				bool show_scrollbar = false;
-				
+
 				if (owner.DropDownStyle == ComboBoxStyle.Simple) {
 					Rectangle area = owner.listbox_area;
 					width = area.Width;
 					height = area.Height;
+
+					// No calculation needed
+					if (height <= 0 || width <= 0)
+						return;
 				}
 				else { // DropDown or DropDownList
 					
@@ -2227,10 +2231,13 @@ namespace System.Windows.Forms
 				
 				page_size = height / owner.ItemHeight;
 
-				if (owner.Items.Count <= owner.MaxDropDownItems) {
+				ComboBoxStyle dropdown_style = owner.DropDownStyle;
+				if ((dropdown_style != ComboBoxStyle.Simple && owner.Items.Count <= owner.MaxDropDownItems)
+					|| (dropdown_style == ComboBoxStyle.Simple && owner.Items.Count * owner.ItemHeight < height)) {
+
 					if (vscrollbar_ctrl != null)
 						vscrollbar_ctrl.Visible = false;
-					if (owner.DropDownStyle != ComboBoxStyle.Simple)
+					if (dropdown_style != ComboBoxStyle.Simple)
 						height = owner.ItemHeight * owner.items.Count;
 				} else {
 					/* Need vertical scrollbar */
@@ -2250,7 +2257,7 @@ namespace System.Windows.Forms
 #if NET_2_0
 					int large = page_size - 1;
 #else
-					int large = (owner.DropDownStyle == ComboBoxStyle.Simple ? page_size : owner.maxdrop_items) - 1;
+					int large = (dropdown_style == ComboBoxStyle.Simple ? page_size : owner.maxdrop_items) - 1;
 #endif
 					if (large < 0)
 						large = 0;
