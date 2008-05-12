@@ -34,11 +34,13 @@ using System.Windows.Forms;
 namespace System.Windows.Forms
 {
 	[MonoTODO ("Needs Implementation")]
-    [ClassInterface(ClassInterfaceType.AutoDispatch)]
     [ComVisible(true)]
 	public class WebBrowserSiteBase : IDisposable
 	{
-
+		internal WebBrowserSiteBase ()
+		{
+		}
+		
 		#region Methods
 		public void Dispose ()
 		{

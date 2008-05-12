@@ -35,7 +35,6 @@ using System.Windows.Forms;
 
 namespace System.Windows.Forms
 {
-	[MonoTODO ("Needs Implementation")]
 	[ClassInterface(ClassInterfaceType.AutoDispatch)]
 	[ComVisible(true)]
 	[DefaultProperty ("Name")]
@@ -169,7 +168,7 @@ namespace System.Windows.Forms
 		#region Public Methods
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public void DrawToBitmap (Bitmap bitmap, Rectangle targetBounds)
+		public new void DrawToBitmap (Bitmap bitmap, Rectangle targetBounds)
 		{
 			base.DrawToBitmap (bitmap, targetBounds);
 		}

@@ -1,5 +1,9 @@
 2008-05-12  Jonathan Pobst  <monkey@jpobst.com>
 
+	* WebBrowser.cs, WebBrowserBase.cs, WebBrowserSiteBase.cs: corcompare.
+
+2008-05-12  Jonathan Pobst  <monkey@jpobst.com>
+
 	* HtmlElement.cs: Fix parameter names to match MS.
 	* HtmlWindowCollection.cs: Should not be sealed.
 

@@ -36,7 +36,6 @@ namespace System.Windows.Forms
 	[DefaultProperty ("Url")]
 	[DefaultEvent ("DocumentCompleted")]
 	[Docking (DockingBehavior.AutoDock)]
-	[MonoTODO ("Needs Implementation")]
 	[ClassInterface (ClassInterfaceType.AutoDispatch)]
 	[ComVisible(true)]
 	[Designer("System.Windows.Forms.Design.WebBrowserDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
@@ -192,7 +191,7 @@ namespace System.Windows.Forms
 
 		[BindableAttribute(true)] 
 		[DefaultValue(null)]
-		[TypeConverter(typeof(UriTypeConverter))]
+		[TypeConverter(typeof(WebBrowserUriTypeConverter))]
 		public Uri Url {
 			get { return new Uri(WebHost.Document.Url); }
 			set { this.Navigate (value); }
@@ -575,8 +574,10 @@ namespace System.Windows.Forms
 			remove { Events.RemoveHandler (StatusTextChangedEvent, value); }
 		}
 
-		public event EventHandler PaddingChanged
-		{
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public new event EventHandler PaddingChanged {
 			add { Events.AddHandler (PaddingChangedEvent, value); }
 			remove { Events.RemoveHandler (PaddingChangedEvent, value); }
 		}
@@ -610,6 +611,10 @@ namespace System.Windows.Forms
 			{
 			}
 		}
+	}
+
+	internal class WebBrowserUriTypeConverter : UriTypeConverter
+	{
 	}
 }
 
