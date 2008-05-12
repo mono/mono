@@ -350,6 +350,20 @@ namespace Mono.CSharp {
 		{
 			comparer = PtrComparer.Instance;
 		}
+
+#if MS_COMPATIBLE
+		//
+		// Workaround System.InvalidOperationException for enums
+		//
+		protected override int GetHash (object key)
+		{
+			TypeBuilder tb = key as TypeBuilder;
+			if (tb != null && tb.BaseType == TypeManager.enum_type)
+				key = tb.BaseType;
+
+			return base.GetHash (key);
+		}
+#endif
 	}
 
 	/*

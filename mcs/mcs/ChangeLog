@@ -1,5 +1,10 @@
 2008-05-12  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #389272
+	* support.cs: Workaround System.InvalidOperationException for enums.
+
+2008-05-12  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #389073
 	* convert.cs: More undocumented explicit IntPtr/UIntPtr conversions.
 
