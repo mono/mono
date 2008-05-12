@@ -140,8 +140,3 @@ gcs1909.cs
 gcs1910-2.cs
 gcs1910.cs
 
-# Reported as csc bug
-cs0019-21.cs NO ERROR
-cs0019-22.cs NO ERROR
-cs0019-2.cs NO ERROR
-
