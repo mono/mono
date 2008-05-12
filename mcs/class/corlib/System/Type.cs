@@ -448,7 +448,11 @@ namespace System {
 		public static Type GetType(string typeName)
 		{
 			if (typeName == null)
-				throw new ArgumentNullException ("typeName");
+#if NET_2_0
+				throw new ArgumentNullException ("TypeName");
+#else
+				throw new ArgumentNullException ("className");
+#endif
 
 			return internal_from_name (typeName, false, false);
 		}
@@ -456,7 +460,11 @@ namespace System {
 		public static Type GetType(string typeName, bool throwOnError)
 		{
 			if (typeName == null)
-				throw new ArgumentNullException ("typeName");
+#if NET_2_0
+				throw new ArgumentNullException ("TypeName");
+#else
+				throw new ArgumentNullException ("className");
+#endif
 
 			Type type = internal_from_name (typeName, throwOnError, false);
 			if (throwOnError && type == null)
@@ -468,7 +476,11 @@ namespace System {
 		public static Type GetType(string typeName, bool throwOnError, bool ignoreCase)
 		{
 			if (typeName == null)
-				throw new ArgumentNullException ("typeName");
+#if NET_2_0
+				throw new ArgumentNullException ("TypeName");
+#else
+				throw new ArgumentNullException ("className");
+#endif
 
 			Type t = internal_from_name (typeName, throwOnError, ignoreCase);
 			if (throwOnError && t == null)
@@ -531,11 +543,16 @@ namespace System {
 		}
 
 		public static Type GetTypeFromHandle (RuntimeTypeHandle handle)
-		{ 
+		{
 			if (handle.Value == IntPtr.Zero)
+#if NET_2_0
 				// This is not consistent with the other GetXXXFromHandle methods, but
 				// MS.NET seems to do this
 				return null;
+#else
+				throw new ArgumentException ("The handle is invalid.");
+#endif
+
 			return internal_from_handle (handle.Value);
 		}
 
@@ -565,6 +582,13 @@ namespace System {
 
 		public static RuntimeTypeHandle GetTypeHandle (object o)
 		{
+			if (o == null)
+#if NET_2_0
+				throw new ArgumentNullException ();
+#else
+				throw new ArgumentNullException ("o");
+#endif
+
 			return o.GetType().TypeHandle;
 		}
 

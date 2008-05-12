@@ -1,3 +1,8 @@
+2008-05-12  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TypeTest.cs: Added GetType, GetTypeArray and GetTypeFromHandle tests
+	for argument checks.
+
 2008-05-07  Robert Jordan  <robertj@gmx.net>
 
 	* Runtime*Handle.cs: Add serialization tests.

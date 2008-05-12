@@ -142,6 +142,95 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (typeof (ObsoleteAttribute), attrs [0].GetType (), "#D10");
 		}
 
+		[Test] // GetFieldFromHandle (RuntimeFieldHandle)
+		public void GetFieldFromHandle1_Handle_Zero ()
+		{
+			RuntimeFieldHandle fh = new RuntimeFieldHandle ();
+
+			try {
+				FieldInfo.GetFieldFromHandle (fh);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Handle is not initialized
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+		}
+
+#if NET_2_0
+		[Test] // GetFieldFromHandle (RuntimeFieldHandle, RuntimeTypeHandle)
+		public void GetFieldFromHandle2_DeclaringType_Zero ()
+		{
+			RuntimeTypeHandle th = new RuntimeTypeHandle ();
+			FieldInfo fi1 = typeof (Class2).GetField ("f5");
+			RuntimeFieldHandle fh = fi1.FieldHandle;
+
+			FieldInfo fi2 = FieldInfo.GetFieldFromHandle (fh, th);
+			Assert.IsNotNull (fi2, "#1");
+			Assert.AreSame (fi1.DeclaringType, fi2.DeclaringType, "#2");
+			Assert.AreEqual (fi1.FieldType, fi2.FieldType, "#3");
+			Assert.AreEqual (fi1.Name, fi2.Name, "#4");
+		}
+
+		[Test] // GetFieldFromHandle (RuntimeFieldHandle, RuntimeTypeHandle)
+		public void GetFieldFromHandle2_Handle_Generic ()
+		{
+			FieldInfoTest<string> instance = new FieldInfoTest<string> ();
+			Type t = instance.GetType ();
+
+			FieldInfo fi1 = t.GetField ("TestField");
+			RuntimeFieldHandle fh = fi1.FieldHandle;
+			RuntimeTypeHandle th = t.TypeHandle;
+
+			FieldInfo fi2 = FieldInfo.GetFieldFromHandle (fh, th);
+			Assert.IsNotNull (fi2, "#1");
+			Assert.AreSame (t, fi2.DeclaringType, "#2");
+			Assert.AreEqual (typeof (string), fi2.FieldType, "#3");
+			Assert.AreEqual ("TestField", fi2.Name, "#4");
+		}
+
+		[Test] // GetFieldFromHandle (RuntimeFieldHandle, RuntimeTypeHandle)
+		[Category ("NotWorking")]
+		[Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=343449
+		public void GetFieldFromHandle2_Handle_GenericDefinition ()
+		{
+			Type t1 = typeof (FieldInfoTest<>);
+			FieldInfo fi1 = t1.GetField ("TestField");
+			RuntimeFieldHandle fh = fi1.FieldHandle;
+
+			FieldInfoTest<string> instance = new FieldInfoTest<string> ();
+			Type t2 = instance.GetType ();
+			RuntimeTypeHandle th = t2.TypeHandle;
+
+			FieldInfo fi2 = FieldInfo.GetFieldFromHandle (fh, th);
+			Assert.IsNotNull (fi2, "#1");
+			Assert.AreSame (t2, fi2.DeclaringType, "#2");
+			Assert.AreEqual (typeof (string), fi2.FieldType, "#3");
+			Assert.AreEqual ("TestField", fi2.Name, "#4");
+		}
+
+		[Test] // GetFieldFromHandle (RuntimeFieldHandle, RuntimeTypeHandle)
+		public void GetFieldFromHandle2_Handle_Zero ()
+		{
+			object instance = new Class2 ();
+			RuntimeTypeHandle th = Type.GetTypeHandle (instance);
+			RuntimeFieldHandle fh = new RuntimeFieldHandle ();
+
+			try {
+				FieldInfo.GetFieldFromHandle (fh, th);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Handle is not initialized
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+		}
+#endif
+
 		[Test]
 		public void PseudoCustomAttributes ()
 		{
@@ -366,7 +455,7 @@ namespace MonoTests.System.Reflection
 
 		public enum LongEnum : long {
 			First = 1,
-		    Second = 2,
+			Second = 2,
 			Third = 3
 		}
 
@@ -392,6 +481,11 @@ namespace MonoTests.System.Reflection
 	class NonPublicFieldClass
 	{
 		protected int protectedField;
+	}
+
+	public class FieldInfoTest<T>
+	{
+		public T TestField;
 	}
 #endif
 }

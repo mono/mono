@@ -1,3 +1,8 @@
+2008-05-12  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* FieldInfoTest.cs: Added tests for GetFieldFromHandle.
+	* MethodBaseTest.cs: Added tests for GetMethodFromHandle.
+
 2008-04-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* BinderTests.cs: Applied patch from Yves Bastide (doc.formatique@gmail.com). Add 

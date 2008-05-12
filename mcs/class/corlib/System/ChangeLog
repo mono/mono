@@ -1,3 +1,8 @@
+2008-05-12  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Type.cs: Modifies exceptions to match MS. Changed GetTypeFromHandle
+	on 1.0 profile to throw ArgumentException when handle is invalid,
+
 2008-05-08  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Activator.cs (CreateInstance): Check for null types when creating

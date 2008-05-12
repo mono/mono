@@ -2492,6 +2492,74 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.IsFalse (typeof (bug82431B4).IsDefined (typeof (NotInheritAttribute), true), "#K4");
 		}
 
+		[Test] // GetType (String)
+		public void GetType1_TypeName_Null ()
+		{
+			try {
+				Type.GetType ((string) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+#if NET_2_0
+				Assert.AreEqual ("TypeName", ex.ParamName, "#5");
+#else
+				Assert.AreEqual ("className", ex.ParamName, "#5");
+#endif
+			}
+		}
+
+		[Test] // GetType (String, Boolean)
+		public void GetType2_TypeName_Null ()
+		{
+			try {
+				Type.GetType ((string) null, false);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+#if NET_2_0
+				Assert.AreEqual ("TypeName", ex.ParamName, "#5");
+#else
+				Assert.AreEqual ("className", ex.ParamName, "#5");
+#endif
+			}
+		}
+
+		[Test] // GetType (String, Boolean, Boolean)
+		public void GetType3_TypeName_Null ()
+		{
+			try {
+				Type.GetType ((string) null, false, false);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+#if NET_2_0
+				Assert.AreEqual ("TypeName", ex.ParamName, "#5");
+#else
+				Assert.AreEqual ("className", ex.ParamName, "#5");
+#endif
+			}
+		}
+
+		[Test]
+		public void GetTypeArray_Args_Null ()
+		{
+			try {
+				Type.GetTypeArray ((object []) null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("args", ex.ParamName, "#5");
+			}
+		}
+
 		[Test]
 		public void GetTypeCode ()
 		{
@@ -2513,6 +2581,45 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.AreEqual (TypeCode.UInt16, Type.GetTypeCode (typeof (ushort)), "#16");
 			Assert.AreEqual (TypeCode.UInt32, Type.GetTypeCode (typeof (uint)), "#17");
 			Assert.AreEqual (TypeCode.UInt64, Type.GetTypeCode (typeof (ulong)), "#18");
+		}
+
+		[Test]
+		public void GetTypeFromHandle_Handle_Zero ()
+		{
+			RuntimeTypeHandle handle = new RuntimeTypeHandle ();
+
+#if NET_2_0
+			Assert.IsNull (Type.GetTypeFromHandle (handle));
+#else
+			try {
+				Type.GetTypeFromHandle (handle);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Handle is not initialized
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+#endif
+		}
+
+		[Test]
+		public void GetTypeHandle_O_Null ()
+		{
+			try {
+				Type.GetTypeHandle (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+#if NET_2_0
+				Assert.IsNull (ex.ParamName, "#5");
+#else
+				Assert.AreEqual ("o", ex.ParamName, "#5");
+#endif
+			}
 		}
 
 		[Test] // GetConstructor (Type [])
@@ -2938,7 +3045,6 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.AreEqual(1, tArgs[0].GetCustomAttributes (typeof (DocAttribute), true).Length, "#1");
 			Assert.AreEqual(1, tArgs[1].GetCustomAttributes (typeof (DocAttribute), true).Length, "#1");
 			Assert.AreEqual(1, mArgs[0].GetCustomAttributes (typeof (DocAttribute), true).Length, "#1");
-
 		}
 #endif
 
