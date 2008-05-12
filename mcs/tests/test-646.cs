@@ -22,7 +22,7 @@ class Program
 			if (CastIntPtrToUInt32 (new IntPtr (int.MaxValue)) != int.MaxValue)
 				return 2;
 		} else {
-			throw new ApplicationException (CastUIntPtrToInt64 (new UIntPtr (ulong.MaxValue)));
+			throw new ApplicationException (CastUIntPtrToInt64 (new UIntPtr (ulong.MaxValue)).ToString ());
 //			if (CastIntPtrToUInt32 (new IntPtr (long.MaxValue)) != long.MaxValue)
 //				return 4;
 		}
