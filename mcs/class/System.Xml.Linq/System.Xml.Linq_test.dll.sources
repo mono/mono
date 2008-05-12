@@ -11,4 +11,5 @@ System.Xml.Linq/XNodeReaderTest.cs
 System.Xml.Linq/XNodeWriterTest.cs
 System.Xml.Linq/XObjectTest.cs
 System.Xml.Linq/XProcessingInstructionTest.cs
+System.Xml.Linq/XStreamingElementTest.cs
 System.Xml.Linq/XTextTest.cs

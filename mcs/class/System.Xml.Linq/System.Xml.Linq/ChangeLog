@@ -1,3 +1,10 @@
+2008-05-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XStreamingElement.cs : couple of fixes:
+	  - object[] args are params.
+	  - Fixed WriteContents(object[],XmlWriter) wrong iteration.
+	  - do not write xmldecl when it does not exist (OmitXmlDeclaration).
+
 2008-04-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XElement.cs, XNode.cs : XNode.ReadFrom() should not reuse

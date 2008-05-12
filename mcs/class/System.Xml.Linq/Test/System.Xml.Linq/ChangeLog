@@ -1,3 +1,7 @@
+2008-05-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XStreamingElementTest.cs : new test.
+
 2008-04-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XNodeReaderTest.cs : added CreateReader3().

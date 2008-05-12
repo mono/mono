@@ -43,7 +43,7 @@ namespace System.Xml.Linq
 			Add (content);
 		}
 
-		public XStreamingElement (XName name, object [] content)
+		public XStreamingElement (XName name, params object [] content)
 			: this (name)
 		{
 			Add (content);
@@ -68,7 +68,7 @@ namespace System.Xml.Linq
 			contents.Add (content);
 		}
 
-		public void Add (object [] content)
+		public void Add (params object [] content)
 		{
 			if (contents == null)
 				contents = new List<object> ();
@@ -100,6 +100,7 @@ namespace System.Xml.Linq
 		public void Save (TextWriter textWriter, SaveOptions options)
 		{
 			XmlWriterSettings s = new XmlWriterSettings ();
+			s.OmitXmlDeclaration = true;
 			s.Indent = options != SaveOptions.DisableFormatting;
 			using (XmlWriter w = XmlWriter.Create (textWriter, s))
 				Save (w);
@@ -126,7 +127,7 @@ namespace System.Xml.Linq
 
 		void WriteContents (IEnumerable<object> items, XmlWriter w)
 		{
-			foreach (object o in contents) {
+			foreach (object o in items) {
 				if (o == null)
 					continue;
 				else if (o is object [])
