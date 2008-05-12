@@ -331,13 +331,8 @@ namespace System.Windows.Forms {
 		protected override void OnResize (EventArgs e)
 		{
 			base.OnResize (e);
-
-			if (size_mode == PictureBoxSizeMode.CenterImage || size_mode == PictureBoxSizeMode.StretchImage)
-				Refresh ();
-#if NET_2_0
-			if (size_mode == PictureBoxSizeMode.Zoom)
-				Refresh ();
-#endif
+			
+			Invalidate ();
 		}
 
 #if NET_2_0
