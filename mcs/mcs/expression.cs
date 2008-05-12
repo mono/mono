@@ -3,7 +3,7 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
-//   Marek Safar (marek.safar@seznam.cz)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // Copyright 2001, 2002, 2003 Ximian, Inc.
 // Copyright 2003-2008 Novell, Inc.
@@ -2690,29 +2690,43 @@ namespace Mono.CSharp {
 				else
 					right = EmptyCast.Create (right, underlying_type);
 			} else if (lenum) {
+				underlying_type = TypeManager.GetEnumUnderlyingType (ltype);
+
 				if (oper != Operator.Subtraction && oper != Operator.Addition) {
 					Constant c = right as Constant;
 					if (c == null || !c.IsDefaultValue)
 						return null;
+				} else {
+					if (!Convert.ImplicitStandardConversionExists (right, underlying_type))
+						return null;
+
+					right = Convert.ImplicitConversionStandard (ec, right, underlying_type, right.Location);
 				}
 
-				underlying_type = TypeManager.GetEnumUnderlyingType (ltype);
 				if (left is Constant)
 					left = ((Constant) left).ConvertExplicitly (false, underlying_type);
 				else
 					left = EmptyCast.Create (left, underlying_type);
+
 			} else if (renum) {
+				underlying_type = TypeManager.GetEnumUnderlyingType (rtype);
+
 				if (oper != Operator.Addition) {
 					Constant c = left as Constant;
 					if (c == null || !c.IsDefaultValue)
 						return null;
+				} else {
+					if (!Convert.ImplicitStandardConversionExists (left, underlying_type))
+						return null;
+
+					left = Convert.ImplicitConversionStandard (ec, left, underlying_type, left.Location);
 				}
 
-				underlying_type = TypeManager.GetEnumUnderlyingType (rtype);
 				if (right is Constant)
 					right = ((Constant) right).ConvertExplicitly (false, underlying_type);
 				else
 					right = EmptyCast.Create (right, underlying_type);
+
 			} else {
 				return null;
 			}
