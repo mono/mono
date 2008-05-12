@@ -2032,7 +2032,7 @@ namespace System.Windows.Forms
 				int cols = Math.Max (1, items_area.Width / ColumnWidthInternal);
 				
 				if (index >= (top_index + (rows * cols))) {
-					int incolumn = ((index + 1) / rows);
+					int incolumn = index / rows;
 					top_index = (incolumn - (cols - 1)) * rows;
 
 					UpdateTopItem ();
