@@ -25,9 +25,8 @@ class Program
 			if (CastUIntPtrToInt64 (new UIntPtr (ulong.MaxValue)) != -1)
 				return 3;
 				
-			throw new ApplicationException (CastIntPtrToUInt32 (new IntPtr (long.MaxValue)).ToString () + "l");
-//			if (CastIntPtrToUInt32 (new IntPtr (long.MaxValue)) != long.MaxValue)
-//				return 4;
+			if (CastIntPtrToUInt32 (new IntPtr (long.MaxValue)) != uint.MaxValue)
+				return 4;
 		}
 		
 		return 0;

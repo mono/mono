@@ -28523,6 +28523,22 @@
       </method>
     </type>
   </test>
+  <test name="test-646.cs">
+    <type name="Program">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int64 CastUIntPtrToInt64(UIntPtr)">
+        <size>7</size>
+      </method>
+      <method name="UInt32 CastIntPtrToUInt32(IntPtr)">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>125</size>
+      </method>
+    </type>
+  </test>
   <test name="test-65.cs">
     <type name="X">
       <method name="Void .ctor()">
