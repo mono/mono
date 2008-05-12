@@ -1107,6 +1107,20 @@ namespace Mono.CSharp {
 
 			Type source_type = source.Type;
 			EmptyExpression expr = EmptyExpression.Grab ();
+
+			//
+			// LAMESPEC: Undocumented IntPtr/UIntPtr conversions
+			// IntPtr -> uint uses int
+			// UIntPtr -> long uses ulong
+			//
+			if (source_type == TypeManager.intptr_type) {
+				if (target_type == TypeManager.uint32_type)
+					target_type = TypeManager.int32_type;
+			} else if (source_type == TypeManager.uintptr_type) {
+				if (target_type == TypeManager.int64_type)
+					target_type = TypeManager.uint64_type;
+			}
+
 			foreach (MethodInfo m in mg.Methods) {
 				ParameterData pd = TypeManager.GetParameterData (m);
 				Type return_type = TypeManager.TypeToCoreType (m.ReturnType);
@@ -1132,6 +1146,10 @@ namespace Mono.CSharp {
 							continue;
 					}
 				}
+
+				// See LAMESPEC: Exclude IntPtr -> int conversion
+				if (source_type == TypeManager.uintptr_type && return_type == TypeManager.uint32_type)
+					continue;
 
 				list.Add (m);
 			}
