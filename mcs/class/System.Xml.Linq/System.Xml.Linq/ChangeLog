@@ -1,5 +1,10 @@
 2008-05-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XNode.cs : fixed AddAfterSelf() to process order of inserted
+	  collection correctly (it could have resulted in reverse order).
+
+2008-05-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XContainer.cs, XElement.cs, XNode.cs, XUtil.cs :
 	  made several refactoring on handling "content" items in couple of
 	  Add*() methods. Attributes should be allowed in XElement.Add(),

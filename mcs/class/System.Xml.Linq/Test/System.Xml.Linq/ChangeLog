@@ -1,5 +1,9 @@
 2008-05-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XElement.cs : added AddAfterSelfCollection().
+
+2008-05-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XDocumentTest.cs, XElementTest.cs :
 	  Added couple of tests for Add() and AddBeforeSelf().
 

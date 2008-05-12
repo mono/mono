@@ -93,16 +93,19 @@ namespace System.Xml.Linq
 		{
 			if (Parent == null)
 				throw new InvalidOperationException ();
+			XNode here = this;
+			XNode orgNext = next;
 			foreach (XNode n in XUtil.ToNodes (content)) {
 				OnAdded (n, false);
 				n.SetOwner (Parent);
-				n.previous = this;
-				n.next = next;
-				if (next != null)
-					next.previous = n;
-				next = n;
-				if (Parent.LastNode == this)
+				n.previous = here;
+				here.next = n;
+				n.next = orgNext;
+				if (orgNext != null)
+					orgNext.previous = n;
+				else
 					Parent.LastNode = n;
+				here = n;
 			}
 		}
 

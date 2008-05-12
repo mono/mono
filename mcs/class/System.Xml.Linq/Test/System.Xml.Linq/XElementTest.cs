@@ -237,6 +237,15 @@ namespace MonoTests.System.Xml.Linq
 		}
 
 		[Test]
+		public void AddAfterSelfCollection ()
+		{
+			var el = new XElement ("root", new XElement ("child"));
+			el.FirstNode.AddAfterSelf (new List<XElement> (new XElement [] {new XElement ("foo"), new XElement ("bar")}));
+			Assert.AreEqual ("<root><child /><foo /><bar /></root>", el.ToString (SaveOptions.DisableFormatting), "#1");
+			Assert.AreEqual ("bar", (el.LastNode as XElement).Name.LocalName, "#2");
+		}
+
+		[Test]
 		public void AddBeforeSelf ()
 		{
 			XElement el = XElement.Parse ("<root><foo/><bar/></root>");
