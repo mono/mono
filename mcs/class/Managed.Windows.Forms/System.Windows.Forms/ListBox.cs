@@ -2028,7 +2028,7 @@ namespace System.Windows.Forms
 				}
 			} else {
 				int rows = items_area.Height / ItemHeight;
-				int cols = items_area.Width / ColumnWidthInternal;
+				int cols = Math.Max (1, items_area.Width / ColumnWidthInternal);
 				
 				if (index >= (top_index + (rows * cols))) {
 					int incolumn = ((index + 1) / rows);

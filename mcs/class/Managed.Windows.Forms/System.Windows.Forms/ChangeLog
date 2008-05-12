@@ -1,3 +1,8 @@
+2008-05-12  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ListBox.cs: There is always at least one column in the ListBox.
+	[Fixes bug #389250]
+
 2008-05-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ComboBox.cs: When handle is created call UpdateComboBoxBounds to
