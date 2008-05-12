@@ -1,3 +1,8 @@
+2008-05-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (mono_thread_execute_interruption): Avoid depending on no longer
+	existing runtime state in the Suspend handler during shutdown.
+
 2008-05-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* threads.c (mono_thread_request_interruption): Add some FIXMEs.
