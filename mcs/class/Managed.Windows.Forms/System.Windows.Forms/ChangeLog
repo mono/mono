@@ -1,5 +1,10 @@
 2008-05-12  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ListBox.cs: Handle End key for multi-column listboxen.
+	[Fixes bug #389266]
+
+2008-05-12  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ListBox.cs: Fix algorithm to determine which column our item is in.
 	[Fixes bug #389265]
 

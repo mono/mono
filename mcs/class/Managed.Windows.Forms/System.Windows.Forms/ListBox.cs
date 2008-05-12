@@ -1436,6 +1436,11 @@ namespace System.Windows.Forms
 			case ItemNavigation.Last: {
 
 				int rows = items_area.Height / ItemHeight;
+				
+				if (multicolumn) {
+					selected_index = Items.Count - 1;
+					break;
+				}
 				if (Items.Count < rows) {
 					top_index = 0;
 					selected_index  = Items.Count - 1;
