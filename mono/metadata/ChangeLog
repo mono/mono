@@ -1,3 +1,8 @@
+2008-05-13 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata.c (mono_metadata_compute_size): Correctly calculate field
+	size for generic param and event tables. Fixes #388977.
+
 2008-05-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* loader.c (mono_method_signature): Use memory barriers because of the double
