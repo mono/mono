@@ -1,3 +1,9 @@
+2008-05-13  Jonathan Pobst  <monkey@jpobst.com>
+
+	* XplatUIX11.cs, X11Keyboard.cs: Had to revert eno's r103060,
+	as it broke some stuff.  Calberto is filing a bug for eno to
+	work with.
+
 2008-05-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ComboBox.cs: When handling PageDown pressed event, set SelectedIndex

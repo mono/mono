@@ -39,13 +39,11 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 
-	internal class X11Keyboard : IDisposable {
-		internal static object XlibLock;
+	internal class X11Keyboard {
 
 		private IntPtr display;
-		private IntPtr client_window;
-		private IntPtr xim;
-		private Hashtable xic_table = new Hashtable ();
+		private IntPtr window;
+		private IntPtr xic;
 		private XIMPositionContext positionContext;
 		private XIMCallbackContext callbackContext;
 		private XIMProperties ximStyle;
@@ -64,35 +62,20 @@ namespace System.Windows.Forms {
 		private int NumLockMask;
 		private int AltGrMask;
 
-		public X11Keyboard (IntPtr display, IntPtr clientWindow)
+		public X11Keyboard (IntPtr display, IntPtr window)
 		{
 			this.display = display;
+			this.window = window;
 			lookup_buffer = new StringBuilder (24);
 			EnsureLayoutInitialized ();
 		}
 
-		public IntPtr ClientWindow {
-			get { return client_window; }
-		}
-
-		void IDisposable.Dispose ()
+		~X11Keyboard ()
 		{
-			if (xim != IntPtr.Zero) {
-				foreach (IntPtr xic in xic_table.Values)
-					XDestroyIC (xic);
-				xic_table.Clear ();
-
-				XCloseIM (xim);
-				xim = IntPtr.Zero;
-			}
-		}
-
-		public void DestroyICForWindow (IntPtr window)
-		{
-			IntPtr xic = GetXic (window);
 			if (xic != IntPtr.Zero) {
-				xic_table.Remove ((long) window);
+				IntPtr im = XIMOfIC (xic);
 				XDestroyIC (xic);
+				XCloseIM (im);
 			}
 		}
 
@@ -114,29 +97,31 @@ namespace System.Windows.Forms {
 				Console.Error.WriteLine ("Could not set X locale modifiers");
 			}
 
-			xim = XOpenIM (display, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+			IntPtr xim = XOpenIM (display, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 			if (xim == IntPtr.Zero) 
 				Console.Error.WriteLine ("Could not get XIM");
 			else 
-				utf8_buffer = new byte [100];
-			initialized = true;
-		}
-
-		void CreateXicForWindow (IntPtr window)
-		{
-			IntPtr xic = CreateXic (window, xim);
-			xic_table [(long) window] = xic;
-			if (xic == IntPtr.Zero)
+				xic = CreateXic (window, xim);
+			if (xic == IntPtr.Zero) {
 				Console.Error.WriteLine ("Could not get XIC");
-			else {
+				if (xim != IntPtr.Zero)
+					XCloseIM (xim);
+			} else {
+				utf8_buffer = new byte [100];
 				if (XGetICValues (xic, "filterEvents", out xic_event_mask, IntPtr.Zero) != null)
 					Console.Error.WriteLine ("Could not get XIC values");
 				EventMask mask = EventMask.ExposureMask | EventMask.KeyPressMask | EventMask.FocusChangeMask;
 				xic_event_mask |= mask;
-				lock (XlibLock) {
-					XplatUIX11.XSelectInput(display, window, new IntPtr ((int) xic_event_mask));
-				}
+				XplatUIX11.XSelectInput(display, window, new IntPtr ((int) xic_event_mask));
+				// FIXME: without it some input methods do not show its UI (but it results in
+				// obstacle, so am disabling it).
+				// XplatUIX11.XMapWindow (display, window);
 			}
+			initialized = true;
+		}
+
+		internal IntPtr Window {
+			get { return window; }
 		}
 
 		public EventMask KeyEventMask {
@@ -156,38 +141,16 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private IntPtr GetXic (IntPtr window)
+		public void FocusIn (IntPtr focus_window)
 		{
-			if (xim != IntPtr.Zero && xic_table.ContainsKey ((long) window))
-				return (IntPtr) xic_table [(long) window];
-			else
-				return IntPtr.Zero;
-		}
-
-		public void FocusIn (IntPtr window)
-		{
-			if (xim == IntPtr.Zero)
-				return;
-
-			this.client_window = window;
-			if (!xic_table.ContainsKey ((long) window))
-				CreateXicForWindow (window);
-			IntPtr xic = GetXic (window);
 			if (xic != IntPtr.Zero)
 				XSetICFocus (xic);
 		}
 
-		public void FocusOut (IntPtr window)
+		public void FocusOut (IntPtr focus_window)
 		{
-			if (xim == IntPtr.Zero)
-				return;
-
-			this.client_window = IntPtr.Zero;
-			IntPtr xic = GetXic (window);
-			if (xic != IntPtr.Zero) {
-				Xutf8ResetIC (xic);
+			if (xic != IntPtr.Zero)
 				XUnsetICFocus (xic);
-			}
 		}
 
 		public bool ResetKeyState(IntPtr hwnd, ref MSG msg) {
@@ -660,9 +623,7 @@ namespace System.Windows.Forms {
 			XDisplayKeycodes (display, out min_keycode, out max_keycode);
 			IntPtr ksp = XGetKeyboardMapping (display, (byte) min_keycode,
 					max_keycode + 1 - min_keycode, out keysyms_per_keycode);
-			lock (XlibLock) {
-				XplatUIX11.XFree (ksp);
-			}
+			XplatUIX11.XFree (ksp);
 
 			syms = keysyms_per_keycode;
 			if (syms > 4) {
@@ -812,9 +773,7 @@ namespace System.Windows.Forms {
 			XIMProperties [] supportedStyles = new XIMProperties [styles.count_styles];
 			for (int i = 0; i < styles.count_styles; i++)
 				supportedStyles [i] = (XIMProperties) Marshal.PtrToStructure (new IntPtr ((long) styles.supported_styles + i * Marshal.SizeOf (typeof (IntPtr))), typeof (XIMProperties));
-			lock (XlibLock) {
-				XplatUIX11.XFree (stylesPtr);
-			}
+			XplatUIX11.XFree (stylesPtr);
 			return supportedStyles;
 		}
 
@@ -857,7 +816,6 @@ namespace System.Windows.Forms {
 
 		private IntPtr CreateXic (IntPtr window, IntPtr xim)
 		{
-			IntPtr xic = IntPtr.Zero;
 			foreach (XIMProperties targetStyle in GetMatchingStylesInPreferredOrder (xim)) {
 				ximStyle = targetStyle;
 				// FIXME: use __arglist when it gets working. See bug #321686
@@ -881,6 +839,7 @@ namespace System.Windows.Forms {
 					xic = XCreateIC (xim,
 						XNames.XNInputStyle, styleRoot,
 						XNames.XNClientWindow, window,
+						XNames.XNFocusWindow, window,
 						IntPtr.Zero);
 					break;
 				}
@@ -891,6 +850,7 @@ namespace System.Windows.Forms {
 				xic = XCreateIC (xim,
 					XNames.XNInputStyle, styleRoot,
 					XNames.XNClientWindow, window,
+					XNames.XNFocusWindow, window,
 					IntPtr.Zero);
 			}
 			return xic;
@@ -915,6 +875,7 @@ namespace System.Windows.Forms {
 				return XCreateIC (xim,
 					XNames.XNInputStyle, styleOverTheSpot,
 					XNames.XNClientWindow, window,
+					XNames.XNFocusWindow, window,
 					XNames.XNPreeditAttributes, preedit,
 					IntPtr.Zero);
 			} finally {
@@ -930,7 +891,7 @@ namespace System.Windows.Forms {
 
 		private IntPtr CreateOnTheSpotXic (IntPtr window, IntPtr xim)
 		{
-			callbackContext = new XIMCallbackContext (window);
+			callbackContext = new XIMCallbackContext ();
 			return callbackContext.CreateXic (window, xim);
 		}
 
@@ -939,9 +900,8 @@ namespace System.Windows.Forms {
 			XIMCallback startCB, doneCB, drawCB, caretCB;
 			IntPtr pStartCB = IntPtr.Zero, pDoneCB = IntPtr.Zero, pDrawCB = IntPtr.Zero, pCaretCB = IntPtr.Zero;
 			IntPtr pStartCBN = IntPtr.Zero, pDoneCBN = IntPtr.Zero, pDrawCBN = IntPtr.Zero, pCaretCBN = IntPtr.Zero;
-			IntPtr window;
 
-			public XIMCallbackContext (IntPtr clientWindow)
+			public XIMCallbackContext ()
 			{
 				startCB = new XIMCallback (IntPtr.Zero, DoPreeditStart);
 				doneCB = new XIMCallback (IntPtr.Zero, DoPreeditDone);
@@ -1019,6 +979,7 @@ namespace System.Windows.Forms {
 				return XCreateIC (xim,
 					XNames.XNInputStyle, styleOnTheSpot,
 					XNames.XNClientWindow, window,
+					XNames.XNFocusWindow, window,
 					XNames.XNPreeditAttributes, preedit,
 					IntPtr.Zero);
 			}
@@ -1041,38 +1002,24 @@ namespace System.Windows.Forms {
 
 			positionContext.Caret = caret;
 			positionContext.X = x;
-			positionContext.Y = y + caret.Height;
+			positionContext.Y = y;
 
 			MoveCurrentCaretPos ();
 		}
 
 		internal void MoveCurrentCaretPos ()
 		{
-			if (positionContext == null || ximStyle != styleOverTheSpot || client_window == IntPtr.Zero)
+			if (positionContext == null || ximStyle != styleOverTheSpot)
 				return;
 
 			int x = positionContext.X;
 			int y = positionContext.Y;
 			CaretStruct caret = positionContext.Caret;
-			IntPtr xic = GetXic (client_window);
-			if (xic == IntPtr.Zero)
+			if (Control.FromHandle (caret.Hwnd) == null)
 				return;
-			Control control = Control.FromHandle (client_window);
-			if (control == null || !control.IsHandleCreated)
-				return;
-			control = Control.FromHandle (caret.Hwnd);
-			if (control == null || !control.IsHandleCreated)
-				return;
-			Hwnd hwnd = Hwnd.ObjectFromHandle (client_window);
-			if (!hwnd.mapped)
-				return;
-
 			int dx, dy;
 			IntPtr child;
-			IntPtr window = control.window.Handle;
-			lock (XlibLock) {
-				XplatUIX11.XTranslateCoordinates (display, client_window, client_window, x, y, out dx, out dy, out child);
-			}
+			XplatUIX11.XTranslateCoordinates (display, Control.FromHandle (caret.Hwnd).window.Handle, window, x, y, out dx, out dy, out child);
 
 			XPoint spot = new XPoint ();
 			spot.X = (short) dx;
@@ -1095,7 +1042,6 @@ namespace System.Windows.Forms {
 			int res;
 
 			status = IntPtr.Zero;
-			IntPtr xic = GetXic (client_window);
 			if (xic != IntPtr.Zero) {
 				do {
 					res = Xutf8LookupString (xic, ref xevent, utf8_buffer, 100, out keysym_res,  out status);
@@ -1119,8 +1065,6 @@ namespace System.Windows.Forms {
 		private static extern IntPtr XOpenIM (IntPtr display, IntPtr rdb, IntPtr res_name, IntPtr res_class);
 
 		[DllImport ("libX11", CallingConvention = CallingConvention.Cdecl)]
-		private static extern IntPtr XCreateIC (IntPtr xim, string name, XIMProperties im_style, string name2, IntPtr value2, IntPtr terminator);
-		[DllImport ("libX11", CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr XCreateIC (IntPtr xim, string name, XIMProperties im_style, string name2, IntPtr value2, string name3, IntPtr value3, IntPtr terminator);
 		[DllImport ("libX11", CallingConvention = CallingConvention.Cdecl)]
 		private static extern IntPtr XCreateIC (IntPtr xim, string name, XIMProperties im_style, string name2, IntPtr value2, string name3, IntPtr value3, string name4, IntPtr value4, IntPtr terminator);
@@ -1141,8 +1085,8 @@ namespace System.Windows.Forms {
 		[DllImport ("libX11")]
 		private static extern void XFreeStringList (IntPtr ptr);
 
-		//[DllImport ("libX11")]
-		//private static extern IntPtr XIMOfIC (IntPtr xic);
+		[DllImport ("libX11")]
+		private static extern IntPtr XIMOfIC (IntPtr xic);
 
 		[DllImport ("libX11")]
 		private static extern void XCloseIM (IntPtr xim);
@@ -1164,9 +1108,6 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11")]
 		private static extern void XUnsetICFocus (IntPtr xic);
-
-		[DllImport ("libX11")]
-		private static extern string Xutf8ResetIC (IntPtr xic);
 
 		[DllImport ("libX11")]
 		private static extern bool XSupportsLocale ();

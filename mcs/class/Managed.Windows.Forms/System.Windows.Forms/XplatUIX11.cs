@@ -240,7 +240,6 @@ namespace System.Windows.Forms {
 
 			// Now regular initialization
 			XlibLock = new object ();
-			X11Keyboard.XlibLock = XlibLock;
 			MessageQueues = Hashtable.Synchronized (new Hashtable(7));
 			unattached_timer_list = ArrayList.Synchronized (new ArrayList (3));
 			XInitThreads();
@@ -1568,7 +1567,7 @@ namespace System.Windows.Forms {
 					    xevent.AnyEvent.type == XEventName.KeyRelease) {
 						// PreFilter() handles "shift key state updates.
 						Keyboard.PreFilter (xevent);
-						if (XFilterEvent (ref xevent, Keyboard.ClientWindow)) {
+						if (XFilterEvent(ref xevent, FosterParent)) {
 							// probably here we could raise WM_IME_KEYDOWN and
 							// WM_IME_KEYUP, but I'm not sure it is worthy.
 							continue;
@@ -3290,14 +3289,12 @@ namespace System.Windows.Forms {
 					#if DriverDebug || DriverDebugDestroy
 					Console.WriteLine ("XDestroyWindow (whole_window = {0:X})", hwnd.whole_window.ToInt32());
 					#endif
-					Keyboard.DestroyICForWindow (hwnd.whole_window);
 					XDestroyWindow(DisplayHandle, hwnd.whole_window);
 				}
 				else if (hwnd.client_window != IntPtr.Zero) {
 					#if DriverDebug || DriverDebugDestroy
 					Console.WriteLine ("XDestroyWindow (client_window = {0:X})", hwnd.client_window.ToInt32());
 					#endif
-					Keyboard.DestroyICForWindow (hwnd.client_window);
 					XDestroyWindow(DisplayHandle, hwnd.client_window);
 				}
 
@@ -3678,7 +3675,7 @@ namespace System.Windows.Forms {
 			// hwnds, since much of the event handling code makes requests using the hwnd's
 			// client_window, and that'll result in BadWindow errors if there's some lag
 			// between the XDestroyWindow call and the DestroyNotify event.
-			if (hwnd == null || hwnd.zombie && xevent.AnyEvent.type != XEventName.ClientMessage) {
+			if (hwnd == null || hwnd.zombie) {
 				#if DriverDebug || DriverDebugDestroy
 					Console.WriteLine("GetMessage(): Got message {0} for non-existent or already destroyed window {1:X}", xevent.type, xevent.AnyEvent.window.ToInt32());
 				#endif
@@ -4162,7 +4159,7 @@ namespace System.Windows.Forms {
 						}
 						goto ProcessNextMessage;
 					}
-					Keyboard.FocusIn(hwnd.client_window);
+					Keyboard.FocusIn(FocusWindow);
 					SendMessage(FocusWindow, Msg.WM_SETFOCUS, IntPtr.Zero, IntPtr.Zero);
 					goto ProcessNextMessage;
 				}
@@ -4172,7 +4169,7 @@ namespace System.Windows.Forms {
 					if (xevent.FocusChangeEvent.detail != NotifyDetail.NotifyNonlinear) {
 						goto ProcessNextMessage;
 					}
-					Keyboard.FocusOut(hwnd.client_window);
+					Keyboard.FocusOut(FocusWindow);
 
 					while (Keyboard.ResetKeyState(FocusWindow, ref msg)) {
 						SendMessage(FocusWindow, msg.message, msg.wParam, msg.lParam);
@@ -4785,12 +4782,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void PostQuitMessage(int exitCode) {
-			ApplicationContext ctx = Application.MWFThread.Current.Context;
-			Form f = ctx != null ? ctx.MainForm : null;
-			if (f != null)
-				PostMessage (Application.MWFThread.Current.Context.MainForm.window.Handle, Msg.WM_QUIT, IntPtr.Zero, IntPtr.Zero);
-			else
-				PostMessage (FosterParent, Msg.WM_QUIT, IntPtr.Zero, IntPtr.Zero);
+			PostMessage (FosterParent, Msg.WM_QUIT, IntPtr.Zero, IntPtr.Zero);
 			XFlush(DisplayHandle);
 		}
 
@@ -5236,7 +5228,7 @@ namespace System.Windows.Forms {
 
 			prev_focus_window = FocusWindow;
 			FocusWindow = hwnd.client_window;
-			Keyboard.FocusIn (hwnd.client_window);
+			Keyboard.FocusIn (FocusWindow);
 
 			if (prev_focus_window != IntPtr.Zero) {
 				SendMessage(prev_focus_window, Msg.WM_KILLFOCUS, FocusWindow, IntPtr.Zero);
@@ -5675,7 +5667,6 @@ namespace System.Windows.Forms {
 
 				// Oh boy.
 				if (hwnd.client_window != hwnd.whole_window) {
-					Keyboard.DestroyICForWindow (hwnd.client_window);
 					XDestroyWindow(DisplayHandle, hwnd.client_window);
 					hwnd.client_window = hwnd.whole_window;
 				}	
