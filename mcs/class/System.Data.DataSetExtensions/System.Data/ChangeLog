@@ -1,3 +1,7 @@
+2008-05-13  Marek Habersack  <mhabersack@novell.com>
+
+	* DataRowComparer_1.cs: implemented GetHashCode and Equals.
+
 2008-05-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataTableExtensions.cs : implemented AsEnumerable().

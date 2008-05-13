@@ -45,34 +45,66 @@ namespace System.Data
 		{
 		}
 
-		[MonoTODO]
+		// LAMESPEC: neither of the parameters throws ArgumentNullException if it's null
 		public bool Equals (TRow leftRow, TRow rightRow)
 		{
-			throw new NotImplementedException ();
+			if (object.ReferenceEquals (leftRow, rightRow))
+				return true;
+
+			if (leftRow == null || rightRow == null)
+				return false;
+
+			int columnCount = leftRow.Table.Columns.Count;
+			if (columnCount != rightRow.Table.Columns.Count)
+				return false;
+
+			for (int i = 0; i < columnCount; i++)
+				if (!ColumnsEqual (leftRow [i], rightRow [i]))
+					return false;
+			return false;
 		}
 
-		[MonoTODO]
+		bool ColumnsEqual (object leftCol, object rightCol)
+		{
+			if (object.ReferenceEquals (leftCol, rightCol))
+				return true;
+
+			if (leftCol == null || rightCol == null)
+				return false;
+
+			ValueType vt = leftCol as ValueType;
+			if (vt != null && vt.Equals (rightCol))
+				return true;
+
+			
+			return false;
+		}
+		
 		public int GetHashCode (TRow row)
 		{
-			throw new NotImplementedException ();
-			/*
-			int ret = row.GetType ().GetHashCode ();
-			GetHashCodeForRowVersion (row, DataRowVersion.Original, ref ret);
-			GetHashCodeForRowVersion (row, DataRowVersion.Current, ref ret);
-			GetHashCodeForRowVersion (row, DataRowVersion.Proposed, ref ret);
-			GetHashCodeForRowVersion (row, DataRowVersion.Default, ref ret);
-			return ret;
-		}
+			if (row == null)
+				throw new ArgumentNullException ("row");
 
-		void GetHashCodeForRowVersion (TRow row, DataRowVersion version, ref int hash)
-		{
-			if (!row.HasVersion (version))
-				return;
-			int local = 0;
-			for (int i = 0; i < row.Table.Columns.Count; i++)
-				local += row [i, version].GetHashCode () ^ 7;
-			hash += local << (((int) version << 1) + 7);
-			*/
+			DataTable table = row.Table;
+			if (table == null)
+				throw new ArgumentException ("The source DataRow objects does not belong to a DataTable.");
+
+			DataColumnCollection columns = table.Columns;
+			int columnCount = columns.Count;
+			if (columnCount == 0)
+				return 0;
+
+			int ret = 0;
+			object o;
+			for (int i = 0; i < columnCount; i++) {
+				o = row [i];
+				if (o == null)
+					continue;
+
+				ret ^= o.GetHashCode ();
+			}
+				
+			return ret;
 		}
 	}
 }
