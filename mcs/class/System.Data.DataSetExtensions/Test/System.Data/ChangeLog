@@ -1,5 +1,10 @@
 2008-05-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* EnumerableRowCollectionTest.cs : added tests for orderby (though
+	  commented out; they do not compile).
+
+2008-05-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataRowComparerTest.cs, EnumerableRowCollectionTest.cs,
 	  testdataset1.xml : new tests.
 

@@ -36,10 +36,9 @@ namespace System.Data
 	public static class TypedTableBaseExtensions
 	{
 
-		[MonoTODO]
 		public static EnumerableRowCollection<TRow> AsEnumerable<TRow> (this TypedTableBase<TRow> source) where TRow : DataRow
 		{
-			throw new NotImplementedException ();
+			return new EnumerableRowCollection<TRow> (source);
 		}
 
 		public static OrderedEnumerableRowCollection<TRow> OrderBy<TRow, TKey> (this TypedTableBase<TRow> source, Func<TRow, TKey> keySelector)
@@ -48,11 +47,10 @@ namespace System.Data
 			return OrderBy<TRow, TKey> (source, keySelector, Comparer<TKey>.Default);
 		}
 
-		[MonoTODO]
 		public static OrderedEnumerableRowCollection<TRow> OrderBy<TRow, TKey> (this TypedTableBase<TRow> source, Func<TRow, TKey> keySelector, IComparer<TKey> comparer)
 			where TRow : DataRow
 		{
-			throw new NotImplementedException ();
+			return OrderedEnumerableRowCollection<TRow>.Create<TRow, TKey> (source, keySelector, comparer, false);
 		}
 
 		public static OrderedEnumerableRowCollection<TRow> OrderByDescending<TRow, TKey> (this TypedTableBase<TRow> source, Func<TRow, TKey> keySelector)
@@ -61,25 +59,22 @@ namespace System.Data
 			return OrderByDescending<TRow, TKey> (source, keySelector, Comparer<TKey>.Default);
 		}
 
-		[MonoTODO]
 		public static OrderedEnumerableRowCollection<TRow> OrderByDescending<TRow, TKey> (this TypedTableBase<TRow> source, Func<TRow, TKey> keySelector, IComparer<TKey> comparer)
 			where TRow : DataRow
 		{
-			throw new NotImplementedException ();
+			return OrderedEnumerableRowCollection<TRow>.Create<TRow, TKey> (source, keySelector, comparer, true);
 		}
 
-		[MonoTODO]
 		public static EnumerableRowCollection<S> Select<TRow, S> (this TypedTableBase<TRow> source, Func<TRow, S> selector)
 			where TRow : DataRow
 		{
-			throw new NotImplementedException ();
+			return new EnumerableRowCollection<S> (EnumerableRowCollection.Select<TRow, S> (source, selector));
 		}
 
-		[MonoTODO]
 		public static EnumerableRowCollection<TRow> Where<TRow> (this TypedTableBase<TRow> source, Func<TRow, bool> predicate)
 			where TRow : DataRow
 		{
-			throw new NotImplementedException ();
+			return new EnumerableRowCollection<TRow> (EnumerableRowCollection.Where<TRow> (source, predicate));
 		}
 	}
 }

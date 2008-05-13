@@ -35,45 +35,34 @@ namespace System.Data
 {
 	public static class EnumerableRowCollectionExtensions
 	{
-		[MonoTODO]
 		public static EnumerableRowCollection<TResult> Cast<TResult> (this EnumerableRowCollection source)
 		{
-			throw new NotImplementedException ();
+			return new EnumerableRowCollection<TResult> (EnumerableRowCollection.Cast<TResult> (source));
 		}
 
-		[MonoTODO]
 		public static OrderedEnumerableRowCollection<TRow> OrderBy<TRow, TKey> (this EnumerableRowCollection<TRow> source, Func<TRow, TKey> keySelector)
 		{
 			return OrderBy<TRow, TKey> (source, keySelector, Comparer<TKey>.Default);
 		}
 
-		[MonoTODO]
 		public static OrderedEnumerableRowCollection<TRow> OrderBy<TRow, TKey> (this EnumerableRowCollection<TRow> source, Func<TRow, TKey> keySelector, IComparer<TKey> comparer)
 		{
-			throw new NotImplementedException ();
+			return OrderedEnumerableRowCollection<TRow>.Create<TRow, TKey> (source, keySelector, comparer, false);
 		}
 
-		[MonoTODO]
 		public static OrderedEnumerableRowCollection<TRow> OrderByDescending<TRow, TKey> (this EnumerableRowCollection<TRow> source, Func<TRow, TKey> keySelector)
 		{
 			return OrderByDescending<TRow, TKey> (source, keySelector, Comparer<TKey>.Default);
 		}
 
-		[MonoTODO]
 		public static OrderedEnumerableRowCollection<TRow> OrderByDescending<TRow, TKey> (this EnumerableRowCollection<TRow> source, Func<TRow, TKey> keySelector, IComparer<TKey> comparer)
 		{
-			throw new NotImplementedException ();
+			return OrderedEnumerableRowCollection<TRow>.Create<TRow, TKey> (source, keySelector, comparer, true);
 		}
 
 		public static EnumerableRowCollection<S> Select<TRow, S> (this EnumerableRowCollection<TRow> source, Func<TRow, S> selector)
 		{
-			return new EnumerableRowCollection<S> (RunSelect<TRow, S> (source, selector));
-		}
-
-		static IEnumerable<S> RunSelect<TRow, S> (this EnumerableRowCollection<TRow> source, Func<TRow, S> selector)
-		{
-			foreach (TRow row in source)
-				yield return selector (row);
+			return new EnumerableRowCollection<S> (EnumerableRowCollection.Select<TRow, S> (source, selector));
 		}
 
 		[MonoTODO]
@@ -102,14 +91,7 @@ namespace System.Data
 
 		public static EnumerableRowCollection<TRow> Where<TRow> (this EnumerableRowCollection<TRow> source, Func<TRow, bool> predicate)
 		{
-			return new EnumerableRowCollection<TRow> (RunWhere<TRow> (source, predicate));
-		}
-
-		static IEnumerable<TRow> RunWhere<TRow> (EnumerableRowCollection<TRow> source, Func<TRow, bool> predicate)
-		{
-			foreach (TRow row in source)
-				if (predicate (row))
-					yield return row;
+			return new EnumerableRowCollection<TRow> (EnumerableRowCollection.Where<TRow> (source, predicate));
 		}
 	}
 }

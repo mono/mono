@@ -50,22 +50,20 @@ namespace System.Data
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public EnumerableRowCollection<TResult> Cast<TResult> ()
 		{
-			throw new NotImplementedException ();
+			return new EnumerableRowCollection<TResult> (EnumerableRowCollection.Cast<TResult> (this));
 		}
 
-		[MonoTODO]
 		public IEnumerator<T> GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			foreach (object o in Rows)
+				yield return (T) o;
 		}
 
-		[MonoTODO]
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			return (IEnumerator) GetEnumerator ();
+			return GetEnumerator ();
 		}
 	}
 }

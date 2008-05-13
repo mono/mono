@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -53,7 +54,7 @@ namespace System.Data
 
 		public static EnumerableRowCollection<DataRow> AsEnumerable (this DataTable source)
 		{
-			return new EnumerableRowCollection<DataRow> (source);
+			return new EnumerableRowCollection<DataRow> (new DataRowEnumerable<DataRow> (source));
 		}
 
 		[MonoTODO]
@@ -77,6 +78,27 @@ namespace System.Data
 			where T : DataRow
 		{
 			throw new NotImplementedException ();
+		}
+	}
+
+	class DataRowEnumerable<TRow> : IEnumerable<TRow>
+	{
+		DataTable source;
+
+		public DataRowEnumerable (DataTable source)
+		{
+			this.source = source;
+		}
+
+		public IEnumerator<TRow> GetEnumerator ()
+		{
+			foreach (TRow row in source.Rows)
+				yield return row;
+		}
+
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			return GetEnumerator ();
 		}
 	}
 }

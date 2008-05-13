@@ -29,15 +29,63 @@
 //
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace System.Data
 {
 	public sealed class OrderedEnumerableRowCollection<TRow>
 		: EnumerableRowCollection<TRow>
 	{
-		internal OrderedEnumerableRowCollection (DataTable source)
-			: this (source)
+		internal static OrderedEnumerableRowCollection<TRow> Create<TRow, TKey> (IEnumerable<TRow> source, Func<TRow, TKey> keySelector, IComparer<TKey> comparer, bool descending)
 		{
+			return new OrderedEnumerableRowCollection<TRow> (new Sorter<TRow, TKey> (source, keySelector, comparer, descending));
+		}
+
+		OrderedEnumerableRowCollection (IEnumerable<TRow> source)
+			: base (source)
+		{
+		}
+	}
+
+	class Sorter<TRow, TKey> : IEnumerable<TRow>
+	{
+		IEnumerable<TRow> source;
+		Func<TRow, TKey> key_selector;
+		IComparer<TKey> comparer;
+		bool descending;
+
+		public Sorter (IEnumerable<TRow> source, Func<TRow, TKey> keySelector, IComparer<TKey> comparer, bool descending)
+		{
+			if (keySelector == null)
+				throw new ArgumentNullException ("keySelector");
+			if (comparer == null)
+				comparer = Comparer<TKey>.Default;
+			this.source = source;
+			this.key_selector = keySelector;
+			this.comparer = comparer;
+			this.descending = descending;
+		}
+
+		public IEnumerator<TRow> GetEnumerator ()
+		{
+			var list = new List<TRow> ();
+			foreach (TRow row in source)
+				list.Add (row);
+			list.Sort (delegate (TRow r1, TRow r2) {
+				return comparer.Compare (key_selector (r1), key_selector (r2));
+				});
+			if (descending)
+				for (int i = list.Count - 1; i >= 0; i--)
+					yield return list [i];
+			else
+				for (int i = 0, c = list.Count; i < c; i++)
+					yield return list [i];
+		}
+
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			return GetEnumerator ();
 		}
 	}
 }

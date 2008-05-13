@@ -1,3 +1,12 @@
+2008-05-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataTableExtensions.cs, EnumerableRowCollection.cs,
+	  EnumerableRowCollectionExtensions.cs, EnumerableRowCollection_1.cs,
+	  OrderedEnumerableRowCollection.cs, TypedTableBase.cs,
+	  TypedTableBaseExtensions.cs : lots of significant refactoring to
+	  make collection/enumerable things unified.
+	  Implemented OrderBy() and OrderByDescending().
+
 2008-05-13  Marek Habersack  <mhabersack@novell.com>
 
 	* DataRowComparer_1.cs: implemented GetHashCode and Equals.
