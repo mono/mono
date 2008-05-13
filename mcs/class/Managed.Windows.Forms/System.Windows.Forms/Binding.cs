@@ -437,7 +437,6 @@ namespace System.Windows.Forms {
 				data = null_value;
 #endif
 
-			Console.WriteLine ("PushData, value = " + data);
 			try {
 				data = FormatData (data);
 				SetControlValue (data);

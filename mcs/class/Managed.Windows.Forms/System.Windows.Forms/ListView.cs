@@ -3607,7 +3607,6 @@ namespace System.Windows.Forms
 
 		public void BeginUpdate ()
 		{
-			Console.WriteLine ("BeginUpdate");
 			// flag to avoid painting
 			updating = true;
 		}
@@ -3620,7 +3619,6 @@ namespace System.Windows.Forms
 
 		public void EndUpdate ()
 		{
-			Console.WriteLine ("EndUpdate");
 			// flag to avoid painting
 			updating = false;
 
