@@ -30,6 +30,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace System.Data
 {
@@ -37,7 +38,7 @@ namespace System.Data
 	{
 		public static EnumerableRowCollection<TResult> Cast<TResult> (this EnumerableRowCollection source)
 		{
-			return new EnumerableRowCollection<TResult> (EnumerableRowCollection.Cast<TResult> (source));
+			return new EnumerableRowCollection<TResult> (Enumerable.Cast<TResult> (source));
 		}
 
 		public static OrderedEnumerableRowCollection<TRow> OrderBy<TRow, TKey> (this EnumerableRowCollection<TRow> source, Func<TRow, TKey> keySelector)
@@ -62,7 +63,7 @@ namespace System.Data
 
 		public static EnumerableRowCollection<S> Select<TRow, S> (this EnumerableRowCollection<TRow> source, Func<TRow, S> selector)
 		{
-			return new EnumerableRowCollection<S> (EnumerableRowCollection.Select<TRow, S> (source, selector));
+			return new EnumerableRowCollection<S> (Enumerable.Select<TRow, S> (source, selector));
 		}
 
 		[MonoTODO]
@@ -91,7 +92,7 @@ namespace System.Data
 
 		public static EnumerableRowCollection<TRow> Where<TRow> (this EnumerableRowCollection<TRow> source, Func<TRow, bool> predicate)
 		{
-			return new EnumerableRowCollection<TRow> (EnumerableRowCollection.Where<TRow> (source, predicate));
+			return new EnumerableRowCollection<TRow> (Enumerable.Where<TRow> (source, predicate));
 		}
 	}
 }

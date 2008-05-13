@@ -31,6 +31,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 
 namespace System.Data
@@ -52,7 +53,7 @@ namespace System.Data
 
 		public EnumerableRowCollection<TResult> Cast<TResult> ()
 		{
-			return new EnumerableRowCollection<TResult> (EnumerableRowCollection.Cast<TResult> (this));
+			return new EnumerableRowCollection<TResult> (Enumerable.Cast<TResult> (this));
 		}
 
 		public IEnumerator<T> GetEnumerator ()

@@ -1,3 +1,12 @@
+2008-05-13  Jb Evain  <jbevain@novell.com>
+
+	* EnumerableRowCollection.cs: delete methods
+	Select/Where/Cast that duplicate Linq to Objects
+	methods.
+	* EnumerableRowCollectionExtensions.cs
+	TypedTableBase.cs, TypedTableBaseExtensions.cs: directly
+	fallback to Linq to Objects.
+
 2008-05-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataTableExtensions.cs, EnumerableRowCollection.cs,

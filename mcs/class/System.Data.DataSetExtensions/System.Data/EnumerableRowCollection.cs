@@ -36,25 +36,6 @@ namespace System.Data
 {
 	public abstract class EnumerableRowCollection : IEnumerable
 	{
-		internal static IEnumerable<TResult> Cast<TResult> (IEnumerable source)
-		{
-			foreach (object o in source)
-				yield return (TResult) o;
-		}
-
-		internal static IEnumerable<S> Select<TRow, S> (IEnumerable<TRow> source, Func<TRow, S> selector)
-		{
-			foreach (TRow row in source)
-				yield return selector (row);
-		}
-
-		internal static IEnumerable<TRow> Where<TRow> (IEnumerable<TRow> source, Func<TRow, bool> predicate)
-		{
-			foreach (TRow row in source)
-				if (predicate (row))
-					yield return row;
-		}
-
 		internal EnumerableRowCollection ()
 		{
 		}

@@ -30,6 +30,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace System.Data
 {
@@ -68,13 +69,13 @@ namespace System.Data
 		public static EnumerableRowCollection<S> Select<TRow, S> (this TypedTableBase<TRow> source, Func<TRow, S> selector)
 			where TRow : DataRow
 		{
-			return new EnumerableRowCollection<S> (EnumerableRowCollection.Select<TRow, S> (source, selector));
+			return new EnumerableRowCollection<S> (Enumerable.Select<TRow, S> (source, selector));
 		}
 
 		public static EnumerableRowCollection<TRow> Where<TRow> (this TypedTableBase<TRow> source, Func<TRow, bool> predicate)
 			where TRow : DataRow
 		{
-			return new EnumerableRowCollection<TRow> (EnumerableRowCollection.Where<TRow> (source, predicate));
+			return new EnumerableRowCollection<TRow> (Enumerable.Where<TRow> (source, predicate));
 		}
 	}
 }
