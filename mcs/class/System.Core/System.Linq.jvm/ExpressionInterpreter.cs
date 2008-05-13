@@ -115,7 +115,10 @@ namespace System.Linq.jvm
                         _value = ((Array)left).GetValue((int)right);
                         return;
                     case ExpressionType.Equal:
-                        _value = left.Equals(right);
+						if (typeof(ValueType).IsAssignableFrom(binary.Right.Type))
+							_value = ValueType.Equals (left, right);
+						else
+							_value = (left == right);
                         return;
                     case ExpressionType.NotEqual:
                         _value = !left.Equals(right);
