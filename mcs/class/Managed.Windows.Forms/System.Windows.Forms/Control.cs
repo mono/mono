@@ -5739,6 +5739,7 @@ namespace System.Windows.Forms
 			if (IsDisposed)
 				return;
 
+			Form frm = this as Form;
 			if (m.WParam.ToInt32() != 0) {
 				if (m.LParam.ToInt32 () == 0) {
 					CreateControl ();
@@ -5761,8 +5762,6 @@ namespace System.Windows.Forms
 			} else {
 				if (parent != null && Focused) {
 					Control	container;
-					Form frm = this as Form;
-					
 					// Need to start at parent, GetContainerControl might return ourselves if we're a container
 					container = (Control)parent.GetContainerControl();
 					if (container != null && (frm == null || !frm.IsMdiChild)) {
@@ -5771,10 +5770,12 @@ namespace System.Windows.Forms
 				}
 			}
 
+			if (frm != null)
+				frm.waiting_showwindow = false;
+
 			// If the form is Max/Min, it got its OnVisibleChanged in SetVisibleCore
-			Form f = this as Form;
-			if (f != null) {
-				if (!IsRecreating && (f.IsMdiChild || f.WindowState == FormWindowState.Normal)) /* XXX make sure this works for mdi forms */
+			if (frm != null) {
+				if (!IsRecreating && (frm.IsMdiChild || frm.WindowState == FormWindowState.Normal)) /* XXX make sure this works for mdi forms */
 					OnVisibleChanged(EventArgs.Empty);
 			} else if (is_toplevel)
 				OnVisibleChanged(EventArgs.Empty);

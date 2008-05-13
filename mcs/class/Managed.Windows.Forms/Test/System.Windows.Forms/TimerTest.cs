@@ -9,6 +9,8 @@ using System;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
+using System.Threading;
+using Timer = System.Windows.Forms.Timer;
 using Sys_Threading=System.Threading;
 
 using NUnit.Framework;
@@ -149,6 +151,61 @@ namespace MonoTests.System.Windows.Forms
 #if NET_2_0
 			Assert.AreEqual (null, timer.Tag, "T1");
 #endif
+		}
+
+		[Test] // bug #325033
+		[Category ("NotWorking")]
+		public void RunningThread ()
+		{
+			Application.Run (new Bug325033Form ());
+			Application.Run (new Bug325033Form2 ());
+		}
+
+		class Bug325033Form : Form
+		{
+			public Bug325033Form ()
+			{
+				Load += new EventHandler (Form_Load);
+			}
+
+			void Form_Load (object sender, EventArgs e)
+			{
+				Thread t = new Thread (new ThreadStart (Run));
+				t.IsBackground = true;
+				t.Start ();
+				t.Join ();
+				Close ();
+			}
+
+			void Run ()
+			{
+				Application.Run (new Bug325033Form2 ());
+			}
+		}
+
+		class Bug325033Form2 : Form
+		{
+			public Bug325033Form2 ()
+			{
+				_label = new Label ();
+				_label.AutoSize = true;
+				_label.Dock = DockStyle.Fill;
+				_label.Text = "It should close automatically.";
+				Controls.Add (_label);
+				_timer = new Timer ();
+				_timer.Tick += new EventHandler (Timer_Tick);
+				_timer.Interval = 500;
+				_timer.Start ();
+			}
+
+			void Timer_Tick (object sender, EventArgs e)
+			{
+				_timer.Stop ();
+				Close ();
+			}
+
+			private Label _label;
+			private Timer _timer;
 		}
 	}
 }

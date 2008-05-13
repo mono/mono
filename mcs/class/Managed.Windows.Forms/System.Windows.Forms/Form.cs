@@ -92,6 +92,7 @@ namespace System.Windows.Forms {
 		private bool			shown_raised;  // The shown event is only raised once
 		private bool			is_clientsize_set;
 		internal bool			suppress_closing_events;
+		internal bool			waiting_showwindow; // for XplatUIX11
 
 #if NET_2_0
 		private MenuStrip		main_menu_strip;

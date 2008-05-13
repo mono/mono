@@ -37,6 +37,8 @@ namespace System.Windows.Forms {
 		private int interval = 100;
 		private DateTime expires;
 		internal Thread thread;
+		internal bool Busy;
+		internal IntPtr window;
 
 #if NET_2_0
 		object control_tag;

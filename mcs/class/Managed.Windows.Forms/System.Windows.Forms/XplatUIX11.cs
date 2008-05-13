@@ -101,6 +101,7 @@ namespace System.Windows.Forms {
 
 		// Message Loop
 		private static Hashtable	MessageQueues;		// Holds our thread-specific XEventQueues
+		private static ArrayList	unattached_timer_list; // holds timers that are enabled but not attached to a window.
 		#if __MonoCS__						//
 		private static Pollfd[]		pollfds;		// For watching the X11 socket
 		private static bool wake_waiting;
@@ -240,6 +241,7 @@ namespace System.Windows.Forms {
 			// Now regular initialization
 			XlibLock = new object ();
 			MessageQueues = Hashtable.Synchronized (new Hashtable(7));
+			unattached_timer_list = ArrayList.Synchronized (new ArrayList (3));
 			XInitThreads();
 
 			ErrorExceptions = false;
@@ -1388,9 +1390,11 @@ namespace System.Windows.Forms {
 
 				timer = (Timer) timers [i];
 
-				if (timer.Enabled && timer.Expires <= now) {
+				if (timer.Enabled && timer.Expires <= now && !timer.Busy) {
+					timer.Busy = true;
 					timer.Update (now);
 					timer.FireTick ();
+					timer.Busy = false;
 				}
 			}
 		}
@@ -1430,10 +1434,12 @@ namespace System.Windows.Forms {
 
 		private void MapWindow(Hwnd hwnd, WindowType windows) {
 			if (!hwnd.mapped) {
-				if (Control.FromHandle(hwnd.Handle) is Form) {
-					Form f = Control.FromHandle(hwnd.Handle) as Form;
-					if (f.WindowState == FormWindowState.Normal)
+				Form f = Control.FromHandle(hwnd.Handle) as Form;
+				if (f != null) {
+					if (f.WindowState == FormWindowState.Normal) {
+						f.waiting_showwindow = true;
 						SendMessage(hwnd.Handle, Msg.WM_SHOWWINDOW, (IntPtr)1, IntPtr.Zero);
+					}
 				}
 
 				// it's possible that our Hwnd is no
@@ -1441,45 +1447,41 @@ namespace System.Windows.Forms {
 				// SendMessage call, so check here.
 				if (hwnd.zombie)
 					return;
-
-				bool need_to_wait = false;
 
 				if ((windows & WindowType.Whole) != 0) {
 					XMapWindow(DisplayHandle, hwnd.whole_window);
 				}
 				if ((windows & WindowType.Client) != 0) {
 					XMapWindow(DisplayHandle, hwnd.client_window);
-
-					need_to_wait = true;
 				}
 
 				hwnd.mapped = true;
 
-				if (need_to_wait && Control.FromHandle(hwnd.Handle) is Form)
+				if (f != null && f.waiting_showwindow)
 					WaitForHwndMessage (hwnd, Msg.WM_SHOWWINDOW);
 			}
 		}
 
 		private void UnmapWindow(Hwnd hwnd, WindowType windows) {
 			if (hwnd.mapped) {
+				Form f = null;
 				if (Control.FromHandle(hwnd.Handle) is Form) {
-					Form f = Control.FromHandle(hwnd.Handle) as Form;
-					if (f.WindowState == FormWindowState.Normal)
+					f = Control.FromHandle(hwnd.Handle) as Form;
+					if (f.WindowState == FormWindowState.Normal) {
+						f.waiting_showwindow = true;
 						SendMessage(hwnd.Handle, Msg.WM_SHOWWINDOW, IntPtr.Zero, IntPtr.Zero);
+					}
 				}
 
 				// it's possible that our Hwnd is no
 				// longer valid after making that
 				// SendMessage call, so check here.
+				// FIXME: it is likely wrong, as it has already sent WM_SHOWWINDOW
 				if (hwnd.zombie)
 					return;
 
-				bool need_to_wait = false;
-
 				if ((windows & WindowType.Client) != 0) {
 					XUnmapWindow(DisplayHandle, hwnd.client_window);
-
-					need_to_wait = true;
 				}
 				if ((windows & WindowType.Whole) != 0) {
 					XUnmapWindow(DisplayHandle, hwnd.whole_window);
@@ -1487,7 +1489,7 @@ namespace System.Windows.Forms {
 
 				hwnd.mapped = false;
 
-				if (need_to_wait && Control.FromHandle(hwnd.Handle) is Form)
+				if (f != null && f.waiting_showwindow)
 					WaitForHwndMessage (hwnd, Msg.WM_SHOWWINDOW);
 			}
 		}
@@ -2389,6 +2391,16 @@ namespace System.Windows.Forms {
 				lock (XlibLock) {
 					if (true /* the window manager supports NET_ACTIVE_WINDOW */) {
 						SendNetWMMessage(hwnd.whole_window, _NET_ACTIVE_WINDOW, (IntPtr)1, IntPtr.Zero, IntPtr.Zero);
+						XEventQueue q = null;
+						lock (unattached_timer_list) {
+							foreach (Timer t in unattached_timer_list) {
+								if (q == null)
+									q= (XEventQueue) MessageQueues [Thread.CurrentThread];
+								t.thread = q.Thread;
+								q.timer_list.Add (t);
+							}
+							unattached_timer_list.Clear ();
+						}
 					}
 // 					else {
 // 						XRaiseWindow(DisplayHandle, handle);
@@ -4580,7 +4592,12 @@ namespace System.Windows.Forms {
 
 			if (queue == null) {
 				// This isn't really an error, MS doesn't start the timer if
-				// it has no assosciated queue
+				// it has no assosciated queue. In this case, remove the timer
+				// from the list of unattached timers (if it was enabled).
+				lock (unattached_timer_list) {
+					if (unattached_timer_list.Contains (timer))
+						unattached_timer_list.Remove (timer);
+				}
 				return;
 			}
 			queue.timer_list.Remove (timer);
@@ -5277,7 +5294,9 @@ namespace System.Windows.Forms {
 
 			if (queue == null) {
 				// This isn't really an error, MS doesn't start the timer if
-				// it has no assosciated queue
+				// it has no assosciated queue at this stage (it will be
+				// enabled when a window is activated).
+				unattached_timer_list.Add (timer);
 				return;
 			}
 			queue.timer_list.Add (timer);

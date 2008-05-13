@@ -99,14 +99,15 @@ namespace System.Windows.Forms {
 
 		#region Protected Instance Methods
 		protected virtual void Dispose(bool disposing) {
-			main_form = null;
+			MainForm = null;
 #if NET_2_0
 			tag = null;
 #endif
 		}
 
 		protected virtual void ExitThreadCore() {
-			XplatUI.PostQuitMessage(0);
+			if (Application.MWFThread.Current.Context == this)
+				XplatUI.PostQuitMessage(0);
 			if (!thread_exit_raised && ThreadExit != null) {
 				thread_exit_raised = true;
 				ThreadExit(this, EventArgs.Empty);

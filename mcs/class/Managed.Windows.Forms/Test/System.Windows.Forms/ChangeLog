@@ -1,3 +1,7 @@
+2008-05-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TimerTest.cs : added test for bug #325033.
+
 2008-05-12  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ApplicationTest.cs: Disable test that I am tired of seeing

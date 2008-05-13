@@ -1,3 +1,21 @@
+2008-05-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Timer.cs, Control.cs, Form.cs, ApplicationContext.cs,
+	  XplatUIX11.cs, XplatUIWin32.cs :
+	  fix for bug #325033 and #387693;
+	  - WM_QUIT should not be sent when no running application
+	    exists.
+	  - SetTimer/KillTimer (especially on win32) should be
+	    invoked for the window that the timer is/will_be attached.
+	  - There could be unattached timers to a window when it's
+	    started. For those timers, hold pending timers and when
+	    a window is mapped, attach them to it.
+	  - WaitForHwndMessage() could run into loop when
+	    WM_SHOWWINDOW is handled before this method is called.
+	    So, strictly check wm_showwindow state.
+	  - Tick handler should not be invoked while one Tick handler
+	    call is still running (introduced Busy state).
+
 2008-05-13  Andreia Gaita <avidigal@novell.com> 
 
 	* WebBrowserBase.cs: Override Internal alternative methods for

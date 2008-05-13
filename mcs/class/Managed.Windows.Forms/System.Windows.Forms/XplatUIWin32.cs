@@ -35,6 +35,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 
 
 /// Win32 Version
@@ -1853,6 +1854,16 @@ namespace System.Windows.Forms {
 
 		internal override void Activate(IntPtr handle) {
 			Win32SetActiveWindow(handle);
+			// delayed timer enabled
+			lock (timer_list) {
+				foreach (Timer t in timer_list.Values) {
+					if (t.Enabled && t.window == IntPtr.Zero) {
+						t.window = handle;
+						int id = t.GetHashCode ();
+						Win32SetTimer(handle, id, (uint)t.Interval, IntPtr.Zero);
+					}
+				}
+			}
 		}
 
 		internal override void Invalidate(IntPtr handle, Rectangle rc, bool clear) {
@@ -2505,7 +2516,10 @@ namespace System.Windows.Forms {
 				timer_list[index]=timer;
 			}
 
-			Win32SetTimer(FosterParent, index, (uint)timer.Interval, IntPtr.Zero);
+			if (Win32SetTimer(FosterParent, index, (uint)timer.Interval, IntPtr.Zero) == IntPtr.Zero)
+				timer.window = FosterParent;
+			else
+				timer.window = IntPtr.Zero;
 		}
 
 		internal override void KillTimer (Timer timer)
@@ -2514,7 +2528,7 @@ namespace System.Windows.Forms {
 
 			index = timer.GetHashCode();
 
-			Win32KillTimer(FosterParent, index);
+			Win32KillTimer(timer.window, index);
 
 			lock (timer_list) {
 				timer_list.Remove(index);
