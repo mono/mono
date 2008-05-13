@@ -223,7 +223,10 @@ namespace System.Linq.jvm
         }
 
         public static object ConvertToTypeChecked(object a, Type fromType, Type toType)
-        {            
+        {   
+			if (a == null && !toType.IsValueType)
+				return a;
+			
             if (IsType(toType, a)){
                 return a;
             }
@@ -237,6 +240,9 @@ namespace System.Linq.jvm
 
 		public static object ConvertToTypeUnchecked (object a, Type fromType, Type toType)
 		{
+			if (a == null && !toType.IsValueType)
+				return a;
+								
 			if (IsType (toType, a)) {
 				return a;
 			}
