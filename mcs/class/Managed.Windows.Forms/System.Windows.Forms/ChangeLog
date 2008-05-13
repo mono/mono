@@ -1,5 +1,19 @@
 2008-05-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XplatUIX11.cs, X11Keyboard.cs :
+	  Significant refactoring on XIM support. Now IM engine UI
+	  should show up, at mostly-correct preedit position.
+	  - Eliminated use of FocusWindow, as it is never mapped
+	    and hence blocks correct preedit position. XIC is now
+	    created per window, and it must be destroyed too when
+	    the window is destroyed.
+	  - WM_QUIT messages should not be filtered even when hwnd
+	    is zombie. Filtering it could cause endless loop.
+	  - Preedit position must move only when the window is alive.
+	  - Make it IDisposable and make sure to release XIM/XICs.
+
+2008-05-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Timer.cs, Control.cs, Form.cs, ApplicationContext.cs,
 	  XplatUIX11.cs, XplatUIWin32.cs :
 	  fix for bug #325033 and #387693;
