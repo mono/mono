@@ -1,3 +1,10 @@
+2008-05-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ComboBox.cs: When handling PageDown pressed event, set SelectedIndex
+	to 0 is the current value is -1, and if style is not Simple, just
+	return, like .net does.
+	Fixes part of #374713.
+
 2008-05-13  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ThemeWin32Classic.cs, ThemeVisualStyles.cs: When calculating

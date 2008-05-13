@@ -1616,10 +1616,14 @@ namespace System.Windows.Forms
 					break;
 	
 				case Keys.PageDown:
+					if (SelectedIndex == -1) {
+						SelectedIndex = 0;
+						if (dropdown_style != ComboBoxStyle.Simple)
+							return;
+					}
+
 					if (listbox_ctrl != null)
 						SelectedIndex = Math.Min(SelectedIndex+(listbox_ctrl.page_size-1), Items.Count-1);
-					else if (SelectedIndex == -1)
-						SelectedIndex = 0;
 					else
 						SelectedIndex = Math.Min (SelectedIndex + MaxDropDownItems - 1, Items.Count - 1);
 						
