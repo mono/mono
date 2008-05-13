@@ -197,7 +197,7 @@ namespace System.Linq.jvm
             switch (unary.NodeType)
             {
                 case ExpressionType.TypeAs:
-                    if (!Math.IsType(unary.Type, o))
+                    if (o == null || !Math.IsType(unary.Type, o))
                     {
                         _value = null;
                     }
