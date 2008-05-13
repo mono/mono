@@ -3,3 +3,12 @@
 ../../build/common/MonoTODOAttribute.cs
 Assembly/AssemblyInfo.cs
 System.Data/DataRowComparer.cs
+System.Data/DataRowComparer_1.cs
+System.Data/DataRowExtensions.cs
+System.Data/DataTableExtensions.cs
+System.Data/EnumerableRowCollection.cs
+System.Data/EnumerableRowCollectionExtensions.cs
+System.Data/EnumerableRowCollection_1.cs
+System.Data/OrderedEnumerableRowCollection.cs
+System.Data/TypedTableBase.cs
+System.Data/TypedTableBaseExtensions.cs

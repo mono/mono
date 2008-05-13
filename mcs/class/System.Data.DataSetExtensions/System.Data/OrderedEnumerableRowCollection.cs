@@ -1,5 +1,5 @@
 //
-// DataRowComparer.cs
+// OrderedEnumerableRowCollection.cs
 //
 // Author:
 //   Atsushi Enomoto  <atsushi@ximian.com>
@@ -32,11 +32,11 @@ using System;
 
 namespace System.Data
 {
-	public static class DataRowComparer
+	public sealed class OrderedEnumerableRowCollection<TRow>
+		: EnumerableRowCollection<TRow>
 	{
-		static readonly DataRowComparer<DataRow> default_instance = DataRowComparer<DataRow>.Default;
-		public static DataRowComparer<DataRow> Default {
-			get { return default_instance; }
+		internal OrderedEnumerableRowCollection ()
+		{
 		}
 	}
 }

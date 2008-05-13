@@ -1,5 +1,5 @@
 //
-// DataRowComparer.cs
+// DataRowComparer_1.cs
 //
 // Author:
 //   Atsushi Enomoto  <atsushi@ximian.com>
@@ -29,14 +29,32 @@
 //
 
 using System;
+using System.Collections.Generic;
 
 namespace System.Data
 {
-	public static class DataRowComparer
+	public sealed class DataRowComparer<TRow> : IEqualityComparer<TRow> where TRow : DataRow
 	{
-		static readonly DataRowComparer<DataRow> default_instance = DataRowComparer<DataRow>.Default;
-		public static DataRowComparer<DataRow> Default {
+		static readonly DataRowComparer<TRow> default_instance = new DataRowComparer<TRow> ();
+
+		public static DataRowComparer<TRow> Default {
 			get { return default_instance; }
+		}
+
+		private DataRowComparer ()
+		{
+		}
+
+		[MonoTODO]
+		public bool Equals (TRow leftRow, TRow rightRow)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public int GetHashCode (TRow row)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

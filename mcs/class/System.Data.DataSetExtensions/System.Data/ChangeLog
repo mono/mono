@@ -1,0 +1,8 @@
+2008-05-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataRowComparer.cs, DataRowComparer_1.cs, DataRowExtensions.cs,
+	  DataTableExtensions.cs, EnumerableRowCollection.cs,
+	  EnumerableRowCollectionExtensions.cs, EnumerableRowCollection_1.cs,
+	  OrderedEnumerableRowCollection.cs, TypedTableBase.cs,
+	  TypedTableBaseExtensions.cs : stubbed all.
+

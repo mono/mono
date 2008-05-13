@@ -1,5 +1,5 @@
 //
-// DataRowComparer.cs
+// TypedTableBase.cs
 //
 // Author:
 //   Atsushi Enomoto  <atsushi@ximian.com>
@@ -29,14 +29,43 @@
 //
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace System.Data
 {
-	public static class DataRowComparer
+	[Serializable]
+	public abstract class TypedTableBase<T> : DataTable, IEnumerable<T>, IEnumerable
+		where T : DataRow
 	{
-		static readonly DataRowComparer<DataRow> default_instance = DataRowComparer<DataRow>.Default;
-		public static DataRowComparer<DataRow> Default {
-			get { return default_instance; }
+		protected TypedTableBase ()
+		{
+		}
+
+		[MonoTODO]
+		protected TypedTableBase (SerializationInfo info, StreamingContext context)
+			: base (info, context)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public EnumerableRowCollection<TResult> Cast<TResult> ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public IEnumerator<T> GetEnumerator ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			return (IEnumerator) GetEnumerator ();
 		}
 	}
 }

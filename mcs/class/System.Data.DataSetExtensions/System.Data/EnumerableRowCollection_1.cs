@@ -1,5 +1,5 @@
 //
-// DataRowComparer.cs
+// EnumerableRowCollection_1.cs
 //
 // Author:
 //   Atsushi Enomoto  <atsushi@ximian.com>
@@ -29,14 +29,26 @@
 //
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace System.Data
 {
-	public static class DataRowComparer
+	public class EnumerableRowCollection<TRow> : EnumerableRowCollection, IEnumerable<TRow>
 	{
-		static readonly DataRowComparer<DataRow> default_instance = DataRowComparer<DataRow>.Default;
-		public static DataRowComparer<DataRow> Default {
-			get { return default_instance; }
+		internal EnumerableRowCollection ()
+		{
+		}
+
+		[MonoTODO]
+		public IEnumerator<TRow> GetEnumerator ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			return GetEnumerator ();
 		}
 	}
 }

@@ -1,5 +1,5 @@
 //
-// DataRowComparer.cs
+// EnumerableRowCollection.cs
 //
 // Author:
 //   Atsushi Enomoto  <atsushi@ximian.com>
@@ -29,14 +29,20 @@
 //
 
 using System;
+using System.Collections;
 
 namespace System.Data
 {
-	public static class DataRowComparer
+	public abstract class EnumerableRowCollection : IEnumerable
 	{
-		static readonly DataRowComparer<DataRow> default_instance = DataRowComparer<DataRow>.Default;
-		public static DataRowComparer<DataRow> Default {
-			get { return default_instance; }
+		internal EnumerableRowCollection ()
+		{
+		}
+
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			// it is the documented behavior.
+			return null;
 		}
 	}
 }

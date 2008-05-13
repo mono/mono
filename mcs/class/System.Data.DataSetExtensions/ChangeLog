@@ -1,0 +1,3 @@
+2008-05-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : make it build under net_2_0 build profile.

@@ -1,5 +1,5 @@
 //
-// DataRowComparer.cs
+// DataTableExtensions.cs
 //
 // Author:
 //   Atsushi Enomoto  <atsushi@ximian.com>
@@ -29,14 +29,55 @@
 //
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+
 
 namespace System.Data
 {
-	public static class DataRowComparer
+
+	public static class DataTableExtensions
 	{
-		static readonly DataRowComparer<DataRow> default_instance = DataRowComparer<DataRow>.Default;
-		public static DataRowComparer<DataRow> Default {
-			get { return default_instance; }
+		[MonoTODO]
+		public static DataView AsDataView (this DataTable table)
+		{
+			return table.DefaultView;
+		}
+
+		[MonoTODO]
+		public static DataView AsDataView<T> (this EnumerableRowCollection<T> source)
+			where T : DataRow
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static EnumerableRowCollection<DataRow> AsEnumerable (this DataTable source)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static DataTable CopyToDataTable<T> (this IEnumerable<T> source)
+			where T : DataRow
+		{
+			DataTable dt = new DataTable ();
+			CopyToDataTable<T> (source, dt, LoadOption.PreserveChanges);
+			return dt;
+		}
+
+		[MonoTODO]
+		public static void CopyToDataTable<T> (this IEnumerable<T> source, DataTable table, LoadOption options)
+			where T : DataRow
+		{
+			CopyToDataTable<T> (source, table, options, null);
+		}
+
+		[MonoTODO]
+		public static void CopyToDataTable<T> (this IEnumerable<T> source, DataTable table, LoadOption options, FillErrorEventHandler errorHandler)
+			where T : DataRow
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }
