@@ -1,3 +1,9 @@
+2008-05-13  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ThemeWin32Classic.cs, ThemeVisualStyles.cs: When calculating
+	progress bar stuffs, use doubles instead of ints to prevent
+	overflow.  [Fixes bug #389798]
+
 2008-05-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XplatUIX11.cs, X11Keyboard.cs :

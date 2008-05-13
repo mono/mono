@@ -3962,7 +3962,7 @@ namespace System.Windows.Forms
 				int block_count = 0;
 				
 				block_width = (client_area.Height * 2) / 3;
-				barpos_pixels = ((ctrl.Value - ctrl.Minimum) * client_area.Width) / (Math.Max(ctrl.Maximum - ctrl.Minimum, 1));
+				barpos_pixels = (int)(((double)(ctrl.Value - ctrl.Minimum) * client_area.Width) / (Math.Max (ctrl.Maximum - ctrl.Minimum, 1)));
 				increment = block_width + space_betweenblocks;
 				
 				block_rect = new Rectangle (start_pixel, client_area.Y, block_width, client_area.Height);

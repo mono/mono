@@ -590,7 +590,7 @@ namespace System.Windows.Forms
 #endif
 			default: // Blocks
 				int block_width = renderer.GetInteger (IntegerProperty.ProgressChunkSize);
-				int first_pixel_outside_filled_area = ((ctrl.Value - ctrl.Minimum) * client_area.Width) / (Math.Max (ctrl.Maximum - ctrl.Minimum, 1)) + client_area.X;
+				int first_pixel_outside_filled_area = (int)(((double)(ctrl.Value - ctrl.Minimum) * client_area.Width) / (Math.Max (ctrl.Maximum - ctrl.Minimum, 1))) + client_area.X;
 				int block_count = 0;
 				int increment = block_width + renderer.GetInteger (IntegerProperty.ProgressSpaceSize);
 				Rectangle block_rect = new Rectangle (start_pixel, client_area.Y, block_width, client_area.Height);
