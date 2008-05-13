@@ -53,16 +53,7 @@ namespace System.Web.Hosting {
 
 		internal void InitializeAndSetPrevious (VirtualPathProvider prev)
 		{
-			Console.WriteLine ("{0}.InitializeAndSetPrevious ({1})", this, prev);
 			this.prev = prev;
-			Console.WriteLine ("\tprevious chain:");
-
-			VirtualPathProvider p = this.prev;
-			while (p != null) {
-				Console.WriteLine ("\t\t{0}", p);
-				p = p.Previous;
-			}
-			
 			Initialize ();
 		}
 		
