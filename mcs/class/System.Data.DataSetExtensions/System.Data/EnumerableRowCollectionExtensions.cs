@@ -44,7 +44,7 @@ namespace System.Data
 		[MonoTODO]
 		public static OrderedEnumerableRowCollection<TRow> OrderBy<TRow, TKey> (this EnumerableRowCollection<TRow> source, Func<TRow, TKey> keySelector)
 		{
-			throw new NotImplementedException ();
+			return OrderBy<TRow, TKey> (source, keySelector, Comparer<TKey>.Default);
 		}
 
 		[MonoTODO]
@@ -56,7 +56,7 @@ namespace System.Data
 		[MonoTODO]
 		public static OrderedEnumerableRowCollection<TRow> OrderByDescending<TRow, TKey> (this EnumerableRowCollection<TRow> source, Func<TRow, TKey> keySelector)
 		{
-			throw new NotImplementedException ();
+			return OrderByDescending<TRow, TKey> (source, keySelector, Comparer<TKey>.Default);
 		}
 
 		[MonoTODO]
@@ -65,16 +65,21 @@ namespace System.Data
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static EnumerableRowCollection<S> Select<TRow, S> (this EnumerableRowCollection<TRow> source, Func<TRow, S> selector)
 		{
-			throw new NotImplementedException ();
+			return new EnumerableRowCollection<S> (RunSelect<TRow, S> (source, selector));
+		}
+
+		static IEnumerable<S> RunSelect<TRow, S> (this EnumerableRowCollection<TRow> source, Func<TRow, S> selector)
+		{
+			foreach (TRow row in source)
+				yield return selector (row);
 		}
 
 		[MonoTODO]
 		public static OrderedEnumerableRowCollection<TRow> ThenBy<TRow, TKey> (this OrderedEnumerableRowCollection<TRow> source, Func<TRow, TKey> keySelector)
 		{
-			throw new NotImplementedException ();
+			return ThenBy<TRow, TKey> (source, keySelector, Comparer<TKey>.Default);
 		}
 
 		[MonoTODO]
@@ -86,7 +91,7 @@ namespace System.Data
 		[MonoTODO]
 		public static OrderedEnumerableRowCollection<TRow> ThenByDescending<TRow, TKey> (this OrderedEnumerableRowCollection<TRow> source, Func<TRow, TKey> keySelector)
 		{
-			throw new NotImplementedException ();
+			return ThenByDescending<TRow, TKey> (source, keySelector, Comparer<TKey>.Default);
 		}
 
 		[MonoTODO]
@@ -95,10 +100,16 @@ namespace System.Data
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static EnumerableRowCollection<TRow> Where<TRow> (this EnumerableRowCollection<TRow> source, Func<TRow, bool> predicate)
 		{
-			throw new NotImplementedException ();
+			return new EnumerableRowCollection<TRow> (RunWhere<TRow> (source, predicate));
+		}
+
+		static IEnumerable<TRow> RunWhere<TRow> (EnumerableRowCollection<TRow> source, Func<TRow, bool> predicate)
+		{
+			foreach (TRow row in source)
+				if (predicate (row))
+					yield return row;
 		}
 	}
 }

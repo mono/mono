@@ -1,5 +1,17 @@
 2008-05-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataTableExtensions.cs : implemented AsEnumerable().
+	* DataRowExtensions.cs : implemented.
+	* EnumerableRowCollection_1.cs : implemented.
+	* EnumerableRowCollectionExtensions.cs :
+	  implemented Select() and Where().
+	* OrderedEnumerableRowCollection.cs : base is not parameterless now.
+	* TypedTableBaseExtensions.cs:
+	  some overloads can just delegate to others.
+	* DataRowComparer_1.cs : (added some non-working code.)
+
+2008-05-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataRowComparer.cs, DataRowComparer_1.cs, DataRowExtensions.cs,
 	  DataTableExtensions.cs, EnumerableRowCollection.cs,
 	  EnumerableRowCollectionExtensions.cs, EnumerableRowCollection_1.cs,

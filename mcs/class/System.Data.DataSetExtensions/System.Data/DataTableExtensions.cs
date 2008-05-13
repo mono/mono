@@ -51,10 +51,9 @@ namespace System.Data
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static EnumerableRowCollection<DataRow> AsEnumerable (this DataTable source)
 		{
-			throw new NotImplementedException ();
+			return new EnumerableRowCollection<DataRow> (source);
 		}
 
 		[MonoTODO]

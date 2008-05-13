@@ -35,58 +35,52 @@ namespace System.Data
 {
 	public static class DataRowExtensions
 	{
-		[MonoTODO]
 		public static T Field<T> (this DataRow row, int columnIndex)
 		{
-			throw new NotImplementedException ();
+			return Field<T> (row, columnIndex, DataRowVersion.Current);
 		}
 
-		[MonoTODO]
 		public static T Field<T> (this DataRow row, int columnIndex, DataRowVersion version)
 		{
-			throw new NotImplementedException ();
+			object ret = row [columnIndex, version];
+			if (ret == DBNull.Value)
+				throw new StrongTypingException ("Cannot get strong typed value since it is DB null.", null);
+			return (T) ret;
 		}
 
-		[MonoTODO]
 		public static T Field<T> (this DataRow row, string columnName)
 		{
-			throw new NotImplementedException ();
+			return Field<T> (row, columnName, DataRowVersion.Current);
 		}
 
-		[MonoTODO]
 		public static T Field<T> (this DataRow row, string columnName, DataRowVersion version)
 		{
-			throw new NotImplementedException ();
+			return Field<T> (row, row.Table.Columns [columnName], version);
 		}
 
-		[MonoTODO]
 		public static T Field<T> (this DataRow row, DataColumn column)
 		{
-			throw new NotImplementedException ();
+			return Field<T> (row, column, DataRowVersion.Current);
 		}
 
-		[MonoTODO]
 		public static T Field<T> (this DataRow row, DataColumn column, DataRowVersion version)
 		{
-			throw new NotImplementedException ();
+			return Field<T> (row, row.Table.Columns.IndexOf (column), version);
 		}
 
-		[MonoTODO]
 		public static void SetField<T> (this DataRow row, int columnIndex, T value)
 		{
-			throw new NotImplementedException ();
+			row [columnIndex] = value;
 		}
 
-		[MonoTODO]
 		public static void SetField<T> (this DataRow row, string columnName, T value)
 		{
-			throw new NotImplementedException ();
+			row [columnName] = value;
 		}
 
-		[MonoTODO]
 		public static void SetField<T> (this DataRow row, DataColumn column, T value)
 		{
-			throw new NotImplementedException ();
+			row [column] = value;
 		}
 	}
 }

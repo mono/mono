@@ -55,6 +55,24 @@ namespace System.Data
 		public int GetHashCode (TRow row)
 		{
 			throw new NotImplementedException ();
+			/*
+			int ret = row.GetType ().GetHashCode ();
+			GetHashCodeForRowVersion (row, DataRowVersion.Original, ref ret);
+			GetHashCodeForRowVersion (row, DataRowVersion.Current, ref ret);
+			GetHashCodeForRowVersion (row, DataRowVersion.Proposed, ref ret);
+			GetHashCodeForRowVersion (row, DataRowVersion.Default, ref ret);
+			return ret;
+		}
+
+		void GetHashCodeForRowVersion (TRow row, DataRowVersion version, ref int hash)
+		{
+			if (!row.HasVersion (version))
+				return;
+			int local = 0;
+			for (int i = 0; i < row.Table.Columns.Count; i++)
+				local += row [i, version].GetHashCode () ^ 7;
+			hash += local << (((int) version << 1) + 7);
+			*/
 		}
 	}
 }

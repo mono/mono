@@ -36,19 +36,48 @@ namespace System.Data
 {
 	public class EnumerableRowCollection<TRow> : EnumerableRowCollection, IEnumerable<TRow>
 	{
-		internal EnumerableRowCollection ()
+		IEnumerable<TRow> source;
+
+		internal EnumerableRowCollection (DataTable source)
+			: this (new DataRowGenericCollection (source))
 		{
 		}
 
-		[MonoTODO]
+		internal EnumerableRowCollection (IEnumerable<TRow> source)
+		{
+			this.source = source;
+		}
+
 		public IEnumerator<TRow> GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			foreach (TRow row in source)
+				yield return row;
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
 			return GetEnumerator ();
+		}
+
+		class DataRowGenericCollection : IEnumerable<TRow>
+		{
+			DataTable source;
+
+			public DataRowGenericCollection (DataTable source)
+			{
+				this.source = source;
+			}
+
+			public IEnumerator<TRow> GetEnumerator ()
+			{
+				foreach (TRow row in source.Rows)
+					yield return row;
+			}
+
+			IEnumerator IEnumerable.GetEnumerator ()
+			{
+				return GetEnumerator ();
+			}
 		}
 	}
 }

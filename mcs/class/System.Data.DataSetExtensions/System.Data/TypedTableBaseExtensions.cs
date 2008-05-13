@@ -42,11 +42,10 @@ namespace System.Data
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static OrderedEnumerableRowCollection<TRow> OrderBy<TRow, TKey> (this TypedTableBase<TRow> source, Func<TRow, TKey> keySelector)
 			where TRow : DataRow
 		{
-			throw new NotImplementedException ();
+			return OrderBy<TRow, TKey> (source, keySelector, Comparer<TKey>.Default);
 		}
 
 		[MonoTODO]
@@ -56,11 +55,10 @@ namespace System.Data
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static OrderedEnumerableRowCollection<TRow> OrderByDescending<TRow, TKey> (this TypedTableBase<TRow> source, Func<TRow, TKey> keySelector)
 			where TRow : DataRow
 		{
-			throw new NotImplementedException ();
+			return OrderByDescending<TRow, TKey> (source, keySelector, Comparer<TKey>.Default);
 		}
 
 		[MonoTODO]
