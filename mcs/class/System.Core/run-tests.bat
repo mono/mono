@@ -25,7 +25,7 @@ REM ********************************************************
 REM Set parameters
 REM ********************************************************
 
-set OUTPUT_FILE_PREFIX=System.Core_MonoTests
+set OUTPUT_FILE_PREFIX=System_Core_MonoTests
 set RUNNING_FIXTURE=MonoTests
 set TEST_SOLUTION=Test\System.Core.Tests-2008.JavaEE.csproj
 set TEST_ASSEMBLY=System.Core.Tests.jar
