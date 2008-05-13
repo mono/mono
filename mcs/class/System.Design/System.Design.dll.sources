@@ -233,6 +233,7 @@ System.Web.UI.Design.WebControls/TableDesigner.cs
 System.Web.UI.Design.WebControls/HyperLinkDesigner.cs
 System.Web.UI.Design.WebControls/CalendarDesigner.cs
 System.Web.UI.Design.WebControls/CheckBoxDesigner.cs
+System.Web.UI.Design.WebControls/DataSourceIDConverter.cs
 System.Web.UI.Design.WebControls/DataProviderNameConverter.cs
 System.Web.UI.Design.WebControls/LinkButtonDesigner.cs
 System.Web.UI.Design.WebControls/AdRotatorDesigner.cs
