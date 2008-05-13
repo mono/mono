@@ -1,5 +1,11 @@
 2008-05-13  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #389625
+	* delegate.cs, generic.cs: Some progress on method group return type
+	inference.
+
+2008-05-13  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #378419
 	* namespace.cs: Inspect also parent namespaces not only namespace entries.
 

@@ -2418,7 +2418,7 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				if (a.Expr.Type == TypeManager.null_type)
+				if (a.Expr is NullLiteral)
 					continue;
 
 				//
@@ -2918,16 +2918,37 @@ namespace Mono.CSharp {
 				return LowerBoundInference (rt, rtype) + 1;
 			}
 
+			//
+			// if E is a method group and T is a delegate type or expression tree type
+			// return type Tb with parameter types T1..Tk and return type Tb, and overload
+			// resolution of E with the types T1..Tk yields a single method with return type U,
+			// then a lower-bound inference is made from U for Tb.
+			//
 			if (e is MethodGroupExpr) {
+				// TODO: Or expression tree
 				if (!TypeManager.IsDelegateType (t))
 					return 0;
 
 				MethodInfo invoke = Delegate.GetInvokeMethod (t, t);
 				Type rtype = invoke.ReturnType;
+#if MS_COMPATIBLE
+				// Blablabla, because reflection does not work with dynamic types
+				Type [] g_args = t.GetGenericArguments ();
+				rtype = g_args [rtype.GenericParameterPosition];
+#endif
+
 				if (!TypeManager.IsGenericType (rtype))
 					return 0;
-				
+
+				MethodGroupExpr mg = (MethodGroupExpr) e;
+				ArrayList args = DelegateCreation.CreateDelegateMethodArguments (invoke, e.Location);
+				mg = mg.OverloadResolve (ec, ref args, true, e.Location);
+				if (mg == null)
+					return 0;
+
+				// TODO: What should happen when return type is of generic type ?
 				throw new NotImplementedException ();
+//				return LowerBoundInference (null, rtype) + 1;
 			}
 
 			//
