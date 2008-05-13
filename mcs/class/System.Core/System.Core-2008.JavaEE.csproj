@@ -115,7 +115,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-RefInfo-system-xml="repository:vmw:framework:2.0" REFS-JarPath-system-xml="" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-JarPath-system-data="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system="" REFS-JarPath-rt="" REFS-RefInfo-rt="repository:jre:sun:1.6.0" />
+      <UserProperties REFS-RefInfo-rt="repository:jre:sun:1.6.0" REFS-JarPath-rt="" REFS-JarPath-system="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system-data="" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-JarPath-system-xml="" REFS-RefInfo-system-xml="repository:vmw:framework:2.0" />
     </VisualStudio>
   </ProjectExtensions>
   <ItemGroup>
@@ -172,6 +172,7 @@
     <Compile Include="System.Linq.Expressions\ParameterExpression.cs" />
     <Compile Include="System.Linq.Expressions\TypeBinaryExpression.cs" />
     <Compile Include="System.Linq.Expressions\UnaryExpression.cs" />
+    <Compile Include="System.Linq.jvm\Conversion.cs" />
     <Compile Include="System.Linq.jvm\ExpressionInterpreter.cs" />
     <Compile Include="System.Linq.jvm\ExpressionValidator.cs" />
     <Compile Include="System.Linq.jvm\Interpreter.cs" />

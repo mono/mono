@@ -222,72 +222,37 @@ namespace System.Linq.jvm
 
         }
 
-        public static object ConvertToTypeChecked(object a, Type t)
-        {
-            checked
-            {
-                if (IsType(t, a))
-                {
-                    return a;
-                }
+        public static object ConvertToTypeChecked(object a, Type fromType, Type toType)
+        {            
+            if (IsType(toType, a)){
+                return a;
             }
-            return Convert.ChangeType(a, t);
-
+     
+			if (Expression.IsPrimitiveConversion(fromType, toType))
+				return Convert.ChangeType (a, toType);
+			
+			throw new NotImplementedException (
+							string.Format ("No Convert defined for type {0} ", toType));
         }
 
-        public static object ConvertToTypeUnchecked(object a, Type t)
-        {
-            unchecked
-            {
-                if (IsType(t, a))
-                {
-                    return a;
-                }
-            }
-            return ConvertToTypeUnchecked(a, Type.GetTypeCode(t));
-            
-        }
+		public static object ConvertToTypeUnchecked (object a, Type fromType, Type toType)
+		{
+			if (IsType (toType, a)) {
+				return a;
+			}
+
+			if (Expression.IsPrimitiveConversion (fromType, toType))
+				return Conversion.ConvertPrimitiveUnChecked (fromType, toType, a);
+
+			throw new NotImplementedException (
+							string.Format ("No Convert defined for type {0} ", toType));
+		}		
 
         public static bool IsType(Type t, Object o)
         {
             return t.IsInstanceOfType(o);
 
-        }
-
-        public static object ConvertToTypeUnchecked(object a, TypeCode tc)
-        {
-
-            switch (tc)
-            {
-                case TypeCode.Char:
-                    return unchecked((Char)a);
-                case TypeCode.Byte:
-                    return unchecked((Byte)a);
-                case TypeCode.Decimal:
-                    return unchecked((Decimal)a);
-                case TypeCode.Double:
-                    return unchecked((Double)a);
-                case TypeCode.Int16:
-                    return unchecked((Int16)a);
-                case TypeCode.Int32:
-                    return unchecked((Int32)a);
-                case TypeCode.Int64:
-                    return unchecked((Int64)a);
-                case TypeCode.UInt16:
-                    return unchecked((UInt16)a);
-                case TypeCode.UInt32:
-                    return unchecked((UInt32)a);
-                case TypeCode.SByte:
-                    return unchecked((SByte)a);
-                case TypeCode.Single:
-                    return unchecked((Single)a);
-                case TypeCode.Boolean:
-                    return unchecked((Boolean)a);
-            }
-
-            throw new NotImplementedException(
-                string.Format("No Convert defined for type {0} ", tc));
-        }
+        }        
 
         public static object Negete(object a, TypeCode tc)
         {

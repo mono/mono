@@ -36,21 +36,18 @@ namespace System.Linq.jvm
             Visit(exp.Body);
         }
 
-        protected override void Visit(Expression expression)
-        {
-            if (expression == null)
-            {
-                return;
-            }
-            if (expression.NodeType == ExpressionType.Power)
-            {
-                VisitBinary((BinaryExpression)expression);
-            }
-            else
-            {
-                base.Visit(expression);
-            }
-        }
+		protected override void Visit (Expression expression)
+		{
+			if (expression == null) {
+				return;
+			}
+			if (expression.NodeType == ExpressionType.Power) {
+				VisitBinary ((BinaryExpression) expression);
+			}
+			else {
+				base.Visit (expression);
+			}
+		}
 
         private void VisitCoalesce(BinaryExpression binary)
         {
@@ -183,6 +180,11 @@ namespace System.Linq.jvm
 
         protected override void VisitUnary(UnaryExpression unary)
         {
+			if (unary.NodeType == ExpressionType.Quote) 
+			{
+				_value = unary.Operand;
+				return;
+			}
             Visit(unary.Operand);
             object o = _value;
 
@@ -210,17 +212,20 @@ namespace System.Linq.jvm
                     _value = Math.NegeteChecked(o, Type.GetTypeCode(unary.Type));
                     return;
                 case ExpressionType.Not:
-                    _value = ! Convert.ToBoolean(o);
+					if (unary.Type == typeof(bool))
+						_value = ! Convert.ToBoolean(o);
+					else
+						_value = ~Convert.ToInt32(o);
                     return;
                 case ExpressionType.UnaryPlus:
                     _value = o;
                     return;
                 case ExpressionType.Convert:
-                    _value = Math.ConvertToTypeUnchecked(o, unary.Type);
+					_value = Math.ConvertToTypeUnchecked (o, unary.Operand.Type, unary.Type);					
                     return;
                 case ExpressionType.ConvertChecked:
-                    _value = Math.ConvertToTypeChecked(o, unary.Type);
-                    return;
+                    _value = Math.ConvertToTypeChecked(o,unary.Operand.Type, unary.Type);
+                    return;				
             }
             throw new NotImplementedException(
                 string.Format(
@@ -435,6 +440,10 @@ namespace System.Linq.jvm
                 _value = o;
             }
         }
+
+		protected override void VisitLambda (LambdaExpression lambda) {
+			_value = lambda.Compile ();
+		}
 
         private object[] VisitListExpressions(ReadOnlyCollection<Expression> collection)
         {
