@@ -4921,6 +4921,10 @@ namespace System.Windows.Forms
 		
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
+			SetBoundsCoreInternal (x, y, width, height, specified);
+		}
+		
+		internal virtual void SetBoundsCoreInternal(int x, int y, int width, int height, BoundsSpecified specified) {
 			// Nasty hack for 2.0 DateTimePicker
 			height = OverrideHeight (height);
 			
@@ -6474,6 +6478,10 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnResize(EventArgs e) {
+			OnResizeInternal (e);
+		}
+		
+		internal virtual void OnResizeInternal (EventArgs e) {
 			PerformLayout(this, "Bounds");
 
 			EventHandler eh = (EventHandler)(Events [ResizeEvent]);

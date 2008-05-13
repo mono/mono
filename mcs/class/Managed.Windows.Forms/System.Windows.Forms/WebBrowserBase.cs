@@ -310,9 +310,9 @@ namespace System.Windows.Forms
 			get { return webHost; }
 		}
 
-		internal override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
+		internal override void SetBoundsCoreInternal (int x, int y, int width, int height, BoundsSpecified specified)
 		{
-			base.SetBoundsCore (x, y, width, height, specified);
+			base.SetBoundsCoreInternal (x, y, width, height, specified);
 			this.webHost.Resize (width, height);
 		}
 
@@ -387,9 +387,9 @@ namespace System.Windows.Forms
 			return OnNewWindowInternal ();
 		}
 
-		internal override void OnResize (EventArgs e)
+		internal override void OnResizeInternal (EventArgs e)
 		{
-			base.OnResize (e);
+			base.OnResizeInternal (e);
 
 			if (state == State.Active)
 				this.webHost.Resize (this.Width, this.Height);

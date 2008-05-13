@@ -1,5 +1,14 @@
 2008-05-13  Andreia Gaita <avidigal@novell.com> 
 
+	* WebBrowserBase.cs: Override Internal alternative methods for
+	  SetBoundsCore and OnResize instead of the protected ones.
+	* Control.cs: Move SetBoundsCore and OnResize implementations to
+	  SetBoundsCoreInternal and OnResizeInternal, so they can be
+	  overriden internally (WebBrowserBase needs to catch them but can't
+	  override the protected methods without api compat problems)
+
+2008-05-13  Andreia Gaita <avidigal@novell.com> 
+
 	* WebBrowserBase.cs: Hiding away non-public overrides for api compat
 
 2009-05-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
