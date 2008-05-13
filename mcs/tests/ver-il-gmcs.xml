@@ -12506,6 +12506,42 @@
       </method>
     </type>
   </test>
+  <test name="gtest-exmethod-20.cs">
+    <type name="Outer.Inner.Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void M(I)">
+        <size>13</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="Outer.ExtensionMethods">
+      <method name="Void AddRange[T](I, IEnumerable`1)">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-exmethod-21.cs">
+    <type name="Outer.Inner.Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void M(I)">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="External.ExtensionMethods">
+      <method name="Void AddRange(I)">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-friend-01.cs">
     <type name="Test">
       <method name="Void .ctor()">
