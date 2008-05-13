@@ -1,3 +1,8 @@
+2008-05-13  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #378419
+	* namespace.cs: Inspect also parent namespaces not only namespace entries.
+
 2008-05-12  Marek Safar  <marek.safar@gmail.com>
 
 	* class.cs (Constructor): Added IsCompilerGenerated.

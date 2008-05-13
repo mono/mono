@@ -862,6 +862,21 @@ namespace Mono.CSharp {
 			if (parent == null)
 				return null;
 
+			//
+			// Inspect parent namespaces in namespace expression
+			//
+			Namespace parent_ns = ns.Parent;
+			do {
+				candidates = parent_ns.LookupExtensionMethod (extensionType, null, name, parent);
+				if (candidates != null)
+					return new ExtensionMethodGroupExpr (candidates, parent, extensionType, loc);
+
+				parent_ns = parent_ns.Parent;
+			} while (parent_ns != null);
+
+			//
+			// Continue in parent scope
+			//
 			return parent.LookupExtensionMethod (extensionType, currentClass, name, loc);
 		}
 
