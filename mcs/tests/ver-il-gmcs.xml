@@ -10609,6 +10609,22 @@
       </method>
     </type>
   </test>
+  <test name="gtest-396.cs">
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Invoke[A,TR](System.Func`2[A,System.Func`1[TR]], A, TR)">
+        <size>1</size>
+      </method>
+      <method name="System.Func`1[System.Int32] Method(System.String)">
+        <size>2</size>
+      </method>
+      <method name="Void Main()">
+        <size>24</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
