@@ -1,5 +1,8 @@
 2008-05-13  Zoltan Varga  <vargaz@gmail.com>
 
+	* loader.c (mono_method_signature): Use memory barriers because of the double
+	checked locking pattern.
+
 	* threads.c (remove_and_abort_threads): Stop and wait for threads which are
 	aborting or aborted as well. Fixes #376391.
 	
