@@ -194,7 +194,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void LambdaPassedAsDelegate ()
 		{
 			var pi = Expression.Parameter (typeof (int), "i");
