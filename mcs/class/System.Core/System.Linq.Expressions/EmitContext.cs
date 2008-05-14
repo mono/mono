@@ -225,9 +225,6 @@ namespace System.Linq.Expressions {
 
 		DynamicMethod method;
 
-		static object mlock = new object ();
-		static int method_count;
-
 		public DynamicMethod Method {
 			get { return method; }
 		}
@@ -248,16 +245,17 @@ namespace System.Linq.Expressions {
 			return method.CreateDelegate (owner.Type, new ExecutionScope (globals.ToArray ()));
 		}
 
-		static string GenerateName ()
+		protected virtual string GenerateName ()
 		{
-			lock (mlock) {
-				return "lambda_method-" + (method_count++);
-			}
+			return "lambda_method";
 		}
 	}
 
 #if !NET_2_1
 	class DebugEmitContext : DynamicEmitContext {
+
+		static object mlock = new object ();
+		static int method_count;
 
 		public DebugEmitContext (LambdaExpression lambda)
 			: base (lambda)
@@ -277,6 +275,13 @@ namespace System.Linq.Expressions {
 
 			type.CreateType ();
 			assembly.Save (file_name);
+		}
+
+		protected override string GenerateName ()
+		{
+			lock (mlock) {
+				return "lambda_method-" + (method_count++);
+			}
 		}
 	}
 #endif

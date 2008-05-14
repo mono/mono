@@ -1,5 +1,10 @@
 2008-05-14  Jb Evain  <jbevain@novell.com>
 
+	* EmitContext.cs: only generate a new lambda name if we're in
+	a debug context.
+
+2008-05-14  Jb Evain  <jbevain@novell.com>
+
 	* LambdaExpression.cs, EmitContext.cs: When encountering a lambda
 	inside an ET, compile it as a read of a global. Based on a patch
 	by Roei Erez <roeie@mainsoft.com>
