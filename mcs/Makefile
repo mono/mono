@@ -21,11 +21,15 @@ centum_tests := \
 	class/Microsoft.JScript					\
 	class/Mono.Posix					\
 	class/Mono.Security					\
+	class/System.Design					\
+	class/System.DirectoryServices		\
+	class/System.Drawing				\
 	class/System.Messaging					\
 	class/System.Runtime.Remoting				\
 	class/System.Runtime.Serialization.Formatters.Soap	\
 	class/System.Security					\
 	class/System.ServiceProcess				\
+	class/System.Web						\
 	class/System.Web.Services				\
 	tests							\
 	errors
@@ -38,17 +42,20 @@ net_2_0_centum_tests := \
 	$(centum_tests)				\
 	class/System.Core			\
 	class/System.Configuration		\
+	class/System.Data.DataSetExtensions	\
 	class/System.Xml.Linq			\
+	class/System.Transactions		\
 	class/Microsoft.Build.Framework		\
 	class/Microsoft.Build.Utilities		\
-	class/Microsoft.Build.Engine
-#class/Microsoft.Build.Tasks	
-#class/Mono.C5
+	class/Microsoft.Build.Engine		\
+	class/Mono.C5
+	
+#	class/System.Web.Extensions
+#	class/Microsoft.Build.Tasks	
 
 # note that System.Xml.Linq is here to prevent this from being empty
 net_3_5_centum_tests := \
 	class/System.Xml.Linq
-#class/System.Web.Extensions		
 
 ifdef ONLY_CENTUM_TESTS
 TEST_SUBDIRS := $($(PROFILE)_centum_tests)
