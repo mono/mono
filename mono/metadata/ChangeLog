@@ -1,5 +1,12 @@
 2008-05-14  Kornél Pál  <kornelpal@gmail.com>
 
+	* coree.c: Rename dwOldProtect to OldProtect that makes naming convention
+	consistent.
+
+	Contributed under MIT/X11 license.
+
+2008-05-14  Kornél Pál  <kornelpal@gmail.com>
+
 	* domain.c (mono_init_internal): Enable LoadLibrary support. Load EXE image
 	even when get_runtimes_from_exe didn't load it that allows mono_fixup_exe_image
 	to fixup the EXE image.
