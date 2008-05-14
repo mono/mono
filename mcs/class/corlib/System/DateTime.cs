@@ -542,44 +542,44 @@ namespace System
 
 		/* methods */
 
-		public DateTime Add (TimeSpan ts)
+		public DateTime Add (TimeSpan value)
 		{
-			DateTime ret = AddTicks (ts.Ticks);
+			DateTime ret = AddTicks (value.Ticks);
 #if NET_2_0
 			ret.kind = kind;
 #endif
 			return ret;
 		}
 
-		public DateTime AddDays (double days)
+		public DateTime AddDays (double value)
 		{
-			return AddMilliseconds (Math.Round (days * 86400000));
+			return AddMilliseconds (Math.Round (value * 86400000));
 		}
 		
-		public DateTime AddTicks (long t)
+		public DateTime AddTicks (long value)
 		{
-			if ((t + ticks.Ticks) > MAX_VALUE_TICKS || (t + ticks.Ticks) < 0) {
+			if ((value + ticks.Ticks) > MAX_VALUE_TICKS || (value + ticks.Ticks) < 0) {
 				throw new ArgumentOutOfRangeException();
 			}
-			DateTime ret = new DateTime (t + ticks.Ticks);
+			DateTime ret = new DateTime (value + ticks.Ticks);
 #if NET_2_0
 			ret.kind = kind;
 #endif
 			return ret;
 		}
 
-		public DateTime AddHours (double hours)
+		public DateTime AddHours (double value)
 		{
-			return AddMilliseconds (hours * 3600000);
+			return AddMilliseconds (value * 3600000);
 		}
 
-		public DateTime AddMilliseconds (double ms)
+		public DateTime AddMilliseconds (double value)
 		{
-			if ((ms * TimeSpan.TicksPerMillisecond) > long.MaxValue ||
-					(ms * TimeSpan.TicksPerMillisecond) < long.MinValue) {
+			if ((value * TimeSpan.TicksPerMillisecond) > long.MaxValue ||
+					(value * TimeSpan.TicksPerMillisecond) < long.MinValue) {
 				throw new ArgumentOutOfRangeException();
 			}
-			long msticks = (long) (ms * TimeSpan.TicksPerMillisecond);
+			long msticks = (long) (value * TimeSpan.TicksPerMillisecond);
 
 			return AddTicks (msticks);
 		}
@@ -596,9 +596,9 @@ namespace System
 			return AddTicks (msticks);
 		}
 
-		public DateTime AddMinutes (double minutes)
+		public DateTime AddMinutes (double value)
 		{
-			return AddMilliseconds (minutes * 60000);
+			return AddMilliseconds (value * 60000);
 		}
 		
 		public DateTime AddMonths (int months)
@@ -631,14 +631,14 @@ namespace System
 			return  temp.Add (this.TimeOfDay);
 		}
 
-		public DateTime AddSeconds (double seconds)
+		public DateTime AddSeconds (double value)
 		{
-			return AddMilliseconds (seconds*1000);
+			return AddMilliseconds (value * 1000);
 		}
 
-		public DateTime AddYears (int years )
+		public DateTime AddYears (int value)
 		{
-			return AddMonths(years * 12);
+			return AddMonths (value * 12);
 		}
 
 		public static int Compare (DateTime t1,	DateTime t2)
@@ -651,16 +651,16 @@ namespace System
 				return 0;
 		}
 
-		public int CompareTo (object v)
+		public int CompareTo (object value)
 		{
-			if ( v == null)
+			if (value == null)
 				return 1;
 
-			if (!(v is System.DateTime))
+			if (!(value is System.DateTime))
 				throw new ArgumentException (Locale.GetText (
 					"Value is not a System.DateTime"));
 
-			return Compare (this, (DateTime) v);
+			return Compare (this, (DateTime) value);
 		}
 
 #if NET_2_0
@@ -737,12 +737,12 @@ namespace System
 			return days[month];			
 		}
 		
-		public override bool Equals (object o)
+		public override bool Equals (object value)
 		{
-			if (!(o is System.DateTime))
+			if (!(value is System.DateTime))
 				return false;
 
-			return ((DateTime) o).ticks == ticks;
+			return ((DateTime) value).ticks == ticks;
 		}
 
 		public static bool Equals (DateTime t1, DateTime t2 )
@@ -878,12 +878,12 @@ namespace System
 			return Parse (s, null);
 		}
 
-		public static DateTime Parse (string s, IFormatProvider fp)
+		public static DateTime Parse (string s, IFormatProvider provider)
 		{
-			return Parse (s, fp, DateTimeStyles.AllowWhiteSpaces);
+			return Parse (s, provider, DateTimeStyles.AllowWhiteSpaces);
 		}
 
-		public static DateTime Parse (string s, IFormatProvider fp, DateTimeStyles styles)
+		public static DateTime Parse (string s, IFormatProvider provider, DateTimeStyles styles)
 		{
 			
 			const string formatExceptionMessage = "String was not recognized as a valid DateTime.";
@@ -892,10 +892,10 @@ namespace System
 #endif
 			
 			if (s == null)
-				throw new ArgumentNullException (Locale.GetText ("s is null"));
-			if (fp == null)
-				fp = CultureInfo.CurrentCulture;
-			DateTimeFormatInfo dfi = DateTimeFormatInfo.GetInstance (fp);
+				throw new ArgumentNullException ("s");
+			if (provider == null)
+				provider = CultureInfo.CurrentCulture;
+			DateTimeFormatInfo dfi = DateTimeFormatInfo.GetInstance (provider);
 
 			bool longYear = false;
 			DateTime result;
@@ -958,9 +958,9 @@ namespace System
 #endif
 		}
 
-		public static DateTime ParseExact (string s, string format, IFormatProvider fp)
+		public static DateTime ParseExact (string s, string format, IFormatProvider provider)
 		{
-			return ParseExact (s, format, fp, DateTimeStyles.None);
+			return ParseExact (s, format, provider, DateTimeStyles.None);
 		}
 
 		private static bool IsDayBeforeMonth (DateTimeFormatInfo dfi)
@@ -1774,7 +1774,7 @@ namespace System
 		}
 
 		public static DateTime ParseExact (string s, string format,
-						   IFormatProvider fp, DateTimeStyles style)
+						   IFormatProvider provider, DateTimeStyles style)
 		{
 			if (format == null)
 				throw new ArgumentNullException ("format");
@@ -1782,14 +1782,14 @@ namespace System
 			string [] formats = new string [1];
 			formats[0] = format;
 
-			return ParseExact (s, formats, fp, style);
+			return ParseExact (s, formats, provider, style);
 		}
 
 		public static DateTime ParseExact (string s, string[] formats,
-						   IFormatProvider fp,
+						   IFormatProvider provider,
 						   DateTimeStyles style)
 		{
-			DateTimeFormatInfo dfi = DateTimeFormatInfo.GetInstance (fp);
+			DateTimeFormatInfo dfi = DateTimeFormatInfo.GetInstance (provider);
 #if NET_2_0
 			CheckStyle (style);
 #endif
@@ -1843,7 +1843,7 @@ namespace System
 		}
 		
 		public static bool TryParseExact (string s, string format,
-						  IFormatProvider fp,
+						  IFormatProvider provider,
 						  DateTimeStyles style,
 						  out DateTime result)
 		{
@@ -1852,15 +1852,15 @@ namespace System
 			formats = new string [1];
 			formats[0] = format;
 
-			return TryParseExact (s, formats, fp, style, out result);
+			return TryParseExact (s, formats, provider, style, out result);
 		}
 
 		public static bool TryParseExact (string s, string[] formats,
-						  IFormatProvider fp,
+						  IFormatProvider provider,
 						  DateTimeStyles style,
 						  out DateTime result)
 		{
-			DateTimeFormatInfo dfi = DateTimeFormatInfo.GetInstance (fp);
+			DateTimeFormatInfo dfi = DateTimeFormatInfo.GetInstance (provider);
 
 			bool longYear = false;
 			return ParseExact (s, formats, dfi, style, out result, true, ref longYear);
@@ -1889,17 +1889,17 @@ namespace System
 			return false;
 		}
 		
-		public TimeSpan Subtract(DateTime dt)
+		public TimeSpan Subtract (DateTime value)
 		{
-			return new TimeSpan(ticks.Ticks) - dt.ticks;
+			return new TimeSpan (ticks.Ticks) - value.ticks;
 		}
 
-		public DateTime Subtract(TimeSpan ts)
+		public DateTime Subtract(TimeSpan value)
 		{
 			TimeSpan newticks;
 
-			newticks = (new TimeSpan (ticks.Ticks)) - ts;
-			DateTime ret = new DateTime(true,newticks);
+			newticks = (new TimeSpan (ticks.Ticks)) - value;
+			DateTime ret = new DateTime (true,newticks);
 #if NET_2_0
 			ret.kind = kind;
 #endif
@@ -1979,9 +1979,9 @@ namespace System
 			return ToString ("G", null);
 		}
 
-		public string ToString (IFormatProvider fp)
+		public string ToString (IFormatProvider provider)
 		{
-			return ToString (null, fp);
+			return ToString (null, provider);
 		}
 
 		public string ToString (string format)
@@ -1989,9 +1989,9 @@ namespace System
 			return ToString (format, null);
 		}
 	
-		public string ToString (string format, IFormatProvider fp)
+		public string ToString (string format, IFormatProvider provider)
 		{
-			DateTimeFormatInfo dfi = DateTimeFormatInfo.GetInstance(fp);
+			DateTimeFormatInfo dfi = DateTimeFormatInfo.GetInstance (provider);
 
 			if (format == null || format == String.Empty)
 				format = "G";
