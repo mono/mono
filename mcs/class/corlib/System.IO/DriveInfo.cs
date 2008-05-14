@@ -238,7 +238,7 @@ namespace System.IO {
 				
 				if (di != null)
 					return di;
-			} catch (Exception e) {
+			} catch (Exception) {
 				// If anything happens.
 			}
 			
