@@ -74,23 +74,23 @@ namespace System.Linq {
 		{
 			Check.SourceAndFunc (source, func);
 			return source.Provider.Execute<TAccumulate> (
-		StaticCall (
-			MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource), typeof (TAccumulate)),
-			source.Expression,
-			Expression.Constant (seed),
-			Expression.Quote (func)));
+				StaticCall (
+					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource), typeof (TAccumulate)),
+					source.Expression,
+					Expression.Constant (seed),
+					Expression.Quote (func)));
 		}
 
 		public static TResult Aggregate<TSource, TAccumulate, TResult> (this IQueryable<TSource> source, TAccumulate seed, Expression<Func<TAccumulate, TSource, TAccumulate>> func, Expression<Func<TAccumulate, TResult>> selector)
 		{
 			Check.SourceAndFuncAndSelector (source, func, selector);
 			return source.Provider.Execute<TResult> (
-		StaticCall (
-			MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource), typeof (TAccumulate), typeof (TResult)),
-			source.Expression,
-			Expression.Constant (seed),
-			Expression.Quote (func),
-			Expression.Quote (selector)));
+				StaticCall (
+					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TSource), typeof (TAccumulate), typeof (TResult)),
+					source.Expression,
+					Expression.Constant (seed),
+					Expression.Quote (func),
+					Expression.Quote (selector)));
 		}
 
 		#endregion
