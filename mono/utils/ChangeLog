@@ -1,3 +1,10 @@
+2008-05-14  Kornél Pál  <kornelpal@gmail.com>
+
+	* mono-path.c (mono_path_canonicalize): Convert '/' to '\' on Windows that
+	fixes path canonicalization for paths containing '/'.
+
+	Contributed under MIT/X11 license.
+
 2008-05-04  Andreas Faerber  <andreas.faerber@web.de>
 
 	* mono-membar.h: Prepare support for OSX/ppc64.

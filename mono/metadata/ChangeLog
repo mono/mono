@@ -1,3 +1,34 @@
+2008-05-14  Kornél Pál  <kornelpal@gmail.com>
+
+	* domain.c (mono_init_internal): Enable LoadLibrary support. Load EXE image
+	even when get_runtimes_from_exe didn't load it that allows mono_fixup_exe_image
+	to fixup the EXE image.
+	(mono_cleanup): Use mono_close_exe_image.
+	(mono_close_exe_image): New function.
+	* image.c: Include "marshal.h".
+	(mono_image_open_from_module_handle): Add ref_count argument. Return the image.
+	(mono_image_open_full, mono_image_close): Fix LoadLibrary/FreeLibrary reference
+	counting when the image is loaded outside of mono_image_open_full. Set status
+	based on GetLastError.
+	* coree.c: Include required headers. Add init_from_coree.
+	(_CorDllMain): Support fix in mono_image_open_full, mono_image_close. Call
+	mono_assembly_open only when the image has vtfixups. Set init_from_coree.
+	(_CorExeMain): Set init_from_coree.
+	(CorExitProcess): Only call ExitProcess for now.
+	(CorBindToRuntimeEx): New stub implementation.
+	(CorBindToRuntime): New function.
+	(MonoFixupCorEE): Fixup CorBindToRuntime and CorBindToRuntimeEx.
+	(MonoFixupExe): ILONLY executables require no fixups.
+	(mono_set_act_ctx): New function to set activation context.
+	(mono_load_coree): Use init_from_coree. Call mono_set_act_ctx.	
+	* coree.h: Move STATUS_SUCCESS and STATUS_INVALID_IMAGE_FORMAT to header.
+	Declare mono_module_handle, coree_module_handle, mono_get_module_file_name,
+	mono_load_coree, mono_fixup_exe_image and mono_image_open_from_module_handle
+	as MONO_INTERNAL.
+	* domain-internals.h: Add mono_close_exe_image.
+
+	Contributed under MIT/X11 license.
+
 2008-05-13 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata.c (mono_metadata_compute_size): Correctly calculate field
