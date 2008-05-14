@@ -138,7 +138,8 @@ namespace System.Web.UI
 		void AddEntry (ref Dictionary<string, string> dictionary, string key, string value) {
 			if (dictionary == null)
 				dictionary = new Dictionary<string, string> ();
-			dictionary.Add (key, value);
+			if (!dictionary.ContainsKey (key))
+				dictionary.Add (key, value);
 		}
 
 		protected internal override string GetScript () {

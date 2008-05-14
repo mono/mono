@@ -1,0 +1,5 @@
+2008-05-14  Marek Habersack  <mhabersack@novell.com>
+
+	* ScriptComponentDescriptor.cs: do not add the same
+	entry twice to a dictionary.
+
