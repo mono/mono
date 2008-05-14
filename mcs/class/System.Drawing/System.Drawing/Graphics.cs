@@ -1708,6 +1708,8 @@ namespace System.Drawing
 			if (GDIPlus.UseX11Drawable) {
 				if (GDIPlus.Display == IntPtr.Zero) {
 					GDIPlus.Display = GDIPlus.XOpenDisplay (IntPtr.Zero);
+					if (GDIPlus.Display == IntPtr.Zero)
+						throw new NotSupportedException ("Could not open display (X-Server required. Check you DISPLAY environment variable)");
 				}
 				if (hwnd == IntPtr.Zero) {
 					hwnd = GDIPlus.XRootWindow (GDIPlus.Display, GDIPlus.XDefaultScreen (GDIPlus.Display));
