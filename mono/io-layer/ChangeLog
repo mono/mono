@@ -1,3 +1,8 @@
+2008-05-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-mutex.h: Get rid of the #ifdef __cplusplus defines, use G_BEGIN_DECLS
+	/G_END_DECLS.
+
 2008-05-07  Dick Porter  <dick@ximian.com>
 
 	* io.c (FindNextFile): Handle symlinks correctly.  Fixes bug
