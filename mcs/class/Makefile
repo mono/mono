@@ -102,6 +102,7 @@ net_2_0_dirs := \
 	System.Web.Extensions		\
 	System.Web.Extensions.Design	\
 	System.Xml.Linq			\
+	System.Data.DataSetExtensions	\
 	System.Data.Linq
 
 net_2_1_dirs := \
@@ -112,7 +113,6 @@ net_2_1_dirs := \
 	System.Core
 
 net_3_5_dirs := \
-	System.Data.DataSetExtensions	\
 	System.Web.Extensions		\
 	System.Web.Extensions.Design
 

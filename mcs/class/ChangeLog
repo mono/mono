@@ -1,3 +1,8 @@
+2008-05-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : moved System.Data.DataSetExtensions.dll from net_3_5
+	  island to centum net_2_0 subdirs.
+
 2008-05-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Makefile: Include silverlight.pub in dist so monobuild goes on...
