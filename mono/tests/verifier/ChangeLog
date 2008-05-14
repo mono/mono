@@ -1,3 +1,9 @@
+2008-05-14 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* test_lib.cs: Dependency for new visibility related tests.
+
+	* Makefile: Added compilation step for test_lib.cs.
+
 2008-05-09 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* make_type_visibility_test.sh: New test
