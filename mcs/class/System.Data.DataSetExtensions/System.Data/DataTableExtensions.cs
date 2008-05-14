@@ -39,17 +39,16 @@ namespace System.Data
 
 	public static class DataTableExtensions
 	{
-		[MonoTODO]
 		public static DataView AsDataView (this DataTable table)
 		{
-			return table.DefaultView;
+			return AsDataView<DataRow> (table.AsEnumerable ());
 		}
 
-		[MonoTODO]
+		[MonoTODO ("We should implement an effective DataView derivation; looks like .NET does.")]
 		public static DataView AsDataView<T> (this EnumerableRowCollection<T> source)
 			where T : DataRow
 		{
-			throw new NotImplementedException ();
+			return CopyToDataTable<T> (source).DefaultView;
 		}
 
 		public static EnumerableRowCollection<DataRow> AsEnumerable (this DataTable source)
@@ -57,27 +56,30 @@ namespace System.Data
 			return new EnumerableRowCollection<DataRow> (new DataRowEnumerable<DataRow> (source));
 		}
 
-		[MonoTODO]
 		public static DataTable CopyToDataTable<T> (this IEnumerable<T> source)
 			where T : DataRow
 		{
 			DataTable dt = new DataTable ();
+			IEnumerator<T> e = source.GetEnumerator ();
+			if (!e.MoveNext ())
+				throw new InvalidOperationException ("The source contains no DataRows");
+			foreach (DataColumn col in e.Current.Table.Columns)
+				dt.Columns.Add (new DataColumn (col.ColumnName, col.DataType, col.Expression, col.ColumnMapping));
 			CopyToDataTable<T> (source, dt, LoadOption.PreserveChanges);
 			return dt;
 		}
 
-		[MonoTODO]
 		public static void CopyToDataTable<T> (this IEnumerable<T> source, DataTable table, LoadOption options)
 			where T : DataRow
 		{
 			CopyToDataTable<T> (source, table, options, null);
 		}
 
-		[MonoTODO]
 		public static void CopyToDataTable<T> (this IEnumerable<T> source, DataTable table, LoadOption options, FillErrorEventHandler errorHandler)
 			where T : DataRow
 		{
-			throw new NotImplementedException ();
+			var reader = new RowEnumerableDataReader (source, 0);
+			table.Load (reader, options, errorHandler);
 		}
 	}
 

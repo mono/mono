@@ -1,5 +1,9 @@
 2008-05-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataTableExtensionsTest.cs : new test.
+
+2008-05-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* EnumerableRowCollectionTest.cs : added tests for thenby (again
 	  commented out yet).
 

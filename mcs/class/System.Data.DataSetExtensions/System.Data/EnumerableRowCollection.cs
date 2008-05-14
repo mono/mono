@@ -36,8 +36,21 @@ namespace System.Data
 {
 	public abstract class EnumerableRowCollection : IEnumerable
 	{
+		DataTable table;
+
 		internal EnumerableRowCollection ()
 		{
+		}
+
+		internal DataTable Table {
+			get {
+				if (table == null)
+					foreach (DataRow r in this) {
+						table = r.Table;
+						break;
+					}
+				return table;
+			}
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()

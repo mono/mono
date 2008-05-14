@@ -1,5 +1,11 @@
 2008-05-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataTableExtensions.cs :
+	  implemented AsDataView() and CopyToDataTable().
+	* EnumerableRowCollection.cs : added Table property for internal use.
+
+2008-05-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TypedTableBase.cs : serialization .ctor() does nothing here (it
 	  might do something in derived types. no need to throw NIE here).
 
