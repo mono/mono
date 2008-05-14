@@ -1,5 +1,10 @@
 2008-05-14 Rodrigo Kumpera <rkumpera@novell.com>
 
+	* valid_visibility_across_generic_instantiations.cs: Regression
+	test for #390128.
+
+2008-05-14 Rodrigo Kumpera <rkumpera@novell.com>
+
 	* test_lib.cs: Dependency for new visibility related tests.
 
 	* Makefile: Added compilation step for test_lib.cs.
