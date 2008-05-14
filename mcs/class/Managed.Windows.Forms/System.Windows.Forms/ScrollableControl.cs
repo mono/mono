@@ -47,7 +47,7 @@ namespace System.Windows.Forms {
 		private SizeGrip		sizegrip;
 		internal ImplicitHScrollBar	hscrollbar;
 		internal ImplicitVScrollBar	vscrollbar;
-		private Size			canvas_size;
+		internal Size			canvas_size;
 		private Rectangle		display_rectangle;
 		private Control			old_parent;
 
@@ -686,10 +686,20 @@ namespace System.Windows.Forms {
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void OnLayout(LayoutEventArgs levent) {
-			CalculateCanvasSize();
+			CalculateCanvasSize (true);
 
 			AdjustFormScrollbars(AutoScroll);	// Dunno what the logic is. Passing AutoScroll seems to match MS behaviour
 			base.OnLayout(levent);
+
+#if NET_2_0
+			// The first time through, we just set the canvas to clientsize
+			// so we could re-layout everything according to the flow.
+			// This time we want to actually calculate the canvas.
+			if (this is FlowLayoutPanel) {
+				CalculateCanvasSize (false);
+				AdjustFormScrollbars (AutoScroll);
+			}
+#endif
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -815,7 +825,7 @@ namespace System.Windows.Forms {
 			return base.AfterTopMostControl ();
 		}
 
-		private void CalculateCanvasSize() {
+		internal virtual void CalculateCanvasSize (bool canOverride) {
 			Control		child;
 			int		num_of_children;
 			int		width;

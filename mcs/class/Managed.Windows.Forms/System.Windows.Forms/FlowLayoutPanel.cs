@@ -105,6 +105,14 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Internal Methods
+		internal override void CalculateCanvasSize (bool canOverride)
+		{
+			if (canOverride)
+				canvas_size = ClientSize;
+			else
+				base.CalculateCanvasSize (canOverride);
+		}
+		
 		internal override Size GetPreferredSizeCore (Size proposedSize)
 		{
 			int width = 0;
