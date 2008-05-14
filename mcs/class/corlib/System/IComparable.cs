@@ -42,7 +42,7 @@ namespace System {
 	
 #if NET_2_0
 	public interface IComparable <T> {
-		int CompareTo (T x);
+		int CompareTo (T other);
 	}
 #endif
 }

@@ -70,12 +70,12 @@ namespace System
 		{
 		}
 
-		public Exception (string msg)
+		public Exception (string message)
 		{
-			message = msg;
+			this.message = message;
 		}
 
-		protected Exception (SerializationInfo info, StreamingContext sc)
+		protected Exception (SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)
 				throw new ArgumentNullException ("info");
@@ -91,10 +91,10 @@ namespace System
 			inner_exception     = (Exception) info.GetValue ("InnerException", typeof (Exception));
 		}
 
-		public Exception (string msg, Exception e)
+		public Exception (string message, Exception innerException)
 		{
-			inner_exception = e;
-			message = msg;
+			inner_exception = innerException;
+			this.message = message;
 		}
 
 		public Exception InnerException {

@@ -43,8 +43,8 @@ namespace System {
 		{
 		}
 
-		public InsufficientMemoryException (string message, Exception base_exception)
-		: base (message, base_exception)
+		public InsufficientMemoryException (string message, Exception innerException)
+		: base (message, innerException)
 		{
 		}
 	}

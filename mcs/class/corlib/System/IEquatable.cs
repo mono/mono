@@ -29,7 +29,7 @@
 namespace System {
 #if NET_2_0
 	public interface IEquatable <T> {
-		bool Equals (T x);
+		bool Equals (T other);
 	}
 #endif
 }

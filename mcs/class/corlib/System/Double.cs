@@ -59,15 +59,15 @@ namespace System {
 		
 		internal double m_value;
 
-		public int CompareTo (object v)
+		public int CompareTo (object value)
 		{
-			if (v == null)
+			if (value == null)
 				return 1;
 			
-			if (!(v is System.Double))
+			if (!(value is System.Double))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.Double"));
 
-			double dv = (double)v;
+			double dv = (double)value;
 
 			if (IsPositiveInfinity(m_value) && IsPositiveInfinity(dv))
 				return 0;
@@ -92,19 +92,19 @@ namespace System {
 			else return 0;
 		}
 
-		public override bool Equals (object o)
+		public override bool Equals (object obj)
 		{
-			if (!(o is System.Double))
+			if (!(obj is System.Double))
 				return false;
 
-			if (IsNaN ((double)o)) {
+			if (IsNaN ((double)obj)) {
 				if (IsNaN(m_value))
 					return true;
 				else
 					return false;
 			}
 
-			return ((double) o) == m_value;
+			return ((double) obj) == m_value;
 		}
 
 #if NET_2_0
@@ -133,16 +133,16 @@ namespace System {
 			else return 0;
 		}
 
-		public bool Equals (double value)
+		public bool Equals (double obj)
 		{
-			if (IsNaN (value)) {
+			if (IsNaN (obj)) {
 				if (IsNaN(m_value))
 					return true;
 				else
 					return false;
 			}
 
-			return value == m_value;
+			return obj == m_value;
 		}
 #endif
 
@@ -182,9 +182,9 @@ namespace System {
 			return Parse (s, (NumberStyles.Float | NumberStyles.AllowThousands), null);
 		}
 
-		public static double Parse (string s, IFormatProvider fp)
+		public static double Parse (string s, IFormatProvider provider)
 		{
-			return Parse (s, (NumberStyles.Float | NumberStyles.AllowThousands), fp);
+			return Parse (s, (NumberStyles.Float | NumberStyles.AllowThousands), provider);
 		}
 
 		public static double Parse (string s, NumberStyles style) 

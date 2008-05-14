@@ -37,6 +37,6 @@ namespace System {
         [ComVisible(true)]
 #endif
 	public interface IFormattable {
-		string ToString (string format, IFormatProvider format_provider);
+		string ToString (string format, IFormatProvider formatProvider);
 	}
 }

@@ -37,6 +37,6 @@ namespace System {
         [ComVisible(true)]
 #endif
 	public interface IFormatProvider {
-		object GetFormat (Type format_type);
+		object GetFormat (Type formatType);
 	}
 }

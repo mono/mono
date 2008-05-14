@@ -378,27 +378,24 @@ namespace System
 		/// </summary>
 		///
 		/// <remarks/>
-		public int CompareTo (object obj)
+		public int CompareTo (object target)
 		{
 			Type thisType;
 
-			if (obj == null)
+			if (target == null)
 				return 1;
 
 			thisType = this.GetType ();
-			if (obj.GetType() != thisType) {
-				throw new ArgumentException (
-					"Object must be the same type as the "
-					+ "enum. The type passed in was " 
-					+ obj.GetType().ToString ()
-					+ "; the enum type was " 
-					+ thisType.ToString () + ".");
+			if (target.GetType() != thisType) {
+				throw new ArgumentException (String.Format (
+					"Object must be the same type as the enum. The type passed in was {0}; the enum type was {1}.", 
+					target.GetType(), thisType));
 			}
 
 			object value1, value2;
 
 			value1 = this.get_value ();
-			value2 = ((Enum)obj).get_value ();
+			value2 = ((Enum)target).get_value ();
 
 			return ((IComparable)value1).CompareTo (value2);
 		}

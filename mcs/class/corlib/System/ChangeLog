@@ -1,3 +1,14 @@
+2008-05-14  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* Double.cs
+	  Enum.cs
+	  Exception.cs
+	  IComparable.cs
+	  IEquatable.cs
+	  IFormatProvider.cs
+	  IFormattable.cs
+	  InsufficientMemoryException.cs: Fix parameter names
+
 2008-05-14  Jb Evain  <jbevain@novell.com>
 
 	* Exception.cs (ToString): output a new line before the 
