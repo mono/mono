@@ -929,9 +929,11 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
+#if !NET_2_1
 			var array = source as TSource [];
 			if (array != null)
 				return array.LongLength;
+#endif
 
 			long counter = 0;
 			using (var enumerator = source.GetEnumerator ())
