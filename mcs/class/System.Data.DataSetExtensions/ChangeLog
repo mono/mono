@@ -1,5 +1,9 @@
 2008-05-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Makefile : use EXTRA_DISTFILES.
+
+2008-05-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* System.Data.DataSetExtensions.dll.sources :
 	  added RowEnumerableDataReader.cs
 	* System.Data.DataSetExtensions_test.dll.sources :
