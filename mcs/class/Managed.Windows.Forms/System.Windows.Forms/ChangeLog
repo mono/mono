@@ -1,3 +1,8 @@
+2008-05-14  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ListBox.cs: Invalidate after scrolling up when selected index
+	changes.  [Fixes bug #390151]
+
 2008-05-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ComboBox.cs: When setting mode to Simple *and* height hasn't been

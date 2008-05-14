@@ -2025,6 +2025,7 @@ namespace System.Windows.Forms
 			if (index < top_index) {
 				top_index = index;
 				UpdateTopItem ();
+				Invalidate ();
 			} else if (!multicolumn) {
 				int rows = items_area.Height / ItemHeight;
 				if (index >= (top_index + rows))
