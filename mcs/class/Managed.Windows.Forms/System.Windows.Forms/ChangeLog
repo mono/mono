@@ -1,5 +1,11 @@
 2008-05-14  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridView.cs, DataGridViewCell.cs: Work around some external
+	checks to make sure we are in an actual row/col for top left header cell.
+	* DataGridViewTopLeftHeaderCell.cs: Implement some NIEX's.
+
+2008-05-14  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Control.cs: Use long instead of int when handling WParam from
 	mousewheel scrolling.  Int was overflowing on Win64.
 

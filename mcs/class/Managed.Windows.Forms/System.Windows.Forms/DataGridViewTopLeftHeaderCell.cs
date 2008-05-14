@@ -47,17 +47,33 @@ namespace System.Windows.Forms
 
 		protected override Rectangle GetContentBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex)
 		{
-			throw new NotImplementedException ();
+			if (DataGridView == null)
+				return Rectangle.Empty;
+
+			Size s = new Size (36, 13);
+			return new Rectangle (2, (DataGridView.ColumnHeadersHeight - s.Height) / 2, s.Width, s.Height);
 		}
 
 		protected override Rectangle GetErrorIconBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex)
 		{
-			throw new NotImplementedException();
+			if (DataGridView == null || string.IsNullOrEmpty (ErrorText))
+				return Rectangle.Empty;
+
+			Size error_icon = new Size (12, 11);
+			return new Rectangle (new Point (Size.Width - error_icon.Width - 5, (Size.Height - error_icon.Height) / 2), error_icon);
 		}
 
 		protected override Size GetPreferredSize (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex, Size constraintSize)
 		{
-			throw new NotImplementedException ();
+			object o = Value;
+
+			if (o != null) {
+				Size s = DataGridViewCell.MeasureTextSize (graphics, o.ToString (), cellStyle.Font, TextFormatFlags.Default);
+				s.Height = Math.Max (s.Height, 17);
+				s.Width += 29;
+				return s;
+			} else
+				return new Size (39, 17);
 		}
 
 		protected override void Paint (Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates  cellState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts)

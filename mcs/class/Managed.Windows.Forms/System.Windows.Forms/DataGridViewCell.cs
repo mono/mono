@@ -125,6 +125,9 @@ namespace System.Windows.Forms {
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public Rectangle ErrorIconBounds {
 			get {
+				if (this is DataGridViewTopLeftHeaderCell)
+					return GetErrorIconBounds (null, null, RowIndex);
+
 				if (DataGridView == null || columnIndex < 0)
 					throw new InvalidOperationException ();
 				if (RowIndex < 0 || RowIndex >= DataGridView.Rows.Count)
@@ -137,6 +140,9 @@ namespace System.Windows.Forms {
 		[Browsable (false)]
 		public string ErrorText {
 			get { 
+				if (this is DataGridViewTopLeftHeaderCell)
+					return GetErrorText (-1);
+					
 				if (OwningRow == null)
 					return string.Empty;
 					
@@ -1473,6 +1479,10 @@ namespace System.Windows.Forms {
 			if (DataGridView != null) {
 				DataGridView.RaiseCellStyleChanged(new DataGridViewCellEventArgs(ColumnIndex, RowIndex));
 			}
+		}
+
+		internal Rectangle InternalErrorIconsBounds {
+			get { return GetErrorIconBounds (null, null, -1); }
 		}
 
 		internal void InternalPaint (Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts) {

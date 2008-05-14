@@ -4137,6 +4137,25 @@ namespace System.Windows.Forms {
 					} else
 						MouseLeftErrorIcon (new_cell);
 				}
+			} else if (hit.Type == DataGridViewHitTestType.TopLeftHeader) {
+				DataGridViewTopLeftHeaderCell new_cell = (DataGridViewTopLeftHeaderCell)TopLeftHeaderCell;
+
+				// Check if we have moved into an error icon area
+				Rectangle icon = new_cell.InternalErrorIconsBounds;
+
+				if (!icon.IsEmpty) {
+					Point loc = Point.Empty;
+
+					icon.X += BorderWidth;
+					icon.Y += loc.Y;
+
+					if (icon.Contains (e.X, e.Y)) {
+						if (tooltip_currently_showing != new_cell)
+							MouseEnteredErrorIcon (new_cell);
+					} else
+						MouseLeftErrorIcon (new_cell);
+				}
+			
 			} else {
 				// We have left the cell area
 				if (hover_cell != null) {
