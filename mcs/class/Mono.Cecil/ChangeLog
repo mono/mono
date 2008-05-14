@@ -1,5 +1,9 @@
 2008-05-14  Jb Evain  <jbevain@novell.com>
 
+	* Mono.Cecil/ReflectionWriter.cs:
+		Only create the GenericParameterConstraint table if needed.
+		Patch by Richard Flamsholt <richard.flamsholt@gmail.com>.
+
 	* Mono.Cecil.Cil/MethodBody.cs:
 		Fix typo in switch cloning. Patch by
 		Rune Glerup <rune.glerup@gmail.com>.

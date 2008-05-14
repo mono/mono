@@ -801,7 +801,6 @@ namespace Mono.Cecil {
 
 			TablesHeap th = m_mdWriter.GetMetadataRoot ().Streams.TablesHeap;
 			GenericParamTable gpTable = m_tableWriter.GetGenericParamTable ();
-			GenericParamConstraintTable gpcTable = m_tableWriter.GetGenericParamConstraintTable ();
 
 			m_genericParamStack.Sort (TableComparers.GenericParam.Instance);
 
@@ -819,6 +818,8 @@ namespace Mono.Cecil {
 
 				if (gp.Constraints.Count == 0)
 					continue;
+
+				GenericParamConstraintTable gpcTable = m_tableWriter.GetGenericParamConstraintTable ();
 
 				foreach (TypeReference constraint in gp.Constraints) {
 					GenericParamConstraintRow gpcRow = m_rowWriter.CreateGenericParamConstraintRow (
