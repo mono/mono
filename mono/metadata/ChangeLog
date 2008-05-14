@@ -1,5 +1,11 @@
 2008-05-14 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (check_is_valid_type_for_field_ops): Type on stack can be
+	a generic instantiation, use mono_class_from_mono_type instead of playing
+	with MonoType directly.
+
+2008-05-14 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c: Added mono_class_has_parent_and_ignore_generics. Visibility
 	checks must ignore generic instantiations, so mono_class_has_parent is not
 	suitable. Fixes #390128.
