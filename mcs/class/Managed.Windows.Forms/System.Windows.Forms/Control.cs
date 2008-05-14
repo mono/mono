@@ -1472,7 +1472,7 @@ namespace System.Windows.Forms
 			return ((int)(short)(param & 0xffff));
 		}
 
-		internal static int HighOrder (int param) {
+		internal static int HighOrder (long param) {
 			return ((int)(short)(param >> 16));
 		}
 
@@ -1640,16 +1640,16 @@ namespace System.Windows.Forms
 			} catch { }
 		}
 		
-		internal static MouseButtons FromParamToMouseButtons (int param) {		
+		internal static MouseButtons FromParamToMouseButtons (long param) {		
 			MouseButtons buttons = MouseButtons.None;
 					
-			if ((param & (int) MsgButtons.MK_LBUTTON) != 0)
+			if ((param & (long) MsgButtons.MK_LBUTTON) != 0)
 				buttons |= MouseButtons.Left;
-			
-			if ((param & (int) MsgButtons.MK_MBUTTON) != 0)
+
+			if ((param & (long)MsgButtons.MK_MBUTTON) != 0)
 				buttons |= MouseButtons.Middle;
-				
-			if ((param & (int) MsgButtons.MK_RBUTTON) != 0)
+
+			if ((param & (long)MsgButtons.MK_RBUTTON) != 0)
 				buttons |= MouseButtons.Right;
 				
 			return buttons;
@@ -5693,9 +5693,9 @@ namespace System.Windows.Forms
 
 		private void WmMouseWheel (ref Message m) {
 			DefWndProc(ref m);
-			OnMouseWheel (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
+			OnMouseWheel (new MouseEventArgs (FromParamToMouseButtons ((long) m.WParam), 
 				mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
-				HighOrder(m.WParam.ToInt32())));
+				HighOrder((long)m.WParam)));
 		}
 
 
