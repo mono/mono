@@ -37,7 +37,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-// General Information about the System.Data.DataSetExtension assembly
+// General Information about the System.Data.DataSetExtensions assembly
 // v3.5 Assembly
 
 [assembly: AssemblyTitle ("System.Data.DataSetExtensions.dll")]
