@@ -66,28 +66,24 @@ namespace System.Data
 			return new EnumerableRowCollection<S> (Enumerable.Select<TRow, S> (source, selector));
 		}
 
-		[MonoTODO]
 		public static OrderedEnumerableRowCollection<TRow> ThenBy<TRow, TKey> (this OrderedEnumerableRowCollection<TRow> source, Func<TRow, TKey> keySelector)
 		{
 			return ThenBy<TRow, TKey> (source, keySelector, Comparer<TKey>.Default);
 		}
 
-		[MonoTODO]
 		public static OrderedEnumerableRowCollection<TRow> ThenBy<TRow, TKey> (this OrderedEnumerableRowCollection<TRow> source, Func<TRow, TKey> keySelector, IComparer<TKey> comparer)
 		{
-			throw new NotImplementedException ();
+			return OrderedEnumerableRowCollection<TRow>.AddSort<TRow, TKey> (source, keySelector, comparer, false);
 		}
 
-		[MonoTODO]
 		public static OrderedEnumerableRowCollection<TRow> ThenByDescending<TRow, TKey> (this OrderedEnumerableRowCollection<TRow> source, Func<TRow, TKey> keySelector)
 		{
 			return ThenByDescending<TRow, TKey> (source, keySelector, Comparer<TKey>.Default);
 		}
 
-		[MonoTODO]
 		public static OrderedEnumerableRowCollection<TRow> ThenByDescending<TRow, TKey> (this OrderedEnumerableRowCollection<TRow> source, Func<TRow, TKey> keySelector, IComparer<TKey> comparer)
 		{
-			throw new NotImplementedException ();
+			return OrderedEnumerableRowCollection<TRow>.AddSort<TRow, TKey> (source, keySelector, comparer, true);
 		}
 
 		public static EnumerableRowCollection<TRow> Where<TRow> (this EnumerableRowCollection<TRow> source, Func<TRow, bool> predicate)

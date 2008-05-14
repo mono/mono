@@ -1,3 +1,9 @@
+2008-05-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EnumerableRowCollectionExtensions.cs,
+	  OrderedEnumerableRowCollection.cs : implemented ThenBy().
+	  It required some generic refactoring.
+
 2008-05-13  Jb Evain  <jbevain@novell.com>
 
 	* EnumerableRowCollection.cs: delete methods

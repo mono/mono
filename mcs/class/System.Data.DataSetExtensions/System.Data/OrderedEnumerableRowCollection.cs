@@ -39,32 +39,75 @@ namespace System.Data
 	{
 		internal static OrderedEnumerableRowCollection<TRow> Create<TRow, TKey> (IEnumerable<TRow> source, Func<TRow, TKey> keySelector, IComparer<TKey> comparer, bool descending)
 		{
-			return new OrderedEnumerableRowCollection<TRow> (new Sorter<TRow, TKey> (source, keySelector, comparer, descending));
+			var sorter = new SortComparer<TRow> ();
+			sorter.AddSort<TKey> (keySelector, comparer, descending);
+			return new OrderedEnumerableRowCollection<TRow> (new SortedEnumerable <TRow> (source, sorter));
 		}
 
-		OrderedEnumerableRowCollection (IEnumerable<TRow> source)
+		internal static OrderedEnumerableRowCollection<TRow> AddSort<TRow, TKey> (OrderedEnumerableRowCollection<TRow> source, Func<TRow, TKey> keySelector, IComparer<TKey> comparer, bool descending)
+		{
+			source.source.Sorter.AddSort<TKey> (keySelector, comparer, descending);
+			return source;
+		}
+
+		OrderedEnumerableRowCollection (SortedEnumerable<TRow> source)
 			: base (source)
 		{
+			this.source = source;
 		}
+
+		SortedEnumerable<TRow> source;
 	}
 
-	class Sorter<TRow, TKey> : IEnumerable<TRow>
+	class SortComparer<TRow> : IComparer<TRow>
 	{
-		IEnumerable<TRow> source;
-		Func<TRow, TKey> key_selector;
-		IComparer<TKey> comparer;
-		bool descending;
+		public SortComparer ()
+		{
+		}
 
-		public Sorter (IEnumerable<TRow> source, Func<TRow, TKey> keySelector, IComparer<TKey> comparer, bool descending)
+		new List<Comparison<TRow>> comparers = new List<Comparison<TRow>> ();
+
+		public void AddSort (Comparison<TRow> comparer)
+		{
+			comparers.Add (comparer);
+		}
+
+		public void AddSort<TKey> (Func<TRow, TKey> keySelector, IComparer<TKey> comparer, bool descending)
 		{
 			if (keySelector == null)
 				throw new ArgumentNullException ("keySelector");
 			if (comparer == null)
 				comparer = Comparer<TKey>.Default;
+			comparers.Add (delegate (TRow r1, TRow r2) {
+				int ret = comparer.Compare (keySelector (r1), keySelector (r2));
+				return descending ? -ret : ret;
+				});
+		}
+
+		public int Compare (TRow r1, TRow r2)
+		{
+			foreach (var c in comparers) {
+				int ret = c (r1, r2);
+				if (ret != 0)
+					return ret;
+			}
+			return 0;
+		}
+	}
+
+	class SortedEnumerable<TRow> : IEnumerable<TRow>
+	{
+		IEnumerable<TRow> source;
+		SortComparer<TRow> sorter;
+
+		public SortedEnumerable (IEnumerable<TRow> source, SortComparer<TRow> sorter)
+		{
 			this.source = source;
-			this.key_selector = keySelector;
-			this.comparer = comparer;
-			this.descending = descending;
+			this.sorter = sorter;
+		}
+
+		public SortComparer<TRow> Sorter {
+			get { return sorter; }
 		}
 
 		public IEnumerator<TRow> GetEnumerator ()
@@ -72,15 +115,9 @@ namespace System.Data
 			var list = new List<TRow> ();
 			foreach (TRow row in source)
 				list.Add (row);
-			list.Sort (delegate (TRow r1, TRow r2) {
-				return comparer.Compare (key_selector (r1), key_selector (r2));
-				});
-			if (descending)
-				for (int i = list.Count - 1; i >= 0; i--)
-					yield return list [i];
-			else
-				for (int i = 0, c = list.Count; i < c; i++)
-					yield return list [i];
+			list.Sort (sorter);
+			for (int i = 0, c = list.Count; i < c; i++)
+				yield return list [i];
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()
