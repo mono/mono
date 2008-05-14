@@ -1,3 +1,7 @@
+2008-05-15  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* Decimal.cs: Tabbify/Format
+
 2008-05-14  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* Version.cs
