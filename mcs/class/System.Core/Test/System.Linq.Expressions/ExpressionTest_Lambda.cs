@@ -187,5 +187,25 @@ namespace MonoTests.System.Linq.Expressions
 
 			Assert.AreEqual (typeof (Expression<Func<string>>), l.GetType ());
 		}
+
+		public static int CallDelegate (Func<int, int> e)
+		{
+			return e (42);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void LambdaPassedAsDelegate ()
+		{
+			var pi = Expression.Parameter (typeof (int), "i");
+			var identity = Expression.Lambda<Func<int, int>> (pi, pi);
+
+			var l = Expression.Lambda<Func<int>> (
+				Expression.Call (
+					GetType ().GetMethod ("CallDelegate"),
+					identity)).Compile ();
+
+			Assert.AreEqual (42, l ());
+		}
 	}
 }
