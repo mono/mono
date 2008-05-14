@@ -44,11 +44,9 @@ namespace System.Data
 		{
 		}
 
-		[MonoTODO]
 		protected TypedTableBase (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
-			throw new NotImplementedException ();
 		}
 
 		public EnumerableRowCollection<TResult> Cast<TResult> ()

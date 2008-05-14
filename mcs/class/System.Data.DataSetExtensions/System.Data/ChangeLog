@@ -1,5 +1,10 @@
 2008-05-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TypedTableBase.cs : serialization .ctor() does nothing here (it
+	  might do something in derived types. no need to throw NIE here).
+
+2008-05-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* EnumerableRowCollectionExtensions.cs,
 	  OrderedEnumerableRowCollection.cs : implemented ThenBy().
 	  It required some generic refactoring.
