@@ -1,3 +1,8 @@
+2008-05-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (mono_image_create_token): Add a 'register_token' argument, and use
+	it to avoid registering tokens during metadata generation. Fixes #390023.
+
 2008-05-14  Kornél Pál  <kornelpal@gmail.com>
 
 	* coree.c: Rename dwOldProtect to OldProtect that makes naming convention
