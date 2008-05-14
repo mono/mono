@@ -40,9 +40,9 @@ using System.Runtime.InteropServices;
 // General Information about the System.Data.DataSetExtension assembly
 // v3.5 Assembly
 
-[assembly: AssemblyTitle ("System.Data.DataSetExtension.dll")]
-[assembly: AssemblyDescription ("System.Data.DataSetExtension.dll")]
-[assembly: AssemblyDefaultAlias ("System.Data.DataSetExtension.dll")]
+[assembly: AssemblyTitle ("System.Data.DataSetExtensions.dll")]
+[assembly: AssemblyDescription ("System.Data.DataSetExtensions.dll")]
+[assembly: AssemblyDefaultAlias ("System.Data.DataSetExtensions.dll")]
 
 [assembly: AssemblyCompany (Consts.MonoCompany)]
 [assembly: AssemblyProduct (Consts.MonoProduct)]
