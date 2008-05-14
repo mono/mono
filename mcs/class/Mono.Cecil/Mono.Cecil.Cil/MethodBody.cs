@@ -182,7 +182,7 @@ namespace Mono.Cecil.Cil {
 					Instruction [] targets = new Instruction [olds.Length];
 
 					for (int j = 0; j < targets.Length; j++)
-						targets [i] = GetInstruction (body, nb, olds [i]);
+						targets [i] = GetInstruction (body, nb, olds [j]);
 
 					instr.Operand = targets;
 				} else if (instr.OpCode.OperandType == OperandType.ShortInlineBrTarget || instr.OpCode.OperandType == OperandType.InlineBrTarget)
