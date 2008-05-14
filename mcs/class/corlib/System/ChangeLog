@@ -1,5 +1,18 @@
 2008-05-14  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
+	* Version.cs
+	  UnhandledExceptionEventHandler.cs
+	  UInt64.cs
+	  UInt32.cs
+	  UInt16.cs: Fix parameter names
+	  Type.cs: Fix parameter names, formatting
+	  TimeSpan.cs
+	  StringComparer.cs
+	  Single.cs
+	  SByte.cs: Fix parameter names
+
+2008-05-14  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
 	* Double.cs
 	  Enum.cs
 	  Exception.cs

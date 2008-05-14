@@ -56,15 +56,15 @@ namespace System
 
 		internal float m_value;
 
-		public int CompareTo (object v)
+		public int CompareTo (object value)
 		{
-			if (v == null)
+			if (value == null)
 				return 1;
 
-			if (!(v is System.Single))
+			if (!(value is System.Single))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.Single."));
 
-			float fv = (float)v;
+			float fv = (float)value;
 
 			if (IsPositiveInfinity (m_value) && IsPositiveInfinity (fv))
 				return 0;
@@ -92,16 +92,16 @@ namespace System
 				return -1;
 		}
 
-		public override bool Equals (object o)
+		public override bool Equals (object obj)
 		{
-			if (!(o is System.Single))
+			if (!(obj is System.Single))
 				return false;
 
-			if (IsNaN ((float) o)) {
+			if (IsNaN ((float) obj)) {
 				return IsNaN (m_value);
 			}
 
-			return ((float) o) == m_value;
+			return ((float) obj) == m_value;
 		}
 
 #if NET_2_0
@@ -133,12 +133,12 @@ namespace System
 				return -1;
 		}
 
-		public bool Equals (float value)
+		public bool Equals (float obj)
 		{
-			if (IsNaN (value))
+			if (IsNaN (obj))
 				return IsNaN (m_value);
 
-			return value == m_value;
+			return obj == m_value;
 		}
 #endif
 

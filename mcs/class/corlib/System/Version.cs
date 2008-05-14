@@ -193,29 +193,29 @@ namespace System {
 #if NET_2_0
 		public
 #endif
-		int CompareTo (Version v)
+		int CompareTo (Version version)
 		{
-			if (v == null)
+			if (version == null)
 				return 1;
 			
-			if (this._Major > v._Major)
+			if (this._Major > version._Major)
 				return 1;
-			else if (this._Major < v._Major)
+			else if (this._Major < version._Major)
 				return -1;
 
-			if (this._Minor > v._Minor)
+			if (this._Minor > version._Minor)
 				return 1;
-			else if (this._Minor < v._Minor)
+			else if (this._Minor < version._Minor)
 				return -1;
 
-			if (this._Build > v._Build)
+			if (this._Build > version._Build)
 				return 1;
-			else if (this._Build < v._Build)
+			else if (this._Build < version._Build)
 				return -1;
 
-			if (this._Revision > v._Revision)
+			if (this._Revision > version._Revision)
 				return 1;
-			else if (this._Revision < v._Revision)
+			else if (this._Revision < version._Revision)
 				return -1;
 
 			return 0;
@@ -224,13 +224,13 @@ namespace System {
 #if NET_2_0
 		public
 #endif
-		bool Equals (Version x)
+		bool Equals (Version obj)
 		{
-			return ((x != null) &&
-			    (x._Major == _Major) &&
-			    (x._Minor == _Minor) &&
-			    (x._Build == _Build) &&
-			    (x._Revision == _Revision));
+			return ((obj != null) &&
+			    (obj._Major == _Major) &&
+			    (obj._Minor == _Minor) &&
+			    (obj._Build == _Build) &&
+			    (obj._Revision == _Revision));
 		}
 
 		public override int GetHashCode ()
@@ -262,29 +262,29 @@ namespace System {
 		//    ie, Version a = new Version (1, 2);  a.ToString (3) should
 		//    throw the expcetion.
 		// </summary>
-		public string ToString (int fields)
+		public string ToString (int fieldCount)
 		{
-			if (fields == 0)
+			if (fieldCount == 0)
 				return String.Empty;
-			if (fields == 1)
+			if (fieldCount == 1)
 				return _Major.ToString ();
-			if (fields == 2)
+			if (fieldCount == 2)
 				return _Major.ToString () + "." + _Minor.ToString ();
-			if (fields == 3){
+			if (fieldCount == 3){
 				if (_Build == UNDEFINED)
 					throw new ArgumentException (Locale.GetText
-					("fields is larger than the number of components defined in this instance."));
+					("fieldCount is larger than the number of components defined in this instance."));
 				return _Major.ToString () + "." + _Minor.ToString () + "." +
 					_Build.ToString ();
 			}
-			if (fields == 4){
+			if (fieldCount == 4){
 				if (_Build == UNDEFINED || _Revision == UNDEFINED)
 					throw new ArgumentException (Locale.GetText
-					("fields is larger than the number of components defined in this instance."));
+					("fieldCount is larger than the number of components defined in this instance."));
 				return _Major.ToString () + "." + _Minor.ToString () + "." +
 					_Build.ToString () + "." + _Revision.ToString ();
 			}
-			throw new ArgumentException (Locale.GetText ("Invalid fields parameter: ") + fields.ToString());	
+			throw new ArgumentException (Locale.GetText ("Invalid fieldCount parameter: ") + fieldCount.ToString());	
 		}
 
 		public static bool operator== (Version v1, Version v2) 

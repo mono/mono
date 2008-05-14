@@ -55,9 +55,9 @@ namespace System
 
 		private long _ticks;
 
-		public TimeSpan (long value)
+		public TimeSpan (long ticks)
 		{
-			_ticks = value;
+			_ticks = ticks;
 		}
 
 		public TimeSpan (int hours, int minutes, int seconds)
@@ -228,9 +228,9 @@ namespace System
 			return Compare (this, value);
 		}
 
-		public bool Equals (TimeSpan value)
+		public bool Equals (TimeSpan obj)
 		{
-			return value._ticks == _ticks;
+			return obj._ticks == _ticks;
 		}
 #endif
 

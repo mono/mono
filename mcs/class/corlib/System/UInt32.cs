@@ -88,9 +88,9 @@ namespace System
 				return -1;
 		}
 
-		public bool Equals (uint value)
+		public bool Equals (uint obj)
 		{
-			return value == m_value;
+			return obj == m_value;
 		}
 #endif
 
@@ -409,12 +409,12 @@ namespace System
 		}
 
 		[CLSCompliant (false)]
-		public static uint Parse (string s, NumberStyles style, IFormatProvider fp) 
+		public static uint Parse (string s, NumberStyles style, IFormatProvider provider) 
 		{
 			Exception exc;
 			uint res;
 
-			if (!Parse (s, style, fp, false, out res, out exc))
+			if (!Parse (s, style, provider, false, out res, out exc))
 				throw exc;
 
 			return res;
@@ -473,9 +473,9 @@ namespace System
 			return ToString (format, null);
 		}
 
-		public string ToString (string format, IFormatProvider fp)
+		public string ToString (string format, IFormatProvider provider)
 		{
-			return NumberFormatter.NumberToString (format, m_value, fp);
+			return NumberFormatter.NumberToString (format, m_value, provider);
 		}
 
 		// =========== IConvertible Methods =========== //

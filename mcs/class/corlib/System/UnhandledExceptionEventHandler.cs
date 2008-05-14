@@ -35,5 +35,5 @@ namespace System
 	[System.Runtime.InteropServices.ComVisible (true)]
 	[Serializable]
 #endif
-	public delegate void UnhandledExceptionEventHandler (object sender, UnhandledExceptionEventArgs args);
+	public delegate void UnhandledExceptionEventHandler (object sender, UnhandledExceptionEventArgs e);
 }

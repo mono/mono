@@ -81,9 +81,9 @@ namespace System
 				return -1;
 		}
 
-		public bool Equals (ushort value)
+		public bool Equals (ushort obj)
 		{
-			return value == m_value;
+			return obj == m_value;
 		}
 #endif
 

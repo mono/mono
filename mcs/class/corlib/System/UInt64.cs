@@ -88,9 +88,9 @@ namespace System
 				return -1;
 		}
 
-		public bool Equals (ulong value)
+		public bool Equals (ulong obj)
 		{
-			return value == m_value;
+			return obj == m_value;
 		}
 #endif
 
@@ -343,12 +343,12 @@ namespace System
 		}
 
 		[CLSCompliant (false)]
-		public static ulong Parse (string s, NumberStyles style, IFormatProvider fp) 
+		public static ulong Parse (string s, NumberStyles style, IFormatProvider provider) 
 		{
 			Exception exc;
 			ulong res;
 
-			if (!Parse (s, style, fp, false, out res, out exc))
+			if (!Parse (s, style, provider, false, out res, out exc))
 				throw exc;
 
 			return res;

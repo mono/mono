@@ -46,15 +46,15 @@ namespace System
 
 		internal sbyte m_value;
 
-		public int CompareTo (object v)
+		public int CompareTo (object obj)
 		{
-			if (v == null)
+			if (obj == null)
 				return 1;
 
-			if (!(v is System.SByte))
+			if (!(obj is System.SByte))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.SByte."));
 
-			sbyte xv = (sbyte) v;
+			sbyte xv = (sbyte) obj;
 			if (m_value == xv)
 				return 0;
 			if (m_value > xv)
@@ -63,12 +63,12 @@ namespace System
 				return -1;
 		}
 
-		public override bool Equals (object o)
+		public override bool Equals (object obj)
 		{
-			if (!(o is System.SByte))
+			if (!(obj is System.SByte))
 				return false;
 
-			return ((sbyte) o) == m_value;
+			return ((sbyte) obj) == m_value;
 		}
 
 		public override int GetHashCode ()
@@ -87,9 +87,9 @@ namespace System
 				return -1;
 		}
 
-		public bool Equals (sbyte value)
+		public bool Equals (sbyte obj)
 		{
-			return value == m_value;
+			return obj == m_value;
 		}
 #endif
 

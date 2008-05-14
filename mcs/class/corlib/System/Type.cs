@@ -64,7 +64,7 @@ namespace System {
 		static bool FilterName_impl (MemberInfo m, object filterCriteria)
 		{
 			string name = (string) filterCriteria;
-        	if (name == null || name.Length == 0 )
+			if (name == null || name.Length == 0 )
 				return false; // because m.Name cannot be null or empty
 				
 			if (name [name.Length-1] == '*')
@@ -76,7 +76,7 @@ namespace System {
 		static bool FilterNameIgnoreCase_impl (MemberInfo m, object filterCriteria)
 		{
 			string name = (string) filterCriteria;
-        	if (name == null || name.Length == 0 )
+			if (name == null || name.Length == 0 )
 				return false; // because m.Name cannot be null or empty
 				
 			if (name [name.Length-1] == '*')
@@ -430,10 +430,10 @@ namespace System {
 			return Equals (cmp);
 		}
 
-		public bool Equals (Type type) {
-			if (type == null)
+		public bool Equals (Type o) {
+			if (o == null)
 				return false;
-			return UnderlyingSystemType.EqualsInternal (type.UnderlyingSystemType);
+			return UnderlyingSystemType.EqualsInternal (o.UnderlyingSystemType);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -791,7 +791,6 @@ namespace System {
 		public MethodInfo GetMethod (string name, BindingFlags bindingAttr, Binder binder,
 		                             Type[] types, ParameterModifier[] modifiers)
 		{
-			
 			return GetMethod (name, bindingAttr, binder, CallingConventions.Any, types, modifiers);
 		}
 
@@ -1177,25 +1176,25 @@ namespace System {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern Type MakeGenericType (Type gt, Type [] types);
 
-		public virtual Type MakeGenericType (params Type[] types)
+		public virtual Type MakeGenericType (params Type[] typeArguments)
 		{
 			if (!IsGenericTypeDefinition)
 				throw new InvalidOperationException ("not a generic type definition");
-			if (types == null)
-				throw new ArgumentNullException ("types");
-			if (GetGenericArguments().Length != types.Length)
-				throw new ArgumentException (String.Format ("The type or method has {0} generic parameter(s) but {1} generic argument(s) where provided. A generic argument must be provided for each generic parameter.", GetGenericArguments ().Length, types.Length), "types");
+			if (typeArguments == null)
+				throw new ArgumentNullException ("typeArguments");
+			if (GetGenericArguments().Length != typeArguments.Length)
+				throw new ArgumentException (String.Format ("The type or method has {0} generic parameter(s) but {1} generic argument(s) where provided. A generic argument must be provided for each generic parameter.", GetGenericArguments ().Length, typeArguments.Length), "typeArguments");
 
-			Type[] systemTypes = new Type[types.Length];
-			for (int i = 0; i < types.Length; ++i) {
-				Type t = types [i];
+			Type[] systemTypes = new Type[typeArguments.Length];
+			for (int i = 0; i < typeArguments.Length; ++i) {
+				Type t = typeArguments [i];
 				if (t == null)
-					throw new ArgumentNullException ("types");
+					throw new ArgumentNullException ("typeArguments");
 
 				t = t.UnderlyingSystemType;
 				if (t == null || !t.IsSystemType)
-					throw new ArgumentNullException ("types");
-				systemTypes [i] = types [i].UnderlyingSystemType;
+					throw new ArgumentNullException ("typeArguments");
+				systemTypes [i] = typeArguments [i].UnderlyingSystemType;
 			}
 
 			Type res = MakeGenericType (this, systemTypes);
