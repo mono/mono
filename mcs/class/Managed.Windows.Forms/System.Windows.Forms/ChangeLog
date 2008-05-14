@@ -1,3 +1,10 @@
+2008-05-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ComboBox.cs: When setting mode to Simple *and* height hasn't been
+	set, default height to 150. I tried first with DefaultSize, but this
+	is not generating a SetBoundsCore call before handle creation time, so
+	we can take it into account. This is just what .net does.
+
 2008-05-13  Jonathan Pobst  <monkey@jpobst.com>
 
 	* XplatUIX11.cs, X11Keyboard.cs: Had to revert eno's r103060,

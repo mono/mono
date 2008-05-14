@@ -402,6 +402,12 @@ namespace System.Windows.Forms
 					CreateComboListBox ();
 					Controls.AddImplicit (listbox_ctrl);
 					listbox_ctrl.Visible = true;
+
+					// This should give us a 150 default height
+					// for Simple mode if size hasn't been set
+					// (DefaultSize doesn't work for us in this case)
+					if (requested_height == -1)
+						requested_height = 150;
 				} else {
 					show_dropdown_button = true;
 					button_state = ButtonState.Normal;
