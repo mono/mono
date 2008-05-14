@@ -1,3 +1,8 @@
+2008-05-14  Marek Habersack  <mhabersack@novell.com>
+
+	* SqlConnection.cs: added support for USER INSTANCE keyword in the
+	connection string.
+
 2008-04-22  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes Bug#381151

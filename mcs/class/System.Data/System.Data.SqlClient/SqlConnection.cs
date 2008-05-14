@@ -100,7 +100,8 @@ namespace System.Data.SqlClient
 		int port;
 		bool fireInfoMessageEventOnUserErrors;
 		bool statisticsEnabled;
-
+		bool userInstance;
+		
 		// The current state
 		ConnectionState state = ConnectionState.Closed;
 
@@ -776,6 +777,7 @@ namespace System.Data.SqlClient
 			parameters["PERSIST SECURITY INFO"] = "false";
 			parameters["POOLING"] = "true";
 			parameters["WORKSTATION ID"] = Environment.MachineName;
+			parameters["USER INSTANCE"] = "false";
  #if NET_2_0
 			async = false;
 			parameters ["ASYNCHRONOUS PROCESSING"] = "false";
@@ -894,6 +896,10 @@ namespace System.Data.SqlClient
 			case "WSID" :
 			case "WORKSTATION ID" :
 				parms.Hostname = value;
+				break;
+				
+			case "USER INSTANCE":
+				userInstance = ConvertToBoolean ("user instance", value);
 				break;
 			default :
 				throw new ArgumentException("Keyword not supported :"+name);
