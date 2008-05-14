@@ -63,6 +63,11 @@ namespace System.Linq.Expressions {
 
 		internal override void Emit (EmitContext ec)
 		{
+			ec.EmitReadGlobal (Compile ());
+		}
+
+		internal void EmitBody (EmitContext ec)
+		{
 			body.Emit (ec);
 			EmitPopIfNeeded (ec);
 			ec.ig.Emit (OpCodes.Ret);

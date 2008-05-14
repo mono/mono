@@ -240,7 +240,7 @@ namespace System.Linq.Expressions {
 			method = new DynamicMethod (GenerateName (), return_type, param_types, typeof (ExecutionScope), true);
 			ig = method.GetILGenerator ();
 
-			owner.Emit (this);
+			owner.EmitBody (this);
 		}
 
 		public override Delegate CreateDelegate ()
@@ -273,7 +273,7 @@ namespace System.Linq.Expressions {
 			var method = type.DefineMethod (name, MethodAttributes.Public | MethodAttributes.Static, return_type, param_types);
 			ig = method.GetILGenerator ();
 
-			owner.Emit (this);
+			owner.EmitBody (this);
 
 			type.CreateType ();
 			assembly.Save (file_name);
