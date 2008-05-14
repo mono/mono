@@ -124,47 +124,47 @@ namespace System
 			}
 		}
 
-		public Decimal (int val) 
+		public Decimal (int value) 
 		{
 			unchecked 
 			{
 				hi = mid = 0;
-				if (val < 0) 
+				if (value < 0) 
 				{
 					flags = SIGN_FLAG;
-					lo = ((uint)~val) + 1;
+					lo = ((uint)~value) + 1;
 				}
 				else 
 				{
 					flags = 0;
-					lo = (uint) val;
+					lo = (uint) value;
 				}
 			}
 		}
 
 		[CLSCompliant(false)]
-		public Decimal (uint val) 
+		public Decimal (uint value) 
 		{
-			lo = val;
+			lo = value;
 			flags = hi = mid = 0;
 		}
 
-		public Decimal (long val) 
+		public Decimal (long value) 
 		{
 			unchecked 
 			{
 				hi = 0;
-				if (val < 0) 
+				if (value < 0) 
 				{
 					flags = SIGN_FLAG;
-					ulong u = ((ulong)~val) + 1;
+					ulong u = ((ulong)~value) + 1;
 					lo = (uint)u;
 					mid = (uint)(u >> 32);
 				}
 				else 
 				{
 					flags = 0;
-					ulong u = (ulong)val;
+					ulong u = (ulong)value;
 					lo = (uint)u;
 					mid = (uint)(u >> 32);
 				}
@@ -172,24 +172,24 @@ namespace System
 		}
 
 		[CLSCompliant(false)]
-		public Decimal (ulong uval) 
+		public Decimal (ulong value) 
 		{
 			unchecked 
 			{
 				flags = hi = 0;
-				lo = (uint)uval;
-				mid = (uint)(uval >> 32);
+				lo = (uint)value;
+				mid = (uint)(value >> 32);
 			}
 		}
 
-		public Decimal (float val) 
+		public Decimal (float value) 
 		{
-			if (val > (float)Decimal.MaxValue || val < (float)Decimal.MinValue) {
+			if (value > (float)Decimal.MaxValue || value < (float)Decimal.MinValue) {
 				throw new OverflowException (Locale.GetText (
-					"Value {0} is greater than Decimal.MaxValue or less than Decimal.MinValue", val));
+					"Value {0} is greater than Decimal.MaxValue or less than Decimal.MinValue", value));
 			}
 			// we must respect the precision (double2decimal doesn't)
-			Decimal d = Decimal.Parse (val.ToString (CultureInfo.InvariantCulture),
+			Decimal d = Decimal.Parse (value.ToString (CultureInfo.InvariantCulture),
 					NumberStyles.Float, CultureInfo.InvariantCulture);
 			flags = d.flags;
 			hi = d.hi;
@@ -197,14 +197,14 @@ namespace System
 			mid = d.mid;
 		}
 
-		public Decimal (double val) 
+		public Decimal (double value) 
 		{
-			if (val > (double)Decimal.MaxValue || val < (double)Decimal.MinValue) {
+			if (value > (double)Decimal.MaxValue || value < (double)Decimal.MinValue) {
 				throw new OverflowException (Locale.GetText (
-					"Value {0} is greater than Decimal.MaxValue or less than Decimal.MinValue", val));
+					"Value {0} is greater than Decimal.MaxValue or less than Decimal.MinValue", value));
 			}
 			// we must respect the precision (double2decimal doesn't)
-			Decimal d = Decimal.Parse (val.ToString (CultureInfo.InvariantCulture),
+			Decimal d = Decimal.Parse (value.ToString (CultureInfo.InvariantCulture),
 					NumberStyles.Float, CultureInfo.InvariantCulture);
 			flags = d.flags;
 			hi = d.hi;
@@ -296,12 +296,12 @@ namespace System
 
 		public static Decimal operator - (Decimal d1, Decimal d2) 
 		{
-			return Subtract(d1, d2);
+			return Subtract (d1, d2);
 		}
 
 		public static Decimal operator - (Decimal d) 
 		{
-			return Negate(d);
+			return Negate (d);
 		}
 
 		public static Decimal operator + (Decimal d) 
@@ -346,129 +346,129 @@ namespace System
 			return result;
 		}
 
-		public static explicit operator byte (Decimal val)
+		public static explicit operator byte (Decimal value)
 		{
-			ulong result = u64 (val);
+			ulong result = u64 (value);
 			return checked ((byte) result);
 		}
 
 		[CLSCompliant (false)]
-		public static explicit operator sbyte (Decimal val)
+		public static explicit operator sbyte (Decimal value)
 		{
-			long result = s64 (val);
+			long result = s64 (value);
 			return checked ((sbyte) result);
 		}
 
-		public static explicit operator char (Decimal val) 
+		public static explicit operator char (Decimal value) 
 		{
-			ulong result = u64 (val);
+			ulong result = u64 (value);
 			return checked ((char) result);
 		}
 
-		public static explicit operator short (Decimal val) 
+		public static explicit operator short (Decimal value) 
 		{
-			long result = s64 (val);
+			long result = s64 (value);
 			return checked ((short) result);
 		}
 
 		[CLSCompliant (false)]
-		public static explicit operator ushort (Decimal val) 
+		public static explicit operator ushort (Decimal value) 
 		{
-			ulong result = u64 (val);
+			ulong result = u64 (value);
 			return checked ((ushort) result);
 		}
 
-		public static explicit operator int (Decimal val) 
+		public static explicit operator int (Decimal value) 
 		{
-			long result = s64 (val);
+			long result = s64 (value);
 			return checked ((int) result);
 		}
 
 		[CLSCompliant(false)]
-		public static explicit operator uint (Decimal val) 
+		public static explicit operator uint (Decimal value) 
 		{
-			ulong result = u64 (val);
+			ulong result = u64 (value);
 			return checked ((uint) result);
 		}
 
-		public static explicit operator long (Decimal val) 
+		public static explicit operator long (Decimal value) 
 		{
-			return s64 (val);
+			return s64 (value);
 		}
 
 		[CLSCompliant(false)]
-		public static explicit operator ulong (Decimal val) 
+		public static explicit operator ulong (Decimal value) 
 		{
-			return u64 (val);
+			return u64 (value);
 		}
 
-		public static implicit operator Decimal (byte val) 
+		public static implicit operator Decimal (byte value) 
 		{
-			return new Decimal (val);
-		}
-
-		[CLSCompliant(false)]
-		public static implicit operator Decimal (sbyte val) 
-		{
-			return new Decimal (val);
-		}
-
-		public static implicit operator Decimal (short val) 
-		{
-			return new Decimal (val);
+			return new Decimal (value);
 		}
 
 		[CLSCompliant(false)]
-		public static implicit operator Decimal (ushort val) 
+		public static implicit operator Decimal (sbyte value) 
 		{
-			return new Decimal (val);
+			return new Decimal (value);
 		}
 
-		public static implicit operator Decimal (char val) 
+		public static implicit operator Decimal (short value) 
 		{
-			return new Decimal (val);
-		}
-
-		public static implicit operator Decimal (int val) 
-		{
-			return new Decimal (val);
+			return new Decimal (value);
 		}
 
 		[CLSCompliant(false)]
-		public static implicit operator Decimal (uint val) 
+		public static implicit operator Decimal (ushort value) 
 		{
-			return new Decimal (val);
+			return new Decimal (value);
 		}
 
-		public static implicit operator Decimal (long val) 
+		public static implicit operator Decimal (char value) 
 		{
-			return new Decimal (val);
+			return new Decimal (value);
+		}
+
+		public static implicit operator Decimal (int value) 
+		{
+			return new Decimal (value);
 		}
 
 		[CLSCompliant(false)]
-		public static implicit operator Decimal (ulong val) 
+		public static implicit operator Decimal (uint value) 
 		{
-			return new Decimal (val);
+			return new Decimal (value);
 		}
 
-		public static explicit operator Decimal (float val) 
+		public static implicit operator Decimal (long value) 
 		{
-			return new Decimal (val);
+			return new Decimal (value);
 		}
 
-		public static explicit operator Decimal (double val)
+		[CLSCompliant(false)]
+		public static implicit operator Decimal (ulong value) 
 		{
-			return new Decimal (val);
+			return new Decimal (value);
 		}
 
-		public static explicit operator float (Decimal val)
+		public static explicit operator Decimal (float value) 
 		{
-			return (float) (double) val;
+			return new Decimal (value);
 		}
 
-		public static explicit operator double (Decimal val)
+		public static explicit operator Decimal (double value)
 		{
-			return decimal2double (ref val);
+			return new Decimal (value);
+		}
+
+		public static explicit operator float (Decimal value)
+		{
+			return (float) (double) value;
+		}
+
+		public static explicit operator double (Decimal value)
+		{
+			return decimal2double (ref value);
 		}
 
 
@@ -507,12 +507,12 @@ namespace System
 			return decimalCompare (ref d1, ref d2) == 0;
 		}
 
-		public override bool Equals (object o) 
+		public override bool Equals (object value) 
 		{
-			if (!(o is Decimal))
+			if (!(value is Decimal))
 				return false;
 
-			return Equals ((Decimal) o, this);
+			return Equals ((Decimal) value, this);
 		}
 
 		// avoid unmanaged call
@@ -685,15 +685,15 @@ namespace System
 			return decimalCompare (ref d1, ref d2);
 		}
 
-		public int CompareTo (object val)
+		public int CompareTo (object value)
 		{
-			if (val == null)
+			if (value == null)
 				return 1;
 
-			if (!(val is Decimal))
+			if (!(value is Decimal))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.Decimal"));
 
-			Decimal d2 = (Decimal)val;
+			Decimal d2 = (Decimal)value;
 			return decimalCompare (ref this, ref d2);
 		}
 
@@ -1156,9 +1156,9 @@ namespace System
 			return (byte)(Decimal.Truncate (value));
 		}
 
-		public static double ToDouble (decimal value)
+		public static double ToDouble (decimal d)
 		{
-			return Convert.ToDouble (value);
+			return Convert.ToDouble (d);
 		}
 
 		public static short ToInt16 (decimal value)
@@ -1171,24 +1171,24 @@ namespace System
 			return (Int16)(Decimal.Truncate (value));
 		}
 
-		public static int ToInt32 (decimal value)
+		public static int ToInt32 (decimal d)
 		{
-			if (value > Int32.MaxValue || value < Int32.MinValue)
+			if (d > Int32.MaxValue || d < Int32.MinValue)
 				throw new OverflowException (Locale.GetText (
 					"Value is greater than Int32.MaxValue or less than Int32.MinValue"));
 
 			// return truncated value
-			return (Int32)(Decimal.Truncate (value));
+			return (Int32)(Decimal.Truncate (d));
 		}
 	
-		public static long ToInt64 (decimal value)
+		public static long ToInt64 (decimal d)
 		{
-			if (value > Int64.MaxValue || value < Int64.MinValue)
+			if (d > Int64.MaxValue || d < Int64.MinValue)
 				throw new OverflowException (Locale.GetText (
 					"Value is greater than Int64.MaxValue or less than Int64.MinValue"));
 
 			// return truncated value
-			return (Int64)(Decimal.Truncate (value));
+			return (Int64)(Decimal.Truncate (d));
 		}
 
 		public static long ToOACurrency (decimal value)
@@ -1207,9 +1207,9 @@ namespace System
 			return (SByte)(Decimal.Truncate (value));
 		}
 	
-		public static float ToSingle (decimal value)
+		public static float ToSingle (decimal d)
 		{
-			return Convert.ToSingle (value);
+			return Convert.ToSingle (d);
 		}
 
 		[CLSCompliant(false)]
@@ -1224,25 +1224,25 @@ namespace System
 		}
 
 		[CLSCompliant(false)]
-		public static uint ToUInt32 (decimal value)
+		public static uint ToUInt32 (decimal d)
 		{
-			if (value > UInt32.MaxValue || value < UInt32.MinValue)
+			if (d > UInt32.MaxValue || d < UInt32.MinValue)
 				throw new OverflowException (Locale.GetText (
 					"Value is greater than UInt32.MaxValue or less than UInt32.MinValue"));
 
 			// return truncated value
-			return (UInt32)(Decimal.Truncate (value));
+			return (UInt32)(Decimal.Truncate (d));
 		}
 
 		[CLSCompliant(false)]
-		public static ulong ToUInt64 (decimal value)
+		public static ulong ToUInt64 (decimal d)
 		{
-			if (value > UInt64.MaxValue || value < UInt64.MinValue)
+			if (d > UInt64.MaxValue || d < UInt64.MinValue)
 				throw new OverflowException (Locale.GetText (
 					"Value is greater than UInt64.MaxValue or less than UInt64.MinValue"));
 
 			// return truncated value
-			return (UInt64)(Decimal.Truncate (value));
+			return (UInt64)(Decimal.Truncate (d));
 		}
 
 		object IConvertible.ToType (Type conversionType, IFormatProvider provider)
