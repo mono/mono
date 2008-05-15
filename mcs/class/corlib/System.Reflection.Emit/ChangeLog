@@ -1,3 +1,8 @@
+2008-05-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* TypeBuilder.cs (.ctor): Convert a null parent to typeof (object) here, not just
+	in CreateType (). Fixes #389171.
+
 2008-05-11  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* FieldBuilder.cs: Added null check for type.

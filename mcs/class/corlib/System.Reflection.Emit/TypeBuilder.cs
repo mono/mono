@@ -147,6 +147,9 @@ namespace System.Reflection.Emit
 			}
 			pmodule = mb;
 
+			if (((attr & TypeAttributes.Interface) == 0) && (parent == null) && !IsCompilerContext)
+				this.parent = typeof (object);
+
 			// skip .<Module> ?
 			table_idx = mb.get_next_table_index (this, 0x02, true);
 			setup_internal_class (this);
