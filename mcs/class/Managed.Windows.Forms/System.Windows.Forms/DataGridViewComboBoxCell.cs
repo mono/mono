@@ -190,12 +190,12 @@ namespace System.Windows.Forms {
 			if (editingControl == null)
 				return;
 			
+			string text = initialFormattedValue == null ? string.Empty : initialFormattedValue.ToString ();
+
 			// A simple way to check if the control has
 			// been initialized already.
 			if (editingControl.Items.Count > 0) {
-				string text = initialFormattedValue == null ? string.Empty : initialFormattedValue.ToString ();
 				editingControl.SelectedIndex = editingControl.FindString (text);
-				
 				return;
 			}
 			
@@ -203,8 +203,6 @@ namespace System.Windows.Forms {
 			editingControl.Items.AddRange (this.Items);
 			
 			editingControl.Sorted = sorted;
-
-			string text = initialFormattedValue == null ? string.Empty : initialFormattedValue.ToString ();
 			editingControl.SelectedIndex = editingControl.FindString (text);
 
 			editingControl.SelectedIndexChanged += new EventHandler (editingControl_SelectedIndexChanged);
