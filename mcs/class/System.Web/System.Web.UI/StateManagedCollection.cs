@@ -150,9 +150,10 @@ namespace System.Web.UI {
 				for (int n=0; n<items.Count; n++)
 				{
 					IStateManager item = (IStateManager) items [n];
-					int oi = Array.IndexOf (originalItems, item);
+					int oi = originalItems != null ? Array.IndexOf (originalItems, item) : -1;
 					object ns = item.SaveViewState ();
-					if (ns != null) hasData = true;
+					if (ns != null)
+						hasData = true;
 					
 					if (oi == -1) {
 						Type t = item.GetType ();
