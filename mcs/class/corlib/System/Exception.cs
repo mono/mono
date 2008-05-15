@@ -288,7 +288,7 @@ namespace System
 			{
 				result.Append (" ---> ").Append (inner_exception.ToString ());
 				result.Append (Environment.NewLine);
-				result.Append (Locale.GetText ("--- End of inner exception stack trace ---"));
+				result.Append (Locale.GetText ("  --- End of inner exception stack trace ---"));
 			}
 
 			if (StackTrace != null)
