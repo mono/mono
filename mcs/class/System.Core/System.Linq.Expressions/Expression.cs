@@ -2080,7 +2080,8 @@ namespace System.Linq.Expressions {
 
 		internal static bool IsNullable (Type type)
 		{
-			return type.IsGenericInstanceOf (typeof (Nullable<>));		}
+			return type.IsGenericInstanceOf (typeof (Nullable<>));
+		}
 
 		static bool IsSignedNumber (Type t)
 		{
