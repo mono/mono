@@ -1,3 +1,7 @@
+2008-05-15  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* StringBuilder.cs: Resubmit uncritical parts of String cleanup patch
+
 2008-04-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UTF7Encoding.cs :
