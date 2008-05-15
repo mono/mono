@@ -33,10 +33,6 @@ namespace System.Linq.Expressions {
 
 	abstract class ExpressionVisitor {
 
-		protected ExpressionVisitor ()
-		{
-		}
-
 		protected virtual void Visit (Expression expression)
 		{
 			if (expression == null)

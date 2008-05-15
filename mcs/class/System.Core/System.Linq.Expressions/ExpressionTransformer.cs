@@ -27,20 +27,14 @@
 //
 
 using System;
+using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Collections.ObjectModel;
 
-namespace System.Linq
-{
-	abstract class ExpressionTransformer
-	{
+namespace System.Linq {
 
-		protected ExpressionTransformer ()
-		{
-		}
+	abstract class ExpressionTransformer {
 
 		public Expression Transform (Expression e)
 		{
