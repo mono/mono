@@ -67,32 +67,28 @@ namespace System.Web.UI
 			throw new NotImplementedException ();
 		}
 
+		// LAME SPEC: it seems DefaultEventAttribute is never queried for the event name.
 		protected internal override void Initialize () {
 			Control c = FindTargetControl (false);
 			ScriptManager sm = Owner.ScriptManager;
 			string eventName = EventName;
+
+			if (!String.IsNullOrEmpty (eventName)) {
+				EventInfo evi = c.GetType ().GetEvent (eventName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+				if (evi == null)
+					throw new InvalidOperationException (String.Format ("Could not find an event named '{0}' on associated control '{1}' for the trigger in UpdatePanel '{2}'.", eventName, c.ID, Owner.ID));
+
+				Delegate d = null;
+				try {
+					d = Delegate.CreateDelegate (evi.EventHandlerType, this, _eventHandler);
+				}
+				catch (ArgumentException) {
+					throw new InvalidOperationException (String.Format ("The event '{0}' in '{1}' for the control '{2}' does not match a standard event handler signature.", eventName, c.GetType (), c.ID));
+				}
+
+				evi.AddEventHandler (c, d);
+			}
 			
-			if (String.IsNullOrEmpty (eventName)) {
-				object [] o = c.GetType ().GetCustomAttributes (typeof (DefaultEventAttribute), true);
-				if (o.Length == 0)
-					throw new InvalidOperationException (String.Format ("Control '{0}' has no default event defined", c.ID));
-				eventName = ((DefaultEventAttribute) o [0]).Name;
-			}
-
-			EventInfo evi = c.GetType ().GetEvent (eventName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
-			if (evi == null)
-				throw new InvalidOperationException (String.Format ("Could not find an event named '{0}' on associated control '{1}' for the trigger in UpdatePanel '{2}'.", eventName, c.ID, Owner.ID));
-
-			Delegate d = null;
-			try {
-				d = Delegate.CreateDelegate (evi.EventHandlerType, this, _eventHandler);
-			}
-			catch (ArgumentException) {
-				throw new InvalidOperationException (String.Format ("The event '{0}' in '{1}' for the control '{2}' does not match a standard event handler signature.", eventName, c.GetType (), c.ID));
-			}
-
-			evi.AddEventHandler (c, d);
-
 			sm.RegisterAsyncPostBackControl (c);
 		}
 

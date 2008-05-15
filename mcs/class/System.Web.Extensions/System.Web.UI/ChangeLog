@@ -1,3 +1,9 @@
+2008-05-15  Marek Habersack  <mhabersack@novell.com>
+
+	* AsyncPostBackTrigger.cs: don't thrown an exception if EventName
+	is null or empty and there is no DefaultEventAttribute attached to
+	the control.
+
 2008-05-14  Marek Habersack  <mhabersack@novell.com>
 
 	* ScriptComponentDescriptor.cs: do not add the same
