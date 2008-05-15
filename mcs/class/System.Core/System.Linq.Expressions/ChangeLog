@@ -1,3 +1,8 @@
+2008-05-15  Jb Evain  <jbevain@novell.com>
+
+	* Extensions.cs: add a few useful extensions such as
+	IsGenericInstanceOf and MakeGenericFrom.
+
 2008-05-15  Roei Erez  <roeie@mainsoft.com>
 
 	* ExpressionTransformer.cs: Add a base class for transforming Expressions.
