@@ -6646,7 +6646,7 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Variable;
 			type = TypeManager.runtime_argument_handle_type;
 
-			if (ec.IsInFieldInitializer || !ec.CurrentBlock.Toplevel.HasVarargs) 
+			if (ec.IsInFieldInitializer || !ec.CurrentBlock.Toplevel.Parameters.HasArglist) 
 			{
 				Error (190, "The __arglist construct is valid only within " +
 				       "a variable argument method");

@@ -4041,9 +4041,6 @@ namespace Mono.CSharp {
 		public CallingConventions CallingConventions {
 			get {
 				CallingConventions cc = Parameters.CallingConvention;
-				if (Parameters.HasArglist && block != null)
-					block.HasVarargs = true;
-
 				if (!IsInterface)
 					if ((ModFlags & Modifiers.STATIC) == 0)
 						cc |= CallingConventions.HasThis;

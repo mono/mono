@@ -1503,8 +1503,7 @@ namespace Mono.CSharp {
 			HasRet = 8,
 			IsDestructor = 16,
 			Unsafe = 32,
-			HasVarargs = 64, // Used in ToplevelBlock
-			IsIterator = 128
+			IsIterator = 64
 		}
 		protected Flags flags;
 
@@ -1522,7 +1521,6 @@ namespace Mono.CSharp {
 		// The statements in this block
 		//
 		protected ArrayList statements;
-		int num_statements;
 
 		//
 		// An array of Blocks.  We keep track of children just
@@ -2234,15 +2232,13 @@ namespace Mono.CSharp {
 				if (unreachable && !(s is LabeledStatement) && !(s is Block))
 					statements [ix] = EmptyStatement.Value;
 
-				num_statements = ix + 1;
-
 				unreachable = ec.CurrentBranching.CurrentUsageVector.IsUnreachable;
 				if (unreachable && s is LabeledStatement)
 					throw new InternalErrorException ("should not happen");
 			}
 
 			Report.Debug (4, "RESOLVE BLOCK DONE", StartLocation,
-				      ec.CurrentBranching, statement_count, num_statements);
+				      ec.CurrentBranching, statement_count);
 
 			while (ec.CurrentBranching is FlowBranchingLabeled)
 				ec.EndFlowBranching ();
@@ -2288,7 +2284,7 @@ namespace Mono.CSharp {
 		
 		protected override void DoEmit (EmitContext ec)
 		{
-			for (int ix = 0; ix < num_statements; ix++){
+			for (int ix = 0; ix < statements.Count; ix++){
 				Statement s = (Statement) statements [ix];
 				s.Emit (ec);
 			}
@@ -2481,11 +2477,6 @@ namespace Mono.CSharp {
 		RootScopeInfo root_scope;
 		Parameters parameters;
 		ToplevelParameterInfo[] parameter_info;
-
-		public bool HasVarargs {
-			get { return (flags & Flags.HasVarargs) != 0; }
-			set { flags |= Flags.HasVarargs; }
-		}
 
 		//
 		// The parameters for the block.

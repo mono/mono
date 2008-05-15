@@ -1,3 +1,8 @@
+2008-05-15  Marek Safar  <marek.safar@gmail.com>
+
+	* class.cs, expression.cs, statement.cs: Removed a hack, setting block flag
+	in getter.
+
 2008-05-13  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #389625
