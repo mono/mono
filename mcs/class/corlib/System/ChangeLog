@@ -1,5 +1,9 @@
 2008-05-15  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
+	* String.cs: Resubmit uncritical parts of String patch
+
+2008-05-15  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
 	* DateTime.cs: Fix parameter names
 
 2008-05-15  Andreas Nahr <ClassDevelopment@A-SoftTech.com>

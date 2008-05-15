@@ -7,6 +7,7 @@
 //   Dan Lewis (dihlewis@yahoo.co.uk)
 //   Sebastien Pouliot  <sebastien@ximian.com>
 //   Marek Safar (marek.safar@seznam.cz)
+//   Andreas Nahr (Classdevelopment@A-SoftTech.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 // Copyright (C) 2004-2005 Novell (http://www.novell.com)
@@ -29,6 +30,14 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+//
+//
+// This class contains all implementation for culture-insensitive methods.
+// Culture-sensitive methods are implemented in the System.Globalization or
+// Mono.Globalization namespace.
+//
+// Ensure that argument checks on methods don't overflow
 //
 
 using System.Text;
@@ -55,10 +64,6 @@ namespace System
 	{
 		[NonSerialized] private int length;
 		[NonSerialized] private char start_char;
-
-		private const int COMPARE_CASE = 0;
-		private const int COMPARE_INCASE = 1;
-		private const int COMPARE_ORDINAL = 2;
 
 		public static readonly String Empty = "";
 
@@ -141,9 +146,13 @@ namespace System
 		}
 
 		[IndexerName ("Chars")]
-		public extern char this [int index] {
-			[MethodImplAttribute (MethodImplOptions.InternalCall)]
-			get;
+		public unsafe char this [int index] {
+			get {
+				if (index < 0 || index >= length)
+					throw new IndexOutOfRangeException ();
+				fixed (char* c = &start_char)
+					return c[index];
+			}
 		}
 
 		public Object Clone ()
@@ -156,44 +165,45 @@ namespace System
 			return TypeCode.String;
 		}
 
-		public void CopyTo (int sourceIndex, char[] destination, int destinationIndex, int count)
+		public unsafe void CopyTo (int sourceIndex, char[] destination, int destinationIndex, int count)
 		{
-			// LAMESPEC: should I null-terminate?
 			if (destination == null)
 				throw new ArgumentNullException ("destination");
 
 			if (sourceIndex < 0 || destinationIndex < 0 || count < 0)
 				throw new ArgumentOutOfRangeException (); 
 
-			// re-ordered to avoid possible integer overflow
 			if (sourceIndex > Length - count)
 				throw new ArgumentOutOfRangeException ("sourceIndex + count > Length");
-			// re-ordered to avoid possible integer overflow
+
 			if (destinationIndex > destination.Length - count)
 				throw new ArgumentOutOfRangeException ("destinationIndex + count > destination.Length");
 
-			InternalCopyTo (sourceIndex, destination, destinationIndex, count);
+			fixed (char* dest = destination, src = this)
+				CharCopy (dest + destinationIndex, src + sourceIndex, count);
 		}
 
-		public char[] ToCharArray ()
+		public unsafe char[] ToCharArray ()
 		{
-			return ToCharArray (0, length);
+			char[] tmp = new char [length];
+			fixed (char* dest = tmp, src = this)
+				CharCopy (dest, src, length);
+			return tmp;
 		}
 
-		public char[] ToCharArray (int startIndex, int length)
+		public unsafe char[] ToCharArray (int startIndex, int length)
 		{
 			if (startIndex < 0)
 				throw new ArgumentOutOfRangeException ("startIndex", "< 0"); 
 			if (length < 0)
 				throw new ArgumentOutOfRangeException ("length", "< 0"); 
-			// re-ordered to avoid possible integer overflow
+
 			if (startIndex > this.length - length)
 				throw new ArgumentOutOfRangeException ("startIndex + length > this.length"); 
 
 			char[] tmp = new char [length];
-
-			InternalCopyTo (startIndex, tmp, 0, length);
-
+			fixed (char* dest = tmp, src = this)
+				CharCopy (dest + startIndex, src, length);
 			return tmp;
 		}
 
@@ -321,7 +331,7 @@ namespace System
 		}
 #endif
 
-		public unsafe String Substring (int startIndex)
+		public String Substring (int startIndex)
 		{
 			if (startIndex == 0)
 				return this;
@@ -329,36 +339,32 @@ namespace System
 			if (startIndex < 0 || startIndex > this.length)
 				throw new ArgumentOutOfRangeException ("startIndex");
 
-			int newlen = this.length - startIndex;
-			string tmp = InternalAllocateStr (newlen);
-			if (newlen != 0) {
-				fixed (char *dest = tmp, src = this) {
-					memcpy ((byte*)dest, (byte*)(src + startIndex), newlen * 2);
-				}
-			}
-			return tmp;
+			return SubstringUnchecked (startIndex, this.length - startIndex);
 		}
 
-		public unsafe String Substring (int startIndex, int length)
+		public String Substring (int startIndex, int length)
 		{
 			if (length < 0)
 				throw new ArgumentOutOfRangeException ("length", "< 0");
 			if (startIndex < 0)
 				throw new ArgumentOutOfRangeException ("startIndex", "< 0");
-			// re-ordered to avoid possible integer overflow
 			if (startIndex > this.length - length)
 				throw new ArgumentOutOfRangeException ("startIndex + length > this.length");
 
+			return SubstringUnchecked (startIndex, length);
+		}	
+
+		internal unsafe String SubstringUnchecked (int startIndex, int length)
+		{
 			if (length == 0)
 				return String.Empty;
 
 			string tmp = InternalAllocateStr (length);
-			fixed (char *dest = tmp, src = this) {
-				memcpy ((byte*)dest, (byte*)(src + startIndex), length * 2);
+			fixed (char* dest = tmp, src = this) {
+				CharCopy (dest, src + startIndex, length);
 			}
-
 			return tmp;
-		}	
+		}
 
 		private static readonly char[] WhiteChars = { (char) 0x9, (char) 0xA, (char) 0xB, (char) 0xC, (char) 0xD,
 #if NET_2_0
@@ -399,12 +405,12 @@ namespace System
 
 		public static int Compare (String strA, String strB)
 		{
-			return Compare (strA, strB, false, CultureInfo.CurrentCulture);
+			return CultureInfo.CurrentCulture.CompareInfo.Compare (strA, strB, CompareOptions.None);
 		}
 
 		public static int Compare (String strA, String strB, bool ignoreCase)
 		{
-			return Compare (strA, strB, ignoreCase, CultureInfo.CurrentCulture);
+			return CultureInfo.CurrentCulture.CompareInfo.Compare (strA, strB, ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None);
 		}
 
 		public static int Compare (String strA, String strB, bool ignoreCase, CultureInfo culture)
@@ -412,25 +418,7 @@ namespace System
 			if (culture == null)
 				throw new ArgumentNullException ("culture");
 
-			if (strA == null) {
-				if (strB == null)
-					return 0;
-				else
-					return -1;
-
-			}
-			else if (strB == null) {
-				return 1;
-			}
-
-			CompareOptions compopts;
-
-			if (ignoreCase)
-				compopts = CompareOptions.IgnoreCase;
-			else
-				compopts = CompareOptions.None;
-
-			return culture.CompareInfo.Compare (strA, strB, compopts);
+			return culture.CompareInfo.Compare (strA, strB, ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None);
 		}
 
 		public static int Compare (String strA, int indexA, String strB, int indexB, int length)
@@ -472,11 +460,11 @@ namespace System
 			else
 				compopts = CompareOptions.None;
 
-			/* Need to cap the requested length to the
-			 * length of the string, because
-			 * CompareInfo.Compare will insist that length
-			 * <= (string.Length - offset)
-			 */
+			// Need to cap the requested length to the
+			// length of the string, because
+			// CompareInfo.Compare will insist that length
+			// <= (string.Length - offset)
+
 			int len1 = length;
 			int len2 = length;
 			
@@ -488,6 +476,7 @@ namespace System
 				len2 = strB.Length - indexB;
 			}
 
+			// ENHANCE: Might call internal_compare_switch directly instead of doing all checks twice
 			return culture.CompareInfo.Compare (strA, indexA, len1, strB, indexB, len2, compopts);
 		}
 #if NET_2_0
@@ -503,9 +492,9 @@ namespace System
 			case StringComparison.InvariantCultureIgnoreCase:
 				return Compare (strA, strB, true, CultureInfo.InvariantCulture);
 			case StringComparison.Ordinal:
-				return CompareOrdinal (strA, strB, CompareOptions.Ordinal);
+				return CompareOrdinalUnchecked (strA, 0, Int32.MaxValue, strB, 0, Int32.MaxValue);
 			case StringComparison.OrdinalIgnoreCase:
-				return CompareOrdinal (strA, strB, CompareOptions.Ordinal | CompareOptions.IgnoreCase);
+				return CompareOrdinalCaseInsensitiveUnchecked (strA, 0, Int32.MaxValue, strB, 0, Int32.MaxValue);
 			default:
 				string msg = Locale.GetText ("Invalid value '{0}' for StringComparison", comparisonType);
 				throw new ArgumentException (msg, "comparisonType");
@@ -524,9 +513,9 @@ namespace System
 			case StringComparison.InvariantCultureIgnoreCase:
 				return Compare (strA, indexA, strB, indexB, length, true, CultureInfo.InvariantCulture);
 			case StringComparison.Ordinal:
-				return CompareOrdinal (strA, indexA, strB, indexB, length, CompareOptions.Ordinal);
+				return CompareOrdinal (strA, indexA, strB, indexB, length);
 			case StringComparison.OrdinalIgnoreCase:
-				return CompareOrdinal (strA, indexA, strB, indexB, length, CompareOptions.Ordinal | CompareOptions.IgnoreCase);
+				return CompareOrdinalCaseInsensitive (strA, indexA, strB, indexB, length);
 			default:
 				string msg = Locale.GetText ("Invalid value '{0}' for StringComparison", comparisonType);
 				throw new ArgumentException (msg, "comparisonType");
@@ -540,7 +529,7 @@ namespace System
 
 		public bool Equals (string value, StringComparison comparisonType)
 		{
-			return String.Equals (this, value, comparisonType);
+			return String.Compare (value, this, comparisonType) == 0;
 		}
 #endif
 		public int CompareTo (Object value)
@@ -551,7 +540,7 @@ namespace System
 			if (!(value is String))
 				throw new ArgumentException ();
 
-			return String.Compare (this, (String) value, false);
+			return String.Compare (this, (String) value);
 		}
 
 		public int CompareTo (String strB)
@@ -559,10 +548,31 @@ namespace System
 			if (strB == null)
 				return 1;
 
-			return Compare (this, strB, false);
+			return Compare (this, strB);
 		}
 
-		public static unsafe int CompareOrdinal (String strA, String strB)
+		public static int CompareOrdinal (String strA, String strB)
+		{
+			return CompareOrdinalUnchecked (strA, 0, Int32.MaxValue, strB, 0, Int32.MaxValue);
+		}
+
+		public static int CompareOrdinal (String strA, int indexA, String strB, int indexB, int length)
+		{
+			if ((indexA > strA.Length) || (indexB > strB.Length) || (indexA < 0) || (indexB < 0) || (length < 0))
+				throw new ArgumentOutOfRangeException ();
+
+			return CompareOrdinalUnchecked (strA, indexA, length, strB, indexB, length);
+		}
+
+		internal static int CompareOrdinalCaseInsensitive (String strA, int indexA, String strB, int indexB, int length)
+		{
+			if ((indexA > strA.Length) || (indexB > strB.Length) || (indexA < 0) || (indexB < 0) || (length < 0))
+				throw new ArgumentOutOfRangeException ();
+
+			return CompareOrdinalCaseInsensitiveUnchecked (strA, indexA, length, strB, indexB, length);
+		}
+
+		internal static unsafe int CompareOrdinalUnchecked (String strA, int indexA, int lenA, String strB, int indexB, int lenB)
 		{
 			if (strA == null) {
 				if (strB == null)
@@ -572,22 +582,29 @@ namespace System
 			} else if (strB == null) {
 				return 1;
 			}
+			int lengthA = Math.Min (lenA, strA.Length - indexA);
+			int lengthB = Math.Min (lenB, strB.Length - indexB);
+
+			if (lengthA == lengthB && Object.ReferenceEquals (strA, strB))
+				return 0;
+
 			fixed (char* aptr = strA, bptr = strB) {
-				char* ap = aptr;
-				char* end = ap + Math.Min (strA.Length, strB.Length);
-				char* bp = bptr;
+				char* ap = aptr + indexA;
+				char* end = ap + Math.Min (lengthA, lengthB);
+				char* bp = bptr + indexB;
 				while (ap < end) {
 					if (*ap != *bp)
 						return *ap - *bp;
 					ap++;
 					bp++;
 				}
-				return strA.Length - strB.Length;
+				return lengthA - lengthB;
 			}
 		}
 
-		internal static int CompareOrdinal (String strA, String strB, CompareOptions options)
+		internal static unsafe int CompareOrdinalCaseInsensitiveUnchecked (String strA, int indexA, int lenA, String strB, int indexB, int lenB)
 		{
+			// Same as above, but checks versus uppercase characters
 			if (strA == null) {
 				if (strB == null)
 					return 0;
@@ -596,56 +613,33 @@ namespace System
 			} else if (strB == null) {
 				return 1;
 			}
+			int lengthA = Math.Min (lenA, strA.Length - indexA);
+			int lengthB = Math.Min (lenB, strB.Length - indexB);
 
-			/* Invariant, because that is cheaper to
-			 * instantiate (and chances are it already has
-			 * been.)
-			 */
-			return CultureInfo.InvariantCulture.CompareInfo.Compare (strA, strB, options);
-		}
+			if (lengthA == lengthB && Object.ReferenceEquals (strA, strB))
+				return 0;
 
-		public static int CompareOrdinal (String strA, int indexA, String strB, int indexB, int length)
-		{
-			return CompareOrdinal (strA, indexA, strB, indexB, length, CompareOptions.Ordinal);
-		}
-
-		internal static int CompareOrdinal (String strA, int indexA, String strB, int indexB, int length, CompareOptions options)
-		{
-			if ((indexA > strA.Length) || (indexB > strB.Length) || (indexA < 0) || (indexB < 0) || (length < 0))
-				throw new ArgumentOutOfRangeException ();
-
-			if (strA == null) {
-				if (strB == null)
-					return 0;
-				else
-					return -1;
+			fixed (char* aptr = strA, bptr = strB) {
+				char* ap = aptr + indexA;
+				char* end = ap + Math.Min (lengthA, lengthB);
+				char* bp = bptr + indexB;
+				while (ap < end) {
+					if (*ap != *bp) {
+						char c1 = Char.ToUpperInvariant (*ap);
+						char c2 = Char.ToUpperInvariant (*bp);
+						if (c1 != c2)
+							return c1 - c2;
+					}
+					ap++;
+					bp++;
+				}
+				return lengthA - lengthB;
 			}
-			else if (strB == null) {
-				return 1;
-			}
-
-			/* Need to cap the requested length to the
-			 * length of the string, because
-			 * CompareInfo.Compare will insist that length
-			 * <= (string.Length - offset)
-			 */
-			int len1 = length;
-			int len2 = length;
-
-			if (length > (strA.Length - indexA)) {
-				len1 = strA.Length - indexA;
-			}
-
-			if (length > (strB.Length - indexB)) {
-				len2 = strB.Length - indexB;
-			}
-
-			return CultureInfo.InvariantCulture.CompareInfo.Compare (strA, indexA, len1, strB, indexB, len2, options);
 		}
 
 		public bool EndsWith (String value)
 		{
-			return EndsWith (value, false, CultureInfo.CurrentCulture);
+			return CultureInfo.CurrentCulture.CompareInfo.IsSuffix (this, value, CompareOptions.None);
 		}
 
 #if NET_2_0
@@ -662,6 +656,7 @@ namespace System
 				ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None);
 		}
 
+		// Following methods are culture-insensitive
 		public int IndexOfAny (char [] anyOf)
 		{
 			if (anyOf == null)
@@ -1093,7 +1088,7 @@ namespace System
 
 		public string Normalize ()
 		{
-			return Normalize (NormalizationForm.FormC);
+			return Normalization.Normalize (this, 0);
 		}
 
 		public string Normalize (NormalizationForm form)
@@ -1112,7 +1107,7 @@ namespace System
 
 		public bool IsNormalized ()
 		{
-			return IsNormalized (NormalizationForm.FormC);
+			return Normalization.IsNormalized (this, 0);
 		}
 
 		public bool IsNormalized (NormalizationForm form)
@@ -1174,7 +1169,7 @@ namespace System
 
 		public bool StartsWith (String value)
 		{
-			return StartsWith (value, false, CultureInfo.CurrentCulture);
+			return CultureInfo.CurrentCulture.CompareInfo.IsPrefix (this, value, CompareOptions.None);
 		}
 
 #if NET_2_0
@@ -1234,9 +1229,7 @@ namespace System
 			if (culture == null)
 				culture = CultureInfo.CurrentCulture;
 			
-			return (culture.CompareInfo.IsPrefix (this, value,
-				ignoreCase ? CompareOptions.IgnoreCase :
-				CompareOptions.None));
+			return culture.CompareInfo.IsPrefix (this, value, ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None);
 		}
 
 		/* This method is culture insensitive */
@@ -1298,7 +1291,6 @@ namespace System
 				throw new ArgumentOutOfRangeException ("startIndex", "< 0");
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count", "< 0");
-			// re-ordered to avoid possible integer overflow
 			if (startIndex > this.length - count)
 				throw new ArgumentOutOfRangeException ("startIndex + count > this.length");
 
@@ -1306,10 +1298,10 @@ namespace System
 
 			fixed (char *dest = tmp, src = this) {
 				char *dst = dest;
-				memcpy ((byte*)dst, (byte*)src, startIndex * 2);
+				CharCopy (dst, src, startIndex);
 				int skip = startIndex + count;
 				dst += startIndex;
-				memcpy ((byte*)dst, (byte*)(src + skip), (length - skip) * 2);
+				CharCopy (dst, src + skip, length - skip);
 			}
 			return tmp;
 		}
@@ -1324,9 +1316,9 @@ namespace System
 			if (culture == null)
 				throw new ArgumentNullException ("culture");
 
-			if (culture.LCID == 0x007F) { // Invariant
+			if (culture.LCID == 0x007F) // Invariant
 				return ToLowerInvariant ();
-			}
+
 			return culture.TextInfo.ToLower (this);
 		}
 
@@ -1361,9 +1353,9 @@ namespace System
 			if (culture == null)
 				throw new ArgumentNullException ("culture");
 
-			if (culture.LCID == 0x007F) { // Invariant
+			if (culture.LCID == 0x007F) // Invariant
 				return ToUpperInvariant ();
-			}
+
 			return culture.TextInfo.ToUpper (this);
 		}
 
@@ -1516,7 +1508,7 @@ namespace System
 			String tmp = InternalAllocateStr (length);
 			if (length != 0) {
 				fixed (char *dest = tmp, src = str) {
-					memcpy ((byte*)dest, (byte*)src, length * 2);
+					CharCopy (dest, src, length);
 				}
 			}
 			return tmp;
@@ -1548,12 +1540,12 @@ namespace System
 			String tmp = InternalAllocateStr (s1.Length + s2.Length);
 			if (s1.Length != 0) {
 				fixed (char *dest = tmp, src = s1) {
-					memcpy ((byte*)dest, (byte*)src, s1.length * 2);
+					CharCopy (dest, src, s1.length);
 				}
 			}
 			if (s2.Length != 0) {
 				fixed (char *dest = tmp, src = s2) {
-					memcpy ((byte*)(dest + s1.Length), (byte*)src, s2.length * 2);
+					CharCopy (dest + s1.Length, src, s2.length);
 				}
 			}
 
@@ -1634,16 +1626,10 @@ namespace System
 
 			String tmp = InternalAllocateStr (s1.length + s2.length);
 
-			if (s1.Length != 0) {
-				fixed (char *dest = tmp, src = s1) {
-					memcpy ((byte*)dest, (byte*)src, s1.length * 2);
-				}
-			}
-			if (s2.Length != 0) {
-				fixed (char *dest = tmp, src = s2) {
-					memcpy ((byte*)(dest + s1.Length), (byte*)src, s2.length * 2);
-				}
-			}
+			fixed (char *dest = tmp, src = s1)
+				CharCopy (dest, src, s1.length);
+			fixed (char *dest = tmp, src = s2)
+				CharCopy (dest + s1.Length, src, s2.length);
 
 			return tmp;
 		}
@@ -1672,22 +1658,21 @@ namespace System
 				}
 			}
 
-			//return InternalConcat (s1, s2, s3);
 			String tmp = InternalAllocateStr (s1.length + s2.length + s3.length);
 
 			if (s1.Length != 0) {
 				fixed (char *dest = tmp, src = s1) {
-					memcpy ((byte*)dest, (byte*)src, s1.length * 2);
+					CharCopy (dest, src, s1.length);
 				}
 			}
 			if (s2.Length != 0) {
 				fixed (char *dest = tmp, src = s2) {
-					memcpy ((byte*)(dest + s1.Length), (byte*)src, s2.length * 2);
+					CharCopy (dest + s1.Length, src, s2.length);
 				}
 			}
 			if (s3.Length != 0) {
 				fixed (char *dest = tmp, src = s3) {
-					memcpy ((byte*)(dest + s1.Length + s2.Length), (byte*)src, s3.length * 2);
+					CharCopy (dest + s1.Length + s2.Length, src, s3.length);
 				}
 			}
 
@@ -1712,22 +1697,22 @@ namespace System
 
 			if (s1.Length != 0) {
 				fixed (char *dest = tmp, src = s1) {
-					memcpy ((byte*)dest, (byte*)src, s1.length * 2);
+					CharCopy (dest, src, s1.length);
 				}
 			}
 			if (s2.Length != 0) {
 				fixed (char *dest = tmp, src = s2) {
-					memcpy ((byte*)(dest + s1.Length), (byte*)src, s2.length * 2);
+					CharCopy (dest + s1.Length, src, s2.length);
 				}
 			}
 			if (s3.Length != 0) {
 				fixed (char *dest = tmp, src = s3) {
-					memcpy ((byte*)(dest + s1.Length + s2.Length), (byte*)src, s3.length * 2);
+					CharCopy (dest + s1.Length + s2.Length, src, s3.length);
 				}
 			}
 			if (s4.Length != 0) {
 				fixed (char *dest = tmp, src = s4) {
-					memcpy ((byte*)(dest + s1.Length + s2.Length + s3.Length), (byte*)src, s4.length * 2);
+					CharCopy (dest + s1.Length + s2.Length + s3.Length, src, s4.length);
 				}
 			}
 
@@ -1739,27 +1724,22 @@ namespace System
 			if (args == null)
 				throw new ArgumentNullException ("args");
 
-			int i = args.Length;
-			if (i == 0)
+			int argLen = args.Length;
+			if (argLen == 0)
 				return String.Empty;
 
-			string [] strings = new string [i];
-			i = 0;
+			string [] strings = new string [argLen];
 			int len = 0;
-			foreach (object arg in args) {
-				if (arg == null) {
-					strings[i] = String.Empty;
-				} else {
-					strings[i] = arg.ToString ();
+			for (int i = 0; i < argLen; i++) {
+				if (args[i] != null) {
+					strings[i] = args[i].ToString ();
 					len += strings[i].length;
 				}
-				i++;
 			}
-
 			if (len == 0)
 				return String.Empty;
 
-			return InternalJoin (String.Empty, strings, 0, strings.Length);
+			return ConcatInternal (strings, len);
 		}
 
 		public static String Concat (params String[] values)
@@ -1767,7 +1747,35 @@ namespace System
 			if (values == null)
 				throw new ArgumentNullException ("values");
 
-			return InternalJoin (String.Empty, values, 0, values.Length);
+			int len = 0;
+			for (int i = 0; i < values.Length; i++) {
+				String s = values[i];
+				if (s != null)
+					len += s.length;
+			}
+			if (len == 0)
+				return String.Empty;
+
+			return ConcatInternal (values, len);
+		}
+
+		private static unsafe String ConcatInternal (String[] values, int length)
+		{
+			String tmp = InternalAllocateStr (length);
+
+			fixed (char* dest = tmp) {
+				int pos = 0;
+				for (int i = 0; i < values.Length; i++) {
+					String source = values[i];
+					if (source != null) {
+						fixed (char* src = source) {
+							CharCopy (dest + pos, src, source.length);
+						}
+						pos += source.Length;
+					}
+				}
+			}
+			return tmp;
 		}
 
 		public unsafe String Insert (int startIndex, String value)
@@ -1786,15 +1794,14 @@ namespace System
 
 			fixed (char *dest = tmp, src = this, val = value) {
 				char *dst = dest;
-				memcpy ((byte*)dst, (byte*)src, startIndex * 2);
+				CharCopy (dst, src, startIndex);
 				dst += startIndex;
-				memcpy ((byte*)dst, (byte*)val, value.length * 2);
+				CharCopy (dst, val, value.length);
 				dst += value.length;
-				memcpy ((byte*)dst, (byte*)(src + startIndex), (length - startIndex) * 2);
+				CharCopy (dst, src + startIndex, length - startIndex);
 			}
 			return tmp;
 		}
-
 
 		public static string Intern (string str)
 		{
@@ -2071,18 +2078,17 @@ namespace System
 
 		internal unsafe int GetCaseInsensitiveHashCode ()
 		{
-			TextInfo ti = CultureInfo.InvariantCulture.TextInfo;
 			fixed (char * c = this) {
 				char * cc = c;
 				char * end = cc + length - 1;
 				int h = 0;
 				for (;cc < end; cc += 2) {
-					h = (h << 5) - h + ti.ToUpper (*cc);
-					h = (h << 5) - h + ti.ToUpper (cc [1]);
+					h = (h << 5) - h + Char.ToUpperInvariant (*cc);
+					h = (h << 5) - h + Char.ToUpperInvariant (cc [1]);
 				}
 				++end;
 				if (cc < end)
-					h = (h << 5) - h + ti.ToUpper (*cc);
+					h = (h << 5) - h + Char.ToUpperInvariant (*cc);
 				return h;
 			}
 		}
@@ -2181,7 +2187,7 @@ namespace System
 
 			if (i != 0) {
 				fixed (char *dest = result) {
-					memcpy ((byte*)dest, (byte*)value, i * 2);
+					CharCopy (dest, value, i);
 				}
 			}
 			return result;
@@ -2201,7 +2207,7 @@ namespace System
 			string result = InternalAllocateStr (length);
 
 			fixed (char *dest = result) {
-				memcpy ((byte*)dest, (byte*)(value + startIndex), length * 2);
+				CharCopy (dest, value + startIndex, length);
 			}
 			return result;
 		}
@@ -2222,7 +2228,7 @@ namespace System
 			string result = InternalAllocateStr (length);
 
 			fixed (char *dest = result, src = val) {
-				memcpy ((byte*)dest, (byte*)(src + startIndex), length * 2);
+				CharCopy (dest, src + startIndex, length);
 			}
 			return result;
 		}
@@ -2236,7 +2242,7 @@ namespace System
 			string result = InternalAllocateStr (val.Length);
 
 			fixed (char *dest = result, src = val) {
-				memcpy ((byte*)dest, (byte*)src, val.Length * 2);
+				CharCopy (dest, src, val.Length);
 			}
 			return result;
 		}
@@ -2413,6 +2419,55 @@ namespace System
 				}
 			}
 			memcpy4 (dest, src, size);
+		}
+
+		internal static unsafe void CharCopy (char *dest, char *src, int count) {
+			// Same rules as for memcpy, but with the premise that 
+			// chars can only be aligned to even addresses if their
+			// enclosing types are correctly aligned
+			if ((((int)(byte*)dest | (int)(byte*)src) & 3) != 0) {
+				if (((int)(byte*)dest & 2) != 0 && ((int)(byte*)src & 2) != 0 && count > 0) {
+					((short*)dest) [0] = ((short*)src) [0];
+					dest++;
+					src++;
+					count--;
+				}
+				if ((((int)(byte*)dest | (int)(byte*)src) & 2) != 0) {
+					memcpy2 ((byte*)dest, (byte*)src, count * 2);
+					return;
+				}
+			}
+			memcpy4 ((byte*)dest, (byte*)src, count * 2);
+		}
+
+		internal static unsafe void CharCopyReverse (char *dest, char *src, int count)
+		{
+			dest += count;
+			src += count;
+			for (int i = count; i > 0; i--) {
+				dest--;
+				src--;
+				*dest = *src;
+			}	
+		}
+
+		internal static unsafe void CharCopy (String target, int targetIndex, String source, int sourceIndex, int count)
+		{
+			fixed (char* dest = target, src = source)
+				CharCopy (dest + targetIndex, src + sourceIndex, count);
+		}
+
+		internal static unsafe void CharCopy (String target, int targetIndex, Char[] source, int sourceIndex, int count)
+		{
+			fixed (char* dest = target, src = source)
+				CharCopy (dest + targetIndex, src + sourceIndex, count);
+		}
+
+		// Use this method if you cannot block copy from left to right (e.g. because you are coping within the same string)
+		internal static unsafe void CharCopyReverse (String target, int targetIndex, String source, int sourceIndex, int count)
+		{
+			fixed (char* dest = target, src = source)
+				CharCopyReverse (dest + targetIndex, src + sourceIndex, count);
 		}
 
 		[CLSCompliant (false), MethodImplAttribute (MethodImplOptions.InternalCall)]
