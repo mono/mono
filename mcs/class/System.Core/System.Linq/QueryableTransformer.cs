@@ -117,11 +117,6 @@ namespace System.Linq {
 		static MethodInfo GetMatchingMethod (MethodInfo method, Type declaring)
 		{
 			foreach (var candidate in declaring.GetMethods ()) {
-
-				if (candidate.Name == method.Name && method.GetParameters ().Length == candidate.GetParameters ().Length) {
-					int a = 2;
-				}
-
 				if (!MethodMatch (candidate, method))
 					continue;
 
