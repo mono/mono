@@ -638,30 +638,14 @@ namespace System.Windows.Forms
 
 			public bool Contains (Control control)
 			{
-				for (int i = list.Count; i > 0; ) {
-					i--;
-
-					if (list [i] == control) {
-						// Do we need to do anything here?
-						return true;
-					}
-				}
-				return false;
+				return list.Contains (control);
 			}
 
 			internal bool ImplicitContains (Control value) {
 				if (impl_list == null)
 					return false;
 
-				for (int i = impl_list.Count; i > 0; ) {
-					i--;
-					
-					if (impl_list [i] == value) {
-						// Do we need to do anything here?
-						return true;
-					}
-				}
-				return false;
+				return impl_list.Contains (value);
 			}
 
 			internal bool AllContains (Control value) {
