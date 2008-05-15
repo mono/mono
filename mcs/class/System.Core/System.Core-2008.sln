@@ -5,14 +5,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Core-2008", "System.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Core.Tests-2008", "Test\System.Core.Tests-2008.csproj", "{F902A50D-6156-4935-A1AC-E82DF0EB83D3}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6DD21DC4-1760-412E-BA3B-9295911E8794}"
-	ProjectSection(SolutionItems) = preProject
-		LocalTestRun.testrunconfig = LocalTestRun.testrunconfig
-		System.Core-2008.vsmdi = System.Core-2008.vsmdi
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LINQIntro", "..\LINQIntro\LINQIntro.csproj", "{9C0334A8-9E1C-4581-A547-46DD4D957E76}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,12 +24,6 @@ Global
 		{F902A50D-6156-4935-A1AC-E82DF0EB83D3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F902A50D-6156-4935-A1AC-E82DF0EB83D3}.Test.NET|Any CPU.ActiveCfg = Test.NET|Any CPU
 		{F902A50D-6156-4935-A1AC-E82DF0EB83D3}.Test.NET|Any CPU.Build.0 = Test.NET|Any CPU
-		{9C0334A8-9E1C-4581-A547-46DD4D957E76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9C0334A8-9E1C-4581-A547-46DD4D957E76}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9C0334A8-9E1C-4581-A547-46DD4D957E76}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9C0334A8-9E1C-4581-A547-46DD4D957E76}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9C0334A8-9E1C-4581-A547-46DD4D957E76}.Test.NET|Any CPU.ActiveCfg = Release|Any CPU
-		{9C0334A8-9E1C-4581-A547-46DD4D957E76}.Test.NET|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
