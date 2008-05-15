@@ -1,3 +1,16 @@
+2008-05-15  Marek Habersack  <mhabersack@novell.com>
+
+	* AspComponentFoundry.cs: treat AssemblyFoundry in a special way
+	when adding a foundry to the array list. AssemblyFoundry instances
+	are stacked at the end of the array list in a LIFO manner. That
+	way TagNameFoundry takes precedence over AssemblyFoundry should
+	the two contain the same type.
+
+2008-05-14  Marek Habersack  <mhabersack@novell.com>
+
+	* ParseException.cs: location can be null in the FileText property
+	getter.
+
 2008-05-07  Marek Habersack  <mhabersack@novell.com>
 
 	* AspGenerator.cs: push the include file directory to the parser

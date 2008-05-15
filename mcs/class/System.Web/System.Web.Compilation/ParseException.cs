@@ -84,7 +84,7 @@ namespace System.Web.Compilation
 				if (fileText != null)
 					return fileText;
 
-				string text = location.FileText;
+				string text = location != null ? location.FileText : null;
 				if (text != null && text.Length > 0)
 					return text;
 				

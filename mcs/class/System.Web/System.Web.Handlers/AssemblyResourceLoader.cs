@@ -71,10 +71,16 @@ namespace System.Web.Handlers {
 				string resourceName = attrs [i].WebResource;
 				if (resourceName != null && resourceName.Length > 0) {
 #if SYSTEM_WEB_EXTENSIONS
-					hashtable.Add (new ResourceKey (resourceName, false), CreateResourceUrl (assembly, resourceName, false));
-					hashtable.Add (new ResourceKey (resourceName, true), CreateResourceUrl (assembly, resourceName, true));
+					ResourceKey rkNoNotify = new ResourceKey (resourceName, false);
+					ResourceKey rkNotify = new ResourceKey (resourceName, true);
+
+					if (!hashtable.Contains (rkNoNotify))
+						hashtable.Add (rkNoNotify, CreateResourceUrl (assembly, resourceName, false));
+					if (!hashtable.Contains (rkNotify))
+						hashtable.Add (rkNotify, CreateResourceUrl (assembly, resourceName, true));
 #else
-					hashtable.Add (resourceName, CreateResourceUrl (assembly, resourceName, false));
+					if (!hashtable.Contains (resourceName))
+						hashtable.Add (resourceName, CreateResourceUrl (assembly, resourceName, false));
 #endif
 				}
 			}

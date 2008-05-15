@@ -1,3 +1,8 @@
+2008-05-14  Marek Habersack  <mhabersack@novell.com>
+
+	* AssemblyResourceLoader.cs: do not add the same entry to a
+	hashtable twice
+
 2008-04-15  Marek Habersack  <mhabersack@novell.com>
 
 	* AssemblyResourceLoader.cs: dispose of streams the way it should

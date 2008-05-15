@@ -76,6 +76,7 @@ namespace System.Web.Compilation
 			source = null;
 			fromConfig = false;
 			object o = foundries [foundryName];
+			
 			if (o == null)
 				return null;
 
@@ -89,7 +90,7 @@ namespace System.Web.Compilation
 			if (af == null)
 				return null;
 
-			Type t;
+			Type t = null;
 			Exception e = null;
 			foreach (Foundry f in af) {
 				try {
@@ -231,8 +232,19 @@ namespace System.Web.Compilation
 				af.Add (f);
 				foundries [foundryName] = af;
 			}
-			
-			af.Insert (0, newFoundry);
+
+			if (newFoundry is AssemblyFoundry) {
+				object o;
+				for (int i = 0; i < af.Count; i++) {
+					o = af [i];
+					if (o is AssemblyFoundry) {
+						af.Insert (i, newFoundry);
+						return;
+					}
+				}
+				af.Add (newFoundry);
+			} else
+				af.Insert (0, newFoundry);
 		}
 
 		public bool LookupFoundry (string foundryName)
