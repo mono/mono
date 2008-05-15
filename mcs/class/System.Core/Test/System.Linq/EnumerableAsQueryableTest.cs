@@ -51,7 +51,6 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void NewQueryableExpression ()
 		{
 			var queryable = _array.AsQueryable ();
