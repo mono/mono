@@ -2106,7 +2106,7 @@ namespace System.Linq.Expressions {
 		//
 		internal static Type GetNullableOf (Type type)
 		{
-			return type.GetGenericArguments () [0];
+			return type.GetFirstGenericArgument ();
 		}
 
 		internal static Type GetNotNullableOf (Type type)

@@ -41,6 +41,11 @@ namespace System.Linq.Expressions {
 				ArrayTypeIsAssignableTo (self, type);
 		}
 
+		public static Type GetFirstGenericArgument (this Type self)
+		{
+			return self.GetGenericArguments () [0];
+		}
+
 		static bool ArrayTypeIsAssignableTo (Type type, Type candidate)
 		{
 			if (!type.IsArray || !candidate.IsArray)
