@@ -35,6 +35,14 @@ namespace System.Linq.Expressions {
 
 	static class Extensions {
 
+		public static bool IsGenericInstanceOf (this Type self, Type type)
+		{
+			if (!self.IsGenericType)
+				return false;
+
+			return self.GetGenericTypeDefinition () == type;
+		}
+
 		public static bool IsAssignableTo (this Type self, Type type)
 		{
 			return type.IsAssignableFrom (self) ||
@@ -44,6 +52,27 @@ namespace System.Linq.Expressions {
 		public static Type GetFirstGenericArgument (this Type self)
 		{
 			return self.GetGenericArguments () [0];
+		}
+
+		public static Type MakeGenericTypeFrom (this Type self, Type type)
+		{
+			return self.MakeGenericType (type.GetGenericArguments ());
+		}
+
+		public static MethodInfo MakeGenericMethodFrom (this MethodInfo self, MethodInfo method)
+		{
+			return self.MakeGenericMethod (method.GetGenericArguments ());
+		}
+
+		public static Type [] GetParameterTypes (this MethodBase self)
+		{
+			var parameters = self.GetParameters ();
+			var types = new Type [parameters.Length];
+
+			for (int i = 0; i < types.Length; i++)
+				types [i] = parameters [i].ParameterType;
+
+			return types;
 		}
 
 		static bool ArrayTypeIsAssignableTo (Type type, Type candidate)
