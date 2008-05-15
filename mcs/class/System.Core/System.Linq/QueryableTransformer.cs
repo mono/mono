@@ -3,8 +3,9 @@
 //
 // Authors:
 //	Roei Erez (roeie@mainsoft.com)
+//	Jb Evain (jbevain@novell.com)
 //
-// Copyright (C) 2007 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,27 +28,23 @@
 //
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Collections.ObjectModel;
 
-namespace System.Linq
-{
-	internal class QueryableTransformer : ExpressionTransformer
-	{
+namespace System.Linq {
 
-		internal QueryableTransformer () {}
+	class QueryableTransformer : ExpressionTransformer {
 
 		protected override MethodCallExpression VisitMethodCall (MethodCallExpression methodCall)
 		{
-			if ( IsQueryableExtension ( methodCall.Method ))
-			{
-				return ReplaceIQueryableMethod (methodCall);
-			}
+			if (IsQueryableExtension (methodCall.Method))
+				return ReplaceQueryableMethod (methodCall);
+
 			return base.VisitMethodCall (methodCall);
 		}
 
@@ -56,119 +53,144 @@ namespace System.Linq
 			return lambda;
 		}
 
-		bool IsQueryableExtension (MethodInfo method)
+		static bool IsQueryableExtension (MethodInfo method)
 		{
-			return	method.GetCustomAttributes(typeof(ExtensionAttribute), false).Count() > 0 &&
-					typeof(IQueryable).IsAssignableFrom( method.GetParameters () [0].ParameterType );
+			return HasExtensionAttribute (method) &&
+				method.GetParameters () [0].ParameterType.IsAssignableTo (typeof (IQueryable));
 		}
 
-		MethodCallExpression ReplaceIQueryableMethod (MethodCallExpression oldCall)
+		static bool HasExtensionAttribute (MethodInfo method)
+		{
+			return method.GetCustomAttributes (typeof (ExtensionAttribute), false).Length > 0;
+		}
+
+		MethodCallExpression ReplaceQueryableMethod (MethodCallExpression old)
 		{
 			Expression target = null;
-			if (oldCall.Object != null){
-				target = Visit (oldCall.Object);
-			}
-			MethodInfo newMethod = ReplaceIQueryableMethodInfo(oldCall.Method);
+			if (old.Object != null)
+				target = Visit (old.Object);
 
-			Expression [] args = new Expression [oldCall.Arguments.Count];
-			int counter = 0;
-			foreach (Expression e in oldCall.Arguments) {
-				Type methodParam = newMethod.GetParameters() [counter].ParameterType;
-				args [counter++] = ReplaceQuotedLambdaIfNeeded(Visit (e), methodParam);
+			var method = ReplaceQueryableMethod (old.Method);
+			var parameters = method.GetParameters ();
+			var arguments = new Expression [old.Arguments.Count];
+
+			for (int i = 0; i < arguments.Length; i++) {
+				arguments [i] = UnquoteIfNeeded (
+					Visit (old.Arguments [i]),
+					parameters [i].ParameterType);
 			}
-			ReadOnlyCollection<Expression> col = args.ToReadOnlyCollection();
-			MethodCallExpression newMethodCall = new MethodCallExpression (target, newMethod, col);
-			return newMethodCall;
+
+			return new MethodCallExpression (target, method, arguments.ToReadOnlyCollection ());
 		}
 
-		static Expression ReplaceQuotedLambdaIfNeeded (Expression e, Type delegateType)
+		static Expression UnquoteIfNeeded (Expression expression, Type delegateType)
 		{
-			UnaryExpression unary = e as UnaryExpression;
-			if (unary != null) {
-				LambdaExpression lambda = unary.Operand as LambdaExpression;
-				if (lambda != null && lambda.Type == delegateType)
-					return lambda;
-			}
-			return e;
+			if (expression.NodeType != ExpressionType.Quote)
+				return expression;
+
+			var lambda = (LambdaExpression) ((UnaryExpression) expression).Operand;
+			if (lambda.Type == delegateType)
+				return lambda;
+
+			return expression;
 		}
 
-		static MethodInfo ReplaceIQueryableMethodInfo (MethodInfo qm)
+		static Type GetTargetDeclaringType (MethodInfo method)
 		{
-			Type typeToSearch = qm.DeclaringType == typeof (Queryable) ? typeof (Enumerable) : qm.DeclaringType;
-			MethodInfo result = GetMatchingMethod (qm, typeToSearch);
-			if (result == null)
-				throw new InvalidOperationException (
-					string.Format("There is no method {0} on type {1} that matches the specified arguments",
-						qm.Name,
-						qm.DeclaringType.FullName));
-			return result;
+			return method.DeclaringType == typeof (Queryable) ? typeof (Enumerable) : method.DeclaringType;
 		}
 
-		static MethodInfo GetMatchingMethod (MethodInfo qm, Type fromType)
+		static MethodInfo ReplaceQueryableMethod (MethodInfo method)
 		{
-			MethodInfo result = (from em in fromType.GetMethods ()
-								 where Match (em, qm)
-								 select em)
-					.FirstOrDefault ();
-			if (result != null && qm.IsGenericMethod)
-				result = result.MakeGenericMethod (qm.GetGenericArguments ());
-			return result;
+			var result = GetMatchingMethod (method, GetTargetDeclaringType (method));
+
+			if (result != null)
+				return result;
+
+			throw new InvalidOperationException (
+				string.Format (
+					"There is no method {0} on type {1} that matches the specified arguments",
+					method.Name,
+					method.DeclaringType.FullName));
 		}
 
-		static bool Match (MethodInfo em, MethodInfo qm) {
+		static MethodInfo GetMatchingMethod (MethodInfo method, Type declaring)
+		{
+			foreach (var candidate in declaring.GetMethods ()) {
 
-			if (em.GetCustomAttributes (typeof (ExtensionAttribute), false).Count() == 0)
-				return false;
+				if (candidate.Name == method.Name && method.GetParameters ().Length == candidate.GetParameters ().Length) {
+					int a = 2;
+				}
 
-			if (em.Name != qm.Name)
-				return false;
+				if (!MethodMatch (candidate, method))
+					continue;
 
-			if (em.GetGenericArguments ().Length != qm.GetGenericArguments ().Length)
-				return false;
+				if (method.IsGenericMethod)
+					return candidate.MakeGenericMethodFrom (method);
 
-			Type [] parameters = (from p in qm.GetParameters () select p.ParameterType).ToArray ();
-			Type returnType = qm.ReturnType;
-
-			if (parameters.Length != em.GetParameters ().Length)
-				return false;
-
-			MethodInfo instanceMethod = em;
-			if (qm.IsGenericMethod) {
-				if (!qm.IsGenericMethod)
-					return false;
-				if (em.GetParameters ().Length != qm.GetParameters ().Length)
-					return false;
-				Type [] genArgs = qm.GetGenericArguments ();
-				instanceMethod = em.MakeGenericMethod (genArgs);
+				return candidate;
 			}
 
-			Type [] enumerableParams = (from p in instanceMethod.GetParameters () select p.ParameterType).ToArray ();
+			return null;
+		}
 
-			if (enumerableParams [0] != ConvertParameter (parameters [0]))
+		static bool MethodMatch (MethodInfo candidate, MethodInfo method)
+		{
+			if (candidate.Name != method.Name)
 				return false;
-			for (int i = 1; i < enumerableParams.Length; ++i)
-				if (!ArgumentMatch(enumerableParams [i], parameters [i]))
+
+			if (!HasExtensionAttribute (candidate))
+				return false;
+
+			if (candidate.GetGenericArguments ().Length != method.GetGenericArguments ().Length)
+				return false;
+
+			var parameters = method.GetParameterTypes ();
+
+			if (parameters.Length != candidate.GetParameters ().Length)
+				return false;
+
+			if (method.IsGenericMethod) {
+				if (!candidate.IsGenericMethod)
 					return false;
-			if (!ArgumentMatch(instanceMethod.ReturnType, returnType))
+
+				candidate = candidate.MakeGenericMethodFrom (method);
+			}
+
+			if (!TypeMatch (candidate.ReturnType, method.ReturnType))
 				return false;
+
+			var candidate_parameters = candidate.GetParameterTypes ();
+
+			if (candidate_parameters [0] != GetComparableType (parameters [0]))
+				return false;
+
+			for (int i = 1; i < candidate_parameters.Length; ++i)
+				if (!TypeMatch (candidate_parameters [i], parameters [i]))
+					return false;
+
 			return true;
 		}
 
-		static bool ArgumentMatch (Type enumerableParam, Type queryableParam)
+		static bool TypeMatch (Type candidate, Type type)
 		{
-			return enumerableParam == queryableParam || enumerableParam == ConvertParameter (queryableParam);
+			if (candidate == type)
+				return true;
+
+			return candidate == GetComparableType (type);
 		}
 
-		static Type ConvertParameter (Type type)
+		static Type GetComparableType (Type type)
 		{
-			if (type.IsGenericType && type.GetGenericTypeDefinition () == typeof (IQueryable<>))
-				type = typeof (IEnumerable<>).MakeGenericType (type.GetGenericArguments ());
-			else if (type.IsGenericType && type.GetGenericTypeDefinition () == typeof (IOrderedQueryable<>))
-				type = typeof (IOrderedEnumerable<>).MakeGenericType (type.GetGenericArguments ());
-			else if (type.IsGenericType && type.GetGenericTypeDefinition () == typeof (Expression<>))
-				type = type.GetGenericArguments () [0];
+			if (type.IsGenericInstanceOf (typeof (IQueryable<>)))
+				type = typeof (IEnumerable<>).MakeGenericTypeFrom (type);
+			else if (type.IsGenericInstanceOf (typeof (IOrderedQueryable<>)))
+				type = typeof (IOrderedEnumerable<>).MakeGenericTypeFrom (type);
+			else if (type.IsGenericInstanceOf (typeof (Expression<>)))
+				type = type.GetFirstGenericArgument ();
 			else if (type == typeof (IQueryable))
-				type = typeof (System.Collections.IEnumerable);
+				type = typeof (IEnumerable);
+
 			return type;
 		}
 	}

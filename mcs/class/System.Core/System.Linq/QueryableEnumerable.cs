@@ -3,8 +3,9 @@
 //
 // Authors:
 //	Roei Erez (roeie@mainsoft.com)
+//	Jb Evain (jbevain@novell.com)
 //
-// Copyright (C) 2007 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the

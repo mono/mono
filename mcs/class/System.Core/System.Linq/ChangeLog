@@ -1,3 +1,8 @@
+2008-05-15  Jb Evain  <jbevain@novell.com>
+
+	* QueryableTransformer.cs, QueryableEnumerable.cs: coding style plus
+	some good refactorings.
+
 2008-05-15  Roei Erez  <roeie@mainsoft.com>
 
 	* QueryableTransformer.cs: missed in the last commit.
