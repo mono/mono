@@ -13,6 +13,7 @@ REM running Test.Sys.Drawing fixture in directory Test\DrawingTest\Test
 REM with output files named GhTests.Net.xml and GhTests.GH.xml
 REM ********************************************************
 
+
 IF "%VMW_HOME%"=="" GOTO ENVIRONMENT_EXCEPTION
 
 
@@ -27,7 +28,6 @@ REM ********************************************************
 REM Set parameters
 REM ********************************************************
 
-set BUILD_OPTION=%1
 set OUTPUT_FILE_PREFIX=System_Data_DataSetExtensions
 set RUNNING_FIXTURE=System.Data.DataSetExtensions.Test
 set TEST_SOLUTION=Test\System.Data.DataSetExtensions.Test.JavaEE.csproj
@@ -123,9 +123,9 @@ REM ********************************************************
 copy Test\bin\%PROJECT_CONFIGURATION%\%TEST_ASSEMBLY% .
 copy %APP_CONFIG_FILE% nunit-console.exe.config
 
-REM @echo on
+@echo on
 "%JAVA_HOME%\bin\java" -Xmx1024M -cp %CLASSPATH% NUnit.Console.ConsoleUi %TEST_ASSEMBLY% %NUNIT_OPTIONS% /xml=%GH_OUTPUT_XML% >>%RUN_LOG% 2<&1
-REM @echo off
+@echo off
 
 REM ********************************************************
 @echo Build XmlTool
