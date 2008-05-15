@@ -391,12 +391,24 @@ namespace System.Windows.Forms
 
 		public string GetErrorText (int rowIndex)
 		{
-			return "";
+			return string.Empty;
 		}
 
 		public virtual int GetPreferredHeight (int rowIndex, DataGridViewAutoSizeRowMode autoSizeRowMode, bool fixedWidth)
 		{
-			throw new NotImplementedException();
+			DataGridViewRow row;
+			
+			if (DataGridView != null)
+				row = DataGridView.Rows.SharedRow (rowIndex);
+			else
+				row = this;
+				
+			int height = 0;
+			
+			foreach (DataGridViewCell cell in row.Cells)
+				height = Math.Max (height, cell.PreferredSize.Height);
+			
+			return height;
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
