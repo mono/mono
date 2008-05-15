@@ -226,5 +226,25 @@ namespace MonoTests.System.Linq.Expressions
 
 			Assert.IsNull (n ());
 		}
+
+		interface IBar {}
+		class Bar : IBar {}
+
+		interface IBaz<T> {}
+		class Baz<T> : IBaz<T> {}
+
+		[Test]
+		public void ConstantInterface ()
+		{
+			var c = Expression.Constant (new Bar (), typeof (IBar));
+			Assert.AreEqual (typeof (IBar), c.Type);
+		}
+
+		[Test]
+		public void ConstantGenericInterface ()
+		{
+			var c = Expression.Constant (new Baz<string> (), typeof (IBaz<string>));
+			Assert.AreEqual (typeof (IBaz<string>), c.Type);
+		}
 	}
 }
