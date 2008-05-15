@@ -192,14 +192,22 @@ namespace System.Windows.Forms {
 			
 			// A simple way to check if the control has
 			// been initialized already.
-			if (editingControl.Items.Count > 0)
+			if (editingControl.Items.Count > 0) {
+				string text = initialFormattedValue == null ? string.Empty : initialFormattedValue.ToString ();
+				editingControl.SelectedIndex = editingControl.FindString (text);
+				
 				return;
+			}
 			
 			editingControl.DropDownStyle = ComboBoxStyle.DropDownList;
-			editingControl.Text = initialFormattedValue == null ? string.Empty : initialFormattedValue.ToString ();
+			editingControl.Items.AddRange (this.Items);
+			
+			editingControl.Sorted = sorted;
+
+			string text = initialFormattedValue == null ? string.Empty : initialFormattedValue.ToString ();
+			editingControl.SelectedIndex = editingControl.FindString (text);
+
 			editingControl.SelectedIndexChanged += new EventHandler (editingControl_SelectedIndexChanged);
-			editingControl.Items.Clear ();
-			editingControl.Items.AddRange (this.Items);		
 		}
 
 		void editingControl_SelectedIndexChanged (object sender, EventArgs e)
@@ -207,20 +215,51 @@ namespace System.Windows.Forms {
 			Value = editingControl.SelectedItem;
 		}
 
-		public override bool KeyEntersEditMode (KeyEventArgs e) {
-			throw new NotImplementedException();
+		public override bool KeyEntersEditMode (KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.Space)
+				return true;
+			if ((int)e.KeyCode >= 48 && (int)e.KeyCode <= 90)
+				return true;
+			if ((int)e.KeyCode >= 96 && (int)e.KeyCode <= 111)
+				return true;
+			if (e.KeyCode == Keys.BrowserSearch || e.KeyCode == Keys.SelectMedia)
+				return true;
+			if ((int)e.KeyCode >= 186 && (int)e.KeyCode <= 229)
+				return true;
+			if (e.KeyCode == Keys.Attn || e.KeyCode == Keys.Packet)
+				return true;
+			if ((int)e.KeyCode >= 248 && (int)e.KeyCode <= 254)
+				return true;
+			if (e.KeyCode == Keys.F4)
+				return true;
+			if ((e.Modifiers == Keys.Alt) && (e.KeyCode == Keys.Down || e.KeyCode == Keys.Up))
+				return true;
+
+			return false;
 		}
 
-		public override object ParseFormattedValue (object formattedValue, DataGridViewCellStyle cellStyle, TypeConverter formattedValueTypeConverter, TypeConverter valueTypeConverter) {
-			throw new NotImplementedException();
+		public override object ParseFormattedValue (object formattedValue, DataGridViewCellStyle cellStyle, TypeConverter formattedValueTypeConverter, TypeConverter valueTypeConverter)
+		{
+			return base.ParseFormattedValue (formattedValue, cellStyle, formattedValueTypeConverter, valueTypeConverter);
 		}
 
 		public override string ToString () {
 			return string.Format ("DataGridViewComboBoxCell {{ ColumnIndex={0}, RowIndex={1} }}", ColumnIndex, RowIndex);
 		}
 
-		protected override Rectangle GetContentBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex) {
-			throw new NotImplementedException();
+		protected override Rectangle GetContentBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex)
+		{
+			if (DataGridView == null)
+				return Rectangle.Empty;
+
+			object o = FormattedValue;
+			Size s = Size.Empty;
+
+			if (o != null)
+				s = DataGridViewCell.MeasureTextSize (graphics, o.ToString (), cellStyle.Font, TextFormatFlags.Default);
+
+			return new Rectangle (1, (OwningRow.Height - s.Height) / 2, s.Width - 3, s.Height);
 		}
 
 		protected override Rectangle GetErrorIconBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex)
@@ -232,12 +271,22 @@ namespace System.Windows.Forms {
 			return new Rectangle (new Point (Size.Width - error_icon.Width - 23, (Size.Height - error_icon.Height) / 2), error_icon);
 		}
 
-		protected override object GetFormattedValue (object value, int rowIndex, ref DataGridViewCellStyle cellStyle, TypeConverter valueTypeConverter, TypeConverter formattedValueTypeConverter, DataGridViewDataErrorContexts context) {
-			throw new NotImplementedException();
+		protected override object GetFormattedValue (object value, int rowIndex, ref DataGridViewCellStyle cellStyle, TypeConverter valueTypeConverter, TypeConverter formattedValueTypeConverter, DataGridViewDataErrorContexts context)
+		{
+			return base.GetFormattedValue (value, rowIndex, ref cellStyle, valueTypeConverter, formattedValueTypeConverter, context);
 		}
 
-		protected override Size GetPreferredSize (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex, Size constraintSize) {
-			throw new NotImplementedException();
+		protected override Size GetPreferredSize (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex, Size constraintSize)
+		{
+			object o = FormattedValue;
+
+			if (o != null) {
+				Size s = DataGridViewCell.MeasureTextSize (graphics, o.ToString (), cellStyle.Font, TextFormatFlags.Default);
+				s.Height = Math.Max (s.Height, 22);
+				s.Width += 25;
+				return s;
+			} else
+				return new Size (39, 22);
 		}
 
 		protected override void OnDataGridViewChanged () {
@@ -270,29 +319,33 @@ namespace System.Windows.Forms {
 			base.OnMouseMove (e);
 		}
 
-		protected override void Paint (Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, 
-				int rowIndex, DataGridViewElementStates elementState, object value, 
-				object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, 
-				DataGridViewPaintParts paintParts) {
-			
-			
-			Rectangle button_area, text_area;
-			text_area = cellBounds;
-			button_area = CalculateButtonArea (cellBounds);
-			
-			graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (cellStyle.BackColor), cellBounds);
-			ThemeEngine.Current.CPDrawComboButton (graphics, button_area, ButtonState.Normal);
-			
-			string text;
-			if (formattedValue == null)
-				text = string.Empty;
-			else {
-				text = formattedValue.ToString ();
-			}
-			
-			graphics.DrawString (text, cellStyle.Font, ThemeEngine.Current.ResPool.GetSolidBrush (cellStyle.ForeColor), text_area, StringFormat.GenericTypographic);
+		protected override void Paint (Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates elementState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts)
+		{
+			// The internal paint routines are overridden instead of
+			// doing the custom paint logic here
+			base.Paint (graphics, clipBounds, cellBounds, rowIndex, elementState, value, formattedValue, errorText, cellStyle, advancedBorderStyle, paintParts);
 		}
 
+		internal override void PaintPartContent (Graphics graphics, Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState, DataGridViewCellStyle cellStyle, object formattedValue)
+		{
+			Color color = Selected ? cellStyle.SelectionForeColor : cellStyle.ForeColor;
+			TextFormatFlags flags = TextFormatFlags.EndEllipsis | TextFormatFlags.VerticalCenter | TextFormatFlags.TextBoxControl;
+	
+			Rectangle text_area = ContentBounds;
+			text_area.X += cellBounds.X;
+			text_area.Y += cellBounds.Y;
+
+			Rectangle button_area = CalculateButtonArea (cellBounds);
+
+			// The background of the dropdown button should be gray, not
+			// the background color of the cell.
+			graphics.FillRectangle (SystemBrushes.Control, button_area);
+			ThemeEngine.Current.CPDrawComboButton (graphics, button_area, ButtonState.Normal);
+
+			if (formattedValue != null)
+				TextRenderer.DrawText (graphics, formattedValue.ToString (), cellStyle.Font, text_area, color, flags);
+		}
+		
 		private Rectangle CalculateButtonArea (Rectangle cellBounds)
 		{
 			Rectangle button_area, text_area;
