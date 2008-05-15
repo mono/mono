@@ -50,38 +50,30 @@ namespace MonoTests.System.Linq {
 			_src = _array.AsQueryable<int> ();
 		}
 
-#if TARGET_JVM //TODO: gmcs fails, bug #390666
 		[Test]
-		public void Aggregate () 
+		public void Aggregate ()
 		{
 		    Assert.AreEqual (_src.Aggregate<int> ((n, m) => n + m), _array.Aggregate<int> ((n, m) => n + m));
 		}
-#endif
 
-#if TARGET_JVM //TODO: gmcs fails, bug #390666
 		[Test]
 		public void All ()
 		{
 		    Assert.AreEqual (_src.All<int> ((n) => n < 11), _array.All<int> ((n) => n < 11));
 		    Assert.AreEqual (_src.All<int> ((n) => n < 10), _array.All<int> ((n) => n < 10));
 		}
-#endif
 
-#if TARGET_JVM //TODO: gmcs fails, bug #390666
 		[Test]
 		public void Any ()
 		{
 			Assert.AreEqual (_src.Any<int> (i => i > 5), _array.Any<int> (i => i > 5));
 		}
-#endif
 
-#if TARGET_JVM //TODO: gmcs fails, bug #390666
 		[Test]
 		public void Average ()
 		{
 			Assert.AreEqual (_src.Average<int> ((n) => 11), _array.Average<int> ((n) => 11));
-		}		
-#endif
+		}
 
 		[Test]
 		public void Concat ()
@@ -103,7 +95,6 @@ namespace MonoTests.System.Linq {
 			Assert.AreEqual (_src.Count<int> (), _array.Count<int> ());
 		}
 
-
 		[Test]
 		public void Distinct ()
 		{
@@ -115,7 +106,7 @@ namespace MonoTests.System.Linq {
 		public void ElementAt ()
 		{
 			for (int i = 0; i < 10; ++i)
-				Assert.AreEqual (_src.ElementAt<int> (i), _array.ElementAt<int> (i));			
+				Assert.AreEqual (_src.ElementAt<int> (i), _array.ElementAt<int> (i));
 		}
 
 		[Test]
@@ -139,29 +130,24 @@ namespace MonoTests.System.Linq {
 			Assert.AreEqual (_src.First<int> (), _array.First<int> ());
 		}
 
-#if TARGET_JVM //TODO: gmcs fails, bug #390666
 		[Test]
 		public void FirstOrDefault ()
 		{
 			Assert.AreEqual (_src.FirstOrDefault<int> ((n) => n > 5), _array.FirstOrDefault<int> ((n) => n > 5));
 			Assert.AreEqual (_src.FirstOrDefault<int> ((n) => n > 10), _array.FirstOrDefault<int> ((n) => n > 10));
 		}
-#endif
 
-#if TARGET_JVM //TODO: gmcs fails, bug #390666
 		[Test]
 		public void GroupBy ()
 		{
 			IQueryable<IGrouping<bool, int>> grouping = _src.GroupBy<int, bool> ((n) => n > 5);
 			Assert.AreEqual (grouping.Count(), 2);
-			foreach (IGrouping<bool, int> group in grouping) 
+			foreach (IGrouping<bool, int> group in grouping)
 			{
-				Assert.AreEqual(group.Count(), 5);				
+				Assert.AreEqual(group.Count(), 5);
 			}
 		}
-#endif
 
-#if TARGET_JVM //TODO: gmcs fails, bug #390666
 		[Test]
 		public void Intersect ()
 		{
@@ -169,26 +155,23 @@ namespace MonoTests.System.Linq {
 			int[] intersection = _src.Intersect<int> (subset.AsQueryable()).ToArray();
 			Assert.AreEqual (subset, intersection);
 		}
-#endif
 
-#if TARGET_JVM //TODO: gmcs fails, bug #390666
 		[Test]
 		public void Last ()
 		{
-			Assert.AreEqual (_src.Last<int> ((n) => n > 1), _array.Last<int> ((n) => n > 1));			
+			Assert.AreEqual (_src.Last<int> ((n) => n > 1), _array.Last<int> ((n) => n > 1));
 		}
-#endif
 
 		[Test]
 		public void LastOrDefault ()
 		{
-			Assert.AreEqual (_src.LastOrDefault<int> (), _array.LastOrDefault<int> ());			
+			Assert.AreEqual (_src.LastOrDefault<int> (), _array.LastOrDefault<int> ());
 		}
 
 		[Test]
 		public void LongCount ()
 		{
-			Assert.AreEqual (_src.LongCount<int> (), _array.LongCount<int> ());			
+			Assert.AreEqual (_src.LongCount<int> (), _array.LongCount<int> ());
 		}
 
 		[Test]
@@ -200,26 +183,23 @@ namespace MonoTests.System.Linq {
 		[Test]
 		public void Min ()
 		{
-			Assert.AreEqual (_src.Min<int> (), _array.Min<int> ());			
+			Assert.AreEqual (_src.Min<int> (), _array.Min<int> ());
 		}
 
 		[Test]
 		public void OfType ()
 		{
-			Assert.AreEqual (_src.OfType<int> ().Count (), _array.OfType<int> ().Count ());			
+			Assert.AreEqual (_src.OfType<int> ().Count (), _array.OfType<int> ().Count ());
 		}
 
-#if TARGET_JVM //TODO: gmcs fails, bug #390666
 		[Test]
-		public void OrderBy () 
+		public void OrderBy ()
 		{
 			int [] arr1 = _array.OrderBy<int, int> ((n) => n * -1).ToArray ();
 			int [] arr2 = _src.OrderBy<int, int> ((n) => n * -1).ToArray ();
 			Assert.AreEqual (arr1, arr2);
 		}
-#endif
 
-#if TARGET_JVM //TODO: gmcs fails, bug #390666
 		[Test]
 		public void OrderByDescending ()
 		{
@@ -227,7 +207,6 @@ namespace MonoTests.System.Linq {
 			int [] arr2 = _src.OrderBy<int, int> ((n) => n).ToArray ();
 			Assert.AreEqual (arr1, arr2);
 		}
-#endif
 
 		[Test]
 		public void Reverse ()
@@ -237,75 +216,63 @@ namespace MonoTests.System.Linq {
 			Assert.AreEqual (arr1, arr2);
 		}
 
-#if TARGET_JVM //TODO: gmcs fails, bug #390666
 		[Test]
 		public void Select ()
 		{
 			int [] arr1 = _array.Select<int, int> ((n) => n - 1).ToArray ();
 			int [] arr2 = _src.Select<int, int> ((n) => n - 1).ToArray ();
-			Assert.AreEqual (arr1, arr2);		
+			Assert.AreEqual (arr1, arr2);
 		}
-#endif
 
-#if TARGET_JVM //TODO: gmcs fails, bug #390666
 		[Test]
 		public void SelectMany ()
 		{
 			int [] arr1 = _array.SelectMany<int, int> ((n) => new int [] { n, n, n }).ToArray ();
 			int [] arr2 = _src.SelectMany<int, int> ((n) => new int [] { n, n, n }).ToArray ();
-			Assert.AreEqual (arr1, arr2);			
+			Assert.AreEqual (arr1, arr2);
 		}
-#endif
 
 		[Test]
 		public void SequenceEqual ()
 		{
-			Assert.IsTrue (_src.SequenceEqual<int> (_src));			
+			Assert.IsTrue (_src.SequenceEqual<int> (_src));
 		}
 
-#if TARGET_JVM //TODO: gmcs fails, bug #390666
 		[Test]
 		public void Single ()
 		{
-			Assert.AreEqual (_src.Single (n => n == 10), 10);			
+			Assert.AreEqual (_src.Single (n => n == 10), 10);
 		}
-#endif
 
-#if TARGET_JVM //TODO: gmcs fails, bug #390666
 		[Test]
 		public void SingleOrDefault ()
 		{
 			Assert.AreEqual (_src.SingleOrDefault (n => n == 10), 10);
 			Assert.AreEqual (_src.SingleOrDefault (n => n == 11), 0);
 		}
-#endif
 
 		[Test]
 		public void Skip ()
 		{
 			int [] arr1 = _array.Skip<int> (5).ToArray ();
 			int [] arr2 = _src.Skip<int> (5).ToArray ();
-			Assert.AreEqual (arr1, arr2);			
+			Assert.AreEqual (arr1, arr2);
 		}
 
-#if TARGET_JVM //TODO: gmcs fails, bug #390666
 		[Test]
 		public void SkipWhile ()
 		{
 			int[] arr1 = _src.SkipWhile<int> ((n) => n < 6).ToArray();
 			int[] arr2 = _src.Skip<int> (5).ToArray();
-			Assert.AreEqual (arr1, arr2);			
+			Assert.AreEqual (arr1, arr2);
 		}
-#endif
 
-#if TARGET_JVM //TODO: gmcs fails, bug #390666
 		[Test]
 		public void Sum ()
 		{
 			Assert.AreEqual (_src.Sum<int> ((n) => n), _array.Sum<int> ((n) => n));
-			Assert.AreEqual (_src.Sum<int> ((n) => n + 1), _array.Sum<int> ((n) => n + 1));	
+			Assert.AreEqual (_src.Sum<int> ((n) => n + 1), _array.Sum<int> ((n) => n + 1));
 		}
-#endif
 
 		[Test]
 		public void Take ()
@@ -315,15 +282,13 @@ namespace MonoTests.System.Linq {
 			Assert.AreEqual (arr1, arr2);
 		}
 
-#if TARGET_JVM //TODO: gmcs fails, bug #390666
 		[Test]
-		public void TakeWhile () 
+		public void TakeWhile ()
 		{
 			int [] arr1 = _array.TakeWhile<int> (n => n < 6).ToArray ();
 			int [] arr2 = _src.TakeWhile<int> (n => n < 6).ToArray ();
 			Assert.AreEqual (arr1, arr2);
 		}
-#endif
 
 		[Test]
 		public void Union ()
@@ -336,7 +301,6 @@ namespace MonoTests.System.Linq {
 			Assert.AreEqual (_src.Union (arr).ToArray (), _array.Union (arr).ToArray ());
 		}
 
-#if TARGET_JVM //TODO: gmcs fails, bug #390666
 		[Test]
 		public void Where ()
 		{
@@ -344,12 +308,11 @@ namespace MonoTests.System.Linq {
 			int [] oddArray2 = _src.Where<int> ((n) => (n % 2) == 1).ToArray ();
 			Assert.AreEqual (oddArray1, oddArray2);
 		}
-#endif
 
 		[Test]
 		public void UserExtensionMethod ()
 		{
-			BindingFlags extensionFlags = BindingFlags.Static | BindingFlags.Public;			
+			BindingFlags extensionFlags = BindingFlags.Static | BindingFlags.Public;
 			MethodInfo method = (from m in typeof (Ext).GetMethods (extensionFlags)
 								 where (m.Name == "UserQueryableExt1" && m.GetParameters () [0].ParameterType.GetGenericTypeDefinition () == typeof (IQueryable<>))
 								 select m).FirstOrDefault ().MakeGenericMethod (typeof (int));
@@ -381,7 +344,7 @@ namespace MonoTests.System.Linq {
 			_src.Provider.Execute (e);
 		}
 
-		[Test]		
+		[Test]
 		public void NonGenericMethod () {
 			BindingFlags extensionFlags = BindingFlags.Static | BindingFlags.Public;
 			MethodInfo method = (from m in typeof (Ext).GetMethods (extensionFlags)
@@ -405,21 +368,21 @@ namespace MonoTests.System.Linq {
 		}
 	}
 
-	class CustomEqualityComparer : IEqualityComparer<int> {		
+	class CustomEqualityComparer : IEqualityComparer<int> {
 
 		public bool Equals (int x, int y)
 		{
-			return true;			
+			return true;
 		}
 
 		public int GetHashCode (int obj)
 		{
 			return 0;
-		}		
+		}
 	}
 
 	public static class Ext {
-		
+
 		public static string UserQueryableExt1<T> (this IQueryable<T> e, Expression<Func<int, int>> ex)
 		{
 			return "UserQueryableExt1";
@@ -445,22 +408,22 @@ namespace MonoTests.System.Linq {
 			return "UserEnumerableExt2";
 		}
 
-		public static string NonGenericMethod (this IQueryable<int> iq) 
+		public static string NonGenericMethod (this IQueryable<int> iq)
 		{
 			return "QueryableNonGenericMethod";
 		}
 
-		public static string NonGenericMethod (this IEnumerable<int> iq) 
+		public static string NonGenericMethod (this IEnumerable<int> iq)
 		{
 			return "EnumerableNonGenericMethod";
 		}
 
-		public static string InstantiatedGenericMethod<T> (this IQueryable<int> iq, T t) 
+		public static string InstantiatedGenericMethod<T> (this IQueryable<int> iq, T t)
 		{
 			return "QueryableInstantiatedGenericMethod";
 		}
 
-		public static string InstantiatedGenericMethod (this IEnumerable<int> ie, int t) 
+		public static string InstantiatedGenericMethod (this IEnumerable<int> ie, int t)
 		{
 			return "EnumerableInstantiatedGenericMethod";
 		}
