@@ -105,7 +105,7 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual ("(value(MonoTests.System.Linq.Expressions.OpClass) + value(MonoTests.System.Linq.Expressions.OpClass))",
 				expr.ToString(), "Add#13");
 
-			Expression<Func<OpClass>> l = Expression.Lambda<Func<OpClass>> (expr);
+			Expression.Lambda<Func<OpClass>> (expr);
 
 #if false
 

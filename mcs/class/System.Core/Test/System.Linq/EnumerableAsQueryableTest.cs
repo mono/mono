@@ -363,7 +363,7 @@ namespace MonoTests.System.Linq {
 			MethodInfo method = (from m in typeof (Ext).GetMethods (extensionFlags)
 								 where (m.Name == "NonGenericMethod" && m.GetParameters () [0].ParameterType.GetGenericTypeDefinition () == typeof (IQueryable<>))
 								 select m).FirstOrDefault ();
-			Expression<Func<int, int>> exp = i => i;
+
 			Expression e = Expression.Call (method, _src.Expression);
 			Assert.AreEqual (_src.Provider.Execute (e), "EnumerableNonGenericMethod", "NonGenericMethod");
 		}
@@ -375,7 +375,7 @@ namespace MonoTests.System.Linq {
 			MethodInfo method = (from m in typeof (Ext).GetMethods (extensionFlags)
 								 where (m.Name == "InstantiatedGenericMethod" && m.GetParameters () [0].ParameterType.GetGenericTypeDefinition () == typeof (IQueryable<>))
 								 select m).FirstOrDefault ().MakeGenericMethod (typeof (int));
-			Expression<Func<int, int>> exp = i => i;
+
 			Expression e = Expression.Call (method, _src.Expression, Expression.Constant(0));
 			_src.Provider.Execute (e);
 		}

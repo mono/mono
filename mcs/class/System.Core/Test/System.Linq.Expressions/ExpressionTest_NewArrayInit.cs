@@ -123,7 +123,7 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		struct Bar {
-			int bar;
+			public int bar;
 			public Bar (int b) { bar = b; }
 		}
 

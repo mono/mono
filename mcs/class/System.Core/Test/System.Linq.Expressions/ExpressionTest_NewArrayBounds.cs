@@ -87,7 +87,7 @@ namespace MonoTests.System.Linq.Expressions {
 		[Test]
 		public void TestArrayAssignability ()
 		{
-			var l = Expression.Lambda<Func<int []>> (
+			Expression.Lambda<Func<int []>> (
 				Expression.NewArrayBounds (
 					typeof (int),
 					4.ToConstant ()));
