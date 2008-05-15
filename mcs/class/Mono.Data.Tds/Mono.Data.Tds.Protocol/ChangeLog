@@ -1,3 +1,8 @@
+2008-05-15  Marek Habersack  <mhabersack@novell.com>
+
+	* Tds.cs: deal with null columns when getting value for a Numeric
+	or Decimal columns.
+
 2008-05-05  Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
 
 	* Tds.cs: a numeric column with no decimal digits and a precision <= 80
