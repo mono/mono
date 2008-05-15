@@ -352,7 +352,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CompileNotNullableToNullable ()
 		{
 			var p = Expression.Parameter (typeof (int), "i");
@@ -364,7 +363,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CompileNullableToNotNullable ()
 		{
 			var p = Expression.Parameter (typeof (int?), "i");
