@@ -38,12 +38,12 @@ using System.Collections.ObjectModel;
 namespace System.Linq
 {
 	internal class QueryableTransformer : ExpressionTransformer
-	{		
+	{
 
 		internal QueryableTransformer () {}
-		
-		protected override MethodCallExpression VisitMethodCall (MethodCallExpression methodCall) 
-		{			
+
+		protected override MethodCallExpression VisitMethodCall (MethodCallExpression methodCall)
+		{
 			if ( IsQueryableExtension ( methodCall.Method ))
 			{
 				return ReplaceIQueryableMethod (methodCall);
@@ -51,29 +51,29 @@ namespace System.Linq
 			return base.VisitMethodCall (methodCall);
 		}
 
-		protected override LambdaExpression VisitLambda (LambdaExpression lambda) 
+		protected override LambdaExpression VisitLambda (LambdaExpression lambda)
 		{
 			return lambda;
-		}			
+		}
 
-		bool IsQueryableExtension (MethodInfo method) 
+		bool IsQueryableExtension (MethodInfo method)
 		{
-			return	method.GetCustomAttributes(typeof(ExtensionAttribute), false).Count() > 0 &&					
+			return	method.GetCustomAttributes(typeof(ExtensionAttribute), false).Count() > 0 &&
 					typeof(IQueryable).IsAssignableFrom( method.GetParameters () [0].ParameterType );
 		}
 
 		MethodCallExpression ReplaceIQueryableMethod (MethodCallExpression oldCall)
-		{			
+		{
 			Expression target = null;
 			if (oldCall.Object != null){
 				target = Visit (oldCall.Object);
-			}			
+			}
 			MethodInfo newMethod = ReplaceIQueryableMethodInfo(oldCall.Method);
 
 			Expression [] args = new Expression [oldCall.Arguments.Count];
 			int counter = 0;
-			foreach (Expression e in oldCall.Arguments) {				
-				Type methodParam = newMethod.GetParameters() [counter].ParameterType;				
+			foreach (Expression e in oldCall.Arguments) {
+				Type methodParam = newMethod.GetParameters() [counter].ParameterType;
 				args [counter++] = ReplaceQuotedLambdaIfNeeded(Visit (e), methodParam);
 			}
 			ReadOnlyCollection<Expression> col = args.ToReadOnlyCollection();
@@ -92,14 +92,14 @@ namespace System.Linq
 			return e;
 		}
 
-		static MethodInfo ReplaceIQueryableMethodInfo (MethodInfo qm) 
+		static MethodInfo ReplaceIQueryableMethodInfo (MethodInfo qm)
 		{
 			Type typeToSearch = qm.DeclaringType == typeof (Queryable) ? typeof (Enumerable) : qm.DeclaringType;
-			MethodInfo result = GetMatchingMethod (qm, typeToSearch);			
+			MethodInfo result = GetMatchingMethod (qm, typeToSearch);
 			if (result == null)
 				throw new InvalidOperationException (
-					string.Format("There is no method {0} on type {1} that matches the specified arguments", 
-						qm.Name, 
+					string.Format("There is no method {0} on type {1} that matches the specified arguments",
+						qm.Name,
 						qm.DeclaringType.FullName));
 			return result;
 		}
@@ -121,14 +121,14 @@ namespace System.Linq
 				return false;
 
 			if (em.Name != qm.Name)
-				return false;			
+				return false;
 
 			if (em.GetGenericArguments ().Length != qm.GetGenericArguments ().Length)
-				return false;			
+				return false;
 
 			Type [] parameters = (from p in qm.GetParameters () select p.ParameterType).ToArray ();
 			Type returnType = qm.ReturnType;
-			
+
 			if (parameters.Length != em.GetParameters ().Length)
 				return false;
 
@@ -159,7 +159,7 @@ namespace System.Linq
 			return enumerableParam == queryableParam || enumerableParam == ConvertParameter (queryableParam);
 		}
 
-		static Type ConvertParameter (Type type) 
+		static Type ConvertParameter (Type type)
 		{
 			if (type.IsGenericType && type.GetGenericTypeDefinition () == typeof (IQueryable<>))
 				type = typeof (IEnumerable<>).MakeGenericType (type.GetGenericArguments ());
@@ -170,6 +170,6 @@ namespace System.Linq
 			else if (type == typeof (IQueryable))
 				type = typeof (System.Collections.IEnumerable);
 			return type;
-		}		
+		}
 	}
 }

@@ -137,14 +137,14 @@ namespace System.Linq {
 
 		#region AsQueryable
 
-		[MonoTODO]
 		public static IQueryable<TElement> AsQueryable<TElement> (this IEnumerable<TElement> source)
 		{
 			var queryable = source as IQueryable<TElement>;
 			if (queryable != null)
 				return queryable;
 
-			return new QueryableEnumerable<TElement> (new ConstantExpression (source, typeof (IQueryable<TElement>)));
+			return new QueryableEnumerable<TElement> (
+				Expression.Constant (source, typeof (IQueryable<TElement>)));
 		}
 
 		[MonoTODO]

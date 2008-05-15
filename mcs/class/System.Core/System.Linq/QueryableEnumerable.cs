@@ -27,20 +27,16 @@
 //
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Linq.Expressions;
 
-namespace System.Linq
-{
-	internal class QueryableEnumerable<TElement> : IQueryable<TElement>, IQueryProvider, IOrderedQueryable<TElement>
-	{		
-		Expression expression;
+namespace System.Linq {
 
-		public QueryableEnumerable (Expression expression) {
-			this.expression = expression;
-		}
+	class QueryableEnumerable<TElement> : IQueryable<TElement>, IQueryProvider, IOrderedQueryable<TElement> {
+
+		Expression expression;
 
 		public Type ElementType {
 			get { return expression.Type; }
@@ -54,41 +50,48 @@ namespace System.Linq
 			get { return this; }
 		}
 
-		public System.Collections.IEnumerator GetEnumerator () 
-		{			
-			return ((IEnumerable<TElement>)this).GetEnumerator ();
-		}
-
-		IEnumerator<TElement> IEnumerable<TElement>.GetEnumerator () 
+		public QueryableEnumerable (Expression expression)
 		{
-			return Execute<IEnumerable<TElement>> (Expression).GetEnumerator ();
+			this.expression = expression;
 		}
 
-		public IQueryable CreateQuery (System.Linq.Expressions.Expression expression) 
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			return GetEnumerator ();
+		}
+
+		public IEnumerator<TElement> GetEnumerator ()
+		{
+			return Execute<IEnumerable<TElement>> (expression).GetEnumerator ();
+		}
+
+		public IQueryable CreateQuery (Expression expression)
 		{
 			return (IQueryable) Activator.CreateInstance (
-				typeof (QueryableEnumerable<>).MakeGenericType (expression.Type.GetGenericArguments()[0]), expression);			
+				typeof (QueryableEnumerable<>).MakeGenericType (
+					expression.Type.GetFirstGenericArgument ()), expression);
 		}
 
-		public object Execute (System.Linq.Expressions.Expression expression) 
+		public object Execute (Expression expression)
 		{
-			QueryableTransformer visitor = new QueryableTransformer ();
-			Expression body = visitor.Transform (expression);
-			LambdaExpression lambda = Expression.Lambda (body);			
-			return lambda.Compile ().DynamicInvoke();
+			var lambda = Expression.Lambda (TransformQueryable (expression));
+			return lambda.Compile ().DynamicInvoke ();
 		}
 
-		public IQueryable<TElem> CreateQuery<TElem> (System.Linq.Expressions.Expression expression) 
+		static Expression TransformQueryable (Expression expression)
+		{
+			return new QueryableTransformer ().Transform (expression);
+		}
+
+		public IQueryable<TElem> CreateQuery<TElem> (Expression expression)
 		{
 			return new QueryableEnumerable<TElem> (expression);
 		}
 
-		public TResult Execute<TResult> (System.Linq.Expressions.Expression expression) 
+		public TResult Execute<TResult> (Expression expression)
 		{
-			QueryableTransformer visitor = new QueryableTransformer ();
-			Expression body = visitor.Transform (expression);
-			Expression<Func<TResult>> lambda = Expression.Lambda<Func<TResult>> (body);
-			return lambda.Compile () ();
+			var lambda = Expression.Lambda<Func<TResult>> (TransformQueryable (expression));
+			return lambda.Compile ().Invoke ();
 		}
 	}
 }
