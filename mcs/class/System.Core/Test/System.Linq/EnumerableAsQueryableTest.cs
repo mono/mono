@@ -51,6 +51,19 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
+		public void NewQueryableExpression ()
+		{
+			var queryable = _array.AsQueryable ();
+			var expression = queryable.Expression;
+
+			Assert.AreEqual (ExpressionType.Constant, expression.NodeType);
+
+			var constant = (ConstantExpression) expression;
+
+			Assert.AreEqual (queryable, constant.Value);
+		}
+
+		[Test]
 		public void Aggregate ()
 		{
 		    Assert.AreEqual (_src.Aggregate<int> ((n, m) => n + m), _array.Aggregate<int> ((n, m) => n + m));
