@@ -122,7 +122,7 @@ namespace System.Linq
 		{
 			switch (binding.BindingType) {
 			case MemberBindingType.Assignment:
-				return VisitMemberAssignment ((MemberAssignment) binding);				
+				return VisitMemberAssignment ((MemberAssignment) binding);
 			case MemberBindingType.MemberBinding:
 				return VisitMemberMemberBinding ((MemberMemberBinding) binding);
 			case MemberBindingType.ListBinding:
@@ -201,11 +201,11 @@ namespace System.Linq
 			if (instance != methodCall.Object || args != methodCall.Arguments)
 				return Expression.Call (instance, methodCall.Method, args);
 			return methodCall;
-		}		
+		}
 
 		protected virtual ReadOnlyCollection<Expression> VisitExpressionList (ReadOnlyCollection<Expression> list)
 		{
-			return VisitList<Expression> (list, Visit);		
+			return VisitList<Expression> (list, Visit);
 		}
 
 		private ReadOnlyCollection<T> VisitList<T> (ReadOnlyCollection<T> list, Func<T,T> selector) where T :class
@@ -244,7 +244,7 @@ namespace System.Linq
 
 		protected virtual MemberListBinding VisitMemberListBinding (MemberListBinding binding)
 		{
-			ReadOnlyCollection<ElementInit> initializers = 
+			ReadOnlyCollection<ElementInit> initializers =
 				VisitElementInitializerList (binding.Initializers);
 			if (initializers != binding.Initializers)
 				return Expression.ListBind (binding.Member, initializers);
@@ -264,7 +264,7 @@ namespace System.Linq
 		protected virtual LambdaExpression VisitLambda (LambdaExpression lambda)
 		{
 			Expression body = Visit (lambda.Body);
-			ReadOnlyCollection<ParameterExpression> parameters = 
+			ReadOnlyCollection<ParameterExpression> parameters =
 				VisitList<ParameterExpression> (lambda.Parameters, VisitParameter);
 			if (body != lambda.Body || parameters != lambda.Parameters)
 				return Expression.Lambda (body, parameters.ToArray());
