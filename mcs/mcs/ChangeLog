@@ -1,5 +1,11 @@
 2008-05-15  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #390666
+	* ecore.cs (BetterExpressionConversion): Unwrap each Expression<T>
+	expressions.
+
+2008-05-15  Marek Safar  <marek.safar@gmail.com>
+
 	* class.cs, expression.cs, statement.cs: Removed a hack, setting block flag
 	in getter.
 

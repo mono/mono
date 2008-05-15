@@ -3407,8 +3407,11 @@ namespace Mono.CSharp {
 				//
 				if (TypeManager.DropGenericTypeArguments (p) == TypeManager.expression_type) {
 					p = TypeManager.GetTypeArguments (p) [0];
+				}
+				if (TypeManager.DropGenericTypeArguments (q) == TypeManager.expression_type) {
 					q = TypeManager.GetTypeArguments (q) [0];
 				}
+				
 				p = Delegate.GetInvokeMethod (null, p).ReturnType;
 				q = Delegate.GetInvokeMethod (null, q).ReturnType;
 			} else {
