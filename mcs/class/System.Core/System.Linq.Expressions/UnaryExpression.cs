@@ -112,15 +112,38 @@ namespace System.Linq.Expressions {
 			var from = operand.Type;
 			var target = Type;
 
-			if (from == target)
+			if (from == target) {
+				operand.Emit (ec);
 				return;
+			}
 
-			if (IsReferenceConversion (from, target))
+			if (IsNullable (from) && !IsNullable (target))
+				EmitConvertFromNullable (ec);
+			else if (!IsNullable (from) && IsNullable (target))
+				EmitConvertToNullable (ec);
+			else if (IsReferenceConversion (from, target))
 				EmitCast (ec);
 			else if (IsPrimitiveConversion (from, target))
 				EmitPrimitiveConversion (ec);
 			else
 				throw new NotImplementedException ();
+		}
+
+		static Type MakeNullableType (Type type)
+		{
+			return typeof (Nullable<>).MakeGenericType (type);
+		}
+
+		void EmitConvertToNullable (EmitContext ec)
+		{
+			ec.Emit (operand);
+			ec.ig.Emit (OpCodes.Newobj,
+				MakeNullableType (operand.Type).GetConstructor (new [] { operand.Type }));
+		}
+
+		void EmitConvertFromNullable (EmitContext ec)
+		{
+			ec.EmitCall (operand, operand.Type.GetMethod ("get_Value"));
 		}
 
 		bool IsBoxing ()
@@ -137,6 +160,8 @@ namespace System.Linq.Expressions {
 		{
 			var ig = ec.ig;
 
+			operand.Emit (ec);
+
 			if (IsBoxing ()) {
 				ig.Emit (OpCodes.Box, operand.Type);
 			} else if (IsUnBoxing ()) {
@@ -148,6 +173,8 @@ namespace System.Linq.Expressions {
 		void EmitPrimitiveConversion (EmitContext ec,
 			OpCode signed, OpCode unsigned, OpCode signed_checked, OpCode unsigned_checked)
 		{
+			operand.Emit (ec);
+
 			bool is_unsigned = IsUnsigned (operand.Type);
 
 			if (this.NodeType != ExpressionType.ConvertChecked)
@@ -241,6 +268,8 @@ namespace System.Linq.Expressions {
 				return;
 			case ExpressionType.Convert:
 			case ExpressionType.ConvertChecked:
+				EmitConvert (ec);
+				return;
 			case ExpressionType.Not:
 			case ExpressionType.Negate:
 			case ExpressionType.NegateChecked:

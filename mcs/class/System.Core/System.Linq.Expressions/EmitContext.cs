@@ -122,6 +122,14 @@ namespace System.Linq.Expressions {
 			EmitCall (method);
 		}
 
+		public void EmitCall (Expression expression, MethodInfo method)
+		{
+			if (!method.IsStatic)
+				EmitLoad (expression);
+
+			EmitCall (method);
+		}
+
 		public void EmitCall (Expression expression, ReadOnlyCollection<Expression> arguments, MethodInfo method)
 		{
 			if (!method.IsStatic)
