@@ -1,3 +1,9 @@
+2008-05-15  Roei Erez  <roeie@mainsoft.com>
+
+	* QueryableTransformer.cs, QueryableEnumerable.cs: two classes added for implementation
+	of Queryable.AsQueryable() implementation.
+	* Queryable.cs: Implement AsQueryable() method.
+
 2008-05-08  Jonathan Pryor  <jpryor@novell.com>
 
 	* Enumerable.cs: LongCount() can be optimized for arrays, and Reverse() can

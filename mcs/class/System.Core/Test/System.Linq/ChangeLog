@@ -1,3 +1,7 @@
+2008-05-15  Roei Erez  <roeie@mainsoft.com>
+
+	* EnumerableAsQueryableTest.cs: test cases for Queryable.AsQueryable() implementation.
+
 2008-05-08  Jonathan Pryor  <jpryor@novell.com>
 
 	* EnumerableTest.cs: test Reverse() for non-IList types.

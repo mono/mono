@@ -15,6 +15,8 @@ System.Runtime.CompilerServices/IStrongBox.cs
 System.Runtime.CompilerServices/StrongBox_T.cs
 System.Linq/Check.cs
 System.Linq/Enumerable.cs
+System.Linq/QueryableEnumerable.cs
+System.Linq/QueryableTransformer.cs
 System.Linq/Grouping.cs
 System.Linq/IGrouping.cs
 System.Linq/IOrderedQueryable.cs
@@ -42,6 +44,7 @@ System.Linq.Expressions/Expression_T.cs
 System.Linq.Expressions/ExpressionPrinter.cs
 System.Linq.Expressions/ExpressionType.cs
 System.Linq.Expressions/ExpressionVisitor.cs
+System.Linq.Expressions/ExpressionTransformer.cs
 System.Linq.Expressions/Extensions.cs
 System.Linq.Expressions/InvocationExpression.cs
 System.Linq.Expressions/LambdaExpression.cs

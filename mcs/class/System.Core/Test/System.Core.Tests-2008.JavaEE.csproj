@@ -115,7 +115,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-RefInfo-rt="repository:jre:sun:1.6.0" REFS-JarPath-rt="" REFS-JarPath-nunit-framework="..\..\..\nunit20\framework\bin\Debug_Java20\nunit.framework.jar" REFS-RefInfo-nunit-framework="j2il:" REFS-JarPath-system="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system-core-2008-javaee="..\bin\Debug_Java\System.Core-2008.JavaEE.jar" REFS-RefInfo-system-core-2008-javaee="j2il:" REFS-JarPath-system-core="" REFS-RefInfo-system-core="repository:vmw:framework:2.0" />
+      <UserProperties REFS-RefInfo-system-core="repository:vmw:framework:2.0" REFS-JarPath-system-core="" REFS-RefInfo-system-core-2008-javaee="j2il:" REFS-JarPath-system-core-2008-javaee="..\bin\Debug_Java\System.Core-2008.JavaEE.jar" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system="" REFS-RefInfo-nunit-framework="j2il:" REFS-JarPath-nunit-framework="..\..\..\nunit20\framework\bin\Debug_Java20\nunit.framework.jar" REFS-JarPath-rt="" REFS-RefInfo-rt="repository:jre:sun:1.6.0" />
     </VisualStudio>
   </ProjectExtensions>
   <ItemGroup>
@@ -148,10 +148,13 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="System.Collections.Generic\ChangeLog" />
     <None Include="System.Linq.Expressions\ChangeLog" />
     <None Include="System.Linq\ChangeLog" />
+    <None Include="System\ChangeLog" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="System.Collections.Generic\HashSetTest.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Add.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_AddChecked.cs" />
@@ -204,10 +207,14 @@
     <Compile Include="System.Linq.Expressions\ExpressionTest_TypeIs.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_UnaryPlus.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Utils.cs" />
+    <Compile Include="System.Linq\EnumerableAsQueryableTest.cs" />
     <Compile Include="System.Linq\EnumerableMoreTest.cs" />
     <Compile Include="System.Linq\EnumerableTest.cs" />
     <Compile Include="System.Linq\QueryableProviderTest.cs" />
     <Compile Include="System.Linq\QueryableTest.cs" />
+    <Compile Include="System\TimeZoneInfo.AdjustmentRuleTest.cs" />
+    <Compile Include="System\TimeZoneInfo.TransitionTimeTest.cs" />
+    <Compile Include="System\TimeZoneInfoTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

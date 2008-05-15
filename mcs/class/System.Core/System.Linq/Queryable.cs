@@ -144,7 +144,7 @@ namespace System.Linq {
 			if (queryable != null)
 				return queryable;
 
-			throw new NotImplementedException ();
+			return new QueryableEnumerable<TElement> (new ConstantExpression (source, typeof (IQueryable<TElement>)));
 		}
 
 		[MonoTODO]
