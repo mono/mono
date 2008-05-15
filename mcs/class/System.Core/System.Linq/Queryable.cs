@@ -144,7 +144,7 @@ namespace System.Linq {
 				return queryable;
 
 			return new QueryableEnumerable<TElement> (
-				Expression.Constant (source, typeof (IQueryable<TElement>)));
+				new ConstantExpression (source, typeof (IQueryable<TElement>)));
 		}
 
 		[MonoTODO]
