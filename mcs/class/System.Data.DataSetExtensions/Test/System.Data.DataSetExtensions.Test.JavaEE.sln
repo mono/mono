@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Data.DataSetExtensions.Test.JavaEE", "System.Data.DataSetExtensions.Test.JavaEE.csproj", "{D6170533-C107-4282-B8BB-571C5BAD1D1C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nunit.framework.dll20.J2EE", "..\..\..\nunit20\framework\nunit.framework.dll20.J2EE.csproj", "{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Data.DataSetExtensions.Test", "System.Data.DataSetExtensions.Test.csproj", "{7C7649EB-F476-4D07-B9DA-896C97148DE8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug_Java|Any CPU = Debug_Java|Any CPU
+		Debug_Java20|Any CPU = Debug_Java20|Any CPU
+		Debug|Any CPU = Debug|Any CPU
+		Release_Java|Any CPU = Release_Java|Any CPU
+		Release_Java20|Any CPU = Release_Java20|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D6170533-C107-4282-B8BB-571C5BAD1D1C}.Debug_Java|Any CPU.ActiveCfg = Debug_Java|Any CPU
+		{D6170533-C107-4282-B8BB-571C5BAD1D1C}.Debug_Java|Any CPU.Build.0 = Debug_Java|Any CPU
+		{D6170533-C107-4282-B8BB-571C5BAD1D1C}.Debug_Java20|Any CPU.ActiveCfg = Debug_Java|Any CPU
+		{D6170533-C107-4282-B8BB-571C5BAD1D1C}.Debug_Java20|Any CPU.Build.0 = Debug_Java|Any CPU
+		{D6170533-C107-4282-B8BB-571C5BAD1D1C}.Debug|Any CPU.ActiveCfg = Debug_Java|Any CPU
+		{D6170533-C107-4282-B8BB-571C5BAD1D1C}.Debug|Any CPU.Build.0 = Debug_Java|Any CPU
+		{D6170533-C107-4282-B8BB-571C5BAD1D1C}.Release_Java|Any CPU.ActiveCfg = Release_Java|Any CPU
+		{D6170533-C107-4282-B8BB-571C5BAD1D1C}.Release_Java|Any CPU.Build.0 = Release_Java|Any CPU
+		{D6170533-C107-4282-B8BB-571C5BAD1D1C}.Release_Java20|Any CPU.ActiveCfg = Release_Java|Any CPU
+		{D6170533-C107-4282-B8BB-571C5BAD1D1C}.Release_Java20|Any CPU.Build.0 = Release_Java|Any CPU
+		{D6170533-C107-4282-B8BB-571C5BAD1D1C}.Release|Any CPU.ActiveCfg = Release_Java|Any CPU
+		{D6170533-C107-4282-B8BB-571C5BAD1D1C}.Release|Any CPU.Build.0 = Release_Java|Any CPU
+		{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}.Debug_Java|Any CPU.ActiveCfg = Debug_Java|Any CPU
+		{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}.Debug_Java|Any CPU.Build.0 = Debug_Java|Any CPU
+		{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}.Debug_Java20|Any CPU.ActiveCfg = Debug_Java20|Any CPU
+		{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}.Debug_Java20|Any CPU.Build.0 = Debug_Java20|Any CPU
+		{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}.Debug|Any CPU.ActiveCfg = Debug_Java|Any CPU
+		{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}.Debug|Any CPU.Build.0 = Debug_Java|Any CPU
+		{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}.Release_Java|Any CPU.ActiveCfg = Release_Java|Any CPU
+		{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}.Release_Java|Any CPU.Build.0 = Release_Java|Any CPU
+		{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}.Release_Java20|Any CPU.ActiveCfg = Release_Java20|Any CPU
+		{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}.Release_Java20|Any CPU.Build.0 = Release_Java20|Any CPU
+		{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}.Release|Any CPU.ActiveCfg = Release_Java|Any CPU
+		{ACDA29DB-62AB-4AF8-8862-B3B4FC755BBC}.Release|Any CPU.Build.0 = Release_Java|Any CPU
+		{7C7649EB-F476-4D07-B9DA-896C97148DE8}.Debug_Java|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C7649EB-F476-4D07-B9DA-896C97148DE8}.Debug_Java|Any CPU.Build.0 = Debug|Any CPU
+		{7C7649EB-F476-4D07-B9DA-896C97148DE8}.Debug_Java20|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C7649EB-F476-4D07-B9DA-896C97148DE8}.Debug_Java20|Any CPU.Build.0 = Debug|Any CPU
+		{7C7649EB-F476-4D07-B9DA-896C97148DE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C7649EB-F476-4D07-B9DA-896C97148DE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C7649EB-F476-4D07-B9DA-896C97148DE8}.Release_Java|Any CPU.ActiveCfg = Release|Any CPU
+		{7C7649EB-F476-4D07-B9DA-896C97148DE8}.Release_Java|Any CPU.Build.0 = Release|Any CPU
+		{7C7649EB-F476-4D07-B9DA-896C97148DE8}.Release_Java20|Any CPU.ActiveCfg = Release|Any CPU
+		{7C7649EB-F476-4D07-B9DA-896C97148DE8}.Release_Java20|Any CPU.Build.0 = Release|Any CPU
+		{7C7649EB-F476-4D07-B9DA-896C97148DE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C7649EB-F476-4D07-B9DA-896C97148DE8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

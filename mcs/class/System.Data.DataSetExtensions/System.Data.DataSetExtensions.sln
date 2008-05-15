@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Data.DataSetExtensions", "System.Data.DataSetExtensions.csproj", "{7FD742E6-7FAB-47B7-B6DD-99ABB44B5914}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Data20", "..\System.Data\System.Data20.csproj", "{BD83C476-AEC7-4535-8158-977B04887AF0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug_Java|Any CPU = Debug_Java|Any CPU
+		Release_Java|Any CPU = Release_Java|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7FD742E6-7FAB-47B7-B6DD-99ABB44B5914}.Debug_Java|Any CPU.ActiveCfg = Release_Java|Any CPU
+		{7FD742E6-7FAB-47B7-B6DD-99ABB44B5914}.Debug_Java|Any CPU.Build.0 = Release_Java|Any CPU
+		{7FD742E6-7FAB-47B7-B6DD-99ABB44B5914}.Release_Java|Any CPU.ActiveCfg = Release_Java|Any CPU
+		{7FD742E6-7FAB-47B7-B6DD-99ABB44B5914}.Release_Java|Any CPU.Build.0 = Release_Java|Any CPU
+		{BD83C476-AEC7-4535-8158-977B04887AF0}.Debug_Java|Any CPU.ActiveCfg = Debug_Java20|Any CPU
+		{BD83C476-AEC7-4535-8158-977B04887AF0}.Release_Java|Any CPU.ActiveCfg = Release_Java20|Any CPU
+		{BD83C476-AEC7-4535-8158-977B04887AF0}.Release_Java|Any CPU.Build.0 = Release_Java20|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
