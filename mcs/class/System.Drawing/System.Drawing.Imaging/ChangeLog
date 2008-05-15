@@ -1,3 +1,8 @@
+2008-05-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* EncoderParameters.cs: Don't downcast an IntPtr to an Int32.
+	[Found using Gendarme]
+
 2007-12-13 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* ImageCodec.jvm.cs: fixed bitmap resolution

@@ -5,11 +5,7 @@
 //	Ravindra (rkumar@novell.com)
 //  Vladimir Vukicevic (vladimir@pobox.com)
 //
-// (C) 2004 Novell, Inc.  http://www.novell.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -76,7 +72,7 @@ namespace System.Drawing.Imaging
 			ptr = (IntPtr) (ptr.ToInt64() + 4);
 			for (int i = 0; i < parameters.Length; i++) {
 				parameters[i].ToNativePtr (ptr);
-				ptr = (IntPtr) ((int) ptr + EncoderParameter.NativeSize());
+				ptr = (IntPtr) (ptr.ToInt64 () + EncoderParameter.NativeSize ());
 			}
 
 			return result;
@@ -105,7 +101,7 @@ namespace System.Drawing.Imaging
 
 			for (int i = 0; i < count; i++) {
 				result.parameters[i] = EncoderParameter.FromNativePtr (ptr);
-				ptr = (IntPtr) ((int) ptr + EncoderParameter.NativeSize());
+				ptr = (IntPtr) (ptr.ToInt64 () + EncoderParameter.NativeSize ());
 			}
 
 			return result;
