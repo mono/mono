@@ -39,7 +39,7 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java|AnyCPU' ">
-    <OutputPath>bin\Release_Java20\</OutputPath>
+    <OutputPath>bin\Release_Java\</OutputPath>
     <DefineConstants>TRACE;JAVA;NET_3_5;TARGET_JVM</DefineConstants>
     <BaseAddress>285212672</BaseAddress>
     <Optimize>true</Optimize>
@@ -59,7 +59,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug_Java20\</OutputPath>
+    <OutputPath>bin\Debug_Java\</OutputPath>
     <DefineConstants>TRACE;DEBUG;JAVA;NET_3_5;TARGET_JVM</DefineConstants>
     <BaseAddress>285212672</BaseAddress>
     <DebugType>full</DebugType>
@@ -143,7 +143,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-RefInfo-system-core="repository:vmw:framework:2.0" REFS-JarPath-system-core="" REFS-JarPath-system="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system-data="" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-JarPath-system-xml="" REFS-RefInfo-system-xml="repository:vmw:framework:2.0" REFS-JarPath-rt="" REFS-RefInfo-rt="repository:jre:sun:1.6.0" />
+      <UserProperties REFS-RefInfo-rt="repository:jre:sun:1.6.0" REFS-JarPath-rt="" REFS-RefInfo-system-xml="repository:vmw:framework:2.0" REFS-JarPath-system-xml="" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-JarPath-system-data="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system="" REFS-JarPath-system-core="" REFS-RefInfo-system-core="repository:vmw:framework:2.0" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
