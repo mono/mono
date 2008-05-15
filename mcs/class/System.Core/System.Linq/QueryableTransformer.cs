@@ -137,9 +137,6 @@ namespace System.Linq {
 			if (!HasExtensionAttribute (candidate))
 				return false;
 
-			if (candidate.GetGenericArguments ().Length != method.GetGenericArguments ().Length)
-				return false;
-
 			var parameters = method.GetParameterTypes ();
 
 			if (parameters.Length != candidate.GetParameters ().Length)
@@ -147,6 +144,9 @@ namespace System.Linq {
 
 			if (method.IsGenericMethod) {
 				if (!candidate.IsGenericMethod)
+					return false;
+
+				if (candidate.GetGenericArguments ().Length != method.GetGenericArguments ().Length)
 					return false;
 
 				candidate = candidate.MakeGenericMethodFrom (method);
