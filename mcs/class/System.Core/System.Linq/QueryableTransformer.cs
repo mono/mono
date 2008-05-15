@@ -106,10 +106,13 @@ namespace System.Linq
 
 		static MethodInfo GetMatchingMethod (MethodInfo qm, Type fromType)
 		{
-			return (from em in fromType.GetMethods ()
-					where Match (em, qm)
-					select em.MakeGenericMethod (qm.GetGenericArguments ()))
-								 .FirstOrDefault ();
+			MethodInfo result = (from em in fromType.GetMethods ()
+								 where Match (em, qm)
+								 select em)
+					.FirstOrDefault ();
+			if (result != null && qm.IsGenericMethod)
+				result = result.MakeGenericMethod (qm.GetGenericArguments ());
+			return result;
 		}
 
 		static bool Match (MethodInfo em, MethodInfo qm) {
