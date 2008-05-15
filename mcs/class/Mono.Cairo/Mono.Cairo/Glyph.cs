@@ -77,7 +77,7 @@ namespace Cairo
 		{
 			int size = Marshal.SizeOf (glyphs[0]);
 			IntPtr dest = Marshal.AllocHGlobal (size * glyphs.Length);
-			int pos = dest.ToInt32 ();
+			long pos = dest.ToInt64 ();
 			for (int i = 0; i < glyphs.Length; i++, pos += size)
 				Marshal.StructureToPtr (glyphs[i], (IntPtr) pos, false);
 			return dest;

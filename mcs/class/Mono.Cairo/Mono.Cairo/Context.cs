@@ -776,7 +776,7 @@ namespace Cairo {
 		static internal IntPtr FromGlyphToUnManagedMemory(Glyph [] glyphs)
 		{
 			IntPtr dest = Marshal.AllocHGlobal (native_glyph_size * glyphs.Length);
-			int pos = dest.ToInt32();
+			long pos = dest.ToInt64();
 
 			if (c_compiler_long_size == 8){
 				foreach (Glyph g in glyphs){

@@ -1,3 +1,9 @@
+2008-05-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Mono.Cairo/Context.cs,
+	* Mono.Cairo/Glyph.cs: Don't downcast an IntPtr to an Int32.
+	[Found using Gendarme]
+
 2008-04-08 Jordi Mas i Hernandez <jordimash@gmail.com>
 
 	* Context.cs: New ReferenceCount property
