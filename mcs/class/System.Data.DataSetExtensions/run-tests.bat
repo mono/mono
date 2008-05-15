@@ -13,8 +13,6 @@ REM running Test.Sys.Drawing fixture in directory Test\DrawingTest\Test
 REM with output files named GhTests.Net.xml and GhTests.GH.xml
 REM ********************************************************
 
-IF "%1"=="" GOTO USAGE
-
 IF "%VMW_HOME%"=="" GOTO ENVIRONMENT_EXCEPTION
 
 
