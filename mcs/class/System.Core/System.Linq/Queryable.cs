@@ -143,8 +143,7 @@ namespace System.Linq {
 			if (queryable != null)
 				return queryable;
 
-			return new QueryableEnumerable<TElement> (
-				new ConstantExpression (source, typeof (IQueryable<TElement>)));
+			return new QueryableEnumerable<TElement> (source);
 		}
 
 		[MonoTODO]

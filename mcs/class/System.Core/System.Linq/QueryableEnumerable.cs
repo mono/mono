@@ -35,9 +35,17 @@ using System.Linq.Expressions;
 
 namespace System.Linq {
 
-	class QueryableEnumerable<TElement> : IQueryable<TElement>, IQueryProvider, IOrderedQueryable<TElement> {
+	interface IQueryableEnumerable : IQueryable {
+		IEnumerable GetEnumerable ();
+	}
+
+	interface IQueryableEnumerable<TElement> : IQueryableEnumerable, IQueryable<TElement>, IOrderedQueryable<TElement> {
+	}
+
+	class QueryableEnumerable<TElement> : IQueryableEnumerable<TElement>, IQueryProvider {
 
 		Expression expression;
+		IEnumerable<TElement> enumerable;
 
 		public Type ElementType {
 			get { return expression.Type; }
@@ -51,9 +59,20 @@ namespace System.Linq {
 			get { return this; }
 		}
 
+		public QueryableEnumerable (IEnumerable<TElement> enumerable)
+		{
+			this.expression = Expression.Constant (this);
+			this.enumerable = enumerable;
+		}
+
 		public QueryableEnumerable (Expression expression)
 		{
 			this.expression = expression;
+		}
+
+		public IEnumerable GetEnumerable ()
+		{
+			return enumerable;
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()

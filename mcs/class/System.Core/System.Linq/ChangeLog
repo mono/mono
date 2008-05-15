@@ -1,5 +1,13 @@
 2008-05-15  Jb Evain  <jbevain@novell.com>
 
+	* QueryableEnumerable.cs: Make that the first expression is a constant
+	of itself, and not a constant of the source enumerable.
+	* QueryableTransformer.cs: On a constant, transform a QueryableEnumerable
+	into the enumerable.
+	* Queryable.cs: use new constructor.
+
+2008-05-15  Jb Evain  <jbevain@novell.com>
+
 	* QueryableTransformer.cs, QueryableEnumerable.cs: coding style plus
 	some good refactorings.
 

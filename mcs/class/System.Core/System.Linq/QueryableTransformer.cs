@@ -53,6 +53,15 @@ namespace System.Linq {
 			return lambda;
 		}
 
+		protected override ConstantExpression VisitConstant (ConstantExpression constant)
+		{
+			var qe = constant.Value as IQueryableEnumerable;
+			if (qe == null)
+				return constant;
+
+			return Expression.Constant (qe.GetEnumerable ());
+		}
+
 		static bool IsQueryableExtension (MethodInfo method)
 		{
 			return HasExtensionAttribute (method) &&
