@@ -1,3 +1,9 @@
+2008-05-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XplatUIX11.cs, X11Keyboard.cs : redoing r103060 with fix for
+	  bug #389996; XSelectInput() behaved as mouse handler robber,
+	  so remove extra call to it.
+
 2008-05-15  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Control.cs: Simplify ControlCollection.Contains method.
