@@ -1,3 +1,7 @@
+2008-05-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : added Test/texts/*.txt to EXTRA_DISTFILES.
+
 2006-11-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* windows-437-2000.ucm: copied from ICU: http://dev.icu-project.org/cgi-bin/viewcvs.cgi/charset/data/ucm/windows-437-2000.ucm?revision=1.2
