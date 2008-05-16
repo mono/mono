@@ -1,5 +1,10 @@
 2008-05-16 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (mono_class_setup_vtable_general): Use memory barriers
+	as we do double checked locking on MonoClass::vtable.
+
+2008-05-16 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* reflection.c (resolve_object): Inflate only if the generic context
 	is not null. Fixes #389886.
 
