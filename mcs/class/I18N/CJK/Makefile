@@ -8,6 +8,6 @@ LOCAL_MCS_FLAGS = /unsafe /resource:big5.table /resource:gb2312.table /resource:
 
 EXTRA_DISTFILES = big5.table jis.table gb2312.table ks.table gb18030.table \
 	README.gb18030 \
-	Test/texts/*.txt
+	$(wildcard Test/texts/*.txt)
 
 include ../../../build/library.make
