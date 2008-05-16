@@ -1,3 +1,7 @@
+2008-05-16  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* bug-389886.2.il: Regression test for bug #389886.
+
 2008-05-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* exit-stress.cs: New stress test program for testing Environment.Exit () and
