@@ -1936,7 +1936,7 @@ namespace System
 #if NET_2_0
 		IEnumerator<char> IEnumerable<char>.GetEnumerator ()
 		{
-			return GetEnumerator ();
+			return new CharEnumerator (this);
 		}
 #endif
 

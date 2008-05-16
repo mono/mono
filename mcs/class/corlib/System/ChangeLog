@@ -1,3 +1,7 @@
+2008-05-16  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* String.cs: Directly create charenumerator
+
 2008-05-15  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* String.cs: Resubmit uncritical parts of String patch
