@@ -1,3 +1,10 @@
+2008-05-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AuthenticodeFormatter.cs: Throw an NotSupportedException if we're
+	trying to sign a non-PE (portable executable) file. We do not support
+	signing CAB and MSI files (nor does mono generates them).
+	[Partial fix for #388602, kept open as Enhancement]
+
 2008-01-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AuthenticodeDeformatter.cs: Use RSAManaged and the new overloaded

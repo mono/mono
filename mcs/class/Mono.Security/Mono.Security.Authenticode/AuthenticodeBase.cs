@@ -99,6 +99,7 @@ namespace Mono.Security.Authenticode {
 			if (fs != null)
 				Close ();
 			fs = new FileStream (filename, FileMode.Open, FileAccess.Read, FileShare.Read);
+			blockNo = 0;
 		}
 
 		internal void Close ()
@@ -106,14 +107,23 @@ namespace Mono.Security.Authenticode {
 			if (fs != null) {
 				fs.Close ();
 				fs = null;
-				blockNo = 0;
 			}
 		}
 
-		internal bool ReadFirstBlock ()
+		internal void ReadFirstBlock ()
+		{
+			int error = ProcessFirstBlock ();
+			if (error != 0) {
+				string msg = Locale.GetText ("Cannot sign non PE files, e.g. .CAB or .MSI files (error {0}).", 
+					error);
+				throw new NotSupportedException (msg);
+			}
+		}
+
+		internal int ProcessFirstBlock ()
 		{
 			if (fs == null)
-				return false;
+				return 1;
 
 			fs.Position = 0;
 			// read first block - it will include (100% sure) 
@@ -121,12 +131,12 @@ namespace Mono.Security.Authenticode {
 			blockLength = fs.Read (fileblock, 0, fileblock.Length);
 			blockNo = 1;
 			if (blockLength < 64)
-				return false;	// invalid PE file
+				return 2;	// invalid PE file
 
 			// 1. Validate the MZ header informations
 			// 1.1. Check for magic MZ at start of header
 			if (BitConverterLE.ToUInt16 (fileblock, 0) != 0x5A4D)
-				return false;
+				return 3;
 
 			// 1.2. Find the offset of the PE header
 			peOffset = BitConverterLE.ToInt32 (fileblock, 60);
@@ -138,13 +148,13 @@ namespace Mono.Security.Authenticode {
 				throw new NotSupportedException (msg);
 			}
 			if (peOffset > fs.Length)
-				return false;
+				return 4;
 
 			// 2. Read between DOS header and first part of PE header
 			// 2.1. Check for magic PE at start of header
 			//	PE - NT header ('P' 'E' 0x00 0x00)
 			if (BitConverterLE.ToUInt32 (fileblock, peOffset) != 0x4550)
-				return false;
+				return 5;
 
 			// 2.2. Locate IMAGE_DIRECTORY_ENTRY_SECURITY (offset and size)
 			dirSecurityOffset = BitConverterLE.ToInt32 (fileblock, peOffset + 152);
@@ -154,7 +164,7 @@ namespace Mono.Security.Authenticode {
 			// (otherwise the signature won't work on MS and we don't want to support COFF for that)
 			coffSymbolTableOffset = BitConverterLE.ToInt32 (fileblock, peOffset + 12);
 
-			return true;
+			return 0;
 		}
 
 		internal byte[] GetSecurityEntry () 
