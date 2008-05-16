@@ -1,3 +1,8 @@
+2008-05-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_object_get_virtual_method): Fix a crash if method->slot is not
+	set in the AOT case.
+
 2008-05-16 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c (mono_class_setup_vtable_general): Use memory barriers
