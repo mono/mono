@@ -1,3 +1,8 @@
+2008-05-16 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (resolve_object): Inflate only if the generic context
+	is not null. Fixes #389886.
+
 2008-05-15  Jonathan Chambers  <joncham@gmail.com>
 
 	* metadata.c (emit_marshal_string): Free return strings using mono_marshal_free
