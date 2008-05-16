@@ -1,3 +1,7 @@
+2008-05-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile: added Test/texts/*.txt to EXTRA_DISTFILES.
+
 2006-01-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DbcsEncoding.cs ISO2022JP.cs GB18030Encoding.cs CP51932.cs
