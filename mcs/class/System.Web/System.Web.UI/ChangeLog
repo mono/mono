@@ -1,3 +1,7 @@
+2008-05-16  Marek Habersack  <mhabersack@novell.com>
+
+	* StateManagedCollection.cs: make {Save,Load}ViewState simpler.
+
 2008-05-15  Marek Habersack  <mhabersack@novell.com>
 
 	* StateManagedCollection.cs: do not query for index of an item in
