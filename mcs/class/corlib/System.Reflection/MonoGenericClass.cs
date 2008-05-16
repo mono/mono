@@ -71,12 +71,6 @@ namespace System.Reflection
 		extern MethodInfo GetCorrespondingInflatedMethod (MethodInfo generic);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern ConstructorInfo GetCorrespondingInflatedConstructor (ConstructorInfo generic);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern FieldInfo GetCorrespondingInflatedField (string generic);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		protected extern MethodInfo[] GetMethods_internal (Type reflected_type);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -164,28 +158,21 @@ namespace System.Reflection
 
 		internal override ConstructorInfo GetConstructor (ConstructorInfo fromNoninstanciated)
 		{
-			initialize ();
-
 #if NET_2_0
 			if (fromNoninstanciated is ConstructorBuilder) {
 				ConstructorBuilder cb = (ConstructorBuilder)fromNoninstanciated;
-				if (!((ModuleBuilder)cb.Module).assemblyb.IsCompilerContext) {
-					if (ctors == null)
-						ctors = new Hashtable ();
-					if (!ctors.ContainsKey (cb))
-						ctors [cb] = new ConstructorOnTypeBuilderInst (this, cb);
-					return (ConstructorInfo)ctors [cb];
-				}
+				if (ctors == null)
+					ctors = new Hashtable ();
+				if (!ctors.ContainsKey (cb))
+					ctors [cb] = new ConstructorOnTypeBuilderInst (this, cb);
+				return (ConstructorInfo)ctors [cb];
 			}
 #endif
-
-			return GetCorrespondingInflatedConstructor (fromNoninstanciated);
+			return null;
 		}
 
 		internal override FieldInfo GetField (FieldInfo fromNoninstanciated)
 		{
-			initialize ();
-
 #if NET_2_0
 			if (fromNoninstanciated is FieldBuilder) {
 				FieldBuilder fb = (FieldBuilder)fromNoninstanciated;
@@ -196,8 +183,7 @@ namespace System.Reflection
 				return (FieldInfo)fields [fb];
 			}
 #endif
-			/* Keep the old code for a while in case the code above needs to be reverted */
-			return GetCorrespondingInflatedField (fromNoninstanciated.Name);
+			return null;
 		}
 		
 		public override MethodInfo[] GetMethods (BindingFlags bf)

@@ -1,3 +1,9 @@
+2008-05-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* MonoGenericClass.cs (GetConstructor): Remove some old code, as the new code
+	seems to work fine.
+	(GetField): Ditto.
+
 2008-05-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* FieldInfo.cs (GetFieldFromHandle): Add an argument check for an invalid handle.
