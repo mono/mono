@@ -75,7 +75,7 @@ namespace System.Data.SqlClient
 
 		#region Constructors
 
-		internal SqlDataReader (SqlCommand command) 
+		internal SqlDataReader (SqlCommand command)
 		{
 			readResult = false;
 			haveRead = false;
@@ -527,12 +527,6 @@ namespace System.Data.SqlClient
 		long GetInt64 (int i)
 		{
 			object value = GetValue (i);
-			// TDS 7.0 returns bigint as decimal(19,0)
-			if (value is decimal) {
-				TdsDataColumn schema = command.Tds.Columns[i];
-				if ((byte)schema["NumericPrecision"] == 19 && (byte)schema["NumericScale"] == 0)
-					value = (long) (decimal) value;
-			}
 			if (!(value is long)) {
 				if (value is DBNull) throw new SqlNullValueException ();
 				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
