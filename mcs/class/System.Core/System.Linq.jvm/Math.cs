@@ -224,8 +224,15 @@ namespace System.Linq.jvm
 
         public static object ConvertToTypeChecked(object a, Type fromType, Type toType)
         {
-			if (a == null && Expression.IsNullable (toType) || !toType.IsValueType)
-				return a;
+			if (Expression.IsNullable (toType) && Expression.GetNotNullableOf (toType) == fromType)
+				return a == null ? a : Activator.CreateInstance (toType, a);
+
+			if (a == null) {
+				if (!toType.IsValueType)
+					return a;
+				if (Expression.IsNullable (fromType))
+					throw new InvalidOperationException ("Nullable object must have a value");
+			}
 			
             if (IsType(toType, a)){
                 return a;
@@ -240,8 +247,15 @@ namespace System.Linq.jvm
 
 		public static object ConvertToTypeUnchecked (object a, Type fromType, Type toType)
 		{
-			if (a == null && Expression.IsNullable (toType) || !toType.IsValueType)							
+			if (Expression.IsNullable (toType) && Expression.GetNotNullableOf (toType) == fromType)
+				return a == null ? a : Activator.CreateInstance (toType, a);
+
+			if (a == null) { 
+				if (!toType.IsValueType)
 					return a;
+				if (Expression.IsNullable (fromType))
+					throw new InvalidOperationException ("Nullable object must have a value");
+			}
 								
 			if (IsType (toType, a)) {
 				return a;
