@@ -1,3 +1,9 @@
+2008-05-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TabControlPainter.cs: Use StringAlignment.Near as the value for
+	StringFormat.Alignment when drawing the tab text.
+	Fixes part of #352399.
+
 2008-02-25  Jonathan Pobst  <monkey@jpobst.com>
 
 	* LabelPainter.cs: Take Padding into account when drawing

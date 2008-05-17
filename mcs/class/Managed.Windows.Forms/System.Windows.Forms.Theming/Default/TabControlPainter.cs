@@ -186,7 +186,7 @@ namespace System.Windows.Forms.Theming.Default
 			imagePadding = new Point (2, 3);
 
 			defaultFormatting = new StringFormat();
-			defaultFormatting.Alignment = StringAlignment.Center;
+			defaultFormatting.Alignment = StringAlignment.Near;
 			defaultFormatting.LineAlignment = StringAlignment.Near;
 			defaultFormatting.FormatFlags = StringFormatFlags.NoWrap | StringFormatFlags.NoClip;
 
