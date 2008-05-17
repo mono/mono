@@ -1,5 +1,11 @@
 2008-05-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* TabControlPainter.cs: Use HotPrefix.Show as the value of
+	StringFormat.HotPrefix when drawing the tab text.
+	Fixes #355193.
+
+2008-05-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* TabControlPainter.cs: Use StringAlignment.Near as the value for
 	StringFormat.Alignment when drawing the tab text.
 	Fixes part of #352399.

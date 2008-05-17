@@ -24,6 +24,7 @@
 
 using System;
 using System.Drawing;
+using System.Drawing.Text;
 using System.Windows.Forms;
 
 namespace System.Windows.Forms.Theming.Default
@@ -189,6 +190,7 @@ namespace System.Windows.Forms.Theming.Default
 			defaultFormatting.Alignment = StringAlignment.Near;
 			defaultFormatting.LineAlignment = StringAlignment.Near;
 			defaultFormatting.FormatFlags = StringFormatFlags.NoWrap | StringFormatFlags.NoClip;
+			defaultFormatting.HotkeyPrefix = HotkeyPrefix.Show;
 
 			borderThickness = new Rectangle (1, 1, 2, 2);
 		}
