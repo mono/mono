@@ -42,8 +42,9 @@ using System.Net.Sockets;
 using System.Globalization;
 using System.Text;
 
-namespace Mono.Data.Tds.Protocol {
-        public abstract class Tds : Component, ITds
+namespace Mono.Data.Tds.Protocol
+{
+	public abstract class Tds : Component, ITds
 	{
 		#region Fields
 
@@ -65,7 +66,7 @@ namespace Mono.Data.Tds.Protocol {
 		string charset;
 		string language;
 
-		bool connected = false;
+		bool connected;
 		bool moreResults;
 
 		Encoding encoder;
@@ -73,7 +74,7 @@ namespace Mono.Data.Tds.Protocol {
 
 		bool doneProc;
 		bool pooling = true;
-		TdsDataRow currentRow = null;
+		TdsDataRow currentRow;
 		TdsDataColumnCollection columns;
 
 		ArrayList tableNames;
@@ -93,14 +94,14 @@ namespace Mono.Data.Tds.Protocol {
 
 		int recordsAffected = -1;
 
-		long StreamLength = 0;
-		long StreamIndex = 0;
-		int StreamColumnIndex = 0;
+		long StreamLength;
+		long StreamIndex;
+		int StreamColumnIndex;
 
-		bool sequentialAccess = false;
-		bool isRowRead = false;
-		bool isResultRead = false;
-		bool LoadInProgress = false;
+		bool sequentialAccess;
+		bool isRowRead;
+		bool isResultRead;
+		bool LoadInProgress;
 
 		#endregion // Fields
 
@@ -388,7 +389,7 @@ namespace Mono.Data.Tds.Protocol {
 					}
 					cancelsRequested += 1;
 				}
-			}	
+			}
 		}
 	
 		public abstract bool Connect (TdsConnectionParameters connectionParameters);
@@ -753,13 +754,13 @@ namespace Mono.Data.Tds.Protocol {
 				}
 
 				element = GetDecimalValue (precision, scale);
-				if (scale == 0) {
-					if (precision <= 19) {
-						if (element != null && !(element is System.DBNull))
-							element = Convert.ToInt64 (element);
-						else
-							element = 0;
-					}
+
+				// workaround for fact that TDS 7.0 returns
+				// bigint as decimal (19,0), and client code
+				// expects it to be returned as a long
+				if (tdsVersion == TdsVersion.tds70 && scale == 0 && precision == 19) {
+					if (!(element is System.DBNull))
+						element = Convert.ToInt64 (element);
 				}
 				break;
 			case TdsColumnType.DateTimeN :
@@ -888,14 +889,16 @@ namespace Mono.Data.Tds.Protocol {
 			return result;
 		}
 
-		private object GetDecimalValue (byte precision, byte scale) {
+		private object GetDecimalValue (byte precision, byte scale)
+		{
 			if (tdsVersion < TdsVersion.tds70)
 				return GetDecimalValueTds50 (precision, scale);
 			else
 				return GetDecimalValueTds70 (precision, scale);
 		}
 		
-		private object GetDecimalValueTds70 (byte precision, byte scale) {
+		private object GetDecimalValueTds70 (byte precision, byte scale)
+		{
 			int[] bits = new int[4] {0,0,0,0};
 
 			int len = (comm.GetByte() & 0xff) - 1;
@@ -915,14 +918,15 @@ namespace Mono.Data.Tds.Protocol {
 				return new Decimal (bits[0], bits[1], bits[2], !positive, scale);
 		}
 
-		private object GetDecimalValueTds50 (byte precision, byte scale) {
+		private object GetDecimalValueTds50 (byte precision, byte scale)
+		{
 			int[] bits = new int[4] {0,0,0,0};
 
 			int len = (comm.GetByte() & 0xff);
 			if (len == 0)
 				return DBNull.Value;
 
-			byte[] dec_bytes=comm.GetBytes(len,false);	
+			byte[] dec_bytes=comm.GetBytes(len,false);
 		
 			byte[] easy=new byte[4];
 
@@ -1072,7 +1076,7 @@ namespace Mono.Data.Tds.Protocol {
 				else
 					result = comm.GetString (len, false);
 				if (tdsVersion < TdsVersion.tds70 && ((string) result).Equals (" "))
-					result = "";
+					result = string.Empty;
 				return result;
 			}
 			else
@@ -1101,7 +1105,7 @@ namespace Mono.Data.Tds.Protocol {
 			// this method is called only for Text and NText. Hence will
 			// return a empty string
 			if (len == 0)
-				return "";
+				return string.Empty;
 
 			if (wideChars)
 				result = comm.GetString (len / 2);
@@ -1110,17 +1114,17 @@ namespace Mono.Data.Tds.Protocol {
 				len /= 2;
 
 			if ((byte) tdsVersion < (byte) TdsVersion.tds70 && result == " ")
-				result = "";
+				result = string.Empty;
 
 			return result;
 		}
 
-                internal bool IsBlobType (TdsColumnType columnType)
+		internal bool IsBlobType (TdsColumnType columnType)
 		{
 			return (columnType == TdsColumnType.Text || columnType == TdsColumnType.Image || columnType == TdsColumnType.NText);
 		}
 
-                internal bool IsLargeType (TdsColumnType columnType)
+		internal bool IsLargeType (TdsColumnType columnType)
 		{
 			return ((byte) columnType > 128);
 		}
@@ -1599,7 +1603,7 @@ namespace Mono.Data.Tds.Protocol {
 					position += len + 1;
 				}
 				tableNames.Add (comm.GetString (len));
-			}	
+			}
 		}
 
 		protected void SetCharset (string charset)

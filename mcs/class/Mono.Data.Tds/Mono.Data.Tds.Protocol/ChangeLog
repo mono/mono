@@ -1,3 +1,8 @@
+2008-05-17  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Tds.cs: Do not return 0 for decimal/numeric columns with value NULL.
+	Avoid unnecessary initialization of fields, and minor code formatting.
+
 2008-05-15  Marek Habersack  <mhabersack@novell.com>
 
 	* Tds.cs: deal with null columns when getting value for a Numeric
