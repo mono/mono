@@ -1,3 +1,8 @@
+2008-05-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_method_compile): Use cfg->args [0] for accessing the this
+	argument.
+
 2008-05-08  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* declsec.h: Move MONO_SECMAN_FLAG to metadata/metadata-internals.h.
