@@ -108,7 +108,7 @@ namespace System.Xml.Linq
 					if (expandedName [i] == '}')
 						ns = expandedName.Substring (1, i - 1);
 				}
-				if (ns == null || ns.Length == 0) // {}foo is invalid
+				if (String.IsNullOrEmpty (ns)) // {}foo is invalid
 					throw ErrorInvalidExpandedName ();
 				if (expandedName.Length == ns.Length + 2) // {foo} is invalid
 					throw ErrorInvalidExpandedName ();

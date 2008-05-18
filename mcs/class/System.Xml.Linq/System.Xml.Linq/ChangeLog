@@ -1,3 +1,8 @@
+2008-05-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* XName.cs: Use String.IsNullOrEmpty inside 2.0 code.
+	[Found using Gendarme]
+
 2008-05-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XNode.cs, XElement.cs, XUtil.cs, XDocument.cs, XContainer.cs:
