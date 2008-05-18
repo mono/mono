@@ -209,48 +209,51 @@ namespace System
 
 		public String [] Split (params char [] separator)
 		{
-			if (separator == null || separator.Length == 0)
-				separator = null;
-			return SplitKeepEmpty (length, separator);
+			return Split (separator, Int32.MaxValue);
 		}
 
 		public String[] Split (char[] separator, int count)
 		{
+			if (separator == null || separator.Length == 0)
+				separator = WhiteChars;
+
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count");
 
-			if (count == 0)
+			if (count == 0) 
 				return new String[0];
 
 			if (count == 1) 
 				return new String[1] { this };
 
-			return SplitKeepEmpty (count - 1, separator);
+			return InternalSplit (separator, count, 0);
 		}
 
 #if NET_2_0
 		[ComVisible (false)]
+		[MonoDocumentationNote ("code should be moved to managed")]
 		public String[] Split (char[] separator, int count, StringSplitOptions options)
 		{
+			if (separator == null || separator.Length == 0)
+				return Split (WhiteChars, count, options);
+
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count", "Count cannot be less than zero.");
 			if ((options != StringSplitOptions.None) && (options != StringSplitOptions.RemoveEmptyEntries))
 				throw new ArgumentException ("options must be one of the values in the StringSplitOptions enumeration", "options");
 
 			if (count == 0)
-				return new String[0];
+				return new string [0];
 
-			if (separator == null || separator.Length == 0)
-				separator = null;
-
-			if (options == StringSplitOptions.RemoveEmptyEntries)
-				return SplitRemoveEmpty (count - 1, separator);
-			return SplitKeepEmpty (count - 1, separator);
+			return InternalSplit (separator, count, (int)options);
 		}
 
 		[ComVisible (false)]
 		public String[] Split (string[] separator, int count, StringSplitOptions options)
 		{
+			if (separator == null || separator.Length == 0)
+				return Split (WhiteChars, count, options);
+
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count", "Count cannot be less than zero.");
 			if ((options != StringSplitOptions.None) && (options != StringSplitOptions.RemoveEmptyEntries))
@@ -260,12 +263,6 @@ namespace System
 
 			if (count == 0 || (this == String.Empty && removeEmpty))
 				return new String [0];
-
-			if (separator == null || separator.Length == 0) {
-				if (removeEmpty)
-					return SplitRemoveEmpty (count - 1, null);
-				return SplitKeepEmpty (count - 1, null);
-			}
 
 			ArrayList arr = new ArrayList ();
 
@@ -292,7 +289,7 @@ namespace System
 					break;
 
 				if (!(matchPos == pos && removeEmpty))
-					arr.Add (this.SubstringUnchecked (pos, matchPos - pos));
+					arr.Add (this.Substring (pos, matchPos - pos));
 
 				pos = matchPos + separator [matchIndex].Length;
 
@@ -324,207 +321,15 @@ namespace System
 		[ComVisible (false)]
 		public String[] Split (char[] separator, StringSplitOptions options)
 		{
-			if ((options != StringSplitOptions.None) && (options != StringSplitOptions.RemoveEmptyEntries))
-				throw new ArgumentException ("options must be one of the values in the StringSplitOptions enumeration", "options");
-
-			if (separator == null || separator.Length == 0)
-				separator = null;
-
-			if (options == StringSplitOptions.RemoveEmptyEntries)
-				return SplitRemoveEmpty (length, separator);
-			return SplitKeepEmpty (length, separator);
+			return Split (separator, Int32.MaxValue, options);
 		}
 
 		[ComVisible (false)]
 		public String[] Split (String[] separator, StringSplitOptions options)
 		{
-			if ((options != StringSplitOptions.None) && (options != StringSplitOptions.RemoveEmptyEntries))
-				throw new ArgumentException ("options must be one of the values in the StringSplitOptions enumeration", "options");
-
-			if (separator == null || separator.Length == 0) {
-				if (options == StringSplitOptions.RemoveEmptyEntries)
-					return SplitRemoveEmpty (length, null);
-				return SplitKeepEmpty (length, null);
-			}
-
 			return Split (separator, Int32.MaxValue, options);
 		}
-
-		private unsafe String[] SplitRemoveEmpty (int maxCount, char[] separator)
-		{
-			if (length == 0) return new String[0];
-			if (maxCount == 0) return new String[1] { this };
-			int found = 0;
-			maxCount++; // Search one additinal split to check if empty entries follow
-			int maxLocal = Math.Min (maxCount, 100);
-			int* datS = stackalloc int[maxLocal]; // Allocate max 400*2 byte on stack
-			int* datL = stackalloc int[maxLocal];
-			bool defaultSeparator = (separator == null);
-			fixed (char* source = this, toTest = separator) {
-				int i = 0;
-				int charCount = 0;
-				for (; i < length; i++) {
-					bool isSeparator = false;
-					if (defaultSeparator)
-						isSeparator = Char.IsWhiteSpace (source[i]);
-					else {
-						for (int k = 0; k < separator.Length; k++)
-							if (source[i] == toTest[k]) {
-								isSeparator = true;
-								break;
-							}
-					}
-					if (isSeparator) {
-						if (charCount != 0) {
-							datL[found] = charCount;
-							datS[found++] = i - charCount;
-							if (found == maxLocal) {
-								if (found == maxCount)
-									break;
-								return SplitFallback (--maxCount, false, separator, found - 1, i);
-							}
-							charCount = 0;
-						}
-					}
-					else
-						charCount++;
-				}
-				if (found == 0) {
-					if (charCount == 0)
-						return new String[0];
-					else if (charCount == length)
-						return new String[1] { this };
-					return new String[1] { SubstringUnchecked (length - charCount, charCount) };
-				}
-
-				String[] ret = new String[found];
-				found--;
-				for (int j = 0; j < found; j++)
-					ret[j] = SubstringUnchecked (datS[j], datL[j]);
-
-				if (charCount == 0) // We ended without hitting maxCount
-					ret[found] = SubstringUnchecked (datS[found], datL[found]);
-				else { // Limited by maxCound - add the remaining data
-					ret[found] = SubstringUnchecked (datS[found], length - datS[found]);
-				}
-				return ret;
-			}
-		}
 #endif
-
-		private unsafe String[] SplitKeepEmpty (int maxCount, char[] separator)
-		{
-			if (maxCount == 0) return new String[1] { this };
-			int found = 0;
-			int maxLocal = Math.Min (maxCount, 200); // Allocate max 800 byte on stack
-			int* dat = stackalloc int[maxLocal];
-			bool defaultSeparator = (separator == null);
-			fixed (char* source = this, toTest = separator) {
-				int i = 0;
-				for (int charCount = 0; i < length; i++) {
-					bool isSeparator = false;
-					if (defaultSeparator)
-						isSeparator = Char.IsWhiteSpace (source[i]);
-					else {
-						for (int k = 0; k < separator.Length; k++)
-							if (source[i] == toTest[k]) {
-								isSeparator = true;
-								break;
-							}
-					}
-					if (isSeparator) {
-						dat[found++] = charCount;
-						if (found == maxLocal) {
-							if (found == maxCount)
-								break;
-							return SplitFallback (maxCount, true, separator, found - 1, i);
-						}
-						charCount = 0;
-					}
-					else
-						charCount++;
-				}
-				if (found == 0)
-					return new String[1] { this };
-
-				String[] ret = new String[found + 1];
-				int pos = 0;
-				for (int j = 0; j < found; j++) {
-					ret[j] = SubstringUnchecked (pos, dat[j]);
-					pos += dat[j] + 1;
-				}
-				ret[found] = SubstringUnchecked (pos, length - pos);
-				return ret;
-			}
-		}
-
-		private unsafe String[] SplitFallback (int maxCount, bool keepEmpty, char[] separator, int found, int startPos)
-		{
-			// found should to be > 1, checks are not made in this fallback method
-			fixed (char* source = this, toTest = separator) {
-				int charCountPrimary = 0;
-				for (int i = startPos; i < length; i++) {
-					bool isSeparator = false;
-					if (separator == null)
-						isSeparator = Char.IsWhiteSpace (source[i]);
-					else {
-						for (int k = 0; k < separator.Length; k++)
-							if (source[i] == toTest[k]) {
-								isSeparator = true;
-								break;
-							}
-					}
-					if (isSeparator) {
-						if (keepEmpty)
-							found++;
-						else
-							if (charCountPrimary > 0)
-								found++;
-						charCountPrimary = 0;
-						if (found == maxCount)
-							break;
-					}
-					else
-						charCountPrimary++;
-				}
-
-				String[] ret = new String[found + 1];
-				int charCount = 0;
-				int resultPos = 0;
-
-				int charPos = 0;
-				for (; resultPos < found; charPos++) {
-					bool isSeparator = false;
-					if (separator == null)
-						isSeparator = Char.IsWhiteSpace (source[charPos]);
-					else {
-						for (int k = 0; k < separator.Length; k++)
-							if (source[charPos] == toTest[k]) {
-								isSeparator = true;
-								break;
-							}
-					}
-					if (isSeparator) {
-						if (charCount > 0)
-							ret[resultPos++] = SubstringUnchecked (charPos - charCount, charCount);
-						else
-							if (keepEmpty)
-								ret[resultPos++] = String.Empty;
-						charCount = 0;
-					}
-					else
-						charCount++;
-				}
-				if (keepEmpty)
-					ret[resultPos] = SubstringUnchecked (charPos, length - charPos);
-				else if (found == maxCount) // Case where empty results may appear before the rest
-					ret[resultPos] = SubstringUnchecked (charPos, length - charPos).TrimStart (separator);
-				else // Case where empty results may appear before and after the rest
-					ret[resultPos] = SubstringUnchecked (charPos, length - charPos).Trim (separator);
-
-				return ret;
-			}
-		}
 
 		public String Substring (int startIndex)
 		{
@@ -547,7 +352,7 @@ namespace System
 				throw new ArgumentOutOfRangeException ("startIndex + length > this.length");
 
 			return SubstringUnchecked (startIndex, length);
-		}
+		}	
 
 		internal unsafe String SubstringUnchecked (int startIndex, int length)
 		{
@@ -561,119 +366,41 @@ namespace System
 			return tmp;
 		}
 
+		private static readonly char[] WhiteChars = { (char) 0x9, (char) 0xA, (char) 0xB, (char) 0xC, (char) 0xD,
+#if NET_2_0
+			(char) 0x85, (char) 0x1680, (char) 0x2028, (char) 0x2029,
+#endif
+			(char) 0x20, (char) 0xA0, (char) 0x2000, (char) 0x2001, (char) 0x2002, (char) 0x2003, (char) 0x2004,
+			(char) 0x2005, (char) 0x2006, (char) 0x2007, (char) 0x2008, (char) 0x2009, (char) 0x200A, (char) 0x200B,
+			(char) 0x3000, (char) 0xFEFF };
+
 		public String Trim ()
 		{
-			if (length == 0) 
-				return String.Empty;
-			int start = FindNotWhiteSpace (0, length, 1);
-
-			if (start == length)
-				return String.Empty;
-
-			int end = FindNotWhiteSpace (length - 1, start, -1);
-
-			int newLength = end - start + 1;
-			if (newLength == length)
-				return this;
-
-			return SubstringUnchecked (start, newLength);
+			return InternalTrim (WhiteChars, 0);
 		}
 
 		public String Trim (params char[] trimChars)
 		{
 			if (trimChars == null || trimChars.Length == 0)
-				return Trim ();
+				trimChars = WhiteChars;
 
-			if (length == 0) 
-				return String.Empty;
-			int start = FindNotInTable (0, length, 1, trimChars);
-
-			if (start == length)
-				return String.Empty;
-
-			int end = FindNotInTable (length - 1, start, -1, trimChars);
-
-			int newLength = end - start + 1;
-			if (newLength == length)
-				return this;
-
-			return SubstringUnchecked (start, newLength);
+			return InternalTrim (trimChars, 0);
 		}
 
 		public String TrimStart (params char[] trimChars)
 		{
-			if (length == 0) 
-				return String.Empty;
-			int start;
 			if (trimChars == null || trimChars.Length == 0)
-				start = FindNotWhiteSpace (0, length, 1);
-			else
-				start = FindNotInTable (0, length, 1, trimChars);
+				trimChars = WhiteChars;
 
-			if (start == 0)
-				return this;
-
-			return SubstringUnchecked (start, length - start);
+			return InternalTrim (trimChars, 1);
 		}
 
 		public String TrimEnd (params char[] trimChars)
 		{
-			if (length == 0) 
-				return String.Empty;
-			int end;
 			if (trimChars == null || trimChars.Length == 0)
-				end = FindNotWhiteSpace (length - 1, -1, -1);
-			else
-				end = FindNotInTable (length - 1, -1, -1, trimChars);
+				trimChars = WhiteChars;
 
-			end++;
-			if (end == length)
-				return this;
-
-			return SubstringUnchecked (0, end);
-		}
-
-		private int FindNotWhiteSpace (int pos, int target, int change)
-		{
-			while (pos != target) {
-				char c = this[pos];
-				if (c < 0x85) {
-					if (c != 0x20) {
-						if (c < 0x9 || c > 0xD)
-							return pos;
-					}
-				}
-				else {
-					if (c != 0xA0 && c != 0xFEFF && c != 0x3000) {
-#if NET_2_0
-						if (c != 0x85 && c != 0x1680 && c != 0x2028 && c != 0x2029)
-#endif
-							if (c < 0x2000 || c > 0x200B)
-								return pos;
-					}
-				}
-				pos += change;
-			}
-			return pos;
-		}
-
-		private unsafe int FindNotInTable (int pos, int target, int change, char[] table)
-		{
-			fixed (char* tablePtr = table, thisPtr = this) {
-				while (pos != target) {
-					char c = thisPtr[pos];
-					int x = 0;
-					while (x < table.Length) {
-						if (c == tablePtr[x])
-							break;
-						x++;
-					}
-					if (x == table.Length)
-						return pos;
-					pos += change;
-				}
-			}
-			return pos;
+			return InternalTrim (trimChars, 2);
 		}
 
 		public static int Compare (String strA, String strB)
