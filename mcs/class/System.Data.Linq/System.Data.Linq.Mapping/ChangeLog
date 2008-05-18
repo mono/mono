@@ -1,0 +1,5 @@
+2008-05-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ChangeLog: New. Let's begin to track changes.
+	* XmlMappingSource.cs: Use String.IsNullOrEmpty inside 2.0 code.
+	[Found using Gendarme]

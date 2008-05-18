@@ -113,7 +113,7 @@ namespace System.Data.Linq.Mapping
         private static XmlTableMapping ReadTableElement(XmlElement element)
         {
             string name = element.GetAttribute("name");
-            if (name == null || name.Length == 0)
+            if (String.IsNullOrEmpty (name))
                 throw new InvalidOperationException();
 
             XmlTableMapping tableMapping = new XmlTableMapping(name);
@@ -137,7 +137,7 @@ namespace System.Data.Linq.Mapping
         private static XmlTypeMapping ReadTypeElement(XmlElement element)
         {
             string name = element.GetAttribute("Name");
-            if (name == null || name.Length == 0)
+            if (String.IsNullOrEmpty (name))
                 throw new InvalidOperationException();
 
             XmlTypeMapping typeMapping = new XmlTypeMapping(name);
@@ -173,7 +173,7 @@ namespace System.Data.Linq.Mapping
         private static XmlMemberMapping ReadAssociationElement(XmlElement element)
         {
             string member = element.GetAttribute("Member");
-            if (member == null || member.Length == 0)
+            if (String.IsNullOrEmpty (member))
                 throw new InvalidOperationException();
 
             XmlAssociationMapping assMapping = new XmlAssociationMapping(member);
