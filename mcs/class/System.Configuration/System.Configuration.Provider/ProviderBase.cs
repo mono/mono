@@ -58,7 +58,7 @@ namespace System.Configuration.Provider
 				_description = config ["description"];
 				config.Remove ("description");
 			}
-			if (_description == null || _description.Length == 0)
+			if (String.IsNullOrEmpty (_description))
 				_description = _name;
 		}
 		

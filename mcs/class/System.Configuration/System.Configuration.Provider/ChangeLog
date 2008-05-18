@@ -1,3 +1,8 @@
+2008-05-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ProviderBase.cs: Use String.IsNullOrEmpty inside 2.0 code.
+	[Found using Gendarme]
+
 2007-08-31  Gert Driesen  <drieseng@users.souceforge.net>
 
 	* ProviderBase.cs: Remove "description" key from NameValueCollection.
