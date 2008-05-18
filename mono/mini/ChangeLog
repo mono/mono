@@ -1,5 +1,11 @@
 2008-05-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir2): Remove non-vtype restriction for
+	generic sharing of NEWARR.
+
+	* mini.c (mini_method_compile): Use cfg->args [0] for accessing the this 
+	argument.
+
 	* mini.h (get_vreg_to_inst): Use braces around the argument.
 
 	* method-to-ir.c: Check unverifiable status after calls to handle_stack_args ().

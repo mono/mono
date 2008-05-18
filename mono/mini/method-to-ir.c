@@ -7497,14 +7497,11 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if (cfg->generic_sharing_context) {
 				int context_used = mono_class_check_context_used (klass);
 
-				if (context_used & MONO_GENERIC_CONTEXT_USED_METHOD || klass->valuetype)
+				if (context_used & MONO_GENERIC_CONTEXT_USED_METHOD)
 					GENERIC_SHARING_FAILURE (CEE_NEWARR);
 
 				if (context_used)
 					shared_access = TRUE;
-
-				// FIXME:
-				//GENERIC_SHARING_FAILURE (CEE_NEWARR);
 			}
 
 			if (shared_access) {
