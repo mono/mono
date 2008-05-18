@@ -1,5 +1,10 @@
 2008-05-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h (get_vreg_to_inst): Use braces around the argument.
+
+	* method-to-ir.c: Check unverifiable status after calls to handle_stack_args ().
+	Update FIXMEs.
+	
 	* method-to-ir.c: Merge --debug=casts support.
 
 2008-05-18  Zoltan Varga  <vargaz@gmail.com>

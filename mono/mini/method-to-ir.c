@@ -365,8 +365,10 @@ mono_print_bb (MonoBasicBlock *bb, const char *msg)
 			ins->inst_false_bb = tblock;	\
 			start_new_bblock = 2;	\
 		}	\
-		if (sp != stack_start) \
+		if (sp != stack_start) {									\
 		    handle_stack_args (cfg, stack_start, sp - stack_start); \
+			CHECK_UNVERIFIABLE (cfg); \
+		} \
         MONO_ADD_INS (bblock, cmp); \
 		MONO_ADD_INS (bblock, ins);	\
 	} while (0)
@@ -3932,9 +3934,6 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
  * or the user may indicate what methods to optimize the most either in a config file
  * or through repeated runs where the compiler applies offline the optimizations to 
  * each method and then decides if it was worth it.
- *
- * TODO:
- * * consider using an array instead of an hash table (bb_hash)
  */
 
 #define CHECK_TYPE(ins) if (!(ins)->type) UNVERIFIED
@@ -3943,6 +3942,7 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 #define CHECK_ARG(num) if ((unsigned)(num) >= (unsigned)num_args) UNVERIFIED
 #define CHECK_LOCAL(num) if ((unsigned)(num) >= (unsigned)header->num_locals) UNVERIFIED
 #define CHECK_OPSIZE(size) if (ip + size > end) UNVERIFIED
+#define CHECK_UNVERIFIABLE(cfg) if (cfg->unverifiable) UNVERIFIED
 #define CHECK_TYPELOAD(klass) if (!(klass) || (klass)->exception_type) {cfg->exception_ptr = klass; goto load_error;}
 
 /* offset from br.s -> br like opcodes */
@@ -5137,6 +5137,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				if (sp != stack_start) {
 					handle_stack_args (cfg, stack_start, sp - stack_start);
 					sp = stack_start;
+					CHECK_UNVERIFIABLE (cfg);
 				}
 				bblock->next_bb = tblock;
 				bblock = tblock;
@@ -6042,6 +6043,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if (sp != stack_start) {
 				handle_stack_args (cfg, stack_start, sp - stack_start);
 				sp = stack_start;
+				CHECK_UNVERIFIABLE (cfg);
 			}
 			MONO_ADD_INS (bblock, ins);
 			start_new_bblock = 1;
@@ -6083,6 +6085,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			if (sp != stack_start) {
 				handle_stack_args (cfg, stack_start, sp - stack_start);
 				sp = stack_start;
+				CHECK_UNVERIFIABLE (cfg);
 			}
 
 			MONO_ADD_INS (bblock, ins);
@@ -6115,8 +6118,10 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			GET_BBLOCK (cfg, tblock, ip);
 			link_bblock (cfg, bblock, tblock);
 
-			if (sp != stack_start)
+			if (sp != stack_start) {
 				handle_stack_args (cfg, stack_start, sp - stack_start);
+				CHECK_UNVERIFIABLE (cfg);
+			}
 
 			MONO_INST_NEW(cfg, cmp, OP_ICOMPARE_IMM);
 			cmp->sreg1 = sp [0]->dreg;
@@ -6215,6 +6220,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 
 				handle_stack_args (cfg, stack_start, sp - stack_start);
 				sp = stack_start;
+				CHECK_UNVERIFIABLE (cfg);
 			}
 
 			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ICOMPARE_IMM, -1, src1->dreg, n);
@@ -7027,6 +7033,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 				if (sp != stack_start) {
 					handle_stack_args (cfg, stack_start, sp - stack_start);
 					sp = stack_start;
+					CHECK_UNVERIFIABLE (cfg);
 				}
 				MONO_ADD_INS (bblock, ins);
 				start_new_bblock = 1;
@@ -9897,7 +9904,6 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
  *     compare_imm, compare_membase
  *   - most back ends unify fp compare+branch, fp compare+ceq
  * - integrate handle_stack_args into inline_method
- * - use sreg2 for destbasereg since it is not really a dreg
  * - get rid of the empty bblocks created by MONO_EMIT_NEW_BRACH_BLOCK2
  * - Things to backport to the old JIT:
  *   - op_atomic_exchange fix for amd64
@@ -9921,7 +9927,6 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
  * - optimize the loading of the interruption flag in the managed->native wrappers
  * - avoid special handling of OP_NOP in passes
  * - move code inserting instructions into one function/macro.
- * - add is_global_vreg () macro
  * - cleanup the code replacement in decompose_long_opts ()
  * - try a coalescing phase after liveness analysis
  * - add float -> vreg conversion + local optimizations on !x86
