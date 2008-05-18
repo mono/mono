@@ -1,3 +1,9 @@
+2008-05-18  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TypeBuilderTest.cs: Enabled test for bug #389171. Added and improved
+	tests for IsAssignableFrom/IsAssignableTo. Added and improved tests
+	for DefineDefaultConstructor.
+
 2008-05-11  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TypeBuilderTest.cs: Added test for type null check in DefineField. 

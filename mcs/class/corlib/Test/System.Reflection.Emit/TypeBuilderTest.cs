@@ -1,4 +1,3 @@
-
 //
 // TypeBuilderTest.cs - NUnit Test Cases for the TypeBuilder class
 //
@@ -15,6 +14,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Threading;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -30,11 +30,12 @@ using System.Collections.Generic;
 
 namespace MonoTests.System.Reflection.Emit
 {
-	public interface EmptyInterface {
-
+	public interface EmptyInterface
+	{
 	}
 
-	public interface OneMethodInterface {
+	public interface OneMethodInterface
+	{
 		void foo ();
 	}
 
@@ -45,15 +46,39 @@ namespace MonoTests.System.Reflection.Emit
 		{
 		}
 
-		interface Foo
+		public interface Foo
 		{
 		}
 
-		interface Bar : Foo
+		public interface Bar : Foo
 		{
 		}
 
-		interface Baz : Bar
+		public interface Baz : Bar
+		{
+		}
+
+		public interface IMoveable
+		{
+		}
+
+		public interface IThrowable : IMoveable
+		{
+		}
+
+		public interface ILiquid
+		{
+		}
+
+		public interface IWater : ILiquid
+		{
+		}
+
+		public interface IAir
+		{
+		}
+
+		public interface IDestroyable
 		{
 		}
 
@@ -1209,7 +1234,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		public void TestDefineDefaultConstructor ()
+		public void DefineDefaultConstructor ()
 		{
 			TypeBuilder tb = module.DefineType (genTypeName ());
 			tb.DefineDefaultConstructor (0);
@@ -1226,27 +1251,55 @@ namespace MonoTests.System.Reflection.Emit
 				Assert.IsNotNull (ex.Message, "#4");
 			}
 		}
-	
+
 		[Test]
-		public void TestDefineDefaultConstructorParent ()
+		public void DefineDefaultConstructor_Parent_DefaultCtorInaccessible ()
 		{
-			TypeBuilder tb = module.DefineType (genTypeName ());
+			TypeBuilder tb;
+			
+			tb = module.DefineType (genTypeName ());
+			tb.DefineDefaultConstructor (MethodAttributes.Private);
+			Type parent_type = tb.CreateType ();
+
+			tb = module.DefineType (genTypeName (), TypeAttributes.Class,
+				parent_type);
+			tb.DefineDefaultConstructor (MethodAttributes.Public);
+			Type emitted_type = tb.CreateType ();
+			try {
+				Activator.CreateInstance (emitted_type);
+				Assert.Fail ("#1");
+			} catch (TargetInvocationException ex) {
+				Assert.AreEqual (typeof (TargetInvocationException), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+
+				MethodAccessException mae = ex.InnerException as MethodAccessException;
+				Assert.IsNotNull (mae, "#5");
+				Assert.AreEqual (typeof (MethodAccessException), mae.GetType (), "#6");
+				Assert.IsNull (mae.InnerException, "#7");
+				Assert.IsNotNull (mae.Message, "#8");
+				Assert.IsTrue (mae.Message.IndexOf (parent_type.FullName) != -1, "#9:" + mae.Message);
+				Assert.IsTrue (mae.Message.IndexOf (".ctor") != -1, "#10:" + mae.Message);
+			}
+		}
+
+		[Test]
+		public void DefineDefaultConstructor_Parent_DefaultCtorMissing ()
+		{
+			TypeBuilder tb;
+
+			tb = module.DefineType (genTypeName ());
 			ConstructorBuilder cb = tb.DefineConstructor (
 				MethodAttributes.Public,
 				CallingConventions.Standard,
 				new Type [] { typeof (string) });
 			cb.GetILGenerator ().Emit (OpCodes.Ret);
-			Type type = tb.CreateType ();
+			Type parent_type = tb.CreateType ();
 
-			// create TypeBuilder for type that derived from the 
-			// previously created type (which has no default ctor)
-			tb = module.DefineType (genTypeName (), TypeAttributes.Class
-				| TypeAttributes.Public, type);
-
-			// you cannot create a type with a default ctor that
-			// derives from a type without a default ctor
+			tb = module.DefineType (genTypeName (), TypeAttributes.Class,
+				parent_type);
 			try {
-				tb.CreateType ();
+				tb.DefineDefaultConstructor (MethodAttributes.Public);
 				Assert.Fail ("#1");
 			} catch (NotSupportedException ex) {
 				// Parent does not have a default constructor.
@@ -8675,43 +8728,475 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		public void TestIsAssignableTo ()
+		public void IsAssignableFrom_Created ()
 		{
-			Type icomparable = typeof (IComparable);
-
 			TypeBuilder tb = module.DefineType (genTypeName (),
-												TypeAttributes.Public, null, new Type [] { icomparable, typeof (Bar) });
+				TypeAttributes.Public, typeof (MemoryStream),
+				new Type [] { typeof (IThrowable), typeof (Bar) });
+			tb.AddInterfaceImplementation (typeof (IDestroyable));
+			Type emitted_type = tb.CreateType ();
 
-			Assert.IsTrue (icomparable.IsAssignableFrom (tb), "#1");
-			Assert.IsFalse (tb.IsAssignableFrom (icomparable), "#2");
+			Assert.IsTrue (typeof (IThrowable).IsAssignableFrom (tb), "#A1");
+			Assert.IsFalse (tb.IsAssignableFrom (typeof (IThrowable)), "#A2");
+			Assert.IsTrue (typeof (IMoveable).IsAssignableFrom (tb), "#A3");
+			Assert.IsFalse (tb.IsAssignableFrom (typeof (IMoveable)), "#A4");
+			Assert.IsTrue (typeof (Foo).IsAssignableFrom (tb), "#A5");
+			Assert.IsFalse (tb.IsAssignableFrom (typeof (Foo)), "#A6");
+			Assert.IsTrue (typeof (Bar).IsAssignableFrom (tb), "#A7");
+			Assert.IsFalse (tb.IsAssignableFrom (typeof (Bar)), "#A8");
+			Assert.IsFalse (typeof (Baz).IsAssignableFrom (tb), "#A9");
+			Assert.IsFalse (tb.IsAssignableFrom (typeof (Baz)), "#A10");
+			Assert.IsTrue (typeof (IDestroyable).IsAssignableFrom (tb), "#A11");
+			Assert.IsFalse (tb.IsAssignableFrom (typeof (IDestroyable)), "#A12");
+			Assert.IsFalse (typeof (IAir).IsAssignableFrom (tb), "#A13");
+			Assert.IsFalse (tb.IsAssignableFrom (typeof (IAir)), "#A14");
+			Assert.IsFalse (typeof (IWater).IsAssignableFrom (tb), "#A15");
+			Assert.IsFalse (tb.IsAssignableFrom (typeof (IWater)), "#A16");
+			Assert.IsFalse (typeof (ILiquid).IsAssignableFrom (tb), "#A17");
+			Assert.IsFalse (tb.IsAssignableFrom (typeof (ILiquid)), "#A18");
 
-			Assert.IsTrue (typeof (Bar).IsAssignableFrom (tb), "#3");
-			Assert.IsFalse (typeof (Baz).IsAssignableFrom (tb), "#4");
+			Assert.IsTrue (typeof (MemoryStream).IsAssignableFrom (tb), "#B1");
+			Assert.IsFalse (tb.IsAssignableFrom (typeof (MemoryStream)), "#B2");
+			Assert.IsTrue (typeof (Stream).IsAssignableFrom (tb), "#B3");
+			Assert.IsFalse (tb.IsAssignableFrom (typeof (Stream)), "#B4");
+			Assert.IsFalse (typeof (FileStream).IsAssignableFrom (tb), "#B5");
+			Assert.IsFalse (tb.IsAssignableFrom (typeof (FileStream)), "#B6");
+			Assert.IsTrue (typeof (object).IsAssignableFrom (tb), "#B7");
+			Assert.IsFalse (tb.IsAssignableFrom (typeof (object)), "#B8");
+			Assert.IsTrue (typeof (IDisposable).IsAssignableFrom (tb), "#B9");
+			Assert.IsFalse (tb.IsAssignableFrom (typeof (IDisposable)), "#B10");
 
-			Assert.IsTrue (tb.IsAssignableFrom (tb), "#5");
+			Assert.IsTrue (tb.IsAssignableFrom (tb), "#C1");
+			Assert.IsFalse (tb.IsAssignableFrom ((Type) null), "#C2");
+			Assert.IsTrue (tb.IsAssignableFrom (emitted_type), "#C3");
+			Assert.IsTrue (emitted_type.IsAssignableFrom (tb), "#C4");
+			Assert.IsFalse (emitted_type.IsAssignableFrom ((Type) null), "#C5");
 
-			Assert.IsFalse (tb.IsAssignableFrom (typeof (IDisposable)), "#6");
-			tb.AddInterfaceImplementation (typeof (IDisposable));
+			Assert.IsTrue (typeof (IThrowable).IsAssignableFrom (emitted_type), "#D1");
+			Assert.IsFalse (emitted_type.IsAssignableFrom (typeof (IThrowable)), "#D2");
+			Assert.IsTrue (typeof (IMoveable).IsAssignableFrom (emitted_type), "#D3");
+			Assert.IsFalse (emitted_type.IsAssignableFrom (typeof (IMoveable)), "#D4");
+			Assert.IsTrue (typeof (Foo).IsAssignableFrom (emitted_type), "#D5");
+			Assert.IsFalse (emitted_type.IsAssignableFrom (typeof (Foo)), "#D6");
+			Assert.IsTrue (typeof (Bar).IsAssignableFrom (emitted_type), "#D7");
+			Assert.IsFalse (emitted_type.IsAssignableFrom (typeof (Bar)), "#D8");
+			Assert.IsFalse (typeof (Baz).IsAssignableFrom (emitted_type), "#D9");
+			Assert.IsFalse (emitted_type.IsAssignableFrom (typeof (Baz)), "#D10");
+			Assert.IsTrue (typeof (IDestroyable).IsAssignableFrom (emitted_type), "#D11");
+			Assert.IsFalse (emitted_type.IsAssignableFrom (typeof (IDestroyable)), "#D12");
+			Assert.IsFalse (typeof (IAir).IsAssignableFrom (emitted_type), "#D13");
+			Assert.IsFalse (emitted_type.IsAssignableFrom (typeof (IAir)), "#D14");
+			Assert.IsFalse (typeof (IWater).IsAssignableFrom (emitted_type), "#D15");
+			Assert.IsFalse (emitted_type.IsAssignableFrom (typeof (IWater)), "#D16");
+			Assert.IsFalse (typeof (ILiquid).IsAssignableFrom (emitted_type), "#D17");
+			Assert.IsFalse (emitted_type.IsAssignableFrom (typeof (ILiquid)), "#D18");
 
-			// Fails under .net, so we don't support it either
-			//Assert.IsTrue (tb.IsAssignableFrom (typeof (IDisposable)), "#7");
+			Assert.IsTrue (typeof (MemoryStream).IsAssignableFrom (emitted_type), "#E1");
+			Assert.IsFalse (emitted_type.IsAssignableFrom (typeof (MemoryStream)), "#E2");
+			Assert.IsTrue (typeof (Stream).IsAssignableFrom (emitted_type), "#E3");
+			Assert.IsFalse (emitted_type.IsAssignableFrom (typeof (Stream)), "#E4");
+			Assert.IsFalse (typeof (FileStream).IsAssignableFrom (emitted_type), "#E5");
+			Assert.IsFalse (emitted_type.IsAssignableFrom (typeof (FileStream)), "#E6");
+			Assert.IsTrue (typeof (object).IsAssignableFrom (emitted_type), "#E7");
+			Assert.IsFalse (emitted_type.IsAssignableFrom (typeof (object)), "#E8");
+			Assert.IsTrue (typeof (IDisposable).IsAssignableFrom (emitted_type), "#E9");
+			Assert.IsFalse (emitted_type.IsAssignableFrom (typeof (IDisposable)), "#E10");
+
+			Assert.IsTrue (typeof (Foo []).IsAssignableFrom (module.GetType (
+				tb.FullName + "[]")), "#F1");
+			Assert.IsTrue (typeof (Bar []).IsAssignableFrom (module.GetType (
+				tb.FullName + "[]")), "#F2");
+			Assert.IsFalse (typeof (Baz []).IsAssignableFrom (module.GetType (
+				tb.FullName + "[]")), "#F3");
+
+			TypeBuilder tb2 = module.DefineType (genTypeName (),
+				TypeAttributes.Public, tb,
+				new Type [] { typeof (IAir) });
+			Type emitted_type2 = tb2.CreateType ();
+
+			Assert.IsTrue (typeof (IThrowable).IsAssignableFrom (tb2), "#G1");
+			Assert.IsFalse (tb2.IsAssignableFrom (typeof (IThrowable)), "#G2");
+			Assert.IsTrue (typeof (IMoveable).IsAssignableFrom (tb2), "#G3");
+			Assert.IsFalse (tb2.IsAssignableFrom (typeof (IMoveable)), "#G4");
+			Assert.IsTrue (typeof (Foo).IsAssignableFrom (tb2), "#G5");
+			Assert.IsFalse (tb2.IsAssignableFrom (typeof (Foo)), "#G6");
+			Assert.IsTrue (typeof (Bar).IsAssignableFrom (tb2), "#G7");
+			Assert.IsFalse (tb2.IsAssignableFrom (typeof (Bar)), "#G8");
+			Assert.IsFalse (typeof (Baz).IsAssignableFrom (tb2), "#G9");
+			Assert.IsFalse (tb2.IsAssignableFrom (typeof (Baz)), "#G10");
+			Assert.IsTrue (typeof (IDestroyable).IsAssignableFrom (tb2), "#G11");
+			Assert.IsFalse (tb2.IsAssignableFrom (typeof (IDestroyable)), "#G12");
+			Assert.IsTrue (typeof (IAir).IsAssignableFrom (tb2), "#G13");
+			Assert.IsFalse (tb2.IsAssignableFrom (typeof (IAir)), "#G14");
+			Assert.IsFalse (typeof (IWater).IsAssignableFrom (tb2), "#G15");
+			Assert.IsFalse (tb2.IsAssignableFrom (typeof (IWater)), "#G16");
+			Assert.IsFalse (typeof (ILiquid).IsAssignableFrom (tb2), "#G17");
+			Assert.IsFalse (tb2.IsAssignableFrom (typeof (ILiquid)), "#G18");
+
+			Assert.IsTrue (typeof (MemoryStream).IsAssignableFrom (tb2), "#H1");
+			Assert.IsFalse (tb2.IsAssignableFrom (typeof (MemoryStream)), "#H2");
+			Assert.IsTrue (typeof (Stream).IsAssignableFrom (tb2), "#H3");
+			Assert.IsFalse (tb2.IsAssignableFrom (typeof (Stream)), "#H4");
+			Assert.IsFalse (typeof (FileStream).IsAssignableFrom (tb2), "#H5");
+			Assert.IsFalse (tb2.IsAssignableFrom (typeof (FileStream)), "#H6");
+			Assert.IsTrue (typeof (object).IsAssignableFrom (tb2), "#H7");
+			Assert.IsFalse (tb2.IsAssignableFrom (typeof (object)), "#H8");
+			Assert.IsTrue (typeof (IDisposable).IsAssignableFrom (tb2), "#H9");
+			Assert.IsFalse (tb2.IsAssignableFrom (typeof (IDisposable)), "#H10");
+
+			Assert.IsTrue (tb2.IsAssignableFrom (tb2), "#I1");
+			Assert.IsFalse (tb2.IsAssignableFrom (tb), "#I2");
+			Assert.IsTrue (tb2.IsAssignableFrom (emitted_type2), "#I3");
+			Assert.IsFalse (tb2.IsAssignableFrom (emitted_type), "#I4");
+			Assert.IsFalse (tb2.IsAssignableFrom ((Type) null), "#I5");
+			Assert.IsTrue (emitted_type2.IsAssignableFrom (emitted_type2), "#I6");
+			Assert.IsFalse (emitted_type2.IsAssignableFrom (emitted_type), "#I7");
+			Assert.IsTrue (emitted_type2.IsAssignableFrom (tb2), "#I8");
+			Assert.IsFalse (emitted_type2.IsAssignableFrom (tb), "#I9");
+			Assert.IsFalse (emitted_type2.IsAssignableFrom ((Type) null), "#I10");
+			Assert.IsTrue (tb.IsAssignableFrom (tb2), "#I11");
+			Assert.IsTrue (tb.IsAssignableFrom (emitted_type2), "#I12");
+			Assert.IsTrue (emitted_type.IsAssignableFrom (tb2), "#I13");
+			Assert.IsTrue (emitted_type.IsAssignableFrom (emitted_type2), "#I14");
+
+			Assert.IsTrue (typeof (IThrowable).IsAssignableFrom (emitted_type2), "#J1");
+			Assert.IsFalse (emitted_type2.IsAssignableFrom (typeof (IThrowable)), "#J2");
+			Assert.IsTrue (typeof (IMoveable).IsAssignableFrom (emitted_type2), "#J3");
+			Assert.IsFalse (emitted_type2.IsAssignableFrom (typeof (IMoveable)), "#J4");
+			Assert.IsTrue (typeof (Foo).IsAssignableFrom (emitted_type2), "#J5");
+			Assert.IsFalse (emitted_type2.IsAssignableFrom (typeof (Foo)), "#J6");
+			Assert.IsTrue (typeof (Bar).IsAssignableFrom (emitted_type2), "#J7");
+			Assert.IsFalse (emitted_type2.IsAssignableFrom (typeof (Bar)), "#J8");
+			Assert.IsFalse (typeof (Baz).IsAssignableFrom (emitted_type2), "#J9");
+			Assert.IsFalse (emitted_type2.IsAssignableFrom (typeof (Baz)), "#J10");
+			Assert.IsTrue (typeof (IDestroyable).IsAssignableFrom (tb2), "#J11");
+			Assert.IsFalse (emitted_type2.IsAssignableFrom (typeof (IDestroyable)), "#J12");
+			Assert.IsTrue (typeof (IAir).IsAssignableFrom (emitted_type2), "#J13");
+			Assert.IsFalse (emitted_type2.IsAssignableFrom (typeof (IAir)), "#J14");
+			Assert.IsFalse (typeof (IWater).IsAssignableFrom (emitted_type2), "#J15");
+			Assert.IsFalse (emitted_type2.IsAssignableFrom (typeof (IWater)), "#J16");
+			Assert.IsFalse (typeof (ILiquid).IsAssignableFrom (emitted_type2), "#J17");
+			Assert.IsFalse (emitted_type2.IsAssignableFrom (typeof (ILiquid)), "#J18");
+
+			Assert.IsTrue (typeof (MemoryStream).IsAssignableFrom (emitted_type2), "#K1");
+			Assert.IsFalse (emitted_type2.IsAssignableFrom (typeof (MemoryStream)), "#K2");
+			Assert.IsTrue (typeof (Stream).IsAssignableFrom (emitted_type2), "#K3");
+			Assert.IsFalse (emitted_type2.IsAssignableFrom (typeof (Stream)), "#K4");
+			Assert.IsFalse (typeof (FileStream).IsAssignableFrom (emitted_type2), "#K5");
+			Assert.IsFalse (emitted_type2.IsAssignableFrom (typeof (FileStream)), "#K6");
+			Assert.IsTrue (typeof (object).IsAssignableFrom (emitted_type2), "#K7");
+			Assert.IsFalse (emitted_type2.IsAssignableFrom (typeof (object)), "#K8");
+			Assert.IsTrue (typeof (IDisposable).IsAssignableFrom (emitted_type2), "#K9");
+			Assert.IsFalse (emitted_type2.IsAssignableFrom (typeof (IDisposable)), "#K10");
+
+			Assert.IsTrue (typeof (Foo []).IsAssignableFrom (module.GetType (
+				tb2.FullName + "[]")), "#L1");
+			Assert.IsTrue (typeof (Bar []).IsAssignableFrom (module.GetType (
+				tb2.FullName + "[]")), "#L2");
+			Assert.IsFalse (typeof (Baz []).IsAssignableFrom (module.GetType (
+				tb2.FullName + "[]")), "#L3");
+
+			TypeBuilder tb3 = module.DefineType (genTypeName (),
+				TypeAttributes.Public, tb2,
+				new Type [] { typeof (IWater) });
+			Type emitted_type3 = tb3.CreateType ();
+
+			Assert.IsTrue (typeof (IThrowable).IsAssignableFrom (tb3), "#M1");
+			Assert.IsFalse (tb3.IsAssignableFrom (typeof (IThrowable)), "#M2");
+			Assert.IsTrue (typeof (IMoveable).IsAssignableFrom (tb3), "#M3");
+			Assert.IsFalse (tb3.IsAssignableFrom (typeof (IMoveable)), "#M4");
+			Assert.IsTrue (typeof (Foo).IsAssignableFrom (tb3), "#M5");
+			Assert.IsFalse (tb3.IsAssignableFrom (typeof (Foo)), "#M6");
+			Assert.IsTrue (typeof (Bar).IsAssignableFrom (tb3), "#M7");
+			Assert.IsFalse (tb3.IsAssignableFrom (typeof (Bar)), "#M8");
+			Assert.IsFalse (typeof (Baz).IsAssignableFrom (tb3), "#M9");
+			Assert.IsFalse (tb3.IsAssignableFrom (typeof (Baz)), "#M10");
+			Assert.IsTrue (typeof (IDestroyable).IsAssignableFrom (tb3), "#M11");
+			Assert.IsFalse (tb3.IsAssignableFrom (typeof (IDestroyable)), "#M12");
+			Assert.IsTrue (typeof (IAir).IsAssignableFrom (tb3), "#M13");
+			Assert.IsFalse (tb3.IsAssignableFrom (typeof (IAir)), "#M14");
+			Assert.IsTrue (typeof (IWater).IsAssignableFrom (tb3), "#M15");
+			Assert.IsFalse (tb3.IsAssignableFrom (typeof (IWater)), "#M16");
+			Assert.IsTrue (typeof (ILiquid).IsAssignableFrom (tb3), "#M17");
+			Assert.IsFalse (tb3.IsAssignableFrom (typeof (ILiquid)), "#M18");
+
+			Assert.IsTrue (typeof (MemoryStream).IsAssignableFrom (tb3), "#N1");
+			Assert.IsFalse (tb3.IsAssignableFrom (typeof (MemoryStream)), "#N2");
+			Assert.IsTrue (typeof (Stream).IsAssignableFrom (tb3), "#N3");
+			Assert.IsFalse (tb3.IsAssignableFrom (typeof (Stream)), "#N4");
+			Assert.IsFalse (typeof (FileStream).IsAssignableFrom (tb3), "#N5");
+			Assert.IsFalse (tb3.IsAssignableFrom (typeof (FileStream)), "#N6");
+			Assert.IsTrue (typeof (object).IsAssignableFrom (tb3), "#N7");
+			Assert.IsFalse (tb3.IsAssignableFrom (typeof (object)), "#N8");
+			Assert.IsTrue (typeof (IDisposable).IsAssignableFrom (tb3), "#N9");
+			Assert.IsFalse (tb3.IsAssignableFrom (typeof (IDisposable)), "#N10");
+
+			Assert.IsTrue (tb3.IsAssignableFrom (tb3), "#O1");
+			Assert.IsFalse (tb3.IsAssignableFrom (tb2), "#O2");
+			Assert.IsFalse (tb3.IsAssignableFrom (tb), "#O3");
+			Assert.IsTrue (tb3.IsAssignableFrom (emitted_type3), "#O4");
+			Assert.IsFalse (tb3.IsAssignableFrom (emitted_type2), "#O5");
+			Assert.IsFalse (tb3.IsAssignableFrom (emitted_type), "#O6");
+			Assert.IsFalse (tb3.IsAssignableFrom ((Type) null), "#O7");
+			Assert.IsTrue (emitted_type3.IsAssignableFrom (emitted_type3), "#O8");
+			Assert.IsFalse (emitted_type3.IsAssignableFrom (emitted_type2), "#O9");
+			Assert.IsFalse (emitted_type3.IsAssignableFrom (emitted_type), "#O10");
+			Assert.IsTrue (emitted_type3.IsAssignableFrom (tb3), "#O11");
+			Assert.IsFalse (emitted_type3.IsAssignableFrom (tb2), "#O12");
+			Assert.IsFalse (emitted_type3.IsAssignableFrom (tb), "#O13");
+			Assert.IsFalse (emitted_type3.IsAssignableFrom ((Type) null), "#O14");
+			Assert.IsTrue (tb2.IsAssignableFrom (tb3), "#O15");
+			Assert.IsTrue (tb2.IsAssignableFrom (emitted_type3), "#O16");
+			Assert.IsTrue (emitted_type2.IsAssignableFrom (emitted_type3), "#O17");
+			Assert.IsTrue (emitted_type2.IsAssignableFrom (tb3), "#O18");
+			Assert.IsTrue (tb.IsAssignableFrom (tb3), "#O19");
+			Assert.IsTrue (tb.IsAssignableFrom (emitted_type3), "#O20");
+			Assert.IsTrue (emitted_type.IsAssignableFrom (tb3), "#021");
+			Assert.IsTrue (emitted_type.IsAssignableFrom (emitted_type3), "#O22");
+
+			Assert.IsTrue (typeof (IThrowable).IsAssignableFrom (emitted_type3), "#P1");
+			Assert.IsFalse (emitted_type3.IsAssignableFrom (typeof (IThrowable)), "#P2");
+			Assert.IsTrue (typeof (IMoveable).IsAssignableFrom (emitted_type3), "#P3");
+			Assert.IsFalse (emitted_type3.IsAssignableFrom (typeof (IMoveable)), "#P4");
+			Assert.IsTrue (typeof (Foo).IsAssignableFrom (emitted_type3), "#P5");
+			Assert.IsFalse (emitted_type3.IsAssignableFrom (typeof (Foo)), "#P6");
+			Assert.IsTrue (typeof (Bar).IsAssignableFrom (emitted_type3), "#P7");
+			Assert.IsFalse (emitted_type3.IsAssignableFrom (typeof (Bar)), "#P8");
+			Assert.IsFalse (typeof (Baz).IsAssignableFrom (emitted_type3), "#P9");
+			Assert.IsFalse (emitted_type3.IsAssignableFrom (typeof (Baz)), "#P10");
+			Assert.IsTrue (typeof (IDestroyable).IsAssignableFrom (emitted_type3), "#P11");
+			Assert.IsFalse (emitted_type3.IsAssignableFrom (typeof (IDestroyable)), "#P12");
+			Assert.IsTrue (typeof (IAir).IsAssignableFrom (emitted_type3), "#P13");
+			Assert.IsFalse (emitted_type3.IsAssignableFrom (typeof (IAir)), "#P14");
+			Assert.IsTrue (typeof (IWater).IsAssignableFrom (emitted_type3), "#P15");
+			Assert.IsFalse (emitted_type3.IsAssignableFrom (typeof (IWater)), "#P16");
+			Assert.IsTrue (typeof (ILiquid).IsAssignableFrom (emitted_type3), "#P17");
+			Assert.IsFalse (emitted_type3.IsAssignableFrom (typeof (ILiquid)), "#P18");
+
+			Assert.IsTrue (typeof (MemoryStream).IsAssignableFrom (emitted_type3), "#Q1");
+			Assert.IsFalse (emitted_type3.IsAssignableFrom (typeof (MemoryStream)), "#Q2");
+			Assert.IsTrue (typeof (Stream).IsAssignableFrom (emitted_type3), "#Q3");
+			Assert.IsFalse (emitted_type3.IsAssignableFrom (typeof (Stream)), "#Q4");
+			Assert.IsFalse (typeof (FileStream).IsAssignableFrom (emitted_type3), "#Q5");
+			Assert.IsFalse (emitted_type3.IsAssignableFrom (typeof (FileStream)), "#Q6");
+			Assert.IsTrue (typeof (object).IsAssignableFrom (emitted_type3), "#Q7");
+			Assert.IsFalse (emitted_type3.IsAssignableFrom (typeof (object)), "#Q8");
+			Assert.IsTrue (typeof (IDisposable).IsAssignableFrom (emitted_type3), "#Q9");
+			Assert.IsFalse (emitted_type3.IsAssignableFrom (typeof (IDisposable)), "#Q10");
+
+			Assert.IsTrue (typeof (Foo []).IsAssignableFrom (module.GetType (
+				tb3.FullName + "[]")), "#R1");
+			Assert.IsTrue (typeof (Bar []).IsAssignableFrom (module.GetType (
+				tb3.FullName + "[]")), "#R2");
+			Assert.IsFalse (typeof (Baz []).IsAssignableFrom (module.GetType (
+				tb3.FullName + "[]")), "#R3");
 		}
 
 		[Test]
-		[Category ("NotDotNet")]
-		public void TestIsAssignableTo_NotDotNet ()
+		public void IsAssignableFrom_NotCreated ()
 		{
-			Type icomparable = typeof (IComparable);
-
 			TypeBuilder tb = module.DefineType (genTypeName (),
-												TypeAttributes.Public, null, new Type [] { icomparable, typeof (Bar) });
+				TypeAttributes.Public, typeof (MemoryStream),
+				new Type [] {
+					typeof (IThrowable), typeof (Bar),
+					typeof (IComparable)
+					});
 
-			Assert.IsTrue (typeof (Foo).IsAssignableFrom (tb), "#1");
+			Assert.IsTrue (typeof (IThrowable).IsAssignableFrom (tb), "#A1");
+			Assert.IsFalse (tb.IsAssignableFrom (typeof (IThrowable)), "#A2");
+			//Assert.IsFalse (typeof (IMoveable).IsAssignableFrom (tb), "#A3");
+			Assert.IsFalse (tb.IsAssignableFrom (typeof (IMoveable)), "#A4");
+			Assert.IsTrue (typeof (IComparable).IsAssignableFrom (tb), "#A5");
+			Assert.IsFalse (tb.IsAssignableFrom (typeof (IComparable)), "#A6");
+			Assert.IsFalse (typeof (IAir).IsAssignableFrom (tb), "#A7");
+			Assert.IsFalse (tb.IsAssignableFrom (typeof (IAir)), "#A8");
+			Assert.IsFalse (typeof (IWater).IsAssignableFrom (tb), "#A9");
+			Assert.IsFalse (tb.IsAssignableFrom (typeof (IWater)), "#A10");
+			Assert.IsFalse (typeof (ILiquid).IsAssignableFrom (tb), "#A11");
+			Assert.IsFalse (tb.IsAssignableFrom (typeof (ILiquid)), "#A12");
 
-			tb.AddInterfaceImplementation (typeof (IDisposable));
+			//Assert.IsFalse (typeof (Foo).IsAssignableFrom (tb), "#B1");
+			Assert.IsFalse (tb.IsAssignableFrom (typeof (Foo)), "#B2");
+			Assert.IsTrue (typeof (Bar).IsAssignableFrom (tb), "#B3");
+			Assert.IsFalse (tb.IsAssignableFrom (typeof (Bar)), "#B4");
+			Assert.IsFalse (typeof (Baz).IsAssignableFrom (tb), "#B5");
+			Assert.IsFalse (tb.IsAssignableFrom (typeof (Baz)), "#B6");
 
-			// bug #73469
-			Assert.IsTrue (typeof (Bar []).IsAssignableFrom (module.GetType (tb.FullName + "[]")), "#2");
+			Assert.IsTrue (typeof (MemoryStream).IsAssignableFrom (tb), "#C1");
+			Assert.IsFalse (tb.IsAssignableFrom (typeof (MemoryStream)), "#C2");
+			Assert.IsTrue (typeof (Stream).IsAssignableFrom (tb), "#C3");
+			Assert.IsFalse (tb.IsAssignableFrom (typeof (Stream)), "#C4");
+			Assert.IsFalse (typeof (FileStream).IsAssignableFrom (tb), "#C5");
+			Assert.IsFalse (tb.IsAssignableFrom (typeof (FileStream)), "#C6");
+			Assert.IsTrue (typeof (object).IsAssignableFrom (tb), "#C7");
+			Assert.IsFalse (tb.IsAssignableFrom (typeof (object)), "#C8");
+			Assert.IsFalse (typeof (IDisposable).IsAssignableFrom (tb), "#C9");
+			Assert.IsFalse (tb.IsAssignableFrom (typeof (IDisposable)), "#C10");
+
+			Assert.IsTrue (tb.IsAssignableFrom (tb), "#D1");
+			Assert.IsFalse (tb.IsAssignableFrom ((Type) null), "#D2");
+
+			TypeBuilder tb2 = module.DefineType (genTypeName (),
+				TypeAttributes.Public, tb,
+				new Type [] { typeof (IAir) });
+
+			Assert.IsFalse (typeof (IThrowable).IsAssignableFrom (tb2), "#E1");
+			Assert.IsFalse (tb2.IsAssignableFrom (typeof (IThrowable)), "#E2");
+			Assert.IsFalse (typeof (IMoveable).IsAssignableFrom (tb2), "#E3");
+			Assert.IsFalse (tb2.IsAssignableFrom (typeof (IMoveable)), "#E4");
+			Assert.IsFalse (typeof (IComparable).IsAssignableFrom (tb2), "#E5");
+			Assert.IsFalse (tb2.IsAssignableFrom (typeof (IComparable)), "#E6");
+			Assert.IsTrue (typeof (IAir).IsAssignableFrom (tb2), "#E7");
+			Assert.IsFalse (tb2.IsAssignableFrom (typeof (IAir)), "#E8");
+			Assert.IsFalse (typeof (IWater).IsAssignableFrom (tb2), "#E9");
+			Assert.IsFalse (tb2.IsAssignableFrom (typeof (IWater)), "#E10");
+			Assert.IsFalse (typeof (ILiquid).IsAssignableFrom (tb2), "#E11");
+			Assert.IsFalse (tb2.IsAssignableFrom (typeof (ILiquid)), "#E12");
+
+			Assert.IsFalse (typeof (Foo).IsAssignableFrom (tb2), "#F1");
+			Assert.IsFalse (tb2.IsAssignableFrom (typeof (Foo)), "#F2");
+			Assert.IsFalse (typeof (Bar).IsAssignableFrom (tb2), "#F3");
+			Assert.IsFalse (tb2.IsAssignableFrom (typeof (Bar)), "#F4");
+			Assert.IsFalse (typeof (Baz).IsAssignableFrom (tb2), "#F5");
+			Assert.IsFalse (tb2.IsAssignableFrom (typeof (Baz)), "#F6");
+
+			Assert.IsTrue (typeof (MemoryStream).IsAssignableFrom (tb2), "#G1");
+			Assert.IsFalse (tb2.IsAssignableFrom (typeof (MemoryStream)), "#G2");
+			Assert.IsTrue (typeof (Stream).IsAssignableFrom (tb2), "#G3");
+			Assert.IsFalse (tb2.IsAssignableFrom (typeof (Stream)), "#G4");
+			Assert.IsFalse (typeof (FileStream).IsAssignableFrom (tb2), "#G5");
+			Assert.IsFalse (tb2.IsAssignableFrom (typeof (FileStream)), "#G6");
+			Assert.IsTrue (typeof (object).IsAssignableFrom (tb2), "#G7");
+			Assert.IsFalse (tb2.IsAssignableFrom (typeof (object)), "#G8");
+			Assert.IsFalse (typeof (IDisposable).IsAssignableFrom (tb2), "#G9");
+			Assert.IsFalse (tb2.IsAssignableFrom (typeof (IDisposable)), "#G10");
+
+			Assert.IsTrue (tb2.IsAssignableFrom (tb2), "#H1");
+			Assert.IsFalse (tb2.IsAssignableFrom (tb), "#H2");
+			Assert.IsTrue (tb.IsAssignableFrom (tb2), "#H3");
+
+			TypeBuilder tb3 = module.DefineType (genTypeName (),
+				TypeAttributes.Public, tb2,
+				new Type [] { typeof (IWater) });
+
+			Assert.IsFalse (typeof (IThrowable).IsAssignableFrom (tb3), "#I1");
+			Assert.IsFalse (tb3.IsAssignableFrom (typeof (IThrowable)), "#I2");
+			Assert.IsFalse (typeof (IMoveable).IsAssignableFrom (tb3), "#I3");
+			Assert.IsFalse (tb3.IsAssignableFrom (typeof (IMoveable)), "#I4");
+			Assert.IsFalse (typeof (IComparable).IsAssignableFrom (tb3), "#I5");
+			Assert.IsFalse (tb3.IsAssignableFrom (typeof (IComparable)), "#I6");
+			Assert.IsFalse (typeof (IAir).IsAssignableFrom (tb3), "#I7");
+			Assert.IsFalse (tb3.IsAssignableFrom (typeof (IAir)), "#I8");
+			Assert.IsTrue (typeof (IWater).IsAssignableFrom (tb3), "#I9");
+			Assert.IsFalse (tb3.IsAssignableFrom (typeof (IWater)), "#I10");
+			//Assert.IsFalse (typeof (ILiquid).IsAssignableFrom (tb3), "#I11");
+			Assert.IsFalse (tb3.IsAssignableFrom (typeof (ILiquid)), "#I12");
+
+			Assert.IsFalse (typeof (Foo).IsAssignableFrom (tb3), "#J1");
+			Assert.IsFalse (tb3.IsAssignableFrom (typeof (Foo)), "#J2");
+			Assert.IsFalse (typeof (Bar).IsAssignableFrom (tb3), "#J3");
+			Assert.IsFalse (tb3.IsAssignableFrom (typeof (Bar)), "#J4");
+			Assert.IsFalse (typeof (Baz).IsAssignableFrom (tb3), "#J5");
+			Assert.IsFalse (tb3.IsAssignableFrom (typeof (Baz)), "#J6");
+
+			Assert.IsTrue (typeof (MemoryStream).IsAssignableFrom (tb3), "#K1");
+			Assert.IsFalse (tb3.IsAssignableFrom (typeof (MemoryStream)), "#K2");
+			Assert.IsTrue (typeof (Stream).IsAssignableFrom (tb3), "#K3");
+			Assert.IsFalse (tb3.IsAssignableFrom (typeof (Stream)), "#K4");
+			Assert.IsFalse (typeof (FileStream).IsAssignableFrom (tb3), "#K5");
+			Assert.IsFalse (tb3.IsAssignableFrom (typeof (FileStream)), "#K6");
+			Assert.IsTrue (typeof (object).IsAssignableFrom (tb3), "#K7");
+			Assert.IsFalse (tb3.IsAssignableFrom (typeof (object)), "#K8");
+			Assert.IsFalse (typeof (IDisposable).IsAssignableFrom (tb3), "#K9");
+			Assert.IsFalse (tb3.IsAssignableFrom (typeof (IDisposable)), "#K10");
+
+			Assert.IsTrue (tb3.IsAssignableFrom (tb3), "#L1");
+			Assert.IsFalse (tb3.IsAssignableFrom (tb2), "#L2");
+			Assert.IsFalse (tb3.IsAssignableFrom (tb), "#L3");
+			Assert.IsTrue (tb2.IsAssignableFrom (tb3), "#L4");
+			Assert.IsTrue (tb.IsAssignableFrom (tb3), "#L5");
+		}
+
+		[Test]
+		[Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=344549
+		public void IsAssignableFrom_NotCreated_AddInterfaceImplementation_Mono ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName (),
+				TypeAttributes.Public, typeof (FormatException),
+				new Type [] { typeof (IThrowable) });
+			tb.AddInterfaceImplementation (typeof (IDestroyable));
+
+			Assert.IsTrue (typeof (IThrowable).IsAssignableFrom (tb), "#A1");
+			Assert.IsFalse (tb.IsAssignableFrom (typeof (IThrowable)), "#A2");
+
+			Assert.IsTrue (typeof (IDestroyable).IsAssignableFrom (tb), "#B1");
+			Assert.IsFalse (tb.IsAssignableFrom (typeof (IDestroyable)), "#B2");
+		}
+
+		[Test]
+		[Category ("NotWorking")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=344549
+		public void IsAssignableFrom_NotCreated_AddInterfaceImplementation_MS ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName (),
+				TypeAttributes.Public, typeof (FormatException),
+				new Type [] { typeof (IThrowable) });
+			tb.AddInterfaceImplementation (typeof (IDestroyable));
+
+			Assert.IsTrue (typeof (IThrowable).IsAssignableFrom (tb), "#A1");
+			Assert.IsFalse (tb.IsAssignableFrom (typeof (IThrowable)), "#A2");
+
+			Assert.IsFalse (typeof (IDestroyable).IsAssignableFrom (tb), "#B1");
+			Assert.IsFalse (tb.IsAssignableFrom (typeof (IDestroyable)), "#B2");
+		}
+
+
+		[Test]
+		[Category ("NotDotNet")]
+		public void IsAssignableFrom_NotCreated_Array ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName (),
+				TypeAttributes.Public, typeof (FormatException),
+				new Type [] {
+					typeof (IThrowable), typeof (Bar),
+					typeof (IComparable)
+					});
+
+			Assert.IsTrue (typeof (Foo []).IsAssignableFrom (module.GetType (
+				tb.FullName + "[]")), "#1");
+			Assert.IsTrue (typeof (Bar []).IsAssignableFrom (module.GetType (
+				tb.FullName + "[]")), "#2");
+			Assert.IsFalse (typeof (Baz []).IsAssignableFrom (module.GetType (
+				tb.FullName + "[]")), "#3");
+		}
+
+		[Test]
+		[Category ("NotDotNet")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=344353
+		public void IsAssignableFrom_NotCreated_BaseInterface_Mono ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName (),
+				TypeAttributes.Public, typeof (FormatException),
+				new Type [] {
+					typeof (IThrowable), typeof (Bar),
+					typeof (IComparable)
+					});
+
+			Assert.IsTrue (typeof (IMoveable).IsAssignableFrom (tb), "#1");
+			Assert.IsFalse (tb.IsAssignableFrom (typeof (IMoveable)), "#2");
+		}
+
+		[Test]
+		[Category ("NotWorking")] // https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=344353
+		public void IsAssignableFrom_NotCreated_BaseInterface_MS ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName (),
+				TypeAttributes.Public, typeof (FormatException),
+				new Type [] {
+					typeof (IThrowable), typeof (Bar),
+					typeof (IComparable)
+					});
+
+			Assert.IsFalse (typeof (IMoveable).IsAssignableFrom (tb), "#1");
+			Assert.IsFalse (tb.IsAssignableFrom (typeof (IMoveable)), "#2");
 		}
 
 		[Test]
@@ -8747,14 +9232,40 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
-		public void CreateType_ParentNull ()
+		public void CreateType_Parent_DefaultCtorMissing ()
+		{
+			TypeBuilder tb;
+
+			tb = module.DefineType (genTypeName ());
+			ConstructorBuilder cb = tb.DefineConstructor (
+				MethodAttributes.Public,
+				CallingConventions.Standard,
+				new Type [] { typeof (string) });
+			cb.GetILGenerator ().Emit (OpCodes.Ret);
+			Type parent_type = tb.CreateType ();
+
+			tb = module.DefineType (genTypeName (), TypeAttributes.Class,
+				parent_type);
+			try {
+				tb.CreateType ();
+				Assert.Fail ("#1");
+			} catch (NotSupportedException ex) {
+				// Parent does not have a default constructor.
+				// The default constructor must be explicitly defined
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test]
+		public void CreateType_Parent_Null ()
 		{
 			TypeBuilder tb;
 			Type emitted_type;
 			
 			tb = module.DefineType (genTypeName (), TypeAttributes.Public, null);
-			// bug #389171:
-			//Assert.AreEqual (typeof (object), tb.BaseType, "#A1");
+			Assert.AreEqual (typeof (object), tb.BaseType, "#A1");
 			emitted_type = tb.CreateType ();
 			Assert.AreEqual (typeof (object), emitted_type.BaseType, "#A2");
 

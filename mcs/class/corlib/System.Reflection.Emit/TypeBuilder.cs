@@ -1692,7 +1692,8 @@ namespace System.Reflection.Emit
 				foreach (Type t in interfaces)
 					if (c.IsAssignableFrom (t))
 						return true;
-				return false;
+				if (!is_created)
+					return false;
 			}
 
 			if (parent == null)
