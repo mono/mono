@@ -2671,6 +2671,25 @@ handle_castclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src)
 	MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, obj_reg, 0);
 	MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_PBEQ, is_null_bb);
 
+	if (mini_get_debug_options ()->better_cast_details) {
+		int to_klass_reg = alloc_preg (cfg);
+		int klass_reg = alloc_preg (cfg);
+		MonoInst *tls_get = mono_get_jit_tls_intrinsic (cfg);
+
+		if (!tls_get) {
+			fprintf (stderr, "error: --debug=casts not supported on this platform.\n.");
+			exit (1);
+		}
+
+		MONO_ADD_INS (cfg->cbb, tls_get);
+		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, vtable_reg, obj_reg, G_STRUCT_OFFSET (MonoObject, vtable));
+		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, klass_reg, vtable_reg, G_STRUCT_OFFSET (MonoVTable, klass));
+
+		MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, tls_get->dreg, G_STRUCT_OFFSET (MonoJitTlsData, class_cast_from), klass_reg);
+		MONO_EMIT_NEW_PCONST (cfg, to_klass_reg, klass);
+		MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, tls_get->dreg, G_STRUCT_OFFSET (MonoJitTlsData, class_cast_to), to_klass_reg);
+	}
+
 	if (klass->flags & TYPE_ATTRIBUTE_INTERFACE) {
 		MONO_EMIT_NEW_LOAD_MEMBASE (cfg, vtable_reg, obj_reg, G_STRUCT_OFFSET (MonoObject, vtable));
 		mini_emit_iface_cast (cfg, vtable_reg, klass, NULL, NULL);
@@ -2696,6 +2715,15 @@ handle_castclass (MonoCompile *cfg, MonoClass *klass, MonoInst *src)
 	}
 
 	MONO_START_BB (cfg, is_null_bb);
+
+	/* Reset the variables holding the cast details */
+	if (mini_get_debug_options ()->better_cast_details) {
+		MonoInst *tls_get = mono_get_jit_tls_intrinsic (cfg);
+
+		MONO_ADD_INS (cfg->cbb, tls_get);
+		/* It is enough to reset the from field */
+		MONO_EMIT_NEW_STORE_MEMBASE_IMM (cfg, OP_STORE_MEMBASE_IMM, tls_get->dreg, G_STRUCT_OFFSET (MonoJitTlsData, class_cast_from), 0);
+	}
 
 	return src;
 }
@@ -9933,7 +9961,6 @@ mono_spill_global_vars (MonoCompile *cfg, gboolean *need_local_opts)
  * - merge r68207.
  * - merge the ia64 switch changes.
  * - merge the mips conditional changes.
- * - merge the --debug=casts changes.
  * - remove unused opcodes from mini-ops.h, remove "op_" from the opcode names,
  *   remove the op_ opcodes from the cpu-..md files, clean up the cpu-..md files.
  * - make the cpu_ tables smaller when the usage of the cee_ opcodes is removed.

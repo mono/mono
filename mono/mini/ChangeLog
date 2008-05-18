@@ -1,3 +1,7 @@
+2008-05-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c: Merge --debug=casts support.
+
 2008-05-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir2): Merge generic sharing changes.
