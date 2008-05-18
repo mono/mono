@@ -1,3 +1,10 @@
+2008-05-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Font.cs: Add comment that downcasting the IntPtr is not an 
+	issue in this case (offset) since the next API requires it.
+	* Icon.cs: Use String.IsNullOrEmpty inside 2.0 code.
+	[Found using Gendarme]
+
 2008-05-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Graphics.cs: Throw a NotSupportedException if we're ask to create

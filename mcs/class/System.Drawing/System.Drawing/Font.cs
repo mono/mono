@@ -641,6 +641,8 @@ namespace System.Drawing
 				}
 
 				if (CharSetOffset == -1) {
+					// not sure why this methods returns an IntPtr since it's an offset
+					// anyway there's no issue in downcasting the result into an int32
 					CharSetOffset = (int) Marshal.OffsetOf (lf, "lfCharSet");
 				}
 

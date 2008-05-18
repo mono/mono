@@ -272,7 +272,7 @@ namespace System.Drawing
 		[MonoLimitation ("The same icon, SystemIcons.WinLogo, is returned for all file types.")]
 		public static Icon ExtractAssociatedIcon (string filePath)
 		{
-			if ((filePath == null) || (filePath.Length == 0))
+			if (String.IsNullOrEmpty (filePath))
 				throw new ArgumentException (Locale.GetText ("Null or empty path."), "filePath");
 			if (!File.Exists (filePath))
 				throw new FileNotFoundException (Locale.GetText ("Couldn't find specified file."), filePath);
