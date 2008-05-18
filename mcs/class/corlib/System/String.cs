@@ -1140,15 +1140,27 @@ namespace System
 			return PadLeft (totalWidth, ' ');
 		}
 
-		public String PadLeft (int totalWidth, char paddingChar)
+		public unsafe String PadLeft (int totalWidth, char paddingChar)
 		{
+			//LAMESPEC: MSDN Doc says this is reversed for RtL languages, but this seems to be untrue
+
 			if (totalWidth < 0)
 				throw new ArgumentOutOfRangeException ("totalWidth", "< 0");
 
-			if (totalWidth < this.length)
-				return String.Copy (this);
+			if (totalWidth <= this.length)
+				return this;
 
-			return InternalPad (totalWidth, paddingChar, false);
+			String tmp = InternalAllocateStr (totalWidth);
+
+			fixed (char* dest = tmp, src = this) {
+				char* padPos = dest;
+				char* padTo = dest + (totalWidth - length);
+				while (padPos != padTo)
+					*padPos++ = paddingChar;
+
+				CharCopy (padTo, src, length);
+			}
+			return tmp;
 		}
 
 		public String PadRight (int totalWidth)
@@ -1156,15 +1168,27 @@ namespace System
 			return PadRight (totalWidth, ' ');
 		}
 
-		public String PadRight (int totalWidth, char paddingChar)
+		public unsafe String PadRight (int totalWidth, char paddingChar)
 		{
+			//LAMESPEC: MSDN Doc says this is reversed for RtL languages, but this seems to be untrue
+
 			if (totalWidth < 0)
 				throw new ArgumentOutOfRangeException ("totalWidth", "< 0");
 
-			if (totalWidth < this.length)
-				return String.Copy (this);
+			if (totalWidth <= this.length)
+				return this;
 
-			return InternalPad (totalWidth, paddingChar, true);
+			String tmp = InternalAllocateStr (totalWidth);
+
+			fixed (char* dest = tmp, src = this) {
+				CharCopy (dest, src, length);
+
+				char* padPos = dest + length;
+				char* padTo = dest + totalWidth;
+				while (padPos != padTo)
+					*padPos++ = paddingChar;
+			}
+			return tmp;
 		}
 
 		public bool StartsWith (String value)
@@ -1823,8 +1847,10 @@ namespace System
 		{
 			if (value == null)
 				throw new ArgumentNullException ("value");
+			if (separator == null)
+				separator = String.Empty;
 
-			return Join (separator, value, 0, value.Length);
+			return JoinUnchecked (separator, value, 0, value.Length);
 		}
 
 		public static string Join (string separator, string[] value, int startIndex, int count)
@@ -1835,16 +1861,65 @@ namespace System
 				throw new ArgumentOutOfRangeException ("startIndex", "< 0");
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count", "< 0");
-			// re-ordered to avoid possible integer overflow
 			if (startIndex > value.Length - count)
-				throw new ArgumentOutOfRangeException ("startIndex + count > value.length");
+				throw new ArgumentOutOfRangeException ("startIndex", "startIndex + count > value.length");
 
 			if (startIndex == value.Length)
 				return String.Empty;
 			if (separator == null)
 				separator = String.Empty;
 
-			return InternalJoin (separator, value, startIndex, count);
+			return JoinUnchecked (separator, value, startIndex, count);
+		}
+
+		private static unsafe string JoinUnchecked (string separator, string[] value, int startIndex, int count)
+		{
+			// Unchecked parameters
+			// startIndex, count must be >= 0; startIndex + count must be <= value.length
+			// separator and value must not be null
+
+			int length = 0;
+			int maxIndex = startIndex + count;
+			// Precount the number of characters that the resulting string will have
+			for (int i = startIndex; i < maxIndex; i++) {
+				String s = value[i];
+				if (s != null)
+					length += s.length;
+			}
+			length += separator.length * (count - 1);
+			if (length <= 0)
+				return String.Empty;
+
+			String tmp = InternalAllocateStr (length);
+
+			maxIndex--;
+			fixed (char* dest = tmp, sepsrc = separator) {
+				// Copy each string from value except the last one and add a separator for each
+				int pos = 0;
+				for (int i = startIndex; i < maxIndex; i++) {
+					String source = value[i];
+					if (source != null) {
+						if (source.Length > 0) {
+							fixed (char* src = source)
+								CharCopy (dest + pos, src, source.Length);
+							pos += source.Length;
+						}
+					}
+					if (separator.Length > 0) {
+						CharCopy (dest + pos, sepsrc, separator.Length);
+						pos += separator.Length;
+					}
+				}
+				// Append last string that does not get an additional separator
+				String sourceLast = value[maxIndex];
+				if (sourceLast != null) {
+					if (sourceLast.Length > 0) {
+						fixed (char* src = sourceLast)
+							CharCopy (dest + pos, src, sourceLast.Length);
+					}
+				}
+			}
+			return tmp;
 		}
 
 		bool IConvertible.ToBoolean (IFormatProvider provider)

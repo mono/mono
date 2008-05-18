@@ -1,3 +1,7 @@
+2008-05-16  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* String.cs: Update Join and Pad functions
+
 2008-05-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Environment.cs: Use String.IsNullOrEmpty inside 2.0 code.
