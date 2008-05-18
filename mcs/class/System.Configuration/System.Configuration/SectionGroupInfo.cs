@@ -251,7 +251,7 @@ namespace System.Configuration
 				ThrowException ("Unrecognized attribute.", reader);
 
 			string removeValue = reader.Value;
-			if (removeValue == null || removeValue.Length == 0)
+			if (String.IsNullOrEmpty (removeValue))
 				ThrowException ("Empty name to remove", reader);
 
 			reader.MoveToElement ();
