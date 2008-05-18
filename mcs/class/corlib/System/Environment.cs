@@ -642,7 +642,7 @@ namespace System {
 				if (!IsRunningOnWindows)
 					return;
 				using (Microsoft.Win32.RegistryKey env = Microsoft.Win32.Registry.LocalMachine.OpenSubKey (@"SYSTEM\CurrentControlSet\Control\Session Manager\Environment", true)) {
-					if (value == null || value.Length == 0)
+					if (String.IsNullOrEmpty (value))
 						env.DeleteValue (variable, false);
 					else
 						env.SetValue (variable, value);
@@ -652,7 +652,7 @@ namespace System {
 				if (!IsRunningOnWindows)
 					return;
 				using (Microsoft.Win32.RegistryKey env = Microsoft.Win32.Registry.CurrentUser.OpenSubKey ("Environment", true)) {
-					if (value == null || value.Length == 0)
+					if (String.IsNullOrEmpty (value))
 						env.DeleteValue (variable, false);
 					else
 						env.SetValue (variable, value);
