@@ -1,3 +1,9 @@
+2008-05-18 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* object.c (mono_class_create_runtime_vtable): Use memory barriers
+	as we do double checked locking on MonoClass::runtime_info and
+	MonoClassRuntimeInfo::domain_vtables.
+
 2008-05-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* debug-helpers.c (print_field_value): Fix a warning.
