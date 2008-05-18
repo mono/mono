@@ -1,3 +1,8 @@
+2008-05-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Chain.cs: Use String.IsNullOrEmpty inside 2.0 code.
+	[Found using Gendarme]
+
 2008-04-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* X500DistinguishedName.cs: Fixed line endings.

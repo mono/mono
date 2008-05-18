@@ -325,7 +325,7 @@ namespace System.Security.Cryptography.X509Certificates {
 
 				// again multiple candidates, let's find the AKI that match the SKI (if we have one)
 				string aki = GetAuthorityKeyIdentifier (child);
-				if ((aki == null) || (aki.Length == 0)) {
+				if (String.IsNullOrEmpty (aki)) {
 					return time_valid [0]; // FIXME: out of luck, you get the first one
 				}
 				foreach (X509Certificate2 parent in time_valid) {
@@ -363,10 +363,10 @@ namespace System.Security.Cryptography.X509Certificates {
 			// check that Authority Key Identifier == Subject Key Identifier
 			// e.g. it will be different if a self-signed certificate is part (not the end) of the chain
 			string ski = GetSubjectKeyIdentifier (certificate);
-			if ((ski == null) || (ski.Length == 0))
+			if (String.IsNullOrEmpty (ski))
 				return true;
 			string aki = GetAuthorityKeyIdentifier (certificate);
-			if ((aki == null) || (aki.Length == 0))
+			if (String.IsNullOrEmpty (aki))
 				return true;
 			// if both id are available then they must match
 			return (aki == ski);
