@@ -1,5 +1,12 @@
 SUBDIRS = cas assemblyresolve
 
+# avoid including eglib twice since GLIB_LIBS == GMODULE_LIBS for eglib builds
+if EGLIB_BUILD
+glib_libs = $(GLIB_LIBS)
+else
+glib_libs = $(GLIB_LIBS) $(GMODULE_LIBS)
+endif
+
 check-local: test
 
 TEST_PROG = ../interpreter/mint
@@ -21,7 +28,7 @@ MKBUNDLE = \
 	$(RUNTIME) $(mcs_topdir)/class/lib/net_2_0/mkbundle.exe
 
 MCS = $(RUNTIME) $(mcs_topdir)/class/lib/net_2_0/gmcs.exe -unsafe -nowarn:0162 -nowarn:0168 -nowarn:0219
-SMCS = $(RUNTIME21) --security=temporary-smcs-hack $(mcs_topdir)/class/lib/net_2_1/smcs.exe -unsafe -nowarn:0162 -nowarn:0168 -nowarn:0219
+SMCS = $(RUNTIME21) --runtime=moonlight --security=temporary-smcs-hack $(mcs_topdir)/class/lib/net_2_1/smcs.exe -unsafe -nowarn:0162 -nowarn:0168 -nowarn:0219
 ILASM = $(RUNTIME) $(mcs_topdir)/class/lib/net_2_0/ilasm.exe
 
 BENCHSRC=fib.cs random.cs nested-loops.cs ackermann.cs tight-loop.cs sieve.cs
@@ -34,7 +41,8 @@ STRESS_TESTS_SRC=	\
 	gchandle-stress.cs	\
 	monitor-stress.cs	\
 	thread-stress.cs	\
-	gc-stress.cs
+	gc-stress.cs		\
+	exit-stress.cs
 
 BASE_TEST_CS_SRC=		\
 	array-init.cs		\
@@ -257,7 +265,11 @@ BASE_TEST_CS_SRC=		\
 	shared-generic-synchronized.2.cs	\
 	generic-inlining.2.cs	\
 	generic-initobj.2.cs	\
-	generic-box.2.cs	\
+	generic-delegate.2.cs	\
+	generic-sizeof.2.cs	\
+	generic-virtual.2.cs	\
+	generic-interface-methods.2.cs	\
+	generic-array-type.2.cs	\
 	recursive-generics.2.cs	\
 	bug-80392.2.cs		\
 	dynamic-method-access.2.cs	\
@@ -273,7 +285,9 @@ BASE_TEST_CS_SRC=		\
 	bug-322722_patch_bx.2.cs		\
 	bug-348522.2.cs		\
 	bug-340662_bug.cs	\
-	bug-322722_dyn_method_throw.2.cs
+	bug-322722_dyn_method_throw.2.cs	\
+	bug-389886-2.cs	\
+	thunks.cs
 
 if AMD64
 TEST_CS_SRC = $(BASE_TEST_CS_SRC) async-exc-compilation.cs
@@ -344,11 +358,18 @@ TEST_IL_SRC=			\
 	bug-79215.2.il	\
 	bug-79956.2.il	\
 	bug-327438.2.il \
+	bug-387274.2.il	\
 	ldtoken_with_byref_typespec.2.il \
 	resolve_method_bug.2.il \
 	resolve_field_bug.2.il \
 	resolve_type_bug.2.il	\
-	generics-sharing-other-exc.2.il
+	generics-sharing-other-exc.2.il	\
+	generic-ldobj.2.il	\
+	generic-mkrefany.2.il	\
+	generic-ldtoken.2.il	\
+	generic-ldtoken-method.2.il	\
+	generic-ldtoken-field.2.il	\
+	generic-tailcall.2.il
 
 #	bug-318677.il
 
@@ -377,14 +398,14 @@ EXTRA_DIST=test-driver $(TEST_CS_SRC) $(TEST_IL_SRC) \
 
 # mkbundle works on ppc, but the pkg-config POC doesn't when run with make test
 if POWERPC
-test:	assemblyresolve/test/asm.dll testjit test-type-load test-inline-call-stack test-bug-80307 test-bug-81673 test-bug-81691 test-bug-81466 test-bug-324535 test-generic-sharing
+test:	assemblyresolve/test/asm.dll testjit test-type-load test-inline-call-stack test-bug-80307 test-bug-81673 test-bug-81691 test-bug-81466 test-bug-324535 test-generic-sharing test-bug-382986
 else
 # Can't use mkbundle on win32 since there is no static build there
 # Can't run test-unhandled-exception on Windows because of all the debug popups...
 if PLATFORM_WIN32
-test:   assemblyresolve/test/asm.dll testjit test-type-load test-inline-call-stack test-bug-80307 test-bug-81673 test-bug-81691 test-bug-81466 test-bug-324535 test-generic-sharing
+test:   assemblyresolve/test/asm.dll testjit test-type-load test-inline-call-stack test-bug-80307 test-bug-81673 test-bug-81691 test-bug-81466 test-bug-324535 test-generic-sharing test-bug-382986
 else
-test:	assemblyresolve/test/asm.dll testjit testbundle test-type-load test-inline-call-stack test-iomap-regression test-bug-80307 test-bug-81673 test-bug-81691 test-bug-81466 test-bug-324535 custom-modifiers test-generic-sharing
+test:	assemblyresolve/test/asm.dll testjit testbundle test-type-load test-inline-call-stack test-iomap-regression test-bug-80307 test-bug-81673 test-bug-81691 test-bug-81466 test-bug-324535 custom-modifiers test-generic-sharing test-bug-382986 
 endif
 endif
 
@@ -630,6 +651,14 @@ custom-modifiers.exe: custom-modifiers.2.cs custom-modifiers-lib.dll
 custom-modifiers: custom-modifiers.exe
 	$(RUNTIME) custom-modifiers.exe
 
+EXTRA_DIST += bug-382986.cs  bug-382986-lib.cs
+bug-382986-lib.dll: bug-382986-lib.cs
+	$(MCS) -target:library -out:bug-382986-lib.dll bug-382986-lib.cs
+bug-382986.exe: bug-382986.cs bug-382986-lib.dll
+	$(MCS) -out:bug-382986.exe -r:bug-382986-lib.dll bug-382986.cs
+test-bug-382986: bug-382986.exe
+	$(RUNTIME) bug-382986.exe
+
 EXTRA_DIST += coreclr-security.cs
 
 if INSTALL_2_1
@@ -640,15 +669,49 @@ test-coreclr-security : coreclr-security.exe
 	$(RUNTIME21) --security=core-clr-test coreclr-security.exe
 endif
 
+EXTRA_DIST += generic-unboxing.2.il
+generic-unboxing.2.dll : generic-unboxing.2.il
+	$(ILASM) /dll /output:generic-unboxing.2.dll $(srcdir)/generic-unboxing.2.il
+
+EXTRA_DIST += generic-boxing.2.il
+generic-boxing.2.dll : generic-boxing.2.il generic-unboxing.2.dll
+	$(ILASM) /dll /output:generic-boxing.2.dll $(srcdir)/generic-boxing.2.il
+
+EXTRA_DIST += generic-unbox.2.cs
+generic-unbox.2.exe : generic-unbox.2.cs generic-unboxing.2.dll
+	$(MCS) -r:generic-unboxing.2.dll -out:$@ $(srcdir)/generic-unbox.2.cs
+
+EXTRA_DIST += generic-box.2.cs
+generic-box.2.exe : generic-box.2.cs generic-unboxing.2.dll generic-boxing.2.dll
+	$(MCS) -r:generic-unboxing.2.dll,generic-boxing.2.dll -out:$@ $(srcdir)/generic-box.2.cs
+
 test-generic-sharing : generics-sharing.2.exe shared-generic-methods.2.exe	\
 		shared-generic-synchronized.2.exe generic-initobj.2.exe		\
-		generics-sharing-other-exc.2.exe generic-box.2.exe
-	$(RUNTIME) -O=gshared generics-sharing.2.exe
-	$(RUNTIME) -O=gshared,-inline shared-generic-methods.2.exe
-	$(RUNTIME) -O=gshared shared-generic-synchronized.2.exe
-	$(RUNTIME) -O=gshared,-inline generic-initobj.2.exe
-	$(RUNTIME) -O=gshared,-inline generic-box.2.exe
-	$(RUNTIME) -O=gshared,-inline generics-sharing-other-exc.2.exe
+		generics-sharing-other-exc.2.exe generic-box.2.exe		\
+		generic-unbox.2.exe generic-delegate.2.exe generic-sizeof.2.exe	\
+		generic-ldobj.2.exe generic-mkrefany.2.exe			\
+		generic-ldtoken.2.exe			\
+		generic-ldtoken-method.2.exe  generic-ldtoken-field.2.exe	\
+		generic-virtual.2.exe generic-tailcall.2.exe			\
+		generic-interface-methods.2.exe generic-array-type.2.exe
+	$(RUNTIME) -O=gshared,-inline        generics-sharing.2.exe
+	$(RUNTIME) -O=gshared,-inline        shared-generic-methods.2.exe
+	$(RUNTIME) -O=gshared,-inline        shared-generic-synchronized.2.exe
+	$(RUNTIME) -O=gshared,-inline        generic-initobj.2.exe
+	$(RUNTIME) -O=gshared,-inline        generic-box.2.exe
+	$(RUNTIME) -O=gshared,-inline        generics-sharing-other-exc.2.exe
+	$(RUNTIME) -O=gshared,-inline        generic-unbox.2.exe
+	$(RUNTIME) -O=gshared,-inline        generic-delegate.2.exe
+	$(RUNTIME) -O=gshared,-inline        generic-sizeof.2.exe
+	$(RUNTIME) -O=gshared,-inline        generic-ldobj.2.exe
+	$(RUNTIME) -O=gshared,-inline        generic-mkrefany.2.exe
+	$(RUNTIME) -O=gshared,-inline        generic-ldtoken.2.exe
+	$(RUNTIME) -O=gshared,-inline        generic-ldtoken-method.2.exe
+	$(RUNTIME) -O=gshared,-inline        generic-ldtoken-field.2.exe
+	$(RUNTIME) -O=gshared,-inline        generic-virtual.2.exe
+	$(RUNTIME) -O=gshared,-inline        generic-tailcall.2.exe
+	$(RUNTIME) -O=gshared,-inline        generic-interface-methods.2.exe
+	$(RUNTIME) -O=gshared,-inline        generic-array-type.2.exe
 
 EXTRA_DIST += async-exceptions.cs
 async-exceptions.exe : async-exceptions.cs
@@ -666,7 +729,7 @@ patch-libtool:
 
 noinst_LTLIBRARIES = libtest.la
 
-INCLUDES = $(GLIB_CFLAGS)
+INCLUDES = $(GLIB_CFLAGS) $(GMODULE_CFLAGS)
 
 if PLATFORM_WIN32
 # gcc-3.4.4 emits incorrect code when making indirect calls to stdcall functions using a tail call
@@ -679,6 +742,6 @@ else
 libtest_la_LDFLAGS = -rpath `pwd`
 endif
 libtest_la_SOURCES = libtest.c
-libtest_la_LIBADD = $(GLIB_LIBS)
+libtest_la_LIBADD = $(glib_libs)
 
 CLEANFILES = $(TESTSI_CS) $(TESTSI_IL) $(STRESS_TESTS) *.dll *.stdout *.exe stest.dat

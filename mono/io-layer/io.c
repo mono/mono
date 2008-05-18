@@ -1688,6 +1688,11 @@ gboolean DeleteFile(const gunichar2 *name)
 	gchar *filename;
 	int retval;
 	gboolean ret = FALSE;
+	guint32 attrs;
+#if 0
+	struct stat statbuf;
+	struct _WapiFileShare *shareinfo;
+#endif
 	
 	if(name==NULL) {
 #ifdef DEBUG
@@ -1707,7 +1712,49 @@ gboolean DeleteFile(const gunichar2 *name)
 		SetLastError (ERROR_INVALID_NAME);
 		return(FALSE);
 	}
+
+	attrs = GetFileAttributes (name);
+	if (attrs == INVALID_FILE_ATTRIBUTES) {
+#ifdef DEBUG
+		g_message ("%s: file attributes error", __func__);
+#endif
+		/* Error set by GetFileAttributes() */
+		g_free (filename);
+		return(FALSE);
+	}
+
+	if (attrs & FILE_ATTRIBUTE_READONLY) {
+#ifdef DEBUG
+		g_message ("%s: file %s is readonly", __func__, filename);
+#endif
+		SetLastError (ERROR_ACCESS_DENIED);
+		g_free (filename);
+		return(FALSE);
+	}
+
+#if 0
+	/* Check to make sure sharing allows us to open the file for
+	 * writing.  See bug 323389.
+	 *
+	 * Do the checks that don't need an open file descriptor, for
+	 * simplicity's sake.  If we really have to do the full checks
+	 * then we can implement that later.
+	 */
+	if (_wapi_stat (filename, &statbuf) < 0) {
+		_wapi_set_last_path_error_from_errno (NULL, filename);
+		g_free (filename);
+		return(FALSE);
+	}
 	
+	if (share_allows_open (&statbuf, 0, GENERIC_WRITE,
+			       &shareinfo) == FALSE) {
+		SetLastError (ERROR_SHARING_VIOLATION);
+		g_free (filename);
+		return FALSE;
+	}
+	_wapi_handle_share_release (shareinfo);
+#endif
+
 	retval = _wapi_unlink (filename);
 	
 	if (retval == -1) {
@@ -1740,6 +1787,7 @@ gboolean MoveFile (const gunichar2 *name, const gunichar2 *dest_name)
 	int result, errno_copy;
 	struct stat stat_src, stat_dest;
 	gboolean ret = FALSE;
+	struct _WapiFileShare *shareinfo;
 	
 	if(name==NULL) {
 #ifdef DEBUG
@@ -1786,16 +1834,36 @@ gboolean MoveFile (const gunichar2 *name, const gunichar2 *dest_name)
 	 * We check it here and return the failure if dest exists and is not
 	 * the same file as src.
 	 */
-	if (!_wapi_stat (utf8_dest_name, &stat_dest) &&
-	    !_wapi_stat (utf8_name, &stat_src)) {
+	if (_wapi_stat (utf8_name, &stat_src) < 0) {
+		_wapi_set_last_path_error_from_errno (NULL, utf8_name);
+		g_free (utf8_name);
+		g_free (utf8_dest_name);
+		return FALSE;
+	}
+	
+	if (!_wapi_stat (utf8_dest_name, &stat_dest)) {
 		if (stat_dest.st_dev != stat_src.st_dev ||
 		    stat_dest.st_ino != stat_src.st_ino) {
 			g_free (utf8_name);
 			g_free (utf8_dest_name);
 			SetLastError (ERROR_ALREADY_EXISTS);
 			return FALSE;
-		}	
+		}
 	}
+
+	/* Check to make sure sharing allows us to open the file for
+	 * writing.  See bug 377049.
+	 *
+	 * Do the checks that don't need an open file descriptor, for
+	 * simplicity's sake.  If we really have to do the full checks
+	 * then we can implement that later.
+	 */
+	if (share_allows_open (&stat_src, 0, GENERIC_WRITE,
+			       &shareinfo) == FALSE) {
+		SetLastError (ERROR_SHARING_VIOLATION);
+		return FALSE;
+	}
+	_wapi_handle_share_release (shareinfo);
 
 	result = _wapi_rename (utf8_name, utf8_dest_name);
 	errno_copy = errno;
@@ -2838,7 +2906,8 @@ gboolean FindNextFile (gpointer handle, WapiFindData *find_data)
 {
 	struct _WapiHandle_find *find_handle;
 	gboolean ok;
-	struct stat buf;
+	struct stat buf, linkbuf;
+	int result;
 	gchar *filename;
 	gchar *utf8_filename, *utf8_basename;
 	gunichar2 *utf16_basename;
@@ -2870,9 +2939,26 @@ retry:
 	/* stat next match */
 
 	filename = g_build_filename (find_handle->dir_part, find_handle->namelist[find_handle->count ++], NULL);
-	if (_wapi_lstat (filename, &buf) != 0) {
+
+	result = _wapi_stat (filename, &buf);
+	if (result == -1 && errno == ENOENT) {
+		/* Might be a dangling symlink */
+		result = _wapi_lstat (filename, &buf);
+	}
+	
+	if (result != 0) {
 #ifdef DEBUG
 		g_message ("%s: stat failed: %s", __func__, filename);
+#endif
+
+		g_free (filename);
+		goto retry;
+	}
+
+	result = _wapi_lstat (filename, &linkbuf);
+	if (result != 0) {
+#ifdef DEBUG
+		g_message ("%s: lstat failed: %s", __func__, filename);
 #endif
 
 		g_free (filename);
@@ -2903,7 +2989,7 @@ retry:
 	else
 		create_time = buf.st_ctime;
 	
-	find_data->dwFileAttributes = _wapi_stat_to_file_attributes (utf8_filename, &buf, &buf);
+	find_data->dwFileAttributes = _wapi_stat_to_file_attributes (utf8_filename, &buf, &linkbuf);
 
 	_wapi_time_t_to_filetime (create_time, &find_data->ftCreationTime);
 	_wapi_time_t_to_filetime (buf.st_atime, &find_data->ftLastAccessTime);

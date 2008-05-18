@@ -21,6 +21,9 @@ configlist=($(printf "%s\n" "${filelist[@]}" | egrep "\\.config\$"))
 # Set the prefix, unless it is overriden (used when building mono rpms)
 : ${prefix=@prefix@}
 
+# Can override .config scanning if specified
+: ${IGNORE_CONFIG_SCAN=0}
+
 libdir=$prefix/@reloc_libdir@
 bindir=$prefix/bin
 
@@ -72,6 +75,8 @@ REQUIRES=$(
 	done
 )
 
+if [ $IGNORE_CONFIG_SCAN -eq 0 ] ; then
+
 rpm_config_REQUIRES=$(
 	# Parse the xml .config files to see what native binaries we call into
 	# TODO: also check monodis --moduleref
@@ -122,9 +127,14 @@ rpm_config_REQUIRES=$(
 
 # Resolve provides to packages, warning on missing to stderr
 config_REQUIRES=$(
+	first=1 # avoid an empty line if no .config reqs are found
 	for i in ${rpm_config_REQUIRES[@]} ; do
 		out=$(rpm -q --whatprovides --queryformat "%{NAME}\n" $i)
 		if [ $? -eq 0 ] ; then
+			if [ $first -eq 1 ] ; then
+			       echo ""
+			       first=0
+			fi
 			echo $out
 		else
 			# echo to stderr
@@ -132,6 +142,8 @@ config_REQUIRES=$(
 		fi
 	done
 )
+
+fi
 
 # Note about above:
 #  Use to do: system("rpm -q --whatprovides --queryformat \"%{NAME}\n\" ""\""req"'$libext'""\"")
@@ -160,7 +172,7 @@ PROVIDES=$(
 # TODO: make this use the mono-find-provides script, to share code
 
 # Filter out dups from both lists
-REQUIRES=$(echo "$REQUIRES" "$config_REQUIRES"  | sort | uniq)
+REQUIRES=$(echo "$REQUIRES $config_REQUIRES"  | sort | uniq)
 PROVIDES=$(echo "$PROVIDES" | sort | uniq)
 
 #

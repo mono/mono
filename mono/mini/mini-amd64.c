@@ -68,7 +68,12 @@ static CRITICAL_SECTION mini_arch_mutex;
 MonoBreakpointInfo
 mono_breakpoint_info [MONO_BREAKPOINT_ARRAY_SIZE];
 
+#ifdef PLATFORM_WIN32
+/* On Win64 always reserve first 32 bytes for first four arguments */
+#define ARGS_OFFSET 48
+#else
 #define ARGS_OFFSET 16
+#endif
 #define GP_SCRATCH_REG AMD64_R11
 
 /*
@@ -176,15 +181,19 @@ amd64_is_near_call (guint8 *code)
 static inline void 
 amd64_patch (unsigned char* code, gpointer target)
 {
+	guint8 rex = 0;
+
 	/* Skip REX */
-	if ((code [0] >= 0x40) && (code [0] <= 0x4f))
+	if ((code [0] >= 0x40) && (code [0] <= 0x4f)) {
+		rex = code [0];
 		code += 1;
+	}
 
 	if ((code [0] & 0xf8) == 0xb8) {
 		/* amd64_set_reg_template */
 		*(guint64*)(code + 1) = (guint64)target;
 	}
-	else if (code [0] == 0x8b) {
+	else if ((code [0] == 0x8b) && rex && x86_modrm_mod (code [1]) == 0 && x86_modrm_rm (code [1]) == 5) {
 		/* mov 0(%rip), %dreg */
 		*(guint32*)(code + 2) = (guint32)(guint64)target - 7;
 	}
@@ -720,9 +729,9 @@ get_call_info (MonoGenericSharingContext *gsctx, MonoMemPool *mp, MonoMethodSign
 	}
 
 #ifdef PLATFORM_WIN32
-	if (stack_size < 32) {
+	if (stack_size < 0x20) {
 		/* The Win64 ABI requires 32 bits  */
-		stack_size = 32;
+		stack_size = 0x20;
 	}
 #endif
 
@@ -775,9 +784,18 @@ mono_arch_get_argument_info (MonoMethodSignature *csig, int param_count, MonoJit
 static int 
 cpuid (int id, int* p_eax, int* p_ebx, int* p_ecx, int* p_edx)
 {
+#ifndef _MSC_VER
 	__asm__ __volatile__ ("cpuid"
 		: "=a" (*p_eax), "=b" (*p_ebx), "=c" (*p_ecx), "=d" (*p_edx)
 		: "a" (id));
+#else
+	int info[4];
+	__cpuid(info, id);
+	*p_eax = info[0];
+	*p_ebx = info[1];
+	*p_ecx = info[2];
+	*p_edx = info[3];
+#endif
 	return 1;
 }
 
@@ -797,7 +815,9 @@ mono_arch_cpu_init (void)
 	__asm__  __volatile__ ("fldcw %0\n": : "m" (fpcw));
 	__asm__  __volatile__ ("fnstcw %0\n": "=m" (fpcw));
 #else
-	_control87 (_PC_53, MCW_PC);
+	/* TODO: This is crashing on Win64 right now.
+	* _control87 (_PC_53, MCW_PC);
+	*/
 #endif
 }
 
@@ -905,9 +925,7 @@ mono_arch_compute_omit_fp (MonoCompile *cfg)
 	cfg->arch.omit_fp = TRUE;
 	cfg->arch.omit_fp_computed = TRUE;
 
-	/* Temporarily disable this when running in the debugger until we have support
-	 * for this in the debugger. */
-	if (mono_debug_using_mono_debugger ())
+	if (cfg->disable_omit_fp)
 		cfg->arch.omit_fp = FALSE;
 
 	if (!debug_omit_fp ())
@@ -1728,10 +1746,18 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 
 	if (cinfo->need_stack_align) {
 		MONO_INST_NEW (cfg, arg, OP_AMD64_OUTARG_ALIGN_STACK);
+		arg->inst_c0 = 8;
 		/* prepend, so they get reversed */
 		arg->next = call->out_args;
 		call->out_args = arg;
 	}
+
+#ifdef PLATFORM_WIN32
+	/* Always reserve 32 bytes of stack space on Win64 */
+	MONO_INST_NEW (cfg, arg, OP_AMD64_OUTARG_ALIGN_STACK);
+	arg->inst_c0 = 32;
+	MONO_INST_LIST_ADD_TAIL (&arg->node, &call->out_args);
+#endif
 
 #if 0
 	if (cfg->method->save_lmf) {
@@ -1937,6 +1963,11 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 			mono_call_inst_add_outarg_reg (cfg, call, vtarg->dreg, cinfo->ret.reg, FALSE);
 		}
 	}
+
+#ifdef PLATFORM_WIN32
+	// FIXME:
+	NOT_IMPLEMENTED;
+#endif
 
 	if (cfg->method->save_lmf) {
 		MONO_INST_NEW (cfg, arg, OP_AMD64_SAVE_SP_TO_LMF);
@@ -2353,6 +2384,7 @@ mono_arch_peephole_pass_2 (MonoCompile *cfg, MonoBasicBlock *bb)
 
 #define NEW_INS(cfg,ins,dest,op) do {	\
 		MONO_INST_NEW ((cfg), (dest), (op)); \
+        (dest)->cil_code = (ins)->cil_code; \
         mono_bblock_insert_before_ins (bb, ins, (dest)); \
 	} while (0)
 
@@ -4023,9 +4055,15 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_COS:
 			EMIT_SSE2_FPFUNC (code, fcos, ins->dreg, ins->sreg1);
 			break;		
-		case OP_ABS:
-			EMIT_SSE2_FPFUNC (code, fabs, ins->dreg, ins->sreg1);
+		case OP_ABS: {
+			static guint64 d = 0x7fffffffffffffffUL;
+
+			g_assert (ins->sreg1 == ins->dreg);
+					
+			mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_R8, &d);
+			amd64_sse_andpd_reg_membase (code, ins->dreg, AMD64_RIP, 0);
 			break;		
+		}
 		case OP_SQRT:
 			EMIT_SSE2_FPFUNC (code, fsqrt, ins->dreg, ins->sreg1);
 			break;
@@ -5874,8 +5912,9 @@ mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckI
 				}
 				item->jmp_code = code;
 				amd64_branch8 (code, X86_CC_NE, 0, FALSE);
-				amd64_mov_reg_imm (code, AMD64_R11, & (vtable->vtable [item->vtable_slot]));
-				amd64_jump_membase (code, AMD64_R11, 0);
+				/* See the comment below about R10 */
+				amd64_mov_reg_imm (code, AMD64_R10, & (vtable->vtable [item->vtable_slot]));
+				amd64_jump_membase (code, AMD64_R10, 0);
 			} else {
 				/* enable the commented code to assert on wrong method */
 #if 0
@@ -5887,14 +5926,20 @@ mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckI
 				}
 				item->jmp_code = code;
 				amd64_branch8 (code, X86_CC_NE, 0, FALSE);
-				amd64_mov_reg_imm (code, AMD64_R11, & (vtable->vtable [item->vtable_slot]));
-				amd64_jump_membase (code, AMD64_R11, 0);
+				/* See the comment below about R10 */
+				amd64_mov_reg_imm (code, AMD64_R10, & (vtable->vtable [item->vtable_slot]));
+				amd64_jump_membase (code, AMD64_R10, 0);
 				amd64_patch (item->jmp_code, code);
 				amd64_breakpoint (code);
 				item->jmp_code = NULL;
 #else
-				amd64_mov_reg_imm (code, AMD64_R11, & (vtable->vtable [item->vtable_slot]));
-				amd64_jump_membase (code, AMD64_R11, 0);
+				/* We're using R10 here because R11
+				   needs to be preserved.  R10 needs
+				   to be preserved for calls which
+				   require a runtime generic context,
+				   but interface calls don't. */
+				amd64_mov_reg_imm (code, AMD64_R10, & (vtable->vtable [item->vtable_slot]));
+				amd64_jump_membase (code, AMD64_R10, 0);
 #endif
 			}
 		} else {
@@ -5931,49 +5976,7 @@ mono_arch_build_imt_thunk (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckI
 MonoMethod*
 mono_arch_find_imt_method (gpointer *regs, guint8 *code)
 {
-	/* 
-	 * R11 is clobbered by the trampoline code, so we have to retrieve the method 
-	 * from the code.
-	 * 41 bb c0 f7 89 00     mov    $0x89f7c0,%r11d
-	 * ff 90 68 ff ff ff     callq  *0xffffffffffffff68(%rax)
-	 */
-	/* Similar to get_vcall_slot_addr () */
-
-	/* Find the start of the call instruction */
-	code -= 7;
-	if ((code [-2] == 0x41) && (code [-1] == 0xbb) && (code [4] == 0xff) && (x86_modrm_mod (code [5]) == 1) && (x86_modrm_reg (code [5]) == 2) && ((signed char)code [6] < 0)) {
-		/* IMT-based interface calls
-		 * 41 bb 14 f8 28 08       mov    $0x828f814,%r11
-		 * ff 50 fc                call   *0xfffffffc(%rax)
-		 */
-		code += 4;
-	} else if ((code [1] == 0xff) && (amd64_modrm_reg (code [2]) == 0x2) && (amd64_modrm_mod (code [2]) == 0x2)) {
-		/* call *[reg+disp32] */
-		code += 1;
-	} else if ((code [4] == 0xff) && (amd64_modrm_reg (code [5]) == 0x2) && (amd64_modrm_mod (code [5]) == 0x1)) {
-		/* call *[reg+disp8] */
-		code += 4;
-	} else
-		g_assert_not_reached ();
-
-	/* Find the start of the mov instruction */
-	code -= 10;
-	if (code [0] == 0x49 && code [1] == 0xbb) {
-		return (MonoMethod*)*(gssize*)(code + 2);
-	} else if (code [3] == 0x4d && code [4] == 0x8b && code [5] == 0x1d) {
-		/* mov    <OFFSET>(%rip),%r11 */
-		return (MonoMethod*)*(gssize*)(code + 10 + *(guint32*)(code + 6));
-	} else if (code [4] == 0x41 && code [5] == 0xbb) {
-		return (MonoMethod*)(gssize)*(guint32*)(code + 6);
-	} else {
-		int i;
-
-		printf ("Unknown call sequence: ");
-		for (i = -10; i < 20; ++i)
-			printf ("%x ", code [i]);
-		g_assert_not_reached ();
-		return NULL;
-	}
+	return regs [MONO_ARCH_IMT_REG];
 }
 
 MonoObject*
@@ -5989,10 +5992,10 @@ mono_arch_emit_imt_argument (MonoCompile *cfg, MonoCallInst *call)
 }
 #endif
 
-MonoRuntimeGenericContext*
-mono_arch_find_static_call_rgctx (gpointer *regs, guint8 *code)
+MonoVTable*
+mono_arch_find_static_call_vtable (gpointer *regs, guint8 *code)
 {
-	return (MonoRuntimeGenericContext*) regs [MONO_ARCH_RGCTX_REG];
+	return (MonoVTable*) regs [MONO_ARCH_RGCTX_REG];
 }
 
 MonoInst*

@@ -57,7 +57,7 @@
 
 #ifdef PLATFORM_WIN32
 #define SHARED_EXT ".dll"
-#elif defined(__ppc__) && defined(__MACH__)
+#elif (defined(__ppc__) || defined(__ppc64__)) && defined(__MACH__)
 #define SHARED_EXT ".dylib"
 #else
 #define SHARED_EXT ".so"
@@ -441,7 +441,7 @@ load_aot_module_from_cache (MonoAssembly *assembly, char **aot_name)
 
 			res = g_spawn_command_line_sync (cmd, &out, &err, &exit_status, NULL);
 
-#if !defined(PLATFORM_WIN32) && !defined(__ppc__) && !defined(__powerpc__)
+#if !defined(PLATFORM_WIN32) && !defined(__ppc__) && !defined(__ppc64__) && !defined(__powerpc__)
 			if (res) {
 				if (!WIFEXITED (exit_status) && (WEXITSTATUS (exit_status) == 0))
 					mono_trace (G_LOG_LEVEL_MESSAGE, MONO_TRACE_AOT, "AOT failed: %s.", err);
@@ -494,6 +494,9 @@ load_aot_module (MonoAssembly *assembly, gpointer user_data)
 		 * Already loaded. This can happen because the assembly loading code might invoke
 		 * the assembly load hooks multiple times for the same assembly.
 		 */
+		return;
+
+	if (assembly->image->dynamic)
 		return;
 
 	if (use_aot_cache)
@@ -1184,6 +1187,8 @@ decode_patch_info (MonoAotModule *aot_module, MonoMemPool *mp, MonoJumpInfo *ji,
 
 		wrapper_type = decode_value (p, &p);
 
+		ji->type = MONO_PATCH_INFO_METHOD;
+
 		switch (wrapper_type) {
 		case MONO_WRAPPER_REMOTING_INVOKE_WITH_CHECK: {
 			guint32 image_index, token, value;
@@ -1199,7 +1204,6 @@ decode_patch_info (MonoAotModule *aot_module, MonoMemPool *mp, MonoJumpInfo *ji,
 			g_assert (ji->data.method);
 			mono_class_init (ji->data.method->klass);
 
-			ji->type = MONO_PATCH_INFO_METHOD;
 			ji->data.method = mono_marshal_get_remoting_invoke_with_check (ji->data.method);
 			break;
 		}
@@ -1207,7 +1211,6 @@ decode_patch_info (MonoAotModule *aot_module, MonoMemPool *mp, MonoJumpInfo *ji,
 			MonoClass *klass = decode_klass_ref (aot_module, p, &p);
 			if (!klass)
 				goto cleanup;
-			ji->type = MONO_PATCH_INFO_METHOD;
 			ji->data.method = mono_marshal_get_proxy_cancast (klass);
 			break;
 		}
@@ -1218,7 +1221,6 @@ decode_patch_info (MonoAotModule *aot_module, MonoMemPool *mp, MonoJumpInfo *ji,
 			MonoClass *klass = decode_klass_ref (aot_module, p, &p);
 			if (!klass)
 				goto cleanup;
-			ji->type = MONO_PATCH_INFO_METHOD;
 			if (wrapper_type == MONO_WRAPPER_LDFLD)
 				ji->data.method = mono_marshal_get_ldfld_wrapper (&klass->byval_arg);
 			else if (wrapper_type == MONO_WRAPPER_LDFLDA)
@@ -1240,12 +1242,10 @@ decode_patch_info (MonoAotModule *aot_module, MonoMemPool *mp, MonoJumpInfo *ji,
 		case MONO_WRAPPER_ALLOC: {
 			int atype = decode_value (p, &p);
 
-			ji->type = MONO_PATCH_INFO_METHOD;
 			ji->data.method = mono_gc_get_managed_allocator_by_type (atype);
 			break;
 		}
 		case MONO_WRAPPER_STELEMREF:
-			ji->type = MONO_PATCH_INFO_METHOD;
 			ji->data.method = mono_marshal_get_stelemref ();
 			break;
 		default:

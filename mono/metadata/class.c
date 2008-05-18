@@ -34,6 +34,7 @@
 #include <mono/metadata/security-core-clr.h>
 #include <mono/metadata/attrdefs.h>
 #include <mono/metadata/gc-internal.h>
+#include <mono/metadata/verify-internals.h>
 #include <mono/utils/mono-counters.h>
 
 MonoStats mono_stats;
@@ -45,6 +46,7 @@ static MonoGetClassFromName get_class_from_name = NULL;
 
 static MonoClass * mono_class_create_from_typedef (MonoImage *image, guint32 type_token);
 static gboolean mono_class_get_cached_class_info (MonoClass *klass, MonoCachedClassInfo *res);
+static gboolean can_access_type (MonoClass *access_klass, MonoClass *member_klass);
 
 void (*mono_debugger_class_init_func) (MonoClass *klass) = NULL;
 void (*mono_debugger_class_loaded_methods_func) (MonoClass *klass) = NULL;
@@ -568,15 +570,19 @@ mono_class_get_context (MonoClass *class)
  * @type: a type
  * @context: a generics context
  *
- * Instantiate the generic type @type, using the generics context @context.
+ * If @type is a generic type and @context is not NULL, instantiate it using the 
+ * generics context @context.
  *
- * Returns: the instantiated type. The returned MonoType is allocated on the heap and is 
- * owned by the caller.
+ * Returns: the instantiated type or a copy of @type. The returned MonoType is allocated
+ * on the heap and is owned by the caller.
  */
 MonoType*
 mono_class_inflate_generic_type (MonoType *type, MonoGenericContext *context)
 {
-	MonoType *inflated = inflate_generic_type (type, context);
+	MonoType *inflated = NULL; 
+
+	if (context)
+		inflated = inflate_generic_type (type, context);
 
 	if (!inflated)
 		return mono_metadata_type_dup (NULL, type);
@@ -656,12 +662,35 @@ mono_class_inflate_generic_method_full (MonoMethod *method, MonoClass *klass_hin
 	 * The reason for this hack is to fix the behavior of inflating generic methods that come from a MethodBuilder.
 	 * What happens is that instantiating a generic MethodBuilder with its own arguments should create a diferent object.
 	 * This is opposite to the way non-SRE MethodInfos behave.
+	 * 
+	 * This happens, for example, when we want to emit a recursive generic method. Given the following C# code:
+	 * 
+	 * void Example<T> () {
+	 *    Example<T> ();
+	 * }
+	 *  
+	 * In Example, the method token must be encoded as: "void Example<!!0>()"
+	 * 
+	 * The reference to the first generic argument, "!!0", must be explicit otherwise it won't be inflated
+	 * properly. To get that we need to inflate the MethodBuilder with its own arguments.
+	 * 
+	 * On the other hand, inflating a non-SRE generic method with its own arguments should
+	 * return itself. For example:
+	 * 
+	 * MethodInfo m = ... //m is a generic method definition
+	 * MethodInfo res = m.MakeGenericMethod (m.GetGenericArguments ());
+	 * res == m
 	 *
-	 * FIXME: express this better, somehow!
+	 * To allow such scenarios we must allow inflation of MethodBuilder to happen in a diferent way than
+	 * what happens with regular methods.
+	 * 
+	 * There is one last touch to this madness, once a TypeBuilder is finished, IOW CreateType() is called,
+	 * everything should behave like a regular type or method.
+	 * 
 	 */
-	is_mb_open = method->generic_container &&
-		method->klass->image->dynamic && !method->klass->wastypebuilder &&
-		context->method_inst == method->generic_container->context.method_inst;
+	is_mb_open = method->generic_container && /* This is a generic method definition */
+		method->klass->image->dynamic && !method->klass->wastypebuilder && /* that is a MethodBuilder from an unfinished TypeBuilder */
+		context->method_inst == method->generic_container->context.method_inst; /* and it's been instantiated with its own arguments.  */
 
 	mono_stats.inflated_method_count++;
 	iresult = g_new0 (MonoMethodInflated, 1);
@@ -3037,10 +3066,13 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 
 	/* Try to share the vtable with our parent. */
 	if (class->parent && (class->parent->vtable_size == class->vtable_size) && (memcmp (class->parent->vtable, vtable, sizeof (gpointer) * class->vtable_size) == 0)) {
+		mono_memory_barrier ();
 		class->vtable = class->parent->vtable;
 	} else {
-		class->vtable = mono_mempool_alloc0 (class->image->mempool, sizeof (gpointer) * class->vtable_size);
-		memcpy (class->vtable, vtable,  sizeof (gpointer) * class->vtable_size);
+		MonoMethod **tmp = mono_mempool_alloc0 (class->image->mempool, sizeof (gpointer) * class->vtable_size);
+		memcpy (tmp, vtable,  sizeof (gpointer) * class->vtable_size);
+		mono_memory_barrier ();
+		class->vtable = tmp;
 	}
 
 	DEBUG_INTERFACE_VTABLE (print_vtable_full (class, class->vtable, class->vtable_size, first_non_interface_slot, "FINALLY", FALSE));
@@ -3561,6 +3593,11 @@ mono_class_init (MonoClass *class)
 		setup_interface_offsets (class, 0);
 	}
 
+
+	if (mono_verifier_is_enabled_for_class (class) && !mono_verifier_verify_class (class)) {
+		mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, concat_two_strings_with_zero (class->image->mempool, class->name, class->image->assembly_name));
+		class_init_ok = FALSE;
+	}
  leave:
 	class->inited = 1;
 	class->init_pending = 0;
@@ -4202,6 +4239,31 @@ mono_class_from_generic_parameter (MonoGenericParam *param, MonoImage *image, gb
 	klass->this_arg.data.generic_param = klass->byval_arg.data.generic_param = param;
 	klass->this_arg.byref = TRUE;
 
+	if (param->owner) {
+		guint32 owner;
+		guint32 cols [MONO_GENERICPARAM_SIZE];
+		MonoTableInfo *tdef  = &image->tables [MONO_TABLE_GENERICPARAM];
+		i = 0;
+
+		if (is_mvar && param->owner->owner.method)
+			 i = mono_metadata_get_generic_param_row (image, param->owner->owner.method->token, &owner);
+		else if (!is_mvar && param->owner->owner.klass)
+			 i = mono_metadata_get_generic_param_row (image, param->owner->owner.klass->type_token, &owner);
+
+		if (i) {
+			mono_metadata_decode_row (tdef, i - 1, cols, MONO_GENERICPARAM_SIZE);
+			do {
+				if (cols [MONO_GENERICPARAM_NUMBER] == param->num) {
+					klass->sizes.generic_param_token = i | MONO_TOKEN_GENERIC_PARAM;
+					break;
+				}
+				if (++i > tdef->rows)
+					break;
+				mono_metadata_decode_row (tdef, i - 1, cols, MONO_GENERICPARAM_SIZE);
+			} while (cols [MONO_GENERICPARAM_OWNER] == owner);
+		}
+	}
+
 	mono_class_setup_supertypes (klass);
 
 	mono_loader_unlock ();
@@ -4473,13 +4535,15 @@ mono_bounded_array_class_get (MonoClass *eclass, guint32 rank, gboolean bounded)
 	class->image = image;
 	class->name_space = eclass->name_space;
 	nsize = strlen (eclass->name);
-	name = g_malloc (nsize + 2 + rank);
+	name = g_malloc (nsize + 2 + rank + 1);
 	memcpy (name, eclass->name, nsize);
 	name [nsize] = '[';
 	if (rank > 1)
 		memset (name + nsize + 1, ',', rank - 1);
-	name [nsize + rank] = ']';
-	name [nsize + rank + 1] = 0;
+	if (bounded)
+		name [nsize + rank] = '*';
+	name [nsize + rank + bounded] = ']';
+	name [nsize + rank + bounded + 1] = 0;
 	class->name = mono_mempool_strdup (image->mempool, name);
 	g_free (name);
 
@@ -4777,7 +4841,7 @@ mono_class_get_field_default_value (MonoClassField *field, MonoTypeEnum *def_typ
 	g_assert (field->type->attrs & FIELD_ATTRIBUTE_HAS_DEFAULT);
 
 	if (!field->data) {
-		cindex = mono_metadata_get_constant_index (field->parent->image, mono_class_get_field_token (field), cindex + 1);
+		cindex = mono_metadata_get_constant_index (field->parent->image, mono_class_get_field_token (field), 0);
 		g_assert (cindex);
 		g_assert (!(field->type->attrs & FIELD_ATTRIBUTE_HAS_FIELD_RVA));
 
@@ -5454,6 +5518,10 @@ mono_class_is_assignable_from (MonoClass *klass, MonoClass *oklass)
 						MonoClass *param1_class = mono_class_from_mono_type (klass->generic_class->context.class_inst->type_argv [i]);
 						MonoClass *param2_class = mono_class_from_mono_type (oklass->generic_class->context.class_inst->type_argv [i]);
 
+						if (param1_class->valuetype != param2_class->valuetype) {
+							match = FALSE;
+							break;
+						}
 						/*
 						 * The _VARIANT and _COVARIANT constants should read _COVARIANT and
 						 * _CONTRAVARIANT, but they are in a public header so we can't fix it.
@@ -5463,8 +5531,10 @@ mono_class_is_assignable_from (MonoClass *klass, MonoClass *oklass)
 								;
 							else if (((container->type_params [i].flags & MONO_GEN_PARAM_COVARIANT) && mono_class_is_assignable_from (param2_class, param1_class)))
 								;
-							else
+							else {
 								match = FALSE;
+								break;
+							}
 						}
 					}
 
@@ -6639,6 +6709,32 @@ is_nesting_type (MonoClass *outer_klass, MonoClass *inner_klass)
 	return FALSE;
 }
 
+static MonoClass *
+mono_class_get_generic_type_definition (MonoClass *klass)
+{
+	return klass->generic_class ? klass->generic_class->container_class : klass;
+}
+
+/*
+ * Check if @klass is a subtype of @parent ignoring generic instantiations.
+ * 
+ * Generic instantiations are ignored for all super types of @klass.
+ * 
+ * Visibility checks ignoring generic instantiations.  
+ */
+static gboolean
+mono_class_has_parent_and_ignore_generics (MonoClass *klass, MonoClass *parent)
+{
+	int i;
+	klass = mono_class_get_generic_type_definition (klass);
+	parent = mono_class_get_generic_type_definition (parent);
+	
+	for (i = 0; i < klass->idepth; ++i) {
+		if (parent == mono_class_get_generic_type_definition (klass->supertypes [i]))
+			return TRUE;
+	}
+	return FALSE;
+}
 /*
  * Subtype can only access parent members with family protection if the site object
  * is subclass of Subtype. For example:
@@ -6657,13 +6753,13 @@ is_nesting_type (MonoClass *outer_klass, MonoClass *inner_klass)
 static gboolean
 is_valid_family_access (MonoClass *access_klass, MonoClass *member_klass, MonoClass *context_klass)
 {
-	if (!mono_class_has_parent (access_klass, member_klass))
+	if (!mono_class_has_parent_and_ignore_generics (access_klass, member_klass))
 		return FALSE;
 
 	if (context_klass == NULL)
 		return TRUE;
 	/*if access_klass is not member_klass context_klass must be type compat*/
-	if (access_klass != member_klass && !mono_class_has_parent (context_klass, access_klass))
+	if (access_klass != member_klass && !mono_class_has_parent_and_ignore_generics (context_klass, access_klass))
 		return FALSE;
 	return TRUE;
 }
@@ -6711,9 +6807,23 @@ get_generic_definition_class (MonoClass *klass)
 }
 
 static gboolean
+can_access_instantiation (MonoClass *access_klass, MonoGenericInst *ginst)
+{
+	int i;
+	for (i = 0; i < ginst->type_argc; ++i) {
+		if (!can_access_type (access_klass, mono_class_from_mono_type (ginst->type_argv[i])))
+			return FALSE;
+	}
+	return TRUE;
+}
+
+static gboolean
 can_access_type (MonoClass *access_klass, MonoClass *member_klass)
 {
 	int access_level = member_klass->flags & TYPE_ATTRIBUTE_VISIBILITY_MASK;
+
+	if (member_klass->generic_class && !can_access_instantiation (access_klass, member_klass->generic_class->context.class_inst))
+		return FALSE;
 
 	if (is_nesting_type (access_klass, member_klass) || (access_klass->nested_in && is_nesting_type (access_klass->nested_in, member_klass)))
 		return TRUE;
@@ -6735,18 +6845,18 @@ can_access_type (MonoClass *access_klass, MonoClass *member_klass)
 		return is_nesting_type (member_klass, access_klass);
 
 	case TYPE_ATTRIBUTE_NESTED_FAMILY:
-		return mono_class_has_parent (access_klass, member_klass->nested_in); 
+		return mono_class_has_parent_and_ignore_generics (access_klass, member_klass->nested_in); 
 
 	case TYPE_ATTRIBUTE_NESTED_ASSEMBLY:
 		return can_access_internals (access_klass->image->assembly, member_klass->image->assembly);
 
 	case TYPE_ATTRIBUTE_NESTED_FAM_AND_ASSEM:
 		return can_access_internals (access_klass->image->assembly, member_klass->nested_in->image->assembly) &&
-			mono_class_has_parent (access_klass, member_klass->nested_in);
+			mono_class_has_parent_and_ignore_generics (access_klass, member_klass->nested_in);
 
 	case TYPE_ATTRIBUTE_NESTED_FAM_OR_ASSEM:
 		return can_access_internals (access_klass->image->assembly, member_klass->nested_in->image->assembly) ||
-			mono_class_has_parent (access_klass, member_klass->nested_in);
+			mono_class_has_parent_and_ignore_generics (access_klass, member_klass->nested_in);
 	}
 	return FALSE;
 }
@@ -6863,7 +6973,7 @@ mono_method_can_access_method_full (MonoMethod *method, MonoMethod *called, Mono
 		while (nested) {
 			can = can_access_member (nested, member_class, context_klass, called->flags & METHOD_ATTRIBUTE_MEMBER_ACCESS_MASK);
 			if (can)
-				return TRUE;
+				break;
 			nested = nested->nested_in;
 		}
 	}
@@ -6873,6 +6983,13 @@ mono_method_can_access_method_full (MonoMethod *method, MonoMethod *called, Mono
 
 	if (!can_access_type (access_class, member_class) && (!access_class->nested_in || !can_access_type (access_class->nested_in, member_class)))
 		return FALSE;
+
+	if (called->is_inflated) {
+		MonoMethodInflated * infl = (MonoMethodInflated*)called;
+		if (infl->context.method_inst && !can_access_instantiation (access_class, infl->context.method_inst))
+		return FALSE;
+	}
+		
 	return TRUE;
 }
 
@@ -6900,7 +7017,7 @@ mono_method_can_access_field_full (MonoMethod *method, MonoClassField *field, Mo
 		while (nested) {
 			can = can_access_member (nested, member_class, context_klass, field->type->attrs & FIELD_ATTRIBUTE_FIELD_ACCESS_MASK);
 			if (can)
-				return TRUE;
+				break;
 			nested = nested->nested_in;
 		}
 	}

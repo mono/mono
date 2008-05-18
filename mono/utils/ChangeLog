@@ -1,3 +1,38 @@
+2008-05-14  Kornél Pál  <kornelpal@gmail.com>
+
+	* mono-path.c (mono_path_canonicalize): Convert '/' to '\' on Windows that
+	fixes path canonicalization for paths containing '/'.
+
+	Contributed under MIT/X11 license.
+
+2008-05-04  Andreas Faerber  <andreas.faerber@web.de>
+
+	* mono-membar.h: Prepare support for OSX/ppc64.
+
+	Contributed under MIT/X11 license.
+
+2008-04-16  Jonathan Chambers  <joncham@gmail.com>
+	* monobitset.c (find_first_unset): Use gsize instead of gulong for platform
+	  dependent size; fixes Win64.
+	* mono-member.h: Implement mono_memory_barrier, mono_memory_read_barrier, and 
+	  mono_memory_write_barrier for Win64.
+
+	Contributed under MIT/X11 license.
+
+2008-04-16  Marek Habersack  <mhabersack@novell.com>
+
+	* mono-io-portability.c (mono_portability_find_file): properly
+	process unrooted entries with a trailing slash.
+
+2008-04-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* dlmalloc.h dlmalloc.c: New files, a slightly modified version of Doug
+	Lea's malloc package.
+
+	* mono-codeman.c: Use dlmalloc for managing memory in dynamic code managers,
+	this allows us to set the executable bit on the system memory dlmalloc 
+	allocates from, fixing #320036.
+
 2008-03-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-logger.h: Move G_END_DECLS outside of an #ifdef. Fixes #375107.

@@ -1019,7 +1019,7 @@ ves_icall_ModuleBuilder_getToken (MonoReflectionModuleBuilder *mb, MonoObject *o
 	
 	MONO_CHECK_ARG_NULL (obj);
 	
-	return mono_image_create_token (mb->dynamic_image, obj, TRUE);
+	return mono_image_create_token (mb->dynamic_image, obj, TRUE, TRUE);
 }
 
 static gint32
@@ -5203,7 +5203,10 @@ ves_icall_System_Reflection_Module_ResolveTypeToken (MonoImage *image, guint32 t
 	if (image->dynamic) {
 		if (type_args || method_args)
 			mono_raise_exception (mono_get_exception_not_implemented (NULL));
-		return mono_lookup_dynamic_token_class (image, token, FALSE, NULL, NULL);
+		klass = mono_lookup_dynamic_token_class (image, token, FALSE, NULL, NULL);
+		if (!klass)
+			return NULL;
+		return &klass->byval_arg;
 	}
 
 	if ((index <= 0) || (index > image->tables [table].rows)) {
@@ -6020,8 +6023,17 @@ ves_icall_System_Environment_GetEnvironmentVariable (MonoString *name)
  */
 #ifndef _MSC_VER
 #ifndef __MINGW32_VERSION
+#ifdef __APPLE__
+/* Apple defines this in crt_externs.h but doesn't provide that header for 
+ * arm-apple-darwin9.  We'll manually define the symbol on Apple as it does
+ * in fact exist on all implementations (so far) 
+ */
+gchar ***_NSGetEnviron();
+#define environ (*_NSGetEnviron())
+#else
 extern
 char **environ;
+#endif
 #endif
 #endif
 
@@ -6164,8 +6176,7 @@ ves_icall_System_Environment_Exit (int result)
 {
 	MONO_ARCH_SAVE_REGS;
 
-	if (!mono_threads_set_shutting_down ())
-		return;
+	mono_threads_set_shutting_down ();
 
 	mono_runtime_set_shutting_down ();
 
@@ -6961,7 +6972,7 @@ base64_to_byte_array (gunichar2 *start, gint ilength, MonoBoolean allowWhitespac
 	gint ignored;
 	gint i;
 	gunichar2 c;
-	gunichar2 last, prev_last;
+	gunichar2 last, prev_last, prev2_last;
 	gint olength;
 	MonoArray *result;
 	guchar *res_ptr;
@@ -6969,7 +6980,7 @@ base64_to_byte_array (gunichar2 *start, gint ilength, MonoBoolean allowWhitespac
 	MonoException *exc;
 
 	ignored = 0;
-	last = prev_last = 0;
+	last = prev_last = 0, prev2_last = 0;
 	for (i = 0; i < ilength; i++) {
 		c = start [i];
 		if (c >= sizeof (dbase64)) {
@@ -6980,6 +6991,7 @@ base64_to_byte_array (gunichar2 *start, gint ilength, MonoBoolean allowWhitespac
 		} else if (isspace (c)) {
 			ignored++;
 		} else {
+			prev2_last = prev_last;
 			prev_last = last;
 			last = c;
 		}
@@ -6994,6 +7006,11 @@ base64_to_byte_array (gunichar2 *start, gint ilength, MonoBoolean allowWhitespac
 	if ((olength & 3) != 0 || olength <= 0) {
 		exc = mono_exception_from_name_msg (mono_get_corlib (), "System",
 					"FormatException", "Invalid length.");
+		mono_raise_exception (exc);
+	}
+
+	if (prev2_last == '=') {
+		exc = mono_exception_from_name_msg (mono_get_corlib (), "System", "FormatException", "Invalid format.");
 		mono_raise_exception (exc);
 	}
 

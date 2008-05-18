@@ -101,6 +101,10 @@ For comments, corrections and updates, please contact mono@novell.com
 
 	Manual pages and Mono documentation are covered by the MIT X11 license. 
 
+* samples
+
+	The code in the "samples" directory is released under the MIT X11 license.
+
 * The Licenses
 
 	These are the licenses used in Mono, the files are located:

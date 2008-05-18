@@ -1,3 +1,16 @@
+2008-04-22  Robert Jordan  <robertj@gmx.net>
+
+	* mono.1: Document MONO_DEBUG=no-gdb-backtrace.
+
+2008-04-21  Martin Baulig  <martin@ximian.com>
+
+	* mono.1: Documented the new --debug=mdb-optimizations option.
+
+2008-04-17  Marek Habersack  <mhabersack@novell.com>
+
+	* mono.1: add description of the new NullFileWatcher to the
+	documentation of the MONO_MANAGED_WATCHER envvar.
+
 2008-03-26  Massimiliano Mantione  <massi@ximian.com>
 	* mono.1: Added description of the logging profiler.
 

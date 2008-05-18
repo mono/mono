@@ -37,6 +37,7 @@
 #include <mono/metadata/exception.h>
 #include <mono/utils/mono-logger.h>
 #include <mono/utils/mono-dl.h>
+#include <mono/utils/mono-membar.h>
 
 MonoDefaults mono_defaults;
 
@@ -1394,12 +1395,20 @@ mono_get_method_from_token (MonoImage *image, guint32 token, MonoClass *klass,
 	if (cols [1] & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) {
 		if (result->klass == mono_defaults.string_class && !strcmp (result->name, ".ctor"))
 			result->string_ctor = 1;
-	} else if ((cols [2] & METHOD_ATTRIBUTE_PINVOKE_IMPL) && (!(cols [1] & METHOD_IMPL_ATTRIBUTE_NATIVE))) {
+	} else if (cols [2] & METHOD_ATTRIBUTE_PINVOKE_IMPL) {
 		MonoMethodPInvoke *piinfo = (MonoMethodPInvoke *)result;
-		MonoTableInfo *im = &tables [MONO_TABLE_IMPLMAP];
 
+#ifdef PLATFORM_WIN32
+		/* IJW is P/Invoke with a predefined function pointer. */
+		if (image->is_module_handle && (cols [1] & METHOD_IMPL_ATTRIBUTE_NATIVE)) {
+			piinfo->addr = mono_image_rva_map (image, cols [0]);
+			g_assert (piinfo->addr);
+		}
+#endif
 		piinfo->implmap_idx = mono_metadata_implmap_from_method (image, idx - 1);
-		piinfo->piflags = mono_metadata_decode_row_col (im, piinfo->implmap_idx - 1, MONO_IMPLMAP_FLAGS);
+		/* Native methods can have no map. */
+		if (piinfo->implmap_idx)
+			piinfo->piflags = mono_metadata_decode_row_col (&tables [MONO_TABLE_IMPLMAP], piinfo->implmap_idx - 1, MONO_IMPLMAP_FLAGS);
 	}
 
 	/* FIXME: lazyness for generics too, but how? */
@@ -1826,7 +1835,10 @@ mono_method_signature (MonoMethod *m)
 	const char *sig;
 	gboolean can_cache_signature;
 	MonoGenericContainer *container;
+	MonoMethodSignature *signature = NULL;
 	int *pattrs;
+
+	/* We need memory barriers below because of the double-checked locking pattern */ 
 
 	if (m->signature)
 		return m->signature;
@@ -1840,10 +1852,11 @@ mono_method_signature (MonoMethod *m)
 
 	if (m->is_inflated) {
 		MonoMethodInflated *imethod = (MonoMethodInflated *) m;
-		MonoMethodSignature *signature;
 		/* the lock is recursive */
 		signature = mono_method_signature (imethod->declaring);
-		m->signature = inflate_generic_signature (imethod->declaring->klass->image, signature, mono_method_get_context (m));
+		signature = inflate_generic_signature (imethod->declaring->klass->image, signature, mono_method_get_context (m));
+		mono_memory_barrier ();
+		m->signature = signature;
 		mono_loader_unlock ();
 		return m->signature;
 	}
@@ -1871,39 +1884,39 @@ mono_method_signature (MonoMethod *m)
 	}
 
 	if (can_cache_signature)
-		m->signature = g_hash_table_lookup (img->method_signatures, sig);
+		signature = g_hash_table_lookup (img->method_signatures, sig);
 
-	if (!m->signature) {
+	if (!signature) {
 		const char *sig_body;
 
 		size = mono_metadata_decode_blob_size (sig, &sig_body);
 
-		m->signature = mono_metadata_parse_method_signature_full (img, container, idx, sig_body, NULL);
-		if (!m->signature) {
+		signature = mono_metadata_parse_method_signature_full (img, container, idx, sig_body, NULL);
+		if (!signature) {
 			mono_loader_unlock ();
 			return NULL;
 		}
 
 		if (can_cache_signature)
-			g_hash_table_insert (img->method_signatures, (gpointer)sig, m->signature);
+			g_hash_table_insert (img->method_signatures, (gpointer)sig, signature);
 	}
 
 	/* Verify metadata consistency */
-	if (m->signature->generic_param_count) {
+	if (signature->generic_param_count) {
 		if (!container || !container->is_method)
 			g_error ("Signature claims method has generic parameters, but generic_params table says it doesn't");
-		if (container->type_argc != m->signature->generic_param_count)
+		if (container->type_argc != signature->generic_param_count)
 			g_error ("Inconsistent generic parameter count.  Signature says %d, generic_params table says %d",
-				 m->signature->generic_param_count, container->type_argc);
+				 signature->generic_param_count, container->type_argc);
 	} else if (container && container->is_method && container->type_argc)
 		g_error ("generic_params table claims method has generic parameters, but signature says it doesn't");
 
 	if (m->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL)
-		m->signature->pinvoke = 1;
-	else if ((m->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) && (!(m->iflags & METHOD_IMPL_ATTRIBUTE_NATIVE))) {
+		signature->pinvoke = 1;
+	else if (m->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) {
 		MonoCallConvention conv = 0;
 		MonoMethodPInvoke *piinfo = (MonoMethodPInvoke *)m;
-		m->signature->pinvoke = 1;
+		signature->pinvoke = 1;
 
 		switch (piinfo->piflags & PINVOKE_ATTRIBUTE_CALL_CONV_MASK) {
 		case 0: /* no call conv, so using default */
@@ -1928,8 +1941,11 @@ mono_method_signature (MonoMethod *m)
 			g_warning ("unsupported calling convention : 0x%04x", piinfo->piflags);
 			g_assert_not_reached ();
 		}
-		m->signature->call_convention = conv;
+		signature->call_convention = conv;
 	}
+
+	mono_memory_barrier ();
+	m->signature = signature;
 
 	mono_loader_unlock ();
 	return m->signature;

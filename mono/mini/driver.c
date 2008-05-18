@@ -39,11 +39,14 @@
 #include <mono/metadata/mono-config.h>
 #include <mono/metadata/environment.h>
 #include <mono/metadata/verify.h>
+#include <mono/metadata/verify-internals.h>
 #include <mono/metadata/mono-debug.h>
 #include <mono/metadata/security-manager.h>
 #include <mono/metadata/security-core-clr.h>
 #include <mono/metadata/gc-internal.h>
+#include <mono/metadata/coree.h>
 #include "mono/utils/mono-counters.h"
+#include <mono/os/gc_wrapper.h>
 
 #include "mini.h"
 #include "jit.h"
@@ -190,6 +193,40 @@ parse_optimizations (const char* p)
 		}
 	}
 	return opt;
+}
+
+static gboolean
+parse_debug_options (const char* p)
+{
+	MonoDebugOptions *opt = mini_get_debug_options ();
+
+	do {
+		if (!*p) {
+			fprintf (stderr, "Syntax error; expected debug option name\n");
+			return FALSE;
+		}
+
+		if (!strncmp (p, "casts", 5)) {
+			opt->better_cast_details = TRUE;
+			p += 5;
+		} else if (!strncmp (p, "mdb-optimizations", 17)) {
+			opt->mdb_optimizations = TRUE;
+			p += 17;
+		} else {
+			fprintf (stderr, "Invalid debug option `%s', use --help-debug for details\n", p);
+			return FALSE;
+		}
+
+		if (*p == ',') {
+			p++;
+			if (!*p) {
+				fprintf (stderr, "Syntax error; expected debug option name\n");
+				return FALSE;
+			}
+		}
+	} while (*p);
+
+	return TRUE;
 }
 
 typedef struct {
@@ -943,7 +980,7 @@ mini_usage (void)
 		"\n"
 		"Development:\n"
 		"    --aot                  Compiles the assembly to native code\n"
-		"    --debug                Enable debugging support\n"
+		"    --debug[=<options>]    Enable debugging support, use --help-debug for details\n"
 		"    --profile[=profiler]   Runs in profiling mode with the specified profiler module\n"
 		"    --trace[=EXPR]         Enable tracing, use --help-trace for details\n"
 		"    --help-devel           Shows more options available to developers\n"
@@ -980,6 +1017,23 @@ mini_trace_usage (void)
 		 "    disabled             Don't print any output until toggled via SIGUSR2\n");
 }
 
+static void
+mini_debug_usage (void)
+{
+	fprintf (stdout,
+		 "Debugging options:\n"
+		 "   --debug[=OPTIONS]     Enable debugging support, optional OPTIONS is a comma\n"
+		 "                         separated list of options\n"
+		 "\n"
+		 "OPTIONS is composed of:\n"
+		 "    casts                Enable more detailed InvalidCastException messages.\n"
+		 "    mdb-optimizations    Disable some JIT optimizations which are normally\n"
+		 "                         disabled when running inside the debugger.\n"
+		 "                         This is useful if you plan to attach to the running\n"
+		 "                         process with the debugger.\n");
+}
+
+
 static const char info[] =
 #ifdef HAVE_KW_THREAD
 	"\tTLS:           __thread\n"
@@ -1005,6 +1059,27 @@ static const char info[] =
 #define error_if_aot_unsupported() do {fprintf (stderr, "AOT compilation is not supported on this platform.\n"); exit (1);} while (0)
 #else
 #define error_if_aot_unsupported()
+#endif
+
+#ifdef PLATFORM_WIN32
+BOOL APIENTRY DllMain (HMODULE module_handle, DWORD reason, LPVOID reserved)
+{
+	if (!GC_DllMain (module_handle, reason, reserved))
+		return FALSE;
+
+	switch (reason)
+	{
+	case DLL_PROCESS_ATTACH:
+		mono_module_handle = module_handle;
+		mono_install_runtime_load (mini_init);
+		break;
+	case DLL_PROCESS_DETACH:
+		if (coree_module_handle)
+			FreeLibrary (coree_module_handle);
+		break;
+	}
+	return TRUE;
+}
 #endif
 
 int
@@ -1098,6 +1173,9 @@ mono_main (int argc, char* argv[])
 		} else if (strcmp (argv [i], "--help-devel") == 0){
 			mini_usage_jitdeveloper ();
 			return 0;
+		} else if (strcmp (argv [i], "--help-debug") == 0){
+			mini_debug_usage ();
+			return 0;
 		} else if (strcmp (argv [i], "--list-opt") == 0){
 			mini_usage_list_opt ();
 			return 0;
@@ -1161,7 +1239,7 @@ mono_main (int argc, char* argv[])
 			}
 			mono_inject_async_exc_pos = atoi (argv [++i]);
 		} else if (strcmp (argv [i], "--verify-all") == 0) {
-			mono_verify_all = TRUE;
+			mono_verifier_enable_verify_all ();
 		} else if (strcmp (argv [i], "--print-vtable") == 0) {
 			mono_print_vtable = TRUE;
 		} else if (strcmp (argv [i], "--stats") == 0) {
@@ -1215,6 +1293,10 @@ mono_main (int argc, char* argv[])
 			action = DO_DRAW;
 		} else if (strcmp (argv [i], "--debug") == 0) {
 			enable_debugging = TRUE;
+		} else if (strncmp (argv [i], "--debug=", 8) == 0) {
+			enable_debugging = TRUE;
+			if (!parse_debug_options (argv [i] + 8))
+				return 1;
 		} else if (strcmp (argv [i], "--security") == 0) {
 			/* fixme enable verifiable code when the verifier works with 2.0
 			* mini_verifier_set_mode (MINI_VERIFIER_MODE_VERIFIABLE);
@@ -1240,9 +1322,9 @@ mono_main (int argc, char* argv[])
 				mono_security_set_mode (MONO_SECURITY_MODE_CAS);
 				mono_activate_security_manager ();
 			} else  if (strcmp (argv [i] + 11, "validil") == 0) {
-				mini_verifier_set_mode (MINI_VERIFIER_MODE_VALID);
+				mono_verifier_set_mode (MONO_VERIFIER_MODE_VALID);
 			} else  if (strcmp (argv [i] + 11, "verifiable") == 0) {
-				mini_verifier_set_mode (MINI_VERIFIER_MODE_VERIFIABLE);
+				mono_verifier_set_mode (MONO_VERIFIER_MODE_VERIFIABLE);
 			} else  {
 				fprintf (stderr, "error: --security= option has invalid argument (cas, core-clr, verifiable or validil)\n");
 				return 1;
@@ -1304,10 +1386,6 @@ mono_main (int argc, char* argv[])
 	}
 
 	if (action == DO_DEBUGGER) {
-		// opt |= MONO_OPT_SHARED;
-		opt &= ~MONO_OPT_INLINE;
-		opt &= ~MONO_OPT_COPYPROP;
-		opt &= ~MONO_OPT_CONSPROP;
 		enable_debugging = TRUE;
 
 #ifdef MONO_DEBUGGER_SUPPORTED

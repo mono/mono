@@ -31,6 +31,7 @@
 #include <mono/utils/mono-digest.h>
 #include <mono/utils/mono-logger.h>
 #include <mono/metadata/reflection.h>
+#include <mono/metadata/coree.h>
 
 #ifndef PLATFORM_WIN32
 #include <sys/types.h>
@@ -550,24 +551,6 @@ set_dirs (char *exe)
 
 #endif /* PLATFORM_WIN32 */
 
-#ifdef UNDER_CE
-#undef GetModuleFileName
-#define GetModuleFileName ceGetModuleFileNameA
-
-DWORD ceGetModuleFileNameA(HMODULE hModule, char* lpFilename, DWORD nSize)
-{
-	DWORD res = 0;
-	wchar_t* wbuff = (wchar_t*)LocalAlloc(LPTR, nSize*2);
-	res = GetModuleFileNameW(hModule, wbuff, nSize);
-	if (res) {
-		int len = wcslen(wbuff);
-		WideCharToMultiByte(CP_ACP, 0, wbuff, len, lpFilename, len, NULL, NULL);
-	}
-	LocalFree(wbuff);
-	return res;
-}
-#endif
-
 /**
  * mono_set_rootdir:
  *
@@ -578,12 +561,10 @@ void
 mono_set_rootdir (void)
 {
 #ifdef PLATFORM_WIN32
-	gunichar2 moddir [MAXPATHLEN];
-	gchar *bindir, *installdir, *root, *utf8name, *config;
+	gchar *bindir, *installdir, *root, *name, *config;
 
-	GetModuleFileNameW (NULL, moddir, MAXPATHLEN);
-	utf8name = g_utf16_to_utf8 (moddir, -1, NULL, NULL, NULL);
-	bindir = g_path_get_dirname (utf8name);
+	name = mono_get_module_file_name (mono_module_handle);
+	bindir = g_path_get_dirname (name);
 	installdir = g_path_get_dirname (bindir);
 	root = g_build_path (G_DIR_SEPARATOR_S, installdir, "lib", NULL);
 
@@ -594,7 +575,7 @@ mono_set_rootdir (void)
 	g_free (root);
 	g_free (installdir);
 	g_free (bindir);
-	g_free (utf8name);
+	g_free (name);
 #else
 	char buf [4096];
 	int  s;
@@ -882,7 +863,7 @@ mono_assembly_load_reference (MonoImage *image, int index)
 		char *extra_msg = g_strdup ("");
 
 		if (status == MONO_IMAGE_ERROR_ERRNO && errno == ENOENT) {
-			extra_msg = g_strdup_printf ("The assembly was not found in the Global Assembly Cache, a path listed in the MONO_PATH environment variable, or in the location of the executing assembly (%s).\n", image->assembly->basedir);
+			extra_msg = g_strdup_printf ("The assembly was not found in the Global Assembly Cache, a path listed in the MONO_PATH environment variable, or in the location of the executing assembly (%s).\n", image->assembly != NULL ? image->assembly->basedir : "" );
 		} else if (status == MONO_IMAGE_ERROR_ERRNO) {
 			extra_msg = g_strdup_printf ("System error: %s\n", strerror (errno));
 		} else if (status == MONO_IMAGE_MISSING_ASSEMBLYREF) {
@@ -1253,6 +1234,7 @@ mono_assembly_open_full (const char *filename, MonoImageOpenStatus *status, gboo
 	MonoAssembly *ass;
 	MonoImageOpenStatus def_status;
 	gchar *fname;
+	gchar *new_fname;
 	
 	g_return_val_if_fail (filename != NULL, NULL);
 
@@ -1290,7 +1272,15 @@ mono_assembly_open_full (const char *filename, MonoImageOpenStatus *status, gboo
 	}
 
 	mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY,
-			"Assembly Loader probing location: '%s'.", filename);
+			"Assembly Loader probing location: '%s'.", fname);
+	new_fname = mono_make_shadow_copy (fname);
+	if (new_fname && new_fname != fname) {
+		g_free (fname);
+		fname = new_fname;
+		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY,
+			    "Assembly Loader shadow-copied assembly to: '%s'.", fname);
+	}
+	
 	image = NULL;
 
 	if (bundles != NULL)
@@ -1440,11 +1430,11 @@ mono_assembly_load_from_full (MonoImage *image, const char*fname,
 
 	mono_assembly_fill_assembly_name (image, &ass->aname);
 
-	if (refonly && strcmp (ass->aname.name, "mscorlib") == 0) {
+	if (mono_defaults.corlib && strcmp (ass->aname.name, "mscorlib") == 0) {
 		// MS.NET doesn't support loading other mscorlibs
 		g_free (ass);
 		g_free (base_dir);
-		mono_image_close (image);
+		mono_image_addref (mono_defaults.corlib);
 		*status = MONO_IMAGE_OK;
 		return mono_defaults.corlib->assembly;
 	}
@@ -1477,6 +1467,10 @@ mono_assembly_load_from_full (MonoImage *image, const char*fname,
 	loaded_assemblies = g_list_prepend (loaded_assemblies, ass);
 	if (mono_defaults.internals_visible_class)
 		mono_assembly_load_friends (ass);
+#ifdef PLATFORM_WIN32
+	if (image->is_module_handle)
+		mono_image_fixup_vtable (image);
+#endif
 	mono_assemblies_unlock ();
 
 	mono_assembly_invoke_load_hook (ass);
@@ -2479,4 +2473,126 @@ void
 mono_register_bundled_assemblies (const MonoBundledAssembly **assemblies)
 {
 	bundles = assemblies;
+}
+
+#define MONO_DECLSEC_FORMAT_20		0x2E
+#define MONO_DECLSEC_FIELD		0x53
+#define MONO_DECLSEC_PROPERTY		0x54
+
+#define SKIP_VISIBILITY_ATTRIBUTE_NAME ("System.Security.Permissions.SecurityPermissionAttribute")
+#define SKIP_VISIBILITY_ATTRIBUTE_SIZE (sizeof (SKIP_VISIBILITY_ATTRIBUTE_NAME) - 1)
+#define SKIP_VISIBILITY_PROPERTY_NAME ("SkipVerification")
+#define SKIP_VISIBILITY_PROPERTY_SIZE (sizeof (SKIP_VISIBILITY_PROPERTY_NAME) - 1)
+
+static gboolean
+mono_assembly_try_decode_skip_verification_param (const char *p, const char **resp, gboolean *abort_decoding)
+{
+	int len;
+	switch (*p++) {
+	case MONO_DECLSEC_PROPERTY:
+		break;
+	case MONO_DECLSEC_FIELD:
+	default:
+		*abort_decoding = TRUE;
+		return FALSE;
+		break;
+	}
+
+	if (*p++ != MONO_TYPE_BOOLEAN) {
+		*abort_decoding = TRUE;
+		return FALSE;
+	}
+		
+	/* property name length */
+	len = mono_metadata_decode_value (p, &p);
+
+	if (len >= SKIP_VISIBILITY_PROPERTY_SIZE && !memcmp (p, SKIP_VISIBILITY_PROPERTY_NAME, SKIP_VISIBILITY_PROPERTY_SIZE)) {
+		p += len;
+		return *p;
+	}
+	p += len + 1;
+
+	*resp = p;
+	return FALSE;
+}
+
+static gboolean
+mono_assembly_try_decode_skip_verification (const char *p, const char *endn)
+{
+	int i, j, num, len, params_len;
+
+	if (*p++ != MONO_DECLSEC_FORMAT_20)
+		return FALSE;
+
+	/* number of encoded permission attributes */
+	num = mono_metadata_decode_value (p, &p);
+	for (i = 0; i < num; ++i) {
+		gboolean is_valid = FALSE;
+		gboolean abort_decoding = FALSE;
+
+		/* attribute name length */
+		len =  mono_metadata_decode_value (p, &p);
+
+		/* We don't really need to fully decode the type. Comparing the name is enough */
+		is_valid = len >= SKIP_VISIBILITY_ATTRIBUTE_SIZE && !memcmp (p, SKIP_VISIBILITY_ATTRIBUTE_NAME, SKIP_VISIBILITY_ATTRIBUTE_SIZE);
+
+		p += len;
+
+		/*size of the params table*/
+		params_len =  mono_metadata_decode_value (p, &p);
+		if (is_valid) {
+			const char *params_end = p + params_len;
+			
+			/* number of parameters */
+			len = mono_metadata_decode_value (p, &p);
+	
+			for (j = 0; j < len; ++j) {
+				if (mono_assembly_try_decode_skip_verification_param (p, &p, &abort_decoding))
+					return TRUE;
+				if (abort_decoding)
+					break;
+			}
+			p = params_end;
+		} else {
+			p += params_len;
+		}
+	}
+	
+	return FALSE;
+}
+
+
+gboolean
+mono_assembly_has_skip_verification (MonoAssembly *assembly)
+{
+	MonoTableInfo *t;	
+	guint32 cols [MONO_DECL_SECURITY_SIZE];
+	const char *blob;
+	int i, len;
+
+	if (MONO_SECMAN_FLAG_INIT (assembly->skipverification))
+		return MONO_SECMAN_FLAG_GET_VALUE (assembly->skipverification);
+
+	t = &assembly->image->tables [MONO_TABLE_DECLSECURITY];
+
+	for (i = 0; i < t->rows; ++i) {
+		mono_metadata_decode_row (t, i, cols, MONO_DECL_SECURITY_SIZE);
+		if ((cols [MONO_DECL_SECURITY_PARENT] & MONO_HAS_DECL_SECURITY_MASK) != MONO_HAS_DECL_SECURITY_ASSEMBLY)
+			continue;
+		if (cols [MONO_DECL_SECURITY_ACTION] != SECURITY_ACTION_REQMIN)
+			continue;
+
+		blob = mono_metadata_blob_heap (assembly->image, cols [MONO_DECL_SECURITY_PERMISSIONSET]);
+		len = mono_metadata_decode_blob_size (blob, &blob);
+		if (!len)
+			continue;
+
+		if (mono_assembly_try_decode_skip_verification (blob, blob + len)) {
+			MONO_SECMAN_FLAG_SET_VALUE (assembly->skipverification, TRUE);
+			return TRUE;
+		}
+	}
+
+	MONO_SECMAN_FLAG_SET_VALUE (assembly->skipverification, FALSE);
+	return FALSE;
 }

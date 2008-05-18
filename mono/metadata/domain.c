@@ -34,6 +34,7 @@
 #include <mono/metadata/threads-types.h>
 #include <metadata/threads.h>
 #include <metadata/profiler-private.h>
+#include <mono/metadata/coree.h>
 
 /* #define DEBUG_DOMAIN_UNLOAD */
 
@@ -112,7 +113,7 @@ static const MonoRuntimeInfo supported_runtimes[] = {
 	{"v1.1.4322", "1.0", { {1,0,5000,0}, {7,0,5000,0} }	},
 	{"v2.0.50215","2.0", { {2,0,0,0},    {8,0,0,0} }	},
 	{"v2.0.50727","2.0", { {2,0,0,0},    {8,0,0,0} }	},
-	{"moonlight", "2.1", { {2,1,0,0},    {9,0,0,0} }    },
+	{"moonlight", "2.1", { {2,0,5,0},    {9,0,0,0} }    },
 };
 
 
@@ -1124,11 +1125,11 @@ mono_domain_create (void)
 
 	domain->shared_generics_hash = NULL;
 
-	mono_debug_domain_create (domain);
-
 	mono_appdomains_lock ();
 	domain_id_alloc (domain);
 	mono_appdomains_unlock ();
+
+	mono_debug_domain_create (domain);
 
 	mono_profiler_appdomain_loaded (domain, MONO_PROFILE_OK);
 	
@@ -1159,6 +1160,10 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 
 	if (domain)
 		g_assert_not_reached ();
+
+#if defined(PLATFORM_WIN32) && !defined(_WIN64)
+	mono_load_coree (exe_filename);
+#endif
 
 	mono_perfcounters_init ();
 
@@ -1196,6 +1201,14 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 		 * exe_image, and close it during shutdown.
 		 */
 		get_runtimes_from_exe (exe_filename, &exe_image, runtimes);
+#ifdef PLATFORM_WIN32
+		if (!exe_image) {
+			exe_image = mono_assembly_open_from_bundle (exe_filename, NULL, FALSE);
+			if (!exe_image)
+				exe_image = mono_image_open (exe_filename, NULL);
+		}
+		mono_fixup_exe_image (exe_image);
+#endif
 	} else if (runtime_version != NULL) {
 		runtimes [0] = get_runtime_by_version (runtime_version);
 		runtimes [1] = NULL;
@@ -1599,8 +1612,7 @@ mono_init_com_types (void)
 void
 mono_cleanup (void)
 {
-	if (exe_image)
-		mono_image_close (exe_image);
+	mono_close_exe_image ();
 
 	mono_loader_cleanup ();
 	mono_classes_cleanup ();
@@ -1612,6 +1624,13 @@ mono_cleanup (void)
 
 	TlsFree (appdomain_thread_id);
 	DeleteCriticalSection (&appdomains_mutex);
+}
+
+void
+mono_close_exe_image (void)
+{
+	if (exe_image)
+		mono_image_close (exe_image);
 }
 
 /**
@@ -1815,8 +1834,6 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 	total_domain_code_alloc += code_alloc;
 	max_domain_code_alloc = MAX (max_domain_code_alloc, code_alloc);
 	max_domain_code_size = MAX (max_domain_code_size, code_size);
-
-	mono_class_unregister_domain_generic_vtables (domain);
 
 #ifdef DEBUG_DOMAIN_UNLOAD
 	mono_mempool_invalidate (domain->mp);

@@ -91,26 +91,26 @@ read_serial (int fd, guchar *buffer, int offset, int count)
 int
 write_serial (int fd, guchar *buffer, int offset, int count, int timeout)
 {
-	struct timeval tmval;
-	fd_set writefs;
+	struct pollfd pinfo;
 	guint32 n;
+
+	pinfo.fd = fd;
+	pinfo.events = POLLOUT;
+	pinfo.revents = POLLOUT;
 
 	n = count;
 
-	FD_SET(fd, &writefs);
-	tmval.tv_sec = timeout / 1000;
-	tmval.tv_usec = (timeout - tmval.tv_sec) * 1000;	
-	
 	while (n > 0)
 	{
 		size_t t;
 			
-		if (timeout > 0)
-		{
-			if (select(fd+1, NULL, &writefs, NULL, &tmval) <= 0 && errno != EINTR)
-			{
+		if (timeout > 0) {
+			int c;
+			
+			while ((c = poll (&pinfo, 1, timeout)) == -1 && errno == EINTR)
+				;
+			if (c == -1)
 				return -1;
-			}
 		}		
 
 		do {
@@ -120,14 +120,6 @@ write_serial (int fd, guchar *buffer, int offset, int count, int timeout)
 		if (t < 0)
 			return -1;
 		
-		if (timeout > 0)
-		{
-			if (select(fd+1, NULL, &writefs, NULL, &tmval) <= 0  && errno != EINTR)
-			{
-				return -1;
-			}
-		}
-
 		offset += t;
 		n -= t; 
 	}
@@ -277,6 +269,7 @@ set_attributes (int fd, int baud_rate, MonoParity parity, int dataBits, MonoStop
 	    
 	case Even: /* Even */
 	    newtio.c_cflag &= ~(PARODD);
+	    newtio.c_cflag |= (PARENB);
 	    break;
 	    
 	case Mark: /* Mark */

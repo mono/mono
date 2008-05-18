@@ -1,3 +1,101 @@
+2008-05-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-mutex.h: Get rid of the #ifdef __cplusplus defines, use G_BEGIN_DECLS
+	/G_END_DECLS.
+
+2008-05-07  Dick Porter  <dick@ximian.com>
+
+	* io.c (FindNextFile): Handle symlinks correctly.  Fixes bug
+	385765.
+
+2008-04-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* handles.c (_wapi_handle_check_share): Fix a crash introduced by the lazy
+	creation of wapi handle slots.
+
+2008-04-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* handles.c (shared_init): Align _wapi_fd_reserve to a multiple of 
+	_WAPI_HANDLE_INITIAL_COUNT to avoid a problem when allocating handles.
+
+2008-04-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* handles.c: Initialize the handle array entries on demand to save memory.
+
+	* wapi-private.h (_WAPI_HANDLE_INITIAL_COUNT): Decrease this to 256 to save
+	memory.
+
+	* handles-private.h (_WAPI_PRIVATE_MAX_SLOTS): Increase this to 1024*16 to
+	compensate for the decrease in _WAPI_HANDLE_INITIAL_COUNT.
+	
+	* threads.c: Use #ifdef instead of #if for checking for valgrind/memcheck.h.
+
+2008-04-22  Dick Porter  <dick@ximian.com>
+
+	* wapi_glob.c (globextend): Comment out the code using ARG_MAX, as
+	that is broken on the latest opensuse.
+
+2008-04-21  Dick Porter  <dick@ximian.com>
+
+	* io.c (DeleteFile): Disable for now the bug fix for 323389, it's
+	breaking too much other stuff.
+
+2008-04-20  Geoff Norton  <gnorton@novell.com>
+
+	* processes.c: Fix the _NSGetEnviron define to prevent an impropoer
+	pointer dereference.
+
+2008-04-18  Miguel de Icaza  <miguel@novell.com>
+
+	* Applied patch from Dick Porter from bug #380649
+
+2008-04-17  Dick Porter  <dick@ximian.com>
+
+	* io.c (DeleteFile): Check file shares before deleting a file.
+	Fixes bug 323389.
+
+2008-04-17  Dick Porter  <dick@ximian.com>
+
+	* io.c (DeleteFile): Return ERROR_ACCESS_DENIED if the file is
+	readonly.  Fixes bug 378229.
+
+2008-04-11  Geoff Norton  <gnorton@novell.com>
+
+	* processes.c: The global extern environ doesn't exist on Mac.  We
+	need to call NSGetEnviron instead.
+
+2008-04-08  Dick Porter  <dick@ximian.com>
+
+	* processes.c (CreateProcess): Improve the managed binary support,
+	so it works when the executable is passed in as the appname.
+	Fixes bug 377815.
+
+2008-04-04  Dick Porter  <dick@ximian.com>
+
+	* io.c (MoveFile): Check file shares before moving a file.  Fixes
+	bug 377049.
+
+2008-04-04  Dick Porter  <dick@ximian.com>
+
+	* error.c (errno_to_WSA): handle ENODEV.  Fixes the reopened part
+	of bug 324035.
+
+2008-04-04  Dick Porter  <dick@ximian.com>
+
+	* processes.c (GetModuleInformation): 
+	* versioninfo.h: 
+	* versioninfo.c: 64bit fixes
+
+2008-04-03  Dick Porter  <dick@ximian.com>
+
+	* io-portability.c (_wapi_basename, _wapi_dirname): Only turn \
+	into / when MONO_IOMAP is in effect.  Fixes bug 346123.
+
+2008-04-03  Dick Porter  <dick@ximian.com>
+
+	* timefuncs.c (GetTickCount): Use mono_msec_ticks(), see bug
+	347476.
+
 2008-04-01  Dick Porter  <dick@ximian.com>
 
 	* versioninfo.c (get_string_block): Refine the fix for bug 354856

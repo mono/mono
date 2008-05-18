@@ -1,3 +1,148 @@
+2008-05-14 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* valid_visibility_across_generic_instantiations.cs: Regression
+	test for #390128.
+
+2008-05-14 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* test_lib.cs: Dependency for new visibility related tests.
+
+	* Makefile: Added compilation step for test_lib.cs.
+
+2008-05-09 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_type_visibility_test.sh: New test
+	generator for visibility tests of generic
+	method and type	arguments.
+
+	* make_tests.sh: Added tests using using
+	the new generator.
+
+2008-05-09 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_tests.sh: Changed one test from unverifiable
+	to valid as it only fails on MS runtime due to a bug
+	on its implementation.
+
+2008-05-02 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* valid_nullable_store.il: New test to ensure
+	that nullables are properly compared.
+
+2008-05-02 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* valid_leave_before_try_block.il: New test to ensure
+	that the leave opcode empties the stack.
+
+2008-05-02 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* BatchCompiler.cs: ilasm generates bad tokens when
+	compiling many times within the same appdomain.
+	Using one per source file. Compilation times are
+	now just a bit faster than before.
+
+	* Makefile: Fix typo.
+
+2008-05-01 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* unverifiable_ldsfld_no_fld.il: Fixed compilation
+	and renamed to invalid_ldsfld_no_fld.il.
+
+	* BatchCompiler.cs: New driver to fast compile the
+	verifier test suite. It's about 20x faster now.
+
+	* Makefile: Use the ilasm driver for faster compilation.
+
+2008-04-30 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_il_overflow_test.sh: New test generator
+	for a truncated IL stream.
+
+	* make_tests.sh: Fixed generation script. Added
+	tests using the new generator.
+
+2008-04-23 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_tests.sh: Add some tests for overlapping
+	aligned reference fields.
+
+	* Makefile: Added new test prefix typeunverifiable.
+	It should be used for tests that type fails to load
+	only under verifiable.
+
+2008-04-15 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_boxed_genarg_test.sh: New test generator
+	for boxed generic arguments.
+
+	* make_test.sh: Added tests using the new generator
+	for the interaction between boxed generic arguments
+	and its constraint types.
+
+2008-04-10 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* AssemblyRunner.cs: If a VerificationException
+	happens while running under fulltrust, it means
+	that the code is invalid.
+
+	* make_method_constraint_test.sh: Test generator for
+	generic methods argument constraints.
+
+	* make_test.sh: Added tests for invalid opcodes
+	using the new generator.
+
+	* invalid_generic_method_and_type.il: New test
+	for generic constraints.
+
+2008-04-10 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_bad_op_test.sh: Test generator for
+	invalid opcodes.
+
+	* make_test.sh: Added tests for invalid opcodes
+	using the new generator.
+
+2008-04-08 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_overlapped_test.sh: Test generator for
+	overlapped fields.
+
+	* make_test.sh: Added tests for overlapped
+	fields using the new generator.
+
+2008-04-07 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_unary_test.sh: Clear the stack before ret.
+
+	* make_test.sh: Added tests for ckfinite.
+
+2008-04-04 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_tail_call_test.sh: New test generator for
+	tail prefix.
+
+	* make_test.sh: Added tests using the new generator.
+
+2008-04-04 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* invalid_branch_middle_of_instruction.il: Recent
+	work on prefixes broke the verification for branching
+	in the middle of an instruction.
+
+2008-04-02 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_prefix_test.sh: New test generator for
+	instruction prefix.
+
+	* make_test.sh: Added tests using the new generator.
+
+2008-04-02 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* make_type_constraint_test.sh: New test generator for
+	constraints on generic type arguments.
+
+	* make_testS: Added tests using the new generator.
+
 2008-03-31 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* AssemblyRunner.cs: Mark TypeLoadException as invalid code.

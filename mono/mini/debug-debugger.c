@@ -32,9 +32,10 @@ static guint64 debugger_get_boxed_object (guint64 klass_arg, guint64 val_arg);
 static guint64 debugger_class_get_static_field_data (guint64 klass);
 
 static guint64 debugger_run_finally (guint64 argument1, guint64 argument2);
-static void debugger_attach (void);
-static void debugger_detach (void);
 static void debugger_initialize (void);
+static guint64 debugger_init_code_buffer (void);
+
+static void debugger_event_handler (MonoDebuggerEvent event, guint64 data, guint64 arg);
 
 static guint64 debugger_create_string (G_GNUC_UNUSED guint64 dummy, G_GNUC_UNUSED guint64 dummy2,
 				       G_GNUC_UNUSED guint64 dummy3, const gchar *string_argument);
@@ -49,10 +50,10 @@ static guint64 debugger_register_class_init_callback (guint64 image_argument, gu
 static void debugger_remove_class_init_callback (guint64 index, G_GNUC_UNUSED guint64 dummy);
 static guint64 debugger_get_method_signature (guint64 argument1, G_GNUC_UNUSED guint64 argument2);
 
-static void (*mono_debugger_notification_function) (guint64 command, guint64 data, guint64 data2);
-
 #define EXECUTABLE_CODE_BUFFER_SIZE 4096
 static guint8 *debugger_executable_code_buffer = NULL;
+
+static GCThreadFunctions debugger_thread_vtable;
 
 static MonoDebuggerMetadataInfo debugger_metadata_info = {
 	sizeof (MonoDebuggerMetadataInfo),
@@ -110,6 +111,8 @@ static MonoDebuggerMetadataInfo debugger_metadata_info = {
 	G_STRUCT_OFFSET (MonoVTable, vtable)
 };
 
+extern void MONO_DEBUGGER__notification_function (guint64 command, guint64 data, guint64 data2);
+
 /*
  * This is a global data symbol which is read by the debugger.
  */
@@ -120,7 +123,7 @@ MonoDebuggerInfo MONO_DEBUGGER__debugger_info = {
 	sizeof (MonoSymbolTable),
 	MONO_TRAMPOLINE_NUM,
 	mono_trampoline_code,
-	&mono_debugger_notification_function,
+	&MONO_DEBUGGER__notification_function,
 	&mono_symbol_table,
 	&debugger_metadata_info,
 	&mono_debug_debugger_version,
@@ -131,10 +134,7 @@ MonoDebuggerInfo MONO_DEBUGGER__debugger_info = {
 	&mono_debugger_runtime_invoke,
 	&debugger_class_get_static_field_data,
 	&debugger_run_finally,
-	&debugger_attach,
-	&debugger_detach,
 	&debugger_initialize,
-	(void*)&mono_get_lmf_addr,
 
 	&debugger_create_string,
 	&debugger_lookup_class,
@@ -155,7 +155,14 @@ MonoDebuggerInfo MONO_DEBUGGER__debugger_info = {
 	EXECUTABLE_CODE_BUFFER_SIZE,
 	MONO_BREAKPOINT_ARRAY_SIZE,
 
-	debugger_get_method_signature
+	debugger_get_method_signature,
+	debugger_init_code_buffer,
+
+	&gc_thread_vtable,
+	&debugger_thread_vtable,
+
+	&mono_debugger_event_handler,
+	debugger_event_handler
 };
 
 static guint64
@@ -378,7 +385,7 @@ debugger_get_method_signature (guint64 method_arg, G_GNUC_UNUSED guint64 dummy)
 static void
 debugger_event_handler (MonoDebuggerEvent event, guint64 data, guint64 arg)
 {
-	mono_debugger_notification_function (event, data, arg);
+	MONO_DEBUGGER__notification_function (event, data, arg);
 }
 
 static void
@@ -398,15 +405,13 @@ debugger_gc_thread_exited (pthread_t thread, void *stack_ptr)
 static void
 debugger_gc_stop_world (void)
 {
-	mono_debugger_event (
-		MONO_DEBUGGER_EVENT_ACQUIRE_GLOBAL_THREAD_LOCK, 0, 0);
+	mono_debugger_event (MONO_DEBUGGER_EVENT_ACQUIRE_GLOBAL_THREAD_LOCK, 0, 0);
 }
 
 static void
 debugger_gc_start_world (void)
 {
-	mono_debugger_event (
-		MONO_DEBUGGER_EVENT_RELEASE_GLOBAL_THREAD_LOCK, 0, 0);
+	mono_debugger_event (MONO_DEBUGGER_EVENT_RELEASE_GLOBAL_THREAD_LOCK, 0, 0);
 }
 
 static GCThreadFunctions debugger_thread_vtable = {
@@ -431,22 +436,12 @@ debugger_finalize_threads (void)
 	gc_thread_vtable = NULL;
 }
 
-static void
-debugger_attach (void)
+static guint64
+debugger_init_code_buffer (void)
 {
-	mono_debugger_init ();
-
-	mono_debugger_event_handler = debugger_event_handler;
-	debugger_executable_code_buffer = mono_global_codeman_reserve (EXECUTABLE_CODE_BUFFER_SIZE);
-	debugger_init_threads ();
-}
-
-static void
-debugger_detach (void)
-{
-	mono_debugger_event_handler = NULL;
-	mono_debugger_notification_function = NULL;
-	debugger_finalize_threads ();
+	if (!debugger_executable_code_buffer)
+		debugger_executable_code_buffer = mono_global_codeman_reserve (EXECUTABLE_CODE_BUFFER_SIZE);
+	return (guint64) (gsize) debugger_executable_code_buffer;
 }
 
 extern MonoDebuggerInfo *MONO_DEBUGGER__debugger_info_ptr;
@@ -459,7 +454,6 @@ debugger_initialize (void)
 void
 mono_debugger_init (void)
 {
-	mono_debugger_notification_function = mono_debugger_create_notification_function ();
 	debugger_executable_code_buffer = mono_global_codeman_reserve (EXECUTABLE_CODE_BUFFER_SIZE);
 	mono_debugger_event_handler = debugger_event_handler;
 
@@ -477,8 +471,8 @@ mono_debugger_init (void)
 	 * linker from removing the .mdb_debug_info section.
 	 */
 
-	mono_debugger_notification_function (MONO_DEBUGGER_EVENT_INITIALIZE_THREAD_MANAGER,
-					     (guint64) (gssize) MONO_DEBUGGER__debugger_info_ptr, 0);
+	mono_debugger_event (MONO_DEBUGGER_EVENT_INITIALIZE_THREAD_MANAGER,
+			     (guint64) (gssize) MONO_DEBUGGER__debugger_info_ptr, 0);
 }
 
 typedef struct 
@@ -499,7 +493,6 @@ static guint32
 main_thread_handler (gpointer user_data)
 {
 	MainThreadArgs *main_args = (MainThreadArgs *) user_data;
-	int retval;
 
 	return mono_runtime_run_main (main_args->method, main_args->argc, main_args->argv, NULL);
 }
@@ -521,8 +514,8 @@ mono_debugger_main (MonoDomain *domain, MonoAssembly *assembly, int argc, char *
 	/*
 	 * Initialize managed code.
 	 */
-	mono_debugger_notification_function (MONO_DEBUGGER_EVENT_INITIALIZE_MANAGED_CODE,
-					     (guint64) (gssize) main_method, 0);
+	mono_debugger_event (MONO_DEBUGGER_EVENT_INITIALIZE_MANAGED_CODE,
+			     (guint64) (gssize) main_method, 0);
 
 	/*
 	 * Start the main thread and wait until it's ready.
@@ -544,7 +537,7 @@ mono_debugger_main (MonoDomain *domain, MonoAssembly *assembly, int argc, char *
 	/*
 	 * This will never return.
 	 */
-	mono_debugger_notification_function (MONO_DEBUGGER_EVENT_WRAPPER_MAIN, 0, 0);
+	mono_debugger_event (MONO_DEBUGGER_EVENT_WRAPPER_MAIN, 0, 0);
 
 	return 0;
 }

@@ -1,3 +1,90 @@
+2008-05-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* configure.in: Add a check for sgen and __thread. Fixes #347171.
+
+2008-05-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* configure.in, data/Makefile.am, data/dotnet35.pc : 
+	  add new package for .net framework 3.5 libs.
+
+2008-05-12  Raja R Harinath  <harinath@hurrynot.org>
+
+	* scripts/mono-service.in: Undo 2008-05-08.  '2>&1' is not a bash-ism.
+
+2008-05-09  Zoltan Varga  <zovarga@debian.chello.hu>
+
+	* Makefile.am (get-monolite-latest): Create mcs/lib if not existing.
+
+2008-05-08  Robert Jordan  <robertjj@gmx.net>
+
+	* scripts/mono-service.in: Replace bash-ism with `sh' syntax.
+
+2008-05-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* data/net_[1_1|2_0]/machine.config: Add entry to remap the public 
+	key used by Silverlight 2.0 platform assemblies. Needed in both 
+	profiles since SN uses 1.0.
+
+2008-05-05  Andreas Färber  <andreas.faerber@web.de>
+
+	* configure.in: Detect ppc64 target architecture.
+	
+	Contributed unter MIT/X11 license.
+
+2008-04-29  Kornél Pál  <kornelpal@gmail.com>
+
+	* configure.in: Check for sys/utime.h.
+	* winconfig.h: Define HAVE_SYS_UTIME_H, undef HAVE_UTIME_H.
+
+2008-04-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* configure.in: Use lowercase for 'integrity of package' for consistency.
+
+2008-04-28  Geoff Norton  <gnorton@novell.com>
+
+	* build-iphone.sh: Some updates to work with the latest SDK.
+
+2008-04-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* configure.in: Use the three argument form of AC_DEFINE everywhere since it is
+	required by autoheader for parameters not in acconfig.h.
+
+	* acconfig.h: Removed, all the parameters are defined in configure.in now.
+
+2008-04-24  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* runtime/Makefile.am (mcs-compileall): Turn on the verifier.
+
+2008-04-18  Wade Berrier  <wberrier@novell.com>
+
+	* scripts/mono-find-requires.in: Add env var to ignore scanning
+	of .config files.
+	Fix extra whitespace when no config reqs are found.
+
+2008-04-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* configure.in: Enable the valgrind header check on amd64 too.
+
+2008-04-16  Wade Berrier  <wberrier@novell.com>
+
+	* scripts/mono-find-requires.in: Fix extraneous whitespace that makes
+	some reqs from .config be on the same line as the monodis reqs.
+
+2008-04-16  Jb Evain  <jbevain@novell.com>
+
+	* configure.in, data/Makefile.am: add a smcs.pc file,
+	that moonlight can use to locate smcs.exe.
+
+2008-04-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* scripts/Makefile.am : we need genxs2 for generating 2.0 based 
+	  serializer.
+
+2008-04-08  Dean Brettle  <dean@brettle.com>
+
+	* configure.in, runtime/Makefile.am: create a symlink at
+	mono/runtime/etc/mono/2.0/Browsers/Compat.browser similar to machine.config
+
 2008-03-26  Massimiliano Mantione  <massi@ximian.com>
 	* configure.in: Added PLATFORM_LINUX automake conditional.
 

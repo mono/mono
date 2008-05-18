@@ -58,7 +58,7 @@ monobinldflags=-Wl,-version-script=$(srcdir)/ldscript.mono $(export_ldflags)
 endif
 
 if PLATFORM_WIN32
-libmono_la_LDFLAGS=-no-undefined -avoid-version $(monoldflags)
+libmono_la_LDFLAGS=-no-undefined -avoid-version -Wl,--kill-at $(monoldflags)
 else
 libmono_la_LDFLAGS=$(monoldflags)
 endif
@@ -249,9 +249,7 @@ if MONO_DEBUGGER_SUPPORTED
 if AMD64
 mono_debugger_arch_sources = mdb-debug-info64.s
 else
-if ALPHA
-mono_debugger_arch_sources = mdb-debug-info64.s
-else
+if X86
 mono_debugger_arch_sources = mdb-debug-info32.s
 endif
 endif
@@ -502,15 +500,15 @@ EXTRA_DIST = $(common_BURGSRC) cprop.c TestDriver.cs ldscript ldscript.mono \
 	$(hppa_sources) inssel-hppa.brg cpu-hppa.md
 
 version.h: Makefile
-	if test -d $(srcdir)/.svn; then \
-		(cd $(srcdir); 	\
-			LANG=C; \
-			export LANG;	\
-			branch=`svn info | grep URL | sed -e 's/.*source//' -e 's,mono/mono/mini,,'`; \
-			version=`svn info | grep Revision | sed 's/.*: //'`; \
+	if test -d $(top_srcdir)/.git/svn; then svn_info='git svn info'; fi; \
+	if test -d $(srcdir)/.svn; then svn_info='svn info'; fi; \
+	if test -n "$$svn_info"; then \
+		(cd $(top_srcdir); \
+			LANG=C; export LANG; \
+			branch=`$$svn_info | grep URL | sed -e 's/.*source//' -e 's,mono$$,,'`; \
+			version=`$$svn_info | grep Revision | sed 's/.*: //'`; \
 			echo "#define FULL_VERSION \"$$branch r$$version\""; \
 		); \
 	else \
 		echo "#define FULL_VERSION \"tarball\""; \
 	fi > version.h
-

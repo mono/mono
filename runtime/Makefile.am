@@ -6,12 +6,13 @@ tmpinst = _tmpinst
 noinst_SCRIPTS = mono-wrapper monodis-wrapper
 
 etctmp = etc
-symlinks = etc/mono/1.0/machine.config etc/mono/2.0/machine.config etc/mono/2.0/web.config etc/mono/browscap.ini
+symlinks = etc/mono/1.0/machine.config etc/mono/2.0/machine.config etc/mono/2.0/web.config etc/mono/browscap.ini etc/mono/2.0/Browsers/Compat.browser
 
 etc/mono/1.0/machine.config: $(top_srcdir)/data/net_1_1/machine.config
 etc/mono/2.0/machine.config: $(top_srcdir)/data/net_2_0/machine.config
 etc/mono/2.0/web.config: $(top_srcdir)/data/net_2_0/web.config
 etc/mono/browscap.ini: $(top_srcdir)/data/browscap.ini
+etc/mono/2.0/Browsers/Compat.browser: $(top_srcdir)/data/net_2_0/Browsers/Compat.browser
 
 $(symlinks):
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
@@ -81,7 +82,8 @@ cur_dir_cmd = pwd
 PLATFORM_PATH_SEPARATOR = :
 endif
 
-# Use --compile-all as a poor man's PEVerify to detect invalid IL
+# Compile all assemblies with the verifier turned on. Code must be valid but not verifiable.
+# TODO it would be nice to split assemblies without unsafe code to use the verifier with verifiable mode.
 # Skip net 2.1 assemblies for now because of visibility problems
 mcs-compileall: mono-wrapper etc/mono/config
 	save_MONO_PATH=$$MONO_PATH; mcs_topdir=`cd $(mcs_topdir) && $(cur_dir_cmd)`; ok=:; \
@@ -99,7 +101,7 @@ mcs-compileall: mono-wrapper etc/mono/config
 		if [ ! -f $$i ] ; then \
 			continue ; \
 		fi ;  \
-	    if ./mono-wrapper --compile-all $$i; then \
+	    if ./mono-wrapper --compile-all --security=validil --verify-all $$i; then \
 	      echo $$i verified OK; \
 	    else \
 	      echo $$i verification failed; ok=false; \

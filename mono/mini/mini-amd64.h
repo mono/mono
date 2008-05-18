@@ -274,6 +274,8 @@ typedef struct {
 #define MONO_ARCH_HAVE_ATOMIC_ADD 1
 #define MONO_ARCH_HAVE_ATOMIC_EXCHANGE 1
 #define MONO_ARCH_HAVE_IMT 1
+#define MONO_ARCH_HAVE_TLS_GET 1
+#define MONO_ARCH_IMT_REG AMD64_R11
 #define MONO_ARCH_VTABLE_REG AMD64_R11
 /*
  * We use r10 for the rgctx register rather than r11 because r11 is

@@ -1,3 +1,8 @@
+2008-04-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* amd64/amd64-codegen.h (amd64_is_imm32): Use gint64 instead of glong because of
+	win64.
+
 2008-03-13  Geoff Norton  <gnorton@novell.com>
 
 	* arch/arm/tramp.c:  Dont compile this on PLATFORM_MACOSX

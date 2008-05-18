@@ -608,6 +608,8 @@ compute_class_bitmap (MonoClass *class, gsize *bitmap, int size, int offset, int
 			if (static_fields) {
 				if (!(field->type->attrs & (FIELD_ATTRIBUTE_STATIC | FIELD_ATTRIBUTE_HAS_FIELD_RVA)))
 					continue;
+				if (field->type->attrs & FIELD_ATTRIBUTE_LITERAL)
+					continue;
 			} else {
 				if (field->type->attrs & (FIELD_ATTRIBUTE_STATIC | FIELD_ATTRIBUTE_HAS_FIELD_RVA))
 					continue;
@@ -1301,21 +1303,6 @@ mono_class_vtable (MonoDomain *domain, MonoClass *class)
 	return mono_class_create_runtime_vtable (domain, class);
 }
 
-static gboolean
-class_needs_rgctx (MonoClass *class)
-{
-	if (!mono_class_generic_sharing_enabled (class))
-		return FALSE;
-
-	while (class) {
-		if (class->generic_class)
-			return TRUE;
-		class = class->parent;
-	}
-
-	return FALSE;
-}
-
 static MonoVTable *
 mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class)
 {
@@ -1502,6 +1489,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class)
 	old_info = class->runtime_info;
 	if (old_info && old_info->max_domain >= domain->domain_id) {
 		/* someone already created a large enough runtime info */
+		mono_memory_barrier ();
 		old_info->domain_vtables [domain->domain_id] = vt;
 	} else {
 		int new_size = domain->domain_id;
@@ -1523,7 +1511,8 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class)
 			memcpy (runtime_info->domain_vtables, old_info->domain_vtables, (old_info->max_domain + 1) * sizeof (gpointer));
 		}
 		runtime_info->domain_vtables [domain->domain_id] = vt;
-		/* keep this last (add membarrier) */
+		/* keep this last*/
+		mono_memory_barrier ();
 		class->runtime_info = runtime_info;
 	}
 	mono_loader_unlock ();
@@ -1557,9 +1546,6 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class)
 			build_imt (class, vt, domain, interface_offsets, NULL);
 		}
 	}
-
-	if (class_needs_rgctx (class))
-		mono_class_setup_runtime_generic_context (class, domain);
 
 	mono_domain_unlock (domain);
 
@@ -2037,8 +2023,15 @@ mono_object_get_virtual_method (MonoObject *obj, MonoMethod *method)
 		if (!is_proxy)
 		       res = vtable [mono_class_interface_offset (klass, method->klass) + method->slot];
 	} else {
-		if (method->slot != -1)
+		if (method->slot != -1) {
 			res = vtable [method->slot];
+		} else {
+			/* method->slot might not be set for instances of generic methods in the AOT case */
+			if (method->is_inflated) {
+				g_assert (((MonoMethodInflated*)method)->declaring->slot != -1);
+				res = vtable [((MonoMethodInflated*)method)->declaring->slot];
+			}
+		}
 	}
 
 	if (is_proxy) {
@@ -2051,6 +2044,11 @@ mono_object_get_virtual_method (MonoObject *obj, MonoMethod *method)
 			res = mono_marshal_get_remoting_invoke_with_check (res);
 		else
 			res = mono_marshal_get_remoting_invoke (res);
+	} else {
+		if (method->is_inflated && !res->is_inflated) {
+			/* Have to inflate the result */
+			res = mono_class_inflate_generic_method (res, &((MonoMethodInflated*)method)->context);
+		}
 	}
 
 	g_assert (res);
@@ -2105,6 +2103,63 @@ MonoObject*
 mono_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject **exc)
 {
 	return default_mono_runtime_invoke (method, obj, params, exc);
+}
+
+/**
+ * mono_method_get_unmanaged_thunk:
+ * @method: method to generate a thunk for.
+ *
+ * Returns an unmanaged->managed thunk that can be used to call
+ * a managed method directly from C.
+ *
+ * The thunk's C signature closely matches the managed signature:
+ *
+ * C#: public bool Equals (object obj);
+ * C:  typedef MonoBoolean (*Equals)(MonoObject*,
+ *             MonoObject*, MonoException**);
+ *
+ * The 1st ("this") parameter must not be used with static methods:
+ *
+ * C#: public static bool ReferenceEquals (object a, object b);
+ * C:  typedef MonoBoolean (*ReferenceEquals)(MonoObject*, MonoObject*,
+ *             MonoException**);
+ *
+ * The last argument must be a non-null pointer of a MonoException* pointer.
+ * It has "out" semantics. After invoking the thunk, *ex will be NULL if no
+ * exception has been thrown in managed code. Otherwise it will point
+ * to the MonoException* caught by the thunk. In this case, the result of
+ * the thunk is undefined:
+ *
+ * MonoMethod *method = ... // MonoMethod* of System.Object.Equals
+ * MonoException *ex = NULL;
+ * Equals func = mono_method_get_unmanaged_thunk (method);
+ * MonoBoolean res = func (thisObj, objToCompare, &ex);
+ * if (ex) {
+ *    // handle exception
+ * }
+ *
+ * The calling convention of the thunk matches the platform's default
+ * convention. This means that under Windows, C declarations must
+ * contain the __stdcall attribute:
+ *
+ * C:  typedef MonoBoolean (__stdcall *Equals)(MonoObject*,
+ *             MonoObject*, MonoException**);
+ *
+ * LIMITATIONS
+ *
+ * Value type arguments and return values are treated as they were objects:
+ *
+ * C#: public static Rectangle Intersect (Rectangle a, Rectangle b);
+ * C:  typedef MonoObject* (*Intersect)(MonoObject*, MonoObject*, MonoException**);
+ *
+ * Arguments must be properly boxed upon trunk's invocation, while return
+ * values must be unboxed.
+ */
+gpointer
+mono_method_get_unmanaged_thunk (MonoMethod *method)
+{
+	method = mono_marshal_get_thunk_invoke_wrapper (method);
+	return mono_compile_method (method);
 }
 
 static void
@@ -5039,7 +5094,7 @@ mono_store_remote_field_new (MonoObject *this, MonoClass *klass, MonoClassField 
  * mono_create_ftnptr:
  *
  *   Given a function address, create a function descriptor for it.
- * This is only needed on IA64.
+ * This is only needed on IA64 and PPC64.
  */
 gpointer
 mono_create_ftnptr (MonoDomain *domain, gpointer addr)
@@ -5055,6 +5110,18 @@ mono_create_ftnptr (MonoDomain *domain, gpointer addr)
 	desc [1] = NULL;
 
 	return desc;
+#elif defined(__ppc64__) || defined(__powerpc64__)
+	gpointer *desc;
+
+	mono_domain_lock (domain);
+	desc = mono_code_manager_reserve (domain->code_mp, 3 * sizeof (gpointer));
+	mono_domain_unlock (domain);
+
+	desc [0] = addr;
+	desc [1] = NULL;
+	desc [2] = NULL;
+
+	return desc;
 #else
 	return addr;
 #endif
@@ -5064,12 +5131,12 @@ mono_create_ftnptr (MonoDomain *domain, gpointer addr)
  * mono_get_addr_from_ftnptr:
  *
  *   Given a pointer to a function descriptor, return the function address.
- * This is only needed on IA64.
+ * This is only needed on IA64 and PPC64.
  */
 gpointer
 mono_get_addr_from_ftnptr (gpointer descr)
 {
-#ifdef __ia64__
+#if defined(__ia64__) || defined(__ppc64__) || defined(__powerpc64__)
 	return *(gpointer*)descr;
 #else
 	return descr;

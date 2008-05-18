@@ -217,10 +217,28 @@ and branch names if available).
 .SH DEVELOPMENT OPTIONS
 The following options are used to help when developing a JITed application.
 .TP
-.I "--debug"
+.I "--debug", "--debug=OPTIONS"
 Turns on the debugging mode in the runtime.  If an assembly was
 compiled with debugging information, it will produce line number
 information for stack traces. 
+.RS
+.ne 8
+.PP
+The optional OPTIONS argument is a comma separated list of debugging
+options.  These options are turned off by default since they generate
+much larger and slower code at runtime.
+.TP
+The following options are supported:
+.TP
+.I casts
+Produces a detailed error when throwing a InvalidCastException.
+.TP
+.I mdb-optimizations
+Disable some JIT optimizations which are usually only disabled when
+running inside the debugger.  This can be helpful if you want to attach
+to the running process with mdb.
+.ne
+.RE
 .TP
 .I "--profile[=profiler[:profiler_args]]"
 Turns on profiling.  For more information about profiling applications
@@ -757,6 +775,10 @@ to track down the source of the problems.
 If this variable is set, when the Mono VM runs into a verification
 problem, instead of throwing an exception it will break into the
 debugger.  This is useful when debugging verifier problems
+.TP
+.I "no-gdb-backtrace"
+This option will disable the GDB backtrace emitted by the runtime
+after a SIGSEGV or SIGABRT in unmanaged code.
 .ne
 .RE
 .TP
@@ -866,10 +888,12 @@ directive, like this:
 .fi
 .TP
 .I "MONO_MANAGED_WATCHER"
-If set to any value, System.IO.FileSystemWatcher will use the default
-managed implementation (slow). If unset, mono will try to use FAM under
-Unix systems and native API calls on Windows, falling back to the
-managed implementation on error.
+If set to "disabled", System.IO.FileSystemWatcher will use a file watcher 
+implementation which silently ignores all the watching requests.
+If set to any other value, System.IO.FileSystemWatcher will use the default
+managed implementation (slow). If unset, mono will try to use inotify, FAM, 
+Gamin, kevent under Unix systems and native API calls on Windows, falling 
+back to the managed implementation on error.
 .TP
 .I "MONO_NO_SMP"
 If set causes the mono process to be bound to a single processor. This may be

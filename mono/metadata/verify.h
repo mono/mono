@@ -35,6 +35,10 @@ typedef enum {
 
 	/*Skip all visibility related checks*/
 	MONO_VERIFY_SKIP_VISIBILITY = 64,
+
+	/*Skip all visibility related checks*/
+	MONO_VERIFY_REPORT_ALL_ERRORS = 128,
+
 } MonoVerifyStatus;
 
 typedef struct {

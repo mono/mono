@@ -218,11 +218,22 @@ typedef struct  {
 #define mono_domain_assemblies_lock(domain)   EnterCriticalSection(&(domain)->assemblies_lock)
 #define mono_domain_assemblies_unlock(domain) LeaveCriticalSection(&(domain)->assemblies_lock)
 
+typedef MonoDomain* (*MonoLoadFunc) (const char *filename, const char *runtime_version);
+
+void
+mono_install_runtime_load  (MonoLoadFunc func) MONO_INTERNAL;
+
+MonoDomain*
+mono_runtime_load (const char *filename, const char *runtime_version) MONO_INTERNAL;
+
 void 
 mono_init_com_types (void) MONO_INTERNAL;
 
 void 
 mono_cleanup (void) MONO_INTERNAL;
+
+void
+mono_close_exe_image (void) MONO_INTERNAL;
 
 void
 mono_jit_info_table_add    (MonoDomain *domain, MonoJitInfo *ji) MONO_INTERNAL;
@@ -248,6 +259,8 @@ mono_domain_lookup_shared_generic (MonoDomain *domain, MonoMethod *method) MONO_
 void
 mono_domain_register_shared_generic (MonoDomain *domain, MonoMethod *method, MonoJitInfo *jit_info) MONO_INTERNAL;
 
+char *
+mono_make_shadow_copy (const char *filename);
 
 /* 
  * Installs a new function which is used to return a MonoJitInfo for a method inside

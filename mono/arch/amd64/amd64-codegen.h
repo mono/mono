@@ -129,7 +129,7 @@ typedef union {
 #define amd64_rex_x(rex) ((((rex) >> 1) & 0x1) << 3)
 #define amd64_rex_b(rex) ((((rex) >> 0) & 0x1) << 3)
 
-#define amd64_is_imm32(val) ((glong)val >= -((glong)1<<31) && (glong)val <= (((glong)1<<31)-1))
+#define amd64_is_imm32(val) ((gint64)val >= -((gint64)1<<31) && (gint64)val <= (((gint64)1<<31)-1))
 
 #define x86_imm_emit64(inst,imm)     \
 	do {	\
@@ -516,6 +516,8 @@ typedef union {
 #define amd64_sse_xorpd_reg_reg(inst,dreg,reg) emit_sse_reg_reg ((inst),(dreg),(reg), 0x66, 0x0f, 0x57)
 
 #define amd64_sse_xorpd_reg_membase(inst,dreg,basereg,disp) emit_sse_reg_membase ((inst),(dreg),(basereg), (disp), 0x66, 0x0f, 0x57)
+
+#define amd64_sse_andpd_reg_membase(inst,dreg,basereg,disp) emit_sse_reg_membase ((inst),(dreg),(basereg), (disp), 0x66, 0x0f, 0x54)
 
 #define amd64_sse_movsd_reg_reg(inst,dreg,reg) emit_sse_reg_reg ((inst), (dreg), (reg), 0xf2, 0x0f, 0x10)
 

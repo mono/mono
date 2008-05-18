@@ -618,14 +618,17 @@ mono_analyze_liveness (MonoCompile *cfg)
 #endif
 
 	if (cfg->new_ir) {
-		optimize_initlocals2 (cfg);
+		if (!cfg->disable_initlocals_opt)
+			optimize_initlocals2 (cfg);
 
 		/* This improves code size by about 5% but slows down compilation too much */
 		if (cfg->compile_aot)
 			mono_analyze_liveness2 (cfg);
 	}
-	else
-		optimize_initlocals (cfg);
+	else {
+		if (!cfg->disable_initlocals_opt)
+			optimize_initlocals (cfg);
+	}
 }
 
 /**

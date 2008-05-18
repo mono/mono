@@ -35,11 +35,9 @@
 
 #define MONO_EMIT_NEW_UNALU(cfg,op,dr,sr1) do { \
                 MonoInst *inst; \
-		inst = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
-                inst->opcode = op; \
+		MONO_INST_NEW ((cfg), inst, op);	\
                 inst->dreg = dr; \
                 inst->sreg1 = sr1; \
-				inst->sreg2 = -1; \
 	        mono_bblock_add_inst (cfg->cbb, inst); \
 	} while (0)
 
@@ -53,8 +51,7 @@
 
 #define MONO_EMIT_NEW_BIALU(cfg,op,dr,sr1,sr2) do { \
                 MonoInst *inst; \
-		inst = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
-                inst->opcode = op; \
+		MONO_INST_NEW ((cfg), inst, op);	\
                 inst->dreg = dr; \
                 inst->sreg1 = sr1; \
                 inst->sreg2 = sr2; \
@@ -71,11 +68,9 @@
 
 #define MONO_EMIT_NEW_BIALU_IMM(cfg,op,dr,sr,imm) do { \
                 MonoInst *inst; \
-		inst = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
-                inst->opcode = op; \
+		MONO_INST_NEW ((cfg), inst, op);	\
                 inst->dreg = dr; \
                 inst->sreg1 = sr; \
-				inst->sreg2 = -1; \
                 inst->inst_p1 = (gpointer)(gssize)(imm); \
 	        mono_bblock_add_inst (cfg->cbb, inst); \
 	} while (0)
@@ -107,8 +102,7 @@
 
 #define MONO_EMIT_NEW_LOAD_MEM(cfg,dr,addr) do { \
                 MonoInst *inst; \
-		inst = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
-                inst->opcode = OP_LOADU4_MEM; \
+		MONO_INST_NEW ((cfg), inst, OP_LOADU4_MEM);	\
                 inst->dreg = dr; \
                 inst->inst_p0 = addr; \
 	        mono_bblock_add_inst (cfg->cbb, inst); \
@@ -116,7 +110,7 @@
 
 #define MONO_EMIT_NEW_LOAD_MEMBASE(cfg,dr,base,offset) do { \
                 MonoInst *inst; \
-                MONO_INST_NEW ((cfg), (inst), OP_LOAD_MEMBASE); \
+		MONO_INST_NEW ((cfg), inst, OP_LOAD_MEMBASE);	\
                 inst->dreg = dr; \
                 inst->inst_basereg = base; \
                 inst->inst_offset = offset; \
@@ -125,11 +119,10 @@
 
 #define MONO_EMIT_NEW_LOAD_MEMBASE_OP(cfg,op,dr,base,offset) do { \
                 MonoInst *inst; \
-                MONO_INST_NEW ((cfg), (inst), (op)); \
+		MONO_INST_NEW ((cfg), inst, op);	\
                 inst->dreg = dr; \
                 inst->inst_basereg = base; \
                 inst->inst_offset = offset; \
-				(inst)->sreg2 = -1; \
 	        mono_bblock_add_inst (cfg->cbb, inst); \
 	} while (0)
 
@@ -138,18 +131,15 @@
                 (inst)->sreg1 = sr; \
                 (inst)->inst_destbasereg = base; \
                 (inst)->inst_offset = offset; \
-				(inst)->sreg2 = -1; \
 	        mono_bblock_add_inst (cfg->cbb, inst); \
 	} while (0)
 
 #define MONO_EMIT_NEW_STORE_MEMBASE(cfg,op,base,offset,sr) do { \
                 MonoInst *inst; \
-		inst = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
-                inst->opcode = op; \
+		MONO_INST_NEW ((cfg), inst, op);	\
                 inst->sreg1 = sr; \
                 inst->inst_destbasereg = base; \
                 inst->inst_offset = offset; \
-				(inst)->sreg2 = -1; \
 	        mono_bblock_add_inst (cfg->cbb, inst); \
 	} while (0)
 
@@ -163,8 +153,7 @@
 
 #define MONO_EMIT_NEW_STORE_MEMBASE_IMM(cfg,op,base,offset,imm) do { \
                 MonoInst *inst; \
-		inst = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
-                inst->opcode = op; \
+		MONO_INST_NEW ((cfg), inst, op);	\
                 inst->inst_destbasereg = base; \
                 inst->inst_offset = offset; \
                 inst->inst_p1 = (gpointer)imm; \
@@ -173,8 +162,7 @@
 
 #define	MONO_EMIT_NEW_COMPARE_IMM(cfg,sr1,imm) do { \
                 MonoInst *inst; \
-		inst = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
-		inst->opcode = OP_COMPARE_IMM;	\
+		MONO_INST_NEW ((cfg), inst, OP_COMPARE_IMM);	\
                 inst->sreg1 = sr1; \
                 inst->inst_p1 = (gpointer)imm; \
 	        mono_bblock_add_inst ((cfg)->cbb, inst); \
@@ -182,8 +170,7 @@
 
 #define	MONO_EMIT_NEW_ICOMPARE_IMM(cfg,sr1,imm) do { \
                 MonoInst *inst; \
-		inst = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
-		inst->opcode = sizeof (void*) == 8 ? OP_ICOMPARE_IMM : OP_COMPARE_IMM;	\
+		MONO_INST_NEW ((cfg), inst, sizeof (void*) == 8 ? OP_ICOMPARE_IMM : OP_COMPARE_IMM);	\
                 inst->sreg1 = sr1; \
                 inst->inst_p1 = (gpointer)imm; \
 	        mono_bblock_add_inst ((cfg)->cbb, inst); \
@@ -191,7 +178,7 @@
 
 #define	MONO_EMIT_NEW_COND_EXC(cfg,cond,name) do { \
                 MonoInst *inst; \
-		inst = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
+		MONO_INST_NEW ((cfg), inst, OP_NOP);	\
 		inst->opcode = OP_COND_EXC_##cond;  \
                 inst->inst_p1 = (char*)name; \
 	        mono_bblock_add_inst ((cfg)->cbb, inst); \
@@ -199,7 +186,7 @@
 
 #define	MONO_EMIT_NEW_ICONST(cfg,dr,imm) do { \
                 MonoInst *inst; \
-        MONO_INST_NEW ((cfg), (inst), OP_ICONST); \
+		MONO_INST_NEW ((cfg), inst, OP_ICONST);	\
                 inst->dreg = dr; \
                 inst->inst_c0 = imm; \
 	        mono_bblock_add_inst ((cfg)->cbb, inst); \
@@ -207,8 +194,7 @@
 
 #define	MONO_EMIT_NEW_I8CONST(cfg,dr,imm) do { \
                 MonoInst *inst; \
-		inst = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
-		inst->opcode = OP_I8CONST;	\
+		MONO_INST_NEW ((cfg), inst, OP_I8CONST);	\
                 inst->dreg = dr; \
                 inst->inst_l = imm; \
 	        mono_bblock_add_inst ((cfg)->cbb, inst); \
@@ -216,8 +202,7 @@
 
 #define	MONO_EMIT_NEW_PCONST(cfg,dr,imm) do { \
                 MonoInst *inst; \
-		inst = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
-		inst->opcode = OP_ICONST;	\
+		MONO_INST_NEW ((cfg), inst, OP_ICONST);	\
                 inst->dreg = dr; \
                 inst->inst_p0 = (gpointer) imm; \
 	        mono_bblock_add_inst ((cfg)->cbb, inst); \
@@ -234,8 +219,7 @@
 
 #define	MONO_EMIT_NEW_AOTCONST(cfg,dr,imm,type) do { \
                 MonoInst *inst; \
-		inst = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
-		inst->opcode = OP_AOTCONST;	\
+		MONO_INST_NEW ((cfg), inst, OP_AOTCONST);	\
                 inst->dreg = dr; \
                 inst->inst_p0 = imm; \
                 inst->inst_c1 = type; \
@@ -252,11 +236,10 @@
         	MonoInst *target_label; \
 		target_label = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
 		target_label->opcode = OP_LABEL;	\
-	        target_label->next = (targetbb)->code; \
+		target_label->next = (targetbb)->code; \
+        (targetbb)->code = target_label; \
 		target_label->inst_c0 = (targetbb)->native_offset; \
-	        (targetbb)->code = target_label; \
-		inst = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
-		inst->opcode = op;	\
+		MONO_INST_NEW ((cfg), inst, op);	\
 		inst->inst_i0 = target_label;	\
 		inst->flags = MONO_INST_BRLABEL;	\
 	        mono_bblock_add_inst ((cfg)->cbb, inst); \
@@ -264,8 +247,7 @@
 
 #define	MONO_EMIT_NEW_BRANCH_LABEL(cfg,op,label) do { \
                 MonoInst *inst; \
-		inst = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
-		inst->opcode = op;	\
+		MONO_INST_NEW ((cfg), inst, op);	\
 		inst->inst_i0 = label;	\
 		inst->flags = MONO_INST_BRLABEL;	\
 	        mono_bblock_add_inst ((cfg)->cbb, inst); \
@@ -389,8 +371,7 @@ base: reg "0" {
 	 * normal rules.
 	 */
 	MonoInst *inst;
-	inst = mono_mempool_alloc0 (s->mempool, sizeof (MonoInst));
-	inst->opcode = OP_ICONST; /* doesn't matter */
+    MONO_INST_NEW (s, inst, OP_NOP); /* The opcode doesn't matter */
 	inst->inst_basereg = state->reg1;
 	inst->inst_offset = 0;
 	state->tree = inst;
@@ -848,7 +829,7 @@ stmt: OP_SWITCH (reg) "2" {
 		 /* the backend must patch the address. we use 0xf0f0f0f0 to avoid the usage 
 		  * of special (short) opcodes on x86 */
 		if (sizeof (gpointer) == 8)
-			MONO_EMIT_NEW_LOAD_MEMBASE (s, target_reg, offset_reg, (long)0xf0f0f0f0f0f0f0f1LL);
+			MONO_EMIT_NEW_LOAD_MEMBASE (s, target_reg, offset_reg, (gint64)0xf0f0f0f0f0f0f0f1LL);
 		else
 			MONO_EMIT_NEW_LOAD_MEMBASE (s, target_reg, offset_reg, 0xf0f0f0f0);
 	}
@@ -865,7 +846,6 @@ stmt: OP_ARGLIST (reg) {
 }
 
 reg: OP_CALL {
-	tree->opcode = OP_CALL;
 	tree->dreg = state->reg1;
 	mono_bblock_add_inst (s->cbb, tree);
 }
@@ -1355,6 +1335,25 @@ reg: CEE_CASTCLASS (reg) {
 
 	MONO_EMIT_NEW_COMPARE_IMM_BRANCH_LABEL (s, CEE_BEQ, obj_reg, 0, object_is_null);
 
+	if (tree->backend.record_cast_details) {
+		int to_klass_reg = mono_regstate_next_int (s->rs);
+		int klass_reg = mono_regstate_next_int (s->rs);
+		MonoInst *tls_get = mono_get_jit_tls_intrinsic (s);
+
+		if (!tls_get) {
+			fprintf (stderr, "error: --debug=casts not supported on this platform.\n.");
+			exit (1);
+		}
+
+		MONO_ADD_INS (s->cbb, tls_get);
+		MONO_EMIT_NEW_LOAD_MEMBASE (s, vtable_reg, obj_reg, G_STRUCT_OFFSET (MonoObject, vtable));
+		MONO_EMIT_NEW_LOAD_MEMBASE (s, klass_reg, vtable_reg, G_STRUCT_OFFSET (MonoVTable, klass));
+
+		MONO_EMIT_NEW_STORE_MEMBASE (s, OP_STORE_MEMBASE_REG, tls_get->dreg, G_STRUCT_OFFSET (MonoJitTlsData, class_cast_from), klass_reg);
+		MONO_EMIT_NEW_PCONST (s, to_klass_reg, klass);
+		MONO_EMIT_NEW_STORE_MEMBASE (s, OP_STORE_MEMBASE_REG, tls_get->dreg, G_STRUCT_OFFSET (MonoJitTlsData, class_cast_to), to_klass_reg);
+	}
+
 	if (klass->flags & TYPE_ATTRIBUTE_INTERFACE) {
 		MONO_EMIT_NEW_LOAD_MEMBASE (s, vtable_reg, obj_reg, G_STRUCT_OFFSET (MonoObject, vtable));
 		mini_emit_castclass_iface (s, vtable_reg, klass);
@@ -1379,6 +1378,16 @@ reg: CEE_CASTCLASS (reg) {
 	}
 
 	mono_bblock_add_inst (s->cbb, object_is_null);
+
+	/* Reset the variables holding the cast details */
+	if (tree->backend.record_cast_details) {
+		MonoInst *tls_get = mono_get_jit_tls_intrinsic (s);
+
+		MONO_ADD_INS (s->cbb, tls_get);
+		/* It is enough to reset the from field */
+		MONO_EMIT_NEW_STORE_MEMBASE_IMM (s, OP_STORE_MEMBASE_IMM, tls_get->dreg, G_STRUCT_OFFSET (MonoJitTlsData, class_cast_from), 0);
+	}
+
 	MONO_EMIT_UNALU (s, tree, OP_MOVE, state->reg1, obj_reg);
 }
 
@@ -2221,9 +2230,6 @@ mini_emit_aotconst (MonoCompile *cfg, int dreg, MonoJumpInfoType patch_type, gpo
 	MonoInst *dest, *pinfo;
 	int got_var_reg;
 
-	dest = mono_mempool_alloc0 (cfg->mempool, sizeof (MonoInst));
-	dest->opcode = OP_GOT_ENTRY;
-
 	g_assert (cfg->got_var);
 
 	pinfo = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));
@@ -2239,8 +2245,7 @@ mini_emit_aotconst (MonoCompile *cfg, int dreg, MonoJumpInfoType patch_type, gpo
 		got_var_reg = cfg->got_var->dreg;
 	}
 
-	dest = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));
-	dest->opcode = OP_GOT_ENTRY;
+	MONO_INST_NEW ((cfg), dest, OP_GOT_ENTRY);
 	dest->inst_left = cfg->got_var; /* not used */
 	dest->inst_right = pinfo;
 

@@ -18,6 +18,13 @@
 #include <errno.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#ifdef HAVE_UTIME_H
+#include <utime.h>
+#else
+#ifdef HAVE_SYS_UTIME_H
+#include <sys/utime.h>
+#endif
+#endif
 
 #include <mono/metadata/gc-internal.h>
 #include <mono/metadata/object.h>
@@ -91,6 +98,21 @@ add_assemblies_to_domain (MonoDomain *domain, MonoAssembly *ass, GHashTable *has
 
 static void
 mono_domain_unload (MonoDomain *domain);
+
+static MonoLoadFunc load_function = NULL;
+
+void
+mono_install_runtime_load (MonoLoadFunc func)
+{
+	load_function = func;
+}
+
+MonoDomain*
+mono_runtime_load (const char *filename, const char *runtime_version)
+{
+	g_assert (load_function);
+	return load_function (filename, runtime_version);
+}
 
 /**
  * mono_runtime_init:
@@ -1119,21 +1141,69 @@ ensure_directory_exists (const char *filename)
 #endif
 }
 
-static char *
-make_shadow_copy (const char *filename)
+static gboolean
+private_file_needs_copying (const char *src, struct stat *sbuf_src, char *dest)
+{
+	struct stat sbuf_dest;
+	
+	if (stat (src, sbuf_src) == -1 || stat (dest, &sbuf_dest) == -1)
+		return TRUE;
+
+	if (sbuf_src->st_mode == sbuf_dest.st_mode &&
+	    sbuf_src->st_size == sbuf_dest.st_size &&
+	    sbuf_src->st_mtime == sbuf_dest.st_mtime)
+		return FALSE;
+
+	return TRUE;
+}
+
+char *
+mono_make_shadow_copy (const char *filename)
 {
 	gchar *sibling_source, *sibling_target;
 	gint sibling_source_len, sibling_target_len;
 	guint16 *orig, *dest;
 	char *shadow;
 	gboolean copy_result;
+	gboolean is_private = FALSE;
+	gboolean do_copy = FALSE;
 	MonoException *exc;
+	gchar **path;
+	struct stat src_sbuf;
+	struct utimbuf utbuf;
+	char *dir_name = g_path_get_dirname (filename);
+	MonoDomain *domain = mono_domain_get ();
+	set_domain_search_path (domain);
+
+	if (!domain->search_path)
+		return (char*) filename;
+	
+	for (path = domain->search_path; *path; path++) {
+		if (**path == '\0') {
+			is_private = TRUE;
+			continue;
+		}
+		
+		if (!is_private)
+			continue;
+
+		if (strcmp (dir_name, *path) == 0) {
+			do_copy = TRUE;
+			break;
+		}
+	}
+
+	if (!do_copy)
+		return (char*) filename;
 	
 	shadow = get_shadow_assembly_location (filename);
 	if (ensure_directory_exists (shadow) == FALSE) {
 		exc = mono_get_exception_execution_engine ("Failed to create shadow copy (ensure directory exists).");
 		mono_raise_exception (exc);
 	}	
+
+	if (!private_file_needs_copying (filename, &src_sbuf, shadow))
+		return (char*) shadow;
 
 	orig = g_utf8_to_utf16 (filename, strlen (filename), NULL, NULL, NULL);
 	dest = g_utf8_to_utf16 (shadow, strlen (shadow), NULL, NULL, NULL);
@@ -1166,8 +1236,22 @@ make_shadow_copy (const char *filename)
 		exc = mono_get_exception_execution_engine ("Failed to create shadow copy of sibling data (CopyFile).");
 		mono_raise_exception (exc);
 	}
+
+	utbuf.actime = src_sbuf.st_atime;
+	utbuf.modtime = src_sbuf.st_mtime;
+	utime (shadow, &utbuf);
 	
 	return shadow;
+}
+
+
+MonoDomain *
+mono_domain_from_appdomain (MonoAppDomain *appdomain)
+{
+	if (appdomain == NULL)
+		return NULL;
+	
+	return appdomain->data;
 }
 
 static gboolean
@@ -1175,20 +1259,24 @@ try_load_from (MonoAssembly **assembly, const gchar *path1, const gchar *path2,
 					const gchar *path3, const gchar *path4,
 					gboolean refonly, gboolean is_private)
 {
-	
 	gchar *fullpath;
-
+	gboolean found = FALSE;
+	
 	*assembly = NULL;
 	fullpath = g_build_filename (path1, path2, path3, path4, NULL);
-	if (g_file_test (fullpath, G_FILE_TEST_IS_REGULAR)) {
-		if (is_private) {
-			char *new_path = make_shadow_copy (fullpath);
-			g_free (fullpath);
-			fullpath = new_path;
-		}
 
+	if (IS_PORTABILITY_SET) {
+		gchar *new_fullpath = mono_portability_find_file (fullpath, TRUE);
+		if (new_fullpath) {
+			g_free (fullpath);
+			fullpath = new_fullpath;
+			found = TRUE;
+		}
+	} else
+		found = g_file_test (fullpath, G_FILE_TEST_IS_REGULAR);
+	
+	if (found)
 		*assembly = mono_assembly_open_full (fullpath, NULL, refonly);
-	}
 
 	g_free (fullpath);
 	return (*assembly != NULL);
@@ -1314,7 +1402,7 @@ ves_icall_System_Reflection_Assembly_LoadFrom (MonoString *fname, MonoBoolean re
 	}
 		
 	name = filename = mono_string_to_utf8 (fname);
-
+	
 	ass = mono_assembly_open_full (filename, &status, refOnly);
 	
 	if (!ass){

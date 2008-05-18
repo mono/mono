@@ -922,6 +922,8 @@ extern void GC_thr_init(void);	/* Needed for Solaris/X86	*/
 #if defined(GC_WIN32_THREADS) && !defined(__CYGWIN32__) && !defined(__CYGWIN__)
 # include <windows.h>
 
+   BOOL WINAPI GC_DllMain(HINSTANCE inst, ULONG reason, LPVOID reserved);
+
   /*
    * All threads must be created using GC_CreateThread, so that they will be
    * recorded in the thread table.  For backwards compatibility, this is not

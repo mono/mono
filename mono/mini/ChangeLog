@@ -135,6 +135,397 @@ Fri Apr 11 18:44:31 CEST 2008 Paolo Molaro <lupus@ximian.com>
 	* mini-s390.c (mono_arch_output_basic_block): Fix SUBCC implementation.
 	(mono_arch_decompose_long_opts): Remove LSUB, the generic code works on s390 too.
 
+2008-05-08  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* declsec.h: Move MONO_SECMAN_FLAG to metadata/metadata-internals.h.
+
+	* mini.c: Added mini_assembly_can_skip_verification. This
+	function checks if the assembly requested to skip verification.	
+	Fixes part of #387274.
+
+2008-05-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_get_method): Disable the check for open generic classes when
+	using generic sharing.
+
+	* generics.cs: Add a test #387034.
+
+	* mini.c (mini_get_method): Check whenever the method class is an open generic
+	type, and return NULL in that case, causing a verification error. Fixes
+	#384123.
+
+2008-05-06  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* driver.c (mono_main): Revert r102623. The right
+	thing to do is to enable the verifier under verifiable
+	unless a --security flag was passed.
+
+	We need this non-trivial behavior for --verify-all otherwise
+	mcs-compileall won't be able to use it. As it needs everything to
+	be verified under validil.
+
+2008-05-06  Martin Baulig  <martin@ximian.com>
+
+	Fix #383749.
+
+	* debug-mini.c (mono_debugger_thread_created): Add proper locking.
+	(mono_debugger_thread_cleanup): Likewise.
+	(mono_debugger_extended_notification): Likewise.
+
+2008-05-06  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini.c (mono_method_to_ir): Verify visibility of call related opcodes
+	against both inflated and non-inflated methods. We need to check against the
+	generic definition for cases where the instantiated method is not visible.
+	We need to check against the inflated types for cases where the instantiation
+	changes any super type. This fixes #382986.
+
+	Note that this doesn't need to be applied to other parts of mono_method_to_ir
+	that check for visibiliy as generic params only appears as the type subject
+	of tokens on call opcodes. Field manipulation and ldftn must always
+	target an exact type.
+
+2008-05-06  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* driver.c (mono_main): Using --verify-all enables the verifier under validil mode
+	if no related --security flag is passed.
+
+2008-05-05  Andreas Färber  <andreas.faerber@web.de>
+
+	* mini-arch.h: Prepare support for ppc64.
+
+	Contributed under MIT/X11 license.
+
+2008-05-05  Andreas Färber  <andreas.faerber@web.de>
+
+	* aot-runtime.c: Prepare support for ppc64.
+
+	Contributed under MIT/X11 license.
+
+2008-05-05  Andreas Färber  <andreas.faerber@web.de>
+
+	* mini-ops.h: Prepare support for ppc64.
+
+	Contributed under MIT/X11 license.
+
+2008-05-04  Andreas Färber  <andreas.faerber@web.de>
+
+	* helpers.c: Add support for OSX/ppc64 and Linux/ppc64 (dis)assemblers.
+
+	Contributed under MIT/X11 license.
+
+2008-05-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (load_aot_module): Avoid trying to load aot code for dynamic
+	assemblies, since aot_name is not a full path, causing us to load MS.NET 
+	assemblies on windows.
+
+﻿2008-04-28  Kornél Pál  <kornelpal@gmail.com>
+
+	* mini.c (mono_jit_compile_method_inner): Use g_warning instead of g_error
+	for unsupported METHOD_IMPL_ATTRIBUTE_NATIVE.
+	* main.c: Use UTF-8 encoded command line instead of Windows default code
+	page on Windows to support Unicode.
+	* driver.c (DllMain): New function for mixed-mode assembly support.
+	* Makefile.am: Add -Wl,--kill-at to libmono_la_LDFLAGS on Windows to
+	export __stdcall functions without decoration.
+
+	Contributed under MIT/X11 license.
+
+2008-04-28  Mark Probst  <mark.probst@gmail.com>
+
+	* tramp-amd64.c, mini-amd64.c: Preserve R11 in the trampoline by
+	saving it very early.
+
+2008-04-28  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.h, mini.c: Lots of code for accessing the old RGCTX
+	deleted.  The only way to access the new RGCTX is via the
+	trampline.
+
+	* mini.c, mini-amd64, mini-x86.c, mini-exceptions.c: Pass the
+	vtable instead of the RGCTX to static methods.
+
+	* mini-tramplines.c, tramp-amd64.c, tramp-x86.c: Trampoline for
+	accessing the new RGCTX.
+
+	* generic-sharing.c: There is no separation between self, type
+	arguments and other types in the RGCTX anymore.
+
+2008-04-25  Jonathan Chambers <joncham@gmail.com>
+
+	* mini-amd64.c (add_general): Remove previous stack adjustment.
+	(mono_arch_call_opcode): Remove OP_OUTARG_MEMBASE and instead simply
+	adjust stack pointer after pushing args. Adjust ARGS_OFFSET to account
+	for 32 bytes of stack space reserved for all calls.
+	
+	* inssel-amd64.brg (OP_OUTARG_MEMBASE): Remove.
+	(OP_AMD64_OUTARG_ALIGN_STACK): Take argument to specify size of stack 
+	adjustment.
+	
+	Code contributed under MIT/X11 license.
+
+2008-04-23  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini.c (mini_method_verify): Only verify non-inflated methods, check
+	against the root definition, peeling out method and type instantiations.
+	Cache verify success results, code that fails verification is still
+	checked multiple times.
+
+2008-04-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_method_to_ir): Avoid inserting write barriers for stores of null.
+
+2008-04-23  Jonathan Chambers <joncham@gmail.com>
+
+	* mini-amd64.c (add_general): Always increment stack on Win64.
+	(mono_arch_call_opcode): Use OP_OUTARG_MEMBASE instead of OP_OUTARG
+	on Win64.
+	
+	* inssel-amd64.brg (OP_OUTARG_MEMBASE): Add OP_OUTARG_MEMBASE for 
+	stack based argument handling on Win64.
+	
+	Code contributed under MIT/X11 license.
+
+2008-04-23  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Makefile.am (version.h): Add support for git-svn.
+
+2008-04-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (mono_handle_native_sigsegv): Rework the gdb calling code
+	so instead of calling g_spawn_command_line_sync, we do everything by hand, 
+	avoiding allocations and libc functions which might deadlock.
+	
+	* mini-exceptions.c (mono_handle_native_sigsegv): Avoid calling gdb if the
+	'no-gdb-backtrace' option is set.
+
+	* mini.c (mini_parse_debug_options): Parse 'no-gdb-backtrace' option.
+
+	* mini.h (MonoDebugOptions): Add 'no_gdb_backtrace' option.
+
+2008-04-21  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.h (MonoDebuggerInfo): Removed `attach', `detach'
+	and `get_lmf_addr'; `notification_address' is no longer a pointer.
+
+2008-04-21  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.h (MonoDebuggerInfo): Added `thread_vtable_ptr',
+	`thread_vtable', `event_handler_ptr' and `event_handler'.
+
+2008-04-21  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.h (MonoDebuggerInfo): Added `init_code_buffer';
+	allows delayed initialization of the `executable_code_buffer' when
+	attaching.
+
+2008-04-21  Martin Baulig  <martin@ximian.com>
+
+	* mini.h (mono_debugger_create_notification_function): Removed.
+	* tramp-*.c (mono_debugger_create_notification_function): Removed.
+
+	* mdb-debug-info64.s
+	(MONO_DEBUGGER__notification_function): Added this in the .text section.
+
+	* mdb-debug-info32.s
+	(MONO_DEBUGGER__notification_function): Added this in the .text section.
+
+	* Makefile.am: Fix the mdb-debug-info*.s logic; the debugger
+	currently only works on x86 and x86_64, so don't create it on ppc.
+
+2008-04-21  Martin Baulig  <martin@ximian.com>
+
+	* mini.h (MonoDebugOptions): Added `mdb_optimizations'.
+
+	* mini.c
+	(mini_method_compile): In the fp elimination check, check
+	`debug_options.mdb_optimizations' in addition to
+	mono_debug_using_mono_debugger().	
+
+	* driver.c (mono_main): Added `--debug=mdb-optimizations' option to
+	disable some JIT optimizations which are only disabled when
+	running inside the debugger.
+	Added `--help-debug' option to describe the debugging options.
+	(parse_debug_options): New static function to parse the `--debug'
+	options, so we can easily add more stuff in future.
+
+2008-04-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (set_exception_type_from_invalid_il): Avoid reading invalid memory when
+	the method has no body.
+
+2008-04-19  Jonathan Chambers <joncham@gmail.com>
+
+	* mini-amd64.c (cpuid): Implement with MSVC intrinsic as inline
+	assembly is not allowed in MSVC 64-bit compiler. 
+	(mono_arch_cpu_init): Don't set floating point precision on MSVC build
+	as we get floating point exceptions everywhere.
+	
+	* exceptions-amd64.c (get_throw_trampoline): Push empty args on stack to
+	correctly align arguments for call to throw_exception.
+	(prepare_for_guard_pages): Cast to guint64 instead of unsigned long.
+	
+	Code contributed under MIT/X11 license.
+
+2008-04-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (amd64_patch): Make the check for (%rip) addressing more strict.
+
+2008-04-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel.brg (OP_SWITCH): Use (gint64) instead of (long) to cast a large constant.
+
+	* mini-amd64.c (NEW_INS): Set cil_code.
+
+	* mini.c (mini_method_compile): Move the disabling of fp elimination to here
+	from mini-amd64.c so all debugger related logic is in one place.
+
+	* mini.c: Set cfg->ip to NULL after passes which set it so instructions created
+	later won't have a random ip assigned to them.
+
+2008-04-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c (mono_create_jump_trampoline): Add an assert to check that
+	the arch specific function initializes code_size.
+	(mono_create_delegate_trampoline): Ditto.
+
+	* mini-mips.h mini-mips.c inssel-mips.brg inssel-long32-mips.brg cpu-mips.md
+	tramp-mips.c: Resurrect MIPS port and also fix the issues on little-endian
+	platforms.
+
+	* liveness.c (mono_analyze_liveness): Disable the initlocals optimization if 
+	running under the debugger.
+
+	* linear-scan.c (mono_linear_scan): Avoid sharing registers if running under the
+	debugger.
+
+	* mini.c (mini_method_compile): Set a few flags in cfg if running under the
+	debugger. Also move the disabling of optimizations here from driver.c.
+	(mono_allocate_stack_slots_full): Avoid sharing stack slots if running under the
+	debugger.
+
+	* mini.h (MonoCompile): Add a few new flags.
+
+2008-04-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_method_to_ir): Set cfg->ip before processing an IL instruction
+	so the cil_code field of created MonoInst's is properly set.
+	(mini_select_instructions): Ditto.
+
+	* mini.h (MONO_INST_NEW): Initialize the cil_code field using cfg->ip.
+	(MONO_INST_NEW_CALL): Ditto.
+
+	* mini.c inssel.brg inssel-x86.brg inssel-amd64.brg: Use MONO_INST_NEW ()
+	in many places so the ins->cil_code field is properly initialized.
+
+	* mini.c (mono_bblock_add_inst): Call MONO_ADD_INS () so the logic is in one
+	place.
+
+2008-04-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_method_compile): Print a different message when compiling a 
+	shared method.
+	
+	* mini.c (GENERIC_SHARING_FAILURE): Print a failure message when verbose_level
+	> 1.
+
+2008-04-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_output_basic_block): Implement OP_ABS directly using
+	SSE2 instructions.
+
+	* basic-math.cs: Fix warnings. Add a test for Math.Abs ().
+	
+2008-04-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (handle_stack_args): Make this return void since its return value was
+	never used. Also set cfg->unverifiable for invalid IL instead of calling
+	G_BREAKPOINT ().
+
+2008-04-10  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Make sure "this" is live in catch clauses with type
+	variables in shared generic code.
+
+2008-04-08  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Replaced uses of MONO_TYPE_IS_REFERENCE with calls to
+	generic_class_is_reference_type() to ensure the proper behaviour
+	when sharing generic code and the type in question is a type
+	argument.
+
+2008-04-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c: Applied patch from Mark Spruiell (mes@zeroc.com). Fix
+	race conditions when printing thread dumps. Fixes #377738.
+
+2008-04-08  Massimiliano Mantione  <massi@ximian.com>
+	
+	aliasing.c (update_aliasing_information_on_inst): Fixed a bug which
+	shows up when both MonoInst arguments can cause aliasig.
+	There is likely no way in the current JIT to trigger this problem, but
+	it showed up in the development of generics sharing, when in a new
+	opcode both args of an OP_GROUP can be aliases (addresses of a local).
+	When the generics sharing code will be committed, its tests will be
+	valid also for this bug.
+
+2008-04-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (decode_patch_info): Always transform PATCH_INFO_WRAPPER to
+	PATCH_INFO_METHOD.
+
+	* mini.c (mono_resolve_patch_target): Fix a crash in the AOT case if method is
+	NULL.
+
+2008-04-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (mono_handle_exception_internal): When --debug=casts is used,
+	use a more detailed exception message for InvalidCastException.
+
+	* mini.h (MonoJitTlsData): Add 'class_cast_from' and 'class_cast_to' fields.
+
+	* driver.c (mono_main): Add --debug=casts option to turn on better 
+	InvalidCastException message details.
+
+	* mini.c (mini_get_debug_options): New helper function to return the address of
+	the debug_options variable.
+
+	* mini.c (mono_get_jit_tls_intrinsic): New helper function to create a load of
+	the jit_tls TLS variable.
+
+	* mini.c (mono_jit_tls): New TLS variable.
+
+	* inssel.brg: Save the details of a cast to a TLS variable when the --debug=casts
+	option is used.
+
+2008-04-07  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini.h: Removed verifer related stuff. This code was moved to verify.c
+
+	* mini.c: Removed verifer related stuff, code moved to verify.c.
+
+	* driver.c: Using code from verify.c instead of mini.c.
+
+2008-04-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (check_for_method_verify): Remove the mscorlib comment since it is no
+	longer valid.
+
+2008-04-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini.c (check_for_method_verify): Enabling verification of
+	corlib if mono_verify_all is set. Bugs in the verifier preventing that
+	have been fixed.
+
+2008-04-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions-amd64.c (throw_exception): Unify the win32/non-win32 cases, save
+	caller saved registers as well.
+	
+	* exceptions-amd64.c (mono_arch_get_restore_context): Restore most caller
+	saved registers as well.
+
 2008-03-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-codegen.c (mono_local_regalloc): Add asserts for some situations which are
@@ -462,7 +853,7 @@ Fri Apr 11 18:44:31 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
 	* iltests.il: Add new tests.
 
-2008-03-20  Korn�l P�l  <kornelpal@gmail.com>
+2008-03-20  Kornél Pál  <kornelpal@gmail.com>
 
 	* mini.c: Removed Windows version macros.
 
@@ -2636,7 +3027,7 @@ Thu Oct 4 14:43:49 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 Thu Oct 4 12:35:27 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
-	* genmdesc.pl: patch from Henryk Pl�tz <henryk@openmoko.org> to
+	* genmdesc.pl: patch from Henryk Plötz <henryk@openmoko.org> to
 	use the preprocessor from the CPP env var if it is set.
 
 Wed Oct 3 17:11:38 CEST 2007 Paolo Molaro <lupus@ximian.com>

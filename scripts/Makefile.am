@@ -24,6 +24,7 @@ bin_SCRIPTS = \
 
 scripts_1_0_compat = \
 	al1			\
+	genxs1			\
 	ilasm1			\
 	mcs1			\
 	mkbundle1		\
@@ -42,7 +43,6 @@ scripts_1_0 = \
 	dtd2xsd			\
 	dtd2rng			\
 	gacutil			\
-	genxs			\
 	installvst		\
 	macpack			\
 	mcs			\
@@ -68,6 +68,7 @@ scripts_1_0_umask = \
 
 scripts_2_0 = \
 	al2			\
+	genxs2			\
 	gmcs			\
 	httpcfg			\
 	ilasm2			\
@@ -90,6 +91,7 @@ scripts_2_0 = \
 #
 scripts_defaults = 		\
 	al			\
+	genxs			\
 	ilasm			\
 	mkbundle		\
 	mono-api-info		\

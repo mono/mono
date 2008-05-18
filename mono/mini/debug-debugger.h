@@ -11,6 +11,7 @@
 
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/mono-debug-debugger.h>
+#include <libgc/include/libgc-mono-debugger.h>
 #include "debug-mini.h"
 
 typedef struct _MonoDebuggerInfo		MonoDebuggerInfo;
@@ -45,10 +46,7 @@ struct _MonoDebuggerInfo {
 	MonoInvokeFunc runtime_invoke;
 	guint64 (*class_get_static_field_data) (guint64 klass);
 	guint64 (*run_finally) (guint64 argument1, guint64 argument2);
-	void (*attach) (void);
-	void (*detach) (void);
 	void (*initialize) (void);
-	void * (*get_lmf_addr) (void);
 
 	guint64 (*create_string) (G_GNUC_UNUSED guint64 dummy1, G_GNUC_UNUSED guint64 dummy2,
 				  G_GNUC_UNUSED guint64 dummy3, const gchar *string_argument);
@@ -74,6 +72,15 @@ struct _MonoDebuggerInfo {
 	guint32 breakpoint_array_size;
 
 	guint64 (*get_method_signature) (guint64 method_argument, G_GNUC_UNUSED guint64 dummy);
+	guint64 (*init_code_buffer) (void);
+
+	/*
+	 * These are only needed when attaching.
+	 */
+	GCThreadFunctions **thread_vtable_ptr;
+	GCThreadFunctions *debugger_thread_vtable;
+	void (**event_handler_ptr) (MonoDebuggerEvent event, guint64 data, guint64 arg);
+	void (*debugger_event_handler) (MonoDebuggerEvent event, guint64 data, guint64 arg);
 };
 
 struct _MonoDebuggerMetadataInfo {

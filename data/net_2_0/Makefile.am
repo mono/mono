@@ -1,3 +1,5 @@
+SUBDIRS = Browsers
+
 monodir = $(sysconfdir)/mono/2.0
 
 EXTRA_DIST =  machine.config \

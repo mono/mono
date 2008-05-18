@@ -196,8 +196,9 @@ mono_arch_nullify_plt_entry (guint8 *code)
 guchar*
 mono_arch_create_trampoline_code (MonoTrampolineType tramp_type)
 {
-	guint8 *buf, *code, *tramp, *br [2];
-	int i, lmf_offset, offset, res_offset, arg_offset, tramp_offset, saved_regs_offset, saved_fpregs_offset, rbp_offset, framesize;
+	guint8 *buf, *code, *tramp, *br [2], *r11_save_code, *after_r11_save_code;
+	int i, lmf_offset, offset, res_offset, arg_offset, tramp_offset, saved_regs_offset;
+	int saved_fpregs_offset, rbp_offset, framesize, orig_rsp_to_rbp_offset;
 	gboolean has_caller;
 
 	if (tramp_type == MONO_TRAMPOLINE_JUMP)
@@ -228,6 +229,12 @@ mono_arch_create_trampoline_code (MonoTrampolineType tramp_type)
 		x86_patch (jump, code);
 	}
 
+	orig_rsp_to_rbp_offset = 0;
+	r11_save_code = code;
+	/* Reserve 5 bytes for the mov_membase_reg to save R11 */
+	code += 5;
+	after_r11_save_code = code;
+
 	/*
 	 * The generic class init trampoline is called directly by
 	 * JITted code, there is no specific trampoline.  The lazy
@@ -238,12 +245,14 @@ mono_arch_create_trampoline_code (MonoTrampolineType tramp_type)
 			tramp_type != MONO_TRAMPOLINE_RGCTX_LAZY_FETCH) {
 		/* Pop the return address off the stack */
 		amd64_pop_reg (code, AMD64_R11);
+		orig_rsp_to_rbp_offset += 8;
 	}
 
 	/* 
 	 * Allocate a new stack frame
 	 */
 	amd64_push_reg (code, AMD64_RBP);
+	orig_rsp_to_rbp_offset -= 8;
 	amd64_mov_reg_reg (code, AMD64_RBP, AMD64_RSP, 8);
 	amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, framesize);
 
@@ -278,8 +287,15 @@ mono_arch_create_trampoline_code (MonoTrampolineType tramp_type)
 			/* RAX is already saved */
 			amd64_mov_reg_membase (code, AMD64_RAX, AMD64_RBP, rbp_offset, 8);
 			amd64_mov_membase_reg (code, AMD64_RBP, saved_regs_offset + (i * 8), AMD64_RAX, 8);
-		} else {
+		} else if (i != AMD64_R11) {
 			amd64_mov_membase_reg (code, AMD64_RBP, saved_regs_offset + (i * 8), i, 8);
+		} else {
+			
+			/* We have to save R11 right at the start of
+			   the trampoline code because it's used as a
+			   scratch register */
+			amd64_mov_membase_reg (r11_save_code, AMD64_RSP, saved_regs_offset + orig_rsp_to_rbp_offset + (i * 8), i, 8);
+			g_assert (r11_save_code == after_r11_save_code);
 		}
 	}
 	offset += 8 * 8;
@@ -394,10 +410,11 @@ mono_arch_create_trampoline_code (MonoTrampolineType tramp_type)
 	amd64_mov_reg_membase (code, AMD64_R11, AMD64_RBP, lmf_offset + G_STRUCT_OFFSET (MonoLMF, lmf_addr), 8);
 	amd64_mov_membase_reg (code, AMD64_R11, 0, AMD64_RCX, 8);
 
-	/* Restore argument registers and r10 (needed to pass rgctx to
-	   static shared generic methods). */
+	/* Restore argument registers, r10 (needed to pass rgctx to
+	   static shared generic methods) and r11 (imt register for
+	   interface calls). */
 	for (i = 0; i < AMD64_NREG; ++i)
-		if (AMD64_IS_ARGUMENT_REG (i) || i == AMD64_R10)
+		if (AMD64_IS_ARGUMENT_REG (i) || i == AMD64_R10 || i == AMD64_R11)
 			amd64_mov_reg_membase (code, i, AMD64_RBP, saved_regs_offset + (i * 8), 8);
 
 	for (i = 0; i < 8; ++i)
@@ -467,55 +484,75 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 }	
 
 gpointer
-mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 encoded_offset)
+mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot)
 {
 	guint8 *tramp = mono_get_trampoline_code (MONO_TRAMPOLINE_RGCTX_LAZY_FETCH);
-	gboolean indirect = MONO_RGCTX_OFFSET_IS_INDIRECT (encoded_offset);
-	int offset = indirect ? MONO_RGCTX_OFFSET_INDIRECT_OFFSET (encoded_offset) :
-		MONO_RGCTX_OFFSET_DIRECT_OFFSET (encoded_offset);
-	guint8 *code, *buf, *jump;
-	guint8 *dummy;
-	int slots_reg;
+	guint8 *code, *buf;
+	guint8 **rgctx_null_jumps;
+	int tramp_size;
+	int depth, index;
+	int i;
 
 	g_assert (tramp);
-	if (indirect)
-		g_assert (MONO_RGCTX_OFFSET_INDIRECT_SLOT (encoded_offset) == 0);
 
-	code = buf = mono_global_codeman_reserve (32);
+	index = slot;
+	for (depth = 0; ; ++depth) {
+		int size = mono_class_rgctx_get_array_size (depth);
 
-	/* load slots ptr */
-	if (indirect) {
-		/* if indirect, load extra_other_infos ptr */
-		amd64_mov_reg_membase (buf, AMD64_RAX, AMD64_ARG_REG1, G_STRUCT_OFFSET (MonoRuntimeGenericContext, extra_other_infos), 8);
-		slots_reg = AMD64_RAX;
-	} else {
-		slots_reg = AMD64_ARG_REG1;
+		if (index < size - 1)
+			break;
+		index -= size - 1;
 	}
-	/* fetch slot */
-	amd64_mov_reg_membase (buf, AMD64_RAX, slots_reg, offset, 8);
 
-	dummy = buf;
+	tramp_size = 32 + 8 * depth;
 
-	/* is slot null? */
+	code = buf = mono_global_codeman_reserve (tramp_size);
+
+	rgctx_null_jumps = g_malloc (sizeof (guint8*) * (depth + 2));
+
+	/* load rgctx ptr from vtable */
+	amd64_mov_reg_membase (buf, AMD64_RAX, AMD64_ARG_REG1, G_STRUCT_OFFSET (MonoVTable, runtime_generic_context), 8);
+	/* is the rgctx ptr null? */
 	amd64_test_reg_reg (buf, AMD64_RAX, AMD64_RAX);
-	jump = buf;
 	/* if yes, jump to actual trampoline */
+	rgctx_null_jumps [0] = buf;
 	amd64_branch8 (buf, X86_CC_Z, -1, 1);
 
-	/* if no, just return */
+	for (i = 0; i < depth; ++i) {
+		/* load ptr to next array */
+		amd64_mov_reg_membase (buf, AMD64_RAX, AMD64_RAX, 0, 8);
+		/* is the ptr null? */
+		amd64_test_reg_reg (buf, AMD64_RAX, AMD64_RAX);
+		/* if yes, jump to actual trampoline */
+		rgctx_null_jumps [i + 1] = buf;
+		amd64_branch8 (buf, X86_CC_Z, -1, 1);
+	}
+
+	/* fetch slot */
+	amd64_mov_reg_membase (buf, AMD64_RAX, AMD64_RAX, sizeof (gpointer) * (index + 1), 8);
+	/* is the slot null? */
+	amd64_test_reg_reg (buf, AMD64_RAX, AMD64_RAX);
+	/* if yes, jump to actual trampoline */
+	rgctx_null_jumps [depth + 1] = buf;
+	amd64_branch8 (buf, X86_CC_Z, -1, 1);
+	/* otherwise return */
 	amd64_ret (buf);
 
-	x86_patch (jump, buf);
+	for (i = 0; i <= depth + 1; ++i)
+		x86_patch (rgctx_null_jumps [i], buf);
+
+	g_free (rgctx_null_jumps);
+
 	/* move the rgctx pointer to the VTABLE register */
 	amd64_mov_reg_reg (buf, MONO_ARCH_VTABLE_REG, AMD64_ARG_REG1, 8);
-	/* store the offset in RAX */
-	amd64_mov_reg_imm (buf, AMD64_RAX, encoded_offset);
+	/* store the slot in RAX */
+	amd64_mov_reg_imm (buf, AMD64_RAX, slot);
 	/* jump to the actual trampoline */
 	amd64_jump_code (buf, tramp);
 
 	mono_arch_flush_icache (code, buf - code);
 
-	g_assert (buf - code <= 32);
+	g_assert (buf - code <= tramp_size);
 
 	return code;
 }
@@ -537,18 +574,4 @@ mono_arch_invalidate_method (MonoJitInfo *ji, void *func, gpointer func_arg)
 
 	x86_push_imm (code, (guint64)func_arg);
 	amd64_call_reg (code, AMD64_R11);
-}
-
-/*
- * This method is only called when running in the Mono Debugger.
- */
-gpointer
-mono_debugger_create_notification_function (void)
-{
-	guint8 *buf, *code;
-
-	code = buf = mono_global_codeman_reserve (2);
-	x86_breakpoint (buf);
-	x86_ret (buf);
-	return code;
 }

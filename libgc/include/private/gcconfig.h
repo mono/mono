@@ -399,8 +399,12 @@
 # else
 #   if (defined(_MSDOS) || defined(_MSC_VER)) && (_M_IX86 >= 300) \
         || defined(_WIN32) && !defined(__CYGWIN32__) && !defined(__CYGWIN__)
-#     define I386
-#     define MSWIN32	/* or Win32s */
+#     if defined(__LP64__) || defined(_WIN64)
+#	define X86_64
+#     else
+#       define I386
+#     endif
+#     define MSWIN32	/* or Win64 */
 #     define mach_type_known
 #   endif
 #   if defined(_MSC_VER) && defined(_M_IA64)

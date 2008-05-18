@@ -1,3 +1,90 @@
+2008-05-16  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* bug-389886.2.il: Regression test for bug #389886.
+
+2008-05-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* exit-stress.cs: New stress test program for testing Environment.Exit () and
+	threads.
+
+	* stress-runner.cs: Add 'exit-stress', add a few new /proc/pid/status entries.
+
+2008-05-12  Jb Evain  <jbevain@novell.com>
+
+	* Makefile.am: fix compilation of 2.1 tests.
+
+2008-05-09  Kornél Pál  <kornelpal@gmail.com>
+
+	* mixed-mode: Added mixed-mode assembly tests.
+
+2008-05-08  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* bug-387274.2.il: Regression test for bug #387274.
+
+2008-05-07  Robert Jordan  <robertj@gmx.net>
+
+	* Makefile.am: don't pull libeglib.a twice. Fixes #387491.
+
+2008-05-05  Robert Jordan  <robertj@gmx.net>
+
+	* libtest.c, thunks.cs: reworked to match the new struct
+	handling.	
+	
+2008-05-06  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* bug-382986.cs. bug-382986-lib.cs: Regression test for
+	bug #382986.
+
+2008-05-04  Robert Jordan  <robertj@gmx.net>
+
+	* libtest.c: disable struct tests for platforms with incompatible
+	native/managed alignments.
+
+2008-05-03  Robert Jordan  <robertj@gmx.net>
+
+	* libtest.c, thunks.cs: tests for mono_method_get_unmanaged_thunk ().
+
+	* Makefile.am: add thunk.cs. link libtest with gmodule.
+
+	Code is contributed under MIT/X11 license.
+
+2008-04-28  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-array-type.2.cs: Test case for type arguments in arrays.
+
+	* Makefile.am: Added test.
+
+2008-04-25  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-interface-methods.2.cs: Test case for generic interface
+	methods.
+
+	* Makefile.am: Added test.
+
+2008-04-15  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Makefile.am (generic-box.2.exe, generic-unbox.2.exe): Create in
+	build-dir.
+
+2008-04-11  Mark Probst  <mark.probst@gmail.com>
+
+	* Makefile.am: Added missing files to EXTRA_DIST.
+
+2008-04-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile: fix extra dist file name.
+
+2008-04-10  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-box.2.cs, generic-boxing.2.il, generic-delegate.2.cs,
+	generic-ldobj.2.il, generic-ldtoken.2.il,
+	generic-ldtoken-field.2.il, generic-ldtoken-method.2.il,
+	generic-mkrefany.2.il, generic-sizeof.2.cs, generic-tailcall.2.il,
+	generic-unbox.2.cs, generic-unboxing.2.il, generic-virtual.2.cs,
+	generics-sharing.2.cs: New test cases for generic sharing.
+
+	* Makefile.am: Added tests.
+
 2008-03-31  Mark Probst  <mark.probst@gmail.com>
 
 	* Makefile.am: Re-enabled CoreCLR security tests.  Fixes #362626.

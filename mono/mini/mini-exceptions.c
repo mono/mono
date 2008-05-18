@@ -18,7 +18,16 @@
 
 #ifndef PLATFORM_WIN32
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
+#endif
+
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+
+#ifdef HAVE_SYS_SYSCALL_H
+#include <sys/syscall.h>
 #endif
 
 #include <mono/metadata/appdomain.h>
@@ -34,9 +43,6 @@
 
 #include "mini.h"
 #include "trace.h"
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
 
 #ifndef MONO_ARCH_CONTEXT_DEF
 #define MONO_ARCH_CONTEXT_DEF
@@ -614,9 +620,9 @@ get_exception_catch_class (MonoJitExceptionInfo *ei, MonoJitInfo *ji, MonoContex
 					gi->this_offset);
 
 		if (ji->method->flags & METHOD_ATTRIBUTE_STATIC) {
-			MonoRuntimeGenericContext *rgctx = info;
+			MonoVTable *vtable = info;
 
-			class = rgctx->vtable->klass;
+			class = vtable->klass;
 		} else {
 			MonoObject *this = info;
 
@@ -687,6 +693,16 @@ mono_handle_exception_internal (MonoContext *ctx, gpointer obj, gpointer origina
 		initial_trace_ips = mono_ex->trace_ips;
 	} else {
 		mono_ex = NULL;
+	}
+
+	if (mono_ex && jit_tls->class_cast_to && !strcmp (mono_ex->object.vtable->klass->name, "InvalidCastException")) {
+		char *from_name = mono_type_get_full_name (jit_tls->class_cast_from);
+		char *to_name = mono_type_get_full_name (jit_tls->class_cast_to);
+		char *msg = g_strdup_printf ("Unable to cast object of type '%s' to type '%s'.", from_name, to_name);
+		mono_ex->message = mono_string_new (domain, msg);
+		g_free (from_name);
+		g_free (to_name);
+		g_free (msg);
 	}
 
 	if (!call_filter)
@@ -1054,6 +1070,22 @@ print_stack_frame (MonoMethod *method, gint32 native_offset, gint32 il_offset, g
 	return FALSE;
 }
 
+static gboolean
+print_stack_frame_to_string (MonoMethod *method, gint32 native_offset, gint32 il_offset, gboolean managed,
+			     gpointer data)
+{
+	GString *p = (GString*)data;
+
+	if (method) {
+		gchar *location = mono_debug_print_stack_frame (method, native_offset, mono_domain_get ());
+		g_string_append_printf (p, "  %s\n", location);
+		g_free (location);
+	} else
+		g_string_append_printf (p, "  at <unknown> <0x%05x>\n", native_offset);
+
+	return FALSE;
+}
+
 static gboolean handling_sigsegv = FALSE;
 
 /*
@@ -1084,10 +1116,7 @@ mono_handle_native_sigsegv (int signal, void *ctx)
  {
 	void *array [256];
 	char **names;
-	char cmd [1024];
 	int i, size;
-	gchar *out, *err;
-	gint exit_status;
 	const char *signal_str = (signal == SIGSEGV) ? "SIGSEGV" : "SIGABRT";
 
 	fprintf (stderr, "\nNative stacktrace:\n\n");
@@ -1103,15 +1132,66 @@ mono_handle_native_sigsegv (int signal, void *ctx)
 
 	/* Try to get more meaningful information using gdb */
 
-#ifndef PLATFORM_WIN32
-	sprintf (cmd, "gdb --ex 'attach %ld' --ex 'info threads' --ex 'thread apply all bt' --batch", (long)getpid ());
-	{
-		int res = g_spawn_command_line_sync (cmd, &out, &err, &exit_status, NULL);
+#if !defined(PLATFORM_WIN32) && defined(HAVE_SYS_SYSCALL_H) && defined(SYS_fork)
+	if (!mini_get_debug_options ()->no_gdb_backtrace) {
+		/* From g_spawn_command_line_sync () in eglib */
+		int res;
+		int stdout_pipe [2] = { -1, -1 };
+		pid_t pid;
+		const char *argv [16];
+		char buf1 [128];
+		int status;
+		char buffer [1024];
 
-		if (res) {
-			fprintf (stderr, "\nDebug info from gdb:\n\n");
-			fprintf (stderr, "%s\n", out);
+		res = pipe (stdout_pipe);
+		g_assert (res != -1);
+			
+		//pid = fork ();
+		/*
+		 * glibc fork acquires some locks, so if the crash happened inside malloc/free,
+		 * it will deadlock. Call the syscall directly instead.
+		 */
+		pid = syscall (SYS_fork);
+		if (pid == 0) {
+			close (stdout_pipe [0]);
+			dup2 (stdout_pipe [1], STDOUT_FILENO);
+
+			for (i = getdtablesize () - 1; i >= 3; i--)
+				close (i);
+
+			argv [0] = g_find_program_in_path ("gdb");
+			if (argv [0] == NULL) {
+				close (STDOUT_FILENO);
+				exit (1);
+			}
+
+			argv [1] = "-ex";
+			sprintf (buf1, "attach %ld", (long)getpid ());
+			argv [2] = buf1;
+			argv [3] = "--ex";
+			argv [4] = "info threads";
+			argv [5] = "--ex";
+			argv [6] = "thread apply all bt";
+			argv [7] = "--batch";
+			argv [8] = 0;
+
+			execv (argv [0], (char**)argv);
+			exit (1);
 		}
+
+		close (stdout_pipe [1]);
+
+		fprintf (stderr, "\nDebug info from gdb:\n\n");
+
+		while (1) {
+			int nread = read (stdout_pipe [0], buffer, 1024);
+
+			if (nread <= 0)
+				break;
+			write (STDERR_FILENO, buffer, nread);
+		}		
+
+		waitpid (pid, &status, WNOHANG);
 	}
 #endif
 	/*
@@ -1157,28 +1237,31 @@ mono_print_thread_dump (void *sigctx)
 #if defined(__i386__) || defined(__x86_64__)
 	MonoContext ctx;
 #endif
+	GString* text = g_string_new (0);
 	char *name;
 	GError *error = NULL;
 
 	if (thread->name) {
 		name = g_utf16_to_utf8 (thread->name, thread->name_len, NULL, NULL, &error);
 		g_assert (!error);
-		fprintf (stdout, "\n\"%s\"", name);
+		g_string_append_printf (text, "\n\"%s\"", name);
 		g_free (name);
 	}
 	else
-		fprintf (stdout, "\n\"\"");
+		g_string_append (text, "\n\"\"");
 
-	fprintf (stdout, " tid=0x%p this=0x%p:\n", (gpointer)(gsize)thread->tid, thread);
+	g_string_append_printf (text, " tid=0x%p this=0x%p:\n", (gpointer)(gsize)thread->tid, thread);
 
 	/* FIXME: */
 #if defined(__i386__) || defined(__x86_64__)
 	mono_arch_sigctx_to_monoctx (sigctx, &ctx);
 
-	mono_jit_walk_stack_from_ctx (print_stack_frame, &ctx, TRUE, stdout);
+	mono_jit_walk_stack_from_ctx (print_stack_frame_to_string, &ctx, TRUE, text);
 #else
 	printf ("\t<Stack traces in thread dumps not supported on this platform>\n");
 #endif
 
+	fprintf (stdout, text->str);
+	g_string_free (text, TRUE);
 	fflush (stdout);
 }
