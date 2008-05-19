@@ -70,12 +70,19 @@ namespace System.Windows.Forms
 		{
 			DrawTextInternal (dc, text, font, pt, foreColor, backColor, TextFormatFlags.Default, false);
 		}
+#endif
 
-		public static void DrawText (IDeviceContext dc, string text, Font font, Point pt, Color foreColor, TextFormatFlags flags)
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		static void DrawText (IDeviceContext dc, string text, Font font, Point pt, Color foreColor, TextFormatFlags flags)
 		{
 			DrawTextInternal (dc, text, font, pt, foreColor, Color.Transparent, flags, false);
 		}
 
+#if NET_2_0
 		public static void DrawText (IDeviceContext dc, string text, Font font, Rectangle bounds, Color foreColor, Color backColor)
 		{
 			DrawTextInternal (dc, text, font, bounds, foreColor, backColor, TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter, false);
@@ -97,12 +104,19 @@ namespace System.Windows.Forms
 		{
 			DrawTextInternal (dc, text, font, bounds, foreColor, backColor, flags, false);
 		}
+#endif
 
-		public static Size MeasureText (string text, Font font)
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		static Size MeasureText (string text, Font font)
 		{
 			return MeasureTextInternal (Hwnd.GraphicsContext, text, font, Size.Empty, TextFormatFlags.Default, false);
 		}
 
+#if NET_2_0
 		public static Size MeasureText (IDeviceContext dc, string text, Font font)
 		{
 			return MeasureTextInternal (dc, text, font, Size.Empty, TextFormatFlags.Default, false);
@@ -339,7 +353,6 @@ namespace System.Windows.Forms
 			return MeasureTextInternal (Hwnd.GraphicsContext, text, font, Size.Empty, TextFormatFlags.Default, useMeasureString);
 		}
 
-#if NET_2_0
 		internal static void DrawTextInternal (IDeviceContext dc, string text, Font font, Point pt, Color foreColor, Color backColor, TextFormatFlags flags, bool useDrawString)
 		{
 			Size sz = MeasureTextInternal (dc, text, font, useDrawString);
@@ -351,6 +364,7 @@ namespace System.Windows.Forms
 			return MeasureTextInternal (dc, text, font, Size.Empty, TextFormatFlags.Default, useMeasureString);
 		}
 
+#if NET_2_0
 		internal static Size MeasureTextInternal (string text, Font font, Size proposedSize, bool useMeasureString)
 		{
 			return MeasureTextInternal (Hwnd.GraphicsContext, text, font, proposedSize, TextFormatFlags.Default, useMeasureString);
