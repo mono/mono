@@ -803,9 +803,9 @@ namespace System.Windows.Forms
 			{
 				if (impl_list != null) {
 					all_controls = null;
+					impl_list.Remove (control);
 					owner.PerformLayout (control, "Parent");
 					owner.OnControlRemoved (new ControlEventArgs (control));
-					impl_list.Remove (control);
 				}
 				control.ChangeParent (null);
 				owner.UpdateChildrenZOrder ();
