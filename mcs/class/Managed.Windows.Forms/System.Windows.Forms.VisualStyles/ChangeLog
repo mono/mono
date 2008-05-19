@@ -1,5 +1,9 @@
 2008-05-19  George Giolfan  <georgegiolfan@yahoo.com>
 
+	* VisualStyleRenderer.cs: Added DrawBackgroundExcludingArea.
+
+2008-05-19  George Giolfan  <georgegiolfan@yahoo.com>
+
 	* GroupBoxState.cs: Included in the 1.1 profile.
 
 2008-04-29  George Giolfan  <georgegiolfan@yahoo.com>

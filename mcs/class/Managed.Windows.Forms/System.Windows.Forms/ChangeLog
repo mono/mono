@@ -1,3 +1,8 @@
+2008-05-19  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* GroupBoxRenderer.cs: Fixed text area clipping in the Visual Styles case.
+	* XplatUIWin32.cs: Made Win32DeleteObject public.
+
 2008-05-19  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* GridEntry.cs: Determine HasDefaultValue more strictly by using 

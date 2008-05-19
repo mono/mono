@@ -83,16 +83,10 @@ namespace System.Windows.Forms
 						break;
 				}
 
-				// Don't paint over the background where we are going to put the text
-				Region old_clip = g.Clip;
-				g.SetClip (new Rectangle (bounds.Left + 9, bounds.Top, font_size.Width - 3, font_size.Height), System.Drawing.Drawing2D.CombineMode.Exclude);
-
 				if (groupBoxText == String.Empty)
 					vsr.DrawBackground (g, bounds);
 				else
-					vsr.DrawBackground (g, new_bounds);
-
-				g.Clip = old_clip;
+					vsr.DrawBackgroundExcludingArea (g, new_bounds, new Rectangle (bounds.Left + 9, bounds.Top, font_size.Width - 3, font_size.Height));
 
 				if (textColor == Color.Empty)
 					textColor = vsr.GetColor (ColorProperty.TextColor);

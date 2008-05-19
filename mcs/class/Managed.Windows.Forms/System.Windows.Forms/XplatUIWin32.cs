@@ -3387,7 +3387,7 @@ namespace System.Windows.Forms {
 		private extern static uint Win32GetLayeredWindowAttributes (IntPtr hwnd, out COLORREF pcrKey, out byte pbAlpha, out LayeredWindowAttributes pwdFlags);
 
 		[DllImport ("gdi32.dll", EntryPoint="DeleteObject", CallingConvention=CallingConvention.StdCall)]
-		private extern static bool Win32DeleteObject(IntPtr o);
+		public extern static bool Win32DeleteObject(IntPtr o);
 
 		[DllImport ("user32.dll", EntryPoint="GetKeyState", CallingConvention=CallingConvention.StdCall)]
 		private extern static short Win32GetKeyState(VirtualKeys nVirtKey);

@@ -501,6 +501,20 @@ namespace System.Windows.Forms.VisualStyles
 		}
 		#endregion
 
+		#region Private Instance Methods
+		internal void DrawBackgroundExcludingArea (IDeviceContext dc, Rectangle bounds, Rectangle excludedArea)
+		{
+			XplatUIWin32.RECT bounds_rect = XplatUIWin32.RECT.FromRectangle (bounds);
+			IntPtr hdc = dc.GetHdc ();
+			XplatUIWin32.Win32ExcludeClipRect (hdc, excludedArea.Left, excludedArea.Top, excludedArea.Right, excludedArea.Bottom);
+			UXTheme.DrawThemeBackground (theme, hdc, part, state, ref bounds_rect, IntPtr.Zero);
+			IntPtr hrgn = XplatUIWin32.Win32CreateRectRgn (excludedArea.Left, excludedArea.Top, excludedArea.Right, excludedArea.Bottom);
+			XplatUIWin32.Win32ExtSelectClipRgn (hdc, hrgn, (int)ClipCombineMode.RGN_OR);
+			XplatUIWin32.Win32DeleteObject (hrgn);
+			dc.ReleaseHdc ();
+		}
+		#endregion
+
 		#region Private Static Methods
 		private static bool IsElementKnownToBeSupported (string className, int part, int state)
 		{
