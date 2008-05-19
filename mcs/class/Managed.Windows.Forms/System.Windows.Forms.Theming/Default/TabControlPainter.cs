@@ -260,14 +260,7 @@ namespace System.Windows.Forms.Theming.Default
 
 		public virtual void Draw (Graphics dc, Rectangle area, TabControl tab)
 		{
-			Brush brush = SystemBrushes.Control;
-			dc.FillRectangle (brush, area);
-			Rectangle panel_rect = GetTabPanelRect (tab);
-
-			if (tab.Appearance == TabAppearance.Normal) {
-				ControlPaint.DrawBorder3D (dc, panel_rect, Border3DStyle.RaisedInner, Border3DSide.Left | Border3DSide.Top);
-				ControlPaint.DrawBorder3D (dc, panel_rect, Border3DStyle.Raised, Border3DSide.Right | Border3DSide.Bottom);
-			}
+			DrawBackground (dc, area, tab);
 
 			int start = 0;
 			int end = tab.TabPages.Count;
@@ -303,6 +296,18 @@ namespace System.Windows.Forms.Theming.Default
 				Rectangle left = GetLeftScrollRect (tab);
 				ControlPaint.DrawScrollButton (dc, right, ScrollButton.Right, tab.RightSliderState);
 				ControlPaint.DrawScrollButton (dc, left, ScrollButton.Left, tab.LeftSliderState);
+			}
+		}
+
+		protected virtual void DrawBackground (Graphics dc, Rectangle area, TabControl tab)
+		{
+			Brush brush = SystemBrushes.Control;
+			dc.FillRectangle (brush, area);
+			Rectangle panel_rect = GetTabPanelRect (tab);
+
+			if (tab.Appearance == TabAppearance.Normal) {
+				ControlPaint.DrawBorder3D (dc, panel_rect, Border3DStyle.RaisedInner, Border3DSide.Left | Border3DSide.Top);
+				ControlPaint.DrawBorder3D (dc, panel_rect, Border3DStyle.Raised, Border3DSide.Right | Border3DSide.Bottom);
 			}
 		}
 
