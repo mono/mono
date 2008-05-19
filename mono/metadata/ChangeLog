@@ -1,3 +1,12 @@
+2008-05-19  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h (MONO_DEBUGGER_VERSION): Bump to 70.
+
+	* mono-debug.c
+	(_mono_debug_using_mono_debugger): New global variable; it's set
+	directly by the debugger, so mono_debug_using_mono_debugger() also
+	works after attaching.
+
 2008-05-18 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* object.c (mono_class_create_runtime_vtable): Use memory barriers
