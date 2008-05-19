@@ -1,3 +1,9 @@
+2008-05-19  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: As a followup to invalidating implicit children when
+	a control is invalidated, only invalidate them if they are in the
+	clip rectangle.
+
 2008-05-19  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* ThemeVisualStyles.cs: Implemented partial support for ToolTip.

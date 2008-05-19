@@ -3968,7 +3968,8 @@ namespace System.Windows.Forms
 					// for things like ListView
 					if (child_controls.ImplicitControls != null)
 						foreach (Control c in child_controls.ImplicitControls)
-							c.Invalidate ();
+							if (rc.IntersectsWith (c.Bounds))
+								c.Invalidate ();
 				
 					// If any of our children are transparent, we
 					// have to invalidate them anyways
