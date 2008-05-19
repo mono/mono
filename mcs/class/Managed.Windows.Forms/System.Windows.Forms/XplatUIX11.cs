@@ -1357,7 +1357,7 @@ namespace System.Windows.Forms {
 		}
 
 		private int NextTimeout (ArrayList timers, DateTime now) {
-			int timeout = Int32.MaxValue; 
+			int timeout = 0; 
 
 			foreach (Timer timer in timers) {
 				int next = (int) (timer.Expires - now).TotalMilliseconds;
