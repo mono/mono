@@ -32,57 +32,21 @@ namespace System.Windows.Forms.Theming.VisualStyles
 			return tabControl.Alignment == TabAlignment.Top &&
 				tabControl.DrawMode == TabDrawMode.Normal;
 		}
-		public override void Draw (Graphics dc, Rectangle area, TabControl tab) {
+		protected override void DrawBackground (Graphics dc, Rectangle area, TabControl tab)
+		{
 			if (!ShouldPaint (tab)) {
-				base.Draw (dc, area, tab);
+				base.DrawBackground (dc, area, tab);
 				return;
 			}
 
 			VisualStyleElement element = VisualStyleElement.Tab.Pane.Normal;
 			if (!VisualStyleRenderer.IsElementDefined (element)) {
-				base.Draw (dc, area, tab);
+				base.DrawBackground (dc, area, tab);
 				return;
 			}
 			Rectangle panel_rectangle = GetTabPanelRect (tab);
 			if (panel_rectangle.IntersectsWith (area))
 				new VisualStyleRenderer (element).DrawBackground (dc, panel_rectangle, area);
-
-			//TODO: The base method should be refactored to allow this class to override only what it needs to.
-			int start = 0;
-			int end = tab.TabPages.Count;
-			int delta = 1;
-
-			if (tab.Alignment == TabAlignment.Top) {
-				start = end;
-				end = 0;
-				delta = -1;
-			}
-			int counter = start;
-			for (; counter != end; counter += delta) {
-				for (int i = tab.SliderPos; i < tab.TabPages.Count; i++) {
-					if (i == tab.SelectedIndex)
-						continue;
-					if (counter != tab.TabPages[i].Row)
-						continue;
-					Rectangle rect = tab.GetTabRect (i);
-					if (!rect.IntersectsWith (area))
-						continue;
-					DrawTab (dc, tab.TabPages[i], tab, rect, false);
-				}
-			}
-
-			if (tab.SelectedIndex != -1 && tab.SelectedIndex >= tab.SliderPos) {
-				Rectangle rect = tab.GetTabRect (tab.SelectedIndex);
-				if (rect.IntersectsWith (area))
-					DrawTab (dc, tab.TabPages[tab.SelectedIndex], tab, rect, true);
-			}
-
-			if (tab.ShowSlider) {
-				Rectangle right = GetRightScrollRect (tab);
-				Rectangle left = GetLeftScrollRect (tab);
-				ControlPaint.DrawScrollButton (dc, right, ScrollButton.Right, tab.RightSliderState);
-				ControlPaint.DrawScrollButton (dc, left, ScrollButton.Left, tab.LeftSliderState);
-			}
 		}
 		protected override int DrawTab (Graphics dc, TabPage page, TabControl tab, Rectangle bounds, bool is_selected)
 		{
