@@ -1293,6 +1293,17 @@ namespace System.Windows.Forms
 		}
 		#endregion
 		#endregion
+		#region ToolTip
+		protected override void ToolTipDrawBackground (Graphics dc, Rectangle clip_rectangle, ToolTip.ToolTipWindow control)
+		{
+			VisualStyleElement element = VisualStyleElement.ToolTip.Standard.Normal;
+			if (!VisualStyleRenderer.IsElementDefined (element)) {
+				base.ToolTipDrawBackground (dc, clip_rectangle, control);
+				return;
+			}
+			new VisualStyleRenderer (element).DrawBackground (dc, control.Bounds);
+		}
+		#endregion
 		#region TreeView
 		[MonoTODO("Use the sizing information provided by the VisualStyles API.")]
 		public override void TreeViewDrawNodePlusMinus (TreeView treeView, TreeNode node, Graphics dc, int x, int middle)

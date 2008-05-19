@@ -1,5 +1,9 @@
 2008-05-19  George Giolfan  <georgegiolfan@yahoo.com>
 
+	* ThemeVisualStyles.cs: Implemented partial support for ToolTip.
+
+2008-05-19  George Giolfan  <georgegiolfan@yahoo.com>
+
 	* ThemeWin32Classic.cs: Refactored: Extracted ToolTipDrawBackground.
 
 2008-05-19  George Giolfan  <georgegiolfan@yahoo.com>
