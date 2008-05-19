@@ -356,7 +356,7 @@ namespace System.Web {
 			int idx = s.IndexOf ("?");
 			string s2 = null;
 			if (idx != -1) {
-				s2 = s.Substring (0, idx-1);
+				s2 = s.Substring (0, idx);
 				s2 = HttpUtility.UrlEncode (s2) + s.Substring (idx);
 			} else {
 				s2 = HttpUtility.UrlEncode (s);

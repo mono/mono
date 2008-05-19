@@ -478,6 +478,13 @@ namespace MonoTests.System.Web {
 				Assert.AreEqual (exp, act, "UrlPathEncode " + c.ToString ());
 			}
 		}
+        [Test]
+        public void UrlPathEncode2()
+        {
+            string s = "default.xxx?sdsd=sds";
+            string s2 = HttpUtility.UrlPathEncode(s);
+            Assert.AreEqual(s, s2, "UrlPathEncode " + s);
+        }
 
 #endif
 
