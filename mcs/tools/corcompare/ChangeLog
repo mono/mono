@@ -1,3 +1,8 @@
+2008-05-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* mono-api-diff.cs : do not report CompilerGeneratedAttribute which
+	  likely comes from auto property.
+
 2008-04-05  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TODO: Removed, as all items are obsolete.

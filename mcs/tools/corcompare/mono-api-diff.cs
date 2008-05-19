@@ -180,6 +180,15 @@ namespace Mono.AssemblyCompare
 			return (object []) list.ToArray (type);
 		}
 
+		public static bool IsMeaninglessAttribute (string s)
+		{
+			if (s == null)
+				return false;
+			if (s == "System.Runtime.CompilerServices.CompilerGeneratedAttribute")
+				return true;
+			return false;
+		}
+
 		public static bool IsMonoTODOAttribute (string s)
 		{
 			if (s == null)
@@ -1120,7 +1129,7 @@ namespace Mono.AssemblyCompare
 				return false;
 			}
 
-			return true;
+			return !IsMeaninglessAttribute (value);
 		}
 
 		protected override void CompareToInner (string name, XmlNode node, XMLNameGroup other)
