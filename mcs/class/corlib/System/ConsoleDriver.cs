@@ -39,15 +39,32 @@ namespace System {
 
 		static ConsoleDriver ()
 		{
+			// Put the actual new statements into separate methods to avoid initalizing
+			// three classes when only one is needed.
 			if (!IsConsole) {
-				driver = new NullConsoleDriver ();
+				driver = CreateNullConsoleDriver ();
 			} else if (Environment.IsRunningOnWindows) {
-				driver = new WindowsConsoleDriver ();
+				driver = CreateWindowsConsoleDriver ();
 			} else {
-				driver = new TermInfoDriver (Environment.GetEnvironmentVariable ("TERM"));
+				driver = CreateTermInfoDriver ();
 			}
 		}
 
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		static IConsoleDriver CreateNullConsoleDriver () {
+			return new NullConsoleDriver ();
+		}
+
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		static IConsoleDriver CreateWindowsConsoleDriver () {
+			return new WindowsConsoleDriver ();
+		}
+
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		static IConsoleDriver CreateTermInfoDriver () {
+			return new TermInfoDriver (Environment.GetEnvironmentVariable ("TERM"));
+		}
+		
 		public static bool Initialized {
 			get { return driver.Initialized; }
 		}
