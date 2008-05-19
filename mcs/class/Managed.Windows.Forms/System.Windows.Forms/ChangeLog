@@ -1,3 +1,9 @@
+2008-05-19  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* GridEntry.cs: Determine HasDefaultValue more strictly by using 
+	PropertyDescriptor.ShouldSerializeValue.
+	[Fixes bug #391924]
+
 2008-05-19  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* ThemeVisualStyles.cs: Enabled support for ScrollBar element styles not present

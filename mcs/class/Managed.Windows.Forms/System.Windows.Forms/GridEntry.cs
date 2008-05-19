@@ -584,9 +584,8 @@ namespace System.Windows.Forms.PropertyGridInternal
 
 		public bool HasDefaultValue {
 			get {
-				if (PropertyDescriptor != null && 
-				    PropertyDescriptor.Attributes[typeof (DefaultValueAttribute)] != null)
-				    return true;
+				if (PropertyDescriptor != null)
+				    return !PropertyDescriptor.ShouldSerializeValue (PropertyOwner);
 				return false;
 			}
 		}
