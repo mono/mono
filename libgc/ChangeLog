@@ -1,3 +1,8 @@
+2008-05-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* configure.in: Add two variables for passing CPPFLAGS/CFLAGS from the parent
+	configure.
+
 2008-04-28  Kornél Pál  <kornelpal@gmail.com>
 
 	* include/gc.h: Add GC_DllMain.
