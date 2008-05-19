@@ -5024,21 +5024,27 @@ namespace System.Windows.Forms
 		#region ToolTip
 		public override void DrawToolTip(Graphics dc, Rectangle clip_rectangle, ToolTip.ToolTipWindow control)
 		{
-			Rectangle text_rect = Rectangle.Inflate (control.ClientRectangle, -2, -1);
+			ToolTipDrawBackground (dc, clip_rectangle, control);
 
+			Rectangle text_rect = Rectangle.Inflate (control.ClientRectangle, -2, -1);
 #if NET_2_0
-			Brush back_brush = ResPool.GetSolidBrush (control.BackColor);;
 			Color foreground = control.ForeColor;
 #else
-			Brush back_brush = SystemBrushes.Info;
 			Color foreground = this.ColorInfoText;
 #endif
-
-			dc.FillRectangle (back_brush, control.ClientRectangle);
-			dc.DrawRectangle (SystemPens.WindowFrame, 0, 0, control.Width - 1, control.Height - 1);
-
 			TextFormatFlags flags = TextFormatFlags.HidePrefix | TextFormatFlags.SingleLine | TextFormatFlags.VerticalCenter;
 			TextRenderer.DrawTextInternal (dc, control.Text, control.Font, text_rect, foreground, flags, false);
+		}
+
+		protected virtual void ToolTipDrawBackground (Graphics dc, Rectangle clip_rectangle, ToolTip.ToolTipWindow control)
+		{
+#if NET_2_0
+			Brush back_brush = ResPool.GetSolidBrush (control.BackColor);;
+#else
+			Brush back_brush = SystemBrushes.Info;
+#endif
+			dc.FillRectangle (back_brush, control.ClientRectangle);
+			dc.DrawRectangle (SystemPens.WindowFrame, 0, 0, control.Width - 1, control.Height - 1);
 		}
 
 		public override Size ToolTipSize(ToolTip.ToolTipWindow tt, string text)
