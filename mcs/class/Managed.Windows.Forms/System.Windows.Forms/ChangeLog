@@ -1,5 +1,12 @@
 2008-05-19  George Giolfan  <georgegiolfan@yahoo.com>
 
+	* ScrollBar.cs: Added FirstButtonEntered, SecondButtonEntered, ThumbEntered,
+	ThumbPressed.
+	* Theme.cs, ThemeWin32Classic.cs: Added ScrollBarHasHotElementStyles,
+	ScrollBarHasPressedThumbStyle.
+
+2008-05-19  George Giolfan  <georgegiolfan@yahoo.com>
+
 	* TextRenderer.cs: Included some methods in the 1.1 profile.
 
 2008-05-19  Jonathan Pobst  <monkey@jpobst.com>

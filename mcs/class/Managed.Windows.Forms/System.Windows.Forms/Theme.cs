@@ -886,6 +886,10 @@ namespace System.Windows.Forms
 
 		// Sizing
 		public abstract int ScrollBarButtonSize {get;}		// Size of the scroll button
+
+		public abstract bool ScrollBarHasHotElementStyles { get; }
+
+		public abstract bool ScrollBarHasPressedThumbStyle { get; }
 		#endregion	// ScrollBar
 
 		#region StatusBar

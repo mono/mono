@@ -4487,6 +4487,18 @@ namespace System.Windows.Forms
 		public override int ScrollBarButtonSize {
 			get { return 16; }
 		}
+
+		public override bool ScrollBarHasHotElementStyles {
+			get {
+				return false;
+			}
+		}
+
+		public override bool ScrollBarHasPressedThumbStyle {
+			get { 
+				return false;
+			}
+		}
 		#endregion	// ScrollBar
 
 		#region StatusBar

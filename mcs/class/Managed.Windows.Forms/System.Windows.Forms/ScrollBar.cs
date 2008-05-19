@@ -75,6 +75,9 @@ namespace System.Windows.Forms
 		private Rectangle dirty;
 
 		internal ThumbMoving thumb_moving = ThumbMoving.None;
+		bool first_button_entered;
+		bool second_button_entered;
+		bool thumb_entered;
 		#endregion	// Local Variables
 
 		private enum TimerType
@@ -234,6 +237,7 @@ namespace System.Windows.Forms
 			small_change = 1;
 
 			timer.Tick += new EventHandler (OnTimer);
+			MouseLeave += new EventHandler (OnMouseLeave);
 			base.KeyDown += new KeyEventHandler (OnKeyDownSB);
 			base.MouseDown += new MouseEventHandler (OnMouseDownSB);
 			base.MouseUp += new MouseEventHandler (OnMouseUpSB);
@@ -277,6 +281,50 @@ namespace System.Windows.Forms
 
 			set {
 				thumb_pos = value;
+			}
+		}
+
+		internal bool FirstButtonEntered {
+			get { return first_button_entered; }
+			private set {
+				if (first_button_entered == value)
+					return;
+				first_button_entered = value;
+				if (ThemeEngine.Current.ScrollBarHasHotElementStyles)
+					Invalidate (first_arrow_area);
+			}
+		}
+
+		internal bool SecondButtonEntered {
+			get { return second_button_entered; }
+			private set {
+				if (second_button_entered == value)
+					return;
+				second_button_entered = value;
+				if (ThemeEngine.Current.ScrollBarHasHotElementStyles)
+					Invalidate (second_arrow_area);
+			}
+		}
+
+		internal bool ThumbEntered {
+			get { return thumb_entered; }
+			private set {
+				if (thumb_entered == value)
+					return;
+				thumb_entered = value;
+				if (ThemeEngine.Current.ScrollBarHasHotElementStyles)
+					Invalidate (thumb_pos);
+			}
+		}
+
+		internal bool ThumbPressed {
+			get { return thumb_pressed; }
+			private set {
+				if (thumb_pressed == value)
+					return;
+				thumb_pressed = value;
+				if (ThemeEngine.Current.ScrollBarHasPressedThumbStyle)
+					Invalidate (thumb_pos);
 			}
 		}
 		#endregion	// Internal & Private Properties
@@ -936,8 +984,16 @@ namespace System.Windows.Forms
 
     		private void OnMouseMoveSB (object sender, MouseEventArgs e)
     		{
-			if (Enabled == false || thumb_size == 0)
+			if (Enabled == false)
 				return;
+
+			FirstButtonEntered = first_arrow_area.Contains (e.Location);
+			SecondButtonEntered = second_arrow_area.Contains (e.Location);
+
+			if (thumb_size == 0)
+				return;
+			
+			ThumbEntered = thumb_pos.Contains (e.Location);
 
 			if (firstbutton_pressed) {
     				if (!first_arrow_area.Contains (e.X, e.Y) && ((firstbutton_state & ButtonState.Pushed) == ButtonState.Pushed)) {
@@ -1038,7 +1094,7 @@ namespace System.Windows.Forms
 			}
 
 			if (thumb_size > 0 && thumb_pos.Contains (e.X, e.Y)) {
-				thumb_pressed = true;
+				ThumbPressed = true;
 				SendWMScroll(ScrollBarCommands.SB_THUMBTRACK);
 				if (vert) {
 					thumbclick_offset = e.Y - thumb_pos.Y;
@@ -1132,7 +1188,7 @@ namespace System.Windows.Forms
 				OnScroll (new ScrollEventArgs (ScrollEventType.ThumbPosition, position));
 				OnScroll (new ScrollEventArgs (ScrollEventType.EndScroll, position));
 				SendWMScroll(ScrollBarCommands.SB_THUMBPOSITION);
-				thumb_pressed = false;
+				ThumbPressed = false;
 				return;
 			}
 
@@ -1430,6 +1486,12 @@ namespace System.Windows.Forms
 			dirty = Rectangle.Empty;
 		}
 
+		void OnMouseLeave (object sender, EventArgs e)
+		{
+			FirstButtonEntered = false;
+			SecondButtonEntered = false;
+			ThumbEntered = false;
+		}
 		#endregion //Private Methods
 #if NET_2_0
 		protected override void OnMouseWheel (MouseEventArgs e)
@@ -1439,5 +1501,6 @@ namespace System.Windows.Forms
 #endif
 	 }
 }
+
 
 
