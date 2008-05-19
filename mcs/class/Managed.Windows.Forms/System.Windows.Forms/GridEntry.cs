@@ -544,9 +544,6 @@ namespace System.Windows.Forms.PropertyGridInternal
 						else
 							current_changed = Object.Equals (properties[i].GetValue (propertyOwners[i]), value);
 					}
-					// restore original value if doesn't get set
-					if (!current_changed && !PropertyDescriptor.IsReadOnly)
-						properties[i].SetValue (propertyOwners[i], currentVal);
 				}
 				if (current_changed)
 					changed = true;

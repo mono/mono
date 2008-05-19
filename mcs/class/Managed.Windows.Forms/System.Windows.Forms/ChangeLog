@@ -1,5 +1,11 @@
 2008-05-19  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* GridEntry.cs: Don't be so strict when setting the value - 
+	do not check if what we set is what we get.
+	[Fixes bug #389245]
+
+2008-05-19  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* XplatUIX11.cs: If there are no timers timeout should be 0
 	[Fixes bug #363522]
 
