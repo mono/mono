@@ -26,13 +26,14 @@
 //	Jonathan Pobst (monkey@jpobst.com)
 //
 
-#if NET_2_0
 namespace System.Windows.Forms.VisualStyles
 {
-	public enum GroupBoxState
+#if NET_2_0
+	public
+#endif
+	enum GroupBoxState
 	{
 		Normal = 1,
 		Disabled = 2
 	}
 }
-#endif
