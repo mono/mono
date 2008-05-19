@@ -1,3 +1,13 @@
+2008-05-19  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.h (MonoDebuggerInfo): Add `using_mono_debugger'
+	pointing to the new `_mono_debug_using_mono_debugger' variable.
+
+	* driver.c
+	(mono_main): Check mono_debug_using_mono_debugger() rather than
+	the `MONO_INSIDE_MDB' environment variable to check whether we're
+	inside the debugger.
+
 2008-05-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mini_method_compile): Use cfg->args [0] for accessing the this
