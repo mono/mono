@@ -1,5 +1,10 @@
 2008-05-19  George Giolfan  <georgegiolfan@yahoo.com>
 
+	* ThemeVisualStyles.cs: Enabled support for ScrollBar element styles not present
+	in the classic theme.
+
+2008-05-19  George Giolfan  <georgegiolfan@yahoo.com>
+
 	* ScrollBar.cs: Added FirstButtonEntered, SecondButtonEntered, ThumbEntered,
 	ThumbPressed.
 	* Theme.cs, ThemeWin32Classic.cs: Added ScrollBarHasHotElementStyles,

@@ -664,7 +664,6 @@ namespace System.Windows.Forms
 		}
 		#endregion
 		#region ScrollBar
-		[MonoTODO ("Enable the rest of the code when ScrollBar will be changed to supply the required information.")]
 		public override void DrawScrollBar (Graphics dc, Rectangle clip, ScrollBar bar)
 		{
 			VisualStyleElement element;
@@ -719,8 +718,8 @@ namespace System.Windows.Forms
 						element = VisualStyleElement.ScrollBar.ArrowButton.UpDisabled;
 					else if (bar.firstbutton_state == ButtonState.Pushed)
 						element = VisualStyleElement.ScrollBar.ArrowButton.UpPressed;
-					//else if (bar.firstbutton_entered)
-					//    element = VisualStyleElement.ScrollBar.ArrowButton.UpHot;
+					else if (bar.FirstButtonEntered)
+						element = VisualStyleElement.ScrollBar.ArrowButton.UpHot;
 					else
 						element = VisualStyleElement.ScrollBar.ArrowButton.UpNormal;
 					renderer = new VisualStyleRenderer (element);
@@ -731,8 +730,8 @@ namespace System.Windows.Forms
 						element = VisualStyleElement.ScrollBar.ArrowButton.DownDisabled;
 					else if (bar.secondbutton_state == ButtonState.Pushed)
 						element = VisualStyleElement.ScrollBar.ArrowButton.DownPressed;
-					//else if (bar.secondbutton_entered)
-					//    element = VisualStyleElement.ScrollBar.ArrowButton.DownHot;
+					else if (bar.SecondButtonEntered)
+						element = VisualStyleElement.ScrollBar.ArrowButton.DownHot;
 					else
 						element = VisualStyleElement.ScrollBar.ArrowButton.DownNormal;
 					renderer = new VisualStyleRenderer (element);
@@ -742,10 +741,10 @@ namespace System.Windows.Forms
 				#region Thumb and grip
 				if (!bar.Enabled)
 					element = VisualStyleElement.ScrollBar.LowerTrackVertical.Disabled;
-				//else if (bar.thumb_state == ButtonState.Pushed)
-				//    element = VisualStyleElement.ScrollBar.ThumbButtonVertical.Pressed;
-				//else if (bar.thumb_entered)
-				//    element = VisualStyleElement.ScrollBar.ThumbButtonVertical.Hot;
+				else if (bar.ThumbPressed)
+					element = VisualStyleElement.ScrollBar.ThumbButtonVertical.Pressed;
+				else if (bar.ThumbEntered)
+					element = VisualStyleElement.ScrollBar.ThumbButtonVertical.Hot;
 				else
 					element = VisualStyleElement.ScrollBar.ThumbButtonVertical.Normal;
 				renderer = new VisualStyleRenderer (element);
@@ -805,8 +804,8 @@ namespace System.Windows.Forms
 						element = VisualStyleElement.ScrollBar.ArrowButton.LeftDisabled;
 					else if (bar.firstbutton_state == ButtonState.Pushed)
 						element = VisualStyleElement.ScrollBar.ArrowButton.LeftPressed;
-					//else if (bar.firstbutton_entered)
-					//    element = VisualStyleElement.ScrollBar.ArrowButton.LeftHot;
+					else if (bar.FirstButtonEntered)
+						element = VisualStyleElement.ScrollBar.ArrowButton.LeftHot;
 					else
 						element = VisualStyleElement.ScrollBar.ArrowButton.LeftNormal;
 					renderer = new VisualStyleRenderer (element);
@@ -817,8 +816,8 @@ namespace System.Windows.Forms
 						element = VisualStyleElement.ScrollBar.ArrowButton.RightDisabled;
 					else if (bar.secondbutton_state == ButtonState.Pushed)
 						element = VisualStyleElement.ScrollBar.ArrowButton.RightPressed;
-					//else if (bar.secondbutton_entered)
-					//    element = VisualStyleElement.ScrollBar.ArrowButton.RightHot;
+					else if (bar.SecondButtonEntered)
+						element = VisualStyleElement.ScrollBar.ArrowButton.RightHot;
 					else
 						element = VisualStyleElement.ScrollBar.ArrowButton.RightNormal;
 					renderer = new VisualStyleRenderer (element);
@@ -828,10 +827,10 @@ namespace System.Windows.Forms
 				#region Thumb and grip
 				if (!bar.Enabled)
 					element = VisualStyleElement.ScrollBar.RightTrackHorizontal.Disabled;
-				//else if (bar.thumb_state == ButtonState.Pushed)
-				//    element = VisualStyleElement.ScrollBar.ThumbButtonHorizontal.Pressed;
-				//else if (bar.thumb_entered)
-				//    element = VisualStyleElement.ScrollBar.ThumbButtonHorizontal.Hot;
+				else if (bar.ThumbPressed)
+					element = VisualStyleElement.ScrollBar.ThumbButtonHorizontal.Pressed;
+				else if (bar.ThumbEntered)
+					element = VisualStyleElement.ScrollBar.ThumbButtonHorizontal.Hot;
 				else
 					element = VisualStyleElement.ScrollBar.ThumbButtonHorizontal.Normal;
 				renderer = new VisualStyleRenderer (element);
@@ -843,6 +842,16 @@ namespace System.Windows.Forms
 					renderer.DrawBackground (dc, bar.ThumbPos, clip);
 				}
 				#endregion
+			}
+		}
+		public override bool ScrollBarHasHotElementStyles {
+			get {
+				return true;
+			}
+		}
+		public override bool ScrollBarHasPressedThumbStyle {
+			get {
+				return true;
 			}
 		}
 		#endregion
