@@ -561,6 +561,9 @@ namespace Mono.CSharp
 		{
 			Output.WriteLine ();
 			Output.WriteLine ("#line default");
+#if NET_2_0
+			Output.WriteLine ("#line hidden");
+#endif
 		}
 
 		protected override void GenerateEvent (CodeMemberEvent eventRef, CodeTypeDeclaration declaration)

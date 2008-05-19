@@ -1,3 +1,8 @@
+2008-05-19  Martin Baulig  <martin@ximian.com>
+
+	* CSharpCodeGenerator.cs: In the 2.0 profile, emit `#line hidden'
+	in addition to `#line default'.
+
 2008-05-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CSharpCodeGenerator.cs: On 2.0 profile, add support for params
