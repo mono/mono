@@ -627,6 +627,9 @@ namespace System.Windows.Forms {
 
 		internal override void OnPaintInternal (PaintEventArgs pe)
 		{
+			if (GetStyle (ControlStyles.UserPaint))
+				return;
+
 			Draw (pe.Graphics, pe.ClipRectangle);
 			pe.Handled = true;
 		}
