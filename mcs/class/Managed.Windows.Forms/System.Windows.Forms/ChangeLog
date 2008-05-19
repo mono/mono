@@ -1,3 +1,7 @@
+2008-05-19  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* GroupBoxRenderer.cs: Included in the 1.1 profile.
+
 2008-05-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XplatUIX11.cs, X11Keyboard.cs : redoing r103060 with fix for
