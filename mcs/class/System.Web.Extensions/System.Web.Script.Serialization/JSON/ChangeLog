@@ -1,0 +1,5 @@
+2008-05-20  Jb Evain  <jbevain@novell.com>
+
+	*.cs: all files from JSon.NET are now re-licensed under the
+	MIT/X11 license, thanks to his author James Newton-King
+	for relicensing them.
