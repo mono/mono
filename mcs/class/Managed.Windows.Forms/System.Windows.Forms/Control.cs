@@ -5037,6 +5037,11 @@ namespace System.Windows.Forms
 							// Explicitly move Toplevel windows to where we want them;
 							// apparently moving unmapped toplevel windows doesn't work
 							XplatUI.SetWindowPos(window.Handle, bounds.X, bounds.Y, bounds.Width, bounds.Height);	
+					} else {
+						// If we are becoming visible, z-order may have changed while
+						// we were invisible, so update our z-order position
+						if (parent != null)
+							parent.UpdateZOrderOfChild (this);
 					}
 					
 					if (!(this is Form))

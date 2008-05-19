@@ -1,3 +1,10 @@
+2008-05-19  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: When we make a control visible, it may have been
+	previously visible and while it wasn't visible, the z-order of
+	things may have been shuffled, so the control needs to have its
+	z-order updated just in case.  [Fixes bug #391518]
+
 2008-05-19  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* ThemeVisualStyles.cs: Added support for GroupBox.
