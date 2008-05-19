@@ -1,3 +1,8 @@
+
+2008-05-19 Noam Lampert <noaml@mainsoft.com>
+
+        * HttpServerUtility.cs: Fix bug in UrlPathEncode when URL contains '?' 
+
 2008-05-12 Noam Lampert <noaml@mainsoft.com>
 
         * HttpApplication.cs: Fix regressions introduced by latest commit

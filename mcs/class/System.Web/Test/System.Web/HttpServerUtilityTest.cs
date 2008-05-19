@@ -84,5 +84,14 @@ namespace MonoTests.System.Web {
 			windata = Encoding.Convert (Encoding.UTF8, win1251, utf8data);
 			Assert.AreEqual ("&#65308;script&#65310;", Encoding.ASCII.GetString (windata), "ok");
 		}
+
+		[Test]
+		public void UrlPathEncode2()
+		{
+			string s = "default.xxx?sdsd=sds";
+			string s2 = Server.UrlPathEncode(s);
+			Assert.AreEqual(s, s2, "UrlPathEncode " + s);
+		}		
+
 	}
 }
