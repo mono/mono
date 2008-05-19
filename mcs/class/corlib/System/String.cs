@@ -352,7 +352,7 @@ namespace System
 				throw new ArgumentOutOfRangeException ("startIndex + length > this.length");
 
 			return SubstringUnchecked (startIndex, length);
-		}	
+		}
 
 		internal unsafe String SubstringUnchecked (int startIndex, int length)
 		{
@@ -366,41 +366,119 @@ namespace System
 			return tmp;
 		}
 
-		private static readonly char[] WhiteChars = { (char) 0x9, (char) 0xA, (char) 0xB, (char) 0xC, (char) 0xD,
-#if NET_2_0
-			(char) 0x85, (char) 0x1680, (char) 0x2028, (char) 0x2029,
-#endif
-			(char) 0x20, (char) 0xA0, (char) 0x2000, (char) 0x2001, (char) 0x2002, (char) 0x2003, (char) 0x2004,
-			(char) 0x2005, (char) 0x2006, (char) 0x2007, (char) 0x2008, (char) 0x2009, (char) 0x200A, (char) 0x200B,
-			(char) 0x3000, (char) 0xFEFF };
-
 		public String Trim ()
 		{
-			return InternalTrim (WhiteChars, 0);
+			if (length == 0) 
+				return String.Empty;
+			int start = FindNotWhiteSpace (0, length, 1);
+
+			if (start == length)
+				return String.Empty;
+
+			int end = FindNotWhiteSpace (length - 1, start, -1);
+
+			int newLength = end - start + 1;
+			if (newLength == length)
+				return this;
+
+			return SubstringUnchecked (start, newLength);
 		}
 
 		public String Trim (params char[] trimChars)
 		{
 			if (trimChars == null || trimChars.Length == 0)
-				trimChars = WhiteChars;
+				return Trim ();
 
-			return InternalTrim (trimChars, 0);
+			if (length == 0) 
+				return String.Empty;
+			int start = FindNotInTable (0, length, 1, trimChars);
+
+			if (start == length)
+				return String.Empty;
+
+			int end = FindNotInTable (length - 1, start, -1, trimChars);
+
+			int newLength = end - start + 1;
+			if (newLength == length)
+				return this;
+
+			return SubstringUnchecked (start, newLength);
 		}
 
 		public String TrimStart (params char[] trimChars)
 		{
+			if (length == 0) 
+				return String.Empty;
+			int start;
 			if (trimChars == null || trimChars.Length == 0)
-				trimChars = WhiteChars;
+				start = FindNotWhiteSpace (0, length, 1);
+			else
+				start = FindNotInTable (0, length, 1, trimChars);
 
-			return InternalTrim (trimChars, 1);
+			if (start == 0)
+				return this;
+
+			return SubstringUnchecked (start, length - start);
 		}
 
 		public String TrimEnd (params char[] trimChars)
 		{
+			if (length == 0) 
+				return String.Empty;
+			int end;
 			if (trimChars == null || trimChars.Length == 0)
-				trimChars = WhiteChars;
+				end = FindNotWhiteSpace (length - 1, -1, -1);
+			else
+				end = FindNotInTable (length - 1, -1, -1, trimChars);
 
-			return InternalTrim (trimChars, 2);
+			end++;
+			if (end == length)
+				return this;
+
+			return SubstringUnchecked (0, end);
+		}
+
+		private int FindNotWhiteSpace (int pos, int target, int change)
+		{
+			while (pos != target) {
+				char c = this[pos];
+				if (c < 0x85) {
+					if (c != 0x20) {
+						if (c < 0x9 || c > 0xD)
+							return pos;
+					}
+				}
+				else {
+					if (c != 0xA0 && c != 0xFEFF && c != 0x3000) {
+#if NET_2_0
+						if (c != 0x85 && c != 0x1680 && c != 0x2028 && c != 0x2029)
+#endif
+							if (c < 0x2000 || c > 0x200B)
+								return pos;
+					}
+				}
+				pos += change;
+			}
+			return pos;
+		}
+
+		private unsafe int FindNotInTable (int pos, int target, int change, char[] table)
+		{
+			fixed (char* tablePtr = table, thisPtr = this) {
+				while (pos != target) {
+					char c = thisPtr[pos];
+					int x = 0;
+					while (x < table.Length) {
+						if (c == tablePtr[x])
+							break;
+						x++;
+					}
+					if (x == table.Length)
+						return pos;
+					pos += change;
+				}
+			}
+			return pos;
 		}
 
 		public static int Compare (String strA, String strB)
