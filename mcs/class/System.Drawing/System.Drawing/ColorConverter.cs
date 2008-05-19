@@ -6,7 +6,7 @@
 //	Ravindra (rkumar@novell.com)
 //
 // Copyright (C) 2002 Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004,2006,2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -176,47 +176,44 @@ namespace System.Drawing
 						  object value,
 						  Type destinationType)
 		{
-			if ((destinationType == typeof (string)) && (value is Color)) {
+			if (value is Color) {
 				Color color = (Color) value;
+				if (destinationType == typeof (string)) {
+					if (color == Color.Empty)
+						return string.Empty;
 
-				if (color == Color.Empty) {
-					return string.Empty;
-				}
+					if (color.IsKnownColor || color.IsNamedColor)
+						return color.Name;
 
-				if (color.IsKnownColor || color.IsNamedColor)
-					return color.Name;
+					String numSeparator = culture.TextInfo.ListSeparator;
 
-				String numSeparator = culture.TextInfo.ListSeparator;
-
-				StringBuilder sb = new StringBuilder ();
-				if (color.A != 255) {
-					sb.Append (color.A);
+					StringBuilder sb = new StringBuilder ();
+					if (color.A != 255) {
+						sb.Append (color.A);
+						sb.Append (numSeparator);
+						sb.Append (" ");
+					}
+					sb.Append (color.R);
 					sb.Append (numSeparator);
 					sb.Append (" ");
-				}
-				sb.Append (color.R);
-				sb.Append (numSeparator);
-				sb.Append (" ");
 
-				sb.Append (color.G);
-				sb.Append (numSeparator);
-				sb.Append (" ");
+					sb.Append (color.G);
+					sb.Append (numSeparator);
+					sb.Append (" ");
 
-				sb.Append (color.B);
-				return sb.ToString ();
-			}
-			
-			if (destinationType == typeof (InstanceDescriptor) && value is Color) {
-				Color c = (Color)value;
-				if (c.IsEmpty) {
-					return new InstanceDescriptor (typeof (Color).GetField ("Empty"), null);
-				} else if (c.IsSystemColor) {
-					return new InstanceDescriptor (typeof (SystemColors).GetProperty (c.Name), null);
-				} else if (c.IsKnownColor){
-					return new InstanceDescriptor (typeof (Color).GetProperty (c.Name), null);
-				} else {
-					MethodInfo met = typeof(Color).GetMethod ("FromArgb", new Type[] { typeof(int), typeof(int), typeof(int), typeof(int) } );
-					return new InstanceDescriptor (met, new object[] {c.A, c.R, c.G, c.B });
+					sb.Append (color.B);
+					return sb.ToString ();
+				} else if (destinationType == typeof (InstanceDescriptor)) {
+					if (color.IsEmpty) {
+						return new InstanceDescriptor (typeof (Color).GetField ("Empty"), null);
+					} else if (color.IsSystemColor) {
+						return new InstanceDescriptor (typeof (SystemColors).GetProperty (color.Name), null);
+					} else if (color.IsKnownColor){
+						return new InstanceDescriptor (typeof (Color).GetProperty (color.Name), null);
+					} else {
+						MethodInfo met = typeof(Color).GetMethod ("FromArgb", new Type[] { typeof(int), typeof(int), typeof(int), typeof(int) } );
+						return new InstanceDescriptor (met, new object[] {color.A, color.R, color.G, color.B });
+					}
 				}
 			}
 

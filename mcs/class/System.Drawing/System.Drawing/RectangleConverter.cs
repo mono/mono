@@ -7,7 +7,7 @@
 //	Ravindra (rkumar@novell.com)
 //	
 // Copyright (C) 2002 Ximian, Inc. http://www.ximian.com
-// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2006, 2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -96,27 +96,26 @@ namespace System.Drawing {
 			// ToString method if the object is valid and if the destination
 			// type is string." MS does not behave as per the specs.
 			// Oh well, we have to be compatible with MS.
-			if ((destinationType == typeof (string)) && (value is Rectangle)) {
-				string separator = culture.TextInfo.ListSeparator;
+			if (value is Rectangle) {
 				Rectangle rect = (Rectangle) value;
-				StringBuilder sb = new StringBuilder ();
-				sb.Append (rect.X.ToString (culture));
-				sb.Append (separator);
-				sb.Append (" ");
-				sb.Append (rect.Y.ToString (culture));
-				sb.Append (separator);
-				sb.Append (" ");
-				sb.Append (rect.Width.ToString (culture));
-				sb.Append (separator);
-				sb.Append (" ");
-				sb.Append (rect.Height.ToString (culture));
-				return sb.ToString ();
-			}
-			
-			if (destinationType == typeof (InstanceDescriptor) && value is Rectangle) {
-				Rectangle c = (Rectangle) value;
-				ConstructorInfo ctor = typeof(Rectangle).GetConstructor (new Type[] {typeof(int), typeof(int), typeof(int), typeof(int)} );
-				return new InstanceDescriptor (ctor, new object[] {c.X, c.Y, c.Width, c.Height});
+				if (destinationType == typeof (string)) {
+					string separator = culture.TextInfo.ListSeparator;
+					StringBuilder sb = new StringBuilder ();
+					sb.Append (rect.X.ToString (culture));
+					sb.Append (separator);
+					sb.Append (" ");
+					sb.Append (rect.Y.ToString (culture));
+					sb.Append (separator);
+					sb.Append (" ");
+					sb.Append (rect.Width.ToString (culture));
+					sb.Append (separator);
+					sb.Append (" ");
+					sb.Append (rect.Height.ToString (culture));
+					return sb.ToString ();
+				} else if (destinationType == typeof (InstanceDescriptor)) {
+					ConstructorInfo ctor = typeof(Rectangle).GetConstructor (new Type[] {typeof(int), typeof(int), typeof(int), typeof(int)} );
+					return new InstanceDescriptor (ctor, new object[] {rect.X, rect.Y, rect.Width, rect.Height});
+				}
 			}
 
 			return base.ConvertTo (context, culture, value, destinationType);

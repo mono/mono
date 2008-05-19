@@ -1,3 +1,13 @@
+2008-05-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CharacterRange.cs,
+	* ColorConverter.cs,
+	* PointConverter.cs,
+	* RectangleConverter.cs,
+	* SizeConverter.cs,
+	* SizeFConverter.cs: Avoid unboxing structs more than one time.
+	[Found using Gendarme]
+
 2008-05-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Font.cs: Add comment that downcasting the IntPtr is not an 

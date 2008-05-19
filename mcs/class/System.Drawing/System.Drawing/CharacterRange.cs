@@ -1,12 +1,12 @@
 //
 // System.Windows.Drawing.CharacterRange.cs
 //
-// Author:
+// Authors:
 //	Dennis Hayes (dennish@raytek.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2002 Ximian, Inc http://www.ximian.com
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -61,31 +61,29 @@ namespace System.Drawing
 			}
 		}
 #if NET_2_0
-		public override bool Equals (Object o)
+		public override bool Equals (object o)
 		{
-			if (o is CharacterRange) {
-				if ( ((CharacterRange)o).First == first && ((CharacterRange)o).Length == length)
-					return true;
-			}
+			if (!(o is CharacterRange))
+				return false;
 
-			return false;
+			CharacterRange cr = (CharacterRange) o;
+			return this == cr;
 		}
 
 		public override int GetHashCode ()
 		{
-			return (first * length);
+			return (first ^ length);
 		}
 		
 		public static bool operator == (CharacterRange cr1, CharacterRange cr2)
 		{
-			return cr1.Equals (cr2);
+			return ((cr1.first == cr2.first) && (cr1.length == cr2.length));
 		}
 
 		public static bool operator != (CharacterRange cr1, CharacterRange cr2)
 		{
-			return !cr1.Equals (cr2);
+			return ((cr1.first != cr2.first) || (cr1.length != cr2.length));
 		}
 #endif
-
 	}
 }

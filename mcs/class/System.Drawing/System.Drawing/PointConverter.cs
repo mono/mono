@@ -6,7 +6,7 @@
 //   Ravindra (rkumar@novell.com)
 //
 // Copyright (C) 2002 Ximian, Inc. http://www.ximian.com
-// Copyright (C) 2004,2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2006, 2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -92,14 +92,15 @@ namespace System.Drawing {
 			// ToString method if the object is valid and if the destination
 			// type is string." MS does not behave as per the specs.
 			// Oh well, we have to be compatible with MS.
-			if ((destinationType == typeof (string)) && (value is Point))
-				return ((Point) value).X.ToString(culture) + culture.TextInfo.ListSeparator 
-					+ " " + ((Point) value).Y.ToString(culture);
-			
-			if (destinationType == typeof (InstanceDescriptor) && value is Point) {
-				Point c = (Point)value;
-				ConstructorInfo ctor = typeof(Point).GetConstructor (new Type[] {typeof(int), typeof(int)} );
-				return new InstanceDescriptor (ctor, new object[] {c.X, c.Y });
+			if (value is Point) {
+				Point point = (Point) value;
+				if (destinationType == typeof (string)) {
+					return point.X.ToString (culture) + culture.TextInfo.ListSeparator 
+						+ " " + point.Y.ToString (culture);
+				} else if (destinationType == typeof (InstanceDescriptor)) {
+					ConstructorInfo ctor = typeof(Point).GetConstructor (new Type[] {typeof(int), typeof(int)} );
+					return new InstanceDescriptor (ctor, new object[] {point.X, point.Y });
+				}
 			}
 
 			return base.ConvertTo (context, culture, value, destinationType);

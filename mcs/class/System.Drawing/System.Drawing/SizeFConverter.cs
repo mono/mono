@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005, 2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -89,14 +89,15 @@ namespace System.Drawing
 
 		public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
 		{
-			if ((destinationType == typeof (string)) && (value is SizeF))
-				return ((SizeF) value).Width.ToString(culture) + culture.TextInfo.ListSeparator
-					+ " " + ((SizeF) value).Height.ToString(culture);
-
-			if (destinationType == typeof (InstanceDescriptor) && value is SizeF) {
-				SizeF s = (SizeF) value;
-				ConstructorInfo ctor = typeof(SizeF).GetConstructor (new Type[] {typeof(int), typeof(int)});
-				return new InstanceDescriptor (ctor, new object[] {s.Width, s.Height});
+			if (value is SizeF) {
+				SizeF size = (SizeF) value;
+				if (destinationType == typeof (string)) {
+					return size.Width.ToString (culture) + culture.TextInfo.ListSeparator
+						+ " " + size.Height.ToString (culture);
+				} else if (destinationType == typeof (InstanceDescriptor)) {
+					ConstructorInfo ctor = typeof(SizeF).GetConstructor (new Type[] {typeof(float), typeof(float)});
+					return new InstanceDescriptor (ctor, new object[] { size.Width, size.Height});
+				}
 			}
 
 			return base.ConvertTo (context, culture, value, destinationType);
