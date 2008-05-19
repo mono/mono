@@ -371,6 +371,18 @@ namespace System.Windows.Forms
 		}
 		#endregion
 		#endregion
+		#region GroupBox
+		public override void DrawGroupBox (Graphics dc, Rectangle area, GroupBox box)
+		{
+			GroupBoxRenderer.DrawGroupBox (
+				dc,
+				new Rectangle (Point.Empty, box.Size),
+				box.Text,
+				box.Font,
+				box.ForeColor == GroupBox.DefaultForeColor ? Color.Empty : box.ForeColor,
+				box.Enabled ? GroupBoxState.Normal : GroupBoxState.Disabled);
+		}
+		#endregion
 		#region Managed windows
 		[MonoTODO("When other VisualStyles implementations are supported, check if the visual style elements are defined.")]
 		[MonoTODO("When the rest of the MDI code is fixed, make sure minimized windows are painted correctly,restrict the caption text drawing area to exclude the title buttons and handle the title bar height correctly.")]
