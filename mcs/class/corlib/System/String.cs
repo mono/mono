@@ -366,6 +366,14 @@ namespace System
 			return tmp;
 		}
 
+		private static readonly char[] WhiteChars = { (char) 0x9, (char) 0xA, (char) 0xB, (char) 0xC, (char) 0xD,
+#if NET_2_0
+			(char) 0x85, (char) 0x1680, (char) 0x2028, (char) 0x2029,
+#endif
+			(char) 0x20, (char) 0xA0, (char) 0x2000, (char) 0x2001, (char) 0x2002, (char) 0x2003, (char) 0x2004,
+			(char) 0x2005, (char) 0x2006, (char) 0x2007, (char) 0x2008, (char) 0x2009, (char) 0x200A, (char) 0x200B,
+			(char) 0x3000, (char) 0xFEFF };
+
 		public String Trim ()
 		{
 			if (length == 0) 
