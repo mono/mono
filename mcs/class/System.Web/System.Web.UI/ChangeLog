@@ -1,3 +1,8 @@
+2008-05-19  Juraj Skripsky  <js@hotfeet.ch>
+
+	* Page.cs (ValidateCollection): Don't check _eventValidation, it
+	has nothing to do with the validators.
+
 2008-05-16  Marek Habersack  <mhabersack@novell.com>
 
 	* StateManagedCollection.cs: make {Save,Load}ViewState simpler.

@@ -1981,11 +1981,6 @@ public partial class Page : TemplateControl, IHttpHandler
 
 	bool ValidateCollection (ValidatorCollection validators)
 	{
-#if NET_2_0
-		if (!_eventValidation)
-			return true;
-#endif
-
 		if (validators == null || validators.Count == 0)
 			return true;
 
