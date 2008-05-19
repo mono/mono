@@ -1,3 +1,7 @@
+2008-05-19  Roei Erez  <roeie@mainsoft.com>
+
+	* Enumerable.cs: Implemente two overloaded GroupBy methods.
+
 2008-05-15  Jb Evain  <jbevain@novell.com>
 
 	* QueryableEnumerable.cs: Make that the first expression is a constant

@@ -733,7 +733,11 @@ namespace System.Linq
 			Func<TKey, IEnumerable<TElement>, TResult> resultSelector,
 			IEqualityComparer<TKey> comparer)
 		{
-			throw new NotImplementedException ();
+			IEnumerable<IGrouping<TKey, TElement>> groups = GroupBy<TSource, TKey, TElement> (
+				source, keySelector, elementSelector, comparer);
+
+			foreach (IGrouping<TKey, TElement> group in groups)
+				yield return resultSelector (group.Key, group);			
 		}
 
 		public static IEnumerable<TResult> GroupBy<TSource, TKey, TResult> (this IEnumerable<TSource> source,
@@ -749,7 +753,10 @@ namespace System.Linq
 			Func<TKey, IEnumerable<TSource>, TResult> resultSelector,
 			IEqualityComparer<TKey> comparer)
 		{
-			throw new NotImplementedException ();
+			IEnumerable<IGrouping<TKey,TSource>> groups = GroupBy<TSource, TKey> (source, keySelector, comparer);
+
+			foreach (IGrouping<TKey, TSource> group in groups)
+				yield return resultSelector (group.Key, group);
 		}
 
 		#endregion
