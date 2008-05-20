@@ -28591,6 +28591,16 @@
       </method>
     </type>
   </test>
+  <test name="test-647.cs">
+    <type name="Foo">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>28</size>
+      </method>
+    </type>
+  </test>
   <test name="test-65.cs">
     <type name="X">
       <method name="Void .ctor()">
