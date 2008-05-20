@@ -47,7 +47,8 @@ namespace System.Linq {
 
 		public IEnumerable<TResult> ApplyResultSelector<TResult> (Func<TKey, IEnumerable<TElement>, TResult> selector)
 		{
-			throw new NotImplementedException ();
+			foreach (IGrouping<TKey, TElement> group in groups.Values)
+				yield return selector (group.Key, group);
 		}
 
 		public int Count
