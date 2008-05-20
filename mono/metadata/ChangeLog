@@ -1,3 +1,10 @@
+2008-05-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_class_create_runtime_vtable): Avoid creating a generic vtable
+	if using the vtable trampoline. Also remove some strange code which put the
+	generic methods themselves into the vtable slots. Remove the AOT init_vtable
+	stuff as it is no longer needed.
+
 2008-05-19 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* pedump.c: Give make --verify all option check code as well.
