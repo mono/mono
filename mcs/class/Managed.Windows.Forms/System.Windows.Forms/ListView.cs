@@ -334,6 +334,7 @@ namespace System.Windows.Forms
 			LostFocus += new EventHandler (FocusChanged);
 			MouseWheel += new MouseEventHandler(ListView_MouseWheel);
 			MouseEnter += new EventHandler (ListView_MouseEnter);
+			Invalidated += new InvalidateEventHandler (ListView_Invalidated);
 
 #if NET_2_0
 			BackgroundImageTiled = false;
@@ -3202,6 +3203,14 @@ namespace System.Windows.Forms
 				focused_item.Layout ();
 				item_control.Invalidate (focused_item.Bounds);
 			}
+		}
+
+		private void ListView_Invalidated (object sender, InvalidateEventArgs e)
+		{
+			// When the ListView is invalidated, we need to invalidate
+			// the child controls.
+			header_control.Invalidate ();
+			item_control.Invalidate ();
 		}
 
 		private void ListView_MouseEnter (object sender, EventArgs args)

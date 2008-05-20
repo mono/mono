@@ -1,3 +1,11 @@
+2008-05-20  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: Remove invalidating implicit child controls when
+	control is invalidated.  It was causing too many redraws on
+	controls with implicit scrollbars.
+	* ListView.cs: Listen to the Invalidated event and invalidate
+	child controls.
+
 2008-05-20  Andreia Gaita <avidigal@novell.com> 
 
 	* WebBrowserBase.cs, WebBrowser.cs: Hook up page loading events
