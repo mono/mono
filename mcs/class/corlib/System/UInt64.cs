@@ -55,13 +55,12 @@ namespace System
 			if (!(value is System.UInt64))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.UInt64."));
 
-			if (this.m_value == (ulong) value)
+			ulong int64 = (ulong) value;
+
+			if (m_value == int64)
 				return 0;
 
-			if (this.m_value < (ulong) value)
-				return -1;
-
-			return 1;
+			return (m_value < int64) ? -1 : 1;
 		}
 
 		public override bool Equals (object obj)

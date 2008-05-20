@@ -1,3 +1,14 @@
+2008-05-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Boolean.cs,
+	* Double.cs,
+	* Enum.cs,
+	* Int64.cs,
+	* Single.cs,
+	* UInt32.cs,
+	* UInt64.cs: Avoid unboxing primitive types more than one time.
+	[Found using Gendarme]
+
 2008-05-19  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* String.cs: Update Trim functions

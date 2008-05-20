@@ -56,13 +56,12 @@ namespace System {
 			if (!(v is System.Int64))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.Int64"));
 
-			if (m_value == (long) v)
+			long value = (long) v;
+
+			if (m_value == value)
 				return 0;
 
-			if (m_value < (long) v)
-				return -1;
-
-			return 1;
+			return (m_value < value) ? -1 : 1;
 		}
 
 		public override bool Equals (object o)

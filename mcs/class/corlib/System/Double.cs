@@ -97,14 +97,12 @@ namespace System {
 			if (!(obj is System.Double))
 				return false;
 
-			if (IsNaN ((double)obj)) {
-				if (IsNaN(m_value))
-					return true;
-				else
-					return false;
-			}
+			double value = (double) obj;
 
-			return ((double) obj) == m_value;
+			if (IsNaN (value))
+				return IsNaN (m_value);
+
+			return (value == m_value);
 		}
 
 #if NET_2_0

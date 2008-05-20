@@ -97,11 +97,12 @@ namespace System
 			if (!(obj is System.Single))
 				return false;
 
-			if (IsNaN ((float) obj)) {
-				return IsNaN (m_value);
-			}
+			float value = (float) obj;
 
-			return ((float) obj) == m_value;
+			if (IsNaN (value))
+				return IsNaN (m_value);
+
+			return (value == m_value);
 		}
 
 #if NET_2_0

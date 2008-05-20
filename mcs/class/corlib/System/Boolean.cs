@@ -96,12 +96,14 @@ namespace System
 				throw new ArgumentException (Locale.GetText (
 					"Object is not a Boolean."));
 
+			bool value = (bool) obj;
+
 			// for case #3
-			if (obj == null || (m_value == true && (bool) obj == false))
+			if (m_value && !value)
 				return 1;
 
 			// for case #2, else it's #1
-			return (m_value == (bool) obj) ? 0 : -1;
+			return (m_value == value) ? 0 : -1;
 		}
 
 		/// <summary>
@@ -120,7 +122,9 @@ namespace System
 			if (obj == null || !(obj is System.Boolean))
 				return false;
 
-			return ((m_value) ? ((bool) obj) : !((bool) obj));
+			bool value = (bool) obj;
+
+			return m_value ? value : !value;
 		}
 
 #if NET_2_0

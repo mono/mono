@@ -55,13 +55,12 @@ namespace System
 			if (!(value is System.UInt32))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.UInt32."));
 
-			if (this.m_value == (uint) value)
+			uint val = (uint) value;
+
+			if (m_value == val)
 				return 0;
 
-			if (this.m_value < (uint) value)
-				return -1;
-
-			return 1;
+			return (m_value < val) ? -1 : 1;
 		}
 
 		public override bool Equals (object obj)
