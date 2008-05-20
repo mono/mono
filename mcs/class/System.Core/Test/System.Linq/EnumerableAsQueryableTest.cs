@@ -34,6 +34,7 @@ using NUnit.Framework;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Reflection;
+using System.Collections;
 
 namespace MonoTests.System.Linq {
 
@@ -378,6 +379,36 @@ namespace MonoTests.System.Linq {
 
 			Expression e = Expression.Call (method, _src.Expression, Expression.Constant(0));
 			_src.Provider.Execute (e);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void NullEnumerable ()
+		{
+			IEnumerable<int> a = null;
+			a.AsQueryable ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void NonGenericEnumerable1 ()
+		{
+			new MyEnum ().AsQueryable ();
+		}
+
+		[Test]
+		public void NonGenericEnumerable2 ()
+		{
+			IEnumerable<int> nonGen = new int[] { 1, 2, 3 };
+			Assert.IsTrue (nonGen.AsQueryable () is IQueryable<int>);
+		}
+	}
+
+	class MyEnum : IEnumerable
+	{
+		public IEnumerator GetEnumerator ()
+		{
+			throw new NotImplementedException ();
 		}
 	}
 

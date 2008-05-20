@@ -139,6 +139,9 @@ namespace System.Linq {
 
 		public static IQueryable<TElement> AsQueryable<TElement> (this IEnumerable<TElement> source)
 		{
+			if (source == null)
+				throw new ArgumentNullException ("source");
+
 			var queryable = source as IQueryable<TElement>;
 			if (queryable != null)
 				return queryable;
@@ -149,11 +152,20 @@ namespace System.Linq {
 		[MonoTODO]
 		public static IQueryable AsQueryable (this IEnumerable source)
 		{
+			if (source == null)
+				throw new ArgumentNullException ("source");
+
 			var queryable = source as IQueryable;
 			if (queryable != null)
 				return queryable;
 
-			throw new NotImplementedException ();
+			Type sourceType = source.GetType ();
+			if (!sourceType.IsGenericImplementationOf (typeof (IEnumerable<>)))
+				throw new ArgumentException ("source is not IEnumerable<>");
+			
+			Type sourceArgType = sourceType.GetFirstGenericArgument ();
+			return (IQueryable) Activator.CreateInstance (typeof (QueryableEnumerable<>)
+					.MakeGenericType (sourceArgType), source);
 		}
 
 		#endregion

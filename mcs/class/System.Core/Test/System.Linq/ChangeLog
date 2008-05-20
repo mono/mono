@@ -1,3 +1,7 @@
+2008-05-20  Roei Erez  <roeie@mainsoft.com>
+
+	* Add tests for Queryable.AsQureyable
+
 2008-05-15  Roei Erez  <roeie@mainsoft.com>
 
 	* EnumerableAsQueryableTest.cs: test cases for Queryable.AsQueryable() implementation.

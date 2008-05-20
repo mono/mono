@@ -1,3 +1,7 @@
+2008-05-20  Roei Erez  <roeie@mainsoft.com>
+
+	* Queryable.cs: Implement the non-generic AsQureyable method.
+
 2008-05-20  Marek Safar  <marek.safar@gmail.com>
 
 	* Enumerable.cs: Removed GroupBy MonoTODO.

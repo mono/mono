@@ -1,3 +1,7 @@
+2008-05-20  Roei Erez  <roeie@mainsoft.com>
+
+	* Extensions.cs: Add 'IsGenericImplementationOf' extension method
+
 2008-05-15  Jb Evain  <jbevain@novell.com>
 
 	* UnaryExpression.cs, EmitContext.cs: emit convert from and
