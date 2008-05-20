@@ -1,3 +1,7 @@
+2008-05-20  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* String.cs: Replace Split function
+
 2008-05-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Boolean.cs,
