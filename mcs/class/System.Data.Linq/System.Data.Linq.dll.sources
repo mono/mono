@@ -25,6 +25,12 @@ System.Data.Linq.Mapping/ResultTypeAttribute.cs
 System.Data.Linq.Mapping/TableAttribute.cs
 System.Data.Linq.Mapping/UpdateCheck.cs
 System.Data.Linq.Mapping/XmlMappingSource.cs
+System.Data.Linq.SqlClient.Implementation/ObjectMaterializer.cs
+System.Data.Linq.SqlClient/Sql2000Provider.cs
+System.Data.Linq.SqlClient/Sql2005Provider.cs
+System.Data.Linq.SqlClient/SqlHelpers.cs
+System.Data.Linq.SqlClient/SqlMethods.cs
+System.Data.Linq.SqlClient/SqlProvider.cs
 System.Data.Linq/Binary.cs
 System.Data.Linq/ChangeAction.cs
 System.Data.Linq/ChangeConflictCollection.cs

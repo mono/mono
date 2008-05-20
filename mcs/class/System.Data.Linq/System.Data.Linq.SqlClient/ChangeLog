@@ -1,0 +1,5 @@
+2008-05-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Sql2000Provider.cs, Sql2005Provider.cs, SqlHelpers.cs,
+	  SqlMethods.cs, SqlProvider.cs : stubs.
+
