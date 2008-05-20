@@ -1,3 +1,8 @@
+2008-05-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c mini.c: Remove the AOT init_vtable stuff as it is no longer
+	needed.
+
 2008-05-19  Martin Baulig  <martin@ximian.com>
 
 	* debug-debugger.h (MonoDebuggerInfo): Add `using_mono_debugger'
