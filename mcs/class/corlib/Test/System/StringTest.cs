@@ -2023,6 +2023,40 @@ public class StringTest : Assertion
 		// Nothing but separators
 		res = "..,.;.,".Split (new Char[]{'.',',',';'},2,StringSplitOptions.RemoveEmptyEntries);
 		AssertEquals ("#10-01", 0, res.Length);
+
+		// Complete testseries
+		char[] dash = new Char[] { '/' };
+		StringSplitOptions o = StringSplitOptions.RemoveEmptyEntries;
+		AssertEquals ("#11-01", "hi", "hi".Split (dash, o)[0]);
+		AssertEquals ("#11-02", "hi", "hi/".Split (dash, o)[0]);
+		AssertEquals ("#11-03", "hi", "/hi".Split (dash, o)[0]);
+
+		AssertEquals ("#11-04-1", "hi..", "hi../".Split (dash, o)[0]);
+		AssertEquals ("#11-04-2", "hi..", "/hi..".Split (dash, o)[0]);
+
+		res = "/hi/..".Split (dash, o);
+		AssertEquals ("#11-05-1", "hi", res[0]);
+		AssertEquals ("#11-05-2", "..", res[1]);
+		AssertEquals ("#11-09-3", 2, res.Length);
+
+		res = "hi/..".Split (dash, o);
+		AssertEquals ("#11-06-1", "hi", res[0]);
+		AssertEquals ("#11-06-2", "..", res[1]);
+		AssertEquals ("#11-09-3", 2, res.Length);
+
+		res = "hi/../".Split (dash, o);
+		AssertEquals ("#11-07-1", "hi", res[0]);
+		AssertEquals ("#11-07-2", "..", res[1]);
+		AssertEquals ("#11-07-3", 2, res.Length);
+
+		res = "/hi../".Split (dash, o);
+		AssertEquals ("#11-08-1", "hi..", res[0]);
+		AssertEquals ("#11-08-2", 1, res.Length);
+
+		res = "/hi/../".Split (dash, o);
+		AssertEquals ("#11-09-1", "hi", res[0]);
+		AssertEquals ("#11-09-2", "..", res[1]);
+		AssertEquals ("#11-09-3", 2, res.Length);
 	}
 #endif
 }

@@ -1,3 +1,7 @@
+2008-05-20  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* StringTest.cs: Add more tests for SplitRemoveEmpty
+
 2008-05-12  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TypeTest.cs: Added GetType, GetTypeArray and GetTypeFromHandle tests
