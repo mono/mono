@@ -112,12 +112,9 @@ namespace System.Linq.Expressions {
 			var from = operand.Type;
 			var target = Type;
 
-			if (from == target) {
+			if (from == target)
 				operand.Emit (ec);
-				return;
-			}
-
-			if (IsNullable (from) && !IsNullable (target))
+			else if (IsNullable (from) && !IsNullable (target))
 				EmitConvertFromNullable (ec);
 			else if (!IsNullable (from) && IsNullable (target))
 				EmitConvertToNullable (ec);
@@ -158,14 +155,12 @@ namespace System.Linq.Expressions {
 
 		void EmitCast (EmitContext ec)
 		{
-			var ig = ec.ig;
-
 			operand.Emit (ec);
 
 			if (IsBoxing ()) {
-				ig.Emit (OpCodes.Box, operand.Type);
+				ec.ig.Emit (OpCodes.Box, operand.Type);
 			} else if (IsUnBoxing ()) {
-				ig.Emit (OpCodes.Unbox_Any, Type);
+				ec.ig.Emit (OpCodes.Unbox_Any, Type);
 			} else
 				ec.ig.Emit (OpCodes.Castclass, Type);
 		}

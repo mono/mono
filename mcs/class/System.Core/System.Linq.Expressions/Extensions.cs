@@ -44,7 +44,7 @@ namespace System.Linq.Expressions {
 		}
 
 		public static bool IsGenericImplementationOf (this Type self, Type type)
-		{			
+		{
 			foreach (Type iface in self.GetInterfaces ())
 				if (iface.IsGenericInstanceOf (type))
 					return true;
