@@ -736,7 +736,7 @@ namespace System.Linq
 				source, keySelector, elementSelector, comparer);
 
 			foreach (IGrouping<TKey, TElement> group in groups)
-				yield return resultSelector (group.Key, group);			
+				yield return resultSelector (group.Key, group);
 		}
 
 		public static IEnumerable<TResult> GroupBy<TSource, TKey, TResult> (this IEnumerable<TSource> source,
