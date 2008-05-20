@@ -2,9 +2,10 @@
 // AssemblyInfo.cs
 //
 // Author:
-//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Atsushi Enomoto  <atsushi@ximian.com>
+//   Marek Safar <marek.safar@gmail.com>
 //
-// (C) 2003 Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2008 Novell, Inc.
 //
 
 //
@@ -59,7 +60,3 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible (false)]
 [assembly: AllowPartiallyTrustedCallers]
 
-[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
-[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
-// Extension attribute should be added by compiler
