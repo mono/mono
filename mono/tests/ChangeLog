@@ -1,3 +1,10 @@
+2008-05-20  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-null-call.2.cs: Tests non-virtual callvirt on generic
+	methods with this==null.
+
+	* Makefile.am: Test added.
+
 2008-05-16  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* bug-389886.2.il: Regression test for bug #389886.
