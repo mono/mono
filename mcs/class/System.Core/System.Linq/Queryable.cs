@@ -149,7 +149,6 @@ namespace System.Linq {
 			return new QueryableEnumerable<TElement> (source);
 		}
 
-		[MonoTODO]
 		public static IQueryable AsQueryable (this IEnumerable source)
 		{
 			if (source == null)
