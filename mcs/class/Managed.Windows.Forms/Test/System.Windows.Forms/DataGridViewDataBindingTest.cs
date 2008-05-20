@@ -32,12 +32,13 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using System.Collections;
 using System.Data;
+using System.Collections.Generic;
 
-namespace MonoTests.System.Windows.Forms
+namespace MonoTests.System.Windows.Forms.DataGridViewBindingTest
 {
 
 	[TestFixture]
-	public class DataGridViewDataSetBindingTest
+	public class DataSetBindingTest
 	{
 		[Test]
 		public void TestDataSet ()
@@ -268,6 +269,43 @@ namespace MonoTests.System.Windows.Forms
 
 			f.Dispose ();
 		}
+	}
+	
+	[TestFixture]
+	public class BindingListTest
+	{
+		[Test]
+		public void TestNullItemInList ()
+		{
+			// Binding when AutoGenerateColumns is false
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+
+			// The list contains one object, but the object is null
+			IList<Customer> list = new Customer[1];
+
+			DataGridView dgv = new DataGridView ();
+			dgv.DataSource = new BindingList<Customer> (list);
+
+			f.Controls.Add (dgv);
+			f.Show ();
+
+			Assert.AreEqual (1, dgv.ColumnCount, "A1");
+			Assert.AreEqual (2, dgv.RowCount, "A2");
+
+			f.Dispose ();
+		}
+
+		private class Customer
+		{
+			string name;
+			
+			public string Name {
+				get { return name; }
+				set { name = value; }
+			}
+		}
+
 	}
 }
 #endif

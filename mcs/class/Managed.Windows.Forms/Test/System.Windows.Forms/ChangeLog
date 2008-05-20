@@ -1,5 +1,9 @@
 2008-05-20  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridViewDataBindingTest.cs: Add test for bug #325239.
+
+2008-05-20  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridViewDataBindingTest.cs: Add test for AutoGenerateColumns.
 
 2008-05-20  Jonathan Pobst  <monkey@jpobst.com>
