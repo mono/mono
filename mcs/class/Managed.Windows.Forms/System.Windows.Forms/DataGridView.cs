@@ -3476,11 +3476,13 @@ namespace System.Windows.Forms {
 
 		internal void OnColumnAddedInternal (DataGridViewColumnEventArgs e)
 		{
-			RowTemplate.Cells.Add ((DataGridViewCell)e.Column.CellTemplate.Clone ());
+			if (e.Column.CellTemplate != null) {
+				RowTemplate.Cells.Add ((DataGridViewCell)e.Column.CellTemplate.Clone ());
 
-			foreach (DataGridViewRow row in Rows)
-				row.Cells.Add ((DataGridViewCell)RowTemplate.Cells[RowTemplate.Cells.Count - 1].Clone ());
-		
+				foreach (DataGridViewRow row in Rows)
+					row.Cells.Add ((DataGridViewCell)RowTemplate.Cells[RowTemplate.Cells.Count - 1].Clone ());
+			}
+			
 			AutoResizeColumnsInternal ();
 			OnColumnAdded (e);
 			PrepareEditingRow (false, true);

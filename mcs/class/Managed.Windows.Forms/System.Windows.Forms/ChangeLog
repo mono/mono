@@ -1,5 +1,10 @@
 2008-05-20  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridView.cs: Don't try to update the RowTemplate with
+	a null CellTemplate.
+
+2008-05-20  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridViewColumn.cs: Allow IsDataBound to be set internally.
 	* DataGridViewColumnCollection.cs: Ensure OnColumnAdded is called.
 	* DataGridView.cs: Lots of fixes/enhancements to databinding to
