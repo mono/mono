@@ -1,3 +1,7 @@
+2008-05-20  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Makefile.am (bug-382986): Fix for srcdir != builddir.
+
 2008-05-20  Mark Probst  <mark.probst@gmail.com>
 
 	* generic-null-call.2.cs: Tests non-virtual callvirt on generic
