@@ -546,7 +546,6 @@ namespace System.Web.Compilation
 				return;
 
 			if (text.IndexOf ("<%") != -1 && !inScript) {
-				Console.WriteLine ("code tag beginning");
 				if (this.text.Length > 0)
 					FlushText (true);
 				CodeRenderParser r = new CodeRenderParser (text, stack.Builder);
