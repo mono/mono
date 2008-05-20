@@ -1,3 +1,7 @@
+2008-05-20  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridViewDataBindingTest.cs: Added.
+
 2008-05-20  Andreia Gaita <avidigal@novell.com> 
 
 	* WebBrowserTest.cs: Added WebBrowser unit tests (not included in the

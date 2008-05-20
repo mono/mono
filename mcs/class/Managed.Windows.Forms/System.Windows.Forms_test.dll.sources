@@ -56,6 +56,7 @@ System.Windows.Forms/DataGridViewColumnHeaderTest.cs
 System.Windows.Forms/DataGridViewColumnTest.cs
 System.Windows.Forms/DataGridViewComboBoxCellTest.cs
 System.Windows.Forms/DataGridViewCommon.cs
+System.Windows.Forms/DataGridViewDataBindingTest.cs
 System.Windows.Forms/DataGridViewElementTest.cs
 System.Windows.Forms/DataGridViewLinkCellTest.cs
 System.Windows.Forms/DataGridViewImageCellTest.cs

@@ -182,7 +182,9 @@ namespace System.Windows.Forms
 		public virtual void Insert (int columnIndex, DataGridViewColumn dataGridViewColumn)
 		{
 			dataGridViewColumn.SetIndex (columnIndex);
+			dataGridViewColumn.SetDataGridView (dataGridView);
 			base.List.Insert (columnIndex, dataGridViewColumn);
+			DataGridView.OnColumnAddedInternal (new DataGridViewColumnEventArgs (dataGridViewColumn));
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, dataGridViewColumn));
 		}
 

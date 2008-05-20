@@ -478,6 +478,11 @@ Example */
 			headerCell.SetColumnIndex(Index);
 		}
 
+		internal void SetIsDataBound (bool value)
+		{
+			isDataBound = value;
+		}
+		
 		internal override void SetState (DataGridViewElementStates state) {
 			if (State != state) {
 				base.SetState(state);

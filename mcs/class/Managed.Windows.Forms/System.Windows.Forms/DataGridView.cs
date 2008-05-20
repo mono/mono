@@ -621,8 +621,12 @@ namespace System.Windows.Forms {
 			get { return dataMember; }
 			set {
 				if (dataMember != value) {
+					ClearBinding ();
+					
 					dataMember = value;
 					OnDataMemberChanged(EventArgs.Empty);
+					
+					DoBinding ();
 				}
 			}
 		}
@@ -643,36 +647,13 @@ namespace System.Windows.Forms {
 					if (!(value == null || value is IList || value is IListSource || value is IBindingList || value is IBindingListView)) {
 						throw new NotSupportedException("Type cant be binded.");
 					}
-					if (dataSource != null) {
-						columns.Clear();
-						rows.Clear();
-						if (dataSource is DataView) {
-							(dataSource as DataView).ListChanged -= OnListChanged;
-						}
-						if (dataSource is DataTable) {
-							((dataSource as IListSource).GetList() as DataView).ListChanged -= OnListChanged;
-						}
-					}
+						
+					ClearBinding ();
+					
 					dataSource = value;
-					OnDataSourceChanged(EventArgs.Empty);
-					if (dataSource != null) {
-						// DataBinding
-						if (value is IList) {
-							BindIList(value as IList);
-						}
-						else if (value is IListSource) {
-							BindIListSource(value as IListSource);
-						}
-						else if (value is IBindingList) {
-							BindIBindingList(value as IBindingList);
-						}
-						else if (value is IBindingListView) {
-							BindIBindingListView(value as IBindingListView);
-							//bool cosa = ((value as IBindingListView).SortDescriptions as IList).IsFixedSize;
-						}
-						OnDataBindingComplete(new DataGridViewBindingCompleteEventArgs(ListChangedType.Reset));
-					}
-					Invalidate();
+					OnDataSourceChanged (EventArgs.Empty);
+					
+					DoBinding ();
 				}
 			}
 		}
@@ -3495,6 +3476,11 @@ namespace System.Windows.Forms {
 
 		internal void OnColumnAddedInternal (DataGridViewColumnEventArgs e)
 		{
+			RowTemplate.Cells.Add ((DataGridViewCell)e.Column.CellTemplate.Clone ());
+
+			foreach (DataGridViewRow row in Rows)
+				row.Cells.Add ((DataGridViewCell)RowTemplate.Cells[RowTemplate.Cells.Count - 1].Clone ());
+		
 			AutoResizeColumnsInternal ();
 			OnColumnAdded (e);
 			PrepareEditingRow (false, true);
@@ -5405,16 +5391,22 @@ namespace System.Windows.Forms {
 		}
 
 		private void BindIList (IList list) {
+			// Stuff from a DataSet
 			if (list is DataView) {
 				DataView dataView = (DataView) list;
 				DataTable table = dataView.Table;
-				DataGridViewCell template = new DataGridViewTextBoxCell();
+
 				foreach (DataColumn dataColumn in table.Columns) {
-					DataGridViewColumn col = new DataGridViewColumn(template);
+					DataGridViewColumn col = CreateColumnByType (dataColumn.DataType);
+					
 					col.Name = dataColumn.ColumnName;
+					col.DataPropertyName = dataColumn.ColumnName;
+					col.SetIsDataBound (true);
 					col.ValueType = dataColumn.DataType;
-					columns.Add(col);
+					
+					columns.Add (col);
 				}
+				
 				dataView.ListChanged += OnListChanged;
 			}
 			else if (list.Count > 0) {
@@ -5428,17 +5420,83 @@ namespace System.Windows.Forms {
 			}
 			foreach (object element in list) {
 				DataGridViewRow row = (DataGridViewRow)RowTemplate.Clone ();
-				rows.InternalAdd(row);
-				PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(element);
+				rows.InternalAdd (row);
+
+				PropertyDescriptorCollection properties = TypeDescriptor.GetProperties (element);
+				
 				foreach (PropertyDescriptor property in properties) {
-					DataGridViewTextBoxCell cell = new DataGridViewTextBoxCell();
-					cell.Value = property.GetValue(element);
-					cell.ValueType = property.PropertyType;
-					row.Cells.Add(cell);
+					if (property.PropertyType == typeof (IBindingList))
+						continue;
+					
+					// We do it this way because there may not be a column
+					// for every cell, ignore cells with no column	
+					DataGridViewCell cell = row.Cells[property.Name];
+					
+					if (cell == null)
+						continue;
+						
+					cell.valuex = property.GetValue (element);
+					cell.valueType = property.PropertyType;
 				}
 			}
 		}
 
+		private DataGridViewColumn CreateColumnByType (Type type)
+		{
+			if (type == typeof (bool))
+				return new DataGridViewCheckBoxColumn ();
+				
+			return new DataGridViewTextBoxColumn ();
+		}
+		
+		private void ClearBinding ()
+		{
+			if (dataSource != null) {
+				columns.Clear ();
+				rows.Clear ();
+				
+				if (dataSource is DataView)
+					(dataSource as DataView).ListChanged -= OnListChanged;
+				if (dataSource is DataTable)
+					((dataSource as IListSource).GetList () as DataView).ListChanged -= OnListChanged;
+			}
+		}
+		
+		private void DoBinding ()
+		{
+			/* The System.Windows.Forms.DataGridView class supports the standard Windows Forms data-binding model. This means the data source can be of any type that implements:
+			 - the System.Collections.IList interface, including one-dimensional arrays.
+			 - the System.ComponentModel.IListSource interface, such as the System.Data.DataTable and System.Data.DataSet classes.
+			 - the System.ComponentModel.IBindingList interface, such as the System.ComponentModel.Collections.BindingList<> class.
+			 - the System.ComponentModel.IBindingListView interface, such as the System.Windows.Forms.BindingSource class.
+			*/
+			
+			if (dataSource != null) {
+				object value = dataSource;
+				
+				// DataBinding
+				if (value is DataSet && string.IsNullOrEmpty (dataMember)) {
+					Invalidate ();
+					return;
+				}
+				if (value is DataSet)
+					value = (value as DataSet).Tables[dataMember];
+					
+				if (value is IList)
+					BindIList (value as IList);
+				else if (value is IListSource)
+					BindIListSource (value as IListSource);
+				else if (value is IBindingList)
+					BindIBindingList (value as IBindingList);
+				else if (value is IBindingListView)
+					BindIBindingListView (value as IBindingListView);
+
+				OnDataBindingComplete (new DataGridViewBindingCompleteEventArgs (ListChangedType.Reset));
+			}
+
+			Invalidate ();
+		}
+		
 		private void BindIListSource (IListSource list) {
 			BindIList(list.GetList());
 		}

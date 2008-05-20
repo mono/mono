@@ -1,3 +1,7 @@
+2008-05-20  Jonathan Pobst  <monkey@jpobst.com>
+
+	* System.Windows.Forms_test.dll.sources: Add DataGridViewDataBindingTest.cs.
+
 2008-05-09  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Makefile: Add .ico's to IMAGE_RESOURCES.  Remove old .resources

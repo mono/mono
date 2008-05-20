@@ -1,5 +1,12 @@
 2008-05-20  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridViewColumn.cs: Allow IsDataBound to be set internally.
+	* DataGridViewColumnCollection.cs: Ensure OnColumnAdded is called.
+	* DataGridView.cs: Lots of fixes/enhancements to databinding to
+	a DataSet.
+
+2008-05-20  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Control.cs: Remove invalidating implicit child controls when
 	control is invalidated.  It was causing too many redraws on
 	controls with implicit scrollbars.
