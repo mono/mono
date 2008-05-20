@@ -52,7 +52,7 @@ namespace MonoTests.System.Windows.Forms
 		{
 			DataGridViewColumnCollection c;
 			
-			c = new DataGridViewColumnCollection (DataGridViewCommon.CreateAndFill ());
+			c = (new DataGridView ()).Columns;
 			c.Add ("A", "B");
 			
 			DataGridViewColumn col = c [0];
