@@ -1,0 +1,27 @@
+2008-05-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AssociationAttribute.cs
+	  AttributeMappingSource.cs
+	  AutoSync.cs
+	  ColumnAttribute.cs
+	  DataAttribute.cs
+	  DatabaseAttribute.cs
+	  FunctionAttribute.cs
+	  InheritanceMappingAttribute.cs
+	  MappingSource.cs
+	  MetaAccessor.cs
+	  MetaAccessor_2.cs
+	  MetaAssociation.cs
+	  MetaDataMember.cs
+	  MetaFunction.cs
+	  MetaModel.cs
+	  MetaParameter.cs
+	  MetaTable.cs
+	  MetaType.cs
+	  ParameterAttribute.cs
+	  ProviderAttribute.cs
+	  ResultTypeAttribute.cs
+	  TableAttribute.cs
+	  UpdateCheck.cs
+	  XmlMappingSource.cs : refresh stub checkin.
+

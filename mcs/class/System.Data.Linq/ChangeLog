@@ -1,0 +1,4 @@
+2008-05-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile, System.Data.Linq.dll.sources : refresh stub checkin.
+
