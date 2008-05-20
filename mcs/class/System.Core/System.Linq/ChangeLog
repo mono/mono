@@ -1,3 +1,7 @@
+2008-05-20  Marek Safar  <marek.safar@gmail.com>
+
+	* Enumerable.cs: Removed GroupBy MonoTODO.
+
 2008-05-19  Roei Erez  <roeie@mainsoft.com>
 
 	* Enumerable.cs: Implemente two overloaded GroupBy methods.

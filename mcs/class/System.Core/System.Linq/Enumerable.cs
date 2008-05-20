@@ -727,7 +727,6 @@ namespace System.Linq
 			return GroupBy (source, keySelector, elementSelector, resultSelector, null);
 		}
 
-		[MonoTODO]
 		public static IEnumerable<TResult> GroupBy<TSource, TKey, TElement, TResult> (this IEnumerable<TSource> source,
 			Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector,
 			Func<TKey, IEnumerable<TElement>, TResult> resultSelector,
@@ -747,7 +746,6 @@ namespace System.Linq
 			return GroupBy (source, keySelector, resultSelector, null);
 		}
 
-		[MonoTODO]
 		public static IEnumerable<TResult> GroupBy<TSource, TKey, TResult> (this IEnumerable<TSource> source,
 			Func<TSource, TKey> keySelector,
 			Func<TKey, IEnumerable<TSource>, TResult> resultSelector,
