@@ -503,16 +503,16 @@ namespace System.Windows.Forms
 		#region Events
 		static object CanGoBackChangedEvent = new object ();
 		static object CanGoForwardChangedEvent = new object ();
-		static object DocumentCompletedEvent = new object ();
 		static object DocumentTitleChangedEvent = new object ();
 		static object EncryptionLevelChangedEvent = new object ();
 		static object FileDownloadEvent = new object ();
-		static object NavigatedEvent = new object ();
 		static object NavigatingEvent = new object ();
-		static object NewWindowEvent = new object ();
+		static object NavigatedEvent = new object ();
 		static object ProgressChangedEvent = new object ();
+		static object DocumentCompletedEvent = new object ();
 		static object StatusTextChangedEvent = new object ();
 		static object PaddingChangedEvent = new object ();
+		static object NewWindowEvent = new object ();
 		
 		[BrowsableAttribute(false)]
 		public event EventHandler CanGoBackChanged {
@@ -592,13 +592,32 @@ namespace System.Windows.Forms
 			return c.Cancel;
 		}
 
-		internal override void OnWebHostCompleted (object sender, EventArgs e)
+		internal override void OnWebHostLoadFinished (object sender, Mono.WebBrowser.LoadFinishedEventArgs e)
 		{
 			documentReady = true;
-			WebBrowserNavigatedEventArgs n = new WebBrowserNavigatedEventArgs (new Uri (WebHost.Document.Url));
-			OnNavigated (n);
+			WebBrowserDocumentCompletedEventArgs n = new WebBrowserDocumentCompletedEventArgs (new Uri (e.Uri));
+			OnDocumentCompleted (n);
+				
+		}
+		
+		internal override void OnWebHostLoadStarted (object sender, Mono.WebBrowser.LoadStartedEventArgs e)
+		{
+			documentReady = false;
+			document = null;
+			WebBrowserNavigatingEventArgs n = new WebBrowserNavigatingEventArgs (new Uri (e.Uri), e.FrameName);
+			OnNavigating (n);
 		}
 
+		internal override void OnWebHostLoadCommited (object sender, Mono.WebBrowser.LoadCommitedEventArgs e)
+		{
+			WebBrowserNavigatedEventArgs n = new WebBrowserNavigatedEventArgs (new Uri (e.Uri));
+			OnNavigated (n);
+		}
+		internal override void OnWebHostProgressChanged (object sender, Mono.WebBrowser.ProgressChangedEventArgs e)
+		{
+			WebBrowserProgressChangedEventArgs n = new WebBrowserProgressChangedEventArgs (e.Progress, e.MaxProgress);
+			OnProgressChanged (n);
+		}
 		#endregion
 
 		[MonoTODO ("Stub, not implemented")]

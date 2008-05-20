@@ -8,7 +8,7 @@ if [ $# -eq 0 ]; then
 	exit 1
 fi
 
-cp ../../System.Windows.Forms_test_NET_2_0.dll .
+cp ../../System.Windows.Forms_test_net_2_0.dll .
 
 topdir=../../../..
 NUNITCONSOLE=$topdir/class/lib/net_2_0/nunit-console.exe
@@ -22,5 +22,5 @@ for i in $@; do
 		fixture="/fixture:MonoTests.${i}"
 	fi
 	MONO_PATH=$MONO_PATH \
-		mono --debug ${NUNITCONSOLE} System.Windows.Forms_test_NET_2_0.dll $fixture
+		mono --debug  ${NUNITCONSOLE} System.Windows.Forms_test_net_2_0.dll $fixture
 done

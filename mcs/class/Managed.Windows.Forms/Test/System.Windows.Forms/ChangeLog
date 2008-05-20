@@ -1,3 +1,9 @@
+2008-05-20  Andreia Gaita <avidigal@novell.com> 
+
+	* WebBrowserTest.cs: Added WebBrowser unit tests (not included in the
+	  build at the moment)
+	* tests2.sh: Fix case on dll name
+
 2008-05-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TimerTest.cs : added test for bug #325033.

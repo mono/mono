@@ -32,6 +32,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using Mono.WebBrowser;
 
 namespace System.Windows.Forms
 {
@@ -333,7 +334,10 @@ namespace System.Windows.Forms
 			webHost.Focus += new EventHandler (OnWebHostFocus);
 			webHost.CreateNewWindow += new Mono.WebBrowser.CreateNewWindowEventHandler (OnWebHostCreateNewWindow);
 			webHost.Alert += new Mono.WebBrowser.AlertEventHandler (OnWebHostAlert);
-			webHost.Completed += new EventHandler (OnWebHostCompleted);
+			webHost.LoadStarted += new LoadStartedEventHandler (OnWebHostLoadStarted);
+			webHost.LoadCommited += new LoadCommitedEventHandler (OnWebHostLoadCommited);
+			webHost.ProgressChanged += new Mono.WebBrowser.ProgressChangedEventHandler (OnWebHostProgressChanged);
+			webHost.LoadFinished += new LoadFinishedEventHandler (OnWebHostLoadFinished);
 		}
 
 		void OnWebHostAlert (object sender, Mono.WebBrowser.AlertEventArgs e)
@@ -421,10 +425,19 @@ namespace System.Windows.Forms
 			return false;
 		}
 
-		internal virtual void OnWebHostCompleted (object sender, EventArgs e)
+		internal virtual void OnWebHostLoadStarted (object sender, LoadStartedEventArgs e)
 		{
 		}
 
+		internal virtual void OnWebHostLoadCommited (object sender, LoadCommitedEventArgs e)
+		{
+		}
+		internal virtual void OnWebHostProgressChanged (object sender, Mono.WebBrowser.ProgressChangedEventArgs e)
+		{
+		}
+		internal virtual void OnWebHostLoadFinished (object sender, LoadFinishedEventArgs e)
+		{
+		}
 		#endregion
 
 		#region Events

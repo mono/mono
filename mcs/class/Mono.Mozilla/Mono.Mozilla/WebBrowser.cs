@@ -31,7 +31,6 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Diagnostics;
-using System.ComponentModel;
 using Mono.WebBrowser;
 using Mono.WebBrowser.DOM;
 
@@ -46,8 +45,8 @@ namespace Mono.Mozilla
 		internal Platform platform;
 		internal Platform enginePlatform;
 		internal Callback callbacks;
-		private EventHandlerList events;
-		private EventHandlerList domEvents;
+		private System.ComponentModel.EventHandlerList events;
+		private System.ComponentModel.EventHandlerList domEvents;
 
 		private string statusText;
 
@@ -118,19 +117,19 @@ namespace Mono.Mozilla
 			get { return statusText; }
 		}
 
-		internal EventHandlerList DomEvents {
+		internal System.ComponentModel.EventHandlerList DomEvents {
 			get {
 				if (domEvents == null)
-					domEvents = new EventHandlerList();
+					domEvents = new System.ComponentModel.EventHandlerList();
 
 				return domEvents;
 			}
 		}
 
-		internal EventHandlerList Events {
+		internal System.ComponentModel.EventHandlerList Events {
 			get {
 				if (events == null)
-					events = new EventHandlerList();
+					events = new System.ComponentModel.EventHandlerList();
 
 				return events;
 			}
@@ -260,12 +259,16 @@ namespace Mono.Mozilla
 		internal static object BlurEvent = new object ();
 		internal static object CreateNewWindowEvent = new object ();
 		internal static object AlertEvent = new object ();
-		internal static object TransferringEvent = new object ();
-		internal static object DocumentCompletedEvent = new object ();
-		internal static object CompletedEvent = new object ();
+			
+		internal static object LoadStartedEvent = new object ();
+		internal static object LoadCommitedEvent = new object ();
+		internal static object ProgressChangedEvent = new object ();
+		internal static object LoadFinishedEvent = new object ();	
+		
 		internal static object LoadEvent = new object ();
 		internal static object UnloadEvent = new object ();
 		internal static object StatusChangedEvent = new object ();
+		internal static object ProgressEvent = new object ();
 		
 		public event NodeEventHandler KeyDown
 		{
@@ -338,21 +341,6 @@ namespace Mono.Mozilla
 			add { Events.AddHandler (AlertEvent, value); }
 			remove { Events.RemoveHandler (AlertEvent, value); }
 		}
-		public event EventHandler Transferring
-		{
-			add { Events.AddHandler (TransferringEvent, value); }
-			remove { Events.RemoveHandler (TransferringEvent, value); }
-		}
-		public event EventHandler DocumentCompleted
-		{
-			add { Events.AddHandler (DocumentCompletedEvent, value); }
-			remove { Events.RemoveHandler (DocumentCompletedEvent, value); }
-		}
-		public event EventHandler Completed
-		{
-			add { Events.AddHandler (CompletedEvent, value); }
-			remove { Events.RemoveHandler (CompletedEvent, value); }
-		}
 		public event EventHandler Loaded
 		{
 			add { Events.AddHandler (LoadEvent, value); }
@@ -364,12 +352,35 @@ namespace Mono.Mozilla
 			remove { Events.RemoveHandler (UnloadEvent, value); }
 		}
 
-		public event StatusChangedEventHandler StatusChanged
+ 		public event StatusChangedEventHandler StatusChanged
 		{
 			add { Events.AddHandler (StatusChangedEvent, value); }
 			remove { Events.RemoveHandler (StatusChangedEvent, value); }
 		}
-
+		
+		public event LoadStartedEventHandler LoadStarted
+		{
+			add { Events.AddHandler (LoadStartedEvent, value); }
+			remove { Events.RemoveHandler (LoadStartedEvent, value); }
+		}
+		
+		public event LoadCommitedEventHandler LoadCommited
+		{
+			add { Events.AddHandler (LoadCommitedEvent, value); }
+			remove { Events.RemoveHandler (LoadCommitedEvent, value); }
+		}		
+		
+		public event ProgressChangedEventHandler ProgressChanged
+		{
+			add { Events.AddHandler (ProgressChangedEvent, value); }
+			remove { Events.RemoveHandler (ProgressChangedEvent, value); }
+		}
+		
+		public event LoadFinishedEventHandler LoadFinished
+		{
+			add { Events.AddHandler (LoadFinishedEvent, value); }
+			remove { Events.RemoveHandler (LoadFinishedEvent, value); }
+		}
 
 		internal static object GenericEvent = new object ();
 		public event EventHandler Generic

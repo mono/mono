@@ -339,6 +339,8 @@ namespace Mono.Mozilla.DOM
 				nsIDOMElement nsElement;
 				Base.StringSet (storage, id);
 				this.document.getElementById (storage, out nsElement);
+				if (nsElement == null)
+					return null;
 				resources.Add ("GetElementById" + id, new HTMLElement (control, nsElement as nsIDOMHTMLElement));
 			}
 			return resources["GetElementById" + id] as IElement;
@@ -349,6 +351,8 @@ namespace Mono.Mozilla.DOM
 			if (!resources.Contains ("GetElementsByTagName" + name)) {
 				nsIDOMNodeList nodes;
 				this.document.getElementsByTagName (storage, out nodes);
+				if (nodes == null)
+					return null;
 				resources.Add ("GetElementsByTagName" + name, new HTMLElementCollection(control, nodes));
 			}
 			return resources["GetElementsByTagName" + name] as IElementCollection;

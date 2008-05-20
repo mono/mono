@@ -94,7 +94,10 @@ namespace System.Windows.Forms
 
 		public HtmlElement GetElementById (string id)
 		{
-			return new HtmlElement (webHost, document.GetElementById (id));
+			IElement elem = document.GetElementById (id);
+			if (elem != null)
+				return new HtmlElement (webHost, elem);
+			return null;
 		}
 
 		public HtmlElement GetElementFromPoint (Point point) 
@@ -108,7 +111,9 @@ namespace System.Windows.Forms
 		public HtmlElementCollection GetElementsByTagName (string tagName) 
 		{
 			Mono.WebBrowser.DOM.IElementCollection col = document.GetElementsByTagName (tagName);
-			return new HtmlElementCollection (webHost, col);
+			if (col != null)
+				return new HtmlElementCollection (webHost, col);
+			return null;
 		}
 
 		public override int GetHashCode () 

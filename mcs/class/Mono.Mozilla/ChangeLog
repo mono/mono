@@ -1,3 +1,11 @@
+2008-05-20  Andreia Gaita <avidigal@novell.com> 
+
+	* Mono.WebBrowser/IWebBrowser.cs, Mono.Mozilla/WebBrowser.cs: Refactor
+	  loading events to something more sane and usable
+	* Mono.Mozilla/DOM/Document.cs: Check for nulls
+	* Mono.Mozilla/Callback.cs: Added progress and request objects from the
+	  loading events. Track progress updates.
+
 2008-05-08  Andreia Gaita <avidigal@novell.com> 
 
 	* Mono.Mozilla2K5.csproj, Mono.Mozilla.dll.sources: Interfaces added to

@@ -64,10 +64,14 @@ namespace Mono.WebBrowser
 		event NodeEventHandler MouseUp;
 		event EventHandler Focus;
 		event CreateNewWindowEventHandler CreateNewWindow;
+		
 		event AlertEventHandler Alert;
-		event EventHandler Transferring;
-		event EventHandler DocumentCompleted;
-		event EventHandler Completed;
+		
+		event LoadStartedEventHandler LoadStarted;
+		event LoadCommitedEventHandler LoadCommited;
+		event ProgressChangedEventHandler ProgressChanged;
+		event LoadFinishedEventHandler LoadFinished;
+				
 		event StatusChangedEventHandler StatusChanged;
 		event EventHandler Generic;		
 	}
@@ -127,6 +131,7 @@ namespace Mono.WebBrowser
 		Gtk = 2
 	}
 
+#region Window Events
 	public delegate bool CreateNewWindowEventHandler (object sender, CreateNewWindowEventArgs e);
 	public class CreateNewWindowEventArgs : EventArgs
 	{
@@ -147,8 +152,10 @@ namespace Mono.WebBrowser
 		}
 		#endregion	// Public Instance Properties
 	}
+#endregion
 
-
+#region Script events
+	
 	public delegate void AlertEventHandler (object sender, AlertEventArgs e);
 	public class AlertEventArgs : EventArgs
 	{
@@ -260,8 +267,10 @@ namespace Mono.WebBrowser
 
 #endregion
 	}
+#endregion
 
-
+#region Loading events
+	
 	public delegate void StatusChangedEventHandler (object sender, StatusChangedEventArgs e);
 	public class StatusChangedEventArgs : EventArgs
 	{
@@ -283,4 +292,60 @@ namespace Mono.WebBrowser
 			this.status = status;
 		}
 	}
+
+	public delegate void ProgressChangedEventHandler (object sender, ProgressChangedEventArgs e);
+	public class ProgressChangedEventArgs : EventArgs 
+	{
+		private int progress;
+		public int Progress {
+			get { return progress; }
+		}
+		private int maxProgress;
+		public int MaxProgress {
+			get { return maxProgress; }
+		}
+		
+		public ProgressChangedEventArgs (int progress, int maxProgress) {
+			this.progress = progress;
+			this.maxProgress = maxProgress;
+		}
+	}
+	
+	public delegate void LoadStartedEventHandler (object sender, LoadStartedEventArgs e);
+	public class LoadStartedEventArgs : System.ComponentModel.CancelEventArgs {
+		private string uri;
+		public string Uri {
+			get {return uri;}
+		}
+		private string frameName;
+		public string FrameName {
+			get {return frameName;}
+		}
+		public LoadStartedEventArgs (string uri, string frameName) {
+			this.uri = uri;
+			this.frameName = frameName;
+		}
+	}
+	public delegate void LoadCommitedEventHandler (object sender, LoadCommitedEventArgs e);
+	public class LoadCommitedEventArgs : EventArgs {
+		private string uri;
+		public string Uri {
+			get {return uri;}
+		}
+		public LoadCommitedEventArgs (string uri) {
+			this.uri = uri;
+		}
+	}
+
+	public delegate void LoadFinishedEventHandler (object sender, LoadFinishedEventArgs e);
+	public class LoadFinishedEventArgs : EventArgs {
+		private string uri;
+		public string Uri {
+			get {return uri;}
+		}
+		public LoadFinishedEventArgs (string uri) {
+			this.uri = uri;
+		}
+	}
+#endregion
 }

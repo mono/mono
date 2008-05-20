@@ -52,14 +52,13 @@ using Mono.WebBrowser.DOM;
 #if debug
 			OnGeneric ("OnWidgetLoaded");
 #endif
-			//			loaded = true;
 		}
 
 
-		public void OnStateChange (Int32 status, UInt32 state)
+		public void OnStateChange (nsIWebProgress progress, nsIRequest request, Int32 status, UInt32 state)
 		{
 #if debug
-			OnGeneric ("OnStateChange");
+			//OnGeneric ("OnStateChange");
 
 			System.Text.StringBuilder s = new System.Text.StringBuilder ();
 			if ((state & (uint) StateFlags.Start) != 0) {
@@ -91,35 +90,54 @@ using Mono.WebBrowser.DOM;
 			}
 			Console.Error.WriteLine (s.ToString ());
 #endif
-			if ((state & (uint) StateFlags.Transferring) != 0 && 
+
+		
+			if ((state & (uint) StateFlags.Start) != 0 && 
 				(state & (uint) StateFlags.IsRequest) != 0 &&
-				(state & (uint) StateFlags.IsDocument) != 0
-				)
+				(state & (uint) StateFlags.IsDocument) != 0 &&
+			    (state & (uint) StateFlags.IsNetwork) != 0 && 
+			    (state & (uint) StateFlags.IsWindow) != 0 
+			    )
 			{
-			
-			    EventHandler eh = (EventHandler) (owner.Events[WebBrowser.TransferringEvent]);
-			    if (eh != null) {
-			        EventArgs e = new EventArgs ();
-			        eh (this, e);
-			    }
-			} else if ((state & (uint) StateFlags.Stop) != 0 && 
-				(state & (uint) StateFlags.IsDocument) != 0
-				)
-			{
-			    EventHandler eh = (EventHandler) (owner.Events[WebBrowser.DocumentCompletedEvent]);
-			    if (eh != null) {
-			        EventArgs e = new EventArgs ();
-			        eh (this, e);
-			    }
-			} else if ((state & (uint) StateFlags.Stop) != 0 && 
+				LoadStartedEventHandler eh = (LoadStartedEventHandler) (owner.Events[WebBrowser.LoadStartedEvent]);
+				if (eh != null) {
+					nsIDOMWindow win;
+					progress.getDOMWindow (out win);
+					AsciiString name = new AsciiString (String.Empty);
+					win.getName (name.Handle);
+					nsIChannel channel;
+					channel = (nsIChannel)request;
+					nsIURI uri;
+					channel.getURI (out uri);
+					AsciiString spec = new AsciiString(String.Empty);
+					uri.getSpec (spec.Handle);
+					LoadStartedEventArgs e = new LoadStartedEventArgs (spec.ToString (), name.ToString ());
+					eh (this, e);
+					if (e.Cancel)
+						request.cancel (0);
+				}
+			}
+				
+			if ((state & (uint) StateFlags.Stop) != 0 && 
 				(state & (uint) StateFlags.IsNetwork) != 0 &&
 				(state & (uint) StateFlags.IsWindow) != 0
 				)
 			{
-			    EventHandler eh = (EventHandler) (owner.Events[WebBrowser.CompletedEvent]);
-			    if (eh != null) {
-			        EventArgs e = new EventArgs ();
-			        eh (this, e);
+			    LoadFinishedEventHandler eh1 = (LoadFinishedEventHandler) (owner.Events[WebBrowser.LoadFinishedEvent]);
+			    if (eh1 != null) {
+
+ 					nsIDOMWindow win;
+					progress.getDOMWindow (out win);
+					nsIChannel channel = (nsIChannel) request;
+					nsIURI uri;
+					channel.getURI (out uri);
+					
+					AsciiString spec = new AsciiString (String.Empty);
+					uri.getSpec (spec.Handle);
+					
+			        LoadFinishedEventArgs e = new LoadFinishedEventArgs (spec.ToString ());
+			        eh1 (this, e);
+
 			    }
 			}  
 #if debug
@@ -132,24 +150,28 @@ using Mono.WebBrowser.DOM;
 #if debug
 			OnGeneric ("OnProgress");
 #endif			
-			// TODO:  Add WebBrowser.OnProgress implementation
+			ProgressChangedEventHandler eh = (ProgressChangedEventHandler) (owner.Events [Mono.Mozilla.WebBrowser.ProgressChangedEvent]);
+		    if (eh != null) {
+		        Mono.WebBrowser.ProgressChangedEventArgs e = new Mono.WebBrowser.ProgressChangedEventArgs (currentTotalProgress, maxTotalProgress);
+		        eh (this, e);
+		    }
 		}
 
-		public void OnLocationChanged (string uri)
+		public void OnLocationChanged (nsIWebProgress progress, nsIRequest request, nsIURI uri)
 		{
 #if debug
 			OnGeneric ("OnLocationChanged");
 #endif
-			/*
-			EventHandler eh = (EventHandler) (owner.Events[WebBrowser.NavigatedEvent]);
+			LoadCommitedEventHandler eh = (LoadCommitedEventHandler) (owner.Events[WebBrowser.LoadCommitedEvent]);
 			if (eh != null) {
-				EventArgs e = new EventArgs ();
+				AsciiString spec = new AsciiString(String.Empty);
+				uri.getSpec (spec.Handle);
+				LoadCommitedEventArgs e = new LoadCommitedEventArgs (spec.ToString());
 				eh (this, e);
 			}
-			*/
 		}
 
-		public void OnStatusChange (string message, Int32 status)
+		public void OnStatusChange (nsIWebProgress progress, nsIRequest request, string message, Int32 status)
 		{
 			StatusChangedEventHandler eh = (StatusChangedEventHandler) (owner.Events[WebBrowser.StatusChangedEvent]);
 			if (eh != null) {
@@ -642,7 +664,7 @@ using Mono.WebBrowser.DOM;
 #endif
 			((DOM.Window)owner.Window).OnUnload ();
 		}
-
+		
 		public void OnGeneric (string type)
 		{
 #if debug
@@ -716,6 +738,18 @@ using Mono.WebBrowser.DOM;
 	internal delegate bool CallbackOnSelect		(IntPtr title, IntPtr text, 
 														 	 UInt32 count, IntPtr list, 
 														 	 out Int32 retVal);
+	
+	internal delegate void CallbackOnLocationChanged ([MarshalAs (UnmanagedType.Interface)] nsIWebProgress progress,
+	                                                  [MarshalAs (UnmanagedType.Interface)] nsIRequest request,
+	                                                  [MarshalAs (UnmanagedType.Interface)] nsIURI uri);
+
+	internal delegate void CallbackOnStatusChange ([MarshalAs (UnmanagedType.Interface)] nsIWebProgress progress,
+	                                               [MarshalAs (UnmanagedType.Interface)] nsIRequest request,
+	                                               [MarshalAs (UnmanagedType.LPWStr)] string message, Int32 status);
+	
+	internal delegate void CallbackOnStateChange ([MarshalAs (UnmanagedType.Interface)] nsIWebProgress progress,
+	                                               [MarshalAs (UnmanagedType.Interface)] nsIRequest request,
+	                                               Int32 arg2, UInt32 arg3);
 
 
 #endregion
@@ -726,13 +760,13 @@ using Mono.WebBrowser.DOM;
 	[StructLayout (LayoutKind.Sequential)]
 	internal struct CallbackBinder {
 		
-		public CallbackVoid				OnWidgetLoaded;
+		public CallbackVoid			OnWidgetLoaded;
 
-		public CallbackIntUint 		OnStateChange;
+		public CallbackOnStateChange 		OnStateChange;
 		public CallbackIntInt		OnProgress;
-		public CallbackString		OnLocationChanged;
+		public CallbackOnLocationChanged		OnLocationChanged;
 
-		public CallbackWStringInt	OnStatusChange;
+		public CallbackOnStatusChange	OnStatusChange;
 
 		public KeyCallback			OnKeyDown;
 		public KeyCallback			OnKeyUp;
@@ -767,11 +801,11 @@ using Mono.WebBrowser.DOM;
 		internal CallbackBinder (Callback callback) {
 			this.OnWidgetLoaded			= new CallbackVoid (callback.OnWidgetLoaded);
 
-			this.OnStateChange			= new CallbackIntUint (callback.OnStateChange);
+			this.OnStateChange			= new CallbackOnStateChange (callback.OnStateChange);
 
 			this.OnProgress				= new CallbackIntInt (callback.OnProgress);
-			this.OnLocationChanged		= new CallbackString (callback.OnLocationChanged);
-			this.OnStatusChange			= new CallbackWStringInt (callback.OnStatusChange);
+			this.OnLocationChanged		= new CallbackOnLocationChanged (callback.OnLocationChanged);
+			this.OnStatusChange			= new CallbackOnStatusChange (callback.OnStatusChange);
 
 			this.OnKeyDown				= new KeyCallback (callback.OnClientDomKeyDown);
 			this.OnKeyUp				= new KeyCallback (callback.OnClientDomKeyUp);
@@ -800,7 +834,7 @@ using Mono.WebBrowser.DOM;
 
 			this.OnLoad 				= new CallbackVoid (callback.OnLoad);
 			this.OnUnload 				= new CallbackVoid (callback.OnUnload);
-
+			
 			this.OnGeneric				= new CallbackWString (callback.OnGeneric);
 		}
 	}
