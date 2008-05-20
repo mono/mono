@@ -77,15 +77,17 @@ namespace System.ComponentModel
 		public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object value,
 						  Type destinationType)
 		{
-			if (destinationType == typeof (string) && value != null && value.GetType() == typeof (TimeSpan)) {
-				// LAMESPEC Doc says TimeSpan uses Ticks, but MS uses time format
-				// [ws][-][d.]hh:mm:ss[.ff][ws]
-				return ((TimeSpan) value).ToString();
-			}
-			if (destinationType == typeof (InstanceDescriptor) && value is TimeSpan) {
-				TimeSpan cval = (TimeSpan) value;
-				ConstructorInfo ctor = typeof(TimeSpan).GetConstructor (new Type[] {typeof(long)});
-				return new InstanceDescriptor (ctor, new object[] {cval.Ticks});
+			if (value is TimeSpan) {
+				TimeSpan timespan = (TimeSpan) value;
+				if (destinationType == typeof (string) && value != null) {
+					// LAMESPEC Doc says TimeSpan uses Ticks, but MS uses time format
+					// [ws][-][d.]hh:mm:ss[.ff][ws]
+					return timespan.ToString ();
+				}
+				if (destinationType == typeof (InstanceDescriptor)) {
+					ConstructorInfo ctor = typeof(TimeSpan).GetConstructor (new Type[] {typeof(long)});
+					return new InstanceDescriptor (ctor, new object[] { timespan.Ticks });
+				}
 			}
 			return base.ConvertTo (context, culture, value, destinationType);
 		}

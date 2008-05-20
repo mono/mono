@@ -65,11 +65,12 @@ namespace System.ComponentModel
 						  CultureInfo culture, object value, Type destinationType)
 		{
 			if (destinationType == typeof (string)) {
-				if (value != null && value is char) {
-					if ((char)value == '\0')
+				if ((value != null) && (value is char)) {
+					char c = (char) value;
+					if (c == '\0')
 						return String.Empty;
 					else
-						return new string ((char) value, 1);
+						return new string (c, 1);
 				}
 			}
 

@@ -1,3 +1,11 @@
+2008-05-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CharConverter.cs,
+	* DateTimeConverter.cs,
+	* GuidConverter.cs,
+	* TimeSpanConverter.cs: Avoid unboxing structs more than one time.
+	[Found using Gendarme]
+
 2008-05-05  James Fitzsimons <james.fitzsimons@gmail.com>
 
 	* TypeDescriptor.cs: GetProperties should not return write-only 

@@ -74,14 +74,17 @@ namespace System.ComponentModel
 		public override object ConvertTo (ITypeDescriptorContext context,
 						  CultureInfo culture, object value, Type destinationType)
 		{
-			if (destinationType == typeof (string) && value != null &&value.GetType() == typeof (Guid))
-				// LAMESPEC MS seems to always parse "D" type
-				return ((Guid) value).ToString("D");
+			if (value is Guid) {
+				Guid guid = (Guid) value;
 
-			if (destinationType == typeof (InstanceDescriptor) && value is Guid) {
-				Guid cval = (Guid) value;
-				ConstructorInfo ctor = typeof(Guid).GetConstructor (new Type[] {typeof(string)});
-				return new InstanceDescriptor (ctor, new object[] {cval.ToString("D")});
+				if (destinationType == typeof (string) && value != null)
+					// LAMESPEC MS seems to always parse "D" type
+					return guid.ToString("D");
+
+				if (destinationType == typeof (InstanceDescriptor)) {
+					ConstructorInfo ctor = typeof(Guid).GetConstructor (new Type[] {typeof(string)});
+					return new InstanceDescriptor (ctor, new object[] { guid.ToString("D") });
+				}
 			}
 			return base.ConvertTo (context, culture, value, destinationType);
 		}

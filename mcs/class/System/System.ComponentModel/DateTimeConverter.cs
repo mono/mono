@@ -79,35 +79,34 @@ namespace System.ComponentModel
 		public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object value,
 						  Type destinationType)
 		{
-			if (destinationType == typeof (string) && value is DateTime) {
-				if (culture == null) {
-					culture = CultureInfo.CurrentCulture;
-				}
+			if (value is DateTime) {
 				DateTime datetime = (DateTime) value;
-				if (datetime == DateTime.MinValue) {
-					return string.Empty;
-				}
+				if (destinationType == typeof (string)) {
+					if (culture == null)
+						culture = CultureInfo.CurrentCulture;
 
-				DateTimeFormatInfo info = (DateTimeFormatInfo) culture.GetFormat (typeof (DateTimeFormatInfo));
+					if (datetime == DateTime.MinValue)
+						return string.Empty;
 
-				if (culture == CultureInfo.InvariantCulture) {
-					if (datetime.Equals (datetime.Date)) {
-						return datetime.ToString ("yyyy-mm-dd", culture);
-					}
-					return datetime.ToString (culture);
-				} else {
-					if (datetime == datetime.Date) {
-						return datetime.ToString (info.ShortDatePattern, culture);
+					DateTimeFormatInfo info = (DateTimeFormatInfo) culture.GetFormat (typeof (DateTimeFormatInfo));
+
+					if (culture == CultureInfo.InvariantCulture) {
+						if (datetime.Equals (datetime.Date)) {
+							return datetime.ToString ("yyyy-mm-dd", culture);
+						}
+						return datetime.ToString (culture);
 					} else {
-						return datetime.ToString (info.ShortDatePattern + " " + 
-							info.ShortTimePattern, culture);
+						if (datetime == datetime.Date) {
+							return datetime.ToString (info.ShortDatePattern, culture);
+						} else {
+							return datetime.ToString (info.ShortDatePattern + " " + 
+								info.ShortTimePattern, culture);
+						}
 					}
+				} else if (destinationType == typeof (InstanceDescriptor)) {
+					ConstructorInfo ctor = typeof(DateTime).GetConstructor (new Type[] {typeof(long)});
+					return new InstanceDescriptor (ctor, new object[] { datetime.Ticks });
 				}
-			}
-			if (destinationType == typeof (InstanceDescriptor) && value is DateTime) {
-				DateTime cval = (DateTime) value;
-				ConstructorInfo ctor = typeof(DateTime).GetConstructor (new Type[] {typeof(long)});
-				return new InstanceDescriptor (ctor, new object[] {cval.Ticks});
 			}
 			return base.ConvertTo (context, culture, value, destinationType);
 		}
