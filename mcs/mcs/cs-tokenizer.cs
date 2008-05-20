@@ -1520,6 +1520,8 @@ namespace Mono.CSharp
 			case Token.DOUBLE:
 			case Token.FLOAT:
 			case Token.CHAR:
+			case Token.BYTE:
+			case Token.DECIMAL:			
 				return true;
 
 			default:

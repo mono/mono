@@ -1,3 +1,8 @@
+2008-05-20  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #392155
+	* cs-tokenizer.cs: Fixed casting of byte and decimal expression.
+
 2008-05-15  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #390666
