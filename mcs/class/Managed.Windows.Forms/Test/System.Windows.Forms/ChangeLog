@@ -1,5 +1,9 @@
 2008-05-20  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridViewDataBindingTest.cs: Add test for AutoGenerateColumns.
+
+2008-05-20  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridViewColumnCollectionTest.cs: Change Add() test to not
 	create 2 column collections.
 

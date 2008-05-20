@@ -211,6 +211,63 @@ namespace MonoTests.System.Windows.Forms
 			f.Dispose ();
 		}
 
+		[Test]
+		public void TestAutoGenerateColumns ()
+		{
+			// Binding when AutoGenerateColumns is false
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+
+			DataSet ds = new DataSet ();
+
+			DataTable dt = ds.Tables.Add ("Muppets");
+
+			dt.Columns.Add ("ID");
+			dt.Columns.Add ("Name");
+
+			dt.Rows.Add (1, "Kermit");
+			dt.Rows.Add (2, "Miss Piggy");
+			dt.Rows.Add (3, "Gonzo");
+
+			DataGridView dgv = new DataGridView ();
+			dgv.AutoGenerateColumns = false;
+			dgv.DataSource = dt;
+
+			f.Controls.Add (dgv);
+			f.Show ();
+
+			Assert.AreEqual (0, dgv.ColumnCount, "A1");
+			Assert.AreEqual (0, dgv.RowCount, "A2");
+
+			dgv.DataSource = null;
+			
+			DataGridViewTextBoxColumn col1 = new DataGridViewTextBoxColumn ();
+			col1.DataPropertyName = "Name";
+			dgv.Columns.Add (col1);
+
+			dgv.DataSource = dt;
+
+			Assert.AreEqual (1, dgv.ColumnCount, "A3");
+			Assert.AreEqual (4, dgv.RowCount, "A4");
+
+			Assert.AreEqual ("Kermit", dgv.Rows[0].Cells[0].Value, "A5");
+
+			dgv.DataSource = null;
+
+			DataGridViewTextBoxColumn col2 = new DataGridViewTextBoxColumn ();
+			col2.DataPropertyName = "id";
+			dgv.Columns.Add (col2);
+
+			dgv.DataSource = dt;
+
+			Assert.AreEqual (2, dgv.ColumnCount, "A6");
+			Assert.AreEqual (4, dgv.RowCount, "A7");
+
+			Assert.AreEqual ("Kermit", dgv.Rows[0].Cells[0].Value, "A8");
+			Assert.AreEqual ("1", dgv.Rows[0].Cells[1].Value, "A9");
+
+			f.Dispose ();
+		}
 	}
 }
 #endif

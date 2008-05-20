@@ -95,6 +95,16 @@ namespace System.Windows.Forms
 			}
 		}
 
+		internal DataGridViewCell GetBoundCell (string dataPropertyName)
+		{
+			foreach (DataGridViewCell cell in base.List) {
+				if (string.Compare (cell.OwningColumn.DataPropertyName, dataPropertyName, true) == 0)
+					return cell;
+			}
+			
+			return null;
+		}
+		
 		public event CollectionChangeEventHandler CollectionChanged;
 
 		int IList.Add (object value)
