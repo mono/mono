@@ -190,7 +190,8 @@ namespace System.Web.Compilation
 		static Hashtable emptyHash = new Hashtable ();
 		bool inForm;
 		bool useOtherTags;
-
+		TagType lastTag;
+		
 		public AspGenerator (TemplateParser tparser)
 		{
 			this.tparser = tparser;
@@ -415,7 +416,7 @@ namespace System.Web.Compilation
 				tparser.Location = location;
 
 			if (text.Length != 0)
-				FlushText ();
+				FlushText (lastTag == TagType.CodeRender);
 
 			if (0 == String.Compare (tagid, "script", true, CultureInfo.InvariantCulture)) {
 				bool in_script = (inScript || ignore_text);
@@ -425,6 +426,7 @@ namespace System.Web.Compilation
 				}
 			}
 
+			lastTag = tagtype;
 			switch (tagtype) {
 			case TagType.Directive:
 				if (tagid == "")
@@ -465,6 +467,7 @@ namespace System.Web.Compilation
 			case TagType.CodeRenderExpression:
 				goto case TagType.CodeRender;
 			case TagType.CodeRender:
+				lastTag = TagType.CodeRender;
 				if (isApplication)
 					throw new ParseException (location, "Invalid content for application file.");
 			
@@ -543,21 +546,31 @@ namespace System.Web.Compilation
 				return;
 
 			if (text.IndexOf ("<%") != -1 && !inScript) {
+				Console.WriteLine ("code tag beginning");
 				if (this.text.Length > 0)
-					FlushText ();
+					FlushText (true);
 				CodeRenderParser r = new CodeRenderParser (text, stack.Builder);
 				r.AddChildren ();
 				return;
 			}
-
+			
 			this.text.Append (text);
 			//PrintLocation (location);
 		}
 
 		void FlushText ()
 		{
+			FlushText (false);
+		}
+		
+		void FlushText (bool ignoreEmptyString)
+		{
 			string t = text.ToString ();
 			text.Length = 0;
+
+			if (ignoreEmptyString && t.Trim ().Length == 0)
+				return;
+			
 			if (inScript) {
 				tparser.Scripts.Add (new ServerSideScript (t, new System.Web.Compilation.Location (tparser.Location)));
 				return;

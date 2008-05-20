@@ -1,3 +1,8 @@
+2008-05-19  Marek Habersack  <mhabersack@novell.com>
+
+	* AspGenerator.cs: if the last tag parsed was a code directive,
+	ignore any accumulated text if it's 100% whitespace.
+
 2008-05-15  Marek Habersack  <mhabersack@novell.com>
 
 	* AspComponentFoundry.cs: treat AssemblyFoundry in a special way
