@@ -5019,6 +5019,16 @@ namespace System.Windows.Forms
 			}
 		}
 
+		public override bool ToolBarHasHotElementStyles (ToolBar toolBar)
+		{
+			return toolBar.Appearance == ToolBarAppearance.Flat;
+		}
+
+		public override bool ToolBarHasHotCheckedElementStyles {
+			get {
+				return false;
+			}
+		}
 		#endregion	// ToolBar
 
 		#region ToolTip

@@ -876,8 +876,8 @@ namespace System.Windows.Forms
 			} 
 
 			if (current_item != null && current_item.Rectangle.Contains (loc)) {
-				if (appearance == ToolBarAppearance.Flat) {
-					if (current_item.Hilight || current_item.Button.Pushed || !current_item.Button.Enabled)
+				if (ThemeEngine.Current.ToolBarHasHotElementStyles (this)) {
+					if (current_item.Hilight || (!ThemeEngine.Current.ToolBarHasHotCheckedElementStyles && current_item.Button.Pushed) || !current_item.Button.Enabled)
 						return;
 					current_item.Hilight = true;
 				}
@@ -894,11 +894,11 @@ namespace System.Windows.Forms
 					}
 				}
 
-				if (appearance == ToolBarAppearance.Flat) {
+				if (ThemeEngine.Current.ToolBarHasHotElementStyles (this)) {
 					foreach (ToolBarItem item in items) {
 						if (item.Rectangle.Contains (loc) && item.Button.Enabled) {
 							current_item = item;
-							if (current_item.Hilight || current_item.Button.Pushed)
+							if (current_item.Hilight || (!ThemeEngine.Current.ToolBarHasHotCheckedElementStyles && current_item.Button.Pushed))
 								continue;
 							current_item.Hilight = true;
 						}

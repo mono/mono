@@ -934,6 +934,9 @@ namespace System.Windows.Forms
 		public abstract int ToolBarDropDownArrowWidth { get; }	 // width for the dropdown arrow on the ToolBarButton
 		public abstract int ToolBarDropDownArrowHeight { get; }	 // height for the dropdown arrow on the ToolBarButton
 		public abstract Size ToolBarDefaultSize{get;}
+
+		public abstract bool ToolBarHasHotElementStyles (ToolBar toolBar);
+		public abstract bool ToolBarHasHotCheckedElementStyles { get; }
 		#endregion	// ToolBar
 
 		#region ToolTip

@@ -1,5 +1,10 @@
 2008-05-21  George Giolfan  <georgegiolfan@yahoo.com>
 
+	* Theme.cs, ThemeWin32Classic.cs, ToolBar.cs: Added support for hot and hot
+	checked styles.
+
+2008-05-21  George Giolfan  <georgegiolfan@yahoo.com>
+
 	* TabControl.cs: Extended to handle the hot style.
 
 2008-05-21  George Giolfan  <georgegiolfan@yahoo.com>
