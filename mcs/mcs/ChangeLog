@@ -1,5 +1,10 @@
 2008-05-21  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #390372
+	* nullable.cs: Set correct return type.
+
+2008-05-21  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #391062
 	* typemanager.cs: Fixed crash when comparing null types.
 

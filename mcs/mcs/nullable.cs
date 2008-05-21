@@ -1017,7 +1017,7 @@ namespace Mono.CSharp.Nullable
 						return ReducedExpression.Create (lc != null ? right : left, this).Resolve (ec);
 
 					right = Convert.ImplicitConversion (ec, right, ltype, loc);
-					type = right.Type;
+					type = left.Type;
 					return this;
 				}
 			} else {
