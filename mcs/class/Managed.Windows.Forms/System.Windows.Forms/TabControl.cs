@@ -983,12 +983,10 @@ namespace System.Windows.Forms {
 				row_count = 1;
 			show_slider = false;
 			
-			int scrollerWidth = ThemeEngine.Current.TabControlScrollerWidth * 2;
-
 			for (int i = 0; i < TabPages.Count; i++) {
 				TabPage page = TabPages [i];
 				int aux = 0;
-				SizeTab (page, i, row_width - scrollerWidth, ref xpos, ref ypos, spacing, 0, ref aux, true);
+				SizeTab (page, i, row_width, ref xpos, ref ypos, spacing, 0, ref aux, true);
 			}
 
 			if (SelectedIndex != -1 && TabPages.Count > SelectedIndex && TabPages[SelectedIndex].Row != BottomRow)
@@ -1075,7 +1073,6 @@ namespace System.Windows.Forms {
 			Size spacing = TabSpacing;
 			int begin_prev = 0;
 
-			row_width -= ThemeEngine.Current.TabControlScrollerWidth * 2;
 			if (TabPages.Count == 0)
 				return;
 
