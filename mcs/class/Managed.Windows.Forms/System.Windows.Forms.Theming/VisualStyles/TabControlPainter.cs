@@ -115,33 +115,6 @@ namespace System.Windows.Forms.Theming.VisualStyles
 						else
 							return VisualStyleElement.Tab.TabItem.Disabled;
 				#endregion
-			/*TODO Repaint the tab when the mouse enters or leaves its area.
-			else if (hot)
-				#region Hot
-				if (top_edge)
-					if (left_edge)
-						if (right_edge)
-							return VisualStyleElement.Tab.TopTabItem.Hot;
-						else
-							return VisualStyleElement.Tab.TopTabItemLeftEdge.Hot;
-					else
-						if (right_edge)
-							return VisualStyleElement.Tab.TopTabItemRightEdge.Hot;
-						else
-							return VisualStyleElement.Tab.TopTabItem.Hot;
-				else
-					if (left_edge)
-						if (right_edge)
-							return VisualStyleElement.Tab.TabItem.Hot;
-						else
-							return VisualStyleElement.Tab.TabItemLeftEdge.Hot;
-					else
-						if (right_edge)
-							return VisualStyleElement.Tab.TabItemRightEdge.Hot;
-						else
-							return VisualStyleElement.Tab.TabItem.Hot;
-				#endregion
-			*/
 			else if (selected)
 				#region Pressed
 				if (top_edge)
@@ -166,6 +139,31 @@ namespace System.Windows.Forms.Theming.VisualStyles
 							return VisualStyleElement.Tab.TabItemRightEdge.Pressed;
 						else
 							return VisualStyleElement.Tab.TabItem.Pressed;
+				#endregion
+			else if (tabControl.EnteredTabPage == tabPage)
+				#region Hot
+				if (top_edge)
+					if (left_edge)
+						if (right_edge)
+							return VisualStyleElement.Tab.TopTabItem.Hot;
+						else
+							return VisualStyleElement.Tab.TopTabItemLeftEdge.Hot;
+					else
+						if (right_edge)
+							return VisualStyleElement.Tab.TopTabItemRightEdge.Hot;
+						else
+							return VisualStyleElement.Tab.TopTabItem.Hot;
+				else
+					if (left_edge)
+						if (right_edge)
+							return VisualStyleElement.Tab.TabItem.Hot;
+						else
+							return VisualStyleElement.Tab.TabItemLeftEdge.Hot;
+					else
+						if (right_edge)
+							return VisualStyleElement.Tab.TabItemRightEdge.Hot;
+						else
+							return VisualStyleElement.Tab.TabItem.Hot;
 				#endregion
 			else
 				#region Normal
@@ -192,6 +190,12 @@ namespace System.Windows.Forms.Theming.VisualStyles
 						else
 							return VisualStyleElement.Tab.TabItem.Normal;
 				#endregion
+		}
+		public override bool HasHotElementStyles (TabControl tabControl)
+		{
+			if (!ShouldPaint (tabControl))
+				return base.HasHotElementStyles (tabControl);
+			return true;
 		}
 	}
 }
