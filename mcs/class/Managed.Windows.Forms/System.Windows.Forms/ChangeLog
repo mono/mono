@@ -1,5 +1,9 @@
 2008-05-21  George Giolfan  <georgegiolfan@yahoo.com>
 
+	* ThemeVisualStyles.cs: Added support for TextBoxBase.
+
+2008-05-21  George Giolfan  <georgegiolfan@yahoo.com>
+
 	* RichTextBox.cs, TextBoxBase.cs, Theme.cs, ThemeWin32Classic.cs: Refactored:
 	Extracted TextBoxBase.Draw and Theme.TextBoxBase*.
 

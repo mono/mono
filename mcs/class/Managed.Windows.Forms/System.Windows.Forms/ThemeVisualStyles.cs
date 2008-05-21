@@ -881,6 +881,66 @@ namespace System.Windows.Forms
 			new VisualStyleRenderer (element).DrawBackground (dc, area);
 		}
 		#endregion
+		#region TextBoxBase
+		static bool TextBoxBaseShouldPaint (TextBoxBase textBoxBase)
+		{
+			return textBoxBase.BorderStyle == BorderStyle.Fixed3D;
+		}
+		static VisualStyleElement TextBoxBaseGetVisualStyleElement (TextBoxBase textBoxBase)
+		{
+			if (!textBoxBase.Enabled)
+				return VisualStyleElement.TextBox.TextEdit.Disabled;
+			if (textBoxBase.ReadOnly)
+				return VisualStyleElement.TextBox.TextEdit.ReadOnly;
+			if (textBoxBase.Entered)
+				return VisualStyleElement.TextBox.TextEdit.Hot;
+			if (textBoxBase.Focused)
+				return VisualStyleElement.TextBox.TextEdit.Focused;
+			return VisualStyleElement.TextBox.TextEdit.Normal;
+		}
+		public override void TextBoxBaseFillBackground (TextBoxBase textBoxBase, Graphics g, Rectangle clippingArea)
+		{
+			if (!TextBoxBaseShouldPaint (textBoxBase)) {
+				base.TextBoxBaseFillBackground (textBoxBase, g, clippingArea);
+				return;
+			}
+			VisualStyleElement element = TextBoxBaseGetVisualStyleElement (textBoxBase);
+			if (!VisualStyleRenderer.IsElementDefined (element)) {
+				base.TextBoxBaseFillBackground (textBoxBase, g, clippingArea);
+				return;
+			}
+			Rectangle bounds = new Rectangle(Point.Empty, textBoxBase.Size);
+			bounds.X -= (bounds.Width - textBoxBase.ClientSize.Width) / 2;
+			bounds.Y -= (bounds.Height - textBoxBase.ClientSize.Height) / 2;
+			new VisualStyleRenderer (element).DrawBackground (g, bounds, clippingArea);
+		}
+		public override bool TextBoxBaseHandleWmNcPaint (TextBoxBase textBoxBase, ref Message m)
+		{
+			if (!TextBoxBaseShouldPaint (textBoxBase))
+				return base.TextBoxBaseHandleWmNcPaint (textBoxBase, ref m);
+			VisualStyleElement element = TextBoxBaseGetVisualStyleElement (textBoxBase);
+			if (!VisualStyleRenderer.IsElementDefined (element))
+				return base.TextBoxBaseHandleWmNcPaint (textBoxBase, ref m);
+			PaintEventArgs e = XplatUI.PaintEventStart (ref m, textBoxBase.Handle, false);
+			new VisualStyleRenderer (element).DrawBackgroundExcludingArea (
+				e.Graphics,
+				new Rectangle (Point.Empty, textBoxBase.Size),
+				new Rectangle (new Point ((textBoxBase.Width - textBoxBase.ClientSize.Width) / 2,
+					(textBoxBase.Height - textBoxBase.ClientSize.Height) / 2),
+					textBoxBase.ClientSize));
+			XplatUI.PaintEventEnd (ref m, textBoxBase.Handle, false);
+			return true;
+		}
+		public override bool TextBoxBaseShouldPaintBackground (TextBoxBase textBoxBase)
+		{
+			if (!TextBoxBaseShouldPaint (textBoxBase))
+				return base.TextBoxBaseShouldPaintBackground (textBoxBase);
+			VisualStyleElement element = TextBoxBaseGetVisualStyleElement (textBoxBase);
+			if (!VisualStyleRenderer.IsElementDefined (element))
+				return base.TextBoxBaseShouldPaintBackground (textBoxBase);
+			return new VisualStyleRenderer (element).IsBackgroundPartiallyTransparent ();
+		}
+		#endregion
 		#region TrackBar
 		protected override Size TrackBarGetThumbSize (TrackBar trackBar)
 		{
