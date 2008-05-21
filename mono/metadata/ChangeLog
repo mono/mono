@@ -1,5 +1,10 @@
 2008-05-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c (mono_class_setup_vtable): Avoid calling setup_methods () for
+	interfaces. Add some comments.
+	(mono_class_init): Call mono_class_setup_methods () here since it is no
+	longer called by mono_class_setup_vtable ().
+
 	* object.c (mono_class_proxy_vtable): Null out entries in pvt->vtable which are
 	not set in class->vtable.
 	(mono_class_create_runtime_vtable): Reenable the disabled code.
