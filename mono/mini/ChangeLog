@@ -1,4 +1,8 @@
-2008-05-21T0620  C.J. Adams-collier <cjac@colliertech.org>
+2008-05-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h: Remove the declaration of mono_aot_init_vtable ().
+
+2008-05-21  C.J. Adams-collier <cjac@colliertech.org>
 
 	* driver.c: updated copyright date
 
