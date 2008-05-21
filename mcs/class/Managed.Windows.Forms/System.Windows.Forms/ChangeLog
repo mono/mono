@@ -1,5 +1,9 @@
 2008-05-21  George Giolfan  <georgegiolfan@yahoo.com>
 
+	* ThemeVisualStyles.cs: Added support for the hot TrackBar thumb style.
+
+2008-05-21  George Giolfan  <georgegiolfan@yahoo.com>
+
 	* Theme.cs, ThemeWin32Classic.cs, TrackBar.cs: Added support for the hot
 	thumb style.
 

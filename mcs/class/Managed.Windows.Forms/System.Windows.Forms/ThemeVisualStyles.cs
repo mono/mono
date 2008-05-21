@@ -951,7 +951,7 @@ namespace System.Windows.Forms
 		}
 		static bool TrackBarIsHot (TrackBar trackBar)
 		{
-			return trackBar.Entered;
+			return trackBar.ThumbEntered;
 		}
 		static bool TrackBarIsPressed (TrackBar trackBar)
 		{
@@ -975,10 +975,10 @@ namespace System.Windows.Forms
 		{
 			if (TrackBarIsDisabled (trackBar))
 				return VisualStyleElement.TrackBar.ThumbBottom.Disabled;
-			else if (TrackBarIsHot (trackBar))
-				return VisualStyleElement.TrackBar.ThumbBottom.Hot;
 			else if (TrackBarIsPressed (trackBar))
 				return VisualStyleElement.TrackBar.ThumbBottom.Pressed;
+			else if (TrackBarIsHot (trackBar))
+				return VisualStyleElement.TrackBar.ThumbBottom.Hot;
 			else if (TrackBarIsFocused (trackBar))
 				return VisualStyleElement.TrackBar.ThumbBottom.Focused;
 			return VisualStyleElement.TrackBar.ThumbBottom.Normal;
@@ -996,10 +996,10 @@ namespace System.Windows.Forms
 		{
 			if (TrackBarIsDisabled (trackBar))
 				return VisualStyleElement.TrackBar.ThumbTop.Disabled;
-			else if (TrackBarIsHot (trackBar))
-				return VisualStyleElement.TrackBar.ThumbTop.Hot;
 			else if (TrackBarIsPressed (trackBar))
 				return VisualStyleElement.TrackBar.ThumbTop.Pressed;
+			else if (TrackBarIsHot (trackBar))
+				return VisualStyleElement.TrackBar.ThumbTop.Hot;
 			else if (TrackBarIsFocused (trackBar))
 				return VisualStyleElement.TrackBar.ThumbTop.Focused;
 			return VisualStyleElement.TrackBar.ThumbTop.Normal;
@@ -1017,10 +1017,10 @@ namespace System.Windows.Forms
 		{
 			if (TrackBarIsDisabled (trackBar))
 				return VisualStyleElement.TrackBar.Thumb.Disabled;
-			else if (TrackBarIsHot (trackBar))
-				return VisualStyleElement.TrackBar.Thumb.Hot;
 			else if (TrackBarIsPressed (trackBar))
 				return VisualStyleElement.TrackBar.Thumb.Pressed;
+			else if (TrackBarIsHot (trackBar))
+				return VisualStyleElement.TrackBar.Thumb.Hot;
 			else if (TrackBarIsFocused (trackBar))
 				return VisualStyleElement.TrackBar.Thumb.Focused;
 			return VisualStyleElement.TrackBar.Thumb.Normal;
@@ -1047,10 +1047,10 @@ namespace System.Windows.Forms
 		{
 			if (TrackBarIsDisabled (trackBar))
 				return VisualStyleElement.TrackBar.ThumbRight.Disabled;
-			else if (TrackBarIsHot (trackBar))
-				return VisualStyleElement.TrackBar.ThumbRight.Hot;
 			else if (TrackBarIsPressed (trackBar))
 				return VisualStyleElement.TrackBar.ThumbRight.Pressed;
+			else if (TrackBarIsHot (trackBar))
+				return VisualStyleElement.TrackBar.ThumbRight.Hot;
 			else if (TrackBarIsFocused (trackBar))
 				return VisualStyleElement.TrackBar.ThumbRight.Focused;
 			return VisualStyleElement.TrackBar.ThumbRight.Normal;
@@ -1068,10 +1068,10 @@ namespace System.Windows.Forms
 		{
 			if (TrackBarIsDisabled (trackBar))
 				return VisualStyleElement.TrackBar.ThumbLeft.Disabled;
-			else if (TrackBarIsHot (trackBar))
-				return VisualStyleElement.TrackBar.ThumbLeft.Hot;
 			else if (TrackBarIsPressed (trackBar))
 				return VisualStyleElement.TrackBar.ThumbLeft.Pressed;
+			else if (TrackBarIsHot (trackBar))
+				return VisualStyleElement.TrackBar.ThumbLeft.Hot;
 			else if (TrackBarIsFocused (trackBar))
 				return VisualStyleElement.TrackBar.ThumbLeft.Focused;
 			return VisualStyleElement.TrackBar.ThumbLeft.Normal;
@@ -1089,10 +1089,10 @@ namespace System.Windows.Forms
 		{
 			if (TrackBarIsDisabled (trackBar))
 				return VisualStyleElement.TrackBar.ThumbVertical.Disabled;
-			else if (TrackBarIsHot (trackBar))
-				return VisualStyleElement.TrackBar.ThumbVertical.Hot;
 			else if (TrackBarIsPressed (trackBar))
 				return VisualStyleElement.TrackBar.ThumbVertical.Pressed;
+			else if (TrackBarIsHot (trackBar))
+				return VisualStyleElement.TrackBar.ThumbVertical.Hot;
 			else if (TrackBarIsFocused (trackBar))
 				return VisualStyleElement.TrackBar.ThumbVertical.Focused;
 			return VisualStyleElement.TrackBar.ThumbVertical.Normal;
@@ -1155,6 +1155,11 @@ namespace System.Windows.Forms
 		}
 		#endregion
 		#endregion
+		public override bool TrackBarHasHotThumbStyle {
+			get {
+				return true;
+			}
+		}
 		#endregion
 		#region ToolBar
 		static bool ToolBarIsDisabled (ToolBarItem item)
