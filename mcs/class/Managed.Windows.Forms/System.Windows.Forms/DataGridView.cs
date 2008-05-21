@@ -5509,6 +5509,8 @@ namespace System.Windows.Forms {
 				}
 				if (value is DataSet)
 					value = (value as DataSet).Tables[dataMember];
+				if (value is BindingSource)
+					value = (value as BindingSource).List;
 					
 				if (value is IList)
 					BindIList (value as IList);

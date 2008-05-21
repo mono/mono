@@ -1,5 +1,9 @@
 2008-05-21  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridViewDataBindingTest.cs: Add test for bug #345483.
+
+2008-05-21  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridViewDataBindingTest.cs: Add test for bug #337470.
 
 2008-05-20  Jonathan Pobst  <monkey@jpobst.com>

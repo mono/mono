@@ -1,5 +1,10 @@
 2008-05-21  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridView.cs: When binding to a BindingSource, get the underlying
+	list to bind to.  [Fixes bug #345483]
+
+2008-05-21  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridView.cs: Do not bind to collection properties.
 	[Fixes bug #337470]
 

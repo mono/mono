@@ -337,5 +337,51 @@ namespace MonoTests.System.Windows.Forms.DataGridViewBindingTest
 			public string[] Names { get { return new string[] { "Kermit", "Gonzo" }; } }
 		}
 	}
+
+	[TestFixture]
+	public class BindingSourceTest
+	{
+		[Test]	// bug #345483
+		public void TestBindingSource ()
+		{
+			// The grid has to extract the List from the BindingSource
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+
+			BindingSource BindingSource = new BindingSource ();
+
+			DataSet dataSet1 = new DataSet ();
+
+			dataSet1.Tables.Add ();
+			dataSet1.Tables[0].Columns.Add ();
+			dataSet1.Tables[0].Columns.Add ();
+			dataSet1.Tables[0].Columns.Add ();
+			dataSet1.Tables[0].Columns.Add ();
+			dataSet1.Tables[0].Columns.Add ();
+			dataSet1.Tables[0].Rows.Add ("111111", "222222", "333333", "444444", "555555");
+
+			BindingSource.DataSource = dataSet1.Tables[0];
+
+			DataGridView dgv = new DataGridView ();
+			dgv.DataSource = BindingSource;
+
+			f.Controls.Add (dgv);
+			f.Show ();
+
+			Assert.AreEqual (5, dgv.ColumnCount, "A1");
+			Assert.AreEqual (2, dgv.RowCount, "A2");
+
+			Assert.AreEqual ("Column1", dgv.Columns[0].Name, "A3");
+			Assert.AreEqual ("111111", dgv.Rows[0].Cells[0].Value, "A4");
+
+			f.Dispose ();
+		}
+
+		private class Customer
+		{
+			public string Name { get { return "Kermit"; } }
+			public string[] Names { get { return new string[] { "Kermit", "Gonzo" }; } }
+		}
+	}
 }
 #endif
