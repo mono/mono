@@ -1,8 +1,12 @@
 2008-05-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* object.c (mono_class_proxy_vtable): Null out entries in pvt->vtable which are
+	not set in class->vtable.
+	(mono_class_create_runtime_vtable): Reenable the disabled code.
+
 	* object.c (mono_class_create_runtime_vtable): Disable the last change for
 	now as it causes some test failures.
-	
+
 	* object.c (mono_class_create_runtime_vtable): Avoid creating a generic vtable
 	if using the vtable trampoline. Also remove some strange code which put the
 	generic methods themselves into the vtable slots. Remove the AOT init_vtable
