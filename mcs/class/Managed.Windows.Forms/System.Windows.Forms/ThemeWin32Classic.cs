@@ -5747,6 +5747,11 @@ namespace System.Windows.Forms
 			}
 		}
 
+		public override bool TrackBarHasHotThumbStyle {
+			get {
+				return false;
+			}
+		}
 		#endregion	// TrackBar
 
 		#region UpDownBase

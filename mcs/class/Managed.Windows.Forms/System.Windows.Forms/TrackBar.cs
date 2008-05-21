@@ -76,6 +76,7 @@ namespace System.Windows.Forms
 #if NET_2_0
 		private bool right_to_left_layout;
 #endif
+		bool thumb_entered;
 	
 		#region events
 #if NET_2_0
@@ -219,6 +220,7 @@ namespace System.Windows.Forms
 			MouseDown += new MouseEventHandler (OnMouseDownTB); 
 			MouseUp += new MouseEventHandler (OnMouseUpTB); 
 			MouseMove += new MouseEventHandler (OnMouseMoveTB);
+			MouseLeave += new EventHandler (OnMouseLeave);
 			KeyDown += new KeyEventHandler (OnKeyDownTB);
 			LostFocus += new EventHandler (OnLostFocusTB);
 			GotFocus += new EventHandler (OnGotFocusTB);
@@ -249,6 +251,17 @@ namespace System.Windows.Forms
 
 			set {
 				thumb_area = value;
+			}
+		}
+
+		internal bool ThumbEntered {
+			get { return thumb_entered; }
+			set {
+				if (thumb_entered == value)
+					return;
+				thumb_entered = value;
+				if (ThemeEngine.Current.TrackBarHasHotThumbStyle)
+					Invalidate (GetRealThumbRectangle ());
 			}
 		}
 		#endregion	// Private & Internal Properties
@@ -779,7 +792,18 @@ namespace System.Windows.Forms
     				if (Value != old_value)
     					OnScroll (EventArgs.Empty);
 			}
+			ThumbEntered = GetRealThumbRectangle ().Contains (e.Location);
     		}
+
+		Rectangle GetRealThumbRectangle ()
+		{
+			Rectangle result = thumb_pos;
+			if (Orientation == Orientation.Vertical) {
+				result.Width = thumb_pos.Height;
+				result.Height = thumb_pos.Width;
+			}
+			return result;
+		}
 
 		internal override void OnPaintInternal (PaintEventArgs pevent)
 		{		
@@ -885,6 +909,11 @@ namespace System.Windows.Forms
  					Refresh();
 			}			
 		}					
+
+		void OnMouseLeave (object sender, EventArgs e)
+		{
+			ThumbEntered = false;
+		}
     		#endregion // Private Methods
 	}
 }

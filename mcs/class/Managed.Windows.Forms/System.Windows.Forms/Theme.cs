@@ -961,6 +961,8 @@ namespace System.Windows.Forms
 		public abstract Size TrackBarDefaultSize{get; }		// Default size for the TrackBar control
 		
 		public abstract int TrackBarValueFromMousePosition (int x, int y, TrackBar tb);
+
+		public abstract bool TrackBarHasHotThumbStyle { get; }
 		#endregion	// TrackBar
 
 		#region UpDownBase
