@@ -1,3 +1,7 @@
+2008-05-21T0620  C.J. Adams-collier <cjac@colliertech.org>
+
+	* driver.c: updated copyright date
+
 2008-05-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c mini.c: Remove the AOT init_vtable stuff as it is no longer
