@@ -2,19 +2,13 @@
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Web.Services20", "System.Web.Services20.csproj", "{B37A8704-33AB-48D9-B0C2-1D919755B69A}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{BC1CF9B3-F696-4988-A4D1-E190CB6D2851} = {BC1CF9B3-F696-4988-A4D1-E190CB6D2851}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DefaultWsdlHelpGenerator", "DefaultWsdlHelpGenerator\DefaultWsdlHelpGenerator.csproj", "{BC1CF9B3-F696-4988-A4D1-E190CB6D2851}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Web20", "..\System.Web\System.Web20.csproj", "{0F744BEF-F9B1-4953-BB86-9ADBF73C3CD4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,6 +42,18 @@ Global
 		{BC1CF9B3-F696-4988-A4D1-E190CB6D2851}.Release_Java20_prepare|Any CPU.ActiveCfg = Release_Java20_prepare|Any CPU
 		{BC1CF9B3-F696-4988-A4D1-E190CB6D2851}.Release_Java20|Any CPU.ActiveCfg = Release_Java20|Any CPU
 		{BC1CF9B3-F696-4988-A4D1-E190CB6D2851}.Release_Java20|Any CPU.Build.0 = Release_Java20|Any CPU
+		{0F744BEF-F9B1-4953-BB86-9ADBF73C3CD4}.Debug_Java|Any CPU.ActiveCfg = Debug_Java|Any CPU
+		{0F744BEF-F9B1-4953-BB86-9ADBF73C3CD4}.Debug_Java|Any CPU.Build.0 = Debug_Java|Any CPU
+		{0F744BEF-F9B1-4953-BB86-9ADBF73C3CD4}.Debug_Java20_prepare|Any CPU.ActiveCfg = Debug_Java20|Any CPU
+		{0F744BEF-F9B1-4953-BB86-9ADBF73C3CD4}.Debug_Java20_prepare|Any CPU.Build.0 = Debug_Java20|Any CPU
+		{0F744BEF-F9B1-4953-BB86-9ADBF73C3CD4}.Debug_Java20|Any CPU.ActiveCfg = Debug_Java20|Any CPU
+		{0F744BEF-F9B1-4953-BB86-9ADBF73C3CD4}.Debug_Java20|Any CPU.Build.0 = Debug_Java20|Any CPU
+		{0F744BEF-F9B1-4953-BB86-9ADBF73C3CD4}.Release_Java|Any CPU.ActiveCfg = Release_Java|Any CPU
+		{0F744BEF-F9B1-4953-BB86-9ADBF73C3CD4}.Release_Java|Any CPU.Build.0 = Release_Java|Any CPU
+		{0F744BEF-F9B1-4953-BB86-9ADBF73C3CD4}.Release_Java20_prepare|Any CPU.ActiveCfg = Release_Java20|Any CPU
+		{0F744BEF-F9B1-4953-BB86-9ADBF73C3CD4}.Release_Java20_prepare|Any CPU.Build.0 = Release_Java20|Any CPU
+		{0F744BEF-F9B1-4953-BB86-9ADBF73C3CD4}.Release_Java20|Any CPU.ActiveCfg = Release_Java20|Any CPU
+		{0F744BEF-F9B1-4953-BB86-9ADBF73C3CD4}.Release_Java20|Any CPU.Build.0 = Release_Java20|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
