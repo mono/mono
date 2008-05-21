@@ -1319,24 +1319,49 @@ namespace System.Windows.Forms
 		}
 		#endregion
 		#region UpDownBase
-		public override void UpDownBaseDrawButton (Graphics g, Rectangle bounds, bool top, bool pressed)
+		public override void UpDownBaseDrawButton (Graphics g, Rectangle bounds, bool top, PushButtonState state)
 		{
 			VisualStyleElement element;
 			if (top)
-				if (pressed)
+				switch (state) {
+				case PushButtonState.Disabled:
+					element = VisualStyleElement.Spin.Up.Disabled;
+					break;
+				case PushButtonState.Pressed:
 					element = VisualStyleElement.Spin.Up.Pressed;
-				else
+					break;
+				case PushButtonState.Hot:
+					element = VisualStyleElement.Spin.Up.Hot;
+					break;
+				default:
 					element = VisualStyleElement.Spin.Up.Normal;
+					break;
+				}
 			else
-				if (pressed)
+				switch (state) {
+				case PushButtonState.Disabled:
+					element = VisualStyleElement.Spin.Down.Disabled;
+					break;
+				case PushButtonState.Pressed:
 					element = VisualStyleElement.Spin.Down.Pressed;
-				else
+					break;
+				case PushButtonState.Hot:
+					element = VisualStyleElement.Spin.Down.Hot;
+					break;
+				default:
 					element = VisualStyleElement.Spin.Down.Normal;
+					break;
+				}
 			if (!VisualStyleRenderer.IsElementDefined (element)) {
-				base.UpDownBaseDrawButton (g, bounds, top, pressed);
+				base.UpDownBaseDrawButton (g, bounds, top, state);
 				return;
 			}
 			new VisualStyleRenderer (element).DrawBackground (g, bounds);
+		}
+		public override bool UpDownBaseHasHotButtonStyle {
+			get {
+				return true;
+			}
 		}
 		#endregion
 	}

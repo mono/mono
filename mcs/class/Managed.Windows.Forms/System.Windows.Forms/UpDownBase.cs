@@ -54,6 +54,8 @@ namespace System.Windows.Forms
 			private int		mouse_y;
 			private int		repeat_delay;
 			private int		repeat_counter;
+			bool top_button_entered;
+			bool bottom_button_entered;
 			#endregion	// Local Variables
 
 			#region Constructors
@@ -96,19 +98,28 @@ namespace System.Windows.Forms
 
 			private void redraw (Graphics graphics)
 			{
-				bool top_button_pressed = false;
-				bool bottom_button_pressed = false;
+				VisualStyles.PushButtonState top_button_state = VisualStyles.PushButtonState.Normal;
+				VisualStyles.PushButtonState bottom_button_state = VisualStyles.PushButtonState.Normal;
 
+				if (owner.Enabled) {
+					if (mouse_pressed != 0) {
+						if (mouse_pressed == 1 && top_button_rect.Contains(mouse_x, mouse_y))
+							top_button_state = VisualStyles.PushButtonState.Pressed;
 
-				if (mouse_pressed != 0) {
-					if (mouse_pressed == 1 && top_button_rect.Contains(mouse_x, mouse_y))
-						top_button_pressed = true;
-
-					if (mouse_pressed == 2 && bottom_button_rect.Contains(mouse_x, mouse_y))
-						bottom_button_pressed = true;
+						if (mouse_pressed == 2 && bottom_button_rect.Contains(mouse_x, mouse_y))
+							bottom_button_state = VisualStyles.PushButtonState.Pressed;
+					} else {
+						if (top_button_entered)
+							top_button_state = VisualStyles.PushButtonState.Hot;
+						if (bottom_button_entered)
+							bottom_button_state = VisualStyles.PushButtonState.Hot;
+					}
+				} else {
+					top_button_state = VisualStyles.PushButtonState.Disabled;
+					bottom_button_state = VisualStyles.PushButtonState.Disabled;
 				}
-				ThemeEngine.Current.UpDownBaseDrawButton (graphics, top_button_rect, true, top_button_pressed);
-				ThemeEngine.Current.UpDownBaseDrawButton (graphics, bottom_button_rect, false, bottom_button_pressed);
+				ThemeEngine.Current.UpDownBaseDrawButton (graphics, top_button_rect, true, top_button_state);
+				ThemeEngine.Current.UpDownBaseDrawButton (graphics, bottom_button_rect, false, bottom_button_state);
 			}
 
 			private void tmrRepeat_Tick (object sender, EventArgs e)
@@ -183,6 +194,9 @@ namespace System.Windows.Forms
 				if ((mouse_pressed == 2) && bottom_button_rect.Contains(mouse_x, mouse_y))
 					after = ButtonState.Pushed;
 
+				bool new_top_button_entered = top_button_rect.Contains (e.Location);
+				bool new_bottom_button_entered = bottom_button_rect.Contains (e.Location);
+				
 				if (before != after) {
 					if (after == ButtonState.Pushed) {
 						tmrRepeat.Enabled = true;
@@ -198,7 +212,32 @@ namespace System.Windows.Forms
 					else
 						tmrRepeat.Enabled = false;
 
+					top_button_entered = new_top_button_entered;
+					bottom_button_entered = new_bottom_button_entered;
+
 					Refresh ();
+				} else {
+					if (ThemeEngine.Current.UpDownBaseHasHotButtonStyle) {
+						Region area_to_invalidate = new Region ();
+						bool dirty = false;
+						area_to_invalidate.MakeEmpty ();
+						if (top_button_entered != new_top_button_entered) {
+							top_button_entered = new_top_button_entered;
+							area_to_invalidate.Union (top_button_rect);
+							dirty = true;
+						}
+						if (bottom_button_entered != new_bottom_button_entered) {
+							bottom_button_entered = new_bottom_button_entered;
+							area_to_invalidate.Union (bottom_button_rect);
+							dirty = true;
+						}
+						if (dirty)
+							Invalidate (area_to_invalidate);
+						area_to_invalidate.Dispose ();
+					} else {
+						top_button_entered = new_top_button_entered;
+						bottom_button_entered = new_bottom_button_entered;
+					}
 				}
 			}
 
@@ -216,6 +255,20 @@ namespace System.Windows.Forms
 					owner.UpButton();
 				else if (e.Delta < 0)
 					owner.DownButton();
+			}
+
+			protected override void OnMouseLeave (EventArgs e)
+			{
+				if (top_button_entered) {
+					top_button_entered = false;
+					if (ThemeEngine.Current.UpDownBaseHasHotButtonStyle)
+						Invalidate (top_button_rect);
+				}
+				if (bottom_button_entered) {
+					bottom_button_entered = false;
+					if (ThemeEngine.Current.UpDownBaseHasHotButtonStyle)
+						Invalidate (bottom_button_rect);
+				}
 			}
 
 			protected override void OnPaint(PaintEventArgs e)

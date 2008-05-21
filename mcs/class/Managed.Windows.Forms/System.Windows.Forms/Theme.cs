@@ -960,7 +960,8 @@ namespace System.Windows.Forms
 		#endregion	// TrackBar
 
 		#region UpDownBase
-		public abstract void UpDownBaseDrawButton (Graphics g, Rectangle bounds, bool top, bool pressed);
+		public abstract void UpDownBaseDrawButton (Graphics g, Rectangle bounds, bool top, VisualStyles.PushButtonState state);
+		public abstract bool UpDownBaseHasHotButtonStyle { get; }
 		#endregion
 
 		#region VScrollBar

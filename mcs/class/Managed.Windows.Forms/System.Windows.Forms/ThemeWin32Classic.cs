@@ -5734,9 +5734,15 @@ namespace System.Windows.Forms
 		#endregion	// TrackBar
 
 		#region UpDownBase
-		public override void UpDownBaseDrawButton (Graphics g, Rectangle bounds, bool top, bool pressed)
+		public override void UpDownBaseDrawButton (Graphics g, Rectangle bounds, bool top, VisualStyles.PushButtonState state)
 		{
-			ControlPaint.DrawScrollButton (g, bounds, top ? ScrollButton.Up : ScrollButton.Down, pressed ? ButtonState.Pushed : ButtonState.Normal);
+			ControlPaint.DrawScrollButton (g, bounds, top ? ScrollButton.Up : ScrollButton.Down, state == VisualStyles.PushButtonState.Pressed ? ButtonState.Pushed : ButtonState.Normal);
+		}
+
+		public override bool UpDownBaseHasHotButtonStyle {
+			get {
+				return false;
+			}
 		}
 		#endregion
 
