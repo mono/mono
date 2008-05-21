@@ -4200,7 +4200,7 @@ namespace System.Windows.Forms {
 			bounds.Inflate (-BorderWidth, -BorderWidth);
 			
 			// Paint the top left cell
-			if (rowHeadersVisible && columnHeadersVisible) {
+			if (rowHeadersVisible && columnHeadersVisible && ColumnCount > 0) {
 				Rectangle topleftbounds = new Rectangle (bounds.X, bounds.Y, rowHeadersWidth, columnHeadersHeight);
 				
 				TopLeftHeaderCell.PaintWork (g, e.ClipRectangle, topleftbounds, -1, TopLeftHeaderCell.State, ColumnHeadersDefaultCellStyle, AdvancedColumnHeadersBorderStyle, DataGridViewPaintParts.All);

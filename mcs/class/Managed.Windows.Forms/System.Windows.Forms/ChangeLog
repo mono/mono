@@ -1,5 +1,10 @@
 2008-05-21  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridView.cs: Only paint the top left header cell if there
+	are columns.
+
+2008-05-21  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridView.cs: When binding to a BindingSource, get the underlying
 	list to bind to.  [Fixes bug #345483]
 
