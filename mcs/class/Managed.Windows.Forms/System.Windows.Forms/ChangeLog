@@ -1,3 +1,8 @@
+2008-05-21  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* RichTextBox.cs, TextBoxBase.cs, Theme.cs, ThemeWin32Classic.cs: Refactored:
+	Extracted TextBoxBase.Draw and Theme.TextBoxBase*.
+
 2008-05-21  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridView.cs: Only paint the top left header cell if there

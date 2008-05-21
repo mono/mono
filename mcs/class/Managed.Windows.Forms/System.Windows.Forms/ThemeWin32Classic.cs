@@ -4766,6 +4766,27 @@ namespace System.Windows.Forms
 
 		#endregion
 
+		#region TextBox
+		public override void TextBoxBaseFillBackground (TextBoxBase textBoxBase, Graphics g, Rectangle clippingArea)
+		{
+			if (textBoxBase.backcolor_set || (textBoxBase.Enabled && !textBoxBase.read_only)) {
+				g.FillRectangle(ResPool.GetSolidBrush(textBoxBase.BackColor), clippingArea);
+			} else {
+				g.FillRectangle(ResPool.GetSolidBrush(ColorControl), clippingArea);
+			}
+		}
+
+		public override bool TextBoxBaseHandleWmNcPaint (TextBoxBase textBoxBase, ref Message m)
+		{
+			return false;
+		}
+
+		public override bool TextBoxBaseShouldPaintBackground (TextBoxBase textBoxBase)
+		{
+			return true;
+		}
+		#endregion
+
 		#region ToolBar
 		public  override void DrawToolBar (Graphics dc, Rectangle clip_rectangle, ToolBar control) 
 		{

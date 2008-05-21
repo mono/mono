@@ -204,6 +204,12 @@ namespace System.Windows.Forms
 				SetStyle (ControlStyles.StandardDoubleClick, false);
 		}
 
+		internal override void PaintControlBackground (PaintEventArgs pevent)
+		{
+			if (!ThemeEngine.Current.TextBoxBaseShouldPaintBackground (this))
+				return;
+			base.PaintControlBackground (pevent);
+		}
 		#endregion	// Private and Internal Methods
 
 		#region Public Instance Properties
@@ -1590,6 +1596,11 @@ namespace System.Windows.Forms
 				document.CaretLostFocus ();
 				break;
 
+			case Msg.WM_NCPAINT:
+				if (!ThemeEngine.Current.TextBoxBaseHandleWmNcPaint (this, ref m))
+					base.WndProc(ref m);
+				break;
+
 			default:
 				base.WndProc(ref m);
 				return;
@@ -1758,20 +1769,20 @@ namespace System.Windows.Forms
 
 		internal override void OnPaintInternal (PaintEventArgs pevent)
 		{
-			// Fill background
-			if (backcolor_set || (Enabled && !read_only)) {
-				pevent.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(BackColor), pevent.ClipRectangle);
-			} else {
-				pevent.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorControl), pevent.ClipRectangle);
-			}
-			
-			// Draw the viewable document
-			document.Draw(pevent.Graphics, pevent.ClipRectangle);
+			Draw (pevent.Graphics, pevent.ClipRectangle);
 
 			//
 			// OnPaint does not get raised on MS (see bug #80639)
 			// 
 			pevent.Handled = true;
+		}
+
+		internal void Draw (Graphics g, Rectangle clippingArea)
+		{
+			ThemeEngine.Current.TextBoxBaseFillBackground (this, g, clippingArea);
+			
+			// Draw the viewable document
+			document.Draw(g, clippingArea);
 		}
 
 		private void FixupHeight ()

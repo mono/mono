@@ -922,6 +922,12 @@ namespace System.Windows.Forms
 		public abstract void DrawTabControl (Graphics dc, Rectangle area, TabControl tab);
 		#endregion
 
+		#region TextBoxBase
+		public abstract void TextBoxBaseFillBackground (TextBoxBase textBoxBase, Graphics g, Rectangle clippingArea);
+		public abstract bool TextBoxBaseHandleWmNcPaint (TextBoxBase textBoxBase, ref Message m);
+		public abstract bool TextBoxBaseShouldPaintBackground (TextBoxBase textBoxBase);
+		#endregion
+
 		#region	ToolBar
 		// Drawing
 		public abstract void DrawToolBar (Graphics dc, Rectangle clip_rectangle, ToolBar control);

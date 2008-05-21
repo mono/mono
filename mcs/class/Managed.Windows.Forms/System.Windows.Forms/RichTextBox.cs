@@ -1151,14 +1151,7 @@ namespace System.Windows.Forms {
 		{
 			Graphics dc = Graphics.FromImage (bitmap);
 
-			if (backcolor_set || (Enabled && !read_only)) {
-				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), targetBounds);
-			} else {
-				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorControl), targetBounds);
-			}
-			
-			// Draw the viewable document
-			document.Draw (dc, targetBounds);
+			Draw (dc, targetBounds);
 		}
 #endif
 
