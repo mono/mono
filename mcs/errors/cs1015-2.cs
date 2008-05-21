@@ -1,4 +1,4 @@
-// CS1015: Only `object', `string', and types that derive from `System.Exception' can be passed into a catch block
+// CS1015: A type that derives from `System.Exception', `object', or `string' expected
 // Line: 9
 
 class Test

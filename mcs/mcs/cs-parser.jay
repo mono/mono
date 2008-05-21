@@ -5739,7 +5739,7 @@ void Error_ExpectingTypeName (Expression expr)
 
 static void Error_InvalidCatchType (Location loc)
 {
-	Report.Error (1015, loc, "Only `object', `string', and types that derive from `System.Exception' can be passed into a catch block");
+	Report.Error (1015, loc, "A type that derives from `System.Exception', `object', or `string' expected");
 }
 
 static void Error_ParameterModifierNotValid (string modifier, Location loc)
