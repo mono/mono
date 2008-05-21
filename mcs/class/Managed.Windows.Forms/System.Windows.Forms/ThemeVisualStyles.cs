@@ -1292,6 +1292,15 @@ namespace System.Windows.Forms
 			return VisualStyleElement.ToolBar.SplitButtonDropDown.Normal;
 		}
 		#endregion
+		public override bool ToolBarHasHotElementStyles (ToolBar toolBar)
+		{
+			return true;
+		}
+		public override bool ToolBarHasHotCheckedElementStyles {
+			get {
+				return true;
+			}
+		}
 		#endregion
 		#region ToolTip
 		protected override void ToolTipDrawBackground (Graphics dc, Rectangle clip_rectangle, ToolTip.ToolTipWindow control)
