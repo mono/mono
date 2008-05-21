@@ -1,21 +1,26 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{0F744BEF-F9B1-4953-BB86-9ADBF73C3CD4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>System.Web</RootNamespace>
     <AssemblyName>System.Web</AssemblyName>
-    <JDKName>1.4.2</JDKName>
+    <JDKName>1.6</JDKName>
     <GHProjectType>1</GHProjectType>
     <!-- workaqround that should be changed to be "framework" when we will be able to compile without MS refs -->
     <GHProjectKind>runtime</GHProjectKind>
     <Version>2.0</Version>
     <ProjectTypeGuids>{F6B19D50-1E2E-4e87-ADFB-10393B439DE0};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <jarserver>ip2</jarserver>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>2.0</OldToolsVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java20|AnyCPU' ">
     <OutputPath>bin\Release_Java20\</OutputPath>
@@ -1451,7 +1456,7 @@
   -->
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties REFS-RefInfo-mainsoft-mscorlib="repository:vmw:framework:2.0" REFS-RefInfo-mainsoft-configuration="repository:vmw:framework:2.0" REFS-JarPath-mainsoft-configuration="" REFS-RefInfo-system-xml="repository:vmw:framework:2.0" REFS-RefInfo-system-drawing="repository:vmw:framework:2.0" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-RefInfo-j2se-helpers="repository:vmw:framework:2.0" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-RefInfo-system-configuration="repository:vmw:framework:2.0" REFS-RefInfo-j2ee-helpers="repository:vmw:framework:2.0" REFS-RefInfo-javaee="repository:JavaEE:tomcat:1.3" REFS-JarPath-javaee="" REFS-JarPath-j2se-helpers="" REFS-JarPath-j2ee-helpers="" REFS-JarPath-j2ee="..\lib\j2ee.jar" REFS-RefInfo-rt="repository:jre:sun:1.4.2" REFS-JarPath-rt="" REFS-JarPath-mscorlib="" REFS-JarPath-system="" REFS-JarPath-system-xml="" REFS-JarPath-system-drawing="" REFS-JarPath-system-data="" REFS-JarPath-system-configuration="" REFS-RefInfo-myfaces="repository:vmw:framework:2.0" REFS-JarPath-myfaces="" />
+      <UserProperties REFS-JarPath-myfaces="" REFS-RefInfo-myfaces="repository:vmw:framework:2.0" REFS-JarPath-system-configuration="" REFS-JarPath-system-data="" REFS-JarPath-system-drawing="" REFS-JarPath-system-xml="" REFS-JarPath-system="" REFS-JarPath-mscorlib="" REFS-JarPath-rt="" REFS-RefInfo-rt="repository:jre:sun:1.4.2" REFS-JarPath-j2ee="..\lib\j2ee.jar" REFS-JarPath-j2ee-helpers="" REFS-JarPath-j2se-helpers="" REFS-JarPath-javaee="" REFS-RefInfo-javaee="repository:JavaEE:tomcat:1.3" REFS-RefInfo-j2ee-helpers="repository:vmw:framework:2.0" REFS-RefInfo-system-configuration="repository:vmw:framework:2.0" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-RefInfo-j2se-helpers="repository:vmw:framework:2.0" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-RefInfo-system-drawing="repository:vmw:framework:2.0" REFS-RefInfo-system-xml="repository:vmw:framework:2.0" REFS-JarPath-mainsoft-configuration="" REFS-RefInfo-mainsoft-configuration="repository:vmw:framework:2.0" REFS-RefInfo-mainsoft-mscorlib="repository:vmw:framework:2.0" />
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>

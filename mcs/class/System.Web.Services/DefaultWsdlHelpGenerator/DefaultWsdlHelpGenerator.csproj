@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug_Java20_prepare|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\</OutputPath>
@@ -20,24 +20,29 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug_Java</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{BC1CF9B3-F696-4988-A4D1-E190CB6D2851}</ProjectGuid>
     <ProjectTypeGuids>{F6B19D50-1E2E-4e87-ADFB-10393B439DE0};{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>DefaultWsdlHelpGenerator</AssemblyName>
-    <JDKName>1.6.0</JDKName>
+    <JDKName>1.6.0_05</JDKName>
     <GHProjectType>3</GHProjectType>
     <GHProjectKind>runtime</GHProjectKind>
     <Version>2.0</Version>
     <AdditionalClassPath>
     </AdditionalClassPath>
     <RootNamespace>DefaultWsdlHelpGenerator</RootNamespace>
-    <jarserver>ipa</jarserver>
+    <jarserver>ip2</jarserver>
     <ApplicationServerType>tomcat</ApplicationServerType>
     <FlatWebApp>true</FlatWebApp>
     <DeployOnBuild>False</DeployOnBuild>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release_Java20|AnyCPU' ">
     <OutputPath>bin\</OutputPath>
@@ -160,14 +165,15 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerPort>1394</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
-      <UserProperties REFS-RefInfo-rt="repository:jre:sun:1.6.0" REFS-JarPath-rt="" REFS-RefInfo-myfaces="repository:vmw:framework:2.0" REFS-JarPath-myfaces="" REFS-RefInfo-mainsoft-web-aspnetconfig="repository:vmw:framework:2.0" REFS-JarPath-mainsoft-web-aspnetconfig="" REFS-RefInfo-system-xml="repository:vmw:framework:2.0" REFS-JarPath-system-xml="" REFS-RefInfo-system-web-services="repository:vmw:framework:2.0" REFS-JarPath-system-web-services="" REFS-RefInfo-system-web="repository:vmw:framework:2.0" REFS-JarPath-system-web="" REFS-RefInfo-system-drawing="repository:vmw:framework:2.0" REFS-JarPath-system-drawing="" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-JarPath-system-data="" REFS-RefInfo-system-configuration="repository:vmw:framework:2.0" REFS-JarPath-system-configuration="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system="" />
+      <UserProperties REFS-JarPath-system="" REFS-RefInfo-system="repository:vmw:framework:2.0" REFS-JarPath-system-configuration="" REFS-RefInfo-system-configuration="repository:vmw:framework:2.0" REFS-JarPath-system-data="" REFS-RefInfo-system-data="repository:vmw:framework:2.0" REFS-JarPath-system-drawing="" REFS-RefInfo-system-drawing="repository:vmw:framework:2.0" REFS-JarPath-system-web="" REFS-RefInfo-system-web="repository:vmw:framework:2.0" REFS-JarPath-system-web-services="" REFS-RefInfo-system-web-services="repository:vmw:framework:2.0" REFS-JarPath-system-xml="" REFS-RefInfo-system-xml="repository:vmw:framework:2.0" REFS-JarPath-mainsoft-web-aspnetconfig="" REFS-RefInfo-mainsoft-web-aspnetconfig="repository:vmw:framework:2.0" REFS-JarPath-myfaces="" REFS-RefInfo-myfaces="repository:vmw:framework:2.0" REFS-JarPath-rt="" REFS-RefInfo-rt="repository:jre:sun:1.6.0" />
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
