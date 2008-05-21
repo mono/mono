@@ -942,6 +942,7 @@ namespace System.Windows.Forms
 		#region ToolTip
 		public abstract void DrawToolTip(Graphics dc, Rectangle clip_rectangle, ToolTip.ToolTipWindow control);
 		public abstract Size ToolTipSize(ToolTip.ToolTipWindow tt, string text);
+		public abstract bool ToolTipTransparentBackground { get; }
 		#endregion	// ToolTip
 		
 		#region BalloonWindow

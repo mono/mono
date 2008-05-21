@@ -5066,6 +5066,12 @@ namespace System.Windows.Forms
 			
 			return size;
 		}
+		
+		public override bool ToolTipTransparentBackground {
+			get {
+				return false;
+			}
+ 		}
 		#endregion	// ToolTip
 
 		#region BalloonWindow

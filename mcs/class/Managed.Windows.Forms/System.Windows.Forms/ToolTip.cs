@@ -88,7 +88,12 @@ namespace System.Windows.Forms {
 				VisibleChanged += new EventHandler(ToolTipWindow_VisibleChanged);
 
 				SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
-				SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);
+				SetStyle (ControlStyles.ResizeRedraw, true);
+				if (ThemeEngine.Current.ToolTipTransparentBackground) {
+					SetStyle (ControlStyles.SupportsTransparentBackColor, true);
+					BackColor = Color.Transparent;
+				} else
+					SetStyle (ControlStyles.Opaque, true);
 			}
 
 			#endregion	// ToolTipWindow Class Constructor
