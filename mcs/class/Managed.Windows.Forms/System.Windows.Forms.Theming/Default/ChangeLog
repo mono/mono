@@ -1,3 +1,7 @@
+2008-05-21  George Giolfan <georgegiolfan@yahoo.com>
+
+	* TabControlPainter.cs: Added HasHotElementStyles.
+
 2008-05-19  George Giolfan <georgegiolfan@yahoo.com>
 
 	* TabControlPainter.cs: Refactored: Extracted DrawBackground.

@@ -29,6 +29,7 @@ using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Windows.Forms.Theming;
 
 namespace System.Windows.Forms {
 #if NET_2_0
@@ -57,6 +58,7 @@ namespace System.Windows.Forms {
 		private ButtonState right_slider_state;
 		private ButtonState left_slider_state;
 		private int slider_pos = 0;
+		TabPage entered_tab_page;
 #if NET_2_0
 		private bool rightToLeftLayout;
 #endif		
@@ -71,6 +73,8 @@ namespace System.Windows.Forms {
 			item_size = ThemeEngine.Current.TabControlDefaultItemSize;
 
 			MouseDown += new MouseEventHandler (MouseDownHandler);
+			MouseLeave += new EventHandler (OnMouseLeave);
+			MouseMove += new MouseEventHandler (OnMouseMove);
 			MouseUp += new MouseEventHandler (MouseUpHandler);
 			SizeChanged += new EventHandler (SizeChangedHandler);
 		}
@@ -453,6 +457,25 @@ namespace System.Windows.Forms {
 			get { return left_slider_state; }
 		}
 
+		internal TabPage EnteredTabPage {
+			get { return entered_tab_page; }
+			private set {
+				if (entered_tab_page == value)
+					return;
+				if (ThemeElements.CurrentTheme.TabControlPainter.HasHotElementStyles (this)) {
+					Region area_to_invalidate = new Region ();
+					area_to_invalidate.MakeEmpty ();
+					if (entered_tab_page != null)
+						area_to_invalidate.Union (entered_tab_page.TabBounds);
+					entered_tab_page = value;
+					if (entered_tab_page != null)
+						area_to_invalidate.Union (entered_tab_page.TabBounds);
+					Invalidate (area_to_invalidate);
+					area_to_invalidate.Dispose ();
+				} else
+					entered_tab_page = value;
+			}
+		}
 		#endregion	// Internal Properties
 
 		#region Protected Instance Properties
@@ -1326,6 +1349,24 @@ namespace System.Windows.Forms {
 			return (int)(rect.Width);
 		}
 
+		void OnMouseMove (object sender, MouseEventArgs e)
+		{
+			if (EnteredTabPage != null && EnteredTabPage.TabBounds.Contains (e.Location))
+				return;
+			for (int index = 0; index < TabCount; index++) {
+				TabPage tab_page = TabPages[index];
+				if (tab_page.TabBounds.Contains (e.Location)) {
+					EnteredTabPage = tab_page;
+					return;
+				}
+			}
+			EnteredTabPage = null;
+		}
+
+		void OnMouseLeave (object sender, EventArgs e)
+		{
+			EnteredTabPage = null;
+		}
 		#endregion	// Internal & Private Methods
 
 		#region Events

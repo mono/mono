@@ -1,5 +1,9 @@
 2008-05-21  George Giolfan  <georgegiolfan@yahoo.com>
 
+	* TabControl.cs: Extended to handle the hot style.
+
+2008-05-21  George Giolfan  <georgegiolfan@yahoo.com>
+
 	* Theme.cs, ThemeVisualStyles.cs, ThemeWin32Classic.cs, UpDownBase.cs:
 	Extended UpDownBase code to handle hot and disabled styles.
 

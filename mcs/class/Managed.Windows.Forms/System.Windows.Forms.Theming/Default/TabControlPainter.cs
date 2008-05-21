@@ -454,5 +454,9 @@ namespace System.Windows.Forms.Theming.Default
 
 			return res;
 		}
+
+		public virtual bool HasHotElementStyles (TabControl tabControl) {
+			return false;
+		}
 	}
 }
