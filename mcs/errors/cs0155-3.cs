@@ -1,4 +1,4 @@
-// CS1015: A type that derives from `System.Exception', `object', or `string' expected
+// CS0155: The type caught or thrown must be derived from System.Exception
 // Line: 9
 
 class Test
