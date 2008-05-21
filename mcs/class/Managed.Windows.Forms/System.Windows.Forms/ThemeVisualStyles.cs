@@ -1312,6 +1312,14 @@ namespace System.Windows.Forms
 			}
 			new VisualStyleRenderer (element).DrawBackground (dc, control.Bounds);
 		}
+		public override bool ToolTipTransparentBackground {
+			get {
+				VisualStyleElement element = VisualStyleElement.ToolTip.Standard.Normal;
+				if (!VisualStyleRenderer.IsElementDefined (element))
+					return base.ToolTipTransparentBackground;
+				return new VisualStyleRenderer (element).IsBackgroundPartiallyTransparent ();
+			}
+		}
 		#endregion
 		#region TreeView
 		[MonoTODO("Use the sizing information provided by the VisualStyles API.")]

@@ -1,5 +1,9 @@
 2008-05-21  George Giolfan  <georgegiolfan@yahoo.com>
 
+	* ThemeVisualStyles.cs: Added support for ToolTip transparent background.
+
+2008-05-21  George Giolfan  <georgegiolfan@yahoo.com>
+
 	* Theme.cs, ThemeWin32Classic.cs, ToolTip.cs: Added support for transparent
 	background.
 
