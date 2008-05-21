@@ -1,3 +1,11 @@
+2008-05-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* mono-api.xsl: Added support for event accessors.
+	* mono-api-diff.cs: Added support for event accessors.
+	* mono-api-info.cs: Added support for explicit interface
+	implementations, and groups event accessors with the corresponding
+	event.
+
 2008-05-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* mono-api-diff.cs : do not report CompilerGeneratedAttribute which

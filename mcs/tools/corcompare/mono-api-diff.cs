@@ -1575,6 +1575,7 @@ namespace Mono.AssemblyCompare
 	class XMLEvents : XMLMember
 	{
 		Hashtable eventTypes;
+		Hashtable nameToMethod = new Hashtable ();
 
 		protected override void LoadExtraData (string name, XmlNode node)
 		{
@@ -1584,6 +1585,19 @@ namespace Mono.AssemblyCompare
 					eventTypes = new Hashtable ();
 
 				eventTypes [name] = xatt.Value;
+			}
+
+			XmlNode child = node.FirstChild;
+			while (child != null) {
+				if (child != null && child.Name == "methods") {
+					XMLMethods m = new XMLMethods ();
+					XmlNode parent = child.ParentNode;
+					string key = GetNodeKey (name, parent);
+					m.LoadData (child);
+					nameToMethod [key] = m;
+					break;
+				}
+				child = child.NextSibling;
 			}
 
 			base.LoadExtraData (name, node);
@@ -1608,6 +1622,16 @@ namespace Mono.AssemblyCompare
 
 				if (etype != oetype)
 					AddWarning (parent, "Event type is {0} and should be {1}", oetype, etype);
+
+				XMLMethods m = nameToMethod [name] as XMLMethods;
+				XMLMethods om = evt.nameToMethod [name] as XMLMethods;
+				if (m != null || om != null) {
+					if (m == null)
+						m = new XMLMethods ();
+
+					m.CompareTo (document, parent, om);
+					counters.AddPartialToPartial (m.Counters);
+				}
 			} finally {
 				AddCountersAttributes (parent);
 				copy.AddPartialToPartial (counters);

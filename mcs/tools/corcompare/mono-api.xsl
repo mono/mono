@@ -321,6 +321,13 @@
 		</xsl:apply-templates>
 	</xsl:template>
 
+	<!-- accessor -->
+	<xsl:template match="event/methods">
+		<xsl:apply-templates select="method">
+			<xsl:sort select="@name"/>
+		</xsl:apply-templates>
+	</xsl:template>
+
 	<xsl:template match="event[@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
 		<div>
 			<xsl:call-template name="ELEMENT">

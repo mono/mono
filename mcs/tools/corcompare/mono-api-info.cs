@@ -412,10 +412,77 @@ namespace Mono.AssemblyInfo
 			return ((int) type.Attributes).ToString (CultureInfo.InvariantCulture);
 		}
 
-		public static bool MustDocumentMethod(MethodBase method)
+		/// <summary>
+		/// The includeExplicit bool was introduced to ignore explicit interface
+		/// implementations for properties and events.
+		///
+		/// When a property / event implements an explicit interface, then
+		/// the MS class libraries only have the accessors; the corresponding
+		/// property/event is not emitted.
+		/// 
+		/// For an example of a property, see System.Windows.Forms.TreeNodeCollection's
+		/// implementation of ICollection.IsSynchronized.
+		/// 
+		/// For an example of an event, see System.Windows.Forms.PropertyGrid's
+		/// implementation of IComPropertyBrowser.ComComponentNameChanged.
+		/// 
+		/// Both our C# compiler and that of MS always emit the property/event,
+		/// so MS must be using another language and/or compiler for (part of)
+		/// the BCL.
+		///
+		/// To avoid numerous extra reports in the Class Status Pages, we'll
+		/// ignore properties/events that are explictly implemented.
+		/// 
+		/// The getters/setters themselves are included in the generated API info
+		/// though.
+		/// </summary>
+		public static bool MustDocumentMethod (MethodBase method, bool includeExplicit, out bool explicitImpl)
 		{
-			// All other methods
-			return (method.IsPublic || method.IsFamily || method.IsFamilyOrAssembly);
+			explicitImpl = false;
+
+			if (method.IsPublic || method.IsFamily || method.IsFamilyOrAssembly)
+				return true;
+
+			if (!includeExplicit || method.DeclaringType.IsInterface)
+				return false;
+
+			Type [] interfaces = method.DeclaringType.GetInterfaces ();
+			foreach (Type interfaceType in interfaces) {
+				if (!IsPublicType (interfaceType))
+					continue;
+
+				InterfaceMapping map = method.DeclaringType.GetInterfaceMap (
+					interfaceType);
+				if (Array.IndexOf (map.TargetMethods, method) != -1) {
+					explicitImpl = true;
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		public static bool MustDocumentMethod (MethodBase method, bool includeExplicit)
+		{
+			bool explicitImpl;
+			return MustDocumentMethod (method, includeExplicit, out explicitImpl);
+		}
+
+		static bool IsPublicType (Type t)
+		{
+			if (t.IsPublic)
+				return true;
+			else if (!t.IsNestedPublic)
+				return false;
+
+			while (t.DeclaringType != null) {
+				t = t.DeclaringType;
+
+				if (!t.IsPublic && !(t.IsNestedPublic || t.IsNestedFamily || t.IsNestedFamORAssem))
+					return false;
+			}
+
+			return true;
 		}
 
 		static string GetClassType (Type t)
@@ -500,8 +567,8 @@ namespace Mono.AssemblyInfo
 					catch (System.Security.SecurityException) { }
 				}
 
-				bool hasGetter = (getMethod != null) && MustDocumentMethod (getMethod);
-				bool hasSetter = (setMethod != null) && MustDocumentMethod (setMethod);
+				bool hasGetter = (getMethod != null) && MustDocumentMethod (getMethod, false);
+				bool hasSetter = (setMethod != null) && MustDocumentMethod (setMethod, false);
 
 				// if neither the getter or setter should be documented, then
 				// skip the property
@@ -521,11 +588,13 @@ namespace Mono.AssemblyInfo
 
 			MethodInfo[] methods = type.GetMethods (flags);
 			foreach (MethodInfo method in methods) {
-				if (method.IsSpecialName && !method.Name.StartsWith ("op_"))
+				bool explicitImpl;
+
+				if (!MustDocumentMethod (method, true, out explicitImpl))
 					continue;
 
-				// we're only interested in public or protected members
-				if (!MustDocumentMethod(method))
+				// avoid writing (property/event) accessors twice
+				if (!explicitImpl && method.IsSpecialName && !method.Name.StartsWith ("op_"))
 					continue;
 
 				list.Add (method);
@@ -558,7 +627,7 @@ namespace Mono.AssemblyInfo
 			foreach (EventInfo eventInfo in events) {
 				MethodInfo addMethod = eventInfo.GetAddMethod (true);
 
-				if (addMethod == null || !MustDocumentMethod (addMethod))
+				if (addMethod == null || !MustDocumentMethod (addMethod, false))
 					continue;
 
 				list.Add (eventInfo);
@@ -636,12 +705,11 @@ namespace Mono.AssemblyInfo
 		{
 			base.AddExtraData (p, member);
 			PropertyInfo prop = (PropertyInfo) member;
-			Type t = prop.PropertyType;
 			AddAttribute (p, "ptype", prop.PropertyType.ToString ());
 			MethodInfo _get = prop.GetGetMethod (true);
 			MethodInfo _set = prop.GetSetMethod (true);
-			bool haveGet = (_get != null && TypeData.MustDocumentMethod(_get));
-			bool haveSet = (_set != null && TypeData.MustDocumentMethod(_set));
+			bool haveGet = (_get != null && TypeData.MustDocumentMethod(_get, false));
+			bool haveSet = (_set != null && TypeData.MustDocumentMethod(_set, false));
 			MethodInfo [] methods;
 
 			if (haveGet && haveSet) {
@@ -702,6 +770,25 @@ namespace Mono.AssemblyInfo
 			base.AddExtraData (p, member);
 			EventInfo evt = (EventInfo) member;
 			AddAttribute (p, "eventtype", evt.EventHandlerType.ToString ());
+
+			MethodInfo _add = evt.GetAddMethod (true);
+			MethodInfo _remove = evt.GetRemoveMethod (true);
+			bool haveAdd = (_add != null && TypeData.MustDocumentMethod (_add, true));
+			bool haveRemove = (_remove != null && TypeData.MustDocumentMethod (_remove, true));
+			MethodInfo [] methods;
+
+			if (haveAdd && haveRemove) {
+				methods = new MethodInfo [] { _add, _remove };
+			} else if (haveAdd) {
+				methods = new MethodInfo [] { _add };
+			} else if (haveRemove) {
+				methods = new MethodInfo [] { _remove };
+			} else {
+				return;
+			}
+
+			MethodData data = new MethodData (document, p, methods);
+			data.DoOutput ();
 		}
 
 		public override string ParentTag {
@@ -1070,4 +1157,3 @@ namespace Mono.AssemblyInfo
 		}
 	}
 }
-
