@@ -2625,6 +2625,13 @@ namespace Mono.CSharp {
 			return false;
 
 		for (int i = 0; i < a.Length; ++i) {
+			if (a [i] == null || b [i] == null) {
+				if (a [i] == b [i])
+					continue;
+
+				return false;
+			}
+		
 			if (!IsEqual (a [i], b [i]))
 				return false;
 		}
