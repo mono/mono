@@ -274,10 +274,9 @@ namespace MonoTests.System.Windows.Forms.DataGridViewBindingTest
 	[TestFixture]
 	public class BindingListTest
 	{
-		[Test]
+		[Test]	// bug #325239
 		public void TestNullItemInList ()
 		{
-			// Binding when AutoGenerateColumns is false
 			Form f = new Form ();
 			f.ShowInTaskbar = false;
 
@@ -305,7 +304,38 @@ namespace MonoTests.System.Windows.Forms.DataGridViewBindingTest
 				set { name = value; }
 			}
 		}
+	}
 
+	[TestFixture]
+	public class ArrayTest
+	{
+		[Test]	// bug #337470
+		public void TestNestedCollections ()
+		{
+			// The grid should not accept collection properties, like Names
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+
+			Array customers = new Customer[1];
+			customers.SetValue (new Customer (), 0);
+			
+			DataGridView dgv = new DataGridView ();
+			dgv.DataSource = customers;
+
+			f.Controls.Add (dgv);
+			f.Show ();
+
+			Assert.AreEqual (1, dgv.ColumnCount, "A1");
+			Assert.AreEqual ("Name", dgv.Columns[0].Name, "A2");
+
+			f.Dispose ();
+		}
+
+		private class Customer
+		{
+			public string Name { get { return "Kermit"; } }
+			public string[] Names { get { return new string[] { "Kermit", "Gonzo" }; } }
+		}
 	}
 }
 #endif

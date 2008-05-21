@@ -1,3 +1,8 @@
+2008-05-21  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridView.cs: Do not bind to collection properties.
+	[Fixes bug #337470]
+
 2008-05-21  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* ThemeVisualStyles.cs: Added support for the hot TrackBar thumb style.
