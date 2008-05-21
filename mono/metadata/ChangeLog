@@ -1,5 +1,8 @@
 2008-05-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c (mono_class_init): Avoid calling mono_class_setup_methods () for
+	interfaces in mscorlib.
+	
 	* class.c (mono_class_setup_vtable): Avoid calling setup_methods () for
 	interfaces. Add some comments.
 	(mono_class_init): Call mono_class_setup_methods () here since it is no
