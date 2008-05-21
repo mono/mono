@@ -5189,15 +5189,11 @@ opt_catch_args
 catch_args 
 	: OPEN_PARENS type opt_identifier CLOSE_PARENS 
 	  {
-		if ($2 is ATypeNameExpression || $2 == TypeManager.system_object_expr || $2 == TypeManager.system_string_expr) {
-			$$ = new DictionaryEntry ($2, $3);
-		} else {
-			Error_InvalidCatchType (GetLocation ($2));
-		}
+		$$ = new DictionaryEntry ($2, $3);
 	  }
 	| OPEN_PARENS CLOSE_PARENS 
 	  {
-		Error_InvalidCatchType (GetLocation ($1));
+		Report.Error (1015, GetLocation ($1), "A type that derives from `System.Exception', `object', or `string' expected");
 	  }
 	;
 
@@ -5735,11 +5731,6 @@ void Error_ExpectingTypeName (Expression expr)
 	} else {
 		expr.Error_InvalidExpressionStatement ();
 	}
-}
-
-static void Error_InvalidCatchType (Location loc)
-{
-	Report.Error (1015, loc, "A type that derives from `System.Exception', `object', or `string' expected");
 }
 
 static void Error_ParameterModifierNotValid (string modifier, Location loc)
