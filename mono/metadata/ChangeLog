@@ -1,8 +1,16 @@
 2008-05-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* object.c (mono_class_create_runtime_vtable): Add a comment.
+
+	* class.c (get_implicit_generic_array_interfaces): Call mono_class_init ()
+	where needed.
+	(setup_interface_offsets): Handle the case when this is called twice for arrays.
+	(mono_class_setup_vtable_general): Add an assert.
+	(mono_class_init): Avoid creating a generic vtable for arrays.
+
 	* class.c (mono_generic_class_get_class): Don't call setup_interface_offsets ()
 	here, let mono_class_init () do that.
-	
+
 	* class.c (mono_class_init): Avoid calling mono_class_setup_methods () for
 	interfaces in mscorlib.
 
