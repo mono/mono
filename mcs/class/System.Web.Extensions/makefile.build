@@ -11,7 +11,7 @@
   <!--Could be RUNTIME TOOLS ... -->
   <property name="rules" value="RUNTIME"/>
 
-  <property name="msbuild_file" value="System.Web.Extensions.JavaEE.csproj"/>
+  <property name="msbuild_file" value="System.Web.Extensions.JavaEE.sln"/>
   
   <!--Fileset describing project output files. Uset by copy/delete rules in framework-->
   <fileset id="output" basedir="${project::get-base-directory()}\bin" failonempty="true">
