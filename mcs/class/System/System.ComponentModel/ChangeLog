@@ -1,3 +1,8 @@
+2008-05-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* INotifyPropertyChanging.cs, PropertyChangingEventArgs.cs,
+	  PropertyChangingEventHandler.cs : new types in 2.0 SP1.
+
 2008-05-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CharConverter.cs,

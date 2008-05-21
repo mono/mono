@@ -325,6 +325,7 @@ System.ComponentModel/InheritanceAttribute.cs
 System.ComponentModel/InheritanceLevel.cs
 System.ComponentModel/InitializationEventAttribute.cs
 System.ComponentModel/INotifyPropertyChanged.cs
+System.ComponentModel/INotifyPropertyChanging.cs
 System.ComponentModel/InstallerTypeAttribute.cs
 System.ComponentModel/InstanceCreationEditor.cs
 System.ComponentModel/InvalidAsynchronousStateException.cs
@@ -370,6 +371,8 @@ System.ComponentModel/ParenthesizePropertyNameAttribute.cs
 System.ComponentModel/PasswordPropertyTextAttribute.cs
 System.ComponentModel/PropertyChangedEventArgs.cs
 System.ComponentModel/PropertyChangedEventHandler.cs
+System.ComponentModel/PropertyChangingEventArgs.cs
+System.ComponentModel/PropertyChangingEventHandler.cs
 System.ComponentModel/PropertyDescriptorCollection.cs
 System.ComponentModel/PropertyDescriptor.cs
 System.ComponentModel/PropertyTabAttribute.cs
