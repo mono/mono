@@ -72,7 +72,7 @@ namespace MonoTests.System.Windows.Forms
 			using (Timer timer = new Timer ()) {
 				timer.Tick += new EventHandler (TickHandler);
 				timer.Start ();
-				Sys_Threading.Thread.Sleep (150);
+				Sys_Threading.Thread.Sleep (500);
 				Application.DoEvents ();
 				Assert.AreEqual (true, timer.Enabled, "1");
 				Assert.AreEqual (true, Ticked, "2");

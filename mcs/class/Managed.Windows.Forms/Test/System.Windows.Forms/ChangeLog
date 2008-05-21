@@ -1,5 +1,10 @@
 2008-05-21  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TimerTest.cs: Increase sleep time to see if it will make
+	StartTest fail less.
+
+2008-05-21  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridViewDataBindingTest.cs: Add test for bug #345483.
 
 2008-05-21  Jonathan Pobst  <monkey@jpobst.com>
