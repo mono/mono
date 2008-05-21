@@ -5183,16 +5183,23 @@ catch_clause
 
 opt_catch_args
 	: /* empty */ { $$ = null; }
-        | catch_args
+	| catch_args
 	;	  
 
 catch_args 
-        : open_parens type opt_identifier CLOSE_PARENS 
-          {
-		$$ = new DictionaryEntry ($2, $3);
+	: OPEN_PARENS type opt_identifier CLOSE_PARENS 
+	  {
+		if ($2 is ATypeNameExpression || $2 == TypeManager.system_object_expr || $2 == TypeManager.system_string_expr) {
+			$$ = new DictionaryEntry ($2, $3);
+		} else {
+			Error_InvalidCatchType (GetLocation ($2));
+		}
 	  }
-        ;
-
+	| OPEN_PARENS CLOSE_PARENS 
+	  {
+		Error_InvalidCatchType (GetLocation ($1));
+	  }
+	;
 
 checked_statement
 	: CHECKED block
@@ -5728,6 +5735,11 @@ void Error_ExpectingTypeName (Expression expr)
 	} else {
 		expr.Error_InvalidExpressionStatement ();
 	}
+}
+
+static void Error_InvalidCatchType (Location loc)
+{
+	Report.Error (1015, loc, "Only `object', `string', and types that derive from `System.Exception' can be passed into a catch block");
 }
 
 static void Error_ParameterModifierNotValid (string modifier, Location loc)
