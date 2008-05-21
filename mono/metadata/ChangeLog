@@ -1,3 +1,10 @@
+2008-05-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_init): Only do the array optimization for szarrays. 
+	Avoid creating a generic vtable for generic instances as well.
+	(mono_class_get_method_from_name_flags): Don't search in the metadata for
+	generic instances.
+
 2008-05-21 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* loader.c (mono_get_method_constrained): Inflate the signature
