@@ -1,3 +1,8 @@
+2008-05-21 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* loader.c (mono_get_method_constrained): Inflate the signature
+	with class context. Fix #325283.
+
 2008-05-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* object.c (mono_class_create_runtime_vtable): Add a comment.
