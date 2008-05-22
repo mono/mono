@@ -24,9 +24,10 @@ if NOT "%SELENIUM_HOME%" == "" goto after_set_SELENIUM_HOME
 set SELENIUM_HOME=%~dp0
 set SELENIUM_HOME=%SELENIUM_HOME:class\System.Web.Extensions=selenium%
 :after_set_SELENIUM_HOME
+echo SELENIUM_HOME=%SELENIUM_HOME%
 
 set Browser=C:\Program Files\Internet Explorer\iexplore.exe
-set HTTPServer=http://localhost:8090
+set HTTPServer=http://localhost:8080
 set SeleniumURL=%HTTPServer%/Selenium
 
 rem =================================================
@@ -53,7 +54,7 @@ rem DEPLOY SELENIUM WITH TESTS TO SERVER
 rem ====================================
 if DEFINED SKIP_SELENIUM goto after_selenium
 echo Deploying Selenium
-call %SELENIUM_HOME%\DeploySelenium.cmd "Tomcat" "%SELENIUM_HOME%\TomcatDeploy.cmd" "http://admin:admin@localhost:8090" >>%BUILD_LOG% 2<&1
+call %SELENIUM_HOME%\DeploySelenium.cmd "Tomcat" "%SELENIUM_HOME%\TomcatDeploy.cmd" "http://admin:admin@localhost:8080" >>%BUILD_LOG% 2<&1
 :after_selenium
 
 rem BUILD APPLICATION UNDER TEST
@@ -62,7 +63,8 @@ if DEFINED SKIP_APP goto after_app
 pushd Test\AUT
 echo Building %cd%\SystemWebExtensionsAUT.JavaEE.csproj
 del /F /Q bin_Java\deployedFiles bin_Java\outputFiles.list
-msbuild SystemWebExtensionsAUT.JavaEE.csproj /t:Deploy /p:Configuration=Debug_Java >>%BUILD_LOG% 2<&1
+msbuild SystemWebExtensionsAUT.JavaEE.csproj /t:Rebuild /t:Deploy /p:Configuration=Debug_Java >>%BUILD_LOG% 2<&1
+IF %ERRORLEVEL% NEQ 0 GOTO BUILD_EXCEPTION
 popd
 :after_app
 
@@ -115,6 +117,14 @@ if NOT %ResultsAsHtml%=="" (
 )
 
 exit /B
-:afterExecuteTestSuite
 
+goto END
+:BUILD_EXCEPTION
+@echo Error in building solutions. See %BUILD_LOG% for details...
+REM EXIT 1
+GOTO END
+
+:afterExecuteTestSuite
+:END
 endlocal
+
