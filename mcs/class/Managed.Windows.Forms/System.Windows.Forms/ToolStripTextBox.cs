@@ -391,6 +391,7 @@ namespace System.Windows.Forms
 			this.TextBox.MultilineChanged += new EventHandler (HandleMultilineChanged);
 			this.TextBox.ReadOnlyChanged += new EventHandler (HandleReadOnlyChanged);
 			this.TextBox.TextAlignChanged += new EventHandler (HandleTextAlignChanged);
+			this.TextBox.TextChanged += new EventHandler (HandleTextChanged);
 		}
 
 		protected override void OnUnsubscribeControlEvents (Control control)
@@ -471,6 +472,11 @@ namespace System.Windows.Forms
 		private void HandleAcceptsTabChanged (object sender, EventArgs e)
 		{
 			OnAcceptsTabChanged (e);
+		}
+
+		private void HandleTextChanged (object sender, EventArgs e)
+		{
+			OnTextChanged (e);
 		}
 		#endregion
 
