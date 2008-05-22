@@ -4163,6 +4163,7 @@ namespace System.Windows.Forms {
 						goto ProcessNextMessage;
 					}
 					SendMessage(FocusWindow, Msg.WM_SETFOCUS, IntPtr.Zero, IntPtr.Zero);
+					Keyboard.FocusIn (FocusWindow);
 					goto ProcessNextMessage;
 				}
 

@@ -1,5 +1,11 @@
 2008-05-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XplatUIX11.cs : when we call WM_SETFOCUS, call X11Keyboard
+	  FocusIn() too. This should fix the issue on switching
+	  scim keyboards.
+
+2008-05-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* X11Keyboard.cs : set XIM font size to somewhat reasonable
 	  number (ideally the input textbox size, but that could be
 	  too messy).
