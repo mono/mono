@@ -1,3 +1,7 @@
+2008-05-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : EXTRA_DISTFILES is becoming messy, so simplify it.
+
 2008-04-13  Jb Evain  <jbevain@novell.com>
 
 	* Makefile, net_2_1_*.sources: SL 2.0 now has a System.Xml.

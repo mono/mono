@@ -73,24 +73,8 @@ EXTRA_DISTFILES = \
 	Test/MonoMicro.Test.csproj	\
 	Test/XmlFiles/76102.xml		\
 	Test/XmlFiles/79683.dtd		\
-	Test/XmlFiles/xsd/multi-schemaLocation.xml \
-	Test/XmlFiles/xsd/datatypesTest.xsd \
-	Test/XmlFiles/xsd/336625.xsd	\
-	Test/XmlFiles/xsd/358408.xsd	\
-	Test/XmlFiles/xsd/361818.xsd	\
-	Test/XmlFiles/xsd/361818-2.xsd	\
-	Test/XmlFiles/xsd/361818-3.xsd	\
-	Test/XmlFiles/xsd/376395.xml	\
-	Test/XmlFiles/xsd/376395.xsd	\
-	Test/XmlFiles/xsd/77687.xsd 	\
-	Test/XmlFiles/xsd/77687inc.xsd 	\
-	Test/XmlFiles/xsd/78985.xml     \
-	Test/XmlFiles/xsd/78985.xsd     \
-	Test/XmlFiles/xsd/79650.xsd     \
-	Test/XmlFiles/xsd/82010.xml	\
-	Test/XmlFiles/xsd/82010.xsd	\
-	Test/XmlFiles/xsd/82078.xsd	\
-	Test/XmlFiles/xsd/inter-inc-1.xsd \
+	Test/XmlFiles/xsd/*.xml \
+	Test/XmlFiles/xsd/*.xsd \
 	Test/XmlFiles/xsl/82493.xml 	\
 	Test/XmlFiles/xsl/82493.xsl 	\
 	Test/XmlFiles/xsl/91834.xml 	\

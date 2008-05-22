@@ -1,3 +1,7 @@
+2008-05-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* resolveUriSchema.xsd : forgot to add.
+
 2008-04-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* 376395.xml, 376395.xsd : new test files.
