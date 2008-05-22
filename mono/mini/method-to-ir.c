@@ -4933,8 +4933,23 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					clause->data.catch_class &&
 					cfg->generic_sharing_context &&
 					mono_class_check_context_used (clause->data.catch_class)) {
-				// FIXME:
-				NOT_IMPLEMENTED;
+				/*
+				 * In shared generic code with catch
+				 * clauses containing type variables
+				 * the exception handling code has to
+				 * be able to get to the rgctx.
+				 * Therefore we have to make sure that
+				 * the rgctx argument (for static
+				 * methods) or the "this" argument
+				 * (for non-static methods) are live.
+				 */
+				if (method->flags & METHOD_ATTRIBUTE_STATIC) {
+					mono_get_vtable_var (cfg);
+				} else {
+					MonoInst *dummy_use;
+
+					EMIT_NEW_DUMMY_USE (cfg, dummy_use, arg_array [0]);
+				}
 			}
 		}
 	} else {
@@ -7897,6 +7912,8 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					ip += 5;
 				} else {
 					MonoInst *addr, *vtvar;
+
+					GENERIC_SHARING_FAILURE (CEE_LDTOKEN);
 
 					vtvar = mono_compile_create_var (cfg, &handle_class->byval_arg, OP_LOCAL);
 					if (cfg->compile_aot)

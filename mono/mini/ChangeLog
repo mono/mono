@@ -1,3 +1,8 @@
+2008-05-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir2): Merge more generic sharing changes missed
+	earlier.
+
 2008-05-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir2): Remove non-vtype restriction for
