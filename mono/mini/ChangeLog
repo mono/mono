@@ -1,3 +1,8 @@
+2008-05-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c (mono_magic_trampoline): Call mono_class_setup_methods ()
+	when needed.
+
 2008-05-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h: Remove the declaration of mono_aot_init_vtable ().
