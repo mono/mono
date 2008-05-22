@@ -1,5 +1,10 @@
 2008-05-22  Mark Probst  <mark.probst@gmail.com>
 
+	* mini.c, jit-icalls.c, jit-icalls.h: Make generic sharing work
+	together with domain sharing.
+
+2008-05-22  Mark Probst  <mark.probst@gmail.com>
+
 	* mini.c: Treat callvirts to final methods like non-virtual calls
 	when doing generic sharing, i.e. look them up in the runtime
 	generic context.

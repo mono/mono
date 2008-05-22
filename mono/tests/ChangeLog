@@ -1,5 +1,10 @@
 2008-05-22  Mark Probst  <mark.probst@gmail.com>
 
+	* Makefile.am: Do generic sharing tests with domain sharing turned
+	on as well.
+
+2008-05-22  Mark Probst  <mark.probst@gmail.com>
+
 	* generic-method-patching.2.cs: Test callvirt to sealed generic
 	methods.
 
