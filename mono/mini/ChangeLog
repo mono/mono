@@ -1,3 +1,10 @@
+2008-05-22  Mark Probst  <mark.probst@gmail.com>
+
+	* inssel.brg, mini-ops.h: Added opcodes for mkrefany and refanyval
+	with computed types (for generic sharing).
+
+	* mini.c: Generic sharing for mkrefany and refanyval.
+
 2008-05-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* inssel.brg (mini_emit_virtual_call): Avoid constructing a generic vtable if
