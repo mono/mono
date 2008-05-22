@@ -9,10 +9,5 @@ NO_TEST = yes
 
 EXTRA_DISTFILES = ibm.pub
 
-ifeq (net_2_0, $(PROFILE))
-all-local $(STD_TARGETS:=-local):
-	@:
-else
 include ../../build/library.make
-endif
 
