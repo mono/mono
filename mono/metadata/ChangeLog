@@ -1,5 +1,9 @@
 2008-05-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c (mono_class_init): Add a comment about trying to avoid calling this.
+
+	* reflection.c (mono_type_get_object): Add a FIXME.
+
 	* loader.c (find_method_in_class): Use mono_class_get_method_by_index ().
 
 	* class.c (mono_class_get_method_by_index): New helper function, returning an
