@@ -208,7 +208,9 @@ namespace Mono.CSharp {
 
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
-			throw new NotSupportedException ("ET");
+			ArrayList args = new ArrayList (1);
+			args.Add (new Argument (this));
+			return CreateExpressionFactoryCall ("Constant", args);
 		}
 
 		public override Expression DoResolve (EmitContext ec)

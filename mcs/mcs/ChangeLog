@@ -1,3 +1,7 @@
+2008-05-22  Marek Safar  <marek.safar@gmail.com>
+
+	* assign.cs (LocalTemporary): Implemented CreateExpressionTree.
+
 2008-05-21  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-parser.jay: Removed redundant catch type check.
