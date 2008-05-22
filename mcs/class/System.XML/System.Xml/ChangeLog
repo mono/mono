@@ -1,3 +1,8 @@
+2008-05-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlReader.cs : some Create() overloads with baseUri argument did
+	  not set baseUri correctly. Fixed bug #392385.
+
 2008-05-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlReader.cs : force CloseInput to every XmlReader that is created

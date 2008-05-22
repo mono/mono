@@ -237,8 +237,14 @@ namespace System.Xml
 			XmlNameTable nt = PopulateNameTable (settings);
 			return new XmlParserContext (nt,
 				new XmlNamespaceManager (nt),
+				null,
+				null,
+				null,
+				null,
 				baseUri,
-				XmlSpace.None);
+				null,
+				XmlSpace.None,
+				null);
 		}
 
 		private static XmlNodeType GetNodeType (

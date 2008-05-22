@@ -413,6 +413,13 @@ namespace MonoTests.System.Xml
 			r.Read ();
 			AssertEquals (String.Empty, r.Value); // should not be at the comment node.
 		}
+
+		[Test]
+		public void CreateSetsBaseUri () // bug #392385
+		{
+			XmlReader r = XmlReader.Create (new StringReader ("<x/>"), new XmlReaderSettings (), "urn:foo");
+			AssertEquals ("urn:foo", r.BaseURI);
+		}
 	}
 }
 #endif
