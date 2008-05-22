@@ -1,3 +1,9 @@
+2008-05-22  Andreia Gaita <avidigal@novell.com> 
+
+	* SWF2k5.csproj, Makefile, build-csproj2k5, SWF2k5.sln: Long overdue
+	  rename of Mono.Mozilla to Mono.WebBrowser. step 2 - update
+	  references
+
 2008-05-20  Jonathan Pobst  <monkey@jpobst.com>
 
 	* System.Windows.Forms_test.dll.sources: Add DataGridViewDataBindingTest.cs.

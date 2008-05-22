@@ -4,9 +4,9 @@
 #
 #
 
-exec > Mono.Mozilla2K5.csproj
+exec > Mono.WebBrowser2K5.csproj
 
-Source=Mono.Mozilla.dll.sources
+Source=Mono.WebBrowser.dll.sources
 
 dohead()
 {
@@ -23,7 +23,7 @@ dohead()
     </ApplicationIcon>
     <AssemblyKeyContainerName>
     </AssemblyKeyContainerName>
-    <AssemblyName>Mono.Mozilla</AssemblyName>
+    <AssemblyName>Mono.WebBrowser</AssemblyName>
     <AssemblyOriginatorKeyFile>
     </AssemblyOriginatorKeyFile>
     <DefaultClientScript>JScript</DefaultClientScript>
@@ -31,7 +31,7 @@ dohead()
     <DefaultTargetSchema>IE50</DefaultTargetSchema>
     <DelaySign>false</DelaySign>
     <OutputType>Library</OutputType>
-    <RootNamespace>Mono.Mozilla</RootNamespace>
+    <RootNamespace>Mono.WebBrowser</RootNamespace>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     <StartupObject>
     </StartupObject>
@@ -99,7 +99,7 @@ dotail()
     cat <<EOF
   <ItemGroup>
     <None Include="ChangeLog" />
-    <None Include="Mono.Mozilla.dll.sources" />
+    <None Include="Mono.WebBrowser.dll.sources" />
     <None Include="README" />
   </ItemGroup>
   <Import Project="\$(MSBuildBinPath)\Microsoft.CSharp.targets" />

@@ -158,14 +158,14 @@ SWFhead()
     <Reference Include="System.Xml">
       <Name>System.Xml</Name>
     </Reference>
-    <Reference Include="Mono.Mozilla2K5">
-      <Name>Mono.Mozilla2K5</Name>
+    <Reference Include="Mono.WebBrowser2K5">
+      <Name>Mono.WebBrowser2K5</Name>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Mono.Mozilla\Mono.Mozilla2K5.csproj">
+    <ProjectReference Include="..\Mono.WebBrowser\Mono.WebBrowser2K5.csproj">
       <Project>{5E6C996A-007F-40CE-B244-006EFCFB77D2}</Project>
-      <Name>Mono.Mozilla2K5</Name>
+      <Name>Mono.WebBrowser2K5</Name>
     </ProjectReference>
   </ItemGroup>
 EOF
