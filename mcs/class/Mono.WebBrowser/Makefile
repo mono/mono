@@ -1,4 +1,4 @@
-thisdir = class/Mono.Mozilla
+thisdir = class/Mono.WebBrowser
 SUBDIRS = 
 include ../../build/rules.make
 

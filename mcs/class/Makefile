@@ -48,7 +48,7 @@ common_dirs := \
 	Mono.CompilerServices.SymbolWriter \
 	Mono.Posix			\
 	Accessibility			\
-	Mono.Mozilla			\
+	Mono.WebBrowser			\
 	Managed.Windows.Forms		\
 	Mono.Data.Sqlite		\
 	Mono.Data.SqliteClient		\

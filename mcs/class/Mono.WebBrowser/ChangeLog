@@ -1,5 +1,10 @@
 2008-05-22  Andreia Gaita <avidigal@novell.com> 
 
+	* Makefile: Long overdue rename of Mono.Mozilla to Mono.WebBrowser.
+	  step 1 - directory moving
+
+2008-05-22  Andreia Gaita <avidigal@novell.com> 
+
 	* Mono.WebBrowser/DOM/INavigation.cs: GetHashCode is not needed here
 	* Mono.WebBrowser/IWebBrowser.cs, Mono.Mozilla/WebBrowser.cs: Hide the
 	  generic event, internal use only
