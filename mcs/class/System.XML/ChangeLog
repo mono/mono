@@ -1,5 +1,9 @@
 2008-05-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Makefile : more simplification (and I forgot the syntax again :/)
+
+2008-05-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Makefile : EXTRA_DISTFILES is becoming messy, so simplify it.
 
 2008-04-13  Jb Evain  <jbevain@novell.com>

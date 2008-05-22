@@ -73,19 +73,10 @@ EXTRA_DISTFILES = \
 	Test/MonoMicro.Test.csproj	\
 	Test/XmlFiles/76102.xml		\
 	Test/XmlFiles/79683.dtd		\
-	Test/XmlFiles/xsd/*.xml \
-	Test/XmlFiles/xsd/*.xsd \
-	Test/XmlFiles/xsl/82493.xml 	\
-	Test/XmlFiles/xsl/82493.xsl 	\
-	Test/XmlFiles/xsl/91834.xml 	\
-	Test/XmlFiles/xsl/91834.xsl 	\
-	Test/XmlFiles/xsl/91834a.xml	\
-	Test/XmlFiles/xsl/325482.xml	\
-	Test/XmlFiles/xsl/325482.xsl	\
-	Test/XmlFiles/xsl/stripspace.xsl \
-	Test/XmlFiles/xsl/stripspace.xml \
-	Test/XmlFiles/xsl/current-in-select.xsl \
-	Test/XmlFiles/xsl/current-in-select.xml \
+	$(wildcard Test/XmlFiles/xsd/*.xml) \
+	$(wildcard Test/XmlFiles/xsd/*.xsd) \
+	$(wildcard Test/XmlFiles/xsl/*.xml) \
+	$(wildcard Test/XmlFiles/xsl/*.xsl) \
 	Test/XmlFiles/xsl/current-in-select.ref \
 	Test/XmlFiles/xsl/ChangeLog \
 	$(xmlfiles_files:%=Test/XmlFiles/%) \

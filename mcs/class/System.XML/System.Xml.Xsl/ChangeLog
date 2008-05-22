@@ -1,3 +1,11 @@
+2008-05-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslCompiledTransform.cs : in XmlWriterSettings, use
+	  ConformanceLevel.Fragment to allow fragment output.
+	  In Transform(string,string), use TextWriter output instead of
+	  XmlWriter to control xml declaration output.
+	  Fixed bug #391424.
+
 2007-12-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslCompiledTransform.cs : when loading XmlReader as an input to

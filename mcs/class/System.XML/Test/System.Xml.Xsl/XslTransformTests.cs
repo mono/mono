@@ -2248,6 +2248,18 @@ Services
 </root>")), null, sw);
 			Assert.AreEqual (@"<y><t yes-one-node="""">1</t><t not-node=""""></t></y>", sw.ToString ());
 		}
+
+		[Test]
+		public void CompiledTransform_Fragment () // bug #391424
+		{
+			XslCompiledTransform xslTransform = new XslCompiledTransform ();
+			XsltSettings settings = new XsltSettings ();
+			settings.EnableDocumentFunction = true;
+			xslTransform.Load ("Test/XmlFiles/xsl/391424.xsl", settings, new XmlUrlResolver ());
+			StringWriter sw = new StringWriter ();
+			xslTransform.Transform (new XPathDocument ("Test/XmlFiles/xsl/391424.xml", XmlSpace.Preserve), null, sw);
+			Assert.AreEqual ("<?xml version=\"1.0\" encoding=\"utf-16\"?>Document found", sw.ToString ());
+		}
 #endif
 	}
 }

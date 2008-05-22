@@ -64,6 +64,7 @@ namespace System.Xml.Xsl
 			enable_debug = enableDebug;
 			if (enable_debug)
 				debugger = new NoOperationDebugger ();
+			output_settings.ConformanceLevel = ConformanceLevel.Fragment;
 		}
 
 		[MonoTODO]
@@ -82,10 +83,8 @@ namespace System.Xml.Xsl
 
 		public void Transform (string inputfile, string outputfile)
 		{
-			using (XmlReader reader = XmlReader.Create (inputfile)) {
-				using (XmlWriter writer = XmlWriter.Create (outputfile, output_settings)) {
-					Transform (reader, writer);
-				}
+			using (Stream outStream = File.Create (outputfile)) {
+				Transform (new XPathDocument (inputfile, XmlSpace.Preserve), null, outStream);
 			}
 		}
 
