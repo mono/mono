@@ -1,5 +1,12 @@
 2008-05-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* TabControl.cs: When invalidating in SelectedIndex and we need to
+	inflate to take into account the border of the tabs, make sure that
+	the invalidated rect doesn't overflow the control bounds, since that
+	would avoid updating at all.
+
+2008-05-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* TabControl.cs: Don't substract scroller width from the row width,
 	since we need to take into account the total width of the control when
 	calculating the position of the tabs. This avoids showing scroller

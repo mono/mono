@@ -362,9 +362,11 @@ namespace System.Windows.Forms {
 				} else {
 					SizeTabs ();
 					// The lines are drawn on the edges of the tabs so the invalid area should
-					// needs to include the extra pixels of line width.
+					// needs to include the extra pixels of line width (but should not
+					// overflow the control bounds).
 					if (appearance == TabAppearance.Normal) {
 						invalid.Inflate (6, 4);
+						invalid.Intersect (ClientRectangle);
 					}
 					Invalidate (invalid);
 				}
