@@ -1,5 +1,9 @@
 2008-05-22  Andreia Gaita <avidigal@novell.com> 
 
+	* Makefile: Fix build target
+
+2008-05-22  Andreia Gaita <avidigal@novell.com> 
+
 	* README: Warning about dependencies
 
 2008-05-22  Andreia Gaita <avidigal@novell.com> 
