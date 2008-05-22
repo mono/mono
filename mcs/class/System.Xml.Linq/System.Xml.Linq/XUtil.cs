@@ -88,26 +88,29 @@ namespace System.Xml.Linq
 				return new XText (o.ToString ());
 		}
 
-		public static object Clone (object o)
+		public static object GetDetachedObject (XObject child)
+		{
+			return child.Owner != null ? Clone (child) : child;
+		}
 
+		public static object Clone (object o)
 		{
 			if (o is string)
 				return (string) o;
+			if (o is XAttribute)
+				return new XAttribute ((XAttribute) o);
 			if (o is XElement)
 				return new XElement ((XElement) o);
 			if (o is XCData)
-				return new XCData (((XCData) o).Value);
+				return new XCData ((XCData) o);
 			if (o is XComment)
-				return new XComment (((XComment) o).Value);
-			XPI pi = o as XPI;
-			if (pi != null)
-				return new XPI (pi.Target, pi.Data);
-			XDeclaration xd = o as XDeclaration;
-			if (xd != null)
-				return new XDeclaration (xd.Version, xd.Encoding, xd.Standalone);
-			XDocumentType dtd = o as XDocumentType;
-			if (dtd != null)
-				throw new NotImplementedException ();
+				return new XComment ((XComment) o);
+			if (o is XPI)
+				return new XPI ((XPI) o);
+			if (o is XDeclaration)
+				return new XDeclaration ((XDeclaration) o);
+			if (o is XDocumentType)
+				return new XDocumentType ((XDocumentType) o);
 			throw new ArgumentException ();
 		}
 	}

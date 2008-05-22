@@ -1,3 +1,11 @@
+2008-05-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XUtil.cs : refactoring Clone(). Support XAttribute too.
+	* XNode.cs, XElement.cs, XContainer.cs : when adding a node that is
+	  already attached to another node, create a clone of it and add it
+	  to the tree instead of adding argument node. Fixed bug #392063.
+	  in XElement .ctor(XElement), copy attributes too.
+
 2008-05-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* XName.cs: Use String.IsNullOrEmpty inside 2.0 code.

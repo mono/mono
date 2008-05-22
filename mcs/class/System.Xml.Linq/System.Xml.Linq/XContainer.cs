@@ -78,6 +78,7 @@ namespace System.Xml.Linq
 		void AddNode (XNode n)
 		{
 			CheckChildType (n, false);
+			n = (XNode) XUtil.GetDetachedObject (n);
 			n.SetOwner (this);
 			if (first == null)
 				last = first = n;

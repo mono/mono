@@ -1,3 +1,7 @@
+2008-05-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XElementTest.cs : added test for bug #392063 and some variants.
+
 2008-05-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XElementTest.cs, XDocumentTest.cs : fixed tests; do now allow

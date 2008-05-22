@@ -478,5 +478,41 @@ namespace MonoTests.System.Xml.Linq
 		{
 			new XElement ("foo", "text").SetValue (null);
 		}
+
+		[Test]
+		public void AddSameInstance () // bug #392063
+		{
+			XElement root = new XElement (XName.Get ("Root", ""));
+			XElement child = new XElement (XName.Get ("Child", ""));
+
+			root.Add (child);
+			root.Add (child);
+			root.ToString ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void AddSameInstance2 ()
+		{
+			XElement root = new XElement (XName.Get ("Root"));
+			XAttribute attr = new XAttribute (XName.Get ("a"), "v");
+
+			root.Add (attr);
+			root.Add (attr); // duplicate attribute
+			root.ToString ();
+		}
+
+		[Test]
+		public void AddAttributeFromDifferentTree ()
+		{
+			XElement e1 = new XElement (XName.Get ("e1"));
+			XElement e2 = new XElement (XName.Get ("e2"));
+			XAttribute attr = new XAttribute (XName.Get ("a"), "v");
+
+			e1.Add (attr);
+			e2.Add (attr);
+			Assert.AreEqual ("<e1 a=\"v\" />", e1.ToString (), "#1");
+			Assert.AreEqual ("<e2 a=\"v\" />", e2.ToString (), "#2");
+		}
 	}
 }

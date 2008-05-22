@@ -99,6 +99,7 @@ namespace System.Xml.Linq
 				if (Owner.OnAddingObject (o, true, here, false))
 					continue;
 				XNode n = XUtil.ToNode (o);
+				n = (XNode) XUtil.GetDetachedObject (n);
 				n.SetOwner (Parent);
 				n.previous = here;
 				here.next = n;
@@ -126,6 +127,7 @@ namespace System.Xml.Linq
 				if (Owner.OnAddingObject (o, true, previous, true))
 					continue;
 				XNode n = XUtil.ToNode (o);
+				n = (XNode) XUtil.GetDetachedObject (n);
 				n.SetOwner (Parent);
 				n.previous = previous;
 				n.next = this;

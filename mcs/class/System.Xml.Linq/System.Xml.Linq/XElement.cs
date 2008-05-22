@@ -58,6 +58,7 @@ namespace System.Xml.Linq
 		public XElement (XElement source)
 		{
 			name = source.name;
+			Add (source.Attributes ());
 			Add (source.Nodes ());
 		}
 
@@ -534,6 +535,7 @@ namespace System.Xml.Linq
 
 		void SetAttributeObject (XAttribute a)
 		{
+			a = (XAttribute) XUtil.GetDetachedObject (a);
 			a.SetOwner (this);
 			if (attr_first == null) {
 				attr_first = a;
