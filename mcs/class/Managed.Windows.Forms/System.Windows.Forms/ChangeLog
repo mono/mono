@@ -1,3 +1,9 @@
+2008-05-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* X11Keyboard.cs : set XIM font size to somewhat reasonable
+	  number (ideally the input textbox size, but that could be
+	  too messy).
+
 2008-05-22  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripTextBox.cs: List for the TextBox's TextChanged and fire

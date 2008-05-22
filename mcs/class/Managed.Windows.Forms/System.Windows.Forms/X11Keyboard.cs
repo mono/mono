@@ -902,7 +902,9 @@ namespace System.Windows.Forms {
 		{
 			IntPtr list;
 			int count;
-			IntPtr fontSet = XCreateFontSet (display, "*", out list, out count, IntPtr.Zero);
+			Control c = Control.FromHandle (window);
+			string xlfd = String.Format ("-*-*-*-*-*-*-{0}-*-*-*-*-*-*-*", (int) c.Font.Size);
+			IntPtr fontSet = XCreateFontSet (display, xlfd, out list, out count, IntPtr.Zero);
 			XPoint spot = new XPoint ();
 			spot.X = 0;
 			spot.Y = 0;
