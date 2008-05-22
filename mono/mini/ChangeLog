@@ -1,5 +1,8 @@
 2008-05-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* inssel.brg (mini_emit_virtual_call): Avoid constructing a generic vtable if
+	possible.
+
 	* mini-trampolines.c (mono_magic_trampoline): Avoid calling setup_methods () in
 	the generic sharing code.
 	
