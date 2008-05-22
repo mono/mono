@@ -1,5 +1,8 @@
 2008-05-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-trampolines.c (mono_magic_trampoline): Avoid calling setup_methods () in
+	the generic sharing code.
+	
 	* mini-trampolines.c (mono_magic_trampoline): Call mono_class_setup_methods ()
 	when needed.
 
