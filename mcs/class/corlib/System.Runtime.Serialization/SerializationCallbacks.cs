@@ -137,15 +137,23 @@ namespace System.Runtime.Serialization {
 		}
 
 		static Hashtable cache = new Hashtable ();
-
+		static object cache_lock = new object ();
+		
 		public static SerializationCallbacks GetSerializationCallbacks (Type t)
 		{
-			lock (cache.SyncRoot) {
+			SerializationCallbacks sc = (SerializationCallbacks) cache [t];
+			if (sc != null)
+				return sc;
 
-				SerializationCallbacks sc = (SerializationCallbacks)  cache [t];
+			// Slow path, new entry, we need to copy
+			lock (cache_lock){
+				sc = (SerializationCallbacks)  cache [t];
 				if (sc == null) {
+					Hashtable copy = (Hashtable) cache.Clone ();
+				
 					sc = new SerializationCallbacks (t);
-					cache [t] = sc;
+					copy [t] = sc;
+					cache = copy;
 				}
 				return sc;
 			}

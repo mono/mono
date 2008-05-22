@@ -1,3 +1,12 @@
+2008-05-22  Miguel de Icaza  <miguel@novell.com>
+
+	* SerializationCallbacks.cs: This lock has a high contention rate
+	on ASP.NET web sites, with multiple cores we end up spending a lot
+	of time on this check.   
+
+	Rewrite this code to have two code paths since we know that the
+	cache is append-only.  
+
 2008-04-02  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
 
 	* IFormatterConverter.cs
