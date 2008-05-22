@@ -1,3 +1,10 @@
+2008-05-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* loader.c (find_method_in_class): Use mono_class_get_method_by_index ().
+
+	* class.c (mono_class_get_method_by_index): New helper function, returning an
+	entry in the class->methods array.
+
 2008-05-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_init): Only do the array optimization for szarrays. 
