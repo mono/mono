@@ -1,5 +1,12 @@
 2008-05-22  Mark Probst  <mark.probst@gmail.com>
 
+	* generic-method-patching.2.cs: Test callvirt to sealed generic
+	methods.
+
+	* Makefile.am: Test added.
+
+2008-05-22  Mark Probst  <mark.probst@gmail.com>
+
 	* generic-refanyval.2.il: Test case for generic refanyval.
 
 	* Makefile.am: Test added.
