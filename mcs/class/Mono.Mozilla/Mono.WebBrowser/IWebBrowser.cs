@@ -34,6 +34,22 @@ namespace Mono.WebBrowser
 {
 	public interface IWebBrowser
 	{
+		/// <summary>
+		/// Initialize a browser instance.
+		/// </summary>
+		/// <param name="handle">
+		/// A <see cref="IntPtr"/> to the native window handle of the widget 
+		/// where the browser engine will draw
+		/// </param>
+		/// <param name="width">
+		/// A <see cref="System.Int32"/>. Initial width
+		/// </param>
+		/// <param name="height">
+		/// A <see cref="System.Int32"/>. Initial height
+		/// </param>
+		/// <returns>
+		/// A <see cref="System.Boolean"/>
+		/// </returns>
 		bool Load (IntPtr handle, int width, int height);
 		void Shutdown ();
 		void FocusIn (FocusOption focus);
@@ -50,6 +66,9 @@ namespace Mono.WebBrowser
 		bool Initialized { get; }
 		IWindow Window { get; }
 		IDocument Document { get; }
+		/// <value>
+		/// Object exposing navigation methods like Go, Back, etc.
+		/// </value>
 		INavigation Navigation { get; }
 
 		event NodeEventHandler KeyDown;
@@ -73,7 +92,6 @@ namespace Mono.WebBrowser
 		event LoadFinishedEventHandler LoadFinished;
 				
 		event StatusChangedEventHandler StatusChanged;
-		event EventHandler Generic;		
 	}
 
 	public enum ReloadOption : uint

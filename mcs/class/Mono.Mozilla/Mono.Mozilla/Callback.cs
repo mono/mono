@@ -39,6 +39,8 @@ using Mono.WebBrowser.DOM;
 	internal class Callback
 	{
 		WebBrowser owner;
+		string currentUri;
+		
 		public Callback (WebBrowser owner) 
 		{
 			this.owner = owner;
@@ -56,7 +58,7 @@ using Mono.WebBrowser.DOM;
 
 
 		public void OnStateChange (nsIWebProgress progress, nsIRequest request, Int32 status, UInt32 state)
-		{
+		{			
 #if debug
 			//OnGeneric ("OnStateChange");
 
@@ -99,19 +101,21 @@ using Mono.WebBrowser.DOM;
 			    (state & (uint) StateFlags.IsWindow) != 0 
 			    )
 			{
+				nsIChannel channel = (nsIChannel) request;
+				nsIURI uri;
+				channel.getURI (out uri);
+				AsciiString spec = new AsciiString(String.Empty);
+				uri.getSpec (spec.Handle);
+				currentUri = spec.ToString ();
+				
 				LoadStartedEventHandler eh = (LoadStartedEventHandler) (owner.Events[WebBrowser.LoadStartedEvent]);
 				if (eh != null) {
 					nsIDOMWindow win;
 					progress.getDOMWindow (out win);
 					AsciiString name = new AsciiString (String.Empty);
 					win.getName (name.Handle);
-					nsIChannel channel;
-					channel = (nsIChannel)request;
-					nsIURI uri;
-					channel.getURI (out uri);
-					AsciiString spec = new AsciiString(String.Empty);
-					uri.getSpec (spec.Handle);
-					LoadStartedEventArgs e = new LoadStartedEventArgs (spec.ToString (), name.ToString ());
+					
+					LoadStartedEventArgs e = new LoadStartedEventArgs (currentUri, name.ToString ());
 					eh (this, e);
 					if (e.Cancel)
 						request.cancel (0);
@@ -128,14 +132,7 @@ using Mono.WebBrowser.DOM;
 
  					nsIDOMWindow win;
 					progress.getDOMWindow (out win);
-					nsIChannel channel = (nsIChannel) request;
-					nsIURI uri;
-					channel.getURI (out uri);
-					
-					AsciiString spec = new AsciiString (String.Empty);
-					uri.getSpec (spec.Handle);
-					
-			        LoadFinishedEventArgs e = new LoadFinishedEventArgs (spec.ToString ());
+			        LoadFinishedEventArgs e = new LoadFinishedEventArgs (currentUri);
 			        eh1 (this, e);
 
 			    }
@@ -145,7 +142,7 @@ using Mono.WebBrowser.DOM;
 #endif
 		}
 
-		public void OnProgress (Int32 currentTotalProgress, Int32 maxTotalProgress)
+		public void OnProgress (nsIWebProgress progress, nsIRequest request, Int32 currentTotalProgress, Int32 maxTotalProgress)
 		{
 #if debug
 			OnGeneric ("OnProgress");
@@ -164,9 +161,7 @@ using Mono.WebBrowser.DOM;
 #endif
 			LoadCommitedEventHandler eh = (LoadCommitedEventHandler) (owner.Events[WebBrowser.LoadCommitedEvent]);
 			if (eh != null) {
-				AsciiString spec = new AsciiString(String.Empty);
-				uri.getSpec (spec.Handle);
-				LoadCommitedEventArgs e = new LoadCommitedEventArgs (spec.ToString());
+				LoadCommitedEventArgs e = new LoadCommitedEventArgs (currentUri);
 				eh (this, e);
 			}
 		}
@@ -750,6 +745,10 @@ using Mono.WebBrowser.DOM;
 	internal delegate void CallbackOnStateChange ([MarshalAs (UnmanagedType.Interface)] nsIWebProgress progress,
 	                                               [MarshalAs (UnmanagedType.Interface)] nsIRequest request,
 	                                               Int32 arg2, UInt32 arg3);
+	internal delegate void CallbackOnProgress ([MarshalAs (UnmanagedType.Interface)] nsIWebProgress progress,
+	                                               [MarshalAs (UnmanagedType.Interface)] nsIRequest request,
+	                                               Int32 arg2, Int32 arg3);
+	
 
 
 #endregion
@@ -763,7 +762,7 @@ using Mono.WebBrowser.DOM;
 		public CallbackVoid			OnWidgetLoaded;
 
 		public CallbackOnStateChange 		OnStateChange;
-		public CallbackIntInt		OnProgress;
+		public CallbackOnProgress		OnProgress;
 		public CallbackOnLocationChanged		OnLocationChanged;
 
 		public CallbackOnStatusChange	OnStatusChange;
@@ -803,7 +802,7 @@ using Mono.WebBrowser.DOM;
 
 			this.OnStateChange			= new CallbackOnStateChange (callback.OnStateChange);
 
-			this.OnProgress				= new CallbackIntInt (callback.OnProgress);
+			this.OnProgress				= new CallbackOnProgress (callback.OnProgress);
 			this.OnLocationChanged		= new CallbackOnLocationChanged (callback.OnLocationChanged);
 			this.OnStatusChange			= new CallbackOnStatusChange (callback.OnStatusChange);
 

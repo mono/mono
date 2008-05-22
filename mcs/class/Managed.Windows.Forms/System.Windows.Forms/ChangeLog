@@ -1,3 +1,9 @@
+2008-05-22  Andreia Gaita <avidigal@novell.com> 
+
+	* WebBrowser.cs: Implement DocumentText. Implement AllowNavigation.
+	  Don't fire events until the initial about:blank page has finished
+	  loading. Clean up events.
+
 2008-05-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XplatUIX11.cs : when we call WM_SETFOCUS, call X11Keyboard

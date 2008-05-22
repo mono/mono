@@ -383,7 +383,7 @@ namespace Mono.Mozilla
 		}
 
 		internal static object GenericEvent = new object ();
-		public event EventHandler Generic
+		internal event EventHandler Generic
 		{
 			add { Events.AddHandler (GenericEvent, value); }
 			remove { Events.RemoveHandler (GenericEvent, value); }

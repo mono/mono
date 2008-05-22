@@ -41,7 +41,9 @@ namespace System.Windows.Forms
 	[Designer("System.Windows.Forms.Design.WebBrowserDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class WebBrowser : WebBrowserBase
 	{
-		private bool allowNavigation;
+		private bool navigated; // flag indicating that at least one page has been loaded (besides the initial about:blank)
+		private bool allowNavigation; // if this is true, and navigated is also true, no other navigation is allowed
+		
 		private bool allowWebBrowserDrop;
 		private bool isWebBrowserContextMenuEnabled;
 		private object objectForScripting;
@@ -54,7 +56,6 @@ namespace System.Windows.Forms
 
 		#region Public Properties
 
-		[MonoTODO ("Stub, not implemented")]
 		[DefaultValue(true)]
 		public bool AllowNavigation {
 			get { return allowNavigation; }
@@ -95,15 +96,23 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public Stream DocumentStream {
 			get { return null; }
-			set {  }
+			set { 
+				if (this.allowNavigation && this.navigated)
+					return;
+			}
 		}
 
-		[MonoTODO ("Stub, not implemented")]
 		[BrowsableAttribute(false)]
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public string DocumentText {
-			get { return String.Empty; }
-			set { throw new NotSupportedException (); }
+			get { 
+				if (!this.navigated)
+					return String.Empty; 
+				return ((Mono.WebBrowser.DOM.IElement)WebHost.Document.FirstChild).OuterHTML;
+			}
+			set { 
+				((Mono.WebBrowser.DOM.IElement)WebHost.Document.FirstChild).OuterHTML = value;
+			}
 		}
 
 		[BrowsableAttribute(false)]
@@ -423,164 +432,105 @@ namespace System.Windows.Forms
 
 		protected virtual void OnCanGoBackChanged(EventArgs e)
 		{
-			EventHandler eh = (EventHandler)(Events [CanGoBackChangedEvent]);
-			if (eh != null)
-				eh (this, e);
+			if (CanGoBackChanged != null)
+				CanGoBackChanged (this, e);
 		}
 
 		protected virtual void OnCanGoForwardChanged(EventArgs e)
-		{
-			EventHandler eh = (EventHandler)(Events [CanGoForwardChangedEvent]);
-			if (eh != null)
-				eh (this, e);
+		{			
+			if (CanGoForwardChanged != null)
+				CanGoForwardChanged (this, e);
 		}
 
 		protected virtual void OnDocumentCompleted(WebBrowserDocumentCompletedEventArgs e)
 		{
-			WebBrowserDocumentCompletedEventHandler eh = (WebBrowserDocumentCompletedEventHandler)(Events [DocumentCompletedEvent]);
-			if (eh != null)
-				eh (this, e);
+			Console.Error.WriteLine (Environment.StackTrace);
+			if (DocumentCompleted != null)
+				DocumentCompleted (this, e);
 		}
 
 		protected virtual void OnDocumentTitleChanged(EventArgs e)
 		{
-			EventHandler eh = (EventHandler)(Events [DocumentTitleChangedEvent]);
-			if (eh != null)
-				eh (this, e);
+			if (DocumentTitleChanged != null)
+				DocumentTitleChanged (this, e);
 		}
 
 		protected virtual void OnEncryptionLevelChanged(EventArgs e)
 		{
-			EventHandler eh = (EventHandler)(Events [EncryptionLevelChangedEvent]);
-			if (eh != null)
-				eh (this, e);
+			if (EncryptionLevelChanged != null)
+				EncryptionLevelChanged (this, e);
 		}
 
 		protected virtual void OnFileDownload(EventArgs e)
 		{
-			EventHandler eh = (EventHandler)(Events [FileDownloadEvent]);
-			if (eh != null)
-				eh (this, e);
+			if (FileDownload != null)
+				FileDownload (this, e);
 		}
 
 		protected virtual void OnNavigated(WebBrowserNavigatedEventArgs e)
 		{
-			WebBrowserNavigatedEventHandler eh = (WebBrowserNavigatedEventHandler)(Events [NavigatedEvent]);
-			if (eh != null)
-				eh (this, e);
+			if (Navigated != null)
+				Navigated (this, e);
 		}
 
 		protected virtual void OnNavigating(WebBrowserNavigatingEventArgs e)
 		{
-			WebBrowserNavigatingEventHandler eh = (WebBrowserNavigatingEventHandler)(Events [NavigatingEvent]);
-			if (eh != null)
-				eh (this, e);
+			if (Navigating != null)
+				Navigating (this, e);
 		}
 
 		protected virtual void OnNewWindow(CancelEventArgs e)
 		{
-			CancelEventHandler eh = (CancelEventHandler)(Events [NewWindowEvent]);
-			if (eh != null)
-				eh (this, e);
+			if (NewWindow != null)
+				NewWindow (this, e);
 		}
 
 		protected virtual void OnProgressChanged(WebBrowserProgressChangedEventArgs e)
 		{
-			WebBrowserProgressChangedEventHandler eh = (WebBrowserProgressChangedEventHandler)(Events [ProgressChangedEvent]);
-			if (eh != null)
-				eh (this, e);
+			if (ProgressChanged != null)
+				ProgressChanged (this, e);
 		}
 
 		protected virtual void OnStatusTextChanged(EventArgs e)
 		{
-			EventHandler eh = (EventHandler)(Events [StatusTextChangedEvent]);
-			if (eh != null)
-				eh (this, e);
+			if (StatusTextChanged != null)
+				StatusTextChanged (this, e);
 		}
 
 		#endregion
 
-		#region Events
-		static object CanGoBackChangedEvent = new object ();
-		static object CanGoForwardChangedEvent = new object ();
-		static object DocumentTitleChangedEvent = new object ();
-		static object EncryptionLevelChangedEvent = new object ();
-		static object FileDownloadEvent = new object ();
-		static object NavigatingEvent = new object ();
-		static object NavigatedEvent = new object ();
-		static object ProgressChangedEvent = new object ();
-		static object DocumentCompletedEvent = new object ();
-		static object StatusTextChangedEvent = new object ();
-		static object PaddingChangedEvent = new object ();
-		static object NewWindowEvent = new object ();
+		#region Events	
+		[BrowsableAttribute(false)]
+		public event EventHandler CanGoBackChanged;
+
+		[BrowsableAttribute(false)]
+		public event EventHandler CanGoForwardChanged;
+
+		public event WebBrowserDocumentCompletedEventHandler DocumentCompleted;
+
+		[BrowsableAttribute(false)]
+		public event EventHandler DocumentTitleChanged;
+
+		[BrowsableAttribute(false)]
+		public event EventHandler EncryptionLevelChanged;
+
+		public event EventHandler FileDownload;
+
+		public event WebBrowserNavigatedEventHandler Navigated;
+
+		public event WebBrowserNavigatingEventHandler Navigating;
+
+		public event CancelEventHandler NewWindow;
 		
-		[BrowsableAttribute(false)]
-		public event EventHandler CanGoBackChanged {
-			add { Events.AddHandler (CanGoBackChangedEvent, value); }
-			remove { Events.RemoveHandler (CanGoBackChangedEvent, value); }
-		}
+		public event WebBrowserProgressChangedEventHandler ProgressChanged;
 
 		[BrowsableAttribute(false)]
-		public event EventHandler CanGoForwardChanged {
-			add { Events.AddHandler (CanGoForwardChangedEvent, value); }
-			remove { Events.RemoveHandler (CanGoForwardChangedEvent, value); }
-		}
-
-		public event WebBrowserDocumentCompletedEventHandler DocumentCompleted {
-			add { Events.AddHandler (DocumentCompletedEvent, value); }
-			remove { Events.RemoveHandler (DocumentCompletedEvent, value); }
-		}
-
-		[BrowsableAttribute(false)]
-		public event EventHandler DocumentTitleChanged {
-			add { Events.AddHandler (DocumentTitleChangedEvent, value); }
-			remove { Events.RemoveHandler (DocumentTitleChangedEvent, value); }
-		}
-
-		[BrowsableAttribute(false)]
-		public event EventHandler EncryptionLevelChanged {
-			add { Events.AddHandler (EncryptionLevelChangedEvent, value); }
-			remove { Events.RemoveHandler (EncryptionLevelChangedEvent, value); }
-		}
-
-		public event EventHandler FileDownload {
-			add { Events.AddHandler (FileDownloadEvent, value); }
-			remove { Events.RemoveHandler (FileDownloadEvent, value); }
-		}
-
-		public event WebBrowserNavigatedEventHandler Navigated {
-			add { Events.AddHandler (NavigatedEvent, value); }
-			remove { Events.RemoveHandler (NavigatedEvent, value); }
-		}
-
-		public event WebBrowserNavigatingEventHandler Navigating {
-			add { Events.AddHandler (NavigatingEvent, value); }
-			remove { Events.RemoveHandler (NavigatingEvent, value); }
-		}
-
-		public event CancelEventHandler NewWindow {
-			add { Events.AddHandler (NewWindowEvent, value); }
-			remove { Events.RemoveHandler (NewWindowEvent, value); }
-		}
-		
-		public event WebBrowserProgressChangedEventHandler ProgressChanged {
-			add { Events.AddHandler (ProgressChangedEvent, value); }
-			remove { Events.RemoveHandler (ProgressChangedEvent, value); }
-		}
-
-		[BrowsableAttribute(false)]
-		public event EventHandler StatusTextChanged {
-			add { Events.AddHandler (StatusTextChangedEvent, value); }
-			remove { Events.RemoveHandler (StatusTextChangedEvent, value); }
-		}
+		public event EventHandler StatusTextChanged;
 
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public new event EventHandler PaddingChanged {
-			add { Events.AddHandler (PaddingChangedEvent, value); }
-			remove { Events.RemoveHandler (PaddingChangedEvent, value); }
-		}
+		public new event EventHandler PaddingChanged;
 		#endregion
 
 		#region Internal
@@ -595,26 +545,36 @@ namespace System.Windows.Forms
 		internal override void OnWebHostLoadFinished (object sender, Mono.WebBrowser.LoadFinishedEventArgs e)
 		{
 			documentReady = true;
+			if (!this.navigated) {
+				this.navigated = true;
+				return;
+			}
+			
 			WebBrowserDocumentCompletedEventArgs n = new WebBrowserDocumentCompletedEventArgs (new Uri (e.Uri));
 			OnDocumentCompleted (n);
-				
 		}
 		
 		internal override void OnWebHostLoadStarted (object sender, Mono.WebBrowser.LoadStartedEventArgs e)
 		{
 			documentReady = false;
 			document = null;
+			if (!this.navigated)
+				return;
 			WebBrowserNavigatingEventArgs n = new WebBrowserNavigatingEventArgs (new Uri (e.Uri), e.FrameName);
 			OnNavigating (n);
 		}
 
 		internal override void OnWebHostLoadCommited (object sender, Mono.WebBrowser.LoadCommitedEventArgs e)
 		{
+			if (!this.navigated)
+				return;
 			WebBrowserNavigatedEventArgs n = new WebBrowserNavigatedEventArgs (new Uri (e.Uri));
 			OnNavigated (n);
 		}
 		internal override void OnWebHostProgressChanged (object sender, Mono.WebBrowser.ProgressChangedEventArgs e)
 		{
+			if (!this.navigated)
+				return;
 			WebBrowserProgressChangedEventArgs n = new WebBrowserProgressChangedEventArgs (e.Progress, e.MaxProgress);
 			OnProgressChanged (n);
 		}

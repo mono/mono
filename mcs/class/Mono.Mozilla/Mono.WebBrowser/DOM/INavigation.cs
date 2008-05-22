@@ -86,8 +86,6 @@ namespace Mono.WebBrowser.DOM
 		void Go (string url, LoadFlags flags);
 
 		int HistoryCount { get; }
-		
-		int GetHashCode ();
 	}
 	
 	[Flags]

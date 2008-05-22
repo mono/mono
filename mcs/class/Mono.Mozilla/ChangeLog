@@ -1,3 +1,11 @@
+2008-05-22  Andreia Gaita <avidigal@novell.com> 
+
+	* Mono.WebBrowser/DOM/INavigation.cs: GetHashCode is not needed here
+	* Mono.WebBrowser/IWebBrowser.cs, Mono.Mozilla/WebBrowser.cs: Hide the
+	  generic event, internal use only
+	* Mono.Mozilla/Callback.cs: Add more xpcom helper objects for
+	  OnProgress. Cache the current uri for events.
+
 2008-05-20  Andreia Gaita <avidigal@novell.com> 
 
 	* Mono.WebBrowser/IWebBrowser.cs, Mono.Mozilla/WebBrowser.cs: Refactor
