@@ -1,5 +1,8 @@
 2008-05-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c (mono_class_init): Control the creation of a generic vtable using
+	a global which is true by default, but set to false by the runtime startup code.
+	
 	* class.c (mono_class_init): Avoid constructing a generic vtable in most cases.
 	Disabled for now since it breaks the embedding API.
 	Move the setup of class->methods for arrays to mono_class_setup_methods ().
