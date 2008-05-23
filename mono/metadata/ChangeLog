@@ -1,5 +1,7 @@
 2008-05-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* class-internals.h class.c: Correct the name of the 'mono_no_setup_vtable_in_class_init' variable.
+
 	* class.c (mono_class_init): Control the creation of a generic vtable using
 	a global which is true by default, but set to false by the runtime startup code.
 	
