@@ -1,4 +1,9 @@
 2008-05-12  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-oprofile.c: Added support for a global counter of all
+	garbage collections, so that the file decoder can correlate the
+	events properly.
+
+2008-05-12  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-oprofile.c: Fixed a bug that prevented using rdtsc,
 	and enabled rdtsc by default,adding a command line option to revert
 	to using gettimeofday.
