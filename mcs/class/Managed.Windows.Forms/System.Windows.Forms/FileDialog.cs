@@ -3366,6 +3366,7 @@ namespace System.Windows.Forms
 		protected FSEntry currentFolderFSEntry = null;
 		protected FSEntry currentTopFolderFSEntry = null;
 		private FileInfoComparer fileInfoComparer = new FileInfoComparer ();
+		private FSEntryComparer fsEntryComparer = new FSEntryComparer ();
 		
 		public FSEntry ChangeDirectory (string folder)
 		{
@@ -3520,6 +3521,8 @@ namespace System.Windows.Forms
 					directories_out.Add (GetDirectoryFSEntry (dirs [i], currentTopFolderFSEntry));
 				}
 
+			directories_out.Sort (fsEntryComparer);
+			
 			files_out = new ArrayList ();
 			
 			ArrayList files = new ArrayList ();
@@ -3604,7 +3607,15 @@ namespace System.Windows.Forms
 				return String.Compare (((FileInfo)fileInfo1).Name, ((FileInfo)fileInfo2).Name);
 			}
 		}
-		
+
+		internal class FSEntryComparer : IComparer
+		{
+			public int Compare (object fileInfo1, object fileInfo2)
+			{
+				return String.Compare (((FSEntry)fileInfo1).Name, ((FSEntry)fileInfo2).Name);
+			}
+		}
+	
 		protected abstract FSEntry GetDesktopFSEntry ();
 		
 		protected abstract FSEntry GetRecentlyUsedFSEntry ();

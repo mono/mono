@@ -1,3 +1,8 @@
+2008-05-23  Jonathan Pobst  <monkey@jpobst.com>
+
+	* FileDialog.cs: Add a FSEntryComparer, and use it to sort the
+	directories.  [Fixes bug #393931]
+
 2008-05-22  Andreia Gaita <avidigal@novell.com> 
 
 	* WebBrowser.cs: Implement DocumentText. Implement AllowNavigation.
