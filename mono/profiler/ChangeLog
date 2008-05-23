@@ -1,4 +1,9 @@
 2008-05-12  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-oprofile.c (handle_heap_profiling): Flush all data
+	buffers, so that objext allocation events are written before the heap
+	description (which contains the "object free" events).
+
+2008-05-12  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-oprofile.c: Added support for a global counter of all
 	garbage collections, so that the file decoder can correlate the
 	events properly.
