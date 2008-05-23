@@ -137,5 +137,26 @@ namespace MonoTests.System.Linq.Expressions {
 
 			Assert.AreEqual ("foo", invoker (Identity, "foo"));
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void InvokeWithExpressionLambdaAsArguments ()
+		{
+			var p = Expression.Parameter (typeof (string), "s");
+
+			Func<string, Expression<Func<string, string>>, string> caller = (s, f) => f.Compile ().Invoke (s);
+
+			var invoke = Expression.Lambda<Func<string>> (
+				Expression.Invoke (
+					Expression.Constant (caller),
+					Expression.Constant ("KABOOM!"),
+					Expression.Lambda<Func<string, string>> (
+						Expression.Call (p, typeof (string).GetMethod ("ToLowerInvariant")), p)));
+
+			Assert.AreEqual (ExpressionType.Quote,
+				(invoke.Body as InvocationExpression).Arguments [1].NodeType);
+
+			Assert.AreEqual ("kaboom!", invoke.Compile ().DynamicInvoke ());
+		}
 	}
 }
