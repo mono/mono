@@ -1,5 +1,7 @@
 2008-05-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* driver.c (mono_main): Set mono_setup_vtable_in_class_init to FALSE.
+
 	* mini.c: Handle the case when mono_class_vtable () fails.
 
 2008-05-23  Massimiliano Mantione  <massi@ximian.com>
