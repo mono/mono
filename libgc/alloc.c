@@ -271,10 +271,6 @@ void GC_maybe_gc()
     static int n_partial_gcs = 0;
 
     if (GC_should_collect()) {
-	if (GC_notify_event)
-		GC_notify_event (GC_EVENT_START);
-	    
-	    
         if (!GC_incremental) {
             GC_gcollect_inner();
             n_partial_gcs = 0;
@@ -320,10 +316,6 @@ void GC_maybe_gc()
 	        GC_n_attempts++;
 	    }
 	}
-	
-
-	if (GC_notify_event)
-		GC_notify_event (GC_EVENT_END);
     }
 }
 
@@ -340,6 +332,10 @@ GC_stop_func stop_func;
         CLOCK_TYPE start_time, current_time;
 #   endif
     if (GC_dont_gc) return FALSE;
+    
+    if (GC_notify_event)
+	GC_notify_event (GC_EVENT_START);
+    
     if (GC_incremental && GC_collection_in_progress()) {
 #   ifdef CONDPRINT
       if (GC_print_stats) {
@@ -402,6 +398,9 @@ GC_stop_func stop_func;
                    MS_TIME_DIFF(current_time,start_time));
       }
 #   endif
+    if (GC_notify_event)
+	GC_notify_event (GC_EVENT_END);
+      
     return(TRUE);
 }
 

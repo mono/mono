@@ -1,3 +1,7 @@
+2008-05-23  Massimiliano Mantione  <massi@ximian.com>
+	* alloc.c: Moved emitting "GC_EVENT_START" and "GC_EVENT_END" events
+	from "GC_maybe_gc" to "GC_try_to_collect_inner".
+
 2008-05-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* configure.in: Add two variables for passing CPPFLAGS/CFLAGS from the parent
