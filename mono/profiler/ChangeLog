@@ -1,4 +1,7 @@
 2008-05-23  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-oprofile.c: Fix the build on x86.
+
+2008-05-23  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-oprofile.c: Support call chains (backtrace) in the
 	stat profiler.
 
