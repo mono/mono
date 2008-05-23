@@ -1,3 +1,8 @@
+2008-05-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (test-generic-sharing): Exit if one of the tests fail. Run the
+	tests with MONO_GENERIC_SHARING=all.
+
 2008-05-22  Mark Probst  <mark.probst@gmail.com>
 
 	* Makefile.am: Do generic sharing tests with domain sharing turned
