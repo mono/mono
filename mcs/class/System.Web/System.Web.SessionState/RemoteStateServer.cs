@@ -72,7 +72,7 @@ namespace System.Web.SessionState {
 			if (item == null)
 				return;
 			item.Timeout = timeout;
-			cache.SetItemTimeout (id, Cache.NoAbsoluteExpiration, new TimeSpan (0, item.Timeout, 0));
+			cache.SetItemTimeout (id, Cache.NoAbsoluteExpiration, new TimeSpan (0, item.Timeout, 0), false);
 		}
 		
 		internal StateServerItem Get (string id)

@@ -104,7 +104,7 @@ namespace System.Web.SessionState
 			if (cache == null || sessionId == null || sessionId.Length == 0)
 				return;
 			
-			cache.SetItemTimeout (INPROC_CACHE_PREFIX + sessionId, Cache.NoAbsoluteExpiration, new TimeSpan (0, timeout, 0));
+			cache.SetItemTimeout (INPROC_CACHE_PREFIX + sessionId, Cache.NoAbsoluteExpiration, new TimeSpan (0, timeout, 0), false);
 		}
 	}
 }

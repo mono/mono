@@ -1,3 +1,8 @@
+2008-05-23  Marek Habersack  <mhabersack@novell.com>
+
+	* SessionInProcHandler.cs, RemoteStateServer.cs: update for
+	internal API change in System.Web.Caching.Cache.
+
 2008-04-28  Marek Habersack  <mhabersack@novell.com>
 
 	* ISessionHandler.cs: added new method, Touch, to reset the item
