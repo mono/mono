@@ -1,3 +1,10 @@
+2008-05-23 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_delegate_type_equal): Handle VAR, MVAR and GENERICINST.
+
+	* verify.c (mono_delegate_signature_equal): Don't compar number of generic
+	parameters as it's irrelevant for delegate checking.
+
 2008-05-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* class-internals.h class.c: Correct the name of the 'mono_no_setup_vtable_in_class_init' variable.
