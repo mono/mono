@@ -1,3 +1,9 @@
+2008-05-23  Massimiliano Mantione  <massi@ximian.com>
+	* profiler.c: Added mono_profiler_install_statistical_call_chain,
+	mono_profiler_stat_get_call_chain_depth and mono_profiler_stat_call_chain
+	to support call chains (backtrace) in the stat profiler.
+	* profiler.c, profiler-private.h: Likewise.
+
 2008-05-22  Mark Probst  <mark.probst@gmail.com>
 
 	* generic-sharing.c: Init generic class when a method of it is
