@@ -292,6 +292,23 @@ public class HashtableTest : Assertion {
 			     0, h.Count);
 	}
 
+#if NET_2_0
+	public class MyEqualityComparer : IEqualityComparer {
+		public bool Equals (object x, object y) { return x == y; }
+		public int GetHashCode (object obj) { return 1; }
+	}
+
+	public class MyHashtable : Hashtable {
+		public MyHashtable (IEqualityComparer c): base (c){}
+
+		public IEqualityComparer GetComparer ()
+		{
+			return EqualityComparer;
+		}
+	}
+	
+#endif
+	
         [Test]
 	public void TestClone() {
 		{
@@ -329,6 +346,15 @@ public class HashtableTest : Assertion {
 
 			((char[])h1[c1[0]])[0] = 'z';
 			AssertEquals("shallow copy", h1[c1[0]], h2[c1[0]]);
+
+#if NET_2_0
+			// NET 2.0 stuff
+			MyEqualityComparer a = new MyEqualityComparer ();
+			MyHashtable mh1 = new MyHashtable (a);
+			MyHashtable mh2 = (MyHashtable) h1.Clone ();
+			
+			AssertEquals ("EqualityComparer", mh1.GetComparer (), mh2.GetComparer ());
+#endif
 		}
 	}
 

@@ -1,3 +1,13 @@
+2008-05-23  Miguel de Icaza  <miguel@novell.com>
+
+	* Hashtable.cs: Implement a faster clone that does not use an
+	enumerator to iterate over the values, this doubles the speed of
+	Clone.
+
+	The use of an internal constructor that builds from a Hashtable is
+	done to avoid populating a Hashtable and then updating every field
+	and structure with new data.
+
 2008-05-08  Robert Jordan  <robertj@gmx.net>
 
 	* DictionaryEntry.cs: Rename fields for serialization

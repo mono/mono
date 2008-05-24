@@ -175,6 +175,25 @@ namespace System.Collections {
 		{
 		}
 
+		//
+		// Used as a faster Clone
+		//
+		internal Hashtable (Hashtable source)
+		{
+			inUse = source.inUse;
+			loadFactor = source.loadFactor;
+
+			table = (Slot []) source.table.Clone ();
+			hashes = (int []) source.hashes.Clone ();
+			threshold = source.threshold;
+			hcpRef = source.hcpRef;
+			comparerRef = source.comparerRef;
+
+#if NET_2_0
+			equalityComparer = source.equalityComparer;
+#endif
+		}
+			
 #if NET_2_0
 		[Obsolete ("Please use Hashtable(int, IEqualityComparer) instead")]
 #endif
@@ -519,25 +538,7 @@ namespace System.Collections {
 
 		public virtual object Clone ()
 		{
-#if NET_2_0
-			Hashtable ht = new Hashtable (Count, equalityComparer);
-			ht.hcp = this.hcp;
-			ht.comparer = this.comparer;
-#else
-			Hashtable ht = new Hashtable (Count, hcp, comparer);
-#endif
-			ht.inUse = 0;
-			ht.loadFactor = this.loadFactor;
-
-			// FIXME: maybe it's faster to simply
-			//        copy the back-end array?
-
-			IDictionaryEnumerator it = GetEnumerator ();
-			while (it.MoveNext ()) {
-				ht [it.Key] = it.Value;
-			}
-
-			return ht;
+			return new Hashtable (this);
 		}
 
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
