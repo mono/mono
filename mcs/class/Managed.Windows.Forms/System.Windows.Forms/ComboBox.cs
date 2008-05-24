@@ -381,6 +381,9 @@ namespace System.Windows.Forms
 				SuspendLayout ();
 
 				if (dropdown_style == ComboBoxStyle.Simple) {
+					foreach (Control c in Controls.GetAllControls ())
+						Console.WriteLine ("->" + c.GetType ());
+					Console.WriteLine ();
 					if (listbox_ctrl != null) {
 						Controls.RemoveImplicit (listbox_ctrl);
 						listbox_ctrl.Dispose ();
@@ -1587,6 +1590,7 @@ namespace System.Windows.Forms
 			if (Items.Count == 0)
 				return;
 
+			int offset;
 			switch (e.KeyCode) 
 			{
 				case Keys.Up:
@@ -1609,12 +1613,11 @@ namespace System.Windows.Forms
 					break;
 				
 				case Keys.PageUp:
-					if (listbox_ctrl != null)
-						SelectedIndex = Math.Max(SelectedIndex- (listbox_ctrl.page_size-1), 0);
-					else if (SelectedIndex == -1)
-						SelectedIndex = 0;
-					else
-						SelectedIndex = Math.Max (SelectedIndex - MaxDropDownItems + 1, 0);
+					offset = listbox_ctrl == null ? MaxDropDownItems - 1 : listbox_ctrl.page_size - 1;
+					if (offset < 1)
+						offset = 1;
+
+					SelectedIndex = Math.Max (SelectedIndex - offset, 0);
 
 					if (DroppedDown)
 						if (SelectedIndex < listbox_ctrl.FirstVisibleItem ())
@@ -1628,11 +1631,12 @@ namespace System.Windows.Forms
 							return;
 					}
 
-					if (listbox_ctrl != null)
-						SelectedIndex = Math.Min(SelectedIndex+(listbox_ctrl.page_size-1), Items.Count-1);
-					else
-						SelectedIndex = Math.Min (SelectedIndex + MaxDropDownItems - 1, Items.Count - 1);
-						
+					offset = listbox_ctrl == null ? MaxDropDownItems - 1 : listbox_ctrl.page_size - 1;
+					if (offset == 0)
+						offset = 1;
+
+					SelectedIndex = Math.Min (SelectedIndex + offset, Items.Count - 1);
+
 					if (DroppedDown)
 						if (SelectedIndex >= listbox_ctrl.LastVisibleItem ())
 							listbox_ctrl.Scroll (SelectedIndex - listbox_ctrl.LastVisibleItem () + 1);

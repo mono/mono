@@ -1,3 +1,9 @@
+2008-05-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ComboBox.cs: When navigating using PageDown/PageUp the navigation
+	should be done for at least 1 item, and not stay at the same item.
+	Fixes part of #374713.
+
 2008-05-23  Jonathan Pobst  <monkey@jpobst.com>
 
 	* FileDialog.cs: Add a FSEntryComparer, and use it to sort the
