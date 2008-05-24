@@ -819,11 +819,40 @@ public class StringTest : Assertion
 	}
 
 	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void IndexOfStringComparisonOrdinalRangeException1 () 
+	{
+		"Mono".IndexOf ("no", 5, StringComparison.Ordinal);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void IndexOfStringComparisonOrdinalRangeException2 () 
+	{
+		"Mono".IndexOf ("no", 1, 5, StringComparison.Ordinal);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void IndexOfStringComparisonOrdinalIgnoreCaseRangeException1 () 
+	{
+		"Mono".IndexOf ("no", 5, StringComparison.OrdinalIgnoreCase);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void IndexOfStringComparisonOrdinalIgnoreCaseRangeException2 () 
+	{
+		"Mono".IndexOf ("no", 1, 5, StringComparison.OrdinalIgnoreCase);
+	}
+
+	[Test]
 	public void IndexOfStringComparison ()
 	{
 		string text = "testing123456";
 		string text2 = "123";
 		string text3 = "NG";
+		string text4 = "t";
 		AssertEquals ("#1-1", 7, text.IndexOf (text2, StringComparison.Ordinal));
 		AssertEquals ("#2-1", 5, text.IndexOf (text3, StringComparison.OrdinalIgnoreCase));
 
@@ -844,6 +873,18 @@ public class StringTest : Assertion
 
 		AssertEquals ("#1-7", -1, text.IndexOf (text2, 7, 1, StringComparison.Ordinal));
 		AssertEquals ("#2-7", -1, text.IndexOf (text3, 5, 1, StringComparison.OrdinalIgnoreCase));
+
+		AssertEquals ("#3-1", 0, text.IndexOf (text4, 0, StringComparison.Ordinal));
+		AssertEquals ("#3-2", 0, text.IndexOf (text4, 0, StringComparison.OrdinalIgnoreCase));
+
+		AssertEquals ("#4-1", -1, text.IndexOf (text4, 13, StringComparison.Ordinal));
+		AssertEquals ("#4-2", -1, text.IndexOf (text4, 13, StringComparison.OrdinalIgnoreCase));
+
+		AssertEquals ("#4-1", -1, text.IndexOf (text4, 13, 0, StringComparison.Ordinal));
+		AssertEquals ("#4-2", -1, text.IndexOf (text4, 13, 0, StringComparison.OrdinalIgnoreCase));
+
+		AssertEquals ("#5-1", 12, text.IndexOf ("6", 12, 1, StringComparison.Ordinal));
+		AssertEquals ("#5-2", 12, text.IndexOf ("6", 12, 1, StringComparison.OrdinalIgnoreCase));
 	}
 
 	[Test]
@@ -1257,11 +1298,40 @@ public class StringTest : Assertion
 	}
 
 	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void LastIndexOfStringComparisonOrdinalRangeException1 () 
+	{
+		"Mono".LastIndexOf ("no", 5, StringComparison.Ordinal);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void LastIndexOfStringComparisonOrdinalRangeException2 () 
+	{
+		"Mono".LastIndexOf ("no", 1, 3, StringComparison.Ordinal);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void LastIndexOfStringComparisonOrdinalIgnoreCaseRangeException1 () 
+	{
+		"Mono".LastIndexOf ("no", 5, StringComparison.OrdinalIgnoreCase);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void LastIndexOfStringComparisonOrdinalIgnoreCaseRangeException2 () 
+	{
+		"Mono".LastIndexOf ("no", 1, 3, StringComparison.OrdinalIgnoreCase);
+	}
+
+	[Test]
 	public void LastIndexOfStringComparison ()
 	{
 		string text = "testing123456";
 		string text2 = "123";
 		string text3 = "NG";
+		string text4 = "t";
 		AssertEquals ("#1-1", 7, text.LastIndexOf (text2, StringComparison.Ordinal));
 		AssertEquals ("#2-1", 5, text.LastIndexOf (text3, StringComparison.OrdinalIgnoreCase));
 
@@ -1282,6 +1352,18 @@ public class StringTest : Assertion
 
 		AssertEquals ("#1-7", -1, text.LastIndexOf (text2, 7, 1, StringComparison.Ordinal));
 		AssertEquals ("#2-7", -1, text.LastIndexOf (text3, 5, 1, StringComparison.OrdinalIgnoreCase));
+
+		AssertEquals ("#3-1", 0, text.LastIndexOf (text4, 0, StringComparison.Ordinal));
+		AssertEquals ("#3-2", 0, text.LastIndexOf (text4, 0, StringComparison.OrdinalIgnoreCase));
+
+		AssertEquals ("#4-1", 3, text.LastIndexOf (text4, 13, StringComparison.Ordinal));
+		AssertEquals ("#4-2", 3, text.LastIndexOf (text4, 13, StringComparison.OrdinalIgnoreCase));
+
+		AssertEquals ("#4-1", 3, text.LastIndexOf (text4, 13, 14, StringComparison.Ordinal));
+		AssertEquals ("#4-2", 3, text.LastIndexOf (text4, 13, 14, StringComparison.OrdinalIgnoreCase));
+
+		AssertEquals ("#5-1", 0, text.LastIndexOf (text4, 1, 2, StringComparison.Ordinal));
+		AssertEquals ("#5-2", 0, text.LastIndexOf (text4, 1, 2, StringComparison.OrdinalIgnoreCase));
 	}
 
 	[Test]
