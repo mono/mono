@@ -70,6 +70,7 @@ namespace System.Windows.Forms
 		private Rectangle button_area;
 		private Rectangle listbox_area;
 		private const int button_width = 16;
+		bool drop_down_button_entered;
 #if NET_2_0
 		private AutoCompleteStringCollection auto_complete_custom_source = null;
 		private AutoCompleteMode auto_complete_mode = AutoCompleteMode.None;
@@ -111,6 +112,7 @@ namespace System.Windows.Forms
 			MouseUp += new MouseEventHandler (OnMouseUpCB);
 			MouseMove += new MouseEventHandler (OnMouseMoveCB);
 			MouseWheel += new MouseEventHandler (OnMouseWheelCB);
+			MouseLeave += new EventHandler (OnMouseLeave);
 			KeyDown +=new KeyEventHandler(OnKeyDownCB);
 		}
 
@@ -1473,24 +1475,38 @@ namespace System.Windows.Forms
 			}
 			
 			if (show_dropdown_button) {
-				dc.FillRectangle (theme.ResPool.GetSolidBrush (theme.ColorControl), button_area);
-
 				ButtonState current_state;
 				if (is_enabled)
 					current_state = button_state;
 				else
 					current_state = ButtonState.Inactive;
 
+				if (is_flat || theme.ComboBoxNormalDropDownButtonHasTransparentBackground (this, current_state))
+					dc.FillRectangle (theme.ResPool.GetSolidBrush (theme.ColorControl), button_area);
+
 				if (is_flat) {
 					theme.DrawFlatStyleComboButton (dc, button_area, current_state);
 				} else {
-					theme.CPDrawComboButton (dc, button_area, current_state);
+					theme.ComboBoxDrawNormalDropDownButton (this, dc, clip, button_area, current_state); 
 				}
+			}
+		}
+
+		internal bool DropDownButtonEntered {
+			get { return drop_down_button_entered; }
+			private set {
+				if (drop_down_button_entered == value)
+					return;
+				drop_down_button_entered = value;
+				if (ThemeEngine.Current.ComboBoxDropDownButtonHasHotElementStyle (this))
+					Invalidate (button_area);
 			}
 		}
 
 		internal void DropDownListBox ()
 		{
+			DropDownButtonEntered = false;
+
 			if (DropDownStyle == ComboBoxStyle.Simple)
 				return;
 			
@@ -1707,8 +1723,17 @@ namespace System.Windows.Forms
 			Capture = true;
 		}
 
+		void OnMouseLeave (object sender, EventArgs e)
+		{
+			if (show_dropdown_button)
+				DropDownButtonEntered = false;
+		}
+
 		void OnMouseMoveCB (object sender, MouseEventArgs e)
 		{
+			if (show_dropdown_button && !dropped_down)
+				DropDownButtonEntered = button_area.Contains (e.Location);
+
 			if (DropDownStyle == ComboBoxStyle.Simple)
 				return;
 

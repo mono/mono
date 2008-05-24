@@ -1579,6 +1579,18 @@ namespace System.Windows.Forms
 				graphics.FillPolygon(SystemBrushes.ControlText, arrow, FillMode.Winding);
 			}		
 		}
+		public override void ComboBoxDrawNormalDropDownButton (ComboBox comboBox, Graphics g, Rectangle clippingArea, Rectangle area, ButtonState state)
+		{
+			CPDrawComboButton (g, area, state);
+		}
+		public override bool ComboBoxNormalDropDownButtonHasTransparentBackground (ComboBox comboBox, ButtonState state)
+		{
+			return true;
+		}
+		public override bool ComboBoxDropDownButtonHasHotElementStyle (ComboBox comboBox)
+		{
+			return false;
+		}
 		#endregion ComboBox
 		
 		#region Datagrid
