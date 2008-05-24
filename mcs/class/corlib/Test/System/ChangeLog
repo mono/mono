@@ -1,3 +1,7 @@
+2008-05-24  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* StringTest.cs: Add (more) tests for (Last)IndexOf
+
 2008-05-20  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* StringTest.cs: Add more tests for SplitRemoveEmpty

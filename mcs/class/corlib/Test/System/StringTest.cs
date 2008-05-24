@@ -818,14 +818,67 @@ public class StringTest : Assertion
 		" ".IndexOf ("", 0, 1, (StringComparison)Int32.MinValue);
 	}
 
+	[Test]
 	public void IndexOfStringComparison ()
 	{
 		string text = "testing123456";
 		string text2 = "123";
 		string text3 = "NG";
-		AssertEquals ("#1", 7, text.IndexOf (text2, StringComparison.Ordinal));
-		AssertEquals ("#2", 5, text.IndexOf (text3, StringComparison.OrdinalIgnoreCase));
+		AssertEquals ("#1-1", 7, text.IndexOf (text2, StringComparison.Ordinal));
+		AssertEquals ("#2-1", 5, text.IndexOf (text3, StringComparison.OrdinalIgnoreCase));
+
+		AssertEquals ("#1-2", 7, text.IndexOf (text2, 0, StringComparison.Ordinal));
+		AssertEquals ("#2-2", 5, text.IndexOf (text3, 0, StringComparison.OrdinalIgnoreCase));
+
+		AssertEquals ("#1-3", 7, text.IndexOf (text2, 1, StringComparison.Ordinal));
+		AssertEquals ("#2-3", 5, text.IndexOf (text3, 1, StringComparison.OrdinalIgnoreCase));
+
+		AssertEquals ("#1-4", 7, text.IndexOf (text2, 6, StringComparison.Ordinal));
+		AssertEquals ("#2-4", -1, text.IndexOf (text3, 6, StringComparison.OrdinalIgnoreCase));
+
+		AssertEquals ("#1-5", 7, text.IndexOf (text2, 7, 3, StringComparison.Ordinal));
+		AssertEquals ("#2-5", -1, text.IndexOf (text3, 7, 3, StringComparison.OrdinalIgnoreCase));
+
+		AssertEquals ("#1-6", -1, text.IndexOf (text2, 6, 0, StringComparison.Ordinal));
+		AssertEquals ("#2-6", -1, text.IndexOf (text3, 5, 0, StringComparison.OrdinalIgnoreCase));
+
+		AssertEquals ("#1-7", -1, text.IndexOf (text2, 7, 1, StringComparison.Ordinal));
+		AssertEquals ("#2-7", -1, text.IndexOf (text3, 5, 1, StringComparison.OrdinalIgnoreCase));
 	}
+
+	[Test]
+	public void IndexOfStringComparisonOrdinal ()
+	{
+		string text = "testing123456";
+		AssertEquals ("#1", 10, text.IndexOf ("456", StringComparison.Ordinal));
+		AssertEquals ("#2", -1, text.IndexOf ("4567", StringComparison.Ordinal));
+		AssertEquals ("#3", 0, text.IndexOf ("te", StringComparison.Ordinal));
+		AssertEquals ("#4", 2, text.IndexOf ("s", StringComparison.Ordinal));
+		AssertEquals ("#5", -1, text.IndexOf ("ates", StringComparison.Ordinal));
+		AssertEquals ("#6", -1, text.IndexOf ("S", StringComparison.Ordinal));
+	}
+
+	[Test]
+	public void IndexOfStringComparisonOrdinalIgnoreCase ()
+	{
+		string text = "testing123456";
+		AssertEquals ("#1", 10, text.IndexOf ("456", StringComparison.OrdinalIgnoreCase));
+		AssertEquals ("#2", -1, text.IndexOf ("4567", StringComparison.OrdinalIgnoreCase));
+		AssertEquals ("#3", 0, text.IndexOf ("te", StringComparison.OrdinalIgnoreCase));
+		AssertEquals ("#4", 2, text.IndexOf ("s", StringComparison.OrdinalIgnoreCase));
+		AssertEquals ("#5", -1, text.IndexOf ("ates", StringComparison.OrdinalIgnoreCase));
+		AssertEquals ("#6", 2, text.IndexOf ("S", StringComparison.OrdinalIgnoreCase));
+	}
+
+	[Test]
+	public void IndexOfOrdinalCountSmallerThanValueString ()
+	{
+		AssertEquals ("#1", -1, "Test".IndexOf ("ST", 2, 1, StringComparison.Ordinal));
+		AssertEquals ("#2", -1, "Test".IndexOf ("ST", 2, 1, StringComparison.OrdinalIgnoreCase));
+		AssertEquals ("#3", -1, "Test".LastIndexOf ("ST", 2, 1, StringComparison.Ordinal));
+		AssertEquals ("#4", -1, "Test".LastIndexOf ("ST", 2, 1, StringComparison.OrdinalIgnoreCase));
+	}
+
 #endif
 
 	public void TestIndexOfAny() {
@@ -1201,6 +1254,58 @@ public class StringTest : Assertion
 	public void LastIndexOf_StringComparison () 
 	{
 		" ".LastIndexOf ("", 0, 1, (StringComparison)Int32.MinValue);
+	}
+
+	[Test]
+	public void LastIndexOfStringComparison ()
+	{
+		string text = "testing123456";
+		string text2 = "123";
+		string text3 = "NG";
+		AssertEquals ("#1-1", 7, text.LastIndexOf (text2, StringComparison.Ordinal));
+		AssertEquals ("#2-1", 5, text.LastIndexOf (text3, StringComparison.OrdinalIgnoreCase));
+
+		AssertEquals ("#1-2", 7, text.LastIndexOf (text2, 12, StringComparison.Ordinal));
+		AssertEquals ("#2-2", 5, text.LastIndexOf (text3, 12, StringComparison.OrdinalIgnoreCase));
+
+		AssertEquals ("#1-3", -1, text.LastIndexOf (text2, 0, StringComparison.Ordinal));
+		AssertEquals ("#2-3", -1, text.LastIndexOf (text3, 0, StringComparison.OrdinalIgnoreCase));
+
+		AssertEquals ("#1-4", -1, text.LastIndexOf (text2, 6, StringComparison.Ordinal));
+		AssertEquals ("#2-4", 5, text.LastIndexOf (text3, 6, StringComparison.OrdinalIgnoreCase));
+
+		AssertEquals ("#1-5", -1, text.LastIndexOf (text2, 7, 3, StringComparison.Ordinal));
+		AssertEquals ("#2-5", 5, text.LastIndexOf (text3, 7, 3, StringComparison.OrdinalIgnoreCase));
+
+		AssertEquals ("#1-6", -1, text.LastIndexOf (text2, 6, 0, StringComparison.Ordinal));
+		AssertEquals ("#2-6", -1, text.LastIndexOf (text3, 5, 0, StringComparison.OrdinalIgnoreCase));
+
+		AssertEquals ("#1-7", -1, text.LastIndexOf (text2, 7, 1, StringComparison.Ordinal));
+		AssertEquals ("#2-7", -1, text.LastIndexOf (text3, 5, 1, StringComparison.OrdinalIgnoreCase));
+	}
+
+	[Test]
+	public void LastIndexOfStringComparisonOrdinal ()
+	{
+		string text = "testing123456";
+		AssertEquals ("#1", 10, text.LastIndexOf ("456", StringComparison.Ordinal));
+		AssertEquals ("#2", -1, text.LastIndexOf ("4567", StringComparison.Ordinal));
+		AssertEquals ("#3", 0, text.LastIndexOf ("te", StringComparison.Ordinal));
+		AssertEquals ("#4", 2, text.LastIndexOf ("s", StringComparison.Ordinal));
+		AssertEquals ("#5", -1, text.LastIndexOf ("ates", StringComparison.Ordinal));
+		AssertEquals ("#6", -1, text.LastIndexOf ("S", StringComparison.Ordinal));
+	}
+
+	[Test]
+	public void LastIndexOfStringComparisonOrdinalIgnoreCase ()
+	{
+		string text = "testing123456";
+		AssertEquals ("#1", 10, text.LastIndexOf ("456", StringComparison.OrdinalIgnoreCase));
+		AssertEquals ("#2", -1, text.LastIndexOf ("4567", StringComparison.OrdinalIgnoreCase));
+		AssertEquals ("#3", 0, text.LastIndexOf ("te", StringComparison.OrdinalIgnoreCase));
+		AssertEquals ("#4", 2, text.LastIndexOf ("s", StringComparison.OrdinalIgnoreCase));
+		AssertEquals ("#5", -1, text.LastIndexOf ("ates", StringComparison.OrdinalIgnoreCase));
+		AssertEquals ("#6", 2, text.LastIndexOf ("S", StringComparison.OrdinalIgnoreCase));
 	}
 #endif
 
