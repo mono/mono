@@ -4679,18 +4679,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "resources\System.Windows.Forms.resources"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\System.Windows.Forms.en.resources"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "resources\System.Windows.Forms.de.resources"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
                     RelPath = "resources\SplitterNS.cur"
                     CustomToolNameSpace = "System.Windows.Forms.SplitterNS.cur"
                     BuildAction = "EmbeddedResource"
@@ -4937,6 +4925,14 @@
                 <File
                     RelPath = "resources\PropertiesTab.bmp"
                     CustomToolNameSpace = "System.Windows.Forms.PropertyGridInternal.PropertiesTab.bmp"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\mono.ico"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\errorProvider.ico"
                     BuildAction = "EmbeddedResource"
                 />
                 <File

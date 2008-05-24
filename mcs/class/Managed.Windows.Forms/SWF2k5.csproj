@@ -1065,15 +1065,6 @@
     <Compile Include="System.Windows.Forms.X11Internal\XplatUIX11-new.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="resources\System.Windows.Forms.resources.prebuilt">
-      <LogicalName>System.Windows.Forms.resources</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources\System.Windows.Forms.en.resources.prebuilt">
-      <LogicalName>System.Windows.Forms.en.resources</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="resources\System.Windows.Forms.de.resources.prebuilt">
-      <LogicalName>System.Windows.Forms.de.resources</LogicalName>
-    </EmbeddedResource>
     <EmbeddedResource Include="resources\SplitterNS.cur">
       <LogicalName>SplitterNS.cur</LogicalName>
       <CustomToolNameSpace>System.Windows.Forms.SplitterNS.cur</CustomToolNameSpace>
@@ -1263,6 +1254,12 @@
     <EmbeddedResource Include="resources\PropertiesTab.bmp">
       <LogicalName>PropertiesTab.bmp</LogicalName>
       <CustomToolNameSpace>System.Windows.Forms.PropertyGridInternal.PropertiesTab.bmp</CustomToolNameSpace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\mono.ico">
+      <LogicalName>mono.ico</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\errorProvider.ico">
+      <LogicalName>errorProvider.ico</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -1,3 +1,7 @@
+2008-05-24  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* SWF.csproj, SWF2k5.csproj: Updated.
+
 2008-05-22  Andreia Gaita <avidigal@novell.com> 
 
 	* SWF2k5.csproj, Makefile, build-csproj2k5, SWF2k5.sln: Long overdue
