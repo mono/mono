@@ -1,3 +1,9 @@
+2008-05-24  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* String.cs: Changed exception to match MS. Fixed ToCharArray to use
+	startindex for source. In PadLeft and PadRight, only return current
+	string if totalWidth is less than length.
+
 2008-05-24 Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
 
 	* Enum.cs: use Array.BinarySearch on the values in IsDefined and

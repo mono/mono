@@ -1,3 +1,12 @@
+2008-05-24  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* StringTest.cs: Improved ctor tests. Avoid use of ExpectedException.
+	Moved tests for argument checks to separate methods. Added tests for
+	EndsWith, IndexOf, IndexOfAny, Intern, IsInternet, Format, StartsWith,
+	SubString, ToCharArray, ToLower and Split. Use String.Empty instead of
+	"". Use more meaningful names for test methods. Marked failing tests
+	that were added by Andreas as NotWorking. 
+
 2008-05-24  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* StringTest.cs: Add (more) tests for (Last)IndexOf

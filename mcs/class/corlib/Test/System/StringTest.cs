@@ -10,78 +10,142 @@
 // Copyright (C) 2006 Novell (http://www.novell.com)
 //
 
-using NUnit.Framework;
 using System;
 using System.Text;
 using System.Globalization;
 using System.Reflection;
+using System.Threading;
+
+using NUnit.Framework;
 
 namespace MonoTests.System
 {
 
 [TestFixture]
-public class StringTest : Assertion
+public class StringTest : TestCase
 {
-#if !TARGET_JVM
-	[Test]
-	public unsafe void CharArrayConstructor ()
+	private CultureInfo orgCulture;
+
+	protected override void SetUp ()
 	{
-		AssertEquals ("char[]", String.Empty, new String ((char[]) null));
-		AssertEquals (String.Empty, new String (new Char [0]));
-		AssertEquals ("A", new String (new Char [1] {'A'}));
+		// save current culture
+		orgCulture = CultureInfo.CurrentCulture;
+	}
+
+	protected override void TearDown ()
+	{
+		// restore original culture
+		Thread.CurrentThread.CurrentCulture = orgCulture;
+	}
+
+
+#if !TARGET_JVM
+	[Test] // ctor (Char [])
+	public unsafe void Constructor2 ()
+	{
+		AssertEquals ("#1", String.Empty, new String ((char[]) null));
+		AssertEquals ("#2", String.Empty, new String (new Char [0]));
+		AssertEquals ("#3", "A", new String (new Char [1] {'A'}));
 	}
 #endif
-	[Test]
-	public void CharArrayIntIntConstructor ()
-	{
-		char[] arr = new char [3] { 'A', 'B', 'C' };
-		AssertEquals ("BC", new String (arr, 1, 2));
-	}
 
-	[Test]
-	[ExpectedException (typeof (ArgumentNullException))]
-	public void CharArray_Null_IntIntConstructor ()
+	[Test] // ctor (Char, Int32)
+	public void Constructor4 ()
 	{
-		new String ((char[])null, 0, 0);
-	}
-
-	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void CharArrayInt_Negative_IntConstructor ()
-	{
-		char[] arr = new char [3] { 'A', 'B', 'C' };
-		new String (arr, -1, 1);
-	}
-
-	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void CharArrayIntInt_Negative_Constructor ()
-	{
-		char[] arr = new char [3] { 'A', 'B', 'C' };
-		new String (arr, 0, -1);
-	}
-
-	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void CharArrayIntInt_TooLong_Constructor ()
-	{
-		char[] arr = new char [3] { 'A', 'B', 'C' };
-		new String (arr, 1, 3);
-	}
-
-	[Test]
-	public void CharIntConstructor ()
-	{
-		AssertEquals ("", new String ('A', 0));
+		AssertEquals (string.Empty, new String ('A', 0));
 		AssertEquals ("AAA", new String ('A', 3));
 	}
 
-	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void CharInt_NegativeConstructor ()
+	[Test] // ctor (Char, Int32)
+	public void Constructor4_Count_Negative ()
 	{
-		new String ('A', -1);
+		try {
+			new String ('A', -1);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// 'count' must be non-negative
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "count", ex.ParamName);
+		}
 	}
+
+	[Test] // ctor (Char [], Int32, Int32)
+	public void Constructor6 ()
+	{
+		char [] arr = new char [3] { 'A', 'B', 'C' };
+		AssertEquals ("#1", "ABC", new String (arr, 0, arr.Length));
+		AssertEquals ("#2", "BC", new String (arr, 1, 2));
+		AssertEquals ("#3", string.Empty, new String (arr, 2, 0));
+	}
+
+	[Test] // ctor (Char [], Int32, Int32)
+	public void Constructor6_Length_Negative ()
+	{
+		char [] arr = new char [3] { 'A', 'B', 'C' };
+
+		try {
+			new String (arr, 0, -1);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Length cannot be less than zero
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "length", ex.ParamName);
+		}
+	}
+
+	[Test] // ctor (Char [], Int32, Int32)
+	public void Constructor6_Length_Overflow ()
+	{
+		char [] arr = new char [3] { 'A', 'B', 'C' };
+
+		try {
+			new String (arr, 1, 3);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Index was out of range. Must be non-negative and
+			// less than the size of the collection
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "startIndex", ex.ParamName);
+		}
+	}
+
+	[Test] // ctor (Char [], Int32, Int32)
+	public void Constructor6_StartIndex_Negative ()
+	{
+		char [] arr = new char [3] { 'A', 'B', 'C' };
+
+		try {
+			new String (arr, -1, 0);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// StartIndex cannot be less than zero
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "startIndex", ex.ParamName);
+		}
+	}
+
+	[Test] // ctor (Char [], Int32, Int32)
+	public void Constructor6_Value_Null ()
+	{
+		try {
+			new String ((char []) null, 0, 0);
+			Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "value", ex.ParamName);
+		}
+	}
+
 #if !TARGET_JVM
 	[Test]
 	public unsafe void CharPtrConstructor ()
@@ -90,6 +154,7 @@ public class StringTest : Assertion
 		AssertEquals ("char*,int,int", String.Empty, new String ((char*) null, 0, 0));
 	}
 
+	[Test]
 	public unsafe void TestSbytePtrConstructorASCII ()
 	{
 		Encoding encoding = Encoding.ASCII;
@@ -100,6 +165,7 @@ public class StringTest : Assertion
 			AssertEquals (s, new String ((sbyte*) bytePtr, 0, bytes.Length, encoding));
 	}
 
+	[Test]
 	public unsafe void TestSbytePtrConstructorDefault ()
 	{
 		Encoding encoding = Encoding.Default;
@@ -125,185 +191,355 @@ public class StringTest : Assertion
 		}
 	}
 
-	public unsafe void TestSbytePtrConstructorNull1 ()
+	[Test] // ctor (SByte*)
+	public unsafe void Constructor3_Value_Null ()
 	{
 		AssertEquals (String.Empty, new String ((sbyte*) null));
 	}
 
-#if NET_2_0
-	[ExpectedException (typeof (ArgumentNullException))]
-#endif
-	public unsafe void TestSbytePtrConstructorNull2 ()
+	[Test] // ctor (SByte*)
+	public unsafe void Constructor3_Value_Invalid ()
 	{
-		AssertEquals (String.Empty, new String ((sbyte*) null, 0, 0));
+		try {
+			new String ((sbyte*) (-1));
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Pointer startIndex and length do not refer to a
+			// valid string
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "ptr", ex.ParamName);
+		}
 	}
 
-#if NET_2_0
-	[ExpectedException (typeof (ArgumentNullException))]
-#endif
-	public unsafe void TestSbytePtrConstructorNull3 ()
+	[Test] // ctor (SByte*, Int32, Int32)
+	public unsafe void Constructor7_Length_Negative ()
 	{
-		AssertEquals (String.Empty, new String ((sbyte*) null, 0, 1));
+		try {
+			new String ((sbyte*) null, 0, -1);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Length cannot be less than zero
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "length", ex.ParamName);
+		}
 	}
 
-#if NET_2_0
-	[ExpectedException (typeof (ArgumentNullException))]
-#endif
-	public unsafe void TestSbytePtrConstructorNull4 ()
+	[Test] // ctor (SByte*, Int32, Int32)
+	public unsafe void Constructor7_StartIndex_Negative ()
 	{
-		AssertEquals (String.Empty, new String ((sbyte*) null, 1, 0));
+		try {
+			new String ((sbyte*) null, -1, 0);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// StartIndex cannot be less than zero
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "startIndex", ex.ParamName);
+		}
 	}
 
-#if NET_2_0
-	[ExpectedException (typeof (ArgumentNullException))]
-#endif
-	public unsafe void TestSbytePtrConstructorNull5 ()
+	[Test]
+	[Category ("NotWorking")] // bug #321615
+	public unsafe void Constructor7_StartIndex_Overflow ()
 	{
-		AssertEquals (String.Empty, new String ((sbyte*) null, 0, 0, null));
+		try {
+			new String ((sbyte*) (-1), 1, 0);
+			Fail ("#A1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Pointer startIndex and length do not refer to a
+			// valid string
+			AssertEquals ("#A2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#A3", ex.InnerException);
+			AssertNotNull ("#A4", ex.Message);
+			AssertEquals ("#A5", "startIndex", ex.ParamName);
+		}
+
+		try {
+			new String ((sbyte*) (-1), 1, 1);
+			Fail ("#B1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Pointer startIndex and length do not refer to a
+			// valid string
+			AssertEquals ("#B2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#B3", ex.InnerException);
+			AssertNotNull ("#B4", ex.Message);
+			AssertEquals ("#B5", "startIndex", ex.ParamName);
+		}
 	}
 
-#if NET_2_0
-	[ExpectedException (typeof (ArgumentNullException))]
-#endif
-	public unsafe void TestSbytePtrConstructorNull6 ()
+	[Test] // ctor (SByte*, Int32, Int32)
+	public unsafe void Constructor7_Value_Invalid ()
 	{
-		AssertEquals (String.Empty, new String ((sbyte*) null, 0, 1, null));
+		try {
+			new String ((sbyte*) (-1), 0, 1);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Pointer startIndex and length do not refer to a
+			// valid string
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "ptr", ex.ParamName);
+		}
 	}
 
-#if NET_2_0
-	[ExpectedException (typeof (ArgumentNullException))]
-#endif
-	public unsafe void TestSbytePtrConstructorNull7 ()
+	[Test] // ctor (SByte*, Int32, Int32)
+	public unsafe void Constructor7_Value_Null ()
 	{
-		AssertEquals (String.Empty, new String ((sbyte*) null, 1, 0, null));
-	}
-
-	public unsafe void TestSbytePtrConstructorNull8 ()
-	{
-		AssertEquals (String.Empty, new String ((sbyte*) null, 0, 0, Encoding.Default));
-	}
-
 #if NET_2_0
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		try {
+			new String ((sbyte*) null, 0, 0);
+			Fail ("#A1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#A2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#A3", ex.InnerException);
+			AssertNotNull ("#A4", ex.Message);
+			AssertEquals ("#A5", "value", ex.ParamName);
+		}
 #else
-	[ExpectedException (typeof (NullReferenceException))]
+		AssertEquals ("#A", String.Empty, new String ((sbyte*) null, 0, 0));
 #endif
-	public unsafe void TestSbytePtrConstructorNull9 ()
-	{
-		AssertEquals (String.Empty, new String ((sbyte*) null, 0, 1, Encoding.Default));
+
+#if NET_2_0
+		try {
+			new String ((sbyte*) null, 0, 1);
+			Fail ("#B1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#B2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#B3", ex.InnerException);
+			AssertNotNull ("#B4", ex.Message);
+			AssertEquals ("#B5", "value", ex.ParamName);
+		}
+#else
+		AssertEquals ("#B", String.Empty, new String ((sbyte*) null, 0, 1));
+#endif
+
+#if NET_2_0
+		try {
+			new String ((sbyte*) null, 1, 0);
+			Fail ("#C1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#C2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#C3", ex.InnerException);
+			AssertNotNull ("#C4", ex.Message);
+			AssertEquals ("#C5", "value", ex.ParamName);
+		}
+#else
+		AssertEquals ("#C", String.Empty, new String ((sbyte*) null, 1, 0));
+#endif
 	}
 
-	public unsafe void TestSbytePtrConstructorNull10 ()
+	[Test] // ctor (SByte*, Int32, Int32, Encoding)
+	public unsafe void Constructor8_Length_Negative ()
 	{
-		AssertEquals (String.Empty, new String ((sbyte*) null, 1, 0, Encoding.Default));
+		try {
+			new String ((sbyte*) null, 0, -1, null);
+			Fail ("#A1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Length cannot be less than zero
+			AssertEquals ("#A2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#A3", ex.InnerException);
+			AssertNotNull ("#A4", ex.Message);
+			AssertEquals ("#A5", "length", ex.ParamName);
+		}
+
+		try {
+			new String ((sbyte*) null, 0, -1, Encoding.Default);
+			Fail ("#B1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Non-negative number required
+			AssertEquals ("#B2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#B3", ex.InnerException);
+			AssertNotNull ("#B4", ex.Message);
+			AssertEquals ("#B5", "length", ex.ParamName);
+		}
 	}
 
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public unsafe void TestSbytePtrConstructorInvalid1 ()
+	[Test] // ctor (SByte*, Int32, Int32, Encoding)
+	public unsafe void Constructor8_StartIndex_Negative ()
 	{
-		AssertEquals (String.Empty, new String ((sbyte*) (-1)));
+		try {
+			new String ((sbyte*) null, -1, 0, null);
+			Fail ("#A1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// StartIndex cannot be less than zero
+			AssertEquals ("#A2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#A3", ex.InnerException);
+			AssertNotNull ("#A4", ex.Message);
+			AssertEquals ("#A5", "startIndex", ex.ParamName);
+		}
+
+		try {
+			new String ((sbyte*) null, -1, 0, Encoding.Default);
+			Fail ("#B1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// StartIndex cannot be less than zero
+			AssertEquals ("#B2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#B3", ex.InnerException);
+			AssertNotNull ("#B4", ex.Message);
+			AssertEquals ("#B5", "startIndex", ex.ParamName);
+		}
 	}
 
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public unsafe void TestSbytePtrConstructorInvalid2 ()
+	[Test]
+	[Category ("NotWorking")] // bug #321615
+	public unsafe void Constructor8_StartIndex_Overflow ()
 	{
-		AssertEquals (String.Empty, new String ((sbyte*) (-1), 0, 1));
+		try {
+			new String ((sbyte*) (-1), 1, 0, null);
+			Fail ("#A1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Pointer startIndex and length do not refer to a
+			// valid string
+			AssertEquals ("#A2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#A3", ex.InnerException);
+			AssertNotNull ("#A4", ex.Message);
+			AssertEquals ("#A5", "startIndex", ex.ParamName);
+		}
+
+		try {
+			new String ((sbyte*) (-1), 1, 1, null);
+			Fail ("#B1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Pointer startIndex and length do not refer to a
+			// valid string
+			AssertEquals ("#B2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#B3", ex.InnerException);
+			AssertNotNull ("#B4", ex.Message);
+			AssertEquals ("#B5", "startIndex", ex.ParamName);
+		}
+
+		try {
+			new String ((sbyte*) (-1), 1, 0, Encoding.Default);
+			Fail ("#C1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Pointer startIndex and length do not refer to a
+			// valid string
+			AssertEquals ("#C2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#C3", ex.InnerException);
+			AssertNotNull ("#C4", ex.Message);
+			AssertEquals ("#C5", "startIndex", ex.ParamName);
+		}
+
+		try {
+			new String ((sbyte*) (-1), 1, 1, Encoding.Default);
+			Fail ("#D1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Pointer startIndex and length do not refer to a
+			// valid string
+			AssertEquals ("#D2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#D3", ex.InnerException);
+			AssertNotNull ("#D4", ex.Message);
+			AssertEquals ("#D5", "startIndex", ex.ParamName);
+		}
 	}
 
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public unsafe void TestSbytePtrConstructorInvalid3 ()
+	[Test] // ctor (SByte*, Int32, Int32, Encoding)
+	public unsafe void Constructor8_Value_Invalid ()
 	{
-		AssertEquals (String.Empty, new String ((sbyte*) (-1), 0, 1, null));
+		try {
+			new String ((sbyte*) (-1), 0, 1, null);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Pointer startIndex and length do not refer to a
+			// valid string
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "ptr", ex.ParamName);
+		}
 	}
 
+	[Test]
 #if NET_2_0
 	[Ignore ("Runtime throws NullReferenceException instead of AccessViolationException")]
 	[ExpectedException (typeof (AccessViolationException))]
 #else
 	[ExpectedException (typeof (NullReferenceException))]
 #endif
-	public unsafe void TestSbytePtrConstructorInvalid4 ()
+	public unsafe void Constructor8_Value_Invalid2 ()
 	{
-		AssertEquals (String.Empty, new String ((sbyte*) (-1), 0, 1, Encoding.Default));
+		new String ((sbyte*) (-1), 0, 1, Encoding.Default);
 	}
 
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public unsafe void TestSbytePtrConstructorNegative1 ()
+	[Test] // ctor (SByte*, Int32, Int32, Encoding)
+	public unsafe void Constructor8_Value_Null ()
 	{
-		AssertEquals (String.Empty, new String ((sbyte*) null, -1, 0));
-	}
+#if NET_2_0
+		try {
+			new String ((sbyte*) null, 0, 0, null);
+			Fail ("#A1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#A2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#A3", ex.InnerException);
+			AssertNotNull ("#A4", ex.Message);
+			AssertEquals ("#A5", "value", ex.ParamName);
+		}
+#else
+		AssertEquals ("#A", String.Empty, new String ((sbyte*) null, 0, 0, null));
+#endif
 
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public unsafe void TestSbytePtrConstructorNegative2 ()
-	{
-		AssertEquals (String.Empty, new String ((sbyte*) null, 0, -1));
-	}
+#if NET_2_0
+		try {
+			new String ((sbyte*) null, 0, 1, null);
+			Fail ("#B1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#B2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#B3", ex.InnerException);
+			AssertNotNull ("#B4", ex.Message);
+			AssertEquals ("#B5", "value", ex.ParamName);
+		}
+#else
+		AssertEquals ("#B", String.Empty, new String ((sbyte*) null, 0, 1, null));
+#endif
 
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public unsafe void TestSbytePtrConstructorNegative3 ()
-	{
-		AssertEquals (String.Empty, new String ((sbyte*) null, -1, 0, null));
-	}
+#if NET_2_0
+		try {
+			new String ((sbyte*) null, 1, 0, null);
+			Fail ("#C1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#C2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#C3", ex.InnerException);
+			AssertNotNull ("#C4", ex.Message);
+			AssertEquals ("#C5", "value", ex.ParamName);
+		}
+#else
+		AssertEquals ("#C", String.Empty, new String ((sbyte*) null, 1, 0, null));
+#endif
 
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public unsafe void TestSbytePtrConstructorNegative4 ()
-	{
-		AssertEquals (String.Empty, new String ((sbyte*) null, 0, -1, null));
-	}
+		AssertEquals ("#D", String.Empty, new String ((sbyte*) null, 0, 0, Encoding.Default));
 
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public unsafe void TestSbytePtrConstructorNegative5 ()
-	{
-		AssertEquals (String.Empty, new String ((sbyte*) null, -1, 0, Encoding.Default));
-	}
+		try {
+			new String ((sbyte*) null, 0, 1, Encoding.Default);
+			Fail ("#E1");
+#if NET_2_0
+		} catch (ArgumentOutOfRangeException ex) {
+			// Pointer startIndex and length do not refer to a
+			// valid string
+			AssertEquals ("#E2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#E3", ex.InnerException);
+			AssertNotNull ("#E4", ex.Message);
+			//AssertEquals ("#E5", "value", ex.ParamName);
+		}
+#else
+		} catch (NullReferenceException ex) {
+			AssertEquals ("#E2", typeof (NullReferenceException), ex.GetType ());
+			AssertNull ("#E3", ex.InnerException);
+			AssertNotNull ("#E4", ex.Message);
+		}
+#endif
 
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public unsafe void TestSbytePtrConstructorNegative6 ()
-	{
-		AssertEquals (String.Empty, new String ((sbyte*) null, 0, -1, Encoding.Default));
-	}
-
-	[Ignore ("Blocked by mcs bug 78899")]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public unsafe void TestSbytePtrConstructorOverflow1 ()
-	{
-		AssertEquals (String.Empty, new String ((sbyte*) (-1), 1, 0));
-	}
-
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public unsafe void TestSbytePtrConstructorOverflow2 ()
-	{
-		AssertEquals (String.Empty, new String ((sbyte*) (-1), 1, 1));
-	}
-
-	[Ignore ("Blocked by mcs bug 78899")]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public unsafe void TestSbytePtrConstructorOverflow3 ()
-	{
-		AssertEquals (String.Empty, new String ((sbyte*) (-1), 1, 0, null));
-	}
-
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public unsafe void TestSbytePtrConstructorOverflow4 ()
-	{
-		AssertEquals (String.Empty, new String ((sbyte*) (-1), 1, 1, null));
-	}
-
-	[Ignore ("Blocked by mcs bug 78899")]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public unsafe void TestSbytePtrConstructorOverflow5 ()
-	{
-		AssertEquals (String.Empty, new String ((sbyte*) (-1), 1, 0, Encoding.Default));
-	}
-
-	[Ignore ("Blocked by mcs bug 78899")]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public unsafe void TestSbytePtrConstructorOverflow6 ()
-	{
-		AssertEquals (String.Empty, new String ((sbyte*) (-1), 1, 1, Encoding.Default));
+		AssertEquals ("#F", String.Empty, new String ((sbyte*) null, 1, 0, Encoding.Default));
 	}
 #endif
-	public void TestLength ()
+
+	[Test]
+	public void Length ()
 	{
 		string str = "test string";
 
@@ -311,7 +547,18 @@ public class StringTest : Assertion
 	}
 
 	[Test]
-	// http://bugzilla.ximian.com/show_bug.cgi?id=70478
+	public void Clone ()
+	{
+		string s1 = "oRiGiNal";
+		AssertEquals ("#A1", s1, s1.Clone ());
+		AssertSame ("#A2", s1, s1.Clone ());
+
+		string s2 = new DateTime (2000, 6, 3).ToString ();
+		AssertEquals ("#B1", s2, s2.Clone ());
+		AssertSame ("#B2", s2, s2.Clone ());
+	}
+
+	[Test] // bug #316666
 	public void CompareNotWorking ()
 	{
 		AssertEquals ("A03", String.Compare ("A", "a"), 1);
@@ -340,8 +587,8 @@ public class StringTest : Assertion
 		string greater = "xyz";
 		string caps = "ABC";
 
-		AssertEquals(0, String.Compare(null, null));
-		AssertEquals(1, String.Compare(lesser, null));
+		AssertEquals(0, String.Compare (null, null));
+		AssertEquals(1, String.Compare (lesser, null));
 
 		Assert (String.Compare (lesser, greater) < 0);
 		Assert (String.Compare (greater, lesser) > 0);
@@ -401,14 +648,14 @@ public class StringTest : Assertion
 	}
 
 	[Test]
-	public void TestCompareOrdinal ()
+	public void CompareOrdinal ()
 	{
 		string lesser = "abc";
 		string medium = "abcd";
 		string greater = "xyz";
 
-		AssertEquals(0, String.CompareOrdinal(null, null));
-		AssertEquals(1, String.CompareOrdinal(lesser, null));
+		AssertEquals(0, String.CompareOrdinal (null, null));
+		AssertEquals(1, String.CompareOrdinal (lesser, null));
 
 		Assert ("#1", String.CompareOrdinal (lesser, greater) < 0);
 		Assert ("#2", String.CompareOrdinal (greater, lesser) > 0);
@@ -432,7 +679,8 @@ public class StringTest : Assertion
 		}
 	}
 
-	public void TestCompareTo ()
+	[Test]
+	public void CompareTo ()
 	{
 		string lower = "abc";
 		string greater = "xyz";
@@ -445,10 +693,14 @@ public class StringTest : Assertion
 	
 	class WeirdToString
 	{
-		public override string ToString () { return null; }
+		public override string ToString ()
+		{
+			return null;
+		}
 	}
 
-	public void TestConcat ()
+	[Test]
+	public void Concat ()
 	{
 		string string1 = "string1";
 		string string2 = "string2";
@@ -458,12 +710,12 @@ public class StringTest : Assertion
 		
 		AssertEquals (string1, String.Concat (string1, null));
 		AssertEquals (string1, String.Concat (null, string1));
-		AssertEquals ("", String.Concat (null, null));
+		AssertEquals (string.Empty, String.Concat (null, null));
 		
 		WeirdToString wts = new WeirdToString ();
 		AssertEquals (string1, String.Concat (string1, wts));
 		AssertEquals (string1, String.Concat (wts, string1));
-		AssertEquals ("", String.Concat (wts, wts));
+		AssertEquals (string.Empty, String.Concat (wts, wts));
 		string [] allstr = new string []{ string1, null, string2, concat };
 		object [] allobj = new object []{ string1, null, string2, concat };
 		string astr = String.Concat (allstr);
@@ -472,106 +724,353 @@ public class StringTest : Assertion
 		AssertEquals (astr, ostr);
 	}
 
-	public void TestCopy()
+	[Test]
+	public void Copy ()
 	{
 		string s1 = "original";
 		string s2 = String.Copy(s1);
-		AssertEquals("String copy no good", s1, s2);
-
-		bool errorThrown = false;
-		try {
-			string s = String.Copy(null);
-		} catch (ArgumentNullException) {
-			errorThrown = true;
-		}
-		Assert("null copy shouldn't be good", errorThrown);
+		AssertEquals("#1", s1, s2);
+		Assert ("#2", !object.ReferenceEquals (s1, s2));
 	}
 
-	public void TestCopyTo()
+	[Test]
+	public void Copy_Str_Null ()
+	{
+		try {
+			String.Copy ((string) null);
+			Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "str", ex.ParamName);
+		}
+	}
+
+	[Test]
+	public void CopyTo ()
 	{
 		string s1 = "original";
-
-		bool errorThrown = false;
-		try {
-			s1.CopyTo(0, (char[])null, 0, s1.Length);
-		} catch (ArgumentNullException) {
-			errorThrown = true;
-		}
-		Assert("null CopyTo shouldn't be good", errorThrown);
-		
 		char[] c1 = new char[s1.Length];
 		string s2 = new String(c1);
-		Assert("char string not bad to start", !s1.Equals(s2));
+		Assert("#1", !s1.Equals(s2));
 		for (int i = 0; i < s1.Length; i++) {
 			s1.CopyTo(i, c1, i, 1);
 		}
 		s2 = new String(c1);
-		AssertEquals("char-by-char copy bad", s1, s2);
+		AssertEquals("#2", s1, s2);
 	}
 
 	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void CopyTo_SourceIndexOverflow () 
+	public void CopyTo_Count_Negative ()
 	{
-		char[] dest = new char [4];
-		"Mono".CopyTo (Int32.MaxValue, dest, 0, 4);
+		char [] dest = new char [4];
+		try {
+			"Mono".CopyTo (0, dest, 0, -1);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Count cannot be less than zero
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "count", ex.ParamName);
+		}
 	}
 
 	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void CopyTo_DestinationIndexOverflow () 
+	public void CopyTo_Count_Overflow ()
 	{
-		char[] dest = new char [4];
-		"Mono".CopyTo (0, dest, Int32.MaxValue, 4);
+		char [] dest = new char [4];
+		try {
+			"Mono".CopyTo (0, dest, 0, Int32.MaxValue);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Index and count must refer to a location within the
+			// string
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "sourceIndex", ex.ParamName);
+		}
 	}
 
 	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void CopyTo_CountOverflow () 
+	public void CopyTo_Destination_Null ()
+	{
+		string s = "original";
+
+		try {
+			s.CopyTo (0, (char []) null, 0, s.Length);
+			Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "destination", ex.ParamName);
+		}
+	}
+
+	[Test]
+	public void CopyTo_DestinationIndex_Negative ()
+	{
+		char [] dest = new char [4];
+		try {
+			"Mono".CopyTo (0, dest, -1, 4);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Index and count must refer to a location within the
+			// string
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "destinationIndex", ex.ParamName);
+		}
+	}
+
+	[Test]
+	public void CopyTo_DestinationIndex_Overflow ()
+	{
+		char [] dest = new char [4];
+		try {
+			"Mono".CopyTo (0, dest, Int32.MaxValue, 4);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Index and count must refer to a location within the
+			// string
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "destinationIndex", ex.ParamName);
+		}
+	}
+
+	[Test]
+	public void CopyTo_SourceIndex_Negative ()
+	{
+		char [] dest = new char [4];
+		try {
+			"Mono".CopyTo (-1, dest, 0, 4);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Index was out of range. Must be non-negative and
+			// less than the size of the collection
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "sourceIndex", ex.ParamName);
+		}
+	}
+
+	[Test]
+	public void CopyTo_SourceIndex_Overflow ()
 	{
 		char[] dest = new char [4];
-		"Mono".CopyTo (0, dest, 0, Int32.MaxValue);
+		try {
+			"Mono".CopyTo (Int32.MaxValue, dest, 0, 4);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Index and count must refer to a location within the
+			// string
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "sourceIndex", ex.ParamName);
+		}
+	}
+
+	[Test] // EndsWith (String)
+	public void EndsWith1 ()
+	{
+		string s;
+
+		Thread.CurrentThread.CurrentCulture = new CultureInfo ("tr-TR");
+		s = "AbC";
+
+		Assert ("#A1", s.EndsWith ("bC"));
+		Assert ("#A1", !s.EndsWith ("bc"));
+		Assert ("#A2", !s.EndsWith ("dc"));
+		Assert ("#A3", !s.EndsWith ("LAbC"));
+		Assert ("#A4", s.EndsWith (string.Empty));
+		Assert ("#A5", !s.EndsWith ("Ab"));
+		Assert ("#A6", !s.EndsWith ("Abc"));
+		Assert ("#A7", s.EndsWith ("AbC"));
+
+		s = "Tai";
+
+		Assert ("#B1", s.EndsWith ("ai"));
+		Assert ("#B2", !s.EndsWith ("AI"));
+		Assert ("#B3", !s.EndsWith ("LTai"));
+		Assert ("#B4", s.EndsWith (string.Empty));
+		Assert ("#B5", !s.EndsWith ("Ta"));
+		Assert ("#B6", !s.EndsWith ("tai"));
+		Assert ("#B7", s.EndsWith ("Tai"));
+
+		Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
+
+		Assert ("#C1", s.EndsWith ("ai"));
+		Assert ("#C2", !s.EndsWith ("AI"));
+		Assert ("#C3", !s.EndsWith ("LTai"));
+		Assert ("#C4", s.EndsWith (string.Empty));
+		Assert ("#C5", !s.EndsWith ("Ta"));
+		Assert ("#C6", !s.EndsWith ("tai"));
+		Assert ("#C7", s.EndsWith ("Tai"));
+	}
+
+	[Test] // EndsWith (String)
+	public void EndsWith1_Value_Null ()
+	{
+		try {
+			"ABC".EndsWith ((string) null);
+			Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "value", ex.ParamName);
+		}
 	}
 
 #if NET_2_0
-	[Test]
-	[ExpectedException (typeof (ArgumentException))]
-	public void TestEndsWithWrongParameter () {
-		"ABC".EndsWith ("C", (StringComparison)80);
+	[Test] // EndsWith (String, StringComparison)
+	public void EndsWith2_ComparisonType_Invalid ()
+	{
+		try {
+			"ABC".EndsWith ("C", (StringComparison) 80);
+			Fail ("#1");
+		} catch (ArgumentException ex) {
+			// The string comparison type passed in is currently
+			// not supported
+			AssertEquals ("#2", typeof (ArgumentException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "comparisonType", ex.ParamName);
+		}
 	}
 
-	[Test]
-	public void TestEndsWithCultureMissing () {
-		bool errorThrown = false;
+	[Test] // EndsWith (String, StringComparison)
+	public void EndsWith2_Value_Null ()
+	{
 		try {
-			"ABC".EndsWith ("C", true, null);
-		} catch (NullReferenceException) {
-			errorThrown = true;
+			"ABC".EndsWith ((string) null, StringComparison.CurrentCulture);
+			Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "value", ex.ParamName);
 		}
-		Assert("should not throw error", !errorThrown);
+	}
+
+	[Test] // EndsWith (String, Boolean, CultureInfo)
+	public void EndsWith3 ()
+	{
+		string s;
+		bool ignorecase;
+		CultureInfo culture;
+
+		Thread.CurrentThread.CurrentCulture = new CultureInfo ("tr-TR");
+		s = "AbC";
+		culture = null;
+
+		ignorecase = false;
+		Assert ("#A1", !s.EndsWith ("bc", ignorecase, culture));
+		Assert ("#A2", !s.EndsWith ("dc", ignorecase, culture));
+		Assert ("#A3", !s.EndsWith ("LAbC", ignorecase, culture));
+		Assert ("#A4", s.EndsWith (string.Empty, ignorecase, culture));
+		Assert ("#A5", !s.EndsWith ("Ab", ignorecase, culture));
+		Assert ("#A6", !s.EndsWith ("Abc", ignorecase, culture));
+		Assert ("#A7", s.EndsWith ("AbC", ignorecase, culture));
+
+		ignorecase = true;
+		Assert ("#B1", s.EndsWith ("bc", ignorecase, culture));
+		Assert ("#B2", !s.EndsWith ("dc", ignorecase, culture));
+		Assert ("#B3", !s.EndsWith ("LAbC", ignorecase, culture));
+		Assert ("#B4", s.EndsWith (string.Empty, ignorecase, culture));
+		Assert ("#B5", !s.EndsWith ("Ab", ignorecase, culture));
+		Assert ("#B6", s.EndsWith ("Abc", ignorecase, culture));
+		Assert ("#B7", s.EndsWith ("AbC", ignorecase, culture));
+
+		s = "Tai";
+		culture = null;
+
+		ignorecase = false;
+		Assert ("#C1", s.EndsWith ("ai", ignorecase, culture));
+		Assert ("#C2", !s.EndsWith ("AI", ignorecase, culture));
+		Assert ("#C3", !s.EndsWith ("LTai", ignorecase, culture));
+		Assert ("#C4", s.EndsWith (string.Empty, ignorecase, culture));
+		Assert ("#C5", !s.EndsWith ("Ta", ignorecase, culture));
+		Assert ("#C6", !s.EndsWith ("tai", ignorecase, culture));
+		Assert ("#C7", s.EndsWith ("Tai", ignorecase, culture));
+
+		ignorecase = true;
+		Assert ("#D1", s.EndsWith ("ai", ignorecase, culture));
+		Assert ("#D2", !s.EndsWith ("AI", ignorecase, culture));
+		Assert ("#D3", !s.EndsWith ("LTai", ignorecase, culture));
+		Assert ("#D4", s.EndsWith (string.Empty, ignorecase, culture));
+		Assert ("#D5", !s.EndsWith ("Ta", ignorecase, culture));
+		Assert ("#D6", s.EndsWith ("tai", ignorecase, culture));
+		Assert ("#D7", s.EndsWith ("Tai", ignorecase, culture));
+
+		s = "Tai";
+		culture = new CultureInfo ("en-US");
+
+		ignorecase = false;
+		Assert ("#E1", s.EndsWith ("ai", ignorecase, culture));
+		Assert ("#E2", !s.EndsWith ("AI", ignorecase, culture));
+		Assert ("#E3", !s.EndsWith ("LTai", ignorecase, culture));
+		Assert ("#E4", s.EndsWith (string.Empty, ignorecase, culture));
+		Assert ("#E5", !s.EndsWith ("Ta", ignorecase, culture));
+		Assert ("#E6", !s.EndsWith ("tai", ignorecase, culture));
+		Assert ("#E7", s.EndsWith ("Tai", ignorecase, culture));
+
+		ignorecase = true;
+		Assert ("#F1", s.EndsWith ("ai", ignorecase, culture));
+		Assert ("#F2", s.EndsWith ("AI", ignorecase, culture));
+		Assert ("#F3", !s.EndsWith ("LTai", ignorecase, culture));
+		Assert ("#F4", s.EndsWith (string.Empty, ignorecase, culture));
+		Assert ("#F5", !s.EndsWith ("Ta", ignorecase, culture));
+		Assert ("#F6", s.EndsWith ("tai", ignorecase, culture));
+		Assert ("#F7", s.EndsWith ("Tai", ignorecase, culture));
+
+		Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
+		culture = null;
+
+		ignorecase = false;
+		Assert ("#G1", s.EndsWith ("ai", ignorecase, culture));
+		Assert ("#G2", !s.EndsWith ("AI", ignorecase, culture));
+		Assert ("#G3", !s.EndsWith ("LTai", ignorecase, culture));
+		Assert ("#G4", s.EndsWith (string.Empty, ignorecase, culture));
+		Assert ("#G5", !s.EndsWith ("Ta", ignorecase, culture));
+		Assert ("#G6", !s.EndsWith ("tai", ignorecase, culture));
+		Assert ("#G7", s.EndsWith ("Tai", ignorecase, culture));
+
+		ignorecase = true;
+		Assert ("#H1", s.EndsWith ("ai", ignorecase, culture));
+		Assert ("#H2", s.EndsWith ("AI", ignorecase, culture));
+		Assert ("#H3", !s.EndsWith ("LTai", ignorecase, culture));
+		Assert ("#H4", s.EndsWith (string.Empty, ignorecase, culture));
+		Assert ("#H5", !s.EndsWith ("Ta", ignorecase, culture));
+		Assert ("#H6", s.EndsWith ("tai", ignorecase, culture));
+		Assert ("#H7", s.EndsWith ("Tai", ignorecase, culture));
+	}
+
+	[Test] // EndsWith (String, Boolean, CultureInfo)
+	public void EndsWith3_Value_Null ()
+	{
+		try {
+			"ABC".EndsWith ((string) null, true, null);
+			Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "value", ex.ParamName);
+		}
 	}
 #endif
 
 	[Test]
-	public void EndsWith()
-	{
-		string s1 = "original";
-		
-		bool errorThrown = false;
-		try {
-			bool huh = s1.EndsWith(null);
-		} catch (ArgumentNullException) {
-			errorThrown = true;
-		}
-		Assert("null EndsWith shouldn't be good", errorThrown);
-
-		Assert("should match", s1.EndsWith("l"));
-		Assert("should match 2", s1.EndsWith("inal"));
-		Assert("should fail", !s1.EndsWith("ina"));
-		Assert ("should match 3", s1.EndsWith (""));
-	}
-
-	public void TestEquals()
+	public void TestEquals ()
 	{
 		string s1 = "original";
 		string yes = "original";
@@ -579,21 +1078,22 @@ public class StringTest : Assertion
 		string no = "copy";
 		string s1s1 = s1 + s1;
 
-		Assert("No match for null", !s1.Equals(null));
-		Assert("Should match object", s1.Equals(y));
-		Assert("Should match", s1.Equals(yes));
-		Assert("Shouldn't match", !s1.Equals(no));
+		Assert("No match for null", !s1.Equals (null));
+		Assert("Should match object", s1.Equals (y));
+		Assert("Should match", s1.Equals (yes));
+		Assert("Shouldn't match", !s1.Equals (no));
 
-		Assert("Static nulls should match", String.Equals(null, null));
-		Assert("Should match", String.Equals(s1, yes));
-		Assert("Shouldn't match", !String.Equals(s1, no));
+		Assert("Static nulls should match", String.Equals (null, null));
+		Assert("Should match", String.Equals (s1, yes));
+		Assert("Shouldn't match", !String.Equals (s1, no));
 
 		AssertEquals ("Equals (object)", false, s1s1.Equals (y));
 	}
 
+	[Test]
 	public void TestFormat ()
 	{
-		AssertEquals ("Empty format string.", "", String.Format ("", 0));
+		AssertEquals ("Empty format string.", string.Empty, String.Format (string.Empty, 0));
 		AssertEquals ("Single argument.", "100", String.Format ("{0}", 100));
 		AssertEquals ("Single argument, right justified.", "X   37X", String.Format ("X{0,5}X", 37));
 		AssertEquals ("Single argument, left justified.", "X37   X", String.Format ("X{0,-5}X", 37));
@@ -604,40 +1104,112 @@ public class StringTest : Assertion
 		AssertEquals ("Formatted argument, right justified.", "#  033#", String.Format ("#{0,5:x3}#", 0x33));
 		AssertEquals ("Formatted argument, left justified.", "#033  #", String.Format ("#{0,-5:x3}#", 0x33));
 		AssertEquals ("Escaped bracket", "typedef struct _MonoObject { ... } MonoObject;", String.Format ("typedef struct _{0} {{ ... }} MonoObject;", "MonoObject"));
-		AssertEquals
-("With Slash", "Could not find file \"a/b\"", String.Format ("Could not find file \"{0}\"", "a/b"));
-		AssertEquals
-("With BackSlash", "Could not find file \"a\\b\"", String.Format ("Could not find file \"{0}\"", "a\\b"));
-
-		// TODO test format exceptions
-
-		// TODO test argument null exceptions
-		//   This should work, but it doesn't currently.
-		//   I think I broke the spec...
-		//bool errorThrown = false;
-		//try {
-		//string s = String.Format(null, " ");
-		//} catch (ArgumentNullException) {
-		//errorThrown = true;
-		//}
-		//Assert("error not thrown 1", errorThrown);
-		//errorThrown = false;
-		//try {
-		//string s = String.Format(null, " ", " ");
-		//} catch (ArgumentNullException) {
-		//errorThrown = true;
-		//}
-		//Assert("error not thrown 2", errorThrown);
-		//errorThrown = false;
-		//try {
-		//string s = String.Format(" ", null);
-		//} catch (ArgumentNullException) {
-		//errorThrown = true;
-		//}
-		//Assert("error not thrown 3", errorThrown);
+		AssertEquals ("With Slash", "Could not find file \"a/b\"", String.Format ("Could not find file \"{0}\"", "a/b"));
+		AssertEquals ("With BackSlash", "Could not find file \"a\\b\"", String.Format ("Could not find file \"{0}\"", "a\\b"));
 	}
 
-	public void TestGetEnumerator()
+	[Test] // Format (String, Object)
+	public void Format1_Format_Null ()
+	{
+		try {
+			String.Format (null, 1);
+			Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "format", ex.ParamName);
+		}
+	}
+
+	[Test] // Format (String, Object [])
+	public void Format2_Format_Null ()
+	{
+		try {
+			String.Format (null, new object [] { 2 });
+			Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "format", ex.ParamName);
+		}
+	}
+
+	[Test] // Format (String, Object [])
+	public void Format2_Args_Null ()
+	{
+		try {
+			String.Format ("text", (object []) null);
+			Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "args", ex.ParamName);
+		}
+	}
+
+	[Test] // Format (IFormatProvider, String, Object [])
+	public void Format3_Format_Null ()
+	{
+		try {
+			String.Format (CultureInfo.InvariantCulture, null,
+				new object [] { 3 });
+			Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "format", ex.ParamName);
+		}
+	}
+
+	[Test] // Format (IFormatProvider, String, Object [])
+	public void Format3_Args_Null ()
+	{
+		try {
+			String.Format (CultureInfo.InvariantCulture, "text",
+				(object []) null);
+			Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "args", ex.ParamName);
+		}
+	}
+
+	[Test] // Format (String, Object, Object)
+	public void Format4_Format_Null ()
+	{
+		try {
+			String.Format (null, 4, 5);
+			Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "format", ex.ParamName);
+		}
+	}
+
+	[Test] // Format (String, Object, Object, Object)
+	public void Format5_Format_Null ()
+	{
+		try {
+			String.Format (null, 4, 5, 6);
+			Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "format", ex.ParamName);
+		}
+	}
+
+	[Test]
+	public void TestGetEnumerator ()
 	{
 		string s1 = "original";
 		char[] c1 = new char[s1.Length];
@@ -654,7 +1226,8 @@ public class StringTest : Assertion
 		AssertEquals("enumerated string should match", s1, s2);
 	}
 
-	public void TestGetHashCode()
+	[Test]
+	public void TestGetHashCode ()
 	{
 		string s1 = "original";
 		// TODO - weak test, currently.  Just verifies determinicity.
@@ -662,74 +1235,54 @@ public class StringTest : Assertion
 			     s1.GetHashCode(), s1.GetHashCode());
 	}
 
-	public void TestGetType() {
+	[Test]
+	public void TestGetType ()
+	{
 		string s1 = "original";
 		AssertEquals("String type", "System.String", s1.GetType().ToString());
 	}
 
-	public void TestGetTypeCode() {
+	[Test]
+	public void TestGetTypeCode ()
+	{
 		string s1 = "original";
 		Assert(s1.GetTypeCode().Equals(TypeCode.String));
 	}
 
-	public void TestIndexOf() {
+	[Test]
+	public void IndexOf ()
+	{
 		string s1 = "original";
 
-		bool errorThrown = false;
 		try {
-			int i = s1.IndexOf('q', s1.Length + 1);
-		} catch (ArgumentOutOfRangeException) {
-			errorThrown = true;
+			s1.IndexOf ('q', s1.Length + 1);
+			Fail ("#A1");
+		} catch (ArgumentOutOfRangeException ex) {
+			AssertEquals ("#A2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#A3", ex.InnerException);
+			AssertNotNull ("#A4", ex.Message);
+			AssertEquals ("#A5", "startIndex", ex.ParamName);
 		}
-		Assert("out of range error for char", errorThrown);
 
-		errorThrown = false;
 		try {
-			int i = s1.IndexOf('q', s1.Length + 1, 1);
-		} catch (ArgumentOutOfRangeException) {
-			errorThrown = true;
+			s1.IndexOf ('q', s1.Length + 1, 1);
+			Fail ("#B1");
+		} catch (ArgumentOutOfRangeException ex) {
+			AssertEquals ("#B2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#B3", ex.InnerException);
+			AssertNotNull ("#B4", ex.Message);
+			AssertEquals ("#B5", "startIndex", ex.ParamName);
 		}
-		Assert("out of range error for char", errorThrown);
 
-		errorThrown = false;
 		try {
-			int i = s1.IndexOf("huh", s1.Length + 1);
-		} catch (ArgumentOutOfRangeException) {
-			errorThrown = true;
+			s1.IndexOf ("huh", s1.Length + 1);
+			Fail ("#C1");
+		} catch (ArgumentOutOfRangeException ex) {
+			AssertEquals ("#C2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#C3", ex.InnerException);
+			AssertNotNull ("#C4", ex.Message);
+			AssertEquals ("#C5", "startIndex", ex.ParamName);
 		}
-		Assert("out of range for string", errorThrown);
-
-		errorThrown = false;
-		try {
-			int i = s1.IndexOf("huh", s1.Length + 1, 3);
-		} catch (ArgumentOutOfRangeException) {
-			errorThrown = true;
-		}
-		Assert("out of range for string", errorThrown);
-
-		errorThrown = false;
-		try {
-			int i = s1.IndexOf(null);
-		} catch (ArgumentNullException) {
-			errorThrown = true;
-		}
-		Assert("null string error", errorThrown);
-
-		errorThrown = false;
-		try {
-			int i = s1.IndexOf(null, 0);
-		} catch (ArgumentNullException) {
-			errorThrown = true;
-		}
-		Assert("null string error", errorThrown);
-
-		errorThrown = false;
-		try {
-			int i = s1.IndexOf(null, 0, 1);
-		} catch (ArgumentNullException) {
-			errorThrown = true;
-		}
-		Assert("null string error", errorThrown);
 
 		AssertEquals("basic char index", 1, s1.IndexOf('r'));
 		AssertEquals("basic char index 2", 2, s1.IndexOf('i'));
@@ -737,8 +1290,8 @@ public class StringTest : Assertion
 		
 		AssertEquals("basic string index", 1, s1.IndexOf("rig"));
 		AssertEquals("basic string index 2", 2, s1.IndexOf("i"));
-		AssertEquals("basic string index 3", 0, "".IndexOf(""));
-		AssertEquals("basic string index 4", 0, "ABC".IndexOf(""));
+		AssertEquals("basic string index 3", 0, string.Empty.IndexOf(string.Empty));
+		AssertEquals("basic string index 4", 0, "ABC".IndexOf(string.Empty));
 		AssertEquals("basic string index - no", -1, s1.IndexOf("rag"));
 
 		AssertEquals("stepped char index", 1, s1.IndexOf('r', 1));
@@ -766,7 +1319,7 @@ public class StringTest : Assertion
 		AssertEquals("stepped string index 3", 
 			     -1, s1.IndexOf("original", 10));
 		AssertEquals("stepped string index 4", 
-					 3, s1.IndexOf("", 3));
+					 3, s1.IndexOf(string.Empty, 3));
 		AssertEquals("stepped limited string index 1",
 			     1, s1.IndexOf("rig", 0, 5));
 		AssertEquals("stepped limited string index 2",
@@ -776,72 +1329,276 @@ public class StringTest : Assertion
 		AssertEquals("stepped limited string index 4",
 			     -1, s1.IndexOf("rig", 2, 3));
 		AssertEquals("stepped limited string index 5",
-			     2, s1.IndexOf("", 2, 3));
+			     2, s1.IndexOf(string.Empty, 2, 3));
 		
 		string s2 = "QBitArray::bitarr_data"; 
 		AssertEquals ("bug #62160", 9, s2.IndexOf ("::"));
 	}
 
-	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void IndexOf_Char_StartIndexOverflow () 
+	[Test] // IndexOf (String)
+	public void IndexOf2_Value_Null ()
 	{
-		"Mono".IndexOf ('o', Int32.MaxValue, 1);
+		try {
+			"Mono".IndexOf ((string) null);
+			Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+#if NET_2_0
+			AssertEquals ("#5", "value", ex.ParamName);
+#else
+			AssertEquals ("#5", "string2", ex.ParamName);
+#endif
+		}
 	}
 
-	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void IndexOf_Char_LengthOverflow () 
+	[Test] // IndexOf (Char, Int32)
+	public void IndexOf3 ()
 	{
-		"Mono".IndexOf ('o', 1, Int32.MaxValue);
+		string s = "testing123456";
+
+		Thread.CurrentThread.CurrentCulture = new CultureInfo ("tr-TR");
+
+		AssertEquals ("#A1", -1, s.IndexOf ('a', s.Length));
+		AssertEquals ("#A2", -1, s.IndexOf ('6', s.Length));
+		AssertEquals ("#A3", -1, s.IndexOf ('t', s.Length));
+		AssertEquals ("#A4", -1, s.IndexOf ('T', s.Length));
+		AssertEquals ("#A5", -1, s.IndexOf ('i', s.Length));
+		AssertEquals ("#A6", -1, s.IndexOf ('I', s.Length));
+		AssertEquals ("#A7", -1, s.IndexOf ('q', s.Length));
+		AssertEquals ("#A8", -1, s.IndexOf ('3', s.Length));
+
+		Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
+
+		AssertEquals ("#B1", -1, s.IndexOf ('a', s.Length));
+		AssertEquals ("#B2", -1, s.IndexOf ('6', s.Length));
+		AssertEquals ("#B3", -1, s.IndexOf ('t', s.Length));
+		AssertEquals ("#B4", -1, s.IndexOf ('T', s.Length));
+		AssertEquals ("#B5", -1, s.IndexOf ('i', s.Length));
+		AssertEquals ("#B6", -1, s.IndexOf ('I', s.Length));
+		AssertEquals ("#B7", -1, s.IndexOf ('q', s.Length));
+		AssertEquals ("#B8", -1, s.IndexOf ('3', s.Length));
 	}
 
-	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void IndexOf_String_StartIndexOverflow () 
+	[Test] // IndexOf (String, Int32)
+	public void IndexOf4_Value_Null ()
 	{
-		"Mono".IndexOf ("no", Int32.MaxValue, 1);
-	}
-
-	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void IndexOf_String_LengthOverflow () 
-	{
-		"Mono".IndexOf ("no", 1, Int32.MaxValue);
+		try {
+			"Mono".IndexOf ((string) null, 1);
+			Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+#if NET_2_0
+			AssertEquals ("#5", "value", ex.ParamName);
+#else
+			AssertEquals ("#5", "string2", ex.ParamName);
+#endif
+		}
 	}
 
 #if NET_2_0
-	[Test]
-	[ExpectedException (typeof (ArgumentException))]
-	public void IndexOf_StringComparison () 
+	[Test] // IndexOf (String, StringComparison)
+	public void IndexOf5 ()
 	{
-		" ".IndexOf ("", 0, 1, (StringComparison)Int32.MinValue);
+		string s = "testing123456";
+		StringComparison comparison_type;
+
+		Thread.CurrentThread.CurrentCulture = new CultureInfo ("tr-TR");
+
+		comparison_type = StringComparison.CurrentCulture;
+		AssertEquals ("#A1", 7, s.IndexOf ("123", comparison_type));
+		AssertEquals ("#A2", -1, s.IndexOf ("NG", comparison_type));
+		AssertEquals ("#A3", -1, s.IndexOf ("nga", comparison_type));
+		AssertEquals ("#A4", 0, s.IndexOf ("t", comparison_type));
+		AssertEquals ("#A5", -1, s.IndexOf ("T", comparison_type));
+		AssertEquals ("#A6", 12, s.IndexOf ("6", comparison_type));
+		AssertEquals ("#A7", 3, s.IndexOf ("tin", comparison_type));
+		AssertEquals ("#A8", -1, s.IndexOf ("TIN", comparison_type));
+		//AssertEquals ("#A9", 0, s.IndexOf (string.Empty, comparison_type));
+
+		comparison_type = StringComparison.CurrentCultureIgnoreCase;
+		AssertEquals ("#B1", 7, s.IndexOf ("123", comparison_type));
+		AssertEquals ("#B2", 5, s.IndexOf ("NG", comparison_type));
+		AssertEquals ("#B3", -1, s.IndexOf ("nga", comparison_type));
+		AssertEquals ("#B4", 0, s.IndexOf ("t", comparison_type));
+		AssertEquals ("#B5", 0, s.IndexOf ("T", comparison_type));
+		AssertEquals ("#B6", 12, s.IndexOf ("6", comparison_type));
+		AssertEquals ("#B7", 3, s.IndexOf ("tin", comparison_type));
+		AssertEquals ("#B8", -1, s.IndexOf ("TIN", comparison_type));
+		//AssertEquals ("#B9", 0, s.IndexOf (string.Empty, comparison_type));
+
+		comparison_type = StringComparison.InvariantCulture;
+		AssertEquals ("#C1", 7, s.IndexOf ("123", comparison_type));
+		AssertEquals ("#C2", -1, s.IndexOf ("NG", comparison_type));
+		AssertEquals ("#C3", -1, s.IndexOf ("nga", comparison_type));
+		AssertEquals ("#C4", 0, s.IndexOf ("t", comparison_type));
+		AssertEquals ("#C5", -1, s.IndexOf ("T", comparison_type));
+		AssertEquals ("#C6", 12, s.IndexOf ("6", comparison_type));
+		AssertEquals ("#C7", 3, s.IndexOf ("tin", comparison_type));
+		AssertEquals ("#C8", -1, s.IndexOf ("TIN", comparison_type));
+		//AssertEquals ("#C9", 0, s.IndexOf (string.Empty, comparison_type));
+
+		comparison_type = StringComparison.InvariantCultureIgnoreCase;
+		AssertEquals ("#D1", 7, s.IndexOf ("123", comparison_type));
+		AssertEquals ("#D2", 5, s.IndexOf ("NG", comparison_type));
+		AssertEquals ("#D3", -1, s.IndexOf ("nga", comparison_type));
+		AssertEquals ("#D4", 0, s.IndexOf ("t", comparison_type));
+		AssertEquals ("#D5", 0, s.IndexOf ("T", comparison_type));
+		AssertEquals ("#D6", 12, s.IndexOf ("6", comparison_type));
+		AssertEquals ("#D7", 3, s.IndexOf ("tin", comparison_type));
+		AssertEquals ("#D8", 3, s.IndexOf ("TIN", comparison_type));
+		//AssertEquals ("#D9", 0, s.IndexOf (string.Empty, comparison_type));
+
+		comparison_type = StringComparison.Ordinal;
+		AssertEquals ("#E1", 7, s.IndexOf ("123", comparison_type));
+		AssertEquals ("#E2", -1, s.IndexOf ("NG", comparison_type));
+		AssertEquals ("#E3", -1, s.IndexOf ("nga", comparison_type));
+		AssertEquals ("#E4", 0, s.IndexOf ("t", comparison_type));
+		AssertEquals ("#E5", -1, s.IndexOf ("T", comparison_type));
+		AssertEquals ("#E6", 12, s.IndexOf ("6", comparison_type));
+		AssertEquals ("#E7", 3, s.IndexOf ("tin", comparison_type));
+		AssertEquals ("#E8", -1, s.IndexOf ("TIN", comparison_type));
+		//AssertEquals ("#E9", 0, s.IndexOf (string.Empty, comparison_type));
+
+		comparison_type = StringComparison.OrdinalIgnoreCase;
+		AssertEquals ("#F1", 7, s.IndexOf ("123", comparison_type));
+		AssertEquals ("#F2", 5, s.IndexOf ("NG", comparison_type));
+		AssertEquals ("#F3", -1, s.IndexOf ("nga", comparison_type));
+		AssertEquals ("#F4", 0, s.IndexOf ("t", comparison_type));
+		AssertEquals ("#F5", 0, s.IndexOf ("T", comparison_type));
+		AssertEquals ("#F6", 12, s.IndexOf ("6", comparison_type));
+		AssertEquals ("#F7", 3, s.IndexOf ("tin", comparison_type));
+		AssertEquals ("#F8", 3, s.IndexOf ("TIN", comparison_type));
+		//AssertEquals ("#F9", 0, s.IndexOf (string.Empty, comparison_type));
+
+		Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
+
+		comparison_type = StringComparison.CurrentCulture;
+		AssertEquals ("#G1", 7, s.IndexOf ("123", comparison_type));
+		AssertEquals ("#G2", -1, s.IndexOf ("NG", comparison_type));
+		AssertEquals ("#G3", -1, s.IndexOf ("nga", comparison_type));
+		AssertEquals ("#G4", 0, s.IndexOf ("t", comparison_type));
+		AssertEquals ("#G5", -1, s.IndexOf ("T", comparison_type));
+		AssertEquals ("#G6", 12, s.IndexOf ("6", comparison_type));
+		AssertEquals ("#G7", 3, s.IndexOf ("tin", comparison_type));
+		AssertEquals ("#G8", -1, s.IndexOf ("TIN", comparison_type));
+		//AssertEquals ("#G9", 0, s.IndexOf (string.Empty, comparison_type));
+
+		comparison_type = StringComparison.CurrentCultureIgnoreCase;
+		AssertEquals ("#H1", 7, s.IndexOf ("123", comparison_type));
+		AssertEquals ("#H2", 5, s.IndexOf ("NG", comparison_type));
+		AssertEquals ("#H3", -1, s.IndexOf ("nga", comparison_type));
+		AssertEquals ("#H4", 0, s.IndexOf ("t", comparison_type));
+		AssertEquals ("#H5", 0, s.IndexOf ("T", comparison_type));
+		AssertEquals ("#H6", 12, s.IndexOf ("6", comparison_type));
+		AssertEquals ("#H7", 3, s.IndexOf ("tin", comparison_type));
+		AssertEquals ("#H8", 3, s.IndexOf ("TIN", comparison_type));
+		//AssertEquals ("#H9", 0, s.IndexOf (string.Empty, comparison_type));
+
+		comparison_type = StringComparison.InvariantCulture;
+		AssertEquals ("#I1", 7, s.IndexOf ("123", comparison_type));
+		AssertEquals ("#I2", -1, s.IndexOf ("NG", comparison_type));
+		AssertEquals ("#I3", -1, s.IndexOf ("nga", comparison_type));
+		AssertEquals ("#I4", 0, s.IndexOf ("t", comparison_type));
+		AssertEquals ("#I5", -1, s.IndexOf ("T", comparison_type));
+		AssertEquals ("#I6", 12, s.IndexOf ("6", comparison_type));
+		AssertEquals ("#I7", 3, s.IndexOf ("tin", comparison_type));
+		AssertEquals ("#I8", -1, s.IndexOf ("TIN", comparison_type));
+		//AssertEquals ("#I9", 0, s.IndexOf (string.Empty, comparison_type));
+
+		comparison_type = StringComparison.InvariantCultureIgnoreCase;
+		AssertEquals ("#J1", 7, s.IndexOf ("123", comparison_type));
+		AssertEquals ("#J2", 5, s.IndexOf ("NG", comparison_type));
+		AssertEquals ("#J3", -1, s.IndexOf ("nga", comparison_type));
+		AssertEquals ("#J4", 0, s.IndexOf ("t", comparison_type));
+		AssertEquals ("#J5", 0, s.IndexOf ("T", comparison_type));
+		AssertEquals ("#J6", 12, s.IndexOf ("6", comparison_type));
+		AssertEquals ("#J7", 3, s.IndexOf ("tin", comparison_type));
+		AssertEquals ("#J8", 3, s.IndexOf ("TIN", comparison_type));
+		//AssertEquals ("#J9", 0, s.IndexOf (string.Empty, comparison_type));
+
+		comparison_type = StringComparison.Ordinal;
+		AssertEquals ("#K1", 7, s.IndexOf ("123", comparison_type));
+		AssertEquals ("#K2", -1, s.IndexOf ("NG", comparison_type));
+		AssertEquals ("#K3", -1, s.IndexOf ("nga", comparison_type));
+		AssertEquals ("#K4", 0, s.IndexOf ("t", comparison_type));
+		AssertEquals ("#K5", -1, s.IndexOf ("T", comparison_type));
+		AssertEquals ("#K6", 12, s.IndexOf ("6", comparison_type));
+		AssertEquals ("#K7", 3, s.IndexOf ("tin", comparison_type));
+		AssertEquals ("#K8", -1, s.IndexOf ("TIN", comparison_type));
+		//AssertEquals ("#K9", 0, s.IndexOf (string.Empty, comparison_type));
+
+		comparison_type = StringComparison.OrdinalIgnoreCase;
+		AssertEquals ("#L1", 7, s.IndexOf ("123", comparison_type));
+		AssertEquals ("#L2", 5, s.IndexOf ("NG", comparison_type));
+		AssertEquals ("#L3", -1, s.IndexOf ("nga", comparison_type));
+		AssertEquals ("#L4", 0, s.IndexOf ("t", comparison_type));
+		AssertEquals ("#L5", 0, s.IndexOf ("T", comparison_type));
+		AssertEquals ("#L6", 12, s.IndexOf ("6", comparison_type));
+		AssertEquals ("#L7", 3, s.IndexOf ("tin", comparison_type));
+		AssertEquals ("#L8", 3, s.IndexOf ("TIN", comparison_type));
+		//AssertEquals ("#L9", 0, s.IndexOf (string.Empty, comparison_type));
+
+		//AssertEquals ("#M", 0, string.Empty.IndexOf (string.Empty, comparison_type));
+	}
+
+	[Test] // IndexOf (String, StringComparison)
+	public void IndexOf5_ComparisonType_Invalid ()
+	{
+		try {
+			"Mono".IndexOf (string.Empty, (StringComparison) Int32.MinValue);
+			Fail ("#1");
+		} catch (ArgumentException ex) {
+			// The string comparison type passed in is currently
+			// not supported
+			AssertEquals ("#2", typeof (ArgumentException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "comparisonType", ex.ParamName);
+		}
+	}
+
+	[Test] // IndexOf (String, StringComparison)
+	public void IndexOf5_Value_Null ()
+	{
+		try {
+			"Mono".IndexOf ((string) null, StringComparison.Ordinal);
+			Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "value", ex.ParamName);
+		}
 	}
 
 	[Test]
 	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void IndexOfStringComparisonOrdinalRangeException1 () 
+	public void IndexOfStringComparisonOrdinalRangeException1 ()
 	{
 		"Mono".IndexOf ("no", 5, StringComparison.Ordinal);
 	}
 
 	[Test]
 	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void IndexOfStringComparisonOrdinalRangeException2 () 
+	public void IndexOfStringComparisonOrdinalRangeException2 ()
 	{
 		"Mono".IndexOf ("no", 1, 5, StringComparison.Ordinal);
 	}
 
 	[Test]
 	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void IndexOfStringComparisonOrdinalIgnoreCaseRangeException1 () 
+	public void IndexOfStringComparisonOrdinalIgnoreCaseRangeException1 ()
 	{
 		"Mono".IndexOf ("no", 5, StringComparison.OrdinalIgnoreCase);
 	}
 
 	[Test]
 	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void IndexOfStringComparisonOrdinalIgnoreCaseRangeException2 () 
+	public void IndexOfStringComparisonOrdinalIgnoreCaseRangeException2 ()
 	{
 		"Mono".IndexOf ("no", 1, 5, StringComparison.OrdinalIgnoreCase);
 	}
@@ -919,172 +1676,747 @@ public class StringTest : Assertion
 		AssertEquals ("#3", -1, "Test".LastIndexOf ("ST", 2, 1, StringComparison.Ordinal));
 		AssertEquals ("#4", -1, "Test".LastIndexOf ("ST", 2, 1, StringComparison.OrdinalIgnoreCase));
 	}
-
 #endif
 
-	public void TestIndexOfAny() {
-		string s1 = "abcdefghijklm";
-
-		bool errorThrown = false;
+	[Test] // IndexOf (Char, Int32, Int32)
+	public void IndexOf6_Count_Negative ()
+	{
 		try {
-			int i = s1.IndexOfAny(null);
-		} catch (ArgumentNullException) {
-			errorThrown = true;
+			"Mono".IndexOf ('o', 1, -1);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Count must be positive and count must refer to a
+			// location within the string/array/collection
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "count", ex.ParamName);
 		}
-		Assert("null char[] error", errorThrown);
-
-		errorThrown = false;
-		try {
-			int i = s1.IndexOfAny(null, 0);
-		} catch (ArgumentNullException) {
-			errorThrown = true;
-		}
-		Assert("null char[] error", errorThrown);
-
-		errorThrown = false;
-		try {
-			int i = s1.IndexOfAny(null, 0, 1);
-		} catch (ArgumentNullException) {
-			errorThrown = true;
-		}
-		Assert("null char[] error", errorThrown);
-
-		char[] c1 = {'a', 'e', 'i', 'o', 'u'};
-		AssertEquals("first vowel", 0, s1.IndexOfAny(c1));
-		AssertEquals("second vowel", 4, s1.IndexOfAny(c1, 1));
-		AssertEquals("out of vowels", -1, s1.IndexOfAny(c1, 9));
-		AssertEquals("second vowel in range", 
-			     4, s1.IndexOfAny(c1, 1, 4));
-		AssertEquals("second vowel out of range", 
-			     -1, s1.IndexOfAny(c1, 1, 3));
-
-		errorThrown = false;
-		try {
-			int i = s1.IndexOfAny(c1, s1.Length+1);
-		} catch (ArgumentOutOfRangeException) {
-			errorThrown = true;
-		}
-		Assert("Out of range error", errorThrown);
-
-		errorThrown = false;
-		try {
-			int i = s1.IndexOfAny(c1, s1.Length+1, 1);
-		} catch (ArgumentOutOfRangeException) {
-			errorThrown = true;
-		}
-		Assert("Out of range error", errorThrown);
 	}
 
-	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void IndexOfAny_StartIndexOverflow () 
+	[Test] // IndexOf (Char, Int32, Int32)
+	public void IndexOf6_Count_Overflow ()
 	{
-		"Mono".IndexOfAny (new char [1] { 'o' }, Int32.MaxValue, 1);
+		try {
+			"Mono".IndexOf ('o', 1, Int32.MaxValue);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Count must be positive and count must refer to a
+			// location within the string/array/collection
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "count", ex.ParamName);
+		}
 	}
 
-	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void IndexOfAny_LengthOverflow () 
+	[Test] // IndexOf (Char, Int32, Int32)
+	public void IndexOf6_StartIndex_Negative ()
 	{
-		"Mono".IndexOfAny (new char [1] { 'o' }, 1, Int32.MaxValue);
+		try {
+			"Mono".IndexOf ('o', -1, 1);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Index was out of range. Must be non-negative and
+			// less than the size of the collection
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "startIndex", ex.ParamName);
+		}
+	}
+
+	[Test] // IndexOf (Char, Int32, Int32)
+	public void IndexOf6_StartIndex_Overflow ()
+	{
+		string s = "testing123456";
+
+		try {
+			s.IndexOf ('o', s.Length + 1, 1);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Index was out of range. Must be non-negative and
+			// less than the size of the collection
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "startIndex", ex.ParamName);
+		}
+	}
+
+	[Test] // IndexOf (String, Int32, Int32)
+	public void IndexOf7 ()
+	{
+		string s = "testing123456test";
+
+		Thread.CurrentThread.CurrentCulture = new CultureInfo ("tr-TR");
+
+		AssertEquals ("#A1", -1, s.IndexOf ("123", 4, 5));
+		AssertEquals ("#A2", 7, s.IndexOf ("123", 4, 6));
+		AssertEquals ("#A3", -1, s.IndexOf ("123", 5, 4));
+		AssertEquals ("#A4", 7, s.IndexOf ("123", 5, 5));
+		AssertEquals ("#A5", 7, s.IndexOf ("123", 0, s.Length));
+		AssertEquals ("#A6", -1, s.IndexOf ("123", s.Length, 0));
+
+		AssertEquals ("#B1", -1, s.IndexOf ("tin", 2, 3));
+		AssertEquals ("#B2", 3, s.IndexOf ("tin", 3, 3));
+		AssertEquals ("#B3", -1, s.IndexOf ("tin", 2, 2));
+		AssertEquals ("#B4", -1, s.IndexOf ("tin", 1, 4));
+		AssertEquals ("#B5", 3, s.IndexOf ("tin", 0, s.Length));
+		AssertEquals ("#B6", -1, s.IndexOf ("tin", s.Length, 0));
+
+		AssertEquals ("#C1", 6, s.IndexOf ("g12", 4, 5));
+		AssertEquals ("#C2", -1, s.IndexOf ("g12", 5, 2));
+		AssertEquals ("#C3", -1, s.IndexOf ("g12", 5, 3));
+		AssertEquals ("#C4", 6, s.IndexOf ("g12", 6, 4));
+		AssertEquals ("#C5", 6, s.IndexOf ("g12", 0, s.Length));
+		AssertEquals ("#C6", -1, s.IndexOf ("g12", s.Length, 0));
+
+		AssertEquals ("#D1", 1, s.IndexOf ("est", 0, 5));
+		AssertEquals ("#D2", -1, s.IndexOf ("est", 1, 2));
+		AssertEquals ("#D3", -1, s.IndexOf ("est", 2, 10));
+		AssertEquals ("#D4", 14, s.IndexOf ("est", 7, 10));
+		AssertEquals ("#D5", 1, s.IndexOf ("est", 0, s.Length));
+		AssertEquals ("#D6", -1, s.IndexOf ("est", s.Length, 0));
+
+		AssertEquals ("#E1", -1, s.IndexOf ("T", 0, s.Length));
+		AssertEquals ("#E2", 4, s.IndexOf ("i", 0, s.Length));
+		AssertEquals ("#E3", -1, s.IndexOf ("I", 0, s.Length));
+		AssertEquals ("#E4", 12, s.IndexOf ("6", 0, s.Length));
+		AssertEquals ("#E5", 0, s.IndexOf ("testing123456", 0, s.Length));
+		AssertEquals ("#E6", -1, s.IndexOf ("testing1234567", 0, s.Length));
+		AssertEquals ("#E7", 0, s.IndexOf (string.Empty, 0, 0));
+		AssertEquals ("#E8", 4, s.IndexOf (string.Empty, 4, 3));
+		AssertEquals ("#E9", 0, string.Empty.IndexOf (string.Empty, 0, 0));
+		AssertEquals ("#E10", -1, string.Empty.IndexOf ("abc", 0, 0));
+
+		Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
+
+		AssertEquals ("#F1", -1, s.IndexOf ("123", 4, 5));
+		AssertEquals ("#F2", 7, s.IndexOf ("123", 4, 6));
+		AssertEquals ("#F3", -1, s.IndexOf ("123", 5, 4));
+		AssertEquals ("#F4", 7, s.IndexOf ("123", 5, 5));
+		AssertEquals ("#F5", 7, s.IndexOf ("123", 0, s.Length));
+		AssertEquals ("#F6", -1, s.IndexOf ("123", s.Length, 0));
+
+		AssertEquals ("#G1", -1, s.IndexOf ("tin", 2, 3));
+		AssertEquals ("#G2", 3, s.IndexOf ("tin", 3, 3));
+		AssertEquals ("#G3", -1, s.IndexOf ("tin", 2, 2));
+		AssertEquals ("#G4", -1, s.IndexOf ("tin", 1, 4));
+		AssertEquals ("#G5", 3, s.IndexOf ("tin", 0, s.Length));
+		AssertEquals ("#G6", -1, s.IndexOf ("tin", s.Length, 0));
+
+		AssertEquals ("#H1", 6, s.IndexOf ("g12", 4, 5));
+		AssertEquals ("#H2", -1, s.IndexOf ("g12", 5, 2));
+		AssertEquals ("#H3", -1, s.IndexOf ("g12", 5, 3));
+		AssertEquals ("#H4", 6, s.IndexOf ("g12", 6, 4));
+		AssertEquals ("#H5", 6, s.IndexOf ("g12", 0, s.Length));
+		AssertEquals ("#H6", -1, s.IndexOf ("g12", s.Length, 0));
+
+		AssertEquals ("#I1", 1, s.IndexOf ("est", 0, 5));
+		AssertEquals ("#I2", -1, s.IndexOf ("est", 1, 2));
+		AssertEquals ("#I3", -1, s.IndexOf ("est", 2, 10));
+		AssertEquals ("#I4", 14, s.IndexOf ("est", 7, 10));
+		AssertEquals ("#I5", 1, s.IndexOf ("est", 0, s.Length));
+		AssertEquals ("#I6", -1, s.IndexOf ("est", s.Length, 0));
+
+		AssertEquals ("#J1", -1, s.IndexOf ("T", 0, s.Length));
+		AssertEquals ("#J2", 4, s.IndexOf ("i", 0, s.Length));
+		AssertEquals ("#J3", -1, s.IndexOf ("I", 0, s.Length));
+		AssertEquals ("#J4", 12, s.IndexOf ("6", 0, s.Length));
+		AssertEquals ("#J5", 0, s.IndexOf ("testing123456", 0, s.Length));
+		AssertEquals ("#J6", -1, s.IndexOf ("testing1234567", 0, s.Length));
+		AssertEquals ("#J7", 0, s.IndexOf (string.Empty, 0, 0));
+		AssertEquals ("#J8", 4, s.IndexOf (string.Empty, 4, 3));
+		AssertEquals ("#J9", 0, string.Empty.IndexOf (string.Empty, 0, 0));
+		AssertEquals ("#J10", -1, string.Empty.IndexOf ("abc", 0, 0));
+	}
+
+	[Test] // IndexOf (String, Int32, Int32)
+	public void IndexOf7_Count_Negative ()
+	{
+		try {
+			"Mono".IndexOf ("no", 1, -1);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Count must be positive and count must refer to a
+			// location within the string/array/collection
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "count", ex.ParamName);
+		}
+	}
+
+	[Test] // IndexOf (String, Int32, Int32)
+	public void IndexOf7_Count_Overflow ()
+	{
+		string s = "testing123456";
+
+		try {
+			s.IndexOf ("no", 1, s.Length);
+			Fail ("#A1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Count must be positive and count must refer to a
+			// location within the string/array/collection
+			AssertEquals ("#A2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#A3", ex.InnerException);
+			AssertNotNull ("#A4", ex.Message);
+			AssertEquals ("#A5", "count", ex.ParamName);
+		}
+
+		try {
+			s.IndexOf ("no", 1, s.Length + 1);
+			Fail ("#B1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Count must be positive and count must refer to a
+			// location within the string/array/collection
+			AssertEquals ("#B2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#B3", ex.InnerException);
+			AssertNotNull ("#B4", ex.Message);
+			AssertEquals ("#B5", "count", ex.ParamName);
+		}
+
+		try {
+			s.IndexOf ("no", 1, int.MaxValue);
+			Fail ("#C1");
+		} catch (ArgumentOutOfRangeException ex) {
+#if NET_2_0
+			// Count must be positive and count must refer to a
+			// location within the string/array/collection
+			AssertEquals ("#C2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#C3", ex.InnerException);
+			AssertNotNull ("#C4", ex.Message);
+			AssertEquals ("#C5", "count", ex.ParamName);
+#else
+			// Index was out of range.  Must be non-negative and
+			// less than the size of the collection
+			AssertEquals ("#C2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#C3", ex.InnerException);
+			AssertNotNull ("#C4", ex.Message);
+			AssertNotNull ("#C5", ex.ParamName);
+			//AssertEquals ("#C5", "startIndex", ex.ParamName);
+#endif
+		}
+	}
+
+	[Test] // IndexOf (String, Int32, Int32)
+	public void IndexOf7_StartIndex_Negative ()
+	{
+		try {
+			"Mono".IndexOf ("no", -1, 1);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Index was out of range. Must be non-negative and
+			// less than the size of the collection
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "startIndex", ex.ParamName);
+		}
+	}
+
+	[Test] // IndexOf (String, Int32, Int32)
+	public void IndexOf7_StartIndex_Overflow ()
+	{
+		string s = "testing123456";
+
+		try {
+			s.IndexOf ("no", s.Length + 1, 1);
+			Fail ("#A1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Index was out of range. Must be non-negative and
+			// less than the size of the collection
+			AssertEquals ("#A2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#A3", ex.InnerException);
+			AssertNotNull ("#A4", ex.Message);
+#if NET_2_0
+			AssertEquals ("#A5", "startIndex", ex.ParamName);
+#else
+			AssertNotNull ("#A5", ex.ParamName);
+			//AssertEquals ("#A5", "count", ex.ParamName);
+#endif
+		}
+
+		try {
+			s.IndexOf ("no", int.MaxValue, 1);
+			Fail ("#B1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Index was out of range. Must be non-negative and
+			// less than the size of the collection
+			AssertEquals ("#B2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#B3", ex.InnerException);
+			AssertNotNull ("#B4", ex.Message);
+			AssertEquals ("#B5", "startIndex", ex.ParamName);
+		}
+	}
+
+	[Test] // IndexOf (String, Int32, Int32)
+	public void IndexOf7_Value_Null ()
+	{
+		try {
+			"Mono".IndexOf ((string) null, 0, 1);
+			Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+#if NET_2_0
+			AssertEquals ("#5", "value", ex.ParamName);
+#else
+			AssertEquals ("#5", "string2", ex.ParamName);
+#endif
+		}
+	}
+
+#if NET_2_0
+	[Test] // IndexOf (String, Int32, StringComparison)
+	public void IndexOf8_ComparisonType_Invalid ()
+	{
+		try {
+			"Mono".IndexOf (string.Empty, 1, (StringComparison) Int32.MinValue);
+			Fail ("#1");
+		} catch (ArgumentException ex) {
+			// The string comparison type passed in is currently
+			// not supported
+			AssertEquals ("#2", typeof (ArgumentException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "comparisonType", ex.ParamName);
+		}
+	}
+
+	[Test] // IndexOf (String, Int32, StringComparison)
+	public void IndexOf8_StartIndex_Negative ()
+	{
+		try {
+			"Mono".IndexOf ("o", -1, StringComparison.Ordinal);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Index was out of range. Must be non-negative and
+			// less than the size of the collection
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "startIndex", ex.ParamName);
+		}
+	}
+
+	[Test] // IndexOf (String, Int32, Int32, StringComparison)
+	public void IndexOf9_ComparisonType_Invalid ()
+	{
+		try {
+			"Mono".IndexOf (string.Empty, 0, 1, (StringComparison) Int32.MinValue);
+			Fail ("#1");
+		} catch (ArgumentException ex) {
+			// The string comparison type passed in is currently
+			// not supported
+			AssertEquals ("#2", typeof (ArgumentException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "comparisonType", ex.ParamName);
+		}
+	}
+
+	[Test] // IndexOf (String, Int32, Int32, StringComparison)
+	public void IndexOf9_Count_Negative ()
+	{
+		try {
+			"Mono".IndexOf ("o", 1, -1, StringComparison.Ordinal);
+			Fail ("#1");
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Count must be positive and count must refer to a
+			// location within the string/array/collection
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "count", ex.ParamName);
+		}
+	}
+
+	[Test] // IndexOf (String, Int32, Int32, StringComparison)
+	public void IndexOf9_StartIndex_Negative ()
+	{
+		try {
+			"Mono".IndexOf ("o", -1, 0, StringComparison.Ordinal);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Index was out of range. Must be non-negative and
+			// less than the size of the collection
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "startIndex", ex.ParamName);
+		}
+	}
+#endif
+
+	[Test]
+	public void IndexOfAny1 ()
+	{
+		string s = "abcdefghijklmd";
+		char[] c;
+
+		c = new char [] {'a', 'e', 'i', 'o', 'u'};
+		AssertEquals ("#1", 0, s.IndexOfAny (c));
+		c = new char [] { 'd', 'z' };
+		AssertEquals ("#1", 3, s.IndexOfAny (c));
+		c = new char [] { 'q', 'm', 'z' };
+		AssertEquals ("#2", 12, s.IndexOfAny (c));
+		c = new char [0];
+		AssertEquals ("#3", -1, s.IndexOfAny (c));
+
+	}
+
+	[Test] // IndexOfAny (Char [])
+	public void IndexOfAny1_AnyOf_Null ()
+	{
+		try {
+			"mono".IndexOfAny ((char []) null);
+			Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertNull ("#5", ex.ParamName);
+		}
+	}
+
+	[Test] // IndexOfAny (Char [], Int32)
+	public void IndexOfAny2 ()
+	{
+		string s = "abcdefghijklmd";
+		char [] c;
+
+		c = new char [] { 'a', 'e', 'i', 'o', 'u' };
+		AssertEquals ("#A1", 0, s.IndexOfAny (c, 0));
+		AssertEquals ("#A1", 4, s.IndexOfAny (c, 1));
+		AssertEquals ("#A2", -1, s.IndexOfAny (c, 9));
+		AssertEquals ("#A3", -1, s.IndexOfAny (c, s.Length));
+
+		c = new char [] { 'd', 'z' };
+		AssertEquals ("#B1", 3, s.IndexOfAny (c, 0));
+		AssertEquals ("#B2", 3, s.IndexOfAny (c, 3));
+		AssertEquals ("#B3", 13, s.IndexOfAny (c, 4));
+		AssertEquals ("#B4", 13, s.IndexOfAny (c, 9));
+		AssertEquals ("#B5", -1, s.IndexOfAny (c, s.Length));
+		AssertEquals ("#B6", 13, s.IndexOfAny (c, s.Length - 1));
+
+		c = new char [] { 'q', 'm', 'z' };
+		AssertEquals ("#C1", 12, s.IndexOfAny (c, 0));
+		AssertEquals ("#C2", 12, s.IndexOfAny (c, 4));
+		AssertEquals ("#C3", 12, s.IndexOfAny (c, 12));
+		AssertEquals ("#C4", -1, s.IndexOfAny (c, s.Length));
+
+		c = new char [0];
+		AssertEquals ("#D1", -1, s.IndexOfAny (c, 0));
+		AssertEquals ("#D2", -1, s.IndexOfAny (c, 4));
+		AssertEquals ("#D3", -1, s.IndexOfAny (c, 9));
+		AssertEquals ("#D4", -1, s.IndexOfAny (c, s.Length));
+	}
+
+	[Test] // IndexOfAny (Char [], Int32)
+	public void IndexOfAny2_AnyOf_Null ()
+	{
+		try {
+			"mono".IndexOfAny ((char []) null, 0);
+			Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertNull ("#5", ex.ParamName);
+		}
+	}
+
+	[Test] // IndexOfAny (Char [], Int32)
+	public void IndexOfAny2_StartIndex_Negative ()
+	{
+		string s = "abcdefghijklm";
+
+		try {
+			s.IndexOfAny (new char [1] { 'd' }, -1, 1);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Specified argument was out of the range of valid
+			// values
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertNull ("#5", ex.ParamName);
+		}
+	}
+
+	[Test] // IndexOfAny (Char [], Int32, Int32)
+	public void IndexOfAny2_StartIndex_Overflow ()
+	{
+		string s = "abcdefghijklm";
+
+		try {
+			s.IndexOfAny (new char [1] { 'd' }, s.Length + 1);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Specified argument was out of the range of valid
+			// values
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertNull ("#5", ex.ParamName);
+		}
+	}
+
+	[Test] // IndexOfAny (Char [], Int32, Int32)
+	public void IndexOfAny3 ()
+	{
+		string s = "abcdefghijklmd";
+		char [] c;
+
+		c = new char [] { 'a', 'e', 'i', 'o', 'u' };
+		AssertEquals ("#A1", 0, s.IndexOfAny (c, 0, 2));
+		AssertEquals ("#A2", -1, s.IndexOfAny (c, 1, 2));
+		AssertEquals ("#A3", -1, s.IndexOfAny (c, 1, 3));
+		AssertEquals ("#A3", 4, s.IndexOfAny (c, 1, 4));
+		AssertEquals ("#A4", 4, s.IndexOfAny (c, 1, s.Length - 1));
+
+		c = new char [] { 'd', 'z' };
+		AssertEquals ("#B1", -1, s.IndexOfAny (c, 0, 2));
+		AssertEquals ("#B2", -1, s.IndexOfAny (c, 1, 2));
+		AssertEquals ("#B3", 3, s.IndexOfAny (c, 1, 3));
+		AssertEquals ("#B4", 3, s.IndexOfAny (c, 0, s.Length));
+		AssertEquals ("#B5", 3, s.IndexOfAny (c, 1, s.Length - 1));
+		AssertEquals ("#B6", -1, s.IndexOfAny (c, s.Length, 0));
+
+		c = new char [] { 'q', 'm', 'z' };
+		AssertEquals ("#C1", -1, s.IndexOfAny (c, 0, 10));
+		AssertEquals ("#C2", 12, s.IndexOfAny (c, 10, 4));
+		AssertEquals ("#C3", -1, s.IndexOfAny (c, 1, 3));
+		AssertEquals ("#C4", 12, s.IndexOfAny (c, 0, s.Length));
+		AssertEquals ("#C5", 12, s.IndexOfAny (c, 1, s.Length - 1));
+
+		c = new char [0];
+		AssertEquals ("#D1", -1, s.IndexOfAny (c, 0, 3));
+		AssertEquals ("#D2", -1, s.IndexOfAny (c, 4, 9));
+		AssertEquals ("#D3", -1, s.IndexOfAny (c, 9, 5));
+		AssertEquals ("#D4", -1, s.IndexOfAny (c, 13, 1));
+	}
+
+	[Test] // IndexOfAny (Char [], Int32, Int32)
+	public void IndexOfAny3_AnyOf_Null ()
+	{
+		try {
+			"mono".IndexOfAny ((char []) null, 0, 0);
+			Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertNull ("#5", ex.ParamName);
+		}
+	}
+
+	[Test] // IndexOfAny (Char [], Int32, Int32)
+	public void IndexOfAny3_Count_Negative ()
+	{
+		try {
+			"Mono".IndexOfAny (new char [1] { 'o' }, 1, -1);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Count must be positive and count must refer to a
+			// location within the string/array/collection
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "count", ex.ParamName);
+		}
+	}
+
+	[Test] // IndexOfAny (Char [], Int32, Int32)
+	public void IndexOfAny3_Length_Overflow ()
+	{
+		string s = "abcdefghijklm";
+
+		try {
+			s.IndexOfAny (new char [1] { 'd' }, 1, s.Length);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Count must be positive and count must refer to a
+			// location within the string/array/collection
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "count", ex.ParamName);
+		}
+	}
+
+	[Test] // IndexOfAny (Char [], Int32, Int32)
+	public void IndexOfAny3_StartIndex_Negative ()
+	{
+		try {
+			"Mono".IndexOfAny (new char [1] { 'o' }, -1, 1);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Specified argument was out of the range of valid
+			// values
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertNull ("#5", ex.ParamName);
+		}
+	}
+
+	[Test] // IndexOfAny (Char [], Int32, Int32)
+	public void IndexOfAny3_StartIndex_Overflow ()
+	{
+		string s = "abcdefghijklm";
+
+		try {
+			s.IndexOfAny (new char [1] { 'o' }, s.Length + 1, 1);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Specified argument was out of the range of valid
+			// values
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertNull ("#5", ex.ParamName);
+		}
 	}
 
 #if NET_2_0
 	[Test]
-	[ExpectedException (typeof (ArgumentNullException))]
-	public void Contains_Null () {
-		"ABC".Contains (null);
-	}
-
-	[Test]
-	public void TestContains () {
-		Assert ("ABC".Contains (""));
+	public void Contains ()
+	{
+		Assert ("ABC".Contains (string.Empty));
 		Assert ("ABC".Contains ("ABC"));
 		Assert ("ABC".Contains ("AB"));
 		Assert (!"ABC".Contains ("AD"));
 	}
 
 	[Test]
-	public void TestIsNullOrEmpty () {
+	public void Contains_Value_Null ()
+	{
+		try {
+			"ABC".Contains (null);
+			Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "value", ex.ParamName);
+		}
+	}
+
+	[Test]
+	public void IsNullOrEmpty ()
+	{
 		Assert (String.IsNullOrEmpty (null));
 		Assert (String.IsNullOrEmpty (String.Empty));
 		Assert (String.IsNullOrEmpty (""));
 		Assert (!String.IsNullOrEmpty ("A"));
+		Assert (!String.IsNullOrEmpty (" "));
+		Assert (!String.IsNullOrEmpty ("\t"));
+		Assert (!String.IsNullOrEmpty ("\n"));
 	}
 #endif
 
-	public void TestInsert() {
+	[Test]
+	public void TestInsert ()
+	{
 		string s1 = "original";
 		
-		bool errorThrown = false;
 		try {
-			string result = s1.Insert(0, null);
-		} catch (ArgumentNullException) {
-			errorThrown = true;
+			s1.Insert (0, null);
+			Fail ("#A1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#A2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#A3", ex.InnerException);
+			AssertNotNull ("#A4", ex.Message);
+			AssertEquals ("#A5", "value", ex.ParamName);
 		}
-		Assert("Null arg error", errorThrown);
 
-		errorThrown = false;
 		try {
-			string result = s1.Insert(s1.Length+1, "Hi!");
-		} catch (ArgumentOutOfRangeException) {
-			errorThrown = true;
+			s1.Insert (s1.Length + 1, "Hi!");
+			Fail ("#B1");
+		} catch (ArgumentOutOfRangeException ex) {
+			AssertEquals ("#B2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#B3", ex.InnerException);
+			AssertNotNull ("#B4", ex.Message);
+			AssertEquals ("#B5", "startIndex", ex.ParamName);
 		}
-		Assert("Out of range error", errorThrown);
 
-		AssertEquals("front insert", 
-			     "Hi!original", s1.Insert(0, "Hi!"));
-		AssertEquals("back insert", 
-			     "originalHi!", s1.Insert(s1.Length, "Hi!"));
-		AssertEquals("middle insert", 
-			     "origHi!inal", s1.Insert(4, "Hi!"));
+		AssertEquals("#C1", "Hi!original", s1.Insert (0, "Hi!"));
+		AssertEquals("#C2", "originalHi!", s1.Insert (s1.Length, "Hi!"));
+		AssertEquals("#C3", "origHi!inal", s1.Insert (4, "Hi!"));
 	}
 
-	public void TestIntern() {
-		bool errorThrown = false;
-		try {
-			string s = String.Intern(null);
-		} catch (ArgumentNullException) {
-			errorThrown = true;
-		}
-		Assert("null arg error", errorThrown);
-
+	[Test]
+	public void Intern ()
+	{
 		string s1 = "original";
-		AssertEquals("One string's reps are both the same",
-			     String.Intern(s1), String.Intern(s1));
+		AssertSame ("#A1", s1, String.Intern (s1));
+		AssertSame ("#A2", String.Intern(s1), String.Intern(s1));
 
 		string s2 = "originally";
-		Assert("Different strings, different reps",
-		       String.Intern(s1) != String.Intern(s2));
+		AssertSame ("#B1", s2, String.Intern (s2));
+		Assert ("#B2", String.Intern(s1) != String.Intern(s2));
+
+		string s3 = new DateTime (2000, 3, 7).ToString ();
+		AssertNull ("#C1", String.IsInterned (s3));
+		AssertSame ("#C2", s3, String.Intern (s3));
+		AssertSame ("#C3", s3, String.IsInterned (s3));
+		AssertSame ("#C4", s3, String.IsInterned (new DateTime (2000, 3, 7).ToString ()));
+		AssertSame ("#C5", s3, String.Intern (new DateTime (2000, 3, 7).ToString ()));
 	}
 
-	public void TestIsInterned() {
-		bool errorThrown = false;
+	[Test]
+	public void Intern_Str_Null ()
+	{
 		try {
-			string s = String.IsInterned(null);
-		} catch (ArgumentNullException) {
-			errorThrown = true;
+			String.Intern (null);
+			Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "str", ex.ParamName);
 		}
-		Assert("null arg error", errorThrown);
-
-		// FIXME - it seems like this should work, but no.
-		//   I don't know how it's possible to get a null
-		//   returned from IsInterned.
-		//Assert("no intern for regular string", 
-		//String.IsInterned("original") == null);
-
-		string s1 = "original";
-		AssertEquals("is interned", s1, String.IsInterned(s1));
 	}
 
-	public void TestJoin() {
-		bool errorThrown = false;
+	[Test]
+	public void IsInterned ()
+	{
+		AssertNull ("#1", String.IsInterned (new DateTime (2000, 3, 6).ToString ()));
+		string s1 = "original";
+		AssertSame("#2", s1, String.IsInterned (s1));
+	}
+
+	[Test]
+	public void IsInterned_Str_Null ()
+	{
+		try {
+			String.IsInterned (null);
+			Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "str", ex.ParamName);
+		}
+	}
+
+	[Test]
+	public void TestJoin ()
+	{
 		try {
 			string s = String.Join(" ", null);
-		} catch (ArgumentNullException) {
-			errorThrown = true;
+			Fail ("#A1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#A2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#A3", ex.InnerException);
+			AssertNotNull ("#A4", ex.Message);
+			AssertEquals ("#A5", "value", ex.ParamName);
 		}
-		Assert("null arg error", errorThrown);
 
 		string[] chunks = {"this", "is", "a", "test"};
 		AssertEquals("Basic join", "this is a test",
@@ -1099,24 +2431,26 @@ public class StringTest : Assertion
 		AssertEquals("Subset join", "is a test",
 			     String.Join(" ", chunks, 1, 3));
 
-		errorThrown = false;
 		try {
 			string s = String.Join(" ", chunks, 2, 3);
-		} catch (ArgumentOutOfRangeException) {
-			errorThrown = true;
+			Fail ("#C1");
+		} catch (ArgumentOutOfRangeException ex) {
+			AssertEquals ("#C2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#C3", ex.InnerException);
+			AssertNotNull ("#C4", ex.Message);
+			AssertEquals ("#C5", "startIndex", ex.ParamName);
 		}
-		Assert("out of range error", errorThrown);
 	}
 
 	[Test]
-	public void Join_SeparatorNull () 
+	public void Join_SeparatorNull ()
 	{
 		string[] chunks = {"this", "is", "a", "test"};
 		AssertEquals ("SeparatorNull", "thisisatest", String.Join (null, chunks));
 	}
 
 	[Test]
-	public void Join_ValuesNull () 
+	public void Join_ValuesNull ()
 	{
 		string[] chunks1 = {null, "is", "a", null};
 		AssertEquals ("SomeNull", " is a ", String.Join (" ", chunks1));
@@ -1129,114 +2463,168 @@ public class StringTest : Assertion
 	}
 
 	[Test]
-	public void Join_AllNull () 
+	public void Join_AllNull ()
 	{
 		string[] chunks = {null, null, null};
-		AssertEquals ("AllNull", "", String.Join (null, chunks));
+		AssertEquals ("AllNull", string.Empty, String.Join (null, chunks));
 	}
 
 	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void Join_StartIndexNegative () 
+	public void Join_StartIndexNegative ()
 	{
 		string[] values = { "Mo", "no" };
-		String.Join ("o", values, -1, 1);
+		try {
+			String.Join ("o", values, -1, 1);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "startIndex", ex.ParamName);
+		}
 	}
 
 	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void Join_StartIndexOverflow () 
+	public void Join_StartIndexOverflow ()
 	{
 		string[] values = { "Mo", "no" };
-		String.Join ("o", values, Int32.MaxValue, 1);
+		try {
+			String.Join ("o", values, Int32.MaxValue, 1);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "startIndex", ex.ParamName);
+		}
 	}
 
 	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void Join_LengthNegative () 
+	public void Join_LengthNegative ()
 	{
 		string[] values = { "Mo", "no" };
-		String.Join ("o", values, 1, -1);
+		try {
+			String.Join ("o", values, 1, -1);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "count", ex.ParamName);
+		}
 	}
 
 	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void Join_LengthOverflow () 
+	public void Join_LengthOverflow ()
 	{
 		string[] values = { "Mo", "no" };
-		String.Join ("o", values, 1, Int32.MaxValue);
+		try {
+			String.Join ("o", values, 1, Int32.MaxValue);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "startIndex", ex.ParamName);
+		}
 	}
 
-	public void TestLastIndexOf() {
+	[Test]
+	public void LastIndexOf ()
+	{
 		string s1 = "original";
 
-		bool errorThrown = false;
 		try {
-			int i = s1.LastIndexOf('q', -1);
-		} catch (ArgumentOutOfRangeException) {
-			errorThrown = true;
+			s1.LastIndexOf ('q', -1);
+			Fail ("#A1");
+		} catch (ArgumentOutOfRangeException ex) {
+			AssertEquals ("#A2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#A3", ex.InnerException);
+			AssertNotNull ("#A4", ex.Message);
+			AssertEquals ("#A5", "startIndex", ex.ParamName);
 		}
-		Assert("out of range error for char", errorThrown);
 
-		errorThrown = false;
 		try {
-			int i = s1.LastIndexOf('q', -1, 1);
-		} catch (ArgumentOutOfRangeException) {
-			errorThrown = true;
+			s1.LastIndexOf ('q', -1, 1);
+			Fail ("#B1");
+		} catch (ArgumentOutOfRangeException ex) {
+			AssertEquals ("#B2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#B3", ex.InnerException);
+			AssertNotNull ("#B4", ex.Message);
+			AssertEquals ("#B5", "startIndex", ex.ParamName);
 		}
-		Assert("out of range error for char", errorThrown);
 
-		errorThrown = false;
 		try {
-			int i = s1.LastIndexOf("huh", s1.Length + 1);
-		} catch (ArgumentOutOfRangeException) {
-			errorThrown = true;
+			s1.LastIndexOf ("huh", s1.Length + 1);
+			Fail ("#C1");
+		} catch (ArgumentOutOfRangeException ex) {
+			AssertEquals ("#C2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#C3", ex.InnerException);
+			AssertNotNull ("#C4", ex.Message);
+			AssertEquals ("#C5", "startIndex", ex.ParamName);
 		}
-		Assert("out of range for string", errorThrown);
 
-		errorThrown = false;
 		try {
-			int i = s1.LastIndexOf("huh", s1.Length + 1, 3);
-		} catch (ArgumentOutOfRangeException) {
-			errorThrown = true;
+			int i = s1.LastIndexOf ("huh", s1.Length + 1, 3);
+			Fail ("#D1");
+		} catch (ArgumentOutOfRangeException ex) {
+			AssertEquals ("#D2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#D3", ex.InnerException);
+			AssertNotNull ("#D4", ex.Message);
+			AssertEquals ("#D5", "startIndex", ex.ParamName);
 		}
-		Assert("out of range for string", errorThrown);
 
-		errorThrown = false;
 		try {
-			int i = s1.LastIndexOf(null);
-		} catch (ArgumentNullException) {
-			errorThrown = true;
+			s1.LastIndexOf (null);
+			Fail ("#E1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#E2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#E3", ex.InnerException);
+			AssertNotNull ("#E4", ex.Message);
+#if NET_2_0
+			AssertEquals ("#E5", "value", ex.ParamName);
+#else
+			AssertEquals ("#E5", "string2", ex.ParamName);
+#endif
 		}
-		Assert("null string error", errorThrown);
 
-		errorThrown = false;
 		try {
-			int i = s1.LastIndexOf(null, 0);
-		} catch (ArgumentNullException) {
-			errorThrown = true;
+			s1.LastIndexOf (null, 0);
+			Fail ("#F1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#F2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#F3", ex.InnerException);
+			AssertNotNull ("#F4", ex.Message);
+#if NET_2_0
+			AssertEquals ("#F5", "value", ex.ParamName);
+#else
+			AssertEquals ("#F5", "string2", ex.ParamName);
+#endif
 		}
-		Assert("null string error", errorThrown);
 
-		errorThrown = false;
 		try {
-			int i = s1.LastIndexOf(null, 0, 1);
-		} catch (ArgumentNullException) {
-			errorThrown = true;
+			s1.LastIndexOf (null, 0, 1);
+			Fail ("#G1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#G2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#G3", ex.InnerException);
+			AssertNotNull ("#G4", ex.Message);
+#if NET_2_0
+			AssertEquals ("#G5", "value", ex.ParamName);
+#else
+			AssertEquals ("#G5", "string2", ex.ParamName);
+#endif
 		}
-		Assert("null string error", errorThrown);
 
 		AssertEquals("basic char index", 1, s1.LastIndexOf('r'));
 		AssertEquals("basic char index", 4, s1.LastIndexOf('i'));
 		AssertEquals("basic char index - no", -1, s1.LastIndexOf('q'));
 
-		AssertEquals("basic string index", 7, s1.LastIndexOf(""));
+		AssertEquals("basic string index", 7, s1.LastIndexOf(string.Empty));
 		AssertEquals("basic string index", 1, s1.LastIndexOf("rig"));
 		AssertEquals("basic string index", 4, s1.LastIndexOf("i"));
 		AssertEquals("basic string index - no", -1, 
 			     s1.LastIndexOf("rag"));
-
-
 
 		AssertEquals("stepped char index", 1, 
 			     s1.LastIndexOf('r', s1.Length-1));
@@ -1268,10 +2656,10 @@ public class StringTest : Assertion
 		AssertEquals("stepped string index #4",
 			     -1, s1.LastIndexOf("translator", 2));
 		AssertEquals("stepped string index #5",
-			     0, "".LastIndexOf("", 0));
+			     0, string.Empty.LastIndexOf(string.Empty, 0));
 #if !TARGET_JVM
 		AssertEquals("stepped string index #6",
-			     -1, "".LastIndexOf("A", -1));
+			     -1, string.Empty.LastIndexOf("A", -1));
 #endif
 		AssertEquals("stepped limited string index #1",
 			     10, s1.LastIndexOf("rig", s1.Length-1, 10));
@@ -1283,7 +2671,7 @@ public class StringTest : Assertion
 			     -1, s1.LastIndexOf("rig", s1.Length-2, 3));
 			     
 		string s2 = "QBitArray::bitarr_data"; 
-		AssertEquals ("bug #62160", 9, s2.LastIndexOf ("::"));    
+		AssertEquals ("bug #62160", 9, s2.LastIndexOf ("::"));
 
 		string s3 = "test123";
 		AssertEquals ("bug #77412", 0, s3.LastIndexOf ("test123"));
@@ -1292,14 +2680,15 @@ public class StringTest : Assertion
 #if NET_2_0
 	[Test]
 	[ExpectedException (typeof (ArgumentException))]
-	public void LastIndexOf_StringComparison () 
+	public void LastIndexOf_StringComparison ()
 	{
-		" ".LastIndexOf ("", 0, 1, (StringComparison)Int32.MinValue);
+		" ".LastIndexOf (string.Empty, 0, 1, (StringComparison)Int32.MinValue);
 	}
 
 	[Test]
+	[Category ("NotWorking")]
 	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void LastIndexOfStringComparisonOrdinalRangeException1 () 
+	public void LastIndexOfStringComparisonOrdinalRangeException1 ()
 	{
 		"Mono".LastIndexOf ("no", 5, StringComparison.Ordinal);
 	}
@@ -1312,20 +2701,22 @@ public class StringTest : Assertion
 	}
 
 	[Test]
+	[Category ("NotWorking")]
 	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void LastIndexOfStringComparisonOrdinalIgnoreCaseRangeException1 () 
+	public void LastIndexOfStringComparisonOrdinalIgnoreCaseRangeException1 ()
 	{
 		"Mono".LastIndexOf ("no", 5, StringComparison.OrdinalIgnoreCase);
 	}
 
 	[Test]
 	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void LastIndexOfStringComparisonOrdinalIgnoreCaseRangeException2 () 
+	public void LastIndexOfStringComparisonOrdinalIgnoreCaseRangeException2 ()
 	{
 		"Mono".LastIndexOf ("no", 1, 3, StringComparison.OrdinalIgnoreCase);
 	}
 
 	[Test]
+	[Category ("NotWorking")]
 	public void LastIndexOfStringComparison ()
 	{
 		string text = "testing123456";
@@ -1367,6 +2758,7 @@ public class StringTest : Assertion
 	}
 
 	[Test]
+	[Category ("NotWorking")]
 	public void LastIndexOfStringComparisonOrdinal ()
 	{
 		string text = "testing123456";
@@ -1379,6 +2771,7 @@ public class StringTest : Assertion
 	}
 
 	[Test]
+	[Category ("NotWorking")]
 	public void LastIndexOfStringComparisonOrdinalIgnoreCase ()
 	{
 		string text = "testing123456";
@@ -1392,237 +2785,390 @@ public class StringTest : Assertion
 #endif
 
 	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void LastIndexOf_Char_StartIndexStringLength () 
+	public void LastIndexOf_Char_StartIndexStringLength ()
 	{
 		string s = "Mono";
-		s.LastIndexOf ('n', s.Length, 1);
+		try {
+			s.LastIndexOf ('n', s.Length, 1);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "startIndex", ex.ParamName);
+		}
 		// this works for string but not for a char
 	}
 
 	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void LastIndexOf_Char_StartIndexOverflow () 
+	public void LastIndexOf_Char_StartIndexOverflow ()
 	{
-		"Mono".LastIndexOf ('o', Int32.MaxValue, 1);
+		try {
+			"Mono".LastIndexOf ('o', Int32.MaxValue, 1);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "startIndex", ex.ParamName);
+		}
 	}
 
 	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void LastIndexOf_Char_LengthOverflow () 
+	public void LastIndexOf_Char_LengthOverflow ()
 	{
-		"Mono".LastIndexOf ('o', 1, Int32.MaxValue);
+		try {
+			"Mono".LastIndexOf ('o', 1, Int32.MaxValue);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "count", ex.ParamName);
+		}
 	}
 
 	[Test]
-	public void LastIndexOf_String_StartIndexStringLength () 
+	public void LastIndexOf_String_StartIndexStringLength ()
 	{
 		string s = "Mono";
-		s.LastIndexOf ("n", s.Length, 1);
+		AssertEquals (-1, s.LastIndexOf ("n", s.Length, 1));
 		// this works for string but not for a char
 	}
 
 	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void LastIndexOf_String_StartIndexStringLength_Plus1 () 
+	public void LastIndexOf_String_StartIndexStringLength_Plus1 ()
 	{
 		string s = "Mono";
-		s.LastIndexOf ("n", s.Length + 1, 1);
+		try {
+			s.LastIndexOf ("n", s.Length + 1, 1);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "startIndex", ex.ParamName);
+		}
 	}
 
 	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void LastIndexOf_String_StartIndexOverflow () 
+	public void LastIndexOf_String_StartIndexOverflow ()
 	{
-		"Mono".LastIndexOf ("no", Int32.MaxValue, 1);
+		try {
+			"Mono".LastIndexOf ("no", Int32.MaxValue, 1);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "startIndex", ex.ParamName);
+		}
 	}
 
 	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void LastIndexOf_String_LengthOverflow () 
+	public void LastIndexOf_String_LengthOverflow ()
 	{
-		"Mono".LastIndexOf ("no", 1, Int32.MaxValue);
+		try {
+			"Mono".LastIndexOf ("no", 1, Int32.MaxValue);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "count", ex.ParamName);
+		}
 	}
 
-	public void TestLastIndexOfAny() {
+	[Test]
+	public void LastIndexOfAny ()
+	{
 		string s1 = ".bcdefghijklm";
 
-		bool errorThrown = false;
 		try {
-			int i = s1.LastIndexOfAny(null);
-		} catch (ArgumentNullException) {
-			errorThrown = true;
+			s1.LastIndexOfAny (null);
+			Fail ("#A1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#A2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#A3", ex.InnerException);
+			AssertNotNull ("#A4", ex.Message);
+			AssertNull ("#A5", ex.ParamName);
 		}
-		Assert("null char[] error", errorThrown);
 
-		errorThrown = false;
 		try {
-			int i = s1.LastIndexOfAny(null, s1.Length);
-		} catch (ArgumentNullException) {
-			errorThrown = true;
+			s1.LastIndexOfAny (null, s1.Length);
+			Fail ("#B1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#B2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#B3", ex.InnerException);
+			AssertNotNull ("#B4", ex.Message);
+			AssertNull ("#B5", ex.ParamName);
 		}
-		Assert("null char[] error", errorThrown);
 
-		errorThrown = false;
 		try {
-			int i = s1.LastIndexOfAny(null, s1.Length, 1);
-		} catch (ArgumentNullException) {
-			errorThrown = true;
+			s1.LastIndexOfAny (null, s1.Length, 1);
+			Fail ("#C1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#C2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#C3", ex.InnerException);
+			AssertNotNull ("#C4", ex.Message);
+			AssertNull ("#C5", ex.ParamName);
 		}
-		Assert("null char[] error", errorThrown);
 
 		char[] c1 = {'a', 'e', 'i', 'o', 'u'};
-		AssertEquals("first vowel", 8, s1.LastIndexOfAny(c1));
-		AssertEquals("second vowel", 4, s1.LastIndexOfAny(c1, 7));
-		AssertEquals("out of vowels", -1, s1.LastIndexOfAny(c1, 3));
-		AssertEquals("second vowel in range", 
-			     4, s1.LastIndexOfAny(c1, s1.Length-6, 4));
-		AssertEquals("second vowel out of range", 
-			     -1, s1.LastIndexOfAny(c1, s1.Length-6, 3));
+		AssertEquals("#D1", 8, s1.LastIndexOfAny (c1));
+		AssertEquals("#D2", 4, s1.LastIndexOfAny (c1, 7));
+		AssertEquals("#D3", -1, s1.LastIndexOfAny (c1, 3));
+		AssertEquals("#D4", 4, s1.LastIndexOfAny (c1, s1.Length - 6, 4));
+		AssertEquals("#D5", -1, s1.LastIndexOfAny (c1, s1.Length - 6, 3));
 
-		errorThrown = false;
 		try {
-			int i = s1.LastIndexOfAny(c1, -1);
-		} catch (ArgumentOutOfRangeException) {
-			errorThrown = true;
+			s1.LastIndexOfAny (c1, -1);
+			Fail ("#E1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Index was out of range. Must be non-negative and
+			// less than the size of the collection
+			AssertEquals ("#E2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#E3", ex.InnerException);
+			AssertNotNull ("#E4", ex.Message);
+			AssertEquals ("#E5", "startIndex", ex.ParamName);
 		}
-		Assert("Out of range error", errorThrown);
 
-		errorThrown = false;
 		try {
-			int i = s1.LastIndexOfAny(c1, -1, 1);
-		} catch (ArgumentOutOfRangeException) {
-			errorThrown = true;
+			s1.LastIndexOfAny (c1, -1, 1);
+			Fail ("#F1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Index was out of range. Must be non-negative and
+			// less than the size of the collection
+			AssertEquals ("#F2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#F3", ex.InnerException);
+			AssertNotNull ("#F4", ex.Message);
+			AssertEquals ("#F5", "startIndex", ex.ParamName);
 		}
-		Assert("Out of range error", errorThrown);
 	}
 
 	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void LastIndexOfAny_StartIndexOverflow () 
+	public void LastIndexOfAny_Length_Overflow ()
 	{
-		"Mono".LastIndexOfAny (new char [1] { 'o' }, Int32.MaxValue, 1);
+		try {
+			"Mono".LastIndexOfAny (new char [1] { 'o' }, 1, Int32.MaxValue);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Count must be positive and count must refer to a
+			// location within the string/array/collection
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "count", ex.ParamName);
+		}
 	}
 
 	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void LastIndexOfAny_LengthOverflow () 
+	public void LastIndexOfAny_StartIndex_Overflow ()
 	{
-		"Mono".LastIndexOfAny (new char [1] { 'o' }, 1, Int32.MaxValue);
+		try {
+			"Mono".LastIndexOfAny (new char [1] { 'o' }, Int32.MaxValue, 1);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Index was out of range. Must be non-negative and
+			// less than the size of the collection
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "startIndex", ex.ParamName);
+		}
 	}
 
-	public void TestPadLeft() {
+	[Test] // PadLeft (Int32)
+	public void PadLeft1 ()
+	{
 		string s1 = "Hi!";
+		string result;
 
-		bool errorThrown = false;
-		try {
-			string s = s1.PadLeft(-1);
-		} catch (ArgumentException) {
-			errorThrown = true;
-		}
-		Assert("Bad argument error", errorThrown);
+		result = s1.PadLeft (0);
+		AssertSame ("#A", s1, result);
 
-		AssertEquals("Too little padding",
-			     s1, s1.PadLeft(s1.Length-1));
-		AssertEquals("Some padding",
-			     "  Hi!", s1.PadLeft(5));
+		result = s1.PadLeft (s1.Length - 1);
+		AssertSame ("#B", s1, result);
+
+		result = s1.PadLeft (s1.Length);
+		AssertEquals ("#C1", s1, result);
+		Assert ("#C2", !object.ReferenceEquals (s1, result));
+
+		result = s1.PadLeft (s1.Length + 1);
+		AssertEquals("#D", " Hi!", result);
 	}
 
-	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void PadLeft_Negative () 
+	[Test] // PadLeft (Int32)
+	public void PadLeft1_TotalWidth_Negative ()
 	{
-		string s = "Mono".PadLeft (-1);
+		try {
+			"Mono".PadLeft (-1);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "totalWidth", ex.ParamName);
+		}
 	}
 
-	public void TestPadRight() {
+	[Test] // PadRight (Int32)
+	public void PadRight1 ()
+	{
 		string s1 = "Hi!";
+		string result;
 
-		bool errorThrown = false;
-		try {
-			string s = s1.PadRight(-1);
-		} catch (ArgumentException) {
-			errorThrown = true;
-		}
-		Assert("Bad argument error", errorThrown);
+		result = s1.PadRight (0);
+		AssertSame ("#A", s1, result);
 
-		AssertEquals("Too little padding",
-			     s1, s1.PadRight(s1.Length-1));
-		AssertEquals("Some padding",
-			     "Hi!  ", s1.PadRight(5));
+		result = s1.PadRight (s1.Length - 1);
+		AssertSame ("#B", s1, result);
+
+		result = s1.PadRight (s1.Length);
+		AssertEquals ("#C1", s1, result);
+		Assert ("#C2", !object.ReferenceEquals (s1, result));
+
+		result = s1.PadRight (s1.Length + 1);
+		AssertEquals("#D", "Hi! ", result);
 	}
 
-	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void PadRight_Negative () 
+	[Test] // PadRight1 (Int32)
+	public void PadRight1_TotalWidth_Negative ()
 	{
-		string s = "Mono".PadLeft (-1);
+		try {
+			"Mono".PadRight (-1);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "totalWidth", ex.ParamName);
+		}
 	}
 
-	public void TestRemove() {
+	[Test] // Remove (Int32, Int32)
+	public void Remove2 ()
+	{
 		string s1 = "original";
 
-		bool errorThrown = false;
 		try {
-			s1.Remove(-1,1);
-		} catch (ArgumentOutOfRangeException) {
-			errorThrown = true;
+			s1.Remove (-1, 1);
+			Fail ("#A1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// StartIndex cannot be less than zero
+			AssertEquals ("#A2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#A3", ex.InnerException);
+			AssertNotNull ("#A4", ex.Message);
+			AssertEquals ("#A5", "startIndex", ex.ParamName);
 		}
-		Assert("out of range error", errorThrown);
-		errorThrown = false;
-		try {
-			s1.Remove(1,-1);
-		} catch (ArgumentOutOfRangeException) {
-			errorThrown = true;
-		}
-		Assert("out of range error", errorThrown);
-		errorThrown = false;
-		try {
-			s1.Remove(s1.Length,s1.Length);
-		} catch (ArgumentOutOfRangeException) {
-			errorThrown = true;
-		}
-		Assert("out of range error", errorThrown);
 
-		AssertEquals("basic remove", "oinal",
-			     s1.Remove(1, 3));
+		try {
+			s1.Remove (1,-1);
+			Fail ("#B1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Count cannot be less than zero
+			AssertEquals ("#B2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#B3", ex.InnerException);
+			AssertNotNull ("#B4", ex.Message);
+			AssertEquals ("#B5", "count", ex.ParamName);
+		}
+
+		try {
+			s1.Remove (s1.Length, s1.Length);
+			Fail ("#C1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Index and count must refer to a location within the
+			// string
+			AssertEquals ("#C2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#C3", ex.InnerException);
+			AssertNotNull ("#C4", ex.Message);
+			AssertEquals ("#C5", "count", ex.ParamName);
+		}
+
+		AssertEquals ("#D1", "oinal", s1.Remove(1, 3));
+		AssertEquals ("#D2", s1, s1.Remove (0, 0));
+		Assert ("#D3", !object.ReferenceEquals (s1, s1.Remove (0, 0)));
+		AssertEquals ("#D4", "riginal", s1.Remove (0, 1));
+		AssertEquals ("#D5", "origina", s1.Remove (7, 1));
 	}
 
-	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void Remove_StartIndexOverflow () 
+	[Test] // Remove (Int32, Int32)
+	public void Remove2_Length_Overflow ()
 	{
-		"Mono".Remove (Int32.MaxValue, 1);
+		try {
+			"Mono".Remove (1, Int32.MaxValue);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Index and count must refer to a location within the
+			// string
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "count", ex.ParamName);
+		}
 	}
 
-	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void Remove_LengthOverflow () 
+	[Test] // Remove (Int32, Int32)
+	public void Remove2_StartIndex_Overflow ()
 	{
-		"Mono".Remove (1, Int32.MaxValue);
+		try {
+			"Mono".Remove (Int32.MaxValue, 1);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Index and count must refer to a location within the
+			// string
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "count", ex.ParamName);
+		}
 	}
 
 #if NET_2_0
-	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void TestRemove1_NegativeStartIndex () {
-		"ABC".Remove (-1);
+	[Test] // Remove (Int32)
+	public void Remove1_StartIndex_Negative ()
+	{
+		try {
+			"ABC".Remove (-1);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// StartIndex cannot be less than zero
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "startIndex", ex.ParamName);
+		}
 	}
 
-	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void TestRemove1_StartIndexOverflow () {
-		"ABC".Remove (3);
+	[Test] // Remove (Int32)
+	public void Remove1_StartIndex_Overflow ()
+	{
+		try {
+			"ABC".Remove (3);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// startIndex must be less than length of string
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "startIndex", ex.ParamName);
+		}
 	}
 
-	[Test]
-	public void TestRemove1 () {
-		AssertEquals ("AB", "ABC".Remove (2));
-		AssertEquals ("", "ABC".Remove (0));
+	[Test] // Remove (Int32)
+	public void Remove1 ()
+	{
+		string s = "ABC";
+
+		AssertEquals ("#1", "AB", s.Remove (2));
+		AssertEquals ("#2", string.Empty, s.Remove (0));
+		AssertEquals ("#3", "A", s.Remove (1));
 	}
 #endif
 
-	public void TestReplace() {
+	[Test]
+	public void Replace()
+	{
 		string s1 = "original";
 
 		AssertEquals("non-hit char", s1, s1.Replace('q','s'));
@@ -1648,15 +3194,15 @@ public class StringTest : Assertion
 		AssertEquals("start", "ooriginal", s1.Replace("o", "oo"));
 		AssertEquals("end", "originall", s1.Replace("l", "ll"));
 
-		AssertEquals("start empty", "riginal", s1.Replace("o", ""));
-		AssertEquals("end empty", "origina", s1.Replace("l", ""));
+		AssertEquals("start empty", "riginal", s1.Replace("o", string.Empty));
+		AssertEquals("end empty", "origina", s1.Replace("l", string.Empty));
 
 		AssertEquals("replace bigger that original", "original", s1.Replace("original2", "original3"));
 
 		AssertEquals ("result longer", ":!:", "::".Replace ("::", ":!:"));
 
 		// Test overlapping matches (bug #54988)
-        string s2 = "...aaaaaaa.bbbbbbbbb,............ccccccc.u...";
+		string s2 = "...aaaaaaa.bbbbbbbbb,............ccccccc.u...";
 		AssertEquals ("..aaaaaaa.bbbbbbbbb,......ccccccc.u..", s2.Replace("..", "."));
 
 		// Test replacing null characters (bug #67395)
@@ -1664,17 +3210,18 @@ public class StringTest : Assertion
 		AssertEquals ("should not strip content after nullchar",
 			"is this ok ?", "is \0 ok ?".Replace ("\0", "this"));
 #endif
-
 	}
 
-	public void TestSplit() {
+	[Test]
+	public void TestSplit ()
+	{
 		string s1 = "abcdefghijklm";
 		char[] c1 = {'q', 'r'};
 		AssertEquals("No splitters", s1, (s1.Split(c1))[0]);
 
 		char[] c2 = {'a', 'e', 'i', 'o', 'u'};
 		string[] chunks = s1.Split(c2);
-		AssertEquals("First chunk", "", chunks[0]);
+		AssertEquals("First chunk", string.Empty, chunks[0]);
 		AssertEquals("Second chunk", "bcd", chunks[1]);
 		AssertEquals("Third chunk", "fgh", chunks[2]);
 		AssertEquals("Fourth chunk", "jklm", chunks[3]);
@@ -1691,7 +3238,7 @@ public class StringTest : Assertion
 
 		chunks = s1.Split(c2, 2);
 		AssertEquals("Limited chunk", 2, chunks.Length);
-		AssertEquals("First limited chunk", "", chunks[0]);
+		AssertEquals("First limited chunk", string.Empty, chunks[0]);
 		AssertEquals("Second limited chunk", "bcdefghijklm", chunks[1]);
 
 		string s3 = "1.0";
@@ -1712,14 +3259,14 @@ public class StringTest : Assertion
 		char[] c5 = {'.'};
 		chunks = s5.Split (c5, 2);
 		AssertEquals(".0.0 split length", 2, chunks.Length);
-		AssertEquals(".0.0 split first chunk", "", chunks[0]);
+		AssertEquals(".0.0 split first chunk", string.Empty, chunks[0]);
 		AssertEquals(".0.0 split second chunk", "0.0", chunks[1]);
 
 		string s6 = ".0";
 		char[] c6 = {'.'};
 		chunks = s6.Split (c6, 2);
 		AssertEquals(".0 split length", 2, chunks.Length);
-		AssertEquals(".0 split first chunk", "", chunks[0]);
+		AssertEquals(".0 split first chunk", string.Empty, chunks[0]);
 		AssertEquals(".0 split second chunk", "0", chunks[1]);
 
 		string s7 = "0.";
@@ -1727,7 +3274,7 @@ public class StringTest : Assertion
 		chunks = s7.Split (c7, 2);
 		AssertEquals("0. split length", 2, chunks.Length);
 		AssertEquals("0. split first chunk", "0", chunks[0]);
-		AssertEquals("0. split second chunk", "", chunks[1]);
+		AssertEquals("0. split second chunk", string.Empty, chunks[1]);
 
 		string s8 = "0.0000";
 		char[] c8 = {'.'};
@@ -1763,177 +3310,465 @@ public class StringTest : Assertion
 		AssertEquals ("#02", "123", st [0]);
 	}
 
+	[Test] // StartsWith (String)
+	public void StartsWith1 ()
+	{
+		string s1 = "original";
+		
+		Assert ("#1", s1.StartsWith ("o"));
+		Assert ("#2", s1.StartsWith ("orig"));
+		Assert ("#3", !s1.StartsWith ("rig"));
+		Assert ("#4", s1.StartsWith (String.Empty));
+		Assert ("#5", String.Empty.StartsWith (String.Empty));
+		Assert ("#6", !String.Empty.StartsWith ("rig"));
+	}
+
+	[Test] // StartsWith (String)
+	public void StartsWith1_Value_Null ()
+	{
+		try {
+			"A".StartsWith (null);
+			Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "value", ex.ParamName);
+		}
+	}
+
 #if NET_2_0
-	[Test]
-	[ExpectedException (typeof (ArgumentException))]
-	public void TestStartsWithWrongParameter () {
-		"ABC".StartsWith ("A", (StringComparison)80);
+	[Test] // StartsWith (String, StringComparison)
+	public void StartsWith2_ComparisonType_Invalid ()
+	{
+		try {
+			"ABC".StartsWith ("A", (StringComparison) 80);
+			Fail ("#1");
+		} catch (ArgumentException ex) {
+			// The string comparison type passed in is currently
+			// not supported
+			AssertEquals ("#2", typeof (ArgumentException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "comparisonType", ex.ParamName);
+		}
+	}
+
+	[Test] // StartsWith (String, StringComparison)
+	public void StartsWith2_Value_Null ()
+	{
+		try {
+			"A".StartsWith (null, StringComparison.CurrentCulture);
+			Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "value", ex.ParamName);
+		}
+	}
+
+	[Test] // StartsWith (String, Boolean, CultureInfo)
+	public void StartsWith3_Culture_Null ()
+	{
+		// This should not crash
+		string s = "boo";
+
+		s.StartsWith ("this", true, null);
 	}
 #endif
 
-	[Test]
-	public void StartsWith() {
-		string s1 = "original";
-		
-		bool errorThrown = false;
-		try {
-			bool huh = s1.StartsWith(null);
-		} catch (ArgumentNullException) {
-			errorThrown = true;
-		}
-		Assert("null StartsWith shouldn't be good", errorThrown);
-
-		Assert("should match", s1.StartsWith("o"));
-		Assert("should match 2", s1.StartsWith("orig"));
-		Assert("should fail", !s1.StartsWith("rig"));
-		Assert("should match 3", s1.StartsWith(String.Empty));
-		Assert("should match 4", String.Empty.StartsWith(String.Empty));
-		Assert("should fail 2", !String.Empty.StartsWith("rig"));
-	}
-
-	public void TestSubstring() {
-		string s1 = "original";
-
-		bool errorThrown = false;
-		try {
-			string s = s1.Substring(s1.Length+1);
-		} catch (ArgumentOutOfRangeException) {
-			errorThrown = true;
-		}
-		Assert("error not thrown", errorThrown);
-		errorThrown = false;
-		try {
-			string s = s1.Substring(-1);
-		} catch (ArgumentOutOfRangeException) {
-			errorThrown = true;
-		}
-		Assert("error not thrown", errorThrown);
-
-		errorThrown = false;
-		try {
-			string s = s1.Substring(1, -1);
-		} catch (ArgumentOutOfRangeException) {
-			errorThrown = true;
-		}
-		Assert("error not thrown", errorThrown);
-		errorThrown = false;
-		try {
-			string s = s1.Substring(-1, 1);
-		} catch (ArgumentOutOfRangeException) {
-			errorThrown = true;
-		}
-		Assert("error not thrown", errorThrown);
-		errorThrown = false;
-		try {
-			string s = s1.Substring(s1.Length, 1);
-		} catch (ArgumentOutOfRangeException) {
-			errorThrown = true;
-		}
-		Assert("error not thrown", errorThrown);
-		errorThrown = false;
-		try {
-			string s = s1.Substring(1, s1.Length);
-		} catch (ArgumentOutOfRangeException) {
-			errorThrown = true;
-		}
-		Assert("error not thrown", errorThrown);
-
-		AssertEquals("basic substring", "inal",
-			     s1.Substring(4));
-		AssertEquals("midstring", "igin",
-			     s1.Substring(2, 4));
-		AssertEquals("at end", "",
-			     s1.Substring(s1.Length, 0));
-	}
-
-	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void Substring_StartIndexOverflow () 
+	[Test] // SubString (Int32)
+	public void Substring1 ()
 	{
-		"Mono".Substring (Int32.MaxValue, 1);
+		string s = "original";
+
+		AssertEquals("#1", "inal", s.Substring (4));
+		AssertEquals ("#2", string.Empty, s.Substring (s.Length));
+#if NET_2_0
+		AssertSame ("#3", s, s.Substring (0));
+#else
+		AssertEquals ("#3a", s, s.Substring (0));
+		Assert ("#3b", !object.ReferenceEquals (s, s.Substring (0)));
+#endif
+	}
+
+	[Test] // SubString (Int32)
+	public void SubString1_StartIndex_Negative ()
+	{
+		string s = "original";
+
+		try {
+			s.Substring (-1);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// StartIndex cannot be less than zero
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "startIndex", ex.ParamName);
+		}
+	}
+
+	[Test] // SubString (Int32)
+	public void SubString1_StartIndex_Overflow ()
+	{
+		string s = "original";
+
+		try {
+			s.Substring (s.Length + 1);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// startIndex cannot be larger than length of string
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+#if NET_2_0
+			AssertEquals ("#5", "startIndex", ex.ParamName);
+#else
+			AssertEquals ("#5", "length", ex.ParamName);
+#endif
+		}
+	}
+
+	[Test] // SubString (Int32, Int32)
+	public void Substring2 ()
+	{
+		string s = "original";
+
+		AssertEquals ("#1", "igin", s.Substring (2, 4));
+		AssertEquals ("#2", string.Empty, s.Substring (s.Length, 0));
+		AssertEquals ("#3", "origina", s.Substring (0, s.Length - 1));
+#if NET_2_0
+		AssertSame ("#4", s, s.Substring (0, s.Length));
+#else
+		AssertEquals ("#4a", s, s.Substring (0, s.Length));
+		Assert ("#4b", !object.ReferenceEquals (s, s.Substring (0, s.Length)));
+#endif
+	}
+
+	[Test] // SubString (Int32, Int32)
+	public void SubString2_Length_Negative ()
+	{
+		string s = "original";
+
+		try {
+			s.Substring (1, -1);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Length cannot be less than zero
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "length", ex.ParamName);
+		}
+	}
+	
+	[Test] // SubString (Int32, Int32)
+	public void Substring2_Length_Overflow ()
+	{
+		string s = "original";
+
+		try {
+			s.Substring (s.Length, 1);
+			Fail ("#A1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Index and length must refer to a location within
+			// the string
+			AssertEquals ("#A2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#A3", ex.InnerException);
+			AssertNotNull ("#A4", ex.Message);
+			AssertEquals ("#A5", "length", ex.ParamName);
+		}
+
+		try {
+			s.Substring (1, s.Length);
+			Fail ("#B1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Index and length must refer to a location within
+			// the string
+			AssertEquals ("#B2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#B3", ex.InnerException);
+			AssertNotNull ("#B4", ex.Message);
+			AssertEquals ("#B5", "length", ex.ParamName);
+		}
+
+		try {
+			s.Substring (1, Int32.MaxValue);
+			Fail ("#C1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Index and length must refer to a location within
+			// the string
+			AssertEquals ("#C2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#C3", ex.InnerException);
+			AssertNotNull ("#C4", ex.Message);
+			AssertEquals ("#C5", "length", ex.ParamName);
+		}
+	}
+
+	[Test] // SubString (Int32, Int32)
+	public void SubString2_StartIndex_Negative ()
+	{
+		string s = "original";
+
+		try {
+			s.Substring (-1, 1);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// StartIndex cannot be less than zero
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "startIndex", ex.ParamName);
+		}
+	}
+
+	[Test] // SubString (Int32, Int32)
+	public void Substring2_StartIndex_Overflow ()
+	{
+		string s = "original";
+
+		try {
+			s.Substring (s.Length + 1, 0);
+			Fail ("#A1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// startIndex cannot be larger than length of string
+			AssertEquals ("#A2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#A3", ex.InnerException);
+			AssertNotNull ("#A4", ex.Message);
+#if NET_2_0
+			AssertEquals ("#A5", "startIndex", ex.ParamName);
+#else
+			AssertEquals ("#A5", "length", ex.ParamName);
+#endif
+		}
+
+		try {
+			"Mono".Substring (Int32.MaxValue, 1);
+			Fail ("#B1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// startIndex cannot be larger than length of string
+			AssertEquals ("#B2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#B3", ex.InnerException);
+			AssertNotNull ("#B4", ex.Message);
+#if NET_2_0
+			AssertEquals ("#B5", "startIndex", ex.ParamName);
+#else
+			AssertEquals ("#B5", "length", ex.ParamName);
+#endif
+		}
 	}
 
 	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void Substring_LengthOverflow () 
+	public void ToCharArray ()
 	{
-		"Mono".Substring (1, Int32.MaxValue);
-	}
+		const string s = "original";
+		char [] c;
 
-	public void TestToCharArray() {
-		string s1 = "original";
-		char[] c1 = s1.ToCharArray();
-		AssertEquals("right array size", s1.Length, c1.Length);
-		AssertEquals("basic char array", s1,
-			     new String(c1));
-		
-		bool errorThrown = false;
-		try {
-			s1.ToCharArray(s1.Length, 1);
-		} catch (ArgumentOutOfRangeException) {
-			errorThrown = true;
-		}
-		Assert("error not thrown", errorThrown);
-		errorThrown = false;
-		try {
-			s1.ToCharArray(1, s1.Length);
-		} catch (ArgumentOutOfRangeException) {
-			errorThrown = true;
-		}
-		Assert("error not thrown", errorThrown);
-		errorThrown = false;
-		try {
-			s1.ToCharArray(-1, 1);
-		} catch (ArgumentOutOfRangeException) {
-			errorThrown = true;
-		}
-		Assert("error not thrown", errorThrown);
-		errorThrown = false;
-		try {
-			s1.ToCharArray(1, -1);
-		} catch (ArgumentOutOfRangeException) {
-			errorThrown = true;
-		}
-		Assert("error not thrown", errorThrown);
+		c = s.ToCharArray ();
+		AssertEquals ("#A1", s.Length, c.Length);
+		AssertEquals ("#A2", s, new String (c));
 
-		c1 = s1.ToCharArray(0, 3);
-		AssertEquals("Starting char array", "ori", new String(c1));
+		c = s.ToCharArray (0, s.Length);
+		AssertEquals ("#B1", s.Length, c.Length);
+		AssertEquals ("#B2", s, new String (c));
+
+		c = s.ToCharArray (1, s.Length - 1);
+		AssertEquals ("#C1", 7, c.Length);
+		AssertEquals ("#C2", "riginal", new String (c));
+
+		c = s.ToCharArray (0, 3);
+		AssertEquals ("#D1", 3, c.Length);
+		AssertEquals ("#D2", "ori", new String (c));
+
+		c = s.ToCharArray (2, 0);
+		AssertEquals ("#E1", 0, c.Length);
+		AssertEquals ("#E2", string.Empty, new String (c));
+
+		c = s.ToCharArray (3, 2);
+		AssertEquals ("#F1", 2, c.Length);
+		AssertEquals ("#F2", "gi", new String (c));
+
+		c = s.ToCharArray (s.Length, 0);
+		AssertEquals ("#G1", 0, c.Length);
+		AssertEquals ("#G2", string.Empty, new String (c));
 	}
 
 	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void ToCharArray_StartIndexOverflow () 
+	public void ToCharArray_Length_Negative ()
 	{
-		"Mono".ToCharArray (1, Int32.MaxValue);
+		const string s = "original";
+
+		try {
+			s.ToCharArray (1, -1);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "length", ex.ParamName);
+		}
 	}
 
 	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void ToCharArray_LengthOverflow () 
+	public void ToCharArray_Length_Overflow ()
 	{
-		"Mono".ToCharArray (Int32.MaxValue, 1);
+		const string s = "original";
+
+		try {
+			s.ToCharArray (1, s.Length);
+			Fail ("#A1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Index was out of range. Must be non-negative and
+			// less than the size of the collection
+			AssertEquals ("#A2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#A3", ex.InnerException);
+			AssertNotNull ("#A4", ex.Message);
+			AssertEquals ("#A5", "startIndex", ex.ParamName);
+		}
+
+		try {
+			s.ToCharArray (1, Int32.MaxValue);
+			Fail ("#B1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Index was out of range. Must be non-negative and
+			// less than the size of the collection
+			AssertEquals ("#B2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#B3", ex.InnerException);
+			AssertNotNull ("#B4", ex.Message);
+			AssertEquals ("#B5", "startIndex", ex.ParamName);
+		}
 	}
 
-	public void TestToLower() {
-		string s1 = "OrIgInAl";
-		AssertEquals("lowercase failed", "original", s1.ToLower());
+	[Test]
+	public void ToCharArray_StartIndex_Negative ()
+	{
+		const string s = "original";
 
-		// TODO - Again, with CultureInfo
+		try {
+			s.ToCharArray (-1, 1);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Index was out of range. Must be non-negative and
+			// less than the size of the collection
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "startIndex", ex.ParamName);
+		}
 	}
 
-	public void TestToString() {
-		string s1 = "original";
+	[Test]
+	public void ToCharArray_StartIndex_Overflow ()
+	{
+		const string s = "original";
+
+		try {
+			s.ToCharArray (s.Length, 1);
+			Fail ("#A1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Index was out of range. Must be non-negative and
+			// less than the size of the collection
+			AssertEquals ("#A2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#A3", ex.InnerException);
+			AssertNotNull ("#A4", ex.Message);
+			AssertEquals ("#A5", "startIndex", ex.ParamName);
+		}
+
+		try {
+			s.ToCharArray (Int32.MaxValue, 1);
+			Fail ("#B1");
+		} catch (ArgumentOutOfRangeException ex) {
+			// Index was out of range. Must be non-negative and
+			// less than the size of the collection
+			AssertEquals ("#B2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#B3", ex.InnerException);
+			AssertNotNull ("#B4", ex.Message);
+			AssertEquals ("#B5", "startIndex", ex.ParamName);
+		}
+	}
+
+	[Test] // ToLower ()
+	public void ToLower1 ()
+	{
+		string s = "OrIgInAl";
+
+		Thread.CurrentThread.CurrentCulture = new CultureInfo ("tr-TR");
+
+		//AssertEquals ("#1", "original", s.ToLower());
+
+		Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
+
+		AssertEquals ("#2", "original", s.ToLower ());
+	}
+
+	[Test] // ToLower (CultureInfo)
+	public void ToLower2 ()
+	{
+		string s = "OrIgInAli";
+
+		Thread.CurrentThread.CurrentCulture = new CultureInfo ("tr-TR");
+
+		AssertEquals ("#A1", "originali", s.ToLower (new CultureInfo ("en-US")));
+		AssertEquals ("#A2", "\u006f\u0072\u0131\u0067\u0131\u006e\u0061\u006c\u0069",
+			s.ToLower (new CultureInfo ("tr-TR")));
+		AssertEquals ("#A3", string.Empty, string.Empty.ToLower (new CultureInfo ("en-US")));
+		AssertEquals ("#A4", string.Empty, string.Empty.ToLower (new CultureInfo ("tr-TR")));
+
+		Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
+
+		AssertEquals ("#B1", "originali", s.ToLower (new CultureInfo ("en-US")));
+		AssertEquals ("#B2", "\u006f\u0072\u0131\u0067\u0131\u006e\u0061\u006c\u0069",
+			s.ToLower (new CultureInfo ("tr-TR")));
+		AssertEquals ("#B3", string.Empty, string.Empty.ToLower (new CultureInfo ("en-US")));
+		AssertEquals ("#B4", string.Empty, string.Empty.ToLower (new CultureInfo ("tr-TR")));
+	}
+
+	[Test] // ToLower (CultureInfo)
+	public void ToLower2_Culture_Null ()
+	{
+		string s = "OrIgInAl";
+
+		try {
+			s.ToLower ((CultureInfo) null);
+			Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "culture", ex.ParamName);
+		}
+
+		try {
+			string.Empty.ToLower ((CultureInfo) null);
+			Fail ("#1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "culture", ex.ParamName);
+		}
+	}
+
+	[Test]
+	public void TestToString ()
+	{
+		string s1 = "OrIgInAli";
 		AssertEquals("ToString failed!", s1, s1.ToString());
 	}
 
-	public void TestToUpper() {
-		string s1 = "OrIgInAl";
-		AssertEquals("uppercase failed", "ORIGINAL", s1.ToUpper());
+	[Test]
+	public void TestToUpper ()
+	{
+		string s1 = "OrIgInAli";
+		AssertEquals("uppercase failed", "ORIGINALI", s1.ToUpper());
 
 		// TODO - Again, with CultureInfo
 	}
 
-	public void TestTrim() {
+	[Test]
+	public void TestTrim ()
+	{
 		string s1 = "  original\t\n";
 		AssertEquals("basic trim failed", "original", s1.Trim());
 		AssertEquals("basic trim failed", "original", s1.Trim(null));
@@ -1943,8 +3778,8 @@ public class StringTest : Assertion
 		AssertEquals("basic trim failed", "original", s1.Trim(null));
 
 		s1 = "   \t \n  ";
-		AssertEquals("empty trim failed", "", s1.Trim());
-		AssertEquals("empty trim failed", "", s1.Trim(null));
+		AssertEquals("empty trim failed", string.Empty, s1.Trim());
+		AssertEquals("empty trim failed", string.Empty, s1.Trim(null));
 
 		s1 = "aaaoriginalbbb";
 		char[] delims = {'a', 'b'};
@@ -1957,7 +3792,9 @@ public class StringTest : Assertion
 #endif
 	}
 
-	public void TestTrimEnd() {
+	[Test]
+	public void TestTrimEnd ()
+	{
 		string s1 = "  original\t\n";
 		AssertEquals("basic TrimEnd failed", 
 			     "  original", s1.TrimEnd(null));
@@ -1968,7 +3805,7 @@ public class StringTest : Assertion
 
 		s1 = "  \t  \n  \n    ";
 		AssertEquals("empty TrimEnd failed", 
-			     "", s1.TrimEnd(null));
+			     string.Empty, s1.TrimEnd(null));
 
 		s1 = "aaaoriginalbbb";
 		char[] delims = {'a', 'b'};
@@ -1976,7 +3813,9 @@ public class StringTest : Assertion
 			     "aaaoriginal", s1.TrimEnd(delims));
 	}
 
-	public void TestTrimStart() {
+	[Test]
+	public void TestTrimStart ()
+	{
 		string s1 = "  original\t\n";
 		AssertEquals("basic TrimStart failed", 
 			     "original\t\n", s1.TrimStart(null));
@@ -1987,7 +3826,7 @@ public class StringTest : Assertion
 
 		s1 = "    \t \n \n  ";
 		AssertEquals("empty TrimStart failed", 
-			     "", s1.TrimStart(null));
+			     string.Empty, s1.TrimStart(null));
 
 		s1 = "aaaoriginalbbb";
 		char[] delims = {'a', 'b'};
@@ -1995,32 +3834,32 @@ public class StringTest : Assertion
 			     "originalbbb", s1.TrimStart(delims));
 	}
 
-	public void TestChars () {
-		// Check for invalid indexes
-		bool ok;
+	[Test]
+	public void TestChars ()
+	{
 		string s;
-		char c;
 
-		ok = false;
+		s = string.Empty;
 		try {
-			s = "";
-			c = s[0];
+			char c = s [0];
+			Fail ("#A1:" + c);
+		} catch (IndexOutOfRangeException ex) {
+			AssertEquals ("#A2", typeof (IndexOutOfRangeException), ex.GetType ());
+			AssertNull ("#A3", ex.InnerException);
+			AssertNotNull ("#A4", ex.Message);
 		}
-		catch (IndexOutOfRangeException) {
-			ok = true;
-		}
-		Assert (ok);
 
-		ok = false;
+		s = "A";
 		try {
-			s = "A";
-			c = s[-1];
+			char c = s [-1];
+			Fail ("#B1:" + c);
+		} catch (IndexOutOfRangeException ex) {
+			AssertEquals ("#B2", typeof (IndexOutOfRangeException), ex.GetType ());
+			AssertNull ("#B3", ex.InnerException);
+			AssertNotNull ("#B4", ex.Message);
 		}
-		catch (IndexOutOfRangeException) {
-			ok = true;
-		}
-		Assert (ok);
 	}
+
 	[Test]
 	public void TestComparePeriod ()
 	{
@@ -2029,38 +3868,100 @@ public class StringTest : Assertion
 	}
 
 	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
 	public void LastIndexOfAnyBounds1 ()
 	{
 		string mono = "Mono";
-                char [] k = { 'M' };
-                mono.LastIndexOfAny (k, mono.Length, 1);
+		char [] k = { 'M' };
+		try {
+			mono.LastIndexOfAny (k, mono.Length, 1);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "startIndex", ex.ParamName);
+		}
 	}
 
 #if NET_2_0
-	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
-	public void SplitString_NegativeCount ()
+	[Test] // Split (Char [], StringSplitOptions)
+	public void Split3_Options_Invalid ()
 	{
-		"A B".Split (new String [] { "A" }, -1, StringSplitOptions.None);
+		try {
+			"A B".Split (new Char [] { 'A' }, (StringSplitOptions) 4096);
+			Fail ("#1");
+		} catch (ArgumentException ex) {
+			// Illegal enum value: 4096
+			AssertEquals ("#2", typeof (ArgumentException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			Assert ("#5", ex.Message.IndexOf ("4096") != 1);
+			AssertNull ("#6", ex.ParamName);
+		}
 	}
 
-	[Test]
-	[ExpectedException (typeof (ArgumentException))]
-	public void SplitString_InvalidOptions ()
+	[Test] // Split (Char [], StringSplitOptions)
+	public void Split4_Options_Invalid ()
 	{
-		"A B".Split (new String [] { "A" }, 0, (StringSplitOptions)4096);
+		try {
+			"A B".Split (new String [] { "A" }, (StringSplitOptions) 4096);
+			Fail ("#1");
+		} catch (ArgumentException ex) {
+			// Illegal enum value: 4096
+			AssertEquals ("#2", typeof (ArgumentException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			Assert ("#5", ex.Message.IndexOf ("4096") != 1);
+			AssertNull ("#6", ex.ParamName);
+		}
 	}
 
-	[Test]
-	public void StartsWith_WithEmptyCulture ()
+	[Test] // Split (Char [], StringSplitOptions)
+	public void Split5_Options_Invalid ()
 	{
-		// This should not crash
-		string s = "boo";
-
-		s.StartsWith ("this", true, null);
+		try {
+			"A B".Split (new Char [] { 'A' }, 0, (StringSplitOptions) 4096);
+			Fail ("#1");
+		} catch (ArgumentException ex) {
+			// Illegal enum value: 4096
+			AssertEquals ("#2", typeof (ArgumentException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			Assert ("#5", ex.Message.IndexOf ("4096") != 1);
+			AssertNull ("#6", ex.ParamName);
+		}
 	}
-	
+
+	[Test] // Split (String [], Int32, StringSplitOptions)
+	public void Split6_Count_Negative ()
+	{
+		try {
+			"A B".Split (new String [] { "A" }, -1, StringSplitOptions.None);
+			Fail ("#1");
+		} catch (ArgumentOutOfRangeException ex) {
+			AssertEquals ("#2", typeof (ArgumentOutOfRangeException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			AssertEquals ("#5", "count", ex.ParamName);
+		}
+	}
+
+	[Test] // Split (String [], Int32, StringSplitOptions)
+	public void Split6_Options_Invalid ()
+	{
+		try {
+			"A B".Split (new String [] { "A" }, 0, (StringSplitOptions) 4096);
+			Fail ("#1");
+		} catch (ArgumentException ex) {
+			// Illegal enum value: 4096
+			AssertEquals ("#2", typeof (ArgumentException), ex.GetType ());
+			AssertNull ("#3", ex.InnerException);
+			AssertNotNull ("#4", ex.Message);
+			Assert ("#5", ex.Message.IndexOf ("4096") != 1);
+			AssertNull ("#6", ex.ParamName);
+		}
+	}
+
 	[Test]
 	public void SplitString ()
 	{
@@ -2071,7 +3972,7 @@ public class StringTest : Assertion
 		AssertEquals (0, res.Length);
 
 		// empty and RemoveEmpty
-		res = "".Split (new String [] { "A" }, StringSplitOptions.RemoveEmptyEntries);
+		res = string.Empty.Split (new String [] { "A" }, StringSplitOptions.RemoveEmptyEntries);
 		AssertEquals (0, res.Length);
 
 		// Not found
@@ -2084,7 +3985,7 @@ public class StringTest : Assertion
 		AssertEquals (4, res.Length);
 		AssertEquals ("A ", res [0]);
 		AssertEquals (" C ", res [1]);
-		AssertEquals ("", res [2]);
+		AssertEquals (string.Empty, res [2]);
 		AssertEquals (" E", res [3]);
 
 		// Same with RemoveEmptyEntries
@@ -2102,9 +4003,9 @@ public class StringTest : Assertion
 		// Delimiter at the beginning and at the end
 		res = "B C DD B".Split (new String[] { "B" }, StringSplitOptions.None);
 		AssertEquals (3, res.Length);
-		AssertEquals ("", res [0]);
+		AssertEquals (string.Empty, res [0]);
 		AssertEquals (" C DD ", res [1]);
-		AssertEquals ("", res [2]);
+		AssertEquals (string.Empty, res [2]);
 
 		res = "B C DD B".Split (new String[] { "B" }, StringSplitOptions.RemoveEmptyEntries);
 		AssertEquals (1, res.Length);
@@ -2142,7 +4043,7 @@ public class StringTest : Assertion
 	}
 	
 	[Test]
-	public void SplitStringChars()
+	public void SplitStringChars ()
 	{
 		String[] res;
 
@@ -2172,13 +4073,13 @@ public class StringTest : Assertion
 		// Keeping Empties and multipe split chars
 		res = "..A;.B.;".Split (new Char[] { '.', ';' }, StringSplitOptions.None);
 		AssertEquals ("#04-01", 7, res.Length);
-		AssertEquals ("#04-02", "",  res [0]);
-		AssertEquals ("#04-03", "",  res [1]);
+		AssertEquals ("#04-02", string.Empty, res [0]);
+		AssertEquals ("#04-03", string.Empty, res [1]);
 		AssertEquals ("#04-04", "A", res [2]);
-		AssertEquals ("#04-05", "",  res [3]);
+		AssertEquals ("#04-05", string.Empty, res [3]);
 		AssertEquals ("#04-06", "B", res [4]);
-		AssertEquals ("#04-07", "",  res [5]);
-		AssertEquals ("#04-08", "",  res [6]);
+		AssertEquals ("#04-07", string.Empty, res [5]);
+		AssertEquals ("#04-08", string.Empty, res [6]);
 
 		// Trimming (3 tests)
 		res = "..A".Split (new Char[] { '.' }, 2, StringSplitOptions.RemoveEmptyEntries);

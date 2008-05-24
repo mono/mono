@@ -169,15 +169,16 @@ namespace System
 		{
 			if (destination == null)
 				throw new ArgumentNullException ("destination");
-
-			if (sourceIndex < 0 || destinationIndex < 0 || count < 0)
-				throw new ArgumentOutOfRangeException (); 
-
+			if (sourceIndex < 0)
+				throw new ArgumentOutOfRangeException ("sourceIndex", "Cannot be negative");
+			if (destinationIndex < 0)
+				throw new ArgumentOutOfRangeException ("destinationIndex", "Cannot be negative.");
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count", "Cannot be negative.");
 			if (sourceIndex > Length - count)
-				throw new ArgumentOutOfRangeException ("sourceIndex + count > Length");
-
+				throw new ArgumentOutOfRangeException ("sourceIndex", "sourceIndex + count > Length");
 			if (destinationIndex > destination.Length - count)
-				throw new ArgumentOutOfRangeException ("destinationIndex + count > destination.Length");
+				throw new ArgumentOutOfRangeException ("destinationIndex", "destinationIndex + count > destination.Length");
 
 			fixed (char* dest = destination, src = this)
 				CharCopy (dest + destinationIndex, src + sourceIndex, count);
@@ -197,13 +198,12 @@ namespace System
 				throw new ArgumentOutOfRangeException ("startIndex", "< 0"); 
 			if (length < 0)
 				throw new ArgumentOutOfRangeException ("length", "< 0"); 
-
 			if (startIndex > this.length - length)
-				throw new ArgumentOutOfRangeException ("startIndex + length > this.length"); 
+				throw new ArgumentOutOfRangeException ("startIndex", "Must be greater than the length of the string.");
 
 			char[] tmp = new char [length];
 			fixed (char* dest = tmp, src = this)
-				CharCopy (dest + startIndex, src, length);
+				CharCopy (dest, src + startIndex, length);
 			return tmp;
 		}
 
@@ -240,7 +240,7 @@ namespace System
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count", "Count cannot be less than zero.");
 			if ((options != StringSplitOptions.None) && (options != StringSplitOptions.RemoveEmptyEntries))
-				throw new ArgumentException ("options must be one of the values in the StringSplitOptions enumeration", "options");
+				throw new ArgumentException ("Illegal enum value: " + options + ".");
 
 			if (count == 0)
 				return new string [0];
@@ -257,7 +257,7 @@ namespace System
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count", "Count cannot be less than zero.");
 			if ((options != StringSplitOptions.None) && (options != StringSplitOptions.RemoveEmptyEntries))
-				throw new ArgumentException ("Illegal enum value: " + options + ".", "options");
+				throw new ArgumentException ("Illegal enum value: " + options + ".");
 
 			bool removeEmpty = (options & StringSplitOptions.RemoveEmptyEntries) == StringSplitOptions.RemoveEmptyEntries;
 
@@ -333,11 +333,18 @@ namespace System
 
 		public String Substring (int startIndex)
 		{
+#if NET_2_0
 			if (startIndex == 0)
 				return this;
-
 			if (startIndex < 0 || startIndex > this.length)
 				throw new ArgumentOutOfRangeException ("startIndex");
+#else
+			if (startIndex < 0)
+				throw new ArgumentOutOfRangeException ("startIndex", "Cannot be negative.");
+
+			if (startIndex > this.length)
+				throw new ArgumentOutOfRangeException ("length", "Cannot exceed length of string.");
+#endif
 
 			return SubstringUnchecked (startIndex, this.length - startIndex);
 		}
@@ -345,11 +352,19 @@ namespace System
 		public String Substring (int startIndex, int length)
 		{
 			if (length < 0)
-				throw new ArgumentOutOfRangeException ("length", "< 0");
+				throw new ArgumentOutOfRangeException ("length", "Cannot be negative.");
 			if (startIndex < 0)
-				throw new ArgumentOutOfRangeException ("startIndex", "< 0");
+				throw new ArgumentOutOfRangeException ("startIndex", "Cannot be negative.");
+#if NET_2_0
+			if (startIndex > this.length)
+				throw new ArgumentOutOfRangeException ("startIndex", "Cannot exceed length of string.");
+#endif
 			if (startIndex > this.length - length)
-				throw new ArgumentOutOfRangeException ("startIndex + length > this.length");
+				throw new ArgumentOutOfRangeException ("length", "startIndex + length > this.length");
+#if NET_2_0
+			if (startIndex == 0 && length == this.length)
+				return this;
+#endif
 
 			return SubstringUnchecked (startIndex, length);
 		}
@@ -725,6 +740,9 @@ namespace System
 
 		public bool EndsWith (String value)
 		{
+			if (value == null)
+				throw new ArgumentNullException ("value");
+
 			return CultureInfo.CurrentCulture.CompareInfo.IsSuffix (this, value, CompareOptions.None);
 		}
 
@@ -735,6 +753,8 @@ namespace System
 #endif
 		bool EndsWith (String value, bool ignoreCase, CultureInfo culture)
 		{
+			if (value == null)
+				throw new ArgumentNullException ("value");
 			if (culture == null)
 				culture = CultureInfo.CurrentCulture;
 
@@ -746,7 +766,7 @@ namespace System
 		public int IndexOfAny (char [] anyOf)
 		{
 			if (anyOf == null)
-				throw new ArgumentNullException ("anyOf");
+				throw new ArgumentNullException ();
 			if (this.length == 0)
 				return -1;
 
@@ -756,9 +776,9 @@ namespace System
 		public int IndexOfAny (char [] anyOf, int startIndex)
 		{
 			if (anyOf == null)
-				throw new ArgumentNullException ("anyOf");
+				throw new ArgumentNullException ();
 			if (startIndex < 0 || startIndex > this.length)
-				throw new ArgumentOutOfRangeException ("startIndex");
+				throw new ArgumentOutOfRangeException ();
 
 			return InternalIndexOfAny (anyOf, startIndex, this.length - startIndex);
 		}
@@ -766,14 +786,12 @@ namespace System
 		public int IndexOfAny (char [] anyOf, int startIndex, int count)
 		{
 			if (anyOf == null)
-				throw new ArgumentNullException ("anyOf");
-			if (startIndex < 0)
-				throw new ArgumentOutOfRangeException ("startIndex", "< 0");
-			if (count < 0)
-				throw new ArgumentOutOfRangeException ("count", "< 0");
+				throw new ArgumentNullException ();
+			if (startIndex < 0 || startIndex > this.length)
+				throw new ArgumentOutOfRangeException ();
 			// re-ordered to avoid possible integer overflow
-			if (startIndex > this.length - count)
-				throw new ArgumentOutOfRangeException ("startIndex + count > this.length");
+			if (count < 0 || startIndex > this.length - count)
+				throw new ArgumentOutOfRangeException ("count", "Count cannot be negative, and startIndex + count must be less than length of the string.");
 
 			return InternalIndexOfAny (anyOf, startIndex, count);
 		}
@@ -858,7 +876,7 @@ namespace System
 			}
 
 			string msg = Locale.GetText ("Invalid value '{0}' for StringComparison", comparison);
-			throw new ArgumentException  (msg, "comparison");
+			throw new ArgumentException  (msg, "comparisonType");
 		}
 
 		public int LastIndexOf (string value, StringComparison comparison)
@@ -919,13 +937,13 @@ namespace System
 		/* This method is culture-insensitive */
 		public int IndexOf (char value, int startIndex, int count)
 		{
-			if (startIndex < 0)
-				throw new ArgumentOutOfRangeException ("startIndex", "< 0");
+			if (startIndex < 0 || startIndex > this.length)
+				throw new ArgumentOutOfRangeException ("startIndex", "Cannot be negative and must be< 0");
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count", "< 0");
 			// re-ordered to avoid possible integer overflow
 			if (startIndex > this.length - count)
-				throw new ArgumentOutOfRangeException ("startIndex + count > this.length");
+				throw new ArgumentOutOfRangeException ("count", "startIndex + count > this.length");
 
 			if ((startIndex == 0 && this.length == 0) || (startIndex == this.length) || (count == 0))
 				return -1;
@@ -978,14 +996,15 @@ namespace System
 		public int IndexOf (String value, int startIndex, int count)
 		{
 			if (value == null)
+#if NET_2_0
 				throw new ArgumentNullException ("value");
-			if (startIndex < 0)
-				throw new ArgumentOutOfRangeException ("startIndex", "< 0");
-			if (count < 0)
-				throw new ArgumentOutOfRangeException ("count", "< 0");
-			// re-ordered to avoid possible integer overflow
-			if (startIndex > this.length - count)
-				throw new ArgumentOutOfRangeException ("startIndex + count > this.length");
+#else
+				throw new ArgumentNullException ("string2");
+#endif
+			if (startIndex < 0 || startIndex > this.length)
+				throw new ArgumentOutOfRangeException ("startIndex", "Cannot be negative, and should not exceed length of string.");
+			if (count < 0 || startIndex > this.length - count)
+				throw new ArgumentOutOfRangeException ("count", "Cannot be negative, and should point to location in string.");
 
 			if (value.length == 0)
 				return startIndex;
@@ -1002,18 +1021,18 @@ namespace System
 		public int LastIndexOfAny (char [] anyOf)
 		{
 			if (anyOf == null)
-				throw new ArgumentNullException ("anyOf");
+				throw new ArgumentNullException ();
 
 			return InternalLastIndexOfAny (anyOf, this.length - 1, this.length);
 		}
 
 		public int LastIndexOfAny (char [] anyOf, int startIndex)
 		{
-			if (anyOf == null) 
-				throw new ArgumentNullException ("anyOf");
+			if (anyOf == null)
+				throw new ArgumentNullException ();
 
 			if (startIndex < 0 || startIndex >= this.length)
-				throw new ArgumentOutOfRangeException ();
+				throw new ArgumentOutOfRangeException ("startIndex", "Cannot be negative, and should be less than length of string.");
 
 			if (this.length == 0)
 				return -1;
@@ -1024,7 +1043,7 @@ namespace System
 		public int LastIndexOfAny (char [] anyOf, int startIndex, int count)
 		{
 			if (anyOf == null) 
-				throw new ArgumentNullException ("anyOf");
+				throw new ArgumentNullException ();
 
 			if ((startIndex < 0) || (startIndex >= this.Length))
 				throw new ArgumentOutOfRangeException ("startIndex", "< 0 || > this.Length");
@@ -1063,8 +1082,6 @@ namespace System
 
 		public int LastIndexOf (String value, int startIndex)
 		{
-			if (value == null)
-				throw new ArgumentNullException ("value");
 			int max = startIndex;
 			if (max < this.Length)
 				max++;
@@ -1134,7 +1151,12 @@ namespace System
 		public int LastIndexOf (String value, int startIndex, int count)
 		{
 			if (value == null)
+#if NET_2_0
 				throw new ArgumentNullException ("value");
+#else
+				throw new ArgumentNullException ("string2");
+#endif
+
 			// -1 > startIndex > for string (0 > startIndex >= for char)
 			if ((startIndex < -1) || (startIndex > this.Length))
 				throw new ArgumentOutOfRangeException ("startIndex", "< 0 || > this.Length");
@@ -1233,7 +1255,7 @@ namespace System
 			if (totalWidth < 0)
 				throw new ArgumentOutOfRangeException ("totalWidth", "< 0");
 
-			if (totalWidth <= this.length)
+			if (totalWidth < this.length)
 				return this;
 
 			String tmp = InternalAllocateStr (totalWidth);
@@ -1261,7 +1283,7 @@ namespace System
 			if (totalWidth < 0)
 				throw new ArgumentOutOfRangeException ("totalWidth", "< 0");
 
-			if (totalWidth <= this.length)
+			if (totalWidth < this.length)
 				return this;
 
 			String tmp = InternalAllocateStr (totalWidth);
@@ -1279,6 +1301,9 @@ namespace System
 
 		public bool StartsWith (String value)
 		{
+			if (value == null)
+				throw new ArgumentNullException ("value");
+
 			return CultureInfo.CurrentCulture.CompareInfo.IsPrefix (this, value, CompareOptions.None);
 		}
 
@@ -1286,6 +1311,9 @@ namespace System
 		[ComVisible (false)]
 		public bool StartsWith (string value, StringComparison comparisonType)
 		{
+			if (value == null)
+				throw new ArgumentNullException ("value");
+
 			switch (comparisonType) {
 			case StringComparison.CurrentCulture:
 				return CultureInfo.CurrentCulture.CompareInfo.IsPrefix (this, value, CompareOptions.None);
@@ -1308,6 +1336,9 @@ namespace System
 		[ComVisible (false)]
 		public bool EndsWith (string value, StringComparison comparisonType)
 		{
+			if (value == null)
+				throw new ArgumentNullException ("value");
+
 			switch (comparisonType) {
 			case StringComparison.CurrentCulture:
 				return CultureInfo.CurrentCulture.CompareInfo.IsSuffix (this, value, CompareOptions.None);
@@ -1326,7 +1357,6 @@ namespace System
 				throw new ArgumentException (msg, "comparisonType");
 			}
 		}
-
 #endif
 
 #if NET_2_0
@@ -1398,11 +1428,11 @@ namespace System
 		public unsafe String Remove (int startIndex, int count)
 		{
 			if (startIndex < 0)
-				throw new ArgumentOutOfRangeException ("startIndex", "< 0");
+				throw new ArgumentOutOfRangeException ("startIndex", "Cannot be negative.");
 			if (count < 0)
-				throw new ArgumentOutOfRangeException ("count", "< 0");
+				throw new ArgumentOutOfRangeException ("count", "Cannot be negative.");
 			if (startIndex > this.length - count)
-				throw new ArgumentOutOfRangeException ("startIndex + count > this.length");
+				throw new ArgumentOutOfRangeException ("count", "startIndex + count > this.length");
 
 			String tmp = InternalAllocateStr (this.length - count);
 
@@ -1529,8 +1559,10 @@ namespace System
 		
 		internal static void FormatHelper (StringBuilder result, IFormatProvider provider, string format, params object[] args)
 		{
-			if (format == null || args == null)
-				throw new ArgumentNullException ();
+			if (format == null)
+				throw new ArgumentNullException ("format");
+			if (args == null)
+				throw new ArgumentNullException ("args");
 
 			int ptr = 0;
 			int start = ptr;
@@ -1894,7 +1926,7 @@ namespace System
 				throw new ArgumentNullException ("value");
 
 			if (startIndex < 0 || startIndex > this.length)
-				throw new ArgumentOutOfRangeException ();
+				throw new ArgumentOutOfRangeException ("startIndex", "Cannot be negative and must be less than or equal to length of string.");
 
 			if (value.Length == 0)
 				return this;
@@ -2269,10 +2301,10 @@ namespace System
 				while (bytes++ [0] != 0)
 					length++;
 			} catch (NullReferenceException) {
-				throw new ArgumentOutOfRangeException ("value", "Value does not refer to a valid string.");
+				throw new ArgumentOutOfRangeException ("ptr", "Value does not refer to a valid string.");
 #if NET_2_0
 			} catch (AccessViolationException) {
-				throw new ArgumentOutOfRangeException ("value", "Value does not refer to a valid string.");
+				throw new ArgumentOutOfRangeException ("ptr", "Value does not refer to a valid string.");
 #endif
 			}
 
@@ -2320,7 +2352,7 @@ namespace System
 							throw;
 #endif
 
-						throw new ArgumentOutOfRangeException ("value", "Value, startIndex and length do not refer to a valid string.");
+						throw new ArgumentOutOfRangeException ("ptr", "Value, startIndex and length do not refer to a valid string.");
 #if NET_2_0
 					} catch (AccessViolationException) {
 						if (!isDefaultEncoding)
@@ -2376,13 +2408,13 @@ namespace System
 		unsafe string CreateString (char [] val, int startIndex, int length)
 		{
 			if (val == null)
-				throw new ArgumentNullException ("val");
+				throw new ArgumentNullException ("value");
 			if (startIndex < 0)
-				throw new ArgumentOutOfRangeException ("startIndex");
+				throw new ArgumentOutOfRangeException ("startIndex", "Cannot be negative.");
 			if (length < 0)
-				throw new ArgumentOutOfRangeException ("length");
+				throw new ArgumentOutOfRangeException ("length", "Cannot be negative.");
 			if (startIndex > val.Length - length)
-				throw new ArgumentOutOfRangeException ("Out of range");
+				throw new ArgumentOutOfRangeException ("startIndex", "Cannot be negative, and should be less than length of string.");
 			if (length == 0)
 				return string.Empty;
 
