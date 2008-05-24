@@ -125,6 +125,45 @@ namespace System.Windows.Forms
 			}
 		}
 		#endregion
+		#region ComboBox
+		static VisualStyleElement ComboBoxGetVisualStyleElement (ComboBox comboBox, ButtonState state)
+		{
+			if (state == ButtonState.Inactive)
+				return VisualStyleElement.ComboBox.DropDownButton.Disabled;
+			if (state == ButtonState.Pushed)
+				return VisualStyleElement.ComboBox.DropDownButton.Pressed;
+			if (comboBox.DropDownButtonEntered)
+				return VisualStyleElement.ComboBox.DropDownButton.Hot;
+			return VisualStyleElement.ComboBox.DropDownButton.Normal;
+		}
+		public override void ComboBoxDrawNormalDropDownButton (ComboBox comboBox, Graphics g, Rectangle clippingArea, Rectangle area, ButtonState state)
+		{
+			VisualStyleElement element = ComboBoxGetVisualStyleElement (comboBox, state);
+			if (!VisualStyleRenderer.IsElementDefined (element)) {
+				base.ComboBoxDrawNormalDropDownButton (comboBox, g, clippingArea, area, state);
+				return;
+			}
+			new VisualStyleRenderer (element).DrawBackground (g, area, clippingArea);
+		}
+		public override bool ComboBoxNormalDropDownButtonHasTransparentBackground (ComboBox comboBox, ButtonState state)
+		{
+			VisualStyleElement element = ComboBoxGetVisualStyleElement (comboBox, state);
+			if (!VisualStyleRenderer.IsElementDefined (element))
+				return base.ComboBoxNormalDropDownButtonHasTransparentBackground (comboBox, state);
+			return new VisualStyleRenderer (element).IsBackgroundPartiallyTransparent ();
+		}
+		public override bool ComboBoxDropDownButtonHasHotElementStyle (ComboBox comboBox)
+		{
+#if NET_2_0
+			switch (comboBox.FlatStyle) {
+			case FlatStyle.Flat:
+			case FlatStyle.Popup:
+				return base.ComboBoxDropDownButtonHasHotElementStyle (comboBox);
+			}
+#endif
+			return true;
+		}
+		#endregion
 		#region ControlPaint
 		#region DrawButton
 		public override void CPDrawButton (Graphics dc, Rectangle rectangle, ButtonState state)

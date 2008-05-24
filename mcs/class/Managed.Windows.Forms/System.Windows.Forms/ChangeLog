@@ -1,5 +1,10 @@
 2008-05-24  George Giolfan  <georgegiolfan@yahoo.com>
 
+	* ThemeVisualStyles.cs: Added support for the hot ComboBox drop down button
+	style.
+
+2008-05-24  George Giolfan  <georgegiolfan@yahoo.com>
+
 	* ComboBox.cs, Theme.cs, ThemeWin32Classic.cs: Added support for the hot drop
 	down button style.
 
