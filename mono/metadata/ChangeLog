@@ -1,3 +1,8 @@
+2008-05-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_Reflection_Assembly_InternalGetType): Call
+	mono_class_setup_vtable () when CAS is active to detect security problems.
+
 2008-05-23 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (mono_delegate_type_equal): Handle VAR, MVAR and GENERICINST.
