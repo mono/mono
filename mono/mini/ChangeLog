@@ -1,7 +1,9 @@
 2008-05-24  Zoltan Varga  <vargaz@gmail.com>
 
-	* mini.c (SIG_HANDLER_SIGNATURE): Fix sparc build too.
+	* mini.c (mono_method_check_inlining): Avoid creating vtables if possible.
 	
+	* mini.c (SIG_HANDLER_SIGNATURE): Fix sparc build too.
+
 	* mini.c (SIG_HANDLER_SIGNATURE): Fix IA64 build.
 
 	* mini.c (mono_jit_compile_method_inner): Avoid a crash if mono_class_vtable ()
