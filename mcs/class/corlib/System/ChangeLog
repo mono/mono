@@ -1,3 +1,9 @@
+2008-05-24 Gonzalo Paniagua Javier <gonzalo.mono@gmail.com>
+
+	* Enum.cs: use Array.BinarySearch on the values in IsDefined and
+	GetName instead of looping through the list. Made the cache in
+	MonoEnumInfo thread static to avoid contention.
+
 2008-05-20  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* String.cs: Replace Split function

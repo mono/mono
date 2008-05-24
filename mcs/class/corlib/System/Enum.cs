@@ -45,6 +45,7 @@ namespace System
 		internal Type utype;
 		internal Array values;
 		internal string[] names;
+		[ThreadStatic]
 		static Hashtable cache;
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -52,9 +53,16 @@ namespace System
 
 		static MonoEnumInfo ()
 		{
-		    	cache = new Hashtable ();
 		}
-		
+
+		static Hashtable Cache {
+			get {
+				if (cache == null) {
+					cache = new Hashtable ();
+				}
+				return cache;
+			}
+		}
 		private MonoEnumInfo (MonoEnumInfo other)
 		{
 			utype = other.utype;
@@ -64,15 +72,13 @@ namespace System
 
 		internal static void GetInfo (Type enumType, out MonoEnumInfo info)
 		{
-			lock (cache) {
-				if (cache.ContainsKey (enumType)) {
-					info = (MonoEnumInfo) cache [enumType];
-					return;
-				}
-				get_enum_info (enumType, out info);
-				Array.Sort (info.values, info.names);
-				cache.Add (enumType, new MonoEnumInfo (info));
+			if (Cache.ContainsKey (enumType)) {
+				info = (MonoEnumInfo) cache [enumType];
+				return;
 			}
+			get_enum_info (enumType, out info);
+			Array.Sort (info.values, info.names);
+			cache.Add (enumType, new MonoEnumInfo (info));
 		}
 	};
 
@@ -219,14 +225,10 @@ namespace System
 				throw new ArgumentException ("enumType is not an Enum type.", "enumType");
 
 			MonoEnumInfo info;
-			int i;
 			value = ToObject (enumType, value);
 			MonoEnumInfo.GetInfo (enumType, out info);
-			for (i = 0; i < info.values.Length; ++i) {
-				if (value.Equals (info.values.GetValue (i)))
-					return info.names [i];
-			}
-			return null;
+			int i = Array.BinarySearch (info.values, value);
+			return (i >= 0) ? info.names [i] : null;
 		}
 
 #if NET_2_0
@@ -249,14 +251,9 @@ namespace System
 			if (vType == typeof(String)) {
 				return ((IList)(info.names)).Contains (value);
 			} else if ((vType == info.utype) || (vType == enumType)) {
-				int i;
 				value = ToObject (enumType, value);
 				MonoEnumInfo.GetInfo (enumType, out info);
-				for (i = 0; i < info.values.Length; ++i) {
-					if (value.Equals (info.values.GetValue (i)))
-						return true;
-				}
-				return false;
+				return (Array.BinarySearch (info.values, value) >= 0);
 			} else {
 				throw new ArgumentException("The value parameter is not the correct type."
 					+ "It must be type String or the same type as the underlying type"
