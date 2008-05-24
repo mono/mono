@@ -1632,7 +1632,7 @@ namespace System.Windows.Forms
 					}
 
 					offset = listbox_ctrl == null ? MaxDropDownItems - 1 : listbox_ctrl.page_size - 1;
-					if (offset == 0)
+					if (offset < 1)
 						offset = 1;
 
 					SelectedIndex = Math.Min (SelectedIndex + offset, Items.Count - 1);

@@ -1,5 +1,11 @@
 2008-05-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ComboBox.cs: Minor correction to previous patch: PageDown should
+	also *try* to move by one item if the computed offset is negative,
+	just like the PageUp case.
+
+2008-05-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ComboBox.cs: When navigating using PageDown/PageUp the navigation
 	should be done for at least 1 item, and not stay at the same item.
 	Fixes part of #374713.
