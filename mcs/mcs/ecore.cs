@@ -97,15 +97,10 @@ namespace Mono.CSharp {
 		void AddressOf (EmitContext ec, AddressOp mode);
 	}
 
-	/// <summary>
-	///   This interface is implemented by variables
-	/// </summary>
+	// TODO: Rename to something meaningful, this is flow-analysis interface only
 	public interface IVariable {
-		VariableInfo VariableInfo {
-			get;
-		}
-
-		bool VerifyFixed ();
+		VariableInfo VariableInfo { get; }
+		bool IsFixed { get; }
 	}
 
 	/// <remarks>
@@ -4747,7 +4742,7 @@ namespace Mono.CSharp {
 
 			// If the instance expression is a local variable or parameter.
 			IVariable var = InstanceExpression as IVariable;
-			if ((var == null) || (var.VariableInfo == null))
+			if (var == null || var.VariableInfo == null)
 				return this;
 
 			VariableInfo vi = var.VariableInfo;
@@ -4798,7 +4793,7 @@ namespace Mono.CSharp {
 		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
 			IVariable var = InstanceExpression as IVariable;
-			if ((var != null) && (var.VariableInfo != null))
+			if (var != null && var.VariableInfo != null)
 				var.VariableInfo.SetFieldAssigned (ec, FieldInfo.Name);
 
 			bool lvalue_instance = !FieldInfo.IsStatic && FieldInfo.DeclaringType.IsValueType;
@@ -4860,19 +4855,20 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public bool VerifyFixed ()
-		{
-			IVariable variable = InstanceExpression as IVariable;
-			// A variable of the form V.I is fixed when V is a fixed variable of a struct type.
-			// We defer the InstanceExpression check after the variable check to avoid a 
-			// separate null check on InstanceExpression.
-			return variable != null && InstanceExpression.Type.IsValueType && variable.VerifyFixed ();
-		}
-
 		public override int GetHashCode ()
 		{
 			return FieldInfo.GetHashCode ();
 		}
+		
+		public bool IsFixed {
+			get {
+				IVariable variable = InstanceExpression as IVariable;
+				// A variable of the form V.I is fixed when V is a fixed variable of a struct type.
+				// We defer the InstanceExpression check after the variable check to avoid a 
+				// separate null check on InstanceExpression.
+				return variable != null && InstanceExpression.Type.IsValueType && variable.IsFixed;
+			}
+		}		
 
 		public override bool Equals (object obj)
 		{

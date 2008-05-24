@@ -606,17 +606,16 @@ namespace Mono.CSharp {
 			}
 
 			IVariable variable = Expr as IVariable;
-			bool is_fixed = variable != null && variable.VerifyFixed ();
-
-			if (!ec.InFixedInitializer && !is_fixed) {
-				Error (212, "You can only take the address of unfixed expression inside " +
-					   "of a fixed statement initializer");
-				return null;
-			}
-
-			if (ec.InFixedInitializer && is_fixed) {
-				Error (213, "You cannot use the fixed statement to take the address of an already fixed expression");
-				return null;
+			if (variable != null && variable.IsFixed) {
+				if (ec.InFixedInitializer) {
+					Error (213, "You cannot use the fixed statement to take the address of an already fixed expression");
+					return null;
+				}
+			} else {
+				if (!ec.InFixedInitializer) {
+					Error (212, "You can only take the address of unfixed expression inside of a fixed statement initializer");
+					return null;
+				}
 			}
 
 			LocalVariableReference lr = Expr as LocalVariableReference;
@@ -861,11 +860,12 @@ namespace Mono.CSharp {
 			get { return null; }
 		}
 
-		public bool VerifyFixed ()
-		{
-			// A pointer-indirection is always fixed.
-			return true;
-		}
+		//
+		// A pointer-indirection is always fixed.
+		//		
+		public bool IsFixed {
+			get { return true; }
+		}		
 
 		#endregion
 	}
@@ -3942,17 +3942,23 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public abstract class VariableReference : Expression, IAssignMethod, IMemoryLocation {
+	public abstract class VariableReference : Expression, IAssignMethod, IMemoryLocation, IVariable {
 		bool prepared;
 		LocalTemporary temp;
 
-		public abstract Variable Variable {
-			get;
-		}
+		//
+		// Variable IL data
+		//
+		public abstract Variable Variable { get; }
+		
+		//
+		// Variable flow-analysis data
+		//
+		public abstract VariableInfo VariableInfo { get; }		
 
-		public abstract bool IsRef {
-			get;
-		}
+		// TODO: turns these two into local flags
+		public abstract bool IsFixed { get; }
+		public abstract bool IsRef { get; }
 
 		public override void Emit (EmitContext ec)
 		{
@@ -4060,7 +4066,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Local variables
 	/// </summary>
-	public class LocalVariableReference : VariableReference, IVariable {
+	public class LocalVariableReference : VariableReference {
 		public readonly string Name;
 		public Block Block;
 		public LocalInfo local_info;
@@ -4087,8 +4093,15 @@ namespace Mono.CSharp {
 			this.is_readonly = is_readonly;
 		}
 
-		public VariableInfo VariableInfo {
+		public override VariableInfo VariableInfo {
 			get { return local_info.VariableInfo; }
+		}
+
+		//		
+		// A local Variable is always fixed.
+		//
+		public override bool IsFixed {
+			get { return true; }
 		}
 
 		public override bool IsRef {
@@ -4206,12 +4219,6 @@ namespace Mono.CSharp {
 			return DoResolveBase (ec);
 		}
 
-		public bool VerifyFixed ()
-		{
-			// A local Variable is always fixed.
-			return true;
-		}
-
 		public override int GetHashCode ()
 		{
 			return Name.GetHashCode ();
@@ -4249,7 +4256,7 @@ namespace Mono.CSharp {
 	///   This represents a reference to a parameter in the intermediate
 	///   representation.
 	/// </summary>
-	public class ParameterReference : VariableReference, IVariable {
+	public class ParameterReference : VariableReference {
 		readonly ToplevelParameterInfo pi;
 		readonly ToplevelBlock referenced;
 		Variable variable;
@@ -4269,6 +4276,13 @@ namespace Mono.CSharp {
 			get { return pi.Parameter.ModFlags == Parameter.Modifier.OUT; }
 		}
 
+		//
+		// A parameter is fixed if it's a value parameter (i.e., no modifier like out, ref, param).
+		//		
+		public override bool IsFixed {
+			get { return pi.Parameter.ModFlags == Parameter.Modifier.NONE; }
+		}
+
 		public string Name {
 			get { return Parameter.Name; }
 		}
@@ -4277,18 +4291,12 @@ namespace Mono.CSharp {
 			get { return pi.Parameter; }
 		}
 
-		public VariableInfo VariableInfo {
+		public override VariableInfo VariableInfo {
 			get { return pi.VariableInfo; }
 		}
 
 		public override Variable Variable {
 			get { return variable != null ? variable : Parameter.Variable; }
-		}
-
-		public bool VerifyFixed ()
-		{
-			// A parameter is fixed if it's a value parameter (i.e., no modifier like out, ref, param).
-			return Parameter.ModFlags == Parameter.Modifier.NONE;
 		}
 
 		public bool IsAssigned (EmitContext ec, Location loc)
@@ -4303,26 +4311,11 @@ namespace Mono.CSharp {
 			Report.Error (269, loc, "Use of unassigned out parameter `{0}'", Name);
 			return false;
 		}
-
-		public bool IsFieldAssigned (EmitContext ec, string field_name, Location loc)
-		{
-			if (!ec.DoFlowAnalysis || !HasOutModifier || ec.CurrentBranching.IsFieldAssigned (VariableInfo, field_name))
-				return true;
-
-			Report.Error (170, loc, "Use of possibly unassigned field `{0}'", field_name);
-			return false;
-		}
-
-		public void SetAssigned (EmitContext ec)
+		
+		void SetAssigned (EmitContext ec)
 		{
 			if (HasOutModifier && ec.DoFlowAnalysis)
 				ec.CurrentBranching.SetAssigned (VariableInfo);
-		}
-
-		public void SetFieldAssigned (EmitContext ec, string field_name)
-		{
-			if (HasOutModifier && ec.DoFlowAnalysis)
-				ec.CurrentBranching.SetFieldAssigned (VariableInfo, field_name);
 		}
 
 		protected bool DoResolveBase (EmitContext ec)
@@ -5131,6 +5124,8 @@ namespace Mono.CSharp {
 		{
 			// nothing
 		}
+		
+		public bool IsFixed { get { return true; } }
 	}
 	
 	/// <summary>
@@ -6432,7 +6427,7 @@ namespace Mono.CSharp {
 	///   Represents the `this' construct
 	/// </summary>
 
-	public class This : VariableReference, IVariable
+	public class This : VariableReference
 	{
 		Block block;
 		VariableInfo variable_info;
@@ -6450,13 +6445,12 @@ namespace Mono.CSharp {
 			this.loc = loc;
 		}
 
-		public VariableInfo VariableInfo {
+		public override VariableInfo VariableInfo {
 			get { return variable_info; }
 		}
 
-		public bool VerifyFixed ()
-		{
-			return !TypeManager.IsValueType (Type);
+		public override bool IsFixed {
+			get { return !TypeManager.IsValueType (type); }
 		}
 
 		public override bool IsRef {
