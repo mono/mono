@@ -1,5 +1,8 @@
 2008-05-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c (setup_interface_offsets): Use sizeof (guint16) when allocating the
+	interface_offsets_packed table.
+	
 	* class.c (mono_class_init): Remove some dead code.
 
 	* icall.c (ves_icall_System_Reflection_Assembly_InternalGetType): Call
