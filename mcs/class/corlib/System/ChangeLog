@@ -1,5 +1,10 @@
 2008-05-24  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* String.cs: Comment out 2.0 compatibility fix for SubString, since it
+	causes regressions in System.Xml.
+
+2008-05-24  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* String.cs: Changed exception to match MS. Fixed ToCharArray to use
 	startindex for source. In PadLeft and PadRight, only return current
 	string if totalWidth is less than length.

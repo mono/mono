@@ -1382,6 +1382,22 @@ public class StringTest : TestCase
 	}
 
 	[Test] // IndexOf (String, Int32)
+	public void IndexOf4 ()
+	{
+		string s = "testing123456";
+
+		AssertEquals ("#1", -1, s.IndexOf ("IN", 3));
+		AssertEquals ("#2", 4, s.IndexOf ("in", 3));
+		AssertEquals ("#3", -1, s.IndexOf ("in", 5));
+		AssertEquals ("#4", 7, s.IndexOf ("1", 5));
+		AssertEquals ("#5", 12, s.IndexOf ("6", 12));
+		AssertEquals ("#6", 0, s.IndexOf ("testing123456", 0));
+		AssertEquals ("#7", -1, s.IndexOf ("testing123456", 1));
+		AssertEquals ("#8", 5, s.IndexOf (string.Empty, 5));
+		AssertEquals ("#9", 0, s.IndexOf (string.Empty, 0));
+	}
+
+	[Test] // IndexOf (String, Int32)
 	public void IndexOf4_Value_Null ()
 	{
 		try {
@@ -3439,11 +3455,12 @@ public class StringTest : TestCase
 		AssertEquals ("#1", "igin", s.Substring (2, 4));
 		AssertEquals ("#2", string.Empty, s.Substring (s.Length, 0));
 		AssertEquals ("#3", "origina", s.Substring (0, s.Length - 1));
+		AssertEquals ("#4", s, s.Substring (0, s.Length));
 #if NET_2_0
-		AssertSame ("#4", s, s.Substring (0, s.Length));
+		// FIXME: enabling the fix for this causes regressions in System.Xml
+		//AssertSame ("#5", s, s.Substring (0, s.Length));
 #else
-		AssertEquals ("#4a", s, s.Substring (0, s.Length));
-		Assert ("#4b", !object.ReferenceEquals (s, s.Substring (0, s.Length)));
+		Assert ("#5", !object.ReferenceEquals (s, s.Substring (0, s.Length)));
 #endif
 	}
 

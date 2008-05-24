@@ -1,5 +1,10 @@
 2008-05-24  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* StringTest.cs: Comment out assert in SubString2 as corresponding
+	fix was reverted. 
+
+2008-05-24  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* StringTest.cs: Improved ctor tests. Avoid use of ExpectedException.
 	Moved tests for argument checks to separate methods. Added tests for
 	EndsWith, IndexOf, IndexOfAny, Intern, IsInternet, Format, StartsWith,

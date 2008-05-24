@@ -362,8 +362,11 @@ namespace System
 			if (startIndex > this.length - length)
 				throw new ArgumentOutOfRangeException ("length", "startIndex + length > this.length");
 #if NET_2_0
+			// FIXME: this causes regressions in System.Xml
+			/*
 			if (startIndex == 0 && length == this.length)
 				return this;
+			*/
 #endif
 
 			return SubstringUnchecked (startIndex, length);
