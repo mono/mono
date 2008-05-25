@@ -1,3 +1,12 @@
+2008-05-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* thread-private.h (struct _WapiHandle_thread): Remove 'owner_pid' field. Reorder
+	fields so this struct (which is the biggest of the handle structs) takes less
+	space.
+
+	* threads.c (QueueUserAPC): Make this function signal safe by adding some
+	restrictions on its usage.
+
 2008-05-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-mutex.h: Get rid of the #ifdef __cplusplus defines, use G_BEGIN_DECLS
