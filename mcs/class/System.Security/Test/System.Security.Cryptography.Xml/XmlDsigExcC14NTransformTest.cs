@@ -98,6 +98,24 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
+		public void Types ()
+		{
+			Type [] input = transform.InputTypes;
+			input [0] = null;
+			input [1] = null;
+			input [2] = null;
+			// property does not return a clone
+			foreach (Type t in transform.InputTypes) {
+				AssertNull (t);
+			}
+			// it's not a static array
+			XmlDsigExcC14NTransform t2 = new XmlDsigExcC14NTransform ();
+			foreach (Type t in t2.InputTypes) {
+				AssertNotNull (t);
+			}
+		}
+
+		[Test]
 		public void GetInnerXml () 
 		{
 			XmlNodeList xnl = transform.UnprotectedGetInnerXml ();

@@ -1,3 +1,8 @@
+2008-05-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* XmlDsigBase64TransformTest.cs: Add test case for InputTypes
+	* XmlDsigExcC14NTransformTest.cs: Add test case for InputTypes
+
 2007-03-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlDsigC14NTransformTest.cs : added test for xmlns attribute 
