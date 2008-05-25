@@ -37,10 +37,10 @@ namespace System.Drawing
 		private int first;
 		private int length;
 
-		public CharacterRange (int first, int length)
+		public CharacterRange (int First, int Length)
 		{
-			this.first = first;
-			this.length = length;
+			this.first = First;
+			this.length = Length;
 		}
 
 		public int First {
@@ -60,13 +60,14 @@ namespace System.Drawing
 				length = value;
 			}
 		}
+
 #if NET_2_0
-		public override bool Equals (object o)
+		public override bool Equals (Object obj)
 		{
-			if (!(o is CharacterRange))
+			if (!(obj is CharacterRange))
 				return false;
 
-			CharacterRange cr = (CharacterRange) o;
+			CharacterRange cr = (CharacterRange) obj;
 			return this == cr;
 		}
 

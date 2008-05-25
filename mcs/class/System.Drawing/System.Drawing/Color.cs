@@ -164,27 +164,25 @@ namespace System.Drawing
 			return FromArgb ((argb >> 24) & 0x0FF, (argb >> 16) & 0x0FF, (argb >> 8) & 0x0FF, argb & 0x0FF);
 		}
 
-		public static Color FromKnownColor (KnownColor c)
+		public static Color FromKnownColor (KnownColor color)
 		{
-			return KnownColors.FromKnownColor (c);
+			return KnownColors.FromKnownColor (color);
 		}
 
-		public static Color FromName (string colorName)
+		public static Color FromName (string name)
 		{
 			try {
-				KnownColor kc = (KnownColor) Enum.Parse (typeof (KnownColor), colorName, true);
+				KnownColor kc = (KnownColor) Enum.Parse (typeof (KnownColor), name, true);
 				return KnownColors.FromKnownColor (kc);
-			}
-			catch {
-				// This is what it returns! 	 
+			} catch {
+				// This is what it returns!
 				Color d = FromArgb (0, 0, 0, 0);
-				d.name = colorName;
+				d.name = name;
 				d.state |= (short) ColorType.Named;
 				return d;
 			}
 		}
 
-	
 		// -----------------------
 		// Public Shared Members
 		// -----------------------
@@ -209,20 +207,20 @@ namespace System.Drawing
 		///	of the two Colors.
 		/// </remarks>
 
-		public static bool operator == (Color colorA, Color colorB)
+		public static bool operator == (Color left, Color right)
 		{
-			if (colorA.value != colorB.value)
+			if (left.value != right.value)
 				return false;
-			if (colorA.IsNamedColor != colorB.IsNamedColor)
+			if (left.IsNamedColor != right.IsNamedColor)
 				return false;
-			if (colorA.IsSystemColor != colorB.IsSystemColor)
+			if (left.IsSystemColor != right.IsSystemColor)
 				return false;
-			if (colorA.IsEmpty != colorB.IsEmpty)
+			if (left.IsEmpty != right.IsEmpty)
 				return false;
-			if (colorA.IsNamedColor) {
+			if (left.IsNamedColor) {
 				// then both are named (see previous check) and so we need to compare them
 				// but otherwise we don't as it kills performance (Name calls String.Format)
-				if (colorA.Name != colorB.Name)
+				if (left.Name != right.Name)
 					return false;
 			}
 			return true;
@@ -238,9 +236,9 @@ namespace System.Drawing
 		///	of the two colors.
 		/// </remarks>
 
-		public static bool operator != (Color colorA, Color colorB)
+		public static bool operator != (Color left, Color right)
 		{
-			return ! (colorA == colorB);
+			return ! (left == right);
 		}
 		
 		public float GetBrightness ()
@@ -414,11 +412,11 @@ namespace System.Drawing
 		///	Checks equivalence of this Color and another object.
 		/// </remarks>
 		
-		public override bool Equals (object o)
+		public override bool Equals (object obj)
 		{
-			if (! (o is Color))
+			if (!(obj is Color))
 				return false;
-			Color c = (Color) o;
+			Color c = (Color) obj;
 			return this == c;
 		}
 

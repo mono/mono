@@ -33,10 +33,10 @@ using System.Collections;
 using System.Drawing.Imaging;
 using System.Threading;
 
-namespace System.Drawing {
-
-	class AnimateEventArgs : EventArgs {
-
+namespace System.Drawing
+{
+	class AnimateEventArgs : EventArgs
+	{
 		private int frameCount;
 		private int activeFrame;
 		private Thread thread;
@@ -45,7 +45,7 @@ namespace System.Drawing {
 		{
 			frameCount = image.GetFrameCount (FrameDimension.Time);
 		}
-      
+
 		public Thread RunThread {
 			get { return thread; }
 			set { thread = value; }
@@ -62,15 +62,15 @@ namespace System.Drawing {
 		}
 	}
 
-	public sealed class ImageAnimator {
-
+	public sealed class ImageAnimator
+	{
 		static Hashtable ht = Hashtable.Synchronized (new Hashtable ());
 
 		private ImageAnimator ()
 		{
 		}
 
-		public static void Animate (Image image, EventHandler onFrameChangeHandler)
+		public static void Animate (Image image, EventHandler onFrameChangedHandler)
 		{
 			// must be non-null and contain animation time frames
 			if (!CanAnimate (image))
@@ -90,7 +90,7 @@ namespace System.Drawing {
 			}
 
 			AnimateEventArgs aea = new AnimateEventArgs (image);
-			WorkerThread wt = new WorkerThread (onFrameChangeHandler, aea, delay);
+			WorkerThread wt = new WorkerThread (onFrameChangedHandler, aea, delay);
 			Thread thread = new Thread (new ThreadStart (wt.LoopHandler));
 			thread.IsBackground = true;
 			aea.RunThread = thread;
@@ -115,7 +115,7 @@ namespace System.Drawing {
 			return false;
 		}
 
-		public static void StopAnimate (Image image, EventHandler onFrameChangeHandler)
+		public static void StopAnimate (Image image, EventHandler onFrameChangedHandler)
 		{
 			if (image == null)
 				return;
@@ -151,8 +151,8 @@ namespace System.Drawing {
 		}
 	}
 
-	class WorkerThread {
-
+	class WorkerThread
+	{
 		private EventHandler frameChangeHandler;
 		private AnimateEventArgs animateEventArgs;
 		private int[] delay;

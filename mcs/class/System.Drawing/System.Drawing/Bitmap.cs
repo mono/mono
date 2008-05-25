@@ -69,15 +69,15 @@ namespace System.Drawing
 		}
 
 		public Bitmap (int width, int height, Graphics g)
-		{		
+		{
 			IntPtr bmp;
 			Status s = GDIPlus.GdipCreateBitmapFromGraphics (width, height, g.nativeObject, out bmp);
 			GDIPlus.CheckStatus (s);
-			nativeObject = bmp;						
+			nativeObject = bmp;
 		}
 
 		public Bitmap (int width, int height, PixelFormat format)
-		{	
+		{
 			IntPtr bmp;
 			Status s = GDIPlus.GdipCreateBitmapFromScan0 (width, height, 0, format, IntPtr.Zero, out bmp);
 			GDIPlus.CheckStatus (s);
@@ -136,12 +136,12 @@ namespace System.Drawing
 		}
 
 		public Bitmap (int width, int height, int stride, PixelFormat format, IntPtr scan0)
-		{		
+		{
 			IntPtr bmp;
-				
+
 			Status status = GDIPlus.GdipCreateBitmapFromScan0 (width, height, stride, format, scan0, out bmp);
-			GDIPlus.CheckStatus (status);	
-			nativeObject = bmp;						 								
+			GDIPlus.CheckStatus (status);
+			nativeObject = bmp;
 		}
 
 		private Bitmap (SerializationInfo info, StreamingContext context)
@@ -153,12 +153,12 @@ namespace System.Drawing
 		// methods
 		public Color GetPixel (int x, int y) {
 			
-			int argb;				
-			
+			int argb;
+
 			Status s = GDIPlus.GdipBitmapGetPixel(nativeObject, x, y, out argb);
 			GDIPlus.CheckStatus (s);
 
-			return Color.FromArgb(argb);		
+			return Color.FromArgb(argb);
 		}
 
 		public void SetPixel (int x, int y, Color color)
@@ -180,17 +180,17 @@ namespace System.Drawing
 		}
 
 		public Bitmap Clone (Rectangle rect, PixelFormat format)
-		{				
-			IntPtr bmp;			
+		{
+			IntPtr bmp;
 			Status status = GDIPlus.GdipCloneBitmapAreaI (rect.X, rect.Y, rect.Width, rect.Height,
 				format, nativeObject, out bmp);
 			GDIPlus.CheckStatus (status);
 			return new Bitmap (bmp);
-       		}
+		}
 		
 		public Bitmap Clone (RectangleF rect, PixelFormat format)
 		{
-			IntPtr bmp;			
+			IntPtr bmp;
 			Status status = GDIPlus.GdipCloneBitmapArea (rect.X, rect.Y, rect.Width, rect.Height,
 				format, nativeObject, out bmp);
 			GDIPlus.CheckStatus (status);
@@ -199,7 +199,7 @@ namespace System.Drawing
 
 		public static Bitmap FromHicon (IntPtr hicon)
 		{	
-			IntPtr bitmap;	
+			IntPtr bitmap;
 			Status status = GDIPlus.GdipCreateBitmapFromHICON (hicon, out bitmap);
 			GDIPlus.CheckStatus (status);
 			return new Bitmap (bitmap);
@@ -207,7 +207,7 @@ namespace System.Drawing
 
 		public static Bitmap FromResource (IntPtr hinstance, string bitmapName)	//TODO: Untested
 		{
-			IntPtr bitmap;	
+			IntPtr bitmap;
 			Status status = GDIPlus.GdipCreateBitmapFromResource (hinstance, bitmapName, out bitmap);
 			GDIPlus.CheckStatus (status);
 			return new Bitmap (bitmap);
@@ -241,7 +241,7 @@ namespace System.Drawing
 			Status status = GDIPlus.GdipCreateHICONFromBitmap (nativeObject, out HandleIcon);
 			GDIPlus.CheckStatus (status);
 
-			return  HandleIcon;			
+			return  HandleIcon;
 		}
 
 		public BitmapData LockBits (Rectangle rect, ImageLockMode flags, PixelFormat format)
@@ -264,12 +264,12 @@ namespace System.Drawing
 
 		public void MakeTransparent ()
 		{
-			Color clr = GetPixel(0,0);			
+			Color clr = GetPixel(0,0);
 			MakeTransparent (clr);
 		}
 
 		public void MakeTransparent (Color transparentColor)
-		{							
+		{
 			// We have to draw always over a 32-bitmap surface that supports alpha channel
 			Bitmap	bmp = new Bitmap(Width, Height, PixelFormat.Format32bppArgb);
 			Graphics gr = Graphics.FromImage(bmp);
@@ -278,7 +278,7 @@ namespace System.Drawing
 			
 			imageAttr.SetColorKey(transparentColor,	transparentColor);
 
-			gr.DrawImage (this, destRect, 0, 0, Width, Height, GraphicsUnit.Pixel, imageAttr);					
+			gr.DrawImage (this, destRect, 0, 0, Width, Height, GraphicsUnit.Pixel, imageAttr);
 			
 			IntPtr oldBmp = nativeObject;
 			nativeObject = bmp.nativeObject;
@@ -295,9 +295,9 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
-		public void UnlockBits (BitmapData bitmap_data)
+		public void UnlockBits (BitmapData bitmapdata)
 		{
-			Status status = GDIPlus.GdipBitmapUnlockBits (nativeObject, bitmap_data);
+			Status status = GDIPlus.GdipBitmapUnlockBits (nativeObject, bitmapdata);
 			GDIPlus.CheckStatus (status);
 		}
 	}

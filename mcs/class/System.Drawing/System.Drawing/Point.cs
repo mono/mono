@@ -38,7 +38,7 @@ using System.ComponentModel;
 
 namespace System.Drawing
 {
-	[Serializable]	
+	[Serializable]
 	[ComVisible (true)]
 	[TypeConverter (typeof (PointConverter))]
 	public struct Point
@@ -146,9 +146,9 @@ namespace System.Drawing
 		///	of the two points.
 		/// </remarks>
 
-		public static bool operator == (Point pt_a, Point pt_b)
+		public static bool operator == (Point left, Point right)
 		{
-			return ((pt_a.X == pt_b.X) && (pt_a.Y == pt_b.Y));
+			return ((left.X == right.X) && (left.Y == right.Y));
 		}
 		
 		/// <summary>
@@ -161,9 +161,9 @@ namespace System.Drawing
 		///	of the two points.
 		/// </remarks>
 
-		public static bool operator != (Point pt_a, Point pt_b)
+		public static bool operator != (Point left, Point right)
 		{
-			return ((pt_a.X != pt_b.X) || (pt_a.Y != pt_b.Y));
+			return ((left.X != right.X) || (left.Y != right.Y));
 		}
 		
 		/// <summary>
@@ -189,9 +189,9 @@ namespace System.Drawing
 		///	Point. Requires explicit cast.
 		/// </remarks>
 
-		public static explicit operator Size (Point pt)
+		public static explicit operator Size (Point p)
 		{
-			return new Size (pt.X, pt.Y);
+			return new Size (p.X, p.Y);
 		}
 
 		/// <summary>
@@ -203,9 +203,9 @@ namespace System.Drawing
 		///	Point. No explicit cast is required.
 		/// </remarks>
 
-		public static implicit operator PointF (Point pt)
+		public static implicit operator PointF (Point p)
 		{
-			return new PointF (pt.X, pt.Y);
+			return new PointF (p.X, p.Y);
 		}
 
 
@@ -318,12 +318,12 @@ namespace System.Drawing
 		///	Checks equivalence of this Point and another object.
 		/// </remarks>
 		
-		public override bool Equals (object o)
+		public override bool Equals (object obj)
 		{
-			if (!(o is Point))
+			if (!(obj is Point))
 				return false;
 
-			return (this == (Point) o);
+			return (this == (Point) obj);
 		}
 
 		/// <summary>
@@ -366,6 +366,7 @@ namespace System.Drawing
 			return string.Format ("{{X={0},Y={1}}}", x.ToString (CultureInfo.InvariantCulture), 
 				y.ToString (CultureInfo.InvariantCulture));
 		}
+
 #if NET_2_0
 		public static Point Add (Point pt, Size sz)
 		{
@@ -382,6 +383,5 @@ namespace System.Drawing
 			return new Point (pt.X - sz.Width, pt.Y - sz.Height);
 		}
 #endif
-
 	}
 }

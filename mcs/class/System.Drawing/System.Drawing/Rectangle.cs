@@ -138,12 +138,12 @@ namespace System.Drawing
 		///	Inflates the Rectangle by a specified Size.
 		/// </remarks>
 		
-		public void Inflate (Size sz)
+		public void Inflate (Size size)
 		{
-			x -= sz.Width;
-			y -= sz.Height;
-			Width += sz.Width * 2;
-			Height += sz.Height * 2;
+			x -= size.Width;
+			y -= size.Height;
+			Width += size.Width * 2;
+			Height += size.Height * 2;
 		}
 
 		/// <summary>
@@ -155,18 +155,18 @@ namespace System.Drawing
 		///	Rectangles. Returns null if there is no	intersection.
 		/// </remarks>
 		
-		public static Rectangle Intersect (Rectangle r1, Rectangle r2)
+		public static Rectangle Intersect (Rectangle a, Rectangle b)
 		{
 			// MS.NET returns a non-empty rectangle if the two rectangles
 			// touch each other
-			if (!r1.IntersectsWithInclusive (r2))
+			if (!a.IntersectsWithInclusive (b))
 				return Empty;
 
 			return Rectangle.FromLTRB (
-				Math.Max (r1.Left, r2.Left),
-				Math.Max (r1.Top, r2.Top),
-				Math.Min (r1.Right, r2.Right),
-				Math.Min (r1.Bottom, r2.Bottom));
+				Math.Max (a.Left, b.Left),
+				Math.Max (a.Top, b.Top),
+				Math.Min (a.Right, b.Right),
+				Math.Min (a.Bottom, b.Bottom));
 		}
 
 		/// <summary>
@@ -178,9 +178,9 @@ namespace System.Drawing
 		///	and another Rectangle.
 		/// </remarks>
 		
-		public void Intersect (Rectangle r)
+		public void Intersect (Rectangle rect)
 		{
-			this = Rectangle.Intersect (this, r);
+			this = Rectangle.Intersect (this, rect);
 		}
 
 		/// <summary>
@@ -238,12 +238,12 @@ namespace System.Drawing
 		///	Rectangles.
 		/// </remarks>
 		
-		public static Rectangle Union (Rectangle r1, Rectangle r2)
+		public static Rectangle Union (Rectangle a, Rectangle b)
 		{
-			return FromLTRB (Math.Min (r1.Left, r2.Left),
-					 Math.Min (r1.Top, r2.Top),
-					 Math.Max (r1.Right, r2.Right),
-					 Math.Max (r1.Bottom, r2.Bottom));
+			return FromLTRB (Math.Min (a.Left, b.Left),
+					 Math.Min (a.Top, b.Top),
+					 Math.Max (a.Right, b.Right),
+					 Math.Max (a.Bottom, b.Bottom));
 		}
 
 		/// <summary>
@@ -256,10 +256,10 @@ namespace System.Drawing
 		///	properties of the two Rectangles.
 		/// </remarks>
 
-		public static bool operator == (Rectangle r1, Rectangle r2)
+		public static bool operator == (Rectangle left, Rectangle right)
 		{
-			return ((r1.Location == r2.Location) && 
-				(r1.Size == r2.Size));
+			return ((left.Location == right.Location) &&
+				(left.Size == right.Size));
 		}
 		
 		/// <summary>
@@ -272,10 +272,10 @@ namespace System.Drawing
 		///	properties of the two Rectangles.
 		/// </remarks>
 
-		public static bool operator != (Rectangle r1, Rectangle r2)
+		public static bool operator != (Rectangle left, Rectangle right)
 		{
-			return ((r1.Location != r2.Location) || 
-				(r1.Size != r2.Size));
+			return ((left.Location != right.Location) ||
+				(left.Size != right.Size));
 		}
 		
 
@@ -291,12 +291,12 @@ namespace System.Drawing
 		///	Creates a Rectangle from Point and Size values.
 		/// </remarks>
 		
-		public Rectangle (Point loc, Size sz)
+		public Rectangle (Point location, Size size)
 		{
-			x = loc.X;
-			y = loc.Y;
-			width = sz.Width;
-			height = sz.Height;
+			x = location.X;
+			y = location.Y;
+			width = size.Width;
+			height = size.Height;
 		}
 
 		/// <summary>
@@ -315,8 +315,6 @@ namespace System.Drawing
 			this.width = width;
 			this.height = height;
 		}
-
-
 
 		/// <summary>
 		///	Bottom Property
@@ -551,12 +549,12 @@ namespace System.Drawing
 		///	Checks equivalence of this Rectangle and another object.
 		/// </remarks>
 		
-		public override bool Equals (object o)
+		public override bool Equals (object obj)
 		{
-			if (!(o is Rectangle))
+			if (!(obj is Rectangle))
 				return false;
 
-			return (this == (Rectangle) o);
+			return (this == (Rectangle) obj);
 		}
 
 		/// <summary>
@@ -580,10 +578,10 @@ namespace System.Drawing
 		///	Checks if a Rectangle intersects with this one.
 		/// </remarks>
 		
-		public bool IntersectsWith (Rectangle r)
+		public bool IntersectsWith (Rectangle rect)
 		{
-			return !((Left >= r.Right) || (Right <= r.Left) ||
-			    (Top >= r.Bottom) || (Bottom <= r.Top));
+			return !((Left >= rect.Right) || (Right <= rect.Left) ||
+			    (Top >= rect.Bottom) || (Bottom <= rect.Top));
 		}
 
 		private bool IntersectsWithInclusive (Rectangle r)
@@ -600,10 +598,10 @@ namespace System.Drawing
 		///	Moves the Rectangle a specified distance.
 		/// </remarks>
 
-		public void Offset (int dx, int dy)
+		public void Offset (int x, int y)
 		{
-			x += dx;
-			y += dy;
+			x += x;
+			y += y;
 		}
 		
 		/// <summary>
@@ -614,10 +612,10 @@ namespace System.Drawing
 		///	Moves the Rectangle a specified distance.
 		/// </remarks>
 
-		public void Offset (Point pt)
+		public void Offset (Point pos)
 		{
-			x += pt.X;
-			y += pt.Y;
+			x += pos.X;
+			y += pos.Y;
 		}
 		
 		/// <summary>

@@ -41,9 +41,9 @@ using System.Security.Permissions;
 namespace System.Drawing
 {
 #if !NET_2_0
-	[ComVisible (false)] 
+	[ComVisible (false)]
 #endif 
-	[Serializable]	
+	[Serializable]
 	[Editor ("System.Drawing.Design.IconEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
 	[TypeConverter(typeof(IconConverter))]
 	public sealed class Icon : MarshalByRefObject, ISerializable, ICloneable, IDisposable
@@ -89,7 +89,7 @@ namespace System.Drawing
 			internal uint []		iconColors;	//colors table
 			internal byte []		iconXOR;	// bits for XOR mask
 			internal byte []		iconAND;	//bits for AND mask
-		};	
+		};
 
 		private Size iconSize;
 		private IntPtr handle = IntPtr.Zero;
@@ -227,7 +227,7 @@ namespace System.Drawing
 				dataStream.Seek (0, SeekOrigin.Begin);
 				InitFromStreamWithSize (dataStream, width, height);
 			}
-                }
+		}
 
 		internal Icon (string resourceName, bool undisposable)
 		{
@@ -241,12 +241,12 @@ namespace System.Drawing
 			this.undisposable = true;
 		}
 
-		void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+		void ISerializable.GetObjectData(SerializationInfo si, StreamingContext context)
 		{
 			MemoryStream ms = new MemoryStream ();
 			Save (ms);
-			info.AddValue ("IconSize", this.Size, typeof (Size));
-			info.AddValue ("IconData", ms.ToArray ());
+			si.AddValue ("IconSize", this.Size, typeof (Size));
+			si.AddValue ("IconData", ms.ToArray ());
 		}
 
 #if NET_2_0
@@ -278,7 +278,7 @@ namespace System.Drawing
 				throw new FileNotFoundException (Locale.GetText ("Couldn't find specified file."), filePath);
 
 			return SystemIcons.WinLogo;
-		}	
+		}
 #endif
 
 		public void Dispose ()
@@ -583,7 +583,7 @@ namespace System.Drawing
 		public override string ToString ()
 		{
 			//is this correct, this is what returned by .Net
-			return "<Icon>";			
+			return "<Icon>";
 		}
 
 		[Browsable (false)]
@@ -630,7 +630,7 @@ namespace System.Drawing
 		{
 			Dispose ();
 		}
-			
+
 		private void InitFromStreamWithSize (Stream stream, int width, int height)
 		{
 			//read the icon header
@@ -794,7 +794,7 @@ Console.WriteLine ("\tbih.biClrImportant: {0}", bih.biClrImportant);
 				
 				imageData [j] = iidata;
 				bihReader.Close();
-			}			
+			}
 
 			reader.Close();
 		}

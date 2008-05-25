@@ -1,3 +1,39 @@
+2008-05-25  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Bitmap.cs: Changed argument names to match MS. Changed spaces to
+	tabs, and removed extra tabs.
+	* CharacterRange.cs: Changed argument names to match MS. 
+	* Color.cs: Changed argument names to match MS.
+	* Font.cs: Changed argument names to match MS. Code formatting.
+	* FontFamily.cs: Changed argument names to match MS. Changed spaces to
+	tabs, and removed extra tabs.
+	* Graphics.cs: Changed argument names to match MS. Changed spaces to
+	tabs, and removed extra tabs.
+	* Image.cs: Changed argument names to match MS. Changed spaces to tabs
+	and removed extra tabs. Code formatting.
+	* Icon.cs: Changed argument names to match MS. Changes spaces to tabs,
+	and removed extra tabs.
+	* IconConverter.cs: Changed argument names to match MS.
+	* ImageAnimator.cs: Code formatting. Changed argument names to match
+	MS.
+	* ImageConverter.cs: Changed argument names to match MS. Avoid double
+	cast in ConvertTo. Changed spaces to tabs, and removed extra tabs.
+	* ImageFormatConverter.cs: Changed argument names to match MS.
+	* Point.cs: Changed argument names to match MS.
+	* PointF.cs: Changed argument names to match MS.
+	* Rectangle.cs: Changed argument names to match MS. Changed spaces to
+	tabs, and removed extra tabs.
+	* RectangleF.cs: Changed argument names to match MS. Changed spaces to
+	tabs, and removed extra tabs.
+	* Region.cs: Changed argument names to match MS. Changed spaces to
+	tabs, and removed extra tabs.
+	* Size.cs: Changed argument names to match MS.
+	* SizeF.cs: Changed argument names to match MS.
+	* StringFormat.cs: Changed argument names to match MS. Changed spaces
+	to tabs, and removed extra tabs.
+	* SystemFonts.cs: Changed argument names to match MS. Code formatting.
+	* TextureBrush.cs: Changed argument names to match MS.
+
 2008-05-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CharacterRange.cs,

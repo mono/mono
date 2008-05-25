@@ -27,10 +27,10 @@
 
 #if NET_2_0
 
-namespace System.Drawing {
-
-	public sealed class SystemFonts {
-		
+namespace System.Drawing
+{
+	public sealed class SystemFonts
+	{
 		static SystemFonts ()
 		{
 		}
@@ -39,66 +39,66 @@ namespace System.Drawing {
 		{
 		}
 
-		public static Font GetFontByName (string name)
+		public static Font GetFontByName (string systemFontName)
 		{
-			if (name == "CaptionFont")
+			if (systemFontName == "CaptionFont")
 				return CaptionFont;
 
-			if (name == "DefaultFont")
+			if (systemFontName == "DefaultFont")
 				return DefaultFont;
 
-			if (name == "DialogFont")
-				return DialogFont;	
+			if (systemFontName == "DialogFont")
+				return DialogFont;
 
-			if (name == "IconTitleFont")
+			if (systemFontName == "IconTitleFont")
 				return IconTitleFont;
 
-			if (name == "MenuFont")
+			if (systemFontName == "MenuFont")
 				return MenuFont;
 
-			if (name == "MessageBoxFont")
+			if (systemFontName == "MessageBoxFont")
 				return MessageBoxFont;
 
-			if (name == "SmallCaptionFont")
+			if (systemFontName == "SmallCaptionFont")
 				return SmallCaptionFont;
 
-			if (name == "StatusFont")
-				return StatusFont;			
+			if (systemFontName == "StatusFont")
+				return StatusFont;
 			
 			return null;
 		}
 
-		public static Font CaptionFont { 
+		public static Font CaptionFont {
 			get { return new Font ("Microsoft Sans Serif", 11, "CaptionFont"); }
 		}
 
-		public static Font DefaultFont  { 
+		public static Font DefaultFont {
 			get { return new Font ("Microsoft Sans Serif", 8.25f, "DefaultFont"); }
 		}
 
-		public static Font DialogFont  { 
+		public static Font DialogFont  {
 			get { return new Font ("Tahoma", 8, "DialogFont"); }
 		}
 
-		public static Font IconTitleFont  { 
+		public static Font IconTitleFont {
 			get { return new Font ("Microsoft Sans Serif", 11, "IconTitleFont"); }
 		}
 
-		public static Font MenuFont  { 
+		public static Font MenuFont {
 			get { return new Font ("Microsoft Sans Serif", 11, "MenuFont"); }
 		}
 
-		public static Font MessageBoxFont  { 
+		public static Font MessageBoxFont {
 			get { return new Font ("Microsoft Sans Serif", 11, "MessageBoxFont"); }
 		}
 
-		public static Font SmallCaptionFont  { 
+		public static Font SmallCaptionFont {
 			get { return new Font ("Microsoft Sans Serif", 11, "SmallCaptionFont"); }
 		}
 
-		public static Font StatusFont  { 
+		public static Font StatusFont {
 			get { return new Font ("Microsoft Sans Serif", 11, "StatusFont"); }
-		}	      
+		}
 	}
 }
 
