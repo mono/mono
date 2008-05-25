@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections;
+using System.Reflection;
 
 using System.IO;
 using System.Runtime.Serialization;
@@ -298,15 +299,11 @@ public class HashtableTest : Assertion {
 		public int GetHashCode (object obj) { return 1; }
 	}
 
-	public class MyHashtable : Hashtable {
-		public MyHashtable (IEqualityComparer c): base (c){}
-
-		public IEqualityComparer GetComparer ()
-		{
-			return EqualityComparer;
-		}
+	static IEqualityComparer GetEqualityComparer (Hashtable h)
+	{
+		return (IEqualityComparer) typeof (Hashtable).GetField ("equalityComparer",
+			BindingFlags.NonPublic | BindingFlags.Instance).GetValue (h);
 	}
-	
 #endif
 	
         [Test]
@@ -350,10 +347,13 @@ public class HashtableTest : Assertion {
 #if NET_2_0
 			// NET 2.0 stuff
 			MyEqualityComparer a = new MyEqualityComparer ();
-			MyHashtable mh1 = new MyHashtable (a);
-			MyHashtable mh2 = (MyHashtable) h1.Clone ();
+			Hashtable mh1 = new Hashtable (a);
+			Hashtable mh1clone = (Hashtable) mh1.Clone ();
 			
-			AssertEquals ("EqualityComparer", mh1.GetComparer (), mh2.GetComparer ());
+			// warning, depends on the field name.
+			AssertEquals ("EqualityComparer",
+				GetEqualityComparer (mh1),
+				GetEqualityComparer (mh1clone));
 #endif
 		}
 	}
