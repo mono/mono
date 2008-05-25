@@ -1,3 +1,9 @@
+2008-05-25  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* GraphicsPath.cs: Changed argument names to match MS. Changed spaces
+	to tabs, and removed extra tabs.
+	* HatchBrush.cs: Changed argument names to match MS.
+
 2007-11-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* GraphicsPath.cs : AddBeziers(Point[]) arg is "params" in 2.0.
