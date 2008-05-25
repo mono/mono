@@ -1,5 +1,11 @@
 2008-05-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* TabControl.cs: Only clicks with the left button should be
+	handled.
+	Fixes #393908.
+
+2008-05-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ComboBox.cs: 
 	* FIleDialog.cs:
 	* TextBox.cs: Expose an internal method in TextBox to restore the

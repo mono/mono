@@ -847,6 +847,9 @@ namespace System.Windows.Forms {
 
 		private void MouseDownHandler (object sender, MouseEventArgs e)
 		{
+			if ((e.Button & MouseButtons.Left) == 0)
+				return;
+
 			if (ShowSlider) {
 				Rectangle right = ThemeEngine.Current.TabControlGetRightScrollRect (this);
 				Rectangle left = ThemeEngine.Current.TabControlGetLeftScrollRect (this);
