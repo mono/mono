@@ -1,5 +1,8 @@
 2008-05-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c (mono_class_inflate_generic_method_full): Don't increase
+	mono_stats.inflated_method_count for methods found in the cache.
+
 	* threads.c (mono_thread_request_interruption): Add a comment about 
 	QueueUserAPC ().
 
