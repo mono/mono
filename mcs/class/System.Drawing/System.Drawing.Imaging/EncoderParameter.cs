@@ -36,11 +36,11 @@ using System.Text;
 
 using System.Runtime.InteropServices;
 
-namespace System.Drawing.Imaging
-{
+namespace System.Drawing.Imaging {
+
 	[StructLayout(LayoutKind.Sequential)]
-	public sealed class EncoderParameter : IDisposable
-	{
+	public sealed class EncoderParameter : IDisposable {
+
 		private Encoder encoder;
 		private int valuesCount;
 		private EncoderParameterValueType type;
@@ -146,13 +146,13 @@ namespace System.Drawing.Imaging
 			Marshal.Copy (value, 0, this.valuePtr, valuesCount);
 		}
 
-		public EncoderParameter (Encoder encoder, int numerator, int demoninator)
+		public EncoderParameter (Encoder encoder, int numerator, int denominator)
 		{
 			this.encoder = encoder;
 			this.valuesCount = 1;
 			this.type = EncoderParameterValueType.ValueTypeRational;
 			this.valuePtr = Marshal.AllocHGlobal (8);
-			int [] valuearray = { numerator, demoninator };
+			int [] valuearray = { numerator, denominator };
 			Marshal.Copy (valuearray, 0, this.valuePtr, valuearray.Length);
 		}
 
@@ -198,25 +198,25 @@ namespace System.Drawing.Imaging
 			}
 		}
 
-		public EncoderParameter (Encoder encoder, int NumberOfValues, int Type, int Value)
+		public EncoderParameter (Encoder encoder, int numberOfValues, int type, int value)
 		{
 			this.encoder = encoder;
-			this.valuePtr = (IntPtr) Value;
-			this.valuesCount = NumberOfValues;
-			this.type = (EncoderParameterValueType) Type;
+			this.valuePtr = (IntPtr) value;
+			this.valuesCount = numberOfValues;
+			this.type = (EncoderParameterValueType) type;
 		}
 
-		public EncoderParameter (Encoder encoder, int numerator1, int demoninator1, int numerator2, int demoninator2)
+		public EncoderParameter (Encoder encoder, int numerator1, int denominator1, int numerator2, int denominator2)
 		{
 			this.encoder = encoder;
 			this.valuesCount = 1;
 			this.type = EncoderParameterValueType.ValueTypeRationalRange;
 			this.valuePtr = Marshal.AllocHGlobal (4 * 4);
-			int [] valuearray = { numerator1, demoninator1, numerator2, demoninator2 };
+			int [] valuearray = { numerator1, denominator1, numerator2, denominator2 };
 			Marshal.Copy (valuearray, 0, this.valuePtr, 4);
 		}
 
-		public EncoderParameter (Encoder encoder, int [] numerator1, int [] denominator1, int [] numerator2, int [] denominator2)
+		public EncoderParameter (Encoder encoder, int[] numerator1, int[] denominator1, int[] numerator2, int[] denominator2)
 		{
 			if (numerator1.Length != denominator1.Length ||
 			    numerator2.Length != denominator2.Length ||
@@ -230,10 +230,10 @@ namespace System.Drawing.Imaging
 			this.valuePtr = Marshal.AllocHGlobal (4 * valuesCount * 4);
 			IntPtr dest = this.valuePtr;
 			for (int i = 0; i < valuesCount; i++) {
-				Marshal.WriteInt32 (dest, i * 4, numerator1 [i]);
-				Marshal.WriteInt32 (dest, (i + 1) * 4, denominator1 [i]);
-				Marshal.WriteInt32 (dest, (i + 2) * 4, numerator2 [i]);
-				Marshal.WriteInt32 (dest, (i + 3) * 4, denominator2 [i]);
+				Marshal.WriteInt32 (dest, i * 4, numerator1[i]);
+				Marshal.WriteInt32 (dest, (i + 1) * 4, denominator1[i]);
+				Marshal.WriteInt32 (dest, (i + 2) * 4, numerator2[i]);
+				Marshal.WriteInt32 (dest, (i + 3) * 4, denominator2[i]);
 			}
 		}
 
@@ -241,6 +241,7 @@ namespace System.Drawing.Imaging
 			get {
 				return encoder;
 			}
+
 			set {
 				encoder = value;
 			}
@@ -264,32 +265,27 @@ namespace System.Drawing.Imaging
 			}
 		}
 
-		void Dispose (bool disposing)
-		{
+		void Dispose (bool disposing) {
 			if (valuePtr != IntPtr.Zero) {
 				Marshal.FreeHGlobal (valuePtr);
 				valuePtr = IntPtr.Zero;
 			}
 		}
 
-		public void Dispose ()
-		{
-			Dispose (true);
+		public void Dispose () {
+			Dispose (true);		
 			GC.SuppressFinalize(this);
 		}
 
-		~EncoderParameter ()
-		{
+		~EncoderParameter () {
 			Dispose (false);
 		}
 
-		internal static int NativeSize ()
-		{
+		internal static int NativeSize () {
 			return Marshal.SizeOf (typeof(GdipEncoderParameter));
 		}
 
-		internal void ToNativePtr (IntPtr epPtr)
-		{
+		internal void ToNativePtr (IntPtr epPtr) {
 			GdipEncoderParameter ep = new GdipEncoderParameter ();
 			ep.guid = this.encoder.Guid;
 			ep.numberOfValues = (uint) this.valuesCount;
@@ -298,8 +294,7 @@ namespace System.Drawing.Imaging
 			Marshal.StructureToPtr (ep, epPtr, false);
 		}
 
-		internal static EncoderParameter FromNativePtr (IntPtr epPtr)
-		{
+		internal static EncoderParameter FromNativePtr (IntPtr epPtr) {
 			GdipEncoderParameter ep;
 			ep = (GdipEncoderParameter) Marshal.PtrToStructure (epPtr, typeof(GdipEncoderParameter));
 

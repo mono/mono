@@ -37,17 +37,18 @@ namespace System.Drawing {
 
 	public sealed class FontFamily : MarshalByRefObject, IDisposable 
 	{
+		
 		static private FontFamily genericMonospace;
 		static private FontFamily genericSansSerif;
 		static private FontFamily genericSerif;
 		private string name;
 		private IntPtr nativeFontFamily = IntPtr.Zero;
-
+				
 		internal FontFamily(IntPtr fntfamily)
 		{
-			nativeFontFamily = fntfamily;
+			nativeFontFamily = fntfamily;		
 		}
-
+		
 		internal void refreshName()
 		{
 			StringBuilder sb;
@@ -66,8 +67,10 @@ namespace System.Drawing {
 			Dispose ();
 		}
 
-		internal IntPtr NativeObject {
-			get {
+		internal IntPtr NativeObject
+		{            
+			get	
+			{
 				return nativeFontFamily;
 			}
 		}
@@ -83,21 +86,21 @@ namespace System.Drawing {
 					status = GDIPlus.GdipGetGenericFontFamilySerif (out nativeFontFamily);
 					break;
 				case GenericFontFamilies.Monospace:
-				default:	// Undocumented default
+				default:	// Undocumented default 
 					status = GDIPlus.GdipGetGenericFontFamilyMonospace (out nativeFontFamily);
 					break;
 			}
 			GDIPlus.CheckStatus (status);
 		}
 		
-		public FontFamily(string name) : this (name, null)
-		{
+		public FontFamily(string familyName) : this (familyName, null)
+		{			
 		}
 		
-		public FontFamily (string name, FontCollection fontCollection)
+		public FontFamily (string familyName, FontCollection collection) 
 		{
-			IntPtr handle = (fontCollection == null) ? IntPtr.Zero : fontCollection.nativeFontCollection;
-			Status status = GDIPlus.GdipCreateFontFamilyFromName (name, handle, out nativeFontFamily);
+			IntPtr handle = (collection == null) ? IntPtr.Zero : collection.nativeFontCollection;
+			Status status = GDIPlus.GdipCreateFontFamilyFromName (familyName, handle, out nativeFontFamily);
 			GDIPlus.CheckStatus (status);
 		}
 		
@@ -154,7 +157,7 @@ namespace System.Drawing {
 		{
 			short outProperty;
 			Status status = GDIPlus.GdipGetLineSpacing (nativeFontFamily, (int)style, out outProperty);
-			GDIPlus.CheckStatus (status);
+			GDIPlus.CheckStatus (status);	
 
 			return (int) outProperty;
 		}
@@ -178,7 +181,7 @@ namespace System.Drawing {
 				// check the status code (throw) at the last step
 				GDIPlus.CheckStatus (status);
 			}
-		}
+		}		
 		
 		public override bool Equals (object obj)
 		{
@@ -191,12 +194,13 @@ namespace System.Drawing {
 		
 		public override int GetHashCode ()
 		{
-			return Name.GetHashCode ();
+			return Name.GetHashCode ();			
 		}
-
+			
+			
 		public static FontFamily[] Families {
 			get { return new InstalledFontCollection ().Families; }
-		}
+		}		
 		
 		public static FontFamily[] GetFamilies (Graphics graphics)
 		{
@@ -204,7 +208,7 @@ namespace System.Drawing {
 				throw new ArgumentNullException ("graphics");
 
 			InstalledFontCollection fntcol = new InstalledFontCollection ();
-			return fntcol.Families;
+			return fntcol.Families;			
 		}
 		
 		[MonoLimitation ("The language parameter is ignored. We always return the name using the default system language.")]
@@ -219,3 +223,4 @@ namespace System.Drawing {
 		}
 	}
 }
+

@@ -37,54 +37,56 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 
-namespace System.Drawing
-{
+namespace System.Drawing {
+	/// <summary>
+	/// Summary description for IconConverter.
+	/// </summary>
 	public class IconConverter : ExpandableObjectConverter
 	{
 		public IconConverter()
 		{
 		}
 
-		public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
+		public override bool CanConvertFrom (ITypeDescriptorContext context, Type srcType)
 		{
-			if (sourceType == typeof (Byte []))
+			if (srcType == typeof (System.Byte[]))
 				return true;
 			else
 				return false;
 		}
 
-		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
+		public override bool CanConvertTo (ITypeDescriptorContext context, Type destType)
 		{
-			if ((destinationType == typeof (Byte [])) || (destinationType == typeof (String)))
+			if ((destType == typeof (System.Byte[])) || (destType == typeof (System.String)))
 				return true;
 			else
 				return false;
 		}
 		
-		public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object value)
+		public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object val)
 		{
-			byte [] bytes = value as byte [];
+			byte [] bytes = val as byte [];
 			if (bytes == null)
-				return base.ConvertFrom (context, culture, value);
-
+				return base.ConvertFrom (context, culture, val);
+			
 			MemoryStream ms = new MemoryStream (bytes);
-
-			return new Icon (ms);
+			
+			return new Icon (ms);				
 		}
 
-		public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
+		public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object val, Type destType )
 		{
-			if ((value is Icon) && (destinationType == typeof (string)))
-				return value.ToString ();
-			else if (value == null && destinationType == typeof (string))
+			if ((val is Icon) && (destType == typeof (string)))
+				return val.ToString ();
+			else if (val == null && destType == typeof (string))
 				return "(none)";
-			else if (CanConvertTo (null, destinationType)) {
+			else if (CanConvertTo (null, destType)) {
 				//came here means destType is byte array ;
 				MemoryStream ms = new MemoryStream ();
-				((Icon) value).Save (ms);
+				((Icon)val).Save (ms);
 				return ms.GetBuffer ();
 			}else
-				return new NotSupportedException ("IconConverter can not convert from " + value.GetType ());
+				return new NotSupportedException ("IconConverter can not convert from " + val.GetType ());				
 		}
 	}
 }

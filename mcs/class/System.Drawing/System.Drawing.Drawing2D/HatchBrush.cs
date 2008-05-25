@@ -40,20 +40,19 @@ namespace System.Drawing.Drawing2D
 	/// </summary>
 	public sealed class HatchBrush : Brush 
 	{
+
 		internal HatchBrush (IntPtr ptr) : base (ptr)
 		{
 		}
 
-		public HatchBrush (HatchStyle hatchstyle, Color foreColor)
-			: this (hatchstyle, foreColor, Color.Black)
+		public HatchBrush (HatchStyle hatchStyle, Color foreColor)
+					: this (hatchStyle, foreColor, Color.Black)
 		{
 		}
 
-		public HatchBrush (HatchStyle hatchstyle, Color foreColor, Color backColor)
+		public HatchBrush(HatchStyle hatchStyle, Color foreColor, Color backColor)
 		{
-			Status status = GDIPlus.GdipCreateHatchBrush (hatchstyle,
-				foreColor.ToArgb (), backColor.ToArgb (),
-				out nativeObject);
+			Status status = GDIPlus.GdipCreateHatchBrush (hatchStyle, foreColor.ToArgb (), backColor.ToArgb (), out nativeObject);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -93,5 +92,6 @@ namespace System.Drawing.Drawing2D
 			HatchBrush clone = new HatchBrush (clonePtr);
 			return clone;
 		}
+
 	}
 }

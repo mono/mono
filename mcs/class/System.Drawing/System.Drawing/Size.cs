@@ -42,7 +42,8 @@ namespace System.Drawing
 	[ComVisible (true)]
 	[TypeConverter (typeof (SizeConverter))]
 	public struct Size
-	{
+	{ 
+		
 		// Private Height and width fields.
 		private int width, height;
 
@@ -144,10 +145,10 @@ namespace System.Drawing
 		///	properties of the two Sizes.
 		/// </remarks>
 
-		public static bool operator == (Size sz1, Size sz2)
+		public static bool operator == (Size sz_a, Size sz_b)
 		{
-			return ((sz1.Width == sz2.Width) &&
-				(sz1.Height == sz2.Height));
+			return ((sz_a.Width == sz_b.Width) && 
+				(sz_a.Height == sz_b.Height));
 		}
 		
 		/// <summary>
@@ -160,10 +161,10 @@ namespace System.Drawing
 		///	properties of the two Sizes.
 		/// </remarks>
 
-		public static bool operator != (Size sz1, Size sz2)
+		public static bool operator != (Size sz_a, Size sz_b)
 		{
-			return ((sz1.Width != sz2.Width) ||
-				(sz1.Height != sz2.Height));
+			return ((sz_a.Width != sz_b.Width) || 
+				(sz_a.Height != sz_b.Height));
 		}
 		
 		/// <summary>
@@ -189,9 +190,9 @@ namespace System.Drawing
 		///	Size. Requires explicit cast.
 		/// </remarks>
 
-		public static explicit operator Point (Size size)
+		public static explicit operator Point (Size sz)
 		{
-			return new Point (size.Width, size.Height);
+			return new Point (sz.Width, sz.Height);
 		}
 
 		/// <summary>
@@ -203,10 +204,11 @@ namespace System.Drawing
 		///	Size. No explicit cast is required.
 		/// </remarks>
 
-		public static implicit operator SizeF (Size p)
+		public static implicit operator SizeF (Size sz)
 		{
-			return new SizeF (p.Width, p.Height);
+			return new SizeF (sz.Width, sz.Height);
 		}
+
 
 		// -----------------------
 		// Public Constructors
@@ -301,12 +303,12 @@ namespace System.Drawing
 		///	Checks equivalence of this Size and another object.
 		/// </remarks>
 		
-		public override bool Equals (object obj)
+		public override bool Equals (object o)
 		{
-			if (!(obj is Size))
+			if (!(o is Size))
 				return false;
 
-			return (this == (Size) obj);
+			return (this == (Size) o);
 		}
 
 		/// <summary>
@@ -349,5 +351,6 @@ namespace System.Drawing
 					 sz1.Height - sz2.Height);
 		}
 #endif
+
 	}
 }

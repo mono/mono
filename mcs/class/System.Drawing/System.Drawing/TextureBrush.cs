@@ -33,17 +33,17 @@ using System.ComponentModel;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 
-namespace System.Drawing
-{
-	public sealed class TextureBrush : Brush
-	{
+namespace System.Drawing {
+
+	public sealed class TextureBrush : Brush {
+
 		internal TextureBrush (IntPtr ptr) :
 			base (ptr)
 		{
 		}
 
-		public TextureBrush (Image bitmap) :
-			this (bitmap, WrapMode.Tile)
+		public TextureBrush (Image image) :
+			this (image, WrapMode.Tile)
 		{
 		}
 

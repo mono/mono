@@ -47,7 +47,7 @@ namespace System.Drawing
 [Editor ("System.Drawing.Design.ImageEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
 [TypeConverter (typeof(ImageConverter))]
 [ImmutableObject (true)]
-public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISerializable
+public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISerializable 
 {
 	public delegate bool GetThumbnailImageAbort();
 	private object tag;
@@ -60,7 +60,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	
 	// constructor
 	internal  Image()
-	{
+	{	
 	}
 	
 	internal Image (SerializationInfo info, StreamingContext context)
@@ -81,7 +81,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	}
 
 	// FIXME - find out how metafiles (another decoder-only codec) are handled
-	void ISerializable.GetObjectData (SerializationInfo si, StreamingContext context)
+	void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 	{
 		using (MemoryStream ms = new MemoryStream ()) {
 			// Icon is a decoder-only codec
@@ -90,17 +90,17 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			} else {
 				Save (ms, RawFormat);
 			}
-			si.AddValue ("Data", ms.ToArray ());
+			info.AddValue ("Data", ms.ToArray ());
 		}
 	}
-
+    
 	// public methods
 	// static
 	public static Image FromFile(string filename)
 	{
 		return FromFile (filename, false);
 	}
-
+	
 	public static Image FromFile(string filename, bool useEmbeddedColorManagement)
 	{
 		IntPtr imagePtr;
@@ -124,7 +124,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	}
 
 	public static Bitmap FromHbitmap(IntPtr hbitmap, IntPtr hpalette)
-	{
+	{		
 		IntPtr imagePtr;
 		Status st;
 
@@ -141,15 +141,15 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		return LoadFromStream (stream, false);
 	}
 
-	[MonoLimitation ("useEmbeddedColorManagement isn't supported.")]
-	public static Image FromStream (Stream stream, bool useEmbeddedColorManagement)
+	[MonoLimitation ("useECM isn't supported.")]	
+	public static Image FromStream (Stream stream, bool useECM)
 	{
 		return LoadFromStream (stream, false);
 	}
 
 	// See http://support.microsoft.com/default.aspx?scid=kb;en-us;831419 for performance discussion	
-	[MonoLimitation ("useEmbeddedColorManagement and validateImageData aren't supported.")]
-	public static Image FromStream (Stream stream, bool useEmbeddedColorManagement, bool validateImageData)
+	[MonoLimitation ("useECM and validateImageData aren't supported.")]	
+	public static Image FromStream (Stream stream, bool useECM, bool validateImageData)
 	{
 		return LoadFromStream (stream, false);
 	}
@@ -301,28 +301,28 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 
 	// non-static	
 	public RectangleF GetBounds (ref GraphicsUnit pageUnit)
-	{
-		RectangleF source;
+	{	
+		RectangleF source;			
 		
 		Status status = GDIPlus.GdipGetImageBounds (nativeObject, out source, ref pageUnit);
-		GDIPlus.CheckStatus (status);
+		GDIPlus.CheckStatus (status);		
 		
 		return source;
 	}
 	
-	public EncoderParameters GetEncoderParameterList(Guid encoder)
+	public EncoderParameters GetEncoderParameterList(Guid format)
 	{
 		Status status;
 		uint sz;
 
-		status = GDIPlus.GdipGetEncoderParameterListSize (nativeObject, ref encoder, out sz);
+		status = GDIPlus.GdipGetEncoderParameterListSize (nativeObject, ref format, out sz);
 		GDIPlus.CheckStatus (status);
 
 		IntPtr rawEPList = Marshal.AllocHGlobal ((int) sz);
 		EncoderParameters eps;
 
 		try {
-			status = GDIPlus.GdipGetEncoderParameterList (nativeObject, ref encoder, sz, rawEPList);
+			status = GDIPlus.GdipGetEncoderParameterList (nativeObject, ref format, sz, rawEPList);
 			eps = EncoderParameters.FromNativePtr (rawEPList);
 			GDIPlus.CheckStatus (status);
 		}
@@ -361,10 +361,11 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		try {
 			status = GDIPlus.GdipGetPropertyItem (nativeObject, propid, propSize, property);
 			GDIPlus.CheckStatus (status);
-			gdipProperty = (GdipPropertyItem) Marshal.PtrToStructure (property,
-								typeof (GdipPropertyItem));
+			gdipProperty = (GdipPropertyItem) Marshal.PtrToStructure (property, 
+								typeof (GdipPropertyItem));						
 			GdipPropertyItem.MarshalTo (gdipProperty, item);
-		} finally {
+		}
+		finally {
 			Marshal.FreeHGlobal (property);
 		}
 		return item;
@@ -391,20 +392,20 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	
 	
 	public void RemovePropertyItem (int propid)
-	{
+	{		
 		Status status = GDIPlus.GdipRemovePropertyItem (nativeObject, propid);
-		GDIPlus.CheckStatus (status);
-	}
+		GDIPlus.CheckStatus (status);					
+	}	
 	
 	public void RotateFlip (RotateFlipType rotateFlipType)
-	{
+	{			
 		Status status = GDIPlus.GdipImageRotateFlip (nativeObject, rotateFlipType);
-		GDIPlus.CheckStatus (status);
+		GDIPlus.CheckStatus (status);				
 	}
 
 	internal ImageCodecInfo findEncoderForFormat (ImageFormat format)
 	{
-		ImageCodecInfo[] encoders = ImageCodecInfo.GetImageEncoders();
+		ImageCodecInfo[] encoders = ImageCodecInfo.GetImageEncoders();			
 		ImageCodecInfo encoder = null;
 		
 		if (format.Guid.Equals (ImageFormat.MemoryBmp.Guid))
@@ -415,7 +416,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			if (encoders[i].FormatID.Equals (format.Guid)) {
 				encoder = encoders[i];
 				break;
-			}
+			}			
 		}
 
 		return encoder;
@@ -491,10 +492,10 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			if (nativeEncoderParams != IntPtr.Zero)
 				Marshal.FreeHGlobal (nativeEncoderParams);
 		}
-
-		GDIPlus.CheckStatus (st);
+		
+		GDIPlus.CheckStatus (st);		
 	}
-
+	
 	public void SaveAdd (EncoderParameters encoderParams)
 	{
 		Status st;
@@ -504,7 +505,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		Marshal.FreeHGlobal (nativeEncoderParams);
 		GDIPlus.CheckStatus (st);
 	}
-
+		
 	public void SaveAdd (Image image, EncoderParameters encoderParams)
 	{
 		Status st;
@@ -514,15 +515,15 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		Marshal.FreeHGlobal (nativeEncoderParams);
 		GDIPlus.CheckStatus (st);
 	}
-
+		
 	public int SelectActiveFrame(FrameDimension dimension, int frameIndex)
 	{
-		Guid guid = dimension.Guid;
+		Guid guid = dimension.Guid;		
 		Status st = GDIPlus.GdipImageSelectActiveFrame (nativeObject, ref guid, frameIndex);
 		
-		GDIPlus.CheckStatus (st);
-
-		return frameIndex;
+		GDIPlus.CheckStatus (st);			
+		
+		return frameIndex;		
 	}
 
 	public void SetPropertyItem(PropertyItem propitem)
@@ -544,9 +545,9 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		get {
 			int flags;
 			
-			Status status = GDIPlus.GdipGetImageFlags (nativeObject, out flags);
-			GDIPlus.CheckStatus (status);
-			return flags;
+			Status status = GDIPlus.GdipGetImageFlags (nativeObject, out flags);			
+			GDIPlus.CheckStatus (status);						
+			return flags;			
 		}
 	}
 	
@@ -558,7 +559,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			GDIPlus.CheckStatus (status);
 			Guid [] guid = new Guid [found];
 			status = GDIPlus.GdipImageGetFrameDimensionsList (nativeObject, guid, found);
-			GDIPlus.CheckStatus (status);
+			GDIPlus.CheckStatus (status);  
 			return guid;
 		}
 	}
@@ -568,11 +569,11 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	public int Height {
 		get {
-			uint height;
-			Status status = GDIPlus.GdipGetImageHeight (nativeObject, out height);
-			GDIPlus.CheckStatus (status);
-
-			return (int) height;
+			uint height;			
+			Status status = GDIPlus.GdipGetImageHeight (nativeObject, out height);		
+			GDIPlus.CheckStatus (status);			
+			
+			return (int)height;
 		}
 	}
 	
@@ -581,15 +582,15 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			float resolution;
 			
 			Status status = GDIPlus.GdipGetImageHorizontalResolution (nativeObject, out resolution);			
-			GDIPlus.CheckStatus (status);
-
+			GDIPlus.CheckStatus (status);			
+			
 			return resolution;
 		}
 	}
 	
 	[Browsable (false)]
 	public ColorPalette Palette {
-		get {
+		get {							
 			return retrieveGDIPalette();
 		}
 		set {
@@ -610,7 +611,9 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			GDIPlus.CheckStatus (st);
 			ret.setFromGDIPalette (palette_data);
 			return ret;
-		} finally {
+		}
+
+		finally {
 			Marshal.FreeHGlobal (palette_data);
 		}
 	}
@@ -628,7 +631,9 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		try {
 			Status st = GDIPlus.GdipSetImagePalette (nativeObject, palette_data);
 			GDIPlus.CheckStatus (st);
-		} finally {
+		}
+
+		finally {
 			Marshal.FreeHGlobal(palette_data);
 		}
 	}
@@ -637,21 +642,21 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	public SizeF PhysicalDimension {
 		get {
 			float width,  height;
-			Status status = GDIPlus.GdipGetImageDimension (nativeObject, out width, out height);
-			GDIPlus.CheckStatus (status);
-
+			Status status = GDIPlus.GdipGetImageDimension (nativeObject, out width, out height);		
+			GDIPlus.CheckStatus (status);			
+			
 			return new SizeF (width, height);
 		}
 	}
 	
 	public PixelFormat PixelFormat {
-		get {
-			PixelFormat pixFormat;
-			Status status = GDIPlus.GdipGetImagePixelFormat (nativeObject, out pixFormat);
-			GDIPlus.CheckStatus (status);
-
+		get {			
+			PixelFormat pixFormat;				
+			Status status = GDIPlus.GdipGetImagePixelFormat (nativeObject, out pixFormat);		
+			GDIPlus.CheckStatus (status);			
+			
 			return pixFormat;
-		}
+		}		
 	}
 	
 	[Browsable (false)]
@@ -660,14 +665,14 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			uint propNumbers;
 			
 			Status status = GDIPlus.GdipGetPropertyCount (nativeObject, 
-									out propNumbers);
+									out propNumbers);			
 			GDIPlus.CheckStatus (status);
 			
 			int [] idList = new int [propNumbers];
 			status = GDIPlus.GdipGetPropertyIdList (nativeObject, 
 								propNumbers, idList);
 			GDIPlus.CheckStatus (status);
-
+			
 			return idList;
 		}
 	}
@@ -687,8 +692,8 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			items =  new PropertyItem [propNums];
 			
 			if (propNums == 0)
-				return items;
-
+				return items;			
+					
 			/* Get PropertyItem list*/
 			properties = Marshal.AllocHGlobal (propsSize * propNums);
 			try {
@@ -696,16 +701,17 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 								propNums, properties);
 				GDIPlus.CheckStatus (status);
 
-				propSize = Marshal.SizeOf (gdipProperty);
+				propSize = Marshal.SizeOf (gdipProperty);			
 				propPtr = properties;
 			
 				for (int i = 0; i < propNums; i++, propPtr = new IntPtr (propPtr.ToInt64 () + propSize)) {
 					gdipProperty = (GdipPropertyItem) Marshal.PtrToStructure 
-						(propPtr, typeof (GdipPropertyItem));
+						(propPtr, typeof (GdipPropertyItem));						
 					items [i] = new PropertyItem ();
-					GdipPropertyItem.MarshalTo (gdipProperty, items [i]);
+					GdipPropertyItem.MarshalTo (gdipProperty, items [i]);								
 				}
-			} finally {
+			}
+			finally {
 				Marshal.FreeHGlobal (properties);
 			}
 			return items;
@@ -716,9 +722,9 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		get {
 			Guid guid;
 			Status st = GDIPlus.GdipGetImageRawFormat (nativeObject, out guid);
-
+			
 			GDIPlus.CheckStatus (st);
-			return new ImageFormat (guid);
+			return new ImageFormat (guid);			
 		}
 	}
 	
@@ -730,8 +736,8 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 
 #if NET_2_0
 	[DefaultValue (null)]
-	[LocalizableAttribute(false)]
-	[BindableAttribute(true)]
+	[LocalizableAttribute(false)] 
+	[BindableAttribute(true)] 	
 	[TypeConverter (typeof (StringConverter))]
 	public object Tag { 
 		get { return tag; }
@@ -741,7 +747,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	public float VerticalResolution {
 		get {
 			float resolution;
-
+			
 			Status status = GDIPlus.GdipGetImageVerticalResolution (nativeObject, out resolution);
 			GDIPlus.CheckStatus (status);
 
@@ -754,10 +760,10 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	public int Width {
 		get {
-			uint width;
-			Status status = GDIPlus.GdipGetImageWidth (nativeObject, out width);
-			GDIPlus.CheckStatus (status);
-
+			uint width;			
+			Status status = GDIPlus.GdipGetImageWidth (nativeObject, out width);		
+			GDIPlus.CheckStatus (status);			
+			
 			return (int)width;
 		}
 	}
@@ -766,7 +772,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		get{
 			return nativeObject;
 		}
-		set {
+		set	{
 			nativeObject = value;
 		}
 	}
@@ -793,15 +799,15 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			}
 			// ... set nativeObject to null before (possibly) throwing an exception
 			nativeObject = IntPtr.Zero;
-			GDIPlus.CheckStatus (status);
+			GDIPlus.CheckStatus (status);		
 		}
 	}
 	
 	public object Clone ()
 	{
 		IntPtr newimage = IntPtr.Zero;
-		Status status = GDIPlus.GdipCloneImage (NativeObject, out newimage);
-		GDIPlus.CheckStatus (status);
+		Status status = GDIPlus.GdipCloneImage (NativeObject, out newimage);			
+		GDIPlus.CheckStatus (status);			
 
 		if (this is Bitmap)
 			return new Bitmap (newimage);

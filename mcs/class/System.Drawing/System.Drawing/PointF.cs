@@ -85,9 +85,9 @@ namespace System.Drawing
 		///	of the two points.
 		/// </remarks>
 
-		public static bool operator == (PointF left, PointF right)
+		public static bool operator == (PointF pt_a, PointF pt_b)
 		{
-			return ((left.X == right.X) && (left.Y == right.Y));
+			return ((pt_a.X == pt_b.X) && (pt_a.Y == pt_b.Y));
 		}
 		
 		/// <summary>
@@ -100,9 +100,9 @@ namespace System.Drawing
 		///	of the two points.
 		/// </remarks>
 
-		public static bool operator != (PointF left, PointF right)
+		public static bool operator != (PointF pt_a, PointF pt_b)
 		{
-			return ((left.X != right.X) || (left.Y != right.Y));
+			return ((pt_a.X != pt_b.X) || (pt_a.Y != pt_b.Y));
 		}
 		
 		/// <summary>
@@ -204,12 +204,12 @@ namespace System.Drawing
 		///	Checks equivalence of this PointF and another object.
 		/// </remarks>
 		
-		public override bool Equals (object obj)
+		public override bool Equals (object o)
 		{
-			if (!(obj is PointF))
+			if (!(o is PointF))
 				return false;
 
-			return (this == (PointF) obj);
+			return (this == (PointF) o);
 		}
 
 		/// <summary>

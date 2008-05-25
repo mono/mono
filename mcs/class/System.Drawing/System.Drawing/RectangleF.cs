@@ -35,7 +35,7 @@ namespace System.Drawing
 	[Serializable]
 	public struct RectangleF
 	{
-		private float x, y, width, height;
+                private float x, y, width, height;
 
 		/// <summary>
 		///	Empty Shared Field
@@ -79,10 +79,10 @@ namespace System.Drawing
 		///	RectangleF by the specified coordinate values.
 		/// </remarks>
 		
-		public static RectangleF Inflate (RectangleF rect, 
+		public static RectangleF Inflate (RectangleF r, 
 						  float x, float y)
 		{
-			RectangleF ir = new RectangleF (rect.X, rect.Y, rect.Width, rect.Height);
+			RectangleF ir = new RectangleF (r.X, r.Y, r.Width, r.Height);
 			ir.Inflate (x, y);
 			return ir;
 		}
@@ -95,9 +95,9 @@ namespace System.Drawing
 		///	Inflates the RectangleF by a specified width and height.
 		/// </remarks>
 		
-		public void Inflate (float x, float y)
+		public void Inflate (float width, float height)
 		{
-			Inflate (new SizeF (x, y));
+			Inflate (new SizeF (width, height));
 		}
 
 		/// <summary>
@@ -108,12 +108,12 @@ namespace System.Drawing
 		///	Inflates the RectangleF by a specified Size.
 		/// </remarks>
 		
-		public void Inflate (SizeF size)
+		public void Inflate (SizeF sz)
 		{
-			x -= size.Width;
-			y -= size.Height;
-			width += size.Width * 2;
-			height += size.Height * 2;
+                        x -= sz.Width;
+                        y -= sz.Height;
+                        width += sz.Width * 2;
+                        height += sz.Height * 2;                        
 		}
 
 		/// <summary>
@@ -125,17 +125,17 @@ namespace System.Drawing
 		///	RectangleFs. Returns null if there is no intersection.
 		/// </remarks>
 		
-		public static RectangleF Intersect (RectangleF a, 
-						    RectangleF b)
+		public static RectangleF Intersect (RectangleF r1, 
+						    RectangleF r2)
 		{
-			if (!a.IntersectsWith (b)) 
+			if (!r1.IntersectsWith (r2)) 
 				return Empty;
 
 			return FromLTRB (
-				Math.Max (a.Left, b.Left),
-				Math.Max (a.Top, b.Top),
-				Math.Min (a.Right, b.Right),
-				Math.Min (a.Bottom, b.Bottom));
+				Math.Max (r1.Left, r2.Left),
+				Math.Max (r1.Top, r2.Top),
+				Math.Min (r1.Right, r2.Right),
+				Math.Min (r1.Bottom, r2.Bottom));
 		}
 
 		/// <summary>
@@ -147,9 +147,9 @@ namespace System.Drawing
 		///	and another RectangleF.
 		/// </remarks>
 		
-		public void Intersect (RectangleF rect)
+		public void Intersect (RectangleF r)
 		{
-			this = RectangleF.Intersect (this, rect);
+			this = RectangleF.Intersect (this, r);
 		}
 
 		/// <summary>
@@ -161,12 +161,12 @@ namespace System.Drawing
 		///	RectangleFs.
 		/// </remarks>
 		
-		public static RectangleF Union (RectangleF a, RectangleF b)
+		public static RectangleF Union (RectangleF r1, RectangleF r2)
 		{
-			return FromLTRB (Math.Min (a.Left, b.Left),
-					 Math.Min (a.Top, b.Top),
-					 Math.Max (a.Right, b.Right),
-					 Math.Max (a.Bottom, b.Bottom));
+			return FromLTRB (Math.Min (r1.Left, r2.Left),
+					 Math.Min (r1.Top, r2.Top),
+					 Math.Max (r1.Right, r2.Right),
+					 Math.Max (r1.Bottom, r2.Bottom));
 		}
 
 		/// <summary>
@@ -179,10 +179,10 @@ namespace System.Drawing
 		///	properties of the two RectangleFs.
 		/// </remarks>
 
-		public static bool operator == (RectangleF left, RectangleF right)
+		public static bool operator == (RectangleF r1, RectangleF r2)
 		{
-			return (left.X == right.X) && (left.Y == right.Y) &&
-				(left.Width == right.Width) && (left.Height == right.Height);
+			return (r1.X == r2.X) && (r1.Y == r2.Y) &&
+                                (r1.Width == r2.Width) && (r1.Height == r2.Height);
 		}
 		
 		/// <summary>
@@ -195,10 +195,10 @@ namespace System.Drawing
 		///	properties of the two RectangleFs.
 		/// </remarks>
 
-		public static bool operator != (RectangleF left, RectangleF right)
+		public static bool operator != (RectangleF r1, RectangleF r2)
 		{
-			return (left.X != right.X) || (left.Y != right.Y) ||
-				(left.Width != right.Width) || (left.Height != right.Height);
+			return (r1.X != r2.X) || (r1.Y != r2.Y) ||
+                                (r1.Width != r2.Width) || (r1.Height != r2.Height);
 		}
 		
 		/// <summary>
@@ -227,12 +227,12 @@ namespace System.Drawing
 		///	Creates a RectangleF from PointF and SizeF values.
 		/// </remarks>
 		
-		public RectangleF (PointF location, SizeF size)
+		public RectangleF (PointF loc, SizeF sz)
 		{
-			x = location.X;
-			y = location.Y;
-			width = size.Width;
-			height = size.Height;
+			x = loc.X;
+                        y = loc.Y;
+                        width = sz.Width;
+                        height = sz.Height;
 		}
 
 		/// <summary>
@@ -247,10 +247,11 @@ namespace System.Drawing
 		public RectangleF (float x, float y, float width, float height)
 		{
 			this.x = x;
-			this.y = y;
-			this.width = width;
-			this.height = height;
+                        this.y = y;
+                        this.width = width;
+                        this.height = height;
 		}
+
 
 #if TARGET_JVM
 		internal RectangleF (java.awt.geom.RectangularShape r2d) {
@@ -340,7 +341,7 @@ namespace System.Drawing
 			}
 			set {
 				x = value.X;
-				y = value.Y;
+                                y = value.Y;
 			}
 		}
 
@@ -375,7 +376,7 @@ namespace System.Drawing
 			}
 			set {
 				width = value.Width;
-				height = value.Height;
+                                height = value.Height;
 			}
 		}
 
@@ -495,12 +496,12 @@ namespace System.Drawing
 		///	Checks equivalence of this RectangleF and an object.
 		/// </remarks>
 		
-		public override bool Equals (object obj)
+		public override bool Equals (object o)
 		{
-			if (!(obj is RectangleF))
+			if (!(o is RectangleF))
 				return false;
 
-			return (this == (RectangleF) obj);
+			return (this == (RectangleF) o);
 		}
 
 		/// <summary>
@@ -524,10 +525,10 @@ namespace System.Drawing
 		///	Checks if a RectangleF intersects with this one.
 		/// </remarks>
 
-		public bool IntersectsWith (RectangleF rect)
+		public bool IntersectsWith (RectangleF r)
 		{
-			return !((Left >= rect.Right) || (Right <= rect.Left) ||
-			    (Top >= rect.Bottom) || (Bottom <= rect.Top));
+			return !((Left >= r.Right) || (Right <= r.Left) ||
+			    (Top >= r.Bottom) || (Bottom <= r.Top));
 		}
 
 		/// <summary>
@@ -538,10 +539,10 @@ namespace System.Drawing
 		///	Moves the RectangleF a specified distance.
 		/// </remarks>
 
-		public void Offset (float x, float y)
+		public void Offset (float dx, float dy)
 		{
-			X += x;
-			Y += y;
+			X += dx;
+			Y += dy;
 		}
 		
 		/// <summary>
@@ -552,9 +553,9 @@ namespace System.Drawing
 		///	Moves the RectangleF a specified distance.
 		/// </remarks>
 
-		public void Offset (PointF pos)
+		public void Offset (PointF pt)
 		{
-			Offset (pos.X, pos.Y);
+			Offset(pt.X, pt.Y);
 		}
 		
 		/// <summary>
@@ -570,5 +571,6 @@ namespace System.Drawing
 			return String.Format ("{{X={0},Y={1},Width={2},Height={3}}}",
 						 x, y, width, height);
 		}
+
 	}
 }

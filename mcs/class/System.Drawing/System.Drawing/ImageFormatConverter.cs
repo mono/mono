@@ -40,38 +40,41 @@ using System.Reflection;
 
 namespace System.Drawing
 {
+	/// <summary>
+	/// Summary description for ImageFormatConverter.
+	/// </summary>
 	public class ImageFormatConverter : TypeConverter
 	{
 		public ImageFormatConverter ()
 		{
 		}
 
-		public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
+		public override bool CanConvertFrom (ITypeDescriptorContext context, Type srcType)
 		{
-			if (sourceType == typeof (string))
+			if (srcType == typeof (string))
 				return true;
-
-			return base.CanConvertFrom (context, sourceType);
+				
+			return base.CanConvertFrom (context, srcType);
 		}
 
-		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
+		public override bool CanConvertTo (ITypeDescriptorContext context, Type destType)
 		{
-			if (destinationType == typeof (string))
+			if (destType == typeof (string))
+				return true;
+				
+			if (destType == typeof (InstanceDescriptor))
 				return true;
 
-			if (destinationType == typeof (InstanceDescriptor))
-				return true;
-
-			return base.CanConvertTo (context, destinationType);
+			return base.CanConvertTo (context, destType);
 		}
 		
-		public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object value)
+		public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object val)
 		{
 			// we must be able to convert from short names and long names
-			string strFormat = (value as string);
+			string strFormat = (val as string);
 			if (strFormat == null) {
 				// case #1, this is not a string
-				return base.ConvertFrom (context, culture, value);
+				return base.ConvertFrom (context, culture, val);
 			} else if (strFormat [0] == '[') {
 				// case #2, this is probably a long format (guid)
 				if (strFormat.Equals (ImageFormat.Bmp.ToString ()))
@@ -118,13 +121,13 @@ namespace System.Drawing
 					return ImageFormat.Wmf;
 			}
 			// last case, this is an unknown string
-			return base.ConvertFrom (context, culture, value);
+			return base.ConvertFrom (context, culture, val);
 		}
 
-		public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
+		public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object val, Type destType )
 		{
-			if (value is ImageFormat) {
-				ImageFormat c = (ImageFormat) value;
+			if (val is ImageFormat) {
+				ImageFormat c = (ImageFormat) val;
 				string prop = null;
 				if (c.Guid.Equals (ImageFormat.Bmp.Guid))
 					prop = "Bmp";
@@ -147,9 +150,9 @@ namespace System.Drawing
 				else if (c.Guid.Equals (ImageFormat.Wmf.Guid))
 					prop = "Wmf";
 
-				if (destinationType == typeof (string)) {
+				if (destType == typeof (string)) {
 					return prop != null ? prop : c.ToString ();
-				} else if (destinationType == typeof (InstanceDescriptor)) {
+				} else if (destType == typeof (InstanceDescriptor)) {
 					if (prop != null){
 						return new InstanceDescriptor (typeof (ImageFormat).GetProperty (prop), null);
 					} else {
@@ -158,8 +161,8 @@ namespace System.Drawing
 					}
 				}
 			}
-
-			return base.ConvertTo (context, culture, value, destinationType);
+			
+			return base.ConvertTo (context, culture, val, destType);
 		}
 
 		public override StandardValuesCollection GetStandardValues (ITypeDescriptorContext context)
