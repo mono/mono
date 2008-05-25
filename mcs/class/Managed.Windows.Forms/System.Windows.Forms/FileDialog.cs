@@ -243,6 +243,7 @@ namespace System.Windows.Forms
 			fileNameComboBox.Size = new Size (245, 21);
 			fileNameComboBox.TabIndex = 1;
 			fileNameComboBox.MaxDropDownItems = MaxFileNameItems;
+			fileNameComboBox.RestoreContextMenu ();
 			UpdateRecentFiles ();
 			
 			// fileTypeLabel

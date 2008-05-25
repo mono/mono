@@ -1601,6 +1601,11 @@ namespace System.Windows.Forms
 			}
 		}
 
+		internal void RestoreContextMenu ()
+		{
+			textbox_ctrl.RestoreContextMenu ();
+		}
+
 		private void OnKeyDownCB(object sender, KeyEventArgs e)
 		{
 			if (Items.Count == 0)

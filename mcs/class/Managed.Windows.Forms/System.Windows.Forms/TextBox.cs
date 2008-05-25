@@ -470,6 +470,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal void RestoreContextMenu ()
+		{
+			ContextMenuInternal = menu;
+		}
+
 		private void menu_Popup(object sender, EventArgs e) {
 			if (SelectionLength == 0) {
 				cut.Enabled = false;

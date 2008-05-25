@@ -1,3 +1,12 @@
+2008-05-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ComboBox.cs: 
+	* FIleDialog.cs:
+	* TextBox.cs: Expose an internal method in TextBox to restore the
+	original context menu, and call it from ComboBox to re-use it in the
+	combobox containing the file name in FileDialog.cs.
+	Fixes part of #393775.
+
 2008-05-24  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* ThemeVisualStyles.cs: Added support for the hot ComboBox drop down button
