@@ -3708,15 +3708,15 @@ public class StringTest : TestCase
 	[Test] // ToLower ()
 	public void ToLower1 ()
 	{
-		string s = "OrIgInAl";
+		string s = "OrIgInAli";
 
 		Thread.CurrentThread.CurrentCulture = new CultureInfo ("tr-TR");
 
-		//AssertEquals ("#1", "original", s.ToLower());
+		AssertEquals ("#1", "\u006f\u0072\u0131\u0067\u0131\u006e\u0061\u006c\u0069", s.ToLower());
 
 		Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
 
-		AssertEquals ("#2", "original", s.ToLower ());
+		AssertEquals ("#2", "originali", s.ToLower ());
 	}
 
 	[Test] // ToLower (CultureInfo)
@@ -3748,22 +3748,22 @@ public class StringTest : TestCase
 
 		try {
 			s.ToLower ((CultureInfo) null);
-			Fail ("#1");
+			Fail ("#A1");
 		} catch (ArgumentNullException ex) {
-			AssertEquals ("#2", typeof (ArgumentNullException), ex.GetType ());
-			AssertNull ("#3", ex.InnerException);
-			AssertNotNull ("#4", ex.Message);
-			AssertEquals ("#5", "culture", ex.ParamName);
+			AssertEquals ("#A2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#A3", ex.InnerException);
+			AssertNotNull ("#A4", ex.Message);
+			AssertEquals ("#A5", "culture", ex.ParamName);
 		}
 
 		try {
 			string.Empty.ToLower ((CultureInfo) null);
-			Fail ("#1");
+			Fail ("#B1");
 		} catch (ArgumentNullException ex) {
-			AssertEquals ("#2", typeof (ArgumentNullException), ex.GetType ());
-			AssertNull ("#3", ex.InnerException);
-			AssertNotNull ("#4", ex.Message);
-			AssertEquals ("#5", "culture", ex.ParamName);
+			AssertEquals ("#B2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#B3", ex.InnerException);
+			AssertNotNull ("#B4", ex.Message);
+			AssertEquals ("#B5", "culture", ex.ParamName);
 		}
 	}
 
@@ -3774,13 +3774,64 @@ public class StringTest : TestCase
 		AssertEquals("ToString failed!", s1, s1.ToString());
 	}
 
-	[Test]
-	public void TestToUpper ()
+	[Test] // ToUpper ()
+	public void ToUpper1 ()
 	{
-		string s1 = "OrIgInAli";
-		AssertEquals("uppercase failed", "ORIGINALI", s1.ToUpper());
+		string s = "OrIgInAli";
 
-		// TODO - Again, with CultureInfo
+		Thread.CurrentThread.CurrentCulture = new CultureInfo ("tr-TR");
+
+		AssertEquals ("#1", "ORIGINAL\u0130", s.ToUpper ());
+
+		Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
+
+		AssertEquals ("#2", "ORIGINALI", s.ToUpper ());
+	}
+
+	[Test] // ToUpper (CultureInfo)
+	public void ToUpper2 ()
+	{
+		string s = "OrIgInAli";
+
+		Thread.CurrentThread.CurrentCulture = new CultureInfo ("tr-TR");
+
+		AssertEquals ("#A1", "ORIGINALI", s.ToUpper (new CultureInfo ("en-US")));
+		AssertEquals ("#A2", "ORIGINAL\u0130", s.ToUpper (new CultureInfo ("tr-TR")));
+		AssertEquals ("#A3", string.Empty, string.Empty.ToUpper (new CultureInfo ("en-US")));
+		AssertEquals ("#A4", string.Empty, string.Empty.ToUpper (new CultureInfo ("tr-TR")));
+
+		Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
+
+		AssertEquals ("#B1", "ORIGINALI", s.ToUpper (new CultureInfo ("en-US")));
+		AssertEquals ("#B2", "ORIGINAL\u0130", s.ToUpper (new CultureInfo ("tr-TR")));
+		AssertEquals ("#B3", string.Empty, string.Empty.ToUpper (new CultureInfo ("en-US")));
+		AssertEquals ("#B4", string.Empty, string.Empty.ToUpper (new CultureInfo ("tr-TR")));
+	}
+
+	[Test] // ToUpper (CultureInfo)
+	public void ToUpper2_Culture_Null ()
+	{
+		string s = "OrIgInAl";
+
+		try {
+			s.ToUpper ((CultureInfo) null);
+			Fail ("#A1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#A2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#A3", ex.InnerException);
+			AssertNotNull ("#A4", ex.Message);
+			AssertEquals ("#A5", "culture", ex.ParamName);
+		}
+
+		try {
+			string.Empty.ToUpper ((CultureInfo) null);
+			Fail ("#B1");
+		} catch (ArgumentNullException ex) {
+			AssertEquals ("#B2", typeof (ArgumentNullException), ex.GetType ());
+			AssertNull ("#B3", ex.InnerException);
+			AssertNotNull ("#B4", ex.Message);
+			AssertEquals ("#B5", "culture", ex.ParamName);
+		}
 	}
 
 	[Test]

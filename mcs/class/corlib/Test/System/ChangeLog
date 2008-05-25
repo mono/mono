@@ -1,3 +1,7 @@
+2008-05-25  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* StringTest.cs: Added/improved tests for ToLower and ToUpper.
+
 2008-05-24  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* StringTest.cs: Comment out assert in SubString2 as corresponding
