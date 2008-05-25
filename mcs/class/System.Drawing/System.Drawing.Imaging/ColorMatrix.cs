@@ -80,38 +80,38 @@ namespace System.Drawing.Imaging
 		}
 
 		[CLSCompliant(false)]
-		public ColorMatrix (float[][] matrix)
-		{			
-			color00 = matrix [0][0];
-			color01 = matrix [0][1];
-			color02 = matrix [0][2];
-			color03 = matrix [0][3];
-			color04 = matrix [0][4];
-			color10 = matrix [1][0];
-			color11 = matrix [1][1];
-			color12 = matrix [1][2];
-			color13 = matrix [1][3];
-			color14 = matrix [1][4];
-			color20 = matrix [2][0];
-			color21 = matrix [2][1];
-			color22 = matrix [2][2];
-			color23 = matrix [2][3];
-			color24 = matrix [2][4];
-			color30 = matrix [3][0];
-			color31 = matrix [3][1];
-			color32 = matrix [3][2];
-			color33 = matrix [3][3];
-			color34 = matrix [3][4];
-			color40 = matrix [4][0];
-			color41 = matrix [4][1];
-			color42 = matrix [4][2];
-			color43 = matrix [4][3];
-			color44 = matrix [4][4];						
+		public ColorMatrix (float [] [] newColorMatrix)
+		{
+			color00 = newColorMatrix [0][0];
+			color01 = newColorMatrix [0][1];
+			color02 = newColorMatrix [0][2];
+			color03 = newColorMatrix [0][3];
+			color04 = newColorMatrix [0][4];
+			color10 = newColorMatrix [1][0];
+			color11 = newColorMatrix [1][1];
+			color12 = newColorMatrix [1][2];
+			color13 = newColorMatrix [1][3];
+			color14 = newColorMatrix [1][4];
+			color20 = newColorMatrix [2][0];
+			color21 = newColorMatrix [2][1];
+			color22 = newColorMatrix [2][2];
+			color23 = newColorMatrix [2][3];
+			color24 = newColorMatrix [2][4];
+			color30 = newColorMatrix [3][0];
+			color31 = newColorMatrix [3][1];
+			color32 = newColorMatrix [3][2];
+			color33 = newColorMatrix [3][3];
+			color34 = newColorMatrix [3][4];
+			color40 = newColorMatrix [4][0];
+			color41 = newColorMatrix [4][1];
+			color42 = newColorMatrix [4][2];
+			color43 = newColorMatrix [4][3];
+			color44 = newColorMatrix [4][4];
 		}
 
 		// properties
 		public float this[int row, int column] {
-			get {  
+			get {
 				switch (row) {
 				case 0:	{
 					switch (column) {
@@ -131,7 +131,7 @@ namespace System.Drawing.Imaging
 					case 2: return color12;
 					case 3: return color13;
 					case 4: return color14;
-					default: break;						
+					default: break;
 					}
 					break;
 				}
@@ -142,7 +142,7 @@ namespace System.Drawing.Imaging
 					case 2: return color22;
 					case 3: return color23;
 					case 4: return color24;
-					default: break;						
+					default: break;
 					}
 					break;
 				}
@@ -153,7 +153,7 @@ namespace System.Drawing.Imaging
 					case 2: return color32;
 					case 3: return color33;
 					case 4: return color34;
-					default: break;		
+					default: break;
 					}
 					break;
 				}
@@ -164,7 +164,7 @@ namespace System.Drawing.Imaging
 					case 2: return color42;
 					case 3: return color43;
 					case 4: return color44;
-					default: break;							
+					default: break;
 					}
 					break;
 				}
@@ -174,8 +174,7 @@ namespace System.Drawing.Imaging
 			
 				throw new IndexOutOfRangeException ("Index was outside the bounds of the array");
 			}
-			
-			set {  
+			set {
 				switch (row) {
 				case 0:	{
 					switch (column) {
@@ -195,7 +194,7 @@ namespace System.Drawing.Imaging
 					case 2: color12 = value; return;
 					case 3: color13 = value; return;
 					case 4: color14 = value; return;
-					default: break;						
+					default: break;
 					}
 					break;
 				}
@@ -206,7 +205,7 @@ namespace System.Drawing.Imaging
 					case 2: color22 = value; return;
 					case 3: color23 = value; return;
 					case 4: color24 = value; return;
-					default: break;						
+					default: break;
 					}
 					break;
 				}
@@ -217,7 +216,7 @@ namespace System.Drawing.Imaging
 					case 2: color32 = value; return;
 					case 3: color33 = value; return;
 					case 4: color34 = value; return;
-					default: break;		
+					default: break;
 					}
 					break;
 				}
@@ -228,7 +227,7 @@ namespace System.Drawing.Imaging
 					case 2: color42 = value; return;
 					case 3: color43 = value; return;
 					case 4: color44 = value; return;
-					default: break;							
+					default: break;
 					}
 					break;
 				}
@@ -237,7 +236,7 @@ namespace System.Drawing.Imaging
 				}
 			
 				throw new IndexOutOfRangeException ("Index was outside the bounds of the array");
-			}			
+			}
 		}
 
 

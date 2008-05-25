@@ -1,3 +1,14 @@
+2008-05-25  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ColorMatrix.cs: Changed argument names to match MS. Changed spaces
+	to tabs, and removed extra tabs.
+	* EncoderParameter.cs: Changed argument names to match MS. Changed
+	spaces to tabs, and removed extra tabs.
+	* ImageAttributes.cs: Changed argument names to match MS. Changed
+	spaces to tabs, and removed extra tabs.
+	* Metafile.cs: Changed argument names to match MS. Changes spaces to
+	tabs, and removed extra tabs. Fixed typo in MonoLimitation text.
+
 2008-05-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* EncoderParameters.cs: Don't downcast an IntPtr to an Int32.

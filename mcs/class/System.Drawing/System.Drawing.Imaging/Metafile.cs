@@ -34,16 +34,16 @@ using System.Reflection;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 
-namespace System.Drawing.Imaging {
-
+namespace System.Drawing.Imaging
+{
 	[MonoTODO ("Metafiles, both WMF and EMF formats, are only partially supported.")]
 	[Serializable]
 #if ONLY_1_1
 	[ComVisible (false)]
 #endif
 	[Editor ("System.Drawing.Design.MetafileEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
-	public sealed class Metafile : Image {
-
+	public sealed class Metafile : Image
+	{
 		// constructors
 
 		internal Metafile (IntPtr ptr)
@@ -51,7 +51,7 @@ namespace System.Drawing.Imaging {
 			nativeObject = ptr;
 		}
 
-		public Metafile (Stream stream) 
+		public Metafile (Stream stream)
 		{
 			if (stream == null)
 				throw new ArgumentException ("stream");
@@ -69,7 +69,7 @@ namespace System.Drawing.Imaging {
 			GDIPlus.CheckStatus (status);
 		}
 
-		public Metafile (string filename) 
+		public Metafile (string filename)
 		{
 			if (filename == null)
 				throw new ArgumentNullException ("filename");
@@ -82,7 +82,7 @@ namespace System.Drawing.Imaging {
 			GDIPlus.CheckStatus (status);
 		}
 
-		public Metafile (IntPtr henhmetafile, bool deleteEmf) 
+		public Metafile (IntPtr henhmetafile, bool deleteEmf)
 		{
 			Status status = GDIPlus.GdipCreateMetafileFromEmf (henhmetafile, deleteEmf, out nativeObject);
 			GDIPlus.CheckStatus (status);
@@ -103,7 +103,7 @@ namespace System.Drawing.Imaging {
 		{
 		}
 
-		public Metafile (IntPtr hmetafile, WmfPlaceableFileHeader wmfHeader) 
+		public Metafile (IntPtr hmetafile, WmfPlaceableFileHeader wmfHeader)
 		{
 			Status status = GDIPlus.GdipCreateMetafileFromEmf (hmetafile, false, out nativeObject);
 			GDIPlus.CheckStatus (status);
@@ -135,7 +135,7 @@ namespace System.Drawing.Imaging {
 		{
 		}
 
-		public Metafile (IntPtr hmetafile, WmfPlaceableFileHeader wmfHeader, bool deleteWmf) 
+		public Metafile (IntPtr hmetafile, WmfPlaceableFileHeader wmfHeader, bool deleteWmf)
 		{
 			Status status = GDIPlus.GdipCreateMetafileFromEmf (hmetafile, deleteWmf, out nativeObject);
 			GDIPlus.CheckStatus (status);
@@ -212,10 +212,10 @@ namespace System.Drawing.Imaging {
 		}
 
 		public Metafile (IntPtr referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit, EmfType type,
-			string description)
+			string desc)
 		{
 			Status status = GDIPlus.GdipRecordMetafileI (referenceHdc, type, ref frameRect, frameUnit,
-				description, out nativeObject);
+				desc, out nativeObject);
 			GDIPlus.CheckStatus (status);
 		}
 
@@ -253,13 +253,13 @@ namespace System.Drawing.Imaging {
 		}
 		
 		public Metafile (string fileName, IntPtr referenceHdc, RectangleF frameRect, MetafileFrameUnit frameUnit, 
-			string description) : this (fileName, referenceHdc, frameRect, frameUnit, EmfType.EmfPlusDual,
-			description) 
+			string desc) : this (fileName, referenceHdc, frameRect, frameUnit, EmfType.EmfPlusDual,
+			desc)
 		{
 		}
 		
 		public Metafile (Stream stream, IntPtr referenceHdc, Rectangle frameRect, MetafileFrameUnit frameUnit, 
-			EmfType type, string description) 
+			EmfType type, string description)
 		{
 			if (stream == null)
 				throw new NullReferenceException ("stream");
@@ -280,7 +280,7 @@ namespace System.Drawing.Imaging {
 		}
 
 		public Metafile (Stream stream, IntPtr referenceHdc, RectangleF frameRect, MetafileFrameUnit frameUnit, 
-			EmfType type, string description) 
+			EmfType type, string description)
 		{
 			if (stream == null)
 				throw new NullReferenceException ("stream");
@@ -323,7 +323,7 @@ namespace System.Drawing.Imaging {
 			return nativeObject;
 		}
 
-		[MonoLimitation ("Metafiles aren't only partially supported by libgdiplus.")]
+		[MonoLimitation ("Metafiles are only partially supported by libgdiplus.")]
 		public MetafileHeader GetMetafileHeader ()
 		{
 			IntPtr header = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (MetafileHeader)));
@@ -331,13 +331,12 @@ namespace System.Drawing.Imaging {
 				Status status = GDIPlus.GdipGetMetafileHeaderFromMetafile (nativeObject, header);
 				GDIPlus.CheckStatus (status);
 				return new MetafileHeader (header);
-			}
-			finally {
+			} finally {
 				Marshal.FreeHGlobal (header);
 			}
 		}
 
-		[MonoLimitation ("Metafiles aren't only partially supported by libgdiplus.")]
+		[MonoLimitation ("Metafiles are only partially supported by libgdiplus.")]
 		public static MetafileHeader GetMetafileHeader (IntPtr henhmetafile)
 		{
 			IntPtr header = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (MetafileHeader)));
@@ -345,13 +344,12 @@ namespace System.Drawing.Imaging {
 				Status status = GDIPlus.GdipGetMetafileHeaderFromEmf (henhmetafile, header);
 				GDIPlus.CheckStatus (status);
 				return new MetafileHeader (header);
-			}
-			finally {
+			} finally {
 				Marshal.FreeHGlobal (header);
 			}
 		}
 
-		[MonoLimitation ("Metafiles aren't only partially supported by libgdiplus.")]
+		[MonoLimitation ("Metafiles are only partially supported by libgdiplus.")]
 		public static MetafileHeader GetMetafileHeader (Stream stream)
 		{
 			if (stream == null)
@@ -373,13 +371,12 @@ namespace System.Drawing.Imaging {
 				}
 				GDIPlus.CheckStatus (status);
 				return new MetafileHeader (header);
-			}
-			finally {
+			} finally {
 				Marshal.FreeHGlobal (header);
 			}
 		}
 
-		[MonoLimitation ("Metafiles aren't only partially supported by libgdiplus.")]
+		[MonoLimitation ("Metafiles are only partially supported by libgdiplus.")]
 		public static MetafileHeader GetMetafileHeader (string fileName)
 		{
 			if (fileName == null)
@@ -390,27 +387,25 @@ namespace System.Drawing.Imaging {
 				Status status = GDIPlus.GdipGetMetafileHeaderFromFile (fileName, header);
 				GDIPlus.CheckStatus (status);
 				return new MetafileHeader (header);
-			}
-			finally {
+			} finally {
 				Marshal.FreeHGlobal (header);
 			}
 		}
 
-		[MonoLimitation ("Metafiles aren't only partially supported by libgdiplus.")]
-		public static MetafileHeader GetMetafileHeader (IntPtr henhmetafile, WmfPlaceableFileHeader wmfHeader)
+		[MonoLimitation ("Metafiles are only partially supported by libgdiplus.")]
+		public static MetafileHeader GetMetafileHeader (IntPtr hmetafile, WmfPlaceableFileHeader wmfHeader)
 		{
 			IntPtr header = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (MetafileHeader)));
 			try {
-				Status status = GDIPlus.GdipGetMetafileHeaderFromEmf (henhmetafile, header);
+				Status status = GDIPlus.GdipGetMetafileHeaderFromEmf (hmetafile, header);
 				GDIPlus.CheckStatus (status);
 				return new MetafileHeader (header);
-			}
-			finally {
+			} finally {
 				Marshal.FreeHGlobal (header);
 			}
 		}
 
-		[MonoLimitation ("Metafiles aren't only partially supported by libgdiplus.")]
+		[MonoLimitation ("Metafiles are only partially supported by libgdiplus.")]
 		public void PlayRecord (EmfPlusRecordType recordType, int flags, int dataSize, byte[] data)
 		{
 			Status status = GDIPlus.GdipPlayMetafileRecord (nativeObject, recordType, flags, dataSize, data);
