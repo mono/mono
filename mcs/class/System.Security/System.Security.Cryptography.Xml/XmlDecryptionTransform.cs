@@ -44,7 +44,6 @@ namespace System.Security.Cryptography.Xml {
 		Type[] outputTypes;
 		object inputObj;
 		ArrayList exceptUris;
-		object lockObject;
 
 		const string NamespaceUri = "http://www.w3.org/2002/07/decrypt#";
 
@@ -57,7 +56,6 @@ namespace System.Security.Cryptography.Xml {
 			Algorithm = XmlSignature.AlgorithmNamespaces.XmlDecryptionTransform;
 			encryptedXml = new EncryptedXml ();
 			exceptUris = new ArrayList ();
-			lockObject = new object ();
 		}
 	
 		#endregion // Constructors
@@ -71,22 +69,18 @@ namespace System.Security.Cryptography.Xml {
 
 		public override Type[] InputTypes {
 			get { 
-				if (inputTypes == null) {
-					lock (lockObject) {
-						inputTypes = new Type [2] {typeof (System.IO.Stream), typeof (System.Xml.XmlDocument)}; 
-					}
-				}
+				if (inputTypes == null)
+					inputTypes = new Type [2] {typeof (System.IO.Stream), typeof (System.Xml.XmlDocument)}; 
+
 				return inputTypes;
 			}
 		}
 
 		public override Type[] OutputTypes {
 			get { 
-				if (outputTypes == null) {
-					lock (lockObject) {
-						outputTypes = new Type [1] {typeof (System.Xml.XmlDocument)};
-					}
-				}
+				if (outputTypes == null)
+					outputTypes = new Type [1] {typeof (System.Xml.XmlDocument)};
+
 				return outputTypes;
 			}
 		}

@@ -1,3 +1,16 @@
+2008-05-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* XmlDecryptionTransform.cs,
+	* XmlDsigBase64Transform.cs,
+	* XmlDsigC14NTransform.cs,
+	* XmlDsigEnvelopedSignatureTransform.cs,
+	* XmlDsigExcC14NTransform.cs,
+	* XmlDsigXPathTransform.cs,
+	* XmlDsigXsltTransform.cs,
+	* XmlLicenseTransform.cs: Don't use lock(this). In fact remove locking
+	since the worse that can happen is two copies of the same data.
+	[Found using Gendarme]
+
 2008-01-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ReferenceList.cs: Avoid infinite recursion when setting []. 

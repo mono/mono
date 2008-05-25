@@ -40,6 +40,8 @@ namespace System.Security.Cryptography.Xml {
 	public class XmlDsigBase64Transform : Transform {
 
 		private CryptoStream cs;
+		private Type[] input;
+		private Type[] output;
 
 		public XmlDsigBase64Transform () 
 		{
@@ -48,18 +50,22 @@ namespace System.Security.Cryptography.Xml {
 
 		public override Type[] InputTypes {
 			get {
-				Type[] input = new Type [3];
-				input[0] = typeof (System.IO.Stream);
-				input[1] = typeof (System.Xml.XmlDocument);
-				input[2] = typeof (System.Xml.XmlNodeList);
+				if (input == null) {
+					input = new Type [3];
+					input[0] = typeof (System.IO.Stream);
+					input[1] = typeof (System.Xml.XmlDocument);
+					input[2] = typeof (System.Xml.XmlNodeList);
+				}
 				return input;
 			}
 		}
 
 		public override Type[] OutputTypes {
 			get {
-				Type[] output = new Type [1];
-				output[0] = typeof (System.IO.Stream);
+				if (output == null) {
+					output = new Type [1];
+					output[0] = typeof (System.IO.Stream);
+				}
 				return output;
 			}
 		}

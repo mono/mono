@@ -37,7 +37,6 @@ namespace System.Security.Cryptography.Xml {
 		private IRelDecryptor _decryptor;
 		private	Type[] inputTypes;
 		private	Type[] outputTypes;
-		private object lockObject = new object ();
 
 		public XmlLicenseTransform ()
 		{
@@ -50,22 +49,18 @@ namespace System.Security.Cryptography.Xml {
 
 		public override Type[] InputTypes {
 			get { 
-				if (inputTypes == null) {
-					lock (lockObject) {
-						inputTypes = new Type [1] { typeof (XmlDocument) };
-					}
-				}
+				if (inputTypes == null)
+					inputTypes = new Type [1] { typeof (XmlDocument) };
+
 				return inputTypes;
 			}
 		}
 
 		public override Type[] OutputTypes {
 			get { 
-				if (outputTypes == null) {
-					lock (lockObject) {
-						outputTypes = new Type [1] {typeof (XmlDocument)};
-					}
-				}
+				if (outputTypes == null)
+					outputTypes = new Type [1] {typeof (XmlDocument)};
+
 				return outputTypes;
 			}
 		}

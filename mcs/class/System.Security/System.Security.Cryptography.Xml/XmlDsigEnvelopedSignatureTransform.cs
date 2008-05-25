@@ -58,13 +58,10 @@ namespace System.Security.Cryptography.Xml {
 		public override Type[] InputTypes {
 			get {
 				if (input == null) {
-					lock (this) {
-						// this way the result is cached if called multiple time
-						input = new Type [3];
-						input[0] = typeof (System.IO.Stream);
-						input[1] = typeof (System.Xml.XmlDocument);
-						input[2] = typeof (System.Xml.XmlNodeList);
-					}
+					input = new Type [3];
+					input[0] = typeof (System.IO.Stream);
+					input[1] = typeof (System.Xml.XmlDocument);
+					input[2] = typeof (System.Xml.XmlNodeList);
 				}
 				return input;
 			}
@@ -73,12 +70,9 @@ namespace System.Security.Cryptography.Xml {
 		public override Type[] OutputTypes {
 			get {
 				if (output == null) {
-					lock (this) {
-						// this way the result is cached if called multiple time
-						output = new Type [2];
-						output [0] = typeof (System.Xml.XmlDocument);
-						output [1] = typeof (System.Xml.XmlNodeList);
-					}
+					output = new Type [2];
+					output [0] = typeof (System.Xml.XmlDocument);
+					output [1] = typeof (System.Xml.XmlNodeList);
 				}
 				return output;
 			}
