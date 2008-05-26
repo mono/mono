@@ -1,5 +1,7 @@
 2008-05-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* number-formatter.h: Make some tables static.
+
 	* class.c (mono_method_set_generic_container): New accessor function.
 	(mono_method_get_generic_container): Ditto.
 
