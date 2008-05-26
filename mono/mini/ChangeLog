@@ -1,3 +1,8 @@
+2008-05-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c generic-sharing.c jit-icalls.c aot-compiler.c: Use accessor functions
+	for accessing method->generic_container.
+
 2008-05-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_method_check_inlining): Avoid creating vtables if possible.
