@@ -406,6 +406,12 @@ namespace System
 			if (other == null)
 				throw new ArgumentNullException ("other");
 
+			if ((this.adjustmentRules == null) != (other.adjustmentRules == null))
+				return false;
+
+			if (this.adjustmentRules == null)
+      				return true;
+
 			if (this.BaseUtcOffset != other.BaseUtcOffset)
 				return false;
 

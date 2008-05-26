@@ -1,3 +1,7 @@
+2008-05-26  Stephane Delcroix  <sdelcroix@novell.com>
+
+	* TimezoneInfo.cs: nullity check in HasSameRules (). Fixes bnc #391011
+
 2008-04-13  Jb Evain  <jbevain@novell.com>
 
 	* Func.cs: remove old ugly 2.1 hack.
