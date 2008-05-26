@@ -1,3 +1,7 @@
+2008-05-26  Stephane Delcroix  <sdelcroix@novell.com>
+
+	* Timezonetsnfo.cs: test for bnc #391011
+
 2008-01-24  Stephane Delcroix  <sdelcroix@novell.com>
 
 	* TimeZoneInfo.TransitionTimeTest.cs: tests adapted to check for whole

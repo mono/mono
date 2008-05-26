@@ -586,6 +586,18 @@ namespace MonoTests.System
 				Assert.AreEqual (new TimeSpan[] {new TimeSpan (1, 0, 0), new TimeSpan (2, 0, 0)}, brussels.GetAmbiguousTimeOffsets (date));
 			}
 		}
+
+		[TestFixture]
+		public class HasSameRulesTests
+		{
+			[Test]
+			public void NullAdjustments () //bnc #391011
+			{
+				TimeZoneInfo utc = TimeZoneInfo.Utc;
+				TimeZoneInfo custom = TimeZoneInfo.CreateCustomTimeZone ("Custom", new TimeSpan (0), "Custom", "Custom");
+				Assert.IsTrue (utc.HasSameRules (custom));
+			}
+		}
 	}
 }
 #endif
