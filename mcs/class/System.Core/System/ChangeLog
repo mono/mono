@@ -1,6 +1,11 @@
 2008-05-26  Stephane Delcroix  <sdelcroix@novell.com>
 
-	* TimezoneInfo.cs: nullity check in HasSameRules (). Fixes bnc #391011
+	* TimeZoneInfo.cs: workaround for weird transition dates, like for 
+	America/Phoenix. Fixes bnc #391093.
+
+2008-05-26  Stephane Delcroix  <sdelcroix@novell.com>
+
+	* TimeZoneInfo.cs: nullity check in HasSameRules (). Fixes bnc #391011
 
 2008-04-13  Jb Evain  <jbevain@novell.com>
 

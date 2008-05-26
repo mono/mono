@@ -690,6 +690,10 @@ namespace System
 						dst_start += baseUtcOffset;
 						DateTime dst_end = ttime + baseUtcOffset + dstDelta;
 
+						//some weird timezone (America/Phoenix) have end dates on Jan 1st
+						if (dst_end.Date == new DateTime (dst_end.Year, 1, 1) && dst_end.Year > dst_start.Year)
+							dst_end -= new TimeSpan (24, 0, 0);
+
 						DateTime dateStart, dateEnd;
 						if (dst_start.Month < 7)
 							dateStart = new DateTime (dst_start.Year, 1, 1);
@@ -697,10 +701,11 @@ namespace System
 							dateStart = new DateTime (dst_start.Year, 7, 1);
 
 						if (dst_end.Month >= 7)
-							dateEnd = new DateTime (dst_start.Year, 12, 31);
+							dateEnd = new DateTime (dst_end.Year, 12, 31);
 						else
 							dateEnd = new DateTime (dst_end.Year, 6, 30);
 
+						
 						TransitionTime transition_start = TransitionTime.CreateFixedDateRule (new DateTime (1, 1, 1) + dst_start.TimeOfDay, dst_start.Month, dst_start.Day);
 						TransitionTime transition_end = TransitionTime.CreateFixedDateRule (new DateTime (1, 1, 1) + dst_end.TimeOfDay, dst_end.Month, dst_end.Day);
 						adjustmentRules.Add (AdjustmentRule.CreateAdjustmentRule (dateStart, dateEnd, dstDelta, transition_start, transition_end));
