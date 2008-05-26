@@ -1,5 +1,21 @@
 2008-05-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c (mono_method_set_generic_container): New accessor function.
+	(mono_method_get_generic_container): Ditto.
+
+	* class-internals.h (struct _MonoMethod): Remove rarely used 
+	'generic_container' field, store it in the property hash instead. Add 
+	'is_generic' boolean field instead.
+
+	* image.c (mono_image_init): Initialize property_hash.
+	(mono_image_close): Destroy property_hash.
+
+	* metadata-internals.h (struct _MonoImage): Add 'property_hash' hash table to
+	hold rarely used fields of runtime structures belonging to this image.
+
+	* class.c loader.c verify.c icall.c reflection.c: Use the new accessor functions
+	to get/set method->generic_container.
+
 	* loader.c (mono_get_method_from_token): Avoid loading the method header for
 	generic methods.
 
