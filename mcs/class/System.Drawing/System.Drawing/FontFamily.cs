@@ -93,14 +93,14 @@ namespace System.Drawing {
 			GDIPlus.CheckStatus (status);
 		}
 		
-		public FontFamily(string familyName) : this (familyName, null)
+		public FontFamily(string name) : this (name, null)
 		{			
 		}
-		
-		public FontFamily (string familyName, FontCollection collection) 
+
+		public FontFamily (string name, FontCollection fontCollection) 
 		{
-			IntPtr handle = (collection == null) ? IntPtr.Zero : collection.nativeFontCollection;
-			Status status = GDIPlus.GdipCreateFontFamilyFromName (familyName, handle, out nativeFontFamily);
+			IntPtr handle = (fontCollection == null) ? IntPtr.Zero : fontCollection.nativeFontCollection;
+			Status status = GDIPlus.GdipCreateFontFamilyFromName (name, handle, out nativeFontFamily);
 			GDIPlus.CheckStatus (status);
 		}
 		

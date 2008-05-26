@@ -244,14 +244,14 @@ namespace System.Drawing
 		//
 		// GetBounds
 		//
-		public RectangleF GetBounds (Graphics graphics)
+		public RectangleF GetBounds (Graphics g)
 		{
-			if (graphics == null)
-				throw new ArgumentNullException ("graphics");
+			if (g == null)
+				throw new ArgumentNullException ("g");
 
                         RectangleF rect = new Rectangle();
                         
-                        Status status = GDIPlus.GdipGetRegionBounds (nativeRegion, graphics.NativeObject, ref rect);
+                        Status status = GDIPlus.GdipGetRegionBounds (nativeRegion, g.NativeObject, ref rect);
                         GDIPlus.CheckStatus (status);
 
                         return rect;

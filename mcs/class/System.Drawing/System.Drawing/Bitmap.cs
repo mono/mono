@@ -295,9 +295,9 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
-		public void UnlockBits (BitmapData bitmap_data)
+		public void UnlockBits (BitmapData bitmapdata)
 		{
-			Status status = GDIPlus.GdipBitmapUnlockBits (nativeObject, bitmap_data);
+			Status status = GDIPlus.GdipBitmapUnlockBits (nativeObject, bitmapdata);
 			GDIPlus.CheckStatus (status);
 		}
 	}

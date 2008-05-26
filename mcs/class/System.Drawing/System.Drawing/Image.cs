@@ -81,7 +81,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	}
 
 	// FIXME - find out how metafiles (another decoder-only codec) are handled
-	void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
+	void ISerializable.GetObjectData (SerializationInfo si, StreamingContext context)
 	{
 		using (MemoryStream ms = new MemoryStream ()) {
 			// Icon is a decoder-only codec
@@ -90,7 +90,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			} else {
 				Save (ms, RawFormat);
 			}
-			info.AddValue ("Data", ms.ToArray ());
+			si.AddValue ("Data", ms.ToArray ());
 		}
 	}
     
@@ -141,15 +141,15 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		return LoadFromStream (stream, false);
 	}
 
-	[MonoLimitation ("useECM isn't supported.")]	
-	public static Image FromStream (Stream stream, bool useECM)
+	[MonoLimitation ("useEmbeddedColorManagement  isn't supported.")]
+	public static Image FromStream (Stream stream, bool useEmbeddedColorManagement)
 	{
 		return LoadFromStream (stream, false);
 	}
 
 	// See http://support.microsoft.com/default.aspx?scid=kb;en-us;831419 for performance discussion	
-	[MonoLimitation ("useECM and validateImageData aren't supported.")]	
-	public static Image FromStream (Stream stream, bool useECM, bool validateImageData)
+	[MonoLimitation ("useEmbeddedColorManagement  and validateImageData aren't supported.")]
+	public static Image FromStream (Stream stream, bool useEmbeddedColorManagement, bool validateImageData)
 	{
 		return LoadFromStream (stream, false);
 	}
@@ -310,19 +310,19 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		return source;
 	}
 	
-	public EncoderParameters GetEncoderParameterList(Guid format)
+	public EncoderParameters GetEncoderParameterList(Guid encoder)
 	{
 		Status status;
 		uint sz;
 
-		status = GDIPlus.GdipGetEncoderParameterListSize (nativeObject, ref format, out sz);
+		status = GDIPlus.GdipGetEncoderParameterListSize (nativeObject, ref encoder, out sz);
 		GDIPlus.CheckStatus (status);
 
 		IntPtr rawEPList = Marshal.AllocHGlobal ((int) sz);
 		EncoderParameters eps;
 
 		try {
-			status = GDIPlus.GdipGetEncoderParameterList (nativeObject, ref format, sz, rawEPList);
+			status = GDIPlus.GdipGetEncoderParameterList (nativeObject, ref encoder, sz, rawEPList);
 			eps = EncoderParameters.FromNativePtr (rawEPList);
 			GDIPlus.CheckStatus (status);
 		}

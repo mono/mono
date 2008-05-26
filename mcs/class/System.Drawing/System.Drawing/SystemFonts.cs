@@ -39,30 +39,30 @@ namespace System.Drawing {
 		{
 		}
 
-		public static Font GetFontByName (string name)
+		public static Font GetFontByName (string systemFontName)
 		{
-			if (name == "CaptionFont")
+			if (systemFontName == "CaptionFont")
 				return CaptionFont;
 
-			if (name == "DefaultFont")
+			if (systemFontName == "DefaultFont")
 				return DefaultFont;
 
-			if (name == "DialogFont")
+			if (systemFontName == "DialogFont")
 				return DialogFont;	
 
-			if (name == "IconTitleFont")
+			if (systemFontName == "IconTitleFont")
 				return IconTitleFont;
 
-			if (name == "MenuFont")
+			if (systemFontName == "MenuFont")
 				return MenuFont;
 
-			if (name == "MessageBoxFont")
+			if (systemFontName == "MessageBoxFont")
 				return MessageBoxFont;
 
-			if (name == "SmallCaptionFont")
+			if (systemFontName == "SmallCaptionFont")
 				return SmallCaptionFont;
 
-			if (name == "StatusFont")
+			if (systemFontName == "StatusFont")
 				return StatusFont;			
 			
 			return null;

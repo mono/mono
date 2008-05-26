@@ -145,10 +145,10 @@ namespace System.Drawing
 		///	properties of the two Sizes.
 		/// </remarks>
 
-		public static bool operator == (Size sz_a, Size sz_b)
+		public static bool operator == (Size sz1, Size sz2)
 		{
-			return ((sz_a.Width == sz_b.Width) && 
-				(sz_a.Height == sz_b.Height));
+			return ((sz1.Width == sz2.Width) && 
+				(sz1.Height == sz2.Height));
 		}
 		
 		/// <summary>
@@ -161,10 +161,10 @@ namespace System.Drawing
 		///	properties of the two Sizes.
 		/// </remarks>
 
-		public static bool operator != (Size sz_a, Size sz_b)
+		public static bool operator != (Size sz1, Size sz2)
 		{
-			return ((sz_a.Width != sz_b.Width) || 
-				(sz_a.Height != sz_b.Height));
+			return ((sz1.Width != sz2.Width) || 
+				(sz1.Height != sz2.Height));
 		}
 		
 		/// <summary>
@@ -190,9 +190,9 @@ namespace System.Drawing
 		///	Size. Requires explicit cast.
 		/// </remarks>
 
-		public static explicit operator Point (Size sz)
+		public static explicit operator Point (Size size)
 		{
-			return new Point (sz.Width, sz.Height);
+			return new Point (size.Width, size.Height);
 		}
 
 		/// <summary>
@@ -204,9 +204,9 @@ namespace System.Drawing
 		///	Size. No explicit cast is required.
 		/// </remarks>
 
-		public static implicit operator SizeF (Size sz)
+		public static implicit operator SizeF (Size p)
 		{
-			return new SizeF (sz.Width, sz.Height);
+			return new SizeF (p.Width, p.Height);
 		}
 
 
@@ -303,12 +303,12 @@ namespace System.Drawing
 		///	Checks equivalence of this Size and another object.
 		/// </remarks>
 		
-		public override bool Equals (object o)
+		public override bool Equals (object obj)
 		{
-			if (!(o is Size))
+			if (!(obj is Size))
 				return false;
 
-			return (this == (Size) o);
+			return (this == (Size) obj);
 		}
 
 		/// <summary>

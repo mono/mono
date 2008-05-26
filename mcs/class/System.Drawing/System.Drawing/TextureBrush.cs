@@ -42,8 +42,8 @@ namespace System.Drawing {
 		{
 		}
 
-		public TextureBrush (Image image) :
-			this (image, WrapMode.Tile)
+		public TextureBrush (Image bitmap) :
+			this (bitmap, WrapMode.Tile)
 		{
 		}
 

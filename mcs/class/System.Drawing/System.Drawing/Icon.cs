@@ -241,12 +241,12 @@ namespace System.Drawing
 			this.undisposable = true;
 		}
 
-		void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+		void ISerializable.GetObjectData(SerializationInfo si, StreamingContext context)
 		{
 			MemoryStream ms = new MemoryStream ();
 			Save (ms);
-			info.AddValue ("IconSize", this.Size, typeof (Size));
-			info.AddValue ("IconData", ms.ToArray ());
+			si.AddValue ("IconSize", this.Size, typeof (Size));
+			si.AddValue ("IconData", ms.ToArray ());
 		}
 
 #if NET_2_0

@@ -70,7 +70,7 @@ namespace System.Drawing {
 		{
 		}
 
-		public static void Animate (Image image, EventHandler onFrameChangeHandler)
+		public static void Animate (Image image, EventHandler onFrameChangedHandler)
 		{
 			// must be non-null and contain animation time frames
 			if (!CanAnimate (image))
@@ -90,7 +90,7 @@ namespace System.Drawing {
 			}
 
 			AnimateEventArgs aea = new AnimateEventArgs (image);
-			WorkerThread wt = new WorkerThread (onFrameChangeHandler, aea, delay);
+			WorkerThread wt = new WorkerThread (onFrameChangedHandler, aea, delay);
 			Thread thread = new Thread (new ThreadStart (wt.LoopHandler));
 			thread.IsBackground = true;
 			aea.RunThread = thread;
@@ -115,7 +115,7 @@ namespace System.Drawing {
 			return false;
 		}
 
-		public static void StopAnimate (Image image, EventHandler onFrameChangeHandler)
+		public static void StopAnimate (Image image, EventHandler onFrameChangedHandler)
 		{
 			if (image == null)
 				return;

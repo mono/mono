@@ -1,3 +1,28 @@
+2008-05-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Bitmap.cs: Changed argument names to match MS.
+	* CharacterRange.cs: Changed argument names to match MS. 
+	* Color.cs: Changed argument names to match MS.
+	* Font.cs: Changed argument names to match MS.
+	* FontFamily.cs: Changed argument names to match MS.
+	* Graphics.cs: Changed argument names to match MS.
+	* Image.cs: Changed argument names to match MS.
+	* Icon.cs: Changed argument names to match MS.
+	* IconConverter.cs: Changed argument names to match MS.
+	* ImageAnimator.cs: Changed argument names to match MS.
+	* ImageConverter.cs: Changed argument names to match MS.
+	* ImageFormatConverter.cs: Changed argument names to match MS.
+	* Point.cs: Changed argument names to match MS.
+	* PointF.cs: Changed argument names to match MS.
+	* Rectangle.cs: Changed argument names to match MS.
+	* RectangleF.cs: Changed argument names to match MS.
+	* Region.cs: Changed argument names to match MS.
+	* Size.cs: Changed argument names to match MS.
+	* SizeF.cs: Changed argument names to match MS.
+	* StringFormat.cs: Changed argument names to match MS.
+	* SystemFonts.cs: Changed argument names to match MS.
+	* TextureBrush.cs: Changed argument names to match MS.
+
 2008-05-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CharacterRange.cs,

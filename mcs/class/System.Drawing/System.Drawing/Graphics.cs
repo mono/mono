@@ -897,37 +897,37 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 		
-		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback)
+		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttrs, DrawImageAbort callback)
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");
 			Status status = GDIPlus.GdipDrawImageRectRect (nativeObject, image.NativeObject, 
                                         destRect.X, destRect.Y, destRect.Width, 
 					destRect.Height, srcX, srcY, srcWidth, srcHeight,
-					srcUnit, imageAttr != null ? imageAttr.NativeObject : IntPtr.Zero, 
+					srcUnit, imageAttrs != null ? imageAttrs.NativeObject : IntPtr.Zero, 
 					callback, IntPtr.Zero);
 			GDIPlus.CheckStatus (status);
 		}
 
-		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback, IntPtr callbackData)
+		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttrs, DrawImageAbort callback, IntPtr callbackData)
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");
 			Status status = GDIPlus.GdipDrawImageRectRect (nativeObject, image.NativeObject, 
 				destRect.X, destRect.Y, destRect.Width, destRect.Height,
 				srcX, srcY, srcWidth, srcHeight, srcUnit, 
-				imageAttr != null ? imageAttr.NativeObject : IntPtr.Zero, callback, callbackData);
+				imageAttrs != null ? imageAttrs.NativeObject : IntPtr.Zero, callback, callbackData);
 			GDIPlus.CheckStatus (status);
 		}
 
-		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback, IntPtr callbackData)
+		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttrs, DrawImageAbort callback, IntPtr callbackData)
 		{
 			if (image == null)
 				throw new ArgumentNullException ("image");
 			Status status = GDIPlus.GdipDrawImageRectRect (nativeObject, image.NativeObject, 
                        		destRect.X, destRect.Y, destRect.Width, destRect.Height,
 				srcX, srcY, srcWidth, srcHeight, srcUnit,
-				imageAttr != null ? imageAttr.NativeObject : IntPtr.Zero, callback, callbackData);
+				imageAttrs != null ? imageAttrs.NativeObject : IntPtr.Zero, callback, callbackData);
 			GDIPlus.CheckStatus (status);
 		}		
 		

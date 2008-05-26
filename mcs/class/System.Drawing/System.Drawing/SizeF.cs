@@ -86,10 +86,10 @@ namespace System.Drawing
 		///	properties of the two Sizes.
 		/// </remarks>
 
-		public static bool operator == (SizeF sz_a, SizeF sz_b)
+		public static bool operator == (SizeF sz1, SizeF sz2)
 		{
-			return ((sz_a.Width == sz_b.Width) && 
-				(sz_a.Height == sz_b.Height));
+			return ((sz1.Width == sz2.Width) && 
+				(sz1.Height == sz2.Height));
 		}
 		
 		/// <summary>
@@ -102,10 +102,10 @@ namespace System.Drawing
 		///	properties of the two Sizes.
 		/// </remarks>
 
-		public static bool operator != (SizeF sz_a, SizeF sz_b)
+		public static bool operator != (SizeF sz1, SizeF sz2)
 		{
-			return ((sz_a.Width != sz_b.Width) || 
-				(sz_a.Height != sz_b.Height));
+			return ((sz1.Width != sz2.Width) || 
+				(sz1.Height != sz2.Height));
 		}
 		
 		/// <summary>
@@ -131,9 +131,9 @@ namespace System.Drawing
 		///	SizeF. Requires explicit cast.
 		/// </remarks>
 
-		public static explicit operator PointF (SizeF sz)
+		public static explicit operator PointF (SizeF size)
 		{
-			return new PointF (sz.Width, sz.Height);
+			return new PointF (size.Width, size.Height);
 		}
 
 
@@ -163,10 +163,10 @@ namespace System.Drawing
 		///	Creates a SizeF from an existing SizeF value.
 		/// </remarks>
 		
-		public SizeF (SizeF sz)
+		public SizeF (SizeF size)
 		{
-			width = sz.Width;
-			height = sz.Height;
+			width = size.Width;
+			height = size.Height;
 		}
 
 		/// <summary>
@@ -244,12 +244,12 @@ namespace System.Drawing
 		///	Checks equivalence of this SizeF and another object.
 		/// </remarks>
 		
-		public override bool Equals (object o)
+		public override bool Equals (object obj)
 		{
-			if (!(o is SizeF))
+			if (!(obj is SizeF))
 				return false;
 
-			return (this == (SizeF) o);
+			return (this == (SizeF) obj);
 		}
 
 		/// <summary>

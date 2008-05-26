@@ -48,56 +48,56 @@ namespace System.Drawing
 		{
 		}
 		
-		public override bool CanConvertFrom (ITypeDescriptorContext context, Type srcType)
+		public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
 		{
-			if (srcType == typeof (System.Byte[]))
+			if (sourceType == typeof (System.Byte []))
 				return true;
 			else
 				return false; 
 		}
 
-		public override bool CanConvertTo (ITypeDescriptorContext context, Type destType)
+		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
 		{
-			if ((destType == typeof (System.Byte[])) || (destType == typeof (System.String)))
+			if ((destinationType == typeof (System.Byte [])) || (destinationType == typeof (System.String)))
 				return true;
 			else
 				return false;
 		}
 		
-		public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object val)
+		public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object value)
 		{
-			byte [] bytes = val as byte [];
+			byte [] bytes = value as byte [];
 			if (bytes == null)
-				return base.ConvertFrom (context, culture, val);
+				return base.ConvertFrom (context, culture, value);
 			
 			MemoryStream ms = new MemoryStream (bytes);
 			
 			return Image.FromStream (ms);	
 		}
 
-		public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object val, Type destType)
+		public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
 		{
-			if (val == null)
+			if (value == null)
 				return "(none)";
 
-			if (val is System.Drawing.Image) {
-				if (destType == typeof (string)) {
-					return val.ToString ();
-				} else if (CanConvertTo (null, destType)) {
-					//came here means destType is byte array ;
+			if (value is System.Drawing.Image) {
+				if (destinationType == typeof (string)) {
+					return value.ToString ();
+				} else if (CanConvertTo (null, destinationType)) {
+					//came here means destinationType is byte array ;
 					MemoryStream ms = new MemoryStream ();
-					((Image)val).Save (ms, ((Image)val).RawFormat);
+					((Image)value).Save (ms, ((Image)value).RawFormat);
 					return ms.GetBuffer ();
 				}
 			}
 
-			string msg = Locale.GetText ("ImageConverter can not convert from type '{0}'.", val.GetType ());
+			string msg = Locale.GetText ("ImageConverter can not convert from type '{0}'.", value.GetType ());
 			throw new NotSupportedException (msg);
 		}
 
-		public override PropertyDescriptorCollection GetProperties (ITypeDescriptorContext context, object val, Attribute[] attribs)
+		public override PropertyDescriptorCollection GetProperties (ITypeDescriptorContext context, object value, Attribute[] attributes)
 		{
-			return TypeDescriptor.GetProperties (typeof (Image), attribs);
+			return TypeDescriptor.GetProperties (typeof (Image), attributes);
 		}
 
 		public override bool GetPropertiesSupported (ITypeDescriptorContext context )

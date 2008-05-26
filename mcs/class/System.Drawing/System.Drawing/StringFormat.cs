@@ -44,9 +44,9 @@ namespace System.Drawing {
 		{					   
 		}		
 		
-		public StringFormat(StringFormatFlags options, int lang)
+		public StringFormat(StringFormatFlags options, int language)
 		{
-			Status status = GDIPlus.GdipCreateStringFormat (options, lang, out nativeStrFmt);        			
+			Status status = GDIPlus.GdipCreateStringFormat (options, language, out nativeStrFmt);        			
 			GDIPlus.CheckStatus (status);
 		}
 		
@@ -75,18 +75,18 @@ namespace System.Drawing {
 			}
 		}
 
-		public StringFormat (StringFormat source)
+		public StringFormat (StringFormat format)
 		{
-			if (source == null)
-				throw new ArgumentNullException ("source");
+			if (format == null)
+				throw new ArgumentNullException ("format");
 
-			Status status = GDIPlus.GdipCloneStringFormat (source.NativeObject, out nativeStrFmt);
+			Status status = GDIPlus.GdipCloneStringFormat (format.NativeObject, out nativeStrFmt);
 			GDIPlus.CheckStatus (status);
 		}
 
-		public StringFormat (StringFormatFlags flags)
+		public StringFormat (StringFormatFlags options)
 		{
-			Status status = GDIPlus.GdipCreateStringFormat (flags, GDIPlus.LANG_NEUTRAL, out nativeStrFmt);
+			Status status = GDIPlus.GdipCreateStringFormat (options, GDIPlus.LANG_NEUTRAL, out nativeStrFmt);
 			GDIPlus.CheckStatus (status);			
 		}
 		
@@ -219,10 +219,10 @@ namespace System.Drawing {
 		}
 
 
-      		public void SetMeasurableCharacterRanges (CharacterRange [] range)
+      		public void SetMeasurableCharacterRanges (CharacterRange [] ranges)
 		{					
 			Status status = GDIPlus.GdipSetStringFormatMeasurableCharacterRanges (nativeStrFmt, 
-				range.Length,	range);
+				ranges.Length,	ranges);
 				
 			GDIPlus.CheckStatus (status);
 		}
