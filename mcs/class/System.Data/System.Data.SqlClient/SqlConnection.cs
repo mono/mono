@@ -599,14 +599,16 @@ namespace System.Data.SqlClient
 			} else if ((idx = theDataSource.IndexOf ("\\")) > -1) {
 				theServerName = theDataSource.Substring (0, idx);
 				theInstanceName = theDataSource.Substring (idx + 1);
+
 				// do port discovery via UDP port 1434
 				port = DiscoverTcpPortViaSqlMonitor (theServerName, theInstanceName);
 				if (port == -1)
 					success = false;
-			} else if (theDataSource.Length == 0 || theDataSource == "(local)")
-				theServerName = "localhost";
-			else
+			} else
 				theServerName = theDataSource;
+
+			if (theServerName.Length == 0 || theServerName == "(local)" || theServerName == ".")
+				theServerName = "localhost";
 
 			if ((idx = theServerName.IndexOf ("tcp:")) > -1)
 				theServerName = theServerName.Substring (idx + 4);
@@ -994,8 +996,13 @@ namespace System.Data.SqlClient
 				for (int i = 0; i < rawtokens.Length / 2 && i < 256; i++) {
 					data [rawtokens [i * 2]] = rawtokens [ i * 2 + 1];
 				}
-				if (!data.ContainsKey ("tcp")) 
-					throw new NotImplementedException ("Only TCP/IP is supported.");
+
+				if (!data.ContainsKey ("tcp")) {
+					string msg = "Mono does not support names pipes or shared memory "
+						+ "for connecting to SQL Server. Please enable the TCP/IP "
+						+ "protocol.";
+					throw new NotImplementedException (msg);
+				}
 
 				SqlServerTcpPort = int.Parse ((string) data ["tcp"]);
 				Close ();

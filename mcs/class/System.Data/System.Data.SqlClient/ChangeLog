@@ -1,3 +1,8 @@
+2008-05-27  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SqlConnection.cs: Added support for '.' as alias for localhost.
+	Improve exception message when TCP/IP protocol is not enabled.
+
 2008-05-17  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SqlDataReader.cs (GetInt64): Removed workaround for TDS 7.0 handling
