@@ -390,5 +390,16 @@ namespace MonoTests.System.Linq.Expressions {
 
 			Assert.AreEqual (k, c (k));
 		}
+
+		[Test]
+		public void CompiledConvertNullableToNullable ()
+		{
+			var p = Expression.Parameter (typeof (int?), "i");
+			var c = Expression.Lambda<Func<int?, short?>> (
+				Expression.Convert (p, typeof (short?)), p).Compile ();
+
+			Assert.AreEqual ((short?) null, c (null));
+			Assert.AreEqual ((short?) 12, c (12));
+		}
 	}
 }
