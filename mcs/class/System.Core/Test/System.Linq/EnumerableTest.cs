@@ -192,6 +192,14 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
+		public void SumOnEmpty ()
+		{
+			int [] data = {};
+
+			Assert.AreEqual (0, data.Sum ());
+		}
+
+		[Test]
 		public void TestMax ()
 		{
 			int [] data = {1, 3, 5, 2};
