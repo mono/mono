@@ -1,3 +1,13 @@
+2008-05-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_get_inst_for_method): Add support for CAS instrinsics when
+	the 'value' to store is a constant.
+
+	* mini-ops.h: Add OP_ATOMIC_CAS_IMM opcodes.
+
+	* mini-amd64.c (mono_arch_output_basic_block): Optimize the the implementation
+	of ATOMIC_EXCHANGE opcodes, add support for the CAS opcodes.
+
 2008-05-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c generic-sharing.c jit-icalls.c aot-compiler.c: Use accessor functions
