@@ -1,3 +1,8 @@
+2008-05-27  Jb Evain  <jbevain@novell.com>
+
+	* UnaryExpression.cs (EmitConvert): implement nullable to nullable
+	convert.
+
 2008-05-20  Roei Erez  <roeie@mainsoft.com>
 
 	* Extensions.cs: Add 'IsGenericImplementationOf' extension method

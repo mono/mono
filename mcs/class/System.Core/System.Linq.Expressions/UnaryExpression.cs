@@ -118,6 +118,8 @@ namespace System.Linq.Expressions {
 				EmitConvertFromNullable (ec);
 			else if (!IsNullable (from) && IsNullable (target))
 				EmitConvertToNullable (ec);
+			else if (IsNullable (from) && IsNullable (target))
+				EmitConvertFromNullableToNullable (ec);
 			else if (IsReferenceConversion (from, target))
 				EmitCast (ec);
 			else if (IsPrimitiveConversion (from, target))
@@ -129,6 +131,37 @@ namespace System.Linq.Expressions {
 		static Type MakeNullableType (Type type)
 		{
 			return typeof (Nullable<>).MakeGenericType (type);
+		}
+
+		void EmitConvertFromNullableToNullable (EmitContext ec)
+		{
+			var ig = ec.ig;
+
+			var from = ec.EmitStored (operand);
+			var to = ig.DeclareLocal (Type);
+
+			var has_value = ig.DefineLabel ();
+			var done = ig.DefineLabel ();
+
+			ig.Emit (OpCodes.Ldloca, from);
+			ig.Emit (OpCodes.Call, from.LocalType.GetMethod ("get_HasValue"));
+			ig.Emit (OpCodes.Brtrue, has_value);
+
+			// if not has value
+			ig.Emit (OpCodes.Ldloca, to);
+			ig.Emit (OpCodes.Initobj, to.LocalType);
+			ig.Emit (OpCodes.Ldloc, to);
+
+			ig.Emit (OpCodes.Br, done);
+
+			ig.MarkLabel (has_value);
+			// if has value
+			ig.Emit (OpCodes.Ldloca, from);
+			ig.Emit (OpCodes.Call, from.LocalType.GetMethod ("GetValueOrDefault", Type.EmptyTypes));
+			ig.Emit (OpCodes.Newobj, to.LocalType.GetConstructor (
+				new [] { GetNotNullableOf (to.LocalType) }));
+
+			ig.MarkLabel (done);
 		}
 
 		void EmitConvertToNullable (EmitContext ec)
