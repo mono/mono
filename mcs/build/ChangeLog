@@ -1,3 +1,7 @@
+2008-05-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* rules.make (PROFILE): Make the 2.0 profile the default.
+
 2008-04-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* library.make: hidden -bootstrap option for gacutil is no longer
