@@ -1,12 +1,20 @@
 2008-05-27 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* object.c: Add 64bits bounds check for arrays under MONO_BIG_ARRAYS.
+
+	Based on patch by Luis F. Ortiz.
+	Contributed under X11 license.
+	http://lists.ximian.com/pipermail/mono-devel-list/2008-May/027995.html
+
+
+2008-05-27 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* object.c, object.h: Changed array related functions to use
 	mono_array_size_t instead of guint32.
 
 	Patch by Luis F. Ortiz.
 	Contributed under X11 license.
 	http://lists.ximian.com/pipermail/mono-devel-list/2008-May/027995.html
-
 
 2008-05-27 Rodrigo Kumpera  <rkumpera@novell.com>
 
