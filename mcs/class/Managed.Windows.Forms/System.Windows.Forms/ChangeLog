@@ -1,3 +1,12 @@
+2008-05-25  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListControl.cs: For the first added item PositionChanged is fired
+	_before_ ItemChanged, which leave us in a temporary invalid state - so
+	we need to set the selected index from ItemChanged handler *if* we
+	know that the first item has just been added *and* the items have been
+	actually added to the ListControl.
+	Fixes #369048.
+
 2008-05-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TabControl.cs: Only clicks with the left button should be

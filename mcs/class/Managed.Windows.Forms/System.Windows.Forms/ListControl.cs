@@ -507,6 +507,12 @@ namespace System.Windows.Forms
 				SetItemsCore (data_manager.List);
 			else
 				RefreshItem (e.Index);
+
+			/* For the first added item, ItemChanged is fired _after_ PositionChanged,
+			 * so we need to set Index _only_ for that case - normally we would do that
+			 * in PositionChanged handler */
+			if (AllowSelection && SelectedIndex == -1 && data_manager.Count == 1)
+				SelectedIndex = data_manager.Position;
 		}
 
 		private void OnPositionChanged (object sender, EventArgs e)
