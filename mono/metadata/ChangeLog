@@ -1,3 +1,15 @@
+2008-05-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* loader.c (mono_get_method_full): Store the lookup result for method
+	tokens in method_cache, the others in methodref_cache to decrease the memory
+	usage of hash tables.
+
+	* image.c (mono_image_close): Destroy method_cache and methodref_cache.
+	(mono_image_init): method_cache is lazy inited now.
+
+	* metadata-internals.h (struct _MonoImage): Change method_cache to
+	a MonoValueHashTable, add a separate methodref_cache.
+
 2008-05-27  Eyal Alaluf <eyala@mainsoft.com>
 
 	* number-formatter.h: Fix tables to avoid arithemtic overflow in
