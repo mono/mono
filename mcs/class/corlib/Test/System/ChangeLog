@@ -1,3 +1,8 @@
+2008-05-27  Eyal Alaluf <eyala@mainsoft.com>
+ 
+	* NumberFormatterTest.cs: Add test for arithemtic overflow in
+	  Double.ToString as exposed by Bug #383531.
+ 
 2008-02-11  Eyal Alaluf <eyala@mainsoft.com>
 
 	* NumberFormatterTest.cs: Test +-Infinity & NaN ToString ("R")
