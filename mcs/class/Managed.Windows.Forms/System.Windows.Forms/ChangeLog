@@ -1,5 +1,9 @@
 2008-05-27  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* PropertyGrid.cs: Respect DefaultTabType.
+
+2008-05-27  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* ListView.cs: SPACE selects an item.
 	[Fixes bug #393023]
 

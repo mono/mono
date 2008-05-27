@@ -192,7 +192,7 @@ namespace System.Windows.Forms
 			propertypages_toolbarbutton.Style = ToolBarButtonStyle.ToggleButton;
 			propertypages_toolbarbutton.ToolTipText = "Property Pages";
 
-			properties_tab = new PropertiesTab ();
+			properties_tab = CreatePropertyTab (this.DefaultTabType);
 			selected_tab = properties_tab;
 			RefreshToolbar (property_tabs);
 			
@@ -987,7 +987,7 @@ namespace System.Windows.Forms
 			if (property_tabs == null)
 				return;
 
-			if (property_tabs.Count > 0 && !property_tabs.Contains (typeof (PropertiesTab)))
+			if (property_tabs.Count > 0 && !property_tabs.Contains (this.DefaultTabType))
 				property_tabs.InsertTab (0, properties_tab, PropertyTabScope.Component);
 		}
 
