@@ -1,3 +1,13 @@
+2008-05-27 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* object.h: Introduced mono_array_size_t typedef. This must be used
+	in all places an array length is expected. This is 64bits wide if
+	MONO_BIG_ARRAYS is enabled.
+
+	Patch by Luis F. Ortiz.
+	Contributed under X11 license.
+	http://lists.ximian.com/pipermail/mono-devel-list/2008-May/027995.html
+
 2008-05-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* security-manager.c class.c: Set the class exception info by calling
