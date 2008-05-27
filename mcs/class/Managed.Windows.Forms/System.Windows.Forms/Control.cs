@@ -1293,7 +1293,7 @@ namespace System.Windows.Forms
 			result = new AsyncMethodResult ();
 			data = new AsyncMethodData ();
 
-			data.Handle = control.Handle;
+			data.Handle = control.GetInvokableHandle ();
 			data.Method = method;
 			data.Args = args;
 			data.Result = result;
@@ -1314,7 +1314,17 @@ namespace System.Windows.Forms
 			return result;
 		}
 
-		
+		// The CheckForIllegalCrossThreadCalls in the #if 2.0 of
+		// Control.Handle throws an exception when we are trying
+		// to get the Handle to properly invoke on.  This avoids that.
+		private IntPtr GetInvokableHandle ()
+		{
+			if (!IsHandleCreated)
+				CreateHandle ();
+
+			return window.Handle;
+		}
+
 		internal void PointToClient (ref int x, ref int y) {
 			XplatUI.ScreenToClient (Handle, ref x, ref y);
 		}

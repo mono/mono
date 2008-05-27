@@ -1,3 +1,11 @@
+2008-05-27  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Control.cs: The 2.0 check for illegal cross thread calls in 
+	Control.Handle were throwing an exception when we were getting
+	the Handle in order to invoke correctly.  Created a private
+	version that does not contain this check.
+	[Fixes bug #394531]
+
 2008-05-27  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* PropertyGrid.cs: Respect DefaultTabType.
