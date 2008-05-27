@@ -1,3 +1,8 @@
+2008-05-27  Jb Evain  <jbevain@novell.com>
+
+	* Enumerable.cs (Sum): don't throw if source is empty.
+	Fixes #394827.
+
 2008-05-20  Roei Erez  <roeie@mainsoft.com>
 
 	* Lookup.cs: Implement ApplyResultSelector method

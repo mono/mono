@@ -1965,9 +1965,6 @@ namespace System.Linq
 				++counter;
 			}
 
-			if (counter == 0)
-				throw new InvalidOperationException ();
-
 			return total;
 		}
 
