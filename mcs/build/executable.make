@@ -97,7 +97,7 @@ endif
 ifdef PROGRAM_config
 ifneq ($(base_prog_config),$(PROGRAM_config))
 executable_CLEAN_FILES += $(PROGRAM_config)
-$(PROGRAM_config): $(base_prog_config)
+$(PROGRAM_config): $(base_prog_config) $(dir $(PROGRAM_config))/.stamp
 	cp $(base_prog_config) $(PROGRAM_config)
 endif
 endif

@@ -1,3 +1,8 @@
+2008-05-27  Raja R Harinath  <harinath@hurrynot.org>
+
+	* executable.make ($(PROGRAM_config)): Depend on directory
+	creation stamp.
+
 2008-05-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* rules.make (PROFILE): Make the 2.0 profile the default.
