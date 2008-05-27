@@ -165,12 +165,24 @@ namespace System.Linq.Expressions {
 		void EmitConvertToNullable (EmitContext ec)
 		{
 			ec.Emit (operand);
+
+			if (IsUnBoxing ()) {
+				EmitUnbox (ec);
+				return;
+			}
+
 			ec.ig.Emit (OpCodes.Newobj,
 				MakeNullableType (operand.Type).GetConstructor (new [] { operand.Type }));
 		}
 
 		void EmitConvertFromNullable (EmitContext ec)
 		{
+			if (IsBoxing ()) {
+				ec.Emit (operand);
+				EmitBox (ec);
+				return;
+			}
+
 			ec.EmitCall (operand, operand.Type.GetMethod ("get_Value"));
 		}
 
@@ -179,9 +191,19 @@ namespace System.Linq.Expressions {
 			return operand.Type.IsValueType && !Type.IsValueType;
 		}
 
+		void EmitBox (EmitContext ec)
+		{
+			ec.ig.Emit (OpCodes.Box, operand.Type);
+		}
+
 		bool IsUnBoxing ()
 		{
 			return !operand.Type.IsValueType && Type.IsValueType;
+		}
+
+		void EmitUnbox (EmitContext ec)
+		{
+			ec.ig.Emit (OpCodes.Unbox_Any, Type);
 		}
 
 		void EmitCast (EmitContext ec)
@@ -189,9 +211,9 @@ namespace System.Linq.Expressions {
 			operand.Emit (ec);
 
 			if (IsBoxing ()) {
-				ec.ig.Emit (OpCodes.Box, operand.Type);
+				EmitBox (ec);
 			} else if (IsUnBoxing ()) {
-				ec.ig.Emit (OpCodes.Unbox_Any, Type);
+				EmitUnbox (ec);
 			} else
 				ec.ig.Emit (OpCodes.Castclass, Type);
 		}
