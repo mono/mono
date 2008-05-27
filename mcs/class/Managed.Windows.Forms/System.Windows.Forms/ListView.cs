@@ -2316,6 +2316,7 @@ namespace System.Windows.Forms
 				break;
 
 			case Keys.Space:
+				SelectIndex (focused_item_index);
 				ToggleItemsCheckState ();
 				break;
 			case Keys.Enter:

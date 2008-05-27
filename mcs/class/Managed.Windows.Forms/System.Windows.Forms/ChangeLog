@@ -1,5 +1,10 @@
 2008-05-27  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* ListView.cs: SPACE selects an item.
+	[Fixes bug #393023]
+
+2008-05-27  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* ListView.cs: Reset the search string whenever the items are 
 	modified.
  	[Fixes bug #393020]
