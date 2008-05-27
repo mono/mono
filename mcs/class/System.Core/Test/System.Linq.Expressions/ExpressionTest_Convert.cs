@@ -401,5 +401,27 @@ namespace MonoTests.System.Linq.Expressions {
 			Assert.AreEqual ((short?) null, c (null));
 			Assert.AreEqual ((short?) 12, c (12));
 		}
+
+		[Test]
+		public void CompiledNullableBoxing ()
+		{
+			var p = Expression.Parameter (typeof (int?), "i");
+			var c = Expression.Lambda<Func<int?, object>> (
+				Expression.Convert (p, typeof (object)), p).Compile ();
+
+			Assert.AreEqual (null, c (null));
+			Assert.AreEqual ((object) (int?) 42, c (42));
+		}
+
+		[Test]
+		public void CompiledNullableUnboxing ()
+		{
+			var p = Expression.Parameter (typeof (object), "o");
+			var c = Expression.Lambda<Func<object, int?>> (
+				Expression.Convert (p, typeof (int?)), p).Compile ();
+
+			Assert.AreEqual ((int?) null, c (null));
+			Assert.AreEqual ((int?) 42, c ((int?) 42));
+		}
 	}
 }
