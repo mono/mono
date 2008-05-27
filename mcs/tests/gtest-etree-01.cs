@@ -2533,7 +2533,7 @@ class Tester
 		Assert (null, e5.Compile ().Invoke (null));
 	}
 	
-	void UnaryPlusTest_5 ()
+	void _UnaryPlusTest_5 ()
 	{
 		Expression<Func<sbyte?, long?>> e6 = (a) => +a;
 		AssertNodeType (e6, ExpressionType.Convert);
@@ -2592,7 +2592,7 @@ class Tester
 	public static int Main ()
 	{
 		var tests = from test in typeof (Tester).GetMethods (BindingFlags.Instance | BindingFlags.NonPublic)
-					where test.GetParameters ().Length == 0
+					where test.GetParameters ().Length == 0 && !test.Name.StartsWith ("_")
 					orderby test.Name
 					select RunTest (test);
 
