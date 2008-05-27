@@ -4287,6 +4287,21 @@ namespace MonoTests.System
 			AssertEquals ("#11", "3.40282347E+38", Single.MaxValue.ToString("R"));
 		}
 
+		// Tests arithmetic overflow in double.ToString exposed by Bug #383531
+		[Test]
+		public void TestToStringOverflow()
+		{
+			// Test all the possible double exponents with the maximal mantissa
+            long dblPattern = 0xfffffffffffff; // all 1s significand
+
+            for (long exp = 0; exp < 4096; exp++) {
+                double val = BitConverter.Int64BitsToDouble((long)(dblPattern | (exp << 52)));
+                string strRes = val.ToString("R", NumberFormatInfo.InvariantInfo);
+				double rndTripVal = Double.Parse(strRes);
+				AssertEquals ("Iter#" + exp, val, rndTripVal);
+            }
+		}
+
 		// Test17000 - Double and X
 		[Test]
 		[ExpectedException (typeof (FormatException))]

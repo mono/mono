@@ -1,3 +1,8 @@
+2008-05-27  Eyal Alaluf <eyala@mainsoft.com>
+
+	* NumberFormatterTest.cs: Add test for arithemtic overflow in
+	  Double.ToString as exposed by Bug #383531.
+
 2008-05-25  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* StringTest.cs: Added/improved tests for ToLower and ToUpper.
