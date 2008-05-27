@@ -1,5 +1,14 @@
 2008-05-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* security-manager.c class.c: Set the class exception info by calling
+	mono_class_set_failure ().
+
+	* class.c (mono_class_get_exception_data): New accessor function.
+	(mono_class_set_failure): Store exception_data in the property hash.
+
+	* class-internals.h (struct _MonoClass): Store 'exception_data' outside
+	the struct as a property.
+
 	* loader.c (mono_get_method_full): Store the lookup result for method
 	tokens in method_cache, the others in methodref_cache to decrease the memory
 	usage of hash tables.
