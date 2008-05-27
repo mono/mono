@@ -45,6 +45,8 @@ namespace System.Windows.Forms.PropertyGridInternal
 		{
 			if (component == null)
 				return new PropertyDescriptorCollection (null);
+			if (attributes == null)
+				attributes = new Attribute[] { BrowsableAttribute.Yes };
 
 			PropertyDescriptorCollection properties = null;
 			TypeConverter converter = TypeDescriptor.GetConverter (component);
