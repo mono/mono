@@ -34,7 +34,7 @@ namespace System.Windows.Forms
 	public class GridItemCollection : IEnumerable, ICollection
 	{
 		#region	Local Variables
-		private System.Collections.SortedList list;
+		private ArrayList list;
 		#endregion	// Local Variables
 
 		#region Public Static Fields
@@ -44,14 +44,14 @@ namespace System.Windows.Forms
 		#region	Constructors
 		internal GridItemCollection()
 		{
-			list = new SortedList();
+			list = new ArrayList();
 		}
 		#endregion	// Constructors
 
 		#region Internal Properties and Methods
 		internal void Add (GridItem grid_item)
 		{
-			list.Add (grid_item.Label, grid_item);
+			list.Add (grid_item);
 		}
 
 		internal void AddRange (GridItemCollection items)
@@ -62,34 +62,38 @@ namespace System.Windows.Forms
 
 		internal int IndexOf (GridItem grid_item)
 		{
-			return list.IndexOfValue (grid_item);
+
+			for (int i=0; i < list.Count; i++)
+				if (list[i] == grid_item)
+					return i;
+			return -1;
 		}
 
-		internal void Remove (string key)
+		private int IndexOf (string label)
 		{
-			list.Remove (key);
+			for (int i=0; i < list.Count; i++)
+				if (((GridItem)list[i]).Label == label)
+					return i;
+			return -1;
 		}
+
 		#endregion	// Internal Properties and Methods
 
 		#region	Public Instance Properties
 		public int Count {
-			get {
-				return list.Count;
-			}
+			get { return list.Count; }
 		}
 
 		public GridItem this [int index] {
-			get {
-				if (index>=list.Count) {
-					throw new ArgumentOutOfRangeException("index");
-				}
-				return (GridItem)list.GetByIndex(index);
-			}
+			get { return (GridItem)list[index]; }
 		}
 
 		public GridItem this [string label] {
 			get {
-				return (GridItem)list[label];
+				int index = IndexOf (label);
+				if (index != -1)
+					return (GridItem)list[index];
+				return null;
 			}
 		}
 		#endregion	// Public Instance Properties
