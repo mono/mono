@@ -1,3 +1,9 @@
+2008-05-27  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* ListView.cs: Reset the search string whenever the items are 
+	modified.
+ 	[Fixes bug #393020]
+
 2008-05-25  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListControl.cs: For the first added item PositionChanged is fired

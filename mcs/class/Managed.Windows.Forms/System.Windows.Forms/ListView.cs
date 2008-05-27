@@ -288,6 +288,7 @@ namespace System.Windows.Forms
 			groups = new ListViewGroupCollection (this);
 #endif
 			items = new ListViewItemCollection (this);
+			items.Changed += new CollectionChangedHandler (OnItemsChanged);
 			checked_indices = new CheckedIndexCollection (this);
 			checked_items = new CheckedListViewItemCollection (this);
 			columns = new ColumnHeaderCollection (this);
@@ -2097,6 +2098,16 @@ namespace System.Windows.Forms
 			}
 
 			return true;
+		}
+
+		private void OnItemsChanged ()
+		{
+			ResetSearchString ();
+		}
+
+		private void ResetSearchString ()
+		{
+			keysearch_text = String.Empty;
 		}
 
 		int GetAdjustedIndex (Keys key)
