@@ -143,8 +143,7 @@ namespace System.Linq.Expressions {
 			var has_value = ig.DefineLabel ();
 			var done = ig.DefineLabel ();
 
-			ig.Emit (OpCodes.Ldloca, from);
-			ig.Emit (OpCodes.Call, from.LocalType.GetMethod ("get_HasValue"));
+			ec.EmitCall (from, from.LocalType.GetMethod ("get_HasValue"));
 			ig.Emit (OpCodes.Brtrue, has_value);
 
 			// if not has value
@@ -156,8 +155,7 @@ namespace System.Linq.Expressions {
 
 			ig.MarkLabel (has_value);
 			// if has value
-			ig.Emit (OpCodes.Ldloca, from);
-			ig.Emit (OpCodes.Call, from.LocalType.GetMethod ("GetValueOrDefault", Type.EmptyTypes));
+			ec.EmitCall (from, from.LocalType.GetMethod ("GetValueOrDefault", Type.EmptyTypes));
 			ig.Emit (OpCodes.Newobj, to.LocalType.GetConstructor (
 				new [] { GetNotNullableOf (to.LocalType) }));
 

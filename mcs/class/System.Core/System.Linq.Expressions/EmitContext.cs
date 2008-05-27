@@ -101,13 +101,34 @@ namespace System.Linq.Expressions {
 			return local;
 		}
 
-		public void EmitLoad (Expression expression)
+		public void EmitLoadAddress (Expression expression)
+		{
+			ig.Emit (OpCodes.Ldloca, EmitStored (expression));
+		}
+
+		public void EmitLoadSubject (Expression expression)
 		{
 			if (expression.Type.IsValueType) {
-				var local = EmitStored (expression);
-				ig.Emit (OpCodes.Ldloca, local);
-			} else
-				expression.Emit (this);
+				EmitLoadAddress (expression);
+				return;
+			}
+
+			Emit (expression);
+		}
+
+		public void EmitLoadSubject (LocalBuilder local)
+		{
+			if (local.LocalType.IsValueType) {
+				EmitLoadAddress (local);
+				return;
+			}
+
+			EmitLoad (local);
+		}
+
+		public void EmitLoadAddress (LocalBuilder local)
+		{
+			ig.Emit (OpCodes.Ldloca, local);
 		}
 
 		public void EmitLoad (LocalBuilder local)
@@ -117,15 +138,21 @@ namespace System.Linq.Expressions {
 
 		public void EmitCall (LocalBuilder local, ReadOnlyCollection<Expression> arguments, MethodInfo method)
 		{
-			EmitLoad (local);
+			EmitLoadSubject (local);
 			EmitArguments (method, arguments);
+			EmitCall (method);
+		}
+
+		public void EmitCall (LocalBuilder local, MethodInfo method)
+		{
+			EmitLoadSubject (local);
 			EmitCall (method);
 		}
 
 		public void EmitCall (Expression expression, MethodInfo method)
 		{
 			if (!method.IsStatic)
-				EmitLoad (expression);
+				EmitLoadSubject (expression);
 
 			EmitCall (method);
 		}
@@ -133,7 +160,7 @@ namespace System.Linq.Expressions {
 		public void EmitCall (Expression expression, ReadOnlyCollection<Expression> arguments, MethodInfo method)
 		{
 			if (!method.IsStatic)
-				EmitLoad (expression);
+				EmitLoadSubject (expression);
 
 			EmitArguments (method, arguments);
 			EmitCall (method);
