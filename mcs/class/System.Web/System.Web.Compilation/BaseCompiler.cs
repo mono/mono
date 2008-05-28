@@ -44,7 +44,8 @@ namespace System.Web.Compilation
 	abstract class BaseCompiler
 	{
 		const string DEFAULT_NAMESPACE = "ASP";
-		
+
+		static Guid HashMD5 = new Guid(0x406ea660, 0x64cf, 0x4c82, 0xb6, 0xf0, 0x42, 0xd4, 0x81, 0x72, 0xa7, 0x99);
 #if NET_2_0
 		static BindingFlags replaceableFlags = BindingFlags.Public | BindingFlags.NonPublic |
 						  BindingFlags.Instance;
@@ -142,6 +143,18 @@ namespace System.Web.Compilation
 		internal void ConstructType ()
 		{
 			unit = new CodeCompileUnit ();
+
+			byte[] md5checksum = parser.MD5Checksum;
+
+			if (md5checksum != null) {
+				CodeChecksumPragma pragma = new CodeChecksumPragma ();
+				pragma.FileName = parser.InputFile;
+				pragma.ChecksumAlgorithmId = HashMD5;
+				pragma.ChecksumData = md5checksum;
+
+				unit.StartDirectives.Add (pragma);
+			}
+			
 #if NET_2_0
 			if (parser.IsPartial) {
 				string partialns = null;

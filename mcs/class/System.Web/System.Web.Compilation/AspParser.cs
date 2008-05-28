@@ -33,6 +33,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Web.Util;
+using System.Security.Cryptography;
 
 namespace System.Web.Compilation
 {
@@ -46,6 +47,7 @@ namespace System.Web.Compilation
 		int beginLine, endLine;
 		int beginColumn, endColumn;
 		int beginPosition, endPosition;
+		byte[] md5checksum;
 		string filename;
 		string fileText;
 		string verbatimID;
@@ -54,10 +56,18 @@ namespace System.Web.Compilation
 		{
 			this.filename = filename;
 			fileText = input.ReadToEnd ();
+
+			MD5 md5 = MD5.Create ();
+			md5checksum = md5.ComputeHash (Encoding.UTF8.GetBytes (fileText));
+			
 			StringReader reader = new StringReader (fileText);
 			tokenizer = new AspTokenizer (reader);
 		}
 
+		public byte[] MD5Checksum {
+			get { return md5checksum; }
+		}
+		
 		public int BeginLine {
 			get { return beginLine; }
 		}

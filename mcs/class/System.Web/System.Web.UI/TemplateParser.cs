@@ -105,6 +105,7 @@ namespace System.Web.UI {
 		Stack includeDirs;
 #endif
 		ILocation directiveLocation;
+		byte[] md5checksum;
 		
 		Assembly srcAssembly;
 		int appAssemblyIndex = -1;
@@ -883,6 +884,11 @@ namespace System.Web.UI {
 		internal abstract string DefaultBaseTypeName { get; }
 		internal abstract string DefaultDirectiveName { get; }
 
+		internal byte[] MD5Checksum {
+			get { return md5checksum; }
+			set { md5checksum = value; }
+		}
+		
 		internal Type DefaultBaseType {
 			get {
 				Type type = Type.GetType (DefaultBaseTypeName, true);

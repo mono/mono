@@ -250,6 +250,7 @@ namespace System.Web.Compilation
 				
 				tparser.AddDependency (arvp);
 			}
+			tparser.MD5Checksum = parser.MD5Checksum;
 		}
 		
 		void InitParser (string filename)

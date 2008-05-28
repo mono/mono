@@ -1,3 +1,7 @@
+2008-05-28  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateParser.cs: added support for #pragma checksum
+
 2008-05-19  Juraj Skripsky  <js@hotfeet.ch>
 
 	* Page.cs (ValidateCollection): Don't check _eventValidation, it

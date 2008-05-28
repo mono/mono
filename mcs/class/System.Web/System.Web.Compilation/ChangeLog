@@ -1,3 +1,8 @@
+2008-05-28  Marek Habersack  <mhabersack@novell.com>
+
+	* AspParser.cs, AspGenerator.cs, BaseCompiler.cs: added support
+	for #pragma checksum
+
 2008-05-19  Marek Habersack  <mhabersack@novell.com>
 
 	* AspGenerator.cs: if the last tag parsed was a code directive,
