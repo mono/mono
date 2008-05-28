@@ -1,3 +1,7 @@
+2008-05-28  Marek Safar  <marek.safar@gmail.com>
+	
+	* Makefile (EXTRA_DISTFILES): More test files.
+
 2006-06-23  Marek Sieradzki  <marek.sieradzki@gmail.com>
 	
 	* Makefile (EXTRA_DISTFILES): Changed name from SimpleTask.cs to

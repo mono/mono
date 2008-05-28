@@ -22,7 +22,9 @@ TEST_MCS_FLAGS = \
 	/r:Microsoft.Build.Framework.dll	\
 	/r:Microsoft.Build.Utilities.dll
 
-EXTRA_DISTFILES = Test/resources/TestTasks.cs
+EXTRA_DISTFILES = \
+	Test/resources/TestTasks.cs		\
+	*.*proj
 
 Test/resources/TestTasks.dll: Test/resources/TestTasks.cs
 	$(CSCOMPILE) Test/resources/TestTasks.cs /r:Microsoft.Build.Framework.dll /r:Microsoft.Build.Utilities.dll /target:library
