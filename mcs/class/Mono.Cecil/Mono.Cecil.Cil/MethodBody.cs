@@ -212,7 +212,7 @@ namespace Mono.Cecil.Cil {
 			return nb;
 		}
 
-		public void Modify ()
+		public void Simplify ()
 		{
 			foreach (Instruction i in this.Instructions) {
 				if (i.OpCode.OpCodeType != OpCodeType.Macro)
