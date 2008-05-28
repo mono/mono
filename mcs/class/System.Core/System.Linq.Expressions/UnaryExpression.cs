@@ -304,6 +304,9 @@ namespace System.Linq.Expressions {
 
 		internal override void Emit (EmitContext ec)
 		{
+			if (method != null)
+				throw new NotImplementedException ();
+
 			switch (this.NodeType) {
 			case ExpressionType.ArrayLength:
 				EmitArrayLength (ec);
