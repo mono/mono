@@ -36,7 +36,6 @@ $(RESULTCODE_MESSAGES): Novell.Directory.Ldap.Utilclass/ResultCodeMessages.txt
 
 EXTRA_DISTFILES = \
 	net_1_1_java_Novell.Directory.Ldap.dll.sources \
-	Novell.Directory.Ldap.vmwcsproj \
 	Novell.Directory.Ldap.Rfc2251/RfcLdapURL.cs \
 	Novell.Directory.Ldap.Security.jvm/AuthenticationCallbackHandler.cs \
 	Novell.Directory.Ldap.Security.jvm/ChangeLog \
