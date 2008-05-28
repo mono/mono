@@ -117,7 +117,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CompiledNotNullableInt32 ()
 		{
 			var p = Expression.Parameter (typeof (int?), "i");
@@ -139,7 +138,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CompiledNotNullableBool ()
 		{
 			var p = Expression.Parameter (typeof (bool?), "i");

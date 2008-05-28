@@ -114,7 +114,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CompiledNegateNullableInt32 ()
 		{
 			var p = Expression.Parameter (typeof (int?), "i");
