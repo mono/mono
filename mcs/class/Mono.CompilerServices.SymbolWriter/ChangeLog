@@ -1,3 +1,19 @@
+2008-05-28  Martin Baulig  <martin@ximian.com>
+
+	* MonoSymbolTable.cs
+	(LineNumberTable): New public class.
+	(MethodEntry.LocalTypeIndices): Removed.
+	(MethodEntry.GetLineNumberTable): New public method; replaces the
+	`LineNumbers' and `NumLineNumbers' fields.
+	(MethodEntry.GetLocals): New public method; replaces the `Locals'
+	and `NumLocals' fields.
+	(MethodEntry.GetCodeBlocks): New public method; replaces the
+	`CodeBlocks' and `NumCodeBlocks' fields.
+	(MethodEntry.GetScopeVariables): New public method; replaces the
+	`ScopeVariables' and `NumScopeVariables' fields.
+	(MethodEntry.GetRealName): New public method; replaces `RealName'.
+	(MethodEntry): Mark the old fields as obsolete.
+
 2008-05-05  Martin Baulig  <martin@ximian.com>
 
 	Drop support for old pre-terrania symbol files.

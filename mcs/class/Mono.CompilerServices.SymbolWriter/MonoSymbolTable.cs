@@ -728,6 +728,19 @@ namespace Mono.CompilerServices.SymbolWriter
 		}
 	}
 
+	public class LineNumberTable
+	{
+		protected LineNumberEntry[] _line_numbers;
+		public LineNumberEntry[] LineNumbers {
+			get { return _line_numbers; }
+		}
+
+		internal LineNumberTable (LineNumberEntry[] lines)
+		{
+			this._line_numbers = lines;
+		}
+	}
+
 	public class MethodEntry : IComparable
 	{
 		#region This is actually written to the symbol file
@@ -735,7 +748,9 @@ namespace Mono.CompilerServices.SymbolWriter
 		public readonly int Token;
 		public readonly int StartRow;
 		public readonly int EndRow;
+		[Obsolete]
 		public readonly int NumLocals;
+		[Obsolete]
 		public readonly int NumLineNumbers;
 		public readonly int NamespaceID;
 		public readonly bool LocalNamesAmbiguous;
@@ -744,9 +759,11 @@ namespace Mono.CompilerServices.SymbolWriter
 		int LocalVariableTableOffset;
 		int LineNumberTableOffset;
 
+		[Obsolete]
 		public readonly int NumCodeBlocks;
 		int CodeBlockTableOffset;
 
+		[Obsolete]
 		public readonly int NumScopeVariables;
 		int ScopeVariableTableOffset;
 
@@ -757,13 +774,18 @@ namespace Mono.CompilerServices.SymbolWriter
 		int file_offset;
 
 		public readonly SourceFileEntry SourceFile;
+		[Obsolete("Use GetLineNumberTable().")]
 		public readonly LineNumberEntry[] LineNumbers;
-		public readonly int[] LocalTypeIndices;
+		[Obsolete("Use GetLocals().")]
 		public readonly LocalVariableEntry[] Locals;
+		[Obsolete("Use GetCodeBlocks().")]
 		public readonly CodeBlockEntry[] CodeBlocks;
+		[Obsolete("Use GetScopeVariables().")]
 		public readonly ScopeVariable[] ScopeVariables;
-
+		[Obsolete("Use GetRealName().")]
 		public readonly string RealName;
+
+		LineNumberTable lnt;
 
 		public readonly MonoSymbolFile SymbolFile;
 
@@ -811,6 +833,8 @@ namespace Mono.CompilerServices.SymbolWriter
 
 				for (int i = 0; i < NumLineNumbers; i++)
 					LineNumbers [i] = new LineNumberEntry (reader);
+
+				lnt = new LineNumberTable (LineNumbers);
 
 				reader.BaseStream.Position = old_pos;
 			}
@@ -869,6 +893,8 @@ namespace Mono.CompilerServices.SymbolWriter
 
 			LineNumbers = BuildLineNumberTable (lines);
 			NumLineNumbers = LineNumbers.Length;
+
+			lnt = new LineNumberTable (LineNumbers);
 
 			file.NumLineNumbers += NumLineNumbers;
 
@@ -1021,6 +1047,31 @@ namespace Mono.CompilerServices.SymbolWriter
 		internal void WriteIndex (BinaryWriter bw)
 		{
 			new MethodIndexEntry (file_offset, Token).Write (bw);
+		}
+
+		public LineNumberTable GetLineNumberTable ()
+		{
+			return lnt;
+		}
+
+		public LocalVariableEntry[] GetLocals ()
+		{
+			return Locals;
+		}
+
+		public CodeBlockEntry[] GetCodeBlocks ()
+		{
+			return CodeBlocks;
+		}
+
+		public ScopeVariable[] GetScopeVariables ()
+		{
+			return ScopeVariables;
+		}
+
+		public string GetRealName ()
+		{
+			return RealName;
 		}
 
 		public int CompareTo (object obj)
