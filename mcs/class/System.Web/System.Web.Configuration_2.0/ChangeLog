@@ -1,3 +1,10 @@
+2008-05-22  Marek Habersack  <mhabersack@novell.com>
+
+	* WebConfigurationHost.cs: changed CreateDeprecatedConfigContext
+	to return a new HttpContext object. This is part of a fix for bug 
+	#325128. Patch contributed by James Fitzsimons <james.fitzsimons@gmail.com>,
+	thanks!
+
 2008-05-07  Marek Habersack  <mhabersack@novell.com>
 
 	* RoleManagerSection.cs: use type converter when creating the

@@ -67,7 +67,7 @@ namespace System.Web.Configuration
 		
 		public virtual object CreateDeprecatedConfigContext (string configPath)
 		{
-			throw new NotImplementedException ();
+			return new HttpConfigurationContext(configPath);
 		}
 		
 		public virtual string DecryptSection (string encryptedXml, ProtectedConfigurationProvider protectionProvider,
