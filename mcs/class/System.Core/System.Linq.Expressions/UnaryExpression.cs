@@ -128,11 +128,6 @@ namespace System.Linq.Expressions {
 				throw new NotImplementedException ();
 		}
 
-		static Type MakeNullableType (Type type)
-		{
-			return typeof (Nullable<>).MakeGenericType (type);
-		}
-
 		void EmitConvertFromNullableToNullable (EmitContext ec)
 		{
 			var ig = ec.ig;
@@ -170,7 +165,7 @@ namespace System.Linq.Expressions {
 				return;
 			}
 
-			ec.EmitNullableNew (MakeNullableType (operand.Type));
+			ec.EmitNullableNew (Type);
 		}
 
 		void EmitConvertFromNullable (EmitContext ec)
