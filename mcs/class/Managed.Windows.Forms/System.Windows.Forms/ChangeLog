@@ -1,3 +1,8 @@
+2008-05-28  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* PropertyGridTextBox.cs, PropertyGridView.cs: Implement validation.
+	[Fixes bug #362756]
+
 2008-05-27  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* GridItemCollection.cs: Refactor to support multiple items with the 

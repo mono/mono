@@ -27,6 +27,7 @@
 
 using System;
 using System.Drawing;
+using System.ComponentModel;
 
 namespace System.Windows.Forms.PropertyGridInternal 
 {
@@ -52,12 +53,15 @@ namespace System.Windows.Forms.PropertyGridInternal
 		}
 	}
 	
-	internal class PropertyGridTextBox : System.Windows.Forms.UserControl {
+	internal class PropertyGridTextBox : System.Windows.Forms.UserControl, IMessageFilter
+	{
 		#region Private Members
 
 		private PGTextBox textbox;
 		private Button dialog_button;
 		private Button dropdown_button;
+		private bool validating = false;
+		private bool filtering = false;
 
 		#endregion Private Members
 
@@ -113,6 +117,10 @@ namespace System.Windows.Forms.PropertyGridInternal
 			textbox.has_been_focused = true;
 			textbox.Focus ();
 			textbox.SelectionLength = 0;
+			if (!filtering) {
+				filtering = true;
+				Application.AddMessageFilter ((IMessageFilter)this);
+			}
 		}
 
 		#endregion
@@ -234,6 +242,10 @@ namespace System.Windows.Forms.PropertyGridInternal
 			Point clientLocation = PointToClient (screenLocation);
 			XplatUI.SendMessage (Handle, Msg.WM_LBUTTONDOWN, new IntPtr ((int) MsgButtons.MK_LBUTTON), Control.MakeParam (clientLocation.X, clientLocation.Y));
 			textbox.FocusAt (screenLocation);
+			if (!filtering) {
+				filtering = true;
+				Application.AddMessageFilter ((IMessageFilter)this);
+			}
 		}	
 
 		private void textbox_DoubleClick(object sender, EventArgs e) {
@@ -241,5 +253,34 @@ namespace System.Windows.Forms.PropertyGridInternal
 			if (eh != null)
 				eh (this, e);
 		}
+
+		bool IMessageFilter.PreFilterMessage(ref Message m)
+		{
+			// validating check is to allow whatever UI code to execute
+			// without filtering messages (i.e. error dialogs, etc)
+			//
+			if (!validating && m.HWnd != textbox.Handle &&
+			    m.Msg == (int)Msg.WM_LBUTTONDOWN || 
+			    m.Msg == (int)Msg.WM_MBUTTONDOWN ||
+			    m.Msg == (int)Msg.WM_RBUTTONDOWN ||
+			    m.Msg == (int)Msg.WM_NCLBUTTONDOWN ||
+			    m.Msg == (int)Msg.WM_NCMBUTTONDOWN ||
+			    m.Msg == (int)Msg.WM_NCRBUTTONDOWN) {
+				if (Validate != null) {
+					CancelEventArgs args = new CancelEventArgs ();
+					validating = true;
+					Validate (this, args);
+					validating = false;
+					if (!args.Cancel) {
+						Application.RemoveMessageFilter ((IMessageFilter)this);
+						filtering = false;
+					}
+					return args.Cancel;
+				}
+			}
+			return false;
+		}
+
+		internal event CancelEventHandler Validate;
 	}
 }

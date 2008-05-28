@@ -97,8 +97,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			grid_textbox.Visible = false;
 			grid_textbox.Font = this.Font;
 			grid_textbox.BackColor = SystemColors.Window;
-			// Not working at all, used to??
-			// grid_textbox.Validating += new CancelEventHandler (TextBoxValidating);
+			grid_textbox.Validate += new CancelEventHandler (grid_textbox_Validate);
 			grid_textbox.ToggleValue+=new EventHandler (grid_textbox_ToggleValue);
 			this.Controls.Add (grid_textbox);
 
@@ -223,11 +222,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			if (this.RootGridItem == null)
 				return;
 
-			if (!TrySetEntry (this.SelectedGridItem, grid_textbox.Text)) {
-				FocusSelection ();
-				return;
-			}
-
 			if (e.X > SplitterLocation - RESIZE_WIDTH && e.X < SplitterLocation + RESIZE_WIDTH) {
 				resizing_grid = true;
 			}
@@ -304,8 +298,11 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				string error = null;
 				bool changed = entry.SetValue (value, out error);
 				if (!changed && error != null) {
-					if (property_grid.ShowError (error, MessageBoxButtons.OKCancel) == DialogResult.OK)
-						return false;
+					if (property_grid.ShowError (error, MessageBoxButtons.OKCancel) == DialogResult.Cancel) {
+						UpdateItem (entry); // restore value, repaint, etc
+						UnfocusSelection ();
+					}
+					return false;
 				}
 			}
 			UpdateItem (entry); // restore value, repaint, etc
@@ -406,11 +403,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			if (selectedItem == null) {
 				/* XXX not sure what MS does, but at least we shouldn't crash */
 				base.OnKeyDown (e);
-				return;
-			}
-
-			if (!TrySetEntry (selectedItem, grid_textbox.Text)) {
-				FocusSelection ();
 				return;
 			}
 
@@ -728,13 +720,6 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			Refresh ();
 		}
 
-		// private void TextBoxValidating (object sender, CancelEventArgs e)
-		// {
-		// 	GridEntry entry = (GridEntry) this.SelectedGridItem;
-		// 	if (entry != null && entry.IsEditable)
-		// 		TrySetEntry (entry, grid_textbox.Text);
-		// }
-
 		#endregion
 
 		private void listBox_MouseUp (object sender, MouseEventArgs e) {
@@ -820,6 +805,12 @@ namespace System.Windows.Forms.PropertyGridInternal {
 		private void grid_textbox_ToggleValue (object sender, EventArgs args) 
 		{
 			ToggleValue (this.SelectedGridItem);
+		}
+
+		private void grid_textbox_Validate (object sender, CancelEventArgs args)
+		{
+			if (!TrySetEntry (this.SelectedGridItem, grid_textbox.Text))
+				args.Cancel = true;
 		}
 
 		private void ToggleValue (GridEntry entry)
