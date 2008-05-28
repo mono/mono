@@ -1,3 +1,9 @@
+2008-05-28  Marek Habersack  <mhabersack@novell.com>
+
+	* ResourceReader.cs: use structs instead of classes for the
+	internal ResourceInfo and ResourceCacheItem data items. Patch from
+	Andreas Nahr <ClassDevelopment@A-SoftTech.com>, thanks!
+
 2008-05-27  Marek Habersack  <mhabersack@novell.com>
 
 	* ResourceReader.cs: reimplement the way resources are read when

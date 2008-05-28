@@ -74,7 +74,7 @@ namespace System.Resources
 #endif
 	public sealed class ResourceReader : IResourceReader, IEnumerable, IDisposable
 	{
-		class ResourceInfo
+		struct ResourceInfo
 		{
 			public readonly long ValuePosition;
 			public readonly string ResourceName;
@@ -88,7 +88,7 @@ namespace System.Resources
 			}
 		}
 
-		class ResourceCacheItem
+		struct ResourceCacheItem
 		{
 			public readonly string ResourceName;
 			public readonly object ResourceValue;
