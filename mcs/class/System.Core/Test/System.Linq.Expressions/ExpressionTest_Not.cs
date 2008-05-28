@@ -117,6 +117,18 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		public void CompiledNotNullableInt32 ()
+		{
+			var p = Expression.Parameter (typeof (int?), "i");
+			var not = Expression.Lambda<Func<int?, int?>> (Expression.Not (p), p).Compile ();
+
+			Assert.AreEqual (null, not (null));
+			Assert.AreEqual ((int?) -4, not (3));
+			Assert.AreEqual ((int?) 2, not (-3));
+		}
+
+		[Test]
 		public void CompileNotBool ()
 		{
 			var p = Expression.Parameter (typeof (bool), "i");
@@ -124,6 +136,18 @@ namespace MonoTests.System.Linq.Expressions
 
 			Assert.AreEqual (false, not (true));
 			Assert.AreEqual (true, not (false));
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void CompiledNotNullableBool ()
+		{
+			var p = Expression.Parameter (typeof (bool?), "i");
+			var not = Expression.Lambda<Func<bool?, bool?>> (Expression.Not (p), p).Compile ();
+
+			Assert.AreEqual ((bool?) null, not (null));
+			Assert.AreEqual ((bool?) false, not (true));
+			Assert.AreEqual ((bool?) true, not (false));
 		}
 	}
 }

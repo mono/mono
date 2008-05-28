@@ -112,5 +112,18 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (0, negate (0));
 			Assert.AreEqual (3, negate (-3));
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void CompiledNegateNullableInt32 ()
+		{
+			var p = Expression.Parameter (typeof (int?), "i");
+			var negate = Expression.Lambda<Func<int?, int?>> (Expression.Negate (p), p).Compile ();
+
+			Assert.AreEqual (null, negate (null));
+			Assert.AreEqual ((int?) -2, negate (2));
+			Assert.AreEqual ((int?) 0, negate (0));
+			Assert.AreEqual ((int?) 3, negate (-3));
+		}
 	}
 }
