@@ -190,6 +190,21 @@ namespace System.Linq.Expressions {
 				method);
 		}
 
+		public void EmitNullableHasValue (LocalBuilder local)
+		{
+			EmitCall (local, local.LocalType.GetMethod ("get_HasValue"));
+		}
+
+		public void EmitNullableGetValueOrDefault (LocalBuilder local)
+		{
+			EmitCall (local, local.LocalType.GetMethod ("GetValueOrDefault", Type.EmptyTypes));
+		}
+
+		public void EmitNullableNew (Type of)
+		{
+			ig.Emit (OpCodes.Newobj, of.GetConstructor (new [] { of.GetFirstGenericArgument () }));
+		}
+
 		public void EmitCollection<T> (IEnumerable<T> collection) where T : Expression
 		{
 			foreach (var expression in collection)
