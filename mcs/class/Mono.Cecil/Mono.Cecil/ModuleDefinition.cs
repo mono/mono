@@ -143,11 +143,6 @@ namespace Mono.Cecil {
 		{
 		}
 
-		internal ModuleDefinition (string name, AssemblyDefinition asm, StructureReader reader) :
-			this (name, asm, reader, false)
-		{
-		}
-
 		internal ModuleDefinition (string name, AssemblyDefinition asm, StructureReader reader, bool main) : base (name)
 		{
 			if (asm == null)
