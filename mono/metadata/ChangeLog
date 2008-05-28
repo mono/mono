@@ -1,3 +1,8 @@
+2008-05-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* object.h: Don't use G_MAXINT32 or G_MAXUINT32 as old glibs
+	don't define it. Use the number literal instead.
+
 2008-05-27 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* icall.c: Changed array related functions to use
