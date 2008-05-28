@@ -144,6 +144,7 @@ namespace System.Web.Compilation
 		{
 			unit = new CodeCompileUnit ();
 
+#if NET_2_0
 			byte[] md5checksum = parser.MD5Checksum;
 
 			if (md5checksum != null) {
@@ -154,8 +155,7 @@ namespace System.Web.Compilation
 
 				unit.StartDirectives.Add (pragma);
 			}
-			
-#if NET_2_0
+
 			if (parser.IsPartial) {
 				string partialns = null;
 				string partialclasstype = parser.PartialClassName;

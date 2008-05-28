@@ -93,6 +93,7 @@ namespace System.Web.UI {
 		OutputCacheLocation oc_location;
 		CultureInfo invariantCulture = CultureInfo.InvariantCulture;
 #if NET_2_0
+		byte[] md5checksum;
 		string src;
 		bool srcIsLegacy;
 		string partialClassName;
@@ -105,7 +106,6 @@ namespace System.Web.UI {
 		Stack includeDirs;
 #endif
 		ILocation directiveLocation;
-		byte[] md5checksum;
 		
 		Assembly srcAssembly;
 		int appAssemblyIndex = -1;
@@ -884,10 +884,12 @@ namespace System.Web.UI {
 		internal abstract string DefaultBaseTypeName { get; }
 		internal abstract string DefaultDirectiveName { get; }
 
+#if NET_2_0
 		internal byte[] MD5Checksum {
 			get { return md5checksum; }
 			set { md5checksum = value; }
 		}
+#endif
 		
 		internal Type DefaultBaseType {
 			get {

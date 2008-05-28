@@ -56,17 +56,19 @@ namespace System.Web.Compilation
 		{
 			this.filename = filename;
 			fileText = input.ReadToEnd ();
-
+#if NET_2_0
 			MD5 md5 = MD5.Create ();
 			md5checksum = md5.ComputeHash (Encoding.UTF8.GetBytes (fileText));
-			
+#endif
 			StringReader reader = new StringReader (fileText);
 			tokenizer = new AspTokenizer (reader);
 		}
 
+#if NET_2_0
 		public byte[] MD5Checksum {
 			get { return md5checksum; }
 		}
+#endif
 		
 		public int BeginLine {
 			get { return beginLine; }
