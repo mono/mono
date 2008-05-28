@@ -1,3 +1,8 @@
+2008-05-28  Jb Evain  <jbevain@novell.com>
+
+	* UnaryExpression.cs (Emit): implement support for compiling
+	lifted unary expressions.
+
 2008-05-27  Jb Evain  <jbevain@novell.com>
 
 	* UnaryExpression.cs (EmitConvert): implement nullable to nullable

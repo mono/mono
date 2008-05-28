@@ -84,6 +84,37 @@ namespace System.Linq.Expressions {
 				ec.ig.Emit (OpCodes.Unbox_Any, type);
 		}
 
+		void EmitLiftedUnary (EmitContext ec)
+		{
+			var ig = ec.ig;
+
+			var from = ec.EmitStored (operand);
+			var to = ig.DeclareLocal (Type);
+
+			var has_value = ig.DefineLabel ();
+			var done = ig.DefineLabel ();
+
+			ec.EmitNullableHasValue (from);
+			ig.Emit (OpCodes.Brtrue, has_value);
+
+			// if not has value
+			ig.Emit (OpCodes.Ldloca, to);
+			ig.Emit (OpCodes.Initobj, to.LocalType);
+			ig.Emit (OpCodes.Ldloc, to);
+
+			ig.Emit (OpCodes.Br, done);
+
+			ig.MarkLabel (has_value);
+			// if has value
+			ec.EmitNullableGetValueOrDefault (from);
+
+			EmitUnaryOperator (ec);
+
+			ec.EmitNullableNew (to.LocalType);
+
+			ig.MarkLabel (done);
+		}
+
 		void EmitUnaryOperator (EmitContext ec)
 		{
 			var ig = ec.ig;
@@ -99,10 +130,6 @@ namespace System.Linq.Expressions {
 			case ExpressionType.Negate:
 			case ExpressionType.NegateChecked:
 				ig.Emit (OpCodes.Neg);
-				break;
-			case ExpressionType.Convert:
-			case ExpressionType.ConvertChecked:
-				EmitConvert (ec);
 				break;
 			}
 		}
@@ -130,30 +157,7 @@ namespace System.Linq.Expressions {
 
 		void EmitConvertFromNullableToNullable (EmitContext ec)
 		{
-			var ig = ec.ig;
-
-			var from = ec.EmitStored (operand);
-			var to = ig.DeclareLocal (Type);
-
-			var has_value = ig.DefineLabel ();
-			var done = ig.DefineLabel ();
-
-			ec.EmitNullableHasValue (from);
-			ig.Emit (OpCodes.Brtrue, has_value);
-
-			// if not has value
-			ig.Emit (OpCodes.Ldloca, to);
-			ig.Emit (OpCodes.Initobj, to.LocalType);
-			ig.Emit (OpCodes.Ldloc, to);
-
-			ig.Emit (OpCodes.Br, done);
-
-			ig.MarkLabel (has_value);
-			// if has value
-			ec.EmitNullableGetValueOrDefault (from);
-			ec.EmitNullableNew (to.LocalType);
-
-			ig.MarkLabel (done);
+			EmitLiftedUnary (ec);
 		}
 
 		void EmitConvertToNullable (EmitContext ec)
@@ -319,7 +323,7 @@ namespace System.Linq.Expressions {
 					operand.Emit (ec);
 					EmitUnaryOperator (ec);
 				} else
-					throw new NotImplementedException ();
+					EmitLiftedUnary (ec);
 				return;
 			case ExpressionType.Quote:
 				ec.EmitReadGlobal (operand, typeof (Expression));
