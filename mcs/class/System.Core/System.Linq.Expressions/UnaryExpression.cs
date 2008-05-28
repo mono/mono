@@ -170,8 +170,7 @@ namespace System.Linq.Expressions {
 				return;
 			}
 
-			ec.ig.Emit (OpCodes.Newobj,
-				MakeNullableType (operand.Type).GetConstructor (new [] { operand.Type }));
+			ec.EmitNullableNew (MakeNullableType (operand.Type));
 		}
 
 		void EmitConvertFromNullable (EmitContext ec)
