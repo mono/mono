@@ -1,3 +1,8 @@
+2008-05-28  Martin Baulig  <martin@ximian.com>
+
+	* Mono.Cecil.Mdb/MdbReader.cs: Reflect latest symbol
+	reader changes.	
+
 2008-05-05  Martin Baulig  <martin@ximian.com>
 
 	* Mono.Cecil.Mdb/MdbWriter.cs: Reflect latest symbol writer

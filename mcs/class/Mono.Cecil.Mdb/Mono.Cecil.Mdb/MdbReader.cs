@@ -69,7 +69,8 @@ namespace Mono.Cecil.Mdb {
 
 		void ReadLocalVariables (MethodEntry entry, MethodBody body)
 		{
-			foreach (LocalVariableEntry loc in entry.Locals) {
+			LocalVariableEntry[] locals = entry.GetLocals ();
+			foreach (LocalVariableEntry loc in locals) {
 				VariableDefinition var = body.Variables [loc.Index];
 				var.Name = loc.Name;
 
@@ -82,7 +83,8 @@ namespace Mono.Cecil.Mdb {
 
 		void ReadLineNumbers (MethodEntry entry, IDictionary instructions)
 		{
-			foreach (LineNumberEntry line in entry.LineNumbers) {
+			LineNumberTable lnt = entry.GetLineNumberTable ();
+			foreach (LineNumberEntry line in lnt.LineNumbers) {
 				Instruction instr = instructions [line.Offset] as Instruction;
 				if (instr == null)
 					continue;
@@ -108,7 +110,8 @@ namespace Mono.Cecil.Mdb {
 
 		void ReadScopes (MethodEntry entry, MethodBody body, IDictionary instructions)
 		{
-			foreach (CodeBlockEntry cbe in entry.CodeBlocks) {
+			CodeBlockEntry[] blocks = entry.GetCodeBlocks ();
+			foreach (CodeBlockEntry cbe in blocks) {
 				if (cbe.BlockType != CodeBlockEntry.Type.Lexical)
 					continue;
 
