@@ -1,3 +1,15 @@
+2008-05-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* icall.c: Added ves_icall_System_Array_GetLongLength and
+	ves_icall_System_Array_CreateInstanceImpl64. Both allow handling big
+	arrays.
+
+	* icall.h: Export both new functions.
+
+	Based on patch by Luis F. Ortiz.
+	Contributed under X11 license.
+	http://lists.ximian.com/pipermail/mono-devel-list/2008-May/027995.html
+
 2008-05-28  Martin Baulig  <martin@ximian.com>
 
 	The debugger now requires exactly r103463.
