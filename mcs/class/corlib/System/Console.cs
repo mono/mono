@@ -112,7 +112,7 @@ namespace System
 			if (!Environment.IsRunningOnWindows && ConsoleDriver.IsConsole) {
 				StreamWriter w = new CStreamWriter (OpenStandardOutput (0), outputEncoding);
 				w.AutoFlush = true;
-				stdout = w;
+				stdout = TextWriter.Synchronized (w, true);
 				stdin = new CStreamReader (OpenStandardInput (0), inputEncoding);
 			} else {
 #endif

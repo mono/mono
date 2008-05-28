@@ -1,3 +1,8 @@
+2008-05-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* Console.cs (.cctor): Make sdout synchronized in the console case too.
+	Fixes #395069.
+
 2008-05-27  Eyal Alaluf <eyala@mainsoft.com>
 
 	* NumberFormatter.jvm.cs: Fix tables to avoid arithemtic overflow
