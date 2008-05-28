@@ -387,7 +387,8 @@ namespace System.Windows.Forms
 		{
 			if (control == null)
 				throw new ArgumentNullException ("control");
-				
+			
+			XplatUI.SetOwner (Handle, control.Handle);
 			Show (control.PointToScreen (position), DefaultDropDownDirection);
 		}
 		
@@ -521,6 +522,7 @@ namespace System.Windows.Forms
 			if (control == null)
 				throw new ArgumentNullException ("control");
 
+			XplatUI.SetOwner (Handle, control.Handle);
 			Show (control.PointToScreen (position), direction);
 		}
 		#endregion

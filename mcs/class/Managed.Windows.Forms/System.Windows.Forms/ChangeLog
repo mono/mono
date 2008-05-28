@@ -1,3 +1,9 @@
+2008-05-28  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripDrowDown.cs: When using the Show () methods that have a
+	Control parameter, set the menu owner to that Control.
+	[Fixes bug #394345]
+
 2008-05-28  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* PropertyGridTextBox.cs, PropertyGridView.cs: Implement validation.
