@@ -2533,12 +2533,13 @@ class Tester
 		Assert (null, e5.Compile ().Invoke (null));
 	}
 	
-	void _UnaryPlusTest_5 ()
+	void UnaryPlusTest_5 ()
 	{
 		Expression<Func<sbyte?, long?>> e6 = (a) => +a;
 		AssertNodeType (e6, ExpressionType.Convert);
-		Assert (3, e6.Compile ().Invoke (3));
-		Assert (null, e6.Compile ().Invoke (null));
+		// FIXME: ET emitter CRASHES MONO RUNTIME
+		//Assert (3, e6.Compile ().Invoke (3));
+		//Assert (null, e6.Compile ().Invoke (null));
 	}	
 
 #pragma warning restore 169
@@ -2592,7 +2593,7 @@ class Tester
 	public static int Main ()
 	{
 		var tests = from test in typeof (Tester).GetMethods (BindingFlags.Instance | BindingFlags.NonPublic)
-					where test.GetParameters ().Length == 0 && !test.Name.StartsWith ("_")
+					where test.GetParameters ().Length == 0
 					orderby test.Name
 					select RunTest (test);
 
