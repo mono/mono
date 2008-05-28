@@ -395,58 +395,106 @@ namespace System.Linq.Expressions {
 			ig.Emit (opcode);
 		}
 
-		void EmitLiftedSimpleBinary (EmitContext ec)
+		void EmitLiftedArithmeticBinary (EmitContext ec)
 		{
-			Label empty_value;
-			LocalBuilder ret = null;
-
-			LocalBuilder vleft, vright;
-
 			var ig = ec.ig;
-			empty_value = ig.DefineLabel ();
-			ret = ig.DeclareLocal (Type);
+			var left = ec.EmitStored (this.left);
+			var right = ec.EmitStored (this.right);
+			var result = ig.DeclareLocal (Type);
 
-			vleft = ec.EmitStored (left);
-			vright = ec.EmitStored (right);
+			var has_value = ig.DefineLabel ();
+			var done = ig.DefineLabel ();
 
-			MethodInfo has_value = left.Type.GetMethod ("get_HasValue");
-			MethodInfo get_value = GetMethodNoPar (left.Type, "get_Value");
+			ec.EmitNullableHasValue (left);
+			ec.EmitNullableHasValue (right);
+			ig.Emit (OpCodes.And);
+			ig.Emit (OpCodes.Brtrue, has_value);
 
-			ig.Emit (OpCodes.Ldloca, vleft);
-			ig.Emit (OpCodes.Call, has_value);
-			ig.Emit (OpCodes.Brfalse, empty_value);
-			ig.Emit (OpCodes.Ldloca, vright);
-			ig.Emit (OpCodes.Call, has_value);
-			ig.Emit (OpCodes.Brfalse, empty_value);
-			ig.Emit (OpCodes.Ldloca, vleft);
-			ig.Emit (OpCodes.Call, get_value);
-			ig.Emit (OpCodes.Ldloca, vright);
-			ig.Emit (OpCodes.Call, get_value);
+			ig.Emit (OpCodes.Ldloca, result);
+			ig.Emit (OpCodes.Initobj, result.LocalType);
+			ig.Emit (OpCodes.Ldloc, result);
+
+			ig.Emit (OpCodes.Br, done);
+
+			ig.MarkLabel (has_value);
+
+			ec.EmitNullableGetValueOrDefault (left);
+			ec.EmitNullableGetValueOrDefault (right);
 
 			EmitBinaryOperator (ec);
 
-			ig.Emit (OpCodes.Newobj, left.Type.GetConstructors () [0]);
+			ec.EmitNullableNew (result.LocalType);
 
-			Label skip = ig.DefineLabel ();
-			ig.Emit (OpCodes.Br_S, skip);
-			ig.MarkLabel (empty_value);
-			ig.Emit (OpCodes.Ldloc, ret);
-			ig.Emit (OpCodes.Ldloca, ret);
-			ig.Emit (OpCodes.Initobj, Type);
-
-			ig.MarkLabel (skip);
+			ig.MarkLabel (done);
 		}
 
-		void EmitSimpleBinary (EmitContext ec)
+		void EmitLiftedRelationalBinary (EmitContext ec)
 		{
-			if (IsLifted) {
-				EmitLiftedSimpleBinary (ec);
-				return;
+			var ig = ec.ig;
+			var left = ec.EmitStored (this.left);
+			var right = ec.EmitStored (this.right);
+
+			var ret = ig.DefineLabel ();
+			var done = ig.DefineLabel ();
+
+			ec.EmitNullableGetValueOrDefault (left);
+			ec.EmitNullableGetValueOrDefault (right);
+
+			switch (NodeType) {
+			case ExpressionType.Equal:
+			case ExpressionType.NotEqual:
+				ig.Emit (OpCodes.Bne_Un, ret);
+				break;
+			default:
+				EmitBinaryOperator (ec);
+				ig.Emit (OpCodes.Brfalse, ret);
+				break;
 			}
 
-			left.Emit (ec);
-			right.Emit (ec);
-			EmitBinaryOperator (ec);
+			ec.EmitNullableHasValue (left);
+			ec.EmitNullableHasValue (right);
+
+			switch (NodeType) {
+			case ExpressionType.Equal:
+				ig.Emit (OpCodes.Ceq);
+				break;
+			case ExpressionType.NotEqual:
+				ig.Emit (OpCodes.Ceq);
+				ig.Emit (OpCodes.Ldc_I4_0);
+				ig.Emit (OpCodes.Ceq);
+				break;
+			default:
+				ig.Emit (OpCodes.And);
+				break;
+			}
+
+			ig.Emit (OpCodes.Br, done);
+
+			ig.MarkLabel (ret);
+
+			ig.Emit (NodeType == ExpressionType.NotEqual ? OpCodes.Ldc_I4_1 : OpCodes.Ldc_I4_0);
+
+			ig.MarkLabel (done);
+		}
+
+		void EmitArithmeticBinary (EmitContext ec)
+		{
+			if (!IsLifted) {
+				left.Emit (ec);
+				right.Emit (ec);
+				EmitBinaryOperator (ec);
+			} else
+				EmitLiftedArithmeticBinary (ec);
+		}
+
+		void EmitRelationalBinary (EmitContext ec)
+		{
+			if (!IsLifted) {
+				left.Emit (ec);
+				right.Emit (ec);
+				EmitBinaryOperator (ec);
+			} else
+				EmitLiftedRelationalBinary (ec);
 		}
 
 		internal override void Emit (EmitContext ec)
@@ -482,14 +530,34 @@ namespace System.Linq.Expressions {
 				return;
 
 			case ExpressionType.Power:
+				// likely broken if lifted
 				left.Emit (ec);
 				right.Emit (ec);
 				ec.EmitCall (typeof (Math).GetMethod ("Pow"));
 				return;
 
-			default:
-				EmitSimpleBinary (ec);
+			case ExpressionType.Add:
+			case ExpressionType.AddChecked:
+			case ExpressionType.Divide:
+			case ExpressionType.LeftShift:
+			case ExpressionType.Modulo:
+			case ExpressionType.Multiply:
+			case ExpressionType.MultiplyChecked:
+			case ExpressionType.RightShift:
+			case ExpressionType.Subtract:
+			case ExpressionType.SubtractChecked:
+				EmitArithmeticBinary (ec);
 				return;
+			case ExpressionType.Equal:
+			case ExpressionType.GreaterThan:
+			case ExpressionType.GreaterThanOrEqual:
+			case ExpressionType.LessThan:
+			case ExpressionType.LessThanOrEqual:
+			case ExpressionType.NotEqual:
+				EmitRelationalBinary (ec);
+				return;
+			default:
+				throw new NotSupportedException (this.NodeType.ToString ());
 			}
 		}
 	}
