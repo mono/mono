@@ -258,6 +258,9 @@ namespace System.Net
 			if (dot == -1)
 				return (String.Compare (host, domain, true, CultureInfo.InvariantCulture) == 0);
 
+			if (dot == 0 && String.Compare ("." + host, domain, true, CultureInfo.InvariantCulture) == 0)
+			    return true;
+	
 			if (host.Length < domain.Length)
 				return false;
 
