@@ -1,3 +1,14 @@
+2008-05-27  Marek Habersack  <mhabersack@novell.com>
+
+	* ResourceReader.cs: reimplement the way resources are read when
+	enumerator is used. The resource indexes and names are read in
+	ReadHeaders when ResourceReader is created and the resource values
+	are read and cached when the enumerator is created. This removed a
+	lot of unnecessary locking and made the whole process more
+	efficient and faster (a test application would acquire the locks
+	40000 times durng a 1.7s run, right now it acquires the lock 1
+	time).
+
 2008-05-08  Miguel de Icaza  <miguel@novell.com>
 
 	* ResourceSet.cs: Pass the ignoreCase argument, needed to

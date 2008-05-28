@@ -39,6 +39,9 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Permissions;
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 
 namespace System.Resources
 {
@@ -71,13 +74,40 @@ namespace System.Resources
 #endif
 	public sealed class ResourceReader : IResourceReader, IEnumerable, IDisposable
 	{
+		class ResourceInfo
+		{
+			public readonly long ValuePosition;
+			public readonly string ResourceName;
+			public readonly int TypeIndex;
+			
+			public ResourceInfo (string resourceName, long valuePosition, int type_index)
+			{
+				ValuePosition = valuePosition;
+				ResourceName = resourceName;
+				TypeIndex = type_index;
+			}
+		}
+
+		class ResourceCacheItem
+		{
+			public readonly string ResourceName;
+			public readonly object ResourceValue;
+
+			public ResourceCacheItem (string name, object value)
+			{
+				ResourceName = name;
+				ResourceValue = value;
+			}
+		}
+		
 		BinaryReader reader;
+		object readerLock = new object ();
 		IFormatter formatter;
 		internal int resourceCount = 0;
 		int typeCount = 0;
 		string[] typeNames;
 		int[] hashes;
-		long[] positions;
+		ResourceInfo[] infos;
 		int dataSectionOffset;
 		long nameSectionOffset;
 		int resource_ver;
@@ -195,18 +225,45 @@ namespace System.Resources
 				/* Read in the virtual offsets for
 				 * each resource name
 				 */
-				positions=new long[resourceCount];
-				for(int i=0; i<resourceCount; i++) {
-					positions[i]=reader.ReadInt32();
-				}
+				long[] positions = new long [resourceCount];
+				for(int i = 0; i < resourceCount; i++)
+					positions [i] = reader.ReadInt32();
 				
 				dataSectionOffset = reader.ReadInt32();
 				nameSectionOffset = reader.BaseStream.Position;
+
+				long origPosition = reader.BaseStream.Position;
+				infos = new ResourceInfo [resourceCount];
+				for (int i = 0; i < resourceCount; i++)
+					infos [i] = CreateResourceInfo (positions [i]);
+				reader.BaseStream.Seek (origPosition, SeekOrigin.Begin);
+				
+				positions = null;
 			} catch(EndOfStreamException e) {
 				throw new ArgumentException("Stream is not a valid .resources file!  It was possibly truncated.", e);
 			}
 		}
 
+		ResourceInfo CreateResourceInfo (long position)
+		{
+			long pos = position + nameSectionOffset;
+
+			reader.BaseStream.Seek (pos, SeekOrigin.Begin);
+
+			// Resource name
+			int len = Read7BitEncodedInt ();
+			byte[] str = new byte [len];
+			
+			reader.Read (str, 0, len);
+			string resourceName = Encoding.Unicode.GetString (str);
+
+			long data_offset = reader.ReadInt32 () + dataSectionOffset;
+			reader.BaseStream.Seek (data_offset, SeekOrigin.Begin);
+			int type_index = Read7BitEncodedInt ();
+			
+			return new ResourceInfo (resourceName, reader.BaseStream.Position, type_index);
+		}
+		
 		/* Cut and pasted from BinaryReader, because it's
 		 * 'protected' there
 		 */
@@ -223,22 +280,6 @@ namespace System.Resources
 			} while ((b & 0x80) == 0x80);
 
 			return ret;
-		}
-
-		private string ResourceName(int index)
-		{
-			lock(this) 
-			{
-				long pos=positions[index]+nameSectionOffset;
-				reader.BaseStream.Seek(pos, SeekOrigin.Begin);
-
-				/* Read a 7-bit encoded byte length field */
-				int len=Read7BitEncodedInt();
-				byte[] str=new byte[len];
-
-				reader.Read(str, 0, len);
-				return Encoding.Unicode.GetString(str);
-			}
 		}
 
 		object ReadValueVer2 (int type_index)
@@ -366,60 +407,45 @@ namespace System.Resources
 				throw new InvalidOperationException("Deserialized object is wrong type");
 			}
 			return obj;
-		}
-		
-		private object ResourceValue(int index)
+		}		
+
+		void LoadResourceValues (IList store)
 		{
-			lock(this)
-			{
-				long pos=positions[index]+nameSectionOffset;
-				reader.BaseStream.Seek(pos, SeekOrigin.Begin);
+			ResourceInfo ri;
+			ResourceCacheItem rci;
+			object value;
+			
+			lock (readerLock) {
+				for (int i = 0; i < resourceCount; i++) {
+					ri = infos [i];
+					if (ri.TypeIndex == -1) {
+						store.Add (new ResourceCacheItem (ri.ResourceName, null));
+						continue;
+					}
 
-				/* Read a 7-bit encoded byte length field */
-				long len=Read7BitEncodedInt();
-				/* ... and skip that data to the info
-				 * we want, the offset into the data
-				 * section
-				 */
-				reader.BaseStream.Seek(len, SeekOrigin.Current);
-
-				long data_offset=reader.ReadInt32();
-				reader.BaseStream.Seek(data_offset+dataSectionOffset, SeekOrigin.Begin);
-				int type_index=Read7BitEncodedInt();
-
-				if (type_index == -1)
-					return null;
+					reader.BaseStream.Seek (ri.ValuePosition, SeekOrigin.Begin);
 #if NET_2_0
-				if (resource_ver == 2)
-					return ReadValueVer2 (type_index);
+					if (resource_ver == 2)
+						value = ReadValueVer2 (ri.TypeIndex);
+					else
 #endif
+						value = ReadValueVer1 (Type.GetType (typeNames [ri.TypeIndex], true));
 
-				return ReadValueVer1 (Type.GetType (typeNames[type_index], true));
+					store.Add (new ResourceCacheItem (ri.ResourceName, value));
+				}
 			}
 		}
-
+		
 #if NET_2_0
 		internal UnmanagedMemoryStream ResourceValueAsStream (string name, int index)
 		{
-			lock(this)
-			{
-				long pos=positions[index]+nameSectionOffset;
-				reader.BaseStream.Seek(pos, SeekOrigin.Begin);
-
-				/* Read a 7-bit encoded byte length field */
-				long len=Read7BitEncodedInt();
-				/* ... and skip that data to the info
-				 * we want, the offset into the data
-				 * section
-				 */
-				reader.BaseStream.Seek(len, SeekOrigin.Current);
-
-				long data_offset=reader.ReadInt32();
-				reader.BaseStream.Seek(data_offset+dataSectionOffset, SeekOrigin.Begin);
-				int type_index=Read7BitEncodedInt();
-				if ((PredefinedResourceType)type_index != PredefinedResourceType.Stream)
-					throw new InvalidOperationException (String.Format ("Resource '{0}' was not a Stream. Use GetObject() instead.", name));
-
+			ResourceInfo ri = infos [index];
+			if ((PredefinedResourceType)ri.TypeIndex != PredefinedResourceType.Stream)
+				throw new InvalidOperationException (String.Format ("Resource '{0}' was not a Stream. Use GetObject() instead.", name));
+			
+			lock (readerLock) {
+				reader.BaseStream.Seek (ri.ValuePosition, SeekOrigin.Begin);
+				
 				// here we return a Stream from exactly
 				// current position so that the returned
 				// Stream represents a single object stream.
@@ -486,28 +512,16 @@ namespace System.Resources
 
 		private void GetResourceDataAt (int index, out string resourceType, out byte [] data)
 		{
-			lock(this)
-			{
-				long pos=positions[index]+nameSectionOffset;
-				reader.BaseStream.Seek(pos, SeekOrigin.Begin);
-
-				/* Read a 7-bit encoded byte length field */
-				long len=Read7BitEncodedInt();
-				/* ... and skip that data to the info
-				 * we want, the offset into the data
-				 * section
-				 */
-				reader.BaseStream.Seek(len, SeekOrigin.Current);
-
-				long data_offset=reader.ReadInt32();
-				reader.BaseStream.Seek(data_offset+dataSectionOffset, SeekOrigin.Begin);
-				int type_index=Read7BitEncodedInt();
-				if (type_index == -1)
-					throw new FormatException ("The resource data is corrupt");
+			ResourceInfo ri = infos [index];
+			int type_index = ri.TypeIndex;
+			if (type_index == -1)
+				throw new FormatException ("The resource data is corrupt");
+			
+			lock (readerLock) {
+				reader.BaseStream.Seek (ri.ValuePosition, SeekOrigin.Begin);
 				long pos2 = reader.BaseStream.Position;
 
 				// Simply read data, and seek back to the original position
-
 				if (resource_ver == 2) {
 					if (type_index >= (int) PredefinedResourceType.FistCustom) {
 						int typenameidx = type_index - (int)PredefinedResourceType.FistCustom;
@@ -518,8 +532,7 @@ namespace System.Resources
 					else
 						resourceType = "ResourceTypeCode." + (PredefinedResourceType) type_index;
 					ReadValueVer2 (type_index);
-				}
-				else {
+				} else {
 					// resource ver 1 == untyped
 					resourceType = "ResourceTypeCode.Null";
 					ReadValueVer1 (Type.GetType (typeNames [type_index], true));
@@ -548,7 +561,7 @@ namespace System.Resources
 
 			reader=null;
 			hashes=null;
-			positions=null;
+			infos=null;
 			typeNames=null;
 		}
 		
@@ -557,9 +570,12 @@ namespace System.Resources
 			private ResourceReader reader;
 			private int index = -1;
 			private bool finished = false;
+			ResourceCacheItem[] cache;
 			
-			internal ResourceEnumerator(ResourceReader readerToEnumerate){
+			internal ResourceEnumerator(ResourceReader readerToEnumerate)
+			{
 				reader = readerToEnumerate;
+				FillCache ();
 			}
 
 			public int Index
@@ -589,7 +605,8 @@ namespace System.Resources
 						throw new InvalidOperationException("ResourceReader is closed.");
 					if (index < 0)
 						throw new InvalidOperationException("Enumeration has not started. Call MoveNext.");
-					return (reader.ResourceName(index)); 
+
+					return cache [index].ResourceName;
 				}
 			}
 			
@@ -600,7 +617,7 @@ namespace System.Resources
 						throw new InvalidOperationException("ResourceReader is closed.");
 					if (index < 0)
 						throw new InvalidOperationException("Enumeration has not started. Call MoveNext.");
-					return(reader.ResourceValue(index));
+					return cache [index].ResourceValue;
 				}
 			}
 			
@@ -649,6 +666,25 @@ namespace System.Resources
 					throw new InvalidOperationException("ResourceReader is closed.");
 				index = -1;
 				finished = false;
+			}
+
+			void FillCache ()
+			{
+				if (reader.reader == null)
+					return;
+				
+#if NET_2_0
+				var resources = new List <ResourceCacheItem> (reader.resourceCount);
+#else
+				ArrayList resources = new ArrayList (reader.resourceCount);
+#endif
+				
+				reader.LoadResourceValues (resources);
+#if NET_2_0
+				cache = resources.ToArray ();
+#else
+				cache = (ResourceCacheItem[]) resources.ToArray (typeof (ResourceCacheItem));
+#endif
 			}
 		} // internal class ResourceEnumerator
 	}  // public sealed class ResourceReader
