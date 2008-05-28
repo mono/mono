@@ -666,6 +666,7 @@ System.Web.UI/PersistenceMode.cs
 System.Web.UI/PostBackOptions.cs
 System.Web.UI/PropertyConverter.cs
 System.Web.UI/PropertyEntry.cs
+System.Web.UI/ReadOnlyDataSourceView.cs
 System.Web.UI/RenderMethod.cs
 System.Web.UI/RootBuilder.cs
 System.Web.UI/SimpleHandlerFactory.cs

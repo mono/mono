@@ -31,6 +31,7 @@
 #if NET_2_0
 using System.Collections;
 using System.ComponentModel;
+using System.Web.UI;
 using System.Web.UI.WebControls.Adapters;
 
 namespace System.Web.UI.WebControls
@@ -58,19 +59,20 @@ namespace System.Web.UI.WebControls
 		protected virtual HierarchicalDataSourceView GetData (string viewPath)
 		{
 			if (DataSource != null && DataSourceID != "")
-				throw new HttpException ();
-			
+				throw new HttpException ();	
 			IHierarchicalDataSource ds = GetDataSource ();
 			if (ds != null)
 				return ds.GetHierarchicalView (viewPath);
-			else
-				return null; 
+			
+			if (DataSource is IHierarchicalEnumerable)
+				return new ReadOnlyDataSourceView ((IHierarchicalEnumerable) DataSource);
+			
+			return null;
 		}
 		
 		protected virtual IHierarchicalDataSource GetDataSource ()
 		{
 			if (IsBoundUsingDataSourceID) {
-				
 				Control ctrl = FindDataSource ();
 
 				if (ctrl == null)

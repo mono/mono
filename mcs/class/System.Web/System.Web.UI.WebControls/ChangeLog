@@ -1,3 +1,12 @@
+2008-05-18  Marek Habersack  <mhabersack@novell.com>
+
+	* HierarchicalDataBoundControl.cs: Modified GetData method to check if
+	DataSource implements IHierarchicalEnumerable and if so constructs and
+	returns a new instance of ReadOnlyDataSourceView. This provides functional
+	compatibility with the Microsoft.NET framework. Fixes bug
+	#395209. Patch contributed by James Fitzsimons
+	<james.fitzsimons@gmail.com>, thanks!
+
 2008-05-06  Marek Habersack  <mhabersack@novell.com>
 
 	* Calendar.cs: do not create dateInfo in the constructor - culture

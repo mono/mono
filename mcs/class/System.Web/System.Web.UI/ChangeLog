@@ -1,5 +1,8 @@
 2008-05-28  Marek Habersack  <mhabersack@novell.com>
 
+	* ReadOnlyDataSourceView.cs: added. Patch contributed by James
+	Fitzsimons <james.fitzsimons@gmail.com>, thanks!
+
 	* TemplateParser.cs: added support for #pragma checksum
 
 2008-05-19  Juraj Skripsky  <js@hotfeet.ch>

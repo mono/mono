@@ -1,3 +1,11 @@
+2008-05-18  Marek Habersack  <mhabersack@novell.com>
+
+	* HierarchicalDataBoundControlTest.cs: Added 
+	TestIHierarchicalEnumerableDataSource to test change made to
+	GetData method to make functionally compatibile with Microsoft.NET
+	framework. Patch contributed by James Fitzsimons
+	<james.fitzsimons@gmail.com>, thanks!
+	
 2008-05-04 Igor Zelmanovich <igorz@mainsoft.com>
 
 	* WebControlTest.cs: make tests compatible with Windows

@@ -81,6 +81,11 @@ namespace MonoTests.System.Web.UI.WebControls
 				dataBindTrace.Append ("[End PerformDataBinding]");
 			}
 
+			public HierarchicalDataSourceView GetData (string path) {
+				dataBindTrace.Append ("[Start GetData]");
+				return base.GetData (path);
+			}
+
 			protected override void OnDataBinding (EventArgs e) {
 				dataBindTrace.Append ("[Start OnDataBinding]");
 				base.OnDataBinding (e);
@@ -149,11 +154,105 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void PerformDataBinding_WorksWithControlAdapter ()
 		{
 			MyHierarchicalDataBoundControl c = new MyHierarchicalDataBoundControl ();
-			MyControlAdapter a = new MyControlAdapter();;
+			MyControlAdapter a = new MyControlAdapter();
 			c.controlAdapter = a;
 			c.DataBind ();
 		}
 
+		public class TestHierarchy : IHierarchicalEnumerable
+		{
+			List<TestNode> list;
+			
+			public TestHierarchy (List<TestNode> source)
+			{
+			    list = source;
+			}
+
+			public IHierarchyData GetHierarchyData (object enumeratedItem)
+			{
+			    return enumeratedItem as TestNode;
+			}
+
+			public IEnumerator GetEnumerator ()
+			{
+				return list.GetEnumerator ();
+			}
+		}
+
+		public class TestNode : IHierarchyData
+		{
+			string name;
+			TestNode parent;
+			List<TestNode> childNodes;
+
+			public TestNode (string name, TestNode parent, List<TestNode> children)
+			{
+				this.name = name;
+				this.parent = parent;
+				this.childNodes = children;
+			}
+
+			public string Name
+			{
+				get { return name; }
+			}
+
+			public IHierarchicalEnumerable GetChildren ()
+			{
+			    return new TestHierarchy (childNodes);
+			}
+
+			public IHierarchyData GetParent ()
+			{
+			    return parent;
+			}
+
+			public bool HasChildren
+			{
+			    get 
+			    {
+				if (childNodes == null)
+				    return false;
+
+				return childNodes.Count > 0; 
+			    }
+			}
+
+			public object Item
+			{
+			    get { return this; }
+			}
+
+			public string Path
+			{
+			    get
+			    {
+				TestNode node = this;
+				string s = name;
+				while ((node = (TestNode)node.GetParent ()) != null)
+				    s = node.Name + ": " + s;
+				return s.Trim ();
+			    }
+			}
+
+			public string Type
+			{
+			    get { return this.ToString (); }
+			}
+		}
+		
+		[Test]
+		public void TestIHierarchicalEnumerableDataSource ()
+		{
+			List<TestNode> list = new List<TestNode> ();
+			list.Add (new TestNode ("test", null, null));
+                        TestHierarchy hierarchy = new TestHierarchy (list);
+			MyHierarchicalDataBoundControl c = new MyHierarchicalDataBoundControl ();
+			c.DataSource = hierarchy;
+			c.DataBind ();
+			HierarchicalDataSourceView view = c.GetData ("");
+		        Assert.IsNotNull (view);
+		}
 	}
 }
 
