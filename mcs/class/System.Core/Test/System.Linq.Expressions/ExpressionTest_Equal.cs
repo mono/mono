@@ -165,5 +165,22 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.IsFalse (eq (1, 2));
 			Assert.IsTrue (eq (1, 1));
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void NullableInt32NotEqual () // have to move that to its own file
+		{
+			var l = Expression.Parameter (typeof (int?), "l");
+			var r = Expression.Parameter (typeof (int?), "r");
+
+			var neq = Expression.Lambda<Func<int?, int?, bool>> (
+				Expression.NotEqual (l, r), l, r).Compile ();
+
+			Assert.IsFalse (neq (null, null));
+			Assert.IsTrue (neq (null, 1));
+			Assert.IsTrue (neq (1, null));
+			Assert.IsTrue (neq (1, 2));
+			Assert.IsFalse (neq (1, 1));
+		}
 	}
 }
