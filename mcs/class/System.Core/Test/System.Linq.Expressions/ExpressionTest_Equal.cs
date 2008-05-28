@@ -150,7 +150,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void NullableInt32Equal ()
 		{
 			var l = Expression.Parameter (typeof (int?), "l");
@@ -164,10 +163,11 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.IsFalse (eq (1, null));
 			Assert.IsFalse (eq (1, 2));
 			Assert.IsTrue (eq (1, 1));
+			Assert.IsFalse (eq (null, 0));
+			Assert.IsFalse (eq (0, null));
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void NullableInt32NotEqual () // have to move that to its own file
 		{
 			var l = Expression.Parameter (typeof (int?), "l");
@@ -181,6 +181,8 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.IsTrue (neq (1, null));
 			Assert.IsTrue (neq (1, 2));
 			Assert.IsFalse (neq (1, 1));
+			Assert.IsTrue (neq (null, 0));
+			Assert.IsTrue (neq (0, null));
 		}
 	}
 }

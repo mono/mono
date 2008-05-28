@@ -108,7 +108,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void NullableInt32LessThan ()
 		{
 			var l = Expression.Parameter (typeof (int?), "l");
