@@ -1,3 +1,9 @@
+2008-05-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ScrollBar.cs: Scrollbars should only react to left-clicks, not right
+	or middle ones.
+	Fixes part of #393908.
+
 2008-05-28  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripDrowDown.cs: When using the Show () methods that have a

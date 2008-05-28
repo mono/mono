@@ -1066,7 +1066,7 @@ namespace System.Windows.Forms
     		{
 			ClearDirty ();
 
-			if (Enabled == false)
+			if (Enabled == false || (e.Button & MouseButtons.Left) == 0)
 				return;
 
     			if (firstbutton_state != ButtonState.Inactive && first_arrow_area.Contains (e.X, e.Y)) {
