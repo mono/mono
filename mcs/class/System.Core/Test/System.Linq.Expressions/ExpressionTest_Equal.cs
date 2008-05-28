@@ -151,17 +151,19 @@ namespace MonoTests.System.Linq.Expressions
 
 		[Test]
 		[Category ("NotWorking")]
-		public void DoubleNullableEqual ()
+		public void NullableInt32Equal ()
 		{
-			var l = Expression.Parameter (typeof (double?), "l");
-			var r = Expression.Parameter (typeof (double?), "r");
+			var l = Expression.Parameter (typeof (int?), "l");
+			var r = Expression.Parameter (typeof (int?), "r");
 
-			var eq = Expression.Lambda<Func<double?, double?, bool>> (
+			var eq = Expression.Lambda<Func<int?, int?, bool>> (
 				Expression.Equal (l, r), l, r).Compile ();
 
-			Assert.AreEqual (true, eq (null, null));
-			Assert.AreEqual (false, eq (null, 1.1));
-			// TODO: .. continue
+			Assert.IsTrue (eq (null, null));
+			Assert.IsFalse (eq (null, 1));
+			Assert.IsFalse (eq (1, null));
+			Assert.IsFalse (eq (1, 2));
+			Assert.IsTrue (eq (1, 1));
 		}
 	}
 }

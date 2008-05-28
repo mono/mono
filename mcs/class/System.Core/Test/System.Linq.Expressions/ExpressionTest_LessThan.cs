@@ -106,5 +106,25 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual ("op_LessThan", expr.Method.Name);
 			Assert.AreEqual ("(value(MonoTests.System.Linq.Expressions.OpClass) < value(MonoTests.System.Linq.Expressions.OpClass))", expr.ToString ());
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void NullableInt32LessThan ()
+		{
+			var l = Expression.Parameter (typeof (int?), "l");
+			var r = Expression.Parameter (typeof (int?), "r");
+
+			var lt = Expression.Lambda<Func<int?, int?, bool>> (
+				Expression.LessThan (l, r), l, r).Compile ();
+
+			Assert.IsFalse (lt (null, null));
+			Assert.IsFalse (lt (null, 1));
+			Assert.IsFalse (lt (null, -1));
+			Assert.IsFalse (lt (1, null));
+			Assert.IsFalse (lt (-1, null));
+			Assert.IsTrue (lt (1, 2));
+			Assert.IsFalse (lt (2, 1));
+			Assert.IsFalse (lt (1, 1));
+		}
 	}
 }

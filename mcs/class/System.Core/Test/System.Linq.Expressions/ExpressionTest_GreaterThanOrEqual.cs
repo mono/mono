@@ -106,5 +106,25 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual ("op_GreaterThanOrEqual", expr.Method.Name);
 			Assert.AreEqual ("(value(MonoTests.System.Linq.Expressions.OpClass) >= value(MonoTests.System.Linq.Expressions.OpClass))", expr.ToString ());
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void NullableInt32GreaterThanOrEqual ()
+		{
+			var l = Expression.Parameter (typeof (int?), "l");
+			var r = Expression.Parameter (typeof (int?), "r");
+
+			var gte = Expression.Lambda<Func<int?, int?, bool>> (
+				Expression.GreaterThanOrEqual (l, r), l, r).Compile ();
+
+			Assert.IsFalse (gte (null, null));
+			Assert.IsFalse (gte (null, 1));
+			Assert.IsFalse (gte (null, -1));
+			Assert.IsFalse (gte (1, null));
+			Assert.IsFalse (gte (-1, null));
+			Assert.IsFalse (gte (1, 2));
+			Assert.IsTrue (gte (2, 1));
+			Assert.IsTrue (gte (1, 1));
+		}
 	}
 }

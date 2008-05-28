@@ -132,5 +132,25 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (false, compiled (-1, 0), "tc4");
 			Assert.AreEqual (false, compiled (0, Int32.MaxValue), "tc5");
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void NullableInt32GreaterThan ()
+		{
+			var l = Expression.Parameter (typeof (int?), "l");
+			var r = Expression.Parameter (typeof (int?), "r");
+
+			var gt = Expression.Lambda<Func<int?, int?, bool>> (
+				Expression.GreaterThan (l, r), l, r).Compile ();
+
+			Assert.IsFalse (gt (null, null));
+			Assert.IsFalse (gt (null, 1));
+			Assert.IsFalse (gt (null, -1));
+			Assert.IsFalse (gt (1, null));
+			Assert.IsFalse (gt (-1, null));
+			Assert.IsFalse (gt (1, 2));
+			Assert.IsTrue (gt (2, 1));
+			Assert.IsFalse (gt (1, 1));
+		}
 	}
 }
