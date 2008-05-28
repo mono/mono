@@ -1,3 +1,20 @@
+2008-05-28  Marek Habersack  <mhabersack@novell.com>
+
+	* Configuration.cs: set the ConfigContext when getting
+	and instance of a section. Fix for bug #325128.
+
+	* ConfigurationSection.cs: added an internal property -
+	ConfigContext used to supply the HttpContext to the Create
+	method of SectionHandler when called from GetRuntimeObject.
+	Fix for bug #325128.
+
+	* InternalConfiguationHost.cs: changed CreateDeprecatedConfigContext
+	to return null rather than throwing a NotImplementedException.
+	Fix for bug #325128.
+
+	* All patches above contributed by James Fitzsimons <james.fitzsimons@gmail.com>,
+	  thanks!
+
 2008-05-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SectionGroupInfo.cs: Use String.IsNullOrEmpty inside 2.0 code.

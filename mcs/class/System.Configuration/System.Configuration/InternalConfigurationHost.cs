@@ -45,7 +45,7 @@ namespace System.Configuration
 		
 		public virtual object CreateDeprecatedConfigContext (string configPath)
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 		
 		public virtual void DeleteStream (string streamName)

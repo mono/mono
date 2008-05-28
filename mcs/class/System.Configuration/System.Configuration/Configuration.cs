@@ -273,6 +273,8 @@ namespace System.Configuration {
 				sec.SectionInformation.SetParentSection (parentSection);
 			}
 			sec.SectionInformation.ConfigFilePath = FilePath;
+
+			sec.ConfigContext = system.Host.CreateDeprecatedConfigContext(configPath);
 			
 			string xml = data as string;
 			sec.RawXml = xml;

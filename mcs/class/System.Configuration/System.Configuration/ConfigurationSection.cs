@@ -34,6 +34,7 @@ using System.IO;
 #if !TARGET_JVM
 using System.Security.Cryptography.Xml;
 #endif
+using System.Configuration.Internal;
 
 namespace System.Configuration
 {
@@ -64,6 +65,17 @@ namespace System.Configuration
 				return sectionInformation;
 			}
 		}
+		
+		private object _configContext;
+		
+		internal object ConfigContext {
+			get {
+				return _configContext;
+			}
+			set {
+				_configContext = value;
+			}
+		}
 
 		[MonoTODO ("Provide ConfigContext. Likely the culprit of bug #322493")]
 		protected internal virtual object GetRuntimeObject ()
@@ -78,7 +90,8 @@ namespace System.Configuration
 					// This code requires some re-thinking...
 					XmlReader reader = new XmlTextReader (new StringReader (RawXml));
 
-					DoDeserializeSection (reader);
+					DoDeserializeSection (reader);				
+					
 					if (!String.IsNullOrEmpty (SectionInformation.ConfigSource)) {
 						string fileDir = SectionInformation.ConfigFilePath;
 						if (!String.IsNullOrEmpty (fileDir))
@@ -96,10 +109,9 @@ namespace System.Configuration
 					// ignore, it can fail - we deserialize only in order to get
 					// the configSource attribute
 				}
-				
 				XmlDocument doc = new XmlDocument ();
 				doc.LoadXml (RawXml);
-				return SectionHandler.Create (parent, null, doc.DocumentElement);
+				return SectionHandler.Create (parent, ConfigContext, doc.DocumentElement);
 			}
 			return this;
 		}
