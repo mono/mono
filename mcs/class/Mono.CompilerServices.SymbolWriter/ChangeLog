@@ -1,6 +1,12 @@
 2008-05-28  Martin Baulig  <martin@ximian.com>
 
 	* MonoSymbolTable.cs
+	(MethodSourceEntry): Mark as Obsolete.
+	(SourceFileEntry.Methods): Likewise.
+
+2008-05-28  Martin Baulig  <martin@ximian.com>
+
+	* MonoSymbolTable.cs
 	(LineNumberTable): New public class.
 	(MethodEntry.LocalTypeIndices): Removed.
 	(MethodEntry.GetLineNumberTable): New public method; replaces the

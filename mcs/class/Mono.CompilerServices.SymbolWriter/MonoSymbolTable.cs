@@ -589,6 +589,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			get { return file_name; }
 		}
 
+		[Obsolete]
 		public MethodSourceEntry[] Methods {
 			get {
 				if (creating)
@@ -636,6 +637,7 @@ namespace Mono.CompilerServices.SymbolWriter
 		}
 	}
 
+	[Obsolete]
 	public struct MethodSourceEntry : IComparable
 	{
 		#region This is actually written to the symbol file
