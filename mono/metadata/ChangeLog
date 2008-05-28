@@ -1,3 +1,10 @@
+2008-05-28  Martin Baulig  <martin@ximian.com>
+
+	The debugger now requires exactly r103463.
+
+	* mono-debug.h (MONO_DEBUGGER_VERSION): Bump to 71.
+	This version is not supported by the debugger, wait for 72.
+
 2008-05-28 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* object.h: Changed array related functions to use
