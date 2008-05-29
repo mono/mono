@@ -202,8 +202,10 @@ namespace System.Linq.Expressions {
 			case ExpressionType.Or:
 				if (!IsLifted)
 					EmitLogical (ec);
-				else
+				else if (Type == typeof (bool?))
 					EmitLiftedLogical (ec);
+				else
+					EmitLiftedArithmeticBinary (ec);
 				break;
 			case ExpressionType.AndAlso:
 			case ExpressionType.OrElse:
@@ -222,13 +224,31 @@ namespace System.Linq.Expressions {
 
 		void EmitLiftedLogical (EmitContext ec)
 		{
-			// TODO
-			if (Type == typeof (bool?)) {
-				EmitLiftedLogical (ec,
-					NodeType == ExpressionType.And || NodeType == ExpressionType.AndAlso,
-					NodeType == ExpressionType.AndAlso || NodeType == ExpressionType.OrElse);
-			} else
-				EmitLiftedToNullBinary (ec);
+			var ig = ec.ig;
+			var and = NodeType == ExpressionType.And;
+			var left = ec.EmitStored (this.left);
+			var right = ec.EmitStored (this.right);
+
+			var ret1 = ig.DefineLabel ();
+			var ret2 = ig.DefineLabel ();
+			var done = ig.DefineLabel ();
+
+			ec.EmitNullableGetValueOrDefault (left);
+			ig.Emit (OpCodes.Brtrue, ret2);
+			ec.EmitNullableGetValueOrDefault (right);
+			ig.Emit (OpCodes.Brtrue, ret1);
+
+			ec.EmitNullableHasValue (left);
+			ig.Emit (OpCodes.Brfalse, ret2);
+
+			ig.MarkLabel (ret1);
+			ec.EmitLoad (and ? left : right);
+			ig.Emit (OpCodes.Br, done);
+
+			ig.MarkLabel (ret2);
+			ec.EmitLoad (and ? right : left);
+
+			ig.MarkLabel (done);
 		}
 
 		void EmitLogicalShortCircuit (EmitContext ec)
