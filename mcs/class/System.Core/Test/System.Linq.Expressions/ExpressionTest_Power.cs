@@ -67,26 +67,43 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		public void ArgTypesFloat_OK ()
+		public void ArgTypesDouble ()
 		{
-			BinaryExpression p = Expression.Power (Expression.Constant (1.0), Expression.Constant (2.0));
+			var p = Expression.Power (Expression.Constant (1.0), Expression.Constant (2.0));
 
 			Assert.AreEqual (ExpressionType.Power, p.NodeType, "Power#01");
 			Assert.AreEqual (typeof (double), p.Type, "Add#02");
+			Assert.AreEqual ("(1 ^ 2)", p.ToString ());
 		}
 
 		[Test]
 		public void TestCompile ()
 		{
-			ParameterExpression a = Expression.Parameter(typeof(double), "a");
-			ParameterExpression b = Expression.Parameter(typeof(double), "b");
-			BinaryExpression p = Expression.Power (a, b);
+			var a = Expression.Parameter (typeof (double), "a");
+			var b = Expression.Parameter (typeof (double), "b");
 
-			Expression<Func<double,double,double>> pexpr = Expression.Lambda<Func<double,double,double>> (p, new ParameterExpression [] { a, b });
-			Func<double,double,double> compiled = pexpr.Compile ();
-			Assert.AreEqual (1, compiled (1, 10));
-			Assert.AreEqual (16, compiled (2, 4));
+			var power = Expression.Lambda<Func<double,double,double>> (
+				Expression.Power (a, b), a, b).Compile ();
+
+			Assert.AreEqual (1, power (1, 10));
+			Assert.AreEqual (16, power (2, 4));
 		}
 
+		[Test]
+		[Category ("NotWorking")]
+		public void NullablePower ()
+		{
+			var a = Expression.Parameter (typeof (double?), "a");
+			var b = Expression.Parameter (typeof (double?), "b");
+
+			var power = Expression.Lambda<Func<double?, double?, double?>> (
+				Expression.Power (a, b), a, b).Compile ();
+
+			Assert.AreEqual ((double?) 1, power (1, 10));
+			Assert.AreEqual ((double?) 16, power (2, 4));
+			Assert.AreEqual ((double?) null, power (1, null));
+			Assert.AreEqual ((double?) null, power (null, 1));
+			Assert.AreEqual ((double?) null, power (null, null));
+		}
 	}
 }
