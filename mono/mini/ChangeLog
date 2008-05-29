@@ -1,3 +1,7 @@
+2008-05-28  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* arrays.cs: Regression tests for allocating arrays with negative sizes.
+
 2008-05-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-x86.h mini-x86.c inssel-x86.brg cpu-x86.md: Add support for
