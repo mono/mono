@@ -1,3 +1,7 @@
+2008-05-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c: Revert the rest of the last change as it breaks the build too.
+
 2008-05-29 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* icall.c: Revert a leak fix as it's breaking the build.
