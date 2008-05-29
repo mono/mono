@@ -1,3 +1,10 @@
+2008-05-29  Andreia Gaita <avidigal@novell.com> 
+
+	* ContainerControl.cs: Check for null dead-end when traversing the tree
+	  of parent controls.
+	
+	  [Fixes #394332, patch by Ernesto Carrea]
+
 2008-05-29  Geoff Norton  <gnorton@novell.com>
 
 	* XplatUICarbon.cs: Fix a culture-dependent conversion to be the

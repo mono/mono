@@ -150,7 +150,7 @@ namespace System.Windows.Forms {
 
 				if (fire_enter) {
 					walk = value;
-					while (walk != root) {
+					while (walk != root && walk != null) {
 						chain.Add (walk);
 						walk = walk.Parent;
 					}
