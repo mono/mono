@@ -243,38 +243,16 @@ namespace System.Linq.Expressions {
 
 		void EmitCoalesce (EmitContext ec)
 		{
-			if (IsNullable (left.Type))
-				EmitNullableCoalesce (ec);
+			var ig = ec.ig;
+			var done = ig.DefineLabel ();
+			var load_right = ig.DefineLabel ();
+
+			var left = ec.EmitStored (this.left);
+			if (IsNullable (left.LocalType))
+				ec.EmitNullableHasValue (left);
 			else
-				EmitReferenceCoalesce (ec);
-		}
+				ec.EmitLoad (left);
 
-		void EmitReferenceCoalesce (EmitContext ec)
-		{
-			var ig = ec.ig;
-			var done = ig.DefineLabel ();
-			var load_right = ig.DefineLabel ();
-
-			var left = ec.EmitStored (this.left);
-			ec.EmitLoad (left);
-			ig.Emit (OpCodes.Brfalse, load_right);
-			ec.EmitLoad (left);
-			ig.Emit (OpCodes.Br, done);
-
-			ig.MarkLabel (load_right);
-			ec.Emit (this.right);
-
-			ig.MarkLabel (done);
-		}
-
-		void EmitNullableCoalesce (EmitContext ec)
-		{
-			var ig = ec.ig;
-			var load_right = ig.DefineLabel ();
-			var done = ig.DefineLabel ();
-
-			var left = ec.EmitStored (this.left);
-			ec.EmitNullableHasValue (left);
 			ig.Emit (OpCodes.Brfalse, load_right);
 
 			ec.EmitLoad (left);
