@@ -1,3 +1,8 @@
+2008-05-29  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes Bug#382635
+	* TdsMetaParameter.cs (set_Value): Truncate the value to thespecified size.
+
 2007-07-24  Nagappan A  <anagappan@novell.com>
 
 	* TdsMetaParameter.cs (Prepare): Fixes Large strings truncated
