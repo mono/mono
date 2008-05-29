@@ -1,3 +1,10 @@
+2008-05-29  Dick Porter  <dick@ximian.com>
+
+	* sockets.c (socket_close): Clear any saved errors
+	(_wapi_connect): Don't save EWOULDBLOCK errors here, as that
+	breaks async connects.  (Bug 377589 test case broken by the
+	previous fix to bug 356552)
+
 2008-05-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* thread-private.h (struct _WapiHandle_thread): Remove 'owner_pid' field. Reorder

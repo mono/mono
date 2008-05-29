@@ -1,3 +1,11 @@
+2008-05-29  Dick Porter  <dick@ximian.com>
+
+	* threadpool.c (mono_thread_pool_remove_socket): Always remove the
+	async socket operations from the pending list when a socket
+	closes.  Leaving it until the threadpool services the event
+	exposes a race condition when a socket descriptor is reused.
+	Fixes bug 377589.
+
 2008-05-28 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* object.c: Fix negative index check for array alocation.
