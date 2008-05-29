@@ -539,6 +539,7 @@ namespace System.Linq.Expressions {
 			case ExpressionType.Add:
 			case ExpressionType.AddChecked:
 			case ExpressionType.Divide:
+			case ExpressionType.ExclusiveOr:
 			case ExpressionType.LeftShift:
 			case ExpressionType.Modulo:
 			case ExpressionType.Multiply:
