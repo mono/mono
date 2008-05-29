@@ -103,9 +103,10 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		public void OrTest ()
+		public void OrBoolTest ()
 		{
-			ParameterExpression a = Expression.Parameter (typeof (bool), "a"), b = Expression.Parameter (typeof (bool), "b");
+			var a = Expression.Parameter (typeof (bool), "a");
+			var b = Expression.Parameter (typeof (bool), "b");
 			var l = Expression.Lambda<Func<bool, bool, bool>> (
 				Expression.Or (a, b), a, b);
 
@@ -124,9 +125,10 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		public void OrNullableTest ()
+		public void OrBoolNullableTest ()
 		{
-			ParameterExpression a = Expression.Parameter (typeof (bool?), "a"), b = Expression.Parameter (typeof (bool?), "b");
+			var a = Expression.Parameter (typeof (bool?), "a");
+			var b = Expression.Parameter (typeof (bool?), "b");
 			var l = Expression.Lambda<Func<bool?, bool?, bool?>> (
 				Expression.Or (a, b), a, b);
 
@@ -178,6 +180,40 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual ((bool?) true, and (item));
 			Assert.IsTrue (item.LeftCalled);
 			Assert.IsTrue (item.RightCalled);
+		}
+
+		[Test]
+		public void OrIntTest ()
+		{
+			var a = Expression.Parameter (typeof (int), "a");
+			var b = Expression.Parameter (typeof (int), "b");
+			var or = Expression.Lambda<Func<int, int, int>> (
+				Expression.Or (a, b), a, b).Compile ();
+
+			Assert.AreEqual ((int?) 1, or (1, 1), "o1");
+			Assert.AreEqual ((int?) 1, or (1, 0), "o2");
+			Assert.AreEqual ((int?) 1, or (0, 1), "o3");
+			Assert.AreEqual ((int?) 0, or (0, 0), "o4");
+		}
+
+		[Test]
+		public void OrIntNullableTest ()
+		{
+			var a = Expression.Parameter (typeof (int?), "a");
+			var b = Expression.Parameter (typeof (int?), "b");
+			var c = Expression.Lambda<Func<int?, int?, int?>> (
+				Expression.Or (a, b), a, b).Compile ();
+
+			Assert.AreEqual ((int?) 1, c (1, 1), "o1");
+			Assert.AreEqual ((int?) 1, c (1, 0), "o2");
+			Assert.AreEqual ((int?) 1, c (0, 1), "o3");
+			Assert.AreEqual ((int?) 0, c (0, 0), "o4");
+
+			Assert.AreEqual ((int?) null, c (1, null), "o5");
+			Assert.AreEqual ((int?) null, c (0, null), "o6");
+			Assert.AreEqual ((int?) null, c (null, 0), "o7");
+			Assert.AreEqual ((int?) null, c (1, null), "o8");
+			Assert.AreEqual ((int?) null, c (null, null), "o9");
 		}
 	}
 }

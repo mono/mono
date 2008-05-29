@@ -103,7 +103,7 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		public void AndTest ()
+		public void AndBoolTest ()
 		{
 			var a = Expression.Parameter (typeof (bool), "a");
 			var b = Expression.Parameter (typeof (bool), "b");
@@ -137,7 +137,7 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		public void AndNullableTest ()
+		public void AndBoolNullableTest ()
 		{
 			var a = Expression.Parameter (typeof (bool?), "a");
 			var b = Expression.Parameter (typeof (bool?), "b");
@@ -192,6 +192,40 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual ((bool?) false, and (item));
 			Assert.IsTrue (item.LeftCalled);
 			Assert.IsTrue (item.RightCalled);
+		}
+
+		[Test]
+		public void AndIntTest ()
+		{
+			var a = Expression.Parameter (typeof (int), "a");
+			var b = Expression.Parameter (typeof (int), "b");
+			var and = Expression.Lambda<Func<int, int, int>> (
+				Expression.And (a, b), a, b).Compile ();
+
+			Assert.AreEqual (0, and (0, 0), "t1");
+			Assert.AreEqual (0, and (0, 1), "t2");
+			Assert.AreEqual (0, and (1, 0), "t3");
+			Assert.AreEqual (1, and (1, 1), "t4");
+		}
+
+		[Test]
+		public void AndIntNullableTest ()
+		{
+			var a = Expression.Parameter (typeof (int?), "a");
+			var b = Expression.Parameter (typeof (int?), "b");
+			var c = Expression.Lambda<Func<int?, int?, int?>> (
+				Expression.And (a, b), a, b).Compile ();
+
+			Assert.AreEqual ((int?) 1, c (1, 1), "a1");
+			Assert.AreEqual ((int?) 0, c (1, 0), "a2");
+			Assert.AreEqual ((int?) 0, c (0, 1), "a3");
+			Assert.AreEqual ((int?) 0, c (0, 0), "a4");
+
+			Assert.AreEqual ((int?) null, c (1, null), "a5");
+			Assert.AreEqual ((int?) null, c (0, null), "a6");
+			Assert.AreEqual ((int?) null, c (null, 0), "a7");
+			Assert.AreEqual ((int?) null, c (1, null), "a8");
+			Assert.AreEqual ((int?) null, c (null, null), "a9");
 		}
 	}
 }
