@@ -405,6 +405,9 @@ namespace System.Collections.Generic {
 				Array.Copy (_items, start, _items, start + delta, _size - start);
 			
 			_size += delta;
+
+			if (delta < 0)
+				Array.Clear (_items, _size, -delta);
 		}
 
 		void CheckIndex (int index)
@@ -519,6 +522,8 @@ namespace System.Collections.Generic {
 				if (!match(_items[j]))
 					_items[i++] = _items[j];
 			}
+			if (j - i > 0)
+				Array.Clear (_items, i, j - i);
 
 			_size = i;
 			return (j - i);

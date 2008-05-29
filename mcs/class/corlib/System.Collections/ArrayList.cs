@@ -2515,6 +2515,8 @@ namespace System.Collections
 		/// Total number of state changes.
 		/// </summary>
 		private int _version;
+		
+		private static readonly object [] EmptyArray = new object [0]; 
 
 		#endregion
 		
@@ -2527,7 +2529,7 @@ namespace System.Collections
 		public ArrayList()
 		{
 #if NET_2_0
-			_items = new object[0];
+			_items = EmptyArray;
 #else
 			_items = new object[DefaultInitialCapacity];
 #endif

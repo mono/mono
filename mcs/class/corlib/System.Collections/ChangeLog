@@ -1,3 +1,7 @@
+2008-05-29  Juraj Skripsky  <js@hotfeet.ch>
+
+	* ArrayList.cs: Create the empty array only once and reuse it.
+
 2008-05-23  Miguel de Icaza  <miguel@novell.com>
 
 	* Hashtable.cs: Implement a faster clone that does not use an
