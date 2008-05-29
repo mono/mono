@@ -102,7 +102,8 @@ namespace MonoTests.System.Linq.Expressions
 		[Test]
 		public void AndAlsoTest ()
 		{
-			ParameterExpression a = Expression.Parameter (typeof (bool), "a"), b = Expression.Parameter (typeof (bool), "b");
+			var a = Expression.Parameter (typeof (bool), "a");
+			var b = Expression.Parameter (typeof (bool), "b");
 			var l = Expression.Lambda<Func<bool, bool, bool>> (
 				Expression.AndAlso (a, b), a, b);
 
@@ -145,10 +146,10 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void AndAlsoTestNullable ()
 		{
-			ParameterExpression a = Expression.Parameter (typeof (bool?), "a"), b = Expression.Parameter (typeof (bool?), "b");
+			var a = Expression.Parameter (typeof (bool?), "a");
+			var b = Expression.Parameter (typeof (bool?), "b");
 			var l = Expression.Lambda<Func<bool?, bool?, bool?>> (
 				Expression.AndAlso (a, b), a, b);
 
@@ -188,7 +189,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void AndAlsoNullableBoolItem ()
 		{
 			var i = Expression.Parameter (typeof (Item<bool?>), "i");

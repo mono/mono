@@ -219,7 +219,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void OrElseNullableBoolItem ()
 		{
 			var i = Expression.Parameter (typeof (Item<bool?>), "i");
