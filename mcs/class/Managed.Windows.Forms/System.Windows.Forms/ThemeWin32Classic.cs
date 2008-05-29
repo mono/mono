@@ -972,6 +972,11 @@ namespace System.Windows.Forms
 				proposed.Width = button.Width - glyphArea.Width - 2;
 
 			Size text_size = TextRenderer.MeasureTextInternal (text, button.Font, proposed, button.TextFormatFlags, button.UseCompatibleTextRendering);
+			
+			// Text can't be bigger than the content rectangle
+			text_size.Height = Math.Min (text_size.Height, content_rect.Height);
+			text_size.Width = Math.Min (text_size.Width, content_rect.Width);
+			
 			Size image_size = image == null ? Size.Empty : image.Size;
 
 			textRectangle = Rectangle.Empty;

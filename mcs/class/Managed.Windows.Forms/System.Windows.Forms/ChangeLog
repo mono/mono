@@ -1,3 +1,9 @@
+2008-05-29  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ThemeWin32Classic.cs: Don't let the text size be bigger than
+	the control size for CheckBox/RadioBox.
+	[Fixes part of bug #394645]
+
 2008-05-29  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* PropertyGrid.cs: Update the state of the sorting buttons in 
