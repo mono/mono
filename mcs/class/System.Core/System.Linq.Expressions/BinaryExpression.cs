@@ -229,23 +229,23 @@ namespace System.Linq.Expressions {
 			var left = ec.EmitStored (this.left);
 			var right = ec.EmitStored (this.right);
 
-			var ret1 = ig.DefineLabel ();
-			var ret2 = ig.DefineLabel ();
+			var ret_from_left = ig.DefineLabel ();
+			var ret_from_right = ig.DefineLabel ();
 			var done = ig.DefineLabel ();
 
 			ec.EmitNullableGetValueOrDefault (left);
-			ig.Emit (OpCodes.Brtrue, ret2);
+			ig.Emit (OpCodes.Brtrue, ret_from_left);
 			ec.EmitNullableGetValueOrDefault (right);
-			ig.Emit (OpCodes.Brtrue, ret1);
+			ig.Emit (OpCodes.Brtrue, ret_from_right);
 
 			ec.EmitNullableHasValue (left);
-			ig.Emit (OpCodes.Brfalse, ret2);
+			ig.Emit (OpCodes.Brfalse, ret_from_left);
 
-			ig.MarkLabel (ret1);
+			ig.MarkLabel (ret_from_right);
 			ec.EmitLoad (and ? left : right);
 			ig.Emit (OpCodes.Br, done);
 
-			ig.MarkLabel (ret2);
+			ig.MarkLabel (ret_from_left);
 			ec.EmitLoad (and ? right : left);
 
 			ig.MarkLabel (done);
