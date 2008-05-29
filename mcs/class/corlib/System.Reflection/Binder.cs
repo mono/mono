@@ -515,7 +515,7 @@ namespace System.Reflection
 					if (idxlen >= 0 && idxlen != args.Length)
 						continue;
 
-					if (haveRet && p.PropertyType != returnType)
+					if (haveRet && !check_type (p.PropertyType, returnType))
 						continue;
 
 					int score = Int32.MaxValue - 1;

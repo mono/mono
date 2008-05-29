@@ -1,9 +1,4 @@
-﻿2008-05-29  Ivan N. Zlatev  <contact@i-nz.net>
-
-	* TypeTest.cs: Add a test to verify that the property type 
-	parameter is not ignored.
-
-2008-05-28 Rodrigo Kumpera  <rkumpera@novell.com>
+﻿2008-05-28 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* DelegateTest.cs (CreateDelegate1_Method_Private_Instance): Added test
 	for bug #372406. It tries to create a delegate to a private instance

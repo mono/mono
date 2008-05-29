@@ -270,8 +270,7 @@ namespace System
 			if (count == 0)
 				return null;
 			
-			if (count == 1 && (types == null || types.Length == 0) && 
-			    (returnType == null || returnType == props[0].PropertyType))
+			if (count == 1 && (types == null || types.Length == 0)) 
 				return props [0];
 
 			if (binder == null)

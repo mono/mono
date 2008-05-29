@@ -1538,16 +1538,6 @@ namespace MonoTests.System
 			}
 		}
 
-		[Test]
-		public void GetProperty8_PropertyType ()
-		{
-			Type type = typeof (Bar);
-			Assert.IsNull (type.GetProperty ("PubInst", BindingFlags.Public | BindingFlags.Instance,
-							 null, typeof (int), Type.EmptyTypes, null), "#1");
-			Assert.IsNotNull (type.GetProperty ("PubInst", BindingFlags.Public | BindingFlags.Instance, null, 
-							    typeof (long), new Type[0], null), "#2");
-		}
-
 #if !TARGET_JVM // StructLayout not supported for TARGET_JVM
 		[StructLayout(LayoutKind.Explicit, Pack = 4, Size = 64)]
 		public class Class1
