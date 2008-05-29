@@ -62,21 +62,55 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		public void Coalesce_1 ()
+		public void IsCoalesceStringLifted ()
 		{
-			// Build the expression by hand for now:
-			ParameterExpression pa = Expression.Parameter (typeof (int?), "a");
-			ParameterExpression pb = Expression.Parameter (typeof (int?), "b");
-			BinaryExpression c = Expression.Coalesce (pa, pb);
-			Assert.AreEqual ("(a ?? b)", c.ToString ());
+			var coalesce = Expression.Coalesce (
+				Expression.Parameter (typeof (string), "a"),
+				Expression.Parameter (typeof (string), "b"));
 
-			Expression<Func<int?, int?, int?>> e = Expression.Lambda<Func<int?,int?,int?>>(
-				c, new ParameterExpression [] { pa, pb });
-			Assert.AreEqual ("(a, b) => (a ?? b)", e.ToString ());
+			Assert.AreEqual ("(a ?? b)", coalesce.ToString ());
 
-			Func<int?,int?,int?> comp = e.Compile ();
+			Assert.IsFalse (coalesce.IsLifted);
+			Assert.IsFalse (coalesce.IsLiftedToNull);
+		}
 
-			Assert.AreEqual (10, comp (10, 20));
+		[Test]
+		public void IsCoalesceNullableIntLifted ()
+		{
+			var coalesce = Expression.Coalesce (
+				Expression.Parameter (typeof (int?), "a"),
+				Expression.Parameter (typeof (int?), "b"));
+
+			Assert.IsFalse (coalesce.IsLifted);
+			Assert.IsFalse (coalesce.IsLiftedToNull);
+		}
+
+		[Test]
+		public void CoalesceNullableInt ()
+		{
+			var a = Expression.Parameter (typeof (int?), "a");
+			var b = Expression.Parameter (typeof (int?), "b");
+			var coalesce = Expression.Lambda<Func<int?, int?, int?>> (
+				Expression.Coalesce (a, b), a, b).Compile ();
+
+			Assert.AreEqual ((int?) 1, coalesce (1, 2));
+			Assert.AreEqual ((int?) null, coalesce (null, null));
+			Assert.AreEqual ((int?) 2, coalesce (null, 2));
+			Assert.AreEqual ((int?) 2, coalesce (2, null));
+		}
+
+		[Test]
+		public void CoalesceString ()
+		{
+			var a = Expression.Parameter (typeof (string), "a");
+			var b = Expression.Parameter (typeof (string), "b");
+			var coalesce = Expression.Lambda<Func<string, string, string>> (
+				Expression.Coalesce (a, b), a, b).Compile ();
+
+			Assert.AreEqual ("foo", coalesce ("foo", "bar"));
+			Assert.AreEqual (null, coalesce (null, null));
+			Assert.AreEqual ("bar", coalesce (null, "bar"));
+			Assert.AreEqual ("foo", coalesce ("foo", null));
 		}
 	}
 }
