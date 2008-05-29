@@ -289,108 +289,109 @@ namespace System.Linq.Expressions {
 			ig.MarkLabel (exit);
 		}
 
+		static bool IsInt32OrInt64 (Type type)
+		{
+			return type == typeof (int) || type == typeof (long);
+		}
+
+		static bool IsSingleOrDouble (Type type)
+		{
+			return type == typeof (float) || type == typeof (double);
+		}
+
 		void EmitBinaryOperator (EmitContext ec)
 		{
-			OpCode opcode;
 			var ig = ec.ig;
 			bool is_unsigned = IsUnsigned (left.Type);
 
 			switch (NodeType) {
 			case ExpressionType.Add:
-				opcode = OpCodes.Add;
+				ig.Emit (OpCodes.Add);
 				break;
 			case ExpressionType.AddChecked:
-				if (left.Type == typeof (int) || left.Type == typeof (long))
-					opcode = OpCodes.Add_Ovf;
+				if (IsInt32OrInt64 (left.Type))
+					ig.Emit (OpCodes.Add_Ovf);
 				else
-					opcode = is_unsigned ? OpCodes.Add_Ovf_Un : OpCodes.Add;
+					ig.Emit (is_unsigned ? OpCodes.Add_Ovf_Un : OpCodes.Add);
 				break;
 			case ExpressionType.Subtract:
-				opcode = OpCodes.Sub;
+				ig.Emit (OpCodes.Sub);
 				break;
 			case ExpressionType.SubtractChecked:
-				if (left.Type == typeof (int) || left.Type == typeof (long))
-					opcode = OpCodes.Sub_Ovf;
+				if (IsInt32OrInt64 (left.Type))
+					ig.Emit (OpCodes.Sub_Ovf);
 				else
-					opcode = is_unsigned ? OpCodes.Sub_Ovf_Un : OpCodes.Sub;
+					ig.Emit (is_unsigned ? OpCodes.Sub_Ovf_Un : OpCodes.Sub);
 				break;
 			case ExpressionType.Multiply:
-				opcode = OpCodes.Mul;
+				ig.Emit (OpCodes.Mul);
 				break;
 			case ExpressionType.MultiplyChecked:
-				if (left.Type == typeof (int) || left.Type == typeof (long))
-					opcode = OpCodes.Mul_Ovf;
+				if (IsInt32OrInt64 (left.Type))
+					ig.Emit (OpCodes.Mul_Ovf);
 				else
-					opcode = is_unsigned ? OpCodes.Mul_Ovf_Un : OpCodes.Mul;
+					ig.Emit (is_unsigned ? OpCodes.Mul_Ovf_Un : OpCodes.Mul);
 				break;
 			case ExpressionType.Divide:
-				opcode = is_unsigned ? OpCodes.Div_Un : OpCodes.Div;
+				ig.Emit (is_unsigned ? OpCodes.Div_Un : OpCodes.Div);
 				break;
 			case ExpressionType.Modulo:
-				opcode = is_unsigned ? OpCodes.Rem_Un : OpCodes.Rem;
+				ig.Emit (is_unsigned ? OpCodes.Rem_Un : OpCodes.Rem);
 				break;
 			case ExpressionType.RightShift:
-				opcode = is_unsigned ? OpCodes.Shr_Un : OpCodes.Shr;
+				ig.Emit (is_unsigned ? OpCodes.Shr_Un : OpCodes.Shr);
 				break;
 			case ExpressionType.LeftShift:
-				opcode = OpCodes.Shl;
+				ig.Emit (OpCodes.Shl);
 				break;
 			case ExpressionType.And:
-				opcode = OpCodes.And;
+				ig.Emit (OpCodes.And);
 				break;
 			case ExpressionType.Or:
-				opcode = OpCodes.Or;
+				ig.Emit (OpCodes.Or);
 				break;
 			case ExpressionType.ExclusiveOr:
-				opcode = OpCodes.Xor;
+				ig.Emit (OpCodes.Xor);
 				break;
 			case ExpressionType.GreaterThan:
-				opcode = is_unsigned ? OpCodes.Cgt_Un : OpCodes.Cgt;
+				ig.Emit (is_unsigned ? OpCodes.Cgt_Un : OpCodes.Cgt);
 				break;
 			case ExpressionType.GreaterThanOrEqual:
-				Type le = left.Type;
-
-				if (is_unsigned || (le == typeof (double) || le == typeof (float)))
+				if (is_unsigned || IsSingleOrDouble (left.Type))
 					ig.Emit (OpCodes.Clt_Un);
 				else
 					ig.Emit (OpCodes.Clt);
 
 				ig.Emit (OpCodes.Ldc_I4_0);
-
-				opcode = OpCodes.Ceq;
+				ig.Emit (OpCodes.Ceq);
 				break;
 			case ExpressionType.LessThan:
-				opcode = is_unsigned ? OpCodes.Clt_Un : OpCodes.Clt;
+				ig.Emit (is_unsigned ? OpCodes.Clt_Un : OpCodes.Clt);
 				break;
 			case ExpressionType.LessThanOrEqual:
-				Type lt = left.Type;
-
-				if (is_unsigned || (lt == typeof (double) || lt == typeof (float)))
+				if (is_unsigned || IsSingleOrDouble (left.Type))
 					ig.Emit (OpCodes.Cgt_Un);
 				else
 					ig.Emit (OpCodes.Cgt);
 
 				ig.Emit (OpCodes.Ldc_I4_0);
-
-				opcode = OpCodes.Ceq;
+				ig.Emit (OpCodes.Ceq);
 				break;
 			case ExpressionType.Equal:
-				opcode = OpCodes.Ceq;
+				ig.Emit (OpCodes.Ceq);
 				break;
 			case ExpressionType.NotEqual:
 				ig.Emit (OpCodes.Ceq);
 				ig.Emit (OpCodes.Ldc_I4_0);
-				opcode = OpCodes.Ceq;
+				ig.Emit (OpCodes.Ceq);
 				break;
 			case ExpressionType.Power:
 				ig.Emit (OpCodes.Call, typeof (Math).GetMethod ("Pow"));
-				opcode = OpCodes.Nop;
 				break;
 			default:
-				throw new InvalidOperationException (string.Format ("Internal error: BinaryExpression contains non-Binary nodetype {0}", NodeType));
+				throw new InvalidOperationException (
+					string.Format ("Internal error: BinaryExpression contains non-Binary nodetype {0}", NodeType));
 			}
-
-			ig.Emit (opcode);
 		}
 
 		void EmitLiftedArithmeticBinary (EmitContext ec)
