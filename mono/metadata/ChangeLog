@@ -1,5 +1,12 @@
 2008-05-28 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* icall.c, marshal.c: Delegate wrappers should skip visibility.
+	This check is performed by the verifier for IL created delegates
+	and by Delegate::CreateDelegate for programatically created ones.
+	Fixes #372406.
+
+2008-05-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* sockey-io.c (ves_icall_System_Net_Sockets_Socket_Select_internal):
 	Fix code to use mono_array_size_t instead of int.
 
