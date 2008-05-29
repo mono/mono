@@ -1,5 +1,9 @@
 2008-05-29  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* Binder.cs: SelectProperty must perform strict property type checking.
+
+2008-05-29  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* MonoGenericClass.cs: GetPropertyImpl should respect the returnType 
 	parameter.
 
