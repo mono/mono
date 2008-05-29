@@ -195,12 +195,65 @@ namespace System.Linq.Expressions {
 			ig.MarkLabel (exit);
 		}
 
-		void EmitLogical (EmitContext ec, bool and, bool short_circuit)
+		void EmitLogicalBinary (EmitContext ec)
 		{
-			if (!IsLifted)
-				EmitNonLiftedBinary (ec);
-			else
-				EmitLiftedLogical (ec, and, short_circuit);
+			switch (NodeType) {
+			case ExpressionType.And:
+			case ExpressionType.Or:
+				if (!IsLifted)
+					EmitLogical (ec);
+				else
+					EmitLiftedLogical (ec);
+				break;
+			case ExpressionType.AndAlso:
+			case ExpressionType.OrElse:
+				if (!IsLifted)
+					EmitLogicalShortCircuit (ec);
+				else
+					EmitLiftedLogicalShortCircuit (ec);
+				break;
+			}
+		}
+
+		void EmitLogical (EmitContext ec)
+		{
+			EmitNonLiftedBinary (ec);
+		}
+
+		void EmitLiftedLogical (EmitContext ec)
+		{
+			// TODO
+			EmitLiftedLogical (ec,
+				NodeType == ExpressionType.And || NodeType == ExpressionType.AndAlso,
+				NodeType == ExpressionType.AndAlso || NodeType == ExpressionType.OrElse);
+		}
+
+		void EmitLogicalShortCircuit (EmitContext ec)
+		{
+			var ig = ec.ig;
+			var and = NodeType == ExpressionType.AndAlso;
+			var ret = ig.DefineLabel ();
+			var done = ig.DefineLabel ();
+
+			ec.Emit (left);
+			ig.Emit (and ? OpCodes.Brfalse : OpCodes.Brtrue, ret);
+
+			ec.Emit (right);
+
+			ig.Emit (OpCodes.Br, done);
+
+			ig.MarkLabel (ret);
+			ig.Emit (and ? OpCodes.Ldc_I4_0 : OpCodes.Ldc_I4_1);
+
+			ig.MarkLabel (done);
+		}
+
+		void EmitLiftedLogicalShortCircuit (EmitContext ec)
+		{
+			// TODO
+			EmitLiftedLogical (ec,
+				NodeType == ExpressionType.And || NodeType == ExpressionType.AndAlso,
+				NodeType == ExpressionType.AndAlso || NodeType == ExpressionType.OrElse);
 		}
 
 		void EmitCoalesce (EmitContext ec)
@@ -474,18 +527,6 @@ namespace System.Linq.Expressions {
 			case ExpressionType.ArrayIndex:
 				EmitArrayAccess (ec);
 				return;
-			case ExpressionType.And:
-				EmitLogical (ec, true, false);
-				return;
-			case ExpressionType.Or:
-				EmitLogical (ec, false, false);
-				return;
-			case ExpressionType.AndAlso:
-				EmitLogical (ec, true, true);
-				return;
-			case ExpressionType.OrElse:
-				EmitLogical (ec, false, true);
-				return;
 			case ExpressionType.Coalesce:
 				EmitCoalesce (ec);
 				return;
@@ -515,6 +556,12 @@ namespace System.Linq.Expressions {
 			case ExpressionType.LessThanOrEqual:
 			case ExpressionType.NotEqual:
 				EmitRelationalBinary (ec);
+				return;
+			case ExpressionType.And:
+			case ExpressionType.Or:
+			case ExpressionType.AndAlso:
+			case ExpressionType.OrElse:
+				EmitLogicalBinary (ec);
 				return;
 			default:
 				throw new NotSupportedException (this.NodeType.ToString ());
