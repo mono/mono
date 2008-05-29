@@ -1,3 +1,8 @@
+2008-05-29  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* GridItemCollection.cs: Revert my multiple items with same 
+	name patch.
+
 2008-05-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ScrollBar.cs: Scrollbars should only react to left-clicks, not right
