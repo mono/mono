@@ -265,86 +265,54 @@ namespace System.Linq.Expressions {
 			case ExpressionType.Add:
 				opcode = OpCodes.Add;
 				break;
-
 			case ExpressionType.AddChecked:
 				if (left.Type == typeof (int) || left.Type == typeof (long))
 					opcode = OpCodes.Add_Ovf;
-				else if (is_unsigned)
-					opcode = OpCodes.Add_Ovf_Un;
 				else
-					opcode = OpCodes.Add;
+					opcode = is_unsigned ? OpCodes.Add_Ovf_Un : OpCodes.Add;
 				break;
-
 			case ExpressionType.Subtract:
 				opcode = OpCodes.Sub;
 				break;
-
 			case ExpressionType.SubtractChecked:
 				if (left.Type == typeof (int) || left.Type == typeof (long))
 					opcode = OpCodes.Sub_Ovf;
-				else if (is_unsigned)
-					opcode = OpCodes.Sub_Ovf_Un;
 				else
-					opcode = OpCodes.Sub;
+					opcode = is_unsigned ? OpCodes.Sub_Ovf_Un : OpCodes.Sub;
 				break;
-
 			case ExpressionType.Multiply:
 				opcode = OpCodes.Mul;
 				break;
-
 			case ExpressionType.MultiplyChecked:
 				if (left.Type == typeof (int) || left.Type == typeof (long))
 					opcode = OpCodes.Mul_Ovf;
-				else if (is_unsigned)
-					opcode = OpCodes.Mul_Ovf_Un;
 				else
-					opcode = OpCodes.Mul;
+					opcode = is_unsigned ? OpCodes.Mul_Ovf_Un : OpCodes.Mul;
 				break;
-
 			case ExpressionType.Divide:
-				if (is_unsigned)
-					opcode = OpCodes.Div_Un;
-				else
-					opcode = OpCodes.Div;
+				opcode = is_unsigned ? OpCodes.Div_Un : OpCodes.Div;
 				break;
-
 			case ExpressionType.Modulo:
-				if (is_unsigned)
-					opcode = OpCodes.Rem_Un;
-				else
-					opcode = OpCodes.Rem;
+				opcode = is_unsigned ? OpCodes.Rem_Un : OpCodes.Rem;
 				break;
-
 			case ExpressionType.RightShift:
-				if (is_unsigned)
-					opcode = OpCodes.Shr_Un;
-				else
-					opcode = OpCodes.Shr;
+				opcode = is_unsigned ? OpCodes.Shr_Un : OpCodes.Shr;
 				break;
-
 			case ExpressionType.LeftShift:
 				opcode = OpCodes.Shl;
 				break;
-
 			case ExpressionType.And:
 				opcode = OpCodes.And;
 				break;
-
 			case ExpressionType.Or:
 				opcode = OpCodes.Or;
 				break;
-
 			case ExpressionType.ExclusiveOr:
 				opcode = OpCodes.Xor;
 				break;
-
 			case ExpressionType.GreaterThan:
-				if (is_unsigned)
-					opcode = OpCodes.Cgt_Un;
-				else
-					opcode = OpCodes.Cgt;
+				opcode = is_unsigned ? OpCodes.Cgt_Un : OpCodes.Cgt;
 				break;
-
 			case ExpressionType.GreaterThanOrEqual:
 				Type le = left.Type;
 
@@ -357,14 +325,9 @@ namespace System.Linq.Expressions {
 
 				opcode = OpCodes.Ceq;
 				break;
-
 			case ExpressionType.LessThan:
-				if (is_unsigned)
-					opcode = OpCodes.Clt_Un;
-				else
-					opcode = OpCodes.Clt;
+				opcode = is_unsigned ? OpCodes.Clt_Un : OpCodes.Clt;
 				break;
-
 			case ExpressionType.LessThanOrEqual:
 				Type lt = left.Type;
 
@@ -372,22 +335,19 @@ namespace System.Linq.Expressions {
 					ig.Emit (OpCodes.Cgt_Un);
 				else
 					ig.Emit (OpCodes.Cgt);
+
 				ig.Emit (OpCodes.Ldc_I4_0);
 
 				opcode = OpCodes.Ceq;
 				break;
-
 			case ExpressionType.Equal:
 				opcode = OpCodes.Ceq;
 				break;
-
 			case ExpressionType.NotEqual:
 				ig.Emit (OpCodes.Ceq);
 				ig.Emit (OpCodes.Ldc_I4_0);
-
 				opcode = OpCodes.Ceq;
 				break;
-
 			default:
 				throw new InvalidOperationException (string.Format ("Internal error: BinaryExpression contains non-Binary nodetype {0}", NodeType));
 			}
@@ -518,34 +478,27 @@ namespace System.Linq.Expressions {
 			case ExpressionType.ArrayIndex:
 				EmitArrayAccess (ec);
 				return;
-
 			case ExpressionType.And:
 				EmitLogical (ec, true, false);
 				return;
-
 			case ExpressionType.Or:
 				EmitLogical (ec, false, false);
 				return;
-
 			case ExpressionType.AndAlso:
 				EmitLogical (ec, true, true);
 				return;
-
 			case ExpressionType.OrElse:
 				EmitLogical (ec, false, true);
 				return;
-
 			case ExpressionType.Coalesce:
 				EmitCoalesce (ec);
 				return;
-
 			case ExpressionType.Power:
 				// likely broken if lifted
 				left.Emit (ec);
 				right.Emit (ec);
 				ec.EmitCall (typeof (Math).GetMethod ("Pow"));
 				return;
-
 			case ExpressionType.Add:
 			case ExpressionType.AddChecked:
 			case ExpressionType.Divide:
