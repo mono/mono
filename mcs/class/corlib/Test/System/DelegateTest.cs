@@ -13,6 +13,19 @@ namespace MonoTests.System
 	[TestFixture]
 	public class DelegateTest
 	{
+#if NET_2_0
+		[Test] //See bug #372406
+		public void CreateDelegate1_Method_Private_Instance ()
+		{
+			C c = new C ();
+			MethodInfo mi = typeof (C).GetMethod ("PrivateInstance", BindingFlags.NonPublic | BindingFlags.Instance);
+			Delegate dg = Delegate.CreateDelegate (typeof (D), mi);
+			Assert.AreSame (mi, dg.Method, "#1");
+			Assert.IsNull (dg.Target, "#2");
+			D d = (D) dg;
+			d (c);
+		}
+#endif
 		[Test] // CreateDelegate (Type, MethodInfo)
 		public void CreateDelegate1_Method_Static ()
 		{
@@ -987,6 +1000,10 @@ namespace MonoTests.System
 			}
 
 			public static void S (C c)
+			{
+			}
+
+			private void PrivateInstance ()
 			{
 			}
 		}

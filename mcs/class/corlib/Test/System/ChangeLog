@@ -1,3 +1,9 @@
+﻿2008-05-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* DelegateTest.cs (CreateDelegate1_Method_Private_Instance): Added test
+	for bug #372406. It tries to create a delegate to a private instance
+	method of other type.
+
 2008-05-27  Eyal Alaluf <eyala@mainsoft.com>
 
 	* NumberFormatterTest.cs: Add test for arithemtic overflow in
