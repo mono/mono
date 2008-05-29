@@ -153,7 +153,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void NullableInt32GreaterThanLiftedToNull ()
 		{
 			var l = Expression.Parameter (typeof (int?), "l");

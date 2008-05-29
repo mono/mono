@@ -168,7 +168,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void NullableInt32EqualLiftedToNull ()
 		{
 			var l = Expression.Parameter (typeof (int?), "l");
@@ -205,7 +204,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void NullableInt32NotEqualLiftedToNull () // have to move that to its own file
 		{
 			var l = Expression.Parameter (typeof (int?), "l");
