@@ -1,3 +1,7 @@
+2008-05-29  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* MonoType.cs: GetPropertyImpl should respect returnType.
+
 2008-05-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* Console.cs (.cctor): Make sdout synchronized in the console case too.
