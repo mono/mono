@@ -143,7 +143,8 @@ namespace MonoTests.System.Linq.Expressions
 		[Test]
 		public void OrElseTest ()
 		{
-			ParameterExpression a = Expression.Parameter (typeof (bool), "a"), b = Expression.Parameter (typeof (bool), "b");
+			var a = Expression.Parameter (typeof (bool), "a");
+			var b = Expression.Parameter (typeof (bool), "b");
 			var l = Expression.Lambda<Func<bool, bool, bool>> (
 				Expression.OrElse (a, b), a, b);
 
@@ -176,7 +177,8 @@ namespace MonoTests.System.Linq.Expressions
 		[Test]
 		public void OrElseTestNullable ()
 		{
-			ParameterExpression a = Expression.Parameter (typeof (bool?), "a"), b = Expression.Parameter (typeof (bool?), "b");
+			var a = Expression.Parameter (typeof (bool?), "a");
+			var b = Expression.Parameter (typeof (bool?), "b");
 			var l = Expression.Lambda<Func<bool?, bool?, bool?>> (
 				Expression.OrElse (a, b), a, b);
 
@@ -201,7 +203,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void OrElseBoolItem ()
 		{
 			var i = Expression.Parameter (typeof (Item<bool>), "i");

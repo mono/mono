@@ -173,7 +173,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void AndAlsoBoolItem ()
 		{
 			var i = Expression.Parameter (typeof (Item<bool>), "i");
