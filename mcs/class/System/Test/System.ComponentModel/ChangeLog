@@ -1,3 +1,9 @@
+2008-05-29  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* TypeDescriptorTests.cs: Add test that verifies that GetAttributes 
+	retrieves the attributes of the type, the base types and the 
+	interfaces the type implements.
+
 2008-05-05  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* TypeDescriptorTests.cs: Add test for handling write-only properties.

@@ -972,22 +972,43 @@ public sealed class TypeDescriptor
 				return _attributes;
 			
 			bool cache = true;
-			object[] ats = _infoType.GetCustomAttributes (true);
-			Hashtable t = new Hashtable ();
+			ArrayList attributesList = new ArrayList ();
 
-			for (int i = ats.Length -1; i >= 0; i--)
-				t [((Attribute) ats[i]).TypeId] = ats[i];
-					
+			// 1) Attributes of the type
+			foreach (Attribute attribute in _infoType.GetCustomAttributes (false))
+				attributesList.Add (attribute);
+
+			// 2) Attributes of the type's implemented interfaces and their interfaces as well
+			foreach (Type inface in _infoType.GetInterfaces ())
+				foreach (Attribute attribute in TypeDescriptor.GetAttributes (inface))
+					attributesList.Add (attribute);
+
+			// 3) Attributes of the base types
+			Type baseType = _infoType.BaseType;
+			while (baseType != null && baseType != typeof (object)) {
+				foreach (Attribute attribute in baseType.GetCustomAttributes (false))
+					attributesList.Add (attribute);
+				baseType = baseType.BaseType;
+			}
+
+			// Filter out duplicate attributes, so that the type and its interfaces
+			// have higher precedence than the base types.
+			Hashtable attributesTable = new Hashtable ();
+			for (int i = attributesList.Count - 1; i >= 0; i--) {
+				Attribute attribute = (Attribute)attributesList[i];
+				attributesTable[attribute.TypeId] = attribute;
+			}
+
 			if (comp != null && comp.Site != null) 
 			{
 				ITypeDescriptorFilterService filter = (ITypeDescriptorFilterService) comp.Site.GetService (typeof(ITypeDescriptorFilterService));
 				if (filter != null)
-					cache = filter.FilterAttributes (comp, t);
+					cache = filter.FilterAttributes (comp, attributesTable);
 			}
-			
-			ArrayList atts = new ArrayList ();
-			atts.AddRange (t.Values);
-			AttributeCollection attCol = new AttributeCollection (atts);
+
+			Attribute[] attributes = new Attribute[attributesTable.Values.Count];
+			attributesTable.Values.CopyTo (attributes, 0);
+			AttributeCollection attCol = new AttributeCollection (attributes);
 			if (cache)
 				_attributes = attCol;
 			return attCol;

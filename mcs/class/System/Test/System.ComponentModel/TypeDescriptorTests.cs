@@ -227,6 +227,7 @@ namespace MonoTests.System.ComponentModel
 			set { prop = value; }
 		}
 
+		[Browsable (false)]
 		public string YetAnotherProperty
 		{
 			get { return null; }
@@ -328,17 +329,26 @@ namespace MonoTests.System.ComponentModel
 		}
 	}
 
+	[Browsable (false)]
 	public interface ITestInterface
 	{
 		void TestFunction ();
 	}
-	
+
+	[Serializable]
 	public class TestClass
 	{
 		public TestClass()
 		{}
 			
 		void TestFunction ()
+		{}
+	}
+
+	[DescriptionAttribute ("bla")]
+	public class TestDerivedClass : TestClass, ITestInterface
+	{
+		public void TestFunction ()
 		{}
 	}
 	
@@ -546,6 +556,10 @@ namespace MonoTests.System.ComponentModel
 				}
 			}
 			Assert.IsTrue (found, "#E4");
+
+			// Shows that attributes are retrieved from the current type, the base types 
+			// and the implemented by the type interfaces.
+			Assert.AreEqual (3, TypeDescriptor.GetAttributes (typeof (TestDerivedClass)).Count, "#F1");
 		}
 		
 		[Test]
@@ -783,13 +797,20 @@ namespace MonoTests.System.ComponentModel
 					yetAnotherPropsFound++;
 			}
 
-			Assert.AreEqual (1, anotherPropsFound, "#G2");
-
 			// GetProperties does not return the base type property in the case 
 			// where both the "new" keyword is used and also the Property type is different 
 			// (Type.GetProperties does return both properties)
 			//
-			Assert.AreEqual (1, yetAnotherPropsFound, "#G3");
+			Assert.AreEqual (1, anotherPropsFound, "#G2");
+			Assert.IsNotNull (derivedCol["AnotherProperty"].Attributes[typeof (DescriptionAttribute)], "#G3");
+			Assert.AreEqual (1, yetAnotherPropsFound, "#G4");
+
+			// Verify that we return the derived "new" property when 
+			// filters are applied that match the parent property
+			// 
+			PropertyDescriptorCollection filteredCol = TypeDescriptor.GetProperties (typeof(MyDerivedComponent), 
+												 new Attribute[] { BrowsableAttribute.Yes });
+			Assert.IsNotNull (filteredCol["YetAnotherProperty"], "#G5");
 
 			// GetProperties does not return write-only properties (ones without a getter)
 			// 

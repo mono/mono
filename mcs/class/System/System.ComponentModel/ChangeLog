@@ -1,3 +1,9 @@
+2008-05-29  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* TypeDescriptor.cs: GetAttributes must retrieve the attributes of 
+	the type, the base types and the interfaces the type implements.
+	[Fix part of bug #394310]
+
 2008-05-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* INotifyPropertyChanging.cs, PropertyChangingEventArgs.cs,
