@@ -386,5 +386,59 @@ namespace MonoTests.System.Data.SqlClient
 		}
 #endif
 
+		[Test]
+		// Test for Bug#382635
+		public void ParameterSize_compatibility_Test ()
+		{
+			SqlConnection conn = new SqlConnection (ConnectionManager.Singleton.ConnectionString);
+			conn.Open ();
+			string longstring = new String('x', 256);
+
+			SqlCommand cmd, cmd1;
+			try {
+				cmd = new SqlCommand ("create table #bug382635 (description varchar(50))", conn);
+			    	cmd.ExecuteNonQuery ();
+			} catch (SqlException e) {
+			  	Assert.Fail ("#PSCT1 - Exception thrown while creating the temp table");
+				throw e;
+			}
+
+			cmd.CommandText = 
+					"CREATE PROCEDURE #sp_bug382635 (@Desc varchar(50)) "
+					+ "AS " + Environment.NewLine 
+					+ "BEGIN" + Environment.NewLine 
+					+ "UPDATE #bug382635 SET description = @Desc" + Environment.NewLine
+					+ "END";
+			cmd.CommandType = CommandType.Text;
+			try {
+				cmd.ExecuteNonQuery ();
+			} catch (SqlException e) {
+			  	Assert.Fail ("#PSCT1 - Exception thrown while creating the temp procedure");
+				throw e;
+			}
+
+			cmd.CommandText = "INSERT INTO #bug382635 " +
+					  "(description) VALUES ('This is a test to verify Bug 382635')";
+			cmd.ExecuteNonQuery ();
+
+			cmd.CommandText = "#sp_bug382635";
+			cmd.CommandType = CommandType.StoredProcedure;
+
+			SqlParameter p1 = new SqlParameter ("@Desc", SqlDbType.NVarChar, 50);
+			p1.Value = longstring;
+			cmd.Parameters.Add (p1);
+			cmd.ExecuteNonQuery ();
+
+			// Test for truncation
+			cmd1 = new SqlCommand ("SELECT DATALENGTH(description) from #bug382635", conn);
+			Assert.AreEqual (50, cmd1.ExecuteScalar (), "#PSCT1");
+
+			// Test for regular scenarios
+			p1.Value = longstring.Substring (0, 20);
+			cmd.ExecuteNonQuery ();
+			Assert.AreEqual (20, cmd1.ExecuteScalar (), "#PSCT1");
+			cmd.Dispose ();			
+			cmd1.Dispose ();
+		}
 	}
 }

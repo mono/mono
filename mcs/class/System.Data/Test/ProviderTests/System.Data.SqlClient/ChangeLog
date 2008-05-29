@@ -1,3 +1,8 @@
+2008-05-29  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* SqlParameterTest.cs (ParameterSize_compatibility_Test) : New
+	test case for Bug#382635 - truncate parameter values accordingly.
+	
 2007-10-19  Nagappan A  <anagappan@novell.com>
 
 	* SqlCommandBuilderTest.cs: Fixed compilation warnings.
