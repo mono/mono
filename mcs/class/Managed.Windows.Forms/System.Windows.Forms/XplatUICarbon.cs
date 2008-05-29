@@ -1333,7 +1333,7 @@ namespace System.Windows.Forms {
 					if (Idle != null) 
 						Idle (this, EventArgs.Empty);
 					else if (TimerList.Count == 0) {
-						ReceiveNextEvent (0, IntPtr.Zero, Convert.ToDouble ("0." + Timer.Minimum), true, ref evtRef);
+						ReceiveNextEvent (0, IntPtr.Zero, 0.15, true, ref evtRef);
 						if (evtRef != IntPtr.Zero && target != IntPtr.Zero) {
 							SendEventToEventTarget (evtRef, target);
 							ReleaseEvent (evtRef);

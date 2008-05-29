@@ -1,3 +1,8 @@
+2008-05-29  Geoff Norton  <gnorton@novell.com>
+
+	* XplatUICarbon.cs: Fix a culture-dependent conversion to be the
+	constant that it is.  Fixes #393981
+
 2008-05-29  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Form.cs: Add a MonoTODO to the AutoScaleBaseSize setter explaining
