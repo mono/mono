@@ -90,6 +90,7 @@
     <Compile Include="System.Linq.Expressions\ExpressionTest_NewArrayBounds.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_NewArrayInit.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Not.cs" />
+    <Compile Include="System.Linq.Expressions\ExpressionTest_NotEqual.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Or.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_OrElse.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Power.cs" />

@@ -17,7 +17,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 //
 // Authors:
-//    Miguel de Icaza (miguel@novell.com)
+//	Miguel de Icaza (miguel@novell.com)
+//	Jb Evain (jbevain@novell.com)
 //
 
 using System;
@@ -29,33 +30,33 @@ using NUnit.Framework;
 namespace MonoTests.System.Linq.Expressions
 {
 	[TestFixture]
-	public class ExpressionTest_Equal
+	public class ExpressionTest_NotEqual
 	{
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void Arg1Null ()
 		{
-			Expression.Equal (null, Expression.Constant (1));
+			Expression.NotEqual (null, Expression.Constant (1));
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void Arg2Null ()
 		{
-			Expression.Equal (Expression.Constant (1), null);
+			Expression.NotEqual (Expression.Constant (1), null);
 		}
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void ArgTypesDifferent ()
 		{
-			Expression.Equal (Expression.Constant (1), Expression.Constant (2.0));
+			Expression.NotEqual (Expression.Constant (1), Expression.Constant (2.0));
 		}
 
 		[Test]
 		public void ReferenceCompare ()
 		{
-			Expression.Equal (Expression.Constant (new NoOpClass ()), Expression.Constant (new NoOpClass ()));
+			Expression.NotEqual (Expression.Constant (new NoOpClass ()), Expression.Constant (new NoOpClass ()));
 		}
 
 		public struct D {
@@ -65,17 +66,17 @@ namespace MonoTests.System.Linq.Expressions
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void NoOperatorClass ()
 		{
-			Expression.Equal (Expression.Constant (new D ()), Expression.Constant (new D ()));
+			Expression.NotEqual (Expression.Constant (new D ()), Expression.Constant (new D ()));
 		}
 
 		[Test]
 		public void Numeric ()
 		{
-			BinaryExpression expr = Expression.Equal (Expression.Constant (1), Expression.Constant (2));
-			Assert.AreEqual (ExpressionType.Equal, expr.NodeType);
+			BinaryExpression expr = Expression.NotEqual (Expression.Constant (1), Expression.Constant (2));
+			Assert.AreEqual (ExpressionType.NotEqual, expr.NodeType);
 			Assert.AreEqual (typeof (bool), expr.Type);
 			Assert.IsNull (expr.Method);
-			Assert.AreEqual ("(1 = 2)", expr.ToString ());
+			Assert.AreEqual ("(1 != 2)", expr.ToString ());
 		}
 
 		[Test]
@@ -84,15 +85,15 @@ namespace MonoTests.System.Linq.Expressions
 			int? a = 1;
 			int? b = 2;
 
-			BinaryExpression expr = Expression.Equal (Expression.Constant (a, typeof(int?)),
+			BinaryExpression expr = Expression.NotEqual (Expression.Constant (a, typeof(int?)),
 								  Expression.Constant (b, typeof(int?)),
 								  false, null);
-			Assert.AreEqual (ExpressionType.Equal, expr.NodeType);
+			Assert.AreEqual (ExpressionType.NotEqual, expr.NodeType);
 			Assert.AreEqual (typeof (bool), expr.Type);
 			Assert.AreEqual (true, expr.IsLifted);
 			Assert.AreEqual (false, expr.IsLiftedToNull);
 			Assert.IsNull (expr.Method);
-			Assert.AreEqual ("(1 = 2)", expr.ToString ());
+			Assert.AreEqual ("(1 != 2)", expr.ToString ());
 		}
 
 		[Test]
@@ -101,15 +102,15 @@ namespace MonoTests.System.Linq.Expressions
 			int? a = 1;
 			int? b = 2;
 
-			BinaryExpression expr = Expression.Equal (Expression.Constant (a, typeof(int?)),
+			BinaryExpression expr = Expression.NotEqual (Expression.Constant (a, typeof(int?)),
 								  Expression.Constant (b, typeof(int?)),
 								  true, null);
-			Assert.AreEqual (ExpressionType.Equal, expr.NodeType);
+			Assert.AreEqual (ExpressionType.NotEqual, expr.NodeType);
 			Assert.AreEqual (typeof (bool?), expr.Type);
 			Assert.AreEqual (true, expr.IsLifted);
 			Assert.AreEqual (true, expr.IsLiftedToNull);
 			Assert.IsNull (expr.Method);
-			Assert.AreEqual ("(1 = 2)", expr.ToString ());
+			Assert.AreEqual ("(1 != 2)", expr.ToString ());
 		}
 
 		[Test]
@@ -119,7 +120,7 @@ namespace MonoTests.System.Linq.Expressions
 			int? a = 1;
 			int b = 2;
 
-			Expression.Equal (Expression.Constant (a, typeof (int?)),
+			Expression.NotEqual (Expression.Constant (a, typeof (int?)),
 					  Expression.Constant (b, typeof (int)));
 		}
 
@@ -128,61 +129,51 @@ namespace MonoTests.System.Linq.Expressions
 		{
 			// We can use the simplest version of GetMethod because we already know only one
 			// exists in the very simple class we're using for the tests.
-			MethodInfo mi = typeof (OpClass).GetMethod ("op_Equality");
+			MethodInfo mi = typeof (OpClass).GetMethod ("op_Inequality");
 
-			BinaryExpression expr = Expression.Equal (Expression.Constant (new OpClass ()), Expression.Constant (new OpClass ()));
-			Assert.AreEqual (ExpressionType.Equal, expr.NodeType);
+			BinaryExpression expr = Expression.NotEqual (Expression.Constant (new OpClass ()), Expression.Constant (new OpClass ()));
+			Assert.AreEqual (ExpressionType.NotEqual, expr.NodeType);
 			Assert.AreEqual (typeof (bool), expr.Type);
 			Assert.AreEqual (mi, expr.Method);
-			Assert.AreEqual ("op_Equality", expr.Method.Name);
+			Assert.AreEqual ("op_Inequality", expr.Method.Name);
 
-			Assert.AreEqual ("(value(MonoTests.System.Linq.Expressions.OpClass) = value(MonoTests.System.Linq.Expressions.OpClass))", expr.ToString ());
-		}
-
-		//
-		// Checks for the behavior when the return type for Equal is not
-		// bool, and its coping with nullable values.
-		//
-		[Test]
-		public void UserDefinedEqual ()
-		{
-
+			Assert.AreEqual ("(value(MonoTests.System.Linq.Expressions.OpClass) != value(MonoTests.System.Linq.Expressions.OpClass))", expr.ToString ());
 		}
 
 		[Test]
-		public void NullableInt32Equal ()
+		public void NullableInt32NotEqual ()
 		{
 			var l = Expression.Parameter (typeof (int?), "l");
 			var r = Expression.Parameter (typeof (int?), "r");
 
-			var eq = Expression.Lambda<Func<int?, int?, bool>> (
-				Expression.Equal (l, r), l, r).Compile ();
+			var neq = Expression.Lambda<Func<int?, int?, bool>> (
+				Expression.NotEqual (l, r), l, r).Compile ();
 
-			Assert.IsTrue (eq (null, null));
-			Assert.IsFalse (eq (null, 1));
-			Assert.IsFalse (eq (1, null));
-			Assert.IsFalse (eq (1, 2));
-			Assert.IsTrue (eq (1, 1));
-			Assert.IsFalse (eq (null, 0));
-			Assert.IsFalse (eq (0, null));
+			Assert.IsFalse (neq (null, null));
+			Assert.IsTrue (neq (null, 1));
+			Assert.IsTrue (neq (1, null));
+			Assert.IsTrue (neq (1, 2));
+			Assert.IsFalse (neq (1, 1));
+			Assert.IsTrue (neq (null, 0));
+			Assert.IsTrue (neq (0, null));
 		}
 
 		[Test]
-		public void NullableInt32EqualLiftedToNull ()
+		public void NullableInt32NotEqualLiftedToNull ()
 		{
 			var l = Expression.Parameter (typeof (int?), "l");
 			var r = Expression.Parameter (typeof (int?), "r");
 
-			var eq = Expression.Lambda<Func<int?, int?, bool?>> (
-				Expression.Equal (l, r, true, null), l, r).Compile ();
+			var neq = Expression.Lambda<Func<int?, int?, bool?>> (
+				Expression.NotEqual (l, r, true, null), l, r).Compile ();
 
-			Assert.AreEqual ((bool?) null, eq (null, null));
-			Assert.AreEqual ((bool?) null, eq (null, 1));
-			Assert.AreEqual ((bool?) null, eq (1, null));
-			Assert.AreEqual ((bool?) false, eq (1, 2));
-			Assert.AreEqual ((bool?) true, eq (1, 1));
-			Assert.AreEqual ((bool?) null, eq (null, 0));
-			Assert.AreEqual ((bool?) null, eq (0, null));
+			Assert.AreEqual ((bool?) null, neq (null, null));
+			Assert.AreEqual ((bool?) null, neq (null, 1));
+			Assert.AreEqual ((bool?) null, neq (1, null));
+			Assert.AreEqual ((bool?) true, neq (1, 2));
+			Assert.AreEqual ((bool?) false, neq (1, 1));
+			Assert.AreEqual ((bool?) null, neq (null, 0));
+			Assert.AreEqual ((bool?) null, neq (0, null));
 		}
 	}
 }
