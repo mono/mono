@@ -51,7 +51,10 @@ namespace System.Windows.Forms
 		#region Internal Properties and Methods
 		internal void Add (GridItem grid_item)
 		{
-			list.Add (grid_item.Label, grid_item);
+			string key = grid_item.Label;
+			while (list.ContainsKey (key))
+				key += "_";
+			list.Add (key, grid_item);
 		}
 
 		internal void AddRange (GridItemCollection items)
@@ -63,11 +66,6 @@ namespace System.Windows.Forms
 		internal int IndexOf (GridItem grid_item)
 		{
 			return list.IndexOfValue (grid_item);
-		}
-
-		internal void Remove (string key)
-		{
-			list.Remove (key);
 		}
 		#endregion	// Internal Properties and Methods
 

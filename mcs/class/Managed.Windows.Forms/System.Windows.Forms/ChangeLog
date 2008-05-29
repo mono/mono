@@ -1,5 +1,11 @@
 2008-05-29  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* GridItemCollection.cs: Add multiple items with conflicting names 
+	support and also preserve name ordering.
+	[Fixes #395345]
+
+2008-05-29  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* GridItemCollection.cs: Revert my multiple items with same 
 	name patch.
 
