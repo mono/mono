@@ -397,6 +397,11 @@ namespace System.Linq.Expressions {
 
 		void EmitLiftedArithmeticBinary (EmitContext ec)
 		{
+			EmitLiftedToNullBinary (ec);
+		}
+
+		void EmitLiftedToNullBinary (EmitContext ec)
+		{
 			var ig = ec.ig;
 			var left = ec.EmitStored (this.left);
 			var right = ec.EmitStored (this.right);
@@ -487,11 +492,6 @@ namespace System.Linq.Expressions {
 				EmitLiftedArithmeticBinary (ec);
 		}
 
-		void EmitLiftedToNullRelationalBinary (EmitContext ec)
-		{
-			EmitArithmeticBinary (ec);
-		}
-
 		void EmitRelationalBinary (EmitContext ec)
 		{
 			if (!IsLifted) {
@@ -499,7 +499,7 @@ namespace System.Linq.Expressions {
 				right.Emit (ec);
 				EmitBinaryOperator (ec);
 			} else if (IsLiftedToNull)
-				EmitLiftedToNullRelationalBinary (ec);
+				EmitLiftedToNullBinary (ec);
 			else
 				EmitLiftedRelationalBinary (ec);
 		}
