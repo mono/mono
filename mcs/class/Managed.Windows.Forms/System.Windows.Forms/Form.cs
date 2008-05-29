@@ -527,7 +527,7 @@ namespace System.Windows.Forms {
 			get {
 				return autoscale_base_size;
 			}
-
+			[MonoTODO ("Setting this is probably unintentional and can cause Forms to be improperly sized.  See http://www.mono-project.com/FAQ:_Winforms#My_forms_are_sized_improperly for details.")]
 			set {
 				autoscale_base_size = value;
 				

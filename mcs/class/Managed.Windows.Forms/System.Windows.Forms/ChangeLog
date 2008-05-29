@@ -1,5 +1,10 @@
 2008-05-29  Jonathan Pobst  <monkey@jpobst.com>
 
+	* Form.cs: Add a MonoTODO to the AutoScaleBaseSize setter explaining
+	that the user probably doesn't want to set this.
+
+2008-05-29  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ThemeWin32Classic.cs: Don't let the text size be bigger than
 	the control size for CheckBox/RadioBox.
 	[Fixes part of bug #394645]
