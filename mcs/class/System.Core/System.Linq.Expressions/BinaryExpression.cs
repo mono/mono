@@ -223,9 +223,12 @@ namespace System.Linq.Expressions {
 		void EmitLiftedLogical (EmitContext ec)
 		{
 			// TODO
-			EmitLiftedLogical (ec,
-				NodeType == ExpressionType.And || NodeType == ExpressionType.AndAlso,
-				NodeType == ExpressionType.AndAlso || NodeType == ExpressionType.OrElse);
+			if (Type == typeof (bool?)) {
+				EmitLiftedLogical (ec,
+					NodeType == ExpressionType.And || NodeType == ExpressionType.AndAlso,
+					NodeType == ExpressionType.AndAlso || NodeType == ExpressionType.OrElse);
+			} else
+				EmitLiftedToNullBinary (ec);
 		}
 
 		void EmitLogicalShortCircuit (EmitContext ec)
