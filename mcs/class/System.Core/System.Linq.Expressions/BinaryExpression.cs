@@ -487,13 +487,20 @@ namespace System.Linq.Expressions {
 				EmitLiftedArithmeticBinary (ec);
 		}
 
+		void EmitLiftedToNullRelationalBinary (EmitContext ec)
+		{
+			EmitArithmeticBinary (ec);
+		}
+
 		void EmitRelationalBinary (EmitContext ec)
 		{
 			if (!IsLifted) {
 				left.Emit (ec);
 				right.Emit (ec);
 				EmitBinaryOperator (ec);
-			} else
+			} else if (IsLiftedToNull)
+				EmitLiftedToNullRelationalBinary (ec);
+			else
 				EmitLiftedRelationalBinary (ec);
 		}
 
