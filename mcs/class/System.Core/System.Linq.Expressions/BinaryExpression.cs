@@ -351,11 +351,9 @@ namespace System.Linq.Expressions {
 				opcode = OpCodes.Shl;
 				break;
 			case ExpressionType.And:
-			case ExpressionType.AndAlso:
 				opcode = OpCodes.And;
 				break;
 			case ExpressionType.Or:
-			case ExpressionType.OrElse:
 				opcode = OpCodes.Or;
 				break;
 			case ExpressionType.ExclusiveOr:
