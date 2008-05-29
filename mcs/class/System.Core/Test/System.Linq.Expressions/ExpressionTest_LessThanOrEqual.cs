@@ -134,7 +134,7 @@ namespace MonoTests.System.Linq.Expressions
 			var r = Expression.Parameter (typeof (int?), "r");
 
 			var lte = Expression.Lambda<Func<int?, int?, bool?>> (
-				Expression.LessThan (l, r, true, null), l, r).Compile ();
+				Expression.LessThanOrEqual (l, r, true, null), l, r).Compile ();
 
 			Assert.AreEqual ((bool?) null, lte (null, null));
 			Assert.AreEqual ((bool?) null, lte (null, 1));
