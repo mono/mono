@@ -1,5 +1,10 @@
 2008-05-29  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* PropertyGrid.cs: Update the state of the sorting buttons in 
+	the toolbar if PropertySort is set programatically.
+
+2008-05-29  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* GridItemCollection.cs: Add multiple items with conflicting names 
 	support and also preserve name ordering.
 	[Fixes #395345]

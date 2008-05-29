@@ -551,6 +551,7 @@ namespace System.Windows.Forms
 						eh (this, EventArgs.Empty);
 #endif
 				}
+				UpdatePropertySortButtonsState ();
 			}
 		}
 
@@ -902,6 +903,21 @@ namespace System.Windows.Forms
 				selected_tab = propertyTab;
 				PopulateGrid (selected_objects);
 				SelectItemCore (null, GetDefaultPropertyItem (root_grid_item, selected_tab));
+			}
+		}
+
+		private void UpdatePropertySortButtonsState ()
+		{
+			if (property_sort == PropertySort.NoSort) {
+				alphabetic_toolbarbutton.Pushed = false;
+				categorized_toolbarbutton.Pushed = false;
+			} else if (property_sort == PropertySort.Alphabetical) {
+				alphabetic_toolbarbutton.Pushed = true;
+				categorized_toolbarbutton.Pushed = false;
+			} else if (property_sort == PropertySort.Categorized || 
+				   property_sort == PropertySort.CategorizedAlphabetical) {
+				alphabetic_toolbarbutton.Pushed = false;
+				categorized_toolbarbutton.Pushed = true;
 			}
 		}
 		
