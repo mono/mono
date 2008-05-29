@@ -1,3 +1,7 @@
+2008-05-29 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* icall.c: Fix some memory leaks.
+
 2008-05-29  Dick Porter  <dick@ximian.com>
 
 	* threadpool.c (mono_thread_pool_remove_socket): Always remove the
