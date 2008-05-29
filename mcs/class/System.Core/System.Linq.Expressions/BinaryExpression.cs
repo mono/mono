@@ -243,50 +243,47 @@ namespace System.Linq.Expressions {
 
 		void EmitCoalesce (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
+			if (IsNullable (left.Type))
+				EmitNullableCoalesce (ec);
+			else
+				EmitReferenceCoalesce (ec);
+		}
 
-			LocalBuilder vleft;
-			LocalBuilder vright;
+		void EmitReferenceCoalesce (EmitContext ec)
+		{
+			var ig = ec.ig;
+			var done = ig.DefineLabel ();
+			var load_right = ig.DefineLabel ();
 
-			MethodInfo has_value = left.Type.GetMethod ("get_HasValue");
+			var left = ec.EmitStored (this.left);
+			ec.EmitLoad (left);
+			ig.Emit (OpCodes.Brfalse, load_right);
+			ec.EmitLoad (left);
+			ig.Emit (OpCodes.Br, done);
 
-			Label exit = ig.DefineLabel ();
-			Label try_right = ig.DefineLabel ();
-			Label setup_null = ig.DefineLabel ();
+			ig.MarkLabel (load_right);
+			ec.Emit (this.right);
 
-			vleft = ec.EmitStored (left);
-			if (IsNullable (left.Type)){
-				ig.Emit (OpCodes.Ldloca, vleft);
-				ig.Emit (OpCodes.Call, has_value);
-			} else
-				ig.Emit (OpCodes.Ldloc, vleft);
+			ig.MarkLabel (done);
+		}
 
-			ig.Emit (OpCodes.Brfalse, try_right);
-			ig.Emit (OpCodes.Ldloc, vleft);
-			ig.Emit (OpCodes.Br, exit);
+		void EmitNullableCoalesce (EmitContext ec)
+		{
+			var ig = ec.ig;
+			var load_right = ig.DefineLabel ();
+			var done = ig.DefineLabel ();
 
-		// try_right;
-			ig.MarkLabel (try_right);
-			vright = ec.EmitStored (right);
-			if (IsNullable (right.Type)){
-				ig.Emit (OpCodes.Ldloca, vright);
-				ig.Emit (OpCodes.Call, has_value);
-			} else
-				ig.Emit (OpCodes.Ldloc, vright);
+			var left = ec.EmitStored (this.left);
+			ec.EmitNullableHasValue (left);
+			ig.Emit (OpCodes.Brfalse, load_right);
 
-			ig.Emit (OpCodes.Brfalse, setup_null);
-			ig.Emit (OpCodes.Ldloc, vright);
-			ig.Emit (OpCodes.Br, exit);
+			ec.EmitLoad (left);
+			ig.Emit (OpCodes.Br, done);
 
-		// setup_null:
-			ig.MarkLabel (setup_null);
-			LocalBuilder ret = ig.DeclareLocal (Type);
-			ig.Emit (OpCodes.Ldloca, ret);
-			ig.Emit (OpCodes.Initobj, Type);
-			ig.Emit (OpCodes.Ldloc, ret);
+			ig.MarkLabel (load_right);
+			ec.Emit (this.right);
 
-		// exit:
-			ig.MarkLabel (exit);
+			ig.MarkLabel (done);
 		}
 
 		static bool IsInt32OrInt64 (Type type)
