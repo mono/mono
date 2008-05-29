@@ -1,5 +1,9 @@
 2008-05-29  Jb Evain  <jbevain@novell.com>
 
+	* BinaryExpression.cs (Emit): fix lifted andalso and orelse.
+
+2008-05-29  Jb Evain  <jbevain@novell.com>
+
 	* BinaryExpression.cs (Emit): properly emit lifted to null
 	relational binary expressions.
 
