@@ -1,5 +1,10 @@
 2008-05-29  Jb Evain  <jbevain@novell.com>
 
+	* Expression.cs (Power): allow bool?.
+	* BinaryExpression.cs: properly deal with lifted power expression.
+
+2008-05-29  Jb Evain  <jbevain@novell.com>
+
 	* BinaryExpression.cs (Emit): fix lifted andalso and orelse.
 
 2008-05-29  Jb Evain  <jbevain@novell.com>

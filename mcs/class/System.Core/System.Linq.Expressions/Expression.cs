@@ -495,7 +495,7 @@ namespace System.Linq.Expressions {
 		{
 			method = BinaryCoreCheck (null, left, right, method);
 
-			if (left.Type != typeof (double))
+			if (GetNotNullableOf (left.Type) != typeof (double))
 				throw new InvalidOperationException ("Power only supports double arguments");
 
 			return MakeSimpleBinary (ExpressionType.Power, left, right, method);

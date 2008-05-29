@@ -382,6 +382,10 @@ namespace System.Linq.Expressions {
 				ig.Emit (OpCodes.Ldc_I4_0);
 				opcode = OpCodes.Ceq;
 				break;
+			case ExpressionType.Power:
+				ig.Emit (OpCodes.Call, typeof (Math).GetMethod ("Pow"));
+				opcode = OpCodes.Nop;
+				break;
 			default:
 				throw new InvalidOperationException (string.Format ("Internal error: BinaryExpression contains non-Binary nodetype {0}", NodeType));
 			}
@@ -514,11 +518,6 @@ namespace System.Linq.Expressions {
 				EmitCoalesce (ec);
 				return;
 			case ExpressionType.Power:
-				// likely broken if lifted
-				left.Emit (ec);
-				right.Emit (ec);
-				ec.EmitCall (typeof (Math).GetMethod ("Pow"));
-				return;
 			case ExpressionType.Add:
 			case ExpressionType.AddChecked:
 			case ExpressionType.Divide:
