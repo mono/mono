@@ -1,5 +1,9 @@
 2008-05-28 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* object.c: Fix negative index check for array alocation.
+
+2008-05-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* icall.c, marshal.c: Delegate wrappers should skip visibility.
 	This check is performed by the verifier for IL created delegates
 	and by Delegate::CreateDelegate for programatically created ones.
