@@ -168,6 +168,25 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		public void NullableInt32EqualLiftedToNull ()
+		{
+			var l = Expression.Parameter (typeof (int?), "l");
+			var r = Expression.Parameter (typeof (int?), "r");
+
+			var eq = Expression.Lambda<Func<int?, int?, bool?>> (
+				Expression.Equal (l, r, true, null), l, r).Compile ();
+
+			Assert.AreEqual ((bool?) null, eq (null, null));
+			Assert.AreEqual ((bool?) null, eq (null, 1));
+			Assert.AreEqual ((bool?) null, eq (1, null));
+			Assert.AreEqual ((bool?) false, eq (1, 2));
+			Assert.AreEqual ((bool?) true, eq (1, 1));
+			Assert.AreEqual ((bool?) null, eq (null, 0));
+			Assert.AreEqual ((bool?) null, eq (0, null));
+		}
+
+		[Test]
 		public void NullableInt32NotEqual () // have to move that to its own file
 		{
 			var l = Expression.Parameter (typeof (int?), "l");
@@ -183,6 +202,25 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.IsFalse (neq (1, 1));
 			Assert.IsTrue (neq (null, 0));
 			Assert.IsTrue (neq (0, null));
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void NullableInt32NotEqualLiftedToNull () // have to move that to its own file
+		{
+			var l = Expression.Parameter (typeof (int?), "l");
+			var r = Expression.Parameter (typeof (int?), "r");
+
+			var neq = Expression.Lambda<Func<int?, int?, bool?>> (
+				Expression.NotEqual (l, r, true, null), l, r).Compile ();
+
+			Assert.AreEqual ((bool?) null, neq (null, null));
+			Assert.AreEqual ((bool?) null, neq (null, 1));
+			Assert.AreEqual ((bool?) null, neq (1, null));
+			Assert.AreEqual ((bool?) true, neq (1, 2));
+			Assert.AreEqual ((bool?) false, neq (1, 1));
+			Assert.AreEqual ((bool?) null, neq (null, 0));
+			Assert.AreEqual ((bool?) null, neq (0, null));
 		}
 	}
 }

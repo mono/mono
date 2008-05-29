@@ -125,5 +125,25 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.IsFalse (lte (2, 1));
 			Assert.IsTrue (lte (1, 1));
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void NullableInt32LessThanOrEqualLiftedToNull ()
+		{
+			var l = Expression.Parameter (typeof (int?), "l");
+			var r = Expression.Parameter (typeof (int?), "r");
+
+			var lte = Expression.Lambda<Func<int?, int?, bool?>> (
+				Expression.LessThan (l, r, true, null), l, r).Compile ();
+
+			Assert.AreEqual ((bool?) null, lte (null, null));
+			Assert.AreEqual ((bool?) null, lte (null, 1));
+			Assert.AreEqual ((bool?) null, lte (null, -1));
+			Assert.AreEqual ((bool?) null, lte (1, null));
+			Assert.AreEqual ((bool?) null, lte (-1, null));
+			Assert.AreEqual ((bool?) true, lte (1, 2));
+			Assert.AreEqual ((bool?) false, lte (2, 1));
+			Assert.AreEqual ((bool?) true, lte (1, 1));
+		}
 	}
 }
