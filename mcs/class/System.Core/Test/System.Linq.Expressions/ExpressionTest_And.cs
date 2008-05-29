@@ -104,7 +104,8 @@ namespace MonoTests.System.Linq.Expressions
 		[Test]
 		public void AndTest ()
 		{
-			ParameterExpression a = Expression.Parameter (typeof (bool), "a"), b = Expression.Parameter (typeof (bool), "b");
+			var a = Expression.Parameter (typeof (bool), "a");
+			var b = Expression.Parameter (typeof (bool), "b");
 			var l = Expression.Lambda<Func<bool, bool, bool>> (
 				Expression.And (a, b), a, b);
 
@@ -137,7 +138,8 @@ namespace MonoTests.System.Linq.Expressions
 		[Test]
 		public void AndNullableTest ()
 		{
-			ParameterExpression a = Expression.Parameter (typeof (bool?), "a"), b = Expression.Parameter (typeof (bool?), "b");
+			var a = Expression.Parameter (typeof (bool?), "a");
+			var b = Expression.Parameter (typeof (bool?), "b");
 			var l = Expression.Lambda<Func<bool?, bool?, bool?>> (
 				Expression.And (a, b), a, b);
 
@@ -159,6 +161,36 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (false, c (null, false), "a7");
 			Assert.AreEqual (null,  c (true, null),  "a8");
 			Assert.AreEqual (null,  c (null, null),   "a9");
+		}
+
+		[Test]
+		public void AndBoolItem ()
+		{
+			var i = Expression.Parameter (typeof (Item<bool>), "i");
+			var and = Expression.Lambda<Func<Item<bool>, bool>> (
+				Expression.And (
+					Expression.Property (i, "Left"),
+					Expression.Property (i, "Right")), i).Compile ();
+
+			var item = new Item<bool> (false, true);
+			Assert.AreEqual (false, and (item));
+			Assert.IsTrue (item.LeftCalled);
+			Assert.IsTrue (item.RightCalled);
+		}
+
+		[Test]
+		public void AndNullableBoolItem ()
+		{
+			var i = Expression.Parameter (typeof (Item<bool?>), "i");
+			var and = Expression.Lambda<Func<Item<bool?>, bool?>> (
+				Expression.And (
+					Expression.Property (i, "Left"),
+					Expression.Property (i, "Right")), i).Compile ();
+
+			var item = new Item<bool?> (false, true);
+			Assert.AreEqual ((bool?) false, and (item));
+			Assert.IsTrue (item.LeftCalled);
+			Assert.IsTrue (item.RightCalled);
 		}
 	}
 }

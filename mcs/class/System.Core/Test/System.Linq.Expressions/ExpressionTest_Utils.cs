@@ -287,4 +287,41 @@ namespace MonoTests.System.Linq.Expressions
 			}
 		}
 	}
+
+	class Item<T> {
+
+		bool left_called;
+		T left;
+
+		public T Left {
+			get {
+				left_called = true;
+				return left;
+			}
+		}
+
+		public bool LeftCalled {
+			get { return left_called; }
+		}
+
+		bool right_called;
+		T right;
+
+		public T Right {
+			get {
+				right_called = true;
+				return right;
+			}
+		}
+
+		public bool RightCalled {
+			get { return right_called; }
+		}
+
+		public Item (T left, T right)
+		{
+			this.left = left;
+			this.right = right;
+		}
+	}
 }

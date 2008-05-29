@@ -149,5 +149,34 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (null, c (null, null),  "o9");
 		}
 
+		[Test]
+		public void OrBoolItem ()
+		{
+			var i = Expression.Parameter (typeof (Item<bool>), "i");
+			var and = Expression.Lambda<Func<Item<bool>, bool>> (
+				Expression.Or (
+					Expression.Property (i, "Left"),
+					Expression.Property (i, "Right")), i).Compile ();
+
+			var item = new Item<bool> (true, false);
+			Assert.AreEqual (true, and (item));
+			Assert.IsTrue (item.LeftCalled);
+			Assert.IsTrue (item.RightCalled);
+		}
+
+		[Test]
+		public void OrNullableBoolItem ()
+		{
+			var i = Expression.Parameter (typeof (Item<bool?>), "i");
+			var and = Expression.Lambda<Func<Item<bool?>, bool?>> (
+				Expression.Or (
+					Expression.Property (i, "Left"),
+					Expression.Property (i, "Right")), i).Compile ();
+
+			var item = new Item<bool?> (true, false);
+			Assert.AreEqual ((bool?) true, and (item));
+			Assert.IsTrue (item.LeftCalled);
+			Assert.IsTrue (item.RightCalled);
+		}
 	}
 }

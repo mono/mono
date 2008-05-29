@@ -18,6 +18,7 @@
 //
 // Authors:
 //		Federico Di Gregorio <fog@initd.org>
+//		Jb Evain <jbevain@novell.com>
 
 using System;
 using System.Reflection;
@@ -169,6 +170,38 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (false, c (null, false), "a7");
 			Assert.AreEqual (null,  c (true, null), "a8");
 			Assert.AreEqual (null,  c (null, null), "a9");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void AndAlsoBoolItem ()
+		{
+			var i = Expression.Parameter (typeof (Item<bool>), "i");
+			var and = Expression.Lambda<Func<Item<bool>, bool>> (
+				Expression.AndAlso (
+					Expression.Property (i, "Left"),
+					Expression.Property (i, "Right")), i).Compile ();
+
+			var item = new Item<bool> (false, true);
+			Assert.AreEqual (false, and (item));
+			Assert.IsTrue (item.LeftCalled);
+			Assert.IsFalse (item.RightCalled);
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void AndAlsoNullableBoolItem ()
+		{
+			var i = Expression.Parameter (typeof (Item<bool?>), "i");
+			var and = Expression.Lambda<Func<Item<bool?>, bool?>> (
+				Expression.AndAlso (
+					Expression.Property (i, "Left"),
+					Expression.Property (i, "Right")), i).Compile ();
+
+			var item = new Item<bool?> (false, true);
+			Assert.AreEqual ((bool?) false, and (item));
+			Assert.IsTrue (item.LeftCalled);
+			Assert.IsFalse (item.RightCalled);
 		}
 	}
 }
