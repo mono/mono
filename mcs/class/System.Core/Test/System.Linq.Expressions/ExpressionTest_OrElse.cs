@@ -18,6 +18,7 @@
 //
 // Authors:
 //		Federico Di Gregorio <fog@initd.org>
+//		Jb Evain <jbevain@novell.com>
 
 using System;
 using System.Reflection;
