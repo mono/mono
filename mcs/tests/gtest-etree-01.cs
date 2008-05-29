@@ -1035,7 +1035,6 @@ class Tester
 		Assert (true, e.Compile ().Invoke (-1, -1));
 	}
 	
-/* FIXME: CRASHES Mono runtime !
 	void EqualTest_2 ()
 	{
 		Expression<Func<double?, double?, bool>> e2 = (a, b) => a == b;
@@ -1043,7 +1042,7 @@ class Tester
 		Assert (true, e2.Compile ().Invoke (3, 3));
 		Assert (false, e2.Compile ().Invoke (3, 2));
 	}
-*/
+
 	void EqualTest_3 ()
 	{
 		Expression<Func<MyType, MyType, bool>> e3 = (MyType a, MyType b) => a == b;
