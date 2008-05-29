@@ -484,21 +484,24 @@ namespace System.Linq.Expressions {
 
 		void EmitArithmeticBinary (EmitContext ec)
 		{
-			if (!IsLifted) {
-				left.Emit (ec);
-				right.Emit (ec);
-				EmitBinaryOperator (ec);
-			} else
+			if (!IsLifted)
+				EmitNonLiftedBinary (ec);
+			else
 				EmitLiftedArithmeticBinary (ec);
+		}
+
+		void EmitNonLiftedBinary (EmitContext ec)
+		{
+			ec.Emit (left);
+			ec.Emit (right);
+			EmitBinaryOperator (ec);
 		}
 
 		void EmitRelationalBinary (EmitContext ec)
 		{
-			if (!IsLifted) {
-				left.Emit (ec);
-				right.Emit (ec);
-				EmitBinaryOperator (ec);
-			} else if (IsLiftedToNull)
+			if (!IsLifted)
+				EmitNonLiftedBinary (ec);
+			else if (IsLiftedToNull)
 				EmitLiftedToNullBinary (ec);
 			else
 				EmitLiftedRelationalBinary (ec);
