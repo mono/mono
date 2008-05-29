@@ -1,3 +1,7 @@
+2008-05-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-value-hash.c: Remove the unused prime functions. Fixes #395320.
+
 2008-05-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-value-hash.c: Fix build on older glib versions.
