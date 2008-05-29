@@ -1,5 +1,9 @@
 2008-05-29 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* icall.c: Revert a leak fix as it's breaking the build.
+
+2008-05-29 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* appdomain.c (mono_make_shadow_copy): Fix another leak of dir_name.
 
 2008-05-29 Rodrigo Kumpera  <rkumpera@novell.com>
