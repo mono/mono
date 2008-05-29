@@ -97,7 +97,37 @@ namespace Mono.Data.Tds {
 
 		public object Value {
 			get { return value; }
-			set { this.value = value; }
+			set { 
+				if (value == DBNull.Value || value == null) {
+					this.value = value;
+					return;
+				}
+
+				// if size is set, truncate the value to specified size
+				if (value.GetType () == typeof (string)) {
+					int len = ((string)value).Length;
+					
+					if ((TypeName == "nvarchar" || 
+					     TypeName == "nchar") 
+					    && isSizeSet && size > 0 && len > size) {
+						this.value = ((string)value).Substring (0, size);
+					} else {
+						this.value = value;
+					}
+				} else if (value.GetType () == typeof (byte[])) {
+					int len = ((byte[])value).Length;
+					
+					if (isSizeSet && size > 0 && len > size ) {
+						byte [] tmpVal = new byte [size];
+						Array.Copy (((byte[]) value), ((byte[]) this.value), size);
+						this.value = tmpVal;
+					} else {
+						this.value = value;
+					}
+				} else {
+					this.value = value;
+				}
+			}
 		}
 
 		public byte Precision {
