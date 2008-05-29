@@ -197,14 +197,10 @@ namespace System.Linq.Expressions {
 
 		void EmitLogical (EmitContext ec, bool and, bool short_circuit)
 		{
-			if (IsLifted) {
+			if (!IsLifted)
+				EmitNonLiftedBinary (ec);
+			else
 				EmitLiftedLogical (ec, and, short_circuit);
-				return;
-			}
-
-			left.Emit (ec);
-			right.Emit (ec);
-			ec.ig.Emit (and ? OpCodes.And : OpCodes.Or);
 		}
 
 		void EmitCoalesce (EmitContext ec)
@@ -302,9 +298,11 @@ namespace System.Linq.Expressions {
 				opcode = OpCodes.Shl;
 				break;
 			case ExpressionType.And:
+			case ExpressionType.AndAlso:
 				opcode = OpCodes.And;
 				break;
 			case ExpressionType.Or:
+			case ExpressionType.OrElse:
 				opcode = OpCodes.Or;
 				break;
 			case ExpressionType.ExclusiveOr:
@@ -375,9 +373,7 @@ namespace System.Linq.Expressions {
 			ig.Emit (OpCodes.And);
 			ig.Emit (OpCodes.Brtrue, has_value);
 
-			ig.Emit (OpCodes.Ldloca, result);
-			ig.Emit (OpCodes.Initobj, result.LocalType);
-			ig.Emit (OpCodes.Ldloc, result);
+			ec.EmitNullableInitialize (result);
 
 			ig.Emit (OpCodes.Br, done);
 

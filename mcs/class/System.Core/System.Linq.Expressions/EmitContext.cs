@@ -195,6 +195,18 @@ namespace System.Linq.Expressions {
 			EmitCall (local, local.LocalType.GetMethod ("get_HasValue"));
 		}
 
+		public void EmitNullableInitialize (LocalBuilder local)
+		{
+			ig.Emit (OpCodes.Ldloca, local);
+			ig.Emit (OpCodes.Initobj, local.LocalType);
+			ig.Emit (OpCodes.Ldloc, local);
+		}
+
+		public void EmitNullableGetValue (LocalBuilder local)
+		{
+			EmitCall (local, local.LocalType.GetMethod ("get_Value", Type.EmptyTypes));
+		}
+
 		public void EmitNullableGetValueOrDefault (LocalBuilder local)
 		{
 			EmitCall (local, local.LocalType.GetMethod ("GetValueOrDefault", Type.EmptyTypes));

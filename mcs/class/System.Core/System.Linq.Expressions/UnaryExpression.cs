@@ -98,9 +98,7 @@ namespace System.Linq.Expressions {
 			ig.Emit (OpCodes.Brtrue, has_value);
 
 			// if not has value
-			ig.Emit (OpCodes.Ldloca, to);
-			ig.Emit (OpCodes.Initobj, to.LocalType);
-			ig.Emit (OpCodes.Ldloc, to);
+			ec.EmitNullableInitialize (to);
 
 			ig.Emit (OpCodes.Br, done);
 
