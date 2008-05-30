@@ -1,5 +1,9 @@
 2008-05-30  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (mono_arch_emit_prolog): Increase max_offset when processing
+	bb_exit instead, since out of line bblocks might not actually be emitted
+	out-of-line.
+	
 	* mini-amd64.c (mono_arch_emit_prolog): Increase bb->max_offset by the
 	maximum epilog size for out of line bblocks if tracing is enabled.
 
