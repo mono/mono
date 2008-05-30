@@ -1,3 +1,8 @@
+2008-05-30  Marek Safar  <marek.safar@gmail.com>
+
+	* Array.cs (IndexOf): Use an array element comparer instead of tested value
+	comparer.
+
 2008-05-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* Console.cs (.cctor): Make sdout synchronized in the console case too.

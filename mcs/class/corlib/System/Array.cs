@@ -1072,7 +1072,7 @@ namespace System
 
 			int max = startIndex + count;
 			for (int i = startIndex; i < max; i++) {
-				if (Object.Equals (value, array.GetValueImpl (i)))
+				if (Object.Equals (array.GetValueImpl (i), value))
 					return i;
 			}
 
