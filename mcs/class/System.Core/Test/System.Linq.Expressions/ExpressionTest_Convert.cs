@@ -425,7 +425,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ChainedNullableConvert ()
 		{
 			var p = Expression.Parameter (typeof (sbyte?), "a");
