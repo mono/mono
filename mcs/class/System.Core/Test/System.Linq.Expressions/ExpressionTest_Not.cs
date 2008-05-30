@@ -147,5 +147,32 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual ((bool?) false, not (true));
 			Assert.AreEqual ((bool?) true, not (false));
 		}
+
+
+		struct Slot {
+			public int Value;
+
+			public Slot (int value)
+			{
+				this.Value = value;
+			}
+
+			public static bool operator ! (Slot s)
+			{
+				return s.Value > 0;
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void UserDefinedNotNullable ()
+		{
+			var s = Expression.Parameter (typeof (Slot?), "s");
+			var not = Expression.Lambda<Func<Slot?, bool?>> (Expression.Not (s), s).Compile ();
+
+			Assert.AreEqual (null, not (null));
+			Assert.AreEqual (true, not (new Slot (1)));
+			Assert.AreEqual (false, not (new Slot (0)));
+		}
 	}
 }
