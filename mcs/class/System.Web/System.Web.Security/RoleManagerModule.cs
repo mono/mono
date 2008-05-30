@@ -29,6 +29,7 @@
 //
 
 #if NET_2_0
+using System.ComponentModel;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Security.Principal;
@@ -37,10 +38,17 @@ using System.Threading;
 using System.Web.Configuration;
 
 namespace System.Web.Security {
-	public sealed class RoleManagerModule : IHttpModule {
+	public sealed class RoleManagerModule : IHttpModule
+	{
+		static readonly object getRolesEvent = new object ();
+		
 		RoleManagerSection _config = null;
-
-		public event RoleManagerEventHandler GetRoles;
+		EventHandlerList events = new EventHandlerList ();
+		
+		public event RoleManagerEventHandler GetRoles {
+			add { events.AddHandler (getRolesEvent, value); }
+			remove { events.RemoveHandler (getRolesEvent, value); }
+		}
 
 		public void Dispose ()
 		{
@@ -66,10 +74,11 @@ namespace System.Web.Security {
 				return;
 
 			/* allow the user to populate the Role */
-			if (GetRoles != null) {
+			RoleManagerEventHandler eh = events [getRolesEvent] as RoleManagerEventHandler;
+			if (eh != null) {
 				RoleManagerEventArgs role_args = new RoleManagerEventArgs (app.Context);
 
-				GetRoles (this, role_args);
+				eh (this, role_args);
 
 				if (role_args.RolesPopulated)
 					return;

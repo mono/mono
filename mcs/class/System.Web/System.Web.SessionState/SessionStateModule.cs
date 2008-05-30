@@ -30,6 +30,7 @@
 //
 
 #if !NET_2_0
+using System.ComponentModel;
 using System.Web.Configuration;
 using System.Web.Caching;
 using System.Web.Util;
@@ -44,10 +45,26 @@ namespace System.Web.SessionState
 	{
 		internal const string CookieName = "ASPSESSION";
 		internal const string HeaderName = "AspFilterSessionId";
-		static object locker = new object ();
+
+		static readonly object locker = new object ();
+		static readonly object startEvent = new object ();
+		static readonly object endEvent = new object ();
 		
+		EventHandlerList events = new EventHandlerList ();
+		
+		public event EventHandler Start {
+			add { events.AddHandler (startEvent, value); }
+			remove { events.RemoveHandler (startEvent, value); }
+		}
+
+		// This event is public, but only Session_[On]End in global.asax will be invoked if present.
+		public event EventHandler End {
+			add { events.AddHandler (endEvent, value); }
+			remove { events.RemoveHandler (endEvent, value); }
+		}
+
 #if TARGET_J2EE		
-static private SessionConfig config {
+		static private SessionConfig config {
 			get {
 				return (SessionConfig)AppDomain.CurrentDomain.GetData("SessionStateModule.config");
 			}
@@ -224,8 +241,9 @@ static private SessionConfig config {
 
 		void OnSessionStart ()
 		{
-			if (Start != null)
-				Start (this, EventArgs.Empty);
+			EventHandler eh = events [startEvent] as EventHandler;
+			if (eh != null)
+				eh (this, EventArgs.Empty);
 		}
 
 		internal void OnSessionRemoved (string key, object value, CacheItemRemovedReason reason)
@@ -235,12 +253,7 @@ static private SessionConfig config {
 			// Only invoked for InProc (see msdn2 docs on SessionStateModule.End)
 			if (cfg.Mode == SessionStateMode.InProc)
 				HttpApplicationFactory.InvokeSessionEnd (value);
-		}
-		
-		public event EventHandler Start;
-
-		// This event is public, but only Session_[On]End in global.asax will be invoked if present.
-		public event EventHandler End;
+		}		
 	}
 }
 

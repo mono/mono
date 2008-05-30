@@ -27,6 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.ComponentModel;
 using System.Security.Permissions;
 
 namespace System.Web.Security
@@ -35,17 +36,22 @@ namespace System.Web.Security
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class PassportAuthenticationModule : IHttpModule
 	{
+		static readonly object authenticateEvent = new object ();
+
+		EventHandlerList events = new EventHandlerList ();
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public PassportAuthenticationModule ()
 		{
 		}
 
-		public event PassportAuthenticationEventHandler Authenticate;
+		public event PassportAuthenticationEventHandler Authenticate {
+			add { events.AddHandler (authenticateEvent, value); }
+			remove { events.RemoveHandler (authenticateEvent, value); }
+		}
 
 		public void Dispose ()
 		{
-			if (Authenticate != null)
-				Authenticate = null;
+			events.Dispose ();
 		}
 
 		[MonoTODO("Will we ever implement this? :-)")]

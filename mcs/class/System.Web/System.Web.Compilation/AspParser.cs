@@ -28,6 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.ComponentModel;
 using System.Collections;
 using System.Globalization;
 using System.IO;
@@ -43,6 +44,10 @@ namespace System.Web.Compilation
 
 	class AspParser : ILocation
 	{
+		static readonly object errorEvent = new object ();
+		static readonly object tagParsedEvent = new object ();
+		static readonly object textParsedEvent = new object ();
+		
 		AspTokenizer tokenizer;
 		int beginLine, endLine;
 		int beginColumn, endColumn;
@@ -51,6 +56,23 @@ namespace System.Web.Compilation
 		string filename;
 		string fileText;
 		string verbatimID;
+
+		EventHandlerList events = new EventHandlerList ();
+		
+		public event ParseErrorHandler Error {
+			add { events.AddHandler (errorEvent, value); }
+			remove { events.RemoveHandler (errorEvent, value); }
+		}
+		
+		public event TagParsedHandler TagParsed {
+			add { events.AddHandler (tagParsedEvent, value); }
+			remove { events.RemoveHandler (tagParsedEvent, value); }
+		}
+		
+		public event TextParsedHandler TextParsed {
+			add { events.AddHandler (textParsedEvent, value); }
+			remove { events.RemoveHandler (textParsedEvent, value); }
+		}
 
 		public AspParser (string filename, TextReader input)
 		{
@@ -474,26 +496,25 @@ namespace System.Web.Compilation
 				  (varname ? TagType.CodeRenderExpression : TagType.CodeRender));
 		}
 
-		public event ParseErrorHandler Error;
-		public event TagParsedHandler TagParsed;
-		public event TextParsedHandler TextParsed;
-
 		void OnError (string msg)
 		{
-			if (Error != null)
-				Error (this, msg);
+			ParseErrorHandler eh = events [errorEvent] as ParseErrorHandler;
+			if (eh != null)
+				eh (this, msg);
 		}
 
 		void OnTagParsed (TagType tagtype, string id, TagAttributes attributes)
 		{
-			if (TagParsed != null)
-				TagParsed (this, tagtype, id, attributes);
+			TagParsedHandler eh = events [tagParsedEvent] as TagParsedHandler;
+			if (eh != null)
+				eh (this, tagtype, id, attributes);
 		}
 
 		void OnTextParsed (string text)
 		{
-			if (TextParsed != null)
-				TextParsed (this, text);
+			TextParsedHandler eh = events [textParsedEvent] as TextParsedHandler;
+			if (eh != null)
+				eh (this, text);
 		}
 	}
 

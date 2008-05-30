@@ -32,6 +32,7 @@
 
 #if NET_2_0
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Web.Configuration;
 using System.Web.Caching;
 using System.Web.Util;
@@ -65,6 +66,9 @@ namespace System.Web.SessionState
 		internal const string HeaderName = "AspFilterSessionId";
 		internal const string CookielessFlagName = "_SessionIDManager_IsCookieLess";
 
+		static readonly object startEvent = new object ();
+		static readonly object endEvent = new object ();
+		
 		SessionStateSection config;
 
 		SessionStateStoreProviderBase handler;
@@ -86,6 +90,19 @@ namespace System.Web.SessionState
 		// config
 		TimeSpan executionTimeout;
 		//int executionTimeoutMS;
+
+		EventHandlerList events = new EventHandlerList ();
+		
+		public event EventHandler Start {
+			add { events.AddHandler (startEvent, value); }
+			remove { events.RemoveHandler (startEvent, value); }
+		}
+
+		// This event is public, but only Session_[On]End in global.asax will be invoked if present.
+		public event EventHandler End {
+			add { events.AddHandler (endEvent, value); }
+			remove { events.RemoveHandler (endEvent, value); }
+		}
 
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public SessionStateModule () {
@@ -377,14 +394,10 @@ namespace System.Web.SessionState
 		}
 
 		void OnSessionStart () {
-			if (Start != null)
-				Start (this, EventArgs.Empty);
+			EventHandler eh = events [startEvent] as EventHandler;
+			if (eh != null)
+				eh (this, EventArgs.Empty);
 		}
-
-		public event EventHandler Start;
-
-		// This event is public, but only Session_[On]End in global.asax will be invoked if present.
-		public event EventHandler End;
 	}
 }
 #endif

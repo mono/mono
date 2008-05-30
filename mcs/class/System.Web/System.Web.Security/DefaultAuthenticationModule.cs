@@ -27,6 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.ComponentModel;
 using System.Security.Permissions;
 using System.Security.Principal;
 using System.Threading;
@@ -39,14 +40,20 @@ namespace System.Web.Security
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class DefaultAuthenticationModule : IHttpModule
 	{
+		static readonly object authenticateEvent = new object ();
 		static GenericIdentity defaultIdentity = new GenericIdentity ("", "");
 
+		EventHandlerList events = new EventHandlerList ();
+		
+		public event DefaultAuthenticationEventHandler Authenticate {
+			add { events.AddHandler (authenticateEvent, value); }
+			remove { events.RemoveHandler (authenticateEvent, value); }
+		}
+		
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public DefaultAuthenticationModule ()
 		{
 		}
-
-		public event DefaultAuthenticationEventHandler Authenticate;
 
 		public void Dispose ()
 		{
@@ -62,8 +69,9 @@ namespace System.Web.Security
 			HttpApplication app = (HttpApplication) sender;
 			HttpContext context = app.Context;
 
-			if (context.User == null && Authenticate != null)
-				Authenticate (this, new DefaultAuthenticationEventArgs (context));
+			DefaultAuthenticationEventHandler eh = events [authenticateEvent] as DefaultAuthenticationEventHandler;
+			if (context.User == null && eh != null)
+				eh (this, new DefaultAuthenticationEventArgs (context));
 
 			if (context.User == null)
 				context.User = new GenericPrincipal (defaultIdentity, new string [0]);

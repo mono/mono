@@ -43,6 +43,13 @@ namespace System.Web.UI.WebControls
 	[Bindable (false)]
 	public class PasswordRecovery : CompositeControl
 	{
+		static readonly object answerLookupErrorEvent = new object ();
+		static readonly object sendingMailEvent = new object ();
+		static readonly object sendMailErrorEvent = new object ();
+		static readonly object userLookupErrorEvent = new object ();
+		static readonly object verifyingAnswerEvent = new object ();
+		static readonly object verifyingUserEvent = new object ();
+		
 		public static readonly string SubmitButtonCommandName = "Submit";
 
 		TableItemStyle _failureTextStyle;
@@ -70,6 +77,40 @@ namespace System.Web.UI.WebControls
 
 		string _username = null;
 		string _answer = null;
+
+		EventHandlerList events = new EventHandlerList ();
+
+#region Events
+		public event EventHandler AnswerLookupError {
+			add { events.AddHandler (answerLookupErrorEvent, value); }
+			remove { events.RemoveHandler (answerLookupErrorEvent, value); }
+		}
+		
+		public event MailMessageEventHandler SendingMail {
+			add { events.AddHandler (sendingMailEvent, value); }
+			remove { events.RemoveHandler (sendingMailEvent, value); }
+		}
+		
+		public event SendMailErrorEventHandler SendMailError {
+			add { events.AddHandler (sendMailErrorEvent, value); }
+			remove { events.RemoveHandler (sendMailErrorEvent, value); }
+		}
+		
+		public event EventHandler UserLookupError {
+			add { events.AddHandler (userLookupErrorEvent, value); }
+			remove { events.RemoveHandler (userLookupErrorEvent, value); }
+		}
+		
+		public event LoginCancelEventHandler VerifyingAnswer {
+			add { events.AddHandler (verifyingAnswerEvent, value); }
+			remove { events.RemoveHandler (verifyingAnswerEvent, value); }
+		}
+		
+		public event LoginCancelEventHandler VerifyingUser {
+			add { events.AddHandler (verifyingUserEvent, value); }
+			remove { events.RemoveHandler (verifyingUserEvent, value); }
+		}
+#endregion
 
 		public PasswordRecovery ()
 		{
@@ -475,17 +516,6 @@ namespace System.Web.UI.WebControls
 
 		#endregion
 
-		#region Events
-
-		public event EventHandler AnswerLookupError;
-		public event MailMessageEventHandler SendingMail;
-		public event SendMailErrorEventHandler SendMailError;
-		public event EventHandler UserLookupError;
-		public event LoginCancelEventHandler VerifyingAnswer;
-		public event LoginCancelEventHandler VerifyingUser;
-
-		#endregion
-
 		protected internal override void CreateChildControls ()
 		{
 			ITemplate userNameTemplate = UserNameTemplate;
@@ -826,32 +856,37 @@ namespace System.Web.UI.WebControls
 
 		protected virtual void OnSendingMail (MailMessageEventArgs e)
 		{
-			if (SendingMail != null)
-				SendingMail (this, e);
+			MailMessageEventHandler eh = events [sendingMailEvent] as MailMessageEventHandler;
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnSendMailError (SendMailErrorEventArgs e)
 		{
-			if (SendMailError != null)
-				SendMailError (this, e);
+			SendMailErrorEventHandler eh = events [sendingMailEvent] as SendMailErrorEventHandler;
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnUserLookupError (EventArgs e)
 		{
-			if (UserLookupError != null)
-				UserLookupError (this, e);
+			EventHandler eh = events [userLookupErrorEvent] as EventHandler;
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnVerifyingAnswer (LoginCancelEventArgs e)
 		{
-			if (VerifyingAnswer != null)
-				VerifyingAnswer (this, e);
+			LoginCancelEventHandler eh = events [verifyingAnswerEvent] as LoginCancelEventHandler;
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnVerifyingUser (LoginCancelEventArgs e)
 		{
-			if (VerifyingUser != null)
-				VerifyingUser (this, e);
+			LoginCancelEventHandler eh = events [verifyingUserEvent] as LoginCancelEventHandler;
+			if (eh != null)
+				eh (this, e);
 		}
 
 		#endregion

@@ -39,8 +39,16 @@ namespace System.Web.UI.WebControls
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class PagerSettings: IStateManager
 	{
+		static readonly object propertyChangedEvent = new object ();
+		
 		StateBag ViewState = new StateBag ();
 		Control ctrl;
+		EventHandlerList events = new EventHandlerList ();
+		
+		public event EventHandler PropertyChanged {
+			add { events.AddHandler (propertyChangedEvent, value); }
+			remove { events.RemoveHandler (propertyChangedEvent, value); }
+		}
 		
 		public PagerSettings ()
 		{
@@ -237,12 +245,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		public event EventHandler PropertyChanged;
-
 		void RaisePropertyChanged ()
 		{
-			if (PropertyChanged != null)
-				PropertyChanged (this, EventArgs.Empty);
+			EventHandler eh = events [propertyChangedEvent] as EventHandler;
+			if (eh != null)
+				eh (this, EventArgs.Empty);
 		}
 
 		public override string ToString ()

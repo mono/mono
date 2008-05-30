@@ -1,3 +1,11 @@
+2008-05-30  Marek Habersack  <mhabersack@novell.com>
+
+	* AnonymousIdentificationModule.cs, FormsAuthenticationModule.cs,
+	DefaultAuthenticationModule.cs, MembershipProvider.cs,
+	WindowsAuthenticationModule.cs, PassportAuthenticationModule.cs,
+	RoleManagerModule.cs: do not use synthetized event accessors (to
+	avoid locks).
+
 2008-05-07  Marek Habersack  <mhabersack@novell.com>
 
 	* RolePrincipal.cs: fix:

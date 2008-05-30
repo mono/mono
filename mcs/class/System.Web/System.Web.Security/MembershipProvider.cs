@@ -29,6 +29,7 @@
 //
 
 #if NET_2_0
+using System.ComponentModel;
 using System.Configuration.Provider;
 using System.Web.Configuration;
 using System.Security.Cryptography;
@@ -38,6 +39,14 @@ namespace System.Web.Security
 {
 	public abstract class MembershipProvider : ProviderBase
 	{
+		static readonly object validatingPasswordEvent = new object ();
+
+		EventHandlerList events = new EventHandlerList ();
+		public event MembershipValidatePasswordEventHandler ValidatingPassword {
+			add { events.AddHandler (validatingPasswordEvent, value); }
+			remove { events.RemoveHandler (validatingPasswordEvent, value); }
+		}
+		
 		protected MembershipProvider ()
 		{
 		}
@@ -73,8 +82,9 @@ namespace System.Web.Security
 		
 		protected virtual void OnValidatingPassword (ValidatePasswordEventArgs args)
 		{
-			if (ValidatingPassword != null)
-				ValidatingPassword (this, args);
+			MembershipValidatePasswordEventHandler eh = events [validatingPasswordEvent] as MembershipValidatePasswordEventHandler;
+			if (eh != null)
+				eh (this, args);
 		}
 
 		SymmetricAlgorithm GetAlg (out byte [] decryptionKey)
@@ -132,8 +142,6 @@ namespace System.Web.Security
 				}
 			}
 		}
-
-		public event MembershipValidatePasswordEventHandler ValidatingPassword;
 	}
 }
 #endif

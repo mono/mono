@@ -26,8 +26,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 using System.Collections;
+using System.ComponentModel;
 using System.IO;
 using System.Security.Permissions;
 #if NET_2_0
@@ -46,6 +46,7 @@ namespace System.Web.Caching
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class CacheDependency: IDisposable {
 #endif
+		static readonly object dependencyChangedEvent = new object ();
 		string[] cachekeys;
 		CacheDependency dependency;
 		DateTime start;
@@ -57,6 +58,12 @@ namespace System.Web.Caching
 		DateTime utcLastModified;
 #endif
 		object locker = new object ();
+		EventHandlerList events = new EventHandlerList ();
+		
+		internal event EventHandler DependencyChanged {
+			add { events.AddHandler (dependencyChangedEvent, value); }
+			remove { events.RemoveHandler (dependencyChangedEvent, value); }
+		}
 		
 #if NET_2_0
 		public CacheDependency (): this (null, null, null, DateTime.Now)
@@ -273,11 +280,9 @@ namespace System.Web.Caching
 		{
 			if (!DoOnChanged ())
 				return;
-			
-			if (DependencyChanged == null)
-				return;
 
-			foreach (EventHandler eh in DependencyChanged.GetInvocationList ())
+			EventHandler eh = events [dependencyChangedEvent] as EventHandler;
+			if (eh != null)
 				eh (sender, e);
 		}
 		
@@ -291,6 +296,6 @@ namespace System.Web.Caching
 			OnDependencyChanged (sender, e);
 		}
 
-		internal event EventHandler DependencyChanged;
+
 	}
 }

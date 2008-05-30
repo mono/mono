@@ -31,6 +31,7 @@
 #if NET_2_0
 
 using System;
+using System.ComponentModel;
 using System.Web;
 using System.Web.Configuration;
 using System.Text;
@@ -38,9 +39,15 @@ using System.Text;
 namespace System.Web.Security {
 
 	public sealed class AnonymousIdentificationModule : IHttpModule {
-
+		static readonly object creatingEvent = new object ();
+		
 		HttpApplication app;
-		public event AnonymousIdentificationEventHandler Creating;
+		EventHandlerList events = new EventHandlerList ();
+		
+		public event AnonymousIdentificationEventHandler Creating  {
+			add { events.AddHandler (creatingEvent, value); }
+			remove { events.RemoveHandler (creatingEvent, value); }
+		}
 
 		public static void ClearAnonymousIdentifier ()
 		{
@@ -78,9 +85,10 @@ namespace System.Web.Security {
 			}
 
 			if (anonymousID == null) {
-				if (Creating != null) {
+				AnonymousIdentificationEventHandler eh = events [creatingEvent] as AnonymousIdentificationEventHandler;
+				if (eh != null) {
 					AnonymousIdentificationEventArgs e = new AnonymousIdentificationEventArgs (HttpContext.Current);
-					Creating (this, e);
+					eh (this, e);
 
 					anonymousID = e.AnonymousID;
 				}

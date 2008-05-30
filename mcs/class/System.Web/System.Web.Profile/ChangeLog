@@ -1,3 +1,8 @@
+2008-05-30  Marek Habersack  <mhabersack@novell.com>
+
+	* ProfileModule.cs: do not use synthetized event accessors (to
+	avoid locks).
+
 2007-12-30  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* SqlProfileProvider.cs: added db schema checking

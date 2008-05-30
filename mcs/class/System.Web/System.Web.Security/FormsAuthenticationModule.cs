@@ -27,6 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.ComponentModel;
 using System.Security.Permissions;
 using System.Security.Principal;
 using System.Text;
@@ -39,12 +40,20 @@ namespace System.Web.Security
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class FormsAuthenticationModule : IHttpModule
 	{
+		static readonly object authenticateEvent = new object ();
+		
 #if NET_2_0
 		AuthenticationSection _config = null;
 #else
 		AuthConfig _config = null;
 #endif
 		bool isConfigInitialized = false;
+		EventHandlerList events = new EventHandlerList ();
+		
+		public event FormsAuthenticationEventHandler Authenticate {
+			add { events.AddHandler (authenticateEvent, value); }
+			remove { events.RemoveHandler (authenticateEvent, value); }
+		}
 		
 		private void InitConfig (HttpContext context)
 		{
@@ -117,8 +126,9 @@ namespace System.Web.Security
 #endif
 
 			FormsAuthenticationEventArgs formArgs = new FormsAuthenticationEventArgs (context);
-			if (Authenticate != null)
-				Authenticate (this, formArgs);
+			FormsAuthenticationEventHandler eh = events [authenticateEvent] as FormsAuthenticationEventHandler;
+			if (eh != null)
+				eh (this, formArgs);
 
 			bool contextUserNull = (context.User == null);
 			if (formArgs.User != null || !contextUserNull) {
@@ -181,8 +191,6 @@ namespace System.Web.Security
 			login.AppendFormat ("?ReturnUrl={0}", HttpUtility.UrlEncode (context.Request.RawUrl));
 			context.Response.Redirect (login.ToString (), false);
 		}
-
-		public event FormsAuthenticationEventHandler Authenticate;
 	}
 }
 

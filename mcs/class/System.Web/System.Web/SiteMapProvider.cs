@@ -31,6 +31,7 @@
 //
 
 #if NET_2_0
+using System.ComponentModel;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Text;
@@ -41,6 +42,8 @@ using System.Web.Configuration;
 
 namespace System.Web {
 	public abstract class SiteMapProvider : ProviderBase {
+		static readonly object siteMapResolveEvent = new object ();
+		
 		internal object this_lock = new object ();
 		
 		bool enableLocalization;
@@ -49,6 +52,13 @@ namespace System.Web {
 		bool securityTrimming;
 		object resolveLock = new Object();
 		bool resolving;
+
+		EventHandlerList events = new EventHandlerList ();
+		
+		public event SiteMapResolveEventHandler SiteMapResolve {
+			add { events.AddHandler (siteMapResolveEvent, value); }
+			remove { events.RemoveHandler (siteMapResolveEvent, value); }
+		}
 		
 		protected virtual void AddNode (SiteMapNode node)
 		{
@@ -245,17 +255,19 @@ namespace System.Web {
 		
 		protected SiteMapNode ResolveSiteMapNode (HttpContext context)
 		{
-			SiteMapResolveEventArgs args = new SiteMapResolveEventArgs (context, this);
-			if (SiteMapResolve != null) {
+			SiteMapResolveEventHandler eh = events [siteMapResolveEvent] as SiteMapResolveEventHandler;
+
+			if (eh != null) {
 				lock (resolveLock) {
-					if (resolving) return null;
+					if (resolving)
+						return null;
 					resolving = true;
-					SiteMapNode r = SiteMapResolve (this, args);
+					SiteMapResolveEventArgs args = new SiteMapResolveEventArgs (context, this);
+					SiteMapNode r = eh (this, args);
 					resolving = false;
 					return r;
 				}
-			}
-			else
+			} else
 				return null;
 		}
 		
@@ -280,8 +292,6 @@ namespace System.Web {
 				return ReturnNodeIfAccessible (node);
 			}
 		}
-
-		public event SiteMapResolveEventHandler SiteMapResolve;
 
 		internal static SiteMapNode ReturnNodeIfAccessible (SiteMapNode node)
 		{

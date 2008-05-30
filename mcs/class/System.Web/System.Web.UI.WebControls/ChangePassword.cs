@@ -42,6 +42,14 @@ namespace System.Web.UI.WebControls
 {
 	public class ChangePassword : CompositeControl, INamingContainer
 	{
+		static readonly object cancelButtonClickEvent = new object ();
+		static readonly object changedPasswordEvent = new object ();
+		static readonly object changePasswordErrorEvent = new object ();
+		static readonly object changingPasswordEvent = new object ();
+		static readonly object continueButtonClickEvent = new object ();
+		static readonly object sendingMailEvent = new object ();
+		static readonly object sendMailErrorEvent = new object ();
+		
 		public static readonly string CancelButtonCommandName = "Cancel";
 		public static readonly string ChangePasswordButtonCommandName = "ChangePassword";
 		public static readonly string ContinueButtonCommandName = "Continue";
@@ -75,6 +83,45 @@ namespace System.Web.UI.WebControls
 
 		bool _showContinue = false;
 
+		EventHandlerList events = new EventHandlerList ();
+		
+#region Public Events
+		public event EventHandler CancelButtonClick {
+			add { events.AddHandler (cancelButtonClickEvent, value); }
+			remove { events.RemoveHandler (cancelButtonClickEvent, value); }
+		}
+		
+		public event EventHandler ChangedPassword {
+			add { events.AddHandler (changedPasswordEvent, value); }
+			remove { events.RemoveHandler (changedPasswordEvent, value); }
+		}
+		
+		public event EventHandler ChangePasswordError {
+			add { events.AddHandler (changePasswordErrorEvent, value); }
+			remove { events.RemoveHandler (changePasswordErrorEvent, value); }
+		}
+		
+		public event LoginCancelEventHandler ChangingPassword {
+			add { events.AddHandler (changingPasswordEvent, value); }
+			remove { events.RemoveHandler (changingPasswordEvent, value); }
+		}
+		
+		public event EventHandler ContinueButtonClick {
+			add { events.AddHandler (continueButtonClickEvent, value); }
+			remove { events.RemoveHandler (continueButtonClickEvent, value); }
+		}
+		
+		public event MailMessageEventHandler SendingMail {
+			add { events.AddHandler (sendingMailEvent, value); }
+			remove { events.RemoveHandler (sendingMailEvent, value); }
+		}
+		
+		public event SendMailErrorEventHandler SendMailError {
+			add { events.AddHandler (sendMailErrorEvent, value); }
+			remove { events.RemoveHandler (sendMailErrorEvent, value); }
+		}
+#endregion
+			
 		#region Public Properties
 
 		[DefaultValue (1)]
@@ -995,18 +1042,6 @@ namespace System.Web.UI.WebControls
 
 		#endregion
 
-		#region Public Events
-
-		public event EventHandler CancelButtonClick;
-		public event EventHandler ChangedPassword;
-		public event EventHandler ChangePasswordError;
-		public event LoginCancelEventHandler ChangingPassword;
-		public event EventHandler ContinueButtonClick;
-		public event MailMessageEventHandler SendingMail;
-		public event SendMailErrorEventHandler SendMailError;
-
-		#endregion
-
 		#region Event Handlers
 
 		protected override bool OnBubbleEvent (object source, EventArgs e)
@@ -1031,32 +1066,37 @@ namespace System.Web.UI.WebControls
 
 		protected virtual void OnCancelButtonClick (EventArgs e)
 		{
-			if (CancelButtonClick != null)
-				CancelButtonClick (this, e);
+			EventHandler eh = events [cancelButtonClickEvent] as EventHandler;
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnChangedPassword (EventArgs e)
 		{
-			if (ChangedPassword != null)
-				ChangedPassword (this, e);
+			EventHandler eh = events [changedPasswordEvent] as EventHandler;
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnChangePasswordError (EventArgs e)
 		{
-			if (ChangePasswordError != null)
-				ChangePasswordError (this, e);
+			EventHandler eh = events [changePasswordErrorEvent] as EventHandler;
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnChangingPassword (LoginCancelEventArgs e)
 		{
-			if (ChangingPassword != null)
-				ChangingPassword (this, e);
+			LoginCancelEventHandler eh = events [changingPasswordEvent] as LoginCancelEventHandler;
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnContinueButtonClick (EventArgs e)
 		{
-			if (ContinueButtonClick != null)
-				ContinueButtonClick (this, e);
+			EventHandler eh = events [continueButtonClickEvent] as EventHandler;
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected internal override void OnInit (EventArgs e)
@@ -1074,14 +1114,16 @@ namespace System.Web.UI.WebControls
 
 		protected virtual void OnSendingMail (MailMessageEventArgs e)
 		{
-			if (SendingMail != null)
-				SendingMail (this, e);
+			MailMessageEventHandler eh = events [sendingMailEvent] as MailMessageEventHandler;
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnSendMailError (SendMailErrorEventArgs e)
 		{
-			if (SendMailError != null)
-				SendMailError (this, e);
+			SendMailErrorEventHandler eh = events [sendMailErrorEvent] as SendMailErrorEventHandler;
+			if (eh != null)
+				eh (this, e);
 		}
 
 		private void UserName_TextChanged (object sender, EventArgs e)

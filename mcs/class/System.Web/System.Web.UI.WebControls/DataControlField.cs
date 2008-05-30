@@ -44,6 +44,8 @@ namespace System.Web.UI.WebControls {
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public abstract class DataControlField : IStateManager, IDataSourceViewSchemaAccessor
 	{
+		static readonly object fieldChangedEvent = new object ();
+		
 		bool tracking = false;
 		StateBag viewState;
 		Control control;
@@ -52,6 +54,12 @@ namespace System.Web.UI.WebControls {
 		TableItemStyle headerStyle;
 		TableItemStyle itemStyle;
 		bool sortingEnabled;
+		EventHandlerList events = new EventHandlerList ();
+		
+		internal event EventHandler FieldChanged {
+			add { events.AddHandler (fieldChangedEvent, value); }
+			remove { events.RemoveHandler (fieldChangedEvent, value); }
+		}
 		
 		protected DataControlField()
 		{ 
@@ -127,8 +135,10 @@ namespace System.Web.UI.WebControls {
 		
 		protected virtual void OnFieldChanged ()
 		{
-			if (FieldChanged != null)
-				FieldChanged (this, EventArgs.Empty);
+			EventHandler eh = events [fieldChangedEvent] as EventHandler;
+			
+			if (eh != null)
+				eh (this, EventArgs.Empty);
 		}	
 	
 		protected virtual void LoadViewState (object savedState)
@@ -408,9 +418,7 @@ namespace System.Web.UI.WebControls {
 			set { 
 				viewState ["dataSourceViewSchema"] = value;
 			}
-		}		
-
-		internal event EventHandler FieldChanged;
+		}
 
 		public override string ToString ()
 		{

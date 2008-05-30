@@ -41,7 +41,14 @@ namespace System.Web.UI.WebControls {
 	[DesignerAttribute ("System.Web.UI.Design.WebControls.BaseDataBoundControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public abstract class BaseDataBoundControl: WebControl
 	{
-		public event EventHandler DataBound;
+		static readonly object dataBoundEvent = new object ();
+
+		EventHandlerList events = new EventHandlerList ();
+		
+		public event EventHandler DataBound {
+			add { events.AddHandler (dataBoundEvent, value); }
+			remove { events.RemoveHandler (dataBoundEvent, value); }
+		}
 		
 		object dataSource;
 		bool initialized;
@@ -144,8 +151,9 @@ namespace System.Web.UI.WebControls {
 		
 		protected virtual void OnDataBound (EventArgs e)
 		{
-			if (DataBound != null)
-				DataBound (this, e);
+			EventHandler eh = events [dataBoundEvent] as EventHandler;
+			if (eh != null)
+				eh (this, e);
 		}
 
 		protected virtual void OnDataPropertyChanged ()

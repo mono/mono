@@ -27,6 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.ComponentModel;
 using System.Security.Permissions;
 
 namespace System.Web.Security
@@ -35,17 +36,23 @@ namespace System.Web.Security
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class WindowsAuthenticationModule : IHttpModule
 	{
+		static readonly object authenticateEvent = new object ();
+
+		EventHandlerList events = new EventHandlerList ();
+		
+		public event WindowsAuthenticationEventHandler Authenticate {
+			add { events.AddHandler (authenticateEvent, value); }
+			remove { events.RemoveHandler (authenticateEvent, value); }
+		}
+		
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public WindowsAuthenticationModule ()
 		{
 		}
 
-		public event WindowsAuthenticationEventHandler Authenticate;
-
 		public void Dispose ()
 		{
-			if (Authenticate != null)
-				Authenticate = null;
+			events.Dispose ();
 		}
 
 		[MonoTODO ("Not implemented")]

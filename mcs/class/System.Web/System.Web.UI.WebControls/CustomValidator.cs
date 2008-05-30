@@ -39,6 +39,20 @@ namespace System.Web.UI.WebControls {
 	[ToolboxData("<{0}:CustomValidator runat=server ErrorMessage=\"CustomValidator\"></{0}:CustomValidator>")]
 #endif
 	public class CustomValidator : BaseValidator {
+		static readonly object serverValidateEvent = new object ();
+
+		EventHandlerList events = new EventHandlerList ();
+		
+		#region Events
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
+			public event ServerValidateEventHandler ServerValidate {
+			add { events.AddHandler (serverValidateEvent, value); }
+			remove { events.RemoveHandler (serverValidateEvent, value); }
+		}
+		
+		#endregion	// Events
+
 		#region Public Constructors
 		public CustomValidator() {
 		}
@@ -109,21 +123,16 @@ namespace System.Web.UI.WebControls {
 		}
 
 		protected virtual bool OnServerValidate(string value) {
-			if (ServerValidate != null) {
+			ServerValidateEventHandler eh = events [serverValidateEvent] as ServerValidateEventHandler;
+			if (eh != null) {
 				ServerValidateEventArgs	e;
 
 				e = new ServerValidateEventArgs(value, true);
-				ServerValidate(this, e);
+				eh (this, e);
 				return e.IsValid;
 			}
 			return true;
 		}
 		#endregion	// Public Instance Methods
-
-		#region Events
-		[WebSysDescription ("")]
-		[WebCategory ("Behavior")]
-		public event ServerValidateEventHandler ServerValidate;
-		#endregion	// Events
 	}
 }

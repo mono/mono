@@ -30,14 +30,24 @@
 
 #if NET_2_0
 using System;
+using System.ComponentModel;
 using System.Collections;
 
 namespace System.Web.UI {
     	
 	public sealed class ExpressionBindingCollection : ICollection, IEnumerable
     	{
+		static readonly object changedEvent = new object ();
+		
 		Hashtable list;
 		ArrayList removed;
+
+		EventHandlerList events = new EventHandlerList ();
+		
+        	public event EventHandler Changed {
+			add { events.AddHandler (changedEvent, value); }
+			remove { events.RemoveHandler (changedEvent, value); }
+		}
 		
 		public ExpressionBindingCollection ()
 		{
@@ -131,12 +141,11 @@ namespace System.Web.UI {
             		OnChanged (new EventArgs ());
         	}
 
-        	public event EventHandler Changed;
-
         	void OnChanged (EventArgs e)   
         	{
-            		if (Changed != null)
-                		Changed (this, e);
+			EventHandler eh = events [changedEvent] as EventHandler;
+            		if (eh != null)
+                		eh (this, e);
         	}        
 
     	}

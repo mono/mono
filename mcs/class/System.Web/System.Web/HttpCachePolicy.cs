@@ -28,6 +28,7 @@
 //
 
 using System.Collections;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Security.Permissions;
@@ -52,7 +53,8 @@ namespace System.Web {
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class HttpCachePolicy {
-
+		static readonly object cacheabilityUpdatedEvent = new object ();
+		
 		internal HttpCachePolicy ()
 		{
 		}
@@ -97,10 +99,15 @@ namespace System.Web {
 		
 		// always false in 1.x
 		bool omit_vary_star = false;
-		
+
+		EventHandlerList events = new EventHandlerList ();
 #endregion
 
-                internal event CacheabilityUpdatedCallback CacheabilityUpdated;
+                internal event CacheabilityUpdatedCallback CacheabilityUpdated {
+			add { events.AddHandler (cacheabilityUpdatedEvent, value); }
+			remove { events.RemoveHandler (cacheabilityUpdatedEvent, value); }
+		}
+		
                 
 #region Properties
 
@@ -194,9 +201,9 @@ namespace System.Web {
 				return;
 			
 			Cacheability = cacheability;
-
-			if (CacheabilityUpdated != null)
-				CacheabilityUpdated (this, new CacheabilityUpdatedEventArgs (cacheability));
+			CacheabilityUpdatedCallback eh = events [cacheabilityUpdatedEvent] as CacheabilityUpdatedCallback;
+			if (eh != null)
+				eh (this, new CacheabilityUpdatedEventArgs (cacheability));
 		}
 
 		public void SetCacheability (HttpCacheability cacheability, string field)

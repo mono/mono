@@ -87,10 +87,13 @@ namespace System.Web {
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[ToolboxItem(false)]
-	public class HttpApplication : IHttpAsyncHandler, IHttpHandler, IComponent, IDisposable {
-		object this_lock = new object();
-
+	public class HttpApplication : IHttpAsyncHandler, IHttpHandler, IComponent, IDisposable
+	{
+		static readonly object disposedEvent = new object ();
+		static readonly object errorEvent = new object ();
+		
 		internal static readonly string [] BinDirs = {"Bin", "bin"};
+		object this_lock = new object();
 		
 		HttpContext context;
 		HttpSessionState session;
@@ -133,7 +136,8 @@ namespace System.Web {
 		AsyncInvoker current_ai;
 
 		EventHandlerList events;
-
+		EventHandlerList nonApplicationEvents = new EventHandlerList ();
+		
 		// Culture and IPrincipal
 		CultureInfo app_culture;
 		CultureInfo appui_culture;
@@ -164,7 +168,17 @@ namespace System.Web {
 		//
 		bool must_yield;
 		bool in_begin;
+
+		public virtual event EventHandler Disposed {
+			add { nonApplicationEvents.AddHandler (disposedEvent, value); }
+			remove { nonApplicationEvents.RemoveHandler (disposedEvent, value); }
+		}
 		
+		public virtual event EventHandler Error {
+			add { nonApplicationEvents.AddHandler (errorEvent, value); }
+			remove { nonApplicationEvents.RemoveHandler (errorEvent, value); }
+		}
+
 		public HttpApplication ()
 		{
 			done = new ManualResetEvent (false);
@@ -341,9 +355,6 @@ namespace System.Web {
 			}
 		}
 		
-		public virtual event EventHandler Disposed;
-		public virtual event EventHandler Error;
-
 		static object PreSendRequestHeadersEvent = new object ();
 		public event EventHandler PreSendRequestHeaders
 		{
@@ -792,9 +803,10 @@ namespace System.Web {
 					modcoll = null;
 				}
 			}
-			
-			if (Disposed != null)
-				Disposed (this, EventArgs.Empty);
+
+			EventHandler eh = nonApplicationEvents [disposedEvent] as EventHandler;
+			if (eh != null)
+				eh (this, EventArgs.Empty);
 			
 			done.Close ();
 			done = null;
@@ -822,10 +834,11 @@ namespace System.Web {
 		{
 			bool first = context.Error == null;
 			context.AddError (e);
-			if (first){
-				if (Error != null){
+			if (first) {
+				EventHandler eh = nonApplicationEvents [errorEvent] as EventHandler;
+				if (eh != null){
 					try {
-						Error (this, EventArgs.Empty);
+						eh (this, EventArgs.Empty);
 					} catch (ThreadAbortException taex){
 						context.ClearError ();
 						if (FlagEnd.Value == taex.ExceptionState)

@@ -28,6 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.ComponentModel;
 using System.Collections;
 using System.Security.Permissions;
 using System.Web.UI;
@@ -37,6 +38,10 @@ namespace System.Web {
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class TraceContext {
+#if NET_2_0
+		static readonly object traceFinishedEvent = new object ();
+#endif
+		
 		HttpContext _Context;
 		TraceManager _traceManager;
 		bool _Enabled;
@@ -49,6 +54,15 @@ namespace System.Web {
 		Hashtable control_states;
 #endif
 		Hashtable sizes;
+		
+#if NET_2_0
+		EventHandlerList events = new EventHandlerList ();
+		
+		public event TraceContextEventHandler TraceFinished {
+			add { events.AddHandler (traceFinishedEvent, value); }
+			remove { events.AddHandler (traceFinishedEvent, value); }
+		}
+#endif
 
 		public TraceContext (HttpContext Context)
 		{
@@ -134,9 +148,7 @@ namespace System.Web {
 				data = new TraceData ();
 			data.Write (category, msg, error, Warning);
 		}
-#if NET_2_0
-		public event TraceContextEventHandler TraceFinished;
-#endif
+
 		internal void SaveData ()
 		{
 			if (data == null)

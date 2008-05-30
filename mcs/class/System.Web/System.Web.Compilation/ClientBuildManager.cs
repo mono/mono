@@ -33,6 +33,7 @@
 using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
+using System.ComponentModel;
 using System.Collections;
 using System.Globalization;
 using System.IO;
@@ -41,6 +42,10 @@ using System.Web.Hosting;
 
 namespace System.Web.Compilation {
 	public sealed class ClientBuildManager : MarshalByRefObject, IDisposable {
+		static readonly object appDomainShutdownEvent = new object ();
+		static readonly object appDomainStartedEvent = new object ();
+		static readonly object appDomainUnloadedEvent = new object ();
+		
 		string virt_dir;
 		string phys_src_dir;
 		//string phys_target_dir;
@@ -49,6 +54,23 @@ namespace System.Web.Compilation {
 		ApplicationManager manager;
 		string app_id;
 		string cache_path;
+
+		EventHandlerList events = new EventHandlerList ();
+		
+		public event BuildManagerHostUnloadEventHandler AppDomainShutdown {
+			add { events.AddHandler (appDomainShutdownEvent, value); }
+			remove { events.RemoveHandler (appDomainShutdownEvent, value); }
+		}
+		
+		public event EventHandler AppDomainStarted {
+			add { events.AddHandler (appDomainStartedEvent, value); }
+			remove { events.RemoveHandler (appDomainStartedEvent, value); }
+		}
+		
+		public event BuildManagerHostUnloadEventHandler AppDomainUnloaded {
+			add { events.AddHandler (appDomainUnloadedEvent, value); }
+			remove { events.RemoveHandler (appDomainUnloadedEvent, value); }
+		}
 
 		public ClientBuildManager (string appVirtualDir, string appPhysicalSourceDir)
 		{
@@ -79,10 +101,6 @@ namespace System.Web.Compilation {
 			//build_params = parameter;
 		}
 
-		public event BuildManagerHostUnloadEventHandler AppDomainShutdown;
-		public event EventHandler AppDomainStarted;
-		public event BuildManagerHostUnloadEventHandler AppDomainUnloaded;
-
 		BareApplicationHost Host {
 			get {
 				if (host != null)
@@ -108,15 +126,17 @@ namespace System.Web.Compilation {
 
 		void OnAppDomainStarted ()
 		{
-			if (AppDomainStarted != null)
-				AppDomainStarted (this, EventArgs.Empty);
+			EventHandler eh = events [appDomainStartedEvent] as EventHandler;
+			if (eh != null)
+				eh (this, EventArgs.Empty);
 		}
 
 		void OnAppDomainShutdown (ApplicationShutdownReason reason)
 		{
-			if (AppDomainShutdown != null) {
+			BuildManagerHostUnloadEventHandler eh = events [appDomainShutdownEvent] as BuildManagerHostUnloadEventHandler;
+			if (eh != null) {
 				BuildManagerHostUnloadEventArgs args = new BuildManagerHostUnloadEventArgs (reason);
-				AppDomainShutdown (this, args);
+				eh (this, args);
 			}
 		}
 
