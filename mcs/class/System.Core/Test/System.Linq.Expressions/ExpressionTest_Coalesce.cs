@@ -112,5 +112,23 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual ("bar", coalesce (null, "bar"));
 			Assert.AreEqual ("foo", coalesce ("foo", null));
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void CoalesceNullableToNonNullable ()
+		{
+			var a = Expression.Parameter (typeof (int?), "a");
+
+			var node = Expression.Coalesce (a, Expression.Constant (99, typeof (int)));
+
+			Assert.AreEqual (typeof (int), node.Type);
+			Assert.IsFalse (node.IsLifted);
+			Assert.IsFalse (node.IsLiftedToNull);
+
+			var coalesce = Expression.Lambda<Func<int?, int>> (node, a).Compile ();
+
+			Assert.AreEqual (5, coalesce (5));
+			Assert.AreEqual (99, coalesce (null));
+		}
 	}
 }
