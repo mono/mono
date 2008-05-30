@@ -383,9 +383,6 @@ namespace System.Windows.Forms
 				SuspendLayout ();
 
 				if (dropdown_style == ComboBoxStyle.Simple) {
-					foreach (Control c in Controls.GetAllControls ())
-						Console.WriteLine ("->" + c.GetType ());
-					Console.WriteLine ();
 					if (listbox_ctrl != null) {
 						Controls.RemoveImplicit (listbox_ctrl);
 						listbox_ctrl.Dispose ();
@@ -2297,9 +2294,9 @@ namespace System.Windows.Forms
 					
 					vscrollbar_ctrl.Dock = DockStyle.Right;
 
-					vscrollbar_ctrl.Maximum = owner.Items.Count - 2;
+					vscrollbar_ctrl.Maximum = owner.Items.Count - 1;
 #if NET_2_0
-					int large = page_size - 1;
+					int large = page_size;
 #else
 					int large = (dropdown_style == ComboBoxStyle.Simple ? page_size : owner.maxdrop_items) - 1;
 #endif
@@ -2534,7 +2531,7 @@ namespace System.Windows.Forms
 				if (delta == 0 || vscrollbar_ctrl == null || !vscrollbar_ctrl.Visible)
 					return;
 
-				int max = owner.Items.Count - page_size;
+				int max = vscrollbar_ctrl.Maximum - page_size + 1;
 
 				int val = vscrollbar_ctrl.Value + delta;
 				if (val > max)

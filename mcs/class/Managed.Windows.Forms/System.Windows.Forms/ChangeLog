@@ -1,3 +1,11 @@
+2008-05-30  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ComboBox.cs: Use ListBox-like scrollbar values In ComboListBox 
+	to avoid setting an invalid value for the verticall scrollbar 
+	when navigating items. And, duh, also remove my silly debug messages
+	from previous commits.
+	Fixes #374713.
+
 2008-05-30  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* FlatButtonAppearance.cs: Make FlatButtonAppearanceConverter exandable and 
