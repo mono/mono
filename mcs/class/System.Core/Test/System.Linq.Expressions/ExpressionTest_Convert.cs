@@ -423,5 +423,22 @@ namespace MonoTests.System.Linq.Expressions {
 			Assert.AreEqual ((int?) null, c (null));
 			Assert.AreEqual ((int?) 42, c ((int?) 42));
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ChainedNullableConvert ()
+		{
+			var p = Expression.Parameter (typeof (sbyte?), "a");
+
+			var test = Expression.Lambda<Func<sbyte?, long?>> (
+				Expression.Convert (
+					Expression.Convert (
+						p,
+						typeof (int?)),
+					typeof (long?)), p).Compile ();
+
+			Assert.AreEqual ((long?) 3, test ((sbyte?) 3));
+			Assert.AreEqual (null, test (null));
+		}
 	}
 }
