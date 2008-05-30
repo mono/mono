@@ -1,5 +1,8 @@
 2008-05-30  Zoltan Varga  <vargaz@gmail.com>
 
+	* ir-emit.h (NEW_VARLOADA): Mark the component vars of a long var INDIRECT
+	as well.
+
 	* mini-codegen.c (mono_local_regalloc): Fix some issues related to fixed sreg2
 	allocation.
 
