@@ -1694,7 +1694,7 @@ namespace System.Windows.Forms
 		private void PopulateSubGridItems (GridEntry parentItem)
 		{
 			parentItem.GridItems.Clear ();
-			if (!IsExpandable (parentItem))
+			if (!parentItem.IsExpandable)
 				return;
 
 			object[] propertyOwners = parentItem.Values;
@@ -1714,21 +1714,8 @@ namespace System.Windows.Forms
 
 				GridEntry item = new GridEntry (this, properties, parentItem);
 				parentItem.GridItems.Add (item);
-				if (IsExpandable (item))
-					PopulateSubGridItems (item);
+				PopulateSubGridItems (item);
 			}
-		}
-
-		private bool IsExpandable (GridEntry item)
-		{
-			if (item == null || item.PropertyDescriptor == null || 
-			    item.PropertyDescriptor.Converter == null)
-				return false;
-			else if (!item.PropertyDescriptor.Converter.GetPropertiesSupported () &&
-				 !item.PropertyDescriptor.Attributes.Contains (
-					 DesignerSerializationVisibilityAttribute.Content))
-				return false;
-			return true;
 		}
 
 		private void UpdateSortLayout (GridEntry rootItem)

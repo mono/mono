@@ -619,7 +619,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 					brush = SystemBrushes.HighlightText;
 				}
 				else {
-					brush = grid_item.IsReadOnly ? inactive_text_brush : SystemBrushes.ControlText;
+					brush = grid_item.IsReadOnly && !grid_item.IsExpandable ? inactive_text_brush : SystemBrushes.ControlText;
 				}
 			}
 			pevent.Graphics.DrawString (grid_item.Label, font, brush,
@@ -646,7 +646,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 			Font font = this.Font;
 			if (grid_item.IsResetable || !grid_item.HasDefaultValue)
 				font = bold_font;
-			Brush brush = grid_item.IsReadOnly ? inactive_text_brush : SystemBrushes.ControlText;
+			Brush brush = grid_item.IsReadOnly && !grid_item.IsExpandable ? inactive_text_brush : SystemBrushes.ControlText;
 			string valueText = String.Empty;
 			if (!grid_item.IsMerged || grid_item.IsMerged && grid_item.HasMergedValue) {
 				if (grid_item.IsPassword)
@@ -836,7 +836,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 				else
 					grid_textbox.Font = this.Font;
 
-				if (entry.IsReadOnly) {
+				if (entry.IsReadOnly && !entry.IsExpandable) {
 					grid_textbox.DropDownButtonVisible = false;
 					grid_textbox.DialogButtonVisible = false;
 					grid_textbox.ReadOnly = true;

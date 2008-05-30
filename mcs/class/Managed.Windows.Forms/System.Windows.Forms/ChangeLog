@@ -1,3 +1,10 @@
+2008-05-30  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* PropertyGrid.cs, PropertyGridView.cs, GridEntry.cs: 
+	 - Allow the editing of entries even if their parent is read-only.
+	 - Do not render expandable properties read-only.
+	 - Refactor expansion checks form PropertyGrid into PropertyGrid.
+
 2008-05-30  George Giolfan <georgegiolfan@yahoo.com> 
 
 	* ScrollBar.cs, Theme.cs, ThemeVisualStyles.cs, ThemeWin32Classic.cs: Added

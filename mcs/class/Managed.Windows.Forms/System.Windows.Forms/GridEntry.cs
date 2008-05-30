@@ -599,17 +599,18 @@ namespace System.Windows.Forms.PropertyGridInternal
 		//
 		public virtual bool IsEditable {
 			get {
+				TypeConverter converter = GetConverter ();
 				if (PropertyDescriptor == null)
 					return false;
 				else if (PropertyDescriptor.PropertyType.IsArray)
 					return false;
-				else if (PropertyDescriptor.IsReadOnly && this.ShouldCreateParentInstance)
-					return true;
-				else if (PropertyDescriptor.Converter == null || 
-					 !PropertyDescriptor.Converter.CanConvertFrom (this, typeof (string)))
+				else if (PropertyDescriptor.IsReadOnly && !this.ShouldCreateParentInstance)
 					return false;
-				else if (PropertyDescriptor.Converter.GetStandardValuesSupported () &&
-					 PropertyDescriptor.Converter.GetStandardValuesExclusive ())
+				else if (converter == null || 
+					 !converter.CanConvertFrom (this, typeof (string)))
+					return false;
+				else if (converter.GetStandardValuesSupported () &&
+					 converter.GetStandardValuesExclusive ())
 					return false;
 				else
 					return true;
@@ -632,10 +633,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 				// 	Console.WriteLine ("CanConvertFrom (string): " + converter.CanConvertFrom ((ITypeDescriptorContext)this, typeof (string)));
 				// 	Console.WriteLine ("IsArray: " + PropertyDescriptor.PropertyType.IsArray.ToString ());
 				// }
-				if (ParentEntry != null && ParentEntry.GridItemType == GridItemType.Property 
-				    && ParentEntry.IsReadOnly)
-					return true;
-				else if (PropertyDescriptor == null || PropertyOwner == null ||
+				if (PropertyDescriptor == null || PropertyOwner == null ||
 				    (PropertyDescriptor.IsReadOnly && !this.ShouldCreateParentInstance && 
 				     EditorStyle != UITypeEditorEditStyle.Modal))
 					return true;
@@ -651,6 +649,16 @@ namespace System.Windows.Forms.PropertyGridInternal
 					return true;
 				else
 					return false;
+			}
+		}
+
+		public bool IsExpandable {
+			get {
+				TypeConverter converter = GetConverter ();
+				if ((converter != null && converter.GetPropertiesSupported ()) || 
+				     PropertyDescriptor.Attributes.Contains (DesignerSerializationVisibilityAttribute.Content))
+					return true;
+				return false;
 			}
 		}
 
