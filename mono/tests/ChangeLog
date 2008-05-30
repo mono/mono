@@ -1,3 +1,7 @@
+2008-05-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* long-shift-regalloc.il: Removed, merged into mini/iltests.il.
+
 2008-05-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am (test-generic-sharing): Exit if one of the tests fail. Run the
