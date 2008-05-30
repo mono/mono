@@ -129,6 +129,13 @@ namespace System.Linq.Expressions {
 			case ExpressionType.NegateChecked:
 				ig.Emit (OpCodes.Neg);
 				break;
+			case ExpressionType.Convert:
+			case ExpressionType.ConvertChecked:
+				// Called when converting from nullable from nullable
+				EmitPrimitiveConversion (ec,
+					GetNotNullableOf (operand.Type),
+					GetNotNullableOf (Type));
+				break;
 			}
 		}
 
@@ -213,13 +220,9 @@ namespace System.Linq.Expressions {
 				ec.ig.Emit (OpCodes.Castclass, Type);
 		}
 
-		void EmitPrimitiveConversion (EmitContext ec,
+		void EmitPrimitiveConversion (EmitContext ec, bool is_unsigned,
 			OpCode signed, OpCode unsigned, OpCode signed_checked, OpCode unsigned_checked)
 		{
-			operand.Emit (ec);
-
-			bool is_unsigned = IsUnsigned (operand.Type);
-
 			if (this.NodeType != ExpressionType.ConvertChecked)
 				ec.ig.Emit (is_unsigned ? unsigned : signed);
 			else
@@ -228,9 +231,19 @@ namespace System.Linq.Expressions {
 
 		void EmitPrimitiveConversion (EmitContext ec)
 		{
-			switch (Type.GetTypeCode (this.Type)) {
+			operand.Emit (ec);
+
+			EmitPrimitiveConversion (ec, operand.Type, Type);
+		}
+
+		void EmitPrimitiveConversion (EmitContext ec, Type from, Type to)
+		{
+			var is_unsigned = IsUnsigned (from);
+
+			switch (Type.GetTypeCode (to)) {
 			case TypeCode.SByte:
 				EmitPrimitiveConversion (ec,
+					is_unsigned,
 					OpCodes.Conv_I1,
 					OpCodes.Conv_U1,
 					OpCodes.Conv_Ovf_I1,
@@ -238,6 +251,7 @@ namespace System.Linq.Expressions {
 				return;
 			case TypeCode.Byte:
 				EmitPrimitiveConversion (ec,
+					is_unsigned,
 					OpCodes.Conv_I1,
 					OpCodes.Conv_U1,
 					OpCodes.Conv_Ovf_U1,
@@ -245,6 +259,7 @@ namespace System.Linq.Expressions {
 				return;
 			case TypeCode.Int16:
 				EmitPrimitiveConversion (ec,
+					is_unsigned,
 					OpCodes.Conv_I2,
 					OpCodes.Conv_U2,
 					OpCodes.Conv_Ovf_I2,
@@ -252,6 +267,7 @@ namespace System.Linq.Expressions {
 				return;
 			case TypeCode.UInt16:
 				EmitPrimitiveConversion (ec,
+					is_unsigned,
 					OpCodes.Conv_I2,
 					OpCodes.Conv_U2,
 					OpCodes.Conv_Ovf_U2,
@@ -259,6 +275,7 @@ namespace System.Linq.Expressions {
 				return;
 			case TypeCode.Int32:
 				EmitPrimitiveConversion (ec,
+					is_unsigned,
 					OpCodes.Conv_I4,
 					OpCodes.Conv_U4,
 					OpCodes.Conv_Ovf_I4,
@@ -266,6 +283,7 @@ namespace System.Linq.Expressions {
 				return;
 			case TypeCode.UInt32:
 				EmitPrimitiveConversion (ec,
+					is_unsigned,
 					OpCodes.Conv_I4,
 					OpCodes.Conv_U4,
 					OpCodes.Conv_Ovf_U4,
@@ -273,6 +291,7 @@ namespace System.Linq.Expressions {
 				return;
 			case TypeCode.Int64:
 				EmitPrimitiveConversion (ec,
+					is_unsigned,
 					OpCodes.Conv_I8,
 					OpCodes.Conv_U8,
 					OpCodes.Conv_Ovf_I8,
@@ -280,18 +299,19 @@ namespace System.Linq.Expressions {
 				return;
 			case TypeCode.UInt64:
 				EmitPrimitiveConversion (ec,
+					is_unsigned,
 					OpCodes.Conv_I8,
 					OpCodes.Conv_U8,
 					OpCodes.Conv_Ovf_U8,
 					OpCodes.Conv_Ovf_U8_Un);
 				return;
 			case TypeCode.Single:
-				if (IsUnsigned (operand.Type))
+				if (is_unsigned)
 					ec.ig.Emit (OpCodes.Conv_R_Un);
 				ec.ig.Emit (OpCodes.Conv_R4);
 				return;
 			case TypeCode.Double:
-				if (IsUnsigned (operand.Type))
+				if (is_unsigned)
 					ec.ig.Emit (OpCodes.Conv_R_Un);
 				ec.ig.Emit (OpCodes.Conv_R8);
 				return;

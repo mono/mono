@@ -1,3 +1,8 @@
+2008-05-30  Jb Evain  <jbevain@novell.com>
+
+	* UnaryExpression.cs (Emit): fix convertion from nullable
+	to nullable types.
+
 2008-05-29  Jb Evain  <jbevain@novell.com>
 
 	* Expression.cs (Power): allow bool?.
