@@ -143,15 +143,18 @@ namespace MonoTests.System.Linq.Expressions
 		public void UserDefinedNegate ()
 		{
 			var s = Expression.Parameter (typeof (Slot), "s");
-			var negate = Expression.Lambda<Func<Slot, Slot>> (
-				Expression.Negate (s), s).Compile ();
+			var node = Expression.Negate (s);
+			Assert.IsFalse (node.IsLifted);
+			Assert.IsFalse (node.IsLiftedToNull);
+			Assert.AreEqual (typeof (Slot), node.Type);
+
+			var negate = Expression.Lambda<Func<Slot, Slot>> (node, s).Compile ();
 
 			Assert.AreEqual (new Slot (-2), negate (new Slot (2)));
 			Assert.AreEqual (new Slot (42), negate (new Slot (-42)));
 		}
 
-		/*
-		struct SlotFromNullable {
+		/*struct SlotFromNullable {
 			public int Value;
 
 			public SlotFromNullable (int value)
@@ -172,8 +175,12 @@ namespace MonoTests.System.Linq.Expressions
 		public void UserDefinedNegateFromNullable ()
 		{
 			var s = Expression.Parameter (typeof (SlotFromNullable?), "s");
-			var negate = Expression.Lambda<Func<SlotFromNullable?, SlotFromNullable>> (
-				Expression.Negate (s), s).Compile ();
+			var node = Expression.Negate (s);
+			Assert.IsFalse (node.IsLifted);
+			Assert.IsFalse (node.IsLiftedToNull);
+			Assert.AreEqual (typeof (SlotFromNullable), node.Type);
+
+			var negate = Expression.Lambda<Func<SlotFromNullable?, SlotFromNullable>> (node, s).Compile ();
 
 			Assert.AreEqual (new SlotFromNullable (-2), negate (new SlotFromNullable (2)));
 			Assert.AreEqual (new SlotFromNullable (42), negate (new SlotFromNullable (-42)));
@@ -201,8 +208,13 @@ namespace MonoTests.System.Linq.Expressions
 		public void UserDefinedNegateFromNullableNotNullable ()
 		{
 			var s = Expression.Parameter (typeof (SlotFromNullableToNullable?), "s");
+			var node = Expression.Negate (s);
+			Assert.IsFalse (node.IsLifted);
+			Assert.IsFalse (node.IsLiftedToNull);
+			Assert.AreEqual (typeof (SlotFromNullableToNullable?), node.Type);
+
 			var negate = Expression.Lambda<Func<SlotFromNullableToNullable?, SlotFromNullableToNullable?>> (
-				Expression.Negate (s), s).Compile ();
+				node, s).Compile ();
 
 			Assert.AreEqual (new SlotFromNullableToNullable (-2), negate (new SlotFromNullableToNullable (2)));
 			Assert.AreEqual (new SlotFromNullableToNullable (42), negate (new SlotFromNullableToNullable (-42)));
