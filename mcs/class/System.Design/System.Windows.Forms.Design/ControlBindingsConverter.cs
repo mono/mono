@@ -21,24 +21,127 @@
 //
 // Authors:
 //	Peter Dennis Bartok (pbartok@novell.com)
+// 	Ivan N. Zlatev (contact i-nz.net)
 //
 //
 
 // NOT COMPLETE
-
 using System.ComponentModel;
+using System.Windows.Forms;
 
-namespace System.Windows.Forms.Design {
-	internal class ControlBindingsConverter : TypeConverter {
-		public ControlBindingsConverter() {
+namespace System.Windows.Forms.Design 
+{
+	internal class ControlBindingsConverter : TypeConverter 
+	{
+		public ControlBindingsConverter() 
+		{
 		}
 
-		public override PropertyDescriptorCollection GetProperties(ITypeDescriptorContext context, object value, Attribute[] attributes) {
-			return base.GetProperties(context, value, attributes);
+		// TODO: Should create some sort of a special PropertyDescriptor and handle the data binding
+		//
+		[MonoTODO]
+		public override PropertyDescriptorCollection GetProperties (ITypeDescriptorContext context, 
+									    object value, Attribute[] attributes) 
+		{
+			PropertyDescriptorCollection properties = new PropertyDescriptorCollection (new PropertyDescriptor[0]);
+			ControlBindingsCollection collection = value as ControlBindingsCollection;
+			if (collection != null && collection.BindableComponent != null) {
+				foreach (PropertyDescriptor property in 
+					 TypeDescriptor.GetProperties (collection.BindableComponent, attributes)) {
+					if (((BindableAttribute) property.Attributes[typeof (BindableAttribute)]).Bindable)
+						properties.Add (new DataBindingPropertyDescriptor (property, attributes, true));
+				}
+			}
+			return properties;
 		}
 
-		public override bool GetPropertiesSupported(ITypeDescriptorContext context) {
-			return base.GetPropertiesSupported(context);
+		public override bool GetPropertiesSupported (ITypeDescriptorContext context) 
+		{
+			return true;
+		}
+
+		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
+		{
+			if (destinationType == typeof (string))
+				return true;
+			return base.CanConvertTo (context, destinationType);
+		}
+
+		public override object ConvertTo (ITypeDescriptorContext context, System.Globalization.CultureInfo culture, 
+						  object value, Type destinationType)
+		{
+			if (destinationType == typeof (string))
+			    return String.Empty;
+			return base.ConvertTo (context, culture, value, destinationType);
+		}
+
+
+		[MonoTODO]
+		private class DataBindingPropertyDescriptor : PropertyDescriptor
+		{
+			bool _readOnly;
+
+			[MonoTODO]
+			public DataBindingPropertyDescriptor (PropertyDescriptor property, Attribute [] attrs, bool readOnly)
+				: base (property.Name, attrs)
+			{
+				_readOnly = readOnly;
+			}
+
+			[MonoTODO]
+			public override object GetValue (object component)
+			{
+				// throw new NotImplementedException ();
+				return null;
+			}
+
+			[MonoTODO]
+			public override void SetValue (object component, object value)
+			{
+				// throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			public override void ResetValue (object component) 
+			{
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			public override bool CanResetValue (object component) 
+			{
+				// throw new NotImplementedException ();
+				return false;
+			}
+
+			public override bool ShouldSerializeValue (object component)
+			{
+				return false;
+			}
+
+			[MonoTODO]
+			public override Type PropertyType {
+				get {
+					// throw new NotImplementedException ();
+					return typeof (DataBindingPropertyDescriptor);
+				}
+			}
+
+			[MonoTODO]
+			public override TypeConverter Converter {
+				get {
+					// throw new NotImplementedException ();
+					return null;
+				}
+			}
+
+			public override Type ComponentType {
+				get { return typeof (ControlBindingsCollection); }
+			}
+
+			public override bool IsReadOnly {
+				get { return _readOnly; }
+			}
 		}
 	}
 }
