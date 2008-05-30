@@ -76,7 +76,8 @@ EXTRA_DISTFILES = \
 	Test/System.Data/schemas/Items.xsd	\
 	Test/System.Data/TypedDataSet.xml	\
 	Mono.Data.SqlExpressions/Parser.jay	\
-	app_test_2.0.config
+	app_test_2.0.config			\
+	Test/System.Data/binserialize/*.bin
 
 BUILT_SOURCES = Mono.Data.SqlExpressions/Parser.cs
 
