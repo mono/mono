@@ -329,8 +329,23 @@ namespace System.Linq.Expressions {
 				EmitLiftedUnary (ec);
 		}
 
+		void CheckUserDefinedOperator ()
+		{
+			// tempory check
+
+			if (operand.Type == method.GetParameters () [0].ParameterType)
+				return;
+
+			if (Type == method.ReturnType)
+				return;
+
+			throw new NotImplementedException ();
+		}
+
 		void EmitUserDefinedOperator (EmitContext ec)
 		{
+			CheckUserDefinedOperator ();
+
 			ec.Emit (operand);
 			ec.EmitCall (method);
 		}

@@ -306,15 +306,22 @@ namespace System.Linq.Expressions {
 		static UnaryExpression MakeSimpleUnary (ExpressionType et, Expression expression, MethodInfo method)
 		{
 			bool is_lifted;
+			Type type;
 
 			if (method == null) {
-				is_lifted = expression.Type.IsNullable ();
+				type = expression.Type;
+				is_lifted = type.IsNullable ();
 			} else {
-				// FIXME: implement
-				is_lifted = false;
+				var parameter = method.GetParameters () [0].ParameterType;
+				type = method.ReturnType;
+
+				is_lifted = parameter.IsNullable () || expression.Type.IsNullable ();
+
+				if (is_lifted && !type.IsNullable ())
+					type = typeof (Nullable<>).MakeGenericType (type);
 			}
 
-			return new UnaryExpression (et, expression, GetResultType (expression, method), method, is_lifted);
+			return new UnaryExpression (et, expression, type, method, is_lifted);
 		}
 
 		static BinaryExpression MakeBoolBinary (ExpressionType et, Expression left, Expression right, bool liftToNull, MethodInfo method)
