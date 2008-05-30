@@ -168,7 +168,13 @@ namespace MonoTests.System.Linq.Expressions
 		public void UserDefinedNotNullable ()
 		{
 			var s = Expression.Parameter (typeof (Slot?), "s");
-			var not = Expression.Lambda<Func<Slot?, bool?>> (Expression.Not (s), s).Compile ();
+			var node = Expression.Not (s);
+			Assert.IsTrue (node.IsLifted);
+			Assert.IsTrue (node.IsLiftedToNull);
+			Assert.AreEqual (typeof (bool?), node.Type);
+			Assert.AreEqual (typeof (Slot).GetMethod ("op_LogicalNot"), node.Method);
+
+			var not = Expression.Lambda<Func<Slot?, bool?>> (node, s).Compile ();
 
 			Assert.AreEqual (null, not (null));
 			Assert.AreEqual (true, not (new Slot (1)));
