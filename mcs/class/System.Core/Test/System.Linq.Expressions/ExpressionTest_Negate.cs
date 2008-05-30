@@ -124,5 +124,92 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual ((int?) 0, negate (0));
 			Assert.AreEqual ((int?) 3, negate (-3));
 		}
+
+
+		struct Slot {
+			public int Value;
+
+			public Slot (int value)
+			{
+				this.Value = value;
+			}
+
+			public static Slot operator - (Slot s)
+			{
+				return new Slot () { Value = -s.Value };
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void UserDefinedNegate ()
+		{
+			var s = Expression.Parameter (typeof (Slot), "s");
+			var negate = Expression.Lambda<Func<Slot, Slot>> (
+				Expression.Negate (s), s).Compile ();
+
+			Assert.AreEqual (new Slot (-2), negate (new Slot (2)));
+			Assert.AreEqual (new Slot (42), negate (new Slot (-42)));
+		}
+
+		struct SlotFromNullable {
+			public int Value;
+
+			public SlotFromNullable (int value)
+			{
+				this.Value = value;
+			}
+
+			public static SlotFromNullable operator - (SlotFromNullable? s)
+			{
+				if (s.HasValue)
+					return new SlotFromNullable (-s.Value.Value);
+				else
+					return new SlotFromNullable (0);
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void UserDefinedNegateFromNullable ()
+		{
+			var s = Expression.Parameter (typeof (SlotFromNullable?), "s");
+			var negate = Expression.Lambda<Func<SlotFromNullable?, SlotFromNullable>> (
+				Expression.Negate (s), s).Compile ();
+
+			Assert.AreEqual (new SlotFromNullable (-2), negate (new SlotFromNullable (2)));
+			Assert.AreEqual (new SlotFromNullable (42), negate (new SlotFromNullable (-42)));
+			Assert.AreEqual (new SlotFromNullable (0), negate (null));
+		}
+
+		struct SlotFromNullableToNullable {
+			public int Value;
+
+			public SlotFromNullableToNullable (int value)
+			{
+				this.Value = value;
+			}
+
+			public static SlotFromNullableToNullable? operator - (SlotFromNullableToNullable? s)
+			{
+				if (s.HasValue)
+					return new SlotFromNullableToNullable (-s.Value.Value);
+				else
+					return s;
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void UserDefinedNegateFromNullableNotNullable ()
+		{
+			var s = Expression.Parameter (typeof (SlotFromNullableToNullable?), "s");
+			var negate = Expression.Lambda<Func<SlotFromNullableToNullable?, SlotFromNullableToNullable?>> (
+				Expression.Negate (s), s).Compile ();
+
+			Assert.AreEqual (new SlotFromNullableToNullable (-2), negate (new SlotFromNullableToNullable (2)));
+			Assert.AreEqual (new SlotFromNullableToNullable (42), negate (new SlotFromNullableToNullable (-42)));
+			Assert.AreEqual (null, negate (null));
+		}
 	}
 }
