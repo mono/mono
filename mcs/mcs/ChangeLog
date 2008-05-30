@@ -1,3 +1,8 @@
+2008-05-30  Marek Safar  <marek.safar@gmail.com>
+
+	* attribute.cs: Don't mix old and new corlib types when emitting corlib
+	security attributes.
+
 2008-05-24  Marek Safar  <marek.safar@gmail.com>
 
 	* ecore.cs, expression.cs: Small IVariable refactoring.

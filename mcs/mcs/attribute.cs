@@ -960,7 +960,9 @@ namespace Mono.CSharp {
 				if (prop_info_arr != null) {
 					for (int i = 0; i < prop_info_arr.Length; ++i) {
 						PropertyInfo emited_pi = prop_info_arr [i];
-						PropertyInfo pi = orig_assembly_type.GetProperty (emited_pi.Name, emited_pi.PropertyType);
+						// FIXME: We are missing return type filter
+						// TODO: pi can be null
+						PropertyInfo pi = orig_assembly_type.GetProperty (emited_pi.Name);
 
 						object old_instance = pi.PropertyType.IsEnum ?
 							System.Enum.ToObject (pi.PropertyType, prop_values_arr [i]) :
