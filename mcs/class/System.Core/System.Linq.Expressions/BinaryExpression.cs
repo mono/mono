@@ -248,14 +248,20 @@ namespace System.Linq.Expressions {
 			var load_right = ig.DefineLabel ();
 
 			var left = ec.EmitStored (this.left);
-			if (left.LocalType.IsNullable ())
+			var left_is_nullable = left.LocalType.IsNullable ();
+
+			if (left_is_nullable)
 				ec.EmitNullableHasValue (left);
 			else
 				ec.EmitLoad (left);
 
 			ig.Emit (OpCodes.Brfalse, load_right);
 
-			ec.EmitLoad (left);
+			if (left_is_nullable && !Type.IsNullable ())
+				ec.EmitNullableGetValue (left);
+			else
+				ec.EmitLoad (left);
+
 			ig.Emit (OpCodes.Br, done);
 
 			ig.MarkLabel (load_right);
