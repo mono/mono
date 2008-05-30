@@ -1,5 +1,9 @@
 2008-05-30  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* ControlBindingsConverter.cs: Fix 1.1 build.
+
+2008-05-30  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* ControlBindingsConverter.cs: Implementated just enough to avoid 
 	the circular dependency in the MWF PropertyGrid.
 
