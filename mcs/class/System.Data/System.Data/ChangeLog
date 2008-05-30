@@ -1,3 +1,8 @@
+2008-05-29  Marek Habersack  <mhabersack@novell.com>
+
+	* DataColumn.cs: do not use synthetic methods for events - this
+	avoids unnecessary locking, especially for internal events.
+
 2008-04-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DataRowView.cs: Modified argument names to match MS. Use 

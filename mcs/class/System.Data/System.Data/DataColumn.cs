@@ -59,17 +59,25 @@ namespace System.Data {
 	[DefaultProperty ("ColumnName")]
 	[DesignTimeVisible (false)]
 	public class DataColumn : MarshalByValueComponent
-	{		
-		#region Events
-		[MonoTODO]
+	{
+#region Events
+		EventHandlerList _eventHandlers = new EventHandlerList ();
+		
 		//used for constraint validation
-		//if an exception is fired during this event the change should be canceled
+		//if an exception is fired during this event the change should be canceled	
+		[MonoTODO]
 		internal event DelegateColumnValueChange ValidateColumnValueChange;
 
 		//used for FK Constraint Cascading rules
+		[MonoTODO]
 		internal event DelegateColumnValueChange ColumnValueChanging;
 
-		internal event PropertyChangedEventHandler PropertyChanged;
+		static readonly object _propertyChangedKey = new object ();
+		internal event PropertyChangedEventHandler PropertyChanged {
+			add { _eventHandlers.AddHandler (_propertyChangedKey, value); }
+			remove { _eventHandlers.RemoveHandler (_propertyChangedKey, value); }
+		}
+		
 		#endregion //Events
 		
 		#region Fields
@@ -852,8 +860,10 @@ namespace System.Data {
 
 		protected internal virtual void 
 		OnPropertyChanging (PropertyChangedEventArgs pcevent) {
-			if (PropertyChanged != null)
-				PropertyChanged (this, pcevent);
+			PropertyChangedEventHandler eh = _eventHandlers [_propertyChangedKey] as PropertyChangedEventHandler;
+			
+			if (eh != null)
+				eh (this, pcevent);
 		}
 
 		protected internal void RaisePropertyChanging(string name) {
