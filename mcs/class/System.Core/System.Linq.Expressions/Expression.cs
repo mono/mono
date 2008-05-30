@@ -286,8 +286,8 @@ namespace System.Linq.Expressions {
 			bool is_lifted;
 
 			if (method == null) {
-				if (IsNullable (left.Type)) {
-					if (!IsNullable (right.Type))
+				if (left.Type.IsNullable ()) {
+					if (!right.Type.IsNullable ())
 						throw new InvalidOperationException ("Assertion, internal error: left is nullable, requires right to be as well");
 
 					is_lifted = true;
@@ -308,7 +308,7 @@ namespace System.Linq.Expressions {
 			bool is_lifted;
 
 			if (method == null) {
-				is_lifted = IsNullable (expression.Type);
+				is_lifted = expression.Type.IsNullable ();
 			} else {
 				// FIXME: implement
 				is_lifted = false;
@@ -322,8 +322,8 @@ namespace System.Linq.Expressions {
 			Type result;
 			Type ltype = left.Type;
 			Type rtype = right.Type;
-			bool lnullable = IsNullable (ltype);
-			bool rnullable = IsNullable (rtype);
+			bool lnullable = ltype.IsNullable ();
+			bool rnullable = rtype.IsNullable ();
 			bool is_lifted;
 
 			// Implement the rules as described in "Expression.Equal" method.
@@ -347,8 +347,8 @@ namespace System.Linq.Expressions {
 					liftToNull = false;
 					result = method.ReturnType;
 				} else if (ltype.IsValueType && rtype.IsValueType &&
-					   ((lnullable && GetNullableOf (ltype) == mltype) ||
-						(rnullable && GetNullableOf (rtype) == mrtype))){
+					   ((lnullable && GetNullableArgumentType (ltype) == mltype) ||
+						(rnullable && GetNullableArgumentType (rtype) == mrtype))){
 					is_lifted = true;
 					if (method.ReturnType == typeof(bool)){
 						result = liftToNull ? typeof(bool?) : typeof(bool);
@@ -725,15 +725,15 @@ namespace System.Linq.Expressions {
 			//
 			// First arg must ne nullable (either Nullable<T> or a reference type
 			//
-			if (left.Type.IsValueType && !IsNullable (left.Type))
+			if (left.Type.IsValueType && !left.Type.IsNullable ())
 				throw new InvalidOperationException ("Left expression can never be null");
 
 			Type result = null;
 
-			if (IsNullable (left.Type)) {
-				Type lbase = GetNullableOf (left.Type);
+			if (left.Type.IsNullable ()) {
+				Type lbase = GetNullableArgumentType (left.Type);
 
-				if (!IsNullable (right.Type) && right.Type.IsAssignableTo (lbase))
+				if (!right.Type.IsNullable () && right.Type.IsAssignableTo (lbase))
 					result = lbase;
 			}
 
@@ -741,7 +741,7 @@ namespace System.Linq.Expressions {
 				result = left.Type;
 
 			if (result == null) {
-				if (IsNullable (left.Type) && GetNullableOf (left.Type).IsAssignableTo (right.Type))
+				if (left.Type.IsNullable () && GetNullableArgumentType (left.Type).IsAssignableTo (right.Type))
 					result = right.Type;
 			}
 
@@ -1059,10 +1059,10 @@ namespace System.Linq.Expressions {
 			// are allowed
 			//
 			if (value == null){
-				if (type.IsValueType && !IsNullable (type))
+				if (type.IsValueType && !type.IsNullable ())
 					throw new ArgumentException ();
 			} else {
-				if (!(type.IsValueType && IsNullable (type)) && !value.GetType ().IsAssignableTo (type))
+				if (!(type.IsValueType && type.IsNullable ()) && !value.GetType ().IsAssignableTo (type))
 					throw new ArgumentException ();
 
 			}
@@ -1149,12 +1149,12 @@ namespace System.Linq.Expressions {
 		static bool IsConvertNodeLifted (MethodInfo method, Expression operand, Type target)
 		{
 			if (method == null)
-				return IsNullable (operand.Type) || IsNullable (target);
+				return operand.Type.IsNullable () || target.IsNullable ();
 
-			if (IsNullable (operand.Type) && !ParameterMatch (method, operand.Type))
+			if (operand.Type.IsNullable () && !ParameterMatch (method, operand.Type))
 				return true;
 
-			if (IsNullable (target) && !ReturnTypeMatch (method, target))
+			if (target.IsNullable () && !ReturnTypeMatch (method, target))
 				return true;
 
 			return false;
@@ -2027,7 +2027,7 @@ namespace System.Linq.Expressions {
 				throw new ArgumentNullException ("expression");
 			if (type == null)
 				throw new ArgumentNullException ("type");
-			if (type.IsValueType && !IsNullable (type))
+			if (type.IsValueType && !type.IsNullable ())
 				throw new ArgumentException ("TypeAs expect a reference or a nullable type");
 
 			return new UnaryExpression (ExpressionType.TypeAs, expression, type);
@@ -2078,11 +2078,6 @@ namespace System.Linq.Expressions {
 			return t == typeof (float) || t == typeof (double) || t == typeof (decimal);
 		}
 
-		internal static bool IsNullable (Type type)
-		{
-			return type.IsGenericInstanceOf (typeof (Nullable<>));
-		}
-
 		static bool IsSignedNumber (Type t)
 		{
 			return IsNumber (t) && !IsUnsigned (t);
@@ -2104,14 +2099,14 @@ namespace System.Linq.Expressions {
 		//
 		// returns the T in a a Nullable<T> type.
 		//
-		internal static Type GetNullableOf (Type type)
+		internal static Type GetNullableArgumentType (Type type)
 		{
 			return type.GetFirstGenericArgument ();
 		}
 
 		internal static Type GetNotNullableOf (Type type)
 		{
-			return IsNullable (type) ? GetNullableOf (type) : type;
+			return type.IsNullable () ? GetNullableArgumentType (type) : type;
 		}
 
 		//

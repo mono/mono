@@ -51,7 +51,7 @@ namespace System.Linq.Expressions {
 		}
 
 		public bool IsLiftedToNull {
-			get { return is_lifted && IsNullable (this.Type); }
+			get { return is_lifted && this.Type.IsNullable (); }
 		}
 
 		internal UnaryExpression (ExpressionType node_type, Expression operand, Type type)
@@ -80,7 +80,7 @@ namespace System.Linq.Expressions {
 
 			ec.EmitIsInst (operand, type);
 
-			if (IsNullable (type))
+			if (type.IsNullable ())
 				ec.ig.Emit (OpCodes.Unbox_Any, type);
 		}
 
@@ -139,11 +139,11 @@ namespace System.Linq.Expressions {
 
 			if (from == target)
 				operand.Emit (ec);
-			else if (IsNullable (from) && !IsNullable (target))
+			else if (from.IsNullable () && !target.IsNullable ())
 				EmitConvertFromNullable (ec);
-			else if (!IsNullable (from) && IsNullable (target))
+			else if (!from.IsNullable () && target.IsNullable ())
 				EmitConvertToNullable (ec);
-			else if (IsNullable (from) && IsNullable (target))
+			else if (from.IsNullable () && target.IsNullable ())
 				EmitConvertFromNullableToNullable (ec);
 			else if (IsReferenceConversion (from, target))
 				EmitCast (ec);

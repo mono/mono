@@ -245,6 +245,11 @@ namespace System.Linq.Expressions {
 			ig.Emit (OpCodes.Isinst, candidate);
 		}
 
+		public void EmitConvert (LocalBuilder local, Type to)
+		{
+
+		}
+
 		public void EmitScope ()
 		{
 			ig.Emit (OpCodes.Ldarg_0);
