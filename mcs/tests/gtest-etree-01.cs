@@ -2536,9 +2536,8 @@ class Tester
 	{
 		Expression<Func<sbyte?, long?>> e6 = (a) => +a;
 		AssertNodeType (e6, ExpressionType.Convert);
-		// FIXME: ET emitter CRASHES MONO RUNTIME
-		//Assert (3, e6.Compile ().Invoke (3));
-		//Assert (null, e6.Compile ().Invoke (null));
+		Assert (3, e6.Compile ().Invoke (3));
+		Assert (null, e6.Compile ().Invoke (null));
 	}	
 
 #pragma warning restore 169
