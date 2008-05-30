@@ -1,3 +1,7 @@
+2008-05-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* iltests.il.in: Merge tests/long-shift.regalloc.il into this file.
+
 2008-05-28  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* arrays.cs: Regression tests for allocating arrays with negative sizes.
