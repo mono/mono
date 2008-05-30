@@ -125,7 +125,6 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual ((int?) 3, negate (-3));
 		}
 
-
 		struct Slot {
 			public int Value;
 
@@ -141,7 +140,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void UserDefinedNegate ()
 		{
 			var s = Expression.Parameter (typeof (Slot), "s");
@@ -170,7 +168,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void UserDefinedNegateFromNullable ()
 		{
 			var s = Expression.Parameter (typeof (SlotFromNullable?), "s");
@@ -200,7 +197,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void UserDefinedNegateFromNullableNotNullable ()
 		{
 			var s = Expression.Parameter (typeof (SlotFromNullableToNullable?), "s");
