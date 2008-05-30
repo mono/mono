@@ -42,6 +42,15 @@ namespace MonoTests.System
 		public string s;
 		public string a;
 	}
+	
+	class DataEqual
+	{
+		public override bool Equals (object obj)
+		{
+			return true;
+		}
+	}
+		
 	//End Auxiliary Things
 
 [TestFixture]
@@ -1365,6 +1374,13 @@ public class ArrayTest : Assertion
 		AssertEquals("#J48", 1, Array.IndexOf(s1, "is", 1, 3));
 		AssertEquals("#J49", -1, Array.IndexOf(s1, "test", 1, 3));
 		AssertEquals("#J50", 3, Array.IndexOf(s1, "a", 1, 3));
+	}
+	
+	[Test]
+	public void TestIndexOf_CustomEqual ()
+	{
+		DataEqual[] test = new DataEqual [] { new DataEqual () };
+		AssertEquals (0, Array.IndexOf (test, "asdfas", 0));
 	}
 	
 	[Test]
