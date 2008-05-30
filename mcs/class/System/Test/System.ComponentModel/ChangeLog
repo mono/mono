@@ -1,3 +1,7 @@
+2008-05-30  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* TypeDescriptorTests.cs: Fix the attributes test on the 1.1 profile.
+
 2008-05-29  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* TypeDescriptorTests.cs: Add test that verifies that GetAttributes 

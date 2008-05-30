@@ -335,7 +335,7 @@ namespace MonoTests.System.ComponentModel
 		void TestFunction ();
 	}
 
-	[Serializable]
+	[DesignerAttribute (typeof(MyDesigner), typeof(int))]
 	public class TestClass
 	{
 		public TestClass()
@@ -351,7 +351,7 @@ namespace MonoTests.System.ComponentModel
 		public void TestFunction ()
 		{}
 	}
-	
+
 	public struct TestStruct
 	{
 		public int TestVal;
