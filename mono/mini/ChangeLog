@@ -1,3 +1,10 @@
+2008-05-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-codegen.c (mono_local_regalloc): Fix some issues related to fixed sreg2
+	allocation.
+
+	* Makefile.am: Don't run bench.exe on make check, it takes too much time.
+	
 2008-05-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir2): Merge more generic sharing changes missed

@@ -1164,7 +1164,8 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 					}
 				}
 			} else {
-				int need_spill = TRUE;
+				gboolean need_spill = TRUE;
+				gboolean need_assign = TRUE;
 
 				dreg_mask &= ~ (regmask (dest_sreg2));
 				sreg1_mask &= ~ (regmask (dest_sreg2));
@@ -1196,28 +1197,46 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 				if (is_global_ireg (ins->sreg2)) {
 					MonoInst *copy = create_copy_ins (cfg, bb, tmp, dest_sreg2, ins->sreg2, NULL, ip, FALSE);
 					insert_before_ins (bb, ins, copy);
+					need_assign = FALSE;
 				}
 				else {
 					val = rs->vassign [ins->sreg2];
 					if (val == dest_sreg2) {
 						/* sreg2 is already assigned to the correct register */
 						need_spill = FALSE;
-					}
-					else if ((val >= 0) || (val < -1)) {
-						/* FIXME: sreg2 already assigned to another register */
-						g_assert_not_reached ();
+					} else if (val < -1) {
+						/* sreg2 is spilled, it can be assigned to dest_sreg2 */
+					} else if (val >= 0) {
+						/* sreg2 already assigned to another register */
+						/*
+						 * We couldn't emit a copy from val to dest_sreg2, because
+						 * val might be spilled later while processing this 
+						 * instruction. So we spill sreg2 so it can be allocated to
+						 * dest_sreg2.
+						 */
+						DEBUG (printf ("\tforced spill of R%d\n", ins->sreg2));
+						free_up_reg (cfg, bb, tmp, ins, val, FALSE);
 					}
 				}
 
 				if (need_spill) {
 					DEBUG (printf ("\tforced spill of R%d\n", rs->isymbolic [dest_sreg2]));
-					get_register_force_spilling (cfg, bb, tmp, ins, rs->isymbolic [dest_sreg2], FALSE);
-					mono_regstate_free_int (rs, dest_sreg2);
+					free_up_reg (cfg, bb, tmp, ins, dest_sreg2, FALSE);
 				}
 
-				if (!is_global_ireg (ins->sreg2))
+				if (need_assign) {
+					if (rs->vassign [ins->sreg2] < -1) {
+						MonoInst *store;
+						int spill;
+
+						/* Need to emit a spill store */
+						spill = - rs->vassign [ins->sreg2] - 1;
+						store = create_spilled_store (cfg, bb, spill, dest_sreg2, ins->sreg2, tmp, NULL, fp);						
+						insert_before_ins (bb, ins, store);
+					}
 					/* force-set sreg2 */
 					assign_reg (cfg, rs, ins->sreg2, dest_sreg2, FALSE);
+				}
 			}
 			ins->sreg2 = dest_sreg2;
 		}
