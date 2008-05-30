@@ -34,6 +34,7 @@ namespace System.Windows.Forms.VisualStyles
 	class VisualStyleElement
 	{
 		#region Private Variables
+		#region Class name/part/state constants
 		private const string BUTTON = "BUTTON";
 		private const string CLOCK = "CLOCK";
 		private const string COMBOBOX = "COMBOBOX";
@@ -46,7 +47,20 @@ namespace System.Windows.Forms.VisualStyles
 		private const string PAGE = "PAGE";
 		private const string PROGRESS = "PROGRESS";
 		private const string REBAR = "REBAR";
+		#region SCROLLBAR
 		private const string SCROLLBAR = "SCROLLBAR";
+		enum SCROLLBARPARTS
+		{
+			SBP_ARROWBTN = 1
+		}
+		enum ARROWBTNSTATES
+		{
+			ABS_UPHOVER = 17,
+			ABS_DOWNHOVER = 18,
+			ABS_LEFTHOVER = 19,
+			ABS_RIGHTHOVER = 20,
+		}
+		#endregion
 		private const string SPIN = "SPIN";
 		private const string STARTPANEL = "STARTPANEL";
 		private const string STATUS = "STATUS";
@@ -59,6 +73,7 @@ namespace System.Windows.Forms.VisualStyles
 		private const string TRAYNOTIFY = "TRAYNOTIFY";
 		private const string TREEVIEW = "TREEVIEW";
 		private const string WINDOW = "WINDOW";
+		#endregion
 
 		private string class_name;
 		private int part;
@@ -428,6 +443,38 @@ namespace System.Windows.Forms.VisualStyles
 				public static VisualStyleElement UpHot { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 1, 2); } }
 				public static VisualStyleElement UpNormal { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 1, 1); } }
 				public static VisualStyleElement UpPressed { get { return VisualStyleElement.CreateElement (VisualStyleElement.SCROLLBAR, 1, 3); } }
+				internal static VisualStyleElement DownHover {
+					get {
+						return new VisualStyleElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_ARROWBTN,
+							(int)ARROWBTNSTATES.ABS_DOWNHOVER);
+					}
+				}
+				internal static VisualStyleElement LeftHover {
+					get {
+						return new VisualStyleElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_ARROWBTN,
+							(int)ARROWBTNSTATES.ABS_LEFTHOVER);
+					}
+				}
+				internal static VisualStyleElement RightHover {
+					get {
+						return new VisualStyleElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_ARROWBTN,
+							(int)ARROWBTNSTATES.ABS_RIGHTHOVER);
+					}
+				}
+				internal static VisualStyleElement UpHover {
+					get {
+						return new VisualStyleElement (
+							SCROLLBAR,
+							(int)SCROLLBARPARTS.SBP_ARROWBTN,
+							(int)ARROWBTNSTATES.ABS_UPHOVER);
+					}
+				}
 			}
 			public static class GripperHorizontal
 			{

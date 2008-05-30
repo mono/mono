@@ -1,3 +1,7 @@
+2008-05-30  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* VisualStyleElement.cs: Added support for the ScrollBar hover style.
+
 2008-05-19  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* VisualStyleRenderer.cs: Added DrawBackgroundExcludingArea.

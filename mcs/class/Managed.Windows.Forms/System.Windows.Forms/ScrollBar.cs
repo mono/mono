@@ -237,6 +237,7 @@ namespace System.Windows.Forms
 			small_change = 1;
 
 			timer.Tick += new EventHandler (OnTimer);
+			MouseEnter += new EventHandler (OnMouseEnter);
 			MouseLeave += new EventHandler (OnMouseLeave);
 			base.KeyDown += new KeyEventHandler (OnKeyDownSB);
 			base.MouseDown += new MouseEventHandler (OnMouseDownSB);
@@ -1486,11 +1487,44 @@ namespace System.Windows.Forms
 			dirty = Rectangle.Empty;
 		}
 
+		void OnMouseEnter (object sender, EventArgs e)
+		{
+			if (ThemeEngine.Current.ScrollBarHasHoverArrowButtonStyle) {
+				Region region_to_invalidate = new Region (first_arrow_area);
+				region_to_invalidate.Union (second_arrow_area);
+				Invalidate (region_to_invalidate);
+			}
+		}
+
 		void OnMouseLeave (object sender, EventArgs e)
 		{
-			FirstButtonEntered = false;
-			SecondButtonEntered = false;
-			ThumbEntered = false;
+			Region region_to_invalidate = new Region ();
+			region_to_invalidate.MakeEmpty ();
+			bool dirty = false;
+			if (ThemeEngine.Current.ScrollBarHasHoverArrowButtonStyle) {
+				region_to_invalidate.Union (first_arrow_area);
+				region_to_invalidate.Union (second_arrow_area);
+				dirty = true;
+			} else
+				if (ThemeEngine.Current.ScrollBarHasHotElementStyles)
+					if (first_button_entered) {
+						region_to_invalidate.Union (first_arrow_area);
+						dirty = true;
+					} else if (second_button_entered) {
+						region_to_invalidate.Union (second_arrow_area);
+						dirty = true;
+					}
+			if (ThemeEngine.Current.ScrollBarHasHotElementStyles)
+				if (thumb_entered) {
+					region_to_invalidate.Union (thumb_pos);
+					dirty = true;
+				}
+			first_button_entered = false;
+			second_button_entered = false;
+			thumb_entered = false;
+			if (dirty)
+				Invalidate (region_to_invalidate);
+			region_to_invalidate.Dispose ();
 		}
 		#endregion //Private Methods
 #if NET_2_0

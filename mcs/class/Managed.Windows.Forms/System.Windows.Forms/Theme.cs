@@ -893,6 +893,8 @@ namespace System.Windows.Forms
 		public abstract bool ScrollBarHasHotElementStyles { get; }
 
 		public abstract bool ScrollBarHasPressedThumbStyle { get; }
+
+		public abstract bool ScrollBarHasHoverArrowButtonStyle { get; }
 		#endregion	// ScrollBar
 
 		#region StatusBar

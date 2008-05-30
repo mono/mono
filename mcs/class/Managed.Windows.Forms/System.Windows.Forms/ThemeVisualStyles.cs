@@ -759,6 +759,8 @@ namespace System.Windows.Forms
 						element = VisualStyleElement.ScrollBar.ArrowButton.UpPressed;
 					else if (bar.FirstButtonEntered)
 						element = VisualStyleElement.ScrollBar.ArrowButton.UpHot;
+					else if (ScrollBarHasHoverArrowButtonStyleVisualStyles && bar.Entered)
+						element = VisualStyleElement.ScrollBar.ArrowButton.UpHover;
 					else
 						element = VisualStyleElement.ScrollBar.ArrowButton.UpNormal;
 					renderer = new VisualStyleRenderer (element);
@@ -771,6 +773,8 @@ namespace System.Windows.Forms
 						element = VisualStyleElement.ScrollBar.ArrowButton.DownPressed;
 					else if (bar.SecondButtonEntered)
 						element = VisualStyleElement.ScrollBar.ArrowButton.DownHot;
+					else if (ScrollBarHasHoverArrowButtonStyleVisualStyles && bar.Entered)
+						element = VisualStyleElement.ScrollBar.ArrowButton.DownHover;
 					else
 						element = VisualStyleElement.ScrollBar.ArrowButton.DownNormal;
 					renderer = new VisualStyleRenderer (element);
@@ -845,6 +849,8 @@ namespace System.Windows.Forms
 						element = VisualStyleElement.ScrollBar.ArrowButton.LeftPressed;
 					else if (bar.FirstButtonEntered)
 						element = VisualStyleElement.ScrollBar.ArrowButton.LeftHot;
+					else if (ScrollBarHasHoverArrowButtonStyleVisualStyles && bar.Entered)
+						element = VisualStyleElement.ScrollBar.ArrowButton.LeftHover;
 					else
 						element = VisualStyleElement.ScrollBar.ArrowButton.LeftNormal;
 					renderer = new VisualStyleRenderer (element);
@@ -857,6 +863,8 @@ namespace System.Windows.Forms
 						element = VisualStyleElement.ScrollBar.ArrowButton.RightPressed;
 					else if (bar.SecondButtonEntered)
 						element = VisualStyleElement.ScrollBar.ArrowButton.RightHot;
+					else if (ScrollBarHasHoverArrowButtonStyleVisualStyles && bar.Entered)
+						element = VisualStyleElement.ScrollBar.ArrowButton.RightHover;
 					else
 						element = VisualStyleElement.ScrollBar.ArrowButton.RightNormal;
 					renderer = new VisualStyleRenderer (element);
@@ -891,6 +899,16 @@ namespace System.Windows.Forms
 		public override bool ScrollBarHasPressedThumbStyle {
 			get {
 				return true;
+			}
+		}
+		const int WindowsVistaMajorVersion = 6;
+		static bool ScrollBarHasHoverArrowButtonStyleVisualStyles =
+			Environment.OSVersion.Version.Major >= WindowsVistaMajorVersion;
+		public override bool ScrollBarHasHoverArrowButtonStyle {
+			get {
+				if (ScrollBarHasHoverArrowButtonStyleVisualStyles)
+					return true;
+				return base.ScrollBarHasHoverArrowButtonStyle;
 			}
 		}
 		#endregion

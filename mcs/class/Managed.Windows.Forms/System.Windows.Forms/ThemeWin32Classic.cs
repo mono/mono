@@ -4516,6 +4516,12 @@ namespace System.Windows.Forms
 				return false;
 			}
 		}
+
+		public override bool ScrollBarHasHoverArrowButtonStyle {
+			get {
+				return false;
+			}
+		}
 		#endregion	// ScrollBar
 
 		#region StatusBar
