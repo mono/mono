@@ -320,10 +320,27 @@ namespace System.Linq.Expressions {
 			}
 		}
 
+		void EmitArithmeticUnary (EmitContext ec)
+		{
+			if (!IsLifted) {
+				operand.Emit (ec);
+				EmitUnaryOperator (ec);
+			} else
+				EmitLiftedUnary (ec);
+		}
+
+		void EmitUserDefinedOperator (EmitContext ec)
+		{
+			ec.Emit (operand);
+			ec.EmitCall (method);
+		}
+
 		internal override void Emit (EmitContext ec)
 		{
-			if (method != null)
-				throw new NotImplementedException ();
+			if (method != null) {
+				EmitUserDefinedOperator (ec);
+				return;
+			}
 
 			switch (this.NodeType) {
 			case ExpressionType.ArrayLength:
@@ -340,11 +357,7 @@ namespace System.Linq.Expressions {
 			case ExpressionType.Negate:
 			case ExpressionType.NegateChecked:
 			case ExpressionType.UnaryPlus:
-				if (!is_lifted) {
-					operand.Emit (ec);
-					EmitUnaryOperator (ec);
-				} else
-					EmitLiftedUnary (ec);
+				EmitArithmeticUnary (ec);
 				return;
 			case ExpressionType.Quote:
 				ec.EmitReadGlobal (operand, typeof (Expression));
