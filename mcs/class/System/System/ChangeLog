@@ -1,3 +1,8 @@
+2008-05-29  Marek Habersack  <mhabersack@novell.com>
+
+	* UriParser.cs: use the lock in CreateDefaults in the way that it
+	needs to acquired only once.
+
 2008-03-10  Stephane Delcroix  <sdelcroix@novell.com>
 
 	* Uri.cs: Fix escaping on utf8 strings. bug 363320.

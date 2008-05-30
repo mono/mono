@@ -213,23 +213,28 @@ namespace System {
 
 		private static void CreateDefaults ()
 		{
-			lock (lock_object) {
-				if (table == null) {
-					table = new Hashtable ();
+			if (table != null)
+				return;
 
-					InternalRegister (new DefaultUriParser (), Uri.UriSchemeFile, -1);
-					InternalRegister (new DefaultUriParser (), Uri.UriSchemeFtp, 21);
-					InternalRegister (new DefaultUriParser (), Uri.UriSchemeGopher, 70);
-					InternalRegister (new DefaultUriParser (), Uri.UriSchemeHttp, 80);
-					InternalRegister (new DefaultUriParser (), Uri.UriSchemeHttps, 443);
-					InternalRegister (new DefaultUriParser (), Uri.UriSchemeMailto, 25);
-					InternalRegister (new DefaultUriParser (), Uri.UriSchemeNetPipe, -1);
-					InternalRegister (new DefaultUriParser (), Uri.UriSchemeNetTcp, -1);
-					InternalRegister (new DefaultUriParser (), Uri.UriSchemeNews, 119);
-					InternalRegister (new DefaultUriParser (), Uri.UriSchemeNntp, 119);
-					// not defined in Uri.UriScheme* but a parser class exists
-					InternalRegister (new DefaultUriParser (), "ldap", 389);
-				}
+			Hashtable newtable = new Hashtable ();
+			InternalRegister (newtable, new DefaultUriParser (), Uri.UriSchemeFile, -1);
+			InternalRegister (newtable, new DefaultUriParser (), Uri.UriSchemeFtp, 21);
+			InternalRegister (newtable, new DefaultUriParser (), Uri.UriSchemeGopher, 70);
+			InternalRegister (newtable, new DefaultUriParser (), Uri.UriSchemeHttp, 80);
+			InternalRegister (newtable, new DefaultUriParser (), Uri.UriSchemeHttps, 443);
+			InternalRegister (newtable, new DefaultUriParser (), Uri.UriSchemeMailto, 25);
+			InternalRegister (newtable, new DefaultUriParser (), Uri.UriSchemeNetPipe, -1);
+			InternalRegister (newtable, new DefaultUriParser (), Uri.UriSchemeNetTcp, -1);
+			InternalRegister (newtable, new DefaultUriParser (), Uri.UriSchemeNews, 119);
+			InternalRegister (newtable, new DefaultUriParser (), Uri.UriSchemeNntp, 119);
+			// not defined in Uri.UriScheme* but a parser class exists
+			InternalRegister (newtable, new DefaultUriParser (), "ldap", 389);
+			
+			lock (lock_object) {
+				if (table == null)
+					table = newtable;
+				else
+					newtable = null;
 			}
 		}
 
@@ -246,7 +251,7 @@ namespace System {
 		}
 
 		// *no* check version
-		private static void InternalRegister (UriParser uriParser, string schemeName, int defaultPort)
+		private static void InternalRegister (Hashtable table, UriParser uriParser, string schemeName, int defaultPort)
 		{
 			uriParser.SchemeName = schemeName;
 			uriParser.DefaultPort = defaultPort;
@@ -282,7 +287,7 @@ namespace System {
 				string msg = Locale.GetText ("Scheme '{0}' is already registred.");
 				throw new InvalidOperationException (msg);
 			}
-			InternalRegister (uriParser, lc, defaultPort);
+			InternalRegister (table, uriParser, lc, defaultPort);
 		}
 
 		internal static UriParser GetParser (string schemeName)
