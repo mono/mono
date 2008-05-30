@@ -150,39 +150,20 @@ namespace System.Windows.Forms
 	}
 	
 #if NET_2_0
-	internal class FlatButtonAppearanceConverter : TypeConverter
+	internal class FlatButtonAppearanceConverter : ExpandableObjectConverter
 	{
 		public override object ConvertTo (ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
 		{
-			if ((value == null) || !(value is FlatButtonAppearance) || (destinationType != typeof (string)))
-				return base.ConvertTo (context, culture, value, destinationType);
-
-			if (culture == null)
-				culture = CultureInfo.CurrentCulture;
-				
-			FlatButtonAppearance fba = (FlatButtonAppearance)value;
-			
-			return string.Format ("{0}{5} {1}{5} {2}{5} {3}{5} {4}", fba.BorderColor.ToArgb (), fba.BorderSize.ToString (), fba.CheckedBackColor.ToArgb (), fba.MouseDownBackColor.ToArgb (), fba.MouseOverBackColor.ToArgb (), culture.TextInfo.ListSeparator);
+			if (destinationType == typeof (string))
+			    return String.Empty;
+			return base.ConvertTo (context, culture, value, destinationType);
 		}
 
-		public override object ConvertFrom (ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
+		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
 		{
-			if ((value == null) || !(value is String))
-				return base.ConvertFrom (context, culture, value);
-
-			if (culture == null)
-				culture = CultureInfo.CurrentCulture;
-
-			string[] parts = ((string)value).Split (culture.TextInfo.ListSeparator.ToCharArray ());
-
-			FlatButtonAppearance fba = new FlatButtonAppearance (null);
-			fba.BorderColor = Color.FromArgb (int.Parse (parts[0].Trim ()));
-			fba.BorderSize = int.Parse (parts[1].Trim ());
-			fba.CheckedBackColor = Color.FromArgb (int.Parse (parts[2].Trim ()));
-			fba.MouseDownBackColor = Color.FromArgb (int.Parse (parts[3].Trim ()));
-			fba.MouseOverBackColor = Color.FromArgb (int.Parse (parts[4].Trim ()));
-			
-			return fba;
+			if (destinationType == typeof (string))
+				return true;
+			return base.CanConvertTo (context, destinationType);
 		}
 	}
 #endif
