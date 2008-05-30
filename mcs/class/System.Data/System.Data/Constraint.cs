@@ -52,7 +52,14 @@ namespace System.Data {
 	[TypeConverterAttribute (typeof (ConstraintConverter))]
 	public abstract class Constraint 
 	{
-		internal event DelegateConstraintNameChange BeforeConstraintNameChange;
+		static readonly object beforeConstraintNameChange = new object ();
+
+		EventHandlerList events = new EventHandlerList ();
+		
+		internal event DelegateConstraintNameChange BeforeConstraintNameChange {
+			add { events.AddHandler (beforeConstraintNameChange, value); }
+			remove { events.RemoveHandler (beforeConstraintNameChange, value); }
+		}
 
 		//if constraintName is not set then a name is 
 		//created when it is added to
@@ -123,10 +130,9 @@ namespace System.Data {
 		
 		private void _onConstraintNameChange (string newName)
 		{
-			if (null != BeforeConstraintNameChange)
-			{
-				BeforeConstraintNameChange (this, newName);
-			}
+			DelegateConstraintNameChange eh = events [beforeConstraintNameChange] as DelegateConstraintNameChange;
+			if (eh != null)
+				eh (this, newName);
 		}
 
 		//call once before adding a constraint to a collection
