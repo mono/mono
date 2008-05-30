@@ -1,5 +1,8 @@
 2008-05-30  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (mono_arch_emit_prolog): Increase bb->max_offset by the
+	maximum epilog size for out of line bblocks if tracing is enabled.
+
 	* iltests.il.in: Merge tests/long-shift.regalloc.il into this file.
 
 2008-05-28  Rodrigo Kumpera  <rkumpera@novell.com>
