@@ -150,6 +150,7 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (new Slot (42), negate (new Slot (-42)));
 		}
 
+		/*
 		struct SlotFromNullable {
 			public int Value;
 
@@ -206,6 +207,6 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (new SlotFromNullableToNullable (-2), negate (new SlotFromNullableToNullable (2)));
 			Assert.AreEqual (new SlotFromNullableToNullable (42), negate (new SlotFromNullableToNullable (-42)));
 			Assert.AreEqual (null, negate (null));
-		}
+		}*/
 	}
 }
