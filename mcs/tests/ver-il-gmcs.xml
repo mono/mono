@@ -3720,7 +3720,7 @@
         <size>7</size>
       </method>
       <method name="Void Main(System.String[])">
-        <size>981</size>
+        <size>987</size>
       </method>
     </type>
   </test>
@@ -3730,7 +3730,7 @@
         <size>7</size>
       </method>
       <method name="Void Main(System.String[])">
-        <size>1420</size>
+        <size>1424</size>
       </method>
     </type>
   </test>
@@ -7582,7 +7582,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Beer(Nullable`1)">
-        <size>65</size>
+        <size>54</size>
       </method>
       <method name="Int64 PubToLong(IrishPub)">
         <size>12</size>
@@ -10622,6 +10622,28 @@
       </method>
       <method name="Void Main()">
         <size>24</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-397.cs">
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Foo NegateFoo(Foo)">
+        <size>12</size>
+      </method>
+      <method name="Foo NegateFooNullable(Nullable`1)">
+        <size>7</size>
+      </method>
+      <method name="Nullable`1 NegateBarNullable(Nullable`1)">
+        <size>7</size>
+      </method>
+      <method name="Nullable`1 NegateBar(Bar)">
+        <size>12</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>147</size>
       </method>
     </type>
   </test>
