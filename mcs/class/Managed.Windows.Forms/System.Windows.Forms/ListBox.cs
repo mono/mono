@@ -2144,10 +2144,20 @@ namespace System.Windows.Forms
 			top_index = /*row_count + */ vscrollbar.Value;
 			last_visible_index = LastVisibleItem ();
 
-			int diff = top_item - top_index;
+			int delta = (top_item - top_index) * ItemHeight;
+			if (DrawMode == DrawMode.OwnerDrawVariable) {
+				delta = 0;
+
+				if (top_index < top_item)
+					for (int i = top_index; i < top_item; i++)
+						delta += GetItemHeight (i);
+				else 
+					for (int i = top_item; i < top_index; i++)
+						delta -= GetItemHeight (i);
+			}
 
 			if (IsHandleCreated)
-				XplatUI.ScrollWindow (Handle, items_area, 0, ItemHeight * diff, false);
+				XplatUI.ScrollWindow (Handle, items_area, 0, delta, false);
 		}
 
 		#endregion Private Methods

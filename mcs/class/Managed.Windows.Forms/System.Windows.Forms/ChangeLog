@@ -1,5 +1,11 @@
 2008-05-30  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ListBox.cs: Compute the precise amount to vertically scroll when
+	using DrawMode.OwnerDrawVariable.
+	Patch by jkeymer (j.keymer@gmx.net).
+
+2008-05-30  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ComboBox.cs: Use ListBox-like scrollbar values In ComboListBox 
 	to avoid setting an invalid value for the verticall scrollbar 
 	when navigating items. And, duh, also remove my silly debug messages
