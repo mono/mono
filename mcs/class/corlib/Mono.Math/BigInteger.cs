@@ -1054,7 +1054,7 @@ namespace Mono.Math {
 				if (b > mod)
 					b %= mod;
 
-				BigInteger ret = new BigInteger (a * b);
+				BigInteger ret = a * b;
 				BarrettReduction (ret);
 
 				return ret;

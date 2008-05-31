@@ -1,3 +1,8 @@
+2007-05-31  Alan McGovern  <alan.mcgovern@gmail.com>
+
+	* BigInteger.cs: Don't instantiate a new BigInteger after
+	multiplying - it's not needed.  
+
 2007-09-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BigInteger.cs: Updated to match Mono.Security sources.
