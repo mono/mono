@@ -102,7 +102,8 @@ namespace System.Security {
 		// NOTE: This method doesn't show in the class library status page because
 		// it cannot be "found" with the StrongNameIdentityPermission for ECMA key.
 		// But it's there!
-		[MonoTODO ("works for fulltrust (empty), documentation doesn't really make sense, type wise")]
+		// FIXME works for fulltrust (empty), documentation doesn't really make sense, type wise
+		[MonoTODO ("CAS support is experimental (and unsupported). This method only works in FullTrust.")]
 		[StrongNameIdentityPermission (SecurityAction.LinkDemand, PublicKey = "0x00000000000000000400000000000000")]
 		public static void GetZoneAndOrigin (out ArrayList zone, out ArrayList origin) 
 		{

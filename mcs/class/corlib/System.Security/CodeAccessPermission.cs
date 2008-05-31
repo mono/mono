@@ -46,6 +46,7 @@ namespace System.Security {
 #if NET_2_0
 	[ComVisible (true)]
 #endif
+	[MonoTODO ("CAS support is experimental (and unsupported).")]
 	public abstract class CodeAccessPermission : IPermission, ISecurityEncodable, IStackWalk {
 
 
@@ -53,7 +54,7 @@ namespace System.Security {
 		{
 		}
 
-		[MonoTODO ("Imperative mode isn't supported")]
+		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
 		public void Assert ()
 		{
 			new PermissionSet (this).Assert ();
@@ -115,7 +116,7 @@ namespace System.Security {
 			new PermissionSet (this).CasOnlyDemand (3);
 		}
 
-		[MonoTODO ("Imperative mode isn't supported")]
+		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
 		public void Deny ()
 		{
 			new PermissionSet (this).Deny ();
@@ -163,13 +164,13 @@ namespace System.Security {
 			return null;
 		}
 
-		[MonoTODO ("Imperative mode isn't supported")]
+		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
 		public void PermitOnly ()
 		{
 			new PermissionSet (this).PermitOnly ();
 		}
 
-		[MonoTODO ("Imperative mode isn't supported")]
+		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
 		public static void RevertAll ()
 		{
 			if (!SecurityManager.SecurityEnabled)
@@ -198,7 +199,7 @@ namespace System.Security {
 			}
 		}
 
-		[MonoTODO ("Imperative mode isn't supported")]
+		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
 		public static void RevertAssert ()
 		{
 			if (!SecurityManager.SecurityEnabled)
@@ -213,7 +214,7 @@ namespace System.Security {
 			}
 		}
 
-		[MonoTODO ("Imperative mode isn't supported")]
+		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
 		public static void RevertDeny ()
 		{
 			if (!SecurityManager.SecurityEnabled)
@@ -228,7 +229,7 @@ namespace System.Security {
 			}
 		}
 
-		[MonoTODO ("Imperative mode isn't supported")]
+		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
 		public static void RevertPermitOnly ()
 		{
 			if (!SecurityManager.SecurityEnabled)

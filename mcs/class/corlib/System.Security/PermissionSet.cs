@@ -49,6 +49,7 @@ namespace System.Security {
 #if NET_2_0
 	[ComVisible (true)]
 #endif
+	[MonoTODO ("CAS support is experimental (and unsupported).")]
 	public class PermissionSet: ISecurityEncodable, ICollection, IEnumerable, IStackWalk, IDeserializationCallback {
 
 		private const string tagName = "PermissionSet";
@@ -153,7 +154,7 @@ namespace System.Security {
 			return perm;
 		}
 
-		[MonoTODO ("Imperative mode isn't supported")]
+		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
 		[SecurityPermission (SecurityAction.Demand, Assertion = true)]
 #if NET_2_0
 		public void Assert ()
@@ -288,7 +289,7 @@ namespace System.Security {
 			}
 		}
 
-		[MonoTODO ("Imperative mode isn't supported")]
+		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
 #if NET_2_0
 		public void Deny ()
 #else
@@ -398,7 +399,7 @@ namespace System.Security {
 			return true;
 		}
 
-		[MonoTODO ("Imperative mode isn't supported")]
+		[MonoTODO ("CAS support is experimental (and unsupported). Imperative mode is not implemented.")]
 #if NET_2_0
 		public void PermitOnly ()
 #else
@@ -427,7 +428,7 @@ namespace System.Security {
 			return false;
 		}
 
-		[MonoTODO ("little documentation in Fx 2.0 beta 1")]
+		// FIXME little documentation in Fx 2.0 beta 1
 		public static byte[] ConvertPermissionSet (string inFormat, byte[] inData, string outFormat) 
 		{
 			if (inFormat == null)
@@ -772,7 +773,7 @@ namespace System.Security {
 			return (list.Count == 0) ? (int) state : base.GetHashCode ();
 		}
 
-		[MonoTODO ("(2.0) what's it doing here? There's probably a reason this was added here.")]
+		// FIXME what's it doing here? There's probably a reason this was added here.
 		static public void RevertAssert ()
 		{
 			CodeAccessPermission.RevertAssert ();
