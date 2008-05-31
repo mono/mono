@@ -74,7 +74,7 @@ namespace System.Security.Cryptography {
 			_st.Clear ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Reset does nothing since CanReuseTransform return false.")]
 		public void Reset ()
 		{
 		}

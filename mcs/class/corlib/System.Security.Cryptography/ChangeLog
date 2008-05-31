@@ -1,3 +1,11 @@
+2008-05-30  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* RSACryptoServiceProvider.cs: Remove MonoTODO that were fixed a
+	while ago. Provide better MonoTODO messages for the next version 
+	of MoMA.
+	* RijndaelManagedTransform.cs: Provide better MonoTODO messages 
+	for the next version of MoMA.
+
 2008-05-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SHA384Managed.cs: Fix compiler warning and use the new local

@@ -377,13 +377,13 @@ namespace System.Security.Cryptography {
 #if NET_2_0
 		// ICspAsymmetricAlgorithm
 
-		[MonoTODO ("call into KeyPairPersistence to get details")]
+		[MonoTODO ("Always return null")]
+		// FIXME: call into KeyPairPersistence to get details
 		[ComVisible (false)]
 		public CspKeyContainerInfo CspKeyContainerInfo {
 			get { return null; }
 		}
 
-		[MonoTODO ("call into CryptoConvert")]
 		[ComVisible (false)]
 		public byte[] ExportCspBlob (bool includePrivateParameters)
 		{
@@ -400,7 +400,6 @@ namespace System.Security.Cryptography {
 			return blob;
 		}
 
-		[MonoTODO ("call into CryptoConvert")]
 		[ComVisible (false)]
 		public void ImportCspBlob (byte[] rawData)
 		{
