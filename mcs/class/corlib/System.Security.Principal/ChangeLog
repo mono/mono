@@ -1,3 +1,7 @@
+2008-05-30  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* IdentityReferenceCollection.cs: Remove MonoTODO and throw NIE.
+
 2007-07-28  Miguel de Icaza  <miguel@novell.com>
 
 	* IdentityReference.cs, SecurityIdentifier.cs, NTAccount.cs: Do

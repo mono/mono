@@ -88,21 +88,19 @@ namespace System.Security.Principal {
 			return false;
 		}
 
-		[MonoTODO]
 		public void CopyTo (IdentityReference[] array, int offset)
 		{
+			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public IEnumerator<IdentityReference> GetEnumerator ()
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public bool Remove (IdentityReference identity)
@@ -116,16 +114,14 @@ namespace System.Security.Principal {
 			return false;
 		}
 
-		[MonoTODO]
 		public IdentityReferenceCollection Translate (Type targetType)
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public IdentityReferenceCollection Translate (Type targetType, bool forceSuccess)
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 	}
 }
