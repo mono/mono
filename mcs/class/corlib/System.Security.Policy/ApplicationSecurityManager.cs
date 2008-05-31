@@ -43,7 +43,7 @@ namespace System.Security.Policy {
 
 		// properties
 
-		[MonoTODO ("(2.0) - replace MonoTrustManager with one inside SWF")]
+		// FIXME replace MonoTrustManager with one inside SWF"
 		public static IApplicationTrustManager ApplicationTrustManager {
 			[SecurityPermission (SecurityAction.Demand, ControlPolicy = true)]
 			get {
@@ -65,7 +65,7 @@ namespace System.Security.Policy {
 
 		// methods
 
-		[MonoTODO ("(2.0) - probably incomplete, missing manifest support")]
+		[MonoTODO ("Missing application manifest support")]
 		[SecurityPermission (SecurityAction.Demand, ControlPolicy = true, ControlEvidence = true)]
 		public static bool DetermineApplicationTrust (ActivationContext activationContext, TrustManagerContext context)
 		{
