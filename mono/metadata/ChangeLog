@@ -1,5 +1,10 @@
 2008-05-30 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* icall.c: Reapply the memory leak fixes as they no
+	longer make mono crash.
+
+2008-05-30 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* reflection.c (mono_type_get_object): Don't store the suplied
 	MonoType with type_hash. A caller which pass a type that
 	was mono_metadata_type_dup'ed cannot free it reliably, as type_hash
