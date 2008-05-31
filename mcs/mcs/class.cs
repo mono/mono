@@ -8028,11 +8028,9 @@ namespace Mono.CSharp {
 					}
 				}
 				
-				if (first_arg_type != declaring_type){
-					Report.Error (
-						562, Location,
-						"The parameter of a unary operator must be the " +
-						"containing type");
+				if (!TypeManager.IsEqual (first_arg_type_unwrap, declaring_type)){
+					Report.Error (562, Location,
+						"The parameter type of a unary operator must be the containing type");
 					return false;
 				}
 				

@@ -1,5 +1,11 @@
 2008-05-31  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #395845
+	* class.cs, nullable.cs: User unary operator is allowed to have nullable and
+	non-nullable parameter type.
+	
+2008-05-31  Marek Safar  <marek.safar@gmail.com>
+
 	* class.cs: Handle contructor initializer as a statement in top-level block.
 
 2008-05-30  Marek Safar  <marek.safar@gmail.com>

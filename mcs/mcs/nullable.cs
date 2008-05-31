@@ -265,6 +265,13 @@ namespace Mono.CSharp.Nullable
 
 		public static Expression Create (Expression expr, Type type)
 		{
+			//
+			// Avoid unwraping and wraping of the same type
+			//
+			Unwrap unwrap = expr as Unwrap;
+			if (unwrap != null && TypeManager.IsEqual (expr.Type, TypeManager.GetTypeArguments (type) [0]))
+				return unwrap.Original;
+		
 			return new Wrap (expr, type);
 		}
 		
@@ -540,8 +547,15 @@ namespace Mono.CSharp.Nullable
 			if (expr == null)
 				return null;
 
-			user_operator = LiftExpression (ec, expr);
-			return user_operator;
+			//
+			// When a user operator is of non-nullable type
+			//
+			if (Expr is Unwrap) {
+				user_operator = LiftExpression (ec, expr);
+				return user_operator;
+			}
+
+			return expr;
 		}
 	}
 
