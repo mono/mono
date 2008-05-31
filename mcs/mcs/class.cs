@@ -4528,7 +4528,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public abstract class ConstructorInitializer : Expression
+	public abstract class ConstructorInitializer : ExpressionStatement
 	{
 		ArrayList argument_list;
 		MethodGroupExpr base_constructor_group;
@@ -4621,6 +4621,11 @@ namespace Mono.CSharp {
 				base_constructor_group.InstanceExpression = ec.GetThis (loc);
 			
 			base_constructor_group.EmitCall (ec, argument_list);
+		}
+
+		public override void EmitStatement (EmitContext ec)
+		{
+			Emit (ec);
 		}
 	}
 
@@ -4872,21 +4877,21 @@ namespace Mono.CSharp {
 
 				if (!block.ResolveMeta (ec, ParameterInfo))
 					block = null;
-			}
 
-			if ((ModFlags & Modifiers.STATIC) == 0){
-				if (Parent.PartialContainer.Kind == Kind.Class && Initializer == null)
-					Initializer = new GeneratedBaseInitializer (Location);
+				if (block != null && (ModFlags & Modifiers.STATIC) == 0){
+					if (Parent.PartialContainer.Kind == Kind.Class && Initializer == null)
+						Initializer = new GeneratedBaseInitializer (Location);
 
-				//
-				// Spec mandates that Initializers will not have
-				// `this' access
-				//
-				ec.IsStatic = true;
-				if ((Initializer != null) &&
-				    !Initializer.Resolve (ConstructorBuilder, ec))
-					return;
-				ec.IsStatic = false;
+					//
+					// Spec mandates that Initializers will not have `this' access
+					//
+					if (Initializer != null) {
+						ec.IsStatic = true;
+						Initializer.Resolve (ConstructorBuilder, ec);
+						ec.IsStatic = false;
+						block.AddScopeStatement (new StatementExpression (Initializer));
+					}
+				}
 			}
 
 			Parameters.ApplyAttributes (ConstructorBuilder);
@@ -4915,9 +4920,6 @@ namespace Mono.CSharp {
 					init.EmitStatement (ec);
 				}
 
-				if (Initializer != null)
-					Initializer.Emit (ec);
-			
 				ec.EmitResolvedTopBlock (block, unreachable);
 			}
 
