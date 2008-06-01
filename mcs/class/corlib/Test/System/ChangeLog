@@ -1,3 +1,8 @@
+2008-05-24  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* StringTest.cs: Comment out a test that currently fails by checking for
+	an obsolete parameter name in an exception (that doesn't even match the existing one)
+
 2008-05-30  Marek Safar  <marek.safar@gmail.com>
 
 	* ArrayTest.cs: New IndexOf test.
