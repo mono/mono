@@ -1,3 +1,9 @@
+2008-06-02  Ankit Jain  <jankit@novell.com>
+
+	Part of fix for bug #367114.
+	* ILParser.jay (seh_clause): Allow exception to be of any type and not
+	just class.
+
 2008-06-01  Ankit Jain  <jankit@novell.com>
 
 	* ILParser.jay: Track api changes.

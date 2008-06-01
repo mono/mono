@@ -1,3 +1,9 @@
+2008-06-02  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #367114.
+	* CatchBlock.cs: Allow exception to be of any type (BaseTypeRef) and not
+	just a class (BaseClassRef).
+
 2008-06-01  Ankit Jain  <jankit@novell.com>
 
 	Fix bug #364580.

@@ -2298,12 +2298,12 @@ seh_clauses		: seh_clause
                           }
 			;
 
-seh_clause		: K_CATCH generic_class_ref handler_block
+seh_clause		: K_CATCH type handler_block
                           {
 				if ($2.GetType () == typeof (PrimitiveTypeRef))
 					Report.Error ("Exception not be of a primitive type.");
 					
-                                BaseClassRef type = (BaseClassRef) $2;
+                                BaseTypeRef type = (BaseTypeRef) $2;
                                 CatchBlock cb = new CatchBlock (type);
                                 cb.SetHandlerBlock ((HandlerBlock) $3);
                                 $$ = cb;
