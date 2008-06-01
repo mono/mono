@@ -3454,8 +3454,7 @@ public class StringTest : TestCase
 		AssertEquals ("#3", "origina", s.Substring (0, s.Length - 1));
 		AssertEquals ("#4", s, s.Substring (0, s.Length));
 #if NET_2_0
-		// FIXME: enabling the fix for this causes regressions in System.Xml
-		//AssertSame ("#5", s, s.Substring (0, s.Length));
+		AssertSame ("#5", s, s.Substring (0, s.Length));
 #else
 		Assert ("#5", !object.ReferenceEquals (s, s.Substring (0, s.Length)));
 #endif

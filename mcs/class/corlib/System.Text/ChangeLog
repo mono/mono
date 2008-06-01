@@ -1,3 +1,9 @@
+2008-06-01  Juraj Skripsky  <js@hotfeet.ch>
+
+	* StringBuilder.cs (ToString): Use String.SubstringUnchecked instead
+	of String.Substring, as the former is guaranteed to create a new
+	string object. Fixes bug #395904.
+
 2008-05-15  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* StringBuilder.cs: Resubmit uncritical parts of String cleanup patch

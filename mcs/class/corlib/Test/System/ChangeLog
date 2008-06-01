@@ -1,3 +1,8 @@
+2008-06-01  Juraj Skripsky  <js@hotfeet.ch>
+
+	* StringTest.cs (Substring2): Blocking bug #395904 has been fixed,
+	re-enable test. 
+
 2008-05-24  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* StringTest.cs: Comment out a test that currently fails by checking for

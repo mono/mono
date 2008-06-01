@@ -203,7 +203,9 @@ namespace System.Text {
 			// If we only have a half-full buffer we return a new string.
 			if (_length < (_str.Length >> 1)) 
 			{
-				_cached_str = _str.Substring(0, _length);
+				// use String.SubstringUnchecked instead of String.Substring
+				// as the former is guaranteed to create a new string object
+				_cached_str = _str.SubstringUnchecked (0, _length);
 				return _cached_str;
 			}
 
@@ -219,7 +221,12 @@ namespace System.Text {
 			if (startIndex < 0 || length < 0 || startIndex > _length - length)
 				throw new ArgumentOutOfRangeException();
 
-			return _str.Substring (startIndex, length);
+			// use String.SubstringUnchecked instead of String.Substring
+			// as the former is guaranteed to create a new string object
+			if (startIndex == 0 && length == _length)
+				return ToString ();
+			else
+				return _str.SubstringUnchecked (startIndex, length);
 		}
 
 		public int EnsureCapacity (int capacity) 

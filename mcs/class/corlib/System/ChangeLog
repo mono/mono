@@ -1,3 +1,8 @@
+2008-06-01  Juraj Skripsky  <js@hotfeet.ch>
+
+	* String.cs (Substring): Blocking bug #395904 has been fixed,
+	re-enable optimization.
+
 2008-06-01  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* String.cs: Replace Split IndexOf
