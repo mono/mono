@@ -773,7 +773,7 @@ namespace System
 			if (this.length == 0)
 				return -1;
 
-			return InternalIndexOfAny (anyOf, 0, this.length);
+			return IndexOfAnyUnchecked (anyOf, 0, this.length);
 		}
 
 		public int IndexOfAny (char [] anyOf, int startIndex)
@@ -783,7 +783,7 @@ namespace System
 			if (startIndex < 0 || startIndex > this.length)
 				throw new ArgumentOutOfRangeException ();
 
-			return InternalIndexOfAny (anyOf, startIndex, this.length - startIndex);
+			return IndexOfAnyUnchecked (anyOf, startIndex, this.length - startIndex);
 		}
 
 		public int IndexOfAny (char [] anyOf, int startIndex, int count)
@@ -792,20 +792,19 @@ namespace System
 				throw new ArgumentNullException ();
 			if (startIndex < 0 || startIndex > this.length)
 				throw new ArgumentOutOfRangeException ();
-			// re-ordered to avoid possible integer overflow
 			if (count < 0 || startIndex > this.length - count)
 				throw new ArgumentOutOfRangeException ("count", "Count cannot be negative, and startIndex + count must be less than length of the string.");
 
-			return InternalIndexOfAny (anyOf, startIndex, count);
+			return IndexOfAnyUnchecked (anyOf, startIndex, count);
 		}
 
-		unsafe int InternalIndexOfAny (char[] anyOf, int startIndex, int count)
+		private unsafe int IndexOfAnyUnchecked (char[] anyOf, int startIndex, int count)
 		{
 			if (anyOf.Length == 0)
 				return -1;
 
 			if (anyOf.Length == 1)
-				return IndexOfImpl(anyOf[0], startIndex, count);
+				return IndexOfUnchecked (anyOf[0], startIndex, count);
 
 			fixed (char* any = anyOf) {
 				int highest = *any;
@@ -851,19 +850,19 @@ namespace System
 
 
 #if NET_2_0
-		public int IndexOf (string value, StringComparison comparison)
+		public int IndexOf (string value, StringComparison comparisonType)
 		{
-			return IndexOf (value, 0, this.Length, comparison);
+			return IndexOf (value, 0, this.Length, comparisonType);
 		}
 
-		public int IndexOf (string value, int startIndex, StringComparison comparison)
+		public int IndexOf (string value, int startIndex, StringComparison comparisonType)
 		{
-			return IndexOf (value, startIndex, this.Length - startIndex, comparison);
+			return IndexOf (value, startIndex, this.Length - startIndex, comparisonType);
 		}
 
-		public int IndexOf (string value, int startIndex, int count, StringComparison comparison)
+		public int IndexOf (string value, int startIndex, int count, StringComparison comparisonType)
 		{
-			switch (comparison) {
+			switch (comparisonType) {
 			case StringComparison.CurrentCulture:
 				return CultureInfo.CurrentCulture.CompareInfo.IndexOf (this, value, startIndex, count, CompareOptions.None);
 			case StringComparison.CurrentCultureIgnoreCase:
@@ -873,28 +872,100 @@ namespace System
 			case StringComparison.InvariantCultureIgnoreCase:
 				return CultureInfo.InvariantCulture.CompareInfo.IndexOf (this, value, startIndex, count, CompareOptions.IgnoreCase);
 			case StringComparison.Ordinal:
-				return CultureInfo.InvariantCulture.CompareInfo.IndexOf (this, value, startIndex, count, CompareOptions.Ordinal);
+				return IndexOfOrdinal (value, startIndex, count, CompareOptions.Ordinal);
 			case StringComparison.OrdinalIgnoreCase:
-				return CultureInfo.InvariantCulture.CompareInfo.IndexOf (this, value, startIndex, count, CompareOptions.OrdinalIgnoreCase);
+				return IndexOfOrdinal (value, startIndex, count, CompareOptions.OrdinalIgnoreCase);
+			default:
+				string msg = Locale.GetText ("Invalid value '{0}' for StringComparison", comparisonType);
+				throw new ArgumentException (msg, "comparisonType");
+			}
+		}
+#endif
+
+		internal int IndexOfOrdinal (string value, int startIndex, int count, CompareOptions options)
+		{
+			if (value == null)
+				throw new ArgumentNullException ("value");
+			if (startIndex < 0)
+				throw new ArgumentOutOfRangeException ("startIndex");
+			if (count < 0 || (this.length - startIndex) < count)
+				throw new ArgumentOutOfRangeException ("count");
+
+			if (options == CompareOptions.Ordinal)
+				return IndexOfOrdinalUnchecked (value, startIndex, count);
+			return IndexOfOrdinalIgnoreCaseUnchecked (value, startIndex, count);
+		}
+
+		internal unsafe int IndexOfOrdinalUnchecked (string value, int startIndex, int count)
+		{
+			int valueLen = value.Length;
+			if (count < valueLen)
+				return -1;
+
+			if (valueLen <= 1) {
+				if (valueLen == 1)
+					return IndexOfUnchecked (value[0], startIndex, count);
+				return 0;
 			}
 
-			string msg = Locale.GetText ("Invalid value '{0}' for StringComparison", comparison);
-			throw new ArgumentException  (msg, "comparisonType");
+			fixed (char* thisptr = this, valueptr = value) {
+				char* ap = thisptr + startIndex;
+				char* thisEnd = ap + count - valueLen + 1;
+				while (ap != thisEnd) {
+					if (*ap == *valueptr) {
+						for (int i = 1; i < valueLen; i++) {
+							if (ap[i] != valueptr[i])
+								goto NextVal;
+						}
+						return (int)(ap - thisptr);
+					}
+					NextVal:
+					ap++;
+				}
+			}
+			return -1;
 		}
 
-		public int LastIndexOf (string value, StringComparison comparison)
+		internal unsafe int IndexOfOrdinalIgnoreCaseUnchecked (string value, int startIndex, int count)
 		{
-			return LastIndexOf (value, value.Length - 1, value.Length, comparison);
+			int valueLen = value.Length;
+			if (count < valueLen)
+				return -1;
+
+			if (valueLen == 0)
+				return 0;
+
+			fixed (char* thisptr = this, valueptr = value) {
+				char* ap = thisptr + startIndex;
+				char* thisEnd = ap + count - valueLen + 1;
+				while (ap != thisEnd) {
+					for (int i = 0; i < valueLen; i++) {
+						if (Char.ToUpperInvariant (ap[i]) != Char.ToUpperInvariant (valueptr[i]))
+							goto NextVal;
+					}
+					return (int)(ap - thisptr);
+					NextVal:
+					ap++;
+				}
+			}
+			return -1;
 		}
 
-		public int LastIndexOf (string value, int startIndex, StringComparison comparison)
+#if NET_2_0
+
+		public int LastIndexOf (string value, StringComparison comparisonType)
 		{
-			return LastIndexOf (value, startIndex, startIndex + 1, comparison);
+			return LastIndexOf (value, this.Length - 1, this.Length, comparisonType);
 		}
 
-		public int LastIndexOf (string value, int startIndex, int count, StringComparison comparison)
+		public int LastIndexOf (string value, int startIndex, StringComparison comparisonType)
 		{
-			switch (comparison) {
+			return LastIndexOf (value, startIndex, startIndex + 1, comparisonType);
+		}
+
+		public int LastIndexOf (string value, int startIndex, int count, StringComparison comparisonType)
+		{
+			switch (comparisonType) {
 			case StringComparison.CurrentCulture:
 				return CultureInfo.CurrentCulture.CompareInfo.LastIndexOf (this, value, startIndex, count, CompareOptions.None);
 			case StringComparison.CurrentCultureIgnoreCase:
@@ -904,57 +975,123 @@ namespace System
 			case StringComparison.InvariantCultureIgnoreCase:
 				return CultureInfo.InvariantCulture.CompareInfo.LastIndexOf (this, value, startIndex, count, CompareOptions.IgnoreCase);
 			case StringComparison.Ordinal:
-				return CultureInfo.InvariantCulture.CompareInfo.LastIndexOf (this, value, startIndex, count, CompareOptions.Ordinal);
+				return LastIndexOfOrdinal (value, startIndex, count, CompareOptions.Ordinal);
 			case StringComparison.OrdinalIgnoreCase:
-				return CultureInfo.InvariantCulture.CompareInfo.LastIndexOf (this, value, startIndex, count, CompareOptions.OrdinalIgnoreCase);
+				return LastIndexOfOrdinal (value, startIndex, count, CompareOptions.OrdinalIgnoreCase);
+			default:
+				string msg = Locale.GetText ("Invalid value '{0}' for StringComparison", comparisonType);
+				throw new ArgumentException (msg, "comparisonType");
 			}
-
-			string msg = Locale.GetText ("Invalid value '{0}' for StringComparison", comparison);
-			throw new ArgumentException  (msg, "comparison");
 		}
 #endif
 
+		internal int LastIndexOfOrdinal (string value, int startIndex, int count, CompareOptions options)
+		{
+			if (value == null)
+				throw new ArgumentNullException ("value");
+			if (startIndex < 0 || startIndex > length)
+				throw new ArgumentOutOfRangeException ("startIndex");
+			if (count < 0 || (startIndex < count - 1))
+				throw new ArgumentOutOfRangeException ("count");
+
+			if (options == CompareOptions.Ordinal)
+				return LastIndexOfOrdinalUnchecked (value, startIndex, count);
+			return LastIndexOfOrdinalIgnoreCaseUnchecked (value, startIndex, count);
+		}
+
+		internal unsafe int LastIndexOfOrdinalUnchecked (string value, int startIndex, int count)
+		{
+			int valueLen = value.Length;
+			if (count < valueLen)
+				return -1;
+
+			if (valueLen <= 1) {
+				if (valueLen == 1)
+					return LastIndexOfUnchecked (value[0], startIndex, count);
+				return 0;
+			}
+
+			fixed (char* thisptr = this, valueptr = value) {
+				char* ap = thisptr + startIndex - valueLen + 1;
+				char* thisEnd = ap - count + valueLen - 1;
+				while (ap != thisEnd) {
+					if (*ap == *valueptr) {
+						for (int i = 1; i < valueLen; i++) {
+							if (ap[i] != valueptr[i])
+								goto NextVal;
+						}
+						return (int)(ap - thisptr);
+					}
+					NextVal:
+					ap--;
+				}
+			}
+			return -1;
+		}
+
+		internal unsafe int LastIndexOfOrdinalIgnoreCaseUnchecked (string value, int startIndex, int count)
+		{
+			int valueLen = value.Length;
+			if (count < valueLen)
+				return -1;
+
+			if (valueLen == 0)
+				return 0;
+
+			fixed (char* thisptr = this, valueptr = value) {
+				char* ap = thisptr + startIndex - valueLen + 1;
+				char* thisEnd = ap - count + valueLen - 1;
+				while (ap != thisEnd) {
+					for (int i = 0; i < valueLen; i++) {
+						if (Char.ToUpperInvariant (ap[i]) != Char.ToUpperInvariant (valueptr[i]))
+							goto NextVal;
+					}
+					return (int)(ap - thisptr);
+					NextVal:
+					ap--;
+				}
+			}
+			return -1;
+		}
+
+		// Following methods are culture-insensitive
 		public int IndexOf (char value)
 		{
 			if (this.length == 0)
 				return -1;
 
-			return IndexOfImpl (value, 0, this.length);
-		}
-
-		public int IndexOf (String value)
-		{
-			return IndexOf (value, 0, this.length);
+			return IndexOfUnchecked (value, 0, this.length);
 		}
 
 		public int IndexOf (char value, int startIndex)
 		{
-			return IndexOf (value, startIndex, this.length - startIndex);
+			if (startIndex < 0)
+				throw new ArgumentOutOfRangeException ("startIndex", "< 0");
+			if (startIndex > this.length)
+				throw new ArgumentOutOfRangeException ("startIndex", "startIndex > this.length");
+
+			if ((startIndex == 0 && this.length == 0) || (startIndex == this.length))
+				return -1;
+
+			return IndexOfUnchecked (value, startIndex, this.length - startIndex);
 		}
 
-		public int IndexOf (String value, int startIndex)
-		{
-			return IndexOf (value, startIndex, this.length - startIndex);
-		}
-
-		/* This method is culture-insensitive */
 		public int IndexOf (char value, int startIndex, int count)
 		{
 			if (startIndex < 0 || startIndex > this.length)
 				throw new ArgumentOutOfRangeException ("startIndex", "Cannot be negative and must be< 0");
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count", "< 0");
-			// re-ordered to avoid possible integer overflow
 			if (startIndex > this.length - count)
 				throw new ArgumentOutOfRangeException ("count", "startIndex + count > this.length");
 
 			if ((startIndex == 0 && this.length == 0) || (startIndex == this.length) || (count == 0))
 				return -1;
 
-			return IndexOfImpl (value, startIndex, count);
+			return IndexOfUnchecked (value, startIndex, count);
 		}
 
-		unsafe int IndexOfImpl (char value, int startIndex, int count)
+		internal unsafe int IndexOfUnchecked (char value, int startIndex, int count)
 		{
 			// It helps JIT compiler to optimize comparison
 			int value_32 = (int)value;
@@ -995,7 +1132,37 @@ namespace System
 			}
 		}
 
-		/* But this one is culture-sensitive */
+		internal unsafe int IndexOfOrdinalIgnoreCase (char value, int startIndex, int count)
+		{
+			if (length == 0)
+				return -1;
+			int end = startIndex + count;
+			char c = Char.ToUpperInvariant (value);
+			fixed (char* s = &start_char) {
+				for (int i = startIndex; i < end; i++)
+					if (Char.ToUpperInvariant (s [i]) == c)
+						return i;
+			}
+			return -1;
+		}
+
+		// Following methods are culture-sensitive
+		public int IndexOf (String value)
+		{
+			if (value == null)
+				throw new ArgumentNullException ("value");
+			if (value.length == 0)
+				return 0;
+			if (this.length == 0)
+				return -1;
+			return CultureInfo.CurrentCulture.CompareInfo.IndexOf (this, value, 0, length);
+		}
+
+		public int IndexOf (String value, int startIndex)
+		{
+			return IndexOf (value, startIndex, this.length - startIndex);
+		}
+
 		public int IndexOf (String value, int startIndex, int count)
 		{
 			if (value == null)
@@ -1021,12 +1188,13 @@ namespace System
 			return CultureInfo.CurrentCulture.CompareInfo.IndexOf (this, value, startIndex, count);
 		}
 
+		// Following methods are culture-insensitive
 		public int LastIndexOfAny (char [] anyOf)
 		{
 			if (anyOf == null)
 				throw new ArgumentNullException ();
 
-			return InternalLastIndexOfAny (anyOf, this.length - 1, this.length);
+			return LastIndexOfAnyUnchecked (anyOf, this.length - 1, this.length);
 		}
 
 		public int LastIndexOfAny (char [] anyOf, int startIndex)
@@ -1040,7 +1208,7 @@ namespace System
 			if (this.length == 0)
 				return -1;
 
-			return InternalLastIndexOfAny (anyOf, startIndex, startIndex + 1);
+			return LastIndexOfAnyUnchecked (anyOf, startIndex, startIndex + 1);
 		}
 
 		public int LastIndexOfAny (char [] anyOf, int startIndex, int count)
@@ -1058,24 +1226,40 @@ namespace System
 			if (this.length == 0)
 				return -1;
 
-			return InternalLastIndexOfAny (anyOf, startIndex, count);
+			return LastIndexOfAnyUnchecked (anyOf, startIndex, count);
 		}
 
+		private unsafe int LastIndexOfAnyUnchecked (char [] anyOf, int startIndex, int count)
+		{
+			if (anyOf.Length == 1)
+				return LastIndexOfUnchecked (anyOf[0], startIndex, count);
+
+			fixed (char* start = this, testStart = anyOf) {
+				char* ptr = start + startIndex;
+				char* ptrEnd = ptr - count;
+				char* test;
+				char* testEnd = testStart + anyOf.Length;
+
+				while (ptr != ptrEnd) {
+					test = testStart;
+					while (test != testEnd) {
+						if (*test == *ptr)
+							return (int)(ptr - start);
+						test++;
+					}
+					ptr--;
+				}
+				return -1;
+			}
+		}
+
+		// Following methods are culture-insensitive
 		public int LastIndexOf (char value)
 		{
 			if (this.length == 0)
 				return -1;
 			
-			return LastIndexOfImpl (value, this.length - 1, this.length);
-		}
-
-		public int LastIndexOf (String value)
-		{
-			if (this.length == 0)
-				/* This overload does additional checking */
-				return LastIndexOf (value, 0, 0);
-			else
-				return LastIndexOf (value, this.length - 1, this.length);
+			return LastIndexOfUnchecked (value, this.length - 1, this.length);
 		}
 
 		public int LastIndexOf (char value, int startIndex)
@@ -1083,15 +1267,6 @@ namespace System
 			return LastIndexOf (value, startIndex, startIndex + 1);
 		}
 
-		public int LastIndexOf (String value, int startIndex)
-		{
-			int max = startIndex;
-			if (max < this.Length)
-				max++;
-			return LastIndexOf (value, startIndex, max);
-		}
-
-		/* This method is culture-insensitive */
 		public int LastIndexOf (char value, int startIndex, int count)
 		{
 			if (startIndex == 0 && this.length == 0)
@@ -1105,11 +1280,10 @@ namespace System
 			if (startIndex - count + 1 < 0)
 				throw new ArgumentOutOfRangeException ("startIndex - count + 1 < 0");
 
-			return LastIndexOfImpl (value, startIndex, count);
+			return LastIndexOfUnchecked (value, startIndex, count);
 		}
 
-		/* This method is culture-insensitive */
-		unsafe int LastIndexOfImpl (char value, int startIndex, int count)
+		internal unsafe int LastIndexOfUnchecked (char value, int startIndex, int count)
 		{
 			// It helps JIT compiler to optimize comparison
 			int value_32 = (int)value;
@@ -1150,7 +1324,38 @@ namespace System
 			}
 		}
 
-		/* But this one is culture-sensitive */
+		internal unsafe int LastIndexOfOrdinalIgnoreCase (char value, int startIndex, int count)
+		{
+			if (length == 0)
+				return -1;
+			int end = startIndex - count;
+			char c = Char.ToUpperInvariant (value);
+			fixed (char* s = &start_char) {
+				for (int i = startIndex; i > end; i--)
+					if (Char.ToUpperInvariant (s [i]) == c)
+						return i;
+			}
+			return -1;
+		}
+
+		// Following methods are culture-sensitive
+		public int LastIndexOf (String value)
+		{
+			if (this.length == 0)
+				// This overload does additional checking
+				return LastIndexOf (value, 0, 0);
+			else
+				return LastIndexOf (value, this.length - 1, this.length);
+		}
+
+		public int LastIndexOf (String value, int startIndex)
+		{
+			int max = startIndex;
+			if (max < this.Length)
+				max++;
+			return LastIndexOf (value, startIndex, max);
+		}
+
 		public int LastIndexOf (String value, int startIndex, int count)
 		{
 			if (value == null)
@@ -1381,7 +1586,7 @@ namespace System
 			if (this.length == 0 || oldChar == newChar)
 				return this;
 
-			int start_pos = IndexOfImpl (oldChar, 0, this.length);
+			int start_pos = IndexOfUnchecked (oldChar, 0, this.length);
 			if (start_pos == -1)
 				return this;
 

@@ -1,3 +1,7 @@
+2008-06-01  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* String.cs: Replace Split IndexOf
+
 2008-05-30  Marek Safar  <marek.safar@gmail.com>
 
 	* Array.cs (IndexOf): Use an array element comparer instead of tested value

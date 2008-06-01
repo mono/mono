@@ -2702,7 +2702,6 @@ public class StringTest : TestCase
 	}
 
 	[Test]
-	[Category ("NotWorking")]
 	[ExpectedException (typeof (ArgumentOutOfRangeException))]
 	public void LastIndexOfStringComparisonOrdinalRangeException1 ()
 	{
@@ -2717,7 +2716,6 @@ public class StringTest : TestCase
 	}
 
 	[Test]
-	[Category ("NotWorking")]
 	[ExpectedException (typeof (ArgumentOutOfRangeException))]
 	public void LastIndexOfStringComparisonOrdinalIgnoreCaseRangeException1 ()
 	{
@@ -2732,7 +2730,6 @@ public class StringTest : TestCase
 	}
 
 	[Test]
-	[Category ("NotWorking")]
 	public void LastIndexOfStringComparison ()
 	{
 		string text = "testing123456";
@@ -2774,7 +2771,6 @@ public class StringTest : TestCase
 	}
 
 	[Test]
-	[Category ("NotWorking")]
 	public void LastIndexOfStringComparisonOrdinal ()
 	{
 		string text = "testing123456";
@@ -2787,7 +2783,6 @@ public class StringTest : TestCase
 	}
 
 	[Test]
-	[Category ("NotWorking")]
 	public void LastIndexOfStringComparisonOrdinalIgnoreCase ()
 	{
 		string text = "testing123456";
