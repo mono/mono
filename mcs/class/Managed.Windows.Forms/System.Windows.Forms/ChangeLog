@@ -1,3 +1,11 @@
+2008-05-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* XplatUIX11.cs: Properly detect the visible area of a control being
+	scrolled (obscured by other winforms controls and any X toplevel
+	windows), to mark as invalid the requested area to be scrolled that
+	isn't visible and thus can't be copied.
+	Fixes #324513.
+
 2008-05-30  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListBox.cs: Compute the precise amount to vertically scroll when

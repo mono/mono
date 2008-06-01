@@ -4903,48 +4903,21 @@ namespace System.Windows.Forms {
 
 			gc = XCreateGC(DisplayHandle, hwnd.client_window, IntPtr.Zero, ref gc_values);
 
-			int src_x, src_y;
-			int dest_x, dest_y;
-			int width, height;
+			Rectangle visible_rect = GetTotalVisibleArea (hwnd.client_window);
+			visible_rect.Intersect (area);
 
-			if (YAmount > 0) {
-				src_y = area.Y;
-				height = area.Height - YAmount;
-				dest_y = area.Y + YAmount;
-			}
-			else {
-				src_y = area.Y - YAmount;
-				height = area.Height + YAmount;
-				dest_y = area.Y;
-			}
+			Rectangle dest_rect = visible_rect;
+			dest_rect.Y += YAmount;
+			dest_rect.X += XAmount;
+			dest_rect.Intersect (area);
 
-			if (XAmount > 0) {
-				src_x = area.X;
-				width = area.Width - XAmount;
-				dest_x = area.X + XAmount;
-			}
-			else {
-				src_x = area.X - XAmount;
-				width = area.Width + XAmount;
-				dest_x = area.X;
-			}
+			Point src = new Point (dest_rect.X - XAmount, dest_rect.Y - YAmount);
+			XCopyArea (DisplayHandle, hwnd.client_window, hwnd.client_window, gc, src.X, src.Y, 
+					dest_rect.Width, dest_rect.Height, dest_rect.X, dest_rect.Y);
 
-			XCopyArea(DisplayHandle, hwnd.client_window, hwnd.client_window, gc, src_x, src_y, width, height, dest_x, dest_y);
+			Rectangle dirty_area = GetDirtyArea (area, dest_rect, XAmount, YAmount);
+			AddExpose (hwnd, true, dirty_area.X, dirty_area.Y, dirty_area.Width, dirty_area.Height);
 
-			// Generate an expose for the area exposed by the horizontal scroll
-			// We don't use AddExpose since we're 
-			if (XAmount > 0) {
-				AddExpose(hwnd, true, area.X, area.Y, XAmount, area.Height);
-			} else if (XAmount < 0) {
-				AddExpose(hwnd, true, XAmount + area.X + area.Width, area.Y, -XAmount, area.Height);
-			}
-
-			// Generate an expose for the area exposed by the vertical scroll
-			if (YAmount > 0) {
-				AddExpose(hwnd, true, area.X, area.Y, area.Width, YAmount);
-			} else if (YAmount < 0) {
-				AddExpose(hwnd, true, area.X, YAmount + area.Y + area.Height, area.Width, -YAmount);
-			}
 			XFreeGC(DisplayHandle, gc);
 		}
 
@@ -4958,6 +4931,125 @@ namespace System.Windows.Forms {
 			rect.X = 0;
 			rect.Y = 0;
 			ScrollWindow(handle, rect, XAmount, YAmount, with_children);
+		}
+
+		Rectangle GetDirtyArea (Rectangle total_area, Rectangle valid_area, int XAmount, int YAmount)
+		{
+			Rectangle dirty_area = total_area;
+
+			if (YAmount > 0)
+				dirty_area.Height -= valid_area.Height;
+			else if (YAmount < 0) {
+				dirty_area.Height -= valid_area.Height;
+				dirty_area.Y += valid_area.Height;
+			}
+
+			if (XAmount > 0)
+				dirty_area.Width -= valid_area.Width;
+			else if (XAmount < 0) {
+				dirty_area.Width -= valid_area.Width;
+				dirty_area.X += valid_area.Width;
+			}
+
+			return dirty_area;
+		}
+
+		Rectangle GetTotalVisibleArea (IntPtr handle)
+		{
+			Control c = Control.FromHandle (handle);
+
+			Rectangle visible_area = c.ClientRectangle;
+			visible_area.Location = c.PointToScreen (Point.Empty);
+
+			for (Control parent = c.Parent; parent != null; parent = parent.Parent) {
+				Rectangle r = parent.ClientRectangle;
+				r.Location = parent.PointToScreen (Point.Empty);
+
+				visible_area.Intersect (r);
+			}
+
+			// If region is null, the entire area is visible.
+			// Get the area not obscured otherwise.
+			Region visible_region = GetVisibleRegion (c, visible_area);
+			if (visible_region != null) {
+				RectangleF rectf = visible_region.GetBounds (Hwnd.GraphicsContext);
+				visible_area = new Rectangle ((int) rectf.X, (int) rectf.Y,
+						(int) rectf.Width, (int) rectf.Height);
+
+				visible_region.Dispose ();
+			}
+
+			visible_area.Location = c.PointToClient (visible_area.Location);
+			return visible_area;
+		}
+
+		// Obscured area by other toplevel windows
+		Region GetVisibleRegion (Control c, Rectangle visible_area)
+		{
+			Region visible_region = null;
+			IntPtr Root;
+			IntPtr Parent;
+			IntPtr Children;
+			int ChildCount;
+
+			Hwnd hwnd = Hwnd.GetObjectFromWindow (c.FindForm ().Handle);
+			IntPtr form_handle = hwnd.whole_window;
+
+			lock (XlibLock) {
+				XQueryTree (DisplayHandle, RootWindow, out Root, out Parent, out Children, out ChildCount);
+			}
+
+			int intptr_size = Marshal.SizeOf (typeof (int));
+			bool above = false;
+
+			for (int i = 0; i < ChildCount; i++) {
+				IntPtr window = new IntPtr (Marshal.ReadInt32 (Children, i * intptr_size));
+
+				XWindowAttributes win_attrs = new XWindowAttributes ();
+				lock (XlibLock) {
+					XGetWindowAttributes (DisplayHandle, window, ref win_attrs);
+				}
+
+				Rectangle win_area = new Rectangle (win_attrs.x, win_attrs.y, 
+						win_attrs.width, win_attrs.height);
+
+				if (win_attrs.map_state != MapState.IsViewable || !win_area.IntersectsWith (visible_area))
+					continue;
+
+				IntPtr SubChildren;
+				int SubChildCount;
+
+				if (above) {
+					if (visible_region == null)
+						visible_region = new Region (visible_area);
+
+					visible_region.Exclude (win_area);
+					continue;
+				}
+
+				lock (XlibLock) {
+					XQueryTree (DisplayHandle, window, out Root, out Parent, out SubChildren, out SubChildCount);
+				}
+
+				if (SubChildren != IntPtr.Zero) {
+					IntPtr sub_win = new IntPtr (Marshal.ReadInt32 (SubChildren));
+
+					lock (XlibLock) {
+						XFree (SubChildren);
+					}
+
+					if (sub_win == form_handle)
+						above = true;
+				}
+			}
+
+			if (Children != IntPtr.Zero) {
+				lock (XlibLock) {
+					XFree (Children);
+				}
+			}
+
+			return visible_region;
 		}
 
 		internal override void SendAsyncMethod (AsyncMethodData method) {
