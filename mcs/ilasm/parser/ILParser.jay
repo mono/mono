@@ -915,8 +915,8 @@ class_decl		: method_all
                                         (CallConv) $6, (string) $4, param_list, 0);
 
 				// NOTICE: `owner' here might be wrong
-                                string sig = MethodDef.CreateSignature (owner, (string) $10,
-                                                                        param_list, 0);
+                                string sig = MethodDef.CreateSignature (owner, (CallConv) $6, (string) $10,
+                                                                        param_list, 0, false);
                                 codegen.CurrentTypeDef.AddOverride (sig, decl);                                        
                           }
 			  OPEN_PARENS sig_args CLOSE_PARENS

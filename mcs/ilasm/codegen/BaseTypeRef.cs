@@ -64,7 +64,7 @@ namespace Mono.ILASM {
                         BaseMethodRef mr = null;
 
                         /* Note: FullName not reqd as this is cached per object */
-                        string key = MethodDef.CreateSignature (ret_type, name, param, gen_param_count);
+                        string key = MethodDef.CreateSignature (ret_type, call_conv, name, param, gen_param_count, true);
                         if (method_table == null)
                                 method_table = new Hashtable ();
                         else
