@@ -1,3 +1,10 @@
+2008-06-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arm.c (mono_arch_output_basic_block): Merge some small fixes from
+	the linear IL branch.
+
+	* driver.c: Print out more information for --version on arm.
+
 2008-05-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (mono_arch_emit_prolog): Increase max_offset when processing
