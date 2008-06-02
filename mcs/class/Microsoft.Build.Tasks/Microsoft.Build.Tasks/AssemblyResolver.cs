@@ -66,6 +66,8 @@ namespace Microsoft.Build.Tasks {
 			string gac_path = GetGacPath ();
 			if (gac_path == null)
 				throw new InvalidOperationException ("XBuild must be run on Mono runtime");
+			if (!Directory.Exists (gac_path))
+				return; // in case mono isn't "installed".
 
 			Version version;
 			DirectoryInfo version_info, assembly_info;
