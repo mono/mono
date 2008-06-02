@@ -1,3 +1,11 @@
+2008-06-02 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (mono_dynamic_image_free): Release memory used by
+	MonoDynamicImage::array_methods elements.
+
+	* reflection.c (assembly_add_win32_resources): Release memory after
+	encoding.
+
 2008-06-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* decimal.c (log2_32): Use an optimized version for this function too.
