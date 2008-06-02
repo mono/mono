@@ -1,3 +1,8 @@
+2008-06-02  Dick Porter  <dick@ximian.com>
+
+	* Win32Exception.cs: Turn W32ErrorMessage into an icall so it can
+	use the FormatMessage API.  Fixes bug 321827.
+
 2008-06-02  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* MemberDescriptor.cs, PropertyDescriptor.cs, 

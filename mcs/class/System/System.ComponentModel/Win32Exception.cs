@@ -33,6 +33,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Collections;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 
 namespace System.ComponentModel
 {
@@ -108,126 +109,7 @@ namespace System.ComponentModel
 			base.GetObjectData (info, context);
 		}
 
-		static string W32ErrorMessage (int error_code)
-		{
-			string message;
-
-			switch (error_code) {
-			case 2:
-				message = Locale.GetText ("Cannot find the specified file");
-				break;
-			case 3:
-				message = Locale.GetText ("Cannot find the specified file");
-				break;
-			case 5:
-				message = Locale.GetText ("Access denied");
-				break;
-			case 50:
-				message = Locale.GetText ("Operation not supported");
-				break;
-			case 267:
-				message = Locale.GetText ("Is a directory");
-				break;
-			case 10004:
-				message = Locale.GetText ("interrupted");
-				break;
-			case 10013:
-				message = Locale.GetText ("Access denied");
-				break;
-			case 10022:
-				message = Locale.GetText ("Invalid arguments");
-				break;
-			case 10024:
-				message = Locale.GetText ("Too many open files");
-				break;
-			case 10035:
-				message = Locale.GetText ("Operation on non-blocking socket would block");
-				break;
-			case 10036:
-				message = Locale.GetText ("Operation in progress");
-				break;
-			case 10038:
-				message = Locale.GetText ("The descriptor is not a socket");
-				break;
-			case 10040:
-				message = Locale.GetText ("Message too long");
-				break;
-			case 10042:
-				message = Locale.GetText ("Protocol option not supported");
-				break;
-			case 10043:
-				message = Locale.GetText ("Protocol not supported");
-				break;
-			case 10044:
-				message = Locale.GetText ("Socket not supported");
-				break;
-			case 10045:
-				message = Locale.GetText ("Operation not supported");
-				break;
-			case 10047:
-				message = Locale.GetText ("An address incompatible with the requested protocol was used");
-				break;
-			case 10048:
-				message = Locale.GetText ("Address already in use");
-				break;
-			case 10049:
-				message = Locale.GetText ("The requested address is not valid in this context");
-				break;
-			case 10050:
-				message = Locale.GetText ("Network subsystem is down");
-				break;
-			case 10051:
-				message = Locale.GetText ("Network is unreachable");
-				break;
-			case 10052:
-				message = Locale.GetText ("Connection broken, keep-alive detected a problem");
-				break;
-			case 10053:
-				message = Locale.GetText ("An established connection was aborted in your host machine.");
-				break;
-			case 10054:
-				message = Locale.GetText ("Connection reset by peer");
-				break;
-			case 10055:
-				message = Locale.GetText ("Not enough buffer space is available");
-				break;
-			case 10056:
-				message = Locale.GetText ("Socket is already connected");
-				break;
-			case 10057:
-				message = Locale.GetText ("The socket is not connected");
-				break;
-			case 10058:
-				message = Locale.GetText ("The socket has been shut down");
-				break;
-			case 10060:
-				message = Locale.GetText ("Connection timed out");
-				break;
-			case 10061:
-				message = Locale.GetText ("Connection refused");
-				break;
-			case 10065:
-				message = Locale.GetText ("No route to host");
-				break;
-			case 10093:
-				message = Locale.GetText ("Winsock not initialized");
-				break;
-			case 10107:
-				message = Locale.GetText ("System call failed");
-				break;
-			case 11001:
-				message = Locale.GetText ("No such host is known");
-				break;
-			case 11002:
-				message = Locale.GetText ("A temporary error occurred on an " +
-							  "authoritative name server. Try  again later.");
-				break;
-			default:
-				message = Locale.GetText ("Some sort of w32 error occurred: ") + error_code;
-				break;
-			}
-
-			return message;
-		}
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern string W32ErrorMessage (int error_code);
 	}
 }
