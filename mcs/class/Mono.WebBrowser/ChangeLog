@@ -1,3 +1,43 @@
+2008-06-02  Andreia Gaita <avidigal@novell.com> 
+
+	* Mono.WebBrowser.dll.sources, Mono.WebBrowser2K5.csproj: Added new
+	  classes/interfaces
+	* Mono.WebBrowser/DOM/IMediaList.cs: Added (Stylesheet.Media support)
+	* Mono.WebBrowser/DOM/IDocument.cs: Added Doctype, Implementation,
+	  Stylesheets
+	* Mono.WebBrowser/DOM/IDocumentType.cs,
+	  Mono.Mozilla/DOM/DocumentType.cs: Added (Document.DocumentType
+	  support)
+	* Mono.WebBrowser/DOM/IStylesheetList.cs,
+	  Mono.Mozilla/DOM/StylesheetList.cs,
+	  Mono.Mozilla/interfaces/nsIDOMHTMLStyleElement.cs,
+	  Mono.Mozilla/interfaces/nsIDOMDocumentStyle.cs,
+	  Mono.Mozilla/interfaces/nsIDOMStyleSheetList.cs: Added
+	  (Document.Stylesheets support)
+	* Mono.WebBrowser/DOM/IDOMImplementation.cs,
+	  Mono.Mozilla/DOM/DOMImplementation.cs: Added
+	  (Document.Implementation support)
+	* Mono.WebBrowser/DOM/INamedNodeMap.cs,
+	  Mono.Mozilla/DOM/NamedNodeMap.cs: Added (Node collection for named
+	  node access - DocumentType.Entities, DocumentType.Notations)
+	* Mono.WebBrowser/DOM/IStylesheet.cs, Mono.Mozilla/DOM/Stylesheet.cs:
+	  Added (StylesheetList.Item support)
+	* Mono.WebBrowser/Exception.cs: Added error code for Preferences
+	  service
+	* Mono.WebBrowser/IWebBrowser.cs, Mono.Mozilla/WebBrowser.cs: Add
+	  Offline, ScrollbarsEnabled
+	* Mono.Mozilla/DOM/Document.cs: This class wraps both dom Document and
+	  HTMLDocument, so assume that the object is a Document (which
+	  HTMLDocument inherits from), and cast appropriately when calling
+	  properties or methods that are from the child class. Add DocType,
+	  Implementation, Stylesheets acessors
+	* Mono.Mozilla/interfaces/nsIPrefBranch.cs,
+	  Mono.Mozilla/interfaces/nsIPrefService.cs: Added (browser
+	  preferences support)
+	* Mono.Mozilla/interfaces/nsIClassInfo.cs: Added (interface querying
+	  support)
+	* Assembly/AssemblyInfo.cs: Version bump
+
 2008-05-22  Andreia Gaita <avidigal@novell.com> 
 
 	* Makefile: Fix build target

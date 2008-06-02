@@ -62,14 +62,16 @@ namespace Mono.WebBrowser
 		void Render (string html);
 		void Render (string html, string uri, string contentType);
 			
-		
 		bool Initialized { get; }
 		IWindow Window { get; }
 		IDocument Document { get; }
+		bool Offline {get; set;}
+		
 		/// <value>
 		/// Object exposing navigation methods like Go, Back, etc.
 		/// </value>
 		INavigation Navigation { get; }
+		bool ScrollbarsEnabled { get; set; }
 
 		event NodeEventHandler KeyDown;
 		event NodeEventHandler KeyPress;

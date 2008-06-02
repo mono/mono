@@ -27,6 +27,7 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Reflection;
 using System.Windows.Forms;
 using System.IO;
 using System.Drawing;
@@ -44,13 +45,12 @@ namespace System.Windows.Forms
 		private bool navigated; // flag indicating that at least one page has been loaded (besides the initial about:blank)
 		private bool allowNavigation; // if this is true, and navigated is also true, no other navigation is allowed
 		
-		private bool allowWebBrowserDrop;
+		private bool allowWebBrowserDrop = true;
 		private bool isWebBrowserContextMenuEnabled;
 		private object objectForScripting;
-		private bool scriptErrorsSuppressed;
-		private bool scrollBarsEnabled;
-		private string statusText;
 		private bool webBrowserShortcutsEnabled;
+		
+		private WebBrowserReadyState readyState;
 
 		private HtmlDocument document;
 
@@ -62,7 +62,6 @@ namespace System.Windows.Forms
 			set { allowNavigation = value; }
 		}
 
-		[MonoTODO ("Stub, not implemented")]
 		[DefaultValue (true)]
 		public bool AllowWebBrowserDrop {
 			get { return allowWebBrowserDrop; }
@@ -91,14 +90,22 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[MonoTODO ("Stub, not implemented")]
 		[BrowsableAttribute(false)]
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public Stream DocumentStream {
-			get { return null; }
+			get {
+				string text = this.DocumentText;
+				StreamReader s = new StreamReader (text);
+				return s.BaseStream;
+			}
 			set { 
 				if (this.allowNavigation && this.navigated)
 					return;
+				this.Url = new Uri ("about:blank");
+				using (StreamReader sourceReader = new StreamReader(value))
+				{
+					this.DocumentText = sourceReader.ReadToEnd();
+				}
 			}
 		}
 
@@ -122,11 +129,10 @@ namespace System.Windows.Forms
 			private set { document.Title = value; }
 		}
 
-		[MonoTODO ("Stub, not implemented")]
 		[BrowsableAttribute(false)]
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public string DocumentType {
-			get { return String.Empty; }
+			get { return document.DocType; }
 		}
 
 		[MonoTODO ("Stub, not implemented")]
@@ -136,23 +142,20 @@ namespace System.Windows.Forms
 			get { return WebBrowserEncryptionLevel.Unknown; }
 		}
 
-		[MonoTODO ("Stub, not implemented")]
 		public override bool Focused {
 			get { return base.Focused; }
 		}
 
-		[MonoTODO ("Stub, not implemented")]
 		[BrowsableAttribute(false)]
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public bool IsBusy {
-			get { return false; }
+			get { return !documentReady; }
 		}
 
-		[MonoTODO ("Stub, not implemented")]
 		[BrowsableAttribute(false)]
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public bool IsOffline {
-			get { return true; }
+			get { return WebHost.Offline; }
 		}
 
 		[MonoTODO ("Stub, not implemented")]
@@ -170,32 +173,28 @@ namespace System.Windows.Forms
 			set { objectForScripting = value; }
 		}
 
-		[MonoTODO ("Stub, not implemented")]
 		[BrowsableAttribute(false)]
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public WebBrowserReadyState ReadyState {
-			get { return WebBrowserReadyState.Uninitialized; }
+			get { return readyState; }
 		}
 
-		[MonoTODO ("Stub, not implemented")]
 		[DefaultValue(false)]
 		public bool ScriptErrorsSuppressed {
-			get { return scriptErrorsSuppressed; }
-			set { scriptErrorsSuppressed = value; }
+			get { return SuppressDialogs; }
+			set { SuppressDialogs = value; }
 		}
 
-		[MonoTODO ("Stub, not implemented")]
 		[DefaultValue(true)]
 		public bool ScrollBarsEnabled {
-			get { return scrollBarsEnabled; }
-			set { scrollBarsEnabled = value; }
+			get { return WebHost.ScrollbarsEnabled; }
+			set { WebHost.ScrollbarsEnabled = value; }
 		}
 
-		[MonoTODO ("Stub, not implemented")]
 		[BrowsableAttribute(false)]
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public virtual string StatusText {
-			get { return statusText; }
+			get { return base.status; }
 		}
 
 		[BindableAttribute(true)] 
@@ -206,11 +205,13 @@ namespace System.Windows.Forms
 			set { this.Navigate (value); }
 		}
 
-		[MonoTODO ("Stub, not implemented")]
 		[BrowsableAttribute(false)]
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public Version Version {
-			get { return null; }
+			get { 
+				Assembly ass = WebHost.GetType().Assembly;
+				return ass.GetName().Version;
+			}
 		}
 
 		[MonoTODO ("Stub, not implemented")]
@@ -347,7 +348,20 @@ namespace System.Windows.Forms
 
 		public void GoSearch ()
 		{
-			throw new NotImplementedException ();
+			string url = "http://www.google.com";
+			try {
+				Microsoft.Win32.RegistryKey reg = Microsoft.Win32.Registry.CurrentUser.OpenSubKey (@"Software\Microsoft\Internet Explorer\Main\Search Page");
+				if (reg != null) {
+					object searchUrl = reg.GetValue ("Default_Search_URL");
+					if (searchUrl != null && searchUrl is string) {
+						Uri uri;
+						if (System.Uri.TryCreate (searchUrl as string, UriKind.Absolute, out uri))
+							url = uri.ToString ();
+					}
+				}
+			} catch {
+			}
+			Navigate (url);
 		}
 
 		public void Print ()
@@ -541,25 +555,14 @@ namespace System.Windows.Forms
 			OnNewWindow (c);
 			return c.Cancel;
 		}
-
-		internal override void OnWebHostLoadFinished (object sender, Mono.WebBrowser.LoadFinishedEventArgs e)
-		{
-			documentReady = true;
-			if (!this.navigated) {
-				this.navigated = true;
-				return;
-			}
-			
-			WebBrowserDocumentCompletedEventArgs n = new WebBrowserDocumentCompletedEventArgs (new Uri (e.Uri));
-			OnDocumentCompleted (n);
-		}
 		
 		internal override void OnWebHostLoadStarted (object sender, Mono.WebBrowser.LoadStartedEventArgs e)
 		{
-			documentReady = false;
-			document = null;
 			if (!this.navigated)
 				return;
+			documentReady = false;
+			document = null;
+			readyState = WebBrowserReadyState.Loading;
 			WebBrowserNavigatingEventArgs n = new WebBrowserNavigatingEventArgs (new Uri (e.Uri), e.FrameName);
 			OnNavigating (n);
 		}
@@ -568,6 +571,7 @@ namespace System.Windows.Forms
 		{
 			if (!this.navigated)
 				return;
+			readyState = WebBrowserReadyState.Loaded;
 			WebBrowserNavigatedEventArgs n = new WebBrowserNavigatedEventArgs (new Uri (e.Uri));
 			OnNavigated (n);
 		}
@@ -575,8 +579,21 @@ namespace System.Windows.Forms
 		{
 			if (!this.navigated)
 				return;
+			readyState = WebBrowserReadyState.Interactive;
 			WebBrowserProgressChangedEventArgs n = new WebBrowserProgressChangedEventArgs (e.Progress, e.MaxProgress);
 			OnProgressChanged (n);
+		}
+
+		internal override void OnWebHostLoadFinished (object sender, Mono.WebBrowser.LoadFinishedEventArgs e)
+		{
+			documentReady = true;
+			if (!this.navigated) {
+				this.navigated = true;
+				return;
+			}
+			readyState = WebBrowserReadyState.Complete;
+			WebBrowserDocumentCompletedEventArgs n = new WebBrowserDocumentCompletedEventArgs (new Uri (e.Uri));
+			OnDocumentCompleted (n);
 		}
 		#endregion
 

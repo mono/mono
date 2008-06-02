@@ -1,3 +1,13 @@
+2008-06-02  Andreia Gaita <avidigal@novell.com> 
+
+	* WebBrowserBase.cs: Implement support for ScriptErrorsSuppressed
+	  (which also suppresses all popup dialogs). Throw NotSupported
+	  exceptions for activex getters/setters.
+	* WebBrowser.cs: Implement DocumentStream, DocumentType, IsBusy,
+	  IsOffline, ReadyState, ScriptErrorsSuppressed, ScrollbarsEnabled,
+	  StatusText, Version, GoSearch
+	* HtmlDocument.cs: Add DocType support
+
 2008-06-02  Andy Hume  <andyhume32@yahoo.co.uk>
 
 	* TextBox.cs: Implement TextBoxAutoCompleteSourceConverter.

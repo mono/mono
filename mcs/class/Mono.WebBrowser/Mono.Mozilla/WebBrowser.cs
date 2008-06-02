@@ -116,7 +116,62 @@ namespace Mono.Mozilla
 		public string StatusText {
 			get { return statusText; }
 		}
+		
+		public bool Offline {
+			get {
+				bool ret;
+				IOService.getOffline (out ret);
+				return ret;
+			}
+			set {
+				IOService.setOffline (value);
+			}
+		}
+		
+		private nsIPrefService prefService;
+		public bool ScrollbarsEnabled {
+			get {
+				if (prefService == null) {
+					IntPtr prefServicePtr = IntPtr.Zero;
+					nsIServiceManager man = Base.gluezilla_getServiceManager ();
+					man.getServiceByContractID ("@mozilla.org/preferences-service;1", typeof (nsIPrefService).GUID, out prefServicePtr);
+					if (prefServicePtr == IntPtr.Zero)
+						throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.PrefService);
 
+					try {
+						prefService = (nsIPrefService)Marshal.GetObjectForIUnknown (prefServicePtr);
+					} catch (System.Exception ex) {
+						throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.PrefService, ex);
+					}
+				}
+				nsIPrefBranch prefBranch;
+				prefService.getBranch ("dom. disable_window_open_feature", out prefBranch);
+				bool ret = true;
+				prefBranch.getBoolPref ("scrollbars", out ret);
+				return ret;
+			}
+			set {
+				Console.Error.WriteLine ("set scrollbars enabled = " + value);
+				if (prefService == null) {
+					IntPtr prefServicePtr = IntPtr.Zero;
+					nsIServiceManager man = Base.gluezilla_getServiceManager ();
+					man.getServiceByContractID ("@mozilla.org/preferences-service;1", typeof (nsIPrefService).GUID, out prefServicePtr);
+					if (prefServicePtr == IntPtr.Zero)
+						throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.PrefService);
+
+					try {
+						prefService = (nsIPrefService)Marshal.GetObjectForIUnknown (prefServicePtr);
+					} catch (System.Exception ex) {
+						throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.PrefService, ex);
+					}
+				}
+				nsIPrefBranch prefBranch;
+				prefService.getBranch ("dom. disable_window_open_feature", out prefBranch);
+				prefBranch.setBoolPref ("scrollbars", value ? 1 : 0);
+				Console.Error.WriteLine ("set scrollbars enabled = " + value + " done");
+			}
+		}
+		
 		internal System.ComponentModel.EventHandlerList DomEvents {
 			get {
 				if (domEvents == null)
@@ -135,6 +190,39 @@ namespace Mono.Mozilla
 			}
 		}
 
+		
+		nsIServiceManager servMan;
+		internal nsIServiceManager ServiceManager {
+			get {
+				if (servMan == null)
+					servMan = Base.gluezilla_getServiceManager ();
+				return servMan;
+			}
+		}
+		
+		nsIIOService ioService;
+		internal nsIIOService IOService {
+			get {
+				if (ioService == null) {
+					IntPtr ioServicePtr = IntPtr.Zero;
+
+					
+
+					if (ioServicePtr == IntPtr.Zero)
+						ServiceManager.getServiceByContractID ("@mozilla.org/network/io-service;1", typeof (nsIIOService).GUID, out ioServicePtr);
+					if (ioServicePtr == IntPtr.Zero)
+						throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.IOService);
+
+					try {
+						ioService = (nsIIOService)Marshal.GetObjectForIUnknown (ioServicePtr);
+					} catch (System.Exception ex) {
+						throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.IOService, ex);
+					}
+				}
+				return ioService;
+			}
+		}		
+		
 		#region Layout
 		public void FocusIn (FocusOption focus)
 		{
@@ -173,42 +261,18 @@ namespace Mono.Mozilla
 			Render (html, "file:///", "text/html");
 		}
 
-		
-		nsIServiceManager servMan;
-		IntPtr ioServicePtr;
-		nsIIOService ioService;
-		
+				
 		public void Render (string html, string uri, string contentType)
 		{
-			nsIWebBrowserStream stream;
 			
+			nsIWebBrowserStream stream;
 			if (Navigation != null) {
 				stream = (nsIWebBrowserStream) navigation.navigation;
 			} else
 				throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.Navigation);
-
-			
-			if (servMan == null)
-				servMan = Base.gluezilla_getServiceManager ();
-			
-			
-			if (ioServicePtr == IntPtr.Zero)
-				servMan.getServiceByContractID ("@mozilla.org/network/io-service;1", typeof (nsIIOService).GUID, out ioServicePtr);
-			if (ioServicePtr == IntPtr.Zero)
-				throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.IOService);
-
-			
-			if (ioService == null) {
-				try {
-					ioService = (nsIIOService)Marshal.GetObjectForIUnknown (ioServicePtr);
-				} catch (System.Exception ex) {
-					throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.IOService, ex);
-				}
-			}
-
 			AsciiString asciiUri = new AsciiString (uri);
 			nsIURI ret;
-			ioService.newURI (asciiUri.Handle, null, null, out ret);
+			IOService.newURI (asciiUri.Handle, null, null, out ret);
 
 			AsciiString ctype = new AsciiString(contentType);
 

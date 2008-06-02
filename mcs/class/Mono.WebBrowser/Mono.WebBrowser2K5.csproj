@@ -10,7 +10,7 @@
     </ApplicationIcon>
     <AssemblyKeyContainerName>
     </AssemblyKeyContainerName>
-    <AssemblyName>Mono.Mozilla</AssemblyName>
+    <AssemblyName>Mono.WebBrowser</AssemblyName>
     <AssemblyOriginatorKeyFile>
     </AssemblyOriginatorKeyFile>
     <DefaultClientScript>JScript</DefaultClientScript>
@@ -18,7 +18,7 @@
     <DefaultTargetSchema>IE50</DefaultTargetSchema>
     <DelaySign>false</DelaySign>
     <OutputType>Library</OutputType>
-    <RootNamespace>Mono.Mozilla</RootNamespace>
+    <RootNamespace>Mono.WebBrowser</RootNamespace>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     <StartupObject>
     </StartupObject>
@@ -82,28 +82,39 @@
     <Compile Include="Mono.Mozilla\AsciiString.cs" />
     <Compile Include="Mono.Mozilla\Base.cs" />
     <Compile Include="Mono.Mozilla\Callback.cs" />
+    <Compile Include="Mono.Mozilla\DOM\DocumentType.cs" />
+    <Compile Include="Mono.Mozilla\DOM\DOMImplementation.cs" />
     <Compile Include="Mono.Mozilla\DOM\EventListener.cs" />
+    <Compile Include="Mono.Mozilla\DOM\NamedNodeMap.cs" />
+    <Compile Include="Mono.Mozilla\DOM\Stylesheet.cs" />
+    <Compile Include="Mono.Mozilla\DOM\StylesheetList.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsICancelable.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIChannel.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIClassInfo.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMCSSRule.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMCSSRuleList.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMCSSStyleDeclaration.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMCSSStyleSheet.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMCSSValue.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMDocumentEvent.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMDocumentStyle.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMEvent.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMEventListener.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMEventTarget.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMHTMLStyleElement.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMKeyEvent.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMMediaList.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMMouseEvent.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMNSRange.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMStyleSheet.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIDOMStyleSheetList.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMUIEvent.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIDOMViewCSS.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIFile.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIIOService.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsILoadGroup.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIPrefBranch.cs" />
+    <Compile Include="Mono.Mozilla\interfaces\nsIPrefService.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIProtocolHandler.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIRequest.cs" />
     <Compile Include="Mono.Mozilla\interfaces\nsIRequestObserver.cs" />
@@ -173,6 +184,12 @@
     <Compile Include="Mono.Mozilla\interfaces\extras\NodeType.cs" />
     <Compile Include="Mono.Mozilla\interfaces\extras\nsIWriteSegmentFun.cs" />
     <Compile Include="Mono.Mozilla\interfaces\extras\Options.cs" />
+    <Compile Include="Mono.WebBrowser\DOM\IDocumentType.cs" />
+    <Compile Include="Mono.WebBrowser\DOM\IDOMImplementation.cs" />
+    <Compile Include="Mono.WebBrowser\DOM\IMediaList.cs" />
+    <Compile Include="Mono.WebBrowser\DOM\INamedNodeMap.cs" />
+    <Compile Include="Mono.WebBrowser\DOM\IStylesheet.cs" />
+    <Compile Include="Mono.WebBrowser\DOM\IStylesheetList.cs" />
     <Compile Include="Mono.WebBrowser\DOM\NodeEventArgs.cs" />
     <Compile Include="Mono.WebBrowser\DOM\NodeEventHandler.cs" />
     <Compile Include="Mono.WebBrowser\IWebBrowser.cs" />
@@ -191,7 +208,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ChangeLog" />
-    <None Include="Mono.Mozilla.dll.sources" />
+    <None Include="Mono.WebBrowser.dll.sources" />
     <None Include="README" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

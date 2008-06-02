@@ -44,23 +44,33 @@ namespace System.Windows.Forms
 	public class WebBrowserBase : Control
 	{
 		internal bool documentReady;
+		private bool suppressDialogs;
+		internal bool SuppressDialogs {
+			get { return suppressDialogs; }
+			set { 
+				suppressDialogs = value;
+				webHost.Alert -= new Mono.WebBrowser.AlertEventHandler (OnWebHostAlert);
+				if (!suppressDialogs)
+					webHost.Alert += new Mono.WebBrowser.AlertEventHandler (OnWebHostAlert);				
+			}
+		}
+		
+		protected string status;
 
 		#region Public Properties
 
-		[MonoTODO ("Stub, not implemented")]
 		[Browsable (false)] 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public Object ActiveXInstance {
-			get { throw new NotImplementedException (); }
+			get { throw new NotSupportedException ("Retrieving a reference to an activex interface is not supported. Sorry."); }
 		}
 
-		[MonoTODO ("Stub, not implemented")]
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override bool AllowDrop {
-			get { return false; }
-			set { throw new NotSupportedException (); }
+			get { return base.AllowDrop; }
+			set { base.AllowDrop = value; }
 		}
 
 		[Browsable (false)]
@@ -185,27 +195,27 @@ namespace System.Windows.Forms
 
 		protected virtual void AttachInterfaces (object nativeActiveXObject)
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ("Retrieving a reference to an activex interface is not supported. Sorry.");
 		}
 
 		protected virtual void CreateSink ()
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ("Retrieving a reference to an activex interface is not supported. Sorry.");
 		}
 
 		protected virtual WebBrowserSiteBase CreateWebBrowserSiteBase ()
 		{
-			return new WebBrowserSiteBase ();
+			throw new NotSupportedException ("Retrieving a reference to an activex interface is not supported. Sorry.");
 		}
 
 		protected virtual void DetachInterfaces ()
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ("Retrieving a reference to an activex interface is not supported. Sorry.");
 		}
 
 		protected virtual void DetachSink ()
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ("Retrieving a reference to an activex interface is not supported. Sorry.");
 		}
 
 		#endregion
@@ -333,11 +343,17 @@ namespace System.Windows.Forms
 			webHost.MouseClick += new Mono.WebBrowser.DOM.NodeEventHandler (OnWebHostMouseClick);
 			webHost.Focus += new EventHandler (OnWebHostFocus);
 			webHost.CreateNewWindow += new Mono.WebBrowser.CreateNewWindowEventHandler (OnWebHostCreateNewWindow);
-			webHost.Alert += new Mono.WebBrowser.AlertEventHandler (OnWebHostAlert);
 			webHost.LoadStarted += new LoadStartedEventHandler (OnWebHostLoadStarted);
 			webHost.LoadCommited += new LoadCommitedEventHandler (OnWebHostLoadCommited);
 			webHost.ProgressChanged += new Mono.WebBrowser.ProgressChangedEventHandler (OnWebHostProgressChanged);
 			webHost.LoadFinished += new LoadFinishedEventHandler (OnWebHostLoadFinished);
+			
+			if (!suppressDialogs)
+				webHost.Alert += new Mono.WebBrowser.AlertEventHandler (OnWebHostAlert);
+			
+			webHost.StatusChanged += delegate (object sender, Mono.WebBrowser.StatusChangedEventArgs e) {
+				status = e.Message;
+			};			
 		}
 
 		void OnWebHostAlert (object sender, Mono.WebBrowser.AlertEventArgs e)

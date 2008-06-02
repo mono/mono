@@ -34,7 +34,7 @@ namespace Mono.Mozilla.DOM
 {
 	internal class Document : Node, IDocument
 	{
-		internal nsIDOMHTMLDocument document;
+		internal nsIDOMDocument document;
 
 		public Document (WebBrowser control, nsIDOMHTMLDocument document)
 			: base (control, document)
@@ -45,6 +45,15 @@ namespace Mono.Mozilla.DOM
 				this.document = document;
 		}
 
+		public Document (WebBrowser control, nsIDOMDocument document)
+			: base (control, document)
+		{
+			if (control.platform != control.enginePlatform)
+				this.document = nsDOMDocument.GetProxy (control, document);
+			else
+				this.document = document;
+		}
+		
 		#region IDisposable Members
 		protected override void Dispose (bool disposing)
 		{
@@ -65,7 +74,7 @@ namespace Mono.Mozilla.DOM
 		}
 		#endregion
 
-		#region IDocument Members
+		#region IDocument Properties
 
 		public IElement Active {
 			get {
@@ -82,23 +91,29 @@ namespace Mono.Mozilla.DOM
 
 		public string ActiveLinkColor {
 			get {
+				if (!(document is nsIDOMHTMLDocument))
+					return String.Empty;
 				nsIDOMHTMLElement element;
-				this.document.getBody (out element);
+				((nsIDOMHTMLDocument)document).getBody (out element);
 				((nsIDOMHTMLBodyElement)element).getALink(storage);
 				return Base.StringGet (storage);
 			}
 			set {
+				if (!(document is nsIDOMHTMLDocument))
+					return;
 				Base.StringSet (storage, value);
 				nsIDOMHTMLElement element;
-				this.document.getBody (out element);
+				((nsIDOMHTMLDocument)document).getBody (out element);
 				((nsIDOMHTMLBodyElement)element).setALink(storage);
 			}
 		}
 				
 		public IElementCollection Anchors {
 			get {
+				if (!(document is nsIDOMHTMLDocument))
+					return null;
 				nsIDOMHTMLCollection ret;
-				this.document.getAnchors (out ret);
+				((nsIDOMHTMLDocument)document).getAnchors (out ret);
 				return new HTMLElementCollection(control, (nsIDOMNodeList)ret);
 			}
 
@@ -106,8 +121,10 @@ namespace Mono.Mozilla.DOM
 
 		public IElementCollection Applets {
 			get {
+				if (!(document is nsIDOMHTMLDocument))
+					return null;
 				nsIDOMHTMLCollection ret;
-				this.document.getApplets (out ret);
+				((nsIDOMHTMLDocument)document).getApplets (out ret);
 				return new HTMLElementCollection(control, (nsIDOMNodeList)ret);
 			}
 
@@ -115,39 +132,50 @@ namespace Mono.Mozilla.DOM
 
 		public string Background {
 			get {
+				if (!(document is nsIDOMHTMLDocument))
+					return String.Empty;
 				nsIDOMHTMLElement element;
-				this.document.getBody (out element);
+				((nsIDOMHTMLDocument)document).getBody (out element);
 				((nsIDOMHTMLBodyElement)element).getBackground(storage);
 				return Base.StringGet (storage);
 			}
 			set {
+				if (!(document is nsIDOMHTMLDocument))
+					return;				
 				Base.StringSet (storage, value);
 				nsIDOMHTMLElement element;
-				this.document.getBody (out element);
+				((nsIDOMHTMLDocument)document).getBody (out element);
 				((nsIDOMHTMLBodyElement)element).setBackground(storage);
 			}
 		}
 
 		public string BackColor {
 			get {
+				if (!(document is nsIDOMHTMLDocument))
+					return String.Empty;
 				nsIDOMHTMLElement element;
-				this.document.getBody (out element);
+				((nsIDOMHTMLDocument)document).getBody (out element);
 				((nsIDOMHTMLBodyElement)element).getBgColor(storage);
 				return Base.StringGet (storage);
 			}
 			set {
+				if (!(document is nsIDOMHTMLDocument))
+					return;				
 				Base.StringSet (storage, value);
 				nsIDOMHTMLElement element;
-				this.document.getBody (out element);
+				((nsIDOMHTMLDocument)document).getBody (out element);
 				((nsIDOMHTMLBodyElement)element).setBgColor(storage);
 			}
 		}
 
 		public IElement Body {
 			get {
+				if (!(document is nsIDOMHTMLDocument))
+					return null;
+				
 				if (!resources.Contains ("Body")) {
 					nsIDOMHTMLElement element;
-					this.document.getBody (out element);
+					((nsIDOMHTMLDocument)document).getBody (out element);
 					nsIDOMHTMLBodyElement b = element as nsIDOMHTMLBodyElement;
 					resources.Add ("Body", new HTMLElement (control, b));
 				}
@@ -193,17 +221,23 @@ namespace Mono.Mozilla.DOM
 
 		public string Cookie {
 			get {
-				this.document.getCookie (storage);
+				if (!(document is nsIDOMHTMLDocument))
+					return String.Empty;
+				((nsIDOMHTMLDocument)document).getCookie (storage);
 				return Base.StringGet (storage);
 			}
 			set {
+				if (!(document is nsIDOMHTMLDocument))
+					return;				
 				Base.StringSet (storage, value);
-				this.document.setCookie (storage);
+				((nsIDOMHTMLDocument)document).setCookie (storage);
 			}
 		}
 		public string Domain {
 			get {
-				this.document.getDomain (storage);
+				if (!(document is nsIDOMHTMLDocument))
+					return String.Empty;
+				((nsIDOMHTMLDocument)document).getDomain (storage);
 				return Base.StringGet (storage);
 			}
 		}
@@ -217,26 +251,41 @@ namespace Mono.Mozilla.DOM
 				return resources["DocumentElement"] as IElement;
 			}
 		}
+		
+		public IDocumentType DocType {
+			get {
+				nsIDOMDocumentType doctype;
+				this.document.getDoctype (out doctype);
+				return new DocumentType (this.control, doctype);
+			}
+		}
+		
 
 		public string ForeColor {
 			get {
+				if (!(document is nsIDOMHTMLDocument))
+					return String.Empty;
 				nsIDOMHTMLElement element;
-				this.document.getBody (out element);
+				((nsIDOMHTMLDocument)document).getBody (out element);
 				((nsIDOMHTMLBodyElement)element).getText(storage);
 				return Base.StringGet (storage);
 			}
 			set {
+				if (!(document is nsIDOMHTMLDocument))
+					return;
 				Base.StringSet (storage, value);
 				nsIDOMHTMLElement element;
-				this.document.getBody (out element);
+				((nsIDOMHTMLDocument)document).getBody (out element);
 				((nsIDOMHTMLBodyElement)element).setText(storage);
 			}
 		}
 
 		public IElementCollection Forms {
 			get {
+				if (!(document is nsIDOMHTMLDocument))
+					return null;
 				nsIDOMHTMLCollection ret;
-				this.document.getForms (out ret);
+				((nsIDOMHTMLDocument)document).getForms (out ret);
 				return new HTMLElementCollection(control, (nsIDOMNodeList)ret);
 			}
 
@@ -244,66 +293,100 @@ namespace Mono.Mozilla.DOM
 
 		public IElementCollection Images {
 			get {
+				if (!(document is nsIDOMHTMLDocument))
+					return null;
 				nsIDOMHTMLCollection ret;
-				this.document.getImages (out ret);
+				((nsIDOMHTMLDocument)document).getImages (out ret);
 				return new HTMLElementCollection(control, (nsIDOMNodeList)ret);
 			}
 
 		}
+		
+		public IDOMImplementation Implementation {
+			get {
+				nsIDOMDOMImplementation implementation;
+				document.getImplementation (out implementation);
+				return new DOMImplementation (this.control, implementation);
+			}
+		}
 
 		public string LinkColor {
 			get {
+				if (!(document is nsIDOMHTMLDocument))
+					return String.Empty;
 				nsIDOMHTMLElement element;
-				this.document.getBody (out element);
+				((nsIDOMHTMLDocument)document).getBody (out element);
 				((nsIDOMHTMLBodyElement)element).getLink(storage);
 				return Base.StringGet (storage);
 			}
 			set {
+				if (!(document is nsIDOMHTMLDocument))
+					return;
 				Base.StringSet (storage, value);
 				nsIDOMHTMLElement element;
-				this.document.getBody (out element);
+				((nsIDOMHTMLDocument)document).getBody (out element);
 				((nsIDOMHTMLBodyElement)element).setLink(storage);
 			}
 		}
 
 		public IElementCollection Links {
 			get {
+				if (!(document is nsIDOMHTMLDocument))
+					return null;
 				nsIDOMHTMLCollection ret;
-				this.document.getLinks (out ret);
+				((nsIDOMHTMLDocument)document).getLinks (out ret);
 				return new HTMLElementCollection(control, (nsIDOMNodeList)ret);
 			}
 
 		}
-
+		
+		public IStylesheetList Stylesheets
+		{
+			get {
+				nsIDOMStyleSheetList styleList;
+				nsIDOMDocumentStyle docStyle = ((nsIDOMDocumentStyle)this.document);
+				docStyle.getStyleSheets (out styleList);
+				return new StylesheetList (this.control, styleList);
+			}
+		}
+		
 		public string Title {
 			get {
-				this.document.getTitle (storage);
+				if (!(document is nsIDOMHTMLDocument))
+					return String.Empty;
+				((nsIDOMHTMLDocument)document).getTitle (storage);
 				return Base.StringGet (storage);
 			}
 			set {
 				Base.StringSet (storage, value);
-				this.document.setTitle (storage);
+				((nsIDOMHTMLDocument)document).setTitle (storage);
 			}
 		}
 
 		public string Url {
 			get {
-				this.document.getURL (storage);
+				if (!(document is nsIDOMHTMLDocument))
+					return String.Empty;
+				((nsIDOMHTMLDocument)document).getURL (storage);
 				return Base.StringGet (storage);
 			}
 		}
 
 		public string VisitedLinkColor {
 			get {
+				if (!(document is nsIDOMHTMLDocument))
+					return String.Empty;
 				nsIDOMHTMLElement element;
-				this.document.getBody (out element);
+				((nsIDOMHTMLDocument)document).getBody (out element);
 				((nsIDOMHTMLBodyElement)element).getVLink(storage);
 				return Base.StringGet (storage);
 			}
 			set {
+				if (!(document is nsIDOMHTMLDocument))
+					return;
 				Base.StringSet (storage, value);
 				nsIDOMHTMLElement element;
-				this.document.getBody (out element);
+				((nsIDOMHTMLDocument)document).getBody (out element);
 				((nsIDOMHTMLBodyElement)element).setVLink(storage);
 			}
 		}
@@ -324,13 +407,17 @@ namespace Mono.Mozilla.DOM
 			}
 		}
 
+		#endregion
 
+		#region Public IDocument Methods
 		public IElement CreateElement (string tagName)
 		{
 			nsIDOMElement nsElement;
 			Base.StringSet (storage, tagName);
 			this.document.createElement (storage, out nsElement);
-			return new HTMLElement (control, (nsIDOMHTMLElement)nsElement);
+			if (document is nsIDOMHTMLDocument)
+				return new HTMLElement (control, (nsIDOMHTMLElement)nsElement);
+			return new Element (control, nsElement);			
 		}
 
 		public IElement GetElementById (string id)
@@ -380,8 +467,10 @@ namespace Mono.Mozilla.DOM
 		}
 		
 		public void Write (string text) {
+			if (!(document is nsIDOMHTMLDocument))
+				return;
 			Base.StringSet (storage, text);
-			this.document.write (storage);
+			((nsIDOMHTMLDocument)document).write (storage);
 		}
 
 		public string InvokeScript (string script)

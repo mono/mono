@@ -435,13 +435,20 @@ namespace System.Windows.Forms
 		#endregion
 
 
+		#region Internal and Private
 		private Color ParseColor (string color) {
 			if (color.IndexOf ("#") >= 0) {
 				return Color.FromArgb (int.Parse (color.Substring (color.IndexOf ("#") + 1), NumberStyles.HexNumber));
 			}
 			return Color.FromName (color);
 		}
+		
+		internal string DocType {
+			get { return this.document.DocType.Name; }
+		}
+		#endregion
 	}
+		
 }
 
 #endif
