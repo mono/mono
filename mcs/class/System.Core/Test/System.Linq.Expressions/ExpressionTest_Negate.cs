@@ -135,7 +135,7 @@ namespace MonoTests.System.Linq.Expressions
 
 			public static Slot operator - (Slot s)
 			{
-				return new Slot () { Value = -s.Value };
+				return new Slot (-s.Value);
 			}
 		}
 
@@ -154,6 +154,53 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (new Slot (42), negate (new Slot (-42)));
 		}
 
+		[Test]
+		[Category ("NotWorking")]
+		public void UserDefinedNotNullableNegateNullable ()
+		{
+			var s = Expression.Parameter (typeof (Slot?), "s");
+			var node = Expression.Negate (s);
+			Assert.IsTrue (node.IsLifted);
+			Assert.IsTrue (node.IsLiftedToNull);
+			Assert.AreEqual (typeof (Slot?), node.Type);
+
+			var negate = Expression.Lambda<Func<Slot?, Slot?>> (node, s).Compile ();
+
+			Assert.AreEqual (null, negate (null));
+			Assert.AreEqual (new Slot (42), negate (new Slot (-42)));
+			Assert.AreEqual (new Slot (-2), negate (new Slot (2)));
+		}
+
+		struct SlotToNullable {
+			public int Value;
+
+			public SlotToNullable (int value)
+			{
+				this.Value = value;
+			}
+
+			public static SlotToNullable? operator - (SlotToNullable s)
+			{
+				return new SlotToNullable (-s.Value);
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void UserDefinedToNullableNegateNullable ()
+		{
+			var s = Expression.Parameter (typeof (SlotToNullable), "s");
+			var node = Expression.Negate (s);
+			Assert.IsFalse (node.IsLifted);
+			Assert.IsFalse (node.IsLiftedToNull);
+			Assert.AreEqual (typeof (SlotToNullable?), node.Type);
+
+			var negate = Expression.Lambda<Func<SlotToNullable, SlotToNullable?>> (node, s).Compile ();
+
+			Assert.AreEqual ((SlotToNullable?) new SlotToNullable (42), negate (new SlotToNullable (-42)));
+			Assert.AreEqual ((SlotToNullable?) new SlotToNullable (-2), negate (new SlotToNullable (2)));
+		}
+
 		struct SlotFromNullable {
 			public int Value;
 
@@ -167,7 +214,7 @@ namespace MonoTests.System.Linq.Expressions
 				if (s.HasValue)
 					return new SlotFromNullable (-s.Value.Value);
 				else
-					return new SlotFromNullable (0);
+					return new SlotFromNullable (-1);
 			}
 		}
 
@@ -185,7 +232,7 @@ namespace MonoTests.System.Linq.Expressions
 
 			Assert.AreEqual (new SlotFromNullable (-2), negate (new SlotFromNullable (2)));
 			Assert.AreEqual (new SlotFromNullable (42), negate (new SlotFromNullable (-42)));
-			Assert.AreEqual (new SlotFromNullable (0), negate (null));
+			Assert.AreEqual (new SlotFromNullable (-1), negate (null));
 		}
 
 		struct SlotFromNullableToNullable {
