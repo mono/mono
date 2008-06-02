@@ -1,3 +1,7 @@
+2008-06-02  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* GridEntry.cs: Pass the ITypeDescriptorContext everywhere.
+
 2008-06-02  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TableLayoutPanel.cs: When calculating preferred size, use the

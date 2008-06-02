@@ -34,6 +34,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.Design;
 using System.ComponentModel;
 using System.ComponentModel.Design;
+using System.Globalization;
 
 namespace System.Windows.Forms.PropertyGridInternal
 {
@@ -296,10 +297,10 @@ namespace System.Windows.Forms.PropertyGridInternal
 			get {
 				TypeConverter converter = GetConverter ();
 				if (PropertyDescriptor != null && converter != null &&
-				    converter.GetStandardValuesSupported ()) {
+				    converter.GetStandardValuesSupported ((ITypeDescriptorContext)this)) {
 					ArrayList values = new ArrayList ();
 					string stringVal = null;
-					ICollection standardValues = converter.GetStandardValues ();
+					ICollection standardValues = converter.GetStandardValues ((ITypeDescriptorContext)this);
 					if (standardValues != null) {
 						foreach (object value in standardValues) {
 							stringVal = ConvertToString (value);
@@ -319,9 +320,9 @@ namespace System.Windows.Forms.PropertyGridInternal
 				return (string)value;
 
 			if (PropertyDescriptor != null && PropertyDescriptor.Converter != null &&
-			    PropertyDescriptor.Converter.CanConvertTo (typeof (string))) {
+			    PropertyDescriptor.Converter.CanConvertTo ((ITypeDescriptorContext)this, typeof (string))) {
 				try {
-					return PropertyDescriptor.Converter.ConvertToString (value);
+					return PropertyDescriptor.Converter.ConvertToString ((ITypeDescriptorContext)this, value);
 				} catch {
 					// XXX: Happens too often...
 					// property_grid.ShowError ("Property value of '" + property_descriptor.Name + "' is not convertible to string.");
@@ -433,9 +434,9 @@ namespace System.Windows.Forms.PropertyGridInternal
 			else {
 				TypeConverter converter = GetConverter ();
 				if (converter != null && 
-				    converter.GetStandardValuesSupported ()) {
+				    converter.GetStandardValuesSupported ((ITypeDescriptorContext)this)) {
 					TypeConverter.StandardValuesCollection values = 
-						(TypeConverter.StandardValuesCollection) converter.GetStandardValues();
+						(TypeConverter.StandardValuesCollection) converter.GetStandardValues ((ITypeDescriptorContext)this);
 					if (values != null) {
 						for (int i = 0; i < values.Count; i++) {
 							if (value != null && value.Equals (values[i])){
@@ -479,8 +480,9 @@ namespace System.Windows.Forms.PropertyGridInternal
 				bool conversionError = false;
 				try {
 					if (converter != null &&
-					    converter.CanConvertFrom (valueType))
-						value = converter.ConvertFrom (value);
+					    converter.CanConvertFrom ((ITypeDescriptorContext)this, valueType))
+						value = converter.ConvertFrom ((ITypeDescriptorContext)this, 
+									       CultureInfo.CurrentCulture, value);
 					else
 						conversionError = true;
 				} catch (Exception e) {
@@ -522,7 +524,8 @@ namespace System.Windows.Forms.PropertyGridInternal
 							else
 								updatedParentProperties[property.Name] = property.GetValue (propertyOwners[i]);
 						}
-						object updatedParentValue = this.ParentEntry.PropertyDescriptor.Converter.CreateInstance (updatedParentProperties);
+						object updatedParentValue = this.ParentEntry.PropertyDescriptor.Converter.CreateInstance (
+							(ITypeDescriptorContext)this, updatedParentProperties);
 						if (updatedParentValue != null)
 							current_changed = this.ParentEntry.SetValueCore (updatedParentValue, out error);
 					} else {
@@ -607,10 +610,10 @@ namespace System.Windows.Forms.PropertyGridInternal
 				else if (PropertyDescriptor.IsReadOnly && !this.ShouldCreateParentInstance)
 					return false;
 				else if (converter == null || 
-					 !converter.CanConvertFrom (this, typeof (string)))
+					 !converter.CanConvertFrom ((ITypeDescriptorContext)this, typeof (string)))
 					return false;
-				else if (converter.GetStandardValuesSupported () &&
-					 converter.GetStandardValuesExclusive ())
+				else if (converter.GetStandardValuesSupported ((ITypeDescriptorContext)this) &&
+					 converter.GetStandardValuesExclusive ((ITypeDescriptorContext)this))
 					return false;
 				else
 					return true;
@@ -640,7 +643,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 				else if (!HasCustomEditor && converter == null)
 					return true;
 				else if (converter != null &&
-					 !converter.GetStandardValuesSupported () &&
+					 !converter.GetStandardValuesSupported ((ITypeDescriptorContext)this) &&
 					 !converter.CanConvertFrom ((ITypeDescriptorContext)this,
 								    typeof (string)) &&
 					 !HasCustomEditor) {
@@ -655,7 +658,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 		public bool IsExpandable {
 			get {
 				TypeConverter converter = GetConverter ();
-				if ((converter != null && converter.GetPropertiesSupported ()) || 
+				if ((converter != null && converter.GetPropertiesSupported ((ITypeDescriptorContext)this)) || 
 				     PropertyDescriptor.Attributes.Contains (DesignerSerializationVisibilityAttribute.Content))
 					return true;
 				return false;
