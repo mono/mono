@@ -1,3 +1,7 @@
+2008-06-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* decimal.c: Add some micro optimizations to make decimal operations faster.
+
 2008-06-01 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* reflection.c (method_encode_clauses): Take a mempool
