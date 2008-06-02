@@ -1,3 +1,8 @@
+2008-06-02  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* TypeTest.cs: Add tests to verify strict return type matching of 
+	property reflection.
+
 2008-06-01  Juraj Skripsky  <js@hotfeet.ch>
 
 	* StringTest.cs (Substring2): Blocking bug #395904 has been fixed,

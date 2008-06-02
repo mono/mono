@@ -1,3 +1,8 @@
+2008-06-02  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* MonoType.cs: For property reflection we should strictly match the return 
+	type if available.
+
 2008-06-01  Juraj Skripsky  <js@hotfeet.ch>
 
 	* String.cs (Substring): Blocking bug #395904 has been fixed,
