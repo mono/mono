@@ -4992,7 +4992,11 @@ namespace System.Windows.Forms {
 			IntPtr Children;
 			int ChildCount;
 
-			Hwnd hwnd = Hwnd.GetObjectFromWindow (c.FindForm ().Handle);
+			Control form = c.FindForm ();
+			if (form == null)
+				return null;
+
+			Hwnd hwnd = Hwnd.GetObjectFromWindow (form.Handle);
 			IntPtr form_handle = hwnd.whole_window;
 
 			lock (XlibLock) {
