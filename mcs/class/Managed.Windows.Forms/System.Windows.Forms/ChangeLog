@@ -4,7 +4,7 @@
 	 - Fix SplitterDistance to update only if needed. 
 	 - Make it force min and max validation.
 	 - Handle properly mouse moves outside the resizeable area.
-	 [Fixes bug #338966]
+	 [Fixes bug #396232]
 
 2008-06-02  Andreia Gaita <avidigal@novell.com> 
 
