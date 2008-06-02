@@ -1,3 +1,10 @@
+2008-06-02  Bill Holmes  <billholmes54@gmail.com>
+	* libtest.c:  Changes to make libtest.c ready to be compiled in 
+	  Visual Studio.  The STDCALL statements had to be moved and I added
+	  declspec(dllexport) statements to all methods.
+
+	Contributed under MIT/X11 license.
+	
 2008-05-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* long-shift-regalloc.il: Removed, merged into mini/iltests.il.
