@@ -11962,6 +11962,33 @@
       </method>
     </type>
   </test>
+  <test name="gtest-anontype-08.cs">
+    <type name="Test">
+      <method name="Void Main()">
+        <size>15</size>
+      </method>
+    </type>
+    <type name="&lt;&gt;__AnonType0`2[&lt;X&gt;__T,&lt;Y&gt;__T]">
+      <method name="Void .ctor(&lt;X&gt;__T, &lt;Y&gt;__T)">
+        <size>21</size>
+      </method>
+      <method name="&lt;X&gt;__T get_X()">
+        <size>7</size>
+      </method>
+      <method name="&lt;Y&gt;__T get_Y()">
+        <size>7</size>
+      </method>
+      <method name="Boolean Equals(System.Object)">
+        <size>69</size>
+      </method>
+      <method name="Int32 GetHashCode()">
+        <size>101</size>
+      </method>
+      <method name="System.String ToString()">
+        <size>108</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-autoproperty-01.cs">
     <type name="Test">
       <method name="Void .ctor()">
