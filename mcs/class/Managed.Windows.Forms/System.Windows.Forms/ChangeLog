@@ -1,3 +1,8 @@
+2008-06-02  Andy Hume  <andyhume32@yahoo.co.uk>
+
+	* TextBox.cs: Implement TextBoxAutoCompleteSourceConverter.
+	[Fixes bug 396124]
+
 2008-06-02  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* GridEntry.cs: Pass the ITypeDescriptorContext everywhere.

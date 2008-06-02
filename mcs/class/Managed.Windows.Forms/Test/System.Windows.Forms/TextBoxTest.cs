@@ -869,4 +869,36 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 	}
+
+#if NET_2_0
+	[TestFixture]
+	public class TextBoxAutoCompleteSourceConverterTest
+	{
+		[Test]
+		public void One()
+		{
+			PropertyDescriptor pd = TypeDescriptor.GetProperties(typeof(TextBox))["AutoCompleteSource"];
+			TypeConverter converter = pd.Converter;
+			Assert.AreEqual("System.Windows.Forms.TextBoxAutoCompleteSourceConverter", 
+				converter.GetType().FullName, "setup--converter type");
+			Assert.IsTrue(converter.GetStandardValuesSupported(), "GetStandardValuesSupported");
+			Assert.IsTrue(converter.GetStandardValuesExclusive(), "GetStandardValuesExclusive");
+			//
+			global::System.Collections.ICollection list = converter.GetStandardValues();
+			Assert.AreEqual(8, list.Count, "count");
+			Object[] arr = new Object[list.Count];
+			list.CopyTo(arr, 0);
+			Assert.AreEqual(AutoCompleteSource.FileSystem, arr[0], "item0");
+			Assert.AreEqual(AutoCompleteSource.HistoryList, arr[1], "item1");
+			Assert.AreEqual(AutoCompleteSource.RecentlyUsedList, arr[2], "item2");
+			Assert.AreEqual(AutoCompleteSource.AllUrl, arr[3], "item3");
+			Assert.AreEqual(AutoCompleteSource.AllSystemSources, arr[4], "item4");
+			Assert.AreEqual(AutoCompleteSource.FileSystemDirectories, arr[5], "item5");
+			Assert.AreEqual(AutoCompleteSource.CustomSource, arr[6], "item6");
+			Assert.AreEqual(AutoCompleteSource.None, arr[7], "item7");
+			// And NOT AutoCompleteSource.ListItems.
+		}
+
+	}
 }
+#endif

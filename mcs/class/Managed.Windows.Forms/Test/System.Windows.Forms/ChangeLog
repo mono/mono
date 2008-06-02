@@ -1,3 +1,8 @@
+2008-06-02  Andy Hume  <andyhume32@yahoo.co.uk>
+
+	* TextBoxTest.cs: Test for TextBoxAutoCompleteSourceConverter, 
+        bug 396124.
+
 2008-06-02  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TableLayoutTest.cs Add test for bug #396141.

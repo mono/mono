@@ -555,8 +555,23 @@ namespace System.Windows.Forms {
 	}
 	
 #if NET_2_0
-	internal class TextBoxAutoCompleteSourceConverter : TypeConverter
+	internal class TextBoxAutoCompleteSourceConverter : EnumConverter
 	{
+		public TextBoxAutoCompleteSourceConverter(Type type)
+			: base(type)
+		{ }
+
+		public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
+		{
+			StandardValuesCollection stdv = base.GetStandardValues(context);
+			AutoCompleteSource[] arr = new AutoCompleteSource[stdv.Count];
+			stdv.CopyTo(arr, 0);
+			AutoCompleteSource[] arr2 = Array.FindAll(arr, delegate (AutoCompleteSource value) {
+				// No "ListItems" in a TextBox.
+				return value != AutoCompleteSource.ListItems;
+			});
+			return new StandardValuesCollection(arr2);
+		}
 	}
 #endif
 }
