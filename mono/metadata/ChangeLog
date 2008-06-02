@@ -1,5 +1,7 @@
 2008-06-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* decimal.c (log2_32): Use an optimized version for this function too.
+	
 	* decimal.c (log2_64): Fix this on 32 bit machines.
 
 2008-06-02 Rodrigo Kumpera  <rkumpera@novell.com>
