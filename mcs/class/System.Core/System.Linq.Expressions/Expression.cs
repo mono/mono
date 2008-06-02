@@ -312,6 +312,7 @@ namespace System.Linq.Expressions {
 				type = expression.Type;
 				is_lifted = type.IsNullable ();
 			} else {
+				// FIXME: completely wrong
 				var parameter = method.GetParameters () [0].ParameterType;
 				type = method.ReturnType;
 
