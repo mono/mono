@@ -61,6 +61,7 @@ namespace System.Web {
 	public sealed class HttpRuntime {
 		static bool caseInsensitive;
 		static bool runningOnWindows;
+		static bool isunc;
 #if TARGET_J2EE
 		static QueueManager queue_manager { get { return _runtime._queue_manager; } }
 		static TraceManager trace_manager { get { return _runtime._trace_manager; } }
@@ -136,9 +137,10 @@ namespace System.Web {
 			PlatformID pid = Environment.OSVersion.Platform;
 			runningOnWindows = ((int) pid != 128 && (int) pid != 4);
 
-			if (runningOnWindows)
+			if (runningOnWindows){
 				caseInsensitive = true;
-			else {
+				isunc = new Uri ("file://" + AppDomainAppPath).IsUnc;
+			} else {
 				string mono_iomap = Environment.GetEnvironmentVariable ("MONO_IOMAP");
 				if (mono_iomap != null) {
 					if (mono_iomap == "all")
@@ -305,7 +307,7 @@ namespace System.Web {
 		public static bool IsOnUNCShare {
 			[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Low)]
 			get {
-				throw new NotImplementedException ();
+				return isunc;
 			}
 		}
 

@@ -1,5 +1,12 @@
-2008-05-30  Marek Habersack  <mhabersack@novell.com>
+2008-06-02  Miguel de Icaza  <miguel@novell.com>
+	
+	* HttpRuntime.cs: Thanks to Christian Hergert for finding this
+	one.  
 
+	Do not throw NIEX on IsOnUNCShare, instead compute the value. 
+
+2008-05-30  Marek Habersack  <mhabersack@novell.com>
+	
 	* HttpApplication.cs, HttpCachePolicy.cs, SiteMapProvider.cs,
 	TraceContext.cs: do not use synthetized event accessors (to avoid
 	locks).
