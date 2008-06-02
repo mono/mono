@@ -1,3 +1,10 @@
+2008-06-02  William Holmes  <billholmes54@gmail.com>
+
+	* mini-amd64.c :  Correcting some of the issues for Winx64 dealing with
+	  reserving 32 bytes on the stack when making calls. 
+
+	Contributed under MIT/X11 license.
+
 2008-06-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-arm.c (mono_arch_output_basic_block): Merge some small fixes from
@@ -13504,6 +13511,8 @@ Mon Apr 7 16:31:34 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	belongs.
 
 	* mini.pc.in: Call this package `mini' for the moment.
+
+
 
 
 
