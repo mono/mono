@@ -1,3 +1,8 @@
+2008-06-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* decimal.c (mono_decimalDiv): Moved equality checks here from managed
+	code.
+
 2008-06-02 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* reflection.c (mono_dynamic_image_free): Release memory used by
