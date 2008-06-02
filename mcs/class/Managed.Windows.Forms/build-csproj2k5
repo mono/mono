@@ -49,7 +49,7 @@ SWFhead()
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>NET_1_1 NET_2_0</DefineConstants>
+    <DefineConstants>NET_1_1 NET_2_0 MWF_ON_MSRUNTIME</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
@@ -73,7 +73,7 @@ SWFhead()
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>NET_1_1 NET_2_0</DefineConstants>
+    <DefineConstants>NET_1_1 NET_2_0 MWF_ON_MSRUNTIME</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
     <DebugSymbols>false</DebugSymbols>
@@ -97,7 +97,7 @@ SWFhead()
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>NET_1_1 ONLY_1_1</DefineConstants>
+    <DefineConstants>NET_1_1 ONLY_1_1 MWF_ON_MSRUNTIME</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
@@ -121,7 +121,7 @@ SWFhead()
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>NET_1_1 ONLY_1_1</DefineConstants>
+    <DefineConstants>NET_1_1 ONLY_1_1 MWF_ON_MSRUNTIME</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
     <DebugSymbols>false</DebugSymbols>
