@@ -1,3 +1,10 @@
+2008-06-02  Atsushi Enomoto  <atsushi@ximian.com>
+			Marek Safar  <marek.safar@gmail.com>
+			
+	A fix for bug #395542
+	* cs-parser.jay: The trailing comma is allowed in anonymous type member
+	declaration.
+	
 2008-06-02  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #395287

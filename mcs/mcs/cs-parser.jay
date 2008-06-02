@@ -3558,7 +3558,7 @@ array_creation_expression
 	;
 
 anonymous_type_expression
-	: NEW OPEN_BRACE anonymous_type_parameters CLOSE_BRACE
+	: NEW OPEN_BRACE anonymous_type_parameters_opt_comma CLOSE_BRACE
 	  {
 	  	if (RootContext.Version <= LanguageVersion.ISO_2)
 	  		Report.FeatureIsNotAvailable (GetLocation ($1), "anonymous types");
@@ -3567,9 +3567,18 @@ anonymous_type_expression
 	  }
 	;
 
-anonymous_type_parameters
+anonymous_type_parameters_opt_comma
+	: anonymous_type_parameters_opt
+	| anonymous_type_parameters COMMA
+	;
+
+anonymous_type_parameters_opt
 	: { $$ = null; }
-	| anonymous_type_parameter
+	| anonymous_type_parameters
+	;
+
+anonymous_type_parameters
+	: anonymous_type_parameter
 	  {
 	  	ArrayList a = new ArrayList (4);
 	  	a.Add ($1);
