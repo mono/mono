@@ -1525,7 +1525,7 @@ namespace System.Windows.Forms {
 				}
 				
 				// Fake the window styles for mdi and parented forms
-				if (cp.HasWindowManager && !cp.IsSet (WindowExStyles.WS_EX_TOOLWINDOW)) {
+				if (cp.HasWindowManager) {
 					// Remove all styles but WS_VISIBLE.
 					cp.WindowStyle &= WindowStyles.WS_VISIBLE;
 					// Set styles that enables us to use the window manager.

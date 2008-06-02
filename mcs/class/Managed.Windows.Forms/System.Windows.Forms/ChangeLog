@@ -1,3 +1,8 @@
+2008-06-02  George Giolfan <georgegiolfan@yahoo.com> 
+
+	* Form.cs: Enabled managed handling of tool window MDI children. Fixes bug
+	394311.
+
 2008-06-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* XplatUIX11.cs: When detecting areas obscured in a control by other
