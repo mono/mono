@@ -1,3 +1,11 @@
+2008-06-02  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* SplitContainer.cs:
+	 - Fix SplitterDistance to update only if needed. 
+	 - Make it force min and max validation.
+	 - Handle properly mouse moves outside the resizeable area.
+	 [Fixes bug #338966]
+
 2008-06-02  Andreia Gaita <avidigal@novell.com> 
 
 	* WebBrowserBase.cs: Implement support for ScriptErrorsSuppressed

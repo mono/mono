@@ -366,11 +366,28 @@ namespace System.Windows.Forms
 			set {
 				if (value < 0)
 					throw new ArgumentOutOfRangeException ();
-				if (orientation == Orientation.Vertical)
-					this.splitter_rectangle.X = value;
-				else
-					this.splitter_rectangle.Y = value;
-				UpdateSplitter ();
+
+				if (value < panel1_min_size)
+					value = panel1_min_size;
+
+				bool updated = true;
+				if (orientation == Orientation.Vertical) {
+					if (this.Width - (this.SplitterWidth + value) < panel2_min_size)
+						value = this.Width - (this.SplitterWidth + panel2_min_size);
+					if (splitter_rectangle.X != value) {
+						splitter_rectangle.X = value;
+						updated = true;
+					}
+				} else {
+					if (this.Height - (this.SplitterWidth + value) < panel2_min_size)
+						value = this.Height - (this.SplitterWidth + panel2_min_size);
+					if (splitter_rectangle.Y != value) {
+						splitter_rectangle.Y = value;
+						updated = true;
+					}
+				}
+				if (updated)
+					UpdateSplitter ();
 			}
 		}
 
@@ -587,28 +604,58 @@ namespace System.Windows.Forms
 
 		private void SplitterMove (Point location)
 		{
-
-			XplatUI.DrawReversibleRectangle (this.Handle, splitter_rectangle_moving, 1);
-
 			int currentMove = orientation == Orientation.Vertical ? location.X : location.Y;
 			int delta = currentMove - splitter_prev_move;
+			Rectangle prev_location = splitter_rectangle_moving;
+			bool moved = false;
 
 			if (orientation == Orientation.Vertical) {
-					if (splitter_rectangle_moving.X + delta > this.panel1_min_size &&
-						splitter_rectangle_moving.X + delta + splitter_rectangle_moving.Width < panel2.Location.X + (panel2.Width - this.panel2_min_size))
-						splitter_rectangle_moving.X += delta;
+				int min = panel1_min_size;
+				int max = panel2.Location.X + (panel2.Width - this.panel2_min_size) - splitter_rectangle_moving.Width;
+
+				if (splitter_rectangle_moving.X + delta > min && splitter_rectangle_moving.X + delta < max) {
+					splitter_rectangle_moving.X += delta;
+					moved = true;
+				} else {
+					// Ensure that the splitter is set to minimum or maximum position, 
+					// even if the mouse "skips".
+					//
+					if (splitter_rectangle_moving.X + delta <= min && splitter_rectangle_moving.X != min) {
+						splitter_rectangle_moving.X = min;
+						moved = true;
+					} else if (splitter_rectangle_moving.X + delta >= max && splitter_rectangle_moving.X != max) {
+						splitter_rectangle_moving.X = max;
+						moved = true;
+					}
+				}
 			} else if (orientation == Orientation.Horizontal) {
-					if (splitter_rectangle_moving.Y + delta > this.panel1_min_size &&
-						splitter_rectangle_moving.Y + delta + splitter_rectangle_moving.Height < panel2.Location.Y + (panel2.Height - this.panel2_min_size))
-						splitter_rectangle_moving.Y += delta;
+				int min = panel1_min_size;
+				int max = panel2.Location.Y + (panel2.Height - this.panel2_min_size) - splitter_rectangle_moving.Height;
+
+				if (splitter_rectangle_moving.Y + delta > min && splitter_rectangle_moving.Y + delta < max) {
+					splitter_rectangle_moving.Y += delta;
+					moved = true;
+				} else {
+					// Ensure that the splitter is set to minimum or maximum position, 
+					// even if the mouse "skips".
+					//
+					if (splitter_rectangle_moving.Y + delta <= min && splitter_rectangle_moving.Y != min) {
+						splitter_rectangle_moving.Y = min;
+						moved = true;
+					} else if (splitter_rectangle_moving.Y + delta >= max && splitter_rectangle_moving.Y != max) {
+						splitter_rectangle_moving.Y = max;
+						moved = true;
+					}
+				}
 			}
 
-			splitter_prev_move = currentMove;
-
-			OnSplitterMoving (new SplitterCancelEventArgs (location.X, location.Y, 
-													 splitter_rectangle.X, splitter_rectangle.Y));
-
-			XplatUI.DrawReversibleRectangle (this.Handle, splitter_rectangle_moving, 1);
+			if (moved) {
+				splitter_prev_move = currentMove;
+				OnSplitterMoving (new SplitterCancelEventArgs (location.X, location.Y, 
+									       splitter_rectangle.X, splitter_rectangle.Y));
+				XplatUI.DrawReversibleRectangle (this.Handle, prev_location, 1);
+				XplatUI.DrawReversibleRectangle (this.Handle, splitter_rectangle_moving, 1);
+			}
 		}
 
 		private void SplitterEndMove (Point location, bool cancel)
@@ -618,7 +665,7 @@ namespace System.Windows.Forms
 				UpdateSplitter ();
 			}
 			SplitterEventArgs args = new SplitterEventArgs (location.X, location.Y, 
-															splitter_rectangle.X, splitter_rectangle.Y);
+									splitter_rectangle.X, splitter_rectangle.Y);
 			OnSplitterMoved (args);
 		}
 
