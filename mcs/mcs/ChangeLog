@@ -1,3 +1,8 @@
+2008-06-02  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #395287
+	* class.cs, modifiers.cs: Automatic properties method base modifiers checks.
+
 2008-05-31  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #395845

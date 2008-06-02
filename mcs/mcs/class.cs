@@ -3556,7 +3556,7 @@ namespace Mono.CSharp {
 				MethodAttributes base_classp = base_method.Attributes & MethodAttributes.MemberAccessMask;
 
 				if (!CheckAccessModifiers (thisp, base_classp, base_method)) {
-					Error_CannotChangeAccessModifiers (base_method, base_classp, null);
+					Error_CannotChangeAccessModifiers (Location, base_method, base_classp, null);
 					ok = false;
 				}
 
@@ -3750,7 +3750,7 @@ namespace Mono.CSharp {
 			base.Emit ();
 		}
 
-		protected void Error_CannotChangeAccessModifiers (MemberInfo base_method, MethodAttributes ma, string suffix)
+		protected void Error_CannotChangeAccessModifiers (Location loc, MemberInfo base_method, MethodAttributes ma, string suffix)
 		{
 			Report.SymbolRelatedToPreviousError (base_method);
 			string base_name = TypeManager.GetFullNameSignature (base_method);
@@ -3760,7 +3760,7 @@ namespace Mono.CSharp {
 				this_name += suffix;
 			}
 
-			Report.Error (507, Location, "`{0}': cannot change access modifiers when overriding `{1}' inherited member `{2}'",
+			Report.Error (507, loc, "`{0}': cannot change access modifiers when overriding `{1}' inherited member `{2}'",
 				this_name, Modifiers.GetDescription (ma), base_name);
 		}
 
@@ -6713,45 +6713,44 @@ namespace Mono.CSharp {
  			PropertyInfo base_property = ResolveBaseProperty ();
  			if (base_property == null)
  				return null;
-  
+
  			base_ret_type = base_property.PropertyType;
 			MethodInfo get_accessor = base_property.GetGetMethod (true);
 			MethodInfo set_accessor = base_property.GetSetMethod (true);
 			MethodAttributes get_accessor_access = 0, set_accessor_access = 0;
 
-			if ((ModFlags & Modifiers.OVERRIDE) != 0) {
-				if (Get != null && !Get.IsDummy && get_accessor == null) {
-					Report.SymbolRelatedToPreviousError (base_property);
-					Report.Error (545, Location, "`{0}.get': cannot override because `{1}' does not have an overridable get accessor", GetSignatureForError (), TypeManager.GetFullNameSignature (base_property));
+			//
+			// Check base property accessors conflict
+			//
+			if ((ModFlags & (Modifiers.OVERRIDE | Modifiers.NEW)) == Modifiers.OVERRIDE) {
+				if (get_accessor == null) {
+					if (Get != null && !Get.IsDummy) {
+						Report.SymbolRelatedToPreviousError (base_property);
+						Report.Error (545, Location,
+							"`{0}.get': cannot override because `{1}' does not have an overridable get accessor",
+							GetSignatureForError (), TypeManager.GetFullNameSignature (base_property));
+					}
+				} else {
+					get_accessor_access = get_accessor.Attributes & MethodAttributes.MemberAccessMask;
+
+					if (!Get.IsDummy && !CheckAccessModifiers (
+						Modifiers.MethodAttr (Get.ModFlags) & MethodAttributes.MemberAccessMask, get_accessor_access, get_accessor))
+						Error_CannotChangeAccessModifiers (Get.Location, get_accessor, get_accessor_access, ".get");
 				}
 
-				if (Set != null && !Set.IsDummy && set_accessor == null) {
-					Report.SymbolRelatedToPreviousError (base_property);
-					Report.Error (546, Location, "`{0}.set': cannot override because `{1}' does not have an overridable set accessor", GetSignatureForError (), TypeManager.GetFullNameSignature (base_property));
-				}
-
-				//
-				// Check base class accessors access
-				//
-
-				// TODO: rewrite to reuse Get|Set.CheckAccessModifiers and share code there
-				get_accessor_access = set_accessor_access = 0;
-				if ((ModFlags & Modifiers.NEW) == 0) {
-					if (get_accessor != null) {
-						MethodAttributes get_flags = Modifiers.MethodAttr (Get.ModFlags != 0 ? Get.ModFlags : ModFlags);
-						get_accessor_access = (get_accessor.Attributes & MethodAttributes.MemberAccessMask);
-
-						if (!Get.IsDummy && !CheckAccessModifiers (get_flags & MethodAttributes.MemberAccessMask, get_accessor_access, get_accessor))
-							Error_CannotChangeAccessModifiers (get_accessor, get_accessor_access, ".get");
+				if (set_accessor == null) {
+					if (Set != null && !Set.IsDummy) {
+						Report.SymbolRelatedToPreviousError (base_property);
+						Report.Error (546, Location,
+							"`{0}.set': cannot override because `{1}' does not have an overridable set accessor",
+							GetSignatureForError (), TypeManager.GetFullNameSignature (base_property));
 					}
+				} else {
+					set_accessor_access = set_accessor.Attributes & MethodAttributes.MemberAccessMask;
 
-					if (set_accessor != null) {
-						MethodAttributes set_flags = Modifiers.MethodAttr (Set.ModFlags != 0 ? Set.ModFlags : ModFlags);
-						set_accessor_access = (set_accessor.Attributes & MethodAttributes.MemberAccessMask);
-
-						if (!Set.IsDummy && !CheckAccessModifiers (set_flags & MethodAttributes.MemberAccessMask, set_accessor_access, set_accessor))
-							Error_CannotChangeAccessModifiers (set_accessor, set_accessor_access, ".set");
-					}
+					if (!Set.IsDummy && !CheckAccessModifiers (
+						Modifiers.MethodAttr (Set.ModFlags) & MethodAttributes.MemberAccessMask, set_accessor_access, set_accessor))
+						Error_CannotChangeAccessModifiers (Set.Location, set_accessor, set_accessor_access, ".set");
 				}
 			}
 
@@ -6910,12 +6909,12 @@ namespace Mono.CSharp {
 			if (!base.Define ())
 				return false;
 
-			if (!CheckBase ())
-				return false;
-
 			flags |= MethodAttributes.HideBySig | MethodAttributes.SpecialName;
 
 			if (!DefineAccessors ())
+				return false;
+
+			if (!CheckBase ())
 				return false;
 
 			// FIXME - PropertyAttributes.HasDefault ?
@@ -7736,10 +7735,6 @@ namespace Mono.CSharp {
 				!Parent.PartialContainer.AddMember (Get) || !Parent.PartialContainer.AddMember (Set))
 				return false;
 
-			if (!CheckBase ())
-				return false;
-
-
 			if ((caching_flags & Flags.MethodOverloadsExist) != 0) {
 				if (!Parent.MemberCache.CheckExistingMembersOverloads (this, Name, parameters))
 					return false;
@@ -7748,6 +7743,9 @@ namespace Mono.CSharp {
 			flags |= MethodAttributes.HideBySig | MethodAttributes.SpecialName;
 			
 			if (!DefineAccessors ())
+				return false;
+
+			if (!CheckBase ())
 				return false;
 
 			if (!Get.IsDummy) {
