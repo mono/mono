@@ -40,31 +40,37 @@ namespace System.ComponentModel
 	{
 		PropertyInfo _member;
 		Type _componentType;
+		Type _propertyType;
 
 		public ReflectionPropertyDescriptor (Type componentType, PropertyDescriptor oldPropertyDescriptor, Attribute [] attributes)
 		: base (oldPropertyDescriptor, attributes)
 		{
 			_componentType = componentType;
+			_propertyType = oldPropertyDescriptor.PropertyType;
 		}
 
 		public ReflectionPropertyDescriptor (Type componentType, string name, Type type, Attribute [] attributes)
 		: base (name, attributes)
 		{
 			_componentType = componentType;
+			_propertyType = type;
 		}
 
 		public ReflectionPropertyDescriptor (PropertyInfo info)
-		: base (info.Name, Attribute.GetCustomAttributes (info, true))
+		: base (info.Name, null)
 		{
 			_member = info;
 			_componentType = _member.DeclaringType;
+			_propertyType = info.PropertyType;
 		}
 
 		PropertyInfo GetPropertyInfo ()
 		{
 			if (_member == null) {
-				_member = _componentType.GetProperty (Name, BindingFlags.GetProperty |  BindingFlags.NonPublic |
-									BindingFlags.Public | BindingFlags.Instance);
+				_member = _componentType.GetProperty (Name, BindingFlags.GetProperty | BindingFlags.NonPublic | 
+								      BindingFlags.Public | BindingFlags.Instance,
+								      null, this.PropertyType,
+								      new Type[0], new ParameterModifier[0]);
 				if (_member == null)
 					throw new ArgumentException ("Accessor methods for the " + Name + " property are missing");
 			}
@@ -83,9 +89,55 @@ namespace System.ComponentModel
 		}
 
 		public override Type PropertyType {
-			get {
-				return GetPropertyInfo ().PropertyType;
+			get { return _propertyType; }
+		}
+
+		// The last added to the list attributes have higher precedence
+		//
+		protected override void FillAttributes (IList attributeList)
+		{
+			base.FillAttributes (attributeList);
+
+			if (!GetPropertyInfo ().CanWrite)
+				attributeList.Add (ReadOnlyAttribute.Yes);
+			
+			// PropertyDescriptor merges the attributes of both virtual and also "new" properties 
+			// in the the component type hierarchy.
+			// 
+			int numberOfBaseTypes = 0;
+			Type baseType = this.ComponentType;
+			while (baseType != null && baseType != typeof (object)) {
+				numberOfBaseTypes++;
+				baseType = baseType.BaseType;
 			}
+
+			Attribute[][] hierarchyAttributes = new Attribute[numberOfBaseTypes][];
+			baseType = this.ComponentType;
+			while (baseType != null && baseType != typeof (object)) {
+				PropertyInfo property = baseType.GetProperty (Name, BindingFlags.NonPublic |
+									      BindingFlags.Public | BindingFlags.Instance | 
+									      BindingFlags.DeclaredOnly, 
+									      null, this.PropertyType,
+									      new Type[0], new ParameterModifier[0]);
+				if (property != null) {
+					object[] attrObjects = property.GetCustomAttributes (false);
+					Attribute[] attrsArray = new Attribute[attrObjects.Length];
+					attrObjects.CopyTo (attrsArray, 0);
+					// add in reverse order so that the base types have lower precedence
+					hierarchyAttributes[--numberOfBaseTypes] = attrsArray;
+				}
+				baseType = baseType.BaseType;
+			}
+
+			foreach (Attribute[] attrArray in hierarchyAttributes) {
+				if (attrArray != null) {
+					foreach (Attribute attr in attrArray)
+						attributeList.Add (attr);
+				}
+			}
+
+			foreach (Attribute attribute in TypeDescriptor.GetAttributes (PropertyType))
+				attributeList.Add (attribute);
 		}
 
 		public override object GetValue (object component)

@@ -161,7 +161,6 @@ namespace System.ComponentModel
 		}
 
 #if NET_2_0
-		[MonoNotSupported ("")]
 		protected override void FillAttributes (IList attributeList)
 		{
 			base.FillAttributes (attributeList);

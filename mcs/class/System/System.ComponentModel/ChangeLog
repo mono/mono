@@ -1,3 +1,15 @@
+2008-06-02  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* MemberDescriptor.cs, PropertyDescriptor.cs, 
+	ReflectionPropertyDescriptor.cs: Implement FillAttributes.
+	* MemberDescriptor.cs: 
+	 - Attributes should be checked for duplicates based on their 
+	 TypeId and not Type.
+	 - For duplicate attributes the last one added has higher precedence.
+	* ReflectionPropertyDescriptor.cs: Use the property type supplied 
+	in the ctor instead of using reflection, because this won't work if 
+	there are more then one property with the same name.
+
 2008-05-29  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* TypeDescriptor.cs: GetAttributes must retrieve the attributes of 

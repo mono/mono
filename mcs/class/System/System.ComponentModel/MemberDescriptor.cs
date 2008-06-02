@@ -43,7 +43,7 @@ namespace System.ComponentModel
 	public abstract class MemberDescriptor
 	{
 		private string name;
-		private Attribute [] attrs;
+		private Attribute [] attrs; // only the attributes supplied in the ctor
 		private AttributeCollection attrCollection;
 
 		protected MemberDescriptor (string name, Attribute [] attrs)
@@ -71,22 +71,17 @@ namespace System.ComponentModel
 
 		protected virtual Attribute [] AttributeArray {
 			get {
-				if (attrs == null) {
-					ArrayList list = new ArrayList ();
-					FillAttributes (list);
-
-					ArrayList filtered = new ArrayList ();
-					foreach (Attribute at in list) {
-						bool found = false;
-						for (int n = 0; n < filtered.Count && !found; n++)
-							found = (filtered [n].GetType () == at.GetType ());
-						if (!found)
-							filtered.Add (at);
-					}
-					attrs = (Attribute[]) filtered.ToArray (typeof(Attribute));
-				}
-
-				return attrs;
+				ArrayList list = new ArrayList ();
+				if (attrs != null)
+					list.AddRange (attrs);
+				FillAttributes (list);
+				// For duplicate attributes, the last one added to the list is kept.
+				Hashtable attributes = new Hashtable ();
+				foreach (Attribute attribute in list)
+					attributes[attribute.TypeId] = attribute;
+				Attribute[] attributesArray = new Attribute[attributes.Values.Count];
+				attributes.Values.CopyTo (attributesArray, 0);
+				return attributesArray;
 			}
 			set {
 				attrs = value;
