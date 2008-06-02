@@ -1,3 +1,7 @@
+2008-06-02  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TableLayoutTest.cs Add test for bug #396141.
+
 2008-05-21  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TimerTest.cs: Increase sleep time to see if it will make

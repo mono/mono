@@ -511,25 +511,29 @@ namespace System.Windows.Forms
 			// to hold every non-autosize control
 			actual_positions = (LayoutEngine as TableLayout).CalculateControlPositions (this, Math.Max (ColumnCount, 1), Math.Max (RowCount, 1));
 			
+			// Use actual row/column counts, not user set ones
+			int actual_cols = actual_positions.GetLength (0);
+			int actual_rows = actual_positions.GetLength (1);
+			
 			// Figure out how wide the panel needs to be
-			int[] column_widths = new int[ColumnCount];
+			int[] column_widths = new int[actual_cols];
 			float total_column_percentage = 0f;
 			
 			// Figure out how tall each column wants to be
-			for (int i = 0; i < ColumnCount; i++) {
+			for (int i = 0; i < actual_cols; i++) {
 				if (i < ColumnStyles.Count && ColumnStyles[i].SizeType == SizeType.Percent)
 					total_column_percentage += ColumnStyles[i].Width;
 					
 				int biggest = 0;
 
-				for (int j = 0; j < RowCount; j++) {
+				for (int j = 0; j < actual_rows; j++) {
 					Control c = actual_positions[i, j];
 
 					if (c != null) {
 						if (!c.AutoSize)
 							biggest = Math.Max (biggest, c.ExplicitBounds.Width + c.Margin.Horizontal + Padding.Horizontal);
 						else
-							biggest = Math.Max (biggest, c.ExplicitBounds.Width + c.Margin.Horizontal + Padding.Horizontal);
+							biggest = Math.Max (biggest, c.PreferredSize.Width + c.Margin.Horizontal + Padding.Horizontal);
 					}
 				}
 
@@ -542,7 +546,7 @@ namespace System.Windows.Forms
 			int non_percent_total_width = 0;
 			int percent_total_width = 0;
 
-			for (int i = 0; i < ColumnCount; i++) {
+			for (int i = 0; i < actual_cols; i++) {
 				if (i < ColumnStyles.Count && ColumnStyles[i].SizeType == SizeType.Percent)
 					percent_total_width = Math.Max (percent_total_width, (int)(column_widths[i] / ((ColumnStyles[i].Width) / total_column_percentage)));
 				else
@@ -551,17 +555,17 @@ namespace System.Windows.Forms
 
 
 			// Figure out how tall the panel needs to be
-			int[] row_heights = new int[RowCount];
+			int[] row_heights = new int[actual_rows];
 			float total_row_percentage = 0f;
 		
 			// Figure out how tall each row wants to be
-			for (int j = 0; j < RowCount; j++) {
+			for (int j = 0; j < actual_rows; j++) {
 				if (j < RowStyles.Count && RowStyles[j].SizeType == SizeType.Percent)
 					total_row_percentage += RowStyles[j].Height;
 					
 				int biggest = 0;
 				
-				for (int i = 0; i < ColumnCount; i++) {
+				for (int i = 0; i < actual_cols; i++) {
 					Control c = actual_positions[i, j];
 
 					if (c != null) {
@@ -580,8 +584,8 @@ namespace System.Windows.Forms
 			// get bigger, even if we only need one to be bigger.
 			int non_percent_total_height = 0;
 			int percent_total_height = 0;
-			
-			for (int j = 0; j < RowCount; j++) {
+
+			for (int j = 0; j < actual_rows; j++) {
 				if (j < RowStyles.Count && RowStyles[j].SizeType == SizeType.Percent)
 					percent_total_height = Math.Max (percent_total_height, (int)(row_heights[j] / ((RowStyles[j].Height) / total_row_percentage)));
 				else

@@ -1,3 +1,9 @@
+2008-06-02  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TableLayoutPanel.cs: When calculating preferred size, use the
+	actual number of columns and rows, not what the user set them to.
+	[Fixes bug #396141]
+
 2008-06-02  George Giolfan <georgegiolfan@yahoo.com> 
 
 	* Form.cs: Enabled managed handling of tool window MDI children. Fixes bug

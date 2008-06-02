@@ -1392,6 +1392,41 @@ namespace MonoTests.System.Windows.Forms
 			LayoutPanel.Controls.Add (OkButton);
 			LayoutPanel.SetColumnSpan (OkButton, 3);
 		}
+		
+		[Test]
+		public void Bug396141 ()
+		{
+			// The issue is the user has set the RowCount to 0, but after
+			// we arrange the controls, we have 1 row.  GetPreferredSize (for
+			// AutoSize) was using 0 instead of 1.
+
+			Form f = new Form ();
+			f.ClientSize = new Size (300, 300);
+			f.ShowInTaskbar = false;
+
+			TableLayoutPanel tlp = new TableLayoutPanel ();
+			tlp.AutoSize = true;
+			tlp.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			tlp.ColumnCount = 2;
+			tlp.RowCount = 0;
+
+			f.Controls.Add (tlp);
+
+			TextBox t1 = new TextBox ();
+			t1.Dock = DockStyle.Fill;
+			tlp.Controls.Add (t1);
+
+			TextBox t2 = new TextBox ();
+			t2.Dock = DockStyle.Fill;
+			tlp.Controls.Add (t2);
+
+			f.Show ();
+			
+			Assert.IsTrue (tlp.Height > 0, "Height must be > 0");
+			Assert.IsTrue (tlp.Width > 0, "Width must be > 0");
+
+			f.Dispose ();
+		}
 	}
 }
 #endif
