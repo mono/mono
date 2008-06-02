@@ -1,3 +1,8 @@
+2008-06-02  Andreia Gaita <avidigal@novell.com> 
+
+	* xpidl2cs.pl: Add mapping: nsIIDPtr[] to IntPtr, nsCID and nsCIDPtr to
+	  Guid. Add support for mapping array types
+
 2008-04-18  Andreia Gaita <avidigal@novell.com> 
 
 	* xpidl2cs.pl: Fix parsing for non-scriptable interfaces
