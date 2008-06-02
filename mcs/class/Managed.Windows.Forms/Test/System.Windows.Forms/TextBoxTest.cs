@@ -900,5 +900,5 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 	}
-}
 #endif
+}
