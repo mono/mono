@@ -629,12 +629,8 @@ namespace System
 				throw new DivideByZeroException ();
 			if (d1.IsZero ())
 				return Decimal.Zero;
-			if (d1 == d2)
-				return Decimal.One;
 
 			d1.flags ^= SIGN_FLAG;
-			if (d1 == d2)
-				return Decimal.MinusOne;
 			d1.flags ^= SIGN_FLAG;
 
 			Decimal result;

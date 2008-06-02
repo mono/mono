@@ -1,3 +1,7 @@
+2008-06-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* Decimal.cs (Divide): Move expensive equality checks to unmanaged code.
+
 2008-06-02  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* MonoType.cs: For property reflection we should strictly match the return 
