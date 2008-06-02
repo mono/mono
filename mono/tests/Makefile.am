@@ -270,6 +270,8 @@ BASE_TEST_CS_SRC=		\
 	generic-virtual.2.cs	\
 	generic-interface-methods.2.cs	\
 	generic-array-type.2.cs	\
+	generic-method-patching.2.cs	\
+	generic-null-call.2.cs	\
 	recursive-generics.2.cs	\
 	bug-80392.2.cs		\
 	dynamic-method-access.2.cs	\
@@ -287,6 +289,7 @@ BASE_TEST_CS_SRC=		\
 	bug-340662_bug.cs	\
 	bug-322722_dyn_method_throw.2.cs	\
 	bug-389886-2.cs	\
+	bug-325283.2.cs	\
 	thunks.cs
 
 if AMD64
@@ -335,7 +338,6 @@ TEST_IL_SRC=			\
 	ckfiniteTest.il		\
 	fault-handler.il		\
 	locallocTest.il		\
-	long-shift-regalloc.il		\
 	initblkTest.il		\
 	qt-instance.il		\
 	vararg.il		\
@@ -366,6 +368,7 @@ TEST_IL_SRC=			\
 	generics-sharing-other-exc.2.il	\
 	generic-ldobj.2.il	\
 	generic-mkrefany.2.il	\
+	generic-refanyval.2.il	\
 	generic-ldtoken.2.il	\
 	generic-ldtoken-method.2.il	\
 	generic-ldtoken-field.2.il	\
@@ -653,9 +656,9 @@ custom-modifiers: custom-modifiers.exe
 
 EXTRA_DIST += bug-382986.cs  bug-382986-lib.cs
 bug-382986-lib.dll: bug-382986-lib.cs
-	$(MCS) -target:library -out:bug-382986-lib.dll bug-382986-lib.cs
+	$(MCS) -target:library -out:$@ $(srcdir)/bug-382986-lib.cs
 bug-382986.exe: bug-382986.cs bug-382986-lib.dll
-	$(MCS) -out:bug-382986.exe -r:bug-382986-lib.dll bug-382986.cs
+	$(MCS) -out:$@ -r:bug-382986-lib.dll $(srcdir)/bug-382986.cs
 test-bug-382986: bug-382986.exe
 	$(RUNTIME) bug-382986.exe
 
@@ -690,28 +693,17 @@ test-generic-sharing : generics-sharing.2.exe shared-generic-methods.2.exe	\
 		generics-sharing-other-exc.2.exe generic-box.2.exe		\
 		generic-unbox.2.exe generic-delegate.2.exe generic-sizeof.2.exe	\
 		generic-ldobj.2.exe generic-mkrefany.2.exe			\
-		generic-ldtoken.2.exe			\
+		generic-refanyval.2.exe generic-ldtoken.2.exe			\
 		generic-ldtoken-method.2.exe  generic-ldtoken-field.2.exe	\
 		generic-virtual.2.exe generic-tailcall.2.exe			\
-		generic-interface-methods.2.exe generic-array-type.2.exe
-	$(RUNTIME) -O=gshared,-inline        generics-sharing.2.exe
-	$(RUNTIME) -O=gshared,-inline        shared-generic-methods.2.exe
-	$(RUNTIME) -O=gshared,-inline        shared-generic-synchronized.2.exe
-	$(RUNTIME) -O=gshared,-inline        generic-initobj.2.exe
-	$(RUNTIME) -O=gshared,-inline        generic-box.2.exe
-	$(RUNTIME) -O=gshared,-inline        generics-sharing-other-exc.2.exe
-	$(RUNTIME) -O=gshared,-inline        generic-unbox.2.exe
-	$(RUNTIME) -O=gshared,-inline        generic-delegate.2.exe
-	$(RUNTIME) -O=gshared,-inline        generic-sizeof.2.exe
-	$(RUNTIME) -O=gshared,-inline        generic-ldobj.2.exe
-	$(RUNTIME) -O=gshared,-inline        generic-mkrefany.2.exe
-	$(RUNTIME) -O=gshared,-inline        generic-ldtoken.2.exe
-	$(RUNTIME) -O=gshared,-inline        generic-ldtoken-method.2.exe
-	$(RUNTIME) -O=gshared,-inline        generic-ldtoken-field.2.exe
-	$(RUNTIME) -O=gshared,-inline        generic-virtual.2.exe
-	$(RUNTIME) -O=gshared,-inline        generic-tailcall.2.exe
-	$(RUNTIME) -O=gshared,-inline        generic-interface-methods.2.exe
-	$(RUNTIME) -O=gshared,-inline        generic-array-type.2.exe
+		generic-interface-methods.2.exe generic-array-type.2.exe	\
+		generic-method-patching.2.exe	\
+		generic-null-call.2.exe
+	for fn in $+ ; do	\
+		echo "Testing $$fn ...";	\
+		MONO_GENERIC_SHARING=all $(RUNTIME) -O=gshared,-inline        $$fn || exit 1;	\
+		MONO_GENERIC_SHARING=all $(RUNTIME) -O=gshared,-inline,shared $$fn || exit 1;	\
+	done
 
 EXTRA_DIST += async-exceptions.cs
 async-exceptions.exe : async-exceptions.cs

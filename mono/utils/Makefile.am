@@ -37,7 +37,11 @@ libmonoutils_la_SOURCES = \
 	mono-uri.c	\
 	mono-poll.c	\
 	mono-path.c	\
-	mono-stdlib.c
+	mono-stdlib.c \
+	mono-property-hash.h \
+	mono-property-hash.c \
+	mono-value-hash.h \
+	mono-value-hash.c
 
 libmonoutilsincludedir = $(includedir)/mono-$(API_VER)/mono/utils
 

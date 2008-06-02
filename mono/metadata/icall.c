@@ -509,7 +509,7 @@ ves_icall_System_Array_CreateInstanceImpl (MonoReflectionType *type, MonoArray *
 {
 	MonoClass *aklass;
 	MonoArray *array;
-	guint32 *sizes, i;
+	mono_array_size_t *sizes, i;
 	gboolean bounded = FALSE;
 
 	MONO_ARCH_SAVE_REGS;
@@ -533,11 +533,55 @@ ves_icall_System_Array_CreateInstanceImpl (MonoReflectionType *type, MonoArray *
 
 	aklass = mono_bounded_array_class_get (mono_class_from_mono_type (type->type), mono_array_length (lengths), bounded);
 
-	sizes = alloca (aklass->rank * sizeof(guint32) * 2);
+	sizes = alloca (aklass->rank * sizeof(mono_array_size_t) * 2);
 	for (i = 0; i < aklass->rank; ++i) {
 		sizes [i] = mono_array_get (lengths, guint32, i);
 		if (bounds)
 			sizes [i + aklass->rank] = mono_array_get (bounds, guint32, i);
+		else
+			sizes [i + aklass->rank] = 0;
+	}
+
+	array = mono_array_new_full (mono_object_domain (type), aklass, sizes, sizes + aklass->rank);
+
+	return array;
+}
+
+static MonoArray *
+ves_icall_System_Array_CreateInstanceImpl64 (MonoReflectionType *type, MonoArray *lengths, MonoArray *bounds)
+{
+	MonoClass *aklass;
+	MonoArray *array;
+	mono_array_size_t *sizes, i;
+	gboolean bounded = FALSE;
+
+	MONO_ARCH_SAVE_REGS;
+
+	MONO_CHECK_ARG_NULL (type);
+	MONO_CHECK_ARG_NULL (lengths);
+
+	MONO_CHECK_ARG (lengths, mono_array_length (lengths) > 0);
+	if (bounds)
+		MONO_CHECK_ARG (bounds, mono_array_length (lengths) == mono_array_length (bounds));
+
+	for (i = 0; i < mono_array_length (lengths); i++) 
+		if ((mono_array_get (lengths, gint64, i) < 0) ||
+		    (mono_array_get (lengths, gint64, i) > MONO_ARRAY_MAX_INDEX))
+			mono_raise_exception (mono_get_exception_argument_out_of_range (NULL));
+
+	if (bounds && (mono_array_length (bounds) == 1) && (mono_array_get (bounds, gint64, 0) != 0))
+		/* vectors are not the same as one dimensional arrays with no-zero bounds */
+		bounded = TRUE;
+	else
+		bounded = FALSE;
+
+	aklass = mono_bounded_array_class_get (mono_class_from_mono_type (type->type), mono_array_length (lengths), bounded);
+
+	sizes = alloca (aklass->rank * sizeof(mono_array_size_t) * 2);
+	for (i = 0; i < aklass->rank; ++i) {
+		sizes [i] = mono_array_get (lengths, guint64, i);
+		if (bounds)
+			sizes [i + aklass->rank] = (mono_array_size_t) mono_array_get (bounds, guint64, i);
 		else
 			sizes [i + aklass->rank] = 0;
 	}
@@ -559,6 +603,7 @@ static gint32
 ves_icall_System_Array_GetLength (MonoArray *this, gint32 dimension)
 {
 	gint32 rank = ((MonoObject *)this)->vtable->klass->rank;
+	mono_array_size_t length;
 
 	MONO_ARCH_SAVE_REGS;
 
@@ -566,9 +611,31 @@ ves_icall_System_Array_GetLength (MonoArray *this, gint32 dimension)
 		mono_raise_exception (mono_get_exception_index_out_of_range ());
 	
 	if (this->bounds == NULL)
-		return this->max_length;
+		length = this->max_length;
+	else
+		length = this->bounds [dimension].length;
+
+#ifdef MONO_BIG_ARRAYS
+	if (length > G_MAXINT32)
+	        mono_raise_exception (mono_get_exception_overflow ());
+#endif
+	return length;
+}
+
+static gint64
+ves_icall_System_Array_GetLongLength (MonoArray *this, gint32 dimension)
+{
+	gint32 rank = ((MonoObject *)this)->vtable->klass->rank;
+
+	MONO_ARCH_SAVE_REGS;
+
+	if ((dimension < 0) || (dimension >= rank))
+		mono_raise_exception (mono_get_exception_index_out_of_range ());
 	
-	return this->bounds [dimension].length;
+	if (this->bounds == NULL)
+ 		return this->max_length;
+ 	
+ 	return this->bounds [dimension].length;
 }
 
 static gint32
@@ -1890,11 +1957,13 @@ ves_icall_Type_GetInterfaces (MonoReflectionType* type)
 	intf = mono_array_new (domain, mono_defaults.monotype_class, ifaces->len);
 	for (i = 0; i < ifaces->len; ++i) {
 		MonoClass *ic = g_ptr_array_index (ifaces, i);
-		MonoType *ret = &ic->byval_arg;
+		MonoType *ret = &ic->byval_arg, *inflated = NULL;
 		if (context && ic->generic_class && ic->generic_class->context.class_inst->is_open)
-			ret = mono_class_inflate_generic_type (ret, context);
+			inflated = ret = mono_class_inflate_generic_type (ret, context);
 		
 		mono_array_setref (intf, i, mono_type_get_object (domain, ret));
+		if (inflated)
+			mono_metadata_free_type (inflated);
 	}
 	g_ptr_array_free (ifaces, TRUE);
 
@@ -2300,10 +2369,11 @@ static MonoReflectionType*
 ves_icall_MonoGenericClass_GetParentType (MonoReflectionGenericClass *type)
 {
 	MonoDynamicGenericClass *gclass;
-	MonoReflectionType *parent = NULL;
+	MonoReflectionType *parent = NULL, *res;
 	MonoDomain *domain;
 	MonoType *inflated;
 	MonoClass *klass;
+
 
 	MONO_ARCH_SAVE_REGS;
 
@@ -2324,7 +2394,9 @@ ves_icall_MonoGenericClass_GetParentType (MonoReflectionGenericClass *type)
 	inflated = mono_class_inflate_generic_type (
 		parent->type, mono_generic_class_get_context ((MonoGenericClass *) gclass));
 
-	return mono_type_get_object (domain, inflated);
+	res = mono_type_get_object (domain, inflated);
+	mono_metadata_free_type (inflated);
+	return res;
 }
 
 static MonoArray*
@@ -2370,6 +2442,7 @@ ves_icall_MonoGenericClass_GetInterfaces (MonoReflectionGenericClass *type)
 
 		iface = mono_type_get_object (domain, it);
 		mono_array_setref (res, i, iface);
+		mono_metadata_free_type (it);
 	}
 
 	return res;
@@ -2729,7 +2802,7 @@ ves_icall_MonoMethod_GetGenericMethodDefinition (MonoReflectionMethod *method)
 
 	MONO_ARCH_SAVE_REGS;
 
-	if (method->method->generic_container)
+	if (method->method->is_generic)
 		return method;
 
 	if (!method->method->is_inflated)
@@ -2739,7 +2812,7 @@ ves_icall_MonoMethod_GetGenericMethodDefinition (MonoReflectionMethod *method)
 
 	result = imethod->declaring;
 	/* Not a generic method.  */
-	if (!result->generic_container)
+	if (!result->is_generic)
 		return NULL;
 
 	if (method->method->klass->image->dynamic) {
@@ -2779,7 +2852,7 @@ ves_icall_MonoMethod_get_IsGenericMethodDefinition (MonoReflectionMethod *method
 {
 	MONO_ARCH_SAVE_REGS;
 
-	return method->method->generic_container != NULL;
+	return method->method->is_generic;
 }
 
 static MonoArray*
@@ -2810,7 +2883,8 @@ ves_icall_MonoMethod_GetGenericArguments (MonoReflectionMethod *method)
 	res = mono_array_new (domain, mono_defaults.monotype_class, count);
 
 	for (i = 0; i < count; i++) {
-		MonoGenericParam *param = &method->method->generic_container->type_params [i];
+		MonoGenericContainer *container = mono_method_get_generic_container (method->method);
+		MonoGenericParam *param = &container->type_params [i];
 		MonoClass *pklass = mono_class_from_generic_parameter (
 			param, method->method->klass->image, TRUE);
 		mono_array_setref (res, i,
@@ -2903,12 +2977,12 @@ ves_icall_InternalInvoke (MonoReflectionMethod *method, MonoObject *this, MonoAr
 	
 	if (m->klass->rank && !strcmp (m->name, ".ctor")) {
 		int i;
-		guint32 *lengths;
-		guint32 *lower_bounds;
+		mono_array_size_t *lengths;
+		mono_array_size_t *lower_bounds;
 		pcount = mono_array_length (params);
-		lengths = alloca (sizeof (guint32) * pcount);
+		lengths = alloca (sizeof (mono_array_size_t) * pcount);
 		for (i = 0; i < pcount; ++i)
-			lengths [i] = *(gint32*) ((char*)mono_array_get (params, gpointer, i) + sizeof (MonoObject));
+			lengths [i] = *(mono_array_size_t*) ((char*)mono_array_get (params, gpointer, i) + sizeof (MonoObject));
 
 		if (m->klass->rank == pcount) {
 			/* Only lengths provided. */
@@ -4129,6 +4203,10 @@ ves_icall_System_Reflection_Assembly_InternalGetType (MonoReflectionAssembly *as
 
 	if (type->type == MONO_TYPE_CLASS) {
 		MonoClass *klass = mono_type_get_class (type);
+
+		if (mono_is_security_manager_active () && !klass->exception_type)
+			/* Some security problems are detected during generic vtable construction */
+			mono_class_setup_vtable (klass);
 		/* need to report exceptions ? */
 		if (throwOnError && klass->exception_type) {
 			/* report SecurityException (or others) that occured when loading the assembly */
@@ -5547,6 +5625,10 @@ ves_icall_System_Delegate_CreateDelegate_internal (MonoReflectionType *type, Mon
 	MONO_ARCH_SAVE_REGS;
 
 	mono_assert (delegate_class->parent == mono_defaults.multicastdelegate_class);
+
+	/* FIME: We must check if target is visible to the caller under coreclr.
+	 * The check should be disabled otherwise as it shouldn't raise expection under fulltrust.
+	 */
 
 	delegate = mono_object_new (mono_object_domain (type), delegate_class);
 

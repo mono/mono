@@ -169,6 +169,127 @@ Fri Apr 11 18:44:31 CEST 2008 Paolo Molaro <lupus@ximian.com>
 	* mini-s390.c (mono_arch_output_basic_block): Fix SUBCC implementation.
 	(mono_arch_decompose_long_opts): Remove LSUB, the generic code works on s390 too.
 
+2008-06-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arm.c (mono_arch_output_basic_block): Merge some small fixes from
+	the linear IL branch.
+
+	* driver.c: Print out more information for --version on arm.
+
+2008-05-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_emit_prolog): Increase max_offset when processing
+	bb_exit instead, since out of line bblocks might not actually be emitted
+	out-of-line.
+	
+	* mini-amd64.c (mono_arch_emit_prolog): Increase bb->max_offset by the
+	maximum epilog size for out of line bblocks if tracing is enabled.
+
+	* iltests.il.in: Merge tests/long-shift.regalloc.il into this file.
+
+2008-05-28  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* arrays.cs: Regression tests for allocating arrays with negative sizes.
+
+2008-05-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.h mini-x86.c inssel-x86.brg cpu-x86.md: Add support for
+	CAS instrinsics. Optimize the implementation of the ATOMIC_EXCHANGE 
+	opcodes.
+
+2008-05-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_get_inst_for_method): Add support for CAS instrinsics when
+	the 'value' to store is a constant.
+
+	* mini-ops.h: Add OP_ATOMIC_CAS_IMM opcodes.
+
+	* mini-amd64.c (mono_arch_output_basic_block): Optimize the the implementation
+	of ATOMIC_EXCHANGE opcodes, add support for the CAS opcodes.
+
+2008-05-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c generic-sharing.c jit-icalls.c aot-compiler.c: Use accessor functions
+	for accessing method->generic_container.
+
+2008-05-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_method_check_inlining): Avoid creating vtables if possible.
+	
+	* mini.c (SIG_HANDLER_SIGNATURE): Fix sparc build too.
+
+	* mini.c (SIG_HANDLER_SIGNATURE): Fix IA64 build.
+
+	* mini.c (mono_jit_compile_method_inner): Avoid a crash if mono_class_vtable ()
+	fails.
+
+2008-05-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* driver.c (mono_main): Set mono_setup_vtable_in_class_init to FALSE.
+
+	* mini.c: Handle the case when mono_class_vtable () fails.
+
+2008-05-23  Massimiliano Mantione  <massi@ximian.com>
+	* mini.c (sigprof_signal_handler): Support call chains (backtrace) in
+	the stat profiler.
+
+2008-05-22  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c, jit-icalls.c, jit-icalls.h: Make generic sharing work
+	together with domain sharing.
+
+2008-05-22  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Treat callvirts to final methods like non-virtual calls
+	when doing generic sharing, i.e. look them up in the runtime
+	generic context.
+
+2008-05-22  Mark Probst  <mark.probst@gmail.com>
+
+	* inssel.brg, mini-ops.h: Added opcodes for mkrefany and refanyval
+	with computed types (for generic sharing).
+
+	* mini.c: Generic sharing for mkrefany and refanyval.
+
+2008-05-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel.brg (mini_emit_virtual_call): Avoid constructing a generic vtable if
+	possible.
+
+	* mini-trampolines.c (mono_magic_trampoline): Avoid calling setup_methods () in
+	the generic sharing code.
+	
+	* mini-trampolines.c (mono_magic_trampoline): Call mono_class_setup_methods ()
+	when needed.
+
+2008-05-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h: Remove the declaration of mono_aot_init_vtable ().
+
+2008-05-21  C.J. Adams-collier <cjac@colliertech.org>
+
+	* driver.c: updated copyright date
+
+2008-05-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c mini.c: Remove the AOT init_vtable stuff as it is no longer
+	needed.
+
+2008-05-19  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.h (MonoDebuggerInfo): Add `using_mono_debugger'
+	pointing to the new `_mono_debug_using_mono_debugger' variable.
+
+	* driver.c
+	(mono_main): Check mono_debug_using_mono_debugger() rather than
+	the `MONO_INSIDE_MDB' environment variable to check whether we're
+	inside the debugger.
+
+2008-05-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_method_compile): Use cfg->args [0] for accessing the this
+	argument.
+
 2008-05-08  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* declsec.h: Move MONO_SECMAN_FLAG to metadata/metadata-internals.h.

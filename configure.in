@@ -36,6 +36,11 @@ else
   gc_default=boehm
 fi
 
+# These variables are the CPPFLAGS/CFLAGS passed to libgc's configure
+# libgc should inherit the original CFLAGS/CPPFLAGS passed to configure, i.e. -O0
+CPPFLAGS_FOR_LIBGC=$CPPFLAGS
+CFLAGS_FOR_LIBGC=$CFLAGS
+
 #
 # These are the flags that need to be stored in the mono.pc file for 
 # compiling code that will embed Mono
@@ -295,6 +300,17 @@ AC_LIBTOOL_WIN32_DLL
 # This causes monodis to not link correctly
 #AC_DISABLE_FAST_INSTALL
 AM_PROG_LIBTOOL
+ 
+AC_ARG_ENABLE(dolt, [ --enable-dolt	Use dolt (http://dolt.freedesktop.org/) instead of libtool for building.])
+
+if test "x$enable_dolt" = "xyes"; then
+   DOLT
+else
+	# The DOLT macro contains AC_SUBST's for these so we must define them because of
+	# autoconf brokeness
+    LTCOMPILE='$(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(COMPILE)'
+    LTCXXCOMPILE='$(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXXCOMPILE)'
+fi
 
 # Test whenever ld supports -version-script
 AC_PROG_LD
@@ -394,6 +410,7 @@ else
 	esac
 fi
 CFLAGS="$CFLAGS -g $WARN"
+CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC -g"
 
 # Where's the 'mcs' source tree?
 if test -d $srcdir/mcs; then
@@ -564,6 +581,8 @@ if test "x$with_xen_opt" = "xyes"; then
 					   void main () { }
 	], [
 	   AC_MSG_RESULT(yes)
+	   # Pass it to libgc as well
+	   CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC -mno-tls-direct-seg-refs"
 	], [
 	   AC_MSG_RESULT(no)
 	   CFLAGS=$ORIG_CFLAGS
@@ -1658,6 +1677,13 @@ fi
 AC_ARG_ENABLE(nunit-tests, [ --enable-nunit-tests	Run the nunit tests of the class library on 'make check'])
 AM_CONDITIONAL(ENABLE_NUNIT_TESTS, [test x$enable_nunit_tests = xyes])
 
+AC_MSG_CHECKING([if big-arrays are to be enabled])
+AC_ARG_ENABLE(big-arrays,  [ --enable-big-arrays	Enable the allocation and indexing of arrays greater than Int32.MaxValue], enable_big_arrays=$enableval, enable_big_arrays=no)
+AC_MSG_RESULT($enable_big_arrays)
+if test "x$enable_big_arrays" = "xyes" ; then
+	AC_DEFINE(MONO_BIG_ARRAYS,1,[Enable the allocation and indexing of arrays greater than Int32.MaxValue])
+fi
+
 TARGET="unknown"
 ACCESS_UNALIGNED="yes"
 
@@ -2003,7 +2029,10 @@ case "x$gc" in
 		# We should use a separate variable for this to avoid passing useless and
 		# potentially problematic defines to libgc (like -D_FILE_OFFSET_BITS=64)
 		# This should be executed late so we pick up the final version of CPPFLAGS
-		ac_configure_args="$ac_configure_args --disable-embed-check --with-libgc-threads=$libgc_threads $libgc_configure_args \"CPPFLAGS=$CPPFLAGS\""
+		# The problem with this approach, is that during a reconfigure, the main
+		# configure scripts gets invoked with these arguments, so we use separate
+		# variables understood by libgc's configure to pass CPPFLAGS and CFLAGS.
+		ac_configure_args="$ac_configure_args --disable-embed-check --with-libgc-threads=$libgc_threads $libgc_configure_args \"CPPFLAGS_FOR_LIBGC=$CPPFLAGS\" \"CFLAGS_FOR_LIBGC=$CFLAGS_FOR_LIBGC\""
 		AC_CONFIG_SUBDIRS(libgc)
 		;;
 esac
@@ -2316,6 +2345,7 @@ echo "
 	libgdiplus:  $libgdiplus_msg
 	zlib:        $zlib_msg
 	oprofile:    $OPROFILE
+	BigArrays:   $enable_big_arrays
 	$disabled
 
 "

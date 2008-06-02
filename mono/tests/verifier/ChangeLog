@@ -1,3 +1,14 @@
+2008-05-23 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* valid_contravariant_delegate_1.il
+	* valid_contravariant_delegate_2.il
+	* valid_convariant_delegate_1.il
+	* valid_convariant_delegate_2.il
+	* valid_generic_delegate_1.cs
+	* valid_generic_delegate_2.cs
+	* valid_invariant_delegate.il: Test compatibility of generic
+	delegates in the presence of variance.
+
 2008-05-14 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* valid_visibility_across_generic_instantiations.cs: Regression

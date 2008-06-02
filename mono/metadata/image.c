@@ -601,7 +601,6 @@ void
 mono_image_init (MonoImage *image)
 {
 	image->mempool = mono_mempool_new_size (512);
-	image->method_cache = g_hash_table_new (NULL, NULL);
 	mono_internal_hash_table_init (&image->class_cache,
 				       g_direct_hash,
 				       class_key_extract,
@@ -642,6 +641,8 @@ mono_image_init (MonoImage *image)
 	image->memberref_signatures = g_hash_table_new (NULL, NULL);
 	image->helper_signatures = g_hash_table_new (g_str_hash, g_str_equal);
 	image->method_signatures = g_hash_table_new (NULL, NULL);
+
+	image->property_hash = mono_property_hash_new ();
 }
 
 #if G_BYTE_ORDER != G_LITTLE_ENDIAN
@@ -1448,7 +1449,10 @@ mono_image_close (MonoImage *image)
 		g_free (image->files);
 	}
 
-	g_hash_table_destroy (image->method_cache);
+	if (image->method_cache)
+		mono_value_hash_table_destroy (image->method_cache);
+	if (image->methodref_cache)
+		g_hash_table_destroy (image->methodref_cache);
 	mono_internal_hash_table_destroy (&image->class_cache);
 	g_hash_table_destroy (image->field_cache);
 	if (image->array_cache) {
@@ -1499,6 +1503,9 @@ mono_image_close (MonoImage *image)
 
 	if (image->rgctx_template_hash)
 		g_hash_table_destroy (image->rgctx_template_hash);
+
+	if (image->property_hash)
+		mono_property_hash_destroy (image->property_hash);
 
 	if (image->interface_bitset) {
 		mono_unload_interface_ids (image->interface_bitset);

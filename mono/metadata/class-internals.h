@@ -12,6 +12,8 @@
 
 extern gboolean mono_print_vtable;
 
+extern gboolean mono_setup_vtable_in_class_init;
+
 typedef void     (*MonoStackWalkImpl) (MonoStackWalk func, gboolean do_il_offset, gpointer user_data);
 
 typedef struct _MonoMethodNormal MonoMethodNormal;
@@ -39,13 +41,14 @@ typedef enum {
 	MONO_REMOTING_TARGET_COMINTEROP
 } MonoRemotingTarget;
 
+#define MONO_METHOD_PROP_GENERIC_CONTAINER 0
+
 struct _MonoMethod {
 	guint16 flags;  /* method flags */
 	guint16 iflags; /* method implementation flags */
 	guint32 token;
 	MonoClass *klass;
 	MonoMethodSignature *signature;
-	MonoGenericContainer *generic_container;
 	/* name is useful mostly for debugging */
 	const char *name;
 	/* this is used by the inlining algorithm */
@@ -55,10 +58,16 @@ struct _MonoMethod {
 	unsigned int string_ctor:1;
 	unsigned int save_lmf:1;
 	unsigned int dynamic:1; /* created & destroyed during runtime */
+	unsigned int is_generic:1; /* whenever this is a generic method definition */
 	unsigned int is_inflated:1; /* whether we're a MonoMethodInflated */
 	unsigned int skip_visibility:1; /* whenever to skip JIT visibility checks */
 	unsigned int verification_success:1; /* whether this method has been verified successfully.*/
-	signed int slot : 19;
+	signed int slot : 18;
+
+	/*
+	 * If is_generic is TRUE, the generic_container is stored in image->property_hash, 
+	 * using the key MONO_METHOD_PROP_GENERIC_CONTAINER.
+	 */
 };
 
 struct _MonoMethodNormal {
@@ -212,6 +221,8 @@ typedef struct {
 	MonoRuntimeGenericContextOtherInfoTemplate *other_infos;
 } MonoRuntimeGenericContextTemplate;
 
+#define MONO_CLASS_PROP_EXCEPTION_DATA 0
+
 struct _MonoClass {
 	/* element class for arrays and enum */
 	MonoClass *element_class; 
@@ -268,7 +279,10 @@ struct _MonoClass {
 	guint is_com_object : 1; 
 
 	guint8     exception_type;	/* MONO_EXCEPTION_* */
-	void*      exception_data;	/* Additional information about the exception */
+
+	/* Additional information about the exception */
+	/* Stored as property MONO_CLASS_PROP_EXCEPTION_DATA */
+	//void       *exception_data;
 
 	MonoClass  *parent;
 	MonoClass  *nested_in;
@@ -667,6 +681,9 @@ mono_class_setup_parent    (MonoClass *klass, MonoClass *parent) MONO_INTERNAL;
 void
 mono_class_setup_supertypes (MonoClass *klass) MONO_INTERNAL;
 
+MonoMethod*
+mono_class_get_method_by_index (MonoClass *class, int index) MONO_INTERNAL;
+
 GPtrArray*
 mono_class_get_implemented_interfaces (MonoClass *klass) MONO_INTERNAL;
 
@@ -731,11 +748,18 @@ mono_class_get_context (MonoClass *class) MONO_INTERNAL;
 MonoGenericContext*
 mono_method_get_context (MonoMethod *method) MONO_INTERNAL;
 
+/* Used by monodis, thus cannot be MONO_INTERNAL */
+MonoGenericContainer*
+mono_method_get_generic_container (MonoMethod *method);
+
 MonoGenericContext*
 mono_generic_class_get_context (MonoGenericClass *gclass) MONO_INTERNAL;
 
 MonoClass*
 mono_generic_class_get_class (MonoGenericClass *gclass) MONO_INTERNAL;
+
+void
+mono_method_set_generic_container (MonoMethod *method, MonoGenericContainer* container) MONO_INTERNAL;
 
 MonoMethod*
 mono_class_inflate_generic_method_full (MonoMethod *method, MonoClass *klass_hint, MonoGenericContext *context);
@@ -897,6 +921,9 @@ mono_find_jit_icall_by_addr (gconstpointer addr) MONO_INTERNAL;
 
 gboolean
 mono_class_set_failure (MonoClass *klass, guint32 ex_type, void *ex_data) MONO_INTERNAL;
+
+gpointer
+mono_class_get_exception_data (MonoClass *klass) MONO_INTERNAL;
 
 MonoException*
 mono_class_get_exception_for_failure (MonoClass *klass) MONO_INTERNAL;

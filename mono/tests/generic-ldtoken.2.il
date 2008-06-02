@@ -105,6 +105,9 @@
 		class Gen`1<class ClassA>	V_0)
 	IL_0000:  newobj instance void class Gen`1<class ClassA>::'.ctor'()
 	IL_0005:  stloc.0 
+	ldloc.0 
+	callvirt instance class [mscorlib]System.Type class Gen`1<class ClassA>::typeOfT()
+	call void class [mscorlib]System.Console::WriteLine (object)
 	IL_0006:  ldloc.0 
 	IL_0007:  callvirt instance class [mscorlib]System.Type class Gen`1<class ClassA>::typeOfT()
 	IL_000c:  ldtoken ClassA
@@ -119,7 +122,7 @@
 	IL_0028:  call class [mscorlib]System.Type class [mscorlib]System.Type::GetTypeFromHandle(valuetype [mscorlib]System.RuntimeTypeHandle)
 	IL_002d:  beq IL_0034
 
-	IL_0032:  ldc.i4.1 
+	IL_0032:  ldc.i4.2
 	IL_0033:  ret 
 	IL_0034:  ldc.i4.0 
 	IL_0035:  ret 

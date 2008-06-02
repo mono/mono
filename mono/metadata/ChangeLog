@@ -1,3 +1,326 @@
+2008-06-01 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (method_encode_clauses): Take a mempool
+	as parameter and use it to allocate the clause array.
+
+	* reflection.c (mono_image_get_field_on_inst_token): Free
+	the inflated type after encoding it.
+
+	* reflection.c (mono_dynamic_image_free): Free each element
+	of MonoDynamicImage::gen_params.
+
+	* reflection.c (reflection_methodbuilder_to_mono_method):
+	Allocate the generic param array from the mempool.
+	Allocate signature params from the mempool.
+
+	* reflection.c (mono_reflection_generic_class_initialize):
+	Free inflated fields after been used.
+
+2008-05-30 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* icall.c: Reapply the memory leak fixes as they no
+	longer make mono crash.
+
+2008-05-30 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (mono_type_get_object): Don't store the suplied
+	MonoType with type_hash. A caller which pass a type that
+	was mono_metadata_type_dup'ed cannot free it reliably, as type_hash
+	might end with a pointer to freed memory.
+	The solution is to use byval_arg or this_arg from the associated
+	MonoClass of the supplied type.
+
+2008-05-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c: Revert the rest of the last change as it breaks the build too.
+
+2008-05-29 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* icall.c: Revert a leak fix as it's breaking the build.
+
+2008-05-29 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* appdomain.c (mono_make_shadow_copy): Fix another leak of dir_name.
+
+2008-05-29 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* appdomain.c (mono_make_shadow_copy): We leaked dir_name.
+
+2008-05-29 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* icall.c: Fix some memory leaks.
+
+2008-05-29  Dick Porter  <dick@ximian.com>
+
+	* threadpool.c (mono_thread_pool_remove_socket): Always remove the
+	async socket operations from the pending list when a socket
+	closes.  Leaving it until the threadpool services the event
+	exposes a race condition when a socket descriptor is reused.
+	Fixes bug 377589.
+
+2008-05-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* object.c: Fix negative index check for array alocation.
+
+2008-05-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* icall.c, marshal.c: Delegate wrappers should skip visibility.
+	This check is performed by the verifier for IL created delegates
+	and by Delegate::CreateDelegate for programatically created ones.
+	Fixes #372406.
+
+2008-05-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* sockey-io.c (ves_icall_System_Net_Sockets_Socket_Select_internal):
+	Fix code to use mono_array_size_t instead of int.
+
+	Based on patch by Luis F. Ortiz.
+	Contributed under X11 license.
+	http://lists.ximian.com/pipermail/mono-devel-list/2008-May/027995.html
+
+2008-05-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* icall.c: Added ves_icall_System_Array_GetLongLength and
+	ves_icall_System_Array_CreateInstanceImpl64. Both allow handling big
+	arrays.
+
+	* icall.h: Export both new functions.
+
+	Based on patch by Luis F. Ortiz.
+	Contributed under X11 license.
+	http://lists.ximian.com/pipermail/mono-devel-list/2008-May/027995.html
+
+2008-05-28  Martin Baulig  <martin@ximian.com>
+
+	The debugger now requires exactly r103463.
+
+	* mono-debug.h (MONO_DEBUGGER_VERSION): Bump to 71.
+	This version is not supported by the debugger, wait for 72.
+
+2008-05-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* object.h: Changed array related functions to use
+	mono_array_size_t instead of guint32. Forgot to commit this file.
+
+	Patch by Luis F. Ortiz.
+	Contributed under X11 license.
+	http://lists.ximian.com/pipermail/mono-devel-list/2008-May/027995.html
+
+
+2008-05-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* object.h: Don't use G_MAXINT32 or G_MAXUINT32 as old glibs
+	don't define it. Use the number literal instead.
+
+2008-05-27 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* icall.c: Changed array related functions to use
+	mono_array_size_t instead of guint32.
+
+	* icall.c (ves_icall_System_Array_GetLength): Check for length
+	overflow under MONO_BIG_ARRAYS.
+
+	Based on patch by Luis F. Ortiz.
+	Contributed under X11 license.
+	http://lists.ximian.com/pipermail/mono-devel-list/2008-May/027995.html
+
+2008-05-27 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* object.c: Add 64bits bounds check for arrays under MONO_BIG_ARRAYS.
+
+	Based on patch by Luis F. Ortiz.
+	Contributed under X11 license.
+	http://lists.ximian.com/pipermail/mono-devel-list/2008-May/027995.html
+
+2008-05-27 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* object.c, object.h: Changed array related functions to use
+	mono_array_size_t instead of guint32.
+
+	Patch by Luis F. Ortiz.
+	Contributed under X11 license.
+	http://lists.ximian.com/pipermail/mono-devel-list/2008-May/027995.html
+
+2008-05-27 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* object.h: Introduced mono_array_size_t typedef. This must be used
+	in all places an array length is expected. This is 64bits wide if
+	MONO_BIG_ARRAYS is enabled.
+
+	Patch by Luis F. Ortiz.
+	Contributed under X11 license.
+	http://lists.ximian.com/pipermail/mono-devel-list/2008-May/027995.html
+
+2008-05-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* security-manager.c class.c: Set the class exception info by calling
+	mono_class_set_failure ().
+
+	* class.c (mono_class_get_exception_data): New accessor function.
+	(mono_class_set_failure): Store exception_data in the property hash.
+
+	* class-internals.h (struct _MonoClass): Store 'exception_data' outside
+	the struct as a property.
+
+	* loader.c (mono_get_method_full): Store the lookup result for method
+	tokens in method_cache, the others in methodref_cache to decrease the memory
+	usage of hash tables.
+
+	* image.c (mono_image_close): Destroy method_cache and methodref_cache.
+	(mono_image_init): method_cache is lazy inited now.
+
+	* metadata-internals.h (struct _MonoImage): Change method_cache to
+	a MonoValueHashTable, add a separate methodref_cache.
+
+2008-05-27  Eyal Alaluf <eyala@mainsoft.com>
+
+	* number-formatter.h: Fix tables to avoid arithemtic overflow in
+	  Double.ToString as exposed by Bug #383531.
+
+2008-05-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* number-formatter.h: Make some tables static.
+
+	* class.c (mono_method_set_generic_container): New accessor function.
+	(mono_method_get_generic_container): Ditto.
+
+	* class-internals.h (struct _MonoMethod): Remove rarely used 
+	'generic_container' field, store it in the property hash instead. Add 
+	'is_generic' boolean field instead.
+
+	* image.c (mono_image_init): Initialize property_hash.
+	(mono_image_close): Destroy property_hash.
+
+	* metadata-internals.h (struct _MonoImage): Add 'property_hash' hash table to
+	hold rarely used fields of runtime structures belonging to this image.
+
+	* class.c loader.c verify.c icall.c reflection.c: Use the new accessor functions
+	to get/set method->generic_container.
+
+	* loader.c (mono_get_method_from_token): Avoid loading the method header for
+	generic methods.
+
+2008-05-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_inflate_generic_method_full): Don't increase
+	mono_stats.inflated_method_count for methods found in the cache.
+
+	* threads.c (mono_thread_request_interruption): Add a comment about 
+	QueueUserAPC ().
+
+2008-05-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (setup_interface_offsets): Use sizeof (guint16) when allocating the
+	interface_offsets_packed table.
+	
+	* class.c (mono_class_init): Remove some dead code.
+
+	* icall.c (ves_icall_System_Reflection_Assembly_InternalGetType): Call
+	mono_class_setup_vtable () when CAS is active to detect security problems.
+
+2008-05-23 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_delegate_type_equal): Handle VAR, MVAR and GENERICINST.
+
+	* verify.c (mono_delegate_signature_equal): Don't compar number of generic
+	parameters as it's irrelevant for delegate checking.
+
+2008-05-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* class-internals.h class.c: Correct the name of the 'mono_no_setup_vtable_in_class_init' variable.
+
+	* class.c (mono_class_init): Control the creation of a generic vtable using
+	a global which is true by default, but set to false by the runtime startup code.
+	
+	* class.c (mono_class_init): Avoid constructing a generic vtable in most cases.
+	Disabled for now since it breaks the embedding API.
+	Move the setup of class->methods for arrays to mono_class_setup_methods ().
+	(mono_class_setup_methods): Add a memory barrier.
+
+	* object.c (mono_class_create_runtime_vtable): Add code to handle the case
+	when mono_class_init () doesn't compute the generic vtable.
+	
+2008-05-23  Massimiliano Mantione  <massi@ximian.com>
+	* profiler.c: Added mono_profiler_install_statistical_call_chain,
+	mono_profiler_stat_get_call_chain_depth and mono_profiler_stat_call_chain
+	to support call chains (backtrace) in the stat profiler.
+	* profiler.c, profiler-private.h: Likewise.
+
+2008-05-22  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-sharing.c: Init generic class when a method of it is
+	requested via a runtime generic context.
+
+2008-05-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_init): Add a comment about trying to avoid calling this.
+
+	* reflection.c (mono_type_get_object): Add a FIXME.
+
+	* loader.c (find_method_in_class): Use mono_class_get_method_by_index ().
+
+	* class.c (mono_class_get_method_by_index): New helper function, returning an
+	entry in the class->methods array.
+
+2008-05-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_init): Only do the array optimization for szarrays. 
+	Avoid creating a generic vtable for generic instances as well.
+	(mono_class_get_method_from_name_flags): Don't search in the metadata for
+	generic instances.
+
+2008-05-21 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* loader.c (mono_get_method_constrained): Inflate the signature
+	with class context. Fix #325283.
+
+2008-05-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_class_create_runtime_vtable): Add a comment.
+
+	* class.c (get_implicit_generic_array_interfaces): Call mono_class_init ()
+	where needed.
+	(setup_interface_offsets): Handle the case when this is called twice for arrays.
+	(mono_class_setup_vtable_general): Add an assert.
+	(mono_class_init): Avoid creating a generic vtable for arrays.
+
+	* class.c (mono_generic_class_get_class): Don't call setup_interface_offsets ()
+	here, let mono_class_init () do that.
+
+	* class.c (mono_class_init): Avoid calling mono_class_setup_methods () for
+	interfaces in mscorlib.
+
+	* class.c (mono_class_setup_vtable): Avoid calling setup_methods () for
+	interfaces. Add some comments.
+	(mono_class_init): Call mono_class_setup_methods () here since it is no
+	longer called by mono_class_setup_vtable ().
+
+	* object.c (mono_class_proxy_vtable): Null out entries in pvt->vtable which are
+	not set in class->vtable.
+	(mono_class_create_runtime_vtable): Reenable the disabled code.
+
+	* object.c (mono_class_create_runtime_vtable): Disable the last change for
+	now as it causes some test failures.
+
+	* object.c (mono_class_create_runtime_vtable): Avoid creating a generic vtable
+	if using the vtable trampoline. Also remove some strange code which put the
+	generic methods themselves into the vtable slots. Remove the AOT init_vtable
+	stuff as it is no longer needed.
+
+2008-05-19 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* pedump.c: Give make --verify all option check code as well.
+	Using --verify code won't check for metadata now.
+
+2008-05-19  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h (MONO_DEBUGGER_VERSION): Bump to 70.
+
+	* mono-debug.c
+	(_mono_debug_using_mono_debugger): New global variable; it's set
+	directly by the debugger, so mono_debug_using_mono_debugger() also
+	works after attaching.
+
 2008-05-18 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* object.c (mono_class_create_runtime_vtable): Use memory barriers

@@ -46,7 +46,6 @@ scripts_1_0 = \
 	installvst		\
 	macpack			\
 	mcs			\
-	mbas			\
 	mjs			\
 	monolinker		\
 	mono-api-diff 		\

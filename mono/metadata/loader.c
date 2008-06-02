@@ -520,11 +520,8 @@ find_method_in_class (MonoClass *in_class, const char *name, const char *qname, 
 		}
 	}
 
-	if (i < in_class->method.count) {
-		mono_class_setup_methods (from_class);
-		g_assert (from_class->method.count == in_class->method.count);
-		return from_class->methods [i];
-	}
+	if (i < in_class->method.count)
+		return mono_class_get_method_by_index (from_class, i);
 	return NULL;
 }
 
@@ -1377,6 +1374,7 @@ mono_get_method_from_token (MonoImage *image, guint32 token, MonoClass *klass,
 	container = klass->generic_container;
 	generic_container = mono_metadata_load_generic_params (image, token, container);
 	if (generic_container) {
+		result->is_generic = TRUE;
 		generic_container->owner.method = result;
 
 		mono_metadata_load_generic_param_constraints (image, token, generic_container);
@@ -1411,16 +1409,8 @@ mono_get_method_from_token (MonoImage *image, guint32 token, MonoClass *klass,
 			piinfo->piflags = mono_metadata_decode_row_col (&tables [MONO_TABLE_IMPLMAP], piinfo->implmap_idx - 1, MONO_IMPLMAP_FLAGS);
 	}
 
-	/* FIXME: lazyness for generics too, but how? */
-	if (!(result->flags & METHOD_ATTRIBUTE_ABSTRACT) &&
-	    !(cols [1] & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) &&
-	    !(result->iflags & METHOD_IMPL_ATTRIBUTE_RUNTIME) && container) {
-		gpointer loc = mono_image_rva_map (image, cols [0]);
-		g_assert (loc);
-		((MonoMethodNormal *) result)->header = mono_metadata_parse_mh_full (image, container, loc);
-	}
-
-	result->generic_container = generic_container;
+ 	if (generic_container)
+ 		mono_method_set_generic_container (result, generic_container);
 
 	return result;
 }
@@ -1429,6 +1419,14 @@ MonoMethod *
 mono_get_method (MonoImage *image, guint32 token, MonoClass *klass)
 {
 	return mono_get_method_full (image, token, klass, NULL);
+}
+
+static gpointer
+get_method_token (gpointer value)
+{
+	MonoMethod *m = (MonoMethod*)value;
+
+	return GUINT_TO_POINTER (m->token);
 }
 
 MonoMethod *
@@ -1442,7 +1440,16 @@ mono_get_method_full (MonoImage *image, guint32 token, MonoClass *klass,
 
 	mono_loader_lock ();
 
-	if ((result = g_hash_table_lookup (image->method_cache, GINT_TO_POINTER (token)))) {
+	if (mono_metadata_token_table (token) == MONO_TABLE_METHOD) {
+		if (!image->method_cache)
+			image->method_cache = mono_value_hash_table_new (NULL, NULL, get_method_token);
+		result = mono_value_hash_table_lookup (image->method_cache, GINT_TO_POINTER (token));
+	} else {
+		if (!image->methodref_cache)
+			image->methodref_cache = g_hash_table_new (NULL, NULL);
+		result = g_hash_table_lookup (image->methodref_cache, GINT_TO_POINTER (token));
+	}
+	if (result) {
 		mono_loader_unlock ();
 		return result;
 	}
@@ -1461,8 +1468,13 @@ mono_get_method_full (MonoImage *image, guint32 token, MonoClass *klass,
 	 * used the `context' to get the method.  See bug #80969.
 	 */
 
-	if (!used_context && !(result && result->is_inflated))
-		g_hash_table_insert (image->method_cache, GINT_TO_POINTER (token), result);
+	if (!used_context && !(result && result->is_inflated) && result) {
+		if (mono_metadata_token_table (token) == MONO_TABLE_METHOD) {
+			mono_value_hash_table_insert (image->method_cache, GINT_TO_POINTER (token), result);
+		} else {
+			g_hash_table_insert (image->methodref_cache, GINT_TO_POINTER (token), result);
+		}
+	}
 
 	mono_loader_unlock ();
 
@@ -1485,7 +1497,7 @@ mono_get_method_constrained (MonoImage *image, guint32 token, MonoClass *constra
 	MonoMethod *method, *result;
 	MonoClass *ic = NULL;
 	MonoGenericContext *class_context = NULL, *method_context = NULL;
-	MonoMethodSignature *sig;
+	MonoMethodSignature *sig, *original_sig;
 
 	mono_loader_lock ();
 
@@ -1497,12 +1509,26 @@ mono_get_method_constrained (MonoImage *image, guint32 token, MonoClass *constra
 
 	mono_class_init (constrained_class);
 	method = *cil_method;
-	sig = mono_method_signature (method);
+	original_sig = sig = mono_method_signature (method);
 
 	if (method->is_inflated && sig->generic_param_count) {
 		MonoMethodInflated *imethod = (MonoMethodInflated *) method;
 		sig = mono_method_signature (imethod->declaring);
 		method_context = mono_method_get_context (method);
+
+		original_sig = sig;
+		/*
+		 * We must inflate the signature with the class instantiation to work on
+		 * cases where a class inherit from a generic type and the override replaces
+		 * and type argument which a concrete type. See #325283.
+		 */
+		if (method_context->class_inst) {
+			MonoGenericContext ctx;
+			ctx.method_inst = NULL;
+			ctx.class_inst = method_context->class_inst;
+		
+			sig = inflate_generic_signature (method->klass->image, sig, &ctx);
+		}
 	}
 
 	if ((constrained_class != method->klass) && (method->klass->interface_id != 0))
@@ -1512,6 +1538,9 @@ mono_get_method_constrained (MonoImage *image, guint32 token, MonoClass *constra
 		class_context = mono_class_get_context (constrained_class);
 
 	result = find_method (constrained_class, ic, method->name, sig, constrained_class);
+	if (sig != original_sig)
+		mono_metadata_free_inflated_signature (sig);
+
 	if (!result) {
 		g_warning ("Missing method %s.%s.%s in assembly %s token %x", method->klass->name_space,
 			   method->klass->name, method->name, image->name, token);
@@ -1550,6 +1579,10 @@ mono_free_method  (MonoMethod *method)
 	if (method->dynamic) {
 		MonoMethodWrapper *mw = (MonoMethodWrapper*)method;
 		int i;
+
+		mono_loader_lock ();
+		mono_property_hash_remove_object (method->klass->image->property_hash, method);
+		mono_loader_unlock ();
 
 		g_free ((char*)method->name);
 		if (mw->method.header) {
@@ -1868,7 +1901,7 @@ mono_method_signature (MonoMethod *m)
 	sig = mono_metadata_blob_heap (img, mono_metadata_decode_row_col (&img->tables [MONO_TABLE_METHOD], idx - 1, MONO_METHOD_SIGNATURE));
 
 	g_assert (!m->klass->generic_class);
-	container = m->generic_container;
+	container = mono_method_get_generic_container (m);
 	if (!container)
 		container = m->klass->generic_container;
 
@@ -2013,7 +2046,7 @@ mono_method_get_header (MonoMethod *method)
 
 	g_assert (loc);
 
-	mn->header = mono_metadata_parse_mh_full (img, method->generic_container, loc);
+	mn->header = mono_metadata_parse_mh_full (img, mono_method_get_generic_container (method), loc);
 
 	mono_loader_unlock ();
 	return mn->header;

@@ -2876,7 +2876,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (ins->inst_imm)
 				ARM_SHR_IMM (code, ins->dreg, ins->sreg1, (ins->inst_imm & 0x1f));
 			else if (ins->dreg != ins->sreg1)
-				ARM_MOV_REG_REG (code, ins->dreg, ins->sreg1);				
+				ARM_MOV_REG_REG (code, ins->dreg, ins->sreg1);
 			break;
 		case OP_ISHR_UN:
 			ARM_SHR_REG (code, ins->dreg, ins->sreg1, ins->sreg2);

@@ -1,3 +1,45 @@
+2008-05-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* long-shift-regalloc.il: Removed, merged into mini/iltests.il.
+
+2008-05-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (test-generic-sharing): Exit if one of the tests fail. Run the
+	tests with MONO_GENERIC_SHARING=all.
+
+2008-05-22  Mark Probst  <mark.probst@gmail.com>
+
+	* Makefile.am: Do generic sharing tests with domain sharing turned
+	on as well.
+
+2008-05-22  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-method-patching.2.cs: Test callvirt to sealed generic
+	methods.
+
+	* Makefile.am: Test added.
+
+2008-05-22  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-refanyval.2.il: Test case for generic refanyval.
+
+	* Makefile.am: Test added.
+
+2008-05-21  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* bug-325283.2.cs: Regression test for bug #325283.
+
+2008-05-20  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Makefile.am (bug-382986): Fix for srcdir != builddir.
+
+2008-05-20  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-null-call.2.cs: Tests non-virtual callvirt on generic
+	methods with this==null.
+
+	* Makefile.am: Test added.
+
 2008-05-16  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* bug-389886.2.il: Regression test for bug #389886.

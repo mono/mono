@@ -1,3 +1,7 @@
+2008-05-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* get.c: Use accessor functions for accessing method->generic_container.	
+
 2008-04-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* main.c (disassemble_file): Do not use mono_assembly_open () to load an image,

@@ -1033,6 +1033,15 @@ mini_debug_usage (void)
 		 "                         process with the debugger.\n");
 }
 
+#if defined(__arm__) && defined(__ARM_EABI__)
+/* Redefine ARCHITECTURE to include more information */
+#undef ARCHITECTURE
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+#define ARCHITECTURE "armel"
+#else
+#define ARCHITECTURE "armeb"
+#endif
+#endif
 
 static const char info[] =
 #ifdef HAVE_KW_THREAD
@@ -1148,7 +1157,7 @@ mono_main (int argc, char* argv[])
 		} else if (strcmp (argv [i], "--verbose") == 0 || strcmp (argv [i], "-v") == 0) {
 			mini_verbose++;
 		} else if (strcmp (argv [i], "--version") == 0 || strcmp (argv [i], "-V") == 0) {
-			g_print ("Mono JIT compiler version %s (%s)\nCopyright (C) 2002-2007 Novell, Inc and Contributors. www.mono-project.com\n", VERSION, FULL_VERSION);
+			g_print ("Mono JIT compiler version %s (%s)\nCopyright (C) 2002-2008 Novell, Inc and Contributors. www.mono-project.com\n", VERSION, FULL_VERSION);
 			g_print (info);
 			if (mini_verbose) {
 				const char *cerror;
@@ -1362,7 +1371,7 @@ mono_main (int argc, char* argv[])
 		return 1;
 	}
 
-	if ((action == DO_EXEC) && g_getenv ("MONO_INSIDE_MDB"))
+	if ((action == DO_EXEC) && mono_debug_using_mono_debugger ())
 		action = DO_DEBUGGER;
 
 	if (mono_compile_aot || action == DO_EXEC || action == DO_DEBUGGER) {
@@ -1399,6 +1408,7 @@ mono_main (int argc, char* argv[])
 		mono_debug_init (MONO_DEBUG_FORMAT_MONO);
 
 	mono_set_defaults (mini_verbose, opt);
+	mono_setup_vtable_in_class_init = FALSE;
 	domain = mini_init (argv [i], forced_version);
 	
 	switch (action) {

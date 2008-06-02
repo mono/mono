@@ -558,22 +558,6 @@ mono_runtime_free_method (MonoDomain *domain, MonoMethod *method)
 	mono_free_method (method);
 }
 
-static MonoInitVTableFunc init_vtable_func = NULL;
-
-/**
- * mono_install_init_vtable:
- * @func: pointer to the function to be installed
- *
- *   Register a function which will be called by the runtime to initialize the
- * method pointers inside a vtable. The JIT can use this function to load the
- * vtable from the AOT file for example.
- */
-void
-mono_install_init_vtable (MonoInitVTableFunc func)
-{
-	init_vtable_func = func;
-}
-
 /*
  * The vtables in the root appdomain are assumed to be reachable by other 
  * roots, and we don't use typed allocation in the other domains.
@@ -1288,6 +1272,7 @@ static MonoVTable *mono_class_create_runtime_vtable (MonoDomain *domain, MonoCla
  *
  * VTables are domain specific because we create domain specific code, and 
  * they contain the domain specific static class data.
+ * On failure, NULL is returned, and class->exception_type is set.
  */
 MonoVTable *
 mono_class_vtable (MonoDomain *domain, MonoClass *class)
@@ -1312,7 +1297,6 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class)
 	char *t;
 	int i;
 	int imt_table_bytes = 0;
-	gboolean inited = FALSE;
 	guint32 vtable_size, class_size;
 	guint32 cindex;
 	guint32 constant_cols [MONO_CONSTANT_SIZE];
@@ -1337,9 +1321,17 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class)
 
 	mono_class_init (class);
 
-	/* FIXME: This should be done by mono_class_init () for dynamic classes as well */
-	if (class->image->dynamic)
+	/* 
+	 * For some classes, mono_class_init () already computed class->vtable_size, and 
+	 * that is all that is needed because of the vtable trampolines.
+	 */
+	if (!class->vtable_size)
 		mono_class_setup_vtable (class);
+
+	if (class->exception_type) {
+		mono_domain_unlock (domain);
+		return NULL;
+	}
 
 	if (ARCH_USE_IMT) {
 		vtable_size = sizeof (MonoVTable) + class->vtable_size * sizeof (gpointer);
@@ -1473,10 +1465,6 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class)
 		}
 	}
 
-	/* 
-	 * arch_create_jit_trampoline () can recursively call this function again
-	 * because it compiles icall methods right away.
-	 */
 	/* FIXME: class_vtable_hash is basically obsolete now: remove as soon
 	 * as we change the code in appdomain.c to invalidate vtables by
 	 * looking at the possible MonoClasses created for the domain.
@@ -1517,11 +1505,13 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class)
 	}
 	mono_loader_unlock ();
 
-	/* initialize vtable */
-	if (init_vtable_func)
-		inited = init_vtable_func (vt);
-
-	if (!inited) {
+	/* Initialize vtable */
+	if (vtable_trampoline) {
+		// This also covers the AOT case
+		for (i = 0; i < class->vtable_size; ++i) {
+			vt->vtable [i] = vtable_trampoline;
+		}
+	} else {
 		mono_class_setup_vtable (class);
 
 		for (i = 0; i < class->vtable_size; ++i) {
@@ -1529,6 +1519,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class)
 
 			if ((cm = class->vtable [i])) {
 				if (mono_method_signature (cm)->generic_param_count)
+					/* FIXME: Why is this needed ? */
 					vt->vtable [i] = cm;
 				else
 					vt->vtable [i] = vtable_trampoline? vtable_trampoline: arch_create_jit_trampoline (cm);
@@ -1556,7 +1547,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *class)
 		mono_raise_exception (exc);
 	}
 
-	/* make sure the the parent is initialized */
+	/* make sure the parent is initialized */
 	if (class->parent)
 		mono_class_vtable (domain, class->parent);
 
@@ -1656,6 +1647,8 @@ mono_class_proxy_vtable (MonoDomain *domain, MonoRemoteClass *remote_class, Mono
 		if ((cm = class->vtable [i]))
 			pvt->vtable [i] = mono_method_signature (cm)->generic_param_count
 				? cm : arch_create_remoting_trampoline (cm, target_type);
+		else
+			pvt->vtable [i] = NULL;
 	}
 
 	if (class->flags & TYPE_ATTRIBUTE_ABSTRACT) {
@@ -3461,7 +3454,7 @@ mono_object_clone (MonoObject *obj)
 void
 mono_array_full_copy (MonoArray *src, MonoArray *dest)
 {
-	int size;
+	mono_array_size_t size;
 	MonoClass *klass = src->obj.vtable->klass;
 
 	MONO_ARCH_SAVE_REGS;
@@ -3497,8 +3490,8 @@ MonoArray*
 mono_array_clone_in_domain (MonoDomain *domain, MonoArray *array)
 {
 	MonoArray *o;
-	guint32 size, i;
-	guint32 *sizes;
+	mono_array_size_t size, i;
+	mono_array_size_t *sizes;
 	MonoClass *klass = array->obj.vtable->klass;
 
 	MONO_ARCH_SAVE_REGS;
@@ -3523,7 +3516,7 @@ mono_array_clone_in_domain (MonoDomain *domain, MonoArray *array)
 		return o;
 	}
 	
-	sizes = alloca (klass->rank * sizeof(guint32) * 2);
+	sizes = alloca (klass->rank * sizeof(mono_array_size_t) * 2);
 	size = mono_array_element_size (klass);
 	for (i = 0; i < klass->rank; ++i) {
 		sizes [i] = array->bounds [i].length;
@@ -3560,12 +3553,23 @@ mono_array_clone (MonoArray *array)
 }
 
 /* helper macros to check for overflow when calculating the size of arrays */
+#ifdef MONO_BIG_ARRAYS
+#define MYGUINT64_MAX 0x0000FFFFFFFFFFFFUL
+#define MYGUINT_MAX MYGUINT64_MAX
+#define CHECK_ADD_OVERFLOW_UN(a,b) \
+        (guint64)(MYGUINT64_MAX) - (guint64)(b) < (guint64)(a) ? -1 : 0
+#define CHECK_MUL_OVERFLOW_UN(a,b) \
+        ((guint64)(a) == 0) || ((guint64)(b) == 0) ? 0 : \
+        (guint64)(b) > ((MYGUINT64_MAX) / (guint64)(a))
+#else
 #define MYGUINT32_MAX 4294967295U
+#define MYGUINT_MAX MYGUINT32_MAX
 #define CHECK_ADD_OVERFLOW_UN(a,b) \
         (guint32)(MYGUINT32_MAX) - (guint32)(b) < (guint32)(a) ? -1 : 0
 #define CHECK_MUL_OVERFLOW_UN(a,b) \
         ((guint32)(a) == 0) || ((guint32)(b) == 0) ? 0 : \
         (guint32)(b) > ((MYGUINT32_MAX) / (guint32)(a))
+#endif
 
 /**
  * mono_array_new_full:
@@ -3578,9 +3582,9 @@ mono_array_clone (MonoArray *array)
  * lower bounds and type.
  */
 MonoArray*
-mono_array_new_full (MonoDomain *domain, MonoClass *array_class, guint32 *lengths, guint32 *lower_bounds)
+mono_array_new_full (MonoDomain *domain, MonoClass *array_class, mono_array_size_t *lengths, mono_array_size_t *lower_bounds)
 {
-	guint32 byte_len, len, bounds_size;
+	mono_array_size_t byte_len, len, bounds_size;
 	MonoObject *o;
 	MonoArray *array;
 	MonoVTable *vtable;
@@ -3595,34 +3599,34 @@ mono_array_new_full (MonoDomain *domain, MonoClass *array_class, guint32 *length
 	/* A single dimensional array with a 0 lower bound is the same as an szarray */
 	if (array_class->rank == 1 && ((array_class->byval_arg.type == MONO_TYPE_SZARRAY) || (lower_bounds && lower_bounds [0] == 0))) {
 		len = lengths [0];
-		if ((int) len < 0)
+		if (len > MONO_ARRAY_MAX_INDEX)//MONO_ARRAY_MAX_INDEX
 			arith_overflow ();
 		bounds_size = 0;
 	} else {
 		bounds_size = sizeof (MonoArrayBounds) * array_class->rank;
 
 		for (i = 0; i < array_class->rank; ++i) {
-			if ((int) lengths [i] < 0)
+			if (lengths [i] > MONO_ARRAY_MAX_INDEX) //MONO_ARRAY_MAX_INDEX
 				arith_overflow ();
 			if (CHECK_MUL_OVERFLOW_UN (len, lengths [i]))
-				mono_gc_out_of_memory (MYGUINT32_MAX);
+				mono_gc_out_of_memory (MONO_ARRAY_MAX_SIZE);
 			len *= lengths [i];
 		}
 	}
 
 	if (CHECK_MUL_OVERFLOW_UN (byte_len, len))
-		mono_gc_out_of_memory (MYGUINT32_MAX);
+		mono_gc_out_of_memory (MONO_ARRAY_MAX_SIZE);
 	byte_len *= len;
 	if (CHECK_ADD_OVERFLOW_UN (byte_len, sizeof (MonoArray)))
-		mono_gc_out_of_memory (MYGUINT32_MAX);
+		mono_gc_out_of_memory (MONO_ARRAY_MAX_SIZE);
 	byte_len += sizeof (MonoArray);
 	if (bounds_size) {
 		/* align */
 		if (CHECK_ADD_OVERFLOW_UN (byte_len, 3))
-			mono_gc_out_of_memory (MYGUINT32_MAX);
+			mono_gc_out_of_memory (MONO_ARRAY_MAX_SIZE);
 		byte_len = (byte_len + 3) & ~3;
 		if (CHECK_ADD_OVERFLOW_UN (byte_len, bounds_size))
-			mono_gc_out_of_memory (MYGUINT32_MAX);
+			mono_gc_out_of_memory (MONO_ARRAY_MAX_SIZE);
 		byte_len += bounds_size;
 	}
 	/* 
@@ -3668,7 +3672,7 @@ mono_array_new_full (MonoDomain *domain, MonoClass *array_class, guint32 *length
  * This routine creates a new szarray with @n elements of type @eclass.
  */
 MonoArray *
-mono_array_new (MonoDomain *domain, MonoClass *eclass, guint32 n)
+mono_array_new (MonoDomain *domain, MonoClass *eclass, mono_array_size_t n)
 {
 	MonoClass *ac;
 
@@ -3689,7 +3693,7 @@ mono_array_new (MonoDomain *domain, MonoClass *eclass, guint32 n)
  * can be sure about the domain it operates in.
  */
 MonoArray *
-mono_array_new_specific (MonoVTable *vtable, guint32 n)
+mono_array_new_specific (MonoVTable *vtable, mono_array_size_t n)
 {
 	MonoObject *o;
 	MonoArray *ao;
@@ -3697,15 +3701,15 @@ mono_array_new_specific (MonoVTable *vtable, guint32 n)
 
 	MONO_ARCH_SAVE_REGS;
 
-	if ((int) n < 0)
+	if (n > MONO_ARRAY_MAX_INDEX)
 		arith_overflow ();
 	
 	elem_size = mono_array_element_size (vtable->klass);
 	if (CHECK_MUL_OVERFLOW_UN (n, elem_size))
-		mono_gc_out_of_memory (MYGUINT32_MAX);
+		mono_gc_out_of_memory (MONO_ARRAY_MAX_SIZE);
 	byte_len = n * elem_size;
 	if (CHECK_ADD_OVERFLOW_UN (byte_len, sizeof (MonoArray)))
-		mono_gc_out_of_memory (MYGUINT32_MAX);
+		mono_gc_out_of_memory (MONO_ARRAY_MAX_SIZE);
 	byte_len += sizeof (MonoArray);
 	if (!vtable->klass->has_references) {
 		o = mono_object_allocate_ptrfree (byte_len, vtable);

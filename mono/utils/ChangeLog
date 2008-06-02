@@ -1,3 +1,21 @@
+2008-05-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-value-hash.c: Remove the unused prime functions. Fixes #395320.
+
+2008-05-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-value-hash.c: Fix build on older glib versions.
+
+	* Makefile.am (libmonoutils_la_SOURCES): Add mono-value-hash.{h,c}.
+
+	* mono-value-hash.h mono-value-hash.c: New files.
+
+2008-05-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (libmonoutils_la_SOURCES): Add mono-property-hash.{h,c}.
+
+	* mono-property-hash.h mono-property-hash.c: New files.
+
 2008-05-14  Kornél Pál  <kornelpal@gmail.com>
 
 	* mono-path.c (mono_path_canonicalize): Convert '/' to '\' on Windows that
