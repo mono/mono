@@ -187,6 +187,14 @@ namespace MonoTests.System.Linq.Expressions
 
 		[Test]
 		[Category ("NotWorking")]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void UserDefinedToNullableNegateFromNullable ()
+		{
+			Expression.Negate (Expression.Parameter (typeof (SlotToNullable?), "s"));
+		}
+
+		[Test]
+		[Category ("NotWorking")]
 		public void UserDefinedToNullableNegateNullable ()
 		{
 			var s = Expression.Parameter (typeof (SlotToNullable), "s");
