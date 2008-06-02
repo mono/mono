@@ -1,3 +1,10 @@
+2008-06-02  Dick Porter  <dick@ximian.com>
+
+	* icall.c (ves_icall_System_ComponentModel_Win32Exception_W32ErrorMessage): 
+	* icall-def.h: Add
+	System.ComponentModel.Win32Exception.W32ErrorMessage, using the
+	FormatMessage API to get the error text.  Fixes bug 321827.
+
 2008-06-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* decimal.c: Add some micro optimizations to make decimal operations faster.
