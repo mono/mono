@@ -1,3 +1,7 @@
+2008-06-02  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TableLayoutTest.cs Add test for bug #396433.
+
 2008-06-02  Andreia Gaita <avidigal@novell.com> 
 
 	* TextBoxTest.cs: Fix endif

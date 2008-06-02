@@ -1,3 +1,8 @@
+2008-06-02  Jonathan Pobst  <monkey@jpobst.com>
+
+	* TableLayoutPanel.cs: Use border sizes when calculating the
+	panel's preferred size.  [Fixes part of bug #396433]
+
 2008-06-02  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* SplitContainer.cs:

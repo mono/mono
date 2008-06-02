@@ -319,7 +319,7 @@ namespace System.Windows.Forms.Layout
 				panel.column_widths[col_styles.Count - 1] += total_width;
 
 			// Figure up all the row heights
-			int total_height = parentDisplayRectangle.Height - (border_width * columns);
+			int total_height = parentDisplayRectangle.Height - (border_width * (rows + 1));
 			index = 0;
 
 			// First assign all the Absolute sized rows..

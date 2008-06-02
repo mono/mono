@@ -1427,6 +1427,41 @@ namespace MonoTests.System.Windows.Forms
 
 			f.Dispose ();
 		}
+		
+		[Test]
+		public void Bug396433 ()
+		{
+			// We were not taking the CellBorderStyle into account when calculating
+			// the preferred size.
+
+			Form f = new Form ();
+			f.ClientSize = new Size (300, 300);
+			f.ShowInTaskbar = false;
+
+			TableLayoutPanel tlp = new TableLayoutPanel ();
+			tlp.AutoSize = true;
+			tlp.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+			tlp.ColumnCount = 2;
+			tlp.RowCount = 1;
+
+			f.Controls.Add (tlp);
+
+			Button t1 = new Button ();
+			tlp.Controls.Add (t1);
+
+			Button t2 = new Button ();
+			tlp.Controls.Add (t2);
+
+			f.Show ();
+
+			Assert.AreEqual (new Size (162, 29), tlp.PreferredSize, "A1");
+			
+			tlp.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
+
+			Assert.AreEqual (new Size (165, 31), tlp.PreferredSize, "A2");
+
+			f.Dispose ();
+		}
 	}
 }
 #endif

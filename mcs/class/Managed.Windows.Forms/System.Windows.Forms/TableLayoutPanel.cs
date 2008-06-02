@@ -592,7 +592,8 @@ namespace System.Windows.Forms
 					non_percent_total_height += row_heights[j];
 			}
 
-			return new Size (non_percent_total_width + percent_total_width, non_percent_total_height + percent_total_height);
+			int border_width = GetCellBorderWidth (CellBorderStyle);
+			return new Size (non_percent_total_width + percent_total_width + (border_width * (actual_cols + 1)), non_percent_total_height + percent_total_height + (border_width * (actual_rows + 1)));
 		}
 		#endregion
 		
