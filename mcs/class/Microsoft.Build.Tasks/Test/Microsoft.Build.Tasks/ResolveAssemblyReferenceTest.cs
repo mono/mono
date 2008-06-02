@@ -43,6 +43,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 		BuildItemGroup big;
 
 		[Test]
+		[Ignore ("it won't succeed if mono is not installed")]
 		public void TestGac1 ()
 		{
 			string documentString = @"
@@ -84,6 +85,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 		}
 
 		[Test]
+		[Ignore ("it won't succeed if mono is not installed")]
 		public void TestHintPath1 ()
 		{
 			string documentString = @"

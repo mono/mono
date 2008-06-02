@@ -1,3 +1,9 @@
+2008-06-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ResolveAssemblyReferenceTest.cs: marked some failing tests as
+	  [Ignore]. They will never be successful when mono is not
+	  "installed".
+
 2007-03-19  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* CombinePathTest.cs: Added.
