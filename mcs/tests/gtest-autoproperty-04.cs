@@ -1,14 +1,20 @@
-// Compiler options: -unsafe
+using System;
 
-namespace N
+namespace MonoTests
 {
-	public class BufferManager
+	public abstract class MainClass
 	{
-		public unsafe byte *Ptr { get; private set; }
-		
-		public static void Main ()
+		protected virtual string [] foo { get; set; }
+		public abstract string [] bar { get; set; }
+
+		public static void Main (string [] args)
 		{
+			Console.WriteLine ("Hello World!");
 		}
 	}
+	public class ChildClass : MainClass
+	{
+		protected override string [] foo { get; set; }
+		public override string [] bar { get; set; }
+	}
 }
-

@@ -12054,18 +12054,41 @@
     </type>
   </test>
   <test name="gtest-autoproperty-04.cs">
-    <type name="N.BufferManager">
+    <type name="MonoTests.MainClass">
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="System.Byte* get_Ptr()">
+      <method name="System.String[] get_foo()">
         <size>7</size>
       </method>
-      <method name="Void set_Ptr(System.Byte*)">
+      <method name="Void set_foo(System.String[])">
         <size>8</size>
       </method>
-      <method name="Void Main()">
-        <size>1</size>
+      <method name="System.String[] get_bar()">
+        <size>0</size>
+      </method>
+      <method name="Void set_bar(System.String[])">
+        <size>0</size>
+      </method>
+      <method name="Void Main(System.String[])">
+        <size>11</size>
+      </method>
+    </type>
+    <type name="MonoTests.ChildClass">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="System.String[] get_foo()">
+        <size>7</size>
+      </method>
+      <method name="Void set_foo(System.String[])">
+        <size>8</size>
+      </method>
+      <method name="System.String[] get_bar()">
+        <size>7</size>
+      </method>
+      <method name="Void set_bar(System.String[])">
+        <size>8</size>
       </method>
     </type>
   </test>
