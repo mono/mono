@@ -1,3 +1,11 @@
+2008-05-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* XplatUiX11.cs: When scrolling and detecting the obscured areas in a
+	control, return immediately if the any parent control's handle hasn't
+	been created or isn't visible, as well as avoiding creating the parent
+	Form if the handle hasn't been previously created.
+	Fixes tests.
+
 2008-06-02  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TableLayoutPanel.cs: Use border sizes when calculating the

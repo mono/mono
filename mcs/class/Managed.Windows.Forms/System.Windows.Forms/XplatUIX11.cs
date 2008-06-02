@@ -4962,6 +4962,9 @@ namespace System.Windows.Forms {
 			visible_area.Location = c.PointToScreen (Point.Empty);
 
 			for (Control parent = c.Parent; parent != null; parent = parent.Parent) {
+				if (!parent.IsHandleCreated || !parent.Visible)
+					return visible_area; // Non visible, not need to finish computations
+
 				Rectangle r = parent.ClientRectangle;
 				r.Location = parent.PointToScreen (Point.Empty);
 
@@ -4993,7 +4996,7 @@ namespace System.Windows.Forms {
 			int ChildCount;
 
 			Control form = c.FindForm ();
-			if (form == null)
+			if (form == null || !form.IsHandleCreated)
 				return null;
 
 			Hwnd hwnd = Hwnd.GetObjectFromWindow (form.Handle);
