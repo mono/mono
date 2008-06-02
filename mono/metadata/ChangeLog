@@ -1,3 +1,20 @@
+2008-06-02 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_dup_array_type): Implement allocation using a mempool.
+
+	* class.c (mono_metadata_signature_deep_dup): Same.
+
+	* metadata.c (mono_metadata_signature_dup_full): Added, allow dup'ng with
+	a mempool.
+
+	* metadata.c (mono_metadata_signature_dup): Delegate to the _full version.
+
+	* metadata.c (mono_metadata_type_dup): Remove asserts and FIXME.
+
+	* metadata-internals.h: Added mono_metadata_signature_dup_full.
+
+	* class-internals.h: Update signatures to take a MonoMemPool.
+
 2008-06-02  Dick Porter  <dick@ximian.com>
 
 	* icall.c (ves_icall_System_ComponentModel_Win32Exception_W32ErrorMessage): 
