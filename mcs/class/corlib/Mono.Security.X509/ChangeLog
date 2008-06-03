@@ -1,3 +1,8 @@
+2008-06-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Certificate.cs: Accept text before the PEM certificate itself.
+	[Fix bug #396486]
+
 2008-01-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PKCS12.cs, X509Certificate.cs, X509Chain.cs, X509Extension.cs:
