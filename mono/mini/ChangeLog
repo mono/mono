@@ -1,5 +1,8 @@
 2008-06-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* tramp-arm.c (mono_arch_create_trampoline_code): Check for thread 
+	interruption. Fix some warnings.
+
 	* tramp-*.c (mono_arch_create_trampoline_code): Call the _force_ variant of
 	interruption_checkpoint.
 
