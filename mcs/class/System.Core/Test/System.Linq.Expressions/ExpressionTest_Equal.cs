@@ -209,7 +209,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void UserDefinedEqual ()
 		{
 			var l = Expression.Parameter (typeof (Slot), "l");
@@ -317,7 +316,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void UserDefinedToNullableEqual ()
 		{
 			var l = Expression.Parameter (typeof (SlotToNullable), "l");
