@@ -89,8 +89,7 @@ endif
 # Rest of the configuration
 
 ifndef PROFILE
-# One can use make PROFILE=default to build the 1.1 libraries
-PROFILE = net_2_0
+PROFILE = default
 endif
 
 include $(topdir)/build/profiles/$(PROFILE).make
