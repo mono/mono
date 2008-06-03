@@ -1,3 +1,7 @@
+2008-06-03  George Giolfan  <georgegiolfan@yahoo.com>
+
+	* SWF2k5-tests.csproj: Updated.
+
 2008-06-02  Andreia Gaita <avidigal@novell.com> 
 
 	* build-csproj2k5, SWF2k5.csproj: Add missing preprocessor symbol. 
