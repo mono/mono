@@ -18,6 +18,7 @@
 //
 // Authors:
 //		Federico Di Gregorio <fog@initd.org>
+//		Jb Evain <jbevain@novell.com>
 
 using System;
 using System.Reflection;
@@ -139,7 +140,8 @@ namespace MonoTests.System.Linq.Expressions
 		[Test]
 		public void CompileAdd ()
 		{
-			ParameterExpression left = Expression.Parameter (typeof (int), "l"), right = Expression.Parameter (typeof (int), "r");
+			var left = Expression.Parameter (typeof (int), "l");
+			var right = Expression.Parameter (typeof (int), "r");
 			var l = Expression.Lambda<Func<int, int, int>> (
 				Expression.Add (left, right), left, right);
 
@@ -183,7 +185,8 @@ namespace MonoTests.System.Linq.Expressions
 		[Test]
 		public void AddTestNullable ()
 		{
-			ParameterExpression a = Expression.Parameter (typeof (int?), "a"), b = Expression.Parameter (typeof (int?), "b");
+			var a = Expression.Parameter (typeof (int?), "a");
+			var b = Expression.Parameter (typeof (int?), "b");
 			var l = Expression.Lambda<Func<int?, int?, int?>> (
 				Expression.Add (a, b), a, b);
 
@@ -201,46 +204,141 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (3,    c (1, 2), "a4");
 		}
 
-		struct EineStrukt {
-			int i;
+		struct Slot {
+			public int Value;
 
-			public int I {
-				get { return i; }
+			public Slot (int value)
+			{
+				this.Value = value;
 			}
 
-			public EineStrukt (int i)
+			public static Slot operator + (Slot a, Slot b)
 			{
-				this.i = i;
-			}
-
-			public static EineStrukt operator + (EineStrukt a, EineStrukt b)
-			{
-				return new EineStrukt (a.i + b.i);
+				return new Slot (a.Value + b.Value);
 			}
 		}
 
 		[Test]
 		[Category ("NotWorking")]
-		public void AddNullableStruct ()
+		public void UserDefinedAdd ()
 		{
-			var a = Expression.Parameter (typeof (EineStrukt?), "a");
-			var b = Expression.Parameter (typeof (EineStrukt?), "b");
+			var l = Expression.Parameter (typeof (Slot), "l");
+			var r = Expression.Parameter (typeof (Slot), "r");
 
-			var body = Expression.Add (a, b);
-			var lambda = Expression.Lambda<Func<EineStrukt?, EineStrukt?, EineStrukt?>> (body, a, b);
+			var node = Expression.Add (l, r);
 
-			Assert.AreEqual (typeof (EineStrukt?), body.Type);
-			Assert.IsTrue (body.IsLifted);
-			Assert.IsTrue (body.IsLiftedToNull);
+			Assert.IsFalse (node.IsLifted);
+			Assert.IsFalse (node.IsLiftedToNull);
+			Assert.AreEqual (typeof (Slot), node.Type);
 
-			var add = lambda.Compile ();
+			var add = Expression.Lambda<Func<Slot, Slot, Slot>> (node, l, r).Compile ();
 
-			var res = add (new EineStrukt (2), new EineStrukt (3));
-			Assert.IsTrue (res.HasValue);
-			Assert.AreEqual (5, res.Value.I);
+			Assert.AreEqual (new Slot (42), add (new Slot (21), new Slot (21)));
+			Assert.AreEqual (new Slot (0), add (new Slot (1), new Slot (-1)));
+		}
 
-			res = add (null, null);
-			Assert.IsFalse (res.HasValue);
+		[Test]
+		[Category ("NotWorking")]
+		public void UserDefinedAddLifted ()
+		{
+			var l = Expression.Parameter (typeof (Slot?), "l");
+			var r = Expression.Parameter (typeof (Slot?), "r");
+
+			var node = Expression.Add (l, r);
+
+			Assert.IsTrue (node.IsLifted);
+			Assert.IsTrue (node.IsLiftedToNull);
+			Assert.AreEqual (typeof (Slot?), node.Type);
+
+			var add = Expression.Lambda<Func<Slot?, Slot?, Slot?>> (node, l, r).Compile ();
+
+			Assert.AreEqual (null, add (null, null));
+			Assert.AreEqual ((Slot?) new Slot (42), add ((Slot?) new Slot (21), (Slot?) new Slot (21)));
+		}
+
+		struct SlotToNullable {
+			public int Value;
+
+			public SlotToNullable (int value)
+			{
+				this.Value = value;
+			}
+
+			public static SlotToNullable? operator + (SlotToNullable a, SlotToNullable b)
+			{
+				return new SlotToNullable (a.Value + b.Value);
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void UserDefinedToNullableAddFromNullable ()
+		{
+			Expression.Add (
+				Expression.Parameter (typeof (SlotToNullable?), "l"),
+				Expression.Parameter (typeof (SlotToNullable?), "r"));
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void UserDefinedToNullableAdd ()
+		{
+			var l = Expression.Parameter (typeof (SlotToNullable), "l");
+			var r = Expression.Parameter (typeof (SlotToNullable), "r");
+
+			var node = Expression.Add (l, r);
+
+			Assert.IsFalse (node.IsLifted);
+			Assert.IsFalse (node.IsLiftedToNull);
+			Assert.AreEqual (typeof (SlotToNullable?), node.Type);
+			Assert.IsNotNull (node.Method);
+
+			var add = Expression.Lambda<Func<SlotToNullable, SlotToNullable, SlotToNullable?>> (node, l, r).Compile ();
+
+			Assert.AreEqual ((SlotToNullable?) new SlotToNullable (4), add (new SlotToNullable (2), new SlotToNullable (2)));
+			Assert.AreEqual ((SlotToNullable?) new SlotToNullable (0), add (new SlotToNullable (2), new SlotToNullable (-2)));
+		}
+
+		struct SlotFromNullableToNullable {
+			public int Value;
+
+			public SlotFromNullableToNullable (int value)
+			{
+				this.Value = value;
+			}
+
+			public static SlotFromNullableToNullable? operator + (SlotFromNullableToNullable? a, SlotFromNullableToNullable? b)
+			{
+				if (a.HasValue && b.HasValue)
+					return (SlotFromNullableToNullable?) new SlotFromNullableToNullable (
+						a.Value.Value + b.Value.Value);
+				else
+					return null;
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void UserDefinedFromNullableToNullableAdd ()
+		{
+			var l = Expression.Parameter (typeof (SlotFromNullableToNullable?), "l");
+			var r = Expression.Parameter (typeof (SlotFromNullableToNullable?), "r");
+
+			var node = Expression.Add (l, r);
+
+			Assert.IsFalse (node.IsLifted);
+			Assert.IsFalse (node.IsLiftedToNull);
+			Assert.AreEqual (typeof (SlotFromNullableToNullable?), node.Type);
+			Assert.IsNotNull (node.Method);
+
+			var add = Expression.Lambda<Func<SlotFromNullableToNullable?, SlotFromNullableToNullable?, SlotFromNullableToNullable?>> (node, l, r).Compile ();
+
+			Assert.AreEqual ((SlotFromNullableToNullable?) null, add (null, null));
+			Assert.AreEqual ((SlotFromNullableToNullable?) null, add (new SlotFromNullableToNullable (2), null));
+			Assert.AreEqual ((SlotFromNullableToNullable?) null, add (null, new SlotFromNullableToNullable (2)));
+			Assert.AreEqual ((SlotFromNullableToNullable?) new SlotFromNullableToNullable (4), add (new SlotFromNullableToNullable (2), new SlotFromNullableToNullable (2)));
+			Assert.AreEqual ((SlotFromNullableToNullable?) new SlotFromNullableToNullable (0), add (new SlotFromNullableToNullable (2), new SlotFromNullableToNullable (-2)));
 		}
 	}
 }
