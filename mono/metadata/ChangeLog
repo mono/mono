@@ -1,5 +1,13 @@
 2008-06-03 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* reflection.c (mono_reflection_generic_class_initialize): Name must
+	be always malloc'ed so we can free it later on. Do this for field, property
+	and event.
+
+	* metadata.c (free_generic_class): Free field, property and event names.
+
+2008-06-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* reflection.c (fieldbuilder_to_mono_class_field): Use mono_metadata_type_dup
 	instead of g_memdup.
 
