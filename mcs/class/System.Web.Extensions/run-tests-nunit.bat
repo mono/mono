@@ -1,4 +1,5 @@
 @echo off
+setlocal
 @REM ********************************************************
 @REM This batch file receives the follwing parameters:
 @REM build/rebuild (optional): should the solution file be rebuilded 
@@ -53,7 +54,8 @@ set TIMESTAMP=%sdy%_%sdm%_%sdd%_%sth%_%stm%
 @REM ********************************************************
 
 set JGAC_PATH=%VMW_HOME%\java_refs\framework\
-set JAVA_HOME=%VMW_HOME%\jre
+if not defined JAVA_HOME set JAVA_HOME=%VMW_HOME%\jre
+echo using JAVA_HOME=%JAVA_HOME%
 
 set RUNTIME_CLASSPATH=%JGAC_PATH%mscorlib.jar
 set RUNTIME_CLASSPATH=%RUNTIME_CLASSPATH%;%JGAC_PATH%System.jar
@@ -193,3 +195,4 @@ copy %BUILD_LOG% ..\
 copy %GH_OUTPUT_XML% ..\
 
 @REM EXIT 0
+endlocal
