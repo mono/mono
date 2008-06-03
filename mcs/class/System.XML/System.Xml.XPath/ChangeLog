@@ -1,3 +1,7 @@
+2008-06-03  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Expression.cs : help diagnose variable resolution failure.
+
 2008-04-02  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathNavigator.cs : fixed InnerXml to not give up with root node.

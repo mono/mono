@@ -1862,6 +1862,8 @@ namespace System.Xml.XPath
 				else
 					var = context.ResolveVariable (new XmlQualifiedName (_name.Name, _name.Namespace));
 			}
+			else
+				throw new XPathException (String.Format ("XSLT context is required to resolve variable. Current namespace manager in current node-set '{0}' is '{1}'", iter.GetType (), iter.NamespaceManager != null ? iter.NamespaceManager.GetType () : null));
 			
 			if (var == null)
 				throw new XPathException ("variable "+_name.ToString ()+" not found");
