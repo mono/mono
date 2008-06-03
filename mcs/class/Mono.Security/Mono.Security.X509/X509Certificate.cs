@@ -214,7 +214,7 @@ namespace Mono.Security.X509 {
 		{
 			if (data != null) {
 				// does it looks like PEM ?
-				if ((data.Length > 0) && (data [0] == 0x2D)) {
+				if ((data.Length > 0) && (data [0] != 0x30)) {
 					try {
 						data = PEM ("CERTIFICATE", data);
 					}
