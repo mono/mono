@@ -1,5 +1,8 @@
 2008-06-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* decimal.c (rescale128): Put back one line which was accidently commented
+	out.
+	
 	* decimal.c (rescale128): Disable the code added by the last patch, as it seems
 	to cause crashes.
 
