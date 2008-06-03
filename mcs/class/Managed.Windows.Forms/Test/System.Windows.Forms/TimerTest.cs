@@ -66,8 +66,10 @@ namespace MonoTests.System.Windows.Forms
 		}
 		
 		[Test]
+		[Category ("NotWorking")]
 		public void StartTest ()
 		{
+			// This test fails about 50% of the time on the buildbots.
 			Ticked = false;
 			using (Timer timer = new Timer ()) {
 				timer.Tick += new EventHandler (TickHandler);
