@@ -1,3 +1,9 @@
+
+Tue Jun 3 13:07:03 CEST 2008 Paolo Molaro <lupus@ximian.com>
+
+	* jit.h, mini.h, trace.c, driver.c: introduce an API to enable tracing
+	from embedding applications.
+
 2008-06-02  William Holmes  <billholmes54@gmail.com>
 
 	* mini-amd64.c :  Correcting some of the issues for Winx64 dealing with
