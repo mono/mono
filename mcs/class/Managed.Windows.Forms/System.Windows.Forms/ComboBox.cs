@@ -2270,7 +2270,7 @@ namespace System.Windows.Forms
 					}
 				}
 				
-				page_size = height / owner.ItemHeight;
+				page_size = Math.Max (height / owner.ItemHeight, 1);
 
 				ComboBoxStyle dropdown_style = owner.DropDownStyle;
 				if ((dropdown_style != ComboBoxStyle.Simple && owner.Items.Count <= owner.MaxDropDownItems)
@@ -2300,8 +2300,8 @@ namespace System.Windows.Forms
 #else
 					int large = (dropdown_style == ComboBoxStyle.Simple ? page_size : owner.maxdrop_items) - 1;
 #endif
-					if (large < 0)
-						large = 0;
+					if (large < 1)
+						large = 1;
 					vscrollbar_ctrl.LargeChange = large;
 					show_scrollbar = vscrollbar_ctrl.Visible = true;
 

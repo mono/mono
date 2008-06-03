@@ -1,5 +1,12 @@
 2008-05-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ComboBox.cs: page_size as well as vscrollbar.LargeChange should be 1
+	if needed, instead of 0 - this should help us in the corner case where
+	we have more than one item but we are only partially showing 1 item.
+	Fixes part of #374713.
+
+2008-05-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* XplatUiX11.cs: When scrolling and detecting the obscured areas in a
 	control, return immediately if the any parent control's handle hasn't
 	been created or isn't visible, as well as avoiding creating the parent
