@@ -1,3 +1,10 @@
+2008-06-03  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* FontNameEditor.cs: PaintEventArgs.Value is string containing
+	the font name and not a Font. 
+	Based on a patch by Andy Hume  <andyhume32@yahoo.co.uk>
+	[Fixes bug #396631]
+
 2008-04-01  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* ColorEditor.cs: Cache the editor contorl instead of creating

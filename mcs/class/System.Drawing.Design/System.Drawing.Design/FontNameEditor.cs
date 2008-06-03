@@ -57,10 +57,11 @@ namespace System.Drawing.Design
 			G.FillRectangle (SystemBrushes.ActiveCaption, e.Bounds);
 
 			// Draw the sample string
-			if (e.Value != null)
-			{
-				Font F = (Font) e.Value;
-				G.DrawString (PreviewString, F, SystemBrushes.ActiveCaptionText, e.Bounds);
+			string fontName = e.Value as string;
+			if (fontName != null && fontName.Length > 0) {
+				using (Font font = new Font (fontName, e.Bounds.Height, FontStyle.Regular, GraphicsUnit.Pixel)) {
+					G.DrawString (PreviewString, font, SystemBrushes.ActiveCaptionText, e.Bounds);
+				}
 			}
 
 			// Draw the border again to ensure it is not overlapped by the text
