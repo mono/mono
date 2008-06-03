@@ -1,3 +1,8 @@
+2008-06-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* decimal.c (rescale128): Disable the code added by the last patch, as it seems
+	to cause crashes.
+
 2008-06-03 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* reflection.c (mono_reflection_generic_class_initialize): Name must
