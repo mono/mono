@@ -334,7 +334,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 		}
 
 		public bool HasCustomEditor {
-			get { return GetEditor() != null; }
+			get { return EditorStyle != UITypeEditorEditStyle.None; }
 		}
 
 		public UITypeEditorEditStyle EditorStyle {
