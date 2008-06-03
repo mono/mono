@@ -1,5 +1,10 @@
 2008-06-03 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata.c (free_generic_class): Release some memory from
+	SRE generic classes.
+
+2008-06-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* reflection.c (mono_image_get_generic_field_token): No reference
 	to name is kept, free it.
 
