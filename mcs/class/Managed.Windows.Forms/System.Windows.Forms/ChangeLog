@@ -1,5 +1,9 @@
 2008-06-03  George Giolfan <georgegiolfan@yahoo.com> 
 
+	* MenuItem.cs: Fixed Dispose.
+
+2008-06-03  George Giolfan <georgegiolfan@yahoo.com> 
+
 	* ColumnHeader.cs: CalcColumnHeader now uses the theme to get the height.
 	* DataGridView.cs: * EnableHeadersVisualStyles: Fixed default value.
 	EnteredHeaderCell, PressedHeaderCell: Added.
