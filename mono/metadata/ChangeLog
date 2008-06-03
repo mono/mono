@@ -1,3 +1,7 @@
+2008-06-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* decimal.c (rescale128): Optimize this function a bit more.
+
 2008-06-03 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata.c (free_generic_class): Release some memory from
