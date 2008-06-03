@@ -1433,7 +1433,6 @@ namespace MonoTests.System.Windows.Forms
 		{
 			// We were not taking the CellBorderStyle into account when calculating
 			// the preferred size.
-
 			Form f = new Form ();
 			f.ClientSize = new Size (300, 300);
 			f.ShowInTaskbar = false;
@@ -1459,6 +1458,37 @@ namespace MonoTests.System.Windows.Forms
 			tlp.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
 
 			Assert.AreEqual (new Size (165, 31), tlp.PreferredSize, "A2");
+
+			f.Dispose ();
+		}
+		
+		[Test]
+		public void IgnoreAutoSizeMode ()
+		{
+			// It would seem that AutoSizeMode for a TableLayoutPanel is always
+			// treated as GrowAndShrink
+			Form f = new Form ();
+			f.ClientSize = new Size (300, 300);
+			f.ShowInTaskbar = false;
+
+			TableLayoutPanel tlp = new TableLayoutPanel ();
+			tlp.AutoSize = true;
+			tlp.Dock = DockStyle.Top;
+			tlp.ColumnCount = 1;
+			tlp.RowCount = 1;
+
+			f.Controls.Add (tlp);
+
+			Button t1 = new Button ();
+			tlp.Controls.Add (t1);
+
+			f.Show ();
+
+			Assert.AreEqual (29, tlp.Height, "A1");
+
+			tlp.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+
+			Assert.AreEqual (29, tlp.Height, "A2");
 
 			f.Dispose ();
 		}

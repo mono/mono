@@ -1,3 +1,8 @@
+2008-06-03  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DefaultLayout.cs: It appears that TableLayoutPanels are immune to
+	AutoSizeMode and always ShrinkAndGrow.  [Fixes bug #396433]
+
 2008-06-02  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TableLayout.cs: Fix a c&p error so we correctly calculate row
