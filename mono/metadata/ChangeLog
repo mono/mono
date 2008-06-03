@@ -1,3 +1,10 @@
+2008-06-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (fieldbuilder_to_mono_class_field): Use mono_metadata_type_dup
+	instead of g_memdup.
+
+	* reflection.c (typebuilder_setup_fields): Same.
+
 2008-06-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* decimal.c (rescale128): Optimize this function a bit more.
