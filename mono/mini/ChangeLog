@@ -1,3 +1,7 @@
+2008-06-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-*.c (mono_arch_create_trampoline_code): Call the _force_ variant of
+	interruption_checkpoint.
 
 Tue Jun 3 13:07:03 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
