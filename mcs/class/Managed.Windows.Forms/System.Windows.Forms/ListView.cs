@@ -398,6 +398,11 @@ namespace System.Windows.Forms
 			}
 		}
 
+		internal ColumnHeader EnteredColumnHeader {
+			get {
+				return header_control.EnteredColumnHeader;
+			}
+		}
 		#endregion	// Private Internal Properties
 
 		#region	 Protected Properties
@@ -1922,7 +1927,7 @@ namespace System.Windows.Forms
 				layout_wd = ClientRectangle.Width;
 			} else {
 				header_control.Width = x;
-				header_control.Height = columns.Count > 0 ? columns [0].Ht : Font.Height + 5;
+				header_control.Height = columns.Count > 0 ? columns [0].Ht : ThemeEngine.Current.ListViewGetHeaderHeight (this, Font);
 				header_control.Visible = true;
 			}
 		}
@@ -3969,6 +3974,7 @@ namespace System.Windows.Forms
 			ColumnHeader drag_column;
 			int drag_x;
 			int drag_to_index = -1;
+			ColumnHeader entered_column_header;
 
 			public HeaderControl (ListView owner)
 			{
@@ -3977,6 +3983,32 @@ namespace System.Windows.Forms
 				MouseDown += new MouseEventHandler (HeaderMouseDown);
 				MouseMove += new MouseEventHandler (HeaderMouseMove);
 				MouseUp += new MouseEventHandler (HeaderMouseUp);
+				MouseLeave += new EventHandler (OnMouseLeave);
+			}
+
+			internal ColumnHeader EnteredColumnHeader {
+				get { return entered_column_header; }
+				private set {
+					if (entered_column_header == value)
+						return;
+					if (ThemeEngine.Current.ListViewHasHotHeaderStyle) {
+						Region region_to_invalidate = new Region ();
+						region_to_invalidate.MakeEmpty ();
+						if (entered_column_header != null)
+							region_to_invalidate.Union (GetColumnHeaderInvalidateArea (entered_column_header));
+						entered_column_header = value;
+						if (entered_column_header != null)
+							region_to_invalidate.Union (GetColumnHeaderInvalidateArea (entered_column_header));
+						Invalidate (region_to_invalidate);
+						region_to_invalidate.Dispose ();
+					} else
+						entered_column_header = value;
+				}
+			}
+
+			void OnMouseLeave (object sender, EventArgs e)
+			{
+				EnteredColumnHeader = null;
 			}
 
 			private ColumnHeader ColumnAtX (int x)
@@ -4022,11 +4054,21 @@ namespace System.Windows.Forms
 						drag_to_index = GetReorderedIndex (clicked_column);
 					}
 					clicked_column.Pressed = true;
-					Rectangle bounds = clicked_column.Rect;
-					bounds.X -= owner.h_marker;
-					Invalidate (bounds);
+					Invalidate (clicked_column);
 					return;
 				}
+			}
+
+			void Invalidate (ColumnHeader columnHeader)
+			{
+				Invalidate (GetColumnHeaderInvalidateArea (columnHeader));
+			}
+
+			Rectangle GetColumnHeaderInvalidateArea (ColumnHeader columnHeader)
+			{
+				Rectangle bounds = columnHeader.Rect;
+				bounds.X -= owner.h_marker;
+				return bounds;
 			}
 
 			void StopResize ()
@@ -4077,17 +4119,16 @@ namespace System.Windows.Forms
 						ColumnHeader over = ColumnAtX (me.X + owner.h_marker);
 						bool pressed = clicked_column.Pressed;
 						clicked_column.Pressed = over == clicked_column;
-						if (clicked_column.Pressed ^ pressed) {
-							Rectangle bounds = clicked_column.Rect;
-							bounds.X -= owner.h_marker;
-							Invalidate (bounds);
-						}
+						if (clicked_column.Pressed ^ pressed)
+							Invalidate (clicked_column);
 					}
 					return;
 				}
 
 				for (int i = 0; i < owner.Columns.Count; i++) {
 					Rectangle zone = owner.Columns [i].Rect;
+					if (zone.Contains (pt))
+						EnteredColumnHeader = owner.Columns [i];
 					zone.X = zone.Right - 5;
 					zone.Width = 10;
 					if (zone.Contains (pt)) {
@@ -4117,9 +4158,7 @@ namespace System.Windows.Forms
 
 				if (clicked_column != null && clicked_column.Pressed) {
 					clicked_column.Pressed = false;
-					Rectangle bounds = clicked_column.Rect;
-					bounds.X -= owner.h_marker;
-					Invalidate (bounds);
+					Invalidate (clicked_column);
 					owner.OnColumnClick (new ColumnClickEventArgs (clicked_column.Index));
 				}
 

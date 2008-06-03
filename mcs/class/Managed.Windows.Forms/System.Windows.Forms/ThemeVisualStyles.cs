@@ -25,6 +25,7 @@
 //	Ernesto Carrea, equistango@gmail.com
 
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms.VisualStyles;
 
 namespace System.Windows.Forms
@@ -409,6 +410,156 @@ namespace System.Windows.Forms
 			return (state & ButtonState.Pushed) == ButtonState.Pushed;
 		}
 		#endregion
+		#endregion
+#if NET_2_0
+		#region DataGridView
+		#region DataGridViewHeaderCell
+		#region DataGridViewRowHeaderCell
+		public override bool DataGridViewRowHeaderCellDrawBackground (DataGridViewRowHeaderCell cell, Graphics g, Rectangle bounds)
+		{
+			if (!cell.DataGridView.EnableHeadersVisualStyles)
+				return base.DataGridViewRowHeaderCellDrawBackground (cell, g, bounds);
+			VisualStyleElement element = DataGridViewRowHeaderCellGetVisualStyleElement (cell);
+			if (!VisualStyleRenderer.IsElementDefined (element))
+				return base.DataGridViewRowHeaderCellDrawBackground (cell, g, bounds);
+			bounds.Width--;
+			Bitmap bitmap = new Bitmap (bounds.Height, bounds.Width);
+			Graphics bitmap_g = Graphics.FromImage (bitmap);
+			Rectangle bitmap_rectangle = new Rectangle (Point.Empty, bitmap.Size);
+			VisualStyleRenderer renderer = new VisualStyleRenderer (element);
+			if (!AreEqual (element, VisualStyleElement.Header.Item.Normal) && renderer.IsBackgroundPartiallyTransparent ())
+				new VisualStyleRenderer (VisualStyleElement.Header.Item.Normal).DrawBackground (bitmap_g, bitmap_rectangle);
+			renderer.DrawBackground (bitmap_g, bitmap_rectangle);
+			bitmap_g.Dispose ();
+			g.Transform = new Matrix(0, 1, 1, 0, 0, 0);
+			g.DrawImage (bitmap, bounds.Y, bounds.X);
+			bitmap.Dispose ();
+			g.ResetTransform ();
+			return true;
+		}
+		public override bool DataGridViewRowHeaderCellDrawSelectionBackground (DataGridViewRowHeaderCell cell)
+		{
+			if (!cell.DataGridView.EnableHeadersVisualStyles || !VisualStyleRenderer.IsElementDefined (DataGridViewRowHeaderCellGetVisualStyleElement (cell)))
+				return base.DataGridViewRowHeaderCellDrawSelectionBackground (cell);
+			return true;
+		}
+		public override bool DataGridViewRowHeaderCellDrawBorder (DataGridViewRowHeaderCell cell, Graphics g, Rectangle bounds)
+		{
+			if (!cell.DataGridView.EnableHeadersVisualStyles || !VisualStyleRenderer.IsElementDefined (DataGridViewRowHeaderCellGetVisualStyleElement (cell)))
+				return base.DataGridViewRowHeaderCellDrawBorder (cell, g, bounds);
+			g.DrawLine (cell.GetBorderPen (), bounds.Right - 1, bounds.Top, bounds.Right - 1, bounds.Bottom - 1);
+			return true;
+		}
+		static VisualStyleElement DataGridViewRowHeaderCellGetVisualStyleElement (DataGridViewRowHeaderCell cell)
+		{
+			if (cell.DataGridView.PressedHeaderCell == cell)
+				return VisualStyleElement.Header.Item.Pressed;
+			if (cell.DataGridView.EnteredHeaderCell == cell)
+				return VisualStyleElement.Header.Item.Hot;
+			if (cell.OwningRow.SelectedInternal)
+				return VisualStyleElement.Header.Item.Pressed;
+			return VisualStyleElement.Header.Item.Normal;
+		}
+		#endregion
+		#region DataGridViewColumnHeaderCell
+		public override bool DataGridViewColumnHeaderCellDrawBackground (DataGridViewColumnHeaderCell cell, Graphics g, Rectangle bounds)
+		{
+			if (!cell.DataGridView.EnableHeadersVisualStyles || cell is DataGridViewTopLeftHeaderCell)
+				return base.DataGridViewColumnHeaderCellDrawBackground (cell, g, bounds);
+			VisualStyleElement element = DataGridViewColumnHeaderCellGetVisualStyleElement (cell);
+			if (!VisualStyleRenderer.IsElementDefined (element))
+				return base.DataGridViewColumnHeaderCellDrawBackground (cell, g, bounds);
+			bounds.Height--;
+			VisualStyleRenderer renderer = new VisualStyleRenderer (element);
+			if (!AreEqual (element, VisualStyleElement.Header.Item.Normal) && renderer.IsBackgroundPartiallyTransparent ())
+			    new VisualStyleRenderer (VisualStyleElement.Header.Item.Normal).DrawBackground (g, bounds);
+			renderer.DrawBackground (g, bounds);
+			return true;
+		}
+		public override bool DataGridViewColumnHeaderCellDrawBorder (DataGridViewColumnHeaderCell cell, Graphics g, Rectangle bounds)
+		{
+			if (!cell.DataGridView.EnableHeadersVisualStyles || cell is DataGridViewTopLeftHeaderCell || !VisualStyleRenderer.IsElementDefined (VisualStyleElement.Header.Item.Normal))
+				return base.DataGridViewColumnHeaderCellDrawBorder (cell, g, bounds);
+			g.DrawLine (cell.GetBorderPen (), bounds.Left, bounds.Bottom - 1, bounds.Right - 1, bounds.Bottom - 1);
+			return true;
+		}
+		static VisualStyleElement DataGridViewColumnHeaderCellGetVisualStyleElement (DataGridViewColumnHeaderCell cell)
+		{
+			if (cell.DataGridView.PressedHeaderCell == cell)
+				return VisualStyleElement.Header.Item.Pressed;
+			if (cell.DataGridView.EnteredHeaderCell == cell)
+				return VisualStyleElement.Header.Item.Hot;
+			return VisualStyleElement.Header.Item.Normal;
+		}
+		#endregion
+		public override bool DataGridViewHeaderCellHasPressedStyle (DataGridView dataGridView)
+		{
+			if (!dataGridView.EnableHeadersVisualStyles || !VisualStyleRenderer.IsElementDefined (VisualStyleElement.Header.Item.Pressed))
+				return base.DataGridViewHeaderCellHasPressedStyle (dataGridView);
+			return true;
+		}
+		public override bool DataGridViewHeaderCellHasHotStyle (DataGridView dataGridView)
+		{
+			if (!dataGridView.EnableHeadersVisualStyles || !VisualStyleRenderer.IsElementDefined (VisualStyleElement.Header.Item.Hot))
+				return base.DataGridViewHeaderCellHasHotStyle (dataGridView);
+			return true;
+		}
+		#endregion
+		#endregion
+#endif
+		#region ListView
+		protected override void ListViewDrawColumnHeaderBackground (ListView listView, ColumnHeader columnHeader, Graphics g, Rectangle area, Rectangle clippingArea)
+		{
+			VisualStyleElement element;
+			if (listView.HeaderStyle == ColumnHeaderStyle.Clickable)
+				if (columnHeader.Pressed)
+					element = VisualStyleElement.Header.Item.Pressed;
+				else if (columnHeader == listView.EnteredColumnHeader)
+					element = VisualStyleElement.Header.Item.Hot;
+				else
+					element = VisualStyleElement.Header.Item.Normal;
+			else
+				element = VisualStyleElement.Header.Item.Normal;
+			if (!VisualStyleRenderer.IsElementDefined (element)) {
+				base.ListViewDrawColumnHeaderBackground (listView, columnHeader, g, area, clippingArea);
+				return;
+			}
+			new VisualStyleRenderer (element).DrawBackground (g, area, clippingArea);
+		}
+		protected override void ListViewDrawUnusedHeaderBackground (ListView listView, Graphics g, Rectangle area, Rectangle clippingArea)
+		{
+			VisualStyleElement element = VisualStyleElement.Header.Item.Normal;
+			if (!VisualStyleRenderer.IsElementDefined (element)) {
+				base.ListViewDrawUnusedHeaderBackground (listView, g, area, clippingArea);
+				return;
+			}
+			new VisualStyleRenderer (element).DrawBackground (g, area, clippingArea);
+		}
+		public override bool ListViewHasHotHeaderStyle {
+			get {
+				if (!VisualStyleRenderer.IsElementDefined (VisualStyleElement.Header.Item.Hot))
+					return base.ListViewHasHotHeaderStyle;
+				return true;
+			}
+		}
+		public override int ListViewGetHeaderHeight (ListView listView, Font font)
+		{
+			VisualStyleElement element = VisualStyleElement.Header.Item.Normal;
+			if (!VisualStyleRenderer.IsElementDefined (element))
+				return base.ListViewGetHeaderHeight (listView, font);
+			Control control = null;
+			Graphics g;
+			if (listView == null) {
+				control = new Control ();
+				g = control.CreateGraphics ();
+			} else
+				g = listView.CreateGraphics ();
+			int result = new VisualStyleRenderer (element).GetPartSize (g, ThemeSizeType.True).Height;
+			g.Dispose ();
+			if (listView == null)
+				control.Dispose ();
+			return result;
+		}
 		#endregion
 		#region GroupBox
 		public override void DrawGroupBox (Graphics dc, Rectangle area, GroupBox box)
@@ -1503,5 +1654,13 @@ namespace System.Windows.Forms
 			}
 		}
 		#endregion
+
+		static bool AreEqual (VisualStyleElement value1, VisualStyleElement value2)
+		{
+			return
+				value1.ClassName == value1.ClassName &&
+				value1.Part == value2.Part &&
+				value1.State == value2.State;
+		}
 	}
 }

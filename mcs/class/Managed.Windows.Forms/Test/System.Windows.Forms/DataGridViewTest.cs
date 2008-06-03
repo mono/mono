@@ -1496,6 +1496,11 @@ namespace MonoTests.System.Windows.Forms
 
 		class cust { public string Name { get { return "test"; } } }
 	
+		[Test]
+		public void EnableHeadersVisualStylesDefaultValue ()
+		{
+			Assert.AreEqual (true, new DataGridView ().EnableHeadersVisualStyles);
+		}
 	}
 	
 	[TestFixture]

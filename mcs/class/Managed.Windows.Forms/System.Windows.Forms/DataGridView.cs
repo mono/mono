@@ -81,7 +81,7 @@ namespace System.Windows.Forms {
 		private DataGridViewCellStyle defaultCellStyle;
 		//private Control editingControl;
 		private DataGridViewEditMode editMode;
-		private bool enableHeadersVisualStyles;
+		private bool enableHeadersVisualStyles = true;
 		private DataGridViewCell firstDisplayedCell;
 		private int firstDisplayedScrollingColumnHiddenWidth;
 		private int firstDisplayedScrollingColumnIndex;
@@ -133,6 +133,9 @@ namespace System.Windows.Forms {
 		
 		private int gridWidth;
 		private int gridHeight;
+
+		DataGridViewHeaderCell pressed_header_cell;
+		DataGridViewHeaderCell entered_header_cell;
 
 		public DataGridView ()
 		{
@@ -704,6 +707,26 @@ namespace System.Windows.Forms {
 			set { enableHeadersVisualStyles = value; }
 		}
 
+		internal DataGridViewHeaderCell EnteredHeaderCell {
+			get { return entered_header_cell; }
+			set {
+				if (entered_header_cell == value)
+					return;
+				if (ThemeEngine.Current.DataGridViewHeaderCellHasHotStyle (this)) {
+					Region area_to_invalidate = new Region ();
+					area_to_invalidate.MakeEmpty ();
+					if (entered_header_cell != null)
+						area_to_invalidate.Union (GetHeaderCellBounds (entered_header_cell));
+					entered_header_cell = value;
+					if (entered_header_cell != null)
+						area_to_invalidate.Union (GetHeaderCellBounds (entered_header_cell));
+					Invalidate (area_to_invalidate);
+					area_to_invalidate.Dispose ();
+				} else
+					entered_header_cell = value;
+			}
+		}
+
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DataGridViewCell FirstDisplayedCell {
@@ -858,6 +881,10 @@ namespace System.Windows.Forms {
 		public new Padding Padding {
 			get { return Padding.Empty; }
 			set { }
+		}
+
+		internal DataGridViewHeaderCell PressedHeaderCell {
+			get { return pressed_header_cell; }
 		}
 
 		[Browsable (true)]
@@ -4015,6 +4042,10 @@ namespace System.Windows.Forms {
 			DoSelectionOnMouseDown (hitTest);
 			
 			if (hitTest.Type != DataGridViewHitTestType.Cell) {
+				if (hitTest.Type == DataGridViewHitTestType.ColumnHeader)
+					pressed_header_cell = columns [hitTest.ColumnIndex].HeaderCell;
+				else if (hitTest.Type == DataGridViewHitTestType.RowHeader)
+					pressed_header_cell = rows [hitTest.RowIndex].HeaderCell;
 				Invalidate ();
 				return;
 			}
@@ -4050,6 +4081,8 @@ namespace System.Windows.Forms {
 				OnCellMouseLeave (new DataGridViewCellEventArgs (hover_cell.ColumnIndex, hover_cell.RowIndex));
 				hover_cell = null;
 			}
+			
+			EnteredHeaderCell = null;
 		}
 		
 		protected override void OnMouseMove (MouseEventArgs e)
@@ -4059,6 +4092,8 @@ namespace System.Windows.Forms {
 			HitTestInfo hit = this.HitTest (e.X, e.Y);
 			
 			if (hit.Type == DataGridViewHitTestType.Cell) {
+				EnteredHeaderCell = null;
+
 				DataGridViewCell new_cell = GetCellInternal (hit.ColumnIndex, hit.RowIndex);
 				
 				// Check if we have moved into an error icon area
@@ -4110,6 +4145,8 @@ namespace System.Windows.Forms {
 			} else if (hit.Type == DataGridViewHitTestType.RowHeader) {
 				DataGridViewRowHeaderCell new_cell = Rows[hit.RowIndex].HeaderCell;
 
+				EnteredHeaderCell = new_cell;
+
 				// Check if we have moved into an error icon area
 				Rectangle icon = new_cell.InternalErrorIconsBounds;
 
@@ -4126,6 +4163,8 @@ namespace System.Windows.Forms {
 						MouseLeftErrorIcon (new_cell);
 				}
 			} else if (hit.Type == DataGridViewHitTestType.TopLeftHeader) {
+				EnteredHeaderCell = null;
+
 				DataGridViewTopLeftHeaderCell new_cell = (DataGridViewTopLeftHeaderCell)TopLeftHeaderCell;
 
 				// Check if we have moved into an error icon area
@@ -4145,6 +4184,11 @@ namespace System.Windows.Forms {
 				}
 			
 			} else {
+				if (hit.Type == DataGridViewHitTestType.ColumnHeader)
+					EnteredHeaderCell = Columns [hit.ColumnIndex].HeaderCell;
+				else
+					EnteredHeaderCell = null;
+
 				// We have left the cell area
 				if (hover_cell != null) {
 					OnCellMouseLeave (new DataGridViewCellEventArgs (hover_cell.ColumnIndex, hover_cell.RowIndex));
@@ -4162,6 +4206,13 @@ namespace System.Windows.Forms {
 			if (hit.Type == DataGridViewHitTestType.Cell) {
 				Rectangle display = GetCellDisplayRectangle (hit.ColumnIndex, hit.RowIndex, false);
 				OnCellMouseUp (new DataGridViewCellMouseEventArgs (hit.ColumnIndex, hit.RowIndex, e.X - display.X, e.Y - display.Y, e));
+			}
+
+			if (pressed_header_cell != null) {
+				DataGridViewHeaderCell cell = pressed_header_cell;
+				pressed_header_cell = null;
+				if (ThemeEngine.Current.DataGridViewHeaderCellHasPressedStyle (this))
+					Invalidate (GetHeaderCellBounds (cell));
 			}
 		}
 
@@ -5357,6 +5408,32 @@ namespace System.Windows.Forms {
 			}
 			
 			return result;
+		}
+
+		Rectangle GetHeaderCellBounds (DataGridViewHeaderCell cell)
+		{
+			Rectangle bounds = new Rectangle (ClientRectangle.Location, cell.Size);
+			if (cell is DataGridViewColumnHeaderCell) {
+				if (RowHeadersVisible)
+					bounds.X += RowHeadersWidth;
+				List<DataGridViewColumn> sortedColumns = columns.ColumnDisplayIndexSortedArrayList;
+				for (int index = first_col_index; index < sortedColumns.Count; index++) {
+					DataGridViewColumn column = sortedColumns [index];
+					if (column.Index == cell.ColumnIndex)
+						break;
+					bounds.X += column.Width;
+				}
+			} else {
+				if (ColumnHeadersVisible)
+					bounds.Y += ColumnHeadersHeight;
+				for (int index = first_row_index; index < Rows.Count; index++) {
+					DataGridViewRow row = GetRowInternal (index);
+					if (row.HeaderCell == cell)
+						break;
+					bounds.Y += row.Height;
+				}
+			}
+			return bounds;
 		}
 
 		private void PrepareEditingRow (bool cell_changed, bool column_changed)

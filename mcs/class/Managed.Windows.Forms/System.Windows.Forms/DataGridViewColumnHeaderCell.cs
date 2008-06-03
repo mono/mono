@@ -228,6 +228,20 @@ namespace System.Windows.Forms {
 			base.Paint (graphics, clipBounds, cellBounds, rowIndex, dataGridViewElementState, value, formattedValue, errorText, cellStyle, advancedBorderStyle, post);
 		}
 
+		internal override void PaintPartBackground (Graphics graphics, Rectangle cellBounds, DataGridViewCellStyle style)
+		{
+			if (ThemeEngine.Current.DataGridViewColumnHeaderCellDrawBackground (this, graphics, cellBounds))
+				return;
+			base.PaintPartBackground (graphics, cellBounds, style);
+		}
+
+		internal override void PaintPartBorder (Graphics graphics, Rectangle cellBounds, int rowIndex)
+		{
+			if (ThemeEngine.Current.DataGridViewColumnHeaderCellDrawBorder (this, graphics, cellBounds))
+				return;
+			base.PaintPartBorder (graphics, cellBounds, rowIndex);
+		}
+
 		protected override bool SetValue (int rowIndex, object value) {
 			header_text = value;
 			return true;

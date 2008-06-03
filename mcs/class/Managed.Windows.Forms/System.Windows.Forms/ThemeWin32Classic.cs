@@ -2162,7 +2162,52 @@ namespace System.Windows.Forms
 		}
 		
 		#endregion // Datagrid
-		
+
+#if NET_2_0
+		#region DataGridView
+		#region DataGridViewHeaderCell
+		#region DataGridViewRowHeaderCell
+		public override bool DataGridViewRowHeaderCellDrawBackground (DataGridViewRowHeaderCell cell, Graphics g, Rectangle bounds)
+		{
+			return false;
+		}
+
+		public override bool DataGridViewRowHeaderCellDrawSelectionBackground (DataGridViewRowHeaderCell cell)
+		{
+			return false;
+		}
+
+		public override bool DataGridViewRowHeaderCellDrawBorder (DataGridViewRowHeaderCell cell, Graphics g, Rectangle bounds)
+		{
+			return false;
+		}
+		#endregion
+
+		#region DataGridViewColumnHeaderCell
+		public override bool DataGridViewColumnHeaderCellDrawBackground (DataGridViewColumnHeaderCell cell, Graphics g, Rectangle bounds)
+		{
+			return false;
+		}
+
+		public override bool DataGridViewColumnHeaderCellDrawBorder (DataGridViewColumnHeaderCell cell, Graphics g, Rectangle bounds)
+		{
+			return false;
+		}
+		#endregion
+
+		public override bool DataGridViewHeaderCellHasPressedStyle  (DataGridView dataGridView)
+		{
+			return false;
+		}
+
+		public override bool DataGridViewHeaderCellHasHotStyle (DataGridView dataGridView)
+		{
+			return false;
+		}
+		#endregion
+		#endregion
+#endif
+
 		#region DateTimePicker
 
 		public override void DrawDateTimePicker(Graphics dc, Rectangle clip_rectangle, DateTimePicker dtp)
@@ -2511,12 +2556,7 @@ namespace System.Windows.Forms
 							continue;
 #endif
 
-						ButtonState state;
-						if (control.HeaderStyle == ColumnHeaderStyle.Clickable)
-							state = col.Pressed ? ButtonState.Pushed : ButtonState.Normal;
-						else
-							state = ButtonState.Flat;
-						CPDrawButton (dc, rect, state);
+						ListViewDrawColumnHeaderBackground (control, col, dc, rect, clip);
 						rect.X += 5;
 						rect.Width -= 10;
 						if (rect.Width <= 0)
@@ -2531,15 +2571,30 @@ namespace System.Windows.Forms
 						Rectangle rect = control.Columns [0].Rect;
 						rect.X = right;
 						rect.Width = control.Right - right;
-						ButtonState state;
-						if (control.HeaderStyle == ColumnHeaderStyle.Clickable)
-							state = ButtonState.Normal;
-						else
-							state = ButtonState.Flat;
-						CPDrawButton (dc, rect, state);
+						ListViewDrawUnusedHeaderBackground (control, dc, rect, clip);
 					}
 				}
 			}
+		}
+
+		protected virtual void ListViewDrawColumnHeaderBackground (ListView listView, ColumnHeader columnHeader, Graphics g, Rectangle area, Rectangle clippingArea)
+		{
+			ButtonState state;
+			if (listView.HeaderStyle == ColumnHeaderStyle.Clickable)
+				state = columnHeader.Pressed ? ButtonState.Pushed : ButtonState.Normal;
+			else
+				state = ButtonState.Flat;
+			CPDrawButton (g, area, state);
+		}
+		
+		protected virtual void ListViewDrawUnusedHeaderBackground (ListView listView, Graphics g, Rectangle area, Rectangle clippingArea)
+		{
+			ButtonState state;
+			if (listView.HeaderStyle == ColumnHeaderStyle.Clickable)
+				state = ButtonState.Normal;
+			else
+				state = ButtonState.Flat;
+			CPDrawButton (g, area, state);
 		}
 
 		public override void DrawListViewHeaderDragDetails (Graphics dc, ListView view, ColumnHeader col, int target_x)
@@ -2921,7 +2976,18 @@ namespace System.Windows.Forms
 		}
 #endif
 
+		public override bool ListViewHasHotHeaderStyle {
+			get {
+				return false;
+			}
+		}
+
 		// Sizing
+		public override int ListViewGetHeaderHeight (ListView listView, Font font)
+		{
+			return font.Height + 5;
+		}
+
 		public override Size ListViewCheckBoxSize {
 			get { return new Size (16, 16); }
 		}

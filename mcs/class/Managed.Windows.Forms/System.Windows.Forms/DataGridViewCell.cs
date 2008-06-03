@@ -1370,10 +1370,15 @@ namespace System.Windows.Forms {
 			Color color = style.BackColor;
 			graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (color), cellBounds);
 		}
-		
-		private void PaintPartBorder (Graphics graphics, Rectangle cellBounds, int rowIndex)
+
+		internal Pen GetBorderPen ()
 		{
-			Pen p = ThemeEngine.Current.ResPool.GetPen (DataGridView.GridColor);
+			return ThemeEngine.Current.ResPool.GetPen (DataGridView.GridColor);
+		}
+		
+		internal virtual void PaintPartBorder (Graphics graphics, Rectangle cellBounds, int rowIndex)
+		{
+			Pen p = GetBorderPen ();
 
 			if (columnIndex == -1) {
 				graphics.DrawLine (p, cellBounds.Left, cellBounds.Top, cellBounds.Left, cellBounds.Bottom - 1);

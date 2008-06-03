@@ -1,3 +1,16 @@
+2008-06-03  George Giolfan <georgegiolfan@yahoo.com> 
+
+	* ColumnHeader.cs: CalcColumnHeader now uses the theme to get the height.
+	* DataGridView.cs: * EnableHeadersVisualStyles: Fixed default value.
+	EnteredHeaderCell, PressedHeaderCell: Added.
+	* DataGridViewCell.cs: Refactored: Extracted GetBorderPen.
+	* DataGridViewColumnHeaderCell.cs, DataGridViewRowHeaderCell.cs: Gave the
+	theme a chance to override default painting.
+	* ListView.cs: Added EnteredColumnHeader. Refactored: Extracted
+	GetColumnHeaderInvalidateArea, Invalidate(ColumnHeader).
+	* Theme.cs, ThemeVisualStyles.cs, ThemeWin32Classic.cs: Added members for
+	ListView and DataGridView header rendering.
+	
 2008-06-03  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* RichTextBox.cs: GetPositionFromCharIndex should return the 

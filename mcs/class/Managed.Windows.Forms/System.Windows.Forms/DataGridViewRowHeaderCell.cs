@@ -231,6 +231,27 @@ namespace System.Windows.Forms {
 			base.Paint (graphics, clipBounds, cellBounds, rowIndex, cellState, value, formattedValue, errorText, cellStyle, advancedBorderStyle, post);
 		}
 
+		internal override void PaintPartBackground (Graphics graphics, Rectangle cellBounds, DataGridViewCellStyle style)
+		{
+			if (ThemeEngine.Current.DataGridViewRowHeaderCellDrawBackground (this, graphics, cellBounds))
+				return;
+			base.PaintPartBackground (graphics, cellBounds, style);
+		}
+
+		internal override void PaintPartSelectionBackground (Graphics graphics, Rectangle cellBounds, DataGridViewElementStates cellState, DataGridViewCellStyle cellStyle)
+		{
+			if (ThemeEngine.Current.DataGridViewRowHeaderCellDrawSelectionBackground (this))
+				return;
+			base.PaintPartSelectionBackground (graphics, cellBounds, cellState, cellStyle);
+		}
+
+		internal override void PaintPartBorder (Graphics graphics, Rectangle cellBounds, int rowIndex)
+		{
+			if (ThemeEngine.Current.DataGridViewRowHeaderCellDrawBorder (this, graphics, cellBounds))
+				return;
+			base.PaintPartBorder (graphics, cellBounds, rowIndex);
+		}
+
 		private void DrawRightArrowGlyph (Graphics g, Pen p, int x, int y)
 		{
 			g.DrawLine (p, x, y, x, y + 8);

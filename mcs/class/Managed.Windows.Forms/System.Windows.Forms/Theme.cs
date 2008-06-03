@@ -786,6 +786,24 @@ namespace System.Windows.Forms
 		
 		#endregion // Datagrid
 
+#if NET_2_0
+		#region DataGridView
+		#region DataGridViewHeaderCell
+		#region DataGridViewRowHeaderCell
+		public abstract bool DataGridViewRowHeaderCellDrawBackground (DataGridViewRowHeaderCell cell, Graphics g, Rectangle bounds);
+		public abstract bool DataGridViewRowHeaderCellDrawSelectionBackground (DataGridViewRowHeaderCell cell);
+		public abstract bool DataGridViewRowHeaderCellDrawBorder (DataGridViewRowHeaderCell cell, Graphics g, Rectangle bounds);
+		#endregion
+		#region DataGridViewColumnHeaderCell
+		public abstract bool DataGridViewColumnHeaderCellDrawBackground (DataGridViewColumnHeaderCell cell, Graphics g, Rectangle bounds);
+		public abstract bool DataGridViewColumnHeaderCellDrawBorder (DataGridViewColumnHeaderCell cell, Graphics g, Rectangle bounds);
+		#endregion
+		public abstract bool DataGridViewHeaderCellHasPressedStyle (DataGridView dataGridView);
+		public abstract bool DataGridViewHeaderCellHasHotStyle (DataGridView dataGridView);
+		#endregion
+		#endregion
+#endif
+
 		#region DateTimePicker
 
 		public abstract void DrawDateTimePicker(Graphics dc, Rectangle clip_rectangle, DateTimePicker dtp);
@@ -814,8 +832,10 @@ namespace System.Windows.Forms
 		public abstract void DrawListViewItems (Graphics dc, Rectangle clip_rectangle, ListView control);
 		public abstract void DrawListViewHeader (Graphics dc, Rectangle clip_rectangle, ListView control);
 		public abstract void DrawListViewHeaderDragDetails (Graphics dc, ListView control, ColumnHeader drag_column, int target_x);
+		public abstract bool ListViewHasHotHeaderStyle { get; }
 
 		// Sizing
+		public abstract int ListViewGetHeaderHeight (ListView listView, Font font);
 		public abstract Size ListViewCheckBoxSize { get; }
 		public abstract int ListViewColumnHeaderHeight { get; }
 		public abstract int ListViewDefaultColumnWidth { get; }

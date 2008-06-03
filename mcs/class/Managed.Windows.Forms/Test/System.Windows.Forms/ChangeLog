@@ -1,3 +1,7 @@
+2008-06-03  George Giolfan <georgegiolfan@yahoo.com> 
+
+	* DataGridViewTest.cs: Added EnableHeadersVisualStylesDefaultValue. 
+
 2008-06-03  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TableLayoutTest.cs Add another test for bug #396433.
