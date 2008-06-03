@@ -303,7 +303,6 @@ namespace System.Web {
 			}
 		}
 
-		[MonoTODO]
 		public static bool IsOnUNCShare {
 			[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Low)]
 			get {
