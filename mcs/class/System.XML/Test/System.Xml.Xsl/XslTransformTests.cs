@@ -2143,6 +2143,26 @@ Services
 			}
 		}
 
+		[Test] // bug #316238
+		public void ResolveVariableInXsltArgumentList ()
+		{
+			ResolveVariableInXsltArgumentList ("Test/XmlFiles/xsl/316238-1.xsl");
+			ResolveVariableInXsltArgumentList ("Test/XmlFiles/xsl/316238-2.xsl");
+		}
+
+		void ResolveVariableInXsltArgumentList (string file)
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<doc><element id=\"test\">this is a test</element></doc>");
+			XslTransform transform = new XslTransform ();
+			transform.Load (file);
+			//Stream outputStream = Console.OpenStandardOutput();
+			XsltArgumentList xsltArgs = new XsltArgumentList ();
+			xsltArgs.AddParam ("test", "", "test");
+			xsltArgs.AddParam ("doc", "", doc.CreateNavigator().Select ("*"));
+			transform.Transform (new XmlDocument (), xsltArgs, TextWriter.Null);
+		}
+
 #if NET_2_0
 		[Test] // bug #349375
 		public void PreserveWhitespace ()

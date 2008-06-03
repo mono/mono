@@ -1,3 +1,7 @@
+2008-06-03  Atsushi Enomoto <atsushi@ximian.com>
+
+	* 316238-1.xsl, 316238-2.xsl : new test files.
+
 2008-05-22  Atsushi Enomoto <atsushi@ximian.com>
 
 	* 391424.xml, 391424.xsl : new test files.

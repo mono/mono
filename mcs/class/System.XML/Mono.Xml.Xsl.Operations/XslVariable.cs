@@ -137,8 +137,8 @@ namespace Mono.Xml.Xsl.Operations {
 		{	
 			object value = GetValue (((XsltCompiledContext)xsltContext).Processor);
 			
-			if (value is XPathNodeIterator)			
-				return ((XPathNodeIterator)value).Clone ();
+			if (value is XPathNodeIterator)
+				return new WrapperIterator (((XPathNodeIterator)value).Clone (), xsltContext);
 			
 			return value;
 		}

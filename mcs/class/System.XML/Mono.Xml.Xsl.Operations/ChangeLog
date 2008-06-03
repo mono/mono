@@ -1,3 +1,9 @@
+2008-06-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslVariable.cs : In XslGeneralVariable.Evaluate(), always wrap
+	  custom XPathNodeIterator with XsltContext so that the iterator
+	  can resolve variables. Fixed bug #316238.
+
 2008-01-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslCopyOf.cs : when the evaluated argument was RTF (it could happen
