@@ -1,3 +1,7 @@
+2008-06-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XsltDebuggerWrapper.cs : allow public methods in debugger instance.
+
 2008-01-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslKey.cs, XslStylesheet.cs, Compiler.cs : XSLT 1.0 does not

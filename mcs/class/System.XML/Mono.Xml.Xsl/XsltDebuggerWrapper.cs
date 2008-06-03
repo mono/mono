@@ -43,10 +43,10 @@ namespace Mono.Xml.Xsl
 		public XsltDebuggerWrapper (object impl)
 		{
 			this.impl = impl;
-			on_compile = impl.GetType ().GetMethod ("OnCompile", BindingFlags.NonPublic | BindingFlags.Instance);
+			on_compile = impl.GetType ().GetMethod ("OnCompile", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 			if (on_compile == null)
 				throw new InvalidOperationException ("INTERNAL ERROR: the debugger does not look like what System.Xml.dll expects. OnCompile method was not found");
-			on_execute = impl.GetType ().GetMethod ("OnExecute", BindingFlags.NonPublic | BindingFlags.Instance);
+			on_execute = impl.GetType ().GetMethod ("OnExecute", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 			if (on_execute == null)
 				throw new InvalidOperationException ("INTERNAL ERROR: the debugger does not look like what System.Xml.dll expects. OnExecute method was not found");
 		}
