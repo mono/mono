@@ -40,6 +40,30 @@ using System.Xml.XPath;
 using Mono.Xml.Xsl;
 
 namespace System.Xml.Xsl {
+	internal class SimpleXsltDebugger
+	{
+		public void OnCompile (XPathNavigator style)
+		{
+			Console.Write ("Compiling: ");
+			PrintXPathNavigator (style);
+			Console.WriteLine ();
+		}
+
+		public void OnExecute (XPathNodeIterator currentNodeSet, XPathNavigator style, XsltContext xsltContext)
+		{
+			Console.Write ("Executing: ");
+			PrintXPathNavigator (style);
+			Console.WriteLine (" / NodeSet: (type {1}) {0} / XsltContext: {2}", currentNodeSet, currentNodeSet.GetType (), xsltContext);
+		}
+
+		void PrintXPathNavigator (XPathNavigator nav)
+		{
+			IXmlLineInfo li = nav as IXmlLineInfo;
+			li = li != null && li.HasLineInfo () ? li : null;
+			Console.Write ("({0}, {1}) element {2}", li != null ? li.LineNumber : 0, li != null ? li.LinePosition : 0, nav.Name);
+		}
+	}
+
 	public sealed class XslTransform {
 
 		internal static readonly bool TemplateStackFrameError;
@@ -61,7 +85,19 @@ namespace System.Xml.Xsl {
 			}
 		}
 
+		static object GetDefaultDebugger ()
+		{
+			string env = Environment.GetEnvironmentVariable ("MONO_XSLT_DEBUGGER");
+			if (env == null)
+				return null;
+			if (env == "simple")
+				return new SimpleXsltDebugger ();
+			object obj = Activator.CreateInstance (Type.GetType (env));
+			return obj;
+		}
+
 		public XslTransform ()
+			: this (GetDefaultDebugger ())
 		{
 		}
 

@@ -1,3 +1,7 @@
+2008-06-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslTransform.cs : add pretty simple printing debugger.
+
 2008-05-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslCompiledTransform.cs : in XmlWriterSettings, use
