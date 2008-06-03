@@ -1,3 +1,14 @@
+2008-06-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (mono_custom_attrs_from_builders): Receive a MonoMemPool
+	and use it for allocating memory.
+
+	* reflection.c (mono_marshal_spec_from_builder): Same.
+
+	* reflection.c: Change code to use new signatures.
+
+	* metadata.c (mono_metadata_type_dup): Add a FIXME note.
+
 2008-06-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* decimal.c (rescale128): Put back one line which was accidently commented
