@@ -1,3 +1,8 @@
+2008-06-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Certificate2.cs: Allow PrivateKey property to be set to null.
+	[Fix bug #396620]
+
 2008-05-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Chain.cs: Use String.IsNullOrEmpty inside 2.0 code.

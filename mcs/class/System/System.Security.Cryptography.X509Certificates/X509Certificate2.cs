@@ -223,7 +223,12 @@ namespace System.Security.Cryptography.X509Certificates {
 				if (_cert == null)
 					throw new CryptographicException (empty_error);
 
-				if (value is RSA)
+				// allow NULL so we can "forget" the key associated to the certificate
+				// e.g. in case we want to export it in another format (see bug #396620)
+				if (value == null) {
+					_cert.RSA = null;
+					_cert.DSA = null;
+				} else 	if (value is RSA)
 					_cert.RSA = (RSA) value;
 				else if (value is DSA)
 					_cert.DSA = (DSA) value;
