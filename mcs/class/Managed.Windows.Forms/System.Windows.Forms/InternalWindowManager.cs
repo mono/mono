@@ -33,7 +33,6 @@ using System.Runtime.InteropServices;
 namespace System.Windows.Forms {
 
 	internal abstract class InternalWindowManager {
-		private Size MinTitleBarSize = new Size (115, 25);
 		private TitleButtons title_buttons;
 		internal Form form;
 
@@ -633,9 +632,9 @@ namespace System.Windows.Forms {
 		private void HandleSizing (Message m)
 		{
 			Rectangle pos = virtual_position;
-			int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
-			int mw = MinTitleBarSize.Width + (bw * 2);
-			int mh = MinTitleBarSize.Height + (bw * 2);
+			Size minimum_size = SystemInformation.MinWindowTrackSize;
+			int mw = minimum_size.Width;
+			int mh = minimum_size.Height;
 			int x = Cursor.Position.X;
 			int y = Cursor.Position.Y;
 

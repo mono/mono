@@ -2163,8 +2163,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal override Size MinWindowTrackSize { get{ throw new NotImplementedException(); } }
-		
 		internal override Keys ModifierKeys {
 			get {
 				return KeyboardHandler.ModifierKeys;

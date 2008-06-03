@@ -204,10 +204,6 @@ namespace System.Windows.Forms.X11Internal {
 			get { return new Size(1, 1); }
 		} 
 
-		internal override Size MinWindowTrackSize {
-			get { return new Size(1, 1); }
-		}
-
 		internal override Keys ModifierKeys {
 			get { return display.ModifierKeys; }
 		}
