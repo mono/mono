@@ -1,5 +1,11 @@
 2008-06-03  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* RichTextBox.cs: GetPositionFromCharIndex should return the 
+	visual position of the character relative to the viewport.
+	[Fixes part of bug #396664]
+
+2008-06-03  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* GridEntry.cs: Make HasCustomEditor check for EditStyle != None 
 	and not just for the existance of an UITypeEditor. In some cases 
 	there is an editor associated just to do PaintValue, but which 

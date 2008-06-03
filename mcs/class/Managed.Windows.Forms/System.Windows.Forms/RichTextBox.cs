@@ -980,8 +980,8 @@ namespace System.Windows.Forms {
 			int	pos;
 
 			document.CharIndexToLineTag(index, out line, out tag, out pos);
-
-			return new Point((int)line.widths[pos] + 1, line.Y + 1);
+			return new Point(line.X + (int)line.widths[pos] + document.OffsetX - document.ViewPortX, 
+					 line.Y + document.OffsetY - document.ViewPortY);
 		}
 
 		public void LoadFile(System.IO.Stream data, RichTextBoxStreamType fileType) {
