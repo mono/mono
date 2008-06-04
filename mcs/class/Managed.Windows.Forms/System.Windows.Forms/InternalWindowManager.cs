@@ -106,8 +106,7 @@ namespace System.Windows.Forms {
 		}
 		internal Size IconicSize {
 			get {
-				int bw = ThemeEngine.Current.ManagedWindowBorderWidth (this);
-				return new Size (152 + bw * 2, TitleBarHeight + bw * 2);
+				return SystemInformation.MinimizedWindowSize;
 			}
 		}
 		

@@ -223,7 +223,12 @@ namespace System.Windows.Forms {
 		internal abstract Size IconSize { get; }
 		internal abstract Size MaxWindowTrackSize { get; }
 		internal abstract bool MenuAccessKeysUnderlined { get; }
-		internal abstract Size MinimizedWindowSize { get; }
+		internal virtual Size MinimizedWindowSize {
+			get {
+				const int BorderWidth = 3;
+				return new Size (154 + 2 * BorderWidth, SystemInformation.CaptionHeight + 2 * BorderWidth - 1);
+			}
+		}
 		internal abstract Size MinimizedWindowSpacingSize { get; }
 		internal abstract Size MinimumWindowSize { get; }
 		internal virtual Size MinimumFixedToolWindowSize { get { return Size.Empty; } }

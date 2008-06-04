@@ -2154,7 +2154,6 @@ namespace System.Windows.Forms {
 				return false;
 			}
 		}
-		internal override Size MinimizedWindowSize { get{ throw new NotImplementedException(); } }
 		internal override Size MinimizedWindowSpacingSize { get{ throw new NotImplementedException(); } }
 
 		internal override Size MinimumWindowSize {

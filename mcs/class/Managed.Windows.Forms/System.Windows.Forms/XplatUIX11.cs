@@ -2129,12 +2129,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal override  Size MinimizedWindowSize {
-			get {
-				return new Size(1, 1);
-			}
-		} 
-
 		internal override  Size MinimizedWindowSpacingSize {
 			get {
 				return new Size(1, 1);
