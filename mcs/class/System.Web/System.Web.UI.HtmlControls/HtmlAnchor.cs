@@ -62,7 +62,7 @@ namespace System.Web.UI.HtmlControls {
 				return (s == null) ? String.Empty : s;
 			}
 			set {
-				if (value == null) {
+				if (value == null || value == String.Empty) {
 					Attributes.Remove ("href");
 				} else {
 					Attributes ["href"] = value;
