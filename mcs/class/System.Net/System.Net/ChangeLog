@@ -1,3 +1,7 @@
+2008-06-04  Stephane Delcroix  <sdelcroix@novell.com>
+
+	* DnsEndPoint_2_1.cs: new DnsEndPoint class for SL2b1
+
 2008-04-13  Jb Evain  <jbevain@novell.com>
 
 	* *_2_1.cs: move the specific 2.1 System.Net code to the
