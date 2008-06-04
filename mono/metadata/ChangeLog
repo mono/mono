@@ -1,3 +1,11 @@
+2008-06-04  Mark Probst  <mark.probst@gmail.com>
+
+	* threads.c: Try to free everything from the delayed free table
+	when shutting down threads, and set the variable to NULL after the
+	table is freed so that calling
+	mono_thread_hazardous_try_free_all() when shutting down the root
+	domain doesn't crash.
+
 2008-06-04 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c (mono_type_retrieve_from_typespec): Add an argument to inform
