@@ -1,3 +1,10 @@
+2008-06-04  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-tailcall2.2.il: Test case for tailcalls from non-generic
+	code to generic code requiring vtable/rgctx argument.
+
+	* Makefile.am: Test added.
+
 2008-06-02  Bill Holmes  <billholmes54@gmail.com>
 	* libtest.c:  Changes to make libtest.c ready to be compiled in 
 	  Visual Studio.  The STDCALL statements had to be moved and I added

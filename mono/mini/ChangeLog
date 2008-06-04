@@ -1,5 +1,10 @@
 2008-06-04  Mark Probst  <mark.probst@gmail.com>
 
+	* mini.c: Ignore tailcall prefix in shared generic code and when
+	doing calls which require a vtable/rgctx argument.
+
+2008-06-04  Mark Probst  <mark.probst@gmail.com>
+
 	* mini.c: Don't free the JIT info.
 
 	* driver.c: Changes in the JIT info table testing code.
