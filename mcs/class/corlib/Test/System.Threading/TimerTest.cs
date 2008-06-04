@@ -198,7 +198,7 @@ namespace MonoTests.System.Threading {
 		private void Callback (object foo)
 		{
 			Bucket b = foo as Bucket;
-			b.count++;
+			Interlocked.Increment (ref b.count);
 		}
 	}
 }

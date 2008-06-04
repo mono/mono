@@ -1,3 +1,7 @@
+2008-06-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* TimerTest.cs (Callback): Use Interlocked Increment to increase the counter.
+
 2007-12-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ThreadTest.cs : made couple of tests fail under Windows and made
