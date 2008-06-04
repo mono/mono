@@ -1,3 +1,9 @@
+2008-06-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_InternalInvoke): Applied patch from Andy Hume 
+	(andyhume32@yahoo.co.uk). Add more useful exception messages. Fixes
+	#396989.
+
 2008-06-04  Mark Probst  <mark.probst@gmail.com>
 
 	* domain.c, domain-internals.h: The JIT infos are now freed by the
@@ -10,7 +16,7 @@
 
 2008-06-03 Rodrigo Kumpera  <rkumpera@novell.com>
 
-	* reflection.c (typebuilder_setup_fields): Use mempool for alocations.
+	* reflection.c (typebuilder_setup_fields): Use mempool for allocations.
 
 	* reflection.c (typebuilder_setup_properties): Same.
 
