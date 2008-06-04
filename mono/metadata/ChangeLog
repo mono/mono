@@ -1,5 +1,8 @@
 2008-06-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* decimal.c (rescale128): Rework the code a bit so it no longer crashes the
+	class library tests.
+
 	* icall.c (ves_icall_InternalInvoke): Applied patch from Andy Hume 
 	(andyhume32@yahoo.co.uk). Add more useful exception messages. Fixes
 	#396989.
