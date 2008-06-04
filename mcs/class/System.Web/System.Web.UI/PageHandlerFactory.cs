@@ -33,7 +33,12 @@ using System.Web.Compilation;
 
 namespace System.Web.UI
 {
-	public class PageHandlerFactory : IHttpHandlerFactory
+#if NET_2_0
+	public
+#else
+	internal
+#endif
+	class PageHandlerFactory : IHttpHandlerFactory
 	{
 		public virtual IHttpHandler GetHandler (HttpContext context, string requestType, string url, string path)
 		{
