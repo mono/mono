@@ -239,7 +239,7 @@ namespace MonoTests.oasis_xslt {
 					input = dom;
 				} else {
 					input = new XPathDocument (xvr,
-						EnvOptions.WhitespaceStyle ? XmlSpace.Preserve :
+						EnvOptions.WhitespaceInstance ? XmlSpace.Preserve :
 						XmlSpace.Default);
 				}
 				return input;
