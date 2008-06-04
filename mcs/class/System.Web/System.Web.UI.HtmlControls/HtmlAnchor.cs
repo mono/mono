@@ -172,13 +172,16 @@ namespace System.Web.UI.HtmlControls {
 			// we don't want to render the "user" URL, so we either render:
 			EventHandler serverClick = (EventHandler) Events [serverClickEvent];
 			if (serverClick != null) {
+				ClientScriptManager csm;
 #if NET_2_0
 				// a script
 				PostBackOptions options = GetPostBackOptions ();
-				Attributes ["href"] = Page.ClientScript.GetPostBackEventReference (options);
+				csm = Page.ClientScript;
+				csm.RegisterForEventValidation (options);
+				Attributes ["href"] = csm.GetPostBackEventReference (options);
 #else
 				// a script
-				ClientScriptManager csm = new ClientScriptManager (Page);
+				csm = new ClientScriptManager (Page);
 				Attributes ["href"] = csm.GetPostBackClientHyperlink (this, String.Empty);
 #endif
 			} else {

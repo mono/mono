@@ -1,6 +1,12 @@
+2008-06-04  Juraj Skripksy  <js@hotfeet.ch>
+
+	* HtmlAnchor.cs (Render): Add missing call to
+	ClientScriptManager.RegisterForEventValidation. Fixes bug #397142.
+
 2008-06-04  Juraj Skripsky  <js@hotfeet.ch>
 
 	* HtmlAnchor.cs: Do not render an empty href attribute.
+	Fixes bug #397046.
 
 2008-02-13  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
