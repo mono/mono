@@ -532,7 +532,7 @@ namespace System.Windows.Forms
 
 		public virtual Size ToolWindowCaptionButtonSize {
 			get {
-				return new Size(15, 15);
+				return XplatUI.ToolWindowCaptionButtonSize;
 			}
 		}
 

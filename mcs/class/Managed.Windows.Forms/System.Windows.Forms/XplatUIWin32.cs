@@ -1518,6 +1518,14 @@ namespace System.Windows.Forms {
 				return Win32GetSystemMetrics (SystemMetrics.SM_CYSMCAPTION);
 			}
 		}
+
+		public override Size ToolWindowCaptionButtonSize {
+			get {
+				return new Size (
+					Win32GetSystemMetrics (SystemMetrics.SM_CXSMSIZE),
+					Win32GetSystemMetrics (SystemMetrics.SM_CYSMSIZE));
+			}
+		}
 		#endregion	// Static Properties
 
 		#region Singleton Specific Code

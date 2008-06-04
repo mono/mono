@@ -423,6 +423,12 @@ namespace System.Windows.Forms {
 				return driver.ToolWindowCaptionHeight;
 			}
 		}
+
+		public static Size ToolWindowCaptionButtonSize {
+			get {
+				return driver.ToolWindowCaptionButtonSize;
+			}
+		}
 		#endregion	// Public Static Properties
 
 		#region Events

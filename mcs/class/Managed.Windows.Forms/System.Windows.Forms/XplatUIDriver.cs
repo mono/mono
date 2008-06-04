@@ -179,7 +179,7 @@ namespace System.Windows.Forms {
 		}
 		
 		internal virtual Size SmallCaptionButtonSize {
-			get { return new Size (17, 17); }
+			get { return new Size (15, 15); }
 		}
 		
 		internal virtual bool UIEffectsEnabled {
@@ -256,6 +256,12 @@ namespace System.Windows.Forms {
 		public virtual int ToolWindowCaptionHeight {
 			get {
 				return 16;
+			}
+		}
+
+		public virtual Size ToolWindowCaptionButtonSize {
+			get {
+				return new Size (15, 15);
 			}
 		}
 		#endregion	// XplatUI Driver Properties
