@@ -1,3 +1,8 @@
+2008-06-04  Mark Probst  <mark.probst@gmail.com>
+
+	* monoburg.c: Upped the limit for the number of rules in an
+	assertion.
+
 2007-11-06  Geoff Norton  <gnorton@novell.com>
 
 	* Makefile.am:  Revert previous change, it breaks the build on
