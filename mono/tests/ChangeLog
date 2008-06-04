@@ -1,5 +1,12 @@
 2008-06-04  Mark Probst  <mark.probst@gmail.com>
 
+	* generic-array-exc.2.il: Test case for generic array type in
+	catch clause.
+
+	* Makefile.am: Test added.
+
+2008-06-04  Mark Probst  <mark.probst@gmail.com>
+
 	* generic-tailcall2.2.il: Test case for tailcalls from non-generic
 	code to generic code requiring vtable/rgctx argument.
 
