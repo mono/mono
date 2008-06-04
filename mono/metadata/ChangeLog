@@ -1,3 +1,14 @@
+2008-06-04 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_type_retrieve_from_typespec): Add an argument to inform
+	the caller if resulting type was inflated.
+
+	* class.c (mono_class_create_from_typespec): Free the MonoType if it
+	was inflated.
+
+	* class.c (mono_type_get_full): Free the MonoType if it	was inflated.
+
+
 2008-06-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* decimal.c (rescale128): Rework the code a bit so it no longer crashes the
