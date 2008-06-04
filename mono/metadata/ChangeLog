@@ -1,3 +1,13 @@
+2008-06-04  Mark Probst  <mark.probst@gmail.com>
+
+	* domain.c, domain-internals.h: The JIT infos are now freed by the
+	JIT info table code.  They are freed immediately if there only a
+	single JIT info table in circulation.  If there is more, the free
+	is delayed via a queue.
+
+	* threads.c, threads-types.h: New hazard pointer function for
+	freeing all freeable delayed items in one sitting.
+
 2008-06-03 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* reflection.c (typebuilder_setup_fields): Use mempool for alocations.

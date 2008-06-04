@@ -1,3 +1,9 @@
+2008-06-04  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: Don't free the JIT info.
+
+	* driver.c: Changes in the JIT info table testing code.
+
 2008-06-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* tramp-arm.c (mono_arch_create_trampoline_code): Check for thread 
