@@ -247,6 +247,12 @@ namespace System.Windows.Forms {
 		internal abstract Rectangle WorkingArea { get; }
 		internal abstract bool ThemesEnabled { get; }
 
+		internal virtual bool RequiresPositiveClientAreaSize {
+			get {
+				return true;
+			}
+		}
+
 		#endregion	// XplatUI Driver Properties
 
 		internal abstract event EventHandler Idle;

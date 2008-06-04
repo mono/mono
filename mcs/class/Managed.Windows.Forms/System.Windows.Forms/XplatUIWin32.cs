@@ -1506,8 +1506,12 @@ namespace System.Windows.Forms {
 				return XplatUIWin32.themes_enabled;
 			}
 		}
- 
 
+		internal override bool RequiresPositiveClientAreaSize {
+			get {
+				return false;
+			}
+		}
 		#endregion	// Static Properties
 
 		#region Singleton Specific Code

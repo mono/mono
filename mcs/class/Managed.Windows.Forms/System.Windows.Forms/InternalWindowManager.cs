@@ -301,13 +301,15 @@ namespace System.Windows.Forms {
 				proposed_window_rect.right -= bw;
 			}
 
-			// This is necessary for Linux, can't handle <= 0-sized 
-			// client areas correctly.
-			if (proposed_window_rect.right <= proposed_window_rect.left) {
-				proposed_window_rect.right += proposed_window_rect.left - proposed_window_rect.right + 1;
-			}
-			if (proposed_window_rect.top >= proposed_window_rect.bottom) {
-				proposed_window_rect.bottom += proposed_window_rect.top - proposed_window_rect.bottom + 1;
+			if (XplatUI.RequiresPositiveClientAreaSize) {
+				// This is necessary for Linux, can't handle <= 0-sized 
+				// client areas correctly.
+				if (proposed_window_rect.right <= proposed_window_rect.left) {
+					proposed_window_rect.right += proposed_window_rect.left - proposed_window_rect.right + 1;
+				}
+				if (proposed_window_rect.top >= proposed_window_rect.bottom) {
+					proposed_window_rect.bottom += proposed_window_rect.top - proposed_window_rect.bottom + 1;
+				}
 			}
 
 			return proposed_window_rect;

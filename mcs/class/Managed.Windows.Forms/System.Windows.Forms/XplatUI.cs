@@ -368,6 +368,12 @@ namespace System.Windows.Forms {
 		}
 #endif
 
+		public static bool RequiresPositiveClientAreaSize {
+			get {
+				return driver.RequiresPositiveClientAreaSize;
+			}
+		}
+
 		public static int SizingBorderWidth {
 			get { return driver.SizingBorderWidth; }
 		}

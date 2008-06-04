@@ -1,5 +1,12 @@
 2008-06-04  George Giolfan  <georgegiolfan@yahoo.com>
 
+	* InternalWindowManager.cs: The adjustment to ensure positive client area
+	sizes is now platform dependent (disabled on Windows).
+	* XplatUI.cs, XplatUIDriver.cs, XplatUIWin32.cs: Added
+	RequiresPositiveClientAreaSize.
+
+2008-06-04  George Giolfan  <georgegiolfan@yahoo.com>
+
 	* Form.cs: Fixed null handling in Icon (see SettingIconToNull in the tests).
 
 2008-06-04  George Giolfan  <georgegiolfan@yahoo.com>
