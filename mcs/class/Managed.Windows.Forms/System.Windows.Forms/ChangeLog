@@ -1,5 +1,11 @@
 2008-06-04  George Giolfan  <georgegiolfan@yahoo.com>
 
+	* MdiWindowManager.cs: Now uses SystemInformation.DoubleClickTime instead of
+	hard coded values.
+	* Theme.cs: Made DoubleClickTime plaform dependent.
+
+2008-06-04  George Giolfan  <georgegiolfan@yahoo.com>
+
 	* Theme.cs: Made ToolWindowCaptionHeight platform dependent.
 	* XplatUI.cs, XplatUIDriver.cs, XplatUIWin32.cs: Added
 	ToolWindowCaptionHeight.

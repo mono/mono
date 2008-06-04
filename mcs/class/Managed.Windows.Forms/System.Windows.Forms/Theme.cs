@@ -442,7 +442,7 @@ namespace System.Windows.Forms
 
 		public virtual int DoubleClickTime {
 			get {
-				return 500;
+				return XplatUI.DoubleClickTime;
 			}
 		}
 

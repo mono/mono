@@ -259,7 +259,7 @@ namespace System.Windows.Forms {
 
 		private void ClickIconMenuItem(object sender, EventArgs e)
 		{
-			if ((DateTime.Now - icon_clicked_time).TotalMilliseconds < 500) {
+			if ((DateTime.Now - icon_clicked_time).TotalMilliseconds <= SystemInformation.DoubleClickTime) {
 				form.Close ();
 				return;
 			}
@@ -519,7 +519,7 @@ namespace System.Windows.Forms {
 		protected override void HandleTitleBarDown (int x, int y)
 		{			
 			if (IconRectangleContains (x, y)) {
-				if ((DateTime.Now - icon_clicked_time).TotalMilliseconds < 500 && icon_clicked.X == x && icon_clicked.Y == y) {
+				if ((DateTime.Now - icon_clicked_time).TotalMilliseconds <= SystemInformation.DoubleClickTime && icon_clicked.X == x && icon_clicked.Y == y) {
 					form.Close ();
 				} else {
 					icon_clicked_time = DateTime.Now;
@@ -578,7 +578,7 @@ namespace System.Windows.Forms {
 			NCClientToNC(ref x, ref y);
 
 			if (IconRectangleContains (x, y)){
-				if ((DateTime.Now - icon_clicked_time).TotalMilliseconds < 500) {
+				if ((DateTime.Now - icon_clicked_time).TotalMilliseconds <= SystemInformation.DoubleClickTime) {
 					if (icon_popup_menu != null && icon_popup_menu.Wnd != null) {
 						icon_popup_menu.Wnd.Hide ();
 					}
