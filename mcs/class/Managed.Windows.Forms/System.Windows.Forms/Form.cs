@@ -745,13 +745,13 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				if (icon != value) {
-					icon = value;
-
-					if (IsHandleCreated) {
-						XplatUI.SetIcon(Handle, icon == null ? default_icon : icon);
-					}
-				}
+				if (value == null)
+					value = default_icon;
+				if (icon == value)
+					return;
+				icon = value;
+				if (IsHandleCreated)
+					XplatUI.SetIcon (Handle, icon);
 			}
 		}
 

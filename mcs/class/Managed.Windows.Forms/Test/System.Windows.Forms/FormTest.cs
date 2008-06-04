@@ -2862,6 +2862,15 @@ namespace MonoTests.System.Windows.Forms
 			a.Dispose ();
 #endif
 		}
+
+		[Test]
+		public void SettingIconToNull ()
+		{
+			Form form = new Form ();
+			Assert.IsNotNull (form.Icon, "1");
+			form.Icon = null;
+			Assert.IsNotNull (form.Icon, "2");
+		}
 	}
 
 	public class TimeBombedForm : Form
