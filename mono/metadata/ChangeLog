@@ -1,5 +1,13 @@
 2008-06-03 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* reflection.c (typebuilder_setup_fields): Use mempool for alocations.
+
+	* reflection.c (typebuilder_setup_properties): Same.
+
+	* reflection.c (typebuilder_setup_events): Same.
+
+2008-06-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* reflection.c (mono_custom_attrs_from_builders): Receive a MonoMemPool
 	and use it for allocating memory.
 
