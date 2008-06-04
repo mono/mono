@@ -1,3 +1,12 @@
+2008-06-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ComboBox.cs: When calling UpdateComboBoxBounds, adjust the height
+	passed to SetBounds to reflect the new adjusted height (Integral-wise), 
+	instead of doing that only in our SetBoundsCore override, since the 
+	bounds cached can be the same as saved one and we could not get the
+	new height applied.
+	Fixes #396297.
+
 2008-06-04  George Giolfan  <georgegiolfan@yahoo.com>
 
 	* Theme.cs: Made ToolWindowCaptionButtonSize platform dependent.
