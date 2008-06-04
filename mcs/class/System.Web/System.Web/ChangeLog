@@ -1,3 +1,11 @@
+2008-06-04  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpServerUtility.cs: remove session hash from the URL if in the
+	cookieless mode. Fixes bug #396628.
+
+	* HttpRequest.cs: make sure that BaseVirtualDir always returns
+	some value.
+
 2008-06-02  Miguel de Icaza  <miguel@novell.com>
 	
 	* HttpRuntime.cs: Thanks to Christian Hergert for finding this

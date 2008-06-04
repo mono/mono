@@ -445,8 +445,12 @@ namespace System.Web {
 				if (base_virtual_dir == null){
 					base_virtual_dir = FilePath;
 					int p = base_virtual_dir.LastIndexOf ('/');
-					if (p != -1)
+					if (p != -1) {
+						if (p == 0)
+							p = 1;
 						base_virtual_dir = base_virtual_dir.Substring (0, p);
+					} else
+						base_virtual_dir = "/";
 				}
 				return base_virtual_dir;
 			}

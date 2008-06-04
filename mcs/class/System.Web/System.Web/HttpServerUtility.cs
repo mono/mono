@@ -36,6 +36,8 @@ using System.Web.Util;
 using System.Collections.Specialized;
 using System.Security.Permissions;
 using System.Text;
+using System.Web.Configuration;
+using System.Web.SessionState;
 
 namespace System.Web {
 
@@ -103,7 +105,8 @@ namespace System.Web {
 			Execute (path, writer, preserveForm, false);
 		}
 
-		void Execute (string path, TextWriter writer, bool preserveForm, bool isTransfer) {
+		void Execute (string path, TextWriter writer, bool preserveForm, bool isTransfer)
+		{
 			if (path == null)
 				throw new ArgumentNullException ("path");
 
@@ -118,6 +121,18 @@ namespace System.Web {
 			}
 
 			string exePath = UrlUtils.Combine (context.Request.BaseVirtualDir, path);
+			bool cookieless = false;
+			
+#if NET_2_0
+			SessionStateSection config = WebConfigurationManager.GetSection ("system.web/sessionState") as SessionStateSection;
+			cookieless = SessionStateModule.IsCookieLess (context, config);
+#else
+			SessionConfig config = HttpContext.GetAppConfig ("system.web/sessionState") as SessionConfig;
+			cookieless = config.CookieLess;
+#endif
+			if (cookieless)
+				exePath = UrlUtils.RemoveSessionId (VirtualPathUtility.GetDirectory (exePath), exePath);
+			
 			IHttpHandler handler = context.ApplicationInstance.GetHandler (context, exePath, true);
 			Execute (handler, writer, preserveForm, exePath, queryString, isTransfer, true);
 		}
