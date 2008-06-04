@@ -5257,7 +5257,7 @@ namespace Mono.CSharp {
 
 			string t_name = InstanceExpression.Type.Name;
 			int t_name_len = t_name.Length;
-			return t_name_len > 2 && t_name [t_name_len - 2] == '[' && t_name [t_name_len - 3] != ']';
+			return t_name_len > 2 && t_name [t_name_len - 2] == '[';
 		}
 
 		override public Expression DoResolve (EmitContext ec)

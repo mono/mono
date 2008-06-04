@@ -1,5 +1,10 @@
+2008-06-04  Marek Safar  <marek.safar@gmail.com>
+
+	* ecore.cs, expression.cs, statement.cs, typemanager.cs: Removed custom
+	GetLength method emit, it breaks resolve rules.
+	
 2008-06-02  Atsushi Enomoto  <atsushi@ximian.com>
-			Marek Safar  <marek.safar@gmail.com>
+            Marek Safar  <marek.safar@gmail.com>
 			
 	A fix for bug #395542
 	* cs-parser.jay: The trailing comma is allowed in anonymous type member

@@ -7752,11 +7752,6 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (rank != 1 && TypeManager.int_getlength_int == null) {
-				TypeManager.int_getlength_int = TypeManager.GetPredefinedMethod (
-					TypeManager.array_type, "GetLength", loc, TypeManager.int32_type);
-			}
-
 			type = TypeManager.GetElementType (t);
 			if (type.IsPointer && !ec.InUnsafe) {
 				UnsafeError (ea.Location);
@@ -8042,21 +8037,6 @@ namespace Mono.CSharp {
 			} else {
 				MethodInfo address = FetchAddressMethod ();
 				ig.Emit (OpCodes.Call, address);
-			}
-		}
-
-		public void EmitGetLength (EmitContext ec, int dim)
-		{
-			int rank = ea.Expr.Type.GetArrayRank ();
-			ILGenerator ig = ec.ig;
-
-			ea.Expr.Emit (ec);
-			if (rank == 1) {
-				ig.Emit (OpCodes.Ldlen);
-				ig.Emit (OpCodes.Conv_I4);
-			} else {
-				IntLiteral.EmitInt (ig, dim);
-				ig.Emit (OpCodes.Callvirt, TypeManager.int_getlength_int);
 			}
 		}
 	}

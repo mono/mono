@@ -153,7 +153,6 @@ namespace Mono.CSharp {
 	static public MethodInfo void_monitor_enter_object;
 	static public MethodInfo void_monitor_exit_object;
 	static public MethodInfo void_initializearray_array_fieldhandle;
-	static public MethodInfo int_getlength_int;
 	static public MethodInfo delegate_combine_delegate_delegate;
 	static public MethodInfo delegate_remove_delegate_delegate;
 	static public MethodInfo int_get_offset_to_string_data;
@@ -306,7 +305,6 @@ namespace Mono.CSharp {
 		void_monitor_enter_object =
 		void_monitor_exit_object =
 		void_initializearray_array_fieldhandle =
-		int_getlength_int =
 		delegate_combine_delegate_delegate =
 		delegate_remove_delegate_delegate =
 		int_get_offset_to_string_data =

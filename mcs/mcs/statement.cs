@@ -5091,6 +5091,7 @@ namespace Mono.CSharp {
 
 			TemporaryVariable copy;
 			Expression access;
+			Expression[] length_exprs;
 
 			public ArrayForeach (Expression var_type, Expression var,
 					     Expression expr, Statement stmt, Location l)
@@ -5112,14 +5113,23 @@ namespace Mono.CSharp {
 
 				counter = new ArrayCounter [rank];
 				lengths = new TemporaryVariable [rank];
+				length_exprs = new Expression [rank];
 
-				ArrayList list = new ArrayList ();
+				ArrayList list = new ArrayList (rank);
 				for (int i = 0; i < rank; i++) {
 					counter [i] = new ArrayCounter (loc);
 					counter [i].Resolve (ec);
 
 					lengths [i] = new TemporaryVariable (TypeManager.int32_type, loc);
 					lengths [i].Resolve (ec);
+
+					if (rank == 1) {
+						length_exprs [i] = new MemberAccess (copy, "Length").Resolve (ec);
+					} else {
+						ArrayList args = new ArrayList (1);
+						args.Add (new Argument (new IntConstant (i, loc)));
+						length_exprs [i] = new Invocation (new MemberAccess (copy, "GetLength"), args).Resolve (ec);
+					}
 
 					list.Add (counter [i]);
 				}
@@ -5177,9 +5187,7 @@ namespace Mono.CSharp {
 					test [i] = ig.DefineLabel ();
 					loop [i] = ig.DefineLabel ();
 
-					lengths [i].EmitThis (ec);
-					((ArrayAccess) access).EmitGetLength (ec, i);
-					lengths [i].EmitStore (ec);
+					lengths [i].Store (ec, length_exprs [i]);
 				}
 
 				for (int i = 0; i < rank; i++) {
