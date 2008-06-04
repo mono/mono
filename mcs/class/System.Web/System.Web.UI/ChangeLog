@@ -1,3 +1,8 @@
+2008-06-04  Juraj Skrispky  <js@hotfeet.ch>
+
+	* PageParser.cs (ProcessMainAttributes): Take value of
+	enableEventValidation from web.config into account. Fixes bug #397099.
+
 2008-06-04  Marek Habersack  <mhabersack@novell.com>
 
 	* PageHandlerFactory.cs: this class should be public. Fixes bug

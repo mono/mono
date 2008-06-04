@@ -379,7 +379,7 @@ namespace System.Web.UI
 
 			theme = GetString (atts, "Theme", theme);
 			styleSheetTheme = GetString (atts, "StyleSheetTheme", styleSheetTheme);
-			enable_event_validation = GetBool (atts, "EnableEventValidation", true);
+			enable_event_validation = GetBool (atts, "EnableEventValidation", enable_event_validation);
 			maintainScrollPositionOnPostBack = GetBool (atts, "MaintainScrollPositionOnPostBack", maintainScrollPositionOnPostBack);
 #endif
 			// Ignored by now
