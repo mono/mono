@@ -42,6 +42,7 @@ namespace Mainsoft.Web.SessionState
 	/// </summary>
 	public sealed partial class ServletSessionStateStoreProvider : SessionStateStoreProviderBase
 	{
+		const int MAX_MINUTES_TIMEOUT = int.MaxValue / 60;
 		#region Public Interface
 
 		public override SessionStateStoreData CreateNewStoreData (HttpContext context, int timeout) {
@@ -49,7 +50,8 @@ namespace Mainsoft.Web.SessionState
 			// we ignore this timeout and use web.xml settings.
 			//must set now as this can be a last chance for ro item
 			//GetSession (context, false).setMaxInactiveInterval (timeout * 60);
-			timeout = GetSession (context, false).getMaxInactiveInterval () / 60;
+			int javaTimeoutInSeconds = GetSession (context, false).getMaxInactiveInterval ();			
+			timeout = GetIntervalInMinutes (javaTimeoutInSeconds);
 			ServletSessionStateItemCollection sessionState = new ServletSessionStateItemCollection (context);
 			return new SessionStateStoreData (
 				sessionState,
@@ -83,7 +85,7 @@ namespace Mainsoft.Web.SessionState
 			return new SessionStateStoreData (
 				sessionState,
 				sessionState.StaticObjects,
-				session.getMaxInactiveInterval () / 60);
+				GetIntervalInMinutes(session.getMaxInactiveInterval ()));
 		}
 
 		public override SessionStateStoreData GetItemExclusive (HttpContext context, string id, out bool locked, out TimeSpan lockAge, out object lockId, out SessionStateActions actions) {
@@ -135,7 +137,7 @@ namespace Mainsoft.Web.SessionState
 
 			return new HttpSessionStateContainer (session.getId (),
 				sessionState, sessionState.StaticObjects,
-				session.getMaxInactiveInterval () / 60,
+				GetIntervalInMinutes (session.getMaxInactiveInterval ()),
 				session.isNew (),
 				HttpCookieMode.AutoDetect, SessionStateMode.Custom,
 				true);
@@ -151,6 +153,13 @@ namespace Mainsoft.Web.SessionState
 				throw new HttpException ("Session is not established");
 
 			return session;
+		}
+
+		static int GetIntervalInMinutes (int seconds)
+		{
+			if (seconds == -1)
+				return MAX_MINUTES_TIMEOUT;
+			return (int) Math.Ceiling ((double) seconds / 60);		
 		}
 
 		#endregion
