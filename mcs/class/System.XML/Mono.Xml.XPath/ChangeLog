@@ -1,3 +1,10 @@
+2008-06-04  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTMXPathDocumentBuilder2.cs : fixed bug #378239.cs. Merge
+	  sequential text nodes in correct way, say, whitespace entities
+	  inside text should be merged (while they should be discarded around
+	  CDATA).
+
 2008-04-02  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathEditableDocument.cs : it should not expect ParentNode for

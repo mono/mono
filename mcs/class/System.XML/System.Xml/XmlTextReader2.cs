@@ -40,6 +40,19 @@ using Mono.Xml;
 
 namespace System.Xml
 {
+	// FIXME: this implementation requires somewhat significant change
+	// to expand entities and merge sequential text and entity references
+	// especially to handle whitespace-only entities (such as bug #372839).
+	//
+	// To do it, we have to read ahead the next node when the input is
+	// text, whitespace or significant whitespace and check if the next
+	// node is EntityReference. If it is entref, then it have to merge
+	// the input entity if it is a text.
+	//
+	// This "read ahead" operation may result in proceeding to the next
+	// element, which badly affects IXmlNamespaceResolverimplementation.
+	// So we cannot fix this in simple way.
+
 	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
 	public class XmlTextReader : XmlReader,
 		IXmlLineInfo, IXmlNamespaceResolver, IHasXmlParserContext

@@ -2163,6 +2163,31 @@ Services
 			transform.Transform (new XmlDocument (), xsltArgs, TextWriter.Null);
 		}
 
+		[Test] // bug #378239
+		public void WhitespaceEntityInStylesheet ()
+		{
+			string xslt = @"<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE xsl:stylesheet [
+<!ENTITY nl '
+'>
+]>
+<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='1.0'>
+<xsl:output method='text' omit-xml-declaration='yes'/>
+
+<xsl:template match='/'>
+<xsl:text>&nl;Hello&nl;World</xsl:text>
+</xsl:template>
+</xsl:stylesheet>";
+			string expected = @"
+Hello
+World";
+			XslTransform t = new XslTransform ();
+			t.Load (new XPathDocument (new StringReader (xslt)));
+			StringWriter sw = new StringWriter ();
+			t.Transform (new XPathDocument (new StringReader ("<test/>")), null, sw);
+			Assert.AreEqual (expected, sw.ToString ());
+		}
+
 #if NET_2_0
 		[Test] // bug #349375
 		public void PreserveWhitespace ()
