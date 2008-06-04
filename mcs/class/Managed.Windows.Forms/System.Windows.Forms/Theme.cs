@@ -538,7 +538,7 @@ namespace System.Windows.Forms
 
 		public virtual int ToolWindowCaptionHeight {
 			get {
-				return 16;
+				return XplatUI.ToolWindowCaptionHeight;
 			}
 		}
 

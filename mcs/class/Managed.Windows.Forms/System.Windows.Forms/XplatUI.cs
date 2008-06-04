@@ -418,6 +418,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		public static int ToolWindowCaptionHeight {
+			get {
+				return driver.ToolWindowCaptionHeight;
+			}
+		}
 		#endregion	// Public Static Properties
 
 		#region Events

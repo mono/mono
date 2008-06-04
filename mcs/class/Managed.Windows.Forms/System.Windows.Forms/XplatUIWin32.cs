@@ -1512,6 +1512,12 @@ namespace System.Windows.Forms {
 				return false;
 			}
 		}
+
+		public override int ToolWindowCaptionHeight {
+			get {
+				return Win32GetSystemMetrics (SystemMetrics.SM_CYSMCAPTION);
+			}
+		}
 		#endregion	// Static Properties
 
 		#region Singleton Specific Code

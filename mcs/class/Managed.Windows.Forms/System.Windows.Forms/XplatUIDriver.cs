@@ -253,6 +253,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		public virtual int ToolWindowCaptionHeight {
+			get {
+				return 16;
+			}
+		}
 		#endregion	// XplatUI Driver Properties
 
 		internal abstract event EventHandler Idle;
