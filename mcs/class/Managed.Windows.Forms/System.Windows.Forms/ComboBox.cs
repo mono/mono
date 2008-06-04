@@ -1283,7 +1283,11 @@ namespace System.Windows.Forms
 
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
 		{
-			if ((specified & BoundsSpecified.Height) != 0) {
+			bool vertically_anchored = (Anchor & AnchorStyles.Top) != 0 && (Anchor & AnchorStyles.Bottom) != 0;
+
+			if ((specified & BoundsSpecified.Height) != 0 ||
+				(specified == BoundsSpecified.None && vertically_anchored)) {
+
 				requested_height = height;
 
 				if (DropDownStyle == ComboBoxStyle.Simple && height > PreferredHeight) {

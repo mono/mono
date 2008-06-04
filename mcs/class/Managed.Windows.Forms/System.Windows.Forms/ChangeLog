@@ -1,3 +1,11 @@
+2008-06-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ComboBox.cs: If the combobox is anchored both on top and bottom,
+	adjust height if IntegralHeight is true when calling SetBoundsCore (as
+	likely the height was modified even if Height wasn't specified in
+	BoundsSpecified parameter).
+	Fixes part of #396297.
+
 2008-06-04  George Giolfan  <georgegiolfan@yahoo.com> 
 
 	* InternalWindowsManager.cs: Changed minimum window size while resizing to
