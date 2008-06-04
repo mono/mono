@@ -1,3 +1,9 @@
+2008-06-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSerializationReader.cs : in ReadXmlDocument(), MoveToContent()
+	  is required after ReadStartElement(). Fixed bug #393406 (without
+	  unit test; no simple way to do that :( ).
+
 2008-04-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlTypeMapping.cs : .NET 2.0 has a weird behavior that swallows
