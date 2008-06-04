@@ -40,6 +40,8 @@ using System.Web.Configuration;
 using System.Globalization;
 using System.Security.Permissions;
 using System.Web.Hosting;
+using System.Web.Configuration;
+using System.Web.SessionState;
 
 namespace System.Web {
 	
@@ -507,21 +509,28 @@ namespace System.Web {
 		
 			if (virtualPath == "")
 				return context.Request.RootVirtualDir;
-		
+
 			if (UrlUtils.IsRelativeUrl (virtualPath)) {
 				virtualPath = UrlUtils.Combine (context.Request.RootVirtualDir, virtualPath);
 			} else if (UrlUtils.IsRooted (virtualPath)) {
 				virtualPath = UrlUtils.Canonic (virtualPath);
 			}
-		
+
+			bool cookieless = false;
+#if NET_2_0
+			SessionStateSection config = WebConfigurationManager.GetSection ("system.web/sessionState") as SessionStateSection;
+			cookieless = SessionStateModule.IsCookieLess (context, config);
+#else
+			SessionConfig config = HttpContext.GetAppConfig ("system.web/sessionState") as SessionConfig;
+			cookieless = config.CookieLess;
+#endif
+			if (!cookieless)
+				return virtualPath;
+
 			if (app_path_mod != null && virtualPath.IndexOf (app_path_mod) < 0) {
-				string rvd = context.Request.RootVirtualDir;
-				string basevd = rvd.Replace (app_path_mod, "");
-		
-				if (!StrUtils.StartsWith (virtualPath, basevd))
-					return virtualPath;
-		
-				virtualPath = UrlUtils.Combine (rvd, virtualPath.Substring (basevd.Length));
+				if (UrlUtils.HasSessionId (virtualPath))
+					virtualPath = UrlUtils.RemoveSessionId (VirtualPathUtility.GetDirectory (virtualPath), virtualPath);
+				return UrlUtils.InsertSessionId (app_path_mod, virtualPath);
 			}
 		
 			return virtualPath;

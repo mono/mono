@@ -73,6 +73,14 @@ namespace System.Web.Util {
 			return path.Substring (2, SessionId.IdLength);
 		}
 
+		internal static bool HasSessionId (string path)
+		{
+			if (path == null || path.Length < 5)
+				return false;
+
+			return (StrUtils.StartsWith (path, "/(") && path.IndexOf ("/)") > 2);
+		}
+		
 		internal static string RemoveSessionId (string base_path, string file_path)
 		{
 			// Caller did a GetSessionId first

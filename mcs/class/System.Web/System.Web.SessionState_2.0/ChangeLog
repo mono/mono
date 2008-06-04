@@ -1,3 +1,8 @@
+2008-06-04  Marek Habersack  <mhabersack@novell.com>
+
+	* SessionStateModule.cs: set the application modifier path to bare
+	session id.
+
 2008-05-30  Marek Habersack  <mhabersack@novell.com>
 
 	* SessionStateModule.cs: do not use synthetized event accessors

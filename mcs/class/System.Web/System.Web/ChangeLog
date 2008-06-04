@@ -1,5 +1,8 @@
 2008-06-04  Marek Habersack  <mhabersack@novell.com>
 
+	* HttpResponse.cs: correctly modify virtual path to include the
+	session ID in cookieless session mode. Fixes bug #396628.
+
 	* HttpServerUtility.cs: remove session hash from the URL if in the
 	cookieless mode. Fixes bug #396628.
 

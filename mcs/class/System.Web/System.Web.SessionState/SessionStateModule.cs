@@ -165,7 +165,7 @@ namespace System.Web.SessionState
 			string new_path = UrlUtils.RemoveSessionId (base_path, context.Request.FilePath);
 			context.Request.SetFilePath (new_path);
 			context.Request.SetHeader (HeaderName, id);
-			context.Response.SetAppPathModifier (String.Concat ("(", id, ")"));
+			context.Response.SetAppPathModifier (id);
 		}
 		
 		void OnReleaseRequestState (object o, EventArgs args)
