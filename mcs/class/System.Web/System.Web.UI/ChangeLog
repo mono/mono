@@ -1,3 +1,8 @@
+2008-06-04  Marek Habersack  <mhabersack@novell.com>
+
+	* PageHandlerFactory.cs: this class should be public. Fixes bug
+	#396707
+
 2008-05-30  Marek Habersack  <mhabersack@novell.com>
 
 	* DataBindingCollection.cs, ExpressionBindingCollection.cs: do not
