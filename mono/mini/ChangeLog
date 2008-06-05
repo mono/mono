@@ -1,3 +1,8 @@
+2008-06-05  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.c (debugger_lookup_class): Also call
+	mono_class_setup_methods() here; we're only called from RTI.
+
 2008-06-05  Andreas Färber  <andreas.faerber@web.de>
 
 	* mini.c (mini_init): Add DTrace probes ves-init-{begin,end}.
