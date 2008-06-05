@@ -1,5 +1,10 @@
 2008-06-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* assembly.c (mono_assembly_load_from_full): Avoid calling the search hooks
+	while holding the assemblies lock to prevent deadlocks. Handle the case
+	where the search hook returns NULL but the assembly was still loaded.
+	Fixes #323696.
+
 	* appdomain.c (set_domain_search_path): Acquire the domain lock since we
 	modify domain state.
 
