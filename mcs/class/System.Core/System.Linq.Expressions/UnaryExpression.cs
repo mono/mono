@@ -108,7 +108,7 @@ namespace System.Linq.Expressions {
 
 			EmitUnaryOperator (ec);
 
-			ec.EmitNullableNew (to.LocalType);
+			ec.EmitNullableNew (Type);
 
 			ig.MarkLabel (done);
 		}
