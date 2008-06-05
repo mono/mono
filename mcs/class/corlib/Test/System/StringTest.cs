@@ -3281,104 +3281,6 @@ public class StringTest : TestCase
 		Thread.CurrentThread.CurrentCulture = old;
 	}
 
-	[Test]
-	public void TestSplit ()
-	{
-		string s1 = "abcdefghijklm";
-		char[] c1 = {'q', 'r'};
-		AssertEquals("No splitters", s1, (s1.Split(c1))[0]);
-
-		char[] c2 = {'a', 'e', 'i', 'o', 'u'};
-		string[] chunks = s1.Split(c2);
-		AssertEquals("First chunk", string.Empty, chunks[0]);
-		AssertEquals("Second chunk", "bcd", chunks[1]);
-		AssertEquals("Third chunk", "fgh", chunks[2]);
-		AssertEquals("Fourth chunk", "jklm", chunks[3]);
-
-		{
-			bool errorThrown = false;
-			try {
-				chunks = s1.Split(c2, -1);
-			} catch (ArgumentOutOfRangeException) {
-				errorThrown = true;
-			}
-			Assert("Split out of range", errorThrown);
-		}
-
-		chunks = s1.Split(c2, 2);
-		AssertEquals("Limited chunk", 2, chunks.Length);
-		AssertEquals("First limited chunk", string.Empty, chunks[0]);
-		AssertEquals("Second limited chunk", "bcdefghijklm", chunks[1]);
-
-		string s3 = "1.0";
-		char[] c3 = {'.'};
-		chunks = s3.Split(c3,2);
-		AssertEquals("1.0 split length", 2, chunks.Length);
-		AssertEquals("1.0 split first chunk", "1", chunks[0]);
-		AssertEquals("1.0 split second chunk", "0", chunks[1]);
-
-		string s4 = "1.0.0";
-		char[] c4 = {'.'};
-		chunks = s4.Split(c4,2);
-		AssertEquals("1.0.0 split length", 2, chunks.Length);
-		AssertEquals("1.0.0 split first chunk", "1", chunks[0]);
-		AssertEquals("1.0.0 split second chunk", "0.0", chunks[1]);
-
-		string s5 = ".0.0";
-		char[] c5 = {'.'};
-		chunks = s5.Split (c5, 2);
-		AssertEquals(".0.0 split length", 2, chunks.Length);
-		AssertEquals(".0.0 split first chunk", string.Empty, chunks[0]);
-		AssertEquals(".0.0 split second chunk", "0.0", chunks[1]);
-
-		string s6 = ".0";
-		char[] c6 = {'.'};
-		chunks = s6.Split (c6, 2);
-		AssertEquals(".0 split length", 2, chunks.Length);
-		AssertEquals(".0 split first chunk", string.Empty, chunks[0]);
-		AssertEquals(".0 split second chunk", "0", chunks[1]);
-
-		string s7 = "0.";
-		char[] c7 = {'.'};
-		chunks = s7.Split (c7, 2);
-		AssertEquals("0. split length", 2, chunks.Length);
-		AssertEquals("0. split first chunk", "0", chunks[0]);
-		AssertEquals("0. split second chunk", string.Empty, chunks[1]);
-
-		string s8 = "0.0000";
-		char[] c8 = {'.'};
-		chunks = s8.Split (c8, 2);
-		AssertEquals("0.0000/2 split length", 2, chunks.Length);
-		AssertEquals("0.0000/2 split first chunk", "0", chunks[0]);
-		AssertEquals("0.0000/2 split second chunk", "0000", chunks[1]);
-
-		chunks = s8.Split (c8, 3);
-		AssertEquals("0.0000/3 split length", 2, chunks.Length);
-		AssertEquals("0.0000/3 split first chunk", "0", chunks[0]);
-		AssertEquals("0.0000/3 split second chunk", "0000", chunks[1]);
-
-		chunks = s8.Split (c8, 1);
-		AssertEquals("0.0000/1 split length", 1, chunks.Length);
-		AssertEquals("0.0000/1 split first chunk", "0.0000", chunks[0]);
-
-		chunks = s1.Split(c2, 1);
-		AssertEquals("Single split", 1, chunks.Length);
-		AssertEquals("Single chunk", s1, chunks[0]);
-
-		chunks = s1.Split(c2, 0);
-		AssertEquals("Zero split", 0, chunks.Length);
-	}
-
-	[Test]
-	public void MoreSplit ()
-	{
-		string test = "123 456 789";
-		string [] st = test.Split ();
-		AssertEquals ("#01", "123", st [0]);
-		st = test.Split (null);
-		AssertEquals ("#02", "123", st [0]);
-	}
-
 	[Test] // StartsWith (String)
 	public void StartsWith1 ()
 	{
@@ -4001,6 +3903,115 @@ public class StringTest : TestCase
 			AssertNotNull ("#4", ex.Message);
 			AssertEquals ("#5", "startIndex", ex.ParamName);
 		}
+	}
+
+	[Test]
+	public void TestSplit ()
+	{
+		string s1 = "abcdefghijklm";
+		char[] c1 = {'q', 'r'};
+		AssertEquals("No splitters", s1, (s1.Split(c1))[0]);
+
+		char[] c2 = {'a', 'e', 'i', 'o', 'u'};
+		string[] chunks = s1.Split(c2);
+		AssertEquals("First chunk", string.Empty, chunks[0]);
+		AssertEquals("Second chunk", "bcd", chunks[1]);
+		AssertEquals("Third chunk", "fgh", chunks[2]);
+		AssertEquals("Fourth chunk", "jklm", chunks[3]);
+
+		{
+			bool errorThrown = false;
+			try {
+				chunks = s1.Split(c2, -1);
+			} catch (ArgumentOutOfRangeException) {
+				errorThrown = true;
+			}
+			Assert("Split out of range", errorThrown);
+		}
+
+		chunks = s1.Split(c2, 2);
+		AssertEquals("Limited chunk", 2, chunks.Length);
+		AssertEquals("First limited chunk", string.Empty, chunks[0]);
+		AssertEquals("Second limited chunk", "bcdefghijklm", chunks[1]);
+
+		string s3 = "1.0";
+		char[] c3 = {'.'};
+		chunks = s3.Split(c3,2);
+		AssertEquals("1.0 split length", 2, chunks.Length);
+		AssertEquals("1.0 split first chunk", "1", chunks[0]);
+		AssertEquals("1.0 split second chunk", "0", chunks[1]);
+
+		string s4 = "1.0.0";
+		char[] c4 = {'.'};
+		chunks = s4.Split(c4,2);
+		AssertEquals("1.0.0 split length", 2, chunks.Length);
+		AssertEquals("1.0.0 split first chunk", "1", chunks[0]);
+		AssertEquals("1.0.0 split second chunk", "0.0", chunks[1]);
+
+		string s5 = ".0.0";
+		char[] c5 = {'.'};
+		chunks = s5.Split (c5, 2);
+		AssertEquals(".0.0 split length", 2, chunks.Length);
+		AssertEquals(".0.0 split first chunk", string.Empty, chunks[0]);
+		AssertEquals(".0.0 split second chunk", "0.0", chunks[1]);
+
+		string s6 = ".0";
+		char[] c6 = {'.'};
+		chunks = s6.Split (c6, 2);
+		AssertEquals(".0 split length", 2, chunks.Length);
+		AssertEquals(".0 split first chunk", string.Empty, chunks[0]);
+		AssertEquals(".0 split second chunk", "0", chunks[1]);
+
+		string s7 = "0.";
+		char[] c7 = {'.'};
+		chunks = s7.Split (c7, 2);
+		AssertEquals("0. split length", 2, chunks.Length);
+		AssertEquals("0. split first chunk", "0", chunks[0]);
+		AssertEquals("0. split second chunk", string.Empty, chunks[1]);
+
+		string s8 = "0.0000";
+		char[] c8 = {'.'};
+		chunks = s8.Split (c8, 2);
+		AssertEquals("0.0000/2 split length", 2, chunks.Length);
+		AssertEquals("0.0000/2 split first chunk", "0", chunks[0]);
+		AssertEquals("0.0000/2 split second chunk", "0000", chunks[1]);
+
+		chunks = s8.Split (c8, 3);
+		AssertEquals("0.0000/3 split length", 2, chunks.Length);
+		AssertEquals("0.0000/3 split first chunk", "0", chunks[0]);
+		AssertEquals("0.0000/3 split second chunk", "0000", chunks[1]);
+
+		chunks = s8.Split (c8, 1);
+		AssertEquals("0.0000/1 split length", 1, chunks.Length);
+		AssertEquals("0.0000/1 split first chunk", "0.0000", chunks[0]);
+
+		chunks = s1.Split(c2, 1);
+		AssertEquals("Single split", 1, chunks.Length);
+		AssertEquals("Single chunk", s1, chunks[0]);
+
+		chunks = s1.Split(c2, 0);
+		AssertEquals("Zero split", 0, chunks.Length);
+	}
+
+	[Test]
+	public void MoreSplit ()
+	{
+		string test = "123 456 789";
+		string [] st = test.Split ();
+		AssertEquals ("#01", "123", st [0]);
+		st = test.Split (null);
+		AssertEquals ("#02", "123", st [0]);
+	}
+
+	[Test]
+	public void SplitEmptyTest ()
+	{
+		string test = "\u006f"; //TODO
+		string [] st = test.Split ();
+		AssertEquals ("#01", 123, st.Length);
+		st = test.Split (null);
+		AssertEquals ("#02", 123, st.Length);
+//TODO: Also for 2.0 Profile with Options=RemoveEmpty
 	}
 
 #if NET_2_0

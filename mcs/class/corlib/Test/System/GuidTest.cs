@@ -140,6 +140,7 @@ namespace MonoTests.System {
 			Assert.IsFalse (g1 == g2);
 		}
 
+#pragma warning disable 1718
 		[Test]
 		public void EqualityOp ()
 		{
@@ -163,6 +164,7 @@ namespace MonoTests.System {
 			Assert.IsFalse (g1 != g2, "A2");
 			Assert.IsTrue (g1 != g3, "A3");
 		}
+#pragma warning restore 1718
 
 		[Test]
 		public void EqualsObject ()

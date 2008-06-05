@@ -72,7 +72,8 @@ namespace MonoTests.System.Reflection
 			Assert.IsNull (pub.GetRaiseMethod (), "#B2");
 			Assert.IsNotNull (pub.GetRemoveMethod (), "#B3");
 		}
-		
+
+#pragma warning disable 67
 		public class PrivateEvent
 		{
 			private static event EventHandler x;
@@ -82,5 +83,6 @@ namespace MonoTests.System.Reflection
 		{
 			public static event EventHandler x;
 		}
+#pragma warning restore 67
 	}
 }

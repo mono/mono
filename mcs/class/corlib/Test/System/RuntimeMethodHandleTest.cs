@@ -75,6 +75,7 @@ namespace MonoTests.System
 		}
 
 #if NET_2_0
+#pragma warning disable 1718
 		[Test]
 		public void Operators ()
 		{
@@ -100,6 +101,7 @@ namespace MonoTests.System
 			Assert.IsTrue (rmhA1 != rmhB1, "#B5");
 			Assert.IsTrue (rmhB1 != rmhA1, "#B6");
 		}
+#pragma warning restore 1718
 #endif
 
 		[Test]

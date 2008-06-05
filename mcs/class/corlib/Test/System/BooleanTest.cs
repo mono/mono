@@ -72,6 +72,7 @@ public class BooleanTest : Assertion {
 		Assert ("!f.Equals(t2)", !f.Equals(t2));
 	}
 
+#pragma warning disable 1718
 	[Test]
 	public void TestEqualOperator ()
 	{
@@ -88,6 +89,7 @@ public class BooleanTest : Assertion {
 		Assert ("t2==t", t2==t);
 		Assert ("f!=t2", f!=t2);
 	}
+#pragma warning restore 1718
 
 	[Test]
 	public void TestGetHashCode ()

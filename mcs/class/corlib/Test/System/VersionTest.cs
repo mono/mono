@@ -167,7 +167,9 @@ namespace MonoTests.System
 			Assert.IsFalse (v1.Equals (v3), "#A3");
 
 			Assert.IsTrue (v2 == v3, "#B1");
+#pragma warning disable 1718
 			Assert.IsTrue (v2 == v2, "#B2");
+#pragma warning restore 1718
 			Assert.IsFalse (v1 == v3, "#B3");
 
 			Assert.IsFalse (v2.Equals ((Version) null), "#C1");

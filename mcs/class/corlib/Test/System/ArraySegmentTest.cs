@@ -137,7 +137,8 @@ public class ArraySegmentTest
 	{
 		ArraySegment<byte> seg = new ArraySegment<byte> (null);
 	}
-	
+
+#pragma warning disable 1718
 	[Test]
 	public void TestArraySegmentEqual ()
 	{
@@ -158,6 +159,7 @@ public class ArraySegmentTest
 	    // Should return true.
 	    Assert.AreEqual(myArrSeg_1 != myArrSeg_2, true);
 	}
+#pragma warning restore 1718
 }
 
 }

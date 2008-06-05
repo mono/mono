@@ -1,3 +1,8 @@
+2008-06-05  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* StringTest.cs: Move Split Tests to single location
+	* *.cs: Disable expected warnings
+
 2008-06-02  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* StringTest.cs: More tests for replace method, also uncomment now-working IndexOf-Tests
