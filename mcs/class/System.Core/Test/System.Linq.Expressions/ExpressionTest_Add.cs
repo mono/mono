@@ -335,5 +335,27 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual ((SlotFromNullableToNullable?) new SlotFromNullableToNullable (4), add (new SlotFromNullableToNullable (2), new SlotFromNullableToNullable (2)));
 			Assert.AreEqual ((SlotFromNullableToNullable?) new SlotFromNullableToNullable (0), add (new SlotFromNullableToNullable (2), new SlotFromNullableToNullable (-2)));
 		}*/
+
+
+		[Test]
+		[Category ("NotWorking")]
+		public void AddStrings ()
+		{
+			var l = Expression.Parameter (typeof (string), "l");
+			var r = Expression.Parameter (typeof (string), "r");
+
+			var meth = typeof (string).GetMethod ("Concat", new [] { typeof (object), typeof (object) });
+
+			var node = Expression.Add (l, r, meth);
+			Assert.IsFalse (node.IsLifted);
+			Assert.IsFalse (node.IsLiftedToNull);
+			Assert.AreEqual (typeof (string), node.Type);
+			Assert.AreEqual (meth, node.Method);
+
+			var concat = Expression.Lambda<Func<string, string, string>> (node, l, r).Compile ();
+
+			Assert.AreEqual (string.Empty, concat (null, null));
+			Assert.AreEqual ("foobar", concat ("foo", "bar"));
+		}
 	}
 }
