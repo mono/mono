@@ -1,3 +1,8 @@
+2008-06-05  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug-debugger.c
+	(mono_debugger_check_breakpoints): Reflect latest runtime changes.
+
 2008-06-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* assembly.c (mono_assembly_load_from_full): Avoid calling the search hooks
