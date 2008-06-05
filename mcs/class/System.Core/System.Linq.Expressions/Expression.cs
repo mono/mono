@@ -1136,6 +1136,12 @@ namespace System.Linq.Expressions {
 			if (type == target)
 				return true;
 
+			if (type.IsNullable () && target == GetNotNullableOf (type))
+				return true;
+
+			if (target.IsNullable () && type == GetNotNullableOf (target))
+				return true;
+
 			if (IsConvertiblePrimitive (type) && IsConvertiblePrimitive (target))
 				return true;
 
@@ -1147,13 +1153,16 @@ namespace System.Linq.Expressions {
 			if (type == target)
 				return true;
 
-			if (type.IsAssignableTo (target) || target.IsAssignableTo (type))
-				return true;
-
 			if (type == typeof (object) || target == typeof (object))
 				return true;
 
 			if (type.IsInterface || target.IsInterface)
+				return true;
+
+			if (type.IsValueType || target.IsValueType)
+				return false;
+
+			if (type.IsAssignableTo (target) || target.IsAssignableTo (type))
 				return true;
 
 			return false;
