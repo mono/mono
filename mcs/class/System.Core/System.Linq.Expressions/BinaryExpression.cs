@@ -559,10 +559,22 @@ namespace System.Linq.Expressions {
 
 			ec.EmitNullableHasValue (left);
 			ec.EmitNullableHasValue (right);
-			ig.Emit (OpCodes.Bne_Un, eq ? ret_false : ret_true);
-
-			ec.EmitNullableHasValue (left);
-			ig.Emit (OpCodes.Brfalse, eq ? ret_true : ret_false);
+			switch (NodeType) {
+			case ExpressionType.Equal:
+				ig.Emit (OpCodes.Bne_Un, ret_false);
+				ec.EmitNullableHasValue (left);
+				ig.Emit (OpCodes.Brfalse, ret_true);
+				break;
+			case ExpressionType.NotEqual:
+				ig.Emit (OpCodes.Bne_Un, ret_true);
+				ec.EmitNullableHasValue (left);
+				ig.Emit (OpCodes.Brfalse, ret_false);
+				break;
+			default:
+				ig.Emit (OpCodes.And);
+				ig.Emit (OpCodes.Brfalse, ret_false);
+				break;
+			}
 
 			ec.EmitNullableGetValueOrDefault (left);
 			ec.EmitNullableGetValueOrDefault (right);
