@@ -74,6 +74,10 @@ namespace System.Text.RegularExpressions
 		#region Implementations of IMachine Interface
 
 		public override Match Scan (Regex regex, string text, int start, int end) {
+
+			if (start > end)
+				return Match.Empty;
+
 			Matcher m = JavaPattern.matcher (((CharSequence) (object) text).subSequence(0, end));
 
 			if (!m.find (start)) {
