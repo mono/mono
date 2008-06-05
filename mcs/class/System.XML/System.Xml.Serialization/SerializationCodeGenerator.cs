@@ -1604,16 +1604,6 @@ namespace System.Xml.Serialization
 			XmlTypeMapping typeMap = xmlMap as XmlTypeMapping;
 			Type xmlMapType = (typeMap != null) ? typeMap.TypeData.Type : typeof(object[]);
 			
-			// Load the default value of members
-			if (map.MembersWithDefault != null)
-			{
-				ArrayList members = map.MembersWithDefault;
-				for (int n=0; n<members.Count; n++) {
-					XmlTypeMapMember mem = (XmlTypeMapMember) members[n];
-					GenerateSetMemberValueFromAttr (mem, ob, GetLiteral (mem.DefaultValue), isValueList);
-				}
-			}
-			
 			bool first = false;
 			// Read attributes
 			GenerateReadAttributeMembers (xmlMap, map, ob, isValueList, ref first);
@@ -2769,6 +2759,11 @@ namespace System.Xml.Serialization
 		{
 			if (ob == null) return "null";
 			if (ob is string) return "\"" + ob.ToString().Replace("\"","\"\"") + "\"";
+			if (ob is DateTime) return "new DateTime (" + ((DateTime) ob).Ticks + ")";
+#if NET_2_0
+			if (ob is DateTimeOffset) return "new DateTimeOffset (" + ((DateTimeOffset) ob).Ticks + ")";
+#endif
+			if (ob is TimeSpan) return "new TimeSpan (" + ((TimeSpan) ob).Ticks + ")";
 			if (ob is bool) return ((bool)ob) ? "true" : "false";
 			if (ob is XmlQualifiedName) {
 				XmlQualifiedName qn = (XmlQualifiedName)ob;

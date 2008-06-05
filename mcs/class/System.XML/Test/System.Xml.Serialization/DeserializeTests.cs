@@ -943,7 +943,6 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // DefaultValue should not be used when deserializing
 		public void TestDeserialize_Field ()
 		{
 			Field f = null;
@@ -1061,7 +1060,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 
 		[Test]
-		[Category ("NotDotNet")] // MS.NET does not allow SoapAttribute backed by enum ??
+		[Category ("NotDotNet")] // MS.NET results in compilation error (probably it generates bogus source.)
 		public void TestDeserialize_Field_Encoded ()
 		{
 			Field_Encoded f = null;
@@ -1072,7 +1071,7 @@ namespace MonoTests.System.XmlSerialization
 				XmlSchemaNamespace, XmlSchemaInstanceNamespace, ANamespace));
 			Assert.AreEqual ((FlagEnum_Encoded) 0, f.Flags1, "#A1");
 			Assert.AreEqual ((FlagEnum_Encoded) 0, f.Flags2, "#A2");
-			Assert.AreEqual (FlagEnum_Encoded.e1 | FlagEnum_Encoded.e2, f.Flags3, "#A3");
+			Assert.AreEqual ((FlagEnum_Encoded) 0, f.Flags3, "#A3");
 			Assert.AreEqual ((FlagEnum_Encoded) 0, f.Flags4, "#A4");
 			Assert.AreEqual (MapModifiers.Public, f.Modifiers, "#A5");
 			Assert.AreEqual (MapModifiers.Public, f.Modifiers2, "#A6");
@@ -1086,14 +1085,14 @@ namespace MonoTests.System.XmlSerialization
 				string.Format (CultureInfo.InvariantCulture, "<?xml version='1.0' encoding='utf-16'?>" +
 				"<q1:field xmlns:xsd='{0}' xmlns:xsi='{1}' id='id1' flag3='two' flag4='' modifiers='Protected' modifiers2='PuBlIc' xmlns:q1='{2}' />",
 				XmlSchemaNamespace, XmlSchemaInstanceNamespace, ANamespace));
-			Assert.AreEqual (FlagEnum_Encoded.e1, f.Flags1, "#B1");
-			Assert.AreEqual (FlagEnum_Encoded.e1, f.Flags2, "#B2");
+			Assert.AreEqual ((FlagEnum_Encoded) 0, f.Flags1, "#B1");
+			Assert.AreEqual ((FlagEnum_Encoded) 0, f.Flags2, "#B2");
 			Assert.AreEqual (FlagEnum_Encoded.e2, f.Flags3, "#B3");
 			Assert.AreEqual ((FlagEnum_Encoded) 0, f.Flags4, "#B4");
 			Assert.AreEqual (MapModifiers.Protected, f.Modifiers, "#B5");
 			Assert.AreEqual (MapModifiers.Public, f.Modifiers2, "#B6");
 			Assert.AreEqual (MapModifiers.Public, f.Modifiers3, "#B7");
-			Assert.AreEqual (MapModifiers.Protected, f.Modifiers4, "#B8");
+			Assert.AreEqual (MapModifiers.Public, f.Modifiers4, "#B8");
 			Assert.AreEqual (MapModifiers.Public, f.Modifiers5, "#B9");
 			Assert.IsNull (f.Names, "#B10");
 			Assert.IsNull (f.Street, "#B11");
@@ -1104,7 +1103,7 @@ namespace MonoTests.System.XmlSerialization
 				XmlSchemaNamespace, XmlSchemaInstanceNamespace, ANamespace));
 			Assert.AreEqual (FlagEnum_Encoded.e2, f.Flags1, "#C1");
 			Assert.AreEqual (FlagEnum_Encoded.e2, f.Flags2, "#C2");
-			Assert.AreEqual (FlagEnum_Encoded.e1 | FlagEnum_Encoded.e2, f.Flags3, "#C3");
+			Assert.AreEqual ((FlagEnum_Encoded) 0, f.Flags3, "#C3");
 			Assert.AreEqual ((FlagEnum_Encoded) 0, f.Flags4, "#C4");
 			Assert.AreEqual (MapModifiers.Public, f.Modifiers, "#C5");
 			Assert.AreEqual (MapModifiers.Protected, f.Modifiers2, "#C6");
@@ -1470,6 +1469,16 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual ((byte) 56, deserialized.Index, "#B4");
 			Assert.AreEqual (new byte[] { 243, 15 }, deserialized.Password, "#B5");
 			Assert.AreEqual ('/', deserialized.PathSeparatorCharacter, "#B6");
+		}
+
+		[Test] // bug #378696
+		public void DoNotFillDefaultValue ()
+		{
+			XmlSerializer xs = new XmlSerializer (typeof (DefaultDateTimeContainer));
+			DefaultDateTimeContainer o = (DefaultDateTimeContainer) xs.Deserialize (new StringReader ("<DefaultDateTimeContainer xmlns='urn:foo' />"));
+			// do not fill DefaultValue / do not bork at generating code.
+			Assert.AreEqual (DateTime.MinValue, o.FancyDateTime, "#1");
+			Assert.AreEqual (0, o.Numeric, "#2");
 		}
 	}
 }

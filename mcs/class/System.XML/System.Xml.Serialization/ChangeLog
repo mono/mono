@@ -1,3 +1,11 @@
+2008-06-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSerializationReaderInterpreter.cs, MapCodeGenerator.cs,
+	  SerializationCodeGenerator.cs : fixed bug #378696.
+	  Default value should not be filled during deserialization, and
+	  default values for DateTime/TimeSpan/DateTimeOffset should not be
+	  output as raw string in generated code.
+
 2008-06-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSerializationReader.cs : in ReadXmlDocument(), MoveToContent()

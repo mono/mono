@@ -46,7 +46,7 @@ namespace MonoTests.System.XmlSerialization
 		}
 		
 		[Test]
-		[NUnit.Framework.Category("NotDotNet")]
+		[NUnit.Framework.Category ("NotDotNet")] // MS.NET results in compilation error (probably it generates bogus source.)
 		public void ReadLiteral ()
 		{
 			XmlSerializer ss = new XmlSerializer (GetLiteralTypeMapping ());
@@ -187,9 +187,9 @@ namespace MonoTests.System.XmlSerialization
 			t.multiList[1].Add (888);
 			t.multiList[1].Add (999);
 
-
-			t.defElem = "theDefValue";
-			t.defAttr = "theDefValue";
+			// XmlSerializer does not deserialize default values explicitly.
+			//t.defElem = "theDefValue";
+			//t.defAttr = "theDefValue";
 
 			t.special = new CustomHashtable ();
 			t.special.Add ("one","1");

@@ -1,3 +1,10 @@
+2008-06-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSerializerTestClasses.cs, DeserializeTests.cs,
+	  ComplexDataStructure.cs : added test for bug #378696.
+	  Fixed couple of wrong tests that expects default values filled
+	  during deserialization.
+
 2008-04-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSerializerTestClasses.cs, XmlSerializerTests.cs : added test

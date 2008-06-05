@@ -685,12 +685,12 @@ namespace System.Xml.Serialization {
 				CodeFieldReferenceExpression fref = new CodeFieldReferenceExpression (new CodeTypeReferenceExpression (GetDomType (typeData, false)), defaultValueFormattable != null ? defaultValueFormattable.ToString(null, CultureInfo.InvariantCulture) : defaultValue.ToString ());
 				CodeAttributeArgument arg = new CodeAttributeArgument (fref);
 				AddCustomAttribute (externalField, "System.ComponentModel.DefaultValue", arg);
-				internalField.InitExpression = fref;
+				//internalField.InitExpression = fref;
 			}
 			else
 			{
 				AddCustomAttribute (externalField, "System.ComponentModel.DefaultValue", GetArg (defaultValue));
-				internalField.InitExpression = new CodePrimitiveExpression (defaultValue);
+				//internalField.InitExpression = new CodePrimitiveExpression (defaultValue);
 			}
 		}
 		

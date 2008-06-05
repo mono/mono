@@ -908,5 +908,17 @@ namespace MonoTests.System.Xml.TestClasses
 		// it should be serialized IF it is NOT IXmlSerializable.
 		public string Whoa = "whoa";
 	}
+
+	[XmlRoot ("DefaultDateTimeContainer", Namespace = "urn:foo")]
+	public class DefaultDateTimeContainer // bug #378696
+	{
+		public DateTime SimpleDateTime;
+
+		[DefaultValue(typeof(DateTime), "2001-02-03T04:05:06")]
+		public DateTime FancyDateTime;
+
+		[DefaultValue (typeof (int), "123456")]
+		public int Numeric;
+	}
 }
 
