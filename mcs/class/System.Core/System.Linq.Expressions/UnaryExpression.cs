@@ -329,25 +329,37 @@ namespace System.Linq.Expressions {
 				EmitLiftedUnary (ec);
 		}
 
-		void CheckUserDefinedOperator ()
+		void EmitLiftedUserDefinedOperator (EmitContext ec)
 		{
-			// tempory check
+			var ig = ec.ig;
+			var local = ec.EmitStored (operand);
 
-			if (operand.Type == method.GetParameters () [0].ParameterType)
-				return;
+			var ret = ig.DefineLabel ();
+			var done = ig.DefineLabel ();
 
-			if (Type == method.ReturnType)
-				return;
+			ec.EmitNullableHasValue (local);
+			ig.Emit (OpCodes.Brfalse, ret);
 
-			throw new NotImplementedException ();
+			ec.EmitNullableGetValueOrDefault (local);
+			ec.EmitCall (method);
+			ec.EmitNullableNew (Type);
+			ig.Emit (OpCodes.Br, done);
+
+			ig.MarkLabel (ret);
+
+			var temp = ig.DeclareLocal (Type);
+			ec.EmitNullableInitialize (temp);
+
+			ig.MarkLabel (done);
 		}
 
 		void EmitUserDefinedOperator (EmitContext ec)
 		{
-			CheckUserDefinedOperator ();
-
-			ec.Emit (operand);
-			ec.EmitCall (method);
+			if (!IsLifted) {
+				ec.Emit (operand);
+				ec.EmitCall (method);
+			} else
+				EmitLiftedUserDefinedOperator (ec);
 		}
 
 		internal override void Emit (EmitContext ec)

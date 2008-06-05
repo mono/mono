@@ -312,14 +312,19 @@ namespace System.Linq.Expressions {
 				type = expression.Type;
 				is_lifted = type.IsNullable ();
 			} else {
-				// FIXME: completely wrong
-				var parameter = method.GetParameters () [0].ParameterType;
-				type = method.ReturnType;
+				var parameter = method.GetParameters () [0];
 
-				is_lifted = parameter.IsNullable () || expression.Type.IsNullable ();
+				if (expression.Type == parameter.ParameterType) {
+					is_lifted = false;
+					type = method.ReturnType;
+				} else if (expression.Type.IsNullable ()
+					&& GetNotNullableOf (expression.Type) == parameter.ParameterType
+					&& !method.ReturnType.IsNullable ()) {
 
-				if (is_lifted && !type.IsNullable ())
-					type = typeof (Nullable<>).MakeGenericType (type);
+					is_lifted = true;
+					type = typeof (Nullable<>).MakeGenericType (method.ReturnType);
+				} else
+					throw new InvalidOperationException ();
 			}
 
 			return new UnaryExpression (et, expression, type, method, is_lifted);

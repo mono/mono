@@ -1,3 +1,9 @@
+2008-06-05  Jb Evain  <jbevain@novell.com>
+
+	* Expression.cs (MakeSimpleUnary): properly create lifted/not lifted
+	unary expressions with user defined operators.
+	* UnaryExpression.cs (Emit): fix compilation of lifted user operators.
+
 2008-05-30  Jb Evain  <jbevain@novell.com>
 
 	* UnaryExpression.cs (Emit): fix convertion from nullable
