@@ -126,6 +126,7 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void RightShiftNullableLongAndInt ()
 		{
 			var l = Expression.Parameter (typeof (long?), "l");
@@ -135,6 +136,11 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.IsTrue (node.IsLifted);
 			Assert.IsTrue (node.IsLiftedToNull);
 			Assert.AreEqual (typeof (long?), node.Type);
+
+			var rs = Expression.Lambda<Func<long?, int, long?>> (node, l, r).Compile ();
+
+			Assert.AreEqual (null, rs (null, 2));
+			Assert.AreEqual (512, rs (1024, 1));
 		}
 	}
 }
