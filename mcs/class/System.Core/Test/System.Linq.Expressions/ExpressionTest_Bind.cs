@@ -145,7 +145,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void BindValueTypes ()
 		{
 			var i = Expression.Parameter (typeof (int), "i");
