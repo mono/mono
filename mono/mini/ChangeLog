@@ -1,3 +1,8 @@
+2008-06-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-*.c (mono_arch_get_unbox_trampoline): No need to check for ret->byref,
+	MONO_TYPE_ISSTRUCT already checks for it.
+
 2008-06-05  Bill Holmes  <billholmes54@gmail.com>
 
 	* mini-amd64.c:merge_argument_class_from_type: When marshaling 
