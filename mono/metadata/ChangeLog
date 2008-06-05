@@ -1,3 +1,8 @@
+2008-06-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* appdomain.c (set_domain_search_path): Acquire the domain lock since we
+	modify domain state.
+
 2008-06-05  Andreas Färber  <andreas.faerber@web.de>
 
 	* boehm-gc.c: Add DTrace probes gc-{begin,end}.
