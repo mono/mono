@@ -232,5 +232,77 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.IsTrue (item.LeftCalled);
 			Assert.IsFalse (item.RightCalled);
 		}
+
+		struct Slot {
+
+			public int Value;
+
+			public Slot (int val)
+			{
+				this.Value = val;
+			}
+
+			public static Slot operator | (Slot a, Slot b)
+			{
+				return new Slot (a.Value | b.Value);
+			}
+
+			public static bool operator true (Slot a)
+			{
+				return a.Value != 0;
+			}
+
+			public static bool operator false (Slot a)
+			{
+				return a.Value == 0;
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void UserDefinedOrElse ()
+		{
+			var l = Expression.Parameter (typeof (Slot), "l");
+			var r = Expression.Parameter (typeof (Slot), "r");
+
+			var method = typeof (Slot).GetMethod ("op_BitwiseOr");
+
+			var node = Expression.OrElse (l, r, method);
+			Assert.IsFalse (node.IsLifted);
+			Assert.IsFalse (node.IsLiftedToNull);
+			Assert.AreEqual (method, node.Method);
+
+			var orelse = Expression.Lambda<Func<Slot, Slot, Slot>> (node, l, r).Compile ();
+
+			Assert.AreEqual (new Slot (64), orelse (new Slot (64), new Slot (64)));
+			Assert.AreEqual (new Slot (32), orelse (new Slot (32), new Slot (64)));
+		}
+
+		struct Incomplete {
+			public int Value;
+
+			public Incomplete (int val)
+			{
+				Value = val;
+			}
+
+			public static Incomplete operator | (Incomplete a, Incomplete b)
+			{
+				return new Incomplete (a.Value | b.Value);
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		[ExpectedException (typeof (ArgumentException))]
+		public void IncompleteUserDefinedOrElse ()
+		{
+			var l = Expression.Parameter (typeof (Incomplete), "l");
+			var r = Expression.Parameter (typeof (Incomplete), "r");
+
+			var method = typeof (Incomplete).GetMethod ("op_BitwiseOr");
+
+			Expression.OrElse (l, r, method);
+		}
 	}
 }
