@@ -144,5 +144,70 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual ((bool?) false, lte (2, 1));
 			Assert.AreEqual ((bool?) true, lte (1, 1));
 		}
+
+		struct Slot {
+			public int Value;
+
+			public Slot (int val)
+			{
+				Value = val;
+			}
+
+			public static bool operator >= (Slot a, Slot b)
+			{
+				return a.Value >= b.Value;
+			}
+
+			public static bool operator <= (Slot a, Slot b)
+			{
+				return a.Value <= b.Value;
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void UserDefinedLessThanOrEqualLifted ()
+		{
+			var l = Expression.Parameter (typeof (Slot?), "l");
+			var r = Expression.Parameter (typeof (Slot?), "r");
+
+			var node = Expression.LessThanOrEqual (l, r);
+			Assert.IsTrue (node.IsLifted);
+			Assert.IsFalse (node.IsLiftedToNull);
+			Assert.AreEqual (typeof (bool), node.Type);
+			Assert.IsNotNull (node.Method);
+
+			var lte = Expression.Lambda<Func<Slot?, Slot?, bool>> (node, l, r).Compile ();
+
+			Assert.AreEqual (false, lte (new Slot (1), new Slot (0)));
+			Assert.AreEqual (true, lte (new Slot (-1), new Slot (1)));
+			Assert.AreEqual (true, lte (new Slot (1), new Slot (1)));
+			Assert.AreEqual (false, lte (null, new Slot (1)));
+			Assert.AreEqual (false, lte (new Slot (1), null));
+			Assert.AreEqual (false, lte (null, null));
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void UserDefinedLessThanOrEqualLiftedToNull ()
+		{
+			var l = Expression.Parameter (typeof (Slot?), "l");
+			var r = Expression.Parameter (typeof (Slot?), "r");
+
+			var node = Expression.LessThanOrEqual (l, r, true, null);
+			Assert.IsTrue (node.IsLifted);
+			Assert.IsTrue (node.IsLiftedToNull);
+			Assert.AreEqual (typeof (bool?), node.Type);
+			Assert.IsNotNull (node.Method);
+
+			var lte = Expression.Lambda<Func<Slot?, Slot?, bool?>> (node, l, r).Compile ();
+
+			Assert.AreEqual (false, lte (new Slot (1), new Slot (0)));
+			Assert.AreEqual (true, lte (new Slot (-1), new Slot (1)));
+			Assert.AreEqual (true, lte (new Slot (1), new Slot (1)));
+			Assert.AreEqual (null, lte (null, new Slot (1)));
+			Assert.AreEqual (null, lte (new Slot (1), null));
+			Assert.AreEqual (null, lte (null, null));
+		}
 	}
 }
