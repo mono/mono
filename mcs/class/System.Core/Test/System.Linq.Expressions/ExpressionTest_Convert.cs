@@ -540,5 +540,39 @@ namespace MonoTests.System.Linq.Expressions {
 			Assert.AreEqual (typeof (int), node.Type);
 			Assert.IsNull (node.Method);
 		}
+
+		struct ImplicitToInt {
+			int Value;
+
+			public ImplicitToInt (int v)
+			{
+				Value = v;
+			}
+
+			public static implicit operator int (ImplicitToInt i)
+			{
+				return i.Value;
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ConvertNullableImplictToIntToNullableLong ()
+		{
+			var i = Expression.Parameter (typeof (ImplicitToInt?), "i");
+
+			var method = typeof (ImplicitToInt).GetMethod ("op_Implicit");
+
+			var node = Expression.Convert (i, typeof (int), method);
+
+			node = Expression.Convert (node, typeof (long?));
+
+			var conv = Expression.Lambda<Func<ImplicitToInt?, long?>> (node, i).Compile ();
+
+			Assert.AreEqual ((long?) 42, conv (new ImplicitToInt (42)));
+
+			Action convnull = () => Assert.AreEqual (null, conv (null));
+			convnull.AssertThrows (typeof (InvalidOperationException));
+		}
 	}
 }
