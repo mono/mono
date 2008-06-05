@@ -1,5 +1,10 @@
 2008-06-05  Jb Evain  <jbevain@novell.com>
 
+	* BinaryExpression.cs (Emit): deal with binary expressions
+	where only the left is lifted.
+
+2008-06-05  Jb Evain  <jbevain@novell.com>
+
 	* Extensions.cs: Add Type.MakeNullableType helper.
 	* Expression.cs (MakeSimpleBinary, MakeBoolBinar): Properly
 	creat lifted/lifted to null/not lifted

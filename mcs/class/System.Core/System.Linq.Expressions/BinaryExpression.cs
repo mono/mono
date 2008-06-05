@@ -368,9 +368,46 @@ namespace System.Linq.Expressions {
 			}
 		}
 
+		bool IsLeftLiftedBinary ()
+		{
+			return left.Type.IsNullable () && !right.Type.IsNullable ();
+		}
+
+		void EmitLeftLiftedToNullBinary (EmitContext ec)
+		{
+			var ig = ec.ig;
+
+			var ret = ig.DefineLabel ();
+			var done = ig.DefineLabel ();
+
+			var left = ec.EmitStored (this.left);
+
+			ec.EmitNullableHasValue (left);
+			ig.Emit (OpCodes.Brfalse, ret);
+
+			ec.EmitNullableGetValueOrDefault (left);
+			ec.Emit (right);
+
+			EmitBinaryOperator (ec);
+
+			ec.EmitNullableNew (Type);
+
+			ig.Emit (OpCodes.Br, done);
+
+			ig.MarkLabel (ret);
+
+			var temp = ig.DeclareLocal (Type);
+			ec.EmitNullableInitialize (temp);
+
+			ig.MarkLabel (done);
+		}
+
 		void EmitLiftedArithmeticBinary (EmitContext ec)
 		{
-			EmitLiftedToNullBinary (ec);
+			if (IsLeftLiftedBinary ())
+				EmitLeftLiftedToNullBinary (ec);
+			else
+				EmitLiftedToNullBinary (ec);
 		}
 
 		void EmitLiftedToNullBinary (EmitContext ec)
