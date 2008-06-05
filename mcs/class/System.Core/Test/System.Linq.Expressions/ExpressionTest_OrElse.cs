@@ -278,6 +278,29 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (new Slot (32), orelse (new Slot (32), new Slot (64)));
 		}
 
+		[Test]
+		[Category ("NotWorking")]
+		public void UserDefinedOrElseLiftedToNull ()
+		{
+			var l = Expression.Parameter (typeof (Slot?), "l");
+			var r = Expression.Parameter (typeof (Slot?), "r");
+
+			var method = typeof (Slot).GetMethod ("op_BitwiseOr");
+
+			var node = Expression.OrElse (l, r, method);
+			Assert.IsTrue (node.IsLifted);
+			Assert.IsTrue (node.IsLiftedToNull);
+			Assert.AreEqual (method, node.Method);
+
+			var orelse = Expression.Lambda<Func<Slot?, Slot?, Slot?>> (node, l, r).Compile ();
+
+			Assert.AreEqual (new Slot (64), orelse (new Slot (64), new Slot (64)));
+			Assert.AreEqual (new Slot (32), orelse (new Slot (32), new Slot (64)));
+			Assert.AreEqual (new Slot (64), orelse (null, new Slot (64)));
+			Assert.AreEqual (new Slot (32), orelse (new Slot (32), null));
+			Assert.AreEqual (null, orelse (null, null));
+		}
+
 		struct Incomplete {
 			public int Value;
 

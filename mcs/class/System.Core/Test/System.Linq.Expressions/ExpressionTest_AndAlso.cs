@@ -254,6 +254,30 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (new Slot (0), andalso (new Slot (64), new Slot (32)));
 		}
 
+		[Test]
+		[Category ("NotWorking")]
+		public void UserDefinedAndAlsoLiftedToNull ()
+		{
+			var l = Expression.Parameter (typeof (Slot?), "l");
+			var r = Expression.Parameter (typeof (Slot?), "r");
+
+			var method = typeof (Slot).GetMethod ("op_BitwiseAnd");
+
+			var node = Expression.AndAlso (l, r, method);
+			Assert.IsTrue (node.IsLifted);
+			Assert.IsTrue (node.IsLiftedToNull);
+			Assert.AreEqual (method, node.Method);
+
+			var andalso = Expression.Lambda<Func<Slot?, Slot?, Slot?>> (node, l, r).Compile ();
+
+			Assert.AreEqual (new Slot (64), andalso (new Slot (64), new Slot (64)));
+			Assert.AreEqual (new Slot (0), andalso (new Slot (32), new Slot (64)));
+			Assert.AreEqual (new Slot (0), andalso (new Slot (64), new Slot (32)));
+			Assert.AreEqual (null, andalso (null, new Slot (32)));
+			Assert.AreEqual (null, andalso (new Slot (64), null));
+			Assert.AreEqual (null, andalso (null, null));
+		}
+
 		struct Incomplete {
 			public int Value;
 
