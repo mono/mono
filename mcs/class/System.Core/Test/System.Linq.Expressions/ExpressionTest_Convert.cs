@@ -304,7 +304,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ConvertNullableStructWithImplicitOpToNullableInt ()
 		{
 			var c = Expression.Convert (Expression.Parameter (typeof (Kling?), ""), typeof (int?));
@@ -453,7 +452,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void NullableImplicitToShort ()
 		{
 			var i = Expression.Parameter (typeof (ImplicitToShort?), "i");
