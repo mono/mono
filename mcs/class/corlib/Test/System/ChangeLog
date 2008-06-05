@@ -1,3 +1,7 @@
+2008-06-02  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* StringTest.cs: More tests for replace method, also uncomment now-working IndexOf-Tests
+
 2008-06-02  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* TypeTest.cs: Add tests to verify strict return type matching of 
@@ -8,7 +12,7 @@
 	* StringTest.cs (Substring2): Blocking bug #395904 has been fixed,
 	re-enable test. 
 
-2008-05-24  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+2008-06-01  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* StringTest.cs: Comment out a test that currently fails by checking for
 	an obsolete parameter name in an exception (that doesn't even match the existing one)

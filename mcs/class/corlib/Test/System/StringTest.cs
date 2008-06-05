@@ -1435,7 +1435,7 @@ public class StringTest : TestCase
 		AssertEquals ("#A6", 12, s.IndexOf ("6", comparison_type));
 		AssertEquals ("#A7", 3, s.IndexOf ("tin", comparison_type));
 		AssertEquals ("#A8", -1, s.IndexOf ("TIN", comparison_type));
-		//AssertEquals ("#A9", 0, s.IndexOf (string.Empty, comparison_type));
+		AssertEquals ("#A9", 0, s.IndexOf (string.Empty, comparison_type));
 
 		comparison_type = StringComparison.CurrentCultureIgnoreCase;
 		AssertEquals ("#B1", 7, s.IndexOf ("123", comparison_type));
@@ -1446,7 +1446,7 @@ public class StringTest : TestCase
 		AssertEquals ("#B6", 12, s.IndexOf ("6", comparison_type));
 		AssertEquals ("#B7", 3, s.IndexOf ("tin", comparison_type));
 		AssertEquals ("#B8", -1, s.IndexOf ("TIN", comparison_type));
-		//AssertEquals ("#B9", 0, s.IndexOf (string.Empty, comparison_type));
+		AssertEquals ("#B9", 0, s.IndexOf (string.Empty, comparison_type));
 
 		comparison_type = StringComparison.InvariantCulture;
 		AssertEquals ("#C1", 7, s.IndexOf ("123", comparison_type));
@@ -1457,7 +1457,7 @@ public class StringTest : TestCase
 		AssertEquals ("#C6", 12, s.IndexOf ("6", comparison_type));
 		AssertEquals ("#C7", 3, s.IndexOf ("tin", comparison_type));
 		AssertEquals ("#C8", -1, s.IndexOf ("TIN", comparison_type));
-		//AssertEquals ("#C9", 0, s.IndexOf (string.Empty, comparison_type));
+		AssertEquals ("#C9", 0, s.IndexOf (string.Empty, comparison_type));
 
 		comparison_type = StringComparison.InvariantCultureIgnoreCase;
 		AssertEquals ("#D1", 7, s.IndexOf ("123", comparison_type));
@@ -1468,7 +1468,7 @@ public class StringTest : TestCase
 		AssertEquals ("#D6", 12, s.IndexOf ("6", comparison_type));
 		AssertEquals ("#D7", 3, s.IndexOf ("tin", comparison_type));
 		AssertEquals ("#D8", 3, s.IndexOf ("TIN", comparison_type));
-		//AssertEquals ("#D9", 0, s.IndexOf (string.Empty, comparison_type));
+		AssertEquals ("#D9", 0, s.IndexOf (string.Empty, comparison_type));
 
 		comparison_type = StringComparison.Ordinal;
 		AssertEquals ("#E1", 7, s.IndexOf ("123", comparison_type));
@@ -1479,7 +1479,7 @@ public class StringTest : TestCase
 		AssertEquals ("#E6", 12, s.IndexOf ("6", comparison_type));
 		AssertEquals ("#E7", 3, s.IndexOf ("tin", comparison_type));
 		AssertEquals ("#E8", -1, s.IndexOf ("TIN", comparison_type));
-		//AssertEquals ("#E9", 0, s.IndexOf (string.Empty, comparison_type));
+		AssertEquals ("#E9", 0, s.IndexOf (string.Empty, comparison_type));
 
 		comparison_type = StringComparison.OrdinalIgnoreCase;
 		AssertEquals ("#F1", 7, s.IndexOf ("123", comparison_type));
@@ -1490,7 +1490,7 @@ public class StringTest : TestCase
 		AssertEquals ("#F6", 12, s.IndexOf ("6", comparison_type));
 		AssertEquals ("#F7", 3, s.IndexOf ("tin", comparison_type));
 		AssertEquals ("#F8", 3, s.IndexOf ("TIN", comparison_type));
-		//AssertEquals ("#F9", 0, s.IndexOf (string.Empty, comparison_type));
+		AssertEquals ("#F9", 0, s.IndexOf (string.Empty, comparison_type));
 
 		Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
 
@@ -1503,7 +1503,7 @@ public class StringTest : TestCase
 		AssertEquals ("#G6", 12, s.IndexOf ("6", comparison_type));
 		AssertEquals ("#G7", 3, s.IndexOf ("tin", comparison_type));
 		AssertEquals ("#G8", -1, s.IndexOf ("TIN", comparison_type));
-		//AssertEquals ("#G9", 0, s.IndexOf (string.Empty, comparison_type));
+		AssertEquals ("#G9", 0, s.IndexOf (string.Empty, comparison_type));
 
 		comparison_type = StringComparison.CurrentCultureIgnoreCase;
 		AssertEquals ("#H1", 7, s.IndexOf ("123", comparison_type));
@@ -1514,7 +1514,7 @@ public class StringTest : TestCase
 		AssertEquals ("#H6", 12, s.IndexOf ("6", comparison_type));
 		AssertEquals ("#H7", 3, s.IndexOf ("tin", comparison_type));
 		AssertEquals ("#H8", 3, s.IndexOf ("TIN", comparison_type));
-		//AssertEquals ("#H9", 0, s.IndexOf (string.Empty, comparison_type));
+		AssertEquals ("#H9", 0, s.IndexOf (string.Empty, comparison_type));
 
 		comparison_type = StringComparison.InvariantCulture;
 		AssertEquals ("#I1", 7, s.IndexOf ("123", comparison_type));
@@ -1525,7 +1525,7 @@ public class StringTest : TestCase
 		AssertEquals ("#I6", 12, s.IndexOf ("6", comparison_type));
 		AssertEquals ("#I7", 3, s.IndexOf ("tin", comparison_type));
 		AssertEquals ("#I8", -1, s.IndexOf ("TIN", comparison_type));
-		//AssertEquals ("#I9", 0, s.IndexOf (string.Empty, comparison_type));
+		AssertEquals ("#I9", 0, s.IndexOf (string.Empty, comparison_type));
 
 		comparison_type = StringComparison.InvariantCultureIgnoreCase;
 		AssertEquals ("#J1", 7, s.IndexOf ("123", comparison_type));
@@ -1536,7 +1536,7 @@ public class StringTest : TestCase
 		AssertEquals ("#J6", 12, s.IndexOf ("6", comparison_type));
 		AssertEquals ("#J7", 3, s.IndexOf ("tin", comparison_type));
 		AssertEquals ("#J8", 3, s.IndexOf ("TIN", comparison_type));
-		//AssertEquals ("#J9", 0, s.IndexOf (string.Empty, comparison_type));
+		AssertEquals ("#J9", 0, s.IndexOf (string.Empty, comparison_type));
 
 		comparison_type = StringComparison.Ordinal;
 		AssertEquals ("#K1", 7, s.IndexOf ("123", comparison_type));
@@ -1547,7 +1547,7 @@ public class StringTest : TestCase
 		AssertEquals ("#K6", 12, s.IndexOf ("6", comparison_type));
 		AssertEquals ("#K7", 3, s.IndexOf ("tin", comparison_type));
 		AssertEquals ("#K8", -1, s.IndexOf ("TIN", comparison_type));
-		//AssertEquals ("#K9", 0, s.IndexOf (string.Empty, comparison_type));
+		AssertEquals ("#K9", 0, s.IndexOf (string.Empty, comparison_type));
 
 		comparison_type = StringComparison.OrdinalIgnoreCase;
 		AssertEquals ("#L1", 7, s.IndexOf ("123", comparison_type));
@@ -1558,9 +1558,9 @@ public class StringTest : TestCase
 		AssertEquals ("#L6", 12, s.IndexOf ("6", comparison_type));
 		AssertEquals ("#L7", 3, s.IndexOf ("tin", comparison_type));
 		AssertEquals ("#L8", 3, s.IndexOf ("TIN", comparison_type));
-		//AssertEquals ("#L9", 0, s.IndexOf (string.Empty, comparison_type));
+		AssertEquals ("#L9", 0, s.IndexOf (string.Empty, comparison_type));
 
-		//AssertEquals ("#M", 0, string.Empty.IndexOf (string.Empty, comparison_type));
+		AssertEquals ("#M", 0, string.Empty.IndexOf (string.Empty, comparison_type));
 	}
 
 	[Test] // IndexOf (String, StringComparison)
@@ -3223,6 +3223,62 @@ public class StringTest : TestCase
 		AssertEquals ("should not strip content after nullchar",
 			"is this ok ?", "is \0 ok ?".Replace ("\0", "this"));
 #endif
+	}
+
+	[Test]
+	public void ReplaceStringBeginEndTest ()
+	{
+		string s1 = "original";
+
+		AssertEquals ("#1", "riginal", s1.Replace ("o", ""));
+		AssertEquals ("#2", "origina", s1.Replace ("l", ""));
+		AssertEquals ("#3", "ariginal", s1.Replace ("o", "a"));
+		AssertEquals ("#4", "originaa", s1.Replace ("l", "a"));
+		AssertEquals ("#5", "aariginal", s1.Replace ("o", "aa"));
+		AssertEquals ("#6", "originaaa", s1.Replace ("l", "aa"));
+		AssertEquals ("#7", "original", s1.Replace ("o", "o"));
+		AssertEquals ("#8", "original", s1.Replace ("l", "l"));
+		AssertEquals ("#9", "original", s1.Replace ("original", "original"));
+		AssertEquals ("#10", "", s1.Replace ("original", ""));
+	}
+
+	[Test]
+	public void ReplaceStringBeginEndTestFallback ()
+	{
+		string prev = new String ('o', 300);
+		string s1 = prev + "riginal";
+
+		AssertEquals ("#1", "riginal", s1.Replace ("o", ""));
+		AssertEquals ("#2", prev + "rigina", s1.Replace ("l", ""));
+		AssertEquals ("#3", new String ('a', 300) + "riginal", s1.Replace ("o", "a"));
+		AssertEquals ("#4", prev + "riginaa", s1.Replace ("l", "a"));
+		AssertEquals ("#5", new String ('a', 600) + "riginal", s1.Replace ("o", "aa"));
+		AssertEquals ("#6", prev + "riginaaa", s1.Replace ("l", "aa"));
+		AssertEquals ("#7", s1, s1.Replace ("o", "o"));
+		AssertEquals ("#8", s1, s1.Replace ("l", "l"));
+		AssertEquals ("#9", s1, s1.Replace (s1, s1));
+		AssertEquals ("#10", "", s1.Replace (prev + "riginal", ""));
+	}
+
+	[Test]
+	public void ReplaceStringOfByOne ()
+	{
+		AssertEquals ("-1", "", new String ('o', 199).Replace ("o", ""));
+		AssertEquals ("0", "", new String ('o', 200).Replace ("o", ""));
+		AssertEquals ("+1", "", new String ('o', 201).Replace ("o", ""));
+	}
+
+	[Test]
+	public void ReplaceStringCultureTests ()
+	{
+		// LAMESPEC: According to MSDN Replace with String parameter is culture-senstive.
+		// However this does not currently seem to be the case. Otherwise following code should
+		// produce "check" instead of "AE"
+
+		CultureInfo old = Thread.CurrentThread.CurrentCulture;
+		Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
+		AssertEquals ("#1", "AE", "AE".Replace ("\u00C6", "check"));
+		Thread.CurrentThread.CurrentCulture = old;
 	}
 
 	[Test]

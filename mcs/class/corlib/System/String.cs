@@ -1579,7 +1579,7 @@ namespace System
 			return culture.CompareInfo.IsPrefix (this, value, ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None);
 		}
 
-		/* This method is culture insensitive */
+		// Following method is culture-insensitive
 		public unsafe String Replace (char oldChar, char newChar)
 		{
 			if (this.length == 0 || oldChar == newChar)
@@ -1592,10 +1592,10 @@ namespace System
 			if (start_pos < 4)
 				start_pos = 0;
 
-			string tmp = InternalAllocateStr(length);
+			string tmp = InternalAllocateStr (length);
 			fixed (char* dest = tmp, src = &start_char) {
 				if (start_pos != 0)
-					memcpy((byte*)dest, (byte*)src, start_pos * 2);
+					CharCopy (dest, src, start_pos);
 
 				char* end_ptr = dest + length;
 				char* dest_ptr = dest + start_pos;
@@ -1614,9 +1614,12 @@ namespace System
 			return tmp;
 		}
 
-		/* This method is culture sensitive */
+		// culture-insensitive using ordinal search (See testcase StringTest.ReplaceStringCultureTests)
 		public String Replace (String oldValue, String newValue)
 		{
+			// LAMESPEC: According to MSDN the following method is culture-sensitive but this seems to be incorrect
+			// LAMESPEC: Result is undefined if result length is longer than maximum string length
+
 			if (oldValue == null)
 				throw new ArgumentNullException ("oldValue");
 
@@ -1629,7 +1632,70 @@ namespace System
 			if (newValue == null)
 				newValue = String.Empty;
 
-			return InternalReplace (oldValue, newValue, CultureInfo.CurrentCulture.CompareInfo);
+			return ReplaceUnchecked (oldValue, newValue);
+		}
+
+		private unsafe String ReplaceUnchecked (String oldValue, String newValue)
+		{
+			if (oldValue.length > length)
+				return this;
+			if (oldValue.length == 1 && newValue.length == 1) {
+				return Replace (oldValue[0], newValue[0]);
+				// ENHANCE: It would be possible to special case oldValue.length == newValue.length
+				// because the length of the result would be this.length and length calculation unneccesary
+			}
+
+			const int maxValue = 200; // Allocate 800 byte maximum
+			int* dat = stackalloc int[maxValue];
+			fixed (char* source = this, replace = newValue) {
+				int i = 0, count = 0;
+				while (i < length) {
+					int found = IndexOfOrdinalUnchecked (oldValue, i, length - i);
+					if (found < 0)
+						break;
+					else {
+						if (count < maxValue)
+							dat[count++] = found;
+						else
+							return ReplaceFallback (oldValue, newValue, maxValue);
+					}
+					i = found + oldValue.length;
+				}
+				int nlen = this.length + ((newValue.length - oldValue.length) * count);
+				String tmp = InternalAllocateStr (nlen);
+
+				int curPos = 0, lastReadPos = 0;
+				fixed (char* dest = tmp) {
+					for (int j = 0; j < count; j++) {
+						int precopy = dat[j] - lastReadPos;
+						CharCopy (dest + curPos, source + lastReadPos, precopy);
+						curPos += precopy;
+						lastReadPos = dat[j] + oldValue.length;
+						CharCopy (dest + curPos, replace, newValue.length);
+						curPos += newValue.length;
+					}
+					CharCopy (dest + curPos, source + lastReadPos, length - lastReadPos);
+				}
+				return tmp;
+			}
+		}
+
+		private String ReplaceFallback (String oldValue, String newValue, int testedCount)
+		{
+			int lengthEstimate = this.length + ((newValue.length - oldValue.length) * testedCount);
+			StringBuilder sb = new StringBuilder (lengthEstimate);
+			for (int i = 0; i < length;) {
+				int found = IndexOfOrdinalUnchecked (oldValue, i, length - i);
+				if (found < 0) {
+					sb.Append (SubstringUnchecked (i, length - i));
+					break;
+				}
+				sb.Append (SubstringUnchecked (i, found - i));
+				sb.Append (newValue);
+				i = found + oldValue.Length;
+			}
+			return sb.ToString ();
+
 		}
 
 		public unsafe String Remove (int startIndex, int count)

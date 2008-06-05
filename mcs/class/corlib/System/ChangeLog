@@ -1,3 +1,7 @@
+2008-06-05  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* String.cs: Managed replacement for Replace method ;)
+
 2008-06-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* Decimal.cs (Divide): Move expensive equality checks to unmanaged code.
