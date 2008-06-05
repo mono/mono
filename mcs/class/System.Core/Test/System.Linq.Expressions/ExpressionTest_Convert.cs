@@ -452,7 +452,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ConvertImplicitToShortToNullableInt ()
 		{
 			var a = Expression.Parameter (typeof (ImplicitToShort?), "a");
