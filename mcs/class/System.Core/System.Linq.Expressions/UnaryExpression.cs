@@ -177,6 +177,12 @@ namespace System.Linq.Expressions {
 				return;
 			}
 
+			if (operand.Type != GetNotNullableOf (Type)) {
+				EmitPrimitiveConversion (ec,
+					operand.Type,
+					GetNotNullableOf (Type));
+			}
+
 			ec.EmitNullableNew (Type);
 		}
 
@@ -189,6 +195,12 @@ namespace System.Linq.Expressions {
 			}
 
 			ec.EmitCall (operand, operand.Type.GetMethod ("get_Value"));
+
+			if (GetNotNullableOf (operand.Type) != Type) {
+				EmitPrimitiveConversion (ec,
+					GetNotNullableOf (operand.Type),
+					Type);
+			}
 		}
 
 		bool IsBoxing ()
