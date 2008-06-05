@@ -163,12 +163,11 @@ namespace System.Windows.Forms {
 					return null;
 					
 				DataGridViewCellStyle style = InheritedStyle;
-				if (style.Format != String.Empty && FormattedValueType == typeof(string)) {
-					return String.Format("{0:" + style.Format + "}", Value);
-				}
+
+				TypeConverter source = TypeDescriptor.GetConverter (valueType);
+				TypeConverter dest = TypeDescriptor.GetConverter (FormattedValueType);
 				
-				return GetFormattedValue (Value, RowIndex, ref style, null, null, DataGridViewDataErrorContexts.Formatting);
-				//return Convert.ChangeType(Value, FormattedValueType, style.FormatProvider);
+				return GetFormattedValue (Value, RowIndex, ref style, source, dest, DataGridViewDataErrorContexts.Formatting);
 			}
 		}
 
@@ -1013,30 +1012,33 @@ namespace System.Windows.Forms {
 			if (rowIndex < 0 || rowIndex >= DataGridView.RowCount)
 				throw new ArgumentOutOfRangeException ("rowIndex");
 				
-			DataGridViewCellFormattingEventArgs e = new DataGridViewCellFormattingEventArgs (ColumnIndex, rowIndex, value, FormattedValueType, cellStyle);
-			
-			if (!(this is DataGridViewRowHeaderCell))
+			// Give the user a chance to custom format
+			if (!(this is DataGridViewRowHeaderCell)) {
+				DataGridViewCellFormattingEventArgs e = new DataGridViewCellFormattingEventArgs (ColumnIndex, rowIndex, value, FormattedValueType, cellStyle);
 				DataGridView.OnCellFormattingInternal (e);
 			
-			if (e.FormattingApplied || e.Value != null) {
-				return e.Value;
+				if (e.FormattingApplied)
+					return e.Value;
+			
+				cellStyle = e.CellStyle;
+				value = e.Value;
 			}
 			
-			if (valueTypeConverter != null) {
-				return valueTypeConverter.ConvertTo (value, FormattedValueType);
-			}
-			
-			if (formattedValueTypeConverter != null) {
-				return formattedValueTypeConverter.ConvertFrom (value);
-			}
-			
+			// Try to use Format/FormatProvider
 			IFormattable formattable = value as IFormattable;
-			if (formattable != null && style != null) {
-				formattable.ToString (style.Format, style.FormatProvider);
-			}
+
+			if (formattable != null && cellStyle != null)
+				return formattable.ToString (cellStyle.Format, cellStyle.FormatProvider);
 			
-			// Now what?
+			// Try to use the value type coverter
+			if (valueTypeConverter != null && valueTypeConverter.CanConvertTo (FormattedValueType))
+				return valueTypeConverter.ConvertTo (value, FormattedValueType);
 			
+			// Try to use the formatted value type coverter
+			if (formattedValueTypeConverter != null && formattedValueTypeConverter.CanConvertFrom (ValueType))
+				return formattedValueTypeConverter.ConvertFrom (value);
+			
+			// Now what? Give up?
 			return value;
 		}
 

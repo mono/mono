@@ -69,7 +69,19 @@ namespace System.Windows.Forms {
 
 		public DataGridViewCellStyle (DataGridViewCellStyle dataGridViewCellStyle)
 		{
-			ApplyStyle(dataGridViewCellStyle);
+			this.alignment = dataGridViewCellStyle.alignment;
+			this.backColor = dataGridViewCellStyle.backColor;
+			this.dataSourceNullValue = dataGridViewCellStyle.dataSourceNullValue;
+			this.font = dataGridViewCellStyle.font;
+			this.foreColor = dataGridViewCellStyle.foreColor;
+			this.format = dataGridViewCellStyle.format;
+			this.formatProvider = dataGridViewCellStyle.formatProvider;
+			this.nullValue = dataGridViewCellStyle.nullValue;
+			this.padding = dataGridViewCellStyle.padding;
+			this.selectionBackColor = dataGridViewCellStyle.selectionBackColor;
+			this.selectionForeColor = dataGridViewCellStyle.selectionForeColor;
+			this.tag = dataGridViewCellStyle.tag;
+			this.wrapMode = dataGridViewCellStyle.wrapMode;
 		}
 
 		[DefaultValue (DataGridViewContentAlignment.NotSet)]
@@ -113,7 +125,11 @@ namespace System.Windows.Forms {
 			get { return font; }
 			set {
 				if (font != value) {
-					font = value;
+					// FIXME:
+					// We actually shouldn't clone here.  We are
+					// somehow supposed to keep the same Font,
+					// but draw correctly if the font has been disposed.
+					font = (Font)value.Clone ();
 					OnStyleChanged();
 				}
 			}
@@ -255,19 +271,33 @@ namespace System.Windows.Forms {
 
 		public virtual void ApplyStyle (DataGridViewCellStyle dataGridViewCellStyle)
 		{
-			this.alignment = dataGridViewCellStyle.alignment;
-			this.backColor = dataGridViewCellStyle.backColor;
-			this.dataSourceNullValue = dataGridViewCellStyle.dataSourceNullValue;
-			this.font = dataGridViewCellStyle.font;
-			this.foreColor = dataGridViewCellStyle.foreColor;
-			this.format = dataGridViewCellStyle.format;
-			this.formatProvider = dataGridViewCellStyle.formatProvider;
-			this.nullValue = dataGridViewCellStyle.nullValue;
-			this.padding = dataGridViewCellStyle.padding;
-			this.selectionBackColor = dataGridViewCellStyle.selectionBackColor;
-			this.selectionForeColor = dataGridViewCellStyle.selectionForeColor;
-			this.tag = dataGridViewCellStyle.tag;
-			this.wrapMode = dataGridViewCellStyle.wrapMode;
+			// We should only apply the new style if it is 'set'.
+			if (dataGridViewCellStyle.alignment != DataGridViewContentAlignment.NotSet)
+				this.alignment = dataGridViewCellStyle.alignment;
+			if (dataGridViewCellStyle.backColor != Color.Empty)
+				this.backColor = dataGridViewCellStyle.backColor;
+			if (dataGridViewCellStyle.dataSourceNullValue != DBNull.Value)
+				this.dataSourceNullValue = dataGridViewCellStyle.dataSourceNullValue;
+			if (dataGridViewCellStyle.font != null)
+				this.font = dataGridViewCellStyle.font;
+			if (dataGridViewCellStyle.foreColor != Color.Empty)
+				this.foreColor = dataGridViewCellStyle.foreColor;
+			if (dataGridViewCellStyle.format != string.Empty)
+				this.format = dataGridViewCellStyle.format;
+			if (dataGridViewCellStyle.formatProvider != null)
+				this.formatProvider = dataGridViewCellStyle.formatProvider;
+			if (dataGridViewCellStyle.nullValue != null)
+				this.nullValue = dataGridViewCellStyle.nullValue;
+			if (dataGridViewCellStyle.padding != Padding.Empty)
+				this.padding = dataGridViewCellStyle.padding;
+			if (dataGridViewCellStyle.selectionBackColor != Color.Empty)
+				this.selectionBackColor = dataGridViewCellStyle.selectionBackColor;
+			if (dataGridViewCellStyle.selectionForeColor != Color.Empty)
+				this.selectionForeColor = dataGridViewCellStyle.selectionForeColor;
+			if (dataGridViewCellStyle.tag != null)
+				this.tag = dataGridViewCellStyle.tag;
+			if (dataGridViewCellStyle.wrapMode != DataGridViewTriState.NotSet)
+				this.wrapMode = dataGridViewCellStyle.wrapMode;
 		}
 
 		object ICloneable.Clone ()

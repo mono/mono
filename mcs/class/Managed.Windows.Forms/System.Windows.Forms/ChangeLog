@@ -1,3 +1,13 @@
+2008-06-05  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridViewCell.cs: Correctly get converters for FormattedValue.
+	Use Format/FormatProvider before trying converters.
+	* DataGridViewCellStyle.cs: ApplyStyle should only apply things that
+	are 'set'.  Change constructor to not use ApplyStyle since it wants
+	everything applied.  Clone the Font.
+	* DataGridViewRowHeaderCell.cs: Start with DefaultCellStyle and
+	ApplyStyle the rest.
+
 2008-06-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: We need to calculate the scrollbars even if the handle

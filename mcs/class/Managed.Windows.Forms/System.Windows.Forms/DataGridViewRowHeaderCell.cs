@@ -59,14 +59,13 @@ namespace System.Windows.Forms {
 
 		public override DataGridViewCellStyle GetInheritedStyle (DataGridViewCellStyle inheritedCellStyle, int rowIndex, bool includeColors)
 		{
-			DataGridViewCellStyle result;
+			DataGridViewCellStyle result = new DataGridViewCellStyle (DataGridView.DefaultCellStyle);
 
-			if (HasStyle) {
-				result = Style;
-			} else {
-				result = DataGridView.RowHeadersDefaultCellStyle;
-			}
-
+			result.ApplyStyle (DataGridView.RowHeadersDefaultCellStyle);
+				
+			if (HasStyle)
+				result.ApplyStyle (Style);
+				
 			return result;
 		}
 
