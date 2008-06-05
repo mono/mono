@@ -3261,11 +3261,11 @@ public class StringTest : TestCase
 	}
 
 	[Test]
-	public void ReplaceStringOfByOne ()
+	public void ReplaceStringOffByOne ()
 	{
-		AssertEquals ("-1", "", new String ('o', 199).Replace ("o", ""));
-		AssertEquals ("0", "", new String ('o', 200).Replace ("o", ""));
-		AssertEquals ("+1", "", new String ('o', 201).Replace ("o", ""));
+		AssertEquals ("#-1", "", new String ('o', 199).Replace ("o", ""));
+		AssertEquals ("#0", "", new String ('o', 200).Replace ("o", ""));
+		AssertEquals ("#+1", "", new String ('o', 201).Replace ("o", ""));
 	}
 
 	[Test]
