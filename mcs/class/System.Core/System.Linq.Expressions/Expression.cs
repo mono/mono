@@ -295,7 +295,7 @@ namespace System.Linq.Expressions {
 				var lp = parameters [0];
 				var rp = parameters [1];
 
-				if (left.Type == lp.ParameterType && right.Type == rp.ParameterType) {
+				if (IsAssignableToOperatorParameter (left, lp) && IsAssignableToOperatorParameter (right, rp)) {
 					is_lifted = false;
 					type = method.ReturnType;
 				} else if (left.Type.IsNullable ()
@@ -313,6 +313,18 @@ namespace System.Linq.Expressions {
 			return new BinaryExpression (et, type, left, right, is_lifted, is_lifted, method, null);
 		}
 
+		static bool IsAssignableToOperatorParameter (Expression expression, ParameterInfo parameter)
+		{
+			if (expression.Type == parameter.ParameterType)
+				return true;
+
+			if ((!expression.Type.IsNullable () && !parameter.ParameterType.IsNullable ())
+				&& IsAssignableToParameterType (expression.Type, parameter))
+				return true;
+
+			return false;
+		}
+
 		static UnaryExpression MakeSimpleUnary (ExpressionType et, Expression expression, MethodInfo method)
 		{
 			bool is_lifted;
@@ -324,7 +336,7 @@ namespace System.Linq.Expressions {
 			} else {
 				var parameter = method.GetParameters () [0];
 
-				if (expression.Type == parameter.ParameterType) {
+				if (IsAssignableToOperatorParameter (expression, parameter)) {
 					is_lifted = false;
 					type = method.ReturnType;
 				} else if (expression.Type.IsNullable ()
@@ -361,7 +373,7 @@ namespace System.Linq.Expressions {
 				var lp = parameters [0];
 				var rp = parameters [1];
 
-				if (left.Type == lp.ParameterType && right.Type == rp.ParameterType) {
+				if (IsAssignableToOperatorParameter (left, lp) && IsAssignableToOperatorParameter (right, rp)) {
 					is_lifted = false;
 					liftToNull = false;
 					type = method.ReturnType;
