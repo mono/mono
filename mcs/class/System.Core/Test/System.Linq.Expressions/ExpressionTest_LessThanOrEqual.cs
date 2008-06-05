@@ -165,7 +165,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void UserDefinedLessThanOrEqualLifted ()
 		{
 			var l = Expression.Parameter (typeof (Slot?), "l");
@@ -188,7 +187,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void UserDefinedLessThanOrEqualLiftedToNull ()
 		{
 			var l = Expression.Parameter (typeof (Slot?), "l");
