@@ -248,7 +248,7 @@ namespace System.Linq.Expressions {
 				}
 
 				if (oper_name == "op_LeftShift" || oper_name == "op_RightShift") {
-					if (IsInt (ultype) && rtype == typeof (int))
+					if (IsInt (ultype) && urtype == typeof (int))
 						return null;
 				}
 
