@@ -4003,17 +4003,6 @@ public class StringTest : TestCase
 		AssertEquals ("#02", "123", st [0]);
 	}
 
-	[Test]
-	public void SplitEmptyTest ()
-	{
-		string test = "\u006f"; //TODO
-		string [] st = test.Split ();
-		AssertEquals ("#01", 123, st.Length);
-		st = test.Split (null);
-		AssertEquals ("#02", 123, st.Length);
-//TODO: Also for 2.0 Profile with Options=RemoveEmpty
-	}
-
 #if NET_2_0
 	[Test] // Split (Char [], StringSplitOptions)
 	public void Split3_Options_Invalid ()
