@@ -1,5 +1,10 @@
 2008-06-05  Jb Evain  <jbevain@novell.com>
 
+	* Expression.cs (GetUserConversionMethod): check for convertion
+	operators on both types.
+
+2008-06-05  Jb Evain  <jbevain@novell.com>
+
 	* Expression.cs (ConditionalBinaryCheck): if a method is passed,
 	checked that the operators true and false are also defined.
 

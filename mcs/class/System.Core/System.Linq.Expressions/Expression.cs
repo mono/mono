@@ -1170,6 +1170,10 @@ namespace System.Linq.Expressions {
 			if (method == null)
 				method = GetUnaryOperator ("op_Implicit", type, type, target);
 			if (method == null)
+				method = GetUnaryOperator ("op_Explicit", target, type, target);
+			if (method == null)
+				method = GetUnaryOperator ("op_Implicit", target, type, target);
+			if (method == null)
 				throw new InvalidOperationException ();
 
 			return method;
