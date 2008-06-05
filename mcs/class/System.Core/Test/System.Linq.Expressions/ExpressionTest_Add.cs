@@ -237,7 +237,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void UserDefinedAddLifted ()
 		{
 			var l = Expression.Parameter (typeof (Slot?), "l");
@@ -270,7 +269,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void UserDefinedToNullableAddFromNullable ()
 		{
@@ -317,7 +315,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void UserDefinedFromNullableToNullableAdd ()
 		{
 			var l = Expression.Parameter (typeof (SlotFromNullableToNullable?), "l");

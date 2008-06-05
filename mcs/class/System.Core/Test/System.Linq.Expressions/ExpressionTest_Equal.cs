@@ -18,6 +18,7 @@
 //
 // Authors:
 //    Miguel de Icaza (miguel@novell.com)
+//    Jb Evain (jbevain@novell.com)
 //
 
 using System;
@@ -228,7 +229,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void UserDefinedEqualLifted ()
 		{
 			var l = Expression.Parameter (typeof (Slot?), "l");
@@ -250,7 +250,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void UserDefinedEqualLiftedToNull ()
 		{
 			var l = Expression.Parameter (typeof (Slot?), "l");
@@ -306,7 +305,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void UserDefinedToNullableEqualFromNullable ()
 		{
@@ -371,7 +369,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void UserDefinedFromNullableToNullableEqual ()
 		{
 			var l = Expression.Parameter (typeof (SlotFromNullableToNullable?), "l");
