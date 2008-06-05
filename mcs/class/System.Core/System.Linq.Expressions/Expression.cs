@@ -77,7 +77,7 @@ namespace System.Linq.Expressions {
 
 		static MethodInfo GetUnaryOperator (string oper_name, Type declaring, Type param, Type ret)
 		{
-			var methods = declaring.GetMethods (PublicStatic);
+			var methods = GetNotNullableOf (declaring).GetMethods (PublicStatic);
 
 			foreach (var method in methods) {
 				if (method.Name != oper_name)
@@ -87,7 +87,7 @@ namespace System.Linq.Expressions {
 				if (parameters.Length != 1)
 					continue;
 
-				if (!IsAssignableToParameterType (param, parameters [0]))
+				if (!IsAssignableToParameterType (GetNotNullableOf (param), parameters [0]))
 					continue;
 
 				if (ret != null && method.ReturnType != GetNotNullableOf (ret))
@@ -121,7 +121,7 @@ namespace System.Linq.Expressions {
 			if (parameters.Length != 1)
 				throw new ArgumentException ("Must have only one parameters", "method");
 
-			if (!IsAssignableToParameterType (param, parameters [0]))
+			if (!IsAssignableToParameterType (GetNotNullableOf (param), parameters [0]))
 				throw new InvalidOperationException ("left-side argument type does not match expression type");
 
 			return method;
