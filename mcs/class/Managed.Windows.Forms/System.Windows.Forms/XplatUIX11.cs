@@ -4994,11 +4994,11 @@ namespace System.Windows.Forms {
 				XQueryTree (DisplayHandle, RootWindow, out Root, out Parent, out Children, out ChildCount);
 			}
 
-			int intptr_size = Marshal.SizeOf (typeof (int));
+			int intptr_size = IntPtr.Size;
 			bool above = false;
 
 			for (int i = 0; i < ChildCount; i++) {
-				IntPtr window = new IntPtr (Marshal.ReadInt32 (Children, i * intptr_size));
+				IntPtr window = Marshal.ReadIntPtr (Children, i * intptr_size);
 
 				XWindowAttributes win_attrs = new XWindowAttributes ();
 				lock (XlibLock) {

@@ -1,3 +1,9 @@
+2008-06-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* XplatUIX1..cs: Use IntPtr size instead of int, as wee need to work
+	also on 64 bit machinges. Fixes the BadWindow errors while scrolling
+	in 64 bit machines.
+
 2008-06-05  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridViewCell.cs: Correctly get converters for FormattedValue.
