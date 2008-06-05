@@ -293,7 +293,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void IncompleteUserDefinedOrElse ()
 		{
